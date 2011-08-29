@@ -16,13 +16,13 @@
 		private $peopleWorkingStatus = 0;
 		private $deactivated = 0;
 		private $cooldown = 0;
-		
+
 		// building data
 		private $building = null;
-		
+
 		// changed data
 		private $changedFields = array();
-		
+
 		// calculations
 		private $buildableStatus = null;
 		private $costs = array();
@@ -49,7 +49,7 @@
 				else
 					return;
 			}
-			
+
 			if (intval($arr['buildlist_id'])>0)
 			{
 				$this->id = $arr['buildlist_id'];
@@ -78,11 +78,11 @@
 			{
 				$this->building = new Building($arr);
 			}
-			
+
 			if ($load==1)
 				$this->load();
 		}
-		
+
 		public function __toString()
 		{
 			if ($this->buildingId>0)
@@ -94,15 +94,15 @@
 			}
 			return $this->id;
 		}
-		
+
 		public function __set($key, $val)
 		{
 			try
 			{
-				
+
 				if (!property_exists($this,$key))
 					throw new EException("Property $key existiert nicht in der Klasse ".__CLASS__);
-				
+
 				if ($key=="cooldown")
 				{
 					$this->changedFields[$key] = "buildlist_cooldown";
@@ -122,7 +122,7 @@
 				echo $e;
 			}
 		}
-		
+
 		public function __get($key)
 		{
 			try
@@ -152,7 +152,7 @@
 				{
 					return $this->building->bunkerFleetSpace*intpow($this->building->storeFactor,$this->level-1);
 				}
-					
+
 				return $this->$key;
 			}
 			catch (EException $e)
@@ -161,14 +161,14 @@
 				return null;
 			}
 		}
-	
-	
+
+
 		private function load()
 		{
-			$sql = dbquery("SELECT	
+			$sql = dbquery("SELECT
 				l.*,
 				i.*
-			FROM 
+			FROM
 				buildlist l
 			INNER JOIN
 				buildings i
@@ -176,15 +176,15 @@
 				l.buildlist_building_id = i.building_id
 				AND l.buildlist_id='".$id."'
 			LIMIT 1;");
-			
+
 			if (mysql_num_rows($res)>0)
 				$arr = mysql_fetch_assoc($res);
 			else
 			{
 				throw new EException("Buildlisteintrag $id existiert nicht!");
-			}			
+			}
 		}
-		
+
 		public function resetCalculation()
 		{
 			$this->buildableStatus = null;
@@ -192,7 +192,7 @@
 			$this->nextCosts = array();
 			$this->demolishCosts = array();
 		}
-		
+
 		public function setPeopleWorking($people)
 		{
 			if ($this->buildType==0)
@@ -203,12 +203,12 @@
 			}
 			return false;
 		}
-		
+
 		public function isMaxLevel()
 		{
 			return $this->level>=$this->building->maxLevel ? true : false;
 		}
-		
+
 		public function getBuildTime()
 		{
 			if (!(count($this->costs)))
@@ -217,7 +217,7 @@
 			}
 			return $this->costs['time'];
 		}
-		
+
 		public function getBuildCosts($levelUp=0)
 		{
 			if (!(count($this->costs)  && !$levelUp) || !(count($this->nextCosts)  && $levelUp))
@@ -240,11 +240,11 @@
 				{
 					$bc['min_time'] = $bc['time'] * $this->minBuildTimeFactor();
 					$bc['time'] -= ($bl->getPeopleWorking(BUILD_BUILDING_ID) * $cfg->value('people_work_done'));
-					if ($bc['time'] < $bc['min_time']) 
+					if ($bc['time'] < $bc['min_time'])
 						$bc['time'] = $bc['min_time'];
 					$bc['costs4']+= $bl->getPeopleWorking(BUILD_BUILDING_ID) * $cfg->value('people_food_require');
 				}
-				
+
 				if ($levelUp)
 					$this->nextCosts = $bc;
 				else
@@ -256,19 +256,19 @@
 			else
 				return $this->costs;
 		}
-		
+
 		public function getDemolishCosts($levelUp=0)
 		{
 			if (!count($this->demolishCosts))
 			{
 				$this->demolishCosts = $this->getBuildCosts($levelUp);
-				
+
 				foreach($this->demolishCosts as $id=>$element)
 					$this->demolishCosts[$id] = $element * $this->building->demolishCostsFactor;
 			}
 			return $this->demolishCosts;
 		}
-		
+
 		public function build()
 		{
 			global $cp, $cu, $bl;
@@ -276,11 +276,11 @@
 			$this->changedFields['startTime'] = "buildlist_build_start_time";
 			$this->changedFields['endTime'] = "buildlist_build_end_time";
 			$this->changedFields['buildType'] = "buildlist_build_type";
-			
+
 			$this->startTime = time();
 			$this->endTime = $this->startTime + $costs['time'];
 			$this->buildType = 3;
-			
+
 			if ($this->id>0)
 			{
 				dbquery("UPDATE buildlist SET buildlist_build_type='3', buildlist_build_start_time='".$this->startTime."', buildlist_build_end_time='".$this->endTime."' WHERE buildlist_id='".$this->id."' LIMIT 1;");
@@ -309,9 +309,9 @@
 							'".floor($this->endTime)."'
 						);");
 			}
-			Buildlist::$underConstruction = true; 
+			Buildlist::$underConstruction = true;
 			$cp->changeRes(-$costs['costs0'],-$costs['costs1'],-$costs['costs2'],-$costs['costs3'],-$costs['costs4']);
-			
+
 			//Log schreiben
 			$log_text = "[b]Gebäudebau[/b]
 
@@ -337,10 +337,10 @@
 
 			//Log Speichern
 			GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 3, $this->level);
-			
+
 			return;
 		}
-		
+
 		public function getPeopleOptimized()
 		{
 			$cfg = Config::getInstance();
@@ -357,16 +357,16 @@
 			$bc['time'] = (array_sum($bc)) / GLOBAL_TIME * BUILD_BUILD_TIME;
 			$bc['time'] *= $bonus;
 			$maxReduction = $bc['time'] - $bc['time'] * $this->minBuildTimeFactor();
-			
+
 			return ceil($maxReduction / $cfg->value('people_work_done'));
-			
+
 		}
-		
+
 		public function minBuildTimeFactor()
 		{
 			return (0.1-(Buildlist::$GENTECH/100));
 		}
-		
+
 		public function demolish()
 		{
 			global $cp, $cu;
@@ -374,15 +374,15 @@
 			$this->changedFields['startTime'] = "buildlist_build_start_time";
 			$this->changedFields['endTime'] = "buildlist_build_end_time";
 			$this->changedFields['buildType'] = "buildlist_build_type";
-			
+
 			$this->startTime = time();
 			$this->endTime = $this->startTime + $costs['time'];
 			$this->buildType = 4;
-			
+
 			dbquery("UPDATE buildlist SET buildlist_build_type='4', buildlist_build_start_time='".$this->startTime."', buildlist_build_end_time='".$this->endTime."' WHERE buildlist_id='".$this->id."' LIMIT 1;");
 			Buildlist::$underConstruction = true;
-			$cp->changeRes(-$costs['costs1'],-$costs['costs2'],-$costs['costs3'],-$costs['costs4'],-$costs['costs5']);
-			
+			$cp->changeRes(-$costs['costs0'],-$costs['costs1'],-$costs['costs2'],-$costs['costs3'],-$costs['costs4']);
+
 			//Log schreiben
 			$log_text = "[b]Gebäudeabriss[/b]
 
@@ -402,13 +402,13 @@
 			[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
 			[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
 			[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
-			
+
 			//Log Speichern
 			GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 4, $this->level);
-			
+
 			return;
 		}
-		
+
 		public function cancelBuild()
 		{
 			if ($this->endTime > time())
@@ -419,12 +419,12 @@
 				$this->endTime = 0;
 				$this->startTime = 0;
 				$this->buildType = 0;
-				
+
 				dbquery("UPDATE buildlist SET buildlist_build_type='0', buildlist_build_start_time='0', buildlist_build_end_time='0' WHERE buildlist_id='".$this->id."' LIMIT 1;");
 				Buildlist::$underConstruction = false;
 				//Rohstoffe vom Planeten abziehen und aktualisieren
 				$cp->changeRes($costs['costs0']*$fac,$costs['costs1']*$fac,$costs['costs2']*$fac,$costs['costs3']*$fac,$costs['costs4']*$fac);
-				
+
 				//Log schreiben
 				$log_text = "[b]Gebäudebau Abbruch[/b]
 
@@ -445,16 +445,16 @@
 [b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
 [b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
 [b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
-				
+
 				//Log Speichern
 				GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 1, $this->level);
-				
+
 				return;
 			}
 			else
 				return "Bauauftrag kann nicht mehr abgebrochen werden, die Arbeit ist bereits fertiggestellt!";
 		}
-		
+
 		public function cancelDemolish()
 		{
 			if ($this->endTime > time())
@@ -465,12 +465,12 @@
 				$this->endTime = 0;
 				$this->startTime = 0;
 				$this->buildType = 0;
-				
+
 				dbquery("UPDATE buildlist SET buildlist_build_type='0', buildlist_build_start_time='0', buildlist_build_end_time='0' WHERE buildlist_id='".$this->id."' LIMIT 1;");
 				Buildlist::$underConstruction = false;
 				//Rohstoffe vom Planeten abziehen und aktualisieren
 				$cp->changeRes($costs['costs1']*$fac,$costs['costs2']*$fac,$costs['costs3']*$fac,$costs['costs4']*$fac,$costs['costs5']*$fac);
-				
+
 				//Log schreiben
 				$log_text = "[b]Gebäudeabriss Abbruch[/b]
 
@@ -494,17 +494,17 @@
 
 				//Log Speichern
 				GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 2, $this->level);
-				
+
 				return;
 			}
 			else
 				return "Abbruchauftrag kann nicht mehr abgebrochen werden, die Arbeit ist bereits fertiggestellt!";
 		}
-		
+
 		public function getWaitingTime()
 		{
 			global $cp, $resNames;
-			
+
 			$costs = $this->getBuildCosts(0,0);
 			$wTime = array();
 			// Wartezeiten auf Ressourcen berechnen
@@ -519,7 +519,7 @@
 			}
 			return max($wTime);
 		}
-		
+
 		public function waitingTimeString($type='build')
 		{
 			global $cp, $resNames;
@@ -528,7 +528,7 @@
 				$costs = $this->getBuildCosts(0,0);
 			else
 				$costs = $this->getDemolishCosts(0,0);
-			
+
 			$wTime = array();
 			// Wartezeiten auf Ressourcen berechnen
 			foreach ($resNames as $rk => $rn)
@@ -541,7 +541,7 @@
 					$wTime[$rk] = 0;
 			}
 			$wTime['max'] = max($wTime);
-			
+
 			$wTime['string'] = "";
 			foreach ($resNames as $rk => $rn)
 			{
@@ -554,7 +554,7 @@
 			}
 			return $wTime;
 		}
-							
+
 	}
 
 ?>
