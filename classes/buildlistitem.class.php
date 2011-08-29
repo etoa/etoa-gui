@@ -469,7 +469,7 @@
 				dbquery("UPDATE buildlist SET buildlist_build_type='0', buildlist_build_start_time='0', buildlist_build_end_time='0' WHERE buildlist_id='".$this->id."' LIMIT 1;");
 				Buildlist::$underConstruction = false;
 				//Rohstoffe vom Planeten abziehen und aktualisieren
-				$cp->changeRes($costs['costs1']*$fac,$costs['costs2']*$fac,$costs['costs3']*$fac,$costs['costs4']*$fac,$costs['costs5']*$fac);
+				$cp->changeRes($costs['costs0']*$fac,$costs['costs1']*$fac,$costs['costs2']*$fac,$costs['costs3']*$fac,$costs['costs4']*$fac);
 
 				//Log schreiben
 				$log_text = "[b]Gebäudeabriss Abbruch[/b]
