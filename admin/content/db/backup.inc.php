@@ -81,7 +81,7 @@
 			$bfiles=array();
 			while ($f = readdir($d))
 			{
-				if (is_file($cfg->backup."/".$f) && stristr($f,".sql"))
+				if (is_file($cfg->backup."/".$f) && stristr($f,".sql") && preg_match('/^'.DB_DATABASE.'/i',$f)==1)
 				{
 					array_push($bfiles,$f);
 				}
