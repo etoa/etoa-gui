@@ -265,7 +265,10 @@
 						break;					
 					case "host":
 						$sql= " user_hostname='".base64_decode($_GET['val'])."'";
-						break;					
+						break;	
+					case "blocked":
+						$sql= " (user_blocked_from<".time()." AND user_blocked_to>".time().")";
+						break;								
 					default:
 						$sql= " user_nick='%".base64_decode($_GET['val'])."%'";
 				}

@@ -28,8 +28,9 @@
 			$conf['flightban']['v']=0;
 		}
 		
+	
 		// Flottensperre aktivieren
-		if ($_POST['flightban_activate']!="")
+		if ($_POST['flightban_activate']!="" || $_POST['flightban_update']!="")
 		{
 			$flightban_from = mktime($_POST['flightban_time_from_h'],$_POST['flightban_time_from_i'],0,$_POST['flightban_time_from_m'],$_POST['flightban_time_from_d'],$_POST['flightban_time_from_y']);
 			$flightban_to = mktime($_POST['flightban_time_to_h'],$_POST['flightban_time_to_i'],0,$_POST['flightban_time_to_m'],$_POST['flightban_time_to_d'],$_POST['flightban_time_to_y']);
@@ -81,7 +82,7 @@
 		}
 		
 		// Kampfsperre aktivieren
-		if ($_POST['battleban_activate']!="")
+		if ($_POST['battleban_activate']!="" || $_POST['battleban_update']!="")
 		{
 			$battleban_from = mktime($_POST['battleban_time_from_h'],$_POST['battleban_time_from_i'],0,$_POST['battleban_time_from_m'],$_POST['battleban_time_from_d'],$_POST['battleban_time_from_y']);
 			$battleban_to = mktime($_POST['battleban_time_to_h'],$_POST['battleban_time_to_i'],0,$_POST['battleban_time_to_m'],$_POST['battleban_time_to_d'],$_POST['battleban_time_to_y']);
@@ -213,7 +214,7 @@
 			$flightban_time_from = $conf['flightban_time']['p1'];
 			$flightban_time_to = $conf['flightban_time']['p2'];
 			$flightban_reason = $conf['flightban']['p1'];
-			$flightban_button = "<input type=\"submit\" name=\"flightban_deactivate\" value=\"Deaktivieren\" />";
+			$flightban_button = "<input type=\"submit\" name=\"flightban_update\" value=\"Aktualisieren\" /> <input type=\"submit\" name=\"flightban_deactivate\" value=\"Deaktivieren\" />";
 		}
 		// ...wenn nicht aktiv
 		else
@@ -283,16 +284,16 @@
 				$battleban_time_status = "Sie ist nun aber abgelaufen!";
 			}
 			
-			$battleban_status = "<div style=\"color:#f90\">Die Flottensperre ist aktiviert! ".$battleban_time_status."</div>";
+			$battleban_status = "<div style=\"color:#f90\">Die Kampfsperre ist aktiviert! ".$battleban_time_status."</div>";
 			$battleban_time_from = $conf['battleban_time']['p1'];
 			$battleban_time_to = $conf['battleban_time']['p2'];
 			$battleban_reason = $conf['battleban']['p1'];
-			$battleban_button = "<input type=\"submit\" name=\"battleban_deactivate\" value=\"Deaktivieren\" />";
+			$battleban_button = "<input type=\"submit\" name=\"battleban_update\" value=\"Aktualisieren\" /> <input type=\"submit\" name=\"battleban_deactivate\" value=\"Deaktivieren\" />";
 		}
 		// ...wenn nicht aktiv
 		else
 		{
-			$battleban_status = "<div style=\"color:#0f0\">Die Flottensperre ist deaktiviert!</div>";
+			$battleban_status = "<div style=\"color:#0f0\">Die Kampfsperre ist deaktiviert!</div>";
 			$battleban_time_from = time();
 			$battleban_time_to = time();
 			$battleban_reason = "";

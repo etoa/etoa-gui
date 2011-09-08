@@ -5,6 +5,7 @@
 	$navmenu['Allgemeines'] = array(
 		'Startseite' => array('page'=>"overview",'sub'=>"",'level'=>0),
 		'Rangliste' => array('page'=>"overview",'sub'=>"stats",'level'=>0),
+		'Pranger' => array('page'=>"user",'sub'=>"&action=search&special=blocked",'level'=>0),
 		'Ingame-News' => array('page'=>"overview",'sub'=>"ingamenews",'level'=>0),
 		'Systemnachricht' => array('page'=>"overview",'sub'=>"systemmessage",'level'=>0),
 		'Offline nehmen' => array('page'=>"overview",'sub'=>"offline",'level'=>1),
