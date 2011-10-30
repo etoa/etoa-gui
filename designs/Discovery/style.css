@@ -358,7 +358,7 @@ div.infoboxcontent {
 	border-bottom:1px solid #fff;
 	background:#225 url(images/cellpic3.gif);
 	padding:4px;
-	text-align:left;	
+	text-align:left;
 }
 
 .statsTab	{
@@ -1412,7 +1412,7 @@ td.havenTab:hover	{
 	position:absolute;
 	background:url('images/transheader1.png') top right no-repeat;
     margin-top:1px;
-	padding:3px 15px 3px 3px;	
+	padding:3px 15px 3px 3px;
 	font-size:8pt;
     float:left;
 }
@@ -1452,7 +1452,7 @@ td.havenTab:hover	{
 
 .buildOverviewObjectNone, .tb td.buildOverviewObjectNone {
 	border:none;
-	
+
 }
 
 
@@ -1465,7 +1465,7 @@ td.havenTab:hover	{
 
 .planetOverviewItem	{
 	float:left;
-	width:120px;	
+	width:120px;
 	font-size:9pt;
 	font-weight:bold;
 	height:17px;
@@ -1474,7 +1474,7 @@ td.havenTab:hover	{
 /* Tab Menu */
 .tabMenu	{
 	display:table;
-	margin:10px auto 0px auto; 
+	margin:10px auto 0px auto;
 	border-left:1px solid #fff;
 }
 
@@ -1484,7 +1484,7 @@ td.havenTab:hover	{
 	height:21px;
 	color:#fff;
 	text-decoration:none;
-	padding:7px 10px 3px 10px;	
+	padding:7px 10px 3px 10px;
 	background:url('images/tab1.png') top right no-repeat;
 	border-bottom:1px solid #fff;
 	border-top:1px solid #fff;
@@ -1495,7 +1495,7 @@ td.havenTab:hover	{
 	float:left;
 	height:21px;
 	color:#ddd;
-	padding:7px 10px 3px 10px;	
+	padding:7px 10px 3px 10px;
 	background:url('images/tab2.png') top right no-repeat;
 }
 
@@ -1504,7 +1504,7 @@ td.havenTab:hover	{
 	float:left;
 	color:#ddd;
 	height:21px;
-	padding:7px 10px 3px 10px;	
+	padding:7px 10px 3px 10px;
 	background:url('images/tab2.png') top right no-repeat;
 }
 
@@ -1516,17 +1516,17 @@ td.havenTab:hover	{
 
 /* Get rid of the margin, padding and bullets in the unordered lists */
 #pmenu {
-	padding:0; 
-	margin:10px auto 0px auto; 
-	list-style-type: none; 
+	padding:0;
+	margin:10px auto 0px auto;
+	list-style-type: none;
 	display:table;
 	border:1px solid #fff;
 }
 
 #pmenu ul {
-	padding:0; 
-	margin:0; 
-	list-style-type: none; 
+	padding:0;
+	margin:0;
+	list-style-type: none;
 	display:block;
 }
 
@@ -1537,14 +1537,14 @@ td.havenTab:hover	{
 
 /* Set up the link size, color and borders */
 #pmenu li a, #pmenu li a:visited {
-	display:block;  
-	font-size:12px; 
-	color:#fff; 
+	display:block;
+	font-size:12px;
+	color:#fff;
 	padding:3px 10px 0px 10px;
-	height:28px; 
-	line-height:24px; 
-	text-decoration:none; 
-	text-indent:5px; 
+	height:28px;
+	line-height:24px;
+	text-decoration:none;
+	text-indent:5px;
 	border:none;
 	text-align:center;
 }
@@ -1560,7 +1560,7 @@ td.havenTab:hover	{
 
 /* Set up the list items */
 #pmenu li {
-	float:left; 
+	float:left;
 	background:#225 url('images/tab1.png') top right no-repeat;
 }
 #pmenu li.tc {display:table-cell;}
@@ -1570,7 +1570,7 @@ td.havenTab:hover	{
 /* Make the hovered list color persist */
 #pmenu li:hover > a {background:#225 url('images/tab2.png') repeat-x; color:#fff;}
 /* For Non-IE and IE7 make the sublevels visible on list hover. This is all it needs */
-#pmenu li:hover > ul {display:block; position:absolute; top:-11px; left:80px; padding:10px 30px 30px 30px; background:transparent url(transparent.gif); width:120px;}
+#pmenu li:hover > ul {display:block; position:absolute; top:-11px; left:80px; padding:10px 30px 30px 30px; background:transparent; width:120px;}
 /* Position the first sub level beneath the top level liinks */
 #pmenu > li:hover > ul {left:-30px; top:22px;}
 
@@ -1591,7 +1591,7 @@ td.havenTab:hover	{
 /* This lot is for IE5.5 and IE6 ONLY and is necessary to make the sublevels appear */
 
 /* change the drop down levels from display:none; to visibility:hidden; */
-* html #pmenu li ul {visibility:hidden; display:block; position:absolute; top:-11px; left:80px; padding:10px 30px 30px 30px; background:transparent url(transparent.gif);}
+* html #pmenu li ul {visibility:hidden; display:block; position:absolute; top:-11px; left:80px; padding:10px 30px 30px 30px; background:transparent;}
 
 /* keep the third level+ hidden when you hover on first level link */
 #pmenu li a:hover ul ul{
@@ -1616,19 +1616,19 @@ visibility:visible; left:-30px; top:14px;
 }
 
 /* make the third level visible when you hover over second level link and position it and all further levels */
-#pmenu li a:hover ul a:hover ul{ 
+#pmenu li a:hover ul a:hover ul{
 visibility:visible; top:-11px; left:80px;
 }
 /* make the fourth level visible when you hover over third level link */
-#pmenu li a:hover ul a:hover ul a:hover ul { 
+#pmenu li a:hover ul a:hover ul a:hover ul {
 visibility:visible;
 }
 /* make the fifth level visible when you hover over fourth level link */
-#pmenu li a:hover ul a:hover ul a:hover ul a:hover ul { 
+#pmenu li a:hover ul a:hover ul a:hover ul a:hover ul {
 visibility:visible;
 }
 /* make the sixth level visible when you hover over fifth level link */
-#pmenu li a:hover ul a:hover ul a:hover ul a:hover ul a:hover ul { 
+#pmenu li a:hover ul a:hover ul a:hover ul a:hover ul a:hover ul {
 visibility:visible;
 }
 
@@ -1646,12 +1646,12 @@ visibility:visible;
 	position:relative;
 	width:120px;
 	height:120px;
-	border:1px solid #fff;	
+	border:1px solid #fff;
 	margin:10px auto;
 }
 
 .techtreeItem	{
-	margin:10px; 
+	margin:10px;
 	position:relative;
 	float:left;
 	width:120px;
@@ -1669,7 +1669,7 @@ visibility:visible;
 	position:absolute;
 	bottom:0px;
 	font-size:8pt;
-	padding:5px;	
+	padding:5px;
 	background:url('images/trans1.png');
 	color:#fff;
 	width:110px;
@@ -1688,7 +1688,7 @@ visibility:visible;
 
 #statsNav1, #statsNav2	{
 	text-align:right;
-	float:right;	
+	float:right;
 }
 
 #statsNav1 input, #statsNav2 input	{
