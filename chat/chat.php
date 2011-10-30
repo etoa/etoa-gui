@@ -20,13 +20,13 @@
 	// 	Created: 07.5.2007
 	// 	Last edited: 06.07.2007
 	// 	Last edited by: MrCage <mrcage@etoa.ch>
-	//	
+	//
 	/**
 	* Main chat screen
 	*
 	* @author MrCage mrcage@etoa.ch
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/	
+	*/
 
 	define('RELATIVE_ROOT','../');
 	include("../inc/bootstrap.inc.php");
@@ -34,7 +34,7 @@
 echo '<?xml version="1.0" encoding="UTF-8"?>';
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">	
+<html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<title>EtoA Chat</title>
 		<meta http-equiv="expires" content="0" />
@@ -42,7 +42,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 	 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 		<meta http-equiv="content-script-type" content="text/javascript" />
 		<meta http-equiv="content-style-type" content="text/css" />
-		<meta http-equiv="content-language" content="de" />		
+		<meta http-equiv="content-language" content="de" />
 		<link rel="stylesheet" type="text/css" href="../css/chat.css" />
 		<?PHP
 			echo $xajax->printJavascript(XAJAX_DIR);
@@ -70,8 +70,8 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 				document.getElementById('userListButton').value='User anzeigen';
 				xajax_showChatUsers();
 			}
-		</script>			
-	</head> 		
+		</script>
+	</head>
 	<body>
 		<?PHP
 			$res = dbquery("
@@ -79,7 +79,10 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 				chat_banns
 			WHERE
 				user_id=".$_SESSION['user_id'].";");
-			if (mysql_num_rows($res)>0)
+			if (!isset($res)) {
+				echo "<p>Irgend etwas lief schief. Versuche den Chat neu zu laden.</p>";
+			}
+			elseif (mysql_num_rows($res)>0)
 			{
 				$arr = mysql_fetch_assoc($res);
 				echo "<p>Du wurdest vom Chat gebannt!<br/><br/>
@@ -92,18 +95,18 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 		<div id="chatitems">
 
 		</div>
-		
+
 
 		<div id="userlist" style="display:none;">
 
 		</div>
-		
+
 		<div id="lastid" style="display:none;visibility:hidden"><?PHP echo isset($lastid) ? $lastid : 0;?></div>
-		
+
 			<div id="chatchannelcontrols">
 				<input type="button" id="userListButton" onclick="showUserList()" value="User anzeigen"/>
-			</div>		
-		
+			</div>
+
 		<script type="text/javascript">
 			xajax_loadChat(0);
 			xajax_showChatUsers();
@@ -116,6 +119,6 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 
 	</body>
 </html>
-<?PHP      
+<?PHP
 	dbclose();
 ?>

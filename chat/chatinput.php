@@ -20,23 +20,23 @@
 	// 	Created: 07.5.2007
 	// 	Last edited: 06.07.2007
 	// 	Last edited by: MrCage <mrcage@etoa.ch>
-	//	
+	//
 	/**
 	* Chat message input field
 	*
 	* @author MrCage mrcage@etoa.ch
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/	
+	*/
 
 	define('RELATIVE_ROOT','../');
 	include("../inc/bootstrap.inc.php");
 
 	echo '<?xml version="1.0" encoding="UTF-8"?>';
-	
+
 	$cu = new CurrentUser($_SESSION['user_id']);
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">	
+<html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<title>EtoA Chat</title>
 		<meta http-equiv="expires" content="0" />
@@ -44,12 +44,12 @@
 	 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 		<meta http-equiv="content-script-type" content="text/javascript" />
 		<meta http-equiv="content-style-type" content="text/css" />
-		<meta http-equiv="content-language" content="de" />		
+		<meta http-equiv="content-language" content="de" />
 		<link rel="stylesheet" type="text/css" href="../css/chat.css" />
 		<?PHP
 			echo $xajax->printJavascript(XAJAX_DIR);
 		?>
-	</head> 		
+	</head>
 	<body>
 		<div id="chatinput">
 			<form action="?" method="post" onsubmit="xajax_sendChat(xajax.getFormValues('cform'));return false;" autocomplete="off" id="cform">
@@ -59,7 +59,7 @@
 				chat_banns
 			WHERE
 				user_id=".$cu->id.";");
-			if (mysql_num_rows($res)>0)
+			if (!isset($res) || mysql_num_rows($res)>0)
 			{
 
 			}
