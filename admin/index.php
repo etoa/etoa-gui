@@ -58,6 +58,7 @@ else
 	}
 	$cb = isset ($s->clipboard) && $s->clipboard==1 ? true : false;
 
+	
 	?>
 
 	<table id="layoutbox">
