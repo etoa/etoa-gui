@@ -55,6 +55,9 @@
 		<script src="../js/main.js" type="text/javascript"></script>
 		<script src="../js/admin.js" type="text/javascript"></script>
 		<script src="../js/tooltip.js" type="text/javascript" ></script>
+		<script src="../js/jquery-latest.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/jquery-ui-latest.custom.min.js" type="text/javascript" charset="utf-8"></script>		
+		
 		';
 		$xajax->printJavascript(XAJAX_DIR); 
 

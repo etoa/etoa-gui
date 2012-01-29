@@ -219,7 +219,23 @@
 			}
 			if ($_POST['type']!="")
 				$sql.= " AND type='".$_POST['type']."' ";
-				
+			
+			if ($_POST['date_from']!="")
+			{
+				if ($ts = strtotime($_POST['date_from']))
+					$sql.= " AND (timestamp>".$ts.")";
+				else
+					echo "Ungültiges Datum";					
+			}			
+			
+			if ($_POST['date_to']!="")
+			{
+				if ($ts = strtotime($_POST['date_to']))			
+					$sql.= " AND (timestamp<".$ts.")";
+				else
+					echo "Ungültiges Datum";
+			}
+			
 			if ($_POST['entity1_id']!="")
 				$sql.= " AND (entity1_id=".$_POST['entity1_id']. " OR entity2_id=".$_POST['entity1_id'].") ";
 			if ($_POST['entity2_id']!="")
@@ -268,6 +284,14 @@
 				if (isset($_POST['buy_4']) && $_POST['buy_4']==1)
 					$sql.= " AND rd.buy_4>'0'";
 			}
+			
+			//battle
+			if (isset($_POST['type']) && $_POST['type']=='battle')
+			{
+
+					
+				
+			}			
 			
 			//other
 			if (isset($_POST['type']) && $_POST['type']=='other')
@@ -325,15 +349,24 @@
 
 				echo "<table class=\"tb\">";
 				echo "<tr>";
-				echo "<th>Empf&auml;nger</th>";
-				echo "<th>Betreff</th>";
 				echo "<th>Datum</th>";
 				echo "<th>Kategorie</th>";
-				echo "<th>Aktion</th>";
+				echo "<th>Empf&auml;nger</th>";
+				echo "<th>Betreff</th>";
 				echo "</tr>";
 				$types = Report::$types;
 				foreach ($reports as $rid=>$r)
 				{
+					if ($_POST['type']=='battle' && $_POST["entity_ships"]==1)
+					{
+						if ($r->entityShips =="" || $r->entityShips == 0)
+							continue;
+					}
+					
+					
+					$sql.= ($_POST['entity_ships']==1) ? " AND rd.entity_ships != '' ": " AND rd.entity_ships='' ";
+
+					
 					
 					if ($r->userId>0)
 						$uidf = get_user_nick($r->userId);
@@ -341,19 +374,19 @@
 						$uidf = "<i>System</i>";
 
 					if ($r->deleted==1)
-						$style="style=\"color:#f90\"";
+						$style="color:#f90;";
 					elseif ($r->read==0)
-						$style="style=\"color:#0f0\"";
+						$style="color:#0f0;";
 					elseif($r->archived==1)
-						$style="style=\"font-style:italic;\"";
+						$style="font-style:italic;";
 					else
 						$style="";
 					echo "<tr>";
-					echo "<td $style>".cut_string($uidf,11)."</a></td>";
-					echo "<td $style ".mTT($r->subject,text2html(substr($r, 0, 1000))).">".cut_string($r->subject,50)."</a></td>";
-					echo "<td $style>".date("Y-d-m H:i",$r->timestamp)."</a></td>";
-					echo "<td $style>".$types[$r->type]."</td>";
-					echo "<td>".edit_button("?page=$page&amp;sub=reports&amp;reportedit=edit&amp;report_id=".$rid)."</td>";
+					echo "<td style=\"$style;width:110px;\">".date("Y-d-m H:i",$r->timestamp)."</td>";
+					echo "<td style=\"$style\">".$types[$r->type]."</td>";
+					echo "<td style=\"$style\">".cut_string($uidf,11)."</td>";
+					echo "<td><div id=\"r_s_".$rid."\" style=\"".$style."cursor:pointer;\" onclick=\"$('#r_l_".$rid."').toggle();\">".cut_string($r->subject,50)."</div><div id=\"r_l_".$rid."\" style=\"display:none;\"><br/>".$r."</div></td>";	//".mTT($r->subject,text2html(substr($r, 0, 1000)))."
+					//echo "<td>".edit_button("?page=$page&amp;sub=reports&amp;reportedit=edit&amp;report_id=".$rid)."</td>";
 					echo "</tr>";
 				}
 				echo "</table><br/>";
@@ -366,6 +399,7 @@
 			}
 		}
 
+		/*
 		elseif (isset($_GET['reportedit']) && $_GET['reportedit']=="edit")
 		{
 			$r = Report::createFactory($_GET['report_id']);
@@ -399,14 +433,13 @@
 
 			echo "</table><br/><input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=reports&amp;action=searchresults'\" value=\"Zur&uuml;ck zu den Suchergebnissen\" /> &nbsp;
 			<input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=reports'\" value=\"Neue Suche\" />";
-		}
+		}*/
 
 		else
 		{
 			$_SESSION['admin']['message_query']=null;
 			echo "Suchmaske:<br/><br/>";
-			echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">
-					<div style=\"float:left;\">";
+			echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
 			tableStart("",'auto');
 			echo "		<tr>
 							<th>Empf&auml;nger-ID</th>
@@ -472,6 +505,26 @@
 								</td>
 							</tr>
 							<tr>
+								<th>Schiffe auf Ziel</th>
+								<td>
+									<input type=\"radio\" name=\"entity_ships\" value=\"2\" checked=\"checked\" /> Egal
+									<input type=\"radio\" name=\"entity_ships\" value=\"0\" /> Nein
+									<input type=\"radio\" name=\"entity_ships\" value=\"1\" /> Ja
+								</td>
+							</tr>							
+							<tr>
+								<th>Datum von</th>
+								<td>
+									<input type=\"text\" name=\"date_from\" id=\"date_from\" value=\"\" size=\"20\" maxlength=\"250\" />
+								</td>
+							</tr>							
+							<tr>
+								<th>Datum bis</th>
+								<td>
+									<input type=\"text\" name=\"date_to\" id=\"date_to\" value=\"\" size=\"20\" maxlength=\"250\" />
+								</td>
+							</tr>							
+							<tr>
 								<th>Anzahl Datens&auml;tze</th>
 								<td class=\"tbldata\">
 									<select name=\"report_limit\">";
@@ -482,11 +535,7 @@
 							</tr>
 
 						</table>
-						</div>
-						<div id=\"detail\" style=\"display:none;\">
-						</div>
-						<br style=\"clear:both\" />
-						<input type=\"submit\" class=\"button\" name=\"user_search\" value=\"Suche starten\" />
+						<p><input type=\"submit\" class=\"button\" name=\"user_search\" value=\"Suche starten\" /></p>
 					</form>";
 
 			$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM reports;"));

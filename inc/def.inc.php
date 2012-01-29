@@ -72,9 +72,6 @@
 
 	define("FORUM_PATH","http://www.etoa.ch/forum");	// Forum Link
 	
-	define("DEVCENTER_PATH","http://dev.etoa.ch");	// Entwickler Link
-	define("DEVCENTER_ONCLICK","window.open('".DEVCENTER_PATH."','dev','width=1024,height=768,scrollbars=yes');");	// Entwickler Link
-	define("BUGREPORT_URL","http://dev.etoa.ch:8000/game/wiki/TicketTutorial");
 
 	define('CHAT_URL',"chatframe.php");	// Chat
 	define('CHAT_ONCLICK',"parent.top.location='chatframe.php';");
@@ -485,7 +482,7 @@
 	$daemonId = $cfg->daemonIdentifier->v;
 	$daemonLogfile = "/var/log/etoad/etoad.".$daemonId.".log";
 	$daemonPidfile = "/var/run/etoa/".$daemonId.".pid";
-	$daemonExe = "/home/etoa/backend/bin/etoad";
+	$daemonExe = "/usr/local/bin/etoad";
 
 
 
