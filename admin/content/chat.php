@@ -81,7 +81,7 @@
 		}
 		else
 		{
-			echo "<tr><td colspan=\"5\" align=\"center\"><i>Keine Allianzen in der Statistik</i></tr>";
+			echo "<tr><td colspan=\"5\" align=\"center\"><i>Keine Nachrichten vorhanden!</i></tr>";
 		}
 		echo "</table>";
 	}
