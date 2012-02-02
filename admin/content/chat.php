@@ -73,8 +73,8 @@
 				echo "<tr>";
 				echo "<td>".date("d.m.Y",$arr['timestamp'])."</td>";
 				echo "<td>".date("H:i:s",$arr['timestamp'])."</td>";
-				echo "<td><a href=\"?page=user&sub=edit&id=".$arr['user_id']."\">".$arr['nick']."</a></td>";
-				echo "<td style=\"color:".$arr['color'].";\">".$arr['text']."</td>";
+				echo "<td><a href=\"?page=user&sub=edit&id=".$arr['user_id']."\" style=\"color:".$arr['color'].";\">".$arr['nick']."</a></td>";
+				echo "<td>".$arr['text']."</td>";
 				echo "</tr>";
 				$cnt++;
 			}
