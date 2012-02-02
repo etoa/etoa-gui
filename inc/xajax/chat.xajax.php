@@ -279,7 +279,7 @@ function sendChat($form)
 			}
 		}
 
-		elseif ($ct!="" && $_SESSION['lastchatmsg']!=md5($form['ctext']))
+		elseif ($ct!="" && (!isset($_SESSION['lastchatmsg']) || $_SESSION['lastchatmsg']!=md5($form['ctext'])))
 		{
 			dbquery("INSERT INTO
 				chat
@@ -299,7 +299,26 @@ function sendChat($form)
 				'".$form['ccolor']."',
 				'".$s['user_id']."',
 				'".$admin."'
-			)");
+			);");
+			dbquery("INSERT INTO
+				chat_log
+			(
+				timestamp,
+				nick,
+				text,
+				color,
+				user_id,
+				admin
+			)
+			VALUES
+			(
+				".time().",
+				'".$s['user_nick']."',
+				'".mysql_real_escape_string(($ct))."',
+				'".$form['ccolor']."',
+				'".$s['user_id']."',
+				'".$admin."'
+			);");			
 			$_SESSION['lastchatmsg']=md5($form['ctext']);
 			$ajax->script("xajax_setChatUserOnline()");
 		}

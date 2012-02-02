@@ -318,6 +318,9 @@
 	$navmenu['Chat']['Chat']['page']="chat";
 	$navmenu['Chat']['Chat']['sub']="";
 	$navmenu['Chat']['Chat']['level']=0;
+	$navmenu['Chat']['Log']['page']="chat";
+	$navmenu['Chat']['Log']['sub']="log";
+	$navmenu['Chat']['Log']['level']=0;
 
 
 	$navmenu['Logs']['Allgemein'] = array('page'=>"logs",'sub'=>"",'level'=>0);
