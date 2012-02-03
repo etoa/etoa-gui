@@ -32,9 +32,9 @@
                 dbquery("
                 INSERT INTO
                 	user_multi
-                (user_id)
+                (user_id,timestamp)
                 VALUES
-                ('".$cu->id."');");
+                ('".$cu->id."',UNIX_TIMESTAMP());");
 
                 ok_msg("Neuer User angelegt!");
             }
@@ -71,7 +71,8 @@
                                 user_multi
                             SET
                                 multi_id='".addslashes(get_user_id($user[$id]))."',
-                                connection='".addslashes($_POST['connection'][$id])."'
+                                connection='".addslashes($_POST['connection'][$id])."',
+								timestamp=UNIX_TIMESTAMP()
                             WHERE
                                 id=$id;");
 							$change = true;
@@ -97,7 +98,13 @@
 							}
 							else
 							{
-								dbquery("UPDATE user_multi SET activ='0' WHERE id=$id;");
+								dbquery("UPDATE 
+									user_multi 
+								SET 
+									activ='0',
+									timestamp=UNIX_TIMESTAMP()
+								WHERE 
+									id=$id;");
 								// Speichert jeden gelöschten multi (soll vor missbrauch schützen -> mutli erstellen -> löschen -> erstellen -> löschen etc.)
 	                            dbquery("
 	                            UPDATE
