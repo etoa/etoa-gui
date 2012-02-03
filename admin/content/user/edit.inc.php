@@ -847,7 +847,11 @@
 				$del_multi_res = dbquery("SELECT * FROM user_multi WHERE user_id=".$arr['user_id']." AND activ=0;");
 				echo '<table class="tb">
 						<tr>
-							<th rowspan="'.(mysql_num_rows($multi_res)+1).'" valign="top">Eingetragene Multis</th>';
+							<th rowspan="'.(mysql_num_rows($multi_res)+1).'" valign="top">Eingetragene Multis</th>
+							<th>Name</th>
+							<th>Begründung</th>
+							<th>Eingetragen</th>
+						</tr>';							
 				while ($multi_arr = mysql_fetch_array($multi_res))
 				{
 					echo '<tr>
@@ -855,12 +859,19 @@
 								<a href="?page=user&sub=edit&user_id='.$multi_arr['multi_id'].'">'.get_user_nick($multi_arr['multi_id']).'</a>
 							</td>
 							<td>
-								('.$multi_arr['connection'].')
+								'.$multi_arr['connection'].'
 							</td>
+							<td>
+								'.date('d.m.Y H:i',$multi_arr['timestamp']).'
+							</td>							
 						</tr>';
 				}
 				echo '<tr>
-					<th rowspan="'.(mysql_num_rows($del_multi_res)+1).'" valign="top">Gelöschte Multis</th>';
+							<th rowspan="'.(mysql_num_rows($del_multi_res)+1).'" valign="top">Gelöschte Multis</th>
+							<th>Name</th>
+							<th>Begründung</th>
+							<th>Gelöscht</th>
+						</tr>';	
 				while ($del_multi_arr = mysql_fetch_array($del_multi_res))
 				{
 					echo '<tr>
@@ -868,8 +879,11 @@
 								<a href="?page=user&sub=edit&user_id='.$del_multi_arr['multi_id'].'">'.get_user_nick($del_multi_arr['multi_id']).'</a>
 							</td>
 							<td>
-								('.$del_multi_arr['connection'].')
+								'.$del_multi_arr['connection'].'
 							</td>
+							<td>
+								'.date('d.m.Y H:i',$multi_arr['timestamp']).'
+							</td>								
 						</tr>';
 				}
 				echo '</table>';
