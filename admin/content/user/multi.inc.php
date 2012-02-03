@@ -255,7 +255,7 @@
 
 						if ($cnt!=0) echo "<tr>"; else $cnt=1;
 						
-						echo "<td $uCol>".$iparr['user_nick']."</td>";
+						echo "<td $uCol><a href=\"?page=user&sub=edit&id=".$iparr['user_id']."\">".$iparr['user_nick']."</a></td>";
 						echo "<td $uCol title=\"".$iparr['user_email']."\">".$iparr['user_name']."</td>";
 						echo "<td $uCol";
 						if ($iparr['time_action'])
@@ -273,7 +273,7 @@
 							echo "<td $uCol>";
 							while($multi_arr = mysql_fetch_array($multi_res))
 							{
-								echo "<span title=\"".$multi_arr['connection']."\">".get_user_nick($multi_arr['multi_id'])."</span>";
+								echo "<span title=\"".$multi_arr['connection']."\"><a href=\"?page=user&sub=edit&id=".$multi_arr['multi_id']."\">".get_user_nick($multi_arr['multi_id'])."</a></span>";
 
 								if($multi<mysql_num_rows($multi_res))
 								{
