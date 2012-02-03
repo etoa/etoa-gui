@@ -862,7 +862,7 @@
 								'.$multi_arr['connection'].'
 							</td>
 							<td>
-								'.date('d.m.Y H:i',$multi_arr['timestamp']).'
+								'.df($multi_arr['timestamp']).'
 							</td>							
 						</tr>';
 				}
@@ -882,7 +882,7 @@
 								'.$del_multi_arr['connection'].'
 							</td>
 							<td>
-								'.date('d.m.Y H:i',$multi_arr['timestamp']).'
+								'.df($multi_arr['timestamp']).'
 							</td>								
 						</tr>';
 				}
