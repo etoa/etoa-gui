@@ -862,7 +862,7 @@
 								'.$multi_arr['connection'].'
 							</td>
 							<td>
-								'.df($multi_arr['timestamp']).'
+								'.($multi_arr['timestamp'] > 0 ? df($multi_arr['timestamp']) : '-').'
 							</td>							
 						</tr>';
 				}
@@ -882,7 +882,7 @@
 								'.$del_multi_arr['connection'].'
 							</td>
 							<td>
-								'.df($multi_arr['timestamp']).'
+								'.($multi_arr['timestamp'] > 0 ? df($multi_arr['timestamp']) : '-').'
 							</td>								
 						</tr>';
 				}
