@@ -1354,19 +1354,43 @@
 					this->actionCapacity += (*it)->getCount() * data->getCapacity();
 					this->actionCount += (*it)->getCount();
 				}
+				/* BUGFIX: Wenn ein Schiff (z.B. Onefight) keine Struktur und kein Schild hat,
+				 * sollten gar keine davon mehr uebrig bleiben. Sobald ein solches Schiff weniger als
+				 * initCount in der Flotte ist, wird die Anzahl mit dieser Bedingung auf null gesetzt.
+				 * Dies kann nicht in setPercentSurvive() oder im Object gemacht werden, weil nur
+				 * an dieser Stelle im Code die Schiffdaten abgerufen werden.
+				 * 
+				 * Ein Hinzufuegen der Daten unten ist danach nicht mehr noetig, da getCount() sowieso
+				 * immer null zurueckliefern wuerde.
+				 * 
+				 * Das fuehrt dazu, dass solche Schiffe bereits nach der ersten Runde eines Kampfes alle
+				 * zerstoert sind.
+				 * 
+				 * Moeglicherweise muss diese Bedingung auch in Fleet::loadShips uebernommen werden.
+				 * 
+				 * TODO: Dieser Bugfix funktioniert nicht, wenn weniger als ein Schiff zerstoert wird.
+				 * 
+				 * Bugfix von river
+				 */
+				if(data->getStructure() == 0 && data->getShield() == 0 && (*it)->getCount() != (*it)->getInitCount())
+				{
+					(*it)->setPercentSurvive(0.0, 0);
+				}
+				else
+				{
+					this->count += (*it)->getCount();
+					this->weapon += (*it)->getCount() * data->getWeapon();
+					this->shield += (*it)->getCount() * data->getShield();
+					this->structure += (*it)->getCount() * data->getStructure();
+					this->heal += (*it)->getCount() * data->getHeal();
 
-				this->count += (*it)->getCount();
-				this->weapon += (*it)->getCount() * data->getWeapon();
-				this->shield += (*it)->getCount() * data->getShield();
-				this->structure += (*it)->getCount() * data->getStructure();
-				this->heal += (*it)->getCount() * data->getHeal();
-
-				if ((*it)->getSpecial())
-					this->antraxBonus += (*it)->getCount() * (*it)->getSBonusAntrax() * data->getBonusAntrax();
-					this->antraxFoodBonus += (*it)->getCount() * (*it)->getSBonusAntraxFood() * data->getBonusAntraxFood();
-					this->destroyBonus += (*it)->getCount() * (*it)->getSBonusBuildDestroy() * data->getBonusBuildDestroy();
-					this->empBonus += (*it)->getCount() * (*it)->getSBonusDeactivade() * data->getBonusDeactivade();
-					this->forstealBonus += (*it)->getCount() * (*it)->getSBonusForsteal() * data->getBonusForsteal();
+					if ((*it)->getSpecial())
+						this->antraxBonus += (*it)->getCount() * (*it)->getSBonusAntrax() * data->getBonusAntrax();
+						this->antraxFoodBonus += (*it)->getCount() * (*it)->getSBonusAntraxFood() * data->getBonusAntraxFood();
+						this->destroyBonus += (*it)->getCount() * (*it)->getSBonusBuildDestroy() * data->getBonusBuildDestroy();
+						this->empBonus += (*it)->getCount() * (*it)->getSBonusDeactivade() * data->getBonusDeactivade();
+						this->forstealBonus += (*it)->getCount() * (*it)->getSBonusForsteal() * data->getBonusForsteal();
+				}
 			}
 
 			if (fleets.size()) {
