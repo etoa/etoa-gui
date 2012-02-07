@@ -1,0 +1,25 @@
+#!/bin/bash
+#
+# Create debian package of etoad
+# $Id$
+#
+
+DEB_NAME=etoa-eventhandler
+PKG_DIR=~
+
+cd $(dirname $0)/../
+ARCH=$(uname -m)
+VER=$(grep "^Version:" dist/debian/DEBIAN/control | awk '{print $2}')
+
+pkgname=${DEB_NAME}_${VER}_${ARCH}
+
+make
+
+t=$(mktemp -d)
+rsync -au --exclude '.svn' dist/debian/ $t
+mkdir -p $t/usr/local/bin
+cp bin/etoad $t/usr/local/bin
+
+dpkg -b $t ${PKG_DIR}/${pkgname}.deb
+
+rm -rf $t
