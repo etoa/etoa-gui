@@ -23,9 +23,6 @@ define('IMAGE_EXT',"png");
 // Load specific admin functions
 require("inc/admin_functions.inc.php");
 
-// Navigation laden
-require_once('nav.php');
-
 // Feste Konstanten
 
 define('SESSION_NAME',"adminsession");
@@ -50,5 +47,6 @@ define('ADMIN_FILESHARING_DIR',CACHE_ROOT."/admin");
 $tpl = new Smarty;
 $tpl->template_dir = "../tpl";
 $tpl->compile_dir = SMARTY_COMPILE_DIR;	
+$tpl->plugins_dir[] = "../plugins/smarty"
 	
 ?>

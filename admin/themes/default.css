@@ -149,12 +149,13 @@ input,select,textarea	{
 #banner	{
 	text-align:right;
 	vertical-align:bottom;
-	font-weight:bold;
-	font-size:16pt;
+	font-weight:normal;
+	font-size:18pt;
+	font-family:Verdana;
 	background:#000 url('../../images/banner.jpg') no-repeat;
 	height:72px;
 	border:1px solid #fff;
-	padding:5px;
+	padding:5px 10px 5px 5px;
 }
 
 #selectbar	{
@@ -199,16 +200,17 @@ input,select,textarea	{
 #copy	{
 	background:#646b84;
 	border:1px solid #fff;
-	padding-left:8px;
+	padding:4px;
+	vertical-align:middle;
+	font-size:8pt;
 }
 
 #bottombar	{
-	padding-top:4px;
-	padding-right:4px;
+	padding:4px;
 	text-align:right;
 	background:#646b84;
-	height:25px;
 	vertical-align:top;
+	font-size:8pt;
 }
 
 #menu1	{
@@ -219,44 +221,74 @@ input,select,textarea	{
 	border:1px solid #fff;
 }
 
-a.menu1Title {
-	display:block;
-	font-weight:bold;
-	font-size:10pt;
-	/*background:#225;*/
-	color:#fff;
-	text-decoration:none;
+#quicksearch	{
+	margin:5px 0px 5px 5px;
+}
+
+/*
+* Nav menu
+*/
+
+.navmenu, .navsubmenu {
+	list-style-type:none;
+	margin:0;
+	padding:0;
+}
+
+.navmenu li, .navsubmenu li {
+	margin:0;
+	padding:0;
+}
+
+.navmenu li {
 	width:180px;
 	padding: 2px 2px 2px 8px;
 	margin: 0px auto;
-	/*border-bottom:solid 1px #e6e6e6;
-	border-top:none;*/
-	height:16px;
 }
 
-a.menu1Title:hover {
-/*	background:#003;*/
-	color:#ccc;
-}
-
-a.menu1Item {
-	display: block;
-	/*background:#626b84;*/
-	font-size:8pt;
-	color:#eee;
+.navmenu li a {
+	font-weight:bold;
+	font-size:10pt;
+	color:#fff;
 	text-decoration:none;
+}
+
+.navmenu li a:hover {
+	color:#bbb;
+}
+
+.navmenu li a.active {
+
+}
+
+.navsubmenu li {
 	width:165px;
-	padding: 2px 2px 2px 18px;
-	margin: 0px auto;
-	/*border-bottom:solid 1px #e6e6e6;*/
+	padding: 0px 0px 1px 2px;
+	margin: 0px 0px 0px 15px;
 }
 
-a.menu1Item:hover {
-	/*background-color:silver;*/
-	color: #445543;
-	text-decoration:none;
-	/*border-bottom:solid 1px #e6e6e6;*/
+.navsubmenu li.bar {
+	padding-bottom:4px;
+	border-bottom: 1px solid #aaa;
 }
+
+.navsubmenu li a {
+	font-weight:normal;
+	font-size:8pt;
+	color:#bbb;
+	text-decoration:none;
+}
+
+.navsubmenu li a:hover {
+	color: #fff;
+	text-decoration:none;
+}
+
+.navsubmenu li a.active {
+	font-weight:bold;
+	color:#fff;
+}
+
 
 
 .menutitle	{
@@ -669,4 +701,32 @@ h1,h2,h3,h4	{
 
 .tabTabActive:hover	{
 	cursor:pointer;	
+}
+
+.popuplink.highlight {
+	color:#ff0;
+}
+
+#headernav {
+	margin:0;
+	padding:0;
+	list-style-type:none;
+	/* Fixes whitespace problem with horizontal lists */
+	font-size:0;
+}
+
+#headernav li {
+	font-size:10pt;
+	margin:0;
+	display:inline-block;
+}
+
+#headernav li:after {
+	padding:0 5px;
+	content:"|";
+}
+
+#headernav li:last-child:after {
+	padding:0;
+	content:none;
 }

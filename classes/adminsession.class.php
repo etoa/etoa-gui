@@ -171,7 +171,10 @@ class AdminSession extends Session
 		$res = dbquery($sql);
 	}
 
-
+	/**
+	* Monitor admin user's action
+	* TODO: This is only a hack, we need a better, cleaner log mechanism
+	*/
 	function monitor()
 	{
 		global $_GET, $_POST;

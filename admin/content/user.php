@@ -108,7 +108,7 @@
 		</td></td>";
 
 		tableEnd();
-		echo "<div style=\"text-align:center;\"><input type=\"submit\" name=\"create\" value=\"Erstellen\" /></div>
+		echo "<p><input type=\"submit\" name=\"create\" value=\"Erstellen\" /></p>
 		</form>";
 	}
 

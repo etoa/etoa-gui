@@ -8,9 +8,9 @@
 // $Id$
 //////////////////////////////////////////////////////
 
-function popupLink($type,$title,$css="",$params="")
+function popupLink($type,$title,$class="",$params="")
 {
-	$res = "<a href=\"#\" ".($css!="" ? "style=\"$css\"" : "")." ";
+	$res = "<a href=\"#\" class=\"popuplink".($class!="" ? " $class" : "")."\" ";
 	$p = $params != "" ? "&amp;".$params : "";
 	switch ($type)
 	{
