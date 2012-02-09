@@ -156,7 +156,7 @@ class BattleReport extends Report
 			case 'bombard':
 				$data = explode(':',$this->content);
 				$building = new Building($data[0]);
-				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat das Geb&auml;de '.$building.' des Planeten '.$ent1->detailLink().' von Stuffe '.$data[2].' auf Stuffe '.$data[1].' zur&uuml;ck gesetzt.';
+				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat das Gebäude '.$building.' des Planeten '.$ent1->detailLink().' von Stufe '.$data[2].' auf Stufe '.$data[1].' zur&uuml;ck gesetzt.';
 				break;
 			case 'bombardfailed':
 				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat erfolglos versucht ein Gebäude des Planeten '.$ent1->detailLink().' zu bombardieren.';
