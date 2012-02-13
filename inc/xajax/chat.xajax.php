@@ -7,6 +7,8 @@ $xajax->register(XAJAX_FUNCTION,'logoutFromChat');
 $xajax->register(XAJAX_FUNCTION,'appendToChatBox');
 $xajax->register(XAJAX_FUNCTION,'checkChatLoggedIn');
 
+include_once(RELATIVE_ROOT.'inc/encoding.inc.php');
+
 function loadChat($minId)
 {
 	$minId = intval($minId);
@@ -37,7 +39,7 @@ function loadChat($minId)
 				while ($arr=mysql_fetch_assoc($res))
 				{
 					$adminstr = "";
-					$text = htmlspecialchars($arr['text']);
+					$text = replace_ascii_control_chars(htmlspecialchars($arr['text']));
 					if ($arr['admin']==1)
 						$adminstr = "<img src=\"../images/star_y.gif\" />";
 
