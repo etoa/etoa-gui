@@ -1,0 +1,11 @@
+<event>
+	<probability>10</probability>
+	<title>Heuschreckenplage</title>
+	<message>In deinen Gewächshäusern auf dem Planeten {planet} ist eine Heuschreckenplage ausgebrochen! Wahrscheinlich vermehrten sich die Tiere aufgrund des in letzer Zeit ständig schönen und warmen Wetters. Die Tiere frassen sich an den Plantagen satt, darum mussten {costs:food} Tonnen an Pflanzen zur Nahrungserzeugung vernichtet werden.</message>	
+	<logbase>10</logbase>
+
+	<costs>
+		<food min="50" max="350" />
+	</costs>
+
+</event>

@@ -1,0 +1,17 @@
+<event>
+	<probability>10</probability>
+	<title>Meteoriteneinschlag</title>
+	<message>Ein Meteorit ist auf deinen Planeten {planet} gestürzt! Glücklicherweise wurden weder Gebäude getroffen noch Menschen verletzt.
+	Ein Team von Spezialisten reiste zum Einschlagkrater und analysierte das metallhaltige Gestein. Sie konnten dabei {reward:metal} Titan aus den Meteoritentrümmern bergen.</message>	
+	<logbase>10</logbase>
+
+	<rewards>
+		<metal min="100" max="600" />
+		
+	</rewards>
+
+	<costs>
+	
+	</costs>
+
+</event>

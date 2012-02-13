@@ -1,0 +1,58 @@
+body	{
+	background:#000;
+	color:#fff;
+	font-family:arial;
+	font-size:9pt;
+	margin:0px;
+	padding:0px;
+}
+
+input,select	{
+	border:1px solid #fff;
+	background:#111;
+	color:#fff;
+}
+
+input[type='button'],input[type='submit']	{
+	background:#223;	
+	font-weight:bold;
+}
+
+
+#chatitems	{ padding:5px;	}
+
+#userlist	{
+	background:#225;	
+	padding:5px;	
+	border:1px solid #fff;
+	margin:5px;
+}
+
+#chatchannelcontrols	{
+	padding:5px;
+}
+
+#chatinput	{
+	position:absolute;
+	left:0px;
+	right:0px;
+	bottom:0px;
+	background:#225;
+	padding:5px 5px 10px 5px;
+}
+
+#channelbox	{
+	background:#223;
+	padding:4px;
+	color:#fff;
+	margin-top:10px;
+}
+
+#channelbox a	{
+	color:#fff;
+}
+
+
+#userlist a	{
+	color:#fff;
+}
