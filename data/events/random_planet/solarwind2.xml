@@ -1,9 +1,0 @@
-<event>
-	<probability>10</probability>
-	<title>Sonnenwind</title>
-	<message>Der Stern in der Nähe deines Planeten {planet} hat durch eine Gaseruption an seiner Oberfläche einen grossen Sonnenwind ausgelöst. Einige dieser elektromagnetisch geladenen Teilchen trafen dabei auch auf das Magnetfeld deines Planeten. Dadurch wurde das Kommunikationssystem deiner Flottenkontrolle für {deactivate:11} gestört. Während dieser Zeit können aus Sicherheitsgründen keine Schiffe starten.</message>	
-	<logbase>10</logbase>
-
-	<deactivate id="11" min="5" max="120" />
-
-</event>
