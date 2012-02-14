@@ -1,4 +1,6 @@
 #include "ConfigFile.h"
+#include "Log.h"
+#include "ExceptionHandler.h"
 
 #include <fstream>
 
@@ -20,6 +22,10 @@ std::string trim(std::string const& source, char const* delims = " \t\r\n")
 ConfigFile::ConfigFile(std::string const& configFile) 
 {
   std::ifstream file(configFile.c_str());
+  if (!file) {
+    LOG(LOG_ERR,"Config file "<<configFile<<" could not be read!");
+    throw ExceptionHandler("Config file not found!");
+  }
 
   std::string line;
   std::string name;

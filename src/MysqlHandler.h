@@ -76,7 +76,7 @@
 			std::ifstream datein;
 			std::string dbCfgFile = config.getConfigDir()+"/db.cfg";
 			
-		  ConfigFile cf(dbCfgFile);
+		  	ConfigFile cf(dbCfgFile);
 			mysql.insert ( std::pair<std::string,std::string>("host",cf.Value("mysql","host")) );
 			mysql.insert ( std::pair<std::string,std::string>("database",cf.Value("mysql","database")) );
 			mysql.insert ( std::pair<std::string,std::string>("user",cf.Value("mysql","user")) );
