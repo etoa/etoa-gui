@@ -45,7 +45,7 @@ class AdminSession extends Session
 			if (mysql_num_rows($ures)>0)
 			{
 				$uarr = mysql_fetch_assoc($ures);
-				if ($uarr['user_password'] == pw_salt($data['login_pw'],$uarr['user_id']))
+				if (validatePasswort($data['login_pw'], $uarr['user_password']))
 				{
 					$this->user_id = $uarr['user_id'];
 					$this->user_nick = $uarr['user_nick'];

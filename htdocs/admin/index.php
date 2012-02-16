@@ -18,7 +18,11 @@ $tpl->assign("theme_path",(!isset($themePath) || !is_file("themes/".$themePath))
 $tpl->assign("page_title",$conf['game_name']['v'].' '.$conf['game_name']['p1'].' Administration - '.Config::getInstance()->roundname->v);
 $tpl->assign("axaj_js",$xajax->printJavascript(XAJAX_DIR));
 
+$tpl->assign("round_name",Config::getInstance()->roundname->v);
+
 initTT();
+
+$view = "admin/default";
 
 // Login if requested
 if (isset($_POST['login_submit']))
@@ -26,10 +30,8 @@ if (isset($_POST['login_submit']))
 	if (! $s->login($_POST))
 	{
 		include("inc/admin_login.inc.php");
-		$out = ob_get_clean();
-		$tpl->assign("content_for_layout",$out);
-		$tpl->display("layouts/admin.html");			
-		exit;
+		$tpl->display("layouts/admin/default_login.html");
+		exit;		
 	}
 }
 
@@ -44,10 +46,8 @@ if (isset($_GET['logout']) && $_GET['logout']!=null)
 if (!$s->validate())
 {
 	include("inc/admin_login.inc.php");
-	$tpl->assign("content_for_layout", ob_get_clean());
-	$tpl->assign("content_frame", $tpl->fetch("chunks/admin/login_window.html"));
-	$tpl->display("layouts/admin.html");		
-	exit;
+	$tpl->display("layouts/admin/default_login.html");
+	exit;		
 }
 else
 {
@@ -55,7 +55,7 @@ else
 	$cu = new AdminUser($s->user_id);
 
 	// Monitor admin's actions
-	$s->monitor();
+	// $s->monitor();
 
 	// Zwischenablage
 	if (isset($_GET['cbclose']))
@@ -71,7 +71,6 @@ else
 	$navmenu = json_decode(file_get_contents($menuFile),true);
 	$tpl->assign("navmenu",$navmenu);
 	
-	$tpl->assign("round_name",Config::getInstance()->roundname->v);
 	$tpl->assign("page",$page);
 	$tpl->assign("sub",$sub);
 	$tpl->assign("time",time());
@@ -154,14 +153,13 @@ else
 	$_SESSION[SESSION_NAME]=$s;
 	dbclose();
 
-	$tpl->assign("content_for_layout", ob_get_clean());
-	
-	$tpl->assign("content_frame", $tpl->fetch("chunks/admin/content_frame.html"));
+	$tpl->assign("content_for_layout", $tpl->fetch("views/".$view.".html"));
+	$tpl->assign("content_overflow", ob_get_clean());
 
 	$render_time = explode(" ",microtime());
 	$tpl->assign("render_time",round($render_time[1]+$render_time[0]-$render_starttime,3));
 
-	$tpl->display("layouts/admin.html");
+	$tpl->display("layouts/admin/default_main.html");
 	exit;
 }
 ?>

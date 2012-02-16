@@ -730,3 +730,70 @@ h1,h2,h3,h4	{
 	padding:0;
 	content:none;
 }
+
+/*
+* Login
+*/
+
+body.login {
+	height:auto;
+}
+
+#login_container {
+	text-align:center;
+	width:500px;
+	margin:20px auto;
+}
+
+#login_inner {
+	padding: 10px 20px;
+	background:rgba(34,34,51,0.7);
+	margin:30px 0px;
+	border-radius:20px;
+}
+
+#login_container  h1, #login_container h2	{
+	text-align:center;
+}
+
+.login_form	{
+	text-align:left;
+	width:360px;
+	margin:30px auto;
+}
+
+.login_form	 label	{
+	width:120px;
+	display:inline-block;
+	text-align:right;
+	vertical-align:middle;
+}
+
+.login_form	 label:after {
+	content:':';
+}
+
+.login_form input[type="text"], .login_form input[type="password"]	{
+	padding:2px;
+	vertical-align:middle;
+}
+
+.login_form  .buttons {
+	margin-top:20px;
+}
+
+.loginmsg	{
+	margin:10px 0px 20px 0px;
+}
+
+.loginmsg.error	{
+	color:#f00;
+}
+
+.loginmsg.warn	{
+	color:#f90;
+}
+
+.loginmsg.ok	{
+	color:#0f0;
+}

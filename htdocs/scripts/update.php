@@ -140,6 +140,4 @@
 	{
 		throw new EException("Could not load bootstrap file ".getcwd()."/inc/bootstrap.inc.php\n");
 	}
-		
-
 ?>

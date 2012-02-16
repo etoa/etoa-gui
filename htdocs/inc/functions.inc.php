@@ -2295,25 +2295,35 @@ function imagecreatefromfile($path, $user_functions = false)
 		return md5($pw.$seed.$salt).md5($salt.$seed.$pw);
 	}
 	
-	function pw_salt2($pw,$seed=0)
+	function saltPasswort($pw, $salt=null)
 	{
-		$gseed = Config::getInstance()->password_salt->v;	// Take the general seed
-		$seedlen = strlen($gseed); // Measure it's length
-		$pwlen = strlen($pw);	// Measure the password length		
-		$mlen = max($pwlen,$seedlen); // Get the maximum lenght
-		$saltedHash = "";	// Create an empty hash
-		$pw = (string)$pw;
-		$last = 0;
-		for ($i=0; $i < $mlen; $i++)
+		if ($salt == null) 
 		{
-			// Now salt the password with the general and the individual seed ...
-			$val = (ord($gseed[$i%$seedlen]) + ord($pw[$i % $pwlen]) + $seed + $last)%255;
-			$saltedHash .= chr($val);
-			$last = $val;
+			$salt = generateSalt();
 		}
-		// ... and return it's SHA1 hash
-		return sha1($saltedHash);
-	}	
+		return sha1($salt.$pw).$salt;
+	}
+	
+	function getSaltFromPassword($passwordAndSalt)
+	{
+		$len = strlen(sha1(""));
+		return substr($passwordAndSalt, $len, $len);		
+	}
+	
+	function validatePasswort($input, $passwordAndSalt)
+	{
+		return saltPasswort($input, getSaltFromPassword($passwordAndSalt)) == $passwordAndSalt;
+	}
+	
+	function generateSalt() 
+	{
+		return sha1(uniqid(mt_rand(), true));
+	}
+	
+	function generatePasswort()
+	{
+		return mt_rand(1000000,9999999);
+	}
 	
 	function passwordStrength($password, $username = null)
 	{
@@ -2880,7 +2890,6 @@ function imagecreatefromfile($path, $user_functions = false)
 	{
 		return $str;
 	}
-
 	
 	function forward($url,$msgTitle=null,$msgText=null)
 	{
@@ -2929,7 +2938,6 @@ function imagecreatefromfile($path, $user_functions = false)
 			}
 		}
 	}
-
 
 	function logAccess($target,$domain="",$sub="")
 	{

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		{include file='chunks/admin/header.html'}
+	</head>
+	<body class="login">
+		<div id="login_container">
+			<a href=".."><img src="../images/game_logo.jpg" alt="Logo" width="450" height="150" border="0" /></a>
+			<h1>Administration - {$round_name}</h1>
+			<div id="login_inner">
+				{$content_for_layout}
+				{$content_overflow|default:''}
+			</div>
+		</div>
+		{$scripts_for_footer|default:''}
+	</body>
+</html>

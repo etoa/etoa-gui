@@ -502,22 +502,12 @@
 		else
 		{				
 		
-		
-		$res = dbquery("
-		SELECT 
-			user_force_pwchange 
-		FROM 
-			admin_users
-		WHERE
-			user_id=".$cu->id.";");
-		$arr = mysql_fetch_row($res);
-		if ($arr[0]==1)
+		if ($cu->forcePasswordChange)
 		{
 			iBoxStart("Passwort");   
 			echo "<span style=\"color:#f90;\">Dein Passwort wurde seit der letzten automatischen Generierung noch nicht geändert. Bitte mache das jetzt <a href=\"?myprofile=1\">hier</a>!</span>";
 			iBoxEnd();			
 		}
-		
 		
 		//
 		// Admin-News
@@ -608,7 +598,7 @@
 		$_SESSION['admin']['user_query']="";
 		$_SESSION['admin']['queries']['alliances']="";
 
-		tableStart("Schnellsuche");
+		tableStart("Schnellsuche", 800);
 		echo "<form action=\"?page=user&amp;action=search\" method=\"post\"><tr><th class=\"tbltitle\">Nick:</th>";
 		echo "<td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" size=\"40\" /> <input type=\"hidden\" name=\"qmode[user_nick]\" value=\"LIKE '%\" /><input type=\"submit\" name=\"user_search\" value=\"Suchen\" /></td></tr></form>";
 
@@ -622,9 +612,9 @@
 		echo "<td class=\"tbldata\"><input type=\"text\" name=\"alliance_tag\" size=\"40\" /> <input type=\"hidden\" name=\"qmode[alliance_tag]\" value=\"LIKE '%\" /><input type=\"submit\" name=\"alliance_search\" value=\"Suchen\" /></td></tr></form>";
 		tableEnd();
 		echo "<script>document.forms[1].elements[0].focus()</script>";
-
+		
 	
-		tableStart("Spieler-Tools");
+		tableStart("Spieler-Tools", 800);
 		
 
 		// Tickets
@@ -695,6 +685,104 @@
 			err_msg("Der Backend-Dienst scheint nicht zu laufen!");
 		}
 		
+		// Online
+
+		$ures=dbquery("SELECT count(*) FROM users;");
+		$uarr=mysql_fetch_row($ures);
+		$up=$uarr[0]/$conf['enable_register']['p2'];
+		$p1res=dbquery("SELECT count(*) FROM planets WHERE planet_user_id>0;");
+		$p1arr=mysql_fetch_row($p1res);
+		$p2res=dbquery("SELECT count(*) FROM planets;");
+		$p2arr=mysql_fetch_row($p2res);
+		if ($p2arr[0]>0)
+			$pp=$p1arr[0]/$p2arr[0];
+		else
+			$pp=0;
+		$s1res=dbquery("SELECT count(entities.cell_id) FROM entities,planets WHERE planets.id=entities.id AND planet_user_id>0 GROUP BY entities.cell_id;");
+		$s1arr=mysql_num_rows($s1res);
+		$s2res=dbquery("SELECT count(*) FROM entities WHERE code='s';");
+		$s2arr=mysql_fetch_row($s2res);
+		if ($s2arr[0]>0)
+			$sp=$s1arr/$s2arr[0];
+		else
+			$sp=0;
+
+
+
+
+		$gres=dbquery("SELECT COUNT(*) FROM user_sessions WHERE time_action>".(time() - $cfg->user_timeout->v).";");
+		$garr=mysql_fetch_row($gres);
+		if ($uarr[0]>0)
+			$gp=$garr[0]/$uarr[0]*100;
+		else
+			$gp=0;
+		$a1res=dbquery("SELECT COUNT(*)  FROM admin_user_sessions WHERE time_action>".(time() - $cfg->admin_timeout->v).";");
+		$a1arr=mysql_fetch_row($a1res);
+		$a2res=dbquery("SELECT COUNT(*)  FROM admin_users;");
+		$a2arr=mysql_fetch_row($a2res);
+		if ($a2arr[0]>0)
+			$ap=$a1arr[0]/$a2arr[0]*100;
+		else
+			$ap=0;
+
+		echo "<table class=\"tb\" style=\"width:auto;float:left;margin-right:20px;\">";
+		echo "<tr><th colspan=\"3\">Online</th></tr>";
+		if (UNIX)
+		{
+			echo "<tr><th><a href=\"?page=overview&amp;sub=daemon\">Backend:</a></th>";
+			if ($pid = checkDaemonRunning($daemonPidfile))
+				echo "<td colspan=\"2\" style=\"color:#0f0;\">Online, PID $pid</td>";
+			else
+				echo "<td colspan=\"2\" style=\"color:red;\">LÄUFT NICHT!</td>";
+			echo "</tr>";
+		}
+		echo "<tr><th><a href=\"?page=user&amp;sub=sessions\">User:</a></th><td>".$garr[0]." / ".$uarr[0]."</td><td>".round($gp,1)."%</td></tr>";
+		echo "<tr><th><a href=\"?page=overview&amp;sub=adminlog\">Admins:</a></th><td>".$a1arr[0]." / ".$a2arr[0]."</td><td>".round($ap,1)."%</td></tr>";
+		echo "</table>";
+
+		//
+		// Auslastung
+		//
+		$g_style=" style=\"color:#0f0\"";
+		$y_style=" style=\"color:#ff0\"";
+		$o_style=" style=\"color:#fa0\"";
+		$r_style=" style=\"color:#f55\"";
+
+		echo "<div>";
+		
+		echo "<table class=\"tb\" style=\"width:auto;float:left;margin-right:20px;\">";
+		echo "<tr><th colspan=\"3\">User-Statisik</th></tr>";
+		echo "<tr><th>User:</th>";
+		if ($up<0.5) $tbs=$g_style;
+		elseif ($up<0.8) $tbs=$y_style;
+		elseif ($up<0.9) $tbs=$o_style;
+		else $tbs=$r_style;
+		echo "<td $tbs>".$uarr[0]." / ".$conf['enable_register']['p2']."</td><td $tbs>".round($up*100,1)."%</td></tr>";
+		echo "<tr><th>Planeten:</th>";
+		if ($pp<0.5) $tbs=$g_style;
+		elseif ($pp<0.8) $tbs=$y_style;
+		elseif ($pp<0.9) $tbs=$o_style;
+		else $tbs=$r_style;
+		echo "<td $tbs>".$p1arr[0]." / ".$p2arr[0]."</td><td $tbs>".round($pp*100,1)."%</td></tr>";
+		echo "<tr><th>Systeme:</th> ";
+		if ($sp<0.5) $tbs=$g_style;
+		elseif ($sp<0.8) $tbs=$y_style;
+		elseif ($sp<0.9) $tbs=$o_style;
+		else $tbs=$r_style;
+		echo "<td $tbs>".$s1arr." / ".$s2arr[0]."</td><td $tbs>".round($sp*100,1)."%</td></tr>";
+		echo "</table>";
+
+		echo "<table class=\"tb\" style=\"width:400px;float:left;margin-right:20px;\">";
+		echo "<tr><th colspan=\"3\">System</th></tr>";
+		if (UNIX)
+		{
+			$un=posix_uname();
+			echo "<tr><th>System:</th><td>".$un['sysname']." ".$un['release']." ".$un['version']."</td></tr>";
+		}
+		echo "<tr><th>PHP:</th><td>".substr(phpversion(),0,10)."</td></tr>
+		<tr><th>MySQL:</th><td>".mysql_get_client_info()."</td></tr>
+		</table>";		
+		echo "<br style=\"clear:both;\" /></div>";
 	
 		}
 }
