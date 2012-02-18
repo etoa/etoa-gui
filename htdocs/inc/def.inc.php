@@ -82,9 +82,6 @@
 	define('RULES_URL','http://www.etoa.ch/regeln'); // Game-Rules
 	define('RULES_ONCLICK',"window.open('".RULES_URL."','rules','width=600,height=500,scrollbars=yes');");
 
-	define('MAIL_SENDER','no-reply@etoa.ch');
-	define('MAIL_REPLY','mail@etoa.ch');
-
   /*********************/
   /* Zufallsereignisse */
   /*********************/

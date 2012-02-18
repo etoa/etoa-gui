@@ -1,34 +1,24 @@
 <?php
-/* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- * Description of mail
- *
- * @author Nicolas
- */
 class Mail
 {
 	function __construct($subject,$text,$useTemplate=1)
 	{
-		$this->subject = Config::getInstance()->game_name." ".Config::getInstance()->roundname->v.": ".$subject;
+		$this->subject = Constants::getInstance()->appName.' '.Config::getInstance()->roundname->v.": ".$subject;
 		if ($useTemplate)
 		{
 			$this->body.= $text."
 
 -----------------------------------------------------------------
-Escape to Andromeda - Das Sci-Fi Browsergame - http://www.etoa.ch
+Escape to Andromeda - Das Sci-Fi Browsergame - http://etoa.ch
 Copyright (C) 2004 EtoA-Gaming, Schweiz
 Kontakt: mail@etoa.ch
-Forum: http://www.etoa.ch/forum";
+Forum: http://etoa.ch/forum";
 		}
 		else
 		{
 			$this->body = $text;
 		}
-		$this->headers = "From: ".Config::getInstance()->game_name." ".Config::getInstance()->roundname->v."<".MAIL_SENDER.">\n";
+		$this->headers = "From: ".Constants::getInstance()->appName.' '.Config::getInstance()->roundname->v."<".Config::getInstance()->mail_sender->v.">\n";
 		$this->headers.= "Content-Type: text/plain; charset=UTF-8\n";
 		$this->headers.= "MIME-Version: 1.0\n";
 		$this->headers.= "Content-Transfer-Encoding: 8bit\n";
@@ -43,7 +33,7 @@ Forum: http://www.etoa.ch/forum";
 		}
 		else
 		{
-			$headers = $this->headers."Reply-to: ".Config::getInstance()->game_name."<".MAIL_REPLY.">\n";
+			$headers = $this->headers."Reply-to: ".Constants::getInstance()->appName.' '.Config::getInstance()->roundname->v."<".Config::getInstance()->mail_reply->v.">\n";
 		}
 		if (mail($rcpt,$this->subject,$this->body,$headers))
 			return true;
