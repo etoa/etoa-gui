@@ -36,7 +36,9 @@
 	if (include("inc/bootstrap.inc.php"))
 	{
 		include("inc/update.inc.php");
-
+		
+		$mode = isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : null;
+	
 		// Prüfen ob Updates eingeschaltet sind
 		if ($cfg->update_enabled->v==1)
 		{
@@ -51,7 +53,7 @@
 			$tmr = timerStart();
 			
 			// Monates-Update (1. des Monates 05:13)
-			if (date("H")=="05" && date("i")=="13" && date("m")=="1")
+			if ($mode=="month" || (date("H")=="05" && date("i")=="13" && date("m")=="1"))
 			{
 				$logt = "[b]Monates-Update ".date("d.m.Y, H:i")."[/b]\n";
 				$log .= update_minute();
@@ -59,7 +61,7 @@
 			}
 			
 			// Tages-Update (03:13)
-			elseif (date("H")=="03" && date("i")=="13")
+			elseif ($mode=="day" || (date("H")=="03" && date("i")=="13"))
 			{
 				$logt = "[b]Tages-Update ".date("d.m.Y, H:i")."[/b]\n";
 				$log .= update_minute();
@@ -67,7 +69,7 @@
 			}
 
 			// Stunden-Update
-			elseif (date("i")=="00")
+			elseif ($mode=="hour" || date("i")=="00")
 			{
 				$logt = "[b]Stunden-Update ".date("H:i")."[/b]\n";
 				$log .= update_minute();
@@ -77,7 +79,7 @@
 			}
 
 			// 30-Minuten-Update
-			elseif (date("i")=="30")
+			elseif ($mode=="30min" ||  date("i")=="30")
 			{
 				$logt = "[b]30-Minuten-Update ".date("H:i")."[/b]\n";
 				$log .= update_minute();
@@ -86,7 +88,7 @@
 			}
 
 			// 5-Minuten-Update
-			elseif (date("i")%5==0 && date("i")!=30)
+			elseif ($mode=="5min" || date("i")%5==0 && date("i")!=30)
 			{
 				$logt = "[b]5-Minuten-Update ".date("H:i")."[/b]\n";
 				$log .= update_minute();
@@ -115,6 +117,7 @@
 			}
 			else
 			{
+				// Wird nur geloggt wenn Debug Modus aktiv
 				Log::add(Log::F_UPDATES, Log::DEBUG, $logt."Gesamtdauer: ".$t."\n\n".$log);
 			}
 			

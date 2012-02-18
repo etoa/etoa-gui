@@ -114,7 +114,6 @@
 		return $log;
 	}
 
-
 	function update_30minute()
 	{
 		global $conf;

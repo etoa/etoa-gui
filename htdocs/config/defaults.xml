@@ -219,7 +219,7 @@ Besten Dank f&#xFC;r euer Verst&#xE4;ndnis&#xD;
     <item name="url_teamspeak" cat="1">
       <v comment="URL: TeamSpeak" type="text">http://www.etoa.ch/teamspeak</v>
     </item>
-    <item name="backup" cat="1">
+    <item name="backup" cat="1" base="yes">
       <v comment="Backup-Pfad" type="text">/home/backup/mysql/test</v>
       <p1 comment="Backup-Aufbewahrungsdauer (Tage)" type="text">14</p1>
       <p2 comment="GZIP benutzen" type="onoff">0</p2>
@@ -410,7 +410,7 @@ http://127.0.0.1</v>
       <v comment="Kryptocenter aktivieren" type="onoff">1</v>
     </item>
     <item name="update_enabled" cat="1">
-      <v comment="Updates einschalten" type="text">1</v>
+      <v comment="Updateskript einschalten" type="text">1</v>
     </item>
     <item name="msg_max_store" cat="8">
       <v comment="Max. Anzahl Nachrichten" type="text">200</v>
