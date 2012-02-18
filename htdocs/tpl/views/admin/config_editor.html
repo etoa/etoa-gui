@@ -1,0 +1,20 @@
+{if $title|default:'' ne ""}<h1>{$title}</h1>{/if}
+{$content|default:''}
+
+<h2>{$subtitle}</h2>
+
+{if $msg|default:'' ne ""}{$msg}{/if}
+
+<form action="?page=config&amp;cid={$cid}" method="post">
+	<table class="tb" style="width:auto;">
+	{foreach from=$items item=i}
+		<tr><th>{$i.label}</th>
+		<td class="tbldata">{$i.field}</td>
+		<td class="tbldata"><code>{$i.name}</code> ({$i.type})</td>
+		</tr>
+	{/foreach}
+	</table>
+
+	<p><input type="submit" name="submit" value="&Uuml;bernehmen" /> &nbsp;
+	<input type="button" value="Zur&uuml;ck zur &Uuml;bersicht" onclick="document.location='?page=config'" /></p>
+</form>
