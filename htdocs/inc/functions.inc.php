@@ -76,6 +76,13 @@
 	}
 	
 	/**
+	* Returns a string containing the game name, version and round
+	*/
+	function getGameIdentifier()	{
+		return Constants::getInstance()->appName.' '.Constants::getInstance()->appVersion.' '.Config::getInstance()->roundname->v;
+	}
+	
+	/**
 	* Baut die Datenbankverbindung auf
 	*/
 	function dbconnect($throwError = 1)

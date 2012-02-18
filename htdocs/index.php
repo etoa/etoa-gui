@@ -90,7 +90,7 @@
 	// Page header
 	//
 	
-	$tpl->assign("gameTitle", Constants::getInstance()->appName.' '.Constants::getInstance()->appVersion.' '.Config::getInstance()->roundname->v);
+	$tpl->assign("gameTitle", getGameIdentifier());
 	$tpl->assign("templateDir", CSS_STYLE);
 
 	// Xajax header

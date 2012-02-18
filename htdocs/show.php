@@ -77,7 +77,7 @@
 	// Page header
 	//
 
-	$tpl->assign("gameTitle",$cfg->game_name->v." ".$cfg->game_name->p1.(isset($indexpage[$index])?' - '.$indexpage[$index]['label']:''));
+	$tpl->assign("gameTitle", getGameIdentifier().(isset($indexpage[$index]) ? ' - '.$indexpage[$index]['label'] : ''));
 	$tpl->assign("templateDir",CSS_STYLE);
 
 	// Xajax header

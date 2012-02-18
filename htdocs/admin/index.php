@@ -21,7 +21,7 @@ $tpl->setLayout("admin/default_main");
 $tpl->setView("admin/default");
 
 $tpl->assign("theme_path", (!isset($themePath) || !is_file("themes/".$themePath)) ? "default.css" : $themePath);
-$tpl->assign("page_title", Constants::getInstance()->appName.' '.Constants::getInstance()->appVersion.' '.Config::getInstance()->roundname->v);
+$tpl->assign("page_title", getGameIdentifier()." Administration");
 $tpl->assign("axaj_js", $xajax->printJavascript(XAJAX_DIR));
 
 $tpl->assign("round_name",Config::getInstance()->roundname->v);

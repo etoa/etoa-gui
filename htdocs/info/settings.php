@@ -3,7 +3,6 @@
 	HelpUtil::breadCrumbs(array("Einstellungen","settings"));
 
 	$item = array();
-	$item['game_name']['p1']="Spielversion";
 	$item['enable_register']['p2']="Max. Spieler";
 	$item['hmode_days']['v']="Urlaubsmodus Mindestdauer";
 	$item['points_update']['p1']="Einheiten/Userpunkte";
@@ -50,12 +49,14 @@
 			echo "</td></tr>";
 			
 		}
+		echo "<tr><td>Spielversion</td>";
+		echo "<td>".Constants::getInstance()->appVersion."</td></tr>";
 		foreach ($item as $conf_name => $a)
 		{
 			foreach ($a as $par => $val)
 			{
-			echo "<tr><td>".$val."</td>";
-			echo "<td>".$conf[$conf_name][$par]."</td></tr>";
+				echo "<tr><td>".$val."</td>";
+				echo "<td>".$conf[$conf_name][$par]."</td></tr>";
 			}
 		}
 		tableEnd();

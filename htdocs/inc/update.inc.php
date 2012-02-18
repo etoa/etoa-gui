@@ -232,6 +232,10 @@
 		$log.= "Inaktive Chat-User löschen...\n";
 		chatUserCleanUp();
 
+		// Process log messages
+		$nr = Log::processQueue();
+		$log.= "$nr Log Nachrichten verarbeitet\n";
+
 		return $log;
 	}
 ?>

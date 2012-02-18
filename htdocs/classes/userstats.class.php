@@ -144,22 +144,23 @@
 		
 		// Renderzeit
 		$cfg = Config::getInstance();
-		$render_time = explode(" ",microtime()); $rtime = $render_time[1]+$render_time[0]-$render_starttime; 
-		imagestring($im,6,10,5,$cfg->game_name->v." ".$cfg->game_name->p1." - ".Config::getInstance()->roundname->v,$colBlack);
-		imagestring($im,6,10,20,"Userstatistik der letzten 24 Stunden",$colBlack);	
-		imagestring($im,2,10,40,"Erstellt: ".date("d.m.Y, H:i").", Renderzeit: ".round($rtime,3)." sec",$colBlack);	
+		$render_time = explode(" ",microtime()); 
+		$rtime = $render_time[1]+$render_time[0]-$render_starttime; 
+		imagestring($im, 6, 10, 5, getGameIdentifier(), $colBlack);
+		imagestring($im, 6, 10, 20, "Userstatistik der letzten 24 Stunden", $colBlack);	
+		imagestring($im, 2, 10, 40, "Erstellt: ".date("d.m.Y, H:i").", Renderzeit: ".round($rtime,3)." sec", $colBlack);	
 	
-		imagestring($im,3,110,$h-40,"Max    Durchschnitt   Aktuell",$colBlack);	
-		imagestring($im,3,50,$h-25,"Online",$colGreen);	
-		imagestring($im,2,110,$h-25,$maxo,$colBlack);	
-		imagestring($im,2,160,$h-25,$avgo,$colBlack);	
-		imagestring($im,2,265,$h-25,$acto,$colBlack);	
+		imagestring($im, 3, 110, $h-40, "Max    Durchschnitt   Aktuell", $colBlack);	
+		imagestring($im, 3, 50, $h-25, "Online", $colGreen);	
+		imagestring($im, 2, 110, $h-25, $maxo, $colBlack);	
+		imagestring($im, 2, 160, $h-25, $avgo, $colBlack);	
+		imagestring($im, 2, 265, $h-25, $acto, $colBlack);	
 	
-		imagestring($im,3,450,$h-40,"Max    Durchschnitt   Aktuell",$colBlack);	
-		imagestring($im,3,350,$h-25,"Registriert",$colBlue);	
-		imagestring($im,2,450,$h-25,$maxr,$colBlack);	
-		imagestring($im,2,500,$h-25,$avgr,$colBlack);	
-		imagestring($im,2,605,$h-25,$actr,$colBlack);	
+		imagestring($im, 3, 450, $h-40, "Max    Durchschnitt   Aktuell", $colBlack);	
+		imagestring($im, 3, 350, $h-25, "Registriert", $colBlue);	
+		imagestring($im, 2, 450, $h-25, $maxr, $colBlack);	
+		imagestring($im, 2, 500, $h-25, $avgr, $colBlack);	
+		imagestring($im, 2, 605, $h-25, $actr, $colBlack);	
 	
 	
 		unlink($file);		
