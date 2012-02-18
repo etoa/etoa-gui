@@ -12,15 +12,17 @@
 	class Config implements ISingleton
 	{
 	    static private $instance;
-			/**
-			 * Array containing all ConfigItem items
-			 * @var array
-			 */
+		/**
+		 * Array containing all ConfigItem items
+		 * @var array
+		 */
 	    private $_items;
 	
-			/**
-			* Get instance with this very nice singleton design pattern
-			*/
+		private $defaultsXml;
+	
+		/**
+		* Get instance with this very nice singleton design pattern
+		*/
 	    static public function getInstance()
 	    {
         if (!self::$instance)
@@ -252,25 +254,26 @@
 			}
 		}
 
-
 		function loadDefault($key)
 		{
-			$xml = simplexml_load_file(RELATIVE_ROOT."config/defaults.xml");
-			foreach ($xml->items->item as $i)
-			{
-				if ($i['name']==$key)
-				{
-					return new ConfigItem($i->v,$i->p1,$i->p2);
-				}
+			if ($this->defaultsXml==null) {
+				$this->defaultsXml = simplexml_load_file(RELATIVE_ROOT."config/defaults.xml");
+			}
+			$arr = $this->defaultsXml->xpath("/config/items/item[@name='".$key."']");
+			if ($arr != null && count($arr) > 0) {
+				$i = $arr[0];
+				return new ConfigItem($i->v,$i->p1,$i->p2);
 			}
 			return false;
 		}
 
 		function categories()
 		{
-			$xml = simplexml_load_file(RELATIVE_ROOT."config/defaults.xml");
+			if ($this->defaultsXml==null) {
+				$this->defaultsXml = simplexml_load_file(RELATIVE_ROOT."config/defaults.xml");
+			}
 			$c = array();
-			foreach ($xml->categories->category as $i)
+			foreach ($this->defaultsXml->categories->category as $i)
 			{
 				$c[(int)$i['id']] = (string)$i;
 			}
@@ -279,66 +282,19 @@
 
 		function itemInCategory($cat)
 		{
-			$xml = simplexml_load_file(RELATIVE_ROOT."config/defaults.xml");
-			$c = array();
-			foreach ($xml->items->item as $i)
-			{
-				if ($i['cat']==$cat)
-					$c[] = $i;
+			if ($this->defaultsXml==null) {
+				$this->defaultsXml = simplexml_load_file(RELATIVE_ROOT."config/defaults.xml");
 			}
-			return $c;
+			return $this->defaultsXml->xpath("/config/items/item[@cat='".$cat."']");
 		}
-
-		/**
-		 * This was only used for the initial creation of defaults.xml
-		 * It will not work anymore because the config table has been reduced
-		function dump()
+		
+		function getBaseItems()
 		{
-			$str = "<config></config>";
-			$xml = new SimpleXMLElement($str);
-
-			$res = dbquery("
-			SELECT
-				*
-			FROM
-				config;");
-			$ixml = $xml->addChild("items");
-			while ($arr = mysql_fetch_assoc($res))
-			{
-				$ichld = $ixml->addChild("item");
-				$ichld->addAttribute("name", $arr['config_name']);
-				$ichld->addAttribute("cat", $arr['config_cat_id']);
-
-				if ($arr['config_value']!="" || $arr['config_comment_v']!="")
-				{
-					$vch = $ichld->addChild("v",$arr['config_value']);
-					$vch->addAttribute("comment",$arr['config_comment_v']);
-					$vch->addAttribute("type",$arr['config_type_v']=="" ? "text" : $arr['config_type_v']);
-				}
-
-				if ($arr['config_param1']!="" || $arr['config_comment_p1']!="")
-				{
-					$p1ch = $ichld->addChild("p1",$arr['config_param1']);
-					$p1ch->addAttribute("comment",$arr['config_comment_p1']);
-					$p1ch->addAttribute("type",$arr['config_type_p1']=="" ? "text" : $arr['config_type_p1']);
-				}
-
-				if ($arr['config_param2']!="" || $arr['config_comment_p2']!="")
-				{
-					$p2ch = $ichld->addChild("p2",$arr['config_param2']);
-					$p2ch->addAttribute("comment",$arr['config_comment_p2']);
-					$p2ch->addAttribute("type",$arr['config_type_p2']=="" ? "text" : $arr['config_type_p2']);
-				}
+			if ($this->defaultsXml==null) {
+				$this->defaultsXml = simplexml_load_file(RELATIVE_ROOT."config/defaults.xml");
 			}
-
-			$dom = new DOMDocument('1.0');
-			$dom->preserveWhiteSpace = false;
-			$dom->formatOutput = true;
-			$dom->loadXML($xml->asXML());
-			$dom->save(RELATIVE_ROOT."config/defaults.xml");
-
-		}
-		*/
+			return $this->defaultsXml->xpath("/config/items/item[@base='yes']");
+		}		
 	}
 	
 	class ConfigItem
@@ -356,24 +312,24 @@
 			return $this->_v;
 		}
 		
-	  public function __get($name)
-  	{
-  		try
-  		{
-	    	if ($name=="p1")		
-	    		return $this->_p1;
-	    	if ($name=="p2")		
-	    		return $this->_p2;
-	    	if ($name=="v")		
-	    		return $this->_v;
-				throw new EException("Property $name der Klasse  ".__CLASS__." existiert nicht!");
-				return null;
+		public function __get($name)
+		{
+			try
+			{
+				if ($name=="p1")		
+					return $this->_p1;
+				if ($name=="p2")		
+					return $this->_p2;
+				if ($name=="v")		
+					return $this->_v;
+					throw new EException("Property $name der Klasse  ".__CLASS__." existiert nicht!");
+					return null;
 			}
 			catch (EException $e)
 			{
 				echo $e;
-	    	return null;
+				return null;
 			}			   		
-    }
+		}
 	}
 ?>

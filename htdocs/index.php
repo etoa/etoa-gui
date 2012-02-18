@@ -90,8 +90,8 @@
 	// Page header
 	//
 	
-	$tpl->assign("gameTitle",$cfg->game_name->v." ".$cfg->game_name->p1);
-	$tpl->assign("templateDir",CSS_STYLE);
+	$tpl->assign("gameTitle", Constants::getInstance()->appName.' '.Constants::getInstance()->appVersion.' '.Config::getInstance()->roundname->v);
+	$tpl->assign("templateDir", CSS_STYLE);
 
 	// Xajax header
 	ob_start();

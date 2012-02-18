@@ -42,11 +42,5 @@ define('USER_BLOCKED_DEFAULT_TIME',3600*24*$conf['user_ban_min_length']['v']);	/
 define('USER_HMODE_DEFAULT_TIME',3600*24*$conf['user_umod_min_length']['v']);	// Standardurlaubszeit
 
 define('ADMIN_FILESHARING_DIR',CACHE_ROOT."/admin");
-
-// Create template object
-$tpl = new Smarty;
-$tpl->template_dir = "../tpl";
-$tpl->compile_dir = SMARTY_COMPILE_DIR;	
-$tpl->plugins_dir[] = "../plugins/smarty"
 	
 ?>

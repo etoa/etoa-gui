@@ -26,12 +26,12 @@
 	// 	Kommentar:
 	//
 
-	echo "<h1>Konfiguration</h1>";
+	$tpl->assign("title", "Konfiguration");
 
-			$conf_type['text']="Textfeld";
-			$conf_type['textarea']="Textblock";
-			$conf_type['timedate']="Zeit/Datum-Feld";
-			$conf_type['onoff']="Ein/Aus-Schalter";
+	$conf_type['text']="Textfeld";
+	$conf_type['textarea']="Textblock";
+	$conf_type['timedate']="Zeit/Datum-Feld";
+	$conf_type['onoff']="Ein/Aus-Schalter";
 	
 	//
 	// Tipps
@@ -121,84 +121,133 @@
 	//
 	else
 	{
+		if (isset($sub) && intval($sub)>0)
+			$_GET['cid'] = $sub;
 
+		// Edit config items
+		if (isset($_GET['cid']) && $_GET['cid']>0)
+		{
+			$tpl->setView("admin/config_editor");
+		
+			$cid = $_GET['cid'];
+			$cats = $cfg->categories();
+			
+			$tpl->assign("subtitle", $cats[$cid]);
+			$tpl->assign("cid", $cid);
 
-			if (isset($sub) && intval($sub)>0)
-				$_GET['cid'] = $sub;
-
-			// Edit config items
-			if (isset($_GET['cid']) && $_GET['cid']>0)
+			if (isset($_POST['submit']))
 			{
-				$cid = $_GET['cid'];
-				$cats = $cfg->categories();
-				
-				echo "<h2>".$cats[$cid]."</h2>";
-
-
-					if (isset($_POST['submit']))
-					{
-						foreach ($cfg->itemInCategory($cid) as $i)
-						{
-							$v = isset($i->v) ? create_sql_value((string)$i->v['type'],(string)$i['name'],"v",$_POST) : "";
-							$p1 = isset($i->p1) ? create_sql_value((string)$i->p1['type'],(string)$i['name'],"p1",$_POST) : "";
-							$p2 = isset($i->p2) ? create_sql_value((string)$i->p2['type'],(string)$i['name'],"p2",$_POST) : "";
-							$cfg->add((string)$i['name'],$v,$p1,$p2);
-						}
-						ok_msg("&Auml;nderungen wurden &uuml;bernommen!");
-					}
-
-					echo "<form action=\"?page=config&amp;cid=".$cid."\" method=\"post\">";
-					echo "<table class=\"tb\" style=\"width:auto;\">";
-					
-					foreach ($cfg->itemInCategory($cid) as $i)
-					{
-						if (isset($i->v))
-						{
-							echo "<tr><th>".$i->v['comment']."</th><td class=\"tbldata\">";
-							display_field((string)$i->v['type'],(string)$i['name'],"v");
-							echo " (".$i['name'].", Wert)</td></tr>";
-						}
-						if (isset($i->p1))
-						{
-							echo "<tr><th>".$i->p1['comment']."</th><td class=\"tbldata\">";
-							display_field((string)$i->p1['type'],(string)$i['name'],"p1");
-							echo " (".$i['name'].", Parameter 1)</td></tr>";
-						}
-						if (isset($i->p2))
-						{
-							echo "<tr><th>".$i->p2['comment']."</th><td class=\"tbldata\">";
-							display_field((string)$i->p2['type'],(string)$i['name'],"p2");
-							echo " (".$i['name'].", Parameter 2)</td></tr>";
-						}
-						echo "<tr><td colspan=\"2\" style=\"height:1px;\"></td></tr>";
-					}
-					echo "</table><br/></br/>";
-
-				echo "<input type=\"submit\" name=\"submit\" value=\"&Uuml;bernehmen\" />";
-				echo " <input type=\"button\" value=\"Zur&uuml;ck zur &Uuml;bersicht\" onclick=\"document.location='?page=config'\" /></form>";
-			}
-
-			// Overview
-			else
-			{
-				echo "<h2>&Uuml;bersicht</h2>";
-				echo "W&auml;hle eine Kategorie:";
-
-				$cats = $cfg->categories();
-				if (count($cats))
+				foreach ($cfg->itemInCategory($cid) as $i)
 				{
-					echo "<ul>";
-					foreach ($cats as $k=> $v)
-					{
-						echo "<li><a href=\"?page=config&amp;cid=".$k."\">".$v."</a></li>";
-					}
-					echo "</ul>";
+					$v = isset($i->v) ? create_sql_value((string)$i->v['type'],(string)$i['name'],"v",$_POST) : "";
+					$p1 = isset($i->p1) ? create_sql_value((string)$i->p1['type'],(string)$i['name'],"p1",$_POST) : "";
+					$p2 = isset($i->p2) ? create_sql_value((string)$i->p2['type'],(string)$i['name'],"p2",$_POST) : "";
+					$cfg->add((string)$i['name'],$v,$p1,$p2);
 				}
-				else
-					echo "<br><br/><i>Keine Konfigurationsdaten vorhanden!</i>";
+				$tpl->assign('msg', "&Auml;nderungen wurden &uuml;bernommen!");
+				$tpl->assign('msg_type', "ok");
+			}
+			
+			$items = array();
+			foreach ($cfg->itemInCategory($cid) as $i)
+			{
+				if (isset($i->v))
+				{
+					$items[] = array(
+						'label' => $i->v['comment'],
+						'name' => $i['name'],
+						'type' => 'Wert',
+						'field' => display_field((string)$i->v['type'], (string)$i['name'], "v"),
+					);
+				}
+				if (isset($i->p1))
+				{
+					$items[] = array(
+						'label' => $i->p1['comment'],
+						'name' => $i['name'],
+						'type' => 'Parameter 1',
+						'field' => display_field((string)$i->p1['type'], (string)$i['name'], "p1"),
+					);				
+				}
+				if (isset($i->p2))
+				{
+					$items[] = array(
+						'label' => $i->p2['comment'],
+						'name' => $i['name'],
+						'type' => 'Parameter 2',
+						'field' => display_field((string)$i->p2['type'], (string)$i['name'], "p2"),
+					);				
+				}
+			}
+			$tpl->assign("items", $items);
+		}
 
-    }
-
+		// Overview
+		else
+		{
+			$tpl->setView("admin/config_base");
+			$tpl->assign("subtitle", 'Grundkonfiguration');
+			
+			if (isset($_POST['submit']))
+			{
+				foreach ($cfg->getBaseItems() as $i)
+				{
+					$v = isset($i->v) ? create_sql_value((string)$i->v['type'],(string)$i['name'],"v",$_POST) : "";
+					$p1 = isset($i->p1) ? create_sql_value((string)$i->p1['type'],(string)$i['name'],"p1",$_POST) : "";
+					$p2 = isset($i->p2) ? create_sql_value((string)$i->p2['type'],(string)$i['name'],"p2",$_POST) : "";
+					$cfg->add((string)$i['name'],$v,$p1,$p2);
+				}
+				$tpl->assign('msg', "&Auml;nderungen wurden &uuml;bernommen!");
+				$tpl->assign('msg_type', "ok");
+			}			
+			$items = array();
+			foreach ( $cfg->getBaseItems() as $i)
+			{
+				if (isset($i->v))
+				{
+					$items[] = array(
+						'label' => $i->v['comment'],
+						'name' => $i['name'],
+						'type' => 'Wert',
+						'field' => display_field((string)$i->v['type'], (string)$i['name'], "v"),
+					);
+				}
+				if (isset($i->p1))
+				{
+					$items[] = array(
+						'label' => $i->p1['comment'],
+						'name' => $i['name'],
+						'type' => 'Parameter 1',
+						'field' => display_field((string)$i->p1['type'], (string)$i['name'], "p1"),
+					);				
+				}
+				if (isset($i->p2))
+				{
+					$items[] = array(
+						'label' => $i->p2['comment'],
+						'name' => $i['name'],
+						'type' => 'Parameter 2',
+						'field' => display_field((string)$i->p2['type'], (string)$i['name'], "p2"),
+					);				
+				}
+			}
+			$tpl->assign("items", $items);
+			
+			echo "<h2>Erweiterte Konfiguration</h2>";
+			
+			$cats = $cfg->categories();
+			if (count($cats) > 0) {
+				echo "<ul>";
+				foreach ($cats as $k=> $v)
+				{
+					echo "<li><a href=\"?page=config&amp;cid=".$k."\">".$v."</a></li>";
+				}
+				echo "</ul>";
+			}
+			else	{
+				echo "<br><br/><i>Keine Konfigurationsdaten vorhanden!</i>";
+			}
+		}
 	}
 ?>
 

@@ -14,15 +14,19 @@ require("inc/includer.inc.php");
 
 ini_set('display_errors', 1);
 
-$tpl->assign("theme_path",(!isset($themePath) || !is_file("themes/".$themePath)) ? "default.css" : $themePath);
-$tpl->assign("page_title",$conf['game_name']['v'].' '.$conf['game_name']['p1'].' Administration - '.Config::getInstance()->roundname->v);
-$tpl->assign("axaj_js",$xajax->printJavascript(XAJAX_DIR));
+// Create template object
+$tpl = new TemplateEngine();
+
+$tpl->setLayout("admin/default_main");
+$tpl->setView("admin/default");
+
+$tpl->assign("theme_path", (!isset($themePath) || !is_file("themes/".$themePath)) ? "default.css" : $themePath);
+$tpl->assign("page_title", Constants::getInstance()->appName.' '.Constants::getInstance()->appVersion.' '.Config::getInstance()->roundname->v);
+$tpl->assign("axaj_js", $xajax->printJavascript(XAJAX_DIR));
 
 $tpl->assign("round_name",Config::getInstance()->roundname->v);
 
 initTT();
-
-$view = "admin/default";
 
 // Login if requested
 if (isset($_POST['login_submit']))
@@ -30,8 +34,6 @@ if (isset($_POST['login_submit']))
 	if (! $s->login($_POST))
 	{
 		include("inc/admin_login.inc.php");
-		$tpl->display("layouts/admin/default_login.html");
-		exit;		
 	}
 }
 
@@ -46,8 +48,6 @@ if (isset($_GET['logout']) && $_GET['logout']!=null)
 if (!$s->validate())
 {
 	include("inc/admin_login.inc.php");
-	$tpl->display("layouts/admin/default_login.html");
-	exit;		
 }
 else
 {
@@ -63,6 +63,7 @@ else
 		$s->clipboard = null;
 	}
 	$cb = isset ($s->clipboard) && $s->clipboard==1 ? true : false;
+	
 	
 	$tpl->assign("search_query",(isset($_POST['search_query']) ? $_POST['search_query'] : '' ));
 	$tpl->assign("user_level",$cu->level);
@@ -153,15 +154,11 @@ else
 	$_SESSION[SESSION_NAME]=$s;
 	dbclose();
 
-	$tpl->assign("content_for_layout", $tpl->fetch("views/".$view.".html"));
 	$tpl->assign("content_overflow", ob_get_clean());
-
 	$render_time = explode(" ",microtime());
+
 	$tpl->assign("render_time",round($render_time[1]+$render_time[0]-$render_starttime,3));
 
-	$tpl->display("layouts/admin/default_main.html");
-	exit;
+	$tpl->render();
 }
 ?>
-
-

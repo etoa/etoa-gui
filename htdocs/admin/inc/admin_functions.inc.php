@@ -388,6 +388,7 @@ function htpasswd_check($user,$file)
 
 function display_field($type,$confname,$field)
 {
+	ob_start();
 	global $cfg;
 	switch ($type)
 	{
@@ -464,6 +465,7 @@ function display_field($type,$confname,$field)
 			}
 			echo "</select>";
 	}
+	return ob_get_clean();
 }
 
 function create_sql_value($type,$confname,$field,$postarray)
