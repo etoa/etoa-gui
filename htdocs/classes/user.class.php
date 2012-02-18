@@ -211,6 +211,10 @@
 				    $sql.= " user_alliance_id=".$this->allianceId.",";
 					elseif ($k=="allianceRankId")
 				    $sql.= " user_alliance_rank_id=".$this->allianceRankId.",";
+					elseif ($k=="specialistId")
+					$sql.= " user_specialist_id=".$this->specialistId.",";
+					elseif ($k=="specialistTime")
+					$sql.= " user_specialist_time=".$this->specialistTime.",";
 					elseif ($k=="visits")
 				    $sql.= " user_visits=".$this->visits.",";
 					elseif ($k=="email")
@@ -224,9 +228,9 @@
 					elseif ($k == "profileImage")
 					{
 						if ($this->profileImage == "")
-					    $sql.= " user_profile_img='',user_profile_img_check=0,";
-            else
-				    	$sql.= " user_profile_img='".$this->profileImage."',user_profile_img_check=1,";
+							$sql.= " user_profile_img='',user_profile_img_check=0,";
+						else
+							$sql.= " user_profile_img='".$this->profileImage."',user_profile_img_check=1,";
 					}
 					elseif ($k == "avatar")
 					{

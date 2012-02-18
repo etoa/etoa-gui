@@ -712,7 +712,7 @@
 					$need_something = false;
 					foreach ($allianceRes as $id=>$res)
 					{
-						if ($res>$costs[$id])
+						if ($res>=$costs[$id])
 						{
 							$need[$id] = 0;
 							$style[$id] = "";
@@ -754,7 +754,7 @@
 						}
 						elseif ($need_something)
 						{
-							$message = "<input type=\"button\" class=\"button\" name=\"storage_submit\" id=\"storage_submit\" value=\"Fehlende Roshtoffe einzahlen\" ".tm("Nicht genügend Rohstoffe","Es sind nicht genügend Rohstoffe vorhanden!<br>Klick auf den Button um die fehlenden Rohstoffe einzuzahlen.")." onclick=\"setSpends(".$need[1].", ".$need[2].", ".$need[3].", ".$need[4].", ".$need[5].");\"/>";
+							$message = "<input type=\"button\" class=\"button\" name=\"storage_submit\" id=\"storage_submit\" value=\"Fehlende Rohstoffe einzahlen\" ".tm("Nicht genügend Rohstoffe","Es sind nicht genügend Rohstoffe vorhanden!<br>Klick auf den Button um die fehlenden Rohstoffe einzuzahlen.")." onclick=\"setSpends(".$need[1].", ".$need[2].", ".$need[3].", ".$need[4].", ".$need[5].");\"/>";
 						}
 						else
 							$message = $cu->alliance->buildlist->getLastError();
@@ -889,7 +889,7 @@
 						}
 						elseif ($need_something)
 						{
-							$message = "<input type=\"button\" class=\"button\" name=\"storage_submit\" id=\"storage_submit\" value=\"Fehlende Roshtoffe einzahlen\" ".tm("Nicht genügend Rohstoffe","Es sind nicht genügend Rohstoffe vorhanden!<br>Klick auf den Button um die fehlenden Rohstoffe einzuzahlen.")." onclick=\"setSpends(".$need[1].", ".$need[2].", ".$need[3].", ".$need[4].", ".$need[5].");\"/>";
+							$message = "<input type=\"button\" class=\"button\" name=\"storage_submit\" id=\"storage_submit\" value=\"Fehlende Rohstoffe einzahlen\" ".tm("Nicht genügend Rohstoffe","Es sind nicht genügend Rohstoffe vorhanden!<br>Klick auf den Button um die fehlenden Rohstoffe einzuzahlen.")." onclick=\"setSpends(".$need[1].", ".$need[2].", ".$need[3].", ".$need[4].", ".$need[5].");\"/>";
 						}
 					}
 					echo "<th width=\"7%\">Stufe</th>

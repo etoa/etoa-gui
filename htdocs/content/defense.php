@@ -637,7 +637,7 @@
 					}							
 				}
 				
-				// Die Roshtoffe der $c-variablen wieder beigeben, da sie sonst doppelt abgezogen werden
+				// Die Rohstoffe der $c-variablen wieder beigeben, da sie sonst doppelt abgezogen werden
 				$cp->resMetal+=$total_metal;
 				$cp->resCrystal+=$total_crystal;
 				$cp->resPlastic+=$total_plastic;

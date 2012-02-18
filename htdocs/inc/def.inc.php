@@ -387,8 +387,8 @@
 	define("SHIP_PRICE_FACTOR_MAX",2);		//Höchstpreisgrenze der Schiffe
 	define("RESS_PRICE_FACTOR_MIN",0.7);		//Mindestpreisgrenze der Rohstoffe
 	define("RESS_PRICE_FACTOR_MAX",2);			//Höchstpreisgrenze der Schiffe
-	define("AUCTION_PRICE_FACTOR_MIN",0.333);	//Mindestpreisgrenze der Autkionen (summiert aus Roshtoffen und Schiffen)
-	define("AUCTION_PRICE_FACTOR_MAX",3);		//Höchstpreisgrenze der Autkionen (summiert aus Roshtoffen und Schiffen)
+	define("AUCTION_PRICE_FACTOR_MIN",0.333);	//Mindestpreisgrenze der Autkionen (summiert aus Rohstoffen und Schiffen)
+	define("AUCTION_PRICE_FACTOR_MAX",3);		//Höchstpreisgrenze der Autkionen (summiert aus Rohstoffen und Schiffen)
 	define("AUCTION_OVERBID",0.01);				//Gebot muss mindestens X% höher sein als jenes des Vorgebotes entsprechen
 	define("MARKET_SELL_TAX",1.005);				//Zuschlagsfaktor auf die Preise
 	define("AUCTION_DELAY_TIME",$cfg->market_auction_delay_time->v);		// Zeit in stunden, wie lange die auktion nach ablauf noch zu sehen ist
