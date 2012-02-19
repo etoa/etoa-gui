@@ -35,15 +35,15 @@
 	// Initialisieren
 	if (include("inc/bootstrap.inc.php"))
 	{	
-		if ($_SERVER['argv'][1]!="")
+		if (isset($_SERVER['argv'][1]) && $_SERVER['argv'][1]!="")
 		{
-			Backup::restore($_SERVER['argv'][1]);
+			DBManager::getInstance()->restore($_SERVER['argv'][1]);
 		}
 		else
 		{
-			echo "Usage: ".$_SERVER['argv'][0]." restorepoint\n\n";
+			echo "Usage: ".$_SERVER['argv'][0]." [restorepoint]\n\n";
 			echo "Available restorepoints:\n\n";
-			$dates = Backup::listImages();
+			$dates = DBManager::getInstance()->getBackupImages();
 			foreach ($dates as $f)
 			{
 				echo "$f\n";

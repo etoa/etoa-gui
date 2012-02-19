@@ -70,10 +70,10 @@
 
 		// Tabellen optimieren
 		$tmr = timerStart();
-		DbMaintenance::optimizeTables();
+		DBManager::getInstance()->optimizeTables();
 		$log.= "Tabellen optimiert.\nDauer: ".timerStop($tmr)." sec\n\n";
 		$tmr = timerStart();
-		DbMaintenance::analyzeTables();
+		DBManager::getInstance()->analyzeTables();
 		$log.= "Tabellen analysiert.\nDauer: ".timerStop($tmr)." sec\n\n";
 
 		// Remove old ip-hostname combos from cache

@@ -77,10 +77,10 @@ class UserSession extends Session
 								FROM
 									".self::tableUser."
 								WHERE
-									LCASE(user_nick)='".strtolower(dbEscapeStr($loginNick))."'
+									LCASE(user_nick)=?
 								LIMIT 1;
 								;";
-								$ures = dbquery($sql);
+								$ures = dbQuerySave($sql, array(strtolower($loginNick)));
 								if (mysql_num_rows($ures)>0)
 								{
 									$uarr = mysql_fetch_assoc($ures);

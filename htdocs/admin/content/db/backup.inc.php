@@ -6,7 +6,7 @@
 		{
 			echo "Erstelle Backup...<br/>";
 
-			if (Backup::create())
+			if (DBManager::getInstance()->backup())
 			{
 				ok_msg("Das Backup wurde erstellt!");
 			}
@@ -20,7 +20,7 @@
 		elseif (isset($_GET['action']) && $_GET['action']=="backuprestore" && $_GET['date']!="")
 		{
 			// Sicherungskopie anlegen
-			if (Backup::create())
+			if (DBManager::getInstance()->backup())
 			{
 				$result = shell_exec("../scripts/restore.php ".$_GET['date']);
 				if ($result=="")
@@ -81,7 +81,7 @@
 			$bfiles=array();
 			while ($f = readdir($d))
 			{
-				if (is_file($cfg->backup."/".$f) && stristr($f,".sql") && preg_match('/^'.DB_DATABASE.'/i',$f)==1)
+				if (is_file($cfg->backup."/".$f) && stristr($f,".sql") && preg_match('/^'.DBManager::getInstance()->getDbName().'/i',$f)==1)
 				{
 					array_push($bfiles,$f);
 				}

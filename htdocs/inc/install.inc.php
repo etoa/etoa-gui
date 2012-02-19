@@ -19,7 +19,7 @@ $tpl->display(getcwd()."/tpl/headerext.html");
 if (!isset($_SESSION['INSTALL']))
 	$_SESSION['INSTALL'] = array();
 
-if (!file_exists(RELATIVE_ROOT."config/db.config.php"))
+if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 {
 	echo "<h1>EtoA Installation</h1>";
 
@@ -35,11 +35,13 @@ if (!file_exists(RELATIVE_ROOT."config/db.config.php"))
 		echo "Prüfe Eingaben....<br/>";
 		if ($_POST['db_server'] != "" && $_POST['db_name'] != "" && $_POST['db_user'] != "" && $_POST['db_password'] != "")
 		{
-			define('DB_SERVER',$_POST['db_server']);
-			define('DB_USER',$_POST['db_user']);
-			define('DB_PASSWORD',$_POST['db_password']);
-			define('DB_DATABASE',$_POST['db_name']);	
-			if (dbconnect(0))
+			$dbCfg = array(
+				'host' => $_POST['db_server'],
+				'dbname' => $_POST['db_name'],
+				'user' => $_POST['db_user'],
+				'password' => $_POST['db_password'],
+			);			
+			if (DBManager::getInstance()->connect(0, $dbCfg))
 			{
 				echo "<div style=\"color:#0f0\">Datenbankverbindung erfolgreich!</div><br/>";
 				
@@ -63,9 +65,8 @@ if (!file_exists(RELATIVE_ROOT."config/db.config.php"))
 
 		$_SESSION['INSTALL']['round_name'] = $_POST['round_name'];
 		$_SESSION['INSTALL']['loginserver_url'] = $_POST['loginserver_url'];
-		$_SESSION['INSTALL']['password_salt'] = $_POST['password_salt'];
 
-		if ($_POST['round_name'] != "" && $_POST['loginserver_url'] != "" && $_POST['password_salt'] != "")
+		if ($_POST['round_name'] != "" && $_POST['loginserver_url'] != "")
 		{
 			$step = 3;
 			$_SESSION['INSTALL']['step'] = 3;
@@ -115,19 +116,10 @@ if (!file_exists(RELATIVE_ROOT."config/db.config.php"))
 		<a href=\"?step=4\" style=\"color:000\">Schritt 4</a> |
 		</div><br/>";
 		
-		define('DB_SERVER',$_SESSION['INSTALL']['db_server']);
-		define('DB_USER',$_SESSION['INSTALL']['db_user']);
-		define('DB_PASSWORD',$_SESSION['INSTALL']['db_password']);
-		define('DB_DATABASE',$_SESSION['INSTALL']['db_name']);	
-		define('PASSWORD_SALT',$_SESSION['INSTALL']['password_salt']);
-
-		dbconnect();
-		
 		$cfg = Config::getInstance();
 		$cfg->set("referers",$_SESSION['INSTALL']['referers']);
 		$cfg->set("roundname",$_SESSION['INSTALL']['round_name']);
 		$cfg->set("loginurl",$_SESSION['INSTALL']['loginserver_url']);
-		$cfg->set("password_salt",$_SESSION['INSTALL']['password_salt']);
 
 		echo "<div style=\"color:#0f0\">Refererliste gespeichert!</div><br/>";
 		
@@ -160,22 +152,17 @@ if (!file_exists(RELATIVE_ROOT."config/db.config.php"))
 			}
 		}
 		
+		$dbCfg = array(
+			'host' => $_SESSION['INSTALL']['db_server'],
+			'dbname' => $_SESSION['INSTALL']['db_name'],
+			'user' => $_SESSION['INSTALL']['db_user'],
+			'password' => $_SESSION['INSTALL']['db_password'],
+		);
 		
-		$out="&lt;?PHP
-	// EtoA main config file
-	// Generated: ".date("d.m.Y H:i")."
-
-	define('DB_SERVER','".$_SESSION['INSTALL']['db_server']."');
-	define('DB_USER','".$_SESSION['INSTALL']['db_user']."');
-	define('DB_PASSWORD','".$_SESSION['INSTALL']['db_password']."');
-	define('DB_DATABASE','".$_SESSION['INSTALL']['db_name']."');	
-	
-?&gt;";
-
-		echo "Fertig! Du musst nun den folgenden Inhalt in eine neue Textdatei namens <b>config/db.config.php</b> speichern!<br/><br/>
-			<div style=\"width:900px;background:#eee;color:#000;font-family:courier new;margin:0px auto;text-align:left;\">
-			".nl2br($out)."
-		</div>";
+		echo "Fertig! Du musst nun den folgenden Inhalt in eine neue Textdatei namens <b>config/".DBManager::getInstance()->getConfigFile()."</b> speichern!<br/><br/>
+			<textarea style=\"width:900px;background:#eee;color:#000;font-family:courier new;margin:0px auto;text-align:left;\">
+			".json_encode($dbCfg)."
+		</textarea>";
 		echo "<br/>&gt;&gt; <a href=\"admin\">Zum Admin-Login</a><br/><br/>
 		&gt;&gt; <a href=\"".$_SESSION['INSTALL']['loginserver_url']."\">Zum Loginserver</a><br/><br/>";
 	
@@ -189,12 +176,6 @@ if (!file_exists(RELATIVE_ROOT."config/db.config.php"))
 		<a href=\"?step=3\" style=\"color:000\">Schritt 3</a> |
 		Schritt 4
 		</div><br/>";
-		
-		define('DB_SERVER',$_SESSION['INSTALL']['db_server']);
-		define('DB_USER',$_SESSION['INSTALL']['db_user']);
-		define('DB_PASSWORD',$_SESSION['INSTALL']['db_password']);
-		define('DB_DATABASE',$_SESSION['INSTALL']['db_name']);	
-		dbconnect();
 		
 		$cfg = Config::getInstance();
 		
@@ -249,11 +230,6 @@ if (!file_exists(RELATIVE_ROOT."config/db.config.php"))
 					<th>Loginserver-URL:</th>
 					<td><input type=\"text\" name=\"loginserver_url\" value=\"".(isset($_SESSION['INSTALL']['loginserver_url']) ? $_SESSION['INSTALL']['loginserver_url'] : 'http://www.etoa.ch')."\" /></td>
 					<td>(z.b. http://www.etoa.ch)</td>
-				</tr>
-				<tr>
-					<th>Passwort-Salt:</th>
-					<td><input type=\"text\" name=\"password_salt\" value=\"".(isset($_SESSION['INSTALL']['password_salt']) ? $_SESSION['INSTALL']['password_salt'] : '')."\" /></td>
-					<td>(mit diesem Schlüssel werden alle Passwörter zusätzlich verschlüsselt; darf während einer laufenden Runde nicht ge&auml;ndert werde da sonst die Passw&ouml;rter nicht mehr gehen)</td>
 				</tr>
 			</table>
 		</fieldset>		

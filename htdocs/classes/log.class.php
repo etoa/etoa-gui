@@ -152,7 +152,20 @@ class Log extends BaseLog
 		dbquery("
 		INSERT DELAYED INTO
 			logs
-		SELECT * FROM
+		(
+			facility,
+			severity,
+			timestamp,
+			ip,
+			message
+		)
+		SELECT 
+			facility,
+			severity,
+			timestamp,
+			ip,
+			message 
+		FROM
 			logs_queue				
 		;");
 		$numRecords = mysql_affected_rows();

@@ -22,11 +22,11 @@ function saveEdit($id,$comment)
 		$arr = mysql_fetch_row($res);
 		if ($arr[0]==$uid)
 		{
-			dbquery("UPDATE buddylist SET bl_comment='".dbEscapeStr($comment)."' WHERE bl_id='".$id."' LIMIT 1;");
+			dbQuerySave("UPDATE buddylist SET bl_comment=? WHERE bl_id='".$id."' LIMIT 1;", array($comment));
 		}
 		else
 		{
-			dbquery("UPDATE buddylist SET bl_comment_buddy='".dbEscapeStr($comment)."' WHERE bl_id=".$id." LIMIT 1;");
+			dbQuerySave("UPDATE buddylist SET bl_comment_buddy=? WHERE bl_id=".$id." LIMIT 1;", array($comment));
 		}
 	}
 	return $ajax;

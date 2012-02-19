@@ -35,7 +35,7 @@
 	// Initialisieren
 	if (include("inc/bootstrap.inc.php"))
 	{
-		Backup::create();
+		DBManager::getInstance()->backup();
 	}
 	else
 	{

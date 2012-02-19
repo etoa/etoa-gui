@@ -86,19 +86,19 @@
 					$sizes = array("" => $cfg->value('imagesize'),"_middle" => $cfg->p1('imagesize'),"_small" => $cfg->p2('imagesize'));
 
 					$dira = array(
-						"abuildings" => array("building",getArrayFromTable("alliance_buildings","alliance_building_id")),
-						"atechnologies" => array("technology",getArrayFromTable("alliance_technologies","alliance_tech_id")),
-						"buildings" => array("building",getArrayFromTable("buildings","building_id")),
-						"defense" => array("def",getArrayFromTable("defense","def_id")),
-						"missiles" => array("missile",getArrayFromTable("missiles","missile_id")),
-						"ships" => array("ship",getArrayFromTable("ships","ship_id")),
-						"stars" => array("star",getArrayFromTable("sol_types","sol_type_id")),
-						"technologies" => array("technology",getArrayFromTable("technologies","tech_id")),
+						"abuildings" => array("building", DBManager::getInstance()->getArrayFromTable("alliance_buildings","alliance_building_id")),
+						"atechnologies" => array("technology", DBManager::getInstance()->getArrayFromTable("alliance_technologies","alliance_tech_id")),
+						"buildings" => array("building", DBManager::getInstance()->getArrayFromTable("buildings","building_id")),
+						"defense" => array("def", DBManager::getInstance()->getArrayFromTable("defense","def_id")),
+						"missiles" => array("missile", DBManager::getInstance()->getArrayFromTable("missiles","missile_id")),
+						"ships" => array("ship", DBManager::getInstance()->getArrayFromTable("ships","ship_id")),
+						"stars" => array("star", DBManager::getInstance()->getArrayFromTable("sol_types","sol_type_id")),
+						"technologies" => array("technology", DBManager::getInstance()->getArrayFromTable("technologies","tech_id")),
 						"nebulas" => array("nebula",range(1,$cfg->value('num_nebula_images'))),
 						"asteroids" => array("asteroids",range(1,$cfg->value('num_asteroid_images'))),
 						"space" => array("space",range(1,$cfg->value('num_space_images'))),
 						"wormholes" => array("wormhole",range(1,$cfg->value('num_wormhole_images'))),
-						"races" => array("race",getArrayFromTable("races","race_id")),
+						"races" => array("race", DBManager::getInstance()->getArrayFromTable("races","race_id")),
 					);
 
 					foreach ($dira as $sdir => $sd)

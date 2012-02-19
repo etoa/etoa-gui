@@ -132,7 +132,7 @@
 			// Deshalb muss diese Funktion nach mtx->release() stehen
 			if ((date("h")-$cfg->p1("backup_time"))%$cfg->get("backup_time")==0 && date("i")==$cfg->p2("backup_time")) 
 			{
-				Backup::create();				
+				DBManager::getInstance()->backup();				
 			}			
 		}
 

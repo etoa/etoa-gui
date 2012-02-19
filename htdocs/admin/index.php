@@ -68,8 +68,7 @@ else
 	$tpl->assign("search_query",(isset($_POST['search_query']) ? $_POST['search_query'] : '' ));
 	$tpl->assign("user_level",$cu->level);
 
-	$menuFile = "../config/admin-menu.conf";
-	$navmenu = json_decode(file_get_contents($menuFile),true);
+	$navmenu = fetchJsonConfig("admin-menu.conf");
 	$tpl->assign("navmenu",$navmenu);
 	
 	$tpl->assign("page",$page);

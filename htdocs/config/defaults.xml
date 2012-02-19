@@ -357,8 +357,8 @@ Besten Dank f&#xFC;r euer Verst&#xE4;ndnis&#xD;
       <p1 comment="Wurmloch-Update: Anzahl &#xC4;nderungen" type="text">1</p1>
     </item>
     <item name="referers" cat="1" base="yes">
-      <v comment="Zugelassene Referers" type="textarea">http://test.etoa.ch&#xD;
-http://dev.etoa.ch&#xD;
+      <v comment="Zugelassene Referers" type="textarea">http://test.dev.etoa.net&#xD;
+http://dev.etoa.net&#xD;
 http://www.etoa.ch&#xD;
 http://localhost&#xD;
 http://127.0.0.1</v>

@@ -36,43 +36,37 @@
 	*/
 	function __autoload($class_name) 
 	{
-		//try
-		//{
-			if ($class_name != "xajax")
+		if ($class_name != "xajax")
+		{
+			if (defined("CLASS_ROOT"))
+				$dir = CLASS_ROOT;
+			else
 			{
-				if (defined("CLASS_ROOT"))
-					$dir = CLASS_ROOT;
+				if (stristr($_SERVER["SCRIPT_FILENAME"],"admin/index.php"))
+					$dir = "../classes";
 				else
-				{
-					if (stristr($_SERVER["SCRIPT_FILENAME"],"admin/index.php"))
-						$dir = "../classes";
-					else
-						$dir = "classes";
-				}
-				$file = strtolower($class_name).'.class.php';
-	      if (file_exists($dir.'/'.$file))
-	      {
-	        include_once($dir.'/'.$file);
-	      }
-	      elseif (file_exists($dir.'/entity/'.$file))
-	      {
-	        include_once($dir.'/entity/'.$file);
-	      }
-	      elseif (file_exists($dir.'/fleetaction/'.$file))
-	      {
-	        include_once($dir.'/fleetaction/'.$file);
-	      }    
-	      else
-	      {
+					$dir = "classes";
+			}
+			$file = strtolower($class_name).'.class.php';
+			if (file_exists($dir.'/'.$file))
+			{
+				include_once($dir.'/'.$file);
+			}
+			elseif (file_exists($dir.'/entity/'.$file))
+			{
+				include_once($dir.'/entity/'.$file);
+			}
+			elseif (file_exists($dir.'/fleetaction/'.$file))
+			{
+				include_once($dir.'/fleetaction/'.$file);
+			}    
+			else
+			{
+				echo "Error: Class $class_name not found!";
+				exit;
 	      //	throw new EException("Die Klasse ".$class_name." wurde nicht gefunden (".$dir."/".$file.")!");
 		    }
-		  }
-	/*	}
-		catch (EException $e)
-		{
-			echo $e;
-			exit;
-		}*/
+		}
 	}
 	
 	/**
@@ -85,70 +79,15 @@
 	/**
 	* Baut die Datenbankverbindung auf
 	*/
-	function dbconnect($throwError = 1)
-	{
-		global $db_handle;
-		global $query_counter;
-		global $queries;
-		global $dbopen;
-
-		$queries = array();
-		$query_counter=0;
-		try
-		{
-			if (!$db_handle = @mysql_connect(DB_SERVER,DB_USER,DB_PASSWORD))
-			{
-				if ($throwError==1)
-					throw new DBException("Zum Datenbankserver auf <b>".DB_SERVER."</b> kann keine Verbindung hergestellt werden!");
-				else
-					return false;
-			}
-			if (!mysql_select_db(DB_DATABASE))
-			{
-				if ($throwError==1)
-					throw new DBException("Auf die Datenbank <b>".DB_DATABASE."</b> auf <b>".DB_SERVER."</b> kann nicht zugegriffen werden!");
-				else
-					return false;
-			}
-			$dbopen = true;
-			dbquery("SET NAMES 'utf8';"); 
-			return true;		
-		}
-		catch (DBException $e)
-		{
-			echo $e;
-			exit;
-		}
+	function dbconnect($throwError = 1) {
+		return DBManager::getInstance()->connect($throwError);
 	}
 
 	/**
 	* Trennt die Datenbankverbindung
 	*/
-	function dbclose()
-	{
-		global $db_handle;
-		global $res;
-		global $query_counter; 
-		global $queries;
-		global $dbopen;
-		if (ETOA_DEBUG==1 && false )
-		{
-			echo "Queries done: ".$query_counter."<br/>";
-			foreach ($queries as $q)
-			{
-				echo "<b>".$q[0]."</b><br/>".($q[1])."<br/>";
-				$res = mysql_query("EXPLAIN ".$q[0]."");
-				drawDbQueryResult($res);
-				echo "<br/>";
-			}
-		}
-		if (isset($res))
-		{
-			@mysql_free_result($res);
-		}
-		@mysql_close($db_handle);
-		unset($db_handle);
-		$dbopen = false;
+	function dbclose() {
+		return DBManager::getInstance()->close();
 	}
 
 	/**
@@ -157,38 +96,8 @@
 	* @param string $string SQL-Abfrage
 	* #param int $fehler Erzwing Fehleranzeige, Standard: 1
 	*/
-	function dbquery($string, $fehler=1)
-	{
-		global $db_handle;
-		global $nohtml;
-		global $query_counter; 
-		global $queries;
-		global $dbopen;
-		if (!$dbopen)
-		{
-			dbconnect();			
-		}
-			
-		$query_counter++;
-		if (defined('ETOA_DEBUG') && ETOA_DEBUG==1 && stristr($string,"SELECT"))
-		{
-			ob_start();
-			debug_print_backtrace();
-			$queries[] = array($string,ob_get_clean());
-		}
-		if ($result=mysql_query($string))
-			return $result;
-		elseif ($fehler==1)
-		{
-			try
-			{
-				throw new DBException($string);	
-			}
-			catch (DBException $e)
-			{
-				echo $e;
-			}			
-		}
+	function dbquery($string, $fehler=1) {
+		return DBManager::getInstance()->query($string, $fehler);
 	}
 
 	/**
@@ -197,102 +106,8 @@
 	* @param string $query SQL-Query
 	* @param array $params Array of arguments
 	*/
-	function dbQuerySave($query,$params=array()) 
-	{
-	    if (is_array($params) && count($params)>0) 
-	    {
-	        foreach ($params as &$v) 
-	        { 
-	        	$v = dbEscapeStr($v); 
-	        }    
-	        # Escaping parameters
-	        # str_replace - replacing ? -> %s. %s is ugly in raw sql query
-	        # vsprintf - replacing all %s to parameters
-	        $sql = vsprintf( str_replace("?","'%s'",$query), $params );   
-	    } 
-	    else 
-	    {
-	        $sql = $query;    # If no params...
-	    }
-	    if ($res = mysql_query($sql))
-	    	return $res;
-			try
-			{
-				throw new DBException($string);	
-			}
-			catch (DBException $e)
-			{
-				echo $e;
-			}
-			return false;
-	} 
-
-	/**
-	 * Prepares a user string for sql queries and
-	 * escapes all malicious characters, e.g. '
-	 * 
-	 * @param string $string
-	 * @return string
-	 */
-	function dbEscapeStr($string)
-	{
-		$string = trim($string);
-		if(get_magic_quotes_gpc())
-			$string = stripslashes($string);
-		return mysql_real_escape_string($string);
-	}
-
-	function drawDbQueryResult($res)
-	{
-		if (mysql_num_rows($res)>0)
-		{
-			echo "<table class=\"tb\"><tr>";
-			for ($x=0;$x<mysql_num_fields($res);$x++)
-			{
-				echo "<th>".mysql_field_name($res,$x)."</th>";
-			}
-			echo "</tr>";
-			while ($arr=mysql_fetch_row($res))
-			{
-				echo "<tr>";
-				foreach ($arr as $a)
-				{
-					echo "<td>".$a."</td>";
-				}
-				echo "</tr>";
-			}
-			echo "</table>";
-		}
-		else
-		{
-			echo "No result!<br/>";
-		}
-	}
-
-	function getArrayFromTable($table,$field)
-	{
-		$r = array();
-		$res = dbquery("
-		SELECT
-			`".$field."`
-		FROM
-			`".$table."`
-		");
-		if (mysql_num_rows($res)>0)
-		{
-			while ($arr=mysql_fetch_row($res))
-			{
-				$r[] = $arr[0];
-			}
-		}
-		return $r;
-	}
-
-	function dbexplain($sql)
-	{
-		echo "Explaining: $sql";
-		$res = mysql_query("EXPLAIN ".$sql."");
-		drawDbQueryResult($res);
+	function dbQuerySave($query, $params=array()) {
+	    return DBManager::getInstance()->safeQuery($query, $params);
 	}
 
 	/**
@@ -2961,7 +2776,29 @@ function imagecreatefromfile($path, $user_functions = false)
 		}
 	}
 
-
+	/**
+	* Checks wether a given config file exists
+	*/
+	function configFileExists($file)	{
+		$path = RELATIVE_ROOT."config/".$file;
+		return file_exists($path);
+	}
+	
+	/**
+	* Fetches the contents of a JSON config file and returns it as an associative array
+	*/
+	function fetchJsonConfig($file)	{
+		$path = RELATIVE_ROOT."config/".$file;
+		if (!file_exists($path))	{
+			throw new EException("Config file $file not found!");
+		}
+		$data = json_decode(file_get_contents($path), true);
+		if (json_last_error() != JSON_ERROR_NONE)	{
+			throw new EException("Failed to parse config file $file (JSON error ".json_last_error().")!");
+		}
+		return $data;
+	}
+	
 	/**
 	* Textfunktionen einbinden
 	*/

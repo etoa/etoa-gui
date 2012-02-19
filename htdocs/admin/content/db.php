@@ -138,7 +138,7 @@
 	{
 		echo '<h2>Optimierungsbericht</h2>';
 		echo '<input type="button" value="Zur Übersicht" onclick="document.location=\'?page='.$page.'\'" /><br/><br/>';
-		$ores = DbMaintenance::optimizeTables(true);
+		$ores = DBManager::getInstance()->optimizeTables(true);
 		db_show_result($ores);
 		echo '<br/><input type="button" value="Zur Übersicht" onclick="document.location=\'?page='.$page.'\'" />';
 	}
@@ -150,7 +150,7 @@
 	{
 		echo '<h2>Reparaturbericht</h2>';
 		echo '<input type="button" value="Zur Übersicht" onclick="document.location=\'?page='.$page.'\'" /><br/><br/>';
-		$ores = DbMaintenance::repairTables(true);
+		$ores = DBManager::getInstance()->repairTables(true);
 		db_show_result($ores);
 		echo '<br/><input type="button" value="Zur Übersicht" onclick="document.location=\'?page='.$page.'\'" />';
 	}
@@ -162,7 +162,7 @@
 	{
 		echo '<h2>Analysebericht</h2>';
 		echo '<input type="button" value="Zur Übersicht" onclick="document.location=\'?page='.$page.'\'" /><br/><br/>';
-		$ores = DbMaintenance::analyzeTables(true);
+		$ores = DBManager::getInstance()->analyzeTables(true);
 		db_show_result($ores);
 		echo '<br/><input type="button" value="Zur Übersicht" onclick="document.location=\'?page='.$page.'\'" />';
 	}
@@ -174,7 +174,7 @@
 	{
 		echo '<h2>Überprüfungsbericht</h2>';
 		echo '<input type="button" value="Zur Übersicht" onclick="document.location=\'?page='.$page.'\'" /><br/><br/>';
-		$ores = DbMaintenance::checkTables(true);
+		$ores = DBManager::getInstance()->checkTables(true);
 		db_show_result($ores);
 		echo '<br/><input type="button" value="Zur Übersicht" onclick="document.location=\'?page='.$page.'\'" />';
 	}			
@@ -1085,7 +1085,7 @@
 		$tr = array();
 		$ts = array();
 		$tn = array();
-		$res=dbquery("SHOW TABLE STATUS FROM ". DB_DATABASE.";");
+		$res=dbquery("SHOW TABLE STATUS FROM ". DBManager::getInstance()->getDbName().";");
 		$rows=$datal=0;
 		while ($arr=mysql_fetch_array($res))
 		{
@@ -1096,7 +1096,7 @@
 			$tn[$arr['Name']]=$arr['Name'];
 		}          
 		echo '<div style="float:right;"><h2>Datenbankstatistiken</h2>';		
-		echo "Die Datenbank <b>".DB_DATABASE."</b> hat <b>".nf($rows)."</b> Zeilen<br/>und eine 
+		echo "Die Datenbank <b>".DBManager::getInstance()->getDbName()."</b> hat <b>".nf($rows)."</b> Zeilen<br/>und eine 
 		Gesamtgrösse von <b>".byte_format($datal)."</b><br/><br/>";
 		echo '<table style="width:300px;" class="tb">';
 		echo '<tr><th colspan="3">Datenbanktabellen</th></tr>';

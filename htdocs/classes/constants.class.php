@@ -1,13 +1,13 @@
 <?php
 /**
-*
+* Gives access to constants defined in config file
 *
 * @author Nicolas Perrenoud <mrcage@etoa.ch>
 */
 class Constants implements ISingleton
 {
 	private $_items;
-	const configFile = "config/constants.conf";
+	const configFile = "constants.conf";
 
 	static private $instance;
 
@@ -29,7 +29,7 @@ class Constants implements ISingleton
 	*/
 	public function __clone()
 	{
-		throw new EException("Config ist nicht klonbar!");
+		throw new EException(__CLASS__." ist nicht klonbar!");
 	}
 
 	/**
@@ -37,10 +37,7 @@ class Constants implements ISingleton
 	*/
 	private function __construct()
 	{
-		if (!is_file(RELATIVE_ROOT.self::configFile))	{
-			throw new EException("Konfigurationsdatei ".self::configFile." existiert nicht!");			
-		}
-		$this->_items = json_decode(file_get_contents(RELATIVE_ROOT.self::configFile),true);
+		$this->_items = fetchJsonConfig(self::configFile);
 	}
 	
 	public function __isset($name)

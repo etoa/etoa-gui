@@ -45,7 +45,7 @@
 	require_once(RELATIVE_ROOT."inc/functions.inc.php");
 
 	// Include db config
-	if (!@include_once(RELATIVE_ROOT."config/db.config.php"))
+	if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 	{
 		if (ADMIN_MODE)
 			forward(RELATIVE_ROOT);
@@ -62,6 +62,7 @@
 
 	date_default_timezone_set("Europe/Zurich");
 
+	define('ETOA_DEBUG',true);
 	// Debug einschalten?
 	if (!defined('ETOA_DEBUG'))
 		define('ETOA_DEBUG',$cfg->debug->v);
