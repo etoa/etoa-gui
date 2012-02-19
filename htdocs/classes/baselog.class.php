@@ -1,73 +1,55 @@
 <?PHP
+abstract class BaseLog
+{
+	protected static $table;
+	protected static $queueTable;	
 
-	abstract class BaseLog
+	// Severities
+
+	/**
+	 * Debug message
+	 */
+	const DEBUG = 0;
+	/**
+	 * Information
+	 */
+	const INFO = 1;
+	/**
+	 * Warning
+	 */
+	const WARNING = 2;
+	/**
+	 * Error
+	 */
+	const ERROR = 3;
+	/**
+	 * Critical error
+	 */
+	const CRIT = 4;
+
+	static public $severities = array("Debug", "Information", "Warnung", "Fehler", "Kritisch");
+
+	abstract static function processQueue();
+	abstract static function cleanup($threshold);
+	
+	/**
+	* Alle alten Logs löschen
+	*/
+	static function removeOld($threshold=0)
 	{
-		// Severities
+		$cfg = Config::getInstance();
+		if ($threshold>0)
+			$tstamp = time() - $threshold;
+		else
+			$tstamp = time() - (24*3600*$cfg->get('log_threshold_days'));
 
-		/**
-		 * Debug message
-		 */
-		const DEBUG = 0;
-		/**
-		 * Information
-		 */
-		const INFO = 1;
-		/**
-		 * Warning
-		 */
-		const WARNING = 2;
-		/**
-		 * Error
-		 */
-		const ERROR = 3;
-		/**
-		 * Critical error
-		 */
-		const CRIT = 4;
+		$nr = Log::cleanup($tstamp);
+		$nr+= GameLog::cleanup($tstamp);
+		$nr+= FleetLog::cleanup($tstamp);
+		$nr+= BattleLog::cleanup($tstamp);
 
-		static public $severities = array("Debug","Information","Warnung","Fehler","Kritisch");
-
-		/**
-		* Alte Logs löschen
-		*/
-		static function removeOld($threshold=0)
-		{
-			$cfg = Config::getInstance();
-			if ($threshold>0)
-				$tstamp = time() - $threshold;
-			else
-				$tstamp = time() - (24*3600*$cfg->get('log_threshold_days'));
-
-			$nr = Log::cleanup($tstamp);
-
-			dbquery("
-				DELETE FROM
-					logs_battle
-				WHERE
-					timestamp<'".$tstamp."'
-			");
-			$nr += mysql_affected_rows();
-			dbquery("
-				DELETE FROM
-					logs_game
-				WHERE
-					timestamp<'".$tstamp."'
-			");
-			$nr += mysql_affected_rows();
-			dbquery("
-				DELETE FROM
-					logs_fleet
-				WHERE
-					timestamp<'".$tstamp."'
-			");
-			$nr += mysql_affected_rows();
-
-
-
-			add_log("4","$nr Logs die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!",time());
-			return $nr;
-		} 
-		
-	}
-
+		Log::add(Log::F_SYSTEM, Log::INFO, "$nr Logs die älter als ".date("d.m.Y H:i", $tstamp)." sind wurden gelöscht!");
+		return $nr;
+	}		
+}
 ?>

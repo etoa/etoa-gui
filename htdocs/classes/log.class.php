@@ -1,6 +1,9 @@
 <?PHP
 class Log extends BaseLog
 {
+	protected static $table = "logs";
+	protected static $queueTable = "logs_queue";
+
 	// Facilities
 	
 	/**
@@ -83,25 +86,25 @@ class Log extends BaseLog
 	const F_ILLEGALACTION = 18;
 
 	static public $facilities = array(
-	"Sonstiges",
-	"Kampfberichte",
-	"Beleidigungen",
-	"User",
-	"System",
-	"Allianzen",
-	"Galaxie",
-	"Markt",
-	"Administration",
-	"Multi-Verstoss",
-	"Multi-Handel",
-	"Schiffshandel",
-	"Recycling",
-	"Flottenaktionen",
-	"Wirtschaft",
-	"Updates",
-	"Schiffe",
-	"Ranglisten",
-	"Illegale Useraktion"
+		"Sonstiges",
+		"Kampfberichte",
+		"Beleidigungen",
+		"User",
+		"System",
+		"Allianzen",
+		"Galaxie",
+		"Markt",
+		"Administration",
+		"Multi-Verstoss",
+		"Multi-Handel",
+		"Schiffshandel",
+		"Recycling",
+		"Flottenaktionen",
+		"Wirtschaft",
+		"Updates",
+		"Schiffe",
+		"Ranglisten",
+		"Illegale Useraktion"
 	);
 
 	/**
@@ -125,7 +128,7 @@ class Log extends BaseLog
 		{
 			dbquery("
 			INSERT DELAYED INTO
-				logs_queue
+				".self::$queueTable."
 			(
 				facility,
 				severity,
@@ -150,8 +153,8 @@ class Log extends BaseLog
 	*/
 	static function processQueue()	{
 		dbquery("
-		INSERT DELAYED INTO
-			logs
+		INSERT INTO
+			".self::$table."
 		(
 			facility,
 			severity,
@@ -162,17 +165,17 @@ class Log extends BaseLog
 		SELECT 
 			facility,
 			severity,
-			timestamp,
+			timestamp,	
 			ip,
 			message 
 		FROM
-			logs_queue				
+			".self::$queueTable."
 		;");
 		$numRecords = mysql_affected_rows();
 		if ($numRecords > 0)	{
 			dbquery("
 			DELETE FROM
-				logs_queue				
+				".self::$queueTable."				
 			LIMIT
 				".$numRecords.";");
 		}
@@ -184,17 +187,15 @@ class Log extends BaseLog
 	*
 	* @param $timestamp string All items older than this time threshold will be deleted
 	*/
-	static function cleanup($timestamp=0)
+	static function cleanup($threshold)
 	{
-		if ($timestamp==0)
-			$timestamp = time() - (24*3600*$cfg->get('log_threshold_days'));
 		dbquery("
 			DELETE FROM
-				logs
+				".self::$table."
 			WHERE
-				timestamp<'".$timestamp."'
+				timestamp<'".$threshold."'
 		");
 		return mysql_affected_rows();
-	}
+	}	
 }
 ?>
