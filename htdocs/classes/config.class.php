@@ -191,26 +191,26 @@
   	{
   		try
   		{
-				if (isset($this->_items[$name]))
-				{
-					return $this->_items[$name];
-				}
-				else
-				{
-					if ($elem = $this->loadDefault($name))
-					{
-						return $elem;
-					}
-
-					throw new EException("Konfigurationsvariable $name existiert nicht!");
-					return null;
-				}
-			}
-			catch (EException $e)
+			if (isset($this->_items[$name]))
 			{
-				echo $e;
-	    	return null;
-			}			   		
+				return $this->_items[$name];
+			}
+			else
+			{
+				if ($elem = $this->loadDefault($name))
+				{
+					return $elem;
+				}
+
+				throw new EException("Konfigurationsvariable $name existiert nicht!");
+				return null;
+			}
+		}
+		catch (EException $e)
+		{
+			echo $e;
+		return null;
+		}			   		
     }
 
 		function restoreDefaults()
@@ -294,7 +294,7 @@
 				$this->defaultsXml = simplexml_load_file(RELATIVE_ROOT."config/defaults.xml");
 			}
 			return $this->defaultsXml->xpath("/config/items/item[@base='yes']");
-		}		
+		}
 	}
 	
 	class ConfigItem
@@ -309,7 +309,7 @@
 		
 		function __toString()
 		{
-			return $this->_v;
+			return (string)$this->_v;
 		}
 		
 		public function __get($name)

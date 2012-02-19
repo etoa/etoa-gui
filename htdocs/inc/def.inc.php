@@ -32,9 +32,6 @@
   /* Directory- and file paths       */
   /***********************************/
 
-	// Backup-Dir
-	define('BACKUP_DIR',$cfg->get('backup'));	
-
 	// RSS Dir
 	define('RSS_DIR',CACHE_ROOT."/rss");
 
@@ -473,15 +470,5 @@
 	define('GAMESTATS_ROW_LIMIT',15);
 	define('USERSTATS_OUTFILE',CACHE_ROOT."/out/userstats.png");
 	define('XML_INFO_FILE',CACHE_ROOT."/xml/info.xml");
-
-	// Daemon
-	// Todo: make changeable
-	$daemonId = $cfg->daemonIdentifier->v;
-	$daemonLogfile = "/var/log/etoad/etoad.".$daemonId.".log";
-	$daemonPidfile = "/var/run/etoa/".$daemonId.".pid";
-	$daemonExe = "/usr/local/bin/etoad";
-
-
-
 
 ?>

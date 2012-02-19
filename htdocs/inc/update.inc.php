@@ -195,9 +195,7 @@
 		AdminSession::cleanup();
 		
 		//Check Backend
-		$daemonId = $cfg->daemonIdentifier->v;
-		$daemonPidfile = "/var/run/etoa/".$daemonId.".pid";
-		$backend = checkDaemonRunning($daemonPidfile)>0 ? true : false;
+		$backend = checkDaemonRunning($cfg->daemon_pidfile)>0 ? true : false;
 		if ($cfg->value("backend") != $backend)
 		{
 			$mailText = $cfg->value("backend") == 0 ? "Funktioniert wieder" : $cfg->p1("backend");

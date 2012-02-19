@@ -17,6 +17,8 @@
     <category id="17">Quests</category>
     <category id="18">Ereignisse</category>
     <category id="19">Logging</category>
+    <category id="20">Eventhandler</category>	
+    <category id="21">Datenbank</category>	
   </categories>
   <items>
 	<item name="roundname" cat="1" base="yes">
@@ -77,13 +79,10 @@
     <item name="user_timeout" cat="1">
       <v comment="Timeout" type="text">2400</v>
     </item>
-    <item name="password_minlength" cat="1">
+    <item name="password_minlength" cat="10">
       <v comment="Minimale Passwortl&#xE4;nge" type="text">6</v>
       <p1 comment="Maximale Passwortl&#xE4;nge" type="text">30</p1>
     </item>
-    <item name="password_salt" cat="1">
-      <v comment="Passwort-Salt" type="text">wokife63wigire64reyodi69</v>
-		</item>
     <item name="global_time" cat="2">
       <v comment="Global Bauzeit in Rohstoffe pro Sekunde, standart Value 12)" type="text">12</v>
     </item>
@@ -132,7 +131,7 @@
     <item name="statsupdate" cat="1">
       <v comment="Statistikupdate" type="timedate">1240063202</v>
     </item>
-    <item name="hmode_days" cat="1">
+    <item name="hmode_days" cat="10">
       <v comment="Urlaubsmodus Mindestdauer" type="text">2</v>
     </item>
     <item name="def_store_capacity" cat="5">
@@ -219,10 +218,23 @@ Besten Dank f&#xFC;r euer Verst&#xE4;ndnis&#xD;
     <item name="url_teamspeak" cat="1">
       <v comment="URL: TeamSpeak" type="text">http://etoa.ch/teamspeak</v>
     </item>
-    <item name="backup" cat="1" base="yes">
+    <item name="backup_dir" cat="21" base="yes">
       <v comment="Backup-Pfad" type="text">/home/etoa/backup/</v>
-      <p1 comment="Backup-Aufbewahrungsdauer (Tage)" type="text">14</p1>
-      <p2 comment="GZIP benutzen" type="onoff">0</p2>
+	</item>
+    <item name="backup_retention_time" cat="21" base="yes">
+      <v comment="Backup-Aufbewahrungsdauer (Tage)" type="text">14</v>
+    </item>
+    <item name="backup_use_gzip" cat="21" base="yes">
+      <v comment="Backup mit GZIP komprimieren" type="onoff">0</v>
+    </item>
+    <item name="backup_time_interval" cat="21">
+      <v comment="Backup-Intervall (Stunden)" type="text">6</v>
+    </item>
+    <item name="backup_time_hour" cat="21">
+      <v comment="Backup-Start (Stunde)" type="text">0</v>
+    </item>
+    <item name="backup_time_minute" cat="21">
+      <v comment="Backup-Start (Minute)" type="text">47</v>
     </item>
     <item name="user_max_planets" cat="3">
       <v comment="Max Planeten/User" type="text">15</v>
@@ -237,7 +249,7 @@ Besten Dank f&#xFC;r euer Verst&#xE4;ndnis&#xD;
     <item name="msg_ban_hours" cat="8">
       <v comment="Sperrzeit f&#xFC;r Beleidigungen (h)" type="text">0</v>
     </item>
-    <item name="user_inactive_days" cat="1">
+    <item name="user_inactive_days" cat="10">
       <v comment="Inaktiv-Anzeige (Tage)" type="text">7</v>
       <p1 comment="Inaktiv-L&#xF6;schung (Tage)" type="text">21</p1>
       <p2 comment="Ungespielt-L&#xF6;schung (Tage)" type="text">14</p2>
@@ -266,7 +278,7 @@ Besten Dank f&#xFC;r euer Verst&#xE4;ndnis&#xD;
     <item name="people_multiply" cat="5">
       <v comment="Bev&#xF6;lkerungswachstum" type="text">1.1</v>
     </item>
-    <item name="online_threshold" cat="1">
+    <item name="online_threshold" cat="10">
       <v comment="Onlinezeit (?) in Minuten" type="text">5</v>
     </item>
     <item name="deactivate_fleet" cat="4">
@@ -345,10 +357,6 @@ Besten Dank f&#xFC;r euer Verst&#xE4;ndnis&#xD;
       <v comment="Admin-Htaccess Bereich-Vorschlag" type="text">Administration-</v>
       <p1 comment="Admin-Htaccess Name-Vorschlag" type="text">etoa</p1>
     </item>
-    <item name="backup_htaccess" cat="11">
-      <v comment="Backup-Htaccess Bereich-Vorschlag" type="text">Backup</v>
-      <p1 comment="Backup-Htaccess Name-Vorschlag" type="text">backup</p1>
-    </item>
     <item name="admin_dateformat" cat="11">
       <v comment="Datumsformat" type="text">Y-m-d H:i:s</v>
     </item>
@@ -378,7 +386,7 @@ http://127.0.0.1</v>
     <item name="mailqueue" cat="8">
       <v comment="Anzahl Mails pro Mailqueue-Check" type="text">50</v>
     </item>
-    <item name="nick_length" cat="1">
+    <item name="nick_length" cat="10">
       <p1 comment="Min. Nickl&#xE4;nge" type="text">3</p1>
       <p2 comment="Max. Nickl&#xE4;nge" type="text">15</p2>
     </item>
@@ -421,7 +429,7 @@ http://127.0.0.1</v>
       <v comment="Game offline stellen" type="onoff">0</v>
       <p1 comment="Erlaubter Zugang zu offline Game" type="textarea">89.236.149.247</p1>
     </item>
-    <item name="name_length" cat="1">
+    <item name="name_length" cat="10">
       <v comment="Maximale L&#xE4;nge des Names" type="text">30</v>
     </item>
     <item name="townhall_ban" cat="1">
@@ -448,7 +456,7 @@ Ich w&#xFC;nsche Euch nun viel Erfolg in der Galaxie von Andromeda. M&#xF6;ge Eu
 &#xD;
 Anmerkung: Eine Kopie dieser Nachricht wird in Eurer Nachrichten-Box hinterlegt. Klickt auf das gr&#xFC;ne Briefsymbol im der linken unteren Bildschirmh&#xE4;lfte um die Nachrichtenbox anzuzeigen.</v>
     </item>
-    <item name="user_delete_days" cat="1">
+    <item name="user_delete_days" cat="10">
       <v comment="Tage bis zur L&#xF6;schung" type="text">5</v>
     </item>
     <item name="battleban_arrival_text" cat="12">
@@ -623,20 +631,21 @@ Anmerkung: Eine Kopie dieser Nachricht wird in Eurer Nachrichten-Box hinterlegt.
       <v comment="Dauer eines Krieges (h)" type="text">48</v>
       <p1 comment="Dauer eines Friedens nach Krieg (h)" type="text">48</p1>
     </item>
-    <item name="backup_time" cat="1">
-      <v comment="Intervall (Stunden)" type="text">6</v>
-      <p1 comment="StartStunde" type="text">0</p1>
-      <p2 comment="Start-Minute" type="text">47</p2>
-    </item>
     <item name="solsys_percent_planet" cat="3">
       <v comment="Prozentualer Anteil an Planeten / Sternensystem" type="text">85</v>
     </item>
     <item name="solsys_percent_asteroids" cat="3">
       <v comment="Prozentualer Anteil an Asteroidenfeldern / Sternensystem" type="text">5</v>
     </item>
-    <item name="daemonIdentifier" cat="1" base="yes">
-      <v comment="Daemon-Id" type="text">roundx</v>
+    <item name="daemon_exe" cat="20">
+      <v comment="Evendhandler Executable" type="text">/usr/local/bin/etoad</v>
+    </item>	
+    <item name="daemon_logfile" cat="20" base="yes">
+      <v comment="Evendhandler Logfile" type="text">/var/log/etoad.roundx.log</v>
     </item>
+    <item name="daemon_pidfile" cat="20" base="yes">
+      <v comment="Evendhandler PID-File" type="text">/var/run/etoa.roundx.pid</v>
+    </item>	
     <item name="specialistconfig" cat="5">
       <v comment="SPECIALIST_AVAILABILITY_FACTOR basierend auf Faktor * Anzahl" type="text">0.3</v>
       <p1 comment="SPECIALIST_MAX_COSTS_FACTOR" type="text">10</p1>
@@ -676,9 +685,9 @@ Anmerkung: Eine Kopie dieser Nachricht wird in Eurer Nachrichten-Box hinterlegt.
     <item name="market_rate_4" cat="6">
       <v comment="Handelskurs Resource 4 (auto)" type="text">1</v>
     </item>
-    <item name="backend" cat="1">
+    <item name="backend" cat="20">
       <v comment="active" type="text">0</v>
-      <p1 comment="message" type="text">Der EtoA-Updatedienst ist momentan ausser Betrieb. Die Entwickler sind informiert. Es ist nicht notwendig ein Ticket zu eröffnen. Unterdessen werden weder Gebäude, Technologien, Schiffe, Verteidigungen, Planeten noch Flotten aktualisiert.</p1>
+      <p1 comment="message" type="textarea">Der EtoA-Updatedienst ist momentan ausser Betrieb. Die Entwickler sind informiert. Es ist nicht notwendig ein Ticket zu eröffnen. Unterdessen werden weder Gebäude, Technologien, Schiffe, Verteidigungen, Planeten noch Flotten aktualisiert.</p1>
       <p2 comment="mail-to" type="text">glaubinix@etoa.ch;mrcage@etoa.ch</p2>
     </item>
     <item name="bot_max_count" cat="1">

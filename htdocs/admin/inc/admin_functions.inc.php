@@ -386,24 +386,25 @@ function htpasswd_check($user,$file)
 	}
 }	
 
-function display_field($type,$confname,$field)
+function display_field($type, $confname, $field)
 {
 	ob_start();
 	global $cfg;
+	$id = "config_".$field."[".$confname."]";
 	switch ($type)
 	{
 		case "text":
-			echo "<input type=\"text\" name=\"config_".$field."[".$confname."]\" value=\"".$cfg->$confname->$field."\" />";
+			echo "<input type=\"text\" id=\"$id\" name=\"$id\" value=\"".$cfg->$confname->$field."\" />";
 			break;
 		case "textarea":
-			echo "<textarea name=\"config_".$field."[".$confname."]\" rows=\"4\" cols=\"50\">".$cfg->$confname->$field."</textarea>";
+			echo "<textarea id=\"$id\" name=\"$id\" rows=\"4\" cols=\"50\">".$cfg->$confname->$field."</textarea>";
 			break;
 		case "onoff":
-			echo "Ja: <input type=\"radio\" name=\"config_".$field."[".$confname."]\" value=\"1\" ";
+			echo "<input type=\"radio\" id=\"".$id."_1\" name=\"".$id."\" value=\"1\" ";
 			if ($cfg->$confname->$field==1) echo " checked=\"checked\"";
-			echo " /> Nein: <input type=\"radio\" name=\"config_".$field."[".$confname."]\" value=\"0\" ";
+			echo " /><label for=\"".$id."_1\">Ja</label>  &nbsp;  <input type=\"radio\" id=\"".$id."_0\" name=\"".$id."\" value=\"0\" ";
 			if ($cfg->$confname->$field==0) echo " checked=\"checked\"";
-			echo " />";
+			echo " /> <label for=\"".$id."_0\">Nein</label>";
 			break;
 		case "timedate":
 			echo "<select name=\"config_".$field."_d[".$confname."]\">";

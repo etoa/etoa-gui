@@ -37,7 +37,7 @@
 	{	
 		if (isset($_SERVER['argv'][1]) && $_SERVER['argv'][1]!="")
 		{
-			DBManager::getInstance()->restore($_SERVER['argv'][1]);
+			DBManager::getInstance()->restoreDB($_SERVER['argv'][1]);
 		}
 		else
 		{

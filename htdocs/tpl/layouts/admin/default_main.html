@@ -6,7 +6,7 @@
 	<body>
 		<table id="layoutbox">
 			<tr>
-				<td id="topbar" colspan="3">
+				<td id="topbar" colspan="2">
 					<ul id="headernav">
 						<li><a href="?adminlist=1">Adminliste</a></li>
 						<li><a href="?myprofile=1">Mein Profil</a></li>
@@ -18,7 +18,7 @@
 			</tr>
 			<tr>
 				<td id="logo">&nbsp;</td>
-				<td id="banner" colspan="2">{$round_name}</td>
+				<td id="banner">{$round_name}</td>
 			</tr>
 			<tr>
 				<td id="menu1">
@@ -32,12 +32,12 @@
 					</div>
 					<ul class="navmenu">
 					{foreach from=$navmenu key=c item=i}
-						<li><a href="?page={$i.page}&sub={$i.sub}"{if $page eq  $i.page} class="active"{/if}>{$c}</a>
+						<li><a href="?page={$i.page}&amp;sub={$i.sub}"{if $page eq  $i.page} class="active"{/if}>{$c}</a>
 						{if $i.children|count gt 0 && $i.page eq $page}
 							<ul class="navsubmenu">
 							{foreach from=$i.children key=cc item=ci}
 								{if $ci.level le $user_level}
-									<li{if $ci.bar|default:false eq true} class="bar"{/if}><a href="?page={$i.page}&sub={$ci.sub}"{if $page eq  $i.page && $sub eq $ci.sub && $sub ne ""} class="active"{/if}>{$cc}</a></li>
+									<li{if $ci.bar|default:false eq true} class="bar"{/if}><a href="?page={$i.page}&amp;sub={$ci.sub}"{if $page eq  $i.page && $sub eq $ci.sub && $sub ne ""} class="active"{/if}>{$cc}</a></li>
 								{/if}
 							{/foreach}
 							</ul>
@@ -55,7 +55,7 @@
 				<td id="copy">
 					&copy; {$time|date_format:"%Y"} by etoa.ch
 				</td>
-				<td id="bottombar" colspan="2">
+				<td id="bottombar">
 					<b>Zeit:</b> {$time|date_format:"%T"} &nbsp; 
 					<b>Renderzeit:</b> {$render_time} sec &nbsp; 
 					<b>Eingeloggt als:</b> {$current_user_nick} &nbsp; 

@@ -6,6 +6,9 @@
 {if $msg|default:'' ne ""}{$msg}{/if}
 
 <form action="?page={$page}&amp;sub={$sub}&amp;cid={$cid}" method="post">
+	<p><input type="submit" name="submit" value="Übernehmen" /> &nbsp;
+	<input type="button" value="Zurück zur Übersicht" onclick="document.location='?page={$page}&amp;sub={$sub}'" /></p>
+
 	<table class="tb" style="width:auto;">
 	{foreach from=$items item=i}
 		<tr><th>{$i.label}</th>
@@ -15,6 +18,6 @@
 	{/foreach}
 	</table>
 
-	<p><input type="submit" name="submit" value="&Uuml;bernehmen" /> &nbsp;
-	<input type="button" value="Zur&uuml;ck zur &Uuml;bersicht" onclick="document.location='?page={$page}&amp;sub={$sub}'" /></p>
+	<p><input type="submit" name="submit" value="Übernehmen" /> &nbsp;
+	<input type="button" value="Zurück zur Übersicht" onclick="document.location='?page={$page}&amp;sub={$sub}'" /></p>
 </form>

@@ -8,7 +8,7 @@ class DBManager implements ISingleton	{
 	
 	static private $instance;
 	const configFile = "db.conf";
-	private $cfg;
+	private $dbCfg;
 	private $handle;
 	private $queryCount = 0;
 	private $queries  = array();
@@ -44,7 +44,7 @@ class DBManager implements ISingleton	{
 	}
 
 	private function loadConfig() {
-		$this->cfg = fetchJsonConfig(self::configFile);
+		$this->dbCfg = fetchJsonConfig(self::configFile);
 	}
 	
 	function getConfigFile() {
@@ -52,44 +52,58 @@ class DBManager implements ISingleton	{
 	}
 	
 	function getHost() {
-		if ($this->cfg == null) {
+		if ($this->dbCfg == null) {
 			$this->loadConfig();
 		}	
-		return $this->cfg['host'];
+		return $this->dbCfg['host'];
 	}	
 
 	function getDbName() {
-		if ($this->cfg == null) {
+		if ($this->dbCfg == null) {
 			$this->loadConfig();
 		}	
-		return $this->cfg['dbname'];
+		return $this->dbCfg['dbname'];
 	}	
+
+	private function getUser() {
+		if ($this->dbCfg == null) {
+			$this->loadConfig();
+		}	
+		return $this->dbCfg['user'];
+	}	
+	
+	private function getPassword() {
+		if ($this->dbCfg == null) {
+			$this->loadConfig();
+		}	
+		return $this->dbCfg['password'];
+	}		
 	
 	/**
 	* Baut die Datenbankverbindung auf
 	*/
 	function connect($throwError = 1, $tempCfg=null)
 	{
-		if ($this->cfg == null) {
+		if ($this->dbCfg == null) {
 			$this->loadConfig();
 		}
 		try
 		{
 			if (is_array($tempCfg) && count($tempCfg) > 0)
-				$cfg = $tempCfg;
+				$dbCfg = $tempCfg;
 			else
-				$cfg = $this->cfg;
-			if (!$this->handle = @mysql_connect($cfg['host'], $cfg['user'], $cfg['password']))
+				$dbCfg = $this->dbCfg;
+			if (!$this->handle = @mysql_connect($dbCfg['host'], $dbCfg['user'], $dbCfg['password']))
 			{
 				if ($throwError==1)
-					throw new DBException("Zum Datenbankserver auf <b>".$cfg['host']."</b> kann keine Verbindung hergestellt werden!");
+					throw new DBException("Zum Datenbankserver auf <b>".$dbCfg['host']."</b> kann keine Verbindung hergestellt werden!");
 				else
 					return false;
 			}
-			if (!mysql_select_db($cfg['dbname']))
+			if (!mysql_select_db($dbCfg['dbname']))
 			{
 				if ($throwError==1)
-					throw new DBException("Auf die Datenbank <b>".$cfg['dbname']."</b> auf <b>".$cfg['host']."</b> kann nicht zugegriffen werden!");
+					throw new DBException("Auf die Datenbank <b>".$dbCfg['dbname']."</b> auf <b>".$dbCfg['host']."</b> kann nicht zugegriffen werden!");
 				else
 					return false;
 			}
@@ -363,16 +377,13 @@ class DBManager implements ISingleton	{
 		return $ores;
 	}
 	
-	public function backup()
+	public function backupDB()
 	{
-		if ($this->cfg == null) {
-			$this->loadConfig();
-		}	
-		$cfg = Config::getInstance();
 		$rtn = false;
-					
 		if (UNIX)
 		{
+			$cfg = Config::getInstance();
+
 			$log = "Starte Backup...\n";
 			$tmr = timerStart();
 			$log .= " Warte auf Mutex...";
@@ -382,17 +393,17 @@ class DBManager implements ISingleton	{
 			$tmr = timerStart();				
 			
 			// Alte Backups löschen
-			$cmd = "find ".BACKUP_DIR." -name *.sql.gz -mtime +".$cfg->p1('backup')." -exec rm {} \;";
+			$cmd = "find ".$cfg->backup_dir." -name *.sql.gz -mtime +".$cfg->backup_retention_time." -exec rm {} \;";
 			passthru($cmd);
-			$cmd = "find ".BACKUP_DIR." -name *.sql -mtime +".$cfg->p1('backup')." -exec rm {} \;";
+			$cmd = "find ".$cfg->backup_dir." -name *.sql -mtime +".$cfg->backup_retention_time." -exec rm {} \;";
 			passthru($cmd);
 	
-			$file = BACKUP_DIR."/".$this->getDbName()."-".date("Y-m-d-H-i");
+			$file = $cfg->backup_dir."/".$this->getDbName()."-".date("Y-m-d-H-i");
 			$file_wo_path = $this->getDbName()."-".date("Y-m-d-H-i");
-			$result = shell_exec("mysqldump -u".$this->cfg['user']." -p".$this->cfg['password']." -h".$this->getHost()." ".$this->getDbName()." > ".$file.".sql");
+			$result = shell_exec("mysqldump -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." > ".$file.".sql");
 			if ($result=="")
 			{
-				if ($cfg->p2('backup')==1)
+				if ($cfg->backup_use_gzip=="1")
 				{
 					$result = shell_exec("gzip ".$file.".sql");
 					if ($result!="")
@@ -426,23 +437,22 @@ class DBManager implements ISingleton	{
 		return $rtn;
 	}
 	
-	public function restore($arg)
+	public function restoreDB($arg)
 	{
-		if ($this->cfg == null) {
-			$this->loadConfig();
-		}	
 		$rtn = false;
 		if (UNIX)
 		{
+			$cfg = Config::getInstance();
+			
 			$mtx = new Mutex();
 			$mtx->acquire();
-			$file = BACKUP_DIR."/".$this->getDbName()."-".$arg;
+			$file = $cfg->backup_dir."/".$this->getDbName()."-".$arg;
 			if (file_exists($file.".sql.gz"))
 			{
 				$result = shell_exec("gunzip ".$file.".sql.gz");
 				if ($result=="")
 				{
-					$result = shell_exec("mysql -u".$this->cfg['user']." -p".$this->cfg['password']." -h".$this->getHost()." ".$this->getDbName()." < ".$file.".sql");
+					$result = shell_exec("mysql -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." < ".$file.".sql");
 					if ($result!="")
 					{
 						echo "Error while restoring backup: $result\n";
@@ -456,7 +466,7 @@ class DBManager implements ISingleton	{
 			}
 			elseif (file_exists($file.".sql"))
 			{
-				$result = shell_exec("mysql -u".$this->cfg['user']." -p".$this->cfg['password']." -h".$this->getHost()." ".$this->getDbName()." < ".$file.".sql");
+				$result = shell_exec("mysql -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." < ".$file.".sql");
 				if ($result!="")
 					echo "Error while restoring backup: $result\n";
 				else
@@ -477,22 +487,22 @@ class DBManager implements ISingleton	{
 		return $rtn;
 	}	
 	
-	public function getBackupImages()
+	public function getBackupImages($strip=1)
 	{
-		if ($this->cfg == null) {
-			$this->loadConfig();
-		}	
 		if (UNIX)
 		{
 			$cfg = Config::getInstance();
-			if ($d = @opendir($cfg->backup))
+			if ($d = @opendir($cfg->backup_dir))
 			{
 				$bfiles=array();
 				while ($f = readdir($d))
 				{
-					if (is_file($cfg->backup."/".$f) && stristr($f,".sql") && preg_match('/^'.$this->getDbName().'/i',$f)==1)
+					if (is_file($cfg->backup_dir."/".$f) && stristr($f,".sql") && preg_match('/^'.$this->getDbName().'/i',$f)==1)
 					{
-						array_push($bfiles, preg_replace('/\.sql$/', '', $f));
+						if ($strip == 0)
+							array_push($bfiles, $f);
+						else
+							array_push($bfiles, preg_replace(array('/\.sql$/', '/^'.$this->getDbName().'-/'), array('', ''), $f));
 					}
 				}
 				rsort($bfiles);
