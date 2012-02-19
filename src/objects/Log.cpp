@@ -87,8 +87,8 @@
 		
 		mysqlpp::Query query = con_->query();
 		
-		query << "INSERT INTO "
-			<< "	logs_fleet "
+		query << "INSERT DELAYED INTO "
+			<< "	logs_fleet_queue "
 			<< "("
 			<< " 	fleet_id, "
 			<< " 	timestamp, "

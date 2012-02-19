@@ -284,8 +284,8 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 		report->setRestore(round((config.nget("def_restore_percent",0) + entity->getUser()->getSpecialist()->getSpecialistDefRepair() - 1)*100));
 
         //Log schreiben
-        query << "INSERT INTO "
-			<< "	logs_battle "
+        query << "INSERT DELAYED INTO "
+			<< "	logs_battle_queue "
 			<< "("
 			<< "	fleet_id, "
 			<< "	user_id, "
