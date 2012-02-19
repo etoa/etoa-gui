@@ -283,7 +283,7 @@ int main(int argc, char* argv[])
 	else if (opt->getValue("pidfile") != NULL )
 		pidFile = opt->getValue("pidfile");
 	else
-		pidFile = "/var/run/etoa/"+gameRound+".pid";
+		pidFile = "/var/run/etoad/"+gameRound+".pid";
 		
 	// Set user
 	if( opt->getValue('u') != NULL)
