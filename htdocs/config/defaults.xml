@@ -641,10 +641,10 @@ Anmerkung: Eine Kopie dieser Nachricht wird in Eurer Nachrichten-Box hinterlegt.
       <v comment="Evendhandler Executable" type="text">/usr/local/bin/etoad</v>
     </item>	
     <item name="daemon_logfile" cat="20" base="yes">
-      <v comment="Evendhandler Logfile" type="text">/var/log/etoad.roundx.log</v>
+      <v comment="Evendhandler Logfile" type="text">/var/log/etoad/roundx.log</v>
     </item>
     <item name="daemon_pidfile" cat="20" base="yes">
-      <v comment="Evendhandler PID-File" type="text">/var/run/etoa.roundx.pid</v>
+      <v comment="Evendhandler PID-File" type="text">/var/run/etoad/roundx.pid</v>
     </item>	
     <item name="specialistconfig" cat="5">
       <v comment="SPECIALIST_AVAILABILITY_FACTOR basierend auf Faktor * Anzahl" type="text">0.3</v>
@@ -685,10 +685,14 @@ Anmerkung: Eine Kopie dieser Nachricht wird in Eurer Nachrichten-Box hinterlegt.
     <item name="market_rate_4" cat="6">
       <v comment="Handelskurs Resource 4 (auto)" type="text">1</v>
     </item>
-    <item name="backend" cat="20">
-      <v comment="active" type="text">0</v>
-      <p1 comment="message" type="textarea">Der EtoA-Updatedienst ist momentan ausser Betrieb. Die Entwickler sind informiert. Es ist nicht notwendig ein Ticket zu eröffnen. Unterdessen werden weder Gebäude, Technologien, Schiffe, Verteidigungen, Planeten noch Flotten aktualisiert.</p1>
-      <p2 comment="mail-to" type="text">glaubinix@etoa.ch;mrcage@etoa.ch</p2>
+    <item name="backend_status" cat="20">
+      <v comment="Eventhandler-Status" type="text">0</v>
+	</item>
+    <item name="backend_offline_message" cat="20">	 
+      <v comment="Eventhandler Offline Nachricht" type="textarea">Der EtoA-Updatedienst ist momentan ausser Betrieb. Die Entwickler sind informiert. Es ist nicht notwendig ein Ticket zu eröffnen. Unterdessen werden weder Gebäude, Technologien, Schiffe, Verteidigungen, Planeten noch Flotten aktualisiert.</v>
+    </item>
+    <item name="backend_offline_mail" cat="20">	 	  
+      <v comment="Eventhandler Offline Mail" type="text">glaubinix@etoa.ch;mrcage@etoa.ch</v>
     </item>
     <item name="bot_max_count" cat="1">
       <v comment="Bot Counter" type="text">5</v>

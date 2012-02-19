@@ -196,18 +196,17 @@
 		
 		//Check Backend
 		$backend = checkDaemonRunning($cfg->daemon_pidfile)>0 ? true : false;
-		if ($cfg->value("backend") != $backend)
+		if ($cfg->value("backend_status") != $backend)
 		{
-			$mailText = $cfg->value("backend") == 0 ? "Funktioniert wieder" : $cfg->p1("backend");
+			$mailText = $cfg->value("backend_status") == 0 ? "Funktioniert wieder" : $cfg->value("backend_offline_message");
+			$status = $cfg->value("backend_status") == 0 ? 1 : 0;
+			$cfg->set("backend_status", $status);
 			
-			$status = $cfg->value("backend") == 0 ? 1 : 0;
-			
-			$cfg->set("backend",$status,$cfg->p1("backend"),$cfg->p2("backend"));
-			
-			$mail = new Mail("EtoA-Backend",$mailText);
-			$sendTo = explode(";",$cfg->p2("backend"));
-			foreach ($sendTo as $sendMail)
+			$mail = new Mail("EtoA-Backend", $mailText);
+			$sendTo = explode(";",$cfg->value("backend_offline_mail"));
+			foreach ($sendTo as $sendMail)	{
 				$mail->send($sendMail);
+			}
 		}
 
 		return $log;

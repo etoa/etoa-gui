@@ -114,13 +114,15 @@ else
 		$rank="";
 		foreach ($navmenu as $cat=> $item)
 		{
-			foreach ($item['children'] as $title=> $data)
-			{
-				if ($item['page']==$page && $data['sub']==$sub)
+			if (isset($item['children']))	{
+				foreach ($item['children'] as $title=> $data)
 				{
-					$rank=$data['level'];
-					if ($data['level'] <= $cu->level)
-						$allow_inc=true;
+					if ($item['page']==$page && $data['sub']==$sub)
+					{
+						$rank=$data['level'];
+						if ($data['level'] <= $cu->level)
+							$allow_inc=true;
+					}
 				}
 			}
 		}
