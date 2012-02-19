@@ -23,10 +23,10 @@
       <v comment="Runde-Name" type="text">Runde X</v>
     </item>
     <item name="roundurl" cat="1" base="yes">
-      <v comment="Runden-URL" type="text">http://roundx.etoa.ch</v>
+      <v comment="Runden-URL" type="text">http://roundx.live.etoa.net</v>
     </item>
     <item name="loginurl" cat="1" base="yes">
-      <v comment="Login-URL" type="text">http://www.etoa.ch</v>
+      <v comment="Login-URL" type="text">http://etoa.ch</v>
     </item>
     <item name="debug" cat="1">
       <v comment="Debug-Modus" type="onoff">0</v>
@@ -211,16 +211,16 @@ Besten Dank f&#xFC;r euer Verst&#xE4;ndnis&#xD;
 </v>
     </item>
     <item name="url_rules" cat="1">
-      <v comment="URL: Regeln" type="text">http://www.etoa.ch/rules</v>
+      <v comment="URL: Regeln" type="text">http://etoa.ch/rules</v>
     </item>
     <item name="url_bugs" cat="1">
-      <v comment="URL: Bug melden" type="text">http://www.etoa.ch/bugs</v>
+      <v comment="URL: Bug melden" type="text">http://dev.etoa.ch/net</v>
     </item>
     <item name="url_teamspeak" cat="1">
-      <v comment="URL: TeamSpeak" type="text">http://www.etoa.ch/teamspeak</v>
+      <v comment="URL: TeamSpeak" type="text">http://etoa.ch/teamspeak</v>
     </item>
     <item name="backup" cat="1" base="yes">
-      <v comment="Backup-Pfad" type="text">/home/backup/mysql/test</v>
+      <v comment="Backup-Pfad" type="text">/home/etoa/backup/</v>
       <p1 comment="Backup-Aufbewahrungsdauer (Tage)" type="text">14</p1>
       <p2 comment="GZIP benutzen" type="onoff">0</p2>
     </item>
@@ -357,8 +357,9 @@ Besten Dank f&#xFC;r euer Verst&#xE4;ndnis&#xD;
       <p1 comment="Wurmloch-Update: Anzahl &#xC4;nderungen" type="text">1</p1>
     </item>
     <item name="referers" cat="1" base="yes">
-      <v comment="Zugelassene Referers" type="textarea">http://test.dev.etoa.net&#xD;
+      <v comment="Zugelassene Referers" type="textarea">http://roundx.live.etoa.net&#xD;
 http://dev.etoa.net&#xD;
+http://etoa.ch&#xD;
 http://www.etoa.ch&#xD;
 http://localhost&#xD;
 http://127.0.0.1</v>
@@ -633,8 +634,8 @@ Anmerkung: Eine Kopie dieser Nachricht wird in Eurer Nachrichten-Box hinterlegt.
     <item name="solsys_percent_asteroids" cat="3">
       <v comment="Prozentualer Anteil an Asteroidenfeldern / Sternensystem" type="text">5</v>
     </item>
-    <item name="daemonIdentifier" cat="1">
-      <v comment="Daemon-Id" type="text">test</v>
+    <item name="daemonIdentifier" cat="1" base="yes">
+      <v comment="Daemon-Id" type="text">roundx</v>
     </item>
     <item name="specialistconfig" cat="5">
       <v comment="SPECIALIST_AVAILABILITY_FACTOR basierend auf Faktor * Anzahl" type="text">0.3</v>

@@ -119,11 +119,8 @@
 	//
 	// Config-Editor
 	//
-	else
+	elseif ($sub=="editor")
 	{
-		if (isset($sub) && intval($sub)>0)
-			$_GET['cid'] = $sub;
-
 		// Edit config items
 		if (isset($_GET['cid']) && $_GET['cid']>0)
 		{
@@ -185,62 +182,14 @@
 		// Overview
 		else
 		{
-			$tpl->setView("admin/config_base");
-			$tpl->assign("subtitle", 'Grundkonfiguration');
-			
-			if (isset($_POST['submit']))
-			{
-				foreach ($cfg->getBaseItems() as $i)
-				{
-					$v = isset($i->v) ? create_sql_value((string)$i->v['type'],(string)$i['name'],"v",$_POST) : "";
-					$p1 = isset($i->p1) ? create_sql_value((string)$i->p1['type'],(string)$i['name'],"p1",$_POST) : "";
-					$p2 = isset($i->p2) ? create_sql_value((string)$i->p2['type'],(string)$i['name'],"p2",$_POST) : "";
-					$cfg->add((string)$i['name'],$v,$p1,$p2);
-				}
-				$tpl->assign('msg', "&Auml;nderungen wurden &uuml;bernommen!");
-				$tpl->assign('msg_type', "ok");
-			}			
-			$items = array();
-			foreach ( $cfg->getBaseItems() as $i)
-			{
-				if (isset($i->v))
-				{
-					$items[] = array(
-						'label' => $i->v['comment'],
-						'name' => $i['name'],
-						'type' => 'Wert',
-						'field' => display_field((string)$i->v['type'], (string)$i['name'], "v"),
-					);
-				}
-				if (isset($i->p1))
-				{
-					$items[] = array(
-						'label' => $i->p1['comment'],
-						'name' => $i['name'],
-						'type' => 'Parameter 1',
-						'field' => display_field((string)$i->p1['type'], (string)$i['name'], "p1"),
-					);				
-				}
-				if (isset($i->p2))
-				{
-					$items[] = array(
-						'label' => $i->p2['comment'],
-						'name' => $i['name'],
-						'type' => 'Parameter 2',
-						'field' => display_field((string)$i->p2['type'], (string)$i['name'], "p2"),
-					);				
-				}
-			}
-			$tpl->assign("items", $items);
-			
-			echo "<h2>Erweiterte Konfiguration</h2>";
-			
+			$tpl->assign("subtitle", 'Erweiterte Konfiguration');
+	
 			$cats = $cfg->categories();
 			if (count($cats) > 0) {
 				echo "<ul>";
 				foreach ($cats as $k=> $v)
 				{
-					echo "<li><a href=\"?page=config&amp;cid=".$k."\">".$v."</a></li>";
+					echo "<li><a href=\"?page=config&amp;sub=$sub&amp;cid=".$k."\">".$v."</a></li>";
 				}
 				echo "</ul>";
 			}
@@ -248,6 +197,60 @@
 				echo "<br><br/><i>Keine Konfigurationsdaten vorhanden!</i>";
 			}
 		}
+	}
+	
+	//
+	// Base
+	//
+	else
+	{
+		$tpl->setView("admin/config_base");
+		$tpl->assign("subtitle", 'Grundkonfiguration');
+		
+		if (isset($_POST['submit']))
+		{
+			foreach ($cfg->getBaseItems() as $i)
+			{
+				$v = isset($i->v) ? create_sql_value((string)$i->v['type'],(string)$i['name'],"v",$_POST) : "";
+				$p1 = isset($i->p1) ? create_sql_value((string)$i->p1['type'],(string)$i['name'],"p1",$_POST) : "";
+				$p2 = isset($i->p2) ? create_sql_value((string)$i->p2['type'],(string)$i['name'],"p2",$_POST) : "";
+				$cfg->add((string)$i['name'],$v,$p1,$p2);
+			}
+			$tpl->assign('msg', "&Auml;nderungen wurden &uuml;bernommen!");
+			$tpl->assign('msg_type', "ok");
+		}			
+		$items = array();
+		foreach ( $cfg->getBaseItems() as $i)
+		{
+			if (isset($i->v))
+			{
+				$items[] = array(
+					'label' => $i->v['comment'],
+					'name' => $i['name'],
+					'type' => 'Wert',
+					'field' => display_field((string)$i->v['type'], (string)$i['name'], "v"),
+				);
+			}
+			if (isset($i->p1))
+			{
+				$items[] = array(
+					'label' => $i->p1['comment'],
+					'name' => $i['name'],
+					'type' => 'Parameter 1',
+					'field' => display_field((string)$i->p1['type'], (string)$i['name'], "p1"),
+				);				
+			}
+			if (isset($i->p2))
+			{
+				$items[] = array(
+					'label' => $i->p2['comment'],
+					'name' => $i['name'],
+					'type' => 'Parameter 2',
+					'field' => display_field((string)$i->p2['type'], (string)$i['name'], "p2"),
+				);				
+			}
+		}
+		$tpl->assign("items", $items);
 	}
 ?>
 
