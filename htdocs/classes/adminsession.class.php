@@ -206,7 +206,7 @@ class AdminSession extends Session
 			}
 		}
 
-		dbquery("INSERT INTO
+		dbquery("INSERT DELAYED INTO
 			admin_surveillance
 		(
 			timestamp,

@@ -50,6 +50,6 @@ abstract class BaseLog
 
 		Log::add(Log::F_SYSTEM, Log::INFO, "$nr Logs die älter als ".date("d.m.Y H:i", $tstamp)." sind wurden gelöscht!");
 		return $nr;
-	}		
+	}
 }
 ?>

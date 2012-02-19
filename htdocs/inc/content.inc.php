@@ -153,7 +153,7 @@
 					}
 				}
 				
-				dbquery("INSERT INTO
+				dbquery("INSERT DELAYED INTO
 					user_surveillance
 				(
 					timestamp,
