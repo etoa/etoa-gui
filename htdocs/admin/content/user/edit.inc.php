@@ -542,7 +542,11 @@
 									echo " /> Nein: <input type=\"radio\" name=\"admin\" value=\"0\" ";
 									if ($arr['admin']==0)
 										echo " checked=\"checked\" ";
-									echo "/> (Der Spieler wird in der Raumkarte als Game-Admin markiert)
+									echo "/> (Der Spieler wird in der Raumkarte als Game-Admin markiert) <br />
+									Entwickler: <input type=\"radio\" name=\"admin\" value=\"2\" ";
+									if ($arr['admin']==2)
+										echo " checked=\"checked\" ";
+									echo "/> (Der Spieler bekommt einen nutzlosen roten Stern im Chat, keine Markierung)
 								</td>
 							</tr>
 							

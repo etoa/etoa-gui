@@ -1,4 +1,6 @@
 <?PHP
+/* encoding.inc.php von river */
+
 function replace_ascii_control_chars($str)
 {
 	$controlChars = array(
