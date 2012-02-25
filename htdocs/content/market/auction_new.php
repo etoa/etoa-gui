@@ -29,6 +29,8 @@
 	$marr = array('factor'=>MARKET_TAX,'timestamp2'=>$auction_end_time);
 	
 	$ok = true;
+	$sf = "";
+	$sv = "";
 	foreach ($resNames as $rk => $rn)
 	{
 		// Convert formatted number back to integer
@@ -94,10 +96,10 @@
 		MarketReport::add(array(
 			'user_id'=>$cu->id,
 			'entity1_id'=>$cp->id,
-			'content'=>$_POST['ressource_text']
+			'content'=> $_POST['auction_text']
 			), "auctionadd", mysql_insert_id(), $marr);
 
-        add_log(LOG_CAT,"Der Spieler ".$cu->nick." hat folgende Rohstoffe zur versteigerung angeboten:\n\n".RES_METAL.": ".nf($_POST['auction_sell_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['auction_sell_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['auction_sell_plastic'])."\n".RES_FUEL.": ".nf($_POST['auction_sell_fuel'])."\n".RES_FOOD.": ".nf($_POST['auction_sell_food'])."\n\nAuktionsende: ".date("d.m.Y H:i",$auction_end_time)."",time());
+        add_log(LOG_CAT,"Der Spieler ".$cu->nick." hat folgende Rohstoffe zur versteigerung angeboten:\n\n".RES_METAL.": ".nf($_POST['auction_sell_0'])."\n".RES_CRYSTAL.": ".nf($_POST['auction_sell_1'])."\n".RES_PLASTIC.": ".nf($_POST['auction_sell_2'])."\n".RES_FUEL.": ".nf($_POST['auction_sell_3'])."\n".RES_FOOD.": ".nf($_POST['auction_sell_4'])."\n\nAuktionsende: ".date("d.m.Y H:i",$auction_end_time)."",time());
 
 		// todo: report
 
