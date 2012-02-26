@@ -783,7 +783,7 @@
 	    $planet_link = "<a href=\"?page=buildings&change_entity=".$arr_planet['id']."\"><img id=\"Planet\" src=\"".$planet_image_path."\" width=\"".$pic_width."\" height=\"".$pic_height."\" border=\"0\" 
 	    onMouseOver=\"show_info(
 			'".$arr_planet['id']."',
-			'". mysql_real_escape_string(str_replace('"', "''", $planet_name))."',
+			'". mysql_real_escape_string(htmlspecialchars($planet_name))."',
 			'".$building_name."',
 			'".$building_time."',
 			'".$shipyard_name[$arr_planet['id']]."',
