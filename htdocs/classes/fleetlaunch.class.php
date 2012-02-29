@@ -919,6 +919,10 @@
 		
 		function setSpeedPercent($perc)
 		{
+			if (!is_integer($perc)) {
+				$perc = 100;
+			}
+
 			$this->speedPercent = min(100,$perc);
 			$this->duration = $this->distance / $this->getSpeed();	// Calculate duration
 			$this->duration *= 3600;	// Convert to seconds
