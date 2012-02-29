@@ -144,14 +144,26 @@
 		{
 			$inUse = false;
 			// check if a research is in progress if using the professor
-			if ($cu->specialistId == 4)
-			{
-				$res = dbquery("SELECT techlist_id FROM techlist WHERE techlist_user_id='".$cu->id."' AND techlist_build_end_time>'".time()."' AND techlist_build_start_time<'".time()."' LIMIT 1;");
-				if (mysql_num_rows($res))
-				{
-					$inUse = true;
-				}
+			switch ($cu->specialistId) {
+				case 4:
+				case 6:
+					$res = dbquery("SELECT techlist_id FROM techlist WHERE techlist_user_id='".$cu->id."' AND techlist_build_end_time>'".time()."' AND techlist_build_start_time<'".time()."' LIMIT 1;");
+					if (mysql_num_rows($res))
+					{
+						$inUse = true;
+					}
+					break;
+				case 2:
+					$res = dbquery("SELECT queue_id FROM def_queue WHERE queue_user_id='" . $cu->id ."' LIMIT 1");
+					if (mysql_num_rows($res))
+					{
+						$inUse = true;
+					}
+					break;
+				default:
+					break;
 			}
+
 			if ($inUse)
 			{
 				err_msg('Der Spezialist wird gerade verwendet!');
