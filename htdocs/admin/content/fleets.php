@@ -1170,12 +1170,12 @@
 
 				echo "<table class=\"tbl\">";
 				echo "<tr>";
-				echo "<td class=\"tbltitle\" $style>Besitzer</td>";
-				echo "<td class=\"tbltitle\" $style>Aktion</td>";
-				echo "<td class=\"tbltitle\" $style>Start</td>";
-				echo "<td class=\"tbltitle\" $style>Ziel</td>";
-				echo "<td class=\"tbltitle\" $style>Startzeit</td>";
-				echo "<td class=\"tbltitle\" $style>Landezeit</td>";
+				echo "<td class=\"tbltitle\">Besitzer</td>";
+				echo "<td class=\"tbltitle\">Aktion</td>";
+				echo "<td class=\"tbltitle\">Start</td>";
+				echo "<td class=\"tbltitle\">Ziel</td>";
+				echo "<td class=\"tbltitle\">Startzeit</td>";
+				echo "<td class=\"tbltitle\">Landezeit</td>";
 				echo "</tr>";
 				while ($arr = mysql_fetch_array($res))
 				{

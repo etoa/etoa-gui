@@ -197,7 +197,7 @@
 				if ($uid>0)
 					$sql.= " AND opponent1_id='".$uid."' ";
 			}
-			if ($_POST['subject']!="")
+			if (isset($_POST['subject']) && $_POST['subject']!="")
 			{
 					if (stristr($_POST['qmode']['subject'],"%")) $addchars = "%";else $addchars = "";
 					$sql.= " AND subject ".stripslashes($_POST['qmode']['subject']).$_POST['subject']."$addchars'";
@@ -246,7 +246,7 @@
 			if (isset($_POST['table']) && $_POST['table'])
 				$join = " INNER JOIN `reports_".$_POST['type']."` AS rd ON reports.id=rd.id ";
 			
-			if ($_POST['subtype']!="")
+			if (isset($_POST['subtype']) && $_POST['subtype'] != "")
 				$sql.= " AND rd.subtype='".$_POST['subtype']."'";
 				
 			//market
@@ -364,9 +364,9 @@
 					}
 					
 					
-					$sql.= ($_POST['entity_ships']==1) ? " AND rd.entity_ships != '' ": " AND rd.entity_ships='' ";
-
-					
+					if (isset($sql)) {
+						$sql.= ($_POST['entity_ships']==1) ? " AND rd.entity_ships != '' ": " AND rd.entity_ships='' ";
+					}
 					
 					if ($r->userId>0)
 						$uidf = get_user_nick($r->userId);
