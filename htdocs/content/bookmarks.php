@@ -226,8 +226,8 @@
 					echo nf($sdi[1])." ".$ships[$sdi[0]]."<br />";
 				}
 				echo "</td>
-						<td class=\"tbldata\">
-							<a href=\"javascript:;\" onclick=\"xajax_launchBookmarkProbe(".$arr['id'].");\"  onclick=\"\">Starten</a> 
+						<td id=\"fleet_bm_actions_" . $arr['id'] . "\" class=\"tbldata\">
+							<a href=\"javascript:;\" onclick=\"$('#fleet_bm_actions_" . $arr['id'] . "').html('Flotte wird gestartet...');xajax_launchBookmarkProbe(".$arr['id'].");\">Starten</a> 
 							<a href=\"?page=$page&amp;mode=new&amp;edit=".$arr['id']."\">Bearbeiten</a> 
 							<a href=\"?page=$page&amp;mode=$mode&amp;del=".$arr['id']."\" onclick=\"return confirm('Soll dieser Favorit wirklich gel&ouml;scht werden?');\">Entfernen</a>
 						</td>

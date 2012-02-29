@@ -33,7 +33,7 @@ $xajax->register(XAJAX_FUNCTION,'showFleetCategorie');
 		$cp = Entity::createFactoryById($_SESSION['cpid']);
 		
 		$objResponse = new xajaxResponse();
-		
+
 		ob_start();
 		$launched = false;
 		$bres = dbquery("
@@ -157,6 +157,11 @@ $xajax->register(XAJAX_FUNCTION,'showFleetCategorie');
 		{
 			echo "<div style=\"color:#f90\">".$str."<div>";
 		}
+
+		$action_content = "<a href=\"javascript:;\" onclick=\"$('#fleet_bm_actions_" . $bid . "').html('Flotte wird gestartet...');xajax_launchBookmarkProbe(".$bid.");\"  onclick=\"\">Starten</a> 
+							<a href=\"?page=bookmarks&amp;mode=new&amp;edit=".$bid."\">Bearbeiten</a> 
+							<a href=\"?page=bookmarks&amp;mode=fleet&amp;del=".$bid."\" onclick=\"return confirm('Soll dieser Favorit wirklich gel&ouml;scht werden?');\">Entfernen</a>";
+		$objResponse->assign("fleet_bm_actions_" . $bid, "innerHTML",$action_content);
 		$objResponse->assign("fleet_info_box","style.display",'block');				
 		$objResponse->append("fleet_info","innerHTML",ob_get_contents());				
 		ob_end_clean();
@@ -359,7 +364,7 @@ $xajax->register(XAJAX_FUNCTION,'showFleetCategorie');
 					AND cells.cy=".$form['cy']."
 					AND entities.pos=".$form['pos']."
 				");
-			if (mysql_num_rows($res)>0 && !($code=='u' && $form['man_p']))
+			if (mysql_num_rows($res)>0 && !($code=='u' && isset($form['man_p'])))
 			{
 				$arr=mysql_fetch_row($res);
 
