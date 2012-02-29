@@ -190,11 +190,17 @@
 							AND queue_endtime>'".$time."'
 						ORDER BY
 							queue_starttime ASC;");
-			
+			$queue_entity = array();
+			$queue = array();
 			while ($arr = mysql_fetch_assoc($res))
 			{
 				$queue[$arr['queue_id']] = $arr;
-				$queue_entity[$arr['queue_def_id']] = $arr;
+				if (isset($queue_entity[$arr['queue_def_id']])) {
+					$queue_entity[$arr['queue_def_id']]['queue_cnt'] += $arr['queue_cnt'];
+					$queue_entity[$arr['queue_def_id']]['queue_endtime'] = $arr['queue_endtime'];
+				} else {
+					$queue_entity[$arr['queue_def_id']] = $arr;
+				}
 			}
 			
 			// Alle Verteidigung laden
@@ -574,14 +580,18 @@
 
 
 							// Queue Array aktualisieren
-							$queue[$deflist_id]['queue_id'] = $deflist_id;
-							$queue[$deflist_id]['queue_def_id'] = $def_id;
-							$queue[$deflist_id]['queue_cnt'] = $build_cnt;
-							$queue[$deflist_id]['queue_starttime'] = $start_time;
-							$queue[$deflist_id]['queue_endtime'] = $end_time;
-							$queue[$deflist_id]['queue_objtime'] = $obj_time;
-							
-							$queue_entity[$def_id]['queue_cnt'] += $def_id;
+							$queue_data = array();
+							$queue_data['queue_id'] = $deflist_id;
+							$queue_data['queue_def_id'] = $def_id;
+							$queue_data['queue_cnt'] = $build_cnt;
+							$queue_data['queue_starttime'] = $start_time;
+							$queue_data['queue_endtime'] = $end_time;
+							$queue_data['queue_objtime'] = $obj_time;
+							$queue[$deflist_id] = $queue_data;
+							if (!isset($queue_entity[$def_id])) {
+								$queue_entity[$def_id] = $queue_data;
+							}
+							$queue_entity[$def_id]['queue_cnt'] += $build_cnt;
 
 
 							//Log schreiben
@@ -737,7 +747,8 @@
 							$new_starttime=$new_endtime;
 						}
 					}
-					
+
+					$queue_entity[$defId]['queue_cnt'] -= $queue_count;
 					// Auftrag aus Array löschen
 					$queue[$id] = NULL;
 					
