@@ -950,6 +950,8 @@
 			}
 			else
 			{
+				include_once(getcwd().'/inc/bootstrap.inc.php');
+				add_log(18,'Der User '.$_SESSION['user_nick'].' versuchte, ein zweites Wurmloch zu &ouml;ffnen');
 				$response->alert("Wurmloch wurde bereits gesetzt!");
 			}
 
