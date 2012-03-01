@@ -167,7 +167,8 @@
 					unset($fm);
 			
 					$this->fleetControlLevel = $bl->getLevel(FLEET_CONTROL_ID);
-					$this->possibleFleetStarts = FLEET_NOCONTROL_NUM + $this->fleetControlLevel - $this->fleetSlotsUsed + $this->specialist->fleetMax;
+					$totalSlots = FLEET_NOCONTROL_NUM + $this->fleetControlLevel + $this->specialist->fleetMax;
+					$this->possibleFleetStarts = $totalSlots - $this->fleetSlotsUsed;
 					
 					if ($this->possibleFleetStarts > 0)
 					{					
@@ -178,7 +179,7 @@
 					}
 					else
 					{
-						$this->error = "Von hier können keine weiteren Flotten starten, alle Slots (".$this->fleetSlotsUsed.") sind belegt!";
+						$this->error = "Von hier können keine weiteren Flotten starten, alle Slots (".$totalSlots.") sind belegt!";
 					}
 				}
 			}
@@ -480,8 +481,9 @@
 				$fm = new FleetManager($this->ownerId);
 				$this->fleetSlotsUsed = $fm->countControlledByEntity($this->sourceEntity->id());
 				unset($fm);
-				
-				$this->possibleFleetStarts = FLEET_NOCONTROL_NUM + $this->fleetControlLevel - $this->fleetSlotsUsed + $this->specialist->fleetMax;
+
+				$totalSlots = FLEET_NOCONTROL_NUM + $this->fleetControlLevel + $this->specialist->fleetMax;
+				$this->possibleFleetStarts = $totalSlots - $this->fleetSlotsUsed;
 				
 				if ($this->possibleFleetStarts > 0)
 				{	
@@ -709,7 +711,7 @@
 						$this->error = "Konnte keine Schiffe zur Flotte hinzufügen da keine vorhanden sind!";
 				}
 				else
-					$this->error = "Von hier können keine weiteren Flotten starten, alle Slots (".$this->fleetSlotsUsed.") sind belegt!";
+					$this->error = "Von hier können keine weiteren Flotten starten, alle Slots (".$totalSlots.") sind belegt!";
 			}
 			else
 			{	
