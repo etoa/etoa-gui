@@ -29,7 +29,7 @@
 		
 		if (isset($_POST['hmod_on']) && checker_verify())
 		{
-			if ($cu->lastInvasion < time() - $cfg->get("user_umod_min_length")*24*3600)
+			if (true || $cu->lastInvasion < time() - $cfg->get("user_umod_min_length")*24*3600)
 			{
 				$cres = dbquery("SELECT id FROM fleet WHERE user_id='".$cu->id."';");
 				$carr = mysql_fetch_row($cres);
@@ -42,7 +42,8 @@
 									INNER JOIN
 										planets as p
 									ON f.entity_to=p.id
-									AND p.planet_user_id='".$cu->id."';");
+									AND p.planet_user_id='".$cu->id."'
+									AND (f.user_id='".$cu->id."' OR (status=0 AND action NOT IN ('collectdebris','explore','flight','createdebris')));");
 					$parr = mysql_fetch_row($pres);
 					if ($parr[0]==0)
 					{
