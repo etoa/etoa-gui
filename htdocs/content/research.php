@@ -30,156 +30,269 @@
 
    // DEFINITIONEN //
 
-if ($cu->properties->cssStyle=="Classic" || $cu->properties->cssStyle=="Dark")
-{
+if ($cu->properties->cssStyle=="Classic" || $cu->properties->cssStyle=="Dark") {
   define('NUM_BUILDINGS_PER_ROW',4);
   define('CELL_WIDTH','25%');
   define('TABLE_WIDTH','');
-}
-else
-{
+} else {
   define('NUM_BUILDINGS_PER_ROW',5);
   define('CELL_WIDTH',120);
   define('TABLE_WIDTH','auto');
 }	
   
-	// Aktiviert / Deaktiviert Bildfilter
-	if ($cu->properties->imageFilter ==1)
-	{
-		$use_img_filter = true;
-	}
-	else
-	{
-		$use_img_filter = false;
-	}
+// Aktiviert / Deaktiviert Bildfilter
+if ($cu->properties->imageFilter ==1) {
+	$use_img_filter = true;
+} else {
+	$use_img_filter = false;
+}
 
-	// SKRIPT //
-	if (isset($cp))
-	{
-		$bl = new BuildList($cp->id(),$cu->id);
+// SKRIPT //
+if (isset($cp)) {
+	$bl = new BuildList($cp->id(),$cu->id);
 
-		if ($bl->getLevel(TECH_BUILDING_ID) > 0)
+	if ($bl->getLevel(TECH_BUILDING_ID) > 0) {
+		define('CURRENT_LAB_LEVEL',$bl->getLevel(TECH_BUILDING_ID));
+
+		$tl = new TechList($cu->id);
+		define("GEN_TECH_LEVEL",$tl->getLevel(GEN_TECH_ID));
+		$minBuildTimeFactor = (0.1-(GEN_TECH_LEVEL/100));
+
+		// Überschrift
+		echo "<h1>Forschungslabor (Stufe ".CURRENT_LAB_LEVEL.") des Planeten ".$cp->name."</h1>";
+		$cp->resBox($cu->properties->smallResBox);
+		
+		// Forschungsliste laden && Gentech level definieren
+		$tres = dbquery("
+		SELECT 
+			* 
+		FROM 
+			techlist 
+		WHERE 
+			techlist_user_id='".$cu->id."';");
+		$builing_something=false;
+		while ($tarr = mysql_fetch_array($tres)) {
+			$techlist[$tarr['techlist_tech_id']]=$tarr;
+			if ($tarr['techlist_build_type']>2) {
+				$builing_something=true;
+			}
+		}
+
+		// people working changed
+		if (isset($_POST['submit_people_form']))
 		{
-			define('CURRENT_LAB_LEVEL',$bl->getLevel(TECH_BUILDING_ID));
-			
-			$tl = new TechList($cu->id);
-			define("GEN_TECH_LEVEL",$tl->getLevel(GEN_TECH_ID));
-			$minBuildTimeFactor = (0.1-(GEN_TECH_LEVEL/100));			
-			
-			$peopleWorking = $bl->getPeopleWorking(TECH_BUILDING_ID);	
-			
-			$peopleTimeReduction = $cfg->value('people_work_done');
-			$peopleFoodConsumption = $cfg->value('people_food_require');
-
-			
-			// Überschrift
-			echo "<h1>Forschungslabor (Stufe ".CURRENT_LAB_LEVEL.") des Planeten ".$cp->name."</h1>";
-			$cp->resBox($cu->properties->smallResBox);
-			//level zählen welches das forschungslabor über dem angegeben level ist und faktor berechnen
-			$need_bonus_level = CURRENT_LAB_LEVEL - $conf['build_time_boni_forschungslabor']['p1'];
-			if ($need_bonus_level<=0)
-			{
-				$time_boni_factor=1;
-			}
+			if (!$builing_something && $bl->setPeopleWorking(TECH_BUILDING_ID, nf_back($_POST['peopleWorking'])))
+				ok_msg("Arbeiter zugeteilt!");
 			else
-			{
-				$time_boni_factor=max($conf['build_time_boni_forschungslabor']['p2'] , 1-($need_bonus_level*($conf['build_time_boni_forschungslabor']['v']/100)));
-			}
+				error_msg('Arbeiter konnten nicht zugeteilt werden!');
+		}
+
+		$peopleWorking = $bl->getPeopleWorking(TECH_BUILDING_ID);	
+
+		$peopleTimeReduction = $cfg->value('people_work_done');
+		$peopleFoodConsumption = $cfg->value('people_food_require');
+
+		//level zählen welches das forschungslabor über dem angegeben level ist und faktor berechnen
+		$need_bonus_level = CURRENT_LAB_LEVEL - $conf['build_time_boni_forschungslabor']['p1'];
+		if ($need_bonus_level<=0) {
+			$time_boni_factor=1;
+		} else {
+			$time_boni_factor=max($conf['build_time_boni_forschungslabor']['p2'] , 1-($need_bonus_level*($conf['build_time_boni_forschungslabor']['v']/100)));
+		}
+
+		//
+		// Läd alle benötgten Daten in Arrays
+		//
 	
-	
-			//
-			// Läd alle benötgten Daten in Arrays
-			//
-			
-			// Forschungsliste laden && Gentech level definieren
-			$tres = dbquery("
+		// Load built buildings
+		$blres = dbquery("
 			SELECT 
 				* 
 			FROM 
-				techlist 
-			WHERE 
-				techlist_user_id='".$cu->id."';");
-			$builing_something=false;
-			while ($tarr = mysql_fetch_array($tres))
-			{
-				$techlist[$tarr['techlist_tech_id']]=$tarr;
-				if ($tarr['techlist_build_type']>2) 
-				{
-					$builing_something=true;
-				}
-			}
-	
-			// Load built buildings
-			$blres = dbquery("
-				SELECT 
-					* 
-				FROM 
-					buildlist 
-				WHERE  
-					buildlist_entity_id='".$cp->id()."'
-				;");
-			while ($blarr = mysql_fetch_array($blres))
-			{
-				$buildlist[$blarr['buildlist_building_id']]=$blarr['buildlist_current_level'];
-			}
+				buildlist 
+			WHERE  
+				buildlist_entity_id='".$cp->id()."'
+			;");
+		while ($blarr = mysql_fetch_array($blres)) {
+			$buildlist[$blarr['buildlist_building_id']]=$blarr['buildlist_current_level'];
+		}
 			
-			// Load requirements
-			$rres = dbquery("
-				SELECT 
-					* 
-				FROM 
-					tech_requirements;");
-			while ($rarr = mysql_fetch_array($rres))
-			{
-				if ($rarr['req_building_id']>0) 
-					$b_req[$rarr['obj_id']]['b'][$rarr['req_building_id']]=$rarr['req_level'];
-				if ($rarr['req_tech_id']>0) 
-					$b_req[$rarr['obj_id']]['t'][$rarr['req_tech_id']]=$rarr['req_level'];
+		// Load requirements
+		$rres = dbquery("
+			SELECT 
+				* 
+			FROM 
+				tech_requirements;");
+		while ($rarr = mysql_fetch_array($rres)) {
+			if ($rarr['req_building_id']>0) 
+				$b_req[$rarr['obj_id']]['b'][$rarr['req_building_id']]=$rarr['req_level'];
+			if ($rarr['req_tech_id']>0) 
+				$b_req[$rarr['obj_id']]['t'][$rarr['req_tech_id']]=$rarr['req_level'];
+		}
+
+		$bid = 0;
+		if ((isset($_GET['id']) && $_GET['id'] >0) || (count($_POST)>0	&& checker_verify())) {
+			if (isset($_GET['id']) && $_GET['id'] >0) {
+				$bid = $_GET['id'];
+			} else {				
+				foreach ($_POST as $k => $v) {
+					if(stristr($k,'_x')) {
+						$bid = preg_replace('/show_([0-9]+)_x/', '\1', $k);
+						break;
+					}
+				}
+				if ($bid==0 && isset($_POST['show'])) {
+					$bid = $_POST['show'];
+				}
+				if ($bid==0 && isset($_POST['id'])) {
+					$bid = $_POST['id'];
+				}			
 			}
+		}
+
+		// cache checker to add it to several forms
+		ob_start();
+		checker_init();
+		$checker = ob_get_contents();
+		ob_end_clean();
+
+		$peopleFree = floor($cp->people) - $bl->totalPeopleWorking() + $bl->getPeopleWorking(TECH_BUILDING_ID);
+		$peopleOptimized = 0;
+		if ($bid) {
+			// Forschungsdaten laden
+			$res = dbquery("
+			SELECT 
+				* 
+			FROM 
+				technologies 
+			WHERE  
+				tech_id='".$bid."'
+				AND tech_show='1';");
+			if (mysql_num_rows($res)>0) {
+				$currentTechData = mysql_fetch_array($res);
+				$bc = array();
+				$costs = array();
+				$costs[0] = $currentTechData['tech_costs_metal'];
+				$costs[1] = $currentTechData['tech_costs_crystal'];
+				$costs[2] = $currentTechData['tech_costs_plastic'];
+				$costs[3] = $currentTechData['tech_costs_fuel'];
+				$costs[4] = $currentTechData['tech_costs_food'];
+				$costs[5] = $currentTechData['tech_costs_power'];
+				$level = 0;
+				if (isset($techlist[$bid])) {
+					$level = $techlist[$bid]['techlist_current_level'];
+				}
+
+				foreach ($resNames as $rk => $rn) {
+					$bc['costs'.$rk] = $costs[$rk] * pow($currentTechData['tech_build_costs_factor'], $level);
+				}
+				$bc['costs5'] = $costs[5] * pow($currentTechData['tech_build_costs_factor'], $level);
+
+				$bonus = $cu->race->researchTime + $cp->typeResearchtime + $cp->starResearchtime + $cu->specialist->researchTime - 3;
+
+				$bc['time'] = (array_sum($bc)) / GLOBAL_TIME * BUILD_BUILD_TIME;
+				$bc['time'] *= $bonus;
+				$maxReduction = $bc['time'] - $bc['time'] * (0.1-(GEN_TECH_LEVEL / 100));
+
+				$peopleOptimized = ceil($maxReduction / $cfg->value('people_work_done'));
+			}
+		}
+
+			// create box to change people working
+			$box =	'
+						<input type="hidden" name="workDone" id="workDone" value="'.$cfg->value('people_work_done').'" />
+						<input type="hidden" name="foodRequired" id="foodRequired" value="'.$cfg->value('people_food_require').'" />
+						<input type="hidden" name="peopleFree" id="peopleFree" value="'.$peopleFree.'" />
+						<input type="hidden" name="foodAvaiable" id="foodAvaiable" value="'.$cp->getRes1(4).'" />';
+			if ($cu->properties->itemShow=='full' && isset($bid) && $bid>0) {
+				$box .= '<input type="hidden" name="peopleOptimized" id="peopleOptimized" value="' . $peopleOptimized . '" />';
+			} else {
+				$box .= '<input type="hidden" name="peopleOptimized" id="peopleOptimized" value="0" />';	
+			}
+			$box .= '	<tr>
+								<th>Eingestellte Arbeiter</th>
+								<td>
+									<input 	type="text" 
+											name="peopleWorking" 
+											id="peopleWorking" 
+											value="'.nf($bl->getPeopleWorking(TECH_BUILDING_ID)).'" 
+											onkeyup="updatePeopleWorkingBox(this.value,\'-1\',\'-1\');"/>
+							</td>
+						</tr>';
+			$box .=		'<tr>
+								<th>Zeitreduktion</th>
+								<td><input	type="text"
+											name="timeReduction"
+											id="timeReduction"
+											value="'.tf($cfg->value('people_work_done') * $bl->getPeopleWorking(TECH_BUILDING_ID)).'"
+											onkeyup="updatePeopleWorkingBox(\'-1\',this.value,\'-1\');" /></td>
+							</tr>
+								<th>Nahrungsverbrauch</th>
+								<td><input	type="text"
+											name="foodUsing"
+											id="foodUsing"
+											value="'.nf($cfg->value('people_food_require') * $bl->getPeopleWorking(TECH_BUILDING_ID)).'"
+											onkeyup="updatePeopleWorkingBox(\'-1\',\'-1\',this.value);" /></td>
+							</tr>
+							<tr>
+								<td colspan="2" style="text-align:center;">
+									<div class="errorBox" id="errorBox" style="display:none;">&nbsp;</div>
+									<input type="submit" value="Speichern" name="submit_people_form" />&nbsp;';
+
+			if (isset($bid) && $bid>0)
+			{
+				$box .= '<input type="button" value="Optimieren" onclick="updatePeopleWorkingBox(\''.$peopleOptimized.'\',\'-1\',\'^-1\');">';
+			}
+			$box .= '
+						</td>
+					</tr>';	
+
+	    	iBoxStart("Labor-Infos");
+	    	echo "<div style=\"text-align:left;\">
+	    	<b>Forschungszeitverringerung:</b> ";
+	    	if ($need_bonus_level>=0)
+	    	{
+	    		echo get_percent_string($time_boni_factor)." durch Stufe ".CURRENT_LAB_LEVEL." (-".((1-$conf['build_time_boni_forschungslabor']['p2'])*100)."% maximum)<br/>";
+	    	}
+	    	else
+	    	{
+	    		echo "Stufe ".$conf['build_time_boni_forschungslabor']['p1']." erforderlich!<br/>";
+	    	}
+			if ($cu->specialist->researchTime!=1) {
+				echo "<b>Forschungszeitverringerung durch ".$cu->specialist->name.":</b> ".get_percent_string($cu->specialist->researchTime)."<br>";
+			}
+		  	echo"
+			<b>Eingestellte Arbeiter:</b> ". nf($peopleWorking);
+			if (!$builing_something)
+				echo '&nbsp;<a href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
+			echo "<br/>
+		  	<b>Zeitreduktion durch Arbeiter pro Auftrag:</b> ".tf($peopleTimeReduction*$peopleWorking)."<br/>
+		  	<b>Nahrungsverbrauch durch Arbeiter pro Auftrag:</b> ".nf($peopleFoodConsumption*$peopleWorking)."<br/>
+		  	<b>Gentechnologie:</b> ".GEN_TECH_LEVEL."<br/>
+		  	<b>Minimale Forschungszeit (mit Arbeiter):</b> Forschungszeit * ".$minBuildTimeFactor;
+			if ($cu->specialist->costsResearch!=1)
+			{
+				echo "<br/><br/><b>Kostenreduktion durch ".$cu->specialist->name.":</b> ".get_percent_string($cu->specialist->costsResearch);
+			}
+		  	echo "</div>";   		    	
+	    	iBoxEnd();
+
+			echo '<div id="changePeople" style="display:none;">';
+			tableStart("Arbeiter im Forschungslabor zuteilen");
+			echo '<form id="changeWorkingPeople" action="?page='.$page.'&amp;id='.$bid.'" method="post">
+				'.$checker.$box.'</form>';
+			tableEnd();
+			echo '</div>';
 
 
 			//
 			//Forschung erforschen/abbrechen
 			//
-			if ((isset($_GET['id']) && $_GET['id'] >0) || (count($_POST)>0	&& checker_verify()))
+			if ($bid > 0)
 			{
-				$bid = 0;
-				if (isset($_GET['id']) && $_GET['id'] >0)
-				{
-					$bid = $_GET['id'];
-				}
-				else
-				{				
-					foreach ($_POST as $k => $v)
-					{
-						if(stristr($k,'_x'))
-						{
-							$bid = preg_replace('/show_([0-9]+)_x/', '\1', $k);
-							break;
-						}
-					}
-					if ($bid==0 && isset($_POST['show']))
-					{
-						$bid = $_POST['show'];
-					}
-					if ($bid==0 && isset($_POST['id']))
-					{
-						$bid = $_POST['id'];
-					}			
-				}
-				// Forschungsdaten laden
-				$res = dbquery("
-				SELECT 
-					* 
-				FROM 
-					technologies 
-				WHERE  
-					tech_id='".$bid."'
-					AND tech_show='1';");
-				if (mysql_num_rows($res)>0)
-				{
-					$arr = mysql_fetch_array($res);
-					
+				$arr = $currentTechData;
+				if ($arr)
+				{	
 					// Prüft, ob Technik schon erforscht wurde und setzt Variablen
 					if(isset($techlist[$arr['tech_id']]))
 					{
@@ -445,7 +558,7 @@ else
 					//
 					echo "<form action=\"?page=$page\" method=\"post\">";
 	                echo "<input type=\"hidden\" name=\"id\" value=\"".$arr['tech_id']."\">";
-	                checker_init();
+	                echo $checker;
 	                
 	                
 					if ($requirements_passed)
@@ -625,34 +738,7 @@ else
 			// Übersicht anziegen
 			//
 			else
-			{
-				
-	    	iBoxStart("Labor-Infos");
-	    	echo "<div style=\"text-align:left;\">
-	    	<b>Forschungszeitverringerung:</b> ";
-	    	if ($need_bonus_level>=0)
-	    	{
-	    		echo get_percent_string($time_boni_factor)." durch Stufe ".CURRENT_LAB_LEVEL." (-".((1-$conf['build_time_boni_forschungslabor']['p2'])*100)."% maximum)<br/>";
-	    	}
-	    	else
-	    	{
-	    		echo "Stufe ".$conf['build_time_boni_forschungslabor']['p1']." erforderlich!<br/>";
-	    	}
-			if ($cu->specialist->researchTime!=1) {
-				echo "<b>Forschungszeitverringerung durch ".$cu->specialist->name.":</b> ".get_percent_string($cu->specialist->researchTime)."<br>";
-			}
-		  	echo"
-			<b>Eingestellte Arbeiter:</b> ".nf($peopleWorking)."<br/>
-		  	<b>Zeitreduktion durch Arbeiter pro Auftrag:</b> ".tf($peopleTimeReduction*$peopleWorking)."<br/>
-		  	<b>Nahrungsverbrauch durch Arbeiter pro Auftrag:</b> ".nf($peopleFoodConsumption*$peopleWorking)."<br/>
-		  	<b>Gentechnologie:</b> ".GEN_TECH_LEVEL."<br/>
-		  	<b>Minimale Forschungszeit (mit Arbeiter):</b> Forschungszeit * ".$minBuildTimeFactor;
-			if ($cu->specialist->costsResearch!=1)
-			{
-				echo "<br/><br/><b>Kostenreduktion durch ".$cu->specialist->name.":</b> ".get_percent_string($cu->specialist->costsResearch);
-			}
-		  	echo "</div>";   		    	
-	    	iBoxEnd();			
+			{			
 				
 				
 				// Load categories
@@ -710,7 +796,7 @@ else
 						}
 					}
 				
-					$cstr=checker_init();
+					$cstr=$checker;
 					echo "<form action=\"?page=$page\" method=\"post\"><div>";
 					echo $cstr;
 					while ($tarr = mysql_fetch_array($tres))
