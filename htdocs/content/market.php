@@ -165,7 +165,7 @@
 	echo "<tr><th>Mögliche Angebote:</th>
 			<td>Du kannst noch ".$possible." Angebote einstellen</td></tr>";
 	echo "<tr><th>Rückzugsgebühren:</th>
-			<td>Wenn du ein Angebot zur&uuml;ckziehst erh&auml;lst du ".(round($return_factor,2)*100)."% des Angebotes zur&uuml;ck (abgerundet).</td></tr>";
+			<td>Wenn du ein Angebot von diesem Planet zur&uuml;ckziehst erh&auml;lst du ".(round($return_factor,2)*100)."% des Angebotes zur&uuml;ck (abgerundet).</td></tr>";
 	echo "<tr><th>Verkaufsgebühren:</th>
 			<td>Der Verkaufsgeb&uuml;hr des Marktplatzes betr&auml;gt ".get_percent_string(MARKET_TAX,1,1)."";
 	if ($cu->specialist->tradeBonus!=1)

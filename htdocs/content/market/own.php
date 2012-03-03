@@ -21,7 +21,6 @@
 	// $Rev$
 	//
 
-	$return_factor = 1 - (1/(MARKET_LEVEL+1));
 
 	// Schiffangebot löschen
 	// <editor-fold>
@@ -41,7 +40,8 @@
 			if (mysql_num_rows($scres)>0)
 			{
 				$scrow=mysql_fetch_array($scres);
-
+				$bl = new BuildList($scrow['entity_id'], $cu->id);
+				$return_factor = 1 - (1/($bl->getLevel(MARKTPLATZ_ID)+1));
 				$marr = array('factor'=>$return_factor,"ship_id"=>$scrow['ship_id'],"ship_count"=>$scrow['count']);
 				foreach ($resNames as $rk => $rn)
 				{
@@ -103,6 +103,8 @@
 			$rcrow = mysql_fetch_assoc($rcres);
 
 			$rarr = array();
+			$bl = new BuildList($rcrow['entity_id'], $cu->id);
+			$return_factor = 1 - (1/($bl->getLevel(MARKTPLATZ_ID)+1));
 			$marr = array('factor'=>$return_factor);
 			foreach ($resNames as $rk => $rn)
 			{
@@ -159,6 +161,8 @@
 			$acrow=mysql_fetch_array($acres);
 
 			$rarr = array();
+			$bl = new BuildList($acrow['entity_id'], $cu->id);
+			$return_factor = 1 - (1/($bl->getLevel(MARKTPLATZ_ID)+1));
 			$marr = array('factor'=>$return_factor);
 			foreach ($resNames as $rk => $rn)
 			{
@@ -234,6 +238,9 @@
 				$i = 0;
 
 				$te = Entity::createFactoryById($row['entity_id']);
+				$bl = new BuildList($row['entity_id'], $cu->id);
+				$return_factor = 1 - (1/($bl->getLevel(MARKTPLATZ_ID)+1));
+				$info_string = "Wenn du das Angebot zur&uuml;ckziehst erh&auml;lst du ".(round($return_factor,2)*100)."% des Angebotes zur&uuml;ck (abgerundet).";
 				if ($te!=null)
 				{
 
@@ -248,7 +255,7 @@
 
 						echo "<td rowspan=\"5\">".($te->detailLink())."</td>";
 						echo "<td rowspan=\"5\">".date("d.m.Y  G:i:s", $row['datum'])."<br/><br/>".stripslashes($row['text'])."</td>";
-						echo "<td rowspan=\"5\"><input type=\"radio\" name=\"ressource_market_id\" value=\"".$row['id']."\"><br/><br/>".$for_alliance."</td></tr>";
+						echo "<td rowspan=\"5\" ".tt($info_string)."><input type=\"radio\" name=\"ressource_market_id\" value=\"".$row['id']."\"><br/><br/>".$for_alliance."</td></tr>";
 					}
 					echo "</tr>";
 				}
@@ -309,6 +316,9 @@
 
 				$i=0;
 				$resCnt = count($resNames);
+				$bl = new BuildList($arr['entity_id'], $cu->id);
+				$return_factor = 1 - (1/($bl->getLevel(MARKTPLATZ_ID)+1));
+				$info_string = "Wenn du das Angebot zur&uuml;ckziehst erh&auml;lst du ".(round($return_factor,2)*100)."% des Angebotes zur&uuml;ck (abgerundet).";
 				foreach ($resNames as $rk => $rn)
 				{
 					echo "<tr>";
@@ -322,7 +332,7 @@
 					if ($i++==0)
 					{
 						echo "<td rowspan=\"$resCnt\">".date("d.m.Y  G:i:s", $arr['datum'])."<br/><br/>".stripslashes($arr['text'])."</td>";
-						echo "<td rowspan=\"$resCnt\"><input type=\"radio\" name=\"ship_market_id\" value=\"".$arr['id']."\"><br/><br/>".$for_alliance."</td>";
+						echo "<td rowspan=\"$resCnt\" ".tt($info_string)."><input type=\"radio\" name=\"ship_market_id\" value=\"".$arr['id']."\"><br/><br/>".$for_alliance."</td>";
 
 					}
 					echo "</tr>";
@@ -333,7 +343,7 @@
 					echo "<tr><td colspan=\"6\" style=\"height:10px;background:#000\"></td></tr>";
 			}
 			tableEnd();
-			echo "<input type=\"submit\" class=\"button\" name=\"ship_cancel\" value=\"Angebot zur&uuml;ckziehen\"/>";
+			echo "<input type=\"submit\" class=\"button\" name=\"ship_cancel\" value=\"Angebot zur&uuml;ckziehen\" />";
 			echo "</form><br/><br/>";
 		}
 		else
@@ -417,7 +427,10 @@
 					}
 				}
 				echo "</td>";
-				echo "<td style=\"width:100px;\">";
+				$bl = new BuildList($arr['entity_id'], $cu->id);
+				$return_factor = 1 - (1/($bl->getLevel(MARKTPLATZ_ID)+1));
+				$info_string = "Wenn du das Angebot zur&uuml;ckziehst erh&auml;lst du ".(round($return_factor,2)*100)."% des Angebotes zur&uuml;ck (abgerundet).";
+				echo "<td ".tt($info_string)." style=\"width:100px;\">";
 				if ($arr['date_end']-time()>0 && $arr['bidcount']==0 && $arr['buyable']==1)
 					echo "<input type=\"radio\" name=\"auction_cancel_id\"  value=\"".$arr['id']."\" />";
 				echo "</td>";
@@ -429,7 +442,9 @@
 		}
 		else
 		{
+			iBoxStart("Auktionen");
 			echo "Keine Auktionen vorhanden!";
+			iBoxEnd();
 		}
 		// </editor-fold>
 	}
