@@ -188,7 +188,7 @@
 			
 			iBoxStart("Übersicht");
 			echo "<div style=\"position:relative;height:320px;padding:0px;background:#000 url('images/stars_middle.jpg');\">
-			<div style=\"position:absolute;right:30px;top:30px;\">
+			<div style=\"position:absolute;right:20px;top:20px;\">
 			<img src=\"".$cp->imagePath('b')."\" style=\"width:220px;height:220px;\" alt=\"Planet\" /></div>";
 			echo "<div class=\"planetOverviewList\">
 			<div class=\"planetOverviewItem\">Name</div> <a href=\"javascript:;\" onclick=\"showTab('tabName')\">".$cp->name."</a><br style=\"clear:left;\"/>
@@ -207,8 +207,13 @@
 				<span class=\"resplastic\">".nf($cp->debrisPlastic,0,1)."</span>
 				<br style=\"clear:left;\"/>";
 			}			
-			if ($cp->desc!="")			
-				echo "<div class=\"planetOverviewItem\">Beschreibung</div> ".stripslashes($cp->desc)."<br style=\"clear:left;\"/>";
+			if ($cp->desc!="") {
+				if (strlen($cp->desc) > 90) {
+					echo "<div class=\"planetOverviewItem\">Beschreibung</div><span ".mTT('Beschreibugn', $cp->desc)."> ".stripslashes(substr($cp->desc,0,90))." ...</span><br style=\"clear:left;\"/>";
+				} else {
+					echo "<div class=\"planetOverviewItem\">Beschreibung</div> ".stripslashes($cp->desc)."<br style=\"clear:left;\"/>";
+				}
+			}	
 			if ($cp->isMain)				
 				echo "<div class=\"planetOverviewItem\">Hauptplanet</div> Dies ist dein Hauptplanet. Hauptplaneten können nicht invasiert oder aufgegeben werden!<br style=\"clear:left;\"/>";
 			echo "</div>";
