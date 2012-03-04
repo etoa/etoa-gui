@@ -13,6 +13,7 @@ namespace planet
 			<< "	users.user_race_id, "
 			<< "	users.user_specialist_id, "
 			<< "	users.user_specialist_time, "
+			<< "	users.user_hmode_to, "
 			<< "	stars.type_id "
 			<< "FROM  "
 			<< "  ( "
@@ -86,6 +87,8 @@ namespace planet
 				this->bunker[2] = (double)pRow["planet_bunker_plastic"];
 				this->bunker[3] = (double)pRow["planet_bunker_fuel"];
 				this->bunker[4] = (double)pRow["planet_bunker_food"];
+
+				this->isUmod = (int)pRow["user_hmode_to"] > 0 ? true : false;
 			}
 		}
 	}
@@ -100,7 +103,9 @@ namespace planet
 				this->ressource[i] = 0;
 		}
 
-		this->birthRate = 1.1 + this->planet_->getTypePopulation() + this->race_->getRacePopulation() + this->sol_->getTypePopulation() + this->specialist_->getSpecialistPopulation() - 4;
+		this->birthRate = (!this->isUmod)
+				? 1.1 + this->planet_->getTypePopulation() + this->race_->getRacePopulation() + this->sol_->getTypePopulation() + this->specialist_->getSpecialistPopulation() - 4
+				: 0;
 		this->ressource[6] = this->ressource[5] / 50 * this->birthRate;
 		this->ressource[6] = (this->ressource[6] <= 3) ? 3 : this->ressource[6];
 		

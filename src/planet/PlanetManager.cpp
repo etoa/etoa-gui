@@ -50,6 +50,7 @@ namespace planet
 			<< "	users.user_race_id, "
 			<< "	users.user_specialist_id, "
 			<< "	users.user_specialist_time, "
+			<< "	users.user_hmode_to, "
 			<< "	stars.type_id "
 			<< "FROM  "
 			<< "  ( "

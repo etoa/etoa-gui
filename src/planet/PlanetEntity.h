@@ -117,6 +117,7 @@ namespace planet
 			this->planetType = (int)planet["planet_type_id"];
 			
 			this->isMain = (bool)planet["planet_user_main"];
+			this->isUmod = (int)planet["user_hmode_to"] > 0 ? true : false;
 			
 			this->speicalistId = (int)planet["user_specialist_time"] < time(0) ? 0 : (int)planet["user_specialist_id"];
 			
@@ -146,7 +147,7 @@ namespace planet
 		int raceId, userId, planetType, solType, speicalistId;
 		int t;
 		double birthRate;
-		bool isMain;
+		bool isMain, isUmod;
 		
 		std::vector<double> store;
 		std::vector<double> cnt;
