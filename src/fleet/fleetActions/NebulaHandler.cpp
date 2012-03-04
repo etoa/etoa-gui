@@ -45,7 +45,7 @@ namespace nebula
 					this->sum +=this->f->addCrystal(this->targetEntity->removeResCrystal(std::min(this->nebula,this->targetEntity->getResCrystal())));
 					
 					report->setRes(0,
-								   floor(this->nebula));
+								   floor(this->sum));
 					
 					// Save the collected resources
 					this->f->fleetUser->addCollectedNebula(this->sum);
