@@ -344,20 +344,24 @@
 		{
 			if (!$this->isAtWar())
 			{
-				$this->getMembers();
-				if ($this->members[$userId]->isValid)
-				{
-					$this->members[$userId]->alliance = null;
-					if ($this->members[$userId]->allianceId == 0)
+				$res = dbquery("SELECT id FROM fleet WHERE user_id='" . $userId . "' AND (action='alliance' OR action='support') LIMIT 1;");
+				if (mysql_num_rows($res) == 0) {
+					$this->getMembers();
+					if ($this->members[$userId]->isValid)
 					{
-						if ($kick==1)
-							$this->members[$userId]->sendMessage(MSG_ALLYMAIL_CAT,"Allianzausschluss","Du wurdest aus der Allianz [b]".$this."[/b] ausgeschlossen!");
-						else
-							$this->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Allianzaustritt","Der Spieler ".$this->members[$userId]." trat aus der Allianz aus!");
+						$this->members[$userId]->alliance = null;
+						if ($this->members[$userId]->allianceId == 0)
+						{
+							if ($kick==1) {
+								$this->members[$userId]->sendMessage(MSG_ALLYMAIL_CAT,"Allianzausschluss","Du wurdest aus der Allianz [b]".$this."[/b] ausgeschlossen!");
+							} else {
+								$this->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Allianzaustritt","Der Spieler ".$this->members[$userId]." trat aus der Allianz aus!");
+							}
 
-						$this->addHistory("[b]".$this->members[$userId]."[/b] ist nun kein Mitglied mehr von uns.");
-						unset($this->members[$userId]);
-						return true;
+							$this->addHistory("[b]".$this->members[$userId]."[/b] ist nun kein Mitglied mehr von uns.");
+							unset($this->members[$userId]);
+							return true;
+						}
 					}
 				}
 			}

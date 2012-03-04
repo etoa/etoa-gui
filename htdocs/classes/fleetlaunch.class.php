@@ -806,7 +806,7 @@
 					($this->sourceEntity->ownerId() == $this->targetEntity->ownerId() && $this->sourceEntity->id() != $this->targetEntity->id() && $ai->allowOwnEntities()) ||
 					($this->sourceEntity->ownerId() != $this->targetEntity->ownerId() && $this->targetEntity->ownerId()>0 && $ai->allowPlayerEntities()) ||
 					($this->targetEntity->ownerId() == 0 && $ai->allowNpcEntities()) || 
-					($ai->allowAllianceEntities && $this->sourceEntity->ownerAlliance()==$this->targetEntity->ownerAlliance())) && 
+					($ai->allowAllianceEntities && $this->sourceEntity->ownerAlliance()==$this->targetEntity->ownerAlliance() && ($this->sourceEntity->ownerAlliance() > 0 || $this->sourceEntity->ownerId() == $this->targetEntity->ownerId()))) && // Allow support action only if both users are in the same alliance or source and target user are the same
 					(!$ai->allianceAction || $this->getAllianceSlots()>0 || $allowed) //this last check, checks for every AllianceAction support, alliance if there is a empty slot
 					)
 					{

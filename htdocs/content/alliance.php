@@ -262,10 +262,11 @@
 					echo "<h2>Allianz-Austritt</h2>";
 					if ($cu->allianceId!=0)
 					{
-						$ally->kickMember($cu->id,0);
-
-
-						ok_msg("Du bist aus der Allianz ausgetreten!");
+						if ($ally->kickMember($cu->id,0)) {
+							ok_msg("Du bist aus der Allianz ausgetreten!");
+						} else {
+							error_msg("Du konntest nicht aus der Allianz austreten, da die Allianz entweder im Krieg ist oder du noch Allianzflotten in der Luft hast!!");
+						}
 						echo "<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"&Uuml;bersicht\" />";
 
 
