@@ -257,7 +257,7 @@
 						
 						$this->ships[$sid] = array(
 						"count" => $cnt,
-						"speed" => $arr['ship_speed']*$timefactor,
+						"speed" => ($arr['ship_speed']/FLEET_FACTOR_F)*$timefactor,
 						"fuel_use" => $arr['ship_fuel_use'] * $cnt,
 						"fake" => strpos($arr['ship_actions'],"fakeattack"),
 						"name" => $arr['ship_name'],
@@ -293,14 +293,14 @@
 						// Set global speed
 						if ($this->speed <= 0)
 						{
-							$this->speed = $arr['ship_speed']*$timefactor;
+							$this->speed = ($arr['ship_speed']/FLEET_FACTOR_F)*$timefactor;
 						}
 						else
 						{
-							$this->speed = min($this->speed, $arr['ship_speed']*$timefactor);
+							$this->speed = min($this->speed, ($arr['ship_speed']/FLEET_FACTOR_F)*$timefactor);
 						}													     
 						
-						$this->timeLaunchLand = max($this->timeLaunchLand, $arr['ship_time2land'] + $arr['ship_time2start']);
+						$this->timeLaunchLand = max($this->timeLaunchLand, $arr['ship_time2land']/FLEET_FACTOR_S + $arr['ship_time2start']/FLEET_FACTOR_L);
 						$this->costsLaunchLand += 2 * ($arr['ship_fuel_use_launch'] + $arr['ship_fuel_use_landing']) * $cnt;						
 						$this->pilots += $arr['ship_pilots'] * $cnt;
 						$this->capacityTotal += $arr['ship_capacity'] * $cnt;
