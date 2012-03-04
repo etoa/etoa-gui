@@ -66,7 +66,7 @@ function searchUser($val,$field_id='user_nick',$box_id='citybox',$separator=";")
 
 function getFlightTargetInfo($f,$sx1,$sy1,$cx1,$cy1,$p1)
 {
-	global $conf,$s;
+	global $conf, $s;
 	$objResponse = new xajaxResponse();
 	ob_start();
 	$launch = true;
@@ -208,8 +208,8 @@ function getFlightTargetInfo($f,$sx1,$sy1,$cx1,$cy1,$p1)
 				}
 				if ($arr['user_id']>0) 
 				{
-					$out.=" <b>Besitzer:</b> ".$arr['user_nick'];			
-					if ($s->getInstance->userId==$arr['user_id'] && $arr['user_id']>0)
+					$out.=" <b>Besitzer:</b> ".$arr['user_nick'];
+					if ($s->getInstance()->user_id==$arr['user_id'] && $arr['user_id']>0)
 					{
 						$out.=' (Eigener Planet)';								
 						$objResponse->assign("targetinfo","style.color",'#f00');								

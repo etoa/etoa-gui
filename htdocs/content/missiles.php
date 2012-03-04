@@ -129,7 +129,7 @@
 					DELETE FROM
 						missile_flights
 					WHERE
-						flight_planet_from=".$cp->id()."
+						flight_entity_from=".$cp->id()."
 						AND flight_id=".intval($_GET['selfdestruct'])."
 					;");
 					if (mysql_affected_rows()>0)
@@ -540,7 +540,7 @@
 						{
 							foreach ($b_req[$mid]['t'] as $id => $l)
 							{
-								if ($techlist[$id] < $l)
+								if (isset($techlist[$id]) && $techlist[$id] < $l)
 								{
 									$requirements_passed = false;
 								}
@@ -608,7 +608,8 @@
 							$missile_max_build=min($build_cnt_metal,$build_cnt_crystal,$build_cnt_plastic,$build_cnt_fuel,$build_cnt_food,$store);
 							
 							// Grösste Zahl die eingegeben werden kann (Da man auch verschrotten kann)
-							$missile_max_number = max($missile_max_build,$missilelist[$mid]);
+							$available_missles = isset($missilelist[$mid]) ? $missilelist[$mid] : 0;
+							$missile_max_number = max($missile_max_build, $available_missles);
 
 							//Tippbox Nachricht generieren
 							//X Anlagen baubar
@@ -770,7 +771,7 @@
 		    			      	  }
 		    			    echo "</td>
 		    			      	  <th rowspan=\"2\">Vorhanden:</th>
-		    			      	  <td rowspan=\"2\">".nf($missilelist[$mid])."</td>
+		    			      	  <td rowspan=\"2\">".nf($available_missles)."</td>
 		    			      	</tr>
 		    			      	<tr>
 		    			      		<th>Reichweite:</th>
