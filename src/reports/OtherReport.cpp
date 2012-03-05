@@ -43,7 +43,7 @@ void OtherReport::saveOtherReport() {
 	
 	try	{
 		if (!this->id) throw 0;
-		
+		query << std::setprecision(18);
 		query << "INSERT INTO "
 			<< "	`reports_other` "
 			<< "( "

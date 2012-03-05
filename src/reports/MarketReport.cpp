@@ -49,7 +49,7 @@ void MarketReport::saveMarketReport() {
 	
 	try	{
 		if (!this->id) throw 0;
-		
+		query << std::setprecision(18);
 		query << "INSERT INTO "
 			<< "	`reports_market` "
 			<< "( "

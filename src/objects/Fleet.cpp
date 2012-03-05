@@ -1575,6 +1575,7 @@
 		mysqlpp::Query query = con->query();
 
 		if (sum>0 || !this->shipsLoaded) {
+			query << std::setprecision(18);
 			query << "UPDATE "
 				<< "	fleet "
 				<< "SET "
