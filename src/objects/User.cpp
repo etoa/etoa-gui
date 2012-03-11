@@ -300,6 +300,7 @@
 				this->userNick = "Unbekannter User";
 				this->allianceId = 0;
 				this->points = 0;
+				this->inactiv = true;
 			}
 			else {
 				My &my = My::instance();
@@ -312,7 +313,9 @@
 					<< "	user_points, "
 					<< "	user_specialist_id, "
 					<< "	user_specialist_time, "
-					<< "	spyattack_counter "
+					<< "	spyattack_counter, "
+					<< "	user_hmode_from, "
+					<< "	user_logouttime "
 					<< "FROM "
 					<< " users "
 					<< "WHERE "
@@ -326,11 +329,11 @@
 					
 					if (uSize > 0) {
 						mysqlpp::Row uRow = uRes.at(0);
-						
 						this->allianceId = (int)uRow["user_alliance_id"];
 						this->userNick = std::string(uRow["user_nick"]);
 						this->points = (double)uRow["user_points"];
 						this->spyattackCount = (int)uRow["spyattack_counter"];
+						this->inactiv = (int)uRow["user_hmode_from"] == 0 && ((int)uRow["user_logouttime"] < (time(NULL) - 14 * 86400)) ? true : false;
 						
 						DataHandler &DataHandler = DataHandler::instance();
 						if ((int)uRow["user_specialist_id"]>0 && (int)uRow["user_specialist_time"]>time(0)) {
@@ -346,6 +349,7 @@
 						this->userNick = "Unbekannter User";
 						this->allianceId = 0;
 						this->points = 0;
+						this->inactiv = true;
 					}
 				}
 			}
@@ -516,5 +520,9 @@
 			techString += "0";
 		
 		return techString;
+	}
+
+	bool User::isInactiv() {
+		return this->inactiv;
 	}
 	

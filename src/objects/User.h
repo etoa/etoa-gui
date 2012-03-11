@@ -3,6 +3,7 @@
 #define __USER__
 
 #include <map>
+#include <time.h>
 #define MYSQLPP_MYSQL_HEADERS_BURIED
 #include <mysql++/mysql++.h>
 
@@ -64,6 +65,7 @@ class User
 		
 		int getUserMain();
 		int getPlanetsCount();
+		bool isInactiv();
 		
 		std::string getTechString();
 		
@@ -74,6 +76,7 @@ class User
 		double points;
 		int elorating;
 		unsigned int spyattackCount;
+		bool inactiv;
 		
 		SpecialistData* specialist;
 		

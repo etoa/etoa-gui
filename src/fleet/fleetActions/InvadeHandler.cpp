@@ -68,7 +68,7 @@ namespace invade
 						this->one = rand() % 101;
 						this->two = (100 * this->chance);
 						
-						if (this->one < this->two) {
+						if (this->one < this->two && this->targetEntity->getUser()->isInactiv()) {
 							if (this->f->fleetUser->getPlanetsCount() < (int)config.nget("user_max_planets",0)) {
 								
 								BattleReport *invade = new BattleReport(this->f->getUserId(),
