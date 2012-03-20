@@ -917,144 +917,47 @@
 		}
 		$out.="</table></td>";
 
+		/**********************/
+		/* Bilderweiterung		*/
+		/**********************/
 
+		$out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
+		$out.="<tr><th  colspan=\"4\">Bild-Erweiterung</th></tr>";
+		$res=dbquery("
+		SELECT 
+			image_ext,
+			COUNT(id) as cnt 
+		FROM 
+			user_properties
+		GROUP BY 
+			image_ext 
+		ORDER BY 
+			cnt DESC 
+		LIMIT $limit;");
+		$rank=1;
+		$total=0;
+		$i = array();
+		$num=mysql_num_rows($res);
+		while ($arr=mysql_fetch_array($res))
+		{
+			array_push($i,$arr);
+			$total+=$arr['cnt'];
+		}
+		foreach ($i as $arr)
+		{
+			$out.="<tr><td >".$rank."</td>";
+			if ($arr['image_ext']!="")
+				$out.="<td >".$arr['image_ext']."</td>";
+			else
+				$out.="<td ><i>Standard</i></td>";
+			$out.="<td >".nf($arr['cnt'])."</td>";
+			$out.="<td >".round(100/$total*$arr['cnt'],2)."%</td></tr>";
+			$rank++;
+		}
 
-    /**********************/
-    /* Bilderweiterung		*/
-    /**********************/
-    
-    $out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
-    $out.="<tr><th  colspan=\"4\">Bild-Erweiterung</th></tr>";
-    $res=dbquery("
-    SELECT 
-        image_ext,
-        COUNT(id) as cnt 
-    FROM 
-        user_properties
-    GROUP BY 
-        image_ext 
-    ORDER BY 
-        cnt DESC 
-    LIMIT $limit;");
-    $rank=1;
-    $total=0;
-    $i = array();
-    $num=mysql_num_rows($res);
-    while ($arr=mysql_fetch_array($res))
-    {
-        array_push($i,$arr);
-        $total+=$arr['cnt'];
-    }
-    foreach ($i as $arr)
-    {
-        $out.="<tr><td >".$rank."</td>";
-        if ($arr['image_ext']!="")
-            $out.="<td >".$arr['image_ext']."</td>";
-        else
-            $out.="<td ><i>Standard</i></td>";
-        $out.="<td >".nf($arr['cnt'])."</td>";
-        $out.="<td >".round(100/$total*$arr['cnt'],2)."%</td></tr>";
-        $rank++;
-    }
-    $out.="</table></td>";
+		$out.="</table></td>";
         
-		$out.="</tr><tr>";
-
-
-
-
-		// Browser
-	$out.="<td style=\"width:33%;vertical-align:top;\" colspan=\"3\"><table width=\"100%\" class=\"tb\">";
-	$out.="<th colspan=\"5\">Browser & Betriebssystem</th></tr>";
-	$res=dbquery("
-	SELECT 
-		user_client, 
-		COUNT(user_id) as cnt 
-	FROM 
-		users 
-	WHERE 
-		user_client!='' 
-	GROUP BY 
-		user_client 
-	ORDER BY 
-		cnt DESC 
-	LIMIT 30;");
-	$rank=1;
-	$total=0;
-	$i = array();
-	$num=mysql_num_rows($res);
-	while ($arr=mysql_fetch_array($res))
-	{
-		array_push($i,$arr);
-		$total+=$arr['cnt'];
-	}
-	foreach ($i as $arr)
-	{
-		$out.="<tr><td>$rank</td>";
-		if (stristr($arr['user_client'],"Firefox"))
-			$client="Firefox ".substr($arr['user_client'],strpos($arr['user_client'],"Firefox/")+8,7);
-		elseif (stristr($arr['user_client'],"MSIE"))
-			$client="Internet Explorer ".substr($arr['user_client'],strpos($arr['user_client'],"MSIE")+5,3);
-		elseif (stristr($arr['user_client'],"Opera"))
-			$client="Opera ".substr($arr['user_client'],strpos($arr['user_client'],"Opera/")+6,4);
-		elseif (stristr($arr['user_client'],"Opera"))
-			$client="Opera ".substr($arr['user_client'],strpos($arr['user_client'],"Opera/")+6,4);
-		elseif (stristr($arr['user_client'],"Safari"))
-			$client="Safari ".substr($arr['user_client'],strpos($arr['user_client'],"Safari/")+7);
-		elseif (stristr($arr['user_client'],"Mozilla"))
-			$client="Mozilla";
-		else
-			$client="-";
-
-		if (stristr($arr['user_client'],"Windows NT 4.0"))
-			$os="Windows NT 4.0";
-		elseif (stristr($arr['user_client'],"Windows NT 5.0"))
-			$os="Windows 2000";
-		elseif (stristr($arr['user_client'],"Windows NT 5.1"))
-			$os="Windows XP";
-		elseif (stristr($arr['user_client'],"Windows NT 5.2"))
-			$os="Windows Server 2003";
-		elseif (stristr($arr['user_client'],"Windows NT 6.0"))
-			$os="Windows Vista";
-		elseif (stristr($arr['user_client'],"Windows 95"))
-			$os="Windows 95";
-		elseif (stristr($arr['user_client'],"Windows 98"))
-			$os="Windows 98";
-		elseif (stristr($arr['user_client'],"Windows ME"))
-			$os="Windows ME";
-		elseif (stristr($arr['user_client'],"Windows CE"))
-			$os="Windows CE";
-		elseif (stristr($arr['user_client'],"Max OS X"))
-			$os="Max OS X";
-		elseif (stristr($arr['user_client'],"Macintosh"))
-			$os="Mac OS";
-		elseif (stristr($arr['user_client'],"Linux"))
-			$os="Linux";
-		elseif (stristr($arr['user_client'],"SunOS"))
-			$os="SunOS";
-		else
-			$os="-";
-
-		$out.="<td ".tm("User Agent String",$arr['user_client']).">".$client."</td>";
-		$out.="<td ".tm("User Agent String",$arr['user_client']).">".$os."</td>";
-		$out.="<td>".nf($arr['cnt'])."</td>";
-		$out.="<td>".round(100/$total*$arr['cnt'],2)."%</td></tr>";
-		$rank++;
-	}
-	$out.="</table></td>";
-
-	$out.="</tr>";
-
-
-
-
-
-
-
-
-
-
-
+		$out.="</tr>";
 
 		$out.="</table>";
 		
