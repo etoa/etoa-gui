@@ -27,17 +27,38 @@ namespace steal
 				this->shipCnt = this->f->getActionCount();
 				
 				// Calculate the chance
-				this->one = rand() % 501;
-				this->two = std::min(config.nget("spyattack_action",2),std::max(config.nget("spyattack_action",1),(config.nget("spyattack_action",0) +this->tLevelAtt - this->tLevelDef + ceil(this->shipCnt/10000.0)+ this->f->getSpecialShipBonusForsteal() * 100)));
+				double min = config.nget("spyattack_action",1); //minimum value
+				double max = config.nget("spyattack_action",2); //maximum value
+				double ini = config.nget("spyattack_action",0); //initial value
+				this->one = rand() % 501; //Choose random number from 0 to 500
+				/* Calculate a number
+				 * > between min and max (the two min() and max() wrappers)
+				 * > the MAXIMUM of
+				 * - > ini plus difference between Att and Def tech levels
+				 * -   plus the third root of the number of ships
+				 * -   (third root seems to be about balanced)
+				 * -   minus one (drawback of choosing third root and
+				 * -   standard value of 3 for ini => average chance remains
+				 * -   at about 4% with this -1)
+				 * - > AND special ship bonus ratio applied to min,max
+				 * === new TechSteal algorithm by river ===
+				 */
+				this->two = std::min(max, std::max(min, // wrappers
+					std::max( // MAXIMUM
+						(ini + this->tLevelAtt - this->tLevelDef // ini + diff(att,def)
+							+ std::pow((double) this->shipCnt,(1.0/3.0)) -1), //shipCnt^(1/3) -1
+						((max - min) * this->f->getSpecialShipBonusForsteal() + min) //linear ratio func
+					)
+				));
 				this->two *= 5;
 				this->two -= this->f->fleetUser->getSpyattackCount();
 				
 				BattleReport *spyattack = new BattleReport(this->f->getUserId(),
-														 this->targetEntity->getUserId(),
-														 this->f->getEntityTo(),
-														 this->f->getEntityFrom(),
-														 this->f->getLandtime(),
-														 this->f->getId());
+										this->targetEntity->getUserId(),
+										this->f->getEntityTo(),
+										this->f->getEntityFrom(),
+										this->f->getLandtime(),
+										this->f->getId());
 				spyattack->addUser(this->targetEntity->getUserId());
 				
 				if (this->one < this->two) {
