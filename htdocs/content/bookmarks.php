@@ -58,98 +58,108 @@
 		if (mysql_num_rows($res)>0)
 		{
 			$arr=mysql_fetch_row($res);
-			
-			// Create shipstring
-			$addships = "";
-			foreach ($_POST['ship_count'] as $sid => $count)
-			{
-				if ($addships=="")
-					$addships.= $sid.":".nf_back($count);
-				else
-					$addships.= ",".$sid.":".nf_back($count);
-			}
-			
-			$speed = max(1,min(100,nf_back($_POST['value'])));
-			
-			// Create restring
-			$freight = intval(nf_back_sign($_POST['res0'])).",".
-				intval(nf_back_sign($_POST['res1'])).",".
-				intval(nf_back_sign($_POST['res2'])).",".
-				intval(nf_back_sign($_POST['res3'])).",".
-				intval(nf_back_sign($_POST['res4'])).",".
-				intval(nf_back_sign($_POST['res5']))."";
-				
-			/*$fetch = intval(nf_back_sign($_POST['fetch0'])).",".
-				intval(nf_back_sign($_POST['fetch1'])).",".
-				intval(nf_back_sign($_POST['fetch2'])).",".
-				intval(nf_back_sign($_POST['fetch3'])).",".
-				intval(nf_back_sign($_POST['fetch4'])).",".
-				intval(nf_back_sign($_POST['fetch5']))."";*/
 
-			/*$freight = max(0,intval(nf_back($_POST['res0']))).",".
-				max(0,intval(nf_back($_POST['res1']))).",".
-				max(0,intval(nf_back($_POST['res2']))).",".
-				max(0,intval(nf_back($_POST['res3']))).",".
-				max(0,intval(nf_back($_POST['res4']))).",".
-				max(0,intval(nf_back($_POST['res5']))).""; */
-				
-			$fetch = max(0,intval(nf_back($_POST['fetch0']))).",".
-				max(0,intval(nf_back($_POST['fetch1']))).",".
-				max(0,intval(nf_back($_POST['fetch2']))).",".
-				max(0,intval(nf_back($_POST['fetch3']))).",".
-				max(0,intval(nf_back($_POST['fetch4']))).",".
-				max(0,intval(nf_back($_POST['fetch5']))).""; 
-				
-			// Save new bookmark
-			if (isset($_POST['submitNew']))
+			//Check discovered for fleet bookmarks, bugfix by river
+			$absX = (($_POST['sx']-1) * CELL_NUM_X) + $_POST['cx'];
+			$absY = (($_POST['sy']-1) * CELL_NUM_Y) + $_POST['cy'];
+			if ($cu->discovered($absX,$absY))
 			{
-				dbquery("
-					INSERT INTO 
-						fleet_bookmarks
-					(
-						user_id,
-						name,
-						target_id,
-						ships,
-						res,
-						resfetch,
-						action,
-						speed
-					) 
-					VALUES 
-					(
-						'".$cu->id."',
-						'".addslashes($_POST['name'])."',
-						'".$arr[0]."',
-						'".$addships."',
-						'".$freight."',
-						'".$fetch."',
-						'".$_POST['action']."',
-						'".$speed."'
-					);");
-							
-				ok_msg("Der Favorit wurde hinzugef&uuml;gt!");
+				// Create shipstring
+				$addships = "";
+				foreach ($_POST['ship_count'] as $sid => $count)
+				{
+					if ($addships=="")
+						$addships.= $sid.":".nf_back($count);
+					else
+						$addships.= ",".$sid.":".nf_back($count);
+				}
+				
+				$speed = max(1,min(100,nf_back($_POST['value'])));
+				
+				// Create restring
+				$freight = intval(nf_back_sign($_POST['res0'])).",".
+					intval(nf_back_sign($_POST['res1'])).",".
+					intval(nf_back_sign($_POST['res2'])).",".
+					intval(nf_back_sign($_POST['res3'])).",".
+					intval(nf_back_sign($_POST['res4'])).",".
+					intval(nf_back_sign($_POST['res5']))."";
+					
+				/*$fetch = intval(nf_back_sign($_POST['fetch0'])).",".
+					intval(nf_back_sign($_POST['fetch1'])).",".
+					intval(nf_back_sign($_POST['fetch2'])).",".
+					intval(nf_back_sign($_POST['fetch3'])).",".
+					intval(nf_back_sign($_POST['fetch4'])).",".
+					intval(nf_back_sign($_POST['fetch5']))."";*/
+
+				/*$freight = max(0,intval(nf_back($_POST['res0']))).",".
+					max(0,intval(nf_back($_POST['res1']))).",".
+					max(0,intval(nf_back($_POST['res2']))).",".
+					max(0,intval(nf_back($_POST['res3']))).",".
+					max(0,intval(nf_back($_POST['res4']))).",".
+					max(0,intval(nf_back($_POST['res5']))).""; */
+					
+				$fetch = max(0,intval(nf_back($_POST['fetch0']))).",".
+					max(0,intval(nf_back($_POST['fetch1']))).",".
+					max(0,intval(nf_back($_POST['fetch2']))).",".
+					max(0,intval(nf_back($_POST['fetch3']))).",".
+					max(0,intval(nf_back($_POST['fetch4']))).",".
+					max(0,intval(nf_back($_POST['fetch5']))).""; 
+					
+				// Save new bookmark
+				if (isset($_POST['submitNew']))
+				{
+					dbquery("
+						INSERT INTO 
+							fleet_bookmarks
+						(
+							user_id,
+							name,
+							target_id,
+							ships,
+							res,
+							resfetch,
+							action,
+							speed
+						) 
+						VALUES 
+						(
+							'".$cu->id."',
+							'".addslashes($_POST['name'])."',
+							'".$arr[0]."',
+							'".$addships."',
+							'".$freight."',
+							'".$fetch."',
+							'".$_POST['action']."',
+							'".$speed."'
+						);");
+								
+					ok_msg("Der Favorit wurde hinzugef&uuml;gt!");
+				}
+				elseif (isset($_POST['submitEdit']))
+				{
+					// Update edidet bookmark
+					dbquery("
+						UPDATE
+							fleet_bookmarks
+						SET
+							name='".addslashes($_POST['name'])."',
+							target_id='".$arr[0]."',
+							ships='".$addships."',
+							res='".$freight."',
+							resfetch='".$fetch."',
+							action='".$_POST['action']."',
+							speed='".$speed."'
+						WHERE
+							user_id='".$cu->id."'
+							AND id='".$_POST['id']."'
+						LIMIT 1;");
+					
+					ok_msg("Der Favorit wurde gespeichert!");
+				}
 			}
-			elseif (isset($_POST['submitEdit']))
+			else
 			{
-				// Update edidet bookmark
-				dbquery("
-					UPDATE
-						fleet_bookmarks
-					SET
-						name='".addslashes($_POST['name'])."',
-						target_id='".$arr[0]."',
-						ships='".$addships."',
-						res='".$freight."',
-						resfetch='".$fetch."',
-						action='".$_POST['action']."',
-						speed='".$speed."'
-					WHERE
-						user_id='".$cu->id."'
-						AND id='".$_POST['id']."'
-					LIMIT 1;");
-				
-				ok_msg("Der Favorit wurde gespeichert!");
+				err_msg('Ziel wurde noch nicht entdeckt.');
 			}
 		}
 		else
