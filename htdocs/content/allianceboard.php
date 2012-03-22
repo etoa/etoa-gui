@@ -48,6 +48,7 @@
 				if (mysql_num_rows($bres)>0)
 				{		
 					$barr=mysql_fetch_array($bres);
+					$bnd_id = $barr['alliance_bnd_id'];
 					if ($barr['alliance_bnd_alliance_id2']==BOARD_ALLIANCE_ID)
 					{
 						$alliance_bnd_id=$barr['alliance_bnd_alliance_id1'];
@@ -264,7 +265,7 @@
 				if (mysql_num_rows($tres)>0)
 				{
 					$tarr=mysql_fetch_array($tres);
-					if (($alliance_bnd_id===$tarr['topic_bnd_id'] && $isAdmin) || (isset($myCat[$tarr['cat_id']]) && ($isAdmin ||$myCat[$tarr['cat_id']])))
+					if (($bnd_id === $tarr['topic_bnd_id'] && $isAdmin) || (isset($myCat[$tarr['cat_id']]) && ($isAdmin ||$myCat[$tarr['cat_id']])))
 					{				
 						if ($tarr['topic_bnd_id']>0)
 						{
@@ -583,7 +584,7 @@
 					
 				}
 				else
-					error_msg("Kein Zugriff!");
+					error_msg("Kein Zugriff!3");
 				echo "<input type=\"button\" value=\"Zur &Uuml;bersicht\" onclick=\"document.location='?page=$page'\" />";
 			}
 		
@@ -798,13 +799,10 @@
 						}
 					}
 					sort($bullets);			
-					$alliance_bnd_id=0;
-					if ($arr['alliance_bnd_alliance_id2']==BOARD_ALLIANCE_ID)
-					{
-						$alliance_bnd_id=$arr['alliance_bnd_alliance_id1'];
-					}
-					else
-					{
+					$alliance_bnd_id = 0;
+					if ($arr['alliance_bnd_alliance_id2']==BOARD_ALLIANCE_ID) {
+						$alliance_bnd_id = $arr['alliance_bnd_alliance_id1'];
+					} else {
 						$alliance_bnd_id=$arr['alliance_bnd_alliance_id2'];
 					}
 					$alliance=get_alliance_names($alliance_bnd_id);
@@ -1060,7 +1058,9 @@
 								else
 									$ps="-";
 								echo "<tr>";
-								if ($arr['cat_bullet']=="" || !is_file(BOARD_BULLET_DIR."/".$arr['cat_bullet'])) $arr['cat_bullet']=BOARD_DEFAULT_IMAGE;
+								if (!isset($arr['cat_bullet']) || $arr['cat_bullet']=="" || !is_file(BOARD_BULLET_DIR."/".$arr['cat_bullet'])) {
+									$arr['cat_bullet']=BOARD_DEFAULT_IMAGE;
+								}
 								echo "<td style=\"width:40px;\"><img src=\"".BOARD_BULLET_DIR."/".$arr['cat_bullet']."\" style=\"width:40px;height:40px;\" /></td>";
 								echo "<td style=\"width:300px;\"";
 								if ($isAdmin)

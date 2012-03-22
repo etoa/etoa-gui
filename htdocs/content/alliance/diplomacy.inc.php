@@ -672,7 +672,7 @@
 						// Log decision
 						$text = "Die Allianzen [b][".$arr['a1tag']."] ".$arr['a1name']."[/b] und [b][".$arr['a2tag']."] ".$arr['a2name']."[/b] schliessen ein Bündnis!";
 						add_alliance_history($cu->allianceId,$text);
-						add_alliance_history($alliance_id,$text);
+						add_alliance_history($arr['a1id'], $text);
 						
 						// Save pact
 						dbquery("
@@ -872,7 +872,7 @@
 							}									
 							elseif ($relations[$aarr['alliance_id']]['level']==0 && count($relations[$aarr['alliance_id']])>0)
 							{
-								if ($relations[$aarr['alliance_id']]['master'])
+								if (isset($relations[$aarr['alliance_id']]['master']) && $relations[$aarr['alliance_id']]['master'])
 								{
 									echo "<td style=\"color:#ff0;\">Anfrage</td>";
 								}
@@ -916,7 +916,7 @@
 							}									
 							elseif ($relations[$aarr['alliance_id']]['level']==0 && count($relations[$aarr['alliance_id']])>0)
 							{
-								if ($relations[$aarr['alliance_id']]['master'])
+								if (isset($relations[$aarr['alliance_id']]['master']) && $relations[$aarr['alliance_id']]['master'])
 								{
 									echo "<a href=\"?page=$page&action=relations&view=".$relations[$aarr['alliance_id']]['id']."\">Anschauen / Löschen</a> ";
 								}
