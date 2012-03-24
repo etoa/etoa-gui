@@ -3,7 +3,7 @@
 
 <h2>{$subtitle}</h2>
 
-{if $msg|default:'' ne ""}{$msg}{/if}
+{if $msg|default:'' ne ""}{msg type="ok" text=$msg}{/if}
 
 <form action="?page={$page}&amp;sub={$sub}&amp;cid={$cid}" method="post">
 	<p><input type="submit" name="submit" value="Übernehmen" /> &nbsp;

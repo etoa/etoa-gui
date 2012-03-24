@@ -427,8 +427,13 @@ http://127.0.0.1</v>
     </item>
     <item name="offline" cat="1">
       <v comment="Game offline stellen" type="onoff">0</v>
-      <p1 comment="Erlaubter Zugang zu offline Game" type="textarea">89.236.149.247</p1>
     </item>
+    <item name="offline_message" cat="1">	
+		<v comment="Offline Nachricht" type="textarea"></v>
+	</item>
+    <item name="offline_ips_allow" cat="1">	
+		<v comment="Erlaubter Zugang zu offline Game" type="textarea"></v>
+	</item>
     <item name="name_length" cat="10">
       <v comment="Maximale L&#xE4;nge des Names" type="text">30</v>
     </item>

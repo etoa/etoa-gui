@@ -1,4 +1,13 @@
 <?php
+//////////////////////////////////////////////////////
+// The Andromeda-Project-Browsergame                //
+// Ein Massive-Multiplayer-Online-Spiel             //
+// Programmiert von Nicolas Perrenoud<mail@nicu.ch> //
+// als Maturaarbeit '04 am Gymnasium Oberaargau	    //
+//////////////////////////////////////////////////////
+// $Id$
+//////////////////////////////////////////////////////
+
 /**
  * Providess session and authentication management
  * for admin area. See parent class for documentation
@@ -171,62 +180,6 @@ class AdminSession extends Session
 		$res = dbquery($sql);
 	}
 
-	/**
-	* Monitor admin user's action
-	* TODO: This is only a hack, we need a better, cleaner log mechanism
-	*/
-	function monitor()
-	{
-		global $_GET, $_POST;
-		// 1984
-		$req = "";
-		$page= "";
-		foreach ($_GET as $k=>$v)
-		{
-			if ($k!="page")
-			{
-				$req.="[b]".$k.":[/b] ".$v."\n";
-			}
-			else
-				$page = $_GET['page'];
-		}
-		$post = "";
-		foreach ($_POST as $k=>$v)
-		{
-			if (is_array($v))
-			{
-				$post.="[b]".$k.":[/b] ".dump($v,1);
-			}
-			else
-			{
-				if ($k=="login_pw" || $k=="user_password_old" || $k=="user_password" || $k=="user_password2")
-					$post.="[b]".$k.":[/b] *******\n";
-				else
-					$post.="[b]".$k.":[/b] ".$v."\n";
-			}
-		}
-
-		dbquery("INSERT DELAYED INTO
-			admin_surveillance
-		(
-			timestamp,
-			user_id,
-			page,
-			request,
-			post,
-			session
-		)
-		VALUES
-		(
-			".time().",
-			'".$this->user_id."',
-			'".$page."',
-			'".$req."',
-			'".addslashes($post)."',
-			'".$this->id."'
-		)");
-	}
-
 	function logout()
 	{
 		self::unregisterSession();
@@ -320,12 +273,9 @@ class AdminSession extends Session
 		return $nr;
 	}
 
-
 	static function kick($sid)
 	{
 		self::unregisterSession($sid);
 	}
-
-
 }
 ?>

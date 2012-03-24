@@ -43,11 +43,11 @@
 		}
 		
 		//Eventhandler //
-		if (!$cfg->value("backend"))
+		if (!$cfg->value("backend_status"))
 		{
 			echo "<br />";
 			iBoxStart("<span style=\"color:red;\">UPDATEDIENST</span>");
-			echo text2html($cfg->p1("backend"));
+			echo text2html($cfg->p1("backend_offline_message"));
 			iBoxEnd();
 		}
 		

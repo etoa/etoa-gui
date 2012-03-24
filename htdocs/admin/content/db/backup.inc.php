@@ -89,7 +89,7 @@
 				echo "<td>".$sr." MB</td>";
 				echo "<td>
 					<a href=\"?page=$page&amp;sub=backup&amp;action=backuprestore&amp;date=$date\" onclick=\"return confirm('Soll die Datenbank mit den im Backup $date gespeicherten Daten &uuml;berschrieben werden?');\">Wiederherstellen</a> &nbsp; 
-					<a href=\"dl.php?path=".base64_encode($cfg->backup_dir."/".$f)."&amp;hash=".md5($cfg->backup_dir."/".$f)."\">Download</a>
+					<a href=\"".createDownloadLink($cfg->backup_dir."/".$f)."\">Download</a>
 				</td></tr>";
 				$cnt++;
 			}

@@ -1,39 +1,41 @@
 <?PHP
-	session_start();
-	if (true || count($_SESSION)>0)
-	{
-		if ($_GET['path']!="" && $_GET['hash']!="")
-		{
-			$file = base64_decode($_GET['path']); 
-			if (md5($file) == $_GET['hash'])
-			{		
-				if (is_file($file))
-				{
-					header('Content-Description: File Transfer');
-					header('Content-Type: application/octet-stream');
-					header('Content-Length: ' . filesize($file));
-					header('Content-Disposition: attachment; filename="' . basename($file).'"');
-					readfile($file);
-					exit;
-				}
-				else
-				{
-					echo "Datei nicht vorhanden!";
-				}
-			}
-			else
-			{
-				echo "Falscher Hash-Wert";
-			}
-		}
-		else
-		{
-			echo "Datei nicht angegeben!";
-		}
-	}
-	else
-	{
-		echo "Nicht eingeloggt!";
-	}
+require("inc/includer.inc.php");
 
+if ($s->user_id) {
+	if ($file = parseDownloadLink($_GET)) {
+	
+		// Check path
+		$file = realpath($file);
+		$allowedDirs = array(
+			realpath(CACHE_ROOT),
+			realpath(ADMIN_FILESHARING_DIR),
+			realpath($cfg->get('backup_dir'))
+		);
+		$allow = false;
+		foreach ($allowedDirs as $ad) {
+			if (substr($file, 0, strlen($ad)) == $ad) {
+				$allow = true;
+				break;
+			}			
+		}
+		if ($allow) {
+			if (is_file($file)) {
+				header('Content-Description: File Transfer');
+				header('Content-Type: application/octet-stream');
+				header('Content-Length: ' . filesize($file));
+				header('Content-Disposition: attachment; filename="' . basename($file).'"');
+				readfile($file);
+				exit;
+			} else {
+				echo "Datei nicht vorhanden!";
+			}		
+		} else {
+			echo "Ungültiger Pfad!";
+		}
+	} else {
+		echo "Datei nicht angegeben oder falscher Hash-Wert!";
+	}
+} else {
+	echo "Nicht eingeloggt!";
+}
 ?>

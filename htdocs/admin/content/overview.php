@@ -44,15 +44,16 @@
 		
 		if (isset($_POST['save']))
 		{
-			$cfg->set('offline',1,$_POST['param1'],$_POST['param2']);
+			$cfg->set('offline_ips_allow', $_POST['offline_ips_allow']);
+			$cfg->set('offline_message', $_POST['offline_message']);
 		}
 
 		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
 		if ($cfg->get('offline')==1)
 		{
 			echo "<span style=\"color:#f90;\">Das Spiel ist offline!</span><br/><br/>
-			Erlaubte IP's (deine ist ".$_SERVER['REMOTE_ADDR']."):<br/> <textarea name=\"param1\" rows=\"6\" cols=\"60\">".$cfg->p1('offline')."</textarea><br/>
-			Nachricht: <br/><textarea name=\"param2\" rows=\"6\" cols=\"60\">".$cfg->p2('offline')."</textarea><br/><br/>
+			Erlaubte IP's (deine ist ".$_SERVER['REMOTE_ADDR']."):<br/> <textarea name=\"offline_ips_allow\" rows=\"6\" cols=\"60\">".$cfg->offline_ips_allow->v."</textarea><br/>
+			Nachricht: <br/><textarea name=\"offline_message\" rows=\"6\" cols=\"60\">".$cfg->offline_message->v."</textarea><br/><br/>
 			<input type=\"submit\" value=\"&Auml;nderungen speichern\" name=\"save\" /> &nbsp; 
 			<input type=\"button\" value=\"Spiel online stellen\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;on=1'\" />";
 			
@@ -375,26 +376,15 @@
 	{
 		if (isset($_POST['save']))
 		{
-				dbquery("UPDATE config SET config_value='".$_POST['config_value']."' WHERE config_name='admininfo';");
+			$cfg->set('admininfo', $_POST['admininfo']);
+			$tpl->assign("msg", "Gespeichert!");
 		}
-		echo "<h1>Ingame-News</h1>";
-		echo "Diese News erscheinen auf der Startseite des Adminmodus:<br/><br/>";
-    echo "<form action=\"?page=$page&sub=$sub\" method=\"post\">";
-		$res = dbquery("SELECT * FROM config WHERE config_name='admininfo';");
-		if (mysql_num_rows($res)>0)
-		{
-			$arr = mysql_fetch_array($res);
-			if ($arr['config_value']!="")
-			{
-				iBoxStart("Vorschau");
-				echo text2html($arr['config_value']);
-				iBoxEnd();
-			}
-			echo "<textarea name=\"config_value\" cols=\"100\" rows=\"15\">".$arr['config_value']."</textarea><br/><br/>";
-			echo "<input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" />";
-		}
-		else
-			echo "Es ist kein Datensatz vorhanden!";
+		$tpl->assign("title", "Admin-News");
+
+		echo "<p>Diese News erscheinen auf der Startseite des Adminmodus:</p>";
+		echo "<form action=\"?page=$page&sub=$sub\" method=\"post\">";
+		echo "<textarea name=\"admininfo\" cols=\"100\" rows=\"15\">".$cfg->get('admininfo')."</textarea><br/><br/>";
+		echo "<input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" />";
 		echo "</form>";	
 	}		
 	
@@ -413,19 +403,34 @@
 	{
 		require("home/observed.inc.php");
 	}	
+
+	elseif ($sub=="sysinfo") {
+	
+		$tpl->setView("admin/sysinfo");
+		$tpl->assign("title", "System-Informationen");
+
+		if (UNIX)
+		{
+			$un=posix_uname();
+			$tpl->assign("unix_name", $un['sysname']." ".$un['release']." ".$un['version']);
+		}
+		$tpl->assign("php_version", substr(phpversion(),0,10));
+		$tpl->assign("db_version", mysql_get_client_info());
+		$tpl->assign("webserver_version", $_SERVER['SERVER_SOFTWARE']);
+
+	}
 	
 	//
-	// Ãœbersicht
+	// Übersicht
 	//
 	else
 	{
-		echo "<h1>&Uuml;bersicht</h1>";
-
+		$tpl->setView("admin/overview");
+		$tpl->assign("title", "&Uuml;bersicht");
 
 		if (!isset($s->home_visited))
 		{
-			echo "<p>Hallo <b>".$cu->nick."</b>, willkommen im Administrationsmodus! Dein Rang ist <b>".$cu->groupName.".</b><br/></p>";
-			//echo "<span style=\"color:#0f0;\">Dein letzter Login war <b>".df($s['user_last_login'])."</b>, Host: <b>".Net::getHost($s['user_last_host'])."</b> (aktuell: ".gethostbyaddr($_SERVER['REMOTE_ADDR'])."), IP: <b>".$s['user_last_ip']."</b> (aktuell: ".$_SERVER['REMOTE_ADDR'].")</span><br/><br/>";
+			$tpl->assign("welcome_msg", "Hallo <b>".$cu->nick."</b>, willkommen im Administrationsmodus! Dein Rang ist <b>".$cu->groupName.".</b>");
 			$s->home_visited=true;
 		}
 		
@@ -436,142 +441,74 @@
 		$arr = mysql_fetch_row($res);
 		if ($arr[0]==0)
 		{
-			echo "<h2>Universum existiert noch nicht!</h2>";
-			echo "<div style=\"color:orange;font-weight:bold;\">Das Universum wurde noch nicht erschaffen!<br/><br/>
-			<input type=\"button\" value=\"Weiter zum Urknall\" onclick=\"document.location='?page=setup&sub=uni'\" /></div><br/><br/>";
+			echo MessageBox::warning("Universum existiert noch nicht!", "Das Universum wurde noch nicht erschaffen!");
+			echo "<p><input type=\"button\" value=\"Weiter zum Urknall\" onclick=\"document.location='?page=setup&sub=uni'\" /></p>";
 		}
 		else
-		{				
+		{			
+			$tpl->assign("force_password_change", $cu->forcePasswordChange);
 		
-		if ($cu->forcePasswordChange)
-		{
-			iBoxStart("Passwort");   
-			echo "<span style=\"color:#f90;\">Dein Passwort wurde seit der letzten automatischen Generierung noch nicht geändert. Bitte mache das jetzt <a href=\"?myprofile=1\">hier</a>!</span>";
-			iBoxEnd();			
-		}
-		
-		//
-		// Admin-News
-		//
-		if ($conf['admininfo']['v']!="")
-		{
-			iBoxStart("Admin-News");   
-			echo text2html($conf['admininfo']['v']);
-			iBoxEnd();			
-		}
-
-		// Flottensperre aktiv
-		if ($conf['flightban']['v']==1)
-		{
-			// PrÃƒÂ¼ft, ob die Sperre schon abgelaufen ist
-			if($conf['flightban_time']['p1']<=time() && $conf['flightban_time']['p2']>=time())
+			// Flottensperre aktiv
+			if ($conf['flightban']['v']==1)
 			{
-				$flightban_time_status = "<span style=\"color:#0f0\">Aktiv</span>";
+				// PrÃƒÂ¼ft, ob die Sperre schon abgelaufen ist
+				if($conf['flightban_time']['p1']<=time() && $conf['flightban_time']['p2']>=time())
+				{
+					$flightban_time_status = "<span style=\"color:#0f0\">Aktiv</span>";
+				}
+				elseif($conf['flightban_time']['p1']>time() && $conf['flightban_time']['p2']>time())
+				{
+					$flightban_time_status = "Ausstehend";
+				}
+				else
+				{
+					$flightban_time_status = "<span style=\"color:#f90\">Abgelaufen</span>";
+				}
+				
+				echo "<br/>";
+				iBoxStart("Flottensperre aktiviert");
+				echo "Die Flottensperre ist aktiviert. Es kÃƒÂ¶nnen keine FlÃƒÂ¼ge gestartet werden!<br><br><b>Status:</b> ".$flightban_time_status."<br><b>Zeit:</b> ".date("d.m.Y H:i",$conf['flightban_time']['p1'])." - ".date("d.m.Y H:i",$conf['flightban_time']['p2'])."<br><b>Grund:</b> ".$conf['flightban']['p1']."<br><br>";
+				echo "Zum deaktivieren: <a href=\"?page=fleets&amp;sub=fleetoptions\">Flottenoptionen</a>";
+				iBoxEnd();
 			}
-			elseif($conf['flightban_time']['p1']>time() && $conf['flightban_time']['p2']>time())
-			{
-				$flightban_time_status = "Ausstehend";
-			}
-			else
-			{
-				$flightban_time_status = "<span style=\"color:#f90\">Abgelaufen</span>";
-			}
-			
-			echo "<br/>";
-			iBoxStart("Flottensperre aktiviert");
-			echo "Die Flottensperre ist aktiviert. Es kÃƒÂ¶nnen keine FlÃƒÂ¼ge gestartet werden!<br><br><b>Status:</b> ".$flightban_time_status."<br><b>Zeit:</b> ".date("d.m.Y H:i",$conf['flightban_time']['p1'])." - ".date("d.m.Y H:i",$conf['flightban_time']['p2'])."<br><b>Grund:</b> ".$conf['flightban']['p1']."<br><br>";
-			echo "Zum deaktivieren: <a href=\"?page=fleets&amp;sub=fleetoptions\">Flottenoptionen</a>";
-			iBoxEnd();
-		}
 		
-		// Kampfsperre aktiv
-		if ($conf['battleban']['v']==1)
-		{
-			// PrÃƒÂ¼ft, ob die Sperre schon abgelaufen ist
-			if($conf['battleban_time']['p1']<=time() && $conf['battleban_time']['p2']>=time())
+			// Kampfsperre aktiv
+			if ($conf['battleban']['v']==1)
 			{
-				$battleban_time_status = "<span style=\"color:#0f0\">Aktiv</span>";
+				// PrÃƒÂ¼ft, ob die Sperre schon abgelaufen ist
+				if($conf['battleban_time']['p1']<=time() && $conf['battleban_time']['p2']>=time())
+				{
+					$battleban_time_status = "<span style=\"color:#0f0\">Aktiv</span>";
+				}
+				elseif($conf['battleban_time']['p1']>time() && $conf['battleban_time']['p2']>time())
+				{
+					$battleban_time_status = "Ausstehend";
+				}
+				else
+				{
+					$battleban_time_status = "<span style=\"color:#f90\">Abgelaufen</span>";
+				}
+				
+				echo "<br/>";
+				iBoxStart("Kampfsperre aktiviert");
+				echo "Die Kampfsperre ist aktiviert. Es kÃƒÂ¶nnen keine Angriffe geflogen werden!<br><br><b>Status:</b> ".$battleban_time_status."<br><b>Zeit:</b> ".date("d.m.Y H:i",$conf['battleban_time']['p1'])." - ".date("d.m.Y H:i",$conf['battleban_time']['p2'])."<br><b>Grund:</b> ".$conf['battleban']['p1']."<br><br>";
+				echo "Zum deaktivieren: <a href=\"?page=fleets&amp;sub=fleetoptions\">Flottenoptionen</a>";
+				iBoxEnd();
 			}
-			elseif($conf['battleban_time']['p1']>time() && $conf['battleban_time']['p2']>time())
-			{
-				$battleban_time_status = "Ausstehend";
-			}
-			else
-			{
-				$battleban_time_status = "<span style=\"color:#f90\">Abgelaufen</span>";
-			}
-			
-			echo "<br/>";
-			iBoxStart("Kampfsperre aktiviert");
-			echo "Die Kampfsperre ist aktiviert. Es kÃƒÂ¶nnen keine Angriffe geflogen werden!<br><br><b>Status:</b> ".$battleban_time_status."<br><b>Zeit:</b> ".date("d.m.Y H:i",$conf['battleban_time']['p1'])." - ".date("d.m.Y H:i",$conf['battleban_time']['p2'])."<br><b>Grund:</b> ".$conf['battleban']['p1']."<br><br>";
-			echo "Zum deaktivieren: <a href=\"?page=fleets&amp;sub=fleetoptions\">Flottenoptionen</a>";
-			iBoxEnd();
-		}
-
-		if ($conf['system_message']['v']!="")
-		{
-			echo "<br/>";
-			iBoxStart("<span style=\"color:red;\">Folgende Systemnachricht ist zurzeit aktiviert (<a href=\"?page=$page&amp;sub=systemmessage\">Bearbeiten/Deaktivieren</a>):</span>");
-			echo text2html($conf['system_message']['v']);
-			iBoxEnd();			
-		}
-		
-		if ($cfg->value('register_key')!="")
-		{
-			iBoxStart("Schutz der öffentlichen Seiten");
-			echo "Die öffentlichen Seiten (Anmeldung, Statistiken etc) sind durch den Schlüssel <span style=\"font-weight:bold;color:#f90\">".$cfg->value('register_key')."</span> geschützt!";
-			iBoxEnd();				
-		}
-		
-		
-		if ($cfg->value('offline')==1)
-		{
-			echo "<br/>";
-			iBoxStart("<span style=\"color:red;\">Spiel offline</span>");
-			echo $cfg->value('p1')." &nbsp; [<a href=\"?page=$page&amp;sub=offline\">&Auml;ndern</a>]";
-			iBoxEnd();			
-		}
-		
+	
 		//
 		// Schnellsuche
 		//
 		$_SESSION['planets']['query']=Null;
 		$_SESSION['admin']['user_query']="";
 		$_SESSION['admin']['queries']['alliances']="";
-
-		tableStart("Schnellsuche", 800);
-		echo "<form action=\"?page=user&amp;action=search\" method=\"post\"><tr><th class=\"tbltitle\">Nick:</th>";
-		echo "<td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" size=\"40\" /> <input type=\"hidden\" name=\"qmode[user_nick]\" value=\"LIKE '%\" /><input type=\"submit\" name=\"user_search\" value=\"Suchen\" /></td></tr></form>";
-
-		echo "<form action=\"?page=galaxy&amp;action=searchresults\" method=\"post\"><tr><th class=\"tbltitle\">Planet:</th>";
-		echo "<td class=\"tbldata\"><input type=\"text\" name=\"planet_name\" size=\"40\" /> <input type=\"hidden\" name=\"qmode[planet_name]\" value=\"%\" /> <input type=\"submit\" name=\"search_submit\" value=\"Suchen\" /></td></tr></form>";
-
-		echo "<form action=\"?page=galaxy&amp;action=searchresults\" method=\"post\"><tr><th class=\"tbltitle\">Planet-Besitzer:</th>";
-		echo "<td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" size=\"40\" /> <input type=\"hidden\" name=\"qmode[user_nick]\" value=\"%\" /> <input type=\"submit\" name=\"search_submit\" value=\"Suchen\" /></td></tr></form>";
-
-		echo "<form action=\"?page=alliances&amp;action=search\" method=\"post\"><tr><th class=\"tbltitle\">Allianz-Tag:</th>";
-		echo "<td class=\"tbldata\"><input type=\"text\" name=\"alliance_tag\" size=\"40\" /> <input type=\"hidden\" name=\"qmode[alliance_tag]\" value=\"LIKE '%\" /><input type=\"submit\" name=\"alliance_search\" value=\"Suchen\" /></td></tr></form>";
-		tableEnd();
-		echo "<script>document.forms[1].elements[0].focus()</script>";
-		
 	
-		tableStart("Spieler-Tools", 800);
-		
-
 		// Tickets
-		$tnew = Ticket::countNew();
-		$tass = Ticket::countAssigned($cu->id);
+		$tpl->assign("num_new_tickets", Ticket::countNew());
+		$tpl->assign("num_open_tickets", Ticket::countAssigned($cu->id));
 
-		echo "<tr><th class=\"tbltitle\">Ticket-System:</th>";
-		echo "<td class=\"tbldata\">
-		".popupLink("tickets",$tnew." neue Tickets",($tnew>0) ? "font-weight:bold;color:#f90;":"")."
-		vorhanden";
-		if ($tass>0)
-		{
-			echo ", ".popupLink("tickets",$tass." offene Tickets",($tass>0) ? "font-weight:bold;color:#f90;":"")." vorhanden";
-		}
-		echo "</td></tr>";
-		
+
+		/*
 		// Beobachter
 		$res = dbquery("
 		SELECT
@@ -620,7 +557,9 @@
 		}
 
 		tableEnd();		
+		*/
 		
+		/*
 		// Online
 
 		$ures=dbquery("SELECT count(*) FROM users;");
@@ -643,9 +582,6 @@
 		else
 			$sp=0;
 
-
-
-
 		$gres=dbquery("SELECT COUNT(*) FROM user_sessions WHERE time_action>".(time() - $cfg->user_timeout->v).";");
 		$garr=mysql_fetch_row($gres);
 		if ($uarr[0]>0)
@@ -661,20 +597,7 @@
 		else
 			$ap=0;
 
-		echo "<table class=\"tb\" style=\"width:auto;float:left;margin-right:20px;\">";
-		echo "<tr><th colspan=\"3\">Online</th></tr>";
-		if (UNIX)
-		{
-			echo "<tr><th><a href=\"?page=eventhandler\">Backend:</a></th>";
-			if ($pid = checkDaemonRunning($cfg->daemon_pidfile))
-				echo "<td colspan=\"2\" style=\"color:#0f0;\">Online, PID $pid</td>";
-			else
-				echo "<td colspan=\"2\" style=\"color:red;\">LÄUFT NICHT!</td>";
-			echo "</tr>";
-		}
-		echo "<tr><th><a href=\"?page=user&amp;sub=sessions\">User:</a></th><td>".$garr[0]." / ".$uarr[0]."</td><td>".round($gp,1)."%</td></tr>";
-		echo "<tr><th><a href=\"?page=overview&amp;sub=adminlog\">Admins:</a></th><td>".$a1arr[0]." / ".$a2arr[0]."</td><td>".round($ap,1)."%</td></tr>";
-		echo "</table>";
+		/*
 
 		//
 		// Auslastung
@@ -706,20 +629,7 @@
 		elseif ($sp<0.9) $tbs=$o_style;
 		else $tbs=$r_style;
 		echo "<td $tbs>".$s1arr." / ".$s2arr[0]."</td><td $tbs>".round($sp*100,1)."%</td></tr>";
-		echo "</table>";
-
-		echo "<table class=\"tb\" style=\"width:400px;float:left;margin-right:20px;\">";
-		echo "<tr><th colspan=\"3\">System</th></tr>";
-		if (UNIX)
-		{
-			$un=posix_uname();
-			echo "<tr><th>System:</th><td>".$un['sysname']." ".$un['release']." ".$un['version']."</td></tr>";
-		}
-		echo "<tr><th>PHP:</th><td>".substr(phpversion(),0,10)."</td></tr>
-		<tr><th>MySQL:</th><td>".mysql_get_client_info()."</td></tr>
-		</table>";		
-		echo "<br style=\"clear:both;\" /></div>";
-	
-		}
+		echo "</table>";*/
+	}
 }
 ?>

@@ -1,68 +1,29 @@
 <?PHP
-
-	//////////////////////////////////////////////////
-	//		 	 ____    __           ______       			//
-	//			/\  _`\ /\ \__       /\  _  \      			//
-	//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
-	//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
-	//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
-	//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
-	//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
-	//																					 		//
-	//////////////////////////////////////////////////
-	// The Andromeda-Project-Browsergame				 		//
-	// Ein Massive-Multiplayer-Online-Spiel			 		//
-	// Programmiert von Nicolas Perrenoud				 		//
-	// www.nicu.ch | mail@nicu.ch								 		//
-	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	//////////////////////////////////////////////////
-	//
-	// 	Dateiname: ships.php
-	// 	Topic: Schiffverwaltung
-	// 	Autor: Nicolas Perrenoud alias MrCage
-	// 	Erstellt: 01.12.2004
-	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage
-	// 	Bearbeitet am: 31.03.2006
-	// 	Kommentar:
-	//
-
-	/*
-	if ($sub=="batchadd")
-	{
-		$shipId = 84;
-		
-		$res = dbquery("SELECT id,planet_user_id FROM planets WHERE planet_user_main=1");
-		while ($arr = mysql_fetch_assoc($res))
-		{
-			$scres = dbquery("SELECT COUNT(*) FROM shiplist WHERE shiplist_entity_id=".$arr['id']." AND shiplist_ship_id=$shipId");
-			$scarr = mysql_fetch_row($scres);
-			if ($scarr[0] == 0)
-			{
-				dbquery("Insert INTO shiplist (shiplist_entity_id,shiplist_user_id,shiplist_ship_id,shiplist_count) 
-				VALUES (".$arr['id'].",".$arr['planet_user_id'].",$shipId,1);");
-			}
-			else
-			{
-				echo "Bereits vorhanden auf ".$arr['id']."<br/>";
-			}
-		}
-		
-	}*/
+//////////////////////////////////////////////////////
+// The Andromeda-Project-Browsergame                //
+// Ein Massive-Multiplayer-Online-Spiel             //
+// Programmiert von Nicolas Perrenoud<mail@nicu.ch> //
+// als Maturaarbeit '04 am Gymnasium Oberaargau	    //
+//////////////////////////////////////////////////////
+// $Id$
+//////////////////////////////////////////////////////
 
 	//
 	// Battlepoints
 	//
 	if ($sub=="battlepoints")
 	{
-		echo "<h1>Punkte</h1>";
-		echo "<h2>Punkte neu berechnen</h2><form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
-		if ($_POST['recalc']!="")
+		$tpl->assign("title", "Schiff-Punkte");
+
+		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
+		if (isset($_POST['recalc']))
 		{
 			cms_ok_msg(calcShipPoints());
 		}
-		echo "Nach jeder direkter &Auml;nderung an den Schiffen via Datenbank m&uuml;ssen die Punkte neu berechnet werden: ";
-		echo "<br/><br/><input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";
-		echo "<h2>Battlepoints</h2>";
+		echo "<p>Nach jeder direkter &Auml;nderung an den Schiffen via Datenbank m&uuml;ssen die Punkte neu berechnet werden!</p>
+		<p><input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></p>
+		</form>";
+
 		$res=dbquery("
 		SELECT
 			ship_id,
@@ -90,7 +51,7 @@
 	//
 	elseif ($sub=="xpcalc")
 	{
-		echo "<h1>XP-Rechner</h1>";
+		$tpl->assign("title", "XP-Rechner");
 
 		echo "Schiff wählen: <select onchange=\"document.location='?page=".$page."&sub=".$sub."&id='+this.options[this.selectedIndex].value\">";
 		$res = dbquery("
@@ -176,9 +137,9 @@
 	//
 	elseif ($sub=="queue")
 	{
-		echo "<h2>Bauliste</h2>";
-
-		if ($_POST['shipqueue_search']!="" || $_GET['action']=="searchresults")
+		$tpl->assign("title", "Schiff-Bauliste");
+		
+		if (isset($_POST['shipqueue_search']) || isset($_POST['action']) && $_GET['action']=="searchresults")
 		{
 			$sqlstart = "
 			SELECT
@@ -367,7 +328,7 @@
 		//
 		// Auftrag bearbeiten
 		//
-		elseif ($_GET['action']=="edit" && $_GET['id']>0)
+		elseif (isset($_POST['action']) && $_GET['action']=="edit" && $_GET['id']>0)
 		{
 			// Änderungen speichern
 			if ($_POST['save']!="")
@@ -504,7 +465,7 @@
 			}
 
 			// Suchmaske
-			echo "Suchmaske:<br/><br/>";
+			$tpl->assign("subtitle", "Suchmaske");
 			echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
 			echo "<table class=\"tbl\">";
 			echo "<tr><td class=\"tbltitle\">Planet ID</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td>";
@@ -518,9 +479,9 @@
 			}
 			echo "</select></td>";
 			echo "</table>";
-			echo "<br/><input type=\"submit\" class=\"button\" name=\"shipqueue_search\" value=\"Suche starten\" /></form>";
+			echo "<p><input type=\"submit\" class=\"button\" name=\"shipqueue_search\" value=\"Suche starten\" /></p></form>";
 			$tblcnt = mysql_fetch_row(dbquery("SELECT COUNT(queue_id) FROM ship_queue;"));
-			echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.<br/>";
+			echo "<p>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.</p>";
 		}
 	}
 
@@ -529,7 +490,7 @@
 	**************/
 	else
 	{
-		echo "<h2>Schiffliste</h2>";
+		$tpl->assign("title", "Schiffliste");
 
 			// Schiffe laden
 			$bres = dbquery("
@@ -548,7 +509,7 @@
 			
 			// Hinzufügen
 			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\" id=\"selector\" name=\"selector\">";
-			tableStart();
+			echo "<table>";
 			
 			//Sonnensystem
 
@@ -594,6 +555,7 @@
 			
 			//Vorhandene Schiffe
 			tableEnd();
+			echo "<br/>";
 			
 			echo "<div id=\"shipsOnPlanet\" style=\"width:700px\"></div>";
 			

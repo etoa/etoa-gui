@@ -1,6 +1,5 @@
 <?PHP
 
-
 	//
 	// Flottenoptionen
 	//
@@ -14,7 +13,7 @@
 		//
 		
 		// Flottensperre deaktivieren
-		if ($_POST['flightban_deactivate']!="")
+		if (isset($_POST['flightban_deactivate']))
 		{
 			dbquery("
 			UPDATE 
@@ -30,10 +29,10 @@
 		
 	
 		// Flottensperre aktivieren
-		if ($_POST['flightban_activate']!="" || $_POST['flightban_update']!="")
+		if (isset($_POST['flightban_activate']) || isset($_POST['flightban_update']))
 		{
-			$flightban_from = mktime($_POST['flightban_time_from_h'],$_POST['flightban_time_from_i'],0,$_POST['flightban_time_from_m'],$_POST['flightban_time_from_d'],$_POST['flightban_time_from_y']);
-			$flightban_to = mktime($_POST['flightban_time_to_h'],$_POST['flightban_time_to_i'],0,$_POST['flightban_time_to_m'],$_POST['flightban_time_to_d'],$_POST['flightban_time_to_y']);
+			$flightban_from = parseDatePicker('flightban_time_from', $_POST);
+			$flightban_to = parseDatePicker('flightban_time_to', $_POST);
 			
 			if($flightban_from < $flightban_to)
 			{
@@ -67,7 +66,7 @@
 		}		
 
 		// Kampfsperre deaktivieren
-		if ($_POST['battleban_deactivate']!="")
+		if (isset($_POST['battleban_deactivate']))
 		{
 			dbquery("
 			UPDATE 
@@ -82,10 +81,10 @@
 		}
 		
 		// Kampfsperre aktivieren
-		if ($_POST['battleban_activate']!="" || $_POST['battleban_update']!="")
+		if (isset($_POST['battleban_activate']) || isset($_POST['battleban_update']))
 		{
-			$battleban_from = mktime($_POST['battleban_time_from_h'],$_POST['battleban_time_from_i'],0,$_POST['battleban_time_from_m'],$_POST['battleban_time_from_d'],$_POST['battleban_time_from_y']);
-			$battleban_to = mktime($_POST['battleban_time_to_h'],$_POST['battleban_time_to_i'],0,$_POST['battleban_time_to_m'],$_POST['battleban_time_to_d'],$_POST['battleban_time_to_y']);
+			$battleban_from = parseDatePicker('battleban_time_from', $_POST);
+			$battleban_to = parseDatePicker('battleban_time_to', $_POST);
 			
 			if($battleban_from < $battleban_to)
 			{			
@@ -221,16 +220,13 @@
 		{
 			$flightban_status = "<div style=\"color:#0f0\">Die Flottensperre ist deaktiviert!</div>";
 			$flightban_time_from = time();
-			$flightban_time_to = time();
+			$flightban_time_to = time()+3600;
 			$flightban_reason = "";
 			$flightban_button = "<input type=\"submit\" name=\"flightban_activate\" value=\"Aktivieren\" />";
 		}
 		
-		echo "<table class=\"tbl\">";
+		echo "<h2>Flottensperre</h2><table class=\"tbl\">";
 		echo "<tr>
-						<td class=\"tbltitle\" colspan=\"2\"><div style=\"text-align:center;\">Flottensperre</div></td>
-					</tr>
-					<tr>
 						<td class=\"tbltitle\" width=\"15%\">Info</td>
 						<td class=\"tbldata\" width=\"85%\">Es k&ouml;nnen keine Fl&uuml;ge gestartet werden</td>
 					</tr>
@@ -241,13 +237,13 @@
 					<tr>
 						<td class=\"tbltitle\">Von</td>
 						<td class=\"tbldata\">";
-						echo show_timebox("flightban_time_from",$flightban_time_from);
+						echo showDatepicker("flightban_time_from", $flightban_time_from, true);
 			echo "</td>
 					</tr>
 					<tr>
 						<td class=\"tbltitle\">Bis</td>
 						<td class=\"tbldata\">";
-						echo show_timebox("flightban_time_to",$flightban_time_to);
+						echo showDatepicker("flightban_time_to", $flightban_time_to, true);
 			echo "</td>
 					</tr>
 					<tr>
@@ -256,11 +252,8 @@
 							<textarea name=\"flightban_reason\" cols=\"50\" rows=\"3\">".$flightban_reason."</textarea>
 						</td>
 					</tr>
-					<tr>
-						<td class=\"tbldata\" colspan=\"2\"><div style=\"text-align:center;\">".$flightban_button."</div></td>
-					</tr>";
-		echo "</table><br><br>";
-
+				</table>
+				<p>".$flightban_button."</p><br/>";
 
 
 		//
@@ -295,16 +288,14 @@
 		{
 			$battleban_status = "<div style=\"color:#0f0\">Die Kampfsperre ist deaktiviert!</div>";
 			$battleban_time_from = time();
-			$battleban_time_to = time();
+			$battleban_time_to = time()+3600;
 			$battleban_reason = "";
 			$battleban_button = "<input type=\"submit\" name=\"battleban_activate\" value=\"Aktivieren\" />";
 		}
 		
-		echo "<table class=\"tbl\">";
+		echo "<h2>Kampfsperre</h2>
+		<table class=\"tbl\">";
 		echo "<tr>
-						<td class=\"tbltitle\" colspan=\"2\"><div style=\"text-align:center;\">Kampfsperre</div></td>
-					</tr>
-					<tr>
 						<td class=\"tbltitle\" width=\"15%\">Info</td>
 						<td class=\"tbldata\" width=\"85%\">Es k&ouml;nnen keine Angriffe geflogen werden</td>
 					</tr>
@@ -315,13 +306,13 @@
 					<tr>
 						<td class=\"tbltitle\">Von</td>
 						<td class=\"tbldata\">";
-						echo show_timebox("battleban_time_from",$battleban_time_from);
+						showDatepicker("battleban_time_from", $battleban_time_from, true);
 			echo "</td>
 					</tr>
 					<tr>
 						<td class=\"tbltitle\">Bis</td>
 						<td class=\"tbldata\">";
-						echo show_timebox("battleban_time_to",$battleban_time_to);
+						showDatepicker("battleban_time_to", $battleban_time_to, true);
 			echo "</td>
 					</tr>
 					<tr>
@@ -345,10 +336,9 @@
 							<textarea name=\"battleban_arrival_text_missiles\" cols=\"50\" rows=\"3\">".$conf['battleban_arrival_text']['p2']."</textarea>
 						</td>
 					</tr>
-					<tr>
-						<td class=\"tbldata\" colspan=\"2\"><div style=\"text-align:center;\">".$battleban_button."</div></td>
-					</tr>";
-		echo "</table>";
+				</tr>
+			</table>
+			<p>".$battleban_button."</p>";
 
 
 		/*
@@ -505,20 +495,18 @@
 	//
 	else
 	{
-		echo "<h1>Flotten</h1>";
-
-
+		$tpl->assign('title', "Flotten");
 
 		//
 		// Flotte bearbeiten
 		//
-		if ($_GET['fleetedit']>0)
+		if (isset($_GET['fleetedit']) && $_GET['fleetedit']>0)
 		{
 			echo "<h2>Flotte bearbeiten</h2>";
 			if (isset($_POST['submit_edit']))
 			{
-				$launchtime=mktime($_POST['launchtime_h'],$_POST['launchtime_i'],$_POST['launchtime_s'],$_POST['launchtime_m'],$_POST['launchtime_d'],$_POST['launchtime_y']);
-				$landtime=mktime($_POST['landtime_h'],$_POST['landtime_i'],$_POST['landtime_s'],$_POST['landtime_m'],$_POST['landtime_d'],$_POST['landtime_y']);
+				$launchtime = parseDatePicker('launchtime', $_POST);
+				$landtime = parseDatePicker('landtime', $_POST);
 				if ($landtime<=$launchtime) $landtime=$launchtime+60;
 
 				if ($srcEnt = Entity::createFactoryByCoords($_POST['sx_start'],$_POST['sy_start'],$_POST['cx_start'],$_POST['cy_start'],$_POST['p_start']))
@@ -716,10 +704,10 @@
 					
 					// Time Data
 					echo "<tr><th class=\"tbltitle\">Startzeit:</th><td class=\"tbldata\">";
-					show_timebox("launchtime",$arr['launchtime'],1);
+					showDatepicker("launchtime",$arr['launchtime'], true, true);
 					echo "</td></tr>";
 					echo "<tr><th class=\"tbltitle\">Landezeit:</th><td class=\"tbldata\">";
-					show_timebox("landtime",$arr['landtime'],1);
+					showDatepicker("landtime",$arr['landtime'], true, true);
 					echo " &nbsp; Flugdauer: ".tf($arr['landtime']-$arr['launchtime'])."</td></tr>";
 					
 					// Source and Target Data
@@ -1045,15 +1033,13 @@
 				cms_err_msg("Datensatz nicht vorhanden!");
 		}
 
-
-
 		//
 		// Suchergebnisse anzeigen
 		//
-		elseif ($_POST['fleet_search']!="" || $_GET['action']=="searchresults")
+		elseif (isset($_POST['fleet_search']) || isset($_GET['action']) && $_GET['action']=="searchresults")
 		{
 			// Flotte löschen
-			if ($_GET['fleetdel']>0)
+			if (isset($_GET['fleetdel']) && $_GET['fleetdel']>0)
 			{
 				dbquery("DELETE FROM fleet WHERE id='".$_GET['fleetdel']."';");
 				dbquery("DELETE FROM fleet_ships WHERE fs_fleet_id='".$_GET['fleetdel']."';");
@@ -1061,6 +1047,7 @@
 			}
 
 			// Suchquery zusammenstellen
+			$sql="";
 			if ($_SESSION['fleetedit']['query']=="")
 			{
 				if ($_POST['sx_start']>0 && $_POST['sy_start']>0 && $_POST['cx_start']>0 && $_POST['cy_start']>0 && $_POST['p_start']!="")
@@ -1132,7 +1119,7 @@
         	1
 				";
 				
-				$sqlend.= " ORDER BY ";
+				$sqlend = " ORDER BY ";
 				
 				switch ($_POST['fleet_order'])
 				{
@@ -1243,7 +1230,8 @@
 			}
 			else
 			{
-				echo "Die Suche lieferte keine Resultate!<br/><br/><input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" />";
+				$tpl->assign("infomsg", "Die Suche lieferte keine Resultate!");
+				echo "<p><input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" /></p>";
 				$_SESSION['fleetedit']['query']=Null;
 			}
 		}
@@ -1253,10 +1241,16 @@
 		//
 		else
 		{
+		
+			echo '<div class="tabs">
+			<ul>
+				<li><a href="#tabs-1">Suchmaske</a></li>
+				<li><a href="#tabs-2">Flotte erstellen</a></li>
+			</ul>
+			<div id="tabs-1">';
 
 			// Search mask
 			$_SESSION['fleetedit']['query']=Null;
-			echo "<h2>Suchmaske</h2>";
 		
 			echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
 			echo "<table class=\"tbl\">";
@@ -1346,7 +1340,8 @@
 			{
 				$users[$uarr['user_id']]=$uarr['user_nick'];
 			}			
-			echo "<h2>Flotte erstellen</h2>";
+						
+			echo '</div><div id="tabs-2">';
 			
 			if (isset($_POST['submit_new_fleet']))
 			{
@@ -1354,8 +1349,8 @@
 				{
 					if ($trgEnt = Entity::createFactoryByCoords($_POST['sx_end'],$_POST['sy_end'],$_POST['cx_end'],$_POST['cy_end'],$_POST['p_end']))
 					{
-						$launchtime=mktime($_POST['launchtime_h'],$_POST['launchtime_i'],$_POST['launchtime_s'],$_POST['launchtime_m'],$_POST['launchtime_d'],$_POST['launchtime_y']);
-						$landtime=mktime($_POST['landtime_h'],$_POST['landtime_i'],$_POST['landtime_s'],$_POST['landtime_m'],$_POST['landtime_d'],$_POST['landtime_y']);
+						$launchtime = parseDatePicker('launchtime', $_POST);
+						$landtime = parseDatePicker('landtime', $_POST);
 
 						dbquery("
 						INSERT INTO 
@@ -1394,16 +1389,16 @@
 							".$_POST['fs_ship_id_new'].",
 							".$_POST['fs_ship_cnt_new']."
 						);");
-						ok_msg("Neue Flotte erstellt! [url ?page=$page&amp;sub=$sub&fleetedit=".$fid."]Details[/url]");
+						$tpl->assign('msg', "Neue Flotte erstellt! [url ?page=$page&amp;sub=$sub&fleetedit=".$fid."]Details[/url]");
 					}
 					else
 					{
-						err_msg("Zielentität nicht vorhanden");
+						$tpl->assign('errmsg', "Zielentität nicht vorhanden");
 					}		
 				}
 				else
 				{
-					err_msg("Startentität nicht vorhanden");
+					$tpl->assign('errmsg', "Startentität nicht vorhanden");
 				}
 			}			
 			
@@ -1424,10 +1419,10 @@
 					
 			// Time Data
 			echo "<tr><th class=\"tbltitle\">Startzeit:</th><td class=\"tbldata\">";
-			show_timebox("launchtime",time()+10,1);
+			showDatepicker("launchtime",time()+10, true, true);
 			echo "</td></tr>";
 			echo "<tr><th class=\"tbltitle\">Landezeit:</th><td class=\"tbldata\">";
-			show_timebox("landtime",time()+90,1);
+			showDatepicker("landtime",time()+90,  true, true);
 			echo " </td></tr>";
 					
 			// Source and Target Data
@@ -1528,6 +1523,8 @@
 			echo "</table><br/>
 			<input type=\"submit\" value=\"Erstellen\" name=\"submit_new_fleet\" /> ";
 			
+			echo '</div>
+			</div>';
 			
 		}
 	}

@@ -84,7 +84,7 @@ class DBManager implements ISingleton	{
 	*/
 	function connect($throwError = 1, $tempCfg=null)
 	{
-		if ($this->dbCfg == null) {
+		if ($this->dbCfg == null && $tempCfg == null) {
 			$this->loadConfig();
 		}
 		try
@@ -513,6 +513,16 @@ class DBManager implements ISingleton	{
 		{
 			echo "Die Backup-Funktion ist nur auf UNIX-Systemen verfügbar!";
 		}
-	}	
+	}
+	
+	public function getDbSize() {
+		$res = $this->safeQuery("
+			SELECT round(sum( data_length + index_length ) / 1024 / 1024,2)
+			FROM information_schema.TABLES
+			WHERE table_schema=?
+			GROUP BY table_schema", array($this->getDbName()));
+		$arr = mysql_fetch_row($res);
+		return $arr[0];
+	}
 }
 ?>

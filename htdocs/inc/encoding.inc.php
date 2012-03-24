@@ -1,4 +1,13 @@
 <?PHP
+//////////////////////////////////////////////////////
+// The Andromeda-Project-Browsergame                //
+// Ein Massive-Multiplayer-Online-Spiel             //
+// Programmiert von Nicolas Perrenoud<mail@nicu.ch> //
+// als Maturaarbeit '04 am Gymnasium Oberaargau	    //
+//////////////////////////////////////////////////////
+// $Id$
+//////////////////////////////////////////////////////
+
 /* encoding.inc.php von river */
 
 function replace_ascii_control_chars($str)

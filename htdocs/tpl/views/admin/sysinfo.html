@@ -1,0 +1,25 @@
+{if $title|default:'' ne ""}<h1>{$title}</h1>{/if}
+{if $subtitle|default:'' ne ""}<h2>{$subtitle}</h2>{/if}
+
+{if $msg|default:'' ne ""}{msg type="ok" text=$msg}{/if}
+{if $infomsg|default:'' ne ""}{msg type="info" text=$infomsg}{/if}
+{if $errmsg|default:'' ne ""}{msg type="err" text=$errmsg}{/if}
+
+<fieldset><legend>System</legend>
+<table>
+{if $is_unix}
+<tr><th>OS Kernel / Architektur</th><td>{$unix_name}</td></tr>
+<tr><th>Webserver</th><td>{$webserver_version}</td></tr>
+<tr><th>PHP</th><td>{$php_version}</td></tr>
+<tr><th>Datenbank</th><td>{$db_version}</td></tr>
+{/if}
+</table>
+</fieldset>
+
+<fieldset><legend>Status</legend>
+<table>
+{if $is_unix}
+<tr><th>Systemlast</th><td>{$sys_load} %</td></tr>
+{/if}
+</table>
+</fieldset>

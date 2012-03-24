@@ -1,7 +1,7 @@
 <?PHP
 	
 	/**
-	*	Handles data and actions for a fleet object
+	* Handles data and actions for a fleet object
 	*
 	* @author Nicolas Perrenoud <mrcage@etoa.ch>
 	*/

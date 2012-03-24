@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		{include file='chunks/admin/header.html'}
+	</head>
+	<body class="adminpopup">
+		<div id="popupcontainer">
+			{$content_for_layout}
+			{$content_overflow|default:''}
+		</div>
+		{$scripts_for_footer|default:''}
+	</body>
+</html>

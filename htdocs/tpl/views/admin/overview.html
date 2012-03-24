@@ -1,0 +1,46 @@
+{if $title|default:'' ne ""}<h1>{$title}</h1>{/if}
+{if $subtitle|default:'' ne ""}<h2>{$subtitle}</h2>{/if}
+
+{if $welcome_msg|default:'' ne ''}<p>{$welcome_msg}</p>{/if}
+
+{if $force_password_change|default:false}
+{msg type="warn" title="Passwortwiederherstellung" text="Dein Passwort wurde seit der letzten automatischen Generierung noch nicht geändert. Bitte mache das jetzt <a href=\"?myprofile=1\">hier</a>!"}
+{/if}			
+
+{if "{cfg key="admininfo"}" ne ""}
+{msg type="info" title="Admin-News" text="{cfg key="admininfo"}"}
+{/if}
+
+{if "{cfg key="system_message"}" ne ""}
+{msg type="info" title="Systemnachricht aktiv!" text="{cfg key="system_message"} <br/><a href=\"?page=$page&amp;sub=systemmessage\">Bearbeiten/Deaktivieren</a>"} 
+{/if}
+
+{if "{cfg key="offline"}" eq 1}
+{msg type="warn" title="Spiel offline" text="{cfg key="offline_message"} <br/><a href=\"?page=$page&amp;sub=offline\">&Auml;ndern</a>"}
+{/if}
+
+{if "{cfg key="register_key"}" ne ""}
+	{msg type="info" text="Die öffentlichen Seiten (Anmeldung, Statistiken etc) sind durch den Schlüssel {cfg key="register_key"} geschützt!"}
+{/if}		
+
+<fieldset class="overview_widget"><legend>Schnellsuche</legend>
+<form action="?page=user&amp;action=search" method="post" class="blocklables label_width_120">
+<label for="user_nick">Nick</label> <input type="text" name="user_nick" id="user_nick" size="40" autofocus="autofocus" /> <input type="hidden" name="qmode[user_nick]" value="LIKE '%" /><input type="submit" name="user_search" value="Suchen" /></form>
+
+<form action="?page=galaxy&amp;action=searchresults" method="post" class="blocklables label_width_120">
+<label for="user_nick">Planet</label> <input type="text" name="planet_name" id="planet_name" size="40" /> <input type="hidden" name="qmode[planet_name]" value="%" /> <input type="submit" name="search_submit" value="Suchen" /></form>
+
+<form action="?page=galaxy&amp;action=searchresults" method="post" class="blocklables label_width_120">
+<label for="user_nick_planet">Planet-Besitzer</label> <input type="text" id="user_nick_planet" name="user_nick" size="40" /> <input type="hidden" name="qmode[user_nick]" value="%" /> <input type="submit" name="search_submit" value="Suchen" /></form>
+
+<form action="?page=alliances&amp;action=search" method="post"  class="blocklables label_width_120">
+<label for="alliance_tag">Allianz-Tag</label> <input type="text" id="alliance_tag" name="alliance_tag" size="40" /> <input type="hidden" name="qmode[alliance_tag]" value="LIKE '%" /><input type="submit" name="alliance_search" value="Suchen" /></form>
+</fieldset>
+
+<fieldset class="overview_widget"><legend>Ticket-System</legend>
+{popuplink type="tickets" title="$num_new_tickets neue Tickets"} vorhanden<br/>
+{popupLink type="tickets" title="$num_open_tickets offene Tickets"} vorhanden
+</fieldset>
+
+{$content|default:''}
+

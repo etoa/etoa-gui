@@ -331,7 +331,7 @@ function userComments($uid,$target)
 {
 	$or = new xajaxResponse();
 	ob_start();
-	echo "<div style=\"background:#335;border:1px solid #aaa;padding:10px;\"><b>Neuer Kommentar:</b><br/><br/><textarea rows=\"4\" cols=\"70\" id=\"new_comment_text\"></textarea><br/><br/>";
+	echo "<h2>Neuer Kommentar:</h2><textarea rows=\"4\" cols=\"70\" id=\"new_comment_text\"></textarea><br/><br/>";
 	echo "<input type=\"button\" onclick=\"xajax_addUserComment('$uid','$target',document.getElementById('new_comment_text').value);\" value=\"Speichern\" />";
 	echo "<h2>Gespeicherte Kommentare</h2><table class=\"tb\">";
 	$lres=dbquery("
@@ -382,7 +382,7 @@ function addUserComment($uid,$target,$text)
 	if ($text!="")
 	{
 		$or->script("showLoader('$target');");
-		dbquery("INSERT INTO user_comments (comment_timestamp,comment_user_id,comment_admin_id,comment_text) VALUES ('".time()."','$uid','".$_SESSION[SESSION_NAME]['user_id']."','".addslashes($text)."');");
+		dbquery("INSERT INTO user_comments (comment_timestamp,comment_user_id,comment_admin_id,comment_text) VALUES ('".time()."','$uid','".$_SESSION['user_id']."','".addslashes($text)."');");
 		$or->script("xajax_userComments('$uid','$target')");
 	}
 	else
@@ -415,8 +415,6 @@ function loadEconomy($uid,$target)
 	$or = new xajaxResponse();
 	ob_start();
 
-	echo "<input type=\"button\" value=\"Wirtschaftsdaten neu laden\" onclick=\"showLoader('tabEconomy');xajax_loadEconomy(".$uid.",'tabEconomy');\" /><br/><br/>";
-
 				// Stopt Ladedauer
 				$tmr = timerStart();
 
@@ -424,6 +422,8 @@ function loadEconomy($uid,$target)
 				// Rohstoff- und Produktionsübersicht
 				//
 
+				echo "<fieldset><legend>Rohstoff- und Produktionsübersicht</legend>";
+				
 				// Sucht alle Planet IDs des Users
 				$pres = dbquery("
 					SELECT
@@ -434,19 +434,7 @@ function loadEconomy($uid,$target)
 						planet_user_id='".$uid."'");
 				if(mysql_num_rows($pres)>0)
 				{
-					iBoxStart("Rohstoff- und Produktionsübersicht");
-					echo "<div align=\"center\">";
-					echo "<table class=\"tbc\">";
-					echo "<tr>
-									<td class=\"tbldata2\">Minimum</td>
-									<td class=\"tbldata3\">Maximum</td>
-									<td class=\"tbldata\" style=\"font-style:italic\">Speicher bald voll</td>
-									<td class=\"tbldata\" style=\"font-weight:bold\">Speicher voll</td>
-								</tr>";
-					echo "</table>";
-					echo "</div><br><br>";
-
-
+					
 					// Läd alle "Planetclass" Daten in ein Array
 					$planets = array();
 					while($parr=mysql_fetch_row($pres))
@@ -707,7 +695,10 @@ function loadEconomy($uid,$target)
 						$tot_prod[5]+=$val_prod[$p->id][5];
 					}
 
-
+					echo "<p>Legende: Minimum, Maximum,
+						<span style=\"font-style:italic\">Speicher bald voll</span>,
+						<span class=\"tbldata\" style=\"font-weight:bold\">Speicher voll</span>
+					</p>";
 
 
 					echo "<h2>Produktion</h2>";
@@ -792,21 +783,25 @@ function loadEconomy($uid,$target)
 					for ($x=0;$x<6;$x++)
 						echo "<td class=\"tbltitle\">".nf($tot_prod[$x]/$cnt_prod)."</td>";
 					echo "</tr>";
-					echo "</table><br><br>";
-
-					iBoxEnd();
+					echo "</table>";
+					
 				}
 				else
 				{
-					iBoxStart("Rohstoff- und Produktionsübersicht");
 					echo "Der User hat noch keinen Planeten!";
-					iBoxEnd();
 				}
+				echo "</fieldset>";
 
+				
+				echo "<fieldset><legend>Die fünf letzten Aufträge</legend>";
+				
+				
 				//
 				// 5 letzte Bauaufträge
 				//
 
+				echo "<h2>Bauaufträge</h2>";
+				
 				$lbres = dbquery("
 				SELECT
 					log.id,
@@ -829,7 +824,7 @@ function loadEconomy($uid,$target)
 					5;");
 				if(mysql_num_rows($lbres)>0)
 				{
-					tableStart("5 letzte Bauaufträge");
+					tableStart();
 					echo "<tr>
 						<th style=\"width:140px;\">Datum</th>
 						<th style=\"\">Schweregrad</th>
@@ -869,9 +864,7 @@ function loadEconomy($uid,$target)
 				}
 				else
 				{
-					iBoxStart("5 letzte Bauaufträge");
 					echo "Es sind keine Logs vorhanden!";
-					iBoxEnd();
 				}
 
 
@@ -879,6 +872,8 @@ function loadEconomy($uid,$target)
 				// 5 letzte Forschungsaufträge
 				//
 
+				echo "<h2>Forschungsaufträge</h2>";
+				
 				$lres = dbquery("
 				SELECT
 					log.id,
@@ -901,7 +896,7 @@ function loadEconomy($uid,$target)
 					5;");
 				if(mysql_num_rows($lres)>0)
 				{
-					tableStart("5 letzte Forschungsaufträge");
+					tableStart();
 					echo "<tr>
 						<th style=\"width:140px;\">Datum</th>
 						<th style=\"\">Schweregrad</th>
@@ -938,9 +933,7 @@ function loadEconomy($uid,$target)
 				}
 				else
 				{
-					iBoxStart("5 letzte Forschungsaufträge");
 					echo "Es sind keine Logs vorhanden!";
-					iBoxEnd();
 				}
 
 
@@ -948,6 +941,8 @@ function loadEconomy($uid,$target)
 				// 5 letzte Schiffsaufträge
 				//
 
+				echo "<h2>Schiffsaufträge</h2>";
+				
 				$lres = dbquery("
 				SELECT
 					log.id,
@@ -971,7 +966,7 @@ function loadEconomy($uid,$target)
 
 				if(mysql_num_rows($lres)>0)
 				{
-					tableStart("5 letzte Schiffsaufträge");
+					tableStart();
 					echo "<tr>
 						<th style=\"width:140px;\">Datum</th>
 						<th style=\"\">Schweregrad</th>
@@ -1008,9 +1003,7 @@ function loadEconomy($uid,$target)
 				}
 				else
 				{
-					iBoxStart("5 letzte Schiffsaufträge");
 					echo "Es sind keine Logs vorhanden!";
-					iBoxEnd();
 				}
 
 
@@ -1019,6 +1012,8 @@ function loadEconomy($uid,$target)
 				// 5 letzte Verteidigungsaufträge
 				//
 
+				echo "<h2>Verteidigungsaufträge</h2>";
+				
 				$lres = dbquery("
 				SELECT
 					log.id,
@@ -1041,7 +1036,7 @@ function loadEconomy($uid,$target)
 					5;");
 				if(mysql_num_rows($lres)>0)
 				{
-					tableStart("5 letzte Verteidigungsaufträge");
+					tableStart();
 					echo "<tr>
 						<th style=\"width:140px;\">Datum</th>
 						<th style=\"\">Schweregrad</th>
@@ -1050,7 +1045,6 @@ function loadEconomy($uid,$target)
 						<th>Status</th>
 						<th>Optionen</th>
 					</tr>";
-
 
 					while ($larr = mysql_fetch_array($lres))
 					{
@@ -1079,14 +1073,12 @@ function loadEconomy($uid,$target)
 				}
 				else
 				{
-					iBoxStart("5 letzte Verteidigungsaufträge");
 					echo "Es sind keine Logs vorhanden!";
-					iBoxEnd();
 				}
-
-				echo "Wirtschaftsseite geladen in ".timerStop($tmr)." sec<br/>";
-
-
+				echo "</fieldset>";
+				
+				echo "<p>Wirtschaftsseite geladen in ".timerStop($tmr)." sec <input type=\"button\" value=\"Wirtschaftsdaten neu laden\" onclick=\"showLoader('tabEconomy');xajax_loadEconomy(".$uid.",'tabEconomy');\" /></p>";
+				
 	$out = ob_get_contents();
 	ob_end_clean();
 	$or->assign($target,"innerHTML",$out);

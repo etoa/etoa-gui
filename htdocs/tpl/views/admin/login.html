@@ -1,4 +1,4 @@
-{if $msg ne ""}<div class="loginmsg {$msg_style}">{$msg}</div>{/if}
+{if $msg|default:'' ne ""}<div class="loginmsg {$msg_style}">{$msg}</div>{/if}
 
 <p>Gib dein Benutzername und dein Passwort ein um dich anzumelden.<br/>
 Klicke auf das Logo um zur Startseite zurückzukehren.</p>

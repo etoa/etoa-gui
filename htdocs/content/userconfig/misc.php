@@ -314,15 +314,14 @@
 		{
 			$pres = dbquery("
 			SELECT 
-				user_password,
-				user_registered 
+				user_password
 			FROM 
 				users 
 			WHERE 
 				user_id=".$cu->id."
 			;");
-			$parr=mysql_fetch_row($pres);
-			if ($parr[0]==pw_salt($_POST['remove_password'],$parr[1]))
+			$parr = mysql_fetch_row($pres);
+			if (validatePasswort($_POST['remove_password'], $parr[0]))
 			{
 				$t = time() + ($conf['user_delete_days']['v']*3600*24);
 				dbquery("
@@ -334,11 +333,11 @@
 					user_id=".$cu->id."
 				;");
 				
-					$s=Null;
-					session_destroy();
-					success_msg("Deine Daten werden am ".df($t)." Uhr von unserem System gelöscht! Wir w&uuml;nschen weiterhin viel Erfolg im Netz!");
-					$cu->addToUserLog("settings","{nick} hat seinen Account zur Löschung freigegeben.",1);
-					echo '<input type="button" value="Zur Startseite" onclick="document.location=\''.Config::getInstance()->loginurl->v.'\'" />';
+				$s=Null;
+				session_destroy();
+				success_msg("Deine Daten werden am ".df($t)." Uhr von unserem System gelöscht! Wir w&uuml;nschen weiterhin viel Erfolg im Netz!");
+				$cu->addToUserLog("settings","{nick} hat seinen Account zur Löschung freigegeben.",1);
+				echo '<input type="button" value="Zur Startseite" onclick="document.location=\''.Config::getInstance()->loginurl->v.'\'" />';
 			}
 			else
 			{

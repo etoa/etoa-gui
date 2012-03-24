@@ -1,7 +1,9 @@
 <?PHP
-	echo "<h1>XML-Import/Export</h1>";
+	$tpl->assign("title", "XML-Import/Export");
 	
-	Cache::checkPerm("user_xml","");
+	if (!Cache::checkPerm("user_xml")) {
+		$tpl->assign("errmsg", Cache::getErrMsg());
+	}
 	$path = CACHE_ROOT."/user_xml";
 	
 	//
@@ -26,9 +28,11 @@
 		if (is_file($file))
 		{
 			$xml = simplexml_load_file($file);
-			
-			echo "<h2>Details ".base64_decode($_GET['file'])."</h2>";
-			tableStart("Allgemeines");
+		
+			$tpl->assign("subtitle", "Details ".base64_decode($_GET['file'])."");
+
+			echo "<fieldset><legend>Allgemeines</legend>";
+			tableStart();
 			if (isset($xml->export))
 			{
 				echo "<tr>
@@ -86,8 +90,10 @@
 				
 			}
 			tableEnd();
+			echo "</fieldset>";
 	
-			tableStart("Planeten");
+			echo "<fieldset><legend>Planeten</legend>";
+			tableStart();
 			if (isset($xml->planets))
 			{
 				if (isset($xml->planets->planet))
@@ -103,35 +109,37 @@
 						</tr>";
 						echo "<tr>
 							<td class=\"tbldata\">".RES_METAL.":</td>
-							<td class=\"tbldata\"> ".nf($p->metal)."</td>
+							<td class=\"tbldata\"> ".nf(intval($p->metal))."</td>
 						</tr>";
 						echo "<tr>
 							<td class=\"tbldata\">".RES_CRYSTAL.":</td>
-							<td class=\"tbldata\"> ".nf($p->crystal)."</td>
+							<td class=\"tbldata\"> ".nf(intval($p->crystal))."</td>
 						</tr>";
 						echo "<tr>
 							<td class=\"tbldata\">".RES_PLASTIC.":</td>
-							<td class=\"tbldata\"> ".nf($p->plastic)."</td>
+							<td class=\"tbldata\"> ".nf(intval($p->plastic))."</td>
 						</tr>";
 						echo "<tr>
 							<td class=\"tbldata\">".RES_FUEL.":</td>
-							<td class=\"tbldata\"> ".nf($p->fuel)."</td>
+							<td class=\"tbldata\"> ".nf(intval($p->fuel))."</td>
 						</tr>";
 						echo "<tr>
 							<td class=\"tbldata\">".RES_FOOD.":</td>
-							<td class=\"tbldata\"> ".nf($p->food)."</td>
+							<td class=\"tbldata\"> ".nf(intval($p->food))."</td>
 						</tr>";
 						echo "<tr>
 							<td class=\"tbldata\">Bewohner:</td>
-							<td class=\"tbldata\"> ".nf($p->people)."</td>
+							<td class=\"tbldata\"> ".nf(intval($p->people))."</td>
 						</tr>";
 					
 					}
 				}
 			}
 			tableEnd();	
-
-			tableStart("Gebäude");
+			echo "</fieldset>";
+	
+			echo "<fieldset><legend>Gebäude</legend>";
+			tableStart();
 			if (isset($xml->buildings))
 			{
 				if (isset($xml->buildings->building))
@@ -148,7 +156,9 @@
 				}
 			}
 			tableEnd();	
+			echo "</fieldset>";
 	
+			echo "<fieldset><legend>Technologien</legend>";
 			tableStart("Technologien");
 			if (isset($xml->technologies))
 			{
@@ -165,7 +175,9 @@
 				}
 			}
 			tableEnd();	
+			echo "</fieldset>";
 			
+			echo "<fieldset><legend>Schiffe</legend>";
 			tableStart("Schiffe");
 			if (isset($xml->ships))
 			{
@@ -182,9 +194,11 @@
 					}
 				}
 			}
-			tableEnd();			
+			tableEnd();	
+			echo "</fieldset>";			
 			
-			tableStart("Verteidigung");
+			echo "<fieldset><legend>Verteidigung</legend>";
+			tableStart();
 			if (isset($xml->defenses))
 			{
 				if (isset($xml->defenses->defense))
@@ -200,7 +214,8 @@
 					}
 				}
 			}
-			tableEnd();						
+			tableEnd();		
+			echo "</fieldset>";			
 			
 		}
 		else
@@ -216,7 +231,8 @@
 	//
 	else
 	{	
-		echo "<h2>Export</h2>";
+		$tpl->assign("subtitle", "Export");
+		
 		if (isset($_POST['exportcache']))
 		{
 			$uti = new UserToXml($_POST['export_user_id']);
@@ -231,11 +247,11 @@
 			echo "<script type=\"text/javascript\">window.open('misc/user_xml.php?id=". $_POST['export_user_id']."');</script>";
 		}
 	
-		echo "Bei jeder Löschung eines Spielers werden automatisch seine Daten
+		echo "<p>Bei jeder Löschung eines Spielers werden automatisch seine Daten
 		in ein XML-File geschrieben und dieses in einem Ordner abgelegt. Wenn du manuell von
-		einem User ein Backup erstellen willst, kannst du das hier tun:<br/><br/>";
+		einem User ein Backup erstellen willst, kannst du das hier tun:</p>";
 		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-		echo "Spieler wählen: <select name=\"export_user_id\">";
+		echo "<p>Spieler wählen: <select name=\"export_user_id\">";
 		$res = dbquery("
 		SELECT
 			user_id,
@@ -254,9 +270,9 @@
 		}
 		echo "</select> 
 		<input type=\"submit\" name=\"exportcache\" value=\"Exportieren\" /> 
-		<input type=\"submit\" name=\"exportdl\" value=\"Herunterladen\" />";
+		<input type=\"submit\" name=\"exportdl\" value=\"Herunterladen\" /></p>";
+		echo "</form>";
 		
-		echo "<h2>Import</h2>";
 		$d = opendir($path);
 		echo "<table class=\"tb\">
 		<tr><th>Datei (Userid_Datum_Zeit)</th>
@@ -268,7 +284,6 @@
 			$file = $path."/".$f;
 			if (is_file($file) && stristr($f,".xml"))
 			{			
-				$dlink = "path=".base64_encode($file)."&hash=".md5($file);
 				$xml = simplexml_load_file($file);
 				echo "<tr>
 				<td>$f</td>
@@ -276,12 +291,11 @@
 				<td>".$xml->export['date']."</td>
 				<td>
 					<a href=\"?page=$page&amp;sub=$sub&amp;file=".base64_encode($f)."\">Details & Import</a> &nbsp;
-					<a href=\"dl.php?".$dlink."\">Download</a></td>
+					<a href=\"".createDownloadLink($file)."\">Download</a></td>
 				</tr>";
 			}
 		}
 		echo "</table>";
 		closedir($d);
-		echo "</form>";
 	}
 ?>

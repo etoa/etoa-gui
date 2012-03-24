@@ -1,27 +1,13 @@
 <?PHP
+//////////////////////////////////////////////////////
+// The Andromeda-Project-Browsergame                //
+// Ein Massive-Multiplayer-Online-Spiel             //
+// Programmiert von Nicolas Perrenoud<mail@nicu.ch> //
+// als Maturaarbeit '04 am Gymnasium Oberaargau	    //
+//////////////////////////////////////////////////////
+// $Id$
+//////////////////////////////////////////////////////
 
-	//////////////////////////////////////////////////
-	//		 	 ____    __           ______       			//
-	//			/\  _`\ /\ \__       /\  _  \      			//
-	//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
-	//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
-	//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
-	//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
-	//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
-	//																					 		//
-	//////////////////////////////////////////////////
-	// The Andromeda-Project-Browsergame				 		//
-	// Ein Massive-Multiplayer-Online-Spiel			 		//
-	// Programmiert von Nicolas Perrenoud				 		//
-	// www.nicu.ch | mail@nicu.ch								 		//
-	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	//////////////////////////////////////////////////
-	//
-	// 	File: functions.php
-	// 	Created: 01.12.2004
-	// 	Last edited: 07.07.2007
-	// 	Last edited by: MrCage <mrcage@etoa.ch>
-	//
 	/**
 	* Main function file
 	*
@@ -37,7 +23,7 @@
 	*
 	* @class_name Name of missing class
 	*/
-	function __autoload($class_name) 
+	function etoa_class_autoload($class_name) 
 	{
 		if ($class_name != "xajax")
 		{
@@ -63,7 +49,7 @@
 			{
 				include_once($dir.'/fleetaction/'.$file);
 			}    
-			else
+			else if (preg_match('/^Smarty_/', $class_name) ==0)
 			{
 				echo "Error: Class $class_name not found!";
 				exit;
@@ -71,6 +57,7 @@
 		    }
 		}
 	}
+	spl_autoload_register("etoa_class_autoload");
 	
 	/**
 	* Returns a string containing the game name, version and round
@@ -2108,18 +2095,12 @@ function imagecreatefromfile($path, $user_functions = false)
 	}	
 	
 	/**
-	* Generates a password using the password string, a user based seed, and a system wide seed
-	*
-	* @param string Password from user
-	* @param string User's salt (e.g. registration date or id)
-	*
-	*/
-	function pw_salt($pw,$seed=0)
-	{
-		$salt = Config::getInstance()->password_salt->v;
-		return md5($pw.$seed.$salt).md5($salt.$seed.$pw);
-	}
-	
+	 * Generates a password using the password string, and possibly a user selected seed
+	 *
+	 * @param string Password from user
+	 * @param string User's salt (must be random)
+	 * @param string Returns a salted password concatenated with the salt itself to be saved in a user database
+	 */
 	function saltPasswort($pw, $salt=null)
 	{
 		if ($salt == null) 
@@ -2129,27 +2110,48 @@ function imagecreatefromfile($path, $user_functions = false)
 		return sha1($salt.$pw).$salt;
 	}
 	
+	/** 
+	 * Returns the salt which is part of a salted password string
+	 *
+	 * @param string Salted password
+	 */	
 	function getSaltFromPassword($passwordAndSalt)
 	{
 		$len = strlen(sha1(""));
 		return substr($passwordAndSalt, $len, $len);		
 	}
 	
+	/** 
+	 * Validates if a given input matches the salted password
+	 *
+	 * @param string $input Clear-Text password input
+	 * @param string $passwordAndSalt Salted password from a user database
+	 */
 	function validatePasswort($input, $passwordAndSalt)
 	{
 		return saltPasswort($input, getSaltFromPassword($passwordAndSalt)) == $passwordAndSalt;
 	}
 	
+	/**
+	 * Generates a new random salt value
+	 */
 	function generateSalt() 
 	{
 		return sha1(uniqid(mt_rand(), true));
 	}
 	
+	/**
+	 * Generates a new random password of length 8
+	 */
 	function generatePasswort()
 	{
-		return mt_rand(1000000,9999999);
+		return substr(sha1(mt_rand()), 0, 8);
 	}
 	
+	/**
+	 * Assesses the security of a password and returns a
+	 * password strength rating
+	 */	
 	function passwordStrength($password, $username = null)
 	{
 	    if (!empty($username))
@@ -2276,8 +2278,7 @@ function imagecreatefromfile($path, $user_functions = false)
 	        $strength = 100;
 	    }
 	    return $strength;
-	}
-	
+	}	
 	
 	/**
 	* Displays a button which opens an abuse report dialog when clicked

@@ -160,7 +160,7 @@
 						$sitterRegistered=$arr[1];
 						if ($_POST['sitter_password1']==$_POST['sitter_password2'] && $_POST['sitter_password1']!="" && strlen($_POST['sitter_password1'])>=PASSWORD_MINLENGHT)
 						{
-							$pw = pw_salt($_POST['sitter_password1'],$cu->registered);
+							$pw = saltPasswort($_POST['sitter_password1']);
 
 							$res = dbquery("SELECT user_id FROM users WHERE user_password='".$pw."' AND user_id=".$cu->id." LIMIT 1;");
 							if (mysql_num_rows($res)==0)

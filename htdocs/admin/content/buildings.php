@@ -537,11 +537,11 @@
 	//
 	else
 	{
-		echo "<h1>Geb&auml;udeliste</h1>";
+		$tpl->assign('title', 'Geb&auml;udeliste');
 		
 		$buildTypes = Building::getBuildTypes();
 
-		$build_colors[0]="#fff";
+		$build_colors[0]="inherit";
 		$build_colors[1]="red";
 		$build_colors[2]="orange";
 		$build_colors[3]="#0f0";
@@ -636,7 +636,7 @@
 		//
 		elseif ((isset($_POST['buildlist_search']) || isset($_POST['new']) || isset($_SESSION['search']['buildings']['query'])) && (isset($_GET['action']) &&$_GET['action']=="search"))
 		{
-			if ($_GET['query']!="")
+			if (isset($_GET['query']) && $_GET['query']!="")
 			{
 				$qs = searchQueryDecode($_GET['query']);
 				foreach($qs as $k=>$v)
@@ -646,6 +646,7 @@
 				$_SESSION['search']['buildings']['query']=null;
 			}
 			$tables = "buildlist,planets,users,buildings";
+			$sql = "";
 			if (isset($_POST['new']))
 			{
 				$updata=explode(":",$_POST['entity_id']);
@@ -781,32 +782,17 @@
 					$narr=mysql_fetch_array($res);
 
 					echo "<tr>";
-					if ($larr['user_id']==$arr['user_id'] && $narr['user_id']==$arr['user_id'] && $larr['id']==$arr['id'] && $narr['id']==$arr['id'])
-						echo "<td class=\"tbldatawtb\">&nbsp;</td>";
-					elseif ($larr['user_id']==$arr['user_id'] && $larr['id']==$arr['id'])
-						echo "<td class=\"tbldatawt\">&nbsp;</td>";
-					elseif ($narr['user_id']==$arr['user_id'] && $narr['id']==$arr['id'])
-						echo "<td class=\"tbldatawb\"><a href=\"?page=galaxy&amp;sub=edit&amp;id=".$arr['buildlist_entity_id']."\" title=\"".$arr['planet_name']."\">".cut_string($arr['planet_name'],11)."</a></td>";
-					else
-						echo "<td class=\"tbldata\"><a href=\"?page=galaxy&amp;sub=edit&amp;id=".$arr['buildlist_entity_id']."\" title=\"".$arr['planet_name']."\">".cut_string($arr['planet_name'],11)."</a></td>";
+					echo "<td class=\"tbldata\"><a href=\"?page=galaxy&amp;sub=edit&amp;id=".$arr['buildlist_entity_id']."\" title=\"".$arr['planet_name']."\">".cut_string($arr['planet_name'] != '' ? $arr['planet_name'] : 'Unbenannt',11)."</a> [".$arr['id']."]</td>";
 
-					if ($larr['user_id']==$arr['user_id'] && $narr['user_id']==$arr['user_id'] && $larr['id']==$arr['id'] && $narr['id']==$arr['id'])
-						echo "<td class=\"tbldatawtb\">&nbsp;</td>";
-					elseif ($larr['user_id']==$arr['user_id'] && $larr['id']==$arr['id'])
-						echo "<td class=\"tbldatawt\">&nbsp;</td>";
-					elseif ($narr['user_id']==$arr['user_id'] && $narr['id']==$arr['id'])
-						echo "<td class=\"tbldatawb\"><a href=\"?page=user&amp;sub=edit&amp;user_id=".$arr['buildlist_user_id']."\" title=\"".$arr['user_nick']."\">".cut_string($arr['user_nick'],11)."</a></td>";
-					else
-						echo "<td class=\"tbldata\"><a href=\"?page=user&amp;sub=edit&amp;user_id=".$arr['buildlist_user_id']."\" title=\"".$arr['user_nick']."\">".cut_string($arr['user_nick'],11)."</a></td>";
-					$style=" style=\"color:".$build_colors[$arr['buildlist_build_type']]."\"";
+					echo "<td class=\"tbldata\"><a href=\"?page=user&amp;sub=edit&amp;user_id=".$arr['buildlist_user_id']."\" title=\"".$arr['user_nick']."\">".cut_string($arr['user_nick'],11)."</a></td>";
+					$style=" ";
 
-					echo "<td class=\"tbldata\" $style>".$arr['building_name']."</td>";
-					echo "<td class=\"tbldata\" $style>".nf($arr['buildlist_current_level'])."</td>";
-					echo "<td class=\"tbldata\" $style>".$buildTypes[$arr['buildlist_build_type']]."</td>";
+					echo "<td class=\"tbldata\">".$arr['building_name']."</td>";
+					echo "<td class=\"tbldata\">".nf($arr['buildlist_current_level'])."</td>";
+					echo "<td class=\"tbldata\" style=\"background:".$build_colors[$arr['buildlist_build_type']]."\">".$buildTypes[$arr['buildlist_build_type']]."</td>";
 					echo "<td class=\"tbldata\">".edit_button("?page=$page&amp;sub=$sub&amp;action=edit&amp;buildlist_id=".$arr['buildlist_id'])."</td>";
 					echo "</tr>";
 
-					$larr=$arr;
 				}
 				echo "</table>";
 				echo "<br/><input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" value=\"Neue Suche\" />";
@@ -822,6 +808,15 @@
 		//
 		else
 		{
+			//$tpl->assign('subtitle', 'Suchmaske');
+		
+			echo '<div class="tabs">
+			<ul>
+				<li><a href="#tabs-1">Schnellsuche</a></li>
+				<li><a href="#tabs-2">Erweiterte Suche</a></li>
+			</ul>
+			<div id="tabs-1">';
+
 			$bres = dbquery("SELECT building_id,building_name FROM buildings ORDER BY building_type_id,building_order,building_name;");
 			while ($barr=mysql_fetch_array($bres))
 			{
@@ -830,9 +825,9 @@
 			
 			// Hinzufügen
 			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\" id=\"selector\" name=\"selector\">";
-			tableStart();
 			
 			//Sonnensystem
+			echo '<table class="tb">';
 			echo "<tr><th class=\"tbltitle\">Sonnensystem</th><td class=\"tbldata\">
 			<select name=\"cell_sx\" onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showBuildingsOnPlanet',1);\">";
 			echo "<option value=\"0\">Sektor X</option>";
@@ -881,11 +876,6 @@
 			//Focus
 			echo "<script type=\"text/javascript\">document.getElementById('userlist_nick').focus();</script>";
 			
-			
-			$tblcnt = mysql_fetch_row(dbquery("SELECT count(buildlist_id) FROM buildlist;"));
-			echo "<br/>Es sind <b>".nf($tblcnt[0])."</b> Eintr&auml;ge in der Datenbank vorhanden.";
-			echo "<br /><br />";
-			
 			//Add User
 			if (searchQueryArray($sa,$so))
 			{
@@ -895,11 +885,11 @@
 				}
 			}
 			
+			echo '</div><div id="tabs-2">';
 			
 			$_SESSION['search']['buildings']['query']=null;
-			echo "<h2>Suchmaske</h2>";
 			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\">";
-			tableStart();
+			echo '<table class="tb">';
 			echo "<tr><th class=\"tbltitle\">Planet ID</th><td class=\"tbldata\"><input type=\"text\" name=\"entity_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
 			echo "<tr><th class=\"tbltitle\">Planetname</th><td class=\"tbldata\"><input type=\"text\" name=\"planet_name\" value=\"\" size=\"20\" maxlength=\"250\" />&nbsp;";
 			fieldqueryselbox('planet_name');
@@ -917,6 +907,14 @@
 			tableEnd();
 			echo "<br/><input type=\"submit\" name=\"buildlist_search\" value=\"Suche starten\" />";
 			echo "</form>";
+			
+			echo '
+				</div>
+			</div>';
+			
+			$tblcnt = mysql_fetch_row(dbquery("SELECT count(buildlist_id) FROM buildlist;"));
+			echo "<p>Es sind <b>".nf($tblcnt[0])."</b> Eintr&auml;ge in der Datenbank vorhanden.</p>";
+
 		}
 		
 	}

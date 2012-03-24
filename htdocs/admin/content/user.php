@@ -250,10 +250,12 @@
 
 	else
 	{
-		echo "<h1>Spieler</h1>";
+		$tpl->assign("title", 'Spieler');
 
 		if ((isset($_GET['special']) || isset($_POST['user_search']) || isset($_SESSION['admin']['user_query'])) && isset($_GET['action']) && $_GET['action']=="search")
 		{
+			$tpl->assign("subtitle", 'Suchergebnisse');
+		
 			$tables = 'users';
 
 			if (isset($_GET['special']))
@@ -386,34 +388,44 @@
 				echo "<tr>";
 				echo "<th>ID</th>";
 				echo "<th>Nick</th>";
+				echo "<th>Status</th>";
 				echo "<th>Name</th>";
 				echo "<th>E-Mail</th>";
 				echo "<th>Punkte</th>";
 				echo "<th>Allianz</th>";
-				echo "<th>Rasse</th>";
+				echo "<th>Rasse</th>
+				<th></th>";
 				echo "</tr>";
 				while ($arr = mysql_fetch_assoc($res))
 				{
-					if ($arr['user_blocked_from']<$time && $arr['user_blocked_to']>$time)
+					if ($arr['user_blocked_from']<$time && $arr['user_blocked_to']>$time) {
+						$status = "Gesperrt";
 						$uCol=' class="userLockedColor"';
-					elseif($arr['user_hmode_from']<$time && $arr['user_hmode_to']>$time)
+					} elseif($arr['user_hmode_from']<$time && $arr['user_hmode_to']>$time) {
+						$status = "Urlaub";
 						$uCol=' class="userHolidayColor"';
-					elseif ($arr['user_deleted']!=0)
+					} elseif ($arr['user_deleted']!=0) {
+						$status = "Löschauftrag";
 						$uCol=' class="userDeletedColor"';
-					elseif ($arr['admin']!=0)
+					} elseif ($arr['admin']!=0) {
+						$status = "Admin";
 						$uCol=' class="adminColor"';
-					elseif ($arr['user_ghost']!=0)
+					} elseif ($arr['user_ghost']!=0) {
+						$status = "Geist";
 						$uCol=' class="userGhostColor"';
-					else
+					} else {
+						$status = 'Spieler';
 						$uCol="";
+					}
 					echo "<tr>";
-					echo "<td ".$uCol." title=\"".$arr['user_name']."\">".$arr['user_id']."</td>";
-					echo "<td ".$uCol." title=\"".$arr['user_nick']."\">".$arr['user_nick']."</td>";
-					echo "<td ".$uCol." title=\"".$arr['user_name']."\">".cut_string($arr['user_name'],15)."</td>";
-					echo "<td ".$uCol." title=\"".$arr['user_email']."\">".cut_string($arr['user_email'],15)."</td>";
-					echo "<td ".$uCol.">".nf($arr['user_points'])."</td>";
-					echo "<td ".$uCol.">".($arr['user_alliance_id']>0 ? $allys[$arr['user_alliance_id']]['tag']:'-')."</td>";
-					echo "<td ".$uCol.">".($arr['user_race_id']>0 ? $race[$arr['user_race_id']]['race_name'] : '-')."</td>";
+					echo "<td>".$arr['user_id']."</td>";
+					echo "<td><a href=\"?page=$page&amp;sub=edit&amp;id=".$arr['user_id']."\">".$arr['user_nick']."</a></td>";
+					echo "<td ".$uCol.">".$status."</td>";
+					echo "<td title=\"".$arr['user_name']."\">".cut_string($arr['user_name'],15)."</td>";
+					echo "<td title=\"".$arr['user_email']."\">".cut_string($arr['user_email'],15)."</td>";
+					echo "<td>".nf($arr['user_points'])."</td>";
+					echo "<td>".($arr['user_alliance_id']>0 ? $allys[$arr['user_alliance_id']]['tag']:'-')."</td>";
+					echo "<td>".($arr['user_race_id']>0 ? $race[$arr['user_race_id']]['race_name'] : '-')."</td>";
 					echo "<td>
 					".edit_button("?page=$page&amp;sub=edit&amp;id=".$arr['user_id'])."
 					".cb_button("add_user=".$arr['user_id']."")."
@@ -421,19 +433,13 @@
 					echo "</tr>";
 				}
 				echo "</table>";
-				echo "<br/><input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /> ";
-				echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;action=search'\" value=\"Aktualisieren\" /><br/><br/>
-				<b>Legende:</b> 
-				<span class=\"userLockedColor\">Gesperrt</span>, 
-				<span class=\"userHolidayColor\">Urlaub</span>, 
-				<span class=\"userDeletedColor\">Löschauftrag</span>
-				<span class=\"adminColor\">Admin</span>
-				<span class=\"userGhostColor\">Geist</span>
-				";
+				echo "<p><input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /> &nbsp; ";
+				echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;action=search'\" value=\"Aktualisieren\" /></p>";
 			}
 			else
 			{
-				echo "Die Suche lieferte keine Resultate!<br/><br/><input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=$page'\" />";
+				$tpl->assign('infomsg', "Die Suche lieferte keine Resultate!");
+				echo "<p><input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=$page'\" /></p>";
 			}
 		}
 
@@ -452,9 +458,11 @@
 
 		else
 		{
+			$tpl->assign("subtitle", 'Suchmaske');
+
 			$_SESSION['admin']['user_query']="";
 			echo "<form action=\"?page=$page&amp;action=search\" method=\"post\">";
-			tableStart("Suchmaske");
+			echo "<table class=\"tbl\">";
 			echo "<tr><th>ID</th><td class=\"tbldata\"><input type=\"text\" name=\"user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
 			echo "<tr><th>Nickname</th><td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchUser(this.value,'user_nick','citybox1');\"/> <br><div class=\"citybox\" id=\"citybox1\">&nbsp;</div></td></tr>";
 			echo "<tr><th>Name</th><td class=\"tbldata\"><input type=\"text\" name=\"user_name\" value=\"\" size=\"20\" maxlength=\"250\" /> </td></tr>";
@@ -472,8 +480,14 @@
 			}
 			echo "</select></td></tr>";
 			echo "<tr><th>Profil-Text</th><td class=\"tbldata\"><input type=\"text\" name=\"user_profile_text\" value=\"\" size=\"20\" maxlength=\"250\" /> </td></tr>";
-			echo "<tr><th>Urlaubsmodus</th><td class=\"tbldata\"><input type=\"radio\" name=\"user_hmode\" value=\"2\" checked=\"checked\" /> Egal &nbsp; <input type=\"radio\" name=\"user_hmode\" value=\"0\" /> Nein &nbsp; <input type=\"radio\" name=\"user_hmode\" value=\"1\" /> Ja</td></tr>";
-			echo "<tr><th>Gesperrt</th><td class=\"tbldata\"><input type=\"radio\" name=\"user_blocked\" value=\"2\" checked=\"checked\" /> Egal &nbsp; <input type=\"radio\" name=\"user_blocked\" value=\"0\" /> Nein &nbsp; <input type=\"radio\" name=\"user_blocked\" value=\"1\"  /> Ja</td></tr>";
+			echo "<tr><th>Urlaubsmodus</th><td class=\"tbldata\">
+				<input type=\"radio\" name=\"user_hmode\" value=\"2\" checked=\"checked\" /> Egal &nbsp; 
+				<input type=\"radio\" name=\"user_hmode\" value=\"0\" /> Nein &nbsp; 
+				<input type=\"radio\" name=\"user_hmode\" value=\"1\" /> Ja</td></tr>";
+			echo "<tr><th>Gesperrt</th><td class=\"tbldata\">
+				<input type=\"radio\" name=\"user_blocked\" value=\"2\" checked=\"checked\" /> Egal &nbsp; 
+				<input type=\"radio\" name=\"user_blocked\" value=\"0\" /> Nein &nbsp; 
+				<input type=\"radio\" name=\"user_blocked\" value=\"1\"  /> Ja</td></tr>";
 			echo "<tr><th>Geist</th><td class=\"tbldata\"><input type=\"radio\" name=\"user_ghost\" value=\"2\" checked=\"checked\" /> Egal &nbsp; <input type=\"radio\" name=\"user_ghost\" value=\"0\" /> Nein &nbsp; <input type=\"radio\" name=\"user_ghost\" value=\"1\"  /> Ja</td></tr>";
 			echo "<tr><th>Chat-Admin</th><td class=\"tbldata\"><input type=\"radio\" name=\"user_chatadmin\" value=\"2\" checked=\"checked\" /> Egal &nbsp; <input type=\"radio\" name=\"user_chatadmin\" value=\"0\" /> Nein &nbsp; <input type=\"radio\" name=\"user_chatadmin\" value=\"1\"  /> Ja</td></tr>";
 			echo "</table>";

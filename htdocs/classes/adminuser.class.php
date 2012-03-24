@@ -1,7 +1,17 @@
 <?php
-class AdminUser
-{
-	const tableUser = "admin_users";
+//////////////////////////////////////////////////////
+// The Andromeda-Project-Browsergame                //
+// Ein Massive-Multiplayer-Online-Spiel             //
+// Programmiert von Nicolas Perrenoud<mail@nicu.ch> //
+// als Maturaarbeit '04 am Gymnasium Oberaargau	    //
+//////////////////////////////////////////////////////
+// $Id$
+//////////////////////////////////////////////////////
+
+class AdminUser {
+	
+	const tableName = "admin_users";
+	
 	private $id = null;
 	private $valid = false;
 	private $passwordString;
@@ -14,15 +24,15 @@ class AdminUser
 	public $boardUrl = "";
 	public $userTheme = "";
 	public $ticketEmail = false;
+	public $locked = false;
 	
-	function __construct($id=null)
-	{
+	function __construct($id=null) {
 		if ($id != null) {
-			$res = dbquery("
+			$res = DBManager::getInstance()->query("
 			SELECT
 				*
 			FROM
-				".self::tableUser." u
+				".self::tableName." u
 			INNER JOIN
 				admin_groups g
 				ON u.user_admin_rank=g.group_id
@@ -48,22 +58,20 @@ class AdminUser
 				$this->boardUrl = $arr['user_board_url'];
 				$this->userTheme = $arr['user_theme'];
 				$this->ticketEmail = ($arr['ticketmail'] > 0);
+				$this->locked = ($arr['user_locked'] > 0);
 			}
 		}
 	}
 
-	function isValid()
-	{
+	function isValid() {
 		return $this->valid;
 	}
 
-	function __toString()
-	{
+	function __toString() {
 		return "[ADMIN]".$this->nick;
 	}
 
-	function __get($field)
-	{
+	function __get($field) {
 		if ($field == "id")
 			return $this->id;
 		if ($field == "nick")
@@ -78,42 +86,60 @@ class AdminUser
 	
 	function setPassword($password, $forceChange=false)	{
 		$pws = saltPasswort($password);
-		dbquery("
+		DBManager::getInstance()->safeQuery("
 		UPDATE 
-			".self::tableUser."
+			".self::tableName."
 		SET
-			user_password='".$pws."',
-			user_force_pwchange=".($forceChange ? 1 : 0)."					
+			user_password=?,
+			user_force_pwchange=?					
 		WHERE
-			user_id=".$this->id.";");
+			user_id=?;", array(
+			$pws,
+			($forceChange ? 1 : 0),
+			$this->id
+		));
 		$this->passwordString = $pws;
 		$this->forcePasswordChange = false;
 		return true;
 	}
 
+	/**
+	* Saves the current record or create a new one
+	* if the id is null
+	*/
 	function save()	{
 		if ($this->id != null) 
 		{
-			dbquery("
+			DBManager::getInstance()->safeQuery("
 			UPDATE 
-				".self::tableUser."
+				".self::tableName."
 			SET 
-				user_admin_rank='".$this->adminRank."',
-				user_nick='".$this->nick."',
-				user_name='".$this->name."',
-				user_email='".$this->email."',
-				user_board_url='".$this->boardUrl."',
-				user_theme='".$this->userTheme."',
-				ticketmail=".($this->ticketEmail ? 1 : 0).",
-				player_id=".$this->playerId."
+				user_admin_rank=?,
+				user_nick=?,
+				user_name=?,
+				user_email=?,
+				user_board_url=?,
+				user_theme=?,
+				ticketmail=?,
+				player_id=?,
+				user_locked=?
 			WHERE 
-				user_id='".$this->id."';");
-		} 
-		else
-		{
-			dbquery("
+				user_id='".$this->id."';", 
+				array(
+					$this->adminRank,
+					$this->nick,
+					$this->name,
+					$this->email,
+					$this->boardUrl,
+					$this->userTheme,
+					($this->ticketEmail ? 1 : 0),
+					$this->playerId,
+					($this->locked ? 1 : 0),				
+				));
+		} else {
+			DBManager::getInstance()->safeQuery("
 			INSERT INTO 
-				".self::tableUser."
+				".self::tableName."
 			(
 				user_admin_rank,
 				user_nick,
@@ -123,38 +149,40 @@ class AdminUser
 				user_theme,
 				ticketmail,
 				player_id,
+				user_locked,
 				user_password
 			) VALUES (
-				'".$this->adminRank."',
-				'".$this->nick."',
-				'".$this->name."',
-				'".$this->email."',
-				'".$this->boardUrl."',
-				'".$this->userTheme."',
-				".($this->ticketEmail ? 1 : 0).",
-				".$this->playerId.",
-				'".saltPasswort(generatePasswort())."'
-			);"); // Add a random password
+				?,?,?,?,?,?,?,?,?,?
+			);", 
+			array(
+				$this->adminRank,
+				$this->nick,
+				$this->name,
+				$this->email,
+				$this->boardUrl,
+				$this->userTheme,
+				($this->ticketEmail ? 1 : 0),
+				$this->playerId,
+				($this->locked ? 1 : 0),
+				saltPasswort(generatePasswort())
+			)); // Add a random password
 			$this->id = mysql_insert_id();
+			$this->valid = true;
 		}
 	}
 
-	//
-	// Statics
-	//
-	
-	static function findByNick($nick)
-	{
-		$sql = "
+	/** 
+	* Finds a user by it's nickname
+	*/
+	static function findByNick($nick) {
+		$ures = DBManager::getInstance()->safeQuery("
 		SELECT
 			user_id
 		FROM
-			".self::tableUser."
+			".self::tableName."
 		WHERE
 			LCASE(user_nick)=LCASE(?)
-		LIMIT 1;
-		;";
-		$ures = dbQuerySave($sql, array($nick));
+		LIMIT 1;", array($nick));
 		if (mysql_num_rows($ures)>0)
 		{
 			$uarr = mysql_fetch_row($ures);
@@ -163,14 +191,16 @@ class AdminUser
 		return null;
 	}
 	
-	static function getArray()
-	{
-		$res = dbquery("
+	/**
+	* Get an array of all user id's and nicknames
+	*/
+	static function getArray() {
+		$res = DBManager::getInstance()->query("
 		SELECT 
 			user_id,
 			user_nick 
 		FROM 
-			".self::tableUser.";");
+			".self::tableName.";");
 		$rtn = array();
 		while ($arr=mysql_fetch_row($res))
 		{
@@ -179,16 +209,17 @@ class AdminUser
 		return $rtn;
 	}
 	
-	static function countAll() 
-	{
-		$res = dbquery("
+	/** 
+	* Count all users
+	*/
+	static function countAll() {
+		$res = DBManager::getInstance()->query("
 		SELECT
 			COUNT(user_id) 
 		FROM 
-			".self::tableUser.";");
+			".self::tableName.";");
 		$arr = mysql_fetch_row($res);
 		return $arr[0];
 	}
-
 }
 ?>

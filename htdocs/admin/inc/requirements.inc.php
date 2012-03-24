@@ -1,11 +1,17 @@
 <?PHP
-
+//////////////////////////////////////////////////////
+// The Andromeda-Project-Browsergame                //
+// Ein Massive-Multiplayer-Online-Spiel             //
+// Programmiert von Nicolas Perrenoud<mail@nicu.ch> //
+// als Maturaarbeit '04 am Gymnasium Oberaargau	    //
+//////////////////////////////////////////////////////
+// $Id$
+//////////////////////////////////////////////////////
 
 	//
 	// Anforderungen
 	//
-	echo "<h1>".TITLE."</h1>";
-
+	$tpl->assign("title", TITLE);
 
 	// Lade Gebäude- & Technologienamen
 	$bures = dbquery("SELECT building_id,building_name FROM buildings;");
@@ -31,8 +37,7 @@
 		".ITEM_ORDER_FLD.";");
 	if (mysql_num_rows($res)>0)
 	{
-		tableStart();
-		echo "<tr>
+		echo "<table><tr>
 			<th colspan=\"".(defined('ITEM_IMAGE_PATH')?2:1)."\">Name</th>
 			<th>Voraussetzungen</th>
 		</tr>";

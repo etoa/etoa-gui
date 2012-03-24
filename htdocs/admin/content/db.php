@@ -1025,8 +1025,8 @@
 	//
 	else
 	{
-		echo "W&auml;hle in der rechten Spalte eine Option aus! Achtung: Einige Operationen können die 
-		Datenbank stark belasten und es dauert eine Weile bis die geforderte Seite geladen ist.";
+		echo "<p>W&auml;hle in der rechten Spalte eine Option aus!<br/> Achtung: Einige Operationen können die 
+		Datenbank stark belasten und es dauert eine Weile bis die geforderte Seite geladen ist.</p>";
 
 		$st = array();
 		$res=dbquery("SHOW GLOBAL STATUS;");
@@ -1040,14 +1040,14 @@
 		echo '<div style="float:left;">';
 
 		echo '<h2>Datenbank-Pflege</h2>';
-		echo '<input type="button" value="Optimieren" onclick="document.location=\'?page='.$page.'&amp;sub=optimize\';" />
-		Sortiert Indizes und defragmentiert Daten.<br/>';
-		echo '<input type="button" value="Reparieren" onclick="document.location=\'?page='.$page.'&amp;sub=repair\';" />
-		Repariert möglicherweise defekte Tabellen.<br/>';
-		echo '<input type="button" value="Überprüfen" onclick="document.location=\'?page='.$page.'&amp;sub=check\';" />
-		Prüft Tabellen auf Fehler.<br/>';
-		echo '<input type="button" value="Analysieren" onclick="document.location=\'?page='.$page.'&amp;sub=analyze\';" />
-		Analysiert die Schlüsselverteilung der Tabellen.<br/>';
+		echo '<p><input type="button" value="Optimieren" onclick="document.location=\'?page='.$page.'&amp;sub=optimize\';" /> &nbsp; 
+		Sortiert Indizes und defragmentiert Daten.</p>';
+		echo '<p><input type="button" value="Reparieren" onclick="document.location=\'?page='.$page.'&amp;sub=repair\';" /> &nbsp; 
+		Repariert möglicherweise defekte Tabellen.</p>';
+		echo '<p><input type="button" value="Überprüfen" onclick="document.location=\'?page='.$page.'&amp;sub=check\';" /> &nbsp; 
+		Prüft Tabellen auf Fehler.</p>';
+		echo '<p><input type="button" value="Analysieren" onclick="document.location=\'?page='.$page.'&amp;sub=analyze\';" /> &nbsp; 
+		Analysiert die Schlüsselverteilung der Tabellen.</p>';
 
 		echo "<h2>Serverstatistiken</h2>";
 		echo 'Der Server läuft seit <b>'.tf($uts).'</b><br/>und wurde am <b>'.df(time()-$uts).'</b> Uhr gestartet.<br/><br/>';
@@ -1095,7 +1095,7 @@
 			$ts[$arr['Name']]=$arr['Data_length']+$arr['Index_length'];
 			$tn[$arr['Name']]=$arr['Name'];
 		}          
-		echo '<div style="float:right;"><h2>Datenbankstatistiken</h2>';		
+		echo '<div style="float:left;margin-left:50px"><h2>Datenbankstatistiken</h2>';		
 		echo "Die Datenbank <b>".DBManager::getInstance()->getDbName()."</b> hat <b>".nf($rows)."</b> Zeilen<br/>und eine 
 		Gesamtgrösse von <b>".byte_format($datal)."</b><br/><br/>";
 		echo '<table style="width:300px;" class="tb">';

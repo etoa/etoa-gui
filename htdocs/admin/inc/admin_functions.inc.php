@@ -69,7 +69,7 @@ function db_show_result($res)
 */
 function cms_err_msg($msg,$id="errmsg")
 {
-	echo "<div class=\"errorBox\" id=\"$id\"><b>Fehler:</b> ".text2html($msg)."</div>";
+	echo MessageBox::get("error", "", text2html($msg));
 }
 
 /**
@@ -79,7 +79,7 @@ function cms_err_msg($msg,$id="errmsg")
 */
 function cms_ok_msg($msg,$id="okmsg")
 {
-	echo "<div class=\"successBox\" id=\"$id\">".text2html($msg)."</div>";
+	echo MessageBox::get("ok", "", text2html($msg));
 }
 
 /**
@@ -279,112 +279,6 @@ function htaccess_tool($name,$user,$dir)
 		echo " <input type=\"submit\" value=\"Deaktivieren\" name=\"htaccess_remove\" />";
 	echo "</form>";
 }
-
-
-/**
-* Displays a tool for securing a directory with a
-* .tpasswd and .htaccess file
-*
-* @param string Default AuthName
-* @param string Default user nick
-* @param string Default directory to store .htpasswd file
-*/
-function htpasswd_tool($user,$file)
-{
-	$file = getcwd()."/../".$file;
-
-	echo "<h2>Passwort-Schutz für Admin-Modus</h2>";
-	
-	if (file_exists($file))
-	{
-		$userarr = posix_getpwuid(fileowner($file));
-		$user = $userarr['name'];
-		if ($user==UNIX_USER)
-		{
-			$userarr = posix_getpwuid(filegroup($file));
-			$user = $userarr['name'];
-			if ($user==UNIX_GROUP)
-			{		    			
-				$perms = substr(sprintf("%o",fileperms($file)),2,3);
-					if (substr($perms,1,1)>=6)
-					{
-						if ($_POST['htaccess_submit']!="")
-						{
-							if ($_POST['htaccess_user']!="" && $_POST['htaccess_password']!="")
-							{
-								$cmd = HTPASSWD_COMMAND." -bc ".$file." ".$_POST['htaccess_user']." ".$_POST['htaccess_password'];
-								passthru($cmd);
-								echo "Passwortdatei erstellt!<br/><br/>";
-							}
-							else
-							{
-								echo "<b>Fehler!</b> Eines oder mehrere Felder sind nicht ausgefüllt!<br/><br/>";
-							}
-						}
-				
-						$active=false;
-						
-						if (file_exists($file))
-						{
-							$f = fopen($file,"r");
-							while ($t=fgets($f,500))
-							{
-								$a = explode(":",$t);
-								$user=$a[0];
-								$pw=$a[1];
-							}
-							fclose($f);
-						}
-						else
-							echo "<b>Fehler:</b>Keine Passwortdatei gefunden ($file)!<br/><br/>";
-				
-						echo "<form action=\"\" method=\"post\">";
-						echo "<table class=\"tb\">";
-						echo "<tr><th>User:</th><td><input type=\"text\" value=\"".$user."\" name=\"htaccess_user\" size=\"40\" /></td></tr>";
-						echo "<tr><th>Neues Passwort:</th><td><input type=\"text\" value=\"\" name=\"htaccess_password\" size=\"40\" /></td></tr>";
-						echo "</table><br/><br/><input type=\"submit\" value=\"Speichern\" name=\"htaccess_submit\" />";
-						if ($active)
-						{
-							echo " <input type=\"submit\" value=\"Deaktivieren\" name=\"htaccess_remove\" />";
-						}
-						echo "</form>";
-
-
-					}
-					else
-					{
-						error_msg("Die Passwortdatei [b]".$file."[/b] hat falsche Gruppenrechte ($perms)!\nDies kann mit [i]chmod g+w ".$file." -R[/i] geändert werden!");
-					}
-			}
-			else
-			{
-					error_msg("Die Passwortdatei [b]".$file."[/b] hat eine falsche Gruppe! Eingestellt ist [b]".$user."[/b], erwartet wurde [b]".UNIX_GROUP."[/b]!\nDies kann mit [i]chgrp ".UNIX_GROUP." ".$file." -R[/i] geändert werden!");
-			}
-		}
-		else
-		{
-			error_msg("Die Passwortdatei [b]".$file."[/b] hat einen falschen Besitzer! Eingestellt ist [b]".$user."[/b], erwartet wurde [b]".UNIX_USER."[/b]!\nDies kann mit [i]chown ".UNIX_USER." ".$file." -R[/i] geändert werden!");
-		}
-	}
-	else
-	{
-		error_msg("Die Passwortdatei [b]".$file."[/b] wurde nicht gefunden!");
-	}
-}
-
-function htpasswd_check($user,$file)
-{
-	$file = getcwd()."/../".$file;
-	if (!file_exists($file))
-	{
-		passthru(HTPASSWD_COMMAND." -bc ".$file." $user \"\"");
-		return false;
-	}
-	else
-	{
-		return true;
-	}
-}	
 
 function display_field($type, $confname, $field)
 {
@@ -1829,4 +1723,60 @@ function showGameLogs($args=null,$limit=0)
 		echo "<p>Keine Daten gefunden!</p>";
 	}
 }
+
+	/**
+	* Shows a datepicker
+	*/
+	function showDatepicker($element_name, $def_val, $time=false, $seconds=false)
+	{
+		echo "<input type=\"text\" name=\"".$element_name."\" value=\"".date('d.m.Y', $def_val)."\" class=\"datepicker\" size=\"10\" />";
+		if ($time) {
+			if ($seconds) {
+				echo ":<input type=\"text\" name=\"".$element_name."_time\" value=\"".date('H:i:s', $def_val)."\" size=\"7\" />";
+			} else {
+				echo ":<input type=\"text\" name=\"".$element_name."_time\" value=\"".date('H:i', $def_val)."\" size=\"5\" />";
+			}
+		}
+	}
+	
+	/**
+	* Parse value submitted by datepicker field
+	*/
+	function parseDatePicker($element_name, $data) {
+		
+		$str = $data[$element_name];
+		if (isset($data[$element_name."_time"])) {
+			$str.= " ".$data[$element_name."_time"];
+		}		
+		return strtotime($str);
+	}
+	
+	/**
+	* Create file downlad link
+	*/
+	function createDownloadLink($file) {
+		
+		$encodedName = base64_encode($file);
+		if (!isset($_SESSION['filedownload'][$encodedName])) {
+			$_SESSION['filedownload'][$encodedName] = uniqid(true);
+		}		
+		return "dl.php?path=".$encodedName."&hash=".sha1($encodedName.$_SESSION['filedownload'][$encodedName]);
+	}
+	
+	/**
+	* $Parse file downlad link
+	*/
+	function parseDownloadLink($arr) {
+		
+		if (isset($arr['path']) && $arr['path']!="" && isset($arr['hash']) && $arr['hash']!="")
+		{
+			$encodedName = $arr['path'];
+			$file = base64_decode($encodedName); 
+			if (isset($_SESSION['filedownload'][$encodedName]) && $arr['hash'] == sha1($encodedName.$_SESSION['filedownload'][$encodedName])) {
+				return $file;
+				unset($_SESSION['filedownload'][$encodedName]);
+			}
+		}
+		return false;
+	}
 ?>

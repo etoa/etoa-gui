@@ -6,7 +6,7 @@
 		echo "<h2>Neu</h2>";
 
 		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-		echo "<table class=\"tb\">";
+		echo "<table class=\"tb\" style=\"width:auto;\">";
 		echo "<tr>
 			<th>Realer Name:</th>
 			<td><input type=\"text\" name=\"user_name\" value=\"\" /></td>
@@ -17,11 +17,11 @@
 		</tr>";
 		echo "<tr>
 			<th>Nickname:</th>
-			<td><input type=\"text\" name=\"user_nick\" value=\"\" /></td>
+			<td><input type=\"text\" name=\"user_nick\" value=\"\" autocomplete=\"off\" /></td>
 		</tr>";
 		echo "<tr>
 			<th>Passwort (leerlassen generiert eins):</th>
-			<td><input type=\"password\" name=\"user_password\" /></td>
+			<td><input type=\"password\" name=\"user_password\" autocomplete=\"off\" /></td>
 		</tr>";
 		echo "<tr>
 			<th>Gruppe:</th>
@@ -49,35 +49,27 @@
 	elseif (isset($_GET['edit']) && $_GET['edit']>0)
 	{
 		echo "<h2>Bearbeiten</h2>";
-		$res = dbquery("
-		SELECT
-			*
-		FROM
-			admin_users
-		WHERE
-			user_id=".$_GET['edit']."
-		");		
-		if (mysql_num_rows($res)>0)
+		$au = new AdminUser($_GET['edit']);
+		if ($au->isValid())
 		{
-			$arr = mysql_fetch_array($res);
 			echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">
-			<input type=\"hidden\" name=\"user_id\" value=\"".$arr['user_id']."\" />";
-			echo "<table class=\"tb\">";
+			<input type=\"hidden\" name=\"user_id\" value=\"".$au->id."\" />";
+			echo "<table class=\"tb\" style=\"width:auto;\">";
 			echo "<tr>
 				<th>Realer Name:</th>
-				<td><input type=\"text\" name=\"user_name\" value=\"".$arr['user_name']."\" /></td>
+				<td><input type=\"text\" name=\"user_name\" value=\"".$au->name."\" /></td>
 			</tr>";
 			echo "<tr>
 				<th>E-Mail:</th>
-				<td><input type=\"text\" name=\"user_email\" value=\"".$arr['user_email']."\" /></td>
+				<td><input type=\"text\" name=\"user_email\" value=\"".$au->email."\" /></td>
 			</tr>";
 			echo "<tr>
 				<th>Nickname:</th>
-				<td><input type=\"text\" name=\"user_nick\" value=\"".$arr['user_nick']."\" /></td>
+				<td><input type=\"text\" name=\"user_nick\" value=\"".$au->nick."\"  autocomplete=\"off\" /></td>
 			</tr>";
 			echo "<tr>
 				<th>Neues Passwort:</th>
-				<td><input type=\"password\" name=\"user_password\" /></td>
+				<td><input type=\"password\" name=\"user_password\" autocomplete=\"off\" /></td>
 			</tr>";
 			echo "<tr>
 				<th>Gruppe:</th>
@@ -93,7 +85,7 @@
 				while ($garr=mysql_fetch_array($gres))
 				{
 					echo "<option value=\"".$garr['group_id']."\"";
-					if ($garr['group_id']==$arr['user_admin_rank'])
+					if ($garr['group_id']==$au->adminRank)
 					{
 						echo " selected=\"selected\"";
 					}
@@ -105,12 +97,14 @@
 				<th>Gesperrt:</th>
 				<td>
 					<input type=\"radio\" name=\"user_locked\" value=\"1\" ";
-					if ($arr['user_locked']==1)
+					if ($arr->locked) {
 						echo " checked=\"checked\"";
+					}
 					echo "/> Ja 
 					<input type=\"radio\" name=\"user_locked\" value=\"0\" ";
-					if ($arr['user_locked']==0)
+					if (!$arr->locked) {
 						echo " checked=\"checked\"";
+					}
 					echo "/> Nein
 				</td>
 			</tr>";			
@@ -132,37 +126,22 @@
 		{
 			if ($_POST['user_nick']!="")
 			{
-				dbquery("
-				INSERT INTO
-					admin_users
-				(
-					user_nick,
-					user_name,
-					user_email,
-					user_admin_rank
-				)
-				VALUES
-				(
-					'".$_POST['user_nick']."',
-					'".$_POST['user_name']."',
-					'".$_POST['user_email']."',
-					'".$_POST['user_admin_rank']."'
-				)
-				");
-				$id = mysql_insert_id();
+				$au = new AdminUser();
+				$au->nick = $_POST['user_nick'];
+				$au->name = $_POST['user_name'];
+				$au->email = $_POST['user_email'];
+				$au->adminRank = $_POST['user_admin_rank'];
+				$au->save();				
 				echo "Gespeichert!<br/><br/>";
-				add_log(8,"Der Administrator ".$cu->nick." erstellt einen neuen Administrator: ".$_POST['user_nick']." (ID: ".$id.").",time());
+				add_log(8,"Der Administrator ".$cu->nick." erstellt einen neuen Administrator: ".$_POST['user_nick']."(".$au->id.").",time());
 
-				if ($_POST['user_password']!="")
-				{
+				if ($_POST['user_password']!="") {
 					$pw = $_POST['user_password'];
-				}				
-				else
-				{
-					$pw = mt_rand(1000000,9999999);
+				} else {
+					$pw = generatePasswort();
 					echo "Das Passwort ist: $pw<br/><br/>";
 				}
-				dbquery("UPDATE admin_users SET user_password='".pw_salt($pw,$id)."' WHERE user_id=".$id.";");
+				$au->setPassword($pw);				
 			}
 			else
 			{
@@ -174,27 +153,21 @@
 		{
 			if ($_POST['user_nick']!="")
 			{
+				$au = new AdminUser($_POST['user_id']);
 				$pw='';
 				if ($_POST['user_password']!="")
 				{
-					$pw = ", user_password='".pw_salt($_POST['user_password'],$_POST['user_id'])."'";
-					add_log(8,"Der Administrator ".$cu->nick." ändert das Passwort des Administrators ".$_POST['user_nick']." (ID: ".$_POST['user_id'].").",time());
-				}				
-				dbquery("
-				UPDATE
-					admin_users
-				SET
-					user_nick='".$_POST['user_nick']."',
-					user_name='".$_POST['user_name']."',
-					user_email='".$_POST['user_email']."',
-					user_admin_rank='".$_POST['user_admin_rank']."',
-					user_locked=".$_POST['user_locked']."
-					".$pw."
-				WHERE
-					user_id=".$_POST['user_id']."				
-				");
+					$au->setPassword($_POST['user_password']);
+					add_log(8,"Der Administrator ".$cu->nick." ändert das Passwort des Administrators ".$_POST['user_nick']."(".$_POST['user_id'].").");
+				}	
+				$au->nick = $_POST['user_nick'];
+				$au->name = $_POST['user_name'];
+				$au->email = $_POST['user_email'];
+				$au->adminRank = $_POST['user_admin_rank'];
+				$au->locked = ($_POST['user_locked'] > 0);
+				$au->save();
 				echo "Gespeichert!<br/><br/>";
-				add_log(8,"Der Administrator ".$cu->nick." ändert die Daten des Administrators ".$_POST['user_nick']." (ID: ".$_POST['user_id'].").",time());
+				add_log(8,"Der Administrator ".$cu->nick." ändert die Daten des Administrators ".$_POST['user_nick']." (ID: ".$_POST['user_id'].").");
 			}
 			else
 			{
@@ -238,7 +211,7 @@
 		ORDER BY
 			user_nick ASC
 		");
-		echo "<table class=\"tb\">
+		echo "<table class=\"tb\" style=\"width:auto;\">
 		<tr>
 			<th>Nick</th>
 			<th>Name</th>

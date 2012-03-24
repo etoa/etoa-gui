@@ -90,7 +90,7 @@
 				{
 					$pres = dbquery("SELECT user_registered FROM users WHERE user_id='".$id."';");
 					$parr = mysql_fetch_row($pres);
-					$sql.= ",user_password='".pw_salt($_POST['user_password'],$parr[0])."'";
+					$sql.= ",user_password='".saltPasswort($_POST['user_password'])."'";
 					echo "Das Passwort wurde ge&auml;ndert!<br>";
 					add_log(8,$cu->nick." ändert das Passwort von ".$_POST['user_nick']."",time());
 				}				
@@ -98,8 +98,8 @@
 				// Handle ban
 				if ($_POST['ban_enable']==1)
 				{
-					$ban_from = mktime($_POST['user_blocked_from_h'],$_POST['user_blocked_from_i'],0,$_POST['user_blocked_from_m'],$_POST['user_blocked_from_d'],$_POST['user_blocked_from_y']);
-					$ban_to = mktime($_POST['user_blocked_to_h'],$_POST['user_blocked_to_i'],0,$_POST['user_blocked_to_m'],$_POST['user_blocked_to_d'],$_POST['user_blocked_to_y']);
+					$ban_from = parseDatePicker('user_blocked_from', $_POST);
+					$ban_to = parseDatePicker('user_blocked_to', $_POST);
 					$sql.= ",user_blocked_from='".$ban_from."'";
 					$sql.= ",user_blocked_to='".$ban_to."'";
 					$sql.= ",user_ban_admin_id='".$_POST['user_ban_admin_id']."'";
@@ -119,8 +119,8 @@
 				// Handle holiday mode
 				if ($_POST['umod_enable']==1)
 				{
-					$sql.= ",user_hmode_from='".mktime($_POST['user_hmode_from_h'],$_POST['user_hmode_from_i'],0,$_POST['user_hmode_from_m'],$_POST['user_hmode_from_d'],$_POST['user_hmode_from_y'])."'";
-					$sql.= ",user_hmode_to='".mktime($_POST['user_hmode_to_h'],$_POST['user_hmode_to_i'],0,$_POST['user_hmode_to_m'],$_POST['user_hmode_to_d'],$_POST['user_hmode_to_y'])."'";
+					$sql.= ",user_hmode_from='".parseDatePicker('user_hmode_from', $_POST)."'";
+					$sql.= ",user_hmode_to='".parseDatePicker('user_hmode_to', $_POST)."'";
 				}
 				else
 				{
@@ -286,14 +286,15 @@
 				}
 				
 				</script>";
-			
-				echo "<h2>Details <span style=\"color:#0f0;\">".$arr['user_nick']."</span> ".cb_button("add_user=".$arr['user_id']."")."</h2>";
+				
+				$tpl->assign('subtitle', "User bearbeiten: ".$arr['user_nick']);
+				//echo "<h2>Details <span style=\"color:#0f0;\">".$arr['user_nick']."</span> ".cb_button("add_user=".$arr['user_id']."")."</h2>";
 
 				echo "<form action=\"?page=$page&amp;sub=edit&amp;id=".$id."\" method=\"post\">
 				<input type=\"hidden\" id=\"tabactive\" name=\"tabactive\" value=\"\" />";
 
 				
-				
+				/*
 			$tc = new TabControl("userTab",array(
 			"Info",
 			"Account",
@@ -314,7 +315,25 @@
 			0
 			);
 		
-			$tc->open();				
+			$tc->open();		*/
+
+		echo '<div class="tabs" id="user_edit_tabs">
+		<ul>
+			<li><a href="#tabs-1">Info</a></li>
+			<li><a href="#tabs-2">Account</a></li>
+			<li><a href="#tabs-3">Daten</a></li>
+			<li><a href="#tabs-4">Sitting</a></li>
+			<li><a href="#tabs-5">Profil</a></li>
+			<li><a href="#tabs-6">Design</a></li>
+			<li><a href="#tabs-7">Nachrichten</a></li>
+			<li><a href="#tabs-8">Loginfehler</a></li>
+			<li><a href="#tabs-9">Punkte</a></li>
+			<li><a href="#tabs-10">Tickets</a></li>
+			<li><a href="#tabs-11">Kommentare</a></li>
+			<li><a href="#tabs-12">Log</a></li>
+			<li><a href="#tabs-13">Wirtschaft</a></li>
+		</ul>
+		<div id="tabs-1">';			
 				
 				
 				/**
@@ -461,147 +480,140 @@
 							</tr>";					
 				
 				echo "</table>";
-				$tc->close();
 				
-				
+				echo '</div><div id="tabs-2">';
 				
 				/**
 				* Account
 				*/
-				$tc->open();			
-				
+
 				echo "<table class=\"tbl\">";
 				echo "<tr>
 								<td class=\"tbltitle\">Nick:</td>
 								<td class=\"tbldata\">
-									<input type=\"text\" name=\"user_nick\" value=\"".$arr['user_nick']."\" size=\"35\" maxlength=\"250\" /> (Eine Nickänderung ist grundsätzlich nicht erlaubt)
+									<input type=\"text\" name=\"user_nick\" value=\"".$arr['user_nick']."\" size=\"35\" maxlength=\"250\" />
 								</td>
+								<td>Eine Nickänderung ist grundsätzlich nicht erlaubt</td>
 							</tr>
 							<tr>
 								<td class=\"tbltitle\">E-Mail:</td>
 								<td class=\"tbldata\">
-									<input type=\"text\" name=\"user_email\" value=\"".$arr['user_email']."\" size=\"35\" maxlength=\"250\" /> (Rundmails gehen an diese Adresse)
+									<input type=\"text\" name=\"user_email\" value=\"".$arr['user_email']."\" size=\"35\" maxlength=\"250\" />
 								</td>
+								<td>Rundmails gehen an diese Adresse</td>
 							</tr>
 							<tr>
 								<td class=\"tbltitle\">Name:</td>
 								<td class=\"tbldata\">
-									<input type=\"text\" name=\"user_name\" value=\"".$arr['user_name']."\" size=\"35\" maxlength=\"250\" /> (Bei Accountübergabe anpassen)
+									<input type=\"text\" name=\"user_name\" value=\"".$arr['user_name']."\" size=\"35\" maxlength=\"250\" />
 								</td>
+								<td>Bei Accountübergabe anpassen</td>
 							</tr>
 							<tr>
 								<td class=\"tbltitle\">E-Mail fix:</td>
 								<td class=\"tbldata\">
-									<input type=\"text\" name=\"user_email_fix\" value=\"".$arr['user_email_fix']."\" size=\"35\" maxlength=\"250\" /> (Bei Accountübergabe anpassen)
+									<input type=\"text\" name=\"user_email_fix\" value=\"".$arr['user_email_fix']."\" size=\"35\" maxlength=\"250\" />
 								</td>
+								<td>Bei Accountübergabe anpassen</td>
 							</tr>
 							<tr>
 								<td class=\"tbltitle\">Passwort:</td>
 								<td class=\"tbldata\">
-									<input type=\"text\" name=\"user_password\" value=\"\" size=\"35\" maxlength=\"250\" /> (Leerlassen um altes Passwort beizubehalten)
+									<input type=\"text\" name=\"user_password\" value=\"\" size=\"35\" maxlength=\"250\" />
 								</td>
+								<td>Leerlassen um altes Passwort beizubehalten</td>
 							</tr>
 							<tr>
 								<td class=\"tbltitle\">Temporäres Passwort:</td>
 								<td class=\"tbldata\">
-									<input type=\"text\" name=\"user_password_temp\" value=\"".$arr['user_password_temp']."\" size=\"30\" maxlength=\"30\" /> (Nur dieses wird verwendet, falls ausgefüllt)
+									<input type=\"text\" name=\"user_password_temp\" value=\"".$arr['user_password_temp']."\" size=\"30\" maxlength=\"30\" /> 
 								</td>
+								<td>Nur dieses wird verwendet, falls ausgefüllt</td>
 							</tr>
 							<tr>
 								<td class=\"tbltitle\">Geist:</td>
 								<td class=\"tbldata\">
-									Ja: <input type=\"radio\" name=\"user_ghost\" value=\"1\"";
+									<input type=\"radio\" name=\"user_ghost\" id=\"user_ghost1\" value=\"1\"";
 									if ($arr['user_ghost']==1)
 									{
 										echo " checked=\"checked\" ";
 									}
-									echo " /> Nein: <input type=\"radio\" name=\"user_ghost\" value=\"0\" ";
+									echo " /><label for=\"user_ghost1\">Ja</label> 
+									<input type=\"radio\" name=\"user_ghost\" id=\"user_ghost0\" value=\"0\" ";
 									if ($arr['user_ghost']==0)
 									{
 										echo " checked=\"checked\" ";
 									}
-									echo "/> (Legt fest ob der Spieler in der Rangliste ausgeblendet wird)
+									echo "/><label for=\"user_ghost0\">Nein</label>
 								</td>
+								<td>Legt fest ob der Spieler in der Rangliste ausgeblendet wird</td>
 							</tr>
 							<tr>
 								<td class=\"tbltitle\">Chat-Admin:</td>
-								<td class=\"tbldata\">Ja: <input type=\"radio\" name=\"user_chatadmin\" value=\"1\"";
+								<td class=\"tbldata\">
+									<input type=\"radio\" name=\"user_chatadmin\" id=\"user_chatadmin1\" value=\"1\"";
 									if ($arr['user_chatadmin']==1)
 										echo " checked=\"checked\" ";
-									echo " /> Nein: <input type=\"radio\" name=\"user_chatadmin\" value=\"0\" ";
+									echo " /><label for=\"user_chatadmin1\">Ja</label> 
+									<input type=\"radio\" name=\"user_chatadmin\" id=\"user_chatadmin0\"value=\"0\" ";
 									if ($arr['user_chatadmin']==0)
 										echo " checked=\"checked\" ";
-									echo "/> (Der Spieler hat Adminrechte im Chat)
+									echo "/><label for=\"user_chatadmin0\">Nein</label>
 								</td>
+								<td>Der Spieler hat Adminrechte im Chat</td>
 							</tr>
 							<tr>
 								<td class=\"tbltitle\">Admin:</td>
-								<td class=\"tbldata\">Ja: <input type=\"radio\" name=\"admin\" value=\"1\"";
+								<td class=\"tbldata\">
+									<input type=\"radio\" name=\"admin\" id=\"admin1\" value=\"1\"";
 									if ($arr['admin']==1)
 										echo " checked=\"checked\" ";
-									echo " /> Nein: <input type=\"radio\" name=\"admin\" value=\"0\" ";
+									echo " /><label for=\"admin1\">Ja</label> 
+									<input type=\"radio\" name=\"admin\" id=\"admin0\" value=\"0\" ";
 									if ($arr['admin']==0)
 										echo " checked=\"checked\" ";
-									echo "/> (Der Spieler wird in der Raumkarte als Game-Admin markiert) <br />
-									Entwickler: <input type=\"radio\" name=\"admin\" value=\"2\" ";
+									echo "/><label for=\"admin0\">Nein</label> 
+									<input type=\"radio\" name=\"admin\" id=\"admin2\" value=\"2\" ";
 									if ($arr['admin']==2)
 										echo " checked=\"checked\" ";
-									echo "/> (Der Spieler bekommt einen nutzlosen roten Stern im Chat, keine Markierung)
+									echo "/><label for=\"admin2\">Entwickler</label>
 								</td>
+								<td>Admin: Der Spieler wird in der Raumkarte als Game-Admin markiert.<br/>Entwickler: Der Spieler bekommt einen nutzlosen roten Stern im Chat, keine Markierung</td>
 							</tr>
-							
-							";
-							
-				
-				echo "<tr>
+							<tr>
 								<td class=\"tbltitle\" valign=\"top\">Sperren</td>
 								<td class=\"tbldata\">
-									Nein:<input type=\"radio\" name=\"ban_enable\" value=\"0\" onclick=\"banEnable(false);\"";
+									<input type=\"radio\" name=\"ban_enable\" id=\"ban_enable0\" value=\"0\" onclick=\"$('#ban_options').hide();\"";
 									if ($arr['user_blocked_from']==0)
 									{
 										echo " checked=\"checked\"";
 									}
-									echo " /> Ja:<input type=\"radio\" name=\"ban_enable\" value=\"1\" onclick=\"banEnable(true);\" ";
+									echo " /><label for=\"ban_enable0\">Nein</label> 
+									<input type=\"radio\" name=\"ban_enable\" id=\"ban_enable1\" value=\"1\" onclick=\"$('#ban_options').show();\" ";
 									if ($arr['user_blocked_from']>0)
 									{
 										echo " checked=\"checked\"";
 									}
-									echo " />";
+									echo " /><label for=\"ban_enable1\">Ja</label>";
 									if ($arr['user_blocked_from']>0 && $arr['user_blocked_to']<time())
 									{
 										echo " <i><b>Diese Sperre ist abgelaufen!</b></i>";
 									}	
-									
-					echo "</td>
-							</tr>
-							<tr>
-								<td class=\"tbltitle\" valign=\"top\">Gesperrt von </td>
+									echo "<table id=\"ban_options\">
+										<tr>
+								<td class=\"tbltitle\" valign=\"top\">Von </td>
 								<td class=\"tbldata\">";
-									if ($arr['user_blocked_from']==0)
-									{
-										show_timebox("user_blocked_from",time());
-									}
-									else
-									{
-										show_timebox("user_blocked_from",$arr['user_blocked_from']);
-									}
-					echo "</td>
+									showDatepicker("user_blocked_from", $arr['user_blocked_from']>0 ? $arr['user_blocked_from'] : time(), true);
+								echo "</td>
 							</tr>
 							<tr>
-								<td class=\"tbltitle\" valign=\"top\">Gesperrt bis</td>
+								<td class=\"tbltitle\" valign=\"top\">Bis</td>
 								<td class=\"tbldata\">";
-									if ($arr['user_blocked_to']==0)
-									{
-										show_timebox("user_blocked_to",time()+USER_BLOCKED_DEFAULT_TIME);
-									}
-									else
-									{
-										show_timebox("user_blocked_to",$arr['user_blocked_to']);
-									}
-					echo "</td>
+									showDatepicker("user_blocked_to", $arr['user_blocked_from']>0 ? $arr['user_blocked_to'] : time()+USER_BLOCKED_DEFAULT_TIME, true);
+							echo "</td>
 							</tr>
 							<tr>
-								<td class=\"tbltitle\" valign=\"top\">Gesperrt von</td>
+								<td class=\"tbltitle\" valign=\"top\">Admin</td>
 								<td class=\"tbldata\">
 									<select name=\"user_ban_admin_id\" id=\"user_ban_admin_id\">
 									<option value=\"0\">(niemand)</option>";
@@ -616,66 +628,58 @@
 								</td>
 							</tr>
 							<tr>
-								<td class=\"tbltitle\" valign=\"top\">Sperrgrund</td>
+								<td class=\"tbltitle\" valign=\"top\">Grund</td>
 								<td class=\"tbldata\">
-									<textarea name=\"user_ban_reason\" id=\"user_ban_reason\" cols=\"60\" rows=\"2\">".stripslashes($arr['user_ban_reason'])."</textarea>
+									<textarea name=\"user_ban_reason\" id=\"user_ban_reason\" cols=\"45\" rows=\"2\">".stripslashes($arr['user_ban_reason'])."</textarea>
 								</td>
-							</tr>";
-
-				echo "<tr>
+							</tr>
+							</table>";
+									
+							echo "</td>
+								<td>Der Benutzer kann sich nicht einloggen und erscheint auf dem Pranger</td>
+							</tr>
+							<tr>
 								<td class=\"tbltitle\" valign=\"top\">U-Mod</td>
 								<td class=\"tbldata\">
-									Nein:<input type=\"radio\" name=\"umod_enable\" value=\"0\" onclick=\"umodEnable(false);\" checked=\"checked\" /> Ja:<input type=\"radio\" name=\"umod_enable\" value=\"1\" onclick=\"umodEnable(true);\" ";
+									<input type=\"radio\" name=\"umod_enable\" id=\"umod_enable0\" value=\"0\" onclick=\"$('#umod_options').hide();\" checked=\"checked\" /><label for=\"umod_enable0\">Nein</label> 
+									<input type=\"radio\" name=\"umod_enable\" id=\"umod_enable1\" value=\"1\" onclick=\"$('#umod_options').show();\" ";
 									if ($arr['user_hmode_from']>0)
 									{
 										echo " checked=\"checked\"";
 									}
-									echo "/>";
+									echo "/><label for=\"umod_enable1\">Ja</label> ";
 									if ($arr['user_hmode_from']>0 && $arr['user_hmode_to']<time())
 									{
 										echo "<i><b>Dieser Urlaubsmodus ist abgelaufen!</b></i>";
 									}
-					echo "</td>
-							</tr>
-							<tr>
-								<td class=\"tbltitle\" valign=\"top\">U-Mod von</td>
-								<td class=\"tbldata\">";
-									if ($arr['user_hmode_from']==0)
-									{
-										show_timebox("user_hmode_from",time());
-									}
-									else
-									{
-										show_timebox("user_hmode_from",$arr['user_hmode_from']);
-									}
-					echo "</td>
-							</tr>
-							<tr>
-								<td class=\"tbltitle\" valign=\"top\">U-Mod bis</td>
-								<td class=\"tbldata\">";
-									if ($arr['user_hmode_to']==0)
-									{
-										show_timebox("user_hmode_to",time()+USER_HMODE_DEFAULT_TIME);
-									}
-									else
-									{
-										show_timebox("user_hmode_to",$arr['user_hmode_to']);
-									}
-					echo "</td>
+							echo "<table id=\"umod_options\">
+									<tr>
+										<td class=\"tbltitle\" valign=\"top\">Von</td>
+										<td class=\"tbldata\">";
+											showDatepicker("user_hmode_from", $arr['user_hmode_from']>0 ? $arr['user_hmode_from'] : time(), true);
+							echo "</td>
+									</tr>
+									<tr>
+										<td class=\"tbltitle\" valign=\"top\">Bis</td>
+										<td class=\"tbldata\">";
+											showDatepicker("user_hmode_to", $arr['user_hmode_to']>0 ? $arr['user_hmode_to'] : time()+USER_HMODE_DEFAULT_TIME, true);
+							echo "</td>
+									</tr>
+									</table>
+								</td>
+								<td>Der Benutzer kann nichts mehr bauen, wird aber auch nicht angegriffen</td>
 							</tr>";
 											
 							
 				echo "</table>";
 				
-				$tc->close();
-				
+				echo '</div><div id="tabs-3">';
 
 				
 				/**
 				* Game-Daten
 				*/
-				$tc->open();			
-				
+
 				echo "<table class=\"tbl\">";
 				echo "<tr>
 								<td class=\"tbltitle\">Rasse:</td>
@@ -840,12 +844,11 @@
 					loadSpecialist(".$st.");loadAllianceRanks(".$arr['user_alliance_rank_id'].");
 					</script>";
 				
-				$tc->close();
+				echo '</div><div id="tabs-4">';
 				
 				/**
 				* Sitting & Multi
 				*/
-				$tc->open();			
 				
 				$multi_res = dbquery("SELECT * FROM user_multi WHERE user_id=".$arr['user_id']." AND activ=1;");
 				$del_multi_res = dbquery("SELECT * FROM user_multi WHERE user_id=".$arr['user_id']." AND activ=0;");
@@ -937,15 +940,11 @@
 				}
 				echo '</table>';
 				
-				$tc->close();
-
-
-
+				echo '</div><div id="tabs-5">';
 
 				/**
 				* Profil
 				*/
-				$tc->open();			
 				
 				echo "<table class=\"tb\">";
 				echo "<tr>
@@ -1010,14 +1009,12 @@
 						echo '</td></tr>';					      
 				echo "</table>";
 				
-				$tc->close();
-				
-				
+				echo '</div><div id="tabs-6">';
+								
 				/**
 				* Design
 				*/								
-				$tc->open();			
-				
+								
 				$imagepacks = get_imagepacks();
 				$designs = get_designs("../");
 				
@@ -1092,11 +1089,11 @@
             		<td class=\"tbltitle\">Schiff/Def Ansicht:</td>
             		<td class=\"tbldata\">
           				<input type=\"radio\" name=\"item_show\" value=\"full\"";
-          				if($arr['item_show']=='full') echo " checked=\"checked\"";
+          				if($arr['item_show']=='full' || $arr['item_show']=='') echo " checked=\"checked\"";
           				echo " /> Volle Ansicht  &nbsp; 
            				<input type=\"radio\" name=\"item_show\" value=\"small\"";
           				if($arr['item_show']=='small') echo " checked=\"checked\"";
-          				echo " /> Einfache Ansicht
+          				echo " /> Einfache Ansicht 
            			</td>
            		</tr>
            		<tr>
@@ -1156,15 +1153,12 @@
           		</tr>";				
 				echo "</table>";
 				
-				$tc->close();				
-				
-				
+				echo '</div><div id="tabs-7">';
 				
 				/**
 				* Messages
 				*/		
-				$tc->open();			
-				
+								
 				echo "<table class=\"tbl\">";		
 				echo "<tr>
 								<td class=\"tbltitle\">Nachrichten-Signatur:</td>
@@ -1252,18 +1246,11 @@
        	echo "<input type=\"button\" onclick=\"showLoader('lastmsgbox');xajax_showLast5Messages(".$arr['user_id'].",'lastmsgbox');\" value=\"Neu laden\" /><br><br>";
        	echo "<div id=\"lastmsgbox\">Lade...</div>";
 				
-				$tc->close();
-
-				
-				
-
-				
-				
+		echo '</div><div id="tabs-8">';
 				
 				/**
 				* Loginfailures
 				*/		
-				$tc->open();			
 				
 				echo "<table class=\"tbl\">";			
 				$lres=dbquery("
@@ -1292,7 +1279,7 @@
 															<a href=\"?page=$page&amp;sub=ipsearch&amp;ip=".$larr['failure_ip']."\">".$larr['failure_ip']."</a>
 														</td>
 														<td class=\"tbldata\">
-															<a href=\"?page=$page&amp;sub=ipsearch&amp;host=".Net::getHost($arr['failure_ip'])."\">".Net::getHost($arr['failure_ip'])."</a>
+															<a href=\"?page=$page&amp;sub=ipsearch&amp;host=".Net::getHost($larr['failure_ip'])."\">".Net::getHost($larr['failure_ip'])."</a>
 														</td>
 														<td class=\"tbldata\">".$larr['failure_client']."</td>
 													</tr>";
@@ -1306,9 +1293,7 @@
 				}
 				echo "</table>";
 				
-				$tc->close();
-				
-				
+				echo '</div><div id="tabs-9">';
 	
 				/**
 				* Points
@@ -1316,7 +1301,6 @@
 				
 				$cUser = new User($id);
 				
-				$tc->open();			
 				tableStart("Bewertung");							
 				echo "<tr>
 								<td>Kampfpunkte</td>
@@ -1342,36 +1326,35 @@
 						
 						
 				echo "<div id=\"pointsBox\">
-					<div style=\"text-align:center;\"><img src=\"../images/loadingmiddle.gif\" /><br/>Wird geladen...</div>
+					<div style=\"text-align:center;\"><img src=\"../web/images/admin/ajax-loader-circle.gif\" /><br/>Wird geladen...</div>
 				</div>
 				";	
-				$tc->close();
-
+				
+				echo '</div><div id="tabs-10">';
 				
 				/**
 				* Tickets
 				*/				
-						$tc->open();			
+		
 				echo "<div id=\"ticketsBox\">
-					<div style=\"text-align:center;\"><img src=\"../images/loadingmiddle.gif\" /><br/>Wird geladen...</div>
+					<div style=\"text-align:center;\"><img src=\"../web/images/admin/ajax-loader-circle.gif\" /><br/>Wird geladen...</div>
 				</div>";	
-				$tc->close();
 				
-
+				echo '</div><div id="tabs-11">';
+				
 				/**
 				* Kommentare
 				*/			
-						$tc->open();				
+			
 				echo "<div id=\"commentsBox\">
-					<div style=\"text-align:center;\"><img src=\"../images/loadingmiddle.gif\" /><br/>Wird geladen...</div>
+					<div style=\"text-align:center;\"><img src=\"../web/images/admin/ajax-loader-circle.gif\" /><br/>Wird geladen...</div>
 				</div>";
-				$tc->close();
 				
+				echo '</div><div id="tabs-12">';				
 				
 				/**
 				* Log
 				*/					
-				$tc->open();				
 					tableStart("",'100%');
 					echo "<tr><th>Nachricht</th><th>Datum</th><th>IP</th></tr>";
 					$lres = dbquery("
@@ -1393,26 +1376,27 @@
 						}
 					}
 					tableEnd();
-				$tc->end();
+					
+				echo '</div><div id="tabs-13">';
 				
 				/**
 				* Wirtschaft
 				*/
-						$tc->open();			
 				
 				echo "
 				<div id=\"tabEconomy\">
 				Das Laden aller Wirtschaftsdaten kann einige Sekunden dauern!<br/><br/>
 				<input type=\"button\" value=\"Wirtschaftsdaten laden\" onclick=\"showLoader('tabEconomy');xajax_loadEconomy(".$arr['user_id'].",'tabEconomy');\" /> 
 				</div>";
-				$tc->close();
-				
-				$tc->end();
+
+			echo '
+				</div>
+			</div>';
+			
 				
 				// Buttons
-				echo "<br/>";
-	
-				echo "<input type=\"submit\" name=\"save\" value=\"&Auml;nderungen &uuml;bernehmen\" style=\"color:#0f0\" /> &nbsp;";
+				echo "<p>";	
+				echo "<input type=\"submit\" name=\"save\" value=\"&Auml;nderungen &uuml;bernehmen\" class=\"positive\" /> &nbsp;";
 				if ($arr['user_deleted']!=0)
 				{
 					echo "<input type=\"submit\" name=\"canceldelete\" value=\"Löschantrag aufheben\" class=\"userDeletedColor\" /> &nbsp;";					
@@ -1421,33 +1405,48 @@
 				{
 					echo "<input type=\"submit\" name=\"requestdelete\" value=\"Löschantrag erteilen\" class=\"userDeletedColor\" /> &nbsp;";					
 				}				
-				echo "<input type=\"submit\" name=\"delete_user\" value=\"User l&ouml;schen\" style=\"color:#f00\" onclick=\"return confirm('Soll dieser User entg&uuml;ltig gel&ouml;scht werden?');\"> ";
+				echo "<input type=\"submit\" name=\"delete_user\" value=\"User l&ouml;schen\" class=\"remove\" onclick=\"return confirm('Soll dieser User entg&uuml;ltig gel&ouml;scht werden?');\"></p>";
 				
-				echo "<hr/>";
+				echo "<hr/><p>";
 				echo button("Planeten","?page=galaxy&sq=".searchQueryUrl("user_id:=:".$arr['user_id']))." &nbsp;";
 				echo button("Gebäude","?page=buildings&sq=".searchQueryUrl("user_nick:=:".$arr['user_nick']))." &nbsp;";
 				echo "<input type=\"button\" value=\"Forschungen\" onclick=\"document.location='?page=techs&action=search&query=".searchQuery(array("user_id"=>$arr['user_id']))."'\" /> &nbsp;";
 				echo button("Schiffe","?page=ships&sq=".searchQueryUrl("user_nick:=:".$arr['user_nick']))." &nbsp;";
 				echo button("Verteidigung","?page=def&sq=".searchQueryUrl("user_nick:=:".$arr['user_nick']))." &nbsp;";
 				echo button("Raketen","?page=missiles&sq=".searchQueryUrl("user_nick:=:".$arr['user_nick']))." &nbsp;";
-				echo "<input type=\"button\" value=\"IP-Adressen &amp; Hosts\" onclick=\"document.location='?page=user&amp;sub=ipsearch&amp;user=".$arr['user_id']."'\" /> ";
+				echo "<input type=\"button\" value=\"IP-Adressen &amp; Hosts\" onclick=\"document.location='?page=user&amp;sub=ipsearch&amp;user=".$arr['user_id']."'\" /></p>";
 
 
 				
 				echo "<hr/>";
-				echo "<input type=\"button\" value=\"Spielerdaten neu laden\" onclick=\"document.location='?page=$page&sub=edit&amp;user_id=".$arr['user_id']."'\" /> &nbsp;";
+				echo "<p><input type=\"button\" value=\"Spielerdaten neu laden\" onclick=\"document.location='?page=$page&sub=edit&amp;user_id=".$arr['user_id']."'\" /> &nbsp;";
 				echo "<input type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=search'\" /> &nbsp;";
-				echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /><br/><br/>";
+				echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /></p>";
 
 								
 				echo "</form>";
 				
 				if ($arr['user_blocked_from']==0)
-					echo "<script>banEnable(false);</script>";
+					echo "<script>$('#ban_options').hide();</script>";
 				if ($arr['user_hmode_from']==0)
-					echo "<script>umodEnable(false);</script>";
-				
-					
+					echo "<script>$('#umod_options').hide();</script>";
+
+				echo '<script>
+					$(function() {
+						$( "#user_edit_tabs" ).bind( "tabsshow", function(event, ui) {
+							if (ui.index == 6) {
+								xajax_showLast5Messages('.$id.',"lastmsgbox");
+							} else if (ui.index == 8) {
+								xajax_userPointsTable('.$id.',"pointsBox");
+							} else if (ui.index == 9) {
+								xajax_userTickets('.$id.',"ticketsBox");
+							} else if (ui.index == 10) {
+								xajax_userComments('.$id.',"commentsBox");
+							}
+						});						
+					});
+				</script>';
+
 			}
 			else
 			{

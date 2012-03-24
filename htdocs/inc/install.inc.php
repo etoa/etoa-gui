@@ -1,7 +1,5 @@
 <?PHP
 
-define('ADMIN_ROOT_GROUP',8);
-
 // Load template engine
 require_once(RELATIVE_ROOT."inc/template.inc.php");
 $tpl->assign("gameTitle","Setup");
@@ -12,8 +10,6 @@ $tpl->assign("topmenu",$indexpage);
 
 if (!isset($_SESSION))
     session_start();
-$tpl->display(getcwd()."/tpl/headerext.html");
-
 $tpl->display(getcwd()."/tpl/headerext.html");
 
 if (!isset($_SESSION['INSTALL']))
@@ -32,14 +28,15 @@ if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 		$_SESSION['INSTALL']['db_password'] = $_POST['db_password'];
 
 		
-		echo "Prüfe Eingaben....<br/>";
+		//echo "Prüfe Eingaben....<br/>";
+		//echo "Prüfe Eingaben....<br/>";
 		if ($_POST['db_server'] != "" && $_POST['db_name'] != "" && $_POST['db_user'] != "" && $_POST['db_password'] != "")
 		{
 			$dbCfg = array(
-				'host' => $_POST['db_server'],
-				'dbname' => $_POST['db_name'],
-				'user' => $_POST['db_user'],
-				'password' => $_POST['db_password'],
+				'host' => $_SESSION['INSTALL']['db_server'],
+				'dbname' => $_SESSION['INSTALL']['db_name'],
+				'user' => $_SESSION['INSTALL']['db_user'],
+				'password' => $_SESSION['INSTALL']['db_password'],
 			);			
 			if (DBManager::getInstance()->connect(0, $dbCfg))
 			{
@@ -86,11 +83,6 @@ if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 			$step = 4;
 			$_SESSION['INSTALL']['step'] = 4;
 			$_SESSION['INSTALL']['referers'] = $_POST['referers'];
-			if (isset($_POST['admin_user']))
-				$_SESSION['INSTALL']['admin_user'] = $_POST['admin_user'];
-			if (isset($_POST['admin_user_pw']))
-				$_SESSION['INSTALL']['admin_user_pw'] = $_POST['admin_user_pw'];
-			
 		}
 		else
 		{
@@ -116,41 +108,20 @@ if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 		<a href=\"?step=4\" style=\"color:000\">Schritt 4</a> |
 		</div><br/>";
 		
+		$dbCfg = array(
+			'host' => $_SESSION['INSTALL']['db_server'],
+			'dbname' => $_SESSION['INSTALL']['db_name'],
+			'user' => $_SESSION['INSTALL']['db_user'],
+			'password' => $_SESSION['INSTALL']['db_password'],
+		);			
+		DBManager::getInstance()->connect(0, $dbCfg);
+		
 		$cfg = Config::getInstance();
 		$cfg->set("referers",$_SESSION['INSTALL']['referers']);
 		$cfg->set("roundname",$_SESSION['INSTALL']['round_name']);
 		$cfg->set("loginurl",$_SESSION['INSTALL']['loginserver_url']);
 
 		echo "<div style=\"color:#0f0\">Refererliste gespeichert!</div><br/>";
-		
-		if (isset($_SESSION['INSTALL']['admin_user']) && $_SESSION['INSTALL']['admin_user']!="" && $_SESSION['INSTALL']['admin_user_pw']!="")
-		{
-			$res = dbquery("SELECT COUNT(*) FROM admin_users WHERE user_nick='".$_SESSION['INSTALL']['admin_user']."';");
-			$arr = mysql_fetch_row($res);
-			if ($arr[0]==0)
-			{
-				dbquery("
-				INSERT INTO
-					admin_users
-				(
-					user_nick,
-					user_name,
-					user_email,
-					user_admin_rank
-				)
-				VALUES
-				(
-					'".$_SESSION['INSTALL']['admin_user']."',
-					'".$_SESSION['INSTALL']['admin_user']."',
-					'".$_SESSION['INSTALL']['admin_user']."',
-					".ADMIN_ROOT_GROUP."
-				)
-				");
-				$id = mysql_insert_id();
-				dbquery("UPDATE admin_users SET user_password='".pw_salt($_SESSION['INSTALL']['admin_user_pw'],$id)."' WHERE user_id=".$id.";");			
-				echo "<div style=\"color:#0f0\">Admin-User ".$_SESSION['INSTALL']['admin_user']." mit Passwort ".$_SESSION['INSTALL']['admin_user_pw']." gespeichert!</div><br/>";
-			}
-		}
 		
 		$dbCfg = array(
 			'host' => $_SESSION['INSTALL']['db_server'],
@@ -163,8 +134,7 @@ if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 			<textarea style=\"width:900px;background:#eee;color:#000;font-family:courier new;margin:0px auto;text-align:left;\">
 			".json_encode($dbCfg)."
 		</textarea>";
-		echo "<br/>&gt;&gt; <a href=\"admin\">Zum Admin-Login</a><br/><br/>
-		&gt;&gt; <a href=\"".$_SESSION['INSTALL']['loginserver_url']."\">Zum Loginserver</a><br/><br/>";
+		echo "<p> <a href=\"admin\">Zum Admin-Login</a> &nbsp; <a href=\"".$_SESSION['INSTALL']['loginserver_url']."\">Zum Loginserver</a></p>";
 	
 	}		
 	
@@ -177,6 +147,14 @@ if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 		Schritt 4
 		</div><br/>";
 		
+		$dbCfg = array(
+			'host' => $_SESSION['INSTALL']['db_server'],
+			'dbname' => $_SESSION['INSTALL']['db_name'],
+			'user' => $_SESSION['INSTALL']['db_user'],
+			'password' => $_SESSION['INSTALL']['db_password'],
+		);			
+		DBManager::getInstance()->connect(0, $dbCfg);		
+		
 		$cfg = Config::getInstance();
 		
 		echo "<form action=\"?\" method=\"post\">
@@ -187,23 +165,8 @@ if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 					<th>Referers:</th>
 					<td><textarea name=\"referers\" rows=\"6\" cols=\"50\">".(isset($_SESSION['INSTALL']['referers']) ? $_SESSION['INSTALL']['referers'] : $cfg->get('referers'))."</textarea></td>
 					<td>(alle Seiten, welche als Absender gelten sollen. Also der Loginserver, sowie der aktuelle Server. Mache für jeden Eintrag eine neue Linie!)</td>
-				</tr>";
-				$res = dbquery("SELECT COUNT(*) FROM admin_users;");
-				$arr = mysql_fetch_row($res);
-				if ($arr[0]==0)
-				{
-					echo "<tr>
-					<th>Admin-User:</th>
-						<td><input type=\"text\" name=\"admin_user\" value=\"".$_SESSION['INSTALL']['admin_user']."\" /></td>
-						<td>(neuer Admin-User-Name)</td>
-					</tr>";
-					echo "<tr>
-					<th>Admin-User Passwort:</th>
-						<td><input type=\"password\" name=\"admin_user_pw\" value=\"".$_SESSION['INSTALL']['admin_user_pw']."\" /></td>
-						<td>(Admin-User Passwort)</td>
-					</tr>";
-				}
-			echo "</table>
+				</tr>
+			</table>
 		</fieldset>		
 		<br/><input type=\"submit\" name=\"step3_submit\" value=\"Weiter\" />						
 		</form>";		
@@ -240,37 +203,38 @@ if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 	}	
 	else
 	{
-		echo "Anscheinend existiert noch keine Konfigurationsdatei für diese EtoA-Instanz. Bitte erstelle
-	eine indem du folgendes Formular ausfüllst:<br/><br/>";
-		
 		echo "<div style=\"font-weight:bold;color:#666;\">
 		<a href=\"?step=1\" style=\"color:000\">Schritt 1</a> |
 		Schritt 2 |
 		Schritt 3 |
 		Schritt 4
 		</div><br/>";
-		echo "<form action=\"?\" method=\"post\">
+		
+		echo "<p>Anscheinend existiert noch keine Konfigurationsdatei für diese EtoA-Instanz. Bitte erstelle
+	eine indem du folgendes Formular ausfüllst:</p>";
+		
+		echo "<form action=\"?\" method=\"post\" autocomplete=\"off\">
 		<fieldset style=\"width:400px;margin:0px auto;\">
 			<legend>MySQL-Datenbank</legend>
 			<table>
 				<tr>
 					<th>Server:</th>
-					<td><input type=\"text\" name=\"db_server\" value=\"".(isset($_SESSION['INSTALL']['db_server']) ? $_SESSION['INSTALL']['db_server'] : '')."\" /></td>
+					<td><input type=\"text\" name=\"db_server\" value=\"".(isset($_SESSION['INSTALL']['db_server']) ? $_SESSION['INSTALL']['db_server'] : '')."\" autocomplete=\"off\" /></td>
 					<td>(z.b. localhost)</td>
 				</tr>
 				<tr>
 					<th>Datenbank:</th>
-					<td><input type=\"text\" name=\"db_name\" value=\"".(isset($_SESSION['INSTALL']['db_name']) ? $_SESSION['INSTALL']['db_name'] : '')."\" /></td>
+					<td><input type=\"text\" name=\"db_name\" value=\"".(isset($_SESSION['INSTALL']['db_name']) ? $_SESSION['INSTALL']['db_name'] : '')."\" autocomplete=\"off\" /></td>
 					<td>(z.b. etoaroundx)</td>
 				</tr>
 				<tr>
 					<th>User:</th>
-					<td><input type=\"text\" name=\"db_user\" value=\"".(isset($_SESSION['INSTALL']['db_user']) ? $_SESSION['INSTALL']['db_user'] : '')."\" /></td>
+					<td><input type=\"text\" name=\"db_user\" value=\"".(isset($_SESSION['INSTALL']['db_user']) ? $_SESSION['INSTALL']['db_user'] : '')."\" autocomplete=\"off\" /></td>
 					<td>(z.b. etoauser)</td>
 				</tr>
 				<tr>
 					<th>Passwort:</th>
-					<td><input type=\"password\" name=\"db_password\" value=\"".(isset($_SESSION['INSTALL']['db_password']) ? $_SESSION['INSTALL']['db_password'] : '')."\" /></td>
+					<td><input type=\"password\" name=\"db_password\" value=\"".(isset($_SESSION['INSTALL']['db_password']) ? $_SESSION['INSTALL']['db_password'] : '')."\" autocomplete=\"off\" /></td>
 					<td>(mind. 10 Zeichen)</td>
 				</tr>
 			</table>

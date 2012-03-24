@@ -1,77 +1,72 @@
 <?php
 class MessageBox
 {
-	static function ok($message,$save=0)
-	{
+	static function get($type, $title, $message, $save=false) {
 		static $messageId=0;
-		$str = "<div class=\"messagebox\" id=\"messagebox".($messageId++)."\">
-			<div class=\"success\">
-		   ".$message."</div></div>";
-		if ($save == 1)
-			$_SESSION['savedmessage'] = $str;
+		$class = "info";
+		switch ($type)
+		{
+			case "success":		
+				$class = "success";
+				break;			
+			case "ok":		
+				$class = "success";
+				break;
+			case "info":		
+				$class = "info";
+				break;
+			case "error":		
+				$class = "error";
+				break;
+			case "err":		
+				$class = "error";
+				break;			
+			case "warn":		
+				$class = "warning";
+				break;
+			case "warning":		
+				$class = "warning";
+				break;			
+			case "validation":		
+				$class = "validation";
+				break;				
+		}				
+		$str = "<div class=\"messagebox\" id=\"messagebox".($messageId++)."\"><div class=\"".$class."\">";
+		if ($title!="" && $title!=null) {
+			$str.="<p class=\"messagetitle\">".$title."</p>";
+		}
+		$str.= $message."</div></div>";
+		if ($save || $save == 1)
+			$_SESSION['savedmessage'] = $str;		
 		return $str;
 	}
 
-	static function info($message,$save=0)
+	static function ok($title, $message, $save=false)
 	{
-		static $messageId=0;
-		$str = "<div class=\"messagebox\" id=\"messagebox".($messageId++)."\">
-			<div class=\"info\">
-		   ".$message."</div></div>";
-		if ($save == 1)
-			$_SESSION['savedmessage'] = $str;
-		return $str;
+		return self::get("success", $title, $message, $save);
 	}
 
-	static function warning($message,$save=0)
+	static function info($title, $message, $save=false)
 	{
-		static $messageId=0;
-		$str = "<div class=\"messagebox\" id=\"messagebox".($messageId++)."\">
-			<div class=\"warning\">
-			<b>Warning:</b> ".$message."</div></div>";
-		if ($save == 1)
-			$_SESSION['savedmessage'] = $str;
-		return $str;
+		return self::get("info", $title, $message, $save);
 	}
 	
-	static function validation($message,$save=0)
+	static function warning($title, $message, $save=false)
 	{
-		static $messageId=0;
-		$str = "<div class=\"messagebox\" id=\"messagebox".($messageId++)."\">
-			<div class=\"validation\">
-			<b>Validation error:</b> ".$message."</div></div>";
-		if ($save == 1)
-			$_SESSION['savedmessage'] = $str;
-		return $str;
+		return self::get("warning", $title, $message, $save);
 	}
 	
-
-	static function error($message,$save=0,$die=0)
+	static function validation($title, $message, $save=false)
 	{
-		static $messageId=0;
-		$str = "<div class=\"messagebox\" id=\"messagebox".($messageId++)."\">
-			<div class=\"error\">
-			<b>".(defined('LANG_Error') ? LANG_Error : 'Error: ').":</b> ".$message."</div></div>";
-		if ($die==1)
-			die($str);
-		if ($save == 1)
-			$_SESSION['savedmessage'] = $str;
-		return $str;
+		return self::get("validation", $title, $message, $save);
 	}
-	
-	static function errorWithTitle($title,$message,$save=0,$die=0)
-	{
-		static $messageId=0;
-		$str = "<div class=\"messagebox\" id=\"messagebox".($messageId++)."\">
-			<div class=\"error\"><p class=\"messagetitle\">".$title."</p> ".$message."</div></div>";
-		if ($die==1)
-			die($str);
-		if ($save == 1)
-			$_SESSION['savedmessage'] = $str;
-		return $str;
-	}	
 
-	static function saved()
+	static function error($title, $message, $save=false)
+	{
+		return self::get("error", $title, $message, $save);
+	}
+
+	static function getSaved()
 	{
 		$msg = isset($_SESSION['savedmessage']) ? $_SESSION['savedmessage'] : "";
 		unset($_SESSION['savedmessage']);

@@ -214,12 +214,13 @@ function planetSelectorByUser($userNick,$function,$show_user_id=1)
 
 function showShipsOnPlanet($form)
 {
+	$objResponse = new xajaxResponse();	
+	
 	$updata=explode(":",$form);
 	$eid=$updata[0];
 	$uid=$updata[1];
 	
 	$style='none';
-	$objResponse = new xajaxResponse();	
 	
 	ob_start();
 

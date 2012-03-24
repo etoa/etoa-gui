@@ -47,7 +47,7 @@
 				$arr = mysql_fetch_array($res);
 	
 				// Passwort generieren
-				$pw = mt_rand(100000000,9999999999);
+				$pw = generatePasswort();
 	
 				// Email schreiben
 				//$email_text="Hallo ".$_POST['user_nick']."<br/><br/>Du hast ein neues Passwort für deinen Account angefordert.<br>Hier sind die neuen Daten:<br><br><b>Nick:</b> ".$_POST['user_nick']."<br><b>Passwort:</b> ".$pw."<br><br>Weiterhin viel Spass wünscht...<br>Das EtoA-Team";
@@ -56,7 +56,14 @@
 				$mail->send($_POST['user_email_fix']);
 	
 				// Passwort updaten
-				dbquery("UPDATE users SET user_password='".pw_salt($pw,$arr['user_registered'])."' WHERE user_nick='".$_POST['user_nick']."' AND user_email_fix='".$_POST['user_email_fix']."';");
+				dbquery("UPDATE 
+					users 
+				SET 
+					user_password='".saltPasswort($pw)."' 
+				WHERE 
+					user_nick='".$_POST['user_nick']."' 
+					AND user_email_fix='".$_POST['user_email_fix']."'
+				;");
 			
 				// Log hinzufügen
 				add_log(3,"Der Benutzer ".$_POST['user_nick']." hat ein neues Passwort per E-Mail angefordert!",time());

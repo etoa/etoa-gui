@@ -339,14 +339,14 @@
 	//
 	else
 	{
-		echo "<h1>Forschungsliste</h1>";
+		$tpl->assign('title', 'Forschungsliste');
 
 		$build_type[0]="Unt&auml;tig";
 		$build_type[1]="Forschen";
 	
 		if (isset($_POST['techlist_search']) || (isset($_GET['action']) && ($_GET['action']=="search" || $_GET['action']=="searchresults")) || isset($_POST['new']))
 		{
-			if ($_GET['query']!="")
+			if (isset($_GET['query']) && $_GET['query']!="")
 			{
 				$qs = searchQueryDecode($_GET['query']);
 				foreach($qs as $k=>$v)
@@ -355,9 +355,12 @@
 				}
 				$_SESSION['search']['tech']['query']=null;
 			}
+			$sql = "";
+			$query = "";
 			$sqlstart = "
 			SELECT 
 					planet_name,
+					planets.id as id,
 		      entities.pos,
 		      cells.sx,cells.sy,
 		      cells.cx,cells.cy,
@@ -503,7 +506,7 @@
 					else
 						$style="";
 					echo "<tr>";
-					echo "<td class=\"tbldata\"$style ".mTT($arr['planet_name'],$arr['sx']."/".$arr['sy']." : ".$arr['cx']."/".$arr['cy']." : ".$arr['pos']).">".cut_string($arr['planet_name'],11)."</a></td>";
+					echo "<td class=\"tbldata\"$style ".mTT($arr['planet_name'],$arr['sx']."/".$arr['sy']." : ".$arr['cx']."/".$arr['cy']." : ".$arr['pos']).">".cut_string($arr['planet_name'] != '' ? $arr['planet_name'] : 'Unbenannt',11)."</a> [".$arr['id']."]</a></td>";
 					echo "<td class=\"tbldata\"$style ".mTT($arr['user_nick'],nf($arr['user_points'])." Punkte").">".cut_string($arr['user_nick'],11)."</a></td>";
 					echo "<td class=\"tbldata\"$style>".$arr['tech_name']."</a></td>";
 					echo "<td class=\"tbldata\"$style>".nf($arr['techlist_current_level'])."</a></td>";
@@ -523,7 +526,7 @@
 		//
 		// Bearbeiten
 		//
-		elseif ($_GET['action']=="edit")
+		elseif (isset($_GET['action']) && $_GET['action']=="edit")
 		{
 			if (isset($_POST['save']))
 			{
@@ -589,17 +592,27 @@
 		// Suchformular Technologien
 		//
 		else
-		{		
+		{
+			//$tpl->assign('subtitle', 'Suchmaske');
+			//echo "<h2>Neue Forschung hinzuf&uuml;gen</h2>";
+			
+			echo '<div class="tabs">
+			<ul>
+				<li><a href="#tabs-1">Suchmaske</a></li>
+				<li><a href="#tabs-2">Direkt hinzufügen</a></li>
+			</ul>
+			<div id="tabs-1">';		
+		
 			$_SESSION['search']['tech']['query']=null;
 			
 			// Technologien laden
 			$bres = dbquery("SELECT tech_id,tech_name FROM technologies ORDER BY tech_type_id,tech_order,tech_name;");
 			$tlist=array();
-			while ($barr=mysql_fetch_array($bres))
+			while ($barr=mysql_fetch_array($bres)) {
 				$tlist[$barr['tech_id']]=$barr['tech_name'];	
+			}
 			
 			// Suchmaske
-			echo "Suchmaske:<br/><br/>";
 			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\">";
 			echo "<table class=\"tbl\">";
 			echo "<tr><td class=\"tbltitle\">Planet ID</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
@@ -614,16 +627,12 @@
 			echo "</select></td></tr>";
 			echo "</table>";
 			echo "<br/><input type=\"submit\" name=\"techlist_search\" value=\"Suche starten\" /></form>";
-			$tblcnt = mysql_fetch_row(dbquery("SELECT 
-													count(*) 
-												FROM 
-													techlist;"));
-			echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.<br/>";	
+			
+			echo '</div><div id="tabs-2">';
 			
 			// Hinzufügen
-			echo "<h2>Neue Forschung hinzuf&uuml;gen</h2>";
 			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\">";
-			tableStart();
+			echo "<table class=\"tbl\">";
 			echo "<tr><th class=\"tbltitle\">Technologie</th><td class=\"tbldata\"><select name=\"tech_id\">";
 			foreach ($tlist as $k=>$v)
 				echo "<option value=\"".$k."\">".$v."</option>";
@@ -649,7 +658,18 @@
 			}
 			echo "</select></td></tr>";
 			tableEnd();
-			echo "<input type=\"submit\" name=\"new\" value=\"Hinzuf&uuml;gen\" /></form>";				
+			echo "<p><input type=\"submit\" name=\"new\" value=\"Hinzuf&uuml;gen\" /></p></form>";				
+			
+			echo '
+				</div>
+			</div>';
+
+			$tblcnt = mysql_fetch_row(dbquery("SELECT 
+													count(*) 
+												FROM 
+													techlist;"));
+			echo "<p>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.</p>";
+			
 		}		
 	}
 

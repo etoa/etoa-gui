@@ -1,0 +1,82 @@
+div.messagebox	{
+	padding:0px;
+	margin:0px;
+}
+
+div.messagebox div	{
+	position:relative;
+	margin: 10px 0px 20px 0px;
+	padding:15px 10px 15px 55px;
+	border:1px solid;
+	background-repeat: no-repeat;
+	background-position: 10px center;
+	font-size:10pt;
+	border-radius:5px;
+}
+
+.messagebox .messagetitle	{
+	font-size:11pt;
+	color:black;
+	font-family: Verdana, sans-serif;
+	margin:0;
+	margin-bottom:10px;
+	padding:0;
+}
+
+div.messagebox div.success	{
+	color: #4F8A10;
+	background-color: #DFF2BF;
+	background-image:url('../images/messagebox/success.png');
+}
+
+div.messagebox div.info	{
+	color: #00529B;
+	background-color: #BDE5F8;
+	background-image: url('../images/messagebox/info.png');
+}
+
+div.messagebox div.validation {
+	color: #D63301;
+	background-color: #FFCCBA;
+	background-image: url('../images/messagebox/validation.png');
+}
+
+div.messagebox div.warning {
+	color: #9F6000;
+	background-color: #FEEFB3;
+	background-image: url('../images/messagebox/warning.png');
+}
+
+div.messagebox div.error	{
+	color: #D8000C;
+	background-color: #FFBABA;
+	background-image: url('../images/messagebox/error.png');
+}
+
+
+p.error {
+	color: black;
+	background-color: #fee;
+	border:3px solid #e32;
+	font-family: sans-serif;
+	font-size: 130%;
+	line-height: 140%;
+	padding: 0.8em;
+	margin: 1em 0;
+}
+p.error em {
+	color: #e32;
+	font-weight: normal;
+	line-height: 140%;
+}
+p.notice {
+	border: 3px solid #ffcc00;
+	background:#ffc;
+	color: #000;
+	display: block;
+	font-family: Courier, monospace;
+	font-size: 120%;
+	line-height: 140%;
+	padding: 0.8em;
+	margin: 1em 0;
+}

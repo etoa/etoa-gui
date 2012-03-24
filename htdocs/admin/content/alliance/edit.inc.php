@@ -39,6 +39,8 @@
 			WHERE 
 				alliance_id='".$id."'
 			;");
+			
+			$tpl->assign('msg', 'Allianzdaten aktualisiert!');
 		}
 		elseif (isset($_POST['member_save']) && $_POST['member_save']!="")
 		{
@@ -76,6 +78,7 @@
 						rank_level='".$_POST['rank_level'][$k]."' 
 					WHERE 
 						rank_id='$k';");
+			$tpl->assign('msg', 'Mitglieder aktualisiert!');
 		}
 		elseif (isset($_POST['bnd_save']) && $_POST['bnd_save']!="")
 		{
@@ -96,6 +99,7 @@
 						alliance_bnd_id='$k';");
 				}
 			}
+			$tpl->assign('msg', 'Diplomatie aktualisiert!');
 		}
 		elseif (isset($_POST['res_save']) && $_POST['res_save']!="")
 		{
@@ -116,17 +120,14 @@
 					WHERE
 						alliance_id='".$id."'
 					LIMIT 1;");
+			$tpl->assign('msg', 'Ressourcen aktualisiert!');
 		}
 		
 		$res = dbquery("SELECT * FROM alliances WHERE alliance_id='".$id."';");
 		$arr = mysql_fetch_assoc($res);
 		
-		echo "<h2>Details <span style=\"color:#0f0;\">[".$arr['alliance_tag']."] ".$arr['alliance_name']."</span></h2>";
-		echo "<div id=\"test\">&nbsp;</div>";
-		echo "<form action=\"?page=$page&amp;sub=edit&amp;id=".$id."\" method=\"post\">
-				<input type=\"hidden\" id=\"tabactive\" name=\"tabactive\" value=\"\" />";
-		
-		
+		$tpl->assign('subtitle', "Allianz bearbeiten: [".$arr['alliance_tag']."] ".$arr['alliance_name']);
+				
 		$ures = dbquery("SELECT 
 							user_id,
 							user_nick,
@@ -166,29 +167,25 @@
 				$ranks[$rarr['rank_id']] = $rarr;
 			}
 		}
+		
+		echo "<form action=\"?page=$page&amp;sub=edit&amp;id=".$id."\" method=\"post\">";
 
-						
-				
-		$tc = new TabControl("userTab",array(
-			"Info",
-			"Mitglieder",
-			"Krieg/BND",
-			"Geschichte",
-			"Rohstoffe",
-			"Einzahlungen",
-			"Gebäude",
-			"Technologien"
-			),
-			0,
-			'100%',
-			0
-			);
-			
+		echo '<div class="tabs">
+		<ul>
+			<li><a href="#tabs-1">Info</a></li>
+			<li><a href="#tabs-2">Mitglieder</a></li>
+			<li><a href="#tabs-3">Diplomatie</a></li>
+			<li><a href="#tabs-4">Geschichte</a></li>
+			<li><a href="#tabs-5">Rohstoffe</a></li>
+			<li><a href="#tabs-6">Einzahlungen</a></li>
+			<li><a href="#tabs-7">Gebäude</a></li>
+			<li><a href="#tabs-8">Technologien</a></li>
+		</ul>
+		<div id="tabs-1">';
+
 			/**
 			* Info
-			*/								
-			$tc->open();
-			echo "<form action=\"?page=$page&sub=base\" method=\"post\">";
+			*/
 			tableStart();
 			echo "<tr><th>ID</th><td>".$arr['alliance_id']."</td></tr>";
 			echo "<tr><th>[Tag] Name</th><td>
@@ -220,19 +217,15 @@
 	      		echo "Keines";
 			}
 			echo "</td></tr>";
-			echo "<tr>
-					<td style=\"text-align:center;\" colspan=\"2\">
-						<input type=\"submit\" name=\"info_save\" value=\"&Uuml;bernehmen\" />
-					</td>
-				</tr>";
 			echo "</table>";
-			echo "</form>";
-			$tc->close();
-					
+			echo "<p><input type=\"submit\" name=\"info_save\" value=\"&Uuml;bernehmen\" /></p>";
+			
+			echo '</div><div id="tabs-2">';
+			
 			/*
 			* Mitglieder
 			**/
-			$tc->open();
+
 			tableStart();
 			echo "<tr>
 					<th>Mitglieder</th>
@@ -247,9 +240,8 @@
 						<th>Mitgliedschaft beenden</th></tr>";
 					foreach ($members as $uid => $uarr)
 					{
-						echo "<tr>
-						<div id=\"uifo".$uarr['user_id']."\" style=\"display:none;\"><a href=\"?page=user&amp;sub=edit&amp;id=".$uarr['user_id']."\">Daten</a><br/>
-						".popupLink("sendmessage","Nachricht senden","","id=".$uarr['user_id'])."</div>
+						echo "<tr><td id=\"uifo".$uarr['user_id']."\" style=\"display:none;\"><a href=\"?page=user&amp;sub=edit&amp;id=".$uarr['user_id']."\">Daten</a><br/>
+						".popupLink("sendmessage","Nachricht senden","","id=".$uarr['user_id'])."</td>
 						<td><a href=\"?page=user&amp;sub=edit&amp;id=".$uarr['user_id']."\" ".cTT($uarr['user_nick'],"uifo".$uarr['user_id']."").">".$uarr['user_nick']."</a></td>
 						<td>".nf($uarr['user_points'])." Punkte</td>
 						<td><select name=\"member_rank[$uid]\"><option value=\"0\">-</option>";
@@ -292,20 +284,16 @@
 				else
 					echo "<b>Keine R&auml;nge vorhanden!</b>";
 				echo "</td></tr>";
-				echo "<tr>
-					<td style=\"text-align:center;\" colspan=\"2\">
-						<input type=\"submit\" name=\"member_save\" value=\"&Uuml;bernehmen\" />
-					</td>
-				</tr>";
-				tableEnd();
-				$tc->close();
-						
+				tableEnd();	
+				echo "<p><input type=\"submit\" name=\"member_save\" value=\"&Uuml;bernehmen\" /></p>";
+				
+				echo '</div><div id="tabs-3">';
+
+
 				/*
 				* Krieg/Bündnisse
 				*/
-				$tc->open();
-				tableStart();
-				echo "<tr><th>B&uuml;ndnisse/Kriege</th><td>";
+				
 				$bres = dbquery("
 				SELECT 
 					alliance_bnd_id,
@@ -330,7 +318,7 @@
 					alliance_bnd_date DESC;");
 				if (mysql_num_rows($bres)>0)
 				{
-					echo "<table style=\"width:100%\">";
+					echo "<table class=\"tb\">";
 					echo "<tr>
 					<th>Allianz</th>
 					<th>Bezeichnung</th>
@@ -360,28 +348,21 @@
 						echo "<td valign=\"top\"><input type=\"checkbox\" name=\"alliance_bnd_del[".$barr['alliance_bnd_id']."]\" value=\"1\" /></td></tr>";
 					}
 					echo "</table>";
+					echo "<p><input type=\"submit\" name=\"bnd_save\" value=\"&Uuml;bernehmen\" /></p>";
 				}
-				else
-					echo "<b>Keine B&uuml;ndnisse/Kriege vorhanden!</b>";
-				echo "</td></tr>";
-				echo "<tr>
-					<td style=\"text-align:center;\" colspan=\"2\">
-						<input type=\"submit\" name=\"bnd_save\" value=\"&Uuml;bernehmen\" />
-					</td>
-				</tr>";
-				tableEnd();
-				$tc->close();
-
+				else {
+					echo "<p><b>Keine B&uuml;ndnisse/Kriege vorhanden!</b></p>";
+				}
+				
+				echo '</div><div id="tabs-4">';
 					
 			/**
 			* Geschichte
 			*/								
-			$tc->open();
 			tableStart();
 			echo "<tr>
 					<th style=\"width:120px;\">Datum / Zeit</th>
-					<th>Ereignis</th
-				></tr>";
+					<th>Ereignis</th></tr>";
 			$hres=dbquery("
 						SELECT 
 							* 
@@ -404,13 +385,13 @@
 				echo "<tr><td colspan=\"3\" class=\"tbldata\"><i>Keine Daten vorhanden!</i></td></tr>";
 			}
 			tableEnd();
-			$tc->close();
+			
+			echo '</div><div id="tabs-5">';
 				
 			/**
 			* Rohstoffe
 			*/								
-			$tc->open();
-			tableStart("Rohstoffe");
+			echo '<table class="tb">';
 			echo "<tr>
 					<th class=\"resmetalcolor\">Titan</th>
 					<td>
@@ -428,18 +409,14 @@
 			echo "<tr><th class=\"resfoodcolor\">Nahrung</th>
 					<td><input type=\"text\" name=\"res_food\" id=\"res_food\" value=\"".nf($arr['alliance_res_food'])."\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
 					+/-: <input type=\"text\" name=\"res_food_add\" id=\"res_food_add\" value=\"0\" size=\"8\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/></td><td colspan=\"2\">";
-			echo "<tr>
-					<td style=\"text-align:center;\" colspan=\"4\">
-						<input type=\"submit\" name=\"res_save\" value=\"Übernehmen\" />
-					</td>
-				</tr>";
 			tableEnd();
-			$tc->close();
+			echo "<p><input type=\"submit\" name=\"res_save\" value=\"Übernehmen\" /></p>";
+
+			echo '</div><div id="tabs-6">';
 					
 			/**
 			* Einzahlungen
 			*/								
-			$tc->open();
   			
 			echo "<form id=\"filterForm\">";
 			tableStart("Filter");
@@ -470,23 +447,18 @@
 					  	}
   			echo 		"</select>
   					</td>
-	  			</tr><tr>
-	  				<td style=\"text-align:center;\" colspan=\"2\">
-  						<input type=\"button\" onclick=\"xajax_showSpend(".$arr['alliance_id'].",xajax.getFormValues('filterForm'))\" value=\"Anzeigen\"\"/>
-  					</td>
-  				</tr>";
+	  			</tr><tr>";
 			 tableEnd();
+			 echo "<p><input type=\"button\" onclick=\"xajax_showSpend(".$arr['alliance_id'].",xajax.getFormValues('filterForm'))\" value=\"Anzeigen\"\"/></p>";
 			 echo "</form>";
 			 
 			 echo "<div id=\"spends\">&nbsp;</div>";
 
-			$tc->close();
-			
+			echo '</div><div id="tabs-7">';
 					
 			/**
 			* Gebäude
 			*/								
-			$tc->open();
 			$res = dbquery("
 						SELECT
 							alliance_buildlist.*,
@@ -517,12 +489,12 @@
 			else
 				echo "<tr><td colspan=\"4\">Keine Gebäude vorhanden!</td></tr>";
 			tableEnd();
-			$tc->close();
+
+			echo '</div><div id="tabs-8">';
 			
 			/**
 			* Technologien
 			*/								
-			$tc->open();
 			$res = dbquery("
 						SELECT
 							alliance_techlist.*,
@@ -552,7 +524,10 @@
 			else
 				echo "<tr><td colspan=\"4\">Keine Technologien vorhanden!</td></tr>";
 			tableEnd();
-			$tc->close();
+			
+			echo '
+				</div>
+			</div>';
 			
 
 ?>

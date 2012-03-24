@@ -203,7 +203,7 @@
 	//
 	elseif ($sub=="create")
 	{
-		echo "<h1>Allianz erstellen</h1";
+		echo "<h1>Allianz erstellen</h1>";
 
 		if (isset($_POST['create']))
 		{
@@ -218,12 +218,12 @@
 			}
 			else
 			{
-				error_msg("Benutzer konnte nicht erstellt werden!\n\n".$errorCode."");
+				error_msg("Allianz konnte nicht erstellt werden!\n\n".$errorCode."");
 			}
 		}
 		
 		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-		tableStart("","400");
+		echo '<table class="tbl">';
 		echo "<tr><th>Tag:</th><td>
 		<input type=\"text\" name=\"alliance_tag\" value=\"\" />
 		</td></td>";
@@ -240,10 +240,8 @@
 		echo "</select>
 		</td></td>";
 		tableEnd();
-		echo "<div style=\"text-align:center;\"><input type=\"submit\" name=\"create\" value=\"Erstellen\" /></div>
+		echo "<p><input type=\"submit\" name=\"create\" value=\"Erstellen\" /></p>
 		</form>";
-
-
 	}
 
 	//
@@ -448,7 +446,7 @@
 	}
 	else
 	{
-		echo "<h1>Allianzen</h1>";
+		$tpl->assign("title", 'Allianzen');
 			
 		//
 		// Suchergebnisse
@@ -456,9 +454,11 @@
 		
 		if ((isset($_POST['alliance_search']) && $_POST['alliance_search']!="" || $_SESSION['admin']['queries']['alliances']!="") && isset($_GET['action']) && $_GET['action']=="search")
 		{
+			$tpl->assign("subtitle", 'Suchergebnisse');
   	
   		if ($_SESSION['admin']['queries']['alliances']=="")
   		{
+			$sql = '';
 				if ($_POST['alliance_id']!="")
 				{
 					$sql.= " AND alliance_id ".stripslashes($_POST['qmode']['alliance_id']).$_POST['alliance_id']."$addchars'";
@@ -556,7 +556,7 @@
 		// Leere Allianzen löschen
 		//
 		
-		elseif ($_GET['sub']=="dropinactive")
+		elseif (isset($_GET['sub']) && $_GET['sub']=="dropinactive")
 		{
 			echo "Sollen folgende leeren Allianzen gel&ouml;scht werden?<br/><br/>";
 			$res = dbquery("SELECT * FROM alliances ORDER BY alliance_tag;");
@@ -606,7 +606,7 @@
 		// Daten bearbeiten
 		//
 		
-		elseif ($_GET['sub']=="edit")
+		elseif (isset($_GET['sub']) && $_GET['sub']=="edit")
 		{
 			include("alliance/edit.inc.php");
 		}
@@ -615,7 +615,7 @@
 		// Daten löschen
 		//
 		
-		elseif ($_GET['sub']=="drop")
+		elseif (isset($_GET['sub']) && $_GET['sub']=="drop")
 		{
 			$res = dbquery("SELECT * FROM alliances WHERE alliance_id=".$_GET['alliance_id'].";");
 			if (mysql_num_rows($res)>0)
@@ -667,7 +667,7 @@
 			$_SESSION['admin']['queries']['alliances']="";
 
 			// Allianz löschen
-			if ($_POST['drop']!="")
+			if (isset($_POST['drop']))
 			{
 				$ally = new Alliance($_POST['alliance_id']);
 				$ally->delete();
@@ -675,7 +675,7 @@
 			}
 
 			// Leere Allianzen löschen
-			if ($_GET['action']=="dropinactive")
+			if (isset($_GET['action']) && $_GET['action']=="dropinactive")
 			{
 				$res = dbquery("SELECT * FROM alliances ORDER BY alliance_tag;");
 				if (mysql_num_rows($res)>0)
@@ -697,7 +697,8 @@
 			}
 
 			// Suchmaske
-			echo "Suchmaske (wenn nichts eingegeben wird werden alle Datens&auml;tze angezeigt):<br/><br/>";
+			$tpl->assign("subtitle", 'Suchmaske');
+			
 			echo "<form action=\"?page=$page&amp;action=search\" method=\"post\">";
 			echo "<table class=\"tbl\">";
 			echo "<tr><td class=\"tbltitle\">ID</td><td class=\"tbldata\"><input type=\"text\" name=\"alliance_id\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('alliance_id');echo"</td></tr>";
@@ -705,7 +706,7 @@
 			echo "<tr><td class=\"tbltitle\">Name</td><td class=\"tbldata\"><input type=\"text\" name=\"alliance_name\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchAlliance(this.value,'alliance_name','citybox2');\"/> ";fieldqueryselbox('alliance_name');echo "<br><div class=\"citybox\" id=\"citybox2\">&nbsp;</div></td></tr>";
 			echo "<tr><td class=\"tbltitle\">Text</td><td class=\"tbldata\"><input type=\"text\" name=\"alliance_text\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('alliance_text');echo "</td></tr>";
 			echo "</table>";
-			echo "<br/><input type=\"submit\" name=\"alliance_search\" value=\"Suche starten\" /></form>";
+			echo "<br/><input type=\"submit\" name=\"alliance_search\" value=\"Suche starten\" /> (wenn nichts eingegeben wird werden alle Datens&auml;tze angezeigt)</form>";
 			$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM alliances;"));
 			echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.";	
 			

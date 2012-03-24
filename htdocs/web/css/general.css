@@ -1,0 +1,171 @@
+
+/* Resources */
+
+.resmetalcolor, .tb .resmetalcolor, .rescolor0, .tb .rescolor0	{
+	color:#CFC8C2;	
+}
+.rescrystalcolor, .tb .rescrystalcolor, .rescolor1, .tb .rescolor1	{
+	color:#C2E2EF;
+}
+.resplasticcolor, .tb .resplasticcolor, .rescolor2, .tb .rescolor2	{
+	color:#E5D1EF;
+}
+.resfuelcolor, .tb .resfuelcolor, .rescolor3, .tb .rescolor3	{
+	color:#A4C1EF;
+}
+.resfoodcolor, .tb .resfoodcolor, .rescolor4, .tb .rescolor4	{
+	color:#C2ECC2;
+}
+.respeoplecolor, .tb .respeoplecolor	{
+	color:#ECC8B2;
+}
+.respowercolor, .tb .respowercolor, .rescolor5, .tb .rescolor5	{
+	color:#EFECC2;
+}
+.respowerucolor, .tb .respowerucolor	{
+	color:#ECB2B2;
+}
+
+.resmetal, .tb .resmetal {
+	background:url('../images/resources/metal_s.png') 1px 1px no-repeat;
+	padding:0px 10px 1px 19px;
+	color:#CFC8C2;
+}
+.rescrystal, .tb .rescrystal	{
+	background:url('../images/resources/crystal_s.png') 1px 1px no-repeat;
+	padding:0px 10px 1px 19px;
+	color:#C2E2EF;
+}
+.resplastic, .tb .resplastic	{
+	background:url('../images/resources/plastic_s.png')  1px 1px no-repeat;
+	padding:0px 10px 1px 19px;
+	color:#E5D1EF;
+}
+.resfuel, .tb .resfuel	{
+	background:url('../images/resources/fuel_s.png')  1px 1px no-repeat;
+	padding:0px 10px 1px 19px;
+	color:#A4C1EF;
+}
+.resfood, .tb .resfood	{
+	background:url('../images/resources/food_s.png')  1px 1px no-repeat;
+	padding:0px 10px 1px 19px;
+	color:#C2ECC2;
+}
+.respeople, .tb .respeople	{
+	background:url('../images/resources/people_s.png') 1px 1px  no-repeat;
+	padding:0px 10px 1px 19px;
+	color:#ECC8B2;
+}
+.respower, .tb .respower	{
+	background:url('../images/resources/power_s.png') 1px 1px  no-repeat;
+	padding:0px 10px 1px 19px;
+	color:#EFECC2;
+}
+.respoweru, .tb .respoweru	{
+	background:url('../images/resources/poweru_s.png')  1px 1px no-repeat;
+	padding:0px 10px 1px 19px;
+	color:#ECB2B2;
+}
+
+.restime, .tb .restime	{
+	background:url('../images/resources/time_s.png')  1px 1px no-repeat;
+	padding:0px 10px 1px 19px;
+}
+
+.resfield, .tb .resfield	{
+	background:url('../images/resources/field_s.png')  1px 1px no-repeat;
+	padding:0px 10px 1px 19px;
+}
+
+.resfullcolor, .tb .resfullcolor	{
+	color:#f20;	
+}
+
+/* Colors */
+
+.userAllianceMemberColor, .tb .userAllianceMemberColor		{
+	color:#ffff33;
+}
+
+.userSelfColor, .tb .userSelfColor		{
+	color:#FF1FFA;
+}
+
+.userLockedColor, .tb .userLockedColor	{
+	color:#FF6522;
+}
+
+.userInactiveColor, .tb .userInactiveColor		{
+	color:#ccc;
+}
+
+.userLongInactiveColor, .tb .userLongInactiveColor		{
+	color:#aaa;
+}
+
+.userGhostColor, .tb .userGhostColor		{
+	color:#779;
+}
+
+.userHolidayColor, .tb .userHolidayColor		{
+	color:#aaffaa;
+}
+
+.userDeletedColor, .tb .userDeletedColor, input.userDeletedColor	{
+	color:#09f;
+}
+
+.adminColor, .tb .adminColor		{
+	color:#DAA520;
+}
+
+.enemyColor, .tb .enemyColor		{
+	color:#ff2200;
+}
+
+.friendColor, .tb .friendColor		{
+	color:#3366ff;
+}
+
+.noobColor, .tb .noobColor		{
+	color:#aaffff;
+}
+
+
+/*------- Tooltip ----------*/
+
+.tooltip {
+  position: absolute;
+  display: none;
+  background: #223;
+  color:#fff;
+  border:1px solid #415680;
+  font-size:9pt;
+  font-family:arial;
+  padding:1px;
+  max-width:400px;
+  z-index:1000;
+}
+
+.tooltip .tttitle	{
+	background:#225;
+  border:1px solid #415680;
+	padding: 2px;
+	font-weight:bold;
+	margin-bottom:2px;
+}
+
+.tooltip .ttcontent	{
+  border:1px solid #415680;
+	padding: 4px;
+}
+
+.tooltip a	{
+	color:#eee;
+	text-decoration:underline;
+	font-weight:bold;
+}
+.tooltip a:hover	{
+	color:#fff;
+	text-decoration:none;;
+}

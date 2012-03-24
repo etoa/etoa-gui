@@ -8,36 +8,8 @@ function smarty_function_msg($params, &$smarty)
 	
 	if (isset($params['type']) && isset($params['text']))
 	{
-		switch ($params['type'])
-		{
-			case "success":		
-				return MessageBox::ok($params['text']);
-				break;			
-			case "ok":		
-				return MessageBox::ok($params['text']);
-				break;
-			case "info":		
-				return MessageBox::info($params['text']);
-				break;
-			case "error":		
-				return MessageBox::error($params['text']);
-				break;
-			case "err":		
-				return MessageBox::error($params['text']);
-				break;			
-			case "warn":		
-				return MessageBox::warning($params['text']);
-				break;
-			case "wargning":		
-				return MessageBox::warning($params['text']);
-				break;			
-			case "validation":		
-				return MessageBox::validation($params['text']);
-				break;				
-			default:
-				return MessageBox::error('Invalid type!');
-		}
+		return MessageBox::get($params['type'], isset($params['title']) ? $params['title'] : '', $params['text']);
 	}
-	return MessageBox::error("Invalid or missing type and text for message!");
+	return MessageBox::error("Smarty Plugin Error", "Invalid or missing 'type' and 'text' for msg plugin!");
 }
 ?>

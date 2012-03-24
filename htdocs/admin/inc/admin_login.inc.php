@@ -27,6 +27,7 @@ if (isset($_GET['sendpass']))
 			$mail = new Mail("Neues Administrationspasswort",$msg);
 			$mail->send($user->email);
 			
+			$tpl->assign('msg_style', "color_ok");
 			$tpl->assign('status_msg', "Das Passwort wurde geändert und dir per Mail zugestellt!");
 			$tpl->assign('button_msg', "Zum Login");
 			$tpl->assign('button_target', "?");
@@ -35,6 +36,7 @@ if (isset($_GET['sendpass']))
 		}
 		else
 		{
+			$tpl->assign('msg_style', "color_warn");
 			$tpl->assign('status_msg', "Dieser Benutzer existiert nicht!");
 			$tpl->assign('button_msg', "Nochmals versuchen");
 			$tpl->assign('button_target', "?sendpass=1");
@@ -61,6 +63,7 @@ else
 			$nu->save();
 			$nu->setPassword($_POST['user_password']);
 
+			$tpl->assign('msg_style', "color_ok");
 			$tpl->assign('status_msg', "Benutzer wurde erstellt!");
 			$tpl->assign('button_msg', "Weiterfahren");
 			$tpl->assign('button_target', "?");			
@@ -75,16 +78,9 @@ else
 	else
 	{
 		$str = $s->lastError;
-		$clr = 3;
-
 		if ($str!="" && $s->lastErrorCode!="nologin")
 		{
-			if ($clr==3)
-				$tpl->assign('msg_style', "warn");
-			elseif ($clr==2)
-				$tpl->assign('msg_style', "error");
-			elseif ($clr==1)
-				$tpl->assign('msg_style', "ok");
+			$tpl->assign('msg_style', "color_warn");
 			$tpl->assign('msg', $str);
 		}
 		

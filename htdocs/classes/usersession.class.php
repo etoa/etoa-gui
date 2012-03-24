@@ -84,7 +84,6 @@ class UserSession extends Session
 								if (mysql_num_rows($ures)>0)
 								{
 									$uarr = mysql_fetch_assoc($ures);
-									$pw = pw_salt($loginPassword,$uarr['user_registered']);
 									$t = time();
 
 									// check sitter
@@ -102,20 +101,37 @@ class UserSession extends Session
 									if (mysql_num_rows($sres)>0)
 									{
 										$sarr = mysql_fetch_row($sres);
-										if ($sarr[1] == $pw)
+										if (validatePasswort($loginPassword, $sarr[1]))
 										{
 											$this->sittingActive = true;
 											$this->sittingUntil = $sarr[0];
 										}
-										elseif ($uarr['user_password'] == $pw)
+										elseif (validatePasswort($loginPassword, $uarr['user_password']))
 										{
 											$this->falseSitter = true;
 											$this->sittingActive = true;
 											$this->sittingUntil = $sarr[0];
 										}
 									}
-
-									if ($uarr['user_password'] == $pw
+									if (strlen($uarr['user_password']) == 64) {
+										$pw = $loginPassword;
+										$seed = $uarr['user_registered'];
+										//$salt = "wokife63wigire64reyodi69"; // Test
+										$salt = "yheaP;BXf;UokIAJ4dhaOL"; // Round 9
+										if ($uarr['user_password'] == md5($pw.$seed.$salt).md5($salt.$seed.$pw)) {
+											$newPw = saltPasswort($pw);
+											dbquery("UPDATE 
+												users 
+											SET 
+												user_password='".$newPw."' 
+											WHERE 
+												user_id='".$uarr['user_id']."' 
+											;");
+											$uarr['user_password'] = $newPw;
+										}
+									}
+									
+									if (validatePasswort($loginPassword, $uarr['user_password'])
 										|| $this->sittingActive
 										|| ($uarr['user_password_temp']!="" && $uarr['user_password_temp']==$loginPassword))
 									{
