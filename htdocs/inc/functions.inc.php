@@ -52,8 +52,11 @@
 			else if (preg_match('/^Smarty_/', $class_name) ==0)
 			{
 				echo "Error: Class $class_name not found!";
+				echo "<pre>";
+				debug_print_backtrace();
+				echo "</pre>";
 				exit;
-	      //	throw new EException("Die Klasse ".$class_name." wurde nicht gefunden (".$dir."/".$file.")!");
+				// throw new EException("Die Klasse ".$class_name." wurde nicht gefunden (".$dir."/".$file.")!");
 		    }
 		}
 	}

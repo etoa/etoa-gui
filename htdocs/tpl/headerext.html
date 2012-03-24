@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">	
 	<head>
-		<title>{$gameTitle}</title>
+		<title>{$gameTitle|default:'EtoA'}</title>
 
 		<meta name="author" content="EtoA Gaming" />
 		<meta name="keywords" content="Escape to Andromeda, Browsergame, Strategie, Simulation, Andromeda, MMPOG, RPG" />
@@ -55,7 +55,7 @@
 		<script type="text/javascript" src="js/tooltip.js"></script>
 		
 		<!-- XAJAX -->
-		{$xajaxJS}
+		{$xajaxJS|default:''}
 		
 		<!-- Design related -->
 		<link rel="stylesheet" type="text/css" href="{$templateDir}/style.css" />
@@ -63,25 +63,26 @@
 
 	</head> 		
 	<body id="outGameBody">
-		{$bodyTopStuff}
+		{$bodyTopStuff|default:''}
 
 		<div id="outGameTop">
 			<div id="outGameTopLogo">
-				<a href="{$loginurl}" title="Zur Startseite">
+				<a href="{$loginurl|default:''}" title="Zur Startseite">
 					<img src="images/outgame/logo.png" alt="Logo" />
 				</a>
 			</div>
 			<div id="outGameTopName">
-				{$roundname}
+				{$roundname|default:'EtoA'}
 			</div>
 			<ul id="outGameTopmenu">
-			{foreach key=identifier item=data from=$topmenu}
-					<li>
-						<a href="{$data.url}">
-							<img src="images/outgame/{$identifier}.png" alt="{$data.label}" /><br/>
-						{$data.label}</a>
-					</li>
+			{if $topmenu|count gt 0}
+			{foreach from=$topmenu key=identifier item=data}
+				<li>
+					<a href="{$data.url}">
+						<img src="images/outgame/{$identifier}.png" alt="{$data.label}" /><br/>{$data.label}</a>
+				</li>
 			{/foreach}
+			{/if}
 			</ul>
 		</div>
 
