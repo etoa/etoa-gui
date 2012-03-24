@@ -1326,6 +1326,7 @@
 	{
 		$response = new xajaxResponse();
 		 $alliance = "";
+		 $target = false;
 		 $allianceStyle = 'none';
 		 $comment = "-";
 		 ob_start();
@@ -1418,7 +1419,7 @@
 				$action = "&nbsp; ";
 			}
 			
-			if ($target == true)
+			if ($target)
 				$submitButton = '&nbsp;<input tabindex="7" type="button" onclick="xajax_havenShowShips()" value="&lt;&lt; Zurück zur Schiffauswahl" />&nbsp;<input tabindex="8" type="button" onclick="xajax_havenReset()" value="Reset" />&nbsp;'.$action;
 			else 
 				$submitButton = '&nbsp;<input tabindex="8" type="button" onclick="xajax_havenReset()" value="Reset" />&nbsp;';

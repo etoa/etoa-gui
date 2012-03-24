@@ -470,22 +470,21 @@
 		* return course with the cancelled status flag enabled.
 		* This is only possible if the fleet hasn't reached it's destination
 		*/
-		function cancelFlight($alliance=false)
+		function cancelFlight($alliance = false, $is_child = false)
 		{
 			if ($this->status == 0 || $this->status == 3)
 			{
-				if ($this->landTime() > time())
+				if ($this->landTime() > time() || $is_child)
 				{
 					if ($this->getAction()->cancelable())
 					{
 						if ($this->id == $this->leaderId)
 						{
-							echo "alliance:".$alliance;
 							if ($alliance)
 							{
 								foreach($this->fleets as $id=>$f)
 								{
-									$f->cancelFlight();
+									$f->cancelFlight(false, true);
 								}
 							}
 							else

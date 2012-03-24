@@ -684,6 +684,7 @@
 		$buildingIterator = $cu->alliance->buildlist->getIterator();
 		while($buildingIterator->valid())
 		{
+			$style_message = '';
 			if ($cu->alliance->buildlist->show($buildingIterator->key()))
 			{
 				$level = $cu->alliance->buildlist->getLevel($buildingIterator->key());
@@ -823,6 +824,7 @@
 		$techIterator = $cu->alliance->techlist->getIterator();
 		while($techIterator->valid())
 		{
+			$style_message = '';
 			if ($cu->alliance->techlist->show($techIterator->key()))
 			{
 				$level = $cu->alliance->techlist->getLevel($techIterator->key());
