@@ -1154,7 +1154,8 @@
 						");
 		while ($parr = mysql_fetch_row($pres)) {
 			if (!($parr[2]<0 || $parr[3]<0 || $parr[4]<0 || $parr[5]<0 || $parr[6]<0)) {
-				$shipPointsAdd = $parr[1]*$cfg->get("alliance_shippoints_per_hour");
+				// New exponential algorithm by river
+				$shipPointsAdd = $cfg->get("alliance_shippoints_per_hour")*pow($cfg->get('alliance_shippoints_base'),($parr[1]-1));
 
 				dbquery("UPDATE
 							users
