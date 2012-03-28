@@ -56,7 +56,9 @@
   {
   	$werft_arr=mysql_fetch_array($werft_res);
   	$silo_level = $werft_arr['buildlist_current_level'];
-		$max_space = $silo_level*MISSILE_SILO_MISSILES_PER_LEVEL;
+		// New exponential missile number algorithm by river
+		// $max_space = per_level * algo_base ^ (silo_level - 1)
+		$max_space = MISSILE_SILO_MISSILES_PER_LEVEL*pow(MISSILE_SILO_MISSILES_ALGO_BASE,$silo_level-1);
 		$max_flights = $silo_level*MISSILE_SILO_FLIGHTS_PER_LEVEL;
   	
 		// Titel

@@ -328,7 +328,9 @@
 	define("DEFQUEUE_CANCEL_END",0.8);						// ???
 
 	// Raketensilo
-	define("MISSILE_SILO_MISSILES_PER_LEVEL",5); 	// Raketen, die pro Stufe im Silo gelagert werden können
+	define("MISSILE_SILO_MISSILES_PER_LEVEL",5); 	// Raketen, die pro Stufe im Silo gelagert werden können (NEU: dient als Vorfaktor zur Basis)
+	/* Neue Konstante fuer eine exponentiell steigende Raketenzahl (by river) */
+	define("MISSILE_SILO_MISSILES_ALGO_BASE",1.4); // Basis des neuen Algorithmus _PER_LEVEL * _ALGO_BASE^(SILO_LEVEL -1)
 	define("MISSILE_SILO_FLIGHTS_PER_LEVEL",1);		// Anzahl gleichzeitiger Flüge pro Silostufe
 	define("MISSILE_BATTLE_SHIELD_FACTOR",0.3);		// Faktor mit dem die Schilde der Verteidigung bei einem Kampf mit einberechnet werden.
 	
