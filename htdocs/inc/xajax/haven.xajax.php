@@ -1242,7 +1242,8 @@
 					ob_start();
 					$ac = FleetAction::createFactory($form['fleet_action']);
 					
-					if ($form['fleet_action']=="alliance" && $fleet->getLeader()==0 && count($form['msgUser'])>0)
+					// bugfix - check for alliance added by river
+					if ($form['fleet_action']=="alliance" && $fleet->getLeader()==0 && $fleet->owner->alliance && count($form['msgUser'])>0)
 					{
 						$subject = "Allianzangriff (".$fleet->targetEntity.")";
 						$text = "[b]Angriffsdaten:[/b][table][tr][td]Flottenkennzeichen:[/td][td]".$fleet->owner->alliance->tag."-".$fid."[/td][/tr][tr][td]Flottenleader:[/td][td]".$fleet->owner->nick."[/td][/tr][tr][td]Zielplanet:[/td][td]".$fleet->targetEntity."[/td][/tr][tr][td]Ankunftszeit:[/td][td]".date("d.m.y, H:i:s",$fleet->landTime)."[/td][/tr][/table]".$form['message_text'];
@@ -1852,7 +1853,8 @@
 			$response->assign("fakeheader","style.display",'none');
 			$response->assign("fakebox","style.display",'none');
 		}
-		if ($code=="alliance" && $fleet->getLeader()==0)
+		// bugfix - check for alliance added by river
+		if ($code=="alliance" && $fleet->getLeader()==0 && $fleet->owner->alliance)
 		{
 			ob_start();
 			echo "<td colspan=\"2\"><textarea name=\"message_text\" id=\"message\" rows=\"10\" cols=\"55\"></textarea></td>
