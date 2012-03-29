@@ -722,7 +722,10 @@ Anmerkung: Eine Kopie dieser Nachricht wird in Eurer Nachrichten-Box hinterlegt.
   		<v comment="Kostenfaktor x * Normal" type="text">0.25</v>
 	</item>
 	<item name="invade_active_users" cat="4">
-		<v comment="Invasieren von aktiven Spielern (J=1/N=0)" type="text">0</v></item>
-
+		<v comment="Invasieren von aktiven Spielern (J=1/N=0)" type="text">0</v>
+	</item>
+	<item name="alliance_shippoints_base" cat="16">
+		<v comment="Faktor für Allianzschiffpunkte" type="text">1.4</v>
+	</item>
   </items>
 </config>
