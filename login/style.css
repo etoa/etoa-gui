@@ -1,0 +1,221 @@
+@charset "utf-8";
+/*
+* CSS Document
+* by: BlacKnight
+* la: 06-04-07
+* license : GPL
+*/
+
+@import url(http://fonts.googleapis.com/css?family=Droid+Sans:400,700);
+
+body
+{
+	margin: 0;
+	padding: 0;
+	font-family: 'Droid Sans', Verdana, Arial, Helvetica, sans-serif;
+	font-size: 1em;
+	color: #222222;
+	background:#000 url('../htdocs/web/images/background.jpg');
+}
+
+#header {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 130px;
+	background: url('../htdocs/web/images/admin/header.png') no-repeat center top;
+	position:relative;
+	color: white;
+	margin:0px auto;
+	width:900px;
+}
+
+#logo {
+	position: absolute;
+	top: 30px;
+	left: 10px;
+	background: url(../images/admin/logo.png) no-repeat top left;
+	cursor: pointer;
+}
+
+#slogan {
+	position:absolute;
+	top:45px;
+	left:310px;
+	font-size:24pt;
+	font-family:'Droid Sans', Verdana, sans-serif;
+	text-shadow:#2565B0 2px 2px 3px, 
+				#2565B0 -2px 2px 3px, 
+				#2565B0 -2px -2px 3px, 
+				#2565B0 2px -2px 3px;
+}
+
+#main
+{
+	margin:0px auto;
+	padding:30px 50px;
+	background-color: #f8f8f8;
+	border-radius:20px;
+	box-shadow:#aaa 0px 0px 10px;
+	position:relative;
+	width:800px;
+}
+
+#userstatus	{
+	position:absolute;
+	top:15px;
+	right:30px;
+	font-size:9pt;
+}
+
+fieldset	{
+	margin:0;
+	padding:5px 10px ;
+	margin-bottom:10px;
+	padding-bottom:20px;
+	border:1px solid #BBBBBB;
+	background:#f1f1f1;
+	border-radius:5px;
+}
+
+legend	{
+	font-weight:bold;
+	font-size:11pt;
+	padding:5px;
+	
+}
+
+h2 {
+	text-align:center;
+}
+
+.tbl	{
+	border-collapse:collapse;
+	
+}
+
+.tbl tr:nth-child(odd) {
+	background:#eee;
+}
+
+.tbl	td
+{
+	border:#bbb solid 1px;	
+	vertical-align:middle;
+	padding: 0px 3px;
+}
+
+.tbl	th
+{
+	background:#ccc;
+	border:#bbb solid 1px;	
+	color:#222;
+	text-align:left;
+	padding:3px 4px;
+	font-size:11pt;
+}
+
+.loginerror	{
+	padding:8px;
+	background:#edd;
+	margin-bottom:10px;
+}
+
+#loginform {
+	margin:0 auto;
+	padding:0;
+	width:400px;
+}
+
+input[type="text"], input[type="password"]	{
+	width:200px;
+	padding:3px;
+	margin:3px;
+}
+
+input[type="text"], input[type="password"], select {
+        border-width:1px;
+        border-style:solid;
+        border-color: #e2e3ea;
+        border-bottom-color: #e3e9ef;
+        border-top-color: #abadb3;
+}
+
+input[type="text"]:focus, input[type="password"]:focus, select:focus {
+        border-color: #b5cfe7;
+        border-bottom-color: #b7d9ed;
+        border-top-color: #3d7bad;
+}
+
+select	{
+	padding:3px;
+	margin:3px;
+}
+
+#loginform label {
+	display:inline-block;
+	width:100px;
+	text-align:right;
+	margin-right:5px;
+}
+
+#loginform label:after	{
+	content:':';
+}
+
+#loginform .buttons	{
+	margin:3px 0 15px 115px;	
+}
+
+#roundinfo	{
+	font-size:8pt;
+	color:#555;
+}
+
+input[type="submit"], input[type="button"], button, .button {
+	-moz-box-shadow:rgba(255, 255, 255, 0.6) 0 1px 0 0;
+	-webkit-box-shadow:rgba(255, 255, 255, 0.6) 0 1px 0 0;
+	-o-box-shadow:rgba(255, 255, 255, 0.6) 0 1px 0 0;
+	box-shadow:rgba(255, 255, 255, 0.6) 0 1px 0 0;
+	-moz-border-radius:4px;
+	-webkit-border-radius:4px;
+	-o-border-radius:4px;
+	-ms-border-radius:4px;
+	-khtml-border-radius:4px;
+	border-radius:4px;
+	background:#e5e5e5;
+	background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(0%, #ffffff), color-stop(100%, #cccccc));
+	background-image:-moz-linear-gradient(top, #ffffff 0%, #cccccc 100%);
+	background-image:linear-gradient(top, #ffffff 0%, #cccccc 100%);
+	border:1px solid #aaaaaa;
+
+	font-family: sans-serif;
+	font-style: normal;
+	font-variant: normal;
+	font-size: 13px;
+	font-size-adjust: none;
+	font-stretch: normal;
+	-x-system-font: none;
+	line-height: 18px;
+	font-weight: bold;
+	text-shadow: #ffffff;
+	display: inline;
+	padding-top: 4px;
+	padding-right: 10px;
+	padding-bottom: 2px;
+	padding-left: 10px;
+	overflow-x: hidden;
+	overflow-y: hidden;
+	color: #555555;
+	text-align: center;
+	position: relative;
+	min-height: 19px;
+	height: auto;
+}
+
+input[type="submit"]:hover, input[type="button"]:hover, button:hover, .button:hover {
+	cursor:pointer;
+	color:#111;
+	background-image:linear-gradient(top, #ffffff 0%, #eeeeee 100%);
+	background-image:-moz-linear-gradient(top, #ffffff 0%, #eeeeee 100%);
+}
