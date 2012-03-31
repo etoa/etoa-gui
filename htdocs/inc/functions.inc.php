@@ -103,6 +103,18 @@
 	    return DBManager::getInstance()->safeQuery($query, $params);
 	}
 
+	function startTransaction() {
+		dbquery("START TRANSACTION;");
+	}
+
+	function commitTransaction() {
+		dbquery("COMMIT;");
+	}
+
+	function rollbackTransaction() {
+		dbquery("ROLLBACK;");
+	}
+
 	/**
 	* Gesamte Config-Tabelle lesen und Werte in Array speichern
 	* DEPRECATED! This is only a wrapper!

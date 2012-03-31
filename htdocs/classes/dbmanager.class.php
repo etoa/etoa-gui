@@ -173,6 +173,7 @@ class DBManager implements ISingleton	{
 			catch (DBException $e)
 			{
 				echo $e;
+				throw $e;
 			}			
 		}
 	}

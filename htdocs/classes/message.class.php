@@ -33,41 +33,47 @@ class Message
 	*/
 	static function sendFromUserToUser($senderId,$receiverId,$subject,$text,$cat=0,$fleetId=0)
 	{
-		if ($cat==0) 
-			$cat = USER_MSG_CAT_ID;
-    dbquery("
-    INSERT INTO 
-    	messages
-    (
-    	message_user_from,
-    	message_user_to,
-    	message_timestamp,
-    	message_cat_id
-    ) 
-   	VALUES 
-   	(
-   		'".$senderId."',
-   		'".$receiverId."',
-   		".time().",
-   		".$cat."
-   	);");
-		dbquery("
-			INSERT INTO
-				message_data
+		try {
+			if ($cat == 0) {
+				$cat = USER_MSG_CAT_ID;
+			}
+			startTransaction();
+			dbquery("INSERT INTO 
+				messages
 			(
-				id,
-				subject,
-				text,
-				fleet_id
-			)
-			VALUES
+				message_user_from,
+				message_user_to,
+				message_timestamp,
+				message_cat_id
+			) 
+			VALUES 
 			(
-				".mysql_insert_id().",
-	   		'".addslashes($subject)."',
-	   		'".addslashes($text)."',
-			'".$fleetId."'
-			);
-		");		
+				'".$senderId."',
+				'".$receiverId."',
+				".time().",
+				".$cat."
+			);");
+			dbquery("
+				INSERT INTO
+					message_data
+				(
+					id,
+					subject,
+					text,
+					fleet_id
+				)
+				VALUES
+				(
+					".mysql_insert_id().",
+				'".addslashes($subject)."',
+				'".addslashes($text)."',
+				'".$fleetId."'
+				);
+			");
+			commitTransaction();
+		} catch (Exception $e) {
+			rollbackTransaction();
+		}	
 	}
 
 	
@@ -81,11 +87,6 @@ class Message
 				messages 
 			WHERE 
 				message_id=".$id.";");
-		dbquery("
-			DELETE FROM 
-				message_data 
-			WHERE 
-				id=".$id.";");
 	}
 
 	/**
