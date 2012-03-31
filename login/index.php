@@ -14,6 +14,8 @@
 	$nickField = sha1("nick".$logintoken.$t);
 	$passwordField = sha1("password".$logintoken.$t);
 
+	$target = '../htdocs/';
+	
 ?>
 <!DOCTYPE html>
 <html>
@@ -32,19 +34,33 @@
 	<body>
 		<div id="layoutbox">
 			<div id="header">
-				<a href="."><img id="logo" src="../htdocs/web/images/admin/logo.png" alt="Logo" /></a>
+				<a href="."><img id="logo" src="<?= $target; ?>/web/images/admin/logo.png" alt="Logo" /></a>
 				<div id="slogan">EtoA Login</div>
 			</div>
 			<div id="main">
-				<form action="../htdocs" method="post" id="loginform">
+				<fieldset class="col50l">
+				<legend>Login</legend>
+				<form action="<?= $target; ?>" method="post" id="loginform">
 					<label for="nick">Nick</label> <input type="text" id="nick" name="<?PHP echo $nickField; ?>" size="11" maxlength="100" /><br />
 					<label for="password">Password</label> <input type="password" id="password" name="<?PHP echo $passwordField; ?>" size="11" maxlength="100" /><br />
 					<p class="buttons">
 						<input type="submit" value="Login" name="login" />&nbsp;
-						<input type="button" value="Admin" onclick="document.location='../htdocs/admin';" />
+						<input type="button" value="Zum Admin-Login" onclick="document.location='<?= $target; ?>/admin';" />
 					</p>
 					<input type="hidden" name="token" value="<?PHP echo $logintoken; ?>" />
 				</form>
+				</fieldset>
+				<fieldset class="col50r">
+				<legend>Optionen</legend>
+				<ul>
+					<li><a href="<?= $target; ?>/show.php?index=register">Anmelden</a></li>
+					<li><a href="<?= $target; ?>/show.php?index=pwforgot">Neues Passwort anfordern</a></li>
+					<li><a href="<?= $target; ?>/show.php?index=stats">Rangliste</a></li>
+					<li><a href="<?= $target; ?>/show.php?index=pillory">Pranger</a></li>
+					<li><a href="<?= $target; ?>/show.php?index=contact">Kontakt</a></li>
+				</ul>
+				</fieldset>
+				<br class="clearer"/>
 			</div>
 		</div>
 	</body>

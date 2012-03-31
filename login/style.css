@@ -59,6 +59,7 @@ body
 	box-shadow:#aaa 0px 0px 10px;
 	position:relative;
 	width:800px;
+	font-size: 0.8em;
 }
 
 #userstatus	{
@@ -124,7 +125,6 @@ h2 {
 #loginform {
 	margin:0 auto;
 	padding:0;
-	width:400px;
 }
 
 input[type="text"], input[type="password"]	{
@@ -218,4 +218,20 @@ input[type="submit"]:hover, input[type="button"]:hover, button:hover, .button:ho
 	color:#111;
 	background-image:linear-gradient(top, #ffffff 0%, #eeeeee 100%);
 	background-image:-moz-linear-gradient(top, #ffffff 0%, #eeeeee 100%);
+}
+
+.col50l {
+	float:left;
+	width:46%;
+	margin-right:1%;
+}
+
+.col50r {
+	float:right;
+	width:46%;
+	margin-left:1%;
+}
+
+.clearer {
+	clear:both;
 }
