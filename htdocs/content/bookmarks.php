@@ -948,15 +948,60 @@
 					echo "<tr>
 										<td style=\"width:40px;background:#000\"><img src=\"".$ent->imagePath()."\" /></td>
 										<td>".$ent->entityCodeString()."</td>
-										<td>".$ent."</td>
+										<td><a href=\"?page=cell&amp;id=".$ent->cellId()."&amp;hl=".$ent->id()."\">".$ent."</a></td>
 										<td>".$ent->owner()."</td>
 										<td>".text2html($arr['comment'])."</td>
-										<td>
-											<a href=\"?page=haven&amp;target=".$ent->id()."\">Flotte</a> 
-											<a href=\"?page=entity&amp;id=".$ent->id()."&amp;hl=".$ent->id()."\">Infos</a> 
-											<a href=\"?page=cell&amp;id=".$ent->cellId()."&amp;hl=".$ent->id()."\">System</a> 
-											<a href=\"?page=$page&amp;edit=".$arr['id']."\">Bearbeiten</a> 
-											<a href=\"?page=$page&amp;del=".$arr['id']."\" onclick=\"return confirm('Soll dieser Favorit wirklich gel&ouml;scht werden?');\">Entfernen</a>
+										<td>";
+
+					// Action icons added by river, Info link moved to coordinates (above)
+
+					// Flotte
+					if ($ent->entityCode()=='p' || $ent->entityCode()=='a' || $ent->entityCode()=='w' || $ent->entityCode()=='n' || $ent->entityCode()=='e')
+					{
+						echo "<a href=\"?page=haven&amp;target=".$ent->id()."\" title=\"Flotte hinschicken\">".icon('fleet')."</a> ";
+					}
+
+					if ($ent->entityCode()=='p')					
+					{						
+						// Nachrichten-Link
+						if ($ent->ownerId()>0 && $cu->id!=$ent->ownerId())
+						{
+							echo "<a href=\"?page=messages&amp;mode=new&amp;message_user_to=".$ent->ownerId()."\" title=\"Nachricht senden\">".icon("mail")."</a> ";
+						}
+							
+						// Ausspionieren, Raketen, Krypto
+						if ($cu->id!=$ent->ownerId())
+						{
+							// Besiedelter Planet
+							if($ent->ownerId() > 0)
+							{
+								echo "<a href=\"javascript:;\" onclick=\"xajax_launchSypProbe(".$ent->id().");\" title=\"Ausspionieren\">".icon("spy")."</a>";
+								echo "<a href=\"?page=missiles&amp;target=".$ent->id()."\" title=\"Raketenangriff starten\">".icon("missile")."</a> ";
+								echo "<a href=\"?page=crypto&amp;target=".$ent->id()."\" title=\"Flottenbewegungen analysieren\">".icon("crypto")."</a> ";					
+							}
+						}
+					}
+					
+					// Analysieren, letzten Analysebericht als Popup anzeigen
+					if (in_array("analyze",$ent->allowedFleetActions()))
+					{
+						if ($cu->properties->showCellreports)
+						{
+							$reports = Report::find(array("type"=>"spy","user_id"=>$cu->id, "entity1_id"=>$ent->id()),"timestamp DESC",1,0,true);
+							if (count($reports)) {
+								$r = array_pop($reports);
+								echo "<span ".tm($r->subject,$r."<br style=\"clear:both\" />")."><a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(".$ent->id().");\" title=\"Analysieren\">".icon("spy")."</a></span>";	
+							}
+							else
+								echo "<a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(".$ent->id().");\" title=\"Analysieren\">".icon("spy")."</a> ";
+						}
+						else
+							echo "<a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(".$ent->id().");\" title=\"Analysieren\">".icon("spy")."</a> ";
+					}
+									echo "
+											<a href=\"?page=entity&amp;id=".$ent->id()."&amp;hl=".$ent->id()."\">".icon('info')."</a> 
+											<a href=\"?page=$page&amp;edit=".$arr['id']."\">".icon('edit')."</a> 
+											<a href=\"?page=$page&amp;del=".$arr['id']."\" onclick=\"return confirm('Soll dieser Favorit wirklich gel&ouml;scht werden?');\">".icon('delete')."</a>
 									</td>
 							</tr>";
 				}
