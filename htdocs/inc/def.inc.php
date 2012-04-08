@@ -335,7 +335,7 @@
 	define("MISSILE_BATTLE_SHIELD_FACTOR",0.3);		// Faktor mit dem die Schilde der Verteidigung bei einem Kampf mit einberechnet werden.
 	
 	// Kryptocenter
-	define("CRYPTO_RANGE_PER_LEVEL",500);				// Reichweite in AE für Kryptoanalyse pro Ausbaustufe
+	define("CRYPTO_RANGE_PER_LEVEL",700);				// Reichweite in AE für Kryptoanalyse pro Ausbaustufe
 	define("CRYPTO_FUEL_COSTS_PER_SCAN",10000);		// Kosten an Tritium pro Kryptoanalyse
 
   /*************************/
