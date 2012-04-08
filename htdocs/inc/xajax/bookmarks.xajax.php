@@ -191,7 +191,7 @@ $xajax->register(XAJAX_FUNCTION,'showFleetCategorie');
 			while($arr=mysql_fetch_row($res))
 			{
 		    $nCount++;
-	      $sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('$inputId').value='".htmlentities($arr[0])."';xajax_addShipToList('".$arr[0]."');document.getElementById('$targetId').style.display = 'none';\">".htmlentities($arr[0])."</a>";
+	      $sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('$inputId').value='".htmlspecialchars($arr[0])."';xajax_addShipToList('".$arr[0]."');document.getElementById('$targetId').style.display = 'none';\">".htmlspecialchars($arr[0])."</a>";
 	      $sLastHit = $arr[0];
 	    }
 		}
