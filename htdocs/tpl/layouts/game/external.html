@@ -1,0 +1,26 @@
+{include file='tpl/chunks/game/header.html'}
+{if $logged_in eq false}
+<div id="outGameTop">
+	<div id="outGameTopLogo">
+		<a href="{$loginurl|default:''}" title="Zur Startseite">
+			<img src="web/images/outgame/logo.png" alt="Logo" />
+		</a>
+	</div>
+	<div id="outGameTopName">
+		{$roundname|default:'EtoA'}
+	</div>
+	<ul id="outGameTopmenu">
+	{if $topmenu|count gt 0}
+	{foreach from=$topmenu key=identifier item=data}
+		<li>
+			<a href="{$data.url}"><img src="web/images/outgame/{$identifier}.png" alt="{$data.label}" /><br/>{$data.label}</a>
+		</li>
+	{/foreach}
+	{/if}
+	</ul>
+</div>
+{/if}
+<div id="outGameContent">
+{$content_for_layout}
+</div>
+{include file='tpl/chunks/game/footer.html'}

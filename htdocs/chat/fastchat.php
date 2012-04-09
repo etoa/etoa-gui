@@ -14,10 +14,13 @@
 	
 	echo '<?xml version="1.0" encoding="UTF-8"?>';
 ?>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-	<head>
+<!doctype html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+	<meta charset="utf-8">
 		<title>EtoA Chat</title>
 		<meta http-equiv="expires" content="0" />
 		<meta http-equiv="pragma" content="no-cache" />
@@ -25,8 +28,9 @@
 		<meta http-equiv="content-script-type" content="text/javascript" />
 		<meta http-equiv="content-style-type" content="text/css" />
 		<meta http-equiv="content-language" content="de" />
-		<link rel="stylesheet" type="text/css" href="../css/chat.css" />
-		<script src="js/fastchat.js" type="text/javascript"></script>
+		<link rel="stylesheet" type="text/css" href="../web/css/chat.css" />
+		<script type="text/javascript" src="../web/js/jquery.min.js"></script>
+		<script type="text/javascript" src="../web/js/fastchat.js" ></script>
 	</head>
 	<body>
 		<?PHP

@@ -176,7 +176,7 @@ class xajaxEventPlugin extends xajaxRequestPlugin
 			{
 				echo "\n<script type='text/javascript' ";
 				echo $this->sDefer;
-				echo "charset='UTF-8'>\n";
+				echo ">\n";
 				echo "/* <![CDATA[ */\n";
 
 				foreach (array_keys($this->aEvents) as $sKey)

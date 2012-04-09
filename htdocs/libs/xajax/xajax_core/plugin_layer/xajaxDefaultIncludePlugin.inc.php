@@ -167,7 +167,7 @@ class xajaxIncludeClientScriptPlugin extends xajaxRequestPlugin
 		echo '<';
 		echo 'script type="text/javascript" ';
 		echo $this->sDefer;
-		echo 'charset="UTF-8">';
+		echo '>';
 		echo $sCrLf;
 		echo '/* <';
 		echo '![CDATA[ */';
@@ -273,7 +273,7 @@ class xajaxIncludeClientScriptPlugin extends xajaxRequestPlugin
 			echo $aJsFile[0];
 			echo '" ';
 			echo $this->sDefer;
-			echo 'charset="UTF-8"><';
+			echo '><';
 			echo '/script>';
 			echo $sCrLf;
 		}
@@ -283,7 +283,7 @@ class xajaxIncludeClientScriptPlugin extends xajaxRequestPlugin
 				echo '<';
 				echo 'script type="text/javascript" ';
 				echo $this->sDefer;
-				echo 'charset="UTF-8">';
+				echo '>';
 				echo $sCrLf;
 				echo '/* <';
 				echo '![CDATA[ */';

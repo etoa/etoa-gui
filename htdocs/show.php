@@ -1,36 +1,19 @@
 <?PHP
-	//////////////////////////////////////////////////
-	//		 	 ____    __           ______       			//
-	//			/\  _`\ /\ \__       /\  _  \      			//
-	//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
-	//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
-	//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
-	//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
-	//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
-	//																					 		//
-	//////////////////////////////////////////////////
-	// The Andromeda-Project-Browsergame				 		//
-	// Ein Massive-Multiplayer-Online-Spiel			 		//
-	// Programmiert von Nicolas Perrenoud				 		//
-	// www.nicu.ch | mail@nicu.ch								 		//
-	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	//////////////////////////////////////////////////
-	//
-	// 	Dateiname: main_i.php
-	// 	Topic: Alternative Include-Seite
-	// 	Autor: Nicolas Perrenoud alias MrCage
-	// 	Erstellt: 01.12.2004
-	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage
-	// 	Bearbeitet am: 07.03.2006
-	// 	Kommentar:
-	//
+//////////////////////////////////////////////////////
+// The Andromeda-Project-Browsergame                //
+// Ein Massive-Multiplayer-Online-Spiel             //
+// Programmiert von Nicolas Perrenoud<mail@nicu.ch> //
+// als Maturaarbeit '04 am Gymnasium Oberaargau	    //
+//////////////////////////////////////////////////////
+// $Id: index.php 1417 2012-03-24 13:51:47Z etoa-live $
+//////////////////////////////////////////////////////
 
-	/**
-	* Alternative main file for out of game viewing of specific pages
-	*
-	* @author MrCage mrcage@etoa.ch
-	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/
+/**
+* Alternative main file for out of game viewing of specific pages
+*
+* @author MrCage mrcage@etoa.ch
+* @copyright Copyright (c) 2004 EtoA Gaming, www.etoa.ch
+*/
 
 	$indexpage = array();
 	$indexpage['login']=array('url'=>'?index=login','label'=>'Einloggen');
@@ -79,6 +62,7 @@
 
 	$tpl->assign("gameTitle", getGameIdentifier().(isset($indexpage[$index]) ? ' - '.$indexpage[$index]['label'] : ''));
 	$tpl->assign("templateDir",CSS_STYLE);
+	$tpl->assign("additional_css", array('web/css/outgame.css'));
 
 	// Xajax header
 	ob_start();
@@ -99,8 +83,6 @@
 	//
 
 	ob_start();
-
-	echo '<div id="outGameContent">';
 			
 	$show = true;
 	// Handle case if outgame key is set
@@ -202,19 +184,12 @@
 		<input type=\"submit\" value=\"Prüfen\" name=\"reg_key_auth_submit\" />
 		</form>";
 	}		
-	echo '</div>';
 
-	$content = ob_get_clean();
+	$tpl->assign("logged_in", ($loggedIn && $page!=DEFAULT_PAGE));
 
-	// Display header
-	if ($loggedIn && $page!=DEFAULT_PAGE)
-		$tpl->display(getcwd()."/tpl/header.html");
-	else
-		$tpl->display(getcwd()."/tpl/headerext.html");
-
-	echo $content;
-
-	// Page footer
-	$tpl->display(getcwd()."/tpl/footer.html");
+	$tpl->assign("content_for_layout", ob_get_clean());
+	
+	$layoutTemplate = "/tpl/layouts/game/external.html";
+	$tpl->display(getcwd().'/'.$layoutTemplate);
 
 ?>

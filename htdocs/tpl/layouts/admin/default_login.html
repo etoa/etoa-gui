@@ -1,21 +1,14 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		{include file='chunks/admin/header.html'}
-	</head>
-	<body class="login">
-		<div id="layoutbox">
-			<div id="header">
-				<a href=".."><img id="logo" src="../web/images/admin/logo.png" alt="Logo" /></a>
-				<div id="slogan">Administration {cfg key="roundname"}</div>
-			</div>
-			<div id="main">
-				<div id="content">
-					{$content_for_layout}
-					{$content_overflow|default:''}
-				</div>
-			</div>
+{include file='chunks/admin/header.html'}
+<div id="layoutbox">
+	<div id="header">
+		<a href=".."><img id="logo" src="../web/images/admin/logo.png" alt="Logo" /></a>
+		<div id="slogan">Administration {cfg key="roundname"}</div>
+	</div>
+	<div id="main">
+		<div id="content">
+			{$content_for_layout}
+			{$content_overflow|default:''}
 		</div>
-		{$scripts_for_footer|default:''}
-	</body>
-</html>
+	</div>
+</div>
+{include file='chunks/admin/footer.html'}

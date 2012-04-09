@@ -1,7 +1,7 @@
-/* Definitionen f�r die �ffentlich zug�nglichen Seiten
+/* Definitionen für die öffentlich zugänglichen Seiten
 -------------------------------------------------------*/
 
-#outGameBody	{
+body	{
 	text-align:center;
 	margin:0px;
 }

@@ -1,31 +1,19 @@
 <?PHP
-	//////////////////////////////////////////////////
-  //       ____    __           ______            //
-  //      /\  _`\ /\ \__       /\  _  \           //
-  //      \ \ \L\_\ \ ,_\   ___\ \ \L\ \          //
-  //       \ \  _\L\ \ \/  / __`\ \  __ \         //
-  //        \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \        //
-  //         \ \____/\ \__\ \____/\ \_\ \_\       //
-  //          \/___/  \/__/\/___/  \/_/\/_/       //
-  //                                              //
-  //////////////////////////////////////////////////
-  // The Andromeda-Project-Browsergame            //
-  // Ein Massive-Multiplayer-Online-Spiel         //
-  // Programmiert von Nicolas Perrenoud           //
-  // www.nicu.ch | mail@nicu.ch                   //
-  // als Maturaarbeit '04 am Gymnasium Oberaargau //
-  //////////////////////////////////////////////////
-	//
-	// 	File: index.php
-	// 	Created: 01.12.2004
-	// 	Last edited: 26.12.2009
-	// 	Last edited by: MrCage <mrcage@etoa.ch>
-	//	
-	/**
-	* Main game file, provides the template and includes all pages
-	*
-	* @author MrCage <mrcage@etoa.ch>
-	*/	
+//////////////////////////////////////////////////////
+// The Andromeda-Project-Browsergame                //
+// Ein Massive-Multiplayer-Online-Spiel             //
+// Programmiert von Nicolas Perrenoud<mail@nicu.ch> //
+// als Maturaarbeit '04 am Gymnasium Oberaargau	    //
+//////////////////////////////////////////////////////
+// $Id: index.php 1417 2012-03-24 13:51:47Z etoa-live $
+//////////////////////////////////////////////////////
+
+/**
+* Main game file, provides the template and includes all pages
+*
+* @author MrCage <mrcage@etoa.ch>
+* @copyright Copyright (c) 2004 EtoA Gaming, www.etoa.ch
+*/	
 
 	//
 	// Basics
@@ -90,6 +78,8 @@
 	// Page header
 	//
 	
+	$layoutTemplate = "/tpl/layouts/game/empty.html";
+	
 	$tpl->assign("gameTitle", getGameIdentifier());
 	$tpl->assign("templateDir", CSS_STYLE);
 
@@ -102,12 +92,6 @@
 	ob_start();
 	initTT();
 	$tpl->assign("bodyTopStuff",ob_get_clean());			
-
-	// Display header		
-	$tpl->display(getcwd()."/tpl/header.html");
-
-	//dump($s);
-	//dump($_SESSION);
 
 	//
 	// Page content
@@ -135,6 +119,8 @@
 		unset($rfr);
 	}
 
+	ob_start();
+	
 	// Spiel ist generell gesperrt (ausser fŸr erlaubte IP's)
 	$allowed_ips = explode("\n",$cfg->value('offline_ips_allow'));
 	
@@ -175,6 +161,7 @@
 		<h1>Falscher Referer</h1>
 		Der Zugriff auf das Spiel ist nur anderen internen Seiten aus m&ouml;glich! Ein externes Verlinken direkt in das Game hinein ist nicht gestattet! Dein Referer: ".$_SERVER["HTTP_REFERER"]."<br/><br/>
 		<a href=\"".Config::getInstance()->loginurl->v."\">Hauptseite</a></div>";
+		
 	}
 	// Zugriff erlauben und Inhalt anzeigen
 	else
@@ -347,23 +334,25 @@
 			$tpl->assign("noteBox",false);
 
 		// Include content
-		ob_start();
 		require("inc/content.inc.php");
-		$tpl->assign("content",ob_get_clean());
 		
 		$tpl->assign("renderTime",$tmr->getRoundedTime());
 						
 		// Display main template
-		$tpl->display(getcwd()."/".CSS_STYLE."/template.tpl");						
-
+		$layoutTemplate = CSS_STYLE."/template.html";
 	}
+	$tpl->assign("content_for_layout", ob_get_clean());
+	
+	//ob_start();
+	//include("chat/fastchat.php");
+	//$tpl->assign("chatstream", ob_get_clean());
 
-	//
-	// Page footer
-	//
+	//ob_start();
+	//include("chat/fastchatinput.php");
+	//$tpl->assign("chatinput", ob_get_clean());
 	
-	$tpl->display(getcwd()."/tpl/footer.html");
-	
+	$tpl->display(getcwd().'/'.$layoutTemplate);
+
 	$_SESSION['lastpage']=$page;
 
 	dbclose();

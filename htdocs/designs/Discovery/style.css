@@ -1707,8 +1707,21 @@ visibility:visible;
 	text-align:center;
 }
 
+#layoutframe {
+	position:absolute;
+	top:0;
+	left:0px;
+	margin:0;
+	padding:0;
+}
 
-
-
-
-
+#chatframe {
+	position:fixed;
+	top:0;
+	right:0;
+	bottom:0;
+	width:230px;
+	background:rgba(0,0,0,0.6);
+	z-index:100;
+	border-left:1px solid #777;
+}

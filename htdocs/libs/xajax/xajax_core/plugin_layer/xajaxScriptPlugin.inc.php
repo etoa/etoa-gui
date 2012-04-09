@@ -145,7 +145,7 @@ class xajaxScriptPlugin extends xajaxRequestPlugin
 				$sHash = md5(implode($aScripts));
 				$sQuery = $sQueryBase . "xjxGenerateJavascript=" . $sHash;
 				
-				echo "\n<script type='text/javascript' src='" . $this->sRequestURI . $sQuery . "' charset='UTF-8'></script>\n";
+				echo "\n<script type='text/javascript' src='" . $this->sRequestURI . $sQuery . "'></script>\n";
 			}
 			
 			$aStyles = $this->_getSections('style');

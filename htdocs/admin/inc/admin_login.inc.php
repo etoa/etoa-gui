@@ -91,7 +91,7 @@ else
 	}
 }
 $tpl->assign("content_overflow", ob_get_clean());
-
+$tpl->assign("body_class", "login");
 $tpl->setLayout("admin/default_login");
 $tpl->render();
 

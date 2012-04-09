@@ -9,7 +9,7 @@ body	{
 	color: white;
 	font-family:verdana, sans-serif, ARIAL;
 	font-size: 10pt;
-	background:#000 url('../../images/background.jpg');
+	background:#000 url('../../web/images/background.jpg');
 }
 
 img	{
@@ -136,7 +136,7 @@ input,select,textarea	{
 }
 
 #logo	{
-	background:#000 url('../../images/logo.jpg') no-repeat;
+	background:#000 url('../../web/images/logo.jpg') no-repeat;
 	width:175px;
 	height:72px;
 	border:1px solid #fff;
@@ -144,7 +144,7 @@ input,select,textarea	{
 
 #banner	{
 	text-align:center;
-	background:#000 url('../../images/banner.jpg') no-repeat;
+	background:#000 url('../../web/images/banner.jpg') no-repeat;
 	height:72px;
 	border:1px solid #fff;
 }
@@ -244,6 +244,9 @@ input,select,textarea	{
 	border-bottom:solid 1px #e6e6e6;
 }
 
+#nav_mode_select {
+	width:100%;
+}
 
 .tbltitle, table.tb th {
 	font-size:10pt;
@@ -390,7 +393,7 @@ td.statsNav	{
 
 td.coordstbl	{
 	border:0px;
-	background:#000000 url('../../images/empty_space.gif');
+	background:#000000 url('../../web/images/empty_space.gif');
 	vertical-align:middle;
 	text-align:center;
 	width:40px;

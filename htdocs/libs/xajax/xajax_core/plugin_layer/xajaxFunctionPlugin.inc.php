@@ -162,7 +162,7 @@ class xajaxFunctionPlugin extends xajaxRequestPlugin
 		{
 			if (0 < count($this->aFunctions))
 			{
-				echo "\n<script type='text/javascript' " . $this->sDefer . "charset='UTF-8'>\n";
+				echo "\n<script type='text/javascript' " . $this->sDefer . ">\n";
 				echo "/* <![CDATA[ */\n";
 
 				foreach (array_keys($this->aFunctions) as $sKey)
