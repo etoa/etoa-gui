@@ -674,17 +674,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 							if ($content=="counter") $out.="<td>".++$counter."</td>";
 							elseif ($content=="user_nick")
 							{
-								$out.= "<td>
-								<div id=\"ttuser".$arr['id']."\" style=\"display:none;\">
-								".popUp("Profil anzeigen","page=userinfo&id=".$arr['id'])."<br/>
-								".popUp("Punkteverlauf","page=$page&amp;mode=$mode&amp;userdetail=".$arr['id'])."<br/>";
-									if ($arr['id']!=$_SESSION['user_id'])
-									{
-										$out.=  "<a href=\"?page=messages&mode=new&message_user_to=".$arr['id']."\">Nachricht senden</a><br/>";
-										$out.=  "<a href=\"?page=buddylist&add_id=".$arr['id']."\">Als Freund hinzufügen</a>";
-									}
-								$out.="</div>
-								<a  href=\"#\" ".cTT($arr['user_nick'],"ttuser".$arr['id']).">".$arr['user_nick']."</a></td>";
+								$out.= "<td>".$arr['user_nick']."</td>";
 							}
 							else
 							{
@@ -723,17 +713,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 						else
 							$out.= "<img src=\"images/stats/stat_same.gif\" alt=\"same\" width=\"21\" height=\"9\" />";
 						$out.= "</td>";
-						$out.= "<td $addstyle >
-						<div id=\"ttuser".$arr['id']."\" style=\"display:none;\">
-						".popUp("Profil anzeigen","page=userinfo&id=".$arr['id'])."<br/>
-						".popUp("Punkteverlauf","page=$page&amp;mode=$mode&amp;userdetail=".$arr['id'])."<br/>";
-							if (isset($_SESSION['user_id']) && $arr['id']!=$_SESSION['user_id'])
-							{
-								$out.=  "<a href=\"?page=messages&mode=new&message_user_to=".$arr['id']."\">Nachricht senden</a><br/>";
-								$out.=  "<a href=\"?page=buddylist&add_id=".$arr['id']."\">Als Freund hinzufügen</a>";
-							}
-						$out.="</div>
-						<a $addstyle href=\"#\" ".cTT($arr['nick'],"ttuser".$arr['id']).">".$arr['nick']."</a></td>";
+						$out.= "<td $addstyle >".$arr['nick']."</td>";
 						$out.= "<td $addstyle >".$arr['race_name']."</td>";
 						$out.= "<td $addstyle ><a $addstyle href=\"?page=sector&sector=".$arr['sx'].",".$arr['sy']."\">".$arr['sx']."/".$arr['sy']."</a></td>";
 						$out.= "<td $addstyle >".$arr['alliance_tag']."</td>";
