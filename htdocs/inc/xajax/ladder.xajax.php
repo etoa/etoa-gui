@@ -727,7 +727,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 						<div id=\"ttuser".$arr['id']."\" style=\"display:none;\">
 						".popUp("Profil anzeigen","page=userinfo&id=".$arr['id'])."<br/>
 						".popUp("Punkteverlauf","page=$page&amp;mode=$mode&amp;userdetail=".$arr['id'])."<br/>";
-							if ($arr['id']!=$_SESSION['user_id'])
+							if (isset($_SESSION['user_id']) && $arr['id']!=$_SESSION['user_id'])
 							{
 								$out.=  "<a href=\"?page=messages&mode=new&message_user_to=".$arr['id']."\">Nachricht senden</a><br/>";
 								$out.=  "<a href=\"?page=buddylist&add_id=".$arr['id']."\">Als Freund hinzufügen</a>";
