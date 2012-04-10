@@ -715,7 +715,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 						$out.= "</td>";
 						$out.= "<td $addstyle >".$arr['nick']."</td>";
 						$out.= "<td $addstyle >".$arr['race_name']."</td>";
-						$out.= "<td $addstyle ><a $addstyle href=\"?page=sector&sector=".$arr['sx'].",".$arr['sy']."\">".$arr['sx']."/".$arr['sy']."</a></td>";
+						$out.= "<td $addstyle >".$arr['sx']."/".$arr['sy']."</td>";
 						$out.= "<td $addstyle >".$arr['alliance_tag']."</td>";
 						$out.= "<td $addstyle >".nf($arr['points'])."</td>";
 						$out.= "</tr>";
