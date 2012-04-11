@@ -12,6 +12,7 @@ function setFocus()
 	    msgFail('Fehler: wrongID');
 	    return false;
 	}
+	//if(input.hasFocus()
 	input.focus();
     }
     catch(e)
@@ -19,11 +20,17 @@ function setFocus()
 	msgFail('Fehler: idNotFound');
     }
 }
+
 function logoutFromChat()
 {
     var xr = new XMLHttpRequest();
-    xr.open('GET','fastchatlogout.php',false);
+    xr.open('GET','fastchatlogout.php',true);
+    xr.onreadystatechange = function(){ if(xr.readyState == 4) finish_logoutFromChat(xr); }
     xr.send(null);
+}
+
+function finish_logoutFromChat(xobj)
+{
     try
     {
 	parent.top.location = parent.main.location;
@@ -56,16 +63,21 @@ function sendChat(id)
 	var xr = new XMLHttpRequest();
 	xr.open('POST','fastchatpush.php',false);
 	xr.setRequestHeader('Content-Type','application/x-www-form-urlencoded; charset=UTF-8');
-	xr.send('ctext='+ctext);
-	var ret = false;
-	if(xr.responseText)
+	xr.onreadystatechange = function()
 	{
-	    ret = handleResponse(xr.responseText);
+	    var ret = false;
+	    if(xr.responseText)
+	    {
+		ret = handleResponse(xr.responseText);
+	    }
+	    else
+	    {
+		msgFail('+');
+	    }
+	    input.value = '';
+	    input.focus();
 	}
-	else
-	    msgFail('+');
-	input.value = '';
-	input.focus();
+	xr.send('ctext='+ctext);
     }
     else
     {

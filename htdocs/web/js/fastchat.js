@@ -20,18 +20,44 @@ function poll(noTimeout)
     var xr = new XMLHttpRequest();
     xr.open('POST','fastchatpoll.php',false);
     xr.setRequestHeader('Content-Type','application/x-www-form-urlencoded; charset=UTF-8');
+    if(typeof noTimeout != 'boolean' || !noTimeout)
+    {
+	xr.onreadystatechange = function()
+	{
+	    if(xr.readyState == 4)
+	    {
+		finish_poll(false,xr);
+	    }
+	}
+    }
+    else
+    {
+	xr.onreadystatechange = function()
+	{
+	    if(xr.readyState == 4)
+	    {
+		finish_poll(true,xr);
+	    }
+	}
+    }
     xr.send('minId='+minId);
-    var ret = false;
+}
+
+function finish_poll(noTimeout,xr)
+{
     if(xr.responseText)
     {
 	ret = handleResponse(xr.responseText);
     }
     else
+    {
 	msgFail('');
+    }
     window.scrollBy(0,100000);
-    if(typeof noTimeout != 'boolean' || !noTimeout)
+    if(!noTimeout)
+    {
 	setTimeout('startpolling();',1000);
-    return ret;
+    }
 }
 
 function handleResponse(rtext)
@@ -82,7 +108,13 @@ function kicked(rtext)
 
 function logIn(rtext)
 {
-    var voider = poll(true);
+    //dirty implementation
+    setTimeout('finish_login("'+rtext+'")',2000);
+    poll(true);
+}
+
+function finish_login(rtext)
+{
     if(rtext.length > 3)
     {
 	userName = rtext.substring(3);
@@ -154,7 +186,18 @@ function showUserList()
 {
     var xr = new XMLHttpRequest();
     xr.open('GET','fastchatuserlist.php',false);
+    xr.onreadystatechange = function()
+    {
+	if(xr.readyState == 4)
+	{
+	    finish_showUserList(xr);
+	}
+    }
     xr.send(null);
+}
+
+function finish_showUserList(xr)
+{
     var txt;
     if(!xr.responseText)
     {

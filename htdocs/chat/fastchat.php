@@ -2,15 +2,7 @@
 	/* fastchat von river */
 
 	define('RELATIVE_ROOT','../');
-/*	include_once(RELATIVE_ROOT.'classes/isingleton.class.php');
-	include_once(RELATIVE_ROOT.'classes/dbmanager.class.php');
-	include_once(RELATIVE_ROOT.'classes/dbexception.class.php');
-	include_once(RELATIVE_ROOT.'inc/functions.inc.php');*/
 	include_once(RELATIVE_ROOT.'inc/bootstrap.inc.php');
-	/*
-	include_once(RELATIVE_ROOT.'classes/user.class.php');
-	include_once(RELATIVE_ROOT.'classes/session.class.php');
-	include_once(RELATIVE_ROOT.'classes/usersession.class.php');*/
 	
 	echo '<?xml version="1.0" encoding="UTF-8"?>';
 ?>
@@ -30,7 +22,7 @@
 		<meta http-equiv="content-language" content="de" />
 		<link rel="stylesheet" type="text/css" href="../web/css/chat.css" />
 		<script type="text/javascript" src="../web/js/jquery.min.js"></script>
-		<script type="text/javascript" src="../web/js/fastchat.js" ></script>
+		<script type="text/javascript" src="../web/js/fastchat-jq.js" ></script>
 	</head>
 	<body>
 		<?PHP
@@ -61,7 +53,7 @@
 					<div id="chatitems"></div>
 					<div id="userlist" style="display:none;"></div>
 					<div id="chatchannelcontrols">
-						<input type="button" id="userListButton" onclick="showUserList()" value="User anzeigen"/><span id="loading" style="color: #aaa;"></span>
+						<input type="button" id="userListButton" value="User anzeigen"/><span id="loading" style="color: #aaa;"></span>
 					</div>
 					<?PHP
 				}
