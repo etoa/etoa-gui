@@ -51,6 +51,12 @@
 			}
 
 		}
+		else if(isset($_SESSION['chatlogouttime']) && ((time() - $_SESSION['chatlogouttime']) < 3))
+		{
+			// dirty prevention of re-login while being logged out
+			// (interferences between chat and chatinput)
+			die('');
+		}
 		else
 		{
 			// User does not exist yet

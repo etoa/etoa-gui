@@ -96,7 +96,7 @@ function handleResponse(rtext)
 
 function logOut()
 {
-    $('body')[0].empty().append('<p>Sie sind ausgeloggt</p>');
+    $('body').empty().append('<p>Sie sind ausgeloggt</p>');
     exitChat();
 }
 
@@ -284,10 +284,7 @@ function exitChat()
 
 function msgFail(rtext)
 {
-    if(($('#loading').empty().append(rtext).size()) == 0)
-    {
-	alert(rtext);
-    }
+    $('#loading').empty().append(rtext);
 }
 
 

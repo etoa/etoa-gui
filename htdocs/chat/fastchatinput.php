@@ -22,11 +22,11 @@
 		<meta http-equiv="content-language" content="de" />
 		<link rel="stylesheet" type="text/css" href="../web/css/chat.css" />
 		<script type="text/javascript" src="../web/js/jquery.min.js"></script>
-		<script type="text/javascript" src="../web/js/fastchatinput.js"></script>
+		<script type="text/javascript" src="../web/js/fastchatinput-jq.js"></script>
 	</head>
 	<body>
 		<div id="chatinput">
-			<form action="" method="post" autocomplete="off" id="cform" onsubmit="sendChat('ctext');return false;">
+			<form action="" method="post" autocomplete="off" id="cform" onsubmit="sendChat();return false;">
 			<?PHP
 				if ( isset($_SESSION['user_id']) )
 				{

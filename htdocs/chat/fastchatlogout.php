@@ -16,4 +16,5 @@
 		user_id = '.$_SESSION['user_id'].';');
 	
 	chatSystemMessage($_SESSION['user_nick'].' verlässt den Chat.');
+	$_SESSION['chatlogouttime'] = time();
 ?>
