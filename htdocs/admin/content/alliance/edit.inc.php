@@ -515,7 +515,7 @@
 				while ($arr = mysql_fetch_assoc($res))
 				{
 					echo "<tr><td>".$arr['alliance_tech_name']."</td><td>".$arr['alliance_techlist_current_level']."</td><td>".$arr['alliance_techlist_member_for']."</td><td>";
-					if ($arr['alliance_buildlist_build_end_time']>time()) echo "Forschen";
+					if ($arr['alliance_techlist_build_end_time']>time()) echo "Forschen";
 					elseif ($arr['alliance_techlist_build_end_time']>0) echo "Forschen abgeschlossen";
 					else echo "Untätig";
 					echo "</td><td>".edit_button("javascript:;","document.getElementById(techlist_".$arr['alliance_techlist_id'].").style.display='block'")."</td></tr>";
