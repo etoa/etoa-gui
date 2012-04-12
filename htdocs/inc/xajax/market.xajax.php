@@ -139,7 +139,11 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 			$carr = mysql_fetch_row($cres);
 			echo "<form action=\"?page=market&amp;mode=ressource\" method=\"post\" id=\"ress_buy_selector\">\n";
 			checker_init();
-			tableStart("Rohstoffangebote ($offerCount von ".$carr[0].")  <span id=\"market_search_loading\"><img src=\"images/loading.gif\" alt=\"loading\" /></span>");
+			tableStart();
+			echo "<thead><tr>
+				<th class=\"infoboxtitle\" colspan=\"20\">Rohstoffangebote ($offerCount von ".$carr[0].")
+					<span id=\"market_search_loading\"><img src=\"images/loading.gif\" alt=\"loading\" /></span>
+				</th></tr>";
 				echo "<tr>
 							<th>Rohstoffe:</th>
 							<th><a href=\"javascript:sortSearch('sell',".($order=="sell"?($orderDirection+1)%2:0).")\">Angebot:</a></th>
@@ -148,7 +152,7 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 							<th><a href=\"javascript:sortSearch('distance',".($order=="distance"?($orderDirection+1)%2:0).")\">Entfernung:</a></th>
 							<th>Beschreibung:</th>
 							<th style=\"width:50px;\">Kaufen:</th>
-						</tr>";
+						</tr></thead>";
 			$cnt=0;
 			foreach ($data as $arr)
 			{
@@ -166,6 +170,8 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 				}
 
 				$cres = $arr['used_res'];
+				
+				echo '<tbody class="offer">';
 				foreach ($resNames as $rk=>$rn)
 				{
 					if ($arr['sell_'.$rk]+$arr['buy_'.$rk]>0)
@@ -177,14 +183,14 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 										if ($i==0)
 										{
 
-											echo "<td rowspan=\"".$cres."\">
+											echo "<td rowspan=\"".$cres."\" class=\"usrinfo\">
 												<a href=\"?page=userinfo&amp;id=".$arr['user_id']."\">".get_user_nick($arr['user_id'])."</a></td>";
-											echo "<td rowspan=\"".$cres."\">
+											echo "<td rowspan=\"".$cres."\" class=\"duration\">
 												".tf($arr['duration'])."
 												</td>
 												<td rowspan=\"".$cres."\">
 													".$for_alliance."<br />
-													".stripslashes($arr['text'])."
+													<span class=\"rtext\">".stripslashes($arr['text'])."</span>
 												</td>
 												<td rowspan=\"".$cres."\">
 													<input type=\"checkbox\" name=\"ressource_market_id[]\" id=\"ressource_market_id\" value=\"".$arr['id']."\" /><br/><br/>
@@ -194,11 +200,12 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 						$i++;
 					}
 				}
+				echo '</tbody>';
 				$cnt++;
 				// Setzt Lücke zwischen den Angeboten
 				if ($cnt<$offerCount)
 				{
-					echo "<tr>
+					echo "<tr class=\"spacer\">
 						<td colspan=\"7\" style=\"height:10px;background:#000\">&nbsp;</td>
 					</tr>";
 				}
@@ -269,14 +276,16 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 					{
 						if ($cnt==0)
 						{
-							tableStart("Angebots&uuml;bersicht");
-							echo "<tr>
+							tableStart();
+							echo "<thead>
+									<tr><th class=\"infoboxtitle\" colspan=\"20\">Angebots&uuml;bersicht</th></tr>";
+							echo "	<tr>
 										<th width=\"25%\">Angebot:</th>
 										<th colspan=\"2\" width=\"25%\">Preis:</th>
 										<th width=\"15%\">Anbieter:</th>
 										<th width=\"15%\">Beschreibung:</th>
 										<th width=\"10%\">Kaufen:</th>
-									</tr>";
+									</tr></thead>";
 						}
 						
 						if($arr['for_alliance']!=0)
@@ -286,6 +295,8 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 
 						$i=0;
 						$resCnt = count($resNames);
+						
+						echo '<tbody class="offer">';
 						foreach ($resNames as $rk => $rn)
 						{
 							echo "<tr>";
@@ -299,14 +310,15 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 							if ($i++==0)
 							{
 								$tu = new User($arr['user_id']);
-								echo "<td rowspan=\"$resCnt\">".$tu->detailLink()."</td>";
-								echo "<td rowspan=\"$resCnt\">".$for_alliance."<br />".stripslashes($arr['text'])."</td>";
+								echo "<td rowspan=\"$resCnt\" class=\"usrinfo\">".$tu->detailLink()."</td>";
+								echo "<td rowspan=\"$resCnt\">".$for_alliance."<br /><span class=\"rtext\">".stripslashes($arr['text'])."</span></td>";
 								echo "<td rowspan=\"$resCnt\">
 									<input type=\"checkbox\" name=\"ship_market_id[]\" id=\"ship_market_id_".$arr['id']."\" value=\"".$arr['id']."\" onclick=\"xajax_calcMarketShipBuy(xajax.getFormValues('ship_buy_selector'));\" />
 								</td>";
 							}
 							echo "</tr>";
 						}
+						echo '</tbody>';
 
 						$cnt++;
 						if ($cnt<mysql_num_rows($res))
@@ -440,7 +452,9 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 
 	$ajax->assign("market_search_results","innerHTML",ob_get_clean());
 	$ajax->assign("market_search_loading","style.display","none");
-
+	
+	//jquery start
+	$ajax->script('uname="'.$_SESSION['user_nick'].'";jqinit();');
 
 	return $ajax;
 }

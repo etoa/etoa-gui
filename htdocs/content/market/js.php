@@ -1472,3 +1472,23 @@
 
 
 			</script>
+<!-- additional market functions by river -->
+<script type="text/javascript">
+	var uname = '';
+	function jqinit()
+	{
+		$(".offer").each(function()
+		{
+			var $th = $(this);
+			var $pa = $th.parent();
+			var $sp;
+			if($(this).find('.rtext').html().toLowerCase().indexOf(uname.toLowerCase()) > -1)
+			{
+				$sp = (($th.next().size() > 0 ? ($th.next()) : ($th.prev())).detach());
+				$th.addClass('foryou').detach().after($sp).prependTo($pa);
+				$th.find('td').css('background-color','navy').css('background-image','none');
+			}
+			$pa.find('thead').detach().prependTo($pa);
+		});
+	}
+</script>
