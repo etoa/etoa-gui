@@ -109,7 +109,7 @@
 			while ($arr=mysql_fetch_assoc($res))
 			{
 				$adminstr = '';
-				$text = $arr['text'];//replace_ascii_control_chars(htmlspecialchars($arr['text']));
+				$text = replace_ascii_control_chars(htmlspecialchars($arr['text']));
 				if ($arr['admin']>=1)
 				{
 					$color = 'y';

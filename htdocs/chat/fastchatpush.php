@@ -80,7 +80,6 @@
 					die('aa:A user with this nick does not exist!');
 				}
 			}
-			// TODO: Change 2nd Regex part to .+ not A-z0-9\s
 			elseif (preg_match('#^/kick (.[^\'\"\?\<\>\$\!\=\;\&\s]+)\s(.+)$#',$ct,$m)>0)
 			{
 				$isCommand = true;
