@@ -177,9 +177,9 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 					if ($arr['sell_'.$rk]+$arr['buy_'.$rk]>0)
 					{
 						echo "<tr>
-										<td class=\"rescolor".$rk."\">".$resIcons[$rk]."<b>".$rn."</b>:</td>
-										<td class=\"rescolor".$rk."\">".($arr['sell_'.$rk]>0 ? nf($arr['sell_'.$rk]) : '-')."</td>
-										<td class=\"rescolor".$rk."\">".($arr['buy_'.$rk]>0 ? nf($arr['buy_'.$rk]) : '-')."</td>";
+										<td class=\"rescolor".$rk." rname\">".$resIcons[$rk]."<b>".$rn."</b>:</td>
+										<td class=\"rescolor".$rk." rsupp\">".($arr['sell_'.$rk]>0 ? nf($arr['sell_'.$rk]) : '-')."</td>
+										<td class=\"rescolor".$rk." rdema\">".($arr['buy_'.$rk]>0 ? nf($arr['buy_'.$rk]) : '-')."</td>";
 										if ($i==0)
 										{
 
@@ -218,9 +218,18 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 				</tr>";
 			}
 			tableEnd();
-			echo "<p><input type=\"submit\" class=\"button\" name=\"ressource_submit\" id=\"ressource_submit\" value=\"Angebot annehmen\"/></p>";
+			tableStart();
+			echo "
+					<tr>
+						<td colspan=\"7\" id=\"ress_buy_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
+					</tr>
+					<tr>
+						<td colspan=\"7\" style=\"text-align:center;vertical-align:middle;\">
+							<input type=\"submit\" name=\"ressource_submit\" id=\"ressource_submit\" value=\"Angebot annehmen\"/>
+						</td>
+					</tr>";
 			echo "</form>";
-
+			tableEnd();
 		}
 		else
 		{
@@ -283,7 +292,7 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 										<th width=\"25%\">Angebot:</th>
 										<th colspan=\"2\" width=\"25%\">Preis:</th>
 										<th width=\"15%\">Anbieter:</th>
-										<th width=\"15%\">Beschreibung:</th>
+										<th width=\"25%\">Beschreibung:</th>
 										<th width=\"10%\">Kaufen:</th>
 									</tr></thead>";
 						}
@@ -305,8 +314,8 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 								$ship = new Ship($arr['ship_id']);
 								echo "<td rowspan=\"$resCnt\">".$arr['count']." <a href=\"?page=help&site=shipyard&id=".$arr['ship_id']."\">".$ship."</a></td>";
 							}
-							echo "<td class=\"rescolor".$rk."\">".$resIcons[$rk]."<b>".$rn."</b>:</td>
-							<td class=\"rescolor".$rk."\">".nf($arr['costs_'.$rk])."</td>";
+							echo "<td class=\"rescolor".$rk." rname\">".$resIcons[$rk]."<b>".$rn."</b>:</td>
+							<td class=\"rescolor".$rk." rdema\">".nf($arr['costs_'.$rk])."</td>";
 							if ($i++==0)
 							{
 								$tu = new User($arr['user_id']);

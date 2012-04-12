@@ -1490,5 +1490,141 @@
 			}
 			$pa.find('thead').detach().prependTo($pa);
 		});
+		if($('#filter_strict').size() == 0)
+		{
+			$('#market_search_filter_payable')
+			.parent().append(
+				'&nbsp;<input id="filter_strict" name="filter_strict" type="checkbox" />'+
+				'<label for="filter_strict">Striktes Filtern</label>'
+			);
+			$('#filter_strict').click(filterRess);
+		}
+		else
+		{
+			$('#filter_strict').attr('checked', false);
+		}
+		if($('#ship_filter_strict').size() == 0)
+		{
+			$('#market_ship_search_filter_payable')
+			.parent().append(
+				'&nbsp;<input id="ship_filter_strict" name="ship_filter_strict" type="checkbox" />'+
+				'<label for="ship_filter_strict">Striktes Filtern</label>'
+			);
+			$('#ship_filter_strict').click(filterShip);
+		}
+		else
+		{
+			$('#ship_filter_strict').attr('checked', false);
+		}
 	}
+
+	function filterRess()
+	{
+		if($('#filter_strict:checked').size() == 0)
+		{
+			applySearchFilter();
+		}
+		else
+		{
+			var $su = new Array();
+			var $de = new Array();
+			for(var i=0;i<5;i++)
+			{
+				$su.push($('#market_search_filter_supply_'+i));
+				$de.push($('#market_search_filter_demand_'+i));
+			}
+			$(".offer").each(function()
+			{
+				for(var i=0;i<5;i++)
+				{
+					if
+					(
+						(
+							$su[i].filter(':checked').size() == 0 &&
+							$(this).find('.rescolor'+i).not(function()
+							{
+								return (
+									$(this).filter('.rsupp').size() == 0 ||
+									$(this).html() == '-'
+								);
+							}).size() > 0
+						) || (
+							$de[i].filter(':checked').size() == 0 &&
+							$(this).find('.rescolor'+i).not(function()
+							{
+								return (
+									$(this).filter('.rdema').size() == 0 ||
+									$(this).html() == '-'
+								);
+							}).size() > 0
+						)
+					)
+					{
+						if($(this).next().size() > 0)
+						{
+							$(this).next().detach();
+						}
+						else
+						{
+							$(this).prev().detach();
+						}
+						$(this).detach();
+					}	
+				}
+			});
+			if($('.offer').size() == 0)
+			{
+				$('#ress_buy_check_message').html('<div style="font-weight:bold;">Keine Angebote vorhanden!</div>');
+			}
+		}
+	}
+
+	function filterShip()
+	{
+		if($('#ship_filter_strict:checked').size() == 0)
+		{
+			applySearchFilter();
+		}
+		else
+		{
+			var $de = new Array();
+			for(var i=0;i<5;i++)
+			{
+				$de.push($('#market_ship_search_filter_demand_'+i));
+			}
+			$(".offer").each(function()
+			{
+				for(var i=0;i<5;i++)
+				{
+					if
+					(
+						$de[i].filter(':checked').size() == 0 &&
+						$(this).find('.rescolor'+i).not(function()
+						{
+							return (
+								$(this).filter('.rdema').size() == 0 ||
+								$(this).html() == '-'
+							);
+						}).size() > 0
+					)
+					{
+						if($(this).next().size() > 0)
+						{
+							$(this).next().detach();
+						}
+						else
+						{
+							$(this).prev().detach();
+						}
+						$(this).detach();
+					}	
+				}
+			});
+			if($('.offer').size() == 0)
+			{
+				$('#ship_buy_check_message').html('<div style="font-weight:bold;">Keine Angebote vorhanden!</div>');
+			}
+		}
+	}
+
 </script>
