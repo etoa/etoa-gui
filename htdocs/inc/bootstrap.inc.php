@@ -62,7 +62,6 @@
 
 	date_default_timezone_set("Europe/Zurich");
 
-	define('ETOA_DEBUG',true);
 	// Debug einschalten?
 	if (!defined('ETOA_DEBUG'))
 		define('ETOA_DEBUG',$cfg->debug->v);
