@@ -21,7 +21,7 @@
     <category id="21">Datenbank</category>	
   </categories>
   <items>
-	<item name="roundname" cat="1" base="yes">
+    <item name="roundname" cat="1" base="yes">
       <v comment="Runde-Name" type="text">Runde X</v>
     </item>
     <item name="roundurl" cat="1" base="yes">
@@ -34,9 +34,9 @@
       <v comment="Debug-Modus" type="onoff">0</v>
     </item>
     <item name="accesslog" cat="1">
-		<v comment="Seitenzugriffe loggen" type="onoff">0</v>
-	</item>
-	<item name="num_of_sectors" cat="3">
+      <v comment="Seitenzugriffe loggen" type="onoff">0</v>
+    </item>
+    <item name="num_of_sectors" cat="3">
       <p1 comment="Anzahl Sektoren X" type="text">2</p1>
       <p2 comment="Anzahl Sektoren Y" type="text">2</p2>
     </item>
@@ -110,14 +110,14 @@
       <p1 comment="Registration offen ab" type="timedate">1190446200</p1>
       <p2 comment="Max. User" type="text">15</p2>
     </item>
-    <item name="enable_login" cat="1">
+    <item name="enable_login" cat="1" base="yes">
       <v comment="Login erlauben" type="onoff">1</v>
       <p1 comment="Login offen ab" type="timedate">1205485200</p1>
     </item>
     <item name="round_end" cat="1">
       <v comment="Rundenende aktualisieren" type="onoff">0</v>
       <p1 comment="Rundenende am" type="timedate">1205485200</p1>
-	  <p2 comment="Zusätzliche Info" type="text"></p2>
+      <p2 comment="Zusätzliche Info" type="text"></p2>
     </item>
     <item name="points_update" cat="1">
       <v comment="Punkteaktualisierung" type="text">3600</v>
