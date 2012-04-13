@@ -2647,7 +2647,6 @@ function imagecreatefromfile($path, $user_functions = false)
 		return " onmouseover=\"showTT('','".str_replace('"',"\'",$content)."',1,event,this);\" onmouseout=\"hideTT();\" ";
 	}
 
-	//securized by river
 	function chatSystemMessage($msg)
 	{
 		dbquery("INSERT INTO
@@ -2659,7 +2658,7 @@ function imagecreatefromfile($path, $user_functions = false)
 		VALUES
 		(
 			".time().",
-			'".mysql_real_escape_string(replace_ascii_control_chars($msg))."'
+			'".mysql_real_escape_string($msg)."'
 		)");	
 	}	
 	

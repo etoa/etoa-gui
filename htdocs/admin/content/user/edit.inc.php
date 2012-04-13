@@ -559,8 +559,13 @@
 									if ($arr['user_chatadmin']==0)
 										echo " checked=\"checked\" ";
 									echo "/><label for=\"user_chatadmin0\">Nein</label>
-								</td>
-								<td>Der Spieler hat Adminrechte im Chat</td>
+									<input type=\"radio\" name=\"user_chatadmin\" id=\"user_chatadmin2\"value=\"2\" ";
+									if ($arr['user_chatadmin']==2)
+										echo " checked=\"checked\" ";
+									echo "/><label for=\"user_chatadmin2\">Leiter Team Community</label>
+									</td>
+								<td>Der Spieler hat Adminrechte im Chat und einen silbernen Stern für Chatadmin bzw.
+									einen grünen Stern für Leiter Team Community</td>
 							</tr>
 							<tr>
 								<td class=\"tbltitle\">Admin:</td>

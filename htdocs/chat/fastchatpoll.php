@@ -23,7 +23,7 @@
 		if(mysql_num_rows($res)>0)
 		{
 			$arr = mysql_fetch_assoc($res);
-			die('bn:'.$arr['reason']); // banned
+			die('bn:'.replace_ascii_control_chars_unicode($arr['reason'])); // banned
 		}
 
 		// else query user and kicked
@@ -47,7 +47,7 @@
 					chat_users
 				WHERE
 					user_id='.$s['user_id'].';');
-				die('ki:'.$arr['kick']);	//ki = Kicked
+				die('ki:'.replace_ascii_control_chars_unicode($arr['kick']));	//ki = Kicked
 			}
 
 		}
@@ -112,16 +112,20 @@
 				$text = replace_ascii_control_chars(htmlspecialchars($arr['text']));
 				if ($arr['admin']>=1)
 				{
-					$color = 'y';
-					// chatadmins = 2, admins = 1, entwickler = 3
+					// chatadmins = 2, admins = 1, entwickler = 3, leiter team community = 4
 					switch($arr['admin'])
 					{
-						case 1: $color = 'y';break; //yellow star
-						case 2: $color = 'g';break; //grey star
-						case 3: $color = 'r';break; //red star
-						default:$color = 'y';
+						case 1: $adminstr = '<img src="../images/star_y.gif" '. //yellow star
+								'alt="Admin" title="Admin" />'; break;
+						case 2: $adminstr = '<img src="../images/star_s.gif" '. //silver star
+								'alt="Chat-Moderator" title="Chat-Moderator" />'; break;
+						case 3: $adminstr = '<img src="../images/star_r.gif" '. //red star
+								'alt="Entwickler" title="Entwickler" />'; break;
+						case 4: $adminstr = '<img src="../images/star_g.gif" '. //green star
+								'alt="Leiter Team Community" title="Leiter Team Community" />'; break;
+						default:$adminstr = // default: yellow without alt-text
+							'<img src="../images/star_y.gif" />'; break;
 					}
-					$adminstr = '<img src="../images/star_'.$color.'.gif" />';
 				}
 
 				if ($arr['user_id']==0)

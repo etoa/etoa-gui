@@ -13,21 +13,19 @@
 			$msg = 'Kicked by Admin';
 		}
 		$res = dbquery('
-	UPDATE
-		chat_users
-	SET
-		kick="'.mysql_real_escape_string(replace_ascii_control_chars($msg)).'"
-	WHERE
-		user_id="'.$uid.'"');
-	if (mysql_affected_rows()>0)
-	{
-		return true;
+		UPDATE
+			chat_users
+		SET
+			kick="'.mysql_real_escape_string($msg).'"
+		WHERE
+			user_id="'.$uid.'"');
+		if (mysql_affected_rows()>0)
+		{
+			return true;
+		}
+		return false;
 	}
-	return false;
-	}
-
 	
-
 	if (isset($s['user_id']))
 	{
 		$admin = 0;
@@ -44,8 +42,10 @@
 			$arr = mysql_fetch_assoc($res);
 			if($arr['admin'] == 1)
 				$admin = 1; // Admin
-			elseif ($arr['user_chatadmin'] >= 1)
+			elseif ($arr['user_chatadmin'] == 1)
 				$admin = 2; // Chatadmin
+			elseif ($arr['user_chatadmin'] == 2)
+				$admin = 4; // Leiter Team Community
 			elseif($arr['admin'] == 2)
 				$admin = 3; // Entwickler
 		}
@@ -57,7 +57,7 @@
 		$ct = $_POST['ctext'];
 		$isCommand = false;
 
-		if ( $admin > 0 && $admin != 3)
+		if ( $admin > 0 && $admin != 3) // Keine Kommandos für Entwickler
 		{
 			$m = array();
 			if (preg_match('#^/kick (.[^\'\"\?\<\>\$\!\=\;\&\s]+)$#',$ct,$m)>0)
@@ -113,9 +113,9 @@
 					dbquery('INSERT INTO
 						chat_banns
 							(user_id,reason,timestamp)
-						VALUES ('.$uid.',"'.$text.'",'.time().')
+						VALUES ('.$uid.',"'.mysql_real_escape_string($text).'",'.time().')
 						ON DUPLICATE KEY UPDATE
-							timestamp='.time().',reason="'.$text.'"');
+							timestamp='.time().',reason="'.mysql_real_escape_string($text).'"');
 					kickChatUser($uid,$text);
 					chatSystemMessage($m[1].' wurde gebannt! Grund: '.$text);
 				}
@@ -220,7 +220,6 @@
 					'".$admin."'
 				);");			
 				$_SESSION['lastchatmsg']=$hash;
-				//$ajax->script("xajax_setChatUserOnline()");
 			}
 			else
 			{
