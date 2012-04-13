@@ -184,7 +184,7 @@
 				user_id=".$this->id."
 			LIMIT 1;");
 			$arr = mysql_fetch_row($res);
-			if ($arr[0]>0 && validatePasswort($oldPassword, $arr[0]))
+			if (validatePasswort($oldPassword, $arr[0]))
 			{
 				$res = dbquery("
 				SELECT 
