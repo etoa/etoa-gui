@@ -2670,7 +2670,7 @@ function imagecreatefromfile($path, $user_functions = false)
 		{
 			$arr = mysql_fetch_assoc($res);
 			chatSystemMessage($arr['nick'].' verlässt den Chat (Timeout).');
-			dbquery('DELETE FROM chat_users WHERE id = '.$arr['user_id'].';');		
+			dbquery('DELETE FROM chat_users WHERE user_id = '.$arr['user_id'].';');		
 		}
 	}
 	
