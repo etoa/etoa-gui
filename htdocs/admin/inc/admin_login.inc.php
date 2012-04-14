@@ -59,7 +59,7 @@ else
 			$nu->email = $_POST['user_email'];
 			$nu->nick = $_POST['user_nick'];
 			$nu->name = $_POST['user_nick'];
-			$nu->adminRank = 8;	// TODO: Constant
+			$nu->roles = array('master');
 			$nu->save();
 			$nu->setPassword($_POST['user_password']);
 

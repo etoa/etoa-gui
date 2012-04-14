@@ -73,7 +73,7 @@
 				echo "<tr>";
 				echo "<td>".date("d.m.Y",$arr['timestamp'])."</td>";
 				echo "<td>".date("H:i:s",$arr['timestamp'])."</td>";
-				echo "<td><a href=\"?page=user&sub=edit&id=".$arr['user_id']."\" style=\"color:".$arr['color'].";\">".$arr['nick']."</a></td>";
+				echo "<td><a href=\"?page=user&sub=edit&id=".$arr['user_id']."\">".$arr['nick']."</a></td>";
 				echo "<td>".$arr['text']."</td>";
 				echo "</tr>";
 				$cnt++;
@@ -143,7 +143,7 @@
 	<h1>InGame-Chat</h1>
 	<fieldset style="width:70%;float:left;height:500px;">
 		<legend>Live-Chat</legend>
-			<div id="chatitems" style="height:100%;overflow:auto">
+			<div id="chatitems" style="height:100%;overflow:auto;background:#222;padding:3px">
 
 			</div>
 			<div id="lastid" style="display:none;visibility:hidden">

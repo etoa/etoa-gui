@@ -27,41 +27,29 @@
 	//
 
 	echo "<h1>Kontakt</h1>";
-	
 	echo "<div style=\"margin:0px auto;width:600px;\">";
-
-		echo text2html($cfg->get('contact_message'))."<br/><br/>";
-		$res = dbquery("
-			SELECT 
-				user_id,
-				user_nick,
-				user_email,
-				group_name
-			FROM 
-				admin_users
-			INNER JOIN
-				admin_groups
-				ON user_admin_rank=group_id
-				AND group_level<3
-		;");
-		if (mysql_num_rows($res)>0)
+	echo text2html($cfg->get('contact_message'))."<br/><br/>";
+	
+	$admins = AdminUser::getAll();
+	if (count($admins) > 0)
+	{
+		tableStart('Kontaktpersonen für diese Runde');
+		foreach ($admins as $arr)
 		{
-			tableStart('Kontaktpersonen für diese Runde');
-			while ($arr = mysql_fetch_array($res))
-			{
-				echo '<tr><td class="tbldata">'.$arr['user_nick'].'</td>';
-				echo '<td class="tbldata">'.$arr['group_name'].'</td>';
-				if (stristr($arr['user_email'],"@etoa.ch"))
-					echo '<td class="tbldata"><a href="mailto:'.$arr['user_email'].'">'.$arr['user_email'].'</a></td>';
-	      else
-	      	echo '<td class="tbldata">-</td>';
+			if ($arr->isContact) {
+				echo '<tr><td class="tbldata">'.$arr->nick.'</td>';
+				if (stristr($arr->email, "@etoa.ch")) {
+					echo '<td class="tbldata"><a href="mailto:'.$arr->email.'">'.$arr->email.'</a></td>';
+				} else {
+					echo '<td class="tbldata">-</td>';
+				}
 				echo '</tr>';
 			}
-			tableEnd();
 		}
-		else
-			echo "<i>Keine Kontaktpersonen vorhanden!</i>";
+		tableEnd();
+	} else {
+		echo "<i>Keine Kontaktpersonen vorhanden!</i>";
+	}
 
 	echo "</div>";
-	
 ?>

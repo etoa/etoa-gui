@@ -1,5 +1,5 @@
 <?PHP
-	echo "<h1>Admin-Management</h1>";
+	$tpl->assign("title", "Admin-Management");
 
 	if (isset($_GET['new']))
 	{
@@ -24,23 +24,24 @@
 			<td><input type=\"password\" name=\"user_password\" autocomplete=\"off\" /></td>
 		</tr>";
 		echo "<tr>
-			<th>Gruppe:</th>
-			<td><select name=\"user_admin_rank\">";
-			$gres = dbquery("
-			SELECT
-				*
-			FROM
-				admin_groups
-			ORDER BY
-				group_name
-			");
-			while ($garr=mysql_fetch_array($gres))
-			{
-				echo "<option value=\"".$garr['group_id']."\"";
-				echo ">".$garr['group_name']."</option>";
-			}
-			echo "</select></td>
+			<th>Rollen:</th>
+			<td>";
+			$rm = new AdminRoleManager();
+			foreach ($rm->getRoles() as $k => $v) {
+				echo '<input type="checkbox" name="roles[]" value="'.$k.'" id="role_'.$k.'"> <label for="role_'.$k.'">'.$v.'</label><br/>';
+			}			
+			echo "</td>
 		</tr>";
+		echo "<tr>
+			<th>Kontakt anzeigen:</th>
+			<td>
+				<input type=\"radio\" name=\"is_contact\" value=\"1\" ";
+				echo " checked=\"checked\"";
+				echo "/> Ja 
+				<input type=\"radio\" name=\"is_contact\" value=\"0\" ";
+				echo "/> Nein
+			</td>
+		</tr>";	
 		echo "</table><br/>
 		<input type=\"submit\" name=\"new_submit\" value=\"Speichern\" /> &nbsp; 
 		<input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" value=\"Abbrechen\" />";
@@ -72,42 +73,48 @@
 				<td><input type=\"password\" name=\"user_password\" autocomplete=\"off\" /></td>
 			</tr>";
 			echo "<tr>
-				<th>Gruppe:</th>
-				<td><select name=\"user_admin_rank\">";
-				$gres = dbquery("
-				SELECT
-					*
-				FROM
-					admin_groups
-				ORDER BY
-					group_name
-				");
-				while ($garr=mysql_fetch_array($gres))
-				{
-					echo "<option value=\"".$garr['group_id']."\"";
-					if ($garr['group_id']==$au->adminRank)
-					{
-						echo " selected=\"selected\"";
+				<th>Rollen:</th>
+				<td>";
+				$rm = new AdminRoleManager();
+				foreach ($rm->getRoles() as $k => $v) {
+					echo '<input type="checkbox" name="roles[]" value="'.$k.'" id="role_'.$k.'"';
+					if (in_array($k, $au->roles)) {
+						echo ' checked="checked"';
 					}
-					echo ">".$garr['group_name']."</option>";
-				}
-				echo "</select></td>
+					echo '> <label for="role_'.$k.'">'.$v.'</label><br/>';
+				}			
+				echo "</td>
 			</tr>";
 			echo "<tr>
 				<th>Gesperrt:</th>
 				<td>
 					<input type=\"radio\" name=\"user_locked\" value=\"1\" ";
-					if ($arr->locked) {
+					if ($au->locked) {
 						echo " checked=\"checked\"";
 					}
 					echo "/> Ja 
 					<input type=\"radio\" name=\"user_locked\" value=\"0\" ";
-					if (!$arr->locked) {
+					if (!$au->locked) {
 						echo " checked=\"checked\"";
 					}
 					echo "/> Nein
 				</td>
-			</tr>";			
+			</tr>";		
+			echo "<tr>
+				<th>Kontakt anzeigen:</th>
+				<td>
+					<input type=\"radio\" name=\"is_contact\" value=\"1\" ";
+					if ($au->isContact) {
+						echo " checked=\"checked\"";
+					}
+					echo "/> Ja 
+					<input type=\"radio\" name=\"is_contact\" value=\"0\" ";
+					if (!$au->isContact) {
+						echo " checked=\"checked\"";
+					}
+					echo "/> Nein
+				</td>
+			</tr>";	
 			echo "</table><br/>
 			<input type=\"submit\" name=\"edit_submit\" value=\"Speichern\" /> &nbsp; 
 			<input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" value=\"Abbrechen\" />";
@@ -130,10 +137,11 @@
 				$au->nick = $_POST['user_nick'];
 				$au->name = $_POST['user_name'];
 				$au->email = $_POST['user_email'];
-				$au->adminRank = $_POST['user_admin_rank'];
+				$au->roles = isset($_POST['roles']) ? $_POST['roles'] : array();
+				$au->isContact = ($_POST['is_contact'] > 0);
 				$au->save();				
-				echo "Gespeichert!<br/><br/>";
-				add_log(8,"Der Administrator ".$cu->nick." erstellt einen neuen Administrator: ".$_POST['user_nick']."(".$au->id.").",time());
+				$tpl->assign("msg", "Gespeichert!");
+				add_log(8,"Der Administrator ".$cu->nick." erstellt einen neuen Administrator: ".$_POST['user_nick']."(".$au->id.").");
 
 				if ($_POST['user_password']!="") {
 					$pw = $_POST['user_password'];
@@ -163,10 +171,11 @@
 				$au->nick = $_POST['user_nick'];
 				$au->name = $_POST['user_name'];
 				$au->email = $_POST['user_email'];
-				$au->adminRank = $_POST['user_admin_rank'];
 				$au->locked = ($_POST['user_locked'] > 0);
+				$au->isContact = ($_POST['is_contact'] > 0);
+				$au->roles = isset($_POST['roles']) ? $_POST['roles'] : array();
 				$au->save();
-				echo "Gespeichert!<br/><br/>";
+				$tpl->assign("msg", "Gespeichert!");
 				add_log(8,"Der Administrator ".$cu->nick." ändert die Daten des Administrators ".$_POST['user_nick']." (ID: ".$_POST['user_id'].").");
 			}
 			else
@@ -175,61 +184,34 @@
 			}			
 		}
 		
-		if (isset($_GET['del']) && $_GET['del']>0 && $_GET['del']!=$cu->id)
-		{
-			$res = dbquery("
-			SELECT
-				user_nick
-			FROM
-				admin_users
-			WHERE
-				user_id=".$_GET['del']."
-			");		
-			if (mysql_num_rows($res)>0)
-			{
-				$arr = mysql_fetch_array($res);
-				dbquery("DELETE FROM admin_users WHERE user_id=".$_GET['del']."");
-				add_log(8,"Der Administrator ".$cu->nick." löscht den Administrator ".$arr['user_nick']." (ID: ".$_GET['del'].").",time());
+		if (isset($_GET['del']) && $_GET['del']>0 && $_GET['del']!=$cu->id) {
+			$au = new AdminUser($_GET['del']);
+			if ($au->isValid() && $au->delete()) {
+				add_log(8, "Der Administrator ".$cu->nick." löscht den Administrator ".$au->nick." (ID: ".$au->id.").");
 				echo "Benutzer gel&ouml;scht!<br/><br/>";
 			}
 		}
-		
-		
-		$res = dbquery("
-		SELECT
-			user_id,
-			user_nick,
-			user_name,
-			group_name,
-			user_email,
-			user_locked
-		FROM
-			admin_users
-		LEFT JOIN
-			admin_groups
-			ON user_admin_rank=group_id
-		ORDER BY
-			user_nick ASC
-		");
+				
 		echo "<table class=\"tb\" style=\"width:auto;\">
 		<tr>
 			<th>Nick</th>
 			<th>Name</th>
 			<th>E-Mail</th>
-			<th>Gruppe</th>
+			<th>Rollen</th>
 			<th>Gesperrt</th>
+			<th></th>
 		</tr>";
-		while ($arr=mysql_fetch_Array($res))
-		{
+		foreach (AdminUser::getAll() as $arr) {
 			echo "<tr>
-				<td>".$arr['user_nick']."</td>
-				<td>".$arr['user_name']."</td>
-				<td><a href=\"mailto:".$arr['user_email']."\">".$arr['user_email']."</a></td>
-				<td>".$arr['group_name']."</td>
-				<td>".($arr['user_locked']==1 ? "<span style=\"color:red\">Ja</span>" : "Nein")."</td>
-				<td style=\"width:40px;\">".edit_button("?page=$page&amp;sub=$sub&amp;edit=".$arr['user_id']."")." ";
-				if ($arr['user_id']!=$cu->id)
-				 	echo del_button("?page=$page&amp;sub=$sub&amp;del=".$arr['user_id'],"return confirm('Soll der Benutzer wirklich gelöscht werden?')");
+				<td>".$arr->nick."</td>
+				<td>".$arr->name."</td>
+				<td><a href=\"mailto:".$arr->email."\">".$arr->email."</a></td>
+				<td>".$arr->getRolesStr()."</td>
+				<td>".($arr->locked==1 ? "<span style=\"color:red\">Ja</span>" : "Nein")."</td>
+				<td style=\"width:40px;\">".edit_button("?page=$page&amp;sub=$sub&amp;edit=".$arr->id."")." ";
+				if ($arr->id != $cu->id) {
+				 	echo del_button("?page=$page&amp;sub=$sub&amp;del=".$arr->id,"return confirm('Soll der Benutzer wirklich gelöscht werden?')");
+				}
 				echo "</td>
 			</tr>";
 		}		

@@ -428,11 +428,7 @@
 		$tpl->setView("admin/overview");
 		$tpl->assign("title", "&Uuml;bersicht");
 
-		if (!isset($s->home_visited))
-		{
-			$tpl->assign("welcome_msg", "Hallo <b>".$cu->nick."</b>, willkommen im Administrationsmodus! Dein Rang ist <b>".$cu->groupName.".</b>");
-			$s->home_visited=true;
-		}
+		$tpl->assign("welcome_msg", "Hallo <b>".$cu->nick."</b>, willkommen im Administrationsmodus! Dein Rollen: <b>".$cu->getRolesStr().".</b>");
 		
 		//
 		// Universum generieren

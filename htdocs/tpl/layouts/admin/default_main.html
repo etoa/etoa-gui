@@ -1,4 +1,4 @@
-{include file='chunks/admin/header.html'}
+{chunk name='admin/header'}
 <div id="layoutbox">
 	<div id="header">
 		<a href="."><img id="logo" src="../web/images/admin/logo.png" alt="Logo" /></a>
@@ -9,7 +9,9 @@
 			<ul id="headernav">
 				<li><a href="?myprofile=1">{$current_user_nick}</a></li>
 				<li><a href="?adminlist=1">Adminliste</a></li>
+				{ifadminrole provided=$user_roles required="master,super-admin,game-admin,trial-game-admin"}
 				<li>{if $num_tickets gt 0}{popuplink type="tickets" title="Tickets ($num_tickets)" class="highlight"}{else}{popuplink type="tickets" title="Tickets"}{/if}</li>
+				{/ifadminrole}
 				<li>{if $num_notes gt 0}{popuplink type="notepad" title="Notizblock ($num_notes)" class="highlight"}{else}{popuplink type="notepad" title="Notizblock"}{/if}</li>
 				{if !$is_cb|default:false}<li><a href="frameset.php?page={$page}{if $i.sub|default:'' ne ''}&amp;sub={$sub}{/if}" target="_top">Zwischenablage</a></li>{/if}<li><a href="?logout=1">Logout</a></li>
 			</ul>
@@ -23,19 +25,7 @@
 				</form>
 			</div>
 			<ul class="navmenu">
-				{foreach from=$navmenu key=c item=i}
-					<li><a href="?page={$i.page}{if $i.sub|default:'' ne ''}&amp;sub={$i.sub}{/if}"{if $page eq  $i.page} class="active"{/if}>{$c}</a>
-					{if $i.children|default:'' ne '' && $i.children|count gt 0 && $i.page eq $page}
-						<ul class="navsubmenu">
-						{foreach from=$i.children key=cc item=ci}
-							{if $ci.level le $user_level}
-								<li{if $ci.bar|default:false eq true} class="bar"{/if}><a href="?page={$i.page}&amp;sub={$ci.sub}"{if $page eq  $i.page && $sub|default:'' eq $ci.sub && $sub|default:'' ne ''} class="active"{/if}>{$cc}</a></li>
-							{/if}
-						{/foreach}
-						</ul>
-					{/if}
-					</li>
-				{/foreach}
+				{chunk name='admin/nav'}
 			</ul>					
 			{$side_nav_widgets}
 		</div>
@@ -50,4 +40,4 @@
 			generiert in {$render_time} sec
 	</div>
 </div>
-{include file='chunks/admin/footer.html'}
+{chunk name='admin/footer'}

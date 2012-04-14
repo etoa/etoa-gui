@@ -767,7 +767,7 @@
 	* @param int $log_timestamp Zeit
 	* @author MrCage
 	*/
-	function add_log($log_cat,$log_text)
+	function add_log($log_cat, $log_text)
 	{
 		Log::add($log_cat,Log::INFO,$log_text);
 	}
@@ -979,7 +979,7 @@
 				WHERE
 					deflist_entity_id='".$planet_id."';
 			");
-			add_log("6","Der Planet mit der ID ".$planet_id." wurde zurückgesetzt!",time());
+			add_log("6","Der Planet mit der ID ".$planet_id." wurde zurückgesetzt!");
 			return true;
 		}
 		else

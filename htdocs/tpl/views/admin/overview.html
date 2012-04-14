@@ -23,6 +23,7 @@
 	{msg type="info" text="Die öffentlichen Seiten (Anmeldung, Statistiken etc) sind durch den Schlüssel {cfg key="register_key"} geschützt!"}
 {/if}		
 
+{ifadminrole provided=$user_roles required="master,super-admin,game-admin,trial-game-admin"}
 <fieldset class="overview_widget"><legend>Schnellsuche</legend>
 <form action="?page=user&amp;action=search" method="post" class="blocklables label_width_120">
 <label for="user_nick">Nick</label> <input type="text" name="user_nick" id="user_nick" size="40" autofocus="autofocus" /> <input type="hidden" name="qmode[user_nick]" value="LIKE '%" /><input type="submit" name="user_search" value="Suchen" /></form>
@@ -36,11 +37,14 @@
 <form action="?page=alliances&amp;action=search" method="post"  class="blocklables label_width_120">
 <label for="alliance_tag">Allianz-Tag</label> <input type="text" id="alliance_tag" name="alliance_tag" size="40" /> <input type="hidden" name="qmode[alliance_tag]" value="LIKE '%" /><input type="submit" name="alliance_search" value="Suchen" /></form>
 </fieldset>
+{/ifadminrole}
 
+{ifadminrole provided=$user_roles required="master,super-admin,game-admin,trial-game-admin"}
 <fieldset class="overview_widget"><legend>Ticket-System</legend>
 {popuplink type="tickets" title="$num_new_tickets neue Tickets"} vorhanden<br/>
 {popupLink type="tickets" title="$num_open_tickets offene Tickets"} vorhanden
 </fieldset>
+{/ifadminrole}
 
 {$content|default:''}
 

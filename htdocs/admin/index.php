@@ -59,7 +59,6 @@ else
 	
 	
 	$tpl->assign("search_query",(isset($_POST['search_query']) ? $_POST['search_query'] : '' ));
-	$tpl->assign("user_level",$cu->level);
 
 	$navmenu = fetchJsonConfig("admin-menu.conf");
 	$tpl->assign("navmenu",$navmenu);
@@ -76,6 +75,7 @@ else
 	$tpl->assign("num_tickets", Ticket::countAssigned($s->user_id) + Ticket::countNew());
 
 	$tpl->assign("current_user_nick", $cu->nick);	
+	$tpl->assign("user_roles", $cu->roles);	
 	
 	// Status widget
 	$tpl->assign("is_unix", UNIX);
@@ -133,18 +133,22 @@ else
 		// Check permissions
 		$allow_inc=false;
 		$found = false;
+		$rm = new AdminRoleManager();
+		
 		foreach ($navmenu as $cat=> $item) 	{
 			if ($item['page']==$page && $sub=="") {
 				$found = true;
-				if ($item['level'] <= $cu->level) {
+				if ($rm->checkAllowed($item['roles'], $cu->roles)) {
 					$allow_inc = true;
+					break;
 				}
 			} else if (isset($item['children'])) {
 				foreach ($item['children'] as $title=> $data) {
 					if ($item['page']==$page && $data['sub']==$sub) {
 						$found = true;
-						if ($data['level'] <= $cu->level) {
+						if ($rm->checkAllowed($data['roles'], $cu->roles)) {
 							$allow_inc = true;
+							break;
 						}
 					}
 				}

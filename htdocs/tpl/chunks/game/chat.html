@@ -3,6 +3,9 @@
 		{$chatstream}
 	</div>
 	<div id="chatinputbox">
+		<form action="" method="post" autocomplete="off" id="cform" onsubmit="sendChat();return false;">
 		{$chatinput}
+		<!--<input type="button" onclick="logoutFromChat();" value="Chat schliessen"/> <span id='msg'></span>-->
+		</form>
 	</div>
 </div>

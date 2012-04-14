@@ -25,19 +25,18 @@ class AdminUser {
 	public $userTheme = "";
 	public $ticketEmail = false;
 	public $locked = false;
+	public $isContact = true;
+	public $roles = array();
 	
 	function __construct($id=null) {
 		if ($id != null) {
-			$res = DBManager::getInstance()->query("
+			$res = DBManager::getInstance()->safeQuery("
 			SELECT
 				*
 			FROM
-				".self::tableName." u
-			INNER JOIN
-				admin_groups g
-				ON u.user_admin_rank=g.group_id
-				AND u.user_id=".$id."
-			");
+				".self::tableName."
+			WHERE
+				user_id=?;", array($id));
 			if (mysql_num_rows($res)>0)
 			{
 				$arr = mysql_fetch_assoc($res);
@@ -45,11 +44,7 @@ class AdminUser {
 				$this->passwordString = $arr['user_password'];
 				$this->valid = true;
 				
-				$this->adminRank = $arr['user_admin_rank'];
-				
 				$this->nick = $arr['user_nick'];
-				$this->level = $arr['group_level'];
-				$this->groupName = $arr['group_name'];
 				$this->forcePasswordChange = ($arr['user_force_pwchange'] > 0);
 
 				$this->name = $arr['user_name'];
@@ -59,6 +54,8 @@ class AdminUser {
 				$this->userTheme = $arr['user_theme'];
 				$this->ticketEmail = ($arr['ticketmail'] > 0);
 				$this->locked = ($arr['user_locked'] > 0);
+				$this->roles = explode(",", $arr['roles']);
+				$this->isContact = ($arr['is_contact'] > 0);
 			}
 		}
 	}
@@ -114,7 +111,6 @@ class AdminUser {
 			UPDATE 
 				".self::tableName."
 			SET 
-				user_admin_rank=?,
 				user_nick=?,
 				user_name=?,
 				user_email=?,
@@ -122,11 +118,12 @@ class AdminUser {
 				user_theme=?,
 				ticketmail=?,
 				player_id=?,
-				user_locked=?
+				user_locked=?,
+				is_contact=?,
+				roles=?
 			WHERE 
 				user_id='".$this->id."';", 
 				array(
-					$this->adminRank,
 					$this->nick,
 					$this->name,
 					$this->email,
@@ -134,14 +131,15 @@ class AdminUser {
 					$this->userTheme,
 					($this->ticketEmail ? 1 : 0),
 					$this->playerId,
-					($this->locked ? 1 : 0),				
+					($this->locked ? 1 : 0),
+					($this->isContact ? 1: 0),
+					implode(',', $this->roles)
 				));
 		} else {
 			DBManager::getInstance()->safeQuery("
 			INSERT INTO 
 				".self::tableName."
 			(
-				user_admin_rank,
 				user_nick,
 				user_name,
 				user_email,
@@ -150,12 +148,13 @@ class AdminUser {
 				ticketmail,
 				player_id,
 				user_locked,
+				is_contact,
+				roles,
 				user_password
 			) VALUES (
-				?,?,?,?,?,?,?,?,?,?
+				?,?,?,?,?,?,?,?,?,?,?
 			);", 
 			array(
-				$this->adminRank,
 				$this->nick,
 				$this->name,
 				$this->email,
@@ -164,11 +163,40 @@ class AdminUser {
 				($this->ticketEmail ? 1 : 0),
 				$this->playerId,
 				($this->locked ? 1 : 0),
+				($this->isContact ? 1: 0),
+				implode(',', $this->roles),
 				saltPasswort(generatePasswort())
 			)); // Add a random password
 			$this->id = mysql_insert_id();
 			$this->valid = true;
 		}
+	}
+	
+	/**
+	* Get formatted string of admin's roles
+	*/
+	function getRolesStr() {
+		$rm = new AdminRoleManager();
+		return $rm->getRolesStr($this->roles);
+	}
+	
+	/**
+	* Deletes current record 
+	*/
+	function delete()	{
+		if ($this->id != null) 
+		{
+			DBManager::getInstance()->safeQuery("
+			DELETE FROM 
+				".self::tableName."
+			user_id=?;", array($this->id));
+		}
+		return false;
+	}
+	
+	function hasRole($roles) {
+		$rm = new AdminRoleManager();
+		return ($rm->checkAllowed($roles, $this->roles));
 	}
 
 	/** 
@@ -205,6 +233,25 @@ class AdminUser {
 		while ($arr=mysql_fetch_row($res))
 		{
 			$rtn[$arr[0]] = $arr[1];
+		}
+		return $rtn;
+	}
+	
+	/**
+	* Get an array of all users
+	*/
+	static function getAll() {
+		$res = DBManager::getInstance()->query("
+		SELECT 
+			user_id
+		FROM 
+			".self::tableName."
+		ORDER BY
+			user_nick;");
+		$rtn = array();
+		while ($arr = mysql_fetch_row($res))
+		{
+			$rtn[$arr[0]] = new AdminUser($arr[0]);
 		}
 		return $rtn;
 	}

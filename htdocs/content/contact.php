@@ -92,60 +92,36 @@
 		echo text2html($conf['contact_message']['v']);
 		iBoxEnd();
 		
-		$res = dbquery("
-			SELECT 
-				user_id,
-				user_nick,
-				user_email,
-				group_name,
-				user_board_url
-			FROM 
-				admin_users
-			INNER JOIN
-				admin_groups
-				ON user_admin_rank=group_id
-				AND group_level<3
-		;");
-		if (mysql_num_rows($res)>0)
+		$admins = AdminUser::getAll();
+		if (count($admins) > 0)
 		{
 			tableStart('Kontaktpersonen für diese Runde');
-			while ($arr = mysql_fetch_array($res))
+			foreach ($admins as $arr)
 			{
-				echo '<tr><td>'.$arr['user_nick'].'</td>';
-				echo '<td>'.$arr['group_name'].'</td>';
-				if (stristr($arr['user_email'],"@etoa.ch"))
-				{
-					echo '<td><a href="mailto:'.$arr['user_email'].'">'.$arr['user_email'].'</a></td>';
+				if ($arr->isContact) {
+					echo '<tr><td class="tbldata">'.$arr->nick.'</td>';
+					if (stristr($arr->email, "@etoa.ch")) {
+						echo '<td class="tbldata"><a href="mailto:'.$arr->email.'">'.$arr->email.'</a></td>';
+						echo '<td><a href="?page='.$page.'&amp;rcpt='.$arr->id.'">Mailformular</a></td>';
+					} else {
+						echo '<td class="tbldata">-</td>';
+						echo '<td class="tbldata">-</td>';
+					}
+					if ($arr->board_url !='') {
+						echo '<td><a href="'.$arr->board_url.'" onclick="window.open(\''.$arr->board_url.'\');return false;">Foren-Profil</a></td>';
+					} else {
+						echo '<td>-</td>';
+					}
+					echo '</tr>';
 				}
-	      else
-	      {
-	      	echo '<td>-</td>';
-	      }
-				if ($arr['user_email']!='')
-				{
-	      	echo '<td><a href="?page='.$page.'&amp;rcpt='.$arr['user_id'].'">Mailformular</a></td>';
-	      }
-	      else
-	      {
-	      	echo '<td>-</td>';
-	      }
-				if ($arr['user_board_url']!='')
-				{
-					echo '<td><a href="'.$arr['user_board_url'].'" onclick="window.open(\''.$arr['user_board_url'].'\');return false;">Foren-Profil</a></td>';
-				}
-	      else
-	      {
-	      	echo '<td>-</td>';
-	      }	      
-				echo '</tr>';
 			}
 			tableEnd();
-		}
-		else
-			error_msg("Keine Kontaktpersonen vorhanden!");
-
+		} else {
+			echo "<i>Keine Kontaktpersonen vorhanden!</i>";
+		}		
+		
 		iBoxStart('Impressum');
-		echo 'EtoA Gaming<br/>Nicolas Perrenoud<br/>Belchenstrasse 9c<br/>4900 Langenthal<br/>Schweiz<br/><a href="mailto:mail@etoa.ch">mail@etoa.ch</a>';     
+		echo Constants::getInstance()->impressumText;
 		iBoxEnd();
 
 		iBoxStart('Powered by');

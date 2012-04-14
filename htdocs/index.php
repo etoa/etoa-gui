@@ -343,13 +343,14 @@
 	}
 	$tpl->assign("content_for_layout", ob_get_clean());
 	
-	//ob_start();
-	//include("chat/fastchat.php");
-	//$tpl->assign("chatstream", ob_get_clean());
-
-	//ob_start();
-	//include("chat/fastchatinput.php");
-	//$tpl->assign("chatinput", ob_get_clean());
+	/*
+	ob_start();
+	include("chat/fastchat.php");
+	$tpl->assign("chatstream", ob_get_clean());
+	ob_start();
+	include("chat/fastchatinput.php");
+	$tpl->assign("chatinput", ob_get_clean());
+	*/
 	
 	$tpl->display(getcwd().'/'.$layoutTemplate);
 

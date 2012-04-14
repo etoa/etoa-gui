@@ -483,9 +483,12 @@ class Ticket
 	 */
 	static function countAssigned($adminId)
 	{
-		$res = dbquery("SELECT COUNT(id) FROM tickets WHERE status='assigned' AND admin_id=".$adminId.";");
-		$arr = mysql_fetch_row($res);
-		return $arr[0];
+		if ($adminId > 0) {
+			$res = dbquery("SELECT COUNT(id) FROM tickets WHERE status='assigned' AND admin_id=".$adminId.";");
+			$arr = mysql_fetch_row($res);
+			return $arr[0];
+		}
+		return 0;
 	}
 
 	/**

@@ -1,6 +1,8 @@
 <?php
 
-echo "<h1>Support-Tickets</h1>";
+$tpl->assign("title", "Support-Tickets");
+
+if ($cu->hasRole("master,super-admin,game-admin,trial-game-admin")) {
 
 echo '<div>[ <a href="?page='.$page.'">Aktive Tickets</a> |
 <a href="?page='.$page.'&amp;action=new">Neues Ticket erstellen</a> |
@@ -324,7 +326,9 @@ else
 		echo '<i>Keine aktiven Tickets vorhanden!</i>';
 	}
 }
-
+} else {
+	$tpl->assign("errmsg", "Nicht erlaubt!");
+}
 
 
 ?>
