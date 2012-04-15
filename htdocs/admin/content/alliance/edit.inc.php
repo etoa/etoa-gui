@@ -472,7 +472,7 @@
 							AND	alliance_buildlist_alliance_id='".$id."';");
 			tableStart();
 			echo "<tr>
-					<th>Gebäude</th><th>Stuffe</th><th>Useranzahl</th><th>Status</th>
+					<th>Gebäude</th><th>Stufe</th><th>Useranzahl</th><th>Status</th>
 				</tr>";
 			if (mysql_num_rows($res)>0)
 			{
@@ -508,7 +508,7 @@
 							AND	alliance_techlist_alliance_id='".$id."';");
 			tableStart();
 			echo "<tr>
-					<th>Gebäude</th><th>Stuffe</th><th>Useranzahl</th><th>Status</th>
+					<th>Gebäude</th><th>Stufe</th><th>Useranzahl</th><th>Status</th>
 				</tr>";
 			if (mysql_num_rows($res)>0)
 			{

@@ -671,7 +671,7 @@ define('HELP_URL',"?page=help&site=buildings");
 									</td>
 									<th width=\"45%\">
 										<span style=\"font-weight:500\">".$it->current()->building."<br/>
-				  			      			Suffe:</span> ".nf($it->current()->level)."
+				  			      			Stufe:</span> ".nf($it->current()->level)."
 				  			      		</th>";
 							if (!$bl->requirementsPassed($it->key()) || $it->current()->isMaxLevel())
 							{
