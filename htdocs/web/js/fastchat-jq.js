@@ -174,7 +174,7 @@ function update(rtext)
 		minId = num;
 		// appends the messages to the chat window
 		$('#chatitems').append(rtext.substring(4+splitted[1].length));
-		$('html').scrollTop(100000);
+		scrollDown();
 		msgFail('+');
 	    }
 	}
@@ -204,7 +204,7 @@ function showUserList()
 	    'value','User verbergen (' + numUsers + ')'
 	);
 	$('#userlist').show();
-	$('html').scrollTop(100000);
+	scrollDown();
     });
 }
 
@@ -221,7 +221,7 @@ function hideUserList()
 		'value','User anzeigen (' + numUsers + ')'
 	    );
 	}
-	$('html').scrollTop(100000);
+	scrollDown();
     });
 }
 
@@ -295,6 +295,12 @@ function chatMsg(text)
     $('#chatitems').append('<span style="color: #aaa;">' +
 	text + '</span><br />'
     );
-    $('html').scrollTop(100000);
+    scrollDown();
 }
 
+function scrollDown()
+{
+    $('html').scrollTop(100000);
+    // special treatment for webkit...
+    $('body').scrollTop(100000);
+}
