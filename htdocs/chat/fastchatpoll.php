@@ -1,6 +1,11 @@
 <?PHP
 /* fastchatpoll von river */
 	define('RELATIVE_ROOT','../');
+	
+	define('RED_STAR','../images/star_r.gif');
+	define('GREEN_STAR','../images/star_green.gif');
+	define('YELLOW_STAR','../images/star_y.gif');
+	define('SILVER_STAR','../images/star_g.gif');
 
 	include_once(RELATIVE_ROOT.'inc/bootstrap.inc.php');
 
@@ -115,16 +120,16 @@
 					// chatadmins = 2, admins = 1, entwickler = 3, leiter team community = 4
 					switch($arr['admin'])
 					{
-						case 1: $adminstr = '<img src="../images/star_y.gif" '. //yellow star
+						case 1: $adminstr = '<img src="'.YELLOW_STAR.'" '. //yellow star
 								'alt="Admin" title="Admin" />'; break;
-						case 2: $adminstr = '<img src="../images/star_s.gif" '. //silver star
+						case 2: $adminstr = '<img src="'.SILVER_STAR.'" '. //silver star
 								'alt="Chat-Moderator" title="Chat-Moderator" />'; break;
-						case 3: $adminstr = '<img src="../images/star_r.gif" '. //red star
+						case 3: $adminstr = '<img src="'.RED_STAR.'" '. //red star
 								'alt="Entwickler" title="Entwickler" />'; break;
-						case 4: $adminstr = '<img src="../images/star_g.gif" '. //green star
+						case 4: $adminstr = '<img src="'.GREEN_STAR.'" '. //green star
 								'alt="Leiter Team Community" title="Leiter Team Community" />'; break;
 						default:$adminstr = // default: yellow without alt-text
-							'<img src="../images/star_y.gif" />'; break;
+							'<img src="'.YELLOW_STAR.'" />'; break;
 					}
 				}
 
