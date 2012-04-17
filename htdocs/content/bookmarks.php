@@ -1005,7 +1005,13 @@
 									</td>
 							</tr>";
 				}
+				
+				// Feedback-box für Ausspionieren und Analysieren von river
+				echo '
+						<tr><td colspan="6"><div id="spy_info_box" style="display:none"><span id="spy_info"></span></div></td></tr>';
+				
 				tableEnd();
+				
 			}
 			else
 			{

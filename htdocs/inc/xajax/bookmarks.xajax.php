@@ -9,6 +9,8 @@ $xajax->register(XAJAX_FUNCTION,'bookmarkBookmark');
 
 $xajax->register(XAJAX_FUNCTION,'showFleetCategorie');
 
+// Spy and analyze probe also available on bookmark page
+include_once('cell.xajax.php');
 
 	function showFleetCategorie($cId)
 	{
