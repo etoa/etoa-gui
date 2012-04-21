@@ -329,7 +329,7 @@
 			<li><a href="#tabs-8">Loginfehler</a></li>
 			<li><a href="#tabs-9">Punkte</a></li>
 			<li><a href="#tabs-10">Tickets</a></li>
-			<li><a href="#tabs-11">Kommentare</a></li>
+			'/*<li><a href="#tabs-11">Kommentare</a></li>*/.'
 			<li><a href="#tabs-12">Log</a></li>
 			<li><a href="#tabs-13">Wirtschaft</a></li>
 		</ul>
@@ -1329,11 +1329,12 @@
 							</tr>";
 				tableEnd();
 						
-						
+				// DON'T BUILD IN A FEATURE THAT'S NOT YET AVILABLE
+				/*
 				echo "<div id=\"pointsBox\">
 					<div style=\"text-align:center;\"><img src=\"../web/images/admin/ajax-loader-circle.gif\" /><br/>Wird geladen...</div>
 				</div>
-				";	
+				";	*/
 				
 				echo '</div><div id="tabs-10">';
 				
@@ -1341,21 +1342,49 @@
 				* Tickets
 				*/				
 		
-				echo "<div id=\"ticketsBox\">
-					<div style=\"text-align:center;\"><img src=\"../web/images/admin/ajax-loader-circle.gif\" /><br/>Wird geladen...</div>
-				</div>";	
+				echo "<div id=\"ticketsBox\">";
 				
-				echo '</div><div id="tabs-11">';
+				$tlist = Ticket::find(array('user_id'=> $id));
+				if (count($tlist)>0)
+				{
+					tableStart('Tickets','100%');
+					echo "<tr><th>ID</th><th>Status</th><th>Kategorie</th><th>User</th><th>Letzte Änderung</th></tr>";
+					foreach ($tlist as $tid => &$ti)
+					{
+						echo "
+						<tr>
+							<td>".popupLink('tickets',$ti->idString,'','id='.$tid)."</td>
+							<td>".$ti->statusName."</td>
+							<td>".$ti->catName."</td>
+							<td><a href=\"javascript:;\" ".cTT($ti->userNick,"tt".$ti->id).">".$ti->userNick."</a></td>
+							<td>".df($ti->time)."</td>
+						</tr>";
+					}
+					tableEnd();
+				}
+				else
+				{
+					echo '<p>Dieser User hat keine Tickets</p>';
+				}
+				
+					//<div style=\"text-align:center;\"><img src=\"../web/images/admin/ajax-loader-circle.gif\" /><br/>Wird geladen...</div>
+				echo "</div>";	
+				
+				//echo '</div><div id="tabs-11">';
 				
 				/**
 				* Kommentare
 				*/			
+				
+				// DON'T BUILD IN A FEATURE THAT'S NOT YET AVILABLE
 			
+				/*
 				echo "<div id=\"commentsBox\">
 					<div style=\"text-align:center;\"><img src=\"../web/images/admin/ajax-loader-circle.gif\" /><br/>Wird geladen...</div>
 				</div>";
+				*/				
 				
-				echo '</div><div id="tabs-12">';				
+				echo '</div><div id="tabs-12">';
 				
 				/**
 				* Log
