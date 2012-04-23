@@ -87,4 +87,29 @@ function replace_ascii_control_chars_unicode($str)
 		chr(127)=> chr(0x2421));
 	return strtr($str, $controlChars);
 }
+
+function encodeJavascriptString($str)
+{
+	$controlChars = array(
+		chr(92) => '\\\\',			// \ to \\
+		chr(39) => "\'",			// '
+		chr(34) => '\"',			// "
+		chr(13).chr(10) => '\n',	// CR LF
+		chr(10).chr(13) => '\n',	// LF CR
+		chr(10) => '\n', 			// LF
+		chr(13) => '\n'  			// CR
+	);
+	return strtr($str, $controlChars);
+}
+
+function replaceBR($str)
+{
+	$controlChars = array(
+		chr(13).chr(10) => '<br />',	// CR LF
+		chr(10).chr(13) => '<br />',	// LF CR
+		chr(10) => '<br />', 			// LF
+		chr(13) => '<br />'  			// CR
+	);
+	return strtr($str, $controlChars);
+}
 ?>

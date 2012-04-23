@@ -2639,7 +2639,7 @@ function imagecreatefromfile($path, $user_functions = false)
 
 	function mTT($title,$content)
 	{
-		return " onmouseover=\"showTT('".str_replace('"',"\'",$title)."','".str_replace('"',"\'",$content)."',1,event,this);\" onmouseout=\"hideTT();\" ";
+		return " onmouseover=\"showTT('".str_replace('"',"\'",$title)."','".replaceBR(str_replace('"',"\'",$content))."',1,event,this);\" onmouseout=\"hideTT();\" ";
 	}
 
 	function tt($content)
