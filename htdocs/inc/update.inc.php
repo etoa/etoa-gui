@@ -12,11 +12,11 @@
 	{
 		global $conf;
 
-	 	// Inaktive User l�schen
+	 	// Inaktive User löschen
 		$tmr = timerStart();
 		$ui = Users::removeInactive();
 		$ud = Users::removeDeleted();
-		$log = "Inaktive und als gelöscht markierte User gel�scht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$log = "Inaktive und als gelöscht markierte User gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
 		// Alte Benuterpunkte-Logs löschen
 		$tmr = timerStart();
@@ -102,7 +102,7 @@
 		//Schiffsteile berechnen
 		Alliance::allianceShipPointsUpdate();
 
-		// Wurml�cher vertauschen
+		// Wurmlöcher vertauschen
 		$tmr = timerStart();
 		Wormhole::randomize();
 		$log.= "Wurml&ouml;cher vertauscht.\nDauer: ".timerStop($tmr)." sec\n\n";
@@ -119,13 +119,28 @@
 		global $conf;
 		$log = "";
 
-		//Admins �ber einkommende Nachrichten Informieren
+		//Admins über einkommende Nachrichten Informieren
 		$ares = dbquery("SELECT user_nick, user_email, player_id FROM admin_users WHERE player_id>0");
 		if (mysql_num_rows($ares)>0)
 		{
 			while ($arow = mysql_fetch_row($ares))
 			{
-				$mres = dbquery("SELECT message_data.subject, message_data.text, users.user_nick FROM messages INNER JOIN `message_data` ON messages.message_id=message_data.id AND messages.message_user_to='".$arow[2]."' AND messages.message_mailed=0 AND messages.message_read=0 LEFT JOIN users ON messages.message_user_from=users.user_id");
+				$mres = dbquery("
+					SELECT 
+						message_data.subject, 
+						message_data.text, 
+						users.user_nick 
+					FROM 
+						messages 
+					INNER JOIN 
+						`message_data` 
+					ON messages.message_id=message_data.id 
+					AND messages.message_user_to='".$arow[2]."' 
+					AND messages.message_mailed=0 
+					AND messages.message_read=0 
+					LEFT JOIN 
+						users 
+					ON messages.message_user_from=users.user_id");
 				
 				if (mysql_num_rows($mres)>0)
 				{
@@ -216,7 +231,7 @@
 	{
 		global $conf;
 
-		// Zufalls-Event ausl�sen
+		// Zufalls-Event auslösen
 		//PlanetEventHandler::doEvent(RANDOM_EVENTS_PER_UPDATE);
 
 		$log= "Krieg/Frieden aktualisieren...\n";
