@@ -1713,7 +1713,7 @@ function showGameLogs($args=null,$limit=0)
 			<td>".$obStatus."</td>
 			<td><a href=\"javascript:;\" onclick=\"toggleBox('details".$arr['id']."')\">Details</a></td>
 			</tr>";
-			echo "<tr id=\"details".$arr['id']."\" style=\"display:none;\"><td colspan=\"9\">".text2($arr['message'])."
+			echo "<tr id=\"details".$arr['id']."\" style=\"display:none;\"><td colspan=\"9\">".text2html($arr['message'])."
 			<br/><br/>IP: ".$arr['ip']."</td></tr>";
 		}
 		echo "</table>";
