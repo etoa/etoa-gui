@@ -317,7 +317,7 @@
 		/** 
 		* Displays a box with resources, power and population
 		*/
-		function resBox($small=0)
+		function resBox($small=0, $return=false)
 		{
 			$cfg = Config::getInstance();
 
@@ -389,8 +389,8 @@
 					$style6="respowercolor";
 					$power_rest = floor($this->prodPower)-floor($this->usePower);
 				}
-				tableStart("Ressourcen");
-				echo "<tr>
+				
+				$rtn = tableStart("Ressourcen", 0, '', '', true)."<tr>
 				<th class=\"resBoxTitleCell\"><div class=\"resmetal\">".RES_METAL."</div></th>
 				<th class=\"resBoxTitleCell\"><div class=\"rescrystal\">".RES_CRYSTAL."</div></th>
 				<th class=\"resBoxTitleCell\"><div class=\"resplastic\">".RES_PLASTIC."</div></th>
@@ -406,36 +406,7 @@
 				<td class=\"$style4\" ".mTT(RES_FOOD,"<img width=\"40px\" height=\"40px\" src=\"images/resources/food.png\" style=\"float:left;margin-right:5px;\"/> <b>Vorhanden:</b> ".nf($this->resFood)."<br/><b>Speicher:</b> ".nf($this->storeFood)."<br style=\"clear:both;\"/>").">".nf(floor($this->resFood))."</td>
 				<td class=\"$style5\" ".mTT("Bevölkerung","<img width=\"40px\" height=\"40px\" src=\"images/resources/people.png\" style=\"float:left;margin-right:5px;\"/> <b>Vorhanden:</b> ".nf($this->people)."<br/><b>Platz:</b> ".nf($this->people_place)."<br style=\"clear:both;\"/>").">".nf(floor($this->people))."</td>
 				<td class=\"$style6\" ".mTT(RES_POWER,"<img width=\"40px\" height=\"40px\" src=\"images/resources/power.png\" style=\"float:left;margin-right:5px;\"/> <b>Produktion:</b> ".nf($this->prodPower)."<br/><b>Verfügbar:</b> ".nf($power_rest)."<br/><b>Verbrauch:</b> ".nf($this->usePower)."<br style=\"clear:both;\"/>").">".nf($power_rest)."</td>
-				</tr>";
-
-				/*	
-				$text = array();
-				if ($store_msg)
-					array_push($text,"Speicher");
-				if ($place_msg)
-					array_push($text,"Wohnmodule");
-				if ($power_msg)
-					array_push($text,"Kraftwerke");
-				if (count($text)>0)
-				{
-					echo "<tr><td class=\"tbldata\" colspan=\"7\" style=\"text-align:center;color:orange;\"><i>Es werden ben&ouml;tigt: ";
-	
-					$cnt=0;
-	                foreach ($text as $value)
-	                {
-	                	if($cnt!=0)
-	                		echo ", ";
-	                	echo "$value";
-	                	$cnt++;
-	                }
-					echo "</i></td></tr>";
-				}*/
-				/*
-				echo "<tr>
-					<td colspan=\"7\" id=\"resprogress\" style=\"height:10px;background:#fff;text-align:center;\"></td>";
-				jsProgressBar("resprogress",$this->updated,($this->updated + $cfg->value("res_update")),650);
-					*/
-				tableEnd();
+				</tr></table>";
 			}
 			else
 			{
@@ -489,7 +460,7 @@
 					$store_err[7] = "";
 					$power_rest = floor($this->prodPower)-floor($this->usePower);
 				}				
-				echo "<div id=\"resbox\">
+				$rtn = "<div id=\"resbox\">
 				<div id=\"resboxheader\">Resourcen</div>
 				<div id=\"resboxcontent\">			
 				<span class=\"resmetal ".$style0."\" ".mTT(RES_METAL,"<img src=\"images/resources/metal.png\" style=\"float:left;margin-right:5px;\"/> <b>Vorhanden:</b> ".nf($this->resMetal)."<br/><b>Speicher:</b> ".nf($this->storeMetal)."<br style=\"clear:both;\"/>").">".nf($this->resMetal,0,1)."</span>
@@ -502,6 +473,11 @@
 				</div>
 				</div>";			
 			}
+			
+			if ($return) {
+				return $rtn;
+			}
+			echo $rtn;
 		}
 		
 		/**

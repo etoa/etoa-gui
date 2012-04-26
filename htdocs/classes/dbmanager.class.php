@@ -394,9 +394,9 @@ class DBManager implements ISingleton	{
 			$tmr = timerStart();				
 			
 			// Alte Backups löschen
-			$cmd = "find ".$cfg->backup_dir." -name *.sql.gz -mtime +".$cfg->backup_retention_time." -exec rm {} \;";
+			$cmd = "find ".$cfg->backup_dir." -name \"".$this->getDbName()."*.sql.gz\" -mtime +".$cfg->backup_retention_time." -exec rm -f {} \;";
 			passthru($cmd);
-			$cmd = "find ".$cfg->backup_dir." -name *.sql -mtime +".$cfg->backup_retention_time." -exec rm {} \;";
+			$cmd = "find ".$cfg->backup_dir." -name \"".$this->getDbName()."*.sql\" -mtime +".$cfg->backup_retention_time." -exec rm -f {} \;";
 			passthru($cmd);
 	
 			$file = $cfg->backup_dir."/".$this->getDbName()."-".date("Y-m-d-H-i");
