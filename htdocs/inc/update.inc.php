@@ -230,6 +230,9 @@
 
 		// Process log messages
 		$nr = Log::processQueue();
+		$nr+= GameLog::processQueue();
+		$nr+= BattleLog::processQueue();
+		$nr+= FleetLog::processQueue();
 		$log.= "$nr Log Nachrichten verarbeitet\n";
 
 		return $log;
