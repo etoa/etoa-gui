@@ -2,7 +2,7 @@
 class BattleLog extends BaseLog
 {
 	protected static $table = "logs_battle";
-	protected static $queueTable = "logs_gattle_queue";
+	protected static $queueTable = "logs_battle_queue";
 
 	/**
 	* Processes the log queue and stores 
