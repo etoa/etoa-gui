@@ -293,30 +293,6 @@
 				echo "<form action=\"?page=$page&amp;sub=edit&amp;id=".$id."\" method=\"post\">
 				<input type=\"hidden\" id=\"tabactive\" name=\"tabactive\" value=\"\" />";
 
-				
-				/*
-			$tc = new TabControl("userTab",array(
-			"Info",
-			"Account",
-			array("name"=>"Daten","js"=>""),
-			"Sitting",
-			"Profil",
-			"Design",
-			array("name"=>"Nachrichten","js"=>"xajax_showLast5Messages(".$arr['user_id'].",'lastmsgbox');"),
-			"Loginfehler",
-			array("name"=>"Punkte","js"=>"xajax_userPointsTable(".$arr['user_id'].",'pointsBox');"),
-			array("name"=>"Tickets","js"=>"xajax_userTickets(".$arr['user_id'].",'ticketsBox');"),
-			array("name"=>"Kommentare","js"=>"xajax_userComments(".$arr['user_id'].",'commentsBox');"),
-			"Log",
-			"Wirtschaft"
-			),
-			0,
-			'100%',
-			0
-			);
-		
-			$tc->open();		*/
-
 		echo '<div class="tabs" id="user_edit_tabs">
 		<ul>
 			<li><a href="#tabs-1">Info</a></li>
@@ -329,7 +305,7 @@
 			<li><a href="#tabs-8">Loginfehler</a></li>
 			<li><a href="#tabs-9">Punkte</a></li>
 			<li><a href="#tabs-10">Tickets</a></li>
-			'/*<li><a href="#tabs-11">Kommentare</a></li>*/.'
+			<li><a href="#tabs-11">Kommentare</a></li>
 			<li><a href="#tabs-12">Log</a></li>
 			<li><a href="#tabs-13">Wirtschaft</a></li>
 		</ul>
@@ -389,7 +365,7 @@
 							</tr>
 							<tr>
 								<td class=\"tbltitle\">Infos:</td>
-								<td class=\"tbldata\" style=\"color:#ff0\">";
+								<td class=\"tbldata\">";
 
 
 									if ($arr['user_observe']!="")
@@ -440,7 +416,7 @@
 									if ($carr[0] > 0)
 									{
 										echo "<div><b>".$carr[0]." Kommentare</b> vorhanden, neuster Kommentar von ".df($carr[1])."
-										[<a href=\"javascript:;\" onclick=\"tabActivate('userTab',9);\">Zeigen</a>]
+										[<a href=\"javascript:;\" onclick=\"$('.tabs').tabs('select', 10);\">Zeigen</a>]
 										</div>";
 									}	
 									
@@ -453,7 +429,7 @@
 									if ($nt+$at > 0)
 									{
 										echo "<div><b>".$nt." neue Tickets</b> und <b>".$at." zugewiesene Tickets</b> vorhanden
-										[<a href=\"javascript:;\" onclick=\"tabActivate('userTab',8);\">Zeigen</a>]
+										[<a href=\"javascript:;\" onclick=\"$('.tabs').tabs('select', 9);\">Zeigen</a>]
 										</div>";
 									}										
 									
@@ -1370,19 +1346,15 @@
 					//<div style=\"text-align:center;\"><img src=\"../web/images/admin/ajax-loader-circle.gif\" /><br/>Wird geladen...</div>
 				echo "</div>";	
 				
-				//echo '</div><div id="tabs-11">';
+				echo '</div><div id="tabs-11">';
 				
 				/**
 				* Kommentare
 				*/			
-				
-				// DON'T BUILD IN A FEATURE THAT'S NOT YET AVILABLE
 			
-				/*
 				echo "<div id=\"commentsBox\">
 					<div style=\"text-align:center;\"><img src=\"../web/images/admin/ajax-loader-circle.gif\" /><br/>Wird geladen...</div>
 				</div>";
-				*/				
 				
 				echo '</div><div id="tabs-12">';
 				
@@ -1461,9 +1433,9 @@
 				echo "</form>";
 				
 				if ($arr['user_blocked_from']==0)
-					echo "<script>$('#ban_options').hide();</script>";
+					echo "<script>$(function() { $('#ban_options').hide(); });</script>";
 				if ($arr['user_hmode_from']==0)
-					echo "<script>$('#umod_options').hide();</script>";
+					echo "<script>$(function() { $('#umod_options').hide(); });</script>";
 
 				echo '<script>
 					$(function() {
