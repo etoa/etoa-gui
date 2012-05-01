@@ -22,6 +22,9 @@
 	// Funktionen und Config einlesen
 	require_once("inc/bootstrap.inc.php");
 
+	// Set no-cache header
+	header("Cache-Control: no-cache, must-revalidate");
+
 	// Render time measurement
 	$tmr = new Timer();
 
