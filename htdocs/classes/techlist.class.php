@@ -47,8 +47,29 @@
 				$level = $this->techs[$bid]['level'];
 			}
 			return $level;	
-		}	
-
+		}
+		
+		function isBuildingSomething()
+		{
+			global $cu;
+			$tres = dbquery("
+			SELECT 
+				techlist_build_type 
+			FROM 
+				techlist 
+			WHERE 
+				techlist_user_id='".$cu->id."';");
+			$building_something=false;
+			while ($tarr = mysql_fetch_assoc($tres))
+			{
+				if ($tarr['techlist_build_type']>2)
+				{
+					$building_something=true;
+					break;
+				}
+			}
+			return $building_something;
+		}
 	}
 
 ?>
