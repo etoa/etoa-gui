@@ -70,6 +70,25 @@
 			}
 			return $building_something;
 		}
+		
+		/* IMPORTANT:
+		 * Check available workers
+		 * before calling this function!
+		 */
+		function setPeopleWorking($people,$bid)
+		{
+			global $cp;
+            dbquery("
+            	UPDATE
+                	buildlist
+            	SET
+                	buildlist_people_working='".$people."'
+            	WHERE
+                	buildlist_building_id='".$bid."'
+                AND
+                	buildlist_entity_id=".$cp->id.'');
+            return true;
+		}
 	}
 
 ?>

@@ -186,23 +186,11 @@
 			return false;
 		}
 
-		function isUnderConstruction($bid = BUILD_BUILDING_ID)
+		function isUnderConstruction()
 		{
-			if($bid == BUILD_BUILDING_ID)
-			{
-				if (!isset(self::$underConstruction))
-					$this->load();
-				return self::$underConstruction;
-			}
-			else if($bid == TECH_BUILDING_ID)
-			{
-				return $this->tl->isBuildingSomething();
-			}
-			else
-			{
-				//implement other build types here
-				throw new Exception('invalid build type (bid)');
-			}
+			if (!isset(self::$underConstruction))
+				$this->load();
+			return self::$underConstruction;
 		}
 
 		function getLevel($bid)
@@ -248,12 +236,14 @@
 		}
 
 		// use only for tech and buildings
-		// otherwise adjust isUnderConstruction()
-		function setPeopleWorking($bid,$people)
+		function setPeopleWorking($bid,$people,$tech=false)
 		{
 			if ($this->items==null)
 				$this->load();
-			if (!$this->isUnderConstruction($bid))
+			if (
+				(!$tech && !$this->isUnderConstruction($bid)) ||
+				($tech && !$this->tl->isBuildingSomething())
+			)
 			{
 				if (isset($this->items[$bid]))
 				{
@@ -261,8 +251,13 @@
 					$free = $cp->people - $this->items[$bid]->peopleWorking + $this->totalPeopleWorking();
 					if ($free >= $people)
 					{
-						if ($this->items[$bid]->setPeopleWorking($people))
+						if (
+							(!$tech && $this->items[$bid]->setPeopleWorking($people)) ||
+							($tech && $this->tl->setPeopleWorking($people,$bid))
+						)
+						{
 							return true;
+						}
 					}
 				}
 			}

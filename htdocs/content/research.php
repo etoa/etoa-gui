@@ -78,16 +78,27 @@ if (isset($cp)) {
 			}
 		}
 
+		$new_people_set = false;
 		// people working changed
 		if (isset($_POST['submit_people_form']))
 		{
-			if (!$builing_something && $bl->setPeopleWorking(TECH_BUILDING_ID, nf_back($_POST['peopleWorking'])))
+			$set_people = nf_back($_POST['peopleWorking']);
+			if (!$builing_something && $bl->setPeopleWorking(TECH_BUILDING_ID, $set_people,true))
+			{
 				ok_msg("Arbeiter zugeteilt!");
+				$new_people_set = true;
+			}
 			else
+			{
 				error_msg('Arbeiter konnten nicht zugeteilt werden!');
+			}
 		}
 
-		$peopleWorking = $bl->getPeopleWorking(TECH_BUILDING_ID);	
+		$peopleWorking = (
+			($new_people_set && isset($set_people)) ?
+			$set_people :
+			$bl->getPeopleWorking(TECH_BUILDING_ID)
+		);	
 
 		$peopleTimeReduction = $cfg->value('people_work_done');
 		$peopleFoodConsumption = $cfg->value('people_food_require');
@@ -156,7 +167,7 @@ if (isset($cp)) {
 		$checker = ob_get_contents();
 		ob_end_clean();
 
-		$peopleFree = floor($cp->people) - $bl->totalPeopleWorking() + $bl->getPeopleWorking(TECH_BUILDING_ID);
+		$peopleFree = floor($cp->people) - $bl->totalPeopleWorking() + $peopleWorking;
 		$peopleOptimized = 0;
 		if ($bid) {
 			// Forschungsdaten laden
@@ -215,7 +226,7 @@ if (isset($cp)) {
 									<input 	type="text" 
 											name="peopleWorking" 
 											id="peopleWorking" 
-											value="'.nf($bl->getPeopleWorking(TECH_BUILDING_ID)).'" 
+											value="'.nf($peopleWorking).'" 
 											onkeyup="updatePeopleWorkingBox(this.value,\'-1\',\'-1\');"/>
 							</td>
 						</tr>';
@@ -224,14 +235,14 @@ if (isset($cp)) {
 								<td><input	type="text"
 											name="timeReduction"
 											id="timeReduction"
-											value="'.tf($cfg->value('people_work_done') * $bl->getPeopleWorking(TECH_BUILDING_ID)).'"
+											value="'.tf($cfg->value('people_work_done') * $peopleWorking).'"
 											onkeyup="updatePeopleWorkingBox(\'-1\',this.value,\'-1\');" /></td>
 							</tr>
 								<th>Nahrungsverbrauch</th>
 								<td><input	type="text"
 											name="foodUsing"
 											id="foodUsing"
-											value="'.nf($cfg->value('people_food_require') * $bl->getPeopleWorking(TECH_BUILDING_ID)).'"
+											value="'.nf($cfg->value('people_food_require') * $peopleWorking).'"
 											onkeyup="updatePeopleWorkingBox(\'-1\',\'-1\',this.value);" /></td>
 							</tr>
 							<tr>
