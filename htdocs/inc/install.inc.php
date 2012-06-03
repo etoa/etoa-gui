@@ -134,7 +134,7 @@ if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 			<textarea style=\"width:900px;background:#eee;color:#000;font-family:courier new;margin:0px auto;text-align:left;\">
 			".json_encode($dbCfg)."
 		</textarea><br /><br />";
-		echo "Und den folgenden Inhalt in eine Datei \"db.cfg\" für den Eventhandler, z.B. <b>config/db.cfg</b>:<br/><br/>
+		echo "Und den folgenden Inhalt in eine Datei \"db.cfg\" für den Eventhandler, z.B. <b>htdocs/config/db.cfg</b>:<br/><br/>
 			<textarea style=\"width:900px;background:#eee;color:#000;font-family:courier new;margin:0px auto;text-align:left;\" rows=\"5\">
 			[mysql]
 			host = ".$dbCfg['host']."
