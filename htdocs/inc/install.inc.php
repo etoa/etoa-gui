@@ -130,9 +130,17 @@ if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 			'password' => $_SESSION['INSTALL']['db_password'],
 		);
 		
-		echo "Fertig! Du musst nun den folgenden Inhalt in eine neue Textdatei namens <b>config/".DBManager::getInstance()->getConfigFile()."</b> speichern!<br/><br/>
+		echo "Fertig! Du musst nun den folgenden Inhalt in eine neue Textdatei namens <b>htdocs/config/".DBManager::getInstance()->getConfigFile()."</b> speichern!<br/><br/>
 			<textarea style=\"width:900px;background:#eee;color:#000;font-family:courier new;margin:0px auto;text-align:left;\">
 			".json_encode($dbCfg)."
+		</textarea><br /><br />";
+		echo "Und den folgenden Inhalt in eine Datei \"db.cfg\" für den Eventhandler, z.B. <b>config/db.cfg</b>:<br/><br/>
+			<textarea style=\"width:900px;background:#eee;color:#000;font-family:courier new;margin:0px auto;text-align:left;\" rows=\"5\">
+			[mysql]
+			host = ".$dbCfg['host']."
+			database = ".$dbCfg['dbname']."
+			user = ".$dbCfg['user']."
+			password = ".$dbCfg['password']."
 		</textarea>";
 		echo "<p> <a href=\"admin\">Zum Admin-Login</a> &nbsp; <a href=\"".$_SESSION['INSTALL']['loginserver_url']."\">Zum Loginserver</a></p>";
 	
