@@ -130,7 +130,7 @@
 			// Backup erstellen
 			// ACHTUNG: Die create()-Funktion aquiriert selbst wieder das Mutes-Token. 
 			// Deshalb muss diese Funktion nach mtx->release() stehen
-			if ((date("h")-$cfg->get('backup_time_hour'))%$cfg->get('backup_time_interval')==0 && date("i")==$cfg->get('backup_time_minute')) 
+			if ($cfg->get('backup_time_interval') > 0 && (date("h")-$cfg->get('backup_time_hour'))%$cfg->get('backup_time_interval')==0 && date("i")==$cfg->get('backup_time_minute')) 
 			{
 				DBManager::getInstance()->backupDB();				
 			}			
