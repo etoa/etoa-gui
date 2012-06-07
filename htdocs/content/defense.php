@@ -567,7 +567,8 @@
 									queue_cnt,
 									queue_starttime,
 									queue_endtime,
-									queue_objtime)
+									queue_objtime,
+									queue_user_click_time)
 								VALUES
 									('".$cu->id."',
 									'".$def_id."',
@@ -575,7 +576,8 @@
 									'".$build_cnt."',
 									'".$start_time."',
 									'".$end_time."',
-									'".$obj_time."');");
+									'".$obj_time."',
+									'".time()."');");
 								$deflist_id = mysql_insert_id();
 
 

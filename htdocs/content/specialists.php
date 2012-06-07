@@ -85,7 +85,6 @@
 					)
 					{
 						$st = $t + (86400 *$arr['specialist_days']);
-						
 						dbquery("
 						UPDATE
 							users
@@ -143,25 +142,58 @@
 		if ($cu->specialistId > 0 && $cu->specialistTime > $t)
 		{
 			$inUse = false;
-			// check if a research is in progress if using the professor
-			switch ($cu->specialistId) {
-				case 4:
-				case 6:
-					$res = dbquery("SELECT techlist_id FROM techlist WHERE techlist_user_id='".$cu->id."' AND techlist_build_end_time>'".time()."' AND techlist_build_start_time<'".time()."' LIMIT 1;");
-					if (mysql_num_rows($res))
-					{
-						$inUse = true;
-					}
-					break;
-				case 2:
-					$res = dbquery("SELECT queue_id FROM def_queue WHERE queue_user_id='" . $cu->id ."' LIMIT 1");
-					if (mysql_num_rows($res))
-					{
-						$inUse = true;
-					}
-					break;
-				default:
-					break;
+			$specQuery = dbquery("
+			SELECT
+				specialist_days
+			FROM
+				specialists
+			WHERE		
+				specialist_id='".$cu->specialistId."'
+				AND specialist_enabled = 1
+			");
+			if (mysql_num_rows($res)>0)
+			{
+				$specArr = mysql_fetch_assoc($specQuery);
+				$inittime = $cu->specialistTime - (86400 *$specArr['specialist_days']);
+				
+				// check if a research is in progress if using the professor
+				switch ($cu->specialistId) {
+					case 4:
+					case 6:
+						$res = dbquery("SELECT techlist_id, techlist_build_start_time FROM techlist WHERE techlist_user_id='".$cu->id."' AND techlist_build_end_time > '".$t."';");
+						if (mysql_num_rows($res) > 0)
+						{
+							while($arr = mysql_fetch_assoc($res))
+							{
+								if($arr['techlist_build_start_time'] > $inittime)
+								{
+									$inUse = true;
+									break;
+								}
+							}
+						}
+						break;
+					case 2: //Ingenieur
+						$res = dbquery("SELECT queue_id, queue_user_click_time FROM def_queue WHERE queue_user_id='" . $cu->id ."' AND queue_endtime > '".$t."';");
+						if (mysql_num_rows($res) > 0) 
+						{
+							while($arr = mysql_fetch_assoc($res))
+							{
+								if($arr['queue_user_click_time'] > $inittime)
+								{
+									$inUse = true;
+									break;
+								}
+							}
+						}
+						break;
+					default:
+						break;
+				}
+			}
+			else
+			{
+				err_msg("Du hast einen Spezialist eingestellt, der gar nicht existiert. Cheater!");
 			}
 
 			if ($inUse)
