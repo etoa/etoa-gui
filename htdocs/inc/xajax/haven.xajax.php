@@ -1074,18 +1074,18 @@
 						{
 							if ($fleet->getLeader()>0) {
 								if ($ac->code() == "alliance") {
-									echo "<input type=\"radio\" onchange=\"xajax_havenCheckAction('".$ac->code()."');\" name=\"fleet_action\" value=\"".$ac->code()."\"";
+									echo "<input type=\"radio\" onchange=\"xajax_havenCheckAction('".$ac->code()."');\" name=\"fleet_action\" value=\"".$ac->code()."\" id=\"action_".$ac->code()."\"";
 
 									echo " checked=\"checked\"";
-									echo " /><span ".tm($ac->name(),$ac->desc())."> ".$ac." (unterstützen)</span><br/>";
+									echo " /><label for=\"action_".$ac->code()."\" ".tm($ac->name(),$ac->desc())."> ".$ac." (unterstützen)</label><br/>";
 									$actionsAvailable++;
 								}
 							} else {									
-								echo "<input type=\"radio\" onchange=\"xajax_havenCheckAction('".$ac->code()."');\" name=\"fleet_action\" value=\"".$ac->code()."\"";
+								echo "<input type=\"radio\" onchange=\"xajax_havenCheckAction('".$ac->code()."');\" name=\"fleet_action\" value=\"".$ac->code()."\" id=\"action_".$ac->code()."\"";
 
 								if ($actionsAvailable == 0)
 									echo " checked=\"checked\"";
-								echo " /><span ".tm($ac->name(),$ac->desc())."> ".$ac."</span><br/>";
+								echo " /><label for=\"action_".$ac->code()."\" ".tm($ac->name(),$ac->desc())."> ".$ac."</label><br/>";
 								$actionsAvailable++;
 							}
 						}
