@@ -195,16 +195,18 @@ if (isset($cp)) {
 				}
 
 				foreach ($resNames as $rk => $rn) {
-					$bc['costs'.$rk] = $costs[$rk] * pow($currentTechData['tech_build_costs_factor'], $level);
+					//BUGFIX by river: costsResearch factor. Still whole code is wrong, but at least consistent now.
+					$bc['costs'.$rk] = $cu->specialist->costsResearch * $costs[$rk] * pow($currentTechData['tech_build_costs_factor'], $level);
 				}
 				$bc['costs5'] = $costs[5] * pow($currentTechData['tech_build_costs_factor'], $level);
 
-				$bonus = $cu->race->researchTime + $cp->typeResearchtime + $cp->starResearchtime + $cu->specialist->researchTime - 3;
-
-				$bc['time'] = (array_sum($bc)) / GLOBAL_TIME * BUILD_BUILD_TIME;
+				$bonus = $cu->race->researchTime + $cp->typeResearchtime + $cp->starResearchtime - 2;
+				$bonus *= $cu->specialist->researchTime;
+				
+				$bc['time'] = (array_sum($bc)) / GLOBAL_TIME * RES_BUILD_TIME * $time_boni_factor;
 				$bc['time'] *= $bonus;
-				$maxReduction = $bc['time'] - $bc['time'] * (0.1-(GEN_TECH_LEVEL / 100));
-
+				$maxReduction = $bc['time'] - $bc['time'] * $minBuildTimeFactor;
+				
 				$peopleOptimized = ceil($maxReduction / $cfg->value('people_work_done'));
 			}
 		}
@@ -343,6 +345,7 @@ if (isset($cp)) {
 					$btime = ($bc['metal']+$bc['crystal']+$bc['plastic']+$bc['fuel']+$bc['food']) / GLOBAL_TIME * RES_BUILD_TIME * $time_boni_factor;
 					$btime *= $bonus * $cu->specialist->researchTime;
 	
+					//Nächste Stufe
 					$btimen = ($bcn['metal']+$bcn['crystal']+$bcn['plastic']+$bcn['fuel']+$bcn['food']) / GLOBAL_TIME * RES_BUILD_TIME * $time_boni_factor;
 					$btimen  *= $bonus * $cu->specialist->researchTime;
 	
