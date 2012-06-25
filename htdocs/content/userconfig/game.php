@@ -48,7 +48,7 @@
 	else
 	{
   		$cu->properties->chatColor = "FFF";
-    	error_msg('Ung&uuml;ltiger RGB-Farbwert, Standardwert #FFF wurde eingefügt.');
+    	error_msg('Ung&uuml;ltiger RGB-Farbwert, Standardwert #FFF wurde eingef&uuml;gt.');
 	}
   }
 			
