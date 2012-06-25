@@ -31,11 +31,25 @@
   	$cu->properties->startUpChat = $_POST['startup_chat'];
 	$cu->properties->showCellreports = $_POST['show_cellreports'];
 	
-	if (strlen($_POST['chat_color'])==3 || strlen($_POST['chat_color'])==6)
+	if ( (	strlen($_POST['chat_color'])==3 &&
+			preg_match('/^[a-fA-F0-9]{3}$/', $_POST['chat_color']) ) ||
+		(	strlen($_POST['chat_color'])==6 &&
+			preg_match('/^[a-fA-F0-9]{6}$/', $_POST['chat_color']) ))
+	{
   		$cu->properties->chatColor = $_POST['chat_color'];
+  		if($_POST['chat_color'] == '000' || $_POST['chat_color'] == '000000')
+  		{
+  			success_msg('Chatfarbe schwarz auf schwarz ist eine Weile ja ganz lustig, '.
+  				'aber in ein paar Minuten bitte zur&uuml;ck&auml;ndern ;)');
+  		} else {
+    		success_msg('Benutzer-Daten wurden ge&auml;ndert!');
+  		}
+	}
 	else
+	{
   		$cu->properties->chatColor = "FFF";
-    success_msg("Benutzer-Daten wurden ge&auml;ndert!");
+    	error_msg('Ung&uuml;ltiger RGB-Farbwert, Standardwert #FFF wurde eingefügt.');
+	}
   }
 			
 
