@@ -1219,13 +1219,18 @@
 		
 		echo "<tr>";
 		if ($cu->alliance->resMetal<0 || $cu->alliance->resCrystal<0 || $cu->alliance->resPlastic<0 || $cu->alliance->resFuel<0 || $cu->alliance->resFood<0)
+		{
 			echo "<td style=\"text-align:center;\"><span ".tm("Produktionsstop","Die Produktion wurde unterbrochen, da negative Rohstoffe vorhanden sind.").">Schiffsteile pro Stunde: 0</span></td>";
+		}
 		else
-			echo "<td style=\"text-align:center;\">Schiffsteile pro Stunde: ".($cfg->get('alliance_shippoints_per_hour')*$cu->alliance->buildlist->getLevel(ALLIANCE_SHIPYARD_ID))."</td>";
-					echo "</tr>
-					<tr>
-						<td style=\"text-align:center;\">Vorhandene Teile: ".($cu->allianceShippoints-$ship_costed)."</td>
-					</tr>";
+		{
+			// if changed, also change classes/alliance.class.php
+			echo "<td style=\"text-align:center;\">Schiffsteile pro Stunde: ".ceil($cfg->get('alliance_shippoints_per_hour')*pow($cfg->get('alliance_shippoints_base'),($cu->alliance->buildlist->getLevel(ALLIANCE_SHIPYARD_ID)-1)))."</td>";
+		}
+		echo "</tr>
+		<tr>
+			<td style=\"text-align:center;\">Vorhandene Teile: ".($cu->allianceShippoints-$ship_costed)."</td>
+		</tr>";
 		
 		tableEnd();
 		
