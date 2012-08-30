@@ -30,28 +30,37 @@ namespace steal
 				double min = config.nget("spyattack_action",1); //minimum value
 				double max = config.nget("spyattack_action",2); //maximum value
 				double ini = config.nget("spyattack_action",0); //initial value
+				
+				// Get the special ship steal bonus, max. 100%
+				double specialShipStealBonus = std::min(this->f->getSpecialShipBonusForsteal(),1.0);
+				
 				this->one = rand() % 501; //Choose random number from 0 to 500
+				
 				/* Calculate a number
 				 * > between min and max (the two min() and max() wrappers)
-				 * > the MAXIMUM of
 				 * - > ini plus difference between Att and Def tech levels
 				 * -   plus the third root of the number of ships
 				 * -   (third root seems to be about balanced)
 				 * -   minus one (drawback of choosing third root and
 				 * -   standard value of 3 for ini => average chance remains
 				 * -   at about 4% with this -1)
-				 * - > AND special ship bonus ratio applied to min,max
-				 * === new TechSteal algorithm by river ===
+				 * === new TechSteal algorithm by river v2 ===
 				 */
 				this->two = std::min(max, std::max(min, // wrappers
-					std::max( // MAXIMUM
 						(ini + this->tLevelAtt - this->tLevelDef // ini + diff(att,def)
-							+ std::pow((double) this->shipCnt,(1.0/3.0)) -1), //shipCnt^(1/3) -1
-						((max - min) * this->f->getSpecialShipBonusForsteal() + min) //linear ratio func
+						+ std::pow((double) this->shipCnt,(1.0/3.0)) -1) //shipCnt^(1/3) -1
 					)
-				));
+				);
+				
+				// Chance is decreased by 0.2% times the square root of the number of successful spyattacks.
 				this->two *= 5;
-				this->two -= this->f->fleetUser->getSpyattackCount();
+				this->two -= std::pow((double) this->f->fleetUser->getSpyattackCount(),(1.0/2.0));
+				
+				// If there is a special ship bonus, choose the maximum of
+				// the calculated value and the bonus
+				// NOTE: This results in a REAL 100% chance for a special ship with
+				// 100% bonus, not only chance = maximum chance value from config.
+				this->two = std::max(this->two, specialShipStealBonus * 500);
 				
 				BattleReport *spyattack = new BattleReport(this->f->getUserId(),
 										this->targetEntity->getUserId(),
@@ -62,7 +71,6 @@ namespace steal
 				spyattack->addUser(this->targetEntity->getUserId());
 				
 				if (this->one < this->two) {
-				
 					std::string actionString = this->f->fleetUser->stealTech(this->targetEntity->getUser());
 					
 					//if there is a tech
@@ -74,13 +82,15 @@ namespace steal
 						
 						etoa::addSpecialiBattle(this->f->getUserId(),"Spezialaktion");
 						
+						// Remove one steal ship from the fleet
 						this->f->deleteActionShip(1);
+						// Increment the user's successful spyattacks counter
+						this->f->fleetUser->addSpyattackCount();
 					}
 					
 					// if stealing a tech failed
 					else  {
 						spyattack->setSubtype("spyattackfailed");
-						
 						this->actionLog->addText("Action failed: Tech error");
 					}
 				} 

@@ -75,8 +75,6 @@
 		if (!this->dataLoaded)
 			this->loadData();
 		
-		this->addSpyattackCount();
-		
 		return this->spyattackCount;
 	}
 	
@@ -438,6 +436,9 @@
 	}
 
 	void User::addSpyattackCount() {
+		if (!this->dataLoaded)
+		    this->loadData();
+	    
 		My &my = My::instance();
 		mysqlpp::Connection *con_ = my.get();
 		
