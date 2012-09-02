@@ -93,7 +93,10 @@ if (isset($cp)) {
 				error_msg('Arbeiter konnten nicht zugeteilt werden!');
 			}
 		}
+		// reload buildlist in case the number of workers has changed.
+		$bl = new BuildList($cp->id(),$cu->id);
 
+		// People working in the tech building.
 		$peopleWorking = (
 			($new_people_set && isset($set_people)) ?
 			$set_people :
