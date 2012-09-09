@@ -974,13 +974,15 @@
 			$buildingIterator->next();
 		}
 		if ($save)
-		{
+		{ // BUGFIX by river: AND part - only edit if new member count is higher
 			dbquery("UPDATE
 						alliance_buildlist
 					SET
 						alliance_buildlist_member_for='".$newMemberCnt."'
 					WHERE
-						alliance_buildlist_alliance_id='".$this->id."';");
+						alliance_buildlist_alliance_id='".$this->id."'
+					AND
+						alliance_buildlist_member_for < '".$newMemberCnt."';");
 		}
 
 
@@ -1019,13 +1021,15 @@
 			$techIterator->next();
 		}
 		if ($save)
-		{
+		{ // BUGFIX by river: AND part - only edit if new member count is higher
 			dbquery("UPDATE
 						alliance_techlist
 					SET
 						alliance_techlist_member_for='".$newMemberCnt."'
 					WHERE
-						alliance_techlist_alliance_id='".$this->id."';");
+						alliance_techlist_alliance_id='".$this->id."'
+					AND
+						alliance_techlist_member_for < '".$newMemberCnt."';");
 		}
 
 		// Berechnet die zu zahlenden Rohstoffe
