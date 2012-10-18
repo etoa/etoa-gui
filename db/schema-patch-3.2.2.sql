@@ -2,12 +2,6 @@ DROP TABLE message_data;
 DROP TABLE messages;
 
 --
--- Datenbank: `etoa_test`
---
-
--- --------------------------------------------------------
-
---
 -- Tabellenstruktur für Tabelle `messages`
 --
 
