@@ -100,7 +100,7 @@
 		$page != 'help')
 		{
 			echo '<h1>Du befindest dich im Urlaubsmodus</h1>
-			Der Urlaubsmous dauert bis mindestens: <b>'.date("d.m.Y, H:i",$cu->hmode_to).'</b><br/>';
+			Der Urlaubsmodus dauert bis mindestens: <b>'.date("d.m.Y, H:i",$cu->hmode_to).'</b><br/>';
 			if($cu->hmode_to < time())
 			{
 			 	echo '<br/><span style="color:#0f0">Die Minimaldauer ist abgelaufen!</span><br/><br/>
