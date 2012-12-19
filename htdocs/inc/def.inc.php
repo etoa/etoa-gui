@@ -460,7 +460,6 @@
 	
 	define('ADD_BANNER','');		// Advertising banner code
 	define('FORCE_ADDS',0); // Banner immer anzeigen
-	define('IPC_ID','A');		// Inter-Process Project-Id (for Backend Message Queue)
 	
 	/***********
 	* Updates *

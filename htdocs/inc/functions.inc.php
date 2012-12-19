@@ -2697,10 +2697,9 @@ function imagecreatefromfile($path, $user_functions = false)
 	{
 		if (function_exists("msg_get_queue"))
 		{
-			$dname = realpath("config/");
-			$ipckey = ftok($dname,IPC_ID);
+			$ipckey = Config::getInstance()->daemon_ipckey->v;
 			$q = msg_get_queue($ipckey,0666);
-			add_log(4,"Sende IPC Message mit Key $ipckey vom Token $dname und Projekt-Id ".IPC_ID.". Die Queue hat die ID ".$q);
+			add_log(4,"Sende IPC Message mit Key $ipckey. Die Queue hat die ID ".$q);
 			return msg_send($q,1,$message,false,false);
 		}
 		return false;

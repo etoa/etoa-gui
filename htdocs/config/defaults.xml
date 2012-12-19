@@ -651,6 +651,9 @@ Anmerkung: Eine Kopie dieser Nachricht wird in Eurer Nachrichten-Box hinterlegt.
     <item name="daemon_pidfile" cat="20" base="yes">
       <v comment="Evendhandler PID-File" type="text">/var/run/etoad/roundx.pid</v>
     </item>	
+    <item name="daemon_ipckey" cat="20" base="yes">
+      <v comment="Evendhandler IPC Key" type="text">1</v>
+    </item>	
     <item name="specialistconfig" cat="5">
       <v comment="SPECIALIST_AVAILABILITY_FACTOR basierend auf Faktor * Anzahl" type="text">0.3</v>
       <p1 comment="SPECIALIST_MAX_COSTS_FACTOR" type="text">10</p1>
