@@ -76,7 +76,8 @@
 																		"show_overview" => 1,
 																		"link_in_overview" => 1
 																	),
-											array	(	"name" => "alliance_tech_comment",
+                                            //bugfix by river: longcomment (not comment)
+											array	(	"name" => "alliance_tech_longcomment",
 																		"text" => "Beschreibung",
 																		"type" => "textarea",
 																		"def_val" => "",

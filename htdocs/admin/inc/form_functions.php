@@ -352,7 +352,11 @@
 			switch ($a['type'])
 			{
 				case "readonly":
-					$sql .= "`".$a['name']."` = `".$a['name']."`";
+					//Case readonly: do *nothing* with the field!
+                    //$sql .= "`".$a['name']."` = `".$a['name']."`";
+                    
+                    //but instead do *not* add a comma
+                    $cntadd = 0;
 				break;
 				case "text":
 					$sql .= "`".$a['name']."` = '".addslashes($_POST[$a['name']])."'";
