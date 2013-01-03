@@ -80,7 +80,13 @@ elseif (isset($_GET['id']) && $_GET['id']>0)
 	if (isset($_POST['submit_new_post']))
 	{
 		// Do not inform the user with pm, because the close function does this already
-		if ($ti->addMessage(array("admin_id"=>$cu->id,"message"=>$_POST['message']),0))
+		// BUGFIX by river: But *only* if it actually *is* closed! wtf.
+		if (
+				$ti->addMessage(
+					array("admin_id"=>$cu->id,"message"=>$_POST['message']),
+					(isset($_POST['checkclose'])?0:1)
+				)
+			)
 		{
 			ok_msg("Nachricht hinzugefügt!");
 			if (isset($_POST['checkclose']))
