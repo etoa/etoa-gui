@@ -664,11 +664,13 @@
 							}
 						}
 						
-						// TODO: Perhaps all entities can get res in the future...
-						if ($trgEnt->code == 'p')
+						if (in_array('OwnableEntity', class_implements($trgEnt)))
 						{
 							$trgEnt->changeRes($arr['res_metal'],$arr['res_crystal'],$arr['res_plastic'],$arr['res_fuel'],$arr['res_food'],$arr['res_power']);
 							$trgEnt->chgPeople($arr['pilots']+$arr['res_people']);
+              if ($arr['res_metal'] + $arr['res_crystal'] + $arr['res_plastic'] + $arr['res_fuel'] + $arr['res_food'] + $arr['res_power'] + $arr['pilots'] + $arr['res_people'] > 0) {
+                ok_msg("Ressourcen transferiert!");
+              }
 						}
 						
 						// TODO: Add parts of usaged stuff (power cells, fuel, food)
