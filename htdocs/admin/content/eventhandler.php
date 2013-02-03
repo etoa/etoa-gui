@@ -2,8 +2,10 @@
 	$tpl->setView('admin/eventhandler');
 	$tpl->assign('title', 'Eventhandler');
 	
-	$un=posix_uname();
-	$tpl->assign('sys_id', $un['sysname']." ".$un['release']." ".$un['version']);
+  if (function_exists('posix_uname')) {
+    $un=posix_uname();
+    $tpl->assign('sys_id', $un['sysname']." ".$un['release']." ".$un['version']);
+  }
 
 	// Warning: Open-Basedir restrictions may appply
 	if (is_file($cfg->daemon_logfile))
