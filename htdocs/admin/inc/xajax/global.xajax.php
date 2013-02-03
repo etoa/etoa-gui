@@ -283,8 +283,7 @@ function showShipsOnPlanet($form)
 		{
 			$out="Keine Schiffe vorhanden!<br/>";
 		}
-		
-		$out.="<br/><input type=\"Button\" value=\"Neu laden\" onclick=\"showLoader('shipsOnPlanet');xajax_showShipsOnPlanet('".$form['entity_id']."');\">";
+		$out.="<br/><input type=\"Button\" value=\"Neu laden\" onclick=\"showLoader('shipsOnPlanet');xajax_showShipsOnPlanet('".$form."');\">";
 		$style='';
 	}
 	elseif ($uid!=0)
@@ -348,7 +347,7 @@ function showShipsOnPlanet($form)
 			$out="Keine Schiffe vorhanden!<br/>";
 		}
 	
-		$out.="<br/><input type=\"Button\" value=\"Neu laden\" onclick=\"showLoader('shipsOnPlanet');xajax_showShipsOnPlanet('".$form['entity_id']."');\">";
+		$out.="<br/><input type=\"Button\" value=\"Neu laden\" onclick=\"showLoader('shipsOnPlanet');xajax_showShipsOnPlanet('".$form."');\">";
 	}
 	else
 	{
