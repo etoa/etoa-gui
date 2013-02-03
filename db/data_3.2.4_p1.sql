@@ -342,7 +342,7 @@ INSERT INTO `config` (`config_id`, `config_name`, `config_value`, `config_param1
 (181, 'battle_rebuildable', '0', '0.75', ''),
 (182, 'rebuildable_costs', '0.25', '', ''),
 (183, 'invade_active_users', '0', '', ''),
-(184, 'alliance_shippoints_base', '1.4', '', '');
+(184, 'alliance_shippoints_base', '1.4', '', ''),
 (185, 'backup_dir', '/home/etoa/backup/', '', ''),
 (186, 'backup_retention_time', '14', '', ''),
 (187, 'backup_use_gzip', '0', '', ''),
