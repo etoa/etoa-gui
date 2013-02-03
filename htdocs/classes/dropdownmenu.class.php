@@ -1,5 +1,17 @@
 <?PHP
 
+  class DropdownMenuItem {
+    
+    public $name;
+    public $link;
+    public $childs = array();
+    
+    public function __construct($name, $link) {
+      $this->name = $name;
+      $this->link = $link;
+    }
+  }
+
 	class DropdownMenu
 	{
 		private $tree;
@@ -12,9 +24,7 @@
 		
 		function add($key,$name,$link)
 		{
-			$this->tree[$key]->name=$name;
-			$this->tree[$key]->link=$link;
-			$this->tree[$key]->childs=array();
+			$this->tree[$key] = new DropdownMenuItem($name, $link);
 		}
 	
 		function addChild($key,$name,$link,$parent)
@@ -74,12 +84,6 @@
 			ob_end_clean();
 			return $rtn;
 			
-		}	
-
-			
-		
-		
-		
+		}
 	}
-
 ?>
