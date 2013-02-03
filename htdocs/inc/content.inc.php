@@ -47,7 +47,7 @@
 		{
 			echo "<br />";
 			iBoxStart("<span style=\"color:red;\">UPDATEDIENST</span>");
-			echo text2html($cfg->p1("backend_offline_message"));
+			echo text2html($cfg->value("backend_offline_message"));
 			iBoxEnd();
 		}
 		
