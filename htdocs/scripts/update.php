@@ -52,12 +52,16 @@
 			// Starte Zeitmessung
 			$tmr = timerStart();
 			
+      $forceLog = false;
+      
 			// Monates-Update (1. des Monates 05:13)
 			if ($mode=="month" || (date("H")=="05" && date("i")=="13" && date("m")=="1"))
 			{
 				$logt = "[b]Monates-Update ".date("d.m.Y, H:i")."[/b]\n";
 				$log .= update_minute();
 				$log .= update_month();
+        
+        $forceLog = true;
 			}
 			
 			// Tages-Update (03:13)
@@ -66,6 +70,8 @@
 				$logt = "[b]Tages-Update ".date("d.m.Y, H:i")."[/b]\n";
 				$log .= update_minute();
 				$log .= update_day();
+        
+        $forceLog = true;
 			}
 
 			// Stunden-Update
@@ -76,6 +82,8 @@
 				$log .= update_5minute();
 				$log .= update_30minute();
 				$log .= update_hour();
+        
+        $forceLog = true;
 			}
 
 			// 30-Minuten-Update
@@ -115,8 +123,12 @@
 			{
 				Log::add(Log::F_UPDATES, Log::WARNING, $logt."Gesamtdauer: ".$t."\n\n".$log);
 			}
-			else
+			else if ($forceLog)
 			{
+        Log::add(Log::F_UPDATES, Log::INFO, $logt."Gesamtdauer: ".$t."\n\n".$log);
+      } 
+      else 
+      {
 				// Wird nur geloggt wenn Debug Modus aktiv
 				Log::add(Log::F_UPDATES, Log::DEBUG, $logt."Gesamtdauer: ".$t."\n\n".$log);
 			}
