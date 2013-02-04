@@ -348,7 +348,7 @@ INSERT INTO `config` (`config_id`, `config_name`, `config_value`, `config_param1
 (187, 'backup_use_gzip', '0', '', ''),
 (188, 'daemon_logfile', '/var/log/etoad/round12.log', '', ''),
 (189, 'daemon_pidfile', '/var/run/etoad/round12.pid', '', ''),
-(190, 'daemon_ipckey', '1090553408', '', ''),
+(190, 'daemon_ipckey', '1', '', ''),
 (191, 'backup_time_interval', '6', '', ''),
 (192, 'backup_time_hour', '0', '', ''),
 (193, 'backup_time_minute', '47', '', ''),
