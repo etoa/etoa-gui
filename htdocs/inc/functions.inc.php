@@ -2515,7 +2515,7 @@ function imagecreatefromfile($path, $user_functions = false)
 						$(<?PHP echo $target; ?>).val(ui.value + ' %');
 					}
 				});
-				$(<?PHP echo $target; ?>).val($("#slider" + " %").slider("value"));
+				$(<?PHP echo $target; ?>).val($("#slider").slider("value") + " %");
 			});
 			</script>
 		
