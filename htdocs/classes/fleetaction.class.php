@@ -132,7 +132,7 @@
 			return false;
 		}
 		
-		static function getAll()
+		static function getAll($sorted=false)
 		{
 			$arr = array();
 			foreach (self::$sublist as $i)
@@ -142,9 +142,15 @@
 					$arr[$i] = $tmp; 
 				}
 			}
+      if ($sorted) {
+        uasort($arr, array(self, 'fleetActionCompare'));
+      }
 			return $arr;			
 		}
 		
+    static function fleetActionCompare($a, $b) 
+    {
+      return strcmp($a->name(), $b->name());
+    }    
 	}
-	
 ?>
