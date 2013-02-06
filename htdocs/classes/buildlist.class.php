@@ -526,7 +526,7 @@
 					$this->errorMsg = "Zuwenig Rohstoffe vorhanden!";
 			}
 			else
-				$this->errorMsg = "Es wird gerade an einem Geb&aauml;de gebaut!";
+				$this->errorMsg = "Es wird gerade an einem Geb&auml;de gebaut!";
 			return false;
 		}
 
