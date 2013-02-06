@@ -12,12 +12,17 @@
 	{
 		global $conf;
 
+    $log = '';
+    
 	 	// Inaktive User löschen
 		$tmr = timerStart();
-		$ui = Users::removeInactive();
-		$ud = Users::removeDeleted();
-		$log = "Inaktive und als gelöscht markierte User gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$nr = Users::removeInactive();
+		$log = "$nr inaktive User gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
+		$tmr = timerStart();
+		$nr = Users::removeDeleted();
+		$log.= "$nr als gelöscht markierte User endgültig gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+    
 		// Alte Benuterpunkte-Logs löschen
 		$tmr = timerStart();
 		$nr = Users::cleanUpPoints();
