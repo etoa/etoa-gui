@@ -8,8 +8,8 @@
 
 	require_once(XAJAX_DIR."/xajax_core/xajax.inc.php");
 	$xajax = new xajax();
-	$xajax->setFlag('debug',false);
-
+  $xajax->configure("javascript URI", XAJAX_DIR);
+  $xajax->configure('debug', false);
 	
 	require_once("inc/xajax/global.xajax.php");
 
