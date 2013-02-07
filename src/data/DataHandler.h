@@ -41,18 +41,18 @@
 		* @param id
 		* @author Glaubinix
 		**/
-		ShipData::ShipData* getShipById(int id);
-		DefData::DefData* getDefById(int id);
-		TechData::TechData* getTechById(int id);
-		BuildingData::BuildingData* getBuildingById(int id);
-		RaceData::RaceData* getRaceById(int id);
-		SolData::SolData* getSolById(int id);
-		PlanetData::PlanetData* getPlanetById(int id);		
-		SpecialistData::SpecialistData* getSpecialistById(int id);		
-		ShipData::ShipData* getShipByName(std::string name);
-		DefData::DefData* getDefByName(std::string name);
-		TechData::TechData* getTechByName(std::string name);
-		BuildingData::BuildingData* getBuildingByName(std::string name);
+		ShipData* getShipById(int id);
+		DefData* getDefById(int id);
+		TechData* getTechById(int id);
+		BuildingData* getBuildingById(int id);
+		RaceData* getRaceById(int id);
+		SolData* getSolById(int id);
+		PlanetData* getPlanetById(int id);		
+		SpecialistData* getSpecialistById(int id);		
+		ShipData* getShipByName(std::string name);
+		DefData* getDefByName(std::string name);
+		TechData* getTechByName(std::string name);
+		BuildingData* getBuildingByName(std::string name);
 				
 		/**
 		* Initialisiert die Werte

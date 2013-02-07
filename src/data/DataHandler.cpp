@@ -13,51 +13,51 @@
 #include "BuildingData.h"
 
 	// Liefert eine Kopie des Datenwertes zurück
-	ShipData::ShipData* DataHandler::getShipById(int id) {
+	ShipData* DataHandler::getShipById(int id) {
 		return this->shipData[idShipConverter[id] ];
 	}
 	
-	DefData::DefData* DataHandler::getDefById(int id) {
+	DefData* DataHandler::getDefById(int id) {
 		return this->defData[idDefConverter[id] ];
 	}
 	
-	TechData::TechData* DataHandler::getTechById(int id) {
+	TechData* DataHandler::getTechById(int id) {
 		return this->techData[idTechConverter[id] ];
 	}
 	
-	BuildingData::BuildingData* DataHandler::getBuildingById(int id) {
+	BuildingData* DataHandler::getBuildingById(int id) {
 		return this->buildingData[idBuildingConverter[id] ];
 	}
 	
-	RaceData::RaceData* DataHandler::getRaceById(int id) {
+	RaceData* DataHandler::getRaceById(int id) {
 		return this->raceData[idRaceConverter[id] ];
 	}
 	
-	SolData::SolData* DataHandler::getSolById(int id) {
+	SolData* DataHandler::getSolById(int id) {
 		return this->solData[idSolConverter[id] ];
 	}
 	
-	PlanetData::PlanetData* DataHandler::getPlanetById(int id) {
+	PlanetData* DataHandler::getPlanetById(int id) {
 		return this->planetData[idPlanetConverter[id] ];
 	}
 	
-	SpecialistData::SpecialistData* DataHandler::getSpecialistById(int id) {
+	SpecialistData* DataHandler::getSpecialistById(int id) {
 		return this->specialistData[idSpecialistConverter[id] ];
 	}
 		
-	ShipData::ShipData* DataHandler::getShipByName(std::string name) {
+	ShipData* DataHandler::getShipByName(std::string name) {
 		return this->shipData[nameConverter[name] ];
 	}
 	
-	DefData::DefData* DataHandler::getDefByName(std::string name) {
+	DefData* DataHandler::getDefByName(std::string name) {
 		return this->defData[nameConverter[name] ];
 	}
 			
-	TechData::TechData* DataHandler::getTechByName(std::string name) {
+	TechData* DataHandler::getTechByName(std::string name) {
 		return this->techData[nameConverter[name] ];
 	}
 			
-	BuildingData::BuildingData* DataHandler::getBuildingByName(std::string name) {
+	BuildingData* DataHandler::getBuildingByName(std::string name) {
 		return this->buildingData[nameConverter[name] ];
 	}
 	

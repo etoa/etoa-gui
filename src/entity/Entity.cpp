@@ -891,11 +891,11 @@
 
 		std::vector<Object*>::iterator ot;
 		for (ot = this->objects.begin() ; ot < this->objects.end(); ot++) {
-			ShipData::ShipData *data = DataHandler.getShipById((*ot)->getTypeId());
+			ShipData *data = DataHandler.getShipById((*ot)->getTypeId());
 			exp += ((*ot)->getInitCount() - (*ot)->getCount()) * data->getCosts();
 		}
 		for (ot = this->def.begin() ; ot < this->def.end(); ot++) {
-			DefData::DefData *data = DataHandler.getDefById((*ot)->getTypeId());
+			DefData *data = DataHandler.getDefById((*ot)->getTypeId());
 			exp += ((*ot)->getInitCount() - (*ot)->getCount()) * data->getCosts();
 		}
 		if (fleets.size()) {
@@ -1178,7 +1178,7 @@
 						slRow = slRes.at(i);
 
 						Object* object = ObjectFactory::createObject(slRow, 's');
-						ShipData::ShipData *data = DataHandler.getShipById(object->getTypeId());
+						ShipData *data = DataHandler.getShipById(object->getTypeId());
 
 						this->count += object->getCount();
 						this->weapon += object->getCount() * data->getWeapon();
@@ -1227,7 +1227,7 @@
 
 			std::vector<Object*>::iterator it;
 			for (it=objects.begin() ; it < objects.end(); it++) {
-				ShipData::ShipData *data = DataHandler.getShipById((*it)->getTypeId());
+				ShipData *data = DataHandler.getShipById((*it)->getTypeId());
 
 				this->count += (*it)->getCount();
 				this->weapon += (*it)->getCount() * data->getWeapon();
@@ -1279,7 +1279,7 @@
 						dlRow = dlRes.at(i);
 
 						Object* object = ObjectFactory::createObject(dlRow, 'd', this->getUser()->getSpecialist()->getSpecialistDefRepair());
-						DefData::DefData *data = DataHandler.getDefById(object->getTypeId());
+						DefData *data = DataHandler.getDefById(object->getTypeId());
 
 						this->count += object->getCount();
 						this->defCount += object->getCount();
@@ -1310,7 +1310,7 @@
 
 		std::vector<Object*>::iterator it;
 		for (it=def.begin() ; it < def.end(); it++) {
-			DefData::DefData *data = DataHandler.getDefById((*it)->getTypeId());
+			DefData *data = DataHandler.getDefById((*it)->getTypeId());
 
 			this->count += (*it)->getCount();
 			this->defCount += (*it)->getCount();
@@ -1410,7 +1410,7 @@
 			std::vector<Object*>::iterator it;
 			DataHandler &DataHandler = DataHandler::instance();
 			for ( it=specialObjects.begin() ; it < specialObjects.end(); it++ ) {
-				ShipData::ShipData *data = DataHandler.getShipById((*it)->getTypeId());
+				ShipData *data = DataHandler.getShipById((*it)->getTypeId());
 				bonus += (*it)->getSBonusWeapon() * data->getBonusWeapon();
 			}
 		}
@@ -1424,7 +1424,7 @@
 			std::vector<Object*>::iterator it;
 			DataHandler &DataHandler = DataHandler::instance();
 			for ( it=specialObjects.begin() ; it < specialObjects.end(); it++ ) {
-				ShipData::ShipData *data = DataHandler.getShipById((*it)->getTypeId());
+				ShipData *data = DataHandler.getShipById((*it)->getTypeId());
 				bonus += (*it)->getSBonusShield() * data->getBonusShield();
 			}
 		}
@@ -1438,7 +1438,7 @@
 			std::vector<Object*>::iterator it;
 			DataHandler &DataHandler = DataHandler::instance();
 			for ( it=specialObjects.begin() ; it < specialObjects.end(); it++ ) {
-				ShipData::ShipData *data = DataHandler.getShipById((*it)->getTypeId());
+				ShipData *data = DataHandler.getShipById((*it)->getTypeId());
 				bonus += (*it)->getSBonusStructure() * data->getBonusStructure();
 			}
 		}
@@ -1452,7 +1452,7 @@
 			std::vector<Object*>::iterator it;
 			DataHandler &DataHandler = DataHandler::instance();
 			for ( it=specialObjects.begin() ; it < specialObjects.end(); it++ ) {
-				ShipData::ShipData *data = DataHandler.getShipById((*it)->getTypeId());
+				ShipData *data = DataHandler.getShipById((*it)->getTypeId());
 				bonus += (*it)->getSBonusHeal() * data->getBonusHeal();
 			}
 		}

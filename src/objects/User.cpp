@@ -400,7 +400,7 @@
 		for ( it=this->techs.begin() ; it != this->techs.end(); it++ ) {
 			if ((unsigned int)(*it).second && (unsigned int)(*it).second < victim->getTechLevel((*it).first)) {
 				if ((unsigned int)(*it).first != techAtWork) {
-					TechData::TechData *data = DataHandler.getTechById((*it).first);
+					TechData *data = DataHandler.getTechById((*it).first);
 					if (data->getStealable())
 						avaiableTechs[(*it).first] = victim->getTechLevel((*it).first);
 				}

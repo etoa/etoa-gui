@@ -38,7 +38,7 @@
 		Config &config = Config::instance();
 		
 		DataHandler &DataHandler = DataHandler::instance();
-		Data::Data *data = DataHandler.getDefById(this->getTypeId());
+		Data *data = DataHandler.getDefById(this->getTypeId());
 		
 		this->rebuildCount = (int)round((this->initCount - this->count)*this->rebuild);
 		int defCount = (int)ceil((this->initCount - (this->count+this->rebuildCount))*config.nget("def_wf_percent",0));
@@ -49,7 +49,7 @@
 		Config &config = Config::instance();
 		
 		DataHandler &DataHandler = DataHandler::instance();
-		Data::Data *data = DataHandler.getDefById(this->getTypeId());
+		Data *data = DataHandler.getDefById(this->getTypeId());
 		
 		this->rebuildCount = (int)round((this->initCount - this->count)*this->rebuild);
 		int defCount = (int)ceil((this->initCount - (this->count+this->rebuildCount))*config.nget("def_wf_percent",0));
@@ -60,7 +60,7 @@
 		Config &config = Config::instance();
 		
 		DataHandler &DataHandler = DataHandler::instance();
-		Data::Data *data = DataHandler.getDefById(this->getTypeId());
+		Data *data = DataHandler.getDefById(this->getTypeId());
 		
 		this->rebuildCount = (int)round((this->initCount - this->count)*this->rebuild);
 		int defCount = (int)ceil((this->initCount - (this->count+this->rebuildCount))*config.nget("def_wf_percent",0));

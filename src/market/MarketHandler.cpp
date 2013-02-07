@@ -398,7 +398,7 @@ namespace market
 		
 		// Handelsschiff
 		DataHandler &DataHandler = DataHandler::instance();
-		ShipData::ShipData *marketShip = DataHandler.getShipById(config.idget("MARKET_SHIP_ID"));
+		ShipData *marketShip = DataHandler.getShipById(config.idget("MARKET_SHIP_ID"));
 		
 		//
 		// Auktionen

@@ -64,8 +64,9 @@ void etoamain()
 		// Graphical bling-bling
 		if (debugEnable(0))
 		{
-			int rtn;
-			rtn = system("clear");
+			if(system("clear") != 0) {
+				DEBUG("Unable to execute 'clear' command");
+			}
 		}
 		DEBUG("----------------------------------------------------------------");
 		DEBUG("- EtoA Eventhandler, (C) 2007 by EtoA Gaming, Time: "<< std::time(0) <<" -");

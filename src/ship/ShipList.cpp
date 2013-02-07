@@ -12,7 +12,7 @@ namespace ship
 		mysqlpp::Query query = con_->query();
 		
 		DataHandler &DataHandler = DataHandler::instance();
-		ShipData::ShipData *data = DataHandler.getShipById(shipId);
+		ShipData *data = DataHandler.getShipById(shipId);
 		
 		if (data->getSpecial()) {
 			query << "INSERT INTO "
