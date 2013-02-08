@@ -17,6 +17,9 @@
 //
 
 #include "PidFile.h"
+#include <iostream>
+#include <fstream>
+#include <string>
 
 PIDFile::PIDFile(const std::string &filename)
   : pidfile_path(filename), pidfile_fd(-1)
@@ -38,20 +41,19 @@ bool PIDFile::fileExists()
 
 int PIDFile::readPid()
 {
- 	char mystring[10];
- 	FILE * pFile = fopen (pidfile_path.c_str(), "r");
-	if (pFile == NULL) 
-	{
+  std::string line;
+  std::ifstream myfile (pidfile_path.c_str());
+  if (myfile.is_open())
+  {
+    getline (myfile,line);
+    myfile.close();
+  }
+  else
+  {
 		std::cerr << "Strange, the PIDfile exists but I am not allowed to read it!"<<std::endl;
  		exit(EXIT_FAILURE);
- 	}
- 	else 
- 	{
- 		char* tmpstr;
-   	tmpstr = fgets (mystring , 100 , pFile);
-   	fclose (pFile);
- 	}		
- 	return atoi(mystring);	
+  }
+ 	return atoi(line.c_str());	
 }
 
 void PIDFile::write()
@@ -78,8 +80,14 @@ void PIDFile::write()
   }
 
   // truncate pidfile at 0 length
-  int tmpresult;
-  tmpresult = ftruncate(pidfile_fd, 0);
+  rc = ftruncate(pidfile_fd, 0);
+  if (rc != 0)
+  {
+      int err = errno;
+      std::ostringstream msg;
+      msg << "Cannot truncate pidfile '" << pidfile_path << "' before writing: " << strerror(err);
+      throw std::runtime_error(msg.str());
+  }
 
   // write our pid
   try
