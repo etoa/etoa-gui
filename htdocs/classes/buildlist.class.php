@@ -240,10 +240,7 @@
 		{
 			if ($this->items==null)
 				$this->load();
-			if (
-				(!$tech && !$this->isUnderConstruction($bid)) ||
-				($tech && !$this->tl->isBuildingSomething())
-			)
+			if ((!$tech && !$this->isUnderConstruction($bid)) || !$this->tl->isBuildingSomething(true))
 			{
 				if (isset($this->items[$bid]))
 				{

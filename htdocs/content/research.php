@@ -73,7 +73,7 @@ if (isset($cp)) {
 		$builing_something=false;
 		while ($tarr = mysql_fetch_array($tres)) {
 			$techlist[$tarr['techlist_tech_id']]=$tarr;
-			if ($tarr['techlist_build_type']>2) {
+			if ($tarr['techlist_build_type']>2 && $tarr['techlist_entity_id'] == $cp->id) {
 				$builing_something=true;
 			}
 		}

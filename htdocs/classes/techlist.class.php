@@ -49,26 +49,29 @@
 			return $level;	
 		}
 		
-		function isBuildingSomething()
+		function isBuildingSomething($onCurrentPlanet=false)
 		{
 			global $cu;
+			if($onCurrentPlanet)
+			{
+				global $cp;
+			}
 			$tres = dbquery("
 			SELECT 
-				techlist_build_type 
+				COUNT(techlist_id)
 			FROM 
 				techlist 
 			WHERE 
-				techlist_user_id='".$cu->id."';");
-			$building_something=false;
-			while ($tarr = mysql_fetch_assoc($tres))
+				techlist_user_id='".$cu->id."'".
+				(($onCurrentPlanet)?" AND techlist_entity_id='".$cp->id."'":'').
+				" AND techlist_build_type > '2'
+			;");
+			$tarr=mysql_fetch_row($tres);
+			if($tarr[0] >0)
 			{
-				if ($tarr['techlist_build_type']>2)
-				{
-					$building_something=true;
-					break;
-				}
+				return true;
 			}
-			return $building_something;
+			return false;
 		}
 		
 		/* IMPORTANT:
