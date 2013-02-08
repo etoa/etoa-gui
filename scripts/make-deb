@@ -4,22 +4,50 @@
 # $Id$
 #
 
+#
+# Config
+# 
+
+TOP=$(dirname $0)/..
 DEB_NAME=etoa-eventhandler
-PKG_DIR=~
-
-cd $(dirname $0)/../
+PKG_DIR=$TOP/deliveries
 ARCH=$(uname -m)
-VER=$(grep "^Version:" dist/debian/DEBIAN/control | awk '{print $2}')
 
+#
+# Subs
+# 
+
+cleanup() {
+  [ -n "${tdir}" ] && [ -d "${tdir}" ] && rm -rf "${tdir}"
+}
+
+#
+# Main
+#
+
+cd $TOP
+
+# Detect version
+VER=$(grep "__ETOAD_VERSION_STRING__" src/version.h | awk '{print $3}' | sed 's/"//g')
+
+# Define package name
 pkgname=${DEB_NAME}_${VER}_${ARCH}
 
+# Ensure source has been compiled
 make
 
-t=$(mktemp -d)
-rsync -au --exclude '.svn' dist/debian/ $t
-mkdir -p $t/usr/local/bin
-cp bin/etoad $t/usr/local/bin
+tdir=$(mktemp -d)
+trap 'cleanup' INT TERM EXIT
 
-dpkg -b $t ${PKG_DIR}/${pkgname}.deb
+# Copy contents of dist/debian/
+rsync -au --exclude '.svn' dist/debian/ $tdir
+mkdir -p $tdir/usr/local/bin
+cp bin/etoad $tdir/usr/local/bin
 
-rm -rf $t
+# Write version to control file
+sed "s/^Version: .*/Version: ${VER}/" -i $tdir/DEBIAN/control
+
+
+# Create package
+mkdir -p ${PKG_DIR}
+dpkg -b $tdir ${PKG_DIR}/${pkgname}.deb

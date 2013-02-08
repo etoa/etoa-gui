@@ -146,10 +146,24 @@ bool validateRoundName(const std::string& s)
 	return true;
 }
 
+/**
+* Returns a version description
+*/
+std::string getVersion()
+{
+	std::string out;
+	out  = "\nEscape to Andromeda\n";
+	out += "Eventhandler Backend Service (etoad)\n\n";
+	out += "Copyright (c) EtoA Gaming, www.etoa.ch\n\n";
+	out += "Version: " __ETOAD_VERSION_STRING__ "\n";
+	out += "Built: " __DATE__ ", " __TIME__ "\n";
+	return out;
+}
+
 int main(int argc, char* argv[])
 {
 	// Register signal handlers
-  signal(SIGABRT, &sighandler);
+	signal(SIGABRT, &sighandler);
 	signal(SIGTERM, &sighandler);
 	signal(SIGINT, &sighandler);
 	signal(SIGHUP, &sighandler);
@@ -236,7 +250,7 @@ int main(int argc, char* argv[])
 	{
 		std::cout << "Escape to Andromeda Event-Handler" << std::endl;
 		std::cout << "(C) 2007 EtoA Gaming Switzerland, www.etoa.ch" << std::endl;
-		std::cout << "Version " <<versionNumber() << " $Rev$ " << std::endl<< std::endl;
+		std::cout << "Version " __ETOAD_VERSION_STRING__ "" << std::endl<< std::endl;
 	}
 	
 	// Log verbosity
@@ -350,7 +364,7 @@ int main(int argc, char* argv[])
  		return EXIT_FAILURE;		
  	}	
 
-	LOG(LOG_NOTICE,"Starting EtoA event-handler "<<versionNumber()<<" $Rev$ for universe " << gameRound);
+	LOG(LOG_NOTICE,"Starting EtoA event-handler " __ETOAD_VERSION_STRING__ " for universe " << gameRound);
 
 	if (detach)
 		daemonize();
