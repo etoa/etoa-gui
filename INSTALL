@@ -1,0 +1,20 @@
+
+Requirements
+------------
+
+### Debian/Ubuntu ###
+
+Tools:
+
+ * build-essential
+ * cmake
+
+Libraries:
+
+ * libboost-filesystem-dev
+ * libboost-regex-dev
+ * libboost-system-dev
+ * libboost-thread-dev
+ * libmysql++-dev
+ * ncurses-dev
+
