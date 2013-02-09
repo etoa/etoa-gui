@@ -43,7 +43,7 @@ bool detach = false;
 int ownerUID;
 
 std::string appPath;
-std::string configDir;
+std::string configFile;
 
 // Signal handler
 void sighandler(int sig)
@@ -70,42 +70,42 @@ void sighandler(int sig)
 // Create a daemon
 void daemonize()
 {
-  pid_t pid, sid;
-  /* Fork off the parent process */
-  pid = fork();
-  if (pid < 0) 
-  {
-  	LOG(LOG_CRIT,  "Could not fork parent process");
- 		exit(EXIT_FAILURE);
-  }
+	pid_t pid, sid;
+	/* Fork off the parent process */
+	pid = fork();
+	if (pid < 0)
+	{
+		LOG(LOG_CRIT, "Could not fork parent process");
+		exit (EXIT_FAILURE);
+	}
 
-  /* If we got a good PID, then we can exit the parent process. */
-  if (pid > 0) 
-  {
-    exit(EXIT_SUCCESS);
-  }
-  
- 	/* Close out the standard file descriptors */
-	close(STDIN_FILENO);
-	close(STDOUT_FILENO);
-	close(STDERR_FILENO);
+	/* If we got a good PID, then we can exit the parent process. */
+	if (pid > 0)
+	{
+		exit (EXIT_SUCCESS);
+	}
 
-  /* Change the file mode mask */
-  umask(0);
-          
-  /* Create a new SID for the child process */
-  sid = setsid();
-  if (sid < 0) 
-  {
-  	LOG(LOG_CRIT, "Unable to get SID for child process");
-    exit(EXIT_FAILURE);
-  }
+	/* Close out the standard file descriptors */
+	close (STDIN_FILENO);
+	close (STDOUT_FILENO);
+	close (STDERR_FILENO);
 
-  // Create pidfile
-  pf->write();	
+	/* Change the file mode mask */
+	umask(0);
 
-  int myPid = (int)getpid();
-	LOG(LOG_NOTICE,"Daemon initialized with PID " << myPid << " and owned by " << getuid());
+	/* Create a new SID for the child process */
+	sid = setsid();
+	if (sid < 0)
+	{
+		LOG(LOG_CRIT, "Unable to get SID for child process");
+		exit (EXIT_FAILURE);
+	}
+
+	// Create pidfile
+	pf->write();
+
+	int myPid = (int) getpid();
+	LOG(LOG_NOTICE, "Daemon initialized with PID " << myPid << " and owned by " << getuid());
 		
 }
 
@@ -117,7 +117,7 @@ void msgQueueThread()
 {                                   
 	LOG(LOG_DEBUG,"Entering message queue thread");				
 	
-	IPCMessageQueue queue(Config::instance().getConfigDir());
+	IPCMessageQueue queue(Config::instance().getConfigFile());
 	if (queue.valid())
 	{
 		while (true)
@@ -175,75 +175,75 @@ int main(int argc, char* argv[])
 
 	// Parse command line
 	AnyOption *opt = new AnyOption();
-  opt->addUsage( "Options: " );
-  opt->addUsage( "  -d, --daemon            Detach from console and run as daemon in background");
-  opt->addUsage( "  -s, --stop              Stops a running instance of this backend");
-  opt->addUsage( "");
-  opt->addUsage( "  -p, --pidfile path      Select path to pidfile");
-  opt->addUsage( "  -c, --config-dir path   Path to config directory");
-  opt->addUsage( "  -u, --uid userid        Select user id under which it runs (necessary if you are root)");
-  opt->addUsage( "  -k, --killexisting      Kills an already running instance of this backend before starting this instance");
-  opt->addUsage( "  -l, --log level         Specify log level (0=emerg, ... , 7=everything");
-  opt->addUsage( "");
-  opt->addUsage( "      --debug             Enable debug mode");
-  opt->addUsage( "  -h, --help              Prints this help");
-  opt->addUsage( "      --version           Prints version information");
-  opt->setFlag("help",'h');
-  opt->setFlag("version");
-  opt->setFlag("killexisting",'k');
-  opt->setFlag("stop",'s');
-  opt->setFlag("daemon",'d');
-  opt->setFlag("debug");
-  opt->setOption("log",'l');
-  opt->setOption("userid",'u');
-  opt->setOption("pidfile",'p');  
-  opt->setOption("config-dir",'c');
-  opt->setOption("sleep",'t');
-  opt->processCommandArgs( argc, argv );
+	opt->addUsage( "Options: " );
+	opt->addUsage( "  -d, --daemon            Detach from console and run as daemon in background");
+	opt->addUsage( "  -s, --stop              Stops a running instance of this backend");
+	opt->addUsage( "");
+	opt->addUsage( "  -p, --pidfile path      Path to PID file (default: /var/run/etoad/INSTANCE.pid)");
+	opt->addUsage( "  -c, --config path       Path to config file (default: /etc/etoad/INSTANCE.conf)");
+	opt->addUsage( "  -u, --uid userid        Select user id under which it runs (necessary if you are root)");
+	opt->addUsage( "  -k, --killexisting      Kills an already running instance of this backend before starting this instance");
+	opt->addUsage( "  -l, --log level         Specify log level (0=emerg, ... , 7=everything");
+	opt->addUsage( "");
+	opt->addUsage( "      --debug             Enable debug mode");
+	opt->addUsage( "  -h, --help              Prints this help");
+	opt->addUsage( "      --version           Prints version information");
+	opt->setFlag("help",'h');
+	opt->setFlag("version");
+	opt->setFlag("killexisting",'k');
+	opt->setFlag("stop",'s');
+	opt->setFlag("daemon",'d');
+	opt->setFlag("debug");
+	opt->setOption("log",'l');
+	opt->setOption("userid",'u');
+	opt->setOption("pidfile",'p');
+	opt->setOption("config",'c');
+	opt->setOption("sleep",'t');
+	opt->processCommandArgs( argc, argv );
 
 	appPath = std::string(argv[0]);
   
-  // Show help
-  if(argc <= 1 || opt->getFlag( "help" ) || opt->getFlag( 'h' )) 
-  {	
-		std::cerr << "Usage: " << appPath << " ROUNDNAME [options]" << std::endl;
-  	opt->printUsage();
+	// Show help
+	if(argc <= 1 || opt->getFlag( "help" ) || opt->getFlag( 'h' ))
+	{
+		std::cerr << "Usage: " << appPath << " INSTANCE [options]" << std::endl;
+		opt->printUsage();
  		return EXIT_SUCCESS;
 	}
 	
 	// Show version info
-  if( opt->getFlag( "version" )) 
-  {	
-  	std::cout << getVersion()<<endl;
+	if( opt->getFlag( "version" ))
+	{
+		std::cout << getVersion()<<endl;
  		return EXIT_SUCCESS;
 	}
   
-  // Set game round
-  gameRound = argv[1];
-  if (!validateRoundName(gameRound))
-  {
+	// Set game round
+	gameRound = argv[1];
+	if (!validateRoundName(gameRound))
+	{
 		LOG(LOG_ERR,"Invalid game round name!");  	
 		return EXIT_FAILURE;
-  }
+	}
 
 	// Enable debug if requested
-  if( opt->getFlag( "debug" )) 
-  {	
-  	debugEnable(1);
+	if (opt->getFlag("debug"))
+	{
+		debugEnable(1);
 	}
 
 	bool killExistingInstance = false;
-  if( opt->getFlag( "killexisting" ) || opt->getFlag( 'k' )) 
-  {	
+	if (opt->getFlag("killexisting") || opt->getFlag('k'))
+	{
 		killExistingInstance = true;
 	}
 	bool stop = false;
-  if( opt->getFlag( "stop" ) || opt->getFlag( 's' )) 
-  {	
+	if (opt->getFlag("stop") || opt->getFlag('s'))
+	{
 		stop = true;
 	}
-  if( opt->getFlag( "daemon" ) || opt->getFlag( 'd' )) 
-  {	
+	if (opt->getFlag("daemon") || opt->getFlag('d'))
+	{
 		detach = true;
 	}
 	else
@@ -254,38 +254,42 @@ int main(int argc, char* argv[])
 	}
 	
 	// Log verbosity
-  if( opt->getValue('l') != NULL) 
-  {	
-  	int lvl = atoi(opt->getValue('l'));
-  	if (LOG_DEBUG >= lvl && lvl >= LOG_EMERG)
-  	{
-  		std::cout << "Setting log verbosity to " << lvl << std::endl;
+	if (opt->getValue('l') != NULL)
+	{
+		int lvl = atoi(opt->getValue('l'));
+		if (LOG_DEBUG >= lvl && lvl >= LOG_EMERG)
+		{
+			std::cout << "Setting log verbosity to " << lvl << std::endl;
 			logPrio(lvl);
 		}
 	}
-  else if( opt->getValue("log") != NULL) 
-  {	
-  	int lvl = atoi(opt->getValue("log"));
-  	if (LOG_DEBUG >= lvl && lvl >= LOG_EMERG)
-  	{
-  		std::cout << "Setting log verbosity to " << lvl << std::endl;
+	else if (opt->getValue("log") != NULL)
+	{
+		int lvl = atoi(opt->getValue("log"));
+		if (LOG_DEBUG >= lvl && lvl >= LOG_EMERG)
+		{
+			std::cout << "Setting log verbosity to " << lvl << std::endl;
 			logPrio(lvl);
 		}
 	}			
 	
 	// Determine config directory
-  if( opt->getValue('c') != NULL) 
-  	configDir = opt->getValue('c');
-  else if( opt->getValue("config-dir") != NULL) 
-  	configDir = opt->getValue("config-dir");
-	else	
+	if (opt->getValue('c') != NULL)
 	{
-		configDir = "/home/etoa/"+gameRound+"/config";
-	}	
-	if (!boost::filesystem::is_directory(configDir))
+		configFile = opt->getValue('c');
+	}
+	else if (opt->getValue("config") != NULL)
 	{
-		LOG(LOG_ERR,"Config directory "<<configDir<<" does not exist!");  	
-		return EXIT_FAILURE;		
+		configFile = opt->getValue("config");
+	}
+	else
+	{
+		configFile = "/etc/etoad/" + gameRound + ".conf";
+	}
+	if (!boost::filesystem::is_regular_file(configFile) && !boost::filesystem::is_symlink(configFile))
+	{
+		LOG(LOG_ERR, "Config file " << configFile << " does not exist!");
+		return EXIT_FAILURE;
 	}
 
 	// Sets the round name the logger uses to create the etoad.roundname.log files
@@ -293,50 +297,63 @@ int main(int argc, char* argv[])
 	
 	// Set pidfile
 	if( opt->getValue('p') != NULL)
+	{
 		pidFile = opt->getValue('p');
+	}
 	else if (opt->getValue("pidfile") != NULL )
+	{
 		pidFile = opt->getValue("pidfile");
+	}
 	else
+	{
 		pidFile = "/var/run/etoad/"+gameRound+".pid";
+	}
 		
 	// Set user
 	if( opt->getValue('u') != NULL)
+	{
 		ownerUID = atoi(opt->getValue('u'));
+	}
 	else if (opt->getValue("uid") != NULL )
+	{
 		ownerUID = atoi(opt->getValue("uid"));
+	}
 	else
+	{
 		ownerUID = (int)getuid();
+	}
 
-  // Set correct uid
-  if (setuid(ownerUID)!=0)
-  {
-  	LOG(LOG_ERR,"Unable to change user id!");  	
-    exit(EXIT_FAILURE);  	
-  }
-  // Check uid
-  if (getuid()==0)
-  {
-  	LOG(LOG_ERR,"This software cannot be run as root!");  	
-    exit(EXIT_FAILURE);  	
-  }
+	// Set correct uid
+	if (setuid(ownerUID) != 0)
+	{
+		LOG(LOG_ERR, "Unable to change user id!");
+		exit (EXIT_FAILURE);
+	}
+	// Check uid
+	if (getuid() == 0)
+	{
+		LOG(LOG_ERR, "This software cannot be run as root!");
+		exit (EXIT_FAILURE);
+	}
 
 
-  pf = new PIDFile(pidFile);
+	pf = new PIDFile(pidFile);
 
 	// Check for existing instance
 	if (pf->fileExists())
 	{
 		int existingPid = pf->readPid();
    	
-   	if (stop)
-   	{
-   		kill(existingPid,SIGTERM);   
-   		std::cout << "Killing process "<<existingPid<<endl;
-   		exit(EXIT_SUCCESS);		
-   	}
+		if (stop)
+		{
+			kill(existingPid, SIGTERM);
+			std::cout << "Killing process " << existingPid << endl;
+			exit (EXIT_SUCCESS);
+		}
 		if (killExistingInstance)
 		{
-			std::cout << "EtoA Daemon " << gameRound << " seems to run already with PID "<<existingPid<<"! Killing this instance..." << std::endl;
+			std::cout << "EtoA Daemon " << gameRound << " seems to run already with PID "
+					<<existingPid<<"! Killing this instance..." << std::endl;
 			int kres = kill(existingPid,SIGTERM);
 			if (kres<0)
 			{
@@ -354,7 +371,9 @@ int main(int argc, char* argv[])
 		}
 		else
 		{
-			std::cerr << "EtoA Daemon " << gameRound << " is already running with PID "<<existingPid<<"!"<<std::endl<<"Use the -k flag to force killing it and continue with this instance. Exiting..." << std::endl;
+			std::cerr << "EtoA Daemon " << gameRound << " is already running with PID "
+					<<existingPid<<"!"<<std::endl
+					<<"Use the -k flag to force killing it and continue with this instance. Exiting..." << std::endl;
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -367,14 +386,20 @@ int main(int argc, char* argv[])
 	LOG(LOG_NOTICE,"Starting EtoA event-handler " __ETOAD_VERSION_STRING__ " for universe " << gameRound);
 
 	if (detach)
+	{
 		daemonize();
+	}
 	else
+	{
 		pf->write();
+	}
 
- 	Config &config = Config::instance();
-        config.setConfigDir(configDir);
-	if( opt->getValue('t') != NULL)
-	  config.setSleep(atoi(opt->getValue('t')));
+	Config &config = Config::instance();
+	config.setConfigFile(configFile);
+	if (opt->getValue('t') != NULL)
+	{
+		config.setSleep(atoi(opt->getValue('t')));
+	}
 		
 	
 	boost::thread mThread(&etoamain);

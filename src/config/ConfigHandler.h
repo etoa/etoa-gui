@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "../util/Functions.h"
+#include "../util/ConfigFile.h"
 
 /**
 * Config Singleton, very usefull!!!!! So use it .D
@@ -25,7 +26,9 @@
 			static Config _instance;
 			return _instance;
 		}
-		~Config () {};
+		~Config () {
+			delete configFileInstance;
+		};
 		
 		/**
 		* Liefert die Configwerte als string
@@ -58,9 +61,13 @@
 		short getAction(std::string action);
 		std::string getActionName(std::string action);
 		
-		void setConfigDir(std::string dir);
-		std::string getConfigDir();
+		void setConfigFile(std::string dir);
+		std::string getConfigFile();
 		
+		std::string getAppConfigValue(std::string const& section, std::string const& entry);
+		std::string getAppConfigValue(std::string const& section, std::string const& entry, double value);
+		std::string getAppConfigValue(std::string const& section, std::string const& entry, std::string const& value);
+
 		void setSleep(int sleep);
 		int getSleep();
 		
@@ -104,7 +111,9 @@
 		std::map<std::string, short> actions;
 		std::map<std::string, std::string> actionName;
 		
-		std::string configDir;
+		std::string configFile;
+		ConfigFile* configFileInstance;
+
 		unsigned int sleep;
 		
 		static Config* _instance;

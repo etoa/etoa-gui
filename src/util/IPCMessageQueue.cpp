@@ -23,16 +23,16 @@ IPCMessageQueue::IPCMessageQueue(std::string token)
 {
 	_valid = false;
 	char proj_id = 'A';
-  key = ftok(token.c_str(),proj_id);
-  LOG(LOG_DEBUG,"Creating IPC key " << key << " from token " << token << " with project id " << proj_id);
-  msgqid=msgget(key,0666|IPC_CREAT);
-  if (msgqid < 0) 
-  {
-    LOG(LOG_ERR,strerror(errno)<<". Error getting message queue, msgget() failed, msgqid = " << msgqid);
-    return;
-  }
-  LOG(LOG_DEBUG,"Message queue gets id " << msgqid );
-   _valid = true;  
+	key = ftok(token.c_str(), proj_id);
+	LOG(LOG_DEBUG, "Creating IPC key " << key << " from token " << token << " with project id " << proj_id);
+	msgqid = msgget(key, 0666 | IPC_CREAT);
+	if (msgqid < 0)
+	{
+		LOG(LOG_ERR, strerror(errno) << ". Error getting message queue, msgget() failed, msgqid = " << msgqid);
+		return;
+	}
+	LOG(LOG_DEBUG, "Message queue gets id " << msgqid);
+	_valid = true;
 }
 
 IPCMessageQueue::~IPCMessageQueue()

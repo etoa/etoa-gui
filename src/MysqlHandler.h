@@ -72,15 +72,11 @@
 			
 		}; 
 		void loadData () {
-			Config &config = Config::instance();
-			std::ifstream datein;
-			std::string dbCfgFile = config.getConfigDir()+"/db.cfg";
 			
-		  	ConfigFile cf(dbCfgFile);
-			mysql.insert ( std::pair<std::string,std::string>("host",cf.Value("mysql","host")) );
-			mysql.insert ( std::pair<std::string,std::string>("database",cf.Value("mysql","database")) );
-			mysql.insert ( std::pair<std::string,std::string>("user",cf.Value("mysql","user")) );
-			mysql.insert ( std::pair<std::string,std::string>("password",cf.Value("mysql","password")) );
+			mysql.insert ( std::pair<std::string,std::string>("host", Config::instance().getAppConfigValue("mysql","host")) );
+			mysql.insert ( std::pair<std::string,std::string>("database", Config::instance().getAppConfigValue("mysql","database")) );
+			mysql.insert ( std::pair<std::string,std::string>("user", Config::instance().getAppConfigValue("mysql","user")) );
+			mysql.insert ( std::pair<std::string,std::string>("password", Config::instance().getAppConfigValue("mysql","password")) );
 
 		}
 		My ( const My& );

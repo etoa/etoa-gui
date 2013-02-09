@@ -32,17 +32,32 @@
 		return(actionName[action]);
 	}
 	
-	void Config::setConfigDir(std::string dir)
+	void Config::setConfigFile(std::string file)
 	{
-		this->configDir	= dir;
+		this->configFile = file;
 		loadConfig();
 	}
 	
-	std::string Config::getConfigDir()
+	std::string Config::getConfigFile()
 	{
-		return this->configDir;
+		return this->configFile;
+	}
+
+	std::string Config::getAppConfigValue(std::string const& section, std::string const& entry)
+	{
+		return this->configFileInstance->Value(section, entry);
 	}
 	
+	std::string Config::getAppConfigValue(std::string const& section, std::string const& entry, double value)
+	{
+		return this->configFileInstance->Value(section, entry, value);
+	}
+
+	std::string Config::getAppConfigValue(std::string const& section, std::string const& entry, std::string const& value)
+	{
+		return this->configFileInstance->Value(section, entry, value);
+	}
+
 	void Config::setSleep(int sleep)
 	{
 		this->sleep = sleep;
@@ -66,6 +81,8 @@
 	
 	void Config::loadConfig ()
 	{
+	  	configFileInstance = new ConfigFile(this->configFile);
+
 		My &my = My::instance();
 		mysqlpp::Connection *con = my.get();
 		
