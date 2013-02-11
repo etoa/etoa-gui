@@ -57,7 +57,7 @@ $xml = "<userbackup>
 		<email>".$arr['user_email']."</email>
 		<points>".$arr['user_points']."</points>
 		<rank>".$arr['user_rank']."</rank>
-		<online>".date("d.m.Y, H:i",$arr['user_last_online'])."</online>		
+		<online>".date("d.m.Y, H:i",$arr['user_logouttime'])."</online>		
 		<ip>".$arr['user_ip']."</ip>		
 		<host>".$arr['user_hostname']."</host>		
 		<alliance id=\"".$arr['user_alliance_id']."\" tag=\"".$arr['alliance_tag']."\">".$arr['alliance_name']."</alliance>

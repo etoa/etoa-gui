@@ -43,8 +43,7 @@
 				SELECT
 					user_id,
 					user_nick,
-					user_email,
-					user_last_online
+					user_email
 				FROM
 					users
 				WHERE

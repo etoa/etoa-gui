@@ -25,32 +25,6 @@
 		//		
 
 		/**
-		* Validates the user session against a given key
-		*/
-		public function validateSession($sessionKey)
-		{
-			$session_valid=false;
-			if ($sessionKey!="")
-			{
-				// Valid browser values
-				if (substr($sessionKey,64,32)==md5(Config::getInstance()->roundname->v)
-				&& substr($sessionKey,96,32)==md5($_SERVER['REMOTE_ADDR']) 
-				&& substr($sessionKey,128,32)==md5($_SERVER['HTTP_USER_AGENT']) 
-				&& substr($sessionKey,160)==session_id() )
-				{
-					// Valid user valies
-					if ($this->lt=substr($sessionKey,0,32) && 
-					$this->uid==substr($sessionKey,32,32) && 
-					$this->sk==$sessionKey)
-					{
-						$session_valid=true;
-					}
-				}
-			}
-			return $session_valid;			
-		}
-		
-		/**
 		* Set setup status to false
 		*/
 		public function setNotSetup()

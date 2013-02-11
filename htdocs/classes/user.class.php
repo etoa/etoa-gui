@@ -24,9 +24,6 @@ class User
 	protected $setup; // Cheker if account is propperly setup
 	protected $isValid; // Checker if class instance belongs to valid user
 	protected $maskMatrix; // Matrix for the "fog of war" effect in the space map
-	protected $uid;
-	protected $lt;
-	protected $sk;
 	protected $realName;
 	protected $email;
 	protected $emailFix;
@@ -89,10 +86,7 @@ class User
 
 		$res = dbquery("
 		SELECT
-			".self::tableName.".*,
-			MD5(user_id) AS uid,
-			MD5(user_logintime) AS lt,
-			user_session_key AS sk
+			".self::tableName.".*
 		FROM
 			".self::tableName."
 		WHERE
@@ -102,12 +96,6 @@ class User
 		if (mysql_num_rows($res)>0)
 		{
 			$arr = mysql_fetch_assoc($res);
-
-			// Those are for session controll
-			$this->uid = $arr['uid'];
-			$this->lt = $arr['lt'];
-			$this->sk = $arr['sk'];
-
 
 			$this->nick=$arr['user_nick'];
 			$this->realName=$arr['user_name'];
