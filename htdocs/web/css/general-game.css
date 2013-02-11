@@ -161,6 +161,7 @@ img.resIcon	{
 	border:none;
 	width:38px;
 	height:39px;
+  border:1px solid transparent;
 }
 
 #innerspacetbl td a.owncell	{
@@ -172,7 +173,7 @@ img.resIcon	{
 }
 
 #innerspacetbl td a:hover	{
-	border:1px dashed #aaa;	
+	border:1px dashed #aaa;
 }
 
 #innerspacetbl td.ycoords	{

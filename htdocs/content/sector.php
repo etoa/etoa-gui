@@ -166,22 +166,22 @@
 	}
 	if ($sx_tr && $sy_tr!=0 && $sx_tr!=$sx_num+1 && $sy_tr!=$sy_num+1)
 	{
-		echo "<td width=\"42\" align=\"center\" height=\"42\"><a href=\"?page=$page&amp;sx=$sx_tr&amp;sy=$sy_tr\" width=\"20\" height=\"20\" border=\"0\" alt=\"Sektor $sx_tr/$sy_tr\" title=\"Sektor $sx_tr/$sy_tr\" onmouseover=\"sector_topright.src='$sector_pic/sector_topright_On.gif';\" onmouseout=\"sector_topright.src='$sector_pic/sector_topright.gif';\"><img name=\"sector_topright\" src=\"$sector_pic/sector_topright.gif\" height=\"42\" width=\"42\" border=\"0\"></a></td>";
+		echo "<td style=\"width:$table_width;height:42px;text-align:center;\"><a href=\"?page=$page&amp;sx=$sx_tr&amp;sy=$sy_tr\" width=\"20\" height=\"20\" border=\"0\" alt=\"Sektor $sx_tr/$sy_tr\" title=\"Sektor $sx_tr/$sy_tr\" onmouseover=\"sector_topright.src='$sector_pic/sector_topright_On.gif';\" onmouseout=\"sector_topright.src='$sector_pic/sector_topright.gif';\"><img name=\"sector_topright\" src=\"$sector_pic/sector_topright.gif\" height=\"42\" width=\"42\" border=\"0\"></a></td>";
 	}
 	else
 	{
-		echo "<td>&nbsp;</td>";
+		echo "<td style=\"width:$table_width;height:42px;text-align:center;\">&nbsp;</td>";
 	}
 	echo "</tr>";
 
 	echo "<tr>";
 	if ($sx_ml && $sy_ml!=0 && $sx_ml!=$sx_num+1 && $sy_ml!=$sy_num+1)
 	{
-		echo "<td width=\"20\" align=\"center\" height=\"$table_height\"><a href=\"?page=$page&amp;sx=$sx_ml&amp;sy=$sy_ml\" width=\"20\" height=\"20\" border=\"0\" alt=\"Sektor $sx_ml/$sy_ml\" title=\"Sektor $sx_ml/$sy_ml\"  onmouseover=\"sector_middleleft.src='$sector_pic/sector_middleleft_On.gif';\" onmouseout=\"sector_middleleft.src='$sector_pic/sector_middleleft.gif';\"><img name=\"sector_middleleft\" src=\"$sector_pic/sector_middleleft.gif\" height=\"42\" width=\"42\" border=\"0\"></a></td>";
+		echo "<td style=\"width:42px;height:".$table_height."px;text-align:center;\"><a href=\"?page=$page&amp;sx=$sx_ml&amp;sy=$sy_ml\" width=\"20\" height=\"20\" border=\"0\" alt=\"Sektor $sx_ml/$sy_ml\" title=\"Sektor $sx_ml/$sy_ml\"  onmouseover=\"sector_middleleft.src='$sector_pic/sector_middleleft_On.gif';\" onmouseout=\"sector_middleleft.src='$sector_pic/sector_middleleft.gif';\"><img name=\"sector_middleleft\" src=\"$sector_pic/sector_middleleft.gif\" height=\"42\" width=\"42\" border=\"0\"></a></td>";
 	}
 	else
 	{
-		echo "<td width=\"20\" align=\"center\" height=\"$table_height\">&nbsp;</td>";
+		echo "<td style=\"width:42px;height:".$table_height."px;text-align:center;\">&nbsp;</td>";
 	}
 	
 		echo "<td style=\"width:".$table_width."px;height:".$table_height."px;\">";
@@ -221,7 +221,7 @@
 
 			echo "<tr>
 				<td class=\"ycoords\">
-					<img name=\"counter_left_$ycoords\" src=\"$counter_left$ycoords.gif\" style=\"height:40px;\"/>
+					<img name=\"counter_left_$ycoords\" src=\"$counter_left$ycoords.gif\" style=\"height:38px;\"/>
 				</td>";
 
 			for ($x=0;$x<$cy_num;$x++)
@@ -251,7 +251,7 @@
 				*/
 				
 				// Symbole anzeigen
-				if ($cu->discovered((($sx - 1) * $cx_num) + $xcoords,(($sy - 1) * $cy_num) + $ycoords))
+				if ($cu->discovered((($sx - 1) * $cx_num) + $xcoords, (($sy - 1) * $cy_num) + $ycoords))
 				{
 					$ent = Entity::createFactory($cells[$xcoords][$ycoords]['code'],$cells[$xcoords][$ycoords]['eid']);
 					
@@ -265,8 +265,8 @@
 					}
 					else
 						$tt->addComment($ent->name());
-					
-					echo "<td style=\"background:url('".$ent->imagePath()."');\"
+
+					echo "<td style=\"width:".$cell_width."px;height:".$cell_height."px;background:url('".$ent->imagePath()."');\"
 						onmouseover=\"counter_left_$ycoords.src='$counter_left_high$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom_high$xcoords.gif';\" onmouseout=\"counter_left_$ycoords.src='$counter_left$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom$xcoords.gif';\">";										
 						
 					if ($cp->sx() == $sx && $cp->sy() == $sy && $cp->cx() == $xcoords && $cp->cy() == $ycoords)
@@ -281,11 +281,24 @@
 				}
 				else
 				{
+          $fogCode = 0;
+          $fogCode += $cu->discovered((($sx - 1) * $cx_num) + $xcoords  , (($sy - 1) * $cy_num) + $ycoords-1) ? 1 : 0;
+          $fogCode += $cu->discovered((($sx - 1) * $cx_num) + $xcoords-1, (($sy - 1) * $cy_num) + $ycoords  ) ? 2 : 0;
+          $fogCode += $cu->discovered((($sx - 1) * $cx_num) + $xcoords+1, (($sy - 1) * $cy_num) + $ycoords  ) ? 4 : 0;
+          $fogCode += $cu->discovered((($sx - 1) * $cx_num) + $xcoords  , (($sy - 1) * $cy_num) + $ycoords+1) ? 8 : 0;
+          
+          if ($fogCode > 0) {
+            $fogImg = "fogborder$fogCode";
+          } else {
+            $fogImg = "fog".mt_rand(1,6);
+          }
+        
 					$tt = new Tooltip();
 					$tt->addTitle("Unerforschte Raumzelle!");
 					$tt->addText("Position: $sx/$sy : $xcoords/$ycoords");
 					$tt->addComment("Expedition senden um Zelle sichtbar zu machen.");
-					echo "<td style=\"background:url('".IMAGE_PATH."/unexplored/fog1.png');\" 
+
+					echo "<td style=\"width:".$cell_width."px;height:".$cell_height."px;background:url('".IMAGE_PATH."/unexplored/".$fogImg.".png');\" 
 						onmouseover=\"counter_left_$ycoords.src='$counter_left_high$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom_high$xcoords.gif';\" onmouseout=\"counter_left_$ycoords.src='$counter_left$ycoords.gif';counter_bottom_$xcoords.src='$counter_bottom$xcoords.gif';\">";					
 
 					if (in_array($cells[$xcoords][$ycoords]['cid'],$user_solsys_ids))
@@ -310,9 +323,9 @@
 		echo "</table></td>";
 		
 		if ($sx_mr && $sy_mr!=0 && $sx_mr!=$sx_num+1 && $sy_mr!=$sy_num+1)
-			echo "<td width=\"20\" align=\"center\" height=\"$table_height\"><a href=\"?page=$page&amp;sx=$sx_mr&amp;sy=$sy_mr\"  width=\"20\" height=\"20\" border=\"0\" alt=\"Sektor $sx_mr/$sy_mr\" title=\"Sektor $sx_mr/$sy_mr\" onmouseover=\"sector_middleright.src='$sector_pic/sector_middleright_On.gif';\" onmouseout=\"sector_middleright.src='$sector_pic/sector_middleright.gif';\"><img name=\"sector_middleright\" src=\"$sector_pic/sector_middleright.gif\" height=\"42\" width=\"42\" border=\"0\"></a></td>";
+			echo "<td style=\"width:42px;height:".$table_height."px;text-align:center;\"><a href=\"?page=$page&amp;sx=$sx_mr&amp;sy=$sy_mr\"  width=\"20\" height=\"20\" border=\"0\" alt=\"Sektor $sx_mr/$sy_mr\" title=\"Sektor $sx_mr/$sy_mr\" onmouseover=\"sector_middleright.src='$sector_pic/sector_middleright_On.gif';\" onmouseout=\"sector_middleright.src='$sector_pic/sector_middleright.gif';\"><img name=\"sector_middleright\" src=\"$sector_pic/sector_middleright.gif\" height=\"42\" width=\"42\" border=\"0\"></a></td>";
 		else
-			echo "<td width=\"20\" align=\"center\" height=\"$table_height\">&nbsp;</td>";
+			echo "<td style=\"width:42px;height:".$table_height."px;text-align:center;\">&nbsp;</td>";
 		echo "</tr><tr>";
 
 		if ($sx_bl && $sy_bl!=0 && $sx_bl!=$sx_num+1 && $sy_bl!=$sy_num+1)
@@ -320,9 +333,9 @@
 		else
 			echo "<td>&nbsp;</td>";
 		if ($sx_bc && $sy_bc!=0 && $sx_bc!=$sx_num+1 && $sy_bc!=$sy_num+1)
-			echo "<td width=\"$table_width\" align=\"center\" height=\"20\"><a href=\"?page=$page&amp;sx=$sx_bc&amp;sy=$sy_bc\" width=\"20\" height=\"20\" border=\"0\" alt=\"Sektor $sx_bc/$sy_bc\" title=\"Sektor $sx_bc/$sy_bc\" onmouseover=\"sector_bottomcenter.src='$sector_pic/sector_bottomcenter_On.gif';\" onmouseout=\"sector_bottomcenter.src='$sector_pic/sector_bottomcenter.gif';\"/><img name=\"sector_bottomcenter\" src=\"$sector_pic/sector_bottomcenter.gif\" height=\"42\" width=\"42\" border=\"0\"></a></td>";
+			echo "<td style=\"width:$table_width;height:42px;text-align:center;\"><a href=\"?page=$page&amp;sx=$sx_bc&amp;sy=$sy_bc\" width=\"20\" height=\"20\" border=\"0\" alt=\"Sektor $sx_bc/$sy_bc\" title=\"Sektor $sx_bc/$sy_bc\" onmouseover=\"sector_bottomcenter.src='$sector_pic/sector_bottomcenter_On.gif';\" onmouseout=\"sector_bottomcenter.src='$sector_pic/sector_bottomcenter.gif';\"/><img name=\"sector_bottomcenter\" src=\"$sector_pic/sector_bottomcenter.gif\" height=\"42\" width=\"42\" border=\"0\"></a></td>";
 		else
-			echo "<td width=\"$table_width\" align=\"center\" height=\"20\">&nbsp;</td>";
+			echo "<td style=\"width:$table_width;height:42px;text-align:center;\">&nbsp;</td>";
 		if ($sx_br && $sy_br!=0 && $sx_br!=$sx_num+1 && $sy_br!=$sy_num+1)
 			echo "<td><a href=\"?page=$page&amp;sx=$sx_br&amp;sy=$sy_br\" width=\"20\" height=\"20\" border=\"0\" alt=\"Sektor $sx_br/$sy_br\" title=\"Sektor $sx_br/$sy_br\" onmouseover=\"sector_bottomright.src='$sector_pic/sector_bottomright_On.gif';\" onmouseout=\"sector_bottomright.src='$sector_pic/sector_bottomright.gif';\"/><img name=\"sector_bottomright\" src=\"$sector_pic/sector_bottomright.gif\" height=\"42\" width=\"42\" border=\"0\"></a></td>";
 		else
