@@ -29,9 +29,7 @@
 	
 		function addChild($key,$name,$link,$parent)
 		{
-			$this->tree[$parent]->childs[$key]->name=$name;
-			$this->tree[$parent]->childs[$key]->link=$link;
-			$this->tree[$parent]->childs[$key]->childs=array();
+      $this->tree[$parent]->childs[$key] = new DropdownMenuItem($name, $link);
 		}		
 		
 		function __toString()
