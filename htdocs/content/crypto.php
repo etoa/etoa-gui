@@ -90,7 +90,7 @@
 							if ($cu->alliance->resFuel >= CRYPTO_FUEL_COSTS_PER_SCAN)
 							{
 								$target = Entity::createFactoryByCoords($sx,$sy,$cx,$cy,$pp);
-								if (true)
+								if ($target != false)
 								{
 									$dist = $cp->distance($target);
 									if ($dist <= CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel)
