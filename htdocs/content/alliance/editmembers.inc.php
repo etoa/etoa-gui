@@ -59,53 +59,56 @@ if (Alliance::checkActionRights('editmembers'))
 
 			// Handle user move from wing to wing or main
 			
-			$checked_arr = array();
-			if (count($ally->wings) > 0)
+			if($conf['allow_wings']['v'])
 			{
-				if (isset($_POST['moveuser']) && count($_POST['moveuser'])>0)
+				$checked_arr = array();
+				if (count($ally->wings) > 0)
 				{
-					foreach ($_POST['moveuser'] as $wf => $wd)	//wf = source alliance id
-					{											//wd = array with alliance members
-						foreach ($wd as $uk => $wt)				//uk = user id
-						{										//wt = value (target alliance id)
-							if ($wt!=0)
-							{
-								if ($wf!= $wt && ($wf == $ally->id || isset($ally->wings[$wf])) && ($wt == $ally->id || isset($ally->wings[$wt])))
+					if (isset($_POST['moveuser']) && count($_POST['moveuser'])>0)
+					{
+						foreach ($_POST['moveuser'] as $wf => $wd)	//wf = source alliance id
+						{											//wd = array with alliance members
+							foreach ($wd as $uk => $wt)				//uk = user id
+							{										//wt = value (target alliance id)
+								if ($wt!=0)
 								{
-									if ($wf == $ally->id)
+									if ($wf!= $wt && ($wf == $ally->id || isset($ally->wings[$wf])) && ($wt == $ally->id || isset($ally->wings[$wt])))
 									{
-										$ally->kickMember($uk);
+										if ($wf == $ally->id)
+										{
+											$ally->kickMember($uk);
+										}
+										else
+										{
+											$ally->wings[$wf]->kickMember($uk);
+										}
+	
+										$checked_arr[$uk] = $wt;
 									}
-									else
-									{
-										$ally->wings[$wf]->kickMember($uk);
-									}
-
-									$checked_arr[$uk] = $wt;
 								}
 							}
 						}
 					}
 				}
-			}
-			// Bug-Workaround by river: First kick all, then reassign them to alliances
-			// to prevent ressources penalty for temporary +1 user
-			// TODO: A cool user-swap-function for alliances would be a better solution. 
-			if (count($checked_arr)>0)
-			{
-				foreach ($checked_arr as $moving_user_id => $target_alliance)
+				// Bug-Workaround by river: First kick all, then reassign them to alliances
+				// to prevent ressources penalty for temporary +1 user
+				// TODO: A cool user-swap-function for alliances would be a better solution. 
+				if (count($checked_arr)>0)
 				{
-					if ($target_alliance == $ally->id)
+					foreach ($checked_arr as $moving_user_id => $target_alliance)
 					{
-						$ally->addMember($moving_user_id);
-						success_msg($ally->members[$moving_user_id]." wurde umgeteilt!");
+						if ($target_alliance == $ally->id)
+						{
+							$ally->addMember($moving_user_id);
+							success_msg($ally->members[$moving_user_id]." wurde umgeteilt!");
+						}
+						else
+						{
+							$ally->wings[$target_alliance]->addMember($moving_user_id);
+							success_msg($ally->wings[$target_alliance]->members[$moving_user_id]." wurde verschoben!");
+						}
+		
 					}
-					else
-					{
-						$ally->wings[$target_alliance]->addMember($moving_user_id);
-						success_msg($ally->wings[$target_alliance]->members[$moving_user_id]." wurde verschoben!");
-					}
-	
 				}
 			}
 		}
@@ -151,7 +154,7 @@ if (Alliance::checkActionRights('editmembers'))
 			<th>Punkte:</th>
 			<th>Online:</th>
 			<th>Rang:</th>";
-			if (count($ally->wings) > 0)
+			if ($conf['allow_wings']['v'] && count($ally->wings) > 0)
 				echo "<th>Umteilen</th>";
 			echo "<th>Aktionen</th>
 		</tr>";
@@ -183,7 +186,7 @@ if (Alliance::checkActionRights('editmembers'))
 				echo "</select></td>";
 			}
 
-			if (count($ally->wings) > 0)
+			if ($conf['allow_wings']['v'] && count($ally->wings) > 0)
 			{
 				echo "<td>";
 				if ($ally->founderId != $mk && !$ally->isAtWar()) {
@@ -200,7 +203,7 @@ if (Alliance::checkActionRights('editmembers'))
 					echo "";
 				}
 				echo "</td>";
-    	}
+			}
 
 			// Aktionen
 			echo "<td>";
@@ -220,7 +223,7 @@ if (Alliance::checkActionRights('editmembers'))
 
 
 
-		if (count($ally->wings) > 0)
+		if ($conf['allow_wings']['v'] && count($ally->wings) > 0)
 		{
 			foreach ($ally->wings as $wid => $wdata)
 			{

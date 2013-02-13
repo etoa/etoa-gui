@@ -21,7 +21,7 @@
 	// $Rev$
 	//
 	
-if (Alliance::checkActionRights('wings'))
+if ($conf['allow_wings']['v'] && Alliance::checkActionRights('wings'))
 {
 	echo "<h2>Wings verwalten</h2>";
 	

@@ -42,7 +42,7 @@
 								</td>
 							</tr>";
 			}
-			if ($infoAlly->motherId != 0)
+			if ($conf['allow_wings']['v'] && $infoAlly->motherId != 0)
 			{
 				echo "<tr>
 								<th colspan=\"2\" style=\"text-align:center;\">

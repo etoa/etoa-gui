@@ -246,7 +246,7 @@
 				//
 				// Wings verwalten
 				//
-				elseif (isset($_GET['action']) && $_GET['action']=="wings")
+				elseif (isset($_GET['action']) && $_GET['action']=="wings" && $conf['allow_wings']['v'])
 				{
 					if (Alliance::checkActionRights('wings'))
 					{
@@ -536,14 +536,14 @@
 						}
 
 						// Wing-Anfrage
-						if (($isFounder || $myRight['wings']) && $ally->motherRequestId > 0)
+						if ($conf['allow_wings']['v'] && ($isFounder || $myRight['wings']) && $ally->motherRequestId > 0)
 						{
 							echo "<tr><th colspan=\"3\" align=\"center\">
 							<div align=\"center\"><b><a href=\"?page=$page&action=wings\">Es ist eine Wing-Anfrage vorhanden!</a></b></div>
 							</th></tr>";
 						}
 
-						if ($ally->motherId != 0)
+						if ($conf['allow_wings']['v'] && $ally->motherId != 0)
 						{
 							echo "<tr>
 											<th colspan=\"3\" style=\"text-align:center;\">
@@ -587,7 +587,7 @@
 
 						if ($isFounder || $myRight['viewmembers']) array_push($adminBox,"<a href=\"?page=$page&amp;action=viewmembers\">Mitglieder anzeigen</a>");
 						array_push($adminBox,"<a href=\"?page=$page&action=base\">Allianzbasis</a>");
-						if ($isFounder || $myRight['wings']) array_push($adminBox,"<a href=\"?page=$page&action=wings\">Wings verwalten</a>");
+						if ($conf['allow_wings']['v'] && ($isFounder || $myRight['wings'])) array_push($adminBox,"<a href=\"?page=$page&action=wings\">Wings verwalten</a>");
 						if ($isFounder || $myRight['history']) array_push($adminBox,"<a href=\"?page=$page&action=history\">Geschichte</a>");
 						if ($isFounder || $myRight['alliancenews']) array_push($adminBox,"<a href=\"?page=$page&action=alliancenews\">Allianznews (Rathaus)</a>");
 						if ($isFounder || $myRight['relations']) array_push($adminBox,"<a href=\"?page=$page&action=relations\">Diplomatie</a>");
@@ -797,7 +797,7 @@
 						<td colspan=\"2\">".nf($ally->visits)." intern / ".nf($ally->visitsExt)." extern</td></tr>\n";
 
 						// Wings
-						if (count($ally->wings) > 0)
+						if ($conf['allow_wings']['v'] && count($ally->wings) > 0)
 						{
 							echo "<tr><th width=\"120\">Wings:</th><td colspan=\"2\">";
 							echo "<table class=\"tb\">";
