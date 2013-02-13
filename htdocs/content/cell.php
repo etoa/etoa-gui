@@ -92,7 +92,7 @@
 			//
 			tableStart("Systemkarte");
 
-			echo "<tr><td colspan=\"6\" style=\"text-align:center;\">
+			echo "<tr><td colspan=\"6\" style=\"text-align:center;vertical-align:middle;\">
 			<a href=\"?page=galaxy\">Galaxie</a> &gt;&nbsp;
 			<a href=\"?page=sector&sector=".$cell->sx.",".$cell->sy."\">Sektor ".$cell->sx."/".$cell->sy."</a> &gt; &nbsp;";
 			$cres = dbquery("
@@ -285,7 +285,7 @@
 						if ($ent->entityCode()=='p')
 							echo "<span ".tm($ent->type(),$tm).">".$ent->type()."</span>";
 						else
-							echo $ent->type();
+							echo $ent->entityCodeString();
 						
 						if ($ent->entityCode()=='w')
 						{

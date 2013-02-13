@@ -2,10 +2,6 @@
 
 	include("image.inc.php");
 
-	define('GALAXY_MAP_DOT_RADIUS',3);
-	define('GALAXY_MAP_WIDTH',500);
-	define('GALAXY_MAP_LEGEND_HEIGHT',40);
-
 	define('IMG_DIR',"images/imagepacks/Discovery");
 
 	$sx_num=$conf['num_of_sectors']['p1'];
@@ -61,11 +57,20 @@
 			$wormholeImageSrc = imagecreatefrompng(IMG_DIR."/wormholes/wormhole1_small.png");
 			$wormholeImage = imagecreatetruecolor(GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
 			ImageCopyResampled($wormholeImage,$wormholeImageSrc,0,0,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,imagesx($wormholeImageSrc),imagesy($wormholeImageSrc));
-				
-			$unexploredImageSrc = imagecreatefrompng(IMG_DIR."/unexplored/fog1.png");
-			$unexploredImage = imagecreatetruecolor(GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
-			ImageCopyResampled($unexploredImage,$unexploredImageSrc,0,0,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,imagesx($unexploredImageSrc),imagesy($unexploredImageSrc));
-			
+      
+      $unexploredImages = array();
+      for ($i=1;$i<7;$i++) {
+        $unexploredImageSrc = imagecreatefrompng(IMG_DIR."/unexplored/fog$i.png");
+        $unexploredImages[$i] = imagecreatetruecolor(GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
+        ImageCopyResampled($unexploredImages[$i],$unexploredImageSrc,0,0,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,imagesx($unexploredImageSrc),imagesy($unexploredImageSrc));
+      }
+
+      $fogborderImages = array();
+      for ($i=1;$i<16;$i++) {
+        $fogborderImageSrc = imagecreatefrompng(IMG_DIR."/unexplored/fogborder$i.png");
+        $fogborderImages[$i] = imagecreatetruecolor(GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
+        ImageCopyResampled($fogborderImages[$i],$fogborderImageSrc,0,0,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,imagesx($fogborderImageSrc),imagesy($fogborderImageSrc));
+      }
 		
 			if (isset($_GET['type']) && $_GET['type']=="alliance")
 			{                        
@@ -209,51 +214,69 @@
 				{
 					while ($arr=mysql_fetch_array($res))
 					{
-					$x = ((($arr['sx']-1)*$cx_num + $arr['cx']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-					$y = $h-GALAXY_MAP_LEGEND_HEIGHT+GALAXY_IMAGE_SCALE-((($arr['sy']-1)*$cy_num + $arr['cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-					$xe = $x-(GALAXY_IMAGE_SCALE/2);
-					$ye = $y-(GALAXY_IMAGE_SCALE/2);
-		
-					if ($admin || $cu->discovered((($arr['sx'] - 1) * $cx_num) + $arr['cx'],(($arr['sy'] - 1) * $cy_num) + $arr['cy']))
-					{
-						if ($arr['code']=='s')
-						{
-							$sres = dbquery("
-							SELECT
-								type_id
-							FROM 
-								stars
-							WHERE
-								id=".$arr['id']."
-							LIMIT 1;
-							");
-							$sarr = mysql_fetch_row($sres);
-							$starImageSrc = imagecreatefrompng(IMG_DIR."/stars/star".$sarr[0]."_small.png");
-							ImageCopyResampled($im,$starImageSrc,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,imagesx($starImageSrc),imagesy($starImageSrc));
-						}
-						elseif ($arr['code']=='w')
-						{
-							ImageCopyResampled($im,$wormholeImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
-						}
-						elseif ($arr['code']=='a')
-						{
-							ImageCopyResampled($im,$asteroidImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
-						}
-						elseif ($arr['code']=='n')
-						{
-							ImageCopyResampled($im,$nebulaImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
-						}
-						elseif ($arr['code']=='e' || $arr['code']=='m')
-						{
-							ImageCopyResampled($im,$spaceImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
-						}
-						else
-							continue;
-					}
-					else
-					{
-						ImageCopyResampled($im,$unexploredImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
-					}
+            $x = ((($arr['sx']-1)*$cx_num + $arr['cx']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
+            $y = $h-GALAXY_MAP_LEGEND_HEIGHT+GALAXY_IMAGE_SCALE-((($arr['sy']-1)*$cy_num + $arr['cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
+            $xe = $x-(GALAXY_IMAGE_SCALE/2);
+            $ye = $y-(GALAXY_IMAGE_SCALE/2);
+      
+            $sx = $arr['sx'];
+            $sy = $arr['sy'];
+            $xcoords = $arr['cx'];
+            $ycoords = $arr['cy'];
+      
+            if ($admin || $cu->discovered((($arr['sx'] - 1) * $cx_num) + $arr['cx'],(($arr['sy'] - 1) * $cy_num) + $arr['cy']))
+            {
+              if ($arr['code']=='s')
+              {
+                $sres = dbquery("
+                SELECT
+                  type_id
+                FROM 
+                  stars
+                WHERE
+                  id=".$arr['id']."
+                LIMIT 1;
+                ");
+                $sarr = mysql_fetch_row($sres);
+                $starImageSrc = imagecreatefrompng(IMG_DIR."/stars/star".$sarr[0]."_small.png");
+                ImageCopyResampled($im,$starImageSrc,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,imagesx($starImageSrc),imagesy($starImageSrc));
+              }
+              elseif ($arr['code']=='w')
+              {
+                ImageCopyResampled($im,$wormholeImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
+              }
+              elseif ($arr['code']=='a')
+              {
+                ImageCopyResampled($im,$asteroidImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
+              }
+              elseif ($arr['code']=='n')
+              {
+                ImageCopyResampled($im,$nebulaImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
+              }
+              elseif ($arr['code']=='e' || $arr['code']=='m')
+              {
+                ImageCopyResampled($im,$spaceImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
+              }
+              else
+                continue;
+            }
+            else
+            {
+              $fogCode = 0;
+              // Bottom
+              $fogCode += $ycoords > 1 && $cu->discovered((($sx - 1) * $cx_num) + $xcoords  , (($sy - 1) * $cy_num) + $ycoords-1) ? 1 : 0;
+              // Left
+              $fogCode += $xcoords > 1 && $cu->discovered((($sx - 1) * $cx_num) + $xcoords-1, (($sy - 1) * $cy_num) + $ycoords  ) ? 2 : 0;
+              // Right
+              $fogCode += $xcoords < $cx_num && $cu->discovered((($sx - 1) * $cx_num) + $xcoords+1, (($sy - 1) * $cy_num) + $ycoords  ) ? 4 : 0;
+              // Top
+              $fogCode += $ycoords < $cy_num && $cu->discovered((($sx - 1) * $cx_num) + $xcoords  , (($sy - 1) * $cy_num) + $ycoords+1) ? 8 : 0;
+              if ($fogCode > 0) {
+                ImageCopyResampled($im,$fogborderImages[$fogCode],$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
+              } else {              
+                ImageCopyResampled($im,$unexploredImages[mt_rand(1,6)],$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
+              }
+            }
 					}
 				}
 				else

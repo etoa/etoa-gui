@@ -142,60 +142,6 @@ img.resIcon	{
 	padding:5px;
 }
 
-
-#innerspacetbl	{
- border-collapse:collapse;
-}
-
-#innerspacetbl td	{
-	border:1px dashed #555;
-	background:#000;
-	padding:0px;
-	width:40px;
-	height:40px;
-}
-
-#innerspacetbl td a	{
-	display:block;
-	margin:0px;
-	border:none;
-	width:38px;
-	height:39px;
-  border:1px solid transparent;
-}
-
-#innerspacetbl td a.owncell	{
-	border:1px dashed #FF1FFA;		
-}
-
-#innerspacetbl td a.selectedcell	{
-	border:1px dashed #00FF00;		
-}
-
-#innerspacetbl td a:hover	{
-	border:1px dashed #aaa;
-}
-
-#innerspacetbl td.ycoords	{
-	background:#000;
-	border-left:none;
-	text-align:center;
-}
-
-#innerspacetbl td.nocoords	{
-	border:none;
-}
-
-#innerspacetbl td.xcoords	{
-	background:#000;
-	border-bottom:none;
-	text-align:center;
-}
-
-
-
-
-
 /* todo */
 
 #market_search_filter_category_selector	{

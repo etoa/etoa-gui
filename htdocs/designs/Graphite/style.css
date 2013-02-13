@@ -541,12 +541,97 @@ img	{
 
 /* Map */
 
-#outerspacetbl	{
-	border-collapse:collapse;
-	background:#000;
-	margin:0px auto;
 
+/*
+* Galaxy and secotr maps
+*/
+
+#galaxy_map_nav {
+  text-align:center;
+  vertical-align:middle;  
 }
+
+#galaxy_map_container {
+  background:black url('../../images/main_bg.jpg');
+  text-align:center;
+  padding:0;
+}
+
+#sector_map_nav {
+  text-align:center;
+  vertical-align:middle;  
+}
+
+#sector_map_container {
+  background:black url('../../images/main_bg.jpg');
+  padding:0;
+  margin:0;
+}
+
+#sector_map_table {
+  margin:5px auto;
+}
+
+#sector_map_table .sector_map_neighbour_nav {
+  text-align:center;
+  vertical-align:middle;
+  border:none;
+  background:transparent;
+  padding:0;
+  margin:0;
+}
+
+#sector_map_table .sector_map_cell {
+  padding:0;
+  margin:0;
+  line-height:0;
+  background:black;
+  border:none;
+}
+
+#sector_map_table .sector_map_cell a {
+  border:none;
+  text-decoration:none;
+}
+
+#sector_map_table .sector_map_cell img.cell_number_spacer {
+  width:40px;
+  height:35px;
+}
+
+#sector_map_table .sector_map_cell img.cell_number_vertical {
+  margin-right:5px;
+  margin-left:5px;
+  width:30px;
+  height:40px;
+  border-bottom:1px dashed #555;
+}
+
+#sector_map_table .sector_map_cell img.cell_number_horizontal {
+  margin-top:5px;
+  margin-bottom:5px;
+  width:40px;
+  height:25px;
+  border-left:1px dashed #555;
+}
+
+#sector_map_table .sector_map_cell a {
+  display:inline-block;
+  border-left:1px dashed #555;
+  border-bottom:1px dashed #555;
+  margin:0;
+  padding:0;
+  line-height:0;
+  width:40px;
+  height:40px;
+  vertical-align:top;
+}
+
+#sector_map_table .sector_map_cell a img {
+  width:40px;
+  height:40px;
+}
+
 
 /* Resbox */
 

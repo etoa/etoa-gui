@@ -159,6 +159,11 @@
 	// Minimale Sperrzeit für Kolonielöschung
 	define("COLONY_DELETE_THRESHOLD",24*3600*5);
 
+  // Galaxy map
+ 	define('GALAXY_MAP_DOT_RADIUS',3);
+	define('GALAXY_MAP_WIDTH',500);
+	define('GALAXY_MAP_LEGEND_HEIGHT',40);
+  
 	// Nachrichten
 	define("USER_MSG_CAT_ID",1);															// Cat-ID Persönliche Nachrichten
 	define('MISC_MSG_CAT_ID',5);

@@ -415,14 +415,6 @@ Anmerkung: Eine Kopie dieser Nachricht wird in Eurer Nachrichten-Box hinterlegt.
       <v comment="Handelskurs Resource 4 (auto)" type="text">1</v>
     </item>
 
-    <item name="general_table_offset" cat="7">
-      <v comment="Tabellen-Offset" type="text">0</v>
-      <p1 comment="Tabellen-Innenabstand" type="text">3</p1>
-    </item>
-    <item name="space_cell_size" cat="7">
-      <p1 comment="Raumzelle Breite" type="text">40</p1>
-      <p2 comment="Raumzelle H&#xF6;he" type="text">40</p2>
-    </item>
     <item name="default_image_path" cat="7">
       <v comment="Standard-Bildpaket" type="text">images/imagepacks/Discovery</v>
     </item>

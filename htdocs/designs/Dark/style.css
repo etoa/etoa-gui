@@ -373,49 +373,99 @@ td.statsNav	{
 	background:#000000 url(images/tabulator.gif);
 }
 
-.spaceCell {
-	border: solid 1px #111;
-	padding:0px;
-	vertical-align:middle;
-	text-align:center;
+
+/*
+* Galaxy and secotr maps
+*/
+
+#galaxy_map_nav {
+  text-align:center;
+  vertical-align:middle;  
 }
 
-.spaceCellUser	{
-	border: solid 2px #4f4;
-	vertical-align:middle
-	;text-align:center;
+#galaxy_map_container {
+  background:black url('../../images/main_bg.jpg');
+  text-align:center;
+  padding:0;
 }
 
-.spaceCellSelected	{
-	border: solid 2px #ef4;
-	vertical-align:middle;
-	text-align:center;
+#sector_map_nav {
+  text-align:center;
+  vertical-align:middle;  
 }
 
-td.coordstbl	{
-	border:0px;
-	background:#000000 url('../../web/images/empty_space.gif');
-	vertical-align:middle;
-	text-align:center;
-	width:40px;
-	height:40px;
+#sector_map_container {
+  background:black url('../../images/main_bg.jpg');
+  padding:0;
+  margin:0;
 }
 
-table#outerspacetbl {
-	margin:0px auto;
-	border-collapse:collapse;
-	padding:0px;
+#sector_map_table {
+  margin:5px auto;
 }
 
-table#innerspacetbl {
-	border:0px solid #fff;
-	background:#000;
+#sector_map_table .sector_map_neighbour_nav {
+  text-align:center;
+  vertical-align:middle;
+  border:none;
+  background:transparent;
+  padding:0;
+  margin:0;
+}
+
+#sector_map_table .sector_map_cell {
+  padding:0;
+  margin:0;
+  line-height:0;
+  background:black;
+  border:none;
+}
+
+#sector_map_table .sector_map_cell a {
+  border:none;
+  text-decoration:none;
+}
+
+#sector_map_table .sector_map_cell img.cell_number_spacer {
+  width:40px;
+  height:35px;
+}
+
+#sector_map_table .sector_map_cell img.cell_number_vertical {
+  margin-right:5px;
+  margin-left:5px;
+  width:30px;
+  height:40px;
+  border-bottom:1px dashed #555;
+}
+
+#sector_map_table .sector_map_cell img.cell_number_horizontal {
+  margin-top:5px;
+  margin-bottom:5px;
+  width:40px;
+  height:25px;
+  border-left:1px dashed #555;
+}
+
+#sector_map_table .sector_map_cell a {
+  display:inline-block;
+  border-left:1px dashed #555;
+  border-bottom:1px dashed #555;
+  margin:0;
+  padding:0;
+  line-height:0;
+  width:40px;
+  height:40px;
+  vertical-align:top;
+}
+
+#sector_map_table .sector_map_cell a img {
+  width:40px;
+  height:40px;
 }
 
 
-
-
-/* �bersicht -> planetenliste */
+/* Übersicht -> planetenliste */
 /* \"Courier New\", Courier, mono; */
 
 .PlaniTextLinks {

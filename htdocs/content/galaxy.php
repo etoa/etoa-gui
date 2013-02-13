@@ -28,25 +28,21 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
 
-	define('GALAXY_MAP_DOT_RADIUS',3);
-	define('GALAXY_MAP_WIDTH',500);
-	define('GALAXY_MAP_LEGEND_HEIGHT',40);
-
 	$sx_num = $cfg->param1('num_of_sectors');
 	$sy_num = $cfg->param2('num_of_sectors');
 	$cx_num = $cfg->param1('num_of_cells');
 	$cy_num = $cfg->param2('num_of_cells');
 	
 	echo '<h1>Galaxie</h1>';
-	iBoxStart("Karte",GALAXY_MAP_WIDTH+20);
-	echo 'Anzeigen: <select onchange="document.getElementById(\'img\').src=\'misc/map.image.php\'+this.options[this.selectedIndex].value;">
+	tableStart("Galaxiekarte");
+	echo '<tr><td id="galaxy_map_nav">Anzeigen: <select onchange="document.getElementById(\'img\').src=\'misc/map.image.php\'+this.options[this.selectedIndex].value;">
 	<option value="?t='.time().'">Normale Galaxieansicht</option>
 	<option value="?type=populated&t='.time().'">Bev&ouml;lkerte Systeme</option>
 	<option value="?type=own&t='.time().'">Systeme mit eigenen Planeten</option>
 	<option value="?type=alliance&t='.time().'">Systeme mit Allianzplaneten</option>
-	</select> &nbsp; <br/><br/>';
-	echo '<img src="misc/map.image.php" alt="Galaxiekarte" id="img" alt="galaxymap" usemap="#Galaxy" style="border:none;"/>';
-	iBoxEnd();
+	</select></td></tr>';
+	echo '<tr><td id="galaxy_map_container"><img src="misc/map.image.php" alt="Galaxiekarte" id="img" alt="galaxymap" usemap="#Galaxy" style="border:none;"/></td></tr>';
+	tableEnd();
 	
 	echo '<map name="Galaxy"><br />';
 	$sec_x_size=GALAXY_MAP_WIDTH/$sx_num;

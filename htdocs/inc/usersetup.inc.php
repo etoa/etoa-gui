@@ -1,9 +1,5 @@
 <?PHP
 
-	define('GALAXY_MAP_DOT_RADIUS',3);
-	define('GALAXY_MAP_WIDTH',500);
-	define('GALAXY_MAP_LEGEND_HEIGHT',40);
-	
 	$sx_num=$conf['num_of_sectors']['p1'];
 	$sy_num=$conf['num_of_sectors']['p2'];
 	$cx_num=$conf['num_of_cells']['p1'];
