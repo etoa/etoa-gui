@@ -176,19 +176,19 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
 			fleet->setPercentSurvive(attPercent,true);
 			entity->setPercentSurvive(defPercent,true);	
 			
-			report->setHeal(fleet->getHeal());
-			report->setEntityHeal(entity->getHeal());
+			report->setHeal(fleet->getHeal(true));
+			report->setEntityHeal(entity->getHeal(true));
 
-            if (fleet->getHeal() > 0) {
-                cAttStructureShield += fleet->getHeal();
+            if (fleet->getHeal(true) > 0) {
+                cAttStructureShield += fleet->getHeal(true);
                 if (cAttStructureShield > initAttStructureShield)
                     cAttStructureShield = initAttStructureShield;
 				
 				fleet->setPercentSurvive(cAttStructureShield/initAttStructureShield,true);
             }
 
-            if (entity->getHeal() > 0) {
-                cDefStructureShield += entity->getHeal();
+            if (entity->getHeal(true) > 0) {
+                cDefStructureShield += entity->getHeal(true);
                 if (cDefStructureShield > initDefStructureShield)
                     cDefStructureShield = initDefStructureShield;
 				
