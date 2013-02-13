@@ -30,6 +30,7 @@
   	$cu->properties->analyzeShipCount = $_POST['analyzeship_count'];
   	$cu->properties->startUpChat = $_POST['startup_chat'];
 	$cu->properties->showCellreports = $_POST['show_cellreports'];
+	$cu->properties->enableKeybinds = $_POST['keybinds_enable'];
 	
 	if ( (	strlen($_POST['chat_color'])==3 &&
 			preg_match('/^[a-fA-F0-9]{3}$/', $_POST['chat_color']) ) ||
@@ -181,7 +182,19 @@ echo "<tr>
 			<div id=\"chatPreview\" style=\"color:#".$cu->properties->chatColor.";\">&lt;".$cu." | ".date("H:i",time())."&gt; Chatvorschau </div>
   		</td>
 		</tr>";
-      		
+//Keybinds (Aktiviert/Deaktiviert)
+echo "<tr>
+    		<th>Keybinds (Navigation mit Tastatur):</th>
+    		<td>
+              <input type=\"radio\" name=\"keybinds_enable\" value=\"1\" ";
+              if ($cu->properties->enableKeybinds==1) echo " checked=\"checked\"";
+              echo "/> Aktiviert &nbsp; 
+              <input type=\"radio\" name=\"keybinds_enable\" value=\"0\" ";
+              if ($cu->properties->enableKeybinds==0) echo " checked=\"checked\"";
+			  echo "/> Deaktiviert
+    	</td>
+  		</tr>";  
+
 
   tableEnd();
   echo "<input type=\"submit\" name=\"data_submit\" value=\"&Uuml;bernehmen\"/>";

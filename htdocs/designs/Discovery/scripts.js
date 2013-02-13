@@ -294,3 +294,5 @@ function PlanetDropDown(enable)
 
 
 }
+
+window.design = "discovery";

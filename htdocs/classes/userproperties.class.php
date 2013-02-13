@@ -21,17 +21,18 @@
 		private $noteBox;
 		private $msgCopy;
 		private $msgBlink;
-    private $spyShipId;
-    private $spyShipCount;
-	private $analyzeShipId;
-	private $analyzeShipCount;
-	private $showCellreports;
-    private $havenShipsButtons;
-    private $showAdds;
-    private $fleetRtnMsg;
+		private $spyShipId;
+		private $spyShipCount;
+		private $analyzeShipId;
+		private $analyzeShipCount;
+		private $showCellreports;
+		private $havenShipsButtons;
+		private $showAdds;
+		private $fleetRtnMsg;
 		private $smallResBox;
 		private $startUpChat;
 		private $chatColor;
+		private $enableKeybinds;
 		
 		private $changedFields;
 		
@@ -81,6 +82,7 @@
 		    	$this->smallResBox = $arr['small_res_box'];
 		    	$this->startUpChat = $arr['startup_chat'];
 				$this->chatColor = $arr['chat_color'];
+				$this->enableKeybinds = $arr['keybinds_enable'];
 
 			}
 			else
@@ -272,6 +274,11 @@
 				{
 					$this->$key = $val;
 					$this->changedFields[$key] = "chat_color";
+				}
+				elseif ($key == "enableKeybinds")
+				{
+					$this->$key = $val;
+					$this->changedFields[$key] = "keybinds_enable";
 				}
 				else
 				{

@@ -273,7 +273,7 @@
 		$tpl->assign("fleetAttack",check_fleet_incomming($cu->id));
 		$tpl->assign("serverTime",date('H:i:s'));
 		$tpl->assign("serverTimeUnix",time());
-		$tpl->assign("currentPlanetName","Planet");
+		$tpl->assign('enableKeybindsString','window.enableKeybinds='.$cu->properties->enableKeybinds.';');
 		
 		if (isset($cp))
 		{
