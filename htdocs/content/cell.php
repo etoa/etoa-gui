@@ -185,7 +185,7 @@
 					  elseif ($ent->owner->lastOnline<time()-USER_INACTIVE_LONG*86400)
 					  {
 						  $class .= "userLongInactiveColor";
-						  $tm_info = "Inaktiv";
+						  $tm_info = "Lange Inaktiv";
 					  }		
 					  // Inaktiv
 					  elseif ($ent->owner->lastOnline<time()-USER_INACTIVE_SHOW*86400)

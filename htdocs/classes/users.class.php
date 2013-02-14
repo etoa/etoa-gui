@@ -173,6 +173,27 @@
 			dbquery("UPDATE `users` SET `user_sitting_days`=`user_sitting_days`+'".$days."';");
 		}
 		
+		// check for $conf['hmode_days']['p2'] BEFORE calling this function
+		static function setUmodToInactive()
+		{
+			$cfg = Config::getInstance();
+			// set all users who are inactive 
+			dbquery('UPDATE
+						`users`
+					SET
+						`user_hmode_from`=0,
+						`user_hmode_to`=0,
+						`user_logouttime`="'.(time()-USER_INACTIVE_LONG*86400).'" 
+					WHERE
+						`user_ghost`="0"
+					AND
+						`admin`=0
+					AND
+						`user_hmode_from`<"'.(time()-$cfg->p1('hmode_days')*86400).'" 
+					;');
+			return mysql_affected_rows();
+		}
+		
 	}
 
 ?>

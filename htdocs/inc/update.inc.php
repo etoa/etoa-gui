@@ -12,7 +12,7 @@
 	{
 		global $conf;
 
-    $log = '';
+		$log = '';
     
 	 	// Inaktive User löschen
 		$tmr = timerStart();
@@ -27,6 +27,14 @@
 		$tmr = timerStart();
 		$nr = Users::cleanUpPoints();
 		$log.= "$nr alte Userpunkte-Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		
+		// Benutzer aus Urlaub inaktiv setzen
+		if($conf['hmode_days']['p2'])
+		{
+			$tmr = timerStart();
+			$nr = Users::setUmodToInactive();
+			$log.= "$nr User aus Urlaubsmodus in Inaktivität gesetzt.\nDauer: ".timerStop($tmr)." sec\n\n";
+		}
 		
 		// Alte Allianzpunkte-Logs löschen
 		$tmr = timerStart();
