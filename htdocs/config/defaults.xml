@@ -66,6 +66,10 @@
     </item>
     <item name="statsupdate" cat="1">
       <v comment="Statistikupdate" type="timedate">1240063202</v>
+      <p1 comment="Spieler im Urlaubsmodus in den Statistiken anzeigen" type="onoff">0</p1>
+    </item>
+    <item name="stats_num_rows" cat="1">
+      <v comment="Statistik Anzahl Daten/Seite" type="text">50</v>
     </item>
     <item name="info" cat="1">
       <v comment="InGame Info" type="textarea">[color=yellow][b]Dies ist ein Testserver und die Spielwiese der Entwickler![/b] &#xD;
@@ -93,9 +97,6 @@ Besten Dank f&#xFC;r euer Verst&#xE4;ndnis&#xD;
     </item>
     <item name="url_teamspeak" cat="1">
       <v comment="URL: TeamSpeak" type="text">http://etoa.ch/404.html</v>
-    </item>
-    <item name="stats_num_rows" cat="1">
-      <v comment="Statistik Anzahl Daten/Seite" type="text">50</v>
     </item>
     <item name="messages_threshold_days" cat="1">
       <v comment="Aufbewahrungsdauer Nachrichten" type="text">28</v>
@@ -469,6 +470,8 @@ Anmerkung: Eine Kopie dieser Nachricht wird in Eurer Nachrichten-Box hinterlegt.
     </item>
     <item name="hmode_days" cat="10">
       <v comment="Urlaubsmodus Mindestdauer" type="text">2</v>
+      <p1 comment="Urlaubsmodus Maximaldauer (in Tagen) falls Dauer begrenzt" type="text">35</p1>
+      <p2 comment="Urlaubsmodus-Dauer begrenzen und User danach in Inaktiv-Status setzen" type="onoff">1</p2>
     </item>
     <item name="user_inactive_days" cat="10">
       <v comment="Inaktiv-Anzeige (Tage)" type="text">7</v>

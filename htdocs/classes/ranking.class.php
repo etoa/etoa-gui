@@ -369,8 +369,9 @@
 				FROM
 					users
 				WHERE
-					user_ghost=0;
-			");
+					user_ghost=0".
+					($cfg->param1('statsupdate')?'':' AND (user_hmode_to<'.time().')').
+			';');
 			
 			$user_stats_query = "";
 			$user_points_query = "";
