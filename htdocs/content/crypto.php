@@ -407,8 +407,8 @@
 												$np->add("Flottenscan: ".$target,$out);
 											}										                   
 											
-											// Mail result (deprecated)
-											//send_msg($cu->id,SHIP_MISC_MSG_CAT_ID,"Kryptocenter-Bericht",$out);
+											// Mail result
+											send_msg($cu->id,SHIP_MISC_MSG_CAT_ID,"Kryptocenter-Bericht",$out);
 											
 											// Set cooldown
 											$cd = time()+$cooldown;
