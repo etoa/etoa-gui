@@ -78,7 +78,7 @@ Es gibt weder Admin-Support noch werden irgendwelche Sachen erstattet. Rechnet d
 [color=limegreen]Alle Infos zur Entwicklung: [url]https://dev.etoa.net[/url]&#xD;
 &#xD;
 [color orange][b]Fehler melden:[/b]&#xD;
-Das es scheinbar noch das eine oder andere Missverst&#xE4;ndnis gibt: Rechtschreibefehler und Derartiges bitte unter [url]http://www.etoa.ch/forum/thread.php?postid=67971[/url] melden und Bugs unter [url]http://dev.etoa.ch:8000/game/newticket[/url] und bei Milestone bitte Beta V3 ausw&#xE4;hlen und wenn m&#xF6;glich kurz schauen, ob der entsprechende Bug schon gemeldet wurde.&#xD;
+Das es scheinbar noch das eine oder andere Missverst&#xE4;ndnis gibt: Rechtschreibefehler und Derartiges bitte unter [url]http://www.etoa.ch/forum/thread.php?postid=67971[/url] melden und Bugs unter [url]https://dev.etoa.net/trac/newticket[/url] und bei Milestone bitte Beta V3 ausw&#xE4;hlen und wenn m&#xF6;glich kurz schauen, ob der entsprechende Bug schon gemeldet wurde.&#xD;
 &#xD;
 Viele Dank ihr macht somit uns, wie auch euch das Ganze einiges einfacher.[/color]&#xD;
 &#xD;
@@ -93,7 +93,7 @@ Besten Dank f&#xFC;r euer Verst&#xE4;ndnis&#xD;
       <v comment="URL: Regeln" type="text">http://etoa.ch/rules</v>
     </item>
     <item name="url_bugs" cat="1">
-      <v comment="URL: Bug melden" type="text">http://etoa.ch/forum/index.php?page=Thread&amp;threadID=7927</v>
+      <v comment="URL: Bug melden" type="text">https://dev.etoa.net/trac/newticket</v>
     </item>
     <item name="url_teamspeak" cat="1">
       <v comment="URL: TeamSpeak" type="text">http://etoa.ch/404.html</v>
