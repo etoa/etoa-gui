@@ -344,7 +344,7 @@
 			$data['name'] = "";
 			$data['res'] = array(0,0,0,0,0,0);
 			$data['fetch'] = array(0,0,0,0,0,0);
-			$data['ships'] = array(0);
+			$data['ships'] = array();
 			$data['speed'] = "100";
 			$data['action'] = "flight";
 		}
@@ -362,7 +362,7 @@
 				<th>Flottenaktion</th>
 				<td>
 					<select name="action">';
-		foreach (FleetAction::getAll() as $ai)
+		foreach (FleetAction::getAll(true) as $ai)
 		{
 			echo '<option value="'.$ai->code().'" style="color:'.$ai->color().'"';
 			if ($data['action']==$ai->code())
@@ -379,16 +379,18 @@
 		
 		// Ship databox
 		$cnt = 0;
-		tableStart('Schiffe',0,"",'input');
+		tableStart('Schiffe',0,"",'bookmarkShiplistInputTable');
+    echo "<tbody></tbody>";
+		tableEnd();
+
+    echo "<script>$(function(){";
 		foreach($data['ships'] as $id=>$count)
 		{
 			?>
-			<script type="text/javascript">
-				xajax_addShipToList(<?PHP echo "'".$id."', '".$count."'"; ?>);
-			</script>
+				fleetBookmarkAddShipToList(<?PHP echo "'".$id."', '".$count."'"; ?>);
 			<?PHP
 		}
-		tableEnd();
+    echo "});</script>";
 		
 		// Ship addbox
 		tableStart('Schiffe hinzufügen',0,'','shipadder');

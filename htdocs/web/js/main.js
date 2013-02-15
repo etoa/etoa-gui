@@ -1569,3 +1569,115 @@ function addFontColor(id, colorId)
 	function htmlEntities(str) {
 		return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 	}
+  
+/**
+ * Executes a simple ajax request which returns a data object
+ */
+function ajaxRequest(actionName, queryData, callbackFunction, errorFunction) {
+  $.getJSON('responder.php?action='+actionName, queryData, function(data) {
+    var errorMsg;
+    $.each(data, function(key, val) {
+      if (key == "error")  {
+        errorMsg = val;
+      }
+    });
+    if (errorMsg) {
+      if (typeof errorFunction !== 'undefined') {
+        errorFunction(errorMsg);
+      }
+    } else {
+      callbackFunction(data);
+    }
+  });
+}
+
+/**
+ * Tests the ajaxRequest function
+ */
+function ajaxRequestTest(testAction, testArgs) {
+  testAction = typeof testAction !== 'undefined' ? testAction : 'test';
+  testArgs = typeof testArgs !== 'undefined' ? testArgs : { tar:'asd', zip:'asd' };
+  ajaxRequest(testAction, testArgs, function(data) {
+    var items = [];
+    $.each(data, function(key, val) {
+      items.push('KEY ' + key + ' VALUE ' + val);
+    });
+    alert(items.join('\n'));
+  }, function(errMsg) {
+    alert("ERROR: " + errMsg);
+  });
+}
+
+/**
+* TODO
+*/
+function fleetBookmarkSearchShipList(val) {
+  ajaxRequest('get_ship_list', { q:val }, function(data) {
+    if (data.count > 0) {
+      var items = [];
+      $.each(data.entries, function(key, val) {
+        items.push(val.name);
+      });
+      alert(items.join('\n'));      
+    }
+  }, alert);
+}
+
+/**
+ * Add a ship to the fleet bookmark list
+ */
+function fleetBookmarkAddShipToList(shipId, shipCount) {
+
+  ajaxRequest('get_ship_info', { ship:shipId }, function(data) {
+    if (data.id) {
+      if ($('#ship_row_' + data.id).length == 0) {
+        $('#bookmarkShiplistInputTable > tbody:last').append($('<tr>')
+          .attr('id', 'ship_row_' + data.id)
+          .append($('<td>')
+            .addClass('thumb')
+            .append($('<img>')
+              .attr('src', data.image)
+            )
+          )
+          .append($('<td>')
+            .text(data.name)
+            .mouseover(function(evt){showTT(data.name, data.tooltip, 1, evt, evt.currentTarget)})
+            .mouseout(hideTT)
+          )
+          .append($('<td>')
+            .addClass('count')
+            .append($('<input>')
+              .attr('id', 'ship_count_'+data.id)
+              .attr('name', 'ship_count['+data.id+']')
+              .attr('size', 10)
+              .attr('value', typeof shipCount !== 'undefined' ? shipCount : 1)
+              .attr('title', 'Anzahl Schiffe eingeben, die mitfliegen sollen')
+              .click(function(evt){evt.currentTarget.select();})
+              .keyup(function(evt){FormatNumber(evt.currentTarget.id, evt.currentTarget.value, '', '', '')})
+            )
+          )
+          .append($('<td>')
+            .addClass('actions')
+            .append($('<a>')
+              .append($('<img>')
+                .attr('src', 'images/icons/delete.png')
+                .attr('alt', 'Entfernen')
+                .attr('title', 'Entfernen')
+              )
+              .click(function(){fleetBookmarkRemoveShipFromList(data.id)})
+            )
+          )        
+        );
+      }
+      $('#shipname').val('');
+      $('#saveShips').show();
+    }
+  }, alert);
+}
+
+/**
+* Remove a ship from the fleet bookmakr list
+*/
+function fleetBookmarkRemoveShipFromList(shipId) {
+  $('#ship_row_' + shipId).remove();
+}

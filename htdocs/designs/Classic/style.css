@@ -997,3 +997,28 @@ visibility:visible;
 	background:url('images/loading.gif') top center no-repeat;
 	text-align:center;
 }
+
+
+/**
+* Fleet bookmarks
+*/
+#bookmarkShiplistInputTable td.thumb {
+  width:40px;
+  background:#000;
+}
+
+#bookmarkShiplistInputTable td.thumb img {
+  width:40px;
+  height:40px;
+  border:0;
+  vertical-align:top;
+}
+
+#bookmarkShiplistInputTable td.count {
+  width:90px;
+}
+
+#bookmarkShiplistInputTable td.actions {
+  width:30px;
+  text-align:center;
+}

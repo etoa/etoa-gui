@@ -2,8 +2,6 @@
 
 $xajax->register(XAJAX_FUNCTION,'launchBookmarkProbe');
 $xajax->register(XAJAX_FUNCTION,'searchShipList');
-$xajax->register(XAJAX_FUNCTION,'addShipToList');
-$xajax->register(XAJAX_FUNCTION,'removeShipFromList');
 $xajax->register(XAJAX_FUNCTION,'bookmarkTargetInfo');
 $xajax->register(XAJAX_FUNCTION,'bookmarkBookmark');
 
@@ -193,7 +191,7 @@ include_once('cell.xajax.php');
 			while($arr=mysql_fetch_row($res))
 			{
 		    $nCount++;
-	      $sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('$inputId').value='".htmlspecialchars($arr[0])."';xajax_addShipToList('".$arr[0]."');document.getElementById('$targetId').style.display = 'none';\">".htmlspecialchars($arr[0])."</a>";
+	      $sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('$inputId').value='".htmlspecialchars($arr[0])."';fleetBookmarkAddShipToList('".$arr[0]."');document.getElementById('$targetId').style.display = 'none';\">".htmlspecialchars($arr[0])."</a>";
 	      $sLastHit = $arr[0];
 	    }
 		}
@@ -221,115 +219,11 @@ include_once('cell.xajax.php');
 	        $objResponse->script("document.getElementById('$targetId').style.display = \"none\"");
 	        $objResponse->script("document.getElementById('$inputId').value = \"".$sLastHit."\"");
 			$objResponse->script("document.getElementById('$inputId').value=\"\"");
-	   	 	$objResponse->script("xajax_addShipToList('$sLastHit','".$function."')");
+	   	 	$objResponse->script("fleetBookmarkAddShipToList('$sLastHit')");
 	    }
 
 	    $objResponse->assign("$targetId", "innerHTML", $sOut);
 	    return $objResponse;
-	}
-	
-	function addShipToList($ship, $count=0)
-	{
-		defineImagePaths();
-		$objResponse = new xajaxResponse();
-		$objResponse->script("document.getElementById('shipname').value=\"\"");
-		
-		if (is_numeric($ship)) $sql = " AND ship_id='".$ship."'";
-		else $sql = "AND ship_name='".$ship."'";
-		$res = dbquery("
-					SELECT
-						ship_id,
-						ship_name,
-						special_ship,
-						ship_actions,
-						ship_shortcomment,
-						ship_launchable
-					FROM
-						ships
-					WHERE
-						(ship_show=1
-							|| ship_buildable=1)
-						".$sql."
-					LIMIT 1;");
-
-		if (mysql_num_rows($res)>0)
-		{
-			$arr = mysql_fetch_assoc($res);
-			if (!in_array($arr['ship_id'], $_SESSION['bookmarks']['added']))
-			{
-				array_push($_SESSION['bookmarks']['added'], $arr['ship_id']);
-				ob_start();
-				echo "<tr id=\"ship_".$arr['ship_id']."\">";
-				if($arr['special_ship']==1)
-				{
-					echo "<td style=\"width:40px;background:#000;\">
-				    		<a href=\"?page=ship_upgrade&amp;id=".$arr['ship_id']."\">
-				    		<img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id']."_small.".IMAGE_EXT."\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
-				    		</a>
-				    	</td>";
-				}
-				else
-				{
- 					echo "<td style=\"width:40px;background:#000;\">
-							<a href=\"?page=help&amp;site=shipyard&amp;id=".$arr['ship_id']."\">
-							<img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id']."_small.".IMAGE_EXT."\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
-							</a>
-						</td>";
-				}
-				
-				$actions = explode(",",$arr['ship_actions']);
-				$accnt=count($actions);
-				if ($accnt>0)
-				{
-					$acstr = "<br/><b>Fähigkeiten:</b> ";
-					$x=0;
-					foreach ($actions as $i)
-					{
-						if ($ac = FleetAction::createFactory($i))
-						{
-							$acstr.=$ac;
-							if ($x<$accnt-1)
-								$acstr.=", ";
-						}
-						$x++;
-					}
-					$acstr.="";
-				}
-				
- 				echo "<td ".tm($arr['ship_name'],"<img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id']."_middle.".IMAGE_EXT."\" style=\"float:left;margin-right:5px;\">".text2html($arr['ship_shortcomment']."<br/>".$acstr."<br style=\"clear:both;\"/>")).">".$arr['ship_name']."</td>";
-				echo "<td width=\"110\">";
-				$tabulator = 1;
-				if ($arr['ship_launchable']==1)
-				{
-					echo "<input type=\"text\" 
-							id=\"ship_count_".$arr['ship_id']."\" 
-							name=\"ship_count[".$arr['ship_id']."]\" 
-							size=\"10\" value=\"".$count."\"  
-							title=\"Anzahl Schiffe eingeben, die mitfliegen sollen\" 
-							onclick=\"this.select();\" tabindex=\"".$tabulator."\" 
-							onkeyup=\"FormatNumber(this.id,this.value,'','','');\"/>";
-				}
-				else
-				{
- 					echo "-";
-				}
- 				echo "</td><td><a onclick=\"xajax_removeShipFromList('".$arr['ship_id']."');\"><img src=\"images/icons/delete.png\" alt=\"Löschen\" style=\"width:16px;height:15px;border:none;\" title=\"Löschen\" /></a></td></tr>";
-				$objResponse->append("input", "innerHTML", ob_get_contents());
-				$objResponse->assign('saveShips',"style.display","");
-				ob_end_clean();
-				}
-			}
-		
-		return $objResponse;
-	}
-	
-	function removeShipFromList($shipId)
-	{
-		$response = new xajaxResponse();
-		$response->script("document.getElementById('input').removeChild(document.getElementById('ship_".$shipId."').parentNode);");
-		$key = array_search($shipId, $_SESSION['bookmarks']['added']);
-		unset( $_SESSION['bookmarks']['added'][$key] );
-		return $response;
 	}
 	
 	function bookmarkTargetInfo($form)
