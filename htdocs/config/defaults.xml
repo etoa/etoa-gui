@@ -470,13 +470,13 @@ Anmerkung: Eine Kopie dieser Nachricht wird in Eurer Nachrichten-Box hinterlegt.
     </item>
     <item name="hmode_days" cat="10">
       <v comment="Urlaubsmodus Mindestdauer" type="text">2</v>
-      <p1 comment="Urlaubsmodus Maximaldauer (in Tagen) falls Dauer begrenzt" type="text">35</p1>
+      <p1 comment="Urlaubsmodus Maximaldauer (in Tagen) falls Dauer begrenzt" type="text">42</p1>
       <p2 comment="Urlaubsmodus-Dauer begrenzen und User danach in Inaktiv-Status setzen" type="onoff">1</p2>
     </item>
     <item name="user_inactive_days" cat="10">
       <v comment="Inaktiv-Anzeige (Tage)" type="text">7</v>
       <p1 comment="Tage, nach denen ein User normalerweise gel&#xF6;scht wird" type="text">21</p1>
-      <p2 comment="Tage, nach denen ein User gel&#xF6;scht wird, wenn er noch 0 Punkte hat, oder invasierbar wird (falls das Invasieren von aktiven Spielern deaktiviert ist)" type="text">14</p2>
+      <p2 comment="Tage, nach denen ein User gel&#xF6;scht wird, wenn er noch 0 Punkte hat, oder invasierbar wird (falls das Invasieren von aktiven Spielern deaktiviert ist)" type="text">8</p2>
     </item>
     <item name="user_ban_min_length" cat="10">
       <v comment="Minimale Sperrdauer (f&#xFC;r Admin-Modus)" type="text">1</v>
