@@ -88,6 +88,7 @@
 								users as a
 							ON
 								a.user_alliance_id=u.user_alliance_id
+                AND u.user_alliance_id > 0
 								AND u.user_id='$uid'
 							INNER JOIN
 								planets
