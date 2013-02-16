@@ -1343,7 +1343,7 @@
 			else 
 				$code = '';
 			
-			$res = dbquery("
+      $sql = "
 				SELECT
 					entities.id,
 					entities.code
@@ -1358,7 +1358,8 @@
 					AND cells.cx=".$form['man_cx']."
 					AND cells.cy=".$form['man_cy']."
 					AND entities.pos=".$form['man_p']."
-				");
+      ";
+			$res = dbquery($sql);
 			if (mysql_num_rows($res)>0 && !($code=='u' && $form['man_p']))
 			{
 				$arr=mysql_fetch_row($res);
@@ -1386,7 +1387,7 @@
 				$response->assign('costae','innerHTML',nf($fleet->getCostsPerHundredAE())." t ".RES_FUEL."");
 				$response->assign('costs','innerHTML',nf($fleet->getCosts())." t ".RES_FUEL."");
 				$response->assign('food','innerHTML',nf($fleet->getCostsFood())." t ".RES_FOOD."");
-				$response->assign('targetinfo','style.background',"#000");
+				$response->assign('targetinfo','style.color','#fff');
 				
 				$target = true;
 				
@@ -1416,7 +1417,7 @@
 			{
 				echo "<div style=\"color:#f00\">Ziel nicht vorhanden!</div>";
 				$response->assign('distance','innerHTML',"Unbekannt");
-				$response->assign('targetinfo','style.background',"#f00");
+				$response->assign('targetinfo','style.color',"#f00");
 				$action = "&nbsp; ";
 			}
 			
@@ -1542,7 +1543,7 @@
 		$response->assign('costae','innerHTML',nf($fleet->getCostsPerHundredAE())." t ".RES_FUEL."");
 		$response->assign('costs','innerHTML',nf($fleet->getCosts())." t ".RES_FUEL."");
 		$response->assign('food','innerHTML',nf($fleet->getCostsFood())." t ".RES_FOOD."");
-		$response->assign('targetinfo','style.background',"#000");
+		$response->assign('targetinfo','style.color',"#fff");
 		
 		$target = true;
 				
