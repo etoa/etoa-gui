@@ -12,14 +12,14 @@
 /*
 	Section: Current Version
 	
-	xajax version 0.5
+	xajax version 0.6
 */
 
 /*
 	Section: Copyright
 	
 	- copyright (c) 2005-2007 by Jared White & J. Max Wilson
-	- copyright (c) 2008-2009 by Joseph Woolley, Steffen Konerow, Jared White & J. Max Wilson
+	- copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White & J. Max Wilson
 */
 
 /*
@@ -42,7 +42,7 @@
 	@package xajax
 	@version $Id: copyright.inc.php 327 2007-02-28 16:55:26Z calltoconstruct $
 	@copyright (c) 2005-2007 by Jared White & J. Max Wilson
-	@copyright (c) 2008-2009 by Joseph Woolley, Steffen Konerow, Jared White & J. Max Wilson
+	@copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White & J. Max Wilson
 	@license http://www.xajaxproject.org/bsd_license.txt BSD License
 */
 

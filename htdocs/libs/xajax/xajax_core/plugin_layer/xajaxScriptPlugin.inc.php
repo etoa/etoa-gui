@@ -14,7 +14,7 @@
 	@package xajax
 	@version $Id: xajaxScriptPlugin.inc.php 362 2007-05-29 15:32:24Z calltoconstruct $
 	@copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
-	@copyright Copyright (c) 2008-2009 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
+	@copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
 	@license http://www.xajaxproject.org/bsd_license.txt BSD License
 */
 
@@ -145,7 +145,7 @@ class xajaxScriptPlugin extends xajaxRequestPlugin
 				$sHash = md5(implode($aScripts));
 				$sQuery = $sQueryBase . "xjxGenerateJavascript=" . $sHash;
 				
-				echo "\n<script type='text/javascript' src='" . $this->sRequestURI . $sQuery . "'></script>\n";
+				echo "\n<script type='text/javascript' src='" . $this->sRequestURI . $sQuery . "' charset='UTF-8'></script>\n";
 			}
 			
 			$aStyles = $this->_getSections('style');
@@ -175,9 +175,9 @@ class xajaxScriptPlugin extends xajaxRequestPlugin
 		return ('' != $this->sRequest);
 	}
 	
-	function &_getSections($sType)
+	function _getSections($sType)
 	{
-		$objPluginManager =& xajaxPluginManager::getInstance();
+		$objPluginManager = xajaxPluginManager::getInstance();
 		
 		$objPluginManager->configure('deferScriptGeneration', 'deferred');
 		
@@ -228,7 +228,7 @@ class xajaxScriptPlugin extends xajaxRequestPlugin
 	{
 		if ($this->canProcessRequest())
 		{
-			$aSections =& $this->_getSections($this->sRequest);
+			$aSections = $this->_getSections($this->sRequest);
 			
 //			echo "<!--" . print_r($aSections, true) . "-->";
 			
@@ -240,12 +240,12 @@ class xajaxScriptPlugin extends xajaxRequestPlugin
 				if ('style' == $this->sRequest)
 					$sType = 'text/css';
 					
-				$objResponse =& new xajaxCustomResponse($sType);
+				$objResponse = new xajaxCustomResponse($sType);
 				
 				foreach ($aSections as $sSection)
 					$objResponse->append($sSection . "\n");
 				
-				$objResponseManager =& xajaxResponseManager::getInstance();
+				$objResponseManager = xajaxResponseManager::getInstance();
 				$objResponseManager->append($objResponse);
 				
 				header ('Expires: ' . gmdate('D, d M Y H:i:s', time() + (60*60*24)) . ' GMT');
@@ -262,5 +262,5 @@ class xajaxScriptPlugin extends xajaxRequestPlugin
 /*
 	Register the plugin with the xajax plugin manager.
 */
-$objPluginManager =& xajaxPluginManager::getInstance();
+$objPluginManager = xajaxPluginManager::getInstance();
 $objPluginManager->registerPlugin(new xajaxScriptPlugin(), 9999);

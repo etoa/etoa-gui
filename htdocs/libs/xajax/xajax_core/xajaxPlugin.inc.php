@@ -14,7 +14,7 @@
 	@package xajax
 	@version $Id: xajaxPlugin.inc.php 362 2007-05-29 15:32:24Z calltoconstruct $
 	@copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
-	@copyright Copyright (c) 2008-2009 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
+	@copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
 	@license http://www.xajaxproject.org/bsd_license.txt BSD License
 */
 
@@ -135,9 +135,9 @@ class xajaxResponsePlugin extends xajaxPlugin
 		
 		objResponse - (object):  A reference to the <xajaxResponse> object
 	*/
-	function setResponse(&$objResponse)
+	function setResponse($objResponse)
 	{
-		$this->objResponse =& $objResponse;
+		$this->objResponse = $objResponse;
 	}
 	
 	/*
@@ -162,7 +162,7 @@ class xajaxResponsePlugin extends xajaxPlugin
 	function getName()
 	{
 //SkipDebug
-		$objLanguageManager =& xajaxLanguageManager::getInstance();
+		$objLanguageManager = xajaxLanguageManager::getInstance();
 		trigger_error(
 			$objLanguageManager->getText('XJXPLG:GNERR:01')
 			, E_USER_ERROR
@@ -181,7 +181,7 @@ class xajaxResponsePlugin extends xajaxPlugin
 	function process()
 	{
 //SkipDebug
-		$objLanguageManager =& xajaxLanguageManager::getInstance();
+		$objLanguageManager = xajaxLanguageManager::getInstance();
 		trigger_error(
 			$objLanguageManager->getText('XJXPLG:PERR:01')
 			, E_USER_ERROR
