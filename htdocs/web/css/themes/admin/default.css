@@ -35,7 +35,7 @@ body	{
 	position: absolute;
 	top: 30px;
 	left: 10px;
-	background: url(../images/admin/logo.png) no-repeat top left;
+	background: url(../../../images/admin/logo.png) no-repeat top left;
 	cursor: pointer;
 }
 
