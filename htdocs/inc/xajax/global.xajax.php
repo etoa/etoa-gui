@@ -405,9 +405,7 @@ function setupShowRace($val)
 	echo  "<tr><th colspan=\"3\">Spezielle Schiffe:</th></tr>";
 	$res=dbquery("
 	SELECT 
-		ship_id,
-		ship_name,
-		ship_shortcomment 
+		ship_id
 	FROM 
 		ships 
 	WHERE 
@@ -418,7 +416,7 @@ function setupShowRace($val)
 	{
 		while ($arr=mysql_fetch_array($res))
 		{
-			$ship = new Ship($arr);
+			$ship = new Ship($arr['ship_id']);
 			echo "<tr><td style=\"background:black;\"><img src=\"".$ship->imgPath()."\" style=\"width:40px;height:40px;border:none;\" alt=\"ship".$ship->id."\" /></td>
 			<th style=\"width:180px;\">".text2html($ship->name)."</th>
 			<td>".text2html($ship->shortComment)."</td></tr>";
