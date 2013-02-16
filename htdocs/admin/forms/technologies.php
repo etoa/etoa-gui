@@ -39,6 +39,8 @@
 	define("DB_IMAGE_PATH",IMAGE_PATH."/technologies/technology<DB_TABLE_ID>_small.".IMAGE_EXT);
 
 	$form_switches = array("Anzeigen"=>'tech_show');
+  
+  define('POST_INSERT_UPDATE_METHOD','Ranking::calcTechPoints');
 	
 	// FIELDS
 	

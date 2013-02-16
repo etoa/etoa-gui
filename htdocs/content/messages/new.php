@@ -21,8 +21,9 @@
 	// $Rev$
 	//
 
-	if (!isset($s->messagesSent))
-		$s->messagesSent = array();
+	if (!isset($_SESSION['messagesSent'])) {
+		$_SESSION['messagesSent'] = array();
+  }
 
 		if (isset($_POST['submit']) && checker_verify())
 		{
@@ -38,8 +39,7 @@
 				{
 					// Prüfe Flooding
 					$flood_interval = time()-FLOOD_CONTROL;
-					// TODO: Fix $s
-					if (!isset($s->messagesSent[$uid]) || $s->messagesSent[$uid] < $flood_interval)
+					if (!isset($_SESSION['messagesSent'][$uid]) || $_SESSION['messagesSent'][$uid] < $flood_interval)
 					{
 						// Prüfe Ignore
 						$res = dbquery("
@@ -58,7 +58,7 @@
 							$check_subject=check_illegal_signs($_POST['message_subject']);
 							if($check_subject=="")
 							{
-									$s->messagesSent[$uid]=$time;
+									$_SESSION['messagesSent'][$uid] = $time;
 									Message::sendFromUserToUser($cu->id,$uid,addslashes($_POST['message_subject']),addslashes($_POST['message_text']));
 	
 	         					    echo "Nachricht wurde an <b>".$rcpt."</b> gesendet! ";
@@ -100,8 +100,8 @@
 		}
 		//Der Username wird übernommen wenn dieser angegeben ist
 		elseif (isset($_POST['message_user_to']))
-		{
-			$user =  get_user_nick(intval(rawurldecode($_POST['message_user_to'])));
+		{ 
+			$user = rawurldecode($_POST['message_user_to']);
 		}
 		else
 		{
@@ -148,7 +148,7 @@
 				}
 				else
 				{
-					$text = "\n\n".stripslashes($_POST['message_text'])."";
+					$text = stripslashes($_POST['message_text'])."";
 				}
 			}
 			elseif (isset($_GET['message_text']))

@@ -313,7 +313,7 @@
         $img = IMAGE_PATH."/unexplored/".$fogImg.".png";
       }
       
-      echo "<a $class href=\"$url\" ".$tt." style=\"background:url('".$img."');\">";
+      echo "<a href=\"$url\" ".$tt." style=\"background:url('".$img."');\">";
       echo "<img src=\"$overlaypic\" alt=\"Nebel\" onmouseover=\"\$(this).attr('src','$sector_pic/hovercell.png');$('#counter_left_$ycoords').attr('src','$counter_left_high$ycoords.gif');\$('#counter_bottom_$xcoords').attr('src','$counter_bottom_high$xcoords.gif');\" onmouseout=\"\$(this).attr('src','$overlaypic');\$('#counter_left_$ycoords').attr('src','$counter_left$ycoords.gif');\$('#counter_bottom_$xcoords').attr('src','$counter_bottom$xcoords.gif');\" />";
       echo "</a>";
       

@@ -185,6 +185,12 @@ class AdminSession extends Session
 		self::unregisterSession();
 	}
 
+	/**
+	 * Unregisters a session and save session to session-log
+	 * 
+	 * @param string $sid Session-ID. If null, the current user's session id will be taken
+	 * @param bool $logoutPressed True if it was manual logout
+	 */
 	static function unregisterSession($sid=null,$logoutPressed=1)
 	{
 		if ($sid == null)
@@ -235,6 +241,9 @@ class AdminSession extends Session
 		session_regenerate_id();
 	}
 
+	/**
+	 * Cleans up sessions with have a timeout. Should be called at login or by cronjob regularly
+	 */
 	static function cleanup()
 	{
 		$cfg = Config::getInstance();
@@ -256,6 +265,10 @@ class AdminSession extends Session
 		}
 	}
 
+	/**
+	 * Removes old session logs from the database
+	 * @param int $threshold Time difference in seconds
+	 */
 	static function cleanupLogs($threshold=0)
 	{
 		$cfg = Config::getInstance();
@@ -273,6 +286,10 @@ class AdminSession extends Session
 		return $nr;
 	}
 
+	/**
+	 * Kicks the user with the given session id
+	 * @param string $sid Session id
+	 */
 	static function kick($sid)
 	{
 		self::unregisterSession($sid);

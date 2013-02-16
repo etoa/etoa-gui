@@ -28,9 +28,6 @@ abstract class BaseLog
 	const CRIT = 4;
 
 	static public $severities = array("Debug", "Information", "Warnung", "Fehler", "Kritisch");
-
-	abstract static function processQueue();
-	abstract static function cleanup($threshold);
 	
 	/**
 	* Alle alten Logs löschen

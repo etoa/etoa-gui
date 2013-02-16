@@ -18,7 +18,7 @@
 		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
 		if (isset($_POST['recalc']))
 		{
-			cms_ok_msg(calcShipPoints());
+			cms_ok_msg(Ranking::calcShipPoints());
 		}
 		echo "<p>Nach jeder direkter &Auml;nderung an den Schiffen via Datenbank m&uuml;ssen die Punkte neu berechnet werden!</p>
 		<p><input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></p>

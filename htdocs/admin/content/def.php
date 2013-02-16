@@ -34,9 +34,9 @@
 	{
 		echo "<h1>Punkte</h1>";
 		echo "<h2>Punkte neu berechnen</h2><form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
-		if ($_POST['recalc']!="")
+		if (isset($_POST['recalc']) && $_POST['recalc']!="")
 		{
-			cms_ok_msg(calcDefensePoints());
+			cms_ok_msg(Ranking::calcDefensePoints());
 		}		
 		echo "Nach jeder direkter &Auml;nderung an den Verteidigungsanlagen via Datenbank m&uuml;ssen die Punkte neu berechnet werden: ";
 		echo "<br/><br/><input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";		
@@ -73,7 +73,7 @@
 	{
 		echo "<h2>Bauliste</h2>";
 
-		if ($_POST['defqueue_search']!="" || $_GET['action']=="searchresults")
+		if ((isset($_POST['defqueue_search']) && $_POST['defqueue_search']!="") || (isset($_GET['action']) && $_GET['action']=="searchresults"))
 		{
 			$sqlstart = "
 			SELECT
@@ -261,7 +261,7 @@
 		//
 		// Auftrag bearbeiten
 		//
-		elseif ($_GET['action']=="edit" && $_GET['id']>0)
+		elseif (isset($_GET['action']) && $_GET['action']=="edit" && $_GET['id']>0)
 		{
 			// Änderungen speichern
 			if ($_POST['save']!="")
@@ -465,7 +465,7 @@
 	{
 		echo "<h1>Verteidigungsliste</h1>";
 	
-		if (isset($_POST['deflist_search']) || $_GET['action']=="searchresults" || isset($_POST['new']))
+		if (isset($_POST['deflist_search']) || (isset($_GET['action']) && $_GET['action']=="searchresults") || isset($_POST['new']))
 		{
 	
 			$sqlstart = "SELECT 
@@ -500,7 +500,8 @@
 			ORDER BY 
 					deflist_entity_id,
 					def_order,def_name;";
-  
+      $sql = "";
+      
 			// Verteidigung hinzufügen
 			if (isset($_POST['new']))
 			{
@@ -623,7 +624,7 @@
 				dbquery("DELETE FROM deflist WHERE deflist_id='".$_POST['deflist_id']."';");
 				success_msg("Gelöscht");
 			}
-			elseif ($_GET['cleanup']==1)
+			elseif (isset($_GET['cleanup']) && $_GET['cleanup']==1)
 			{
 				dbquery("DELETE FROM deflist WHERE deflist_count=0;");
 				success_msg("Aufgeräumt");
@@ -676,7 +677,7 @@
 		//
 		// Bearbeiten
 		// 
-		elseif ($_GET['action']=="edit")
+		elseif (isset($_GET['action']) && $_GET['action']=="edit")
 		{
 			$res = dbquery("SELECT 
 								deflist.deflist_id,

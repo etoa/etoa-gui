@@ -122,7 +122,7 @@
 		* Abgelaufene Sperren löschen
 		*
 		*/
-		function removeOldBanns()
+		static function removeOldBanns()
 		{
 			dbquery("
 				UPDATE

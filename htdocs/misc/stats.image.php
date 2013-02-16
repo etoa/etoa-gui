@@ -78,7 +78,9 @@
 			");
 			if (mysql_num_rows($pres)>0)
 			{
-				define('B_W', (IM_W-B_B)/floor(mysql_num_rows($pres)/STEP)/2);
+        $records_per_step = floor(mysql_num_rows($pres)/STEP);
+        
+				define('B_W', (IM_W-B_B)/max($records_per_step,1)/2);
 				// Bar colors
 				for ($x=0;$x<B_W;$x++)
 				{

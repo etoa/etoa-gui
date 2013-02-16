@@ -166,8 +166,9 @@
 		imagestring($im, 2, 500, $h-25, $avgr, $colBlack);	
 		imagestring($im, 2, 605, $h-25, $actr, $colBlack);	
 	
-	
-		unlink($file);		
+    if (is_file($file)) {
+      unlink($file);		
+    }
 		imagepng($im,$file);
 
 		}

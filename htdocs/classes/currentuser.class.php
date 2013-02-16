@@ -99,7 +99,7 @@
 			}	
 			
 			$pos = $absX + ($cy_num*$sy_num)*($absY-1)-1;
-			return ($this->dmask{$pos}%4);		
+			return (($pos < strlen($this->dmask)) ? $this->dmask{$pos} > 0 : false);
 		}
 		
 		function setDiscovered($absX,$absY,$owner=1,$save=1)

@@ -40,6 +40,7 @@
 
 	$form_switches = array("Anzeigen"=>'building_show');
 
+  define('POST_INSERT_UPDATE_METHOD','Ranking::calcBuildingPoints');
 	
 	// FIELDS
 	

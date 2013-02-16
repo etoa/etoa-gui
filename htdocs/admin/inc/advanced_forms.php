@@ -76,7 +76,13 @@ else
 		if (defined('POST_INSERT_UPDATE_METHOD'))
 		{
 			$fname = POST_INSERT_UPDATE_METHOD;
-			cms_ok_msg("Datensatz ge&auml;ndert! ".$fname());
+      if (stristr('::', $fname)) {
+        list($class, $method) = explode('::', $fname);
+        $hookResult = $class::$method();
+      } else {
+        $hookResult = $fname();
+      }
+			cms_ok_msg("Datensatz ge&auml;ndert! ".$hookResult);
 		}
 		else
 		{
@@ -101,7 +107,13 @@ else
 		if (defined('POST_INSERT_UPDATE_METHOD'))
 		{
 			$fname = POST_INSERT_UPDATE_METHOD;
-			cms_ok_msg("Datensatz ge&auml;ndert! ".$fname());
+      if (stristr($fname, '::')) {
+        list($class, $method) = explode('::', $fname);
+        $hookResult = $class::$method();
+      } else {
+        $hookResult = $fname();
+      }
+			cms_ok_msg("Datensatz ge&auml;ndert! ".$hookResult);
 		}
 		else
 		{

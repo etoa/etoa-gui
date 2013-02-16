@@ -38,7 +38,7 @@
 	define("DB_TABLE_SORT",'def_order');
 	define("DB_TABLE_SORT_PARENT",'def_cat_id');
 
-	define('POST_INSERT_UPDATE_METHOD','calcDefensePoints');
+	define('POST_INSERT_UPDATE_METHOD','Ranking::calcDefensePoints');
 
 	$form_switches = array("Anzeigen"=>'def_show','Baubar'=>'def_buildable');
 
