@@ -10,6 +10,51 @@ var enterKey = 13;
 // array for all used keycodes
 var keys = new Array();
 
+// Initialize keybinding events
+function keybindsInit() {
+
+  if(window.enableKeybinds && $)
+  {
+    // disable keybinds if inside input or textarea
+    if($(':focus').prop('tagName')==='INPUT' || $(':focus').prop('tagName')==='TEXTAREA')
+    {
+        keyNavigationOn = false;
+    }
+    else
+    {
+        keyNavigationOn = true;
+    }
+    // disable keybinds if input or textarea gets focus and re-enable on blur
+    $('input,textarea').focus(function(e)
+    {
+        keyNavigationOn = false;
+    });
+    $('input,textarea').blur(function(e)
+    {
+        keyNavigationOn = true;
+    });
+    // add an event handler for keypress
+    $('body').keypress(function(e)
+    {
+        // check whether keybinds are enabled
+        if(keyNavigationOn && !e.metaKey && !e.shiftKey && !e.ctrlKey && !e.altKey)
+        {
+            // even jquery doesn't get all keycodes into one value,
+            // so use the one that isn't zero
+            var pressedKey = (e.which || e.keyCode);
+            // change url if the pressed key is in our array
+            if(keys[pressedKey])
+            {
+                window.location = keys[pressedKey];
+                // prevent things like horizontal scrolling between
+                // right arrow key pressed and new site loading
+                e.preventDefault();
+            }
+        }
+    });
+  }
+}
+
 if(window.enableKeybinds && $)
 {
     // catch undefined strings here, the keypress handler doesn't.
@@ -33,44 +78,5 @@ if(window.enableKeybinds && $)
     keys[118] /* 'v' */     = "?page=bookmarks";
     keys[108] /* 'l' */     = "?page=fleets";
 
-    $(document).ready(function()
-    {
-        // disable keybinds if inside input or textarea
-        if($(':focus').prop('tagName')==='INPUT' || $(':focus').prop('tagName')==='TEXTAREA')
-        {
-            keyNavigationOn = false;
-        }
-        else
-        {
-            keyNavigationOn = true;
-        }
-        // disable keybinds if input or textarea gets focus and re-enable on blur
-        $('input,textarea').focus(function(e)
-        {
-            keyNavigationOn = false;
-        });
-        $('input,textarea').blur(function(e)
-        {
-            keyNavigationOn = true;
-        });
-        // add an event handler for keypress
-        $('body').keypress(function(e)
-        {
-            // check whether keybinds are enabled
-            if(keyNavigationOn && !e.metaKey && !e.shiftKey && !e.ctrlKey && !e.altKey)
-            {
-                // even jquery doesn't get all keycodes into one value,
-                // so use the one that isn't zero
-                var pressedKey = (e.which || e.keyCode);
-                // change url if the pressed key is in our array
-                if(keys[pressedKey])
-                {
-                    window.location = keys[pressedKey];
-                    // prevent things like horizontal scrolling between
-                    // right arrow key pressed and new site loading
-                    e.preventDefault();
-                }
-            }
-        });
-    });
+    $(document).ready(keybindsInit);
 }
