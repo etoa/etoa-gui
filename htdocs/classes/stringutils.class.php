@@ -10,6 +10,10 @@
     /**
     * Splits a string of words into an array and treats words in quotes as a single word
     *
+    * Test:
+    *   StringUtils::splitBySpaces('Lorem ipsum "dolor sit amet" consectetur "adipiscing \\"elit" dolor') 
+    *   == array ('Lorem','ipsum','dolor sit amet','consectetur','adipiscing "elit','dolor'))
+    *
     * @see http://stackoverflow.com/questions/2202435/php-explode-the-string-but-treat-words-in-quotes-as-a-single-word
     */
     static function splitBySpaces($text) {
