@@ -1631,6 +1631,19 @@ function fleetBookmarkAddShipToList(shipId, shipCount) {
   ajaxRequest('get_ship_info', { ship:shipId }, function(data) {
     if (data.id) {
       if ($('#ship_row_' + data.id).length == 0) {
+      
+        var numberInput = '-';
+        if (data.launchable == 1) {
+          numberInput = $('<input>')
+            .attr('id', 'ship_count_'+data.id)
+            .attr('name', 'ship_count['+data.id+']')
+            .attr('size', 10)
+            .attr('value', typeof shipCount !== 'undefined' ? shipCount : 1)
+            .attr('title', 'Anzahl Schiffe eingeben, die mitfliegen sollen')
+            .click(function(evt){evt.currentTarget.select();})
+            .keyup(function(evt){FormatNumber(evt.currentTarget.id, evt.currentTarget.value, '', '', '')});
+        }
+      
         $('#bookmarkShiplistInputTable > tbody:last').append($('<tr>')
           .attr('id', 'ship_row_' + data.id)
           .append($('<td>')
@@ -1646,15 +1659,7 @@ function fleetBookmarkAddShipToList(shipId, shipCount) {
           )
           .append($('<td>')
             .addClass('count')
-            .append($('<input>')
-              .attr('id', 'ship_count_'+data.id)
-              .attr('name', 'ship_count['+data.id+']')
-              .attr('size', 10)
-              .attr('value', typeof shipCount !== 'undefined' ? shipCount : 1)
-              .attr('title', 'Anzahl Schiffe eingeben, die mitfliegen sollen')
-              .click(function(evt){evt.currentTarget.select();})
-              .keyup(function(evt){FormatNumber(evt.currentTarget.id, evt.currentTarget.value, '', '', '')})
-            )
+            .append(numberInput)
           )
           .append($('<td>')
             .addClass('actions')
