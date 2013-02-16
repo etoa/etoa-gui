@@ -19,6 +19,7 @@
     <category id="19">Logging</category>
     <category id="20">Eventhandler</category>	
     <category id="21">Datenbank</category>	
+    <category id="22">Entwickler-Optionen</category>	
   </categories>
   <items>
     <item name="roundname" cat="1" base="yes">
@@ -29,12 +30,6 @@
     </item>
     <item name="loginurl" cat="1" base="yes">
       <v comment="Login-URL" type="text">http://etoa.ch</v>
-    </item>
-    <item name="debug" cat="1">
-      <v comment="Debug-Modus" type="onoff">0</v>
-    </item>
-    <item name="accesslog" cat="1">
-      <v comment="Seitenzugriffe loggen" type="onoff">0</v>
     </item>
     <item name="user_timeout" cat="1">
       <v comment="User-Timeout (wenn man so lange nichts macht, muss man sich neu einloggen) in Sekunden" type="text">2400</v>
@@ -743,6 +738,12 @@ Anmerkung: Eine Kopie dieser Nachricht wird in Eurer Nachrichten-Box hinterlegt.
     </item>
     <item name="backup_time_minute" cat="21">
       <v comment="Backup-Start (Minute)" type="text">47</v>
+    </item>
+    <item name="debug" cat="22">
+      <v comment="Debug-Modus" type="onoff">0</v>
+    </item>
+    <item name="accesslog" cat="22">
+      <v comment="Seitenzugriffe loggen" type="onoff">0</v>
     </item>
   </items>
 </config>
