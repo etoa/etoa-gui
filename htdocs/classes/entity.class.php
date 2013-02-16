@@ -241,7 +241,7 @@
 			// Planetendistanz wenn sie nicht im selben Solsys sind
 			else
 			{
-				$ps = ($ae/2) - (($p2)*$ae/4/$np);									
+				$ps = $ae - (($ae/4/$np)*($p1 + $p2));
 			}
 			$ssae = $sae + $ps;
 			return round($ssae);
