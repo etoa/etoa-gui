@@ -60,120 +60,135 @@
 		if ( $admin > 0 && $admin != 3) // Keine Kommandos für Entwickler
 		{
 			$m = array();
-			if (preg_match('#^/kick (.[^\'\"\?\<\>\$\!\=\;\&\s]+)$#',$ct,$m)>0)
-			{
-				$isCommand = true;
-				$uid = User::findIdByNick($m[1]);
-				if ($uid>0)
-				{
-					if (kickChatUser($uid))
-					{
-						chatSystemMessage($m[1].' wurde gekickt!');
-					}
-					else
-					{
-						die('aa:User is not online in chat!');
-					}
-				}
-				else
-				{
-					die('aa:A user with this nick does not exist!');
-				}
-			}
-			elseif (preg_match('#^/kick (.[^\'\"\?\<\>\$\!\=\;\&\s]+)\s(.+)$#',$ct,$m)>0)
-			{
-				$isCommand = true;
-				$text = '';
-				if (isset($m[2]))
-					$text = $m[2];
-				$uid = User::findIdByNick($m[1]);
-				if ($uid>0)
-				{
-					if (kickChatUser($uid,$text))
-					{
-						chatSystemMessage($m[1].' wurde gekickt! Grund: '.$text);
-					}
-					else
-					{
-						die('aa:User is not online in chat!');
-					}
-				}
-				else
-				{
-					die('aa:A user with this nick does not exist!');
-				}
-			}
-			elseif (preg_match('#^/ban (.[^\'\"\?\<\>\$\!\=\;\&\s]+)\s([A-Za-z0-9\s]+)$#',$ct,$m)>0)
-			{
-				$isCommand = true;
-				$text = isset($m[2]) ? $m[2] : '';
-				$uid = User::findIdByNick($m[1]);
-				if ($uid>0)
-				{
-					dbquery('INSERT INTO
-						chat_banns
-							(user_id,reason,timestamp)
-						VALUES ('.$uid.',"'.mysql_real_escape_string($text).'",'.time().')
-						ON DUPLICATE KEY UPDATE
-							timestamp='.time().',reason="'.mysql_real_escape_string($text).'"');
-					kickChatUser($uid,$text);
-					chatSystemMessage($m[1].' wurde gebannt! Grund: '.$text);
-				}
-				else
-				{
-					die('aa:A user with this nick does not exist!');
-				}
-			}
-			elseif (preg_match('#^/unban (.[^\'\"\?\<\>\$\!\=\;\&\s]+)$#',$ct,$m)>0)
-			{
-				$isCommand = true;
-				$uid = User::findIdByNick($m[1]);
-				if ($uid>0)
-				{
-					dbquery('DELETE FROM
-						chat_banns
-					WHERE
-						user_id='.$uid.';');
-					if (mysql_affected_rows()>0)
-					{
-						die('aa:Unbanned '.$m[1].'!');
-					}
-					else
-					{
-						die('aa:A user with that nick is not banned!');
-					}
-				}
-				else
-				{
-					die('aa:A user with this nick does not exist!');
-				}			
-			}
-			elseif (preg_match('#^/banlist$#',$ct,$m)>0)
-			{
-				$isCommand = true;
-				$res = dbquery('SELECT
-					user_id,reason,timestamp
-				FROM
-					chat_banns
-				;');
-				if (mysql_num_rows($res)>0)
-				{
-					$out='';
-					while ($arr=mysql_fetch_assoc($res))
-					{
-						$tu = new User($arr['user_id']);
-						if ($tu->isValid)
-						{
-							$out.= $tu->nick.': '.$arr['reason'].' ('.df($arr['timestamp']).")\n";
-						}
-					}
-					die('bl:'.$out);
-				}
-				else
-				{
-					die('aa:Bannliste leer!');
-				}
-			}
+      
+      $words = StringUtils::splitBySpaces($ct);
+      $commandMatch = array();
+      if (count($words) > 0 && preg_match('#^/([a-z]+)$#i', array_shift($words), $commandMatch)) 
+      {
+        $command = strtolower($commandMatch[1]);
+        $isCommand = true;
+        
+        // Kick user
+        if ($command == "kick")
+        {
+          if (isset($words[0])) 
+          {
+            $uid = User::findIdByNick($words[0]);
+            if ($uid>0)
+            {
+              $msg = (count($words) > 1) ? implode(' ', array_slice($words, 1)) : '';
+              if (kickChatUser($uid, $msg))
+              {
+                 chatSystemMessage($words[0].' wurde gekickt!'.($msg != '' ? ' Grund: '.$msg : ''));
+              }
+              else
+              {
+                die('aa:User is not online in chat!');
+              }
+            }
+            else
+            {
+              die('aa:A user with this nick does not exist!');
+            }
+          }
+          else
+          {
+            die('aa:No user specified!');
+          }          
+        }
+        
+        // Ban user
+        elseif ($command == "ban")
+        {
+          if (isset($words[0])) 
+          {
+            $uid = User::findIdByNick($words[0]);
+            if ($uid>0)
+            {
+              $text = (count($words) > 1) ? implode(' ', array_slice($words, 1)) : '';
+              dbquery('INSERT INTO
+                chat_banns
+                  (user_id,reason,timestamp)
+                VALUES ('.$uid.',"'.mysql_real_escape_string($text).'",'.time().')
+                ON DUPLICATE KEY UPDATE
+                  timestamp='.time().',reason="'.mysql_real_escape_string($text).'"');
+              kickChatUser($uid, $text);
+              chatSystemMessage($words[0].' wurde gebannt! Grund: '.$text);
+            }
+            else
+            {
+              die('aa:A user with this nick does not exist!');
+            }
+          }
+          else
+          {
+            die('aa:No user specified!');
+          }          
+        }
+
+        elseif ($command == "unban")
+        {
+          if (isset($words[0])) 
+          {
+            $uid = User::findIdByNick($words[0]);
+            if ($uid>0)
+            {
+              dbquery('DELETE FROM
+                chat_banns
+              WHERE
+                user_id='.$uid.';');
+              if (mysql_affected_rows()>0)
+              {
+                die('aa:Unbanned '.$words[0].'!');
+              }
+              else
+              {
+                die('aa:A user with that nick is not banned!');
+              }
+            }
+            else
+            {
+              die('aa:A user with this nick does not exist!');
+            }
+          }
+          else
+          {
+            die('aa:No user specified!');
+          }
+        }
+
+        elseif ($command == "banlist")
+        {
+          $res = dbquery('SELECT
+            user_id,reason,timestamp
+          FROM
+            chat_banns
+          ;');
+          if (mysql_num_rows($res)>0)
+          {
+            $out='';
+            while ($arr=mysql_fetch_assoc($res))
+            {
+              $tu = new User($arr['user_id']);
+              if ($tu->isValid)
+              {
+                $out.= $tu->nick.': '.$arr['reason'].' ('.df($arr['timestamp']).")\n";
+              }
+            }
+            die('bl:'.$out);
+          }
+          else
+          {
+            die('aa:Bannliste leer!');
+          }
+        }        
+        
+        // Unknown command
+        else
+        {
+          die('aa:Unknown command \''.$command.'\'!');
+        }        
+      }
 		}
 		if(!$isCommand)
 		{
