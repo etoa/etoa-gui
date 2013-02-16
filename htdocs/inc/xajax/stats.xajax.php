@@ -464,11 +464,10 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 				$orderDir = "ASC";
 			}
 			
-
+      $queryParams = array();
 			if ($userstring!="")
 			{
 				$limit="0,".STATS_NUM_OF_ROWS;
-				$userstring=remove_illegal_signs($userstring);
 				if ($absolute==1)
 				{
 					if($mode=="diplomacy" || $mode=="battle" || $mode=="trade")
@@ -489,12 +488,13 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 							LEFT JOIN 
 								alliances ON user_alliance_id=alliance_id
 						WHERE
-							LCASE(user_nick) LIKE '".strtolower($userstring)."'
+							LCASE(user_nick) LIKE ?
 							AND user_ghost=0
 						ORDER BY 
 							$order DESC
 						LIMIT 
 							$limit;";
+            $queryParams = array(strtolower($userstring));
 					}
 					else
 					{
@@ -515,11 +515,12 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 						FROM 
 							user_stats
 						WHERE 
-							LCASE(nick) LIKE '".strtolower($userstring)."' 
+							LCASE(nick) LIKE ?
 						ORDER BY 
 							$order $orderDir
 						LIMIT 
 							$limit;";
+            $queryParams = array(strtolower($userstring));
 					}
 				}
 				else
@@ -542,12 +543,13 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 							LEFT JOIN 
 								alliances ON user_alliance_id=alliance_id
 						WHERE
-				       		LCASE(user_nick) LIKE '%".strtolower($userstring)."%'
+              LCASE(user_nick) LIKE ?
 							AND user_ghost=0
 						ORDER BY 
 							$order DESC
 						LIMIT 
 							$limit;";
+            $queryParams = array(strtolower('%'.$userstring.'%'));
 					}
 					else
 					{
@@ -568,11 +570,12 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 						FROM 
 							user_stats
 						WHERE 
-					LCASE(nick) LIKE '%".strtolower($userstring)."%' 
+              LCASE(nick) LIKE ?
 						ORDER BY 
 							$order $orderDir
 						LIMIT 
 							$limit;";
+            $queryParams = array(strtolower('%'.$userstring.'%'));
 					}
 				}
 			}
@@ -626,7 +629,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 						$limit;";
 				}
 			}
-			$res=dbquery($sql);
+			$res=dbQuerySave($sql, $queryParams);
 			
 			$nr = mysql_num_rows($res);
 			if ($nr>0)

@@ -695,26 +695,6 @@
 	}
 
 	/**
-	* Überprüft ob unerlaubte Zeichen im Text sind und gibt Antwort zurück
-	*
-	* @todo Check if this method is still usable
-	*/
-	function remove_illegal_signs($string)
-	{
-		$string = str_replace("'","",$string);
-		$string = str_replace("<","",$string);
-		$string = str_replace(">","",$string);
-		$string = str_replace("?","",$string);
-		$string = str_replace("\\","",$string);
-		$string = str_replace("$","",$string);
-		$string = str_replace("!","",$string);
-		$string = str_replace("=","",$string);
-		$string = str_replace(";","",$string);
-		$string = str_replace("&","",$string);
-		return $string;
-	}
-
-	/**
 	* Sends a system message to an user
 	*/
 	function send_msg($user_id,$msg_type,$subject,$text)
