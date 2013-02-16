@@ -97,7 +97,7 @@
 	}
 
 
-	function admin_create_new_dataset_query($db_fields,$_POST)
+	function admin_create_new_dataset_query($db_fields)
 	{
 		global $_FILES;
 		$type="";
@@ -211,7 +211,6 @@
 		$sql.= ");";
 		return $sql;
 	}
-
 
 
 	function admin_edit_dataset($db_fields,$arr)
@@ -340,9 +339,7 @@
 		echo "</table></td></tr>";
 	}
 
-
-
-	function admin_edit_dataset_query($db_fields,$_POST)
+	function admin_edit_dataset_query($db_fields)
 	{
 		$sql = "UPDATE ".DB_TABLE." SET ";
 		$cnt = 1;
@@ -411,7 +408,6 @@
 		$sql.= " WHERE ".DB_TABLE_ID."='".$_POST[DB_TABLE_ID]."';";
 		return $sql;
 	}
-
 
 	function admin_delete_dataset($db_fields,$arr)
 	{
@@ -482,7 +478,6 @@
 			}
 		}
 	}
-
 
 
 
@@ -594,7 +589,5 @@
 		$user_rank_name = $arr['rank_desc'];
 		return $user_rank_name;
 	}
-
-
 
 ?>

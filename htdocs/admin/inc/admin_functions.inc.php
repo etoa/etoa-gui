@@ -90,7 +90,7 @@ function cms_ok_msg($msg,$id="okmsg")
 */
 function advanced_form($module)
 {
-	require_once("inc/form_functions.php");
+  require_once("inc/form_functions.php");
 	require_once("forms/$module.php");
 	require_once("inc/advanced_forms.php");
 }

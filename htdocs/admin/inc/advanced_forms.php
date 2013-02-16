@@ -71,7 +71,7 @@ else
 	// Add new dataset query
 	if (isset($_POST['new']) && $_POST['new']!="")
 	{
-		$sql = admin_create_new_dataset_query($db_fields,$_POST);
+		$sql = admin_create_new_dataset_query($db_fields);
 		dbquery($sql);
 		if (defined('POST_INSERT_UPDATE_METHOD'))
 		{
@@ -96,7 +96,7 @@ else
 	// Edit dataset query
 	if (isset($_POST['edit']) && $_POST['edit']!="")
 	{
-		$sql = admin_edit_dataset_query($db_fields,$_POST);
+		$sql = admin_edit_dataset_query($db_fields);
 		dbquery($sql);
 		if (defined('POST_INSERT_UPDATE_METHOD'))
 		{

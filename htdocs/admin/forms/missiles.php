@@ -63,7 +63,8 @@
 																		"rcb_elem_chekced" => "",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
-																		"show_overview" => 1
+																		"show_overview" => 1,
+                                    "link_in_overview" => 1
 																	),
 
 											1	=> 	array	(	"name" => "missile_sdesc",
