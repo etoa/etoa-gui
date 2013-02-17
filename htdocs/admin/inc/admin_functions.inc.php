@@ -288,20 +288,20 @@ function display_field($type, $confname, $field)
 	switch ($type)
 	{
 		case "text":
-			echo "<input type=\"text\" id=\"$id\" name=\"$id\" value=\"".$cfg->$confname->$field."\" />";
+			echo "<input type=\"text\" id=\"$id\" name=\"$id\" class=\"inputfield-$type\" value=\"".$cfg->$confname->$field."\" />";
 			break;
 		case "textarea":
-			echo "<textarea id=\"$id\" name=\"$id\" rows=\"4\" cols=\"50\">".$cfg->$confname->$field."</textarea>";
+			echo "<textarea id=\"$id\" name=\"$id\" rows=\"4\" cols=\"50\" class=\"inputfield-$type\">".$cfg->$confname->$field."</textarea>";
 			break;
 		case "onoff":
-			echo "<input type=\"radio\" id=\"".$id."_1\" name=\"".$id."\" value=\"1\" ";
+			echo "<input type=\"radio\" id=\"".$id."_1\" name=\"".$id."\" value=\"1\" class=\"inputfield-$type\" ";
 			if ($cfg->$confname->$field==1) echo " checked=\"checked\"";
-			echo " /><label for=\"".$id."_1\">Ja</label>  &nbsp;  <input type=\"radio\" id=\"".$id."_0\" name=\"".$id."\" value=\"0\" ";
+			echo " /><label for=\"".$id."_1\">Ja</label>  &nbsp;  <input type=\"radio\" id=\"".$id."_0\" name=\"".$id."\" value=\"0\"  class=\"inputfield-$type\" ";
 			if ($cfg->$confname->$field==0) echo " checked=\"checked\"";
 			echo " /> <label for=\"".$id."_0\">Nein</label>";
 			break;
 		case "timedate":
-			echo "<select name=\"config_".$field."_d[".$confname."]\">";
+			echo "<select name=\"config_".$field."_d[".$confname."]\" class=\"inputfield-$type\">";
 			for ($x=1;$x<32;$x++)
 			{
 				echo "<option value=\"$x\"";
@@ -311,7 +311,7 @@ function display_field($type, $confname, $field)
 				echo "$x</option>";
 			}
 			echo "</select>.";
-			echo "<select name=\"config_".$field."_m[".$confname."]\">";
+			echo "<select name=\"config_".$field."_m[".$confname."]\" class=\"inputfield-$type\">";
 			for ($x=1;$x<32;$x++)
 			{
 				echo "<option value=\"$x\"";
@@ -321,7 +321,7 @@ function display_field($type, $confname, $field)
 				echo "$x</option>";
 			}
 			echo "</select>.";
-			echo "<select name=\"config_".$field."_y[".$confname."]\">";
+			echo "<select name=\"config_".$field."_y[".$confname."]\" class=\"inputfield-$type\">";
 			for ($x=date("Y")-50;$x<date("Y")+50;$x++)
 			{
 				echo "<option value=\"$x\"";
@@ -329,7 +329,7 @@ function display_field($type, $confname, $field)
 				echo ">$x</option>";
 			}
 			echo "</select> ";
-			echo "<select name=\"config_".$field."_h[".$confname."]\">";
+			echo "<select name=\"config_".$field."_h[".$confname."]\" class=\"inputfield-$type\">";
 			for ($x=0;$x<25;$x++)
 			{
 				echo "<option value=\"$x\"";
@@ -339,7 +339,7 @@ function display_field($type, $confname, $field)
 				echo "$x</option>";
 			}
 			echo "</select>:";
-			echo "<select name=\"config_".$field."_i[".$confname."]\">";
+			echo "<select name=\"config_".$field."_i[".$confname."]\" class=\"inputfield-$type\">";
 			for ($x=0;$x<60;$x++)
 			{
 				echo "<option value=\"$x\"";
@@ -349,7 +349,7 @@ function display_field($type, $confname, $field)
 				echo "$x</option>";
 			}
 			echo "</select>:";
-			echo "<select name=\"config_".$field."_s[".$confname."]\">";
+			echo "<select name=\"config_".$field."_s[".$confname."]\" class=\"inputfield-$type\">";
 			for ($x=0;$x<60;$x++)
 			{
 				echo "<option value=\"$x\"";

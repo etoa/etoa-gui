@@ -348,6 +348,15 @@ form.label_width_100 p.buttons {
 	margin-left:107px;
 }
 
+.inputfield-text {
+  width:350px;
+}
+
+.inputfield-textarea {
+  width:350px;
+  height:150px;
+}
+
 /******************
 * Tables          *
 ******************/
