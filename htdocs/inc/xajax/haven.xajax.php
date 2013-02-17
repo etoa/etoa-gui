@@ -1337,7 +1337,7 @@
 		$cx = intval($form['man_cx']);
 		$cy = intval($form['man_cy']);
 		$pos = intval($form['man_p']);
-		if ($sx>0 && $sy>0 && $cx>0 && $cy>0 && $pos>0)
+		if ($sx>0 && $sy>0 && $cx>0 && $cy>0 && $pos>=0)
 		{		
 			$absX = (($sx - 1) * CELL_NUM_X) + $cx;
 			$absY = (($sy - 1) * CELL_NUM_Y) + $cy;
