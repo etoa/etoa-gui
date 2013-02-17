@@ -13,7 +13,8 @@ $tpl = TemplateEngine::getInstance();
 // Form: Adding a new dataset
 if (isset($_GET['action']) && $_GET['action']=="new")
 {
-	$tpl->assign("title", MODUL_NAME." - Neuer Datensatz");
+	$tpl->assign("title", MODUL_NAME);
+  $tpl->assign("subtitle", "Neuer Datensatz");
 	echo "<p>Gib die Daten des neuen Datensatzes in die untenstehende Maske ein:</p>";
 	echo "<form action=\"?".URL_SEARCH_STRING."\" method=\"post\">";
 	echo "<table>";
@@ -29,7 +30,8 @@ elseif (isset($_GET['action']) && $_GET['action']=="edit")
 {
 	$res = mysql_query("SELECT * FROM ".DB_TABLE." WHERE ".DB_TABLE_ID."='".$_GET['id']."';");
 	$arr=mysql_fetch_array($res);
-	$tpl->assign("title", MODUL_NAME." - Datensatz bearbeiten");
+	$tpl->assign("title", MODUL_NAME);
+  $tpl->assign("subtitle", "Datensatz bearbeiten");
 	echo "<p>&Auml;ndere die Daten des Datensatzes und klicke auf '&Uuml;bernehmen', um die Daten zu speichern:</p>";
 	echo "<form action=\"?".URL_SEARCH_STRING."\" method=\"post\">";
 	echo "<input type=\"submit\" value=\"&Uuml;bernehmen\" name=\"edit\" />&nbsp;";
@@ -49,7 +51,8 @@ elseif (isset($_GET['action']) && $_GET['action']=="del")
 {
 	$res = mysql_query("SELECT * FROM ".DB_TABLE." WHERE ".DB_TABLE_ID."='".$_GET['id']."';");
 	$arr=mysql_fetch_array($res);
-	$tpl->assign("title", MODUL_NAME." - Datensatz l&ouml;schen");
+	$tpl->assign("title", MODUL_NAME);
+  $tpl->assign("subtitle", "Datensatz l&ouml;schen");
 	echo "<p>Bitte best&auml;tige das L&ouml;schen des folgenden Datensatzes:</p>";
 	echo "<form action=\"?".URL_SEARCH_STRING."\" method=\"post\">";
 	echo "<input type=\"hidden\" name=\"".DB_TABLE_ID."\" value=\"".$_GET['id']."\" />";
@@ -65,7 +68,8 @@ elseif (isset($_GET['action']) && $_GET['action']=="del")
 else
 {
 	// Show Title
-	$tpl->assign("title", MODUL_NAME." - &Uuml;bersicht");
+	$tpl->assign("title", MODUL_NAME);
+	$tpl->assign("subtitle", "&Uuml;bersicht");
 	echo "<p>Um einen Datensatz hinzuzuf&uuml;gen, zu &auml;ndern oder zu l&ouml;schen klicke  bitte auf die entsprechenden Links oder Buttons!</p>";
 
 	// Add new dataset query

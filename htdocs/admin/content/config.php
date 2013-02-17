@@ -34,25 +34,9 @@
 	$conf_type['onoff']="Ein/Aus-Schalter";
 	
 	//
-	// Tipps
-	//
-	if ($sub=="tipps")
-	{
-		advanced_form("tipps");
-	}
-
-	//
-	// Ticket-Cat
-	//
-	elseif ($sub=="ticketcat")
-	{
-		advanced_form("ticketcat");
-	}
-
-	//
 	// Restore
 	//
-	elseif ($sub=="restoredefaults")
+	if ($sub=="restoredefaults")
 	{
 		echo "<h2>Konfiguration auf Standardwerte zurücksetzen</h2>";
 		if (isset($_POST['restoresubmit']))
