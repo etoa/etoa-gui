@@ -96,6 +96,11 @@
 		// Aus Urlaub prüfen
 		elseif ($cu->hmode_from>0 && 
 		$page != 'userconfig' &&
+		$page != 'messages' &&
+		$page != 'stats' &&
+		$page != 'townhall' &&
+		$page != 'buddylist' &&
+		$page != 'userinfo' &&
 		$page != 'contact' &&
 		$page != 'help')
 		{
