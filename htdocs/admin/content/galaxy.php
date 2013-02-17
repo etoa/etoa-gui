@@ -37,7 +37,7 @@
 		<option value=\"?type=populated&t=".time()."\">Bev&ouml;lkerte Systeme</option>
 		
 		</select><br/><br/>";
-		echo "<img src=\"../misc/map.image.php\" alt=\"Galaxiekarte\" id=\"img\" usemap=\"#Galaxy\" style=\"border:none;\"/>";		
+		echo "<img src=\"../misc/map.image.php?req_admin\" alt=\"Galaxiekarte\" id=\"img\" usemap=\"#Galaxy\" style=\"border:none;\"/>";		
 		
 	}
 
@@ -159,7 +159,7 @@
 				echo "<h2>Urknall - Schritt 3/3</h2>";
 				Universe::create($_POST['map_image'],$_POST['map_precision']);
 				echo "<br/><br/>
-				<img src=\"../misc/map.image.php\" alt=\"Galaxiekarte\" id=\"img\" usemap=\"#Galaxy\" style=\"border:none;\"/><br/><br/>
+				<img src=\"../misc/map.image.php?req_admin\" alt=\"Galaxiekarte\" id=\"img\" usemap=\"#Galaxy\" style=\"border:none;\"/><br/><br/>
 				<input type=\"button\" value=\"Weiter\" onclick=\"document.location='?page=$page&sub=uni'\" />";
 			}
 			else
@@ -285,9 +285,10 @@
 				else
 				{
 					echo "<h2>&Uuml;bersicht</h2>";
-					echo "<div style=\"float:right;width:500px\"><img src=\"../misc/map.image.php\" alt=\"Galaxiekarte\" id=\"img\" usemap=\"#Galaxy\" style=\"border:none;\"/></div>";
+					
+          echo "<p><img src=\"../misc/map.image.php?req_admin\" alt=\"Galaxiekarte\" id=\"img\" usemap=\"#Galaxy\" style=\"border:none;\"/></p>";
 
-					tableStart("Informationen");
+					tableStart("Informationen", GALAXY_MAP_WIDTH);
 					$res = dbquery("SELECT MAX(sx),MAX(sy) FROM cells;");
 					$arr = mysql_fetch_row($res);
 					echo "<tr><th>Sektoren</th><td>".$arr[0]." x ".$arr[1]."</td></tr>";

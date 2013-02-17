@@ -33,7 +33,7 @@
 	{
 		if (isset($_SESSION))
 			$s = $_SESSION;
-		if ($admin || $s['user_id'] > 0)
+		if ($admin || (isset($s['user_id']) && $s['user_id'] > 0))
 		{
 			if (isset($s))
 				$cu = new CurrentUser($s['user_id']);

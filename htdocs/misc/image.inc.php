@@ -2,6 +2,9 @@
 
 	chdir(realpath(dirname(__FILE__)."/../"));
 	define('USE_HTML',false);
+  if (isset($_GET['req_admin'])) {
+    define('ADMIN_MODE',true);
+  }
 	require_once("inc/bootstrap.inc.php");
 
 	header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
