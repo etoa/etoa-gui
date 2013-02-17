@@ -5,7 +5,7 @@
 	//
 	if ($sub=="cronjob")
 	{
-		echo "<h2>Update-Skript</h2>";
+		echo "<h1>Periodische Updates (Cronjob)</h1>";
 		
 		if (UNIX)
 		{
