@@ -1326,16 +1326,21 @@
 	function havenTargetInfo($form)
 	{
 		$response = new xajaxResponse();
-		 $alliance = "";
-		 $target = false;
-		 $allianceStyle = 'none';
-		 $comment = "-";
-		 ob_start();
-		if ($form['man_sx']!="" && $form['man_sy']!="" && $form['man_cx']!="" && $form['man_cy']!="" && $form['man_p']!=""
-		&& $form['man_sx']>0 && $form['man_sy']>0 && $form['man_cx']>0 && $form['man_cy']>0 && $form['man_p']>=0)
+		$alliance = "";
+		$target = false;
+		$allianceStyle = 'none';
+		$comment = "-";
+		
+		ob_start();
+		$sx = intval($form['man_sx']);
+		$sy = intval($form['man_sy']);
+		$cx = intval($form['man_cx']);
+		$cy = intval($form['man_cy']);
+		$pos = intval($form['man_p']);
+		if ($sx>0 && $sy>0 && $cx>0 && $cy>0 && $pos>0)
 		{		
-			$absX = (($form['man_sx'] - 1)* CELL_NUM_X) + $form['man_cx'];
-			$absY = (($form['man_sy']-1) * CELL_NUM_Y) + $form['man_cy'];	
+			$absX = (($sx - 1) * CELL_NUM_X) + $cx;
+			$absY = (($sy - 1) * CELL_NUM_Y) + $cy;
 			$fleet = unserialize($_SESSION['haven']['fleetObj']);
 
 			if ($fleet->owner->discovered($absX,$absY) == 0)
@@ -1343,7 +1348,7 @@
 			else 
 				$code = '';
 			
-      $sql = "
+			$sql = "
 				SELECT
 					entities.id,
 					entities.code
@@ -1353,14 +1358,14 @@
 					cells
 				ON
 					entities.cell_id=cells.id
-					AND cells.sx=".$form['man_sx']."
-					AND cells.sy=".$form['man_sy']."
-					AND cells.cx=".$form['man_cx']."
-					AND cells.cy=".$form['man_cy']."
-					AND entities.pos=".$form['man_p']."
-      ";
+					AND cells.sx=".$sx."
+					AND cells.sy=".$sy."
+					AND cells.cx=".$cx."
+					AND cells.cy=".$cy."
+					AND entities.pos=".$pos."
+				";
 			$res = dbquery($sql);
-			if (mysql_num_rows($res)>0 && !($code=='u' && $form['man_p']))
+			if (mysql_num_rows($res)>0 && !($code=='u' && $pos))
 			{
 				$arr=mysql_fetch_row($res);
 				
