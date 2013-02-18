@@ -215,70 +215,67 @@
 	   
 	  public function distance(Entity $target)
 	  {
-	  	$cfg = Config::getInstance();
-			$ae=$cfg->value('cell_length');			// Länge vom Solsys in AE
-			$np=$cfg->param2('num_planets');		// Max. Planeten im Solsys
-
-	  	$p1=$this->pos();
-	  	$p2=$target->pos();
-
-			$cAbsX = (($this->sx()-1) * CELL_NUM_X) + $this->cx();
-			$cAbsY = (($this->sy()-1) * CELL_NUM_Y) + $this->cy();						
-			
-			$tAbsX = (($target->sx()-1) * CELL_NUM_X) + $target->cx();
-			$tAbsY = (($target->sy()-1) * CELL_NUM_Y) + $target->cy();						
-	  	
-			$dx = abs($tAbsX - $cAbsX);	// Get difference on x axis in absolute coordinates
-			$dy = abs($tAbsY - $cAbsY); // Get difference on y axis in absolute coordinates
-			$sd = sqrt(pow($dx,2)+pow($dy,2));		// Use Pythagorean theorem to get the absolute length
-			$sae = $sd * CELL_LENGTH;							// Multiply with AE units per cell
-			
-			// Planetendistanz wenn sie im selben Solsys sind
-			if ($sae==0)
-			{
-				$ps = abs($p2-$p1)*$ae/4/$np;									
-			}
-			// Planetendistanz wenn sie nicht im selben Solsys sind
-			else
-			{
-				$ps = $ae - (($ae/4/$np)*($p1 + $p2));
-			}
-			$ssae = $sae + $ps;
-			return round($ssae);
+	  	return $this->distanceByCoords($target->sx(), $target->sy(), $target->cx(), $target->cy(), $target->pos());
 	  }	
 	  
-	  public function distanceByCoords($sx,$sy,$cx,$cy,$p)
+    /**
+    * Calculates the distance to another cell specified by its coordinates
+    *
+    * @param int $sx Sector X
+    * @param int $sy Sector Y
+    * @param int $cx Cell X
+    * @param int $cy Cell Y
+    * @param int $p Entity position
+    */
+	  public function distanceByCoords($sx, $sy, $cx, $cy, $p)
 	  {
 	  	$cfg = Config::getInstance();
-			$ae=$cfg->value('cell_length');			// Länge vom Solsys in AE
-			$np=$cfg->param2('num_planets');		// Max. Planeten im Solsys
-	  	
-	  	$p1=$this->pos();
-	  	$p2=$p;
-	  	
-			$cAbsX = (($this->sx()-1) * CELL_NUM_X) + $this->cx();
-			$cAbsY = (($this->sy()-1) * CELL_NUM_Y) + $this->cy();						
+      
+      // Länge vom Solsys in AE
+			$cellLengthAE = $cfg->value('cell_length');
+      // Max. Planeten im Solsys
+			$maxNumEntitiesPerSystem = $cfg->param2('num_planets');
+      
+      // Number of cells per sector
+      $cellsPerSectorX = $cfg->param1('num_of_cells');
+      $cellsPerSectorY = $cfg->param2('num_of_cells');
+
+	  	// Absolute coordinates of current cell
+			$cAbsX = (($this->sx()-1) * $cellsPerSectorX) + $this->cx();
+			$cAbsY = (($this->sy()-1) * $cellsPerSectorY) + $this->cy();
 			
-			$tAbsX = (($sx-1) * CELL_NUM_X) + $cx;
-			$tAbsY = (($sy-1) * CELL_NUM_Y) + $cy;						
+      // Absolute coordinates of target cell
+			$tAbsX = (($sx-1) * $cellsPerSectorX) + $cx;
+			$tAbsY = (($sy-1) * $cellsPerSectorY) + $cy;						
+
+      // Entity position in cell (Planet position in sol system)
+	  	$p1 = $this->pos();
+	  	$p2 = $p;
 	  	
-			$dx = abs($tAbsX - $cAbsX);	// Get difference on x axis in absolute coordinates
-			$dy = abs($tAbsY - $cAbsY); // Get difference on y axis in absolute coordinates
-			$sd = sqrt(pow($dx,2)+pow($dy,2));		// Use Pythagorean theorem to get the absolute length
-			$sae = $sd * CELL_LENGTH;							// Multiply with AE units per cell
+      // Get difference on x axis in absolute coordinates
+			$dx = abs($tAbsX - $cAbsX);
+      // Get difference on y axis in absolute coordinates
+			$dy = abs($tAbsY - $cAbsY); 
+      // Use Pythagorean theorem to get the absolute length
+			$hypotenuse = sqrt(pow($dx,2) + pow($dy,2));
+      // Multiply with AE units per cell
+			$cellDistanceAE = $hypotenuse * $cellLengthAE;		
 			
+      // The distance between the innermost and outermost possible entity in the system
+      // The outermost entity lies at half distance to the cell edge
+      $distanceInnerOuterEntity = $cellLengthAE/4/$maxNumEntitiesPerSystem;
+      
 			// Planetendistanz wenn sie im selben Solsys sind
-			if ($sae==0)
+			if ($cellDistanceAE == 0)
 			{
-				$ps = abs($p2-$p1)*$ae/4/$np;									
+				$finalDistance = abs($p2 - $p1) * $distanceInnerOuterEntity;									
 			}
 			// Planetendistanz wenn sie nicht im selben Solsys sind
 			else
 			{
-				$ps = ($ae/2) - (($p2)*$ae/4/$np);									
+				$finalDistance = $cellDistanceAE + $cellLengthAE - ($distanceInnerOuterEntity * ($p1 + $p2));
 			}
-			$ssae = $sae + $ps;
-			return round($ssae);			  	
+			return round($finalDistance);		  	
 	  }		       
 	     
 	  /**
