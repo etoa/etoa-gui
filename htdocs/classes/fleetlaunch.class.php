@@ -1213,6 +1213,38 @@
 			}
 		}
 		
+		// Alliance attack already confirmed
+		function checkAttNum($leaderid)
+		{
+			$cfg = Config::getInstance();
+			if(!$cfg->value('alliance_fleets_max_players'))
+			{
+				return true;
+			}
+			// Check number of users participating in the alliance attack
+			$res = dbquery('
+				SELECT
+					`user_id`
+				FROM
+					`fleet`
+				WHERE
+					`leader_id` = '.$leaderid.'
+				GROUP BY
+					`user_id`
+			;');
+			if(mysql_num_rows($res) < $cfg->p1('alliance_fleets_max_players'))
+			{
+				return true;
+			}
+			while($arr = mysql_fetch_assoc($res))
+			{
+				if($this->ownerId == $arr['user_id'])
+				{
+					return true;
+				}
+			}
+			return false;
+		}
 		
 		
 		//

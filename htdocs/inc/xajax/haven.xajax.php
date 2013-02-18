@@ -1914,33 +1914,36 @@
 			if (mysql_num_rows($res)>0) {
 				$arr=mysql_fetch_assoc($res);
 				if ($arr['next_id']==$fleet->sourceEntity->ownerAlliance()) {
-					$cres = dbquery("
-									SELECT
-										COUNT(id) as cnt
-									FROM
-										fleet
-									WHERE
-										leader_id='$id'
-									;");
-					$carr=mysql_fetch_assoc($cres);
-					if ($carr['cnt']<=$fleet->allianceSlots) {
-						$duration = $fleet->distance / $fleet->getSpeed();	// Calculate duration
-						$duration *= 3600;	// Convert to seconds
-						$duration = ceil($duration);
-						$maxTime = $arr["landtime"] - time() - $fleet->timeLaunchLand - $fleet->duration1 - 120;
-					
-						if ($duration < $maxTime) {
-							$percentageSpeed =  ceil(100 * $duration / $maxTime);
-							$fleet->setSpeedPercent($percentageSpeed);
-							$fleet->setLeader($id);
-							$comment = "Unterstützung des Allianzangriffes mit  Ankunft: ".date("d.m.y, H:i:s",$arr["landtime"]);
+					if($fleet->checkAttNum($id,$u))
+					{
+						$cres = dbquery("
+										SELECT
+											COUNT(id) as cnt
+										FROM
+											fleet
+										WHERE
+											leader_id='$id'
+										;");
+						$carr=mysql_fetch_assoc($cres);
+						if ($carr['cnt']<=$fleet->allianceSlots) {
+							$duration = $fleet->distance / $fleet->getSpeed();	// Calculate duration
+							$duration *= 3600;	// Convert to seconds
+							$duration = ceil($duration);
+							$maxTime = $arr["landtime"] - time() - $fleet->timeLaunchLand - $fleet->duration1 - 120;
+						
+							if ($duration < $maxTime) {
+								$percentageSpeed =  ceil(100 * $duration / $maxTime);
+								$fleet->setSpeedPercent($percentageSpeed);
+								$fleet->setLeader($id);
+								$comment = "Unterstützung des Allianzangriffes mit  Ankunft: ".date("d.m.y, H:i:s",$arr["landtime"]);
+							}
+							else $comment = "Der gewählte Angriff kann nicht mehr erreicht werden.";
 						}
-						else $comment = "Der gewählte Angriff kann nicht mehr erreicht werden.";
+						else $comment = "Am gewählten Angriff kann nicht teilgenommen werden, da die Flottenkontrolle keine weiteren Teilflotten unterstützt.";
 					}
-					else $comment = "Am gewählten Angriff kann nicht teilgenommen werden, da die Flottenkontrolle keine weiteren Teilflotten unterstützt.";
+					else $comment = "Am gewählten Angriff kann nicht teilgenommen werden, da die Anzahl Angreifer limitiert ist.";
 				}
 				else $comment = "Der gewählte Angriff gehört nicht zu unserem Imperium";
-
 			}
 				
 				
