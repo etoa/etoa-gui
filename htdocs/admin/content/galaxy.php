@@ -352,13 +352,131 @@
 	//
 	elseif ($sub=="galaxycheck")
 	{	
-		echo "<h1>Entitäten pr&uuml;fen</h1>";
+		echo "<h1>Integritätscheck</h1>";
+    
+		echo "<h2>Prüfen ob zu allen Planeten mit einer User-Id auch ein User existiert...</h2>";
+		$user=array();
+		$res=dbquery("SELECT user_id,user_nick FROM users;");
+		if (mysql_num_rows($res)>0)
+		{
+			while ($arr=mysql_fetch_array($res))
+			{
+				$user[$arr['user_id']]=$arr['user_nick'];
+			}
+		}
+		$res=dbquery("
+		SELECT 
+			id,
+			planet_user_id,
+			planet_user_main 
+		FROM 
+			planets 
+		WHERE 
+			planet_user_id>0
+		;");
+		$cnt=0;
+		$rowStr = "";
+		if (mysql_num_rows($res)>0)
+		{
+			while ($arr=mysql_fetch_array($res))
+			{
+				if (count($user[$arr['planet_user_id']])==0)
+				{
+					$cnt++;
+					$rowStr+= "<tr><td>".$arr['planet_name']."</td><td>".$arr['id']."</td><td>".$arr['planet_user_id']."</td>
+					<td><a href=\"?page=$page&sub=edit&amp;id=".$arr['id']."\">Bearbeiten</a></td></tr>";
+				}
+			}
+			if ($cnt==0)
+			{
+				echo MessageBox::ok("", "Keine Fehler gefunden!");
+			}
+			else
+			{
+				echo "<table class=\"tb\"><tr><th>Name</th><th>Id</th><th>User-Id</th><th>Id</th><th>Aktionen</th></tr>";
+				echo $rowStr;
+				echo "</table>";
+			}			
+		}
+		else
+		{
+			echo MessageBox::ok("", "Keine bewohnten Planeten gefunden!");
+		}
 
+		
+		echo "<h2>Prüfe auf Hauptplaneten ohne User...</h2>";
+		$res=dbquery("
+		SELECT
+			planet_name,
+			id
+		FROM
+			planets
+		WHERE
+			planet_user_main=1
+			AND planet_user_id=0
+		");
+		if (mysql_num_rows($res)>0)
+		{
+			echo "<table class=\"tb\"><tr><th>Name</th><th>Id</th><th>Aktionen</th></tr>";
+			while ($arr=mysql_fetch_array($res))
+			{
+				if (count($user[$arr['planet_user_id']])==0)
+				{
+					echo "<tr><td>".$arr['planet_name']."</td><td>".$arr['id']."</td><td><a href=\"?page=$page&sub=edit&amp;id=".$arr['id']."\">Bearbeiten</a></td></tr>";
+				}
+			}
+			echo "</table>";			
+		}
+		else
+		{
+			echo MessageBox::ok("", "Keine Fehler gefunden!");
+		}
+		
+		echo "<h2>Prüfe auf User ohne Hauptplanet / mit zuviel Hauptplaneten...</h2>";
+		$res = dbquery("
+		select 
+			p.*,
+			u.user_nick 
+		from 
+		(
+			select 
+				sum(planet_user_main) as s,
+				planet_user_id as uid 
+			from 
+				planets 
+			group by 
+				planet_user_id
+		) as p 
+		inner join 
+			users u 
+		on 
+			u.user_id=p.uid 
+			and uid>0
+			and (s=0 
+			or s>1)
+			");
+		if (mysql_num_rows($res)>0)
+		{
+			echo "<table class=\"tb\"><tr><th>Nick</th><th>Anzahl Hauptplaneten</th></tr>";
+			while ($arr=mysql_fetch_array($res))
+			{
+				echo "<tr><td>".$arr['user_nick']." (".$arr['uid'].")</td>
+				<td>".$arr['s']."</td>
+				</tr>";
+			}
+			echo "</table>";						
+		}
+		else
+		{
+			echo MessageBox::ok("", "Keine Fehler gefunden!");			
+		}
+    
+    
 		$res=dbquery("SELECT id,code FROM entities;");
 		if (mysql_num_rows($res)>0)
 		{
 			$errcnt = 0;	
-			echo "Entitäten werden auf Integrität geprüft...<br/>";
+			echo "<h2>Entitäten werden auf Integrität geprüft...</h2>";
 			while ($arr=mysql_fetch_assoc($res))
 			{
 				switch ($arr['code'])
@@ -442,22 +560,22 @@
 						}
 						break;
 					default:
-						echo "Achtung! Entität ".$arr['id']." hat einen unbekannten Code (".$arr['code'].")<br/>";							
+						echo "Achtung! Entität <a href=\"?page=galaxy&sub=edit&id=".$arr['id']."\">".$arr['id']."</a> hat einen unbekannten Code (".$arr['code'].")<br/>";							
 						$errcnt++;					
 				}
 			}
 			if ($errcnt>0)
 			{
-				echo mysql_num_rows($res)." Datensätze geprüft. Es wurden <b>$errcnt</b> Fehler gefunden!<br/>";
+				echo MessageBox::warning("", mysql_num_rows($res)." Datensätze geprüft. Es wurden <b>$errcnt</b> Fehler gefunden!");
 			}
 			else
 			{
-				echo mysql_num_rows($res)." Datensätze geprüft. Keine Fehler gefunden!<br/>";
+				echo MessageBox::ok("", mysql_num_rows($res)." Datensätze geprüft. Keine Fehler gefunden!");
 			}
 		}
 		else
 		{
-			echo "Keine Entitäten vorhanden!<br/>";
+			echo MessageBox::info("", "Keine Entitäten vorhanden!");
 		}
 		
 		
@@ -469,7 +587,7 @@
 		if (mysql_num_rows($res)>0)
 		{
 			$errcnt = 0;	
-			echo "Sterne werden auf Integrität geprüft...<br/>";
+			echo "<h2>Sterne werden auf Integrität geprüft...</h2>";
 			while ($arr=mysql_fetch_assoc($res))
 			{
 				$eres=dbquery("
@@ -489,23 +607,23 @@
 					$earr = mysql_fetch_array($eres);
 					if($earr['code']!='s')
 					{
-						echo "Falscher Code (".$earr['code'].") bei Stern ".$arr['id']."<br/>";							
+						echo "Falscher Code (".$earr['code'].") bei Stern <a href=\"?page=galaxy&sub=edit&id=".$arr['id']."\">".$arr['id']."</a><br/>";							
 						$errcnt++;
 					}					
 				}
 			}
 			if ($errcnt>0)
 			{
-				echo mysql_num_rows($res)." Datensätze geprüft. Es wurden <b>$errcnt</b> Fehler gefunden!<br/>";
+				echo MessageBox::warning("", mysql_num_rows($res)." Datensätze geprüft. Es wurden <b>$errcnt</b> Fehler gefunden!");
 			}
 			else
 			{
-				echo mysql_num_rows($res)." Datensätze geprüft. Keine Fehler gefunden!<br/>";
+				echo MessageBox::ok("", mysql_num_rows($res)." Datensätze geprüft. Keine Fehler gefunden!");
 			}
 		}
 		else
 		{
-			echo "Keine Sterne vorhanden!<br/>";
+			echo MessageBox::info("", "Keine Sterne vorhanden!");
 		}		
 
 		$res=dbquery("
@@ -516,7 +634,7 @@
 		if (mysql_num_rows($res)>0)
 		{
 			$errcnt = 0;	
-			echo "Wurmlöcher werden auf Integrität geprüft...<br/>";
+			echo "<h2>Wurmlöcher werden auf Integrität geprüft...</h2>";
 			while ($arr=mysql_fetch_assoc($res))
 			{
 				$eres=dbquery("
@@ -536,23 +654,23 @@
 					$earr = mysql_fetch_array($eres);
 					if($earr['code']!='w')
 					{
-						echo "Falscher Code (".$earr['code'].") bei Wurmloch ".$arr['id']."<br/>";							
+						echo "Falscher Code (".$earr['code'].") bei Wurmloch <a href=\"?page=galaxy&sub=edit&id=".$arr['id']."\">".$arr['id']."</a><br/>";							
 						$errcnt++;
 					}					
 				}
 			}
 			if ($errcnt>0)
 			{
-				echo mysql_num_rows($res)." Datensätze geprüft. Es wurden <b>$errcnt</b> Fehler gefunden!<br/>";
+				echo MessageBox::warning("", mysql_num_rows($res)." Datensätze geprüft. Es wurden <b>$errcnt</b> Fehler gefunden!");
 			}
 			else
 			{
-				echo mysql_num_rows($res)." Datensätze geprüft. Keine Fehler gefunden!<br/>";
+				echo MessageBox::ok("", mysql_num_rows($res)." Datensätze geprüft. Keine Fehler gefunden!");
 			}
 		}
 		else
 		{
-			echo "Keine Wurmlöcher vorhanden!<br/>";
+			echo MessageBox::info("", "Keine Wurmlöcher vorhanden!");
 		}	
 
 		$res=dbquery("
@@ -563,7 +681,7 @@
 		if (mysql_num_rows($res)>0)
 		{
 			$errcnt = 0;	
-			echo "Leere Räume werden auf Integrität geprüft...<br/>";
+			echo "<h2>Leere Räume werden auf Integrität geprüft...</h2>";
 			while ($arr=mysql_fetch_assoc($res))
 			{
 				$eres=dbquery("
@@ -583,30 +701,30 @@
 					$earr = mysql_fetch_array($eres);
 					if($earr['code']!='e')
 					{
-						echo "Falscher Code (".$earr['code'].") bei leerem Raum ".$arr['id'].".<br/>";				
+						echo "Falscher Code (".$earr['code'].") bei leerem Raum <a href=\"?page=galaxy&sub=edit&id=".$arr['id']."\">".$arr['id']."</a>.<br/>";				
 						$errcnt++;
 					}					
 				}
 			}
 			if ($errcnt>0)
 			{
-				echo mysql_num_rows($res)." Datensätze geprüft. Es wurden <b>$errcnt</b> Fehler gefunden!<br/>";
+				echo MessageBox::warning("", mysql_num_rows($res)." Datensätze geprüft. Es wurden <b>$errcnt</b> Fehler gefunden!");
 			}
 			else
 			{
-				echo mysql_num_rows($res)." Datensätze geprüft. Keine Fehler gefunden!<br/>";
+				echo MessageBox::ok("", mysql_num_rows($res)." Datensätze geprüft. Keine Fehler gefunden!");
 			}
 		}
 		else
 		{
-			echo "Keine leeren Räume vorhanden!<br/>";
+			echo MessageBox::info("", "Keine leeren Räume vorhanden!");
 		}		
 
 		$res=dbquery("SELECT id FROM cells;");
 		if (mysql_num_rows($res)>0)
 		{
 			$errcnt = 0;	
-			echo "<br/>Zellen werden auf Integrität geprüft...<br/>";
+			echo "<h2>Zellen werden auf Integrität geprüft...</h2>";
 			while ($arr=mysql_fetch_assoc($res))
 			{
 				$eres = dbquery("
@@ -618,146 +736,21 @@
 				if (mysql_num_rows($eres)==0)
 				{
 					$earr = mysql_fetch_assoc($eres);
-					echo "Fehlende Entität ".$earr['id']." bei Zelle ".$arr['id']."<br/>";							
+					echo "Fehlende Entität ".$earr['id']." bei Zelle <a href=\"?page=galaxy&sub=edit&id=".$arr['id']."\">".$arr['id']."</a><br/>";							
 					$errcnt++;
 				}
 			}
 			if ($errcnt>0)
 			{
-				echo mysql_num_rows($res)." Datensätze geprüft. Es wurden <b>$errcnt</b> Fehler gefunden!<br/>";
+				echo MessageBox::warning("", mysql_num_rows($res)." Datensätze geprüft. Es wurden <b>$errcnt</b> Fehler gefunden!");
 			}
 			else
 			{
-				echo mysql_num_rows($res)." Datensätze geprüft. Keine Fehler gefunden!<br/>";
+				echo MessageBox::ok("", mysql_num_rows($res)." Datensätze geprüft. Keine Fehler gefunden!");
 			}
 		}
 	}
 	
-	//
-	// Owner check
-	//
-	elseif ($sub=="planetcheck")
-	{
-		echo "<h1>Planeten pr&uuml;fen</h1>";
-
-		echo "Prüfen ob zu allen Planeten mit einer User-Id auch ein User existiert...<br/><br/>";
-		$user=array();
-		$res=dbquery("SELECT user_id,user_nick FROM users;");
-		if (mysql_num_rows($res)>0)
-		{
-			while ($arr=mysql_fetch_array($res))
-			{
-				$user[$arr['user_id']]=$arr['user_nick'];
-			}
-		}
-		$res=dbquery("
-		SELECT 
-			id,
-			planet_user_id,
-			planet_user_main 
-		FROM 
-			planets 
-		WHERE 
-			planet_user_id>0
-		;");
-		$cnt=0;
-		$rowStr = "";
-		if (mysql_num_rows($res)>0)
-		{
-			while ($arr=mysql_fetch_array($res))
-			{
-				if (count($user[$arr['planet_user_id']])==0)
-				{
-					$cnt++;
-					$rowStr+= "<tr><td>".$arr['planet_name']."</td><td>".$arr['id']."</td><td>".$arr['planet_user_id']."</td>
-					<td><a href=\"?page=$page&sub=edit&amp;id=".$arr['id']."\">Bearbeiten</a></td></tr>";
-				}
-			}
-			if ($cnt==0)
-			{
-				ok_msg("Keine Fehler gefunden!");
-			}
-			else
-			{
-				echo "<table class=\"tb\"><tr><th>Name</th><th>Id</th><th>User-Id</th><th>Id</th><th>Aktionen</th></tr>";
-				echo $rowStr;
-				echo "</table>";
-			}			
-		}
-		else
-		{
-			echo "<i>Keine bewohnten Planeten gefunden!</i>";
-		}
-
-		
-		echo "<br/>Prüfe auf Hauptplaneten ohne User...<br/><br/>";
-		$res=dbquery("
-		SELECT
-			planet_name,
-			id
-		FROM
-			planets
-		WHERE
-			planet_user_main=1
-			AND planet_user_id=0
-		");
-		if (mysql_num_rows($res)>0)
-		{
-			echo "<table class=\"tb\"><tr><th>Name</th><th>Id</th><th>Aktionen</th></tr>";
-			while ($arr=mysql_fetch_array($res))
-			{
-				if (count($user[$arr['planet_user_id']])==0)
-				{
-					echo "<tr><td>".$arr['planet_name']."</td><td>".$arr['id']."</td><td><a href=\"?page=$page&sub=edit&amp;id=".$arr['id']."\">Bearbeiten</a></td></tr>";
-				}
-			}
-			echo "</table>";			
-		}
-		else
-		{
-			ok_msg("Keine Fehler gefunden!");
-		}
-		
-		echo "<br/>Prüfe auf User ohne Hauptplanet / mit zuviel Hauptplaneten...<br/><br/>";
-		$res = dbquery("
-		select 
-			p.*,
-			u.user_nick 
-		from 
-		(
-			select 
-				sum(planet_user_main) as s,
-				planet_user_id as uid 
-			from 
-				planets 
-			group by 
-				planet_user_id
-		) as p 
-		inner join 
-			users u 
-		on 
-			u.user_id=p.uid 
-			and uid>0
-			and (s=0 
-			or s>1)
-			");
-		if (mysql_num_rows($res)>0)
-		{
-			echo "<table class=\"tb\"><tr><th>Nick</th><th>Anzahl Hauptplaneten</th></tr>";
-			while ($arr=mysql_fetch_array($res))
-			{
-				echo "<tr><td>".$arr['user_nick']." (".$arr['uid'].")</td>
-				<td>".$arr['s']."</td>
-				</tr>";
-			}
-			echo "</table>";						
-		}
-		else
-		{
-			ok_msg("Keine Fehler gefunden!");			
-		}
-	}
-
 	elseif ($sub=="planet_types")
 	{
 		advanced_form("planet_types");
