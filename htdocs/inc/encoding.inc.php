@@ -22,7 +22,7 @@ function replace_ascii_control_chars($str)
 		chr( 6) => '&#x2406;',
 		chr( 7) => '&#x2407;',
 		chr( 8) => '&#x2408;',
-		chr( 9) => '&#x2409;',
+		chr( 9) => '&#x2409;&#x200B;',
 		chr(10) => '&#x240A;',
 		chr(11) => '&#x240B;',
 		chr(12) => '&#x240C;',
