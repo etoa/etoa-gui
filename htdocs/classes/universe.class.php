@@ -732,7 +732,6 @@
 				$tbl[]="user_comments";
 				$tbl[]="user_warnings";
 				$tbl[]="user_properties";
-				$tbl[]="user_minimap";
 				
 				$tbl[]="buddylist";
 				$tbl[]="messages";
