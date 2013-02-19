@@ -1,7 +1,5 @@
 /* EtoA keybind navigation by river */
 
-var keyNavigationOn = false;
-
 var rightArrowKey = 39;
 var leftArrowKey = 37;
 var spaceBarKey = 32;
@@ -15,40 +13,26 @@ function keybindsInit() {
 
   if(window.enableKeybinds && $)
   {
-    // disable keybinds if inside input or textarea
-    if($(':focus').prop('tagName')==='INPUT' || $(':focus').prop('tagName')==='TEXTAREA')
-    {
-        keyNavigationOn = false;
-    }
-    else
-    {
-        keyNavigationOn = true;
-    }
-    // disable keybinds if input or textarea gets focus and re-enable on blur
-    $('input,textarea').focus(function(e)
-    {
-        keyNavigationOn = false;
-    });
-    $('input,textarea').blur(function(e)
-    {
-        keyNavigationOn = true;
-    });
     // add an event handler for keypress
     $('body').keypress(function(e)
     {
-        // check whether keybinds are enabled
-        if(keyNavigationOn && !e.metaKey && !e.shiftKey && !e.ctrlKey && !e.altKey)
+        // disable keybinds if inside input or textarea
+        if(!($(e.target).prop('tagName') === 'INPUT' || $(e.target).prop('tagName') === 'TEXTAREA'))
         {
-            // even jquery doesn't get all keycodes into one value,
-            // so use the one that isn't zero
-            var pressedKey = (e.which || e.keyCode);
-            // change url if the pressed key is in our array
-            if(keys[pressedKey])
+            // check whether keybinds are enabled
+            if(!e.metaKey && !e.shiftKey && !e.ctrlKey && !e.altKey)
             {
-                window.location = keys[pressedKey];
-                // prevent things like horizontal scrolling between
-                // right arrow key pressed and new site loading
-                e.preventDefault();
+                // even jquery doesn't get all keycodes into one value,
+                // so use the one that isn't zero
+                var pressedKey = (e.which || e.keyCode);
+                // change url if the pressed key is in our array
+                if(keys[pressedKey])
+                {
+                    window.location = keys[pressedKey];
+                    // prevent things like horizontal scrolling between
+                    // right arrow key pressed and new site loading
+                    e.preventDefault();
+                }
             }
         }
     });
