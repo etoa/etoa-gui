@@ -32,13 +32,57 @@
 	if ($sub=="map")
 	{
 		echo "<h1>Galaxiekarte</h1>";
-		echo "Anzeigen: <select onchange=\"document.getElementById('img').src='../misc/map.image.php'+this.options[this.selectedIndex].value;\">
+		
+    echo '<div id="tabs">
+      <ul>
+        <li><a href="#interactive">Interaktive Karte</a></li>
+        <li><a href="#image">Kartenbild</a></li>
+      </ul>';
+    echo '<div id="interactive">';  
+    
+    echo "<div id=\"sector_map_table\">";
+    
+    $sx_num = $cfg->param1('num_of_sectors');
+    $sy_num = $cfg->param2('num_of_sectors');
+    $cx_num = $cfg->param1('num_of_cells');
+    $cy_num = $cfg->param2('num_of_cells');
+    
+    $sectorMap = new SectorMapRenderer($cx_num, $cy_num);
+    $sectorMap->setCellUrl("?page=galaxy&cell_id=");
+    
+    // Selected cell
+    if (isset($_GET['cell'])) {
+      $cell = new Cell($_GET['cell']);
+      if ($cell->isValid()) {
+        $sectorMap->setSelectedCell($cell);
+      }
+    }
+    
+    //$sectorMap->setImpersonatedUser(new CurrentUser(1));
+    
+    // Draw map
+    for ($sy = $sy_num; $sy > 0; $sy--) {
+      for ($sx = 1; $sx <= $sx_num; $sx++) {
+        echo "<div class=\"sector_map_cell\" style=\"display:inline-block;width:auto\">";
+        $sectorMap->render($sx, $sy);
+        echo "</div>";
+      }
+      echo "<br/>";
+    }    
+    echo "</div>";
+		
+    echo '</div><div id="image">';  
+    
+    echo "Anzeigen: <select onchange=\"document.getElementById('img').src='../misc/map.image.php'+this.options[this.selectedIndex].value;\">
 		<option value=\"?req_admin&amp;t=".time()."\">Normale Galaxieansicht</option>
 		<option value=\"?req_admin&amp;type=populated&t=".time()."\">Bev&ouml;lkerte Systeme</option>
-		
 		</select><br/><br/>";
-		echo "<img src=\"../misc/map.image.php?req_admin\" alt=\"Galaxiekarte\" id=\"img\" usemap=\"#Galaxy\" style=\"border:none;\"/>";		
-		
+		echo "<img src=\"../misc/map.image.php?req_admin\" alt=\"Galaxiekarte\" id=\"img\" usemap=\"#Galaxy\" style=\"border:none;\"/>";
+    
+    echo '</div></div>';
+
+    echo '<script>$(function() { $("#tabs").tabs(); });</script>';
+    
 	}
 
 	//
@@ -573,7 +617,12 @@
 		
 		$sa = array();
 		$so = array();
-		
+
+    // Create search query if cell id is requested
+    if (isset($_GET['cell_id'])) {
+      $_GET['sq'] = base64_encode("cell_id:=:".intval($_GET['cell_id']));
+    }
+    
 		//
 		// Details bearbeiten
 		//
@@ -610,6 +659,10 @@
 				}
 				$sql.= ") ";
 			}
+			if (isset($sa['cell_id']))
+			{
+				$sql.= " AND c.id ".searchFieldSql($sa['cell_id']);
+			}      
 			if (isset($sa['cell_cx']))
 			{
 				$sql.= " AND c.cx ".searchFieldSql($sa['cell_cx']);

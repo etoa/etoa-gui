@@ -94,15 +94,15 @@
 
 			echo "<tr><td colspan=\"6\" style=\"text-align:center;vertical-align:middle;\">
 			<a href=\"?page=galaxy\">Galaxie</a> &gt;&nbsp;
-			<a href=\"?page=sector&sector=".$cell->sx.",".$cell->sy."\">Sektor ".$cell->sx."/".$cell->sy."</a> &gt; &nbsp;";
+			<a href=\"?page=sector&sector=".$cell->getSX().",".$cell->getSY()."\">Sektor ".$cell->getSX()."/".$cell->getSY()."</a> &gt; &nbsp;";
 			$cres = dbquery("
 			SELECT
 				id
 			FROM
 				cells
 			WHERE
-				sx=".$cell->sx."
-				AND sy=".$cell->sy."
+				sx=".$cell->getSX()."
+				AND sy=".$cell->getSY()."
 				AND cx=1
 				AND cy=1;
 			");
@@ -114,7 +114,7 @@
 				for ($y=1;$y<=$cy_num;$y++)
 				{		
 					echo "<option value=\"".$cid."\"";
-					if ($cell->cx==$x && $cell->cy==$y)
+					if ($cell->getCX()==$x && $cell->getCY()==$y)
 						echo " selected=\"selected\"";
 					echo ">System $x/$y &nbsp;</option>";
 					$cid++;
@@ -422,15 +422,15 @@
 				iBoxStart("Fehler");
 				echo "<div style=\"text-align:center;\">
 				<a href=\"?page=galaxy\">Galaxie</a> &gt;&nbsp;
-				<a href=\"?page=sector&sector=".$cell->sx.",".$cell->sy."\">Sektor ".$cell->sx."/".$cell->sy."</a> &gt; &nbsp;";
+				<a href=\"?page=sector&sector=".$cell->getSX().",".$cell->getSY()."\">Sektor ".$cell->getSX()."/".$cell->getSY()."</a> &gt; &nbsp;";
 				$cres = dbquery("
 				SELECT
 					id
 				FROM
 					cells
 				WHERE
-					sx=".$cell->sx."
-					AND sy=".$cell->sy."
+					sx=".$cell->getSX()."
+					AND sy=".$cell->getSY()."
 					AND cx=1
 					AND cy=1;
 				");
@@ -442,7 +442,7 @@
 					for ($y=1;$y<=$cy_num;$y++)
 					{		
 						echo "<option value=\"".$cid."\"";
-						if ($cell->cx==$x && $cell->cy==$y)
+						if ($cell->getCX()==$x && $cell->getCY()==$y)
 							echo " selected=\"selected\"";
 						echo ">System $x/$y &nbsp;</option>";
 						$cid++;
@@ -454,7 +454,7 @@
 				echo button("Erkundungsflotte senden","?page=haven&cellTarget=".$cellId)." &nbsp; ";
 			}
 			
-			echo "<input type=\"button\" value=\"Zur Raumkarte\" onclick=\"document.location='?page=sector&amp;sx=".$cell->sx."&amp;sy=".$cell->sy."'\" /> &nbsp; ";
+			echo "<input type=\"button\" value=\"Zur Raumkarte\" onclick=\"document.location='?page=sector&amp;sx=".$cell->getSX()."&amp;sy=".$cell->getSY()."'\" /> &nbsp; ";
 
 		}
 		else

@@ -65,15 +65,7 @@
   // Load galaxy dimensions
 	$sx_num = $cfg->param1('num_of_sectors');
 	$sy_num = $cfg->param2('num_of_sectors');
-	$cx_num = $cfg->param1('num_of_cells');
-	$cy_num = $cfg->param2('num_of_cells');
 
-  $counter_left="images/map/GalaxyFrameCounterLeft";
-  $counter_left_high="images/map/GalaxyFrameCounterLeftHighlight";
-
-  $counter_bottom="images/map/GalaxyFrameCounterBottom";
-  $counter_bottom_high="images/map/GalaxyFrameCounterBottomHighlight";
-  
   // Validate coordinates
 	if ($sx>$sx_num) {
     $sx = $sx_num;
@@ -106,26 +98,6 @@
 	$sy_bl = $sy-1;
 	$sy_bc = $sy-1;
 	$sy_br = $sy-1;
-
-	// Load user's systems
-  $res = dbquery("
-  SELECT 
-  	cells.id as id
-  FROM 
-  	planets
-  INNER JOIN
-  (
-  	entities
-  	INNER JOIN
-  		cells 
-  		ON cells.id=entities.cell_id
-  )
- 	ON entities.id=planets.id
-  	AND planet_user_id='".$cu->id."';");
-  while ($arr = mysql_fetch_row($res))
-  {
-  	$user_solsys_ids[]=$arr[0];
-  }
 
 	echo "<form action=\"?page=$page\" method=\"post\">";
 	
@@ -220,116 +192,36 @@
   // Map
   echo "<td class=\"sector_map_cell\">";
   
-  //echo "<table id=\"innerspacetbl\">";
+	// Load user's systems
   $res = dbquery("
   SELECT 
-    cx,
-    cy,
-    cells.id as cid,
-    entities.id as eid,
-    code
+  	cells.id as id
   FROM 
-    cells 
+  	planets
   INNER JOIN
-    entities
-    ON entities.cell_id=cells.id
-    AND entities.pos=0
-    AND sx='$sx' 
-    AND sy='$sy';");
-  $cells = array();
-  while ($arr = mysql_fetch_assoc($res))
+  (
+  	entities
+  	INNER JOIN
+  		cells 
+  		ON cells.id=entities.cell_id
+  )
+ 	ON entities.id=planets.id
+  	AND planet_user_id='".$cu->id."';");
+  $user_solsys_ids = array();
+  while ($arr = mysql_fetch_row($res))
   {
-    $cells[$arr['cx']][$arr['cy']]['cid']=$arr['cid'];
-    $cells[$arr['cx']][$arr['cy']]['eid']=$arr['eid'];
-    $cells[$arr['cx']][$arr['cy']]['code']=$arr['code'];
-  }
-  for ($y=0;$y<$cx_num;$y++)
-  {
-    $ycoords = $cy_num-$y;
-    
-    // Numbers on the left side
-    echo "<img id=\"counter_left_$ycoords\" alt=\"$ycoords\" src=\"$counter_left$ycoords.gif\" class=\"cell_number_vertical\"/>";
-
-    for ($x=0;$x<$cy_num;$x++)
-    {
-      $xcoords = $x+1;				
-  
-      if ($cp->sx() == $sx && $cp->sy() == $sy && $cp->cx() == $xcoords && $cp->cy() == $ycoords) {
-        $overlaypic = "$sector_pic/selectedcell.png";
-      } elseif (in_array($cells[$xcoords][$ycoords]['cid'],$user_solsys_ids)) {
-        $overlaypic = "$sector_pic/owncell.png";
-      } else {
-        $overlaypic = "images/blank.gif";
-      }  
-  
-      // Symbole anzeigen
-      if ($cu->discovered((($sx - 1) * $cx_num) + $xcoords, (($sy - 1) * $cy_num) + $ycoords))
-      {
-        
-        $ent = Entity::createFactory($cells[$xcoords][$ycoords]['code'],$cells[$xcoords][$ycoords]['eid']);
-        
-        $tt = new Tooltip();
-        $tt->addTitle($ent->entityCodeString());
-        $tt->addText("Position: $sx/$sy : $xcoords/$ycoords");
-        if ($ent->entityCode()=='w')
-        {
-          $tent = new Wormhole($ent->targetId());
-          $tt->addComment("Ziel: $tent</a>");	
-        }
-        else
-        {
-          $tt->addComment($ent->name());
-        }
-        
-        $url = "?page=cell&amp;id=".$cells[$xcoords][$ycoords]['cid'];
-        $img = $ent->imagePath();        
-          
-        unset($ent);
-      }
-      else
-      {
-        $fogCode = 0;
-        // Bottom
-        $fogCode += $ycoords > 1 && $cu->discovered((($sx - 1) * $cx_num) + $xcoords  , (($sy - 1) * $cy_num) + $ycoords-1) ? 1 : 0;
-        // Left
-        $fogCode += $xcoords > 1 && $cu->discovered((($sx - 1) * $cx_num) + $xcoords-1, (($sy - 1) * $cy_num) + $ycoords  ) ? 2 : 0;
-        // Right
-        $fogCode += $xcoords < $cx_num && $cu->discovered((($sx - 1) * $cx_num) + $xcoords+1, (($sy - 1) * $cy_num) + $ycoords  ) ? 4 : 0;
-        // Top
-        $fogCode += $ycoords < $cy_num && $cu->discovered((($sx - 1) * $cx_num) + $xcoords  , (($sy - 1) * $cy_num) + $ycoords+1) ? 8 : 0;
-        
-        if ($fogCode > 0) {
-          $fogImg = "fogborder$fogCode";
-        } else {
-          $fogImg = "fog".mt_rand(1,6);
-        }
-      
-        $tt = new Tooltip();
-        $tt->addTitle("Unerforschte Raumzelle!");
-        $tt->addText("Position: $sx/$sy : $xcoords/$ycoords");
-        $tt->addComment("Expedition senden um Zelle sichtbar zu machen.");
-
-        $url = "?page=haven&cellTarget=".$cells[$xcoords][$ycoords]['cid'];
-        $img = IMAGE_PATH."/unexplored/".$fogImg.".png";
-      }
-      
-      echo "<a href=\"$url\" ".$tt." style=\"background:url('".$img."');\">";
-      echo "<img src=\"$overlaypic\" alt=\"Nebel\" onmouseover=\"\$(this).attr('src','$sector_pic/hovercell.png');$('#counter_left_$ycoords').attr('src','$counter_left_high$ycoords.gif');\$('#counter_bottom_$xcoords').attr('src','$counter_bottom_high$xcoords.gif');\" onmouseout=\"\$(this).attr('src','$overlaypic');\$('#counter_left_$ycoords').attr('src','$counter_left$ycoords.gif');\$('#counter_bottom_$xcoords').attr('src','$counter_bottom$xcoords.gif');\" />";
-      echo "</a>";
-      
-    }
-    echo "<br/>";
+  	$user_solsys_ids[]=$arr[0];
   }
   
-  // Linke untere ecke
-  echo "<img alt=\"Blank\" src=\"images/blank.gif\" class=\"cell_number_spacer\"/>";
-  
-  // Numbers on the bottom side
-  for ($x=0;$x<$cy_num;$x++)
-  {
-    $xcoords = $x+1;
-    echo "<img id=\"counter_bottom_$xcoords\" alt=\"$xcoords\" src=\"$counter_bottom$xcoords.gif\" class=\"cell_number_horizontal\"/>";
-  }
+  $sectorMap = new SectorMapRenderer($cfg->param1('num_of_cells'), $cfg->param2('num_of_cells'));
+  $sectorMap->enableRuler(true);
+  $sectorMap->enableTooltips(true);
+  $sectorMap->setUserCellIDs($user_solsys_ids);
+  $sectorMap->setSelectedCell($cp->getCell());
+  $sectorMap->setImpersonatedUser($cu);
+  $sectorMap->setCellUrl("?page=cell&amp;id=");
+  $sectorMap->setUndiscoveredCellUrl("?page=haven&cellTarget=");
+  $sectorMap->render($sx, $sy);
   
   echo "</td>";
 

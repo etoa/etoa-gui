@@ -11,6 +11,11 @@
 		private $isValid;
 		private $entities;
 		
+    public $sx;
+    public $sy;
+    public $cx;
+    public $cy;
+    
 		public function Cell($id=0)
 		{
 			$this->isValid=false;
@@ -91,6 +96,21 @@
 			return (($this->sy - 1) * $cy_num) + $this->cy;
 		}
 		
+    function getSX() {
+      return $this->sx;
+    }
+    
+    function getSY() {
+      return $this->sy;
+    }
+
+    function getCX() {
+      return $this->cx;
+    }
+
+    function getCY() {
+      return $this->cy;
+    }
 	
 	}
 
