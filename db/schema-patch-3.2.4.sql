@@ -1,1 +1,0 @@
-ALTER TABLE `def_queue` ADD COLUMN `queue_user_click_time` INTEGER UNSIGNED NOT NULL DEFAULT 0 AFTER `queue_build_type`;
