@@ -438,7 +438,7 @@
 		if ($arr[0]==0)
 		{
 			echo MessageBox::warning("Universum existiert noch nicht!", "Das Universum wurde noch nicht erschaffen!");
-			echo "<p><input type=\"button\" value=\"Weiter zum Urknall\" onclick=\"document.location='?page=setup&sub=uni'\" /></p>";
+			echo "<p><input type=\"button\" value=\"Weiter zum Urknall\" onclick=\"document.location='?page=galaxy&sub=uni'\" /></p>";
 		}
 		else
 		{			
