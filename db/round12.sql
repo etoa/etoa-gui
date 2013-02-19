@@ -4343,8 +4343,7 @@ CREATE TABLE `users` (
   KEY `user_name` (`user_name`),
   KEY `user_nick` (`user_nick`),
   KEY `user_rank_current` (`user_rank`),
-  KEY `user_points` (`user_points`),
-  KEY `user_acttime` (`user_acttime`)
+  KEY `user_points` (`user_points`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
