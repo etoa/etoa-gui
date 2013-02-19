@@ -41,9 +41,10 @@
 		$nr = Alliance::cleanUpPoints();
 		$log.= "$nr alte Allianzpunkte-Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
 
-		$tmr = timerStart();
-		Users::resetSpyattacks();
-		$log.= "Spionageangriffscounter auf 0 gesetzt.\nDauer: ".timerStop($tmr)." sec\n\n";
+		// Spyattacks zurücksetzen (altes Balancing)
+		//$tmr = timerStart();
+		//Users::resetSpyattacks();
+		//$log.= "Spionageangriffscounter auf 0 gesetzt.\nDauer: ".timerStop($tmr)." sec\n\n";
 
 		// Alte Session-Logs
 		$tmr = timerStart();
