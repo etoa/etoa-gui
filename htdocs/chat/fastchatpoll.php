@@ -6,6 +6,7 @@
 	define('GREEN_STAR','../images/star_green.gif');
 	define('YELLOW_STAR','../images/star_y.gif');
 	define('SILVER_STAR','../images/star_g.gif');
+	define('CYAN_STAR','../images/star_c.gif');
 
 	include_once(RELATIVE_ROOT.'inc/bootstrap.inc.php');
 
@@ -128,6 +129,8 @@
 								'alt="Entwickler" title="Entwickler" />'; break;
 						case 4: $adminstr = '<img src="'.GREEN_STAR.'" '. //green star
 								'alt="Leiter Team Community" title="Leiter Team Community" />'; break;
+						case 5: $adminstr = '<img src="'.CYAN_STAR.'" '. //cyan star
+								'alt="Entwickler" title="Entwickler" />'; break;
 						default:$adminstr = // default: yellow without alt-text
 							'<img src="'.YELLOW_STAR.'" />'; break;
 					}

@@ -534,14 +534,19 @@
 									<input type=\"radio\" name=\"user_chatadmin\" id=\"user_chatadmin0\"value=\"0\" ";
 									if ($arr['user_chatadmin']==0)
 										echo " checked=\"checked\" ";
-									echo "/><label for=\"user_chatadmin0\">Nein</label>
+									echo "/><label for=\"user_chatadmin0\">Nein</label><br />
 									<input type=\"radio\" name=\"user_chatadmin\" id=\"user_chatadmin2\"value=\"2\" ";
 									if ($arr['user_chatadmin']==2)
 										echo " checked=\"checked\" ";
-									echo "/><label for=\"user_chatadmin2\">Leiter Team Community</label>
+									echo "/><label for=\"user_chatadmin2\">Leiter Team Community</label><br />
+									<input type=\"radio\" name=\"user_chatadmin\" id=\"user_chatadmin3\"value=\"3\" ";
+									if ($arr['user_chatadmin']==3)
+										echo " checked=\"checked\" ";
+									echo "/><label for=\"user_chatadmin3\">Entwickler mit Adminrechten</label>
 									</td>
-								<td>Der Spieler hat Adminrechte im Chat und einen silbernen Stern für Chatadmin bzw.
-									einen grünen Stern für Leiter Team Community</td>
+								<td>Der Spieler hat Adminrechte im Chat und einen silbernen Stern für Chatadmin,
+									einen grünen Stern für Leiter Team Community bzw. einen cyanfarbenen Stern für
+									Entwickler mit Adminrechten (Entwickler mit Adminrechten funktioniert nur, wenn unten 'Admin' auf 'Ja' gestellt wird).</td>
 							</tr>
 							<tr>
 								<td class=\"tbltitle\">Admin:</td>
@@ -557,7 +562,7 @@
 									<input type=\"radio\" name=\"admin\" id=\"admin2\" value=\"2\" ";
 									if ($arr['admin']==2)
 										echo " checked=\"checked\" ";
-									echo "/><label for=\"admin2\">Entwickler</label>
+									echo "/><label for=\"admin2\">Entwickler ohne Adminrechte</label>
 								</td>
 								<td>Admin: Der Spieler wird in der Raumkarte als Game-Admin markiert.<br/>Entwickler: Der Spieler bekommt einen nutzlosen roten Stern im Chat, keine Markierung</td>
 							</tr>
