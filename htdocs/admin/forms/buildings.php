@@ -508,8 +508,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
-																	),			
-
+																	),
 											array	(	"name" => "building_fieldsprovide",
 																		"text" => "Zur Verfügung gestellte Felder",
 																		"type" => "text",
@@ -523,7 +522,49 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
-																	)																			
+																	),																			
+											array	(	"name" => "building_bunker_res",
+																		"text" => "Ressourcen-Grundkapazität Bunker",
+																		"type" => "text",
+																		"def_val" => "",
+																		"size" => "20",
+																		"maxlen" => "250",
+																		"rows" => "",
+																		"cols" => "",
+																		"rcb_elem" => "",
+																		"rcb_elem_chekced" => "",
+																		"select_elem" => "",
+																		"select_elem_checked" => "",
+																		"show_overview" => 0
+																	),
+											array	(	"name" => "building_bunker_fleet_count",
+																		"text" => "Schiffszahl-Grundkapazität Bunker",
+																		"type" => "text",
+																		"def_val" => "",
+																		"size" => "20",
+																		"maxlen" => "250",
+																		"rows" => "",
+																		"cols" => "",
+																		"rcb_elem" => "",
+																		"rcb_elem_chekced" => "",
+																		"select_elem" => "",
+																		"select_elem_checked" => "",
+																		"show_overview" => 0
+																	),
+											array	(	"name" => "building_bunker_fleet_space",
+																		"text" => "Schiffsstruktur-Grundkapazität Bunker",
+																		"type" => "text",
+																		"def_val" => "",
+																		"size" => "20",
+																		"maxlen" => "250",
+																		"rows" => "",
+																		"cols" => "",
+																		"rcb_elem" => "",
+																		"rcb_elem_chekced" => "",
+																		"select_elem" => "",
+																		"select_elem_checked" => "",
+																		"show_overview" => 0
+																	)
 											);
         
 ?>
