@@ -786,26 +786,28 @@
 			&& $data['name']!=""
 			&& $data['tag']!="")
 			{
-				$tagRegExPattern = '/^[^\'\"\?\<\>\$\!\=\;\&]{1,6}$/i';
+				$tagRegExPattern = '/^[^\'\"\?\<\>\$\!\=\;\&\\\\[\]]{1,6}$/i';
 				if (preg_match($tagRegExPattern,$data['tag'])>0)
 				//if (eregi("^[^\'\"\?\<\>\$\!\=\;\&]{1,6}$",$data['tag']))
 				{
-					if (preg_match('/([^\'\"\?\<\>\$\!\=\;\&]{4,25})$/',$data['name']))
+					if (preg_match('/([^\'\"\?\<\>\$\!\=\;\&\\\\[\]]{4,25})$/',$data['name']))
 					{
 					if (isset($data['founder']))
 						{
-							$res = dbquery("
+							$res = dbquerySave("
 							SELECT
 								COUNT(alliance_id)
 							FROM
 								alliances
 							WHERE
-								alliance_tag='".$data['tag']."'
-								OR alliance_name='".$data['tag']."'
-							LIMIT 1;");
+								alliance_tag=?
+								OR alliance_name=?
+							LIMIT 1;", 
+                array($data['tag'], $data['name'])
+              );
 							if (mysql_result($res,0)==0)
 							{
-								dbquery("
+								dbquerySave("
 								INSERT INTO
 									alliances
 								(
@@ -815,11 +817,13 @@
 									alliance_foundation_date
 								)
 								VALUES
-								(
-									'".$data['tag']."',
-									'".$data['name']."',
-									'".$data['founder']->id."',
-									'".time()."');");
+								(?,?,?,?);",
+                  array(
+                    $data['tag'], 
+                    $data['name'], 
+                    $data['founder']->id, 
+                    time())
+                );
 								$returnMsg = new Alliance(mysql_insert_id());
 								$data['founder']->alliance = $returnMsg;
 								$data['founder']->addToUserLog("alliance","{nick} hat die Allianz [b]".$returnMsg."[/b] gegründet.");
@@ -833,10 +837,10 @@
 							$returnMsg = "Allianzgründer-ID fehlt!";
 					}
 					else
-						$returnMsg = "Ungültiger Name! Die Länge muss zwischen 4 und 25 Zeichen liegen und darf folgende Zeichen nicht enthalten: ^'\"?<>$!=;&[]";
+						$returnMsg = "Ungültiger Name! Die Länge muss zwischen 4 und 25 Zeichen liegen und darf folgende Zeichen nicht enthalten: ^'\"?<>$!=;&[]\\\\";
 				}
 				else
-					$returnMsg = "Ungültiger Tag! Die Länge muss zwischen 3 und 6 Zeichen liegen und darf folgende Zeichen nicht enthalten: ^'\"?<>$!=;&[]";
+					$returnMsg = "Ungültiger Tag! Die Länge muss zwischen 3 und 6 Zeichen liegen und darf folgende Zeichen nicht enthalten: ^'\"?<>$!=;&[]\\\\";
 			}
 			else
 				$returnMsg = "Name/Tag fehlt!";
