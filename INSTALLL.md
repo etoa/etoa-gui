@@ -115,3 +115,29 @@ Visit the base config page on [http://round12.live.etoa.net/admin/?page=config](
 The eventhandler IPC-Key can be obtained by starting the eventhandler backend for this round in debug mode.
 
 
+Setup test instance on an Ubuntu server 
+---------------------------------------
+
+Install Ununtu server, choose OpenSSH and LAMP as server profile.
+
+GUI:
+
+    sudo apt-get install subversion git phpmyadmin
+    sudo mkdir -p /var/www/etoa/test
+    sudo chown -R etoa /var/www/etoa/test
+    ln /var/www/etoa/test ~/test -s
+    svn co https://dev.etoa.net/svn/etoa-gui/trunk/htdocs ~/test
+
+Create database and database user using phpmyadmin
+
+Backend: 
+
+    supt apt-get install build-essential cmake libboost-all-dev libmysql++-dev
+    svn co https://dev.etoa.net/svn/etoa-eventhandler/trunk ~/backend
+    cd ~/backend
+    cmake .
+    make
+    sudo mkdir /var/run/etoad/
+    sudo chown etoa /var/run/etoad/
+    sudo mkdir /var/log/etoad
+    bin/etoad test --debug -c ~/test/config/
