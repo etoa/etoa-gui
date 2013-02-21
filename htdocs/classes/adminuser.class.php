@@ -189,7 +189,7 @@ class AdminUser {
 			DBManager::getInstance()->safeQuery("
 			DELETE FROM 
 				".self::tableName."
-			user_id=?;", array($this->id));
+			WHERE user_id=?;", array($this->id));
 		}
 		return false;
 	}
