@@ -36,12 +36,12 @@
 	echo '<h1>Galaxie</h1>';
 	tableStart("Galaxiekarte");
 	echo '<tr><td id="galaxy_map_nav">Anzeigen: <select onchange="document.getElementById(\'img\').src=\'misc/map.image.php\'+this.options[this.selectedIndex].value;">
-	<option value="?t='.time().'">Normale Galaxieansicht</option>
-	<option value="?type=populated&t='.time().'">Bev&ouml;lkerte Systeme</option>
-	<option value="?type=own&t='.time().'">Systeme mit eigenen Planeten</option>
-	<option value="?type=alliance&t='.time().'">Systeme mit Allianzplaneten</option>
+	<option value="?legend&t='.time().'">Normale Galaxieansicht</option>
+	<option value="?legend&type=populated&t='.time().'">Bev&ouml;lkerte Systeme</option>
+	<option value="?legend&type=own&t='.time().'">Systeme mit eigenen Planeten</option>
+	<option value="?legend&type=alliance&t='.time().'">Systeme mit Allianzplaneten</option>
 	</select></td></tr>';
-	echo '<tr><td id="galaxy_map_container"><img src="misc/map.image.php" alt="Galaxiekarte" id="img" alt="galaxymap" usemap="#Galaxy" style="border:none;"/></td></tr>';
+	echo '<tr><td id="galaxy_map_container"><img src="misc/map.image.php?legend" alt="Galaxiekarte" id="img" alt="galaxymap" usemap="#Galaxy" style="border:none;"/></td></tr>';
 	tableEnd();
 	
 	echo '<map name="Galaxy"><br />';

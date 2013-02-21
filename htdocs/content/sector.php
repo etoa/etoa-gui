@@ -221,7 +221,7 @@
   $sectorMap->setImpersonatedUser($cu);
   $sectorMap->setCellUrl("?page=cell&amp;id=");
   $sectorMap->setUndiscoveredCellUrl("?page=haven&cellTarget=");
-  $sectorMap->render($sx, $sy);
+  echo $sectorMap->render($sx, $sy);
   
   echo "</td>";
 

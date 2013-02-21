@@ -11,10 +11,15 @@
 	$p_num_min=$conf['num_planets']['p1'];
 	$p_num_max=$conf['num_planets']['p2'];
 
-	define('GALAXY_IMAGE_SCALE',GALAXY_MAP_WIDTH/((($sx_num-1)*10)+$cx_num));
+  $size = min(isset($_GET['size']) ? intval($_GET['size']) : GALAXY_MAP_WIDTH, 3000);
+  
+  $legend = isset($_GET['legend']);
+  $legendHeight = $legend ? GALAXY_MAP_LEGEND_HEIGHT : 0;
+  
+	define('GALAXY_IMAGE_SCALE', $size /((($sx_num-1)*10)+$cx_num));
 	
-	$w = GALAXY_MAP_WIDTH;
-	$h = $sy_num*$cy_num*GALAXY_IMAGE_SCALE+GALAXY_MAP_LEGEND_HEIGHT;
+	$w = $size;
+	$h = $sy_num*$cy_num*GALAXY_IMAGE_SCALE + $legendHeight;
 	$im = imagecreatetruecolor($w,$h);
 
 	$colBlack = imagecolorallocate($im,0,0,0);
@@ -112,13 +117,15 @@
 				while ($arr=mysql_fetch_array($res))
 				{
 					$x = ((($arr['sx']-1)*$cx_num + $arr['cx']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-					$y = $h-GALAXY_MAP_LEGEND_HEIGHT+GALAXY_IMAGE_SCALE-((($arr['sy']-1)*$cy_num + $arr['cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
+					$y = $h-$legendHeight+GALAXY_IMAGE_SCALE-((($arr['sy']-1)*$cy_num + $arr['cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
 					imagefilledellipse ($im,$x,$y,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[$arr['cnt']]);
 				}		
-				imagestring($im,3,10,$h-GALAXY_MAP_LEGEND_HEIGHT+10,"Legende:    Viel    Mittel    Wenig",$colWhite);
-				imagefilledellipse ($im,80,$h-GALAXY_MAP_LEGEND_HEIGHT+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[$p_num_max]);
-				imagefilledellipse ($im,135,$h-GALAXY_MAP_LEGEND_HEIGHT+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[floor($p_num_max/2)]);
-				imagefilledellipse ($im,205,$h-GALAXY_MAP_LEGEND_HEIGHT+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[3]);
+        if ($legend) {
+          imagestring($im,3,10,$h-$legendHeight+10,"Legende:    Viel    Mittel    Wenig",$colWhite);
+          imagefilledellipse ($im,80,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[$p_num_max]);
+          imagefilledellipse ($im,135,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[floor($p_num_max/2)]);
+          imagefilledellipse ($im,205,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[3]);
+        }
 			}
 			elseif (isset($_GET['type']) && $_GET['type']=="own")
 			{
@@ -151,13 +158,15 @@
 				while ($arr=mysql_fetch_array($res))
 				{
 					$x = ((($arr['sx']-1)*$cx_num + $arr['cx']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-					$y = $h-GALAXY_MAP_LEGEND_HEIGHT+GALAXY_IMAGE_SCALE-((($arr['sy']-1)*$cy_num + $arr['cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
+					$y = $h-$legendHeight+GALAXY_IMAGE_SCALE-((($arr['sy']-1)*$cy_num + $arr['cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
 					imagefilledellipse ($im,$x,$y,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[$arr['cnt']]);
 				}		
-				imagestring($im,3,10,$h-GALAXY_MAP_LEGEND_HEIGHT+10,"Legende:    Viel    Mittel    Wenig",$colWhite);
-				imagefilledellipse ($im,80,$h-GALAXY_MAP_LEGEND_HEIGHT+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[$p_num_max]);
-				imagefilledellipse ($im,135,$h-GALAXY_MAP_LEGEND_HEIGHT+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[floor($p_num_max/2)]);
-				imagefilledellipse ($im,205,$h-GALAXY_MAP_LEGEND_HEIGHT+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[3]);
+        if ($legend) {
+          imagestring($im,3,10,$h-$legendHeight+10,"Legende:    Viel    Mittel    Wenig",$colWhite);
+          imagefilledellipse ($im,80,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[$p_num_max]);
+          imagefilledellipse ($im,135,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[floor($p_num_max/2)]);
+          imagefilledellipse ($im,205,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[3]);
+        }
 			}
 			elseif (isset($_GET['type']) && $_GET['type']=="populated")
 			{
@@ -186,13 +195,15 @@
 				while ($arr=mysql_fetch_assoc($res))
 				{
 					$x = ((($arr['sx']-1)*$cx_num + $arr['cx']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-					$y = $h-GALAXY_MAP_LEGEND_HEIGHT+GALAXY_IMAGE_SCALE-((($arr['sy']-1)*$cy_num + $arr['cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
+					$y = $h-$legendHeight+GALAXY_IMAGE_SCALE-((($arr['sy']-1)*$cy_num + $arr['cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
 					imagefilledellipse ($im,$x,$y,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[max(3,$arr['cnt'])]);
 				}		
-				imagestring($im,3,10,$h-GALAXY_MAP_LEGEND_HEIGHT+10,"Legende:    Viel    Mittel    Wenig",$colWhite);
-				imagefilledellipse ($im,80,$h-GALAXY_MAP_LEGEND_HEIGHT+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[$p_num_max]);
-				imagefilledellipse ($im,135,$h-GALAXY_MAP_LEGEND_HEIGHT+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[floor($p_num_max/2)]);
-				imagefilledellipse ($im,205,$h-GALAXY_MAP_LEGEND_HEIGHT+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[3]);
+        if ($legend) {
+          imagestring($im,3,10,$h-$legendHeight+10,"Legende:    Viel    Mittel    Wenig",$colWhite);
+          imagefilledellipse ($im,80,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[$p_num_max]);
+          imagefilledellipse ($im,135,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[floor($p_num_max/2)]);
+          imagefilledellipse ($im,205,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[3]);
+        }
 			}
 			else
 			{
@@ -216,7 +227,7 @@
 					while ($arr=mysql_fetch_array($res))
 					{
             $x = ((($arr['sx']-1)*$cx_num + $arr['cx']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-            $y = $h-GALAXY_MAP_LEGEND_HEIGHT+GALAXY_IMAGE_SCALE-((($arr['sy']-1)*$cy_num + $arr['cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
+            $y = $h-$legendHeight+GALAXY_IMAGE_SCALE-((($arr['sy']-1)*$cy_num + $arr['cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
             $xe = $x-(GALAXY_IMAGE_SCALE/2);
             $ye = $y-(GALAXY_IMAGE_SCALE/2);
       
@@ -285,18 +296,20 @@
 					imagestring($im,3,20,20,"Universum existiert noch nicht!",$colWhite);
 				}
 				/*
-				imagestring($im,3,10,$h-GALAXY_MAP_LEGEND_HEIGHT+10,"Legende:    Stern    Asteroidenfeld    Nebel    Wurmloch",$colWhite);
-				imagefilledellipse ($im,80,$h-GALAXY_MAP_LEGEND_HEIGHT+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$colWhite);
-				imagefilledellipse ($im,145,$h-GALAXY_MAP_LEGEND_HEIGHT+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$colGrey);
-				imagefilledellipse ($im,270,$h-GALAXY_MAP_LEGEND_HEIGHT+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$colOrange);
-				imagefilledellipse ($im,335,$h-GALAXY_MAP_LEGEND_HEIGHT+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$colViolett);
+				imagestring($im,3,10,$h-$legendHeight+10,"Legende:    Stern    Asteroidenfeld    Nebel    Wurmloch",$colWhite);
+				imagefilledellipse ($im,80,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$colWhite);
+				imagefilledellipse ($im,145,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$colGrey);
+				imagefilledellipse ($im,270,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$colOrange);
+				imagefilledellipse ($im,335,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$colViolett);
 				*/
-				imagestring($im,3,10,$h-GALAXY_MAP_LEGEND_HEIGHT+10,"Galaxiekarte",$colWhite);
+        if ($legend) {
+          imagestring($im,3,10,$h-$legendHeight+10,"Galaxiekarte",$colWhite);
+        }
 			}
 			
 			for ($x=($cx_num*GALAXY_IMAGE_SCALE);$x<$w;$x+=($cx_num*GALAXY_IMAGE_SCALE))
 			{
-				MDashedLine($im,$x,0,$x,$h-GALAXY_MAP_LEGEND_HEIGHT,$colGrey,$colBlack);
+				MDashedLine($im,$x,0,$x,$h-$legendHeight,$colGrey,$colBlack);
 			}
 			for ($y=($cy_num*GALAXY_IMAGE_SCALE);$y<$h;$y+=($cy_num*GALAXY_IMAGE_SCALE))
 			{

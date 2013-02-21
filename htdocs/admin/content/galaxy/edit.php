@@ -3,6 +3,7 @@
 	$eres = dbquery("
 			SELECT 
 				e.id,
+        c.id as cid,
 				code,
 				pos,
 				sx,
@@ -25,8 +26,9 @@
 				if ($id>1)
 					echo button("&lt;&lt; Vorheriges Objekt","?page=$page&amp;sub=$sub&id=".($id-1)."");
 				echo " &nbsp; Objekt ".$earr['id']." &nbsp; ";
-				echo button("Nächstes Objekt &gt;&gt;","?page=$page&amp;sub=$sub&id=".($id+1)."")." 
-				".button("Alle Objekte dieser Zelle/dieses Systems anzeigen","?page=$page".searchQueryUrl("cell_s:=:".$earr['sx']."_".$earr['sy'].";cell_c:=:".$earr['cx']."_".$earr['cy']));
+				echo button("Nächstes Objekt &gt;&gt;","?page=$page&amp;sub=$sub&id=".($id+1)."")."<br/><br/>
+				".button("Alle Objekte dieser Zelle/dieses Systems anzeigen","?page=$page".searchQueryUrl("cell_s:=:".$earr['sx']."_".$earr['sy'].";cell_c:=:".$earr['cx']."_".$earr['cy']))." 
+        ".button("System dieses Objekts auf der Karte anzeigen","?page=$page&amp;sub=map&amp;cell=".$earr['cid']);
 				echo "<br/><br/>";
 				
 				if ($earr['code']=='p')

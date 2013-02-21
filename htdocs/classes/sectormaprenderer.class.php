@@ -90,6 +90,8 @@ class SectorMapRenderer {
   */
   function render($sx, $sy) {
   
+    ob_start();
+  
     $res = dbquery("
     SELECT 
       cx,
@@ -125,19 +127,30 @@ class SectorMapRenderer {
       for ($x=0; $x < $this->numberOfCellsY; $x++)
       {
         $xcoords = $x+1;				
-    
+
+        // Title or tooltip
+        $title = (isset($tt) ? $tt : "title=\"$sx/$sy : $xcoords/$ycoords\"");
+        
+        // Cell element classes
+        $classes = array();
+        if ($xcoords == 1) {
+          $classes[] = "sectorborder-left";
+        }
+        if ($ycoords == 1) {
+          $classes[] = "sectorborder-bottom";
+        }
+
+        // Overlay image classes
+        $overlayClasses = array();
         if ($this->selectedCell != null && $this->selectedCell->getSX() == $sx && $this->selectedCell->getSY() == $sy && $this->selectedCell->getCX() == $xcoords && $this->selectedCell->getCY() == $ycoords) {
-          $overlaypic = RELATIVE_ROOT.self::MapImageDirectory."/selectedcell.png";
+          $overlayClasses[] = 'selected';
         } elseif (in_array($cells[$xcoords][$ycoords]['cid'], $this->userCellsIDs)) {
-          $overlaypic = RELATIVE_ROOT.self::MapImageDirectory."/owncell.png";
-        } else {
-          $overlaypic = RELATIVE_ROOT."images/blank.gif";
-        }  
-    
+          $overlayClasses[] = 'owned';
+        }
+        
         // Discovered cell or no user specified
         if ($this->impersonatedUser == null || $this->impersonatedUser->discovered((($sx - 1) * $this->numberOfCellsX) + $xcoords, (($sy - 1) * $this->numberOfCellsY) + $ycoords))
         {
-          
           $ent = Entity::createFactory($cells[$xcoords][$ycoords]['code'],$cells[$xcoords][$ycoords]['eid']);
           
           if ($this->tooltipsEnabled) {
@@ -156,9 +169,7 @@ class SectorMapRenderer {
           }
           
           $url = isset($this->cellUrl) ? $this->cellUrl.$cells[$xcoords][$ycoords]['cid'] : '#';
-          
           $img = RELATIVE_ROOT.$ent->imagePath();        
-            
           unset($ent);
         }
         
@@ -191,25 +202,20 @@ class SectorMapRenderer {
           $url = isset($this->undiscoveredCellUrl) ? $this->undiscoveredCellUrl.$cells[$xcoords][$ycoords]['cid'] : '#';
           $img = IMAGE_PATH."/unexplored/".$fogImg.".png";
         }
-        
-        // Title or tooltip
-        $title = (isset($tt) ? $tt : "title=\"$sx/$sy : $xcoords/$ycoords\"");
-        
+
+
         // Mouseover
-        $mouseOver = "$(this).attr('src','".RELATIVE_ROOT.self::MapImageDirectory."/hovercell.png');";
+        $mouseOver = '';
         if ($this->rulerEnabled) {
-          $mouseOver.= "$('#counter_left_$ycoords').attr('src','".RELATIVE_ROOT.self::MapImageDirectory."/".self::VerticalCoordinateNumberHighlighImagePrefix."$ycoords.gif');$('#counter_bottom_$xcoords').attr('src','".RELATIVE_ROOT.self::MapImageDirectory."/".self::HorizontalCoordinateNumberHighlighImagePrefix."$xcoords.gif');";
+          $mouseOver.= " onmouseover=\"$('#counter_left_$ycoords').attr('src','".RELATIVE_ROOT.self::MapImageDirectory."/".self::VerticalCoordinateNumberHighlighImagePrefix."$ycoords.gif');$('#counter_bottom_$xcoords').attr('src','".RELATIVE_ROOT.self::MapImageDirectory."/".self::HorizontalCoordinateNumberHighlighImagePrefix."$xcoords.gif');\"";
+          $mouseOver.= " onmouseout=\"$('#counter_left_$ycoords').attr('src','".RELATIVE_ROOT.self::MapImageDirectory."/".self::VerticalCoordinateNumberImagePrefix."$ycoords.gif');$('#counter_bottom_$xcoords').attr('src','".RELATIVE_ROOT.self::MapImageDirectory."/".self::HorizontalCoordinateNumberImagePrefix."$xcoords.gif');\"";
         }
         
-        // Mouseout
-        $mouseOut = "$(this).attr('src','$overlaypic');";
-        if ($this->rulerEnabled) {
-          $mouseOut.= "$('#counter_left_$ycoords').attr('src','".RELATIVE_ROOT.self::MapImageDirectory."/".self::VerticalCoordinateNumberImagePrefix."$ycoords.gif');$('#counter_bottom_$xcoords').attr('src','".RELATIVE_ROOT.self::MapImageDirectory."/".self::HorizontalCoordinateNumberImagePrefix."$xcoords.gif');";
-        }
-        
-        echo "<a href=\"$url\" ".$title." style=\"background:url('".$img."');\">";
-        echo "<img src=\"$overlaypic\" alt=\"Raumzelle\" onmouseover=\"$mouseOver\" onmouseout=\"$mouseOut\" />";
-        echo "</a>";
+        $class = count($classes) > 0 ? " class=\"".implode(' ', $classes)."\"": '';
+        $overlayClass = count($overlayClasses) > 0 ? " class=\"".implode(' ', $overlayClasses)."\"": '';
+
+        echo "<a href=\"".$url."\" style=\"background:url('".$img."');\"$class$mouseOver>";
+        echo "<img src=\"".RELATIVE_ROOT."images/blank.gif\" alt=\"Raumzelle\" ".$title." data-id=\"".$cells[$xcoords][$ycoords]['cid']."\" $overlayClass/></a>";
         
       }
       echo "<br/>";
@@ -226,8 +232,10 @@ class SectorMapRenderer {
         $xcoords = $x+1;
         echo "<img id=\"counter_bottom_$xcoords\" alt=\"$xcoords\" src=\"".RELATIVE_ROOT.self::MapImageDirectory."/".self::HorizontalCoordinateNumberImagePrefix."$xcoords.gif\" class=\"cell_number_horizontal\"/>";
       }
-      
-    }    
+
+    }
+    
+    return ob_get_clean();
   }
 
 }

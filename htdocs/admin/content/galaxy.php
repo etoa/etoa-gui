@@ -31,24 +31,16 @@
 	//
 	if ($sub=="map")
 	{
-		echo "<h1>Galaxiekarte</h1>";
-		
-    echo '<div id="tabs">
-      <ul>
-        <li><a href="#interactive">Interaktive Karte</a></li>
-        <li><a href="#image">Kartenbild</a></li>
-      </ul>';
-    echo '<div id="interactive">';  
-    
-    echo "<div id=\"sector_map_table\">";
-    
+    $tpl->setView("admin/galaxy/map");
+    $tpl->assign("title", 'Galaxiekarte');  
+  
     $sx_num = $cfg->param1('num_of_sectors');
     $sy_num = $cfg->param2('num_of_sectors');
     $cx_num = $cfg->param1('num_of_cells');
     $cy_num = $cfg->param2('num_of_cells');
     
     $sectorMap = new SectorMapRenderer($cx_num, $cy_num);
-    $sectorMap->setCellUrl("?page=galaxy&cell_id=");
+    //$sectorMap->setCellUrl("?page=galaxy&cell_id=");
     
     // Selected cell
     if (isset($_GET['cell'])) {
@@ -58,31 +50,24 @@
       }
     }
     
-    //$sectorMap->setImpersonatedUser(new CurrentUser(1));
+    // View map as user
+    if (isset($_GET['user'])) {
+      $user = new CurrentUser($_GET['user']);
+      if ($user->isValid) {
+        $sectorMap->setImpersonatedUser($user);
+      }
+    }
+    
     
     // Draw map
+    $mapsectors = array();
     for ($sy = $sy_num; $sy > 0; $sy--) {
       for ($sx = 1; $sx <= $sx_num; $sx++) {
-        echo "<div class=\"sector_map_cell\" style=\"display:inline-block;width:auto\">";
-        $sectorMap->render($sx, $sy);
-        echo "</div>";
+        $mapsectors[$sy][$sx] = $sectorMap->render($sx, $sy);
       }
-      echo "<br/>";
-    }    
-    echo "</div>";
-		
-    echo '</div><div id="image">';  
-    
-    echo "Anzeigen: <select onchange=\"document.getElementById('img').src='../misc/map.image.php'+this.options[this.selectedIndex].value;\">
-		<option value=\"?req_admin&amp;t=".time()."\">Normale Galaxieansicht</option>
-		<option value=\"?req_admin&amp;type=populated&t=".time()."\">Bev&ouml;lkerte Systeme</option>
-		</select><br/><br/>";
-		echo "<img src=\"../misc/map.image.php?req_admin\" alt=\"Galaxiekarte\" id=\"img\" usemap=\"#Galaxy\" style=\"border:none;\"/>";
-    
-    echo '</div></div>';
+    }
+    $tpl->assign("mapsectors", $mapsectors);  
 
-    echo '<script>$(function() { $("#tabs").tabs(); });</script>';
-    
 	}
 
 	//

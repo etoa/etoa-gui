@@ -470,6 +470,19 @@ td.statsNav	{
   height:40px;
 }
 
+#sector_map_table .sector_map_cell a img.hovered, #sector_map_table .sector_map_cell a img:hover {
+  background:url('../../images/map/hovercell.png');
+}
+
+#sector_map_table .sector_map_cell a img.selected {
+  background:url('../../images/map/selectedcell.png');
+}
+
+#sector_map_table .sector_map_cell a img.owned {
+  background:url('../../images/map/owncell.png');
+}
+
+
 
 /* Übersicht -> planetenliste */
 /* \"Courier New\", Courier, mono; */
