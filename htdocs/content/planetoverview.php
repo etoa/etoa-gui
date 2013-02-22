@@ -36,7 +36,7 @@
 		if (isset($_GET['action']) && $_GET['action']=="change_name")
 		{
 			echo "<h2>:: Planetenname/-beschreibung &auml;ndern ::</h2>";
-			echo '<script type="text/javascript" src="js/planetname.js"></script>';
+			echo '<script type="text/javascript" src="web/js/planetname.js"></script>';
 			echo "<form action=\"?page=$page\" method=\"POST\" style=\"text-align:center;\">";
 			tableStart("Hier den neuen Namen eingeben:");
 			echo "<tr><th>Name:</th><td>
@@ -223,7 +223,7 @@
 	
 	
 			echo "<div id=\"tabName\" style=\"".($sub=="name" ? '' : 'display:none;')."\">";
-			echo '<script type="text/javascript" src="js/planetname.js"></script>';
+			echo '<script type="text/javascript" src="web/js/planetname.js"></script>';
 			echo "<form action=\"?page=$page\" method=\"POST\" style=\"text-align:center;\">";
 			tableStart("Name und Beschreibung ändern:");
 			echo "<tr><th>Name:</th><td>
