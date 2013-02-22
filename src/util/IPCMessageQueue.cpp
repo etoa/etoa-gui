@@ -24,7 +24,7 @@ IPCMessageQueue::IPCMessageQueue(std::string token)
 	_valid = false;
 	char proj_id = 'A';
 	key = ftok(token.c_str(), proj_id);
-	LOG(LOG_DEBUG, "Creating IPC key " << key << " from token " << token << " with project id " << proj_id);
+	LOG(LOG_NOTICE, "Creating IPC key '" << key << "' (Token '" << token << "', project id '" << proj_id << "')");
 	msgqid = msgget(key, 0666 | IPC_CREAT);
 	if (msgqid < 0)
 	{
