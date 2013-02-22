@@ -128,9 +128,6 @@ class SectorMapRenderer {
       {
         $xcoords = $x+1;				
 
-        // Title or tooltip
-        $title = (isset($tt) ? $tt : "title=\"$sx/$sy : $xcoords/$ycoords\"");
-        
         // Cell element classes
         $classes = array();
         if ($xcoords == 1) {
@@ -203,6 +200,8 @@ class SectorMapRenderer {
           $img = IMAGE_PATH."/unexplored/".$fogImg.".png";
         }
 
+        // Title or tooltip
+        $title = (isset($tt) ? $tt : "title=\"$sx/$sy : $xcoords/$ycoords\"");
 
         // Mouseover
         $mouseOver = '';
