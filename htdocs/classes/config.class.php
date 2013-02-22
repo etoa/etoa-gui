@@ -65,7 +65,7 @@ class Config implements ISingleton
 	*/
 	public function add($name,$val,$param1="",$param2="") {
 		$this->_items[$name] = new ConfigItem($val,$param1,$param2);
-		dbquery("
+		dbQuerySave("
 		INSERT INTO
 			config
 		(
@@ -76,16 +76,16 @@ class Config implements ISingleton
 		)
 		VALUES
 		(
-			'".$name."',
-			'".$val."',
-			'".$param1."',
-			'".$param2."'
+			?,?,?,?
 		)
 		ON DUPLICATE KEY UPDATE 
-			config_value='".$val."',
-			config_param1='".$param1."',
-			config_param2='".$param2."'
-		;");
+			config_value=?,
+			config_param1=?,
+			config_param2=?
+		;", array(
+      $name,$val,$param1,$param2,
+      $val,$param1,$param2
+    ));
 		return true;
 	}
 
