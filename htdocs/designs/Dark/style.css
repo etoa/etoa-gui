@@ -421,11 +421,6 @@ td.statsNav	{
   border:none;
 }
 
-#sector_map_table .sector_map_cell a {
-  border:none;
-  text-decoration:none;
-}
-
 #sector_map_table .sector_map_cell img.cell_number_spacer {
   width:40px;
   height:35px;
@@ -448,6 +443,8 @@ td.statsNav	{
 }
 
 #sector_map_table .sector_map_cell a {
+  border:none;
+  text-decoration:none;
   display:inline-block;
   border-left:1px dashed #555;
   border-bottom:1px dashed #555;
@@ -464,6 +461,17 @@ td.statsNav	{
   height:40px;
 }
 
+#sector_map_table .sector_map_cell a img.hovered, #sector_map_table .sector_map_cell a img:hover {
+  background:url('../../images/map/hovercell.png');
+}
+
+#sector_map_table .sector_map_cell a img.selected {
+  background:url('../../images/map/selectedcell.png');
+}
+
+#sector_map_table .sector_map_cell a img.owned {
+  background:url('../../images/map/owncell.png');
+}
 
 /* Übersicht -> planetenliste */
 /* \"Courier New\", Courier, mono; */

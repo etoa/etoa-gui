@@ -427,11 +427,6 @@ td.statsNav	{
   border:none;
 }
 
-#sector_map_table .sector_map_cell a {
-  border:none;
-  text-decoration:none;
-}
-
 #sector_map_table .sector_map_cell img.cell_number_spacer {
   width:40px;
   height:35px;
@@ -454,6 +449,8 @@ td.statsNav	{
 }
 
 #sector_map_table .sector_map_cell a {
+  border:none;
+  text-decoration:none;
   display:inline-block;
   border-left:1px dashed #555;
   border-bottom:1px dashed #555;

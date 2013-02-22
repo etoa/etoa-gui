@@ -570,6 +570,7 @@ img	{
 
 #sector_map_table {
   margin:5px auto;
+  min-width:550px;
 }
 
 #sector_map_table .sector_map_neighbour_nav {
@@ -587,11 +588,6 @@ img	{
   line-height:0;
   background:black;
   border:none;
-}
-
-#sector_map_table .sector_map_cell a {
-  border:none;
-  text-decoration:none;
 }
 
 #sector_map_table .sector_map_cell img.cell_number_spacer {
@@ -616,6 +612,8 @@ img	{
 }
 
 #sector_map_table .sector_map_cell a {
+  border:none;
+  text-decoration:none;
   display:inline-block;
   border-left:1px dashed #555;
   border-bottom:1px dashed #555;
@@ -632,6 +630,17 @@ img	{
   height:40px;
 }
 
+#sector_map_table .sector_map_cell a img.hovered, #sector_map_table .sector_map_cell a img:hover {
+  background:url('../../images/map/hovercell.png');
+}
+
+#sector_map_table .sector_map_cell a img.selected {
+  background:url('../../images/map/selectedcell.png');
+}
+
+#sector_map_table .sector_map_cell a img.owned {
+  background:url('../../images/map/owncell.png');
+}
 
 /* Resbox */
 
