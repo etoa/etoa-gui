@@ -188,6 +188,8 @@
 						`user_ghost`="0"
 					AND
 						`admin`=0
+          AND 
+            `user_hmode_from`>0
 					AND
 						`user_hmode_from`<"'.(time()-$cfg->p1('hmode_days')*86400).'" 
 					;');
