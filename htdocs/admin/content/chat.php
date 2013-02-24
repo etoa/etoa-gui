@@ -1,4 +1,5 @@
 <?PHP
+
 	//
 	// Updates
 	//
@@ -107,7 +108,7 @@
 				kick='Bannend by Admin'
 			WHERE
 				user_id='".$uid."'");
-			chatSystemMessage(get_user_nick($uid)." wurde gebannt!");
+			ChatManager::sendSystemMessage(get_user_nick($uid)." wurde gebannt!");
 		}
 		elseif(isset($_GET['unban']) && $_GET['unban'] > 0)
 		{
@@ -127,7 +128,7 @@
 				kick='Kicked by Admin'
 			WHERE
 				user_id='".$uid."'");
-			chatSystemMessage(get_user_nick($uid)." wurde gekickt!");
+			ChatManager::sendSystemMessage(get_user_nick($uid)." wurde gekickt!");
 		}
 		elseif(isset($_GET['del']) && $_GET['del'] > 0)
 		{

@@ -1245,8 +1245,7 @@ CREATE TABLE `chat` (
   `color` varchar(15) NOT NULL,
   `user_id` smallint(5) unsigned NOT NULL DEFAULT '0',
   `admin` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `private` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `channel` varchar(20) NOT NULL,
+  `channel_id` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `timestamp` (`timestamp`)
 ) ENGINE=MEMORY DEFAULT CHARSET=utf8;
@@ -1284,6 +1283,21 @@ LOCK TABLES `chat_banns` WRITE;
 /*!40000 ALTER TABLE `chat_banns` DISABLE KEYS */;
 /*!40000 ALTER TABLE `chat_banns` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `chat_channels`
+--
+
+CREATE TABLE IF NOT EXISTS `chat_channels` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `type` enum('public','alliance','private','') NOT NULL,
+  `permanent` int(11) NOT NULL,
+  `topic` varchar(255) NOT NULL,
+  `user_id` int(10) unsigned DEFAULT NULL,
+  `alliance_id` int(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 --
 -- Table structure for table `chat_log`

@@ -16,43 +16,101 @@ input,select	{
 input[type='button'],input[type='submit']	{
 	background:#223;	
 	font-weight:bold;
+  cursor:pointer;
 }
 
+#tabs {
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  bottom:45px;
+}
 
-#chatitems	{ padding:5px;	}
+.ui-widget-content { 
+  border: none;
+}
+
+.ui-widget-header { 
+  border-top: none;
+  border-left: none;
+  border-right: none; 
+}
+
+#chatitems	{ 
+  border-radius:2px;
+  padding:5px;	
+  margin-top:2px;	
+  background:black;
+  overflow:auto;
+  vertical-align:middle;
+}
+
+#chatitems img {
+  vertical-align:middle;
+  margin-right:3px;
+}
+
+#chatitems .systemMessage {
+  color:#777;
+}
+
+#chatitems .serverMessage {
+ color:#aaa;
+}
+
+#chatitems .adminMessage {
+ color:#ff8;
+ font-weight:bold;
+}
+
+#chatitems a {
+  color:#fff;
+}
 
 #userlist	{
-	background:#225;	
-	padding:5px;	
-	border:1px solid #fff;
-	margin:5px;
+  padding:5px 10px;
 }
 
-#chatchannelcontrols	{
-	padding:5px;
+#userlist a	{
+	color:#fff;
+}
+
+#loading	{ 
+	position:fixed;
+	left:0px;
+	right:0px;
+	bottom:35px;
+  height:16px;
+  background:black;
+  color:#fff;
+  overflow:hidden;
+  vertical-align:middle;
+}
+
+#loadingAnimation { 
+  display:inline-block;
+  width:20px;
+}
+
+#loadingAnimation img { 
+  vertical-align:middle;
+}
+
+#loading span { 
+  vertical-align:middle;
 }
 
 #chatinput	{
-	position:absolute;
+	position:fixed;
 	left:0px;
 	right:0px;
 	bottom:0px;
 	background:#225;
+  height:20px;
 	padding:5px 5px 10px 5px;
 }
 
-#channelbox	{
-	background:#223;
-	padding:4px;
-	color:#fff;
-	margin-top:10px;
-}
-
-#channelbox a	{
-	color:#fff;
-}
-
-
-#userlist a	{
-	color:#fff;
+#ctext {
+  width:250px;
 }

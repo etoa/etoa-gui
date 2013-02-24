@@ -15,9 +15,6 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/
 
-	include_once('encoding.inc.php');
-	
-
 	/**
 	* Loads missing classes
 	*
@@ -2619,7 +2616,7 @@ function imagecreatefromfile($path, $user_functions = false)
 
 	function mTT($title,$content)
 	{
-		return " onmouseover=\"showTT('".str_replace('"',"\'",$title)."','".replaceBR(str_replace('"',"\'",$content))."',1,event,this);\" onmouseout=\"hideTT();\" ";
+		return " onmouseover=\"showTT('".str_replace('"',"\'",$title)."','".StringUtils::replaceBR(str_replace('"',"\'",$content))."',1,event,this);\" onmouseout=\"hideTT();\" ";
 	}
 
 	function tt($content)
@@ -2627,33 +2624,6 @@ function imagecreatefromfile($path, $user_functions = false)
 		return " onmouseover=\"showTT('','".str_replace('"',"\'",$content)."',1,event,this);\" onmouseout=\"hideTT();\" ";
 	}
 
-	function chatSystemMessage($msg)
-	{
-		dbquery("INSERT INTO
-			chat
-		(
-			timestamp,
-			text
-		)
-		VALUES
-		(
-			".time().",
-			'".mysql_real_escape_string($msg)."'
-		)");	
-	}	
-	
-	// Double message bug fixed by river
-	function chatUserCleanUp()
-	{
-		$res = dbquery('SELECT user_id,nick FROM chat_users WHERE timestamp < '.(time()-180));		
-		if (mysql_num_rows($res)>0)
-		{
-			$arr = mysql_fetch_assoc($res);
-			chatSystemMessage($arr['nick'].' verlässt den Chat (Timeout).');
-			dbquery('DELETE FROM chat_users WHERE user_id = '.$arr['user_id'].';');		
-		}
-	}
-	
 	function checkDaemonRunning($pidfile)
 	{
 		if ($fh = @fopen($pidfile,"r"))

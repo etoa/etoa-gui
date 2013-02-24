@@ -22,6 +22,7 @@
     <category id="22">Entwickler-Optionen</category>	
     <category id="23">Kryptocenter</category>
     <category id="24">Texte</category>
+    <category id="25">Chat</category>
   </categories>
   <items>
     <item name="roundname" cat="1" base="yes">
@@ -755,5 +756,15 @@ Ich w&#xFC;nsche Euch nun viel Erfolg in der Galaxie von Andromeda. M&#xF6;gen E
 Anmerkung: Eine Kopie dieser Nachricht wird in Eurer Nachrichten-Box hinterlegt. Mit dem Schliessen dieser Nachricht leuchtet das Briefsymbol am oberen Bildschirmrand gr&#xFC;n. Klickt darauf, um die Nachrichtenbox anzuzeigen.</v>
     </item>
 
+    <item name="chat_recent_messages" cat="25">
+      <v comment="Anzahl aktuelle Chat Nachrichten" type="text">200</v>
+    </item>
+    <item name="chat_user_timeout" cat="25">
+      <v comment="Chat User Timeout in Sekunden" type="text">180</v>
+    </item>    
+    <item name="chat_welcome_message" cat="25">
+      <v comment="Chat Willkommensnachricht" type="textarea">Hallo %nick%, willkommen im EtoA-Chat. Bitte beachte, dass wir Spam nicht dulden und eine gepflegte Ausdrucksweise erwarten. Bei Verstössen gegen diese Regeln werden wir mit Banns und/oder Accountsperrungen vorgehen!</v>
+    </item>
+    
   </items>
 </config>

@@ -17,7 +17,6 @@ function loadChat($minId)
 				text,
 				color,
 				user_id,
-				private,
 				admin
 			FROM
 				chat
@@ -29,13 +28,13 @@ function loadChat($minId)
 			$out='';
 			if (mysql_num_rows($res)>0)
 			{
+      
 				while ($arr=mysql_fetch_assoc($res))
 				{
 					if ($arr['admin']==1)
 						$adminstr = "<img src=\"../images/star_y.gif\" />";
 					else
 						$adminstr = "";
-					if ($arr['private']==0 || $s['user_id']==$arr['user_id'])
 					if ($arr['user_id']==0)
 					{
 						$out.= "<span style=\"color:#aaa\">";
@@ -48,8 +47,9 @@ function loadChat($minId)
 						$out.= "$adminstr&lt;<a style=\"color:".$arr['color']."\" href=\"?page=user&amp;sub=edit&amp;id=".$arr['user_id']."\">".$arr['nick']."</a> | ".date("H:i",$arr['timestamp'])."&gt; ".stripslashes($arr['text']);
 						$out.= "</span><br/>";
 					}
-					else
+					else {
 						$out.= "$adminstr&lt;<a style=\"color:#fff\" href=\"?page=user&amp;sub=edit&amp;id=".$arr['user_id']."\">".$arr['nick']."</a> | ".date("H:i",$arr['timestamp'])."&gt; ".stripslashes($arr['text'])."<br/>";
+          }
 					$lastid=$arr['id'];
 				}
 				$ajax->append("chatitems","innerHTML",$out);

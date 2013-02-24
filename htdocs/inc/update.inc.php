@@ -208,12 +208,8 @@
 		$log.= "$nr Krieg und Frieden aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";		
 		
 		// Chat-Cleanup
-		$res = dbquery("SELECT id FROM chat ORDER BY id DESC LIMIT 200,1");
-		if (mysql_num_rows($res)>0)
-		{
-			$arr=mysql_fetch_row($res);
-			dbquery("DELETE FROM chat WHERE id < ".$arr[0]);		
-		}
+		$log.= "Alte Chat Nachrichten löschen...\n";
+    ChatManager::cleanUpMessages();
 
 		// Userstats
 		UserStats::generateImage(USERSTATS_OUTFILE);
@@ -255,7 +251,7 @@
 		check_missiles();
       
 		$log.= "Inaktive Chat-User löschen...\n";
-		chatUserCleanUp();
+		ChatManager::cleanUpUsers();
 
 		// Process log messages
 		$nr = Log::processQueue();
