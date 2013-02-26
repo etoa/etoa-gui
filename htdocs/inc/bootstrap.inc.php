@@ -46,7 +46,7 @@
 
   // Load specific admin functions
   if (ADMIN_MODE) {
-    require("inc/admin_functions.inc.php");
+    require(RELATIVE_ROOT."admin/inc/admin_functions.inc.php");
   }
   
 	// Include db config
