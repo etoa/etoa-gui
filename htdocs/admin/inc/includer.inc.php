@@ -20,9 +20,6 @@ $render_starttime=$render_time[1]+$render_time[0];
 define('IMAGE_PATH',"../images/imagepacks/Discovery");
 define('IMAGE_EXT',"png");
 
-// Load specific admin functions
-require("inc/admin_functions.inc.php");
-
 // Feste Konstanten
 
 define('SESSION_NAME',"adminsession");

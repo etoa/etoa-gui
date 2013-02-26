@@ -44,6 +44,11 @@
 	// Load functions
 	require_once(RELATIVE_ROOT."inc/functions.inc.php");
 
+  // Load specific admin functions
+  if (ADMIN_MODE) {
+    require("inc/admin_functions.inc.php");
+  }
+  
 	// Include db config
 	if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 	{
