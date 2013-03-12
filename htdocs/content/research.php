@@ -73,7 +73,10 @@ if (isset($cp)) {
 		$builing_something=false;
 		while ($tarr = mysql_fetch_array($tres)) {
 			$techlist[$tarr['techlist_tech_id']]=$tarr;
-			if ($tarr['techlist_build_type']>2 && $tarr['techlist_entity_id'] == $cp->id) {
+            // Check, ob schon eine Technik geforscht wird
+            // BUGFIX: this is tech, NO check for same planet,
+            // because only one tech at the same time per user
+			if ($tarr['techlist_build_type']>2) {
 				$builing_something=true;
 			}
 		}
@@ -93,8 +96,14 @@ if (isset($cp)) {
 				error_msg('Arbeiter konnten nicht zugeteilt werden!');
 			}
 		}
-		// reload buildlist in case the number of workers has changed.
+		// reload buildlist and techlist in case the number of workers has changed.
+        // re-define constants dependent on these objects
 		$bl = new BuildList($cp->id(),$cu->id);
+		define('CURRENT_LAB_LEVEL',$bl->getLevel(TECH_BUILDING_ID));
+
+		$tl = new TechList($cu->id);
+		define("GEN_TECH_LEVEL",$tl->getLevel(GEN_TECH_ID));
+		$minBuildTimeFactor = (0.1-(GEN_TECH_LEVEL/100));
 
 		// People working in the tech building.
 		$peopleWorking = (
@@ -320,7 +329,7 @@ if (isset($cp)) {
 						$end_time = $techlist[$arr['tech_id']]['techlist_build_end_time'];
 						$planet_id = $techlist[$arr['tech_id']]['techlist_entity_id'];
 					}
-					// Gebäude wurde noch nicht gebaut. Es werden Default Werte vergeben
+					// Tech wurde noch nicht erforscht. Es werden Default Werte vergeben
 					else
 					{
 						$built = false;
@@ -450,12 +459,12 @@ if (isset($cp)) {
 								}
 								else
 								{
-									echo "<i>Bauauftrag kann nicht gestartet werden, zuwenig Rohstoffe vorhanden!</i><br/><br/>";
+									echo "<i>Forschung kann nicht gestartet werden, zuwenig Rohstoffe vorhanden!</i><br/><br/>";
 								}
 						}
 						else
 						{
-							echo "<i>Bauauftrag kann nicht gestartet werden, es wird bereits an einem Geb&auml;ude gearbeitet!</i><br/><br/>";
+							echo "<i>Forschung kann nicht gestartet werden, es wird bereits an einer Technologie geforscht!</i><br/><br/>";
 						}
 					}
 	
@@ -476,7 +485,7 @@ if (isset($cp)) {
 								techlist_tech_id='".$arr['tech_id']."'
 								AND techlist_user_id='".$cu->id."';");
 	
-							//Rohstoffe vom Planeten abziehen und aktualisieren
+							//Rohstoffe zurückgeben und aktualisieren
 							$cp->changeRes($bc['metal']*$fac,$bc['crystal']*$fac,$bc['plastic']*$fac,$bc['fuel']*$fac,$bc['food']*$fac);
 							$b_status=0;
 							$builing_something=false;
@@ -558,7 +567,7 @@ if (isset($cp)) {
 								$requirements_passed = false;
 							}
 						}
-					}								
+					}
 					if (isset($b_req[$bid]['t']) && count($b_req[$bid]['t'])>0)
 					{
 						foreach ($b_req[$bid]['t'] as $id => $level)
