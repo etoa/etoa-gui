@@ -28,7 +28,8 @@ class BattleReport extends Report
 		'spyattackfailed'=>'Spionageangriff erfolglos',
 		'battle'=>'Kampfbericht',
 		'battlefailed'=>'Kampfbericht (Abgebrochen)',
-		'battleban'=>'Kampfbericht (Abgebrochen)'
+		'battleban'=>'Kampfbericht (Abgebrochen)',
+		'alliancefailed' => 'Allianzteilflotte abgebrochen'
 	);
 
 	protected $subType = 'other';
@@ -139,6 +140,7 @@ class BattleReport extends Report
 	function __toString()
 	{
 		global $resNames;
+		$cfg = Config::getInstance();
 
 		ob_start();
 		$ent1 = Entity::createFactoryById($this->entity1Id);
@@ -652,6 +654,13 @@ class BattleReport extends Report
 					</tr>
 				</table>';
 				echo 'Der Kampf wurde abgebrochen, da momentan gerade eine Kampfsperre aktiv ist!';
+				break;
+			case 'alliancefailed':
+				echo 'Deine Flotte vom Planeten '.$ent2->detailLink().
+					' wollte sich einem Allianzangriff auf den Planeten '.$ent1->detailLink().
+					' anschliessen. Die Flotte &uuml;berstieg aber die Limitierung durch das'.
+					' intergalaktische Kriegsrecht auf '.$cfg->p1('alliance_fleets_max_players').
+					' Angreifer, weswegen die Piloten dem Kampf nur zuschauen konnten.';
 				break;
 			default:
 				dump($this);
