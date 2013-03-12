@@ -1056,6 +1056,8 @@
 		return nicks;
 	}
 
+	// this function is required to return the fleet leader first!
+	// the returned string begins and ends with ','
 	std::string Fleet::getUserIds() {
 		std::string ids = "," + etoa::d2s(this->getUserId()) + ",";
 		if (fleets.size()) {
@@ -1232,6 +1234,80 @@
 				}
 			}
 		}
+	}
+	
+	// this function does not check whether there is a maximum configured, this should be done by the calling function
+	void Fleet::sendHomeExceedingAllianceFleets(unsigned int maxFleetUsers, int targetUserId, Log* actionLog)
+	{
+	    if (fleets.size())
+	    {
+		// get vector of all user ids
+		std::string ulist = this->getUserIds();
+		std::vector<int> uids;
+		int uid = 0;
+		size_t found = ulist.find_first_of(",");
+		// the string should at least contain one "," - this statement
+		// should never be false
+		if(found != std::string::npos)
+		{
+		    // remove leading "," from string
+		    ulist = ulist.substr(found+1);
+		    // as long as there is another "," there is another user id in the string
+		    // because getUserIds returns a "," at the end of the string
+		    while ((found = ulist.find_first_of(",")) != std::string::npos)
+		    {
+			// add userid from string to vector if not =0
+			uid = (int)etoa::s2d(ulist.substr(0,found));
+			if(uid > 0)
+			{
+			    uids.push_back(uid);
+			}
+			// remove id string plus next "," from string
+			ulist = ulist.substr(found+1);
+		    }
+		}
+		// iterate over users and remove (beginning with the last one) until number fits
+		// maxFleetUsers is inclusive the leader fleet
+		while(uids.size() > maxFleetUsers)
+		{
+		    std::vector<Fleet*>::iterator it;
+		    Fleet * f = NULL;
+		    uid = uids.back();
+		    // NEVER remove fleet leader!
+		    assert(uid != this->getLeaderId());
+		    uids.pop_back();
+		    // iterate over fleets and remove every one that belongs to the current user
+		    for(it = fleets.begin() ; it < fleets.end(); it++ )
+		    {
+			if((*it)->getUserId() == uid)
+			{
+			    f = (*it);
+			    fleets.erase(it);
+			    // send a report to the current user that his fleet is sent home
+			    BattleReport * report = new BattleReport
+			    (
+				uid,
+				targetUserId,
+				f->getEntityTo(),
+				f->getEntityFrom(),
+				f->getLandtime(),
+				f->getId()
+			    );
+			    report->setSubtype("alliancefailed");
+			    report->setResult(0);
+			    actionLog->addText("Allianceattack: Fleet removed");
+			    
+			    // send fleet back home
+			    f->setReturn();
+			    // safely remove objects
+			    delete f;
+			    f = NULL;
+			    delete report;
+			    report = NULL;
+			}
+		    }
+		}
+	    }
 	}
 
 	void Fleet::loadShips() {

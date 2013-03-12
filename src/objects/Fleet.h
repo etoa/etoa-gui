@@ -14,11 +14,13 @@
 #include "../util/Functions.h"
 #include "../config/ConfigHandler.h"
 #include "../data/DataHandler.h"
+#include "../reports/BattleReport.h"
 
 #include "Message.h"
 #include "Object.h"
 #include "ObjectFactory.h"
 #include "User.h"
+#include "Log.h"
 
 /**
 * Fleet class
@@ -174,6 +176,7 @@ public:
 	void loadShips();
 	void recalcShips();
 	void setPercentSurvive(double percentage, bool total=true);
+	void sendHomeExceedingAllianceFleets(unsigned int maxFleetUsers, int targetUserId, Log* actionLog);
 	
 	void setReturn();
 	void setMain();
