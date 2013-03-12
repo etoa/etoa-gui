@@ -2,6 +2,11 @@
 
 var rightArrowKey = 39;
 var leftArrowKey = 37;
+
+//Fix for Bug in Webkit and IE (missing arrow keys support)
+var rightArrowKeyAlternative = 50;
+var leftArrowKeyAlternative = 49;
+
 var spaceBarKey = 32;
 var enterKey = 13;
 
@@ -43,7 +48,9 @@ if(window.enableKeybinds && $)
 {
     // catch undefined strings here, the keypress handler doesn't.
     keys[rightArrowKey]     = window.nextEntityUrl || "#";
+    keys[rightArrowKeyAlternative] = window.nextEntityUrl || "#";
     keys[leftArrowKey]      = window.prevEntityUrl || "#";
+    keys[leftArrowKeyAlternative] = window.prevEntityUrl || "#";
     //keys[enterKey]          = "chatframe.php"; // this results in a bug (multiple chats open)
     keys[spaceBarKey]       = "?page=overview";
     
@@ -61,6 +68,7 @@ if(window.enableKeybinds && $)
     keys[97]  /* 'a' */     = "?page=alliance";
     keys[118] /* 'v' */     = "?page=bookmarks";
     keys[108] /* 'l' */     = "?page=fleets";
+    keys[112] /* 'p' */     = "?page=economy";
 
     $(document).ready(keybindsInit);
 }
