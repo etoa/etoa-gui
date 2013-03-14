@@ -45,8 +45,8 @@ function poll(doLoop)
     hideLoading();
    
   }, function(err){ localMsg(
-    'Verbindung zum Server fehlgeschlagen ('+err+'). M&ouml;glicherweise' +
-    ' ist der Server &uuml;berlastet. Versuche den Chat neu zu laden.'
+    'Verbindung zum Server fehlgeschlagen ('+err+'). Möglicherweise' +
+    ' ist der Server überlastet. Versuche den Chat neu zu laden.'
   )});
 }
 
