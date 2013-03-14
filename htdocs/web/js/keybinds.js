@@ -22,7 +22,7 @@ function keybindsInit() {
     $('body').keypress(function(e)
     {
         // disable keybinds if inside input or textarea
-        if(!($(e.target).prop('tagName') === 'INPUT' || $(e.target).prop('tagName') === 'TEXTAREA'))
+        if(!($(e.target).prop('tagName') === 'INPUT' || $(e.target).prop('tagName') === 'TEXTAREA' || $(e.target).prop('tagName') === 'SELECT'))
         {
             // check whether keybinds are enabled
             if(!e.metaKey && !e.shiftKey && !e.ctrlKey && !e.altKey)
