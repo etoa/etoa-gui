@@ -1,4 +1,4 @@
-﻿<?PHP
+<?PHP
 class ChatPollJsonResponder extends JsonResponder 
 {
   function getRequiredParams() {

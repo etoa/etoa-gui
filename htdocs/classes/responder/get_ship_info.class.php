@@ -1,4 +1,4 @@
-﻿<?PHP
+<?PHP
 class GetShipInfoJsonResponder extends JsonResponder 
 {
   function getRequiredParams() {

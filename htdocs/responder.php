@@ -1,4 +1,4 @@
-﻿<?PHP
+<?PHP
 //////////////////////////////////////////////////////
 // The Andromeda-Project-Browsergame                //
 // Ein Massive-Multiplayer-Online-Spiel             //
