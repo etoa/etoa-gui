@@ -127,6 +127,8 @@ function update(out, lastId)
     }
     else
     {
+      // check whether the user has scrolled up, avoid auto-scrolling in that case
+      var doScroll = ($('#chatitems').prop('scrollHeight')-$('#chatitems').outerHeight() == $('#chatitems').prop('scrollTop'));
       // appends the messages to the chat window
       $.each(out, function(key, val) {
         var elem = $('<div>');
@@ -203,9 +205,10 @@ function update(out, lastId)
         localMsg(msgStack.pop());
       }
       
+      // reset error message
       msgFail('');
       
-      if (minId != lastId) {
+      if (doScroll && minId != lastId) {
         scrollDown();
       }
       minId = lastId;
