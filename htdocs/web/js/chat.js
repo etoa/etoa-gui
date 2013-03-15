@@ -10,6 +10,8 @@ var msgStack=new Array();
 var msgHistory = new Array();
 var msgHistoryIdx = -1;
 
+var chatPollTimeout = 0;
+
 /* Basic chat and server communication functionality */
 
 // polls for new chat messages every second
@@ -39,7 +41,7 @@ function poll(doLoop)
     }   
     
     if (doLoop) {
-      setTimeout(function(){poll(true);},1000);
+      chatPollTimeout = setTimeout(function(){poll(true);},1000);
     }
         
     hideLoading();
@@ -326,7 +328,7 @@ function sendChat()
     }
     msgHistoryIdx = -1;
 
-    ajaxRequest('chat_push', {ctext:ctext}, 
+    ajaxRequest('chat_push', {"ctext":ctext}, 
       function(data) {  
   
         if (data.cmd) {    
@@ -342,6 +344,8 @@ function sendChat()
           else
             msgFail('Serverfehler: notProtocol');
         } else {
+          //poll, but only once, to insta-load pushed text
+          //otherwise the user won't get immediate feedback
           poll(false);
         }
         $('#ctext').val('').focus();
