@@ -71,6 +71,7 @@ class ChatPollJsonResponder extends JsonResponder
         );        
       }
       
+      // User exists, not kicked, not banned.
       ChatManager::updateUserEntry($_SESSION['user_id'], $_SESSION['user_nick']);
 
       // Query new messages

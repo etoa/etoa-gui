@@ -117,6 +117,28 @@ class ChatManager {
   }
   
   /**
+   * Gets the number of online users in the chat
+   */
+  static function getUserOnlineNumber()
+  {
+	$res = dbquery('
+	SELECT
+	  COUNT(`user_id`)
+	FROM
+	  `chat_users`
+	;');
+	$arr = mysql_fetch_array($res);
+	if(is_integer($arr[0]))
+	{
+		return $arr[0];
+	}
+	else
+	{
+		return 0;
+	}
+  }
+  
+  /**
   * Gets a list of users currently being online in the chat
   */
   static function getUserOnlineList() {
