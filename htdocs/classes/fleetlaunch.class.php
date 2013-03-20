@@ -802,12 +802,21 @@
 	
 					// Permission checks
 					if (
-					(($this->sourceEntity->id() == $this->targetEntity->id() && $ai->allowSourceEntity()) || 
-					($this->sourceEntity->ownerId() == $this->targetEntity->ownerId() && $this->sourceEntity->id() != $this->targetEntity->id() && $ai->allowOwnEntities()) ||
-					($this->sourceEntity->ownerId() != $this->targetEntity->ownerId() && $this->targetEntity->ownerId()>0 && $ai->allowPlayerEntities()) ||
-					($this->targetEntity->ownerId() == 0 && $ai->allowNpcEntities()) || 
-					($ai->allowAllianceEntities && $this->sourceEntity->ownerAlliance()==$this->targetEntity->ownerAlliance() && (($this->sourceEntity->ownerAlliance() > 0 && $this->checkDefNum()) || $this->sourceEntity->ownerId() == $this->targetEntity->ownerId()))) && // Allow support action only if both users are in the same alliance or source and target user are the same
-					(!$ai->allianceAction || $this->getAllianceSlots()>0 || $allowed) //this last check, checks for every AllianceAction support, alliance if there is a empty slot
+						// Action is allowed if:
+						(
+							// * Source and target are the same and the action allows that
+							($this->sourceEntity->id() == $this->targetEntity->id() && $ai->allowSourceEntity()) ||
+							// * source and target are different but belong to the same user and the action is possible for the same user (e.g. ok for transport, not ok for attack)
+							($this->sourceEntity->ownerId() == $this->targetEntity->ownerId() && $this->sourceEntity->id() != $this->targetEntity->id() && $ai->allowOwnEntities()) ||
+							// * source and target are from different users and target belongs to an user (so it's not a nebula for example) and the action allows any other player's planet as target
+							($this->sourceEntity->ownerId() != $this->targetEntity->ownerId() && $this->targetEntity->ownerId()>0 && $ai->allowPlayerEntities()) ||
+							// * target doesn't belong to an user and action allows that (e.g. crystal collection from nebulas)
+							($this->targetEntity->ownerId() == 0 && $ai->allowNpcEntities()) ||
+							// * action allows only same-alliance users and source and target user belong to the same alliance (alliance >0 -> they have an alliance) OR same user for no alliance
+							//   this is used only for support, so in case different user there is also a check whether there are available support slots on the planet (checkDefNum)
+							($ai->allowAllianceEntities && $this->sourceEntity->ownerAlliance()==$this->targetEntity->ownerAlliance() && (($this->sourceEntity->ownerAlliance() > 0 && $this->checkDefNum()) || $this->sourceEntity->ownerId() == $this->targetEntity->ownerId()))
+						) &&
+						(!$ai->allianceAction || $this->getAllianceSlots()>0 || $allowed) //this last check, checks for every AllianceAction support, alliance if there is a empty slot
 					)
 					{
 						//Check for exclusive Actions
@@ -1270,17 +1279,29 @@
 				GROUP BY
 					`user_id`
 			;');
+			// user id is guaranteed to not be the target owner, so the number is reduced
+			// by one, because we always have one slot reserved for the planet's owner
 			if(mysql_num_rows($res) < ($cfg->p1('alliance_fleets_max_players') - 1))
 			{
 				return true;
 			}
+			// if the maximum of user slots is already reached, we check whether there
+			// is already a support fleet from the same user
 			while($arr = mysql_fetch_assoc($res))
 			{
+				// if the user already supports this planet with one fleet, he can
+				// send even more fleets to support the same planet
 				if($this->ownerId == $arr['user_id'])
 				{
 					return true;
 				}
 			}
+			// Meldung ausgeben, dass Support nicht möglich ist
+			// Dies wird zufälligerweise gerade am richtigen Ort
+			// angezeigt, sollte wenn möglich woanders ausgegeben werden.
+			echo "Support nicht m&ouml;glich, die Maximalzahl von ".
+				$cfg->p1('alliance_fleets_max_players').
+				" Verteidigern ist auf diesem Planet bereits erreicht<br />";
 			return false;
 		}
 		
