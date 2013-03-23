@@ -1030,13 +1030,24 @@
 	}
 
 	void Fleet::setSupport() {
+		// landtime == time when fleet first arrives on target planet
+		// launchtime == time when fleet took of start planet
+		// nextActionTime == supportTime (duration in seconds)
+		
+		// save flight duration in temp
 		int temp = this->getLandtime() - this->getLaunchtime();
+		// launchtime is now time when fleet arrived on target entity
 		this->launchtime = this->getLandtime();
+		// landtime is now time when fleet leaves target entity again
 		this->landtime = this->getLandtime() + this->getNextactiontime();
+		// status == 3 means fleet is supporting planet
 		this->status = 3;
+		// nextactiontime is duration of flight back to home planet
 		this->nextactiontime = temp;
-
+		
+		// nextid is now home planet
 		this->nextId = this->entityFrom;
+		// entityfrom is now supported planet
 		this->entityFrom = this->entityTo;
 	}
 
@@ -1308,6 +1319,61 @@
 		    }
 		}
 	    }
+	}
+	
+	// returns true if there are still slots available for this fleet
+	bool Fleet::checkSupportSlots(unsigned int maxSupportSlots, int targetEntityId, int targetUserId)
+	{
+	    My &my = My::instance();
+	    mysqlpp::Connection *con = my.get();
+	    mysqlpp::Query query = con->query();
+	    
+	    // In contrast to the gui query, don't return fleets with status 0, because these are also
+	    // still on the way to the target and could be rejected on arrival.
+	    // Also a check with status=0  would return the current fleet (this) as well
+	    query
+	    << "SELECT "
+	    << "	`user_id` "
+	    << "FROM"
+	    << "	`fleet` "
+	    << "WHERE"
+	    << "	`action`='support' "
+	    << "AND"
+	    << "	status=3 "
+	    << "AND"
+	    << "	`entity_to` = '" << targetEntityId << "' "
+	    << "AND"
+	    << "	`user_id` != '" << targetUserId << "' "
+	    << "GROUP BY"
+	    << "	`user_id` "
+	    << ";";
+	    RESULT_TYPE fsRes = query.store();
+	    query.reset();
+	    
+	    if (fsRes)
+	    {
+		// user id is guaranteed to not be the target owner, so the number is reduced
+		// by one, because we always have one slot reserved for the planet's owner
+		size_t fsSize = fsRes.size();
+		if ((unsigned int)fsSize < (maxSupportSlots - 1))
+		{
+		    return true;
+		}
+		// if the maximum of user slots is already reached, we check whether there
+		// is already a support fleet from the same user
+		mysqlpp::Row fsRow;
+		for (size_t i=0; i<fsSize; i++)
+		{
+		    fsRow = fsRes.at(i);
+		    // if the user already supports this planet with one fleet, he can
+		    // send even more fleets to support the same planet
+		    if(this->userId == (int)fsRow["user_id"])
+		    {
+			return true;
+		    }
+		}
+	    }
+	    return false;
 	}
 
 	void Fleet::loadShips() {

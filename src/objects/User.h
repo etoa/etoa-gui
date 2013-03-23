@@ -69,6 +69,11 @@ class User
 		
 		std::string getTechString();
 		
+		inline int getUserId() const
+		{
+		    return this->userId;
+		}
+		
 	private:
 		int userId;
 		int allianceId;

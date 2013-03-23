@@ -190,6 +190,7 @@ public:
 	
 	bool actionIsAllowed();
 	void setShipsChanged();
+	bool checkSupportSlots(unsigned int maxSupportSlots, int targetEntityId, int targetUserId);
 	
 	std::string getLogResStart();
 	std::string getLogResEnd();
