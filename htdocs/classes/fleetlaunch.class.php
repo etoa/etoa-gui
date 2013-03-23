@@ -775,6 +775,7 @@
 		function getAllowedActions()
 		{
 			$cfg = Config::getInstance();
+			$this->error = '';
 			
 			//$allowed =  ($this->sFleets && count($this->sFleets) && ( $this->leaderId>0 || in_array($this->targetEntity->id,$this->sFleets))) ? true : false;
 			$allowed = true;
@@ -798,6 +799,9 @@
 				// Test each possible action
 				foreach ($actions as $i)
 				{
+					// variable to check whether a support overflow error message should be printed
+					$supportPossible = true;
+					
 					$ai = FleetAction::createFactory($i);
 	
 					// Permission checks
@@ -814,7 +818,7 @@
 							($this->targetEntity->ownerId() == 0 && $ai->allowNpcEntities()) ||
 							// * action allows only same-alliance users and source and target user belong to the same alliance (alliance >0 -> they have an alliance) OR same user for no alliance
 							//   this is used only for support, so in case different user there is also a check whether there are available support slots on the planet (checkDefNum)
-							($ai->allowAllianceEntities && $this->sourceEntity->ownerAlliance()==$this->targetEntity->ownerAlliance() && (($this->sourceEntity->ownerAlliance() > 0 && $this->checkDefNum()) || $this->sourceEntity->ownerId() == $this->targetEntity->ownerId()))
+							($ai->allowAllianceEntities && $this->sourceEntity->ownerAlliance()==$this->targetEntity->ownerAlliance() && ($this->sourceEntity->ownerId() == $this->targetEntity->ownerId() || ($this->sourceEntity->ownerAlliance() > 0 && ($supportPossible = $this->checkDefNum()))))
 						) &&
 						(!$ai->allianceAction || $this->getAllianceSlots()>0 || $allowed) //this last check, checks for every AllianceAction support, alliance if there is a empty slot
 					)
@@ -862,7 +866,7 @@
 												}
 												else
 												{
-													$this->error = "Der Besitzer des Ziels steht unter Anfängerschutz!  Die Punkte des Users müssen zwischen ".(USER_ATTACK_PERCENTAGE*100)."% und ".(100/USER_ATTACK_PERCENTAGE)."% von deinen Punkten liegen";
+													$this->error .= "Der Besitzer des Ziels steht unter Anfängerschutz!  Die Punkte des Users müssen zwischen ".(USER_ATTACK_PERCENTAGE*100)."% und ".(100/USER_ATTACK_PERCENTAGE)."% von deinen Punkten liegen<br />";
 												}
 											} // if ($ai->allowActivePlayerEntities() || ($this->targetEntity->owner->isInactiv() && !$ai->allowActivePlayerEntities()))
 										} // if (!$battleban)
@@ -874,7 +878,7 @@
 								} // if (!$this->targetEntity->ownerHoliday() || $ai->allowOnHoliday())
 								else
 								{
-									$this->error = "Der Besitzer des Zielst ist im Urlaub; viele Aktionen sind deshalb nicht möglich!";
+									$this->error .= "Der Besitzer des Ziels ist im Urlaub; viele Aktionen sind deshalb nicht möglich!<br />";
 								}
 							} // if($this->targetEntity->ownerId()>0)
 							else
@@ -883,6 +887,15 @@
 							}
 						} // if ($exclusiceAllowed)
 					} // Permission checks
+					// print error message if support slots check failed
+					if(!$supportPossible)
+					{
+						// Meldung ausgeben, dass Support nicht möglich ist
+						$this->error .= 'Support nicht m&ouml;glich, die Maximalzahl von '.
+							$cfg->p1('alliance_fleets_max_players').
+							' Verteidigern ist auf diesem Planet bereits erreicht.<br />';
+						$supportPossible = true;
+					}
 				} // foreach ($actions as $i)
 			} // else Flottensperre
 			return $actionObjs;			
@@ -1296,12 +1309,6 @@
 					return true;
 				}
 			}
-			// Meldung ausgeben, dass Support nicht möglich ist
-			// Dies wird zufälligerweise gerade am richtigen Ort
-			// angezeigt, sollte wenn möglich woanders ausgegeben werden.
-			echo "Support nicht m&ouml;glich, die Maximalzahl von ".
-				$cfg->p1('alliance_fleets_max_players').
-				" Verteidigern ist auf diesem Planet bereits erreicht<br />";
 			return false;
 		}
 		
