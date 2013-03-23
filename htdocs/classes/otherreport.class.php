@@ -27,6 +27,7 @@ class OtherReport extends Report
 		'supportreturn'=>'Supportflotte R&uuml;ckflug',
 		'support'=>'Supportflotte angekommen',
 		'supportfailed'=>'Supportflug fehlgeschlagen"',
+		'supportoverflow' => 'Support nicht m&ouml;glich',
 		'transport'=>'Transport angekommen',
 		'collectdebris'=>'Tr&uuml;mmer gesammelt',
 		'collectdebrisfailed'=>'Tr&uuml;mmersammeln gescheitert',
@@ -85,6 +86,8 @@ class OtherReport extends Report
 	function __toString()
 	{
 		global $resNames;
+
+		$cfg = Config::getInstance();
 
 		ob_start();
 		$ent1 = Entity::createFactoryById($this->entity1Id);
@@ -409,6 +412,17 @@ class OtherReport extends Report
 				$action = FleetAction::createFactory($this->actionCode);
 				echo '<strong>FLOTTE LANDEN FEHLGESCHLAGEN</strong><br /><br />
 					Eine eurer Flotten konnte nicht auf ihrem Ziel landen!';
+				echo '<strong>Ziel: </strong>'.$ent1->detailLink().'<br />';
+				echo '<strong>Start: </strong>'.$ent2->detailLink().'<br />';
+				echo '<strong>Ankunft: </strong>'.df($this->timestamp).'<br />';
+				echo '<strong>Auftrag: </strong>'.$action->name().' ['.FleetAction::$statusCode[$this->status].']<br />';
+				break;
+			case 'supportoverflow':
+					$action = FleetAction::createFactory($this->actionCode);
+					echo '<strong>Kein Supportplatz auf dem Zielplaneten vorhanden</strong><br /><br />
+					Eine Supportflotte konnte keinen Platz mehr auf dem Zielplaneten finden.<br />
+					Der Planet wurde bereits von '.$cfg->p1('alliance_fleets_max_players').
+					' Imperatoren verteidigt, so dass Eure Flotte wieder umkehren musste. <br />';
 				echo '<strong>Ziel: </strong>'.$ent1->detailLink().'<br />';
 				echo '<strong>Start: </strong>'.$ent2->detailLink().'<br />';
 				echo '<strong>Ankunft: </strong>'.df($this->timestamp).'<br />';
