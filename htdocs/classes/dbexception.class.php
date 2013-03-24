@@ -4,6 +4,7 @@
 		public function __toString()
 		{
 			global $cu;
+			$cfg = Config::getInstance();
 
 			$str = "Datenbankfehler\nDatei: ".parent::getFile().", Zeile: ".parent::getLine()."\nAbfrage:".parent::getMessage()."\nFehlermeldung: ".mysql_error()."\nStack-Trace: ".parent::getTraceAsString()."";
 
@@ -41,8 +42,7 @@
 				<b>Fehlermeldung:</b> ".nl2br(mysql_error())."<br/>				";
 				$str.="<div style=\"text-align:left;border-top:1px solid #000;\">
 				<b>Stack-Trace:</b><br/>".nl2br(parent::getTraceAsString())."<br/>";
-				if (defined('BUGREPORT_URL'))
-					$str.="<a href=\"".BUGREPORT_URL."\" target=\"_blank\">Fehler melden</a>";
+				$str.="<a href=\"".$cfg->value('url_bugs')."\" target=\"_blank\">Fehler melden</a>";
 				$str.="</div>
 				<br/>
 				<a href=\"http://dev.etoa.ch\" target=\"_blank\">Fehler melden</a>

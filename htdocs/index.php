@@ -314,7 +314,7 @@
 		$tpl->assign("helpcenterUrl",HELPCENTER_URL);
 		$tpl->assign("helpcenterOnclick",HELPCENTER_ONCLICK);
 		$tpl->assign("devcenterOnclick",DEVCENTER_ONCLICK);
-		$tpl->assign("bugreportUrl",BUGREPORT_URL);
+		$tpl->assign("bugreportUrl",$cfg->value('url_bugs'));
 		
 		
 		$tpl->assign("chatUrl",CHAT_URL);
