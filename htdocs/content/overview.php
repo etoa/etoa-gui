@@ -586,9 +586,11 @@
 	//Abstand
 	echo "<br><br><br><br><br><br><br><br>";
 	echo "<center>";
-	echo "<div align=\"center\" style=\"position:relative; left:0px; top:0px; width:".$absolute_width."px; height:".$absolute_height."px; vertical-align:middle;\">";
+	echo "<div align=\"center\" style=\"position:relative; left:0px; top:0px; width:".$absolute_width."px; height:".$absolute_height."px; vertical-align:middle;\">
+	";
 
-	echo "<div align=\"center\" style=\"position:relative; left:0px; top:0px; width:".$d_planets."px; height:".$d_planets."px; text-align:center; vertical-align:middle;\">";
+	echo "<div align=\"center\" style=\"position:relative; left:0px; top:0px; width:".$d_planets."px; height:".$d_planets."px; text-align:center; vertical-align:middle;\" id=\"planet_circle_inner_container\">
+	";
 
     //Liest alle Planeten des Besitzers aus und gibt benötigte infos
     $psql = "
@@ -776,14 +778,16 @@
         $defense_name[$arr_planet['id']] = "";
       }
 	
-			$planet_info = "<b>".stripcslashes($planet_name)."</b><br>".$building_name." ".$building_level."";
+			$planet_info = "<b class=\"planet_name\">".htmlentities(stripcslashes($planet_name),ENT_QUOTES)."</b><br>
+			".$building_name." ".$building_level."
+			";
 			$planet_image_path = "".IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$arr_planet['planet_image']."_middle.gif";
 	
 			// Planet bild mit link zum bauhof und der informationen übergabe beim mouseover
 	    $planet_link = "<a href=\"?page=buildings&change_entity=".$arr_planet['id']."\"><img id=\"Planet\" src=\"".$planet_image_path."\" width=\"".$pic_width."\" height=\"".$pic_height."\" border=\"0\" 
 	    onMouseOver=\"show_info(
 			'".$arr_planet['id']."',
-			'". mysql_real_escape_string(htmlspecialchars($planet_name))."',
+			'".htmlspecialchars(mysql_real_escape_string($planet_name),ENT_QUOTES)."',
 			'".$building_name."',
 			'".$building_time."',
 			'".$shipyard_name[$arr_planet['id']]."',
@@ -804,7 +808,8 @@
 			'".floor($arr_planet['planet_store_fuel'])."',
 			'".floor($arr_planet['planet_store_food'])."',
 			'".floor($arr_planet['planet_people_place'])."'
-			);\"/></a>";
+			);\"/></a>
+			";
 	
 	
 			if($degree==0)
@@ -817,7 +822,8 @@
 			$left2=$middle_left+(($d_planets/2)*cos(deg2rad($degree+270)));
 			$top2=$middle_top+(($d_planets/2)*sin(deg2rad($degree+270)));
 	
-			echo "<div style=\"position:absolute; left:".$left2."px; top:".$top2."px; text-align:center; vertical-align:middle;\">".$planet_link."</div>";
+			echo "<div style=\"position:absolute; left:".$left2."px; top:".$top2."px; text-align:center; vertical-align:middle;\">".$planet_link."</div>
+			";
 	
 			if($degree==0)
 			{
@@ -865,20 +871,20 @@
 				$top=$middle_top+(($d_infos/2)*sin(deg2rad($degree+270)))-$pic_height/2;
 			}
 	
-			echo "<div id=\"planet_info_".$arr_planet['id']."\" style=\"position:absolute; left:".$left."px; top:".$top."px; width:".$info_box_width."px; height:".$info_box_height."px; text-align:".$text."; vertical-align:middle;\">";
+			echo "<div id=\"planet_info_".$arr_planet['id']."\" style=\"position:absolute; left:".$left."px; top:".$top."px; width:".$info_box_width."px; height:".$info_box_height."px; text-align:".$text."; vertical-align:middle;\">
+			";
+			
+			echo $planet_info;
+			echo '<span id="planet_timer_'.$arr_planet['id'].'">';
 			
 			// Stellt Zeit Counter dar, wenn ein Gebäude in bau ist
 			if(isset($building_rest_time) && $building_rest_time>0)
 			{
-				$planet_info .= "<br>(TIME)";
-				echo "".startTime($building_rest_time, "planet_info_".$arr_planet['id']."", 0, $planet_info)."";
-			}
-			else
-			{
-				echo $planet_info;
+				echo startTime($building_rest_time, "planet_timer_".$arr_planet['id']."", 0, "<br>(TIME)")."";
 			}
 			
-			echo "</div>";
+			echo "</span></div>
+			";
 			$degree = $degree + (360/$division);
 		}
 
@@ -974,6 +980,7 @@
 
 	</table></center>";
 
-echo "</div></div></center>";
+echo "</div></div></center>
+";
 
 ?>
