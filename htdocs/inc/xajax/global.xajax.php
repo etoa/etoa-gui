@@ -57,6 +57,7 @@ function searchUser($val,$field_id='user_nick',$box_id='citybox',$separator=";")
 	{
 		$objResponse->script("document.getElementById('".$box_id."').style.display = \"none\"");
 		$objResponse->script("document.getElementById('".$field_id."').value = \"".$outNick.$sLastHit."\"");
+		$objResponse->script("document.getElementById('".$field_id."').focus()");
 	}
 	$objResponse->assign($box_id, "innerHTML", $sOut);
 	
