@@ -778,7 +778,7 @@
         $defense_name[$arr_planet['id']] = "";
       }
 	
-			$planet_info = "<b class=\"planet_name\">".htmlentities(stripcslashes($planet_name),ENT_QUOTES)."</b><br>
+			$planet_info = "<b class=\"planet_name\">".htmlentities(stripcslashes($planet_name),ENT_QUOTES,'UTF-8')."</b><br>
 			".$building_name." ".$building_level."
 			";
 			$planet_image_path = "".IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$arr_planet['planet_image']."_middle.gif";
