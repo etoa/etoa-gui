@@ -6,11 +6,14 @@ var chanId = 0;
 var userName = '';
 var numUsers = 0;
 
+var unviewed = 0;
+
 var msgStack=new Array();
 var msgHistory = new Array();
 var msgHistoryIdx = -1;
 
 var chatPollTimeout = 0;
+var chatPollDelayMilliseconds = 1000;
 
 /* Basic chat and server communication functionality */
 
@@ -19,10 +22,9 @@ var chatPollTimeout = 0;
 function poll(doLoop)
 {
   ajaxRequest('chat_poll', { 
-    minId:minId,
-    chanId:chanId 
-  }, function(data) {
-    
+    "minId":minId,
+    "chanId":chanId 
+  }, function(data) {    
     // selects the action according to the returned text
     // and executes the corresponding function
     if (data.cmd) {    
@@ -31,17 +33,20 @@ function poll(doLoop)
       else if (data.cmd == 'ki')
         kicked(data.msg);
       else if (data.cmd == 'li')
+      {
         logIn(data.msg);
+        (new UpdateThread()).syncUpdate(data.out,data.lastId);
+      }
       else if (data.cmd == 'bn')
         banned(data.msg);
       else if (data.cmd == 'up')
-        update(data.out, data.lastId);
+        (new UpdateThread()).syncUpdate(data.out,data.lastId);
       else
         msgFail('Serverfehler: notProtocol');
     }   
     
     if (doLoop) {
-      chatPollTimeout = setTimeout(function(){poll(true);},1000);
+      chatPollTimeout = setTimeout(function(){poll(true);},chatPollDelayMilliseconds);
     }
         
     hideLoading();
@@ -81,15 +86,12 @@ function kicked(rtext) {
   exitChat();
 }
 
-
-// Sets a flag for poll() to display a welcome message
-
+// Sets a welcome message
 function logIn(rtext)
 {
   if(rtext != '')
   {
     msgStack.push(rtext);
-    poll(false);
   }
   else
   {
@@ -114,111 +116,6 @@ function banned(rtext)
   exitChat();
 }
 
-
-// displays new chat messages
-
-function update(out, lastId)
-{
-  if(out)
-  {
-    if(isNaN(lastId))
-    {
-      msgFail('Serverfehler: NaN');
-    }
-    else
-    {
-      // check whether the user has scrolled up, avoid auto-scrolling in that case
-      var doScroll = ($('#chatitems').prop('scrollHeight')-$('#chatitems').outerHeight() == $('#chatitems').prop('scrollTop'));
-      // appends the messages to the chat window
-      $.each(out, function(key, val) {
-        var elem = $('<div>');
-        if (val.userId=="0") {
-          elem.addClass('systemMessage');
-          elem.text('<' + val.time + '> ' + val.text);
-        } else {
-          
-          if (val.admin) {
-            switch(val.admin)
-            {
-              //yellow star
-              case "1":
-                elem.append($('<img>')
-                  .attr('src', 'images/star_y.gif')
-                  .attr('alt', 'Admin')
-                  .attr('title', 'Admin')
-                );
-                break;
-              case "2":
-                elem.append($('<img>')
-                  .attr('src', 'images/star_g.gif')
-                  .attr('alt', 'Chat-Moderator')
-                  .attr('title', 'Chat-Moderator')
-                );
-                break;
-              case "3":
-                elem.append($('<img>')
-                  .attr('src', 'images/star_r.gif')
-                  .attr('alt', 'Entwickler')
-                  .attr('title', 'Entwickler')
-                );
-                break;
-              case "4":
-                elem.append($('<img>')
-                  .attr('src', 'images/star_green.gif')
-                  .attr('alt', 'Leiter Team Community')
-                  .attr('title', 'Leiter Team Community')
-                );
-                break;
-              case "5":
-                elem.append($('<img>')
-                  .attr('src', 'images/star_c.gif')
-                  .attr('alt', 'Entwickler')
-                  .attr('title', 'Entwickler')
-                );
-                break;                  
-            }
-          }
-          
-          var link = $('<a>')
-            .attr('href','index.php?page=userinfo&id=' + val.userId)
-            .attr('target','main')
-            .text(val.nick);
-            
-          if (val.color != "")  {
-            elem.css('color', val.color);
-            link.css('color', val.color);
-          }
-          
-          elem.append('&lt;');
-          elem.append(link);
-          elem.append(' | ' + val.time + '&gt; ' + val.text);
-        }
-        // Insert only if id differs from last insterted element 
-        // (mitigates possible race condition when ordinary polling is executed the same time as the chat send polling)
-        if (lastInsertedId != val.id) {
-          $('#chatitems').append(elem);
-        }
-        lastInsertedId = val.id;
-      });
-      
-      if (msgStack.length > 0) {
-        localMsg(msgStack.pop());
-      }
-      
-      // reset error message
-      msgFail('');
-      
-      if (doScroll && minId != lastId) {
-        scrollDown();
-      }
-      minId = lastId;
-    }
-  }
-  else
-  {
-    msgFail('Serverfehler: noParam');
-  }
-}
 
 /* User list functions */
 
@@ -414,3 +311,285 @@ function handleCTextKey(event) {
     }
   }  
 }
+
+
+// sets elements as read on scroll
+function updateViewed(ev)
+{
+  $('.unviewed').filter(function(){return !isInvisible($(this))})
+  .removeClass('unviewed')
+  .addClass('viewed');
+  unviewed = $('.unviewed').size();
+  // update invisible count
+  if(unviewed > 0)
+  {
+    $('#unread').css('display','block')
+    .html(unviewed+'&nbsp;&darr;');
+  }
+  else
+  {
+    $('#unread').css('display','none');
+  } 
+}
+
+// checks whether the element is below the visible part of the chat
+function isInvisible(jqElem)
+{
+  return (jqElem.position().top - jqElem.parent().position().top - jqElem.parent().prop('clientHeight')) > 0;
+}
+
+
+/* Mutex functionality
+ *
+ * implements Wallace's variant of
+ * Lamport's bakery algorithm
+ */
+
+
+// Thread class for the update function
+
+function UpdateThread()
+{
+  // Static variable to assign a new id to each thread
+  if(!UpdateThread.ThreadCounter)
+  {
+    UpdateThread.ThreadCounter = 0;
+  }
+  // instance variable to store the thread id
+  this.id = ++UpdateThread.ThreadCounter;
+  
+  // unsynchronized update() function
+  // only call via mutex
+  
+  // displays new chat messages
+  this.update = function(out, lastId)
+  {
+    // CRITICAL SECTION
+    if(out)
+    {
+      if(isNaN(lastId))
+      {
+        msgFail('Serverfehler: NaN');
+      }
+      else
+      {
+        // check whether the user has scrolled up, avoid auto-scrolling in that case
+        var doScroll =
+            ( $('#chatitems').prop('scrollHeight') -
+              $('#chatitems').prop('clientHeight') -
+              $('#chatitems').prop('scrollTop') ) < 1;
+        var added = 0;
+        
+        // appends the messages to the chat window
+        $.each(out, function(key, val) {
+          if($('#chatmsg_'+val.id).size() == 0)
+          {
+            var elem = $('<div>');
+            elem.attr('id','chatmsg_'+val.id);
+            elem.addClass('chatmsg');
+            if (val.userId=="0") {
+              elem.addClass('systemMessage');
+              elem.text('<' + val.time + '> ' + val.text);
+            } else {
+              
+              if (val.admin) {
+                switch(val.admin)
+                {
+                  //yellow star
+                  case "1":
+                    elem.append($('<img>')
+                      .attr('src', 'images/star_y.gif')
+                      .attr('alt', 'Admin')
+                      .attr('title', 'Admin')
+                    );
+                    break;
+                  case "2":
+                    elem.append($('<img>')
+                      .attr('src', 'images/star_g.gif')
+                      .attr('alt', 'Chat-Moderator')
+                      .attr('title', 'Chat-Moderator')
+                    );
+                    break;
+                  case "3":
+                    elem.append($('<img>')
+                      .attr('src', 'images/star_r.gif')
+                      .attr('alt', 'Entwickler')
+                      .attr('title', 'Entwickler')
+                    );
+                    break;
+                  case "4":
+                    elem.append($('<img>')
+                      .attr('src', 'images/star_green.gif')
+                      .attr('alt', 'Leiter Team Community')
+                      .attr('title', 'Leiter Team Community')
+                    );
+                    break;
+                  case "5":
+                    elem.append($('<img>')
+                      .attr('src', 'images/star_c.gif')
+                      .attr('alt', 'Entwickler')
+                      .attr('title', 'Entwickler')
+                    );
+                    break;                  
+                }
+              }
+              
+              var link = $('<a>')
+                .attr('href','index.php?page=userinfo&id=' + val.userId)
+                .attr('target','main')
+                .text(val.nick);
+                
+              if (val.color != "")  {
+                elem.css('color', val.color);
+                link.css('color', val.color);
+              }
+              
+              elem.append('&lt;');
+              elem.append(link);
+              elem.append(' | ' + val.time + '&gt; ' + val.text);
+            }
+            // Insert only if id differs from last insterted element 
+            // (mitigates possible race condition when ordinary polling is executed the same time as the chat send polling)
+            if (lastInsertedId < val.id) {
+              $('#chatitems').append(elem);
+              added++;
+              if(doScroll || !isInvisible(elem))
+              {
+                elem.addClass('viewed');
+              }
+              else
+              {
+                elem.addClass('unviewed');
+              }
+            }
+            lastInsertedId = val.id;
+          }
+        });
+        
+        if (msgStack.length > 0) {
+          localMsg(msgStack.pop());
+        }
+        
+        // reset error message
+        msgFail('');
+        
+        if (doScroll && minId != lastId) {
+          scrollDown();
+        }
+        updateViewed();
+        minId = lastId;
+      }
+    }
+    else
+    {
+      msgFail('Serverfehler: noParam');
+    }
+  }
+  
+  // synchronized update() function with mutual exclusion
+  this.syncUpdate = function(out, lastId)
+  {
+    return (new UpdateMutex(this,out,lastId));
+  }
+}
+
+// Mutex class for the update function
+
+function UpdateMutex(threadObj, o, lid)
+{
+  // static variable to store synchronized update attempts
+  if(!UpdateMutex.Wait)
+  {
+    UpdateMutex.Wait = new Object();
+  }
+  
+  // static method for acquiring cpu time
+  UpdateMutex.Run = function(commandId, startId)
+  {
+    UpdateMutex.Wait[commandId].attempt( UpdateMutex.Wait[startId] );
+  }
+  
+  // instance method for attempting to run command
+  this.attempt = function( startMutexObject )
+  {
+    // we loop until UpdateMutex.next() returns null
+    for(var j=startMutexObject; j; j=UpdateMutex.next(j.threadObject.id))
+    {
+      if(j.enter ||
+          (j.number &&
+            (j.number < this.number ||
+              (j.number == this.number && j.threadObject.id < this.threadObject.id)
+            )
+          )
+        )
+      {
+        // we don't have the exclusive access, because there is another
+        // thread with higher priority, so we sleep and try again
+        return setTimeout("UpdateMutex.Run("+this.threadObject.id+","+j.threadObject.id+")",30);
+      }
+      // we have exclusive access now so we run update()
+      // ACTUAL UPDATE() CALL IS HERE
+      this.threadObject.update(this.out,this.lastId)
+      // now the exclusive access can be released
+      this.number = 0;
+      // and we can delete this object
+      UpdateMutex.remove(this.threadObject.id);
+    }
+    // there is no next element in the Wait queue
+    return null;
+  }
+  
+  // static wait queue manipulation functions
+  
+  // remove an element from the Wait queue
+  // => destroy the mutex instance
+  UpdateMutex.remove = function(tid)
+  {
+    delete UpdateMutex.Wait[tid];
+  }
+
+  // returns next mutex instance in the Wait queue
+  // starting at key tid
+  UpdateMutex.next = function(tid)
+  {
+    for(i in UpdateMutex.Wait)
+    {
+      // catch browser handling that also uses variables
+      // inherited from Object in for-in-loops
+      if(typeof UpdateMutex.Wait[i] != 'object')
+      {
+        break;
+      }
+      // if key is not specified (or was set to zero in the
+      // previous loop) return the object at this key
+      if(!tid)
+      {
+        return UpdateMutex.Wait[i];
+      }
+      // if we found the key, we set the key to zero
+      // so the next object in the queue is returned
+      if(tid == i)
+      {
+        tid = 0;
+      }
+    }
+    // if there is no next element, return null
+    return null;
+  }
+  
+  // constructor code
+  this.threadObject = threadObj;
+  this.out = o;
+  this.lastId = lid;
+  
+  UpdateMutex.Wait[this.threadObject.id] = this;
+    
+  // set number to current timestamp
+  this.enter = true;
+  this.number = (new Date()).getTime();
+  this.enter = false;
+  
+  // auto-start attempt to acquire mutex
+  this.attempt(UpdateMutex.next(0));
+}
+

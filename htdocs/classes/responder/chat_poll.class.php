@@ -64,11 +64,8 @@ class ChatPollJsonResponder extends JsonResponder
       {
         // User does not exist yet
         ChatManager::sendSystemMessage($_SESSION['user_nick'].' betritt den Chat.');
-        ChatManager::updateUserEntry($_SESSION['user_id'], $_SESSION['user_nick']);
-        return array(
-          'cmd' => 'li',
-          'msg' => ChatManager::getWelcomeMessage($_SESSION['user_nick'])
-        );        
+        $data['cmd'] = 'li';
+        $data['msg'] = ChatManager::getWelcomeMessage($_SESSION['user_nick']);
       }
       
       // User exists, not kicked, not banned.
@@ -94,7 +91,11 @@ class ChatPollJsonResponder extends JsonResponder
       ');
 
       $lastid = intval($params['minId']);
-      $data['cmd'] = 'up';
+      // check whether 'login' has been set
+      if(!isset($data['cmd']))
+      {
+        $data['cmd'] = 'up';
+      }
       $data['out'] = array();
       if (mysql_num_rows($res)>0)
       {
@@ -109,9 +110,9 @@ class ChatPollJsonResponder extends JsonResponder
             'userId' => $arr['user_id'],
             'nick' => $arr['nick'],
             'admin' => $arr['admin']
-          );          
+          );
           $lastid = $arr['id'];
-        }        
+        }
       }
       $data['lastId'] = intval($lastid);
     }

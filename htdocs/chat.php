@@ -69,7 +69,11 @@
             </div>
           </div>
           
-          <div id="loading"><span id="loadingAnimation"><img src="web/images/ajax-loader-chat.gif" alt="Loading"></span><span id="loadingMessage"></span></div>
+          <div id="loading">
+			<span id="loadingAnimation"><img src="web/images/ajax-loader-chat.gif" alt="Loading"></span>
+			<span id="loadingMessage"></span>
+			<div id="unread">&nbsp;</div>
+          </div>
           <div id="chatinput">
             <form action="#" method="post" autocomplete="off" id="cform">
               <input type="text" id="ctext" name="ctext" value="" size="40" maxlength="255" style="color:#<?PHP echo $cu->properties->chatColor;?>"/><input type="button" id="sendButton" value="Chat" title="Text senden" />
@@ -103,9 +107,12 @@
       $('#ctext').keyup(function(event) {
         handleCTextKey(event);
       });
+	  
+	  // add/remove unread messages indicator on scrolling
+	  $('#chatitems').scroll(function(){updateViewed();});
       
-     // gives focus to the input field.
-      $('#ctext').focus();       
+	  // gives focus to the input field.
+      $('#ctext').focus();
       
       // Start polling
       if($('#chatitems').size() != 0)
