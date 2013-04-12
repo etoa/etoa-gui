@@ -98,16 +98,18 @@ void etoamain()
 			
 			abuilding::aBuildingHandler* abh = new abuilding::aBuildingHandler();
 			abh->update();
+			delete abh;
 			
 			atech::aTechHandler* ath = new atech::aTechHandler();
 			ath->update();
+			delete ath;
 			
-			building::BuildingHandler* bh = new building::BuildingHandler();
-			bh->update();  
-	
 			tech::TechHandler* th = new tech::TechHandler();
 			th->update(); 
 			delete th;
+			
+			building::BuildingHandler* bh = new building::BuildingHandler();
+			bh->update();  
 			
 			fleet::FleetHandler* fh = new fleet::FleetHandler();
 			fh->update(); 
@@ -117,7 +119,8 @@ void etoamain()
 	
 			def::DefHandler* dh = new def::DefHandler();
 			dh->update();  
-	
+			
+			// TODO: why true?
 			if (bh->changes() || dh->changes() || sh->changes() || true)
 			{			
 				DEBUG("Changing planet data...");
@@ -126,10 +129,6 @@ void etoamain()
 				std::vector<int> v1 = bh->getChangedPlanets();
 				std::vector<int> v2 = sh->getChangedPlanets();
 				std::vector<int> v3 = dh->getChangedPlanets();
-				delete bh;
-				delete sh;
-				delete dh;
-				delete fh;
 				
 				// Merge all changed planet id's together
 				for (unsigned int x=0; x<v2.size(); x++)
@@ -158,27 +157,29 @@ void etoamain()
 						
 					v1.push_back(EntityUpdateQueue::instance().front());
 					EntityUpdateQueue::instance().pop();
-	    	}
-							
+				}
+				
 				planet::PlanetManager* pm = new planet::PlanetManager(&v1);
 				pm->updateUserPlanets();
 				delete pm;
-	
+				
 				DEBUG("Updated "<<v1.size() << " entities.");
-	
 			}
-		
+			delete bh;
+			delete fh;
+			delete sh;
+			delete dh;
 		} 
 		// Catch mysql exceptions
-    catch (mysqlpp::BadQuery e) {
-        LOG(LOG_ERR,"MySQL: Unexpected query error: " << e.what());
-			  sleep(10);
-    }
+		catch (mysqlpp::BadQuery e) {
+			LOG(LOG_ERR,"MySQL: Unexpected query error: " << e.what());
+			sleep(10);
+		}
 		catch (mysqlpp::Exception e) 
 		{ 
-		  LOG(LOG_ERR,"MySQL: General error: " << e.what()); 
-		  sleep(10);
-		} 			
+			LOG(LOG_ERR,"MySQL: General error: " << e.what()); 
+			sleep(10);
+		}
 		
 		sleep(minLoopDuration);
 	}
