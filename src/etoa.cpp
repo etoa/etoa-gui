@@ -30,6 +30,8 @@
 
 #include "etoa.h"
 #include <exception>
+#include "util/MemInfo.h"
+#include "version.h"
 
 void etoamain()
 {
@@ -68,8 +70,21 @@ void etoamain()
 				DEBUG("Unable to execute 'clear' command");
 			}
 		}
+
 		DEBUG("----------------------------------------------------------------");
-		DEBUG("- EtoA Eventhandler, (C) 2007 by EtoA Gaming, Time: "<< std::time(0) <<" -");
+		DEBUG("- EtoA Eventhandler, (C) 2007 by EtoA Gaming                   -");
+		DEBUG("----------------------------------------------------------------");
+		if (debugEnable(0)) {
+			DEBUG("  Version      : " << __ETOAD_VERSION_STRING__);
+			time_t rawtime;
+			time ( &rawtime );
+			std::string str(ctime (&rawtime));
+			str.erase(std::remove(str.begin(), str.end(), '\n'), str.end());
+			DEBUG("  Time         : " << str << " (" << std::time(0) << ")");
+			MemInfo* mi = new MemInfo();
+			DEBUG("  Memory usage : VIRT " << (mi->getVirtualMemUsedByCurrentProcess()) << " KB, PHYS " << (mi->getPhysMemUsedByCurrentProcess()) << " KB");
+			delete mi;
+		}
 		DEBUG("----------------------------------------------------------------\n");
 		
 
