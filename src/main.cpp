@@ -401,7 +401,8 @@ int main(int argc, char* argv[])
 		config.setSleep(atoi(opt->getValue('t')));
 	}
 		
-	
+	delete opt;
+
 	boost::thread mThread(&etoamain);
 	boost::thread qThread(&msgQueueThread);
 

@@ -14,51 +14,51 @@
 
 	// Liefert eine Kopie des Datenwertes zurück
 	ShipData* DataHandler::getShipById(int id) {
-		return this->shipData[idShipConverter[id] ];
+		return &this->shipData[idShipConverter[id] ];
 	}
 	
 	DefData* DataHandler::getDefById(int id) {
-		return this->defData[idDefConverter[id] ];
+		return &this->defData[idDefConverter[id] ];
 	}
 	
 	TechData* DataHandler::getTechById(int id) {
-		return this->techData[idTechConverter[id] ];
+		return &this->techData[idTechConverter[id] ];
 	}
 	
 	BuildingData* DataHandler::getBuildingById(int id) {
-		return this->buildingData[idBuildingConverter[id] ];
+		return &this->buildingData[idBuildingConverter[id] ];
 	}
 	
 	RaceData* DataHandler::getRaceById(int id) {
-		return this->raceData[idRaceConverter[id] ];
+		return &this->raceData[idRaceConverter[id] ];
 	}
 	
 	SolData* DataHandler::getSolById(int id) {
-		return this->solData[idSolConverter[id] ];
+		return &this->solData[idSolConverter[id] ];
 	}
 	
 	PlanetData* DataHandler::getPlanetById(int id) {
-		return this->planetData[idPlanetConverter[id] ];
+		return &this->planetData[idPlanetConverter[id] ];
 	}
 	
 	SpecialistData* DataHandler::getSpecialistById(int id) {
-		return this->specialistData[idSpecialistConverter[id] ];
+		return &this->specialistData[idSpecialistConverter[id] ];
 	}
 		
 	ShipData* DataHandler::getShipByName(std::string name) {
-		return this->shipData[nameConverter[name] ];
+		return &this->shipData[nameConverter[name] ];
 	}
 	
 	DefData* DataHandler::getDefByName(std::string name) {
-		return this->defData[nameConverter[name] ];
+		return &this->defData[nameConverter[name] ];
 	}
 			
 	TechData* DataHandler::getTechByName(std::string name) {
-		return this->techData[nameConverter[name] ];
+		return &this->techData[nameConverter[name] ];
 	}
 			
 	BuildingData* DataHandler::getBuildingByName(std::string name) {
-		return this->buildingData[nameConverter[name] ];
+		return &this->buildingData[nameConverter[name] ];
 	}
 	
 	// Clear the Data and reload it
@@ -125,17 +125,14 @@
 		query.reset();
 		if (dRes) {
 			unsigned int dSize = dRes.size();
-			DefData* object;
-
 			if (dSize>0) {
 				mysqlpp::Row dRow;
-
 				for (mysqlpp::Row::size_type i = 0; i<dSize; i++) {
 					dRow = dRes.at(i);
 					this->idDefConverter[(int)(dRow["id"]) ] =  this->counter;
 					this->nameConverter[std::string(dRow["name"]) ] = this->counter;
-					object = new DefData(dRow);
-					this->defData.push_back(object);
+					DefData obj(dRow);
+					this->defData.push_back(obj);
 					this->counter++;
 				}
 			}
@@ -206,17 +203,14 @@
 		query.reset();
 		if (sRes) {
 			unsigned int sSize = sRes.size();
-			ShipData* object;
-
 			if (sSize>0) {
 				mysqlpp::Row sRow;
-				
 				for (mysqlpp::Row::size_type i = 0; i<sSize; i++) {
 					sRow = sRes.at(i);
 					this->idShipConverter[(int)(sRow["id"]) ] =  this->counter;
 					this->nameConverter[std::string(sRow["name"]) ] = this->counter;
-					object = new ShipData(sRow);
-					this->shipData.push_back(object);
+					ShipData obj(sRow);
+					this->shipData.push_back(obj);
 					this->counter++;
 					/** Save the id in the action container **/
 					
@@ -249,17 +243,14 @@
 		query.reset();
 		if (tRes) {
 			unsigned int tSize = tRes.size();
-			TechData* object;
-
 			if (tSize>0) {
-				mysqlpp::Row tRow;
-				
+				mysqlpp::Row tRow;				
 				for (mysqlpp::Row::size_type i = 0; i<tSize; i++) {
 					tRow = tRes.at(i);
 					this->idTechConverter[(int)(tRow["id"]) ] =  this->counter;
 					this->nameConverter[std::string(tRow["name"]) ] = this->counter;
-					object = new TechData(tRow);
-					this->techData.push_back(object);
+					TechData obj(tRow);
+					this->techData.push_back(obj);
 					this->counter++;
 				}
 			}
@@ -312,17 +303,14 @@
 		query.reset();
 		if (bRes) {
 			unsigned int bSize = bRes.size();
-			BuildingData* object;
-
 			if (bSize>0) {
 				mysqlpp::Row bRow;
-				
 				for (mysqlpp::Row::size_type i = 0; i<bSize; i++) {
 					bRow = bRes.at(i);
 					this->idBuildingConverter[(int)(bRow["id"]) ] =  this->counter;
 					this->nameConverter[std::string(bRow["name"]) ] = this->counter;
-					object = new BuildingData(bRow);
-					this->buildingData.push_back(object);
+					BuildingData obj(bRow);
+					this->buildingData.push_back(obj);
 					this->counter++;
 				}
 			}
@@ -337,16 +325,13 @@
 		query.reset();
 		if (rRes) {
 			unsigned int rSize = rRes.size();
-			RaceData* object;
-
 			if (rSize>0) {
 				mysqlpp::Row rRow;
-				
 				for (mysqlpp::Row::size_type i = 0; i<rSize; i++) {
 					rRow = rRes.at(i);
 					this->idRaceConverter[(int)(rRow["race_id"]) ] =  this->counter;
-					object = new RaceData(rRow);
-					this->raceData.push_back(object);
+					RaceData obj(rRow);
+					this->raceData.push_back(obj);
 					this->counter++;
 				}
 			}
@@ -361,16 +346,13 @@
 		query.reset();
 		if (slRes) {
 			unsigned int slSize = slRes.size();
-			SolData* object;
-
 			if (slSize>0) {
 				mysqlpp::Row slRow;
-				
 				for (mysqlpp::Row::size_type i = 0; i<slSize; i++) {
 					slRow = slRes.at(i);
 					this->idSolConverter[(int)(slRow["sol_type_id"]) ] =  this->counter;
-					object = new SolData(slRow);
-					this->solData.push_back(object);
+					SolData obj(slRow);
+					this->solData.push_back(obj);
 					this->counter++;
 				}
 			}
@@ -385,16 +367,13 @@
 		query.reset();
 		if (pRes) {
 			unsigned int pSize = pRes.size();
-			PlanetData* object;
-
 			if (pSize>0) {
 				mysqlpp::Row pRow;
-				
 				for (mysqlpp::Row::size_type i = 0; i<pSize; i++) {
 					pRow = pRes.at(i);
 					this->idPlanetConverter[(int)(pRow["type_id"]) ] =  this->counter;
-					object = new PlanetData(pRow);
-					this->planetData.push_back(object);
+					PlanetData obj(pRow);
+					this->planetData.push_back(obj);
 					this->counter++;
 				}
 			}
@@ -409,17 +388,14 @@
 		query.reset();
 		if (spRes) {
 			unsigned int spSize = spRes.size();
-			SpecialistData* object;
-
 			if (spSize>0) {
 				mysqlpp::Row spRow;
-				
 				for (mysqlpp::Row::size_type i = 0; i<spSize; i++) 
 				{
 					spRow = spRes.at(i);
 					this->idSpecialistConverter[(int)(spRow["specialist_id"]) ] =  this->counter;
-					object = new SpecialistData(spRow);
-					this->specialistData.push_back(object);
+					SpecialistData obj(spRow);
+					this->specialistData.push_back(obj);
 					this->counter++;
 				}
 			}

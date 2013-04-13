@@ -83,14 +83,14 @@
 		/**
 		* Container mit den gespeicherten Daten
 		**/
-		std::vector<ShipData*> shipData;
-		std::vector<DefData*> defData;
-		std::vector<TechData*> techData;
-		std::vector<BuildingData*> buildingData;
-		std::vector<RaceData*> raceData;
-		std::vector<SolData*> solData;
-		std::vector<PlanetData*> planetData;
-		std::vector<SpecialistData*> specialistData;
+		std::vector<ShipData> shipData;
+		std::vector<DefData> defData;
+		std::vector<TechData> techData;
+		std::vector<BuildingData> buildingData;
+		std::vector<RaceData> raceData;
+		std::vector<SolData> solData;
+		std::vector<PlanetData> planetData;
+		std::vector<SpecialistData> specialistData;
 		
 		/**
 		* counter
