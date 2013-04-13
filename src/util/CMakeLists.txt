@@ -11,6 +11,7 @@ SET(UTIL_SRC_FILES
 	Debug.cpp
 	Chameleon.cpp
 	ConfigFile.cpp
+	MemInfo.cpp
 )
 
 ADD_LIBRARY(util ${UTIL_SRC_FILES})
