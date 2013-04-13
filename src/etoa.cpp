@@ -57,40 +57,35 @@ void etoamain()
 		try 
 		{ 
 			
-		// Update the data and config, everyday once at about 02:17:00 AM
-		if ((time(0)-1021)%86400==0) {
-			DataHandler.reloadData();
-			Config::instance().reloadConfig();
-		}
-		
-		// Graphical bling-bling
-		if (debugEnable(0))
-		{
-			if(system("clear") != 0) {
-				DEBUG("Unable to execute 'clear' command");
+			// Update the data and config, everyday once at about 02:17:00 AM
+			if ((time(0)-1021)%86400==0) {
+				DataHandler.reloadData();
+				Config::instance().reloadConfig();
 			}
-		}
-
-		DEBUG("----------------------------------------------------------------");
-		DEBUG("- EtoA Eventhandler, (C) 2007 by EtoA Gaming                   -");
-		DEBUG("----------------------------------------------------------------");
-		if (debugEnable(0)) {
-			DEBUG("  Version      : " << __ETOAD_VERSION_STRING__);
-			time_t rawtime;
-			time ( &rawtime );
-			std::string str(ctime (&rawtime));
-			str.erase(std::remove(str.begin(), str.end(), '\n'), str.end());
-			DEBUG("  Time         : " << str << " (" << std::time(0) << ")");
-			MemInfo* mi = new MemInfo();
-			DEBUG("  Memory usage : VIRT " << (mi->getVirtualMemUsedByCurrentProcess()) << " KB, PHYS " << (mi->getPhysMemUsedByCurrentProcess()) << " KB");
-			delete mi;
-		}
-		DEBUG("----------------------------------------------------------------\n");
 		
+			// Graphical bling-bling
+			if (debugEnable(0))
+			{
+				if(system("clear") != 0) {
+					DEBUG("Unable to execute 'clear' command");
+				}
+			}
 
-	
-			//quest::QuestHandler* qh = new quest::QuestHandler();
-			//qh->update();
+			DEBUG("----------------------------------------------------------------");
+			DEBUG("- EtoA Eventhandler, (C) 2007 by EtoA Gaming                   -");
+			DEBUG("----------------------------------------------------------------");
+			if (debugEnable(0)) {
+				DEBUG("  Version      : " << __ETOAD_VERSION_STRING__);
+				time_t rawtime;
+				time ( &rawtime );
+				std::string str(ctime (&rawtime));
+				str.erase(std::remove(str.begin(), str.end(), '\n'), str.end());
+				DEBUG("  Time         : " << str << " (" << std::time(0) << ")");
+				MemInfo* mi = new MemInfo();
+				DEBUG("  Memory usage : VIRT " << (mi->getVirtualMemUsedByCurrentProcess()) << " KB, PHYS " << (mi->getPhysMemUsedByCurrentProcess()) << " KB");
+				delete mi;
+			}
+			DEBUG("----------------------------------------------------------------\n");
 			
 			/**
 			* Start with event handling
