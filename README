@@ -1,0 +1,44 @@
+
+Requirements
+------------
+
+Tools:
+
+ * build-essential
+ * cmake
+
+Libraries:
+
+ * libboost-filesystem-dev
+ * libboost-regex-dev
+ * libboost-system-dev
+ * libboost-thread-dev
+ * libmysql++-dev
+
+
+Releasing
+---------
+
+Define release version and next development version:
+
+    VERSION=3.0.2
+    DEV_VERSION=3.X.X-SNAPSHOT
+    
+Create SCM tag:
+
+    bin/set-version.sh $VERSION
+    svn cp https://dev.etoa.net/svn/etoa-eventhandler/trunk https://dev.etoa.net/svn/etoa-eventhandler/tags/$VERSION -m "[Release $VERSION]"
+    svn switch https://dev.etoa.net/svn/etoa-eventhandler/tags/$VERSION
+    
+Build source and create debian package:
+
+    make
+    bin/make-deb.sh
+    
+Switch back to trunk:
+
+    svn switch https://dev.etoa.net/svn/etoa-eventhandler/trunk
+    bin/set-version.sh $DEV_VERSION
+    svn commit -m "[Prepare for next development iteration]"
+
+

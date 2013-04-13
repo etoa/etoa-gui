@@ -10,7 +10,8 @@
 
 TOP=$(dirname $0)/..
 DEB_NAME=etoa-eventhandler
-PKG_DIR=$TOP/deliveries
+PKG_DIR=$TOP/target
+BIN_FILE=$TOP/target/etoad
 ARCH=$(uname -m)
 
 #
@@ -42,7 +43,7 @@ trap 'cleanup' INT TERM EXIT
 # Copy contents of dist/debian/
 rsync -au --exclude '.svn' dist/debian/ $tdir
 mkdir -p $tdir/usr/local/bin
-cp bin/etoad $tdir/usr/local/bin
+cp $BIN_FILE $tdir/usr/local/bin
 
 # Write version to control file
 sed "s/^Version: .*/Version: ${VER}/" -i $tdir/DEBIAN/control

@@ -1,20 +1,17 @@
 
-Requirements
+Installation
 ------------
 
-### Debian/Ubuntu ###
+Install requirements:
 
-Tools:
+    apt-get install libboost-thread1.42.0, libboost-regex1.42.0, libboost-filesystem1.42.0, libboost-system1.42.0, libmysql++3
 
- * build-essential
- * cmake
+Install etoad from source directory:
 
-Libraries:
+    make install
 
- * libboost-filesystem-dev
- * libboost-regex-dev
- * libboost-system-dev
- * libboost-thread-dev
- * libmysql++-dev
- * ncurses-dev
+Install etoad from Debian package:
+
+    dpkg -i /path/to/etoa-eventhandler_*.deb
+
 
