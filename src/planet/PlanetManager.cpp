@@ -1,5 +1,6 @@
 
 #include "PlanetManager.h"
+#include "../util/Debug.h"
 
 namespace planet
 {
@@ -83,11 +84,12 @@ namespace planet
 				mysqlpp::Row row;
 				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) { 
 					row = res.at(i);
+					DEBUG("Planet " << (int)row["id"]);
 					this->planet_ = new PlanetEntity(row);
 					delete this->planet_;
 				}
 			}
-			//std::cout << "Updated " << resSize << " Userplanets\n";
+			DEBUG("Updated " << resSize << " Userplanets");
 		}
 	}
 }
