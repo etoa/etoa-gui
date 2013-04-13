@@ -27,6 +27,7 @@ Define release version and next development version:
 Create SCM tag:
 
     bin/set-version.sh $VERSION
+    svn commit -m "[Prepare for release]"
     svn cp https://dev.etoa.net/svn/etoa-eventhandler/trunk https://dev.etoa.net/svn/etoa-eventhandler/tags/$VERSION -m "[Release $VERSION]"
     svn switch https://dev.etoa.net/svn/etoa-eventhandler/tags/$VERSION
     
