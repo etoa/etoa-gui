@@ -12,6 +12,7 @@ var enterKey = 13;
 
 // array for all used keycodes
 var keys = new Array();
+var shiftKeys = new Array();
 
 // Initialize keybinding events
 function keybindsInit() {
@@ -25,15 +26,22 @@ function keybindsInit() {
         if(!($(e.target).prop('tagName') === 'INPUT' || $(e.target).prop('tagName') === 'TEXTAREA' || $(e.target).prop('tagName') === 'SELECT'))
         {
             // check whether keybinds are enabled
-            if(!e.metaKey && !e.shiftKey && !e.ctrlKey && !e.altKey)
+            if(!e.metaKey && !e.ctrlKey && !e.altKey)
             {
                 // even jquery doesn't get all keycodes into one value,
                 // so use the one that isn't zero
                 var pressedKey = (e.which || e.keyCode);
                 // change url if the pressed key is in our array
-                if(keys[pressedKey])
+                if(!e.shiftKey && keys[pressedKey])
                 {
                     window.location = keys[pressedKey];
+                    // prevent things like horizontal scrolling between
+                    // right arrow key pressed and new site loading
+                    e.preventDefault();
+                }
+                else if(e.shiftKey && shiftKeys[pressedKey])
+                {
+                    window.location = shiftKeys[pressedKey];
                     // prevent things like horizontal scrolling between
                     // right arrow key pressed and new site loading
                     e.preventDefault();
@@ -47,28 +55,30 @@ function keybindsInit() {
 if(window.enableKeybinds && $)
 {
     // catch undefined strings here, the keypress handler doesn't.
-    keys[rightArrowKey]     = window.nextEntityUrl || "#";
+    keys[rightArrowKey]      = window.nextEntityUrl || "#";
     keys[rightArrowKeyAlternative] = window.nextEntityUrl || "#";
-    keys[leftArrowKey]      = window.prevEntityUrl || "#";
+    keys[leftArrowKey]       = window.prevEntityUrl || "#";
     keys[leftArrowKeyAlternative] = window.prevEntityUrl || "#";
     //keys[enterKey]          = "chatframe.php"; // this results in a bug (multiple chats open)
-    keys[spaceBarKey]       = "?page=overview";
+    keys[spaceBarKey]        = "?page=overview";
     
-    keys[104] /* 'h' */     = "?page=haven";
-    keys[103] /* 'g' */     = "?page=buildings";
-    keys[102] /* 'f' */     = "?page=research";
-    keys[119] /* 'w' */     = "?page=shipyard";
-    keys[100] /* 'd' */     = "?page=defense";
-    keys[114] /* 'r' */     = "?page=missiles";
-    keys[109] /* 'm' */     = "?page=market";
-    keys[115] /* 's' */     = "?page=stats";
-    keys[107] /* 'k' */     = "?page=galaxy";
-    keys[110] /* 'n' */     = "?page=messages";
-    keys[98]  /* 'b' */     = "?page=reports";
-    keys[97]  /* 'a' */     = "?page=alliance";
-    keys[118] /* 'v' */     = "?page=bookmarks";
-    keys[108] /* 'l' */     = "?page=fleets";
-    keys[112] /* 'p' */     = "?page=economy";
+    keys[104] /* 'h' */      = "?page=haven";
+    keys[103] /* 'g' */      = "?page=buildings";
+    keys[102] /* 'f' */      = "?page=research";
+    keys[119] /* 'w' */      = "?page=shipyard";
+    keys[100] /* 'd' */      = "?page=defense";
+    keys[114] /* 'r' */      = "?page=missiles";
+    keys[109] /* 'm' */      = "?page=market";
+    keys[115] /* 's' */      = "?page=stats";
+    keys[107] /* 'k' */      = "?page=galaxy";
+    keys[110] /* 'n' */      = "?page=messages";
+    keys[98]  /* 'b' */      = "?page=reports";
+    keys[97]  /* 'a' */      = "?page=alliance";
+    keys[118] /* 'v' */      = "?page=bookmarks";
+    keys[108] /* 'l' */      = "?page=fleets";
+    keys[112] /* 'p' */      = "?page=economy";
+
+    shiftKeys[80] /* 'P' */  = "?page=planetstats";
 
     $(document).ready(keybindsInit);
 }
