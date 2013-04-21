@@ -258,8 +258,12 @@ AnyOption::cleanup()
 	free (optchartype);
 	free (optcharindex);
 	free (usage);
-	if( values != NULL )
+	if( values != NULL ) {
+		for( int i = 0 ; i < g_value_counter ; i++) {
+			free (values[i]);
+    }
 		free (values);
+  }
 	if( new_argv != NULL )
 		free (new_argv);
 }
