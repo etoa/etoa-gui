@@ -159,6 +159,7 @@ namespace planet
 			<< "		users  "
 			<< "	ON planets.planet_user_id = users.user_id "
 			<< "LIMIT 1;";
+		//std::cout << query.str();
 		RESULT_TYPE pRes = query.store();
 		query.reset();
 		

@@ -21,7 +21,7 @@ ADD_SUBDIRECTORY(reports)
 
 SET( ETOAD_SRC_FILES
 	EventHandler.h
-	MysqlHandler.h
+	MysqlHandler.cpp
 	version.h
 	etoa.cpp
 	main.cpp

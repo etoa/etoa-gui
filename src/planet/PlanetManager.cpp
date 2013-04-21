@@ -74,7 +74,9 @@ namespace planet
 			<< " INNER JOIN  "
 			<< "	users  "
 			<< " ON planets.planet_user_id = users.user_id;";
+		//std::cout << query.str();
 		RESULT_TYPE res = query.store();
+
 		query.reset();
 		
 		if (res) {
