@@ -11,17 +11,21 @@
 #include "../MysqlHandler.h"
 #include "../planet/PlanetEntity.h"
 
+#define PLANETMANAGER_UPDATE_INTERVAL 300
+
 namespace planet
 {
 	class PlanetManager
 	{
 	public:
 		PlanetManager();
-		PlanetManager(std::vector<int>* planetIds);	
-
-		void updateUserPlanets();
+		~PlanetManager();
+		
+		void updatePlanet(int planetId);
+		void updatePlanets(std::vector<int>* planetIds);
+		std::vector<int> getUpdateableUserPlanets();
 	private:
-		PlanetEntity* planet_;
+
 	};
 }
 

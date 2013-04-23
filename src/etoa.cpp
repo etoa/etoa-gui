@@ -123,63 +123,62 @@ void etoamain()
 			
 			fleet::FleetHandler* fh = new fleet::FleetHandler();
 			fh->update(); 
-			
+      delete fh;
+      
 			ship::ShipHandler* sh = new ship::ShipHandler();
 			sh->update();  
 	
 			def::DefHandler* dh = new def::DefHandler();
 			dh->update();  
 			
-			// TODO: why true?
-			if (bh->changes() || dh->changes() || sh->changes() || true)
-			{			
-				DEBUG("Changing planet data...");
-				
-				// Load id's of changed planets
-				std::vector<int> v1 = bh->getChangedPlanets();
-				std::vector<int> v2 = sh->getChangedPlanets();
-				std::vector<int> v3 = dh->getChangedPlanets();
-				
-				// Merge all changed planet id's together
-				for (unsigned int x=0; x<v2.size(); x++)
-				{
-					std::vector<int>::iterator result;
-	 				result = find(v1.begin(), v1.end(), v2[x]);
-	 				if (result == v1.end())
-	 				{ 
-	 					 v1.push_back(v2[x]);
-	 				}				
-				}
-				for (unsigned int x=0;x<v3.size();x++)
-				{
-					std::vector<int>::iterator result;
-	 				result = find( v1.begin(), v1.end(), v3[x]);
-	 				if (result == v1.end())
-	 				{
-	 					v1.push_back(v3[x]);
-					}
-					
-				}
-				
-				while(!EntityUpdateQueue::instance().empty()) 
-				{
-					DEBUG("Now serving: " << EntityUpdateQueue::instance().front());
-						
-					v1.push_back(EntityUpdateQueue::instance().front());
-					EntityUpdateQueue::instance().pop();
-				}
-				
-				planet::PlanetManager* pm = new planet::PlanetManager(&v1);
-				pm->updateUserPlanets();
-				delete pm;
-				
-				DEBUG("Updated "<<v1.size() << " entities.");
-			}
-			delete bh;
-			delete fh;
-			delete sh;
-			delete dh;
-		} 
+      // Collect id's of changed planets
+      
+      std::vector<int> changedPlanetIds;
+    
+      std::vector<int> v1;
+      if (bh->changes()) {
+        v1 = bh->getChangedPlanets();
+      }
+      delete bh;
+      
+      std::vector<int> v2;
+      if (sh->changes()) {
+        v2 = sh->getChangedPlanets();
+      }
+      delete sh;
+     
+      std::vector<int> v3;
+      if (dh->changes()) {
+        v3 = dh->getChangedPlanets();
+      }
+      delete dh;
+      
+      std::vector<int> v4;
+      while(!EntityUpdateQueue::instance().empty()) 
+      {
+        v4.push_back(EntityUpdateQueue::instance().front());
+        EntityUpdateQueue::instance().pop();
+      }
+
+      planet::PlanetManager pm = planet::PlanetManager();
+      std::vector<int> v5 = pm.getUpdateableUserPlanets();
+      
+      changedPlanetIds.reserve(v1.size() + v2.size() + v3.size() + v4.size() + v5.size());
+      changedPlanetIds.insert(changedPlanetIds.end(), v1.begin(), v1.end());
+      changedPlanetIds.insert(changedPlanetIds.end(), v2.begin(), v2.end());
+      changedPlanetIds.insert(changedPlanetIds.end(), v3.begin(), v3.end());
+      changedPlanetIds.insert(changedPlanetIds.end(), v4.begin(), v4.end());
+      changedPlanetIds.insert(changedPlanetIds.end(), v5.begin(), v5.end());
+  
+      sort(changedPlanetIds.begin(), changedPlanetIds.end());
+      changedPlanetIds.erase(unique(changedPlanetIds.begin(), changedPlanetIds.end() ), changedPlanetIds.end());        
+        
+      pm.updatePlanets(&changedPlanetIds);
+      
+      DEBUG("Updated " << changedPlanetIds.size() << " planets.");
+
+    }
+
 		// Catch mysql exceptions
 		catch (mysqlpp::BadQuery e) {
 			LOG(LOG_ERR,"MySQL: Unexpected query error: " << e.what());

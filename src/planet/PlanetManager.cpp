@@ -4,94 +4,53 @@
 
 namespace planet
 {
-	PlanetManager::PlanetManager(std::vector<int>* planetIds)
-	{
-		//std::cout << "Updating " << planetIds->size() << " Planet(s)...\n";
-		while (!planetIds->empty()) {
-			this->planet_ = new PlanetEntity(planetIds->back());
-			planetIds->pop_back();
-			delete this->planet_;
-		}
+	PlanetManager::PlanetManager() {
 	}
 	
-	void PlanetManager::updateUserPlanets()
+	PlanetManager::~PlanetManager() {
+	}
+	
+	void PlanetManager::updatePlanet(int planetId)
 	{
-		std::time_t ptime = std::time(0) - 300;
+    DEBUG("Update planet " << planetId);
+		PlanetEntity* p = new PlanetEntity(planetId);
+		delete p;
+	}
+
+	void PlanetManager::updatePlanets(std::vector<int>* planetIds)
+	{
+    for (unsigned int x=0; x < planetIds->size(); x++)
+    {
+			updatePlanet((*planetIds)[x]);
+    }  
+	}
+	
+	std::vector<int> PlanetManager::getUpdateableUserPlanets()
+	{
+		std::time_t ptime = std::time(0) - PLANETMANAGER_UPDATE_INTERVAL;
 		My &my = My::instance();
 		mysqlpp::Connection* con_ = my.get();
 		mysqlpp::Query query = con_->query();
 		query << "SELECT "
-			<< "	planets.id, "
-			<< "	planets.planet_user_main, "
-			<< "	planets.planet_last_updated, "
-			<< "	planets.planet_res_metal, "
-			<< "	planets.planet_res_crystal, "
-			<< "	planets.planet_res_plastic, "
-			<< "	planets.planet_res_fuel, "
-			<< "	planets.planet_res_food, "
-			<< "	planets.planet_bunker_metal, "
-			<< "	planets.planet_bunker_crystal, "
-			<< "	planets.planet_bunker_plastic, "
-			<< "	planets.planet_bunker_fuel, "
-			<< "	planets.planet_bunker_food, "
-			<< "	planets.planet_prod_metal, "
-			<< "	planets.planet_prod_crystal, "
-			<< "	planets.planet_prod_plastic, "
-			<< "	planets.planet_prod_fuel, "
-			<< "	planets.planet_prod_food, "
-			<< "	planets.planet_store_metal, "
-			<< "	planets.planet_store_crystal, "
-			<< "	planets.planet_store_plastic, "
-			<< "	planets.planet_store_fuel, "
-			<< "	planets.planet_store_food, "
-			<< "	planets.planet_people, "
-			<< "	planets.planet_people_place, "
-			<< "	planets.planet_type_id, "
-			<< "	users.user_id, "
-			<< "	users.user_race_id, "
-			<< "	users.user_specialist_id, "
-			<< "	users.user_specialist_time, "
-			<< "	users.user_hmode_to, "
-			<< "	stars.type_id "
-			<< "FROM  "
-			<< "  ( "
-			<< "  	( "
-			<< "		("
-			<< "		entities "
-			<< "			INNER JOIN "
-			<< "				planets "
-			<< "			ON planets.id = entities.id "
-			<< "			AND planets.planet_last_updated<'"<< ptime << "' "
-			<< "		) "
-			<< "		INNER JOIN  "
-			<< "			entities AS e "
-			<< "		ON e.cell_id=entities.cell_id AND e.pos=0 "
-			<< "	) "
-			<< "	INNER JOIN  	 "
-			<< "		stars "
-			<< "	ON stars.id=e.id "
-			<< " )"
-			<< " INNER JOIN  "
-			<< "	users  "
-			<< " ON planets.planet_user_id = users.user_id;";
-		//std::cout << query.str();
+			<< "	id "
+			<< "FROM "
+			<< "  planets "
+			<< "WHERE planet_last_updated<'" << ptime << "' "
+			<< "  AND planet_user_id > 0 ";
 		RESULT_TYPE res = query.store();
-
 		query.reset();
 		
+    std::vector<int> vec;
+    
 		if (res) {
 			unsigned int resSize = res.size();
-			
 			if (resSize) {
-				mysqlpp::Row row;
 				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) { 
-					row = res.at(i);
-					DEBUG("Planet " << (int)row["id"]);
-					this->planet_ = new PlanetEntity(row);
-					delete this->planet_;
+          mysqlpp::Row row = res.at(i);
+          vec.push_back((int)row["id"]);
 				}
 			}
-			DEBUG("Updated " << resSize << " Userplanets");
 		}
+    return vec;
 	}
 }
