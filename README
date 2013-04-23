@@ -33,7 +33,7 @@ Create SCM tag:
     
 Build source and create debian package:
 
-    make
+    bin/build.sh
     bin/make-deb.sh
     
 Switch back to trunk:
