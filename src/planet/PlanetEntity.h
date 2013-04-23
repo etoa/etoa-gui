@@ -20,7 +20,6 @@ namespace planet
 	{
 	public:
 		PlanetEntity(int entityId);
-		PlanetEntity(mysqlpp::Row& planet);
 		~PlanetEntity();
 	
 	private:

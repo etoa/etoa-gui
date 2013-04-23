@@ -131,6 +131,7 @@ void etoamain()
 			def::DefHandler* dh = new def::DefHandler();
 			dh->update();  
 			
+
       // Collect id's of changed planets
       
       std::vector<int> changedPlanetIds;
