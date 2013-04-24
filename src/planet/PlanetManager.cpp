@@ -13,8 +13,10 @@ namespace planet
 	void PlanetManager::updatePlanet(int planetId)
 	{
     DEBUG("Update planet " << planetId);
-		PlanetEntity* p = new PlanetEntity(planetId);
-		delete p;
+		PlanetEntity p = PlanetEntity(planetId);
+		p.updateResources();
+    p.updateProduction();
+    p.save();
 	}
 
 	void PlanetManager::updatePlanets(std::vector<int>* planetIds)
@@ -37,6 +39,7 @@ namespace planet
 			<< "  planets "
 			<< "WHERE planet_last_updated<'" << ptime << "' "
 			<< "  AND planet_user_id > 0 ";
+    //std::cout << query.str() << std::endl;
 		RESULT_TYPE res = query.store();
 		query.reset();
 		

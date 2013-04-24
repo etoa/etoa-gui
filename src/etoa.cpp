@@ -176,7 +176,7 @@ void etoamain()
         
       pm.updatePlanets(&changedPlanetIds);
       
-      DEBUG("Updated " << changedPlanetIds.size() << " planets.");
+      DEBUG("Updated " << changedPlanetIds.size() << " planets");
 
     }
 

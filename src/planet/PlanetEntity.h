@@ -21,9 +21,12 @@ namespace planet
 	public:
 		PlanetEntity(int entityId);
 		~PlanetEntity();
+		void updateResources();
+    void updateProduction();
+    void save();
+		void saveRes();
 	
 	private:
-		bool smallUpdate;
 		int entityId;
 		int fieldsUsed, fieldsExtra, solarPowerBonus;
 		int bunkerRes, bunkered;
@@ -46,15 +49,13 @@ namespace planet
 		ShipData* ship_;
 		DefData* def_;
 		
-		void updateValues();
 		void loadData();
 		void loadBuildlist();
 		void loadShiplist();
 		void loadDeflist();
 		void addBoni();
 		
-		void save();
-		void saveRes();
+
 		
 	};	
 }

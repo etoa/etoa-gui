@@ -4,10 +4,6 @@
 namespace planet
 {
 	PlanetEntity::PlanetEntity(int entityId) {
-
-		this->smallUpdate = false;
-		
-		Config &config = Config::instance();
 					
 		this->entityId = entityId;
 			
@@ -15,51 +11,12 @@ namespace planet
 		this->cnt.resize(8);
 		this->ressource.resize(7);
 		this->bunker.resize(5);
-			
-		this->loadData();
-		
-		DataHandler &DataHandler = DataHandler::instance();
-			
-		this->race_ = DataHandler.getRaceById(this->raceId);
-		this->sol_ = DataHandler.getSolById(this->solType);
-		this->planet_ = DataHandler.getPlanetById(this->planetType);
-		this->specialist_ = DataHandler.getSpecialistById(this->speicalistId);
-			
-		this->updateValues();
-			
-		this->fieldsUsed = 0;
-		this->fieldsExtra = 0;
-			
-		this->bunkerRes = 0;
-			
-		this->store[0] = config.nget("def_store_capacity", 0);
-		this->store[1] = config.nget("def_store_capacity", 0);
-		this->store[2] = config.nget("def_store_capacity", 0);
-		this->store[3] = config.nget("def_store_capacity", 0);
-		this->store[4] = config.nget("def_store_capacity", 0);
-		this->store[5] = config.nget("user_start_people", 1);
-			
-		this->cnt[0] = 0;
-		this->cnt[1] = 0;
-		this->cnt[2] = 0;
-		this->cnt[3] = 0;
-		this->cnt[4] = 0;
-		this->cnt[5] = 0;
-		this->cnt[6] = 0;
-		this->cnt[7] = 0;
-			
-		this->loadBuildlist();
-		this->loadShiplist();
-		this->loadDeflist();
-		this->addBoni();
+
+    this->loadData();
 	}
 
 	PlanetEntity::~PlanetEntity() {
-		if (smallUpdate)
-			this->saveRes();
-		else
-			this->save();
-	
+
 	}
 
 	void PlanetEntity::loadData() {
@@ -96,7 +53,6 @@ namespace planet
 			<< "		users  "
 			<< "	ON planets.planet_user_id = users.user_id "
 			<< "LIMIT 1;";
-		//std::cout << query.str();
 		RESULT_TYPE pRes = query.store();
 		query.reset();
 		
@@ -151,9 +107,17 @@ namespace planet
 				this->isUmod = (int)pRow["user_hmode_to"] > 0 ? true : false;
 			}
 		}
+    
+		DataHandler &DataHandler = DataHandler::instance();
+			
+		this->race_ = DataHandler.getRaceById(this->raceId);
+		this->sol_ = DataHandler.getSolById(this->solType);
+		this->planet_ = DataHandler.getPlanetById(this->planetType);
+		this->specialist_ = DataHandler.getSpecialistById(this->speicalistId);
+
 	}
 	
-	void PlanetEntity::updateValues() {
+	void PlanetEntity::updateResources() {
 		for (int i = 0; i < 5; i++) {
 			if (this->store[i] > (this->ressource[i]+(this->cnt[i]/3600)*this->t))
 				this->ressource[i] = (this->cnt[i]/3600)*this->t;
@@ -176,6 +140,37 @@ namespace planet
 		else if (this->store[5] <= (this->ressource[5] + (this->ressource[6] / 3600 * this->t)))
 			this->ressource[5] = (this->ressource[5] > this->store[5]) ? 0 : this->store[5] - this->ressource[5];
 	}
+  
+	void PlanetEntity::updateProduction() {
+    
+    this->fieldsUsed = 0;
+		this->fieldsExtra = 0;
+			
+		this->bunkerRes = 0;
+		
+		Config &config = Config::instance();
+    
+		this->store[0] = config.nget("def_store_capacity", 0);
+		this->store[1] = config.nget("def_store_capacity", 0);
+		this->store[2] = config.nget("def_store_capacity", 0);
+		this->store[3] = config.nget("def_store_capacity", 0);
+		this->store[4] = config.nget("def_store_capacity", 0);
+		this->store[5] = config.nget("user_start_people", 1);
+			
+		this->cnt[0] = 0;
+		this->cnt[1] = 0;
+		this->cnt[2] = 0;
+		this->cnt[3] = 0;
+		this->cnt[4] = 0;
+		this->cnt[5] = 0;
+		this->cnt[6] = 0;
+		this->cnt[7] = 0;
+			
+		this->loadBuildlist();
+		this->loadShiplist();
+		this->loadDeflist();
+		this->addBoni();
+  }
 	
 	void PlanetEntity::loadBuildlist() {
 		My &my = My::instance();
