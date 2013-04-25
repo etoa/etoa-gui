@@ -1,6 +1,6 @@
 
 #include "ShipHandler.h"
-
+#include "../util/Debug.h"
 namespace ship
 {
 	void ShipHandler::update()
@@ -28,6 +28,8 @@ namespace ship
 		RESULT_TYPE res = query.store();
 		query.reset();
 
+    int built = 0;
+    
 		// Add changed planets to vector
 		if (res) {
 			unsigned int resSize = res.size();
@@ -48,6 +50,7 @@ namespace ship
 												(int)arr["queue_user_id"],
 												(int)arr["queue_ship_id"],
 												(int)arr["queue_cnt"]);
+              built += (int)arr["queue_cnt"];
 							this->changes_=true;
 							this->updatePlanet =true;
 						}
@@ -62,7 +65,8 @@ namespace ship
 							ShipList::add(		(int)arr["queue_entity_id"], 
 												(int)arr["queue_user_id"],
 												(int)arr["queue_ship_id"],
-												(int)obj_cnt);	  				
+												(int)obj_cnt);
+              built += (int)obj_cnt;
 							query << "UPDATE "
 								<< "	ship_queue "
 								<< "SET "
@@ -98,5 +102,7 @@ namespace ship
 				}	  	    	
 			}  
 		}
+    
+    DEBUG("Ships: "<< built << " built");
 	}	
 }

@@ -139,8 +139,7 @@ namespace building
 			<< "	buildlist_build_type=3 "
 			<< "	AND buildlist_build_end_time<" << time << ";";
 		query.store();
-		DEBUG("Upgraded "<< my.affected_rows(query) <<" Buildings");
-		    
+    int up = my.affected_rows(query);
 		
 		query << "UPDATE "
 			<< "	buildlist "
@@ -152,8 +151,10 @@ namespace building
 			<< "WHERE "
 			<< "	buildlist_build_type=4 "
 			<< "	AND buildlist_build_end_time<" << time << ";";
-		query.store();   	
-		DEBUG("Downgraded "<< my.affected_rows(query) <<" Buildings");
+		query.store();
+    int down = my.affected_rows(query);
+    
+		DEBUG("Buildings: " << up << " upgraded, " << down << " downgraded");
 
 	}	
 }

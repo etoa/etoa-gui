@@ -22,7 +22,7 @@ namespace tech
 			<< "	techlist_build_type=3 "
 			<< "	AND techlist_build_end_time<" << time << ";";
 		query.store();
-		DEBUG("Upgraded "<< my.affected_rows(query) <<" Technologies");
+		DEBUG("Technologies: "<< my.affected_rows(query) <<" upgraded");
 
 		if( my.affected_rows(query) > 0 ) {
 			this->changes_ = true;

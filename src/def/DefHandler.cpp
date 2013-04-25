@@ -1,6 +1,6 @@
 
 #include "DefHandler.h"
-
+#include "../util/Debug.h"
 namespace def
 {
 	void DefHandler::update()
@@ -28,6 +28,8 @@ namespace def
 		RESULT_TYPE res = query.store();
 		query.reset();
 
+    int built = 0;
+    
 		// Add changed planets to vector
 		if (res)  {
 			unsigned int resSize = res.size();
@@ -48,6 +50,7 @@ namespace def
 												(int)arr["queue_user_id"],
 												(int)arr["queue_def_id"],
 												(int)arr["queue_cnt"]);
+              built += (int)arr["queue_cnt"];
 							changes_=true;
 							updatePlanet = true;
 						}
@@ -63,6 +66,7 @@ namespace def
 												(int)arr["queue_user_id"],
 												(int)arr["queue_def_id"],
 												(int)obj_cnt);
+              built += (int)obj_cnt;
 							query << "UPDATE "
 								<< "	def_queue "
 								<< "SET "
@@ -98,5 +102,6 @@ namespace def
 				}	  	    	
 			}  
 		}
+    DEBUG("Defenses: "<< built << " built");
 	}	
 }

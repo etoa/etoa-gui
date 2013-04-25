@@ -69,12 +69,12 @@ namespace planet
     {
 			updatePlanet((*planetIds)[x]);
     }
-    DEBUG("Updated " << planetIds->size() << " planets");
+    DEBUG("Planets: " << planetIds->size() << " updated");
   }
 	
 	void PlanetManager::updatePlanet(int planetId)
 	{
-    DEBUG("  Updating planet " << planetId);
+    DEBUG("  Processing planet " << planetId);
 		PlanetEntity p = PlanetEntity(planetId);
 		p.updateResources();
     p.updateProduction();
