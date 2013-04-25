@@ -9,25 +9,8 @@ namespace planet
 	
 	PlanetManager::~PlanetManager() {
 	}
-	
-	void PlanetManager::updatePlanet(int planetId)
-	{
-    DEBUG("Update planet " << planetId);
-		PlanetEntity p = PlanetEntity(planetId);
-		p.updateResources();
-    p.updateProduction();
-    p.save();
-	}
-
-	void PlanetManager::updatePlanets(std::vector<int>* planetIds)
-	{
-    for (unsigned int x=0; x < planetIds->size(); x++)
-    {
-			updatePlanet((*planetIds)[x]);
-    }  
-	}
-	
-	std::vector<int> PlanetManager::getUpdateableUserPlanets()
+  
+	std::vector<int>* PlanetManager::getUpdateableUserPlanets()
 	{
 		std::time_t ptime = std::time(0) - PLANETMANAGER_UPDATE_INTERVAL;
 		My &my = My::instance();
@@ -43,17 +26,58 @@ namespace planet
 		RESULT_TYPE res = query.store();
 		query.reset();
 		
-    std::vector<int> vec;
+    std::vector<int>* vec = new std::vector<int>();
     
 		if (res) {
 			unsigned int resSize = res.size();
 			if (resSize) {
 				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) { 
           mysqlpp::Row row = res.at(i);
-          vec.push_back((int)row["id"]);
+          vec->push_back((int)row["id"]);
 				}
 			}
 		}
     return vec;
+	}
+  
+  void PlanetManager::markForUpdate(int planetId) {
+    planetsMarkedForUpdate.push_back(planetId);
+  }
+  
+  void PlanetManager::markForUpdate(std::vector<int>* planetIds) {
+    planetsMarkedForUpdate.reserve(planetsMarkedForUpdate.size() + planetIds->size());
+    planetsMarkedForUpdate.insert(planetsMarkedForUpdate.end(), planetIds->begin(), planetIds->end());
+  }
+	
+	void PlanetManager::updatePlanets()
+	{
+    std::vector<int>* up = getUpdateableUserPlanets();
+    markForUpdate(up);
+    delete up;
+    
+    updatePlanets(&planetsMarkedForUpdate);
+    planetsMarkedForUpdate.clear();
+  }  
+  
+	void PlanetManager::updatePlanets(std::vector<int>* planetIds)
+	{
+    // Remove duplicates
+    sort(planetIds->begin(), planetIds->end());
+    planetIds->erase(unique(planetIds->begin(), planetIds->end() ), planetIds->end());        
+  
+    for (unsigned int x=0; x < planetIds->size(); x++)
+    {
+			updatePlanet((*planetIds)[x]);
+    }
+    DEBUG("Updated " << planetIds->size() << " planets");
+  }
+	
+	void PlanetManager::updatePlanet(int planetId)
+	{
+    DEBUG("  Updating planet " << planetId);
+		PlanetEntity p = PlanetEntity(planetId);
+		p.updateResources();
+    p.updateProduction();
+    p.save();
 	}
 }

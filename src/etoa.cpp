@@ -47,11 +47,6 @@ void etoamain()
 	DataHandler &DataHandler = DataHandler::instance();
 
 	// Main loop
-	if (debugEnable(0))
-	{
-		DEBUG("Waiting 3 seconds so that you can read all messages before entering loop");
-		sleep(3);
-	}
 	while (true)
 	{
 		try 
@@ -81,15 +76,16 @@ void etoamain()
 				std::string str(ctime (&rawtime));
 				str.erase(std::remove(str.begin(), str.end(), '\n'), str.end());
 				DEBUG("  Time         : " << str << " (" << std::time(0) << ")");
-				MemInfo* mi = new MemInfo();
-				DEBUG("  Memory usage : VIRT " << (mi->getVirtualMemUsedByCurrentProcess()) << " KB, PHYS " << (mi->getPhysMemUsedByCurrentProcess()) << " KB");
-				delete mi;
+				MemInfo mi;
+				DEBUG("  Memory usage : VIRT " << (mi.getVirtualMemUsedByCurrentProcess()) << " KB, PHYS " << (mi.getPhysMemUsedByCurrentProcess()) << " KB");
 			}
 			DEBUG("----------------------------------------------------------------\n");
 			
 			/**
 			* Start with event handling
 			*/
+      
+      // Market update
 			if ((mtime+300) < std::time(0))
 			{
 				market::MarketHandler* mh = new market::MarketHandler();
@@ -98,6 +94,7 @@ void etoamain()
 				delete mh;
 			}
 			
+      // Alliance points update
 			if ((std::time(0) + 60) % 3600 == 0)
 			{
 				aPoints::aPointsHandler* aph = new aPoints::aPointsHandler();
@@ -105,78 +102,64 @@ void etoamain()
 				delete aph;
 			}
 			
+      planet::PlanetManager pm = planet::PlanetManager();
 			
+      // Update alliance buildings
 			abuilding::aBuildingHandler* abh = new abuilding::aBuildingHandler();
 			abh->update();
 			delete abh;
 			
+      // Update alliance technologies
 			atech::aTechHandler* ath = new atech::aTechHandler();
 			ath->update();
 			delete ath;
 			
+      // Update technologies
 			tech::TechHandler* th = new tech::TechHandler();
 			th->update(); 
 			delete th;
 			
+      // Update buildings
 			building::BuildingHandler* bh = new building::BuildingHandler();
-			bh->update();  
-			
-			fleet::FleetHandler* fh = new fleet::FleetHandler();
-			fh->update(); 
-      delete fh;
-      
-			ship::ShipHandler* sh = new ship::ShipHandler();
-			sh->update();  
-	
-			def::DefHandler* dh = new def::DefHandler();
-			dh->update();  
-			
-
-      // Collect id's of changed planets
-      
-      std::vector<int> changedPlanetIds;
-    
-      std::vector<int> v1;
+			bh->update();
       if (bh->changes()) {
-        v1 = bh->getChangedPlanets();
+        std::vector<int> v = bh->getChangedPlanets();
+        pm.markForUpdate(&v);
       }
       delete bh;
       
-      std::vector<int> v2;
+      // Update ships
+			ship::ShipHandler* sh = new ship::ShipHandler();
+			sh->update();  
       if (sh->changes()) {
-        v2 = sh->getChangedPlanets();
+        std::vector<int> v = sh->getChangedPlanets();
+        pm.markForUpdate(&v);
       }
       delete sh;
-     
-      std::vector<int> v3;
+      
+      // Update defenses
+			def::DefHandler* dh = new def::DefHandler();
+			dh->update();  
       if (dh->changes()) {
-        v3 = dh->getChangedPlanets();
+        std::vector<int> v = dh->getChangedPlanets();
+        pm.markForUpdate(&v);
       }
       delete dh;
       
-      std::vector<int> v4;
+      // Get planet id's to be changed from message queue
       while(!EntityUpdateQueue::instance().empty()) 
       {
-        v4.push_back(EntityUpdateQueue::instance().front());
+        pm.markForUpdate(EntityUpdateQueue::instance().front());
         EntityUpdateQueue::instance().pop();
       }
 
-      planet::PlanetManager pm = planet::PlanetManager();
-      std::vector<int> v5 = pm.getUpdateableUserPlanets();
-      
-      changedPlanetIds.reserve(v1.size() + v2.size() + v3.size() + v4.size() + v5.size());
-      changedPlanetIds.insert(changedPlanetIds.end(), v1.begin(), v1.end());
-      changedPlanetIds.insert(changedPlanetIds.end(), v2.begin(), v2.end());
-      changedPlanetIds.insert(changedPlanetIds.end(), v3.begin(), v3.end());
-      changedPlanetIds.insert(changedPlanetIds.end(), v4.begin(), v4.end());
-      changedPlanetIds.insert(changedPlanetIds.end(), v5.begin(), v5.end());
-  
-      sort(changedPlanetIds.begin(), changedPlanetIds.end());
-      changedPlanetIds.erase(unique(changedPlanetIds.begin(), changedPlanetIds.end() ), changedPlanetIds.end());        
-        
-      pm.updatePlanets(&changedPlanetIds);
-      
-      DEBUG("Updated " << changedPlanetIds.size() << " planets");
+      // Update planets which have been marked
+      pm.updatePlanets();
+
+      // Process fleet events
+			fleet::FleetHandler* fh = new fleet::FleetHandler();
+			fh->update(); 
+      delete fh;
 
     }
 

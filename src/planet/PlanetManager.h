@@ -5,8 +5,9 @@
 #define MYSQLPP_MYSQL_HEADERS_BURIED
 #include <mysql++/mysql++.h>
 
-#include <vector>
 #include <iostream>
+#include <vector>
+#include <algorithm>
 
 #include "../MysqlHandler.h"
 #include "../planet/PlanetEntity.h"
@@ -21,11 +22,14 @@ namespace planet
 		PlanetManager();
 		~PlanetManager();
 		
+    void markForUpdate(int planetId);
+    void markForUpdate(std::vector<int>* planetIds);
 		void updatePlanet(int planetId);
+		void updatePlanets();
 		void updatePlanets(std::vector<int>* planetIds);
-		std::vector<int> getUpdateableUserPlanets();
+		std::vector<int>* getUpdateableUserPlanets();
 	private:
-
+    std::vector<int> planetsMarkedForUpdate;
 	};
 }
 

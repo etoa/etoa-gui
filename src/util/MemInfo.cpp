@@ -9,14 +9,14 @@ MemInfo::~MemInfo()
 {
 }
 
-long long MemInfo::getTotalVirtualMem() {
+long long MemInfo::getTotalVirtualMem() const {
 	long long totalVirtualMem = memInfo.totalram;
 	totalVirtualMem += memInfo.totalswap;
 	totalVirtualMem *= memInfo.mem_unit;
 	return totalVirtualMem;
 }
 
-long long MemInfo::getVirtualMemUsed() {
+long long MemInfo::getVirtualMemUsed() const {
 	long long virtualMemUsed = memInfo.totalram - memInfo.freeram;
         virtualMemUsed += memInfo.totalswap - memInfo.freeswap;
         virtualMemUsed *= memInfo.mem_unit;
@@ -38,13 +38,13 @@ int MemInfo::getVirtualMemUsedByCurrentProcess() {
         return result;
 }
 
-long long MemInfo::getTotalPyhsMem() {
+long long MemInfo::getTotalPyhsMem() const {
 	long long totalPhysMem = memInfo.totalram;
 	totalPhysMem *= memInfo.mem_unit;
 	return totalPhysMem;
 }
 
-long long MemInfo::getPhysMemUsed() {
+long long MemInfo::getPhysMemUsed() const {
 	long long physMemUsed = memInfo.totalram - memInfo.freeram;
 	physMemUsed *= memInfo.mem_unit;
 	return physMemUsed;

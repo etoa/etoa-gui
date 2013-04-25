@@ -18,11 +18,11 @@ class MemInfo
 	MemInfo();
 	~MemInfo();
     
-	long long getTotalVirtualMem();
-	long long getVirtualMemUsed();
+	long long getTotalVirtualMem() const;
+	long long getVirtualMemUsed() const;
 	int getVirtualMemUsedByCurrentProcess(); //Note: this value is in KB!
-	long long getTotalPyhsMem();
-	long long getPhysMemUsed();
+	long long getTotalPyhsMem() const;
+	long long getPhysMemUsed() const;
 	int getPhysMemUsedByCurrentProcess(); //Note: this value is in KB!
   
   private:
