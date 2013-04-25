@@ -25,8 +25,8 @@
 #include <vector>
 #include <sys/errno.h>
 
-#include "ExceptionHandler.h"
-#include "Functions.h"
+#include "../util/ExceptionHandler.h"
+#include "../util/Functions.h"
 
 /**
 * Simple logging interface for EtoA

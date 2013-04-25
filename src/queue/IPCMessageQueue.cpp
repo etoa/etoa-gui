@@ -17,7 +17,7 @@
 //
 
 #include "IPCMessageQueue.h"
-#include "Log.h"
+#include "../util/Log.h"
 
 IPCMessageQueue::IPCMessageQueue(std::string token)
 {

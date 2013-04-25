@@ -182,3 +182,33 @@ void etoamain()
 			
 }
 
+/**
+* Runs the message queue listener for receiving
+* command from the frontend
+*/
+void msgQueueThread()
+{                                   
+	LOG(LOG_DEBUG,"Entering message queue thread");				
+	
+	IPCMessageQueue queue(Config::instance().getConfigFile());
+	if (queue.valid())
+	{
+		while (true)
+		{
+			std::string cmd = "";
+			int id = 0;
+			queue.rcvCommand(&cmd,&id);
+			
+			if (cmd == "planetupdate")
+			{
+				EntityUpdateQueue::instance().push(id);
+			}
+			else if (cmd == "configupdate")
+			{
+				Config::instance().reloadConfig();
+			}
+		}
+	}
+	LOG(LOG_ERR,"Entering message queue ended");				
+}
+
