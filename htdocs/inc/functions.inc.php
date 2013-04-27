@@ -687,7 +687,7 @@
            	}
            	else
            	{
-           		return "&lt; &gt; ' \" ? ! $ = ; &amp;";
+           		return "&lt; &gt; &apos; &quot; ? ! $ = ; &amp;";
            	}
 	}
 
@@ -2611,17 +2611,17 @@ function imagecreatefromfile($path, $user_functions = false)
 
 	function cTT($title,$content)
 	{
-		return " onclick=\"showTT('".str_replace('"',"\'",$title)."','".str_replace('"',"\'",$content)."',0,event,this);return false;\"  ";
+		return " onclick=\"showTT('".StringUtils::encodeJavascriptStringForTT($title)."','".StringUtils::encodeJavascriptStringForTT($content)."',0,event,this);return false;\"  ";
 	}
 
 	function mTT($title,$content)
 	{
-		return " onmouseover=\"showTT('".str_replace('"',"\'",$title)."','".StringUtils::replaceBR(str_replace('"',"\'",$content))."',1,event,this);\" onmouseout=\"hideTT();\" ";
+		return " onmouseover=\"showTT('".StringUtils::encodeJavascriptStringForTT($title)."','".StringUtils::replaceBR(StringUtils::encodeJavascriptStringForTT($content))."',1,event,this);\" onmouseout=\"hideTT();\" ";
 	}
 
 	function tt($content)
 	{
-		return " onmouseover=\"showTT('','".str_replace('"',"\'",$content)."',1,event,this);\" onmouseout=\"hideTT();\" ";
+		return " onmouseover=\"showTT('','".StringUtils::encodeJavascriptStringForTT($content)."',1,event,this);\" onmouseout=\"hideTT();\" ";
 	}
 
 	function checkDaemonRunning($pidfile)

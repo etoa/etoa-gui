@@ -164,7 +164,7 @@
 					// Sender
 					$sender = $marr['message_user_from']>0 ? ($marr['user_nick']!='' ? $marr['user_nick'] : '<i>Unbekannt</i>') : '<i>'.$marr['cat_sender'].'</i>';
 					// Title
-					$subj = $marr['subject']!="" ? htmlspecialchars($marr['subject']) : "<i>Kein Titel</i>";
+					$subj = $marr['subject']!="" ? htmlentities($marr['subject'],ENT_QUOTES,'UTF-8') : "<i>Kein Titel</i>";
 					
 					tableStart();
 					echo "<tr><th colspan=\"2\">".$subj."</th></tr>";
@@ -180,17 +180,17 @@
 					else
 					{
 						echo '[<a href="?page='.$page.'&mode='.$mode.'&amp;msg_id='.$_GET['msg_id'].'&amp;src=1">Quelltext</a>]';
-					}					
+					}
 					echo "</td><td width=\"250\">";
 					if ($marr['text']!="")
 					{
 						if (isset($_GET['src']))
 						{
-							echo '<textarea rows="30" cols="60" readonly="readonly">'.htmlspecialchars($marr['text']).'</textarea>';
+							echo '<textarea rows="30" cols="60" readonly="readonly">'.htmlentities($marr['text'],ENT_QUOTES,'UTF-8').'</textarea>';
 						}	
 						else
 						{
-							echo text2html(htmlspecialchars($marr['text']));
+							echo text2html(addslashes($marr['text']));
 						}
 					}
 					else
@@ -217,7 +217,7 @@
 					{
 						// Muss mit echo 'text'; erfolgen, da sonst der Text beim ersten " - Zeichen abgeschnitten wird!
 						// Allerdings ist so das selbe Problem mit den ' - Zeichen!
-						echo '<input type=\'hidden\' name=\'message_text\' value=\''.htmlspecialchars($marr['text']).'\' />';
+						echo '<input type=\'hidden\' name=\'message_text\' value=\''.htmlentities($marr['text'],ENT_QUOTES,'UTF-8').'\' />';
 					}
 					echo "<input type=\"submit\" value=\"Weiterleiten\" name=\"remit\" />&nbsp;";
 					if ($marr['message_user_from']>0)
@@ -366,27 +366,27 @@
 					{
 						if(count($_POST['delmsg'])<=($conf['msg_max_store']['p1']-$_POST['archived_msg_cnt']))
 						{
-	            foreach ($_POST['delmsg'] as $id=>$val)
-	            {
-	                dbquery("
-	                UPDATE
-	                    messages
-	                SET
-	                    message_archived=1
-	                WHERE
-	                    message_id='".$id."'
-	                    AND message_user_to='".$cu->id."'
-	                    ;");
-	            }
-	            if (count($_POST['delmsg'])==1)
-	                success_msg("Nachricht wurde archiviert!");
-	            else
-	                success_msg("Nachrichten wurden archiviert!");
-            }
-            else
-            {
-            	error_msg("Zu wenig Platz im Archiv!");
-            }
+						foreach ($_POST['delmsg'] as $id=>$val)
+						{
+							dbquery("
+							UPDATE
+								messages
+							SET
+								message_archived=1
+							WHERE
+								message_id='".$id."'
+								AND message_user_to='".$cu->id."'
+								;");
+						}
+						if (count($_POST['delmsg'])==1)
+							success_msg("Nachricht wurde archiviert!");
+						else
+							success_msg("Nachrichten wurden archiviert!");
+						}
+						else
+						{
+							error_msg("Zu wenig Platz im Archiv!");
+						}
 					}
 				}
 
@@ -568,7 +568,7 @@
 							$sender = $marr['message_user_from']>0 ? ($marr['user_nick']!='' ? $marr['user_nick'] : '<i>Unbekannt</i>') : '<i>'.$arr['cat_sender'].'</i>';
 							
 							// Title
-							$subj = $marr['subject']!="" ? stripslashes($marr['subject']) : "<i>Kein Titel</i>";
+							$subj = $marr['subject']!="" ? htmlentities($marr['subject'],ENT_QUOTES,'UTF-8') : "<i>Kein Titel</i>";
 							
 							// Read or not read
 							if ($marr['message_read']==0)
@@ -585,22 +585,22 @@
 
 							if ($marr['message_read']==1)
 							{
-	            	echo "<tr id=\"msg_id_".$rcnt."\" style=\"display:;\">";
-	            	$rcnt++;
-	            }
-	            else
-	            {
-	            	echo "<tr style=\"display:;\">";
-	            }
-	            
-	            
-	            echo "				<td style=\"width:2%;\">
+								echo "<tr id=\"msg_id_".$rcnt."\" style=\"display:;\">";
+								$rcnt++;
+							}
+							else
+							{
+								echo "<tr style=\"display:;\">";
+							}
+
+							echo "				<td style=\"width:2%;\">
 	            					<img src=\"".$im_path."\" alt=\"Mail\" id=\"msgimg".$marr['message_id']."\" />
 	            				</td>
 	            			<td style=\"width:66%;\" ";
 							if ($msgpreview)
 							{
-								echo tm($subj,htmlspecialchars(substr($marr['text'], 0, 500)));
+								// subj has already been encoded above
+								echo tm($subj,htmlentities(substr($marr['text'], 0, 500),ENT_QUOTES,'UTF-8'));
 							}
 							echo ">";
 							if ($marr['message_massmail']==1)
@@ -614,25 +614,25 @@
 							}
 							else
 							{
-                if ($msgpreview)
-                {
+								if ($msgpreview)
+								{
 									echo "<a href=\"javascript:;\" onclick=\"toggleBox('msgtext".$marr['message_id']."');xajax_messagesSetRead(".$marr['message_id'].")\" >".$subj."</a>";
-                }
-                else
-                {
+								}
+								else
+								{
 									echo "<a href=\"?page=$page&amp;msg_id=".$marr['message_id']."&amp;mode=".$mode."\">".$subj."</a>";
-                }
-              }
+								}
+							}
 							echo "</td>";
 							echo "<td style=\"width:15%;\">".userPopUp($marr['message_user_from'],$marr['user_nick'],0,$strong)."</td>";
 							echo "<td style=\"width:15%;\">".date("d.m.Y H:i",$marr['message_timestamp'])."</td>";
 							echo "<td style=\"width:2%;text-align:center;padding:0px;vertical-align:middle;\">
 							<input id=\"delcb_".$arr['cat_id']."_".$dcnt."\" type=\"checkbox\" name=\"delmsg[".$marr['message_id']."]\" value=\"1\" title=\"Nachricht zum L&ouml;schen markieren\" /></td>";
 							echo "</tr>\n";
-              if ($msgpreview)
-              {
+							if ($msgpreview)
+							{
 								echo "<tr style=\"display:none;\" id=\"msgtext".$marr['message_id']."\"><td colspan=\"5\" class=\"tbldata\">";
-								echo text2html($marr['text']);
+								echo text2html(addslashes($marr['text']));
 								echo "<br/><br/>";
 								$msgadd = "&amp;message_text=".base64_encode($marr['message_id'])."&amp;message_sender=".base64_encode($sender);
 								if(substr($marr['subject'],0,3) == "Fw:")

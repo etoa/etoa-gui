@@ -60,7 +60,7 @@
 							if($check_subject=="")
 							{
 									$_SESSION['messagesSent'][$uid] = $time;
-									Message::sendFromUserToUser($cu->id,$uid,addslashes($_POST['message_subject']),addslashes($_POST['message_text']));
+									Message::sendFromUserToUser($cu->id,$uid,$_POST['message_subject'],$_POST['message_text']);
 	
 	         					    echo "Nachricht wurde an <b>".$rcpt."</b> gesendet! ";
 	         		    			$_POST['message_user_to']=null;
@@ -119,16 +119,16 @@
 			// Weiterleiten
 			if (isset($_POST['remit']))
 			{
-				$subj = 'Fw: '.stripslashes($_POST['message_subject']);
+				$subj = 'Fw: '.htmlentities($_POST['message_subject'],ENT_QUOTES,'UTF-8');
 			}
 			// Antworten und "Re: " voran fügen, wenn dies nicht schon steht
 			elseif (isset($_POST['answer']))
 			{
-				$subj = 'Re: '.stripslashes($_POST['message_subject']);
+				$subj = 'Re: '.htmlentities($_POST['message_subject'],ENT_QUOTES,'UTF-8');
 			}
 			else
 			{
-				$subj = stripslashes($_POST['message_subject']);
+				$subj = htmlentities($_POST['message_subject'],ENT_QUOTES,'UTF-8');
 			}
 		}
 		else
@@ -145,11 +145,11 @@
 		{
 			if (isset($_POST['message_sender']))
 			{
-				$text = "\n\n[b]Nachricht von ".$_POST['message_sender'].":[/b]\n\n".stripslashes($_POST['message_text'])."";
+				$text = "\n\n[b]Nachricht von ".$_POST['message_sender'].":[/b]\n\n".htmlentities($_POST['message_text'],ENT_QUOTES,'UTF-8')."";
 			}
 			else
 			{
-				$text = stripslashes($_POST['message_text'])."";
+				$text = htmlentities($_POST['message_text'],ENT_QUOTES,'UTF-8')."";
 			}
 		}
 		elseif (isset($_GET['message_text']))
@@ -162,12 +162,12 @@
 				if (mysql_num_rows($mres))
 				{
 					$marr = mysql_fetch_array($mres);
-					$text = "\n\n[b]Nachricht von ".base64_decode($_GET['message_sender']).":[/b]\n\n".htmlspecialchars($marr['text'])."";
+					$text = "\n\n[b]Nachricht von ".base64_decode($_GET['message_sender']).":[/b]\n\n".htmlentities($marr['text'],ENT_QUOTES,'UTF-8');
 				}
 			}
 			else
 			{
-				$text = "\n\n".htmlspecialchars($marr['text'])."";
+				$text = "\n\n".htmlentities($marr['text'],ENT_QUOTES,'UTF-8')."";
 			}
 		}
 	    else

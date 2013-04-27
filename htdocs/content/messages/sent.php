@@ -43,14 +43,14 @@
 				if (mysql_num_rows($mres)>0)
 				{
 					$marr = mysql_fetch_array($mres);
-					$subj = $marr['subject']!="" ? stripslashes($marr['subject']) : "<i>Kein Titel</i>";
+					$subj = $marr['subject']!="" ? htmlentities($marr['subject'],ENT_QUOTES,'UTF-8') : "<i>Kein Titel</i>";
 				
 					tableStart();
 					echo "<tr><th colspan=\"2\">".$subj."</th></tr>";
 					echo "<tr><th style=\"width:100px;\">Datum:</td><td>".date("d.m.Y H:i",$marr['message_timestamp'])."</td></tr>";
 				
 					echo "<tr><th>Sender:</th><td>".userPopUp($cu->id, $cu->nick,0)."</td></tr>";
-					echo "<tr><th>Text:</td><td>".text2html($marr['text'])."</td></tr>";
+					echo "<tr><th>Text:</td><td>".text2html(addslashes($marr['text']))."</td></tr>";
 					tableEnd();
 					echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=messages&mode=sent'\" /> &nbsp; ";
 				}
@@ -105,7 +105,7 @@
 					echo "<td ><a href=\"?page=$page&msg_id=".$marr['message_id']."&mode=".$mode."\">";
 					if ($marr['subject']!="")
 					{
-						echo stripslashes($marr['subject']);
+						echo htmlentities($marr['subject'],ENT_QUOTES,'UTF-8');
 					}
 					else
 					{

@@ -65,8 +65,8 @@ class Message
 				VALUES
 				(
 					".mysql_insert_id().",
-				'".addslashes($subject)."',
-				'".addslashes($text)."',
+				'".mysql_real_escape_string($subject)."',
+				'".mysql_real_escape_string($text)."',
 				'".$fleetId."'
 				);
 			");
