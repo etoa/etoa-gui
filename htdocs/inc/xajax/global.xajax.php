@@ -18,7 +18,7 @@ function searchUser($val,$field_id='user_nick',$box_id='citybox',$separator=";")
 	foreach ($nicks as $nick)
 	{
 		if (strlen($temp)>0) $outNick.=$temp.=";";
-		$val=$nick;
+		$val=trim($nick);
 		$temp=$val;
 	}
 	$sOut = "";
