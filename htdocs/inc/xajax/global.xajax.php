@@ -30,7 +30,7 @@ function searchUser($val,$field_id='user_nick',$box_id='citybox',$separator=";")
 		while($arr=mysql_fetch_row($res))
 		{
 			$nCount++;
-			$sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('".$field_id."').value=document.getElementById('".$field_id."').value?document.getElementById('".$field_id."').value.replace(/^(.+);[^;]+$/,'$1;')+'".htmlentities($arr[0],ENT_QUOTES,'UTF-8')."':'".htmlentities($arr[0],ENT_QUOTES,'UTF-8')."';document.getElementById('".$box_id."').style.display = 'none';\">".htmlentities($arr[0],ENT_QUOTES,'UTF-8')."</a>";
+			$sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('".$field_id."').value=(document.getElementById('".$field_id."').value && document.getElementById('".$field_id."').value.indexOf(';')!=-1)?document.getElementById('".$field_id."').value.replace(/^(.+);[^;]+$/,'$1;')+'".htmlentities($arr[0],ENT_QUOTES,'UTF-8')."':'".htmlentities($arr[0],ENT_QUOTES,'UTF-8')."';document.getElementById('".$box_id."').style.display = 'none';\">".htmlentities($arr[0],ENT_QUOTES,'UTF-8')."</a>";
 			$sLastHit = $arr[0];
 		}
 	}
