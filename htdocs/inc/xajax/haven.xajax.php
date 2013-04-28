@@ -221,6 +221,7 @@
 	
 				$actions = explode(",",$arr['ship_actions']);
 				$accnt=count($actions);
+				$acstr = '';
 				if ($accnt>0)
 				{
 					$acstr = "<br/><b>Fähigkeiten:</b> ";
@@ -239,7 +240,7 @@
 				}	
 	
 
-	      echo "<td ".tm($arr['ship_name'],"<img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id']."_middle.".IMAGE_EXT."\" style=\"float:left;margin-right:5px;\">".text2html($arr['ship_shortcomment']."<br/>".$acstr."<br style=\"clear:both;\"/>")).">".$arr['ship_name']."</td>";
+	      echo "<td ".tm($arr['ship_name'],"<img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id']."_middle.".IMAGE_EXT."\" style=\"float:left;margin-right:5px;\">".text2html($arr['ship_shortcomment'])."<br/>".$acstr."<br style=\"clear:both;\"/>").">".$arr['ship_name']."</td>";
 	      echo "<td width=\"190\" ".tm("Geschwindigkeit","Grundgeschwindigkeit: ".$arr['ship_speed']." AE/h<br>$speedtechstring").">".nf($arr['ship_speed']*$timefactor)." AE/h</td>";
 	      echo "<td width=\"110\">".nf($arr['ship_pilots'])."</td>";
 	      echo "<td width=\"110\">".nf($arr['shiplist_count'])."<br/>";
