@@ -79,6 +79,7 @@ if(window.enableKeybinds && $)
     keys[112] /* 'p' */      = "?page=economy";
 
     shiftKeys[80] /* 'P' */  = "?page=planetstats";
+    shiftKeys[86] /* 'V' */  = "?page=bookmarks&mode=fleet";
 
     $(document).ready(keybindsInit);
 }
