@@ -389,7 +389,8 @@
 					users
 				WHERE
 					user_ghost=0".
-					($cfg->param1('statsupdate')?'':' AND (user_hmode_to<'.time().')').
+					// same check as below to set `user_stats`.`hmod` field
+					($cfg->param1('statsupdate')?'':' AND (user_hmode_from = 0)').
 			';');
 			
 			$user_stats_query = "";
