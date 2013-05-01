@@ -55,7 +55,7 @@
       $forceLog = false;
       
 			// Monates-Update (1. des Monates 05:13)
-			if ($mode=="month" || (date("H")=="05" && date("i")=="13" && date("m")=="1"))
+			if ($mode=="month" || (date("H")=="05" && date("i")=="13" && date("j")=="1"))
 			{
 				$logt = "[b]Monates-Update ".date("d.m.Y, H:i")."[/b]\n";
 				$log .= update_minute();
