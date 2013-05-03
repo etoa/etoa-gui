@@ -86,6 +86,8 @@ $xajax->register(XAJAX_FUNCTION,'launchAnalyzeProbe');
 	  return $objResponse;	
 	}
 
+	// add the following line to the php of the calling site:
+	// $_SESSION['currentEntity']=serialize($cp);
 	function launchAnalyzeProbe($tid)
 	{
 		$cp = unserialize($_SESSION['currentEntity']);

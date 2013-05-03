@@ -30,6 +30,9 @@
 
 	$mode = (isset($_GET['mode']) && $_GET['mode']!="") ? $_GET['mode'] : 'target';
 	
+	// save current planet for use in xajax functions
+	$_SESSION['currentEntity']=serialize($cp);
+	
 	// Header & Menu
 	echo "<h1>Favoriten</h1>";
  	show_tab_menu("mode",
@@ -772,12 +775,12 @@
 					}
 					else
 					{
-						error_msg("Es existiert kein Objekt an den angegebenen Koordinaten!!");
+						error_msg("Es existiert kein Objekt an den angegebenen Koordinaten!");
 					}
 				}
 				else
 				{
-					error_msg("Das Gebiet ist noch nicht erkundet!!");
+					error_msg("Das Gebiet ist noch nicht erkundet!");
 				}
 			}
 	
@@ -909,7 +912,7 @@
 						<td colspan=\"6\" style=\"text-align:center;\">
 							<select name=\"sort_value\">";
 				foreach ($values as $value => $name)
-				{		
+				{
 					echo "<option value=\"".$value."\"";
 					if($cu->properties->itemOrderBookmark==$value)
 					{
