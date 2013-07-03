@@ -952,7 +952,10 @@
 			else
 			{
 				include_once(getcwd().'/inc/bootstrap.inc.php');
-				add_log(18,'Der User '.$_SESSION['user_nick'].' versuchte, ein zweites Wurmloch zu &ouml;ffnen');
+				add_log(18,'Der User '.$_SESSION['user_nick'].' versuchte, ein zweites Wurmloch zu &ouml;ffnen <br />'
+						.'Bereits gesetztes Wurmloch: '.$fleet->wormholeEntryEntity.' mit Austrittspunkt '.$fleet->wormholeExitEntity .'<br />'
+						.'Zweites Wumloch: '.$form['man_sx'].' / '.$form['man_sy'].' : '.$form['man_cx'].' / '.$form['man_cy'].' : '.$form['man_p'].'.'
+				);
 				$response->alert("Wurmloch wurde bereits gesetzt!");
 			}
 
