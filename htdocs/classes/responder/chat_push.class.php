@@ -4,6 +4,12 @@ class ChatPushJsonResponder extends JsonResponder
   function getRequiredParams() {
     return array('ctext');
   }
+  
+  function validateSession()
+  {
+    global $s;
+    return $s->chatValidate();
+  }
 
   function getResponse($params) {
 

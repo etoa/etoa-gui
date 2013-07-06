@@ -26,5 +26,21 @@ abstract class JsonResponder
   
   abstract public function getRequiredParams();
   abstract public function getResponse($params);
+  
+  // replace with own function in child classes
+  public function validateSession()
+  {
+    global $s;
+    
+    if ($s->validate(0))
+    {
+      $cu = new CurrentUser($s->user_id);
+      if ($cu->isValid)
+      {
+        return true;
+      }
+    }
+    return false;
+  }
 }
 ?>

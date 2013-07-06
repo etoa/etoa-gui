@@ -142,6 +142,15 @@ class UserSession extends Session
 										$this->registerSession();
 										$this->bot_count = 0;
 										$this->firstView = true;
+										
+										// do not use this values for real verification
+										// intended only for chat session pseudo-validation
+										$this->cRemoteAddr = $_SERVER['REMOTE_ADDR'];
+										$this->cUserAgent = $_SERVER['HTTP_USER_AGENT'];
+										// does not guarantee valid login, see above.
+										// this isn't set to false on session timeout
+										$this->cLogin = true;
+										
 										return true;
 									}
 									else
@@ -332,7 +341,29 @@ class UserSession extends Session
 			$this->lastError = "";
 		}
 		if ($destroy==1)
+		{
+			// chat logout
+			$this->cLogin = false;
+			// destroy user session
 			self::unregisterSession();
+		}
+		return false;
+	}
+	
+	// only for session validation in chat, do not use
+	// for real validation
+	function chatValidate()
+	{
+		if($this->cLogin == true &&
+		   $this->cRemoteAddr == $_SERVER['REMOTE_ADDR'] &&
+		   $this->cUserAgent == $_SERVER['HTTP_USER_AGENT'] &&
+		   isset($_SESSION['user_id']) &&
+		   $this->user_id > 0 &&
+		   $_SESSION['user_id'] == $this->user_id
+		)
+		{
+			return true;
+		}
 		return false;
 	}
 
@@ -368,6 +399,9 @@ class UserSession extends Session
 
 	function logout()
 	{
+		// chat logout
+		$this->cLogin = false;
+		// destroy session
 		self::unregisterSession();
 	}
 

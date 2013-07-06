@@ -4,9 +4,14 @@ class ChatLogoutJsonResponder extends JsonResponder
   function getRequiredParams() {
     return array();
   }
+  
+  function validateSession()
+  {
+    global $s;
+    return $s->chatValidate();
+  }
 
   function getResponse($params) {
-
     $data = array();
     
     if(!isset($_SESSION['user_id']) || !isset($_SESSION['user_nick']))

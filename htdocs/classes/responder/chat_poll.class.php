@@ -5,6 +5,12 @@ class ChatPollJsonResponder extends JsonResponder
     return array('minId', 'chanId');
   }
 
+  function validateSession()
+  {
+    global $s;
+    return $s->chatValidate();
+  }
+
   function getResponse($params) {
     
     $data = array();

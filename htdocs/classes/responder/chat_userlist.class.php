@@ -5,6 +5,12 @@ class ChatUserlistJsonResponder extends JsonResponder
     return array();
   }
 
+  function validateSession()
+  {
+    global $s;
+    return $s->chatValidate();
+  }
+
   function getResponse($params) {
     
     $data = array();
