@@ -159,7 +159,7 @@ class OtherReport extends Report
 				echo '</table><br/>';
 				if ($this->ships!='')
 				{
-					echo '<br />Aufrund einer Kolision mit einem Asteroiden sind einige deiner Schiffe zerst&ouml;rt worden:<br />';
+					echo '<br />Aufgrund einer Kolision mit einem Asteroiden sind einige deiner Schiffe zerst&ouml;rt worden:<br />';
 					echo '<table>';
 					$shipArr = explode(',',$this->ships);
 					$ships = Ship::getItems();

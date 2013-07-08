@@ -180,14 +180,14 @@
 	                        if ($arr['bl_user_id']==$cu->id)
 	                        {
 	                                $nick = get_user_nick($arr['bl_buddy_id']);
-	                                iBoxStart("Kommentar fÃŒr ".$nick."");
+	                                iBoxStart("Kommentar f&uuml;r ".$nick."");
 	                                echo "<textarea name=\"bl_comment\" rows=\"5\" cols=\"60\">".stripslashes($arr['bl_comment'])."</textarea>";
 	                                iBoxEnd();
 	                        }
 	                        else
 	                        {
 	                                $nick = get_user_nick($arr['bl_user_id']);
-	                                iBoxStart("Kommentar fÃŒr ".$nick."");
+	                                iBoxStart("Kommentar f&uuml;r ".$nick."");
 	                                echo "<textarea name=\"bl_comment_buddy\" rows=\"5\" cols=\"60\">".stripslashes($arr['bl_comment_buddy'])."</textarea>";
 	                                iBoxEnd();
 	                        }                       

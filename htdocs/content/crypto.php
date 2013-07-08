@@ -392,7 +392,7 @@
 											// Inform oponent
 											if ($target->ownerId()>0)
 											{
-												send_msg($target->ownerId(),SHIP_SPY_MSG_CAT_ID,"Funkstörung","Eure Flottenkontrolle hat soeben eine kurzzeitige Störung des Kommunikationsnetzes festgestellt. Es kann sein das fremde Hacker in das Netz eingedrungen sind und Flottendaten geklaut haben.");
+												send_msg($target->ownerId(),SHIP_SPY_MSG_CAT_ID,"Funkstörung","Eure Flottenkontrolle hat soeben eine kurzzeitige Störung des Kommunikationsnetzes festgestellt. Es kann sein, dass fremde Spione in das Netz eingedrungen sind und Flottendaten geklaut haben.");
 											}
 											
 											// Display result
@@ -909,7 +909,7 @@
 	                    // Inform oponent
 	                    if ($target->ownerId()>0)
 	                    {                  
-	                      send_msg($target->ownerId(),SHIP_SPY_MSG_CAT_ID,"Funkstörung","Eure Flottenkontrolle hat soeben eine kurzzeitige Störung des Kommunikationsnetzes festgestellt. Es kann sein das fremde Hacker in das Netz eingedrungen sind und Flottendaten geklaut haben.");
+	                      send_msg($target->ownerId(),SHIP_SPY_MSG_CAT_ID,"Funkstörung","Eure Flottenkontrolle hat soeben eine kurzzeitige Störung des Kommunikationsnetzes festgestellt. Es kann sein, dass fremde Spione in das Netz eingedrungen sind und Flottendaten geklaut haben.");
 	                    }
 	                                        
 	                    // Display result
