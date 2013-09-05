@@ -47,6 +47,7 @@ trap 'cleanup' INT TERM EXIT
 rsync -au --exclude '.svn' dist/debian/ $tdir
 mkdir -p $tdir/usr/local/bin
 cp $BIN_FILE $tdir/usr/local/bin
+cp dist/etoad-manager $tdir/usr/local/bin
 
 # Write version to control file
 sed "s/^Version: .*/Version: ${VER}/" -i $tdir/DEBIAN/control

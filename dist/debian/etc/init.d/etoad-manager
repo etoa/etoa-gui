@@ -1,0 +1,75 @@
+#! /bin/sh
+
+### BEGIN INIT INFO
+# Provides:          etoad-manager
+# Required-Start:    $remote_fs $syslog $mysql
+# Required-Stop:     $remote_fs $syslog $mysql
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: EtoA backend manager
+# Description:       Starts and stops the EtoA backend manager which controls multiple backend instances
+### END INIT INFO
+
+# Author: Nicolas Perrenoud <mrcage@etoa.ch>
+#
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/bin
+DESC="EtoA Eventhandler Backend Manager"
+NAME=etoad-manager
+MANAGER=/usr/local/bin/$NAME
+SCRIPTNAME=/etc/init.d/$NAME
+
+# Exit if the package is not installed
+[ -x "$MANAGER" ] || exit 0
+
+# Read configuration variable file if it is present
+[ -r /etc/default/$NAME ] && . /etc/default/$NAME
+
+# Load the VERBOSE setting and other rcS variables
+. /lib/init/vars.sh
+
+# Define LSB log_* functions.
+# Depend on lsb-base (>= 3.2-14) to ensure that this file is present
+# and status_of_proc is working.
+. /lib/lsb/init-functions
+
+case "$1" in
+  start)
+	[ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC" "$NAME"
+	$MANAGER start
+	ret=$?
+	[ "$VERBOSE" != no ] && log_end_msg $ret
+	exit $ret
+	;;
+  stop)
+	[ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$NAME"
+	$MANAGER stop
+	ret=$?
+	[ "$VERBOSE" != no ] && log_end_msg $ret
+	exit $ret
+	;;
+  status)
+       	$MANAGER status
+	exit $?
+       ;;
+  reload)
+	[ "$VERBOSE" != no ] && log_daemon_msg "Reloading $DESC" "$NAME"
+	$MANAGER reload
+	ret=$?
+	[ "$VERBOSE" != no ] && log_end_msg $ret
+	exit $ret
+	;;
+  restart)
+	[ "$VERBOSE" != no ] && log_daemon_msg "Restarting $DESC" "$NAME"
+	$MANAGER restart
+	ret=$?
+	[ "$VERBOSE" != no ] && log_end_msg $ret
+	exit $ret
+	;;
+  *)
+	echo "Usage: $SCRIPTNAME {start|stop|status|restart|reload}" >&2
+	exit 3
+	;;
+esac
+
+:

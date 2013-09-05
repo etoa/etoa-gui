@@ -20,6 +20,21 @@ for file in $(find $ENABLED_CONFIG_DIR -name *${CONFIG_EXT}); do
 	ienabled+=($instance)
 done
 
+
+run_unprivileged() {
+	local cmd="$@"
+	if [ $(id -u) -ne 0 ]; then
+		$cmd
+		return $?
+	fi
+	if ! id -u $USER >/dev/null 2>&1; then
+		echo "User '$USER' does not exist!"
+		exit 1
+	fi
+	su $USER -c "$cmd"
+	return $?
+}
+
 #
 # Starts an instance
 #
@@ -28,7 +43,7 @@ do_start() {
 	if ! check_status $instance; then
 		configfile=$ENABLED_CONFIG_DIR/${instance}${CONFIG_EXT}
 		pidfile=$PID_DIR/$instance.pid
-		$ETOAD_BIN $instance -d -c $configfile -p $pidfile
+		run_unprivileged $ETOAD_BIN $instance -d -c $configfile -p $pidfile
 		return $?
 	fi
 	return 0
@@ -41,7 +56,7 @@ do_stop() {
 	local instance=$1
 	if check_status $instance; then
 		pidfile=$PID_DIR/$instance.pid
-		$ETOAD_BIN $instance -s -p $pidfile >/dev/null
+		run_unprivileged $ETOAD_BIN $instance -d -s -p $pidfile
 		return $?
 	fi
 	return 0
@@ -73,6 +88,27 @@ check_status() {
 	return 1
 }
 
+#
+# Reload instance config
+#
+do_reload() {
+	local instance=$1
+	re='^[0-9]+$'
+	pidfile=$PID_DIR/$instance.pid
+	if [ -e $pidfile ]; then
+		pid=$(cat $pidfile | head -1)
+		if [[ $pid =~ $re ]] ; then
+			if [ -e /proc/$pid ]; then
+				kill -s HUP $pid
+				return $?
+			fi
+			return 2
+		fi
+		return 3
+	fi
+	return 1
+}
+
 contains_element () {
   local e
   for e in "${@:2}"; do [[ "$e" == "$1" ]] && return 0; done
@@ -84,6 +120,8 @@ case "$1" in
 		ret=0
 		for instance in ${ienabled[@]}; do
 			do_start $instance
+			r=$?
+			if [ $r -ne 0 ]; then ret=$r; fi
 		done
 		exit $ret
 	;;
@@ -91,6 +129,8 @@ case "$1" in
 		ret=0
 		for instance in ${ienabled[@]}; do
 			do_stop $instance
+			r=$?
+			if [ $r -ne 0 ]; then ret=$r; fi
 		done
 		exit $ret
 	;;
@@ -99,6 +139,13 @@ case "$1" in
 		for instance in ${ienabled[@]}; do
 			do_stop $instance
 			do_start $instance
+		done
+		exit $ret
+	;;
+	reload)
+		ret=0
+		for instance in ${ienabled[@]}; do
+			do_reload $instance
 		done
 		exit $ret
 	;;
@@ -159,7 +206,7 @@ case "$1" in
 		exit 0	
 	;;
 	*)
-		echo "Usage: $(basename $0) {start|stop|status|restart|list|enable|disable}" >&2
+		echo "Usage: $(basename $0) {start|stop|status|restart|reload|list|enable|disable}" >&2
 		exit 3
 	;;
 esac
