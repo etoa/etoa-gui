@@ -55,8 +55,9 @@ do_start() {
 do_stop() {
 	local instance=$1
 	if check_status $instance; then
+		configfile=$ENABLED_CONFIG_DIR/${instance}${CONFIG_EXT}
 		pidfile=$PID_DIR/$instance.pid
-		run_unprivileged $ETOAD_BIN $instance -d -s -p $pidfile
+		run_unprivileged $ETOAD_BIN $instance -d -s -c $configfile -p $pidfile
 		return $?
 	fi
 	return 0

@@ -1,4 +1,5 @@
 #!/bin/bash
 
 mkdir -p /var/run/etoad
+chown etoa:etoa /var/run/etoad
 
