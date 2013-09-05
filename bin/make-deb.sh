@@ -35,7 +35,10 @@ VER=$(grep "__ETOAD_VERSION_STRING__" src/version.h | awk '{print $3}' | sed 's/
 pkgname=${DEB_NAME}_${VER}_${ARCH}
 
 # Ensure source has been compiled
-make
+if [ ! -f $BIN_FILE ]; then
+	echo "Source has not been built! Please execute 'bin/build.sh'"
+	exit 1;
+fi
 
 tdir=$(mktemp -d)
 trap 'cleanup' INT TERM EXIT
