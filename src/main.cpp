@@ -317,7 +317,7 @@ int main(int argc, char* argv[])
 		if (stop)
 		{
 			kill(existingPid, SIGTERM);
-			std::cout << "Killing process " << existingPid << endl;
+			DEBUG("Killing process " << existingPid);
 			exit (EXIT_SUCCESS);
 		}
 		if (killExistingInstance)
