@@ -1,4 +1,4 @@
 #!/bin/bash
 
-mkdir -p /var/run/etoa
+mkdir -p /var/run/etoad
 
