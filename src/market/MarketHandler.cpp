@@ -393,9 +393,6 @@ namespace market
 		
 		std::time_t time = std::time(0);
 		
-		User *buyer;
-		User *seller;
-		
 		// Handelsschiff
 		DataHandler &DataHandler = DataHandler::instance();
 		ShipData *marketShip = DataHandler.getShipById(config.idget("MARKET_SHIP_ID"));
@@ -424,8 +421,8 @@ namespace market
 				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) {
 					arr = res.at(i);
 						
-					buyer = new User((int)arr["current_buyer_id"]);
-					seller = new User((int)arr["user_id"]);
+					User buyer((int)arr["current_buyer_id"]);
+					User seller((int)arr["user_id"]);
 						
 					// Add trade points
 					int tradepointsBuyer = 1;
@@ -445,8 +442,8 @@ namespace market
 					int launchtime = time; // Startzeit
 					double distance = etoa::calcDistanceByPlanetId(arr["entity_id"],arr["current_buyer_entity_id"]);
 					int duration = (int)(distance / (double)marketShip->getSpeed() * 3600) + marketShip->getTime2Start() + marketShip->getTime2Land();
-					int sellerLandtime = launchtime + (int)(duration / seller->getSpecialist()->getSpecialistTradeBonus()); // Landezeit
-					int buyerLandtime = launchtime + (int)(duration / buyer->getSpecialist()->getSpecialistTradeBonus()); // Landezeit
+					int sellerLandtime = launchtime + (int)(duration / seller.getSpecialist()->getSpecialistTradeBonus()); // Landezeit
+					int buyerLandtime = launchtime + (int)(duration / buyer.getSpecialist()->getSpecialistTradeBonus()); // Landezeit
 
 					query << "INSERT INTO fleet "
 						<< "(	user_id, "
