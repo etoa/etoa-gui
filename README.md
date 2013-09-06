@@ -7,18 +7,10 @@ A backend for handling events in the Escape to Andromeda game written in C++.
 Requirements
 ------------
 
-Tools:
-
- * build-essential
- * cmake
-
-Libraries:
-
- * libboost-filesystem-dev
- * libboost-regex-dev
- * libboost-system-dev
- * libboost-thread-dev
- * libmysql++-dev
+ * Linux C++ build chain
+ * CMake
+ * Boost library (filesystem, regex, system, thread)
+ * MySQL++ library
 
 If you use Debian Linux, you can simply execute
 
