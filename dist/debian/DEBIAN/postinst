@@ -3,3 +3,8 @@
 mkdir -p /var/run/etoad
 chown etoa:etoa /var/run/etoad
 
+mkdir -p /var/log/etoad
+chown etoa:etoa /var/log/etoad
+
+mkdir -p /etc/etoad/instances-available
+mkdir -p /etc/etoad/instances-enabled
