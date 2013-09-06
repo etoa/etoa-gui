@@ -127,12 +127,12 @@ This will create the `etoa` user if necessary and the following files and direct
 
  * `/usr/local/bin/etoad` Etoad binary
  * `/usr/local/bin/etoad-manager` Etoad instance manager tool
+ * `/etc/init.d/etoad-manager` Init-Script for etoad-manager
  * `/var/run/etoad/` PID files
  * `/var/log/etoad/` Per-instance log files
- * `/etc/etoad/instances-available` Available instance configurations
- * `/etc/etoad/instances-enabled` Enabled instances (symlinks)
- * `/etc/init.d/etoad-manager` Init-Script for etoad-manager
-
+ * `/etc/etoad/instances-available/` Available instance configurations
+ * `/etc/etoad/instances-enabled/` Enabled instance configurations (symlinks)
+ 
 The `etoad-manager` tool simplifies managing multiple etoad instances. To get a list of all availabe configurations, execute:
 
 	etoad-manager list
