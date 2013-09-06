@@ -123,7 +123,7 @@ Executing `bin/make-deb.sh` will create a Debian package file like `etoa-eventha
 
 	dbkg -i etoa-eventhandler_<VERSION>_<ARCHITECTURE>.deb
 
-The installer might compain about missing library dependencies. Install them using `apt-get`.
+The installer might complain about missing library dependencies. Install them using `apt-get`.
 
 The installer creates the `etoa` user if necessary and adds the following files and directories:
 
