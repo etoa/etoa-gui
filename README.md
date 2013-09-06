@@ -123,7 +123,9 @@ Executing `bin/make-deb.sh` will create a Debian package file like `etoa-eventha
 
 	dbkg -i etoa-eventhandler_<VERSION>_<ARCHITECTURE>.deb
 
-This will create the `etoa` user if necessary and the following files and directories:
+The installer might compain about missing library dependencies. Install them using `apt-get`.
+
+The installer creates the `etoa` user if necessary and adds the following files and directories:
 
  * `/usr/local/bin/etoad` Etoad binary
  * `/usr/local/bin/etoad-manager` Etoad instance manager tool
