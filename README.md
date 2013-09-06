@@ -119,7 +119,37 @@ Further command line parameters:
 
 ### Debian Setup ###
 
-TODO
+Executing `bin/make-deb.sh` will create a Debian package file like `etoa-eventhandler_<VERSION>_<ARCHITECTURE>.deb` in the `target/` directory which can be installed by executing:
+
+	dbkg -i etoa-eventhandler_<VERSION>_<ARCHITECTURE>.deb
+
+This will create the `etoa` user if necessary and the following files and directories:
+
+ * `/usr/local/bin/etoad` Etoad binary
+ * `/usr/local/bin/etoad-manager` Etoad instance manager tool
+ * `/var/run/etoad/` PID files
+ * `/var/log/etoad/` Per-instance log files
+ * `/etc/etoad/instances-available` Available instance configurations
+ * `/etc/etoad/instances-enabled` Enabled instances (symlinks)
+ * `/etc/init.d/etoad-manager` Init-Script for etoad-manager
+
+The `etoad-manager` tool simplifies managing multiple etoad instances. To get a list of all availabe configurations, execute:
+
+	etoad-manager list
+	
+You can then use the `etoad-manager enable <INSTANCE>` command to enable an instance. Start all enabled instances by executing:
+
+	etoad-manager start
+	
+and track the status of all instances by executing:
+
+	etoad-manager status
+	
+Execute `etoad-manager` without arguments to get a list of all available actions.
+
+To start etoad-manager automatically on system boot execute
+
+	update-rc.d etoad-manager defaults
 
 ### Logging ###
 
