@@ -47,10 +47,13 @@ Build source and create debian package:
     bin/build.sh
     bin/make-deb.sh
     
-Switch back to trunk:
+Prepare for further development:
 
     bin/set-version.sh $DEV_VERSION
     git add src/version.h
     git commit -m "[Prepare for next development iteration $DEV_VERSION]"
 
+Push changes:
 
+    git push
+    git push --tags
