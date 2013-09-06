@@ -16,7 +16,7 @@ If you use Debian Linux, you can simply execute
 
 	apt-get install build-essential cmake libboost-all-dev libmysql++-dev
 
-to install all dependencies
+to install all dependencies.
 
 Building
 --------
@@ -38,9 +38,9 @@ Define release version and next development version:
 Create SCM tag:
 
     bin/set-version.sh $VERSION
-    svn commit -m "[Prepare for release]"
-    svn cp https://dev.etoa.net/svn/etoa-eventhandler/trunk https://dev.etoa.net/svn/etoa-eventhandler/tags/$VERSION -m "[Release $VERSION]"
-    svn switch https://dev.etoa.net/svn/etoa-eventhandler/tags/$VERSION
+    git add src/version.h
+    git commit -m "[Release $VERSION]"
+    git tag $VERSION
     
 Build source and create debian package:
 
@@ -49,8 +49,8 @@ Build source and create debian package:
     
 Switch back to trunk:
 
-    svn switch https://dev.etoa.net/svn/etoa-eventhandler/trunk
     bin/set-version.sh $DEV_VERSION
-    svn commit -m "[Prepare for next development iteration]"
+    git add src/version.h
+    git commit -m "[Prepare for next development iteration $DEV_VERSION]"
 
 
