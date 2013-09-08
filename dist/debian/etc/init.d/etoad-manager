@@ -2,8 +2,10 @@
 #
 ### BEGIN INIT INFO
 # Provides:          etoad-manager
-# Required-Start:    $remote_fs $syslog mysql
-# Required-Stop:     $remote_fs $syslog mysql
+# Required-Start:    $network $remote_fs $syslog
+# Required-Stop:     $network $remote_fs $syslog
+# Should-Start:      mysql
+# Should-Stop:       mysql
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: EtoA backend manager
