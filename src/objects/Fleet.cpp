@@ -911,7 +911,7 @@
 			// calculations for the main fleet
 			for ( ot = this->objects.begin() ; ot != this->objects.end(); ot++ ) {
 				this->objCounter.insert ( std::pair<unsigned int, unsigned int>((*ot)->getTypeId(),(*ot)->getInitCount()) );
-				fleetObjCounter.insert ( std::pair<unsigned int, unsigned int>((*ot)->getTypeId(),(*ot)->getInitCount()) );				
+				fleetObjCounter.insert ( std::pair<unsigned int, unsigned int>((*ot)->getTypeId(),(*ot)->getInitCount()) );
 			}
 			
 			// calculations for all the support fleets
