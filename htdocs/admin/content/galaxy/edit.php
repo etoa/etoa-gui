@@ -61,8 +61,8 @@
 							$addsql.=",planet_image='".intval($_POST['planet_type_id'])."_1'";
 						}
 						else
-							$addsql.=",planet_image='".intval($_POST['planet_image'])."'";
-						
+							$addsql.=",planet_image='".mysql_real_escape_string($_POST['planet_image'])."'";
+
 						//Daten Speichern
 						dbquery("
 						UPDATE
