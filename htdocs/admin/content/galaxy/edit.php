@@ -215,7 +215,7 @@
 					<td>
 					<img id=\"pimg\" src=\"".$imPath.$arr['planet_image'].$imPathPost."\" style=\"float:left;\" />
 					<select name=\"planet_image\" onchange=\"document.getElementById('pimg').src='$imPath'+this.value+'$imPathPost'\">";
-					echo "<option value=\"\">Undefiniert</options";
+					echo "<option value=\"\">Undefiniert</option>";
 
 					for ($x=1;$x<=$cfg->value('num_planet_images');$x++)
 					{
