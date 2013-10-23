@@ -58,38 +58,38 @@
 						}
 						if ($pl->typeId != $_POST['planet_type_id'])
 						{
-							$addsql.=",planet_image='".$_POST['planet_type_id']."_1'";
+							$addsql.=",planet_image='".intval($_POST['planet_type_id'])."_1'";
 						}
 						else
-							$addsql.=",planet_image='".$_POST['planet_image']."'";
+							$addsql.=",planet_image='".intval($_POST['planet_image'])."'";
 						
 						//Daten Speichern
 						dbquery("
 						UPDATE
 							planets
 						SET
-              planet_name='".$_POST['planet_name']."',
-              planet_type_id=".$_POST['planet_type_id'].",
-              planet_fields=".$_POST['planet_fields'].",
-              planet_fields_extra=".$_POST['planet_fields_extra'].",
-              planet_temp_from=".$_POST['planet_temp_from'].",
-              planet_temp_to=".$_POST['planet_temp_to'].",
-              planet_res_metal='".$_POST['planet_res_metal']."',
-              planet_res_crystal='".$_POST['planet_res_crystal']."',
-              planet_res_plastic='".$_POST['planet_res_plastic']."',
-              planet_res_fuel='".$_POST['planet_res_fuel']."',
-              planet_res_food='".$_POST['planet_res_food']."',
-              planet_res_metal=planet_res_metal+'".$_POST['planet_res_metal_add']."',
-              planet_res_crystal=planet_res_crystal+'".$_POST['planet_res_crystal_add']."',
-              planet_res_plastic=planet_res_plastic+'".$_POST['planet_res_plastic_add']."',
-              planet_res_fuel=planet_res_fuel+'".$_POST['planet_res_fuel_add']."',
-              planet_res_food=planet_res_food+'".$_POST['planet_res_food_add']."',
-              planet_wf_metal='".$_POST['planet_wf_metal']."',
-              planet_wf_crystal='".$_POST['planet_wf_crystal']."',
-              planet_wf_plastic='".$_POST['planet_wf_plastic']."',
-              planet_people='".$_POST['planet_people']."',
-              planet_people=planet_people+'".$_POST['planet_people_add']."',
-              planet_desc='".addslashes($_POST['planet_desc'])."'
+              planet_name='".mysql_real_escape_string($_POST['planet_name'])."',
+              planet_type_id=".intval($_POST['planet_type_id']).",
+              planet_fields=".intval($_POST['planet_fields']).",
+              planet_fields_extra=".intval($_POST['planet_fields_extra']).",
+              planet_temp_from=".intval($_POST['planet_temp_from']).",
+              planet_temp_to=".intval($_POST['planet_temp_to']).",
+              planet_res_metal='".intval($_POST['planet_res_metal'])."',
+              planet_res_crystal='".intval($_POST['planet_res_crystal'])."',
+              planet_res_plastic='".intval($_POST['planet_res_plastic'])."',
+              planet_res_fuel='".intval($_POST['planet_res_fuel'])."',
+              planet_res_food='".intval($_POST['planet_res_food'])."',
+              planet_res_metal=planet_res_metal+'".intval($_POST['planet_res_metal_add'])."',
+              planet_res_crystal=planet_res_crystal+'".intval($_POST['planet_res_crystal_add'])."',
+              planet_res_plastic=planet_res_plastic+'".intval($_POST['planet_res_plastic_add'])."',
+              planet_res_fuel=planet_res_fuel+'".intval($_POST['planet_res_fuel_add'])."',
+              planet_res_food=planet_res_food+'".intval($_POST['planet_res_food_add'])."',
+              planet_wf_metal='".intval($_POST['planet_wf_metal'])."',
+              planet_wf_crystal='".intval($_POST['planet_wf_crystal'])."',
+              planet_wf_plastic='".intval($_POST['planet_wf_plastic'])."',
+              planet_people='".intval($_POST['planet_people'])."',
+              planet_people=planet_people+'".intval($_POST['planet_people_add'])."',
+              planet_desc='".mysql_real_escape_string($_POST['planet_desc'])."'
               $addsql
 						WHERE
 							id='".$id."';");
@@ -324,8 +324,8 @@
 						UPDATE
 							stars
 						SET
-              name='".$_POST['name']."',
-              type_id=".$_POST['type_id']."
+              name='".mysql_real_escape_string($_POST['name'])."',
+              type_id=".intval($_POST['type_id'])."
 						WHERE
 							id='".$id."';");
 						if (mysql_affected_rows()>0)
@@ -375,18 +375,18 @@
 						UPDATE
 							asteroids
 						SET
-              res_metal='".$_POST['res_metal']."',
-              res_crystal='".$_POST['res_crystal']."',
-              res_plastic='".$_POST['res_plastic']."',
-              res_fuel='".$_POST['res_fuel']."',
-              res_food='".$_POST['res_food']."',
-              res_power='".$_POST['res_power']."',
-              res_metal=res_metal+'".$_POST['res_metal_add']."',
-              res_crystal=res_crystal+'".$_POST['res_crystal_add']."',
-              res_plastic=res_plastic+'".$_POST['res_plastic_add']."',
-              res_fuel=res_fuel+'".$_POST['res_fuel_add']."',
-              res_food=res_food+'".$_POST['res_food_add']."',
-              res_power=res_power+'".$_POST['res_power_add']."'
+              res_metal='".intval($_POST['res_metal'])."',
+              res_crystal='".intval($_POST['res_crystal'])."',
+              res_plastic='".intval($_POST['res_plastic'])."',
+              res_fuel='".intval($_POST['res_fuel'])."',
+              res_food='".intval($_POST['res_food'])."',
+              res_power='".intval($_POST['res_power'])."',
+              res_metal=res_metal+'".intval($_POST['res_metal_add'])."',
+              res_crystal=res_crystal+'".intval($_POST['res_crystal_add'])."',
+              res_plastic=res_plastic+'".intval($_POST['res_plastic_add'])."',
+              res_fuel=res_fuel+'".intval($_POST['res_fuel_add'])."',
+              res_food=res_food+'".intval($_POST['res_food_add'])."',
+              res_power=res_power+'".intval($_POST['res_power_add'])."'
 						WHERE
 							id='".$id."';");
 						if (mysql_affected_rows()>0)
@@ -444,18 +444,18 @@
 						UPDATE
 							nebulas
 						SET
-              res_metal='".$_POST['res_metal']."',
-              res_crystal='".$_POST['res_crystal']."',
-              res_plastic='".$_POST['res_plastic']."',
-              res_fuel='".$_POST['res_fuel']."',
-              res_food='".$_POST['res_food']."',
-              res_power='".$_POST['res_power']."',
-              res_metal=res_metal+'".$_POST['res_metal_add']."',
-              res_crystal=res_crystal+'".$_POST['res_crystal_add']."',
-              res_plastic=res_plastic+'".$_POST['res_plastic_add']."',
-              res_fuel=res_fuel+'".$_POST['res_fuel_add']."',
-              res_food=res_food+'".$_POST['res_food_add']."',
-              res_power=res_power+'".$_POST['res_power_add']."'
+              res_metal='".intval($_POST['res_metal'])."',
+              res_crystal='".intval($_POST['res_crystal'])."',
+              res_plastic='".intval($_POST['res_plastic'])."',
+              res_fuel='".intval($_POST['res_fuel'])."',
+              res_food='".intval($_POST['res_food'])."',
+              res_power='".intval($_POST['res_power'])."',
+              res_metal=res_metal+'".intval($_POST['res_metal_add'])."',
+              res_crystal=res_crystal+'".intval($_POST['res_crystal_add'])."',
+              res_plastic=res_plastic+'".intval($_POST['res_plastic_add'])."',
+              res_fuel=res_fuel+'".intval($_POST['res_fuel_add'])."',
+              res_food=res_food+'".intval($_POST['res_food_add'])."',
+              res_power=res_power+'".intval($_POST['res_power_add'])."'
 						WHERE
 							id='".$id."';");
 						if (mysql_affected_rows()>0)
