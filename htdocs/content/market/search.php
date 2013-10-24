@@ -16,9 +16,6 @@
 	// www.etoa.ch | mail@etoa.ch								 		//
 	//////////////////////////////////////////////////
 	//
-	// $Author$
-	// $Date$
-	// $Rev$
 	//
 	$_SESSION['alliance_id'] = $cu->allianceId();
 

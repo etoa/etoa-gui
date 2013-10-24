@@ -16,9 +16,6 @@
 	// www.etoa.ch | mail@etoa.ch								 		//
 	//////////////////////////////////////////////////
 	//
-	// $Author$
-	// $Date$
-	// $Rev$
 	//
 	
 		if(!isset($_POST['ship_for_alliance']))

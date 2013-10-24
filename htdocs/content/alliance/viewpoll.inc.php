@@ -16,9 +16,6 @@
 	// www.etoa.ch | mail@etoa.ch								 		//
 	//////////////////////////////////////////////////
 	//
-	// $Author$
-	// $Date$
-	// $Rev$
 	//
 
 	echo "<h2>Umfragen</h2>";

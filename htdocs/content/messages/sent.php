@@ -16,9 +16,6 @@
 	// www.etoa.ch | mail@etoa.ch								 		//
 	//////////////////////////////////////////////////
 	//
-	// $Author$
-	// $Date$
-	// $Rev$
 	//
 
 		if (isset($_GET['msg_id']))
