@@ -81,7 +81,7 @@
 				$this->resFood = $arr['res_food'];
 				$this->resPower = $arr['res_power'];
 				$this->resPeople = $arr['res_people'];
-			
+                
 				$this->valid = true;
 				
 				// TODO: Needs some improvement / redesign
@@ -522,22 +522,53 @@
 						$log = new Fleetlog($this->ownerId,$this->sourceId);
 						$log->cancel($this->id,$this->launchTime,$this->landTime,$this->targetId,$this->actionCode,$this->status,$this->pilots);
 						$log->addFleetRes(array($this->resMetal,$this->resCrystal,$this->resPlastic,$this->resFuel,$this->resFood),$this->resPeople,null,false);
-						$tottime = $this->landTime() - $this->launchTime + $this->nextActionTime;
-						$difftime = time() - $this->launchTime;
 						
+                        // ### STATUS ###
+                        // 0: Hinflug
+                        // 1: Rückflug
+                        // 2: Abgebrochen
+                        // 3: Supporting
+                        
+						$time = time();
+						// how long is the fleet already flying
+						$difftime = 0;//time() - $this->launchTime;
+						// what is the total flight time (one-way plus supporting time)
+						$tottime = 0;//$this->landTime() - $this->launchTime + $this->nextActionTime;
+						
+						// status 3 => supporting at target
 						if ($this->actionCode=="support" && $this->status==3)
 						{
-							$this->launchTime = time();
-							$this->landTime = time() + $this->nextActionTime;
+							// time supporting plus single way from source to target
+							// (which is the same as target to source, thus nextActionTime)
+							$difftime = $time - $this->launchTime + $this->nextActionTime;
+							// total support time plus single way from source to target
+							$tottime = $this->landTime() - $this->launchTime + $this->nextActionTime;
+							
+							$this->launchTime = $time;
+							$this->landTime = $time + $this->nextActionTime;
 							
 							$this->targetId = $this->nextId;
+                            
+                            $this->removeSupportRes();
 						}
 						else
 						{
-							$tottime = $this->landTime() - $this->launchTime;
-							$difftime = time() - $this->launchTime;
-							$this->launchTime = time();
-							$this->landTime = $this->launchTime + $difftime ;
+							// how long is the fleet already flying on its way to target
+							$difftime = $time - $this->launchTime;
+							if($this->actionCode=="support") // support on its way to target
+							{
+								// total support time plus single way from source to target
+								$tottime = $this->landTime() - $this->launchTime + $this->nextActionTime;
+                                $this->removeSupportRes();
+							}
+							else
+							{
+								// single way from source to target
+								$tottime = $this->landTime() - $this->launchTime;
+							}
+							
+							$this->launchTime = $time;
+							$this->landTime = $time + $difftime ;
 							
 							$tmp = $this->targetId;
 							$this->targetId = $this->sourceId;
@@ -738,6 +769,22 @@
 			}
 			return false;
 		}
+        
+        /**
+         * Removes support fuel/food for
+         * cancelled fleet
+         */
+        function removeSupportRes()
+        {
+			dbquery("
+			UPDATE 
+				fleet 
+			SET 
+                support_usage_fuel='0', 
+                support_usage_food='0' 
+			WHERE 
+				id='".$this->id."';");
+        }
 
 		
 		/**

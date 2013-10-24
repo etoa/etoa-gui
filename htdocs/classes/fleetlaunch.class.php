@@ -503,11 +503,12 @@
 					{
 						
 						// Load resource (is needed because of the xajax use)
+						// subtracts payload ressources from source
 						$this->finalLoadResource();
 						
-						// Subtract flight costs from source
-						$this->sourceEntity->chgRes(4,-$this->getCosts());
-						$this->sourceEntity->chgRes(5,-$this->getCostsFood());
+						// Subtract flight and support costs from source
+						$this->sourceEntity->chgRes(4,-$this->getCosts()-$this->getSupportFuel());
+						$this->sourceEntity->chgRes(5,-$this->getCostsFood()-$this->getSupportFood());
 						$this->sourceEntity->chgPeople(-($this->getPilots()+$this->capacityPeopleLoaded));
 						
 						if ($this->action=="alliance" && $this->leaderId!=0) {
@@ -1045,6 +1046,7 @@
 			return $loaded;
 		}
 		
+		// subtracts the payload ress (not support/flight fuel and food)
 		function finalLoadResource()
 		{
 			global $resNames;
