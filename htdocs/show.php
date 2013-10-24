@@ -5,7 +5,6 @@
 // Programmiert von Nicolas Perrenoud<mail@nicu.ch> //
 // als Maturaarbeit '04 am Gymnasium Oberaargau	    //
 //////////////////////////////////////////////////////
-// $Id: index.php 1417 2012-03-24 13:51:47Z etoa-live $
 //////////////////////////////////////////////////////
 
 /**
