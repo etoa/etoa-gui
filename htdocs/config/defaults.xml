@@ -23,6 +23,7 @@
     <category id="23">Kryptocenter</category>
     <category id="24">Texte</category>
     <category id="25">Chat</category>
+    <category id="26">Boost-System</category>
   </categories>
   <items>
     <item name="roundname" cat="1" base="yes">
@@ -766,5 +767,14 @@ Anmerkung: Eine Kopie dieser Nachricht wird in Eurer Nachrichten-Box hinterlegt.
       <v comment="Chat Willkommensnachricht" type="textarea">Hallo %nick%, willkommen im EtoA-Chat. Bitte beachte, dass wir Spam nicht dulden und eine gepflegte Ausdrucksweise erwarten. Bei Verstössen gegen diese Regeln werden wir mit Banns und/oder Accountsperrungen vorgehen!</v>
     </item>
     
+    <item name="boost_system_enable" cat="26">
+      <v comment="Boost-System aktiv" type="onoff">0</v>
+    </item>
+    <item name="boost_system_max_res_prod_bonus" cat="26">
+      <v comment="Maximaler Ressourcenproduktionsbonus" type="text">2</v>
+    </item>
+    <item name="boost_system_max_building_speed_bonus" cat="26">
+      <v comment="Maximaler Baugeschwindigkeitssbonus" type="text">2</v>
+    </item>
   </items>
 </config>
