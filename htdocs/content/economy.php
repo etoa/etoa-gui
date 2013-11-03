@@ -254,6 +254,7 @@
 			}
 			$pwrcnt=floor($pwrcnt);
 
+			// Boost system
 			if ($cfg->value('boost_system_enable') == 1) {
 				echo "<tr><th style=\"height:2px;\" colspan=\"8\"></td></tr>";
 			
@@ -273,7 +274,7 @@
 				echo "<td style=\"color:#0f0\">".nf(floor($cnt['plastic'] * $cu->boostBonusProduction))."</td>";
 				echo "<td style=\"color:#0f0\">".nf(floor($cnt['fuel'] * $cu->boostBonusProduction))."</td>";
 				echo "<td style=\"color:#0f0\">".nf(floor($cnt['food'] * $cu->boostBonusProduction))."</td>";
-				echo "<td style=\"color:#f00\">".nf(floor($pwrcnt * $cu->boostBonusProduction))."</td>";
+				echo "<td style=\"color:#f00\">-</td>";
 				echo "<td></td>";
 				echo "</tr>";
 			
@@ -282,7 +283,6 @@
 				$cnt['plastic'] = floor($cnt['plastic'] * (1 + $cu->boostBonusProduction));
 				$cnt['fuel']    = floor($cnt['fuel']    * (1 + $cu->boostBonusProduction));
 				$cnt['food']    = floor($cnt['food']    * (1 + $cu->boostBonusProduction));
-				$pwrcnt         = floor($pwrcnt         * (1 + $cu->boostBonusProduction));
 			}
 			
 			// Anzeigen der Gesamtproduktion
