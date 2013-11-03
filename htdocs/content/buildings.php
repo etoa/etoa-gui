@@ -290,7 +290,10 @@ define('HELP_URL',"?page=help&site=buildings");
 
 		if ($cu->specialist->costsBuilding!=1)
 		{
-			echo '<br /><br /><strong>Kostenreduktion durch '.$cu->specialist->name.':</strong> '.get_percent_string($cu->specialist->costsBuilding);
+			echo '<br /><strong>Kostenreduktion durch '.$cu->specialist->name.':</strong> '.get_percent_string($cu->specialist->costsBuilding);
+		}
+		if ($cfg->value('boost_system_enable') == 1) {		
+			echo '<br /><strong>Geschwindigkeitsboost:</strong> '.get_percent_string($cu->boostBonusBuilding+1);
 		}
   		echo '</div>';   	
   		iBoxEnd();
