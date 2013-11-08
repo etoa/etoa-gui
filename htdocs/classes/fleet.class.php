@@ -94,7 +94,7 @@
 							$this->fleets[$arr['id']] = new Fleet($arr['id']);
 						}
 					}
-				}	  
+				}
 				else
 					$this->fleets = array(); // Hack to avoid notice error!
 			}
