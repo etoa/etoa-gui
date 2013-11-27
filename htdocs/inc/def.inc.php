@@ -77,6 +77,7 @@
 	define('TEAMSPEAK_ONCLICK',"window.open('".TEAMSPEAK_URL."','ts','width=800,height=600,scrollbars=yes');");
 
 	define('RULES_URL','http://www.etoa.ch/regeln'); // Game-Rules
+	define('PRIVACY_URL','http://www.etoa.ch/privacy'); // Privacy statement
 	define('RULES_ONCLICK',"window.open('".RULES_URL."','rules','width=600,height=500,scrollbars=yes');");
 
   /*********************/

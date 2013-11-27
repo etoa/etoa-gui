@@ -33,7 +33,7 @@
       <v comment="Runden-URL" type="text">http://roundx.live.etoa.net</v>
     </item>
     <item name="loginurl" cat="1" base="yes">
-      <v comment="Login-URL" type="text">http://etoa.ch</v>
+      <v comment="Login-URL (leerlassen für lokales Login)" type="text">http://etoa.ch</v>
     </item>
     <item name="user_timeout" cat="1">
       <v comment="User-Timeout (wenn man so lange nichts macht, muss man sich neu einloggen) in Sekunden" type="text">2400</v>

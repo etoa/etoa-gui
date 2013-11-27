@@ -2767,6 +2767,27 @@ function imagecreatefromfile($path, $user_functions = false)
 		return $data;
 	}
 	
+	function getLoginUrl($args=array()) {
+		$url = Config::getInstance()->loginurl->v;
+		if (empty($url)) {
+			$url = "show.php?index=login";
+			if (sizeof($args) > 0 && isset($args['page'])) {
+				unset($args['page']);
+			}
+		}
+		if (sizeof($args) > 0) {
+			foreach ($args as $k => $v) {
+				if (!stristr($url, '?')) {
+					$url.="?";
+				} else {
+					$url.="&";
+				}
+				$url.= $k."=".$v;
+			}
+		}
+		return $url;
+	}
+
 	/**
 	* Textfunktionen einbinden
 	*/

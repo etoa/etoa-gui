@@ -74,7 +74,7 @@
 	$tpl->assign("bodyTopStuff",ob_get_clean());
 
 	$tpl->assign("topmenu",$indexpage);
-	$tpl->assign("loginurl",Config::getInstance()->loginurl->v);
+	$tpl->assign("loginurl", getLoginUrl());
 	$tpl->assign("roundname",Config::getInstance()->roundname->v);
 
 	//

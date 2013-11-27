@@ -36,7 +36,7 @@
 	{
 		if (!$s->login($_POST))
 		{
-			forward(Config::getInstance()->loginurl->v."?page=err&err=".$s->lastErrorCode,"Loginfehler",$s->lastError);
+			forward(getLoginUrl(array('page'=>'err', 'err' => $s->lastErrorCode)), "Loginfehler", $s->lastError);
 		}
 	}
 
@@ -51,13 +51,13 @@
 	if (isset($_GET['logout']) && $_GET['logout']!=null)
 	{
 		$s->logout();
-		forward(Config::getInstance()->loginurl->v.'?page=logout',"Logout");
+		forward(getLoginUrl(array('page'=>'logout')), "Logout");
 	}
 
 	// Validate session
 	if (!$s->validate())
 	{
-		forward(Config::getInstance()->loginurl->v."?page=err&err=nosession","Ungültige Session",$s->lastError);
+		forward(getLoginUrl(array('page'=>'err', 'err'=>'nosession')),"Ung¸ltige Session",$s->lastError);
 	}
 
 	// Load user data
@@ -66,7 +66,7 @@
 	// Check if it is valid user
 	if (!$cu->isValid)
 	{
-		forward(Config::getInstance()->loginurl->v."?page=err&err=usernotfound","Benutzer nicht mehr vorhanden");
+		forward(getLoginUrl(array('page'=>'err', 'err'=>'usernotfound')),"Benutzer nicht mehr vorhanden");
 	}
 
 	//
@@ -135,7 +135,7 @@
 		} else {
 			echo "Das Spiel ist aufgrund von Wartungsarbeiten momentan offline! Schaue sp&auml;ter nochmals vorbei!<br/><br/>";
 		}
-		echo button("Zur Startseite",Config::getInstance()->loginurl->v);
+		echo button("Zur Startseite", getLoginUrl());
 		iBoxEnd();
 	}
 	// Login ist gesperrt
@@ -144,7 +144,7 @@
 		iBoxStart("Login geschlossen",750,"margin:50px auto;text-align:center");
 		echo "<img src=\"images/keychain.png\" alt=\"maintenance\" /><br/><br/>";
 		echo "Der Login momentan geschlossen!<br/><br/>";
-		echo button("Zur Startseite",Config::getInstance()->loginurl->v);
+		echo button("Zur Startseite", getLoginUrl());
 		iBoxEnd();
 	}
 	// Login ist erlaubt aber noch zeitlich zu früh
@@ -153,7 +153,7 @@
 		iBoxStart("Login noch geschlossen",750,"margin:50px auto;text-align:center");
 		echo "<img src=\"images/keychain.png\" alt=\"maintenance\" /><br/><br/>";
 		echo "Das Spiel startet am ".date("d.m.Y",$cfg->param1('enable_login'))." ab ".date("H:i",$cfg->param1('enable_login'))."!<br/><br/>";
-		echo button("Zur Startseite",Config::getInstance()->loginurl->v);
+		echo button("Zur Startseite", getLoginUrl());
 		iBoxEnd();
 	}
 	// Zugriff von anderen als eigenem Server bzw Login-Server sperren
@@ -162,7 +162,7 @@
 		echo "<div style=\"text-align:center;\">
 		<h1>Falscher Referer</h1>
 		Der Zugriff auf das Spiel ist nur anderen internen Seiten aus m&ouml;glich! Ein externes Verlinken direkt in das Game hinein ist nicht gestattet! Dein Referer: ".$_SERVER["HTTP_REFERER"]."<br/><br/>
-		<a href=\"".Config::getInstance()->loginurl->v."\">Hauptseite</a></div>";
+		<a href=\"".getLoginUrl() ."\">Hauptseite</a></div>";
 		
 	}
 	// Zugriff erlauben und Inhalt anzeigen
