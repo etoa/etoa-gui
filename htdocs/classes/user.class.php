@@ -57,6 +57,8 @@ class User
 	protected $rankHighest;
 	protected $specialistId;
 	protected $specialistTime;
+	protected $boostBonusProduction;
+	protected $boostBonusBuilding;
 	protected $specialist = null;
 	protected $ghost;
 	protected $lastInvasion;
@@ -149,6 +151,9 @@ class User
 
 			$this->specialistId = $arr['user_specialist_id'];
 			$this->specialistTime = $arr['user_specialist_time'];
+			
+			$this->boostBonusProduction = $arr['boost_bonus_production'];
+			$this->boostBonusBuilding = $arr['boost_bonus_building'];
 			
 			$this->lastInvasion = $arr['lastinvasion'];
 

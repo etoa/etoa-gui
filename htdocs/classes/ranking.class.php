@@ -179,9 +179,14 @@
 		*/
 		static function calcTitles()
 		{
-			$file_u = CACHE_ROOT."/out/usertitles.gen";
-			$file_a = CACHE_ROOT."/out/usertitles_a.gen";
-			$file_ex = CACHE_ROOT."/out/usertitles_ex.gen";
+			$dir = CACHE_ROOT."/out";
+			if (!is_dir($dir)) {
+				mkdir($dir);
+			}		
+		
+			$file_u = $dir."/usertitles.gen";
+			$file_a = $dir."/usertitles_a.gen";
+			$file_ex = $dir."/usertitles_ex.gen";
 			$titles_u = Ranking::getTitles();
 			$titles_a = Ranking::getTitles(1);
 			$titles_ex = Ranking::getTitles(0,1);
@@ -396,6 +401,8 @@
 			$user_stats_query = "";
 			$user_points_query = "";
 			$user_rank_highest=array();
+			$max_points_building = 0;
+			$points_building_arr = array();
 			while ($uarr=mysql_fetch_assoc($ures))
 			{
 				$user_id = $uarr['user_id'];
@@ -602,6 +609,9 @@
 					)";				
 				
 				$allpoints+=$points;
+				
+				$max_points_building = max($max_points_building, $points_building);
+				$points_building_arr[$user_id] = $points_building;
 			}
 			unset($user_id);
 	
@@ -632,6 +642,29 @@
 						".substr($user_stats_query,1)."
 					;
 				");
+			}
+			
+			// Update boost bonus
+			if ($cfg->value('boost_system_enable') == 1 && $max_points_building > 0) {
+				$max_prod = $cfg->value('boost_system_max_res_prod_bonus');
+				$max_build = $cfg->value('boost_system_max_building_speed_bonus');
+				foreach ($points_building_arr as $uid => $ubp) {
+					dbquery("
+						UPDATE 
+							users 
+						SET 
+							boost_bonus_production=".($max_prod * ($max_points_building - $ubp) / $max_points_building).",
+							boost_bonus_building=".($max_build * ($max_points_building - $ubp) / $max_points_building)."
+						WHERE
+							user_id=".$uid.";");
+				}
+			} else {
+				dbquery("
+					UPDATE 
+						users 
+					SET 
+						boost_bonus_production=0,
+						boost_bonus_building=0;");
 			}
 			
 			// Save points to user points table
@@ -1123,6 +1156,11 @@
 			");
 			if (mysql_num_rows($res)>0)
 			{
+				$dir = CACHE_ROOT."/userbanner";
+				if (!is_dir($dir)) {
+					mkdir($dir);
+				}
+			
 				while ($arr = mysql_fetch_row($res))
 				{
 					$im = imagecreatefrompng(RELATIVE_ROOT."images/userbanner/userbanner1.png");
