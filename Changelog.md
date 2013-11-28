@@ -6,7 +6,7 @@ Version NEXT
 
 ### Features ###
 
- * *#8# Added boost system for resource production and building speed
+ * *#8* Added boost system for resource production and building speed
 
 ### Bugfixes ###
 
