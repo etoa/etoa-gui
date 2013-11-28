@@ -240,6 +240,13 @@ class User
 				{
 				$sql.= " user_avatar='".$this->avatar."',";
 				}
+				elseif ($k == "hmode_from") {
+					$sql.= " user_hmode_from=".$this->hmode_from.",";
+				}
+				elseif ($k == "hmode_to") {
+					$sql.= " user_hmode_to=".$this->hmode_to.",";
+				}
+
 				else
 					echo " $k has no valid UPDATE query!<br/>";
 			}

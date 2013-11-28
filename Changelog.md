@@ -1,6 +1,14 @@
 Escape to Andromeda Changelog
 =============================
 
+Version NEXT
+------------
+
+### Bugfixes ###
+
+ * *#2* Fixed "Query error" message if holiday mode gets enabled
+
+
 Version 3.3
 -----------
 
