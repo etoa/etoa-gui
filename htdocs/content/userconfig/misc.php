@@ -118,27 +118,26 @@
 					
 						$hfrom=time();
 						
-						$hto=$hfrom+($cfg->get("user_umod_min_length")*86400);
-						if (dbquery("UPDATE users SET user_hmode_from='$hfrom',user_hmode_to='$hto' WHERE user_id='".$cu->id."';"))
-						{
-							dbquery ("
-								UPDATE 
-									planets 
-								SET 
-									planet_last_updated='0',
-									planet_prod_metal=0,
-									planet_prod_crystal=0,
-									planet_prod_plastic=0,
-									planet_prod_fuel=0,
-									planet_prod_food=0
-								WHERE 
-									planet_user_id='".$cu->id."';");
+						$hto = $hfrom+($cfg->get("user_umod_min_length")*86400);
+
+						dbquery ("
+							UPDATE
+								planets
+							SET
+								planet_last_updated='0',
+								planet_prod_metal=0,
+								planet_prod_crystal=0,
+								planet_prod_plastic=0,
+								planet_prod_fuel=0,
+								planet_prod_food=0
+							WHERE
+								planet_user_id='".$cu->id."';");
 										
-								$cu->hmode_to = $hto;
-								success_msg("Du bist nun im Urlaubsmodus bis [b]".df($hto)."[/b].");
-								$cu->addToUserLog("settings","{nick} ist nun im Urlaub.",1);
-								$umod = true;
-						}
+						$cu->hmode_from = $hfrom;
+						$cu->hmode_to = $hto;
+						success_msg("Du bist nun im Urlaubsmodus bis [b]".df($hto)."[/b].");
+						$cu->addToUserLog("settings","{nick} ist nun im Urlaub.",1);
+						$umod = true;
 					}
 					else
 					{
