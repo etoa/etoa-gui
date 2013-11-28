@@ -4,6 +4,10 @@ Escape to Andromeda Changelog
 Version NEXT
 ------------
 
+### Features ###
+
+ * *#8# Added boost system for resource production and building speed
+
 ### Bugfixes ###
 
  * *#2* Fixed "Query error" message if holiday mode gets enabled
