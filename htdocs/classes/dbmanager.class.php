@@ -173,8 +173,22 @@ class DBManager implements ISingleton	{
 			catch (DBException $e)
 			{
 				echo $e;
+
+				// Write message to error query log
+				if (defined('ERROR_LOGFILE'))
+				{
+					global $cu;
+					if (!file_exists(DBERROR_LOGFILE))
+					{
+						touch(DBERROR_LOGFILE);
+						chmod(DBERROR_LOGFILE,0662);
+					}
+					$f = fopen(DBERROR_LOGFILE,"a+");
+					fwrite($f,date("d.m.Y H:i:s").", ".(isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR']:'local').", ".$e->getErrStr()."\n".$str."\n\n");
+					fclose($f);
+				}
 				throw $e;
-			}			
+			}
 		}
 	}
 

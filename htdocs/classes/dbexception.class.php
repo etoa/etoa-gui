@@ -1,24 +1,15 @@
 <?PHP
 	class DBException extends Exception
 	{
+		public function getErrStr() {
+			return "Datenbankfehler\nDatei: ".parent::getFile().", Zeile: ".parent::getLine()."\nAbfrage:".parent::getMessage()."\nFehlermeldung: ".mysql_error()."\nStack-Trace: ".parent::getTraceAsString();
+		}
+
 		public function __toString()
 		{
-			global $cu;
 			$cfg = Config::getInstance();
 
-			$str = "Datenbankfehler\nDatei: ".parent::getFile().", Zeile: ".parent::getLine()."\nAbfrage:".parent::getMessage()."\nFehlermeldung: ".mysql_error()."\nStack-Trace: ".parent::getTraceAsString()."";
-
-			if (defined('ERROR_LOGFILE'))
-			{
-				if (!file_exists(DBERROR_LOGFILE))
-				{
-					touch(DBERROR_LOGFILE);
-					chmod(DBERROR_LOGFILE,0662);
-				}
-				$f = fopen(DBERROR_LOGFILE,"a+");
-				fwrite($f,date("d.m.Y H:i:s").", ".(isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR']:'local').", ".$cu."\n".$str."\n\n");
-				fclose($f);
-			}
+			$str = $this->getErrStr();
 
 			if (!(defined('ETOA_DEBUG') && ETOA_DEBUG==1))
 				return "<div class=\"errorBox\" style=\"text-align:left;\"><h2>Datenbankfehler</h2>Die gewünschte Abfrage konnte nicht durchgeführt werden!<br/>
@@ -51,12 +42,8 @@
 				{
 					$str .= "</body></html>";
 				}
-				
-				return $str;
 			}
 			return $str;
 		}
 	}
-
-
 ?>
