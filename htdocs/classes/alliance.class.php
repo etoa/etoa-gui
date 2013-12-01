@@ -293,21 +293,21 @@
 			if ($this->members == null)
 			{
 				$this->members = array();
-		  	$res = dbquery("
-		  	SELECT
-		  		user_id
-		  	FROM
-		  		users
-		  	WHERE
-		  		user_alliance_id=".$this->id."
-		  	");
-		  	if (mysql_num_rows($res)>0)
-		  	{
-		  		while ($arr = mysql_fetch_row($res))
-		  		{
-			  		$this->members[$arr[0]] = new User($arr[0]);
-		  		}
-		  	}
+				$res = dbquery("
+				SELECT
+					user_id
+				FROM
+					users
+				WHERE
+					user_alliance_id=".$this->id."
+				");
+				if (mysql_num_rows($res)>0)
+				{
+					while ($arr = mysql_fetch_row($res))
+					{
+						$this->members[$arr[0]] = new User($arr[0]);
+					}
+				}
 			}
 			return $this->members;
 		}
@@ -719,11 +719,10 @@
 				// Set user alliance link to null
 				if ($this->members==null)
 					$this->getMembers();
-				for($i=0;$i<count($this->members);$i++)
-				{
-					$this->members[$i]->alliance = null;
+				foreach ($this->members as &$member) {
+					$member->alliance = null;
 				}
-				$user->alliance = null;
+				unset($member);
 
 				// Daten löschen
 				dbquery("
@@ -735,6 +734,7 @@
 				//Log schreiben
 				if($user!=null)
 				{
+					$user->alliance = null;
 					$user->addToUserLog("alliance","{nick} löst die Allianz [b]".$this."[/b] auf.");
 					add_log("5","Die Allianz [b]".$this."[/b] wurde von ".$user." aufgelöst!");
 				}
