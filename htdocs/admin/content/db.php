@@ -728,21 +728,7 @@
 
 		// Inactive 
 		echo '<fieldset><legend><input type="checkbox" value="1" name="cl_inactive" /> User</legend>';
-		$register_time = time()-(24*3600*$conf['user_inactive_days']['p2']);		// Zeit nach der ein User gelöscht wird wenn er noch 0 Punkte hat
-		$online_time = time()-(24*3600*$conf['user_inactive_days']['p1']);	// Zeit nach der ein User normalerweise gelöscht wird
-		$res =	dbquery("
-			SELECT
-				COUNT(user_id)
-			FROM
-				users
-			WHERE
-				user_ghost='0'
-				AND (user_registered<'".$register_time."' AND user_points='0')
-				OR (user_last_online<'".$online_time."' AND user_hmode_from='0');
-		;");		
-		$tblcnt = mysql_fetch_row($res);
-		echo nf($tblcnt[0])." inaktive Benutzer löschen (".$conf['user_inactive_days']['p2']." Tage seit der Registration ohne Login 
-		oder ".$conf['user_inactive_days']['p1']." Tage nicht mehr eingeloggt)<br/>";
+		echo nf(Users::getNumInactive())." inaktive Benutzer löschen (".$conf['user_inactive_days']['p2']." Tage seit der Registration ohne Login oder ".$conf['user_inactive_days']['p1']." Tage nicht mehr eingeloggt)<br/>";
 		$res =	dbquery("
 			SELECT
 				COUNT(user_id)
