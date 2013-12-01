@@ -297,8 +297,11 @@
 					if  ($set) $ustring .=",";
 					else $set = true;
 					$ustring .= $uarr[0];
-
 				}
+				if (empty($ustring)) {
+					$ustring="0";
+				}
+
 				if ($_POST['del_user_log']==1)
 				{
 					$lres = dbquery("DELETE	FROM 
@@ -351,7 +354,7 @@
 								!(`tickets`.user_id IN (".$ustring."))");
 					$tstring = "";
 					$set = false;
-					while ($uarr = mysql_fetch_row($ures))
+					while ($uarr = mysql_fetch_row($res))
 					{
 						if  ($set) $tstring .=",";
 						else $set = true;
@@ -360,7 +363,7 @@
 					dbquery("DELETE FROM
 								`ticket_msg`
 							WHERE
-								`tickets_msg`.id IN (".$tstring."))");
+								`ticket_id` IN (".$tstring.")");
 					
 					$tres = dbquery("DELETE FROM 
 										`tickets`
@@ -773,7 +776,9 @@
 			if  ($set) $ustring .=",";
 			else $set = true;
 			$ustring .= $uarr[0];
-			
+		}
+		if (empty($ustring)) {
+			$ustring="0";
 		}
 		
 		$lres = dbquery("SELECT
