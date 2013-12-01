@@ -732,6 +732,7 @@
 				$tbl[]="user_comments";
 				$tbl[]="user_warnings";
 				$tbl[]="user_properties";
+				$tbl[]="user_sessions";
 				
 				$tbl[]="buddylist";
 				$tbl[]="messages";
@@ -741,6 +742,12 @@
 				$tbl[]="notepad_data";
 				$tbl[]="bookmarks";
 				$tbl[]="fleet_bookmarks";
+				$tbl[]="chat_log";
+				$tbl[]="reports";
+				$tbl[]="reports_other";
+				$tbl[]="reports_battle";
+				$tbl[]="reports_spy";
+				$tbl[]="reports_market";
 	
 				$tbl[]="logs";
 				$tbl[]="logs_alliance";
@@ -750,10 +757,13 @@
 				
 				$tbl[]="login_failures";
 				$tbl[]="admin_user_log";
+				$tbl[]="admin_user_sessionlog";
 				$tbl[]="tickets";
+				$tbl[]="ticket_msg";
 				$tbl[]="chat";
 				$tbl[]="chat_users";
 				$tbl[]="attack_ban";
+				$tbl[]="hostname_cache";
 			}
 			else
 			{
@@ -765,11 +775,13 @@
 				");
 			}
 			
+			dbquery("SET FOREIGN_KEY_CHECKS=0;");
 			foreach ($tbl as $t)
 			{
 				dbquery("TRUNCATE $t;");
 				echo "Leere Tabelle <b>$t</b><br/>";
 			}
+			dbquery("SET FOREIGN_KEY_CHECKS=1;");
 			
 			dbquery("
 					UPDATE
@@ -786,7 +798,7 @@
 						config_value='1'
 					WHERE
 						config_name IN ('market_metal_factor','market_crystal_factor','market_plastic_factor','market_fuel_factor','market_food_factor');");
-			
+
 			$mtx->release();		
 			return true;
 		}
