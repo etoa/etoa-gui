@@ -73,9 +73,6 @@
     <item name="url_rules" cat="1">
       <v comment="URL: Regeln" type="text">http://etoa.ch/rules</v>
     </item>
-    <item name="url_bugs" cat="1">
-      <v comment="URL: Bug melden" type="text">https://dev.etoa.net/trac/newticket</v>
-    </item>
     <item name="url_teamspeak" cat="1">
       <v comment="URL: TeamSpeak" type="text">http://etoa.ch/404.html</v>
     </item>

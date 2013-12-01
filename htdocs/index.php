@@ -313,7 +313,7 @@
 		$tpl->assign("helpcenterUrl",HELPCENTER_URL);
 		$tpl->assign("helpcenterOnclick",HELPCENTER_ONCLICK);
 		$tpl->assign("devcenterOnclick",DEVCENTER_ONCLICK);
-		$tpl->assign("bugreportUrl",$cfg->value('url_bugs'));
+		$tpl->assign("bugreportUrl",DEVCENTER_PATH);
 		
 		
 		$tpl->assign("chatUrl",CHAT_URL);

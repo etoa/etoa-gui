@@ -4,7 +4,6 @@
 		public function __toString()
 		{
 			global $cu;
-			$cfg = Config::getInstance();
 			
 			$str = "Allgemeiner Fehler: ".parent::getMessage()."\nDatei: ".parent::getFile().", Zeile: ".parent::getLine()."\nStack-Trace: ".parent::getTraceAsString()."";
 			$f = fopen(ERROR_LOGFILE,"a+");
@@ -16,7 +15,7 @@
 				<b>Datei:</b> ".parent::getFile().", <b>Zeile:</b> ".parent::getLine()."";
 				$str.="<div style=\"text-align:left;border-top:1px solid #000;\">
 				<b>Stack-Trace:</b><br/>".nl2br(parent::getTraceAsString())."<br/>
-				<a href=\"".$cfg->value('url_bugs')."\" target=\"_blank\">Fehler melden</a></div>
+				<a href=\"".DEVCENTER_PATH."\" target=\"_blank\">Fehler melden</a></div>
 				</div>";				
 				return $str;
 			}

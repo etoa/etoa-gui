@@ -2,13 +2,12 @@
 	class DBException extends Exception
 	{
 		public function getErrStr() {
-			return "Datenbankfehler\nDatei: ".parent::getFile().", Zeile: ".parent::getLine()."\nAbfrage:".parent::getMessage()."\nFehlermeldung: ".mysql_error()."\nStack-Trace: ".parent::getTraceAsString();
+			return "Datenbankfehler\nDatei: ".parent::getFile().", Zeile: ".parent::getLine()."\nAbfrage:".
+				parent::getMessage()."\nFehlermeldung: ".mysql_error()."\nStack-Trace: ".parent::getTraceAsString();
 		}
 
 		public function __toString()
 		{
-			$cfg = Config::getInstance();
-
 			$str = $this->getErrStr();
 
 			if (!(defined('ETOA_DEBUG') && ETOA_DEBUG==1))
@@ -33,7 +32,7 @@
 				<b>Fehlermeldung:</b> ".nl2br(mysql_error())."<br/>				";
 				$str.="<div style=\"text-align:left;border-top:1px solid #000;\">
 				<b>Stack-Trace:</b><br/>".nl2br(parent::getTraceAsString())."<br/>";
-				$str.="<a href=\"".$cfg->value('url_bugs')."\" target=\"_blank\">Fehler melden</a>";
+				$str.="<a href=\"".DEVCENTER_PATH."\" target=\"_blank\">Fehler melden</a>";
 				$str.="</div>
 				<br/>
 				<a href=\"http://dev.etoa.ch\" target=\"_blank\">Fehler melden</a>
