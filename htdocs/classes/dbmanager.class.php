@@ -114,6 +114,7 @@ class DBManager implements ISingleton	{
 		catch (DBException $e)
 		{
 			echo $e;
+			$this->writeMsgToErrorLog($e->getErrStr());
 			exit;
 		}
 	}
@@ -173,20 +174,7 @@ class DBManager implements ISingleton	{
 			catch (DBException $e)
 			{
 				echo $e;
-
-				// Write message to error query log
-				if (defined('ERROR_LOGFILE'))
-				{
-					global $cu;
-					if (!file_exists(DBERROR_LOGFILE))
-					{
-						touch(DBERROR_LOGFILE);
-						chmod(DBERROR_LOGFILE,0662);
-					}
-					$f = fopen(DBERROR_LOGFILE,"a+");
-					fwrite($f,date("d.m.Y H:i:s").", ".(isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR']:'local').", ".$e->getErrStr()."\n".$str."\n\n");
-					fclose($f);
-				}
+				$this->writeMsgToErrorLog($e->getErrStr());
 				throw $e;
 			}
 		}
@@ -538,6 +526,24 @@ class DBManager implements ISingleton	{
 			GROUP BY table_schema", array($this->getDbName()));
 		$arr = mysql_fetch_row($res);
 		return $arr[0];
+	}
+
+	/**
+	* Writes a message to error log
+	*/
+	private function writeMsgToErrorLog($message) {
+		if (defined('ERROR_LOGFILE'))
+		{
+			global $cu;
+			if (!file_exists(DBERROR_LOGFILE))
+			{
+				touch(DBERROR_LOGFILE);
+				chmod(DBERROR_LOGFILE,0662);
+			}
+			$f = fopen(DBERROR_LOGFILE,"a+");
+			fwrite($f,date("d.m.Y H:i:s").", ".(isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR']:'local').", ".$cu."\n".$message."\n\n");
+			fclose($f);
+		}
 	}
 }
 ?>
