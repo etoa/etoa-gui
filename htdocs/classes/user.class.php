@@ -684,7 +684,7 @@ class User
 	*/
 	function delete($self=false,$from="")
 	{
-		$utx = new userToXml($this->id);
+		$utx = new UserToXml($this->id);
 		if ($xmlfile = $utx->toCacheFile())
 		{
 			//

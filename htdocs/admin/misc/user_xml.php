@@ -1,16 +1,13 @@
 <?PHP
-	session_start();
-	if (count($_SESSION)>0)
+	chdir(realpath(dirname(__FILE__)."/../../"));
+		define('USE_HTML',false);
+    define('ADMIN_MODE',true);
+	require_once("inc/bootstrap.inc.php");
+
+	if (isset($_SESSION['adminsession']))
 	{
 		if ($_GET['id']>0)
 		{
-			// Funktionen und Config einlesen
-			require("../../conf.inc.php");
-			require("../../functions.php");
-		
-			// Mit der DB verbinden
-			dbconnect();
-			
 			header('Content-Description: File Transfer');
 			header('Content-Type: application/octet-stream');
 			//header('Content-Length: ' . filesize($file));
