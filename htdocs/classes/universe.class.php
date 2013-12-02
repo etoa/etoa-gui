@@ -799,6 +799,14 @@
 					WHERE
 						config_name IN ('market_metal_factor','market_crystal_factor','market_plastic_factor','market_fuel_factor','market_food_factor');");
 
+			// Remove user XML backups
+			$userXmlPath = UserToXml::getDataDirectory();
+			foreach (new DirectoryIterator($userXmlPath) as $fileInfo) {
+				if(!$fileInfo->isDot()) {
+					unlink($fileInfo->getPathname());
+				}
+			}
+
 			$mtx->release();		
 			return true;
 		}
