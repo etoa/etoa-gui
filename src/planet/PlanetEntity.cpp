@@ -29,6 +29,7 @@ namespace planet
 			<< "	users.user_race_id, "
 			<< "	users.user_specialist_id, "
 			<< "	users.user_specialist_time, "
+            << "    users.boost_bonus_production, "
 			<< "	users.user_hmode_to, "
 			<< "	stars.type_id "
 			<< "FROM  "
@@ -67,6 +68,7 @@ namespace planet
 				this->solType = (int)pRow["type_id"];
 				this->planetType = (int)pRow["planet_type_id"];
 				this->speicalistId = (int)pRow["user_specialist_time"] < time(0) ? 0 : (int)pRow["user_specialist_id"];
+                this->boostBonusProduction = (float)pRow["boost_bonus_production"];
 				
 				this->solarPowerBonus = etoa::getSolarPowerBonus((int)pRow["planet_temp_from"], (int)pRow["planet_temp_to"]);
 				this->solarFuelBonus = 1 - (etoa::getSolarFuelBonus((int)pRow["planet_temp_from"], (int)pRow["planet_temp_to"]));
@@ -302,11 +304,16 @@ namespace planet
 	}
 	
 	void PlanetEntity::addBoni() {
-		this->cnt[0] += (this->cnt[0] * (this->planet_->getTypeMetal() + this->race_->getRaceMetal() + this->sol_->getTypeMetal() + this->specialist_->getSpecialistProdMetal() - 4));
-		this->cnt[1] += (this->cnt[1] * (this->planet_->getTypeCrystal() + this->race_->getRaceCrystal() + this->sol_->getTypeCrystal() + this->specialist_->getSpecialistProdCrystal() - 4));
-		this->cnt[2] += (this->cnt[2] * (this->planet_->getTypePlastic() + this->race_->getRacePlastic() + this->sol_->getTypePlastic() + this->specialist_->getSpecialistProdPlastic() - 4));
-		this->cnt[3] += (this->cnt[3] * (this->planet_->getTypeFuel() + this->race_->getRaceFuel() + this->sol_->getTypeFuel() + this->specialist_->getSpecialistProdFuel() + this->solarFuelBonus - 5));
-		this->cnt[4] += (this->cnt[4] * (this->planet_->getTypeFood() + this->race_->getRaceFood() + this->sol_->getTypeFood() + this->specialist_->getSpecialistProdFood() - 4));
+		Config &config = Config::instance();
+        float boost = 0;
+        if (config.nget("boost_system_enable", 0) == 1) {
+            boost += this->boostBonusProduction;
+        }
+		this->cnt[0] += (this->cnt[0] * (this->planet_->getTypeMetal() + this->race_->getRaceMetal() + this->sol_->getTypeMetal() + this->specialist_->getSpecialistProdMetal() - 4 + boost));
+		this->cnt[1] += (this->cnt[1] * (this->planet_->getTypeCrystal() + this->race_->getRaceCrystal() + this->sol_->getTypeCrystal() + this->specialist_->getSpecialistProdCrystal() - 4 + boost));
+		this->cnt[2] += (this->cnt[2] * (this->planet_->getTypePlastic() + this->race_->getRacePlastic() + this->sol_->getTypePlastic() + this->specialist_->getSpecialistProdPlastic() - 4 + boost));
+		this->cnt[3] += (this->cnt[3] * (this->planet_->getTypeFuel() + this->race_->getRaceFuel() + this->sol_->getTypeFuel() + this->specialist_->getSpecialistProdFuel() + this->solarFuelBonus - 5 + boost));
+		this->cnt[4] += (this->cnt[4] * (this->planet_->getTypeFood() + this->race_->getRaceFood() + this->sol_->getTypeFood() + this->specialist_->getSpecialistProdFood() - 4 + boost));
 		this->cnt[6] += (this->cnt[6] * (this->planet_->getTypePower() + this->race_->getRacePower() + this->sol_->getTypePower() + this->specialist_->getSpecialistPower() - 4));
 		
 		
