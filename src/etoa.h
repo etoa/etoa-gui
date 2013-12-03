@@ -64,8 +64,7 @@
 #include "alliance/aBuildingHandler.h"
 #include "alliance/aPointsHandler.h"
 
-#include "queue/IPCMessageQueue.h"
-#include "queue/EntityUpdateQueue.h"
+#include "queue/MessageQueueReceiver.h"
 
 #include "lib/anyoption/anyoption.h"
 #include "util/PidFile.h"

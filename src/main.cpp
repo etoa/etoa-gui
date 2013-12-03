@@ -373,11 +373,8 @@ int main(int argc, char* argv[])
 		
 	delete opt;
 
-	boost::thread mThread(&etoamain);
-	boost::thread qThread(&msgQueueThread);
-
-	mThread.join();	
-	qThread.join();
+	// Enter main loop
+	etoamain();
 	
 	// This point should never be reached
 	cerr << "Unexpectedly reached end of main()";
