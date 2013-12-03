@@ -1,0 +1,14 @@
+htdocs/cache/dberrors.txt
+htdocs/cache/out/
+htdocs/cache/smarty_compile/
+htdocs/cache/userbanner/
+htdocs/cache/user_xml/
+htdocs/cache/xml/
+htdocs/cache/allianceprofiles/
+htdocs/cache/avatars/
+htdocs/cache/filtered_images/
+htdocs/cache/imagepacks/
+htdocs/cache/rss/
+htdocs/cache/userprofiles/
+htdocs/config/db.conf
+backup/
