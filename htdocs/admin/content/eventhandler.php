@@ -46,6 +46,7 @@
 
     $tpl->setView('admin/eventhandler');
     $tpl->assign('title', 'Eventhandler');
+    $tpl->assign('message_queue_size', BackendMessage::getMessageQueueSize());
     
     if (function_exists('posix_uname')) {
       $un=posix_uname();

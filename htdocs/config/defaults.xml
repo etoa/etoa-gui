@@ -660,9 +660,6 @@ http://www.etoa.ch</v>
     <item name="daemon_pidfile" cat="20" base="yes">
       <v comment="Evendhandler PID-File" type="text">/var/run/etoad/roundx.pid</v>
     </item>	
-    <item name="daemon_ipckey" cat="20" base="yes">
-      <v comment="Evendhandler IPC Key" type="text">1</v>
-    </item>	
     <item name="backend_status" cat="20">
       <v comment="Eventhandler-Status" type="text">0</v>
 	</item>
