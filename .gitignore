@@ -3,5 +3,6 @@ htdocs/cache/out/
 htdocs/cache/smarty_compile/
 htdocs/cache/userbanner/
 htdocs/cache/user_xml/
+htdocs/cache/xml/
 htdocs/config/db.conf
 backup/

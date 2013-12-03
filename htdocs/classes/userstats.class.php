@@ -178,6 +178,11 @@
 	static function generateXml($file)
 	{
 
+		$dir = dirname($file);
+		if (!is_dir($dir)) {
+			mkdir($dir, 0777, true);
+		}
+
 			/**
 			* Gameinfo XML
 			*/ 

@@ -138,7 +138,7 @@
 		}	
 		if (file_exists(XML_INFO_FILE))
 		{
-			echo "<a href=\"".XML_INFO_FILE."\">XML</a>";
+			echo "<p><a href=\"".XML_INFO_FILE."\">Statistik als XML anzeigen</a></p>";
 		}
 		else
 		{
