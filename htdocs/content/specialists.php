@@ -102,9 +102,9 @@
 						-$arr['specialist_costs_food'] * $factor);
 						
 						//Update every planet
-						foreach ($planets as $pid)
-							sendBackendMessage("planetupdate:".$pid);
-						
+						foreach ($planets as $pid) {
+							BackendMessage::updatePlanet($pid);
+						}
 						ok_msg('Der gewählte Spezialist wurde eingestellt!');
 					}
 					else
