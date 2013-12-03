@@ -320,6 +320,11 @@
 			$this->getMembers();
 			if (!isset($this->members[$userId]))
 			{
+				$maxMemberCount = Config::getInstance()->get("alliance_max_member_count");
+				if ($maxMemberCount > 0 && $this->memberCount > $maxMemberCount) {
+					return false;
+				}
+
 				$tmpUser = new User($userId);
 				if ($tmpUser->isValid)
 				{
@@ -1190,6 +1195,21 @@
 		$nr = mysql_affected_rows();
 		add_log("4","$nr Allianzpunkte-Logs die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!");
 		return $nr;
+	}
+
+	/**
+	* Returns the number of members of the given alliance
+	*/
+	static public function countMembers($allianceId) {
+		$narr = mysql_fetch_row(dbquery("
+		SELECT
+			COUNT(user_id) as member_count
+		FROM
+			users
+		WHERE
+			user_alliance_id=".$allianceId."
+		;"));
+		return $narr[0];
 	}
 }
 ?>

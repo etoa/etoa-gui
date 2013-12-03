@@ -221,17 +221,23 @@
 				Im Folgenden findest du eine Liste der Allianzen die momentan Bewerbungen akzeptieren:<br/><br/>";
 				$res=dbquery("
 				SELECT
-					alliance_id,
-					alliance_tag,
-					alliance_name,
-					alliance_accept_applications
+					alliances.alliance_id,
+					alliances.alliance_tag,
+					alliances.alliance_name,
+					alliances.alliance_accept_applications,
+					COUNT(users.user_id) as member_count
 				FROM
 					alliances
+				LEFT JOIN
+					users
+					ON users.user_alliance_id=alliances.alliance_id
 				WHERE
-					alliance_accept_applications=1
+					alliances.alliance_accept_applications=1
+				GROUP BY
+					alliances.alliance_id
 				ORDER BY
-					alliance_name,
-					alliance_tag;");
+					alliances.alliance_name,
+					alliances.alliance_tag;");
 				if (mysql_num_rows($res)>0)
 				{
 					tableStart("","400"," align=\"center\"");
@@ -239,17 +245,25 @@
 					echo "<tr>
 									<th>Tag</th>
 									<th>Name</th>
+									<th>Mitglieder</th>
 									<th style=\"width:100px;\">Aktionen</th>
 							</tr>";
 					while ($arr=mysql_fetch_array($res))
 					{
 						echo "<tr><td>".$arr['alliance_tag']."</td>
 						<td>".$arr['alliance_name']."</td>
+						<td>".$arr['member_count']."</td>
 						<td><a href=\"?page=alliance&amp;info_id=".$arr['alliance_id']."\">Info</a>";
 						echo "&nbsp;<a href=\"?page=$page&action=join&alliance_id=".$arr['alliance_id']."\">Bewerben</a>";
 						echo "</td></tr>";
 					}
 					tableEnd();
+
+					$maxMemberCount = Config::getInstance()->get("alliance_max_member_count");
+					if ($maxMemberCount != 0) {
+						echo "<p><b>Hinweis:</b> Eine Allianz darf maximal $maxMemberCount Mitglieder haben!</p>";
+					}
+
 					echo "<a href=\"?page=$page&amp;action=create\">Gründe</a> eine eigene Allianz.</a>";
 				}
 				else

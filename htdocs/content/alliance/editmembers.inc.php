@@ -96,13 +96,19 @@ if (Alliance::checkActionRights('editmembers'))
 					{
 						if ($target_alliance == $ally->id)
 						{
-							$ally->addMember($moving_user_id);
-							success_msg($ally->members[$moving_user_id]." wurde umgeteilt!");
+							if ($ally->addMember($moving_user_id)) {
+								success_msg($ally->members[$moving_user_id]." wurde umgeteilt!");
+							} else {
+								error_msg("Umteilung nicht möglich, User ist bereits Mitglied oder die maximale Anzahl an Mitgliedern wurde erreicht!");
+							}
 						}
 						else
 						{
-							$ally->wings[$target_alliance]->addMember($moving_user_id);
-							success_msg($ally->wings[$target_alliance]->members[$moving_user_id]." wurde verschoben!");
+							if ($ally->wings[$target_alliance]->addMember($moving_user_id)) {
+								success_msg($ally->wings[$target_alliance]->members[$moving_user_id]." wurde verschoben!");
+							} else {
+								error_msg("Verschiebung nicht möglich, User ist bereits Mitglied oder die maximale Anzahl an Mitgliedern wurde erreicht!");
+							}
 						}
 		
 					}
