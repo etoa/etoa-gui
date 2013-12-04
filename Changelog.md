@@ -1,18 +1,20 @@
 Escape to Andromeda Changelog
 =============================
 
-Version NEXT
+Version 3.4
 ------------
 
 ### Features ###
 
- * *#8* Added boost system for resource production and building speed
- * *#10* Crypto center (alliance building) cooldown is now individual for each user
+ * Added boost system for resource production and building speed (#8)
+ * Crypto center (alliance building) cooldown is now individual for each user (#10)
+ * Number of alliance members can now be limited (defaults to 7) (#16)
 
 ### Bugfixes ###
 
- * *#2* Fixed "Query error" message if holiday mode gets enabled
-
+ * Fixed "Query error" message if holiday mode gets enabled (#2)
+ * Minbari mysticum no longer hides whole alliance fleet (#11)
+ * Fixed "msg_send fail" on specialist activation (#5)
 
 Version 3.3
 -----------
