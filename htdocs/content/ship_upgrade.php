@@ -311,7 +311,7 @@
 				     	<td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"deactivade\" border=\"0\"></td>
 				     </tr>";
 			}
-			// Speed Bonus
+			// Readyness Bonus
 			if($arr['special_ship_bonus_readiness']>0)
 			{
 				echo "<tr>
