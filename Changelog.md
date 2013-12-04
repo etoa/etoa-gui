@@ -7,6 +7,7 @@ Version NEXT
 ### Features ###
 
  * *#8* Added boost system for resource production and building speed
+ * *#10* Crypto center (alliance building) cooldown is now individual for each user
 
 ### Bugfixes ###
 
