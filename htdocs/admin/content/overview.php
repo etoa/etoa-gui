@@ -86,7 +86,21 @@
 			error_msg("Run scripts/gamestats.php periodically to update gamestats!",1);			
 		}		
 	}
-		
+
+	//
+	// Changelog
+	//
+	elseif ($sub=="changelog")
+	{
+		echo "<h1>Changelog</h1>";
+		$changelogFile = "../../Changelog.md";
+		if (is_file($changelogFile)) {
+			echo "<pre class=\"changelog\">".file_get_contents($changelogFile)."</pre>";
+		} else {
+			error_msg("Changelog nicht verfügbar!",1);
+		}
+	}
+
 	//
 	// Admin Session-Log
 	//
