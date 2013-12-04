@@ -71,6 +71,7 @@
         ships.special_ship_bonus_build_destroy,
         ships.special_ship_bonus_antrax_food,
         ships.special_ship_bonus_deactivade,
+        ships.special_ship_bonus_readiness,
 
         shiplist.shiplist_special_ship_level,
         shiplist.shiplist_special_ship_exp,
@@ -86,7 +87,8 @@
         shiplist.shiplist_special_ship_bonus_forsteal,
         shiplist.shiplist_special_ship_bonus_build_destroy,
         shiplist.shiplist_special_ship_bonus_antrax_food,
-        shiplist.shiplist_special_ship_bonus_deactivade
+        shiplist.shiplist_special_ship_bonus_deactivade,
+        shiplist.shiplist_special_ship_bonus_readiness
     FROM
         	ships AS ships
         INNER JOIN
@@ -309,7 +311,16 @@
 				     	<td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"deactivade\" border=\"0\"></td>
 				     </tr>";
 			}
-
+			// Speed Bonus
+			if($arr['special_ship_bonus_readiness']>0)
+			{
+				echo "<tr>
+				     	<th>Bereitschaft (".$arr['shiplist_special_ship_bonus_readiness'].")</th>
+				     	<td>".(round($arr['shiplist_special_ship_bonus_readiness']*$arr['special_ship_bonus_readiness']*100,1))."%</td>
+				     	<td>Verringert die Start- und Landezeit der ganzen Flotte (".($arr['special_ship_bonus_readiness']*100)."% pro Level)</td>
+				     	<td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"readiness\" border=\"0\"></td>
+				     </tr>";
+			}
 
 
 
