@@ -133,35 +133,65 @@
 			return 0;
 		}
 		
-		function getCooldown($bid)
+		function getCooldown($bid, $uid=null)
 		{
 			if ($this->items==null)
 				$this->load();
 			if (isset($this->itemStatus[$bid]))
 			{
-				if ($this->itemStatus[$bid]['cooldown'] > time())
-					return $this->itemStatus[$bid]['cooldown'];
+				if ($uid != null) {
+					$res = dbQuerySave("
+					SELECT
+						cooldown_end
+					FROM
+						alliance_building_cooldown
+					WHERE
+						cooldown_user_id=?
+						AND cooldown_alliance_building_id=?
+						;", array($uid, $bid));
+					if (mysql_num_rows($res)>0)
+					{
+						$arr = mysql_fetch_assoc($res);
+						return $arr['cooldown_end'];
+					}
+				} else {
+					if ($this->itemStatus[$bid]['cooldown'] > time())
+						return $this->itemStatus[$bid]['cooldown'];
+				}
 			}
 			return false;	
-		}		
+		}
 		
-		function setCooldown($bid,$cd)			
+		function setCooldown($bid, $cd, $uid=null)
 		{
 			if ($this->items==null)
 				$this->load();
 			if (isset($this->itemStatus[$bid]))
 			{
-				$this->itemStatus[$bid]['cooldown'] = $cd;
-				$res = dbquery("
-				UPDATE
-					alliance_buildlist 
-				SET
-					alliance_buildlist_cooldown=".$cd."
-				WHERE 
-					alliance_buildlist_id=".$this->itemStatus[$bid]['listid'].";");				
+				if ($uid != null) {
+					dbQuerySave("
+					REPLACE INTO
+						alliance_building_cooldown
+					(
+						cooldown_user_id,
+						cooldown_alliance_building_id,
+						cooldown_end
+					) VALUES (
+						?,?,?
+					);", array($uid, $bid, $cd));
+				} else {
+					$this->itemStatus[$bid]['cooldown'] = $cd;
+					$res = dbquery("
+					UPDATE
+						alliance_buildlist
+					SET
+						alliance_buildlist_cooldown=".$cd."
+					WHERE
+						alliance_buildlist_id=".$this->itemStatus[$bid]['listid'].";");
+				}
 			}
 		}
-		
+
 		function getBuildTime($itemId,$targetLevel)
 		{	
 			$targetLevel = max(1,$targetLevel);
