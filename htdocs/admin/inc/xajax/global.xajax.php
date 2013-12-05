@@ -413,6 +413,7 @@ function editShipByListId($form,$listId)
 			shiplist_special_ship_bonus_heal,
 			shiplist_special_ship_bonus_capacity,
 			shiplist_special_ship_bonus_speed,
+			shiplist_special_ship_bonus_readiness,
 			shiplist_special_ship_bonus_pilots,
 			shiplist_special_ship_bonus_tarn,
 			shiplist_special_ship_bonus_antrax,
@@ -450,6 +451,7 @@ function editShipByListId($form,$listId)
 					<b>Heallevel:</b> <input type=\"text\" name=\"edit_bonus_heal_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_heal']."\" size=\"5\" maxlength=\"20\" /><br/>
 					<b>Kapazit&auml;tlevel:</b> <input type=\"text\" name=\"edit_bonus_capacity_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_capacity']."\" size=\"5\" maxlength=\"20\" /><br/>
 					<b>Speedlevel:</b> <input type=\"text\" name=\"edit_bonus_speed_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_speed']."\" size=\"5\" maxlength=\"20\" /><br/>
+					<b>Bereitschaftslevel:</b> <input type=\"text\" name=\"edit_bonus_readiness_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_readiness']."\" size=\"5\" maxlength=\"20\" /><br/>
 					<b>Besatzungslevel:</b> <input type=\"text\" name=\"edit_bonus_pilots_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_pilots']."\" size=\"5\" maxlength=\"20\" /><br/>
 					<b>Tarnungslevel:</b> <input type=\"text\" name=\"edit_bonus_tarn_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_tarn']."\" size=\"5\" maxlength=\"20\" /><br/>
 					<b>Giftgaslevel:</b> <input type=\"text\" name=\"edit_bonus_antrax_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_antrax']."\" size=\"5\" maxlength=\"20\" /><br/>
@@ -501,6 +503,7 @@ function editShipByShipId($form,$shipId)
 			shiplist_special_ship_bonus_heal,
 			shiplist_special_ship_bonus_capacity,
 			shiplist_special_ship_bonus_speed,
+			shiplist_special_ship_bonus_readiness,
 			shiplist_special_ship_bonus_pilots,
 			shiplist_special_ship_bonus_tarn,
 			shiplist_special_ship_bonus_antrax,
@@ -550,6 +553,7 @@ function editShipByShipId($form,$shipId)
 					<b>Heallevel:</b> <input type=\"text\" name=\"edit_bonus_heal_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_heal']."\" size=\"5\" maxlength=\"20\" /><br/>
 					<b>Kapazit&auml;tlevel:</b> <input type=\"text\" name=\"edit_bonus_capacity_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_capacity']."\" size=\"5\" maxlength=\"20\" /><br/>
 					<b>Speedlevel:</b> <input type=\"text\" name=\"edit_bonus_speed_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_speed']."\" size=\"5\" maxlength=\"20\" /><br/>
+					<b>Bereitschaftslevel:</b> <input type=\"text\" name=\"edit_bonus_readiness_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_readiness']."\" size=\"5\" maxlength=\"20\" /><br/>
 					<b>Besatzungslevel:</b> <input type=\"text\" name=\"edit_bonus_pilots_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_pilots']."\" size=\"5\" maxlength=\"20\" /><br/>
 					<b>Tarnungslevel:</b> <input type=\"text\" name=\"edit_bonus_tarn_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_tarn']."\" size=\"5\" maxlength=\"20\" /><br/>
 					<b>Giftgaslevel:</b> <input type=\"text\" name=\"edit_bonus_antrax_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_antrax']."\" size=\"5\" maxlength=\"20\" /><br/>
@@ -603,6 +607,7 @@ function submitEditShip($form,$listId)
 			shiplist_special_ship_bonus_heal='".intval($form['edit_bonus_heal_'.$listId])."',
 			shiplist_special_ship_bonus_capacity='".intval($form['edit_bonus_capacity_'.$listId])."',
 			shiplist_special_ship_bonus_speed='".intval($form['edit_bonus_speed_'.$listId])."',
+			shiplist_special_ship_bonus_readiness='".intval($form['edit_bonus_readiness_'.$listId])."',
 			shiplist_special_ship_bonus_pilots='".intval($form['edit_bonus_pilots_'.$listId])."',
 			shiplist_special_ship_bonus_tarn='".intval($form['edit_bonus_tarn_'.$listId])."',
 			shiplist_special_ship_bonus_antrax='".intval($form['edit_bonus_antrax_'.$listId])."',

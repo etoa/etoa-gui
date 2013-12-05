@@ -500,7 +500,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0,
-																		"show_hide" => array("special_ship_max_level","special_ship_need_exp","special_ship_exp_factor","special_ship_bonus_weapon","special_ship_bonus_structure","special_ship_bonus_shield","special_ship_bonus_heal","special_ship_bonus_capacity","special_ship_bonus_speed","special_ship_bonus_pilots","special_ship_bonus_tarn","special_ship_bonus_antrax","special_ship_bonus_forsteal","special_ship_bonus_build_destroy","special_ship_bonus_antrax_food","special_ship_bonus_deactivade")
+																		"show_hide" => array("special_ship_max_level","special_ship_need_exp","special_ship_exp_factor","special_ship_bonus_weapon","special_ship_bonus_structure","special_ship_bonus_shield","special_ship_bonus_heal","special_ship_bonus_capacity","special_ship_bonus_speed","special_ship_bonus_pilots","special_ship_bonus_tarn","special_ship_bonus_antrax","special_ship_bonus_forsteal","special_ship_bonus_build_destroy","special_ship_bonus_antrax_food","special_ship_bonus_deactivade","special_ship_bonus_readiness")
 																	),
 
 											array	(	"name" => "special_ship_max_level",
@@ -726,8 +726,21 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
-																	),																																																																																
-		
+																	),
+											array	(	"name" => "special_ship_bonus_readiness",
+																		"text" => "Bereitschafts-Bonus (Start/Landung)",
+																		"type" => "text",
+																		"def_val" => "",
+																		"size" => "20",
+																		"maxlen" => "250",
+																		"rows" => "",
+																		"cols" => "",
+																		"rcb_elem" => "",
+																		"rcb_elem_chekced" => "",
+																		"select_elem" => "",
+																		"select_elem_checked" => "",
+																		"show_overview" => 0
+																	),
 											);
 
 ?>
