@@ -1,0 +1,23 @@
+{if $title|default:'' ne ""}<h1>{$title}</h1>{/if}
+{$content|default:''}
+
+<h2>{$subtitle}</h2>
+
+{if $msg|default:'' ne ""}{msg type="ok" text=$msg}{/if}
+
+<table class="tb" style="width:100%;">
+	<tr>
+		<th>Titel</th>
+		<th>Inhalt</th>
+		<th>Aktualisiert</th>
+		<th>ID</th>
+	</tr>
+{foreach from=$texts item=t}
+	<tr>
+		<td><a href="?page={$page}&id={$t->id}">{$t->label}</a></th>
+		<td>{$t->content|truncate:100}</td>
+		<td>{$t->updated|df}</td>
+		<td>{$t->id}</th>
+	</tr>
+{/foreach}
+</table>

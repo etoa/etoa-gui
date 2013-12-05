@@ -1,0 +1,24 @@
+{if $title|default:'' ne ""}<h1>{$title}</h1>{/if}
+{$content|default:''}
+
+<h2>{$subtitle}</h2>
+{if $msg|default:'' ne ""}{msg type="ok" text=$msg}{/if}
+
+{if $text|default:'' ne ""}
+	<form action="?page={$page}&id={$text->id}" method="post">
+		<textarea name="content" id="texteditor_area" rows="28" cols="100" style="width:98%">{$text->content}</textarea>
+		<p>
+			<button type="submit" name="save">&Uuml;bernehmen</button>&nbsp;
+			<button type="button" onclick="document.location='?page={$page}&preview={$text->id}'">Vorschau</button>&nbsp;
+			<button type="button" onclick="document.location='?page={$page}'">Schliessen</button>
+		</p>
+	</form>
+	<script>
+	$(function(){
+		$('#texteditor_area').focus();
+	});
+	</script>
+{else}
+	{msg type="err" text="Ungültige Text ID"}
+	<p><button type="button" onclick="document.location='?page={$page}'">Schliessen</button></p>
+{/if}
