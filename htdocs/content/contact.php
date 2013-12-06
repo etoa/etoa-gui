@@ -85,9 +85,14 @@
 			}
 		}
 		
-		iBoxStart("Wichtig");
-		echo text2html($conf['contact_message']['v']);
-		iBoxEnd();
+		$tm = new TextManager();
+		$contactText = $tm->getText('contact_message');
+		if ($contactText->enabled && !empty($contactText->content))
+		{
+			iBoxStart("Wichtig");
+			echo text2html($contactText->content);
+			iBoxEnd();
+		}
 		
 		$admins = AdminUser::getAll();
 		if (count($admins) > 0)

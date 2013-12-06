@@ -33,22 +33,29 @@
 			}
 		}
 		
+		$tm = new TextManager();
+
 		// SYSTEMNACHRICHT //
-		if ($cfg->value('system_message')!="")
+		$systemMessage = $tm->getText('system_message');
+		if ($systemMessage->enabled && !empty($systemMessage->content))
 		{
-			echo "<br/>";
+			echo "<br />";
 			iBoxStart("<span style=\"color:red;\">WICHTIGE SYSTEMNACHRICHT</span>");
-			echo text2html($cfg->value('system_message'));
+			echo text2html($systemMessage->content);
 			iBoxEnd();
 		}
 		
 		//Eventhandler //
 		if (!$cfg->value("backend_status"))
 		{
-			echo "<br />";
-			iBoxStart("<span style=\"color:red;\">UPDATEDIENST</span>");
-			echo text2html($cfg->value("backend_offline_message"));
-			iBoxEnd();
+			$infoText = $tm->getText('backend_offline_message');
+			if ($infoText->enabled && !empty($infoText->content))
+			{
+				echo "<br />";
+				iBoxStart("<span style=\"color:red;\">UPDATEDIENST</span>");
+				echo text2html($infoText->content);
+				iBoxEnd();
+			}
 		}
 		
 		// Auf Löschung prüfen

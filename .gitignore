@@ -12,3 +12,4 @@ htdocs/cache/rss/
 htdocs/cache/userprofiles/
 htdocs/config/db.conf
 backup/
+htdocs/cache/errors.txt
