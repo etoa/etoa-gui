@@ -75,32 +75,6 @@
 		require("home/stats.inc.php");
 	}
 
-
-	//
-	// Statistics-Graph
-	//
-	elseif ($sub=="userstats")
-	{
-		echo "<h1>Userstatistiken</h1>";
-		echo "<h2>Online / Registrierte User</h2>";
-		if (file_exists(CACHE_ROOT."/out/userstats.png"))
-		{
-			echo "<img src=\"../cache/out/userstats.png\" alt=\"Userstats\" />";
-		}
-		else
-		{
-			error_msg("Run scripts/userstats.php periodically to update the image!",1);
-		}
-		if (file_exists(XML_INFO_FILE))
-		{
-			echo "<p><a href=\"".XML_INFO_FILE."\">Statistik als XML anzeigen</a></p>";
-		}
-		else
-		{
-			error_msg("Run scripts/userstats.php periodically to update the xml!",1);
-		}
-	}
-
 	//
 	// Statistiken
 	//
@@ -108,15 +82,24 @@
 	{
 		if (isset($_POST['regen']))
 		{
+			UserStats::generateImage(USERSTATS_OUTFILE);
+			UserStats::generateXml(XML_INFO_FILE);
 			GameStats::generateAndSave();
+
 			forward("?page=$page&sub=$sub");
 		}
 
 		$tpl->setView("admin/overview/gamestats");
 		$tpl->assign("title", "Spielstatistiken");
 
+		if (file_exists(USERSTATS_OUTFILE)) {
+			$tpl->assign("userstats", USERSTATS_OUTFILE);
+		}
 		if (is_file(GAMESTATS_FILE)) {
 			$tpl->assign("gamestats", file_get_contents(GAMESTATS_FILE));
+		}
+		if (file_exists(XML_INFO_FILE)) {
+			$tpl->assign("xmlinfo", XML_INFO_FILE);
 		}
 	}
 

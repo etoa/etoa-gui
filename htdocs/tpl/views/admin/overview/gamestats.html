@@ -1,12 +1,24 @@
 {if $title|default:'' ne ""}<h1>{$title}</h1>{/if}
 {if $subtitle|default:'' ne ""}<h2>{$subtitle}</h2>{/if}
 
+<h2>Spieler</h2>
+{if $userstats|default:'' ne ''}
+	<p><img src="{$userstats}" alt="Userstats" /></p>
+{else}
+	<p>User Statistik nicht vorhanden!</p>
+{/if}
+
 {if $gamestats|default:'' ne ''}
 	{$gamestats}
 {else}
-	<p>Statistiken nicht vorhanden!</p>
+	<p>Spielstatistiken nicht vorhanden!</p>
 {/if}
 
 <form action="?page={$page}&amp;sub={$sub}" method="post">
-	<p><button type="submit" name="regen">Erneuern</button></p>
+	<p>
+		{if $xmlinfo|default:'' ne ''}
+			<button type="button" onclick="window.open('{$xmlinfo}');">Als XML herunterladen</button>&nbsp;
+		{/if}
+		<button type="submit" name="regen">Erneuern</button>
+	</p>
 </form>
