@@ -133,7 +133,7 @@ elseif (isset($_GET['id']) && $_GET['id']>0)
 	echo df($ti->time);
 	echo '</td></tr>';
 	echo '<tr><th>Admin-Kommentar:</th><td colspan="3">';
-	echo '<textarea name="admin_comment" style="color:yellow" rows="4" cols="60">'.$ti->adminComment.'</textarea>
+	echo '<textarea name="admin_comment" style="color:#00008B" rows="4" cols="60">'.$ti->adminComment.'</textarea>
 	<input type="submit" name="submit_admin_comment" value="Speichern" /> (wird auch beim Senden einer neuen Nachricht gespeichert)';
 	echo '</td></tr>';
 	tableEnd();
