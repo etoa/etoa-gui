@@ -189,6 +189,19 @@
 	}
 
 	//
+	// Error log
+	//
+	elseif ($sub=="errorlog")
+	{
+		echo "<h2>Datenbankfehler</h2>";
+		if (is_file(DBERROR_LOGFILE)) {
+			echo "<pre class=\"changelog\">".file_get_contents(DBERROR_LOGFILE)."</pre>";
+		} else {
+			echo "<p>Keine Fehler gefunden</p>";
+		}
+	}
+
+	//
 	// Clean-Up
 	//
 	elseif($sub=='cleanup')
