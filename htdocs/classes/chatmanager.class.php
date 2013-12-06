@@ -92,11 +92,17 @@ class ChatManager {
   * Gets the configured welcome message
   */
   static function getWelcomeMessage($nick) {
-    return str_replace(
-      array('%nick%'),
-      array($nick),
-      Config::getInstance()->chat_welcome_message->v
-    );
+	$tm = new TextManager();
+	$text = $tm->getText('chat_welcome_message');
+	if ($text->enabled && !empty($text->content))
+	{
+		return str_replace(
+		  array('%nick%'),
+		  array($nick),
+		  $text->content
+		);
+	}
+	return '';
   }
   
   /**

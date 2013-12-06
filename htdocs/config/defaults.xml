@@ -716,9 +716,6 @@ http://www.etoa.ch</v>
     <item name="chat_user_timeout" cat="25">
       <v comment="Chat User Timeout in Sekunden" type="text">180</v>
     </item>    
-    <item name="chat_welcome_message" cat="25">
-      <v comment="Chat Willkommensnachricht" type="textarea">Hallo %nick%, willkommen im EtoA-Chat. Bitte beachte, dass wir Spam nicht dulden und eine gepflegte Ausdrucksweise erwarten. Bei Verstössen gegen diese Regeln werden wir mit Banns und/oder Accountsperrungen vorgehen!</v>
-    </item>
     
     <item name="boost_system_enable" cat="26">
       <v comment="Boost-System aktiv" type="onoff">0</v>
