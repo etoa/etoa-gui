@@ -987,3 +987,40 @@ visibility:visible;
   width:30px;
   text-align:center;
 }
+
+
+/*
+* Tutorial
+*/
+#tutorialContainer {
+	padding:10px;
+}
+
+.tutorialBox {
+	text-align: left;
+	border: 1px solid #fff;
+	background: #575763;
+	margin-bottom: 5px;
+}
+
+.tutorialTitle {
+	font-weight:bold;
+	border-bottom: 1px solid #fff;
+	background: #333333;
+	padding: 2px 5px;
+}
+
+.tutorialContent {
+	padding: 2px 5px;
+}
+
+.tutorialFooter {
+	border-top: 1px solid #fff;
+	background: #333333;
+	padding: 2px 5px;
+}
+
+.tutorialBoxReduced {
+	text-align:right;
+	float:right;
+}

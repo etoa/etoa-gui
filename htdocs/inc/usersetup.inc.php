@@ -9,6 +9,8 @@
 
 	echo "<h1>Willkommen in Andromeda</h1>";
 
+	echo "<div class=\"userSetupContainer\">";
+
 		// Apply choosen itemset
 	if (isset($s->itemset_key) && isset($_POST[md5($s->itemset_key)]) && isset($_POST['itemset_id']))
 	{
@@ -296,13 +298,7 @@
 	{
 		echo "<form action=\"?\" method=\"post\">";
 		checker_init();
-		$beginText = $tm->getText('usersetup_begin');
-		if ($beginText->enabled && !empty($beginText->content))
-		{
-			iBoxStart('Allgemeine Information');
-			echo '<div style="padding:20px;font-size:11px;">'.text2html($beginText->content).'</div>';
-			iBoxEnd();
-		}
+
 		echo "<h2>Rasse auswählen</h2>
 		Bitte wählt die Rasse eures Volkes aus.<br/>
 		Jede Rasse hat Vor- und Nachteile sowie einige Spezialeinheiten:<br/><br/>";
@@ -352,5 +348,5 @@
 	{
 		echo "Fehler";
 	}
-
+	echo "</div>";
 ?>
