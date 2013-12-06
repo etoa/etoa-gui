@@ -1,7 +1,28 @@
 <?PHP
 class TextManager {
 
-	function getText($id, $default=null) {
+	private $textDef;
+
+	function __construct() {
+		$this->textDef = fetchJsonConfig("texts.conf");
+	}
+
+	function isValidTextId($id) {
+		return isset($this->textDef[$id]);
+	}
+
+	function getLabel($id) {
+		return $this->textDef[$id]['label'];
+	}
+
+	function getAllTextIDs() {
+		return array_keys($this->textDef);
+	}
+
+	function getText($id) {
+		if (!$this->isValidTextId($id)) {
+			return null;
+		}
 		$res = dbQuerySave('
 			SELECT
 				*
@@ -14,21 +35,21 @@ class TextManager {
 			$t = new Text($id, $arr['text_content']);
 			$t->updated = $arr['text_updated'];
 			$t->enabled = ($arr['text_enabled'] > 0);
+			$t->label = $this->textDef[$id]['label'];
 			return $t;
 		}
-		if ($default !== null) {
-			return new Text($id, $default);
-		}
-		return null;
+		$t = new Text($id, $this->textDef[$id]['default']);
+		$t->label = $this->textDef[$id]['label'];
+		return $t;
 	}
 	
-	function updateText($id, $content) {
+	function updateText($text) {
 		dbQuerySave('
 			REPLACE INTO
 				texts
-			(text_id, text_content, text_updated)
-			VALUES (?, ?, UNIX_TIMESTAMP());', 
-			array($id, $content));
+			(text_id, text_content, text_updated, text_enabled)
+			VALUES (?, ?, UNIX_TIMESTAMP(), ?);', 
+			array($text->id, $text->content, $text->enabled ? 1 : 0));
 	}
 
 	function enableText($id) {

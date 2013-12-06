@@ -2,17 +2,18 @@
 	$tpl->assign("title", "Texte");
 
 	$tm = new TextManager();
-	$textDef = fetchJsonConfig("texts.conf");
 
 	// Edit text
 	if (!empty($_GET['id'])) {
 		$tpl->setView("admin/texts/edit");
 		$id = $_GET['id'];
-		if (isset($textDef[$id])) {
+		if ($tm->isValidTextId($id)) {
 			if (isset($_POST['save'])) {
-				$tm->updateText($id, $_POST['content']);
+				$t = $tm->getText($id);
+				$t->content = $_POST['content'];
+				$tm->updateText($t);
 			}
-			$tpl->assign("subtitle", 'Text bearbeiten: ' . $textDef[$id]['label']);
+			$tpl->assign("subtitle", 'Text bearbeiten: ' . $tm->getLabel($id));
 			$tpl->assign("text", $tm->getText($id, ""));
 		} else {
 			$tpl->assign("subtitle", 'Text bearbeiten');
@@ -23,8 +24,8 @@
 	elseif (!empty($_GET['preview'])) {
 		$tpl->setView("admin/texts/preview");
 		$id = $_GET['preview'];
-		if (isset($textDef[$id])) {
-			$tpl->assign("subtitle", 'Textvorschau: ' . $textDef[$id]['label']);
+		if ($tm->isValidTextId($id)) {
+			$tpl->assign("subtitle", 'Textvorschau: ' . $tm->getLabel($id));
 			$tpl->assign("text", $tm->getText($id, ""));
 		} else {
 			$tpl->assign("subtitle", 'Textvorschau');
@@ -34,8 +35,10 @@
 	// Enable text
 	else if (!empty($_GET['enable'])) {
 		$id = $_GET['enable'];
-		if (isset($textDef[$id])) {
-			$tm->enableText($id);
+		if ($tm->isValidTextId($id)) {
+			$t = $tm->getText($id);
+			$t->enabled = true;
+			$tm->updateText($t);
 		}
 		forward("?page=$page");
 	}
@@ -43,8 +46,10 @@
 	// Disable text
 	else if (!empty($_GET['disable'])) {
 		$id = $_GET['disable'];
-		if (isset($textDef[$id])) {
-			$tm->disableText($id);
+		if ($tm->isValidTextId($id)) {
+			$t = $tm->getText($id);
+			$t->enabled = false;
+			$tm->updateText($t);
 		}
 		forward("?page=$page");
 	}
@@ -54,10 +59,8 @@
 		$tpl->setView("admin/texts/overview");
 		$tpl->assign("subtitle", 'Übersicht');		
 		$texts = array();
-		foreach ($textDef as $tk => $td) {
-			$t = $tm->getText($tk, "");
-			$t->label = $td['label'];
-			$texts[] = $t;
+		foreach ($tm->getAllTextIDs() as $id) {
+			$texts[] = $tm->getText($id, "");
 		}
 		$tpl->assign("texts", $texts);
 	}
