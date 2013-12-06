@@ -2,7 +2,7 @@ CREATE TABLE `tutorial` (
  `tutorial_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
  `tutorial_title` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
  PRIMARY KEY (`tutorial_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 INSERT INTO `tutorial` (`tutorial_id`, `tutorial_title`) VALUES
 (1, 'Rassenauswahl'),
@@ -15,7 +15,7 @@ CREATE TABLE `tutorial_texts` (
  `text_content` text COLLATE utf8_unicode_ci NOT NULL,
  `text_step` tinyint(2) unsigned NOT NULL DEFAULT '0',
  PRIMARY KEY (`text_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+) ENGINE=MyISAM AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 INSERT INTO `tutorial_texts` (`text_id`, `text_tutorial_id`, `text_title`, `text_content`, `text_step`) VALUES
 (1, 1, 'Willkommen', 'Willkommen, werter neuer Imperator in den Galaxien Andromedas!\r\n\r\nDer Grundgedanke des Spieles (wie bei fast allen Aufbau-BG´s) liegt darin, durch Rohstoffe Gebäude und Schiffe zu bauen. Bei EtoA jedoch sind die Möglichkeiten ungleich größer und vielfältiger. Dieses Tutorial soll euch ein wenig Entscheidungshilfe geben, erfolgreich den Wirren des Universums zu trotzen.', 0),
