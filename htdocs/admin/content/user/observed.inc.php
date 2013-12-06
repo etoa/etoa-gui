@@ -252,15 +252,16 @@
 			user_sessions.time_action
 		FROM 
 			users
-		INNER JOIN
+		LEFT JOIN
 			user_sessionlog
 		ON
 			users.user_id = user_sessionlog.user_id
-			AND users.user_observe!=''
 		LEFT JOIN
 			user_sessions
 		ON
 			users.user_id = user_sessions.user_id
+		WHERE
+			users.user_observe!=''
 		GROUP BY
 			users.user_id
 		ORDER BY
