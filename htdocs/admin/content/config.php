@@ -44,6 +44,7 @@
 			if ($cnt = $cfg->restoreDefaults())
 			{
 				ok_msg("$cnt Einstellungen wurden wiederhergestellt!");
+				BackendMessage::reloadConfig();
 			}
 		}
 
@@ -119,6 +120,7 @@
           $cfg->add((string)$i['name'],$v,$p1,$p2);
         }
       }
+	  BackendMessage::reloadConfig();
       $tpl->assign('msg', "&Auml;nderungen wurden &uuml;bernommen!");
       $tpl->assign('msg_type', "ok");
  			$tpl->assign('activeTab', $_POST['activeTab']);
@@ -182,6 +184,7 @@
 				$p2 = isset($i->p2) ? create_sql_value((string)$i->p2['type'],(string)$i['name'],"p2",$_POST) : "";
 				$cfg->add((string)$i['name'],$v,$p1,$p2);
 			}
+			BackendMessage::reloadConfig();
 			$tpl->assign('msg', "&Auml;nderungen wurden &uuml;bernommen!");
 			$tpl->assign('msg_type', "ok");
 		}			

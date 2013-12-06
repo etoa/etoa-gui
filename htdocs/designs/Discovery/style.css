@@ -4,7 +4,7 @@ body {
 	background-attachment: fixed;
 	background-position: left top;
 	color: white;
-	margin:20px;
+	margin:0px;
 	font-family:verdana, sans-serif, arial;
 	font-size: 10pt;
 	border:none;
@@ -1767,9 +1767,7 @@ visibility:visible;
 }
 
 #layoutframe {
-	position:absolute;
-	top:0;
-	left:0px;
+	position:relative;
 	margin:0;
 	padding:0;
 }
@@ -1807,4 +1805,40 @@ visibility:visible;
 #bookmarkShiplistInputTable td.actions {
   width:30px;
   text-align:center;
+}
+
+/*
+* Tutorial
+*/
+#tutorialContainer {
+	position: absolute;
+	right: 10px;
+	top: 60px;
+	z-index:500;
+}
+
+.tutorialBox {
+	width: 450px;
+	text-align: left;
+	border: 1px solid #fff;
+	background: url("images/cellpic3.gif") repeat scroll 0 0 #60606B;
+	box-shadow: 0px 0px 20px 3px #000;
+	margin-bottom: 5px;
+}
+
+.tutorialTitle {
+	font-weight:bold;
+	border-bottom: 1px solid #fff;
+	background: url("images/cellpic4.gif") repeat scroll 0 0 #2C2C31;
+	padding: 2px 5px;
+}
+
+.tutorialContent {
+	padding: 2px 5px;
+}
+
+.tutorialFooter {
+	border-top: 1px solid #fff;
+	background: url("images/cellpic4.gif") repeat scroll 0 0 #2C2C31;
+	padding: 2px 5px;
 }

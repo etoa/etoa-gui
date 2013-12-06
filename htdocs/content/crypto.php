@@ -59,9 +59,9 @@
 			
 			// Calculate cooldown
 			$cooldown = max($cfg->param2("cryptocenter"),$cfg->value("cryptocenter") - ($cfg->param1("cryptocenter")*($cryptoCenterLevel-1)));
-			if ($cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID)>time())
+			if ($cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID, $cu->id) > time())
 			{
-				$status_text = "Bereit in <span id=\"cdcd\">".tf($cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID)-time()."</span>");
+				$status_text = "Bereit in <span id=\"cdcd\">".tf($cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID, $cu->id)-time()."</span>");
 				$cd_enabled=true;
 			}
 			else
@@ -409,13 +409,13 @@
 											
 											// Set cooldown
 											$cd = time()+$cooldown;
-											$cu->alliance->buildlist->setCooldown(ALLIANCE_CRYPTO_ID,$cd);
+											$cu->alliance->buildlist->setCooldown(ALLIANCE_CRYPTO_ID, $cd, $cu->id);
 											
 											$cu->alliance->addHistory("Der Spieler [b]".$cu."[/b] hat den Planeten ".$target->name()."[/b] (".$sx."/".$sy." : ".$cx."/".$cy." : ".$pp.") gescannt!");
 											
-											if ($cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID)>time())
+											if ($cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID, $cu->id) > time())
 											{
-												$status_text = "Bereit in <span id=\"cdcd\">".tf($cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID)-time()."</span>");
+												$status_text = "Bereit in <span id=\"cdcd\">".tf($cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID, $cu->id)-time()."</span>");
 												$cd_enabled=true;
 											}
 											else
@@ -534,9 +534,9 @@
 			else
 			{
 				echo "<b>Diese Funktion wurde vor kurzem benutzt! <br/>
-					Du musst bis ".df($cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID))." warten, um die Funktion wieder zu benutzen!</b>";
+					Du musst bis ".df($cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID, $cu->id))." warten, um die Funktion wieder zu benutzen!</b>";
 				
-				countDown("cdcd",$cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID));
+				countDown("cdcd",$cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID, $cu->id));
 			}
 		}
 		else

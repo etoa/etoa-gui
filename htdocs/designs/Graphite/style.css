@@ -1022,3 +1022,43 @@ visibility:visible;
   width:30px;
   text-align:center;
 }
+
+.userSetupContainer {
+	width:700px;
+}
+
+/*
+* Tutorial
+*/
+#tutorialContainer {
+	position: absolute;
+	right: 8px;
+	top: 60px;
+	z-index:1;
+}
+
+.tutorialBox {
+	width: 450px;
+	text-align: left;
+	border: 1px solid #000;
+	background: #4E4E4F;
+	box-shadow: 0px 0px 20px 3px #000;
+	margin-bottom: 5px;
+}
+
+.tutorialTitle {
+	font-weight:bold;
+	border-bottom: 1px solid #000;
+	background: #242426;
+	padding: 2px 5px;
+}
+
+.tutorialContent {
+	padding: 2px 5px;
+}
+
+.tutorialFooter {
+	border-top: 1px solid #000;
+	background: #242426;
+	padding: 2px 5px;
+}

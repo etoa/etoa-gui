@@ -69,6 +69,7 @@
 			$this->speed = 0;
 			$this->speed1 = 0;
 			$this->sBonusSpeed=1;
+			$this->sBonusReadiness=1;
 			$this->duration=0;
 			$this->action='';
 			$this->costsPerHundredAE=0;
@@ -272,6 +273,7 @@
 						"sBonusHeal" => $arr['shiplist_special_ship_bonus_heal'],
 						"sBonusCapacity" => $arr['shiplist_special_ship_bonus_capacity'],
 						"sBonusSpeed" => $arr['shiplist_special_ship_bonus_speed'],
+						"sBonusReadiness" => $arr['shiplist_special_ship_bonus_readiness'],
 						"sBonusPilots" => $arr['shiplist_special_ship_bonus_pilots'],
 						"sBonusTarn" => $arr['shiplist_special_ship_bonus_tarn'],
 						"sBonusAntrax" => $arr['shiplist_special_ship_bonus_antrax'],
@@ -283,6 +285,7 @@
 						
 						if ($arr['special_ship']) {
 							$this->sBonusSpeed += $arr['shiplist_special_ship_bonus_speed']*$arr['special_ship_bonus_speed'];
+							$this->sBonusReadiness += $arr['shiplist_special_ship_bonus_readiness']*$arr['special_ship_bonus_readiness'];
 							$this->sBonusPilots = max(0,$this->sBonusPilots-$arr['shiplist_special_ship_bonus_pilots']*$arr['special_ship_bonus_pilots']);
 							$this->sBonusCapacity += $arr['shiplist_special_ship_bonus_capacity']*$arr['special_ship_bonus_capacity'];
 						}
@@ -615,6 +618,7 @@
 									fs_special_ship_bonus_heal,
 									fs_special_ship_bonus_capacity,
 									fs_special_ship_bonus_speed,
+									fs_special_ship_bonus_readiness,
 									fs_special_ship_bonus_pilots,
 									fs_special_ship_bonus_tarn,
 									fs_special_ship_bonus_antrax,
@@ -637,6 +641,7 @@
 									".$sda['sBonusHeal'].",
 									".$sda['sBonusCapacity'].",
 									".$sda['sBonusSpeed'].",
+									".$sda['sBonusReadiness'].",
 									".$sda['sBonusPilots'].",
 									".$sda['sBonusTarn'].",
 									".$sda['sBonusAntrax'].",
@@ -756,6 +761,7 @@
 			$this->sBonusCapacity=1;
 			$this->sBonusPilots=1;
 			$this->sBonusSpeed=1;
+			$this->sBonusReadiness=1;
 		}				
 		
 		function unsetWormhole()
@@ -947,7 +953,7 @@
 			$this->speedPercent = max(1,min(100,$perc));
 			$this->duration = $this->distance / $this->getSpeed();	// Calculate duration
 			$this->duration *= 3600;	// Convert to seconds
-			$this->duration += $this->timeLaunchLand;	// Add launch and land time
+			$this->duration += $this->getTimeLaunchLand();	// Add launch and land time
 			$this->duration = ceil($this->duration);
 		}
 		
@@ -958,7 +964,7 @@
 		
 		function getTimeLaunchLand()
 		{
-			return $this->timeLaunchLand;
+			return ceil($this->timeLaunchLand * (2 - $this->sBonusReadiness));
 		}
 		
 		function getCostsLaunchLand()

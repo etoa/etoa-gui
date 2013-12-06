@@ -120,31 +120,6 @@
 	{
 			advanced_form("specialists");
 	}
-
-	//
-	// Statistics-Graph
-	//
-	elseif ($sub=="userstats")
-	{
-		echo "<h1>Userstatistiken</h1>";
-		echo "<h2>Online / Registrierte User</h2>";
-		if (file_exists(CACHE_ROOT."/out/userstats.png"))
-		{
-			echo "<img src=\"../cache/out/userstats.png\" alt=\"Userstats\" />";
-		}
-		else
-		{
-			error_msg("Run scripts/userstats.php periodically to update the image!",1);			
-		}	
-		if (file_exists(XML_INFO_FILE))
-		{
-			echo "<a href=\"".XML_INFO_FILE."\">XML</a>";
-		}
-		else
-		{
-			error_msg("Run scripts/userstats.php periodically to update the xml!",1);			
-		}	
-	}
 	
 	//
 	// Fehlerhafte Logins
