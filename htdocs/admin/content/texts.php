@@ -14,7 +14,7 @@
 				$tm->updateText($t);
 			}
 			$tpl->assign("subtitle", 'Text bearbeiten: ' . $tm->getLabel($id));
-			$tpl->assign("text", $tm->getText($id, ""));
+			$tpl->assign("text", $tm->getText($id));
 		} else {
 			$tpl->assign("subtitle", 'Text bearbeiten');
 		}
@@ -26,7 +26,7 @@
 		$id = $_GET['preview'];
 		if ($tm->isValidTextId($id)) {
 			$tpl->assign("subtitle", 'Textvorschau: ' . $tm->getLabel($id));
-			$tpl->assign("text", $tm->getText($id, ""));
+			$tpl->assign("text", $tm->getText($id));
 		} else {
 			$tpl->assign("subtitle", 'Textvorschau');
 		}

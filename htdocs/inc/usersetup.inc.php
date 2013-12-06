@@ -1,5 +1,7 @@
 <?PHP
 
+	$tm = new TextManager();
+
 	$sx_num=$conf['num_of_sectors']['p1'];
 	$sy_num=$conf['num_of_sectors']['p2'];
 	$cx_num=$conf['num_of_cells']['p1'];
@@ -333,11 +335,16 @@
 	elseif ($mode=="finished")
 	{
 		echo "<h2>Einrichtung abgeschlossen</h2>";
-		iBoxStart("Willkommen");
-		echo text2html($conf['welcome_message']['v']);
-		iBoxEnd();
+
+		$welcomeText = $tm->getText('welcome_message');
+		if ($welcomeText->enabled && !empty($welcomeText->content))
+		{
+			iBoxStart("Willkommen");
+			echo text2html($welcomeText->content);
+			iBoxEnd();
+			send_msg($cu->id,USER_MSG_CAT_ID, 'Willkommen', $welcomeText->content);
+		}
 		echo '<input type="button" value="Zum Heimatplaneten" onclick="document.location=\'?page=planetoverview\'" />';
-		send_msg($cu->id,USER_MSG_CAT_ID,'Willkommen',$conf['welcome_message']['v']);
 	}
 	else
 	{

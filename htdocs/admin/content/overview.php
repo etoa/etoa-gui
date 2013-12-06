@@ -304,43 +304,6 @@
 				echo "<i>Keine Eintr&auml;ge vorhanden</i>";
 		}
 	}	
-	
-	//
-	// Ingame-News
-	//
-	elseif ($sub=="ingamenews")
-	{
-		echo "<h1>Ingame-News</h1>";
-		echo "<form action=\"?page=$page&sub=$sub#writer\" method=\"post\">";
-
-		if (isset($_POST['save']))
-		{
-			$cfg->set("info",$_POST['config_value'],$_POST['enable']);
-		}
-
-
-		if ($cfg->param1("info")==1 && $cfg->value('info')!="")
-		{
-			echo "Diese News erscheinen auf der Startseite im Game:<br/><br/>";
-			iBoxStart("Vorschau");
-			echo text2html($cfg->value('info'));
-			iBoxEnd();
-		}
-
-		echo "<a name=\"writer\"></a>";
-		if (isset($_POST['save']))
-		{
-			success_msg("Nachricht geändert!");
-		}
-
-		echo "<input type=\"radio\" name=\"enable\" value=\"1\" ".($cfg->param1("info")==1 ? ' checked="checked"' :'')." /> Anzeigen
-		<input type=\"radio\" name=\"enable\" value=\"0\" ".($cfg->param1("info")!=1 ? ' checked="checked"' :'')." /> Verstecken<br/><br/>";
-
-		echo "<textarea name=\"config_value\" cols=\"120\" rows=\"20\">".$cfg->value('info')."</textarea><br/><br/>";
-		echo "<input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" />";
-		echo "</form>";	
-	}	
-	
 
 	//
 	// System-Nachricht
