@@ -9,6 +9,8 @@
 
 	echo "<h1>Willkommen in Andromeda</h1>";
 
+	echo "<div class=\"userSetupContainer\">";
+
 		// Apply choosen itemset
 	if (isset($s->itemset_key) && isset($_POST[md5($s->itemset_key)]) && isset($_POST['itemset_id']))
 	{
@@ -346,5 +348,5 @@
 	{
 		echo "Fehler";
 	}
-
+	echo "</div>";
 ?>

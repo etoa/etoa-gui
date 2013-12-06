@@ -1023,6 +1023,10 @@ visibility:visible;
   text-align:center;
 }
 
+.userSetupContainer {
+	width:700px;
+}
+
 /*
 * Tutorial
 */
