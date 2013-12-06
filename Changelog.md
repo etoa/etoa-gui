@@ -10,6 +10,7 @@ Version 3.4
  * Crypto center (alliance building) cooldown is now individual for each user (#10)
  * Number of alliance members can now be limited (defaults to 7) (#16)
  * New mysticum feat: Reduce launch and landing time (Readiness) (#9)
+ * [ADMIN] Improved text management (#20)
 
 ### Bugfixes ###
 
