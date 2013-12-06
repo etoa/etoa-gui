@@ -36,10 +36,13 @@ class TextManager {
 			$t->updated = $arr['text_updated'];
 			$t->enabled = ($arr['text_enabled'] > 0);
 			$t->label = $this->textDef[$id]['label'];
+			$t->description = $this->textDef[$id]['description'];
+			$t->isOriginal = ($arr['text_content'] == $this->textDef[$id]['default']);
 			return $t;
 		}
 		$t = new Text($id, $this->textDef[$id]['default']);
 		$t->label = $this->textDef[$id]['label'];
+		$t->description = $this->textDef[$id]['description'];
 		return $t;
 	}
 	
@@ -69,6 +72,15 @@ class TextManager {
 				texts
 			SET
 				text_enabled=0
+			WHERE
+				text_id=?;',
+			array($id));
+	}
+
+	function resetText($id) {
+		dbQuerySave('
+			DELETE FROM
+				texts
 			WHERE
 				text_id=?;',
 			array($id));

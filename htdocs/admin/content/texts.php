@@ -12,8 +12,13 @@
 				$t = $tm->getText($id);
 				$t->content = $_POST['content'];
 				$tm->updateText($t);
+				forward("?page=$page&id=$id");
 			}
-			$tpl->assign("subtitle", 'Text bearbeiten: ' . $tm->getLabel($id));
+			else if (isset($_POST['reset'])) {
+				$tm->resetText($id);
+				forward("?page=$page&id=$id");
+			}
+			$tpl->assign("subtitle", $tm->getLabel($id));
 			$tpl->assign("text", $tm->getText($id));
 		} else {
 			$tpl->assign("subtitle", 'Text bearbeiten');
@@ -25,7 +30,7 @@
 		$tpl->setView("admin/texts/preview");
 		$id = $_GET['preview'];
 		if ($tm->isValidTextId($id)) {
-			$tpl->assign("subtitle", 'Textvorschau: ' . $tm->getLabel($id));
+			$tpl->assign("subtitle", $tm->getLabel($id));
 			$tpl->assign("text", $tm->getText($id));
 		} else {
 			$tpl->assign("subtitle", 'Textvorschau');

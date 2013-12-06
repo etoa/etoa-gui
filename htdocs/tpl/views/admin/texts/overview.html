@@ -8,6 +8,7 @@
 <table class="tb" style="width:auto;">
 	<tr>
 		<th>Titel</th>
+		<th>Beschreibung</th>
 		<th>Inhalt</th>
 		<th>Aktualisiert</th>
 		<th>Aktiv</th>
@@ -15,8 +16,9 @@
 {foreach from=$texts item=t}
 	<tr>
 		<td><a href="?page={$page}&id={$t->id}">{$t->label}</a></th>
+		<td>{$t->description}</td>
 		<td>{$t->content|truncate:100}</td>
-		<td>{$t->updated|df}</td>
+		<td>{if $t->updated gt 0}{$t->updated|df}{/if}</td>
 		<td style="text-align:center;">
 			{if $t->enabled}
 				<a href="?page={$page}&disable={$t->id}"><img src="../images/true.gif" alt="true" title="Deaktivieren"/></a>
