@@ -1034,7 +1034,7 @@ visibility:visible;
 	position: absolute;
 	right: 8px;
 	top: 60px;
-	z-index:500;
+	z-index:1;
 }
 
 .tutorialBox {
