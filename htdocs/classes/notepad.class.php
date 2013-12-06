@@ -14,7 +14,7 @@
 			
 			if ($loadAll==1)
 			{
-				$res=dbquery("
+				$res=dbQuerySave("
 				SELECT 
 					n.id,
 					n.timestamp,
@@ -25,9 +25,9 @@
 				INNER JOIN	
 					notepad_data as nd
 					ON nd.id=n.id
-					AND user_id=".$this->userId." 
+					AND user_id=?
 				ORDER BY 
-					timestamp DESC;");
+					timestamp DESC;", array($this->userId));
 				$this->num=mysql_num_rows($res);
 				if ($this->num>0)
 				{
@@ -53,7 +53,7 @@
 			}
 			else
 			{
-				$res=dbquery("
+				$res=dbQuerySave("
 				SELECT 
 					n.id,
 					n.timestamp,
@@ -64,8 +64,9 @@
 				INNER JOIN	
 					notepad_data as nd
 					ON nd.id=n.id
-					AND n.user_id=".$this->userId."
-					AND n.id=".$noteId.";");
+					AND n.user_id=?
+					AND n.id=?",
+					array($this->userId, $noteId));
 				if (mysql_num_rows($res)>0)
 				{
 					$arr=mysql_fetch_array($res);
@@ -79,7 +80,7 @@
 		function add($subject,$text)
 		{
 			$time = time();
-			dbquery("
+			dbQuerySave("
 			INSERT INTO 
 				notepad 
 			(
@@ -88,11 +89,11 @@
 			) 
 			VALUES 
 			(
-				'".$this->userId."',
-				'".$time."'
-			);");
+				?,
+				?
+			);", array($this->userId, $time));
 			$mid = mysql_insert_id();
-			dbquery("
+			dbQuerySave("
 			INSERT INTO 
 				notepad_data
 			(
@@ -102,10 +103,8 @@
 			) 
 			VALUES 
 			(
-				".$mid.",
-				'".addslashes($subject)."',
-				'".addslashes($text)."'
-			);");			
+				?, ?, ?
+			);", array($mid, $subject, $text));
 			$this->num++;
 			$this->note[$mid] = new Note($mid,$subject,$text,$time);
 		}
@@ -115,26 +114,25 @@
 		function set($noteId,$subject,$text)
 		{
 			$time = time();
-			dbquery("
+			dbQuerySave("
 			UPDATE 
 				notepad
 			SET 
 				timestamp='".$time."' 
 			WHERE 
-				user_id=".$this->userId." 
-				AND id='".$noteId."'
-			;");
+				user_id=?
+				AND id=?
+			;", array($this->userId, $noteId));
 			if (mysql_affected_rows()>0)
 			{
-				dbquery("
+				dbQuerySave("
 				UPDATE 
 					notepad_data
 				SET 
-					subject='".addslashes($subject)."',
-					text='".addslashes($text)."'
+					subject=?,
+					text=?
 				WHERE 
-					id='".$noteId."'
-				;");			
+					id=?;", array($subject, $text, $noteId));
 				$this->note[$noteId] = new Note($noteId,$subject,$text,$time);
 			}
 		}	
@@ -143,7 +141,7 @@
 		{
 			if ($this->num==-1)
 			{
-				$res=dbquery("SELECT COUNT(id) FROM notepad WHERE user_id=".$this->userId.";");
+				$res = dbQuerySave("SELECT COUNT(id) FROM notepad WHERE user_id=?;", array($this->userId));
 				$cnt = mysql_fetch_row($res);
 				$this->num=$cnt[0];
 			}
@@ -152,10 +150,10 @@
 		
 		function delete($nid)
 		{
-			dbquery("DELETE FROM notepad WHERE id=".$nid." && user_id=".$this->userId.";");
+			dbQuerySave("DELETE FROM notepad WHERE id=? AND user_id=?;", array($nid, $this->userId));
 			if (mysql_affected_rows()>0)
 			{
-				dbquery("DELETE FROM notepad_data WHERE id=".$nid.";");
+				dbQuerySave("DELETE FROM notepad_data WHERE id=?;", array($nid));
 				unset($this->note[$nid]);
 				$this->num--;
 				return true;
@@ -165,15 +163,15 @@
 		
 		function deleteAll()
 		{
-			$res=dbquery("SELECT id FROM notepad WHERE user_id=".$this->userId.";");
+			$res=dbQuerySave("SELECT id FROM notepad WHERE user_id=?;", array($this->userId));
 			if (mysql_num_rows($res)>0)
 			{
 				while ($arr=mysql_fetch_row($res))
 				{
-					dbquery("DELETE FROM notepad_data WHERE id=".$arr[0]);
+					dbQuerySave("DELETE FROM notepad_data WHERE id=?;", array($arr[0]));
 				}
 			}	
-			$res=dbquery("DELETE FROM notepad WHERE user_id=".$this->userId.";");
+			$res=dbQuerySave("DELETE FROM notepad WHERE user_id=?;", array($this->userId));
 		}
 		
 	}

@@ -21,6 +21,7 @@ Version 3.4
  * Minbari mysticum no longer hides whole alliance fleet (#11)
  * Fixed "msg_send fail" on specialist activation (#5)
  * Fixed a DB query bug with single quotes in alliance names in the alliance founding process
+ * Fixed possible SQL injection vulnerabilities in notepad class
 
 Version 3.3
 -----------
