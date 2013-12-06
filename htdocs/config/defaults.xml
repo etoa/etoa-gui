@@ -662,9 +662,6 @@ http://www.etoa.ch</v>
     <item name="backend_status" cat="20">
       <v comment="Eventhandler-Status" type="text">0</v>
 	</item>
-    <item name="backend_offline_message" cat="20">	 
-      <v comment="Eventhandler Offline Nachricht" type="textarea">Der EtoA-Updatedienst ist momentan ausser Betrieb. Die Entwickler sind informiert. Es ist nicht notwendig ein Ticket zu eröffnen. Unterdessen werden weder Gebäude, Technologien, Schiffe, Verteidigungen, Planeten noch Flotten aktualisiert.</v>
-    </item>
     <item name="backend_offline_mail" cat="20">	 	  
       <v comment="Eventhandler Offline Mail" type="text">river@etoa.ch;mrcage@etoa.ch</v>
     </item>
