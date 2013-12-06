@@ -10,14 +10,20 @@
 		<th>Titel</th>
 		<th>Inhalt</th>
 		<th>Aktualisiert</th>
-		<th>ID</th>
+		<th>Aktiv</th>
 	</tr>
 {foreach from=$texts item=t}
 	<tr>
 		<td><a href="?page={$page}&id={$t->id}">{$t->label}</a></th>
 		<td>{$t->content|truncate:100}</td>
 		<td>{$t->updated|df}</td>
-		<td>{$t->id}</th>
+		<td>
+			{if $t->enabled}
+				<a href="?page={$page}&disable={$t->id}"><img src="../images/true.gif" alt="true" title="Deaktivieren"/></a>
+			{else}
+				<a href="?page={$page}&enable={$t->id}"><img src="../images/false.gif" alt="false" title="Aktivieren"/></a>
+			{/if}
+		</td>
 	</tr>
 {/foreach}
 </table>

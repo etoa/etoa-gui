@@ -5,6 +5,7 @@ class Text {
 	public $label;
 	public $content;
 	public $updated;
+	public $enabled = true;
 	
 	function __construct($id, $content) {
 		$this->id = $id;

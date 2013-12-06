@@ -30,6 +30,24 @@
 			$tpl->assign("subtitle", 'Textvorschau');
 		}
 	}
+
+	// Enable text
+	else if (!empty($_GET['enable'])) {
+		$id = $_GET['enable'];
+		if (isset($textDef[$id])) {
+			$tm->enableText($id);
+		}
+		forward("?page=$page");
+	}
+
+	// Disable text
+	else if (!empty($_GET['disable'])) {
+		$id = $_GET['disable'];
+		if (isset($textDef[$id])) {
+			$tm->disableText($id);
+		}
+		forward("?page=$page");
+	}
 	
 	// Overview
 	else {
