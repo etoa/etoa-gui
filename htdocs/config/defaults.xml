@@ -455,9 +455,6 @@ http://www.etoa.ch</v>
       <v comment="User-Profilbilder gepr&#xFC;ft" type="timedate">1209569797</v>
     </item>
 
-    <item name="admininfo" cat="11">
-      <v comment="Admin-News" type="textarea"/>
-    </item>
     <item name="admin_timeout" cat="11">
       <v comment="Admin-Timeout" type="text">1200</v>
     </item>

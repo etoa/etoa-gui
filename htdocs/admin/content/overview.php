@@ -344,26 +344,6 @@
 		}
 		echo "</form>";	
 	}
-		
-	
-	//
-	// Admin-News
-	//
-	elseif ($sub=="adminnews")
-	{
-		if (isset($_POST['save']))
-		{
-			$cfg->set('admininfo', $_POST['admininfo']);
-			$tpl->assign("msg", "Gespeichert!");
-		}
-		$tpl->assign("title", "Admin-News");
-
-		echo "<p>Diese News erscheinen auf der Startseite des Adminmodus:</p>";
-		echo "<form action=\"?page=$page&sub=$sub\" method=\"post\">";
-		echo "<textarea name=\"admininfo\" cols=\"100\" rows=\"15\">".$cfg->get('admininfo')."</textarea><br/><br/>";
-		echo "<input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" />";
-		echo "</form>";	
-	}		
 	
 	//
 	// User bearbeiten

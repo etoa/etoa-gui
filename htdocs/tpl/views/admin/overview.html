@@ -7,8 +7,9 @@
 {msg type="warn" title="Passwortwiederherstellung" text="Dein Passwort wurde seit der letzten automatischen Generierung noch nicht geändert. Bitte mache das jetzt <a href=\"?myprofile=1\">hier</a>!"}
 {/if}			
 
-{if "{cfg key="admininfo"}" ne ""}
-{msg type="info" title="Admin-News" text="{cfg key="admininfo"}"}
+{text key="admininfo" assign="admininfo"}
+{if "$admininfo" ne ""}
+{msg type="info" title="Admin-News" text="{$admininfo|text2html}"}
 {/if}
 
 {if "{cfg key="system_message"}" ne ""}
