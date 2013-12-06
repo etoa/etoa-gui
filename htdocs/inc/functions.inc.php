@@ -2711,7 +2711,7 @@ function imagecreatefromfile($path, $user_functions = false)
 			}
 			else
 			{
-				define("IMAGE_PATH",$cfg->default_image_path->v);
+				define("IMAGE_PATH", (ADMIN_MODE ? '../' : '') . $cfg->default_image_path->v);
 				define("IMAGE_EXT","png");
 			}
 		}

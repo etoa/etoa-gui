@@ -1399,6 +1399,8 @@ function reqInfo($id,$cat='b')
 	$or = new xajaxResponse();
 	ob_start();
 	
+	defineImagePaths();
+
 	// Load items
 	$bures = dbquery("SELECT building_id,building_name FROM buildings WHERE building_show=1;");
 	while ($buarr = mysql_fetch_array($bures))
