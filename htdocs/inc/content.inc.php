@@ -2,6 +2,15 @@
 	
 	$time = time();
 
+	// Get tutorial
+	$ttm = new TutorialManager();
+	if (!$ttm->hasReadTutorial($cu->id, 1)) {
+		$tpl->assign('tutorial_id', 1);
+	}
+	else if ($cu->isSetup() && !$ttm->hasReadTutorial($cu->id, 2)) {
+		$tpl->assign('tutorial_id', 2);
+	}
+
 	// Go to user setup page if user wasn't set up correctly
 	if (!$cu->isSetup() && $page!="help" && $page!="contact")
 	{
