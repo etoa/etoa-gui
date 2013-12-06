@@ -11,6 +11,8 @@ Version 3.4
  * Number of alliance members can now be limited (defaults to 7) (#16)
  * New mysticum feat: Reduce launch and landing time (Readiness) (#9)
  * [ADMIN] Improved text management (#20)
+ * [ADMIN] Changelogs page added
+ * [ADMIN] User- and game stats page combined
 
 ### Bugfixes ###
 
