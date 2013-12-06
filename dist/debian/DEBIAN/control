@@ -1,9 +1,8 @@
 Package: etoa-eventhandler
 Version: 3.0
-Section: games 
+Section: misc
 Priority: optional
 Architecture: all
-Essential: no
-Depends: libboost-thread1.49.0, libboost-regex1.49.0, libboost-filesystem1.49.0, libboost-system1.49.0, libmysql++3
+Depends: adduser, libc6, libboost-thread1.49.0, libboost-regex1.49.0, libboost-filesystem1.49.0, libboost-system1.49.0, libmysql++3
 Maintainer: Nicolas Perrenoud <mrcage@etoa.ch>
 Description: Escape to Andromeda Eventhandler

@@ -1,5 +1,21 @@
 #!/bin/bash
 
+set -e
+
+case "$1" in
+    configure)
+        # create the etoa group if it isn't already there
+        if ! getent group etoa >/dev/null; then
+            addgroup --quiet --system etoa
+        fi
+
+        # create etoa user if it isn't already there
+        if ! getent passwd etoa >/dev/null; then
+            adduser --system --ingroup etoa etoa --gecos "etoa eventhandler management daemon"
+        fi
+    ;;
+esac 
+
 mkdir -p /var/run/etoad
 chown etoa:etoa /var/run/etoad
 
@@ -8,3 +24,6 @@ chown etoa:etoa /var/log/etoad
 
 mkdir -p /etc/etoad/instances-available
 mkdir -p /etc/etoad/instances-enabled
+
+update-rc.d etoad-manager defaults
+
