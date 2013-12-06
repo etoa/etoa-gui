@@ -617,7 +617,7 @@ class User
 		$replace = array($this->nick,$this->nick);
 		$message = str_replace($search,$replace,$message);
 
-		dbquery("
+		dbQuerySave("
 		INSERT INTO
 			user_log
 		(
@@ -629,14 +629,8 @@ class User
 			public
 		)
 		VALUES
-		(
-			".$this->id.",
-			".time().",
-			'".$zone."',
-			'".$message."',
-			'".gethostbyname($_SERVER['REMOTE_ADDR'])."',
-			".intval($public)."
-		);");
+		(?, UNIX_TIMESTAMP(), ?, ?, ?, ?);",
+		array($this->id, $zone, $message, gethostbyname($_SERVER['REMOTE_ADDR']), intval($public)));
 		return true;
 	}
 
