@@ -629,8 +629,14 @@ class User
 			public
 		)
 		VALUES
-		(?, UNIX_TIMESTAMP(), ?, ?, ?, ?);",
-		array($this->id, $zone, $message, gethostbyname($_SERVER['REMOTE_ADDR']), intval($public)));
+		(
+			".$this->id.",
+			".time().",
+			'".$zone."',
+			'".mysql_real_escape_string($message)."',
+			'".gethostbyname($_SERVER['REMOTE_ADDR'])."',
+			".intval($public)."
+		);");
 		return true;
 	}
 
@@ -931,8 +937,8 @@ die Spielleitung";
 		FROM
 			".self::tableName."
 		WHERE
-			user_nick='".$nick."'
-			OR user_email_fix='".$data['email']."'
+			user_nick='".mysql_real_escape_string($nick)."'
+			OR user_email_fix='".mysql_real_escape_string($data['email'])."'
 		LIMIT 1;");
 		if (mysql_num_rows($res)>0)
 		{
@@ -955,13 +961,13 @@ die Spielleitung";
 			user_sitting_days
 			)
 			VALUES
-			('".$data['name']."',
-			'".$nick."',
+			('".mysql_real_escape_string($data['name'])."',
+			'".mysql_real_escape_string($nick)."',
 			'".saltPasswort($pw)."',
-			'".$data['email']."',
-			'".$data['email']."',
-			'".(isset($data['race']) ? $data['race'] : 0)."',
-			'".(isset($data['ghost']) ? $data['ghost'] : 0)."',
+			'".mysql_real_escape_string($data['email'])."',
+			'".mysql_real_escape_string($data['email'])."',
+			'".(isset($data['race']) ? intval($data['race']) : 0)."',
+			'".(isset($data['ghost']) ? intval($data['ghost']) : 0)."',
 			'".$time."',
 			'".$cfg->get("user_sitting_days")."');"))
 		{
@@ -1014,7 +1020,7 @@ die Spielleitung";
 		FROM
 			".self::tableName."
 		WHERE
-			user_nick='".$nick."'
+			user_nick='".mysql_real_escape_string($nick)."'
 		LIMIT 1;
 		");
 		if (mysql_num_rows($res)>0)
