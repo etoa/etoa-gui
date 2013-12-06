@@ -36,11 +36,12 @@
 		$tm = new TextManager();
 
 		// SYSTEMNACHRICHT //
-		if ($cfg->value('system_message')!="")
+		$systemMessage = $tm->getText('system_message');
+		if ($systemMessage->enabled && !empty($systemMessage->content))
 		{
-			echo "<br/>";
+			echo "<br />";
 			iBoxStart("<span style=\"color:red;\">WICHTIGE SYSTEMNACHRICHT</span>");
-			echo text2html($cfg->value('system_message'));
+			echo text2html($systemMessage->content);
 			iBoxEnd();
 		}
 		

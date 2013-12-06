@@ -12,8 +12,9 @@
 {msg type="info" title="Admin-News" text="{$admininfo|text2html}"}
 {/if}
 
-{if "{cfg key="system_message"}" ne ""}
-{msg type="info" title="Systemnachricht aktiv!" text="{cfg key="system_message"} <br/><a href=\"?page=$page&amp;sub=systemmessage\">Bearbeiten/Deaktivieren</a>"} 
+{text key="system_message" assign="system_message"}
+{if "$system_message" ne ""}
+{msg type="info" title="Systemnachricht aktiv!" text="{$system_message|text2html} <br/><a href=\"?page=texts&amp;id=system_message\">Bearbeiten/Deaktivieren</a>"}
 {/if}
 
 {if "{cfg key="offline"}" eq 1}

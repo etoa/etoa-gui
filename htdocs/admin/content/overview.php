@@ -304,46 +304,6 @@
 				echo "<i>Keine Eintr&auml;ge vorhanden</i>";
 		}
 	}	
-
-	//
-	// System-Nachricht
-	//
-	elseif ($sub=="systemmessage")
-	{
-		echo "<h1>Systemnachricht</h1>";
-		if (isset($_POST['save']))
-		{
-			$cfg->set("system_message",$_POST['config_value']);
-			success_msg("Nachricht geändert!");
-		}		
-		if (isset($_POST['saveclear']))
-		{
-			$cfg->set("system_message","");
-			success_msg("Nachricht gelöscht!");
-		}		
-		
-    echo "<form action=\"?page=$page&sub=$sub\" method=\"post\">";
-		$res = dbquery("SELECT * FROM config WHERE config_name='system_message';");
-		if (mysql_num_rows($res)>0)
-		{
-			$arr = mysql_fetch_array($res);
-			echo "Diese Nachricht erscheint sofort auf jeder Seite im Spiel:<br/><br/>";
-			if ($arr['config_value']!="")
-			{
-				iBoxStart("Vorschau");
-				echo text2html($arr['config_value']);
-				iBoxEnd();
-			}
-			echo "<textarea name=\"config_value\" cols=\"100\" rows=\"15\">".$arr['config_value']."</textarea><br/><br/>";
-			echo "<input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" /> &nbsp; 
-			<input type=\"submit\" name=\"saveclear\" value=\"Löschen\" />";
-		}
-		else
-		{
-			echo "Es ist kein Datensatz vorhanden!";
-		}
-		echo "</form>";	
-	}
 	
 	//
 	// User bearbeiten

@@ -92,9 +92,6 @@ http://www.etoa.ch</v>
     <item name="under_construction" cat="1">
       <v comment="Seite die in Bearbeitung sind (DB Updates, ...)" type="textarea"></v>
     </item>
-    <item name="system_message" cat="1">
-      <v comment="Wichtige Systemnachricht" type="textarea"/>
-    </item>
     <item name="offline" cat="1">
       <v comment="Game offline stellen" type="onoff">0</v>
     </item>
