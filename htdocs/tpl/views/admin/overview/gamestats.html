@@ -1,0 +1,12 @@
+{if $title|default:'' ne ""}<h1>{$title}</h1>{/if}
+{if $subtitle|default:'' ne ""}<h2>{$subtitle}</h2>{/if}
+
+{if $gamestats|default:'' ne ''}
+	{$gamestats}
+{else}
+	<p>Statistiken nicht vorhanden!</p>
+{/if}
+
+<form action="?page={$page}&amp;sub={$sub}" method="post">
+	<p><button type="submit" name="regen">Erneuern</button></p>
+</form>

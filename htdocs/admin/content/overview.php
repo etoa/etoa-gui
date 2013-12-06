@@ -105,12 +105,19 @@
 	// Statistiken
 	//
 	elseif ($sub=="gamestats")
-	{	
-		echo "<h1>Spielstatistiken</h1>";
-		if (!@include(CACHE_ROOT."/out/gamestats.html"))
+	{
+		if (isset($_POST['regen']))
 		{
-			error_msg("Run scripts/gamestats.php periodically to update gamestats!",1);			
-		}		
+			GameStats::generateAndSave();
+			forward("?page=$page&sub=$sub");
+		}
+
+		$tpl->setView("admin/overview/gamestats");
+		$tpl->assign("title", "Spielstatistiken");
+
+		if (is_file(GAMESTATS_FILE)) {
+			$tpl->assign("gamestats", file_get_contents(GAMESTATS_FILE));
+		}
 	}
 
 	//

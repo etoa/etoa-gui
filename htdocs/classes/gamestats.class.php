@@ -974,21 +974,24 @@
 	static function generateAndSave()
 	{
 		$file = GAMESTATS_FILE;
-			if ($f=fopen($file,"w+"))
-			{
-				$str = self::generate();
-				if (!fwrite($f,$str))
-				{
-					echo "Error! Could not write gamestats file $file!";
-					return false;
-				}
-				fclose($f);				
-				return true;
-			}	
-			echo "Error! Could not open gamestats file $file!";
-			return false;
+		$dir = dirname($file);
+		if (!is_dir($dir)) {
+			mkdir($dir, 0777, true);
 		}
 		
+		if ($f=fopen($file,"w+"))
+		{
+			$str = self::generate();
+			if (!fwrite($f,$str))
+			{
+				echo "Error! Could not write gamestats file $file!";
+				return false;
+			}
+			fclose($f);
+			return true;
+		}
+		echo "Error! Could not open gamestats file $file!";
+		return false;
 	}
-
+}
 ?>

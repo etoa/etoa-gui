@@ -206,9 +206,10 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 	elseif ($mode=="gamestats")
 	{
 		ob_start();
-		if (!@include(CACHE_ROOT."/out/gamestats.html"))
-		{
-			echo "<tr><td><i>Run scripts/gamestats.php periodically to update gamestats!</i></tr>";		
+		if (is_file(GAMESTATS_FILE)) {
+			echo file_get_contents(GAMESTATS_FILE);
+		} else {
+			echo "<p>Statistiken noch nicht vorhanden!</p>";
 		}
 	 	$objResponse->assign('statsBox', 'innerHTML', ob_get_clean());
 	}
