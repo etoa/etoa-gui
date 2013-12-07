@@ -128,10 +128,11 @@
 		$string = preg_replace("#^ftp://([^ ,\n]*)#i", "[url]ftp://\\1[/url]", $string);
 		$string = preg_replace("#^www\\.([^ ,\n]*)#i", "[url]http://www.\\1[/url]", $string);
 
-		$string = preg_replace('#\[url=([^\[]*)\]([^\[]*)\[/url\]#i', '<a href="\1">\2</a>', $string);
-		$string = preg_replace('#\[url ([^\[]*)\]([^\[]*)\[/url\]#i', '<a href="\1">\2</a>', $string);
-	 	$string = preg_replace('#\[url\]www.([^\[]*)\[/url\]#i', '<a href="http://www.\1">\1</a>', $string);
-		$string = preg_replace('#\[url\]([^\[]*)\[/url\]#i', '<a href="\1">\1</a>', $string);
+		$string = preg_replace_callback('#\[url=([^\[]*)\]([^\[]*)\[/url\]#i', 'bbcode_urls_to_links_with_newtab', $string);
+		$string = preg_replace_callback('#\[url ([^\[]*)\]([^\[]*)\[/url\]#i', 'bbcode_urls_to_links_with_newtab', $string);
+		$string = preg_replace_callback('#\[url\]([^\[]*)\[/url\]#i', 'bbcode_urls_to_links_with_newtab', $string);
+        
+        
 
 		$string = preg_replace('#\[mailurl=([^\[]*)\]([^\[]*)\[/mailurl\]#i', '<a href="mailto:\1">\2</a>', $string);
 		$string = preg_replace('#\[mailurl ([^\[]*)\]([^\[]*)\[/mailurl\]#i', '<a href="mailto:\1">\2</a>', $string);
@@ -309,4 +310,29 @@ $smilielist[':(']="frown.gif";
 $smilielist[':-(']="frown.gif";
 	
 	
+	/**
+	*   Callback-Funktion für preg_replace_callback zum Unterscheiden externer URLs in bbcode
+	*
+	* @param $match Array mit [0]=> ganzer String, [1]..[n]=> subpatterns in ()
+	* @return String mit html-links
+	*
+	* @author river
+	*
+	* In javascript gibt es bereits sowas.
+	*/
+    
+    function bbcode_urls_to_links_with_newtab($match)
+    {
+        $url = $match[1];
+        $intern = (preg_match('#etoa.ch$|etoa.net$#i',parse_url($url, PHP_URL_HOST)) === 1);
+        $scheme = parse_url($url, PHP_URL_SCHEME);
+        if($scheme === NULL)
+        {
+            $url = 'http://'.$url;
+        }
+        
+        return '<a href="'.$url.'"'.($intern?'':' target="_blank"').'>'
+                .(isset($match[2])?$match[2]:$match[1]).'</a>';
+    }
+
 ?>
