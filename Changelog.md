@@ -23,6 +23,7 @@ Version 3.4
  * Fixed "msg_send fail" on specialist activation (#5)
  * Fixed a DB query bug with single quotes in alliance names in the alliance founding process
  * Fixed possible SQL injection vulnerabilities in notepad class
+ * Fixed race detail page in help
 
 Version 3.3
 -----------
