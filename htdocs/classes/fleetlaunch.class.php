@@ -867,7 +867,7 @@
 												if(($this->sourceEntity->ownerAlliance() && $this->sourceEntity->owner->alliance->checkWar($this->targetEntity->ownerAlliance()))
 												|| $this->ownerId==$this->sourceEntity->lastUserCheck()
 												|| (
-                                                    ! ($this->sourceEntity->ownerPoints()*USER_ATTACK_PERCENTAGE>$this->targetEntity->ownerPoints()  || $this->sourceEntity->ownerPoints()/USER_ATTACK_PERCENTAGE < $this->targetEntity->ownerPoints() )
+                                                    !($this->sourceEntity->ownerPoints()*USER_ATTACK_PERCENTAGE > $this->targetEntity->ownerPoints() || $this->sourceEntity->ownerPoints()/USER_ATTACK_PERCENTAGE < $this->targetEntity->ownerPoints() )
                                                     && ($this->sourceEntity->ownerPoints() > USER_ATTACK_MIN_POINTS)
                                                     && ($this->targetEntity->ownerPoints() > USER_ATTACK_MIN_POINTS)
                                                    )
@@ -878,7 +878,11 @@
 												}
 												else
 												{
-													$this->error .= "Der Besitzer des Ziels steht unter Anfängerschutz!  Die Punkte des Users müssen zwischen ".(USER_ATTACK_PERCENTAGE*100)."% und ".(100/USER_ATTACK_PERCENTAGE)."% von deinen Punkten liegen<br />";
+													$this->error .= 'Der Besitzer des Ziels steht unter Anfängerschutz!'
+                                                        .'Die Punkte des Users müssen zwischen '.(USER_ATTACK_PERCENTAGE*100).'% und '
+                                                        .(100/USER_ATTACK_PERCENTAGE).'% von deinen Punkten liegen.<br />'
+                                                        .'Ausserdem müssen beide Spieler mindestens '.(USER_ATTACK_MIN_POINTS)
+                                                        .' Punkte haben.<br />';
 												}
 											} // if ($ai->allowActivePlayerEntities() || ($this->targetEntity->owner->isInactiv() && !$ai->allowActivePlayerEntities()))
 										} // if (!$battleban)
