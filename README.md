@@ -1,14 +1,12 @@
 Escape to Andromeda README
 ==========================
 
-(C) since 2003 by Nicolas Perrenoud and EtoA Gaming
+(C) 2003 Nicolas Perrenoud and EtoA Gaming
 
-See INSTALL for detailed instructions on 
+See [INSTALL](INSTALL.md) for detailed instructions on 
 how to set up the game.
 
-See LICENSE for legal information.
-
-See AUTHORS for a list of developers.
+See [LICENSE](LICENSE.md) for legal information.
 
 This program is distributed in the hope that it will be useful, 
 but WITHOUT ANY WARRANTY; without even the implied warranty of 
@@ -27,6 +25,6 @@ Contributors
 
  * Greaser <greaser@etoa.ch>
  * Raphael Ochsenbein <ramonkahn@etoa.ch>
- * Selina Tanner <demora@etoa.ch>
+ * Demora <demora@etoa.ch>
  * Yanneck Boss <yanneck@etoa.ch>
  * fabiator <fabiator@etoa.ch>
