@@ -810,6 +810,8 @@
 					$supportPossible = true;
 					
 					$ai = FleetAction::createFactory($i);
+                    
+                    $noobProtectionErrorAdded = false;
 	
 					// Permission checks
 					if (
@@ -876,13 +878,15 @@
 												{
 													$actionObjs[$i] = $ai;
 												}
-												else
+												else if (!$noobProtectionErrorAdded)
 												{
 													$this->error .= 'Der Besitzer des Ziels steht unter Anfängerschutz!'
                                                         .'Die Punkte des Users müssen zwischen '.(USER_ATTACK_PERCENTAGE*100).'% und '
                                                         .(100/USER_ATTACK_PERCENTAGE).'% von deinen Punkten liegen.<br />'
                                                         .'Ausserdem müssen beide Spieler mindestens '.(USER_ATTACK_MIN_POINTS)
                                                         .' Punkte haben.<br />';
+                                                    // only add error message once, not for every action
+                                                    $noobProtectionErrorAdded = true;
 												}
 											} // if ($ai->allowActivePlayerEntities() || ($this->targetEntity->owner->isInactiv() && !$ai->allowActivePlayerEntities()))
 										} // if (!$battleban)
