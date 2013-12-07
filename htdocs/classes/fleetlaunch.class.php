@@ -803,6 +803,8 @@
 			}
 			else
 			{
+                $noobProtectionErrorAdded = false;
+                
 				// Test each possible action
 				foreach ($actions as $i)
 				{
@@ -811,8 +813,6 @@
 					
 					$ai = FleetAction::createFactory($i);
                     
-                    $noobProtectionErrorAdded = false;
-	
 					// Permission checks
 					if (
 						// Action is allowed if:
