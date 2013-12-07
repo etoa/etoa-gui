@@ -1,32 +1,33 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+	<meta charset="utf-8">
+	<title>Image filter test</title>
+</head>
+<body>
 <?PHP
+
 $dir="images/imagepacks/Discovery/buildings";
-$d=opendir("../".$dir);
+$filters = array('gray', 'red', 'orange', 'yellow', 'green', 'blue', 'negate', 'brightness', 'emboss', 'blur', 'removal', 'smooth', 'edgedetect');
+$match = '/building[0-9]+\.png/';
+
+$d=opendir("../htdocs/".$dir);
 while ($f=readdir($d))
 {
-	if (is_file("../".$dir."/".$f))
+	if (is_file("../htdocs/".$dir."/".$f))
 	{
-		if (stristr($f,".png"))
+		if (preg_match($match, $f))
 		{
-			echo "<img src=\"../".$dir."/".$f."\" alt=\"original\"/> ";
-			echo "<img src=\"imagefilter.php?file=".$dir."/".$f."&filter=gray\" alt=\"grey\"/> ";
-			echo "<img src=\"imagefilter.php?file=".$dir."/".$f."&filter=red\" alt=\"red\"/> ";
-			echo "<img src=\"imagefilter.php?file=".$dir."/".$f."&filter=orange\" alt=\"orange\"/> ";
-			echo "<img src=\"imagefilter.php?file=".$dir."/".$f."&filter=yellow\" alt=\"yellow\"/> ";
-			echo "<img src=\"imagefilter.php?file=".$dir."/".$f."&filter=green\" alt=\"green\"/> ";
-			echo "<img src=\"imagefilter.php?file=".$dir."/".$f."&filter=blue\" alt=\"blue\"/> ";
-			echo "<img src=\"imagefilter.php?file=".$dir."/".$f."&filter=negate\" alt=\"negate\"/> ";
-			echo "<img src=\"imagefilter.php?file=".$dir."/".$f."&filter=brightness\" alt=\"brightness\"/> ";
-			echo "<img src=\"imagefilter.php?file=".$dir."/".$f."&filter=emboss\" alt=\"emboss\"/> ";
-			echo "<img src=\"imagefilter.php?file=".$dir."/".$f."&filter=blur\" alt=\"blur\"/> ";
-			echo "<img src=\"imagefilter.php?file=".$dir."/".$f."&filter=removal\" alt=\"removal\"/> ";
-			echo "<img src=\"imagefilter.php?file=".$dir."/".$f."&filter=smooth\" alt=\"smooth\"/> ";
-			echo "<img src=\"imagefilter.php?file=".$dir."/".$f."&filter=edgedetect\" alt=\"edgedetect\"/> ";
+			echo "<img src=\"../htdocs/".$dir."/".$f."\" alt=\"Original\" title=\"Original\" /> ";
+			foreach ($filters as $filter) {
+				echo "<img src=\"../htdocs/misc/imagefilter.php?file=".$dir."/".$f."&amp;filter=".$filter."\" alt=\"Filter ".$filter."\" title=\"Filter ".$filter."\"/> \n";
+			}
 			echo "<br><br>";
 			
 		}
 	}
 }
 closedir($dir);
-
-
 ?>
+</body>
+</html>
