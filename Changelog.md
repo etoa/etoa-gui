@@ -11,6 +11,7 @@ Version 3.4
  * Number of alliance members can now be limited (defaults to 7) (#16)
  * New mysticum feat: Reduce launch and landing time (Readiness) (#9)
  * Added tutorial system (#18)
+ * bbcode-[url]-links open in a new tab (#13)
  * [ADMIN] Improved text management (#20)
  * [ADMIN] Changelogs page added
  * [ADMIN] User- and game stats page combined
@@ -22,6 +23,7 @@ Version 3.4
  * Fixed "msg_send fail" on specialist activation (#5)
  * Fixed a DB query bug with single quotes in alliance names in the alliance founding process
  * Fixed possible SQL injection vulnerabilities in notepad class
+ * Fixed race detail page in help
 
 Version 3.3
 -----------
