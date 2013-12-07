@@ -174,25 +174,22 @@
 					}
 				}
 				
-				dbquery("INSERT DELAYED INTO
+				dbQuerySave("INSERT DELAYED INTO
 					user_surveillance
 				(
 					timestamp,
 					user_id,
 					page,
 					request,
+					request_raw,
 					post,
 					session
 				)
 				VALUES
 				(
-					".time().",
-					".$cu->id.",
-					'".$page."',
-					'".$req."',
-					'".$post."',
-					'".$s->id."'
-				)");
+					UNIX_TIMESTAMP(),
+					?, ?, ?, ?, ?, ?
+				)", array($cu->id, $page, $req, $_SERVER['QUERY_STRING'], $post, $s->id));
 			}
 
 			// Cheating-Schutz für externe Formulare

@@ -98,3 +98,8 @@ CREATE TABLE `tutorial_user_progress` (
  `tup_closed` tinyint(1) unsigned NOT NULL DEFAULT '0',
  UNIQUE KEY `tup_user_id` (`tup_user_id`,`tup_tutorial_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- User surveillance
+--
+ALTER TABLE `user_surveillance` ADD `request_raw` text NOT NULL AFTER `request`;

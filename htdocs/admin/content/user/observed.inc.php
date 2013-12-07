@@ -67,39 +67,51 @@
 		{
 			if ($si[1]>0)
 			{
+				$sid = $si[0];
 				$res = dbquery("
 				SELECT 
 					*
 				FROM 
 					user_sessionlog
 				WHERE
-					session_id='".$si[0]."'
+					session_id='".$sid."'
 				LIMIT 1;");
 				if (mysql_num_rows($res)>0)
 				{
 					$arr=mysql_fetch_array($res);
-					echo "<tr>";
-					echo "<td>".date("d.m.Y H:i",$arr['time_login'])."</td>";
-					echo "<td>";
-					if ($arr['time_action']>0)
-						echo date("d.m.Y H:i",$arr['time_action']);
-					else
-						echo "-";
-					echo "</td>";
-					echo "<td>";
-					$dur = max($arr['time_logout'],$arr['time_action'])-$arr['time_login'];
-					if ($dur>0)
-						echo tf($dur);
-					else
-						echo "-";
-					echo "</td>
-					<td>".$si[1]."</td>
-					<td>".($dur>0 ? round($si[1] / $dur * 60,1) : '-')."</td>
-					<td><a href=\"javascript:;\" onclick=\"toggleBox('details".$arr['id']."')\">Details</a></td>
-					</tr>";
 				}
+				else
+				{
+					$res = dbquery("
+					SELECT
+						*
+					FROM
+						user_sessions
+					WHERE
+						id='".$sid."'
+					LIMIT 1;");
+					if (mysql_num_rows($res)>0)
+					{
+						$arr=mysql_fetch_array($res);
+					}
+				}
+				echo "<tr>";
+				echo "<td>".(isset($arr['time_login']) && $arr['time_login'] > 0 ? date("d.m.Y H:i",$arr['time_login']) : '-')."</td>";
+				echo "<td>".(isset($arr['time_action']) && $arr['time_action'] > 0 ? date("d.m.Y H:i",$arr['time_action']) : '-')."</td>";
+				echo "<td>";
+				$dur = max($arr['time_logout'],$arr['time_action'])-$arr['time_login'];
+				if ($dur>0)
+					echo tf($dur);
+				else
+					echo "-";
+				echo "</td>
+				<td>".$si[1]."</td>
+				<td>".($dur>0 ? round($si[1] / $dur * 60,1) : '-')."</td>
+				<td><a href=\"javascript:;\" onclick=\"toggleBox('details".$sid."')\">Details</a></td>
+				</tr>";
+
 				echo "<tr>
-				<td colspan=\"6\" id=\"details".$arr['id']."\" style=\"display:none;\">";
+				<td colspan=\"6\" id=\"details".$sid."\" style=\"display:none;\">";
 				echo "<b>IP:</b> ".$arr['ip_addr'].", &nbsp; 
 				<b>Host:</b> ".Net::getHost($arr['ip_addr']).", &nbsp; ";
 				echo "<b>Client:</b> ".$arr['user_agent']."<br/>";
@@ -108,15 +120,17 @@
 				if (mysql_num_rows($res)>0)
 				{
 					tableStart("","100%");
-					echo "<tr><th>Zeit</th><th>Seite</th><th>Request (GET)</th><th>Formular (POST)</th></tr>";
+					echo "<tr><th>Zeit</th><th>Seite</th><th>Request (GET)</th><th>Query String</th><th>Formular (POST)</th></tr>";
 					while ($arr=mysql_fetch_assoc($res))
 					{
 						$req = wordwrap($arr['request'], 60, "\n", true);
+						$reqRaw = wordwrap($arr['request_raw'], 60, "\n", true);
 						$post = wordwrap($arr['post'], 60, "\n", true);
 						echo "<tr>
 							<td>".df($arr['timestamp'],1)."</td>
 							<td>".$arr['page']."</td>
 							<td>".text2html($req)."</td>
+							<td>".text2html($reqRaw)."</td>
 							<td>".text2html($post)."</td>
 						</tr>";
 					}
