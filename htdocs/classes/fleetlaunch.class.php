@@ -861,11 +861,16 @@
 												// 1. att allowed if war is active
 												// 2. or att allowed if last owner == this owner (invade time threshold)
 												// 3. or att allowed if user points are in limits
+                                                //    and no user is below minimum attack threshold
 												// 4. or att allowed if target user is inactive
 												// 5. or att allowed if target user is locked 
 												if(($this->sourceEntity->ownerAlliance() && $this->sourceEntity->owner->alliance->checkWar($this->targetEntity->ownerAlliance()))
 												|| $this->ownerId==$this->sourceEntity->lastUserCheck()
-												|| !($this->sourceEntity->ownerPoints()*USER_ATTACK_PERCENTAGE>$this->targetEntity->ownerPoints()  || $this->sourceEntity->ownerPoints()/USER_ATTACK_PERCENTAGE < $this->targetEntity->ownerPoints() ) 
+												|| (
+                                                    ! ($this->sourceEntity->ownerPoints()*USER_ATTACK_PERCENTAGE>$this->targetEntity->ownerPoints()  || $this->sourceEntity->ownerPoints()/USER_ATTACK_PERCENTAGE < $this->targetEntity->ownerPoints() )
+                                                    && ($this->sourceEntity->ownerPoints() > USER_ATTACK_MIN_POINTS)
+                                                    && ($this->targetEntity->ownerPoints() > USER_ATTACK_MIN_POINTS)
+                                                   )
 												|| $this->targetEntity->owner->isInactiv() 
 												|| $this->targetEntity->ownerLocked() )
 												{

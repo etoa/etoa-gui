@@ -369,7 +369,7 @@
 	define("SHIP_BOMB_FACTOR",$cfg->ship_bomb_factor->v); 				// Chance-Faktor beim Bombardieren + Deaktivieren
 
 	// Anfängerschutz
-	define("USER_ATTACK_MIN_POINTS",$cfg->user_attack_min_points->v);		// Absolute Puntktegrenze (momentan ausgeschaltet)
+	define("USER_ATTACK_MIN_POINTS",$cfg->user_attack_min_points->v);		// Absolute Puntktegrenze
 	define("USER_ATTACK_PERCENTAGE",$cfg->user_attack_percentage->v); 		// Prozentualer Punkteunterschied
 
 	$weaponNames = array("Strahlenwaffe","Raketen","Projektilwaffe");
