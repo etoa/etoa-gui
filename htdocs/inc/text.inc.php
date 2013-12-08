@@ -324,7 +324,6 @@ $smilielist[':-(']="frown.gif";
     
     function bbcode_urls_to_links_with_newtab($match)
     {
-        $intern = (preg_match('#etoa.ch$|etoa.net$#i',parse_url($url, PHP_URL_HOST)) === 1);
         $url = $match[1];
         $scheme = parse_url($url, PHP_URL_SCHEME);
         $host = parse_url($url, PHP_URL_HOST);
@@ -344,6 +343,7 @@ $smilielist[':-(']="frown.gif";
             }
             $url = 'http://'.$url;
         }
+        $intern = (preg_match('#etoa.ch$|etoa.net$#i',parse_url($url, PHP_URL_HOST)) === 1);
         
         return '<a href="'.$url.'"'.($intern?'':' target="_blank"').'>'
                 .(isset($match[2])?$match[2]:$match[1]).'</a>';
