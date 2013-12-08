@@ -12,6 +12,7 @@ Version 3.4
  * New mysticum feat: Reduce launch and landing time (Readiness) (#9)
  * Added tutorial system (#18)
  * bbcode-[url]-links open in a new tab (#13)
+ * Noob protection minimal attackable threshold points implemented (#21)
  * [ADMIN] Improved text management (#20)
  * [ADMIN] Changelogs page added
  * [ADMIN] User- and game stats page combined
@@ -24,6 +25,7 @@ Version 3.4
  * Fixed a DB query bug with single quotes in alliance names in the alliance founding process
  * Fixed possible SQL injection vulnerabilities in notepad class
  * Fixed race detail page in help
+ * Fixed broken link in admin ticket system (#25)
 
 Version 3.3
 -----------
