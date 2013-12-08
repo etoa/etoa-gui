@@ -21,6 +21,8 @@ $tpl->assign("css_theme", (!isset($themePath) || !is_file(RELATIVE_ROOT."/web/cs
 $tpl->assign("page_title", getGameIdentifier()." Administration");
 $tpl->assign("ajax_js", $xajax->printJavascript(XAJAX_DIR));
 
+initTT();
+
 if ($s->user_id)
 {
 	$cu = new AdminUser($s->user_id);
