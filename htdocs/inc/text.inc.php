@@ -318,16 +318,30 @@ $smilielist[':-(']="frown.gif";
 	*
 	* @author river
 	*
-	* In javascript gibt es bereits sowas.
+	* Im javascript gibt es bereits sowas.
+	* Diese Funktion überprüft nicht, ob eine valide URL vorliegt.
 	*/
     
     function bbcode_urls_to_links_with_newtab($match)
     {
-        $url = $match[1];
         $intern = (preg_match('#etoa.ch$|etoa.net$#i',parse_url($url, PHP_URL_HOST)) === 1);
+        $url = $match[1];
         $scheme = parse_url($url, PHP_URL_SCHEME);
+        $host = parse_url($url, PHP_URL_HOST);
+        $path = parse_url($url, PHP_URL_PATH);
+        // bei relativen / unvollständigen URLs automatisch
+        // scheme, host und path hinzufügen.
+        // Setzt eine gültige URL voraus.
         if($scheme === NULL)
         {
+            if($host === NULL)
+            {
+                if($path === NULL)
+                {
+                    $url = '/'.$url;
+                }
+                $url = $_SERVER['SERVER_NAME'].$url;
+            }
             $url = 'http://'.$url;
         }
         
