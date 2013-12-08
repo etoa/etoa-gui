@@ -121,7 +121,7 @@ elseif (isset($_GET['id']) && $_GET['id']>0)
 	echo $ti->statusName;
 	echo '</td></tr>';
 	echo '<tr><th>User:</th><td>';
-	echo '<a href=\"javascript:;\" '.cTT($ti->userNick,"ttuser").'>'.$ti->userNick.'</a>';
+	echo '<a href="javascript:;" '.cTT($ti->userNick,"ttuser").'>'.$ti->userNick.'</a>';
 	echo '</td></tr>';
 	if ($ti->adminId > 0)
 	{
