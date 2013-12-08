@@ -26,6 +26,7 @@ Version 3.4
  * Fixed possible SQL injection vulnerabilities in notepad class
  * Fixed race detail page in help
  * Fixed broken link in admin ticket system (#25)
+ * Fixed fuel/food doubling on support abort (#7)
 
 Version 3.3
 -----------
