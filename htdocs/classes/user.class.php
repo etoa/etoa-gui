@@ -1048,12 +1048,22 @@ die Spielleitung";
     public function canAttackUser(User $u)
     {
         // att allowed if war is active
+        // or att allowed if target user is not noob protected
         // or att allowed if target user is inactive
-        // or att allowed if target user is locked 
-        return ($this->allianceId && $this->alliance->checkWar($u->alliance))
+        // or att allowed if target user is locked
+        if ($this->allianceId > 0)
+        {
+            return $this->alliance->checkWar($u->alliance)
                 || !$this->isUserNoobProtected($u)
                 || $this->isInactiv() 
+                || $this->locked;                    
+        }
+        else
+        {
+            return !$this->isUserNoobProtected($u)
+                || $this->isInactiv() 
                 || $this->locked;
+        }
     }
     
     public function canAttackPlanet(Planet $p)
