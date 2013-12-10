@@ -224,8 +224,6 @@
 					// DEBUG
 					$query_counter=0; 
 					$queries=array();
-
-					echo '<div id="info">&nbsp;</div>';
 					
 					// Content includen
 					if (!include("content/".$page.".php"))
