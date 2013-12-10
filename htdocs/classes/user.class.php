@@ -1035,5 +1035,32 @@ die Spielleitung";
 	{
 		return "<a href=\"?page=userinfo&amp;id=".$this->id."\">".$this->__toString()."</a>";
 	}
+    
+    public function isUserNoobProtected(User $u)
+    {
+        // check whether user points are outside limits
+        // or this user or opponent is below minimum attack threshold
+        return  ($this->points*USER_ATTACK_PERCENTAGE > $u->points || $this->points/USER_ATTACK_PERCENTAGE < $u->points)
+                || ($this->points <= USER_ATTACK_MIN_POINTS)
+                || ($u->points <= USER_ATTACK_MIN_POINTS);
+    }
+    
+    public function canAttackUser(User $u)
+    {
+        // att allowed if war is active
+        // or att allowed if target user is inactive
+        // or att allowed if target user is locked 
+        return ($this->allianceId && $this->alliance->checkWar($u->alliance))
+                || !isUserNoobProtected($u)
+                || $this->isInactiv() 
+                || $this->locked;
+    }
+    
+    public function canAttackPlanet(Planet $p)
+    {
+        // Planet is attackable if user is attackable
+        // or if last owner == this owner (invade time threshold)
+        return $this->canAttackUser($p->owner()) || $this->id == $p->lastUserCheck();
+    }
 }
 ?>
