@@ -64,8 +64,12 @@
 	            {
                 $fname = $this->targetName.".".$ext;
                 $fpath = $this->targetDir."/".$fname;
-                if (file_exists($fpath) && is_file($fpath))
+				if (!is_dir($this->targetDir)) {
+					mkdir($this->targetDir, 0755, true);
+				}
+                if (file_exists($fpath) && is_file($fpath)) {
                     @unlink($fpath);
+				}
                 move_uploaded_file($source,$fpath);
                 if (UNIX)
                 	chmod($fpath,FILE_UPLOAD_PERMS);
