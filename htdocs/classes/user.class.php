@@ -1051,7 +1051,7 @@ die Spielleitung";
         // or att allowed if target user is inactive
         // or att allowed if target user is locked 
         return ($this->allianceId && $this->alliance->checkWar($u->alliance))
-                || !isUserNoobProtected($u)
+                || !$this->isUserNoobProtected($u)
                 || $this->isInactiv() 
                 || $this->locked;
     }
