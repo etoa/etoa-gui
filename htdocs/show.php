@@ -133,34 +133,9 @@
 		}
 		elseif ($page!="" && $loggedIn  && $page!=DEFAULT_PAGE)
 		{
-			$sub="content/";
-			if (!preg_match('/^[a-z\_]+$/',$page) || strlen($page)>50)
-			{
-				die("<h1>Fehler</h1>Der Seitenname <b>".$page."</b> enth&auml;lt unerlaubte Zeichen!<br/><br/>
-				<a href=\"javascript:window.close();\">Schliessen</a><br/><br/>");
-			}
-			if (file_exists($sub.$page.".php"))
-			{
-				$popup = true;
-				include ($sub.$page.".php");
-
-				if (isset($_GET['sub']))
-	                                $lasub = $_GET['sub'];
-                                elseif (isset($_GET['action']))
-                                     $lasub = $_GET['action'];
-                                elseif (isset($_GET['site']))
-                                        $lasub = $_GET['site'];
-                                else
-                                     $lasub="";
-
-				logAccess($page,"ingame",$lasub);
-
-				echo "<br/><br/>";
-			}
-			else
-			{
-				echo "<h1>Fehler:</h1> Die Seite <b>".$page."</b> existiert nicht!<br/><br/>";
-			}
+			$popup = true;
+			require("inc/content.inc.php");
+			echo "<br/><br/>";
 		}
 		else
 		{
