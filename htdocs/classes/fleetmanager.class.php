@@ -121,7 +121,7 @@
 								
 								// Minbari fleet hide ability does not work with alliance attacks
 								// TODO: Improvement would be differentiation between single fleets
-								if(!$cFleet->getAction()->code = 'alliance')
+								if(!$cFleet->getAction()->code() == 'alliance')
 								{
 									$specialBoniRes = dbquery("
 										SELECT
