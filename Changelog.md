@@ -27,6 +27,7 @@ Version 3.4
  * Fixed race detail page in help
  * Fixed broken link in admin ticket system (#25)
  * Fixed fuel/food doubling on support abort (#7)
+ * User and allinace profile image directories are now being created created if they not exist
 
 Version 3.3
 -----------
