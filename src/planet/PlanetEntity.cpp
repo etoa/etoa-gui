@@ -120,6 +120,14 @@ namespace planet
 	}
 	
 	void PlanetEntity::updateResources() {
+
+		if (this->isUmod) {
+			for (int i = 0; i < 6; i++) {
+				this->ressource[i] = 0;
+			}
+			return;
+		}
+
 		for (int i = 0; i < 5; i++) {
 			if (this->store[i] > (this->ressource[i]+(this->cnt[i]/3600)*this->t))
 				this->ressource[i] = (this->cnt[i]/3600)*this->t;
@@ -129,9 +137,7 @@ namespace planet
 				this->ressource[i] = 0;
 		}
 
-		this->birthRate = (!this->isUmod)
-				? 1.1 + this->planet_->getTypePopulation() + this->race_->getRacePopulation() + this->sol_->getTypePopulation() + this->specialist_->getSpecialistPopulation() - 4
-				: 0;
+		this->birthRate = 1.1 + this->planet_->getTypePopulation() + this->race_->getRacePopulation() + this->sol_->getTypePopulation() + this->specialist_->getSpecialistPopulation() - 4;
 		this->ressource[6] = this->ressource[5] / 50 * this->birthRate;
 		this->ressource[6] = (this->ressource[6] <= 3) ? 3 : this->ressource[6];
 		
