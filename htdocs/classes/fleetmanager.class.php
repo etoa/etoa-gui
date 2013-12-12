@@ -134,14 +134,14 @@
 										ON s.ship_id = fs.fs_ship_id
 											AND fs.fs_fleet_id='".$farr[0]."'
 											AND s.special_ship='1';");
-								}
-								if(mysql_num_rows($specialBoniRes)>0)
-    	    					{
-            						while ($specialBoniArr = mysql_fetch_assoc($specialBoniRes))
-									{
-										$specialShipBonusTarn += $specialBoniArr['special_ship_bonus_tarn'] * $specialBoniArr['fs_special_ship_bonus_tarn'];
-            						}
-        						}
+                                    if(mysql_num_rows($specialBoniRes)>0)
+                                    {
+                                        while ($specialBoniArr = mysql_fetch_assoc($specialBoniRes))
+                                        {
+                                            $specialShipBonusTarn += $specialBoniArr['special_ship_bonus_tarn'] * $specialBoniArr['fs_special_ship_bonus_tarn'];
+                                        }
+                                    }
+                                }
 								$diffTimeFactor = 0.1 * min(9,$diffTimeFactor + 10 * $specialShipBonusTarn);
 							
 								if ($cFleet->remainingTime() <  ($cFleet->landTime() - $cFleet->launchTime())*(1 - $diffTimeFactor)) {
