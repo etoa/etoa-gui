@@ -1053,7 +1053,8 @@ die Spielleitung";
         // or att allowed if target user is locked
         if ($this->allianceId > 0 && $u->allianceId > 0)
         {
-            return $this->alliance->checkWar($u->allianceId)
+            // somehow $this->alliance doesn't use the getter
+            return $this->__get('alliance')->checkWar($u->allianceId)
                 || !$this->isUserNoobProtected($u)
                 || $this->isInactiv() 
                 || $this->locked;                    
