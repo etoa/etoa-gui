@@ -303,10 +303,8 @@
 		Bitte wählt die Rasse eures Volkes aus.<br/>
 		Jede Rasse hat Vor- und Nachteile sowie einige Spezialeinheiten:<br/><br/>";
 	
-		echo "<select name=\"register_user_race_id\" 
-		onchange=\"showLoader('raceInfo');xajax_setupShowRace(this.options[this.selectedIndex].value)\"
-		onkeyup=\"showLoader('raceInfo');xajax_setupShowRace(this.options[this.selectedIndex].value)\" >
-		<option>Bitte wählen...</option>";
+		echo "<select name=\"register_user_race_id\" id=\"register_user_race_id\">
+		<option value=\"0\">Bitte wählen...</option>";
 		$res = dbquery("
 		SELECT
 			race_id,
@@ -326,8 +324,8 @@
 		echo "</select>";
 	
 		// xajax content will be placed in the following cell
-		echo "<br/><br/><div id=\"raceInfo\">
-		</div>";
+		echo "<br/><br/><div id=\"raceInfo\"></div>";
+		echo "<br/><br/><input type=\"submit\" name=\"submit_setup1\" id=\"submit_setup1\" value=\"Weiter\" />";
 		echo "</form>";
 	}
 	elseif ($mode=="finished")
