@@ -98,8 +98,12 @@
 							success_msg("Änderungen übernommen");
 						}
 					}
-					
-					if(count($_POST)>0 && !isset($_POST['save']))
+					if (isset($_POST['calcres'])) {
+						BackendMessage::updatePlanet($id);
+						sleep(2);
+						success_msg("Resourcen neu berechnet");
+					}
+					else if(count($_POST)>0 && !isset($_POST['save']))
 					{
 						//Wenn der Besitzer wechseln soll
 						if($_POST['planet_user_id']!=$_POST['planet_user_id_old'])
@@ -306,13 +310,16 @@
 					echo "<tr><th>Beschreibung</td>
 					<td colspan=\"3\"><textarea name=\"planet_desc\" rows=\"2\" cols=\"50\" >".stripslashes($arr['planet_desc'])."</textarea></td></tr>";
 					echo "</table>";
-					echo "<br/>
-								<input tabindex=\"26\" type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />&nbsp;";
+					echo "<br/>";
+					echo "<p>";
+					echo "<input tabindex=\"26\" type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />&nbsp;";
 					echo "<input tabindex=\"27\" type=\"button\" class=\"button\" onclick=\"document.location='?page=$page&amp;newsearch'\" value=\"Neue Suche\" /> ";
 					echo "<input tabindex=\"28\" type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=searchresults'\" /> ";
-					echo "</form>";
-					echo "<hr/>";
+					echo "</p><hr/><p>";
+					echo "<input type=\"submit\" name=\"calcres\" value=\"Neu berechnen\" class=\"button\" />&nbsp;";
 					echo "<input type=\"button\" value=\"Gebäude\" onclick=\"document.location='?page=buildings&action=search&query=".searchQuery(array("entity_id"=>$arr['id']))."'\" /> &nbsp;";
+					echo "</p>";
+					echo "</form>";
 				}
 				elseif ($earr['code']=='s')
 				{		
