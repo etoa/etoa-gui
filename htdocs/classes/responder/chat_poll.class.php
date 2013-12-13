@@ -60,7 +60,7 @@ class ChatPollJsonResponder extends JsonResponder
           WHERE
             user_id='.$_SESSION['user_id'].';');
           return array(
-            'cmd' => 'bn',
+            'cmd' => 'ki',
             'msg' => StringUtils::replaceAsciiControlCharsUnicode($arr['kick'])
           );            
         }
