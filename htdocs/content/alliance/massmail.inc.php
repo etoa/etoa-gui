@@ -65,7 +65,7 @@ if (Alliance::checkActionRights('massmail'))
 		}
 		tableStart("Nachricht verfassen");
 		echo "<tr><th style=\"width:50px;\">Betreff:</th><td><input type=\"text\" name=\"message_subject\" value=\"".$subject."\" size=\"30\" maxlength=\"255\"></td></tr>";
-		echo "<tr><th>Text:</th><td><textarea name=\"message_text\" rows=\"5\" cols=\"50\"></textarea></td></tr>";
+		echo "<tr><th>Text:</th><td><textarea name=\"message_text\" rows=\"5\" cols=\"50\"></textarea><br/>".helpLink('textformat', 'Hilfe zur Formatierung')."</td></tr>";
 		tableEnd();
 		echo "<input type=\"submit\" name=\"submit\" value=\"Senden\" /> &nbsp;<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=$page'\" />";
 		echo "</form>";

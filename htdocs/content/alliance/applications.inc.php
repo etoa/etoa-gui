@@ -158,7 +158,7 @@ if (Alliance::checkActionRights('applications'))
 				</td>
 				<td>".df($arr['timestamp'])."<br/><br/>".text2html($arr['text'])."</td>
 				<td>
-					<textarea rows=\"6\" cols=\"40\" name=\"application_answer_text[".$arr['user_id']."]\" /></textarea>
+					<textarea rows=\"6\" cols=\"40\" name=\"application_answer_text[".$arr['user_id']."]\" /></textarea><br/>".helpLink('textformat', 'Hilfe zur Formatierung')."
 				</td>
 				<td>";
 				if ($maxMemberCount == 0 || $currentMemberCount < $maxMemberCount) {
