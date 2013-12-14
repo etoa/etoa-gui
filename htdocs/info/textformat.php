@@ -146,6 +146,244 @@
 		]
 	];
 	
+	$kt = [
+		[
+			'n' => "Argau",
+			'f' => "[flag ch-ag]"
+		],
+		[
+			'n' => "Appenzell Innerrhode",
+			'f' => "[flag ch-ai]"
+		],
+		[
+			'n' => "Appenzell Ausserrhoden",
+			'f' => "[flag ch-ar]"
+		],
+		[
+			'n' => "Bern",
+			'f' => "[flag ch-be]"
+		],
+		[
+			'n' => "Basel Land",
+			'f' => "[flag ch-bl]"
+		],
+		[
+			'n' => "Basel Stadt",
+			'f' => "[flag ch-bs]",
+		],
+		[
+			'n' => "Graubünden",
+			'f' => "[flag ch-gr]"
+		],
+		[
+			'n' => "Jura",
+			'f' => "[flag ch-ju]"
+		],
+		[
+			'n' => "Luzern",
+			'f' => "[flag ch-lu]"
+		],
+		[
+			'n' => "Nidwalden",
+			'f' => "[flag ch-nw]",
+		],
+		[
+			'n' => "Obwalden",
+			'f' => "[flag ch-ow]"
+		],
+		[
+			'n' => "Schaffhausen",
+			'f' => "[flag ch-sh]"
+		],
+		[
+			'n' => "Schwyz",
+			'f' => "[flag ch-sz]"
+		],
+		[
+			'n' => "Solothurn",
+			'f' => "[flag ch-so]"
+		],
+		[
+			'n' => "Thurgau",
+			'f' => "[flag ch-tg]"
+		],
+		[
+			'n' => "Tessin",
+			'f' => "[flag ch-ti]"
+		],
+		[
+			'n' => "Uri",
+			'f' => "[flag ch-ur]"
+		],
+		[
+			'n' => "Waadt",
+			'f' => "[flag ch-vd]"
+		],
+		[
+			'n' => "Wallis",
+			'f' => "[flag ch-vs]"
+		],
+		[
+			'n' => "Zug",
+			'f' => "[flag ch-zg]"
+		],
+		[
+			'n' => "Zürich",
+			'f' => "[flag ch-zh]"
+		],
+		[
+			'n' => "Genf",
+			'f' => "[flag ch-ge]"
+		]
+	];
+	
+	$fl = [
+		[	
+			'n' => "Schweiz",
+			'f' => "[flag ch]"
+		],
+		[
+			'n' => "Argentinien",
+			'f' => "[flag ar]"
+		],
+		[
+			'n' => "Österreich",
+			'f' => "[flag at]"
+		],
+		[
+			'n' => "Australien",
+			'f' => "[flag au]"
+		],
+		[
+			'n' => "Beneluxstaaten",
+			'f' => "[flag benelux]"
+		],
+		[
+			'n' => "Bulgarien",
+			'f' => "[flag bg]"
+		],
+		[
+			'n' => "Brasilien",
+			'f' => "[flag br]"
+		],
+		[
+			'n' => "Kanada",
+			'f' => "[flag ca]"
+		],
+		[
+			'n' => "China",
+			'f' => "[flag cn]"
+		],
+		[
+			'n' => "Tschechien",
+			'f' => "[flag cz]"
+		],
+		[
+			'n' => "Deutschland",
+			'f' => "[flag de]"
+		],
+		[
+			'n' => "Dänemark",
+			'f' => "[flag dk]"
+		],
+		[
+			'n' => "Estland",
+			'f' => "[flag ee]"
+		],
+		[
+			'n' => "Europa",
+			'f' => "[flag eu]"
+		],
+		[
+			'n' => "Finnland",
+			'f' => "[flag fi]"
+		],
+		[
+			'n' => "Frankreich",
+			'f' => "[flag fr]"
+		],
+		[
+			'n' => "Grossbritannien",
+			'f' => "[flag gb]"
+		],
+		[
+			'n' => "Griechenland",
+			'f' => "[flag gr]"
+		],
+		[
+			'n' => "Kroatien",
+			'f' => "[flag hr]"
+		],
+		[
+			'n' => "Israel",
+			'f' => "[flag il]"
+		],
+		[
+			'n' => "Indien",
+			'f' => "[flag in]"
+		],
+		[
+			'n' => "Japan",
+			'f' => "[flag jp]"
+		],
+		[
+			'n' => "Südkorea",
+			'f' => "[flag kp]"
+		],
+		[
+			'n' => "Luxemburg",
+			'f' => "[flag lu]"
+		],
+		[
+			'n' => "Lettland",
+			'f' => "[flag lv]"
+		],
+		[
+			'n' => "Niederlande",
+			'f' => "[flag nl]"
+		],
+		[
+			'n' => "Norwegen",
+			'f' => "[flag no]"
+		],
+		[
+			'n' => "Polen",
+			'f' => "[flag pl]"
+		],
+		[
+			'n' => "Russland",
+			'f' => "[flag ru]"
+		],
+		[
+			'n' => "Schweden",
+			'f' => "[flag se]"
+		],
+		[
+			'n' => "Slowakei",
+			'f' => "[flag sk]"
+		],
+		[
+			'n' => "Spanien",
+			'f' => "[flag sp]"
+		],
+		[
+			'n' => "Türkei",
+			'f' => "[flag ty]"
+		],
+		[
+			'n' => "USA",
+			'f' => "[flag us]"
+		],
+		[
+			'n' => "Vatikan",
+			'f' => "[flag vn]"
+		],
+		[
+			'n' => "Welt",
+			'f' => "[flag world]"
+		]
+	];
+
 	// Table code
 	tableStart("Liste der wichtigsten BB-Codes");
 		
@@ -162,20 +400,35 @@
 	
 	
 	//Table flags
-	iBoxStart("Liste mit den vorhandenen Flaggen");
-		{
-			echo "Klicke auf den jeweiligen Link, wenn du eine Flagge für ein Land oder eine Flagge für einen schweizer Kanton einfügen möchtest. Als BBCode musst du dann jeweils nur den aufgeführten Tag in deinen text schreiben.<br/>
-						Bemerkung: Beide Listen sind nicht vollständig, d.h. es kann sein, dass dein Kanton oder dein Lieblingsland gerade fehlt!<br/><br/>";
-			echo "<b><a href=\"javascript:;\" onclick=\"window.open('show.php?info=flags_land','infobox','width=800,height=600,scrollbars=yes')\">Land</a></b><br/><br/>";
-			echo "<b><a href=\"javascript:;\" onclick=\"window.open('show.php?info=flag_kanton','infobox','width=800,height=600,scrollbars=yes')\">Kanton</a></b><br/>";
-		}
-	iBoxEnd();
+	tableStart("Liste mit den vorhandenen Flaggen");
+	echo '<tr><td colspan="3">';
+	echo "Klicke auf den jeweiligen Link, wenn du eine Flagge für ein Land oder eine Flagge für einen schweizer Kanton einfügen möchtest.
+		Als BBCode musst du dann jeweils nur den aufgeführten Tag in deinen text schreiben.<br/>
+		<br/>Bemerkung: Beide Listen sind nicht vollständig, d.h. es kann sein, dass dein Kanton oder dein Lieblingsland gerade fehlt!<br/><br/>";
+	echo '</td></tr>';
+
+	echo "<tr><th class=\"tbltitle\">Kanton</th><th class=\"tbltitle\">BBCode</th><th class=\"tbltitle\">Flagge</th></tr>";  	
+  	foreach($kt as $city)
+	{
+		echo "<tr><td class=\"tbldata\" style=\"text-align:left\">".$city['n']."</td>";
+		echo "<td class=\"tbldata\" style=\"text-align:left\">".$city['f']."</td>";
+		echo "<td class=\"tbldata\" style=\"text-align:left\">".text2html($city['f'])."</td></tr>";
+	}
+
+	echo "<tr><th class=\"tbltitle\">Land</th><th class=\"tbltitle\">BBCode</th><th class=\"tbltitle\">Flagge</th></tr>";
+  	foreach($fl as $land)
+	{
+		echo "<tr><td class=\"tbldata\" style=\"text-align:left\">".$land['n']."</td>";
+		echo "<td class=\"tbldata\" style=\"text-align:left\">".$land['f']."</td>";
+		echo "<td class=\"tbldata\" style=\"text-align:left\">".text2html($land['f'])."</td></tr>";
+	}		
+	tableEnd();
 	
 	//Table colour
 	iBoxStart("Erlaubte Schriftfarben");
 		{
 			echo "Klicke auf den Link, um eine Tabelle mit allen erlaubten Farben für den BBCode zu öffnen. Im BBCode kannst du entweder den Farbnamen eingeben oder den Hexadecimalcode.<br/><br/>";
-			echo "<b><a href=\"javascript:;\" onclick=\"window.open('show.php?info=colorlist','infobox','width=800,height=600,scrollbars=yes')\">Farbliste</a></b><br/>";
+			echo "<b><a href=\"javascript:;\" onclick=\"window.open('show.php?page=help&site=colorlist','infobox','width=800,height=600,scrollbars=yes')\">Farbliste</a></b><br/>";
 		}		
 	iBoxEnd();
 	
