@@ -9,7 +9,13 @@
 
 ob_start();
 
-require("inc/includer.inc.php");
+try {
+	require("inc/includer.inc.php");
+} catch (DBException $ex) {
+	ob_clean();
+	echo $ex;
+	exit();
+}
 
 // Create template object
 $tpl = TemplateEngine::getInstance();
@@ -22,6 +28,8 @@ $tpl->assign("page_title", getGameIdentifier()." Administration");
 $tpl->assign("ajax_js", $xajax->printJavascript(XAJAX_DIR));
 
 initTT();
+
+try {
 
 // Login if requested
 if (isset($_POST['login_submit']))
@@ -179,6 +187,12 @@ else
 
 	$tpl->assign("render_time",round($render_time[1]+$render_time[0]-$render_starttime,3));
 
+	$tpl->render();
+}
+} catch (DBException $ex) {
+	ob_clean();
+	$tpl->setLayout("admin/default_popup");
+	$tpl->assign("content_overflow", $ex);
 	$tpl->render();
 }
 ?>
