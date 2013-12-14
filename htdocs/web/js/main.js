@@ -1760,3 +1760,28 @@ $(function(){
 	});
 	$('.tutorialFinish').click(closeTutorial);
 });
+
+
+//
+// User setup
+//
+$(function(){
+	if ($('#register_user_race_id').length > 0 ) {
+		$('#register_user_race_id').change(function(){
+			getRaceInfo($(this).val());
+		});
+		getRaceInfo(0);
+	}
+});
+
+function getRaceInfo(id) {
+  ajaxRequest('get_race_infos', { id:id }, function(data) {
+	if (data.content) {
+		$('#raceInfo').html(data.content);
+		$('#submit_setup1').show();
+	} else {
+		$('#raceInfo').html('Bitte Rasse auswählen!');
+		$('#submit_setup1').hide();
+	}
+  }, alert);
+}
