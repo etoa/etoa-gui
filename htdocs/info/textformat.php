@@ -386,27 +386,23 @@
 
 	// Table code
 	tableStart("Liste der wichtigsten BB-Codes");
-		
-		echo "<tr><th class=\"tbltitle\">Das m&ouml;chtest du machen</th><th class=\"tbltitle\">BBCode an einem kleinen Beispiel</th><th class=\"tbltitle\">Sichtbares Resultat</th></tr>";
-		
-		// Several cells of the table
-		foreach ($bb as $code)
-		{
-			echo "<tr><td class=\"tbldata\" style=\"text-align:left\">".$code['m']."</td>";
-			echo "<td class=\"tbldata\" style=\"text-align:left\">".$code['b']."</td>";
-			echo "<td class=\"tbldata\" style=\"text-align:left\">".text2html($code['b'])."</td></tr>";
-		}
+	echo "<tr><th class=\"tbltitle\">Das m&ouml;chtest du machen</th><th class=\"tbltitle\">BBCode an einem kleinen Beispiel</th><th class=\"tbltitle\">Sichtbares Resultat</th></tr>";
+	// Several cells of the table
+	foreach ($bb as $code)
+	{
+		echo "<tr><td class=\"tbldata\" style=\"text-align:left\">".$code['m']."</td>";
+		echo "<td class=\"tbldata\" style=\"text-align:left\">".$code['b']."</td>";
+		echo "<td class=\"tbldata\" style=\"text-align:left\">".text2html($code['b'])."</td></tr>";
+	}
 	tableEnd();
 	
-	
 	//Table flags
-	tableStart("Liste mit den vorhandenen Flaggen");
-	echo '<tr><td colspan="3">';
+	iBoxStart("Flaggen");
 	echo "Klicke auf den jeweiligen Link, wenn du eine Flagge für ein Land oder eine Flagge für einen schweizer Kanton einfügen möchtest.
 		Als BBCode musst du dann jeweils nur den aufgeführten Tag in deinen text schreiben.<br/>
-		<br/>Bemerkung: Beide Listen sind nicht vollständig, d.h. es kann sein, dass dein Kanton oder dein Lieblingsland gerade fehlt!<br/><br/>";
-	echo '</td></tr>';
-
+		<br/>Bemerkung: Beide Listen sind nicht vollständig, d.h. es kann sein, dass dein Kanton oder dein Lieblingsland gerade fehlt!<br/>";
+	echo '<table style="width:100%;"><tr><td style="width:50%;vertical-align:top;">';
+	tableStart();
 	echo "<tr><th class=\"tbltitle\">Kanton</th><th class=\"tbltitle\">BBCode</th><th class=\"tbltitle\">Flagge</th></tr>";  	
   	foreach($kt as $city)
 	{
@@ -414,7 +410,9 @@
 		echo "<td class=\"tbldata\" style=\"text-align:left\">".$city['f']."</td>";
 		echo "<td class=\"tbldata\" style=\"text-align:left\">".text2html($city['f'])."</td></tr>";
 	}
-
+	tableEnd();
+	echo '</td><td style="width:50%;vertical-align:top;">';
+	tableStart();
 	echo "<tr><th class=\"tbltitle\">Land</th><th class=\"tbltitle\">BBCode</th><th class=\"tbltitle\">Flagge</th></tr>";
   	foreach($fl as $land)
 	{
@@ -423,22 +421,20 @@
 		echo "<td class=\"tbldata\" style=\"text-align:left\">".text2html($land['f'])."</td></tr>";
 	}		
 	tableEnd();
+	echo '</td></tr></table>';
+	iBoxEnd();	
 	
 	//Table colour
-	iBoxStart("Erlaubte Schriftfarben");
-		{
-			echo "Klicke auf den Link, um eine Tabelle mit allen erlaubten Farben für den BBCode zu öffnen. Im BBCode kannst du entweder den Farbnamen eingeben oder den Hexadecimalcode.<br/><br/>";
-			echo "<b><a href=\"javascript:;\" onclick=\"window.open('show.php?page=help&site=colorlist','infobox','width=800,height=600,scrollbars=yes')\">Farbliste</a></b><br/>";
-		}		
+	iBoxStart("Schriftfarben");
+	echo "Im BBCode kannst du entweder den Farbnamen eingeben oder den Hexadecimalcode.<br/><br/>";
+	include("colorlist.php");
 	iBoxEnd();
 	
 	iBoxStart("Fehlerquellen");
-		{
-			echo "Es kann vorkommen, dass du mehrere BB-Codes kombinieren möchtest (zum Beispiel eine grössere Schrift und andere Farbe).<br/>
-						Dabei ist es wichtig, dass du die Reihenfolge der Tags beachtest; es gillt, immer von innen nach aussen arbeiten.<br/><br/>
-						Beispiel: Text rot schreiben und Schriftgrösse 15;<br/><br/>
-						[color=red][size=15]EtoA[/size][/color] ist richtig und ergibt ".text2html('[color=red][size=15]EtoA[/size][/color]').", aber [color=red][size=15]EtoA[/color][/size] ist falsch und gibt kein gültiges Resultat!<br/><br/>
-						Theoretisch kannst du so viele verschiedene Tags hinterinander hängen. Wichtig ist einfach, dass die Reihenfole immer beachtet wird. Um nicht unschöne Fehler in einer Nachricht oder in einem Forenpost zu haben, ist es immer gut, wenn ingame die Nachrichtenvorschau eingeschaltet ist und wenn man vor dem absenden des Posts noch schnell auf Vorschau klickt im Forum. So sparrt man Zeit und verhindert unschöne Fehler.";
-		}
+	echo "Es kann vorkommen, dass du mehrere BB-Codes kombinieren möchtest (zum Beispiel eine grössere Schrift und andere Farbe).<br/>
+		Dabei ist es wichtig, dass du die Reihenfolge der Tags beachtest; es gillt, immer von innen nach aussen arbeiten.<br/><br/>
+		Beispiel: Text rot schreiben und Schriftgrösse 15;<br/><br/>
+		[color=red][size=15]EtoA[/size][/color] ist richtig und ergibt ".text2html('[color=red][size=15]EtoA[/size][/color]').", aber [color=red][size=15]EtoA[/color][/size] ist falsch und gibt kein gültiges Resultat!<br/><br/>
+		Theoretisch kannst du so viele verschiedene Tags hinterinander hängen. Wichtig ist einfach, dass die Reihenfole immer beachtet wird. Um nicht unschöne Fehler in einer Nachricht oder in einem Forenpost zu haben, ist es immer gut, wenn ingame die Nachrichtenvorschau eingeschaltet ist und wenn man vor dem absenden des Posts noch schnell auf Vorschau klickt im Forum. So sparrt man Zeit und verhindert unschöne Fehler.";
 	iBoxEnd();
 ?>
