@@ -31,86 +31,116 @@
 	
 	// Array BBCode
 	
-	$bb[0]['m']="Text <b>fett</b> schreiben";
-	$bb[0]['b']="[b]EtoA[/b]";
-	
-	$bb[1]['m']="Text <b>unterstreichen</b>";
-	$bb[1]['b']="[u]EtoA[/u]";
-	
-	$bb[2]['m']="Text <b>kursiv</b> schreiben";
-	$bb[2]['b']="[i]EtoA[/i]";
-	
-	$bb[3]['m']="<b>Verschiedenfarbig</b> schreiben";
-	$bb[3]['b']="[color=red]EtoA[/color]";
-	
-	$bb[4]['m']="<b>Grösse</b> ändern";
-	$bb[4]['b']="[size=15]EtoA[/size]";
-	
-	$bb[5]['m']="<b>Schriftart</b> ändern";
-	$bb[5]['b']="[font=times]EtoA[/font]";
-	
-	$bb[6]['m']="<b>Textausrichtung</b> ändern: zentriert";
-	$bb[6]['b']="[center]EtoA[/center]";
-	
-	$bb[7]['m']="<b>Textausrichtung</b> ändern: rechtsbündig";
-	$bb[7]['b']="[right]EtoA[/right]";
-	
-	$bb[8]['m']="<b>E-Mail</b> Link erstellen <b>(Adresse sichtbar)</b>";
-	$bb[8]['b']="[email]mail@etoa.ch[/email]";	
-	
-	$bb[9]['m']="<b>E-Mail</b> Link erstellen <b>(Adresse unsichtbar)</b>";
-	$bb[9]['b']="[email=mail@etoa.ch]EtoA[/email]";
-	
-	$bb[10]['m']="<b>Link</b> zu einer Homepage erstellen <b>(Adresse sichtbar)</b>";
-	$bb[10]['b']="[url]http://www.etoa.ch[/url]";
-	
-	$bb[11]['m']="<b>Link</b> zu einer Homepage erstellen <b>(Adresse unsichtbar)</b>";
-	$bb[11]['b']="[url=http://www.etoa.ch]EtoA[/url]";                   
-	
-	$bb[12]['m']="<b>Bild</b> einfügen auf einer Homepage <b>(Bild sichtbar)</b>";
-	$bb[12]['b']="[img]http://etoa.ch/images/logo_mini.gif[/img]";
-	
-	$bb[13]['m']="<b>Anklickbares</b> Bild einfügen";
-	$bb[13]['b']="[url=http://etoa.ch/images/logo_mini.gif][img]http://etoa.ch/images/logo_mini.gif[/img][/url]";	
-	
-	$bb[14]['m']="<b>Link</b> zu einem Bild im Internet einfügen <b>(Bild nicht sichtbar)</b>";
-	$bb[14]['b']="[url=http://etoa.ch/images/logo_mini.gif]EtoA Logo[/url]";  
-	
-	$bb[15]['m']="Text <b>zitieren (ohne Autor)</b>";
-	$bb[15]['b']="[quote]EtoA[/quote]";
-	
-	$bb[16]['m']="Text <b>zitieren (mit Autor)</b>";
-	$bb[16]['b']="[quote=Hans Muster]EtoA[/quote]";
-	
-	$bb[17]['m']="Blockcode: <b>Zentriert</b> den Text und verwendet die Schriftart <b>Courier New</b> (praktisch für Programmcode)";           
-	$bb[17]['b']="[bc]EtoA ist ein Onlinebrowsergame[/bc]";
-	
-	$bb[18]['m']="Liste erstellen: Aufzählung <b>ohne</b> Nummerierung; beliebig viele Elemente möglich";
-	$bb[18]['b']="[list][*]Andorianer[*]Minbari[*]Vorgonen[*]etc.[/list]";
-
-	$bb[19]['m']="Liste erstellen: Aufzählung <b>mit nummerischer</b> Nummerierung; beliebig viele Elemente möglich";
-	$bb[19]['b']="[nlist][*]Andorianer[*]Minbari[*]Vorgonen[*]etc.[/nlist]";                        
-
-	$bb[20]['m']="Liste erstellen: Aufzählung <b>mit nummerischer</b> Nummerierung; beliebig viele Elemente möglich";
-	$bb[20]['b']="[list=1][*]Andorianer[*]Minbari[*]Vorgonen[*]etc.[/list]";                        
-
-	$bb[21]['m']="Liste erstellen: Aufzählung <b>mit alphabetischer</b> Nummerierung; beliebig viele Elemente möglich";
-	$bb[21]['b']="[alist][*]Andorianer[*]Minbari[*]Vorgonen[*]etc.[/alist]";  
-	
-	$bb[22]['m']="Liste erstellen: Aufzählung <b>mit alphabetischer</b> Nummerierung; beliebig viele Elemente möglich";
-	$bb[22]['b']="[list=a][*]Andorianer[*]Minbari[*]Vorgonen[*]etc.[/list]";
-	
-	$bb[23]['m']="Liste erstellen: Aufzählung <b>mit römischer</b> Nummerierung; beliebig viele Elemente möglich";
-	$bb[23]['b']="[rlist][*]Andorianer[*]Minbari[*]Vorgonen[*]etc.[/rlist]";  
-	
-	$bb[24]['m']="Liste erstellen: Aufzählung <b>mit römischer</b> Nummerierung; beliebig viele Elemente möglich";
-	$bb[24]['b']="[list=I][*]Andorianer[*]Minbari[*]Vorgonen[*]etc.[/list]";
-	
-	$bb[25]['m']="<b>Flagge</b> eines Landes einfügen";
-	$bb[25]['b']="[flag ch]";
-	
-	$bb[26]['m']="<b>Flagge</b> eines schweizer Kantons einfügen";
-	$bb[26]['b']="[flag ch-be]";	
+	$bb = [
+		[
+			'm' => "Text <b>fett</b> schreiben",
+			'b' => "[b]EtoA[/b]"
+		],
+		[
+			'm' => "Text <b>unterstreichen</b>",
+			'b' => "[u]EtoA[/u]"
+		],
+		[
+			'm' => "Text <b>kursiv</b> schreiben",
+			'b' => "[i]EtoA[/i]"
+		],
+		[
+			'm' => "<b>Verschiedenfarbig</b> schreiben",
+			'b' => "[color=red]EtoA[/color]"
+		],
+		[
+			'm' => "<b>Grösse</b> ändern",
+			'b' => "[size=15]EtoA[/size]"
+		],
+		[
+			'm' => "<b>Schriftart</b> ändern",
+			'b' => "[font=times]EtoA[/font]"
+		],
+		[
+			'm' => "<b>Textausrichtung</b> ändern: zentriert",
+			'b' => "[center]EtoA[/center]"
+		],
+		[
+			'm' => "<b>Textausrichtung</b> ändern: rechtsbündig",
+			'b' => "[right]EtoA[/right]"
+		],
+		[
+			'm' => "<b>E-Mail</b> Link erstellen <b>(Adresse sichtbar)</b>",
+			'b' => "[email]mail@etoa.ch[/email]"
+		],
+		[
+			'm' => "<b>E-Mail</b> Link erstellen <b>(Adresse unsichtbar)</b>",
+			'b' => "[email=mail@etoa.ch]EtoA[/email]"
+		],
+		[
+			'm' => "<b>Link</b> zu einer Homepage erstellen <b>(Adresse sichtbar)</b>",
+			'b' => "[url]http://www.etoa.ch[/url]"
+		],
+		[
+			'm' => "<b>Link</b> zu einer Homepage erstellen <b>(Adresse unsichtbar)</b>",
+			'b' => "[url=http://www.etoa.ch]EtoA[/url]"
+		],
+		[
+			'm' => "<b>Bild</b> einfügen auf einer Homepage <b>(Bild sichtbar)</b>",
+			'b' => "[img]http://etoa.ch/images/logo_mini.gif[/img]"
+		],
+		[
+			'm' => "<b>Anklickbares</b> Bild einfügen",
+			'b' => "[url=http://etoa.ch/images/logo_mini.gif][img]http://etoa.ch/images/logo_mini.gif[/img][/url]"
+		],
+		[
+			'm' => "<b>Link</b> zu einem Bild im Internet einfügen <b>(Bild nicht sichtbar)</b>",
+			'b' => "[url=http://etoa.ch/images/logo_mini.gif]EtoA Logo[/url]"
+		],
+		[
+			'm' => "Text <b>zitieren (ohne Autor)</b>",
+			'b' => "[quote]EtoA[/quote]"
+		],
+		[
+			'm' => "Text <b>zitieren (mit Autor)</b>",
+			'b' => "[quote=Hans Muster]EtoA[/quote]"
+		],
+		[
+			'm' => "Blockcode: <b>Zentriert</b> den Text und verwendet die Schriftart <b>Courier New</b> (praktisch für Programmcode)",
+			'b' => "[bc]EtoA ist ein Onlinebrowsergame[/bc]"
+		],
+		[
+			'm' => "Liste erstellen: Aufzählung <b>ohne</b> Nummerierung; beliebig viele Elemente möglich",
+			'b' => "[list][*]Andorianer[*]Minbari[*]Vorgonen[*]etc.[/list]"
+		],
+		[
+			'm' => "Liste erstellen: Aufzählung <b>mit nummerischer</b> Nummerierung; beliebig viele Elemente möglich",
+			'b' => "[nlist][*]Andorianer[*]Minbari[*]Vorgonen[*]etc.[/nlist]"
+		],
+		[
+			'm' => "Liste erstellen: Aufzählung <b>mit nummerischer</b> Nummerierung; beliebig viele Elemente möglich",
+			'b' => "[list=1][*]Andorianer[*]Minbari[*]Vorgonen[*]etc.[/list]"
+		],
+		[
+			'm' => "Liste erstellen: Aufzählung <b>mit alphabetischer</b> Nummerierung; beliebig viele Elemente möglich",
+			'b' => "[alist][*]Andorianer[*]Minbari[*]Vorgonen[*]etc.[/alist]"
+		],
+		[
+			'm' => "Liste erstellen: Aufzählung <b>mit alphabetischer</b> Nummerierung; beliebig viele Elemente möglich",
+			'b' => "[list=a][*]Andorianer[*]Minbari[*]Vorgonen[*]etc.[/list]"
+		],
+		[
+			'm' => "Liste erstellen: Aufzählung <b>mit römischer</b> Nummerierung; beliebig viele Elemente möglich",
+			'b' => "[rlist][*]Andorianer[*]Minbari[*]Vorgonen[*]etc.[/rlist]"
+		],
+		[
+			'm' => "Liste erstellen: Aufzählung <b>mit römischer</b> Nummerierung; beliebig viele Elemente möglich",
+			'b' => "[list=I][*]Andorianer[*]Minbari[*]Vorgonen[*]etc.[/list]"
+		],
+		[
+			'm' => "<b>Flagge</b> eines Landes einfügen",
+			'b' => "[flag ch]",
+		],
+		[
+			'm' => "<b>Flagge</b> eines schweizer Kantons einfügen",
+			'b' => "[flag ch-be]"
+		]
+	];
 	
 	// Table code
 	tableStart("Liste der wichtigsten BB-Codes");
