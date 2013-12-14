@@ -89,6 +89,10 @@
 			'b' => "[url=http://etoa.ch/images/logo_mini.gif][img]http://etoa.ch/images/logo_mini.gif[/img][/url]"
 		],
 		[
+			'm' => "<b>Interner Link</b>",
+			'b' => "Erkunde das [page=cell&id=635]System 635[/page] mit dem [page=help&site=shipyard&id=71]AURIGA Explorer[/page] und schreib mir eine [page=messages&mode=new]Nachricht[/page] mit den Resultaten!"
+		],
+		[
 			'm' => "<b>Link</b> zu einem Bild im Internet einfügen <b>(Bild nicht sichtbar)</b>",
 			'b' => "[url=http://etoa.ch/images/logo_mini.gif]EtoA Logo[/url]"
 		],
