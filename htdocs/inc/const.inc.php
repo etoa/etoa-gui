@@ -40,10 +40,6 @@
 	if (!defined('ADMIN_MODE'))
 		define('ADMIN_MODE',false);
 
-	if (!defined('USE_HTML'))
-		define('USE_HTML',true);
-
-
 	define('ERROR_LOGFILE',CACHE_ROOT."/errors.txt");
 	define('DBERROR_LOGFILE',CACHE_ROOT."/dberrors.txt");
 	

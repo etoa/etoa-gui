@@ -1,7 +1,6 @@
 <?php
 
 	chdir(realpath(dirname(__FILE__)."/../"));
-	define('USE_HTML',false);
   if (isset($_GET['req_admin'])) {
     define('ADMIN_MODE',true);
   }
