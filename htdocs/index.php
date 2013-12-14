@@ -316,7 +316,7 @@
 		$tpl->assign("teamspeakOnclick",TEAMSPEAK_ONCLICK);
 		$tpl->assign("rulesUrl",RULES_URL);
 		$tpl->assign("rulesOnclick",RULES_ONCLICK);
-		$tpl->assign("urlForum",FORUM_PATH);
+		$tpl->assign("urlForum",FORUM_URL);
 		$tpl->assign("helpcenterUrl",HELPCENTER_URL);
 		$tpl->assign("helpcenterOnclick",HELPCENTER_ONCLICK);
 		$tpl->assign("devcenterOnclick",DEVCENTER_ONCLICK);

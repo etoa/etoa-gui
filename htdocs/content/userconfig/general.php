@@ -141,9 +141,8 @@
       	Format: GIF, JPG oder PNG. Grösse: Max ".byte_format(BOARD_AVATAR_MAX_SIZE)." </td>
       </tr>";
       echo "<tr>
-      	<th width=\"35%\">Öffentliches Foren-Profil:</th>
-      	<td width=\"65%\"><input type=\"text\" name=\"user_profile_board_url\" maxlength=\"200\" size=\"50\" value=\"".$cu->profileBoardUrl."\"><br/>
-      	<span style=\"font-weight:500;font-size:7pt;\">(zb http://www.etoa.ch/forum/profile.php?userid=1)</span></td>
+		<th width=\"35%\">Link zum öffentliches Foren-Profil:</th>
+		<td width=\"65%\"><input type=\"text\" name=\"user_profile_board_url\" maxlength=\"200\" size=\"50\" value=\"".$cu->profileBoardUrl."\"></td>
       </tr>";
 
       tableEnd();
