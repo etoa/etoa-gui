@@ -13,6 +13,7 @@ Version 3.4
  * Added tutorial system (#18)
  * bbcode-[url]-links open in a new tab (#13)
  * Noob protection minimal attackable threshold points implemented (#21)
+ * Added text format help link to various text fieldsy
  * [ADMIN] Improved text management (#20)
  * [ADMIN] Changelogs page added
  * [ADMIN] User- and game stats page combined
