@@ -58,6 +58,9 @@
 		exit();
 	}
 
+	// Load template engine
+	require_once(RELATIVE_ROOT."inc/template.inc.php");
+
 	// Connect to database
 	dbconnect();
 
@@ -93,9 +96,6 @@
 	$index = isset($_GET['index']) ? $_GET['index'] : null;
 	$info = isset($_GET['info']) ? $_GET['info'] : null;
 	$mode = isset($_GET['mode']) ? $_GET['mode'] : null;
-
-	// Load template engine
-	require_once(RELATIVE_ROOT."inc/template.inc.php");
 
 	// Initialize XAJAX and load functions
 	if (USE_HTML) // todo: shell check

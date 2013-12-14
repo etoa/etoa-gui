@@ -19,7 +19,14 @@
 	//
 
 	// Funktionen und Config einlesen
-	require_once("inc/bootstrap.inc.php");
+	try {
+		require_once("inc/bootstrap.inc.php");
+	} catch (DBException $ex) {
+		$tpl->assign("content_for_layout", $ex);
+		$layoutTemplate = "/tpl/layouts/game/empty.html";
+		$tpl->display(getcwd().'/'.$layoutTemplate);
+		exit;
+	}
 
 	// Set no-cache header
 	header("Cache-Control: no-cache, must-revalidate");

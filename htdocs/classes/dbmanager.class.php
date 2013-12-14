@@ -113,9 +113,8 @@ class DBManager implements ISingleton	{
 		}
 		catch (DBException $e)
 		{
-			echo $e;
 			$this->writeMsgToErrorLog($e->getErrStr());
-			exit;
+			throw $e;
 		}
 	}
 
@@ -173,7 +172,6 @@ class DBManager implements ISingleton	{
 			}
 			catch (DBException $e)
 			{
-				echo $e;
 				$this->writeMsgToErrorLog($e->getErrStr());
 				throw $e;
 			}
