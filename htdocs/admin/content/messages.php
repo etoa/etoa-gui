@@ -753,7 +753,7 @@
 
 		elseif (isset($_GET['sub']) && $_GET['sub']=="trash")
 		{
-			dbQuerySave("UPDATE messages SET message_deleted=1 WHERE message_id=?;", array($_GET['message_id']));
+			dbQuerySave("UPDATE messages SET message_deleted=1, message_read=1 WHERE message_id=?;", array($_GET['message_id']));
 			forward('?page='.$page.'&action=searchresults');
 		}
 
