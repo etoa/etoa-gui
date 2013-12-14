@@ -80,6 +80,7 @@
 	//
 	// Page content
 	//
+	try {
 
 	ob_start();
 			
@@ -104,8 +105,11 @@
 			$show = false;
 		}
 	}
-	if ($loggedIn)
+	if ($loggedIn) {
 		$show = true;
+	}
+
+	$tpl->assign("logged_in", ($loggedIn && $page!=DEFAULT_PAGE));
 			
 	if ($show)
 	{
@@ -159,10 +163,13 @@
 		</form>";
 	}		
 
-	$tpl->assign("logged_in", ($loggedIn && $page!=DEFAULT_PAGE));
-
 	$tpl->assign("content_for_layout", ob_get_clean());
 	
+	} catch (DBException $ex) {
+		ob_clean();
+		$tpl->assign("content_for_layout", $ex);
+	}
+
 	$layoutTemplate = "/tpl/layouts/game/external.html";
 	$tpl->display(getcwd().'/'.$layoutTemplate);
 

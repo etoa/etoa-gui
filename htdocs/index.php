@@ -120,7 +120,7 @@
 		}
 		unset($rfr);
 	}
-
+	try {
 	ob_start();
 	
 	// Spiel ist generell gesperrt (ausser fŸr erlaubte IP's)
@@ -344,6 +344,10 @@
 		$layoutTemplate = CSS_STYLE."/template.html";
 	}
 	$tpl->assign("content_for_layout", ob_get_clean());
+	} catch (DBException $ex) {
+		ob_clean();
+		$tpl->assign("content_for_layout", $ex);
+	}
 	
 	/*
 	ob_start();
