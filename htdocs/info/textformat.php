@@ -45,7 +45,7 @@
 			'b' => "[i]EtoA[/i]"
 		],
 		[
-			'm' => "<b>Verschiedenfarbig</b> schreiben",
+			'm' => '<b>Verschiedenfarbig</b> schreiben (<a href="#colors">Farbliste</a>)',
 			'b' => "[color=red]EtoA[/color]"
 		],
 		[
@@ -137,12 +137,8 @@
 			'b' => "[list=I][*]Andorianer[*]Minbari[*]Vorgonen[*]etc.[/list]"
 		],
 		[
-			'm' => "<b>Flagge</b> eines Landes einfügen",
-			'b' => "[flag ch]",
-		],
-		[
-			'm' => "<b>Flagge</b> eines schweizer Kantons einfügen",
-			'b' => "[flag ch-be]"
+			'm' => '<b>Flagge</b> eines Landes einfügen oder Kantons einfügen (<a href="#flags">Flaggen</a>)',
+			'b' => "[flag ch-be] liegt in der [flag ch]",
 		]
 	];
 	
@@ -394,9 +390,26 @@
 		echo "<td class=\"tbldata\" style=\"text-align:left\">".$code['b']."</td>";
 		echo "<td class=\"tbldata\" style=\"text-align:left\">".text2html($code['b'])."</td></tr>";
 	}
-	tableEnd();
+	tableEnd();	
+	
+	// Potential errors
+	iBoxStart("Fehlerquellen");
+	echo "Es kann vorkommen, dass du mehrere BB-Codes kombinieren möchtest (zum Beispiel eine grössere Schrift und andere Farbe).<br/>
+		Dabei ist es wichtig, dass du die Reihenfolge der Tags beachtest; es gillt, immer von innen nach aussen arbeiten.<br/><br/>
+		Beispiel: Text rot schreiben und Schriftgrösse 15;<br/><br/>
+		[color=red][size=15]EtoA[/size][/color] ist richtig und ergibt ".text2html('[color=red][size=15]EtoA[/size][/color]').", aber [color=red][size=15]EtoA[/color][/size] ist falsch und gibt kein gültiges Resultat!<br/><br/>
+		Theoretisch kannst du so viele verschiedene Tags hinterinander hängen. Wichtig ist einfach, dass die Reihenfole immer beachtet wird. Um nicht unschöne Fehler in einer Nachricht oder in einem Forenpost zu haben, ist es immer gut, wenn ingame die Nachrichtenvorschau eingeschaltet ist und wenn man vor dem absenden des Posts noch schnell auf Vorschau klickt im Forum. So sparrt man Zeit und verhindert unschöne Fehler.";
+	iBoxEnd();
+	
+	//Table colour
+	echo '<a id="colors"></a>';
+	iBoxStart("Schriftfarben");
+	echo "Im BBCode kannst du entweder den Farbnamen eingeben oder den Hexadecimalcode.<br/><br/>";
+	include("colorlist.php");
+	iBoxEnd();
 	
 	//Table flags
+	echo '<a id="flags"></a>';
 	iBoxStart("Flaggen");
 	echo "Klicke auf den jeweiligen Link, wenn du eine Flagge für ein Land oder eine Flagge für einen schweizer Kanton einfügen möchtest.
 		Als BBCode musst du dann jeweils nur den aufgeführten Tag in deinen text schreiben.<br/>
@@ -422,19 +435,5 @@
 	}		
 	tableEnd();
 	echo '</td></tr></table>';
-	iBoxEnd();	
-	
-	//Table colour
-	iBoxStart("Schriftfarben");
-	echo "Im BBCode kannst du entweder den Farbnamen eingeben oder den Hexadecimalcode.<br/><br/>";
-	include("colorlist.php");
-	iBoxEnd();
-	
-	iBoxStart("Fehlerquellen");
-	echo "Es kann vorkommen, dass du mehrere BB-Codes kombinieren möchtest (zum Beispiel eine grössere Schrift und andere Farbe).<br/>
-		Dabei ist es wichtig, dass du die Reihenfolge der Tags beachtest; es gillt, immer von innen nach aussen arbeiten.<br/><br/>
-		Beispiel: Text rot schreiben und Schriftgrösse 15;<br/><br/>
-		[color=red][size=15]EtoA[/size][/color] ist richtig und ergibt ".text2html('[color=red][size=15]EtoA[/size][/color]').", aber [color=red][size=15]EtoA[/color][/size] ist falsch und gibt kein gültiges Resultat!<br/><br/>
-		Theoretisch kannst du so viele verschiedene Tags hinterinander hängen. Wichtig ist einfach, dass die Reihenfole immer beachtet wird. Um nicht unschöne Fehler in einer Nachricht oder in einem Forenpost zu haben, ist es immer gut, wenn ingame die Nachrichtenvorschau eingeschaltet ist und wenn man vor dem absenden des Posts noch schnell auf Vorschau klickt im Forum. So sparrt man Zeit und verhindert unschöne Fehler.";
 	iBoxEnd();
 ?>
