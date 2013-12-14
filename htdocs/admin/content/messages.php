@@ -687,7 +687,8 @@
 					echo "<td $style ".mTT($arr['subject'],text2html(substr($arr['text'], 0, 500))).">".cut_string($arr['subject'],20)."</a></td>";
 					echo "<td $style>".date("Y-d-m H:i",$arr['message_timestamp'])."</a></td>";
 					echo "<td $style>".$arr['cat_name']."</td>";
-					echo "<td>".edit_button("?page=$page&sub=edit&message_id=".$arr['message_id'])."</td>";
+					echo "<td>".edit_button("?page=$page&sub=edit&message_id=".$arr['message_id'])." ";
+					echo del_button("?page=$page&sub=trash&message_id=".$arr['message_id'])."</td>";
 					echo "</tr>";
 				}
 				echo "</table><br/>";
@@ -748,6 +749,12 @@
 
 			echo "</table><br/><input type=\"button\" onclick=\"document.location='?page=$page&amp;action=searchresults'\" value=\"Zur&uuml;ck zu den Suchergebnissen\" /> &nbsp;
 			<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" />";
+		}
+
+		elseif (isset($_GET['sub']) && $_GET['sub']=="trash")
+		{
+			dbQuerySave("UPDATE messages SET message_deleted=1 WHERE message_id=?;", array($_GET['message_id']));
+			forward('?page='.$page.'&action=searchresults');
 		}
 
 		else
