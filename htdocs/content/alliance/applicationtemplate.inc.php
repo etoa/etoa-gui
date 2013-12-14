@@ -25,7 +25,7 @@ if (Alliance::checkActionRights('applicationtemplate'))
 	checker_init();
 	tableStart("Bewerbungsvorlage");
 	echo "<tr><th>Text:</td>
-	<td><textarea rows=\"15\" cols=\"60\" name=\"alliance_application_template\">".stripslashes($arr['alliance_application_template'])."</textarea></td></tr>";
+	<td><textarea rows=\"15\" cols=\"60\" name=\"alliance_application_template\">".stripslashes($arr['alliance_application_template'])."</textarea><br/>".helpLink('textformat', 'Hilfe zur Formatierung')."</td></tr>";
 	echo "<tr><th>Beispiel:</td><td>";
 	echo nl2br('Dein Name:
 Dein Alter:

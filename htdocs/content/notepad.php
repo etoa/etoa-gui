@@ -37,8 +37,7 @@
 		tableStart("Neue Notiz");
 		echo "<tr><th>Titel:</th>
 		<td><input type=\"text\" name=\"note_subject\" value=\"\" size=\"40\" /></td></tr>";
-		echo "<tr><th>Text:</th>
-		<td><textarea name=\"note_text\" cols=\"50\" rows=\"10\"></textarea></td></tr>";
+		echo '<tr><th>Text:</th><td><textarea name="note_text" cols="50" rows="10"></textarea><br/>'.helpLink('textformat', 'Hilfe zur Formatierung').'</td></tr>';
 		tableEnd();
 		echo "<input type=\"submit\" value=\"Speichern\" name=\"submit_new\" > &nbsp; ";
 		echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page'\" /> &nbsp; ";			
@@ -56,7 +55,7 @@
 			echo "<input type=\"hidden\" name=\"note_id\" value=\"".$n->id()."\" />";
 			tableStart("Notiz bearbeiten");
 			echo "<tr><th>Titel:</th><td><input type=\"text\" name=\"note_subject\" value=\"".stripslashes($n->subject())."\" size=\"40\" /></td></tr>";
-			echo "<tr><th>Text:</th><td><textarea name=\"note_text\" cols=\"50\" rows=\"10\">".stripslashes($n->text())."</textarea></td></tr>";
+			echo '<tr><th>Text:</th><td><textarea name="note_text" cols="50" rows="10">'.stripslashes($n->text()).'</textarea><br/>'.helpLink('textformat', 'Hilfe zur Formatierung').'</td></tr>';
 			tableEnd();
 			echo "<input type=\"submit\" value=\"Speichern\" name=\"submit_edit\" > &nbsp; ";
 			echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page'\" /> &nbsp; ";			

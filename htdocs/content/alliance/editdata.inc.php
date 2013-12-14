@@ -44,6 +44,7 @@ if (Alliance::checkActionRights('editdata'))
 		<th>Beschreibung:</th>
 		<td>
 			<textarea rows=\"25\" cols=\"70\" name=\"alliance_text\">".stripslashes($ally->text)."</textarea>
+			<br/>".helpLink('textformat', 'Hilfe zur Formatierung')."
 		</td>
 	</tr>
 	<tr>

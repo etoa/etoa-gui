@@ -161,7 +161,7 @@
 						echo "<form action=\"?page=$page&amp;action=join\" method=\"post\">";
 						checker_init();
 						tableStart("Bewerbungstext");
-						echo "<tr><th>Nachricht:</th><td><textarea rows=\"15\" cols=\"80\" name=\"user_alliance_application\">".$arr['alliance_application_template']."</textarea></td>";
+						echo "<tr><th>Nachricht:</th><td><textarea rows=\"15\" cols=\"80\" name=\"user_alliance_application\">".$arr['alliance_application_template']."</textarea><br/>".helpLink('textformat', 'Hilfe zur Formatierung')."</td>";
 						tableEnd();
 						echo "<input type=\"hidden\" name=\"user_alliance_id\" value=\"".intval($arr['alliance_id'])."\" />";
 						echo "<input type=\"submit\" name=\"submitapplication\" value=\"Senden\" />&nbsp;<input type=\"button\" onclick=\"document.location='?page=alliance&action=join'\" value=\"Zur&uuml;ck\" /></form>";
