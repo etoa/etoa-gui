@@ -226,7 +226,8 @@
 					$queries=array();
 					
 					// Content includen
-					if (!include("content/".$page.".php"))
+					$contentFile = "content/".$page.".php";
+					if (!file_exists($contentFile) || !include($contentFile))
 					{
 						echo '<h1>Fehler</h1>
 						Die Seite <b>'.$page.'</b> existiert nicht!<br/><br/>
@@ -247,7 +248,7 @@
 				else
 				{
 					echo '<h1>Fehler</h1>
-					Der Seitenname <b>'.$page.'</b> enth&auml;lt unerlaubte Zeichen!<br/><br/>
+					Der Seitenname enth&auml;lt unerlaubte Zeichen!<br/><br/>
 					<input type="button" onclick="history.back();" value="Zurück" />';
 				}
 			}

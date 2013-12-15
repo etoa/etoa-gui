@@ -119,20 +119,21 @@
 			$sub="index/";
 			if (!preg_match('^[a-z\_]+$^',$index) || strlen($index)>50)
 			{
-				die("<h1>Fehler</h1>Der Seitenname <b>".$index."</b> enth&auml;lt unerlaubte Zeichen!<br/><br/>
-				<a href=\"javascript:window.close();\">Schliessen</a><br/><br/>");
-			}
-			if (file_exists($sub.$index.".php"))
-			{
-				$popup = true;
-				include ($sub.$index.".php");
-				logAccess($index,"public");
+				echo "<h1>Fehler</h1>Der Seitenname enth&auml;lt unerlaubte Zeichen!<br/><br/>
+				<a href=\"javascript:window.close();\">Schliessen</a><br/><br/>";
+			} else {
+				if (file_exists($sub.$index.".php"))
+				{
+					$popup = true;
+					include ($sub.$index.".php");
+					logAccess($index,"public");
 
-				echo "<br/><br/>";
-			}
-			else
-			{
-				echo "<h1>Fehler:</h1> Die Seite <b>".$index."</b> existiert nicht!<br/><br/>";
+					echo "<br/><br/>";
+				}
+				else
+				{
+					echo "<h1>Fehler</h1> Die Seite <b>".$index."</b> existiert nicht!<br/><br/>";
+				}
 			}
 		}
 		elseif ($page!="" && $loggedIn  && $page!=DEFAULT_PAGE)
