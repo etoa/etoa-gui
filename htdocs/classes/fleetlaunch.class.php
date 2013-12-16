@@ -812,6 +812,11 @@
 					$supportPossible = true;
 					
 					$ai = FleetAction::createFactory($i);
+
+					// Skip this action if it is an alliance action and ABS is disabled
+					if ($ai->allianceAction && $cfg->value("abs_enabled") != 1) {
+						continue;
+					}
                     
 					// Permission checks
 					if (

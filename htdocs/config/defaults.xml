@@ -280,6 +280,9 @@ http://www.etoa.ch</v>
     <item name="invade_active_users" cat="4">
       <v comment="Invasieren von aktiven Spielern" type="onoff">0</v>
     </item>
+    <item name="abs_enabled" cat="4">
+      <v comment="Allianzkampfsystem (AKS) aktiv" type="onoff">1</v>
+    </item>
     <item name="alliance_fleets_max_players" cat="4">
       <v comment="Anzahl Spieler in einer Allianzflotte oder Support einschränken" type="onoff">1</v>
       <p1 comment="Maximale Spielerzahl im KB (mindestens 1)" type="text">3</p1>

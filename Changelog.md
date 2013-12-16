@@ -17,6 +17,7 @@ Version 3.4
  * [ADMIN] Improved text management (#20)
  * [ADMIN] Changelogs page added
  * [ADMIN] User- and game stats page combined
+ * [ADMIN] Alliance battle system can now be disabled in config
 
 ### Bugfixes ###
 
