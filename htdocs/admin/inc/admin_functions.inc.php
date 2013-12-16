@@ -455,7 +455,6 @@ function searchQueryUrl($str)
 * @param array Pointer to query array
 * @param array Pointer to order/limit array
 * @author Nicolas Perrenoud <mrcage@etoa.ch>
-* @see http://dev.etoa.ch:8000/game/wiki/AdminSearchQuery
 */		
 function searchQueryArray(&$arr,&$oarr)
 {

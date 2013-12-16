@@ -184,7 +184,7 @@
 				if ($_POST['user_alliance_application']!='')
 				{
 					$alliances = get_alliance_names();
-					send_msg($alliances[$_POST['user_alliance_id']]['founder_id'],MSG_ALLYMAIL_CAT,"Bewerbung","Der Spieler ".$cu->nick." hat sich bei deiner Allianz beworben. Gehe auf die [url ?page=alliance&action=applications]Allianzseite[/url] für Details!");
+					send_msg($alliances[$_POST['user_alliance_id']]['founder_id'],MSG_ALLYMAIL_CAT,"Bewerbung","Der Spieler ".$cu->nick." hat sich bei deiner Allianz beworben. Gehe auf die [page=alliance&action=applications]Allianzseite[/page] für Details!");
 					add_alliance_history($_POST['user_alliance_id'],"Der Spieler [b]".$cu->nick."[/b] bewirbt sich sich bei der Allianz.");
 					dbquery("
 					INSERT INTO

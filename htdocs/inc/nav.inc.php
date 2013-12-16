@@ -56,7 +56,7 @@
 	$topnav=array();
 
 	$topnav[0]['name']='Forum';
-	$topnav[0]['url']=FORUM_PATH;
+	$topnav[0]['url']=FORUM_URL;
 
 	$topnav[1]['name']='Helpcenter';
 	$topnav[1]['url']=HELPCENTER_URL;

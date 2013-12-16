@@ -19,7 +19,14 @@
 	//
 
 	// Funktionen und Config einlesen
-	require_once("inc/bootstrap.inc.php");
+	try {
+		require_once("inc/bootstrap.inc.php");
+	} catch (DBException $ex) {
+		$tpl->assign("content_for_layout", $ex);
+		$layoutTemplate = "/tpl/layouts/game/empty.html";
+		$tpl->display(getcwd().'/'.$layoutTemplate);
+		exit;
+	}
 
 	// Set no-cache header
 	header("Cache-Control: no-cache, must-revalidate");
@@ -120,7 +127,7 @@
 		}
 		unset($rfr);
 	}
-
+	try {
 	ob_start();
 	
 	// Spiel ist generell gesperrt (ausser fŸr erlaubte IP's)
@@ -309,7 +316,7 @@
 		$tpl->assign("teamspeakOnclick",TEAMSPEAK_ONCLICK);
 		$tpl->assign("rulesUrl",RULES_URL);
 		$tpl->assign("rulesOnclick",RULES_ONCLICK);
-		$tpl->assign("urlForum",FORUM_PATH);
+		$tpl->assign("urlForum",FORUM_URL);
 		$tpl->assign("helpcenterUrl",HELPCENTER_URL);
 		$tpl->assign("helpcenterOnclick",HELPCENTER_ONCLICK);
 		$tpl->assign("devcenterOnclick",DEVCENTER_ONCLICK);
@@ -344,6 +351,10 @@
 		$layoutTemplate = CSS_STYLE."/template.html";
 	}
 	$tpl->assign("content_for_layout", ob_get_clean());
+	} catch (DBException $ex) {
+		ob_clean();
+		$tpl->assign("content_for_layout", $ex);
+	}
 	
 	/*
 	ob_start();

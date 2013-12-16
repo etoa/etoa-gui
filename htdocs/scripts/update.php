@@ -27,10 +27,10 @@
 	// 	Die Datei wird auf einer Shell aufgerufen (via Cron-Job realisiert)
 	//	Sie wird jede Stunde aufgerufen
 
-	define('USE_HTML',false);
-
 	// Gamepfad feststellen
 	$grd = chdir(realpath(dirname(__FILE__)."/../"));
+
+	try {
 
 	// Initialisieren
 	if (include("inc/bootstrap.inc.php"))
@@ -154,5 +154,9 @@
 	else
 	{
 		throw new EException("Could not load bootstrap file ".getcwd()."/inc/bootstrap.inc.php\n");
+	}
+	} catch (DBException $ex) {
+		echo $ex;
+		exit(1);
 	}
 ?>

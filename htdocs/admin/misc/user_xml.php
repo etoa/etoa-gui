@@ -1,6 +1,5 @@
 <?PHP
 	chdir(realpath(dirname(__FILE__)."/../../"));
-		define('USE_HTML',false);
     define('ADMIN_MODE',true);
 	require_once("inc/bootstrap.inc.php");
 
