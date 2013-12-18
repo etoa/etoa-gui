@@ -1056,14 +1056,14 @@ die Spielleitung";
             // somehow $this->alliance doesn't use the getter
             return $this->__get('alliance')->checkWar($u->allianceId)
                 || !$this->isUserNoobProtected($u)
-                || $this->isInactiv() 
-                || $this->locked;                    
+                || $u->isInactiv() 
+                || $u->locked;                    
         }
         else
         {
             return !$this->isUserNoobProtected($u)
-                || $this->isInactiv() 
-                || $this->locked;
+                || $u->isInactiv() 
+                || $u->locked;
         }
     }
     
