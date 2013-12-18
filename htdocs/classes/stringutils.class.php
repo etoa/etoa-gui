@@ -54,7 +54,7 @@
 	  // NOTE: if the text contains html text, it is displayed as html, not as plaintext.
 	  // if you want to display text with plaintext <br> etc., wrap the INPUT like that:
 	  // htmlentities($input_string,ENT_QUOTES,'UTF-8')
-	  return str_replace("\\","\\\\",htmlentities($str,ENT_QUOTES,'UTF-8'));
+	  return str_replace("\\","\\\\",htmlentities(str_replace("'",'&apos;',$str), ENT_QUOTES,'UTF-8'));
 	}
     
     public static function replaceAsciiControlCharsUnicode($str)
