@@ -77,6 +77,7 @@ if(window.enableKeybinds && $)
     keys[118] /* 'v' */      = "?page=bookmarks";
     keys[108] /* 'l' */      = "?page=fleets";
     keys[112] /* 'p' */      = "?page=economy";
+    keys[252] /* 'ü' */      = "?page=fleetstats";
 
     shiftKeys[80] /* 'P' */  = "?page=planetstats";
     shiftKeys[86] /* 'V' */  = "?page=bookmarks&mode=fleet";
