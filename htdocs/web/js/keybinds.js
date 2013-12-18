@@ -80,6 +80,7 @@ if(window.enableKeybinds && $)
 
     shiftKeys[80] /* 'P' */  = "?page=planetstats";
     shiftKeys[86] /* 'V' */  = "?page=bookmarks&mode=fleet";
+    shiftKeys[66] /* 'B' */  = "?page=population";
 
     $(document).ready(keybindsInit);
 }
