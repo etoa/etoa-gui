@@ -828,7 +828,7 @@
                             (
                                 $cfg->p1("abs_enabled") == 1 &&
                                 // and the two alliances are not at war against each other
-                                ! $this->sourceEntity->ownerAlliance()->checkWar($this->targetEntity->ownerAlliance)
+                                ! $this->sourceEntity->owner->alliance->checkWar($this->targetEntity->ownerAlliance())
                             )
                         )
                     )
