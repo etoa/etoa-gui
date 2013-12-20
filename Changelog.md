@@ -18,6 +18,7 @@ Version 3.4
  * [ADMIN] Changelogs page added
  * [ADMIN] User- and game stats page combined
  * [ADMIN] Alliance battle system can now be disabled in config
+ * [ADMIN] Alliance battle system can now be restricted to alliances at war only in config (#19)
 
 ### Bugfixes ###
 

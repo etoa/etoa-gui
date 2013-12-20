@@ -814,8 +814,24 @@
 					$ai = FleetAction::createFactory($i);
 
 					// Skip this action if it is an alliance action and ABS is disabled
-					if ($this->sourceEntity->ownerId() != $this->targetEntity->ownerId()
-                        && $ai->allianceAction && $cfg->value("abs_enabled") != 1)
+                    // and if the owner of the target planet is not the same user (support)
+                    // or if alliance battle system is only allowed for alliances at war
+                    // and the source's and target's alliances aren't at war against each other
+					if
+                    (
+                        $this->sourceEntity->ownerId() != $this->targetEntity->ownerId() &&
+                        $ai->allianceAction &&
+                        (
+                            // alliance battle system is disabled
+                            $cfg->value("abs_enabled") != 1 ||
+                            // or abs is enabled for alliances at war only
+                            (
+                                $cfg->p1("abs_enabled") == 1 &&
+                                // and the two alliances are not at war against each other
+                                ! $this->sourceEntity->ownerAlliance()->checkWar($this->targetEntity->ownerAlliance)
+                            )
+                        )
+                    )
                     {
 						continue;
 					}

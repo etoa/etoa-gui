@@ -282,6 +282,7 @@ http://www.etoa.ch</v>
     </item>
     <item name="abs_enabled" cat="4">
       <v comment="Allianzkampfsystem (AKS) aktiv" type="onoff">1</v>
+      <p1 comment="AKS auf Allianzen im Krieg beschränken" type="onoff">0</p1>
     </item>
     <item name="alliance_fleets_max_players" cat="4">
       <v comment="Anzahl Spieler in einer Allianzflotte oder Support einschränken" type="onoff">1</v>
