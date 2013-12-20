@@ -824,10 +824,17 @@
                             $cfg->value("abs_enabled") != 1 || (
                                 // or abs is enabled for alliances at war only
                                 $cfg->p1("abs_enabled") == 1 && (
-                                    // and it is an agressive action
-                                    $ai->attitude == 3 &&
-                                    // and the two alliances are not at war against each other
-                                    ! $this->sourceEntity->owner->alliance->checkWar($this->targetEntity->ownerAlliance())
+                                    (
+                                        // and it is an agressive action
+                                        $ai->attitude == 3 &&
+                                        // and the two alliances are not at war against each other
+                                        ! $this->sourceEntity->owner->alliance->checkWar($this->targetEntity->ownerAlliance())
+                                    ) || (
+                                        // or it is a defensive action
+                                        $ai->atttitude == 1 &&
+                                        // and the user's alliance is not at war
+                                        ! $this->owner->alliance->isAtWar()
+                                    )
                                 )
                             )
                         )
