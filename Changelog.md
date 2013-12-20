@@ -30,7 +30,8 @@ Version 3.4
  * Fixed broken link in admin ticket system (#25)
  * Fixed fuel/food doubling on support abort (#7)
  * User and allinace profile image directories are now being created created if they not exist
- * [ADMIN] Fixed coordinate selector (position) on galaxy screen 
+ * Fixed "banned" instead of "kicked" message in Chat (#30)
+ * [ADMIN] Fixed coordinate selector (position) on galaxy screen
 
 Version 3.3
 -----------
