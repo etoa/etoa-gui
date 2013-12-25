@@ -1248,6 +1248,7 @@
 			<ul>
 				<li><a href="#tabs-1">Suchmaske</a></li>
 				<li><a href="#tabs-2">Flotte erstellen</a></li>
+				<li><a href="#tabs-3">Schiffe senden</a></li>
 			</ul>
 			<div id="tabs-1">';
 
@@ -1524,6 +1525,143 @@
 				echo "</select></td></tr>";					
 			echo "</table><br/>
 			<input type=\"submit\" value=\"Erstellen\" name=\"submit_new_fleet\" /> ";
+
+			echo '</div><div id="tabs-3">';
+
+			if (isset($_POST['submit_send_ships']))
+			{
+				if ($_POST['fs_ship_id_new'] > 0) {
+					if ($srcEnt = Entity::createFactoryByCoords($_POST['sx_start'],$_POST['sy_start'],$_POST['cx_start'],$_POST['cy_start'],$_POST['p_start']))
+					{
+						$mpres = dbquery("
+						SELECT
+							id,
+							planet_user_id
+						FROM
+							planets
+						WHERE
+							planet_user_main=1");
+						$fi = 0;
+						while ($mparr = mysql_fetch_assoc($mpres)) {
+
+							$launchtime = parseDatePicker('launchtime', $_POST);
+							$landtime = parseDatePicker('landtime', $_POST);
+
+							dbquery("
+							INSERT INTO
+								fleet
+							(
+							user_id,
+							launchtime,
+							landtime,
+							entity_from,
+							entity_to,
+							action,
+							status
+							)
+							VALUES
+							(
+								'".$mparr['planet_user_id']."',
+								".$launchtime.",
+								".$landtime.",
+								".$srcEnt->id().",
+								".$mparr['id'].",
+								'flight',
+								1
+							);");
+							$fid = mysql_insert_id();
+							dbquery("
+							INSERT INTO
+								fleet_ships
+							(
+								fs_fleet_id,
+								fs_ship_id,
+								fs_ship_cnt
+							)
+							VALUES
+							(
+								".$fid.",
+								".$_POST['fs_ship_id_new'].",
+								".$_POST['fs_ship_cnt_new']."
+							);");
+							$fi++;
+						}
+						$tpl->assign('msg', "$fi Flotten erstellt!");
+					}
+					else
+					{
+						$tpl->assign('errmsg', "Startentität nicht vorhanden");
+					}
+				}
+				else
+				{
+					$tpl->assign('errmsg', "Schiffstyp nicht ausgewählt!");
+				}
+			}
+
+			echo "<form action=\"?page=$page\" method=\"post\" name=\"fleetform\">";
+			echo "<table class=\"tbl\">";
+
+			// Time Data
+			echo "<tr><th clas s=\"tbltitle\">Startzeit:</th><td class=\"tbldata\">";
+			showDatepicker("launchtime",time()+10, true, true);
+			echo "</td></tr>";
+			echo "<tr><th class=\"tbltitle\">Landezeit:</th><td class=\"tbldata\">";
+			showDatepicker("landtime",time()+90,  true, true);
+			echo " </td></tr>";
+
+			// Source and Target Data
+			echo "<tr><th class=\"tbltitle\">Startzelle:</th><td class=\"tbldata\">
+			<select name=\"sx_start\" onchange=\"submitForm();\">";
+			for ($x=1;$x<=$conf['num_of_sectors']['p1'];$x++)
+			{
+				echo "<option value=\"$x\"";
+				echo ">$x</option>";
+			}
+			echo "</select>/<select name=\"sy_start\" onchange=\"submitForm();\">";
+			for ($x=1;$x<=$conf['num_of_sectors']['p2'];$x++)
+			{
+				echo "<option value=\"$x\"";
+				echo ">$x</option>";
+			}
+			echo "</select> : <select name=\"cx_start\" onchange=\"submitForm();\">";
+			for ($x=1;$x<=$conf['num_of_cells']['p1'];$x++)
+			{
+				echo "<option value=\"$x\"";
+				echo ">$x</option>";
+			}
+			echo "</select>/<select name=\"cy_start\" onchange=\"submitForm();\">";
+			for ($x=1;$x<=$conf['num_of_cells']['p2'];$x++)
+			{
+				echo "<option value=\"$x\"";
+				echo ">$x</option>";
+			}
+			echo "</select> : <select name=\"p_start\" onchange=\"submitForm();\">";
+			for ($x=0;$x<=$conf['num_planets']['p2'];$x++)
+			{
+				echo "<option value=\"$x\"";
+				echo ">$x</option>";
+			}
+			echo "</select> ";
+
+			echo "</td></tr>";
+
+			echo "<tr><th>Ziel:</th><td>Hauptplanet jedes Spielers</td></tr>";
+
+			echo "<tr>
+			<td class=\"tbltitle\">Schiffe:</td>
+				<td class=\"tbldata\">
+					<input type=\"text\" name=\"fs_ship_cnt_new\" value=\"1\" size=\"5\" />
+					<select name=\"fs_ship_id_new\">";
+					echo "<option value=\"0\">Schiff wählen...</option>";
+					$ssres=dbquery("SELECT ship_id,ship_name FROM ships ORDER BY ship_name;");
+					while ($ssarr=mysql_fetch_array($ssres))
+					{
+						echo "<option value=\"".$ssarr['ship_id']."\">".$ssarr['ship_name']."</option>";
+					}
+				echo "</select></td></tr>";
+			echo "</table><br/>
+			<input type=\"submit\" value=\"Erstellen\" name=\"submit_send_ships\" /> ";
 			
 			echo '</div>
 			</div>';
