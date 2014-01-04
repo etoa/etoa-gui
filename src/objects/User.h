@@ -74,6 +74,8 @@ class User
 		    return this->userId;
 		}
 		
+		bool isAtWarWith(int opponentAllianceId);
+		
 	private:
 		int userId;
 		int allianceId;

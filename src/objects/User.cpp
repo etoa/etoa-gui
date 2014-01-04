@@ -527,3 +527,33 @@
 		return this->inactiv;
 	}
 	
+	bool User::isAtWarWith(int opponentAllianceId)
+	{
+            if (this->getAllianceId() !=0 && allianceId!=0)
+            {
+                My &my = My::instance();
+                mysqlpp::Connection *con_ = my.get();
+                mysqlpp::Query query = con_->query();
+                
+                query << "SELECT ";
+                query << "  alliance_bnd_id ";
+                query << "FROM ";
+                query << "  alliance_bnd ";
+                query << "WHERE ";
+                query << "  (alliance_bnd_alliance_id1='" << this->getAllianceId() << "' ";
+                query << "  AND alliance_bnd_alliance_id2='" << opponentAllianceId << "') ";
+                query << "OR ";
+                query << "  (alliance_bnd_alliance_id1='" << opponentAllianceId << "' ";
+                query << "  AND alliance_bnd_alliance_id2='" << this->getAllianceId() << "') ";
+                query << "  AND alliance_bnd_level='3';";
+                
+                RESULT_TYPE warCheckRes = query.store();
+                query.reset();
+                
+                if (warCheckRes && warCheckRes.size() > 0)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
