@@ -70,34 +70,13 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
         mysqlpp::Query query = con_->query();
 
         // Prüft, ob Krieg herrscht
-        this->alliancesHaveWar = false;
-        if (fleet->fleetUser->getAllianceId()!=0 && entity->getUser()->getAllianceId()!=0)
+        if(entity->getUser() != NULL)
         {
-            query << "SELECT ";
-            query << "	alliance_bnd_id ";
-            query << "FROM ";
-            query << "	alliance_bnd ";
-            query << "WHERE ";
-            query << "	(alliance_bnd_alliance_id1='" << fleet->fleetUser->getAllianceId() << "' ";
-            query << "	AND alliance_bnd_alliance_id2='" << entity->getUser()->getAllianceId() << "') ";
-            query << "OR ";
-            query << "	(alliance_bnd_alliance_id1='" << entity->getUser()->getAllianceId() << "' ";
-            query << "	AND alliance_bnd_alliance_id2='" << fleet->fleetUser->getAllianceId() << "') ";
-            query << "	AND alliance_bnd_level='3';";
-            RESULT_TYPE warCheckRes = query.store();
-            query.reset();
-
-            if (warCheckRes)
-            {
-                int warCheckSize = warCheckRes.size();
-
-                if (warCheckSize > 0)
-                {
-                    this->alliancesHaveWar = true;
-                }
-            }
+            this->alliancesHaveWar = fleet->fleetUser->isAtWarWith(entity->getUser()->getAllianceId());
+        } else {
+            this->alliancesHaveWar = false;
         }
-
+        
         //Report
         report->setShield(fleet->getShield(true));
         report->setStructure(fleet->getStructure(true));
