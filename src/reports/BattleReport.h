@@ -57,7 +57,11 @@ public:
 		
 	~BattleReport() {
 		while (!this->users.empty()) {
+                        // id saves the auto_increment value of the generated
+                        // row in the Report::save() query
 			this->id = this->save(this->users.back());
+                        // that id is used as `reports_battle`.`id`
+                        // in the saveBattleReport() query
 			this->saveBattleReport();
 			this->users.pop_back();
 		}
