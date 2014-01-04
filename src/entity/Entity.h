@@ -100,7 +100,9 @@ class Entity
 			this->buildingAtWork = 0;
 			this->actionName = "";
 			this->userId = 0;
-		}
+                        
+                        this->entityUser = NULL;
+                }
 		
 		
 		virtual ~Entity() {}
