@@ -51,13 +51,6 @@ void etoamain()
 	{
 		try 
 		{ 
-			
-			// Update the data and config, everyday once at about 02:17:00 AM
-			if ((time(0)-1021)%86400==0) {
-				DataHandler.reloadData();
-				Config::instance().reloadConfig();
-			}
-		
 			// Graphical bling-bling
 			if (debugEnable(0))
 			{
@@ -80,7 +73,37 @@ void etoamain()
 				DEBUG("  Memory usage : VIRT " << (mi.getVirtualMemUsedByCurrentProcess()) << " KB, PHYS " << (mi.getPhysMemUsedByCurrentProcess()) << " KB");
 			}
 			DEBUG("----------------------------------------------------------------\n");
-			
+
+			bool reloadConfig = false;
+			planet::PlanetManager pm = planet::PlanetManager();
+
+			// Handle queued commands from frontend
+			MessageQueueReceiver mq;
+			std::vector<MessageQueueCommand> mqRes = mq.receive();
+			for(std::vector<MessageQueueCommand>::iterator it = mqRes.begin(); it != mqRes.end(); ++it) {
+				MessageQueueCommand mqc = *it;
+				if (mqc.cmd == "planetupdate")
+				{
+					pm.markForUpdate(etoa::toInt(mqc.arg));
+				}
+				else if (mqc.cmd == "configupdate")
+				{
+					reloadConfig = true;
+				}
+			}
+
+			// Update the data and config, everyday once at about 02:17:00 AM
+			if ((time(0)-1021)%86400==0) {
+				reloadConfig = true;
+			}
+
+			// Reload config
+			if (reloadConfig) {
+				LOG(LOG_INFO, "Reloading configuration"); 
+				DataHandler.reloadData();
+				Config::instance().reloadConfig();
+			}
+
 			/**
 			* Start with event handling
 			*/
@@ -101,8 +124,6 @@ void etoamain()
 				aph->update();
 				delete aph;
 			}
-			
-      planet::PlanetManager pm = planet::PlanetManager();
 			
       // Update alliance buildings
 			abuilding::aBuildingHandler* abh = new abuilding::aBuildingHandler();
@@ -145,13 +166,6 @@ void etoamain()
         pm.markForUpdate(&v);
       }
       delete dh;
-      
-      // Get planet id's to be changed from message queue
-      while(!EntityUpdateQueue::instance().empty()) 
-      {
-        pm.markForUpdate(EntityUpdateQueue::instance().front());
-        EntityUpdateQueue::instance().pop();
-      }
 
       // Update planets which have been marked
       pm.updatePlanets();
@@ -181,34 +195,3 @@ void etoamain()
 	exit(EXIT_FAILURE);
 			
 }
-
-/**
-* Runs the message queue listener for receiving
-* command from the frontend
-*/
-void msgQueueThread()
-{                                   
-	LOG(LOG_DEBUG,"Entering message queue thread");				
-	
-	IPCMessageQueue queue(Config::instance().getConfigFile());
-	if (queue.valid())
-	{
-		while (true)
-		{
-			std::string cmd = "";
-			int id = 0;
-			queue.rcvCommand(&cmd,&id);
-			
-			if (cmd == "planetupdate")
-			{
-				EntityUpdateQueue::instance().push(id);
-			}
-			else if (cmd == "configupdate")
-			{
-				Config::instance().reloadConfig();
-			}
-		}
-	}
-	LOG(LOG_ERR,"Entering message queue ended");				
-}
-

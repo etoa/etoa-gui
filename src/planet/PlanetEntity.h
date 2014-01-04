@@ -33,6 +33,7 @@ namespace planet
 		double solarFuelBonus;
 		int raceId, userId, planetType, solType, speicalistId;
 		int t;
+        float boostBonusProduction;
 		double birthRate;
 		bool isMain, isUmod;
 		

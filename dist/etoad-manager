@@ -4,7 +4,7 @@ CONFIG_DIR=/etc/etoad
 ENABLED_CONFIG_DIR=$CONFIG_DIR/instances-enabled
 AVAILALE_CONFIG_DIR=$CONFIG_DIR/instances-available
 PID_DIR=/var/run/etoad
-ETOAD_BIN=/usr/local/bin/etoad
+ETOAD_BIN=/usr/bin/etoad
 USER=etoa
 CONFIG_EXT=.conf
 

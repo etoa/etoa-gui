@@ -141,7 +141,7 @@ int main(int argc, char* argv[])
 	signal(SIGQUIT, &sighandler);
 	signal(SIGFPE, &sighandler);
 
-	logPrio(LOG_NOTICE);
+	logPrio(LOG_INFO);
 
 	// Parse command line
 	AnyOption *opt = new AnyOption();
@@ -153,7 +153,7 @@ int main(int argc, char* argv[])
 	opt->addUsage( "  -c, --config path       Path to config file (default: /etc/etoad/INSTANCE.conf)");
 	opt->addUsage( "  -u, --uid userid        Select user id under which it runs (necessary if you are root)");
 	opt->addUsage( "  -k, --killexisting      Kills an already running instance of this backend before starting this instance");
-	opt->addUsage( "  -l, --log level         Specify log level (0=emerg, ... , 7=everything");
+	opt->addUsage( "  -l, --log level         Specify log level (0=emerg, ... , 7=everything), default is 6");
 	opt->addUsage( "");
 	opt->addUsage( "      --debug             Enable debug mode");
 	opt->addUsage( "  -h, --help              Prints this help");
@@ -373,11 +373,8 @@ int main(int argc, char* argv[])
 		
 	delete opt;
 
-	boost::thread mThread(&etoamain);
-	boost::thread qThread(&msgQueueThread);
-
-	mThread.join();	
-	qThread.join();
+	// Enter main loop
+	etoamain();
 	
 	// This point should never be reached
 	cerr << "Unexpectedly reached end of main()";

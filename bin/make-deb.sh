@@ -45,14 +45,29 @@ trap 'cleanup' INT TERM EXIT
 
 # Copy contents of dist/debian/
 rsync -au --exclude '.svn' dist/debian/ $tdir
-mkdir -p $tdir/usr/local/bin
-cp $BIN_FILE $tdir/usr/local/bin
-cp dist/etoad-manager $tdir/usr/local/bin
+mkdir -p $tdir/usr/bin
+cp $BIN_FILE $tdir/usr/bin
+strip $tdir/usr/bin/$(basename $BIN_FILE)
+cp ${TOP}/dist/etoad-manager $tdir/usr/bin
 
 # Write version to control file
 sed "s/^Version: .*/Version: ${VER}/" -i $tdir/DEBIAN/control
 
 
+if [ "$ARCH" == "x86_64" ]; then
+    deb_arch=amd64
+else 
+    deb_arch=$ARCH
+fi
+sed "s/^Architecture: .*/Architecture: ${deb_arch}/" -i $tdir/DEBIAN/control
+
+
 # Create package
 mkdir -p ${PKG_DIR}
-dpkg -b $tdir ${PKG_DIR}/${pkgname}.deb
+fakeroot dpkg -b $tdir ${PKG_DIR}/${pkgname}.deb
+
+if [ -e /usr/bin/lintian ]; then
+    echo "Lintian analysis results:"
+    /usr/bin/lintian ${PKG_DIR}/${pkgname}.deb
+fi
+
