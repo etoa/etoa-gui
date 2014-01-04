@@ -529,7 +529,7 @@
 	
 	bool User::isAtWarWith(int opponentAllianceId)
 	{
-            if (this->getAllianceId() !=0 && allianceId!=0)
+            if (this->getAllianceId() != 0 && opponentAllianceId != 0)
             {
                 My &my = My::instance();
                 mysqlpp::Connection *con_ = my.get();
