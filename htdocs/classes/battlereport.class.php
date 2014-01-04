@@ -662,6 +662,28 @@ class BattleReport extends Report
 					' intergalaktische Kriegsrecht auf '.$cfg->p1('alliance_fleets_max_players').
 					' Angreifer, weswegen die Piloten dem Kampf nur zuschauen konnten.';
 				break;
+            case 'alliancenowar':
+                echo 'Deine Flotte vom Planeten '.$ent2->detailLink().
+					' wollte sich einem Allianzangriff auf den Planeten '.$ent1->detailLink().
+					' anschliessen. Da sich die Allianzen von Angreifer und Verteidiger aber'.
+                    ' nicht im Krieg befinden, war die Unterst&uuml;tzung gem&auml;ss'.
+					' intergalaktischem Kriegsrecht nicht möglich,'.
+					' weswegen die Piloten dem Kampf nur zuschauen konnten.';
+                break;
+            case 'supportnowar': //TODO: Implement in Backend
+                echo 'Deine Flotte vom Planeten '.$ent2->detailLink().
+					' ist zum Support auf den Planeten '.$ent1->detailLink().
+					' stationiert, wo gerade ein Kampf stattgefunden hat.'.
+                    ' Da sich die Allianzen von Angreifer und Verteidiger aber'.
+                    ' nicht im Krieg befinden, war die Unterst&uuml;tzung gem&auml;ss'.
+					' intergalaktischem Kriegsrecht nicht möglich,'.
+					' weswegen deine Piloten dem Kampf nur zuschauen konnten.';
+                break;
+            case 'absdisabled':
+                echo 'Deine Flotte vom Planeten '.$ent2->detailLink().
+					' wollte einen Allianzangriff auf den Planeten '.$ent1->detailLink().
+					' durchführen. Da das Allianzkampfsystem momentan nicht aktiv ist,'.
+					' mussten deine Piloten leider umkehren.';
 			default:
 				dump($this);
 		}
