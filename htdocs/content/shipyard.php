@@ -62,7 +62,7 @@
   if (mysql_num_rows($werft_res)>0)
   {
 		$werft_arr = mysql_fetch_assoc($werft_res);
-  	define('CURRENT_SHIPYARD_LEVEL',$werft_arr['buildlist_current_level']);
+        define('CURRENT_SHIPYARD_LEVEL',$werft_arr['buildlist_current_level']);
 
 		// Titel
 		echo "<h1>Raumschiffswerft (Stufe ".CURRENT_SHIPYARD_LEVEL.") des Planeten ".$cp->name."</h1>";
@@ -1090,7 +1090,7 @@
 									if ($cp->prodFood > 0)
 									{
 										$bwait['food'] = ceil(($food_costs - $cp->resFood) / $cp->prodFood * 3600);
-										$bwmsg['food'] = tm("Fehlender Rohstoff",nf($data['ship_costs_food']-$cp->resFood)." Nahrung<br />Bereit in ".tf($bwait['food'])."");
+										$bwmsg['food'] = tm("Fehlender Rohstoff",nf($food_costs-$cp->resFood)." Nahrung<br />Bereit in ".tf($bwait['food'])."");
 									}
 									else
 									{
