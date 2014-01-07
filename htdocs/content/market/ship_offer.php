@@ -108,9 +108,6 @@
             // if only some ships have been removed, re-add the removed ships
 			if($removed_ships_count > 0)
             {
-                echo 'User '.$cu->nick.' hat versucht, auf dem Planeten '.$cp->name()
-                         .' mehr Schiffe der ID '.$ship_id .' zu verkaufen, als vorhanden sind.'
-                         .' Vorhanden: '.$removed_ships_count.', Versuchte Verkaufszahl: '.$ship_count;
                 $sl->add($ship_id, $removed_ships_count);
                 // log action because this was a bug earlier
                 Log::add(Log::F_ILLEGALACTION,Log::WARNING,
