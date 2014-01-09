@@ -438,7 +438,7 @@ define('HELP_URL',"?page=help&site=buildings");
 						{
 							echo '<tr>
 									<td>
-										<input type="submit" class="button" name="command_demolish" value="Abreissen">
+										<input type="submit" class="button" name="command_demolish" value="Abreissen" onclick="if (this.value==\'Abreissen\'){return confirm(\'Geb&auml;de wirklich abreissen?\');}">
 									</td>
 									<td>'.tf($demolishCosts['time']).'</td>';
 							foreach ($resNames as $rk=>$rn)
