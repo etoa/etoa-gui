@@ -208,7 +208,7 @@
 	tableEnd();
 	echo "<input type=\"button\" value=\"Zur Raumkarte\" onclick=\"document.location='?page=sector'\" /> &nbsp; ";
 	if ($ent)
-		echo "<input type=\"button\" value=\"Zur Systemkarte\" onclick=\"document.location='?page=cell&amp;id=".$ent->cellId()."'\" />";			
+		echo "<input type=\"button\" value=\"Zur Systemkarte\" onclick=\"document.location='?page=cell&amp;id=".$ent->cellId()."&hl=".$id."'\" />";			
 	echo "</form>
 	<script type=\"\">document.forms['planetsearch'].elements[0].focus();</script>";
 	
