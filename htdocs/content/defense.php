@@ -85,7 +85,7 @@
 			****************************/
 			if(count($_POST)>0 && isset($_POST['sort_submit']))
 			{
-				$cu->properties->itemOrderShip = $_POST['sort_value'];
+				$cu->properties->itemOrderDef = $_POST['sort_value'];
 				$cu->properties->itemOrderWay = $_POST['sort_way'];
 			}
 			
@@ -353,7 +353,7 @@
 						foreach ($values as $value => $name)
 						{		
 							echo "<option value=\"".$value."\"";
-							if($cu->properties->itemOrderShip==$value)
+							if($cu->properties->itemOrderDef==$value)
 							{
 								echo " selected=\"selected\"";
 							}
