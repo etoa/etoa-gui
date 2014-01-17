@@ -2010,11 +2010,15 @@ function imagecreatefromfile($path, $user_functions = false)
 		$bc['food'] = $fac * $buildingArray['building_costs_food'] * pow($buildingArray['building_build_costs_factor'],$level);
 		$bc['power'] = $fac * $buildingArray['building_costs_power'] * pow($buildingArray['building_build_costs_factor'],$level);
 		
-		if (!isset($cp->typeBuildtime))
-			$cp->typeBuildtime = 1.0;
-		if (!isset($cp->starBuildtime))
-			$cp->starBuildtime = 1.0;
-		$bonus = $cu->race->buildTime + $cp->typeBuildtime + $cp->starBuildtime + $cu->specialist->buildTime - 3;
+        $typeBuildTime = 1.0;
+        $starBuildTime = 1.0;
+        
+		if (isset($cp->typeBuildtime))
+			$typeBuildTime = $cp->typeBuildtime;
+		if (isset($cp->starBuildtime))
+			$starBuildTime = $cp->starBuildtime;
+            
+		$bonus = $cu->race->buildTime + $typeBuildTime + $starBuildTime + $cu->specialist->buildTime - 3;
 		$bc['time'] = ($bc['metal']+$bc['crystal']+$bc['plastic']+$bc['fuel']+$bc['food']) / GLOBAL_TIME * BUILD_BUILD_TIME;
 		$bc['time'] *= $bonus;
 		return $bc;
