@@ -1047,23 +1047,25 @@ die Spielleitung";
     
     public function canAttackUser(User $u)
     {
+        // somehow $this->alliance doesn't use the getter
+        // neither does $u->locked, wtf
+        
         // att allowed if war is active
         // or att allowed if target user is not noob protected
         // or att allowed if target user is inactive
         // or att allowed if target user is locked
-        if ($this->allianceId > 0 && $u->allianceId > 0)
+        if ($this->allianceId() > 0 && $u->allianceId() > 0)
         {
-            // somehow $this->alliance doesn't use the getter
-            return $this->__get('alliance')->checkWar($u->allianceId)
+            return $this->__get('alliance')->checkWar($u->allianceId())
                 || !$this->isUserNoobProtected($u)
                 || $u->isInactiv() 
-                || $u->locked;                    
+                || $u->__get('locked');
         }
         else
         {
             return !$this->isUserNoobProtected($u)
                 || $u->isInactiv() 
-                || $u->locked;
+                || $u->__get('locked');
         }
     }
     
