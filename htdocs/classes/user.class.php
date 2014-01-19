@@ -617,7 +617,7 @@ class User
 		$replace = array($this->nick,$this->nick);
 		$message = str_replace($search,$replace,$message);
 
-		dbQuerySave("
+		dbquery("
 		INSERT INTO
 			user_log
 		(
