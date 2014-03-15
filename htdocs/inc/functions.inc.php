@@ -1001,6 +1001,17 @@
 		}		
 		echo text2html($text)."</div>";		
 	}
+	
+	/**
+	* Formatierte Info-Meldung anzeigen
+	*
+	* $text: Info-Meldung
+	*/
+	function info_msg($text)
+	{
+		echo "<div class=\"infoMsgBox\">";
+		echo text2html($text)."</div>";	
+	}
        
   /**
   * Error msg
