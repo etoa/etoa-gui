@@ -629,7 +629,7 @@
 		echo '<h1>Marktplatz</h1>';
 		$cp->resBox($cu->properties->smallResBox);
 
-		error_msg("Der Marktplatz wurde noch nicht gebaut.");
+		info_msg("Der Marktplatz wurde noch nicht gebaut.");
 	}
 
 
@@ -639,7 +639,7 @@
 		echo '<h1>Marktplatz</h1>';
 		$cp->resBox($cu->properties->smallResBox);
 
-		error_msg("Der Marktplatz ist momentan im Spiel deaktiviert.");
+		info_msg("Der Marktplatz ist momentan im Spiel deaktiviert.");
     }
 
 

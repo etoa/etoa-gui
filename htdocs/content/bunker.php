@@ -171,7 +171,7 @@
 			else
 			{
 				echo "<br />";
-				error_msg("Der Flottenbunker wurde noch nicht gebaut!");
+				info_msg("Der Flottenbunker wurde noch nicht gebaut!");
 			}
 		}
 		elseif ($mode=="fleet")
@@ -310,7 +310,7 @@
 			else
 			{
 				echo "<br />";
-				error_msg("Der Flottenbunker wurde noch nicht gebaut!");
+				info_msg("Der Flottenbunker wurde noch nicht gebaut!");
 			}
 		}
 		else
@@ -360,7 +360,7 @@
 			else
 			{
 				echo "<br />";
-				error_msg("Der Rohstoffbunker wurde noch nicht gebaut!");
+				info_msg("Der Rohstoffbunker wurde noch nicht gebaut!");
 			}
 		}
 	}

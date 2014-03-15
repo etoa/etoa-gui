@@ -174,7 +174,7 @@
 	}
 
 	if (!$has_mobile_objects) {
-		error_msg("Keine mobilen Anlagen vorhanden!", 1);
+		info_msg("Keine mobilen Anlagen vorhanden!", 1);
 	}
 	
 	//Recycling Level laden
@@ -450,7 +450,7 @@
 		}
 		else
 		{
-			error_msg("Es sind keine Schiffe auf diesem Planeten vorhanden!");
+			info_msg("Es sind keine Schiffe auf diesem Planeten vorhanden!");
 		}
 
 
@@ -500,11 +500,11 @@
 			echo "<input type=\"submit\" class=\"button\" name=\"submit_recycle_def\" value=\"Ausgew&auml;hlte Anlagen recyceln\"></form>";
 		}
 		else
-			error_msg("Es sind keine Verteidigungsanlagen auf diesem Planeten vorhanden!", 1);
+			info_msg("Es sind keine Verteidigungsanlagen auf diesem Planeten vorhanden!", 1);
 	}
 	else
 	{
-		error_msg("Es können keine Schiffe oder Verteidigungsanlagen recycelt werden, da die Recyclingtechnologie noch nicht erforscht wurde!", 1);
+		info_msg("Es können keine Schiffe oder Verteidigungsanlagen recycelt werden, da die Recyclingtechnologie noch nicht erforscht wurde!", 1);
 	}
 
 

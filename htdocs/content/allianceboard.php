@@ -1105,6 +1105,7 @@
 		else
 			error_msg("Die Allianz existiert nicht!");
 	}
-	else
-		error_msg("Du bist in keiner Allianz und kannst darum das Allianzboard nicht nutzen!");
+	else {
+		info_msg("Du bist in keiner Allianz und kannst darum das Allianzboard nicht nutzen!");
+	}
 ?>
