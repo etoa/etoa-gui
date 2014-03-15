@@ -1064,3 +1064,25 @@ visibility:visible;
 	background: #242426;
 	padding: 2px 5px;
 }
+
+/*
+* Messages and errors
+*/
+
+.errorBox	{
+	border:1px #4E4E4F solid;
+	background:#242426;
+	color:#fcc;
+}
+
+.successBox	{
+	border:1px #4E4E4F solid;
+	background:#242426;
+	color:#cfc;
+}
+
+.infoMsgBox	{
+	border:1px #4E4E4F solid;
+	background:#242426;
+	color:#ccf;
+}
