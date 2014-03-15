@@ -1,4 +1,9 @@
 <?PHP
+	$cache_dir = "../cache/filtered_images";
+	if (!is_dir($cache_dir)) {
+		mkdir($cache_dir);
+	}
+
 	$file=$_GET['file'];
 	
 	if (substr($file,0,17)!="images/imagepacks")	
@@ -11,7 +16,7 @@
 	$ext = substr($file,strrpos($file,".")+1);
 	$filter=$_GET['filter'];
 	
-	$tmpName = "../cache/filtered_images/".md5($fi['filename'].$filter).".".$fi['extension'];
+	$tmpName = $cache_dir."/".md5($fi['filename'].$filter).".".$fi['extension'];
 	
 	if (file_exists($tmpName))
 	{
