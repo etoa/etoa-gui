@@ -99,8 +99,16 @@ img.resIcon	{
 	background:#aba;
 	color:#040;
 	width:90%;
-	margin:5px auto;
-	margin-bottom:15px;
+	margin:15px auto;
+}
+
+.infoMsgBox	{
+	border:1px #00f solid;
+	padding:5px;
+	background:#aab;
+	color:#004;
+	width:90%;
+	margin:15px auto;
 }
 
 /* Misc */

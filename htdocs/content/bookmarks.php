@@ -254,7 +254,7 @@
 		}
 		else
 		{
-			error_msg("Noch keine Favoriten vorhanden!",1);
+			info_msg("Noch keine Favoriten vorhanden!");
 		}			
 			
 	}
@@ -1017,7 +1017,7 @@
 			}
 			else
 			{
-				error_msg("Noch keine Bookmarks vorhanden!",1);
+				info_msg("Noch keine Bookmarks vorhanden!");
 			}
 		}
 	}

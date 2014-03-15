@@ -39,8 +39,6 @@
 
 	// BEGIN SKRIPT //
 
-	echo "<form action=\"?page=$page\" method=\"post\">";
-
 	//Tabulator var setzten (für das fortbewegen des cursors im forumular)
 	$tabulator = 1;
 
@@ -293,8 +291,7 @@
 			}
 
 			// Infos anzeigen
-			echo "<div>";
-			//echo '<div><div style="float:left;width:450px;text-align:left;font-size:9pt;">';											
+			echo "<form action=\"?page=$page\" method=\"post\">";
 			tableStart("Fabrik-Infos");
 			echo "<tr><td>";
 			echo "<b>Eingestellte Arbeiter:</b> ".nf($people_working)."<br/>
@@ -379,8 +376,6 @@
 					</td>
 				</tr>";
 			tableEnd();
-			
-			echo "<br style=\"clear:both;\" /></div>";
 			echo "</form>";
 			
 			echo "<form action=\"?page=".$page."\" method=\"post\">";
@@ -785,7 +780,7 @@
 	/*********************************
 	* Liste der Bauaufträge anzeigen *
 	*********************************/
-			if(isset($queue))
+			if(isset($queue) && !empty($queue))
 			{
 				tableStart("Bauliste");
 				$first=true;
@@ -853,8 +848,6 @@
 					}
 				}
 				tableEnd();
-			 	echo "<br/><br/>";
-
 			}
 
 
@@ -1278,7 +1271,7 @@
 											Es k&ouml;nnen noch keine Anlagen gebaut werden!<br>
 											Baue zuerst die ben&ouml;tigten Geb&auml;ude und erforsche die erforderlichen Technologien!
 										</td>
-									</tr><br>";
+									</tr>";
 						}
 					}
 					// Es gibt noch keine Schiffe
@@ -1288,9 +1281,6 @@
 					}
 				
    					tableEnd();
-   				
-					//Lücke zwischen Kategorien
-					echo "<br/>";
 				}
    				// Baubutton anzeigen
 				if ($cnt > 0)
@@ -1311,7 +1301,7 @@
 		
 		// Ressourcen anzeigen
 		$cp->resBox($cu->properties->smallResBox);
-		error_msg("Die Waffenfabrik wurde noch nicht gebaut!");
+		info_msg("Die Waffenfabrik wurde noch nicht gebaut!");
 
 
 	}
