@@ -47,11 +47,11 @@ void AllianceHandler::update()
 	delete bh;
     } else {
         BattleReport *bReport = new BattleReport(this->f->getUserId(),
+                                                this->targetEntity->getUserId(),
                                                 this->f->getEntityTo(),
                                                 this->f->getEntityFrom(),
                                                 this->f->getLandtime(),
-                                                this->f->getId(),
-                                                this->f->getAction());
+                                                this->f->getId());
         if(!isAbsEnabled)
         {
             // Set the message to "ABS is not active"
