@@ -56,7 +56,7 @@ void AllianceHandler::update()
         {
             // Set the message to "ABS is not active"
             // (this case should be prevented by the frontend anyway)
-            bReport->setSubtype('absdisabled');
+            bReport->setSubtype("absdisabled");
         }
         // else (!isAbsRestrictedOnWar || isAllianceAtWarWithOpponent) is false at this point
         // thus (!isAbsRestrictedOnWar) and (isAllianceAtWarWithOpponent) are both false
@@ -65,7 +65,7 @@ void AllianceHandler::update()
         {
             // Set the message to "The attack failed because there is no ongoing war"
             // This occurs e.g. when a war ends while an alliance fleet is still on its way
-            bReport->setSubtype('alliancenowar');
+            bReport->setSubtype("alliancenowar");
         }
         
         // BUG: all fleet users should receive the report
