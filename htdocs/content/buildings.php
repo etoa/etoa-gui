@@ -126,7 +126,7 @@ define('HELP_URL',"?page=help&site=buildings");
 					$bid = $_POST['id'];
 				}			
 			}
-			
+            
 			// people working changed
 			if (isset($_POST['submit_people_form']))
 			{
@@ -224,7 +224,7 @@ define('HELP_URL',"?page=help&site=buildings");
 					<input type="hidden" name="foodRequired" id="foodRequired" value="'.$cfg->value('people_food_require').'" />
 					<input type="hidden" name="peopleFree" id="peopleFree" value="'.$peopleFree.'" />
 					<input type="hidden" name="foodAvaiable" id="foodAvaiable" value="'.$cp->getRes1(4).'" />';
-		if ($cu->properties->itemShow=='full' && isset($bid) && $bid>0)
+		if ($cu->properties->itemShow=='full' && isset($bid) && $bid>0 && $bl->item($bid) !== false)
 		{
 			$box .= '<input type="hidden" name="peopleOptimized" id="peopleOptimized" value="'.$bl->item($bid)->getPeopleOptimized().'" />';
 		}
@@ -262,7 +262,7 @@ define('HELP_URL',"?page=help&site=buildings");
 								<div class="errorBox" id="errorBox" style="display:none;">&nbsp;</div>
 								<input type="submit" value="Speichern" name="submit_people_form" />&nbsp;';
 		
-		if ($cu->properties->itemShow=='full' && isset($bid) && $bid>0)
+		if ($cu->properties->itemShow=='full' && isset($bid) && $bid>0 && $bl->item($bid) !== false)
 		{
 			$peopleOptimized = $bl->item($bid)->getPeopleOptimized();
 			$box .= '<input type="button" value="Optimieren" onclick="updatePeopleWorkingBox(\''.$peopleOptimized.'\',\'-1\',\'^-1\');">';
@@ -306,7 +306,7 @@ define('HELP_URL',"?page=help&site=buildings");
 		echo '</div>';
 		
 		// if full view and detail view selected, show it
-		if (isset($bid) && $bid>0 && $cu->properties->itemShow=='full')
+		if (isset($bid) && $bid>0 && $bl->item($bid) !== false && $cu->properties->itemShow=='full')
 		{
 			
 			//
