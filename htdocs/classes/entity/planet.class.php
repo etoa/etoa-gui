@@ -291,6 +291,11 @@
 		{
 			return $this->__get('name');//htmlspecialchars($this->name);
 		}
+        
+        function getNoBrDesc()
+        {
+            return htmlspecialchars($this->desc, ENT_QUOTES, 'UTF-8', true);
+        }
 
 		function __toString()
 		{

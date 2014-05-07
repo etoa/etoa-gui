@@ -206,8 +206,7 @@
 			}			
 			if ($cp->desc!="") {
 				if (strlen($cp->desc) > 90) {
-					//TODO:HERE
-					echo "<div class=\"planetOverviewItem\">Beschreibung</div><span ".mTT('Beschreibung', $cp->desc)."> ".stripslashes(substr($cp->desc,0,90))." ...</span><br style=\"clear:left;\"/>";
+					echo "<div class=\"planetOverviewItem\">Beschreibung</div><span ".mTT('Beschreibung', $cp->desc)."> ".substr($cp->desc,0,90)." ...</span><br style=\"clear:left;\"/>";
 				} else {
 					echo "<div class=\"planetOverviewItem\">Beschreibung</div> ".$cp->desc."<br style=\"clear:left;\"/>";
 				}
@@ -227,7 +226,7 @@
 			echo "<tr><th>Name:</th><td>
 			<input type=\"text\" name=\"planet_name\" id=\"planet_name\" value=\"".($cp->name)."\" length=\"25\" maxlength=\"15\" />
 			&nbsp; <a href=\"javascript:;\" onclick=\"GenPlot();\">Name generieren</a></td></tr>";
-			echo "<tr><th>Beschreibung:</th><td><textarea name=\"planet_desc\" rows=\"2\" cols=\"30\">".($cp->desc)."</textarea></td></tr>";
+			echo "<tr><th>Beschreibung:</th><td><textarea name=\"planet_desc\" rows=\"2\" cols=\"30\">".($cp->getNoBrDesc())."</textarea></td></tr>";
 			tableEnd();
 			echo "<input type=\"submit\" name=\"submit_change\" value=\"Speichern\" /> &nbsp; ";
 			echo "</form>";
