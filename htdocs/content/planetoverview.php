@@ -37,8 +37,8 @@
 			echo "<form action=\"?page=$page\" method=\"POST\" style=\"text-align:center;\">";
 			tableStart("Hier den neuen Namen eingeben:");
 			echo "<tr><th>Name:</th><td>
-			<input type=\"text\" name=\"planet_name\" id=\"planet_name\" value=\"".$cp->name."\" length=\"16\" maxlength=\"15\" /></td></tr>";
-			echo "<tr><th>Beschreibung:</th><td><textarea name=\"planet_desc\" rows=\"2\" cols=\"30\">".stripslashes($cp->desc)."</textarea></td></tr>";
+			<input type=\"text\" name=\"planet_name\" id=\"planet_name\" value=\"".($cp->name)."\" length=\"16\" maxlength=\"15\" /></td></tr>";
+			echo "<tr><th>Beschreibung:</th><td><textarea name=\"planet_desc\" rows=\"2\" cols=\"30\">".($cp->desc)."</textarea></td></tr>";
 			tableEnd();
 			echo "<input type=\"submit\" name=\"submit_change\" value=\"Speichern\" /> &nbsp; ";
 			echo '<input onclick="GenPlot();" type="button" value="Name generieren" /> &nbsp; ';
@@ -147,7 +147,7 @@
 			$sl = new ShipList($cp->id,$cu->id,1);
 			$dl = new DefList($cp->id,$cu->id,1);			
 	
-		 	echo "<h1>&Uuml;bersicht &uuml;ber den Planeten ".$cp->name."</h1>";
+		 	echo "<h1>&Uuml;bersicht &uuml;ber den Planeten ".$cp->name()."</h1>";
 			$cp->resBox($cu->properties->smallResBox);
 
 			if (isset($_GET['sub']) && $_GET['sub']=="ships")
@@ -206,9 +206,10 @@
 			}			
 			if ($cp->desc!="") {
 				if (strlen($cp->desc) > 90) {
-					echo "<div class=\"planetOverviewItem\">Beschreibung</div><span ".mTT('Beschreibugn', $cp->desc)."> ".stripslashes(substr($cp->desc,0,90))." ...</span><br style=\"clear:left;\"/>";
+					//TODO:HERE
+					echo "<div class=\"planetOverviewItem\">Beschreibung</div><span ".mTT('Beschreibung', $cp->desc)."> ".stripslashes(substr($cp->desc,0,90))." ...</span><br style=\"clear:left;\"/>";
 				} else {
-					echo "<div class=\"planetOverviewItem\">Beschreibung</div> ".stripslashes($cp->desc)."<br style=\"clear:left;\"/>";
+					echo "<div class=\"planetOverviewItem\">Beschreibung</div> ".$cp->desc."<br style=\"clear:left;\"/>";
 				}
 			}	
 			if ($cp->isMain)				
@@ -224,9 +225,9 @@
 			echo "<form action=\"?page=$page\" method=\"POST\" style=\"text-align:center;\">";
 			tableStart("Name und Beschreibung ändern:");
 			echo "<tr><th>Name:</th><td>
-			<input type=\"text\" name=\"planet_name\" id=\"planet_name\" value=\"".$cp->name."\" length=\"25\" maxlength=\"15\" />
+			<input type=\"text\" name=\"planet_name\" id=\"planet_name\" value=\"".($cp->name)."\" length=\"25\" maxlength=\"15\" />
 			&nbsp; <a href=\"javascript:;\" onclick=\"GenPlot();\">Name generieren</a></td></tr>";
-			echo "<tr><th>Beschreibung:</th><td><textarea name=\"planet_desc\" rows=\"2\" cols=\"30\">".stripslashes($cp->desc)."</textarea></td></tr>";
+			echo "<tr><th>Beschreibung:</th><td><textarea name=\"planet_desc\" rows=\"2\" cols=\"30\">".($cp->desc)."</textarea></td></tr>";
 			tableEnd();
 			echo "<input type=\"submit\" name=\"submit_change\" value=\"Speichern\" /> &nbsp; ";
 			echo "</form>";

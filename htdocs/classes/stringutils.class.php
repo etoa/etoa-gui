@@ -45,6 +45,8 @@
       return strtr($str, $controlChars);
     }
 	
+    
+    /*
 	public static function encodeJavascriptStringForTT($str)
 	{
 	  // javascript should display text in a tooltip;
@@ -56,6 +58,33 @@
 	  // htmlentities($input_string,ENT_QUOTES,'UTF-8')
 	  return str_replace("\\","\\\\",htmlentities(str_replace("'",'&apos;',$str), ENT_QUOTES,'UTF-8'));
 	}
+	*/
+    
+    /*
+	public static function encodeDBStringToJS($str)
+    {
+        // Pass the string to a JS variable inline (so no " and no ' occurence possible)
+        // NOTE: this incorrectly shows ' as &apos; but there is no possibility
+        // to encode it correctly without either breaking the javascript or incorrectly
+        // displayed higher-unicode characters. TODO: stop using inline javascript.
+        return str_replace("\\","\\\\",htmlentities(str_replace("'",'&apos;',$str), ENT_QUOTES,'UTF-8'));
+        //return base64_encode($str);
+    }
+    */
+    
+	public static function encodeDBStringToJS($str)
+    {
+        return str_replace("'","\\'",str_replace("\\","\\\\",htmlspecialchars($str, ENT_COMPAT,'UTF-8')));
+    }
+    
+    /* Encode a string from the DB (stored via mysql_real_escape_string)
+     * to be displayed as plaintext in the HTML document, so changing
+     * all the tags to entities etc. AND replacing newlines with <br> tags
+     */
+    public static function encodeDBStringToPlaintext($str)
+    {
+        return StringUtils::replaceBR(htmlspecialchars($str, ENT_QUOTES, 'UTF-8'));
+    }
     
     public static function replaceAsciiControlCharsUnicode($str)
     {

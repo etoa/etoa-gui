@@ -2625,17 +2625,17 @@ function imagecreatefromfile($path, $user_functions = false)
 
 	function cTT($title,$content)
 	{
-		return " onclick=\"showTT('".StringUtils::encodeJavascriptStringForTT($title)."','".StringUtils::encodeJavascriptStringForTT($content)."',0,event,this);return false;\"  ";
+		return " onclick=\"showTT('".StringUtils::encodeDBStringToJS($title)."','".StringUtils::encodeDBStringToJS($content)."',0,event,this);return false;\"  ";
 	}
 
 	function mTT($title,$content)
 	{
-		return " onmouseover=\"showTT('".StringUtils::encodeJavascriptStringForTT($title)."','".StringUtils::replaceBR(StringUtils::encodeJavascriptStringForTT($content))."',1,event,this);\" onmouseout=\"hideTT();\" ";
+		return " onmouseover=\"showTT('".StringUtils::encodeDBStringToJS($title)."','".StringUtils::replaceBR(StringUtils::encodeDBStringToJS($content))."',1,event,this);\" onmouseout=\"hideTT();\" ";
 	}
 
 	function tt($content)
 	{
-		return " onmouseover=\"showTT('','".StringUtils::encodeJavascriptStringForTT($content)."',1,event,this);\" onmouseout=\"hideTT();\" ";
+		return " onmouseover=\"showTT('','".StringUtils::encodeDBStringToJS($content)."',1,event,this);\" onmouseout=\"hideTT();\" ";
 	}
 
 	function checkDaemonRunning($pidfile)

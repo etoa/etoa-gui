@@ -9,6 +9,8 @@
 	{
 		protected $isValid;
 		protected $coordsLoaded;
+        private $desc;
+        private $name;
 
 		// TODO: Make protected and ad getter
 		public $resources;
@@ -22,7 +24,7 @@
 			$this->exploreCode = 'e';
 			$this->explore = false;
 			$this->isValid = false;
-      $this->isVisible = true;
+            $this->isVisible = true;
 			
 			if (!is_array($arr) && $arr>0)
 			{
@@ -79,12 +81,12 @@
 			}
 
 			if ($arr)
-			{				
+			{
 				$this->id=$arr['id'];
 				$this->cellId=$arr['cell_id'];
 				$this->userId=$arr['planet_user_id'];
-				$this->name= $arr['planet_name']!="" ? stripslashes($arr['planet_name']) : 'Unbenannt';
-				$this->desc= stripslashes($arr['planet_desc']);
+				$this->name= $arr['planet_name']!="" ? ($arr['planet_name']) : 'Unbenannt';
+				$this->desc= $arr['planet_desc'];
 				$this->image=$arr['planet_image'];
 				$this->updated=$arr['planet_last_updated'];
 				$this->userChanged=$arr['planet_user_changed'];
@@ -187,7 +189,19 @@
 
 			}
 		}
-		
+	
+    public function __get($var)
+    {
+        if($var == 'desc')
+        {
+            return StringUtils::encodeDBStringToPlaintext($this->desc);
+        }
+        if($var == 'name')
+        {
+            return htmlspecialchars($this->name, ENT_QUOTES, 'UTF-8', true);
+        }
+        return $this->$var;
+    }
 
     public function allowedFleetActions()
     {
@@ -275,7 +289,7 @@
 		
 		function name()
 		{
-			return htmlspecialchars($this->name);
+			return $this->__get('name');//htmlspecialchars($this->name);
 		}
 
 		function __toString()
@@ -567,12 +581,12 @@
 			UPDATE 
 				planets 
 			SET 
-				planet_name='".addslashes($name)."',
-				planet_desc='".addslashes($comment)."' 
+				planet_name='".mysql_real_escape_string($name)."',
+				planet_desc='".mysql_real_escape_string($comment)."' 
 			WHERE 
 				id='".$this->id."';");
 			$this->name=$name;
-			$this->desc=$comment;			
+			$this->desc=$comment;
 		}
 	
 		function setDefaultResources()
@@ -1018,7 +1032,7 @@
 					planets
 				SET
 					planet_user_id='".$this->userId."',
-					planet_name='".$this->name."',
+					planet_name='".mysql_real_escape_string($this->name)."',
 					planet_user_changed=".$this->changed.",
 					planet_user_main=0
 				WHERE
