@@ -2,6 +2,15 @@
 	
 	$time = time();
 
+	// Get tutorial
+	$ttm = new TutorialManager();
+	if (!$ttm->hasReadTutorial($cu->id, 1)) {
+		$tpl->assign('tutorial_id', 1);
+	}
+	else if ($cu->isSetup() && !$ttm->hasReadTutorial($cu->id, 2)) {
+		$tpl->assign('tutorial_id', 2);
+	}
+
 	// Go to user setup page if user wasn't set up correctly
 	if (!$cu->isSetup() && $page!="help" && $page!="contact")
 	{
@@ -33,22 +42,29 @@
 			}
 		}
 		
+		$tm = new TextManager();
+
 		// SYSTEMNACHRICHT //
-		if ($cfg->value('system_message')!="")
+		$systemMessage = $tm->getText('system_message');
+		if ($systemMessage->enabled && !empty($systemMessage->content))
 		{
-			echo "<br/>";
+			echo "<br />";
 			iBoxStart("<span style=\"color:red;\">WICHTIGE SYSTEMNACHRICHT</span>");
-			echo text2html($cfg->value('system_message'));
+			echo text2html($systemMessage->content);
 			iBoxEnd();
 		}
 		
 		//Eventhandler //
 		if (!$cfg->value("backend_status"))
 		{
-			echo "<br />";
-			iBoxStart("<span style=\"color:red;\">UPDATEDIENST</span>");
-			echo text2html($cfg->value("backend_offline_message"));
-			iBoxEnd();
+			$infoText = $tm->getText('backend_offline_message');
+			if ($infoText->enabled && !empty($infoText->content))
+			{
+				echo "<br />";
+				iBoxStart("<span style=\"color:red;\">UPDATEDIENST</span>");
+				echo text2html($infoText->content);
+				iBoxEnd();
+			}
 		}
 		
 		// Auf Löschung prüfen
@@ -158,25 +174,22 @@
 					}
 				}
 				
-				dbquery("INSERT DELAYED INTO
+				dbQuerySave("INSERT DELAYED INTO
 					user_surveillance
 				(
 					timestamp,
 					user_id,
 					page,
 					request,
+					request_raw,
 					post,
 					session
 				)
 				VALUES
 				(
-					".time().",
-					".$cu->id.",
-					'".$page."',
-					'".$req."',
-					'".$post."',
-					'".$s->id."'
-				)");
+					UNIX_TIMESTAMP(),
+					?, ?, ?, ?, ?, ?
+				)", array($cu->id, $page, $req, $_SERVER['QUERY_STRING'], $post, $s->id));
 			}
 
 			// Cheating-Schutz für externe Formulare
@@ -211,11 +224,10 @@
 					// DEBUG
 					$query_counter=0; 
 					$queries=array();
-
-					echo '<div id="info">&nbsp;</div>';
 					
 					// Content includen
-					if (!include("content/".$page.".php"))
+					$contentFile = "content/".$page.".php";
+					if (!file_exists($contentFile) || !include($contentFile))
 					{
 						echo '<h1>Fehler</h1>
 						Die Seite <b>'.$page.'</b> existiert nicht!<br/><br/>
@@ -236,7 +248,7 @@
 				else
 				{
 					echo '<h1>Fehler</h1>
-					Der Seitenname <b>'.$page.'</b> enth&auml;lt unerlaubte Zeichen!<br/><br/>
+					Der Seitenname enth&auml;lt unerlaubte Zeichen!<br/><br/>
 					<input type="button" onclick="history.back();" value="Zurück" />';
 				}
 			}

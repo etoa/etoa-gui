@@ -11,18 +11,14 @@
 		// Renderzeit-Start festlegen
 		$render_time = explode(" ",microtime());
 		$render_starttime=$render_time[1]+$render_time[0];
-	
-		$out="<h2>Spieler-Auslastung</h2>";
-		$out.="<img src=\"cache/out/userstats.png\" alt=\"User-Statistik\" />";
 
 		//
 		//Universum
 		//
 
-		$out.="<h2>Universum</h2>";
+		$out ="<h2>Universum</h2>";
 		$out.="<table width=\"95%\">";
 		$out.="<tr>";
-
 
         /****************************************/
         /* Bewohnte Planetentypen               */
@@ -974,21 +970,24 @@
 	static function generateAndSave()
 	{
 		$file = GAMESTATS_FILE;
-			if ($f=fopen($file,"w+"))
-			{
-				$str = self::generate();
-				if (!fwrite($f,$str))
-				{
-					echo "Error! Could not write gamestats file $file!";
-					return false;
-				}
-				fclose($f);				
-				return true;
-			}	
-			echo "Error! Could not open gamestats file $file!";
-			return false;
+		$dir = dirname($file);
+		if (!is_dir($dir)) {
+			mkdir($dir, 0777, true);
 		}
 		
+		if ($f=fopen($file,"w+"))
+		{
+			$str = self::generate();
+			if (!fwrite($f,$str))
+			{
+				echo "Error! Could not write gamestats file $file!";
+				return false;
+			}
+			fclose($f);
+			return true;
+		}
+		echo "Error! Could not open gamestats file $file!";
+		return false;
 	}
-
+}
 ?>

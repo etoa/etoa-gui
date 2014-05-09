@@ -196,7 +196,7 @@
 	// Personal fleets
 	//
 	else 
-	{	
+	{
 		echo "<input type=\"button\" onclick=\"document.location='?page=fleets&mode=alliance'\" value=\"Allianzflotten anzeigen\" /><br/><br/>";
 		
 		$fm = new FleetManager($cu->id,$cu->allianceId);
@@ -280,7 +280,7 @@
 		$header=0;
 		$fm->loadForeign();
 		if ($fm->count() > 0)
-		{	
+		{
 			tableStart("Fremde Flotten");
 			foreach ($fm->getAll() as $fid=>$fd)
 			{	

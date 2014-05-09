@@ -293,21 +293,21 @@
 			if ($this->members == null)
 			{
 				$this->members = array();
-		  	$res = dbquery("
-		  	SELECT
-		  		user_id
-		  	FROM
-		  		users
-		  	WHERE
-		  		user_alliance_id=".$this->id."
-		  	");
-		  	if (mysql_num_rows($res)>0)
-		  	{
-		  		while ($arr = mysql_fetch_row($res))
-		  		{
-			  		$this->members[$arr[0]] = new User($arr[0]);
-		  		}
-		  	}
+				$res = dbquery("
+				SELECT
+					user_id
+				FROM
+					users
+				WHERE
+					user_alliance_id=".$this->id."
+				");
+				if (mysql_num_rows($res)>0)
+				{
+					while ($arr = mysql_fetch_row($res))
+					{
+						$this->members[$arr[0]] = new User($arr[0]);
+					}
+				}
 			}
 			return $this->members;
 		}
@@ -320,6 +320,11 @@
 			$this->getMembers();
 			if (!isset($this->members[$userId]))
 			{
+				$maxMemberCount = Config::getInstance()->get("alliance_max_member_count");
+				if ($maxMemberCount > 0 && $this->memberCount > $maxMemberCount) {
+					return false;
+				}
+
 				$tmpUser = new User($userId);
 				if ($tmpUser->isValid)
 				{
@@ -719,11 +724,10 @@
 				// Set user alliance link to null
 				if ($this->members==null)
 					$this->getMembers();
-				for($i=0;$i<count($this->members);$i++)
-				{
-					$this->members[$i]->alliance = null;
+				foreach ($this->members as &$member) {
+					$member->alliance = null;
 				}
-				$user->alliance = null;
+				unset($member);
 
 				// Daten löschen
 				dbquery("
@@ -735,6 +739,7 @@
 				//Log schreiben
 				if($user!=null)
 				{
+					$user->alliance = null;
 					$user->addToUserLog("alliance","{nick} löst die Allianz [b]".$this."[/b] auf.");
 					add_log("5","Die Allianz [b]".$this."[/b] wurde von ".$user." aufgelöst!");
 				}
@@ -1190,6 +1195,21 @@
 		$nr = mysql_affected_rows();
 		add_log("4","$nr Allianzpunkte-Logs die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!");
 		return $nr;
+	}
+
+	/**
+	* Returns the number of members of the given alliance
+	*/
+	static public function countMembers($allianceId) {
+		$narr = mysql_fetch_row(dbquery("
+		SELECT
+			COUNT(user_id) as member_count
+		FROM
+			users
+		WHERE
+			user_alliance_id=".$allianceId."
+		;"));
+		return $narr[0];
 	}
 }
 ?>

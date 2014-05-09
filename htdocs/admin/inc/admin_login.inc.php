@@ -84,7 +84,7 @@ else
 		}
 		
 		$tpl->assign('login_target', "?".$_SERVER['QUERY_STRING']);
-		$tpl->assign('game_login_url', Config::getInstance()->loginurl->v);
+		$tpl->assign('game_login_url', '../show.php?index=login');
 		
 		$tpl->setView("admin/login");
 	}

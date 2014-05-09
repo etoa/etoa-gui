@@ -678,7 +678,7 @@
 			}			
 			if (isset($sa['cell_pos']))
 			{
-				$sql.= " AND c.pos ".searchFieldSql($sa['cell_pos']);
+				$sql.= " AND e.pos ".searchFieldSql($sa['cell_pos']);
 			}
 
 			if (isset($sa['name']))

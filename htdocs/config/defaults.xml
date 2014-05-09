@@ -21,8 +21,8 @@
     <category id="21">Datenbank</category>	
     <category id="22">Entwickler-Optionen</category>	
     <category id="23">Kryptocenter</category>
-    <category id="24">Texte</category>
     <category id="25">Chat</category>
+    <category id="26">Boost-System</category>
   </categories>
   <items>
     <item name="roundname" cat="1" base="yes">
@@ -32,7 +32,7 @@
       <v comment="Runden-URL" type="text">http://roundx.live.etoa.net</v>
     </item>
     <item name="loginurl" cat="1" base="yes">
-      <v comment="Login-URL" type="text">http://etoa.ch</v>
+      <v comment="Login-URL (leerlassen für lokales Login)" type="text">http://etoa.ch</v>
     </item>
     <item name="user_timeout" cat="1">
       <v comment="User-Timeout (wenn man so lange nichts macht, muss man sich neu einloggen) in Sekunden" type="text">2400</v>
@@ -72,9 +72,6 @@
     <item name="url_rules" cat="1">
       <v comment="URL: Regeln" type="text">http://etoa.ch/rules</v>
     </item>
-    <item name="url_bugs" cat="1">
-      <v comment="URL: Bug melden" type="text">https://dev.etoa.net/trac/newticket</v>
-    </item>
     <item name="url_teamspeak" cat="1">
       <v comment="URL: TeamSpeak" type="text">http://etoa.ch/404.html</v>
     </item>
@@ -94,9 +91,6 @@ http://www.etoa.ch</v>
     </item>
     <item name="under_construction" cat="1">
       <v comment="Seite die in Bearbeitung sind (DB Updates, ...)" type="textarea"></v>
-    </item>
-    <item name="system_message" cat="1">
-      <v comment="Wichtige Systemnachricht" type="textarea"/>
     </item>
     <item name="offline" cat="1">
       <v comment="Game offline stellen" type="onoff">0</v>
@@ -286,6 +280,10 @@ http://www.etoa.ch</v>
     <item name="invade_active_users" cat="4">
       <v comment="Invasieren von aktiven Spielern" type="onoff">0</v>
     </item>
+    <item name="abs_enabled" cat="4">
+      <v comment="Allianzkampfsystem (AKS) aktiv" type="onoff">1</v>
+      <p1 comment="AKS auf Allianzen im Krieg beschränken" type="onoff">0</p1>
+    </item>
     <item name="alliance_fleets_max_players" cat="4">
       <v comment="Anzahl Spieler in einer Allianzflotte oder Support einschränken" type="onoff">1</v>
       <p1 comment="Maximale Spielerzahl im KB (mindestens 1)" type="text">3</p1>
@@ -458,9 +456,6 @@ http://www.etoa.ch</v>
       <v comment="User-Profilbilder gepr&#xFC;ft" type="timedate">1209569797</v>
     </item>
 
-    <item name="admininfo" cat="11">
-      <v comment="Admin-News" type="textarea"/>
-    </item>
     <item name="admin_timeout" cat="11">
       <v comment="Admin-Timeout" type="text">1200</v>
     </item>
@@ -547,6 +542,9 @@ http://www.etoa.ch</v>
       <v comment="Spielerrang: Erfahrung" type="text">Kriegsheld von Andromeda</v>
     </item>
 
+    <item name="alliance_max_member_count" cat="16">
+      <v comment="Maximale Anzahl von Allianzmitgliedern. 0=unendlich" type="text">7</v>
+    </item>
     <item name="alliance_membercosts_factor" cat="16">
       <v comment="Kosten pro Member&#13;&#10;&#13;&#10;Calc: 1 + this.value*(member.count-1)" type="text">0.9</v>
     </item>
@@ -662,15 +660,9 @@ http://www.etoa.ch</v>
     <item name="daemon_pidfile" cat="20" base="yes">
       <v comment="Evendhandler PID-File" type="text">/var/run/etoad/roundx.pid</v>
     </item>	
-    <item name="daemon_ipckey" cat="20" base="yes">
-      <v comment="Evendhandler IPC Key" type="text">1</v>
-    </item>	
     <item name="backend_status" cat="20">
       <v comment="Eventhandler-Status" type="text">0</v>
 	</item>
-    <item name="backend_offline_message" cat="20">	 
-      <v comment="Eventhandler Offline Nachricht" type="textarea">Der EtoA-Updatedienst ist momentan ausser Betrieb. Die Entwickler sind informiert. Es ist nicht notwendig ein Ticket zu eröffnen. Unterdessen werden weder Gebäude, Technologien, Schiffe, Verteidigungen, Planeten noch Flotten aktualisiert.</v>
-    </item>
     <item name="backend_offline_mail" cat="20">	 	  
       <v comment="Eventhandler Offline Mail" type="text">river@etoa.ch;mrcage@etoa.ch</v>
     </item>
@@ -713,58 +705,21 @@ http://www.etoa.ch</v>
       <p2 comment="Kryptocenter min Cooldown (sec)&#13;&#10;Uservalue 600" type="text">21600</p2>
     </item>
 
-    <item name="info" cat="24">
-      <v comment="InGame Info" type="textarea">[color=yellow][b]Dies ist ein Testserver und die Spielwiese der Entwickler![/b] &#xD;
-Es gibt weder Admin-Support noch werden irgendwelche Sachen erstattet. Rechnet damit dass eure Accs unter Umst&#xE4;nden ohne Vorank&#xFC;ndigung gel&#xF6;scht oder angegriffen werden k&#xF6;nnen, falls wir etwas testen m&#xFC;ssen.[/color]&#xD;
-&#xD;
-[color=limegreen]Alle Infos zur Entwicklung: [url]https://dev.etoa.net[/url]&#xD;
-&#xD;
-[color orange][b]Fehler melden:[/b]&#xD;
-Das es scheinbar noch das eine oder andere Missverst&#xE4;ndnis gibt: Rechtschreibefehler und Derartiges bitte unter [url]http://www.etoa.ch/forum/thread.php?postid=67971[/url] melden und Bugs unter [url]https://dev.etoa.net/trac/newticket[/url] und bei Milestone bitte Beta V3 ausw&#xE4;hlen und wenn m&#xF6;glich kurz schauen, ob der entsprechende Bug schon gemeldet wurde.&#xD;
-&#xD;
-Viele Dank ihr macht somit uns, wie auch euch das Ganze einiges einfacher.[/color]&#xD;
-&#xD;
-[color blue][b]Flottenupdates:[/b]&#xD;
-Bez&#xFC;glich des Flottenscripts ist es momentan noch m&#xF6;glich, dass Aktionen nicht korrekt ausgef&#xFC;hrt werden oder dass das Script aufgrund einer Aktion blockiert wird. Vollen Support diesbez&#xFC;glich wird es ab Donnerstag Abend geben.&#xD;
-&#xD;
-Besten Dank f&#xFC;r euer Verst&#xE4;ndnis&#xD;
-[/color]&#xD;
-</v>
-    </item>
-    <item name="contact_message" cat="24">
-      <v comment="Kontakt-Text" type="textarea">Die folgenden Angaben betreffen nur die aktuelle Spielrunde. Bitte bei Problemen im Zusammenhang mit dem Spielablauf (Namenswechsel, Cheater/Buguser melden etc) die Game-Admins kontaktieren. Bei schweren Bugs oder Fragen bitte zuerst im Forum nachschauen, dann erst die Entwickler kontaktieren. Bitte nur ganz wichtige E-Mails an die Projektleitung senden, belanglose Mails und Spam werden stillschweigend ignoriert!</v>
-    </item>
-    <item name="welcome_message" cat="24">
-      <v comment="Begr&#xFC;ssungstext f&#xFC;r neue Spieler" type="textarea">Seid gegr&#xFC;sst, Imperator!&#xD;
-&#xD;
-Ich begl&#xFC;ckw&#xFC;nsche Euch zum Antritt Eurer Regentschaft. Die Zukunft Eurer Rasse liegt nun in Euren H&#xE4;nden. Eure Heimatwelt hat sich soweit entwickelt dass ihre Bewohner sich danach sehnen die Galaxie um sie herum zu erkunden und fremde Welten zu besiedeln.&#xD;
-&#xD;
-Links seht ihr die Navigation, mit der ihr Euer Reich verwalten k&#xF6;nnt. Baut zuerst einige Geb&#xE4;ude um Rohstoffe zu f&#xF6;rdern. Danach solltet ihr Forschungslabors und Werften errichten, damit ihr Raumschiffe bauen k&#xF6;nnt um die Weiten von Andromeda zu erkunden. Bedenkt dass einige Geb&#xE4;ude Energie ben&#xF6;tigen, vernachl&#xE4;ssigt also den Bau von geeigneten Kraftwerken nicht.&#xD;
-&#xD;
-Ansonsten schaut Euch einfach um, zweifellos werdet Ihr Euch rasch zurechtfinden.&#xD;
-&#xD;
-Weitere Hilfen und Tipps findet ihr hier:&#xD;
-&#xD;
-Hilfe: [url ?page=help]Umfangreiche InGame-Hilfe[/url]&#xD;
-Kontakt: [url ?page=contact]Game-Admin kontaktieren[/url]&#xD;
-Forum: [url http://www.etoa.ch/forum]Offizielles Forum[/url]&#xD;
-FAQ: [url http://www.etoa.ch/faq]H&#xE4;ufig gestellte Fragen und Antworten dazu[/url]&#xD;
-Wiki: [url http://etoa.ch/help/?page=article]How-To&#x27;s und hilfreiche Artikel[/url]&#xD;
-&#xD;
-Ich w&#xFC;nsche Euch nun viel Erfolg in der Galaxie von Andromeda. M&#xF6;gen Euer Imperium gross und Eure Schlachten erfolgreich sein!&#xD;
-&#xD;
-Anmerkung: Eine Kopie dieser Nachricht wird in Eurer Nachrichten-Box hinterlegt. Mit dem Schliessen dieser Nachricht leuchtet das Briefsymbol am oberen Bildschirmrand gr&#xFC;n. Klickt darauf, um die Nachrichtenbox anzuzeigen.</v>
-    </item>
-
     <item name="chat_recent_messages" cat="25">
       <v comment="Anzahl aktuelle Chat Nachrichten" type="text">200</v>
     </item>
     <item name="chat_user_timeout" cat="25">
       <v comment="Chat User Timeout in Sekunden" type="text">180</v>
     </item>    
-    <item name="chat_welcome_message" cat="25">
-      <v comment="Chat Willkommensnachricht" type="textarea">Hallo %nick%, willkommen im EtoA-Chat. Bitte beachte, dass wir Spam nicht dulden und eine gepflegte Ausdrucksweise erwarten. Bei Verstössen gegen diese Regeln werden wir mit Banns und/oder Accountsperrungen vorgehen!</v>
-    </item>
     
+    <item name="boost_system_enable" cat="26">
+      <v comment="Boost-System aktiv" type="onoff">0</v>
+    </item>
+    <item name="boost_system_max_res_prod_bonus" cat="26">
+      <v comment="Maximaler Ressourcenproduktionsbonus" type="text">2</v>
+    </item>
+    <item name="boost_system_max_building_speed_bonus" cat="26">
+      <v comment="Maximaler Baugeschwindigkeitssbonus" type="text">2</v>
+    </item>
   </items>
 </config>

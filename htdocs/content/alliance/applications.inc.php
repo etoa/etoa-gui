@@ -19,6 +19,7 @@
 	//
 if (Alliance::checkActionRights('applications'))
 {
+	$maxMemberCount = Config::getInstance()->get("alliance_max_member_count");
 
 		echo "<h2>Bewerbungen</h2>";
 		if(isset($_POST['applicationsubmit']) && checker_verify())
@@ -37,6 +38,11 @@ if (Alliance::checkActionRights('applications'))
 					// Anfrage annehmen
 					if ($answer==2)
 					{
+						if ($maxMemberCount != 0 && Alliance::countMembers($cu->allianceId) >= $maxMemberCount) {
+							error_msg("Maximale Anzahl an Mitgliedern erreicht!");
+							break;
+						}
+
 						$cnt++;
 						$new_member = true;
 						ok_msg($nick." wurde angenommen.");
@@ -111,8 +117,9 @@ if (Alliance::checkActionRights('applications'))
 				ok_msg("Änderungen übernommen");
 			}
 		}
-						
-						
+
+		$currentMemberCount = Alliance::countMembers($cu->allianceId);
+
 		echo "<form action=\"?page=$page&action=applications\" method=\"post\" id=\"applicationsForm\">";
 		checker_init();
 		$res = dbquery("
@@ -151,13 +158,15 @@ if (Alliance::checkActionRights('applications'))
 				</td>
 				<td>".df($arr['timestamp'])."<br/><br/>".text2html($arr['text'])."</td>
 				<td>
-					<textarea rows=\"6\" cols=\"40\" name=\"application_answer_text[".$arr['user_id']."]\" /></textarea>
+					<textarea rows=\"6\" cols=\"40\" name=\"application_answer_text[".$arr['user_id']."]\" /></textarea><br/>".helpLink('textformat', 'Hilfe zur Formatierung')."
 				</td>
-				<td>
-					<input type=\"radio\" name=\"application_answer[".$arr['user_id']."]\" value=\"2\" onchange=\"xajax_showAllianceMemberAddCosts('".$cu->allianceId()."',xajax.getFormValues('applicationsForm'));\"/> <span ".tm("Anfrage annehmen","".$arr['user_nick']." wird in die Allianz aufgenommen.<br>Eine Nachricht wird versendet.").">Annehmen</span><br><br>
-					<input type=\"radio\" name=\"application_answer[".$arr['user_id']."]\" value=\"1\" onchange=\"xajax_showAllianceMemberAddCosts('".$cu->allianceId()."',xajax.getFormValues('applicationsForm'));\"/> <span ".tm("Anfrage ablehnen","".$arr['user_nick']." wird der Zutritt zu der Allianz verweigert.<br>Eine Nachricht wird versendet.").">Ablehnen</span><br><br>
-					<input type=\"radio\" name=\"application_answer[".$arr['user_id']."]\" value=\"0\" checked=\"checked\" onchange=\"xajax_showAllianceMemberAddCosts('".$cu->allianceId()."',xajax.getFormValues('applicationsForm'));\"/> <span ".tm("Anfrage nicht bearbeiten","Sofern vorhanden, wird eine Nachricht an ".$arr['user_nick']." geschickt.").">Nicht bearbeiten</span>
-				</td>
+				<td>";
+				if ($maxMemberCount == 0 || $currentMemberCount < $maxMemberCount) {
+					echo "<input type=\"radio\" name=\"application_answer[".$arr['user_id']."]\" value=\"2\" onchange=\"xajax_showAllianceMemberAddCosts('".$cu->allianceId()."',xajax.getFormValues('applicationsForm'));\"/> <span ".tm("Anfrage annehmen","".$arr['user_nick']." wird in die Allianz aufgenommen.<br>Eine Nachricht wird versendet.").">Annehmen</span><br><br>";
+				}
+				echo "<input type=\"radio\" name=\"application_answer[".$arr['user_id']."]\" value=\"1\" onchange=\"xajax_showAllianceMemberAddCosts('".$cu->allianceId()."',xajax.getFormValues('applicationsForm'));\"/> <span ".tm("Anfrage ablehnen","".$arr['user_nick']." wird der Zutritt zu der Allianz verweigert.<br>Eine Nachricht wird versendet.").">Ablehnen</span><br><br>";
+				echo "<input type=\"radio\" name=\"application_answer[".$arr['user_id']."]\" value=\"0\" checked=\"checked\" onchange=\"xajax_showAllianceMemberAddCosts('".$cu->allianceId()."',xajax.getFormValues('applicationsForm'));\"/> <span ".tm("Anfrage nicht bearbeiten","Sofern vorhanden, wird eine Nachricht an ".$arr['user_nick']." geschickt.").">Nicht bearbeiten</span>";
+				echo "</td>
 				</tr>";
 			}
 			echo "<tr id=\"memberCosts\" style=\"display: none;\"><td colspan=\"4\" id=\"memberCostsTD\"></td></tr>";
@@ -170,6 +179,9 @@ if (Alliance::checkActionRights('applications'))
 		}
 		echo "<input type=\"button\" onclick=\"document.location='?page=alliance';\" value=\"Zur&uuml;ck\" /></form>";
 
+		if ($maxMemberCount != 0) {
+			echo "<p><b>Hinweis:</b> Eine Allianz darf maximal $maxMemberCount Mitglieder haben (aktuell $currentMemberCount)!</p>";
+		}
 
 }
 

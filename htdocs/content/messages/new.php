@@ -196,7 +196,7 @@
 			 </tr>";
 			echo "<tr>
 				<th width=\"50\" valign=\"top\">Text:</th>
-				<td width=\"250\"><textarea name=\"message_text\" id=\"message\" rows=\"10\" cols=\"60\" ";
+				<td width=\"250\"><textarea name=\"message_text\" id=\"message\" rows=\"12\" cols=\"60\" ";
 				if ($msgcreatpreview)
 				{
 					/*
@@ -207,7 +207,7 @@
 					*/
 					echo "onkeyup=\"text2html(this.value,'msgPreview');\"";
 				}
-				echo ">".$text."</textarea></td>";
+				echo ">".$text.'</textarea><br/>'.helpLink('textformat', 'Hilfe zur Formatierung').'</td>';
 				
 				if ($msgcreatpreview)
 				{
@@ -280,7 +280,6 @@
 				<a href=\"javascript:;\" onclick=\"addText(':holy:', '', false, document.msgform);".$prevstr."\"><img src=\"".SMILIE_DIR."/holy.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
 				<a href=\"javascript:;\" onclick=\"addText(':rolleyes:', '', false, document.msgform);".$prevstr."\"><img src=\"".SMILIE_DIR."/rolleyes.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
 				<a href=\"javascript:;\" onclick=\"addText(':anger:', '', false, document.msgform);".$prevstr."\"><img src=\"".SMILIE_DIR."/anger.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;";
-
 				echo "</td>";
 		echo "</tr>";
 		if ($msgcreatpreview)

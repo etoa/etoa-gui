@@ -1,6 +1,5 @@
 #! /usr/bin/php -q
 <?PHP
-
 	/////////////////////////////////////////////////
 	//		 	 ____    __           ______       			//
 	//			/\  _`\ /\ \__       /\  _  \      			//
@@ -27,12 +26,10 @@
 	// 	Kommentar: 	Diese Date erstellt ein Backup einer Datenbank mit dem Datum im Dateinamen
 
 	// Gamepfad feststellen
-	define('USE_HTML',false);
-
-	// Gamepfad feststellen
 	$grd = chdir(realpath(dirname(__FILE__)."/../"));
 
 	// Initialisieren
+	try {
 	if (include("inc/bootstrap.inc.php"))
 	{	
 		if (isset($_SERVER['argv'][1]) && $_SERVER['argv'][1]!="")
@@ -53,5 +50,9 @@
 	else
 	{
 		throw new EException("Could not load bootstrap file ".getcwd()."/inc/bootstrap.inc.php\n");
+	}
+	} catch (DBException $ex) {
+		echo $ex;
+		exit(1);
 	}
 ?>

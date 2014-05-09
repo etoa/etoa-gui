@@ -40,13 +40,9 @@
 	if (!defined('ADMIN_MODE'))
 		define('ADMIN_MODE',false);
 
-	if (!defined('USE_HTML'))
-		define('USE_HTML',true);
-
-
 	define('ERROR_LOGFILE',CACHE_ROOT."/errors.txt");
 	define('DBERROR_LOGFILE',CACHE_ROOT."/dberrors.txt");
-	
+
 	define("DEVCENTER_PATH","http://dev.etoa.ch");	// Entwickler Link
 	define("DEVCENTER_ONCLICK","window.open('".DEVCENTER_PATH."','dev','width=1024,height=768,scrollbars=yes');");	// Entwickler Link
 ?>

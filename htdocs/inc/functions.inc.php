@@ -1001,6 +1001,17 @@
 		}		
 		echo text2html($text)."</div>";		
 	}
+	
+	/**
+	* Formatierte Info-Meldung anzeigen
+	*
+	* $text: Info-Meldung
+	*/
+	function info_msg($text)
+	{
+		echo "<div class=\"infoMsgBox\">";
+		echo text2html($text)."</div>";	
+	}
        
   /**
   * Error msg
@@ -1031,10 +1042,10 @@
 		switch($addition)
 		{		
 			case 1:
-				echo text2html("\n\n[url http://forum.etoa.ch]Zum Forum[/url] | [email mail@etoa.ch]Mail an die Spielleitung[/email]");		
+				echo text2html("\n\n[url ".FORUM_URL."]Zum Forum[/url] | [email mail@etoa.ch]Mail an die Spielleitung[/email]");
 				break;
 			case 2:
-				echo text2html("\n\n[url http://bugs.etoa.net]Fehler melden[/url]");		
+				echo text2html("\n\n[url ".DEVCENTER_PATH."]Fehler melden[/url]");
 				break;				
 			default:
 				echo '';
@@ -1042,7 +1053,7 @@
 		if (isset($stacktrace))
 		{
 			echo "<div style=\"text-align:left;border-top:1px solid #000;\">
-			<b>Stack-Trace:</b><br/>".nl2br($stacktrace)."<br/><a href=\"http://bugs.etoa.net\" target=\"_blank\">Fehler melden</a></div>";
+			<b>Stack-Trace:</b><br/>".nl2br($stacktrace)."<br/><a href=\"".DEVCENTER_PATH."\" target=\"_blank\">Fehler melden</a></div>";
 		}
 		echo "</div>";
 		if ($exit>0) 
@@ -2010,11 +2021,15 @@ function imagecreatefromfile($path, $user_functions = false)
 		$bc['food'] = $fac * $buildingArray['building_costs_food'] * pow($buildingArray['building_build_costs_factor'],$level);
 		$bc['power'] = $fac * $buildingArray['building_costs_power'] * pow($buildingArray['building_build_costs_factor'],$level);
 		
-		if (!isset($cp->typeBuildtime))
-			$cp->typeBuildtime = 1.0;
-		if (!isset($cp->starBuildtime))
-			$cp->starBuildtime = 1.0;
-		$bonus = $cu->race->buildTime + $cp->typeBuildtime + $cp->starBuildtime + $cu->specialist->buildTime - 3;
+        $typeBuildTime = 1.0;
+        $starBuildTime = 1.0;
+        
+		if (isset($cp->typeBuildtime))
+			$typeBuildTime = $cp->typeBuildtime;
+		if (isset($cp->starBuildtime))
+			$starBuildTime = $cp->starBuildtime;
+            
+		$bonus = $cu->race->buildTime + $typeBuildTime + $starBuildTime + $cu->specialist->buildTime - 3;
 		$bc['time'] = ($bc['metal']+$bc['crystal']+$bc['plastic']+$bc['fuel']+$bc['food']) / GLOBAL_TIME * BUILD_BUILD_TIME;
 		$bc['time'] *= $bonus;
 		return $bc;
@@ -2610,17 +2625,17 @@ function imagecreatefromfile($path, $user_functions = false)
 
 	function cTT($title,$content)
 	{
-		return " onclick=\"showTT('".StringUtils::encodeJavascriptStringForTT($title)."','".StringUtils::encodeJavascriptStringForTT($content)."',0,event,this);return false;\"  ";
+		return " onclick=\"showTT('".StringUtils::encodeDBStringToJS($title)."','".StringUtils::encodeDBStringToJS($content)."',0,event,this);return false;\"  ";
 	}
 
 	function mTT($title,$content)
 	{
-		return " onmouseover=\"showTT('".StringUtils::encodeJavascriptStringForTT($title)."','".StringUtils::replaceBR(StringUtils::encodeJavascriptStringForTT($content))."',1,event,this);\" onmouseout=\"hideTT();\" ";
+		return " onmouseover=\"showTT('".StringUtils::encodeDBStringToJS($title)."','".StringUtils::replaceBR(StringUtils::encodeDBStringToJS($content))."',1,event,this);\" onmouseout=\"hideTT();\" ";
 	}
 
 	function tt($content)
 	{
-		return " onmouseover=\"showTT('','".StringUtils::encodeJavascriptStringForTT($content)."',1,event,this);\" onmouseout=\"hideTT();\" ";
+		return " onmouseover=\"showTT('','".StringUtils::encodeDBStringToJS($content)."',1,event,this);\" onmouseout=\"hideTT();\" ";
 	}
 
 	function checkDaemonRunning($pidfile)
@@ -2638,18 +2653,6 @@ function imagecreatefromfile($path, $user_functions = false)
 	      	return $pid;   
 	    	}
 			}
-		}
-		return false;
-	}
-	
-	function sendBackendMessage($message)
-	{
-		if (function_exists("msg_get_queue"))
-		{
-			$ipckey = Config::getInstance()->daemon_ipckey->v;
-			$q = msg_get_queue($ipckey,0666);
-			add_log(4,"Sende IPC Message mit Key $ipckey. Die Queue hat die ID ".$q);
-			return msg_send($q,1,$message,false,false);
 		}
 		return false;
 	}
@@ -2723,7 +2726,7 @@ function imagecreatefromfile($path, $user_functions = false)
 			}
 			else
 			{
-				define("IMAGE_PATH",$cfg->default_image_path->v);
+				define("IMAGE_PATH", (ADMIN_MODE ? '../' : '') . $cfg->default_image_path->v);
 				define("IMAGE_EXT","png");
 			}
 		}
@@ -2767,6 +2770,27 @@ function imagecreatefromfile($path, $user_functions = false)
 		return $data;
 	}
 	
+	function getLoginUrl($args=array()) {
+		$url = Config::getInstance()->loginurl->v;
+		if (empty($url)) {
+			$url = "show.php?index=login";
+			if (sizeof($args) > 0 && isset($args['page'])) {
+				unset($args['page']);
+			}
+		}
+		if (sizeof($args) > 0) {
+			foreach ($args as $k => $v) {
+				if (!stristr($url, '?')) {
+					$url.="?";
+				} else {
+					$url.="&";
+				}
+				$url.= $k."=".$v;
+			}
+		}
+		return $url;
+	}
+
 	/**
 	* Textfunktionen einbinden
 	*/

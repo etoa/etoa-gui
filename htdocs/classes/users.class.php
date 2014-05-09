@@ -8,10 +8,11 @@
 		static function removeInactive($manual=false)
 		{
 			$cfg = Config::getInstance();
+            $now = time();
 	
-			$register_time = time()-(24*3600*$cfg->p2('user_inactive_days'));		// Zeit nach der ein User gelöscht wird wenn er noch 0 Punkte hat
-			$online_time = time()-(24*3600*$cfg->p1('user_inactive_days'));	// Zeit nach der ein User normalerweise gelöscht wird
-			$inactive_time = time()-(24*3600*USER_INACTIVE_TIME_LONG);
+			$register_time = $now-(24*3600*$cfg->p2('user_inactive_days'));		// Zeit nach der ein User gelöscht wird wenn er noch 0 Punkte hat
+			$online_time = $now-(24*3600*$cfg->p1('user_inactive_days'));	// Zeit nach der ein User normalerweise gelöscht wird
+			$inactive_time = $now-(24*3600*USER_INACTIVE_TIME_LONG);
 	
 			$res =	dbquery("
 				SELECT
@@ -21,6 +22,7 @@
 				WHERE
 					user_ghost='0'
 					AND admin=0
+                    AND `user_blocked_to`<'".$now."' 
 					AND ((user_registered<'".$register_time."' AND user_points='0')
 					OR (user_logouttime<'".$online_time."' AND user_logouttime>0 AND user_hmode_from='0'));
 			");
@@ -49,6 +51,7 @@
 				WHERE
 					user_ghost='0'
 					AND admin=0
+                    AND `user_blocked_to`<'".$now."' 
 					AND user_logouttime<'".$inactive_time."' 
 					AND user_logouttime>'".($inactive_time-3600*24)."' 
 					AND user_hmode_from='0';
@@ -72,6 +75,34 @@
 			}					
 				
 			return $nr;
+		}
+
+		/**
+		* Gets the number of inactive users
+		*/
+		static function getNumInactive()
+		{
+			$cfg = Config::getInstance();
+            $now = time();
+
+			$register_time = time()-(24*3600*$cfg->p2('user_inactive_days'));		// Zeit nach der ein User gelöscht wird wenn er noch 0 Punkte hat
+			$online_time = time()-(24*3600*$cfg->p1('user_inactive_days'));	// Zeit nach der ein User normalerweise gelöscht wird
+			$inactive_time = time()-(24*3600*USER_INACTIVE_TIME_LONG);
+
+			$res =	dbquery("
+				SELECT
+					COUNT(user_id)
+				FROM
+					users
+				WHERE
+					user_ghost='0'
+					AND admin=0
+                    AND `user_blocked_to`<'".$now."' 
+					AND ((user_registered<'".$register_time."' AND user_points='0')
+					OR (user_logouttime<'".$online_time."' AND user_logouttime>0 AND user_hmode_from='0'));
+			");
+			$arr = mysql_fetch_row($res);
+			return $arr[0];
 		}
 
 		/**
@@ -177,6 +208,7 @@
 		static function setUmodToInactive()
 		{
 			$cfg = Config::getInstance();
+            $now = time();
 			// set all users who are inactive 
 			dbquery('UPDATE
 						`users`
@@ -188,8 +220,10 @@
 						`user_ghost`="0"
 					AND
 						`admin`=0
-          AND 
-            `user_hmode_from`>0
+                    AND
+                        `user_blocked_to`<'.$now.' 
+                    AND 
+                        `user_hmode_from`>0
 					AND
 						`user_hmode_from`<"'.(time()-$cfg->p1('hmode_days')*86400).'" 
 					;');

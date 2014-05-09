@@ -63,9 +63,12 @@
 
 		// Überprüft ob die angegebene Anzahl Schiffe noch vorhanden ist (eventuelle Zerstörung durch Kampf?)
 		$sl = new ShipList($cp->id,$cu->id);
-
+        
 		// Schiffe vom Planeten abziehen
-		if ($sl->remove($ship_id,$ship_count))
+        $removed_ships_count = $sl->remove($ship_id,$ship_count);
+
+        // Falls alle Schiffe abgezogen werden konnten
+		if ($ship_count == $removed_ships_count)
 		{
 			// Angebot speicherns
 			dbquery("
@@ -88,7 +91,7 @@
 					'".$ship_count."',
 					".$cv."
 					'".$_POST['ship_for_alliance']."',
-					'".addslashes($_POST['ship_text'])."',
+					'".mysql_real_escape_string($_POST['ship_text'])."',
 					'".time()."')");
 
 			MarketReport::add(array(
@@ -100,9 +103,19 @@
 			ok_msg("Angebot erfolgreich abgesendet!");
 			return_btn();
 		}
-		else
+        else
 		{
-			error_msg("Die angegebenen Schiffe sind nicht mehr vorhanden!");
+            // if only some ships have been removed, re-add the removed ships
+			if($removed_ships_count > 0)
+            {
+                $sl->add($ship_id, $removed_ships_count);
+                // log action because this was a bug earlier
+                Log::add(Log::F_ILLEGALACTION,Log::WARNING,
+                         'User '.$cu->nick.' hat versucht, auf dem Planeten'.$cp->name()
+                         .' mehr Schiffe der ID '.$ship_id .' zu verkaufen, als vorhanden sind.'
+                         .' Vorhanden: '.$removed_ships_count.', Versuchte Verkaufszahl: '.$ship_count);
+            }
+            error_msg("Die angegebenen Schiffe sind nicht mehr vorhanden!");
 			return_btn();
 		}
 

@@ -212,7 +212,7 @@
             	$ships[$sarr['ship_id']]=$sarr;
             }
 
-						echo "</script>";
+						echo "</script>\n";
 
 	          echo "<form action=\"?page=".$page."\" method=\"post\" name=\"ship_selector\" id=\"ship_selector\">\n";
 	          echo $cstr;

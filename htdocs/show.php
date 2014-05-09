@@ -74,12 +74,13 @@
 	$tpl->assign("bodyTopStuff",ob_get_clean());
 
 	$tpl->assign("topmenu",$indexpage);
-	$tpl->assign("loginurl",Config::getInstance()->loginurl->v);
+	$tpl->assign("loginurl", getLoginUrl());
 	$tpl->assign("roundname",Config::getInstance()->roundname->v);
 
 	//
 	// Page content
 	//
+	try {
 
 	ob_start();
 			
@@ -104,8 +105,11 @@
 			$show = false;
 		}
 	}
-	if ($loggedIn)
+	if ($loggedIn) {
 		$show = true;
+	}
+
+	$tpl->assign("logged_in", ($loggedIn && $page!=DEFAULT_PAGE));
 			
 	if ($show)
 	{
@@ -115,52 +119,28 @@
 			$sub="index/";
 			if (!preg_match('^[a-z\_]+$^',$index) || strlen($index)>50)
 			{
-				die("<h1>Fehler</h1>Der Seitenname <b>".$index."</b> enth&auml;lt unerlaubte Zeichen!<br/><br/>
-				<a href=\"javascript:window.close();\">Schliessen</a><br/><br/>");
-			}
-			if (file_exists($sub.$index.".php"))
-			{
-				$popup = true;
-				include ($sub.$index.".php");
-				logAccess($index,"public");
+				echo "<h1>Fehler</h1>Der Seitenname enth&auml;lt unerlaubte Zeichen!<br/><br/>
+				<a href=\"javascript:window.close();\">Schliessen</a><br/><br/>";
+			} else {
+				if (file_exists($sub.$index.".php"))
+				{
+					$popup = true;
+					include ($sub.$index.".php");
+					logAccess($index,"public");
 
-				echo "<br/><br/>";
-			}
-			else
-			{
-				echo "<h1>Fehler:</h1> Die Seite <b>".$index."</b> existiert nicht!<br/><br/>";
+					echo "<br/><br/>";
+				}
+				else
+				{
+					echo "<h1>Fehler</h1> Die Seite <b>".$index."</b> existiert nicht!<br/><br/>";
+				}
 			}
 		}
 		elseif ($page!="" && $loggedIn  && $page!=DEFAULT_PAGE)
 		{
-			$sub="content/";
-			if (!preg_match('/^[a-z\_]+$/',$page) || strlen($page)>50)
-			{
-				die("<h1>Fehler</h1>Der Seitenname <b>".$page."</b> enth&auml;lt unerlaubte Zeichen!<br/><br/>
-				<a href=\"javascript:window.close();\">Schliessen</a><br/><br/>");
-			}
-			if (file_exists($sub.$page.".php"))
-			{
-				$popup = true;
-				include ($sub.$page.".php");
-
-				if (isset($_GET['sub']))
-	                                $lasub = $_GET['sub'];
-                                elseif (isset($_GET['action']))
-                                     $lasub = $_GET['action'];
-                                elseif (isset($_GET['site']))
-                                        $lasub = $_GET['site'];
-                                else
-                                     $lasub="";
-
-				logAccess($page,"ingame",$lasub);
-
-				echo "<br/><br/>";
-			}
-			else
-			{
-				echo "<h1>Fehler:</h1> Die Seite <b>".$page."</b> existiert nicht!<br/><br/>";
-			}
+			$popup = true;
+			require("inc/content.inc.php");
+			echo "<br/><br/>";
 		}
 		else
 		{
@@ -184,10 +164,13 @@
 		</form>";
 	}		
 
-	$tpl->assign("logged_in", ($loggedIn && $page!=DEFAULT_PAGE));
-
 	$tpl->assign("content_for_layout", ob_get_clean());
 	
+	} catch (DBException $ex) {
+		ob_clean();
+		$tpl->assign("content_for_layout", $ex);
+	}
+
 	$layoutTemplate = "/tpl/layouts/game/external.html";
 	$tpl->display(getcwd().'/'.$layoutTemplate);
 

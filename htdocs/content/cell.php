@@ -191,7 +191,7 @@
 						  $tm_info = "Inaktiv";
 					  }
 					  // Eigener Planet
-					  elseif($cu->id==$ent->ownerId())
+					  elseif($cu->id == $ent->ownerId())
 					  {
 						  $class .= "userSelfColor";
 						  $tm_info = "";
@@ -203,9 +203,7 @@
 						  $tm_info = "Allianzmitglied";
 					  }
 					  // Noob
-					  elseif (
-						  ($cu->points*USER_ATTACK_PERCENTAGE>$ent->ownerPoints() || $cu->points/USER_ATTACK_PERCENTAGE<$ent->ownerPoints())
-						  && $ent->ownerId()!=$cu->id)
+					  elseif (!$cu->canAttackPlanet($ent))
 					  {
 						  $class .= "noobColor";
 						  $tm_info = "Anf&auml;ngerschutz";

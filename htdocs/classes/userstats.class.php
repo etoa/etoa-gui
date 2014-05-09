@@ -166,17 +166,26 @@
 		imagestring($im, 2, 500, $h-25, $avgr, $colBlack);	
 		imagestring($im, 2, 605, $h-25, $actr, $colBlack);	
 	
-    if (is_file($file)) {
-      unlink($file);		
-    }
+		$dir = dirname($file);
+		if (!is_dir($dir)) {
+			mkdir($dir, 0777, true);
+		}
+
+		if (is_file($file)) {
+		  unlink($file);
+		}
 		imagepng($im,$file);
 
 		}
-		
 	}
 	
 	static function generateXml($file)
 	{
+
+		$dir = dirname($file);
+		if (!is_dir($dir)) {
+			mkdir($dir, 0777, true);
+		}
 
 			/**
 			* Gameinfo XML

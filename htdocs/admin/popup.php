@@ -11,6 +11,8 @@ ob_start();
 
 require("inc/includer.inc.php");
 
+try {
+
 // Create template object
 $tpl = TemplateEngine::getInstance();
 
@@ -20,6 +22,8 @@ $tpl->setView("admin/default");
 $tpl->assign("css_theme", (!isset($themePath) || !is_file(RELATIVE_ROOT."/web/css/themes/admin/".$themePath."css")) ? "default" : $themePath);
 $tpl->assign("page_title", getGameIdentifier()." Administration");
 $tpl->assign("ajax_js", $xajax->printJavascript(XAJAX_DIR));
+
+initTT();
 
 if ($s->user_id)
 {
@@ -40,5 +44,11 @@ else {
 
 $tpl->assign("content_overflow", ob_get_clean());
 $tpl->render();
+} catch (DBException $ex) {
+	ob_clean();
+	$tpl->setLayout("admin/default_popup");
+	$tpl->assign("content_overflow", $ex);
+	$tpl->render();
+}
 	
 ?>

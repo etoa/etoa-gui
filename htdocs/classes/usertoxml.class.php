@@ -8,11 +8,18 @@ class UserToXml
     	$this->userId = intval($userId);
     }
     
+	public static function getDataDirectory() {
+		$dir = CACHE_ROOT."/user_xml";
+		if (!is_dir($dir)) {
+			mkdir($dir, 0777, true);
+		}
+		return $dir;
+	}
     
 	function toCacheFile()
 	{
 		$filename = $this->userId."_".date("Y-m-d_H-i").".xml";
-		$file = CACHE_ROOT."/user_xml/".$filename;
+		$file = self::getDataDirectory()."/".$filename;
 		if ($xml =  $this->__toString())
 		{
 			if ($d=@fopen($file,"w+"))

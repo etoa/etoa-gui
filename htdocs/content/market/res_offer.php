@@ -108,7 +108,7 @@
 							'".$cp->id()."'
 							".$sv.",
 							'".$_POST['ressource_for_alliance']."',
-							'".addslashes($_POST['ressource_text'])."',
+							'".mysql_real_escape_string($_POST['ressource_text'])."',
 							'".time()."');";
 
 					if (dbquery($sql))

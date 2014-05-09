@@ -67,7 +67,7 @@
 	define("HELPCENTER_URL","http://www.etoa.ch/help/?page=faq");	// Helpcenter Link
 	define('HELPCENTER_ONCLICK',"window.open('".HELPCENTER_URL."','helpcenter','width=1024,height=700,scrollbars=yes');");
 
-	define("FORUM_PATH","http://www.etoa.ch/forum");	// Forum Link
+	define("FORUM_URL","http://forum.etoa.ch");	// Forum Link
 	
 
 	define('CHAT_URL',"chatframe.php");	// Chat
@@ -77,6 +77,7 @@
 	define('TEAMSPEAK_ONCLICK',"window.open('".TEAMSPEAK_URL."','ts','width=800,height=600,scrollbars=yes');");
 
 	define('RULES_URL','http://www.etoa.ch/regeln'); // Game-Rules
+	define('PRIVACY_URL','http://www.etoa.ch/privacy'); // Privacy statement
 	define('RULES_ONCLICK',"window.open('".RULES_URL."','rules','width=600,height=500,scrollbars=yes');");
 
   /*********************/
@@ -368,7 +369,7 @@
 	define("SHIP_BOMB_FACTOR",$cfg->ship_bomb_factor->v); 				// Chance-Faktor beim Bombardieren + Deaktivieren
 
 	// Anfängerschutz
-	define("USER_ATTACK_MIN_POINTS",$cfg->user_attack_min_points->v);		// Absolute Puntktegrenze (momentan ausgeschaltet)
+	define("USER_ATTACK_MIN_POINTS",$cfg->user_attack_min_points->v);		// Absolute Puntktegrenze
 	define("USER_ATTACK_PERCENTAGE",$cfg->user_attack_percentage->v); 		// Prozentualer Punkteunterschied
 
 	$weaponNames = array("Strahlenwaffe","Raketen","Projektilwaffe");

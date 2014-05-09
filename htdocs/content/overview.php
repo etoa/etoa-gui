@@ -66,32 +66,15 @@
 		iBoxEnd();
 	}
 
-/*	// REMOVE / DISABLE AFTER BETA
-	iBoxStart("BETA");		
-	echo "Aktuelle Version: <span style=\"color:#f90;font-weight:bold;\">";
-	ob_start();
-	passthru("svnversion");
-	$ver=intval(ob_get_contents());
-	ob_end_flush();
-	echo "</span> <a href=\"http://dev.etoa.ch:8000/game/changeset/";
-	echo "\" target=\"_blank\">Changelog</a><br/>";
-	echo "Fehler melden: <a href=\"http://dev.etoa.ch:8000/game/newticket\" target=\"_blank\">Ticket erstellen</a><br/>";
-	echo "Diskussionen: <a href=\"http://www.etoa.ch/forum/board.php?boardid=8\" target=\"_blank\">Testerforum</a><br/>";
-	echo "Letzte Änderungen:<br/><span style=\"color:#ff0;\">";
-	ob_start();
-	//passthru("svn log -r HEAD:".($ver-3));
-	echo nl2br(ob_get_clean());
-	echo "</span>";
-	iBoxEnd();
-	
-*/
 	//
 	// Admin-Infos
 	//
-	if ($cfg->param1("info")==1 && $cfg->value('info')!="")
+	$tm = new TextManager();
+	$infoText = $tm->getText('info');
+	if ($infoText->enabled && !empty($infoText->content))
 	{
 		iBoxStart(": Wichtige Information :");
-		echo text2html($cfg->value('info'));
+		echo text2html($infoText->content);
 		iBoxEnd();
 	}
 	
@@ -775,7 +758,7 @@
         $defense_name[$arr_planet['id']] = "";
       }
 	
-			$planet_info = "<b class=\"planet_name\">".htmlentities(stripcslashes($planet_name),ENT_QUOTES,'UTF-8')."</b><br>
+			$planet_info = "<b class=\"planet_name\">".StringUtils::encodeDBStringToPlaintext($planet_name)."</b><br>
 			".$building_name." ".$building_level."
 			";
 			$planet_image_path = "".IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$arr_planet['planet_image']."_middle.gif";
@@ -784,7 +767,7 @@
 	    $planet_link = "<a href=\"?page=buildings&change_entity=".$arr_planet['id']."\"><img id=\"Planet\" src=\"".$planet_image_path."\" width=\"".$pic_width."\" height=\"".$pic_height."\" border=\"0\" 
 	    onMouseOver=\"show_info(
 			'".$arr_planet['id']."',
-			'".htmlspecialchars(mysql_real_escape_string($planet_name),ENT_QUOTES)."',
+			'".StringUtils::encodeDBStringToJS($planet_name)."',
 			'".$building_name."',
 			'".$building_time."',
 			'".$shipyard_name[$arr_planet['id']]."',

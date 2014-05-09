@@ -28,8 +28,14 @@
 
 	echo "<h1>Kontakt</h1>";
 	echo "<div style=\"margin:0px auto;width:600px;\">";
-	echo text2html($cfg->get('contact_message'))."<br/><br/>";
-	
+
+	$tm = new TextManager();
+	$contactText = $tm->getText('contact_message');
+	if ($contactText->enabled && !empty($contactText->content))
+	{
+		echo text2html($contactText->content)."<br/><br/>";
+	}
+
 	$admins = AdminUser::getAll();
 	if (count($admins) > 0)
 	{

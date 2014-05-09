@@ -80,8 +80,8 @@
 			echo "<td class=\"tbldata\" id=\"emailStatus\">Du musst eine g&uuml;ltige E-Mail-Adresse eingeben. Auf diese wird dir ein Passwort zugeschickt mit dem du dich einloggen kannst.</td></tr>";
 			echo "<tr><td colspan=\"3\">
 			<input type=\"checkbox\" name=\"agbread\" value=\"1\" onclick=\"if (this.checked) document.getElementById('register_submit').disabled=false; else document.getElementById('register_submit').disabled='disabled';\" />
-			Ich akzeptiere die <a href=\"javascript:;\" onclick=\"window.open('".Config::getInstance()->loginurl->v."/regeln');\" >Regeln</a>
-			sowie die <a href=\"javascript:;\" onclick=\"window.open('".Config::getInstance()->loginurl->v."/privacy');\" >Datenschutzerklärung</a>
+			Ich akzeptiere die <a href=\"javascript:;\" onclick=\"window.open('".RULES_URL."');\" >Regeln</a>
+			sowie die <a href=\"javascript:;\" onclick=\"window.open('".PRIVACY_URL."');\" >Datenschutzerklärung</a>
 
 			<br/><ul style=\"text-align:left;margin-left:30px\">
 			<li>Pro Person darf nur 1 Account verwendet werden. Multis werden rigoros <a href=\"javascript:;\" onclick=\"window.open('?index=pillory');\">gesperrt</a>!</li>
@@ -125,10 +125,10 @@
         Melde dich bei einem <a href=\"?index=contact\">Admin</a>, falls du keine E-Mail erh&auml;ltst oder andere Anmeldeprobleme auftreten.";
         iBoxEnd();
 
-				echo button("Zum Login",Config::getInstance()->loginurl->v);
+		echo button("Zum Login", getLoginUrl());
 
         echo "</div><br style=\"clear:both;\" /></div>";
-    		$_SESSION['REGISTER']=Null;
+    	$_SESSION['REGISTER']=Null;
     }
     else
     {

@@ -54,39 +54,39 @@
 		echo '<script type="text/javascript">xajax_reqInfo('.$starItem.',"b")</script>';
 	
 		echo "<br/><br/>";
-		$bures = dbquery("SELECT COUNT(*),req_building_id,req_req_building_id FROM building_requirements WHERE req_req_building_id>0 GROUP BY req_building_id,req_req_building_id;");
+		$bures = dbquery("SELECT COUNT(*),obj_id,req_building_id FROM building_requirements WHERE req_building_id>0 GROUP BY obj_id,req_building_id;");
 		while ($buarr = mysql_fetch_row($bures))
 		{
 			if ($buarr[0]!=1)
 				echo "Gebäude-Bedingung Fehler bei Gebäude ".$buarr[1]." (".$buarr[2].")<br/>";
 		}
-		$bures = dbquery("SELECT COUNT(*),req_building_id,req_req_tech_id FROM building_requirements WHERE req_req_tech_id>0 GROUP BY req_building_id,req_req_tech_id;");
+		$bures = dbquery("SELECT COUNT(*),obj_id,req_tech_id FROM building_requirements WHERE req_tech_id>0 GROUP BY obj_id,req_tech_id;");
 		while ($buarr = mysql_fetch_row($bures))
 		{
 			if ($buarr[0]!=1)
 				echo "Tech-Bedingung Fehler bei Gebäude ".$buarr[1]." (".$buarr[2].")<br/>";
 		}
 
-		$bures = dbquery("SELECT COUNT(*),req_tech_id,req_req_building_id FROM tech_requirements WHERE req_req_building_id>0 GROUP BY req_tech_id,req_req_building_id;");
+		$bures = dbquery("SELECT COUNT(*),obj_id,req_building_id FROM tech_requirements WHERE req_building_id>0 GROUP BY obj_id,req_building_id;");
 		while ($buarr = mysql_fetch_row($bures))
 		{
 			if ($buarr[0]!=1)
 				echo "Gebäude-Bedingung Fehler bei Tech ".$buarr[1]." (".$buarr[2].")<br/>";
 		}	
-		$bures = dbquery("SELECT COUNT(*),req_tech_id,req_req_tech_id FROM tech_requirements WHERE req_req_tech_id>0 GROUP BY req_tech_id,req_req_tech_id;");
+		$bures = dbquery("SELECT COUNT(*),obj_id,req_tech_id FROM tech_requirements WHERE req_tech_id>0 GROUP BY obj_id,req_tech_id;");
 		while ($buarr = mysql_fetch_row($bures))
 		{
 			if ($buarr[0]!=1)
 				echo "Tech-Bedingung Fehler bei Tech ".$buarr[1]." (".$buarr[2].")<br/>";
 		}			
 
-		$bures = dbquery("SELECT COUNT(*),req_ship_id,req_req_building_id FROM ship_requirements WHERE req_req_building_id>0 GROUP BY req_ship_id,req_req_building_id;");
+		$bures = dbquery("SELECT COUNT(*),obj_id,req_building_id FROM ship_requirements WHERE req_building_id>0 GROUP BY obj_id,req_building_id;");
 		while ($buarr = mysql_fetch_row($bures))
 		{
 			if ($buarr[0]!=1)
 				echo "Gebäude-Bedingung Fehler bei Schiff ".$buarr[1]." (".$buarr[2].")<br/>";
 		}	
-		$bures = dbquery("SELECT COUNT(*),req_ship_id,req_req_tech_id FROM ship_requirements WHERE req_req_tech_id>0 GROUP BY req_ship_id,req_req_tech_id;");
+		$bures = dbquery("SELECT COUNT(*),obj_id,req_tech_id FROM ship_requirements WHERE req_tech_id>0 GROUP BY obj_id,req_tech_id;");
 		while ($buarr = mysql_fetch_row($bures))
 		{
 			if ($buarr[0]!=1)

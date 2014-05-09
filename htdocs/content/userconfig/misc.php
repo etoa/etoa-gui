@@ -118,27 +118,26 @@
 					
 						$hfrom=time();
 						
-						$hto=$hfrom+($cfg->get("user_umod_min_length")*86400);
-						if (dbquery("UPDATE users SET user_hmode_from='$hfrom',user_hmode_to='$hto' WHERE user_id='".$cu->id."';"))
-						{
-							dbquery ("
-								UPDATE 
-									planets 
-								SET 
-									planet_last_updated='0',
-									planet_prod_metal=0,
-									planet_prod_crystal=0,
-									planet_prod_plastic=0,
-									planet_prod_fuel=0,
-									planet_prod_food=0
-								WHERE 
-									planet_user_id='".$cu->id."';");
+						$hto = $hfrom+($cfg->get("user_umod_min_length")*86400);
+
+						dbquery ("
+							UPDATE
+								planets
+							SET
+								planet_last_updated='0',
+								planet_prod_metal=0,
+								planet_prod_crystal=0,
+								planet_prod_plastic=0,
+								planet_prod_fuel=0,
+								planet_prod_food=0
+							WHERE
+								planet_user_id='".$cu->id."';");
 										
-								$cu->hmode_to = $hto;
-								success_msg("Du bist nun im Urlaubsmodus bis [b]".df($hto)."[/b].");
-								$cu->addToUserLog("settings","{nick} ist nun im Urlaub.",1);
-								$umod = true;
-						}
+						$cu->hmode_from = $hfrom;
+						$cu->hmode_to = $hto;
+						success_msg("Du bist nun im Urlaubsmodus bis [b]".df($hto)."[/b].");
+						$cu->addToUserLog("settings","{nick} ist nun im Urlaub.",1);
+						$umod = true;
 					}
 					else
 					{
@@ -286,8 +285,9 @@
 				dbquery("UPDATE users SET user_hmode_from=0,user_hmode_to=0,user_logouttime='".time()."' WHERE user_id='".$cu->id."';");
 				dbquery ("UPDATE planets SET planet_last_updated=".time()." WHERE planet_user_id='".$cu->id."';");
 				
-				foreach ($planets as $pid)
-					sendBackendMessage("planetupdate:".$pid);
+				foreach ($planets as $pid) {
+					BackendMessage::updatePlanet($pid);
+				}
 				
 				success_msg("Urlaubsmodus aufgehoben! Denke daran, auf allen deinen Planeten die Produktion zu überprüfen!");
 				$cu->addToUserLog("settings","{nick} ist nun aus dem Urlaub zurück.",1);
@@ -345,7 +345,7 @@
 				session_destroy();
 				success_msg("Deine Daten werden am ".df($t)." Uhr von unserem System gelöscht! Wir w&uuml;nschen weiterhin viel Erfolg im Netz!");
 				$cu->addToUserLog("settings","{nick} hat seinen Account zur Löschung freigegeben.",1);
-				echo '<input type="button" value="Zur Startseite" onclick="document.location=\''.Config::getInstance()->loginurl->v.'\'" />';
+				echo '<input type="button" value="Zur Startseite" onclick="document.location=\''.getLoginUrl().'\'" />';
 			}
 			else
 			{

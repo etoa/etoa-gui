@@ -12,7 +12,7 @@ class Mail
 Escape to Andromeda - Das Sci-Fi Browsergame - http://etoa.ch
 Copyright (C) 2004 EtoA-Gaming, Schweiz
 Kontakt: mail@etoa.ch
-Forum: http://etoa.ch/forum";
+Forum: ".FORUM_URL;
 		}
 		else
 		{

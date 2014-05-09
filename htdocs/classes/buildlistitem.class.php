@@ -236,6 +236,11 @@
 				$bc['time'] = (array_sum($bc)) / GLOBAL_TIME * BUILD_BUILD_TIME;
 				$bc['time'] *= $bonus;
 
+				// Boost
+				if ($cfg->value('boost_system_enable') == 1) {		
+					$bc['time'] *= 1/($cu->boostBonusBuilding + 1);
+				}
+				
 				if ($bl->getPeopleWorking(BUILD_BUILDING_ID) > 0)
 				{
 					$bc['min_time'] = $bc['time'] * $this->minBuildTimeFactor();

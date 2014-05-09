@@ -45,17 +45,20 @@
       return strtr($str, $controlChars);
     }
 	
-	public static function encodeJavascriptStringForTT($str)
-	{
-	  // javascript should display text in a tooltip;
-	  // this is the required encoding foo to do that correctly.
-	  // NOTE: if the text is multiline and contains line-breaks, wrap the
-	  // function call with the replaceBR function from below.
-	  // NOTE: if the text contains html text, it is displayed as html, not as plaintext.
-	  // if you want to display text with plaintext <br> etc., wrap the INPUT like that:
-	  // htmlentities($input_string,ENT_QUOTES,'UTF-8')
-	  return str_replace("\\","\\\\",htmlentities($str,ENT_QUOTES,'UTF-8'));
-	}
+	public static function encodeDBStringToJS($str)
+    {
+        // Pass the string to a JS variable inline (so no " and no ' occurence possible)
+        return str_replace("'","\\'",str_replace("\\","\\\\",htmlspecialchars($str, ENT_COMPAT,'UTF-8')));
+    }
+    
+    /* Encode a string from the DB (stored via mysql_real_escape_string)
+     * to be displayed as plaintext in the HTML document, so changing
+     * all the tags to entities etc. AND replacing newlines with <br> tags
+     */
+    public static function encodeDBStringToPlaintext($str)
+    {
+        return StringUtils::replaceBR(htmlspecialchars($str, ENT_COMPAT, 'UTF-8'));
+    }
     
     public static function replaceAsciiControlCharsUnicode($str)
     {

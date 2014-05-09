@@ -161,7 +161,7 @@
 						echo "<form action=\"?page=$page&amp;action=join\" method=\"post\">";
 						checker_init();
 						tableStart("Bewerbungstext");
-						echo "<tr><th>Nachricht:</th><td><textarea rows=\"15\" cols=\"80\" name=\"user_alliance_application\">".$arr['alliance_application_template']."</textarea></td>";
+						echo "<tr><th>Nachricht:</th><td><textarea rows=\"15\" cols=\"80\" name=\"user_alliance_application\">".$arr['alliance_application_template']."</textarea><br/>".helpLink('textformat', 'Hilfe zur Formatierung')."</td>";
 						tableEnd();
 						echo "<input type=\"hidden\" name=\"user_alliance_id\" value=\"".intval($arr['alliance_id'])."\" />";
 						echo "<input type=\"submit\" name=\"submitapplication\" value=\"Senden\" />&nbsp;<input type=\"button\" onclick=\"document.location='?page=alliance&action=join'\" value=\"Zur&uuml;ck\" /></form>";
@@ -184,7 +184,7 @@
 				if ($_POST['user_alliance_application']!='')
 				{
 					$alliances = get_alliance_names();
-					send_msg($alliances[$_POST['user_alliance_id']]['founder_id'],MSG_ALLYMAIL_CAT,"Bewerbung","Der Spieler ".$cu->nick." hat sich bei deiner Allianz beworben. Gehe auf die [url ?page=alliance&action=applications]Allianzseite[/url] für Details!");
+					send_msg($alliances[$_POST['user_alliance_id']]['founder_id'],MSG_ALLYMAIL_CAT,"Bewerbung","Der Spieler ".$cu->nick." hat sich bei deiner Allianz beworben. Gehe auf die [page=alliance&action=applications]Allianzseite[/page] für Details!");
 					add_alliance_history($_POST['user_alliance_id'],"Der Spieler [b]".$cu->nick."[/b] bewirbt sich sich bei der Allianz.");
 					dbquery("
 					INSERT INTO
@@ -221,17 +221,23 @@
 				Im Folgenden findest du eine Liste der Allianzen die momentan Bewerbungen akzeptieren:<br/><br/>";
 				$res=dbquery("
 				SELECT
-					alliance_id,
-					alliance_tag,
-					alliance_name,
-					alliance_accept_applications
+					alliances.alliance_id,
+					alliances.alliance_tag,
+					alliances.alliance_name,
+					alliances.alliance_accept_applications,
+					COUNT(users.user_id) as member_count
 				FROM
 					alliances
+				LEFT JOIN
+					users
+					ON users.user_alliance_id=alliances.alliance_id
 				WHERE
-					alliance_accept_applications=1
+					alliances.alliance_accept_applications=1
+				GROUP BY
+					alliances.alliance_id
 				ORDER BY
-					alliance_name,
-					alliance_tag;");
+					alliances.alliance_name,
+					alliances.alliance_tag;");
 				if (mysql_num_rows($res)>0)
 				{
 					tableStart("","400"," align=\"center\"");
@@ -239,17 +245,25 @@
 					echo "<tr>
 									<th>Tag</th>
 									<th>Name</th>
+									<th>Mitglieder</th>
 									<th style=\"width:100px;\">Aktionen</th>
 							</tr>";
 					while ($arr=mysql_fetch_array($res))
 					{
 						echo "<tr><td>".$arr['alliance_tag']."</td>
 						<td>".$arr['alliance_name']."</td>
+						<td>".$arr['member_count']."</td>
 						<td><a href=\"?page=alliance&amp;info_id=".$arr['alliance_id']."\">Info</a>";
 						echo "&nbsp;<a href=\"?page=$page&action=join&alliance_id=".$arr['alliance_id']."\">Bewerben</a>";
 						echo "</td></tr>";
 					}
 					tableEnd();
+
+					$maxMemberCount = Config::getInstance()->get("alliance_max_member_count");
+					if ($maxMemberCount != 0) {
+						echo "<p><b>Hinweis:</b> Eine Allianz darf maximal $maxMemberCount Mitglieder haben!</p>";
+					}
+
 					echo "<a href=\"?page=$page&amp;action=create\">Gründe</a> eine eigene Allianz.</a>";
 				}
 				else

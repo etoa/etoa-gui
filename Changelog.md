@@ -1,6 +1,39 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.4
+------------
+
+### Features ###
+
+ * Added boost system for resource production and building speed (#8)
+ * Crypto center (alliance building) cooldown is now individual for each user (#10)
+ * Number of alliance members can now be limited (defaults to 7) (#16)
+ * New mysticum feat: Reduce launch and landing time (Readiness) (#9)
+ * Added tutorial system (#18)
+ * bbcode-[url]-links open in a new tab (#13)
+ * Noob protection minimal attackable threshold points implemented (#21)
+ * Added text format help link to various text fieldsy
+ * [ADMIN] Improved text management (#20)
+ * [ADMIN] Changelogs page added
+ * [ADMIN] User- and game stats page combined
+ * [ADMIN] Alliance battle system can now be disabled in config
+ * [ADMIN] Alliance battle system can now be restricted to alliances at war only in config (#19)
+
+### Bugfixes ###
+
+ * Fixed "Query error" message if holiday mode gets enabled (#2)
+ * Minbari mysticum no longer hides whole alliance fleet (#11)
+ * Fixed "msg_send fail" on specialist activation (#5)
+ * Fixed a DB query bug with single quotes in alliance names in the alliance founding process
+ * Fixed possible SQL injection vulnerabilities in notepad class
+ * Fixed race detail page in help
+ * Fixed broken link in admin ticket system (#25)
+ * Fixed fuel/food doubling on support abort (#7)
+ * User and allinace profile image directories are now being created created if they not exist
+ * Fixed "banned" instead of "kicked" message in Chat (#30)
+ * [ADMIN] Fixed coordinate selector (position) on galaxy screen
+
 Version 3.3
 -----------
 

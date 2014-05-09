@@ -79,14 +79,44 @@
 	// Statistiken
 	//
 	elseif ($sub=="gamestats")
-	{	
-		echo "<h1>Spielstatistiken</h1>";
-		if (!@include(CACHE_ROOT."/out/gamestats.html"))
+	{
+		if (isset($_POST['regen']))
 		{
-			error_msg("Run scripts/gamestats.php periodically to update gamestats!",1);			
-		}		
+			UserStats::generateImage(USERSTATS_OUTFILE);
+			UserStats::generateXml(XML_INFO_FILE);
+			GameStats::generateAndSave();
+
+			forward("?page=$page&sub=$sub");
+		}
+
+		$tpl->setView("admin/overview/gamestats");
+		$tpl->assign("title", "Spielstatistiken");
+
+		if (file_exists(USERSTATS_OUTFILE)) {
+			$tpl->assign("userstats", USERSTATS_OUTFILE);
+		}
+		if (is_file(GAMESTATS_FILE)) {
+			$tpl->assign("gamestats", file_get_contents(GAMESTATS_FILE));
+		}
+		if (file_exists(XML_INFO_FILE)) {
+			$tpl->assign("xmlinfo", XML_INFO_FILE);
+		}
 	}
-		
+
+	//
+	// Changelog
+	//
+	elseif ($sub=="changelog")
+	{
+		echo "<h1>Changelog</h1>";
+		$changelogFile = "../../Changelog.md";
+		if (is_file($changelogFile)) {
+			echo "<pre class=\"changelog\">".file_get_contents($changelogFile)."</pre>";
+		} else {
+			error_msg("Changelog nicht verfügbar!",1);
+		}
+	}
+
 	//
 	// Admin Session-Log
 	//
@@ -290,103 +320,6 @@
 				echo "<i>Keine Eintr&auml;ge vorhanden</i>";
 		}
 	}	
-	
-	//
-	// Ingame-News
-	//
-	elseif ($sub=="ingamenews")
-	{
-		echo "<h1>Ingame-News</h1>";
-		echo "<form action=\"?page=$page&sub=$sub#writer\" method=\"post\">";
-
-		if (isset($_POST['save']))
-		{
-			$cfg->set("info",$_POST['config_value'],$_POST['enable']);
-		}
-
-
-		if ($cfg->param1("info")==1 && $cfg->value('info')!="")
-		{
-			echo "Diese News erscheinen auf der Startseite im Game:<br/><br/>";
-			iBoxStart("Vorschau");
-			echo text2html($cfg->value('info'));
-			iBoxEnd();
-		}
-
-		echo "<a name=\"writer\"></a>";
-		if (isset($_POST['save']))
-		{
-			success_msg("Nachricht geändert!");
-		}
-
-		echo "<input type=\"radio\" name=\"enable\" value=\"1\" ".($cfg->param1("info")==1 ? ' checked="checked"' :'')." /> Anzeigen
-		<input type=\"radio\" name=\"enable\" value=\"0\" ".($cfg->param1("info")!=1 ? ' checked="checked"' :'')." /> Verstecken<br/><br/>";
-
-		echo "<textarea name=\"config_value\" cols=\"120\" rows=\"20\">".$cfg->value('info')."</textarea><br/><br/>";
-		echo "<input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" />";
-		echo "</form>";	
-	}	
-	
-
-	//
-	// System-Nachricht
-	//
-	elseif ($sub=="systemmessage")
-	{
-		echo "<h1>Systemnachricht</h1>";
-		if (isset($_POST['save']))
-		{
-			$cfg->set("system_message",$_POST['config_value']);
-			success_msg("Nachricht geändert!");
-		}		
-		if (isset($_POST['saveclear']))
-		{
-			$cfg->set("system_message","");
-			success_msg("Nachricht gelöscht!");
-		}		
-		
-    echo "<form action=\"?page=$page&sub=$sub\" method=\"post\">";
-		$res = dbquery("SELECT * FROM config WHERE config_name='system_message';");
-		if (mysql_num_rows($res)>0)
-		{
-			$arr = mysql_fetch_array($res);
-			echo "Diese Nachricht erscheint sofort auf jeder Seite im Spiel:<br/><br/>";
-			if ($arr['config_value']!="")
-			{
-				iBoxStart("Vorschau");
-				echo text2html($arr['config_value']);
-				iBoxEnd();
-			}
-			echo "<textarea name=\"config_value\" cols=\"100\" rows=\"15\">".$arr['config_value']."</textarea><br/><br/>";
-			echo "<input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" /> &nbsp; 
-			<input type=\"submit\" name=\"saveclear\" value=\"Löschen\" />";
-		}
-		else
-		{
-			echo "Es ist kein Datensatz vorhanden!";
-		}
-		echo "</form>";	
-	}
-		
-	
-	//
-	// Admin-News
-	//
-	elseif ($sub=="adminnews")
-	{
-		if (isset($_POST['save']))
-		{
-			$cfg->set('admininfo', $_POST['admininfo']);
-			$tpl->assign("msg", "Gespeichert!");
-		}
-		$tpl->assign("title", "Admin-News");
-
-		echo "<p>Diese News erscheinen auf der Startseite des Adminmodus:</p>";
-		echo "<form action=\"?page=$page&sub=$sub\" method=\"post\">";
-		echo "<textarea name=\"admininfo\" cols=\"100\" rows=\"15\">".$cfg->get('admininfo')."</textarea><br/><br/>";
-		echo "<input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" />";
-		echo "</form>";	
-	}		
 	
 	//
 	// User bearbeiten

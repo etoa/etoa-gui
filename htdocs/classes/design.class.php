@@ -101,10 +101,10 @@
 			switch ($addition)
 			{
 				case 1:
-					echo text2html('\n\n[url http://forum.etoa.ch]Zum Forum[/url] | [email mail@etoa.ch]Mail an die Spielleitung[/email]');
+					echo text2html('\n\n[url '.FORUM_URL.']Zum Forum[/url] | [email mail@etoa.ch]Mail an die Spielleitung[/email]');
 					break;
 				case 2:
-					echo text2html('\n\n[url http://bugs.etoa.net]Fehler melden[/url]');
+					echo text2html('\n\n[url '.DEVCENTER_PATH.']Fehler melden[/url]');
 				break;
 				default:
 					echo '';
@@ -116,7 +116,7 @@
 						<br />'
 						.nl2br($stacktrace).'
 						<br />
-						<a href="http://bugs.etoa.net" target="_blank">Fehler melden</a>
+						<a href="'.DEVCENTER_PATH.'" target="_blank">Fehler melden</a>
 					</div>';
 			}
 			echo '</div>';

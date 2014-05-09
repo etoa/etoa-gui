@@ -1,11 +1,15 @@
 <?PHP
 
+	$tm = new TextManager();
+
 	$sx_num=$conf['num_of_sectors']['p1'];
 	$sy_num=$conf['num_of_sectors']['p2'];
 	$cx_num=$conf['num_of_cells']['p1'];
 	$cy_num=$conf['num_of_cells']['p2'];
 
 	echo "<h1>Willkommen in Andromeda</h1>";
+
+	echo "<div class=\"userSetupContainer\">";
 
 		// Apply choosen itemset
 	if (isset($s->itemset_key) && isset($_POST[md5($s->itemset_key)]) && isset($_POST['itemset_id']))
@@ -294,19 +298,13 @@
 	{
 		echo "<form action=\"?\" method=\"post\">";
 		checker_init();
-		iBoxStart('Allgemeine Information');
-		echo '<div style="padding:20px;font-size:11px;">Lieber Imperator,<br/>
-		damit Ihnen der Anfang im Spiel etwas einfacher fällt finden Sie <a href="http://www.etoa.ch/forum/thread.php?threadid=7020" >hier den Beginner-Guide</a>. Und nun soll es auch gleich losgehen mit dem Erobern einer neuen Welt, lasst uns somit die gewünschte Rasse wählen.<br/><br/>
-		Die Spielleitung</div>';
-		iBoxEnd();
+
 		echo "<h2>Rasse auswählen</h2>
 		Bitte wählt die Rasse eures Volkes aus.<br/>
 		Jede Rasse hat Vor- und Nachteile sowie einige Spezialeinheiten:<br/><br/>";
 	
-		echo "<select name=\"register_user_race_id\" 
-		onchange=\"showLoader('raceInfo');xajax_setupShowRace(this.options[this.selectedIndex].value)\"
-		onkeyup=\"showLoader('raceInfo');xajax_setupShowRace(this.options[this.selectedIndex].value)\" >
-		<option>Bitte wählen...</option>";
+		echo "<select name=\"register_user_race_id\" id=\"register_user_race_id\">
+		<option value=\"0\">Bitte wählen...</option>";
 		$res = dbquery("
 		SELECT
 			race_id,
@@ -326,22 +324,27 @@
 		echo "</select>";
 	
 		// xajax content will be placed in the following cell
-		echo "<br/><br/><div id=\"raceInfo\">
-		</div>";
+		echo "<br/><br/><div id=\"raceInfo\"></div>";
+		echo "<br/><br/><input type=\"submit\" name=\"submit_setup1\" id=\"submit_setup1\" value=\"Weiter\" />";
 		echo "</form>";
 	}
 	elseif ($mode=="finished")
 	{
 		echo "<h2>Einrichtung abgeschlossen</h2>";
-		iBoxStart("Willkommen");
-		echo text2html($conf['welcome_message']['v']);
-		iBoxEnd();
+
+		$welcomeText = $tm->getText('welcome_message');
+		if ($welcomeText->enabled && !empty($welcomeText->content))
+		{
+			iBoxStart("Willkommen");
+			echo text2html($welcomeText->content);
+			iBoxEnd();
+			send_msg($cu->id,USER_MSG_CAT_ID, 'Willkommen', $welcomeText->content);
+		}
 		echo '<input type="button" value="Zum Heimatplaneten" onclick="document.location=\'?page=planetoverview\'" />';
-		send_msg($cu->id,USER_MSG_CAT_ID,'Willkommen',$conf['welcome_message']['v']);
 	}
 	else
 	{
 		echo "Fehler";
 	}
-
+	echo "</div>";
 ?>

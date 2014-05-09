@@ -229,24 +229,6 @@ elseif ($sub=="ipresolver")
 	echo "<input type=\"submit\" name=\"whois\" value=\"WHOIS\" /><br/>";		
 	echo "</form>";
 }
-
-//
-// gamestats
-//
-elseif ($sub=="gamestats")
-{
-	echo "<h2>Spielstatistiken</h2>";
-	if (isset($_GET['regen']))
-	{
-		if (GameStats::generateAndSave())
-		{
-			ok_msg("Statistiken erneuert!");				
-		}
-	}
-	echo "<a href=\"?page=$page&amp;sub=$sub&amp;regen=1\">Erneuern</a><br/><br/>";		
-	echo readfile(GAMESTATS_FILE);
-}
-
 	
 else
 {

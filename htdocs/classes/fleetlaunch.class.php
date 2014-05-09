@@ -69,6 +69,7 @@
 			$this->speed = 0;
 			$this->speed1 = 0;
 			$this->sBonusSpeed=1;
+			$this->sBonusReadiness=1;
 			$this->duration=0;
 			$this->action='';
 			$this->costsPerHundredAE=0;
@@ -272,6 +273,7 @@
 						"sBonusHeal" => $arr['shiplist_special_ship_bonus_heal'],
 						"sBonusCapacity" => $arr['shiplist_special_ship_bonus_capacity'],
 						"sBonusSpeed" => $arr['shiplist_special_ship_bonus_speed'],
+						"sBonusReadiness" => $arr['shiplist_special_ship_bonus_readiness'],
 						"sBonusPilots" => $arr['shiplist_special_ship_bonus_pilots'],
 						"sBonusTarn" => $arr['shiplist_special_ship_bonus_tarn'],
 						"sBonusAntrax" => $arr['shiplist_special_ship_bonus_antrax'],
@@ -283,6 +285,7 @@
 						
 						if ($arr['special_ship']) {
 							$this->sBonusSpeed += $arr['shiplist_special_ship_bonus_speed']*$arr['special_ship_bonus_speed'];
+							$this->sBonusReadiness += $arr['shiplist_special_ship_bonus_readiness']*$arr['special_ship_bonus_readiness'];
 							$this->sBonusPilots = max(0,$this->sBonusPilots-$arr['shiplist_special_ship_bonus_pilots']*$arr['special_ship_bonus_pilots']);
 							$this->sBonusCapacity += $arr['shiplist_special_ship_bonus_capacity']*$arr['special_ship_bonus_capacity'];
 						}
@@ -615,6 +618,7 @@
 									fs_special_ship_bonus_heal,
 									fs_special_ship_bonus_capacity,
 									fs_special_ship_bonus_speed,
+									fs_special_ship_bonus_readiness,
 									fs_special_ship_bonus_pilots,
 									fs_special_ship_bonus_tarn,
 									fs_special_ship_bonus_antrax,
@@ -637,6 +641,7 @@
 									".$sda['sBonusHeal'].",
 									".$sda['sBonusCapacity'].",
 									".$sda['sBonusSpeed'].",
+									".$sda['sBonusReadiness'].",
 									".$sda['sBonusPilots'].",
 									".$sda['sBonusTarn'].",
 									".$sda['sBonusAntrax'].",
@@ -756,6 +761,7 @@
 			$this->sBonusCapacity=1;
 			$this->sBonusPilots=1;
 			$this->sBonusSpeed=1;
+			$this->sBonusReadiness=1;
 		}				
 		
 		function unsetWormhole()
@@ -797,6 +803,8 @@
 			}
 			else
 			{
+                $noobProtectionErrorAdded = false;
+                
 				// Test each possible action
 				foreach ($actions as $i)
 				{
@@ -804,7 +812,37 @@
 					$supportPossible = true;
 					
 					$ai = FleetAction::createFactory($i);
-	
+
+					// Skip this action if it is an alliance action and ABS is disabled
+                    // and if the owner of the target planet is not the same user (support)
+                    // or if alliance battle system is only allowed for alliances at war
+                    // and the source's and target's alliances aren't at war against each other
+					if (
+                        $this->sourceEntity->ownerId() != $this->targetEntity->ownerId() &&
+                        $ai->allianceAction && (
+                            // alliance battle system is disabled
+                            $cfg->value("abs_enabled") != 1 || (
+                                // or abs is enabled for alliances at war only
+                                $cfg->p1("abs_enabled") == 1 && (
+                                    (
+                                        // and it is an agressive action
+                                        $ai->attitude() == 3 &&
+                                        // and the two alliances are not at war against each other
+                                        ! $this->sourceEntity->owner->alliance->checkWar($this->targetEntity->ownerAlliance())
+                                    ) || (
+                                        // or it is a defensive action
+                                        $ai->attitude() == 1 &&
+                                        // and the user's alliance is not at war
+                                        ! $this->owner->alliance->isAtWar()
+                                    )
+                                )
+                            )
+                        )
+                    )
+                    {
+						continue;
+					}
+                    
 					// Permission checks
 					if (
 						// Action is allowed if:
@@ -852,22 +890,19 @@
 												|| ($this->ownerId == $this->sourceEntity->lastUserCheck())
 												)
 											{
-												// 1. att allowed if war is active
-												// 2. or att allowed if last owner == this owner (invade time threshold)
-												// 3. or att allowed if user points are in limits
-												// 4. or att allowed if target user is inactive
-												// 5. or att allowed if target user is locked 
-												if(($this->sourceEntity->ownerAlliance() && $this->sourceEntity->owner->alliance->checkWar($this->targetEntity->ownerAlliance()))
-												|| $this->ownerId==$this->sourceEntity->lastUserCheck()
-												|| !($this->sourceEntity->ownerPoints()*USER_ATTACK_PERCENTAGE>$this->targetEntity->ownerPoints()  || $this->sourceEntity->ownerPoints()/USER_ATTACK_PERCENTAGE < $this->targetEntity->ownerPoints() ) 
-												|| $this->targetEntity->owner->isInactiv() 
-												|| $this->targetEntity->ownerLocked() )
+												if($this->owner->canAttackPlanet($this->targetEntity))
 												{
 													$actionObjs[$i] = $ai;
 												}
-												else
+												else if (!$noobProtectionErrorAdded)
 												{
-													$this->error .= "Der Besitzer des Ziels steht unter Anfängerschutz!  Die Punkte des Users müssen zwischen ".(USER_ATTACK_PERCENTAGE*100)."% und ".(100/USER_ATTACK_PERCENTAGE)."% von deinen Punkten liegen<br />";
+													$this->error .= 'Der Besitzer des Ziels steht unter Anfängerschutz! '
+                                                        .'Die Punkte des Users müssen zwischen '.(USER_ATTACK_PERCENTAGE*100).'% und '
+                                                        .(100/USER_ATTACK_PERCENTAGE).'% von deinen Punkten liegen.<br />'
+                                                        .'Ausserdem müssen beide Spieler mindestens '.(USER_ATTACK_MIN_POINTS)
+                                                        .' Punkte haben.<br />';
+                                                    // only add error message once, not for every action
+                                                    $noobProtectionErrorAdded = true;
 												}
 											} // if ($ai->allowActivePlayerEntities() || ($this->targetEntity->owner->isInactiv() && !$ai->allowActivePlayerEntities()))
 										} // if (!$battleban)
@@ -947,7 +982,7 @@
 			$this->speedPercent = max(1,min(100,$perc));
 			$this->duration = $this->distance / $this->getSpeed();	// Calculate duration
 			$this->duration *= 3600;	// Convert to seconds
-			$this->duration += $this->timeLaunchLand;	// Add launch and land time
+			$this->duration += $this->getTimeLaunchLand();	// Add launch and land time
 			$this->duration = ceil($this->duration);
 		}
 		
@@ -958,7 +993,7 @@
 		
 		function getTimeLaunchLand()
 		{
-			return $this->timeLaunchLand;
+			return ceil($this->timeLaunchLand * (2 - $this->sBonusReadiness));
 		}
 		
 		function getCostsLaunchLand()

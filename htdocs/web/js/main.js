@@ -1686,3 +1686,102 @@ function fleetBookmarkAddShipToList(shipId, shipCount) {
 function fleetBookmarkRemoveShipFromList(shipId) {
   $('#ship_row_' + shipId).remove();
 }
+
+//
+// Tutorial
+//
+
+// Minimize tutorial
+minimizeTutorial = function(){
+	$('.tutorialBox').hide();
+	$('.tutorialBoxReduced').show();
+	$.cookie('tutorial_minimize', 'yes');
+}
+
+// Restore tutorial
+restoreTutorial = function(){
+	$('.tutorialBox').show();
+	$('.tutorialBoxReduced').hide();
+	$.cookie('tutorial_minimize', 'no');
+}
+
+openTutorial = function(){
+	$('#tutorialContainer').show();
+	$('.tutorialBoxReduced').hide();
+	
+	if ($.cookie('tutorial_minimize') == 'yes') {
+		minimizeTutorial();
+	}	
+}
+
+closeTutorial = function(){
+	$('#tutorialContainer').hide();
+	ajaxRequest('close_tutorial', { id:$('#tutorialContainer').attr('data-tutorial') }, function(data) {}, alert);	
+}
+
+function showTutorialText(id, step) {
+  ajaxRequest('get_tutorial', { id:id, step:step }, function(data) {
+	if (data.title && data.content) {
+	  $('#tutorialContainer').attr('data-tutorial', id);
+	  $('.tutorialTitleContent').html(data.title);
+	  $('.tutorialContent').html(data.content);
+	  if (data.prev) {
+		$('.tutorialPrev').show();
+		$('.tutorialPrev').unbind( "click" );
+		$('.tutorialPrev').click(function(){
+			showTutorialText(id, data.prev);
+		});
+	  } else {
+		$('.tutorialPrev').hide();
+	  }
+	  if (data.next) {
+		$('.tutorialNext').show();
+		$('.tutorialNext').unbind( "click" );
+		$('.tutorialNext').click(function(){
+			showTutorialText(id, data.next);
+		});
+		$('.tutorialFinish').hide();
+	  } else {
+		$('.tutorialNext').hide();
+		$('.tutorialFinish').show();
+	  }
+	}
+  }, alert);
+  openTutorial();
+}
+
+$(function(){
+	$('.tutorialMinimize').click(minimizeTutorial);
+	$('.tutorialRestore').click(restoreTutorial);
+	$('.tutorialClose').click(function(){
+		if (confirm('Tutorial wirklich schliessen?')) { 
+			closeTutorial() 
+		}
+	});
+	$('.tutorialFinish').click(closeTutorial);
+});
+
+
+//
+// User setup
+//
+$(function(){
+	if ($('#register_user_race_id').length > 0 ) {
+		$('#register_user_race_id').change(function(){
+			getRaceInfo($(this).val());
+		});
+		getRaceInfo(0);
+	}
+});
+
+function getRaceInfo(id) {
+  ajaxRequest('get_race_infos', { id:id }, function(data) {
+	if (data.content) {
+		$('#raceInfo').html(data.content);
+		$('#submit_setup1').show();
+	} else {
+		$('#raceInfo').html('Bitte Rasse auswählen!');
+		$('#submit_setup1').hide();
+	}
+  }, alert);
+}

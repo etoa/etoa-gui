@@ -57,6 +57,8 @@ class User
 	protected $rankHighest;
 	protected $specialistId;
 	protected $specialistTime;
+	protected $boostBonusProduction;
+	protected $boostBonusBuilding;
 	protected $specialist = null;
 	protected $ghost;
 	protected $lastInvasion;
@@ -150,6 +152,9 @@ class User
 			$this->specialistId = $arr['user_specialist_id'];
 			$this->specialistTime = $arr['user_specialist_time'];
 			
+			$this->boostBonusProduction = $arr['boost_bonus_production'];
+			$this->boostBonusBuilding = $arr['boost_bonus_building'];
+			
 			$this->lastInvasion = $arr['lastinvasion'];
 
 			$this->raceId = $arr['user_race_id'];
@@ -235,6 +240,13 @@ class User
 				{
 				$sql.= " user_avatar='".$this->avatar."',";
 				}
+				elseif ($k == "hmode_from") {
+					$sql.= " user_hmode_from=".$this->hmode_from.",";
+				}
+				elseif ($k == "hmode_to") {
+					$sql.= " user_hmode_to=".$this->hmode_to.",";
+				}
+
 				else
 					echo " $k has no valid UPDATE query!<br/>";
 			}
@@ -621,7 +633,7 @@ class User
 			".$this->id.",
 			".time().",
 			'".$zone."',
-			'".$message."',
+			'".mysql_real_escape_string($message)."',
 			'".gethostbyname($_SERVER['REMOTE_ADDR'])."',
 			".intval($public)."
 		);");
@@ -672,7 +684,7 @@ class User
 	*/
 	function delete($self=false,$from="")
 	{
-		$utx = new userToXml($this->id);
+		$utx = new UserToXml($this->id);
 		if ($xmlfile = $utx->toCacheFile())
 		{
 			//
@@ -925,8 +937,8 @@ die Spielleitung";
 		FROM
 			".self::tableName."
 		WHERE
-			user_nick='".$nick."'
-			OR user_email_fix='".$data['email']."'
+			user_nick='".mysql_real_escape_string($nick)."'
+			OR user_email_fix='".mysql_real_escape_string($data['email'])."'
 		LIMIT 1;");
 		if (mysql_num_rows($res)>0)
 		{
@@ -949,13 +961,13 @@ die Spielleitung";
 			user_sitting_days
 			)
 			VALUES
-			('".$data['name']."',
-			'".$nick."',
+			('".mysql_real_escape_string($data['name'])."',
+			'".mysql_real_escape_string($nick)."',
 			'".saltPasswort($pw)."',
-			'".$data['email']."',
-			'".$data['email']."',
-			'".(isset($data['race']) ? $data['race'] : 0)."',
-			'".(isset($data['ghost']) ? $data['ghost'] : 0)."',
+			'".mysql_real_escape_string($data['email'])."',
+			'".mysql_real_escape_string($data['email'])."',
+			'".(isset($data['race']) ? intval($data['race']) : 0)."',
+			'".(isset($data['ghost']) ? intval($data['ghost']) : 0)."',
 			'".$time."',
 			'".$cfg->get("user_sitting_days")."');"))
 		{
@@ -1008,7 +1020,7 @@ die Spielleitung";
 		FROM
 			".self::tableName."
 		WHERE
-			user_nick='".$nick."'
+			user_nick='".mysql_real_escape_string($nick)."'
 		LIMIT 1;
 		");
 		if (mysql_num_rows($res)>0)
@@ -1023,5 +1035,45 @@ die Spielleitung";
 	{
 		return "<a href=\"?page=userinfo&amp;id=".$this->id."\">".$this->__toString()."</a>";
 	}
+    
+    public function isUserNoobProtected(User $u)
+    {
+        // check whether user points are outside limits
+        // or this user or opponent is below minimum attack threshold
+        return  ($this->points*USER_ATTACK_PERCENTAGE > $u->points || $this->points/USER_ATTACK_PERCENTAGE < $u->points)
+                || ($this->points <= USER_ATTACK_MIN_POINTS)
+                || ($u->points <= USER_ATTACK_MIN_POINTS);
+    }
+    
+    public function canAttackUser(User $u)
+    {
+        // somehow $this->alliance doesn't use the getter
+        // neither does $u->locked, wtf
+        
+        // att allowed if war is active
+        // or att allowed if target user is not noob protected
+        // or att allowed if target user is inactive
+        // or att allowed if target user is locked
+        if ($this->allianceId() > 0 && $u->allianceId() > 0)
+        {
+            return $this->__get('alliance')->checkWar($u->allianceId())
+                || !$this->isUserNoobProtected($u)
+                || $u->isInactiv() 
+                || $u->__get('locked');
+        }
+        else
+        {
+            return !$this->isUserNoobProtected($u)
+                || $u->isInactiv() 
+                || $u->__get('locked');
+        }
+    }
+    
+    public function canAttackPlanet(Planet $p)
+    {
+        // Planet is attackable if user is attackable
+        // or if last owner == this owner (invade time threshold)
+        return $this->canAttackUser($p->owner()) || $this->id == $p->lastUserCheck();
+    }
 }
 ?>

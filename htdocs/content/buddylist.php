@@ -304,7 +304,7 @@
 	        }
 	        else
 	        {
-	                error_msg("Es sind noch keine Freunde in deiner Buddyliste eingetragen!",1);
+	                info_msg("Es sind noch keine Freunde in deiner Buddyliste eingetragen!");
 	        }
 	
 	$res=dbquery("

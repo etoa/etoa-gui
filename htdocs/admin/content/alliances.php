@@ -628,7 +628,7 @@
 				echo "<tr><td class=\"tbltitle\" valign=\"top\">Name</td><td class=\"tbldata\">".$arr['alliance_name']."</td></tr>";
 				echo "<tr><td class=\"tbltitle\" valign=\"top\">Tag</td><td class=\"tbldata\">".$arr['alliance_tag']."</td></tr>";
 				$users = get_user_names();
-				echo "<tr><td class=\"tbltitle\" valign=\"top\">Gr&uuml;nder</td><td class=\"tbldata\">".$users[$arr['alliance_founder_id']]."</td></tr>";				
+				echo "<tr><td class=\"tbltitle\" valign=\"top\">Gr&uuml;nder</td><td class=\"tbldata\">".$users[$arr['alliance_founder_id']]['nick']."</td></tr>";				
 				echo "<tr><td class=\"tbltitle\" valign=\"top\">Text</td><td class=\"tbldata\">".text2html($arr['alliance_text'])."</td></tr>";
 				echo "<tr><td class=\"tbltitle\" valign=\"top\">Gr&uuml;ndung</td><td class=\"tbldata\">".date("Y-m-d H:i:s",$arr['alliance_foundation_date'])."</td></tr>";
 				echo "<tr><td class=\"tbltitle\" valign=\"top\">Website</td><td class=\"tbldata\">".$arr['alliance_url']."</td></tr>";
@@ -670,8 +670,11 @@
 			if (isset($_POST['drop']))
 			{
 				$ally = new Alliance($_POST['alliance_id']);
-				$ally->delete();
-				echo "Die Allianz wurde gel&ouml;scht!<br/><br/>";
+				if ($ally->delete()) {
+					echo "Die Allianz wurde gel&ouml;scht!<br/><br/>";
+				} else {
+					cms_err_msg("Allianz konnte nicht gelöscht werden (ist sie in einem aktiven Krieg?)");
+				}
 			}
 
 			// Leere Allianzen löschen

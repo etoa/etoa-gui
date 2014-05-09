@@ -223,10 +223,12 @@
 		$backend = checkDaemonRunning($cfg->daemon_pidfile)>0 ? true : false;
 		if ($cfg->value("backend_status") != $backend)
 		{
-			$mailText = $cfg->value("backend_status") == 0 ? "Funktioniert wieder" : $cfg->value("backend_offline_message");
 			$status = $cfg->value("backend_status") == 0 ? 1 : 0;
 			$cfg->set("backend_status", $status);
-			
+
+			$tm = new TextManager();
+			$infoText = $tm->getText('backend_offline_message');
+			$mailText = $cfg->value("backend_status") == 0 ? "Funktioniert wieder" : $infoText->content;
 			$mail = new Mail("EtoA-Backend", $mailText);
 			$sendTo = explode(";",$cfg->value("backend_offline_mail"));
 			foreach ($sendTo as $sendMail)	{

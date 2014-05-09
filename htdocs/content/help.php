@@ -77,7 +77,7 @@
 				Häufig gestellte Fragen (FAQ)
 			</td>
 			<td style="text-align:center;width:20%">
-				<a href="'.FORUM_PATH.'" target="_Blank"><img src="images/users.png" border="0" alt="Forum" title="Forum" style="width:40px;height:40px;"></a><br/>
+				<a href="'.FORUM_URL.'" target="_Blank"><img src="images/users.png" border="0" alt="Forum" title="Forum" style="width:40px;height:40px;"></a><br/>
 				Forum
 			</td>
 			<td style="text-align:center;width:20%">

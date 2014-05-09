@@ -19,7 +19,14 @@
 	//
 
 	// Funktionen und Config einlesen
-	require_once("inc/bootstrap.inc.php");
+	try {
+		require_once("inc/bootstrap.inc.php");
+	} catch (DBException $ex) {
+		$tpl->assign("content_for_layout", $ex);
+		$layoutTemplate = "/tpl/layouts/game/empty.html";
+		$tpl->display(getcwd().'/'.$layoutTemplate);
+		exit;
+	}
 
 	// Set no-cache header
 	header("Cache-Control: no-cache, must-revalidate");
@@ -36,7 +43,7 @@
 	{
 		if (!$s->login($_POST))
 		{
-			forward(Config::getInstance()->loginurl->v."?page=err&err=".$s->lastErrorCode,"Loginfehler",$s->lastError);
+			forward(getLoginUrl(array('page'=>'err', 'err' => $s->lastErrorCode)), "Loginfehler", $s->lastError);
 		}
 	}
 
@@ -51,13 +58,13 @@
 	if (isset($_GET['logout']) && $_GET['logout']!=null)
 	{
 		$s->logout();
-		forward(Config::getInstance()->loginurl->v.'?page=logout',"Logout");
+		forward(getLoginUrl(array('page'=>'logout')), "Logout");
 	}
 
 	// Validate session
 	if (!$s->validate())
 	{
-		forward(Config::getInstance()->loginurl->v."?page=err&err=nosession","Ungültige Session",$s->lastError);
+		forward(getLoginUrl(array('page'=>'err', 'err'=>'nosession')),"Ung¸ltige Session",$s->lastError);
 	}
 
 	// Load user data
@@ -66,7 +73,7 @@
 	// Check if it is valid user
 	if (!$cu->isValid)
 	{
-		forward(Config::getInstance()->loginurl->v."?page=err&err=usernotfound","Benutzer nicht mehr vorhanden");
+		forward(getLoginUrl(array('page'=>'err', 'err'=>'usernotfound')),"Benutzer nicht mehr vorhanden");
 	}
 
 	//
@@ -120,7 +127,7 @@
 		}
 		unset($rfr);
 	}
-
+	try {
 	ob_start();
 	
 	// Spiel ist generell gesperrt (ausser für erlaubte IP's)
@@ -135,7 +142,7 @@
 		} else {
 			echo "Das Spiel ist aufgrund von Wartungsarbeiten momentan offline! Schaue sp&auml;ter nochmals vorbei!<br/><br/>";
 		}
-		echo button("Zur Startseite",Config::getInstance()->loginurl->v);
+		echo button("Zur Startseite", getLoginUrl());
 		iBoxEnd();
 	}
 	// Login ist gesperrt
@@ -144,7 +151,7 @@
 		iBoxStart("Login geschlossen",750,"margin:50px auto;text-align:center");
 		echo "<img src=\"images/keychain.png\" alt=\"maintenance\" /><br/><br/>";
 		echo "Der Login momentan geschlossen!<br/><br/>";
-		echo button("Zur Startseite",Config::getInstance()->loginurl->v);
+		echo button("Zur Startseite", getLoginUrl());
 		iBoxEnd();
 	}
 	// Login ist erlaubt aber noch zeitlich zu früh
@@ -153,7 +160,7 @@
 		iBoxStart("Login noch geschlossen",750,"margin:50px auto;text-align:center");
 		echo "<img src=\"images/keychain.png\" alt=\"maintenance\" /><br/><br/>";
 		echo "Das Spiel startet am ".date("d.m.Y",$cfg->param1('enable_login'))." ab ".date("H:i",$cfg->param1('enable_login'))."!<br/><br/>";
-		echo button("Zur Startseite",Config::getInstance()->loginurl->v);
+		echo button("Zur Startseite", getLoginUrl());
 		iBoxEnd();
 	}
 	// Zugriff von anderen als eigenem Server bzw Login-Server sperren
@@ -162,7 +169,7 @@
 		echo "<div style=\"text-align:center;\">
 		<h1>Falscher Referer</h1>
 		Der Zugriff auf das Spiel ist nur anderen internen Seiten aus m&ouml;glich! Ein externes Verlinken direkt in das Game hinein ist nicht gestattet! Dein Referer: ".$_SERVER["HTTP_REFERER"]."<br/><br/>
-		<a href=\"".Config::getInstance()->loginurl->v."\">Hauptseite</a></div>";
+		<a href=\"".getLoginUrl() ."\">Hauptseite</a></div>";
 		
 	}
 	// Zugriff erlauben und Inhalt anzeigen
@@ -309,11 +316,11 @@
 		$tpl->assign("teamspeakOnclick",TEAMSPEAK_ONCLICK);
 		$tpl->assign("rulesUrl",RULES_URL);
 		$tpl->assign("rulesOnclick",RULES_ONCLICK);
-		$tpl->assign("urlForum",FORUM_PATH);
+		$tpl->assign("urlForum",FORUM_URL);
 		$tpl->assign("helpcenterUrl",HELPCENTER_URL);
 		$tpl->assign("helpcenterOnclick",HELPCENTER_ONCLICK);
 		$tpl->assign("devcenterOnclick",DEVCENTER_ONCLICK);
-		$tpl->assign("bugreportUrl",$cfg->value('url_bugs'));
+		$tpl->assign("bugreportUrl",DEVCENTER_PATH);
 		
 		
 		$tpl->assign("chatUrl",CHAT_URL);
@@ -344,6 +351,10 @@
 		$layoutTemplate = CSS_STYLE."/template.html";
 	}
 	$tpl->assign("content_for_layout", ob_get_clean());
+	} catch (DBException $ex) {
+		ob_clean();
+		$tpl->assign("content_for_layout", $ex);
+	}
 	
 	/*
 	ob_start();

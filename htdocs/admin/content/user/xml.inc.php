@@ -1,28 +1,12 @@
 <?PHP
 	$tpl->assign("title", "XML-Import/Export");
 	
-	if (!Cache::checkPerm("user_xml")) {
-		$tpl->assign("errmsg", Cache::getErrMsg());
-	}
-	$path = CACHE_ROOT."/user_xml";
-	
-	//
-	// Import
-	//
-	if (isset($_GET['import']))
-	{
-		$file = $path."/".base64_decode($_GET['import']);
-		if (is_file($file))
-		{
-			
-		}
-		echo "IN ARBEIT";
-	}	
+	$path = UserToXml::getDataDirectory();
 	
 	//
 	// Details
 	//
-	elseif (isset($_GET['file']))
+	if (isset($_GET['file']))
 	{
 		$file = $path."/".base64_decode($_GET['file']);
 		if (is_file($file))
@@ -222,8 +206,7 @@
 		{
 			error_msg("Datei $file nicht gefunden!");
 		}		
-		echo "<input type=\"button\" onclick=\"document.location='?page=$page&sub=$sub'\" value=\"Übersicht\" /> &nbsp;";
-		echo "<input type=\"button\" onclick=\"document.location='?page=$page&sub=$sub&import=".$_GET['file']."'\" value=\"Import\" />";
+		echo "<input type=\"button\" onclick=\"document.location='?page=$page&sub=$sub'\" value=\"Übersicht\" />";
 	}
 	
 	//
@@ -274,28 +257,36 @@
 		echo "</form>";
 		
 		$d = opendir($path);
-		echo "<table class=\"tb\">
-		<tr><th>Datei (Userid_Datum_Zeit)</th>
-		<th>Spieler</th>
-		<th>Datum</th>
-		<th>Optionen</th></tr>";
+		$files = array();
 		while ($f = readdir($d))
 		{
 			$file = $path."/".$f;
 			if (is_file($file) && stristr($f,".xml"))
-			{			
+			{
+				$files[] = $file;
+			}
+		}
+		closedir($d);
+		if (count($files) > 0) {
+			echo "<table class=\"tb\">
+			<tr><th>Datei (Userid_Datum_Zeit)</th>
+			<th>Spieler</th>
+			<th>Datum</th>
+			<th>Optionen</th></tr>";
+			foreach ($files as $file) {
 				$xml = simplexml_load_file($file);
 				echo "<tr>
-				<td>$f</td>
+				<td>".basename($file)."</td>
 				<td>".$xml->account->nick."</td>
 				<td>".$xml->export['date']."</td>
 				<td>
-					<a href=\"?page=$page&amp;sub=$sub&amp;file=".base64_encode($f)."\">Details & Import</a> &nbsp;
+					<a href=\"?page=$page&amp;sub=$sub&amp;file=".base64_encode(basename($file))."\">Details</a> &nbsp;
 					<a href=\"".createDownloadLink($file)."\">Download</a></td>
 				</tr>";
 			}
+			echo "</table>";
+		} else {
+			echo "<p><i>Noch keine Dateien vorhanden!</i></p>";
 		}
-		echo "</table>";
-		closedir($d);
 	}
 ?>

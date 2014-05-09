@@ -1090,24 +1090,24 @@
 							}
 							else
 							{
-								error_msg("Baue zuerst dein Raketensilo aus um mehr Raketen zu starten (".MISSILE_SILO_FLIGHTS_PER_LEVEL." Angriff pro Stufe)!");
+								info_msg("Baue zuerst dein Raketensilo aus um mehr Raketen zu starten (".MISSILE_SILO_FLIGHTS_PER_LEVEL." Angriff pro Stufe)!");
 							}
 						}
 					}
 				}
 				else
 				{
-					error_msg("Keine Raketen verfügbar!");
+					info_msg("Keine Raketen verfügbar!");
 				}  
 			}
 			else
 			{
-				error_msg("Dieses Gebäude ist noch bis ".df($werft_arr['buildlist_deactivated'])." deaktiviert!");
+				info_msg("Dieses Gebäude ist noch bis ".df($werft_arr['buildlist_deactivated'])." deaktiviert!");
 			}
 		}	
 		else
 		{
-			error_msg("Zu wenig Energie verfügbar! Gebäude ist deaktiviert!");
+			info_msg("Zu wenig Energie verfügbar! Gebäude ist deaktiviert!");
 		}
 	}
 	else
@@ -1117,7 +1117,7 @@
 		
 		// Ressourcen anzeigen
 		$cp->resBox($cu->properties->smallResBox);
-		error_msg("Das Raketensilo wurde noch nicht gebaut!");
+		info_msg("Das Raketensilo wurde noch nicht gebaut!");
 	}
 
 ?>
