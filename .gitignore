@@ -10,6 +10,6 @@ htdocs/cache/filtered_images/
 htdocs/cache/imagepacks/
 htdocs/cache/rss/
 htdocs/cache/userprofiles/
+htdocs/cache/errors.txt
 htdocs/config/db.conf
 backup/
-htdocs/cache/errors.txt
