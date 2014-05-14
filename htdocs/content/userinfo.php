@@ -32,7 +32,7 @@
 		$uid = $cu->id;
 
 	if (isset($_GET['id']) && intval($_GET['id'])>0)
-		$uid = $_GET['id'];
+		$uid = intval($_GET['id']);
 	
 	if (isset($uid))
 	{
