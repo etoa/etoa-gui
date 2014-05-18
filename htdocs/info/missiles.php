@@ -87,7 +87,7 @@
 	    tableEnd();
 		}
 		else
-		  echo "Ragetendaten nicht gefunden!";
+		  echo "Raketendaten nicht gefunden!";
 		echo "<input type=\"button\" value=\"Raketen&uuml;bersicht\" onclick=\"document.location='?$link&amp;site=$site'\" /> &nbsp; ";
 		echo "<input type=\"button\" value=\"Technikbaum\" onclick=\"document.location='?page=techtree&mode=defense'\" /> &nbsp; ";
 		if ($_SESSION['lastpage']=="missiles")
