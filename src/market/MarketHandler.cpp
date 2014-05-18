@@ -280,15 +280,15 @@ namespace market
 										log += "\nNahrung: ";
 										log += etoa::nf(std::string(arr["sell_4"]));
 										log += "\n\nDies hat ihn folgende Rohstoffe gekostet:\nTitan: ";
-										log += etoa::nf(std::string(arr["buy_1"]));
+										log += etoa::nf(std::string(arr["buy_0"]));
 										log += "\nSilizium: ";
-										log += etoa::nf(std::string(arr["buy_2"]));
+										log += etoa::nf(std::string(arr["buy_1"]));
 										log += "\nPVC: ";
-										log += etoa::nf(std::string(arr["buy_3"]));
+										log += etoa::nf(std::string(arr["buy_2"]));
 										log += "\nTritium: ";
-										log += etoa::nf(std::string(arr["buy_4"]));
+										log += etoa::nf(std::string(arr["buy_3"]));
 										log += "\nNahrung: ";
-										log += etoa::nf(std::string(arr["buy_5"]));
+										log += etoa::nf(std::string(arr["buy_4"]));
 										etoa::add_log(10,log,time);
 									}
 								}
