@@ -53,6 +53,8 @@
 	//
 	if (isset($_GET['id']))
 	{
+		$sid = intval(isset($_GET['id']));
+		
 		$res = dbquery("
 		SELECT 
 			* 
@@ -62,7 +64,7 @@
 			ship_cat
 			ON ship_cat_id=cat_id
 		WHERE 
-			ship_id='".$_GET['id']."' 
+			ship_id='".$sid."' 
 			AND ship_show=1
 		;");
 		if ($arr = @mysql_fetch_array($res))
@@ -82,7 +84,7 @@
 			while ($barr=mysql_fetch_array($bres))		
 			{
 				echo "<option value=\"".$barr['ship_id']."\"";
-				if ($barr['ship_id']==$_GET['id']) echo " selected=\"selected\"";
+				if ($barr['ship_id']==$sid) echo " selected=\"selected\"";
 				echo ">".$barr['ship_name']."</option>";
 			}
 			echo "</select><br/><br/>";		
@@ -277,7 +279,7 @@
 	{
 		HelpUtil::breadCrumbs(array("Schiffe","shipyard"));
 	
-		if (isset($_GET['order']))
+		if (isset($_GET['order']) && ctype_alpha($_GET['order']))
 		{
 			$order="ship_".$_GET['order'];
 			if ($_SESSION['help']['orderfield']==$_GET['order'])

@@ -37,7 +37,12 @@
 	ImageCopyresized($im,$imh,(IM_W-(IM_W*BG_FAC_W))/2,(IM_H-(IM_H*BG_FAC_H))/2,0,0,IM_W*BG_FAC_W,IM_H*BG_FAC_H,imagesx($imh),imagesy($imh));
 	ImageRectangle($im, 0, 0, IM_W-1, IM_H-1, $black);
 	
-	if (isset($_GET['alliance']) && $_GET['alliance']>0 && count($_SESSION)>0)
+	if (isset($_GET['alliance']))
+	{
+		$aid = intval($_GET['alliance']);
+	}
+	
+	if ($aid>0 && count($_SESSION)>0)
 	{
 		$res=dbquery("
 			SELECT 
@@ -47,22 +52,22 @@
 			FROM 
 				alliances
 			WHERE 
-				alliance_id='".$_GET['alliance']."';
+				alliance_id='".$aid."';
 		");
 		if (mysql_num_rows($res)>0)
 		{
 			$arr=mysql_fetch_array($res);
-			if ($_GET['start']>0)
-				$sql1 = " AND point_timestamp > ".$_GET['start']." ";
-			if ($_GET['end']>0)
-				$sql2 = " AND point_timestamp < ".$_GET['end']." ";			
+			if (intval($_GET['start'])>0)
+				$sql1 = " AND point_timestamp > ".intval($_GET['start'])." ";
+			if (intval($_GET['end'])>0)
+				$sql2 = " AND point_timestamp < ".intval($_GET['end'])." ";			
 			$pres=dbquery("
 				SELECT 
 					* 
 				FROM 
 					alliance_points
 				WHERE 
-					point_alliance_id='".$_GET['alliance']."' 
+					point_alliance_id='".$aid."' 
 					AND point_points>0
 					$sql1
 					$sql2

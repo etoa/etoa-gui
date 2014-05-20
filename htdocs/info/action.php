@@ -4,7 +4,7 @@
 	define("HELP_URL","?$link&amp;site=shipyard");
 	
 	
-	if (isset($_GET['action']))
+	if (isset($_GET['action']) && ctype_alpha($_GET['action']))
 	{
 		$site = $_GET['site'];
 		$action = $_GET['action'];

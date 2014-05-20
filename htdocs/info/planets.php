@@ -3,7 +3,7 @@
 	echo "<h2>Planeten</h2>";
 	HelpUtil::breadCrumbs(array("Planeten","planets"));
 
-	if (isset($_GET['order']))
+	if (isset($_GET['order']) && ctype_alpha($_GET['order']))
 	{
 		$order="type_".$_GET['order'];
 		if ($_SESSION['help']['orderfield']==$_GET['order'])

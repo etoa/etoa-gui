@@ -25,7 +25,7 @@
 	* @copyright Copyright (c) 2004-2010 by EtoA Gaming, www.etoa.net
 	*/	
 
-	$mode = (isset($_GET['mode']) && $_GET['mode']!="") ? $_GET['mode'] : 'target';
+	$mode = (isset($_GET['mode']) && $_GET['mode']!="" && ctype_alpha($_GET['mode'])) ? $_GET['mode'] : 'target';
 	
 	// save current planet for use in xajax functions
 	$_SESSION['currentEntity']=serialize($cp);
@@ -39,8 +39,15 @@
  	echo '<br/>';
 	
 	// Save edited or new fleet bookmarks
-	if (isset($_POST['submitEdit']) || isset($_POST['submitNew']))
+	// max length (in database) of action is 15 chars
+	if ((isset($_POST['submitEdit']) || isset($_POST['submitNew'])) && (isset($_POST['action']) && ctype_alpha($_POST['action']) && strlen($_POST['action']) <= 15))
 	{
+		$sx = intval($_POST['sx']);
+		$cx = intval($_POST['cx']);
+		$sy = intval($_POST['sy']);
+		$cy = intval($_POST['cy']);
+		$pos = intval($_POST['pos']);
+		
 		// Check entity
 		$res=dbquery("
 			SELECT
@@ -50,18 +57,18 @@
 			INNER JOIN
 				cells
 			ON entities.cell_id=cells.id
-				AND sx='".$_POST['sx']."'
-        		AND sy='".$_POST['sy']."'
-        		AND cx='".$_POST['cx']."'
-        		AND cy='".$_POST['cy']."'
-        		AND pos='".$_POST['pos']."';");
+				AND sx='".$sx."'
+        		AND sy='".$sy."'
+        		AND cx='".$cx."'
+        		AND cy='".$cy."'
+        		AND pos='".$pos."';");
 		if (mysql_num_rows($res)>0)
 		{
 			$arr=mysql_fetch_row($res);
 
 			//Check discovered for fleet bookmarks, bugfix by river
-			$absX = (($_POST['sx']-1) * CELL_NUM_X) + $_POST['cx'];
-			$absY = (($_POST['sy']-1) * CELL_NUM_Y) + $_POST['cy'];
+			$absX = (($sx-1) * CELL_NUM_X) + $cx;
+			$absY = (($sy-1) * CELL_NUM_Y) + $cy;
 			if ($cu->discovered($absX,$absY))
 			{
 				// Create shipstring
@@ -69,12 +76,12 @@
 				foreach ($_POST['ship_count'] as $sid => $count)
 				{
 					if ($addships=="")
-						$addships.= $sid.":".nf_back($count);
+						$addships.= intval($sid).":".nf_back(intval($count));
 					else
-						$addships.= ",".$sid.":".nf_back($count);
+						$addships.= ",".intval($sid).":".nf_back(intval($count));
 				}
 				
-				$speed = max(1,min(100,nf_back($_POST['value'])));
+				$speed = max(1,min(100,intval(nf_back($_POST['value']))));
 				
 				// Create restring
 				$freight = intval(nf_back_sign($_POST['res0'])).",".
@@ -124,7 +131,7 @@
 						VALUES 
 						(
 							'".$cu->id."',
-							'".addslashes($_POST['name'])."',
+							'".mysql_real_escape_string($_POST['name'])."',
 							'".$arr[0]."',
 							'".$addships."',
 							'".$freight."',
@@ -151,7 +158,7 @@
 							speed='".$speed."'
 						WHERE
 							user_id='".$cu->id."'
-							AND id='".$_POST['id']."'
+							AND id='".intval($_POST['id'])."'
 						LIMIT 1;");
 					
 					ok_msg("Der Favorit wurde gespeichert!");
@@ -169,13 +176,15 @@
 	}
 	
 	// Delete fleet bookmark
-	if (isset($_GET['del']) && $_GET['del']>0)
+	if (isset($_GET['del']) && intval($_GET['del'])>0)
 	{
+		$bmid = intval($_GET['del']);
+		
 		dbquery("
 		DELETE FROM 
 			fleet_bookmarks
 		WHERE 
-			id='".$_GET['del']."' 
+			id='".$bmid."' 
 			AND user_id='".$cu->id."';");
 		if (mysql_affected_rows()>0)
 			ok_msg("Gelöscht");
@@ -267,8 +276,10 @@
 		$_SESSION['bookmarks'] = array('added');
 		$_SESSION['bookmarks']['added'] = array();
 		
-		if (isset($_GET['edit']) && $_GET['edit']>0)
+		if (isset($_GET['edit']) && intval($_GET['edit'])>0)
 		{
+			$bmid = intval($_GET['edit']);
+			
 			// Load bookmark data
 			$bres = dbquery("
 						SELECT
@@ -276,7 +287,7 @@
 						FROM
 							fleet_bookmarks
 						WHERE
-							id='".$_GET['edit']."' 
+							id='".$bmid."' 
 							AND user_id='".$cu->id."';");
 			if (mysql_num_rows($bres)>0)
 			{
@@ -637,15 +648,17 @@
 		/****************************
 		*  Sortiereingaben speichern *
 		****************************/
-		if(count($_POST)>0 && isset($_POST['sort_submit']))
+		if(count($_POST)>0 && isset($_POST['sort_submit']) && isset($_POST['sort_value']) && ctype_alpha($_POST['sort_value']) && isset($_POST['sort_way']) && ctype_alpha($_POST['sort_way']))
 		{
 			$cu->properties->itemOrderBookmark = $_POST['sort_value'];
     		$cu->properties->itemOrderWay = $_POST['sort_way'];
 		}
 		
 		// Bearbeiten
-		if (isset($_GET['edit']) && $_GET['edit']>0)
+		if (isset($_GET['edit']) && intval($_GET['edit'])>0)
 		{
+			$bmid = intval($_GET['edit']);
+			
 			echo "<form action=\"?page=$page\" method=\"post\">";
 			checker_init();
 			$res=dbquery("
@@ -658,7 +671,7 @@
 			INNER JOIN
 				entities	
 				ON bookmarks.entity_id=entities.id
-				AND bookmarks.id='".$_GET['edit']."'
+				AND bookmarks.id='".$bmid."'
 				AND bookmarks.user_id=".$cu->id.";");
 			if (mysql_num_rows($res)>0)
 			{
@@ -678,7 +691,7 @@
 							</tr>";
 				tableEnd();
 				
-				echo "<input type=\"hidden\" name=\"bookmark_id\" value=\"".$_GET['edit']."\" />";
+				echo "<input type=\"hidden\" name=\"bookmark_id\" value=\"".$bmid."\" />";
 				echo "<input type=\"submit\" value=\"Speichern\" name=\"submit_edit_target\" /> &nbsp; ";
 			}
 			else
@@ -691,38 +704,48 @@
 		else
 		{
 			// Bearbeiteter Favorit speichern
-			if (isset($_POST['submit_edit_target']) && $_POST['submit_edit_target'] && checker_verify())
+			if (isset($_POST['submit_edit_target']) && isset($_POST['bookmark_comment']) && isset($_POST['bookmark_id']) && intval($_POST['bookmark_id'])>0 && checker_verify())
 			{
+				$bmid = intval($_POST['bookmark_id']);
+				
 				dbquery("
 				UPDATE 
 					bookmarks
 				SET 
-					comment='".addslashes($_POST['bookmark_comment'])."' 
+					comment='".mysql_real_escape_string($_POST['bookmark_comment'])."' 
 				WHERE 
-					id='".$_POST['bookmark_id']."' 
+					id='".$bmid."' 
 					AND user_id='".$cu->id."';");
 				if (mysql_affected_rows()>0)
 					ok_msg("Gespeichert");
 			}
 	
 			// Favorit löschen
-			if (isset($_GET['del']) && $_GET['del']>0)
+			if (isset($_GET['del']) && intval($_GET['del'])>0)
 			{
+				$bmid = intval($_GET['del']);
+				
 				dbquery("
 				DELETE FROM 
 					bookmarks
 				WHERE 
-					id='".$_GET['del']."' 
+					id='".$bmid."' 
 					AND user_id='".$cu->id."';");
 				if (mysql_affected_rows()>0)
 					ok_msg("Gelöscht");
 			}
 	
-			// Neuer Favorit speichern
+			// Neuen Favorit speichern
 			if (isset($_POST['submit_target']) && $_POST['submit_target']!="" && checker_verify())
 			{
-				$absX = (($_POST['sx']-1) * CELL_NUM_X) + $_POST['cx'];
-				$absY = (($_POST['sy']-1) * CELL_NUM_Y) + $_POST['cy'];
+				$sx = intval($_POST['sx']);
+				$cx = intval($_POST['cx']);
+				$sy = intval($_POST['sy']);
+				$cy = intval($_POST['cy']);
+				$pos = intval($_POST['pos']);
+				
+				$absX = (($sx-1) * CELL_NUM_X) + $cx;
+				$absY = (($sy-1) * CELL_NUM_Y) + $cy;
 				if ($cu->discovered($absX,$absY))
 				{
 					$res=dbquery("
@@ -733,11 +756,11 @@
 						INNER JOIN
 							cells
 						ON entities.cell_id=cells.id
-							AND sx='".$_POST['sx']."'
-	    				    AND sy='".$_POST['sy']."'
-	        				AND cx='".$_POST['cx']."'
-	        				AND cy='".$_POST['cy']."'
-	        				AND pos='".$_POST['pos']."';");
+							AND sx='".$sx."'
+	    				    AND sy='".$sy."'
+	        				AND cx='".$cx."'
+	        				AND cy='".$cy."'
+	        				AND pos='".$pos."';");
 					if (mysql_num_rows($res)>0)
 					{
 						$arr=mysql_fetch_row($res);
@@ -761,7 +784,7 @@
 								VALUES 
 									('".$cu->id."',
 									'".$arr[0]."',
-									'".addslashes($_POST['bookmark_comment'])."');");
+									'".mysql_real_escape_string($_POST['bookmark_comment'])."');");
 								
 							ok_msg("Der Favorit wurde hinzugef&uuml;gt!");
 						}
@@ -782,15 +805,17 @@
 			}
 	
 			// Neuer Favorit speichern (id gegeben
-			if (isset($_GET['add']) && $_GET['add']>0)
+			if (isset($_GET['add']) && intval($_GET['add'])>0)
 			{
+				$bmid = intval($_GET['add']);
+				
 				$res=dbquery("
 				SELECT
 					entities.id
 				FROM
 					entities
 				WHERE
-					id=".$_GET['add'].";");
+					id=".$bmid.";");
 				if (mysql_num_rows($res)>0)
 				{
 					$arr=mysql_fetch_row($res);

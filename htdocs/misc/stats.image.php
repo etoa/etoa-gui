@@ -39,8 +39,12 @@
 	$imh = imagecreatefromjpeg("images/logo_trans.jpg");
 	ImageCopyresized($im,$imh,(IM_W-(IM_W*BG_FAC_W))/2,(IM_H-(IM_H*BG_FAC_H))/2,0,0,IM_W*BG_FAC_W,IM_H*BG_FAC_H,imagesx($imh),imagesy($imh));
 	ImageRectangle($im, 0, 0, IM_W-1, IM_H-1, $black);
-	
-	if (isset($_GET['user']) && $_GET['user']>0 && count($_SESSION)>0)
+
+	if (isset($_GET['user']))
+	{
+		$uid = intval($_GET['user']);
+	}
+	if ($uid > 0 && count($_SESSION) > 0)
 	{
 		$res=dbquery("
 			SELECT 
@@ -49,17 +53,17 @@
 			FROM 
 				users
 			WHERE 
-				user_id='".$_GET['user']."';
+				user_id='".$uid."';
 		");
 		if (mysql_num_rows($res)>0)
 		{
 			$arr=mysql_fetch_array($res);
-			if (isset($_GET['start']) && $_GET['start']>0)
-				$sql1 = " AND point_timestamp > ".$_GET['start']." ";
+			if (isset($_GET['start']) && intval($_GET['start'])>0)
+				$sql1 = " AND point_timestamp > ".intval($_GET['start'])." ";
 			else
 				$sql1 = "";
-			if (isset($_GET['end']) && $_GET['end']>0)
-				$sql2 = " AND point_timestamp < ".$_GET['end']." ";
+			if (isset($_GET['end']) && intval($_GET['end'])>0)
+				$sql2 = " AND point_timestamp < ".intval($_GET['end'])." ";
 			else
 				$sql2 = "";
 
@@ -69,7 +73,7 @@
 				FROM 
 					user_points
 				WHERE 
-					point_user_id='".$_GET['user']."' 
+					point_user_id='".$uid."' 
 					AND point_points>0
 					$sql1
 					$sql2

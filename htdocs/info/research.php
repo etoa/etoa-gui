@@ -7,8 +7,8 @@
 	
 	if (isset($_GET['id']))
 	{
-		if (!isset($b_level)) $b_level = 0;
-		if ($b_level == 0) $b_level = 1;
+		$tid = intval($_GET['id']);
+		
 		$res = dbquery("
 		SELECT 
 			tech_id,
@@ -25,7 +25,7 @@
 		FROM 
 			technologies 
 		WHERE 
-			tech_id='".$_GET['id']."'
+			tech_id='".$tid."'
 			;");
 		
 		if ($arr = @mysql_fetch_array($res))
@@ -50,7 +50,7 @@
 			while ($barr=mysql_fetch_array($bres))		
 			{
 				echo "<option value=\"".$barr['tech_id']."\"";
-				if ($barr['tech_id']==$_GET['id']) echo " selected=\"selected\"";
+				if ($barr['tech_id']==$tid) echo " selected=\"selected\"";
 				echo ">".$barr['tech_name']."</option>";
 			}
 			echo "</select><br/><br/>";		

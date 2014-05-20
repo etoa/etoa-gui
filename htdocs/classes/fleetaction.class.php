@@ -118,7 +118,7 @@
 
 		static function createFactory($code)
 		{
-			if ($code!="")
+			if ($code!="" && ctype_alpha($code))
 			{
 				$className = "fleetAction".ucfirst($code);
 				$classFile = CLASS_ROOT."/fleetaction/".strtolower($className).".class.php";

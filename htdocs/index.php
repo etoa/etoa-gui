@@ -218,7 +218,7 @@
 				$eid=0;
 				if (isset($_GET['change_entity']))
 				{
-					$eid = $_GET['change_entity'];
+					$eid = intval($_GET['change_entity']);
 				}
 				if ($eid>0 && in_array($eid,$planets))
 				{

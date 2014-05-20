@@ -15,7 +15,7 @@ class HelpUtil
 		echo "Du befindest dich hier: ";
 		if ($item1!=null)
 		{
-			if (isset($_GET['page']))
+			if (isset($_GET['page']) && ctype_alnum(str_replace(array('-','_'), '', $_GET['page'])))
 				$page = "page";
 			else
 				$page = "index";
