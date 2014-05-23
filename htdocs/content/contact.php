@@ -27,10 +27,12 @@
 
 	echo '<h1>Kontakt</h1>';
 
-	if (isset($_GET['rcpt']) && $_GET['rcpt']>0)	
+	if (isset($_GET['rcpt']) && intval($_GET['rcpt'])>0)	
 	{
+		$rcpt = intval($_GET['rcpt']);
+		
 		echo '<h2>Mail an Game-Administrator</h2>
-		<form action="?page='.$page.'&amp;sendrcpt='.intval($_GET['rcpt']).'" method="post"><div>';
+		<form action="?page='.$page.'&amp;sendrcpt='.$rcpt.'" method="post"><div>';
 		$res=dbquery("
 		SELECT
 			user_nick,
@@ -38,7 +40,7 @@
 		FROM
 			admin_users
 		WHERE
-			user_id=".intval($_GET['rcpt']).";
+			user_id=".$rcpt.";
 		");
 		if (mysql_num_rows($res)>0)
 		{
@@ -67,7 +69,7 @@
 			FROM
 				admin_users
 			WHERE
-				user_id=".$_GET['sendrcpt'].";
+				user_id=".intval($_GET['sendrcpt']).";
 			");
 			if (mysql_num_rows($res)>0)
 			{
