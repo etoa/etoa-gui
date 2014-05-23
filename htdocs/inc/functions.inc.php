@@ -418,6 +418,7 @@
 	{
 		$number = str_replace('`', '', $number);
 		$number = str_replace('%', '', $number);
+        $number = intval($number);
 		if ($colorize==1)
 		{
 			if ($number>0)
@@ -425,7 +426,7 @@
 			if ($number<0)
 				return "<span style=\"color:#f00\">".number_format($number,0,",",".")."</span>";
 		}
-		$number = abs(intval($number));
+		$number = abs($number);
 		return $number;
 		
 	}
