@@ -27,9 +27,9 @@
 
 	// BEGIN SKRIPT //
 
-	if (isset($_GET['id']) && $_GET['id']>0)
+	if (isset($_GET['id']) && intval($_GET['id'])>0)
 	{
-		$cellId = $_GET['id'];
+		$cellId = intval($_GET['id']);
 	}
 	else
 	{
@@ -39,7 +39,7 @@
 	$_SESSION['currentEntity']=serialize($cp);
 	
 	// Systemnamen updaten
-	if (isset($_POST['starname_submit']) && $_POST['starname']!="" && $_POST['starname_id']>0 && checker_verify())
+	if (isset($_POST['starname_submit']) && $_POST['starname']!="" && intval($_POST['starname_id'])>0 && checker_verify())
 	{
 		$star = new Star($_POST['starname_id']);
 		if ($star->isValid())
