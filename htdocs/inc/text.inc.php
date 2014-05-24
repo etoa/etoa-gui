@@ -349,4 +349,9 @@ $smilielist[':-(']="frown.gif";
                 .(isset($match[2])?$match[2]:$match[1]).'</a>';
     }
     
+    function ctype_aldash($str)
+    {
+        return ctype_alpha(str_replace('_','',$str));
+    }
+    
 ?>

@@ -81,7 +81,8 @@
 			/****************************
 			*  Sortiereingaben speichern *
 			****************************/
-			if(count($_POST)>0 && isset($_POST['sort_submit']))
+			if(count($_POST)>0 && isset($_POST['sort_submit'])
+			   && ctype_aldash($_POST['sort_value']) && ctype_aldash($_POST['sort_way']))
 			{
 				$cu->properties->itemOrderDef = $_POST['sort_value'];
 				$cu->properties->itemOrderWay = $_POST['sort_way'];
@@ -486,9 +487,9 @@
 							$bc['fuel']=0;
 						}
 						//Nahrung
-						if ($_POST['additional_food_costs']>0 || $defs[$def_id]['def_costs_food']>0)
+						if (intval($_POST['additional_food_costs'])>0 || $defs[$def_id]['def_costs_food']>0)
 						{
-							 $bf['food']=$cp->resFood/($_POST['additional_food_costs']+$defs[$def_id]['def_costs_food']); 
+							 $bf['food']=$cp->resFood/(intval($_POST['additional_food_costs'])+$defs[$def_id]['def_costs_food']);
 						}
 						else 
 						{
@@ -503,7 +504,8 @@
 						
 						//Check for Rene-Bug
 						$additional_food_costs = $people_working*$cfg->value('people_food_require');
-						if ($additional_food_costs!=$_POST['additional_food_costs'] || $_POST['additional_food_costs']<0) {
+						if ($additional_food_costs!=intval($_POST['additional_food_costs']) || intval($_POST['additional_food_costs'])<0)
+						{
 							$build_cnt=0;
 						}
 					
@@ -515,7 +517,7 @@
 							$bc['crystal']=$defs[$def_id]['def_costs_crystal']*$build_cnt;
 							$bc['plastic']=$defs[$def_id]['def_costs_plastic']*$build_cnt;
 							$bc['fuel']=$defs[$def_id]['def_costs_fuel']*$build_cnt;
-							$bc['food']=($_POST['additional_food_costs']+$defs[$def_id]['def_costs_food'])*$build_cnt;
+							$bc['food']=(intval($_POST['additional_food_costs'])+$defs[$def_id]['def_costs_food'])*$build_cnt;
 	
 							//Berechnete Ress provisorisch abziehen
 							$cp->resMetal-=$bc['metal'];
@@ -664,8 +666,8 @@
 	/*********************
 	* Auftrag abbrechen  *
 	*********************/
-			if (isset($_GET['cancel']) && $_GET['cancel']>0 && $cancelable)
-			{	
+			if (isset($_GET['cancel']) && intval($_GET['cancel'])>0 && $cancelable)
+			{
 				$id = intval($_GET['cancel']);
 				if (isset($queue[$id]))
 				{
