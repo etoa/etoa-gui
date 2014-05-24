@@ -348,5 +348,5 @@ $smilielist[':-(']="frown.gif";
         return '<a href="'.$url.'"'.($intern?'':' target="_blank"').'>'
                 .(isset($match[2])?$match[2]:$match[1]).'</a>';
     }
-
+    
 ?>
