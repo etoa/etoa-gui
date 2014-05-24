@@ -22,7 +22,7 @@
 		function Allianz($id=0)
 		{
 			$this->isValid = true;
-			$this->id = $id;
+			$this->id = intval($id);
 			$this->pos = 0;
 			$this->name = "Allianz";
 			$this->coordsLoaded=false;

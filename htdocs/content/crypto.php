@@ -475,8 +475,8 @@
 			tableEnd();
 			
 			if (!$cd_enabled)
-			{				
-				if (isset($_GET['target']) && $_GET['target']>0)
+			{
+				if (isset($_GET['target']) && intval($_GET['target'])>0)
 				{
 					$ent = Entity::createFactoryById($_GET['target']);
 					$coords = $ent->coordsArray();
@@ -496,7 +496,7 @@
 					$coords[2] = $cp->cx;
 					$coords[3] = $cp->cy;
 					$coords[4] = $cp->pos;
-				}  		
+				}
 				echo '<form action="?page='.$page.'" method="post">';		
 				checker_init();
 				iBoxStart("Ziel für Flottenanalyse wahlen:");
@@ -1081,6 +1081,6 @@
 
     info_msg("Aufgrund eines intergalaktischen Moratoriums der Völkerföderation der Galaxie Andromeda 
     sind sämtliche elektronischen Spionagetätigkeiten zurzeit nicht erlaubt!");
-  }  
+  }
   
 ?>

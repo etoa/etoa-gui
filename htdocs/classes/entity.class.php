@@ -322,7 +322,7 @@
 			FROM
 				entities
 			WHERE
-				id=".$id."
+				id=".intval($id)."
 			");
 			if (mysql_num_rows($res)>0)
 			{
@@ -370,11 +370,11 @@
 				entities
 			INNER JOIN	
 				cells on entities.cell_id=cells.id
-			AND sx=".$c1."
-			AND sy=".$c2."
-			AND cx=".$c3."
-			AND cy=".$c4."
-			AND pos=".$c5."
+			AND sx=".intval($c1)."
+			AND sy=".intval($c2)."
+			AND cx=".intval($c3)."
+			AND cy=".intval($c4)."
+			AND pos=".intval($c5)."
 			LIMIT 1;
 			");
 			if (mysql_num_rows($res)>0)
@@ -423,7 +423,7 @@
 			FROM
 				entities
 			WHERE 	
-				entities.cell_id='".$cell."'
+				entities.cell_id='".intval($cell)."'
 				AND entities.pos='0'
 			LIMIT 1;");
 			

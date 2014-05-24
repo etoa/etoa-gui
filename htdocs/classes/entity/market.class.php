@@ -22,7 +22,7 @@
 		function Market($id=0)
 		{
 			$this->isValid = true;
-			$this->id = $id;
+			$this->id = intval($id);
 			$this->pos = 0;
 			$this->name = "Marktplatz";
 			$this->coordsLoaded=false;
