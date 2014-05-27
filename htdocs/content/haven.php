@@ -45,11 +45,11 @@
 		
 			if (isset($_GET['target']) && intval($_GET['target'])>0)
 			{
-				$_SESSION['haven']['targetId']=$_GET['target'];
+				$_SESSION['haven']['targetId']=intval($_GET['target']);
 			}
 			elseif (isset($_GET['cellTarget']) && intval($_GET['cellTarget'])>0)
 			{
-				$_SESSION['haven']['cellTargetId']=$_GET['cellTarget'];
+				$_SESSION['haven']['cellTargetId']=intval($_GET['cellTarget']);
 			}
 
 

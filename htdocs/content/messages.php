@@ -35,7 +35,7 @@
 	// BEGIN SKRIPT //
 	
 	// Modus setzen
-	$mode = isset($_GET['mode']) && ($_GET['mode']!="") ? $_GET['mode'] : 'inbox';
+	$mode = isset($_GET['mode']) && ($_GET['mode']!="") && ctype_alpha($_GET['mode']) ? $_GET['mode'] : 'inbox';
 
 
 	?>
@@ -172,11 +172,11 @@
 					echo "<tr><td class=\"tbltitle\" width=\"50\" valign=\"top\">Text:<br/>";
 					if (isset($_GET['src']))
 					{
-						echo '[<a href="?page='.$page.'&mode='.$mode.'&amp;msg_id='.$_GET['msg_id'].'">Nachricht</a>]';
+						echo '[<a href="?page='.$page.'&mode='.$mode.'&amp;msg_id='.intval($_GET['msg_id']).'">Nachricht</a>]';
 					}
 					else
 					{
-						echo '[<a href="?page='.$page.'&mode='.$mode.'&amp;msg_id='.$_GET['msg_id'].'&amp;src=1">Quelltext</a>]';
+						echo '[<a href="?page='.$page.'&mode='.$mode.'&amp;msg_id='.intval($_GET['msg_id']).'&amp;src=1">Quelltext</a>]';
 					}
 					echo "</td><td width=\"250\">";
 					if ($marr['text']!="")
@@ -223,7 +223,7 @@
 						echo "<input type=\"submit\" value=\"Antworten\" name=\"answer\" />&nbsp;";
 						echo "<input type=\"button\" value=\"Absender ignorieren\" onclick=\"document.location='?page=".$page."&amp;mode=ignore&amp;add=".$marr['message_user_from']."'\" />&nbsp;";
 					}						
-					echo "<input type=\"button\" value=\"L&ouml;schen\" onclick=\"document.location='?page=$page&mode=mode&del=".$_GET['msg_id']."';\" />&nbsp;";
+					echo "<input type=\"button\" value=\"L&ouml;schen\" onclick=\"document.location='?page=$page&mode=mode&del=".intval($_GET['msg_id'])."';\" />&nbsp;";
 					if ($marr['message_user_from']>0)
 					{
 						ticket_button(1,"Beleidigung melden",$marr['message_user_from']);
@@ -256,7 +256,7 @@
 					SET 
 						message_deleted=1 
 					WHERE 
-						message_id='".$_POST['message_id']."' 
+						message_id='".intval($_POST['message_id'])."' 
 						AND message_user_to='".$cu->id."'
 					LIMIT 1;");
 					success_msg("Nachricht wurde gel&ouml;scht!");
@@ -269,7 +269,7 @@
 					SET 
 						message_deleted=1 
 					WHERE 
-						message_id='".$_GET['del']."' 
+						message_id='".intval($_GET['del'])."' 
 						AND message_user_to='".$cu->id."'
 					LIMIT 1;");
 					if (mysql_affected_rows()>0)
@@ -305,7 +305,7 @@
 							SET
 								message_deleted=1
 							WHERE
-								message_id='$id'
+								message_id='".intval($id)."'
 								AND message_user_to='".$cu->id."'
 								$sqladd;");
 						}
@@ -371,7 +371,7 @@
 							SET
 								message_archived=1
 							WHERE
-								message_id='".$id."'
+								message_id='".intval($id)."'
 								AND message_user_to='".$cu->id."'
 								;");
 						}

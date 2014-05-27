@@ -38,7 +38,9 @@
 			{
 				foreach ($_POST['buildlist_prod_percent'] as $id=>$val)
 				{
-					if ($val>1) $val=1; if ($val<0) $val=0;
+					$val = floatval($val);
+					if ($val>1) $val=1;
+					if ($val<0) $val=0;
 					dbquery("
 					UPDATE 
 						buildlist 
@@ -47,7 +49,7 @@
 					WHERE 
 						buildlist_user_id=".$cu->id." 
 						AND buildlist_entity_id=".$cp->id." 
-						AND buildlist_building_id='$id'
+						AND buildlist_building_id='".intval($id)."'
 					;");
 				}
 				ok_msg("Änderungen gespeichert!");

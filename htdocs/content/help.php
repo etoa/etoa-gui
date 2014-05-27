@@ -33,7 +33,7 @@
 	else
 		$link = "page=".$page;
 	
-	if (isset($_GET['site']) && $_GET['site']!="")
+	if (isset($_GET['site']) && ctype_aldash($_GET['site']) && $_GET['site']!="")
 	{
 		$site = $_GET['site'];
 		if ($site!="")
