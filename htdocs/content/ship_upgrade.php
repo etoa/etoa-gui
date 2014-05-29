@@ -30,7 +30,7 @@
 	//
 	if (isset($_GET['id']) && $_GET['id']!="")
 	{
-		echo "<h1>Schiffs Upgrade Menu</h1>";
+		echo "<h1>Schiffsupgrade-Menu</h1>";
 
     //
     // Upgrade speichern
