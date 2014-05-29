@@ -140,6 +140,7 @@
 			{
 				if ($_POST['planet_name']!="")
 				{
+					// setNameAndComment() escapes strings
 					$cp->setNameAndComment($_POST['planet_name'],$_POST['planet_desc']);
 				}
 			}

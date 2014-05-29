@@ -151,21 +151,21 @@ if (isset($cp)) {
 		}
 
 		$bid = 0;
-		if ((isset($_GET['id']) && $_GET['id'] >0) || (count($_POST)>0	&& checker_verify())) {
-			if (isset($_GET['id']) && $_GET['id'] >0) {
-				$bid = $_GET['id'];
+		if ((isset($_GET['id']) && intval($_GET['id']) >0) || (count($_POST)>0	&& checker_verify())) {
+			if (isset($_GET['id']) && intval($_GET['id']) >0) {
+				$bid = intval($_GET['id']);
 			} else {				
 				foreach ($_POST as $k => $v) {
 					if(stristr($k,'_x')) {
-						$bid = preg_replace('/show_([0-9]+)_x/', '\1', $k);
+						$bid = intval(preg_replace('/show_([0-9]+)_x/', '\1', $k));
 						break;
 					}
 				}
 				if ($bid==0 && isset($_POST['show'])) {
-					$bid = $_POST['show'];
+					$bid = intval($_POST['show']);
 				}
 				if ($bid==0 && isset($_POST['id'])) {
-					$bid = $_POST['id'];
+					$bid = intval($_POST['id']);
 				}			
 			}
 		}
