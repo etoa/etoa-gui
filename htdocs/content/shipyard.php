@@ -81,7 +81,8 @@
 			/****************************
 			*  Sortiereingaben speichern *
 			****************************/
-			if(count($_POST)>0 && isset($_POST['sort_submit']))
+			if(count($_POST)>0 && isset($_POST['sort_submit'])
+			   && ctype_aldash($_POST['sort_value']) && ctype_aldash($_POST['sort_way']))
 			{
 				$cu->properties->itemOrderShip = $_POST['sort_value'];
        			$cu->properties->itemOrderWay = $_POST['sort_way'];
@@ -424,6 +425,8 @@
 				$counter=0;
 				foreach ($_POST['build_count'] as $ship_id => $build_cnt)
 				{
+				  $ship_id = intval($ship_id);
+				  
 					$build_cnt=nf_back($build_cnt);
 
 					if ($build_cnt>0 && isset($ships[$ship_id]))
@@ -498,9 +501,9 @@
 							$bc['fuel']=0;
 						}
 						//Nahrung
-						if ($_POST['additional_food_costs']>0 || $ships[$ship_id]['ship_costs_food']>0)
+						if (intval($_POST['additional_food_costs'])>0 || $ships[$ship_id]['ship_costs_food']>0)
 						{
-							 $bf['food']=$cp->resFood/($_POST['additional_food_costs']+$ships[$ship_id]['ship_costs_food']); 
+							 $bf['food']=$cp->resFood/(intval($_POST['additional_food_costs'])+$ships[$ship_id]['ship_costs_food']);
 						}
 						else 
 						{
@@ -515,7 +518,7 @@
 						
 						//Check for Rene-Bug
 						$additional_food_costs = $people_working*$cfg->value('people_food_require');
-						if ($additional_food_costs!=$_POST['additional_food_costs'] || $_POST['additional_food_costs']<0) 
+						if ($additional_food_costs!=intval($_POST['additional_food_costs']) || intval($_POST['additional_food_costs'])<0) 
 						{
 							$build_cnt=0;
 						}
@@ -528,7 +531,7 @@
 							$bc['crystal']=$ships[$ship_id]['ship_costs_crystal']*$build_cnt;
 							$bc['plastic']=$ships[$ship_id]['ship_costs_plastic']*$build_cnt;
 							$bc['fuel']=$ships[$ship_id]['ship_costs_fuel']*$build_cnt;
-							$bc['food']=($_POST['additional_food_costs']+$ships[$ship_id]['ship_costs_food'])*$build_cnt;
+							$bc['food']=(intval($_POST['additional_food_costs'])+$ships[$ship_id]['ship_costs_food'])*$build_cnt;
 
     	        //Berechnete Ress provisorisch abziehen
     	        $cp->resMetal-=$bc['metal'];
@@ -665,7 +668,7 @@
 	/*********************
 	* Auftrag abbrechen  *
 	*********************/
-			if (isset($_GET['cancel']) && $_GET['cancel']>0 && $cancelable)
+			if (isset($_GET['cancel']) && intval($_GET['cancel'])>0 && $cancelable)
 			{	
 				$id = intval($_GET['cancel']);
 				if (isset($queue[$id]))

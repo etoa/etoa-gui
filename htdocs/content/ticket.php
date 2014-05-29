@@ -22,7 +22,7 @@
 
 	echo "<h1>Ticketsystem</h1>";
 
-if (isset($_GET['id']) && $_GET['id']>0)
+if (isset($_GET['id']) && intval($_GET['id'])>0)
 {
 	echo "<h2>Ticket-Details</h2>";
 	$tarr = Ticket::find(array("user_id"=>$cu->id,"id"=>intval($_GET['id'])));
@@ -73,7 +73,7 @@ if (isset($_GET['id']) && $_GET['id']>0)
 
 		if ($ti->status!="closed")
 		{
-			echo '<form action="?page='.$page.'&amp;id='.$_GET['id'].'" method="post">';
+			echo '<form action="?page='.$page.'&amp;id='.intval($_GET['id']).'" method="post">';
 			tableStart("Neue Nachricht");
 			echo '<tr><th>Absender:</th><td>';
 			echo $cu->nick."";

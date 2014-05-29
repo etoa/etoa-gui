@@ -33,8 +33,9 @@
 	// Details anzeigen
 	//
 
-	if (isset($_GET['userdetail']) && $_GET['userdetail']>0)
+	if (isset($_GET['userdetail']) && intval($_GET['userdetail'])>0)
 	{
+		$udid = intval($_GET['userdetail']);
 		$res=dbquery("
 		SELECT 
             user_nick,
@@ -44,7 +45,7 @@
 		FROM 
 			users 
 		WHERE 
-			user_id='".$_GET['userdetail']."';");
+			user_id='".$udid."';");
 		if (mysql_num_rows($res)>0)
 		{
 			$arr=mysql_fetch_array($res);
@@ -62,7 +63,7 @@
 			FROM 
 				user_points 
 			WHERE 
-				point_user_id='".$_GET['userdetail']."' 
+				point_user_id='".$udid."' 
 			ORDER BY 
 				point_timestamp DESC 
 			LIMIT 48; ");
@@ -98,8 +99,10 @@
 			error_msg("Datensatz wurde nicht gefunden!");
 	}
 	
-	elseif (isset($_GET['alliancedetail']) && $_GET['alliancedetail']>0)
+	elseif (isset($_GET['alliancedetail']) && intval($_GET['alliancedetail'])>0)
 	{
+		$adid = intval($_GET['alliancedetail']);
+		
 		$res=dbquery("
 		SELECT 
             alliance_tag,
@@ -110,7 +113,7 @@
 		FROM 
 			alliances 
 		WHERE 
-			alliance_id='".$_GET['alliancedetail']."';");
+			alliance_id='".$adid."';");
 		if (mysql_num_rows($res)>0)
 		{
 			$arr=mysql_fetch_array($res);
@@ -123,7 +126,7 @@
 			FROM 
 				alliance_points 
 			WHERE 
-				point_alliance_id='".$_GET['alliancedetail']."' 
+				point_alliance_id='".$adid."' 
 			ORDER BY 
 				point_timestamp DESC 
 			LIMIT 48; ");
@@ -151,7 +154,12 @@
 		}
 		else
 			error_msg("Datensatz wurde nicht gefunden!");
-		if ($_GET['limit']>0) $limit=$_GET['limit']; else $limit=0;
+		
+		$limit = 0;
+		if (isset($_GET['limit']))
+		{
+			$limit=intval($_GET['limit']);
+		}
 		echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=$page&mode=$mode&limit=".$limit."'\" /> &nbsp; ";
 	}
 
@@ -196,7 +204,7 @@
 		// >> AJAX generated content inserted here
 		echo "</div>";
 		
-		if (isset($_GET['mode']))
+		if (isset($_GET['mode']) && ctype_alpha($_GET['mode']))
 		{
 			$mode = $_GET['mode'];
 		}
