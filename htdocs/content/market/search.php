@@ -26,9 +26,9 @@
 	else
 		$searchCat = "resources";
 
-	if (isset($_GET['auctionid']) && $_GET['auctionid']>0)
+	if (isset($_GET['auctionid']) && intval($_GET['auctionid'])>0)
 	{
-		$_SESSION['auctionid']=$_GET['auctionid'];
+		$_SESSION['auctionid']=intval($_GET['auctionid']);
 	}
 
 	echo "<form action=\"?page=".$page."\" method=\"post\" id=\"search_selector\">\n";
