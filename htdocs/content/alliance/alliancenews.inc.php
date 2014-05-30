@@ -163,7 +163,7 @@ if (Alliance::checkActionRights('alliancenews'))
 			
 		while ($alliances=mysql_fetch_assoc($alliance))
 		{
-			$selected = ($aid = $alliances['alliance_id']) ? 'selected="selected" ' : "";
+			$selected = ($aid == $alliances['alliance_id']) ? 'selected="selected" ' : "";
 			
 			echo '<option value="'.$alliances['alliance_id'].'" '.$selected.'>['.$alliances['alliance_tag']."]  ".$alliances['alliance_name']."</option>";
 		}
