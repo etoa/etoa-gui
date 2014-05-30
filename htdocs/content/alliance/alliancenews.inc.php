@@ -135,10 +135,10 @@ if (Alliance::checkActionRights('alliancenews'))
 	echo "<tr><th colspan=\"3\">Sende diese Nachricht nur ab, wenn du dir bezüglich der Ratshausreglen sicher bist! Eine Missachtung kann zur Sperrung des Accounts führen!</th></tr>";
 	echo "<tr>
 		<th width=\"170\">Betreff:</td>
-		<td colspan=\"2\"><input type=\"text\" name=\"news_title\" value=\"".encodeDBStringToPlaintext($news_title)."\" size=\"62\" maxlength=\"255\"></td></tr>";
+		<td colspan=\"2\"><input type=\"text\" name=\"news_title\" value=\"".StringUtils::encodeDBStringToPlaintext($news_title)."\" size=\"62\" maxlength=\"255\"></td></tr>";
 	echo '<tr>
 		<th width="170">Text:</td>
-		<td colspan="2"><textarea name="news_text" rows="18" cols="60">'.encodeDBStringToPlaintext($news_text).'</textarea>
+		<td colspan="2"><textarea name="news_text" rows="18" cols="60">'.StringUtils::encodeDBStringForTextarea($news_text).'</textarea>
 		<br/>'.helpLink('textformat', 'Hilfe zur Formatierung').'</td></tr>';
 	echo "<tr>
 		<th width=\"170\">Ziel:</td>
