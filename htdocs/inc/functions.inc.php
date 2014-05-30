@@ -710,7 +710,7 @@
 			VALUES
 			(
 				'0',
-				'".$user_id."',
+				'".intval($user_id)."',
 				'".time()."',
 				'".$msg_type."'
 			);
@@ -726,8 +726,8 @@
 			VALUES
 			(
 				".mysql_insert_id().",
-				'".addslashes($subject)."',
-				'".addslashes($text)."'
+				'".mysql_real_escape_string($subject)."',
+				'".mysql_real_escape_string($text)."'
 			);
 		");		
 			return true;

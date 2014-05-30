@@ -60,6 +60,13 @@
         return StringUtils::replaceBR(htmlspecialchars($str, ENT_COMPAT, 'UTF-8'));
     }
     
+    /* Wrapper function, like encodeDBStringToPlaintext() but for inside a textarea.
+     */
+    public static function encodeDBStringForTextarea($str)
+    {
+        return htmlspecialchars($str, ENT_QUOTES, 'UTF-8', true);
+    }
+    
     public static function replaceAsciiControlCharsUnicode($str)
     {
       $controlChars = array(
