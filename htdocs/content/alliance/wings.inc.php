@@ -22,25 +22,25 @@ if ($conf['allow_wings']['v'] && Alliance::checkActionRights('wings'))
 {
 	echo "<h2>Wings verwalten</h2>";
 	
-	if (isset($_GET['remove']) && $_GET['remove']>0)
+	if (isset($_GET['remove']) && intval($_GET['remove'])>0)
 	{
-		if ($ally->removeWing($_GET['remove']))
+		if ($ally->removeWing(intval($_GET['remove'])))
 			ok_msg("Wing entfernt!");
 		else
 			err_msg("Wing konnte nicht entfernt werden!");
 	}
 	
-	if (isset($_GET['cancelreq']) && $_GET['cancelreq']>0)
+	if (isset($_GET['cancelreq']) && intval($_GET['cancelreq'])>0)
 	{
-		if ($ally->cancelWingRequest($_GET['cancelreq']))
+		if ($ally->cancelWingRequest(intval($_GET['cancelreq'])))
 			ok_msg("Anfrage zurückgezogen!");
 		else
 			err_msg("Anfrage konnte nicht zurückgezogen werden!");
 	}
 		
-	if (isset($_POST['add_wing_id']) && $_POST['add_wing_id']>0)
+	if (isset($_POST['add_wing_id']) && intval($_POST['add_wing_id'])>0)
 	{
-		if ($ally->addWingRequest($_POST['add_wing_id']))
+		if ($ally->addWingRequest(intval($_POST['add_wing_id'])))
 			ok_msg("Winganfrage hinzugefügt. Der Gründer der angefragten Allianz wurde informiert!");		
 		else
 			err_msg("Es ist bereits eine Anfrage vorhanden oder die Allianz ist schon ein Wing einer anderen Allianz!");

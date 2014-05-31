@@ -45,6 +45,9 @@ if (Alliance::checkActionRights('editmembers'))
 			{
 				foreach ($_POST['user_alliance_rank_id'] as $uid=>$rid)
 				{
+				    $uid = intval($uid);
+					$rid = intval($rid);
+
 					if (mysql_num_rows(dbquery("SELECT user_id FROM users WHERE user_alliance_rank_id!='$rid' AND user_id='$uid';"))>0)
 					{
 						dbquery("UPDATE users SET user_alliance_rank_id='$rid' WHERE user_id='$uid';");
@@ -65,8 +68,11 @@ if (Alliance::checkActionRights('editmembers'))
 					{
 						foreach ($_POST['moveuser'] as $wf => $wd)	//wf = source alliance id
 						{											//wd = array with alliance members
+						    $wf = intval($wf);
 							foreach ($wd as $uk => $wt)				//uk = user id
 							{										//wt = value (target alliance id)
+								$uk = intval($uk);
+								$wt = intval($wt);
 								if ($wt!=0)
 								{
 									if ($wf!= $wt && ($wf == $ally->id || isset($ally->wings[$wf])) && ($wt == $ally->id || isset($ally->wings[$wt])))
@@ -117,12 +123,13 @@ if (Alliance::checkActionRights('editmembers'))
 		}
 
 		// Gründer wechseln
-		if (isset($_GET['setfounder']) && $_GET['setfounder']>0 && $isFounder && $cu->id!=$_GET['setfounder'])
+		if (isset($_GET['setfounder']) && intval($_GET['setfounder'])>0 && $isFounder && $cu->id!=intval($_GET['setfounder']))
 		{
+		    $fid = intval($_GET['setfounder']);
 
-			if (isset($ally->members[$_GET['setfounder']]))
+			if (isset($ally->members[$fid]))
 			{
-				$ally->founderId = $_GET['setfounder'];
+				$ally->founderId = $fid;
 				add_log(5,"Der Spieler [b]".$ally->founder."[/b] wird vom Spieler [b]".$cu."[/b] zum Gründer befördert.");
 				ok_msg("Gründer ge&auml;ndert!");
 			}
@@ -133,10 +140,12 @@ if (Alliance::checkActionRights('editmembers'))
 		// Mitglied kicken
 		if (isset($_GET['kickuser']) && intval($_GET['kickuser'])>0 && checker_verify() && !$cu->alliance->isAtWar())
 		{
-			if (isset($ally->members[$_GET['kickuser']]))
+		    $kid = intval($_GET['kickuser']);
+
+			if (isset($ally->members[$kid]))
 			{
-				$tmpUser = $ally->members[$_GET['kickuser']];
-				$ally->kickMember($_GET['kickuser']);
+				$tmpUser = $ally->members[$kid];
+				$ally->kickMember($kid);
 
 				add_log(5,"Der Spieler [b]".$tmpUser."[/b] wurde von [b]".$cu."[/b] aus der Allianz [b]".$ally."[/b] ausgeschlossen!",time());
 				ok_msg("Der Spieler [b]".$tmpUser."[/b] wurde aus der Allianz ausgeschlossen!");
@@ -147,8 +156,6 @@ if (Alliance::checkActionRights('editmembers'))
 				error_msg("Der Spieler konnte nicht aus der Allianz ausgeschlossen werden, da er kein Mitglieder dieser Allianz ist!");
 			}
 		}
-
-
 
 		checker_init();
 		tableStart();

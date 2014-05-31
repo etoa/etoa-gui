@@ -124,8 +124,8 @@
 				tableStart("Allianz-Daten");
 				echo "<tr><th>Tag / Name:</th>
 				<td>
-				[<input type=\"text\" name=\"alliance_tag\" size=\"6\" maxlength=\"6\" value=\"".$defTag."\" />]
-				&nbsp; <input type=\"text\" name=\"alliance_name\" size=\"25\" maxlength=\"25\" value=\"".$defName."\" /></td></tr>
+				[<input type=\"text\" name=\"alliance_tag\" size=\"6\" maxlength=\"6\" value=\"".StringUtils::encodeDBStringToPlaintext($defTag)."\" />]
+				&nbsp; <input type=\"text\" name=\"alliance_name\" size=\"25\" maxlength=\"25\" value=\"".StringUtils::encodeDBStringToPlaintext($defName)."\" /></td></tr>
 				<tr><td colspan=\"2\">Alle weiteren Daten könnten nach der Erstellung im Allianzmenü geändert werden.</td></tr>";
 				tableEnd();
 				echo "<input type=\"submit\" name=\"createsubmit\" value=\"Speichern\" /> &nbsp;
@@ -183,9 +183,11 @@
 
 				if ($_POST['user_alliance_application']!='')
 				{
+					$aid = intval($_POST['user_alliance_id']);
+					
 					$alliances = get_alliance_names();
-					send_msg($alliances[$_POST['user_alliance_id']]['founder_id'],MSG_ALLYMAIL_CAT,"Bewerbung","Der Spieler ".$cu->nick." hat sich bei deiner Allianz beworben. Gehe auf die [page=alliance&action=applications]Allianzseite[/page] für Details!");
-					add_alliance_history($_POST['user_alliance_id'],"Der Spieler [b]".$cu->nick."[/b] bewirbt sich sich bei der Allianz.");
+					send_msg($alliances[$aid]['founder_id'],MSG_ALLYMAIL_CAT,"Bewerbung","Der Spieler ".$cu->nick." hat sich bei deiner Allianz beworben. Gehe auf die [page=alliance&action=applications]Allianzseite[/page] für Details!");
+					add_alliance_history($aid,"Der Spieler [b]".$cu->nick."[/b] bewirbt sich sich bei der Allianz.");
 					dbquery("
 					INSERT INTO
 						alliance_applications
@@ -198,19 +200,19 @@
 					VALUES
 					(
 						".$cu->id.",
-						".$_POST['user_alliance_id'].",
-						'".addslashes($_POST['user_alliance_application'])."',
+						".$aid.",
+						'".mysql_real_escape_string($_POST['user_alliance_application'])."',
 						".time()."
 					);
 					");
 
-					ok_msg("Deine Bewerbung bei der Allianz [".$alliances[$_POST['user_alliance_id']]['tag']."] ".$alliances[$_POST['user_alliance_id']]['name']." wurde gespeichert! Die Allianzleitung wurde informiert und wird deine Bewerbung ansehen.");
+					ok_msg("Deine Bewerbung bei der Allianz [".$alliances[$aid]['tag']."] ".$alliances[$aid]['name']." wurde gespeichert! Die Allianzleitung wurde informiert und wird deine Bewerbung ansehen.");
 					echo "<input value=\"&Uuml;bersicht\" type=\"button\" onclick=\"document.location='?page=$page'\" />";
 				}
 				else
 				{
 					error_msg("Du musst einen Bewerbungstext eingeben!");
-					echo "<input value=\"Zur&uuml;ck\" type=\"button\" onclick=\"document.location='?page=$page&action=join&alliance_id=".$_POST['user_alliance_id']."'\" />";
+					echo "<input value=\"Zur&uuml;ck\" type=\"button\" onclick=\"document.location='?page=$page&action=join&alliance_id=".$aid."'\" />";
 				}
 			}
 			// Allianzauswahl anzeigen
