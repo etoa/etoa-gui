@@ -341,7 +341,7 @@
 			FROM
 				users
 			WHERE
-				user_nick='".$nick."';
+				user_nick='".mysql_real_escape_string($nick)."';
 		");
 		if (mysql_num_rows($res)>0)
 		{

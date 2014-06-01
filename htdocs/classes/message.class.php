@@ -48,10 +48,10 @@ class Message
 			) 
 			VALUES 
 			(
-				'".$senderId."',
-				'".$receiverId."',
+				'".intval($senderId)."',
+				'".intval($receiverId)."',
 				".time().",
-				".$cat."
+				".intval($cat)."
 			);");
 			dbquery("
 				INSERT INTO

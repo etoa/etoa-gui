@@ -67,7 +67,7 @@
 		}
 		else
 		{
-			if (isset($_GET['restore']) && $_GET['restore']>0)
+			if (isset($_GET['restore']) && intval($_GET['restore'])>0)
 			{
 				dbquery("
 				UPDATE

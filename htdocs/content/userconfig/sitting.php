@@ -21,7 +21,7 @@
 	if (!$s->sittingActive || $s->falseSitter)
 	{
 			//
-            // Neuer user anlegen, der am gleichen PC sitzt (multi)
+            // Neuen user anlegen, der am gleichen PC sitzt (multi)
             //
 
             if (isset($_POST['new_multi'])!="" && checker_verify())
@@ -67,17 +67,15 @@
                             UPDATE
                                 user_multi
                             SET
-                                multi_id='".addslashes(get_user_id($user[$id]))."',
-                                connection='".addslashes($_POST['connection'][$id])."',
+                                multi_id='".get_user_id($user[$id])."',
+                                connection='".mysql_real_escape_string($_POST['connection'][$id])."',
 								timestamp=UNIX_TIMESTAMP()
                             WHERE
-                                id=$id;");
+                                id=".intval($id).";");
 							$change = true;
 
                         }
-
                     }
-
                 }
 				if ($change) ok_msg("&Auml;nderungen &uuml;bernommen!");
 
@@ -87,6 +85,7 @@
                     // User löschen
                     foreach ($_POST['del_multi'] as $id=>$data)
                     {
+						$id = intval($id);
                         if ($_POST['del_multi'][$id]==1)
                         {
 							if ($_POST['connection'][$id]==0 && $_POST['del_multi'][$id]==0)
@@ -149,7 +148,7 @@
 			{
 				if ($_POST['sitter_nick']!="")
 				{
-					$res = dbquery("SELECT user_id,user_registered FROM users WHERE user_id!=".$cu->id." AND user_nick='".addslashes($_POST['sitter_nick'])."' LIMIT 1;");
+					$res = dbquery("SELECT user_id,user_registered FROM users WHERE user_id!=".$cu->id." AND user_nick='".mysql_real_escape_string($_POST['sitter_nick'])."' LIMIT 1;");
 					if (mysql_num_rows($res)>0)
 					{
 						$arr = mysql_fetch_row($res);
@@ -363,15 +362,15 @@
 		//
 
 
-		if (isset($_GET['remove_sitting']) && $_GET['remove_sitting']>0)
+		if (isset($_GET['remove_sitting']) && intval($_GET['remove_sitting'])>0)
 		{
-			dbquery("DELETE FROM user_sitting WHERE id=".$_GET['remove_sitting']." AND user_id=".$cu->id." AND date_from>".time().";");
+			dbquery("DELETE FROM user_sitting WHERE id=".intval($_GET['remove_sitting'])." AND user_id=".$cu->id." AND date_from>".time().";");
 			if (mysql_affected_rows()>0)
 				ok_msg("Sitting entfernt!");
 		}
-		if (isset($_GET['cancel_sitting']) && $_GET['cancel_sitting']>0)
+		if (isset($_GET['cancel_sitting']) && intval($_GET['cancel_sitting'])>0)
 		{
-			$res = dbquery("UPDATE user_sitting SET date_to=".time()." WHERE id=".$_GET['cancel_sitting']." AND user_id=".$cu->id." AND date_from<".time()." AND date_to>".time().";");
+			$res = dbquery("UPDATE user_sitting SET date_to=".time()." WHERE id=".intval($_GET['cancel_sitting'])." AND user_id=".$cu->id." AND date_from<".time()." AND date_to>".time().";");
 			if (mysql_affected_rows()>0)
 				ok_msg("Sitting abgebrochen!");
 		}
