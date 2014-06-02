@@ -48,13 +48,13 @@
 		$sv.= ",'".$_POST['auction_sell_'.$rk]."'";
 
 		$sf.= ",currency_".$rk;
-		$sv.= ",'".(isset($_POST['auction_buy_'.$rk])?$_POST['auction_buy_'.$rk]:'')."'";
+		$sv.= ",'".(isset($_POST['auction_buy_'.$rk])?intval($_POST['auction_buy_'.$rk]):'')."'";
 
 		// Report data
 		if ($_POST['auction_sell_'.$rk]>0)
 			$marr['sell_'.$rk]=$_POST['auction_sell_'.$rk];
 		if (isset($_POST['res_buy_'.$rk]) && $_POST['res_buy_'.$rk]>0)
-			$marr['buy_'.$rk]=$_POST['auction_buy_'.$rk];
+			$marr['buy_'.$rk]=intval($_POST['auction_buy_'.$rk]);
 	}
 	
 	$ship_update=0;
@@ -63,7 +63,6 @@
 	// Prüft ob Rohstoffe noch vorhanden sind (eventueller verlust durch Kampf?)
 	if ($ok && $cp->checkRes($subtracted))
 	{
-
         // Rohstoffe + Taxe vom Planetenkonto abziehen
 		$cp->subRes($subtracted);
 
@@ -84,7 +83,7 @@
             '".$cp->id()."',
             '".time()."',
             '".$auction_end_time."',
-            '".addslashes($_POST['auction_text'])."'
+            '".mysql_real_escape_string($_POST['auction_text'])."'
 			".$sv.",
             '1')");
 

@@ -47,7 +47,7 @@
 			FROM
 				specialists
 			WHERE		
-				specialist_id='".$_POST['engage']."'
+				specialist_id='".intval($_POST['engage'])."'
 				AND specialist_enabled = 1
 			");
 			if (mysql_num_rows($res)>0)

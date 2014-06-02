@@ -41,7 +41,7 @@
 		);
 	 	show_tab_menu("mode",$tabitems);
 		
-		$mode = (isset($_GET['mode'])) ? $_GET['mode'] : "res";
+		$mode = (isset($_GET['mode']) && ctype_aldash($_GET['mode'])) ? $_GET['mode'] : "res";
 		
 		$bl = new BuildList($cp->id,$cp->id);
 		$sl = new ShipList($cp->id,$cu->id);

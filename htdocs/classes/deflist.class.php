@@ -124,6 +124,9 @@
 		
 		function add($defId,$cnt)
 		{
+			$cnt = intval($cnt);
+			$defId = intval($defId);
+			
 			dbquery("
 				UPDATE
 					deflist
@@ -158,6 +161,8 @@
 		
 		function remove($defId,$cnt)
 		{
+			$defId = intval($defId);
+			
 			$res = dbquery("SELECT 
 								deflist_id, 
 								deflist_count 
@@ -169,7 +174,7 @@
 								AND deflist_entity_id='".$this->entityId."';");
 			$arr = mysql_fetch_row($res);
 
-			$delable = min($cnt,$arr[1]);
+			$delable = intval(min($cnt,$arr[1]));
 			
 			dbquery("UPDATE
 				deflist
