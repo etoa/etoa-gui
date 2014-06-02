@@ -95,10 +95,10 @@
 				elseif ($fd->id() == $fd->leaderId())
 				{
 					echo "Das ist die Leaderflotte!<br />
-						<a href=\"?page=fleetinfo&amp;id=".$fd->leaderId()."&lead_id=".$fd->leaderId()."\">Gesammter Angriff anzeigen</a></td></tr>";
+						<a href=\"?page=fleetinfo&amp;id=".$fd->leaderId()."&lead_id=".$fd->leaderId()."\">Gesamten Angriff anzeigen</a></td></tr>";
 				}
 				else
-					echo "<a href=\"?page=fleetinfo&amp;id=".$fd->leaderId()."&lead_id=".$fd->leaderId()."\">Gesammter Angriff anzeigen</a></td></tr>";
+					echo "<a href=\"?page=fleetinfo&amp;id=".$fd->leaderId()."&lead_id=".$fd->leaderId()."\">Gesamten Angriff anzeigen</a></td></tr>";
 				echo "<tr>
 						<th>Startkoordinaten:</th>
 						<td>
