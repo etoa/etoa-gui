@@ -37,6 +37,7 @@ if (Alliance::checkActionRights('ranks'))
 								{
 									foreach ($_POST['rank_name'] as $id=>$name)
 									{
+						                $id = intval($id);
 										dbquery("DELETE FROM alliance_rankrights WHERE rr_rank_id=$id;");
 										if (isset($_POST['rank_del'][$id]) && $_POST['rank_del'][$id]==1)
 										{
@@ -48,13 +49,14 @@ if (Alliance::checkActionRights('ranks'))
 											dbquery("UPDATE 
 												alliance_ranks 
 											SET 
-												rank_name='".$name."',
+												rank_name='".mysql_real_escape_string($name)."',
 												rank_level='".$_POST['rank_level'][$id]."' 
 											WHERE rank_id=$id;");
 											if (isset($_POST['rankright']) && isset($_POST['rankright'][$id]))
 											{
 												foreach ($_POST['rankright'][$id] as $rid=>$rv)
 												{
+												    $rid = intval($rid);
 													dbquery("INSERT INTO alliance_rankrights (rr_right_id,rr_rank_id) VALUES ($rid,$id);");
 												}
 											}
