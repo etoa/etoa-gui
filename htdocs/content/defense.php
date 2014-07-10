@@ -82,7 +82,7 @@
 			*  Sortiereingaben speichern *
 			****************************/
 			if(count($_POST)>0 && isset($_POST['sort_submit'])
-			   && ctype_aldash($_POST['sort_value']) && ctype_aldash($_POST['sort_way']))
+			   && ctype_aldotsc($_POST['sort_value']) && ctype_aldotsc($_POST['sort_way']))
 			{
 				$cu->properties->itemOrderDef = $_POST['sort_value'];
 				$cu->properties->itemOrderWay = $_POST['sort_way'];

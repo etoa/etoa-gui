@@ -68,7 +68,7 @@
 		// >> AJAX generated content inserted here
 		echo "</div>";
 		
-		if (isset($_GET['mode']) && ctype_aldash($_GET['mode']))
+		if (isset($_GET['mode']) && ctype_alsc($_GET['mode']))
 		{
 			$mode = $_GET['mode'];
 		}

@@ -648,7 +648,7 @@
 		/****************************
 		*  Sortiereingaben speichern *
 		****************************/
-		if(count($_POST)>0 && isset($_POST['sort_submit']) && isset($_POST['sort_value']) && ctype_alpha($_POST['sort_value']) && isset($_POST['sort_way']) && ctype_alpha($_POST['sort_way']))
+		if(count($_POST)>0 && isset($_POST['sort_submit']) && isset($_POST['sort_value']) && ctype_aldotsc($_POST['sort_value']) && isset($_POST['sort_way']) && ctype_aldotsc($_POST['sort_way']))
 		{
 			$cu->properties->itemOrderBookmark = $_POST['sort_value'];
     		$cu->properties->itemOrderWay = $_POST['sort_way'];
