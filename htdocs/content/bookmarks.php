@@ -76,9 +76,9 @@
 				foreach ($_POST['ship_count'] as $sid => $count)
 				{
 					if ($addships=="")
-						$addships.= intval($sid).":".nf_back(intval($count));
+						$addships.= intval($sid).":".nf_back($count);
 					else
-						$addships.= ",".intval($sid).":".nf_back(intval($count));
+						$addships.= ",".intval($sid).":".nf_back($count);
 				}
 				
 				$speed = max(1,min(100,intval(nf_back($_POST['value']))));
