@@ -643,7 +643,7 @@
 				}
 
 				// Accept pact offer
-				if (isset($_POST['pact_accept'])) && isset($_POST['id']) && intval($_POST['id']) > 0)
+				if (isset($_POST['pact_accept']) && isset($_POST['id']) && intval($_POST['id']) > 0)
 				{
 					$id = intval($_POST['id']);
 					
