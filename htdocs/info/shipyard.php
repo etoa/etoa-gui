@@ -53,7 +53,7 @@
 	//
 	if (isset($_GET['id']))
 	{
-		$sid = intval(isset($_GET['id']));
+		$sid = intval($_GET['id']);
 		
 		$res = dbquery("
 		SELECT 
