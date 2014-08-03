@@ -4,7 +4,8 @@ CONFIG_DIR=/etc/etoad
 ENABLED_CONFIG_DIR=$CONFIG_DIR/instances-enabled
 AVAILALE_CONFIG_DIR=$CONFIG_DIR/instances-available
 PID_DIR=/var/run/etoad
-ETOAD_BIN=/usr/bin/etoad
+#ETOAD_BIN=/usr/bin/etoad
+ETOAD_BIN=/usr/local/bin/etoad
 USER=etoa
 CONFIG_EXT=.conf
 
@@ -20,6 +21,10 @@ for file in $(find $ENABLED_CONFIG_DIR -name *${CONFIG_EXT}); do
 	ienabled+=($instance)
 done
 
+if [ ! -d $PID_DIR ]; then
+    mkdir -p $PID_DIR
+    chown $USER $PID_DIR
+fi
 
 run_unprivileged() {
 	local cmd="$@"
