@@ -240,7 +240,9 @@
 		{
 			if ($this->items==null)
 				$this->load();
-			if ((!$tech && !$this->isUnderConstruction($bid)) || !$this->tl->isBuildingSomething(true))
+			
+			// BUGFIX: if first part is false, check for $tech in second part!
+			if ((!$tech && !$this->isUnderConstruction($bid)) || ($tech && !$this->tl->isBuildingSomething(true)))
 			{
 				if (isset($this->items[$bid]))
 				{
