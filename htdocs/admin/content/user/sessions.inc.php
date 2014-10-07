@@ -43,6 +43,7 @@ if (mysql_num_rows($res)>0)
         <th class=\"tbltitle\">Nick</th>
 		<th class=\"tbltitle\">Login</th>
 		<th class=\"tbltitle\">Letzte Aktion</th>
+		<th class=\"tbltitle\">Status</th>
 		<th class=\"tbltitle\">IP / Hostname</th>
 		<th class=\"tbltitle\">Client</th>
 		<th class=\"tbltitle\">Dauer</th>
