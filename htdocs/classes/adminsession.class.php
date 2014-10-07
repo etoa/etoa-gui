@@ -236,8 +236,11 @@ class AdminSession extends Session
 				id='".$sid."'
 			;");
 		}
-		session_destroy();
-		session_regenerate_id();
+        if ($logoutPressed==1)
+        {
+            session_destroy();
+            session_regenerate_id();
+        }
 	}
 
 	/**
@@ -291,7 +294,7 @@ class AdminSession extends Session
 	 */
 	static function kick($sid)
 	{
-		self::unregisterSession($sid);
+		self::unregisterSession($sid,0);
 	}
 }
 ?>
