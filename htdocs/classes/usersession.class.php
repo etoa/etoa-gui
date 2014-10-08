@@ -253,7 +253,6 @@ class UserSession extends Session
 			WHERE
 				id='".session_id()."'
 				AND `user_id`=".intval($this->user_id)."
-				AND `ip_addr`='".$_SERVER['REMOTE_ADDR']."'
 				AND `user_agent`='".$_SERVER['HTTP_USER_AGENT']."'
 				AND `time_login`=".intval($this->time_login)."
 			LIMIT 1
@@ -307,8 +306,8 @@ class UserSession extends Session
 							SET
 								time_action=".$t.",
 								bot_count='".$this->bot_count."',
-								last_span='".$this->last_span."'
-								
+								last_span='".$this->last_span."',
+								ip_addr='".$_SERVER['REMOTE_ADDR']."'
 							WHERE
 								id='".session_id()."'
 							;");
