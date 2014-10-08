@@ -19,11 +19,41 @@
 	//
 
 			iBoxStart("Logins");
-			echo "Hier findest du eine Liste der letzten 10 Logins in deinen Account, ebenfalls kannst du weiter unten
+			echo "Hier findest du deine aktiven Sessions, eine Liste der letzten 10 Logins in deinen Account, ebenfalls kannst du weiter unten
 			sehen wann dass fehlerhafte Loginversuche stattgefunden haben. Solltest du feststellen, dass jemand unbefugten 
 			Zugriff auf deinen Account hatte, solltest du umgehend dein Passwort &auml;ndern und ein ".ticketLink("Ticket",16)." schreiben.";
 			iBoxEnd();
-    	tableStart("Letzte 10 Logins");
+
+		tableStart("Aktive Sessions");
+			$res=dbquery("
+			SELECT 
+				time_login,
+				time_action,
+				ip_addr,
+				user_agent  
+			FROM 
+				user_sessions
+			WHERE
+				user_id=".$cu->id."
+			ORDER BY 
+				time_action DESC;");
+			echo "<tr>
+			<th>Login</th>
+			<th>Letzte Aktion</th>
+			<th>IP-Adresse</th>
+			<th>Hostname</th>
+			<th>Client</th></tr>";
+			while ($arr=mysql_fetch_array($res))
+			{
+				echo "<tr><td>".df($arr['time_login'])."</td>";
+				echo "<td>".df($arr['time_action'])."</td>";
+				echo "<td>".$arr['ip_addr']."</td>";
+				echo "<td>".Net::getHost($arr['ip_addr'])."</td>";
+				echo "<td>".$arr['user_agent']."</td></tr>";
+			}
+    	tableEnd();
+			
+		tableStart("Letzte 10 Logins");
 			$res=dbquery("
 			SELECT 
 				time_login,
@@ -49,6 +79,7 @@
 				echo "<td>".$arr['user_agent']."</td></tr>";
 			}
     	tableEnd();
+		
     	tableStart("Letzte 10 fehlgeschlagene Logins");
 			$res=dbquery("
 			SELECT 
