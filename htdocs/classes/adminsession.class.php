@@ -102,7 +102,6 @@ class AdminSession extends Session
 			WHERE
 				id='".session_id()."'
 				AND `user_id`=".intval($this->user_id)."
-				AND `ip_addr`='".$_SERVER['REMOTE_ADDR']."'
 				AND `user_agent`='".$_SERVER['HTTP_USER_AGENT']."'
 				AND `time_login`=".intval($this->time_login)."
 			LIMIT 1
@@ -118,7 +117,8 @@ class AdminSession extends Session
 					UPDATE
 						`".self::tableSession."`
 					SET
-						time_action=".$t."
+						time_action=".$t.",
+						ip_addr='".$_SERVER['REMOTE_ADDR']."'
 					WHERE
 						id='".session_id()."'
 					;");
