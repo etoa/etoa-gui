@@ -1,13 +1,9 @@
 <?php
-/* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
- * Description of usersession
+ * Provides session and authentication management
+ * for player area.
  *
- * @author Nicolas
+ * @author Nicolas Perrenoud <mrcage@etoa.ch>
  */
 class UserSession extends Session
 {
@@ -17,14 +13,14 @@ class UserSession extends Session
 
 	protected $namePrefix = "user";
 
+	/**
+	 * Returns the single instance of this class
+	 *
+	 * @return AdminSession Instance of this class
+	 */
 	public static function getInstance()
 	{
-		if (empty(self::$instance))
-		{
-			$className = __CLASS__;
-			self::$instance = new $className(func_get_args());
-		}
-		return self::$instance;
+		return parent::getInstance(__CLASS__);
 	}
 
 	function login($data)
@@ -241,6 +237,11 @@ class UserSession extends Session
 		return false;
 	}
 
+	/**
+	 * Checks if the current session is valid
+	 *
+	 * @return True if session is valid
+	 */
 	function validate($destroy=1)
 	{
 		if (isset($this->time_login))
@@ -349,8 +350,10 @@ class UserSession extends Session
 		return false;
 	}
 	
-	// only for session validation in chat, do not use
-	// for real validation
+	/**
+	 * only for session validation in chat, do not use
+	 * for real validation
+	 */
 	function chatValidate()
 	{
 		if($this->cLogin == true &&
@@ -496,7 +499,7 @@ class UserSession extends Session
 		}
 	}
 
-  /**
+	/**
 	 * Removes old session logs from the database
 	 * @param int $threshold Time difference in seconds
 	 */
@@ -525,6 +528,5 @@ class UserSession extends Session
 	{
 		self::unregisterSession($sid,0);
 	}
-
 }
 ?>

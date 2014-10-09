@@ -1,6 +1,6 @@
 <?php
 /**
- * Providess session and authentication management
+ * Provides session and authentication management
  * for user login areas
  *
  * @author Nicolas Perrenoud <mrcage@etoa.ch>

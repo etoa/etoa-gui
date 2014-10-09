@@ -1,15 +1,7 @@
 <?php
-//////////////////////////////////////////////////////
-// The Andromeda-Project-Browsergame                //
-// Ein Massive-Multiplayer-Online-Spiel             //
-// Programmiert von Nicolas Perrenoud<mail@nicu.ch> //
-// als Maturaarbeit '04 am Gymnasium Oberaargau	    //
-//////////////////////////////////////////////////////
-//////////////////////////////////////////////////////
-
 /**
- * Providess session and authentication management
- * for admin area. See parent class for documentation
+ * Provides session and authentication management
+ * for admin area.
  *
  * @author Nicolas Perrenoud <mrcage@etoa.ch>
  */
@@ -34,9 +26,8 @@ class AdminSession extends Session
 	function login($data)
 	{
 		self::cleanup();
-
-		// TODO: Use preg_match
-		if ($data['login_nick']!="" && $data['login_pw']!="" && !stristr($data['login_nick'],"'") && !stristr($data['login_pw'],"'"))
+		
+		if (!empty($data['login_nick']) && !empty($data['login_pw']))
 		{
 			$sql = "
 			SELECT
@@ -249,7 +240,7 @@ class AdminSession extends Session
 	static function cleanup()
 	{
 		$cfg = Config::getInstance();
-
+		
 		$res = dbquery("
 		SELECT
 			id
