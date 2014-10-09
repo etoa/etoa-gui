@@ -80,6 +80,9 @@
 	define('PRIVACY_URL','http://www.etoa.ch/privacy'); // Privacy statement
 	define('RULES_ONCLICK',"window.open('".RULES_URL."','rules','width=600,height=500,scrollbars=yes');");
 
+	// URL for user banner HTML snippet
+	define('USERBANNER_LINK_URL', 'http://www.etoa.ch');
+	
   /*********************/
   /* Zufallsereignisse */
   /*********************/

@@ -387,8 +387,8 @@
 			{
 				echo '<div style="text-align: center;">
 				<img src="'.$name.'" alt="Banner"><br><br>
-				<textarea readonly="readonly" rows="2" cols="65">&lt;a href="http://www.etoa.ch"&gt;&lt;img src="'.$cfg->roundurl.'/'.$name.'" width="468" height="60" alt="EtoA Online-Game" border="0" /&gt;&lt;/a&gt;</textarea>
-				<textarea readonly="readonly" rows="2" cols="65">[url=http://www.etoa.ch][img]'.$cfg->roundurl.'/'.$name.'[/img][/url]</textarea>';				
+				<textarea readonly="readonly" rows="2" cols="65">&lt;a href="'.USERBANNER_LINK_URL.'"&gt;&lt;img src="'.$cfg->roundurl.'/'.$name.'" width="468" height="60" alt="EtoA Online-Game" border="0" /&gt;&lt;/a&gt;</textarea>
+				<textarea readonly="readonly" rows="2" cols="65">[url='.USERBANNER_LINK_URL.'][img]'.$cfg->roundurl.'/'.$name.'[/img][/url]</textarea>';				
 			}
 			else
 			{
