@@ -38,6 +38,7 @@ if (isset($_POST['login_submit']))
 	{
 		include("inc/admin_login.inc.php");
 	}
+	forward(".");
 }
 
 // Perform logout if requested

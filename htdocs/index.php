@@ -45,6 +45,7 @@
 		{
 			forward(getLoginUrl(array('page'=>'err', 'err' => $s->lastErrorCode)), "Loginfehler", $s->lastError);
 		}
+		forward(".");
 	}
 
 	// Check for modified etoa tool by pain
