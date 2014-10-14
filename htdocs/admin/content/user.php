@@ -163,6 +163,14 @@
 	}
 	
 	//
+	// User banner
+	//
+	elseif ($sub=="userbanner")
+	{
+		require("user/userbanner.inc.php");		
+	}
+	
+	//
 	// Session-Log
 	//
 	elseif ($sub=="userlog")
