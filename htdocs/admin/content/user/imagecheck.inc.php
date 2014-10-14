@@ -103,13 +103,16 @@
 		}
 	}
 	$files = array();
-	$d = opendir($dir);
-	while ($f = readdir($d))
-	{
-		if (is_file($dir.$f))
+	if (is_dir($dir)) {
+		$d = opendir($dir);
+		while ($f = readdir($d))
 		{
-			array_push($files,$f);
+			if (is_file($dir.$f))
+			{
+				array_push($files,$f);
+			}
 		}
+		closedir($d);
 	}
 
 	$overhead = array();
