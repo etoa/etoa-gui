@@ -64,25 +64,29 @@
 		{
 			tableStart("Tools");
 			echo '<tr>
-			<td style="text-align:center;width:20%">
+			<td style="text-align:center;width:16%">
 				<a href="?page=ticket"><img src="images/abuse.png" border="0" alt="Missbrauch" style="width:40px;height:40px;" title="Ticket erstellen"></a><br/>
 				Ticket an einen Admin schreiben
 			</td>
-			<td style="text-align:center;width:20%">
+			<td style="text-align:center;width:17%">
 				<a href="?page=contact"><img src="images/mail.png" border="0" alt="Kontakt" style="width:40px;height:40px;" title="Kontakt"></a><br/>
 				Admin per E-Mail kontaktieren
 			</td>
-			<td style="text-align:center;width:20%">
+			<td style="text-align:center;width:16%">
 				<a href="javascript:;" onclick="'.HELPCENTER_ONCLICK.'"><img src="images/help.png" border="0" alt="FAQ" style="width:40px;height:40px;" title="Hilfecenter und FAQ"></a><br/>
 				Häufig gestellte Fragen (FAQ)
 			</td>
-			<td style="text-align:center;width:20%">
+			<td style="text-align:center;width:17%">
 				<a href="'.FORUM_URL.'" target="_Blank"><img src="images/users.png" border="0" alt="Forum" title="Forum" style="width:40px;height:40px;"></a><br/>
 				Forum
 			</td>
-			<td style="text-align:center;width:20%">
+			<td style="text-align:center;width:17%">
 				<a href="'.DEVCENTER_PATH.'" target="_Blank"><img src="images/bug.png" border="0" alt="FAQ" style="width:40px;height:40px;" title="FAQ"></a><br/>
 				Fehler melden
+			</td>
+			<td style="text-align:center;width:17%">
+				<a href="?page=changelog"><img src="images/changelog.png" border="0" alt="FAQ" style="width:40px;height:40px;" title="Changelog"></a><br/>
+				Changelog
 			</td>
 			</td></tr>';
 			tableEnd();
