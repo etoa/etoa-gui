@@ -38,7 +38,11 @@ if (isset($_POST['login_submit']))
 	{
 		include("inc/admin_login.inc.php");
 	}
-	forward(".");
+	if (!empty($_SERVER['QUERY_STRING'])) {
+		forward("?".$_SERVER['QUERY_STRING']);
+	} else {
+		forward(".");
+	}
 }
 
 // Perform logout if requested
