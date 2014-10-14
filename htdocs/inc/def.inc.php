@@ -481,4 +481,14 @@
 	define('USERSTATS_OUTFILE',CACHE_ROOT."/out/userstats.png");
 	define('XML_INFO_FILE',CACHE_ROOT."/xml/info.xml");
 
+	/***********
+	* Userbanner *
+	***********/
+	
+	define('USERBANNER_WIDTH', 468);
+	define('USERBANNER_HEIGTH', 60);
+	define('USERBANNER_BACKGROUND_IMAGE', RELATIVE_ROOT."images/userbanner/userbanner1.png");
+	define('USERBANNER_FONT', RELATIVE_ROOT."images/userbanner/calibri.ttf");
+	define('USERBANNER_DIR', CACHE_ROOT.'/userbanner');
+
 ?>

@@ -983,7 +983,7 @@
 				      </tr>";
 				      
 						echo '<tr><th>Banner:</th><td>';
-						$name = CACHE_ROOT.'/userbanner/'.md5('user'.$id).'.png';
+						$name = Ranking::getUserBannerPath($id);
 						if (file_exists($name))
 						{
 							echo '

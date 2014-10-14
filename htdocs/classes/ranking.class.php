@@ -1128,87 +1128,115 @@
 			return array($num,$allpoints);
 		}
 
-		static function createUserBanner()
+	static function createUserBanner()
+	{
+		$dir = USERBANNER_DIR;
+		if (!is_dir($dir)) {
+			mkdir($dir);
+		}
+		
+		$createdFiles = array();
+		
+		$res=dbquery("
+		SELECT
+			u.user_nick,
+			a.alliance_tag,
+			a.alliance_name,
+			r.race_name,
+			u.user_points,
+			u.user_id,
+			u.admin,
+			u.user_ghost,
+			u.user_rank
+		FROM
+			users u
+		LEFT JOIN
+			alliances a
+			ON u.user_alliance_id=a.alliance_id
+		LEFT JOIN
+			races r
+			On u.user_race_id=r.race_id
+		");
+		while ($arr = mysql_fetch_assoc($res))
 		{
-			$w = 468;
-			$h = 60;
-			$font = RELATIVE_ROOT."images/userbanner/calibri.ttf";
+			if ($arr['admin'] == 1) {
+				$pt = "  -  Game-Admin";
+			} elseif ($arr['user_ghost'] == 1) {
+				$pt = "";
+			} else {
+				$pt = "  -  ".nf($arr['user_points'])." Punkte, Platz ".$arr['user_rank']."";
+			}
+			$text = Config::getInstance()->roundname->v.$pt;
+		
+			$im = self::createUserBannerImage(USERBANNER_WIDTH, USERBANNER_HEIGTH, USERBANNER_BACKGROUND_IMAGE, USERBANNER_FONT, 
+				$arr['user_nick'], $arr['alliance_tag'], $arr['alliance_name'], $arr['race_name'], $text);
 			
-			$res=dbquery("
-			SELECT
-				u.user_nick,
-				a.alliance_name,
-				a.alliance_tag,
-				r.race_name,
-				u.user_points,
-				u.user_id,
-				u.admin,
-				u.user_ghost,
-				u.user_rank
-			FROM
-				users u
-			LEFT JOIN
-				alliances a
-				ON u.user_alliance_id=a.alliance_id
-			LEFT JOIN
-				races r
-				On u.user_race_id=r.race_id
-			");
-			if (mysql_num_rows($res)>0)
+			$file = self::getUserBannerPath($arr['user_id']);
+			if (file_exists($file))
 			{
-				$dir = CACHE_ROOT."/userbanner";
-				if (!is_dir($dir)) {
-					mkdir($dir);
-				}
-			
-				while ($arr = mysql_fetch_row($res))
-				{
-					$im = imagecreatefrompng(RELATIVE_ROOT."images/userbanner/userbanner1.png");
-					$colBlack = imagecolorallocate($im,0,0,0);
-					$colGrey = imagecolorallocate($im,120,120,120);
-					$colYellow = imagecolorallocate($im,255,255,0);
-					$colOrange = imagecolorallocate($im,255,100,0);
-					$colWhite = imagecolorallocate($im,255,255,255);
-					$colGreen = imagecolorallocate($im,0,255,0);
-					$colBlue = imagecolorallocate($im,150,150,240);
-					$colViolett = imagecolorallocate($im,200,0,200);
-					$colRe = imagecolorallocate($im,200,0,200);
-					
-					$nsize = imagettfbbox(16,0,$font,$arr[0]);
-					
-					ImageTTFText ($im, 16, 0, 6, 21, $colBlack, $font,$arr[0]);
-					ImageTTFText ($im, 16, 0, 5, 20, $colWhite, $font,$arr[0]);
-					ImageTTFText ($im, 11, 0, $nsize[2]-$nsize[0] + 16, 21, $colBlack, $font,$arr[3]);
-					ImageTTFText ($im, 11, 0, $nsize[2]-$nsize[0] + 15, 20, $colWhite, $font,$arr[3]);
-					
-					if ($arr[2]!="")
-					{
-						ImageTTFText ($im, 9, 0, 9, 39, $colBlack, $font,"<".$arr[2]."> ".$arr[1]);
-						ImageTTFText ($im, 9, 0, 8, 38, $colWhite, $font,"<".$arr[2]."> ".$arr[1]);
-					}
-					
-					if ($arr[6]==1)
-						$pt = "  -  Game-Admin";
-					elseif ($arr[7]==1)
-						$pt = "";
-					else
-						$pt = "  -  ".nf($arr[4])." Punkte, Platz ".$arr[8]."";
-					
-					ImageTTFText ($im, 9, 0, 9, 54, $colBlack, $font,Config::getInstance()->roundname->v.$pt);
-					ImageTTFText ($im, 9, 0, 8, 53, $colWhite, $font,Config::getInstance()->roundname->v.$pt);
-			
-					$file = CACHE_ROOT."/userbanner/".md5("user".$arr[5]).".png";
-					if (file_exists($file))
-					{
-						unlink($file);
-					}
-					imagepng($im,$file);
-					chmod($file,0777);
-					imagedestroy($im);			
-				}
+				unlink($file);
+			}
+			imagepng($im,$file);
+			chmod($file,0777);
+			imagedestroy($im);
+			$createdFiles[] = $file;	
+		}
+		
+		// Remove old banner images
+		$dh = opendir($dir);
+		while ($f = readdir($dh)) {
+			$fp = $dir.'/'.$f;
+			if (is_file($fp) && !in_array($fp, $createdFiles)) {
+				unlink($fp);
 			}
 		}
+		closedir($dh);
+	}
+	
+	static function getUserBannerPath($userId) {
+		return USERBANNER_DIR.'/'.md5('user'.$userId).'.png';
+	}
 
+	static function createUserBannerImage($w, $h, $backgroundImage, $font, $nick, $allianceTag, $allianceName, $race, $text) {
+		$im = imagecreatefrompng($backgroundImage);
+		
+		$colBlack = imagecolorallocate($im,0,0,0);
+		$colGrey = imagecolorallocate($im,120,120,120);
+		$colYellow = imagecolorallocate($im,255,255,0);
+		$colOrange = imagecolorallocate($im,255,100,0);
+		$colWhite = imagecolorallocate($im,255,255,255);
+		$colGreen = imagecolorallocate($im,0,255,0);
+		$colBlue = imagecolorallocate($im,150,150,240);
+		$colViolett = imagecolorallocate($im,200,0,200);
+		$colRe = imagecolorallocate($im,200,0,200);
+		
+		$nsize = imagettfbbox(16,0,$font, $nick);
+		
+		// Nick
+		ImageTTFText ($im, 16, 0, 6, 21, $colBlack, $font, $nick);
+		ImageTTFText ($im, 16, 0, 5, 20, $colWhite, $font, $nick);
+		
+		// Race
+		ImageTTFText ($im, 11, 0, $nsize[2]-$nsize[0] + 16, 21, $colBlack, $font, $race);
+		ImageTTFText ($im, 11, 0, $nsize[2]-$nsize[0] + 15, 20, $colWhite, $font, $race);
+		
+		// Alliance
+		if (!empty($allianceTag))
+		{
+			ImageTTFText ($im, 9, 0, 9, 39, $colBlack, $font,"<".$allianceTag."> ".$allianceName);
+			ImageTTFText ($im, 9, 0, 8, 38, $colWhite, $font,"<".$allianceTag."> ".$allianceName);
+		}
+		
+		// Text
+		if (!empty($text))
+		{
+			ImageTTFText ($im, 9, 0, 9, 54, $colBlack, $font, $text);
+			ImageTTFText ($im, 9, 0, 8, 53, $colWhite, $font, $text);
+		}
+		
+		return $im;
+	}
+		
     static function calcBuildingPoints($id=0)
     {
       $cfg = Config::getInstance();
