@@ -40,6 +40,7 @@
  														"sitting"=>"Sitting",
  														"password"=>"Passwort",
  														"logins"=>"Logins",
+ 														"banner"=>"Banner",
  														"misc"=>"Sonstiges");
 
 	$ures = dbquery("
@@ -197,6 +198,15 @@
 		elseif ($mode=="logins")
 		{
     	require("content/userconfig/logins.php");
+		}
+		
+		/****************/
+		/* Banner		*/
+		/****************/
+		
+		elseif ($mode=="banner")
+		{
+    	require("content/userconfig/banner.php");
 		}
 		
     /****************/
