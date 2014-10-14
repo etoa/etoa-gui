@@ -108,11 +108,12 @@
 	//
 	elseif ($sub=="changelog")
 	{
-		echo "<h1>Changelog</h1>";
 		$changelogFile = "../../Changelog.md";
 		if (is_file($changelogFile)) {
-			echo "<pre class=\"changelog\">".file_get_contents($changelogFile)."</pre>";
+			$Parsedown = new Parsedown();
+			echo $Parsedown->text(file_get_contents($changelogFile)); 
 		} else {
+			echo "<h1>Changelog</h1>";
 			error_msg("Changelog nicht verfügbar!",1);
 		}
 	}
