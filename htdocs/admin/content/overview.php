@@ -385,10 +385,10 @@
 			// Flottensperre aktiv
 			if ($conf['flightban']['v']==1)
 			{
-				// PrÃƒÂ¼ft, ob die Sperre schon abgelaufen ist
+				// Prüft, ob die Sperre schon abgelaufen ist
 				if($conf['flightban_time']['p1']<=time() && $conf['flightban_time']['p2']>=time())
 				{
-					$flightban_time_status = "<span style=\"color:#0f0\">Aktiv</span>";
+					$flightban_time_status = "<span style=\"color:#0f0\">Aktiv</span> Es können keine Flüge gestartet werden!";
 				}
 				elseif($conf['flightban_time']['p1']>time() && $conf['flightban_time']['p2']>time())
 				{
@@ -399,20 +399,17 @@
 					$flightban_time_status = "<span style=\"color:#f90\">Abgelaufen</span>";
 				}
 				
-				echo "<br/>";
-				iBoxStart("Flottensperre aktiviert");
-				echo "Die Flottensperre ist aktiviert. Es kÃƒÂ¶nnen keine FlÃƒÂ¼ge gestartet werden!<br><br><b>Status:</b> ".$flightban_time_status."<br><b>Zeit:</b> ".date("d.m.Y H:i",$conf['flightban_time']['p1'])." - ".date("d.m.Y H:i",$conf['flightban_time']['p2'])."<br><b>Grund:</b> ".$conf['flightban']['p1']."<br><br>";
-				echo "Zum deaktivieren: <a href=\"?page=fleets&amp;sub=fleetoptions\">Flottenoptionen</a>";
-				iBoxEnd();
+				$tpl->assign("fleet_ban_title", "Flottensperre aktiviert");
+				$tpl->assign("fleet_ban_text", "Die Flottensperre wurde aktiviert.<br><br><b>Status:</b> ".$flightban_time_status."<br><b>Zeit:</b> ".date("d.m.Y H:i",$conf['flightban_time']['p1'])." - ".date("d.m.Y H:i",$conf['flightban_time']['p2'])."<br><b>Grund:</b> ".$conf['flightban']['p1']."<br><br>Zum deaktivieren: <a href=\"?page=fleets&amp;sub=fleetoptions\">Flottenoptionen</a>");
 			}
 		
 			// Kampfsperre aktiv
 			if ($conf['battleban']['v']==1)
 			{
-				// PrÃƒÂ¼ft, ob die Sperre schon abgelaufen ist
+				// Prüft, ob die Sperre schon abgelaufen ist
 				if($conf['battleban_time']['p1']<=time() && $conf['battleban_time']['p2']>=time())
 				{
-					$battleban_time_status = "<span style=\"color:#0f0\">Aktiv</span>";
+					$battleban_time_status = "<span style=\"color:#0f0\">Aktiv</span> Es können keine Angriffe geflogen werden!";
 				}
 				elseif($conf['battleban_time']['p1']>time() && $conf['battleban_time']['p2']>time())
 				{
@@ -422,12 +419,9 @@
 				{
 					$battleban_time_status = "<span style=\"color:#f90\">Abgelaufen</span>";
 				}
-				
-				echo "<br/>";
-				iBoxStart("Kampfsperre aktiviert");
-				echo "Die Kampfsperre ist aktiviert. Es kÃƒÂ¶nnen keine Angriffe geflogen werden!<br><br><b>Status:</b> ".$battleban_time_status."<br><b>Zeit:</b> ".date("d.m.Y H:i",$conf['battleban_time']['p1'])." - ".date("d.m.Y H:i",$conf['battleban_time']['p2'])."<br><b>Grund:</b> ".$conf['battleban']['p1']."<br><br>";
-				echo "Zum deaktivieren: <a href=\"?page=fleets&amp;sub=fleetoptions\">Flottenoptionen</a>";
-				iBoxEnd();
+
+				$tpl->assign("fleet_ban_title", "Kampfsperre aktiviert");
+				$tpl->assign("fleet_ban_text", "Die Kampfsperre wurde aktiviert.<br><br><b>Status:</b> ".$battleban_time_status."<br><b>Zeit:</b> ".date("d.m.Y H:i",$conf['battleban_time']['p1'])." - ".date("d.m.Y H:i",$conf['battleban_time']['p2'])."<br><b>Grund:</b> ".$conf['battleban']['p1']."<br><br>Zum deaktivieren: <a href=\"?page=fleets&amp;sub=fleetoptions\">Flottenoptionen</a>");
 			}
 	
 		//
