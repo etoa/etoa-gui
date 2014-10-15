@@ -1,0 +1,24 @@
+{if $title|default:'' ne ""}<h1>{$title}</h1>{/if}
+
+{if $msg|default:'' ne ""}{msg type="ok" text=$msg}{/if}
+{if $errmsg|default:'' ne ""}{msg type="err" text=$errmsg}{/if}
+{if $warnmsg|default:'' ne ""}{msg type="warn" text=$warnmsg}{/if}
+
+{if $is_unix eq true}
+	<h3>Unix-Cronjob einrichten</h3>
+	<ol>
+		<li>Auf den Server einloggen (z.B. via SSH) resp. eine Shell/Kommandozeile öffnen</li>
+		<li>Folgenden Befehl eingeben: <pre class="code">crontab -e</pre></li>
+		<li>Diese Zeile einfügen: <pre class="code">{$cronjob}</pre></li>
+		<li>Die Datei speichern und den Editor beenden
+			<ul>
+				<li>Falls der Editor Vim ist: <i>ESC</i> drücken, <i>:wq</i> eingeben</li>
+				<li>Falls der Editor Nano ist: <i>CTRL+X</i> drücken und Speichern mit <i>Y</i> bestätigen</li>
+			</ul>
+		</li>
+		<li>Resultat prüfen: <pre class="code">crontab -l</pre></li>
+	</ol>
+
+	<h3>Aktuelle Crontab</h3>
+	<pre class="code">{$crontab}</pre>
+{/if}
