@@ -90,3 +90,15 @@
 		<br/><br/><pre>{$update_day_results}</pre>
 	{/if}
 </fieldset>
+
+
+<fieldset>
+	<legend>Monats-Update</legend>
+	<ul>
+		<li>Sitter-Tage aktualisieren</li>
+	</ul>
+	<input type="button" value="Ausführen" onclick="document.location='?page={$page}&sub={$sub}&action=update_month'" />
+	{if $update_month_results|default:'' ne ""}
+		<br/><br/><pre>{$update_month_results}</pre>
+	{/if}
+</fieldset>

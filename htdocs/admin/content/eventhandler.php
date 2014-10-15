@@ -97,6 +97,13 @@
 			echo text2html(update_day());
 			$tpl->assign('update_day_results', ob_get_clean());
 		}
+		if (isset($_GET['action']) && $_GET['action']=="update_month")
+		{
+			ob_start();
+			include(RELATIVE_ROOT."inc/update.inc.php");
+			echo text2html(update_month());
+			$tpl->assign('update_month_results', ob_get_clean());
+		}
 			
 		$tpl->setView('admin/updates');
 		$tpl->assign('title', 'Manuelle Updates');
