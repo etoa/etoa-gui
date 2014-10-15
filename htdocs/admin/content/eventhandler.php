@@ -8,7 +8,7 @@
 		if (UNIX)
 		{
 			$scriptname = dirname(realpath(__DIR__."/../"))."/scripts/update.php";
-			$tpl->assign('cronjob', "* * * * * php ".$scriptname);
+			$tpl->assign('cronjob', "* * * * * ".$scriptname);
 
 			ob_start();
 			echo "Crontab-User: ";
