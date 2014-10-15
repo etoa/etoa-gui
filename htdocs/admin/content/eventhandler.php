@@ -48,10 +48,10 @@
 			$mtx = new Mutex();
 			$mtx->acquire();
 			$num = Ranking::calc(true);
-	    	Ranking::calcTitles();
+			Ranking::calcTitles();
 			$mtx->release();
-	    	$d = $num[1]/$num[0];
-	    	echo "Die Punkte von ".$num[0]." Spielern wurden aktualisiert!\nEin Spieler hat durchschnittlich ".nf($d)." Punkte!";
+			$d = $num[1]/$num[0];
+			echo "Die Punkte von ".$num[0]." Spielern wurden aktualisiert!\nEin Spieler hat durchschnittlich ".nf($d)." Punkte!";
 			$_SESSION['update_results'] = ob_get_clean();
 			forward('?page='.$page.'&sub='.$sub);
 		}

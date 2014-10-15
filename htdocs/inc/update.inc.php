@@ -13,8 +13,8 @@
 		global $conf;
 
 		$log = '';
-    
-	 	// Inaktive User löschen
+	
+		// Inaktive User löschen
 		$tmr = timerStart();
 		$nr = Users::removeInactive();
 		$log = "$nr inaktive User gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
@@ -22,7 +22,7 @@
 		$tmr = timerStart();
 		$nr = Users::removeDeleted();
 		$log.= "$nr als gelöscht markierte User endgültig gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
-    
+	
 		// Alte Benuterpunkte-Logs löschen
 		$tmr = timerStart();
 		$nr = Users::cleanUpPoints();
@@ -209,7 +209,7 @@
 		
 		// Chat-Cleanup
 		$log.= "Alte Chat Nachrichten löschen...\n";
-    ChatManager::cleanUpMessages();
+	ChatManager::cleanUpMessages();
 
 		// Userstats
 		UserStats::generateImage(USERSTATS_OUTFILE);
@@ -251,7 +251,7 @@
 		
 		$log.= "Raketen berechnen...\n";
 		check_missiles();
-      
+	  
 		$log.= "Inaktive Chat-User löschen...\n";
 		ChatManager::cleanUpUsers();
 
