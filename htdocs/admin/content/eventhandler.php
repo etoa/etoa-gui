@@ -47,82 +47,89 @@
 	//
 	else if($sub=='updates')
 	{
-		// Punkte aktualisieren
+		// Update points
 		if (isset($_GET['action']) && $_GET['action']=="points")
 		{
 			ob_start();
+			echo "[b]Punkte-Update[/b]\n";
 			$mtx = new Mutex();
 			$mtx->acquire();
 			$num = Ranking::calc(true);
 	    	Ranking::calcTitles();
 			$mtx->release();
-	    	echo "Die Punkte von ".$num[0]." Spielern wurden aktualisiert!<br/>";
 	    	$d = $num[1]/$num[0];
-	    	echo "Ein Spieler hat durchschnittlich ".nf($d)." Punkte!";
-			$tpl->assign('update_results', ob_get_clean());
+	    	echo "Die Punkte von ".$num[0]." Spielern wurden aktualisiert!\nEin Spieler hat durchschnittlich ".nf($d)." Punkte!";
+			$_SESSION['update_results'] = ob_get_clean();
+			forward('?page='.$page.'&sub='.$sub);
 		}
-
+		// Minute update
 		if (isset($_GET['action']) && $_GET['action']=="update_minute")
 		{
 			ob_start();
+			echo "[b]Minuten-Update[/b]\n";
 			include(RELATIVE_ROOT."inc/update.inc.php");
-			echo text2html(update_minute());
-			$tpl->assign('update_results', ob_get_clean());
+			echo update_minute();
+			$_SESSION['update_results'] = ob_get_clean();
+			forward('?page='.$page.'&sub='.$sub);
 		}
-		if (isset($_GET['action']) && $_GET['action']=="update_30minute")
-		{
-			ob_start();
-			include(RELATIVE_ROOT."inc/update.inc.php");
-			echo text2html(update_30minute());
-			$tpl->assign('update_results', ob_get_clean());
-		}
+		// 5 minutes update
 		if (isset($_GET['action']) && $_GET['action']=="update_5minute")
 		{
 			ob_start();
+			echo "[b]5-Minuten-Update[/b]\n";
 			include(RELATIVE_ROOT."inc/update.inc.php");
-			echo text2html(update_5minute());
-			$tpl->assign('update_results', ob_get_clean());
+			echo update_5minute();
+			$_SESSION['update_results'] = ob_get_clean();
+			forward('?page='.$page.'&sub='.$sub);
 		}
+		// 30 minutes update
+		if (isset($_GET['action']) && $_GET['action']=="update_30minute")
+		{
+			ob_start();
+			echo "[b]30-Minuten-Update[/b]\n";
+			include(RELATIVE_ROOT."inc/update.inc.php");
+			echo update_30minute();
+			$_SESSION['update_results'] = ob_get_clean();
+			forward('?page='.$page.'&sub='.$sub);
+		}
+		// Hourly update
 		if (isset($_GET['action']) && $_GET['action']=="update_hour")
 		{
 			ob_start();
+			echo "[b]Stunden-Update[/b]\n";
 			include(RELATIVE_ROOT."inc/update.inc.php");
-			echo text2html(update_hour());
-			$tpl->assign('update_results', ob_get_clean());
+			echo update_hour();
+			$_SESSION['update_results'] = ob_get_clean();
+			forward('?page='.$page.'&sub='.$sub);
 		}
+		// Daily update
 		if (isset($_GET['action']) && $_GET['action']=="update_day")
 		{
 			ob_start();
+			echo "[b]Tages-Update[/b]\n";
 			include(RELATIVE_ROOT."inc/update.inc.php");
-			echo text2html(update_day());
-			$tpl->assign('update_results', ob_get_clean());
+			echo update_day();
+			$_SESSION['update_results'] = ob_get_clean();
+			forward('?page='.$page.'&sub='.$sub);
 		}
+		// Monthly update
 		if (isset($_GET['action']) && $_GET['action']=="update_month")
 		{
 			ob_start();
+			echo "[b]Monats-Update[/b]\n";
 			include(RELATIVE_ROOT."inc/update.inc.php");
-			echo text2html(update_month());
-			$tpl->assign('update_results', ob_get_clean());
+			echo update_month();
+			$_SESSION['update_results'] = ob_get_clean();
+			forward('?page='.$page.'&sub='.$sub);
 		}
-			
+
 		$tpl->setView('admin/updates');
 		$tpl->assign('title', 'Manuelle Updates');
-
-		/*
-		echo '<b>Markt updaten:</b> 
-		Fertige Auktionen und Angebote abschliessen
-		<input type="button" value="Ausführen" onclick="document.location=\'?page='.$page.'&amp;sub='.$sub.'&amp;action=market\'" /><br/><br/>';
-		echo '<b>Felder updaten:</b> 
-		Felder der Planeten neu berechnen
-		<input type="button" value="Ausführen" onclick="document.location=\'?page='.$page.'&amp;sub='.$sub.'&amp;action=fields\'" /><br/><br/>';
-		echo '<b>Lager updaten:</b> 
-		Lagerkapazitäten neu berechnen
-		<input type="button" value="Ausführen" onclick="document.location=\'?page='.$page.'&amp;sub='.$sub.'&amp;action=store\'" /><br/><br/>';
-		echo '<b>Ressourcen updaten:</b> 
-		Ressourcen auf allen Planeten neu berechnen.
-		<input type="button" value="Ausführen" onclick="document.location=\'?page='.$page.'&amp;sub='.$sub.'&amp;action=resources\'" /><br/><br/>';
-		*/
-		
+		if (!empty($_SESSION['update_results'])) {
+			$tpl->assign('update_results', text2html($_SESSION['update_results']));
+			unset($_SESSION['update_results']);
+		}		
+	
 	}
  
 	else {
