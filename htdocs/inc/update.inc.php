@@ -75,7 +75,7 @@
 		Users::removeOldBanns();
 		$log.= "Abgelaufene Sperren gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
 		
-		//Alte Baudatensätze löschen
+		// Alte Baudatensätze löschen
 		$tmr = timerStart();
 		$nr = Shiplist::cleanUp();
 		$log.= "$nr alte Schiffseinträge gelöscht.\n";

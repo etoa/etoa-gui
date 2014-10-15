@@ -41,8 +41,84 @@
 		}
 		
 	}
-  
-  else {
+	
+	//
+	// Updates
+	//
+	else if($sub=='updates')
+	{
+		// Punkte aktualisieren
+		if (isset($_GET['action']) && $_GET['action']=="points")
+		{
+			ob_start();
+			$mtx = new Mutex();
+			$mtx->acquire();
+			$num = Ranking::calc(true);
+	    	Ranking::calcTitles();
+			$mtx->release();
+	    	echo "Die Punkte von ".$num[0]." Spielern wurden aktualisiert!<br/>";
+	    	$d = $num[1]/$num[0];
+	    	echo "Ein Spieler hat durchschnittlich ".nf($d)." Punkte!";
+			$tpl->assign('update_points_results', ob_get_clean());
+		}
+
+		if (isset($_GET['action']) && $_GET['action']=="update_minute")
+		{
+			ob_start();
+			include(RELATIVE_ROOT."inc/update.inc.php");
+			echo text2html(update_minute());
+			$tpl->assign('update_minute_results', ob_get_clean());
+		}
+		if (isset($_GET['action']) && $_GET['action']=="update_30minute")
+		{
+			ob_start();
+			include(RELATIVE_ROOT."inc/update.inc.php");
+			echo text2html(update_30minute());
+			$tpl->assign('update_30minute_results', ob_get_clean());
+		}
+		if (isset($_GET['action']) && $_GET['action']=="update_5minute")
+		{
+			ob_start();
+			include(RELATIVE_ROOT."inc/update.inc.php");
+			echo text2html(update_5minute());
+			$tpl->assign('update_5minute_results', ob_get_clean());
+		}
+		if (isset($_GET['action']) && $_GET['action']=="update_hour")
+		{
+			ob_start();
+			include(RELATIVE_ROOT."inc/update.inc.php");
+			echo text2html(update_hour());
+			$tpl->assign('update_hour_results', ob_get_clean());
+		}
+		if (isset($_GET['action']) && $_GET['action']=="update_day")
+		{
+			ob_start();
+			include(RELATIVE_ROOT."inc/update.inc.php");
+			echo text2html(update_day());
+			$tpl->assign('update_day_results', ob_get_clean());
+		}
+			
+		$tpl->setView('admin/updates');
+		$tpl->assign('title', 'Manuelle Updates');
+
+		/*
+		echo '<b>Markt updaten:</b> 
+		Fertige Auktionen und Angebote abschliessen
+		<input type="button" value="Ausführen" onclick="document.location=\'?page='.$page.'&amp;sub='.$sub.'&amp;action=market\'" /><br/><br/>';
+		echo '<b>Felder updaten:</b> 
+		Felder der Planeten neu berechnen
+		<input type="button" value="Ausführen" onclick="document.location=\'?page='.$page.'&amp;sub='.$sub.'&amp;action=fields\'" /><br/><br/>';
+		echo '<b>Lager updaten:</b> 
+		Lagerkapazitäten neu berechnen
+		<input type="button" value="Ausführen" onclick="document.location=\'?page='.$page.'&amp;sub='.$sub.'&amp;action=store\'" /><br/><br/>';
+		echo '<b>Ressourcen updaten:</b> 
+		Ressourcen auf allen Planeten neu berechnen.
+		<input type="button" value="Ausführen" onclick="document.location=\'?page='.$page.'&amp;sub='.$sub.'&amp;action=resources\'" /><br/><br/>';
+		*/
+		
+	}
+ 
+	else {
 
     $tpl->setView('admin/eventhandler');
     $tpl->assign('title', 'Eventhandler');
