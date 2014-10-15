@@ -79,8 +79,6 @@ else
 	$tpl->assign("sub", $sub);
 	$tpl->assign("time", time());
 
-	$tpl->assign('is_unix', UNIX);		
-	
 	$nres = dbquery("select COUNT(*) from admin_notes where admin_id='".$s->user_id."'");
 	$narr = mysql_fetch_row($nres);
 	$tpl->assign("num_notes", $narr[0]);
