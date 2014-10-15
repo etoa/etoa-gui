@@ -8,14 +8,16 @@
 		if (UNIX)
 		{
 			$scriptname = dirname(realpath(__DIR__."/../"))."/scripts/update.php";
-			$tpl->assign('cronjob', "* * * * * ".$scriptname);
+			$cronjob = "* * * * * ".$scriptname;
+			$tpl->assign('cronjob', $cronjob);
 
-			ob_start();
-			echo "Crontab-User: ";
-			passthru("id");
-			echo "\n\n";
-			passthru("crontab -l");
-			$tpl->assign('crontab', ob_get_clean());
+			$tpl->assign('crontab_user', trim(shell_exec('id')));
+
+			$crontab = array();
+			exec("crontab -l", $crontab);
+			$tpl->assign('crontab', implode("\n", $crontab));
+			
+			$tpl->assign('crontab_check', in_array($cronjob, $crontab));
 		}
 		else
 		{
