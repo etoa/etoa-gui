@@ -59,7 +59,7 @@
 	    	echo "Die Punkte von ".$num[0]." Spielern wurden aktualisiert!<br/>";
 	    	$d = $num[1]/$num[0];
 	    	echo "Ein Spieler hat durchschnittlich ".nf($d)." Punkte!";
-			$tpl->assign('update_points_results', ob_get_clean());
+			$tpl->assign('update_results', ob_get_clean());
 		}
 
 		if (isset($_GET['action']) && $_GET['action']=="update_minute")
@@ -67,42 +67,42 @@
 			ob_start();
 			include(RELATIVE_ROOT."inc/update.inc.php");
 			echo text2html(update_minute());
-			$tpl->assign('update_minute_results', ob_get_clean());
+			$tpl->assign('update_results', ob_get_clean());
 		}
 		if (isset($_GET['action']) && $_GET['action']=="update_30minute")
 		{
 			ob_start();
 			include(RELATIVE_ROOT."inc/update.inc.php");
 			echo text2html(update_30minute());
-			$tpl->assign('update_30minute_results', ob_get_clean());
+			$tpl->assign('update_results', ob_get_clean());
 		}
 		if (isset($_GET['action']) && $_GET['action']=="update_5minute")
 		{
 			ob_start();
 			include(RELATIVE_ROOT."inc/update.inc.php");
 			echo text2html(update_5minute());
-			$tpl->assign('update_5minute_results', ob_get_clean());
+			$tpl->assign('update_results', ob_get_clean());
 		}
 		if (isset($_GET['action']) && $_GET['action']=="update_hour")
 		{
 			ob_start();
 			include(RELATIVE_ROOT."inc/update.inc.php");
 			echo text2html(update_hour());
-			$tpl->assign('update_hour_results', ob_get_clean());
+			$tpl->assign('update_results', ob_get_clean());
 		}
 		if (isset($_GET['action']) && $_GET['action']=="update_day")
 		{
 			ob_start();
 			include(RELATIVE_ROOT."inc/update.inc.php");
 			echo text2html(update_day());
-			$tpl->assign('update_day_results', ob_get_clean());
+			$tpl->assign('update_results', ob_get_clean());
 		}
 		if (isset($_GET['action']) && $_GET['action']=="update_month")
 		{
 			ob_start();
 			include(RELATIVE_ROOT."inc/update.inc.php");
 			echo text2html(update_month());
-			$tpl->assign('update_month_results', ob_get_clean());
+			$tpl->assign('update_results', ob_get_clean());
 		}
 			
 		$tpl->setView('admin/updates');

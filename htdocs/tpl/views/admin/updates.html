@@ -3,13 +3,14 @@
 {if $msg|default:'' ne ""}{msg type="ok" text=$msg}{/if}
 {if $errmsg|default:'' ne ""}{msg type="err" text=$errmsg}{/if}
 
+{if $update_results|default:'' ne ""}
+	{msg type="info" text="{$update_results}"}
+{/if}
+
 <fieldset>
 	<legend>Punkte updaten</legend>
 	<p>Die <a href="?page=overview&amp;sub=stats" target="_blank">Punkte</a> aller Spieler aktualisieren</p>
 	<input type="button" value="Ausführen" onclick="document.location='?page={$page}&sub={$sub}&action=points'" />
-	{if $update_points_results|default:'' ne ""}
-		<br/><br/><pre>{$update_points_results}</pre>
-	{/if}
 </fieldset>
 
 <fieldset>
@@ -21,9 +22,6 @@
 		<li>Log-Nachrichten</li>
 	</ul>
 	<input type="button" value="Ausführen" onclick="document.location='?page={$page}&sub={$sub}&action=update_minute'" />
-	{if $update_minute_results|default:'' ne ""}
-		<br/><br/><pre>{$update_minute_results}</pre>
-	{/if}
 </fieldset>
 
 <fieldset>
@@ -36,9 +34,6 @@
 		<li>Backend-Check</li>
 	</ul>
 	<input type="button" value="Ausführen" onclick="document.location='?page={$page}&sub={$sub}&action=update_5minute'" />
-	{if $update_5minute_results|default:'' ne ""}
-		<br/><br/><pre>{$update_5minute_results}</pre>
-	{/if}
 </fieldset>
 
 <fieldset>
@@ -48,9 +43,6 @@
 		<li>Markt-Ressourcen Verhältnisse</li>
 	</ul>
 	<input type="button" value="Ausführen" onclick="document.location='?page={$page}&sub={$sub}&action=update_30minute'" />
-	{if $update_30minute_results|default:'' ne ""}
-		<br/><br/><pre>{$update_30minute_results}</pre>
-	{/if}
 </fieldset>
 
 <fieldset>
@@ -62,9 +54,6 @@
 		<li>Wurmlöcher vertauschen</li>
 	</ul>
 	<input type="button" value="Ausführen" onclick="document.location='?page={$page}&sub={$sub}&action=update_hour'" />
-	{if $update_hour_results|default:'' ne ""}
-		<br/><br/><pre>{$update_hour_results}</pre>
-	{/if}
 </fieldset>
 
 <fieldset>
@@ -86,9 +75,6 @@
 		<li>Close open tickets that are answered by an admin and are inactive</li>
 	</ul>
 	<input type="button" value="Ausführen" onclick="document.location='?page={$page}&sub={$sub}&action=update_day'" />
-	{if $update_day_results|default:'' ne ""}
-		<br/><br/><pre>{$update_day_results}</pre>
-	{/if}
 </fieldset>
 
 
@@ -98,7 +84,4 @@
 		<li>Sitter-Tage aktualisieren</li>
 	</ul>
 	<input type="button" value="Ausführen" onclick="document.location='?page={$page}&sub={$sub}&action=update_month'" />
-	{if $update_month_results|default:'' ne ""}
-		<br/><br/><pre>{$update_month_results}</pre>
-	{/if}
 </fieldset>
