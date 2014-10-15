@@ -4,6 +4,10 @@
 {if $errmsg|default:'' ne ""}{msg type="err" text=$errmsg}{/if}
 {if $warnmsg|default:'' ne ""}{msg type="warn" text=$warnmsg}{/if}
 
+{if "{cfg key="update_enabled"}" ne 1}
+	{msg type="info" title="Updates deaktiviert" text="Periodische Updates sind momentan deaktiviert! <a href=\"?page=eventhandler&sub=cronjob&activateupdate=1\">Aktivieren</a>"}
+{/if}
+
 {if $is_unix eq true}
 	{if $crontab_check}
 		{msg type="ok" text="Cronjob ist korrekt eingerichtet!"}

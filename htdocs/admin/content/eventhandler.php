@@ -5,6 +5,13 @@
 	//
 	if ($sub=="cronjob")
 	{
+		// Activate update system
+		if (isset($_GET['activateupdate']) && $_GET['activateupdate']==1)
+		{
+			Config::getInstance()->set("update_enabled",1);
+			$tpl->assign('msg', "Updates aktiviert!");
+		}
+	
 		if (UNIX)
 		{
 			$scriptname = dirname(realpath(__DIR__."/../"))."/scripts/update.php";
