@@ -48,5 +48,9 @@
 </fieldset>
 {/ifadminrole}
 
+{if $fleet_ban_title|default:"" ne ""}
+	{msg type="info" title="{$fleet_ban_title}" text="{$fleet_ban_text}"}
+{/if}
+
 {$content|default:''}
 
