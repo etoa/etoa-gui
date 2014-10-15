@@ -7,7 +7,7 @@
 	{
 		if (UNIX)
 		{
-			$scriptname = dirname(realpath("../conf.inc.php"))."/scripts/update.php";
+			$scriptname = dirname(realpath(__DIR__."/../"))."/scripts/update.php";
 			$tpl->assign('cronjob', "* * * * * php ".$scriptname);
 
 			ob_start();
