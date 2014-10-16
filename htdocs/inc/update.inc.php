@@ -251,8 +251,8 @@
 	
 		// War/peace
 		$tmr = timerStart();
-		$nr = warpeace_update();
-		$log.= "$nr Krieg und Frieden aktualisiert (".timerStop($tmr)." sec)\n";
+		$task = new WarPeaceUpdateTask();
+		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
 		
 		// Missiles
 		$tmr = timerStart();
