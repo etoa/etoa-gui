@@ -33,6 +33,19 @@
 		
 		$tpl->setView('admin/cronjob');
 		$tpl->assign('title', 'Periodische Updates (Cronjob)');
+		
+		// Periodic tasks from configuration
+		$periodictasks = fetchJsonConfig("periodictasks.conf");
+		foreach ($periodictasks as &$taskConfig) {
+			$klass = $taskConfig['name'];
+			$reflect = new ReflectionClass($klass);
+			if ($reflect->implementsInterface('IPeriodicTask')) {
+				$t = new $klass();
+				$taskConfig['desc'] = $t->getDescription();
+			}
+			unset($taskConfig);
+		}
+		$tpl->assign('periodictasks', $periodictasks);
 	}
 	
 	//

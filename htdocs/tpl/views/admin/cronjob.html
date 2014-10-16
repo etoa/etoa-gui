@@ -32,3 +32,25 @@
 	<p>User: <code>{$crontab_user}</code></p>
 	<pre class="code">{$crontab}</pre>
 {/if}
+
+{if $periodictasks|count > 0}
+	<h3>Tasks</h3>
+	<table>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Beschreibung</th>
+				<th>Zeitplan</th>
+			</tr>
+		</thead>
+		<tbody>
+			{foreach from=$periodictasks item=t}
+				<tr>
+					<td>{$t.name}</td>
+					<td>{$t.desc}</td>
+					<td>{$t.schedule}</td>
+				</tr>
+			{/foreach}
+		</tbody>
+	</table>
+{/if}
