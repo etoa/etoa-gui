@@ -200,16 +200,10 @@
 
 		$log = '';
 		
-		// User Statistik speichern
+		// Update user statistics
 		$tmr = timerStart();
-		$rres = dbquery("SELECT COUNT(user_id) FROM users;");
-		$rarr = mysql_fetch_row($rres);
-		$gres = dbquery("SELECT COUNT(user_id) FROM user_sessions;");
-		$garr = mysql_fetch_row($gres);
-		dbquery("INSERT INTO user_onlinestats (stats_timestamp,stats_count,stats_regcount) VALUES (".time().",".$garr[0].",".$rarr[0].");");
-		UserStats::generateImage(USERSTATS_OUTFILE);
-		UserStats::generateXml(XML_INFO_FILE);
-		$log.= "User-Statistik: ".$garr[0]." User online, ".$rarr[0]." User registriert (".timerStop($tmr)." sec)\n";
+		$task = new GenerateUserStatisticsTask();
+		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
 		
 		// Chat-Cleanup
 		$tmr = timerStart();
