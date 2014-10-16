@@ -170,7 +170,7 @@
 		
 		/**
 		* Spionageangriffscounter auf 0 setzen
-		*
+		* @deprecated altes Balancing
 		*/
 		static function resetSpyattacks()
 		{

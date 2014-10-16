@@ -941,8 +941,7 @@
 					$tpoints=0;
 					if ($arr['upoints']>0 && $cfg->param2('points_update')>0)
 					{
-						$upoints = floor($arr['upoints'] / $cfg->param2('points_update')
-);
+						$upoints = floor($arr['upoints'] / $cfg->param2('points_update'));
 					}
 					
 					$bres=dbquery("SELECT
@@ -1083,24 +1082,12 @@
 			// Zeit in Config speichern
 			$cfg->set('statsupdate',time());
 			$num = mysql_num_rows($ures);
-	
-	 		// Log-Eintrag
-	 		if ($manual)
-			{
-	 			Log::add(Log::F_UPDATES,Log::INFO,"Statistiken wurden manuell vom User ".$_SESSION['user_nick']." aktualisiert!");
-			}
-	 		else
-			{
-				Log::add(Log::F_UPDATES,Log::DEBUG,"Statistiken wurden aktualisiert!");
-			}
 
 			// Arrays löschen (Speicher freigeben)
 			mysql_free_result($res);
 			unset($arr);
-
-			self::createUserBanner();
 	
-			return array($num,$allpoints);
+			return array($num, $allpoints);
 		}
 
 		static function createUserBanner() {

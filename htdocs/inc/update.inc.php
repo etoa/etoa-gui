@@ -1,10 +1,12 @@
 <?PHP
 	function update_month()
 	{
+		$log = "";
+	
 		// Urlaubstage aktualisieren
 		$tmr = timerStart();
 		Users::addSittingDays();
-		$log = "Sittertage aller User wurden aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$log.= "Sittertage aller User wurden aktualisiert (".timerStop($tmr)." sec)\n";
 		
 		return $log;
 	}
@@ -17,123 +19,127 @@
 		// Inaktive User löschen
 		$tmr = timerStart();
 		$nr = Users::removeInactive();
-		$log = "$nr inaktive User gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$log.= "$nr inaktive User gelöscht (".timerStop($tmr)." sec)\n";
 
 		$tmr = timerStart();
 		$nr = Users::removeDeleted();
-		$log.= "$nr als gelöscht markierte User endgültig gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$log.= "$nr als gelöscht markierte User endgültig gelöscht (".timerStop($tmr)." sec)\n";
 	
 		// Alte Benuterpunkte-Logs löschen
 		$tmr = timerStart();
 		$nr = Users::cleanUpPoints();
-		$log.= "$nr alte Userpunkte-Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$log.= "$nr alte Userpunkte-Logs gelöscht (".timerStop($tmr)." sec)\n";
 		
 		// Benutzer aus Urlaub inaktiv setzen
 		if($conf['hmode_days']['p2'])
 		{
 			$tmr = timerStart();
 			$nr = Users::setUmodToInactive();
-			$log.= "$nr User aus Urlaubsmodus in Inaktivität gesetzt.\nDauer: ".timerStop($tmr)." sec\n\n";
+			$log.= "$nr User aus Urlaubsmodus in Inaktivität gesetzt (".timerStop($tmr)." sec)\n";
 		}
 		
 		// Alte Allianzpunkte-Logs löschen
 		$tmr = timerStart();
 		$nr = Alliance::cleanUpPoints();
-		$log.= "$nr alte Allianzpunkte-Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
-
-		// Spyattacks zurücksetzen (altes Balancing)
-		//$tmr = timerStart();
-		//Users::resetSpyattacks();
-		//$log.= "Spionageangriffscounter auf 0 gesetzt.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$log.= "$nr alte Allianzpunkte-Logs gelöscht (".timerStop($tmr)." sec)\n";
 
 		// Alte Session-Logs
 		$tmr = timerStart();
 		$nr = UserSession::cleanupLogs();
-		$log.= "$nr alte Session-Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$log.= "$nr alte Session-Logs gelöscht (".timerStop($tmr)." sec)\n";
 
 		$tmr = timerStart();
 		$nr = AdminSession::cleanupLogs();
-		$log.= "$nr alte Session-Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$log.= "$nr alte Session-Logs gelöscht (".timerStop($tmr)." sec)\n";
 
 		// Alte Logs löschen
 		$tmr = timerStart();
 		$nr = Log::removeOld();
-		$log.= "$nr alte Logs gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$log.= "$nr alte Logs gelöscht (".timerStop($tmr)." sec)\n";
 
 		// Alte Nachrichten löschen
 		$tmr = timerStart();
 		Message::removeOld();
-		$log.= "Alte Nachrichten gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$log.= "Alte Nachrichten gelöscht (".timerStop($tmr)." sec)\n";
 		
 		// Alte Berichte löschen
 		$tmr = timerStart();
 		Report::removeOld();
-		$log.= "Alte Berichte gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$log.= "Alte Berichte gelöscht (".timerStop($tmr)." sec)\n";
 
 		// Abgelaufene Sperren löschen
 		$tmr = timerStart();
 		Users::removeOldBanns();
-		$log.= "Abgelaufene Sperren gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$log.= "Abgelaufene Sperren gelöscht (".timerStop($tmr)." sec)\n";
 		
 		// Alte Baudatensätze löschen
 		$tmr = timerStart();
 		$nr = Shiplist::cleanUp();
-		$log.= "$nr alte Schiffseinträge gelöscht.\n";
+		$log.= "$nr alte Schiffseinträge gelöscht (".timerStop($tmr)." sec)\n";
+		
+		$tmr = timerStart();
 		$nr = Deflist::cleanUp();
-		$log.= "$nr alte Verteidigungseinträge gelöscht.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$log.= "$nr alte Verteidigungseinträge gelöscht (".timerStop($tmr)." sec)\n";
 
 		// Tabellen optimieren
 		$tmr = timerStart();
 		DBManager::getInstance()->optimizeTables();
-		$log.= "Tabellen optimiert.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$log.= "Tabellen optimiert (".timerStop($tmr)." sec)\n";
 		$tmr = timerStart();
 		DBManager::getInstance()->analyzeTables();
-		$log.= "Tabellen analysiert.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$log.= "Tabellen analysiert (".timerStop($tmr)." sec)\n";
 
 		// Remove old ip-hostname combos from cache
+		$tmr = timerStart();
 		Net::clearCache();
+		$log.= "IP/Hostname Cache gelöscht (".timerStop($tmr)." sec)\n";
 
 		// Close open tickets that are answered by an admin and are inactive
+		$tmr = timerStart();
 		Ticket::closeAssigedInactive();
+		$log.= "Inaktive Tickes geschlossen(".timerStop($tmr)." sec)\n";
 		
 		return $log;
 	}
 
-
 	function update_hour()
 	{
-		global $conf;
-
+		$log = "";
+		
 		// Punkteberechnung
 		$tmr = timerStart();
 		Ranking::calc();
-		if (ENABLE_USERTITLES==1)
-		{
-			Ranking::calcTitles();
-		}
-		$log = "\nPunkte aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";
+		$log.= "Punkte aktualisiert (".timerStop($tmr)." sec)\n";
 		
-		//Schiffsteile berechnen
+		$tmr = timerStart();
+		Ranking::createUserBanner();
+		$log.= "User Banner erstellt (".timerStop($tmr)." sec)\n";
+
+		if (ENABLE_USERTITLES==1) {
+			$tmr = timerStart();
+			Ranking::calcTitles();
+			$log.= "User Titel aktualisiert (".timerStop($tmr)." sec)\n";
+		}
+		
+		// Schiffsteile berechnen
+		$tmr = timerStart();
 		Alliance::allianceShipPointsUpdate();
+		$log.= "Allianz-Schiffsteile berechnet (".timerStop($tmr)." sec)\n";
 
 		// Wurmlöcher vertauschen
 		$tmr = timerStart();
 		Wormhole::randomize();
-		$log.= "Wurml&ouml;cher vertauscht.\nDauer: ".timerStop($tmr)." sec\n\n";
-
-		// Closes all open tables, forces all tables in use to be closed, and flushes the query cache.
-		// DEPRECATED: One should not rely on that, it should work otherwise. Needs global admin privilege of mysql
-		//dbquery("FLUSH TABLES");
+		$log.= "Wurml&ouml;cher vertauscht (".timerStop($tmr)." sec)\n";
 
 		return $log;
 	}
 
 	function update_30minute()
 	{
-		global $conf;
 		$log = "";
 
-		//Admins über einkommende Nachrichten Informieren
+		// Admins über einkommende Nachrichten Informieren
+		$tmr = timerStart();
 		$ares = dbquery("SELECT user_nick, user_email, player_id FROM admin_users WHERE player_id>0");
 		if (mysql_num_rows($ares)>0)
 		{
@@ -178,11 +184,13 @@
 					dbquery("UPDATE messages SET messages.message_mailed=1 WHERE messages.message_user_to='".$arow[2]."';");
 				}
 			}
-			$log = "\nAdmin-Mailqueue wurde abgearbeitet.";
 		}
+		$log.= "Admin-Mailqueue wurde abgearbeitet (".timerStop($tmr)." sec)\n";
 
 		// Update market resource rates
+		$tmr = timerStart();
 		MarketHandler::updateRates();
+		$log.= "Markt-Raten aktualisiert (".timerStop($tmr)." sec)\n";
 
 		return $log;
 	}
@@ -190,38 +198,37 @@
 
 	function update_5minute()
 	{
-		global $conf;
 		$cfg = Config::getInstance();
 
+		$log = '';
+		
 		// User Statistik speichern
-		$rres=dbquery("SELECT COUNT(user_id) FROM users;");
-		$rarr=mysql_fetch_row($rres);
-		$gres=dbquery("SELECT COUNT(user_id) FROM user_sessions;");
-		$garr=mysql_fetch_row($gres);
-		dbquery("INSERT INTO user_onlinestats (stats_timestamp,stats_count,stats_regcount) VALUES (".time().",".$garr[0].",".$rarr[0].");");
-		$log = "\nUser-Statistik: ".$garr[0]." User online, ".$rarr[0]." User registriert\n\n";
-
-		
-		// Krieg-Frieden-Update
 		$tmr = timerStart();
-		$nr = warpeace_update();
-		$log.= "$nr Krieg und Frieden aktualisiert.\nDauer: ".timerStop($tmr)." sec\n\n";		
-		
-		// Chat-Cleanup
-		$log.= "Alte Chat Nachrichten löschen...\n";
-	ChatManager::cleanUpMessages();
-
-		// Userstats
+		$rres = dbquery("SELECT COUNT(user_id) FROM users;");
+		$rarr = mysql_fetch_row($rres);
+		$gres = dbquery("SELECT COUNT(user_id) FROM user_sessions;");
+		$garr = mysql_fetch_row($gres);
+		dbquery("INSERT INTO user_onlinestats (stats_timestamp,stats_count,stats_regcount) VALUES (".time().",".$garr[0].",".$rarr[0].");");
 		UserStats::generateImage(USERSTATS_OUTFILE);
 		UserStats::generateXml(XML_INFO_FILE);
-
+		$log.= "User-Statistik: ".$garr[0]." User online, ".$rarr[0]." User registriert (".timerStop($tmr)." sec)\n";
+		
+		// Chat-Cleanup
+		$tmr = timerStart();
+		$nr = ChatManager::cleanUpMessages();
+		$log.= "$nr alte Chat Nachrichten gelöscht (".timerStop($tmr)." sec)\n";
+		
 		// Cleanup session
+		$tmr = timerStart();
 		UserSession::cleanup();
 		AdminSession::cleanup();
+		$log.= "Session cleanup (".timerStop($tmr)." sec)\n";
 		
-		//Check Backend
+		// Check Backend
+		$tmr = timerStart();
 		$backend = checkDaemonRunning($cfg->daemon_pidfile)>0 ? true : false;
-		if ($cfg->value("backend_status") != $backend)
+		$change = $cfg->value("backend_status") != $backend;
+		if ($change)
 		{
 			$status = $cfg->value("backend_status") == 0 ? 1 : 0;
 			$cfg->set("backend_status", $status);
@@ -235,32 +242,37 @@
 				$mail->send($sendMail);
 			}
 		}
-
+		$log.= "Backend Check: ".($backend ? 'gestartet' : 'gestoppt')." (".($change ? 'geändert' : 'keine Änderung').") (".timerStop($tmr)." sec)\n";
+		
 		return $log;
 	}
 
 	function update_minute()
 	{
-		global $conf;
-
-		// Zufalls-Event auslösen
-		//PlanetEventHandler::doEvent(RANDOM_EVENTS_PER_UPDATE);
-
-		$log= "Krieg/Frieden aktualisieren...\n";
+		$log = '';
+	
+		// War/peace
+		$tmr = timerStart();
 		$nr = warpeace_update();
+		$log.= "$nr Krieg und Frieden aktualisiert (".timerStop($tmr)." sec)\n";
 		
-		$log.= "Raketen berechnen...\n";
+		// Missiles
+		$tmr = timerStart();
 		check_missiles();
+		$log.= "Raketen berechnet (".timerStop($tmr)." sec)\n";
 	  
-		$log.= "Inaktive Chat-User löschen...\n";
-		ChatManager::cleanUpUsers();
+		// Remove inactive chat users
+		$tmr = timerStart();
+		$nr = ChatManager::cleanUpUsers();
+		$log.= "$nr inaktive Chat-User gelöscht (".timerStop($tmr)." sec)\n";
 
 		// Process log messages
+		$tmr = timerStart();
 		$nr = Log::processQueue();
 		$nr+= GameLog::processQueue();
 		$nr+= BattleLog::processQueue();
 		$nr+= FleetLog::processQueue();
-		$log.= "$nr Log Nachrichten verarbeitet\n";
+		$log.= "$nr Log Nachrichten verarbeitet (".timerStop($tmr)." sec)\n";
 
 		return $log;
 	}

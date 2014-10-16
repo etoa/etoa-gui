@@ -47,10 +47,14 @@
 			echo "[b]Punkte-Update[/b]\n";
 			$mtx = new Mutex();
 			$mtx->acquire();
-			$num = Ranking::calc(true);
-			Ranking::calcTitles();
+			$num = Ranking::calc();
+			Ranking::createUserBanner();
+			if (ENABLE_USERTITLES==1) {
+				Ranking::calcTitles();
+			}
 			$mtx->release();
 			$d = $num[1]/$num[0];
+			Log::add(Log::F_UPDATES,Log::INFO,"Statistiken wurden manuell vom User ".$_SESSION['user_nick']." aktualisiert!");
 			echo "Die Punkte von ".$num[0]." Spielern wurden aktualisiert!\nEin Spieler hat durchschnittlich ".nf($d)." Punkte!";
 			$_SESSION['update_results'] = ob_get_clean();
 			forward('?page='.$page.'&sub='.$sub);
