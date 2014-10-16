@@ -266,11 +266,8 @@
 
 		// Process log messages
 		$tmr = timerStart();
-		$nr = Log::processQueue();
-		$nr+= GameLog::processQueue();
-		$nr+= BattleLog::processQueue();
-		$nr+= FleetLog::processQueue();
-		$log.= "$nr Log Nachrichten verarbeitet (".timerStop($tmr)." sec)\n";
+		$task = new ProcessLogMessagesTask();
+		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
 
 		return $log;
 	}
