@@ -12,8 +12,6 @@
 	}
 	function update_day()
 	{
-		global $conf;
-
 		$log = '';
 	
 		// Inaktive User löschen
@@ -31,7 +29,7 @@
 		$log.= "$nr alte Userpunkte-Logs gelöscht (".timerStop($tmr)." sec)\n";
 		
 		// Benutzer aus Urlaub inaktiv setzen
-		if($conf['hmode_days']['p2'])
+		if (Config::getInstance()->p2('hmode_days'))
 		{
 			$tmr = timerStart();
 			$nr = Users::setUmodToInactive();
