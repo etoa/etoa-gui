@@ -7,80 +7,92 @@
 	{msg type="info" text="{$update_results}"}
 {/if}
 
-<fieldset>
-	<legend>Punkte updaten</legend>
-	<p>Die <a href="?page=overview&amp;sub=stats" target="_blank">Punkte</a> aller Spieler aktualisieren</p>
-	<input type="button" value="Ausführen" onclick="document.location='?page={$page}&sub={$sub}&action=points'" />
-</fieldset>
-
-<fieldset>
-	<legend>Minuten-Update</legend>
-	<ul>
-		<li>Krieg/Frieden</li>
-		<li>Raketen</li>
-		<li>inaktive Chat-User</li>
-		<li>Log-Nachrichten</li>
-	</ul>
-	<input type="button" value="Ausführen" onclick="document.location='?page={$page}&sub={$sub}&action=update_minute'" />
-</fieldset>
-
-<fieldset>
-	<legend>5-Minuten-Update</legend>
-	<ul>
-		<li>User Statistik</li>
-		<li>Chat-Nachrichten Cleanup</li>
-		<li>Session Cleanup</li>
-		<li>Backend-Check</li>
-	</ul>
-	<input type="button" value="Ausführen" onclick="document.location='?page={$page}&sub={$sub}&action=update_5minute'" />
-</fieldset>
-
-<fieldset>
-	<legend>30-Minuten-Update</legend>
-	<ul>
-		<li>Admin-Mailwarteschlange</li>
-		<li>Markt-Ressourcen Verhältnisse</li>
-	</ul>
-	<input type="button" value="Ausführen" onclick="document.location='?page={$page}&sub={$sub}&action=update_30minute'" />
-</fieldset>
-
-<fieldset>
-	<legend>Studen-Update</legend>
-	<ul>
-		<li>Punkte</li>
-		<li>Titel</li>
-		<li>Allianz-Schiffpunkte</li>
-		<li>Wurmlöcher vertauschen</li>
-	</ul>
-	<input type="button" value="Ausführen" onclick="document.location='?page={$page}&sub={$sub}&action=update_hour'" />
-</fieldset>
-
-<fieldset>
-	<legend>Tages-Update</legend>
-	<ul>
-		<li>Inaktive User löschen</li>
-		<li>zum Löschen markierte User löschen</li>
-		<li>alte Benuterpunkte-Logs löschen</li>
-		<li>Benutzer aus Urlaub inaktiv setzen</li>
-		<li>Alte Allianzpunkte-Logs löschen</li>
-		<li>Alte Session-Logs löschen</li>
-		<li>Alte Logs löschen</li>
-		<li>Alte Nachrichten löschen</li>
-		<li>Alte Berichte löschen</li>
-		<li>Abgelaufene Sperren löschen</li>
-		<li>Alte Baudatensätze löschen</li>
-		<li>Tabellen optimieren</li>
-		<li>Remove old ip-hostname combos from cache</li>
-		<li>Close open tickets that are answered by an admin and are inactive</li>
-	</ul>
-	<input type="button" value="Ausführen" onclick="document.location='?page={$page}&sub={$sub}&action=update_day'" />
-</fieldset>
-
-
-<fieldset>
-	<legend>Monats-Update</legend>
-	<ul>
-		<li>Sitter-Tage aktualisieren</li>
-	</ul>
-	<input type="button" value="Ausführen" onclick="document.location='?page={$page}&sub={$sub}&action=update_month'" />
-</fieldset>
+<table style="width:100%">
+	<colgroup>
+		<col style="width:180px"/>
+		<col/>
+		<col style="width:90px"/>
+	</colgroup>
+	<tr>
+		<th>Punkte updaten</th>
+		<td>Die <a href="?page=overview&amp;sub=stats" target="_blank">Punkte</a> aller Spieler aktualisieren</td>
+		<td><input type="button" value="Ausführen" onclick="document.location='?page={$page}&sub={$sub}&action=points'" /></td>
+	</tr>
+	<tr>
+		<th>Minuten-Update</th>
+		<td>
+			<ul>
+				<li>Krieg/Frieden</li>
+				<li>Raketen</li>
+				<li>inaktive Chat-User</li>
+				<li>Log-Nachrichten</li>
+			</ul>
+		</td>
+		<td><input type="button" value="Ausführen" onclick="document.location='?page={$page}&sub={$sub}&action=update_minute'" /></td>
+	</tr>
+	<tr>
+		<th>5-Minuten-Update</th>
+		<td>
+			<ul>
+				<li>User Statistik</li>
+				<li>Chat-Nachrichten Cleanup</li>
+				<li>Session Cleanup</li>
+				<li>Backend-Check</li>
+			</ul>
+		</td>
+		<td><input type="button" value="Ausführen" onclick="document.location='?page={$page}&sub={$sub}&action=update_5minute'" /></td>
+	</tr>
+	<tr>
+		<th>30-Minuten-Update</th>
+		<td>
+			<ul>
+				<li>Admin-Mailwarteschlange</li>
+				<li>Markt-Ressourcen Verhältnisse</li>
+			</ul>
+		</td>
+		<td><input type="button" value="Ausführen" onclick="document.location='?page={$page}&sub={$sub}&action=update_30minute'" /></td>
+	</tr>
+	<tr>
+		<th>Studen-Update</th>
+		<td>
+			<ul>
+				<li>Punkte</li>
+				<li>Titel</li>
+				<li>Allianz-Schiffpunkte</li>
+				<li>Wurmlöcher vertauschen</li>
+			</ul>
+		</td>
+		<td><input type="button" value="Ausführen" onclick="document.location='?page={$page}&sub={$sub}&action=update_hour'" /></td>
+	</tr>
+	<tr>
+		<th>Tages-Update</th>
+		<td>
+			<ul>
+				<li>Inaktive User löschen</li>
+				<li>zum Löschen markierte User löschen</li>
+				<li>alte Benuterpunkte-Logs löschen</li>
+				<li>Benutzer aus Urlaub inaktiv setzen</li>
+				<li>Alte Allianzpunkte-Logs löschen</li>
+				<li>Alte Session-Logs löschen</li>
+				<li>Alte Logs löschen</li>
+				<li>Alte Nachrichten löschen</li>
+				<li>Alte Berichte löschen</li>
+				<li>Abgelaufene Sperren löschen</li>
+				<li>Alte Baudatensätze löschen</li>
+				<li>Tabellen optimieren</li>
+				<li>Remove old ip-hostname combos from cache</li>
+				<li>Close open tickets that are answered by an admin and are inactive</li>
+			</ul>
+		</td>
+		<td><input type="button" value="Ausführen" onclick="document.location='?page={$page}&sub={$sub}&action=update_day'" /></td>
+	</tr>
+	<tr>
+		<th>Monats-Update</th>
+		<td>
+			<ul>
+				<li>Sitter-Tage aktualisieren</li>
+			</ul>
+		</td>
+		<td><input type="button" value="Ausführen" onclick="document.location='?page={$page}&sub={$sub}&action=update_month'" /></td>
+	</tr>
+</table>
