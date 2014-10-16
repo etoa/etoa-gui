@@ -12,7 +12,7 @@
 			FROM
 				missile_flights
 			WHERE
-				flight_landtime < ".time()."
+				flight_landtime < UNIX_TIMESTAMP()
 			ORDER BY
 				flight_landtime ASC
 			;");
