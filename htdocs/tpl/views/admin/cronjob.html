@@ -40,7 +40,11 @@
 			<tr>
 				<th>Name</th>
 				<th>Beschreibung</th>
-				<th>Zeitplan</th>
+				<th>Minute</th>
+				<th>Stunde</th>
+				<th>Tag des Monats</th>
+				<th>Monat</th>
+				<th>Tag der Woche</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -48,7 +52,11 @@
 				<tr>
 					<td>{$t.name}</td>
 					<td>{$t.desc}</td>
-					<td>{$t.schedule}</td>
+					<td style="text-align:center;">{$t.min}</td>
+					<td style="text-align:center;">{$t.hour}</td>
+					<td style="text-align:center;">{$t.dayofmonth}</td>
+					<td style="text-align:center;">{$t.month}</td>
+					<td style="text-align:center;">{$t.dayofweek}</td>
 				</tr>
 			{/foreach}
 		</tbody>

@@ -42,6 +42,12 @@
 			if ($reflect->implementsInterface('IPeriodicTask')) {
 				$t = new $klass();
 				$taskConfig['desc'] = $t->getDescription();
+				$elements = preg_split('/\s+/', $taskConfig['schedule']);
+				$taskConfig['min'] = $elements[0];
+				$taskConfig['hour'] = $elements[1];
+				$taskConfig['dayofmonth'] = $elements[2];
+				$taskConfig['month'] = $elements[3];
+				$taskConfig['dayofweek'] = $elements[4];
 			}
 			unset($taskConfig);
 		}
