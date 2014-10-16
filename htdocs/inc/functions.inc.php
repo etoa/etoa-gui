@@ -1980,32 +1980,6 @@ function imagecreatefromfile($path, $user_functions = false)
 	}
 
 	/**
-	* Checks and handles missile actions
-	* @todo source this out
-	*/
-	function check_missiles()
-	{
-		$res = dbquery("
-		SELECT
-			flight_id
-		FROM
-			missile_flights
-		WHERE
-			flight_landtime < ".time()."
-		ORDER BY
-			flight_landtime ASC
-		;");
-		if (mysql_num_rows($res)>0)
-		{
-			include("inc/missiles.inc.php");
-			while($arr=mysql_fetch_assoc($res))
-			{
-				missile_battle($arr['flight_id']);				
-			}
-		}		
-	}
-
-	/**
 	* Calculates costs per level for a given building costs array
 	*
 	* @param array Array of db cost values

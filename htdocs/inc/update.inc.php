@@ -256,8 +256,8 @@
 		
 		// Missiles
 		$tmr = timerStart();
-		check_missiles();
-		$log.= "Raketen berechnet (".timerStop($tmr)." sec)\n";
+		$task = new CheckMissilesTask();
+		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
 	  
 		// Remove inactive chat users
 		$tmr = timerStart();
