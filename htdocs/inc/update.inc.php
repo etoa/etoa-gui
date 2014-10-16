@@ -261,8 +261,8 @@
 	  
 		// Remove inactive chat users
 		$tmr = timerStart();
-		$nr = ChatManager::cleanUpUsers();
-		$log.= "$nr inaktive Chat-User gelöscht (".timerStop($tmr)." sec)\n";
+		$task = new RemoveInactiveChatUsersTask();
+		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
 
 		// Process log messages
 		$tmr = timerStart();
