@@ -143,8 +143,8 @@
 
 		// Update market resource rates
 		$tmr = timerStart();
-		MarketHandler::updateRates();
-		$log.= "Markt-Raten aktualisiert (".timerStop($tmr)." sec)\n";
+		$task = new MarketrateUpdateTask();
+		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
 
 		return $log;
 	}
