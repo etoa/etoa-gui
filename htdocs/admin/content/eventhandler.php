@@ -61,7 +61,7 @@
 				$title = "[b]Task: ".$periodictasks[$_GET['runtask']]['desc']."[/b] (".$_GET['runtask'].")\n";
 				ob_start();
 				$tr = new PeriodicTaskRunner();
-				$out = $tr->runTask($_GET['runtask']);
+				$out = $tr->runTask($_GET['runtask'], 1);
 				$_SESSION['update_results'] = $title.$out.ob_get_clean();
 				Log::add(Log::F_UPDATES, Log::INFO, "Task [b]".$_GET['runtask']."[/b] manuell ausgeführt:\n".trim($out));
 			}
