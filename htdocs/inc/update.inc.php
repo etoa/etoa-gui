@@ -29,12 +29,9 @@
 		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
 		
 		// Benutzer aus Urlaub inaktiv setzen
-		if (Config::getInstance()->p2('hmode_days'))
-		{
-			$tmr = timerStart();
-			$nr = Users::setUmodToInactive();
-			$log.= "$nr User aus Urlaubsmodus in Inaktivität gesetzt (".timerStop($tmr)." sec)\n";
-		}
+		$tmr = timerStart();
+		$task = new SetHolydayModeUsersInactiveTask();
+		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
 		
 		// Alte Allianzpunkte-Logs löschen
 		$tmr = timerStart();
