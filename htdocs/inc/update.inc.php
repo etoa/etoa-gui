@@ -1,37 +1,25 @@
 <?PHP
 	function update_month()
 	{
-		$log = "";
+		$log = '';
+		$tr = new PeriodicTaskRunner();
 	
 		// Urlaubstage aktualisieren
 		$tmr = timerStart();
 		Users::addSittingDays();
 		$log.= "Sittertage aller User wurden aktualisiert (".timerStop($tmr)." sec)\n";
 		
+		$log.= "\nTotal: ".$tr->getTotalDuration().' sec';
 		return $log;
 	}
 	function update_day()
 	{
 		$log = '';
-	
-		// Inaktive User löschen
-		$tmr = timerStart();
-		$task = new RemoveInactiveUsersTask();
-		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
-
-		$tmr = timerStart();
-		$task = new RemoveDeletedUsersTask();
-		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
-	
-		// Alte Benuterpunkte-Logs löschen
-		$tmr = timerStart();
-		$task = new RemoveOldUserPointLogsTask();
-		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
-		
-		// Benutzer aus Urlaub inaktiv setzen
-		$tmr = timerStart();
-		$task = new SetHolydayModeUsersInactiveTask();
-		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
+		$tr = new PeriodicTaskRunner();
+		$log.= $tr->runTask('RemoveInactiveUsersTask');
+		$log.= $tr->runTask('RemoveDeletedUsersTask');
+		$log.= $tr->runTask('RemoveOldUserPointLogsTask');
+		$log.= $tr->runTask('SetHolydayModeUsersInactiveTask');
 		
 		// Alte Allianzpunkte-Logs löschen
 		$tmr = timerStart();
@@ -94,55 +82,30 @@
 		Ticket::closeAssigedInactive();
 		$log.= "Inaktive Tickes geschlossen(".timerStop($tmr)." sec)\n";
 		
+		$log.= "\nTotal: ".$tr->getTotalDuration().' sec';
 		return $log;
 	}
 
 	function update_hour()
 	{
-		$log = "";
-		
-		// Punkteberechnung
-		$tmr = timerStart();
-		$task = new CalculateRankingTask();
-		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
-		
-		// Crete user banners
-		$tmr = timerStart();
-		$task = new CreateUserBannerTask();
-		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
-
-		// Update user titles
-		$tmr = timerStart();
-		$task = new UpdateUserTitlesTask();
-		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
-		
-		// Schiffsteile berechnen
-		$tmr = timerStart();
-		$task = new AllianceShipPointsUpdateTask();
-		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
-
-		// Wurmlöcher vertauschen
-		$tmr = timerStart();
-		$task = new PermuteWormholesTask();
-		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
-
+		$log = '';
+		$tr = new PeriodicTaskRunner();
+		$log.= $tr->runTask('CalculateRankingTask');
+		$log.= $tr->runTask('CreateUserBannerTask');
+		$log.= $tr->runTask('UpdateUserTitlesTask');
+		$log.= $tr->runTask('AllianceShipPointsUpdateTask');
+		$log.= $tr->runTask('PermuteWormholesTask');
+		$log.= "\nTotal: ".$tr->getTotalDuration().' sec';
 		return $log;
 	}
 
 	function update_30minute()
 	{
-		$log = "";
-
-		// Admins über einkommende Nachrichten Informieren
-		$tmr = timerStart();
-		$task = new AdminMessageNotificationTask();
-		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
-
-		// Update market resource rates
-		$tmr = timerStart();
-		$task = new MarketrateUpdateTask();
-		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
-
+		$log = '';
+		$tr = new PeriodicTaskRunner();
+		$log.= $tr->runTask('AdminMessageNotificationTask');
+		$log.= $tr->runTask('MarketrateUpdateTask');
+		$log.= "\nTotal: ".$tr->getTotalDuration().' sec';
 		return $log;
 	}
 
@@ -150,54 +113,24 @@
 	function update_5minute()
 	{
 		$log = '';
-		
-		// Update user statistics
-		$tmr = timerStart();
-		$task = new GenerateUserStatisticsTask();
-		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
-		
-		// Chat-Cleanup
-		$tmr = timerStart();
-		$task = new RemoveOldChatMessagesTask();
-		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
-		
-		// Cleanup sessions
-		$tmr = timerStart();
-		$task = new SessionCleanupTask();
-		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
-		
-		// Check Backend
-		$tmr = timerStart();
-		$task = new BackendCheckTask();
-		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
-		
+		$tr = new PeriodicTaskRunner();
+		$log.= $tr->runTask('GenerateUserStatisticsTask');
+		$log.= $tr->runTask('RemoveOldChatMessagesTask');
+		$log.= $tr->runTask('SessionCleanupTask');
+		$log.= $tr->runTask('BackendCheckTask');
+		$log.= "\nTotal: ".$tr->getTotalDuration().' sec';
 		return $log;
 	}
 
 	function update_minute()
 	{
 		$log = '';
-	
-		// War/peace
-		$tmr = timerStart();
-		$task = new WarPeaceUpdateTask();
-		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
-		
-		// Missiles
-		$tmr = timerStart();
-		$task = new CheckMissilesTask();
-		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
-	  
-		// Remove inactive chat users
-		$tmr = timerStart();
-		$task = new RemoveInactiveChatUsersTask();
-		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
-
-		// Process log messages
-		$tmr = timerStart();
-		$task = new ProcessLogMessagesTask();
-		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
-
+		$tr = new PeriodicTaskRunner();	
+		$log.= $tr->runTask('WarPeaceUpdateTask');
+		$log.= $tr->runTask('CheckMissilesTask');
+		$log.= $tr->runTask('RemoveInactiveChatUsersTask');
+		$log.= $tr->runTask('ProcessLogMessagesTask');
+		$log.= "\nTotal: ".$tr->getTotalDuration().' sec';
 		return $log;
 	}
 ?>
