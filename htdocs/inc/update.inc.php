@@ -31,12 +31,7 @@
 		$log.= $tr->runTask('OptimizeTablesTask');
 		$log.= $tr->runTask('AnalyzeTablesTask');
 		$log.= $tr->runTask('ClearIPHostnameCacheTask');
-
-		// Close open tickets that are answered by an admin and are inactive
-		$tmr = timerStart();
-		Ticket::closeAssigedInactive();
-		$log.= "Inaktive Tickes geschlossen(".timerStop($tmr)." sec)\n";
-		
+		$log.= $tr->runTask('CloseAssigedInactiveTicketsTask');
 		$log.= "\nTotal: ".$tr->getTotalDuration().' sec';
 		return $log;
 	}
