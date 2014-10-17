@@ -41,16 +41,18 @@
 			$klass = $tc['name'];
 			$reflect = new ReflectionClass($klass);
 			if ($reflect->implementsInterface('IPeriodicTask')) {
-				$t = new $klass();
-				$taskConfig['desc'] = $t->getDescription();
 				$elements = preg_split('/\s+/', $tc['schedule']);
-				$taskConfig['min'] = $elements[0];
-				$taskConfig['hour'] = $elements[1];
-				$taskConfig['dayofmonth'] = $elements[2];
-				$taskConfig['month'] = $elements[3];
-				$taskConfig['dayofweek'] = $elements[4];
+				$t = new $klass();
+				$taskConfig = array(
+					'desc' => $t->getDescription(),
+					'min' => $elements[0],
+					'hour' => $elements[1],
+					'dayofmonth' => $elements[2],
+					'month' => $elements[3],
+					'dayofweek' => $elements[4]
+				);
+				$periodictasks[$tc['name']] = $taskConfig;
 			}
-			$periodictasks[$tc['name']] = $taskConfig;
 		}
 		$tpl->assign('periodictasks', $periodictasks);
 		
