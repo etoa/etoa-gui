@@ -30,11 +30,7 @@
 		$log.= $tr->runTask('CleanupDeflistTask');
 		$log.= $tr->runTask('OptimizeTablesTask');
 		$log.= $tr->runTask('AnalyzeTablesTask');
-		
-		// Remove old ip-hostname combos from cache
-		$tmr = timerStart();
-		Net::clearCache();
-		$log.= "IP/Hostname Cache gelöscht (".timerStop($tmr)." sec)\n";
+		$log.= $tr->runTask('ClearIPHostnameCacheTask');
 
 		// Close open tickets that are answered by an admin and are inactive
 		$tmr = timerStart();
