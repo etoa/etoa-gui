@@ -22,11 +22,7 @@
 		$log.= $tr->runTask('SetHolydayModeUsersInactiveTask');
 		$log.= $tr->runTask('RemoveOldAlliancePointLogsTask');
 		$log.= $tr->runTask('CleanupSessionLogsTask');
-
-		// Alte Logs löschen
-		$tmr = timerStart();
-		$nr = Log::removeOld();
-		$log.= "$nr alte Logs gelöscht (".timerStop($tmr)." sec)\n";
+		$log.= $tr->runTask('RemoveOldLogsTask');
 
 		// Alte Nachrichten löschen
 		$tmr = timerStart();
