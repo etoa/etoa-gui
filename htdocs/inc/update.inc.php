@@ -109,9 +109,10 @@
 		$task = new CalculateRankingTask();
 		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
 		
+		// Crete user banners
 		$tmr = timerStart();
-		Ranking::createUserBanner();
-		$log.= "User Banner erstellt (".timerStop($tmr)." sec)\n";
+		$task = new CreateUserBannerTask();
+		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
 
 		// Update user titles
 		$tmr = timerStart();
