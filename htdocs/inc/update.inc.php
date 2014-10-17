@@ -25,11 +25,7 @@
 		$log.= $tr->runTask('RemoveOldLogsTask');
 		$log.= $tr->runTask('RemoveOldMessagesTask');
 		$log.= $tr->runTask('RemoveOldReportsTask');
-
-		// Abgelaufene Sperren löschen
-		$tmr = timerStart();
-		Users::removeOldBanns();
-		$log.= "Abgelaufene Sperren gelöscht (".timerStop($tmr)." sec)\n";
+		$log.= $tr->runTask('RemoveOldBannsTask');
 		
 		// Alte Baudatensätze löschen
 		$tmr = timerStart();
