@@ -210,11 +210,10 @@
 		$task = new RemoveOldChatMessagesTask();
 		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
 		
-		// Cleanup session
+		// Cleanup sessions
 		$tmr = timerStart();
-		UserSession::cleanup();
-		AdminSession::cleanup();
-		$log.= "Session cleanup (".timerStop($tmr)." sec)\n";
+		$task = new SessionCleanupTask();
+		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
 		
 		// Check Backend
 		$tmr = timerStart();
