@@ -16,12 +16,12 @@
 	
 		// Inaktive User löschen
 		$tmr = timerStart();
-		$nr = Users::removeInactive();
-		$log.= "$nr inaktive User gelöscht (".timerStop($tmr)." sec)\n";
+		$task = new RemoveInactiveUsersTask();
+		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
 
 		$tmr = timerStart();
-		$nr = Users::removeDeleted();
-		$log.= "$nr als gelöscht markierte User endgültig gelöscht (".timerStop($tmr)." sec)\n";
+		$task = new RemoveDeletedUsersTask();
+		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
 	
 		// Alte Benuterpunkte-Logs löschen
 		$tmr = timerStart();
