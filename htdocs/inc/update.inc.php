@@ -28,15 +28,9 @@
 		$log.= $tr->runTask('RemoveOldBannsTask');
 		$log.= $tr->runTask('CleanupShiplistTask');
 		$log.= $tr->runTask('CleanupDeflistTask');
+		$log.= $tr->runTask('OptimizeTablesTask');
+		$log.= $tr->runTask('AnalyzeTablesTask');
 		
-		// Tabellen optimieren
-		$tmr = timerStart();
-		DBManager::getInstance()->optimizeTables();
-		$log.= "Tabellen optimiert (".timerStop($tmr)." sec)\n";
-		$tmr = timerStart();
-		DBManager::getInstance()->analyzeTables();
-		$log.= "Tabellen analysiert (".timerStop($tmr)." sec)\n";
-
 		// Remove old ip-hostname combos from cache
 		$tmr = timerStart();
 		Net::clearCache();
