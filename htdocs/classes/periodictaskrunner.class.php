@@ -10,9 +10,12 @@
 			$klass = $taskIdentifier;
 			$reflect = new ReflectionClass($klass);
 			if ($reflect->implementsInterface('IPeriodicTask')) {
+				$mtx = new Mutex();
+				$mtx->acquire();
 				$tmr = timerStart();
-				$task = new $klass();				
+				$task = new $klass();
 				$output = $task->run();
+				$mtx->release();
 				$duration = timerStop($tmr);
 				$this->totalDuration += $duration;
 				if (!empty($output)) {
