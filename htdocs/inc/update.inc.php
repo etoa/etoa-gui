@@ -23,16 +23,8 @@
 		$log.= $tr->runTask('RemoveOldAlliancePointLogsTask');
 		$log.= $tr->runTask('CleanupSessionLogsTask');
 		$log.= $tr->runTask('RemoveOldLogsTask');
-
-		// Alte Nachrichten löschen
-		$tmr = timerStart();
-		Message::removeOld();
-		$log.= "Alte Nachrichten gelöscht (".timerStop($tmr)." sec)\n";
-		
-		// Alte Berichte löschen
-		$tmr = timerStart();
-		Report::removeOld();
-		$log.= "Alte Berichte gelöscht (".timerStop($tmr)." sec)\n";
+		$log.= $tr->runTask('RemoveOldMessagesTask');
+		$log.= $tr->runTask('RemoveOldReportsTask');
 
 		// Abgelaufene Sperren löschen
 		$tmr = timerStart();
