@@ -3,12 +3,7 @@
 	{
 		$log = '';
 		$tr = new PeriodicTaskRunner();
-	
-		// Urlaubstage aktualisieren
-		$tmr = timerStart();
-		Users::addSittingDays();
-		$log.= "Sittertage aller User wurden aktualisiert (".timerStop($tmr)." sec)\n";
-		
+		$log.= $tr->runTask('UpdateSittingDaysTask');		
 		$log.= "\nTotal: ".$tr->getTotalDuration().' sec';
 		return $log;
 	}
