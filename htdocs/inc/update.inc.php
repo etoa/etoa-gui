@@ -21,15 +21,7 @@
 		$log.= $tr->runTask('RemoveOldUserPointLogsTask');
 		$log.= $tr->runTask('SetHolydayModeUsersInactiveTask');
 		$log.= $tr->runTask('RemoveOldAlliancePointLogsTask');
-		
-		// Alte Session-Logs
-		$tmr = timerStart();
-		$nr = UserSession::cleanupLogs();
-		$log.= "$nr alte Session-Logs gelöscht (".timerStop($tmr)." sec)\n";
-
-		$tmr = timerStart();
-		$nr = AdminSession::cleanupLogs();
-		$log.= "$nr alte Session-Logs gelöscht (".timerStop($tmr)." sec)\n";
+		$log.= $tr->runTask('CleanupSessionLogsTask');
 
 		// Alte Logs löschen
 		$tmr = timerStart();
