@@ -106,8 +106,8 @@
 		
 		// Punkteberechnung
 		$tmr = timerStart();
-		Ranking::calc();
-		$log.= "Punkte aktualisiert (".timerStop($tmr)." sec)\n";
+		$task = new CalculateRankingTask();
+		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
 		
 		$tmr = timerStart();
 		Ranking::createUserBanner();
