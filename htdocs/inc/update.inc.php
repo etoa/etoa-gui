@@ -121,8 +121,8 @@
 		
 		// Schiffsteile berechnen
 		$tmr = timerStart();
-		Alliance::allianceShipPointsUpdate();
-		$log.= "Allianz-Schiffsteile berechnet (".timerStop($tmr)." sec)\n";
+		$task = new AllianceShipPointsUpdateTask();
+		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
 
 		// Wurmlöcher vertauschen
 		$tmr = timerStart();
