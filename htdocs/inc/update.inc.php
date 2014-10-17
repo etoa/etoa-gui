@@ -126,8 +126,8 @@
 
 		// Wurmlöcher vertauschen
 		$tmr = timerStart();
-		Wormhole::randomize();
-		$log.= "Wurml&ouml;cher vertauscht (".timerStop($tmr)." sec)\n";
+		$task = new PermuteWormholesTask();
+		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
 
 		return $log;
 	}
