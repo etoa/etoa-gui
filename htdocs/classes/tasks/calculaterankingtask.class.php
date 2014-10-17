@@ -12,7 +12,7 @@
 		}
 		
 		function getDescription() {
-			return "Punkte berechnen und Randliste aktualisieren";
+			return "Punkte berechnen und Rangliste aktualisieren";
 		}
 	}
 ?>

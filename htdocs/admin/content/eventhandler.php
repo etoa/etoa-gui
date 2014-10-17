@@ -9,9 +9,10 @@
 		if (isset($_GET['activateupdate']) && $_GET['activateupdate']==1)
 		{
 			Config::getInstance()->set("update_enabled",1);
-			$tpl->assign('msg', "Updates aktiviert!");
+			$tpl->assign('msg', "Tasks aktiviert!");
 		}
 	
+		// Cron configuration
 		if (UNIX)
 		{
 			$scriptname = dirname(realpath(__DIR__."/../"))."/scripts/update.php";
@@ -32,120 +33,45 @@
 		}
 		
 		$tpl->setView('admin/cronjob');
-		$tpl->assign('title', 'Periodische Updates (Cronjob)');
+		$tpl->assign('title', 'Periodische Tasks (Cronjob)');
 		
-		// Periodic tasks from configuration
-		$periodictasks = fetchJsonConfig("periodictasks.conf");
-		foreach ($periodictasks as &$taskConfig) {
-			$klass = $taskConfig['name'];
+		// Load periodic tasks from configuration
+		$periodictasks = array();
+		foreach (fetchJsonConfig("periodictasks.conf") as $tc) {
+			$klass = $tc['name'];
 			$reflect = new ReflectionClass($klass);
 			if ($reflect->implementsInterface('IPeriodicTask')) {
 				$t = new $klass();
 				$taskConfig['desc'] = $t->getDescription();
-				$elements = preg_split('/\s+/', $taskConfig['schedule']);
+				$elements = preg_split('/\s+/', $tc['schedule']);
 				$taskConfig['min'] = $elements[0];
 				$taskConfig['hour'] = $elements[1];
 				$taskConfig['dayofmonth'] = $elements[2];
 				$taskConfig['month'] = $elements[3];
 				$taskConfig['dayofweek'] = $elements[4];
 			}
-			unset($taskConfig);
+			$periodictasks[$tc['name']] = $taskConfig;
 		}
 		$tpl->assign('periodictasks', $periodictasks);
-	}
-	
-	//
-	// Updates
-	//
-	else if($sub=='updates')
-	{
-		// Update points
-		if (isset($_GET['action']) && $_GET['action']=="points")
+		
+		// Run periodic task if requested
+		if (!empty($_GET['runtask']))
 		{
-			ob_start();
-			echo "[b]Punkte-Update[/b]\n";
-			$mtx = new Mutex();
-			$mtx->acquire();
-			$num = Ranking::calc();
-			Ranking::createUserBanner();
-			if (ENABLE_USERTITLES==1) {
-				Ranking::calcTitles();
+			if (isset($periodictasks[$_GET['runtask']])) {
+				$out = "[b]Task: ".$periodictasks[$_GET['runtask']]['desc']."[/b] (".$_GET['runtask'].")\n";
+				ob_start();
+				$tr = new PeriodicTaskRunner();
+				$out.= $tr->runTask($_GET['runtask']);
+				$_SESSION['update_results'] = $out.ob_get_clean();
 			}
-			$mtx->release();
-			$d = $num[1]/$num[0];
-			Log::add(Log::F_UPDATES,Log::INFO,"Statistiken wurden manuell vom User ".$_SESSION['user_nick']." aktualisiert!");
-			echo "Die Punkte von ".$num[0]." Spielern wurden aktualisiert!\nEin Spieler hat durchschnittlich ".nf($d)." Punkte!";
-			$_SESSION['update_results'] = ob_get_clean();
 			forward('?page='.$page.'&sub='.$sub);
 		}
-		// Minute update
-		if (isset($_GET['action']) && $_GET['action']=="update_minute")
-		{
-			ob_start();
-			echo "[b]Minuten-Update[/b]\n";
-			include(RELATIVE_ROOT."inc/update.inc.php");
-			echo update_minute();
-			$_SESSION['update_results'] = ob_get_clean();
-			forward('?page='.$page.'&sub='.$sub);
-		}
-		// 5 minutes update
-		if (isset($_GET['action']) && $_GET['action']=="update_5minute")
-		{
-			ob_start();
-			echo "[b]5-Minuten-Update[/b]\n";
-			include(RELATIVE_ROOT."inc/update.inc.php");
-			echo update_5minute();
-			$_SESSION['update_results'] = ob_get_clean();
-			forward('?page='.$page.'&sub='.$sub);
-		}
-		// 30 minutes update
-		if (isset($_GET['action']) && $_GET['action']=="update_30minute")
-		{
-			ob_start();
-			echo "[b]30-Minuten-Update[/b]\n";
-			include(RELATIVE_ROOT."inc/update.inc.php");
-			echo update_30minute();
-			$_SESSION['update_results'] = ob_get_clean();
-			forward('?page='.$page.'&sub='.$sub);
-		}
-		// Hourly update
-		if (isset($_GET['action']) && $_GET['action']=="update_hour")
-		{
-			ob_start();
-			echo "[b]Stunden-Update[/b]\n";
-			include(RELATIVE_ROOT."inc/update.inc.php");
-			echo update_hour();
-			$_SESSION['update_results'] = ob_get_clean();
-			forward('?page='.$page.'&sub='.$sub);
-		}
-		// Daily update
-		if (isset($_GET['action']) && $_GET['action']=="update_day")
-		{
-			ob_start();
-			echo "[b]Tages-Update[/b]\n";
-			include(RELATIVE_ROOT."inc/update.inc.php");
-			echo update_day();
-			$_SESSION['update_results'] = ob_get_clean();
-			forward('?page='.$page.'&sub='.$sub);
-		}
-		// Monthly update
-		if (isset($_GET['action']) && $_GET['action']=="update_month")
-		{
-			ob_start();
-			echo "[b]Monats-Update[/b]\n";
-			include(RELATIVE_ROOT."inc/update.inc.php");
-			echo update_month();
-			$_SESSION['update_results'] = ob_get_clean();
-			forward('?page='.$page.'&sub='.$sub);
-		}
-
-		$tpl->setView('admin/updates');
-		$tpl->assign('title', 'Manuelle Updates');
+		// Handle result message
 		if (!empty($_SESSION['update_results'])) {
 			$tpl->assign('update_results', text2html($_SESSION['update_results']));
 			unset($_SESSION['update_results']);
-		}		
-	
+		}
+		
 	}
  
 	else {

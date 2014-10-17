@@ -35,28 +35,35 @@
 
 {if $periodictasks|count > 0}
 	<h3>Tasks</h3>
-	<table>
+	
+	{if $update_results|default:'' ne ""}
+		{msg type="info" text="{$update_results}"}
+	{/if}
+	
+	<table style="width:100%">
 		<thead>
 			<tr>
-				<th>Name</th>
 				<th>Beschreibung</th>
+				<th>Name</th>
 				<th>Minute</th>
 				<th>Stunde</th>
 				<th>Tag des Monats</th>
 				<th>Monat</th>
 				<th>Tag der Woche</th>
+				<th style="width:90px">Aktion</th>
 			</tr>
 		</thead>
 		<tbody>
-			{foreach from=$periodictasks item=t}
+			{foreach from=$periodictasks item=t key=k}
 				<tr>
-					<td>{$t.name}</td>
 					<td>{$t.desc}</td>
+					<td>{$k}</td>
 					<td style="text-align:center;">{$t.min}</td>
 					<td style="text-align:center;">{$t.hour}</td>
 					<td style="text-align:center;">{$t.dayofmonth}</td>
 					<td style="text-align:center;">{$t.month}</td>
 					<td style="text-align:center;">{$t.dayofweek}</td>
+					<td><input type="button" value="Ausführen" onclick="document.location='?page={$page}&sub={$sub}&runtask={$k}'" /></td>
 				</tr>
 			{/foreach}
 		</tbody>
