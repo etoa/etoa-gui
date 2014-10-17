@@ -113,11 +113,10 @@
 		Ranking::createUserBanner();
 		$log.= "User Banner erstellt (".timerStop($tmr)." sec)\n";
 
-		if (ENABLE_USERTITLES==1) {
-			$tmr = timerStart();
-			Ranking::calcTitles();
-			$log.= "User Titel aktualisiert (".timerStop($tmr)." sec)\n";
-		}
+		// Update user titles
+		$tmr = timerStart();
+		$task = new UpdateUserTitlesTask();
+		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
 		
 		// Schiffsteile berechnen
 		$tmr = timerStart();
