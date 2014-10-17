@@ -25,8 +25,8 @@
 	
 		// Alte Benuterpunkte-Logs löschen
 		$tmr = timerStart();
-		$nr = Users::cleanUpPoints();
-		$log.= "$nr alte Userpunkte-Logs gelöscht (".timerStop($tmr)." sec)\n";
+		$task = new RemoveOldUserPointLogsTask();
+		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
 		
 		// Benutzer aus Urlaub inaktiv setzen
 		if (Config::getInstance()->p2('hmode_days'))
