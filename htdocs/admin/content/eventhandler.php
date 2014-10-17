@@ -5,6 +5,9 @@
 	//
 	if ($sub=="cronjob")
 	{
+		$tpl->setView('admin/cronjob');
+		$tpl->assign('title', 'Periodische Tasks (Cronjob)');
+	
 		// Activate update system
 		if (isset($_GET['activateupdate']) && $_GET['activateupdate']==1)
 		{
@@ -32,9 +35,6 @@
 			$tpl->assign('warnmsg', "Cronjobs sind nur auf UNIX-Systemen verfügbar!");
 		}
 		
-		$tpl->setView('admin/cronjob');
-		$tpl->assign('title', 'Periodische Tasks (Cronjob)');
-		
 		// Load periodic tasks from configuration
 		$periodictasks = array();
 		foreach (fetchJsonConfig("periodictasks.conf") as $tc) {
@@ -58,11 +58,12 @@
 		if (!empty($_GET['runtask']))
 		{
 			if (isset($periodictasks[$_GET['runtask']])) {
-				$out = "[b]Task: ".$periodictasks[$_GET['runtask']]['desc']."[/b] (".$_GET['runtask'].")\n";
+				$title = "[b]Task: ".$periodictasks[$_GET['runtask']]['desc']."[/b] (".$_GET['runtask'].")\n";
 				ob_start();
 				$tr = new PeriodicTaskRunner();
-				$out.= $tr->runTask($_GET['runtask']);
-				$_SESSION['update_results'] = $out.ob_get_clean();
+				$out = $tr->runTask($_GET['runtask']);
+				$_SESSION['update_results'] = $title.$out.ob_get_clean();
+				Log::add(Log::F_UPDATES, Log::INFO, "Task [b]".$_GET['runtask']."[/b] manuell ausgeführt:\n".trim($out));
 			}
 			forward('?page='.$page.'&sub='.$sub);
 		}
@@ -71,7 +72,6 @@
 			$tpl->assign('update_results', text2html($_SESSION['update_results']));
 			unset($_SESSION['update_results']);
 		}
-		
 	}
  
 	else {
