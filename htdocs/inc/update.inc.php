@@ -26,16 +26,9 @@
 		$log.= $tr->runTask('RemoveOldMessagesTask');
 		$log.= $tr->runTask('RemoveOldReportsTask');
 		$log.= $tr->runTask('RemoveOldBannsTask');
+		$log.= $tr->runTask('CleanupShiplistTask');
+		$log.= $tr->runTask('CleanupDeflistTask');
 		
-		// Alte Baudatensätze löschen
-		$tmr = timerStart();
-		$nr = Shiplist::cleanUp();
-		$log.= "$nr alte Schiffseinträge gelöscht (".timerStop($tmr)." sec)\n";
-		
-		$tmr = timerStart();
-		$nr = Deflist::cleanUp();
-		$log.= "$nr alte Verteidigungseinträge gelöscht (".timerStop($tmr)." sec)\n";
-
 		// Tabellen optimieren
 		$tmr = timerStart();
 		DBManager::getInstance()->optimizeTables();
