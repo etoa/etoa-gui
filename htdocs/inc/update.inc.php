@@ -207,8 +207,8 @@
 		
 		// Chat-Cleanup
 		$tmr = timerStart();
-		$nr = ChatManager::cleanUpMessages();
-		$log.= "$nr alte Chat Nachrichten gelöscht (".timerStop($tmr)." sec)\n";
+		$task = new RemoveOldChatMessagesTask();
+		$log.= $task->run()." (".timerStop($tmr)." sec)\n";
 		
 		// Cleanup session
 		$tmr = timerStart();
