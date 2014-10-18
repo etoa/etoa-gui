@@ -31,7 +31,8 @@ Version NEXT
 
 #### Changes ####
 
- * Manual updates page moved to "Eventhandler" menu item
+ * Manual updates page moved to "Eventhandler" -> "Periodic tasks" menu item
+ * Every periodic task can now be executed on its own
  
 #### Bugfixes ####
 
