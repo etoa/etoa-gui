@@ -138,5 +138,12 @@
 			}
 			return true;
 		}
+		
+		/**
+		* Load periodic tasks from configuration
+		*/
+		static function getScheduleFromConfig() {
+			return fetchJsonConfig("periodictasks.conf");
+		}
 	}
 ?>

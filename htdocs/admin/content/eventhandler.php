@@ -37,7 +37,7 @@
 		
 		// Load periodic tasks from configuration
 		$periodictasks = array();
-		foreach (fetchJsonConfig("periodictasks.conf") as $tc) {
+		foreach (PeriodicTaskRunner::getScheduleFromConfig() as $tc) {
 			$klass = $tc['name'];
 			$reflect = new ReflectionClass($klass);
 			if ($reflect->implementsInterface('IPeriodicTask')) {
