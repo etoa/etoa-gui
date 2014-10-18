@@ -23,7 +23,11 @@
 
 {if "{cfg key="register_key"}" ne ""}
 	{msg type="info" text="Die öffentlichen Seiten (Anmeldung, Statistiken etc) sind durch den Schlüssel {cfg key="register_key"} geschützt!"}
-{/if}		
+{/if}
+
+{if "{cfg key="update_enabled"}" ne 1}
+	{msg type="info" title="Updates deaktiviert" text="Periodische Updates sind momentan deaktiviert! <a href=\"?page=eventhandler&sub=cronjob&activateupdate=1\">Aktivieren</a>"}
+{/if}
 
 {ifadminrole provided=$user_roles required="master,super-admin,game-admin,trial-game-admin"}
 <fieldset class="overview_widget"><legend>Schnellsuche</legend>

@@ -32,7 +32,8 @@
 	try {
 	if (include("inc/bootstrap.inc.php"))
 	{
-		DBManager::getInstance()->backupDB();
+		$tr = new PeriodicTaskRunner();
+		$tr->runTask('CreateBackupTask');
 	}
 	else
 	{

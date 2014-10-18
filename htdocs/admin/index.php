@@ -79,8 +79,6 @@ else
 	$tpl->assign("sub", $sub);
 	$tpl->assign("time", time());
 
-	$tpl->assign('is_unix', UNIX);		
-	
 	$nres = dbquery("select COUNT(*) from admin_notes where admin_id='".$s->user_id."'");
 	$narr = mysql_fetch_row($nres);
 	$tpl->assign("num_notes", $narr[0]);
@@ -127,21 +125,6 @@ else
 	}
 	else
 	{
-		// Activate update system
-		if (isset($_GET['activateupdate']) && $_GET['activateupdate']==1)
-		{
-			Config::getInstance()->set("update_enabled",1);
-		}
-
-		if (Config::getInstance()->update_enabled->v !=1 )
-		{
-			echo "<br/>";
-			iBoxStart("Updates deaktiviert");
-			echo "Die Updates sind momentan deaktiviert!";
-			echo " <a href=\"?page=$page&amp;activateupdate=1\">Aktivieren</a>";
-			iBoxEnd();
-		}
-
 		// Check permissions
 		$allow_inc=false;
 		$found = false;

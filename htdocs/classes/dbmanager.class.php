@@ -386,11 +386,6 @@ class DBManager implements ISingleton	{
 			$cfg = Config::getInstance();
 
 			$log = "Starte Backup...\n";
-			$tmr = timerStart();
-			$log .= " Warte auf Mutex...";
-			$mtx = new Mutex();
-			$mtx->acquire();
-			$log .= " Mutex erhalten in ".timerStop($tmr)."s, beginne Backup...\n\n";
 			$tmr = timerStart();				
 			
 			// Alte Backups löschen
@@ -429,7 +424,6 @@ class DBManager implements ISingleton	{
 				$log.= "FEHLER beim erstellen der Datei $file: $result";					
 			}
 			add_log (15,"[b]Backup[/b]\nGesamtdauer: ".timerStop($tmr)."\n\n".$log);			
-			$mtx->release();					
 		}
 		else
 		{

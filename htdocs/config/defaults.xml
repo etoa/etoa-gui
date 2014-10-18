@@ -679,15 +679,6 @@ http://www.etoa.ch</v>
     <item name="backup_use_gzip" cat="21" base="yes">
       <v comment="Backup mit GZIP komprimieren" type="onoff">0</v>
     </item>
-    <item name="backup_time_interval" cat="21">
-      <v comment="Backup-Intervall (Stunden)" type="text">6</v>
-    </item>
-    <item name="backup_time_hour" cat="21">
-      <v comment="Backup-Start (Stunde)" type="text">1</v>
-    </item>
-    <item name="backup_time_minute" cat="21">
-      <v comment="Backup-Start (Minute)" type="text">47</v>
-    </item>
 
     <item name="debug" cat="22">
       <v comment="Debug-Modus" type="onoff">0</v>

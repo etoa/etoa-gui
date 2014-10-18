@@ -7,18 +7,12 @@
 {else}
 	<p>User Statistik nicht vorhanden!</p>
 {/if}
+{if $xmlinfo|default:'' ne ''}
+	<button type="button" onclick="window.open('{$xmlinfo}');">Als XML herunterladen</button>&nbsp;
+{/if}
 
 {if $gamestats|default:'' ne ''}
 	{$gamestats}
 {else}
 	<p>Spielstatistiken nicht vorhanden!</p>
 {/if}
-
-<form action="?page={$page}&amp;sub={$sub}" method="post">
-	<p>
-		{if $xmlinfo|default:'' ne ''}
-			<button type="button" onclick="window.open('{$xmlinfo}');">Als XML herunterladen</button>&nbsp;
-		{/if}
-		<button type="submit" name="regen">Erneuern</button>
-	</p>
-</form>

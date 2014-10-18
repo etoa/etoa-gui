@@ -176,16 +176,18 @@ class ChatManager {
 	static function cleanUpUsers()
 	{
 		$res = dbquery('
-      SELECT user_id,nick 
-      FROM chat_users 
-      WHERE timestamp < UNIX_TIMESTAMP() - '.intval(Config::getInstance()->chat_user_timeout->v).';'
-    );
+			SELECT user_id,nick 
+			FROM chat_users 
+			WHERE timestamp < UNIX_TIMESTAMP() - '.intval(Config::getInstance()->chat_user_timeout->v).';'
+		);
 		if (mysql_num_rows($res)>0)
 		{
 			$arr = mysql_fetch_assoc($res);
 			self::sendSystemMessage($arr['nick'].' verlässt den Chat (Timeout).');
 			dbquery('DELETE FROM chat_users WHERE user_id = '.$arr['user_id'].';');		
+			return mysql_affected_rows();
 		}
+		return 0;
 	}
   
   /**
@@ -195,16 +197,18 @@ class ChatManager {
   static function cleanUpMessages() 
   {
 		$res = dbquery("
-      SELECT id 
-      FROM chat 
-      ORDER BY id DESC 
-      LIMIT ".intval(Config::getInstance()->chat_recent_messages->v).",1;"
-    );
+			SELECT id 
+			FROM chat 
+			ORDER BY id DESC 
+			LIMIT ".intval(Config::getInstance()->chat_recent_messages->v).",1;"
+		);
 		if (mysql_num_rows($res)>0)
 		{
 			$arr=mysql_fetch_row($res);
 			dbquery("DELETE FROM chat WHERE id < ".$arr[0]);		
+			return mysql_affected_rows();
 		}
+		return 0;
   }
   
 }

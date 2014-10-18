@@ -65,7 +65,14 @@
 	// Validate session
 	if (!$s->validate())
 	{
+		if (empty(Config::getInstance()->loginurl->v)) 
+		{
+			forward(getLoginUrl());
+		}
+		else
+		{
 		forward(getLoginUrl(array('page'=>'err', 'err'=>'nosession')),"Ungültige Session",$s->lastError);
+		}
 	}
 
 	// Load user data

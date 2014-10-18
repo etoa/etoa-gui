@@ -1,16 +1,17 @@
 <?PHP
-
+class MissileBattleHandler 
+{
 	/**
 	* Handles missile assault
 	*
 	* @param int Flight Id
 	*/
-	function missile_battle($fid)
+	static function battle($fid)
 	{
-		global $conf;
+		$cfg = Config::getInstance();
 			
  		// Kampf abbrechen und Raketen zum Startplanet schicken wenn Kampfsperre aktiv ist
- 	 	if ($conf['battleban']['v']!=0 && $conf['battleban_time']['p1']<=time() && $conf['battleban_time']['p2']>time())
+ 	 	if ($cfg->value('battleban') != 0 && $cfg->p1('battleban_time') <= time() && $cfg->p2('battleban_time') > time())
 		{
 			// Lädt Flugdaten
 			$res = dbquery("
@@ -23,7 +24,7 @@
 			;");		
 			if (mysql_num_rows($res)>0)
 			{
-				$arr=mysql_fetch_array($res);
+				$arr = mysql_fetch_assoc($res);
 				
 				// Transferiert Raketen zum Startplanet
 				$mres = dbquery("
@@ -34,7 +35,7 @@
 					missile_flights_obj
 				WHERE
 					obj_flight_id='".$fid."'");
-				while($marr=mysql_fetch_array($mres))
+				while($marr = mysql_fetch_assoc($mres))
 				{
 					dbquery("
 					UPDATE
@@ -42,7 +43,7 @@
 					SET
 						missilelist_count=missilelist_count+".$marr['obj_cnt']."
 					WHERE
-						missilelist_entity_id=".$arr['flight_planet_from']."							
+						missilelist_entity_id=".$arr['flight_entity_from']."							
 						AND missilelist_missile_id=".$marr['obj_missile_id']."								
 					;");
 				}
@@ -64,8 +65,8 @@
 				;");
 				
 				// Schickt Nachricht an den Angreifer
-				$msg = $conf['battleban_arrival_text']['p2'];
-				$uid = get_user_id_by_planet($arr['flight_planet_from']);
+				$msg = $cfg->p2('battleban_arrival_text');
+				$uid = get_user_id_by_planet($arr['flight_entity_from']);
 				send_msg($uid,SHIP_WAR_MSG_CAT_ID,'Ergebnis des Raketenangriffs',$msg);
 			}
 			
@@ -399,5 +400,5 @@
 			}			
 		}		
 	}
-	
+}
 ?>

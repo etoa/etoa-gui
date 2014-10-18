@@ -4,13 +4,14 @@
 		// Backup erstellen
 		if (isset($_POST['create']))
 		{
-			if (DBManager::getInstance()->backupDB())
+			try
 			{
-				ok_msg("Das Backup wurde erstellt!");
+				$tr = new PeriodicTaskRunner();
+				ok_msg($tr->runTask('CreateBackupTask'));
 			}
-			else
+			catch (Exception $e)
 			{
-				error_msg("Beim Ausf&uuml;hren des Backup-Befehls trat ein Fehler auf!");
+				error_msg("Beim Ausf&uuml;hren des Backup-Befehls trat ein Fehler auf! ".$e->getMessage());
 			}
 		}
 
@@ -18,16 +19,20 @@
 		elseif (isset($_GET['action']) && $_GET['action']=="backuprestore" && $_GET['date']!="")
 		{
 			// Sicherungskopie anlegen
-			if (DBManager::getInstance()->backupDB())
+			try 
 			{
-				if (DBManager::getInstance()->restoreDB($_GET['date']))
+				$tr = new PeriodicTaskRunner();
+				$tr->runTask('CreateBackupTask');
+				
+				if (DBManager::getInstance()->restoreDB($_GET['date'])) {
 					echo "Das Backup ".$_GET['date']." wurde wiederhergestellt und es wurde eine Sicherungskopie der vorherigen Daten angelegt!<br/><br/>";
-				else
+				} else {
 					cms_err_msg("Beim Ausf&uuml;hren des Restore-Befehls trat ein Fehler auf! $result");
+				}
 			}
-			else
+			catch (Exception $e)
 			{
-				cms_err_msg("Beim Ausf&uuml;hren des Backup-Befehls trat ein Fehler auf! $result");
+				cms_err_msg("Beim Ausf&uuml;hren des Backup-Befehls trat ein Fehler auf! ".$e->getMessage());
 			}
 		}
 		
@@ -37,45 +42,25 @@
 			$cfg->set("backup_dir", $_POST['backup_dir']);
 			$cfg->set("backup_retention_time", $_POST['backup_retention_time']);
 			$cfg->set("backup_use_gzip", $_POST['backup_use_gzip']);
-			$cfg->set("backup_time_interval", $_POST['backup_time_interval']);
-			$cfg->set("backup_time_hour", $_POST['backup_time_hour']);
-			$cfg->set("backup_time_minute", $_POST['backup_time_minute']);
 			ok_msg("Einstellungen gespeichert");
 		}
 
 		echo $frm->begin();
-		iBoxStart("Backup-Einstellungen");
+		echo "<fieldset><legend>Backup-Einstellungen</legend>";
 		echo "Speicherpfad: <input type=\"text\" value=\"".$cfg->backup_dir."\" name=\"backup_dir\" size=\"50\" /><br/>
 		Aufbewahrungsdauer: <input type=\"text\" value=\"".$cfg->get('backup_retention_time')."\" name=\"backup_retention_time\" size=\"2\" /> Tage &nbsp; &nbsp;
 		GZIP benutzen: <input type=\"radio\" name=\"backup_use_gzip\" value=\"1\" ".($cfg->get('backup_use_gzip')=="1" ? ' checked="checked"' : '')."/> Ja  
-		<input type=\"radio\" name=\"backup_use_gzip\" value=\"0\" ".($cfg->get('backup_use_gzip')=="0" ? ' checked="checked"' : '')."/> Nein<br/>
-		Intervall: <select name=\"backup_time_interval\">";
-		for ($i=1;$i<=24;$i++)
-		{
-			echo "<option value=\"".$i."\" ".($cfg->get('backup_time_interval')==$i ? ' selected="selected"':'').">".$i."</option>";
-		}
-		echo "</select/> Stunden &nbsp;&nbsp; Startzeit: <select name=\"backup_time_hour\">";
-		for ($i=0;$i<24;$i++)
-		{
-			echo "<option value=\"".$i."\" ".($cfg->get('backup_time_hour')==$i ? ' selected="selected"':'').">".$i."</option>";
-		}
-		echo "</select/>:<select name=\"backup_time_minute\">";
-		for ($i=0;$i<60;$i++)
-		{
-			echo "<option value=\"".$i."\" ".($cfg->get('backup_time_minute')==$i ? ' selected="selected"':'').">".$i."</option>";
-		}
-		echo "</select/>";
-		
-		echo "&nbsp;&nbsp;  <input type=\"submit\" value=\"Speichern\" name=\"submit_changes\"  />";
-		iBoxEnd();
+		<input type=\"radio\" name=\"backup_use_gzip\" value=\"0\" ".($cfg->get('backup_use_gzip')=="0" ? ' checked="checked"' : '')."/> Nein<br/>";
+		echo "<input type=\"submit\" value=\"Speichern\" name=\"submit_changes\"  />";
+		echo "</fieldset>";
 		echo $frm->end();
 
-		echo "<br/>Im Folgenden sind alle verfügbaren Backups aufgelistet. Backups werden durch ein Skript erstellt dass per Cronjob aufgerufen wird.<br/><br/>";
+		echo "<p>Im Folgenden sind alle verfügbaren Backups aufgelistet. Backups werden durch ein Skript erstellt dass per Cronjob aufgerufen wird.</p>";
 
 		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-		echo "<input type=\"submit\" value=\"Neues Backup erstellen\" name=\"create\" /> &nbsp;
-		 </form><br/>";
-		if ($d = opendir($cfg->backup_dir))
+		echo "<p><input type=\"submit\" value=\"Neues Backup erstellen\" name=\"create\" /></p>
+		 </form>";
+		if (is_dir($cfg->backup_dir) && $d = opendir($cfg->backup_dir))
 		{
 			$cnt=0;
 			echo "<table class=\"tb\" style=\"width:auto;\"><tr><th>Name</th><th>Grösse</th><th>Optionen</th></tr>";

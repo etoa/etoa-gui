@@ -28,6 +28,10 @@ Version NEXT
 #### Features ####
 
  * Added page displaying all user banners
+
+#### Changes ####
+
+ * Manual updates page moved to "Eventhandler" menu item
  
 #### Bugfixes ####
 

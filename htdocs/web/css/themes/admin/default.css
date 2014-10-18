@@ -201,6 +201,15 @@ legend	{
 	font-family: 'Droid Sans', Verdana, sans-serif;
 }
 
+pre.code	{
+	margin:0;
+	padding:5px 10px ;
+	background: #333;
+	color:#f1f1f1;
+	border:1px solid #BBBBBB;
+	border-radius:2px;
+}
+
 /******************
 * Forms           *
 ******************/
