@@ -4,13 +4,14 @@
 		// Backup erstellen
 		if (isset($_POST['create']))
 		{
-			if (DBManager::getInstance()->backupDB())
+			try
 			{
-				ok_msg("Das Backup wurde erstellt!");
+				$tr = new PeriodicTaskRunner();
+				ok_msg($tr->runTask('CreateBackupTask'));
 			}
-			else
+			catch (Exception $e)
 			{
-				error_msg("Beim Ausf&uuml;hren des Backup-Befehls trat ein Fehler auf!");
+				error_msg("Beim Ausf&uuml;hren des Backup-Befehls trat ein Fehler auf! ".$e->getMessage());
 			}
 		}
 
@@ -18,16 +19,20 @@
 		elseif (isset($_GET['action']) && $_GET['action']=="backuprestore" && $_GET['date']!="")
 		{
 			// Sicherungskopie anlegen
-			if (DBManager::getInstance()->backupDB())
+			try 
 			{
-				if (DBManager::getInstance()->restoreDB($_GET['date']))
+				$tr = new PeriodicTaskRunner();
+				$tr->runTask('CreateBackupTask');
+				
+				if (DBManager::getInstance()->restoreDB($_GET['date'])) {
 					echo "Das Backup ".$_GET['date']." wurde wiederhergestellt und es wurde eine Sicherungskopie der vorherigen Daten angelegt!<br/><br/>";
-				else
+				} else {
 					cms_err_msg("Beim Ausf&uuml;hren des Restore-Befehls trat ein Fehler auf! $result");
+				}
 			}
-			else
+			catch (Exception $e)
 			{
-				cms_err_msg("Beim Ausf&uuml;hren des Backup-Befehls trat ein Fehler auf! $result");
+				cms_err_msg("Beim Ausf&uuml;hren des Backup-Befehls trat ein Fehler auf! ".$e->getMessage());
 			}
 		}
 		
@@ -75,7 +80,7 @@
 		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
 		echo "<input type=\"submit\" value=\"Neues Backup erstellen\" name=\"create\" /> &nbsp;
 		 </form><br/>";
-		if ($d = opendir($cfg->backup_dir))
+		if (is_dir($cfg->backup_dir) && $d = opendir($cfg->backup_dir))
 		{
 			$cnt=0;
 			echo "<table class=\"tb\" style=\"width:auto;\"><tr><th>Name</th><th>Grösse</th><th>Optionen</th></tr>";

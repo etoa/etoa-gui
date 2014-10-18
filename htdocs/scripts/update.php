@@ -59,14 +59,6 @@
 				}
 				$text = "Periodische Tasks (".date("d.m.Y H:i:s",$time)."):\n\n".$log;
 				Log::add(Log::F_UPDATES, $severity, $text);
-				
-				// Backup erstellen
-				// ACHTUNG: Die create()-Funktion aquiriert selbst wieder das Mutes-Token. 
-				// Deshalb muss diese Funktion nach mtx->release() stehen
-				if ($cfg->get('backup_time_interval') > 0 && (date("h")-$cfg->get('backup_time_hour'))%$cfg->get('backup_time_interval')==0 && date("i")==$cfg->get('backup_time_minute')) 
-				{
-					DBManager::getInstance()->backupDB();
-				}
 			}
 
 			// DB schliessen
