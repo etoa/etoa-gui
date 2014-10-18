@@ -28,6 +28,7 @@ Version NEXT
 #### Features ####
 
  * Added page displaying all user banners
+ * Added "Error Log" screen and possibility to remove error log and database error log
 
 #### Changes ####
 

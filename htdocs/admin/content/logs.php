@@ -26,14 +26,32 @@
 	// 	Kommentar:
 	//
 
-	echo "<h1>Logs</h1>";
+	$tpl->assign('title', 'Logs');
 
 	echo "<div id=\"logsinfo\"></div>"; //nur zu entwicklungszwecken!
 	
 	//
+	// Error log
+	//
+	if ($sub=="errorlog")
+	{
+		$tpl->setView('admin/errorlog');
+		$tpl->assign('subtitle', 'Fehler-Log');
+
+		if (isset($_POST['purgelog_submit'])) {
+			file_put_contents(ERROR_LOGFILE, '');
+			forward('?page='.$page.'&sub='.$sub);
+		}
+		
+		if (is_file(ERROR_LOGFILE)) {
+			$tpl->assign('logfile', file_get_contents(ERROR_LOGFILE));
+		}
+	}
+	
+	//
 	// ??
 	// 
-	if (isset($_POST['alliance_search']) && $_POST['alliance_search']!="" || isset($_GET['action']) && $_GET['action']=="searchresults")
+	elseif (isset($_POST['alliance_search']) && $_POST['alliance_search']!="" || isset($_GET['action']) && $_GET['action']=="searchresults")
 	{
 		if ($_SESSION['logs']['query']=="")
 		{

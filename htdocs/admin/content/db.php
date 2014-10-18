@@ -26,7 +26,7 @@
 	// 	Kommentar:
 	//
 	
-	echo "<h1>Datenbank</h1>";
+	$tpl->assign('title', 'Datenbank');
 
 	//
 	// Datenbanktabellen optimieren
@@ -90,11 +90,16 @@
 	//
 	elseif ($sub=="errorlog")
 	{
-		echo "<h2>Datenbankfehler</h2>";
+		$tpl->setView('admin/errorlog');
+		$tpl->assign('subtitle', 'Datenbankfehler');
+
+		if (isset($_POST['purgelog_submit'])) {
+			file_put_contents(DBERROR_LOGFILE, '');
+			forward('?page='.$page.'&sub='.$sub);
+		}
+		
 		if (is_file(DBERROR_LOGFILE)) {
-			echo "<pre class=\"changelog\">".file_get_contents(DBERROR_LOGFILE)."</pre>";
-		} else {
-			echo "<p>Keine Fehler gefunden</p>";
+			$tpl->assign('logfile', file_get_contents(DBERROR_LOGFILE));
 		}
 	}
 

@@ -15,6 +15,10 @@
 	// Cache directory
 	if (!defined('CACHE_ROOT'))
 		define('CACHE_ROOT',RELATIVE_ROOT.'cache');
+	
+	// Log directory
+	if (!defined('LOG_DIR'))
+		define('LOG_DIR',RELATIVE_ROOT.'log');
 
 	// Class directory
 	if (!defined('CLASS_ROOT'))
@@ -40,8 +44,8 @@
 	if (!defined('ADMIN_MODE'))
 		define('ADMIN_MODE',false);
 
-	define('ERROR_LOGFILE',CACHE_ROOT."/errors.txt");
-	define('DBERROR_LOGFILE',CACHE_ROOT."/dberrors.txt");
+	define('ERROR_LOGFILE', LOG_DIR."/errors.log");
+	define('DBERROR_LOGFILE', LOG_DIR."/dberrors.log");
 
 	define("DEVCENTER_PATH","http://dev.etoa.ch");	// Entwickler Link
 	define("DEVCENTER_ONCLICK","window.open('".DEVCENTER_PATH."','dev','width=1024,height=768,scrollbars=yes');");	// Entwickler Link

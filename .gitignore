@@ -14,3 +14,4 @@ htdocs/cache/errors.txt
 htdocs/config/db.conf
 htdocs/config/periodictasks-overrides.conf
 backup/
+htdocs/log/*.log
