@@ -37,6 +37,7 @@
 		
 		// Load periodic tasks from configuration
 		$periodictasks = array();
+		$time = time();
 		foreach (PeriodicTaskRunner::getScheduleFromConfig() as $tc) {
 			$klass = $tc['name'];
 			$reflect = new ReflectionClass($klass);
@@ -49,7 +50,8 @@
 					'hour' => $elements[1],
 					'dayofmonth' => $elements[2],
 					'month' => $elements[3],
-					'dayofweek' => $elements[4]
+					'dayofweek' => $elements[4],
+					'current' => PeriodicTaskRunner::shouldRun($tc['schedule'], $time)
 				);
 				$periodictasks[$tc['name']] = $taskConfig;
 			}
