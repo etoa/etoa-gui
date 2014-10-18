@@ -38,15 +38,9 @@
 			// Prüfen ob Updates eingeschaltet sind
 			if ($cfg->update_enabled->v==1)
 			{
-				// Mutex holen
-				$tmr = timerStart();
-				$log = " Warte auf Mutex...";
-				$mtx = new Mutex();
-				$mtx->acquire();
-				$log .= " erhalten in ".timerStop($tmr)."s\n\n";
-				
 				$time = time();
 				
+				// Execute tasks
 				$tr = new PeriodicTaskRunner();
 				foreach (PeriodicTaskRunner::getScheduleFromConfig() as $tc) {
 					if (PeriodicTaskRunner::shouldRun($tc['schedule'], $time)) {
@@ -55,7 +49,7 @@
 				}
 				$log.= "\nTotal: ".$tr->getTotalDuration().' sec';
 				
-				// Log schreiben
+				// Write log
 				if (LOG_UPDATES) {
 					$severity = Log::INFO;
 				} elseif ($tr->getTotalDuration() > LOG_UPDATES_THRESHOLD) {
@@ -65,9 +59,6 @@
 				}
 				$text = "Periodische Tasks (".date("d.m.Y H:i:s",$time)."):\n\n".$log;
 				Log::add(Log::F_UPDATES, $severity, $text);
-
-				// Mutex freigeben
-				$mtx->release();
 				
 				// Backup erstellen
 				// ACHTUNG: Die create()-Funktion aquiriert selbst wieder das Mutes-Token. 

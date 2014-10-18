@@ -6,24 +6,36 @@
 	{
 		private $totalDuration = 0;
 	
-		function runTask($taskIdentifier, $mutex=0) {
+		function runTask($taskIdentifier) {
 			$klass = $taskIdentifier;
 			$reflect = new ReflectionClass($klass);
 			if ($reflect->implementsInterface('IPeriodicTask')) {
-				if ($mutex == 1) {
-					$mtx = new Mutex();
-					$mtx->acquire();
-				}
+
+				// Acquire mutex
+				$tmr = timerStart();
+				$mtx = new Mutex();
+				$mtx->acquire();
+				$acquireDuration = timerStop($tmr);
+				
+				// Run task and measure time
 				$tmr = timerStart();
 				$task = new $klass();
 				$output = $task->run();
-				if ($mutex == 1) {
-					$mtx->release();
-				}
 				$duration = timerStop($tmr);
+				
+				// Release mutex
+				$mtx->release();
+
+				// Add to total duration
 				$this->totalDuration += $duration;
+				
+				// Return output
 				if (!empty($output)) {
-					return $output." (".$duration." sec)\n";
+					$output.=" (".$duration." sec)";
+					if ($acquireDuration > 1) {
+						$output.=" (Mutex erhalten in ".$acquireDuration." sec)";
+					}
+					return $output."\n";
 				}
 				return '';
 			} else {
