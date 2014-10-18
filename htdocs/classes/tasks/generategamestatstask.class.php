@@ -6,7 +6,7 @@
 	{		
 		function run()
 		{
-			Gamestats::generateAndSave();
+			Gamestats::generateAndSave(GAMESTATS_FILE);
 			return "Spielstatistiken erstellt";
 		}
 		

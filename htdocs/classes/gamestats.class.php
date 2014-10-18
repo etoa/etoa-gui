@@ -967,9 +967,8 @@
 		return $out;
 	}
 	
-	static function generateAndSave()
+	static function generateAndSave($file)
 	{
-		$file = GAMESTATS_FILE;
 		$dir = dirname($file);
 		if (!is_dir($dir)) {
 			mkdir($dir, 0777, true);
