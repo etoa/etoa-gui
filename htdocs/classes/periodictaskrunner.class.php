@@ -155,7 +155,12 @@
 		* Load periodic tasks from configuration
 		*/
 		static function getScheduleFromConfig() {
-			return fetchJsonConfig("periodictasks.conf");
+			$defaults = fetchJsonConfig("periodictasks-default.conf");
+			if (configFileExists("periodictasks-overrides.conf")) {
+				$override = fetchJsonConfig("periodictasks-overrides.conf");
+				return array_merge($defaults, $override);
+			}
+			return $defaults;
 		}
 	}
 ?>
