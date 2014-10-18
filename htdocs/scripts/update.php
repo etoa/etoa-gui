@@ -17,8 +17,8 @@
 	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
 	//////////////////////////////////////////////////
 	//
-	//	Dateiname: update_minute.php
-	//	Topic: Minütliche Updates
+	//	Dateiname: update.php
+	//	Topic: Periodische Tasks
 	//	Autor: Nicolas Perrenoud alias MrCage
 	//	Erstellt: 29.11.2006
 	//	Bearbeitet von: Nicolas Perrenoud alias MrCage
@@ -35,10 +35,6 @@
 		// Initialisieren
 		if (include("inc/bootstrap.inc.php"))
 		{
-			include("inc/update.inc.php");
-			
-			$mode = isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : null;
-			
 			// Prüfen ob Updates eingeschaltet sind
 			if ($cfg->update_enabled->v==1)
 			{
@@ -47,94 +43,28 @@
 				$log = " Warte auf Mutex...";
 				$mtx = new Mutex();
 				$mtx->acquire();
-				$log .= " Mutex erhalten in ".timerStop($tmr)."s, beginne Update...\n\n";
+				$log .= " erhalten in ".timerStop($tmr)."s\n\n";
 				
-				// Starte Zeitmessung
-				$tmr = timerStart();
+				$time = time();
 				
-				$forceLog = false;
-				
-				// Monates-Update (1. des Monates 05:13)
-				if ($mode=="month" || (date("H")=="05" && date("i")=="13" && date("j")=="1"))
-				{
-					$logt = "[b]Monates-Update ".date("d.m.Y, H:i")."[/b]\n";
-					$log .= update_minute();
-					$log .= update_month();
-					
-					$forceLog = true;
+				$tr = new PeriodicTaskRunner();
+				foreach (PeriodicTaskRunner::getScheduleFromConfig() as $tc) {
+					if (PeriodicTaskRunner::shouldRun($tc['schedule'], $time)) {
+						$log.= $tc['name'].': '.$tr->runTask($tc['name']);
+					}
 				}
-				
-				// Tages-Update (03:13)
-				elseif ($mode=="day" || (date("H")=="03" && date("i")=="13"))
-				{
-					$logt = "[b]Tages-Update ".date("d.m.Y, H:i")."[/b]\n";
-					$log .= update_minute();
-					$log .= update_day();
-			
-					$forceLog = true;
-				}
-				
-				// Stunden-Update
-				elseif ($mode=="hour" || date("i")=="00")
-				{
-					$logt = "[b]Stunden-Update ".date("H:i")."[/b]\n";
-					$log .= update_minute();
-					$log .= update_5minute();
-					$log .= update_30minute();
-					$log .= update_hour();
-					
-					$forceLog = true;
-				}
-
-				// 30-Minuten-Update
-				elseif ($mode=="30min" ||  date("i")=="30")
-				{
-					$logt = "[b]30-Minuten-Update ".date("H:i")."[/b]\n";
-					$log .= update_minute();
-					$log .= update_5minute();
-					$log .= update_30minute();
-				}
-
-				// 5-Minuten-Update
-				elseif ($mode=="5min" || date("i")%5==0 && date("i")!=30)
-				{
-					$logt = "[b]5-Minuten-Update ".date("H:i")."[/b]\n";
-					$log .= update_minute();
-					$log .= update_5minute();
-				}
-
-				// Minuten-Update
-				else
-				{
-					$logt = "[b]Minuten-Update ".date("H:i")."[/b]\n";
-					$log .= update_minute();
-				}
-
-				// 3-nach Update
-				if (date("i")=="3") 
-				{
-					// Statistiken generieren und speichern
-					Gamestats::generateAndSave();
-				}
+				$log.= "\nTotal: ".$tr->getTotalDuration().' sec';
 				
 				// Log schreiben
-				$t = timerStop($tmr);
-				if (LOG_UPDATES || $t > LOG_UPDATES_THRESHOLD)
-				{
-					Log::add(Log::F_UPDATES, Log::WARNING, $logt."Gesamtdauer: ".$t."\n\n".$log);
+				if (LOG_UPDATES) {
+					$severity = Log::INFO;
+				} elseif ($tr->getTotalDuration() > LOG_UPDATES_THRESHOLD) {
+					$severity = Log::WARNING;
+				} else {
+					$severity = Log::DEBUG;
 				}
-				else if ($forceLog)
-				{
-					Log::add(Log::F_UPDATES, Log::INFO, $logt."Gesamtdauer: ".$t."\n\n".$log);
-				} 
-				else 
-				{
-					// Wird nur geloggt wenn Debug Modus aktiv
-					Log::add(Log::F_UPDATES, Log::DEBUG, $logt."Gesamtdauer: ".$t."\n\n".$log);
-				}
-				
-				//Löscht Arrays (gibt Speicher wieder frei)
-				unset($log);
+				$text = "Periodische Tasks (".date("d.m.Y H:i:s",$time)."):\n\n".$log;
+				Log::add(Log::F_UPDATES, $severity, $text);
 
 				// Mutex freigeben
 				$mtx->release();
