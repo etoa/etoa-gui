@@ -377,15 +377,9 @@
 		echo "<h2>Rohstoffkurse</h2>";
 		if (isset($_GET['action']) && $_GET['action']=="updaterates")
 		{
-			MarketHandler::updateRates();
-			ok_msg("Rohstoffraten wurden neu berechnet.");
+			$tr = new PeriodicTaskRunner();
+			ok_msg($tr->runTask('MarketrateUpdateTask'));
 		}
-		/*
-		if (isset($_GET['action']) && $_GET['action']=="randomrates")
-		{
-			MarketHandler::randomRates();
-			ok_msg("Rohstoffraten wurden generiert.");
-		}*/
 
 		echo "<table class=\"tb\" style=\"width:200px;\">";
 		for ($i=0;$i<NUM_RESOURCES;$i++)
@@ -395,7 +389,7 @@
 		}
 		echo "</table>";
 
-		echo 'Marktkurse werden alle 30 Minuten berechnet. <br/><br/>';
+		echo '<p>Die Marktkurse werden periodisch neu berechnet.</p>';
 		echo '<input type="button" value="Kurse manuell aktualisieren" onclick="document.location=\'?page='.$page.'&amp;action=updaterates\'" /><br/><br/>';
 			
 		echo '</div>';

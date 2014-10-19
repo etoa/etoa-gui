@@ -7,7 +7,7 @@
 		function run()
 		{
 			MarketHandler::updateRates();
-			return "Markt-Raten aktualisiert";
+			return "Rohstoff-Raten im Markt aktualisiert";
 		}
 		
 		function getDescription() {

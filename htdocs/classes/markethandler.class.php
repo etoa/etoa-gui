@@ -216,35 +216,5 @@ class MarketHandler
 			id=".$id."
 		");
 	}
-
-/*
-	static function randomRates($n=MARKET_RATES_COUNT)
-	{
-		for ($i=0;$i<$n;$i++)
-		{
-			dbquery("
-			UPDATE
-				market_rates
-			SET
-					supply_0=".mt_rand(0,99999).",
-					supply_1=".mt_rand(0,99999).",
-					supply_2=".mt_rand(0,99999).",
-					supply_3=".mt_rand(0,99999).",
-					supply_4=".mt_rand(0,99999).",
-					supply_5=".mt_rand(0,99999).",
-					demand_0=".mt_rand(0,99999).",
-					demand_1=".mt_rand(0,99999).",
-					demand_2=".mt_rand(0,99999).",
-					demand_3=".mt_rand(0,99999).",
-					demand_4=".mt_rand(0,99999).",
-					demand_5=".mt_rand(0,99999)."
-			ORDER BY
-				id DESC
-			LIMIT 1;");
-			self::updateRates();
-		}
-	}*/
-
-
 }
 ?>
