@@ -14,7 +14,7 @@ require("inc/includer.inc.php");
 // Create template object
 $tpl = new TemplateEngine('admin/tpl');
 
-$tpl->setLayout("default/default_popup");
+$tpl->setLayout("default/popup");
 $tpl->setView("default");
 
 $tpl->assign("css_theme", (!isset($themePath) || !is_file(RELATIVE_ROOT."/web/css/themes/admin/".$themePath."css")) ? "default" : $themePath);

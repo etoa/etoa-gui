@@ -91,7 +91,7 @@ else
 }
 $tpl->assign("content_overflow", ob_get_clean());
 $tpl->assign("body_class", "login");
-$tpl->setLayout("default/default_login");
+$tpl->setLayout("default/login");
 $tpl->render();
 
 ?>

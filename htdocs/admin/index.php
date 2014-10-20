@@ -20,7 +20,7 @@ try {
 // Create template object
 $tpl = new TemplateEngine('admin/tpl');
 
-$tpl->setLayout("default/default_main");
+$tpl->setLayout("default/main");
 $tpl->setView("default");
 
 $tpl->assign("css_theme", (!isset($themePath) || !is_file(RELATIVE_ROOT."/web/css/themes/admin/".$themePath."css")) ? "default" : $themePath);
@@ -179,7 +179,7 @@ else
 }
 } catch (DBException $ex) {
 	ob_clean();
-	$tpl->setLayout("default/default_popup");
+	$tpl->setLayout("default/popup");
 	$tpl->assign("content_overflow", $ex);
 	$tpl->render();
 }
