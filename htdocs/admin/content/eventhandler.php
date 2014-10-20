@@ -5,7 +5,7 @@
 	//
 	if ($sub=="cronjob")
 	{
-		$tpl->setView('admin/cronjob');
+		$tpl->setView();
 		$tpl->assign('title', 'Periodische Tasks (Cronjob)');
 	
 		// Activate update system

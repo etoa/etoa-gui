@@ -100,7 +100,7 @@
 	//
 	elseif ($sub=="cat")
 	{
-		simple_form("ship_cat");
+		simple_form("ship_cat", $tpl);
 	}
 
 	//
@@ -108,7 +108,7 @@
 	//
 	elseif ($sub=="data")
 	{
-		advanced_form("ships");
+		advanced_form("ships", $tpl);
 	}
 	
 	//

@@ -6,7 +6,7 @@
 	//	
 	if ($sub=="data")
 	{
-		advanced_form("missiles");
+		advanced_form("missiles", $tpl);
 	}
 
 	//

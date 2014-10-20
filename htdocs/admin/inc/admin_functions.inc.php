@@ -87,7 +87,7 @@ function cms_ok_msg($msg,$id="okmsg")
 *
 * @param string Module-key
 */
-function advanced_form($module)
+function advanced_form($module, $tpl)
 {
   require_once("inc/form_functions.php");
 	require_once("forms/$module.php");
@@ -100,7 +100,7 @@ function advanced_form($module)
 *
 * @param string Module-key
 */
-function simple_form($module)
+function simple_form($module, $tpl)
 {
 	require_once("inc/form_functions.php");
 	require_once("forms/$module.php");

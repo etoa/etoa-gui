@@ -1,3 +1,3 @@
 <?PHP
-	advanced_form("tutorials");
+	advanced_form("tutorials", $tpl);
 ?>

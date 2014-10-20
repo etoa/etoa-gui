@@ -14,7 +14,7 @@ require("inc/includer.inc.php");
 try {
 
 // Create template object
-$tpl = TemplateEngine::getInstance();
+$tpl = new TemplateEngine();
 
 $tpl->setLayout("admin/default_popup");
 $tpl->setView("admin/default");

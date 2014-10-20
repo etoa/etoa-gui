@@ -18,7 +18,7 @@ try {
 }
 
 // Create template object
-$tpl = TemplateEngine::getInstance();
+$tpl = new TemplateEngine();
 
 $tpl->setLayout("admin/default_main");
 $tpl->setView("admin/default");

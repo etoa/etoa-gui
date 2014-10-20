@@ -217,7 +217,7 @@
 	//
 	elseif ($sub=="type")
 	{
-		simple_form("building_types");
+		simple_form("building_types", $tpl);
 	}
 
 	//
@@ -225,7 +225,7 @@
 	//
 	elseif ($sub=="data")
 	{
-		advanced_form("buildings");
+		advanced_form("buildings", $tpl);
 	}
 
 	//

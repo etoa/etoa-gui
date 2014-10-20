@@ -190,7 +190,7 @@
 	//
 	elseif ($sub=="buildingsdata")
 	{
-		advanced_form("alliancebuildings");
+		advanced_form("alliancebuildings", $tpl);
 	}
 	
 	//
@@ -198,7 +198,7 @@
 	//
 	elseif ($sub=="techdata")
 	{
-		advanced_form("alliancetechnologies");
+		advanced_form("alliancetechnologies", $tpl);
 	}	
 
 	//

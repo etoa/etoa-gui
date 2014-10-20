@@ -88,11 +88,11 @@
 	
 	elseif ($sub=="planet_types")
 	{
-		advanced_form("planet_types");
+		advanced_form("planet_types", $tpl);
 	}
 	elseif ($sub=="sol_types")
 	{
-		advanced_form("sol_types");
+		advanced_form("sol_types", $tpl);
 	}
 	
 	/*

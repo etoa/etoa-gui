@@ -1,29 +1,18 @@
 <?PHP
-class TemplateEngine implements ISingleton {
+class TemplateEngine {
 
 	private $view = "default";
 	private $layout = "default";
 
-	static private $instance;
 	private $smarty;
-
-	/**
-	* Get instance with this very nice singleton design pattern
-	*/
-	static public function getInstance() {
-		if (!self::$instance) {
-			self::$instance = new TemplateEngine();
-		}
-		return self::$instance;
-	}
 
 	public function __clone() {
 		throw new EException("Config ist nicht klonbar!");
 	}	
 	
-	public function __construct() {
+	public function __construct($tplDir=null) {
 		$this->smarty = new Smarty();
-		$this->smarty->template_dir = RELATIVE_ROOT."tpl";
+		$this->smarty->template_dir = $tplDir != null ? RELATIVE_ROOT.$tplDir : RELATIVE_ROOT."tpl";
 		$this->smarty->compile_dir = SMARTY_COMPILE_DIR;	
 		$this->smarty->plugins_dir = array_merge($this->smarty->plugins_dir, array(RELATIVE_ROOT."plugins/smarty"));
 	}

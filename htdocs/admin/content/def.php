@@ -63,7 +63,7 @@
 	//
 	elseif ($sub=="transforms")
 	{
-		advanced_form("obj_transforms");		
+		advanced_form("obj_transforms", $tpl);		
 	}
 	
 	//
@@ -424,7 +424,7 @@
 	//	
 	elseif ($sub=="data")
 	{
-		advanced_form("defense");
+		advanced_form("defense", $tpl);
 	}
 
 	//
@@ -432,7 +432,7 @@
 	//	
 	elseif ($sub=="cat")
 	{
-		advanced_form("def_cat");
+		advanced_form("def_cat", $tpl);
 	}
 
 	

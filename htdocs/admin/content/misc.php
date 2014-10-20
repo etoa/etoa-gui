@@ -13,7 +13,7 @@
 	//
 	elseif ($sub=="tipps")
 	{
-		advanced_form("tipps");
+		advanced_form("tipps", $tpl);
 	}
 
 	//
@@ -21,7 +21,7 @@
 	//
 	elseif ($sub=="ticketcat")
 	{
-		advanced_form("ticketcat");
+		advanced_form("ticketcat", $tpl);
 	}
   
 	

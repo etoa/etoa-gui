@@ -94,7 +94,7 @@
 	//
 	elseif ($sub=="type")
 	{
-		simple_form("tech_types");
+		simple_form("tech_types", $tpl);
 	}
 	
 	//
@@ -102,7 +102,7 @@
 	//
 	elseif ($sub=="data")
 	{
-		advanced_form("technologies");
+		advanced_form("technologies", $tpl);
 	}	
 	//
 	// Anforderungen

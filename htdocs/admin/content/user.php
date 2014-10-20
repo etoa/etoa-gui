@@ -118,7 +118,7 @@
 	//
 	elseif ($sub=="specialists")
 	{
-			advanced_form("specialists");
+			advanced_form("specialists", $tpl);
 	}
 	
 	//
@@ -183,7 +183,7 @@
 	//
 	elseif ($sub=="race")
 	{
-		advanced_form("races");
+		advanced_form("races", $tpl);
 	}
 
 	//
