@@ -80,7 +80,7 @@
  
 	else {
 
-		$tpl->setView('admin/eventhandler');
+		$tpl->setView('eventhandler');
 		$tpl->assign('title', 'Eventhandler');
 
 		if (UNIX)

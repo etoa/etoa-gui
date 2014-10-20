@@ -40,11 +40,11 @@ if (isset($_GET['sendpass']))
 			$tpl->assign('button_msg', "Nochmals versuchen");
 			$tpl->assign('button_target', "?sendpass=1");
 		}
-		$tpl->setView("admin/login_status");
+		$tpl->setView("login_status");
 	}
 	else
 	{
-		$tpl->setView("admin/request_password");
+		$tpl->setView("request_password");
 	}
 }
 else
@@ -67,11 +67,11 @@ else
 			$tpl->assign('button_msg', "Weiterfahren");
 			$tpl->assign('button_target', "?");			
 
-			$tpl->setView("admin/login_status");
+			$tpl->setView("login_status");
 		}
 		else
 		{
-			$tpl->setView("admin/login_newuser");
+			$tpl->setView("login_newuser");
 		}
 	}
 	else
@@ -86,12 +86,12 @@ else
 		$tpl->assign('login_target', "?".$_SERVER['QUERY_STRING']);
 		$tpl->assign('game_login_url', '../show.php?index=login');
 		
-		$tpl->setView("admin/login");
+		$tpl->setView("login");
 	}
 }
 $tpl->assign("content_overflow", ob_get_clean());
 $tpl->assign("body_class", "login");
-$tpl->setLayout("admin/default_login");
+$tpl->setLayout("default/default_login");
 $tpl->render();
 
 ?>

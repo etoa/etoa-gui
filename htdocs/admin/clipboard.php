@@ -12,10 +12,10 @@ ob_start();
 require("inc/includer.inc.php");
 
 // Create template object
-$tpl = new TemplateEngine();
+$tpl = new TemplateEngine('admin/tpl');
 
-$tpl->setLayout("admin/default_popup");
-$tpl->setView("admin/default");
+$tpl->setLayout("default/default_popup");
+$tpl->setView("default");
 
 $tpl->assign("css_theme", (!isset($themePath) || !is_file(RELATIVE_ROOT."/web/css/themes/admin/".$themePath."css")) ? "default" : $themePath);
 $tpl->assign("page_title", getGameIdentifier()." Administration");

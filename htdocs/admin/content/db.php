@@ -90,7 +90,7 @@
 	//
 	elseif ($sub=="errorlog")
 	{
-		$tpl->setView('admin/errorlog');
+		$tpl->setView('errorlog');
 		$tpl->assign('subtitle', 'Datenbankfehler');
 
 		if (isset($_POST['purgelog_submit'])) {

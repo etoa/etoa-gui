@@ -5,7 +5,7 @@
 
 	// Edit text
 	if (!empty($_GET['id'])) {
-		$tpl->setView("admin/texts/edit");
+		$tpl->setView("texts/edit");
 		$id = $_GET['id'];
 		if ($tm->isValidTextId($id)) {
 			if (isset($_POST['save'])) {
@@ -27,7 +27,7 @@
 	
 	// Preview text
 	elseif (!empty($_GET['preview'])) {
-		$tpl->setView("admin/texts/preview");
+		$tpl->setView("texts/preview");
 		$id = $_GET['preview'];
 		if ($tm->isValidTextId($id)) {
 			$tpl->assign("subtitle", $tm->getLabel($id));
@@ -61,7 +61,7 @@
 	
 	// Overview
 	else {
-		$tpl->setView("admin/texts/overview");
+		$tpl->setView("texts/overview");
 		$tpl->assign("subtitle", 'Übersicht');		
 		$texts = array();
 		foreach ($tm->getAllTextIDs() as $id) {

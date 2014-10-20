@@ -35,7 +35,7 @@
 	//
 	if ($sub=="errorlog")
 	{
-		$tpl->setView('admin/errorlog');
+		$tpl->setView('errorlog');
 		$tpl->assign('subtitle', 'Fehler-Log');
 
 		if (isset($_POST['purgelog_submit'])) {

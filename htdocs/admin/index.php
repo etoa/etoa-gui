@@ -18,10 +18,10 @@ try {
 }
 
 // Create template object
-$tpl = new TemplateEngine();
+$tpl = new TemplateEngine('admin/tpl');
 
-$tpl->setLayout("admin/default_main");
-$tpl->setView("admin/default");
+$tpl->setLayout("default/default_main");
+$tpl->setView("default");
 
 $tpl->assign("css_theme", (!isset($themePath) || !is_file(RELATIVE_ROOT."/web/css/themes/admin/".$themePath."css")) ? "default" : $themePath);
 $tpl->assign("page_title", getGameIdentifier()." Administration");
@@ -112,7 +112,7 @@ else
 	$tpl->assign("admins_count", AdminUser::countAll());
 	$tpl->assign("db_size", DBManager::getInstance()->getDbSize());
 	
-	$tpl->assign("side_nav_widgets", $tpl->getChunk("admin/status_widget"));
+	$tpl->assign("side_nav_widgets", $tpl->getChunk("status_widget"));
 			
 	// Inhalt einbinden
 	if (isset($_GET['adminlist']))
@@ -179,7 +179,7 @@ else
 }
 } catch (DBException $ex) {
 	ob_clean();
-	$tpl->setLayout("admin/default_popup");
+	$tpl->setLayout("default/default_popup");
 	$tpl->assign("content_overflow", $ex);
 	$tpl->render();
 }

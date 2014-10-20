@@ -31,7 +31,7 @@
 	//
 	if ($sub=="map")
 	{
-    $tpl->setView("admin/galaxy/map");
+    $tpl->setView("galaxy/map");
     $tpl->assign("title", 'Galaxiekarte');  
   
     $sx_num = $cfg->param1('num_of_sectors');

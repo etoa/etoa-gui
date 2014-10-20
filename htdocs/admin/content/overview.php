@@ -80,7 +80,7 @@
 	//
 	elseif ($sub=="gamestats")
 	{
-		$tpl->setView("admin/overview/gamestats");
+		$tpl->setView("overview/gamestats");
 		$tpl->assign("title", "Spielstatistiken");
 
 		if (file_exists(USERSTATS_OUTFILE)) {
@@ -335,7 +335,7 @@
 
 	elseif ($sub=="sysinfo") {
 	
-		$tpl->setView("admin/sysinfo");
+		$tpl->setView("sysinfo");
 		$tpl->assign("title", "System-Informationen");
 
 		if (UNIX)
@@ -354,7 +354,7 @@
 	//
 	else
 	{
-		$tpl->setView("admin/overview");
+		$tpl->setView("overview");
 		$tpl->assign("title", "&Uuml;bersicht");
 
 		$tpl->assign("welcome_msg", "Hallo <b>".$cu->nick."</b>, willkommen im Administrationsmodus! Dein Rollen: <b>".$cu->getRolesStr().".</b>");

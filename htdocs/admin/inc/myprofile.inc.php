@@ -1,6 +1,6 @@
 <?PHP
 
-	$tpl->setView("admin/myprofile");
+	$tpl->setView("myprofile");
 	$tpl->assign("title", "Mein Profil");
 	
 	if (isset($_POST['submitpw']))

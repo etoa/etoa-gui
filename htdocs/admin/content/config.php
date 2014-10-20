@@ -106,7 +106,7 @@
 	//
 	elseif ($sub=="editor")
 	{
-    $tpl->setView("admin/config/editor");
+    $tpl->setView("config/editor");
     $tpl->assign("subtitle", 'Erweiterte Konfiguration');
     
     if (isset($_POST['submit']))
@@ -172,7 +172,7 @@
 	//
 	else
 	{
-		$tpl->setView("admin/config/base");
+		$tpl->setView("config/base");
 		$tpl->assign("subtitle", 'Grundkonfiguration');
 		
 		if (isset($_POST['submit']))
