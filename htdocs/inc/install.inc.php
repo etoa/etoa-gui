@@ -10,7 +10,7 @@ $tpl->assign("topmenu",$indexpage);
 
 if (!isset($_SESSION))
     session_start();
-$tpl->display(getcwd()."/tpl/chunks/game/header.html");
+$tpl->display("tpl/chunks/header.html");
 
 if (!isset($_SESSION['INSTALL']))
 	$_SESSION['INSTALL'] = array();
@@ -257,7 +257,7 @@ else
 	echo "Ihre Konfigurationsdatei existiert bereits!";
 }
 
-$tpl->display(getcwd()."/tpl/chunks/game/footer.html");
+$tpl->display("tpl/chunks/footer.html");
 
 
 ?>

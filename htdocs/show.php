@@ -171,7 +171,6 @@
 		$tpl->assign("content_for_layout", $ex);
 	}
 
-	$layoutTemplate = "/tpl/layouts/game/external.html";
-	$tpl->display(getcwd().'/'.$layoutTemplate);
+	$tpl->display("tpl/layouts/external.html");
 
 ?>

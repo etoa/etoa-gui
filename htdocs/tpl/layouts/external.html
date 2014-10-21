@@ -1,4 +1,4 @@
-{include file='tpl/chunks/game/header.html'}
+{chunk name='header'}
 {if $logged_in eq false}
 <div id="outGameTop">
 	<div id="outGameTopLogo">
@@ -23,4 +23,4 @@
 <div id="outGameContent">
 {$content_for_layout}
 </div>
-{include file='tpl/chunks/game/footer.html'}
+{chunk name='footer'}

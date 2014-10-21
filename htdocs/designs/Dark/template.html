@@ -1,4 +1,4 @@
-{include file='tpl/chunks/game/header.html'}
+{chunk name='header'}
 <table id="layoutbox" width="{$gameWidth}%">
 	<tr>
 		<td id="minibar">				
@@ -74,7 +74,7 @@
 			{/section}				
 		</td>
 		<td id="content">
-			{include file='tpl/chunks/game/tutorial.html'}
+			{chunk name='tutorial'}
 			{$content_for_layout}
 		</td>
 		{if $adds == true }
@@ -96,4 +96,4 @@
 		</td>
 	</tr>
 </table>
-{include file='tpl/chunks/game/footer.html'}
+{chunk name='footer'}

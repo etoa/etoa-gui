@@ -38,5 +38,9 @@ class TemplateEngine {
 		$this->smarty->display("layouts/".$this->layout.".html");
 		exit;
 	}
+	
+	function display($file) {
+		$this->smarty->display(getcwd().'/'.$file);	
+	}
 }
 ?>

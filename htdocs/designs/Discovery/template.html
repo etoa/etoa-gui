@@ -7,7 +7,7 @@
 //--                             Ingame-Buttonstyle wie im Menue anpassen (button1, button2 ? )
 //--                             Preload nach dem Logon 1x Ausführen, damit er aus dem Body herausgenommen werden kann
 //---------------------------------------------------------------------------------------------------------------------------------*}
-{include file='tpl/chunks/game/header.html'}
+{chunk name='header'}
 <div id="layoutframe">
 {* ----------------------------------- Linker Menueleiste ----------------------------------- *}
 <div class="Left_Panel">
@@ -272,7 +272,7 @@
 	</div>
 {/if}
 
-{include file='tpl/chunks/game/tutorial.html'}
+{chunk name='tutorial'}
 
 <div class="Spielbereich_">
 	{$content_for_layout}
@@ -486,4 +486,4 @@
 
 </div>
 
-{include file='tpl/chunks/game/footer.html'}
+{chunk name='footer'}

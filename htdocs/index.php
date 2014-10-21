@@ -23,8 +23,7 @@
 		require_once("inc/bootstrap.inc.php");
 	} catch (DBException $ex) {
 		$tpl->assign("content_for_layout", $ex);
-		$layoutTemplate = "/tpl/layouts/game/empty.html";
-		$tpl->display(getcwd().'/'.$layoutTemplate);
+		$tpl->display("tpl/layouts/empty.html");
 		exit;
 	}
 
@@ -95,7 +94,7 @@
 	// Page header
 	//
 	
-	$layoutTemplate = "/tpl/layouts/game/empty.html";
+	$layoutTemplate = "tpl/layouts/empty.html";
 	
 	$tpl->assign("gameTitle", getGameIdentifier());
 	$tpl->assign("templateDir", CSS_STYLE);
@@ -373,7 +372,7 @@
 	$tpl->assign("chatinput", ob_get_clean());
 	*/
 	
-	$tpl->display(getcwd().'/'.$layoutTemplate);
+	$tpl->display($layoutTemplate);
 
 	$_SESSION['lastpage']=$page;
 
