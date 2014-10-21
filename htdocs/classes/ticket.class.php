@@ -172,7 +172,7 @@ class Ticket
 		}
 		if ($field=="time")
 		{
-			return self::$this->timestamp;
+			return $this->timestamp;
 		}
 		if ($field=="changed")
 		{
