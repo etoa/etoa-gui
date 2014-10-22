@@ -597,7 +597,7 @@
 							if ($msgpreview)
 							{
 								// subj has already been encoded above
-								echo tm($subj,htmlentities(substr($marr['text'], 0, 500),ENT_QUOTES,'UTF-8'));
+								echo tm($subj,htmlentities(substr(strip_bbcode($marr['text']), 0, 500),ENT_QUOTES,'UTF-8'));
 							}
 							echo ">";
 							if ($marr['message_massmail']==1)
