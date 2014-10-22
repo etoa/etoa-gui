@@ -32,121 +32,155 @@
 		$tu = new User($_GET['surveillance']);
 
 		echo "<h2>Erweiterte Beobachtung von ".$tu."</h2>";
-		$sessions = array();
-		$sres = dbquery("
-		SELECT 
-			session,COUNT(id) 
-		FROM 
-			user_surveillance 
-		WHERE 
-			user_id=".$_GET['surveillance']." 
-		GROUP BY 
-			session
-		ORDER BY
-			timestamp DESC
-		LIMIT
-			50000;");
-		if (mysql_num_rows($sres)>0)
+		
+		if (!empty($_GET['session']))
 		{
-			while ($sarr=mysql_fetch_row($sres))
+			$sid = $_GET['session'];
+			
+			$res = dbquery("
+			SELECT 
+				*
+			FROM 
+				user_sessionlog
+			WHERE
+				session_id='".$sid."'
+			LIMIT 1;");
+			if (mysql_num_rows($res)>0)
 			{
-				$sessions[] = array($sarr[0],$sarr[1]);		
-			}			
-		}
-
-		echo "<p>Die erweiterte Beobachtung ist automatisch für User unter Beobachtung aktiv!</p>";
-		echo "<p>".button("Neu laden","?page=$page&amp;sub=$sub&amp;surveillance=".$_GET['surveillance'])." &nbsp; ".button("Zurück","?page=$page&amp;sub=$sub")."</p>";
-
-		echo "<table class=\"tb\"><tr>";
-		echo "<th>Login</th>
-		<th>Letzte Aktivit&auml;t</th>";
-		echo "<th>Session-Dauer</th>
-		<th>Aktionen</th>
-		<th>Aktionen/Minute</th>
-		<th>Optionen</th>
-		</tr>";
-		foreach ($sessions as $si)
-		{
-			if ($si[1]>0)
+				$arr=mysql_fetch_array($res);
+			}
+			else
 			{
-				$sid = $si[0];
 				$res = dbquery("
-				SELECT 
+				SELECT
 					*
-				FROM 
-					user_sessionlog
+				FROM
+					user_sessions
 				WHERE
-					session_id='".$sid."'
+					id='".$sid."'
 				LIMIT 1;");
 				if (mysql_num_rows($res)>0)
 				{
 					$arr=mysql_fetch_array($res);
 				}
-				else
+			}
+			
+			echo "<h3>Session ".$sid."</h3>";
+
+			echo "<p><b>IP:</b> ".$arr['ip_addr']."<br/>
+			<b>Host:</b> ".Net::getHost($arr['ip_addr'])."<br/>
+			<b>Client:</b> ".$arr['user_agent']."</p>";
+			
+			echo "<p>".button("Neu laden","?page=$page&amp;sub=$sub&amp;surveillance=".$_GET['surveillance']."&amp;session=".$_GET['session'])." &nbsp; ".
+			button("Zurück","?page=$page&amp;sub=$sub&amp;surveillance=".$_GET['surveillance'])."</p>";
+
+			$res = dbquery("SELECT * FROM user_surveillance WHERE session='".$sid."' ORDER BY timestamp DESC;");
+			if (mysql_num_rows($res)>0)
+			{
+				tableStart("","100%");
+				echo "<tr><th>Zeit</th><th>Seite</th><th>Request (GET)</th><th>Query String</th><th>Formular (POST)</th></tr>";
+				while ($arr=mysql_fetch_assoc($res))
 				{
+					$req = wordwrap($arr['request'], 60, "\n", true);
+					$reqRaw = wordwrap($arr['request_raw'], 60, "\n", true);
+					$post = wordwrap($arr['post'], 60, "\n", true);
+					echo "<tr>
+						<td>".df($arr['timestamp'],1)."</td>
+						<td>".$arr['page']."</td>
+						<td>".text2html($req)."</td>
+						<td>".text2html($reqRaw)."</td>
+						<td>".text2html($post)."</td>
+					</tr>";
+				}
+				tableEnd();
+			}
+		} 
+		else 
+		{
+		
+			$sessions = array();
+			$sres = dbquery("
+			SELECT 
+				session,COUNT(id) 
+			FROM 
+				user_surveillance 
+			WHERE 
+				user_id=".$_GET['surveillance']." 
+			GROUP BY 
+				session
+			ORDER BY
+				timestamp DESC
+			LIMIT
+				50000;");
+			if (mysql_num_rows($sres)>0)
+			{
+				while ($sarr=mysql_fetch_row($sres))
+				{
+					$sessions[] = array($sarr[0],$sarr[1]);		
+				}			
+			}
+
+			echo "<p>Die erweiterte Beobachtung ist automatisch für User unter Beobachtung aktiv!</p>";
+			echo "<p>".button("Neu laden","?page=$page&amp;sub=$sub&amp;surveillance=".$_GET['surveillance'])." &nbsp; ".button("Zurück","?page=$page&amp;sub=$sub")."</p>";
+
+			echo "<table class=\"tb\"><tr>";
+			echo "<th>Login</th>
+			<th>Letzte Aktivit&auml;t</th>";
+			echo "<th>Session-Dauer</th>
+			<th>Aktionen</th>
+			<th>Aktionen/Minute</th>
+			<th>Optionen</th>
+			</tr>";
+			foreach ($sessions as $si)
+			{
+				if ($si[1]>0)
+				{
+					$sid = $si[0];
 					$res = dbquery("
-					SELECT
+					SELECT 
 						*
-					FROM
-						user_sessions
+					FROM 
+						user_sessionlog
 					WHERE
-						id='".$sid."'
+						session_id='".$sid."'
 					LIMIT 1;");
 					if (mysql_num_rows($res)>0)
 					{
 						$arr=mysql_fetch_array($res);
 					}
-				}
-				echo "<tr>";
-				echo "<td>".(isset($arr['time_login']) && $arr['time_login'] > 0 ? date("d.m.Y H:i",$arr['time_login']) : '-')."</td>";
-				echo "<td>".(isset($arr['time_action']) && $arr['time_action'] > 0 ? date("d.m.Y H:i",$arr['time_action']) : '-')."</td>";
-				echo "<td>";
-				$dur = max($arr['time_logout'],$arr['time_action'])-$arr['time_login'];
-				if ($dur>0)
-					echo tf($dur);
-				else
-					echo "-";
-				echo "</td>
-				<td>".$si[1]."</td>
-				<td>".($dur>0 ? round($si[1] / $dur * 60,1) : '-')."</td>
-				<td><a href=\"javascript:;\" onclick=\"toggleBox('details".$sid."')\">Details</a></td>
-				</tr>";
-
-				echo "<tr>
-				<td colspan=\"6\" id=\"details".$sid."\" style=\"display:none;\">";
-				echo "<b>IP:</b> ".$arr['ip_addr'].", &nbsp; 
-				<b>Host:</b> ".Net::getHost($arr['ip_addr']).", &nbsp; ";
-				echo "<b>Client:</b> ".$arr['user_agent']."<br/>";
-				
-				$res = dbquery("SELECT * FROM user_surveillance WHERE session='".$si[0]."' ORDER BY timestamp DESC;");
-				if (mysql_num_rows($res)>0)
-				{
-					tableStart("","100%");
-					echo "<tr><th>Zeit</th><th>Seite</th><th>Request (GET)</th><th>Query String</th><th>Formular (POST)</th></tr>";
-					while ($arr=mysql_fetch_assoc($res))
+					else
 					{
-						$req = wordwrap($arr['request'], 60, "\n", true);
-						$reqRaw = wordwrap($arr['request_raw'], 60, "\n", true);
-						$post = wordwrap($arr['post'], 60, "\n", true);
-						echo "<tr>
-							<td>".df($arr['timestamp'],1)."</td>
-							<td>".$arr['page']."</td>
-							<td>".text2html($req)."</td>
-							<td>".text2html($reqRaw)."</td>
-							<td>".text2html($post)."</td>
-						</tr>";
+						$res = dbquery("
+						SELECT
+							*
+						FROM
+							user_sessions
+						WHERE
+							id='".$sid."'
+						LIMIT 1;");
+						if (mysql_num_rows($res)>0)
+						{
+							$arr=mysql_fetch_array($res);
+						}
 					}
-					tableEnd();
+					echo "<tr>";
+					echo "<td>".(isset($arr['time_login']) && $arr['time_login'] > 0 ? date("d.m.Y H:i",$arr['time_login']) : '-')."</td>";
+					echo "<td>".(isset($arr['time_action']) && $arr['time_action'] > 0 ? date("d.m.Y H:i",$arr['time_action']) : '-')."</td>";
+					echo "<td>";
+					$dur = max($arr['time_logout'],$arr['time_action'])-$arr['time_login'];
+					if ($dur>0)
+						echo tf($dur);
+					else
+						echo "-";
+					echo "</td>
+					<td>".$si[1]."</td>
+					<td>".($dur>0 ? round($si[1] / $dur * 60,1) : '-')."</td>
+					<td><a href=\"?page=$page&sub=$sub&surveillance=".$_GET['surveillance']."&amp;session=".$si[0]."\">Details</a></td>
+					</tr>";
 				}
-				
-				echo "</td>
-				</tr>";				
 			}
-		}
-		echo "</table>";
+			echo "</table>";
 
-		
-		
 		/*
 		$res = dbquery("SELECT * FROM user_surveillance WHERE user_id=".$_GET['surveillance']." ORDER BY timestamp DESC LIMIT 1000;");
 		if (mysql_num_rows($res)>0)
@@ -174,6 +208,9 @@
 			echo "<p>Keine Einträge vorhanden!</p>";
 		}*/
 		echo "<p>".button("Zurück","?page=$page&amp;sub=$sub")."</p>";
+		
+		}
+		
 	}
 	
 	//
