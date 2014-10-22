@@ -22,6 +22,7 @@ Version NEXT
  * Fixed encoding issues
  * Fixed multiple vulnerabilities which could have been exploited by XSS
  * Fixed several issues in the Graphite design
+ * Removed BBcode tags in message preview
  
 ### Administration ###
 
