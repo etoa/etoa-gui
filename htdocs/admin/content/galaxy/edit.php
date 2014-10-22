@@ -118,7 +118,7 @@
 							}
 							
 							//Log Schreiben
-							Log::add(Log::F_GALAXY,Log::INFO,$cu->nick." wechselt den Besitzer vom Planeten: [URL=?page=galaxy&sub=edit&id=".$id."][B]".$id."[/B][/URL]\nAlter Besitzer: [URL=?page=user&sub=edit&user_id=".$_POST['planet_user_id_old']."][B]".$_POST['planet_user_id_old']."[/B][/URL]\nNeuer Besitzer: [URL=?page=user&sub=edit&user_id=".$_POST['planet_user_id']."][B]".$_POST['planet_user_id']."[/B][/URL]");
+							Log::add(Log::F_GALAXY,Log::INFO,$cu->nick." wechselt den Besitzer vom Planeten: [page galaxy sub=edit id=".$id."][B]".$id."[/B][/page]\nAlter Besitzer: [page user sub=edit user_id=".$_POST['planet_user_id_old']."][B]".$_POST['planet_user_id_old']."[/B][/page]\nNeuer Besitzer: [page user sub=edit user_id=".$_POST['planet_user_id']."][B]".$_POST['planet_user_id']."[/B][/page]");
 
 							success_msg("Der Planet wurde dem User mit der ID: [b]".$_POST['planet_user_id']."[/b] &uuml;bergeben!");
 						}

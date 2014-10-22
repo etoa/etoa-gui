@@ -161,7 +161,7 @@
 					if(mysql_num_rows($multi_res1)!=0 || mysql_num_rows($multi_res2)!=0)
 					{
 						// TODO
-						Log::add(Log::F_MULTITRADE,Log::INFO,"[URL=?page=user&sub=edit&user_id=".$cu->id."][B]".$cu->nick."[/B][/URL] hat an einer Auktion von [URL=?page=user&sub=edit&user_id=".$arr['user_id']."][B]".$seller."[/B][/URL] gewonnen:\n\nRohstoffe:\n".RES_METAL.": ".nf($arr['sell_0'])."\n".RES_CRYSTAL.": ".nf($arr['sell_1'])."\n".RES_PLASTIC.": ".nf($arr['sell_2'])."\n".RES_FUEL.": ".nf($arr['sell_3'])."\n".RES_FOOD.": ".nf($arr['sell_4'])."\n\nDies hat ihn folgende Rohstoffe gekostet:\n".RES_METAL.": ".nf($_POST['new_buy_0'])."\n".RES_CRYSTAL.": ".nf($_POST['new_buy_1'])."\n".RES_PLASTIC.": ".nf($_POST['new_buy_2'])."\n".RES_FUEL.": ".nf($_POST['new_buy_3'])."\n".RES_FOOD.": ".nf($_POST['new_buy_4'])."",time());
+						Log::add(Log::F_MULTITRADE,Log::INFO,"[page user sub=edit user_id=".$cu->id."][B]".$cu->nick."[/B][/page] hat an einer Auktion von [page user sub=edit user_id=".$arr['user_id']."][B]".$seller."[/B][/page] gewonnen:\n\nRohstoffe:\n".RES_METAL.": ".nf($arr['sell_0'])."\n".RES_CRYSTAL.": ".nf($arr['sell_1'])."\n".RES_PLASTIC.": ".nf($arr['sell_2'])."\n".RES_FUEL.": ".nf($arr['sell_3'])."\n".RES_FOOD.": ".nf($arr['sell_4'])."\n\nDies hat ihn folgende Rohstoffe gekostet:\n".RES_METAL.": ".nf($_POST['new_buy_0'])."\n".RES_CRYSTAL.": ".nf($_POST['new_buy_1'])."\n".RES_PLASTIC.": ".nf($_POST['new_buy_2'])."\n".RES_FUEL.": ".nf($_POST['new_buy_3'])."\n".RES_FOOD.": ".nf($_POST['new_buy_4'])."",time());
 					}
 
 					// Log schreiben

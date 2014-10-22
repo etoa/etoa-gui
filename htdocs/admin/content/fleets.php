@@ -1392,7 +1392,7 @@
 							".$_POST['fs_ship_id_new'].",
 							".$_POST['fs_ship_cnt_new']."
 						);");
-						$tpl->assign('msg', "Neue Flotte erstellt! [url ?page=$page&amp;sub=$sub&fleetedit=".$fid."]Details[/url]");
+						$tpl->assign('msg', "Neue Flotte erstellt! <a href=\"?page=$page&amp;sub=$sub&fleetedit=".$fid."\">Details</a>");
 					}
 					else
 					{

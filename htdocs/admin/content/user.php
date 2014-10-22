@@ -70,7 +70,7 @@
 				"ghost" => $_POST['user_ghost']
 				),$errorCode))
 			{
-				ok_msg("Benutzer wurde erstellt! [[url ?page=user&sub=edit&id=".$errorCode."]Details[/url]]");
+				ok_msg("Benutzer wurde erstellt! [[page user sub=edit id=".$errorCode."]Details[/page]]");
 			}
 			else
 			{

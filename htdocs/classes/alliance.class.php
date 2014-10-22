@@ -453,7 +453,7 @@
 				if (mysql_affected_rows()>0)
 				{
 					$this->wingRequests[$allianceId] = new Alliance($allianceId);
-					$this->wingRequests[$allianceId]->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Wing-Anfrage","Die Allianz [b]".$this."[/b] möchte eure Allianz als Wing hinzufügen. [url ?page=alliance&action=wings]Anfrage beantworten[/url]");
+					$this->wingRequests[$allianceId]->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Wing-Anfrage","Die Allianz [b]".$this."[/b] möchte eure Allianz als Wing hinzufügen. [page alliance action=wings]Anfrage beantworten[/page]");
 					return true;
 				}
 			}
