@@ -1124,7 +1124,7 @@
 				}
 				else
 				{
-					error_msg("Bevor das Forum benutzt werden kann müssen [url=?page=alliance&amp;action=ranks]Ränge[/url] erstellt werden!");
+					error_msg("Bevor das Forum benutzt werden kann müssen [page alliance action=ranks]Ränge[/page] erstellt werden!");
 				}				
 			}
 		}

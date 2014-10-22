@@ -217,7 +217,7 @@
 				"founder" => new User($_POST['alliance_founder_id'])
 				),$errorCode))
 			{
-				ok_msg("Allianz wurde erstellt! [[url ?page=alliances&sub=edit&id=".$errorCode->id."]Details[/url]]");
+				ok_msg("Allianz wurde erstellt! [[page alliances sub=edit id=".$errorCode->id."]Details[/page]]");
 			}
 			else
 			{

@@ -343,9 +343,9 @@ class Ticket
 
 			if ($informUser==1 && $this->messages[$tmi]->userId == 0)
 			{
-				$text = "Hallo!\n\nDein [url ?page=ticket&id=".$this->id."]Ticket ".$this->idString.
-						"[/url] wurde aktualisiert!\n\n[url ?page=ticket&id=".$this->id."]".
-						"klicke HIER um die Änderungen anzusehen.[/url]\n\nDein Adminteam";
+				$text = "Hallo!\n\nDein [page ticket id=".$this->id."]Ticket ".$this->idString.
+						"[/page] wurde aktualisiert!\n\n[page ticket id=".$this->id."]".
+						"klicke HIER um die Änderungen anzusehen.[/page]\n\nDein Adminteam";
 				send_msg($this->userId,USER_MSG_CAT_ID,"Dein Ticket ".$this->id."",$text);
 			}
 			$this->changed = true;
