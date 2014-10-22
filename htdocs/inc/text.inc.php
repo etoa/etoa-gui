@@ -353,7 +353,7 @@ $smilielist[':-(']="frown.gif";
 		if (preg_match('/^([a-z\_]+)(?:\s+(.+))?$/i', $match[1], $parts)) {
 			$page = $parts[1];
 			$url = '?page='.$page;
-			if (isset($parts[1])) {
+			if (isset($parts[2])) {
 				foreach(preg_split('/\s+/', $parts[2]) as $e) {
 					$url.='&'.$e;
 				}
