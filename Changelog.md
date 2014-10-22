@@ -44,6 +44,7 @@ Version NEXT
  * Forward to correct page in URL query string after login
  * User banners of non-existent users will now be removed when banners are being updated
  * Truncate user_surveillance table when resetting universe
+ * Links to internal pages in messages no longer open new tab (#24)
 
 
 Version 3.4.0
