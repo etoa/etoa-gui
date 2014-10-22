@@ -131,8 +131,7 @@
 		$string = preg_replace_callback('#\[url=([^\[]*)\]([^\[]*)\[/url\]#i', 'bbcode_urls_to_links_with_newtab', $string);
 		$string = preg_replace_callback('#\[url ([^\[]*)\]([^\[]*)\[/url\]#i', 'bbcode_urls_to_links_with_newtab', $string);
 		$string = preg_replace_callback('#\[url\]([^\[]*)\[/url\]#i', 'bbcode_urls_to_links_with_newtab', $string);
-        
-        
+		$string = preg_replace_callback('#\[page ([^\[]*)\]([^\[]*)\[/page\]#i', 'bbcode_page_to_links', $string);
 
 		$string = preg_replace('#\[mailurl=([^\[]*)\]([^\[]*)\[/mailurl\]#i', '<a href="mailto:\1">\2</a>', $string);
 		$string = preg_replace('#\[mailurl ([^\[]*)\]([^\[]*)\[/mailurl\]#i', '<a href="mailto:\1">\2</a>', $string);
@@ -349,6 +348,23 @@ $smilielist[':-(']="frown.gif";
                 .(isset($match[2])?$match[2]:$match[1]).'</a>';
     }
     
+	function bbcode_page_to_links($match) {
+		$parts = array();
+		if (preg_match('/^([a-z\_]+)(?:\s+(.+))?$/i', $match[1], $parts)) {
+			$page = $parts[1];
+			$url = '?page='.$page;
+			if (isset($parts[1])) {
+				foreach(preg_split('/\s+/', $parts[2]) as $e) {
+					$url.='&'.$e;
+				}
+			}
+		} else {
+			$url = $match[1];
+		}
+		$label = (isset($match[2])?$match[2]:$match[1]);
+        return '<a href="'.$url.'">'.$label.'</a>';
+	}
+	
     function ctype_alsc($str)
     {
         return ctype_alpha(str_replace('_','',$str));
