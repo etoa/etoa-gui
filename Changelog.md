@@ -35,6 +35,7 @@ Version NEXT
 
  * Manual updates page moved to "Eventhandler" -> "Periodic tasks" menu item
  * Every periodic task can now be executed on its own
+ * Open each user surveillance session table in separate screen
  
 #### Bugfixes ####
 
