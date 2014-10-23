@@ -459,15 +459,6 @@ http://www.etoa.ch</v>
     <item name="admin_timeout" cat="11">
       <v comment="Admin-Timeout" type="text">1200</v>
     </item>
-    <item name="htaccess" cat="11">
-      <v comment="Htpasswd-Befehl" type="text">htpasswd2</v>
-      <p1 comment="Htaccess-Datei" type="text">.htaccess</p1>
-      <p2 comment="Htpasswd-Datei" type="text">cache/security/.htpasswd</p2>
-    </item>
-    <item name="admin_htaccess" cat="11">
-      <v comment="Admin-Htaccess Bereich-Vorschlag" type="text">Administration-</v>
-      <p1 comment="Admin-Htaccess Name-Vorschlag" type="text">etoa</p1>
-    </item>
     <item name="admin_dateformat" cat="11">
       <v comment="Datumsformat" type="text">Y-m-d H:i:s</v>
     </item>

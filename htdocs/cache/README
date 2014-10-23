@@ -18,7 +18,6 @@ The cache directory holds the following subdirectories:
 - imagepacks: generated downloadable imagepacks
 - out: some generated graphics
 - rss: rss feeds
-- security: htaccess password for admin mode
 - smarty_*: smarty cache directories
 - user_xml: xml files of deleted users
 - userprofiles: Images of users

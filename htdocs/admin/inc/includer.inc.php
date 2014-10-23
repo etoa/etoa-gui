@@ -30,10 +30,6 @@ define('URL_SEARCH_STRING3', "page=$page");
 
 define('DATE_FORMAT',$conf['admin_dateformat']['v']);
 
-define('HTPASSWD_COMMAND',$conf['htaccess']['v']);
-define('HTPASSWD_FILE',$conf['htaccess']['p2']);
-define('HTPASSWD_USER',$conf['admin_htaccess']['p1']);
-
 define('USER_BLOCKED_DEFAULT_TIME',3600*24*$conf['user_ban_min_length']['v']);	// Standardsperrzeit
 define('USER_HMODE_DEFAULT_TIME',3600*24*$conf['user_umod_min_length']['v']);	// Standardurlaubszeit
 
