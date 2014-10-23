@@ -703,7 +703,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 				<th>Punkte</th>";
 			}
 			$out.="</tr>";
-			while ($arr=mysql_fetch_array($res))
+			while ($arr=mysql_fetch_assoc($res))
 			{
 				if($mode=="diplomacy" || $mode=="battle" || $mode=="trade")
 				{
