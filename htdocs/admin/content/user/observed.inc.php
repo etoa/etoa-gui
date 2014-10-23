@@ -65,8 +65,17 @@
 				}
 			}
 			
-			echo "<h3>Session ".$sid."</h3>";
-
+			echo "<h3>Session";
+			if (isset($arr['time_login']) && $arr['time_login'] > 0) {
+				echo " von ".date("d.m.Y H:i",$arr['time_login']);
+				if (isset($arr['time_action']) && $arr['time_action'] > 0) {
+					echo " bis ". date("d.m.Y H:i",$arr['time_action']);
+				}
+			} else {
+				echo " $sid";
+			}
+			echo "</h3>";
+			
 			echo "<p><b>IP:</b> ".$arr['ip_addr']."<br/>
 			<b>Host:</b> ".Net::getHost($arr['ip_addr'])."<br/>
 			<b>Client:</b> ".$arr['user_agent']."</p>";
