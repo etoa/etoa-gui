@@ -3,7 +3,7 @@
 // Load template engine
 require_once(RELATIVE_ROOT."inc/template.inc.php");
 $tpl->assign("gameTitle","Setup");
-$tpl->assign("templateDir","designs/Discovery");
+$tpl->assign("templateDir","designs/Graphite");
 $indexpage = array();
 $indexpage['feeds']=array('url'=>'.','label'=>'Setup');
 $tpl->assign("topmenu",$indexpage);
@@ -115,6 +115,19 @@ if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 			'password' => $_SESSION['INSTALL']['db_password'],
 		);			
 		DBManager::getInstance()->connect(0, $dbCfg);
+
+		$dbConfigSting = json_encode($dbCfg);
+		$file = "htdocs/config/".DBManager::getInstance()->getConfigFile();
+		
+		//file_put_contents($file, $dbConfigSting);
+		
+		$dbConfigStingEventHandler = "[mysql]
+host = ".$dbCfg['host']."
+database = ".$dbCfg['dbname']."
+user = ".$dbCfg['user']."
+password = ".$dbCfg['password']."
+";
+		$eventhandlerFile = "/etc/etoad/roundx.cfg";
 		
 		$cfg = Config::getInstance();
 		$cfg->set("referers",$_SESSION['INSTALL']['referers']);
@@ -123,26 +136,12 @@ if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 
 		echo "<div style=\"color:#0f0\">Refererliste gespeichert!</div><br/>";
 		
-		$dbCfg = array(
-			'host' => $_SESSION['INSTALL']['db_server'],
-			'dbname' => $_SESSION['INSTALL']['db_name'],
-			'user' => $_SESSION['INSTALL']['db_user'],
-			'password' => $_SESSION['INSTALL']['db_password'],
-		);
-		
-		echo "Fertig! Du musst nun den folgenden Inhalt in eine neue Textdatei namens <b>htdocs/config/".DBManager::getInstance()->getConfigFile()."</b> speichern!<br/><br/>
-			<textarea style=\"width:900px;background:#eee;color:#000;font-family:courier new;margin:0px auto;text-align:left;\">
-			".json_encode($dbCfg)."
-		</textarea><br /><br />";
-		echo "Und den folgenden Inhalt in eine Datei \"db.cfg\" für den Eventhandler, z.B. <b>htdocs/config/db.cfg</b>:<br/><br/>
-			<textarea style=\"width:900px;background:#eee;color:#000;font-family:courier new;margin:0px auto;text-align:left;\" rows=\"5\">
-			[mysql]
-			host = ".$dbCfg['host']."
-			database = ".$dbCfg['dbname']."
-			user = ".$dbCfg['user']."
-			password = ".$dbCfg['password']."
-		</textarea>";
-		echo "<p> <a href=\"admin\">Zum Admin-Login</a> &nbsp; <a href=\"".$_SESSION['INSTALL']['loginserver_url']."\">Zum Loginserver</a></p>";
+		echo "Fertig! Du musst nun den folgenden Inhalt in eine neue Textdatei namens <b>".$file."</b> speichern!<br/><br/>
+			<pre class=\"code\">".$dbConfigSting."</pre><br /><br />";
+		echo "Und den folgenden Inhalt in eine Konfigurationsdatei für den Eventhandler, z.B. <b>".$eventhandlerFile."</b>:<br/><br/>
+			<pre class=\"code\">".$dbConfigStingEventHandler."</pre>";
+		echo "<p><input type=\"button\" onclick=\"document.location='admin'\" value=\"Zum Admin-Login\"/> &nbsp; 
+		<input type=\"button\" onclick=\"document.location='".getLoginUrl()."'\" value=\"Zum Loginserver\"/></p>";
 	
 	}		
 	
