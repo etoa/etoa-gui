@@ -63,7 +63,7 @@ if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 		$_SESSION['INSTALL']['round_name'] = $_POST['round_name'];
 		$_SESSION['INSTALL']['loginserver_url'] = $_POST['loginserver_url'];
 
-		if ($_POST['round_name'] != "" && $_POST['loginserver_url'] != "")
+		if ($_POST['round_name'] != "")
 		{
 			$step = 3;
 			$_SESSION['INSTALL']['step'] = 3;
@@ -200,7 +200,7 @@ if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 				<tr>
 					<th>Loginserver-URL:</th>
 					<td><input type=\"text\" name=\"loginserver_url\" value=\"".(isset($_SESSION['INSTALL']['loginserver_url']) ? $_SESSION['INSTALL']['loginserver_url'] : 'http://www.etoa.ch')."\" /></td>
-					<td>(z.b. http://www.etoa.ch)</td>
+					<td>(z.b. http://www.etoa.ch, leerlassen für lokales Login)</td>
 				</tr>
 			</table>
 		</fieldset>		
