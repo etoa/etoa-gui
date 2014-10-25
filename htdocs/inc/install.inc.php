@@ -2,19 +2,24 @@
 
 // Load template engine
 require_once(RELATIVE_ROOT."inc/template.inc.php");
+
 $tpl->assign("gameTitle","Setup");
 $tpl->assign("templateDir","designs/Graphite");
+
 $indexpage = array();
 $indexpage['feeds']=array('url'=>'.','label'=>'Setup');
 $tpl->assign("topmenu",$indexpage);
 
-if (!isset($_SESSION))
+if (!isset($_SESSION)) {
     session_start();
-$tpl->display("tpl/chunks/header.html");
-
-if (!isset($_SESSION['INSTALL']))
+}
+	
+if (!isset($_SESSION['INSTALL'])) {
 	$_SESSION['INSTALL'] = array();
+}
 
+ob_start();
+	
 if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 {
 	echo "<div class=\"installContainer\">";
@@ -261,7 +266,10 @@ else
 }
 echo "</div>";
 
-$tpl->display("tpl/chunks/footer.html");
+$tpl->assign('content', ob_get_clean());
 
+$tpl->setView('install');
+$tpl->setLayout('empty');
+$tpl->render();
 
 ?>
