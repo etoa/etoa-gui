@@ -17,6 +17,7 @@ if (!isset($_SESSION['INSTALL']))
 
 if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 {
+	echo "<div class=\"installContainer\">";
 	echo "<h1>EtoA Installation</h1>";
 
 
@@ -101,12 +102,12 @@ if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 	
 	if($step==4)
 	{
-		echo "<div style=\"font-weight:bold;color:#666;\">
-		<a href=\"?step=1\" style=\"color:000\">Schritt 1</a> |
-		<a href=\"?step=2\" style=\"color:000\">Schritt 2</a> |
-		<a href=\"?step=3\" style=\"color:000\">Schritt 3</a> |
-		<a href=\"?step=4\" style=\"color:000\">Schritt 4</a> |
-		</div><br/>";
+		echo "<div class=\"installMenu\">
+		<a href=\"?step=1\">Schritt 1</a> |
+		<a href=\"?step=2\">Schritt 2</a> |
+		<a href=\"?step=3\">Schritt 3</a> |
+		<a href=\"?step=4\">Schritt 4</a> |
+		</div>";
 		
 		$dbCfg = array(
 			'host' => $_SESSION['INSTALL']['db_server'],
@@ -117,9 +118,6 @@ if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 		DBManager::getInstance()->connect(0, $dbCfg);
 
 		$dbConfigSting = json_encode($dbCfg);
-		$file = "htdocs/config/".DBManager::getInstance()->getConfigFile();
-		
-		//file_put_contents($file, $dbConfigSting);
 		
 		$dbConfigStingEventHandler = "[mysql]
 host = ".$dbCfg['host']."
@@ -134,11 +132,19 @@ password = ".$dbCfg['password']."
 		$cfg->set("roundname",$_SESSION['INSTALL']['round_name']);
 		$cfg->set("loginurl",$_SESSION['INSTALL']['loginserver_url']);
 
-		echo "<div style=\"color:#0f0\">Refererliste gespeichert!</div><br/>";
+		writeConfigFile(DBManager::getInstance()->getConfigFile(), $dbConfigSting);
 		
-		echo "Fertig! Du musst nun den folgenden Inhalt in eine neue Textdatei namens <b>".$file."</b> speichern!<br/><br/>
+		echo "<div style=\"color:#0f0\">Konfiguration gespeichert!</div><br/>";
+		
+		if (!configFileExists(DBManager::getInstance()->getConfigFile()))
+		{
+			echo "Fertig! Du musst nun den folgenden Inhalt in eine neue Textdatei namens <b>".getConfigFilePath(DBManager::getInstance()->getConfigFile())."</b> speichern!<br/><br/>
 			<pre class=\"code\">".$dbConfigSting."</pre><br /><br />";
-		echo "Und den folgenden Inhalt in eine Konfigurationsdatei für den Eventhandler, z.B. <b>".$eventhandlerFile."</b>:<br/><br/>
+		} else {
+			$_SESSION['INSTALL']['step'] = 1;
+		}
+		
+		echo "Für den Eventhandler musst du noch den folgenden Inhalt in eine Konfigurationsdatei, z.B. <b>".$eventhandlerFile."</b>, speichern:<br/><br/>
 			<pre class=\"code\">".$dbConfigStingEventHandler."</pre>";
 		echo "<p><input type=\"button\" onclick=\"document.location='admin'\" value=\"Zum Admin-Login\"/> &nbsp; 
 		<input type=\"button\" onclick=\"document.location='".getLoginUrl()."'\" value=\"Zum Loginserver\"/></p>";
@@ -147,12 +153,12 @@ password = ".$dbCfg['password']."
 	
 	elseif($step==3)
 	{
-		echo "<div style=\"font-weight:bold;color:#666;\">
-		<a href=\"?step=1\" style=\"color:000\">Schritt 1</a> |
-		<a href=\"?step=2\" style=\"color:000\">Schritt 2</a> |
-		<a href=\"?step=3\" style=\"color:000\">Schritt 3</a> |
+		echo "<div class=\"installMenu\">
+		<a href=\"?step=1\">Schritt 1</a> |
+		<a href=\"?step=2\">Schritt 2</a> |
+		<a href=\"?step=3\">Schritt 3</a> |
 		Schritt 4
-		</div><br/>";
+		</div>";
 		
 		$dbCfg = array(
 			'host' => $_SESSION['INSTALL']['db_server'],
@@ -165,30 +171,31 @@ password = ".$dbCfg['password']."
 		$cfg = Config::getInstance();
 		
 		echo "<form action=\"?\" method=\"post\">
-		<fieldset style=\"width:700px;margin:0px auto;\">
+		<fieldset>
 			<legend>Weitere Einstellungen</legend>
 			<table>
 				<tr>
 					<th>Referers:</th>
-					<td><textarea name=\"referers\" rows=\"6\" cols=\"50\">".(isset($_SESSION['INSTALL']['referers']) ? $_SESSION['INSTALL']['referers'] : $cfg->get('referers'))."</textarea></td>
-					<td>(alle Seiten, welche als Absender gelten sollen. Also der Loginserver, sowie der aktuelle Server. Mache für jeden Eintrag eine neue Linie!)</td>
+					<td><textarea name=\"referers\" rows=\"6\" cols=\"50\">".(isset($_SESSION['INSTALL']['referers']) ? $_SESSION['INSTALL']['referers'] : $cfg->get('referers'))."</textarea><br/>
+					(alle Seiten, welche als Absender gelten sollen. Also der Loginserver, sowie der aktuelle Server. Mache für jeden Eintrag eine neue Linie!)</td>
+					<td></td>
 				</tr>
 			</table>
 		</fieldset>		
-		<br/><input type=\"submit\" name=\"step3_submit\" value=\"Weiter\" />						
+		<p><input type=\"submit\" name=\"step3_submit\" value=\"Weiter\" /></p>		
 		</form>";		
 	}		
 	
 	elseif($step==2)
 	{
-		echo "<div style=\"font-weight:bold;color:#666;\">
-		<a href=\"?step=1\" style=\"color:000\">Schritt 1</a> |
-		<a href=\"?step=2\" style=\"color:000\">Schritt 2</a> |
+		echo "<div class=\"installMenu\">
+		<a href=\"?step=1\">Schritt 1</a> |
+		<a href=\"?step=2\">Schritt 2</a> |
 		Schritt 3 |
 		Schritt 4
-		</div><br/>";
+		</div>";
 		echo "<form action=\"?\" method=\"post\">
-		<fieldset style=\"width:700px;;margin:0px auto;\">
+		<fieldset>
 			<legend>Allgemeine Daten</legend>
 			<table>
 				<tr>
@@ -203,25 +210,23 @@ password = ".$dbCfg['password']."
 				</tr>
 			</table>
 		</fieldset>		
-		<br/><input type=\"submit\" name=\"step2_submit\" value=\"Weiter\" />						
-		</form>";		
-		
-		
+		<p><input type=\"submit\" name=\"step2_submit\" value=\"Weiter\" /></p>				
+		</form>";
 	}	
 	else
 	{
-		echo "<div style=\"font-weight:bold;color:#666;\">
-		<a href=\"?step=1\" style=\"color:000\">Schritt 1</a> |
+		echo "<div class=\"installMenu\">
+		<a href=\"?step=1\">Schritt 1</a> |
 		Schritt 2 |
 		Schritt 3 |
 		Schritt 4
-		</div><br/>";
+		</div>";
 		
-		echo "<p>Anscheinend existiert noch keine Konfigurationsdatei für diese EtoA-Instanz. Bitte erstelle
-	eine indem du folgendes Formular ausfüllst:</p>";
+		echo "<p>Anscheinend existiert noch keine Konfigurationsdatei für diese EtoA-Instanz.<br/>
+		Bitte erstelle eine indem du folgendes Formular ausfüllst:</p>";
 		
 		echo "<form action=\"?\" method=\"post\" autocomplete=\"off\">
-		<fieldset style=\"width:400px;margin:0px auto;\">
+		<fieldset>
 			<legend>MySQL-Datenbank</legend>
 			<table>
 				<tr>
@@ -245,9 +250,8 @@ password = ".$dbCfg['password']."
 					<td>(mind. 10 Zeichen)</td>
 				</tr>
 			</table>
-		</fieldset><br/>
-		
-		<br/><input type=\"submit\" name=\"install_check\" value=\"Eingaben prüfen\" />
+		</fieldset>		
+		<p><input type=\"submit\" name=\"install_check\" value=\"Eingaben prüfen\" /></p>
 		</form>";	
 	}
 }
@@ -255,6 +259,7 @@ else
 {
 	echo "Ihre Konfigurationsdatei existiert bereits!";
 }
+echo "</div>";
 
 $tpl->display("tpl/chunks/footer.html");
 

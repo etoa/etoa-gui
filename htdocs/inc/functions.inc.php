@@ -2584,6 +2584,14 @@ function imagecreatefromfile($path, $user_functions = false)
 		return file_exists($path);
 	}
 	
+	function getConfigFilePath($file)	{
+		return RELATIVE_ROOT."config/".$file;
+	}
+	
+	function writeConfigFile($file, $contents)	{
+		file_put_contents(RELATIVE_ROOT."config/".$file, $contents);
+	}
+	
 	/**
 	* Fetches the contents of a JSON config file and returns it as an associative array
 	*/

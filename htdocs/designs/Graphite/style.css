@@ -1094,4 +1094,25 @@ pre.code	{
 	color:#f1f1f1;
 	border:1px solid #BBBBBB;
 	border-radius:2px;
+	text-align: left;
+}
+
+.installContainer {
+	width: 550px;
+	margin: 20px auto;
+	text-align: center;
+}
+
+.installMenu {
+	font-weight:bold;
+	color:#666;
+	text-align: center;
+}
+
+.installContainer table {
+	width: 100%;
+}
+
+.installContainer table td, .installContainer table th {
+	text-align: left;
 }
