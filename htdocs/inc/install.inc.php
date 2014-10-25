@@ -34,8 +34,6 @@ if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 		$_SESSION['INSTALL']['db_password'] = $_POST['db_password'];
 
 		
-		//echo "Prüfe Eingaben....<br/>";
-		//echo "Prüfe Eingaben....<br/>";
 		if ($_POST['db_server'] != "" && $_POST['db_name'] != "" && $_POST['db_user'] != "" && $_POST['db_password'] != "")
 		{
 			$dbCfg = array(
@@ -54,6 +52,8 @@ if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 			else
 			{
 				echo "<div style=\"color:#f00;\">Verbindung fehlgeschlagen! Fehler: ".mysql_error()."</div>";
+				$_SESSION['INSTALL']['step']=1;
+				$step = 1;
 			}
 		}
 		else
