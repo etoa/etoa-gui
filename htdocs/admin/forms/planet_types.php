@@ -95,7 +95,7 @@
 																		"rcb_elem_chekced" => "1",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
-																		"show_overview" => 0
+																		"show_overview" => 1
 																	),																	
 												3	=> 	array	(	"name" => "type_f_metal",
 																		"text" => "Metallfaktor",
