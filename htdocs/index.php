@@ -287,6 +287,7 @@
 		$tpl->assign("serverTime",date('H:i:s'));
 		$tpl->assign("serverTimeUnix",time());
 		$tpl->assign('enableKeybindsString','window.enableKeybinds='.$cu->properties->enableKeybinds.';');
+		$tpl->assign('isAdmin', $cu->admin);
 		
 		if (isset($cp))
 		{
