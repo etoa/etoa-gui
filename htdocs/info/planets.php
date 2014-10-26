@@ -29,7 +29,7 @@
 		$sort="ASC";
 	}
 
-	$res = dbquery("SELECT * FROM planet_types ORDER BY $order $sort;");
+	$res = dbquery("SELECT * FROM planet_types WHERE type_consider=1 ORDER BY $order $sort;");
 	if (mysql_num_rows($res)>0)
 	{
 
