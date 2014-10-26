@@ -10,6 +10,7 @@ $tpl->assign("gameTitle", "Setup");
 $tpl->assign("templateDir"," designs/Graphite");
 
 $tpl->assign('title', 'EtoA Installation');
+$tpl->assign('version', getAppVersion());
 
 if (!isset($_SESSION)) {
     session_start();

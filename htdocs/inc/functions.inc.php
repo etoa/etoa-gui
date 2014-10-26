@@ -66,7 +66,17 @@
 	* Returns a string containing the game name, version and round
 	*/
 	function getGameIdentifier()	{
-		return Constants::getInstance()->appName.' '.Constants::getInstance()->appVersion.' '.Config::getInstance()->roundname->v;
+		return Constants::getInstance()->appName.' '.getAppVersion().' '.Config::getInstance()->roundname->v;
+	}
+	
+	function getAppVersion() {
+		require_once(RELATIVE_ROOT.'version.php');
+		return APP_VERSION;
+	}
+	
+	function getSchemaVersion() {
+		require_once(RELATIVE_ROOT.'version.php');
+		return SCHEMA_VERSION;
 	}
 	
 	/**
