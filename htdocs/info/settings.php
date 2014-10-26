@@ -50,7 +50,7 @@
 			
 		}
 		echo "<tr><td>Spielversion</td>";
-		echo "<td>".Constants::getInstance()->appVersion."</td></tr>";
+		echo "<td>".getAppVersion()."</td></tr>";
 		foreach ($item as $conf_name => $a)
 		{
 			foreach ($a as $par => $val)

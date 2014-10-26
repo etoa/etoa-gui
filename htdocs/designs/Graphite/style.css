@@ -1086,3 +1086,60 @@ visibility:visible;
 	background:#242426;
 	color:#ccf;
 }
+
+pre.code	{
+	margin:0;
+	padding:5px 10px ;
+	background: #333;
+	color:#f1f1f1;
+	border:1px solid #BBBBBB;
+	border-radius:2px;
+	text-align: left;
+}
+
+.installContainer {
+	width: 550px;
+	margin: 20px auto;
+	text-align: center;
+}
+
+.installMenu {
+	font-weight:bold;
+	color:#666;
+	text-align: center;
+	list-style-type: none;
+}
+
+.installMenu li {
+	display: inline-block;
+	margin: 0;
+}
+
+.installMenu li:after {
+	content:'»';
+}
+
+.installMenu li:last-child:after {
+	content:none;
+}
+
+.installContainer table {
+	width: 100%;
+}
+
+.installContainer table td, .installContainer table th {
+	text-align: left;
+}
+
+.installContainer .messagebox {
+	padding: 5px;
+	margin: 10px;
+}
+
+.installContainer .messagebox .success {
+	color:#0f0;
+}
+
+.installContainer .messagebox .error {
+	color:#f00;
+}
