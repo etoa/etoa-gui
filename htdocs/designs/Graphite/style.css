@@ -1107,6 +1107,20 @@ pre.code	{
 	font-weight:bold;
 	color:#666;
 	text-align: center;
+	list-style-type: none;
+}
+
+.installMenu li {
+	display: inline-block;
+	margin: 0;
+}
+
+.installMenu li:after {
+	content:'»';
+}
+
+.installMenu li:last-child:after {
+	content:none;
 }
 
 .installContainer table {
@@ -1115,4 +1129,17 @@ pre.code	{
 
 .installContainer table td, .installContainer table th {
 	text-align: left;
+}
+
+.installContainer .messagebox {
+	padding: 5px;
+	margin: 10px;
+}
+
+.installContainer .messagebox .success {
+	color:#0f0;
+}
+
+.installContainer .messagebox .error {
+	color:#f00;
 }

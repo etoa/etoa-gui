@@ -3,12 +3,13 @@
 // Load template engine
 require_once(RELATIVE_ROOT."inc/template.inc.php");
 
-$tpl->assign("gameTitle","Setup");
-$tpl->assign("templateDir","designs/Graphite");
+$tpl->setView('install');
+$tpl->setLayout('empty');
 
-$indexpage = array();
-$indexpage['feeds']=array('url'=>'.','label'=>'Setup');
-$tpl->assign("topmenu",$indexpage);
+$tpl->assign("gameTitle", "Setup");
+$tpl->assign("templateDir"," designs/Graphite");
+
+$tpl->assign('title', 'EtoA Installation');
 
 if (!isset($_SESSION)) {
     session_start();
@@ -18,14 +19,12 @@ if (!isset($_SESSION['INSTALL'])) {
 	$_SESSION['INSTALL'] = array();
 }
 
-ob_start();
-	
 if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 {
-	echo "<div class=\"installContainer\">";
-	echo "<h1>EtoA Installation</h1>";
-
-
+	ob_start();
+	
+	$numSteps = 4;
+	
 	if (isset($_POST['install_check']))
 	{
 		$_SESSION['INSTALL']['db_server'] = $_POST['db_server'];
@@ -44,23 +43,22 @@ if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 			);			
 			if (DBManager::getInstance()->connect(0, $dbCfg))
 			{
-				echo "<div style=\"color:#0f0\">Datenbankverbindung erfolgreich!</div><br/>";
+				$tpl->assign('msg', 'Datenbankverbindung erfolgreich!');
 				
 				$_SESSION['INSTALL']['step']=2;
 				$step = 2;
 			}
 			else
 			{
-				echo "<div style=\"color:#f00;\">Verbindung fehlgeschlagen! Fehler: ".mysql_error()."</div>";
+				$tpl->assign('errmsg', 'Verbindung fehlgeschlagen! Fehler: '.mysql_error());
 				$_SESSION['INSTALL']['step']=1;
 				$step = 1;
 			}
 		}
 		else
 		{
-			echo "<div style=\"color:#f00;\">Achtung! Du hast nicht alle Felder ausgef&uuml;lt!</div>";
+			$tpl->assign('errmsg', 'Achtung! Du hast nicht alle Felder ausgef&uuml;lt!');
 		}
-		echo "<br/>";
 	}
 	elseif(isset($_POST['step2_submit']) && $_POST['step2_submit'])
 	{
@@ -77,10 +75,9 @@ if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 		}
 		else
 		{
-			echo "<div style=\"color:#f00;\">Achtung! Du hast nicht alle Felder ausgef&uuml;lt!</div>";
+			$tpl->assign('errmsg', 'Achtung! Du hast nicht alle Felder ausgef&uuml;lt!');
 		}		
 	}	
-	
 	elseif(isset($_POST['step3_submit']) && $_POST['step3_submit'])
 	{
 		$step = 3;
@@ -92,8 +89,8 @@ if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 		}
 		else
 		{
-			echo "<div style=\"color:#f00;\">Achtung! Du hast nicht alle Felder ausgef&uuml;lt!</div>";
-		}		
+			$tpl->assign('errmsg', 'Achtung! Du hast nicht alle Felder ausgef&uuml;lt!');
+		}
 	}		
 	
 	if (isset($_SESSION['INSTALL']['step']) && isset($_GET['step']) && $_GET['step']>0)
@@ -104,16 +101,19 @@ if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 	{
 		$step = isset($_SESSION['INSTALL']['step']) ? $_SESSION['INSTALL']['step'] : 1;
 	}
+
+	$navElems = array();
+	for ($i=1; $i <= $numSteps; $i++) {
+		if ($i <= $step) {
+			$navElems['Schritt '.$i] = '?step='.$i;
+		} else {
+			$navElems['Schritt '.$i] = null;
+		}
+	}
+	$tpl->assign('installMenu', $navElems);
 	
 	if($step==4)
 	{
-		echo "<div class=\"installMenu\">
-		<a href=\"?step=1\">Schritt 1</a> |
-		<a href=\"?step=2\">Schritt 2</a> |
-		<a href=\"?step=3\">Schritt 3</a> |
-		<a href=\"?step=4\">Schritt 4</a> |
-		</div>";
-		
 		$dbCfg = array(
 			'host' => $_SESSION['INSTALL']['db_server'],
 			'dbname' => $_SESSION['INSTALL']['db_name'],
@@ -139,7 +139,7 @@ password = ".$dbCfg['password']."
 
 		writeConfigFile(DBManager::getInstance()->getConfigFile(), $dbConfigSting);
 		
-		echo "<div style=\"color:#0f0\">Konfiguration gespeichert!</div><br/>";
+		$tpl->assign('msg', 'Konfiguration gespeichert!');
 		
 		if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 		{
@@ -158,13 +158,6 @@ password = ".$dbCfg['password']."
 	
 	elseif($step==3)
 	{
-		echo "<div class=\"installMenu\">
-		<a href=\"?step=1\">Schritt 1</a> |
-		<a href=\"?step=2\">Schritt 2</a> |
-		<a href=\"?step=3\">Schritt 3</a> |
-		Schritt 4
-		</div>";
-		
 		$dbCfg = array(
 			'host' => $_SESSION['INSTALL']['db_server'],
 			'dbname' => $_SESSION['INSTALL']['db_name'],
@@ -175,7 +168,7 @@ password = ".$dbCfg['password']."
 		
 		$cfg = Config::getInstance();
 		
-		echo "<form action=\"?\" method=\"post\">
+		$str = "<form action=\"?\" method=\"post\">
 		<fieldset>
 			<legend>Weitere Einstellungen</legend>
 			<table>
@@ -187,19 +180,13 @@ password = ".$dbCfg['password']."
 				</tr>
 			</table>
 		</fieldset>		
-		<p><input type=\"submit\" name=\"step3_submit\" value=\"Weiter\" /></p>		
-		</form>";		
+		<p><input type=\"submit\" name=\"step3_submit\" value=\"Weiter\" /></p>";
+		$tpl->assign('installform', $str);
 	}		
 	
 	elseif($step==2)
 	{
-		echo "<div class=\"installMenu\">
-		<a href=\"?step=1\">Schritt 1</a> |
-		<a href=\"?step=2\">Schritt 2</a> |
-		Schritt 3 |
-		Schritt 4
-		</div>";
-		echo "<form action=\"?\" method=\"post\">
+		$str = "<form action=\"?\" method=\"post\">
 		<fieldset>
 			<legend>Allgemeine Daten</legend>
 			<table>
@@ -215,23 +202,12 @@ password = ".$dbCfg['password']."
 				</tr>
 			</table>
 		</fieldset>		
-		<p><input type=\"submit\" name=\"step2_submit\" value=\"Weiter\" /></p>				
-		</form>";
+		<p><input type=\"submit\" name=\"step2_submit\" value=\"Weiter\" /></p>";
+		$tpl->assign('installform', $str);
 	}	
 	else
 	{
-		echo "<div class=\"installMenu\">
-		<a href=\"?step=1\">Schritt 1</a> |
-		Schritt 2 |
-		Schritt 3 |
-		Schritt 4
-		</div>";
-		
-		echo "<p>Anscheinend existiert noch keine Konfigurationsdatei für diese EtoA-Instanz.<br/>
-		Bitte erstelle eine indem du folgendes Formular ausfüllst:</p>";
-		
-		echo "<form action=\"?\" method=\"post\" autocomplete=\"off\">
-		<fieldset>
+		$str = "<fieldset>
 			<legend>MySQL-Datenbank</legend>
 			<table>
 				<tr>
@@ -256,20 +232,16 @@ password = ".$dbCfg['password']."
 				</tr>
 			</table>
 		</fieldset>		
-		<p><input type=\"submit\" name=\"install_check\" value=\"Eingaben prüfen\" /></p>
-		</form>";	
+		<p><input type=\"submit\" name=\"install_check\" value=\"Eingaben prüfen\" /></p>";	
+		$tpl->assign('installform', $str);
 	}
+	$tpl->assign('content', ob_get_clean());
 }
 else
 {
-	echo "Ihre Konfigurationsdatei existiert bereits!";
+	$tpl->assign('errmsg', "Ihre Konfigurationsdatei existiert bereits!");
 }
-echo "</div>";
 
-$tpl->assign('content', ob_get_clean());
-
-$tpl->setView('install');
-$tpl->setLayout('empty');
 $tpl->render();
 
 ?>
