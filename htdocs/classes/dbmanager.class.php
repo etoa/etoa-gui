@@ -381,53 +381,75 @@ class DBManager implements ISingleton	{
 	public function backupDB()
 	{
 		$rtn = false;
+		
 		if (UNIX)
+		{
+			$mysqldump = "mysqldump";
+		}
+		else if (WINDOWS)
+		{
+			$mysqldump = WINDOWS_MYSQLDUMP_PATH;
+		}
+		
+		if (UNIX || WINDOWS) 
 		{
 			$cfg = Config::getInstance();
 
 			$log = "Starte Backup...\n";
 			$tmr = timerStart();				
 			
-			// Alte Backups löschen
-			$cmd = "find ".$cfg->backup_dir." -name \"".$this->getDbName()."*.sql.gz\" -mtime +".$cfg->backup_retention_time." -exec rm -f {} \;";
-			passthru($cmd);
-			$cmd = "find ".$cfg->backup_dir." -name \"".$this->getDbName()."*.sql\" -mtime +".$cfg->backup_retention_time." -exec rm -f {} \;";
-			passthru($cmd);
-	
-			$file = $cfg->backup_dir."/".$this->getDbName()."-".date("Y-m-d-H-i");
-			$file_wo_path = $this->getDbName()."-".date("Y-m-d-H-i");
-			$result = shell_exec("mysqldump -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." > ".$file.".sql");
-			if ($result=="")
+			$backupDir = self::getBackupDir();
+			if ($backupDir != null) 
 			{
-				if ($cfg->backup_use_gzip=="1")
+			
+				// Alte Backups löschen
+				if (UNIX) {
+					$cmd = "find ".$backupDir." -name \"".$this->getDbName()."*.sql.gz\" -mtime +".$cfg->backup_retention_time." -exec rm -f {} \;";
+					passthru($cmd);
+					$cmd = "find ".$backupDir." -name \"".$this->getDbName()."*.sql\" -mtime +".$cfg->backup_retention_time." -exec rm -f {} \;";
+					passthru($cmd);
+				}
+		
+				$file = $backupDir."/".$this->getDbName()."-".date("Y-m-d-H-i");
+				$file_wo_path = $this->getDbName()."-".date("Y-m-d-H-i");
+				$result = shell_exec($mysqldump." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." > ".$file.".sql");
+				if ($result=="")
 				{
-					$result = shell_exec("gzip ".$file.".sql");
-					if ($result!="")
+					if ($cfg->backup_use_gzip=="1" && UNIX)
 					{
-						echo "Error while zipping Backup-Dump $file: $result\n";
+						$result = shell_exec("gzip ".$file.".sql");
+						if ($result!="")
+						{
+							echo "Error while zipping Backup-Dump $file: $result\n";
+						}
+						else
+						{
+							$log.= "GZIP Backup erstellt! Grösse: ".byte_format(filesize($file.".sql.gz"));
+							$rtn = true;
+						}
 					}
 					else
 					{
-						$log.= "GZIP Backup erstellt! Grösse: ".byte_format(filesize($file.".sql.gz"));
+						$log.= "Backup erstellt! Grösse: ".byte_format(filesize($file.".sql"));
 						$rtn = true;
 					}
 				}
 				else
 				{
-					$log.= "Backup erstellt! Grösse: ".byte_format(filesize($file.".sql"));
-					$rtn = true;
+					echo "Error while creating Backup-Dump $file: $result\n";		
+					$log.= "FEHLER beim erstellen der Datei $file: $result";					
 				}
 			}
 			else
 			{
-				echo "Error while creating Backup-Dump $file: $result\n";		
-				$log.= "FEHLER beim erstellen der Datei $file: $result";					
+				echo "Error while creating Backup-Dump: Backup directory does not exist\n";		
+				$log.= "FEHLER beim erstellen des Backups: Das Backup Verzeichnis existiert nicht!";					
 			}
 			add_log (15,"[b]Backup[/b]\nGesamtdauer: ".timerStop($tmr)."\n\n".$log);			
 		}
 		else
 		{
-			echo "Die Backup-Funktion ist nur auf UNIX-Systemen verfügbar!";
+			echo "Die Backup-Funktion ist auf diesem System nicht verfügbar!";
 		}
 		return $rtn;
 	}
@@ -435,41 +457,58 @@ class DBManager implements ISingleton	{
 	public function restoreDB($arg)
 	{
 		$rtn = false;
+		
 		if (UNIX)
 		{
-			$cfg = Config::getInstance();
-			
+			$mysql = "mysql";
+		}
+		else if (WINDOWS)
+		{
+			$mysql = WINDOWS_MYSQL_PATH;
+		}
+		
+		if (UNIX || WINDOWS)
+		{
 			$mtx = new Mutex();
 			$mtx->acquire();
-			$file = $cfg->backup_dir."/".$this->getDbName()."-".$arg;
-			if (file_exists($file.".sql.gz"))
+			
+			$backupDir = self::getBackupDir();
+			if ($backupDir != null) 
 			{
-				$result = shell_exec("gunzip ".$file.".sql.gz");
-				if ($result=="")
+				$file = $backupDir."/".$this->getDbName()."-".$arg;
+				if (file_exists($file.".sql.gz"))
 				{
-					$result = shell_exec("mysql -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." < ".$file.".sql");
-					if ($result!="")
+					$result = shell_exec("gunzip ".$file.".sql.gz");
+					if ($result=="")
 					{
-						echo "Error while restoring backup: $result\n";
+						$result = shell_exec($mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." < ".$file.".sql");
+						if ($result!="")
+						{
+							echo "Error while restoring backup: $result\n";
+						}
+						else
+							$rtn = true;
+						shell_exec("gzip ".$file.".sql");
 					}
 					else
+						echo "Error while unzipping Backup-Dump $file: $result\n";
+				}
+				elseif (file_exists($file.".sql"))
+				{
+					$result = shell_exec($mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." < ".$file.".sql");
+					if ($result!="")
+						echo "Error while restoring backup: $result\n";
+					else
 						$rtn = true;
-					shell_exec("gzip ".$file.".sql");
 				}
 				else
-					echo "Error while unzipping Backup-Dump $file: $result\n";
-			}
-			elseif (file_exists($file.".sql"))
-			{
-				$result = shell_exec("mysql -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." < ".$file.".sql");
-				if ($result!="")
-					echo "Error while restoring backup: $result\n";
-				else
-					$rtn = true;
+				{
+					echo "Error: File $file not found!\n";	
+				}
 			}
 			else
 			{
-				echo "Error: File $file not found!\n";	
+				echo "Error: Backup directory does not exist!\n";	
 			}
 			
 			add_log (15,"[b]Datenbank-Restore[/b]\n\nDie Datenbank wurde von der Quelle [b]".$file."[/b] wiederhergestellt!\n");			
@@ -477,22 +516,22 @@ class DBManager implements ISingleton	{
 		}
 		else
 		{
-			echo "Die Backup-Funktion ist nur auf UNIX-Systemen verfügbar!";
+			echo "Die Restore-Funktion ist auf diesem System nicht verfügbar!";
 		}
 		return $rtn;
 	}	
 	
 	public function getBackupImages($strip=1)
 	{
-		if (UNIX)
+		$bfiles=array();
+		$dir = self::getBackupDir();
+		if ($dir != null) 
 		{
-			$cfg = Config::getInstance();
-			if ($d = @opendir($cfg->backup_dir))
+			if ($d = opendir($dir))
 			{
-				$bfiles=array();
 				while ($f = readdir($d))
 				{
-					if (is_file($cfg->backup_dir."/".$f) && stristr($f,".sql") && preg_match('/^'.$this->getDbName().'/i',$f)==1)
+					if (is_file($dir."/".$f) && stristr($f,".sql") && preg_match('/^'.$this->getDbName().'/i',$f)==1)
 					{
 						if ($strip == 0)
 							array_push($bfiles, $f);
@@ -501,13 +540,21 @@ class DBManager implements ISingleton	{
 					}
 				}
 				rsort($bfiles);
-				return $bfiles;
 			}
 		}
-		else
-		{
-			echo "Die Backup-Funktion ist nur auf UNIX-Systemen verfügbar!";
+		return $bfiles;
+	}
+	
+	/**
+	* Returns the backup directory path, if it exists
+	*/
+	public static function getBackupDir() {
+		$cfg = Config::getInstance();
+		$backupDir = $cfg->backup_dir;
+		if (!empty($backupDir) && is_dir($backupDir)) {
+			return $backupDir;
 		}
+		return null;
 	}
 	
 	public function getDbSize() {
