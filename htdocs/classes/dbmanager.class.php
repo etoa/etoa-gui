@@ -401,14 +401,8 @@ class DBManager implements ISingleton	{
 			$backupDir = self::getBackupDir();
 			if ($backupDir != null) 
 			{
-			
-				// Alte Backups löschen
-				if (UNIX) {
-					$cmd = "find ".$backupDir." -name \"".$this->getDbName()."*.sql.gz\" -mtime +".$cfg->backup_retention_time." -exec rm -f {} \;";
-					passthru($cmd);
-					$cmd = "find ".$backupDir." -name \"".$this->getDbName()."*.sql\" -mtime +".$cfg->backup_retention_time." -exec rm -f {} \;";
-					passthru($cmd);
-				}
+				// Remove old backup files
+				self::removeOldBackups($backupDir, $cfg->backup_retention_time);
 		
 				$file = $backupDir."/".$this->getDbName()."-".date("Y-m-d-H-i");
 				$file_wo_path = $this->getDbName()."-".date("Y-m-d-H-i");
@@ -555,6 +549,19 @@ class DBManager implements ISingleton	{
 			return $backupDir;
 		}
 		return null;
+	}
+	
+	/**
+	* Removes old backup files
+	*/
+	public static function removeOldBackups($dir, $days) {
+		$time = time();
+		$files = array_merge(glob($dir."/*.sql"), glob($dir."/*.sql.gz"));
+		foreach ($files as $f) {
+			if (is_file($f) && $time -filemtime($f) >= $days * 86400) {
+				unlink($f);
+			}
+		}
 	}
 	
 	public function getDbSize() {
