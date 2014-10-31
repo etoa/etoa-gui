@@ -430,56 +430,40 @@ class DBManager implements ISingleton	{
 	
 	public function restoreDB($backupDir, $arg)
 	{
-		$rtn = false;
-
 		$mysql = WINDOWS ? WINDOWS_MYSQL_PATH : "mysql";
-		
-		$mtx = new Mutex();
-		$mtx->acquire();
 		
 		if (is_dir($backupDir)) 
 		{
-			$file = $backupDir."/".$this->getDbName()."-".$arg;
-			if (UNIX && file_exists($file.".sql.gz"))
+			$file = $backupDir."/".$this->getDbName()."-".$arg.".sql";
+			if (file_exists($file.".gz"))
 			{
-				$result = shell_exec("gunzip ".$file.".sql.gz");
-				if ($result=="")
+				if (!UNIX)
 				{
-					$result = shell_exec($mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." < ".$file.".sql");
-					if ($result!="")
-					{
-						echo "Error while restoring backup: $result\n";
-					}
-					else
-						$rtn = true;
-					shell_exec("gzip ".$file.".sql");
+					throw new Exception("Das Entpacken von GZIP Backups wird nur auf UNIX Systemen unterstützt");
 				}
-				else
-					echo "Error while unzipping Backup-Dump $file: $result\n";
+				$cmd = "gunzip < ".$file.".gz | ".$mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName();
 			}
-			elseif (file_exists($file.".sql"))
+			elseif (file_exists($file))
 			{
-				$result = shell_exec($mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." < ".$file.".sql");
+				$cmd = $mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." < ".$file;
+			}
+			if (isset($cmd))
+			{
+				$result = shell_exec($cmd);
 				if ($result!="")
-					echo "Error while restoring backup: $result\n";
-				else
-					$rtn = true;
+				{
+					throw new Exception("Error while restoring backup: ".$result);
+				}
 			}
 			else
 			{
-				echo "Error: File $file not found!\n";	
+				throw new Exception("Backup file $file not found!");	
 			}
 		}
 		else
 		{
-			echo "Error: Backup directory $backupDir does not exist!\n";	
+			throw new Exception("Backup directory $backupDir does not exist!");	
 		}
-		
-		add_log (15,"[b]Datenbank-Restore[/b]\n\nDie Datenbank wurde von der Quelle [b]".$file."[/b] wiederhergestellt!\n");			
-
-		$mtx->release();			
-
-		return $rtn;
 	}	
 	
 	public function getBackupImages($dir, $strip=1)

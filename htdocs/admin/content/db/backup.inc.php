@@ -24,11 +24,36 @@
 				$tr = new PeriodicTaskRunner();
 				$tr->runTask('CreateBackupTask');
 				
-				$dir = DBManager::getBackupDir();				
-				if (DBManager::getInstance()->restoreDB($dir, $_GET['date'])) {
-					cms_ok_msg("Das Backup ".$_GET['date']." wurde wiederhergestellt und es wurde eine Sicherungskopie der vorherigen Daten angelegt!");
-				} else {
-					cms_err_msg("Beim Ausf&uuml;hren des Restore-Befehls trat ein Fehler auf! $result");
+				$dir = DBManager::getBackupDir();
+				$restorePoint = $_GET['date'];
+				
+				try 
+				{
+					// Acquire mutex
+					$mtx = new Mutex();
+					$mtx->acquire();
+				
+					// Restore database
+					DBManager::getInstance()->restoreDB($dir, $restorePoint);
+				
+					// Write log
+					Log::add(Log::F_UPDATES, Log::INFO, "[b]Datenbank-Restore[/b]\nDie Datenbank wurde vom Backup [b]".$restorePoint."[/b] aus dem Verzeichnis [b]".$dir."[/b] wiederhergestellt.");
+
+					// Show message
+					cms_ok_msg("Das Backup ".$restorePoint." wurde wiederhergestellt und es wurde eine Sicherungskopie der vorherigen Daten angelegt!");
+				}
+				catch (Exception $e) 
+				{
+					// Write log
+					Log::add(Log::F_UPDATES, Log::ERROR, "[b]Datenbank-Restore[/b]\nDie Datenbank konnte nicht vom Backup [b]".$restorePoint."[/b] aus dem Verzeichnis [b]".$dir."[/b] wiederhergestellt werden: ".$e->getMessage());
+					
+					// Show message
+					cms_err_msg("Beim Ausf&uuml;hren des Restore-Befehls trat ein Fehler auf! ".$e->getMessage());
+				}
+				finally 
+				{
+					// Release mutex
+					$mtx->release();
 				}
 			}
 			catch (Exception $e)
