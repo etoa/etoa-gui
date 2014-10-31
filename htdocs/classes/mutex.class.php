@@ -29,6 +29,10 @@
 		private $key;
 		private $sem;
 		
+		private static function isSupported() {
+			return UNIX && !preg_match('/^win/i', $_SERVER['OS']);
+		}
+		
 		/**
 		* Class constructor. Initializes the semaphore key
 		* for this project based on this file's directory name
@@ -36,7 +40,7 @@
 		*/
 		function Mutex()
 		{
-			if (UNIX)
+			if (self::isSupported())
 			{
 				$this->key = ftok(dirname(__FILE__),"e");
 				$this->sem =  sem_get($this->key,1);
@@ -48,7 +52,7 @@
 		*/
 		function acquire()
 		{
-			if (UNIX)
+			if (self::isSupported())
 			{
 				sem_acquire($this->sem);
 			}
@@ -59,7 +63,7 @@
 		*/
 		function release()
 		{
-			if (UNIX)
+			if (self::isSupported())
 			{
 				sem_release($this->sem);		
 			}

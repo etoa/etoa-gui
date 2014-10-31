@@ -24,7 +24,8 @@
 				$tr = new PeriodicTaskRunner();
 				$tr->runTask('CreateBackupTask');
 				
-				if (DBManager::getInstance()->restoreDB($_GET['date'])) {
+				$dir = DBManager::getBackupDir();				
+				if (DBManager::getInstance()->restoreDB($dir, $_GET['date'])) {
 					cms_ok_msg("Das Backup ".$_GET['date']." wurde wiederhergestellt und es wurde eine Sicherungskopie der vorherigen Daten angelegt!");
 				} else {
 					cms_err_msg("Beim Ausf&uuml;hren des Restore-Befehls trat ein Fehler auf! $result");
@@ -55,7 +56,7 @@
 		echo "</fieldset>";
 		echo $frm->end();
 
-		echo "<p>Im Folgenden sind alle verfügbaren Backups aufgelistet. Backups werden durch ein Skript erstellt dass per Cronjob aufgerufen wird.</p>";
+		echo "<p>Im Folgenden sind alle verfügbaren Backups aufgelistet. Backups werden automatisch durch einen periodischen Task erstellt.</p>";
 
 		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
 		echo "<p><input type=\"submit\" value=\"Neues Backup erstellen\" name=\"create\" /></p>
@@ -65,7 +66,7 @@
 		{
 			$cnt=0;
 			echo "<table class=\"tb\" style=\"width:auto;\"><tr><th>Name</th><th>Grösse</th><th>Optionen</th></tr>";
-			$bfiles = DBManager::getInstance()->getBackupImages(0);
+			$bfiles = DBManager::getInstance()->getBackupImages($dir, 0);
 
 			foreach ($bfiles as $f)
 			{

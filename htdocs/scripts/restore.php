@@ -32,15 +32,16 @@
 	try {
 	if (include("inc/bootstrap.inc.php"))
 	{	
+		$dir = DBManager::getBackupDir();
 		if (isset($_SERVER['argv'][1]) && $_SERVER['argv'][1]!="")
 		{
-			DBManager::getInstance()->restoreDB($_SERVER['argv'][1]);
+			DBManager::getInstance()->restoreDB($dir, $_SERVER['argv'][1]);
 		}
 		else
 		{
 			echo "Usage: ".$_SERVER['argv'][0]." [restorepoint]\n\n";
 			echo "Available restorepoints:\n\n";
-			$dates = DBManager::getInstance()->getBackupImages();
+			$dates = DBManager::getInstance()->getBackupImages($dir);
 			foreach ($dates as $f)
 			{
 				echo "$f\n";

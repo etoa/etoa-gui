@@ -378,148 +378,114 @@ class DBManager implements ISingleton	{
 		return $ores;
 	}
 	
-	public function backupDB()
+	public function backupDB($backupDir, $gzip)
 	{
 		$rtn = false;
 		
-		if (UNIX)
-		{
-			$mysqldump = "mysqldump";
-		}
-		else if (WINDOWS)
-		{
-			$mysqldump = WINDOWS_MYSQLDUMP_PATH;
-		}
+		$mysqldump = WINDOWS ? WINDOWS_MYSQLDUMP_PATH : "mysqldump";
 		
-		if (UNIX || WINDOWS) 
-		{
-			$cfg = Config::getInstance();
-
-			$log = "Starte Backup...\n";
-			$tmr = timerStart();				
-			
-			$backupDir = self::getBackupDir();
-			if ($backupDir != null) 
+		$log = "Starte Backup...\n";
+		$tmr = timerStart();
+		
+		if (is_dir($backupDir)) 
+		{		
+			$file = $backupDir."/".$this->getDbName()."-".date("Y-m-d-H-i");
+			$file_wo_path = $this->getDbName()."-".date("Y-m-d-H-i");
+			$result = shell_exec($mysqldump." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." > ".$file.".sql");
+			if ($result=="")
 			{
-				// Remove old backup files
-				self::removeOldBackups($backupDir, $cfg->backup_retention_time);
-		
-				$file = $backupDir."/".$this->getDbName()."-".date("Y-m-d-H-i");
-				$file_wo_path = $this->getDbName()."-".date("Y-m-d-H-i");
-				$result = shell_exec($mysqldump." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." > ".$file.".sql");
-				if ($result=="")
+				if ($gzip && UNIX)
 				{
-					if ($cfg->backup_use_gzip=="1" && UNIX)
+					$result = shell_exec("gzip ".$file.".sql");
+					if ($result!="")
 					{
-						$result = shell_exec("gzip ".$file.".sql");
-						if ($result!="")
-						{
-							echo "Error while zipping Backup-Dump $file: $result\n";
-						}
-						else
-						{
-							$log.= "GZIP Backup erstellt! Grösse: ".byte_format(filesize($file.".sql.gz"));
-							$rtn = true;
-						}
+						echo "Error while zipping Backup-Dump $file: $result\n";
 					}
 					else
 					{
-						$log.= "Backup erstellt! Grösse: ".byte_format(filesize($file.".sql"));
+						$log.= "GZIP Backup erstellt! Grösse: ".byte_format(filesize($file.".sql.gz"));
 						$rtn = true;
 					}
 				}
 				else
 				{
-					echo "Error while creating Backup-Dump $file: $result\n";		
-					$log.= "FEHLER beim erstellen der Datei $file: $result";					
+					$log.= "Backup erstellt! Grösse: ".byte_format(filesize($file.".sql"));
+					$rtn = true;
 				}
 			}
 			else
 			{
-				echo "Error while creating Backup-Dump: Backup directory does not exist\n";		
-				$log.= "FEHLER beim erstellen des Backups: Das Backup Verzeichnis existiert nicht!";					
+				echo "Error while creating Backup-Dump $file: $result\n";		
+				$log.= "FEHLER beim erstellen der Datei $file: $result";					
 			}
-			add_log (15,"[b]Backup[/b]\nGesamtdauer: ".timerStop($tmr)."\n\n".$log);			
 		}
 		else
 		{
-			echo "Die Backup-Funktion ist auf diesem System nicht verfügbar!";
+			echo "Error while creating Backup-Dump: Backup directory $backupDir does not exist\n";		
+			$log.= "FEHLER beim erstellen des Backups: Das Backup Verzeichnis $backupDir existiert nicht!";					
 		}
+		add_log (15,"[b]Backup[/b]\nGesamtdauer: ".timerStop($tmr)."\n\n".$log);			
 		return $rtn;
 	}
 	
-	public function restoreDB($arg)
+	public function restoreDB($backupDir, $arg)
 	{
 		$rtn = false;
+
+		$mysql = WINDOWS ? WINDOWS_MYSQL_PATH : "mysql";
 		
-		if (UNIX)
-		{
-			$mysql = "mysql";
-		}
-		else if (WINDOWS)
-		{
-			$mysql = WINDOWS_MYSQL_PATH;
-		}
+		$mtx = new Mutex();
+		$mtx->acquire();
 		
-		if (UNIX || WINDOWS)
+		if (is_dir($backupDir)) 
 		{
-			$mtx = new Mutex();
-			$mtx->acquire();
-			
-			$backupDir = self::getBackupDir();
-			if ($backupDir != null) 
+			$file = $backupDir."/".$this->getDbName()."-".$arg;
+			if (UNIX && file_exists($file.".sql.gz"))
 			{
-				$file = $backupDir."/".$this->getDbName()."-".$arg;
-				if (file_exists($file.".sql.gz"))
-				{
-					$result = shell_exec("gunzip ".$file.".sql.gz");
-					if ($result=="")
-					{
-						$result = shell_exec($mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." < ".$file.".sql");
-						if ($result!="")
-						{
-							echo "Error while restoring backup: $result\n";
-						}
-						else
-							$rtn = true;
-						shell_exec("gzip ".$file.".sql");
-					}
-					else
-						echo "Error while unzipping Backup-Dump $file: $result\n";
-				}
-				elseif (file_exists($file.".sql"))
+				$result = shell_exec("gunzip ".$file.".sql.gz");
+				if ($result=="")
 				{
 					$result = shell_exec($mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." < ".$file.".sql");
 					if ($result!="")
+					{
 						echo "Error while restoring backup: $result\n";
+					}
 					else
 						$rtn = true;
+					shell_exec("gzip ".$file.".sql");
 				}
 				else
-				{
-					echo "Error: File $file not found!\n";	
-				}
+					echo "Error while unzipping Backup-Dump $file: $result\n";
+			}
+			elseif (file_exists($file.".sql"))
+			{
+				$result = shell_exec($mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." < ".$file.".sql");
+				if ($result!="")
+					echo "Error while restoring backup: $result\n";
+				else
+					$rtn = true;
 			}
 			else
 			{
-				echo "Error: Backup directory does not exist!\n";	
+				echo "Error: File $file not found!\n";	
 			}
-			
-			add_log (15,"[b]Datenbank-Restore[/b]\n\nDie Datenbank wurde von der Quelle [b]".$file."[/b] wiederhergestellt!\n");			
-			$mtx->release();			
 		}
 		else
 		{
-			echo "Die Restore-Funktion ist auf diesem System nicht verfügbar!";
+			echo "Error: Backup directory $backupDir does not exist!\n";	
 		}
+		
+		add_log (15,"[b]Datenbank-Restore[/b]\n\nDie Datenbank wurde von der Quelle [b]".$file."[/b] wiederhergestellt!\n");			
+
+		$mtx->release();			
+
 		return $rtn;
 	}	
 	
-	public function getBackupImages($strip=1)
+	public function getBackupImages($dir, $strip=1)
 	{
 		$bfiles=array();
-		$dir = self::getBackupDir();
-		if ($dir != null) 
+		if ($dir != null && is_dir($dir)) 
 		{
 			if ($d = opendir($dir))
 			{

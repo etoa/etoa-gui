@@ -6,8 +6,23 @@
 	{		
 		function run()
 		{	
-			DBManager::getInstance()->backupDB();
-			return "Backup erstellt";
+			$cfg = Config::getInstance();
+			
+			$backupDir = DBManager::getBackupDir();
+			$gzip = $cfg->backup_use_gzip=="1";
+			
+			if ($backupDir != null) 
+			{
+				// Remove old backup files
+				DBManager::removeOldBackups($backupDir, $cfg->backup_retention_time);
+				
+				DBManager::getInstance()->backupDB($backupDir, $gzip);
+				return "Backup erstellt";
+			}
+			else
+			{
+				return "Backup konnte nicht erstellt werden, Backup Verzeichnis existiert nicht!";
+			}
 		}
 		
 		function getDescription() {
