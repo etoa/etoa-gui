@@ -6,12 +6,34 @@
 		{
 			try
 			{
-				$tr = new PeriodicTaskRunner();
-				cms_ok_msg($tr->runTask('CreateBackupTask'));
+				$dir = DBManager::getBackupDir();
+				$gzip = Config::getInstance()->backup_use_gzip=="1";
+			
+				// Acquire mutex
+				$mtx = new Mutex();
+				$mtx->acquire();
+			
+				// Do the backup
+				$log = DBManager::getInstance()->backupDB($dir, $gzip);
+				
+				// Write log
+				Log::add(Log::F_SYSTEM, Log::INFO, "[b]Datenbank-Backup[/b]\n".$log);
+				
+				// Show message
+				cms_ok_msg($log);
 			}
 			catch (Exception $e)
 			{
-				cms_err_msg("Beim Ausf&uuml;hren des Backup-Befehls trat ein Fehler auf! ".$e->getMessage());
+				// Write log
+				Log::add(Log::F_SYSTEM, Log::ERROR, "[b]Datenbank-Backup[/b]\nFehler: ".$e->getMessage());
+			
+				// Show message
+				cms_err_msg("Beim Ausf&uuml;hren des Backup-Befehls trat ein Fehler auf: ".$e->getMessage());
+			}
+			finally 
+			{
+				// Release mutex
+				$mtx->release();
 			}
 		}
 
@@ -21,23 +43,26 @@
 			// Sicherungskopie anlegen
 			try 
 			{
-				$tr = new PeriodicTaskRunner();
-				$tr->runTask('CreateBackupTask');
-				
 				$dir = DBManager::getBackupDir();
 				$restorePoint = $_GET['date'];
+				$gzip = Config::getInstance()->backup_use_gzip=="1";
 				
 				try 
 				{
 					// Acquire mutex
 					$mtx = new Mutex();
 					$mtx->acquire();
+					
+					// Backup current database
+					$log = "Anlegen einer Sicherungskopie: ";
+					$log.= DBManager::getInstance()->backupDB($dir, $gzip);
 				
 					// Restore database
-					DBManager::getInstance()->restoreDB($dir, $restorePoint);
+					$log.= "\nWiederherstellen der Datenbank: ";
+					$log.= DBManager::getInstance()->restoreDB($dir, $restorePoint);
 				
 					// Write log
-					Log::add(Log::F_UPDATES, Log::INFO, "[b]Datenbank-Restore[/b]\nDie Datenbank wurde vom Backup [b]".$restorePoint."[/b] aus dem Verzeichnis [b]".$dir."[/b] wiederhergestellt.");
+					Log::add(Log::F_SYSTEM, Log::INFO, "[b]Datenbank-Restore[/b]\n".$log);
 
 					// Show message
 					cms_ok_msg("Das Backup ".$restorePoint." wurde wiederhergestellt und es wurde eine Sicherungskopie der vorherigen Daten angelegt!");
@@ -45,7 +70,7 @@
 				catch (Exception $e) 
 				{
 					// Write log
-					Log::add(Log::F_UPDATES, Log::ERROR, "[b]Datenbank-Restore[/b]\nDie Datenbank konnte nicht vom Backup [b]".$restorePoint."[/b] aus dem Verzeichnis [b]".$dir."[/b] wiederhergestellt werden: ".$e->getMessage());
+					Log::add(Log::F_SYSTEM, Log::ERROR, "[b]Datenbank-Restore[/b]\nDie Datenbank konnte nicht vom Backup [b]".$restorePoint."[/b] aus dem Verzeichnis [b]".$dir."[/b] wiederhergestellt werden: ".$e->getMessage());
 					
 					// Show message
 					cms_err_msg("Beim Ausf&uuml;hren des Restore-Befehls trat ein Fehler auf! ".$e->getMessage());
@@ -95,10 +120,9 @@
 
 			foreach ($bfiles as $f)
 			{
-				$sr = round(filesize($dir."/".$f)/1024/1024,2);
-				$date=substr($f,strpos($f,"-")+1,16);
+				$date = substr($f,strpos($f,"-")+1,16);
 				echo "<tr><td>".$f."</td>";
-				echo "<td>".$sr." MB</td>";
+				echo "<td>".byte_format(filesize($dir."/".$f))."</td>";
 				echo "<td>
 					<a href=\"?page=$page&amp;sub=backup&amp;action=backuprestore&amp;date=$date\" onclick=\"return confirm('Soll die Datenbank mit den im Backup $date gespeicherten Daten &uuml;berschrieben werden?');\">Wiederherstellen</a> &nbsp; 
 					<a href=\"".createDownloadLink($dir."/".$f)."\">Download</a>

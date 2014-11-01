@@ -380,66 +380,50 @@ class DBManager implements ISingleton	{
 	
 	public function backupDB($backupDir, $gzip)
 	{
-		$rtn = false;
-		
 		$mysqldump = WINDOWS ? WINDOWS_MYSQLDUMP_PATH : "mysqldump";
-		
-		$log = "Starte Backup...\n";
-		$tmr = timerStart();
 		
 		if (is_dir($backupDir)) 
 		{		
-			$file = $backupDir."/".$this->getDbName()."-".date("Y-m-d-H-i");
-			$file_wo_path = $this->getDbName()."-".date("Y-m-d-H-i");
-			$result = shell_exec($mysqldump." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." > ".$file.".sql");
-			if ($result=="")
+			$file = $backupDir."/".$this->getDbName()."-".date("Y-m-d-H-i").".sql";
+			
+			if ($gzip)
 			{
-				if ($gzip && UNIX)
+				if (!UNIX)
 				{
-					$result = shell_exec("gzip ".$file.".sql");
-					if ($result!="")
-					{
-						echo "Error while zipping Backup-Dump $file: $result\n";
-					}
-					else
-					{
-						$log.= "GZIP Backup erstellt! Grösse: ".byte_format(filesize($file.".sql.gz"));
-						$rtn = true;
-					}
-				}
-				else
-				{
-					$log.= "Backup erstellt! Grösse: ".byte_format(filesize($file.".sql"));
-					$rtn = true;
-				}
+					throw new Exception("Das Erstellen von GZIP Backups wird nur auf UNIX Systemen unterstützt!");
+				}			
+				$file.=".gz";
+				$cmd = $mysqldump." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." | gzip > ".$file;
 			}
 			else
 			{
-				echo "Error while creating Backup-Dump $file: $result\n";		
-				$log.= "FEHLER beim erstellen der Datei $file: $result";					
+				$cmd = $mysqldump." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." > ".$file;
 			}
+			$result = shell_exec($cmd);
+			if (!empty($result))
+			{
+				throw new Exception("Fehler beim Erstellen der Backup-Datei ".$file.": ".$result);					
+			}
+			return "Backup ".$file." erstellt, Dateigrösse: ".byte_format(filesize($file));
 		}
 		else
 		{
-			echo "Error while creating Backup-Dump: Backup directory $backupDir does not exist\n";		
-			$log.= "FEHLER beim erstellen des Backups: Das Backup Verzeichnis $backupDir existiert nicht!";					
+			throw new Exception("Das Backup Verzeichnis ".$backupDir." existiert nicht!");
 		}
-		add_log (15,"[b]Backup[/b]\nGesamtdauer: ".timerStop($tmr)."\n\n".$log);			
-		return $rtn;
 	}
 	
-	public function restoreDB($backupDir, $arg)
+	public function restoreDB($backupDir, $restorePoint)
 	{
 		$mysql = WINDOWS ? WINDOWS_MYSQL_PATH : "mysql";
 		
 		if (is_dir($backupDir)) 
 		{
-			$file = $backupDir."/".$this->getDbName()."-".$arg.".sql";
+			$file = $backupDir."/".$this->getDbName()."-".$restorePoint.".sql";
 			if (file_exists($file.".gz"))
 			{
 				if (!UNIX)
 				{
-					throw new Exception("Das Entpacken von GZIP Backups wird nur auf UNIX Systemen unterstützt");
+					throw new Exception("Das Entpacken von GZIP Backups wird nur auf UNIX Systemen unterstützt!");
 				}
 				$cmd = "gunzip < ".$file.".gz | ".$mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName();
 			}
@@ -450,10 +434,11 @@ class DBManager implements ISingleton	{
 			if (isset($cmd))
 			{
 				$result = shell_exec($cmd);
-				if ($result!="")
+				if (!empty($result))
 				{
 					throw new Exception("Error while restoring backup: ".$result);
 				}
+				return "Die Datenbank wurde vom Backup [b]".$restorePoint."[/b] aus dem Verzeichnis [b]".$backupDir."[/b] wiederhergestellt.";
 			}
 			else
 			{
@@ -462,7 +447,7 @@ class DBManager implements ISingleton	{
 		}
 		else
 		{
-			throw new Exception("Backup directory $backupDir does not exist!");	
+			throw new Exception("Backup directory $backupDir does not exist!");
 		}
 	}	
 	
@@ -480,7 +465,7 @@ class DBManager implements ISingleton	{
 						if ($strip == 0)
 							array_push($bfiles, $f);
 						else
-							array_push($bfiles, preg_replace(array('/\.sql$/', '/^'.$this->getDbName().'-/'), array('', ''), $f));
+							array_push($bfiles, preg_replace(array('/\.sql(.gz)?$/', '/^'.$this->getDbName().'-/'), array('', ''), $f));
 					}
 				}
 				rsort($bfiles);

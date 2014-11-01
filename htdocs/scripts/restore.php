@@ -30,6 +30,7 @@
 		if (include("inc/bootstrap.inc.php"))
 		{	
 			$dir = DBManager::getBackupDir();
+			
 			if (!empty($_SERVER['argv'][1]))
 			{
 				$restorePoint = $_SERVER['argv'][1];
@@ -43,15 +44,15 @@
 					$mtx->acquire();
 					
 					// Restore database
-					DBManager::getInstance()->restoreDB($dir, $restorePoint);
+					$log = DBManager::getInstance()->restoreDB($dir, $restorePoint);
 					
 					// Write log
-					Log::add(Log::F_UPDATES, Log::INFO, "[b]Datenbank-Restore[/b]\nDie Datenbank wurde via Skript vom Backup [b]".$restorePoint."[/b] aus dem Verzeichnis [b]".$dir."[/b] wiederhergestellt.");
+					Log::add(Log::F_SYSTEM, Log::INFO, "[b]Datenbank-Restore Skript[/b]\n".$log);
 				}
 				catch (Exception $e) 
 				{
 					// Write log
-					Log::add(Log::F_UPDATES, Log::ERROR, "[b]Datenbank-Restore[/b]\nDie Datenbank konnte nicht vom Backup [b]".$restorePoint."[/b] aus dem Verzeichnis [b]".$dir."[/b] wiederhergestellt werden: ".$e->getMessage());
+					Log::add(Log::F_SYSTEM, Log::ERROR, "[b]Datenbank-Restore Skript[/b]\nDie Datenbank konnte nicht vom Backup [b]".$restorePoint."[/b] aus dem Verzeichnis [b]".$dir."[/b] wiederhergestellt werden: ".$e->getMessage());
 					
 					// Show output
 					echo "Fehler: ".$e->getMessage();

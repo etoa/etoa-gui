@@ -16,8 +16,8 @@
 				// Remove old backup files
 				DBManager::removeOldBackups($backupDir, $cfg->backup_retention_time);
 				
-				DBManager::getInstance()->backupDB($backupDir, $gzip);
-				return "Backup erstellt";
+				$log = DBManager::getInstance()->backupDB($backupDir, $gzip);
+				return $log;
 			}
 			else
 			{
