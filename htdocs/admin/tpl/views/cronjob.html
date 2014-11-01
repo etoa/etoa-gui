@@ -10,6 +10,7 @@
 
 {if $is_unix eq true}
 	{if $crontab_check}
+		<h3>Cronjob</h3>
 		{msg type="ok" text="Cronjob ist korrekt eingerichtet!"}
 	{else}
 		{msg type="warn" text="Cronjob ist möglicherweise nicht korrekt eingerichtet!"}
@@ -26,11 +27,14 @@
 			</li>
 			<li>Resultat prüfen: <pre class="code">crontab -l</pre></li>
 		</ol>
+		
+		<h3>Aktuelle Crontab</h3>
+		<p>User: <code>{$crontab_user}</code></p>
+		<pre class="code">{$crontab}</pre>
 	{/if}
-
-	<h3>Aktuelle Crontab</h3>
-	<p>User: <code>{$crontab_user}</code></p>
-	<pre class="code">{$crontab}</pre>
+{else}
+	<h3>Cronjob</h3>
+	{msg type="warn" text="Cronjobs sind nur auf UNIX-Systemen verfügbar!"}
 {/if}
 
 {if $periodictasks|count > 0}
