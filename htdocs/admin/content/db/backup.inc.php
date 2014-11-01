@@ -6,12 +6,34 @@
 		{
 			try
 			{
-				$tr = new PeriodicTaskRunner();
-				ok_msg($tr->runTask('CreateBackupTask'));
+				$dir = DBManager::getBackupDir();
+				$gzip = Config::getInstance()->backup_use_gzip=="1";
+			
+				// Acquire mutex
+				$mtx = new Mutex();
+				$mtx->acquire();
+			
+				// Do the backup
+				$log = DBManager::getInstance()->backupDB($dir, $gzip);
+				
+				// Write log
+				Log::add(Log::F_SYSTEM, Log::INFO, "[b]Datenbank-Backup[/b]\n".$log);
+				
+				// Show message
+				cms_ok_msg($log);
 			}
 			catch (Exception $e)
 			{
-				error_msg("Beim Ausf&uuml;hren des Backup-Befehls trat ein Fehler auf! ".$e->getMessage());
+				// Write log
+				Log::add(Log::F_SYSTEM, Log::ERROR, "[b]Datenbank-Backup[/b]\nFehler: ".$e->getMessage());
+			
+				// Show message
+				cms_err_msg("Beim Ausf&uuml;hren des Backup-Befehls trat ein Fehler auf: ".$e->getMessage());
+			}
+			finally 
+			{
+				// Release mutex
+				$mtx->release();
 			}
 		}
 
@@ -21,13 +43,42 @@
 			// Sicherungskopie anlegen
 			try 
 			{
-				$tr = new PeriodicTaskRunner();
-				$tr->runTask('CreateBackupTask');
+				$dir = DBManager::getBackupDir();
+				$restorePoint = $_GET['date'];
+				$gzip = Config::getInstance()->backup_use_gzip=="1";
 				
-				if (DBManager::getInstance()->restoreDB($_GET['date'])) {
-					echo "Das Backup ".$_GET['date']." wurde wiederhergestellt und es wurde eine Sicherungskopie der vorherigen Daten angelegt!<br/><br/>";
-				} else {
-					cms_err_msg("Beim Ausf&uuml;hren des Restore-Befehls trat ein Fehler auf! $result");
+				try 
+				{
+					// Acquire mutex
+					$mtx = new Mutex();
+					$mtx->acquire();
+					
+					// Backup current database
+					$log = "Anlegen einer Sicherungskopie: ";
+					$log.= DBManager::getInstance()->backupDB($dir, $gzip);
+				
+					// Restore database
+					$log.= "\nWiederherstellen der Datenbank: ";
+					$log.= DBManager::getInstance()->restoreDB($dir, $restorePoint);
+				
+					// Write log
+					Log::add(Log::F_SYSTEM, Log::INFO, "[b]Datenbank-Restore[/b]\n".$log);
+
+					// Show message
+					cms_ok_msg("Das Backup ".$restorePoint." wurde wiederhergestellt und es wurde eine Sicherungskopie der vorherigen Daten angelegt!");
+				}
+				catch (Exception $e) 
+				{
+					// Write log
+					Log::add(Log::F_SYSTEM, Log::ERROR, "[b]Datenbank-Restore[/b]\nDie Datenbank konnte nicht vom Backup [b]".$restorePoint."[/b] aus dem Verzeichnis [b]".$dir."[/b] wiederhergestellt werden: ".$e->getMessage());
+					
+					// Show message
+					cms_err_msg("Beim Ausf&uuml;hren des Restore-Befehls trat ein Fehler auf! ".$e->getMessage());
+				}
+				finally 
+				{
+					// Release mutex
+					$mtx->release();
 				}
 			}
 			catch (Exception $e)
@@ -42,7 +93,7 @@
 			$cfg->set("backup_dir", $_POST['backup_dir']);
 			$cfg->set("backup_retention_time", $_POST['backup_retention_time']);
 			$cfg->set("backup_use_gzip", $_POST['backup_use_gzip']);
-			ok_msg("Einstellungen gespeichert");
+			cms_ok_msg("Einstellungen gespeichert");
 		}
 
 		echo $frm->begin();
@@ -55,26 +106,26 @@
 		echo "</fieldset>";
 		echo $frm->end();
 
-		echo "<p>Im Folgenden sind alle verfügbaren Backups aufgelistet. Backups werden durch ein Skript erstellt dass per Cronjob aufgerufen wird.</p>";
+		echo "<p>Im Folgenden sind alle verfügbaren Backups aufgelistet. Backups werden automatisch durch einen periodischen Task erstellt.</p>";
 
 		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
 		echo "<p><input type=\"submit\" value=\"Neues Backup erstellen\" name=\"create\" /></p>
 		 </form>";
-		if (is_dir($cfg->backup_dir) && $d = opendir($cfg->backup_dir))
+		$dir = DBManager::getBackupDir();
+		if ($dir != null)
 		{
 			$cnt=0;
 			echo "<table class=\"tb\" style=\"width:auto;\"><tr><th>Name</th><th>Grösse</th><th>Optionen</th></tr>";
-			$bfiles = DBManager::getInstance()->getBackupImages(0);
+			$bfiles = DBManager::getInstance()->getBackupImages($dir, 0);
 
 			foreach ($bfiles as $f)
 			{
-				$sr = round(filesize($cfg->backup_dir."/".$f)/1024/1024,2);
-				$date=substr($f,strpos($f,"-")+1,16);
+				$date = substr($f,strpos($f,"-")+1,16);
 				echo "<tr><td>".$f."</td>";
-				echo "<td>".$sr." MB</td>";
+				echo "<td>".byte_format(filesize($dir."/".$f))."</td>";
 				echo "<td>
 					<a href=\"?page=$page&amp;sub=backup&amp;action=backuprestore&amp;date=$date\" onclick=\"return confirm('Soll die Datenbank mit den im Backup $date gespeicherten Daten &uuml;berschrieben werden?');\">Wiederherstellen</a> &nbsp; 
-					<a href=\"".createDownloadLink($cfg->backup_dir."/".$f)."\">Download</a>
+					<a href=\"".createDownloadLink($dir."/".$f)."\">Download</a>
 				</td></tr>";
 				$cnt++;
 			}
@@ -82,11 +133,9 @@
 			{
 				echo "<tr><td colspan=\"3\"><i>Es sind noch keine Dateien vorhanden!</i></td></tr>";
 			}
-
 			echo "</table>";
-			closedir($d);
 		}
 		else {
-			cms_err_msg("Das Verzeichnis ".$cfg->backup_dir." wurde nicht gefunden!");
+			cms_err_msg("Das Backupverzeichnis wurde nicht gefunden!");
 		}
 ?>

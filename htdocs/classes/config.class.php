@@ -53,7 +53,7 @@ class Config implements ISingleton
 			config;");
 		if (mysql_num_rows($res)>0) {
 			while ($arr = mysql_fetch_assoc($res)) {
-				$this->_items[$arr['config_name']] = new ConfigItem(stripslashes($arr['config_value']),stripslashes($arr['config_param1']),stripslashes($arr['config_param2']));
+				$this->_items[$arr['config_name']] = new ConfigItem($arr['config_value'], $arr['config_param1'], $arr['config_param2']);
 			}
 		} else {
 			err_msg("Config table empty!");
@@ -188,7 +188,7 @@ class Config implements ISingleton
 				dbquery("TRUNCATE TABLE config;");
 				$cnt = 0;
 				foreach ($xml->items->item as $i) {
-					dbquery("
+					dbQuerySave("
 					INSERT INTO
 						config
 					(
@@ -199,12 +199,14 @@ class Config implements ISingleton
 					)
 					VALUES
 					(
-						'".$i['name']."',
-						'".(isset($i->v) ? addslashes($i->v) : '')."',
-						'".(isset($i->p1) ? addslashes($i->p1) : '')."',
-						'".(isset($i->p2) ? addslashes($i->p2) : '')."'
+						?, ?, ?, ?
 					)
-					;");
+					;", array(
+						$i['name'],
+						(isset($i->v) ? $i->v : ''),
+						(isset($i->p1) ? $i->p1 : ''),
+						(isset($i->p2) ? $i->p2 : '')
+					));
 					$cnt++;
 				}
 				$this->load();

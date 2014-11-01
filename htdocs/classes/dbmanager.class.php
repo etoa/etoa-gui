@@ -378,135 +378,124 @@ class DBManager implements ISingleton	{
 		return $ores;
 	}
 	
-	public function backupDB()
+	public function backupDB($backupDir, $gzip)
 	{
-		$rtn = false;
-		if (UNIX)
-		{
-			$cfg = Config::getInstance();
-
-			$log = "Starte Backup...\n";
-			$tmr = timerStart();				
+		$mysqldump = WINDOWS ? WINDOWS_MYSQLDUMP_PATH : "mysqldump";
+		
+		if (is_dir($backupDir)) 
+		{		
+			$file = $backupDir."/".$this->getDbName()."-".date("Y-m-d-H-i").".sql";
 			
-			// Alte Backups löschen
-			$cmd = "find ".$cfg->backup_dir." -name \"".$this->getDbName()."*.sql.gz\" -mtime +".$cfg->backup_retention_time." -exec rm -f {} \;";
-			passthru($cmd);
-			$cmd = "find ".$cfg->backup_dir." -name \"".$this->getDbName()."*.sql\" -mtime +".$cfg->backup_retention_time." -exec rm -f {} \;";
-			passthru($cmd);
-	
-			$file = $cfg->backup_dir."/".$this->getDbName()."-".date("Y-m-d-H-i");
-			$file_wo_path = $this->getDbName()."-".date("Y-m-d-H-i");
-			$result = shell_exec("mysqldump -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." > ".$file.".sql");
-			if ($result=="")
+			if ($gzip)
 			{
-				if ($cfg->backup_use_gzip=="1")
+				if (!UNIX)
 				{
-					$result = shell_exec("gzip ".$file.".sql");
-					if ($result!="")
-					{
-						echo "Error while zipping Backup-Dump $file: $result\n";
-					}
-					else
-					{
-						$log.= "GZIP Backup erstellt! Grösse: ".byte_format(filesize($file.".sql.gz"));
-						$rtn = true;
-					}
-				}
-				else
-				{
-					$log.= "Backup erstellt! Grösse: ".byte_format(filesize($file.".sql"));
-					$rtn = true;
-				}
+					throw new Exception("Das Erstellen von GZIP Backups wird nur auf UNIX Systemen unterstützt!");
+				}			
+				$file.=".gz";
+				$cmd = $mysqldump." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." | gzip > ".$file;
 			}
 			else
 			{
-				echo "Error while creating Backup-Dump $file: $result\n";		
-				$log.= "FEHLER beim erstellen der Datei $file: $result";					
+				$cmd = $mysqldump." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." > ".$file;
 			}
-			add_log (15,"[b]Backup[/b]\nGesamtdauer: ".timerStop($tmr)."\n\n".$log);			
+			$result = shell_exec($cmd);
+			if (!empty($result))
+			{
+				throw new Exception("Fehler beim Erstellen der Backup-Datei ".$file.": ".$result);					
+			}
+			return "Backup ".$file." erstellt, Dateigrösse: ".byte_format(filesize($file));
 		}
 		else
 		{
-			echo "Die Backup-Funktion ist nur auf UNIX-Systemen verfügbar!";
+			throw new Exception("Das Backup Verzeichnis ".$backupDir." existiert nicht!");
 		}
-		return $rtn;
 	}
 	
-	public function restoreDB($arg)
+	public function restoreDB($backupDir, $restorePoint)
 	{
-		$rtn = false;
-		if (UNIX)
+		$mysql = WINDOWS ? WINDOWS_MYSQL_PATH : "mysql";
+		
+		if (is_dir($backupDir)) 
 		{
-			$cfg = Config::getInstance();
-			
-			$mtx = new Mutex();
-			$mtx->acquire();
-			$file = $cfg->backup_dir."/".$this->getDbName()."-".$arg;
-			if (file_exists($file.".sql.gz"))
+			$file = $backupDir."/".$this->getDbName()."-".$restorePoint.".sql";
+			if (file_exists($file.".gz"))
 			{
-				$result = shell_exec("gunzip ".$file.".sql.gz");
-				if ($result=="")
+				if (!UNIX)
 				{
-					$result = shell_exec("mysql -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." < ".$file.".sql");
-					if ($result!="")
-					{
-						echo "Error while restoring backup: $result\n";
-					}
-					else
-						$rtn = true;
-					shell_exec("gzip ".$file.".sql");
+					throw new Exception("Das Entpacken von GZIP Backups wird nur auf UNIX Systemen unterstützt!");
 				}
-				else
-					echo "Error while unzipping Backup-Dump $file: $result\n";
+				$cmd = "gunzip < ".$file.".gz | ".$mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName();
 			}
-			elseif (file_exists($file.".sql"))
+			elseif (file_exists($file))
 			{
-				$result = shell_exec("mysql -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." < ".$file.".sql");
-				if ($result!="")
-					echo "Error while restoring backup: $result\n";
-				else
-					$rtn = true;
+				$cmd = $mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." < ".$file;
+			}
+			if (isset($cmd))
+			{
+				$result = shell_exec($cmd);
+				if (!empty($result))
+				{
+					throw new Exception("Error while restoring backup: ".$result);
+				}
+				return "Die Datenbank wurde vom Backup [b]".$restorePoint."[/b] aus dem Verzeichnis [b]".$backupDir."[/b] wiederhergestellt.";
 			}
 			else
 			{
-				echo "Error: File $file not found!\n";	
+				throw new Exception("Backup file $file not found!");	
 			}
-			
-			add_log (15,"[b]Datenbank-Restore[/b]\n\nDie Datenbank wurde von der Quelle [b]".$file."[/b] wiederhergestellt!\n");			
-			$mtx->release();			
 		}
 		else
 		{
-			echo "Die Backup-Funktion ist nur auf UNIX-Systemen verfügbar!";
+			throw new Exception("Backup directory $backupDir does not exist!");
 		}
-		return $rtn;
 	}	
 	
-	public function getBackupImages($strip=1)
+	public function getBackupImages($dir, $strip=1)
 	{
-		if (UNIX)
+		$bfiles=array();
+		if ($dir != null && is_dir($dir)) 
 		{
-			$cfg = Config::getInstance();
-			if ($d = @opendir($cfg->backup_dir))
+			if ($d = opendir($dir))
 			{
-				$bfiles=array();
 				while ($f = readdir($d))
 				{
-					if (is_file($cfg->backup_dir."/".$f) && stristr($f,".sql") && preg_match('/^'.$this->getDbName().'/i',$f)==1)
+					if (is_file($dir."/".$f) && stristr($f,".sql") && preg_match('/^'.$this->getDbName().'/i',$f)==1)
 					{
 						if ($strip == 0)
 							array_push($bfiles, $f);
 						else
-							array_push($bfiles, preg_replace(array('/\.sql$/', '/^'.$this->getDbName().'-/'), array('', ''), $f));
+							array_push($bfiles, preg_replace(array('/\.sql(.gz)?$/', '/^'.$this->getDbName().'-/'), array('', ''), $f));
 					}
 				}
 				rsort($bfiles);
-				return $bfiles;
 			}
 		}
-		else
-		{
-			echo "Die Backup-Funktion ist nur auf UNIX-Systemen verfügbar!";
+		return $bfiles;
+	}
+	
+	/**
+	* Returns the backup directory path, if it exists
+	*/
+	public static function getBackupDir() {
+		$cfg = Config::getInstance();
+		$backupDir = $cfg->backup_dir;
+		if (!empty($backupDir) && is_dir($backupDir)) {
+			return $backupDir;
+		}
+		return null;
+	}
+	
+	/**
+	* Removes old backup files
+	*/
+	public static function removeOldBackups($dir, $days) {
+		$time = time();
+		$files = array_merge(glob($dir."/*.sql"), glob($dir."/*.sql.gz"));
+		foreach ($files as $f) {
+			if (is_file($f) && $time -filemtime($f) >= $days * 86400) {
+				unlink($f);
+			}
 		}
 	}
 	
