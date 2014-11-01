@@ -5,7 +5,7 @@
 {if $warnmsg|default:'' ne ""}{msg type="warn" text=$warnmsg}{/if}
 
 {if "{cfg key="update_enabled"}" ne 1}
-	{msg type="info" title="Updates deaktiviert" text="Periodische Updates sind momentan deaktiviert! <a href=\"?page=eventhandler&sub=cronjob&activateupdate=1\">Aktivieren</a>"}
+	{msg type="info" title="Updates deaktiviert" text="Periodische Updates sind momentan deaktiviert! <a href=\"?page=$page&activateupdate=1\">Aktivieren</a>"}
 {/if}
 
 {if $is_unix eq true}

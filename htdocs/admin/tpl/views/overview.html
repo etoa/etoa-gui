@@ -26,7 +26,7 @@
 {/if}
 
 {if "{cfg key="update_enabled"}" ne 1}
-	{msg type="info" title="Updates deaktiviert" text="Periodische Updates sind momentan deaktiviert! <a href=\"?page=eventhandler&sub=cronjob&activateupdate=1\">Aktivieren</a>"}
+	{msg type="info" title="Updates deaktiviert" text="Periodische Updates sind momentan deaktiviert! <a href=\"?page=cronjob&activateupdate=1\">Aktivieren</a>"}
 {/if}
 
 {ifadminrole provided=$user_roles required="master,super-admin,game-admin,trial-game-admin"}
