@@ -25,10 +25,6 @@
 		
 		$tpl->assign('crontab_check', in_array($cronjob, $crontab));
 	}
-	else
-	{
-		$tpl->assign('warnmsg', "Cronjobs sind nur auf UNIX-Systemen verfügbar!");
-	}
 	
 	// Load periodic tasks from configuration
 	$periodictasks = array();
