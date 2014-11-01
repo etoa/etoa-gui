@@ -16,6 +16,9 @@
 				// Do the backup
 				$log = DBManager::getInstance()->backupDB($dir, $gzip);
 				
+				// Release mutex
+				$mtx->release();
+				
 				// Write log
 				Log::add(Log::F_SYSTEM, Log::INFO, "[b]Datenbank-Backup[/b]\n".$log);
 				
@@ -24,16 +27,14 @@
 			}
 			catch (Exception $e)
 			{
+				// Release mutex
+				$mtx->release();
+			
 				// Write log
 				Log::add(Log::F_SYSTEM, Log::ERROR, "[b]Datenbank-Backup[/b]\nFehler: ".$e->getMessage());
 			
 				// Show message
 				cms_err_msg("Beim Ausf&uuml;hren des Backup-Befehls trat ein Fehler auf: ".$e->getMessage());
-			}
-			finally 
-			{
-				// Release mutex
-				$mtx->release();
 			}
 		}
 
@@ -60,6 +61,9 @@
 					// Restore database
 					$log.= "\nWiederherstellen der Datenbank: ";
 					$log.= DBManager::getInstance()->restoreDB($dir, $restorePoint);
+
+					// Release mutex
+					$mtx->release();
 				
 					// Write log
 					Log::add(Log::F_SYSTEM, Log::INFO, "[b]Datenbank-Restore[/b]\n".$log);
@@ -69,16 +73,14 @@
 				}
 				catch (Exception $e) 
 				{
+					// Release mutex
+					$mtx->release();
+
 					// Write log
 					Log::add(Log::F_SYSTEM, Log::ERROR, "[b]Datenbank-Restore[/b]\nDie Datenbank konnte nicht vom Backup [b]".$restorePoint."[/b] aus dem Verzeichnis [b]".$dir."[/b] wiederhergestellt werden: ".$e->getMessage());
 					
 					// Show message
 					cms_err_msg("Beim Ausf&uuml;hren des Restore-Befehls trat ein Fehler auf! ".$e->getMessage());
-				}
-				finally 
-				{
-					// Release mutex
-					$mtx->release();
 				}
 			}
 			catch (Exception $e)

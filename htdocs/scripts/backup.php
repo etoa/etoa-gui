@@ -42,12 +42,18 @@
 				
 				// Restore database
 				$log = DBManager::getInstance()->backupDB($dir, $gzip);
+
+				// Release mutex
+				$mtx->release();
 				
 				// Write log
 				Log::add(Log::F_SYSTEM, Log::INFO, "[b]Datenbank-Backup Skript[/b]\n".$log);
 			}
 			catch (Exception $e) 
 			{
+				// Release mutex
+				$mtx->release();
+
 				// Write log
 				Log::add(Log::F_SYSTEM, Log::ERROR, "[b]Datenbank-Backup Skript[/b]\nDie Datenbank konnte nicht in das Verzeichnis [b]".$dir."[/b] gesichert werden: ".$e->getMessage());
 				
@@ -56,11 +62,6 @@
 				
 				// Return code
 				$ret = 1;
-			}
-			finally
-			{
-				// Release mutex
-				$mtx->release();
 			}
 			
 			exit($ret);

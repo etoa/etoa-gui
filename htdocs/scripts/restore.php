@@ -45,12 +45,18 @@
 					
 					// Restore database
 					$log = DBManager::getInstance()->restoreDB($dir, $restorePoint);
+
+					// Release mutex
+					$mtx->release();
 					
 					// Write log
 					Log::add(Log::F_SYSTEM, Log::INFO, "[b]Datenbank-Restore Skript[/b]\n".$log);
 				}
 				catch (Exception $e) 
 				{
+					// Release mutex
+					$mtx->release();
+
 					// Write log
 					Log::add(Log::F_SYSTEM, Log::ERROR, "[b]Datenbank-Restore Skript[/b]\nDie Datenbank konnte nicht vom Backup [b]".$restorePoint."[/b] aus dem Verzeichnis [b]".$dir."[/b] wiederhergestellt werden: ".$e->getMessage());
 					
@@ -59,11 +65,6 @@
 					
 					// Return code
 					$ret = 1;
-				}
-				finally
-				{
-					// Release mutex
-					$mtx->release();
 				}
 				
 				exit($ret);
