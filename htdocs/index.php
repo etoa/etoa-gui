@@ -364,16 +364,21 @@
 		$tpl->assign("content_for_layout", $ex);
 	}
 	
-	/*
-	ob_start();
-	include("chat/fastchat.php");
-	$tpl->assign("chatstream", ob_get_clean());
-	ob_start();
-	include("chat/fastchatinput.php");
-	$tpl->assign("chatinput", ob_get_clean());
-	*/
-	
-	$tpl->display($layoutTemplate);
+	try {
+		$tpl->display($layoutTemplate);
+	} catch (SmartyException $e) {
+		$tpl->assign('message', $e->getMessage());
+		$func = function($value) { 
+			if (isset($value['file'])) {
+				$value['file'] = substr($value['file'], strlen(__DIR__)+1);
+			}
+			return $value; 
+		};
+		$tpl->assign('trace', array_map($func, $e->getTrace()));
+		$tpl->setView('exception');
+		$tpl->setLayout('empty');
+		$tpl->render();
+	}
 
 	$_SESSION['lastpage']=$page;
 

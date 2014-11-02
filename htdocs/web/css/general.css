@@ -205,3 +205,28 @@
   background:#575763;
 }
 
+/*
+* Exceptions
+*/
+
+.exception-container {
+	margin: 10px;
+}
+
+.exception-message {
+	border: 1px solid #f00;
+	padding: 8px;
+	margin: 20px 0;
+	font-size: 150%;
+}
+
+table.stacktrace {
+	width:100%;
+	border-collapse:collapse;
+}
+
+table.stacktrace td, table.stacktrace th{
+	padding: 3px;
+	text-align: left;
+	border: 1px solid #aaa;
+}
