@@ -2547,7 +2547,7 @@ function imagecreatefromfile($path, $user_functions = false)
 				$cu = new CurrentUser($_SESSION['user_id']);
 
 
-			if ($cu->properties->cssStyle !='')
+			if ($cu->properties->cssStyle !='' && is_dir(DESIGN_DIRECTORY."/".$cu->properties->cssStyle))
 			{
 				define('CSS_STYLE',DESIGN_DIRECTORY."/".$cu->properties->cssStyle);
 			}

@@ -36,7 +36,7 @@
 		}
 	}
 
-	if (isset($cu) && $cu->properties->cssStyle !='')
+	if (isset($cu) && $cu->properties->cssStyle !='' && is_dir(DESIGN_DIRECTORY."/".$cu->properties->cssStyle))
 	{
 		define('CSS_STYLE',DESIGN_DIRECTORY."/".$cu->properties->cssStyle);
 	}
