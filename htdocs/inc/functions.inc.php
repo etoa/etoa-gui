@@ -1237,57 +1237,59 @@
 	/**
 	* Wählt die verschiedenen Designs aus und schreibt sie in ein array. by Lamborghini
 	*/
-	function get_designs($path="")
+	function get_designs()
 	{
-		$designs=array();
-		if ($d=opendir($path.DESIGN_DIRECTORY))
+		$baseDir = RELATIVE_ROOT.DESIGN_DIRECTORY;
+		$designs = array();
+		if ($d = opendir($baseDir))
 		{
-			while ($f=readdir($d))
+			while ($f = readdir($d))
 			{
-				$dir = DESIGN_DIRECTORY."/".$f;
-				if (is_dir($path.$dir) && $f!=".." && $f!=".")
+				$dir = $baseDir."/".$f;
+				if (is_dir($dir) && !preg_match('/^\./', $f))
 				{
-					$file = $path.$dir."/design.xml";
+					$file = $dir."/".DESIGN_CONFIG_FILE_NAME;
 					if (is_file($file))
 					{
+						$designs[$f]['dir'] = $dir;
 						$xml = new XMLReader();
 						$xml->open($file);
-				    while ($xml->read()) 
-				    {
-				        switch ($xml->name) 
-				        {
-				        	case "name":
-				            $xml->read();
-				            $designs[$f]['name']= $xml->value;
-				            $xml->read();
-				            break;
-				        	case "changed":
-				            $xml->read();
-				            $designs[$f]['changed']= $xml->value;
-				            $xml->read();
-				            break;
-				       	 	case "version":
-				            $xml->read();
-				            $designs[$f]['version']= $xml->value;
-				            $xml->read();
-				            break;
-				       	 	case "author":
-				            $xml->read();
-				            $designs[$f]['author']= $xml->value;
-				            $xml->read();
-				            break;
-				       	 	case "email":
-				            $xml->read();
-				            $designs[$f]['email']= $xml->value;
-				            $xml->read();
-				            break;	
-				       	 	case "description":
-				            $xml->read();
-				            $designs[$f]['description']= $xml->value;
-				            $xml->read();
-				            break;						            			            
-				        }
-				    }
+						while ($xml->read()) 
+						{
+							switch ($xml->name) 
+							{
+								case "name":
+									$xml->read();
+									$designs[$f]['name']= $xml->value;
+									$xml->read();
+									break;
+								case "changed":
+									$xml->read();
+									$designs[$f]['changed']= $xml->value;
+									$xml->read();
+									break;
+								case "version":
+									$xml->read();
+									$designs[$f]['version']= $xml->value;
+									$xml->read();
+									break;
+								case "author":
+									$xml->read();
+									$designs[$f]['author']= $xml->value;
+									$xml->read();
+									break;
+								case "email":
+									$xml->read();
+									$designs[$f]['email']= $xml->value;
+									$xml->read();
+									break;
+								case "description":
+									$xml->read();
+									$designs[$f]['description']= $xml->value;
+									$xml->read();
+									break;
+							}
+						}
 						$xml->close();
 					}
 				}
