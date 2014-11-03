@@ -2638,6 +2638,31 @@ function imagecreatefromfile($path, $user_functions = false)
 		return $url;
 	}
 
+	function createZipFromDirectory($dir, $zipFile) {
+		
+		$zip = new ZipArchive();
+		if ($zip->open($zipFile, ZIPARCHIVE::CREATE) !== TRUE) {
+			throw new Exception("Cannot open ZIP file ".$zipFile);
+		}
+		
+		// create recursive directory iterator
+		$files = new RecursiveIteratorIterator (new RecursiveDirectoryIterator($dir), RecursiveIteratorIterator::LEAVES_ONLY);
+
+		// let's iterate
+		foreach ($files as $name => $file) {
+			$new_filename = substr($name,strrpos($name,'/') + 1);
+			if (is_file($file))
+			{
+				$zip->addFile($file, $new_filename);
+			}
+		}
+
+		// close the zip file
+		if (!$zip->close()) {
+			throw new Exception("There was a problem writing the ZIP archive ".$zipFile);
+		}
+	}
+	
 	/**
 	* Textfunktionen einbinden
 	*/
