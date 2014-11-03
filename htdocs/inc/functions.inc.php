@@ -2454,9 +2454,9 @@ function imagecreatefromfile($path, $user_functions = false)
 	}
 	
 	
-	function initTT()
+	function getInitTT()
 	{
-		echo '<div class="tooltip" id="tooltip" style="display:none;" onmouseup="hideTT();">
+		return '<div class="tooltip" id="tooltip" style="display:none;" onmouseup="hideTT();">
   	<div class="tttitle" id="tttitle"></div>
   	<div class="ttcontent" id="ttcontent"></div>
  		</div> ';		

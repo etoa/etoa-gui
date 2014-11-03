@@ -67,9 +67,7 @@
 	$tpl->assign("xajaxJS", $xajax->getJavascript(XAJAX_DIR));
 
 	// Tooltip init
-	ob_start();
-	initTT();
-	$tpl->assign("bodyTopStuff",ob_get_clean());
+	$tpl->assign("bodyTopStuff", getInitTT());
 
 	$tpl->assign("topmenu",$indexpage);
 	$tpl->assign("loginurl", getLoginUrl());

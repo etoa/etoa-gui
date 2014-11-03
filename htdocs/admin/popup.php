@@ -23,7 +23,7 @@ $tpl->assign("css_theme", (!isset($themePath) || !is_file(RELATIVE_ROOT."/web/cs
 $tpl->assign("page_title", getGameIdentifier()." Administration");
 $tpl->assign("ajax_js", $xajax->getJavascript(XAJAX_DIR));
 
-initTT();
+$tpl->assign("bodyTopStuff", getInitTT());
 
 if ($s->user_id)
 {
