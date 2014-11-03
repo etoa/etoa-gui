@@ -24,8 +24,37 @@
 		advanced_form("ticketcat", $tpl);
 	}
   
+	//
+	// Bildpakete
+	//
+	elseif ($sub=="designs")
+	{
+		$tpl->assign('title', 'Designs');
+		
+		$designs = get_designs("../");
+		
+		foreach ($designs as $k => $v) 
+		{
+			$res = dbQuerySave("
+			SELECT 
+				COUNT(id) as cnt 
+			FROM 
+				user_properties
+			WHERE 
+				css_style=?;", 
+			array(
+				$k
+			));
+			$arr = mysql_fetch_row($res);
+			$designs[$k]['users'] = $arr[0];
+		}
+		
+		$tpl->assign('designs', $designs);
+		
+		$tpl->setView('designs');
+	}
 	
-  //
+	//
 	// Bildpakete
 	//
 	elseif ($sub=="imagepacks")

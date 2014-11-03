@@ -1,0 +1,50 @@
+{if $title|default:'' ne ""}<h1>{$title}</h1>{/if}
+{if $subtitle|default:'' ne ""}<h2>{$subtitle}</h2>{/if}
+
+{if $msg|default:'' ne ""}{msg type="ok" text=$msg}{/if}
+{if $infomsg|default:'' ne ""}{msg type="info" text=$infomsg}{/if}
+{if $errmsg|default:'' ne ""}{msg type="err" text=$errmsg}{/if}
+
+<h2>Verfügbare Designs</h2>
+
+<table class="tbl" style="width:100%">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Beschreibung</th>
+			<th>Geändert</th>
+			<th>Version</th>
+			<th>Autor</th>
+			<th>E-Mail</th>
+			<th>Users</th>
+			<th>Aktionen</th>
+		</tr>
+	</thead>
+	<tbody>
+	{foreach item=d key=k from=$designs}
+		<tr>
+			<td>{$d.name}</td>
+			<td>{$d.description}</td>
+			<td>{$d.changed}</td>
+			<td>{$d.version}</td>
+			<td>{$d.author}</td>
+			<td>{$d.email}</td>
+			<td>{$d.users}</td>
+			<td style="width:130px">
+				<a href="?page={$page}&sub={$sub}&download={$k}">Download</a>
+				<a href="?page={$page}&sub={$sub}&remove={$k}">Entfernen</a>
+			</td>
+		</tr>
+	{/foreach}
+	</tbody>
+</table>
+
+<form action="?page={$page}&sub={$sub}" method="post" enctype="multipart/form-data">
+<fieldset>
+	<legend>Design hochladen</legend>
+	Design-Datei (ZIP): <input type="file" name="design"/> 
+	<input type="submit" name="submit" value="Design hochladen">
+</fieldset>
+</form>
+
+{$content|default:''}
