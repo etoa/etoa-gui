@@ -21,7 +21,7 @@ $tpl->setView("default");
 
 $tpl->assign("css_theme", (!isset($themePath) || !is_file(RELATIVE_ROOT."/web/css/themes/admin/".$themePath."css")) ? "default" : $themePath);
 $tpl->assign("page_title", getGameIdentifier()." Administration");
-$tpl->assign("ajax_js", $xajax->printJavascript(XAJAX_DIR));
+$tpl->assign("ajax_js", $xajax->getJavascript(XAJAX_DIR));
 
 initTT();
 

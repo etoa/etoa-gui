@@ -100,9 +100,7 @@
 	$tpl->assign("templateDir", CSS_STYLE);
 
 	// Xajax header
-	ob_start();
-	echo $xajax->printJavascript(XAJAX_DIR);		
-	$tpl->assign("xajaxJS",ob_get_clean());
+	$tpl->assign("xajaxJS", $xajax->getJavascript(XAJAX_DIR));
 
 	// Tooltip init
 	ob_start();
