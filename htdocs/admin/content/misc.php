@@ -31,8 +31,8 @@
 	{
 		$tpl->assign('title', 'Designs');
 		
-		$designs = get_designs("../");
-		
+		$designs = get_designs();
+
 		if (isset($_POST['submit']))
 		{
 			if (isset($_FILES["design"])) 
@@ -50,11 +50,10 @@
 			if (isset($designs[$design])) 
 			{
 				$zipFile = tempnam('sys_get_temp_dir', $design);
-				$dir = '../'.DESIGN_DIRECTORY.'/'.$design;
+				$dir = $designs[$design]['dir'];
 			
 				try {
 					createZipFromDirectory($dir, $zipFile);
-				
 					header('Content-Type: application/zip');
 					header('Content-disposition: attachment; filename='.$design.'.zip');
 					header('Content-Length: ' . filesize($zipFile));
