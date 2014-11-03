@@ -25,13 +25,47 @@
 	}
   
 	//
-	// Bildpakete
+	// Designs
 	//
 	elseif ($sub=="designs")
 	{
 		$tpl->assign('title', 'Designs');
 		
 		$designs = get_designs("../");
+		
+		if (isset($_POST['submit']))
+		{
+			if (isset($_FILES["design"])) 
+			{
+				
+				if(move_uploaded_file($_FILES["design"]['tmp_name'], $root."/".$_FILES["design"]['name']))
+				{
+				
+				}
+			}
+		}
+		else if (!empty($_GET['download']))
+		{
+			$design = $_GET['download'];
+			if (isset($designs[$design])) 
+			{
+				$zipFile = tempnam('sys_get_temp_dir', $design);
+				$dir = '../'.DESIGN_DIRECTORY.'/'.$design;
+			
+				try {
+					createZipFromDirectory($dir, $zipFile);
+				
+					header('Content-Type: application/zip');
+					header('Content-disposition: attachment; filename='.$design.'.zip');
+					header('Content-Length: ' . filesize($zipFile));
+					readfile($zipFile);
+					unlink($zipFile);
+					exit();
+				} catch (Exception $e) {
+					cms_err_msg($e->getMessage());
+				}
+			}
+		}
 		
 		foreach ($designs as $k => $v) 
 		{
