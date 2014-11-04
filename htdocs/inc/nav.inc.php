@@ -74,7 +74,4 @@
 	$topnav[4]['url']=CHAT_URL;
 	$topnav[4]['onclick']=CHAT_ONCLICK;
 
-	$topnav[5]['name']="TeamSpeak";
-	$topnav[5]['url']=TEAMSPEAK_URL;
-	$topnav[5]['onclick']=TEAMSPEAK_ONCLICK;
 ?>
