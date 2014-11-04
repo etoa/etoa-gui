@@ -118,7 +118,7 @@
 				var out = time_string;
 			}
 	
-			document.getElementById(target).innerHTML = out;	
+			$('#'+target).html(out);
 			time = time - 1;
 		}
 		
@@ -168,7 +168,7 @@
 			}
 
 	
-			document.getElementById(target).innerHTML = out;	
+			$('#'+target).html(out);
 			time = time + 1;
 		}
 		
