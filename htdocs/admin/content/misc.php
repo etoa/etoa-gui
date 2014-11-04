@@ -49,11 +49,16 @@
 					{
 						// Iterate over files and detect design info file
 						$uploadedDesignDir = null;
+						$hasMainTemplateFile = false;
 						for( $i = 0; $i < $zip->numFiles; $i++ ){ 
 							$stat = $zip->statIndex($i); 
 							if (basename($stat['name']) == DESIGN_CONFIG_FILE_NAME)
 							{
 								$uploadedDesignDir = dirname($stat['name']);
+							}
+							else if (basename($stat['name']) == DESIGN_TEMPLATE_FILE_NAME)
+							{
+								$hasMainTemplateFile = true;
 							}
 						}
 						$zip->close();
@@ -64,35 +69,43 @@
 							// Test naming pattern of design directory
 							if (preg_match('/^[a-z0-9_-]+$/i', $uploadedDesignDir))
 							{
-								// Move uploaded file
-								$target = $customDesignDir.'/'.$_FILES["design"]['name'];
-								if (move_uploaded_file($_FILES["design"]['tmp_name'], $target))
-								{
-									$zip = new ZipArchive();
-									if ($zip->open($target) === TRUE)
+								// Test for main template file
+								if ($hasMainTemplateFile)
+								{							
+									// Move uploaded file
+									$target = $customDesignDir.'/'.$_FILES["design"]['name'];
+									if (move_uploaded_file($_FILES["design"]['tmp_name'], $target))
 									{
-										// Remove existing design, if it exists
-										$existingDesign = $customDesignDir.'/'.$uploadedDesignDir;
-										if (is_dir($existingDesign))
+										$zip = new ZipArchive();
+										if ($zip->open($target) === TRUE)
 										{
-											rrmdir($existingDesign);
+											// Remove existing design, if it exists
+											$existingDesign = $customDesignDir.'/'.$uploadedDesignDir;
+											if (is_dir($existingDesign))
+											{
+												rrmdir($existingDesign);
+											}
+											
+											// Extract design
+											$zip->extractTo($customDesignDir);
+											$zip->close();
+											
+											// Reload list of designs
+											$designs = get_designs();
 										}
 										
-										// Extract design
-										$zip->extractTo($customDesignDir);
-										$zip->close();
-										
-										// Reload list of designs
-										$designs = get_designs();
+										// Remove uploaded design archive
+										unlink($target);
+										$tpl->assign('msg', "Design hochgeladen");
 									}
-									
-									// Remove uploaded design archive
-									unlink($target);
-									$tpl->assign('msg', "Design hochgeladen");
+									else
+									{
+										$tpl->assign('errmsg', "Fehler beim Upload des Designs!");
+									}
 								}
 								else
 								{
-									$tpl->assign('errmsg', "Fehler beim Upload des Designs!");
+									$tpl->assign('errmsg', "Ungültiges Design, Template-Datei ".DESIGN_TEMPLATE_FILE_NAME." nicht vorhanden!");
 								}
 							}
 							else
@@ -102,7 +115,7 @@
 						}
 						else
 						{
-							$tpl->assign('errmsg', "Ungültiges Design, Datei ".DESIGN_CONFIG_FILE_NAME." nicht vorhanden!");
+							$tpl->assign('errmsg', "Ungültiges Design, Info-Datei ".DESIGN_CONFIG_FILE_NAME." nicht vorhanden!");
 						}
 					}
 					else

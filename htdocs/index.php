@@ -352,7 +352,7 @@
 		$tpl->assign("renderTime",$tmr->getRoundedTime());
 						
 		// Display main template
-		$layoutTemplate = CSS_STYLE."/template.html";
+		$layoutTemplate = CSS_STYLE."/".DESIGN_TEMPLATE_FILE_NAME;
 	}
 	$tpl->assign("content_for_layout", ob_get_clean());
 	} catch (DBException $ex) {

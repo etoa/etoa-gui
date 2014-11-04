@@ -53,6 +53,9 @@
 	// Design configuration file name
 	define("DESIGN_CONFIG_FILE_NAME", "design.xml");
 	
+	// Design main template file name
+	define("DESIGN_TEMPLATE_FILE_NAME", "template.html");
+	
 	// Tech Ordner
 	define("IMAGE_TECHNOLOGY_DIR","technologies");
 	
