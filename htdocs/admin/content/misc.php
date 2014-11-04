@@ -33,13 +33,36 @@
 		
 		$designs = get_designs();
 
+		$customDesignDir = RELATIVE_ROOT.DESIGN_DIRECTORY.'/custom';
+		
 		if (isset($_POST['submit']))
 		{
 			if (isset($_FILES["design"])) 
 			{				
-				if(move_uploaded_file($_FILES["design"]['tmp_name'], $root."/".$_FILES["design"]['name']))
+				$target = $customDesignDir.'/'.$_FILES["design"]['name'];
+				if ($_FILES["design"]['type'] == 'application/zip')
 				{
-				
+					if(move_uploaded_file($_FILES["design"]['tmp_name'], $target))
+					{
+						$zip = new ZipArchive();
+						if ($zip->open($target) === TRUE)
+						{
+							$zip->extractTo($customDesignDir);
+							$zip->close();
+							
+							$designs = get_designs();
+						}
+						unlink($target);
+						$tpl->assign('msg', "Design hochgeladen");
+					}
+					else
+					{
+						$tpl->assign('errmsg', "Fehler beim Upload des Designs!");
+					}
+				}
+				else
+				{
+					$tpl->assign('errmsg', "Keine ZIP-Datei!");
 				}
 			}
 		}
@@ -60,8 +83,19 @@
 					unlink($zipFile);
 					exit();
 				} catch (Exception $e) {
-					cms_err_msg($e->getMessage());
+					$tpl->assign('errmsg', $e->getMessage());
 				}
+			}
+		}
+		else if (!empty($_GET['remove']))
+		{
+			$design = $_GET['remove'];
+			if (isset($designs[$design]) && $designs[$design]['custom']) 
+			{
+				$dir = $designs[$design]['dir'];
+				rrmdir($dir);
+				$tpl->assign('msg', 'Design gelöscht');
+				$designs = get_designs();
 			}
 		}
 		
