@@ -212,7 +212,38 @@
 		$sampleInfoFile = RELATIVE_ROOT.DESIGN_DIRECTORY."/official/".$cfg->value('default_css_style').'/'.DESIGN_CONFIG_FILE_NAME;
 		$tpl->assign('sampleInfoFile', htmlentities(file_get_contents($sampleInfoFile)));
 		
-		
+		$tpl->assign('knownTemplateVars', array(
+			'currentPlanetImage' => 'Pfad zum aktuellen Planetenbild',
+			'prevPlanetId' => 'ID des vorherigen Planeten',
+			'nextPlanetId' => 'ID des nächsten Planeten',
+			'page' => 'Name der aktuellen Seite',
+			'selectField' => 'Auswahlfeld (&lt;select&gt;) aller Planeten',
+			'planetList' => 'Liste aller Planeten als Links',
+			'messages' => 'Anzahl neuer Nachrichten',
+			'newreports' => 'Anzahl neuer Berichte',
+			'notes' => 'Anzahl vorhandener Notizen',
+			'fleetAttack' => 'Anzahl fremder angreifender Flotten',
+			'buddys' => 'Anzahl Freunde welche online sind',
+			'bugreportUrl' => 'URL zur Seite wo man Fehler melden kann',
+			'helpcenterOnclick' => 'JavaScript-Code zum Öffnen des Help-Centers als Popup',
+			'urlForum' => 'URL zum Forum',
+			'chatOnclick' => 'JavaScript-Code zum Öffnen des Chats',
+			'teamspeakOnclick' => 'JavaScript-Code zum Öffnen der TeamSpeak Seite als Popup',
+			'rulesOnclick' => 'JavaScript-Code zum Öffnen der Regeln-Seite als Popup',
+			'serverTime' => 'Die aktuelle Zeit, wird automatisch aktualisiert',
+			'serverTimeUnix' => 'Die aktuelle Zeit als Unix-Zeitstempel',
+			'content_for_layout' => 'Die eigentliche Inhalt der Seite',
+			'templateDir' => 'Pfad zum Template-Verzeichnis (z.B. zum Laden von Bildern)',
+			'topNav' => 'Array mit allen Elementen der Header-Navigation',
+			'gameNav' => 'Array mit allen Elementen der Haupt-Spielnavigation',
+			'usersOnline' => 'Anzahl User welche online sind',
+			'usersTotal' => 'Anzahl registrierter User',
+			'renderTime' => 'Zeit welche gebraucht wurde, um den Inhalt der Seite zusammenzustellen',
+			'userNick' => 'Name des Spielers',
+			'userPoints' => 'Punkte des Spielers',
+			'isAdmin' => 'Ist wahr falls der Spieler ein Admin ist',
+			'buddyreq' => 'Ist wahr falls Freundschaftsanfragen vorhanden sind'
+		));
 		
 		$tpl->setView('designs');
 	}
