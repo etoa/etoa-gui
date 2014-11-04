@@ -1,0 +1,63 @@
+{chunk name='header'}
+
+<div class="header">
+	<a href="?page=overview" class="brand">Escape to Andromeda</a>
+	<ul class="header-nav pull-right">
+		{foreach from=$topNav item=i}
+			<li>
+				{if $i.onclick|default:'' neq ""}
+					<a href="javascript:;" onclick="{$i.onclick}">{$i.name}</a>
+				{else}
+					<a href="{$i.url}" target="_blank">{$i.name}</a>
+				{/if}
+			</li>
+		{/foreach}
+	</ul>
+	<br class="clear"/>
+</div>
+<div class="mainContainer">
+	<div class="sidebar">
+		<div class="planetimage">
+			{if $currentPlanetImage|default:'' != ''}
+				<a href="?page=planetoverview">
+					<img src="{$currentPlanetImage}" alt="Planet" style="width:100px;height:100px;" />
+				</a>
+			{/if}
+		</div>
+		{*
+		<a id="prevEntity" href="?page={$page}&mode={$mode}&change_entity={$prevPlanetId}">a</a>
+		<a id="nextEntity" href="?page={$page}&mode={$mode}&change_entity={$nextPlanetId}">b</a>
+		*}
+		<div class="planetname">
+			{if $selectField|default:'' != ''}
+				{$selectField}
+			{/if}
+		</div>	
+		{foreach from=$gameNav item=c}
+			<p class="nav-header">{$c['cat']}</p>
+			<ul class="nav">
+				{foreach from=$c.items item=i}
+					<li><a href="{$i.url}">{$i.name}</a></li>
+				{/foreach}
+			</ul>
+		{/foreach}
+		<br/>
+	</div>
+	<div class="content">
+		{chunk name='tutorial'}
+		{$content_for_layout}
+	</div>
+</div>
+<div class="footer">
+	<span class="copyright">&copy; 2014 EtoA Gaming</span>
+	<ul class="footer-infos pull-right">
+		<li><b>Zeit:</b> <span id="servertime">{$serverTime}</span></li>
+		<li><b>Online:</b> {$usersOnline} / {$usersTotal}</li>
+		<li><b>Renderzeit:</b> {$renderTime} sec</li>
+		<li><b>Eingeloggt als:</b> {$userNick}</li>
+		<li><b>Punkte:</b> {$userPoints}</li>
+	</ul>
+	<br class="clear"/>
+</div>
+
+{chunk name='footer'}

@@ -1,0 +1,189 @@
+/* html5doctor.com Reset v1.6.1 (http://html5doctor.com/html-5-reset-stylesheet/) - http://cssreset.com */
+html,body,div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,abbr,address,cite,code,del,dfn,em,img,ins,kbd,q,samp,small,strong,sub,sup,var,b,i,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,figcaption,figure,footer,header,hgroup,menu,nav,section,summary,time,mark,audio,video{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}
+body{line-height:1}
+article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}
+nav ul{list-style:none}
+blockquote,q{quotes:none}
+blockquote:before,blockquote:after,q:before,q:after{content:none}
+a{margin:0;padding:0;font-size:100%;vertical-align:baseline;background:transparent}
+ins{background-color:#ff9;color:#000;text-decoration:none}
+mark{background-color:#ff9;color:#000;font-style:italic;font-weight:bold}
+del{text-decoration:line-through}
+abbr[title],dfn[title]{border-bottom:1px dotted;cursor:help}
+table{border-collapse:collapse;border-spacing:0}
+hr{display:block;height:1px;border:0;border-top:1px solid #ccc;margin:1em 0;padding:0}
+input,select{vertical-align:middle}
+
+/* EtoA Base Design CSS */
+
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,300italic,400italic,600italic);
+
+/*
+* Basic elements
+*/
+
+body {
+	background:#000 url('images/mainbg.jpg') repeat;
+	color: #fff;
+	font-family: 'Open Sans', sans-serif;
+}
+
+h1, h2, h3 {
+	font-weight: 400;
+}
+
+h1 {
+	font-size: 2.5em;
+}
+
+h2 {
+	font-size: 1.6em;
+}
+
+h3 {
+	font-size: 1.3em;
+}
+
+/*
+* Layout
+*/
+
+.container {
+	display: table;
+}
+
+.sidebar {
+	display: table-cell;
+	vertical-align: top;
+	width: 200px;
+}
+
+.content {
+	display: table-cell;
+	vertical-align: top;
+}
+
+.pull-right {
+	float: right;
+}
+
+.clear {
+	clear: both;
+}
+
+/*
+* Header
+*/
+
+.header {
+	background: rgba(100,100,100, 0.5);
+	border-bottom: 1px solid #555;
+	padding: 10px;
+}
+
+.brand {
+	color: #fff;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+.header-nav {
+	list-style-type: none;
+}
+
+.header-nav li {
+	display: inline-block;
+	padding: 0px 5px;
+}
+
+.header-nav li a {
+	color: #bbb;
+	text-decoration: none;
+}
+
+.header-nav li a:hover {
+	color: #fff;
+}
+
+/*
+* Sidebar
+*/
+
+.sidebar {
+	background: rgba(50,50,50, 0.5);
+	border-right: 1px solid #555;
+}
+
+.sidebar .planetimage {
+	text-align: center;
+	background: rgba(0,0,0, 0.5);
+	padding: 15px 0;
+}
+
+.sidebar .planetname {
+	padding: 1px;
+}
+
+.sidebar .planetname select {
+	width: 100%;
+	border: 1px solid #555;
+}
+
+.sidebar .nav-header {
+	padding: 3px 10px;
+}
+
+.sidebar .nav {
+	list-style-type: none;
+}
+
+.sidebar .nav  li {
+}
+
+.sidebar .nav  li a {
+	color: #bbb;
+	text-decoration: none;
+	display:block;
+	background: rgba(100,100,100, 0.5);
+	border-bottom: 1px solid #555;
+	padding: 1px 10px;
+}
+
+.sidebar .nav  li a:hover {
+	color: #fff;
+	background: rgba(100,100,100, 0.8);
+}
+
+/*
+* Content
+*/
+
+.content {
+	padding: 10px 20px;
+}
+
+.content ul {
+    list-style: initial;
+    margin: initial;
+    padding: 0 0 0 40px;
+}
+
+/*
+* Footer
+*/
+
+.footer {
+	background: rgba(100,100,100, 0.5);
+	border-top: 1px solid #555;
+	padding: 6px 10px;
+	font-size: 70%;
+}
+
+.footer-infos {
+	list-style-type: none;
+}
+
+.footer-infos li {
+	display: inline-block;
+	padding: 0px 8px;
+}
