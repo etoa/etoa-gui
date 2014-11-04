@@ -29,25 +29,8 @@
 
 	if ($cp)
 	{
-		// Planetenname ändern
-		if (isset($_GET['action']) && $_GET['action']=="change_name")
-		{
-			echo "<h2>:: Planetenname/-beschreibung &auml;ndern ::</h2>";
-			echo '<script type="text/javascript" src="web/js/planetname.js"></script>';
-			echo "<form action=\"?page=$page\" method=\"POST\" style=\"text-align:center;\">";
-			tableStart("Hier den neuen Namen eingeben:");
-			echo "<tr><th>Name:</th><td>
-			<input type=\"text\" name=\"planet_name\" id=\"planet_name\" value=\"".($cp->name)."\" length=\"16\" maxlength=\"15\" /></td></tr>";
-			echo "<tr><th>Beschreibung:</th><td><textarea name=\"planet_desc\" rows=\"2\" cols=\"30\">".($cp->desc)."</textarea></td></tr>";
-			tableEnd();
-			echo "<input type=\"submit\" name=\"submit_change\" value=\"Speichern\" /> &nbsp; ";
-			echo '<input onclick="GenPlot();" type="button" value="Name generieren" /> &nbsp; ';
-			echo '<input onclick="document.location=\'?page='.$page.'\';" type="button" value="Abbrechen" /> &nbsp; ';
-			echo "</form>";
-		}
-
 		// Kolonie aufgeben
-		elseif (isset($_GET['action']) && $_GET['action']=="remove")
+		if (isset($_GET['action']) && $_GET['action']=="remove")
 		{
 			if (!$cp->isMain)
 			{		
@@ -221,7 +204,7 @@
 	
 	
 			echo "<div id=\"tabName\" style=\"".($sub=="name" ? '' : 'display:none;')."\">";
-			echo '<script type="text/javascript" src="web/js/planetname.js"></script>';
+			echo '<script type="text/javascript" src="web/js/vendor/planetname.js"></script>';
 			echo "<form action=\"?page=$page\" method=\"POST\" style=\"text-align:center;\">";
 			tableStart("Name und Beschreibung ändern:");
 			echo "<tr><th>Name:</th><td>

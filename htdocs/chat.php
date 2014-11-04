@@ -20,10 +20,10 @@
 		<meta http-equiv="content-script-type" content="text/javascript" />
 		<meta http-equiv="content-style-type" content="text/css" />
 		<meta http-equiv="content-language" content="de" />
-		<link rel="stylesheet" type="text/css" href="web/css/jquery-ui.game.css" />
+		<link rel="stylesheet" type="text/css" href="web/css/vendor/jquery-ui.game.css" />
 		<link rel="stylesheet" type="text/css" href="web/css/chat.css" />
-		<script type="text/javascript" src="web/js/jquery.min.js"></script>
-		<script type="text/javascript" src="web/js/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="web/js/vendor/jquery.min.js"></script>
+		<script type="text/javascript" src="web/js/vendor/jquery-ui.min.js"></script>
 		<script type="text/javascript" src="web/js/main.js" ></script>
 		<script type="text/javascript" src="web/js/chat.js" ></script>
 	</head>
