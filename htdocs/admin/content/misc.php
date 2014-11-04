@@ -212,6 +212,8 @@
 		$sampleInfoFile = RELATIVE_ROOT.DESIGN_DIRECTORY."/official/".$cfg->value('default_css_style').'/'.DESIGN_CONFIG_FILE_NAME;
 		$tpl->assign('sampleInfoFile', htmlentities(file_get_contents($sampleInfoFile)));
 		
+		
+		
 		$tpl->setView('designs');
 	}
 	
