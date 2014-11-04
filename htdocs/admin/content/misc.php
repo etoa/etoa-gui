@@ -50,6 +50,8 @@
 						// Iterate over files and detect design info file
 						$uploadedDesignDir = null;
 						$hasMainTemplateFile = false;
+						$hasMainStylesheetFile = false;
+						$hasMainScriptFile = false;
 						for( $i = 0; $i < $zip->numFiles; $i++ ){ 
 							$stat = $zip->statIndex($i); 
 							if (basename($stat['name']) == DESIGN_CONFIG_FILE_NAME)
@@ -59,6 +61,14 @@
 							else if (basename($stat['name']) == DESIGN_TEMPLATE_FILE_NAME)
 							{
 								$hasMainTemplateFile = true;
+							}
+							else if (basename($stat['name']) == DESIGN_STYLESHEET_FILE_NAME)
+							{
+								$hasMainStylesheetFile = true;
+							}
+							else if (basename($stat['name']) == DESIGN_SCRIPT_FILE_NAME)
+							{
+								$hasMainScriptFile = true;
 							}
 						}
 						$zip->close();
@@ -71,36 +81,52 @@
 							{
 								// Test for main template file
 								if ($hasMainTemplateFile)
-								{							
-									// Move uploaded file
-									$target = $customDesignDir.'/'.$_FILES["design"]['name'];
-									if (move_uploaded_file($_FILES["design"]['tmp_name'], $target))
+								{
+									// Test for main stylesheet file
+									if ($hasMainStylesheetFile)
 									{
-										$zip = new ZipArchive();
-										if ($zip->open($target) === TRUE)
+										// Test for main script file
+										if ($hasMainScriptFile)
 										{
-											// Remove existing design, if it exists
-											$existingDesign = $customDesignDir.'/'.$uploadedDesignDir;
-											if (is_dir($existingDesign))
+											// Move uploaded file
+											$target = $customDesignDir.'/'.$_FILES["design"]['name'];
+											if (move_uploaded_file($_FILES["design"]['tmp_name'], $target))
 											{
-												rrmdir($existingDesign);
+												$zip = new ZipArchive();
+												if ($zip->open($target) === TRUE)
+												{
+													// Remove existing design, if it exists
+													$existingDesign = $customDesignDir.'/'.$uploadedDesignDir;
+													if (is_dir($existingDesign))
+													{
+														rrmdir($existingDesign);
+													}
+													
+													// Extract design
+													$zip->extractTo($customDesignDir);
+													$zip->close();
+													
+													// Reload list of designs
+													$designs = get_designs();
+												}
+												
+												// Remove uploaded design archive
+												unlink($target);
+												$tpl->assign('msg', "Design hochgeladen");
 											}
-											
-											// Extract design
-											$zip->extractTo($customDesignDir);
-											$zip->close();
-											
-											// Reload list of designs
-											$designs = get_designs();
+											else
+											{
+												$tpl->assign('errmsg', "Fehler beim Upload des Designs!");
+											}
 										}
-										
-										// Remove uploaded design archive
-										unlink($target);
-										$tpl->assign('msg', "Design hochgeladen");
+										else
+										{
+											$tpl->assign('errmsg', "Ungültiges Design, Script-Datei ".DESIGN_SCRIPT_FILE_NAME." nicht vorhanden!");
+										}
 									}
 									else
 									{
-										$tpl->assign('errmsg', "Fehler beim Upload des Designs!");
+										$tpl->assign('errmsg', "Ungültiges Design, Stylesheet-Datei ".DESIGN_STYLESHEET_FILE_NAME." nicht vorhanden!");
 									}
 								}
 								else
