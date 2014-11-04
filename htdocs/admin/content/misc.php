@@ -42,22 +42,53 @@
 				$target = $customDesignDir.'/'.$_FILES["design"]['name'];
 				if ($_FILES["design"]['type'] == 'application/zip')
 				{
-					if(move_uploaded_file($_FILES["design"]['tmp_name'], $target))
+					$zip = new ZipArchive();
+					if ($zip->open($_FILES["design"]['tmp_name']) === TRUE)
 					{
-						$zip = new ZipArchive();
-						if ($zip->open($target) === TRUE)
-						{
-							$zip->extractTo($customDesignDir);
-							$zip->close();
-							
-							$designs = get_designs();
+						$uploadedDesignDir = null;
+						for( $i = 0; $i < $zip->numFiles; $i++ ){ 
+							$stat = $zip->statIndex($i); 
+							if (basename($stat['name']) == DESIGN_CONFIG_FILE_NAME)
+							{
+								$uploadedDesignDir = dirname($stat['name']);
+							}							
 						}
-						unlink($target);
-						$tpl->assign('msg', "Design hochgeladen");
+						$zip->close();
+						if ($uploadedDesignDir != null)
+						{
+							if (preg_match('/^[a-z0-9_-]+$/i', $uploadedDesignDir))
+							{
+								if(move_uploaded_file($_FILES["design"]['tmp_name'], $target))
+								{
+									$zip = new ZipArchive();
+									if ($zip->open($target) === TRUE)
+									{
+										$zip->extractTo($customDesignDir);
+										$zip->close();
+										
+										$designs = get_designs();
+									}
+									unlink($target);
+									$tpl->assign('msg', "Design hochgeladen");
+								}
+								else
+								{
+									$tpl->assign('errmsg', "Fehler beim Upload des Designs!");
+								}
+							}
+							else
+							{
+								$tpl->assign('errmsg', "Ungültiges Design, Verzeichnis-Name enthält ungültige Zeichen (nur a-z, 0-9 sowie _ und - sind erlaubt)!");
+							}
+						}
+						else
+						{
+							$tpl->assign('errmsg', "Ungültiges Design, Datei ".DESIGN_CONFIG_FILE_NAME." nicht vorhanden!");
+						}
 					}
 					else
 					{
-						$tpl->assign('errmsg', "Fehler beim Upload des Designs!");
+						$tpl->assign('errmsg', "Kann ZIP-Datei nicht öffnen!");
 					}
 				}
 				else
