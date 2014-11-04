@@ -1252,56 +1252,70 @@
 					if (is_dir($dir) && !preg_match('/^\./', $f))
 					{
 						$file = $dir."/".DESIGN_CONFIG_FILE_NAME;
-						if (is_file($file))
+						$design = parseDesignInfoFile($file);
+						if ($design != null)
 						{
-							$designs[$f]['dir'] = $dir;
-							$designs[$f]['custom'] = ($rd == 'custom');
-							$xml = new XMLReader();
-							$xml->open($file);
-							while ($xml->read()) 
-							{
-								switch ($xml->name) 
-								{
-									case "name":
-										$xml->read();
-										$designs[$f]['name']= $xml->value;
-										$xml->read();
-										break;
-									case "changed":
-										$xml->read();
-										$designs[$f]['changed']= $xml->value;
-										$xml->read();
-										break;
-									case "version":
-										$xml->read();
-										$designs[$f]['version']= $xml->value;
-										$xml->read();
-										break;
-									case "author":
-										$xml->read();
-										$designs[$f]['author']= $xml->value;
-										$xml->read();
-										break;
-									case "email":
-										$xml->read();
-										$designs[$f]['email']= $xml->value;
-										$xml->read();
-										break;
-									case "description":
-										$xml->read();
-										$designs[$f]['description']= $xml->value;
-										$xml->read();
-										break;
-								}
-							}
-							$xml->close();
+							$design['dir'] = $dir;
+							$design['custom'] = ($rd == 'custom');
+							$designs[$f] = $design;
 						}
 					}
 				}
 			}
 		}
 		return $designs;
-	}	
+	}
+	
+	/**
+	* Parses a design info file
+	*/
+	function parseDesignInfoFile($file)
+	{
+		if (is_file($file))
+		{
+			$xml = new XMLReader();
+			$xml->open($file);
+			while ($xml->read()) 
+			{
+				switch ($xml->name) 
+				{
+					case "name":
+						$xml->read();
+						$design['name']= $xml->value;
+						$xml->read();
+						break;
+					case "changed":
+						$xml->read();
+						$design['changed']= $xml->value;
+						$xml->read();
+						break;
+					case "version":
+						$xml->read();
+						$design['version']= $xml->value;
+						$xml->read();
+						break;
+					case "author":
+						$xml->read();
+						$design['author']= $xml->value;
+						$xml->read();
+						break;
+					case "email":
+						$xml->read();
+						$design['email']= $xml->value;
+						$xml->read();
+						break;
+					case "description":
+						$xml->read();
+						$design['description']= $xml->value;
+						$xml->read();
+						break;
+				}
+			}
+			$xml->close();
+			return $design;
+		}
+		return null;
+	}
 
 	/**
 	* Überprüft ob ein Gebäude deaktiviert ist
