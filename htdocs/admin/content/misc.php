@@ -35,39 +35,58 @@
 
 		$customDesignDir = RELATIVE_ROOT.DESIGN_DIRECTORY.'/custom';
 		
+		// Design upload
 		if (isset($_POST['submit']))
 		{
 			if (isset($_FILES["design"])) 
-			{				
-				$target = $customDesignDir.'/'.$_FILES["design"]['name'];
+			{		
+				// Check MIME type
 				if ($_FILES["design"]['type'] == 'application/zip')
 				{
+					// Test if ZIP file can be read
 					$zip = new ZipArchive();
 					if ($zip->open($_FILES["design"]['tmp_name']) === TRUE)
 					{
+						// Iterate over files and detect design info file
 						$uploadedDesignDir = null;
 						for( $i = 0; $i < $zip->numFiles; $i++ ){ 
 							$stat = $zip->statIndex($i); 
 							if (basename($stat['name']) == DESIGN_CONFIG_FILE_NAME)
 							{
 								$uploadedDesignDir = dirname($stat['name']);
-							}							
+							}
 						}
 						$zip->close();
+						
+						// Check if design directory exits
 						if ($uploadedDesignDir != null)
 						{
+							// Test naming pattern of design directory
 							if (preg_match('/^[a-z0-9_-]+$/i', $uploadedDesignDir))
 							{
-								if(move_uploaded_file($_FILES["design"]['tmp_name'], $target))
+								// Move uploaded file
+								$target = $customDesignDir.'/'.$_FILES["design"]['name'];
+								if (move_uploaded_file($_FILES["design"]['tmp_name'], $target))
 								{
 									$zip = new ZipArchive();
 									if ($zip->open($target) === TRUE)
 									{
+										// Remove existing design, if it exists
+										$existingDesign = $customDesignDir.'/'.$uploadedDesignDir;
+										if (is_dir($existingDesign))
+										{
+											rrmdir($existingDesign);
+										}
+										
+										// Extract design
 										$zip->extractTo($customDesignDir);
 										$zip->close();
 										
+										// Reload list of designs
 										$designs = get_designs();
 									}
+									
+									// Remove uploaded design archive
 									unlink($target);
 									$tpl->assign('msg', "Design hochgeladen");
 								}
@@ -97,6 +116,7 @@
 				}
 			}
 		}
+		// Design download
 		else if (!empty($_GET['download']))
 		{
 			$design = $_GET['download'];
@@ -118,6 +138,7 @@
 				}
 			}
 		}
+		// Removal of custom design
 		else if (!empty($_GET['remove']))
 		{
 			$design = $_GET['remove'];
@@ -130,6 +151,7 @@
 			}
 		}
 		
+		// Show all designs
 		foreach ($designs as $k => $v) 
 		{
 			$res = dbQuerySave("
