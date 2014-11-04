@@ -1237,64 +1237,85 @@
 	/**
 	* Wählt die verschiedenen Designs aus und schreibt sie in ein array. by Lamborghini
 	*/
-	function get_designs($path="")
+	function get_designs()
 	{
-		$designs=array();
-		if ($d=opendir($path.DESIGN_DIRECTORY))
+		$rootDir = RELATIVE_ROOT.DESIGN_DIRECTORY;
+		$designs = array();
+		foreach(array('official', 'custom') as $rd)
 		{
-			while ($f=readdir($d))
+			$baseDir = $rootDir.'/'.$rd;
+			if ($d = opendir($baseDir))
 			{
-				$dir = DESIGN_DIRECTORY."/".$f;
-				if (is_dir($path.$dir) && $f!=".." && $f!=".")
+				while ($f = readdir($d))
 				{
-					$file = $path.$dir."/design.xml";
-					if (is_file($file))
+					$dir = $baseDir."/".$f;
+					if (is_dir($dir) && !preg_match('/^\./', $f))
 					{
-						$xml = new XMLReader();
-						$xml->open($file);
-				    while ($xml->read()) 
-				    {
-				        switch ($xml->name) 
-				        {
-				        	case "name":
-				            $xml->read();
-				            $designs[$f]['name']= $xml->value;
-				            $xml->read();
-				            break;
-				        	case "changed":
-				            $xml->read();
-				            $designs[$f]['changed']= $xml->value;
-				            $xml->read();
-				            break;
-				       	 	case "version":
-				            $xml->read();
-				            $designs[$f]['version']= $xml->value;
-				            $xml->read();
-				            break;
-				       	 	case "author":
-				            $xml->read();
-				            $designs[$f]['author']= $xml->value;
-				            $xml->read();
-				            break;
-				       	 	case "email":
-				            $xml->read();
-				            $designs[$f]['email']= $xml->value;
-				            $xml->read();
-				            break;	
-				       	 	case "description":
-				            $xml->read();
-				            $designs[$f]['description']= $xml->value;
-				            $xml->read();
-				            break;						            			            
-				        }
-				    }
-						$xml->close();
+						$file = $dir."/".DESIGN_CONFIG_FILE_NAME;
+						$design = parseDesignInfoFile($file);
+						if ($design != null)
+						{
+							$design['dir'] = $dir;
+							$design['custom'] = ($rd == 'custom');
+							$designs[$f] = $design;
+						}
 					}
 				}
 			}
 		}
 		return $designs;
-	}	
+	}
+	
+	/**
+	* Parses a design info file
+	*/
+	function parseDesignInfoFile($file)
+	{
+		if (is_file($file))
+		{
+			$xml = new XMLReader();
+			$xml->open($file);
+			while ($xml->read()) 
+			{
+				switch ($xml->name) 
+				{
+					case "name":
+						$xml->read();
+						$design['name']= $xml->value;
+						$xml->read();
+						break;
+					case "changed":
+						$xml->read();
+						$design['changed']= $xml->value;
+						$xml->read();
+						break;
+					case "version":
+						$xml->read();
+						$design['version']= $xml->value;
+						$xml->read();
+						break;
+					case "author":
+						$xml->read();
+						$design['author']= $xml->value;
+						$xml->read();
+						break;
+					case "email":
+						$xml->read();
+						$design['email']= $xml->value;
+						$xml->read();
+						break;
+					case "description":
+						$xml->read();
+						$design['description']= $xml->value;
+						$xml->read();
+						break;
+				}
+			}
+			$xml->close();
+			return $design;
+		}
+		return null;
+	}
 
 	/**
 	* Überprüft ob ein Gebäude deaktiviert ist
@@ -2454,9 +2475,9 @@ function imagecreatefromfile($path, $user_functions = false)
 	}
 	
 	
-	function initTT()
+	function getInitTT()
 	{
-		echo '<div class="tooltip" id="tooltip" style="display:none;" onmouseup="hideTT();">
+		return '<div class="tooltip" id="tooltip" style="display:none;" onmouseup="hideTT();">
   	<div class="tttitle" id="tttitle"></div>
   	<div class="ttcontent" id="ttcontent"></div>
  		</div> ';		
@@ -2546,16 +2567,20 @@ function imagecreatefromfile($path, $user_functions = false)
 			if (!isset($cu))
 				$cu = new CurrentUser($_SESSION['user_id']);
 
-
+			$design = DESIGN_DIRECTORY."/official/".$cfg->value('default_css_style');
 			if ($cu->properties->cssStyle !='')
 			{
-				define('CSS_STYLE',DESIGN_DIRECTORY."/".$cu->properties->cssStyle);
+				if (is_dir(DESIGN_DIRECTORY."/custom/".$cu->properties->cssStyle))
+				{
+					$design = DESIGN_DIRECTORY."/custom/".$cu->properties->cssStyle;
+				}
+				else if (is_dir(DESIGN_DIRECTORY."/official/".$cu->properties->cssStyle))
+				{
+					$design = DESIGN_DIRECTORY."/official/".$cu->properties->cssStyle;
+				}
 			}
-			else
-			{
-				define('CSS_STYLE',DESIGN_DIRECTORY."/".$cfg->value('default_css_style'));
-			}
-			define('GAME_WIDTH',$cu->properties->gameWidth);
+			define('CSS_STYLE', $design);
+			define('GAME_WIDTH', $cu->properties->gameWidth);
 
 			// Image paths
 			if ($cu->properties->imageUrl != '' && $cu->properties->imageExt != '')
@@ -2638,6 +2663,51 @@ function imagecreatefromfile($path, $user_functions = false)
 		return $url;
 	}
 
+	function createZipFromDirectory($dir, $zipFile) {
+		
+		$zip = new ZipArchive();
+		if ($zip->open($zipFile, ZIPARCHIVE::CREATE) !== TRUE) {
+			throw new Exception("Cannot open ZIP file ".$zipFile);
+		}
+		
+		// create recursive directory iterator
+		$files = new RecursiveIteratorIterator (new RecursiveDirectoryIterator($dir), RecursiveIteratorIterator::LEAVES_ONLY);
+
+		// let's iterate
+		foreach ($files as $name => $file) {
+			$new_filename = substr($name,strrpos($name,'/') + 1);
+			if (is_file($file))
+			{
+				$zip->addFile($file, $new_filename);
+			}
+		}
+
+		// close the zip file
+		if (!$zip->close()) {
+			throw new Exception("There was a problem writing the ZIP archive ".$zipFile);
+		}
+	}
+	
+	/**
+	* Recursively remove a directory and its contents
+	*/
+	function rrmdir($dir) { 
+		if (is_dir($dir)) { 
+			$objects = scandir($dir); 
+			foreach ($objects as $object) { 
+				if ($object != "." && $object != "..") { 
+					if (filetype($dir."/".$object) == "dir") {
+						rrmdir($dir."/".$object); 
+					} else { 
+						unlink($dir."/".$object); 
+					}
+				}
+			}
+			reset($objects); 
+			rmdir($dir); 
+		} 
+	 }
+	
 	/**
 	* Textfunktionen einbinden
 	*/

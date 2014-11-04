@@ -24,8 +24,198 @@
 		advanced_form("ticketcat", $tpl);
 	}
   
+	//
+	// Designs
+	//
+	elseif ($sub=="designs")
+	{
+		$tpl->assign('title', 'Designs');
+		
+		$designs = get_designs();
+
+		$customDesignDir = RELATIVE_ROOT.DESIGN_DIRECTORY.'/custom';
+		
+		// Design upload
+		if (isset($_POST['submit']))
+		{
+			if (isset($_FILES["design"])) 
+			{		
+				// Check MIME type
+				if ($_FILES["design"]['type'] == 'application/zip')
+				{
+					// Test if ZIP file can be read
+					$zip = new ZipArchive();
+					if ($zip->open($_FILES["design"]['tmp_name']) === TRUE)
+					{
+						// Iterate over files and detect design info file
+						$uploadedDesignDir = null;
+						$hasMainTemplateFile = false;
+						$hasMainStylesheetFile = false;
+						$hasMainScriptFile = false;
+						for( $i = 0; $i < $zip->numFiles; $i++ ){ 
+							$stat = $zip->statIndex($i); 
+							if (basename($stat['name']) == DESIGN_CONFIG_FILE_NAME)
+							{
+								$uploadedDesignDir = dirname($stat['name']);
+							}
+							else if (basename($stat['name']) == DESIGN_TEMPLATE_FILE_NAME)
+							{
+								$hasMainTemplateFile = true;
+							}
+							else if (basename($stat['name']) == DESIGN_STYLESHEET_FILE_NAME)
+							{
+								$hasMainStylesheetFile = true;
+							}
+							else if (basename($stat['name']) == DESIGN_SCRIPT_FILE_NAME)
+							{
+								$hasMainScriptFile = true;
+							}
+						}
+						$zip->close();
+						
+						// Check if design directory exits
+						if ($uploadedDesignDir != null)
+						{
+							// Test naming pattern of design directory
+							if (preg_match('/^[a-z0-9_-]+$/i', $uploadedDesignDir))
+							{
+								// Test for main template file
+								if ($hasMainTemplateFile)
+								{
+									// Test for main stylesheet file
+									if ($hasMainStylesheetFile)
+									{
+										// Test for main script file
+										if ($hasMainScriptFile)
+										{
+											// Move uploaded file
+											$target = $customDesignDir.'/'.$_FILES["design"]['name'];
+											if (move_uploaded_file($_FILES["design"]['tmp_name'], $target))
+											{
+												$zip = new ZipArchive();
+												if ($zip->open($target) === TRUE)
+												{
+													// Remove existing design, if it exists
+													$existingDesign = $customDesignDir.'/'.$uploadedDesignDir;
+													if (is_dir($existingDesign))
+													{
+														rrmdir($existingDesign);
+													}
+													
+													// Extract design
+													$zip->extractTo($customDesignDir);
+													$zip->close();
+													
+													// Reload list of designs
+													$designs = get_designs();
+												}
+												
+												// Remove uploaded design archive
+												unlink($target);
+												$tpl->assign('msg', "Design hochgeladen");
+											}
+											else
+											{
+												$tpl->assign('errmsg', "Fehler beim Upload des Designs!");
+											}
+										}
+										else
+										{
+											$tpl->assign('errmsg', "Ungültiges Design, Script-Datei ".DESIGN_SCRIPT_FILE_NAME." nicht vorhanden!");
+										}
+									}
+									else
+									{
+										$tpl->assign('errmsg', "Ungültiges Design, Stylesheet-Datei ".DESIGN_STYLESHEET_FILE_NAME." nicht vorhanden!");
+									}
+								}
+								else
+								{
+									$tpl->assign('errmsg', "Ungültiges Design, Template-Datei ".DESIGN_TEMPLATE_FILE_NAME." nicht vorhanden!");
+								}
+							}
+							else
+							{
+								$tpl->assign('errmsg', "Ungültiges Design, Verzeichnis-Name enthält ungültige Zeichen (nur a-z, 0-9 sowie _ und - sind erlaubt)!");
+							}
+						}
+						else
+						{
+							$tpl->assign('errmsg', "Ungültiges Design, Info-Datei ".DESIGN_CONFIG_FILE_NAME." nicht vorhanden!");
+						}
+					}
+					else
+					{
+						$tpl->assign('errmsg', "Kann ZIP-Datei nicht öffnen!");
+					}
+				}
+				else
+				{
+					$tpl->assign('errmsg', "Keine ZIP-Datei!");
+				}
+			}
+		}
+		// Design download
+		else if (!empty($_GET['download']))
+		{
+			$design = $_GET['download'];
+			if (isset($designs[$design])) 
+			{
+				$zipFile = tempnam('sys_get_temp_dir', $design);
+				$dir = $designs[$design]['dir'];
+			
+				try {
+					createZipFromDirectory($dir, $zipFile);
+					header('Content-Type: application/zip');
+					header('Content-disposition: attachment; filename='.$design.'.zip');
+					header('Content-Length: ' . filesize($zipFile));
+					readfile($zipFile);
+					unlink($zipFile);
+					exit();
+				} catch (Exception $e) {
+					$tpl->assign('errmsg', $e->getMessage());
+				}
+			}
+		}
+		// Removal of custom design
+		else if (!empty($_GET['remove']))
+		{
+			$design = $_GET['remove'];
+			if (isset($designs[$design]) && $designs[$design]['custom']) 
+			{
+				$dir = $designs[$design]['dir'];
+				rrmdir($dir);
+				$tpl->assign('msg', 'Design gelöscht');
+				$designs = get_designs();
+			}
+		}
+		
+		// Show all designs
+		foreach ($designs as $k => $v) 
+		{
+			$res = dbQuerySave("
+			SELECT 
+				COUNT(id) as cnt 
+			FROM 
+				user_properties
+			WHERE 
+				css_style=?;", 
+			array(
+				$k
+			));
+			$arr = mysql_fetch_row($res);
+			$designs[$k]['users'] = $arr[0];
+		}
+		
+		$tpl->assign('designs', $designs);
+		
+		$sampleInfoFile = RELATIVE_ROOT.DESIGN_DIRECTORY."/official/".$cfg->value('default_css_style').'/'.DESIGN_CONFIG_FILE_NAME;
+		$tpl->assign('sampleInfoFile', htmlentities(file_get_contents($sampleInfoFile)));
+		
+		$tpl->setView('designs');
+	}
 	
-  //
+	//
 	// Bildpakete
 	//
 	elseif ($sub=="imagepacks")

@@ -1002,7 +1002,7 @@
 				*/								
 								
 				$imagepacks = get_imagepacks();
-				$designs = get_designs("../");
+				$designs = get_designs();
 				
 				echo "<table class=\"tbl\">";
  				echo "<tr>

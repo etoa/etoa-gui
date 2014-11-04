@@ -100,14 +100,10 @@
 	$tpl->assign("templateDir", CSS_STYLE);
 
 	// Xajax header
-	ob_start();
-	echo $xajax->printJavascript(XAJAX_DIR);		
-	$tpl->assign("xajaxJS",ob_get_clean());
+	$tpl->assign("xajaxJS", $xajax->getJavascript(XAJAX_DIR));
 
 	// Tooltip init
-	ob_start();
-	initTT();
-	$tpl->assign("bodyTopStuff",ob_get_clean());			
+	$tpl->assign("bodyTopStuff", getInitTT());
 
 	//
 	// Page content
@@ -356,7 +352,7 @@
 		$tpl->assign("renderTime",$tmr->getRoundedTime());
 						
 		// Display main template
-		$layoutTemplate = CSS_STYLE."/template.html";
+		$layoutTemplate = CSS_STYLE."/".DESIGN_TEMPLATE_FILE_NAME;
 	}
 	$tpl->assign("content_for_layout", ob_get_clean());
 	} catch (DBException $ex) {
@@ -364,16 +360,21 @@
 		$tpl->assign("content_for_layout", $ex);
 	}
 	
-	/*
-	ob_start();
-	include("chat/fastchat.php");
-	$tpl->assign("chatstream", ob_get_clean());
-	ob_start();
-	include("chat/fastchatinput.php");
-	$tpl->assign("chatinput", ob_get_clean());
-	*/
-	
-	$tpl->display($layoutTemplate);
+	try {
+		$tpl->display($layoutTemplate);
+	} catch (SmartyException $e) {
+		$tpl->assign('message', $e->getMessage());
+		$func = function($value) { 
+			if (isset($value['file'])) {
+				$value['file'] = substr($value['file'], strlen(__DIR__)+1);
+			}
+			return $value; 
+		};
+		$tpl->assign('trace', array_map($func, $e->getTrace()));
+		$tpl->setView('exception');
+		$tpl->setLayout('empty');
+		$tpl->render();
+	}
 
 	$_SESSION['lastpage']=$page;
 

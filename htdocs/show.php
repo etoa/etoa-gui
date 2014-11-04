@@ -36,14 +36,19 @@
 		}
 	}
 
+	$design = DESIGN_DIRECTORY."/official/".$cfg->value('default_css_style');
 	if (isset($cu) && $cu->properties->cssStyle !='')
 	{
-		define('CSS_STYLE',DESIGN_DIRECTORY."/".$cu->properties->cssStyle);
+		if (is_dir(DESIGN_DIRECTORY."/custom/".$cu->properties->cssStyle)) 
+		{
+			$design = DESIGN_DIRECTORY."/custom/".$cu->properties->cssStyle;
+		}
+		else if (is_dir(DESIGN_DIRECTORY."/official/".$cu->properties->cssStyle))
+		{
+			$design = DESIGN_DIRECTORY."/official/".$cu->properties->cssStyle;
+		}
 	}
-	else
-	{
-		define('CSS_STYLE',DESIGN_DIRECTORY."/".$cfg->value('default_css_style'));
-	}
+	define('CSS_STYLE', $design);
 	if (isset($cu) && $cu->properties->imageUrl != '' && $cu->properties->imageExt != '')
 	{
 		define('IMAGE_PATH',$cu->properties->imageUrl);
@@ -64,14 +69,10 @@
 	$tpl->assign("additional_css", array('web/css/outgame.css'));
 
 	// Xajax header
-	ob_start();
-	echo $xajax->printJavascript(XAJAX_DIR);
-	$tpl->assign("xajaxJS",ob_get_clean());
+	$tpl->assign("xajaxJS", $xajax->getJavascript(XAJAX_DIR));
 
 	// Tooltip init
-	ob_start();
-	initTT();
-	$tpl->assign("bodyTopStuff",ob_get_clean());
+	$tpl->assign("bodyTopStuff", getInitTT());
 
 	$tpl->assign("topmenu",$indexpage);
 	$tpl->assign("loginurl", getLoginUrl());
