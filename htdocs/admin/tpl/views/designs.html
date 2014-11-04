@@ -17,6 +17,7 @@
 			<th>Autor</th>
 			<th>E-Mail</th>
 			<th>Users</th>
+			<th>Offizielles Design</th>
 			<th>Aktionen</th>
 		</tr>
 	</thead>
@@ -30,9 +31,12 @@
 			<td>{$d.author}</td>
 			<td>{$d.email}</td>
 			<td>{$d.users}</td>
+			<td>{if $d.custom}nein{else}ja{/if}</td>
 			<td style="width:130px">
 				<a href="?page={$page}&sub={$sub}&download={$k}">Download</a>
+				{if $d.custom}
 				<a href="?page={$page}&sub={$sub}&remove={$k}">Entfernen</a>
+				{/if}
 			</td>
 		</tr>
 	{/foreach}

@@ -1239,58 +1239,63 @@
 	*/
 	function get_designs()
 	{
-		$baseDir = RELATIVE_ROOT.DESIGN_DIRECTORY;
+		$rootDir = RELATIVE_ROOT.DESIGN_DIRECTORY;
 		$designs = array();
-		if ($d = opendir($baseDir))
+		foreach(array('official', 'custom') as $rd)
 		{
-			while ($f = readdir($d))
+			$baseDir = $rootDir.'/'.$rd;
+			if ($d = opendir($baseDir))
 			{
-				$dir = $baseDir."/".$f;
-				if (is_dir($dir) && !preg_match('/^\./', $f))
+				while ($f = readdir($d))
 				{
-					$file = $dir."/".DESIGN_CONFIG_FILE_NAME;
-					if (is_file($file))
+					$dir = $baseDir."/".$f;
+					if (is_dir($dir) && !preg_match('/^\./', $f))
 					{
-						$designs[$f]['dir'] = $dir;
-						$xml = new XMLReader();
-						$xml->open($file);
-						while ($xml->read()) 
+						$file = $dir."/".DESIGN_CONFIG_FILE_NAME;
+						if (is_file($file))
 						{
-							switch ($xml->name) 
+							$designs[$f]['dir'] = $dir;
+							$designs[$f]['custom'] = ($rd == 'custom');
+							$xml = new XMLReader();
+							$xml->open($file);
+							while ($xml->read()) 
 							{
-								case "name":
-									$xml->read();
-									$designs[$f]['name']= $xml->value;
-									$xml->read();
-									break;
-								case "changed":
-									$xml->read();
-									$designs[$f]['changed']= $xml->value;
-									$xml->read();
-									break;
-								case "version":
-									$xml->read();
-									$designs[$f]['version']= $xml->value;
-									$xml->read();
-									break;
-								case "author":
-									$xml->read();
-									$designs[$f]['author']= $xml->value;
-									$xml->read();
-									break;
-								case "email":
-									$xml->read();
-									$designs[$f]['email']= $xml->value;
-									$xml->read();
-									break;
-								case "description":
-									$xml->read();
-									$designs[$f]['description']= $xml->value;
-									$xml->read();
-									break;
+								switch ($xml->name) 
+								{
+									case "name":
+										$xml->read();
+										$designs[$f]['name']= $xml->value;
+										$xml->read();
+										break;
+									case "changed":
+										$xml->read();
+										$designs[$f]['changed']= $xml->value;
+										$xml->read();
+										break;
+									case "version":
+										$xml->read();
+										$designs[$f]['version']= $xml->value;
+										$xml->read();
+										break;
+									case "author":
+										$xml->read();
+										$designs[$f]['author']= $xml->value;
+										$xml->read();
+										break;
+									case "email":
+										$xml->read();
+										$designs[$f]['email']= $xml->value;
+										$xml->read();
+										break;
+									case "description":
+										$xml->read();
+										$designs[$f]['description']= $xml->value;
+										$xml->read();
+										break;
+								}
 							}
+							$xml->close();
 						}
-						$xml->close();
 					}
 				}
 			}
@@ -2548,16 +2553,20 @@ function imagecreatefromfile($path, $user_functions = false)
 			if (!isset($cu))
 				$cu = new CurrentUser($_SESSION['user_id']);
 
-
-			if ($cu->properties->cssStyle !='' && is_dir(DESIGN_DIRECTORY."/".$cu->properties->cssStyle))
+			$design = DESIGN_DIRECTORY."/official/".$cfg->value('default_css_style');
+			if ($cu->properties->cssStyle !='')
 			{
-				define('CSS_STYLE',DESIGN_DIRECTORY."/".$cu->properties->cssStyle);
+				if (is_dir(DESIGN_DIRECTORY."/custom/".$cu->properties->cssStyle))
+				{
+					$design = DESIGN_DIRECTORY."/custom/".$cu->properties->cssStyle;
+				}
+				else if (is_dir(DESIGN_DIRECTORY."/official/".$cu->properties->cssStyle))
+				{
+					$design = DESIGN_DIRECTORY."/official/".$cu->properties->cssStyle;
+				}
 			}
-			else
-			{
-				define('CSS_STYLE',DESIGN_DIRECTORY."/".$cfg->value('default_css_style'));
-			}
-			define('GAME_WIDTH',$cu->properties->gameWidth);
+			define('CSS_STYLE', $design);
+			define('GAME_WIDTH', $cu->properties->gameWidth);
 
 			// Image paths
 			if ($cu->properties->imageUrl != '' && $cu->properties->imageExt != '')

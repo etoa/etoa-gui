@@ -36,14 +36,19 @@
 		}
 	}
 
-	if (isset($cu) && $cu->properties->cssStyle !='' && is_dir(DESIGN_DIRECTORY."/".$cu->properties->cssStyle))
+	$design = DESIGN_DIRECTORY."/official/".$cfg->value('default_css_style');
+	if (isset($cu) && $cu->properties->cssStyle !='')
 	{
-		define('CSS_STYLE',DESIGN_DIRECTORY."/".$cu->properties->cssStyle);
+		if (is_dir(DESIGN_DIRECTORY."/custom/".$cu->properties->cssStyle)) 
+		{
+			$design = DESIGN_DIRECTORY."/custom/".$cu->properties->cssStyle;
+		}
+		else if (is_dir(DESIGN_DIRECTORY."/official/".$cu->properties->cssStyle))
+		{
+			$design = DESIGN_DIRECTORY."/official/".$cu->properties->cssStyle;
+		}
 	}
-	else
-	{
-		define('CSS_STYLE',DESIGN_DIRECTORY."/".$cfg->value('default_css_style'));
-	}
+	define('CSS_STYLE', $design);
 	if (isset($cu) && $cu->properties->imageUrl != '' && $cu->properties->imageExt != '')
 	{
 		define('IMAGE_PATH',$cu->properties->imageUrl);
