@@ -41,7 +41,7 @@
 			if (isset($_FILES["design"])) 
 			{		
 				// Check MIME type
-				if ($_FILES["design"]['type'] == 'application/zip')
+				if (in_array($_FILES["design"]['type'], array('application/zip', 'application/x-zip-compressed')))
 				{
 					// Test if ZIP file can be read
 					$zip = new ZipArchive();
@@ -151,7 +151,7 @@
 				}
 				else
 				{
-					$tpl->assign('errmsg', "Keine ZIP-Datei!");
+					$tpl->assign('errmsg', "Keine ZIP-Datei (".$_FILES["design"]['type'].")!");
 				}
 			}
 		}
