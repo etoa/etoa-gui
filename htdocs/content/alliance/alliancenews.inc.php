@@ -47,17 +47,18 @@ if (Alliance::checkActionRights('alliancenews'))
 			VALUES
 			(".$cu->allianceId.",
 			".$cu->id.",
-			'".addslashes($_POST['news_title'])."',
-			'".addslashes($_POST['news_text'])."',
+			'".mysql_real_escape_string($_POST['news_title'])."',
+			'".mysql_real_escape_string($_POST['news_text'])."',
 			".time().",
-			".$_POST['alliance_id'].")");
+			".intval($_POST['alliance_id']).")");
 			
 			ok_msg("News wurde gesendet!");
 						
 			// Gebe nur Punkte falls Nachricht öffentlich oder an andere Allianz
 			if ($cu->allianceId!=$_POST['alliance_id'])
 			{
-				$cu->rating->addDiplomacyRating(DIPLOMACY_POINTS_PER_NEWS,"Rathausnews verfasst (ID:".mysql_insert_id().", ".addslashes($_POST['news_text']).")");
+				// 2nd param is only for logging, Log::add() escapes string properly
+				$cu->rating->addDiplomacyRating(DIPLOMACY_POINTS_PER_NEWS,"Rathausnews verfasst (ID:".mysql_insert_id().", ".$_POST['news_text'].")");
 			}
 			
 			// Update rss file
@@ -96,7 +97,7 @@ if (Alliance::checkActionRights('alliancenews'))
 	tableStart("Neue Allianzenews");
 	if(isset($_SESSION['alliance']['news']['alliance_id']) && $_SESSION['alliance']['news']['alliance_id']!=0)
 	{
-		$aid = $_SESSION['alliance']['news']['alliance_id'];
+		$aid = intval($_SESSION['alliance']['news']['alliance_id']);
 	}
 	else
 	{
@@ -129,15 +130,15 @@ if (Alliance::checkActionRights('alliancenews'))
 		$send = "";
 	}
 
-	$aid = (isset($_POST['alliance_id'])) ? $_POST['alliance_id'] : $cu->allianceId();
+	$aid = (isset($_POST['alliance_id'])) ? intval($_POST['alliance_id']) : $cu->allianceId();
 
 	echo "<tr><th colspan=\"3\">Sende diese Nachricht nur ab, wenn du dir bezüglich der Ratshausreglen sicher bist! Eine Missachtung kann zur Sperrung des Accounts führen!</th></tr>";
 	echo "<tr>
 		<th width=\"170\">Betreff:</td>
-		<td colspan=\"2\"><input type=\"text\" name=\"news_title\" value=\"".$news_title."\" size=\"62\" maxlength=\"255\"></td></tr>";
+		<td colspan=\"2\"><input type=\"text\" name=\"news_title\" value=\"".StringUtils::encodeDBStringToPlaintext($news_title)."\" size=\"62\" maxlength=\"255\"></td></tr>";
 	echo '<tr>
 		<th width="170">Text:</td>
-		<td colspan="2"><textarea name="news_text" rows="18" cols="60">'.$news_text.'</textarea>
+		<td colspan="2"><textarea name="news_text" rows="18" cols="60">'.StringUtils::encodeDBStringForTextarea($news_text).'</textarea>
 		<br/>'.helpLink('textformat', 'Hilfe zur Formatierung').'</td></tr>';
 	echo "<tr>
 		<th width=\"170\">Ziel:</td>
@@ -162,7 +163,7 @@ if (Alliance::checkActionRights('alliancenews'))
 			
 		while ($alliances=mysql_fetch_assoc($alliance))
 		{
-			$selected = ($aid = $alliances['alliance_id']) ? 'selected="selected" ' : "";
+			$selected = ($aid == $alliances['alliance_id']) ? 'selected="selected" ' : "";
 			
 			echo '<option value="'.$alliances['alliance_id'].'" '.$selected.'>['.$alliances['alliance_tag']."]  ".$alliances['alliance_name']."</option>";
 		}

@@ -57,10 +57,10 @@
 						AND l.deflist_user_id=".$cu->id."
 						AND l.deflist_entity_id=".$cp->id."
 						AND l.deflist_count > 0
-						AND l.deflist_def_id=".$def_id."");					
+						AND l.deflist_def_id=".intval($def_id)."");					
 				if (mysql_num_rows($res)) {
 					$arr = mysql_fetch_assoc($res);
-					$packcount = min(max(0, $v), $arr['cnt']);
+					$packcount = intval(min(max(0, $v), $arr['cnt']));
 
 					if ($packcount > 0) {
 						$sl->add($arr['id'],$dl->remove($def_id, $packcount));
@@ -82,6 +82,7 @@
 		$transformed_counter = 0;
 		if (isset($_POST['stransform']) && count($_POST['stransform']) > 0) {
 			foreach ($_POST['stransform'] as $ship_id => $v) {
+				$ship_id = intval($ship_id);
 				$res = dbquery("
 					SELECT
 						l.shiplist_count as cnt,			
@@ -98,7 +99,7 @@
 						AND l.shiplist_ship_id=".$ship_id."");					
 				if (mysql_num_rows($res)) {
 					$arr = mysql_fetch_assoc($res);
-					$packcount = min(max(0, $v),$arr['cnt']);
+					$packcount = intval(min(max(0, $v),$arr['cnt']));
 					if ($packcount>0) {
 						$dl->add($arr['id'],$sl->remove($ship_id, $packcount));
 						$transformed_counter += $packcount;
@@ -174,7 +175,7 @@
 	}
 
 	if (!$has_mobile_objects) {
-		error_msg("Keine mobilen Anlagen vorhanden!", 1);
+		info_msg("Keine mobilen Anlagen vorhanden!", 1);
 	}
 	
 	//Recycling Level laden
@@ -216,6 +217,8 @@
 			{
 				foreach ($_POST['ship_count'] as $id=>$num)
 				{
+					$id = intval($id);
+					
 					$num=abs($num);
 					if($num>0)
 					{
@@ -450,7 +453,7 @@
 		}
 		else
 		{
-			error_msg("Es sind keine Schiffe auf diesem Planeten vorhanden!");
+			info_msg("Es sind keine Schiffe auf diesem Planeten vorhanden!");
 		}
 
 
@@ -500,11 +503,11 @@
 			echo "<input type=\"submit\" class=\"button\" name=\"submit_recycle_def\" value=\"Ausgew&auml;hlte Anlagen recyceln\"></form>";
 		}
 		else
-			error_msg("Es sind keine Verteidigungsanlagen auf diesem Planeten vorhanden!", 1);
+			info_msg("Es sind keine Verteidigungsanlagen auf diesem Planeten vorhanden!", 1);
 	}
 	else
 	{
-		error_msg("Es können keine Schiffe oder Verteidigungsanlagen recycelt werden, da die Recyclingtechnologie noch nicht erforscht wurde!", 1);
+		info_msg("Es können keine Schiffe oder Verteidigungsanlagen recycelt werden, da die Recyclingtechnologie noch nicht erforscht wurde!", 1);
 	}
 
 

@@ -3,9 +3,25 @@
 	echo "<h2>Verteidigung</h2>";
 	$race=get_races_array();
 
-	if (isset($_GET['id']))
+	if (isset($_GET['id']) && intval($_GET['id']) > 0)
 	{
-		$res = dbquery("SELECT * FROM defense WHERE def_id='".$_GET['id']."';");
+		$did = intval($_GET['id']);
+		
+		$res = dbquery("SELECT 
+						`def_name`,
+						`def_id`,
+						`def_costs_metal`,
+						`def_costs_crystal`,
+						`def_costs_plastic`,
+						`def_costs_fuel`,
+						`def_costs_food`,
+						`def_structure`,
+						`def_shield`,
+						`def_weapon`,
+						`def_heal`,
+						`def_fields`,
+						`def_max_count`
+					FROM defense WHERE `def_id`='".$did."';");
 		if ($arr = mysql_fetch_array($res))
 		{
 			HelpUtil::breadCrumbs(array("Verteidigung","defense"),array(text2html($arr['def_name']),$arr['def_id']),1);
@@ -22,7 +38,7 @@
 			while ($barr=mysql_fetch_array($bres))		
 			{
 				echo "<option value=\"".$barr['def_id']."\"";
-				if ($barr['def_id']==$_GET['id']) echo " selected=\"selected\"";
+				if ($barr['def_id']==$did) echo " selected=\"selected\"";
 				echo ">".$barr['def_name']."</option>";
 			}
 			echo "</select><br/><br/>";		
@@ -85,7 +101,7 @@
 	{
 		HelpUtil::breadCrumbs(array("Verteidigung","defense"));		
 		
-		if (isset($_GET['order']))
+		if (isset($_GET['order']) && ctype_alpha($_GET['order']))
 		{
 			$order="def_".$_GET['order'];
 			if ($_SESSION['help']['orderfield']==$_GET['order'])
@@ -107,7 +123,7 @@
 		}
 		else
 		{
-			$order="def_order";
+			$order='def_order';
 			$sort="ASC";
 		}
 

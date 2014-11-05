@@ -30,11 +30,12 @@
 
 	if (!isset($_GET['id']))
 		$uid = $cu->id;
-
-	if (isset($_GET['id']) && intval($_GET['id'])>0)
-		$uid = $_GET['id'];
+	elseif (intval($_GET['id'])>0)
+		$uid = intval($_GET['id']);
+	else
+		$uid = 0;
 	
-	if (isset($uid))
+	if ($uid > 0)
 	{
 		$user = new User($uid);
 		

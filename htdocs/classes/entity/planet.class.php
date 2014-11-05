@@ -9,6 +9,8 @@
 	{
 		protected $isValid;
 		protected $coordsLoaded;
+        private $desc;
+        private $name;
 
 		// TODO: Make protected and ad getter
 		public $resources;
@@ -22,9 +24,9 @@
 			$this->exploreCode = 'e';
 			$this->explore = false;
 			$this->isValid = false;
-      $this->isVisible = true;
+            $this->isVisible = true;
 			
-			if (!is_array($arr) && $arr>0)
+			if (!is_array($arr) && intval($arr)>0)
 			{
 				$res = dbquery("
 				SELECT
@@ -43,7 +45,7 @@
         	INNER JOIN 
           	planet_types 
             ON planets.planet_type_id = planet_types.type_id
-            AND planets.id='".$arr."'
+            AND planets.id='".intval($arr)."'
 				)
         INNER JOIN 
         (	
@@ -79,12 +81,12 @@
 			}
 
 			if ($arr)
-			{				
+			{
 				$this->id=$arr['id'];
 				$this->cellId=$arr['cell_id'];
 				$this->userId=$arr['planet_user_id'];
-				$this->name= $arr['planet_name']!="" ? stripslashes($arr['planet_name']) : 'Unbenannt';
-				$this->desc= stripslashes($arr['planet_desc']);
+				$this->name= $arr['planet_name']!="" ? ($arr['planet_name']) : 'Unbenannt';
+				$this->desc= $arr['planet_desc'];
 				$this->image=$arr['planet_image'];
 				$this->updated=$arr['planet_last_updated'];
 				$this->userChanged=$arr['planet_user_changed'];
@@ -187,7 +189,19 @@
 
 			}
 		}
-		
+	
+    public function __get($var)
+    {
+        if($var == 'desc')
+        {
+            return StringUtils::encodeDBStringToPlaintext($this->desc);
+        }
+        if($var == 'name')
+        {
+            return htmlspecialchars($this->name, ENT_QUOTES, 'UTF-8', true);
+        }
+        return $this->$var;
+    }
 
     public function allowedFleetActions()
     {
@@ -275,8 +289,13 @@
 		
 		function name()
 		{
-			return htmlspecialchars($this->name);
+			return $this->__get('name');//htmlspecialchars($this->name);
 		}
+        
+        function getNoBrDesc()
+        {
+            return htmlspecialchars($this->desc, ENT_QUOTES, 'UTF-8', true);
+        }
 
 		function __toString()
 		{
@@ -554,8 +573,8 @@
 	    UPDATE
 	    	planets
 	    SET
-				planet_user_id=".$uid.",
-				planet_user_main=".$main."
+				planet_user_id=".intval($uid).",
+				planet_user_main=".intval($main)."
 	    WHERE
 	    	id='".$this->id."';";
 	    dbquery($sql);		
@@ -567,12 +586,12 @@
 			UPDATE 
 				planets 
 			SET 
-				planet_name='".addslashes($name)."',
-				planet_desc='".addslashes($comment)."' 
+				planet_name='".mysql_real_escape_string($name)."',
+				planet_desc='".mysql_real_escape_string($comment)."' 
 			WHERE 
 				id='".$this->id."';");
 			$this->name=$name;
-			$this->desc=$comment;			
+			$this->desc=$comment;
 		}
 	
 		function setDefaultResources()
@@ -656,7 +675,7 @@
 			    UPDATE
 	    			planets
 	    		SET
-        			planet_people=planet_people+".$diff."
+        			planet_people=planet_people+".intval($diff)."
 	    		WHERE
 	    			id='".$this->id."';";
 			dbquery($sql);
@@ -721,6 +740,8 @@
 		 */
 		function chgRes($i,$diff)
 		{
+            $diff = intval($diff);
+            
 			switch ($i)
 			{
 				case 1:
@@ -766,9 +787,9 @@
 			$str = "";
 			foreach ($resNames as $rk => $rn)
 			{
-				if (isset($data[$rk]) && $data[$rk]>0)
+				if (isset($data[$rk]) && intval($data[$rk])>0)
 				{
-					$diff = $data[$rk];
+					$diff = intval($data[$rk]);
 					// compatilility...
 					// todo: one day, planet table resourcse shold also be enumerated
 					if ($str!="")
@@ -822,7 +843,7 @@
 			{
 				if (isset($data[$rk]) && $data[$rk]>=0)
 				{
-					if ($this->resources[$rk] - $data[$rk] < 0)
+					if ($this->resources[$rk] - intval($data[$rk]) < 0)
 						return false;
 				}
 			}
@@ -836,9 +857,9 @@
 			$str = "";
 			foreach ($resNames as $rk => $rn)
 			{
-				if (isset($data[$rk]) && $data[$rk]>0)
+				if (isset($data[$rk]) && intval($data[$rk])>0)
 				{
-					$diff = $data[$rk];
+					$diff = intval($data[$rk]);
 
 					if ($this->resources[$rk] - $diff < 0)
 						return false;
@@ -890,23 +911,25 @@
 
 		function chgBunker($i,$amount)
 		{
+            $amount = intval($amount);
+            
 			switch ($i)
 			{
 				case 1:
 					$str = "planet_bunker_metal=".$amount."";
-		    	$this->bunkerMetal=$amount;
+                    $this->bunkerMetal=$amount;
 					break;
 				case 2:
 					$str = "planet_bunker_crystal=".$amount."";
-		    	$this->bunkerCrystal=$amount;
+                    $this->bunkerCrystal=$amount;
 					break;
 				case 3:
 					$str = "planet_bunker_plastic=".$amount."";
-		   	 	$this->bunkerPlastic=$amount;
+                    $this->bunkerPlastic=$amount;
 					break;
 				case 4:
 					$str = "planet_bunker_fuel=".$amount."";
-		    	$this->bunkerFuel=$amount;
+                    $this->bunkerFuel=$amount;
 					break;
 				case 5:
 					$str = "planet_bunker_food=".$amount."";
@@ -1009,7 +1032,7 @@
 		function chown($new_user_id)
 		{
 			$this->name = "Unbenannt";
-			$this->userId = $new_user_id;
+			$this->userId = intval($new_user_id);
 			$this->changed = time();
 			
       // Planet �hmen
@@ -1018,7 +1041,7 @@
 					planets
 				SET
 					planet_user_id='".$this->userId."',
-					planet_name='".$this->name."',
+					planet_name='".mysql_real_escape_string($this->name)."',
 					planet_user_changed=".$this->changed.",
 					planet_user_main=0
 				WHERE

@@ -341,7 +341,7 @@
 			FROM
 				users
 			WHERE
-				user_nick='".$nick."';
+				user_nick='".mysql_real_escape_string($nick)."';
 		");
 		if (mysql_num_rows($res)>0)
 		{
@@ -418,6 +418,7 @@
 	{
 		$number = str_replace('`', '', $number);
 		$number = str_replace('%', '', $number);
+        $number = intval($number);
 		if ($colorize==1)
 		{
 			if ($number>0)
@@ -425,7 +426,7 @@
 			if ($number<0)
 				return "<span style=\"color:#f00\">".number_format($number,0,",",".")."</span>";
 		}
-		$number = abs(intval($number));
+		$number = abs($number);
 		return $number;
 		
 	}
@@ -709,7 +710,7 @@
 			VALUES
 			(
 				'0',
-				'".$user_id."',
+				'".intval($user_id)."',
 				'".time()."',
 				'".$msg_type."'
 			);
@@ -725,8 +726,8 @@
 			VALUES
 			(
 				".mysql_insert_id().",
-				'".addslashes($subject)."',
-				'".addslashes($text)."'
+				'".mysql_real_escape_string($subject)."',
+				'".mysql_real_escape_string($text)."'
 			);
 		");		
 			return true;
@@ -1000,6 +1001,17 @@
 				echo "<b>Erfolg:</b> ";
 		}		
 		echo text2html($text)."</div>";		
+	}
+	
+	/**
+	* Formatierte Info-Meldung anzeigen
+	*
+	* $text: Info-Meldung
+	*/
+	function info_msg($text)
+	{
+		echo "<div class=\"infoMsgBox\">";
+		echo text2html($text)."</div>";	
 	}
        
   /**
@@ -2614,17 +2626,17 @@ function imagecreatefromfile($path, $user_functions = false)
 
 	function cTT($title,$content)
 	{
-		return " onclick=\"showTT('".StringUtils::encodeJavascriptStringForTT($title)."','".StringUtils::encodeJavascriptStringForTT($content)."',0,event,this);return false;\"  ";
+		return " onclick=\"showTT('".StringUtils::encodeDBStringToJS($title)."','".StringUtils::encodeDBStringToJS($content)."',0,event,this);return false;\"  ";
 	}
 
 	function mTT($title,$content)
 	{
-		return " onmouseover=\"showTT('".StringUtils::encodeJavascriptStringForTT($title)."','".StringUtils::replaceBR(StringUtils::encodeJavascriptStringForTT($content))."',1,event,this);\" onmouseout=\"hideTT();\" ";
+		return " onmouseover=\"showTT('".StringUtils::encodeDBStringToJS($title)."','".StringUtils::replaceBR(StringUtils::encodeDBStringToJS($content))."',1,event,this);\" onmouseout=\"hideTT();\" ";
 	}
 
 	function tt($content)
 	{
-		return " onmouseover=\"showTT('','".StringUtils::encodeJavascriptStringForTT($content)."',1,event,this);\" onmouseout=\"hideTT();\" ";
+		return " onmouseover=\"showTT('','".StringUtils::encodeDBStringToJS($content)."',1,event,this);\" onmouseout=\"hideTT();\" ";
 	}
 
 	function checkDaemonRunning($pidfile)

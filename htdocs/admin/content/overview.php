@@ -259,14 +259,19 @@
 					<th>Aktivität</th>
 					<th>Dauer</th>
 					<th>IP</th>
-					<th>Browser</th>
-					<th>OS</th>
+					<th>User Agent</th>
 					<th>Kicken</th>
 				</tr>";
 				$t = time();
 				while ($arr=mysql_fetch_array($res))
 				{
-					$browser = get_browser($arr['user_agent'], true);
+					if (ini_get("browscap") != null)
+					{
+						$bc = get_browser($arr['user_agent'], true);
+						$browser = $bc['parent'].' ['.$bc['platform'].']';
+					} else {
+						$browser = $arr['user_agent'];
+					}
 					echo "<tr>
 						<td ".($t - $cfg->admin_timeout->v < $arr['time_action'] ? 'style="color:#0f0;">Online': 'style="color:red;">Timeout')."</td>
 						<td>".$arr['user_nick']."</td>
@@ -274,8 +279,7 @@
 						<td>".date("d.m.Y H:i",$arr['time_action'])."</td>
 						<td>".tf($arr['time_action']-$arr['time_login'])."</td>
 						<td title=\"".Net::getHost($arr['ip_addr'])."\">".$arr['ip_addr']."</td>
-						<td title=\"".$arr['user_agent']."\">".$browser['parent']."</td>
-						<td title=\"".$arr['user_agent']."\">".$browser['platform']."</td>
+						<td title=\"".$arr['user_agent']."\">".$browser."</td>
 						<td><a href=\"?page=$page&amp;sub=$sub&amp;kick=".$arr['user_id']."\">Kick</a></td>
 					</tr>";
 				}			

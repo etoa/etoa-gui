@@ -190,7 +190,7 @@
 				UPDATE
 					stars
 				SET
-					name='".addslashes($name)."'
+					name='".mysql_real_escape_string($name)."'
 				WHERE
 					id=".$this->id."
 				");

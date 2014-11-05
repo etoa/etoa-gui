@@ -9,8 +9,9 @@
 
 	if (isset($_GET['id']))
 	{
-		if ($_GET['level']==0) $_GET['level']=1;
-		$res = dbquery("SELECT * FROM missiles WHERE missile_id='".$_GET['id']."';");
+		$mid = intval($_GET['id']);
+		
+		$res = dbquery("SELECT * FROM missiles WHERE missile_id='".$mid."';");
 		if ($arr = mysql_fetch_array($res))
 		{
 			HelpUtil::breadCrumbs(array("Raketen","missiles"),array(text2html($arr['missile_name']),$arr['missile_id']),1);
@@ -27,7 +28,7 @@
 			while ($barr=mysql_fetch_array($bres))		
 			{
 				echo "<option value=\"".$barr['missile_id']."\"";
-				if ($barr['missile_id']==$_GET['id']) echo " selected=\"selected\"";
+				if ($barr['missile_id']==$mid) echo " selected=\"selected\"";
 				echo ">".$barr['missile_name']."</option>";
 			}
 			echo "</select><br/><br/>";		
@@ -87,7 +88,7 @@
 	    tableEnd();
 		}
 		else
-		  echo "Ragetendaten nicht gefunden!";
+		  echo "Raketendaten nicht gefunden!";
 		echo "<input type=\"button\" value=\"Raketen&uuml;bersicht\" onclick=\"document.location='?$link&amp;site=$site'\" /> &nbsp; ";
 		echo "<input type=\"button\" value=\"Technikbaum\" onclick=\"document.location='?page=techtree&mode=defense'\" /> &nbsp; ";
 		if ($_SESSION['lastpage']=="missiles")
@@ -102,7 +103,7 @@
 	{
 		HelpUtil::breadCrumbs(array("Raketen","missiles"));		
 		
-		if (isset($_GET['order']))
+		if (isset($_GET['order']) && ctype_alpha($_GET['order']))
 		{
 			$order="missile_".$_GET['order'];
 			if ($_SESSION['help']['orderfield']==$_GET['order'])

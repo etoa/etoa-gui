@@ -100,8 +100,8 @@ define('HELP_URL',"?page=help&site=buildings");
 		}
 
 		//Gebäude ausbauen/abreissen/abbrechen
-		if ((isset($_GET['id']) && $_GET['id'] > 0) || (count($_POST)>0 && checker_verify()))
-		{	
+		if ((isset($_GET['id']) && intval($_GET['id']) > 0) || (count($_POST)>0 && checker_verify()))
+		{
 			$bid = 0;
 			if (isset($_GET['id']) && intval($_GET['id']) >0)
 			{
@@ -113,20 +113,20 @@ define('HELP_URL',"?page=help&site=buildings");
 				{
 					if(stristr($k,'_x'))
 					{
-						$bid = preg_replace('/show_([0-9]+)_x/', '\1', $k);
+						$bid = intval(preg_replace('/show_([0-9]+)_x/', '\1', $k));
 						break;
 					}
 				}
 				if ($bid==0 && isset($_POST['show']))
 				{
-					$bid = $_POST['show'];
+					$bid = intval($_POST['show']);
 				}
 				if ($bid==0 && isset($_POST['id']))
 				{
-					$bid = $_POST['id'];
+					$bid = intval($_POST['id']);
 				}			
 			}
-			
+            
 			// people working changed
 			if (isset($_POST['submit_people_form']))
 			{
@@ -224,7 +224,7 @@ define('HELP_URL',"?page=help&site=buildings");
 					<input type="hidden" name="foodRequired" id="foodRequired" value="'.$cfg->value('people_food_require').'" />
 					<input type="hidden" name="peopleFree" id="peopleFree" value="'.$peopleFree.'" />
 					<input type="hidden" name="foodAvaiable" id="foodAvaiable" value="'.$cp->getRes1(4).'" />';
-		if ($cu->properties->itemShow=='full' && isset($bid) && $bid>0)
+		if ($cu->properties->itemShow=='full' && isset($bid) && $bid>0 && $bl->item($bid) !== false)
 		{
 			$box .= '<input type="hidden" name="peopleOptimized" id="peopleOptimized" value="'.$bl->item($bid)->getPeopleOptimized().'" />';
 		}
@@ -262,7 +262,7 @@ define('HELP_URL',"?page=help&site=buildings");
 								<div class="errorBox" id="errorBox" style="display:none;">&nbsp;</div>
 								<input type="submit" value="Speichern" name="submit_people_form" />&nbsp;';
 		
-		if ($cu->properties->itemShow=='full' && isset($bid) && $bid>0)
+		if ($cu->properties->itemShow=='full' && isset($bid) && $bid>0 && $bl->item($bid) !== false)
 		{
 			$peopleOptimized = $bl->item($bid)->getPeopleOptimized();
 			$box .= '<input type="button" value="Optimieren" onclick="updatePeopleWorkingBox(\''.$peopleOptimized.'\',\'-1\',\'^-1\');">';
@@ -306,7 +306,7 @@ define('HELP_URL',"?page=help&site=buildings");
 		echo '</div>';
 		
 		// if full view and detail view selected, show it
-		if (isset($bid) && $bid>0 && $cu->properties->itemShow=='full')
+		if (isset($bid) && $bid>0 && $bl->item($bid) !== false && $cu->properties->itemShow=='full')
 		{
 			
 			//
@@ -533,7 +533,7 @@ define('HELP_URL',"?page=help&site=buildings");
 					"resable"=>"Ausbaubare Gebäude",
 			);
 			show_tab_menu("mode",$tabitems);
-			$mode = (isset($_GET['mode'])) ? $_GET['mode'] : "all";
+			$mode = (isset($_GET['mode']) && ctype_alpha($_GET['mode'])) ? $_GET['mode'] : "all";
 			
 			$tres = dbquery("SELECT
 								type_id,

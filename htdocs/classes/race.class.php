@@ -16,7 +16,7 @@
 		
 		public function Race($id=0)
 		{
-			if ($id > 0)
+			if (intval($id) > 0)
 			{
 				$rres = dbquery("
 				SELECT
@@ -24,12 +24,12 @@
 				FROM
 					races
 				WHERE
-					race_id=".$id."			
+					race_id=".intval($id)."			
 				");
 				if (mysql_num_rows($rres)>0)
 				{
 					$rarr = mysql_fetch_assoc($rres);
-			    $this->id = $id;
+			    $this->id = intval($id);
 					$this->name = $rarr['race_name'];
 					$this->researchTime = $rarr['race_f_researchtime'];
 					$this->buildTime = $rarr['race_f_buildtime'];

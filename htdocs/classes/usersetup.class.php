@@ -7,6 +7,10 @@
 	*/
 	static function addItemSetListToPlanet($planetid,$userid,$setid)
 	{
+		$planetid = intval($planetid);
+		$userid = intval($userid);
+		$setid = intval($setid);
+		
 		// Add buildings
 		$ires = dbquery("
 		SELECT 
@@ -36,7 +40,7 @@
 						".$planetid.",
 						".$iarr['count']."
 					);");						
-			}		
+			}
 		}		
 		
 		// Add technologies

@@ -43,7 +43,9 @@
 		GROUP BY 
 			session
 		ORDER BY
-			timestamp DESC;");
+			timestamp DESC
+		LIMIT
+			50000;");
 		if (mysql_num_rows($sres)>0)
 		{
 			while ($sarr=mysql_fetch_row($sres))

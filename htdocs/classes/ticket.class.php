@@ -622,10 +622,10 @@ class TicketMessage
 		)
 		VALUES
 		(
-			".$data['ticket_id'].",
-			".(isset($data['user_id'])?$data['user_id']:0).",
-			".(isset($data['admin_id'])?$data['admin_id']:0).",
-			'".addslashes($data['message'])."',
+			".intval($data['ticket_id']).",
+			".(isset($data['user_id'])?intval($data['user_id']):0).",
+			".(isset($data['admin_id'])?intval($data['admin_id']):0).",
+			'".mysql_real_escape_string($data['message'])."',
 			".time()."
 		);");
 		$tid = mysql_insert_id();

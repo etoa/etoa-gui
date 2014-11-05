@@ -111,7 +111,7 @@
                         SET
                             buildlist_people_working='".$work."'
                         WHERE
-                            buildlist_building_id='".$id."'
+                            buildlist_building_id='".intval($id)."'
                         AND buildlist_entity_id=".$cp->id."");
                     }
                 }

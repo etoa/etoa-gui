@@ -127,7 +127,7 @@ if (isset($_GET['detail'])) {
 	//
 	//Order
 	//
-	if (isset($_GET['order']))
+	if (isset($_GET['order']) && ctype_alpha($_GET['order']))
 	{
 		$order="race_".$_GET['order'];
 		if ($_SESSION['help']['orderfield']==$_GET['order'])

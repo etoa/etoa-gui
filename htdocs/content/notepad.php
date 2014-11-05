@@ -47,9 +47,10 @@
 	//
 	// Notiz bearbeiten
 	//
-	elseif (isset($_GET['action']) && $_GET['action']=="edit" && $_GET['id']>0)
+	elseif (isset($_GET['action']) && $_GET['action']=="edit" && intval($_GET['id'])>0)
 	{
-		if ($n = $np->get($_GET['id']))
+		$nid = intval($_GET['id']);
+		if ($n = $np->get($nid))
 		{
 			echo "<form action=\"?page=$page\" method=\"post\">";
 			echo "<input type=\"hidden\" name=\"note_id\" value=\"".$n->id()."\" />";
@@ -76,18 +77,19 @@
 		// Änderungen speichern
 		if (isset($_POST['submit_new']) && $_POST['note_subject']!="")
 		{
+			// Notepad::add() uses safe query
 			$np->add($_POST['note_subject'],$_POST['note_text']);
-
 		}
 		// Änderungen speichern
 		if (isset($_POST['submit_edit']) && $_POST['note_id']>0 && $_POST['note_subject']!="")
 		{
+			// Notepad::set() uses safe query
 			$np->set($_POST['note_id'],$_POST['note_subject'],$_POST['note_text']);
-
 		}		
 		// Notiz löschen
-		elseif (isset($_GET['action']) && $_GET['action']=="delete" && $_GET['id']>0)
+		elseif (isset($_GET['action']) && $_GET['action']=="delete" && intval($_GET['id'])>0)
 		{
+			// Notepad::delete() uses safe query
 			$np->delete($_GET['id']);
 		}
 

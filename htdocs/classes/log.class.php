@@ -142,7 +142,7 @@ class Log extends BaseLog
 				'".$severity."',
 				'".time()."',
 				'".(isset($_SERVER['REMOTE_ADDR'])?$_SERVER['REMOTE_ADDR']:'')."',
-				'".addslashes($msg)."'
+				'".mysql_real_escape_string($msg)."'
 			);");
 		}
 	}

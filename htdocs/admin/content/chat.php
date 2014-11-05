@@ -65,7 +65,8 @@
 		FROM 
 			chat_log
 		ORDER BY 
-			$order $sort;");		
+			$order $sort
+		LIMIT 10000;");		
 		if (mysql_num_rows($res)>0)
 		{
 			$cnt = 1;

@@ -733,6 +733,7 @@
 				$tbl[]="user_warnings";
 				$tbl[]="user_properties";
 				$tbl[]="user_sessions";
+				$tbl[]="user_surveillance";
 				
 				$tbl[]="buddylist";
 				$tbl[]="messages";

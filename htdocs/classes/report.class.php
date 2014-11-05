@@ -78,7 +78,7 @@ abstract class Report
 
 		if (isset($arr))
 		{
-			$this->id = $arr['id'];
+			$this->id = intval($arr['id']);
 			$this->timestamp = $arr['timestamp'];
 			$this->type = $arr['type'];
 			$this->read = $arr['read']==1;
@@ -166,32 +166,32 @@ abstract class Report
 			if (isset($data['user_id']))
 			{
 				$fs.= ",user_id";
-				$vs.= ",'".$data['user_id']."'";
+				$vs.= ",'".intval($data['user_id'])."'";
 			}
 			if (isset($data['alliance_id']))
 			{
 				$fs.= ",alliance_id";
-				$vs.= ",'".$data['alliance_id']."'";
+				$vs.= ",'".intval($data['alliance_id'])."'";
 			}
 			if (isset($data['content']))
 			{
 				$fs.= ",content";
-				$vs.= ",'".addslashes($data['content'])."'";
+				$vs.= ",'".mysql_real_escape_string($data['content'])."'";
 			}
 			if (isset($data['entity1_id']))
 			{
 				$fs.= ",entity1_id";
-				$vs.= ",'".addslashes($data['entity1_id'])."'";
+				$vs.= ",'".intval($data['entity1_id'])."'";
 			}
 			if (isset($data['entity2_id']))
 			{
 				$fs.= ",entity2_id";
-				$vs.= ",'".addslashes($data['entity2_id'])."'";
+				$vs.= ",'".intval($data['entity2_id'])."'";
 			}
 			if (isset($data['opponent1_id']))
 			{
 				$fs.= ",opponent1_id";
-				$vs.= ",'".addslashes($data['opponent1_id'])."'";
+				$vs.= ",'".intval($data['opponent1_id'])."'";
 			}
 
 			$sql = "INSERT INTO

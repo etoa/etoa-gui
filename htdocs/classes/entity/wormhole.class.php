@@ -25,7 +25,7 @@
 		function Wormhole($id=0)
 		{
 			$this->isValid = true;
-			$this->id = $id;
+			$this->id = intval($id);
 			$this->pos = 0;
 			$this->name = "";
 			$this->coordsLoaded=false;
@@ -282,7 +282,7 @@
 					'".$time."'
 				);");
 			}
-		}	
+		}
 			
 		public function getFleetTargetForwarder()
 		{

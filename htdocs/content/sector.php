@@ -54,6 +54,9 @@
 		$sx = $cfg->param1('map_init_sector');
 		$sy = $cfg->param2('map_init_sector');
 	}
+	
+	$sx = intval($sx);
+	$sy = intval($sy);
 
 	echo "<h1>Sektor ".$sx."/".$sy."</h1>";
 

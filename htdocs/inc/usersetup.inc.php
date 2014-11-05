@@ -20,7 +20,7 @@
 		$cu->setSetupFinished();
 		$mode = "finished";		
 	}
-	elseif (isset($_POST['submit_chooseplanet']) && $_POST['choosenplanetid']>0 && checker_verify() && !isset($cp))
+	elseif (isset($_POST['submit_chooseplanet']) && intval($_POST['choosenplanetid'])>0 && checker_verify() && !isset($cp))
 	{
 		
 		
@@ -75,7 +75,7 @@
 	{
 		$mode = "choosesector";	
 	}
-	elseif (isset($_POST['submit_setup1']) && $_POST['register_user_race_id']>0 && checker_verify())
+	elseif (isset($_POST['submit_setup1']) && intval($_POST['register_user_race_id'])>0 && checker_verify())
 	{
 		$cu->race = new Race($_POST['register_user_race_id']);
 		$mode = "choosesector";	

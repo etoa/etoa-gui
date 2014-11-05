@@ -225,7 +225,7 @@
 		//
 		// Rohstoffverkauf speichern
 		//
-		elseif (isset($_POST['ress_last_update']) && $_POST['ress_last_update']==1 && checker_verify())
+		elseif (isset($_POST['ress_last_update']) && intval($_POST['ress_last_update'])==1 && checker_verify())
 		{
 			require("content/market/res_offer.php");
 		}
@@ -233,7 +233,7 @@
 		//
 		// Schiffverkauf speichern
 		//
-		elseif (isset($_POST['ship_last_update']) && $_POST['ship_last_update']==1 && checker_verify())
+		elseif (isset($_POST['ship_last_update']) && intval($_POST['ship_last_update'])==1 && checker_verify())
 		{
 			require("content/market/ship_offer.php");
 		}
@@ -241,7 +241,7 @@
 		//
 		// Auktion Speichern
 		//
-		elseif (isset($_POST['auction_last_update']) && $_POST['auction_last_update']==1 && checker_verify())
+		elseif (isset($_POST['auction_last_update']) && intval($_POST['auction_last_update'])==1 && checker_verify())
 		{	
 			require("content/market/auction_new.php");
 		}
@@ -250,7 +250,7 @@
 		//
 		// Einzelne Auktion anzeigen (Bei einer Auktion bieten)
 		//<editor-fold>
-		elseif(isset($_POST['auction_market_id']) && $_POST['auction_market_id']!=0 && !isset($_POST['auction_cancel']) && checker_verify())
+		elseif(isset($_POST['auction_market_id']) && intval($_POST['auction_market_id'])!=0 && !isset($_POST['auction_cancel']) && checker_verify())
 		{
 		
 
@@ -629,7 +629,7 @@
 		echo '<h1>Marktplatz</h1>';
 		$cp->resBox($cu->properties->smallResBox);
 
-		error_msg("Der Marktplatz wurde noch nicht gebaut.");
+		info_msg("Der Marktplatz wurde noch nicht gebaut.");
 	}
 
 
@@ -639,7 +639,7 @@
 		echo '<h1>Marktplatz</h1>';
 		$cp->resBox($cu->properties->smallResBox);
 
-		error_msg("Der Marktplatz ist momentan im Spiel deaktiviert.");
+		info_msg("Der Marktplatz ist momentan im Spiel deaktiviert.");
     }
 
 

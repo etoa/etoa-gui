@@ -32,8 +32,10 @@
 	        //
 	        // Erlaubnis erteilen
 	        //
-	        if (isset($_GET['allow']) && $_GET['allow']>0)
+	        if (isset($_GET['allow']) && intval($_GET['allow'])>0)
 	        {
+				$blid = intval($_GET['allow']);
+				
 	                $res=dbquery("
 	                SELECT
 	                        users.user_nick
@@ -43,12 +45,12 @@
 	                        users
 	                ON
 	                        buddylist.bl_user_id=users.user_id
-	                        AND buddylist.bl_user_id=".$_GET['allow']."
+	                        AND buddylist.bl_user_id=".$blid."
 	                        AND buddylist.bl_buddy_id=".$cu->id.";");
 	                if (mysql_num_rows($res)>0)
 	                {
 	                        $arr=mysql_fetch_array($res);
-	                        dbquery("UPDATE buddylist SET bl_allow=1 WHERE bl_user_id=".$_GET['allow']." AND bl_buddy_id=".$cu->id.";");
+	                        dbquery("UPDATE buddylist SET bl_allow=1 WHERE bl_user_id=".$blid." AND bl_buddy_id=".$cu->id.";");
 	                        $res = dbquery("
 	                        SELECT
 	                                bl_id
@@ -56,15 +58,15 @@
 	                                buddylist
 	                        WHERE
 	                                bl_user_id=".$cu->id."
-	                                AND bl_buddy_id=".$_GET['allow']."
+	                                AND bl_buddy_id=".$blid."
 	                        ");
 	                        if (mysql_num_rows($res)>0)
 	                        {
-	                                dbquery("UPDATE buddylist SET bl_allow=1 WHERE bl_user_id=".$cu->id." AND bl_buddy_id=".$_GET['allow'].";");
+	                                dbquery("UPDATE buddylist SET bl_allow=1 WHERE bl_user_id=".$cu->id." AND bl_buddy_id=".$blid.";");
                           	}
                           	else
                           	{
-                                  dbquery("INSERT INTO buddylist (bl_allow,bl_user_id,bl_buddy_id) VALUES (1,".$cu->id.",".$_GET['allow'].");");
+                                  dbquery("INSERT INTO buddylist (bl_allow,bl_user_id,bl_buddy_id) VALUES (1,".$cu->id.",".$blid.");");
 	                        }
 	                        ok_msg("Erlaubnis erteilt!");
 	                }
@@ -75,8 +77,10 @@
 	        //
 	        // Erlaubnis verweigern
 	        //
-	        if (isset($_GET['deny']) && $_GET['deny']>0)
+	        if (isset($_GET['deny']) && intval($_GET['deny'])>0)
 	        {
+				$blid = intval($_GET['deny']);
+				
 	                $res=dbquery("
 	                SELECT
 	                        users.user_nick
@@ -84,13 +88,13 @@
 	                        buddylist,
 	                        users
 	                WHERE
-	                        buddylist.bl_user_id=".$_GET['deny']."
+	                        buddylist.bl_user_id=".$blid."
 	                        AND buddylist.bl_user_id=users.user_id
 	                        AND buddylist.bl_buddy_id=".$cu->id.";");
 	                if (mysql_num_rows($res)>0)
 	                {
 	                        $arr=mysql_fetch_array($res);
-	                        dbquery("DELETE FROM buddylist WHERE bl_user_id=".$_GET['deny']." AND bl_buddy_id=".$cu->id.";");
+	                        dbquery("DELETE FROM buddylist WHERE bl_user_id=".$blid." AND bl_buddy_id=".$cu->id.";");
 	                        ok_msg("Die Anfrage wurde gel&ouml;scht!");
 	                }
 	                else
@@ -100,12 +104,13 @@
 	        //
 	        // Freund hinzufÃŒgen
 	        //
-	        if ((isset($_POST['buddy_nick']) && $_POST['buddy_nick']!="" && $_POST['submit_buddy']!="") || (isset($_GET['add_id']) && $_GET['add_id']>0))
+	        if ((isset($_POST['buddy_nick']) && $_POST['buddy_nick']!="" && $_POST['submit_buddy']!="") || (isset($_GET['add_id']) && intval($_GET['add_id'])>0))
 	        {
-	                if (isset($_GET['add_id']) && $_GET['add_id']>0)
-	                        $res=dbquery("SELECT user_id,user_nick FROM users WHERE user_id='".$_GET['add_id']."';");
+				$buid = intval($_GET['add_id']);
+	                if ($buid>0)
+	                        $res=dbquery("SELECT user_id,user_nick FROM users WHERE user_id='".$buid."';");
 	                else
-	                        $res=dbquery("SELECT user_id,user_nick FROM users WHERE user_nick='".$_POST['buddy_nick']."';");
+	                        $res=dbquery("SELECT user_id,user_nick FROM users WHERE user_nick='".mysql_real_escape_string($_POST['buddy_nick'])."';");
 	                if (mysql_num_rows($res)>0)
 	                {
 	                        $arr=mysql_fetch_array($res);
@@ -130,12 +135,13 @@
 	        //
 	        // Entfernen
 	        //
-	        if (isset($_GET['remove']) && $_GET['remove']>0)
+	        if (isset($_GET['remove']) && intval($_GET['remove'])>0)
 	        {
+				$rmid = intval($_GET['remove']);
 	                $c = 0;
-	                dbquery("DELETE FROM buddylist WHERE bl_user_id='".$cu->id."' AND bl_buddy_id='".$_GET['remove']."';");
+	                dbquery("DELETE FROM buddylist WHERE bl_user_id='".$cu->id."' AND bl_buddy_id='".$rmid."';");
 	                $c+=mysql_affected_rows();
-	                dbquery("DELETE FROM buddylist WHERE bl_user_id='".$_GET['remove']."' AND bl_buddy_id='".$cu->id."';");
+	                dbquery("DELETE FROM buddylist WHERE bl_user_id='".$rmid."' AND bl_buddy_id='".$cu->id."';");
 	                $c+=mysql_affected_rows();
 	                if ($c>0)
 	                {
@@ -146,13 +152,14 @@
 	        //
 	        // In einer anderen Liste entfernen
 	        //
-	        if (isset($_GET['removeremote']) && $_GET['removeremote']>0)
+	        if (isset($_GET['removeremote']) && intval($_GET['removeremote'])>0)
 	        {
-	                dbquery("DELETE FROM buddylist WHERE bl_user_id='".$_GET['removeremote']."' AND bl_buddy_id='".$cu->id."';");
+	                dbquery("DELETE FROM buddylist WHERE bl_user_id='".intval($_GET['removeremote'])."' AND bl_buddy_id='".$cu->id."';");
 	        }
 	
-	        if (isset($_GET['comment']) && $_GET['comment']>0)
+	        if (isset($_GET['comment']) && intval($_GET['comment'])>0)
 	        {
+				$blid = intval($_GET['comment']);
 	                $res = dbquery("
 	                SELECT
 	                        bl_user_id,
@@ -163,7 +170,7 @@
 	                FROM
 	                        buddylist
 	                WHERE
-	                        bl_id='".$_GET['comment']."'
+	                        bl_id='".$blid."'
 	                        AND
 	                        (
 	                                bl_user_id=".$cu->id."
@@ -304,7 +311,7 @@
 	        }
 	        else
 	        {
-	                error_msg("Es sind noch keine Freunde in deiner Buddyliste eingetragen!",1);
+	                info_msg("Es sind noch keine Freunde in deiner Buddyliste eingetragen!");
 	        }
 	
 	$res=dbquery("

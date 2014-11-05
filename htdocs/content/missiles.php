@@ -194,7 +194,10 @@
 					$launch = array();
 					$lcnt = 0;
 					foreach ($_POST['count'] as $k => $v)
-					{				
+					{
+					  $v = intval($v);
+					  $k = intval($k);
+					  
 						if ($v > 0)
 						{
 							if (isset($missilelist[$k]))
@@ -221,13 +224,15 @@
 							flight_landtime
 						) VALUES (
 							'".$cp->id()."',
-							'".$_POST['targetplanet']."',
+							'".intval($_POST['targetplanet'])."',
 							UNIX_TIMESTAMP(),
-							UNIX_TIMESTAMP()+".$_POST['timeforflight']."
-						);");
+							UNIX_TIMESTAMP()+".intval($_POST['timeforflight'])."
+						);"); // TODO: timeforflight comes from client? srsly?
 						$fid = mysql_insert_id();
 						foreach ($launch as $k => $v)
 						{
+							$k = intval($k);
+							$v = intval($v);
 							// Save flying missiles
 							dbquery("
 							INSERT INTO
@@ -328,6 +333,7 @@
 						foreach($_POST['missile_count'] as $k => $v)
 						{
 							$v = intval($v);
+							$k = intval($k);
 							if ($v > 0)
 							{
 								$valid=true;
@@ -433,6 +439,8 @@
 						foreach($_POST['missile_count'] as $k => $v)
 						{
 							$v = intval($v);
+							$k = intval($k);
+							
 							if ($v > 0)
 							{
 								$valid=true;
@@ -970,7 +978,7 @@
 													INNER JOIN
 														cells
 													ON
-														entities.id='".$_GET['target']."'
+														entities.id='".intval($_GET['target'])."'
 														AND entities.cell_id=cells.id;");
 									$tarr=mysql_fetch_array($tres);
 									$coords[0] = $tarr['sx'];
@@ -1090,24 +1098,24 @@
 							}
 							else
 							{
-								error_msg("Baue zuerst dein Raketensilo aus um mehr Raketen zu starten (".MISSILE_SILO_FLIGHTS_PER_LEVEL." Angriff pro Stufe)!");
+								info_msg("Baue zuerst dein Raketensilo aus um mehr Raketen zu starten (".MISSILE_SILO_FLIGHTS_PER_LEVEL." Angriff pro Stufe)!");
 							}
 						}
 					}
 				}
 				else
 				{
-					error_msg("Keine Raketen verfügbar!");
+					info_msg("Keine Raketen verfügbar!");
 				}  
 			}
 			else
 			{
-				error_msg("Dieses Gebäude ist noch bis ".df($werft_arr['buildlist_deactivated'])." deaktiviert!");
+				info_msg("Dieses Gebäude ist noch bis ".df($werft_arr['buildlist_deactivated'])." deaktiviert!");
 			}
 		}	
 		else
 		{
-			error_msg("Zu wenig Energie verfügbar! Gebäude ist deaktiviert!");
+			info_msg("Zu wenig Energie verfügbar! Gebäude ist deaktiviert!");
 		}
 	}
 	else
@@ -1117,7 +1125,7 @@
 		
 		// Ressourcen anzeigen
 		$cp->resBox($cu->properties->smallResBox);
-		error_msg("Das Raketensilo wurde noch nicht gebaut!");
+		info_msg("Das Raketensilo wurde noch nicht gebaut!");
 	}
 
 ?>

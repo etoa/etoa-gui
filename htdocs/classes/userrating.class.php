@@ -129,7 +129,7 @@
 			UPDATE
 				user_ratings
 			SET
-				  	diplomacy_rating=diplomacy_rating+".$rating."
+				  	diplomacy_rating=diplomacy_rating+".intval($rating)."
 			WHERE
 				id=".$this->id.";");			
 			if ($reason!="")

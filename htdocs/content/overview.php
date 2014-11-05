@@ -758,7 +758,7 @@
         $defense_name[$arr_planet['id']] = "";
       }
 	
-			$planet_info = "<b class=\"planet_name\">".htmlentities(stripcslashes($planet_name),ENT_QUOTES,'UTF-8')."</b><br>
+			$planet_info = "<b class=\"planet_name\">".StringUtils::encodeDBStringToPlaintext($planet_name)."</b><br>
 			".$building_name." ".$building_level."
 			";
 			$planet_image_path = "".IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$arr_planet['planet_image']."_middle.gif";
@@ -767,7 +767,7 @@
 	    $planet_link = "<a href=\"?page=buildings&change_entity=".$arr_planet['id']."\"><img id=\"Planet\" src=\"".$planet_image_path."\" width=\"".$pic_width."\" height=\"".$pic_height."\" border=\"0\" 
 	    onMouseOver=\"show_info(
 			'".$arr_planet['id']."',
-			'".htmlspecialchars(mysql_real_escape_string($planet_name),ENT_QUOTES)."',
+			'".StringUtils::encodeDBStringToJS($planet_name)."',
 			'".$building_name."',
 			'".$building_time."',
 			'".$shipyard_name[$arr_planet['id']]."',

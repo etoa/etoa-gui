@@ -19,7 +19,7 @@
 	//
 
 		// Ignorierung hinzufügen
-		if ((isset($_POST['submit_ignore']) && $_POST['target_id']>0) || isset($_GET['add']) && $_GET['add']>0)
+		if ((isset($_POST['submit_ignore']) && intval($_POST['target_id'])>0) || isset($_GET['add']) && intval($_GET['add'])>0)
 		{
 			if ($_GET['add'])
 			{
@@ -42,7 +42,7 @@
 			VALUES
 			(
 			  ".$cu->id.",
-			  ".$_POST['target_id']."
+			  ".intval($_POST['target_id'])."
 			)
 			");		
 			ok_msg("Spieler wurde ignoriert!");
@@ -50,7 +50,7 @@
 		
 		
 		// Ignorierung löschen
-		if (isset($_GET['remove']) && $_GET['remove']>0)
+		if (isset($_GET['remove']) && intval($_GET['remove'])>0)
 		{
 			dbquery("
 			DELETE FROM

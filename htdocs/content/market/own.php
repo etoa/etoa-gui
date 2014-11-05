@@ -25,13 +25,15 @@
 	{
 		if (isset($_POST['ship_market_id']))
 		{
+			$smid = intval($_POST['ship_market_id']);
+			
 			$scres=dbquery("
 			SELECT
 				*
 			FROM
 				market_ship
 			WHERE
-				id='".$_POST['ship_market_id']."'
+				id='".$smid."'
 				AND user_id='".$cu->id."'");
 
 			if (mysql_num_rows($scres)>0)
@@ -59,12 +61,12 @@
 				DELETE FROM
 					market_ship
 				WHERE
-					id='".$_POST['ship_market_id']."'");
+					id='".$smid."'");
 
 			MarketReport::add(array(
 				'user_id'=>$cu->id,
 				'entity1_id'=>$cp->id,
-				), "shipcancel", $_POST['ship_market_id'], $marr);
+				), "shipcancel", $smid, $marr);
 
 				ok_msg("Angebot wurde gel&ouml;scht und du hast $returnCount (".(round($return_factor,2)*100)."%) der angebotenen Schiffe zur&uuml;ck erhalten (es wird abgerundet)");
 			}
@@ -86,13 +88,15 @@
 	// <editor-fold>
 	elseif (isset($_POST['ressource_cancel']) && isset($_POST['ressource_market_id']))
 	{
+		$rmid = intval($_POST['ressource_market_id']);
+		
 		$rcres=dbquery("
 		SELECT
 			*
 		FROM
 			market_ressource
 		WHERE
-			id='".$_POST['ressource_market_id']."'
+			id='".$rmid."'
 			AND user_id='".$cu->id."'");
 
 		if (mysql_num_rows($rcres)>0)
@@ -122,13 +126,13 @@
 			MarketReport::add(array(
 				'user_id'=>$cu->id,
 				'entity1_id'=>$rcrow['entity_id'],
-				), "rescancel", $_POST['ressource_market_id'], $marr);
+				), "rescancel", $rmid, $marr);
 
 			dbquery("
 			DELETE FROM
 				market_ressource
 			WHERE
-				id='".$_POST['ressource_market_id']."'");
+				id='".$rmid."'");
 
 			ok_msg("Angebot wurde gel&ouml;scht und du hast ".(round($return_factor,2)*100)."% der angebotenen Rohstoffe zur&uuml;ck erhalten!");
 		}
@@ -144,13 +148,15 @@
 	// <editor-fold>
 	elseif(isset($_POST['auction_cancel']) && isset($_POST['auction_cancel_id']))
 	{
+		$acid = intval($_POST['auction_cancel_id']);
+		
 		$acres=dbquery("
 		SELECT
 			*
 		FROM
 			market_auction
 		WHERE
-			id='".$_POST['auction_cancel_id']."'
+			id='".$acid."'
 			AND user_id='".$cu->id."'");
 		if (mysql_num_rows($acres)>0)
 		{
@@ -175,12 +181,12 @@
 			$cp->addRes($rarr);
 
 			//Auktion löschen
-			dbquery("DELETE FROM market_auction WHERE id='".$_POST['auction_cancel_id']."'");
+			dbquery("DELETE FROM market_auction WHERE id='".$acid."'");
 			
 			MarketReport::add(array(
 				'user_id'=>$cu->id,
 				'entity1_id'=>$acrow['entity_id'],
-				), "auctioncancel", $_POST['auction_cancel_id'], $marr);
+				), "auctioncancel", $acid, $marr);
 			//add_log(7,"Der Spieler ".$cu->nick." zieht folgende Auktion zur&uuml;ck:\nRohstoffe:\n".RES_METAL.": ".$acrow['sell_metal']."\n".RES_CRYSTAL.": ".$acrow['sell_crystal']."\n".RES_PLASTIC.": ".$acrow['sell_plastic']."\n".RES_FUEL.": ".$acrow['sell_fuel']."\n".RES_FOOD.": ".$acrow['sell_food']."\n\nEr erh&auml;lt ".(round($return_factor,2)*100)."% der Waren erstattet!",time());
 
 			ok_msg("Auktion wurde gel&ouml;scht und du hast ".(round($return_factor,2)*100)."% der angebotenen Waren zur&uuml;ck erhalten (es wird abgerundet)!");

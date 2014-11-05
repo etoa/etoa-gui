@@ -28,14 +28,16 @@
 	//
 	// Upgrade menu eines spezial Schiffes
 	//
-	if (isset($_GET['id']) && $_GET['id']!="")
+	if (isset($_GET['id']) && intval($_GET['id']) > 0)
 	{
-		echo "<h1>Schiffs Upgrade Menu</h1>";
+		echo "<h1>Schiffsupgrade-Menu</h1>";
 
     //
     // Upgrade speichern
     //
-    if(isset($_POST['submit_upgrade']) && $_POST['submit_upgrade']!="" && $_POST['id']!="" && $_POST['upgrade']!="" && checker_verify())
+    if(isset($_POST['submit_upgrade']) && $_POST['submit_upgrade']!=""
+	   && intval($_POST['id']) > 0 && $_POST['upgrade']!=""
+	   && ctype_alpha($_POST['upgrade']) && checker_verify())
     {
         dbquery("
         UPDATE
@@ -44,7 +46,7 @@
         	shiplist_special_ship_level=shiplist_special_ship_level+1,
         	shiplist_special_ship_bonus_".$_POST['upgrade']."=shiplist_special_ship_bonus_".$_POST['upgrade']."+1
         WHERE
-        	shiplist_ship_id='".$_POST['id']."'
+        	shiplist_ship_id='".intval($_POST['id'])."'
         	AND shiplist_user_id='".$cu->id."';");
 
         ok_msg("Upgrade erfolgreich duchgeführt!");

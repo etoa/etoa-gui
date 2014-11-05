@@ -20,9 +20,11 @@
 
 	echo "<h2>Umfragen</h2>";
 
-	if (isset($_POST['vote_submit']) && checker_verify() && isset($_GET['vote']) && $_GET['vote']>0 && isset($_POST['poll_answer']) && $_POST['poll_answer']>0)
+	if (isset($_POST['vote_submit']) && checker_verify() && isset($_GET['vote']) && intval($_GET['vote'])>0 && isset($_POST['poll_answer']) && intval($_POST['poll_answer'])>0)
 	{
-		dbquery("UPDATE alliance_polls SET poll_a".$_POST['poll_answer']."_count=poll_a".$_POST['poll_answer']."_count+1 WHERE poll_alliance_id=".$arr['alliance_id']." AND poll_id=".$_GET['vote'].";");
+		$vid = intval($_GET['vote']);
+		$pa = intval($_POST['poll_answer']);
+		dbquery("UPDATE alliance_polls SET poll_a".$pa."_count=poll_a".$pa."_count+1 WHERE poll_alliance_id=".$arr['alliance_id']." AND poll_id=".$vid.";");
 		if (mysql_affected_rows()==1)
 		{
 			dbquery("INSERT INTO alliance_poll_votes (
@@ -31,10 +33,10 @@
 				vote_alliance_id,
 				vote_number
 			) VALUES (
-			'".$_GET['vote']."',
+			'".$vid."',
 			'".$cu->id."',
 			'".$arr['alliance_id']."',
-			'".$_POST['poll_answer']."'
+			'".$pa."'
 			)");
 		}
 	}

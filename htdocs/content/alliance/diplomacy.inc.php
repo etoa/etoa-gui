@@ -81,15 +81,17 @@
 			//
 			// Kriegserklärung schreiben
 			//
-			if (isset($_GET['begin_war']) && $_GET['begin_war']>0)
+			if (isset($_GET['begin_war']) && intval($_GET['begin_war'])>0)
 			{
+				$aid = intval($_GET['begin_war']);
+				
 				$check = false;
 				if(!isset($_GET['begin_bnd']) || $_GET['begin_bnd']!=$cu->allianceId)
 				{
 					$check = true;
 				}
 				
-				$ares=dbquery("SELECT * FROM alliances WHERE alliance_id='".$_GET['begin_war']."';");
+				$ares=dbquery("SELECT * FROM alliances WHERE alliance_id='".$aid."';");
 				if (mysql_num_rows($ares)>0 && $check)
 				{
 					$aarr=mysql_fetch_array($ares);
@@ -115,8 +117,10 @@
 			//
 			// Bündnisanfrage schreiben
 			//
-			elseif (isset($_GET['begin_bnd']) && $_GET['begin_bnd']>0)
+			elseif (isset($_GET['begin_bnd']) && intval($_GET['begin_bnd'])>0)
 			{
+				$aid = intval($_GET['begin_bnd']);
+				
 				$ares=dbquery("
 				SELECT
 					alliance_id,
@@ -126,8 +130,8 @@
 				FROM
 					alliances
 				WHERE
-					alliance_id='".$_GET['begin_bnd']."';");
-				if (mysql_num_rows($ares)>0 && isset($_GET['begin_bnd']) && $_GET['begin_bnd']!=$cu->allianceId)
+					alliance_id='".$aid."';");
+				if (mysql_num_rows($ares)>0 && $_GET['begin_bnd'] != $cu->allianceId)
 				{
 					$aarr=mysql_fetch_array($ares);
 					
@@ -170,9 +174,10 @@
 			//
 			// Büdniss/Kriegs- Text ansehen
 			//
-			elseif (isset($_GET['view']) && $_GET['view']>0)
+			elseif (isset($_GET['view']) && intval($_GET['view'])>0)
 			{
-				$id=$_GET['view'];					
+				$id = intval($_GET['view']);
+				
 				$res = dbquery("
 				SELECT 
 					alliance_bnd_text,
@@ -266,7 +271,7 @@
 							</tr>";
 							echo "<tr>
 								<th style=\"width:200px;\">Öffentlicher Text</th>
-								<td><textarea name=\"alliance_bnd_text_pub\" rows=\"6\" cols=\"70\">".stripslashes($arr['alliance_bnd_text_pub'])."</textarea></td>
+								<td><textarea name=\"alliance_bnd_text_pub\" rows=\"6\" cols=\"70\">".StringUtils::encodeDBStringForTextarea($arr['alliance_bnd_text_pub'])."</textarea></td>
 							</tr>";
 							tableEnd();				
 							echo "<input type=\"hidden\" name=\"id\" value=\"".$id."\" />";					
@@ -286,7 +291,7 @@
 							{
 								echo "<tr>
 									<th style=\"width:200px;\">Öffentlicher Text</th>
-									<td><textarea name=\"alliance_bnd_text_pub\" rows=\"6\" cols=\"70\">".stripslashes($arr['alliance_bnd_text_pub'])."</textarea></td>
+									<td><textarea name=\"alliance_bnd_text_pub\" rows=\"6\" cols=\"70\">".StringUtils::encodeDBStringForTextarea($arr['alliance_bnd_text_pub'])."</textarea></td>
 								</tr>";
 							}
 							else
@@ -318,9 +323,10 @@
 			//
 			// End pact
 			//
-			elseif (isset($_GET['end_pact']) && $_GET['end_pact']>0)
+			elseif (isset($_GET['end_pact']) && intval($_GET['end_pact'])>0)
 			{
-				$id=$_GET['end_pact'];					
+				$id = intval($_GET['end_pact']);
+				
 				$res = dbquery("
 				SELECT 
 					alliance_bnd_text,
@@ -384,8 +390,10 @@
 			else
 			{
 				// Save pact offer
-				if (isset($_POST['sbmit_new_bnd']) && checker_verify())
+				if (isset($_POST['sbmit_new_bnd']) && isset($_POST['alliance_bnd_alliance_id']) && checker_verify())
 				{
+					$id = intval($_POST['alliance_bnd_alliance_id']);
+					
 					$bnd_res = dbquery("
 					SELECT 
 						alliance_bnd_id 
@@ -394,10 +402,10 @@
 					WHERE 
 						(
 							(alliance_bnd_alliance_id1='".$cu->allianceId."' 
-							AND alliance_bnd_alliance_id2='".$_POST['alliance_bnd_alliance_id']."') 
+							AND alliance_bnd_alliance_id2='".$id."') 
 						OR 
 							(alliance_bnd_alliance_id2='".$cu->allianceId."' 
-							AND alliance_bnd_alliance_id1='".$_POST['alliance_bnd_alliance_id']."')
+							AND alliance_bnd_alliance_id1='".$id."')
 						) 
 						AND alliance_bnd_level>0");
 					
@@ -423,17 +431,17 @@
 						VALUES 
 						(
 							'".$cu->allianceId."',
-							'".$_POST['alliance_bnd_alliance_id']."',
+							'".$id."',
 							'0',
-							'".addslashes($_POST['alliance_bnd_text'])."',
-							'".addslashes($_POST['alliance_bnd_name'])."',
+							'".mysql_real_escape_string($_POST['alliance_bnd_text'])."',
+							'".mysql_real_escape_string($_POST['alliance_bnd_name'])."',
 							".time().",
 							'".$cu->id."'
 						);");
 						ok_msg("Du hast einer Allianz erfolgreich ein B&uuml;ndnis angeboten!");
 
 						//Nachricht an den Leader der gegnerischen Allianz schreiben
-						$res=dbquery("SELECT alliance_founder_id FROM alliances WHERE alliance_id='".$_POST['alliance_bnd_alliance_id']."'");
+						$res=dbquery("SELECT alliance_founder_id FROM alliances WHERE alliance_id='".$id."'");
 						$arr=mysql_fetch_array($res);
 
 						send_msg($arr['alliance_founder_id'],MSG_ALLYMAIL_CAT,"Bündnisanfrage","Die Allianz [b][".$alliances[$cu->allianceId]['tag']."] ".$alliances[$cu->allianceId]['name']."[/b] fragt euch für ein Bündnis an.\n
@@ -443,8 +451,9 @@
 				}
 				
 				// Save war
-				if (isset($_POST['sbmit_new_war']) && checker_verify())
+				if (isset($_POST['sbmit_new_war']) && intval($_POST['alliance_bnd_alliance_id']) > 0 && checker_verify())
 				{
+					$id = intval($_POST['alliance_bnd_alliance_id']);
 					$alliances = get_alliance_names();
 					
 					$war_res = dbquery("
@@ -455,10 +464,10 @@
 					WHERE 
 						(
 							(alliance_bnd_alliance_id1='".$cu->allianceId."' 
-							AND alliance_bnd_alliance_id2='".$_POST['alliance_bnd_alliance_id']."') 
+							AND alliance_bnd_alliance_id2='".$id."') 
 							OR 
 							(alliance_bnd_alliance_id2='".$cu->allianceId."' 
-							AND alliance_bnd_alliance_id1='".$_POST['alliance_bnd_alliance_id']."')
+							AND alliance_bnd_alliance_id1='".$id."')
 						) 
 						AND alliance_bnd_level>0");
 					
@@ -484,10 +493,10 @@
 						VALUES 
 						(
 							'".$cu->allianceId."',
-							'".$_POST['alliance_bnd_alliance_id']."',
+							'".$id."',
 							'3',
-							'".addslashes($_POST['alliance_bnd_text'])."',
-							'".addslashes($_POST['alliance_bnd_text_pub'])."',
+							'".mysql_real_escape_string($_POST['alliance_bnd_text'])."',
+							'".mysql_real_escape_string($_POST['alliance_bnd_text_pub'])."',
 							'".time()."',
 							".DIPLOMACY_POINTS_PER_WAR.",
 							'".$cu->id."'
@@ -495,11 +504,11 @@
 						
 						ok_msg("Du hast einer Allianz den Krieg erkl&auml;rt!");
 						
-						add_alliance_history($cu->allianceId,"Der Allianz [b][".$alliances[$_POST['alliance_bnd_alliance_id']]['tag']."] ".$alliances[$_POST['alliance_bnd_alliance_id']]['name']."[/b] wird der Krieg erkl&auml;rt!");
-						add_alliance_history($_POST['alliance_bnd_alliance_id'],"Die Allianz [b][".$alliances[$cu->allianceId]['tag']."] ".$alliances[$cu->allianceId]['name']."[/b] erkl&auml;rt den Krieg!");
+						add_alliance_history($cu->allianceId,"Der Allianz [b][".$alliances[$id]['tag']."] ".$alliances[$id]['name']."[/b] wird der Krieg erkl&auml;rt!");
+						add_alliance_history($id,"Die Allianz [b][".$alliances[$cu->allianceId]['tag']."] ".$alliances[$cu->allianceId]['name']."[/b] erkl&auml;rt den Krieg!");
 
 						//Nachricht an den Leader der gegnerischen Allianz schreiben
-						$res=dbquery("SELECT alliance_founder_id FROM alliances WHERE alliance_id='".$_POST['alliance_bnd_alliance_id']."'");
+						$res=dbquery("SELECT alliance_founder_id FROM alliances WHERE alliance_id='".$id."';");
 						$arr=mysql_fetch_array($res);
 
 						send_msg($arr['alliance_founder_id'],MSG_ALLYMAIL_CAT,"Kriegserklärung","Die Allianz [b][".$alliances[$cu->allianceId]['tag']."] ".$alliances[$cu->allianceId]['name']."[/b] erklärt euch den Krieg!\n
@@ -508,8 +517,10 @@
 				}
 
 				// End pact
-				if (isset($_POST['submit_pact_end']))
+				if (isset($_POST['submit_pact_end']) && isset($_POST['id']) && intval($_POST['id']) > 0)
 				{
+					$id = intval($_POST['id']);
+					
 					$res=dbquery("
 					SELECT
 						a1.alliance_id as a1id,
@@ -533,7 +544,7 @@
 						alliance_bnd_alliance_id1=".$cu->allianceId." 
 						OR alliance_bnd_alliance_id2=".$cu->allianceId." 
 					) 
-					AND alliance_bnd_id=".$_POST['id']."
+					AND alliance_bnd_id=".$id."
 					AND alliance_bnd_level='2';");
 					
 					if (mysql_num_rows($res)==1)
@@ -559,19 +570,19 @@
 						}
 						
 						//Delete Bnd Forum
-						$bres=dbquery("SELECT * FROM allianceboard_topics WHERE topic_bnd_id=".$_POST['id'].";");
+						$bres=dbquery("SELECT * FROM allianceboard_topics WHERE topic_bnd_id=".$id.";");
 						while ($barr=mysql_fetch_array($bres))
 						{
 							dbquery("DELETE FROM allianceboard_posts WHERE post_topic_id=".$barr['topic_id'].";");
 						}
-						dbquery("DELETE FROM allianceboard_topics WHERE topic_bnd_id=".$_POST['id'].";");
+						dbquery("DELETE FROM allianceboard_topics WHERE topic_bnd_id=".$id.";");
 						
 						// Delete entity
 						dbquery("
 						DELETE FROM 
 							alliance_bnd 
 						WHERE 
-							alliance_bnd_id=".$_POST['id']."
+							alliance_bnd_id=".$id."
 						;");
 
 						// Add log							
@@ -596,9 +607,10 @@
 				}
 
 				// Withdraw pact offer
-				if(isset($_POST['submit_withdraw_pact']))
+				if(isset($_POST['submit_withdraw_pact']) && isset($_POST['id']) && intval($_POST['id']) > 0)
 				{
-					$id=$_POST['id'];
+					$id = intval($_POST['id']);
+					
 					$res=dbquery("
 						SELECT 
 							alliance_bnd_id,
@@ -631,9 +643,10 @@
 				}
 
 				// Accept pact offer
-				if (isset($_POST['pact_accept']))
+				if (isset($_POST['pact_accept']) && isset($_POST['id']) && intval($_POST['id']) > 0)
 				{
-					$id=$_POST['id'];
+					$id = intval($_POST['id']);
+					
 					$res=dbquery("
 						SELECT 
 							alliance_bnd_id,
@@ -686,9 +699,10 @@
 				}
 
 				// Reject pact offer
-				if (isset($_POST['pact_reject']))
+				if (isset($_POST['pact_reject']) && isset($_POST['id']) && intval($_POST['id']) > 0)
 				{
-					$id=$_POST['id'];
+					$id = intval($_POST['id']);
+
 					$res=dbquery("
 						SELECT 
 							alliance_bnd_id,
@@ -739,14 +753,15 @@
 				}
 
 				// Save public pact text
-				if (isset($_POST['submit_pact_public_text']))
+				if (isset($_POST['submit_pact_public_text']) && isset($_POST['id']) && intval($_POST['id']) > 0)
 				{
-					$id=$_POST['id'];
+					$id = intval($_POST['id']);
+
 					dbquery("
 					UPDATE
 						alliance_bnd
 					SET
-						alliance_bnd_text_pub='".addslashes($_POST['alliance_bnd_text_pub'])."'
+						alliance_bnd_text_pub='".mysql_real_escape_string($_POST['alliance_bnd_text_pub'])."'
 					WHERE
 						(
 							alliance_bnd_alliance_id1=".$cu->allianceId."
@@ -759,14 +774,15 @@
 				}
 
 				// Save public war text
-				if (isset($_POST['submit_war_public_text']))
+				if (isset($_POST['submit_war_public_text']) && isset($_POST['id']) && intval($_POST['id']) > 0)
 				{
-					$id=$_POST['id'];
+					$id = intval($_POST['id']);
+
 					dbquery("
 					UPDATE
 						alliance_bnd
 					SET
-						alliance_bnd_text_pub='".addslashes($_POST['alliance_bnd_text_pub'])."'
+						alliance_bnd_text_pub='".mysql_real_escape_string($_POST['alliance_bnd_text_pub'])."'
 					WHERE
 						(
 							alliance_bnd_alliance_id1=".$cu->allianceId."

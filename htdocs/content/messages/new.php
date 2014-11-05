@@ -151,7 +151,7 @@
 		}
 		elseif (isset($_GET['message_text']))
 		{
-			$sql = "SELECT text FROM message_data INNER JOIN messages ON id=message_id AND message_user_to='".$cu->id."' AND id='".base64_decode(stripslashes($_GET['message_text']))."'  LIMIT 1;";
+			$sql = "SELECT text FROM message_data INNER JOIN messages ON id=message_id AND message_user_to='".$cu->id."' AND id='".intval(base64_decode(stripslashes($_GET['message_text'])))."'  LIMIT 1;";
 			$mres = dbquery($sql);
 			
 			if (isset($_GET['message_sender']))

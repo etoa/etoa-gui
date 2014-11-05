@@ -52,7 +52,7 @@
 			
 			$ids = array();
 			foreach ($_POST['delreport'] as $id=>$val)
-				array_push($ids,$id);
+				array_push($ids,intval($id));
 			
 			dbquery("
 				UPDATE
@@ -92,7 +92,7 @@
 			
 			$ids = array();
 			foreach ($_POST['delreport'] as $id=>$val)
-				array_push($ids,$id);
+				array_push($ids,intval($id));
 			
 			dbquery("
 				UPDATE

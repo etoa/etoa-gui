@@ -1,15 +1,7 @@
 <?php
-//////////////////////////////////////////////////////
-// The Andromeda-Project-Browsergame                //
-// Ein Massive-Multiplayer-Online-Spiel             //
-// Programmiert von Nicolas Perrenoud<mail@nicu.ch> //
-// als Maturaarbeit '04 am Gymnasium Oberaargau	    //
-//////////////////////////////////////////////////////
-//////////////////////////////////////////////////////
-
 /**
- * Providess session and authentication management
- * for admin area. See parent class for documentation
+ * Provides session and authentication management
+ * for admin area.
  *
  * @author Nicolas Perrenoud <mrcage@etoa.ch>
  */
@@ -34,9 +26,8 @@ class AdminSession extends Session
 	function login($data)
 	{
 		self::cleanup();
-
-		// TODO: Use preg_match
-		if ($data['login_nick']!="" && $data['login_pw']!="" && !stristr($data['login_nick'],"'") && !stristr($data['login_pw'],"'"))
+		
+		if (!empty($data['login_nick']) && !empty($data['login_pw']))
 		{
 			$sql = "
 			SELECT
@@ -102,7 +93,6 @@ class AdminSession extends Session
 			WHERE
 				id='".session_id()."'
 				AND `user_id`=".intval($this->user_id)."
-				AND `ip_addr`='".$_SERVER['REMOTE_ADDR']."'
 				AND `user_agent`='".$_SERVER['HTTP_USER_AGENT']."'
 				AND `time_login`=".intval($this->time_login)."
 			LIMIT 1
@@ -118,7 +108,8 @@ class AdminSession extends Session
 					UPDATE
 						`".self::tableSession."`
 					SET
-						time_action=".$t."
+						time_action=".$t.",
+						ip_addr='".$_SERVER['REMOTE_ADDR']."'
 					WHERE
 						id='".session_id()."'
 					;");
@@ -236,8 +227,11 @@ class AdminSession extends Session
 				id='".$sid."'
 			;");
 		}
-		session_destroy();
-		session_regenerate_id();
+        if ($logoutPressed==1)
+        {
+            session_destroy();
+            session_regenerate_id();
+        }
 	}
 
 	/**
@@ -246,7 +240,7 @@ class AdminSession extends Session
 	static function cleanup()
 	{
 		$cfg = Config::getInstance();
-
+		
 		$res = dbquery("
 		SELECT
 			id
@@ -291,7 +285,7 @@ class AdminSession extends Session
 	 */
 	static function kick($sid)
 	{
-		self::unregisterSession($sid);
+		self::unregisterSession($sid,0);
 	}
 }
 ?>

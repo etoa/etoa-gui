@@ -41,7 +41,7 @@
 		);
 	 	show_tab_menu("mode",$tabitems);
 		
-		$mode = (isset($_GET['mode'])) ? $_GET['mode'] : "res";
+		$mode = (isset($_GET['mode']) && ctype_alsc($_GET['mode'])) ? $_GET['mode'] : "res";
 		
 		$bl = new BuildList($cp->id,$cp->id);
 		$sl = new ShipList($cp->id,$cu->id);
@@ -171,7 +171,7 @@
 			else
 			{
 				echo "<br />";
-				error_msg("Der Flottenbunker wurde noch nicht gebaut!");
+				info_msg("Der Flottenbunker wurde noch nicht gebaut!");
 			}
 		}
 		elseif ($mode=="fleet")
@@ -310,7 +310,7 @@
 			else
 			{
 				echo "<br />";
-				error_msg("Der Flottenbunker wurde noch nicht gebaut!");
+				info_msg("Der Flottenbunker wurde noch nicht gebaut!");
 			}
 		}
 		else
@@ -360,7 +360,7 @@
 			else
 			{
 				echo "<br />";
-				error_msg("Der Rohstoffbunker wurde noch nicht gebaut!");
+				info_msg("Der Rohstoffbunker wurde noch nicht gebaut!");
 			}
 		}
 	}

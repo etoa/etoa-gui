@@ -20,8 +20,6 @@
 
 if (Alliance::checkActionRights('polls'))
 {
-
-
 		echo "<h2>Umfragen verwalten</h2>";
 		if (isset($_GET['pollaction']) && $_GET['pollaction']=="create")
 		{
@@ -58,17 +56,17 @@ if (Alliance::checkActionRights('polls'))
 								poll_a8_text
 							) VALUES (
 								'".$arr['alliance_id']."',
-								'".addslashes($_POST['poll_title'])."',
-								'".addslashes($_POST['poll_question'])."',
+								'".mysql_real_escape_string($_POST['poll_title'])."',
+								'".mysql_real_escape_string($_POST['poll_question'])."',
 								'".time()."',
-								'".addslashes($_POST['poll_a1_text'])."',
-								'".addslashes($_POST['poll_a2_text'])."',
-								'".addslashes($_POST['poll_a3_text'])."',
-								'".addslashes($_POST['poll_a4_text'])."',
-								'".addslashes($_POST['poll_a5_text'])."',
-								'".addslashes($_POST['poll_a6_text'])."',
-								'".addslashes($_POST['poll_a7_text'])."',
-								'".addslashes($_POST['poll_a8_text'])."'
+								'".mysql_real_escape_string($_POST['poll_a1_text'])."',
+								'".mysql_real_escape_string($_POST['poll_a2_text'])."',
+								'".mysql_real_escape_string($_POST['poll_a3_text'])."',
+								'".mysql_real_escape_string($_POST['poll_a4_text'])."',
+								'".mysql_real_escape_string($_POST['poll_a5_text'])."',
+								'".mysql_real_escape_string($_POST['poll_a6_text'])."',
+								'".mysql_real_escape_string($_POST['poll_a7_text'])."',
+								'".mysql_real_escape_string($_POST['poll_a8_text'])."'
 							);");
 							ok_msg("Umfrage wurde gespeichert!");
 							$_SESSION['alliance_poll']=null;
@@ -109,9 +107,11 @@ if (Alliance::checkActionRights('polls'))
 		//
 		// Umfrage bearbeiten
 		//
-		elseif (isset($_GET['edit']) && $_GET['edit']>0)
+		elseif (isset($_GET['edit']) && intval($_GET['edit'])>0)
 		{
-			$pres=dbquery("SELECT * FROM alliance_polls WHERE poll_id=".$_GET['edit']." AND poll_alliance_id=".$arr['alliance_id'].";");
+		    $eid = intval($_GET['edit']);
+
+			$pres=dbquery("SELECT * FROM alliance_polls WHERE poll_id=".$eid." AND poll_alliance_id=".$arr['alliance_id'].";");
 			if (mysql_num_rows($pres)>0)
 			{
 				$parr=mysql_fetch_array($pres);
@@ -145,18 +145,18 @@ if (Alliance::checkActionRights('polls'))
 							if ($_POST['poll_a1_text']!="" && $_POST['poll_a2_text']!="")
 							{
 								dbquery("UPDATE alliance_polls SET
-									poll_title='".addslashes($_POST['poll_title'])."',
-									poll_question='".addslashes($_POST['poll_question'])."',
-									poll_a1_text='".addslashes($_POST['poll_a1_text'])."',
-									poll_a2_text='".addslashes($_POST['poll_a2_text'])."',
-									poll_a3_text='".addslashes($_POST['poll_a3_text'])."',
-									poll_a4_text='".addslashes($_POST['poll_a4_text'])."',
-									poll_a5_text='".addslashes($_POST['poll_a5_text'])."',
-									poll_a6_text='".addslashes($_POST['poll_a6_text'])."',
-									poll_a7_text='".addslashes($_POST['poll_a7_text'])."',
-									poll_a8_text='".addslashes($_POST['poll_a8_text'])."'
+									poll_title='".mysql_real_escape_string($_POST['poll_title'])."',
+									poll_question='".mysql_real_escape_string($_POST['poll_question'])."',
+									poll_a1_text='".mysql_real_escape_string($_POST['poll_a1_text'])."',
+									poll_a2_text='".mysql_real_escape_string($_POST['poll_a2_text'])."',
+									poll_a3_text='".mysql_real_escape_string($_POST['poll_a3_text'])."',
+									poll_a4_text='".mysql_real_escape_string($_POST['poll_a4_text'])."',
+									poll_a5_text='".mysql_real_escape_string($_POST['poll_a5_text'])."',
+									poll_a6_text='".mysql_real_escape_string($_POST['poll_a6_text'])."',
+									poll_a7_text='".mysql_real_escape_string($_POST['poll_a7_text'])."',
+									poll_a8_text='".mysql_real_escape_string($_POST['poll_a8_text'])."'
 								WHERE
-									poll_id=".$_GET['edit']."
+									poll_id=".$eid."
 									AND poll_alliance_id=".$arr['alliance_id'].";");
 								echo "Umfrage wurde gespeichert!";
 								$_SESSION['alliance_poll']=null;
@@ -199,19 +199,21 @@ if (Alliance::checkActionRights('polls'))
 		//
 		else
 		{
-			if (isset($_GET['del']) && $_GET['del']>0)
+			if (isset($_GET['del']) && intval($_GET['del'])>0)
 			{
-				dbquery("DELETE FROM alliance_polls WHERE poll_id=".$_GET['del']." AND poll_alliance_id=".$arr['alliance_id'].";");
+				$did = intval($_GET['del']);
+
+				dbquery("DELETE FROM alliance_polls WHERE poll_id=".$did." AND poll_alliance_id=".$arr['alliance_id'].";");
 				if (mysql_affected_rows()>0)
 				{
-					dbquery("DELETE FROM alliance_poll_votes WHERE vote_poll_id=".$_GET['del']." AND vote_alliance_id=".$arr['alliance_id'].";");
+					dbquery("DELETE FROM alliance_poll_votes WHERE vote_poll_id=".$did." AND vote_alliance_id=".$arr['alliance_id'].";");
 					ok_msg("Umfrage wurde gel&ouml;scht!");
 				}
 			}
-			if (isset($_GET['deactivate']) && $_GET['deactivate'])
-				dbquery("UPDATE alliance_polls SET poll_active=0 WHERE poll_id=".$_GET['deactivate']." AND poll_alliance_id=".$arr['alliance_id'].";");
-			if (isset($_GET['activate']) && $_GET['activate'])
-				dbquery("UPDATE alliance_polls SET poll_active=1 WHERE poll_id=".$_GET['activate']." AND poll_alliance_id=".$arr['alliance_id'].";");
+			if (isset($_GET['deactivate']) && intval($_GET['deactivate']) > 0)
+				dbquery("UPDATE alliance_polls SET poll_active=0 WHERE poll_id=".intval($_GET['deactivate'])." AND poll_alliance_id=".$arr['alliance_id'].";");
+			if (isset($_GET['activate']) && intval($_GET['activate']) > 0)
+				dbquery("UPDATE alliance_polls SET poll_active=1 WHERE poll_id=".intval($_GET['activate'])." AND poll_alliance_id=".$arr['alliance_id'].";");
 
 			$_SESSION['alliance_poll']=null;
 			$pres=dbquery("SELECT * FROM alliance_polls WHERE poll_alliance_id=".$arr['alliance_id'].";");
@@ -239,5 +241,5 @@ if (Alliance::checkActionRights('polls'))
 			<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" />";
 						}
 						
-}						
+}
 ?>

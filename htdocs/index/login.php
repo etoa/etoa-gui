@@ -85,7 +85,7 @@
 			</div>
 			<input type="hidden" name="token" value="<?PHP echo $logintoken; ?>" />
 		</form>
-		<script>
+		<script type="text/javascript">
 		$(function(){
 			$('#loginname').focus();
 		});

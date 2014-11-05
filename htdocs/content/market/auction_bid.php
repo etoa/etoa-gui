@@ -34,7 +34,7 @@
 	FROM
 		market_auction
 	WHERE
-		id='".$_POST['auction_market_id']."'
+		id='".intval($_POST['auction_market_id'])."'
 		AND user_id!=".$cu->id."
 		AND date_end>'".time()."'
 	");
