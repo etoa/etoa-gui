@@ -130,8 +130,7 @@
 	//
 	else
 	{
-		echo "<p>W&auml;hle in der rechten Spalte eine Option aus!<br/> Achtung: Einige Operationen können die 
-		Datenbank stark belasten und es dauert eine Weile bis die geforderte Seite geladen ist.</p>";
+		$tpl->setView('db');
 
 		$st = array();
 		$res=dbquery("SHOW GLOBAL STATUS;");
@@ -142,49 +141,35 @@
 		$uts = $st['uptime'];
 		$utm = round($uts/60);
 		$uth = round($uts/3600);
-		echo '<div style="float:left;">';
 
-		echo '<h2>Datenbank-Pflege</h2>';
-		echo '<p><input type="button" value="Optimieren" onclick="document.location=\'?page='.$page.'&amp;sub=maintenance&action=optimize\';" /> &nbsp; 
-		Sortiert Indizes und defragmentiert Daten.</p>';
-		echo '<p><input type="button" value="Analysieren" onclick="document.location=\'?page='.$page.'&amp;sub=maintenance&action=analyze\';" /> &nbsp; 
-		Analysiert die Schlüsselverteilung der Tabellen.</p>';
-		echo '<p><input type="button" value="Überprüfen" onclick="document.location=\'?page='.$page.'&amp;sub=maintenance&action=check\';" /> &nbsp; 
-		Prüft Tabellen auf Fehler.</p>';
-		echo '<p><input type="button" value="Reparieren" onclick="document.location=\'?page='.$page.'&amp;sub=maintenance&action=repair\';" /> &nbsp; 
-		Repariert möglicherweise defekte Tabellen.</p>';
+		$tpl->assign('serverUptime', tf($uts));
+		$tpl->assign('serverStarted', df(time()-$uts));
+		
+		$tpl->assign('bytesReceived', byte_format($st['bytes_received']));
+		$tpl->assign('bytesReceivedHour', byte_format($uth > 0 ? $st['bytes_received']/$uth : 0));
+		$tpl->assign('bytesSent', byte_format($st['bytes_sent']));
+		$tpl->assign('bytesSentHour', byte_format($uth > 0 ? $st['bytes_sent']/$uth : 0));
+		$tpl->assign('bytesTotal', byte_format($st['bytes_received']+$st['bytes_sent']));
+		$tpl->assign('bytesTotalHour', byte_format($uth > 0 ? ($st['bytes_received']+$st['bytes_sent'])/$uth : 0));
 
-		echo "<h2>Serverstatistiken</h2>";
-		echo 'Der Server läuft seit <b>'.tf($uts).'</b><br/>und wurde am <b>'.df(time()-$uts).'</b> Uhr gestartet.<br/><br/>';
-		echo '<table style="width:450px;" class="tb">';
-		echo '<tr><th colspan="2">Traffic</th><th>ø pro Stunde</th></tr>';
-		echo '<tr><td style="width:120px;">Empfangen</td><td>'.byte_format($st['bytes_received']).'</td><td>'.byte_format($uth > 0 ? $st['bytes_received']/$uth : 0).'</td></tr>';
-		echo '<tr><td>Gesendet</td><td>'.byte_format($st['bytes_sent']).'</td><td>'.byte_format($uth > 0 ? $st['bytes_sent']/$uth : 0).'</td></tr>';
-		echo '<tr><td>Total</td><td>'.byte_format($st['bytes_received']+$st['bytes_sent']).'</td><td>'.byte_format($uth > 0 ? ($st['bytes_received']+$st['bytes_sent'])/$uth : 0).'</td></tr>';
-		echo '</table><br/>';
-		echo '<table style="width:450px;" class="tb">';
-		echo '<tr><th colspan="2">Verbindungen</th><th>ø pro Stunde</th></tr>';
-		echo '<tr><td>max. gleichz. Verbindungen</td><td>'.nf($st['max_used_connections']).'</td><td>-</td></tr>';
-		echo '<tr><td>Fehlgeschlagen</td><td>'.nf($st['aborted_connects']).'</td><td>'.nf($uth > 0 ? $st['aborted_connects']/$uth : 0).'</td></tr>';
-		echo '<tr><td>Abgebrochen</td><td>'.nf($st['aborted_clients']).'</td><td>'.nf($uth > 0 ? ($st['aborted_clients'])/$uth : 0).'</td></tr>';
-		echo '<tr><td>Insgesamt</td><td>'.nf($st['connections']).'</td><td>'.nf($uth > 0 ? ($st['connections'])/$uth : 0).'</td></tr>';
-		echo '</table><br/>';
-		echo '<table style="width:450px;" class="tb">';
-		echo '<tr><th colspan="2">Abfragen</th></tr>';
-		echo '<tr><td style="width:120px;">Insgesamt</td><td>'.nf($st['questions']).'</td></tr>';
-		echo '<tr><td>ø pro Tag</td><td>'.nf($uth > 0 ? $st['questions']/$uth*24 : 0).'</td></tr>';
-		echo '<tr><td>ø pro Stunde</td><td>'.nf($uth > 0 ?  $st['questions']/$uth : 0).'</td></tr>';
-		echo '<tr><td>ø pro Minute</td><td>'.nf($utm > 0 ? $st['questions']/$utm : 0).'</td></tr>';
-		echo '<tr><td>ø pro Sekunde</td><td>'.nf($uts > 0 ? $st['questions']/$uts : 0).'</td></tr>';
-		echo '</table><br/>';
-		echo '<table style="width:450px;" class="tb">';
-		echo '<tr><th colspan="2">Sonstiges</th></tr>';
-		echo '<tr><td style="width:280px;">Langsame Abfragen</td><td>'.nf($st['slow_queries']).'</td></tr>';
-		echo '<tr><td>Erstellte Temorärtabellen auf der Festplatte</td><td>'.nf($st['created_tmp_disk_tables']).'</td></tr>';
-		echo '<tr><td>Offene Tabellen</td><td>'.nf($st['open_tables']).'</td></tr>';
-		echo '<tr><td>Geöffnete Tabellen</td><td>'.nf($st['opened_tables']).'</td></tr>';
-		echo '</table><br/>';
-		echo '</div>';		
+		$tpl->assign('maxUsedConnections', nf($st['max_used_connections']));
+		$tpl->assign('abortedConnections', nf($st['aborted_connects']));
+		$tpl->assign('abortedConnectsHour', nf($uth > 0 ? $st['aborted_connects']/$uth : 0));
+		$tpl->assign('abortedClients', nf($st['aborted_clients']));
+		$tpl->assign('abortedClientsHour', nf($uth > 0 ? ($st['aborted_clients'])/$uth : 0));
+		$tpl->assign('connections', nf($st['connections']));
+		$tpl->assign('connectionsHour', nf($uth > 0 ? ($st['connections'])/$uth : 0));
+
+		$tpl->assign('questions', nf($st['questions']));
+		$tpl->assign('avgQuestionsDay', nf($uth > 0 ? $st['questions']/$uth*24 : 0));
+		$tpl->assign('avgQuestionsHour', nf($uth > 0 ?  $st['questions']/$uth : 0));
+		$tpl->assign('avgQuestionsMinute', nf($utm > 0 ? $st['questions']/$utm : 0));
+		$tpl->assign('avgQuestionsSecond', nf($uts > 0 ? $st['questions']/$uts : 0));
+
+		$tpl->assign('slowQueries', nf($st['slow_queries']));
+		$tpl->assign('createdTmpDiskTables', nf($st['created_tmp_disk_tables']));
+		$tpl->assign('openTables', nf($st['open_tables']));
+		$tpl->assign('openedTables', nf($st['opened_tables']));
 
 		$sort = isset($_GET['sort']) ? $_GET['sort'] : 'size';
 		$tr = array();
@@ -199,23 +184,23 @@
 			$tr[$arr['Name']]=$arr['Rows'];
 			$ts[$arr['Name']]=$arr['Data_length']+$arr['Index_length'];
 			$tn[$arr['Name']]=$arr['Name'];
-		}          
-		echo '<div style="float:left;margin-left:50px"><h2>Datenbankstatistiken</h2>';		
-		echo "Die Datenbank <b>".DBManager::getInstance()->getDbName()."</b> hat <b>".nf($rows)."</b> Zeilen<br/>und eine 
-		Gesamtgrösse von <b>".byte_format($datal)."</b><br/><br/>";
-		echo '<table style="width:300px;" class="tb">';
-		echo '<tr><th colspan="3">Datenbanktabellen</th></tr>';
-		echo '<tr>
-			<th><a href="?page='.$page.'&amp;sort=name">Name</th>
-			<th><a href="?page='.$page.'&amp;sort=size">Grösse</th>
-			<th><a href="?page='.$page.'&amp;sort=rows">Einträge</th>
-		</tr>';
+		} 
+		
+		$tpl->assign('dbName', DBManager::getInstance()->getDbName());
+		$tpl->assign('dbRows', nf($rows));
+		$tpl->assign('dbSize', byte_format($datal));
+		
+		$dbStats = array();
 		if ($sort=='rows')
 		{
 			arsort ($tr);
 			foreach ($tr as $k=>$v)
 			{
-				echo '<tr><td>'.$tn[$k].'</td><td>'.byte_format($ts[$k]).'</td><td>'.nf($tr[$k]).'</td></tr>';
+				$dbStats[] = array(
+					'name' => $tn[$k],
+					'size' => byte_format($ts[$k]),
+					'entries' => nf($tr[$k])
+				);
 			}		
 		}
 		if ($sort=='name')
@@ -223,7 +208,11 @@
 			asort ($tn);
 			foreach ($tn as $k=>$v)
 			{
-				echo '<tr><td>'.$tn[$k].'</td><td>'.byte_format($ts[$k]).'</td><td>'.nf($tr[$k]).'</td></tr>';
+				$dbStats[] = array(
+					'name' => $tn[$k],
+					'size' => byte_format($ts[$k]),
+					'entries' => nf($tr[$k])
+				);
 			}		
 		}
 		else
@@ -231,14 +220,13 @@
 			arsort ($ts);
 			foreach ($ts as $k=>$v)
 			{
-				echo '<tr><td>'.$tn[$k].'</td><td>'.byte_format($ts[$k]).'</td><td>'.nf($tr[$k]).'</td></tr>';
+				$dbStats[] = array(
+					'name' => $tn[$k],
+					'size' => byte_format($ts[$k]),
+					'entries' => nf($tr[$k])
+				);
 			}		
 		}
-		echo '</table>';
-		echo '</div>';		
-		
-		echo '<br style="clear:both" />';
-		
+		$tpl->assign('dbStats', $dbStats);
 	}
 ?>
-
