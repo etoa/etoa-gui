@@ -29,41 +29,40 @@
 	$tpl->assign('title', 'Datenbank');
 
 	//
-	// Datenbanktabellen optimieren
+	// Database maintenance
 	//
-	if ($sub=="optimize")
+	if ($sub == "maintenance")
 	{
-		$tpl->setView('db_operation');
-		$tpl->assign('subtitle', 'Optimierungsbericht');
-
-		$ores = DBManager::getInstance()->optimizeTables(true);
-		
-		// Fields
-		$fields = array();
-		while ($fo = mysql_fetch_field($ores))
-		{
-			$fields[] = $fo->name;
-		}
-		$tpl->assign('fields', $fields);
-
-		// Records
-		$rows = array();
-		while ($arr = mysql_fetch_assoc($ores))
-		{
-			$rows[] = $arr;
-		}
-		$tpl->assign('rows', $rows);
-	}
+		$action = isset($_GET['action']) ? $_GET['action'] : null;
 	
-	//
-	// Datenbanktabellen reparieren
-	//
-	elseif ($sub=="repair")
-	{
 		$tpl->setView('db_operation');
-		$tpl->assign('subtitle', 'Reparaturbericht');
 		
-		$ores = DBManager::getInstance()->repairTables(true);
+		// Datenbanktabellen optimieren
+		if ($action == "optimize")
+		{
+			$tpl->assign('subtitle', 'Optimierungsbericht');
+			$ores = DBManager::getInstance()->optimizeTables(true);
+		}
+		// Datenbanktabellen analysieren
+		elseif ($action == "analyze")
+		{
+			$tpl->assign('subtitle', 'Analysebericht');
+			$tpl->assign('msg', 'Tabellen deren Analysestatus bereits aktuell ist werden nicht angezeigt!');
+			$ores = DBManager::getInstance()->analyzeTables(true);
+		}
+		// Datenbanktabellen prüfen
+		elseif ($action == "check")
+		{
+			$tpl->assign('subtitle', 'Überprüfungsbericht');
+			$tpl->assign('msg', 'Es werden nur Tabellen mit einem Status != OK angezeigt!');
+			$ores = DBManager::getInstance()->checkTables(true);
+		}
+		// Datenbanktabellen reparieren
+		elseif ($action == "repair")
+		{
+			$tpl->assign('subtitle', 'Reparaturbericht');	
+			$ores = DBManager::getInstance()->repairTables(true);		
+		}		
 		
 		// Fields
 		$fields = array();
@@ -77,77 +76,20 @@
 		$rows = array();
 		while ($arr = mysql_fetch_assoc($ores))
 		{
-			$rows[] = $arr;
-		}
-		$tpl->assign('rows', $rows);
-	}
-
-	//
-	// Datenbanktabellen reparieren
-	//
-	elseif ($sub=="analyze")
-	{
-		$tpl->setView('db_operation');
-		$tpl->assign('subtitle', 'Analysebericht');
-
-		$ores = DBManager::getInstance()->analyzeTables(true);
-		
-		// Fields
-		$fields = array();
-		while ($fo = mysql_fetch_field($ores))
-		{
-			$fields[] = $fo->name;
-		}
-		$tpl->assign('fields', $fields);
-
-		// Records
-		$rows = array();
-		while ($arr = mysql_fetch_assoc($ores))
-		{
+			// When checking, filter all rows with OK status
+			if ($action == "check" && isset($arr['Msg_text']) && $arr['Msg_text'] == "OK") {
+				continue;
+			}
+			
 			// Filter all rows which are already up do date
-			if (!isset($arr['Msg_text']) || $arr['Msg_text'] != "Table is already up to date")
-			{
-				$rows[] = $arr;
+			if ($action == "analyze" && isset($arr['Msg_text']) && $arr['Msg_text'] == "Table is already up to date") {
+				continue;
 			}
+		
+			$rows[] = $arr;
 		}
 		$tpl->assign('rows', $rows);
-		
-		$tpl->assign('msg', 'Tabellen deren Analysestatus bereits aktuell ist werden nicht angezeigt!');
 	}
-	
-	//
-	// Datenbanktabellen reparieren
-	//
-	elseif ($sub=="check")
-	{
-		$tpl->setView('db_operation');
-		$tpl->assign('subtitle', 'Überprüfungsbericht');
-
-		$ores = DBManager::getInstance()->checkTables(true);
-
-		// Fields
-		$fields = array();
-		while ($fo = mysql_fetch_field($ores))
-		{
-			$fields[] = $fo->name;
-		}
-		$tpl->assign('fields', $fields);
-
-		// Records
-		$rows = array();
-		while ($arr = mysql_fetch_assoc($ores))
-		{
-			// Filter all rows with OK status
-			if (!isset($arr['Msg_text']) || $arr['Msg_text'] != "OK")
-			{
-				$rows[] = $arr;
-			}
-		}
-		$tpl->assign('rows', $rows);
-		
-		$tpl->assign('msg', 'Es werden nur Tabellen mit einem Status != OK angezeigt!');
-	}			
-	
 
 	//
 	// Backups anzeigen
@@ -203,13 +145,13 @@
 		echo '<div style="float:left;">';
 
 		echo '<h2>Datenbank-Pflege</h2>';
-		echo '<p><input type="button" value="Optimieren" onclick="document.location=\'?page='.$page.'&amp;sub=optimize\';" /> &nbsp; 
+		echo '<p><input type="button" value="Optimieren" onclick="document.location=\'?page='.$page.'&amp;sub=maintenance&action=optimize\';" /> &nbsp; 
 		Sortiert Indizes und defragmentiert Daten.</p>';
-		echo '<p><input type="button" value="Analysieren" onclick="document.location=\'?page='.$page.'&amp;sub=analyze\';" /> &nbsp; 
+		echo '<p><input type="button" value="Analysieren" onclick="document.location=\'?page='.$page.'&amp;sub=maintenance&action=analyze\';" /> &nbsp; 
 		Analysiert die Schlüsselverteilung der Tabellen.</p>';
-		echo '<p><input type="button" value="Überprüfen" onclick="document.location=\'?page='.$page.'&amp;sub=check\';" /> &nbsp; 
+		echo '<p><input type="button" value="Überprüfen" onclick="document.location=\'?page='.$page.'&amp;sub=maintenance&action=check\';" /> &nbsp; 
 		Prüft Tabellen auf Fehler.</p>';
-		echo '<p><input type="button" value="Reparieren" onclick="document.location=\'?page='.$page.'&amp;sub=repair\';" /> &nbsp; 
+		echo '<p><input type="button" value="Reparieren" onclick="document.location=\'?page='.$page.'&amp;sub=maintenance&action=repair\';" /> &nbsp; 
 		Repariert möglicherweise defekte Tabellen.</p>';
 
 		echo "<h2>Serverstatistiken</h2>";
