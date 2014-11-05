@@ -33,11 +33,26 @@
 	//
 	if ($sub=="optimize")
 	{
-		echo '<h2>Optimierungsbericht</h2>';
-		echo '<input type="button" value="Zur Übersicht" onclick="document.location=\'?page='.$page.'\'" /><br/><br/>';
+		$tpl->setView('db_operation');
+		$tpl->assign('subtitle', 'Optimierungsbericht');
+
 		$ores = DBManager::getInstance()->optimizeTables(true);
-		db_show_result($ores);
-		echo '<br/><input type="button" value="Zur Übersicht" onclick="document.location=\'?page='.$page.'\'" />';
+		
+		// Fields
+		$fields = array();
+		while ($fo = mysql_fetch_field($ores))
+		{
+			$fields[] = $fo->name;
+		}
+		$tpl->assign('fields', $fields);
+
+		// Records
+		$rows = array();
+		while ($arr = mysql_fetch_assoc($ores))
+		{
+			$rows[] = $arr;
+		}
+		$tpl->assign('rows', $rows);
 	}
 	
 	//
@@ -45,11 +60,26 @@
 	//
 	elseif ($sub=="repair")
 	{
-		echo '<h2>Reparaturbericht</h2>';
-		echo '<input type="button" value="Zur Übersicht" onclick="document.location=\'?page='.$page.'\'" /><br/><br/>';
+		$tpl->setView('db_operation');
+		$tpl->assign('subtitle', 'Reparaturbericht');
+		
 		$ores = DBManager::getInstance()->repairTables(true);
-		db_show_result($ores);
-		echo '<br/><input type="button" value="Zur Übersicht" onclick="document.location=\'?page='.$page.'\'" />';
+		
+		// Fields
+		$fields = array();
+		while ($fo = mysql_fetch_field($ores))
+		{
+			$fields[] = $fo->name;
+		}
+		$tpl->assign('fields', $fields);
+
+		// Records
+		$rows = array();
+		while ($arr = mysql_fetch_assoc($ores))
+		{
+			$rows[] = $arr;
+		}
+		$tpl->assign('rows', $rows);
 	}
 
 	//
@@ -57,11 +87,32 @@
 	//
 	elseif ($sub=="analyze")
 	{
-		echo '<h2>Analysebericht</h2>';
-		echo '<input type="button" value="Zur Übersicht" onclick="document.location=\'?page='.$page.'\'" /><br/><br/>';
+		$tpl->setView('db_operation');
+		$tpl->assign('subtitle', 'Analysebericht');
+
 		$ores = DBManager::getInstance()->analyzeTables(true);
-		db_show_result($ores);
-		echo '<br/><input type="button" value="Zur Übersicht" onclick="document.location=\'?page='.$page.'\'" />';
+		
+		// Fields
+		$fields = array();
+		while ($fo = mysql_fetch_field($ores))
+		{
+			$fields[] = $fo->name;
+		}
+		$tpl->assign('fields', $fields);
+
+		// Records
+		$rows = array();
+		while ($arr = mysql_fetch_assoc($ores))
+		{
+			// Filter all rows which are already up do date
+			if (!isset($arr['Msg_text']) || $arr['Msg_text'] != "Table is already up to date")
+			{
+				$rows[] = $arr;
+			}
+		}
+		$tpl->assign('rows', $rows);
+		
+		$tpl->assign('msg', 'Tabellen deren Analysestatus bereits aktuell ist werden nicht angezeigt!');
 	}
 	
 	//
@@ -69,11 +120,32 @@
 	//
 	elseif ($sub=="check")
 	{
-		echo '<h2>Überprüfungsbericht</h2>';
-		echo '<input type="button" value="Zur Übersicht" onclick="document.location=\'?page='.$page.'\'" /><br/><br/>';
+		$tpl->setView('db_operation');
+		$tpl->assign('subtitle', 'Überprüfungsbericht');
+
 		$ores = DBManager::getInstance()->checkTables(true);
-		db_show_result($ores);
-		echo '<br/><input type="button" value="Zur Übersicht" onclick="document.location=\'?page='.$page.'\'" />';
+
+		// Fields
+		$fields = array();
+		while ($fo = mysql_fetch_field($ores))
+		{
+			$fields[] = $fo->name;
+		}
+		$tpl->assign('fields', $fields);
+
+		// Records
+		$rows = array();
+		while ($arr = mysql_fetch_assoc($ores))
+		{
+			// Filter all rows with OK status
+			if (!isset($arr['Msg_text']) || $arr['Msg_text'] != "OK")
+			{
+				$rows[] = $arr;
+			}
+		}
+		$tpl->assign('rows', $rows);
+		
+		$tpl->assign('msg', 'Es werden nur Tabellen mit einem Status != OK angezeigt!');
 	}			
 	
 
@@ -133,12 +205,12 @@
 		echo '<h2>Datenbank-Pflege</h2>';
 		echo '<p><input type="button" value="Optimieren" onclick="document.location=\'?page='.$page.'&amp;sub=optimize\';" /> &nbsp; 
 		Sortiert Indizes und defragmentiert Daten.</p>';
-		echo '<p><input type="button" value="Reparieren" onclick="document.location=\'?page='.$page.'&amp;sub=repair\';" /> &nbsp; 
-		Repariert möglicherweise defekte Tabellen.</p>';
-		echo '<p><input type="button" value="Überprüfen" onclick="document.location=\'?page='.$page.'&amp;sub=check\';" /> &nbsp; 
-		Prüft Tabellen auf Fehler.</p>';
 		echo '<p><input type="button" value="Analysieren" onclick="document.location=\'?page='.$page.'&amp;sub=analyze\';" /> &nbsp; 
 		Analysiert die Schlüsselverteilung der Tabellen.</p>';
+		echo '<p><input type="button" value="Überprüfen" onclick="document.location=\'?page='.$page.'&amp;sub=check\';" /> &nbsp; 
+		Prüft Tabellen auf Fehler.</p>';
+		echo '<p><input type="button" value="Reparieren" onclick="document.location=\'?page='.$page.'&amp;sub=repair\';" /> &nbsp; 
+		Repariert möglicherweise defekte Tabellen.</p>';
 
 		echo "<h2>Serverstatistiken</h2>";
 		echo 'Der Server läuft seit <b>'.tf($uts).'</b><br/>und wurde am <b>'.df(time()-$uts).'</b> Uhr gestartet.<br/><br/>';

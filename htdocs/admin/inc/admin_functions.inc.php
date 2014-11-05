@@ -41,14 +41,14 @@ function openerLink($target,$title,$css="")
 */	
 function db_show_result($res)
 {
-	echo '<table class="tb"><tr>';
+	echo '<table class="tb"><thead><tr>';
 	$fc=0;
 	while ($fo = mysql_fetch_field($res))
 	{
 		echo '<th>'.$fo->name.'</th>';
 		$fc++;
 	}		
-	echo '</tr>';
+	echo '</tr></thead><tbody>';
 	while ($arr=mysql_fetch_row($res))
 	{
 		echo '<tr>';
@@ -58,7 +58,7 @@ function db_show_result($res)
 		}
 		echo '</tr>';
 	}
-	echo '</table>';		
+	echo '</tbody></table>';		
 }
 
 /**
