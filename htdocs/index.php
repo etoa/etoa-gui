@@ -249,10 +249,6 @@
 			}
 		}
 
-
-		// Navigation laden
-		require_once('inc/nav.inc.php');
-
 		// Count Messages
 		define('NEW_MESSAGES',Message::checkNew($cu->id));
 
@@ -314,8 +310,12 @@
 		$tpl->assign("gameWidth",GAME_WIDTH);
 		$tpl->assign("page",$page);
 		$tpl->assign("mode",$mode);
-		$tpl->assign("topNav",$topnav);
-		$tpl->assign("gameNav",$navmenu);
+		
+		// Navigation laden
+		$gameMenu = fetchJsonConfig("game-menu.conf");
+		$tpl->assign("topNav", $gameMenu['top']);
+		$tpl->assign("gameNav", $gameMenu['main']);		
+		
 		$tpl->assign("teamspeakUrl",TEAMSPEAK_URL);
 		$tpl->assign("teamspeakOnclick",TEAMSPEAK_ONCLICK);
 		$tpl->assign("rulesUrl",RULES_URL);
