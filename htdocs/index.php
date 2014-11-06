@@ -312,9 +312,9 @@
 		$tpl->assign("mode",$mode);
 		
 		// Navigation laden
-		$gameMenu = fetchJsonConfig("game-menu.conf");
-		$tpl->assign("topNav", $gameMenu['top']);
-		$tpl->assign("gameNav", $gameMenu['main']);		
+		$gameMenu = new GameMenu("game-menu.conf");
+		$tpl->assign("topNav", $gameMenu->getTopNav());
+		$tpl->assign("mainNav", $gameMenu->getMainNav());
 		
 		$tpl->assign("teamspeakUrl",TEAMSPEAK_URL);
 		$tpl->assign("teamspeakOnclick",TEAMSPEAK_ONCLICK);

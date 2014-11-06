@@ -5,10 +5,10 @@
 	<ul class="header-nav pull-right">
 		{foreach from=$topNav item=i}
 			<li>
-				{if $i.onclick|default:'' neq ""}
-					<a href="javascript:;" onclick="{$i.onclick}">{$i.name}</a>
+				{if $i->onclick|default:'' neq ""}
+					<a href="javascript:;" onclick="{$i->onclick}">{$i->name}</a>
 				{else}
-					<a href="{$i.url}" target="_blank">{$i.name}</a>
+					<a href="{$i->url}" target="_blank">{$i->name}</a>
 				{/if}
 			</li>
 		{/foreach}
@@ -33,11 +33,11 @@
 				{$selectField}
 			{/if}
 		</div>	
-		{foreach from=$gameNav item=c}
-			<p class="nav-header">{$c['cat']}</p>
+		{foreach from=$mainNav key=category item=items}
+			<p class="nav-header">{$category}</p>
 			<ul class="nav">
-				{foreach from=$c.items item=i}
-					<li><a href="{$i.url}">{$i.name}</a></li>
+				{foreach from=$items item=i}
+					<li><a href="{$i->url}">{$i->name}</a></li>
 				{/foreach}
 			</ul>
 		{/foreach}
