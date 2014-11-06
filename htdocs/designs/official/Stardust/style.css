@@ -33,7 +33,7 @@ h1, h2, h3 {
 }
 
 h1 {
-	font-size: 2.5em;
+	font-size: 2.1em;
 }
 
 h2 {
@@ -118,6 +118,35 @@ h3 {
 	text-align: center;
 	background: rgba(0,0,0, 0.5);
 	padding: 15px 0;
+	position: relative;
+}
+
+.sidebar .planetimage .servertime {
+	position: absolute;
+	left: 8px;
+	top: 8px;
+	font-size: 70%;
+}
+
+.sidebar .planetimage .planetIterator {
+	position: absolute;
+	bottom: 8px;
+	color: #fff;
+	text-decoration: none;
+	font-size: 180%;
+	color: #888;
+}
+
+.sidebar .planetimage .planetIterator:hover {
+	color: #fff;
+}
+
+.sidebar .planetimage .prevPlanet {
+	left: 8px;
+}
+
+.sidebar .planetimage .nextPlanet {
+	right: 8px;
 }
 
 .sidebar .planetname {
@@ -127,6 +156,8 @@ h3 {
 .sidebar .planetname select {
 	width: 100%;
 	border: 1px solid #555;
+    background: none repeat scroll 0% 0% #111;
+    color: #FFF;
 }
 
 .sidebar .nav-header {
@@ -159,7 +190,7 @@ h3 {
 */
 
 .content {
-	padding: 10px 20px;
+	padding: 30px 40px;
 }
 
 .content ul {
@@ -173,17 +204,9 @@ h3 {
 */
 
 .footer {
-	background: rgba(100,100,100, 0.5);
-	border-top: 1px solid #555;
+	margin-top: 10px;
+	margin-bottom: 5px;
 	padding: 6px 10px;
 	font-size: 70%;
 }
 
-.footer-infos {
-	list-style-type: none;
-}
-
-.footer-infos li {
-	display: inline-block;
-	padding: 0px 8px;
-}
