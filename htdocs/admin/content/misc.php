@@ -235,7 +235,7 @@
 			'content_for_layout' => 'Die eigentliche Inhalt der Seite',
 			'templateDir' => 'Pfad zum Template-Verzeichnis (z.B. zum Laden von Bildern)',
 			'topNav' => 'Array mit allen Elementen der Header-Navigation',
-			'gameNav' => 'Array mit allen Elementen der Haupt-Spielnavigation',
+			'mainNav' => 'Array mit allen Elementen der Haupt-Spielnavigation',
 			'usersOnline' => 'Anzahl User welche online sind',
 			'usersTotal' => 'Anzahl registrierter User',
 			'renderTime' => 'Zeit welche gebraucht wurde, um den Inhalt der Seite zusammenzustellen',
