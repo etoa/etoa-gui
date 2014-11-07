@@ -69,6 +69,12 @@ Ordner/                 Ordnername ist gleich dem Namen des Designs
 <h3>Design-Info Datei</h3>
 <p>Beispiel einer <code>design.xml</code> Datei:</p>
 <pre class="code">{$sampleInfoFile}</pre>
+<p>Die Tags haben folgende Bedeuting:</p>
+<ul>
+	{foreach item=v key=k from=$designInfoParams}
+		<li><b>{$k}:</b> {$v}</li>
+	{/foreach}
+</ul>
 
 <h3>Smarty-Variabeln</h3>
 <table class="tbl" style="width:100%">
