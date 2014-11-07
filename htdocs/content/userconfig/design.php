@@ -108,7 +108,7 @@
                 <select name=\"css_style\" id=\"designSelector\" onchange=\"xajax_designInfo(this.options[this.selectedIndex].value);\">";
                 foreach ($designs as $k => $v)
                 {
-					if (!$v['restricted'] || $cu->admin)
+					if (!$v['restricted'] || $cu->admin || $cu->developer)
 					{
 						echo "<option value=\"$k\"";
 						if ($cu->properties->cssStyle == $k) 
