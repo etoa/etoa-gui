@@ -190,7 +190,7 @@ h3 {
 */
 
 .content {
-	padding: 30px 40px;
+	padding: 30px 50px;
 }
 
 .content ul {
@@ -208,5 +208,31 @@ h3 {
 	margin-bottom: 5px;
 	padding: 6px 10px;
 	font-size: 70%;
+}
+
+/*
+* Tables
+*/
+
+.tb {
+	border-collapse: collapse;
+}
+
+.tb th {
+	text-align: left;
+	font-weight: bold;
+}
+
+.tb td, .tb th {
+	border: 1px solid #aaa;
+	padding: 1px 3px;
+}
+
+.tb tr:nth-child(even) {
+	background: rgba(50,50,50, 0.7);
+}
+
+.tb tr:nth-child(odd) {
+	background: rgba(30,30,30, 0.7);
 }
 
