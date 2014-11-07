@@ -204,7 +204,8 @@ a:hover {
 
 .content {
 	padding: 30px 50px;
-	width: 100%;
+	width: 900px;
+	font-size: 90%;
 }
 
 .content ul {
@@ -241,6 +242,7 @@ a:hover {
 .tb td, .tb th {
 	border: 1px solid #aaa;
 	padding: 2px 4px;
+	vertical-align: middle;
 }
 
 .tb tr:nth-child(even) {
@@ -249,5 +251,34 @@ a:hover {
 
 .tb tr:nth-child(odd) {
 	background: rgba(20,20,20, 0.9);
+}
+
+/*
+* Forms
+*/
+
+input[type="text"], select, textarea {
+	padding: 2px 3px;
+	font-family: 'Open Sans', sans-serif;
+	background: rgba(0,0,0, 0.7);
+	color: #fff;
+	font-size: 90%;
+	border: 1px solid #777;
+}
+
+input[type="submit"], input[type="button"], button {
+	padding: 5px 7px;
+	cursor: pointer;
+	font-family: 'Open Sans', sans-serif;
+	border: 1px solid #444;
+	background: linear-gradient(rgb(40,40,40), rgb(20,20,20));
+	color: #ccc;
+	border-radius: 2px;
+	font-weight: bold;
+}
+
+input[type="submit"]:hover, input[type="button"]:hover, button:hover {
+	color: #fff;
+	border: 1px solid #666;
 }
 
