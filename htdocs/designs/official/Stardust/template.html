@@ -13,6 +13,9 @@
 				{/if}
 			</li>
 		{/foreach}
+		{if $isAdmin}
+			<li><a href="admin" target="_blank">Administration</a></li>
+		{/if}
 		<li><a href="?logout=1">Logout</a></li>
 	</ul>
 	<br class="clear"/>
