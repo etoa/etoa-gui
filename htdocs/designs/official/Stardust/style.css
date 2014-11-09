@@ -48,12 +48,12 @@ h3 {
 }
 
 a {
-	color: #825D40;
+	color: #1E90FF;
 	text-decoration: none;
 }
 
 a:hover {
-	color: #a27D60;
+	color: #fff;
 	text-decoration: none;
 }
 
@@ -282,3 +282,68 @@ input[type="submit"]:hover, input[type="button"]:hover, button:hover {
 	border: 1px solid #666;
 }
 
+/*
+* Custom element: infobox
+*/
+
+.boxLayout {
+	margin-bottom: 1.6em;
+	border: 1px solid #aaa;
+}
+
+.infoboxtitle {
+	padding: 2px;
+	font-weight: bold;
+	border-bottom: 1px solid #aaa;
+	background: rgba(20,20,20, 0.9);
+}
+
+.infoboxcontent {
+	padding: 2px;
+	background: rgba(40,40,40, 0.9);
+}
+
+/*
+* Custom element: Tabs
+*/
+
+#pmenu {
+	padding: 0;
+	margin: 10px auto 10px auto;
+	list-style-type: none;
+	display: table;
+	background: rgba(20,20,20, 0.9);
+}
+
+#pmenu li.tc {
+	display: table-cell;
+}
+#pmenu li {
+	float: left;
+}
+
+#pmenu li a, #pmenu li a:visited {
+	display: block;
+	color: #aaa;
+	padding: 6px 10px 6px 10px;
+	text-decoration: none;
+	text-align: center;
+	border: 1px solid #aaa;
+}
+
+#pmenu li a:hover {
+	border: 1px solid #fff;
+	color: #fff;
+}
+
+/*
+* Two column list (alliance page)
+*/
+.twoColumnList ul {
+	display: inline-block;
+	width: 48%;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	
+}
