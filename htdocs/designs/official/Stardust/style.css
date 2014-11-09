@@ -337,13 +337,16 @@ input[type="submit"]:hover, input[type="button"]:hover, button:hover {
 }
 
 /*
-* Two column list (alliance page)
+* Three column list (alliance page)
 */
-.twoColumnList ul {
+
+.threeColumnList {
+    -webkit-column-count: 3; /* Chrome, Safari, Opera */
+    -moz-column-count: 3; /* Firefox */
+    column-count: 3;
+}
+
+.allianceManagementLinks a {
+	padding: 3px;
 	display: inline-block;
-	width: 48%;
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
-	
 }

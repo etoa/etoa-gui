@@ -259,16 +259,25 @@
 					echo "<h2>Allianz-Austritt</h2>";
 					if ($cu->allianceId!=0)
 					{
-						if ($ally->kickMember($cu->id,0)) {
-							ok_msg("Du bist aus der Allianz ausgetreten!");
-						} else {
-							error_msg("Du konntest nicht aus der Allianz austreten, da die Allianz entweder im Krieg ist oder du noch Allianzflotten in der Luft hast!!");
+						if (isset($_POST['submit_leave']))
+						{
+							if ($ally->kickMember($cu->id,0)) {
+								ok_msg("Du bist aus der Allianz ausgetreten!");
+							} else {
+								error_msg("Du konntest nicht aus der Allianz austreten, da die Allianz entweder im Krieg ist oder du noch Allianzflotten in der Luft hast!!");
+							}
+							echo "<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"&Uuml;bersicht\" />";
 						}
-						echo "<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"&Uuml;bersicht\" />";
-
-
-						//add_log(5,"Der Spieler [b]".$cu->nick."[/b] ist aus der Allianz [b][".$allys[$cu->allianceId]['tag']."] ".$allys[$cu->allianceId]['name']."[/b] ausgetreten!",time());
-
+						else
+						{
+							echo "<form action=\"?page=$page&amp;action=leave\" method=\"post\">";
+							echo "<p>Willst du die Allianz wirklich verlassen?</p>";
+							echo "<p>
+								<input type=\"submit\" name=\"submit_leave\" value=\"Ja\" />
+								<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Nein\" />
+							</p>";
+							echo "</form>";
+						}
 					}
 					else
 						echo "Du bist in keiner Allianz!<br/><br/><input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"&Uuml;bersicht\" />";
@@ -581,40 +590,59 @@
 						// Verwaltung
 						$adminBox=array();
 
-
-						if ($isFounder || $myRight['viewmembers']) array_push($adminBox,"<a href=\"?page=$page&amp;action=viewmembers\">Mitglieder anzeigen</a>");
-						array_push($adminBox,"<a href=\"?page=$page&action=base\">Allianzbasis</a>");
-						if ($conf['allow_wings']['v'] && ($isFounder || $myRight['wings'])) array_push($adminBox,"<a href=\"?page=$page&action=wings\">Wings verwalten</a>");
-						if ($isFounder || $myRight['history']) array_push($adminBox,"<a href=\"?page=$page&action=history\">Geschichte</a>");
-						if ($isFounder || $myRight['alliancenews']) array_push($adminBox,"<a href=\"?page=$page&action=alliancenews\">Allianznews (Rathaus)</a>");
-						if ($isFounder || $myRight['relations']) array_push($adminBox,"<a href=\"?page=$page&action=relations\">Diplomatie</a>");
-						if ($isFounder || $myRight['polls']) array_push($adminBox,"<a href=\"?page=$page&action=polls\">Umfragen verwalten</a>");
-						if ($isFounder || $myRight['massmail']) array_push($adminBox,"<a href=\"?page=$page&action=massmail\">Rundmail</a>");
-						if ($isFounder || $myRight['editmembers']) array_push($adminBox,"<a href=\"?page=$page&action=editmembers\">Mitglieder verwalten</a>");
-						if ($isFounder || $myRight['ranks']) array_push($adminBox,"<a href=\"?page=$page&action=ranks\">R&auml;nge</a>");
-						if ($isFounder || $myRight['editdata']) array_push($adminBox,"<a href=\"?page=$page&amp;action=editdata\">Allianz-Daten</a>");
-						if ($isFounder || $myRight['applicationtemplate']) array_push($adminBox,"<a href=\"?page=$page&action=applicationtemplate\">Bewerbungsvorlage</a>");
-						if ($isFounder && !$cu->alliance->isAtWar()) array_push($adminBox,"<a href=\"?page=$page&action=liquidate\">Allianz aufl&ouml;sen</a>");
-
-
-						if (!$isFounder && !$cu->alliance->isAtWar()) array_push($adminBox,"<a href=\"?page=$page&action=leave\" onclick=\"return confirm('Allianz wirklich verlassen?');\">Allianz verlassen</a>");
+						if ($isFounder || $myRight['viewmembers'])  {
+							$adminBox["Mitglieder anzeigen"] = "?page=$page&amp;action=viewmembers";
+						}
+						$adminBox["Allianzbasis"] = "?page=$page&action=base";
+						if ($conf['allow_wings']['v'] && ($isFounder || $myRight['wings'])) {
+							$adminBox["Wings verwalten"] = "?page=$page&action=wings";
+						}
+						if ($isFounder || $myRight['history']) {
+							$adminBox["Geschichte"] = "?page=$page&action=history";
+						}
+						if ($isFounder || $myRight['alliancenews']) {
+							$adminBox["Allianznews (Rathaus)"] = "?page=$page&action=alliancenews";
+						}
+						if ($isFounder || $myRight['relations']) {
+							$adminBox["Diplomatie"] = "?page=$page&action=relations";
+						}
+						if ($isFounder || $myRight['polls']) {
+							$adminBox["Umfragen verwalten"] = "?page=$page&action=polls";
+						}
+						if ($isFounder || $myRight['massmail']) {
+							$adminBox["Rundmail"] = "?page=$page&action=massmail";
+						}
+						if ($isFounder || $myRight['editmembers']) {
+							$adminBox["Mitglieder verwalten"] = "?page=$page&action=editmembers";
+						}
+						if ($isFounder || $myRight['ranks']) {
+							$adminBox["Ränge"] = "?page=$page&action=ranks";
+						}
+						if ($isFounder || $myRight['editdata']) {
+							$adminBox["Allianz-Daten bearbeiten"] = "?page=$page&amp;action=editdata";
+						}
+						if ($isFounder || $myRight['applicationtemplate']) {
+							$adminBox["Bewerbungsvorlage"] = "?page=$page&action=applicationtemplate";
+						}
+						if ($isFounder && !$cu->alliance->isAtWar()) {
+							$adminBox["Allianz aufl&ouml;sen"] = "?page=$page&action=liquidate";
+						}
+						if (!$isFounder && !$cu->alliance->isAtWar()) {
+							$adminBox["Allianz verlassen"] = "?page=$page&action=leave"; 
+							//array_push($adminBox,"<a href=\"\" onclick=\"return confirm('Allianz wirklich verlassen?');\"></a>");
+						}
 
 						$cnt=count($adminBox);
 						if ($cnt>0)
 						{
 							echo"<tr><th width=\"120\" >Verwaltung:</th>";
-							echo "<td class=\"twoColumnList\" colspan=\"2\">";
-							$bcnt=0;
-							foreach ($adminBox as $ab)
+							echo "<td colspan=\"2\">";
+							echo "<div class=\"threeColumnList allianceManagementLinks\">";
+							foreach ($adminBox as $k => $v)
 							{
-								if ($bcnt==0)
-									echo "<ul>";
-								echo "<li><b>".$ab."</b></li>";
-								if ($bcnt == floor($cnt/2))
-									echo "</ul><ul>";
-								$bcnt++;
+								echo "<a href=\"$v\">$k</a><br/>";
 							}
-							echo "</ul>";
+							echo "</div>";
 							echo "</td></tr>";
 						}
 
