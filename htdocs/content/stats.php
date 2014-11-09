@@ -173,25 +173,24 @@
 		
 		$ddm = new DropdownMenu(1);
 		$ddm->add('total','Gesamtstatistik','xajax_statsShowBox(\'user\');');
-		$ddm->add('detail','Detailstatistiken','');
-		$ddm->add('special','Spezialstatistiken','');
+
+		$ddm->add('buildings','Gebäude','xajax_statsShowBox(\'buildings\');','detail');
+		$ddm->add('tech','Forschung','xajax_statsShowBox(\'tech\');','detail');
+		$ddm->add('ships','Schiffe','xajax_statsShowBox(\'ships\');','detail');
+		$ddm->add('exp','Erfahrung','xajax_statsShowBox(\'exp\');','detail');
+
+		$ddm->add('battle','Kampf','xajax_statsShowBox(\'battle\');','special');
+		$ddm->add('trade','Handel','xajax_statsShowBox(\'trade\');','special');
+		$ddm->add('diplomacy','Diplomatie','xajax_statsShowBox(\'diplomacy\');','special');
+		echo $ddm; 
+		
+		$ddm = new DropdownMenu(1);
 		$ddm->add('alliances','Allianzen','xajax_statsShowBox(\'alliances\');');
-		$ddm->add('other','Diverses','xajax_statsShowBox(\'other\');');
+		$ddm->add('base','Allianzbasis','xajax_statsShowBox(\'base\');','alliances');
 		$ddm->add('titles','Titel','xajax_statsShowBox(\'titles\');');
-
-		$ddm->addChild('buildings','Gebäude','xajax_statsShowBox(\'buildings\');','detail');
-		$ddm->addChild('tech','Forschung','xajax_statsShowBox(\'tech\');','detail');
-		$ddm->addChild('ships','Schiffe','xajax_statsShowBox(\'ships\');','detail');
-		$ddm->addChild('exp','Erfahrung','xajax_statsShowBox(\'exp\');','detail');
-
-		$ddm->addChild('battle','Kampf','xajax_statsShowBox(\'battle\');','special');
-		$ddm->addChild('trade','Handel','xajax_statsShowBox(\'trade\');','special');
-		$ddm->addChild('diplomacy','Diplomatie','xajax_statsShowBox(\'diplomacy\');','special');
-		
-		$ddm->addChild('base','Allianzbasis','xajax_statsShowBox(\'base\');','alliances');
-		
-		$ddm->addChild('pillory','Pranger','xajax_statsShowBox(\'pillory\');','other');
-		$ddm->addChild('gamestats','Spielstatistik','xajax_statsShowBox(\'gamestats\');','other');
+	
+		$ddm->add('pillory','Pranger','xajax_statsShowBox(\'pillory\');','other');
+		$ddm->add('gamestats','Spielstatistik','xajax_statsShowBox(\'gamestats\');','other');
 
 		echo $ddm; 
 		
