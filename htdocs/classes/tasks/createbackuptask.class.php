@@ -14,10 +14,10 @@
 			if ($backupDir != null) 
 			{
 				// Remove old backup files
-				DBManager::removeOldBackups($backupDir, $cfg->backup_retention_time);
+				$cleaned = DBManager::removeOldBackups($backupDir, $cfg->backup_retention_time);
 				
 				$log = DBManager::getInstance()->backupDB($backupDir, $gzip);
-				return $log;
+				return $log.", $cleaned alte Backup-Dateien gelöscht";
 			}
 			else
 			{

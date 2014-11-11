@@ -118,13 +118,14 @@
 	if ($dir != null)
 	{
 		$cnt=0;
-		echo "<table class=\"tb\" style=\"width:auto;\"><tr><th>Name</th><th>Grösse</th><th>Optionen</th></tr>";
+		echo "<table class=\"tb\" style=\"width:auto;\"><tr><th>Name</th><th>Erstellt</th><th>Grösse</th><th>Optionen</th></tr>";
 		$bfiles = DBManager::getInstance()->getBackupImages($dir, 0);
 
 		foreach ($bfiles as $f)
 		{
 			$date = substr($f,strpos($f,"-")+1,16);
 			echo "<tr><td>".$f."</td>";
+			echo "<td>".df(filectime($dir."/".$f))."</td>";
 			echo "<td>".byte_format(filesize($dir."/".$f))."</td>";
 			echo "<td>
 				<a href=\"?page=$page&amp;sub=backup&amp;action=backuprestore&amp;date=$date\" onclick=\"return confirm('Soll die Datenbank mit den im Backup $date gespeicherten Daten &uuml;berschrieben werden?');\">Wiederherstellen</a> &nbsp; 

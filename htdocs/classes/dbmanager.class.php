@@ -488,15 +488,19 @@ class DBManager implements ISingleton	{
 	
 	/**
 	* Removes old backup files
+	* @return The number of removed files
 	*/
 	public static function removeOldBackups($dir, $days) {
+		$deleted = 0;
 		$time = time();
 		$files = array_merge(glob($dir."/*.sql"), glob($dir."/*.sql.gz"));
 		foreach ($files as $f) {
-			if (is_file($f) && $time -filemtime($f) >= $days * 86400) {
+			if (is_file($f) && $time - filemtime($f) >= 86400 * $days) {
 				unlink($f);
+				$deleted++;
 			}
 		}
+		return $deleted;
 	}
 	
 	public function getDbSize() {
