@@ -74,4 +74,8 @@
 			{/foreach}
 		</tbody>
 	</table>
+	<p>
+		<input type="button" value="Aktuelle Tasks ausführen" onclick="document.location='?page={$page}&run=current'" />
+		<input type="button" value="Alle Tasks ausführen" onclick="document.location='?page={$page}&run=all'" />
+	</p>
 {/if}

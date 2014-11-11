@@ -62,6 +62,23 @@
 		}
 		forward('?page='.$page);
 	}
+	// Run current or all tasks if requested
+	if (!empty($_GET['run']))
+	{
+		ob_start();
+		$tr = new PeriodicTaskRunner();
+		foreach (PeriodicTaskRunner::getScheduleFromConfig() as $tc) {
+			if ($_GET['run'] == "all" || PeriodicTaskRunner::shouldRun($tc['schedule'], $time)) {
+				$log.= $tc['name'].': '.$tr->runTask($tc['name']);
+			}
+		}
+		$log.= ob_get_clean();
+		$log.= "\nTotal: ".$tr->getTotalDuration().' sec';
+		$_SESSION['update_results'] = $log;
+		Log::add(Log::F_UPDATES, Log::INFO, "Tasks manuell ausgeführt:\n".trim($log));
+		forward('?page='.$page);
+	}
+	
 	// Handle result message
 	if (!empty($_SESSION['update_results'])) {
 		$tpl->assign('update_results', text2html($_SESSION['update_results']));
