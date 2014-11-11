@@ -42,6 +42,7 @@ class User
 	protected $registered;
 	protected $chatadmin;
 	protected $admin;
+	protected $developer;
 	protected $ip;
 	protected $visits;
 	protected $profileImage;
@@ -124,6 +125,7 @@ class User
 			$this->setup = $arr['user_setup']==1 ? true : false;
 			$this->chatadmin=$arr['user_chatadmin']==1 ? true : false;
 			$this->admin=$arr['admin']==1 ? true : false;
+			$this->developer=$arr['admin']==2 ? true : false;
 			$this->ghost=$arr['user_ghost']==1 ? true : false;
 
 			$this->ip=$_SERVER['REMOTE_ADDR'];

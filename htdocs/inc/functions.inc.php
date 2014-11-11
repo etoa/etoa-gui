@@ -1309,6 +1309,11 @@
 						$design['description']= $xml->value;
 						$xml->read();
 						break;
+					case "restricted":
+						$xml->read();
+						$design['restricted'] = $xml->value == "true";
+						$xml->read();
+						break;
 				}
 			}
 			$xml->close();

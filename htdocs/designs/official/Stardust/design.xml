@@ -1,0 +1,10 @@
+<?xml version='1.0' standalone='yes'?>
+<design version="1.1">
+	<name>Stardust</name>
+	<changed>1.10.2014</changed>
+	<version>0.1</version>
+	<author>MrCage</author>
+	<email>mrcage@etoa.ch</email>
+	<description>Minimales Basisdesign</description>
+	<restricted>true</restricted>
+</design>

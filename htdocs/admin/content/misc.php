@@ -211,6 +211,16 @@
 		
 		$sampleInfoFile = RELATIVE_ROOT.DESIGN_DIRECTORY."/official/".$cfg->value('default_css_style').'/'.DESIGN_CONFIG_FILE_NAME;
 		$tpl->assign('sampleInfoFile', htmlentities(file_get_contents($sampleInfoFile)));
+
+		$tpl->assign('designInfoParams', array(
+			'name' => 'Name des Designs (sollte identisch mit dem Namen des Verzeichnisses sein',
+			'changed' => 'Datum der letzten Änderung',
+			'version' => 'Version',
+			'author' => 'Autor',
+			'email' => 'E-Mail Adresse des Autors',
+			'description' => 'Kurzbeschreibung des Designs',
+			'restricted' => 'Wenn auf \'true\' gesetzt, können nur als Admin oder Entwickler markierte Spieler dieses Design auswählen',
+		));
 		
 		$tpl->assign('knownTemplateVars', array(
 			'currentPlanetImage' => 'Pfad zum aktuellen Planetenbild',
@@ -235,7 +245,7 @@
 			'content_for_layout' => 'Die eigentliche Inhalt der Seite',
 			'templateDir' => 'Pfad zum Template-Verzeichnis (z.B. zum Laden von Bildern)',
 			'topNav' => 'Array mit allen Elementen der Header-Navigation',
-			'gameNav' => 'Array mit allen Elementen der Haupt-Spielnavigation',
+			'mainNav' => 'Array mit allen Elementen der Haupt-Spielnavigation',
 			'usersOnline' => 'Anzahl User welche online sind',
 			'usersTotal' => 'Anzahl registrierter User',
 			'renderTime' => 'Zeit welche gebraucht wurde, um den Inhalt der Seite zusammenzustellen',

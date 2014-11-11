@@ -1842,3 +1842,18 @@ visibility:visible;
 	background: url("images/cellpic4.gif") repeat scroll 0 0 #2C2C31;
 	padding: 2px 5px;
 }
+
+/*
+* Three column list (alliance page)
+*/
+
+.threeColumnList {
+    -webkit-column-count: 3; /* Chrome, Safari, Opera */
+    -moz-column-count: 3; /* Firefox */
+    column-count: 3;
+}
+
+.allianceManagementLinks a {
+	padding: 3px;
+	display: inline-block;
+}

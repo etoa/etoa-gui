@@ -50,14 +50,13 @@
 	
 	$ddm = new DropdownMenu(1);
 	$ddm->add('b','Gebäude',"showTab('tabBuildings');");
-	
-	if ($research)
+	if ($research) {
 		$ddm->add('r','Technologien',"showTab('tabResearch');");
+	}
 	$ddm->add('s','Speicher',"showTab('tabStorage');");
-	
-	if($shipyard)
+	if($shipyard) {
 		$ddm->add('sw','Schiffswerft',"showTab('tabShipyard');");
-
+	}
 	echo $ddm; 
 	
 	echo "<br>";
