@@ -60,7 +60,7 @@
 			$_SESSION['update_results'] = $title.$out.ob_get_clean();
 			Log::add(Log::F_UPDATES, Log::INFO, "Task [b]".$_GET['runtask']."[/b] manuell ausgeführt:\n".trim($out));
 		}
-		forward('?page='.$page.'&sub='.$sub);
+		forward('?page='.$page);
 	}
 	// Handle result message
 	if (!empty($_SESSION['update_results'])) {
