@@ -414,11 +414,22 @@ class DBManager implements ISingleton	{
 	
 	public function restoreDB($backupDir, $restorePoint)
 	{
-		$mysql = WINDOWS ? WINDOWS_MYSQL_PATH : "mysql";
-		
 		if (is_dir($backupDir)) 
 		{
 			$file = $backupDir."/".$this->getDbName()."-".$restorePoint.".sql";
+			$this->restoreDBFromFile($file);
+			return "Die Datenbank wurde vom Backup [b]".$restorePoint."[/b] aus dem Verzeichnis [b]".$backupDir."[/b] wiederhergestellt.";
+		}
+		else
+		{
+			throw new Exception("Backup directory $backupDir does not exist!");
+		}
+	}
+	
+	public function restoreDBFromFile($file)
+	{
+		$mysql = WINDOWS ? WINDOWS_MYSQL_PATH : "mysql";
+		
 			if (file_exists($file.".gz"))
 			{
 				if (!UNIX)
@@ -438,17 +449,12 @@ class DBManager implements ISingleton	{
 				{
 					throw new Exception("Error while restoring backup: ".$result);
 				}
-				return "Die Datenbank wurde vom Backup [b]".$restorePoint."[/b] aus dem Verzeichnis [b]".$backupDir."[/b] wiederhergestellt.";
+				return "Die Datenbank wurde aus der Datei [b]".$file."[/b] wiederhergestellt.";
 			}
 			else
 			{
 				throw new Exception("Backup file $file not found!");	
 			}
-		}
-		else
-		{
-			throw new Exception("Backup directory $backupDir does not exist!");
-		}
 	}	
 	
 	public function getBackupImages($dir, $strip=1)
