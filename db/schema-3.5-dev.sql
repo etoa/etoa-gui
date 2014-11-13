@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 13. Nov 2014 um 18:45
+-- Erstellungszeit: 13. Nov 2014 um 19:36
 -- Server Version: 5.6.20
 -- PHP-Version: 5.5.15
 
@@ -1683,18 +1683,6 @@ CREATE TABLE IF NOT EXISTS `hostname_cache` (
   `host` varchar(100) NOT NULL,
   `timestamp` int(11) NOT NULL
 ) ENGINE=MEMORY DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `ip_ban`
---
-
-CREATE TABLE IF NOT EXISTS `ip_ban` (
-`id` int(11) NOT NULL,
-  `ip` varchar(15) NOT NULL,
-  `msg` text NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -5314,12 +5302,6 @@ ALTER TABLE `hostname_cache`
  ADD PRIMARY KEY (`addr`);
 
 --
--- Indexes for table `ip_ban`
---
-ALTER TABLE `ip_ban`
- ADD PRIMARY KEY (`id`);
-
---
 -- Indexes for table `login_failures`
 --
 ALTER TABLE `login_failures`
@@ -5982,11 +5964,6 @@ MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
 --
 ALTER TABLE `fleet_ships`
 MODIFY `fs_id` int(10) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `ip_ban`
---
-ALTER TABLE `ip_ban`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `login_failures`
 --
