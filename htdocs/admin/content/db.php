@@ -29,9 +29,17 @@
 	$tpl->assign('title', 'Datenbank');
 
 	//
+	// Database reset
+	//
+	if ($sub == "reset")
+	{
+		require("db/reset.inc.php");
+	}
+	
+	//
 	// Database maintenance
 	//
-	if ($sub == "maintenance")
+	elseif ($sub == "maintenance")
 	{
 		require("db/maintenance.inc.php");
 	}
