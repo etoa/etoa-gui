@@ -63,7 +63,7 @@
 			// Drop tables
 			else if ($action == "drop")
 			{
-				$schemaFile = RELATIVE_ROOT.'../db/schema-'.getSchemaVersion().'.sql';
+				$schemaFile = RELATIVE_ROOT.'../db/schema.sql';
 				if (!is_file($schemaFile))
 				{
 					throw new Exception("Schema-Datei $schemaFile existiert nicht!");
@@ -87,7 +87,7 @@
 				$mtx->release();
 
 				$tpl->setView('db/reset_done');
-				$tpl->assign("msg", "$tc Tabellen gelöscht, Datenbankschema $schemaFile neu initialisiert!");
+				$tpl->assign("msg", "$tc Tabellen gelöscht, Datenbankschema neu initialisiert!");
 				
 			}
 		}

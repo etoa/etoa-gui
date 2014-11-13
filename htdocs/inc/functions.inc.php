@@ -73,12 +73,7 @@
 		require_once(RELATIVE_ROOT.'version.php');
 		return APP_VERSION;
 	}
-	
-	function getSchemaVersion() {
-		require_once(RELATIVE_ROOT.'version.php');
-		return SCHEMA_VERSION;
-	}
-	
+
 	/**
 	* Baut die Datenbankverbindung auf
 	*/
