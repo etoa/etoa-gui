@@ -81,7 +81,8 @@
 				<?PHP
 					tableEnd();
 				?>
-				<br/><input id="loginsubmit" type="submit" name="login" value="Login" class="button" />
+				<br/><input id="loginsubmit" type="submit" name="login" value="Login" class="button" /> &nbsp;
+				<input type="button" onclick="document.location='admin'" value="Zum Admin-Login" class="button" />
 			</div>
 			<input type="hidden" name="token" value="<?PHP echo $logintoken; ?>" />
 		</form>
