@@ -17,70 +17,54 @@
 	// als Maturaarbeit '04 am Gymnasium Oberaargau //
 	//////////////////////////////////////////////////
 	// 
-	// Topic: Datenbank-Wiederherstellung
+	// Topic: Datenbank-Backup, erstellt ein Backup einer Datenbank mit dem Datum im Dateinamen
 	// Autor: Nicolas Perrenoud alias MrCage
 	// Erstellt: 01.12.2004
 	//
-	
+
 	// Gamepfad feststellen
-	$grd = chdir(realpath(dirname(__FILE__)."/../"));
+	$grd = chdir(realpath(dirname(__FILE__)."/../htdocs/"));
 
 	// Initialisieren
 	try {
 		if (include("inc/bootstrap.inc.php"))
-		{	
+		{
 			$dir = DBManager::getBackupDir();
+			$gzip = Config::getInstance()->backup_use_gzip=="1";
+		
+			$ret = 0;
 			
-			if (!empty($_SERVER['argv'][1]))
+			try
 			{
-				$restorePoint = $_SERVER['argv'][1];
-			
-				$ret = 0;
-			
-				try
-				{
-					// Acquire mutex
-					$mtx = new Mutex();
-					$mtx->acquire();
-					
-					// Restore database
-					$log = DBManager::getInstance()->restoreDB($dir, $restorePoint);
-
-					// Release mutex
-					$mtx->release();
-					
-					// Write log
-					Log::add(Log::F_SYSTEM, Log::INFO, "[b]Datenbank-Restore Skript[/b]\n".$log);
-				}
-				catch (Exception $e) 
-				{
-					// Release mutex
-					$mtx->release();
-
-					// Write log
-					Log::add(Log::F_SYSTEM, Log::ERROR, "[b]Datenbank-Restore Skript[/b]\nDie Datenbank konnte nicht vom Backup [b]".$restorePoint."[/b] aus dem Verzeichnis [b]".$dir."[/b] wiederhergestellt werden: ".$e->getMessage());
-					
-					// Show output
-					echo "Fehler: ".$e->getMessage();
-					
-					// Return code
-					$ret = 1;
-				}
+				// Acquire mutex
+				$mtx = new Mutex();
+				$mtx->acquire();
 				
-				exit($ret);
+				// Restore database
+				$log = DBManager::getInstance()->backupDB($dir, $gzip);
+
+				// Release mutex
+				$mtx->release();
+				
+				// Write log
+				Log::add(Log::F_SYSTEM, Log::INFO, "[b]Datenbank-Backup Skript[/b]\n".$log);
 			}
-			else
+			catch (Exception $e) 
 			{
-				echo "Usage: ".$_SERVER['argv'][0]." [restorepoint]\n\n";
-				echo "Available restorepoints:\n\n";
-				$dates = DBManager::getInstance()->getBackupImages($dir);
-				foreach ($dates as $f)
-				{
-					echo "$f\n";
-				}
+				// Release mutex
+				$mtx->release();
+
+				// Write log
+				Log::add(Log::F_SYSTEM, Log::ERROR, "[b]Datenbank-Backup Skript[/b]\nDie Datenbank konnte nicht in das Verzeichnis [b]".$dir."[/b] gesichert werden: ".$e->getMessage());
 				
-				exit(1);
+				// Show output
+				echo "Fehler: ".$e->getMessage();
+				
+				// Return code
+				$ret = 1;
 			}
+			
+			exit($ret);
 		}
 		else
 		{

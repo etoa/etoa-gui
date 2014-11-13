@@ -13,7 +13,7 @@
 	// Cron configuration
 	if (UNIX)
 	{
-		$scriptname = dirname(realpath(__DIR__."/../"))."/scripts/update.php";
+		$scriptname = dirname(realpath(__DIR__."/../../"))."/bin/update.php";
 		$cronjob = "* * * * * ".$scriptname;
 		$tpl->assign('cronjob', $cronjob);
 
