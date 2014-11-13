@@ -7,14 +7,6 @@
 	$action = isset($_POST['action']) ? $_POST['action'] : null;
 	if (isset($_POST['submit']))
 	{
-		// Create a list of all tables
-		$res = dbquery("SHOW TABLES;");
-		$tbls = array();
-		while ($arr = mysql_fetch_row($res))
-		{
-			$tbls[] = $arr[0];
-		}
-	
 		try
 		{
 			// Do the backup
@@ -36,6 +28,8 @@
 			{
 				$mtx = new Mutex();
 				$mtx->acquire();
+
+				$tbls = DBManager::getInstance()->getAllTables();
 
 				// Empty tables
 				dbquery("SET FOREIGN_KEY_CHECKS=0;");
@@ -63,31 +57,19 @@
 			// Drop tables
 			else if ($action == "drop")
 			{
-				$schemaFile = RELATIVE_ROOT.'../db/schema.sql';
-				if (!is_file($schemaFile))
-				{
-					throw new Exception("Schema-Datei $schemaFile existiert nicht!");
-				}
-			
 				$mtx = new Mutex();
 				$mtx->acquire();
 			
-				// Empty tables
-				dbquery("SET FOREIGN_KEY_CHECKS=0;");
-				$tc = 0;
-				foreach ($tbls as $t)
-				{
-					dbquery("TRUNCATE $t;");
-					$tc++;
-				}
-				dbquery("SET FOREIGN_KEY_CHECKS=1;");
+				// Drop tables
+				$tc = DBManager::getInstance()->dropAllTables();
 				
-				DBManager::getInstance()->restoreDBFromFile($schemaFile);
+				// Load schema
+				DBManager::getInstance()->migrate();
 				
 				$mtx->release();
 
 				$tpl->setView('db/reset_done');
-				$tpl->assign("msg", "$tc Tabellen gelöscht, Datenbankschema neu initialisiert!");
+				$tpl->assign("msg", $tc." Tabellen gelöscht, Datenbankschema neu initialisiert!");
 				
 			}
 		}

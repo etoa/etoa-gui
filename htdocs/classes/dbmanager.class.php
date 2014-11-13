@@ -417,6 +417,10 @@ class DBManager implements ISingleton	{
 		if (is_dir($backupDir)) 
 		{
 			$file = $backupDir."/".$this->getDbName()."-".$restorePoint.".sql";
+			if (file_exists($file.".gz"))
+			{
+				$file = $file.".gz";
+			}
 			$this->restoreDBFromFile($file);
 			return "Die Datenbank wurde vom Backup [b]".$restorePoint."[/b] aus dem Verzeichnis [b]".$backupDir."[/b] wiederhergestellt.";
 		}
@@ -428,34 +432,51 @@ class DBManager implements ISingleton	{
 	
 	public function restoreDBFromFile($file)
 	{
+		if (file_exists($file))
+		{
+			try {
+				$this->loadFile($file);
+				return "Die Datenbank wurde aus der Datei [b]".$file."[/b] wiederhergestellt.";
+			}
+			catch (Exception $e)
+			{
+				throw new Exception("Error while restoring backup: ".$e->getMessage());
+			}
+		}
+		else
+		{
+			throw new Exception("Backup file $file not found!");	
+		}
+	}	
+
+	private function loadFile($file) {
 		$mysql = WINDOWS ? WINDOWS_MYSQL_PATH : "mysql";
-		
-			if (file_exists($file.".gz"))
+		if (file_exists($file))
+		{
+			$ext = pathinfo ($file, PATHINFO_EXTENSION);
+			if ($ext == "gz")
 			{
 				if (!UNIX)
 				{
-					throw new Exception("Das Entpacken von GZIP Backups wird nur auf UNIX Systemen unterstützt!");
+					throw new Exception("Das Laden von GZIP SQL Dateien wird nur auf UNIX Systemen unterstützt!");
 				}
 				$cmd = "gunzip < ".$file.".gz | ".$mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName();
 			}
-			elseif (file_exists($file))
+			else
 			{
 				$cmd = $mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." < ".$file;
 			}
-			if (isset($cmd))
+			$result = shell_exec($cmd);
+			if (!empty($result))
 			{
-				$result = shell_exec($cmd);
-				if (!empty($result))
-				{
-					throw new Exception("Error while restoring backup: ".$result);
-				}
-				return "Die Datenbank wurde aus der Datei [b]".$file."[/b] wiederhergestellt.";
+				throw new Exception("Error while loading file with MySQL: ".$result);
 			}
-			else
-			{
-				throw new Exception("Backup file $file not found!");	
-			}
-	}	
+		}
+		else
+		{
+			throw new Exception("File $file not found!");	
+		}
+	}
 	
 	public function getBackupImages($dir, $strip=1)
 	{
@@ -534,6 +555,39 @@ class DBManager implements ISingleton	{
 			$f = fopen(DBERROR_LOGFILE,"a+");
 			fwrite($f,date("d.m.Y H:i:s").", ".(isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR']:'local').", ".$cu."\n".$message."\n\n");
 			fclose($f);
+		}
+	}
+
+	/**
+	* Creates a list of all tables
+	*/
+	public function getAllTables() {
+		$res = $this->query("SHOW TABLES;");
+		$tbls = array();
+		while ($arr = mysql_fetch_row($res))
+		{
+			$tbls[] = $arr[0];
+		}
+		return $tbls;
+	}
+	
+	/**
+	* Drops all tables
+	*/
+	public function dropAllTables() {
+		$tbls = $this->getAllTables();
+		dbquery("SET FOREIGN_KEY_CHECKS=0;");
+		dbquery("DROP TABLE ".implode(',', $tbls).";");
+		dbquery("SET FOREIGN_KEY_CHECKS=1;");
+		return count($tbls);
+	}
+	
+	public function migrate() {
+		$files = glob(RELATIVE_ROOT.'../db/migrations/*.sql');
+		natsort($files);
+		foreach ($files as $f) {
+			echo pathinfo($f, PATHINFO_FILENAME)."\n";
+			$this->loadFile($f);
 		}
 	}
 }
