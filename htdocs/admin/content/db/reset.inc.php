@@ -82,10 +82,12 @@
 				}
 				dbquery("SET FOREIGN_KEY_CHECKS=1;");
 				
+				DBManager::getInstance()->restoreDBFromFile($schemaFile);
+				
 				$mtx->release();
 
 				$tpl->setView('db/reset_done');
-				$tpl->assign("msg", "$tc Tabellen gelöscht!");
+				$tpl->assign("msg", "$tc Tabellen gelöscht, Datenbankschema $schemaFile neu initialisiert!");
 				
 			}
 		}
