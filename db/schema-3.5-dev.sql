@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 13. Nov 2014 um 07:55
+-- Erstellungszeit: 13. Nov 2014 um 08:34
 -- Server Version: 5.6.20
 -- PHP-Version: 5.5.15
 
@@ -2217,33 +2217,6 @@ CREATE TABLE IF NOT EXISTS `message_ignore` (
 `ignore_id` int(10) unsigned NOT NULL,
   `ignore_owner_id` int(10) unsigned NOT NULL DEFAULT '0',
   `ignore_target_id` int(10) unsigned NOT NULL DEFAULT '0'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `minimap`
---
-
-CREATE TABLE IF NOT EXISTS `minimap` (
-`field_id` int(10) unsigned NOT NULL,
-  `field_x` int(3) unsigned NOT NULL DEFAULT '0',
-  `field_y` int(3) unsigned NOT NULL DEFAULT '0',
-  `field_typ_id` int(3) unsigned NOT NULL DEFAULT '0',
-  `field_event_id` int(10) unsigned NOT NULL DEFAULT '0'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `minimap_field_types`
---
-
-CREATE TABLE IF NOT EXISTS `minimap_field_types` (
-`field_typ_id` int(3) unsigned NOT NULL,
-  `field_name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `field_image` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `field_blocked` int(1) unsigned NOT NULL DEFAULT '0'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
@@ -4828,21 +4801,6 @@ CREATE TABLE IF NOT EXISTS `user_log` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `user_minimap`
---
-
-CREATE TABLE IF NOT EXISTS `user_minimap` (
-  `minimap_user_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `minimap_sx` int(3) unsigned NOT NULL DEFAULT '1',
-  `minimap_sy` int(3) unsigned NOT NULL DEFAULT '1',
-  `minimap_cx` int(3) unsigned NOT NULL DEFAULT '1',
-  `minimap_cy` int(3) unsigned NOT NULL DEFAULT '1',
-  `minimap_user_fly_points` int(4) unsigned NOT NULL DEFAULT '0'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- --------------------------------------------------------
-
---
 -- Tabellenstruktur für Tabelle `user_multi`
 --
 
@@ -5548,18 +5506,6 @@ ALTER TABLE `message_ignore`
  ADD PRIMARY KEY (`ignore_id`), ADD KEY `ignore_owner_id` (`ignore_owner_id`), ADD KEY `ignore_target_id` (`ignore_target_id`);
 
 --
--- Indexes for table `minimap`
---
-ALTER TABLE `minimap`
- ADD PRIMARY KEY (`field_id`);
-
---
--- Indexes for table `minimap_field_types`
---
-ALTER TABLE `minimap_field_types`
- ADD PRIMARY KEY (`field_typ_id`);
-
---
 -- Indexes for table `missilelist`
 --
 ALTER TABLE `missilelist`
@@ -5792,12 +5738,6 @@ ALTER TABLE `user_comments`
 --
 ALTER TABLE `user_log`
  ADD PRIMARY KEY (`id`), ADD KEY `user_id` (`user_id`), ADD KEY `timestamp` (`timestamp`);
-
---
--- Indexes for table `user_minimap`
---
-ALTER TABLE `user_minimap`
- ADD PRIMARY KEY (`minimap_user_id`);
 
 --
 -- Indexes for table `user_multi`
@@ -6220,16 +6160,6 @@ MODIFY `cat_id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
 --
 ALTER TABLE `message_ignore`
 MODIFY `ignore_id` int(10) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `minimap`
---
-ALTER TABLE `minimap`
-MODIFY `field_id` int(10) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `minimap_field_types`
---
-ALTER TABLE `minimap_field_types`
-MODIFY `field_typ_id` int(3) unsigned NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `missilelist`
 --
