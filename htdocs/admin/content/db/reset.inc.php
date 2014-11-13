@@ -2,7 +2,7 @@
 	$tpl->setView('db/reset');
 	$tpl->assign('subtitle', 'Reset');
 
-	$persistentTables = fetchJsonConfig("definition-tables.conf");
+	$persistentTables = fetchJsonConfig("persistent-tables.conf");
 
 	$action = isset($_POST['action']) ? $_POST['action'] : null;
 	if (isset($_POST['submit']))
@@ -42,7 +42,7 @@
 				$tc = 0;
 				foreach ($tbls as $t)
 				{
-					if (!in_array($t, $persistentTables))
+					if (!in_array($t, $persistentTables['definitions']))
 					{
 						dbquery("TRUNCATE $t;");
 						echo "Leere Tabelle <b>$t</b><br/>";
