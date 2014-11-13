@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 13. Nov 2014 um 18:40
+-- Erstellungszeit: 13. Nov 2014 um 18:45
 -- Server Version: 5.6.20
 -- PHP-Version: 5.5.15
 
@@ -1581,58 +1581,6 @@ INSERT INTO `events` (`event_id`, `event_execrate`, `event_title`, `event_text`,
 (5, 100, 'Supernova', 'Bei einer Supernova sind {reward:p:crystal} ins Weltall geschleudert worden und nun auf deinem Planeten {planet} angekommen.', 0, '', '', '0.0100', 0, 0, 20, 70, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '0.0100', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '0.0100', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '0.0100', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '0.0100', 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (6, 100, 'Unabhängige Bürger', 'Eine Gruppe von {reward:p:people} unabhängigen Bürgern ist auf deinem Planeten gelandet, möchtes du ihnen eine Unterkunft anbieten?', 1, '{reward:p:people} Bürger schliessen sich deiner Zivilisation an!', 'Die unabhängigen Bürger sind empört dass du ihnen keine Unterkunft gewährt hast und stürmen deine {costs:n:building}, dabei geht ein Teil kaputt und die Stufe des Silos verringert sich um {costs:n:buildinglevel}.', '0.0100', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '0.0100', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '0.0100', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '0.0100', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 1, 0, 0, '0.0100', 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (7, 100, 'Defekter Antrieb', 'Ein Imperialisches Schlachtschiff hat einen defekten Antrieb, möchtest du der Besatzung {costs:p:crystal} geben, damit sie ihren Antrieb wieder benutzen können?', 0, 'Die Besatzung des Schlachtschiffes ist auf ihren Planeten zurück geflogen und hat sich dann entschieden, dir ein Geschenk zu machen: {reward:p:shipcnt} {reward:p:ship}', 'Die Piloten des fremden Schiffes versucht, das Silizium zu stehlen, dabei kommt es zu Aueinandersetzungen mit deiner Armee. Du verlierst {costs:n:people} Bürger und {costs:n:crystal}', '0.0100', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 11, 0, 0, 0, 0, 0, 0, 0, '0.0100', 0, 0, 350, 841, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '0.0100', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '0.0100', 0, 0, 0, 50, 0, 0, 0, 0, 0, 0, 0, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '0.0100', 0, 0, 0, 0, 0, 0, 0, 0, 0);
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `events_exec`
---
-
-CREATE TABLE IF NOT EXISTS `events_exec` (
-`event_id` int(10) unsigned NOT NULL,
-  `event_user_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `event_planet_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `event_cell_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `event_title` varchar(100) NOT NULL,
-  `event_text` text NOT NULL,
-  `event_ask` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `event_answer_pos` text NOT NULL,
-  `event_answer_neg` text NOT NULL,
-  `event_reward_metal` bigint(12) unsigned NOT NULL DEFAULT '0',
-  `event_reward_crystal` bigint(12) unsigned NOT NULL DEFAULT '0',
-  `event_reward_plastic` bigint(12) unsigned NOT NULL DEFAULT '0',
-  `event_reward_fuel` bigint(12) unsigned NOT NULL DEFAULT '0',
-  `event_reward_food` bigint(12) unsigned NOT NULL DEFAULT '0',
-  `event_reward_people` bigint(12) unsigned NOT NULL DEFAULT '0',
-  `event_reward_shid_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `event_reward_ship_num` int(10) unsigned NOT NULL DEFAULT '0',
-  `event_reward_def_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `event_reward_def_num` int(10) unsigned NOT NULL DEFAULT '0',
-  `event_reward_building_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `event_reward_building_level` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `event_reward_tech_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `event_reward_tech_level` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `event_costs_metal` bigint(12) unsigned NOT NULL DEFAULT '0',
-  `event_costs_crystal` bigint(12) unsigned NOT NULL DEFAULT '0',
-  `event_costs_plastic` bigint(12) unsigned NOT NULL DEFAULT '0',
-  `event_costs_fuel` bigint(12) unsigned NOT NULL DEFAULT '0',
-  `event_costs_food` bigint(12) unsigned NOT NULL DEFAULT '0',
-  `event_costs_people` bigint(12) unsigned NOT NULL DEFAULT '0',
-  `event_costs_ship_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `event_costs_ship_num` int(10) unsigned NOT NULL DEFAULT '0',
-  `event_costs_def_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `event_costs_def_num` int(10) unsigned NOT NULL DEFAULT '0',
-  `event_costs_building_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `event_costs_building_level` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `event_costs_tech_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `event_costs_tech_level` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `event_alien_ship1_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `event_alien_ship1` int(10) unsigned NOT NULL DEFAULT '0',
-  `event_alien_ship2_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `event_alien_ship2` int(10) unsigned NOT NULL DEFAULT '0',
-  `event_alien_ship3_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `event_alien_ship3` int(10) unsigned NOT NULL DEFAULT '0'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -5342,12 +5290,6 @@ ALTER TABLE `events`
  ADD PRIMARY KEY (`event_id`);
 
 --
--- Indexes for table `events_exec`
---
-ALTER TABLE `events_exec`
- ADD PRIMARY KEY (`event_id`);
-
---
 -- Indexes for table `fleet`
 --
 ALTER TABLE `fleet`
@@ -6025,11 +5967,6 @@ MODIFY `id` int(8) unsigned NOT NULL AUTO_INCREMENT;
 --
 ALTER TABLE `events`
 MODIFY `event_id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
---
--- AUTO_INCREMENT for table `events_exec`
---
-ALTER TABLE `events_exec`
-MODIFY `event_id` int(10) unsigned NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `fleet`
 --
