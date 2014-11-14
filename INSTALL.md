@@ -41,7 +41,7 @@ On the unix shell, execute
 
 this will open the cron editor. Insert the following text (when using vi as editor, press INSERT first)
  
-    * * * * * php /path/to/etoa/bin/update.php
+    * * * * * php /path/to/etoa/bin/cronjob.php
 	
 Save and exit (in vi, press CTRL+C, then write wq and press ENTER), type
 
