@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS `schema_migrations` (
+  `version` varchar(255) NOT NULL,
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+ALTER TABLE `schema_migrations`
+ ADD PRIMARY KEY (`version`);

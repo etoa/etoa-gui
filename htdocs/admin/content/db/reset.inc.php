@@ -36,7 +36,7 @@
 				$tc = 0;
 				foreach ($tbls as $t)
 				{
-					if (!in_array($t, $persistentTables['definitions']))
+					if (!in_array($t, $persistentTables['definitions']) && $t != DBManager::SCHEMA_MIGRATIONS_TABLE)
 					{
 						dbquery("TRUNCATE $t;");
 						echo "Leere Tabelle <b>$t</b><br/>";

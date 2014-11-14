@@ -34,11 +34,12 @@
 				// Acquire mutex
 				$mtx = new Mutex();
 				$mtx->acquire();
-
-				DBManager::getInstance()->dropAllTables();
 				
 				echo "Migrate database:\n";
-				DBManager::getInstance()->migrate();
+				$cnt = DBManager::getInstance()->migrate();
+				if ($cnt == 0) {
+					echo "Database is up-to-date\n";
+				}
 
 				// Release mutex
 				$mtx->release();

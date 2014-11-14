@@ -15,6 +15,8 @@ class DBManager implements ISingleton	{
 	private $isOpen = false;
 	private $logQueries = false;
 	
+	const SCHEMA_MIGRATIONS_TABLE = "schema_migrations";
+	
 	/**
 	* Get instance with this very nice singleton design pattern
 	*/
@@ -583,12 +585,26 @@ class DBManager implements ISingleton	{
 	}
 	
 	public function migrate() {
+	
+		$res = $this->safeQuery("SELECT * FROM information_schema.TABLES WHERE table_schema=? AND table_name=?;", array($this->getDbName(), self::SCHEMA_MIGRATIONS_TABLE));
+		if (!($arr = mysql_fetch_row($res))) {
+			$this->loadFile(RELATIVE_ROOT.'../db/init_schema_migrations.sql');
+		}
+			
 		$files = glob(RELATIVE_ROOT.'../db/migrations/*.sql');
 		natsort($files);
+		$cnt = 0;
 		foreach ($files as $f) {
-			echo pathinfo($f, PATHINFO_FILENAME)."\n";
-			$this->loadFile($f);
+			$pi = pathinfo($f, PATHINFO_FILENAME);
+			$res = $this->safeQuery("SELECT date FROM `".self::SCHEMA_MIGRATIONS_TABLE."` WHERE `version`=?;", array($pi));
+			if (!($arr = mysql_fetch_row($res))) {
+				echo $pi."\n";
+				$this->loadFile($f);
+				$this->safeQuery("INSERT INTO `".self::SCHEMA_MIGRATIONS_TABLE."` (`version`, `date`) VALUES (?, CURRENT_TIMESTAMP);", array($pi));	
+				$cnt++;
+			}
 		}
+		return $cnt;
 	}
 }
 ?>
