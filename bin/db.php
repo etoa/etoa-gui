@@ -47,6 +47,8 @@
 				show_usage();
 			}
 		
+			$verbose = in_array("-v", $args);
+		
 			//
 			// Migrate schema updates
 			//
@@ -110,6 +112,11 @@
 					// Write log
 					Log::add(Log::F_SYSTEM, Log::INFO, "[b]Datenbank-Backup Skript[/b]\n".$log);
 
+					// Show output
+					if ($verbose) {
+						echo $log;
+					}
+					
 					exit(0);
 				}
 				catch (Exception $e) 
@@ -153,7 +160,12 @@
 						
 						// Write log
 						Log::add(Log::F_SYSTEM, Log::INFO, "[b]Datenbank-Restore Skript[/b]\n".$log);
-						
+					
+						// Show output
+						if ($verbose) {
+							echo $log;
+						}
+					
 						exit(0);
 					}
 					catch (Exception $e) 
