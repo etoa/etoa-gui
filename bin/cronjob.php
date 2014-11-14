@@ -33,6 +33,10 @@
 		// Initialisieren
 		if (include("inc/bootstrap.inc.php"))
 		{
+			$args = array_splice($_SERVER['argv'], 1);
+		
+			$verbose = in_array("-v", $args);
+		
 			// Prüfen ob Updates eingeschaltet sind
 			if ($cfg->update_enabled->v==1)
 			{
@@ -57,6 +61,10 @@
 				}
 				$text = "Periodische Tasks (".date("d.m.Y H:i:s",$time)."):\n\n".$log;
 				Log::add(Log::F_UPDATES, $severity, $text);
+				
+				if ($verbose) {
+					echo $text;
+				}
 			}
 
 			// DB schliessen
