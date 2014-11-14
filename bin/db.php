@@ -26,6 +26,7 @@
 		echo "\nUsage: ".basename($_SERVER['argv'][0])." [action]\n\n";
 		echo "Actions:\n";
 		echo "  migrate    Migrate schema updates\n";
+		echo "  reset      Drop all tables and rebuild database from scratch\n";
 		echo "  backup     Backup database\n";
 		echo "  restore    Restore database from backup\n";
 		exit(1);
@@ -49,13 +50,18 @@
 			//
 			// Migrate schema updates
 			//
-			if ($action == "migrate")
+			if ($action == "migrate" || $action == "reset")
 			{
 				try
 				{
 					// Acquire mutex
 					$mtx = new Mutex();
 					$mtx->acquire();
+					
+					if ($action == "reset") {
+						echo "Dropping all tables:\n";
+						DBManager::getInstance()->dropAllTables();
+					}
 					
 					echo "Migrate database:\n";
 					$cnt = DBManager::getInstance()->migrate();
