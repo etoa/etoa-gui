@@ -517,11 +517,5 @@
 	define('USERBANNER_BACKGROUND_IMAGE', RELATIVE_ROOT."images/userbanner/userbanner1.png");
 	define('USERBANNER_FONT', RELATIVE_ROOT."images/userbanner/calibri.ttf");
 	define('USERBANNER_DIR', CACHE_ROOT.'/userbanner');
-
-	/***********
-	* Database *
-	***********/
-	define("WINDOWS_MYSQL_PATH", "c:\\xampp\\mysql\\bin\\mysql.exe");
-	define("WINDOWS_MYSQLDUMP_PATH", "c:\\xampp\\mysql\\bin\\mysqldump.exe");
 	
 ?>

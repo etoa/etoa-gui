@@ -91,10 +91,10 @@ class DBManager implements ISingleton	{
 		}
 		try
 		{
-			if (is_array($tempCfg) && count($tempCfg) > 0)
-				$dbCfg = $tempCfg;
-			else
-				$dbCfg = $this->dbCfg;
+			if (is_array($tempCfg) && count($tempCfg) > 0) {
+				$this->dbCfg = $tempCfg;
+			}
+			$dbCfg = $this->dbCfg;
 			if (!$this->handle = @mysql_connect($dbCfg['host'], $dbCfg['user'], $dbCfg['password']))
 			{
 				if ($throwError==1)

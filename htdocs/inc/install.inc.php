@@ -167,6 +167,12 @@ password = ".$dbCfg['password']."
 		);			
 		DBManager::getInstance()->connect(0, $dbCfg);		
 		
+		// Migrate database
+		$cnt = DBManager::getInstance()->migrate();
+		if ($cnt > 0) {
+			$tpl->assign('msg', "Datenbank migriert");
+		}
+		
 		$cfg = Config::getInstance();
 		
 		$str = "<form action=\"?\" method=\"post\">
