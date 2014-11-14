@@ -508,7 +508,7 @@ class DBManager implements ISingleton	{
 	*/
 	public static function getBackupDir() {
 		$cfg = Config::getInstance();
-		$backupDir = $cfg->backup_dir;
+		$backupDir = $cfg->backup_dir->v;
 		if (!empty($backupDir) && is_dir($backupDir)) {
 			return $backupDir;
 		}

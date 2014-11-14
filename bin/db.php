@@ -22,6 +22,15 @@
 	// Erstellt: 01.12.2004
 	//
 
+	function show_usage() {
+		echo "\nUsage: ".basename($_SERVER['argv'][0])." [action]\n\n";
+		echo "Actions:\n";
+		echo "  migrate    Migrate schema updates\n";
+		echo "  backup     Backup database\n";
+		echo "  restore    Restore database from backup\n";
+		exit(1);
+	}
+	
 	// Gamepfad feststellen
 	$grd = chdir(realpath(dirname(__FILE__)."/../htdocs/"));
 
@@ -29,15 +38,13 @@
 	try {
 		if (include("inc/bootstrap.inc.php"))
 		{
-			if (empty($_SERVER['argv'][1]))
+			$args = array_splice($_SERVER['argv'], 1);
+			$action = array_shift($args);
+		
+			if (empty($action))
 			{
-				echo "Usage: ".$_SERVER['argv'][0]." [action]\n\n";
-				echo "Actions:\n";
-				echo "  migrate    Migrate schema updates\n";
-				exit(1);
+				show_usage();
 			}
-			$action = $_SERVER['argv'][1];
-			$ret = 0;
 		
 			//
 			// Migrate schema updates
@@ -58,6 +65,8 @@
 
 					// Release mutex
 					$mtx->release();
+
+					exit(0);
 				}
 				catch (Exception $e) 
 				{
@@ -68,16 +77,115 @@
 					echo "Fehler: ".$e->getMessage();
 					
 					// Return code
-					$ret = 1;
+					exit(1);
 				}
 			}
-			else
+
+			//
+			// Backup database
+			//
+			else if ($action == "backup")
 			{
-				echo "Unknown action\n";
-				$ret = 1;
+				$dir = DBManager::getBackupDir();
+				$gzip = Config::getInstance()->backup_use_gzip=="1";
+				
+				try
+				{
+					// Acquire mutex
+					$mtx = new Mutex();
+					$mtx->acquire();
+					
+					// Restore database
+					$log = DBManager::getInstance()->backupDB($dir, $gzip);
+
+					// Release mutex
+					$mtx->release();
+					
+					// Write log
+					Log::add(Log::F_SYSTEM, Log::INFO, "[b]Datenbank-Backup Skript[/b]\n".$log);
+
+					exit(0);
+				}
+				catch (Exception $e) 
+				{
+					// Release mutex
+					$mtx->release();
+
+					// Write log
+					Log::add(Log::F_SYSTEM, Log::ERROR, "[b]Datenbank-Backup Skript[/b]\nDie Datenbank konnte nicht in das Verzeichnis [b]".$dir."[/b] gesichert werden: ".$e->getMessage());
+					
+					// Show output
+					echo "Fehler: ".$e->getMessage();
+					
+					// Return code
+					exit(1);
+				}
 			}
 
-			exit($ret);
+			//
+			// Restore database
+			//
+			else if ($action == "restore")
+			{
+				$dir = DBManager::getBackupDir();
+				
+				// Check if restore point specified
+				if (!empty($args[0]))
+				{
+					$restorePoint = $args[0];
+					try
+					{
+						// Acquire mutex
+						$mtx = new Mutex();
+						$mtx->acquire();
+						
+						// Restore database
+						$log = DBManager::getInstance()->restoreDB($dir, $restorePoint);
+
+						// Release mutex
+						$mtx->release();
+						
+						// Write log
+						Log::add(Log::F_SYSTEM, Log::INFO, "[b]Datenbank-Restore Skript[/b]\n".$log);
+						
+						exit(0);
+					}
+					catch (Exception $e) 
+					{
+						// Release mutex
+						$mtx->release();
+
+						// Write log
+						Log::add(Log::F_SYSTEM, Log::ERROR, "[b]Datenbank-Restore Skript[/b]\nDie Datenbank konnte nicht vom Backup [b]".$restorePoint."[/b] aus dem Verzeichnis [b]".$dir."[/b] wiederhergestellt werden: ".$e->getMessage());
+						
+						// Show output
+						echo "Fehler: ".$e->getMessage();
+						
+						// Return code
+						exit(1);
+					}
+				}
+				else
+				{
+					echo "\nUsage: ".$_SERVER['argv'][0]." ".$action." [restorepoint]\n\n";
+					echo "Available restorepoints:\n\n";
+					$dates = DBManager::getInstance()->getBackupImages($dir);
+					foreach ($dates as $f)
+					{
+						echo "$f\n";
+					}
+					exit(1);
+				}
+			}
+
+			//
+			// Any other action
+			//
+			else
+			{
+				echo "\nUnknown action!\n";
+				show_usage();
+			}
 		}
 		else
 		{
