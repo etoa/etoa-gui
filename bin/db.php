@@ -17,7 +17,7 @@
 	// als Maturaarbeit '04 am Gymnasium Oberaargau //
 	//////////////////////////////////////////////////
 	// 
-	// Topic: Datenbank-Backup, erstellt ein Backup einer Datenbank mit dem Datum im Dateinamen
+	// Topic: Database maintenance
 	// Autor: Nicolas Perrenoud alias MrCage
 	// Erstellt: 01.12.2004
 	//
@@ -29,33 +29,54 @@
 	try {
 		if (include("inc/bootstrap.inc.php"))
 		{
-			try
+			if (empty($_SERVER['argv'][1]))
 			{
-				// Acquire mutex
-				$mtx = new Mutex();
-				$mtx->acquire();
-				
-				echo "Migrate database:\n";
-				$cnt = DBManager::getInstance()->migrate();
-				if ($cnt == 0) {
-					echo "Database is up-to-date\n";
-				}
-
-				// Release mutex
-				$mtx->release();
+				echo "Usage: ".$_SERVER['argv'][0]." [action]\n\n";
+				echo "Actions:\n";
+				echo "  migrate    Migrate schema updates\n";
+				exit(1);
 			}
-			catch (Exception $e) 
+			$action = $_SERVER['argv'][1];
+			$ret = 0;
+		
+			//
+			// Migrate schema updates
+			//
+			if ($action == "migrate")
 			{
-				// Release mutex
-				$mtx->release();
+				try
+				{
+					// Acquire mutex
+					$mtx = new Mutex();
+					$mtx->acquire();
+					
+					echo "Migrate database:\n";
+					$cnt = DBManager::getInstance()->migrate();
+					if ($cnt == 0) {
+						echo "Database is up-to-date\n";
+					}
 
-				// Show output
-				echo "Fehler: ".$e->getMessage();
-				
-				// Return code
+					// Release mutex
+					$mtx->release();
+				}
+				catch (Exception $e) 
+				{
+					// Release mutex
+					$mtx->release();
+
+					// Show output
+					echo "Fehler: ".$e->getMessage();
+					
+					// Return code
+					$ret = 1;
+				}
+			}
+			else
+			{
+				echo "Unknown action\n";
 				$ret = 1;
 			}
-			
+
 			exit($ret);
 		}
 		else
