@@ -15,6 +15,8 @@
 			<th>Version</th>
 			<th>Autor</th>
 			<th>E-Mail</th>
+			<th>Dateitypen</th>
+			<th>Aktionen</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -26,6 +28,11 @@
 			<td>{$d.version}</td>
 			<td>{$d.author}</td>
 			<td>{$d.email}</td>
+			<td>{$d.extensions|implode:', '}
+			</td>
+			<td style="width:130px">
+				<a href="?page={$page}&sub={$sub}&download={$k}">Download</a>
+			</td>
 		</tr>
 	{/foreach}
 	</tbody>

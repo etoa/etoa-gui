@@ -5,6 +5,8 @@
 	$imPackDir = IMAGEPACK_DIRECTORY;
 	$baseType = "png";
 	
+	$imagepacks = get_imagepacks();
+	
 	if (isset($_GET['manage']))
 	{
 		if (is_dir($imPackDir."/".$_GET['manage']))
@@ -101,39 +103,30 @@
 		}
 		
 	}
+	// Imagepack download
+	else if (!empty($_GET['download']))
+	{
+		$imagepack = $_GET['download'];
+		if (isset($imagepacks[$imagepack])) 
+		{
+			$zipFile = tempnam('sys_get_temp_dir', 'imagepack-'.$imagepack);
+			$dir = $imagepacks[$imagepack]['dir'];
+		
+			try {
+				createZipFromDirectory($dir, $zipFile);
+				header('Content-Type: application/zip');
+				header('Content-disposition: attachment; filename='.$imagepack.'.zip');
+				header('Content-Length: ' . filesize($zipFile));
+				readfile($zipFile);
+				unlink($zipFile);
+				exit();
+			} catch (Exception $e) {
+				$tpl->assign('errmsg', $e->getMessage());
+			}
+		}
+	}	
 	else
 	{
-		$imagepacks = get_imagepacks();
 		$tpl->assign('imagepacks', $imagepacks);
-
-		echo "<h2>Downloadbare Bildpakete erzeugen</h2>";
-
-		$pkg = new ImagePacker("../images/imagepacks","../cache/imagepacks");
-
-		if (isset($_GET['gen']))
-		{
-			echo "Erstelle Pakate...<br/><div style=\"border:1px solid #fff;\">";
-			$pkg->pack();
-			echo "</div><br/>";
-		}
-
-		if ($pkg->checkPacked())
-		{
-		 echo "<div style=\"color:#0f0\">Bildpakete sind vorhanden!</div>";
-		}
-		else
-		{
-		 echo "<br/><div style=\"color:#f00\">Bildpakete sind NICHT vollständig vorhanden!</div>";
-		}
-		echo "<br/><br/>";
-
-		if (UNIX)
-		{
-			echo "<a href=\"?page=$page&amp;sub=$sub&amp;gen=1\">Neu erstellen</a>";
-		}
-		else
-		{
-			error_msg("Bildpakete können nur auf einem Unix System erstellt werden!");
-		}		
 	}	
 ?>

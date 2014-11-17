@@ -40,7 +40,7 @@
 	
 	// Pfade
 	define("SMILIE_DIR",IMAGE_DIR."/smilies");								// Smilies
-	define("IMAGEPACK_DIRECTORY",IMAGE_DIR.DIRECTORY_SEPARATOR."imagepacks");				// Bilder
+	define("IMAGEPACK_DIRECTORY",IMAGE_DIR."/imagepacks");				// Bilder
 	define("IMAGEPACK_DOWNLOAD_DIRECTORY",CACHE_ROOT."/imagepacks");				// Bilder
 
   /***********************************/
