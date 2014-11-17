@@ -1,9 +1,10 @@
 <?PHP
-	echo "<h1>Bildpakete verwalten</h1>";
+	$tpl->setView('imagepacks');
+	$tpl->assign('title', 'Bildpakete verwalten');
 
-	$imPackDir = "../images/imagepacks";
+	$imPackDir = IMAGEPACK_DIRECTORY;
 	$baseType = "png";
-
+	
 	if (isset($_GET['manage']))
 	{
 		if (is_dir($imPackDir."/".$_GET['manage']))
@@ -102,31 +103,8 @@
 	}
 	else
 	{
-
-
-		if ($d = opendir($imPackDir))
-		{
-			tableStart("Vorhandene Bildpakete");
-			while ($f = readdir($d))
-			{
-				if (substr($f,0,1)!="." && is_dir($imPackDir."/".$f))
-				{
-					$cdir = $imPackDir."/".$f;
-					if ($xml = simplexml_load_file($cdir."/imagepack.xml"))
-					{
-						echo "<tr>
-						<td><a href=\"?page=$page&amp;sub=$sub&amp;manage=".$f."\">".$xml->name."</a></td>
-						<td>".$xml->author."</td>
-						<td>".$xml->email."</td>
-						<td>".$xml->extensions."</td>
-						</tr>";
-					}					
-				}
-			}			
-			tableEnd();
-			closedir($d);
-		}
-
+		$imagepacks = get_imagepacks();
+		$tpl->assign('imagepacks', $imagepacks);
 
 		echo "<h2>Downloadbare Bildpakete erzeugen</h2>";
 

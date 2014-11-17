@@ -1,0 +1,34 @@
+{if $title|default:'' ne ""}<h1>{$title}</h1>{/if}
+
+{if $msg|default:'' ne ""}{msg type="ok" text=$msg}{/if}
+{if $infomsg|default:'' ne ""}{msg type="info" text=$infomsg}{/if}
+{if $errmsg|default:'' ne ""}{msg type="err" text=$errmsg}{/if}
+
+<h2>Bildpakete verwalten</h2>
+
+<table class="tbl" style="width:100%">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Beschreibung</th>
+			<th>Geändert</th>
+			<th>Version</th>
+			<th>Autor</th>
+			<th>E-Mail</th>
+		</tr>
+	</thead>
+	<tbody>
+	{foreach item=d key=k from=$imagepacks}
+		<tr>
+			<td>{$d.name}</td>
+			<td>{$d.description}</td>
+			<td>{$d.changed}</td>
+			<td>{$d.version}</td>
+			<td>{$d.author}</td>
+			<td>{$d.email}</td>
+		</tr>
+	{/foreach}
+	</tbody>
+</table>
+
+{$content|default:''}
