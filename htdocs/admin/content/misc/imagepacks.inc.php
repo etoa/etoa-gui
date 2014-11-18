@@ -11,11 +11,14 @@
 	//
 	if (isset($_GET['manage']))
 	{
-		$tpl->setView('imagepacks');
+		$tpl->setView('imagepacks_check');
 		
 		if (isset($imagepacks[$_GET['manage']])) 
 		{
 			$imagepack = $imagepacks[$_GET['manage']];
+			
+			$tpl->assign('imagepack_name', $imagepack['name']);
+			
 			$cdir = $imagepack['dir'];
 			$exts = $imagepack['extensions'];
 			
@@ -41,6 +44,7 @@
 				"races" => array("race", DBManager::getInstance()->getArrayFromTable("races","race_id")),
 			);
 			
+			$results = array();
 			foreach ($dira as $sdir => $sd)
 			{
 				$sprefix = $sd[0];
@@ -52,7 +56,7 @@
 						$baseFile = $cdir."/".$baseFileStr;
 						if (!is_file($baseFile))
 						{
-							echo "<i>Basisbild fehlt: $baseFile</i><br/>";
+							$results[] = "Basisbild fehlt: $baseFile";
 						}
 						else
 						{
@@ -67,18 +71,20 @@
 										$sa = getimagesize($file);
 										if ($sa[0] != $sizew)
 										{
-											echo "Falsche Grösse: <i>$filestr</i> (".$sa[0]." statt $sizew).";
-											if (resizeImage($file, $file, $sizew,$sizew, $ext))
-												echo "<span style=\"color:#0f0;\">KORRIGIERT!</span>";
-											echo "<br/>";
+											$str = "Falsche Grösse: <i>$filestr</i> (".$sa[0]." statt $sizew) ";
+											if (resizeImage($baseFile, $file, $sizew, $sizew, $ext)) {
+												$str.= "<span style=\"color:#0f0;\">KORRIGIERT!</span>";
+											}
+											$results[] = $str;
 										}
 									}
 									else
 									{
-										echo "<i>Fehlt: $filestr</i>";
-										if (resizeImage($baseFile, $file, $sizew,$sizew, $ext))
-											echo "<span style=\"color:#0f0;\">KORRIGIERT!</span>";
-										echo "<br/>";
+										$str= "Bild fehlt: $filestr ";
+										if (resizeImage($baseFile, $file, $sizew,$sizew, $ext)) {
+											$str.= "<span style=\"color:#0f0;\">KORRIGIERT!</span>";
+										}
+										$results[] = $str;
 									}
 								}
 							}
@@ -87,12 +93,15 @@
 				}		
 				else
 				{
-					echo "Verzeichnis fehlt: $sdir<br/>";
+					$results[] = "Verzeichnis fehlt: $sdir";
 				}				
 			}
-			echo button("Zurück","?page=$page&amp;sub=$sub");
+			$tpl->assign('results', $results);
 		}
-		
+		else
+		{
+			$tpl->assign('errmsg', "Ungültiges Bildpaket");
+		}
 	}
 	
 	//
