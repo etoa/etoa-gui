@@ -224,7 +224,8 @@
 		'userNick' => 'Name des Spielers',
 		'userPoints' => 'Punkte des Spielers',
 		'isAdmin' => 'Ist wahr falls der Spieler ein Admin ist',
-		'buddyreq' => 'Ist wahr falls Freundschaftsanfragen vorhanden sind'
+		'buddyreq' => 'Ist wahr falls Freundschaftsanfragen vorhanden sind',
+		'infoText' => 'InGame Infotext, falls definiert'
 	));
 	
 ?>
