@@ -1168,65 +1168,78 @@
   /**
   * Get imagepacks
   */
-	function get_imagepacks($path="")
+	function get_imagepacks()
 	{
-		$pack=array();
+		$packs = array();
 		global $conf;
-		if ($d=opendir($path.IMAGEPACK_DIRECTORY))
+		if ($d=opendir(IMAGEPACK_DIRECTORY))
 		{
 			while ($f=readdir($d))
 			{
 				$dir = IMAGEPACK_DIRECTORY."/".$f;
-				if (is_dir($path.$dir) && $f!=".." && $f!=".")
+				if (is_dir($dir) && $f!=".." && $f!=".")
 				{
-					$file = $path.$dir."/imagepack.xml";
+					$file = $dir."/".IMAGEPACK_CONFIG_FILE_NAME;
 					
 					if (is_file($file))
 					{
+						$pack['dir'] = $dir;
+						$pack['path'] = substr($dir, strlen(RELATIVE_ROOT));
 						$xml = new XMLReader();
 						$xml->open($file);
-				    while ($xml->read()) 
-				    {
-			        switch ($xml->name) 
-			        {
-			        	case "name":
-			            $xml->read();
-			            $pack[$dir]['name']= $xml->value;
-			            $xml->read();
-			            break;
-			        	case "changed":
-			            $xml->read();
-			            $pack[$dir]['changed']= $xml->value;
-			            $xml->read();
-			            break;
-			       	 	case "extensions":
-			            $xml->read();
-			            $pack[$dir]['extensions']= explode(",",$xml->value);
-			            $xml->read();
-			            break;
-			       	 	case "author":
-			            $xml->read();
-			            $pack[$dir]['author']= $xml->value;
-			            $xml->read();
-			            break;
-			       	 	case "email":
-			            $xml->read();
-			            $pack[$dir]['email']= $xml->value;
-			            $xml->read();
-			            break;		
-			       	 	case "files":
-			            $xml->read();
-			            $pack[$dir]['files']= explode(",",$xml->value);
-			            $xml->read();
-			            break;			            		            
-			        }
-				    }
+						while ($xml->read()) 
+						{
+							switch ($xml->name) 
+							{
+								case "name":
+									$xml->read();
+									$pack['name']= $xml->value;
+									$xml->read();
+									break;
+								case "description":
+									$xml->read();
+									$pack['description']= $xml->value;
+									$xml->read();
+									break;
+								case "version":
+									$xml->read();
+									$pack['version']= $xml->value;
+									$xml->read();
+									break;
+								case "changed":
+									$xml->read();
+									$pack['changed']= $xml->value;
+									$xml->read();
+									break;
+								case "extensions":
+									$xml->read();
+									$pack['extensions']= explode(",",$xml->value);
+									$xml->read();
+									break;
+								case "author":
+									$xml->read();
+									$pack['author']= $xml->value;
+									$xml->read();
+									break;
+								case "email":
+									$xml->read();
+									$pack['email']= $xml->value;
+									$xml->read();
+									break;		
+								case "files":
+									$xml->read();
+									$pack['files']= explode(",",$xml->value);
+									$xml->read();
+									break;			            		            
+							}
+						}
 						$xml->close();
+						$packs[basename($dir)] = $pack;
 					}
 				}
 			}
 		}
-		return $pack;
+		return $packs;
 	}
 
 	/**
