@@ -2688,7 +2688,7 @@ function imagecreatefromfile($path, $user_functions = false)
 
 		// let's iterate
 		foreach ($files as $name => $file) {
-			$new_filename = substr($name,strrpos($name,'/') + 1);
+			$new_filename = substr($name, strlen(dirname($dir)) + 1);
 			if (is_file($file))
 			{
 				$zip->addFile($file, $new_filename);
