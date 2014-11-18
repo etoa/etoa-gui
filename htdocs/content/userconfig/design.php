@@ -27,14 +27,14 @@
     
     if (isset($_POST['data_submit_design']) && $_POST['data_submit_design']!="")
     {
-
-    	$designChange = false;
-    	if ($cu->properties->cssStyle != $_POST['css_style'])
-    	{
-	    	$cu->properties->cssStyle=$_POST['css_style'];
-	    	$designChange=true;
-    	}
-    	
+		// Design
+    	$designChange = ($cu->properties->cssStyle != $_POST['css_style']);
+		if (!empty($_POST['css_style'])) {
+	    	$cu->properties->cssStyle = $_POST['css_style'];
+		} else {
+			$cu->properties->cssStyle = null;
+		}
+		    	
     	if ($cu->properties->smallResBox != $_POST['small_res_box'])
     	{
     		$cu->properties->smallResBox = $_POST['small_res_box'];
@@ -99,6 +99,7 @@
         <th>Design w&auml;hlen:</th>
         <td width=\"64%\" colspan=\"4\">
                 <select name=\"css_style\" id=\"designSelector\" onchange=\"xajax_designInfo(this.options[this.selectedIndex].value);\">";
+				echo '<option value="">(Standard)</option>';
                 foreach ($designs as $k => $v)
                 {
 					if (!$v['restricted'] || $cu->admin || $cu->developer)
