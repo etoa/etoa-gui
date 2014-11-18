@@ -23,6 +23,10 @@ Version NEXT
  * Fixed multiple vulnerabilities which could have been exploited by XSS
  * Fixed several issues in the Graphite design
  * Removed BBcode tags in message preview
+
+#### Changes ####
+
+ * Added new template variable ownFleetCount which indicates the number of the player's currently active fleets
  
 ### Administration ###
 

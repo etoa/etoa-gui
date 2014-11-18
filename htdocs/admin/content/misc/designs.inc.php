@@ -204,6 +204,7 @@
 		'newreports' => 'Anzahl neuer Berichte',
 		'notes' => 'Anzahl vorhandener Notizen',
 		'fleetAttack' => 'Anzahl fremder angreifender Flotten',
+		'ownFleetCount' => 'Anzahl eigener Flotten',
 		'buddys' => 'Anzahl Freunde welche online sind',
 		'bugreportUrl' => 'URL zur Seite wo man Fehler melden kann',
 		'helpcenterOnclick' => 'JavaScript-Code zum Öffnen des Help-Centers als Popup',
