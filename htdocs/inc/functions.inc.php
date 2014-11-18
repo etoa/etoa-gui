@@ -1184,6 +1184,7 @@
 					if (is_file($file))
 					{
 						$pack['dir'] = $dir;
+						$pack['path'] = substr($dir, strlen(RELATIVE_ROOT));
 						$xml = new XMLReader();
 						$xml->open($file);
 						while ($xml->read()) 
