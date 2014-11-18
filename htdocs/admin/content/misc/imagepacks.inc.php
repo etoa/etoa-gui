@@ -138,6 +138,19 @@
 		$tpl->assign('imagepacks', $imagepacks);
 		
 		$tpl->assign('baseType', $baseType);
+
+		$sampleInfoFile = RELATIVE_ROOT.$cfg->value('default_image_path').'/'.IMAGEPACK_CONFIG_FILE_NAME;
+		$tpl->assign('sampleInfoFile', htmlentities(file_get_contents($sampleInfoFile)));
+
+		$tpl->assign('infoParams', array(
+			'name' => 'Name des Designs (sollte identisch mit dem Namen des Verzeichnisses sein',
+			'changed' => 'Datum der letzten Änderung',
+			'version' => 'Version',
+			'author' => 'Autor',
+			'email' => 'E-Mail Adresse des Autors',
+			'description' => 'Kurzbeschreibung des Designs',
+			'extensions' => 'Unterstützte Bildformate (png, gif, jpg)',
+		));
 		
 		$required_images = [
 			"abuildings" => array("building", DBManager::getInstance()->getArrayFromTable("alliance_buildings",["alliance_building_id", "alliance_building_name"],"alliance_building_id")),

@@ -40,6 +40,18 @@
 </table>
 
 <h2>Dokumentation</h2>
+
+<h3>Bildpaket-Info Datei</h3>
+<p>Beispiel einer <code>imagepacks.xml</code> Datei:</p>
+<pre class="code">{$sampleInfoFile}</pre>
+<p>Die Tags haben folgende Bedeuting:</p>
+<ul>
+	{foreach item=v key=k from=$infoParams}
+		<li><b>{$k}:</b> {$v}</li>
+	{/foreach}
+</ul>
+
+
 <h3>Benötigte Bilddateien</h3>
 {foreach item=category_data key=category_dir from=$required_images}
 	<h4>Verzeichnis: {$category_dir}</h4>

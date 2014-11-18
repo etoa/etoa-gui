@@ -1179,7 +1179,7 @@
 				$dir = IMAGEPACK_DIRECTORY."/".$f;
 				if (is_dir($dir) && $f!=".." && $f!=".")
 				{
-					$file = $dir."/imagepack.xml";
+					$file = $dir."/".IMAGEPACK_CONFIG_FILE_NAME;
 					
 					if (is_file($file))
 					{
