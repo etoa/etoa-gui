@@ -29,6 +29,8 @@ $tpl->assign("ajax_js", $xajax->getJavascript(XAJAX_DIR));
 
 $tpl->assign("bodyTopStuff", getInitTT());
 
+$tpl->assign('game_login_url', '../show.php?index=login');
+
 try {
 
 // Login if requested
