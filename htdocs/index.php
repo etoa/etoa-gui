@@ -338,7 +338,7 @@
 		$infoText = $tm->getText('info');
 		if ($infoText->enabled && !empty($infoText->content))
 		{
-			$tpl->assign("infoText", text2html($infoText->content));
+			$tpl->assign("infoText", $infoText->content);
 		}
 		
 		$tpl->assign("chatUrl",CHAT_URL);
