@@ -277,6 +277,13 @@
 		$tpl->assign("buddys",check_buddys_online($cu->id));
 		$tpl->assign("buddyreq",check_buddy_req($cu->id));
 		$tpl->assign("fleetAttack",check_fleet_incomming($cu->id));
+
+		// Number of player's own fleets
+		$fm = new FleetManager($cu->id,$cu->allianceId);
+		$fm->loadOwn();
+		$tpl->assign("ownFleetCount", $fm->count());
+		unset($fm);
+		
 		$tpl->assign("serverTime",date('H:i:s'));
 		$tpl->assign("serverTimeUnix",time());
 		$tpl->assign('enableKeybindsString','window.enableKeybinds='.$cu->properties->enableKeybinds.';');
