@@ -334,6 +334,12 @@
 		$tpl->assign("devcenterOnclick",DEVCENTER_ONCLICK);
 		$tpl->assign("bugreportUrl",DEVCENTER_PATH);
 		
+		$tm = new TextManager();
+		$infoText = $tm->getText('info');
+		if ($infoText->enabled && !empty($infoText->content))
+		{
+			$tpl->assign("infoText", text2html($infoText->content));
+		}
 		
 		$tpl->assign("chatUrl",CHAT_URL);
 		$tpl->assign("chatOnclick",CHAT_ONCLICK);
