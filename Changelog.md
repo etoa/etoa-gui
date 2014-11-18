@@ -27,6 +27,7 @@ Version NEXT
 #### Changes ####
 
  * Added new template variable ownFleetCount which indicates the number of the player's currently active fleets
+ * Added new template variable infoText which shows the ingame info message, if defined
  
 ### Administration ###
 
