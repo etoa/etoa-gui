@@ -39,4 +39,33 @@
 	</tbody>
 </table>
 
-{$content|default:''}
+<h2>Dokumentation</h2>
+<h3>Benötigte Bilddateien</h3>
+{foreach item=category_data key=category_dir from=$required_images}
+	<h4>Verzeichnis: {$category_dir}</h4>
+	<table class="tbl" style="width:100%">
+		<colgroup>
+			<col style="width:150px"/>
+			<col/>
+		</colgroup
+		<thead>
+			<tr>
+				<th>Dateiname</th>
+				<th>Name</th>
+			</tr>
+		</thead>
+		<tbody>
+		{foreach item=i from=$category_data.1}
+			<tr>
+				{if $i|is_array}
+					<td><code>{$category_data.0}{$i.0}.{$baseType}</code></td>
+					<td>{$i.1}</td>
+				{else}
+					<td><code>{$category_data.0}{$i}.{$baseType}</code></td>
+					<td>-</td>
+				{/if}
+			</tr>
+		{/foreach}
+		</tbody>
+	</table>
+{/foreach}

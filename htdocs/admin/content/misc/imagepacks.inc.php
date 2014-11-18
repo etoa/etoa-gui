@@ -136,5 +136,24 @@
 	{
 		$tpl->setView('imagepacks');
 		$tpl->assign('imagepacks', $imagepacks);
+		
+		$tpl->assign('baseType', $baseType);
+		
+		$required_images = [
+			"abuildings" => array("building", DBManager::getInstance()->getArrayFromTable("alliance_buildings",["alliance_building_id", "alliance_building_name"],"alliance_building_id")),
+			"asteroids" => array("asteroids",range(1,$cfg->value('num_asteroid_images'))),
+			"atechnologies" => array("technology", DBManager::getInstance()->getArrayFromTable("alliance_technologies",["alliance_tech_id","alliance_tech_name"],"alliance_tech_id")),
+			"buildings" => array("building", DBManager::getInstance()->getArrayFromTable("buildings",["building_id","building_name"],"building_id")),
+			"defense" => array("def", DBManager::getInstance()->getArrayFromTable("defense",["def_id","def_name"],"def_id")),
+			"missiles" => array("missile", DBManager::getInstance()->getArrayFromTable("missiles",["missile_id","missile_name"],"missile_id")),
+			"nebulas" => array("nebula",range(1,$cfg->value('num_nebula_images'))),
+			"races" => array("race", DBManager::getInstance()->getArrayFromTable("races",["race_id","race_name"],"race_id")),
+			"ships" => array("ship", DBManager::getInstance()->getArrayFromTable("ships",["ship_id", "ship_name"],"ship_id")),
+			"space" => array("space",range(1,$cfg->value('num_space_images'))),
+			"stars" => array("star", DBManager::getInstance()->getArrayFromTable("sol_types",["sol_type_id","sol_type_name"],"sol_type_id")),
+			"technologies" => array("technology", DBManager::getInstance()->getArrayFromTable("technologies",["tech_id","tech_name"],"tech_id")),
+			"wormholes" => array("wormhole",range(1,$cfg->value('num_wormhole_images'))),
+		];
+		$tpl->assign('required_images', $required_images);
 	}	
 ?>
