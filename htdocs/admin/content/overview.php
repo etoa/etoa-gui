@@ -343,10 +343,9 @@
 			$un=posix_uname();
 			$tpl->assign("unix_name", $un['sysname']." ".$un['release']." ".$un['version']);
 		}
-		$tpl->assign("php_version", substr(phpversion(),0,10));
+		$tpl->assign("php_version", phpversion());
 		$tpl->assign("db_version", mysql_get_client_info());
 		$tpl->assign("webserver_version", $_SERVER['SERVER_SOFTWARE']);
-
 	}
 	
 	//
