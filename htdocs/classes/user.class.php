@@ -1137,8 +1137,25 @@ die Spielleitung";
 		return (($pos < strlen($this->dmask)) ? $this->dmask{$pos} > 0 : false);
 	}
 	
+	function getDiscoveredPercent()
+	{
+		if (!isset($this->dmask))
+		{
+			$this->loadDiscoveryMask();
+		}
+		$strl = strlen($this->dmask);
+		if ($strl > 0) {
+			return substr_count($this->dmask, "1") / $strl * 100;
+		}
+		return 0;
+	}
+	
 	function setDiscovered($absX,$absY)
 	{
+		if (!isset($this->dmask))
+		{
+			$this->loadDiscoveryMask();
+		}
 		$cfg = Config::getInstance();
 		$sx_num=$cfg->param1('num_of_sectors');
 		$cx_num=$cfg->param1('num_of_cells');
@@ -1149,16 +1166,42 @@ die Spielleitung";
 		{
 			for ($y=$absY-1; $y<=$absY+1; $y++)
 			{
-				$pos = $x + ($cy_num*$sy_num)*($y-1)-1;
-				if ($pos>= 0 && $pos <= $sx_num*$sy_num*$cx_num*$cy_num)
+				if ($x > 0 && $y > 0 && $x <= $sx_num * $cx_num && $y <= $sy_num * $cy_num)
 				{
-					$this->dmask{$pos} = '1';
+					$pos = $x + ($cy_num*$sy_num)*($y-1)-1;
+					if ($pos>= 0 && $pos <= $sx_num*$sy_num*$cx_num*$cy_num)
+					{
+						$this->dmask{$pos} = '1';
+					}
 				}
 			}
 		}	
 		$this->saveDiscoveryMask();
 	}	
 
+	function setDiscoveredAll($discovered)
+	{
+		if (!isset($this->dmask))
+		{
+			$this->loadDiscoveryMask();
+		}
+		$cfg = Config::getInstance();
+		$sx_num=$cfg->param1('num_of_sectors');
+		$cx_num=$cfg->param1('num_of_cells');
+		$sy_num=$cfg->param2('num_of_sectors');
+		$cy_num=$cfg->param2('num_of_cells');
+		
+		for ($x=1; $x <= $sx_num * $cx_num; $x++)
+		{
+			for ($y=1; $y <= $sy_num * $cy_num; $y++)
+			{
+				$pos = $x + ($cy_num*$sy_num)*($y-1)-1;
+				$this->dmask{$pos} = $discovered ? '1' : '0';
+			}
+		}	
+		$this->saveDiscoveryMask();
+	}
+	
 	private function saveDiscoveryMask()
 	{
 		dbquery("
