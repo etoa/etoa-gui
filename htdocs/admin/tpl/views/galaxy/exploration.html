@@ -5,4 +5,30 @@
 {if $infomsg|default:'' ne ""}{msg type="info" text=$infomsg}{/if}
 {if $errmsg|default:'' ne ""}{msg type="err" text=$errmsg}{/if}
 
-{$content|default:''}
+<p>
+	<b>Erkundung anzeigen für:</b> 
+	<select onchange="document.location='?page={$page}&amp;sub={$sub}&amp;user_id='+this.options[this.selectedIndex].value">
+	<option value="0" style="font-style:italic;">(Benutzer wählen...)</option>
+	{foreach item=v key=k from=$users}
+		<option value="{$k}"{if $uid == $k} selected="selected"{/if}>{$v}</option>
+	{/foreach}
+	</select>
+</p>
+
+{if $uid|default:0 gt 0}
+	<h3>Spieler '{$user->nick}'</h3>
+	<p>Erkundet: {$discoveredPercent|round:2}%</p>
+	<form action="?page={$page}&amp;sub={$sub}&amp;user_id={$uid}" method="post">
+		<p>
+			<input type="text" name="sx" value="{$sx}" size="2" />:<input type="text" name="sy" value="{$sy}" size="2" /> /
+			<input type="text" name="cx" value="{$cx}" size="2" />:<input type="text" name="cy" value="{$cy}" size="2" /> 
+			<input type="submit" name="discover_selected" value="Gewählte Koordinate erkunden" />
+		</p>
+		<p>
+			<input type="submit" name="discover_reset" value="Erkundung zurücksetzen" onclick="return confirm('Wirklich zurücksetzen?')" />
+			<input type="submit" name="discover_all" value="Alles erkunden" />
+		</p>
+	</form>
+{else}
+	<p>Bitte Spieler wählen!</p>
+{/if}
