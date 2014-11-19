@@ -37,11 +37,20 @@
 	if (isset($_SESSION) || $admin)
 	{
 		if (isset($_SESSION))
+		{
 			$s = $_SESSION;
+		}
 		if ($admin || (isset($s['user_id']) && $s['user_id'] > 0))
 		{
-			if (isset($s))
-				$cu = new CurrentUser($s['user_id']);
+
+			if ($admin && !empty($_GET['user']))
+			{
+				$user = new User($_GET['user']);
+			}
+			else if (!$admin && isset($s))
+			{
+				$user = new CurrentUser($s['user_id']);
+			}
 		
 			$starImageSrc = imagecreatefrompng(IMG_DIR."/stars/star4_small.png");
 			$starImage = imagecreatetruecolor(GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
@@ -236,7 +245,7 @@
             $xcoords = $arr['cx'];
             $ycoords = $arr['cy'];
       
-            if ($admin || $cu->discovered((($arr['sx'] - 1) * $cx_num) + $arr['cx'],(($arr['sy'] - 1) * $cy_num) + $arr['cy']))
+            if (($admin && !isset($user)) || $user->discovered((($arr['sx'] - 1) * $cx_num) + $arr['cx'],(($arr['sy'] - 1) * $cy_num) + $arr['cy']))
             {
               if ($arr['code']=='s')
               {
@@ -276,13 +285,13 @@
             {
               $fogCode = 0;
               // Bottom
-              $fogCode += $ycoords > 1 && $cu->discovered((($sx - 1) * $cx_num) + $xcoords  , (($sy - 1) * $cy_num) + $ycoords-1) ? 1 : 0;
+              $fogCode += $ycoords > 1 && $user->discovered((($sx - 1) * $cx_num) + $xcoords  , (($sy - 1) * $cy_num) + $ycoords-1) ? 1 : 0;
               // Left
-              $fogCode += $xcoords > 1 && $cu->discovered((($sx - 1) * $cx_num) + $xcoords-1, (($sy - 1) * $cy_num) + $ycoords  ) ? 2 : 0;
+              $fogCode += $xcoords > 1 && $user->discovered((($sx - 1) * $cx_num) + $xcoords-1, (($sy - 1) * $cy_num) + $ycoords  ) ? 2 : 0;
               // Right
-              $fogCode += $xcoords < $cx_num && $cu->discovered((($sx - 1) * $cx_num) + $xcoords+1, (($sy - 1) * $cy_num) + $ycoords  ) ? 4 : 0;
+              $fogCode += $xcoords < $cx_num && $user->discovered((($sx - 1) * $cx_num) + $xcoords+1, (($sy - 1) * $cy_num) + $ycoords  ) ? 4 : 0;
               // Top
-              $fogCode += $ycoords < $cy_num && $cu->discovered((($sx - 1) * $cx_num) + $xcoords  , (($sy - 1) * $cy_num) + $ycoords+1) ? 8 : 0;
+              $fogCode += $ycoords < $cy_num && $user->discovered((($sx - 1) * $cx_num) + $xcoords  , (($sy - 1) * $cy_num) + $ycoords+1) ? 8 : 0;
               if ($fogCode > 0) {
                 ImageCopyResampled($im,$fogborderImages[$fogCode],$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
               } else {              
