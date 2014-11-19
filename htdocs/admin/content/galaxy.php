@@ -69,6 +69,14 @@
     $tpl->assign("mapsectors", $mapsectors);  
 
 	}
+	
+	//
+	// Exploration
+	//
+	elseif ($sub=="exploration")
+	{
+		require("galaxy/exploration.inc.php");
+	}
 
 	//
 	// Universe Maintenance
