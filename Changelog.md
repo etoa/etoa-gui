@@ -37,6 +37,7 @@ Version NEXT
  * Added "Error Log" screen and possibility to remove error log and database error log
  * Added system info page to admin menu
  * Added possibility to discover specific coordinates or the complete map for any user
+ * Added screen which shows executed and pending database schema migrations
 
 #### Changes ####
 

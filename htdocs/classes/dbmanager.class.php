@@ -718,5 +718,20 @@ class DBManager implements ISingleton	{
 		}
 		return $cnt;
 	}
+	
+	public function getPendingMigrations() 
+	{
+		$files = glob(RELATIVE_ROOT.'../db/migrations/*.sql');
+		natsort($files);
+		$migrations = [];
+		foreach ($files as $f) {
+			$pi = pathinfo($f, PATHINFO_FILENAME);
+			$res = $this->safeQuery("SELECT date FROM `".self::SCHEMA_MIGRATIONS_TABLE."` WHERE `version`=?;", array($pi));
+			if (!($arr = mysql_fetch_row($res))) {
+				$migrations[] = $pi;
+			}
+		}
+		return $migrations;
+	}
 }
 ?>
