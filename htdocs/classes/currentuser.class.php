@@ -9,7 +9,6 @@
 	class CurrentUser extends User
 	{
 		protected $property;
-		private $dmask;
 		
 		/**
 		* Constructor which calls the default parent constructor
@@ -43,108 +42,6 @@
 	    	user_id='".$this->id."';";
 	    dbquery($sql);
 	    $this->setup=true;					
-		}
-
-		function loadDiscoveryMask()
-		{
-			$cfg = Config::getInstance();
-			$sx_num=$cfg->param1('num_of_sectors');
-			$cx_num=$cfg->param1('num_of_cells');
-			$sy_num=$cfg->param2('num_of_sectors');
-			$cy_num=$cfg->param2('num_of_cells');
-			
-			$res = dbquery("
-			SELECT
-				discoverymask
-			FROM				
-				users
-			WHERE
-				user_id=".$this->id."
-			");
-			$this->dmask = '';
-			$arr = mysql_fetch_row($res);
-			if (strlen($arr[0])<3)
-			{
-				for ($x=1;$x<=$sx_num*$cx_num;$x++)
-				{
-					for ($y=1;$y<=$sy_num*$cy_num;$y++)
-					{
-						$this->dmask.= '0';
-					}
-				}
-				dbquery("
-						UPDATE
-							users
-						SET
-							discoverymask='".$this->dmask."'
-						WHERE
-							user_id='".$this->id."'
-						LIMIT 1;");
-			}
-			else
-			{
-				$this->dmask=$arr[0];
-			}
-		}
-
-		function discovered($absX,$absY)
-		{
-			$cfg = Config::getInstance();
-			$sy_num=$cfg->param2('num_of_sectors');
-			$cy_num=$cfg->param2('num_of_cells');
-			
-			if (!isset($this->dmask))
-			{
-				$this->loadDiscoveryMask();
-			}	
-			
-			$pos = $absX + ($cy_num*$sy_num)*($absY-1)-1;
-			return (($pos < strlen($this->dmask)) ? $this->dmask{$pos} > 0 : false);
-		}
-		
-		function setDiscovered($absX,$absY,$owner=1,$save=1)
-		{
-			$cfg = Config::getInstance();
-			$sx_num=$cfg->param1('num_of_sectors');
-			$cx_num=$cfg->param1('num_of_cells');
-			$sy_num=$cfg->param2('num_of_sectors');
-			$cy_num=$cfg->param2('num_of_cells');
-			
-			for ($x=$absX-1; $x<=$absX+1; $x++)
-			{
-				for ($y=$absY-1; $y<=$absY+1; $y++)
-				{
-					$pos = $x + ($cy_num*$sy_num)*($y-1)-1;
-					if ($pos>= 0 && $pos <= $sx_num*$sy_num*$cx_num*$cy_num)
-					{
-						if ($owner==1)
-						{
-							$this->dmask{$pos} = '5';				
-						}
-						else
-						{
-							$this->dmask{$pos} = '1';
-						}
-					}
-				}
-			}	
-			
-			if ($save==1)
-			{
-				$this->saveDiscoveryMask();
-			}			
-		}	
-
-		function saveDiscoveryMask()
-		{
-			dbquery("
-			UPDATE
-				users
-			SET
-				discoverymask='".$this->dmask."'
-			WHERE
-				user_id=".$this->id."
-			");
 		}
 		
 		function setPassword($oldPassword, $newPassword1, $newPassword2, &$returnMsg)
