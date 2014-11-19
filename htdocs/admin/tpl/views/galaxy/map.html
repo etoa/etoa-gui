@@ -3,23 +3,10 @@
 
 <div id="tabs">
   <ul>
-    <li><a href="#interactive">Interaktive Karte</a></li>
     <li><a href="#image">Kartenbild</a></li>
+    <li><a href="#interactive">Interaktive Karte</a></li>
   </ul>
-  <div id="interactive">
-  
-    <div id="map_viewport"> 
-      
-      <div id="sector_map_table">
-        {foreach from=$mapsectors item=row key=sy}
-          {foreach from=$row item=data key=sx}<div class="sector_map_cell" style="display:inline-block;width:auto">{$data}</div>{/foreach}<br/>
-        {/foreach}
-      </div>
-      
-    </div>
 
-  </div>  
-  
   <div id="image">
     Anzeigen: 
     <select onchange="$('#img').attr('src', this.options[this.selectedIndex].value);">
@@ -28,6 +15,16 @@
 		</select><br/><br/>
     <img src="../misc/map.image.php?legend&amp;req_admin" alt="Galaxiekarte" id="img" usemap="#Galaxy" style="border:none\"/>
   </div>
+
+  <div id="interactive">
+    <div id="map_viewport"> 
+      <div id="sector_map_table">
+        {foreach from=$mapsectors item=row key=sy}
+          {foreach from=$row item=data key=sx}<div class="sector_map_cell" style="display:inline-block;width:auto">{$data}</div>{/foreach}<br/>
+        {/foreach}
+      </div>
+    </div>
+  </div>  
 </div>
 
 <script>
