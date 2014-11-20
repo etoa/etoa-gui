@@ -98,7 +98,7 @@
 	$mode = isset($_GET['mode']) ? $_GET['mode'] : null;
 
 	// Initialize XAJAX and load functions
-	if (!isset($_SERVER['SHELL']))
+	if (!isset($_SERVER['SHELL']) && (!defined('SKIP_XAJAX_INIT') || !SKIP_XAJAX_INIT))
 	{
 		define('XAJAX_DEBUG',false);
 		if (ADMIN_MODE)

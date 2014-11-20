@@ -70,7 +70,7 @@
 		}
 		else
 		{
-		forward(getLoginUrl(array('page'=>'err', 'err'=>'nosession')),"Ung¸ltige Session",$s->lastError);
+		forward(getLoginUrl(array('page'=>'err', 'err'=>'nosession')),"Ung√ºltige Session",$s->lastError);
 		}
 	}
 
@@ -109,7 +109,7 @@
 	// Page content
 	//
 	
-	// Referers prüfen
+	// Referers pr≈∏fen
 	$referer_allow=false;
 	if (isset($_SERVER["HTTP_REFERER"]))
 	{
@@ -120,6 +120,7 @@
 			$referers[$k] = trim($v);
 		}
 		unset($v);
+		$referers[] = 'http://'.$_SERVER['HTTP_HOST'];
 		foreach ($referers as &$rfr)
 		{
 			//echo "RefCheck: ".$_SERVER["HTTP_REFERER"]." vs ".$rfr."<br/>";
@@ -133,7 +134,7 @@
 	try {
 	ob_start();
 	
-	// Spiel ist generell gesperrt (ausser für erlaubte IP's)
+	// Spiel ist generell gesperrt (ausser f≈∏r erlaubte IP's)
 	$allowed_ips = explode("\n",$cfg->value('offline_ips_allow'));
 	
 	if ($cfg->value('offline')==1 && !in_array($_SERVER['REMOTE_ADDR'],$allowed_ips))
@@ -157,7 +158,7 @@
 		echo button("Zur Startseite", getLoginUrl());
 		iBoxEnd();
 	}
-	// Login ist erlaubt aber noch zeitlich zu früh
+	// Login ist erlaubt aber noch zeitlich zu fr≈∏h
 	elseif ($cfg->value('enable_login')==1 && $cfg->value('enable_login')!="" && $cfg->param1('enable_login') > time() && !in_array($_SERVER['REMOTE_ADDR'],$allowed_ips))
 	{
 		iBoxStart("Login noch geschlossen",750,"margin:50px auto;text-align:center");
@@ -214,7 +215,7 @@
 				}
 				// Todo: check if mainplanet is still 0
 				
-				// Wenn eine ID angegeben wurde (Wechsel des Planeten) wird diese überprüft
+				// Wenn eine ID angegeben wurde (Wechsel des Planeten) wird diese ≈∏berpr≈∏ft
 				//if (!isset($s->echng_key))
 				//	$s->echng_key = mt_rand(100,9999999);
 				
@@ -276,6 +277,13 @@
 		$tpl->assign("buddys",check_buddys_online($cu->id));
 		$tpl->assign("buddyreq",check_buddy_req($cu->id));
 		$tpl->assign("fleetAttack",check_fleet_incomming($cu->id));
+
+		// Number of player's own fleets
+		$fm = new FleetManager($cu->id,$cu->allianceId);
+		$fm->loadOwn();
+		$tpl->assign("ownFleetCount", $fm->count());
+		unset($fm);
+		
 		$tpl->assign("serverTime",date('H:i:s'));
 		$tpl->assign("serverTimeUnix",time());
 		$tpl->assign('enableKeybindsString','window.enableKeybinds='.$cu->properties->enableKeybinds.';');
@@ -326,6 +334,12 @@
 		$tpl->assign("devcenterOnclick",DEVCENTER_ONCLICK);
 		$tpl->assign("bugreportUrl",DEVCENTER_PATH);
 		
+		$tm = new TextManager();
+		$infoText = $tm->getText('info');
+		if ($infoText->enabled && !empty($infoText->content))
+		{
+			$tpl->assign("infoText", $infoText->content);
+		}
 		
 		$tpl->assign("chatUrl",CHAT_URL);
 		$tpl->assign("chatOnclick",CHAT_ONCLICK);

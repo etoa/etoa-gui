@@ -1004,7 +1004,7 @@
 				$imagepacks = get_imagepacks();
 				$designs = get_designs();
 				
-				echo "<table class=\"tbl\">";
+				echo "<table class=\"tbl\" style=\"width:1000px\">";
  				echo "<tr>
 			 					<td class=\"tbltitle\">Design:</td>
 			 					<td class=\"tbldata\">
@@ -1027,18 +1027,24 @@
 									<input type=\"text\" name=\"image_url\" id=\"image_url\" size=\"45\" maxlength=\"250\" value=\"".$arr['image_url']."\"> 
 									<input type=\"text\" name=\"image_ext\" id=\"image_ext\" value=\"".$arr['image_ext']."\" size=\"3\" maxlength=\"6\" />
 			 						&nbsp; <input type=\"button\" onclick=\"
-			 						var ImageSet = document.getElementById('imageSelector').options[document.getElementById('imageSelector').selectedIndex].value.split(':');
+									var imageSetVal = document.getElementById('imageSelector').options[document.getElementById('imageSelector').selectedIndex].value;
+									if (imageSetVal!='') {
+			 						var ImageSet = imageSetVal.split(':');
 			 						document.getElementById('image_url').value=ImageSet[0];
 			 						document.getElementById('image_ext').value=ImageSet[1];
+									} else {
+									document.getElementById('image_url').value='';
+			 						document.getElementById('image_ext').value='';
+									}
 			 						\" value=\"&lt;&lt;\" /> &nbsp; ";
 					        echo "<select id=\"imageSelector\">
 					        <option value=\"\">(Bitte wählen)</option>";
-			            foreach ($imagepacks as $k => $v)
+			            foreach ($imagepacks as $v)
 			            {
 			            	foreach ($v['extensions'] as $e)
 			            	{
-			                echo "<option value=\"$k:$e\"";
-			                if ($arr['image_url']==$k) echo " selected=\"selected\"";
+			                echo "<option value=\"".$v['path'].":".$e."\"";
+			                if ($arr['image_url']==$v['path']) echo " selected=\"selected\"";
 			                echo ">".$v['name']." ($e)</option>";
 			               }
 			            }

@@ -763,7 +763,6 @@
 				$tbl[]="ticket_msg";
 				$tbl[]="chat";
 				$tbl[]="chat_users";
-				$tbl[]="attack_ban";
 				$tbl[]="hostname_cache";
 				$tbl[]="backend_message_queue";
 			}

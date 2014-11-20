@@ -41,9 +41,7 @@ On the unix shell, execute
 
 this will open the cron editor. Insert the following text (when using vi as editor, press INSERT first)
  
-    * * * * * php /path/to/etoa/scripts/update.php
-    1,6,11,16,21,26,31,36,41,46,51,56 * * * * php /path/to/etoa/scripts/userstats.php
-    3 * * * * php /path/to/etoa/scripts/gamestats.php > /dev/null
+    * * * * * php /path/to/etoa/bin/cronjob.php
 	
 Save and exit (in vi, press CTRL+C, then write wq and press ENTER), type
 

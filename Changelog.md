@@ -23,6 +23,11 @@ Version NEXT
  * Fixed multiple vulnerabilities which could have been exploited by XSS
  * Fixed several issues in the Graphite design
  * Removed BBcode tags in message preview
+
+#### Changes ####
+
+ * Added new template variable ownFleetCount which indicates the number of the player's currently active fleets
+ * Added new template variable infoText which shows the ingame info message, if defined
  
 ### Administration ###
 
@@ -30,6 +35,9 @@ Version NEXT
 
  * Added page displaying all user banners
  * Added "Error Log" screen and possibility to remove error log and database error log
+ * Added system info page to admin menu
+ * Added possibility to discover specific coordinates or the complete map for any user
+ * Added screen which shows executed and pending database schema migrations
 
 #### Changes ####
 

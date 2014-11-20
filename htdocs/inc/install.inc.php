@@ -7,7 +7,7 @@ $tpl->setView('install');
 $tpl->setLayout('empty');
 
 $tpl->assign("gameTitle", "Setup");
-$tpl->assign("templateDir"," designs/Graphite");
+$tpl->assign("templateDir","designs/official/Graphite");
 
 $tpl->assign('title', 'EtoA Installation');
 $tpl->assign('version', getAppVersion());
@@ -166,6 +166,12 @@ password = ".$dbCfg['password']."
 			'password' => $_SESSION['INSTALL']['db_password'],
 		);			
 		DBManager::getInstance()->connect(0, $dbCfg);		
+		
+		// Migrate database
+		$cnt = DBManager::getInstance()->migrate();
+		if ($cnt > 0) {
+			$tpl->assign('msg', "Datenbank migriert");
+		}
 		
 		$cfg = Config::getInstance();
 		

@@ -41,7 +41,19 @@
 			<p class="nav-header">{$category}</p>
 			<ul class="nav">
 				{foreach from=$items item=i}
-					<li><a href="{$i->url}">{$i->name}</a></li>
+					<li><a href="{$i->url}">{$i->name}
+					{* Show number of own and enemy fleets *}
+					{if $i->name eq "Flotten" and ($ownFleetCount gt 0 or $fleetAttack gt 0)}
+						<span style="float:right;">
+							{if $ownFleetCount gt 0}
+								<span style="color:#0f0;">{$ownFleetCount}</span>
+							{/if}
+							{if $fleetAttack gt 0}
+								<span style="color:#f00;">{$fleetAttack}</span>
+							{/if}
+						</span>
+					{/if}
+					</a></li>
 				{/foreach}
 			</ul>
 		{/foreach}

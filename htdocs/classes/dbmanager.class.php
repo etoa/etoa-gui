@@ -15,6 +15,8 @@ class DBManager implements ISingleton	{
 	private $isOpen = false;
 	private $logQueries = false;
 	
+	const SCHEMA_MIGRATIONS_TABLE = "schema_migrations";
+	
 	/**
 	* Get instance with this very nice singleton design pattern
 	*/
@@ -89,10 +91,10 @@ class DBManager implements ISingleton	{
 		}
 		try
 		{
-			if (is_array($tempCfg) && count($tempCfg) > 0)
-				$dbCfg = $tempCfg;
-			else
-				$dbCfg = $this->dbCfg;
+			if (is_array($tempCfg) && count($tempCfg) > 0) {
+				$this->dbCfg = $tempCfg;
+			}
+			$dbCfg = $this->dbCfg;
 			if (!$this->handle = @mysql_connect($dbCfg['host'], $dbCfg['user'], $dbCfg['password']))
 			{
 				if ($throwError==1)
@@ -246,20 +248,39 @@ class DBManager implements ISingleton	{
 		}
 	}
 
-	function getArrayFromTable($table,$field)
+	function getArrayFromTable($table,$field,$sort=null)
 	{
 		$r = array();
-		$res = $this->query("
-		SELECT
-			`".$field."`
-		FROM
-			`".$table."`
-		");
-		if (mysql_num_rows($res)>0)
-		{
-			while ($arr=mysql_fetch_row($res))
+		$order = !empty($sort) ? ' ORDER BY `'.$sort.'` ASC' : '';
+		if (is_array($field)) {
+			$res = $this->query("
+			SELECT
+				`".implode('`,`', $field)."`
+			FROM
+				`".$table."`
+			$order
+			");
+			if (mysql_num_rows($res)>0)
 			{
-				$r[] = $arr[0];
+				while ($arr=mysql_fetch_row($res))
+				{
+					$r[] = $arr;
+				}
+			}
+		} else {
+			$res = $this->query("
+			SELECT
+				`".$field."`
+			FROM
+				`".$table."`
+			$order
+			");
+			if (mysql_num_rows($res)>0)
+			{
+				while ($arr=mysql_fetch_row($res))
+				{
+					$r[] = $arr[0];
+				}
 			}
 		}
 		return $r;
@@ -397,6 +418,10 @@ class DBManager implements ISingleton	{
 			}
 			else
 			{
+				if (WINDOWS && !file_exists($mysqldump)) {
+					$this->dumpIntoFile($file);
+					return;
+				}
 				$cmd = $mysqldump." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." > ".$file;
 			}
 			$result = shell_exec($cmd);
@@ -414,42 +439,158 @@ class DBManager implements ISingleton	{
 	
 	public function restoreDB($backupDir, $restorePoint)
 	{
-		$mysql = WINDOWS ? WINDOWS_MYSQL_PATH : "mysql";
-		
 		if (is_dir($backupDir)) 
 		{
 			$file = $backupDir."/".$this->getDbName()."-".$restorePoint.".sql";
 			if (file_exists($file.".gz"))
 			{
-				if (!UNIX)
-				{
-					throw new Exception("Das Entpacken von GZIP Backups wird nur auf UNIX Systemen unterstützt!");
-				}
-				$cmd = "gunzip < ".$file.".gz | ".$mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName();
+				$file = $file.".gz";
 			}
-			elseif (file_exists($file))
-			{
-				$cmd = $mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." < ".$file;
-			}
-			if (isset($cmd))
-			{
-				$result = shell_exec($cmd);
-				if (!empty($result))
-				{
-					throw new Exception("Error while restoring backup: ".$result);
-				}
-				return "Die Datenbank wurde vom Backup [b]".$restorePoint."[/b] aus dem Verzeichnis [b]".$backupDir."[/b] wiederhergestellt.";
-			}
-			else
-			{
-				throw new Exception("Backup file $file not found!");	
-			}
+			$this->restoreDBFromFile($file);
+			return "Die Datenbank wurde vom Backup [b]".$restorePoint."[/b] aus dem Verzeichnis [b]".$backupDir."[/b] wiederhergestellt.";
 		}
 		else
 		{
 			throw new Exception("Backup directory $backupDir does not exist!");
 		}
+	}
+	
+	public function restoreDBFromFile($file)
+	{
+		if (file_exists($file))
+		{
+			try {
+				$this->loadFile($file);
+				return "Die Datenbank wurde aus der Datei [b]".$file."[/b] wiederhergestellt.";
+			}
+			catch (Exception $e)
+			{
+				throw new Exception("Error while restoring backup: ".$e->getMessage());
+			}
+		}
+		else
+		{
+			throw new Exception("Backup file $file not found!");	
+		}
 	}	
+
+	private function loadFile($file) {
+		$mysql = WINDOWS ? WINDOWS_MYSQL_PATH : "mysql";
+		if (file_exists($file))
+		{
+			$ext = pathinfo ($file, PATHINFO_EXTENSION);
+			if ($ext == "gz")
+			{
+				if (!UNIX)
+				{
+					throw new Exception("Das Laden von GZIP SQL Dateien wird nur auf UNIX Systemen unterstützt!");
+				}
+				$cmd = "gunzip < ".$file.".gz | ".$mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName();
+			}
+			else
+			{
+				if (WINDOWS && !file_exists($mysql)) {
+					$this->importFromFile($file);
+					return;
+				}
+				$cmd = $mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." < ".$file;
+			}
+			$result = shell_exec($cmd);
+			if (!empty($result))
+			{
+				throw new Exception("Error while loading file with MySQL: ".$result);
+			}
+		}
+		else
+		{
+			throw new Exception("File $file not found!");	
+		}
+	}
+	
+	/**
+	* Import SQL file using PHP functionality only
+	*/
+	private function importFromFile($file, $delimiter = ';')
+	{
+		set_time_limit(0);
+		if (is_file($file) === true)
+		{
+			$file = fopen($file, 'r');
+			if (is_resource($file) === true)
+			{
+				$query = array();
+				while (feof($file) === false)
+				{
+					$query[] = fgets($file);
+					if (preg_match('~' . preg_quote($delimiter, '~') . '\s*$~iS', end($query)) === 1)
+					{
+						$query = trim(implode('', $query));
+						$this->query($query, 1);
+					}
+					if (is_string($query) === true)
+					{
+						$query = array();
+					}
+				}
+				return fclose($file);
+			}
+		}
+		return false;
+	}
+	
+	/**
+	* Import database or tables to SQL file using PHP functionality only
+	*/
+	private function dumpIntoFile($file, $tables = '*')
+	{
+		//get all of the tables
+		if($tables == '*')
+		{
+			$tables = array();
+			$result = $this->query('SHOW TABLES');
+			while($row = mysql_fetch_row($result))
+			{
+				$tables[] = $row[0];
+			}
+		}
+		else
+		{
+			$tables = is_array($tables) ? $tables : explode(',',$tables);
+		}
+		
+		//cycle through
+		foreach($tables as $table)
+		{
+			$result = $this->query('SELECT * FROM '.$table);
+			$num_fields = mysql_num_fields($result);
+			
+			$return.= 'DROP TABLE '.$table.';';
+			$row2 = mysql_fetch_row($this->query('SHOW CREATE TABLE '.$table));
+			$return.= "\n\n".$row2[1].";\n\n";
+			
+			for ($i = 0; $i < $num_fields; $i++) 
+			{
+				while($row = mysql_fetch_row($result))
+				{
+					$return.= 'INSERT INTO '.$table.' VALUES(';
+					for($j=0; $j<$num_fields; $j++) 
+					{
+						$row[$j] = addslashes($row[$j]);
+						$row[$j] = ereg_replace("\n","\\n",$row[$j]);
+						if (isset($row[$j])) { $return.= '"'.$row[$j].'"' ; } else { $return.= '""'; }
+						if ($j<($num_fields-1)) { $return.= ','; }
+					}
+					$return.= ");\n";
+				}
+			}
+			$return.="\n\n\n";
+		}
+		
+		//save file
+		$handle = fopen($file, 'w+');
+		fwrite($handle,$return);
+		fclose($handle);
+	}
 	
 	public function getBackupImages($dir, $strip=1)
 	{
@@ -479,7 +620,7 @@ class DBManager implements ISingleton	{
 	*/
 	public static function getBackupDir() {
 		$cfg = Config::getInstance();
-		$backupDir = $cfg->backup_dir;
+		$backupDir = $cfg->backup_dir->v;
 		if (!empty($backupDir) && is_dir($backupDir)) {
 			return $backupDir;
 		}
@@ -529,6 +670,68 @@ class DBManager implements ISingleton	{
 			fwrite($f,date("d.m.Y H:i:s").", ".(isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR']:'local').", ".$cu."\n".$message."\n\n");
 			fclose($f);
 		}
+	}
+
+	/**
+	* Creates a list of all tables
+	*/
+	public function getAllTables() {
+		$res = $this->query("SHOW TABLES;");
+		$tbls = array();
+		while ($arr = mysql_fetch_row($res))
+		{
+			$tbls[] = $arr[0];
+		}
+		return $tbls;
+	}
+	
+	/**
+	* Drops all tables
+	*/
+	public function dropAllTables() {
+		$tbls = $this->getAllTables();
+		dbquery("SET FOREIGN_KEY_CHECKS=0;");
+		dbquery("DROP TABLE ".implode(',', $tbls).";");
+		dbquery("SET FOREIGN_KEY_CHECKS=1;");
+		return count($tbls);
+	}
+	
+	public function migrate() {
+	
+		$res = $this->safeQuery("SELECT * FROM information_schema.TABLES WHERE table_schema=? AND table_name=?;", array($this->getDbName(), self::SCHEMA_MIGRATIONS_TABLE));
+		if (!($arr = mysql_fetch_row($res))) {
+			$this->loadFile(RELATIVE_ROOT.'../db/init_schema_migrations.sql');
+		}
+			
+		$files = glob(RELATIVE_ROOT.'../db/migrations/*.sql');
+		natsort($files);
+		$cnt = 0;
+		foreach ($files as $f) {
+			$pi = pathinfo($f, PATHINFO_FILENAME);
+			$res = $this->safeQuery("SELECT date FROM `".self::SCHEMA_MIGRATIONS_TABLE."` WHERE `version`=?;", array($pi));
+			if (!($arr = mysql_fetch_row($res))) {
+				echo $pi."\n";
+				$this->loadFile($f);
+				$this->safeQuery("INSERT INTO `".self::SCHEMA_MIGRATIONS_TABLE."` (`version`, `date`) VALUES (?, CURRENT_TIMESTAMP);", array($pi));	
+				$cnt++;
+			}
+		}
+		return $cnt;
+	}
+	
+	public function getPendingMigrations() 
+	{
+		$files = glob(RELATIVE_ROOT.'../db/migrations/*.sql');
+		natsort($files);
+		$migrations = [];
+		foreach ($files as $f) {
+			$pi = pathinfo($f, PATHINFO_FILENAME);
+			$res = $this->safeQuery("SELECT date FROM `".self::SCHEMA_MIGRATIONS_TABLE."` WHERE `version`=?;", array($pi));
+			if (!($arr = mysql_fetch_row($res))) {
+				$migrations[] = $pi;
+			}
+		}
+		return $migrations;
 	}
 }
 ?>

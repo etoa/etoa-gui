@@ -1,6 +1,9 @@
 <?php
 
 	chdir(realpath(dirname(__FILE__)."/../"));
+	
+	define('SKIP_XAJAX_INIT', true);
+	
   if (isset($_GET['req_admin'])) {
     define('ADMIN_MODE',true);
   }

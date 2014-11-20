@@ -13,7 +13,7 @@
 				<li>{if $num_tickets gt 0}{popuplink type="tickets" title="Tickets ($num_tickets)" class="highlight"}{else}{popuplink type="tickets" title="Tickets"}{/if}</li>
 				{/ifadminrole}
 				<li>{if $num_notes gt 0}{popuplink type="notepad" title="Notizblock ($num_notes)" class="highlight"}{else}{popuplink type="notepad" title="Notizblock"}{/if}</li>
-				{if !$is_cb|default:false}<li><a href="frameset.php?page={$page}{if $i.sub|default:'' ne ''}&amp;sub={$sub}{/if}" target="_top">Zwischenablage</a></li>{/if}<li><a href="?logout=1">Logout</a></li>
+				{if !$is_cb|default:false}<li><a href="frameset.php?page={$page}{if $i.sub|default:'' ne ''}&amp;sub={$sub}{/if}" target="_top">Zwischenablage</a></li>{/if}<li><a href="{$game_login_url}" target="_blank">Spiel-Login</a></li><li><a href="?logout=1">Logout</a></li>
 			</ul>
 		</div>
 	</div>

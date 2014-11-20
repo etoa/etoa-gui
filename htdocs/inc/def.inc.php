@@ -40,7 +40,7 @@
 	
 	// Pfade
 	define("SMILIE_DIR",IMAGE_DIR."/smilies");								// Smilies
-	define("IMAGEPACK_DIRECTORY",IMAGE_DIR.DIRECTORY_SEPARATOR."imagepacks");				// Bilder
+	define("IMAGEPACK_DIRECTORY",IMAGE_DIR."/imagepacks");				// Bilder
 	define("IMAGEPACK_DOWNLOAD_DIRECTORY",CACHE_ROOT."/imagepacks");				// Bilder
 
   /***********************************/
@@ -61,6 +61,9 @@
 	
 	// Design main script file name
 	define("DESIGN_SCRIPT_FILE_NAME", "scripts.js");
+
+	// Imagepack configuration file name
+	define("IMAGEPACK_CONFIG_FILE_NAME", "imagepack.xml");
 	
 	// Tech Ordner
 	define("IMAGE_TECHNOLOGY_DIR","technologies");
@@ -517,11 +520,5 @@
 	define('USERBANNER_BACKGROUND_IMAGE', RELATIVE_ROOT."images/userbanner/userbanner1.png");
 	define('USERBANNER_FONT', RELATIVE_ROOT."images/userbanner/calibri.ttf");
 	define('USERBANNER_DIR', CACHE_ROOT.'/userbanner');
-
-	/***********
-	* Database *
-	***********/
-	define("WINDOWS_MYSQL_PATH", "c:\\xampp\\mysql\\bin\\mysql.exe");
-	define("WINDOWS_MYSQLDUMP_PATH", "c:\\xampp\\mysql\\bin\\mysqldump.exe");
 	
 ?>

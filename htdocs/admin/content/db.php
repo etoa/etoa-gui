@@ -29,9 +29,25 @@
 	$tpl->assign('title', 'Datenbank');
 
 	//
+	// Database schema migrations
+	//
+	if ($sub == "migrations")
+	{
+		require("db/migrations.inc.php");
+	}
+	
+	//
+	// Database reset
+	//
+	elseif ($sub == "reset")
+	{
+		require("db/reset.inc.php");
+	}
+	
+	//
 	// Database maintenance
 	//
-	if ($sub == "maintenance")
+	elseif ($sub == "maintenance")
 	{
 		require("db/maintenance.inc.php");
 	}

@@ -1,40 +1,42 @@
 #! /usr/bin/php -q
 <?PHP
 	//////////////////////////////////////////////////
-	//			 ____	 __			  ______				//
-	//			/\	_`\ /\ \__		 /\	 _	\				//
-	//			\ \ \L\_\ \ ,_\	  ___\ \ \L\ \				//
-	//			 \ \  _\L\ \ \/	 / __`\ \  __ \				//
-	//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \			//
-	//			 \ \____/\ \__\ \____/\ \_\ \_\				//
-	//				\/___/	\/__/\/___/	 \/_/\/_/			//
-	//														//
+	//           ____    __           ______        //
+	//          /\  _`\ /\ \__       /\  _  \       //
+	//          \ \ \L\_\ \ ,_\   ___\ \ \L\ \      //
+	//           \ \  _\L\ \ \/  / __`\ \  __ \     //
+	//            \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \    //
+	//             \ \____/\ \__\ \____/\ \_\ \_\   //
+	//              \/___/  \/__/\/___/  \/_/\/_/   //
+	//                                              //
 	//////////////////////////////////////////////////
-	// The Andromeda-Project-Browsergame						//
-	// Ein Massive-Multiplayer-Online-Spiel					//
-	// Programmiert von Nicolas Perrenoud						//
-	// www.nicu.ch | mail@nicu.ch										//
-	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
+	// The Andromeda-Project-Browsergame            //
+	// Ein Massive-Multiplayer-Online-Spiel         //
+	// Programmiert von Nicolas Perrenoud           //
+	// www.nicu.ch | mail@nicu.ch                   //
+	// als Maturaarbeit '04 am Gymnasium Oberaargau //
 	//////////////////////////////////////////////////
 	//
-	//	Dateiname: update.php
-	//	Topic: Periodische Tasks
-	//	Autor: Nicolas Perrenoud alias MrCage
-	//	Erstellt: 29.11.2006
-	//	Bearbeitet von: Nicolas Perrenoud alias MrCage
-	//	Bearbeitet am: 07.12.2006
-	//	Kommentar: Diese Datei führt Aktionen aus die einmal pro Minute erledigt werden müssen
-	//	Die Datei wird auf einer Shell aufgerufen (via Cron-Job realisiert)
-	//	Sie wird jede Stunde aufgerufen
+	// Topic: Periodische Tasks
+	// Autor: Nicolas Perrenoud alias MrCage
+	// Erstellt: 29.11.2006
+	// Kommentar: Diese Datei führt Aktionen aus die einmal pro Minute erledigt werden müssen
+	// Die Datei wird auf einer Shell aufgerufen (via Cron-Job realisiert)
+	// Sie wird jede Minute einmal aufgerufen
+	//
 
 	// Gamepfad feststellen
-	$grd = chdir(realpath(dirname(__FILE__)."/../"));
+	$grd = chdir(realpath(dirname(__FILE__)."/../htdocs/"));
 
 	try {
 		
 		// Initialisieren
 		if (include("inc/bootstrap.inc.php"))
 		{
+			$args = array_splice($_SERVER['argv'], 1);
+		
+			$verbose = in_array("-v", $args);
+		
 			// Prüfen ob Updates eingeschaltet sind
 			if ($cfg->update_enabled->v==1)
 			{
@@ -59,6 +61,10 @@
 				}
 				$text = "Periodische Tasks (".date("d.m.Y H:i:s",$time)."):\n\n".$log;
 				Log::add(Log::F_UPDATES, $severity, $text);
+				
+				if ($verbose) {
+					echo $text;
+				}
 			}
 
 			// DB schliessen

@@ -18,38 +18,23 @@
 	//
 	//
 
-		$themes = get_imagepacks();
-		$designs = get_designs();
+	$imagepacks = get_imagepacks();
+	$designs = get_designs();
 
-		//change Theme skript
-		echo "<script type=\"text/javascript\">";
-		echo "function changeTheme()\n{";
-		echo "var id=document.getElementById('image_select').options[document.getElementById('image_select').selectedIndex].value;\n";
-		echo "switch (id)\n{";
-		foreach ($themes as $k => $v)
-		{
-			echo "case '$k': document.getElementById('image_url').value='".$k."';\n document.getElementById('image_ext').value='".$v['extensions'][0]."'\n;break;";
-		}
-		echo "default: document.getElementById('image_url').value='';document.getElementById('image_ext').value='';";
-		echo "}\n";
-		echo "}\n</script>";
-		
-
-
-		//
+	//
     // Daten werden gespeichert
     //
     
     if (isset($_POST['data_submit_design']) && $_POST['data_submit_design']!="")
     {
-
-    	$designChange = false;
-    	if ($cu->properties->cssStyle != $_POST['css_style'])
-    	{
-	    	$cu->properties->cssStyle=$_POST['css_style'];
-	    	$designChange=true;
-    	}
-    	
+		// Design
+    	$designChange = ($cu->properties->cssStyle != $_POST['css_style']);
+		if (!empty($_POST['css_style'])) {
+	    	$cu->properties->cssStyle = $_POST['css_style'];
+		} else {
+			$cu->properties->cssStyle = null;
+		}
+		    	
     	if ($cu->properties->smallResBox != $_POST['small_res_box'])
     	{
     		$cu->properties->smallResBox = $_POST['small_res_box'];
@@ -63,21 +48,29 @@
       $cu->properties->noteBox=$_POST['notebox'];
       $cu->properties->showAdds=$_POST['show_adds'];
 
-      if($_POST['image_ext']!="" && isset($_POST['image_url']) && $_POST['image_url']!="")
-      {
-      	$cu->properties->imageUrl = htmlentities($_POST['image_url']);
-      	$cu->properties->imageExt = htmlentities($_POST['image_ext']);
-      }
-      
-      if ($_POST['image_select']!='')
-      {
-      	$cu->properties->imageUrl = $_POST['image_select'];
-      }
-      
-      if(isset($_POST['image_ext']))
-      {
-      	$cu->properties->imageExt = $_POST['image_ext'];
-      }
+		if (!empty($_POST['image_ext']) && !empty($_POST['image_url']))
+		{
+			$cu->properties->imageUrl = htmlentities($_POST['image_url']);
+			$cu->properties->imageExt = htmlentities($_POST['image_ext']);
+		}
+		else if (!empty($_POST['image_select']) && isset($imagepacks[$_POST['image_select']]))
+		{
+			$imp = $imagepacks[$_POST['image_select']];
+			$cu->properties->imageUrl = $imp['path'];
+			if (isset($_POST['image_ext']) && in_array($_POST['image_ext'], $imp['extensions']))
+			{
+				$cu->properties->imageExt = $_POST['image_ext'];
+			}
+			else
+			{
+				$cu->properties->imageExt = $imp['extensions'][0];
+			}
+		}
+		else
+		{
+			$cu->properties->imageUrl = null;
+			$cu->properties->imageExt = null;
+		}
       
       success_msg("Design-Daten wurden geändert!");
 
@@ -106,6 +99,7 @@
         <th>Design w&auml;hlen:</th>
         <td width=\"64%\" colspan=\"4\">
                 <select name=\"css_style\" id=\"designSelector\" onchange=\"xajax_designInfo(this.options[this.selectedIndex].value);\">";
+				echo '<option value="">(Standard)</option>';
                 foreach ($designs as $k => $v)
                 {
 					if (!$v['restricted'] || $cu->admin || $cu->developer)
@@ -127,10 +121,12 @@
             <td width=\"64%\" colspan=\"4\">
                 <select id=\"image_select\" name=\"image_select\" onchange=\"xajax_imagePackInfo(this.options[this.selectedIndex].value);\">";
                 echo "<option value=\"\">(Selbstdefiniert oder Standard)</option>";
-                foreach ($themes as $k => $v)
+                foreach ($imagepacks as $k => $v)
                 {
-                    echo "<option value=\"$k\"";
-                    if ($cu->properties->imageUrl == $k) echo " selected=\"selected\"";
+                    echo "<option value=\"".$k."\"";
+                    if ($cu->properties->imageUrl == $v['path']) {
+						echo " selected=\"selected\"";
+					}
                     echo ">".$v['name']."</option>";
                 }
                 echo "</select> <span id=\"imagePackExtension\"></span><br/>
@@ -273,7 +269,7 @@
         <th class="tbltitle">Autor</th>
         <th class="tbltitle">Grösse</th>
         <th class="tbltitle">Letzte Änderung</th></tr>';
-        foreach ($themes as $k => $v)
+        foreach ($imagepacks as $k => $v)
         {
         	if (count($v['files'])>0)
         	{
