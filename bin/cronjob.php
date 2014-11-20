@@ -28,6 +28,12 @@
 	// Gamepfad feststellen
 	$grd = chdir(realpath(dirname(__FILE__)."/../htdocs/"));
 
+	if (!isset($_SERVER['argv']))
+	{
+		echo "Script has to be executed on command line!";
+		exit(1);
+	}
+	
 	try {
 		
 		// Initialisieren
