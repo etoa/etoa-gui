@@ -5,73 +5,46 @@
 
 {if $msg|default:'' ne ""}{msg type="ok" text=$msg}{/if}
 
-<form action="?page={$page}&amp;sub={$sub}" method="post">
+<form action="?page={$page}&amp;sub={$sub}&category={$currentCategory}" method="post">
 
-  <div id="tabs">
-    <ul>
-    {foreach from=$configData key=ck item=cv}
-      <li><a href="#config{$ck}">{$cv.name}</a></li>
-    {/foreach}
-    </ul>
-    {foreach from=$configData key=ck item=cv}
-    <div id="config{$ck}">
-
-      <table class="tb" style="width:auto;">
-      <tr>
-        <th>Name</th>
-        <th>Wert</th>
-        <th>Key</th>
-      </tr>    
-      {foreach from=$cv.items item=i}
-        <tr>
-          <td>{$i.label}</th>
-          <td class="tbldata">{$i.field}</td>
-          <td class="tbldata"><code>{$i.name}</code> ({$i.type})</td>
-        </tr>
-      {/foreach}
-      </table>  
+  <div class="configEditorWrap">
     
-    </div>
-    {/foreach}
+	<div class="configEditorNav">
+		<ul>
+			{foreach from=$configData key=ck item=cv}
+				<li>
+					<a href="?page={$page}&amp;sub={$sub}&category={$ck}"{if $currentCategory == $ck} class="active"{/if}>{$cv}</a>
+				</li>
+			{/foreach}
+		</ul>
+	</div>
+	
+	<div class="configEditorContent">
+		<h3>{$configData[$currentCategory]}</h3>
+		{if isset($configItems)}
+			<table class="tb">
+				<colgroup>
+					<col style="width: 400px;">
+					<col style="width: 370px";>
+					<col>
+				</colgroup>
+				<tr>
+					<th>Name</th>
+					<th>Wert</th>
+					<th>Key</th>
+				</tr>    
+				{foreach from=$configItems item=i}
+					<tr>
+						<td>{$i.label}</th>
+						<td class="tbldata">{$i.field}</td>
+						<td class="tbldata"><code>{$i.name}</code> ({$i.type})</td>
+					</tr>
+				{/foreach}
+			</table>    
+			<br/><input type="submit" name="submit" value="Übernehmen" />
+		{/if}
+	</div>
+	
   </div>
-
-  <p><input type="submit" name="submit" value="Übernehmen" /></p>
-  <input type="hidden" name="activeTab" id="activeTab" value="{$activeTab|default:''}" />
   
 </form>
-
-<script>
-  var tabSelected=false;
-  
-  function selectTabByName(selector, name) {
-    var index = $(selector + ' a[href="'+name+'"]').parent().index();
-    $(selector).tabs('select', index);
-  }
-  
-  $(function() {
-  
-    $("#tabs").tabs({
-      select: function(event, ui) {
-        tabSelected = true;
-        window.location.hash = ui.tab.hash;
-        $('#activeTab').val(ui.tab.hash)
-      }
-    });
-    $(window).on('hashchange', function() {
-      if (tabSelected) {
-        tabSelected = false;
-        return;
-      }
-      if (window.location.hash != '') {
-        selectTabByName("#tabs", window.location.hash);
-      }
-      tabSelected = false;      
-    });
-    
-    if ($('#activeTab').val() != '') {
-      selectTabByName("#tabs", $('#activeTab').val());
-    } else {
-      $("#tabs").tabs('select', 0);
-    }
-  });
-</script>

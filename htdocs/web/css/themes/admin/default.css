@@ -875,3 +875,69 @@ body.adminpopup {
 	color:#fff;
 	width:110px;
 }
+
+/*
+* Config
+*/
+
+.configEditorWrap {
+	display:table;
+	width: 100%;
+}
+
+.configEditorNav {
+	display:table-cell;
+	width: 150px;
+	vertical-align:top;
+}
+
+.configEditorNav ul {
+	list-style-type:none;
+	margin:0;
+	padding:0;
+}
+
+.configEditorNav ul  li {
+	margin: 5px 0;
+}
+
+.configEditorNav ul  li a {
+	display: block;
+	padding: 4px 10px;
+	border: 1px solid #DDD;
+	border-radius: 2px;
+	border-right: none;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	text-decoration: none;
+	background: #F6F6F6;
+	color: #888;
+}
+
+.configEditorNav ul  li a:hover {
+	background: #fff;
+	color: #000;
+}
+
+.configEditorNav ul  li a.active {
+	background: #fff;
+	color: #0073EA;
+}
+
+.configEditorContent {
+	background: #fff;
+	display:table-cell;
+	vertical-align:top;
+	padding: 15px;
+	border: 1px solid #DDD;
+	border-radius: 2px;
+}
+
+.configEditorContent h3 {
+	margin-top: 0;
+}
+
+.configEditorContent table {
+	width: 100%;
+}
+
