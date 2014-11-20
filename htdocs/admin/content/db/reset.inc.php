@@ -66,6 +66,9 @@
 				// Load schema
 				DBManager::getInstance()->migrate();
 				
+				// Load config default
+				$cfg->restoreDefaults();
+				
 				$mtx->release();
 
 				$tpl->setView('db/reset_done');

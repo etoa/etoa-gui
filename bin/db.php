@@ -76,6 +76,11 @@
 					if ($cnt == 0) {
 						echo "Database is up-to-date\n";
 					}
+					
+					// Load config defaults
+					if ($action == "reset") {
+						Config::getInstance()->restoreDefaults();
+					}
 
 					// Release mutex
 					$mtx->release();

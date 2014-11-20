@@ -171,6 +171,9 @@ password = ".$dbCfg['password']."
 		$cnt = DBManager::getInstance()->migrate();
 		if ($cnt > 0) {
 			$tpl->assign('msg', "Datenbank migriert");
+			
+			// Load config defaults
+			Config::getInstance()->restoreDefaults();
 		}
 		
 		$cfg = Config::getInstance();
