@@ -27,17 +27,18 @@
 					<col style="width: 400px;">
 					<col style="width: 370px";>
 					<col>
+					<col>
 				</colgroup>
 				<tr>
 					<th>Name</th>
 					<th>Wert</th>
-					<th>Key</th>
-				</tr>    
+					<th>Standard</th>
+				</tr>
 				{foreach from=$configItems item=i}
 					<tr>
-						<td>{$i.label}</th>
-						<td class="tbldata">{$i.field}</td>
-						<td class="tbldata"><code>{$i.name}</code> ({$i.type})</td>
+						<td title="{$i.name}, {$i.type}">{$i.label}</th>
+						<td>{$i.field}</td>
+						<td><code>{$i.default}</code></td>
 					</tr>
 				{/foreach}
 			</table>    

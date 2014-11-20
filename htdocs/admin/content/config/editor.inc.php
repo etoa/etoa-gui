@@ -53,6 +53,7 @@
 					'name' => $i['name'],
 					'type' => 'v',
 					'field' => display_field((string)$i->v['type'], (string)$i['name'], "v"),
+					'default' =>  (string)$i->v
 				  );
 				}
 				if (isset($i->p1))
@@ -62,6 +63,7 @@
 					'name' => $i['name'],
 					'type' => 'p1',
 					'field' => display_field((string)$i->p1['type'], (string)$i['name'], "p1"),
+					'default' => (string)$i->p1
 				  );
 				}
 				if (isset($i->p2))
@@ -71,6 +73,7 @@
 					'name' => $i['name'],
 					'type' => 'p2',
 					'field' => display_field((string)$i->p2['type'], (string)$i['name'], "p2"),
+					'default' => (string)$i->p2
 				  );
 				}
 			}        
