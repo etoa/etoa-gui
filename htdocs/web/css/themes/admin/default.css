@@ -940,4 +940,10 @@ body.adminpopup {
 .configEditorContent table {
 	width: 100%;
 }
-
+.configEditorContent table tr.configValueChanged input, 
+.configEditorContent table tr.configValueChanged select, 
+.configEditorContent table tr.configValueChanged textarea, 
+.configEditorContent table tr.configValueChanged code {
+	color: #0073EA;
+	border-color: #0073EA;
+}

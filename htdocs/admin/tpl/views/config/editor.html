@@ -35,7 +35,7 @@
 					<th>Standard</th>
 				</tr>
 				{foreach from=$configItems item=i}
-					<tr>
+					<tr{if $i.changed} class="configValueChanged"{/if}>
 						<td title="{$i.name}, {$i.type}">{$i.label}</th>
 						<td>{$i.field}</td>
 						<td><code>{$i.default}</code></td>
