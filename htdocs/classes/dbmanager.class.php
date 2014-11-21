@@ -421,7 +421,7 @@ class DBManager implements ISingleton	{
 				$cmd = $mysqldump." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." --default-character-set=utf8 ".$this->getDbName()." -r ".$file;
 			}
 			
-			if (WINDOWS && !file_exists($mysqldump))
+			if (WINDOWS && !file_exists($mysqldump) || UNIX && !unix_command_exists($mysqldump))
 			{
 				$this->dumpIntoFile($file);
 			}
@@ -496,7 +496,7 @@ class DBManager implements ISingleton	{
 				$cmd = $mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." --default-character-set=utf8 ".$this->getDbName()." < ".$file;
 			}
 			
-			if (WINDOWS && !file_exists($mysql))
+			if (WINDOWS && !file_exists($mysql) || UNIX && !unix_command_exists($mysqldump))
 			{
 				$this->importFromFile($file);
 			}

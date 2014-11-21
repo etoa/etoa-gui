@@ -63,6 +63,13 @@ class Config implements ISingleton
 	}
 	
 	/**
+	* Reloads all values from the database
+	*/
+	public function reload() {
+		$this->load();
+	}
+	
+	/**
 	* Adds a given value to a keyword
 	*/
 	public function add($name,$val,$param1="",$param2="") {
@@ -184,7 +191,7 @@ class Config implements ISingleton
 		}			   		
 	}
 
-	function restoreDefaults() {
+	public static function restoreDefaults() {
 		try {
 			if ($xml = simplexml_load_file(RELATIVE_ROOT.self::DEFAULTS_FILE_PATH)) {
 				dbquery("TRUNCATE TABLE config;");
@@ -211,7 +218,6 @@ class Config implements ISingleton
 					));
 					$cnt++;
 				}
-				$this->load();
 				return $cnt;
 			}
 			throw new EException("Konfiguratonsdatei existiert nicht!");

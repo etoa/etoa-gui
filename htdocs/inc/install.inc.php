@@ -1,7 +1,7 @@
 <?PHP
 
 // Load template engine
-require_once(RELATIVE_ROOT."inc/template.inc.php");
+$tpl = new TemplateEngine();
 
 $tpl->setView('install');
 $tpl->setLayout('empty');
@@ -173,7 +173,8 @@ password = ".$dbCfg['password']."
 			$tpl->assign('msg', "Datenbank migriert");
 			
 			// Load config defaults
-			Config::getInstance()->restoreDefaults();
+			Config::restoreDefaults();
+			Config::getInstance()->reload();			
 		}
 		
 		$cfg = Config::getInstance();

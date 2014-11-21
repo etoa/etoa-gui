@@ -16,3 +16,4 @@ htdocs/config/periodictasks-overrides.conf
 backup/
 htdocs/log/*.log
 /htdocs/designs/custom/*
+/htdocs/config/debug
