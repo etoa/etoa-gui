@@ -7,7 +7,7 @@
 
 		public function __toString()
 		{
-			if (isset($_SERVER['SHELL'])) {
+			if (isCLI()) {
 				return $this->getErrStr();
 			} else {
 				if (isDebugEnabled()) {

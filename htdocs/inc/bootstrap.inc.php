@@ -59,13 +59,19 @@
 	}
 
 	// Include db config
-	if (!configFileExists(DBManager::getInstance()->getConfigFile()))
+	$cbConfigFile = DBManager::getInstance()->getConfigFile();
+	if (!configFileExists($cbConfigFile))
 	{
-		if (ADMIN_MODE) {
-			forward(RELATIVE_ROOT);
+		if (isCLI()) {
+			echo "Database configuration file $cbConfigFile does not exist!";
+			exit(1);
+		} else {
+			if (ADMIN_MODE) {
+				forward(RELATIVE_ROOT);
+			}
+			require(RELATIVE_ROOT."inc/install.inc.php");
+			exit();
 		}
-		require(RELATIVE_ROOT."inc/install.inc.php");
-		exit();
 	}
 
 	// Load template engine
@@ -97,7 +103,7 @@
 	$mode = isset($_GET['mode']) ? $_GET['mode'] : null;
 
 	// Initialize XAJAX and load functions
-	if (!isset($_SERVER['SHELL']) && (!defined('SKIP_XAJAX_INIT') || !SKIP_XAJAX_INIT))
+	if (!isCLI() && (!defined('SKIP_XAJAX_INIT') || !SKIP_XAJAX_INIT))
 	{
 		if (ADMIN_MODE) {
 			require_once(RELATIVE_ROOT."/admin/inc/xajax_admin.inc.php");

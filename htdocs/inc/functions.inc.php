@@ -2730,6 +2730,13 @@ function imagecreatefromfile($path, $user_functions = false)
 	}
 	
 	/**
+	* Returns true if script is run on command line
+	*/
+	function isCLI() {
+		return isset($_SERVER['SHELL']);
+	}
+	
+	/**
 	* Textfunktionen einbinden
 	*/
 	include_once(RELATIVE_ROOT.'inc/text.inc.php');
