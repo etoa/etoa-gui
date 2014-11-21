@@ -12,7 +12,7 @@
 <head>
 	<meta charset="utf-8">
 		<title>EtoA Chat</title>
-		<link rel="stylesheet" type="text/css" href="web/css/vendor/jquery-ui.game.css" />
+		<link rel="stylesheet" type="text/css" href="web/css/vendor/jquery-ui.css" />
 		<link rel="stylesheet" type="text/css" href="web/css/chat.css" />
 		<script type="text/javascript" src="web/js/vendor/jquery.min.js"></script>
 		<script type="text/javascript" src="web/js/vendor/jquery-ui.min.js"></script>
