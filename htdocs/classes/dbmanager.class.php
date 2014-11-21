@@ -414,7 +414,7 @@ class DBManager implements ISingleton	{
 					throw new Exception("Das Erstellen von GZIP Backups wird nur auf UNIX Systemen unterstützt!");
 				}			
 				$file.=".gz";
-				$cmd = $mysqldump." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." | gzip > ".$file;
+				$cmd = $mysqldump." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." --default-character-set=utf8 ".$this->getDbName()." | gzip > ".$file;
 			}
 			else
 			{
@@ -422,12 +422,12 @@ class DBManager implements ISingleton	{
 					$this->dumpIntoFile($file);
 					return;
 				}
-				$cmd = $mysqldump." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." > ".$file;
+				$cmd = $mysqldump." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." --default-character-set=utf8 ".$this->getDbName()." -r ".$file;
 			}
 			$result = shell_exec($cmd);
 			if (!empty($result))
 			{
-				throw new Exception("Fehler beim Erstellen der Backup-Datei ".$file.": ".$result);					
+				throw new Exception("Fehler beim Erstellen der Backup-Datei ".$file.": ".$result);
 			}
 			return "Backup ".$file." erstellt, Dateigrösse: ".byte_format(filesize($file));
 		}
@@ -485,7 +485,7 @@ class DBManager implements ISingleton	{
 				{
 					throw new Exception("Das Laden von GZIP SQL Dateien wird nur auf UNIX Systemen unterstützt!");
 				}
-				$cmd = "gunzip < ".$file.".gz | ".$mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName();
+				$cmd = "gunzip < ".$file.".gz | ".$mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." --default-character-set=utf8 ".$this->getDbName();
 			}
 			else
 			{
@@ -493,7 +493,7 @@ class DBManager implements ISingleton	{
 					$this->importFromFile($file);
 					return;
 				}
-				$cmd = $mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." ".$this->getDbName()." < ".$file;
+				$cmd = $mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." --default-character-set=utf8 ".$this->getDbName()." < ".$file;
 			}
 			$result = shell_exec($cmd);
 			if (!empty($result))
