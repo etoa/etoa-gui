@@ -138,10 +138,10 @@
 
 	// Game-Rules
 	define('RULES_URL', 'http://www.etoa.ch/regeln');
+	define('RULES_ONCLICK', "window.open('".RULES_URL."','rules','width=600,height=500,scrollbars=yes');");
 	
 	// Privacy statement
 	define('PRIVACY_URL', 'http://www.etoa.ch/privacy');
-	define('RULES_ONCLICK', "window.open('".RULES_URL."','rules','width=600,height=500,scrollbars=yes');");
 
 	// URL for user banner HTML snippet
 	define('USERBANNER_LINK_URL', 'http://www.etoa.ch');	
@@ -190,14 +190,6 @@
 	define("RES_FUEL", "Tritium");
 	define("RES_FOOD", "Nahrung");
 	define("RES_POWER", "Energiezellen");
-
-	// deprecated!
-	define("RES_1", RES_METAL);
-	define("RES_2", RES_CRYSTAL);
-	define("RES_3", RES_PLASTIC);
-	define("RES_4", RES_FUEL);
-	define("RES_5", RES_FOOD);
-	define("RES_6", RES_POWER);
 
 	$resNames = array(RES_METAL,RES_CRYSTAL,RES_PLASTIC,RES_FUEL,RES_FOOD);
 
@@ -706,5 +698,4 @@
 	define('USERBANNER_FONT', RELATIVE_ROOT."images/userbanner/calibri.ttf");
 	define('USERBANNER_DIR', CACHE_ROOT.'/userbanner');
 
-	
 ?>
