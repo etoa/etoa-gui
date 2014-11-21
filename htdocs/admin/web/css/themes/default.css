@@ -55,7 +55,7 @@ body	{
 	color: black;
 	font-family:verdana, sans-serif, Arial;
 	font-size: 10pt;
-	background:#000 url('../../../images/background.jpg');
+	background:#000 url('../../images/background.jpg');
 	text-align:left;
 }
 
@@ -72,7 +72,7 @@ body	{
 	padding: 0;
 	width: 100%;
 	height: 130px;
-	background: url('../../../images/admin/header.png') no-repeat center top;
+	background: url('../../images/header.png') no-repeat center top;
 	position:relative;
 	color: white;
 }
@@ -81,7 +81,6 @@ body	{
 	position: absolute;
 	top: 30px;
 	left: 10px;
-	background: url(../../../images/admin/logo.png) no-repeat top left;
 	cursor: pointer;
 }
 
@@ -298,50 +297,50 @@ input[type="submit"]:hover, input[type="button"]:hover, button:hover, .button:ho
 @-moz-document url-prefix() {
 	input[type="submit"].positive, input[type="button"].positive, button.positive {
 		color:#529214;
-		background-image: url('../../../images/admin/icons/tick.png'), -moz-linear-gradient(top, #ffffff 0%, #cccccc 100%);
+		background-image: url('../../images/icons/tick.png'), -moz-linear-gradient(top, #ffffff 0%, #cccccc 100%);
 		background-repeat: no-repeat;
 		background-position: 6px 5px, 0px 0px;
 		padding-left:25px;
 	}
 	
 	input[type="submit"].positive:hover, input[type="button"].positive:hover, button.positive:hover {
-		background-image: url('../../../images/admin/icons/tick.png'), -moz-linear-gradient(top, #ffffff 0%, #eeeeee 100%);
+		background-image: url('../../images/icons/tick.png'), -moz-linear-gradient(top, #ffffff 0%, #eeeeee 100%);
 	}
 
 	input[type="submit"].negative, input[type="button"].negative, button.negative {
 		color:#d12f19;
-		background-image: url('../../../images/admin/icons/cross.png'), -moz-linear-gradient(top, #ffffff 0%, #cccccc 100%);
+		background-image: url('../../images/icons/cross.png'), -moz-linear-gradient(top, #ffffff 0%, #cccccc 100%);
 		background-repeat: no-repeat;
 		background-position: 6px 5px, 0px 0px;
 		padding-left:25px;
 	}
 
 	input[type="submit"].negative:hover, input[type="button"].negative:hover, button.negative:hover {
-		background-image: url('../../../images/admin/icons/cross.png'), -moz-linear-gradient(top, #ffffff 0%, #eeeeee 100%);
+		background-image: url('../../images/icons/cross.png'), -moz-linear-gradient(top, #ffffff 0%, #eeeeee 100%);
 	}
 	
 	input[type="submit"].add, input[type="button"].add, button.add {
 		color:#529214;
-		background-image:url('../../../images/admin/icons/add.png'), -moz-linear-gradient(top, #ffffff 0%, #cccccc 100%);
+		background-image:url('../../images/icons/add.png'), -moz-linear-gradient(top, #ffffff 0%, #cccccc 100%);
 		background-repeat: no-repeat;
 		background-position: 6px 5px, 0px 0px;
 		padding-left:25px;
 	}
 	
 	input[type="submit"].add:hover, input[type="button"].add:hover, button.add:hover {
-		background-image: url('../../../images/admin/icons/add.png'), -moz-linear-gradient(top, #ffffff 0%, #eeeeee 100%);
+		background-image: url('../../images/icons/add.png'), -moz-linear-gradient(top, #ffffff 0%, #eeeeee 100%);
 	}	
 
 	input[type="submit"].remove, input[type="button"].remove, button.remove {
 		color:#d12f19;
-		background-image:url('../../../images/admin/icons/delete.png'), -moz-linear-gradient(top, #ffffff 0%, #cccccc 100%);
+		background-image:url('../../images/icons/delete.png'), -moz-linear-gradient(top, #ffffff 0%, #cccccc 100%);
 		background-repeat: no-repeat;
 		background-position: 6px 5px, 0px 0px;
 		padding-left:25px;
 	}
 	
 	input[type="submit"].remove:hover, input[type="button"].remove:hover, button.remove:hover {
-		background-image: url('../../../images/admin/icons/delete.png'), -moz-linear-gradient(top, #ffffff 0%, #eeeeee 100%);
+		background-image: url('../../images/icons/delete.png'), -moz-linear-gradient(top, #ffffff 0%, #eeeeee 100%);
 	}	
 }
 
@@ -357,7 +356,7 @@ input[type="radio"] + label  {
 
 
 input[type="text"].search	{
-	background-image:url('../../../images/search.png');
+	background-image:url('../../images/search.png');
 	background-position: 2px 3px;
 	background-repeat: no-repeat;
 	padding-left: 20px;

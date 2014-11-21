@@ -1319,7 +1319,7 @@
 				// DON'T BUILD IN A FEATURE THAT'S NOT YET AVILABLE
 				/*
 				echo "<div id=\"pointsBox\">
-					<div style=\"text-align:center;\"><img src=\"../web/images/admin/ajax-loader-circle.gif\" /><br/>Wird geladen...</div>
+					<div style=\"text-align:center;\"><img src=\"web/images/ajax-loader-circle.gif\" /><br/>Wird geladen...</div>
 				</div>
 				";	*/
 				
@@ -1354,7 +1354,7 @@
 					echo '<p>Dieser User hat keine Tickets</p>';
 				}
 				
-					//<div style=\"text-align:center;\"><img src=\"../web/images/admin/ajax-loader-circle.gif\" /><br/>Wird geladen...</div>
+					//<div style=\"text-align:center;\"><img src=\"web/images/ajax-loader-circle.gif\" /><br/>Wird geladen...</div>
 				echo "</div>";	
 				
 				echo '</div><div id="tabs-11">';
@@ -1364,7 +1364,7 @@
 				*/			
 			
 				echo "<div id=\"commentsBox\">
-					<div style=\"text-align:center;\"><img src=\"../web/images/admin/ajax-loader-circle.gif\" /><br/>Wird geladen...</div>
+					<div style=\"text-align:center;\"><img src=\"web/images/ajax-loader-circle.gif\" /><br/>Wird geladen...</div>
 				</div>";
 				
 				echo '</div><div id="tabs-12">';

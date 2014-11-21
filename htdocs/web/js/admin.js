@@ -24,16 +24,16 @@ function toggleBox(boxId)
 		
 function showLoader(elem)
 {
-	document.getElementById(elem).innerHTML='<div style=\"text-align:center;padding:10px;\"><img src="../web/images/admin/ajax-loader-circle.gif" /></div>';
+	document.getElementById(elem).innerHTML='<div style=\"text-align:center;padding:10px;\"><img src="web/images/ajax-loader-circle.gif" /></div>';
 }
 
 function showLoaderPrepend(elem)
 {
-	document.getElementById(elem).innerHTML='<div style=\"text-align:center;padding:10px;\"><img src="../web/images/admin/ajax-loader-circle.gif" /></div>'+document.getElementById(elem).innerHTML;
+	document.getElementById(elem).innerHTML='<div style=\"text-align:center;padding:10px;\"><img src="web/images/ajax-loader-circle.gif" /></div>'+document.getElementById(elem).innerHTML;
 }
 
 function showLoaderInline(elem)
 {
-	document.getElementById(elem).innerHTML='<span style=\"text-align:center;padding:10px;\"><img src="../web/images/admin/ajax-loader-circle.gif" /></span>';
+	document.getElementById(elem).innerHTML='<span style=\"text-align:center;padding:10px;\"><img src="web/images/ajax-loader-circle.gif" /></span>';
 }
 	
