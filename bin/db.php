@@ -86,7 +86,8 @@
 			
 			// Load config defaults
 			if ($action == "reset") {
-				Config::getInstance()->restoreDefaults();
+				Config::restoreDefaults();
+				Config::getInstance()->reload();
 			}
 
 			// Release mutex

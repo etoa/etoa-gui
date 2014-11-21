@@ -4,8 +4,9 @@
 
 	if (isset($_POST['restoresubmit']))
 	{
-		if ($cnt = $cfg->restoreDefaults())
+		if ($cnt = Config::restoreDefaults())
 		{
+			Config::getInstance()->reload();
 			$tpl->assign("msg", "$cnt Einstellungen wurden wiederhergestellt!");
 			BackendMessage::reloadConfig();
 		}

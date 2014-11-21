@@ -173,7 +173,8 @@ password = ".$dbCfg['password']."
 			$tpl->assign('msg', "Datenbank migriert");
 			
 			// Load config defaults
-			Config::getInstance()->restoreDefaults();
+			Config::restoreDefaults();
+			Config::getInstance()->reload();			
 		}
 		
 		$cfg = Config::getInstance();
