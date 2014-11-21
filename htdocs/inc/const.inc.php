@@ -1,5 +1,8 @@
 <?php
 
+	// Timezone
+	define('TIMEZONE', 'Europe/Zurich');
+
 	// OS-Version feststellen
 	if (defined('POSIX_F_OK'))
 	{

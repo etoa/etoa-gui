@@ -27,7 +27,7 @@
 	* @author MrCage mrcage@etoa.ch
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
-
+	
 	/***********************************/
 	/* Design, Layout, Allgmeine Pfade */
 	/***********************************/

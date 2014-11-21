@@ -32,8 +32,6 @@
 	ini_set('display_errors', 1);
 	ini_set('arg_separator.output',  '&amp;');
 
-	date_default_timezone_set('Europe/Zurich');
-
 	// Path to the relative root of the game
 	if (!defined('RELATIVE_ROOT')) {
 		define('RELATIVE_ROOT', '');
@@ -49,6 +47,9 @@
 	if (ADMIN_MODE) {
 		require(RELATIVE_ROOT."admin/inc/admin_functions.inc.php");
 	}
+	
+	// Set timezone
+	date_default_timezone_set(TIMEZONE);
 	
 	// Enable debug error reporting
 	if (isDebugEnabled()) {
@@ -76,8 +77,6 @@
 	// Load config
 	$cfg = Config::getInstance();
 	$conf = $cfg->getArray();
-
-	date_default_timezone_set("Europe/Zurich");
 
 	// Init session
 	if (ADMIN_MODE) {
