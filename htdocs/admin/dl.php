@@ -9,8 +9,11 @@ if ($s->user_id) {
 		$allowedDirs = array(
 			realpath(CACHE_ROOT),
 			realpath(ADMIN_FILESHARING_DIR),
-			realpath($cfg->get('backup_dir'))
 		);
+		$backupDir = DBManager::getBackupDir();
+		if (!empty($backupDir)) {
+			$allowedDirs[] = realpath($backupDir);
+		}
 		$allow = false;
 		foreach ($allowedDirs as $ad) {
 			if (substr($file, 0, strlen($ad)) == $ad) {

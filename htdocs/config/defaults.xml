@@ -662,7 +662,7 @@ http://www.etoa.ch</v>
     </item>
 
     <item name="backup_dir" cat="21" base="yes">
-      <v comment="Backup-Pfad" type="text">/home/etoa/backup/</v>
+      <v comment="Backup-Pfad (leerlassen für Standardpfad)" type="text"></v>
 	</item>
     <item name="backup_retention_time" cat="21" base="yes">
       <v comment="Backup-Aufbewahrungsdauer (Tage)" type="text">14</v>

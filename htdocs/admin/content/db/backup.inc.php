@@ -101,7 +101,7 @@
 
 	echo $frm->begin();
 	echo "<fieldset><legend>Backup-Einstellungen</legend>";
-	echo "Speicherpfad: <input type=\"text\" value=\"".$cfg->backup_dir."\" name=\"backup_dir\" size=\"50\" /><br/>
+	echo "Speicherpfad: <input type=\"text\" value=\"".$cfg->backup_dir."\" name=\"backup_dir\" size=\"50\" /> (leerlassen für Standardpfad)<br/>
 	Aufbewahrungsdauer: <input type=\"text\" value=\"".$cfg->get('backup_retention_time')."\" name=\"backup_retention_time\" size=\"2\" /> Tage &nbsp; &nbsp;
 	GZIP benutzen: <input type=\"radio\" name=\"backup_use_gzip\" value=\"1\" ".($cfg->get('backup_use_gzip')=="1" ? ' checked="checked"' : '')."/> Ja  
 	<input type=\"radio\" name=\"backup_use_gzip\" value=\"0\" ".($cfg->get('backup_use_gzip')=="0" ? ' checked="checked"' : '')."/> Nein<br/>";
@@ -114,9 +114,11 @@
 	echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
 	echo "<p><input type=\"submit\" value=\"Neues Backup erstellen\" name=\"create\" /></p>
 	 </form>";
+	 
 	$dir = DBManager::getBackupDir();
 	if ($dir != null)
 	{
+		echo "<h3>Vorhandene Backups in ".realpath($dir)."</h3>";
 		$cnt=0;
 		echo "<table class=\"tb\" style=\"width:auto;\"><tr><th>Name</th><th>Erstellt</th><th>Grösse</th><th>Optionen</th></tr>";
 		$bfiles = DBManager::getInstance()->getBackupImages($dir, 0);
@@ -135,11 +137,12 @@
 		}
 		if ($cnt==0)
 		{
-			echo "<tr><td colspan=\"3\"><i>Es sind noch keine Dateien vorhanden!</i></td></tr>";
+			echo "<tr><td colspan=\"4\"><i>Es sind noch keine Dateien vorhanden!</i></td></tr>";
 		}
 		echo "</table>";
 	}
 	else {
+		echo "<h3>Vorhandene Backups</h3>";
 		cms_err_msg("Das Backupverzeichnis wurde nicht gefunden!");
 	}
 ?>

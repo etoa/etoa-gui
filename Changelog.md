@@ -46,6 +46,7 @@ Version NEXT
  * Every periodic task can now be executed on its own
  * Open each user surveillance session table in separate screen
  * Changed layout of detailed config editor
+ * If no backup directory is defined, a default path will be used
  
 #### Bugfixes ####
 
