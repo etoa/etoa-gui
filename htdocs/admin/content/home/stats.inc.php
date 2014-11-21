@@ -628,7 +628,7 @@
 		$m = $conf['points_update']['v']/60;
 		echo "alle $m Minuten!<br/>";
 	}
-	echo "Letzte Aktualisierung: <b>".date("d.m.Y",$conf['statsupdate']['v'])."</b> um <b>".date("H:i",$conf['statsupdate']['v'])." Uhr</b><br/>";
+	echo "Letzte Aktualisierung: <b>".df($cfg->get('statsupdate'))." Uhr</b><br/>";
 	echo "<b>Legende:</b> 
 	<span class=\"userLockedColor\">Gesperrt</span>, 
 	<span class=\"userHolidayColor\">Urlaubsmodus</span>, 

@@ -631,9 +631,6 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 					$order $orderDir
 				LIMIT 
 					$limit;";
-				// NOTE: Add "WHERE hmod=0" statement here
-				// with check for $cfg->param1('statsupdate')
-				// if check for umod in ranking.class.php fails
 			}
 		}
 		$res=dbQuerySave($sql, $queryParams);

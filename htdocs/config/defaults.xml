@@ -64,7 +64,9 @@
     </item>
     <item name="statsupdate" cat="1">
       <v comment="Statistikupdate" type="timedate">1240063202</v>
-      <p1 comment="Spieler im Urlaubsmodus in den Statistiken anzeigen" type="onoff">0</p1>
+    </item>
+    <item name="show_hmod_users_stats" cat="1">
+      <v comment="Spieler im Urlaubsmodus in den Statistiken anzeigen" type="onoff">1</v>
     </item>
     <item name="stats_num_rows" cat="1">
       <v comment="Statistik Anzahl Daten/Seite" type="text">50</v>

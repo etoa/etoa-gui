@@ -387,7 +387,7 @@
 				WHERE
 					user_ghost=0".
 					// same check as below to set `user_stats`.`hmod` field
-					($cfg->param1('statsupdate')?'':' AND (user_hmode_from = 0)').
+					($cfg->value('show_hmod_users_stats') == 1 ? '' : ' AND (user_hmode_from = 0)').
 			';');
 			
 			$user_stats_query = "";
