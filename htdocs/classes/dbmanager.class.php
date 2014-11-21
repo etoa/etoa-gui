@@ -418,16 +418,20 @@ class DBManager implements ISingleton	{
 			}
 			else
 			{
-				if (WINDOWS && !file_exists($mysqldump)) {
-					$this->dumpIntoFile($file);
-					return;
-				}
 				$cmd = $mysqldump." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." --default-character-set=utf8 ".$this->getDbName()." -r ".$file;
 			}
-			$result = shell_exec($cmd);
-			if (!empty($result))
+			
+			if (WINDOWS && !file_exists($mysqldump))
 			{
-				throw new Exception("Fehler beim Erstellen der Backup-Datei ".$file.": ".$result);
+				$this->dumpIntoFile($file);
+			}
+			else
+			{
+				$result = shell_exec($cmd);
+				if (!empty($result))
+				{
+					throw new Exception("Fehler beim Erstellen der Backup-Datei ".$file.": ".$result);
+				}
 			}
 			return "Backup ".$file." erstellt, Dateigrösse: ".byte_format(filesize($file));
 		}
@@ -489,16 +493,20 @@ class DBManager implements ISingleton	{
 			}
 			else
 			{
-				if (WINDOWS && !file_exists($mysql)) {
-					$this->importFromFile($file);
-					return;
-				}
 				$cmd = $mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." --default-character-set=utf8 ".$this->getDbName()." < ".$file;
 			}
-			$result = shell_exec($cmd);
-			if (!empty($result))
+			
+			if (WINDOWS && !file_exists($mysql))
 			{
-				throw new Exception("Error while loading file with MySQL: ".$result);
+				$this->importFromFile($file);
+			}
+			else
+			{
+				$result = shell_exec($cmd);
+				if (!empty($result))
+				{
+					throw new Exception("Error while loading file with MySQL: ".$result);
+				}
 			}
 		}
 		else
