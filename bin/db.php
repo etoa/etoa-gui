@@ -29,6 +29,8 @@
 		echo "  reset      Drop all tables and rebuild database from scratch\n";
 		echo "  backup     Backup database\n";
 		echo "  restore    Restore database from backup\n";
+		echo "  check      Check tables\n";
+		echo "  repair     Repair defect tables\n";
 		exit(1);
 	}
 	
@@ -204,6 +206,32 @@
 						echo "$f\n";
 					}
 					exit(1);
+				}
+			}
+			
+			//
+			// Check database
+			//
+			else if ($action == "check")
+			{
+				echo "\nChecking tables:\n\n";
+				$ores = DBManager::getInstance()->checkTables(true);
+				while ($arr = mysql_fetch_assoc($ores))
+				{
+					echo implode("\t", $arr)."\n";
+				}
+			}
+			
+			//
+			// Repair database
+			//
+			else if ($action == "repair")
+			{
+				echo "\nRepairing tables:\n\n";
+				$ores = DBManager::getInstance()->repairTables(true);
+				while ($arr = mysql_fetch_assoc($ores))
+				{
+					echo implode("\t", $arr)."\n";
 				}
 			}
 
