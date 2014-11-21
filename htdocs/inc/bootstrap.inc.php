@@ -29,31 +29,33 @@
 	*/
 	
 	//Fehler ausgabe definiert
-  	ini_set('display_errors', 1);
+	ini_set('display_errors', 1);
 	ini_set('arg_separator.output',  '&amp;');
 
 	date_default_timezone_set('Europe/Zurich');
 
 	// Path to the relative root of the game
-	if (!defined('RELATIVE_ROOT'))
-		define('RELATIVE_ROOT','');
-		
+	if (!defined('RELATIVE_ROOT')) {
+		define('RELATIVE_ROOT', '');
+	}
+	
 	// Load constants
 	require_once(RELATIVE_ROOT."inc/const.inc.php");
 
 	// Load functions
 	require_once(RELATIVE_ROOT."inc/functions.inc.php");
 
-  // Load specific admin functions
-  if (ADMIN_MODE) {
-    require(RELATIVE_ROOT."admin/inc/admin_functions.inc.php");
-  }
-  
+	// Load specific admin functions
+	if (ADMIN_MODE) {
+		require(RELATIVE_ROOT."admin/inc/admin_functions.inc.php");
+	}
+
 	// Include db config
 	if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 	{
-		if (ADMIN_MODE)
+		if (ADMIN_MODE) {
 			forward(RELATIVE_ROOT);
+		}
 		require(RELATIVE_ROOT."inc/install.inc.php");
 		exit();
 	}
@@ -71,21 +73,24 @@
 	date_default_timezone_set("Europe/Zurich");
 
 	// Debug einschalten?
-	if (!defined('ETOA_DEBUG'))
-		define('ETOA_DEBUG',$cfg->debug->v);
+	if (!defined('ETOA_DEBUG')) {
+		define('ETOA_DEBUG', $cfg->debug->v);
+	}
 
 	// Fehlermeldungs-Level feststellen
-	if (ETOA_DEBUG==1)
+	if (ETOA_DEBUG==1) {
 		error_reporting(E_ALL);
-	else
+	} else {
 		error_reporting(E_ERROR | E_WARNING | E_PARSE);
+	}
 
 	// Init session
-	if (ADMIN_MODE)
+	if (ADMIN_MODE) {
 		$s = AdminSession::getInstance();
-	else
+	} else {
 		$s = UserSession::getInstance();
-
+	}
+	
 	// Load default values
 	require_once(RELATIVE_ROOT."inc/def.inc.php");
 
