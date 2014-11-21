@@ -15,64 +15,8 @@
 	// www.nicu.ch | mail@nicu.ch								 		//
 	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
 	//////////////////////////////////////////////////
-	//
-	// 	File: bootstrap.inc.php
-	// 	Created: 07.5.2007
-	// 	Last edited: 06.07.2007
-	// 	Last edited by: MrCage <mrcage@etoa.ch>
-	//	
-	/**
-	* Defines some global constants which should not be changed
-	*
-	* @author MrCage mrcage@etoa.ch
-	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/
-	
-	//Fehler ausgabe definiert
-	ini_set('display_errors', 1);
-	ini_set('arg_separator.output',  '&amp;');
 
-	// Path to the relative root of the game
-	if (!defined('RELATIVE_ROOT')) {
-		define('RELATIVE_ROOT', '');
-	}
-	
-	// Load constants
-	require_once(RELATIVE_ROOT."inc/const.inc.php");
-
-	// Load functions
-	require_once(RELATIVE_ROOT."inc/functions.inc.php");
-
-	// Load specific admin functions
-	if (ADMIN_MODE) {
-		require(RELATIVE_ROOT."admin/inc/admin_functions.inc.php");
-	}
-	
-	// Set timezone
-	date_default_timezone_set(TIMEZONE);
-	
-	// Enable debug error reporting
-	if (isDebugEnabled()) {
-		error_reporting(E_ALL);
-	} else {
-		error_reporting(E_ERROR | E_WARNING | E_PARSE);
-	}
-
-	// Include db config
-	$cbConfigFile = DBManager::getInstance()->getConfigFile();
-	if (!configFileExists($cbConfigFile))
-	{
-		if (isCLI()) {
-			echo "Database configuration file $cbConfigFile does not exist!";
-			exit(1);
-		} else {
-			if (ADMIN_MODE) {
-				forward(RELATIVE_ROOT);
-			}
-			require(RELATIVE_ROOT."inc/install.inc.php");
-			exit();
-		}
-	}
+	require("init.inc.php");
 
 	// Connect to database
 	dbconnect();
