@@ -14,11 +14,7 @@
 
 	function text2html($string)
 	{
-		global $smilielist;
-		if (!defined('SMILIE_DIR'))
-			define('SMILIE_DIR', "images/smilies");
-		
-		$string = str_replace("  ", "&nbsp;&nbsp;", $string);
+		$string = str_replace("	 ", "&nbsp;&nbsp;", $string);
 
 		$string = str_replace("\"", "&quot;", $string);
 		$string = str_replace("<", "&lt;", $string);
@@ -141,25 +137,27 @@
 		$string = preg_replace('#\[email\]([^\[]*)\[/email\]#i', '<a href="mailto:\1">\1</a>', $string);
 
 		$string = str_replace('[table]', '<table class="bbtable">', $string);
-    $string = str_replace('[/table]', '</table>', $string);
-    $string = str_replace('[td]', '<td>', $string);
-    $string = str_replace('[/td]', '</td>', $string);
-    $string = str_replace('[th]', '<th>', $string);
-    $string = str_replace('[/th]', '</th>', $string);
-    $string = str_replace('[tr]', '<tr>', $string);
-    $string = str_replace('[/tr]', '</tr>', $string);
-    
-    $string = str_replace('[TABLE]', '<table>', $string);
-    $string = str_replace('[/TABLE]', '</table>', $string);
-    $string = str_replace('[TD]', '<td>', $string);
-    $string = str_replace('[/TD]', '</td>', $string);
-    $string = str_replace('[TH]', '<th>', $string);
-    $string = str_replace('[/TH]', '</th>', $string);
-    $string = str_replace('[TR]', '<tr>', $string);
-    $string = str_replace('[/TR]', '</tr>', $string);
-    
-    
-    $string = str_replace(' :) ', '<img src="'.SMILIE_DIR.'/smile.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+		$string = str_replace('[/table]', '</table>', $string);
+		$string = str_replace('[td]', '<td>', $string);
+		$string = str_replace('[/td]', '</td>', $string);
+		$string = str_replace('[th]', '<th>', $string);
+		$string = str_replace('[/th]', '</th>', $string);
+		$string = str_replace('[tr]', '<tr>', $string);
+		$string = str_replace('[/tr]', '</tr>', $string);
+		
+		$string = str_replace('[TABLE]', '<table>', $string);
+		$string = str_replace('[/TABLE]', '</table>', $string);
+		$string = str_replace('[TD]', '<td>', $string);
+		$string = str_replace('[/TD]', '</td>', $string);
+		$string = str_replace('[TH]', '<th>', $string);
+		$string = str_replace('[/TH]', '</th>', $string);
+		$string = str_replace('[TR]', '<tr>', $string);
+		$string = str_replace('[/TR]', '</tr>', $string);
+		
+		if (!defined('SMILIE_DIR')) {
+			define('SMILIE_DIR', "images/smilies");	
+		}	 
+		$string = str_replace(' :) ', '<img src="'.SMILIE_DIR.'/smile.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
 		$string = str_replace(' :-) ', '<img src="'.SMILIE_DIR.'/smile.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
 		$string = str_replace(' ;) ', '<img src="'.SMILIE_DIR.'/wink.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
 		$string = str_replace(' ;-) ', '<img src="'.SMILIE_DIR.'/wink.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
@@ -197,120 +195,13 @@
 		$string = str_replace('[/size]', '</font>', $string);
 		$string = str_replace('[/SIZE]', '</font>', $string);
 
- 		$string = stripslashes($string);
+		$string = stripslashes($string);
 
 		return $string;
 	}
 	
-$flaglist['ch-la']="Langenthal";
-$flaglist['ch-ag']="Kanton Aargau";
-$flaglist['ch-ai']="Kanton Appenzell-Innerrhoden";
-$flaglist['ch-ar']="Kanton Appenzell-Ausserrhoden";
-$flaglist['ch-be']="Kanton Bern";
-$flaglist['ch-bl']="Kanton Basel-Landschaft";
-$flaglist['ch-bs']="Kanton Basel-Stadt";
-$flaglist['ch-ge']="Kanton Genf";
-$flaglist['ch-gr']="Kanton Graub&uuml;nden";
-$flaglist['ch-ju']="Kanton Jura";
-$flaglist['ch-lu']="Kanton Luzern";
-$flaglist['ch-nw']="Kanton Nidwalden";
-$flaglist['ch-ow']="Kanton Obwalden";
-$flaglist['ch-sh']="Kanton Schaffhausen";
-$flaglist['ch-so']="Kanton Solothurn";
-$flaglist['ch-sz']="Kanton Schwyz";
-$flaglist['ch-tg']="Kanton Thurgau";
-$flaglist['ch-ti']="Kanton Tessin";
-$flaglist['ch-ur']="Kanton Uri";
-$flaglist['ch-vd']="Kanton Waadt";
-$flaglist['ch-vs']="Kanton Wallis";
-$flaglist['ch-zg']="Kanton Zug";
-$flaglist['ch-zh']="Kanton Z&uuml;rich";
-$flaglist['ar']="Argentinien";
-$flaglist['at']="&Ouml;sterreich";
-$flaglist['au']="Australien";
-$flaglist['be']="Belgien";
-$flaglist['benelux']="Benelux";
-$flaglist['bg']="Bulgarien";
-$flaglist['br']="Brasilien";
-$flaglist['ca']="Kanada";
-$flaglist['ch']="Schweiz";
-$flaglist['cn']="China";
-$flaglist['hr']="Kroatien";
-$flaglist['cz']="Tschechische Republik";
-$flaglist['de']="Deutschland";
-$flaglist['dk']="D&auml;nemark";
-$flaglist['ee']="Estland";
-$flaglist['eu']="Europa";
-$flaglist['fi']="Finnland";
-$flaglist['fr']="Frankreich";
-$flaglist['gb']="Grossbritanien";
-$flaglist['gr']="Griechenland";
-$flaglist['il']="Israel";
-$flaglist['in']="India";
-$flaglist['it']="Italien";
-$flaglist['jp']="Japan";
-$flaglist['kp']="Korea";
-$flaglist['lv']="Lettland";
-$flaglist['lu']="Luxemburg";
-$flaglist['nl']="Niederlande";
-$flaglist['no']="Norwegen";
-$flaglist['pl']="Polen";
-$flaglist['ru']="Russland";
-$flaglist['sk']="Slovakei";
-$flaglist['sp']="Spanien";
-$flaglist['se']="Schweden";
-$flaglist['ty']="T&uuml;rkey";
-$flaglist['us']="USA";
-$flaglist['vn']="Vietnam";
-$flaglist['world']="Welt";
-
-$colorlist['black']="Schwarz";
-$colorlist['darkred']="Dunkelrot";
-$colorlist['red']="Rot";
-$colorlist['orange']="Orange";
-$colorlist['brown']="Braun";
-$colorlist['yellow']="Gelb";
-$colorlist['green']="Gr&uuml;n";
-$colorlist['olive']="Olive";
-$colorlist['cyan']="Cyan";
-$colorlist['blue']="Blau";
-$colorlist['darkblue']="Dunkelblau";
-$colorlist['indigo']="Indigo";
-$colorlist['violet']="Violet";
-$colorlist['white']="Weiss";
-
-$sizelist['8']="Klein";
-$sizelist['10']="Mittel";
-$sizelist['12']="Mittelgross";
-$sizelist['14']="Gross";
-$sizelist['17']="Ganz gross";
-
-$smilielist=array();
-
-$smilielist[':)']="smile.gif";
-$smilielist[':-)']="smile.gif";
-$smilielist[';)']="wink.gif";
-$smilielist[';-)']="wink.gif";
-$smilielist[':p']="tongue.gif";
-$smilielist[':-p']="tongue.gif";
-$smilielist[':0']="laugh.gif";
-$smilielist[':angry:']="angry.gif";
-$smilielist[':sad:']="sad.gif";
-$smilielist[':anger:']="anger.gif";
-$smilielist[':pst:']="pst.gif";
-$smilielist[':D']="biggrin.gif";
-$smilielist[':-D']="biggrin.gif";
-$smilielist[':holy:']="holy.gif";
-$smilielist[':cool:']="cool.gif";
-$smilielist['8)']="cool.gif";
-$smilielist['8-)']="cool.gif";
-$smilielist[':rolleyes:']="rolleyes.gif";
-$smilielist[':(']="frown.gif";
-$smilielist[':-(']="frown.gif";
-	
-	
 	/**
-	*   Callback-Funktion für preg_replace_callback zum Unterscheiden externer URLs in bbcode
+	*	Callback-Funktion für preg_replace_callback zum Unterscheiden externer URLs in bbcode
 	*
 	* @param $match Array mit [0]=> ganzer String, [1]..[n]=> subpatterns in ()
 	* @return String mit html-links
@@ -320,34 +211,32 @@ $smilielist[':-(']="frown.gif";
 	* Im javascript gibt es bereits sowas.
 	* Diese Funktion überprüft nicht, ob eine valide URL vorliegt.
 	*/
-    
-    function bbcode_urls_to_links_with_newtab($match)
-    {
-        $url = $match[1];
-        $scheme = parse_url($url, PHP_URL_SCHEME);
-        $host = parse_url($url, PHP_URL_HOST);
-        $path = parse_url($url, PHP_URL_PATH);
-        // bei relativen / unvollständigen URLs automatisch
-        // scheme, host und path hinzufügen.
-        // Setzt eine gültige URL voraus.
-        if($scheme === NULL)
-        {
-            if($host === NULL)
-            {
-                if($path === NULL)
-                {
-                    $url = '/'.$url;
-                }
-                $url = $_SERVER['SERVER_NAME'].$url;
-            }
-            $url = 'http://'.$url;
-        }
-        $intern = (preg_match('#etoa.ch$|etoa.net$#i',parse_url($url, PHP_URL_HOST)) === 1);
-        
-        return '<a href="'.$url.'"'.($intern?'':' target="_blank"').'>'
-                .(isset($match[2])?$match[2]:$match[1]).'</a>';
-    }
-    
+	function bbcode_urls_to_links_with_newtab($match)
+	{
+		$url = $match[1];
+		$scheme = parse_url($url, PHP_URL_SCHEME);
+		$host = parse_url($url, PHP_URL_HOST);
+		$path = parse_url($url, PHP_URL_PATH);
+		// bei relativen / unvollständigen URLs automatisch
+		// scheme, host und path hinzufügen.
+		// Setzt eine gültige URL voraus.
+		if($scheme === NULL)
+		{
+			if($host === NULL)
+			{
+				if($path === NULL)
+				{
+					$url = '/'.$url;
+				}
+				$url = $_SERVER['SERVER_NAME'].$url;
+			}
+			$url = 'http://'.$url;
+		}
+		$intern = (preg_match('#etoa.ch$|etoa.net$#i',parse_url($url, PHP_URL_HOST)) === 1);
+		
+		return '<a href="'.$url.'"'.($intern?'':' target="_blank"').'>'.(isset($match[2])?$match[2]:$match[1]).'</a>';
+	}
+	
 	function bbcode_page_to_links($match) {
 		$parts = array();
 		if (preg_match('/^([a-z\_]+)(?:\s+(.+))?$/i', $match[1], $parts)) {
@@ -362,18 +251,18 @@ $smilielist[':-(']="frown.gif";
 			$url = $match[1];
 		}
 		$label = (isset($match[2])?$match[2]:$match[1]);
-        return '<a href="'.$url.'">'.$label.'</a>';
+		return '<a href="'.$url.'">'.$label.'</a>';
 	}
 	
-    function ctype_alsc($str)
-    {
-        return ctype_alpha(str_replace('_','',$str));
-    }
-    
-    function ctype_aldotsc($str)
-    {
-        return ctype_alpha(str_replace('_','',str_replace('.','',$str)));
-    }
+	function ctype_alsc($str)
+	{
+		return ctype_alpha(str_replace('_','',$str));
+	}
+	
+	function ctype_aldotsc($str)
+	{
+		return ctype_alpha(str_replace('_','',str_replace('.','',$str)));
+	}
 
 	function strip_bbcode($string) {
 		return preg_replace('#\[(.*)\]([^\[]*)\[/(.*)\]#i', '\2', $string);
