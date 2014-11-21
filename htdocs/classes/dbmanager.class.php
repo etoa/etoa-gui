@@ -697,9 +697,11 @@ class DBManager implements ISingleton	{
 	*/
 	public function dropAllTables() {
 		$tbls = $this->getAllTables();
-		dbquery("SET FOREIGN_KEY_CHECKS=0;");
-		dbquery("DROP TABLE ".implode(',', $tbls).";");
-		dbquery("SET FOREIGN_KEY_CHECKS=1;");
+		if (count($tbls) > 0) {
+			dbquery("SET FOREIGN_KEY_CHECKS=0;");
+			dbquery("DROP TABLE ".implode(',', $tbls).";");
+			dbquery("SET FOREIGN_KEY_CHECKS=1;");
+		}
 		return count($tbls);
 	}
 	
