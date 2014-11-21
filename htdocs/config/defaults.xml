@@ -671,9 +671,6 @@ http://www.etoa.ch</v>
       <v comment="Backup mit GZIP komprimieren" type="onoff">0</v>
     </item>
 
-    <item name="debug" cat="22">
-      <v comment="Debug-Modus" type="onoff">0</v>
-    </item>
     <item name="accesslog" cat="22">
       <v comment="Seitenzugriffe loggen" type="onoff">0</v>
     </item>

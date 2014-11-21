@@ -49,6 +49,13 @@
 	if (ADMIN_MODE) {
 		require(RELATIVE_ROOT."admin/inc/admin_functions.inc.php");
 	}
+	
+	// Enable debug error reporting
+	if (isDebugEnabled()) {
+		error_reporting(E_ALL);
+	} else {
+		error_reporting(E_ERROR | E_WARNING | E_PARSE);
+	}
 
 	// Include db config
 	if (!configFileExists(DBManager::getInstance()->getConfigFile()))
@@ -72,18 +79,6 @@
 
 	date_default_timezone_set("Europe/Zurich");
 
-	// Debug einschalten?
-	if (!defined('ETOA_DEBUG')) {
-		define('ETOA_DEBUG', $cfg->debug->v);
-	}
-
-	// Fehlermeldungs-Level feststellen
-	if (ETOA_DEBUG==1) {
-		error_reporting(E_ALL);
-	} else {
-		error_reporting(E_ERROR | E_WARNING | E_PARSE);
-	}
-
 	// Init session
 	if (ADMIN_MODE) {
 		$s = AdminSession::getInstance();
@@ -105,11 +100,11 @@
 	// Initialize XAJAX and load functions
 	if (!isset($_SERVER['SHELL']) && (!defined('SKIP_XAJAX_INIT') || !SKIP_XAJAX_INIT))
 	{
-		define('XAJAX_DEBUG',false);
-		if (ADMIN_MODE)
+		if (ADMIN_MODE) {
 			require_once(RELATIVE_ROOT."/admin/inc/xajax_admin.inc.php");
-		else
+		} else {
 			require_once(RELATIVE_ROOT."inc/xajax.inc.php");
+		}
 	}
 
 	// Set popup identifiert to false

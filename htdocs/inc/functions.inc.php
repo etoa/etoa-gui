@@ -2722,6 +2722,14 @@ function imagecreatefromfile($path, $user_functions = false)
 	 }
 	
 	/**
+	* Returns true if the debug mode is enabled 
+	* by checking the existence of the file config/debug
+	*/
+	function isDebugEnabled() {
+		return file_exists(RELATIVE_ROOT.'config/debug');
+	}
+	
+	/**
 	* Textfunktionen einbinden
 	*/
 	include_once(RELATIVE_ROOT.'inc/text.inc.php');

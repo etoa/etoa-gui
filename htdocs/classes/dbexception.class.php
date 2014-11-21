@@ -10,7 +10,7 @@
 			if (isset($_SERVER['SHELL'])) {
 				return $this->getErrStr();
 			} else {
-				if (defined('ETOA_DEBUG') && ETOA_DEBUG==1) {
+				if (isDebugEnabled()) {
 					$str = "<div class=\"errorBox\" style=\"text-align:left;\"><h2>Datenbankfehler</h2>
 					<b>Datei:</b> ".parent::getFile().", <b>Zeile:</b> ".parent::getLine()."<br/>
 					<b>Abfrage:</b> ".nl2br(parent::getMessage())."<br/>
