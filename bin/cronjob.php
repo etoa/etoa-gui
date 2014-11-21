@@ -42,7 +42,15 @@
 		echo "Could not load bootstrap file ".getcwd()."/".($init)."\n";
 		exit(1);
 	}
-		
+	
+	// Connect to database
+	try {
+		dbconnect();
+	} catch (DBException $ex) {
+		echo $ex;
+		exit(1);
+	}
+	
 	$args = array_splice($_SERVER['argv'], 1);
 
 	$verbose = in_array("-v", $args);
