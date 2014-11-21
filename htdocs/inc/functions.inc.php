@@ -2737,6 +2737,17 @@ function imagecreatefromfile($path, $user_functions = false)
 	}
 	
 	/**
+	* Returns true if the specified unix command exists
+	*/
+	function unix_command_exists($cmd) {
+		if (UNIX) {
+			$returnVal = shell_exec("which $cmd 2>/dev/null");
+			return (empty($returnVal) ? false : true);
+		}
+		return false;
+	}
+	
+	/**
 	* Textfunktionen einbinden
 	*/
 	include_once(RELATIVE_ROOT.'inc/text.inc.php');
