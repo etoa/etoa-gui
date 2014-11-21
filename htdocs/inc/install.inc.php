@@ -1,7 +1,7 @@
 <?PHP
 
 // Load template engine
-require_once(RELATIVE_ROOT."inc/template.inc.php");
+$tpl = new TemplateEngine();
 
 $tpl->setView('install');
 $tpl->setLayout('empty');

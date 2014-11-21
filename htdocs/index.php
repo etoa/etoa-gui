@@ -22,6 +22,7 @@
 	try {
 		require_once("inc/bootstrap.inc.php");
 	} catch (DBException $ex) {
+		$tpl = new TemplateEngine();
 		$tpl->assign("content_for_layout", $ex);
 		$tpl->display("tpl/layouts/empty.html");
 		exit;

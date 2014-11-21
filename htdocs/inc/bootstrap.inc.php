@@ -74,15 +74,15 @@
 		}
 	}
 
-	// Load template engine
-	require_once(RELATIVE_ROOT."inc/template.inc.php");
-
 	// Connect to database
 	dbconnect();
 
 	// Load config
 	$cfg = Config::getInstance();
 	$conf = $cfg->getArray();
+	
+	// Load default values
+	require_once(RELATIVE_ROOT."inc/def.inc.php");
 
 	// Init session
 	if (ADMIN_MODE) {
@@ -91,8 +91,8 @@
 		$s = UserSession::getInstance();
 	}
 	
-	// Load default values
-	require_once(RELATIVE_ROOT."inc/def.inc.php");
+	// Create template engine object
+	$tpl = new TemplateEngine();
 
 	// Set default page / action variables
 	$page = (isset($_GET['page']) && $_GET['page']!="") ? $_GET['page'] : DEFAULT_PAGE;
