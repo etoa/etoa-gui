@@ -15,7 +15,6 @@
 	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
 
 	<!-- CSS Stylesheets -->
-	<link rel="stylesheet" type="text/css" href="web/css/vendor/jquery-fancybox.css" />
 	<link rel="stylesheet" type="text/css" href="web/css/vendor/jquery-ui.css" />
 	{if $templateDir|default:'' ne ''}<link rel="stylesheet" type="text/css" href="{$templateDir}/style.css" />{/if}
 	{if $additional_css|default:'' and $additional_css|count gt 0}{foreach from=$additional_css item=css}<link rel="stylesheet" type="text/css" href="{$css}" />{/foreach}{/if}
@@ -37,7 +36,6 @@
 	{$xajaxJS|default:''}
 	<script type="text/javascript" src="web/js/vendor/jquery.min.js"></script>
 	<script type="text/javascript" src="web/js/vendor/jquery-ui.min.js"></script>
-	<script type="text/javascript" src="web/js/vendor/jquery-fancybox.pack.js"></script>
 	<script type="text/javascript" src="web/js/vendor/jquery.cookie.js"></script>
 	<script type="text/javascript" src="web/js/main.js"></script>
 	{if $page|default:'' ne ''}<script type="text/javascript">window.prevEntityUrl="?page={$page}&mode={$mode}&change_entity={$prevPlanetId}";window.nextEntityUrl="?page={$page}&mode={$mode}&change_entity={$nextPlanetId}";{$enableKeybindsString}</script>{/if}
