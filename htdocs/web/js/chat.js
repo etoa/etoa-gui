@@ -44,6 +44,8 @@ $(function() {
 		updateViewed();
 	});
 	
+	$('#usercount').click(fetchUserList);
+	
 	// gives focus to the input field.
 	$('#ctext').focus();
 	
@@ -57,15 +59,12 @@ $(function() {
 	{
 		logOut();
 	}
-	
-	// Enable tabs
-	$( "#tabs" ).tabs();
-	
+
 	// Resize chat area
 	function resizeUi() {
 		var h = $(window).height();
 		var w = $(window).width();
-		$("#chatitems").css('height', $("#tabs").height() - $("#tabs ul").height() - 20);
+		$("#chatitems").css('height', $("#chatcontainer").height() - 20);
 	};
 	var resizeTimer = null;
 	$(window).bind('resize', function() {
@@ -185,25 +184,47 @@ function updateUserList()
     function(data) {
       if(data.length == 0)
       {
-        $('#userlist').empty().append('Keine User online');
+		$('#usercount').html('Keine User online');
       }
       else
       {
-        $('#userlist').empty();
-        $.each(data, function(key, val) {
-          $('#userlist').append($('<div>')
-            .append($('<a>')
-              .attr('href','index.php?page=userinfo&id='+val.id)
-              .attr('target','main')
-              .text(val.nick)));
-        });
-        $('#tabs ul:first li a[href=#tabs-user]').text('User ('+data.length+')');
+		$('#usercount').html('' + data.length + ' User');
       }
     }, function(err) {
       msgFail('Serverfehler: '+err)
     });
     
   setTimeout(function() { updateUserList(); }, 5000);
+}
+
+function fetchUserList()
+{
+  ajaxRequest('chat_userlist', null, 
+    function(data) {
+		if(data.length == 0)
+		{
+			localMsg('Keine User online');
+		}
+		else
+		{
+			var elem = $('<div>');
+			elem.addClass('serverMessage');
+			elem.append($('<div>').text("User im Chat:"));
+			// Append each user
+			$.each(data, function(key, val) {
+			  elem.append($('<div>').text(" ")
+				.append($('<a>')
+				  .attr('href','index.php?page=userinfo&id='+val.id)
+				  .attr('target','main')
+				  .text(val.nick)));
+			});
+			$('#chatitems').append(elem);
+			$('#ctext').focus();
+			scrollDown();
+		}
+    }, function(err) {
+      msgFail('Serverfehler: '+err)
+    });
 }
 
 /* text display and exit functions */
@@ -383,12 +404,12 @@ function updateViewed(ev)
   // update invisible count
   if(unviewed > 0)
   {
-    $('#unread').css('display','block')
+    $('#unread').show()
     .html(unviewed+'&nbsp;&darr;');
   }
   else
   {
-    $('#unread').css('display','none');
+    $('#unread').hide();
   } 
 }
 
