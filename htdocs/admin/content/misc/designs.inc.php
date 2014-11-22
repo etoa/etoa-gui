@@ -228,4 +228,19 @@
 		'infoText' => 'InGame Infotext, falls definiert'
 	));
 	
+	$tpl->assign('additionalCommonCssFiles', [
+		[
+			'name' => 'reset.css',
+			'description' => 'Resets all element dimensions',
+			'linkUrl' => '../web/css/reset.css',
+			'url' => '../../../web/css/reset.css'
+		],
+		[
+			'name' => 'game.css',
+			'description' => 'Common definitions for some ingame elements, colors, icons, ...',
+			'linkUrl' => '../web/css/game.css',
+			'url' => '../../../web/css/game.css'
+		],
+	]);
+	
 ?>
