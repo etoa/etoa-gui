@@ -24,4 +24,4 @@
 	{$scripts_for_layout|default:''}
 	{$ajax_js}
 </head>
-<body{if $body_class|default:"" ne ""} class="{$body_class}"{/if}>
+<body{if $body_class|default:"" ne ""} class="{$body_class}"{/if}>{$bodyTopStuff|default:''}
