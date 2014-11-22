@@ -258,7 +258,6 @@ class MarketReport extends Report
 						</tr>";
 				}
 				echo "</table><br/>";
-				//echo "Die Waren werden von ".$ent2->detailLink()." nach ".$ent->detailLink()." geliefert.";
 				echo "Die Waren werden vom Marktplatz nach ".$ent->detailLink()." geliefert.";
 				if ($sellerFleet->valid())
 					echo " Landung: ".df($sellerFleet->landTime())."";
@@ -332,7 +331,7 @@ class MarketReport extends Report
 						</tr>";
 				}
 				echo "</table><br/>";
-				//echo "Die Waren werden von ".$ent2->detailLink()." nach ".$ent->detailLink()." geliefert.";
+
 				echo "Die Waren werden vom Marktplatz nach ".$ent->detailLink()." geliefert.";
 				if ($sellerFleet->valid())
 					echo " Landung: ".df($sellerFleet->landTime())."";
@@ -341,8 +340,6 @@ class MarketReport extends Report
 				$op = new User($this->opponent1Id);
 				$ent2 = Entity::createFactoryById($this->entity2Id);
 
-//				echo "Du hast folgendes Angebot (#".$this->recordId.") im <a href=\"?page=market&amp;mode=user_sell&amp;change_entity=".$this->entity1Id."\">Marktplatz</a>
-//				auf ".$ent->detailLink()." an ".$op->detailLink()." auf ".$ent2->detailLink()." verkauft:<br/><br/>";
 				echo "Du hast folgendes Angebot (#".$this->recordId.") im <a href=\"?page=market&amp;mode=user_sell&amp;change_entity=".$this->entity1Id."\">Marktplatz</a>
 				auf ".$ent->detailLink()." an ".$op->detailLink()." verkauft:<br/><br/>";
 				$ts = new Ship($this->shipId);

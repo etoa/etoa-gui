@@ -200,9 +200,6 @@ function addNewBuddy($form)
 			$msg = $bl->lastError;
 		}
 
-		// missing data error
-		//$msg = '';
-
 		return $ajax;
 	}
 

@@ -11,17 +11,16 @@
 	<meta name="keywords" content="Escape to Andromeda, Browsergame, Strategie, Simulation, Andromeda, MMPOG, RPG" />
 	<meta name="robots" content="nofollow" />
   
-  <link rel="shortcut icon" type="image/x-icon" href="../favicon.ico" />
+	<link rel="shortcut icon" type="image/x-icon" href="../favicon.ico" />
 
-	<link rel="stylesheet" type="text/css" href="../web/css/reset.css" />
-	<link rel="stylesheet" type="text/css" href="../web/css/messagebox.css" />
-	<link rel="stylesheet" type="text/css" href="../web/css/general.css" />
-	<link rel="stylesheet" type="text/css" href="../web/css/vendor/jquery-ui.admin.css" />
-	<link rel="stylesheet" type="text/css" href="../web/css/themes/admin/{$css_theme}.css" />
+	<link rel="stylesheet" type="text/css" href="web/css/vendor/jquery-ui.css" />
+	<link rel="stylesheet" type="text/css" href="web/css/themes/{$css_theme}.css" />
+	
 	<script src="../web/js/vendor/jquery.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../web/js/vendor/jquery.mapbox.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../web/js/vendor/jquery.mousewheel.js" type="text/javascript" charset="utf-8"></script>
+	
 	{$scripts_for_layout|default:''}
 	{$ajax_js}
 </head>
-<body{if $body_class|default:"" ne ""} class="{$body_class}"{/if}>
+<body{if $body_class|default:"" ne ""} class="{$body_class}"{/if}>{$bodyTopStuff|default:''}

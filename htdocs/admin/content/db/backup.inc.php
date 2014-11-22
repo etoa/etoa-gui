@@ -91,7 +91,7 @@
 	}
 	
 	$frm = new Form("bustn","?page=$page&amp;sub=$sub");
-	if (isset($_POST['submit_changes'])) //$frm->checkSubmit("submit_changes")
+	if (isset($_POST['submit_changes']))
 	{
 		$cfg->set("backup_dir", $_POST['backup_dir']);
 		$cfg->set("backup_retention_time", $_POST['backup_retention_time']);

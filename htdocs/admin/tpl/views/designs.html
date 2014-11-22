@@ -59,7 +59,9 @@
 <pre class="code">
 Ordner/                 Ordnername ist gleich dem Namen des Designs
  |- images/             Bilder
+ |- chat.css            (Optional) Stylesheet für den Chat
  |- design.xml          Informationen zum Design im XML Format
+ |- external.css        (Optional) Zusätzliches Stylesheet für externe Seiten (Registrierung, Passwort-Recovery, ...)
  |- scripts.js          JavaScript Code
  |- style.css           Stylesheet
  '- template.html       Haupt-Template
@@ -94,5 +96,25 @@ Ordner/                 Ordnername ist gleich dem Namen des Designs
 	</tbody>
 </table>
 
+<h3>Allgemeine zusätzliche CSS Dateien</h3>
+<p>Folgende CSS Dateien könne im style.css importiert werden (der Inhalt dieser Dateien kann alternativ auch in das Design reinkopiert und verändert werden):</p>
+<table class="tbl" style="width:100%">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Beschreibung</th>
+			<th>Verwendung</th>
+		</tr>
+	</thead>
+	<tbody>
+	{foreach item=v from=$additionalCommonCssFiles}
+		<tr>
+			<td><a href="{$v.linkUrl}" target="_blank">{$v.name}</a></td>
+			<td>{$v.description}</td>
+			<td><code>@import url('{$v.url}');</code></td>
+		</tr>
+	{/foreach}
+	</tbody>
+</table>
 
 {$content|default:''}

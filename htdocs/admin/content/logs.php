@@ -585,7 +585,6 @@
 				echo "<option value=\"".$k."\">".$v."</option>";
 		}
 		echo "</select> &nbsp; ";
-		//echo " <label for=\"searchentity\">Ziel:</label> <input type=\"text\" id=\"searchentity\" name=\"searchentity\" value=\"\" autocomplete=\"off\" /> &nbsp; ";
 		echo " <label for=\"searchtime\">Zeit:</label> ";
 		show_timebox("searchtime",time());
 		echo "&nbsp; ";
@@ -603,9 +602,6 @@
 		showAttackAbuseLogs();
 		echo "</div>";
 
-		//$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM logs;"));
-		//echo "<p>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.</p>";
-
 		$waveMaxCnt = array(3,4);				// Max. 3er/4er Wellen...
 		$waveTime = 15*60;						// ...innerhalb 15mins
 		
@@ -618,10 +614,6 @@
 		
 		$first_ban_time = 12*3600;							// Sperrzeit beim ersten Vergehen: 12h
 		$add_ban_time = 12*3600;								// Sperrzeit bei jedem weiteren Vergehen: 12h (wird immer dazu addiert)
-		
-		
-		
-		//echo "Angriffsverletzung (Test tool)<br><br><br>";
 		
 		// Alle Kampfberichte, die laut Regeln als Angriff zählen (Waffen > 0), aus den letzten 24h Stunden werden ausgelesen. KBs, die schon einmal zu einer Sperre geführt haben, werden nicht noch ein 2. mal verarbeitet.
 		
@@ -969,12 +961,7 @@
 		echo "<div id=\"log_contents\">";
 		showFleetLogs();
 		echo "</div>";
-
-		//$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM logs;"));
-		//echo "<p>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.</p>";
-
 	}
-
 
 	//
 	// New simple AJAX based general log viewer

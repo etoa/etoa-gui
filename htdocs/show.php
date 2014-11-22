@@ -14,15 +14,40 @@
 * @copyright Copyright (c) 2004 EtoA Gaming, www.etoa.ch
 */
 
-	$indexpage = array();
-	$indexpage['login']=array('url'=>'?index=login','label'=>'Einloggen');
-	$indexpage['register']=array('url'=>'?index=register','label'=>'Registrieren');
-	$indexpage['pwforgot']=array('url'=>'?index=pwforgot','label'=>'Passwort');
-	$indexpage['ladder']=array('url'=>'?index=ladder','label'=>'Rangliste');
-	$indexpage['gamestats']=array('url'=>'?index=gamestats','label'=>'Server');
-	$indexpage['pillory']=array('url'=>'?index=pillory','label'=>'Pranger');
-	$indexpage['help']=array('url'=>'?index=help','label'=>'Hilfe');
-	$indexpage['contact']=array('url'=>'?index=contact','label'=>'Kontakt');
+	$indexpage = [
+		'login' => [
+			'url'=>'?index=login',
+			'label'=>'Einloggen'
+		],
+		'register' => [
+			'url'=>'?index=register',
+			'label'=>'Registrieren'
+		],
+		'pwforgot' => [
+			'url'=>'?index=pwforgot',
+			'label'=>'Passwort'
+		],
+		'ladder' => [
+			'url'=>'?index=ladder',
+			'label'=>'Rangliste'
+		],
+		'gamestats' => [
+			'url'=>'?index=gamestats',
+			'label'=>'Server'
+		],
+		'pillory' => [
+			'url'=>'?index=pillory',
+			'label'=>'Pranger'
+		],
+		'help' => [
+			'url'=>'?index=help',
+			'label'=>'Hilfe'
+		],
+		'contact' => [
+			'url'=>'?index=contact',
+			'label'=>'Kontakt'
+		]
+	];
 
 	require_once("inc/bootstrap.inc.php");
 
@@ -66,7 +91,14 @@
 
 	$tpl->assign("gameTitle", getGameIdentifier().(isset($indexpage[$index]) ? ' - '.$indexpage[$index]['label'] : ''));
 	$tpl->assign("templateDir",CSS_STYLE);
-	$tpl->assign("additional_css", array('web/css/outgame.css'));
+	
+	$additionalCss = [];
+	if (file_exists(CSS_STYLE."/external.css")) {
+		$additionalCss[] = CSS_STYLE."/external.css";
+	} else {
+		$additionalCss[] = 'web/css/external.css';
+	}
+	$tpl->assign("additional_css", $additionalCss);
 
 	// Xajax header
 	$tpl->assign("xajaxJS", $xajax->getJavascript(XAJAX_DIR));

@@ -383,9 +383,6 @@
 		//
 		else
 		{
-			//$tpl->assign('subtitle', 'Suchmaske');
-			//echo "<h2>Neue Forschung hinzuf&uuml;gen</h2>";
-			
 			echo '<div class="tabs">
 			<ul>
 				<li><a href="#tabs-1">Suchmaske</a></li>

@@ -15,6 +15,66 @@ var msgHistoryIdx = -1;
 var chatPollTimeout = 0;
 var chatPollDelayMilliseconds = 1000;
 
+/*
+* Page initialization
+*/
+$(function() {
+
+	// Chat event handlers
+
+	$('#cform').submit(function() {
+		sendChat();
+		return false;
+	});
+	
+	$('#sendButton').click(function(){
+		sendChat();
+	});
+	
+	$('#logoutButton').click(function(){
+		logoutFromChat();
+	});
+	
+	$('#ctext').keyup(function(event) {
+		handleCTextKey(event);
+	});
+  
+	// add/remove unread messages indicator on scrolling
+	$('#chatitems').scroll(function(){
+		updateViewed();
+	});
+	
+	// gives focus to the input field.
+	$('#ctext').focus();
+	
+	// Start polling
+	if($('#chatitems').size() != 0)
+	{
+		poll(true);
+		updateUserList();
+	}
+	else
+	{
+		logOut();
+	}
+	
+	// Enable tabs
+	$( "#tabs" ).tabs();
+	
+	// Resize chat area
+	function resizeUi() {
+		var h = $(window).height();
+		var w = $(window).width();
+		$("#chatitems").css('height', $("#tabs").height() - $("#tabs ul").height() - 20);
+	};
+	var resizeTimer = null;
+	$(window).bind('resize', function() {
+		if (resizeTimer) clearTimeout(resizeTimer);
+		resizeTimer = setTimeout(resizeUi, 100);
+	});
+	resizeUi();
+});
+
 /* Basic chat and server communication functionality */
 
 // polls for new chat messages every second

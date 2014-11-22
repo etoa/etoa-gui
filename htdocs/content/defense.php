@@ -152,7 +152,6 @@
 			{
 				$buildlist[$arr['buildlist_building_id']]=$arr['buildlist_current_level'];
 			}
-			// echo $building_fields;
 			
 			// Gebaute Verteidigung laden
 			$res = dbquery("

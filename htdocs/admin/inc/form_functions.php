@@ -164,8 +164,6 @@
 							$iminfo = getimagesize($_FILES[$a['name']]['tmp_name']);
 							$imdata = addslashes(fread(fopen($form_data, "r"), filesize($form_data)));
 
-							//$iminfo[0] $iminfo[1] filesize($form_data) time())
-
 							$image = imagecreatefromjpeg($_FILES[$a['name']]['tmp_name']);
 							$image1 = imagecreate(150,150*$iminfo['1']/$iminfo['0']);
 							$farbe_body=imagecolorallocate($image1,51,51,51);
@@ -350,8 +348,6 @@
 			{
 				case "readonly":
 					//Case readonly: do *nothing* with the field!
-                    //$sql .= "`".$a['name']."` = `".$a['name']."`";
-                    
                     //but instead do *not* add a comma
                     $cntadd = 0;
 				break;

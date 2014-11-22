@@ -122,7 +122,6 @@
 	    $tabulator=1;
 			echo "<form id=\"shipForm\" onsubmit=\"xajax_havenShowTarget(xajax.getFormValues('shipForm')); return false;\">";
 			tableStart("Vorhandene Raumschiffe");
-			//echo "<table class=\"tb\">";
 			echo "<tr>
 				<th colspan=\"6\">Schiffe wählen</th>
 			</tr>";
@@ -399,7 +398,6 @@
 					echo "</td></tr>";
 					
 					tableEnd();
-					//echo "</table><br/>";					
 					$response->assign("havenContentShips","innerHTML",ob_get_contents());				
 					ob_end_clean();		
 									
@@ -1734,7 +1732,6 @@
 		$fleet->resetSupport();
 		
 		if ($code == "support") {
-			//echo "<span ".tm($fleet->getSupport(),$fleet->getSupportDesc())." style=\"font-weight:bold;\">";		
 			echo "<form id=\"supportForm\">";
 			echo "<input type=\"text\" 
 								id=\"hour\"

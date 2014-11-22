@@ -385,8 +385,7 @@
 					echo "<td style=\"$style;width:110px;\">".date("Y-d-m H:i",$r->timestamp)."</td>";
 					echo "<td style=\"$style\">".$types[$r->type]."</td>";
 					echo "<td style=\"$style\">".cut_string($uidf,11)."</td>";
-					echo "<td><div id=\"r_s_".$rid."\" style=\"".$style."cursor:pointer;\" onclick=\"$('#r_l_".$rid."').toggle();\">".cut_string($r->subject,50)."</div><div id=\"r_l_".$rid."\" style=\"display:none;\"><br/>".$r."</div></td>";	//".mTT($r->subject,text2html(substr($r, 0, 1000)))."
-					//echo "<td>".edit_button("?page=$page&amp;sub=reports&amp;reportedit=edit&amp;report_id=".$rid)."</td>";
+					echo "<td><div id=\"r_s_".$rid."\" style=\"".$style."cursor:pointer;\" onclick=\"$('#r_l_".$rid."').toggle();\">".cut_string($r->subject,50)."</div><div id=\"r_l_".$rid."\" style=\"display:none;\"><br/>".$r."</div></td>";
 					echo "</tr>";
 				}
 				echo "</table><br/>";

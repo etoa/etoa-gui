@@ -68,8 +68,6 @@
           $cu->profileBoardUrl = $_POST['user_profile_board_url'];
           
           success_msg("Benutzer-Daten wurden ge&auml;ndert!");
-          //$cu->addToUserLog("settings","{nick} hat sein Profil aktualisiert.",1);
-            
         }
         else
               echo "<b>Fehler!</b> Die E-Mail-Adresse ist nicht korrekt!<br/><br/>";

@@ -1,3 +1,9 @@
+/* 
+* EtoA Discovery Design by Greaser
+*/
+
+@import url('../../../web/css/game.css');
+
 body {
 	background-image: url(images/Hintergrund.jpg);
 	background-repeat: no-repeat;

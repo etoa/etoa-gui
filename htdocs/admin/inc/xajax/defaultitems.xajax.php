@@ -221,7 +221,6 @@ function addItemToSet($setid,$form)
 	
 	$out = ob_get_contents();
 	ob_end_clean();
-	//$or->assign("itemlist","innerHTML",$out);
 	return $or;
 }
 
