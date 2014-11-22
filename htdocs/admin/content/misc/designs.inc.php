@@ -12,7 +12,7 @@
 		if (isset($_FILES["design"])) 
 		{		
 			// Check MIME type
-			if (in_array($_FILES["design"]['type'], array('application/zip', 'application/x-zip-compressed')))
+			if (in_array($_FILES["design"]['type'], array('application/zip', 'application/x-zip-compressed', 'application/x-zip')))
 			{
 				// Test if ZIP file can be read
 				$zip = new ZipArchive();
