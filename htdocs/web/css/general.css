@@ -132,45 +132,6 @@
 }
 
 
-/*------- Tooltip ----------*/
-
-.tooltip {
-  position: absolute;
-  display: none;
-  background: #223;
-  color:#fff;
-  border:1px solid #415680;
-  font-size:9pt;
-  font-family:arial;
-  padding:1px;
-  max-width:400px;
-  z-index:1000;
-}
-
-.tooltip .tttitle	{
-	background:#225;
-  border:1px solid #415680;
-	padding: 2px;
-	font-weight:bold;
-	margin-bottom:2px;
-}
-
-.tooltip .ttcontent	{
-  border:1px solid #415680;
-	padding: 4px;
-}
-
-.tooltip a	{
-	color:#eee;
-	text-decoration:underline;
-	font-weight:bold;
-}
-.tooltip a:hover	{
-	color:#fff;
-	text-decoration:none;;
-}
-
-
 /* Xajax Suchliste z.b. bei Usereingabe in Nachrichten*/
 .citybox  {
   position:absolute;
