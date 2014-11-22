@@ -19,7 +19,7 @@ input[type='button'],input[type='submit']	{
   cursor:pointer;
 }
 
-#tabs {
+#chatcontainer {
   position:fixed;
   top:0;
   left:0;
@@ -27,18 +27,8 @@ input[type='button'],input[type='submit']	{
   bottom:45px;
 }
 
-.ui-widget, div.chatmsg, div.serverMessage {
+div.chatmsg, div.serverMessage {
   font-size: 1em;
-}
-
-.ui-widget-content { 
-  border: none;
-}
-
-.ui-widget-header { 
-  border-top: none;
-  border-left: none;
-  border-right: none; 
 }
 
 #chatitems	{ 

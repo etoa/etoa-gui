@@ -6,7 +6,6 @@
 <head>
 	<meta charset="utf-8">
 		<title>EtoA Chat</title>
-		<link rel="stylesheet" type="text/css" href="web/css/vendor/jquery-ui.css" />
 		<link rel="stylesheet" type="text/css" href="{$chatCss}" />
 		<script type="text/javascript" src="web/js/vendor/jquery.min.js"></script>
 		<script type="text/javascript" src="web/js/main.js" ></script>
@@ -19,17 +18,8 @@
 			{if isset($errmsg)}
 				<p>{$errmsg}</p>
 			{else}
-				<div id="tabs">
-					<ul>
-						<li><a href="#tabs-global">Global</a></li>
-						<li><a href="#tabs-user">User</a></li>
-					</ul>
-					<div id="tabs-global">
-						<div id="chatitems"></div>
-					</div>
-					<div id="tabs-user">
-						<div id="userlist"></div>
-					</div>
+				<div id="chatcontainer">
+					<div id="chatitems"></div>
 				</div>
 				<div id="loading">
 					<span id="loadingAnimation"><img src="web/images/ajax-loader-chat.gif" alt="Loading"></span>
@@ -44,6 +34,5 @@
 				</div>
 			{/if}
 		{/if}
-		<script type="text/javascript" src="web/js/vendor/jquery-ui.min.js"></script>
 	</body>
 </html>

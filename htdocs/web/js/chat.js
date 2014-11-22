@@ -57,15 +57,12 @@ $(function() {
 	{
 		logOut();
 	}
-	
-	// Enable tabs
-	$( "#tabs" ).tabs();
-	
+
 	// Resize chat area
 	function resizeUi() {
 		var h = $(window).height();
 		var w = $(window).width();
-		$("#chatitems").css('height', $("#tabs").height() - $("#tabs ul").height() - 20);
+		$("#chatitems").css('height', $("#chatcontainer").height() - 20);
 	};
 	var resizeTimer = null;
 	$(window).bind('resize', function() {
