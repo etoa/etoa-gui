@@ -91,7 +91,14 @@
 
 	$tpl->assign("gameTitle", getGameIdentifier().(isset($indexpage[$index]) ? ' - '.$indexpage[$index]['label'] : ''));
 	$tpl->assign("templateDir",CSS_STYLE);
-	$tpl->assign("additional_css", array('web/css/external.css'));
+	
+	$additionalCss = [];
+	if (file_exists(CSS_STYLE."/external.css")) {
+		$additionalCss[] = CSS_STYLE."/external.css";
+	} else {
+		$additionalCss[] = 'web/css/external.css';
+	}
+	$tpl->assign("additional_css", $additionalCss);
 
 	// Xajax header
 	$tpl->assign("xajaxJS", $xajax->getJavascript(XAJAX_DIR));
