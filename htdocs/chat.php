@@ -30,8 +30,30 @@
 			$tpl->assign('chatColor', $cu->properties->chatColor);
 		}
 	}
-	
 	$tpl->assign('login', $login);
+	
+	// Select design
+	$design = DESIGN_DIRECTORY."/official/".$cfg->value('default_css_style');
+	if (isset($cu) && $cu->properties->cssStyle !='')
+	{
+		if (is_dir(DESIGN_DIRECTORY."/custom/".$cu->properties->cssStyle)) 
+		{
+			$design = DESIGN_DIRECTORY."/custom/".$cu->properties->cssStyle;
+		}
+		else if (is_dir(DESIGN_DIRECTORY."/official/".$cu->properties->cssStyle))
+		{
+			$design = DESIGN_DIRECTORY."/official/".$cu->properties->cssStyle;
+		}
+	}
+	define('CSS_STYLE', $design);
+	
+	// Chat design css
+	if (file_exists(CSS_STYLE."/chat.css")) {
+		$chatCss = CSS_STYLE."/chat.css";
+	} else {
+		$chatCss = 'web/css/chat.css';
+	}
+	$tpl->assign('chatCss', $chatCss);
 	
 	$tpl->display("tpl/layouts/chat.html");
 	

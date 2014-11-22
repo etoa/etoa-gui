@@ -240,7 +240,7 @@
 			'description' => 'Common definitions for some ingame elements, colors, icons, ...',
 			'linkUrl' => '../web/css/game.css',
 			'url' => '../../../web/css/game.css'
-		],
+		]
 	]);
 	
 ?>
