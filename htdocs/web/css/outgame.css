@@ -27,19 +27,21 @@ body	{
 }
 
 #outGameTopmenu li {
-	float:left;
-	display:block;
-	margin:0px 0px;
-	padding:10px;
-	text-align:center;
-	width:auto;
-	border-left:1px solid #222;
-	border-right:1px solid #444;
+	display:inline;
+	margin:0px;
+	padding:0px;
 }
 
 #outGameTopmenu li a {
+	display: inline-block;
 	text-decoration:none;
 	color:#999;
+	margin:0px 0px;
+	padding:30px 15px;
+	text-align:center;
+	width:auto;
+	border-right:1px solid #222;
+	border-left:1px solid #444;
 }
 
 #outGameTopmenu li a:hover {

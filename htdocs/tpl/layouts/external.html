@@ -9,15 +9,15 @@
 	<div id="outGameTopName">
 		{$roundname|default:'EtoA'}
 	</div>
-	<ul id="outGameTopmenu">
-	{if $topmenu|count gt 0}
-	{foreach from=$topmenu key=identifier item=data}
-		<li>
-			<a href="{$data.url}"><img src="web/images/outgame/{$identifier}.png" alt="{$data.label}" /><br/>{$data.label}</a>
-		</li>
-	{/foreach}
-	{/if}
-	</ul>
+	<ul id="outGameTopmenu">{strip}
+		{if $topmenu|count gt 0}
+			{foreach from=$topmenu key=identifier item=data}
+				<li>
+					<a href="{$data.url}" class="nav-item-{$identifier}">{$data.label}</a>
+				</li>
+			{/foreach}
+		{/if}
+	{/strip}</ul>
 </div>
 {/if}
 <div id="outGameContent">
