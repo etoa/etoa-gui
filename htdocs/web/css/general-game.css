@@ -3,23 +3,9 @@ img	{
 	border:none;
 }
 
-.imgcell, .tb .imgcell	{
-	padding:0px;
-}
-
-.imgcell img, .tb .imgcell	img {
-	display:block;
-}
-
-.goodcolor, .tb .goodcolor	{
-	color:#0f0;
-}
-
-.badcolor, .tb .badcolor	{
-	color:#f50;
-}
-
-/* Search-Box */
+/*
+* Search-Box 
+*/
 
 .search	{
 	background: #000 url('../images/search.png') 2px 1px no-repeat;
@@ -31,17 +17,18 @@ img	{
 	padding-left:20px;
 }
       
-/* BB-Code Items */      
+/* 
+* BB-Code Items
+*/
 
-.bbtable td	{
-	padding:2px;
-}
-.bbtable th	{
+.bbtable td, .bbtable th {
 	padding:2px;
 }
      
-/* Resource display */                         
-                              
+/* 
+* Resource display 
+*/
+
 img.resIcon	{
 	float:left;
 	margin-right:5px;
@@ -50,6 +37,10 @@ img.resIcon	{
 #resbox	span	{
 	padding-right:5px;
 }
+
+/*
+* Planet resources box
+*/
 
 .resBoxTitleCell	{
 	vertical-align:middle;
@@ -60,10 +51,9 @@ img.resIcon	{
 	height:100%;
 }
 
-
-
-
-/* Message-Boxes */
+/*
+* Message-Boxes
+*/
 
 .errorBox	{
 	border:1px #f00 solid;
@@ -111,12 +101,9 @@ img.resIcon	{
 	margin:15px auto;
 }
 
-/* Misc */
-
-.numbers	{
-	text-align:right;
-}
-
+/*
+* User and alliance info log
+*/
 
 .infoLog	{
 	border-bottom:1px solid #556;
@@ -132,7 +119,9 @@ img.resIcon	{
  white-space : nowrap;
 }
 
-/* todo */
+/*
+* Market
+*/
 
 #market_search_filter_category_selector	{
 	float:left;
@@ -169,37 +158,9 @@ img.resIcon	{
 	cursor:pointer;
 }
 
-
-
-ul.horizMenu	{
-	list-style-type:none;
-	text-align:center;
-	background:#225;
-	border:1px solid #fff;
-	padding:5px;
-}
-
-.horizMenu li	{
-	float:left;
-	padding:0px 5px;
-}
-
-.horizMenu li a	{
-	text-decoration:none;
-	font-weight:bold;
-}
-
-.horizMenu li a:hover	{
-	text-decoration:none;
-	font-weight:bold;
-	color:#aaa;
-}
-
-ul.horizMenu:after	{
-	content:'.';
-	visibility:hidden;
-	clear:both;
-}
+/*
+* Battle report
+*/
 
 table.battleTable, table.battleTable tr, table.battleTable tr td  {
     border:none;
@@ -209,11 +170,19 @@ table.battleTable {
     margin:0 auto;
 }
 
+/*
+* Preview of chat color in user settings -> Game
+*/
+
 #chatPreview {
 	float:right;
 	padding: 5px 20px;
 	background-color:#000;
 }
+
+/*
+* Fleet bookmark ship selection auto-complete
+*/
 
 #shiplist  {
   position:absolute;
