@@ -194,7 +194,7 @@ function updateUserList()
               .attr('target','main')
               .text(val.nick)));
         });
-        $('#tabs ul:first li a[href=#tabs-user]').text('User ('+data.length+')');
+		$('#usercount').html('' + data.length + ' User');
       }
     }, function(err) {
       msgFail('Serverfehler: '+err)
@@ -380,12 +380,12 @@ function updateViewed(ev)
   // update invisible count
   if(unviewed > 0)
   {
-    $('#unread').css('display','block')
+    $('#unread').show()
     .html(unviewed+'&nbsp;&darr;');
   }
   else
   {
-    $('#unread').css('display','none');
+    $('#unread').hide();
   } 
 }
 
