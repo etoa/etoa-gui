@@ -30,8 +30,6 @@
 	echo "<form action=\"?page=$page\" method=\"post\">";
 	
 	// Gebäude Level und Arbeiter laden
- 	//$bl = new BuildList($cp->id,$cu->id);
-	//$cryptoCenterLevel = $bl->getLevel(BUILD_CRYPTO_ID);
 	if ($cu->allianceId!=0)
 	{
 		$cryptoCenterLevel = $cu->alliance->buildlist->getLevel(ALLIANCE_CRYPTO_ID);

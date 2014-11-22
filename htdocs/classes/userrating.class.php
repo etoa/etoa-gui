@@ -51,14 +51,11 @@
 		{
 			try
 			{
-				if (!property_exists($this,$key))
+				if (!property_exists($this,$key)) {
 					throw new EException("Property $key existiert nicht in der Klasse ".__CLASS__);
-				
-				
+				}
 				
 				throw new EException("Property $key der Klasse ".__CLASS__." ist nicht änderbar!");
-				
-				//$this->$key = $val;
 				return false;
 			}
 			catch (EException $e)

@@ -211,7 +211,6 @@
 				
 				if ($msgcreatpreview)
 				{
-					//$prevstr="xajax_messagesNewMessagePreview(document.getElementById('message').value)";
 					$prevstr="text2html(document.getElementById('message').value,'msgPreview');";
 				}
 				else

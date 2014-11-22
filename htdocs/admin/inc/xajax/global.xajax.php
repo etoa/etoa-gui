@@ -530,7 +530,6 @@ function editShipByShipId($form,$shipId)
 		{
 			if ($arr['ship_id']==$shipId)
 			{
-		 		//$objResponse->assign("data_".$shipId,"style.display", 'none');
 		 		$objResponse->assign("edit_".$shipId,"style.display", '');
 				
 				$p = new Planet($arr['shiplist_entity_id']);
@@ -1167,7 +1166,6 @@ function searchUserList($val,$function)
     }
 
     $objResponse = new xajaxResponse();
-   	//$objResponse->script("xajax_showShipsOnPlanet(0)");
 
   	if(strlen($sOut) > 0)  
   	{

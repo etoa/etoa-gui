@@ -94,7 +94,6 @@ function showAllianceMembers($alliance_id=0,$field_id)
 							</tr>
 							".$members."
 							</table>";
-			//$out = "".$cnt." Mitglieder:<br><br>".$members."";
 		}
 	}
 	

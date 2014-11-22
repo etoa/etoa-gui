@@ -8,7 +8,6 @@
     $cy_num = $cfg->param2('num_of_cells');
     
     $sectorMap = new SectorMapRenderer($cx_num, $cy_num);
-    //$sectorMap->setCellUrl("?page=galaxy&cell_id=");
     
     // Selected cell
     if (isset($_GET['cell'])) {
