@@ -131,41 +131,6 @@
 	color:#aaffff;
 }
 
-
-/* Xajax Suchliste z.b. bei Usereingabe in Nachrichten*/
-.citybox  {
-  position:absolute;
-  z-index:10;
-  border:1px #ccc solid;
-  border-top:none;
-  border-bottom:none;
-  background:#223;
-  padding:0px;
-  display:none;
-}
-
-.citybox ul  {
-  padding:0 10px 0 10px;
-  margin:0;
-}
-
-.citybox li  {
-  list-style:none;
-  padding-left:0;
-}
-
-.citybox a  {
-  text-decoration:none;
-  color:#aaa;
-  display:block;
-  padding:5px;
-  border-bottom:1px solid #fff;
-}
-.citybox a:hover {
-  color:#fff;
-  background:#575763;
-}
-
 /*
 * Exceptions
 */

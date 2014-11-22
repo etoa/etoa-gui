@@ -786,7 +786,7 @@ body.adminpopup {
   border:1px #ccc solid;
   border-top:none;
   border-bottom:none;
-  background:#223;
+  background:#ddd;
   padding:0px;
   display:none;
 }
@@ -803,20 +803,68 @@ body.adminpopup {
 
 #userlist a  {
   text-decoration:none;
-  color:#aaa;
+  color:#111;
+  display:block;
+  padding:5px;
+  border-bottom:1px solid #777;
+}
+#userlist a:hover {
+  color:#000;
+  background:#fff;
+}
+
+
+/*
+* Xajax Suchliste z.b. bei Usereingabe in Nachrichten
+*/
+
+.citybox  {
+  position:absolute;
+  z-index:10;
+  border:1px #ccc solid;
+  border-top:none;
+  border-bottom:none;
+  background:#ddd;
+  padding:0px;
+  display:none;
+}
+
+.citybox ul  {
+  padding:0 10px 0 10px;
+  margin:0;
+}
+
+.citybox li  {
+  list-style:none;
+  padding-left:0;
+}
+
+.citybox a  {
+  text-decoration:none;
+  color:#111;
   display:block;
   padding:5px;
   border-bottom:1px solid #fff;
-}
-#userlist a:hover {
-  color:#fff;
-  background:#225;
+  font-weight: normal;
 }
 
+.citybox a:hover {
+  color:#000;
+  background:#eee;
+  font-weight: normal;
+}
+
+/*
+* Popup
+*/
 
 .popuplink.highlight {
 	color:#ff0;
 }
+
+/*
+* Eventhandler
+*/
 
 .eventhandler_log {
 	padding:3px;
