@@ -140,7 +140,6 @@
 			echo "<th class=\"tbltitle\">Reichweite</th>";
 			echo "<th class=\"tbltitle\">Schaden</th>";
 			echo "<th class=\"tbltitle\">Verteidigung</th>";
-			//echo "<th class=\"tbltitle\">&nbsp;</th></tr>";
 			while ($arr = mysql_fetch_array($res))
 			{
 				echo "<tr><td class=\"tbldata\" style=\"width:40px;background:#000\">
@@ -160,7 +159,6 @@
 						echo "Kein</td>";
 					}
 				echo "<td class=\"tbldata\">".nf($arr['missile_damage'])."</td></tr>";
-				//echo "<td class=\"tbldata\"><a href=\"?page=$page&site=$site&id=".$arr['missile_id']."\">Details</a></td></tr>";
 			}
 			tableEnd();
 		}

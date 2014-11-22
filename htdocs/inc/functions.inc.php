@@ -1857,7 +1857,6 @@
 	function show_avatar($avatar=BOARD_DEFAULT_IMAGE)
 	{
 		if ($avatar=="") $avatar=BOARD_DEFAULT_IMAGE;
-		//echo "<div style=\"background:url('images/frame.gif') no-repeat;padding:8px;\">";
 		echo "<div style=\"padding:8px;\">";
 		echo "<img id=\"avatar\" src=\"".BOARD_AVATAR_DIR."/".$avatar."\" alt=\"avatar\" style=\"width:64px;height:64px;\"/></div>";
 	}

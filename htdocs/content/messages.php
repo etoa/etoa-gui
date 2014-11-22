@@ -155,7 +155,6 @@
 		LIMIT 1;");
 				if (mysql_num_rows($mres)>0)
 				{
-					//echo "<form action=\"?page=$page&mode=".$mode."\" method=\"post\">";
 					//checker_init();
 					$marr = mysql_fetch_array($mres);
 					// Sender

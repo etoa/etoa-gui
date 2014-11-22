@@ -124,7 +124,6 @@
 		$referers[] = 'http://'.$_SERVER['HTTP_HOST'];
 		foreach ($referers as &$rfr)
 		{
-			//echo "RefCheck: ".$_SERVER["HTTP_REFERER"]." vs ".$rfr."<br/>";
 			if (substr($_SERVER["HTTP_REFERER"],0,strlen($rfr))==$rfr)
 			{
 				$referer_allow=true;

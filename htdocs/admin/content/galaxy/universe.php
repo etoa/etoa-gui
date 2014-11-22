@@ -240,8 +240,6 @@
       else
       {
         echo "<h2>&Uuml;bersicht</h2>";
-        
-        //echo "<p><img src=\"../misc/map.image.php?req_admin\" alt=\"Galaxiekarte\" id=\"img\" usemap=\"#Galaxy\" style=\"border:none;\"/></p>";
 
         tableStart("Informationen", GALAXY_MAP_WIDTH);
         $res = dbquery("SELECT MAX(sx),MAX(sy) FROM cells;");

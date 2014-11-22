@@ -22,15 +22,6 @@
 
 	echo "<h1>Berichte</h1>";
 
-/*
-	echo "<ul class=\"horizMenu\">
-	<li>Typ: <a href=\"?page=$page\">Neuste</a>";
-	foreach (Report::$types as $k=>$v)
-	{
-		echo "<li><a href=\"?page=$page&amp;type=$k\">$v</a></li>";
-	}
-	echo "</ul>"; */
-
 	// Show navigation
 	$tabitems = array("all"=>"Neuste Berichte");
 	foreach (Report::$types as $k=>$v)

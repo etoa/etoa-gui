@@ -288,7 +288,6 @@
 				</script>";
 				
 				$tpl->assign('subtitle', "User bearbeiten: ".$arr['user_nick']);
-				//echo "<h2>Details <span style=\"color:#0f0;\">".$arr['user_nick']."</span> ".cb_button("add_user=".$arr['user_id']."")."</h2>";
 
 				echo "<form action=\"?page=$page&amp;sub=edit&amp;id=".$id."\" method=\"post\">
 				<input type=\"hidden\" id=\"tabactive\" name=\"tabactive\" value=\"\" />";

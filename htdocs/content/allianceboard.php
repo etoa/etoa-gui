@@ -832,7 +832,6 @@
 					tableStart();
 					echo "<tr><th>Name:</th><td>".$alliance[$alliance_bnd_id]['name']."</td></tr>";
 					echo "<tr><th>Beschreibung:</th><td>".$arr['alliance_bnd_text']."</td></tr>";
-					//echo "<tr><th>Reihenfolge/Position:</th><td><input type=\"text\" size=\"1\" maxlenght=\"2\" name=\"cat_order\" value=\"".$arr['cat_order']."\" /></td></tr>";
 					echo "<tr><th>Zugriff:</th><td>";
 					foreach ($rank as $k=>$v)
 					{
