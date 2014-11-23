@@ -1,5 +1,5 @@
 body	{
-	background:#000;
+	background:#000 url('../images/background.jpg');
 	color:#fff;
 	font-family:arial;
 	font-size:9pt;
@@ -11,12 +11,6 @@ input,select	{
 	border:1px solid #fff;
 	background:#111;
 	color:#fff;
-}
-
-input[type='button'],input[type='submit']	{
-	background:#223;	
-	font-weight:bold;
-	cursor:pointer;
 }
 
 #chatcontainer {
@@ -35,7 +29,7 @@ div.chatmsg, div.serverMessage {
 	border-radius:2px;
 	padding:5px;	
 	margin-top:2px;	
-	background:black;
+	background:rgba(0,0,0, 0.3);
 	overflow:auto;
 	vertical-align:middle;
 	font-family: Verdana, Arial, sans-serif;
@@ -107,7 +101,12 @@ div.chatmsg, div.serverMessage {
 }
 
 #ctext {
-	width:250px;
+	width:100%;
+	border-color: #999;
+}
+
+#ctext:focus {
+	border-color: #ccc;
 }
 
 #status {
@@ -133,4 +132,29 @@ div.chatmsg, div.serverMessage {
 
 #usercount:hover {
 	color: #fff;
+}
+
+#chattopnav {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	background: rgba(0,0,255, 0.5);
+}
+
+#logoutButton {
+	position: absolute;
+	top: 1px;
+	right: 19px;
+	z-index: 100;
+	font-weight: bold;
+	cursor: pointer;
+	border: 1px solid #333;
+	color: #aaa;
+	background: rgba(0, 0, 0, 0.5);
+}
+
+#logoutButton:hover {
+	border: 1px solid #555;
+	color: #ddd;
 }

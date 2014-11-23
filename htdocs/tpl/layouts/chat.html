@@ -19,6 +19,7 @@
 				<p>{$errmsg}</p>
 			{else}
 				<div id="chatcontainer">
+					<input type="button" id="logoutButton" value="X" title="Chat schliessen"/>
 					<div id="chatitems"></div>
 				</div>
 				<div id="loading">
@@ -31,8 +32,7 @@
 				</div>
 				<div id="chatinput">
 					<form action="#" method="post" autocomplete="off" id="cform">
-					<input type="text" id="ctext" name="ctext" value="" size="40" maxlength="255" style="color:#{$chatColor}"/><input type="button" id="sendButton" value="Chat" title="Text senden" />
-					<input type="button" id="logoutButton" value="X" title="Chat schliessen"/>
+						<input type="text" id="ctext" name="ctext" value="" size="40" maxlength="255" style="color:#{$chatColor}"/>
 					</form>
 				</div>
 			{/if}

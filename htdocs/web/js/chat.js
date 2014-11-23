@@ -27,10 +27,6 @@ $(function() {
 		return false;
 	});
 	
-	$('#sendButton').click(function(){
-		sendChat();
-	});
-	
 	$('#logoutButton').click(function(){
 		logoutFromChat();
 	});
