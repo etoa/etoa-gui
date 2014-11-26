@@ -8,7 +8,7 @@
 		private $fields = 0, $maxLevel = 0;
 		
 		private $costs = array();
-		private $costsFactor, $demolishCostsFactor, $storeFactor;
+		private $costsFactor, $prodFactor, $demolishCostsFactor, $storeFactor;
 		private $bunkerRes, $bunkerFleetCount, $bunkerFleetSpace;
 		private $shortDesc, $longDesc;
 		
@@ -68,6 +68,7 @@
 					$this->costsFactor = $arr['building_build_costs_factor'];
 					$this->demolishCostsFactor = $arr['building_demolish_costs_factor'];
 					$this->storeFactor = $arr['building_store_factor'];
+          $this->prodFactor = $arr['building_production_factor'];
 
 					$this->bunkerRes = $arr['building_bunker_res'];
 					$this->bunkerFleetCount = $arr['building_bunker_fleet_count'];

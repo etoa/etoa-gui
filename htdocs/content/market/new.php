@@ -470,8 +470,8 @@
           				<th colspan=\"6\" style=\"text-align:center;vertical-align:middle;\">Beschreibung</th>
           			</tr>
           			<tr>
-          				<td colspan=\"6\" style=\"text-align:center;vertical-align:middle;\">
-          					<input type=\"text\" value=\"\" name=\"auction_text\" id=\"auction_text\" size=\"100\" maxlength=\"60\" ".tm("Text","Schreib einen kleinen Werbetext f&uuml;r deine Waren.")." onkeyup=\"checkMarketAuctionFormular(0);\"/>
+          				<td colspan=\"6\" style=\"text-align:left;vertical-align:middle;\">
+          					<input type=\"text\" value=\"\" name=\"auction_text\" id=\"auction_text\" size=\"55\" maxlength=\"60\" ".tm("Text","Schreib einen kleinen Werbetext f&uuml;r deine Waren.")." onkeyup=\"checkMarketAuctionFormular(0);\"/>
           				</td>
           			</tr>";
 					// Status Nachricht (Ajax Überprüfungstext)
