@@ -19,7 +19,7 @@ $tpl = new TemplateEngine('admin/tpl');
 $tpl->setLayout("default/popup");
 $tpl->setView("default");
 
-$tpl->assign("css_theme", (!isset($themePath) || !is_file(RELATIVE_ROOT."/web/css/themes/admin/".$themePath."css")) ? "default" : $themePath);
+$tpl->assign("css_theme", $css_theme);
 $tpl->assign("page_title", getGameIdentifier()." Administration");
 $tpl->assign("ajax_js", $xajax->getJavascript(XAJAX_DIR));
 

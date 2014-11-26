@@ -38,12 +38,15 @@ Version NEXT
  * Added system info page to admin menu
  * Added possibility to discover specific coordinates or the complete map for any user
  * Added screen which shows executed and pending database schema migrations
-
+ * Show changed config values on "restore defaults" page
+ 
 #### Changes ####
 
  * Manual updates page moved to "Eventhandler" -> "Periodic tasks" menu item
  * Every periodic task can now be executed on its own
  * Open each user surveillance session table in separate screen
+ * Changed layout of detailed config editor
+ * If no backup directory is defined, a default path will be used
  
 #### Bugfixes ####
 

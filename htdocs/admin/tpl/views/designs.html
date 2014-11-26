@@ -59,12 +59,15 @@
 <pre class="code">
 Ordner/                 Ordnername ist gleich dem Namen des Designs
  |- images/             Bilder
+ |- chat.css            (Optional) Stylesheet für den Chat
  |- design.xml          Informationen zum Design im XML Format
+ |- external.css        (Optional) Zusätzliches Stylesheet für externe Seiten (Registrierung, Passwort-Recovery, ...)
  |- scripts.js          JavaScript Code
  |- style.css           Stylesheet
  '- template.html       Haupt-Template
 </pre>
 <p>Im Template kann die Syntax der <a href="http://www.smarty.net" target="_blank">Smarty-Templatesprache</a> verwendet werden.</p>
+<p>Der Quellcode der optionalen Stilesheets kann von den Originalen kopiert werden: <a href="../web/css/chat.css" target="_blank">chat.css</a> und <a href="../web/css/external.css" target="_blank">external.css</a>.</p>
 
 <h3>Design-Info Datei</h3>
 <p>Beispiel einer <code>design.xml</code> Datei:</p>
@@ -94,5 +97,25 @@ Ordner/                 Ordnername ist gleich dem Namen des Designs
 	</tbody>
 </table>
 
+<h3>Allgemeine zusätzliche CSS Dateien</h3>
+<p>Folgende CSS Dateien könne im style.css importiert werden (der Inhalt dieser Dateien kann alternativ auch in das Design reinkopiert und verändert werden):</p>
+<table class="tbl" style="width:100%">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Beschreibung</th>
+			<th>Verwendung</th>
+		</tr>
+	</thead>
+	<tbody>
+	{foreach item=v from=$additionalCommonCssFiles}
+		<tr>
+			<td><a href="{$v.linkUrl}" target="_blank">{$v.name}</a></td>
+			<td>{$v.description}</td>
+			<td><code>@import url('{$v.url}');</code></td>
+		</tr>
+	{/foreach}
+	</tbody>
+</table>
 
 {$content|default:''}

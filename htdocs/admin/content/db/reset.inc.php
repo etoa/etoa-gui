@@ -46,7 +46,8 @@
 				dbquery("SET FOREIGN_KEY_CHECKS=1;");
 
 				// Restore default config
-				$cr = $cfg->restoreDefaults();
+				$cr = Config::restoreDefaults();
+				$cfg->reload();
 				
 				$mtx->release();
 				
@@ -65,6 +66,10 @@
 				
 				// Load schema
 				DBManager::getInstance()->migrate();
+				
+				// Load config default
+				Config::restoreDefaults();
+				$cfg->reload();
 				
 				$mtx->release();
 

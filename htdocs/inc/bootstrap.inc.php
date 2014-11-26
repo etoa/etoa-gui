@@ -15,51 +15,8 @@
 	// www.nicu.ch | mail@nicu.ch								 		//
 	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
 	//////////////////////////////////////////////////
-	//
-	// 	File: bootstrap.inc.php
-	// 	Created: 07.5.2007
-	// 	Last edited: 06.07.2007
-	// 	Last edited by: MrCage <mrcage@etoa.ch>
-	//	
-	/**
-	* Defines some global constants which should not be changed
-	*
-	* @author MrCage mrcage@etoa.ch
-	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/
-	
-	//Fehler ausgabe definiert
-  	ini_set('display_errors', 1);
-	ini_set('arg_separator.output',  '&amp;');
 
-	date_default_timezone_set('Europe/Zurich');
-
-	// Path to the relative root of the game
-	if (!defined('RELATIVE_ROOT'))
-		define('RELATIVE_ROOT','');
-		
-	// Load constants
-	require_once(RELATIVE_ROOT."inc/const.inc.php");
-
-	// Load functions
-	require_once(RELATIVE_ROOT."inc/functions.inc.php");
-
-  // Load specific admin functions
-  if (ADMIN_MODE) {
-    require(RELATIVE_ROOT."admin/inc/admin_functions.inc.php");
-  }
-  
-	// Include db config
-	if (!configFileExists(DBManager::getInstance()->getConfigFile()))
-	{
-		if (ADMIN_MODE)
-			forward(RELATIVE_ROOT);
-		require(RELATIVE_ROOT."inc/install.inc.php");
-		exit();
-	}
-
-	// Load template engine
-	require_once(RELATIVE_ROOT."inc/template.inc.php");
+	require("init.inc.php");
 
 	// Connect to database
 	dbconnect();
@@ -67,27 +24,19 @@
 	// Load config
 	$cfg = Config::getInstance();
 	$conf = $cfg->getArray();
-
-	date_default_timezone_set("Europe/Zurich");
-
-	// Debug einschalten?
-	if (!defined('ETOA_DEBUG'))
-		define('ETOA_DEBUG',$cfg->debug->v);
-
-	// Fehlermeldungs-Level feststellen
-	if (ETOA_DEBUG==1)
-		error_reporting(E_ALL);
-	else
-		error_reporting(E_ERROR | E_WARNING | E_PARSE);
-
-	// Init session
-	if (ADMIN_MODE)
-		$s = AdminSession::getInstance();
-	else
-		$s = UserSession::getInstance();
-
+	
 	// Load default values
 	require_once(RELATIVE_ROOT."inc/def.inc.php");
+
+	// Init session
+	if (ADMIN_MODE) {
+		$s = AdminSession::getInstance();
+	} else {
+		$s = UserSession::getInstance();
+	}
+	
+	// Create template engine object
+	$tpl = new TemplateEngine();
 
 	// Set default page / action variables
 	$page = (isset($_GET['page']) && $_GET['page']!="") ? $_GET['page'] : DEFAULT_PAGE;
@@ -98,13 +47,13 @@
 	$mode = isset($_GET['mode']) ? $_GET['mode'] : null;
 
 	// Initialize XAJAX and load functions
-	if (!isset($_SERVER['SHELL']) && (!defined('SKIP_XAJAX_INIT') || !SKIP_XAJAX_INIT))
+	if (!isCLI() && (!defined('SKIP_XAJAX_INIT') || !SKIP_XAJAX_INIT))
 	{
-		define('XAJAX_DEBUG',false);
-		if (ADMIN_MODE)
+		if (ADMIN_MODE) {
 			require_once(RELATIVE_ROOT."/admin/inc/xajax_admin.inc.php");
-		else
+		} else {
 			require_once(RELATIVE_ROOT."inc/xajax.inc.php");
+		}
 	}
 
 	// Set popup identifiert to false

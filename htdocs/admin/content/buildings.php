@@ -596,8 +596,6 @@
 		//
 		else
 		{
-			//$tpl->assign('subtitle', 'Suchmaske');
-		
 			echo '<div class="tabs">
 			<ul>
 				<li><a href="#tabs-1">Schnellsuche</a></li>

@@ -112,7 +112,6 @@ class UserSession extends Session
 									if (strlen($uarr['user_password']) == 64) {
 										$pw = $loginPassword;
 										$seed = $uarr['user_registered'];
-										//$salt = "wokife63wigire64reyodi69"; // Test
 										$salt = "yheaP;BXf;UokIAJ4dhaOL"; // Round 9
 										if ($uarr['user_password'] == md5($pw.$seed.$salt).md5($salt.$seed.$pw)) {
 											$newPw = saltPasswort($pw);

@@ -19,6 +19,8 @@ class Config implements ISingleton
 	private $_items;
 
 	private $defaultsXml;
+	
+	const DEFAULTS_FILE_PATH = "config/defaults.xml";
 
 	/**
 	* Get instance with this very nice singleton design pattern
@@ -58,6 +60,13 @@ class Config implements ISingleton
 		} else {
 			err_msg("Config table empty!");
 		}
+	}
+	
+	/**
+	* Reloads all values from the database
+	*/
+	public function reload() {
+		$this->load();
 	}
 	
 	/**
@@ -182,9 +191,9 @@ class Config implements ISingleton
 		}			   		
 	}
 
-	function restoreDefaults() {
+	public static function restoreDefaults() {
 		try {
-			if ($xml = simplexml_load_file(RELATIVE_ROOT."config/defaults.xml")) {
+			if ($xml = simplexml_load_file(RELATIVE_ROOT.self::DEFAULTS_FILE_PATH)) {
 				dbquery("TRUNCATE TABLE config;");
 				$cnt = 0;
 				foreach ($xml->items->item as $i) {
@@ -209,7 +218,6 @@ class Config implements ISingleton
 					));
 					$cnt++;
 				}
-				$this->load();
 				return $cnt;
 			}
 			throw new EException("Konfiguratonsdatei existiert nicht!");
@@ -221,7 +229,7 @@ class Config implements ISingleton
 
 	function loadDefault($key) {
 		if ($this->defaultsXml==null) {
-			$this->defaultsXml = simplexml_load_file(RELATIVE_ROOT."config/defaults.xml");
+			$this->defaultsXml = simplexml_load_file(RELATIVE_ROOT.self::DEFAULTS_FILE_PATH);
 		}
 		$arr = $this->defaultsXml->xpath("/config/items/item[@name='".$key."']");
 		if ($arr != null && count($arr) > 0) {
@@ -233,7 +241,7 @@ class Config implements ISingleton
 
 	function categories() {
 		if ($this->defaultsXml==null) {
-			$this->defaultsXml = simplexml_load_file(RELATIVE_ROOT."config/defaults.xml");
+			$this->defaultsXml = simplexml_load_file(RELATIVE_ROOT.self::DEFAULTS_FILE_PATH);
 		}
 		$c = array();
 		foreach ($this->defaultsXml->categories->category as $i) {
@@ -244,14 +252,14 @@ class Config implements ISingleton
 
 	function itemInCategory($cat) {
 		if ($this->defaultsXml==null) {
-			$this->defaultsXml = simplexml_load_file(RELATIVE_ROOT."config/defaults.xml");
+			$this->defaultsXml = simplexml_load_file(RELATIVE_ROOT.self::DEFAULTS_FILE_PATH);
 		}
 		return $this->defaultsXml->xpath("/config/items/item[@cat='".$cat."']");
 	}
 	
 	function getBaseItems() {
 		if ($this->defaultsXml==null) {
-			$this->defaultsXml = simplexml_load_file(RELATIVE_ROOT."config/defaults.xml");
+			$this->defaultsXml = simplexml_load_file(RELATIVE_ROOT.self::DEFAULTS_FILE_PATH);
 		}
 		return $this->defaultsXml->xpath("/config/items/item[@base='yes']");
 	}

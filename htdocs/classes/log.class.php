@@ -124,7 +124,7 @@ class Log extends BaseLog
 		{
 			$severity = self::INFO;
 		}
-		if ($severity > self::DEBUG || Config::getInstance()->debug->v==1)
+		if ($severity > self::DEBUG || isDebugEnabled())
 		{
 			dbquery("
 			INSERT DELAYED INTO

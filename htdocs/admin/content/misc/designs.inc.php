@@ -12,7 +12,7 @@
 		if (isset($_FILES["design"])) 
 		{		
 			// Check MIME type
-			if (in_array($_FILES["design"]['type'], array('application/zip', 'application/x-zip-compressed')))
+			if (in_array($_FILES["design"]['type'], array('application/zip', 'application/x-zip-compressed', 'application/x-zip')))
 			{
 				// Test if ZIP file can be read
 				$zip = new ZipArchive();
@@ -227,5 +227,20 @@
 		'buddyreq' => 'Ist wahr falls Freundschaftsanfragen vorhanden sind',
 		'infoText' => 'InGame Infotext, falls definiert'
 	));
+	
+	$tpl->assign('additionalCommonCssFiles', [
+		[
+			'name' => 'reset.css',
+			'description' => 'Resets all element dimensions',
+			'linkUrl' => '../web/css/reset.css',
+			'url' => '../../../web/css/reset.css'
+		],
+		[
+			'name' => 'game.css',
+			'description' => 'Common definitions for some ingame elements, colors, icons, ...',
+			'linkUrl' => '../web/css/game.css',
+			'url' => '../../../web/css/game.css'
+		]
+	]);
 	
 ?>

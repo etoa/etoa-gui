@@ -50,7 +50,6 @@
 				$pw = generatePasswort();
 	
 				// Email schreiben
-				//$email_text="Hallo ".$_POST['user_nick']."<br/><br/>Du hast ein neues Passwort für deinen Account angefordert.<br>Hier sind die neuen Daten:<br><br><b>Nick:</b> ".$_POST['user_nick']."<br><b>Passwort:</b> ".$pw."<br><br>Weiterhin viel Spass wünscht...<br>Das EtoA-Team";
 				$email_text="Hallo ".$_POST['user_nick']."\n\nDu hast ein neues Passwort angefordert.\nHier sind die neuen Daten:\n\nUniversum: ".Config::getInstance()->roundname->v."\n\nNick: ".$_POST['user_nick']."\nPasswort: ".$pw."\n\nWeiterhin viel Spass...\nDas EtoA-Team";
 				$mail = new Mail("Passwort-Anforderung",$email_text);
 				$mail->send($_POST['user_email_fix']);

@@ -1,4 +1,4 @@
-{foreach from=$navmenu key=c item=i}
+{strip}{foreach from=$navmenu key=c item=i}
 	{ifadminrole provided=$user_roles required=$i.roles}
 	<li><a href="?page={$i.page}{if $i.sub|default:'' ne ''}&amp;sub={$i.sub}{/if}"{if $page eq  $i.page} class="active"{/if}>{$c}</a>
 	{if $i.children|default:'' ne '' && $i.children|count gt 0 && $i.page eq $page}
@@ -12,4 +12,4 @@
 	{/if}
 	</li>
 	{/ifadminrole}
-{/foreach}
+{/foreach}{/strip}

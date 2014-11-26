@@ -1,5 +1,5 @@
 body	{
-	background:#000;
+	background:#000 url('../images/background.jpg');
 	color:#fff;
 	font-family:arial;
 	font-size:9pt;
@@ -13,68 +13,52 @@ input,select	{
 	color:#fff;
 }
 
-input[type='button'],input[type='submit']	{
-	background:#223;	
-	font-weight:bold;
-  cursor:pointer;
+#chatcontainer {
+	position:fixed;
+	top:0;
+	left:0;
+	right:0;
+	bottom:40px;
 }
 
-#tabs {
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  bottom:45px;
-}
-
-.ui-widget, div.chatmsg, div.serverMessage {
-  font-size: 1em;
-}
-
-.ui-widget-content { 
-  border: none;
-}
-
-.ui-widget-header { 
-  border-top: none;
-  border-left: none;
-  border-right: none; 
+div.chatmsg, div.serverMessage {
+	font-size: 1em;
 }
 
 #chatitems	{ 
-  border-radius:2px;
-  padding:5px;	
-  margin-top:2px;	
-  background:black;
-  overflow:auto;
-  vertical-align:middle;
-  font-family: Verdana, Arial, sans-serif;
+	border-radius:2px;
+	padding:5px;	
+	margin-top:2px;	
+	background:rgba(0,0,0, 0.3);
+	overflow:auto;
+	vertical-align:middle;
+	font-family: Verdana, Arial, sans-serif;
 }
 
 #chatitems img {
-  vertical-align:middle;
-  margin-right:3px;
+	vertical-align:middle;
+	margin-right:3px;
 }
 
 #chatitems .systemMessage {
-  color:#777;
+	color:#777;
 }
 
 #chatitems .serverMessage {
- color:#aaa;
+	color:#aaa;
 }
 
 #chatitems .adminMessage {
- color:#ff8;
- font-weight:bold;
+	color:#ff8;
+	font-weight:bold;
 }
 
 #chatitems a {
-  color:#fff;
+	color:#fff;
 }
 
 #userlist	{
-  padding:5px 10px;
+	padding:5px 10px;
 }
 
 #userlist a	{
@@ -85,25 +69,25 @@ input[type='button'],input[type='submit']	{
 	position:fixed;
 	left:0px;
 	right:0px;
-	bottom:35px;
-  height:16px;
-  background:black;
-  color:#fff;
-  overflow:hidden;
-  vertical-align:middle;
+	bottom:30px;
+	height:16px;
+	background:black;
+	color:#fff;
+	overflow:hidden;
+	vertical-align:middle;
 }
 
 #loadingAnimation { 
-  display:inline-block;
-  width:20px;
+	  display:inline-block;
+	  width:20px;
 }
 
 #loadingAnimation img { 
-  vertical-align:middle;
+	vertical-align:middle;
 }
 
 #loading span { 
-  vertical-align:middle;
+	vertical-align:middle;
 }
 
 #chatinput	{
@@ -111,25 +95,58 @@ input[type='button'],input[type='submit']	{
 	left:0px;
 	right:0px;
 	bottom:0px;
-	background:#225;
-  height:20px;
-	padding:5px 5px 10px 5px;
+	background:#222;
+	height:20px;
+	padding:5px 5px 5px 5px;
 }
 
 #ctext {
-  width:250px;
+	width:100%;
+	border-color: #999;
 }
 
-#unread{
-  float: right;
-  padding: 0 0.5em;
-  color: lime;
-  z-index: 10;
-  position: fixed;
-  right: 0;
-  /* should be #loading bottom +1px */
-  bottom: 36px;
-  /* not transparent, so it hides oversized msgFail text below */
-  background-color: inherit;
+#ctext:focus {
+	border-color: #ccc;
 }
 
+#status {
+	float: right;
+	padding: 0 0.5em;
+	z-index: 10;
+	position: fixed;
+	right: 0;
+	/* should be #loading bottom +1px */
+	bottom: 31px;
+	/* not transparent, so it hides oversized msgFail text below */
+}
+
+#unread {
+	color: lime;
+	padding-left: 5px;
+}
+
+#usercount {
+	color: #ccc;
+	cursor: pointer;
+}
+
+#usercount:hover {
+	color: #fff;
+}
+
+#logoutButton {
+	position: absolute;
+	top: 1px;
+	right: 19px;
+	z-index: 100;
+	font-weight: bold;
+	cursor: pointer;
+	border: 1px solid #333;
+	color: #aaa;
+	background: rgba(0, 0, 0, 0.5);
+}
+
+#logoutButton:hover {
+	border: 1px solid #555;
+	color: #ddd;
+}

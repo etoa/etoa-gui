@@ -95,14 +95,12 @@
 			if (mysql_num_rows($res)>0)
 			{
 				echo "<tr><th>Zeit</th>";
-				//echo "<th>Passwort</th>";
 				echo "<th>IP-Adresse</th>
 				<th>Hostname</th>
 				<th>Client</th></tr>";
 				while ($arr=mysql_fetch_array($res))
 				{
 					echo "<tr><td>".df($arr['failure_time'])."</td>";
-					//echo "<td>".$arr['failure_pw']."</td>";
 					echo "<td>".$arr['failure_ip']."</td>";
 					echo "<td>".Net::getHost($arr['failure_ip'])."</td>";
 					echo "<td>".$arr['failure_client']."</td></tr>";

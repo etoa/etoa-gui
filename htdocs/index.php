@@ -22,6 +22,7 @@
 	try {
 		require_once("inc/bootstrap.inc.php");
 	} catch (DBException $ex) {
+		$tpl = new TemplateEngine();
 		$tpl->assign("content_for_layout", $ex);
 		$tpl->display("tpl/layouts/empty.html");
 		exit;
@@ -123,7 +124,6 @@
 		$referers[] = 'http://'.$_SERVER['HTTP_HOST'];
 		foreach ($referers as &$rfr)
 		{
-			//echo "RefCheck: ".$_SERVER["HTTP_REFERER"]." vs ".$rfr."<br/>";
 			if (substr($_SERVER["HTTP_REFERER"],0,strlen($rfr))==$rfr)
 			{
 				$referer_allow=true;

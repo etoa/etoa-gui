@@ -288,7 +288,6 @@
 				</script>";
 				
 				$tpl->assign('subtitle', "User bearbeiten: ".$arr['user_nick']);
-				//echo "<h2>Details <span style=\"color:#0f0;\">".$arr['user_nick']."</span> ".cb_button("add_user=".$arr['user_id']."")."</h2>";
 
 				echo "<form action=\"?page=$page&amp;sub=edit&amp;id=".$id."\" method=\"post\">
 				<input type=\"hidden\" id=\"tabactive\" name=\"tabactive\" value=\"\" />";
@@ -1319,7 +1318,7 @@
 				// DON'T BUILD IN A FEATURE THAT'S NOT YET AVILABLE
 				/*
 				echo "<div id=\"pointsBox\">
-					<div style=\"text-align:center;\"><img src=\"../web/images/admin/ajax-loader-circle.gif\" /><br/>Wird geladen...</div>
+					<div style=\"text-align:center;\"><img src=\"web/images/ajax-loader-circle.gif\" /><br/>Wird geladen...</div>
 				</div>
 				";	*/
 				
@@ -1354,7 +1353,7 @@
 					echo '<p>Dieser User hat keine Tickets</p>';
 				}
 				
-					//<div style=\"text-align:center;\"><img src=\"../web/images/admin/ajax-loader-circle.gif\" /><br/>Wird geladen...</div>
+					//<div style=\"text-align:center;\"><img src=\"web/images/ajax-loader-circle.gif\" /><br/>Wird geladen...</div>
 				echo "</div>";	
 				
 				echo '</div><div id="tabs-11">';
@@ -1364,7 +1363,7 @@
 				*/			
 			
 				echo "<div id=\"commentsBox\">
-					<div style=\"text-align:center;\"><img src=\"../web/images/admin/ajax-loader-circle.gif\" /><br/>Wird geladen...</div>
+					<div style=\"text-align:center;\"><img src=\"web/images/ajax-loader-circle.gif\" /><br/>Wird geladen...</div>
 				</div>";
 				
 				echo '</div><div id="tabs-12">';

@@ -1008,7 +1008,6 @@ function showAttackAbuseLogs($args=null,$limit=-1,$load=true)
 			$fUser = new User($banData['fUser']);
 			$eUser = new User($banData['eUser']);
 			$action = FleetAction::createFactory($banData['action']);
-			//$fa = FleetAction::createFactory($arr['action']);
 			$entity = Entity::createFactoryById($banData['entity']);
 			
 			echo "<tr>

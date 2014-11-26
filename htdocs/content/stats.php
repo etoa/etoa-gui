@@ -230,7 +230,7 @@
 		<span class=\"userInactiveColor\">Inaktiv (".USER_INACTIVE_SHOW." Tage)</span>, 
 		<span class=\"userAllianceMemberColor\">Allianz(-mitglied)</span>
 		<br/>";
-		echo "Letzte Aktualisierung: <b>".df($conf['statsupdate']['v'])." Uhr</b><br/>";
+		echo "Letzte Aktualisierung: <b>".df($cfg->get('statsupdate'))." Uhr</b><br/>";
 		echo "Die Aktualisierung der Punkte erfolgt ";
 		$h = $conf['points_update']['v']/3600;
 		if ($h>1)

@@ -64,7 +64,9 @@
     </item>
     <item name="statsupdate" cat="1">
       <v comment="Statistikupdate" type="timedate">1240063202</v>
-      <p1 comment="Spieler im Urlaubsmodus in den Statistiken anzeigen" type="onoff">0</p1>
+    </item>
+    <item name="show_hmod_users_stats" cat="1">
+      <v comment="Spieler im Urlaubsmodus in den Statistiken anzeigen" type="onoff">1</v>
     </item>
     <item name="stats_num_rows" cat="1">
       <v comment="Statistik Anzahl Daten/Seite" type="text">50</v>
@@ -662,7 +664,7 @@ http://www.etoa.ch</v>
     </item>
 
     <item name="backup_dir" cat="21" base="yes">
-      <v comment="Backup-Pfad" type="text">/home/etoa/backup/</v>
+      <v comment="Backup-Pfad (leerlassen für Standardpfad)" type="text"></v>
 	</item>
     <item name="backup_retention_time" cat="21" base="yes">
       <v comment="Backup-Aufbewahrungsdauer (Tage)" type="text">14</v>
@@ -671,9 +673,6 @@ http://www.etoa.ch</v>
       <v comment="Backup mit GZIP komprimieren" type="onoff">0</v>
     </item>
 
-    <item name="debug" cat="22">
-      <v comment="Debug-Modus" type="onoff">0</v>
-    </item>
     <item name="accesslog" cat="22">
       <v comment="Seitenzugriffe loggen" type="onoff">0</v>
     </item>

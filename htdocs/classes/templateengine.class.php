@@ -11,6 +11,10 @@ class TemplateEngine {
 	}	
 	
 	public function __construct($tplDir=null) {
+		
+		// Load smarty template engine
+		require_once(SMARTY_DIR.'/Smarty.class.php');
+
 		$this->smarty = new Smarty();
 		$this->smarty->template_dir = $tplDir != null ? RELATIVE_ROOT.$tplDir : RELATIVE_ROOT."tpl";
 		$this->smarty->compile_dir = SMARTY_COMPILE_DIR;	

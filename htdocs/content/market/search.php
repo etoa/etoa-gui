@@ -36,7 +36,6 @@
 	tableStart("Suchfilter");
 
 	echo "<tr><td>";
-	//echo "<div id=\"search_cat_field\" style=\"text-align:center;vertical-align:middle;height:30px;\">
 	echo "<div id=\"market_search_filter_category_selector\">Kategorie:
 					<select id=\"search_cat\" name=\"search_cat\" onchange=\"showSearchFilter(this.value);applySearchFilter();\">";
 	if(MIN_MARKET_LEVEL_RESS<=MARKET_LEVEL)

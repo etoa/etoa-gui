@@ -120,8 +120,7 @@ class User
 
 			$this->deleted = $arr['user_deleted'];
 
-				//$this->monitored = ($arr['user_observe']!="" && stristr($arr['user_observe'],"bug")) ? true : false;
-				$this->monitored = ($arr['user_observe']!="") ? true : false;
+			$this->monitored = ($arr['user_observe']!="") ? true : false;
 
 			$this->registered = $arr['user_registered'];
 			$this->setup = $arr['user_setup']==1 ? true : false;

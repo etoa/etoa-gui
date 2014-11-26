@@ -1857,7 +1857,6 @@
 	function show_avatar($avatar=BOARD_DEFAULT_IMAGE)
 	{
 		if ($avatar=="") $avatar=BOARD_DEFAULT_IMAGE;
-		//echo "<div style=\"background:url('images/frame.gif') no-repeat;padding:8px;\">";
 		echo "<div style=\"padding:8px;\">";
 		echo "<img id=\"avatar\" src=\"".BOARD_AVATAR_DIR."/".$avatar."\" alt=\"avatar\" style=\"width:64px;height:64px;\"/></div>";
 	}
@@ -2720,6 +2719,32 @@ function imagecreatefromfile($path, $user_functions = false)
 			rmdir($dir); 
 		} 
 	 }
+	
+	/**
+	* Returns true if the debug mode is enabled 
+	* by checking the existence of the file config/debug
+	*/
+	function isDebugEnabled() {
+		return file_exists(RELATIVE_ROOT.'config/debug');
+	}
+	
+	/**
+	* Returns true if script is run on command line
+	*/
+	function isCLI() {
+		return isset($_SERVER['SHELL']);
+	}
+	
+	/**
+	* Returns true if the specified unix command exists
+	*/
+	function unix_command_exists($cmd) {
+		if (UNIX) {
+			$returnVal = shell_exec("which $cmd 2>/dev/null");
+			return (empty($returnVal) ? false : true);
+		}
+		return false;
+	}
 	
 	/**
 	* Textfunktionen einbinden

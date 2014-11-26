@@ -211,7 +211,6 @@
 				
 				if ($msgcreatpreview)
 				{
-					//$prevstr="xajax_messagesNewMessagePreview(document.getElementById('message').value)";
 					$prevstr="text2html(document.getElementById('message').value,'msgPreview');";
 				}
 				else
@@ -293,7 +292,6 @@
 		echo "<script type=\"text/javascript\">";
 		if ($msgcreatpreview)
 		{
-			//echo "xajax_messagesNewMessagePreview(document.getElementById('message').value);";
 			echo "text2html(document.getElementById('message').value,'msgPreview');";
 		}
 		echo "document.getElementById('user_nick').focus()";

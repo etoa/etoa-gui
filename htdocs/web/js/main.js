@@ -1204,9 +1204,6 @@ function addFontColor(id, colorId)
 		text = text.replace(/\[page=(.*?)\](.*?)\[\/page\]/gi, "<a href='?page=$1'>$2</a>");
 		text = text.replace(/\[url=(.*?)\](.*?)\[\/URL\]/gi, "<a href='$1' target='_blank'>$2</a>");
 		text = text.replace(/\[URL\](.*?)\[\/URL\]/gi, "<a href='$1' target='_blank'>$1</a>");
-		//text = text.replace(/http:\/\/www\.(\S+)\b/gi, " <a href='http://www.$1' target='_blank'>http://www.$1</a>");
-		//text = text.replace(/^http:\/\/(\S+)/gi, "<a href='http://$1' target='_blank'>http://$1</a>");
-		//text = text.replace(/www\.(\S+)\b/gi, " <a href='http://www.$1' target='_blank'>www.$1</a>");
 		text = text.replace(/\[email=(.*?)\](.*?)\[\/email\]/gi, "<a href='mailto:$1'>$2</a>");
 		text = text.replace(/\[email\](.*?)\[\/email\]/gi, "<a href='mailto:$1'>$1</a>");
 		

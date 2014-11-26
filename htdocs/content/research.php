@@ -637,7 +637,6 @@ if (isset($cp)) {
 							{
 								echo "<tr><td style=\"color:red;\">Erforschen</td><td>".tf($btime)."</td>";
 								echo $bcstring;
-								//echo "<td>".nf($bc['metal'])."</td><td>".nf($bc['crystal'])."</td><td>".nf($bc['plastic'])."</td><td>".nf($bc['fuel'])."</td><td>".nf($bc['food'])."</td></tr>";
 								echo "<tr><td colspan=\"7\"><i>Es kann nichts erforscht werden da gerade an einer anderen Technik geforscht wird!</i></td></tr>";
 							}
 							// Zuwenig Rohstoffe vorhanden

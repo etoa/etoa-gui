@@ -58,6 +58,12 @@ The admin panel can be accessed at roundx/admin.
  * Go to Admin-Panel => Config => Imagepacks and generate the downloadable imagepack files
  * Go to Admin-Panel => Config => Generate Universe to create the universe for this round
  
+Debug mode
+----------
+
+Create an empty file `config/debug` to enable the debug mode.
+
+ 
 Sample installation on host.etoa.net
 ------------------------------------
 

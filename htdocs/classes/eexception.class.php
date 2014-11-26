@@ -9,7 +9,7 @@
 			$f = fopen(ERROR_LOGFILE,"a+");
 			fwrite($f,date("d.m.Y H:i:s").", ".$_SERVER['REMOTE_ADDR'].", ".$cu."\n".$str."\n\n");
 			fclose($f);
-			if (!isset($_SERVER['SHELL']))
+			if (!isCLI())
 			{
 				$str = "<div class=\"errorBox\" style=\"text-align:left;\"><h2>Allgemeiner Fehler</h2> ".parent::getMessage()."<br/>
 				<b>Datei:</b> ".parent::getFile().", <b>Zeile:</b> ".parent::getLine()."";

@@ -229,7 +229,16 @@
 				{
 					$bc['costs'.$rk] = $cu->specialist->costsBuilding * $this->building->costs[$rk] * pow($this->building->costsFactor,$this->level+$levelUp);
 				}
-				$bc['costs5'] = $cu->specialist->costsBuilding * $this->building->costs[5] * pow($this->building->costsFactor,$this->level+$levelUp);
+        
+				if ($this->level != 0)
+        {
+				  $bc['costs5'] = ($cu->specialist->costsBuilding * $this->building->costs[5] * pow($this->building->prodFactor,$this->level+$levelUp))-
+                          ($cu->specialist->costsBuilding * $this->building->costs[5] * pow($this->building->prodFactor,$this->level-1));
+        }
+        else
+        {
+          $bc['costs5'] = ($cu->specialist->costsBuilding * $this->building->costs[5] * pow($this->building->prodFactor,$this->level+$levelUp));
+        } 
 
 				$bonus = $cu->race->buildTime + $cp->typeBuildtime + $cp->starBuildtime + $cu->specialist->buildTime - 3;
 
@@ -269,8 +278,11 @@
 				$this->demolishCosts = $this->getBuildCosts($levelUp);
 
 				foreach($this->demolishCosts as $id=>$element)
+        {
+          if ($id == 'costs5') $element = 0; 
 					$this->demolishCosts[$id] = $element * $this->building->demolishCostsFactor;
-			}
+			  }
+      }
 			return $this->demolishCosts;
 		}
 

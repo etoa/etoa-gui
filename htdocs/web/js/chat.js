@@ -15,6 +15,61 @@ var msgHistoryIdx = -1;
 var chatPollTimeout = 0;
 var chatPollDelayMilliseconds = 1000;
 
+/*
+* Page initialization
+*/
+$(function() {
+
+	// Chat event handlers
+
+	$('#cform').submit(function() {
+		sendChat();
+		return false;
+	});
+	
+	$('#logoutButton').click(function(){
+		logoutFromChat();
+	});
+	
+	$('#ctext').keyup(function(event) {
+		handleCTextKey(event);
+	});
+  
+	// add/remove unread messages indicator on scrolling
+	$('#chatitems').scroll(function(){
+		updateViewed();
+	});
+	
+	$('#usercount').click(fetchUserList);
+	
+	// gives focus to the input field.
+	$('#ctext').focus();
+	
+	// Start polling
+	if($('#chatitems').size() != 0)
+	{
+		poll(true);
+		updateUserList();
+	}
+	else
+	{
+		logOut();
+	}
+
+	// Resize chat area
+	function resizeUi() {
+		var h = $(window).height();
+		var w = $(window).width();
+		$("#chatitems").css('height', $("#chatcontainer").height() - 20);
+	};
+	var resizeTimer = null;
+	$(window).bind('resize', function() {
+		if (resizeTimer) clearTimeout(resizeTimer);
+		resizeTimer = setTimeout(resizeUi, 100);
+	});
+	resizeUi();
+});
+
 /* Basic chat and server communication functionality */
 
 // polls for new chat messages every second
@@ -125,25 +180,47 @@ function updateUserList()
     function(data) {
       if(data.length == 0)
       {
-        $('#userlist').empty().append('Keine User online');
+		$('#usercount').html('Keine User online');
       }
       else
       {
-        $('#userlist').empty();
-        $.each(data, function(key, val) {
-          $('#userlist').append($('<div>')
-            .append($('<a>')
-              .attr('href','index.php?page=userinfo&id='+val.id)
-              .attr('target','main')
-              .text(val.nick)));
-        });
-        $('#tabs ul:first li a[href=#tabs-user]').text('User ('+data.length+')');
+		$('#usercount').html('' + data.length + ' User');
       }
     }, function(err) {
       msgFail('Serverfehler: '+err)
     });
     
   setTimeout(function() { updateUserList(); }, 5000);
+}
+
+function fetchUserList()
+{
+  ajaxRequest('chat_userlist', null, 
+    function(data) {
+		if(data.length == 0)
+		{
+			localMsg('Keine User online');
+		}
+		else
+		{
+			var elem = $('<div>');
+			elem.addClass('serverMessage');
+			elem.append($('<div>').text("User im Chat:"));
+			// Append each user
+			$.each(data, function(key, val) {
+			  elem.append($('<div>').text(" ")
+				.append($('<a>')
+				  .attr('href','index.php?page=userinfo&id='+val.id)
+				  .attr('target','main')
+				  .text(val.nick)));
+			});
+			$('#chatitems').append(elem);
+			$('#ctext').focus();
+			scrollDown();
+		}
+    }, function(err) {
+      msgFail('Serverfehler: '+err)
+    });
 }
 
 /* text display and exit functions */
@@ -323,12 +400,12 @@ function updateViewed(ev)
   // update invisible count
   if(unviewed > 0)
   {
-    $('#unread').css('display','block')
+    $('#unread').show()
     .html(unviewed+'&nbsp;&darr;');
   }
   else
   {
-    $('#unread').css('display','none');
+    $('#unread').hide();
   } 
 }
 

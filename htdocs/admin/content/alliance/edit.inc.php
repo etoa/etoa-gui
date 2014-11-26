@@ -483,9 +483,7 @@
 					elseif ($arr['alliance_buildlist_build_end_time']>0) echo "Bau abgeschlossen";
 					else echo "Untätig";
 					echo "</td>";
-          // TODO Implement
-          //echo "<td>".edit_button("javascript:;","document.getElementById(buildlist_".$arr['alliance_buildlist_id'].").style.display=''")."</td>";
-          echo "</tr>";
+					echo "</tr>";
 					echo "<tr id=\"buildlist_".$arr['alliance_buildlist_id']."\" style=\"display: none;\"><td>test</td></tr>";
 				}
 			}
@@ -522,9 +520,7 @@
 					elseif ($arr['alliance_techlist_build_end_time']>0) echo "Forschen abgeschlossen";
 					else echo "Untätig";
 					echo "</td>";
-          // TODO Implement
-          //echo "<td>".edit_button("javascript:;","document.getElementById(techlist_".$arr['alliance_techlist_id'].").style.display='block'")."</td>";
-          echo "</tr>";
+					echo "</tr>";
 				}
 			}
 			else

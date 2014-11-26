@@ -463,8 +463,8 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
     			<th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
     			<th>".RES_ICON_PLASTIC."".RES_PLASTIC."</th>
     			<th>".RES_ICON_FUEL."".RES_FUEL."</th>
-    			<th>".RES_ICON_FOOD."".RES_FOOD."</th>
-    			<th>".RES_ICON_POWER."Energie</th>
+        	<th>".RES_ICON_FOOD."".RES_FOOD."</th>      
+   <!-- 	<th>".RES_ICON_POWER."Energie</th>     -->
     			<th>Felder</th></tr>";
     for ($x=0;$x<min(30,$arr['building_last_level']);$x++)
     {
@@ -475,7 +475,7 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
     				<td style="text-align:right;">'.nf($bc['plastic']).'</td>
     				<td style="text-align:right;">'.nf($bc['fuel']).'</td>
     				<td style="text-align:right;">'.nf($bc['food']).'</td>
-    				<td style="text-align:right;">'.nf($bc['power']).'</td>
+   <!-- 	  <td style="text-align:right;">'.nf($bc['power']).'</td>      -->
     				<td style="text-align:right;">'.nf($arr['building_fields']*($x+1)).'</td></tr>';
     }
     tableEnd();
