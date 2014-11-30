@@ -37,7 +37,8 @@
  														"game"=>"Spiel",
  														"messages"=>"Nachrichten",
  														"design"=>"Design",
- 														"sitting"=>"Sitting",
+ 														"sitting"=>"Sitting", 
+                            "dual"=>"Dual",                            
  														"password"=>"Passwort",
  														"logins"=>"Logins",
  														"banner"=>"Banner",
@@ -160,7 +161,22 @@
 
       }
     }
-
+    
+    /****************/
+		/* Dual			*/
+		/****************/
+		elseif($mode=='dual')
+  	{
+      if(!$s->sittingActive)
+      {
+      	require("content/userconfig/dual.php");
+    	}
+      else
+      {
+      	echo "Im Sittermodus ist dieser Bereich gesperrt!";
+      }
+    }
+    
 		/****************/
 		/* Passwort			*/
 		/****************/

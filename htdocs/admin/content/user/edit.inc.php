@@ -19,6 +19,8 @@
 				user_email='".$_POST['user_email']."',
 				user_password_temp='".$_POST['user_password_temp']."',
 				user_email_fix='".$_POST['user_email_fix']."',
+        dual_name ='".$_POST['dual_name']."',
+        dual_email ='".$_POST['dual_email']."',
 				user_race_id='".$_POST['user_race_id']."',
 				user_alliance_id='".$_POST['user_alliance_id']."',
 				user_profile_text='".addslashes($_POST['user_profile_text'])."',
@@ -491,7 +493,21 @@
 								</td>
 								<td>Bei Accountübergabe anpassen</td>
 							</tr>
-							<tr>
+              <tr>
+								<td class=\"tbltitle\">Name Dual:</td>
+								<td class=\"tbldata\">
+									<input type=\"text\" name=\"dual_name\" value=\"".$arr['dual_name']."\" size=\"35\" maxlength=\"250\" />
+								</td>
+								<td>Bei Dualänderung anpassen</td>
+							</tr>
+              <tr>
+								<td class=\"tbltitle\">E-Mail Dual:</td>
+								<td class=\"tbldata\">
+									<input type=\"text\" name=\"dual_email\" value=\"".$arr['dual_email']."\" size=\"35\" maxlength=\"250\" />
+								</td>
+								<td>Bei Dualänderung anpassen</td>
+							</tr>
+              <tr>
 								<td class=\"tbltitle\">Passwort:</td>
 								<td class=\"tbldata\">
 									<input type=\"text\" name=\"user_password\" value=\"\" size=\"35\" maxlength=\"250\" />

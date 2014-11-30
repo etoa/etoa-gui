@@ -26,6 +26,8 @@ class User
 	protected $realName;
 	protected $email;
 	protected $emailFix;
+  protected $d_email;   //Dual E-mail
+  protected $d_realName; //Dual name
 	protected $lastOnline;
 	protected $acttime;
 	protected $points;
@@ -105,6 +107,9 @@ class User
 			$this->realName=$arr['user_name'];
 			$this->email=$arr['user_email'];
 			$this->emailFix=$arr['user_email_fix'];
+
+      $this -> d_email = $arr['dual_email'];
+      $this -> d_realName = $arr['dual_name'];
 
 			$this->lastOnline=$arr['user_logouttime'];
 			$this->acttime = null;
@@ -226,6 +231,10 @@ class User
 				$sql.= " user_visits=".$this->visits.",";
 				elseif ($k=="email")
 				$sql.= " user_email='".$this->email."',";
+        elseif ($k=="d_realName")
+				$sql.= " dual_name='".$this->d_realName."',";
+        elseif ($k=="d_email")
+				$sql.= " dual_email='".$this->d_email."',";
 				elseif ($k=="profileText")
 				$sql.= " user_profile_text='".$this->profileText."',";
 				elseif ($k=="signature")
