@@ -108,7 +108,7 @@
 					$sql.= ",user_ban_reason='".addslashes($_POST['user_ban_reason'])."'";
 					
 					$usr = new User($id);
-					$usr->addToUserLog("account","{nick} wird von [b]".date("d.m.Y H:i",$ban_from)."[/b] bis [b]".date("d.m.Y H:i",$ban_to)."[/b] gesperrt.\n[b]Grund:[/b] ".addslashes($_POST['user_ban_reason'])."\n[b]Verantwortlich: [/b] ".$_POST['user_nick'],1);
+					$usr->addToUserLog("account","{nick} wird von [b]".date("d.m.Y H:i",$ban_from)."[/b] bis [b]".date("d.m.Y H:i",$ban_to)."[/b] gesperrt.\n[b]Grund:[/b] ".addslashes($_POST['user_ban_reason'])."\n[b]Verantwortlich: [/b] ".mysql_fetch_array(dbquery("SELECT user_nick FROM admin_users WHERE user_id = ".$_POST['user_ban_admin_id'] ))['user_nick'],1);
 				}
 				else
 				{
