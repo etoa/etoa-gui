@@ -1771,6 +1771,11 @@ $(function(){
 	}
 });
 
+function rdm() {
+  document.getElementById("register_user_race_id").selectedIndex = Math.random() * (document.getElementById("register_user_race_id").length - 1) + 1;
+  getRaceInfo(document.getElementById("register_user_race_id").value);
+}
+
 function getRaceInfo(id) {
   ajaxRequest('get_race_infos', { id:id }, function(data) {
 	if (data.content) {

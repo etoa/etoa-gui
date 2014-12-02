@@ -321,8 +321,10 @@
 			echo "<option value=\"".$race['race_id']."\"";
 			echo ">".$race['race_name']."</option>";
 		}
-		echo "</select>";
+		echo "</select>";                       
 	
+    echo "<br/><br/><input type=\"button\" name=\"random\" id=\"random\" value=\"Zufällige Rasse auswählen\"  onclick=\"rdm()\"/>"; 
+      
 		// xajax content will be placed in the following cell
 		echo "<br/><br/><div id=\"raceInfo\"></div>";
 		echo "<br/><br/><input type=\"submit\" name=\"submit_setup1\" id=\"submit_setup1\" value=\"Weiter\" />";
