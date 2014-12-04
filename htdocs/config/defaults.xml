@@ -370,7 +370,7 @@ http://www.etoa.ch</v>
       <v comment="Standard-Bildpaket" type="text">images/imagepacks/Discovery</v>
     </item>
     <item name="default_css_style" cat="7">
-      <v comment="Standard Design" type="text">Graphite</v>
+      <v comment="Standard Design" type="text">Revolution</v>
     </item>
     <item name="imagepack_zip_format" cat="7">
       <v comment="Zip-Format f&#xFC;r Bildpakete" type="text">zip</v>
