@@ -217,6 +217,18 @@
 				add_log(3,$str);
 				$s=Null;
 			}*/
+			
+			// Change display mode (full/small) if requested
+			if (isset($_GET['change_display_mode'])) {
+				if ($_GET['change_display_mode'] == 'small') {
+					$cu->properties->itemShow = 'small';
+				}
+				elseif ($_GET['change_display_mode'] == 'full') {
+					$cu->properties->itemShow = 'full';
+				}
+				forward("?page=$page");
+			}
+			
 			if (true)
 			{
 				if (preg_match('/^[a-z\_]+$/',$page)  && strlen($page)<=50)
