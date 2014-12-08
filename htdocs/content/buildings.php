@@ -208,7 +208,7 @@ define('HELP_URL',"?page=help&site=buildings");
 			else
 			{
 				$color="";
-				$status_text="Unt&auml;tig";
+				$status_text="";
 			}
 		}
 		
@@ -314,9 +314,13 @@ define('HELP_URL',"?page=help&site=buildings");
 			// Gebäudedaten anzeigen
 			//
 			$item = $bl->item($bid);
-			tableStart($item);
+			$caption = (string)$item;
+			if (!empty($status_text)) {
+				$caption.= ' <span style="'.$color.'">'.$status_text.'</span>';
+			}
+			tableStart($caption);
 			echo '<tr>
-                  	<td rowspan="4" style="width:220px;background:#000;vertical-align:middle;">
+                  	<td rowspan="3" style="width:220px;background:#000;vertical-align:middle;">
                  		'.helpImageLink('buildings&amp;id='.$item->buildingId,$item->building->imgPathBig(),$item->building,'width:220px;height:220px').'
 					</td>
 					<td colspan="2" style="vertical-align:top;height:150px;width:100%">
@@ -332,10 +336,6 @@ define('HELP_URL',"?page=help&site=buildings");
 			echo '<tr>
 					<th style="width:250px;height:20px;">Platzverbrauch total:</th>
 					<td>'.$f.' '.($f!=1 ? 'Felder' : 'Feld').'</td>
-				</tr>';
-			echo '<tr>
-					<th style="width:250px;height:20px;">Status:</th>
-					<td style="'.$color.'" id="buildstatus" >'.$status_text.'</td>
 				</tr>';
 			tableEnd();
 			
