@@ -562,11 +562,16 @@
 			}
 			echo "</tr>";
 			echo "<tr><th>Benuzt</th>";
-			echo "<td><img src=\"misc/progress.image.php?r=1&w=100&p=".round($cp->resMetal/$cp->storeMetal*100)."\" alt=\"progress\" /></td>";
-			echo "<td><img src=\"misc/progress.image.php?r=1&w=100&p=".round($cp->resCrystal/$cp->storeCrystal*100)."\" alt=\"progress\" /></td>";
-			echo "<td><img src=\"misc/progress.image.php?r=1&w=100&p=".round($cp->resPlastic/$cp->storePlastic*100)."\" alt=\"progress\" /></td>";
-			echo "<td><img src=\"misc/progress.image.php?r=1&w=100&p=".round($cp->resFuel/$cp->storeFuel*100)."\" alt=\"progress\" /></td>";
-			echo "<td><img src=\"misc/progress.image.php?r=1&w=100&p=".round($cp->resFood/$cp->storeFood*100)."\" alt=\"progress\" /></td>";
+			$percent_metal_storage = $cp->storeMetal > 0 ? round($cp->resMetal/$cp->storeMetal*100) : 0;
+			$percent_crystal_storage = $cp->storeCrystal > 0 ? round($cp->resCrystal/$cp->storeCrystal*100) : 0;
+			$percent_plastic_storage = $cp->storePlastic > 0 ? round($cp->resPlastic/$cp->storePlastic*100) : 0;
+			$percent_fuel_storage = $cp->storeFuel > 0 ? round($cp->resFuel/$cp->storeFuel*100) : 0;
+			$percent_food_storage = $cp->storeFood > 0 ? round($cp->resFood/$cp->storeFood*100) : 0;
+			echo "<td><img src=\"misc/progress.image.php?r=1&w=100&p=".$percent_metal_storage."\" alt=\"progress\" /></td>";
+			echo "<td><img src=\"misc/progress.image.php?r=1&w=100&p=".$percent_crystal_storage."\" alt=\"progress\" /></td>";
+			echo "<td><img src=\"misc/progress.image.php?r=1&w=100&p=".$percent_plastic_storage."\" alt=\"progress\" /></td>";
+			echo "<td><img src=\"misc/progress.image.php?r=1&w=100&p=".$percent_fuel_storage."\" alt=\"progress\" /></td>";
+			echo "<td><img src=\"misc/progress.image.php?r=1&w=100&p=".$percent_food_storage."\" alt=\"progress\" /></td>";
 			echo "</tr>";
 			
 			

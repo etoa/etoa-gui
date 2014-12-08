@@ -8,6 +8,7 @@ Version NEXT
 
  * Der Code zum Banner ist nun in einem eigenständigen Tab in den Einstellungen untergebracht
  * Details zur aktuellen Session können nun in den Einstellungen im Tab "Login" angezeigt werden
+ * Neuer Spezialist: Der Architekt reduziert die Bauzeit um 10%
 
 ### Bugfixes ###
 
