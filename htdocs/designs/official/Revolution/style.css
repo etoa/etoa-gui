@@ -1501,7 +1501,7 @@ a:hover {
 }
 
 #resboxheader	{
-	background:url('images/bar.png') -1px 0px no-repeat;
+	background:rgba(24, 35, 59, 0.5);
 	height:26px;
 	color:#dae9ff;
 	font-weight:bold;
