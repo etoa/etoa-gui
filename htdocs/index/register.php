@@ -56,7 +56,7 @@
 			$userName = isset($_SESSION['REGISTER']['register_user_name']) ? $_SESSION['REGISTER']['register_user_name'] : '';
 			$userNick = isset($_SESSION['REGISTER']['register_user_nick']) ? $_SESSION['REGISTER']['register_user_nick'] : '';
 			$userEmail = isset($_SESSION['REGISTER']['register_user_email']) ? $_SESSION['REGISTER']['register_user_email'] : '';
-			
+			$userPassword = isset($_SESSION['REGISTER']['register_user_password']) ? $_SESSION['REGISTER']['register_user_password'] : '';
 			
 			echo 'Melde dich hier für die '.Config::getInstance()->roundname->v.' von '.Constants::getInstance()->appName.' an. Es sind noch <b>'.max($cfg->p2('enable_register')-$ucnt[0],0).'</b> von <b>'.$cfg->p2('enable_register').'</b> Plätzen frei!<br/><br/>';
 			echo "<form action=\"?index=register\" method=\"post\">
@@ -66,23 +66,29 @@
 		
 			echo "<tr><th class=\"tbltitle\" style=\"width:150px;\">Vollst&auml;ndiger Name:</th>";
 			echo "<td class=\"tbldata\" style=\"width:170px;\">
-				<input type=\"text\" id=\"register_user_name\" name=\"register_user_name\" maxlength=\"".NAME_MAXLENGTH."\" size=\"".NAME_MAXLENGTH."\" value=\"".$userName."\" onkeyup=\"xajax_registerCheckName(this.value)\" onblur=\"xajax_registerCheckName(this.value)\" /></td>";
-			echo "<td class=\"tbldata\" id=\"nameStatus\">Hier musst du deinen realen Namen angeben; dies dient zur Kontrolle gegen Multis. Dieser Name ist nur f&uuml;r Administratoren sichtbar!</td></tr>";
-			
-			echo "<tr><th class=\"tbltitle\">Benutzername:</th>";
-			echo "<td class=\"tbldata\">
-				<input type=\"text\" name=\"register_user_nick\" maxlength=\"".NICK_MAXLENGHT."\" size=\"".NICK_MAXLENGHT."\" value=\"".$userNick."\" onkeyup=\"xajax_registerCheckNick(this.value)\" onblur=\"xajax_registerCheckNick(this.value)\" /></td>";
-			echo "<td class=\"tbldata\" id=\"nickStatus\">Mit diesem Name tritts du im Spiel als der Herrscher deines Volkes auf. <b>Der Nickname ist endgültig und kann nicht geändert werden!</b></td></tr>";
+				<input type=\"text\" id=\"register_user_name\" name=\"register_user_name\" maxlength=\"".NAME_MAXLENGTH."\" size=\"".NAME_MAXLENGTH."\" value=\"".$userName."\" /></td>";
+			echo "<td class=\"tbldata\">Hier musst du deinen realen Namen angeben; dies dient zur Kontrolle gegen Multis. Dieser Name ist nur f&uuml;r Administratoren sichtbar!<br/><span id=\"nameStatus\"></span></td></tr>";
 			
 			echo "<tr><th class=\"tbltitle\">E-Mail:</th>";
 			echo "<td class=\"tbldata\">
-				<input type=\"text\" name=\"register_user_email\" maxlength=\"50\" size=\"30\" value=\"".$userEmail."\" onkeyup=\"xajax_registerCheckEmail(this.value)\" onblur=\"xajax_registerCheckEmail(this.value)\" /></td>";
-			echo "<td class=\"tbldata\" id=\"emailStatus\">Du musst eine g&uuml;ltige E-Mail-Adresse eingeben. Auf diese wird dir ein Passwort zugeschickt mit dem du dich einloggen kannst.</td></tr>";
-			echo "<tr><td colspan=\"3\">
-			<input type=\"checkbox\" name=\"agbread\" value=\"1\" onclick=\"if (this.checked) document.getElementById('register_submit').disabled=false; else document.getElementById('register_submit').disabled='disabled';\" />
-			Ich akzeptiere die <a href=\"javascript:;\" onclick=\"window.open('".RULES_URL."');\" >Regeln</a>
-			sowie die <a href=\"javascript:;\" onclick=\"window.open('".PRIVACY_URL."');\" >Datenschutzerklärung</a>
+				<input type=\"text\" id=\"register_user_email\" name=\"register_user_email\" maxlength=\"50\" size=\"30\" value=\"".$userEmail."\" /></td>";
+			echo "<td class=\"tbldata\">Du musst eine g&uuml;ltige E-Mail-Adresse eingeben. Auf diese wird dir ein Passwort zugeschickt mit dem du dich einloggen kannst.<br/><span id=\"emailStatus\"></span></td></tr>";
 
+			echo "<tr><th class=\"tbltitle\">Benutzername:</th>";
+			echo "<td class=\"tbldata\">
+				<input type=\"text\" id=\"register_user_nick\" name=\"register_user_nick\" maxlength=\"".NICK_MAXLENGHT."\" size=\"".NICK_MAXLENGHT."\" value=\"".$userNick."\" /></td>";
+			echo "<td class=\"tbldata\">Mit diesem Name tritts du im Spiel als der Herrscher deines Volkes auf. <b>Der Nickname ist endgültig und kann nicht geändert werden!</b><br/><span id=\"nickStatus\"></span></td></tr>";
+
+			echo "<tr><th class=\"tbltitle\">Passwort:</th>";
+			echo "<td class=\"tbldata\">
+				<input type=\"password\" id=\"register_user_password\" name=\"register_user_password\" size=\"20\" value=\"".$userPassword."\" /></td>";
+			echo "<td class=\"tbldata\">Wähle ein sicheres Passwort damit niemand unbefugt in deinen Account einloggen kann.</b><br/><span id=\"passwordStatus\"></span></td></tr>";
+
+			
+			echo "<tr><td colspan=\"3\">
+			<input type=\"checkbox\" name=\"agbread\" id=\"agbread\" value=\"1\" />
+			<label for=\"agbread\">Ich akzeptiere die <a href=\"javascript:;\" onclick=\"window.open('".RULES_URL."');\" >Regeln</a>
+			sowie die <a href=\"javascript:;\" onclick=\"window.open('".PRIVACY_URL."');\" >Datenschutzerklärung</a></label>
 			<br/><ul style=\"text-align:left;margin-left:30px\">
 			<li>Pro Person darf nur 1 Account verwendet werden. Multis werden rigoros <a href=\"javascript:;\" onclick=\"window.open('?index=pillory');\">gesperrt</a>!</li>
 			<li>Nach der Registration wird ein automatisch generiertes Passwort an die angegebene E-Mail-Adresse gesendet.</li>
@@ -93,8 +99,49 @@
 			echo "</table><br/>";
 			
 
-			echo "<input type=\"submit\" id=\"register_submit\" disabled=\"disabled\" name=\"register_submit\" value=\"Anmelden!\" /></div></form><br/>
-			<script type=\"text/javascript\">document.getElementById('register_user_name').focus()</script>";
+			echo "<input type=\"submit\" id=\"register_submit\" disabled=\"disabled\" name=\"register_submit\" value=\"Anmelden!\" /></div></form>";
+			?>
+				<script type="text/javascript">
+					$(function(){
+						$('#register_user_name').focus();
+						
+						$('#register_user_name').keyup(function(){
+							xajax_registerCheckName(this.value);
+						});
+						$('#register_user_name').blur(function(){
+							xajax_registerCheckName(this.value);
+						});
+						
+						$('#register_user_email').keyup(function(){
+							xajax_registerCheckEmail(this.value);
+						});
+						$('#register_user_email').blur(function(){
+							xajax_registerCheckEmail(this.value);
+						});
+						
+						$('#register_user_nick').keyup(function(){
+							xajax_registerCheckNick(this.value);
+						});
+						$('#register_user_nick').blur(function(){
+							xajax_registerCheckNick(this.value);
+						});
+						
+						$('#register_user_password').keyup(function(){
+							xajax_registerCheckPassword(this.value);
+						});
+						$('#register_user_password').blur(function(){
+							xajax_registerCheckPassword(this.value);
+						});
+						
+						$('#agbread').click(function(){
+							if (this.checked) 
+								$('#register_submit').prop('disabled', false); 
+							else 
+								$('#register_submit').prop('disabled', true); 
+						});
+					});
+				</script>			
+			<?PHP
 		}		
 		
 	}
@@ -114,36 +161,39 @@
 		if (User::register(array(
 			"name" => $_POST['register_user_name'],
 			"nick" => $_POST['register_user_nick'],
-			"email" => $_POST['register_user_email']),$errorCode))
-    {
-				
-
-        iBoxStart("Registration erfolgreich!");
-        echo "Es wurde eine E-Mail an <b>".$_POST['register_user_email']."</b> verschickt, in der ein automatisch generiertes Passwort f&uuml;r deine Erstanmeldung steht.
-        <b>Bitte &auml;ndere dieses Passwort sobald als m&ouml;glich in den Einstellungen.</b><br/><br/>
-        Solltest du innerhalb der n&auml;chsten 5 Minuten keine E-Mail erhalten, pr&uuml;fe zun&auml;chst dein Spam-Verzeichnis.<br/><br/>
-        Melde dich bei einem <a href=\"?index=contact\">Admin</a>, falls du keine E-Mail erh&auml;ltst oder andere Anmeldeprobleme auftreten.";
-        iBoxEnd();
-
-		echo button("Zum Login", getLoginUrl());
-
-        echo "</div><br style=\"clear:both;\" /></div>";
-    	$_SESSION['REGISTER']=Null;
-    }
-    else
-    {
+			"email" => $_POST['register_user_email'],
+			"password" => $_POST['register_user_password'],
+			),$errorCode))
+		{
+			if (empty($_POST['register_user_password'])) {
+				$pwAddition = ', in der ein automatisch generiertes Passwort f&uuml;r deine Erstanmeldung steht.
+				<b>Bitte &auml;ndere dieses Passwort sobald als m&ouml;glich in den Einstellungen</b>';
+			} else {
+				$pwAddition = '';
+			}
+		
+			iBoxStart("Registration erfolgreich!");
+			echo "Es wurde eine Bestätigungsnachricht an <b>".$_POST['register_user_email']."</b> verschickt".$pwAddition .".<br/><br/>
+			Solltest du innerhalb der n&auml;chsten 5 Minuten keine E-Mail erhalten, pr&uuml;fe zun&auml;chst dein Spam-Verzeichnis.<br/><br/>
+			Melde dich bei einem <a href=\"?index=contact\">Admin</a>, falls du keine E-Mail erh&auml;ltst oder andere Anmeldeprobleme auftreten.";
+			iBoxEnd();
+			echo button("Zum Login", getLoginUrl());
+			echo "</div><br style=\"clear:both;\" /></div>";
+			$_SESSION['REGISTER']=Null;
+		}
+		else
+		{
 			if ($errorCode!="")
-	  	{
-	      err_msg($errorCode);
-	      drawRegForm();
-	  	}      	      	
-    	else
-    	{
-        echo "<h2>Fehler</h2>";
-        echo "Beim Speichern der Daten trat ein Fehler auf! Bitte informiere den Entwickler:<br/><br/><a href=\"mailto:mail@etoa.ch\">E-Mail senden</a></p>";
-    	}
-    }
-
+			{
+				err_msg($errorCode);
+				drawRegForm();
+			}
+			else
+			{
+				echo "<h2>Fehler</h2>";
+				echo "Beim Speichern der Daten trat ein Fehler auf! Bitte informiere den Entwickler:<br/><br/><a href=\"mailto:mail@etoa.ch\">E-Mail senden</a></p>";
+			}
+		}
 	}
 	
 	//

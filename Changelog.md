@@ -11,6 +11,7 @@ Version NEXT
  * Added tab for banner in user settings screen
  * Added table of open sessions to login tab in user settings screen.
  * Added architect specialist which reduces build time by 10%
+ * A password can now be specified when creating an account
 
 #### Bugfixes ####
 

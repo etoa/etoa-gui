@@ -9,12 +9,6 @@
 /* Eigene Scripte */
 
 $(document).ready(function() {
-
-	if (document.getElementById('seitenname').innerHTML == 'overview') {
-		$('.infoboxtitle').hide(); 
-		$('.infoboxcontent').hide();
-	}
-	
 	if (sessionStorage.chat) {
 			$("#c_aside").replaceWith("<iframe id='c_aside' src='chat.php'></iframe>");
 			document.getElementById("f_chat").style.display = "none";
