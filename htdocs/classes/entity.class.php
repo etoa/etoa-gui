@@ -289,7 +289,7 @@
 				case 's':
 					return new Star($id);
 				case 'p':
-					return new Planet($id);
+					return Planet::getById($id);
 				case 'a':
 					return new AsteroidField($id);
 				case 'n':
@@ -334,7 +334,7 @@
 					case 's':
 						return new Star($id);
 					case 'p':
-						return new Planet($id);
+						return Planet::getById($id);
 					case 'a':
 						return new AsteroidField($id);
 					case 'n':
@@ -388,7 +388,7 @@
 					case 's':
 						return new Star($id);
 					case 'p':
-						return new Planet($id);
+						return Planet::getById($id);
 					case 'a':
 						return new AsteroidField($id);
 					case 'n':

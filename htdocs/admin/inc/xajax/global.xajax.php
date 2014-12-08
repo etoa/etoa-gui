@@ -180,7 +180,7 @@ function planetSelectorByUser($userNick,$function,$show_user_id=1)
 					$out.="<option value=\"0:".$parr[1]."\">Alle</option>";
 					$cnt++;
 				}
-				$p = new Planet($parr[0]);
+				$p = Planet::getById($parr[0]);
 				
 				if ($show_user_id==1)
 				{
@@ -532,7 +532,7 @@ function editShipByShipId($form,$shipId)
 			{
 		 		$objResponse->assign("edit_".$shipId,"style.display", '');
 				
-				$p = new Planet($arr['shiplist_entity_id']);
+				$p = Planet::getById($arr['shiplist_entity_id']);
 				$listId = $arr['shiplist_id'];
 				
 				echo "<tr><th colspan=\"6\">".$p."</th></tr><tr>

@@ -239,7 +239,7 @@
 					$s->cpid = $cpid;
 				}										
 
-				$cp = new Planet($cpid);
+				$cp = Planet::getById($cpid);
 				
 				$pm = new PlanetManager($planets);
 			}

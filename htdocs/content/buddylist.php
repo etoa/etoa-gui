@@ -277,7 +277,7 @@
 	                        <td>".$arr['user_nick']."</td>";
 	                        if ($arr['bl_allow']==1)
 	                        {
-	                                $tp = new Planet($arr['pid']);
+	                                $tp = Planet::getById($arr['pid']);
 	                                echo "<td>".nf($arr['user_points'])."</td>";
 	                                echo "<td><a href=\"?page=cell&amp;id=".$tp->cellId()."&amp;hl=".$tp->id()."\">".$tp."</a></td>";
 	                                if ($arr['time_action'])

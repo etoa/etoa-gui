@@ -22,9 +22,7 @@
 	}
 	elseif (isset($_POST['submit_chooseplanet']) && intval($_POST['choosenplanetid'])>0 && checker_verify() && !isset($cp))
 	{
-		
-		
-		$tp = new Planet($_POST['choosenplanetid']);
+		$tp = Planet::getById($_POST['choosenplanetid']);
 		$tp->reset();
 		$tp->assignToUser($cu->id,1);
 		$tp->setDefaultResources();	
@@ -108,7 +106,7 @@
 		checker_init();
 
 		echo "<h2>Planetenwahl bestätigen</h2>";
-		$tp = new Planet($pid);
+		$tp = Planet::getById($pid);
 
 		echo "<input type=\"hidden\" name=\"choosenplanetid\" value=\"".$pid."\" />";
 		echo "Folgender Planet wurde für Euch ausgewählt:<br/><br/>";

@@ -71,7 +71,7 @@
 			echo "<h2>Planeten</h2><ul>";
 			while ($arr=mysql_fetch_array($res))
 			{
-				$pl = new Planet($arr['id']);
+				$pl = Planet::getById($arr['id']);
 				echo "<li><a href=\"?page=galaxy&sub=edit&id=".$arr['id']."\">".$pl."</a></li>";
 			}
 			echo "</ul>";

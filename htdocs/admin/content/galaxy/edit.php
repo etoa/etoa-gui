@@ -35,7 +35,7 @@
 				{		
 					if (isset($_POST['save']))
 					{
-						$pl = new Planet($id);							
+						$pl = Planet::getById($id);							
 
 						if (isset($_POST['planet_user_main']))
 						{
@@ -109,7 +109,7 @@
 						if($_POST['planet_user_id']!=$_POST['planet_user_id_old'])
 						{
 							//Planet dem neuen User übergeben (Schiffe und Verteidigung werden vom Planeten gelöscht!)
-							$pl = new Planet($id);
+							$pl = Planet::getById($id);
 							$pl->chown($_POST['planet_user_id']);
 							
 							if ($_POST['planet_user_id']==0)

@@ -1,194 +1,188 @@
 <?PHP
-      
-  /**
-  * Planet class
-  *
-  * @author Nicolas Perrenoud <mrcage@etoa.ch>
-  */
-	class Planet extends Entity implements OwnableEntity
-	{
-		protected $isValid;
-		protected $coordsLoaded;
-        private $desc;
-        private $name;
+/**
+* Planet class
+*
+* @author Nicolas Perrenoud <mrcage@etoa.ch>
+*/
+class Planet extends Entity implements OwnableEntity
+{
+	protected $isValid;
+	protected $coordsLoaded;
+	private $desc;
+	private $name;
 
-		// TODO: Make protected and ad getter
-		public $resources;
-		
-		/**
-		* Constructor
-		* Erwartet ein Array mit dem Inhalt des MySQL-Datensatzes, oder die ID eines Planeten
-		*/
-		function Planet($arr=null)
-		{
-			$this->exploreCode = 'e';
-			$this->explore = false;
-			$this->isValid = false;
-            $this->isVisible = true;
-			
-			if (!is_array($arr) && intval($arr)>0)
-			{
-				$res = dbquery("
-				SELECT
-        	planets.*,
-        	cells.sx,
-        	cells.sy,
-        	cells.cx,
-        	cells.cy,
-        	cells.id as cell_id,
-        	pentity.pos,
-        	planet_types.*,
+	// TODO: Make protected and ad getter
+	public $resources;
+	
+	/**
+	* Constructor
+	* Erwartet ein Array mit dem Inhalt des MySQL-Datensatzes, oder die ID eines Planeten
+	*/
+	function Planet()
+	{
+		$this->exploreCode = 'e';
+		$this->explore = false;
+		$this->isValid = false;
+		$this->isVisible = true;
+	}
+	
+	public static function getById($id)
+	{
+		$res = dbquery("
+		SELECT
+			planets.*,
+			cells.sx,
+			cells.sy,
+			cells.cx,
+			cells.cy,
+			cells.id as cell_id,
+			pentity.pos,
+			planet_types.*,
 			sol_types.*
-				FROM 
-				(
-					planets
-        	INNER JOIN 
-          	planet_types 
-            ON planets.planet_type_id = planet_types.type_id
-            AND planets.id='".intval($arr)."'
-				)
-        INNER JOIN 
-        (	
-        	entities AS pentity
-         	INNER JOIN cells 
-          	ON cells.id = pentity.cell_id
+		FROM 
+		(
+			planets
+			INNER JOIN 
+				planet_types 
+				ON planets.planet_type_id = planet_types.type_id
+				AND planets.id='".intval($id)."'
+		)
+		INNER JOIN 
+		(	
+			entities AS pentity
+			INNER JOIN cells 
+				ON cells.id = pentity.cell_id
 			INNER JOIN 
 				entities AS sentity
 				ON cells.id = sentity.cell_id
 				AND sentity.pos =0
-				
-				INNER JOIN stars 
+			INNER JOIN stars 
 				ON stars.id = sentity.id
-				INNER JOIN sol_types 
+			INNER JOIN sol_types 
 				ON sol_types.sol_type_id = stars.type_id
-        )
-        ON planets.id = pentity.id
-       
-       LIMIT 1;
-				;");
-				
-	
-
-				if (mysql_num_rows($res)>0)
-				{
-					$arr=mysql_fetch_assoc($res);
-					
-				}
-				else
-				{
-					echo "Planet $arr nicht gefunden!\n";
-				}
-			}
-
-			if ($arr)
-			{
-				$this->id=$arr['id'];
-				$this->cellId=$arr['cell_id'];
-				$this->userId=$arr['planet_user_id'];
-				$this->name= $arr['planet_name']!="" ? ($arr['planet_name']) : 'Unbenannt';
-				$this->desc= $arr['planet_desc'];
-				$this->image=$arr['planet_image'];
-				$this->updated=$arr['planet_last_updated'];
-				$this->userChanged=$arr['planet_user_changed'];
-				$this->lastUserId=$arr['planet_last_user_id'];
-				
-				$this->owner = new User($arr['planet_user_id']);
-				
-				$this->sx = $arr['sx'];
-				$this->sy = $arr['sy'];
-				$this->cx = $arr['cx'];
-				$this->cy = $arr['cy'];
-				$this->pos = $arr['pos'];
-
-				$this->typeId = $arr['type_id'];
-				$this->typeName = $arr['type_name'];
-
-				$this->habitable = (boolean)$arr['type_habitable'];
-				$this->collectGas = (boolean)$arr['type_collect_gas'];
-
-				$this->typeMetal=$arr['type_f_metal'];
-				$this->typeCrystal=$arr['type_f_crystal'];
-				$this->typePlastic=$arr['type_f_plastic'];
-				$this->typeFuel=$arr['type_f_fuel'];
-				$this->typeFood=$arr['type_f_food'];
-				$this->typePower=$arr['type_f_power'];
-				$this->typePopulation=$arr['type_f_population'];
-				$this->typeResearchtime=$arr['type_f_researchtime'];
-				$this->typeBuildtime=$arr['type_f_buildtime'];
-
-				$this->starTypeId=$arr['sol_type_id'];
-				$this->starTypeName=$arr['sol_type_name'];
-				$this->starMetal=$arr['sol_type_f_metal'];
-				$this->starCrystal=$arr['sol_type_f_crystal'];
-				$this->starPlastic=$arr['sol_type_f_plastic'];
-				$this->starFuel=$arr['sol_type_f_fuel'];
-				$this->starFood=$arr['sol_type_f_food'];
-				$this->starPower=$arr['sol_type_f_power'];
-				$this->starPopulation=$arr['sol_type_f_population'];
-				$this->starResearchtime=$arr['sol_type_f_researchtime'];
-				$this->starBuildtime=$arr['sol_type_f_buildtime'];
-				
-				$this->debrisMetal = $arr['planet_wf_metal'];
-				$this->debrisCrystal = $arr['planet_wf_crystal'];
-				$this->debrisPlastic = $arr['planet_wf_plastic'];
-
-				if ($this->debrisMetal+$this->debrisCrystal+$this->debrisPlastic > 0)
-					$this->debrisField = true;
-				else
-					$this->debrisField = false;
-
-				$this->fieldsBase = $arr['planet_fields'];
-				$this->fieldsExtra = $arr['planet_fields_extra'];
-				$this->fieldsUsed=$arr['planet_fields_used'];
-				
-				$this->fields_extra=$arr['planet_fields_extra'];
-				$this->fields_used=$arr['planet_fields_used'];
-				
-				$this->fields = $this->fieldsBase + $this->fieldsExtra;
-								
-				$this->temp_from=$arr['planet_temp_from'];
-				$this->temp_to=$arr['planet_temp_to'];
-				$this->people=zeroPlus($arr['planet_people']);
-				$this->people_place=zeroPlus($arr['planet_people_place']);
-
-				$this->resMetal=zeroPlus(floor($arr['planet_res_metal']));
-				$this->resCrystal=zeroPlus(floor($arr['planet_res_crystal']));
-				$this->resPlastic=zeroPlus(floor($arr['planet_res_plastic']));
-				$this->resFuel=zeroPlus(floor($arr['planet_res_fuel']));
-				$this->resFood=zeroPlus(floor($arr['planet_res_food']));
-				$this->usePower=zeroPlus(floor($arr['planet_use_power']));
-
-				$this->resources = array($this->resMetal,$this->resCrystal,$this->resPlastic,$this->resFuel,$this->resFood);
-
-				$this->bunkerMetal = zeroPlus($arr['planet_bunker_metal']);
-				$this->bunkerCrystal = zeroPlus($arr['planet_bunker_crystal']);
-				$this->bunkerPlastic = zeroPlus($arr['planet_bunker_plastic']);
-				$this->bunkerFuel = zeroPlus($arr['planet_bunker_fuel']);
-				$this->bunkerFood = zeroPlus($arr['planet_bunker_food']);
-
-				$this->storeMetal=$arr['planet_store_metal'];
-				$this->storeCrystal=$arr['planet_store_crystal'];
-				$this->storePlastic=$arr['planet_store_plastic'];
-				$this->storeFuel=$arr['planet_store_fuel'];
-				$this->storeFood=$arr['planet_store_food'];
-				
-				$this->prodMetal=$arr['planet_prod_metal'];
-				$this->prodCrystal=$arr['planet_prod_crystal'];
-				$this->prodPlastic=$arr['planet_prod_plastic'];
-				$this->prodFuel=$arr['planet_prod_fuel'];
-				$this->prodFood=$arr['planet_prod_food'];
-				$this->prodPower=zeroPlus($arr['planet_prod_power']);
-				$this->prodPeople=$arr['planet_prod_people'];
-
-				if ($arr['planet_user_main']==1)
-					$this->isMain=true;
-				else
-					$this->isMain=false;
-
-				$this->isValid = true;
-
-			}
+		)
+		ON planets.id = pentity.id
+		LIMIT 1;
+		;");
+		if (mysql_num_rows($res)>0)
+		{
+			$arr = mysql_fetch_assoc($res);
+			$p = self::getByArray($arr);
+			$p->isValid = true;
+			return $p;
 		}
+		return null;
+	}
+	
+	public static function getByArray($arr)
+	{
+		$p = new Planet();
+	
+		$p->id = $arr['id'];
+		$p->cellId = $arr['cell_id'];
+		$p->userId = $arr['planet_user_id'];
+		$p->name = $arr['planet_name']!="" ? ($arr['planet_name']) : 'Unbenannt';
+		$p->desc = $arr['planet_desc'];
+		$p->image = $arr['planet_image'];
+		$p->updated = $arr['planet_last_updated'];
+		$p->userChanged = $arr['planet_user_changed'];
+		$p->lastUserId = $arr['planet_last_user_id'];
+		
+		$p->owner = new User($arr['planet_user_id']);
+		
+		$p->sx = $arr['sx'];
+		$p->sy = $arr['sy'];
+		$p->cx = $arr['cx'];
+		$p->cy = $arr['cy'];
+		$p->pos = $arr['pos'];
+
+		$p->typeId = $arr['type_id'];
+		$p->typeName = $arr['type_name'];
+
+		$p->habitable = (boolean)$arr['type_habitable'];
+		$p->collectGas = (boolean)$arr['type_collect_gas'];
+
+		$p->typeMetal = $arr['type_f_metal'];
+		$p->typeCrystal = $arr['type_f_crystal'];
+		$p->typePlastic = $arr['type_f_plastic'];
+		$p->typeFuel = $arr['type_f_fuel'];
+		$p->typeFood = $arr['type_f_food'];
+		$p->typePower = $arr['type_f_power'];
+		$p->typePopulation = $arr['type_f_population'];
+		$p->typeResearchtime = $arr['type_f_researchtime'];
+		$p->typeBuildtime = $arr['type_f_buildtime'];
+
+		$p->starTypeId = $arr['sol_type_id'];
+		$p->starTypeName = $arr['sol_type_name'];
+		$p->starMetal = $arr['sol_type_f_metal'];
+		$p->starCrystal = $arr['sol_type_f_crystal'];
+		$p->starPlastic = $arr['sol_type_f_plastic'];
+		$p->starFuel = $arr['sol_type_f_fuel'];
+		$p->starFood = $arr['sol_type_f_food'];
+		$p->starPower = $arr['sol_type_f_power'];
+		$p->starPopulation = $arr['sol_type_f_population'];
+		$p->starResearchtime = $arr['sol_type_f_researchtime'];
+		$p->starBuildtime = $arr['sol_type_f_buildtime'];
+		
+		$p->debrisMetal = $arr['planet_wf_metal'];
+		$p->debrisCrystal = $arr['planet_wf_crystal'];
+		$p->debrisPlastic = $arr['planet_wf_plastic'];
+
+		$p->debrisField = ($p->debrisMetal + $p->debrisCrystal + $p->debrisPlastic > 0);
+
+		$p->fieldsBase = $arr['planet_fields'];
+		$p->fieldsExtra = $arr['planet_fields_extra'];
+		$p->fieldsUsed = $arr['planet_fields_used'];
+		
+		$p->fields_extra = $arr['planet_fields_extra'];
+		$p->fields_used = $arr['planet_fields_used'];
+		
+		$p->fields = $p->fieldsBase + $p->fieldsExtra;
+						
+		$p->temp_from = $arr['planet_temp_from'];
+		$p->temp_to = $arr['planet_temp_to'];
+		$p->people = zeroPlus($arr['planet_people']);
+		$p->people_place = zeroPlus($arr['planet_people_place']);
+
+		$p->resMetal = zeroPlus(floor($arr['planet_res_metal']));
+		$p->resCrystal = zeroPlus(floor($arr['planet_res_crystal']));
+		$p->resPlastic = zeroPlus(floor($arr['planet_res_plastic']));
+		$p->resFuel = zeroPlus(floor($arr['planet_res_fuel']));
+		$p->resFood = zeroPlus(floor($arr['planet_res_food']));
+		$p->usePower = zeroPlus(floor($arr['planet_use_power']));
+
+		$p->resources = array(
+			$p->resMetal,
+			$p->resCrystal,
+			$p->resPlastic,
+			$p->resFuel,
+			$p->resFood
+		);
+
+		$p->bunkerMetal = zeroPlus($arr['planet_bunker_metal']);
+		$p->bunkerCrystal = zeroPlus($arr['planet_bunker_crystal']);
+		$p->bunkerPlastic = zeroPlus($arr['planet_bunker_plastic']);
+		$p->bunkerFuel = zeroPlus($arr['planet_bunker_fuel']);
+		$p->bunkerFood = zeroPlus($arr['planet_bunker_food']);
+
+		$p->storeMetal = $arr['planet_store_metal'];
+		$p->storeCrystal = $arr['planet_store_crystal'];
+		$p->storePlastic = $arr['planet_store_plastic'];
+		$p->storeFuel = $arr['planet_store_fuel'];
+		$p->storeFood = $arr['planet_store_food'];
+		
+		$p->prodMetal = $arr['planet_prod_metal'];
+		$p->prodCrystal = $arr['planet_prod_crystal'];
+		$p->prodPlastic = $arr['planet_prod_plastic'];
+		$p->prodFuel = $arr['planet_prod_fuel'];
+		$p->prodFood = $arr['planet_prod_food'];
+		$p->prodPower = zeroPlus($arr['planet_prod_power']);
+		$p->prodPeople = $arr['planet_prod_people'];
+
+		$p->isMain = ($arr['planet_user_main']==1);
+		
+		return $p;
+	}
 	
     public function __get($var)
     {
@@ -266,8 +260,10 @@
 			return $this->owner;
 		}
 		
-		function ownerMain() { return $this->isMain; }
-		
+		function ownerMain()
+		{
+			return $this->isMain;
+		}		
 		
 		function type()
 		{
@@ -330,9 +326,8 @@
 		function getCoordinates()
 		{
 			return $this->formatedCoords();
-		}		
+		}
 		
-
 		/** 
 		* Displays a box with resources, power and population
 		*/

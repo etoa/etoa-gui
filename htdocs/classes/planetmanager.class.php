@@ -97,7 +97,7 @@
 			{
 				foreach ($this->items as $i)
 				{
-					$this->itemObjects[] = new Planet($i);
+					$this->itemObjects[] = Planet::getById($i);
 				}
 				$this->loaded=true;
 			}

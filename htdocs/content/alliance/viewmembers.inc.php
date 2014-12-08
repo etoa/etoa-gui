@@ -81,7 +81,7 @@ if (Alliance::checkActionRights('viewmembers'))
 		$time = time();
 		while ($uarr = mysql_fetch_assoc($ures))
 		{
-			$tp = new Planet($uarr['pid']);
+			$tp = Planet::getById($uarr['pid']);
 			echo "<tr>";
 			echo "<td>".$uarr['user_nick']."</td>
 			<td>".$tp."</td>

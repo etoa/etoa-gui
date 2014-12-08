@@ -439,7 +439,7 @@ function loadEconomy($uid,$target)
 					$planets = array();
 					while($parr=mysql_fetch_row($pres))
 					{
-						$planets[] = new Planet($parr[0]);
+						$planets[] = Planet::getById($parr[0]);
 					}
 
 					$cnt_res=0;
