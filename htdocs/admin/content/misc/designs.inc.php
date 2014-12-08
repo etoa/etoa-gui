@@ -199,7 +199,7 @@
 		'nextPlanetId' => 'ID des nächsten Planeten',
 		'page' => 'Name der aktuellen Seite',
 		'selectField' => 'Auswahlfeld (&lt;select&gt;) aller Planeten',
-		'planetList' => 'Liste aller Planeten als Links',
+		'planetList' => 'Liste aller Planeten [label, url, current, image]',
 		'messages' => 'Anzahl neuer Nachrichten',
 		'newreports' => 'Anzahl neuer Berichte',
 		'notes' => 'Anzahl vorhandener Notizen',

@@ -127,35 +127,29 @@
 			ob_end_clean();			
 			return $str;
 		}		
-
-		function getLinkList($currendId,$images=0)
-		{
-			global $page, $mode;
-			
+		
+		function getLinkList($currendId, $page, $mode)
+		{	
 			if ($mode!="")
+			{
 				$req = "&amp;mode=$mode&amp;change_entity=";
+			}
 			else
+			{
 				$req = "&amp;change_entity=";
-
+			}
 			$this->load();
-			ob_start();			
+			$list = [];
 			foreach ($this->itemObjects as $i)
 			{
-				if ($images==1)
-					echo "<img src=\"".$i->imagePath()."\" alt=\"thumb\" />";
-				if ($currendId==$i->id())
-					echo "<a href=\"?page=$page".$req.$i->id()."\"><b>".$i."</b></a>\n";
-				else
-					echo "<a href=\"?page=$page".$req.$i->id()."\">".$i."</a>\n";
+				$list[] = [
+					"url" => "?page=$page".$req.$i->id(),
+					"label" => $i,
+					"current" => $currendId==$i->id(),
+					"image" => $i->imagePath()
+				];
 			}
-			$str = ob_get_contents();
-			ob_end_clean();			
-			return $str;			
+			return $list;
 		}
-		
-	
-		
-
 	}
-
 ?>

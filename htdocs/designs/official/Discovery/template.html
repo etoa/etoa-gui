@@ -283,7 +283,9 @@
 {*---------------------------------------------- Dropdown für Linkes Menue ---------------------------------------------------*}
 
 <div id="planetDropDown" onmouseover="PlanetDropDown(true);return true;"  onmouseout="PlanetDropDown(false);return true;">
-{$planetList}
+	{foreach from=$planetList item=p}
+		<a href="{$p.url}" {if $p.current}class="active"{/if}>{$p.label}</a>
+	{/foreach}
 </div>
 
 {*---------------------------------------------- Imagemaps linker Menueleiste ---------------------------------------------------*}

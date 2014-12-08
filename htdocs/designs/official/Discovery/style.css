@@ -724,6 +724,10 @@ body {
 
 }
 
+#planetDropDown	a.active {
+	font-weight: bold;
+}
+
 #planetDropDown	a:hover {
 	color:#fff;
 	background:#0806a3 url('images/button2.jpg');

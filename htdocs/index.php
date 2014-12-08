@@ -293,8 +293,7 @@
 		{
 			$tpl->assign("currentPlanetName",$cp);
 			$tpl->assign("currentPlanetImage",$cp->imagePath("m"));
-			$tpl->assign("planetList",$pm->getLinkList($s->cpid));
-			$tpl->assign("planetListImages",$pm->getLinkList($s->cpid,1));
+			$tpl->assign("planetList", $pm->getLinkList($s->cpid, $page, $mode));
 			$tpl->assign("nextPlanetId",$pm->nextId($s->cpid));
 			$tpl->assign("prevPlanetId",$pm->prevId($s->cpid));
 			$tpl->assign("selectField",$pm->getSelectField($s->cpid));
@@ -302,8 +301,7 @@
 		else
 		{
 			$tpl->assign("currentPlanetName","Unbekannt");
-			$tpl->assign("planetList","");						
-			$tpl->assign("planetListImages","");		
+			$tpl->assign("planetList", "");
 			$tpl->assign("nextPlanetId",0);
 			$tpl->assign("prevPlanetId",0);
 			$tpl->assign("selectField","");		

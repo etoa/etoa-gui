@@ -58,7 +58,11 @@
 				<a id="prevplanet" href="?page={$page}&mode={$mode}&change_entity={$prevPlanetId}"></a>
 				<a id="nextplanet" href="?page={$page}&mode={$mode}&change_entity={$nextPlanetId}"></a>
 				<a id="navplanetlist" href="#" onclick="js_planetlist(true); return true"></a>				
-				<div id="planetlist" onmouseover="js_planetlist(true); return true"; onmouseout="js_planetlist(false); return true;">{$planetList}</div>		
+				<div id="planetlist" onmouseover="js_planetlist(true); return true"; onmouseout="js_planetlist(false); return true;">
+					{foreach from=$planetList item=p}
+						<a href="{$p.url}" {if $p.current}class="active"{/if}>{$p.label}</a>
+					{/foreach}
+				</div>		
 				
 				<a href="?page=cell" class="right-tip" data-tips=" System " id="navcell"></a>		
 				<a href="?page=sector" class="right-tip" data-tips=" Sektor " id="navsektor"></a>
