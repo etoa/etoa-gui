@@ -1618,6 +1618,18 @@ a:hover {
 }
 /* Planet Overview */
 
+.planetOverviewName {
+	position:absolute;
+	left:20px;
+	top:15px;
+	font-size:18pt;
+
+}
+
+.planetOverviewName  a {
+	font-weight: normal;
+}
+
 .planetOverviewList	{
 	position:absolute;
 	left:20px;

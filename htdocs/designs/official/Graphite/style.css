@@ -767,6 +767,13 @@ img	{
 }
 /* Planet Overview */
 
+.planetOverviewName {
+	position:absolute;
+	left:20px;
+	top:15px;
+	font-size:18pt;
+}
+
 .planetOverviewList	{
 	position:absolute;
 	left:20px;

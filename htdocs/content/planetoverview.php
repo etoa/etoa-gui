@@ -171,8 +171,8 @@
 			echo "<div style=\"position:relative;height:320px;padding:0px;background:#000 url('images/stars_middle.jpg');\">
 			<div style=\"position:absolute;right:20px;top:20px;\">
 			<img src=\"".$cp->imagePath('b')."\" style=\"width:220px;height:220px;\" alt=\"Planet\" /></div>";
+			echo "<div class=\"planetOverviewName\"><a href=\"javascript:;\" onclick=\"showTab('tabName')\">".$cp->name."</a></div>";
 			echo "<div class=\"planetOverviewList\">
-			<div class=\"planetOverviewItem\">Name</div> <a href=\"javascript:;\" onclick=\"showTab('tabName')\">".$cp->name."</a><br style=\"clear:left;\"/>
 			<div class=\"planetOverviewItem\">Grösse</div> ".nf($conf['field_squarekm']['v']*$cp->fields)." km&sup2;<br style=\"clear:left;\"/>
 			<div class=\"planetOverviewItem\">Temperatur</div>	".$cp->temp_from." &deg;C bis ".$cp->temp_to." &deg;C <br style=\"clear:left;\"/>
 			<div class=\"planetOverviewItem\">System</div> <a href=\"?page=cell&amp;id=".$cp->cellId()."&amp;hl=".$cp->id()."\">".$cp->getSectorSolsys()."</a> (Position ".$cp->pos.")<br style=\"clear:left;\"/>

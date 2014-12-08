@@ -1520,7 +1520,17 @@ td.havenTab:hover	{
 
 }
 
+.planetOverviewName {
+	position:absolute;
+	left:20px;
+	top:15px;
+	font-size:18pt;
+}
 
+.planetOverviewName a {
+	text-decoration: none;
+}
+	
 .planetOverviewList	{
 	position:absolute;
 	left:20px;
