@@ -4,7 +4,7 @@
 		<a href="."><img id="logo" src="web/images/logo.png" alt="Logo" /></a>
 		<div id="slogan">Administration {cfg key="roundname"}</div>
 		<div id="headerbar">
-			<b>Zeit:</b> {$time|date_format:"%T"} &nbsp;
+			<b>Zeit:</b> <span id="servertime">{$time|date_format:"%T"}</span> &nbsp;
 			Eingeloggt als&nbsp;
 			<ul id="headernav">
 				<li><a href="?myprofile=1">{$current_user_nick}</a></li>

@@ -41,6 +41,7 @@ Version NEXT
  * Added possibility to discover specific coordinates or the complete map for any user
  * Added screen which shows executed and pending database schema migrations
  * Show changed config values on "restore defaults" page
+ * Time clock in header is now also ticking every second
  
 #### Changes ####
 
