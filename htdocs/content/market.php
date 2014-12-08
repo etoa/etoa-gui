@@ -71,7 +71,7 @@
 
 		// Show title
 		echo '<h1>Marktplatz (Stufe '.MARKET_LEVEL.') des Planeten '.$cp->name().'</h1>';
-		$cp->resBox($cu->properties->smallResBox);
+		echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
 
 		// Load javascript
 		require("content/market/js.php");
@@ -627,8 +627,7 @@
 	{
 		// Header
 		echo '<h1>Marktplatz</h1>';
-		$cp->resBox($cu->properties->smallResBox);
-
+		echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
 		info_msg("Der Marktplatz wurde noch nicht gebaut.");
 	}
 
@@ -637,11 +636,8 @@
     else
     {
 		echo '<h1>Marktplatz</h1>';
-		$cp->resBox($cu->properties->smallResBox);
-
+		echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
 		info_msg("Der Marktplatz ist momentan im Spiel deaktiviert.");
     }
-
-
 ?>
 

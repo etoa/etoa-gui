@@ -24,7 +24,7 @@
 	$totAvail = ceil($uCnt*SPECIALIST_AVAILABILITY_FACTOR);
 
 	echo '<h1>Spezialisten</h1>';    
-	$cp->resBox($cu->properties->smallResBox);
+	echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
 	
 	//
 	// Engage specialist

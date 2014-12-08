@@ -31,7 +31,7 @@
 	{
 
 		echo '<h1>Raumschiffhafen des Planeten '.$cp->name.'</h1>';
-		$cp->resBox($cu->properties->smallResBox);
+		echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
 	
 		//
 		// Kampfsperre prüfen

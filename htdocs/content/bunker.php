@@ -31,7 +31,7 @@
 	{
 
 		echo "<h1>Bunker des Planeten ".$cp->name."</h1>";
-		$cp->resBox($cu->properties->smallResBox);
+		echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
 		
 		// Navigation
 		$tabitems = array(

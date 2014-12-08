@@ -66,7 +66,7 @@
 		echo "<h1>Raumschiffswerft (Stufe ".CURRENT_SHIPYARD_LEVEL.") des Planeten ".$cp->name."</h1>";
 
 		// Ressourcen anzeigen
-		$cp->resBox($cu->properties->smallResBox);
+		echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
 
 		// Prüfen ob dieses Gebäude deaktiviert wurde
 		if ($werft_arr['buildlist_deactivated']>time())
@@ -1327,7 +1327,7 @@
 		echo "<h1>Raumschiffswerft des Planeten ".$cp->name."</h1>";		
 		
 		// Ressourcen anzeigen
-		$cp->resBox($cu->properties->smallResBox);
+		echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
 		info_msg("Die Raumschiffswerft wurde noch nicht gebaut!");
 
 

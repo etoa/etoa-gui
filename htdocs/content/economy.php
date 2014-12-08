@@ -61,7 +61,7 @@
 		
 
 		echo "<h1>Wirtschaft des Planeten ".$cp->name."</h1>";
-		$cp->resBox($cu->properties->smallResBox);
+		echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
 
 		$bl = new BuildList($cp->id,$cp->id);
 

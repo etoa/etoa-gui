@@ -33,7 +33,7 @@
 	// BEGIN SKRIPT //
 
 	echo "<h1>Recyclingstation des Planeten ".$cp->name."</h1>";
-	$cp->resBox($cu->properties->smallResBox);
+	echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
   
 	echo "<h2>Mobile Anlagen</h2>";		
 

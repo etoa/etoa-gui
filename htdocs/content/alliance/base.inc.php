@@ -19,7 +19,7 @@
 	//
 	
 	// Zeigt eigene Rohstoffe an
-	$cp->resBox($cu->properties->smallResBox);
+	echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
 	
 	echo "<h2><a href=\"?page=".$page."&amp;action=".$_GET['action']."\">Allianzbasis</a></h2>";
 	

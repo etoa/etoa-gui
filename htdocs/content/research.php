@@ -57,7 +57,7 @@ if (isset($cp)) {
 
 		// Überschrift
 		echo "<h1>Forschungslabor (Stufe ".CURRENT_LAB_LEVEL.") des Planeten ".$cp->name."</h1>";
-		$cp->resBox($cu->properties->smallResBox);
+		echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
 		
 		// Forschungsliste laden && Gentech level definieren
 		$tres = dbquery("
@@ -1083,7 +1083,7 @@ if (isset($cp)) {
 		else
 		{
 			echo "<h1>Forschungslabor des Planeten ".$cp->name."</h1>";
-			$cp->resBox($cu->properties->smallResBox);
+			echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
 			info_msg("Das Forschungslabor wurde noch nicht gebaut!");
 		}
 	}

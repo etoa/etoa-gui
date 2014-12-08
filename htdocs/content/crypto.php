@@ -53,7 +53,7 @@
 	  {
 			// Titel
 			echo "<h1>Allianzkryptocenter (Stufe ".$cryptoCenterLevel.") der Allianz ".$cu->alliance."</h1>";		
-			$cp->resBox($cu->properties->smallResBox);
+			echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
 			
 			// Calculate cooldown
 			$cooldown = max($cfg->param2("cryptocenter"),$cfg->value("cryptocenter") - ($cfg->param1("cryptocenter")*($cryptoCenterLevel-1)));
@@ -539,7 +539,7 @@
 		{
 			// Titel
 			echo "<h1>Kryptocenter des Planeten ".$cp->name."</h1>";		
-			$cp->resBox($cu->properties->smallResBox);
+			echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
 
 			info_msg("Das Kryptocenter wurde noch nicht gebaut!");
 		}
@@ -548,7 +548,7 @@
   {
     // Titel
     echo "<h1>Kryptocenter des Planeten ".$cp->name."</h1>";    
-    $cp->resBox($cu->properties->smallResBox);
+    echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
 
     info_msg("Aufgrund eines intergalaktischen Moratoriums der Völkerföderation der Galaxie Andromeda 
     sind sämtliche elektronischen Spionagetätigkeiten zurzeit nicht erlaubt!");

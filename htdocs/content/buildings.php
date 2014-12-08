@@ -62,7 +62,8 @@ define('HELP_URL',"?page=help&site=buildings");
 	if (isset($cp))
 	{
 		echo "<h1>Bauhof des Planeten ".$cp->name()."</h1>";
-		$cp->resBox($cu->properties->smallResBox);
+		
+		echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
 		
 		// Load buildlist object
 		$bl = new Buildlist($cp->id,$cu->id,2);

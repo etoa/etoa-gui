@@ -132,7 +132,7 @@
 			$dl = new DefList($cp->id,$cu->id,1);			
 	
 		 	echo "<h1>&Uuml;bersicht &uuml;ber den Planeten ".$cp->name()."</h1>";
-			$cp->resBox($cu->properties->smallResBox);
+			echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
 
 			if (isset($_GET['sub']) && $_GET['sub']=="ships")
 				$sub="ships";

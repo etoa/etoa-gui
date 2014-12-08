@@ -32,7 +32,7 @@
 
         echo '<h1>Bev&ouml;lkerungs&uuml;bersicht des Planeten '.$cp->name.'</h1>';
         echo '<div id="population_info"></div>'; // Nur zu testzwecken
-        $cp->resBox($cu->properties->smallResBox);
+        echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
 
         $res = dbquery("
         SELECT
