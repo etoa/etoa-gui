@@ -20,7 +20,11 @@ Version NEXT
  * Probleme mit Encodings behoben
  * Mehrere Sicherheitslücken behoben
  * Mehrere Probleme im Graphite design behoben
- 
+
+### Änderungen ###
+
+ * Der Button zum Abreissen eines Gebäudes wird nun nicht mehr so prominent angezeigt
+
 
 Version 3.4.0
 -------------

@@ -28,6 +28,7 @@ Version NEXT
 
  * Added new template variable ownFleetCount which indicates the number of the player's currently active fleets
  * Added new template variable infoText which shows the ingame info message, if defined
+ * The button for demolishing a building is no longer shown so prominently
  
 ### Administration ###
 
