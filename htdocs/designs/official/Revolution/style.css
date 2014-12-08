@@ -1040,6 +1040,11 @@ a:hover {
 	/*border: 1px solid #fff;*/
 }
 
+/* Hide 'classic' infobox on overview page */
+.overviewInfoTextContainer {
+	display: none;
+}
+
 /* Navigationen etc - Fussbereich */
 
 #f_nachricht:link {

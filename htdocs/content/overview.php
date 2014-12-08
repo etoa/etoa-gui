@@ -73,12 +73,12 @@
 	$infoText = $tm->getText('info');
 	if ($infoText->enabled && !empty($infoText->content))
 	{
+		echo '<div class="overviewInfoTextContainer">';
 		iBoxStart(": Wichtige Information :");
 		echo text2html($infoText->content);
 		iBoxEnd();
+		echo '</div>';
 	}
-	
-
 
 	tableStart("Status");
 	echo "<tr>
