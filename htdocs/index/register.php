@@ -115,35 +115,30 @@
 			"name" => $_POST['register_user_name'],
 			"nick" => $_POST['register_user_nick'],
 			"email" => $_POST['register_user_email']),$errorCode))
-    {
-				
-
-        iBoxStart("Registration erfolgreich!");
-        echo "Es wurde eine E-Mail an <b>".$_POST['register_user_email']."</b> verschickt, in der ein automatisch generiertes Passwort f&uuml;r deine Erstanmeldung steht.
-        <b>Bitte &auml;ndere dieses Passwort sobald als m&ouml;glich in den Einstellungen.</b><br/><br/>
-        Solltest du innerhalb der n&auml;chsten 5 Minuten keine E-Mail erhalten, pr&uuml;fe zun&auml;chst dein Spam-Verzeichnis.<br/><br/>
-        Melde dich bei einem <a href=\"?index=contact\">Admin</a>, falls du keine E-Mail erh&auml;ltst oder andere Anmeldeprobleme auftreten.";
-        iBoxEnd();
-
-		echo button("Zum Login", getLoginUrl());
-
-        echo "</div><br style=\"clear:both;\" /></div>";
-    	$_SESSION['REGISTER']=Null;
-    }
-    else
-    {
+		{
+			iBoxStart("Registration erfolgreich!");
+			echo "Es wurde eine E-Mail an <b>".$_POST['register_user_email']."</b> verschickt, in der ein automatisch generiertes Passwort f&uuml;r deine Erstanmeldung steht.
+			<b>Bitte &auml;ndere dieses Passwort sobald als m&ouml;glich in den Einstellungen.</b><br/><br/>
+			Solltest du innerhalb der n&auml;chsten 5 Minuten keine E-Mail erhalten, pr&uuml;fe zun&auml;chst dein Spam-Verzeichnis.<br/><br/>
+			Melde dich bei einem <a href=\"?index=contact\">Admin</a>, falls du keine E-Mail erh&auml;ltst oder andere Anmeldeprobleme auftreten.";
+			iBoxEnd();
+			echo button("Zum Login", getLoginUrl());
+			echo "</div><br style=\"clear:both;\" /></div>";
+			$_SESSION['REGISTER']=Null;
+		}
+		else
+		{
 			if ($errorCode!="")
-	  	{
-	      err_msg($errorCode);
-	      drawRegForm();
-	  	}      	      	
-    	else
-    	{
-        echo "<h2>Fehler</h2>";
-        echo "Beim Speichern der Daten trat ein Fehler auf! Bitte informiere den Entwickler:<br/><br/><a href=\"mailto:mail@etoa.ch\">E-Mail senden</a></p>";
-    	}
-    }
-
+			{
+				err_msg($errorCode);
+				drawRegForm();
+			}
+			else
+			{
+				echo "<h2>Fehler</h2>";
+				echo "Beim Speichern der Daten trat ein Fehler auf! Bitte informiere den Entwickler:<br/><br/><a href=\"mailto:mail@etoa.ch\">E-Mail senden</a></p>";
+			}
+		}
 	}
 	
 	//
