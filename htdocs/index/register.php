@@ -66,22 +66,22 @@
 		
 			echo "<tr><th class=\"tbltitle\" style=\"width:150px;\">Vollst&auml;ndiger Name:</th>";
 			echo "<td class=\"tbldata\" style=\"width:170px;\">
-				<input type=\"text\" id=\"register_user_name\" name=\"register_user_name\" maxlength=\"".NAME_MAXLENGTH."\" size=\"".NAME_MAXLENGTH."\" value=\"".$userName."\" /></td>";
+				<input type=\"text\" id=\"register_user_name\" name=\"register_user_name\" maxlength=\"".NAME_MAXLENGTH."\" size=\"".NAME_MAXLENGTH."\" value=\"".$userName."\"  autocomplete=\"off\" /></td>";
 			echo "<td class=\"tbldata\">Hier musst du deinen realen Namen angeben; dies dient zur Kontrolle gegen Multis. Dieser Name ist nur f&uuml;r Administratoren sichtbar!<br/><span id=\"nameStatus\"></span></td></tr>";
 			
 			echo "<tr><th class=\"tbltitle\">E-Mail:</th>";
 			echo "<td class=\"tbldata\">
-				<input type=\"text\" id=\"register_user_email\" name=\"register_user_email\" maxlength=\"50\" size=\"30\" value=\"".$userEmail."\" /></td>";
+				<input type=\"text\" id=\"register_user_email\" name=\"register_user_email\" maxlength=\"50\" size=\"30\" value=\"".$userEmail."\"  autocomplete=\"off\" /></td>";
 			echo "<td class=\"tbldata\">Du musst eine g&uuml;ltige E-Mail-Adresse eingeben. Auf diese wird dir ein Passwort zugeschickt mit dem du dich einloggen kannst.<br/><span id=\"emailStatus\"></span></td></tr>";
 
 			echo "<tr><th class=\"tbltitle\">Benutzername:</th>";
 			echo "<td class=\"tbldata\">
-				<input type=\"text\" id=\"register_user_nick\" name=\"register_user_nick\" maxlength=\"".NICK_MAXLENGHT."\" size=\"".NICK_MAXLENGHT."\" value=\"".$userNick."\" /></td>";
+				<input type=\"text\" id=\"register_user_nick\" name=\"register_user_nick\" maxlength=\"".NICK_MAXLENGHT."\" size=\"".NICK_MAXLENGHT."\" value=\"".$userNick."\" autocomplete=\"off\" /></td>";
 			echo "<td class=\"tbldata\">Mit diesem Name tritts du im Spiel als der Herrscher deines Volkes auf. <b>Der Nickname ist endgültig und kann nicht geändert werden!</b><br/><span id=\"nickStatus\"></span></td></tr>";
 
 			echo "<tr><th class=\"tbltitle\">Passwort:</th>";
 			echo "<td class=\"tbldata\">
-				<input type=\"password\" id=\"register_user_password\" name=\"register_user_password\" size=\"20\" value=\"".$userPassword."\" /></td>";
+				<input type=\"password\" id=\"register_user_password\" name=\"register_user_password\" size=\"20\" value=\"".$userPassword."\" autocomplete=\"off\" /></td>";
 			echo "<td class=\"tbldata\">Wähle ein sicheres Passwort damit niemand unbefugt in deinen Account einloggen kann.</b><br/><span id=\"passwordStatus\"></span></td></tr>";
 
 			
