@@ -3,6 +3,7 @@
 	$xajax->register(XAJAX_FUNCTION,'registerCheckName');
 	$xajax->register(XAJAX_FUNCTION,'registerCheckNick');
 	$xajax->register(XAJAX_FUNCTION,'registerCheckEmail');
+	$xajax->register(XAJAX_FUNCTION,'registerCheckPassword');
 
 //Überprüft die Korrektheit der Eingabe von Vor- und Nachname
 function registerCheckName($val)
@@ -99,8 +100,24 @@ function registerCheckEmail($val)
 	return $objResponse;
 }
 
+//Überprüft die Korrektheit des Passworts
+function registerCheckPassword($val)
+{
+	$objResponse = new xajaxResponse();
+	$objResponse->assign('passwordStatus', 'style.fontWeight', "bold");
 
-
-
+	if (strlen($val)>=PASSWORD_MINLENGHT)
+	{
+		$objResponse->assign('passwordStatus', 'innerHTML', "Ok");
+		$objResponse->assign('passwordStatus', 'style.color', "#0f0");
+	}
+	else
+	{
+		$objResponse->assign('passwordStatus', 'innerHTML', "Das Passwort ist noch zu kurz (Mind. ".PASSWORD_MINLENGHT." Zeichen)!");
+		$objResponse->assign('passwordStatus', 'style.color', "#f90");
+	}
+    
+	return $objResponse;
+}
 
 ?>
