@@ -69,8 +69,10 @@ input[type="button"].warn:hover,input[type="submit"].warn:hover	{
 	background:url('images/button_hover.gif') repeat-x;
 }
 
-input[type="button"].disabled,input[type="submit"].disabled,input[type="button"].disabled:hover,input[type="submit"].disabled:hover	{
-	background:url('images/button.gif') repeat-x;
+input[type="button"].disabled, input[type="submit"].disabled, 
+input[type="button"]:disabled, input[type="submit"]:disabled, 
+input[type="button"].disabled:hover, input[type="submit"].disabled:hover {
+	background:url('images/button_disabled.gif') repeat-x;
 	color:#ccc;
 }
 
