@@ -321,7 +321,7 @@
 		}
 		echo "</select>";                       
 	
-    echo "<br/><br/><input type=\"button\" name=\"random\" id=\"random\" value=\"Zufällige Rasse auswählen\"  onclick=\"rdm()\"/>"; 
+		echo " &nbsp; <input type=\"button\" name=\"random\" id=\"random\" value=\"Zufällige Rasse auswählen\"  onclick=\"rdm()\"/>"; 
       
 		// xajax content will be placed in the following cell
 		echo "<br/><br/><div id=\"raceInfo\"></div>";
