@@ -58,7 +58,7 @@
 	try {
 	
 		// Prüfen ob Updates eingeschaltet sind
-		if ($cfg->update_enabled->v==1)
+		if (Config::getInstance()->update_enabled->v==1)
 		{
 			$time = time();
 					
