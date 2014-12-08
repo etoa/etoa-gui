@@ -416,19 +416,20 @@ define('HELP_URL',"?page=help&site=buildings");
 					}
 	
 					// Abreissen
-					if ($item->level>0 && $item->building->demolishCostsFactor!=0 && $item->buildType==0)
+					$canDemolish = ($item->level>0 && $item->building->demolishCostsFactor!=0 && $item->buildType==0);
+					if ($canDemolish)
 					{
 						$waitArr = $item->waitingTimeString('demolish');
 						// Es wird bereits an einem Gebäude gebaut
 						if (!$bl->checkDemolishable($bid))
 						{
-							echo '<tr>
+							echo '<tr class="demolishActionContainer">
 									<td style="color:red;">Abreissen</td>
 									<td>'.tf($demolishCosts['time']).'</td>'
 									.$waitArr['string'].'
 									<td>'.nf($costs['costs5']).'</td>
 								</tr>
-								<tr>
+								<tr class="demolishActionContainer">
 									<td colspan="8">
 										<i>'.$bl->getLastError().'</i>
 									</td>
@@ -437,7 +438,7 @@ define('HELP_URL',"?page=help&site=buildings");
 						}
 						else
 						{
-							echo '<tr>
+							echo '<tr class="demolishActionContainer">
 									<td>
 										<input type="submit" class="button" name="command_demolish" value="Abreissen" onclick="if (this.value==\'Abreissen\'){return confirm(\'Geb&auml;de wirklich abreissen?\');}">
 									</td>
@@ -489,6 +490,17 @@ define('HELP_URL',"?page=help&site=buildings");
 		      				</tr>';
 					}
 					tableEnd();
+					
+					if ($canDemolish) {
+						echo '<div>Falls mehr Platz benötigt wird, kann dieses Gebäude <a href="javascript:;" onclick="$(\'.demolishActionContainer\').show();$(this).parent().hide();return false;">abgerissen</a> werden.</div>';
+						?>
+						<script>
+						$(function(){
+							$('.demolishActionContainer').hide();
+						});
+						</script>
+						<?PHP	
+					}
 					
 					if ($item->getWaitingTime()>0)
 					{
