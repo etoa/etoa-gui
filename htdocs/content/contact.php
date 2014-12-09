@@ -123,15 +123,6 @@
 		} else {
 			echo "<i>Keine Kontaktpersonen vorhanden!</i>";
 		}		
-		
-		iBoxStart('Impressum');
-		$tm = new TextManager();
-		$impressum = $tm->getText('impressum');
-		if ($impressum->enabled && !empty($impressum->content))
-		{
-			echo text2html($impressum->content);
-		}
-		iBoxEnd();
 
 		echo '<p>Wir danken den folgenden Open-Source Projekten für ihre tolle und wertvolle Arbeit:</p>';
 		$thirdparty = fetchJsonConfig("thirdparty.conf");
