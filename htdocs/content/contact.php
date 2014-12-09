@@ -125,7 +125,12 @@
 		}		
 		
 		iBoxStart('Impressum');
-		echo Constants::getInstance()->impressumText;
+		$tm = new TextManager();
+		$impressum = $tm->getText('impressum');
+		if ($impressum->enabled && !empty($impressum->content))
+		{
+			echo text2html($impressum->content);
+		}
 		iBoxEnd();
 
 		iBoxStart('Powered by');
