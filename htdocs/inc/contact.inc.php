@@ -108,7 +108,8 @@
 			foreach ($admins as $arr)
 			{
 				if ($arr->isContact) {
-					$showMailAddress = empty(CONTACT_REQUIRED_MAIL_SUFFIX) || preg_match('/'.CONTACT_REQUIRED_MAIL_SUFFIX.'/i', $arr->email);
+					$suffix = CONTACT_REQUIRED_MAIL_SUFFIX;
+					$showMailAddress = empty($suffix) || preg_match('/'.$suffix.'/i', $arr->email);
 				
 					echo '<tr><td>'.$arr->nick.'</td>';
 					if ($showMailAddress) {
