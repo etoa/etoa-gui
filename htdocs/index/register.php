@@ -152,42 +152,42 @@
 	{
 		$_SESSION['REGISTER']=$_POST;
 		
-		$errorCode="";
-		if (User::register(array(
-			"name" => $_POST['register_user_name'],
-			"nick" => $_POST['register_user_nick'],
-			"email" => $_POST['register_user_email'],
-			"password" => $_POST['register_user_password'],
-			),$errorCode))
+		try
 		{
-			if (empty($_POST['register_user_password'])) {
-				$pwAddition = ', in der ein automatisch generiertes Passwort f&uuml;r deine Erstanmeldung steht.
-				<b>Bitte &auml;ndere dieses Passwort sobald als m&ouml;glich in den Einstellungen</b>';
-			} else {
-				$pwAddition = '';
-			}
+			$newUser = User::register(
+				$_POST['register_user_name'],
+				$_POST['register_user_email'],
+				$_POST['register_user_nick'],
+				$_POST['register_user_password']
+			);
+			add_log(3,"Der Benutzer ".$newUser->nick." (".$newUser->realName.", ".$newUser->email.") hat sich registriert!");
+		
+			$email_text = "Hallo ".$newUser->nick."\n\nDu hast dich erfolgreich beim Sci-Fi Browsergame Escape to Andromeda registriert.\nHier nochmals deine Daten:\n\n";
+			$email_text.= "Universum: ".Config::getInstance()->roundname->v."\n";
+			$email_text.= "Name: ".$newUser->realName."\n";
+			$email_text.= "E-Mail: ".$newUser->email."\n\n";
+			$email_text.= "Nick: ".$newUser->nick."\n\n";
+			$email_text.= "WICHTIG: Gib dein Passwort an niemanden weiter. Gib dein Passwort auch auf keiner Seite ausser unserer Loginseite ein. Ein Game-Admin oder Entwickler wird dich auch nie nach dem Passwort fragen!\n";
+			$email_text.= "Desweiteren solltest du dich mit den Regeln (".RULES_URL.") bekannt machen, da ein Regelverstoss eine (zeitweilige) Sperrung deines Accounts zur Folge haben kann!\n\n";
+			$email_text.= "Viel Spass beim Spielen!\nDas EtoA-Team";
+
+			$mail = new Mail("Account-Registrierung", $email_text);
+			$mail->send($newUser->email);
 		
 			iBoxStart("Registration erfolgreich!");
-			echo "Es wurde eine Bestätigungsnachricht an <b>".$_POST['register_user_email']."</b> verschickt".$pwAddition .".<br/><br/>
+			echo "Es wurde eine Bestätigungsnachricht an <b>".$_POST['register_user_email']."</b> verschickt.<br/><br/>
 			Solltest du innerhalb der n&auml;chsten 5 Minuten keine E-Mail erhalten, pr&uuml;fe zun&auml;chst dein Spam-Verzeichnis.<br/><br/>
 			Melde dich bei einem <a href=\"?index=contact\">Admin</a>, falls du keine E-Mail erh&auml;ltst oder andere Anmeldeprobleme auftreten.";
 			iBoxEnd();
+			
 			echo button("Zum Login", getLoginUrl());
 			echo "</div><br style=\"clear:both;\" /></div>";
 			$_SESSION['REGISTER']=Null;
 		}
-		else
+		catch (Exception $e)
 		{
-			if ($errorCode!="")
-			{
-				err_msg($errorCode);
-				drawRegForm();
-			}
-			else
-			{
-				echo "<h2>Fehler</h2>";
-				echo "Beim Speichern der Daten trat ein Fehler auf! Bitte informiere den Entwickler:<br/><br/><a href=\"mailto:mail@etoa.ch\">E-Mail senden</a></p>";
-			}
+			err_msg("Die Registration hat leider nicht geklappt: ".$e->getMessage());
+			drawRegForm();
 		}
 	}
 	

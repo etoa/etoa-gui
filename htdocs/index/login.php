@@ -72,11 +72,11 @@
 			<p class="form-text">Bitte Logindaten für die <?=Config::getInstance()->roundname->v?> eingeben:</p>
 			<p>
 				<label for="loginname">Name</label>
-				<input id="loginname" type="text" name="<?=$nickField?>" value="" size="20" maxlength="250" /> &nbsp; <a href="?index=register">Kein Account? Hier registrieren</a>
+				<input id="loginname" type="text" name="<?=$nickField?>" value="" size="20" maxlength="250" tabindex="1" /> &nbsp; <a href="?index=register">Kein Account? Hier registrieren</a>
 			</p>
 			<p>
 				<label for="loginpw">Passwort</label>
-				<input id="loginpw" type="password" name="<?=$passwordField?>" value="" size="20" maxlength="250" /> &nbsp; <a href="?index=pwforgot">Passwort vergessen?</a>
+				<input id="loginpw" type="password" name="<?=$passwordField?>" value="" size="20" maxlength="250" tabindex="2" /> &nbsp; <a href="?index=pwforgot">Passwort vergessen?</a>
 			</p>
 			<p class="form-buttons">
 				<input id="loginsubmit" type="submit" name="login" value="Login" class="button" /> &nbsp;

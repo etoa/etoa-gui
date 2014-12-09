@@ -113,7 +113,7 @@ function registerCheckPassword($val)
 	}
 	else
 	{
-		$objResponse->assign('passwordStatus', 'innerHTML', "Das Passwort ist noch zu kurz (Mind. ".PASSWORD_MINLENGHT." Zeichen)!");
+		$objResponse->assign('passwordStatus', 'innerHTML', "Das Passwort ist noch zu kurz (mind. ".PASSWORD_MINLENGHT." Zeichen sind nötig)!");
 		$objResponse->assign('passwordStatus', 'style.color', "#f90");
 	}
     
