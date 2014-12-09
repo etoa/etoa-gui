@@ -205,6 +205,10 @@ a:hover {
 	text-align: center;
 }
 
+#contentwrap {
+	padding-right: 20px;
+}
+
 #content::-webkit-scrollbar {
     width: 6px;
 }
