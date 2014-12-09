@@ -20,11 +20,11 @@ class HelpUtil
 			else
 				$page = "index";
 			
-			echo "<a href=\"?$page=help\">Hilfe</a> &gt; ";
+			echo "<a href=\"?$page=help\">Hilfe</a> &raquo; ";
 			
 			if ($item2!=null)
 			{
-				echo "<a href=\"?$page=help&amp;site=".$item1[1]."\">".$item1[0]."</a> &gt; ";		
+				echo "<a href=\"?$page=help&amp;site=".$item1[1]."\">".$item1[0]."</a> &raquo; ";		
 				if ($disable2==0)
 					echo $item2[0]."<br/><br/>";		
 			}
