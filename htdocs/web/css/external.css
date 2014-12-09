@@ -3,12 +3,11 @@
 --------------------------------------------*/
 
 body	{
-	text-align:center;
+	text-align:left;
 	margin:0px;
 }
 
 #outGameTop	{
-	
 	text-align:right;
 	background: url('../images/outgame/topbg.png') repeat-x;
 	height:80px;
@@ -69,9 +68,45 @@ body	{
 }
 
 h1	{
-	padding-bottom:20px;
+	padding-bottom: 20px;
+	text-align: center;
+}
+
+p.center {
+	text-align: center;
 }
 
 #outGameContent	{
-	margin:2px 20px;
+	margin: 20px auto;
+	width: 700px;	
+}
+
+/*
+* Forms
+*/
+
+.styled-form {
+	margin:0px auto;
+}
+
+.styled-form-medium {
+	width:450px;
+}
+
+.styled-form label {
+	display: inline-block;
+	text-align: right;
+}
+
+.styled-form label:after {
+	content:':';
+}
+
+.styled-form-medium  label {
+	width: 80px;
+}
+
+.styled-form-medium .form-buttons, 
+.styled-form-medium .form-text {
+	padding-left: 85px;
 }

@@ -81,13 +81,14 @@
 	}
 	else
 	{
-		echo "<form action=\"?index=pwforgot\" method=\"post\"><div>";
+		echo '<form action="?index=pwforgot" method="post"><div style="width:400px;margin:0px auto;">';
 		$cstr = checker_init();
 		echo "Hier kannst du ein neues Passwort per E-Mail anfordern, wenn du deines vergessen hast:<br/><br/>";
-		echo "<table style=\"margin:0px auto;\">";
+		tableStart();
 		echo "<tr><th class=\"tbltitle\">Benutzername:</th><td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" size=\"30\" maxlength=\"255\" /></td></tr>";
 		echo "<tr><th class=\"tbltitle\">Deine E-Mail:</th><td class=\"tbldata\"><input type=\"text\" name=\"user_email_fix\" size=\"30\" maxlength=\"255\" /></td></tr>";
-		echo "</table><br/><input type=\"submit\" name=\"submit_pwforgot\" value=\"Passwort anfordern\" class=\"button\" /><br/><br/></div></form>";
+		tableEnd();
+		echo "<input type=\"submit\" name=\"submit_pwforgot\" value=\"Passwort anfordern\" class=\"button\" /></div></form>";
 	}
 ?>
 
