@@ -323,7 +323,7 @@ define('HELP_URL',"?page=help&site=buildings");
                   	<td rowspan="3" style="width:220px;background:#000;vertical-align:middle;">
                  		'.helpImageLink('buildings&amp;id='.$item->buildingId,$item->building->imgPathBig(),$item->building,'width:220px;height:220px').'
 					</td>
-					<td colspan="2" style="vertical-align:top;height:150px;width:100%">
+					<td colspan="2" style="vertical-align:top;height:150px;">
 						'.$item->building->longDesc.'
 					</td>
 				</tr>';
