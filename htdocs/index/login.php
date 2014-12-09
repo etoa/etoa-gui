@@ -72,7 +72,7 @@
 			<p class="form-text">Bitte Logindaten eingeben:</p>
 			<p>
 				<label for="loginname">Name</label>
-				<input id="loginname" type="text" name="<?=$nickField?>" value="" size="20" maxlength="250" />
+				<input id="loginname" type="text" name="<?=$nickField?>" value="" size="20" maxlength="250" /> &nbsp; <a href="?index=register">Kein Account? Hier registrieren</a>
 			</p>
 			<p>
 				<label for="loginpw">Passwort</label>
