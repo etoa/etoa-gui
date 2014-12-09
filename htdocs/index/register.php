@@ -97,10 +97,13 @@
 
 			</td></tr>";
 			echo "</table><br/>";
-			
-
-			echo "<input type=\"submit\" id=\"register_submit\" disabled=\"disabled\" name=\"register_submit\" value=\"Anmelden!\" /></div></form>";
 			?>
+
+			<input type="submit" id="register_submit" disabled="disabled" name="register_submit" value="Anmelden!" /> &nbsp; 
+			<a href="?index=login">Zurück zum Login</a>
+			</div>
+			</form>
+
 				<script type="text/javascript">
 					$(function(){
 						$('#register_user_name').focus();
