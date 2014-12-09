@@ -51,6 +51,9 @@
 		exit(1);
 	}
 	
+	// Load default values
+	require_once(RELATIVE_ROOT."inc/def.inc.php");
+	
 	$args = array_splice($_SERVER['argv'], 1);
 
 	$verbose = in_array("-v", $args);
