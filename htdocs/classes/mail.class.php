@@ -27,6 +27,7 @@ Forum: ".FORUM_URL;
 
 	function send($rcpt,$replyTo="")
 	{
+		$replyTo = trim($replyTo);
 		if ($replyTo!="")
 		{
 			$headers = $this->headers."Reply-to: ".$replyTo."\n";
@@ -35,16 +36,12 @@ Forum: ".FORUM_URL;
 		{
 			$headers = $this->headers."Reply-to: ".APP_NAME.' '.Config::getInstance()->roundname->v."<".Config::getInstance()->mail_reply->v.">\n";
 		}
-		if (mail($rcpt,$this->subject,$this->body,$headers))
+		if (mail($rcpt, $this->subject, $this->body, $headers)) {
 			return true;
-
+		}
+			
 		err_msg("Mail wurde nicht gesendet!\n\nTo: $rcpt\nSubject:".$this->subject."\n\nHeader:\n\n$headers\n\nBody:\n\n".$this->body);
 		return false;
-
-
-
 	}
-
-
 }
 ?>

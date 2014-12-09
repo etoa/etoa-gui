@@ -63,7 +63,7 @@
 					'url' => '?page=ticket'
 				],
 				[
-					'label' => 'Admin kontaktieren',
+					'label' => 'Admin via Mail kontaktieren',
 					'url' => '?page=contact'
 				],
 				[

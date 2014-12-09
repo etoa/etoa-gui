@@ -1,0 +1,133 @@
+<?PHP
+
+	if ($index!="") {
+		$baseUrl = "?index=".$index;
+	} else {
+		$baseUrl = "?page=".$page;
+	}
+	
+	// Text
+	$tm = new TextManager();
+	$contactText = $tm->getText('contact_message');
+	if ($contactText->enabled && !empty($contactText->content))
+	{
+		iBoxStart();
+		echo text2html($contactText->content);
+		iBoxEnd();
+	}
+	
+	// List of admins
+	$admins = AdminUser::getAll();
+	if (count($admins) > 0)
+	{
+		if (isset($_GET['rcpt']) && intval($_GET['rcpt'])>0)	
+		{
+			$rcpt = intval($_GET['rcpt']);
+			echo '<form action="'.$baseUrl.'&amp;rcpt='.$rcpt.'" method="post"><div>';	
+			if (isset($admins[$rcpt]) && $admins[$rcpt]->isContact)
+			{
+				$admin = $admins[$rcpt];
+				
+				$showForm = true;
+				$mail_subject = '';
+				$mail_text = '';
+				if (isset($_POST['submit']))
+				{
+					$mail_subject = $_POST['mail_subject'];
+					$mail_text = $_POST['mail_text'];
+				
+					if (!empty($mail_subject) && !empty($mail_text))
+					{				
+						// Subject
+						$subject = "Kontakt-Anfrage: ".$mail_subject;
+						
+						// Sender, receiver
+						$recipient = $admin->nick.'<'.$admin->email.'>';
+						if (isset($cu)) {
+							$sender = $cu->nick."<".$cu->email.">";
+						} else {
+							$sender = $_POST['mail_sender'];
+						}
+
+						// Text
+						$text = "Kontakt-Anfrage ".APP_NAME." ".Config::getInstance()->roundname->v."\n----------------------\n\n";
+						if (isset($cu)) {
+							$text.= "Nick: ".$cu->nick."\n";
+							$text.= "ID: ".$cu->id."\n";
+						} else {
+							$text.= "E-Mail: ".$_POST['mail_sender']."\n";
+						}				
+						$text.= "IP/Host: ".$_SERVER['REMOTE_ADDR']." (".Net::getHost($_SERVER['REMOTE_ADDR']).")\n\n";
+						$text.= $mail_text;
+
+						// Send mail
+						$mail = new Mail($subject, $text);
+						if ($mail->send($recipient, $sender))
+						{
+							ok_msg('Vielen Dank! Deine Nachricht wurde gesendet!');
+							$showForm = false;
+						}
+					}
+					else
+					{
+						err_msg("Titel oder Text fehlt!");
+					}
+				}
+			
+				if ($showForm)
+				{
+					tableStart('Nachricht an '.$admin->nick.' senden');
+					echo '<tr><th>E-Mail:</th><td>';
+					if (isset($cu)) {
+						echo ''.$cu->nick.'&lt;'.$cu->email.'&gt;';
+					} else {
+						echo '<input type="text" name="mail_sender" value="" size="50" />';
+					}
+					echo '</td></tr>';
+					echo '<tr><th>Titel:</th><td><input type="text" name="mail_subject" value="'.$mail_subject.'" size="50" /></td></tr>';
+					echo '<tr><th>Text:</th><td><textarea name="mail_text" rows="6" cols="80">'.$mail_text.'</textarea></td></tr>';
+					tableEnd();
+					echo '<input type="submit" name="submit" value="Senden" /> &nbsp;';
+				}
+			}
+			else
+			{
+				err_msg("Kontakt nicht vorhanden!");
+			}
+			echo '<input type="button" onclick="document.location=\''.$baseUrl.'\'" value="Zurück" /></div></form>';
+		}		
+		else
+		{
+			tableStart('Kontaktpersonen für diese Runde');
+			echo '<tr>
+				<th>Name</th>
+				<th>Mail</th>
+				<th>Kontaktformular</th>
+				<th>Foren-Profil</th>
+			</tr>';
+			foreach ($admins as $arr)
+			{
+				if ($arr->isContact) {
+					$showMailAddress = empty(CONTACT_REQUIRED_MAIL_SUFFIX) || preg_match('/'.CONTACT_REQUIRED_MAIL_SUFFIX.'/i', $arr->email);
+				
+					echo '<tr><td>'.$arr->nick.'</td>';
+					if ($showMailAddress) {
+						echo '<td><a href="mailto:'.$arr->email.'">'.$arr->email.'</a></td>';
+					} else {
+						echo '<td>(nicht öffentlich)</td>';
+					}
+					echo '<td><a href="'.$baseUrl.'&amp;rcpt='.$arr->id.'">Mail senden</a></td>';
+					if ($arr->boardUrl !='') {
+						echo '<td><a href="'.$arr->boardUrl.'" onclick="window.open(\''.$arr->boardUrl.'\');return false;">Profil</a></td>';
+					} else {
+						echo '<td>-</td>';
+					}
+					echo '</tr>';
+				}
+			}
+			tableEnd();		
+		}		
+	} else {
+		echo "<i>Keine Kontaktpersonen vorhanden!</i>";
+	}
+?>
