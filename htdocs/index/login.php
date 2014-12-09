@@ -69,7 +69,7 @@
 		?>
 		
 		<form action="." method="post" class="styled-form styled-form-medium">
-			<p class="form-text">Bitte Logindaten eingeben:</p>
+			<p class="form-text">Bitte Logindaten für die <?=Config::getInstance()->roundname->v?> eingeben:</p>
 			<p>
 				<label for="loginname">Name</label>
 				<input id="loginname" type="text" name="<?=$nickField?>" value="" size="20" maxlength="250" /> &nbsp; <a href="?index=register">Kein Account? Hier registrieren</a>

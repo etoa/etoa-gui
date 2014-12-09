@@ -88,7 +88,7 @@
 		$cstr = checker_init();
 		?>
 		<form action="?index=pwforgot" method="post" class="styled-form styled-form-medium">
-			<p class="form-text">Hier kannst du ein neues Passwort per E-Mail anfordern, wenn du deines vergessen hast:</p>
+			<p class="form-text">Hier kannst du ein neues Passwort für deinen Account in der <?=Config::getInstance()->roundname->v?> per E-Mail anfordern, wenn du deines vergessen hast:</p>
 			<p class="form-text">Wenn du weitere Hilfe benötigst, kannst du <a href="?index=contact">hier</a> einen Game-Admin kontaktieren.</p>
 			<p>
 				<label for="user_nick">Benutzername</label>

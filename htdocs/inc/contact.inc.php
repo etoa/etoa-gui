@@ -98,7 +98,7 @@
 		}		
 		else
 		{
-			tableStart('Kontaktpersonen für diese Runde');
+			tableStart('Kontaktpersonen für die '.Config::getInstance()->roundname->v);
 			echo '<tr>
 				<th>Name</th>
 				<th>Mail</th>
