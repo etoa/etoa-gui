@@ -905,113 +905,111 @@ die Spielleitung";
 	/**
 	* Registers a new user
 	*/
-	static public function register($data, &$errorCode, $welcomeMail=1)
+	static public function register($name, $email, $nick, $password, $race=null, $ghost=false)
 	{
-		$time = time();
 		$cfg = Config::getInstance();
 
-		if ($data['name']=="" || $data['nick']=="" || $data['email']=="")
+		// Validate required data is not empty
+		if (empty($name) || empty($email) || empty($nick) || empty($password))
 		{
-			$errorCode = "Nicht alle Felder sind ausgef&uuml;llt!";
-			return false;
+			throw new Exception("Nicht alle Felder sind ausgef&uuml;llt!");
+		}
+		
+		// Validate email
+		if (!checkEmail($email))
+		{
+			throw new Exception("Diese E-Mail-Adresse scheint ung&uuml;ltig zu sein. Pr&uuml;fe nach, ob dein E-Mail-Server online ist und die Adresse im korrekten Format vorliegt!");
 		}
 
-		$nick=trim($data['nick']);
-
-		if (!checkValidNick($nick) || !checkValidName($data['name']))
+		// Validate name
+		if (!checkValidName($name))
 		{
-			$errorCode = "Du hast ein unerlaubtes Zeichen im Benutzernamen oder im vollst&auml;ndigen Namen!";
-			return false;
+			throw new Exception("Du hast ein unerlaubtes Zeichen im vollst&auml;ndigen Namen!");
+		}
+		
+		// Validate nickname
+		$nick = trim($nick);
+		if (!checkValidNick($nick))
+		{
+			throw new Exception("Du hast ein unerlaubtes Zeichen im Benutzernamen!");
+		}
+		if ($nick == '')
+		{
+			throw new Exception("Dein Nickname darf nicht nur aus Leerzeichen bestehen!");
+		}
+		$nick_length = strlen(utf8_decode($nick));
+		if ($nick_length < NICK_MINLENGHT || $nick_length > NICK_MAXLENGHT)
+		{
+			throw new Exception("Dein Nickname muss mindestens ".NICK_MINLENGHT." Zeichen und maximum ".NICK_MAXLENGHT." Zeichen haben!");
 		}
 
-		$nick_length=strlen(utf8_decode($nick));
-		if($nick=='')
+		// Validate password
+		if (strlen($password) < PASSWORD_MINLENGHT)
 		{
-			$errorCode = "Dein Nickname darf nicht nur aus Leerzeichen bestehen!";
-			return false;
+			throw new Exception("Das Passwort ist noch zu kurz (mind. ".PASSWORD_MINLENGHT." Zeichen sind nötig)!");
 		}
 
-		if($nick_length<NICK_MINLENGHT || $nick_length>NICK_MAXLENGHT)
-		{
-			$errorCode = "Dein Nickname muss mindestens ".NICK_MINLENGHT." Zeichen und maximum ".NICK_MAXLENGHT." Zeichen haben!";
-			return false;
-		}
-
-		if (!checkEmail($data['email']))
-		{
-			$errorCode = "Diese E-Mail-Adresse scheint ung&uuml;ltig zu sein. Pr&uuml;fe nach, ob dein E-Mail-Server online ist und die Adresse im korrekten Format vorliegt!";
-			return false;
-		}
-
-		$res = mysql_query("
+		// Check existing user
+		$res = dbQuerySave("
 		SELECT
 			user_id
 		FROM
 			".self::tableName."
 		WHERE
-			user_nick='".mysql_real_escape_string($nick)."'
-			OR user_email_fix='".mysql_real_escape_string($data['email'])."'
-		LIMIT 1;");
+			user_nick=?
+			OR user_email_fix=?
+		LIMIT 1;", [
+			$nick,
+			$email
+		]);
 		if (mysql_num_rows($res)>0)
 		{
-			$errorCode = "Der Benutzer mit diesem Nicknamen oder dieser E-Mail-Adresse existiert bereits!";
-			return false;
+			throw new Exception("Der Benutzer mit diesem Nicknamen oder dieser E-Mail-Adresse existiert bereits!");
 		}
 
-		$pw = (isset($data['password']) && $data['password']!="") ? $data['password'] : mt_rand(100000000,9999999999);
-		if (dbquery("
+		// Add new record
+		if (dbQuerySave("
 			INSERT INTO
-			".self::tableName." (
-			user_name,
-			user_nick,
-			user_password,
-			user_email,
-			user_email_fix,
-			user_race_id,
-			user_ghost,
-			user_registered,
-			user_sitting_days
+				".self::tableName." 
+			(
+				user_name,
+				user_nick,
+				user_password,
+				user_email,
+				user_email_fix,
+				user_race_id,
+				user_ghost,
+				user_registered,
+				user_sitting_days
 			)
 			VALUES
-			('".mysql_real_escape_string($data['name'])."',
-			'".mysql_real_escape_string($nick)."',
-			'".saltPasswort($pw)."',
-			'".mysql_real_escape_string($data['email'])."',
-			'".mysql_real_escape_string($data['email'])."',
-			'".(isset($data['race']) ? intval($data['race']) : 0)."',
-			'".(isset($data['ghost']) ? intval($data['ghost']) : 0)."',
-			'".$time."',
-			'".$cfg->get("user_sitting_days")."');"))
+			(
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				UNIX_TIMESTAMP(),
+				?
+			);", [
+				$name,
+				$nick,
+				saltPasswort($password),
+				$email,
+				$email,
+				(isset($race) ? intval($race) : 0),
+				($ghost ? 1 : 0),
+				$cfg->get("user_sitting_days")
+			]))
 		{
-			$errorCode = mysql_insert_id();
-			$rating = new UserRating($errorCode);
-			$properties = new UserProperties($errorCode);
-
-			if (!isset($data['password']))
-				add_log(3,"Der Benutzer ".$nick." (".$data['name'].", ".$data['email'].") hat sich registriert!");
-			else
-				add_log(3,"Der Benutzer ".$nick." (".$data['name'].", ".$data['email'].") wurde registriert!");
-
-			if ($welcomeMail == 1)
-			{
-				$email_text = "Hallo ".$nick."\n\nDu hast dich erfolgreich beim Sci-Fi Browsergame Escape to Andromeda registriert.\nHier nochmals deine Daten:\n\n";
-				$email_text.= "Universum: ".Config::getInstance()->roundname->v."\n";
-				$email_text.= "Name: ".$data['name']."\n";
-				$email_text.= "E-Mail: ".$data['email']."\n\n";
-				$email_text.= "Nick: ".$nick."\n";
-				$email_text.= "Passwort: ".$pw." (bitte nach dem ersten Login ändern)\n\n";
-				$email_text.= "WICHTIG: Gib das Passwort an niemanden weiter. Gib dein Passwort auch auf keiner Seite ausser unserer Loginseite ein. Ein Game-Admin oder Entwickler wird dich auch nie nach dem Passwort fragen!\n";
-				$email_text.= "Desweiteren solltest du dich mit den Regeln (".RULES_URL.") bekannt machen, da ein Regelverstoss eine (zeitweilige) Sperrung deines Accounts zur Folge haben kann!\n\n";
-				$email_text.= "Viel Spass beim Spielen!\nDas EtoA-Team";
-
-				$mail = new Mail("Account-Registrierung",$email_text);
-				$mail->send($data['email']);
-			}
-			return true;
+			$uid = mysql_insert_id();
+			$rating = new UserRating($uid);
+			$properties = new UserProperties($uid);			
+			return new User($uid);
 		}
-
-		$errorCode = "Ein unbekannter Fehler trat auf!";
-		return false;
+		throw new Exception("Ein unbekannter Fehler trat auf! ".mysql_error());
 	}
 
 	/**

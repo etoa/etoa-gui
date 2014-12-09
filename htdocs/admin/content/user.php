@@ -60,21 +60,22 @@
 		
 		if (isset($_POST['create']))
 		{
-			$errorCode = "";
-			if (User::register(array(
-				"name" => $_POST['user_name'],
-				"nick" => $_POST['user_nick'],
-				"password" => $_POST['user_password'],
-				"email" => $_POST['user_email'],
-				"race" => $_POST['user_race'],
-				"ghost" => $_POST['user_ghost']
-				),$errorCode))
+			try 
 			{
-				ok_msg("Benutzer wurde erstellt! [[page user sub=edit id=".$errorCode."]Details[/page]]");
+				$newUser = User::register(
+					$_POST['user_name'],
+					$_POST['user_email'],
+					$_POST['user_nick'],
+					$_POST['user_password'],
+					$_POST['user_race'],
+					$_POST['user_ghost']==1
+				);
+				add_log(3,"Der Benutzer ".$newUser->nick." (".$newUser->realName.", ".$newUser->email.") wurde registriert!");					
+				ok_msg("Benutzer wurde erstellt! [[page user sub=edit id=".$newUser->id."]Details[/page]]");
 			}
-			else
+			catch (Exception $e)
 			{
-				error_msg("Benutzer konnte nicht erstellt werden!\n\n".$errorCode."");
+				error_msg("Benutzer konnte nicht erstellt werden!\n\n".$e->getMessage());
 			}
 		}
 		
@@ -83,14 +84,14 @@
 		echo "<tr><th>Name:</th><td>
 		<input type=\"text\" name=\"user_name\" value=\"\" />
 		</td></td>";
+		echo "<tr><th>E-Mail:</th><td>
+		<input type=\"text\" name=\"user_email\" value=\"\" />
+		</td></td>";
 		echo "<tr><th>Nick:</th><td>
 		<input type=\"text\" name=\"user_nick\" value=\"\" />
 		</td></td>";
 		echo "<tr><th>Passwort:</th><td>
-		<input type=\"text\" name=\"user_password\" value=\"\" />
-		</td></td>";
-		echo "<tr><th>E-Mail:</th><td>
-		<input type=\"text\" name=\"user_email\" value=\"\" />
+		<input type=\"password\" name=\"user_password\" value=\"\" />
 		</td></td>";
 		echo "<tr><th>Rasse:</th><td>
 		<select name=\"user_race\" />

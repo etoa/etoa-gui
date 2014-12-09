@@ -74,7 +74,8 @@
 	//
 
 	$tpl->assign("gameTitle", getGameIdentifier().(isset($indexpage[$index]) ? ' - '.$indexpage[$index]['label'] : ''));
-	$tpl->assign("templateDir",CSS_STYLE);
+	$tpl->assign("gameIdentifier", getGameIdentifier());
+	$tpl->assign("templateDir", CSS_STYLE);
 	
 	$additionalCss = [];
 	if (file_exists(CSS_STYLE."/external.css")) {

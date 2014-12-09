@@ -1,26 +1,5 @@
 {chunk name='header'}
-{if $logged_in eq false}
-<div id="outGameTop">
-	<div id="outGameTopLogo">
-		<a href="{$loginurl|default:''}" title="Zur Startseite">
-			<img src="web/images/outgame/logo.png" alt="Logo" />
-		</a>
-	</div>
-	<div id="outGameTopName">
-		{$roundname|default:'EtoA'}
-	</div>
-	<ul id="outGameTopmenu">{strip}
-		{if $topmenu|count gt 0}
-			{foreach from=$topmenu key=identifier item=data}
-				<li>
-					<a href="{$data.url}" class="nav-item-{$identifier}">{$data.label}</a>
-				</li>
-			{/foreach}
-		{/if}
-	{/strip}</ul>
-</div>
-{/if}
 <div id="outGameContent">
-{$content_for_layout}
+	{$content_for_layout}
 </div>
 {chunk name='footer'}

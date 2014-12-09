@@ -2,9 +2,9 @@
 
 $url = "?$link&amp;site=$site";
 
-if (isset($_GET['detail'])) {
+if (isset($_GET['id'])) {
 
-	$raceId = $_GET['detail'];
+	$raceId = $_GET['id'];
 
 	$res = dbQuerySave("
 	SELECT
@@ -17,9 +17,30 @@ if (isset($_GET['detail'])) {
 
 	$arr=mysql_fetch_array($res);
 
-	echo "<h2>Rassen: ".$arr['race_name']."</h2>";
+	echo "<h2>Rassen</h2>";
+	
+	HelpUtil::breadCrumbs(array("Rassen","races"),array(text2html($arr['race_name']),$arr['race_id']),1);
+	echo "<select onchange=\"document.location='?$link&amp;site=races&id='+this.options[this.selectedIndex].value\">";
+	$bres=dbquery("SELECT 
+		race_id,
+		race_name 
+	FROM 
+		races 
+	ORDER BY 
+		race_name;");
+	while ($barr=mysql_fetch_array($bres))		
+	{
+		echo "<option value=\"".$barr['race_id']."\"";
+		if ($barr['race_id']==$raceId)
+			echo " selected=\"selected\"";
+		echo ">".$barr['race_name']."</option>";
+	}
+	echo "</select><br/><br/>";		
 
+	// Info text
 	echo text2html($arr['race_comment'])."<br/><br/>";
+
+	// Bonus / Malus
 	tableStart('',300);
 	echo "<tr><th colspan=\"2\">St&auml;rken / Schw&auml;chen:</th></tr>";
 	if ($arr['race_f_metal']!=1)
@@ -63,9 +84,8 @@ if (isset($_GET['detail'])) {
 		echo "<tr><th>".RES_ICON_TIME."Fluggeschwindigkeit:</td><td>".get_percent_string($arr['race_f_fleettime'],1)."</td></tr>";
 	}
 	tableEnd();
-	tableStart('',500);
 
-	echo  "<tr><th colspan=\"3\">Spezielle Schiffe:</th></tr>";
+	// Ships
 	$res=dbQuerySave("
 	SELECT
 		ship_id
@@ -77,6 +97,8 @@ if (isset($_GET['detail'])) {
 	AND special_ship=0;", array($raceId));
 	if (mysql_num_rows($res)>0)
 	{
+		tableStart('',500);
+		echo  "<tr><th colspan=\"3\">Spezielle Schiffe:</th></tr>";
 		while ($arr=mysql_fetch_array($res))
 		{
 			$ship = new Ship($arr['ship_id']);
@@ -84,14 +106,10 @@ if (isset($_GET['detail'])) {
 			<th style=\"width:180px;\">".text2html($ship->name)."</th>
 			<td>".text2html($ship->shortComment)."</td></tr>";
 		}
+		tableEnd();
 	}
-	else {
-		echo "<tr><td colspan=\"3\">Keine Rassenschiffe vorhanden</td></tr>";
-	}
-
-	tableEnd();
-	tableStart('',500);
-	echo  "<tr><th colspan=\"3\">Spezielle Verteidigung:</th></tr>";
+	
+	// Defenses
 	$res=dbQuerySave("
 	SELECT
 		def_id,
@@ -104,6 +122,8 @@ if (isset($_GET['detail'])) {
 	AND def_buildable=1;", array($raceId));
 	if (mysql_num_rows($res)>0)
 	{
+		tableStart('',500);
+		echo  "<tr><th colspan=\"3\">Spezielle Verteidigung:</th></tr>";
 		while ($arr=mysql_fetch_array($res))
 		{
 			$s_img = IMAGE_PATH."/".IMAGE_DEF_DIR."/def".$arr['def_id']."_small.".IMAGE_EXT;
@@ -111,19 +131,16 @@ if (isset($_GET['detail'])) {
 			<th style=\"width:180px;\">".text2html($arr['def_name'])."</th>
 			<td>".text2html($arr['def_shortcomment'])."</td></tr>";
 		}
+		tableEnd();
 	}
-	else {
-		echo "<tr><td colspan=\"3\">Keine Rassenverteidigung vorhanden</td></tr>";
-	}
-
-	tableEnd();
-	echo "<br/>";
 	echo button("Rassenübersicht",$url)."&nbsp;&nbsp; ";
 	
 } else {
 
 	echo "<h2>Rassen</h2>";
 
+	HelpUtil::breadCrumbs(array("Rassen","races"));
+	
 	//
 	//Order
 	//
@@ -159,17 +176,15 @@ if (isset($_GET['detail'])) {
 	$res = dbquery("SELECT * FROM races ORDER BY $order $sort;");
 	if (mysql_num_rows($res)>0)
 	{
-
 		tableStart("Kurzinformation");
 		echo "<tr>";
-		//"<td class=\"tbltitle\">Logo</td>";
-		echo "<td class=\"tbltitle\">Name</td>";
-		echo "<td class=\"tbltitle\">Kurzbeschreibug</td></tr>";
-
+		echo "<th>Name</th>";
+		echo "<th>Kurzbeschreibug</th>
+		</tr>";
 		while ($arr = mysql_fetch_array($res))
 		{
 			echo "<tr>";
-			echo "<td><a href=\"?$link&amp;site=races&amp;detail=".$arr['race_id']."\">".$arr['race_name']."</a></td>";
+			echo "<td><a href=\"?$link&amp;site=races&amp;id=".$arr['race_id']."\">".$arr['race_name']."</a></td>";
 			echo "<td>".text2html($arr['race_short_comment'])."</td></tr>";
 
 		}

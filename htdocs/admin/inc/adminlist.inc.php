@@ -15,7 +15,7 @@
 			<td>".$arr->name."</td>
 			<td><a href=\"mailto:".$arr->email."\">".$arr->email."</a></td>
 			<td>".$arr->getRolesStr()."</td>
-			<td>".($arr->board_url ? "<a href=\"".$arr->board_url."\" target=\"_blank\">Profil</a>" : "")."</td>
+			<td>".($arr->boardUrl ? "<a href=\"".$arr->boardUrl."\" target=\"_blank\">Profil</a>" : "")."</td>
 		</tr>";
 	}		
 	echo "</table><br/> ";

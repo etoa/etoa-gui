@@ -3,75 +3,62 @@
 --------------------------------------------*/
 
 body	{
-	text-align:center;
+	text-align:left;
 	margin:0px;
-}
-
-#outGameTop	{
-	
-	text-align:right;
-	background: url('../images/outgame/topbg.png') repeat-x;
-	height:80px;
-	position:relative;
-	margin-bottom:30px;
-}
-
-#outGameTopmenu {
-	list-style-type:none;
-	clear:both;
-	position:absolute;
-	top:0px;
-	right:0px;
-	height:80px;
-	margin:0px;
-	padding:0px;
-}
-
-#outGameTopmenu li {
-	display:inline;
-	margin:0px;
-	padding:0px;
-}
-
-#outGameTopmenu li a {
-	display: inline-block;
-	text-decoration:none;
-	color:#999;
-	margin:0px 0px;
-	padding:30px 15px;
-	text-align:center;
-	width:auto;
-	border-right:1px solid #222;
-	border-left:1px solid #444;
-}
-
-#outGameTopmenu li a:hover {
-	color:#ddd;
-}
-
-#outGameTopmenu li a img {
-	border:none;
-	width:40px;
-	height:40px;
-}
-
-#outGameTopLogo	{
-	position:absolute;
-	top:0px;
-	left:0px;
-}
-
-#outGameTopName	{
-	position:absolute;
-	top:27px;
-	left:250px;
-	font-size:16pt;
 }
 
 h1	{
-	padding-bottom:20px;
+	padding-bottom: 20px;
+	text-align: center;
+}
+
+p.center {
+	text-align: center;
 }
 
 #outGameContent	{
-	margin:2px 20px;
+	margin: 80px auto 10px;
+	width: 800px;	
+}
+
+/*
+* Tables
+*/
+
+table.tb.boxLayout {
+	width: 100%!important;
+}
+
+table.tb td , table.tb th{
+	vertical-align: middle;
+}
+
+/*
+* Forms
+*/
+
+.styled-form {
+	margin:0px auto;
+}
+
+.styled-form-medium {
+	width:550px;
+}
+
+.styled-form label {
+	display: inline-block;
+	text-align: right;
+}
+
+.styled-form label:after {
+	content:':';
+}
+
+.styled-form-medium  label {
+	width: 120px;
+}
+
+.styled-form-medium .form-buttons, 
+.styled-form-medium .form-text {
+	padding-left: 125px;
 }
