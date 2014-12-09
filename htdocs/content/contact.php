@@ -133,13 +133,22 @@
 		}
 		iBoxEnd();
 
-		iBoxStart('Powered by');
-		echo '<img style="border:1px solid #000;margin:5px 10px;" src="images/powered/php.png" alt="PHP" />';
-		echo '<img style="border:1px solid #000;margin:5px 10px;" src="images/powered/mysql.png" alt="MySQL" />';
-		echo '<img style="border:1px solid #000;margin:5px 10px;" src="images/powered/apache.png" alt="Apache" />';
-		echo '<img style="border:1px solid #000;margin:5px 10px;" src="images/powered/xajax.png" alt="XAJAX" />';
-		echo '<img style="border:1px solid #000;margin:5px 10px;" src="images/powered/smarty.png" alt="Smarty" />';
-		iBoxEnd();
+		echo '<p>Wir danken den folgenden Open-Source Projekten für ihre tolle und wertvolle Arbeit:</p>';
+		$thirdparty = fetchJsonConfig("thirdparty.conf");
+		tableStart();
+		echo '<tr>
+			<th>Projekt</th>
+			<th>Beschreibung</th>
+			<th>Website</th>
+		</tr>';
+		foreach ($thirdparty as $tp) {
+			echo '<tr>
+				<td>'.$tp['name'].'</td>
+				<td>'.$tp['description'].'</td>
+				<td><a href="'.$tp['url'].'" target="_blank">'.$tp['url'].'</a></td>
+			</tr>';
+		}
+		tableEnd();
 	}
 ?>                                                  
                                                     
