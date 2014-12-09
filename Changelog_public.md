@@ -26,7 +26,7 @@ Version 3.5.0
 ### Änderungen ###
 
  * Der Button zum Abreissen eines Gebäudes wird nun nicht mehr so prominent angezeigt
-
+ * Die extern zugänglichen Seiten Rangliste, Hilfe, Spielstatistiken und Pranger wurden entfernt um die Code-Wartung zu vereinfachen. All diese Daten sind auch ingame verfügbar.
 
 Version 3.4.0
 -------------

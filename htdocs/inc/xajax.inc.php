@@ -67,10 +67,6 @@
 		{
 			require_once(RELATIVE_ROOT."inc/xajax/register.xajax.php");
 		}
-		elseif ($index=="ladder" || $index=="stats")
-		{
-			require_once(RELATIVE_ROOT."inc/xajax/ladder.xajax.php");
-		}
 	}	
 	
 	$xajax->processRequest();

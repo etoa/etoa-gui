@@ -27,22 +27,6 @@
 			'url'=>'?index=pwforgot',
 			'label'=>'Passwort'
 		],
-		'ladder' => [
-			'url'=>'?index=ladder',
-			'label'=>'Rangliste'
-		],
-		'gamestats' => [
-			'url'=>'?index=gamestats',
-			'label'=>'Server'
-		],
-		'pillory' => [
-			'url'=>'?index=pillory',
-			'label'=>'Pranger'
-		],
-		'help' => [
-			'url'=>'?index=help',
-			'label'=>'Hilfe'
-		],
 		'contact' => [
 			'url'=>'?index=contact',
 			'label'=>'Kontakt'
