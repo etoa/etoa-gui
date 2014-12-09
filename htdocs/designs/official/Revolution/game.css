@@ -142,14 +142,11 @@
 * Search-Box 
 */
 
-.search	{
-	background: #000 url('../images/search.png') 2px 1px no-repeat;
-	padding-left:20px;
-}
-
-.search:focus	{
-	background: #222 url('../images/search.png') 2px 1px no-repeat;
-	padding-left:20px;
+input[type="text"].search, input[type="text"].search:focus {
+	background-image: url('../../../web/images/search.png');
+	background-position: 3px 4px;
+	background-repeat: no-repeat;
+	padding-left:25px;
 }
       
 /* 
