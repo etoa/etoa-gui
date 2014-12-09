@@ -53,10 +53,10 @@
 					<div id="planetname">noch nicht ausgewählt</div>
 				{/if}
 						
-				<a id="prevplanet" href="?page={$page}&mode={$mode}&change_entity={$prevPlanetId}"></a>
-				<a id="nextplanet" href="?page={$page}&mode={$mode}&change_entity={$nextPlanetId}"></a>
+				<a id="prevplanet" href="?page={$page}&amp;mode={$mode}&amp;change_entity={$prevPlanetId}"></a>
+				<a id="nextplanet" href="?page={$page}&amp;mode={$mode}&amp;change_entity={$nextPlanetId}"></a>
 				<a id="navplanetlist" href="#" onclick="js_planetlist(true); return true"></a>				
-				<div id="planetlist" onmouseover="js_planetlist(true); return true"; onmouseout="js_planetlist(false); return true;">
+				<div id="planetlist" onmouseover="js_planetlist(true); return true;" onmouseout="js_planetlist(false); return true;">
 					{foreach from=$planetList item=p}
 						<a href="{$p.url}" {if $p.current}class="active"{/if}>{$p.label}</a>
 					{/foreach}
@@ -91,7 +91,9 @@
 
 			<!-- zentraler Inhaltsbereich -->
   			<section id="content">
+					<div id="contentwrap">
 					{$content_for_layout}	
+					</div>
 					<img src="{$templateDir}/images/content_footerabstand.gif" width="142" height="50" alt="">
   			</section>
 

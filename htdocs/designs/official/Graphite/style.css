@@ -477,60 +477,57 @@ img	{
 	margin:15px 0px;
 	padding:0px;
 	border-collapse: collapse;
-}
-
-.boxLayout table.tb, table.tb.boxLayout {
-	width:100%;
-	margin:15px 0px;
+	border:1px solid #111;
+	color:#fff;
 }
 
 /* Infoboxes and -tables */
 .infoboxtitle	{
 	border-collapse: collapse;
-	background:none;
-	border:none;
+	background:#242426;
+	border-bottom: 1px solid #111;
 	color:#fff;
 	font-weight:bold;
-	padding:0px;
+	padding: 0;
 	margin:0px;
 	width:100%;
+	text-align:left;
+	vertical-align:top;
+	font-weight: bold;
 }
 
-.infoboxtitleleft	{
-	background:url('images/boxtitleleft.png') no-repeat;
-	height:30px;
-	width:175px;
-}
-
-.infoboxtitleright	{
-	background:url('images/boxtitleright.png') no-repeat;
-	height:30px;
-	width:175px;
-}
-
-.infoboxtitlemiddle	{
-	background:url('images/boxtitle.png') repeat-x;
-	height:30px;
-	text-align:center;
+.infoboxtitle span {
+	padding: 2px 4px;
+	display: block;
 }
 
 .infoboxcontent	{
-	color:#fff;
+	padding:4px;
 	background:#4E4E50;
-	padding:8px;
-	border:1px solid #111;
 }
 
 
 
 /* Tables */
 
- table.tb	{
+table.tb {
  	border-collapse:collapse;
 	margin:0px;
+	width:100%;
+	margin:15px 0px;
 }
 
-.tb th	{
+table.tb caption {
+	background:#242426;
+	border:1px solid #111;
+	border-bottom: none;
+	text-align:left;
+	vertical-align:top;
+	padding:2px;
+	font-weight: bold;
+}
+
+table.tb th {
 	background:#242426;
 	border:1px solid #111;
 	text-align:left;
@@ -538,7 +535,7 @@ img	{
 	padding:2px;
 }
 
-.tb td	{
+table.tb td {
 	color:#fff;
 	background:#4E4E4F;
 	border:1px solid #111;

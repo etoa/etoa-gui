@@ -205,6 +205,10 @@ a:hover {
 	text-align: center;
 }
 
+#contentwrap {
+	padding-right: 20px;
+}
+
 #content::-webkit-scrollbar {
     width: 6px;
 }
@@ -1334,59 +1338,57 @@ a:hover {
 	margin:15px 0px;
 	padding:0px;
 	border-collapse: collapse;
-	width: 98%
-}
-
-.boxLayout table.tb, table.tb.boxLayout {
-	width:98%;
-	margin:15px 0px;
+	width: 100%;
+	color: #dae9ff;
+	text-align: left;
+	border:1px solid #111;
 }
 
 /* Infoboxes and -tables */
 .infoboxtitle	{
 	border-collapse: collapse;
-	background:none;
-	border:none;
+	background: rgba(24, 35, 59, 0.5);
+	border-bottom: 1px solid #111;
 	color:#dae9ff;
 	font-weight:bold;
-	padding:0px;
+	padding:2px 0px;
 	margin:0px;
 	width:100%;
+	text-align: left;
+	vertical-align: top;
+	font-weight: bold;
 }
 
-.infoboxtitleleft	{
-	height:30px;
-	width:175px;
-}
-
-.infoboxtitleright	{
-	height:30px;
-	width:175px;
-}
-
-.infoboxtitlemiddle	{
-	height:30px;
-	text-align:center;
+.infoboxtitle span {
+	padding: 2px 4px;
+	display: block;
 }
 
 .infoboxcontent	{
-	color:#dae9ff;
-	text-align: left;
-	background:rgba(24, 35, 59, 0.6);
-	padding:8px;
-	border:1px solid #111;
-	width: 98%
+	background: rgba(24, 35, 59, 0.9);
+	padding:4px 8px;
 }
 
 /* Tables */
 
- table.tb	{
+table.tb	{
  	border-collapse:collapse;
-	margin:0px;
+	margin:15px 0px;
 	text-align: right;
+	width: 100%;
 }
 
-.tb th	{
+table.tb caption {
+	background: rgba(24, 35, 59, 0.5);
+	border: 1px solid #111;
+	border-bottom: none;
+	text-align: left;
+	vertical-align: top;
+	padding: 2px;
+	font-weight: bold;
+}
+
+table.tb th	{
 	background:rgba(24, 35, 59, 0.5);
 	border:1px solid #111;
 	text-align:left;
@@ -1394,7 +1396,7 @@ a:hover {
 	padding:2px;
 }
 
-.tb td	{
+table.tb td	{
 	color:#dae9ff;
 	background:rgba(24, 35, 59, 0.9);
 	border:1px solid #111;

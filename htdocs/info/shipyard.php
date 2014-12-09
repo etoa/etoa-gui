@@ -328,7 +328,7 @@
 					$order $sort;");
 				if (mysql_num_rows($res)>0)
 				{
-					tableStart($carr['cat_name'],800);
+					tableStart($carr['cat_name']);
 					echo "<tr><th colspan=\"2\"><a href=\"?$link&amp;site=$site&amp;order=name\">Name</a></th>";
 					echo "<th><a href=\"?$link&amp;site=$site&amp;order=race_id\">Rasse</a></th>";
 					echo "<th><a href=\"?$link&amp;site=$site&amp;order=capacity\">Kapazität</a></th>";
