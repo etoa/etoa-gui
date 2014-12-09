@@ -1,5 +1,7 @@
 <?php
 
+	define('APP_NAME', 'EtoA');
+
 	// Timezone
 	define('TIMEZONE', 'Europe/Zurich');
 

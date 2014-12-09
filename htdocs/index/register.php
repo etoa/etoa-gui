@@ -58,7 +58,7 @@
 			$userEmail = isset($_SESSION['REGISTER']['register_user_email']) ? $_SESSION['REGISTER']['register_user_email'] : '';
 			$userPassword = isset($_SESSION['REGISTER']['register_user_password']) ? $_SESSION['REGISTER']['register_user_password'] : '';
 			
-			echo 'Melde dich hier für die '.Config::getInstance()->roundname->v.' von '.Constants::getInstance()->appName.' an. Es sind noch <b>'.max($cfg->p2('enable_register')-$ucnt[0],0).'</b> von <b>'.$cfg->p2('enable_register').'</b> Plätzen frei!<br/><br/>';
+			echo 'Melde dich hier für die '.Config::getInstance()->roundname->v.' von '.APP_NAME.' an. Es sind noch <b>'.max($cfg->p2('enable_register')-$ucnt[0],0).'</b> von <b>'.$cfg->p2('enable_register').'</b> Plätzen frei!<br/><br/>';
 			echo "<form action=\"?index=register\" method=\"post\">
 			<div style=\"width:700px;margin:5px auto;\">";
 
