@@ -90,7 +90,7 @@ p.center {
 }
 
 .styled-form-medium {
-	width:450px;
+	width:480px;
 }
 
 .styled-form label {
@@ -103,10 +103,10 @@ p.center {
 }
 
 .styled-form-medium  label {
-	width: 80px;
+	width: 120px;
 }
 
 .styled-form-medium .form-buttons, 
 .styled-form-medium .form-text {
-	padding-left: 85px;
+	padding-left: 125px;
 }

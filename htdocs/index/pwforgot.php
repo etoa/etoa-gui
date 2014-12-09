@@ -26,7 +26,11 @@
 	// 	Kommentar:
 	//
 
-	echo '<h1>Passwort vergessen?</h1>';
+	?>
+	
+	<h1>Passwort vergessen?</h1>
+	
+	<?PHP
 
 	if (isset($_POST['submit_pwforgot']) && checker_verify())
 	{
@@ -81,14 +85,25 @@
 	}
 	else
 	{
-		echo '<form action="?index=pwforgot" method="post"><div style="width:400px;margin:0px auto;">';
 		$cstr = checker_init();
-		echo "Hier kannst du ein neues Passwort per E-Mail anfordern, wenn du deines vergessen hast:<br/><br/>";
-		tableStart();
-		echo "<tr><th class=\"tbltitle\">Benutzername:</th><td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" size=\"30\" maxlength=\"255\" /></td></tr>";
-		echo "<tr><th class=\"tbltitle\">Deine E-Mail:</th><td class=\"tbldata\"><input type=\"text\" name=\"user_email_fix\" size=\"30\" maxlength=\"255\" /></td></tr>";
-		tableEnd();
-		echo "<input type=\"submit\" name=\"submit_pwforgot\" value=\"Passwort anfordern\" class=\"button\" /></div></form>";
+		?>
+		<form action="?index=pwforgot" method="post" class="styled-form styled-form-medium">
+			<p class="form-text">Hier kannst du ein neues Passwort per E-Mail anfordern, wenn du deines vergessen hast:</p>
+			<p class="form-text">Wenn du weitere Hilfe benötigst, kannst du <a href="?index=contact">hier</a> einen Game-Admin kontaktieren.</p>
+			<p>
+				<label for="user_nick">Benutzername</label>
+				<input type="text" name="user_nick" id="user_nick" size="30" maxlength="255" />
+			</p>
+			<p>
+				<label for="user_email_fix">Deine E-Mail</label>
+				<input type="text" name="user_email_fix" id="user_email_fix" size="30" maxlength="255" />
+			</p>
+			<p class="form-buttons">			
+				<input type="submit" name="submit_pwforgot" value="Passwort anfordern" class="button" /> &nbsp;
+				<a href="?index=login">Zurück zum Login</a>
+			</p>
+		</form>
+		<?PHP
 	}
 ?>
 
