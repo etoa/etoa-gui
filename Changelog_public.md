@@ -1,8 +1,8 @@
 Escape to Andromeda Changelog
 =============================
 
-Version NEXT
-------------
+Version 3.5.0
+-------------
 
 ### Features ###
 
