@@ -837,7 +837,7 @@
 			if (isset($cu->properties) && $cu->properties->cssStyle=="Graphite")
 				$w = "width:650px";			
 			else
-				$w = "width:98%";
+				$w = "width:100%";
 		}
 		if ($id!="")
 		{
@@ -849,15 +849,17 @@
 		}
 		elseif ($layout=="nondisplay")
 		{
-			echo "<table ".$id." class=\"tb boxLayout\" style=\"display:none;".$w."\">";
+			echo "<table ".$id." class=\"tb\" style=\"display:none;".$w."\">";
 		}
 		else
 		{
-			echo "<table ".$id." class=\"tb boxLayout\" style=\"".$w."\">";
+			echo "<table ".$id." class=\"tb\" style=\"".$w."\">";
 		}
 		
 		if ($title!="")
-			echo "<tr><th class=\"infoboxtitle\" colspan=\"20\">$title</th></tr>";
+		{
+			echo "<caption>".$title."</caption>";
+		}
 	}
 
 	function tableEnd()
@@ -884,7 +886,7 @@
 			if (isset($cu->properties) && $cu->properties->cssStyle=="Graphite")
 				$w = "width:650px";			
 			else
-				$w = "width:98%";
+				$w = "width:100%";
 		}
 		
 		echo "<div class=\"boxLayout\" style=\"".$w."\">";

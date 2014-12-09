@@ -333,6 +333,16 @@ input,select,textarea	{
 	margin:15px auto;
 }
 
+.tbl caption, table.tb	caption {
+	border:1px solid #fff;
+	border-bottom: none;
+	font-size:10pt;
+	font-weight:bold;
+	background:#225 url(images/cellpic.gif);
+	padding:4px;
+	text-align:center;
+}
+
 .tblc	{
 	margin:0px auto;
 	border:1px solid #ffffff;
