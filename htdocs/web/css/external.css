@@ -75,28 +75,3 @@ h1	{
 #outGameContent	{
 	margin:2px 20px;
 }
-
-#outgameOverviewTable	{
-	width:450px;
-		margin:0px auto;
-}
-
-#outgameOverviewTable	td	{
-	width:150px;
-	height:150px;
-}
-
-#outgameOverviewTable	td	a {
-	display:block;
-	background:#777;
-	border:1px solid #fff;
-	width:120px;
-	height:90px;
-	text-align:center;
-	padding-top:30px;
-	text-decoration:none;
-}
-
-#outgameOverviewTable	td	a:hover {
-	background:#444;
-}
