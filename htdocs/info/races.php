@@ -2,9 +2,9 @@
 
 $url = "?$link&amp;site=$site";
 
-if (isset($_GET['detail'])) {
+if (isset($_GET['id'])) {
 
-	$raceId = $_GET['detail'];
+	$raceId = $_GET['id'];
 
 	$res = dbQuerySave("
 	SELECT
@@ -17,7 +17,25 @@ if (isset($_GET['detail'])) {
 
 	$arr=mysql_fetch_array($res);
 
-	echo "<h2>Rassen: ".$arr['race_name']."</h2>";
+	echo "<h2>Rassen</h2>";
+	
+	HelpUtil::breadCrumbs(array("Rassen","races"),array(text2html($arr['race_name']),$arr['race_id']),1);
+	echo "<select onchange=\"document.location='?$link&amp;site=races&id='+this.options[this.selectedIndex].value\">";
+	$bres=dbquery("SELECT 
+		race_id,
+		race_name 
+	FROM 
+		races 
+	ORDER BY 
+		race_name;");
+	while ($barr=mysql_fetch_array($bres))		
+	{
+		echo "<option value=\"".$barr['race_id']."\"";
+		if ($barr['race_id']==$raceId)
+			echo " selected=\"selected\"";
+		echo ">".$barr['race_name']."</option>";
+	}
+	echo "</select><br/><br/>";		
 
 	echo text2html($arr['race_comment'])."<br/><br/>";
 	tableStart('',300);
@@ -124,6 +142,8 @@ if (isset($_GET['detail'])) {
 
 	echo "<h2>Rassen</h2>";
 
+	HelpUtil::breadCrumbs(array("Rassen","races"));
+	
 	//
 	//Order
 	//
@@ -169,7 +189,7 @@ if (isset($_GET['detail'])) {
 		while ($arr = mysql_fetch_array($res))
 		{
 			echo "<tr>";
-			echo "<td><a href=\"?$link&amp;site=races&amp;detail=".$arr['race_id']."\">".$arr['race_name']."</a></td>";
+			echo "<td><a href=\"?$link&amp;site=races&amp;id=".$arr['race_id']."\">".$arr['race_name']."</a></td>";
 			echo "<td>".text2html($arr['race_short_comment'])."</td></tr>";
 
 		}
