@@ -891,8 +891,9 @@
 		
 		echo "<div class=\"boxLayout\" style=\"".$w."\">";
 
-		if ($title!="")
-			echo "<div class=\"infoboxtitle\">$title</div>";
+		if ($title!="") {
+			echo "<div class=\"infoboxtitle\"><span>$title</span></div>";
+		}
 		echo "<div class=\"infoboxcontent\">";
 	}
 
