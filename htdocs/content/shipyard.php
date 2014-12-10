@@ -297,43 +297,45 @@
     	}
 
     	// Infos anzeigen
-		echo "<form action=\"?page=$page\" method=\"post\">";
     	tableStart("Werft-Infos");
-    	echo "<tr><td>";
-    	echo "<b>Eingestellte Arbeiter:</b> ".nf($people_working)."<br/>
-    	<b>Bauzeitverringerung:</b> ";
+		echo '<colgroup><col style="width:400px;"/><col/></colgroup>';
+		if ($cu->specialist->costsShip!=1)
+		{
+			echo "<tr><td>Kostenreduktion durch ".$cu->specialist->name.":</td><td>".get_percent_string($cu->specialist->costsShip)."</td></tr>";
+		}
+		if ($cu->specialist->shipTime!=1)
+		{
+			echo "<tr><td>Bauzeitverringerung durch ".$cu->specialist->name.":</td><td>".get_percent_string($cu->specialist->shipTime)."</td></tr>";
+		}
+    	echo "<tr><td>Eingestellte Arbeiter:</td><td>".nf($people_working)."</td></tr>";
+    	echo "<tr><td>Bauzeitverringerung:</td><td>";
     	if ($need_bonus_level>=0)
     	{
-    		echo get_percent_string($time_boni_factor)." durch Stufe ".CURRENT_SHIPYARD_LEVEL."<br/>";
+    		echo get_percent_string($time_boni_factor)." durch Stufe ".CURRENT_SHIPYARD_LEVEL;
     	}
     	else
     	{
-    		echo "Stufe ".$conf['build_time_boni_schiffswerft']['p1']." erforderlich!<br/>";
+    		echo "Stufe ".$conf['build_time_boni_schiffswerft']['p1']." erforderlich!";
     	}
-		if ($cu->specialist->shipTime!=1) {
-			echo "<b>Bauzeitverringerung durch ".$cu->specialist->name.":</b> ".get_percent_string($cu->specialist->shipTime)."<br/>";
-		}
+		echo "</td></tr>";
     	if ($cancel_res_factor>0)
     	{
-    		echo "<b>Ressourcenrückgabe bei Abbruch:</b> ".($cancel_res_factor*100)."% (ohne ".RES_FOOD.", ".(SHIPQUEUE_CANCEL_END*100)."% maximal)";
+    		echo "<tr><td>Ressourcenrückgabe bei Abbruch:</td><td>".($cancel_res_factor*100)."% (ohne ".RES_FOOD.", ".(SHIPQUEUE_CANCEL_END*100)."% maximal)</td></tr>";
     		$cancelable = true;
     	}
     	else
     	{
-    		echo "<b>Abbruchmöglichkeit:</b> Stufe ".SHIPQUEUE_CANCEL_MIN_LEVEL." erforderlich!";
+    		echo "<tr><td>Abbruchmöglichkeit:</td><td>Stufe ".SHIPQUEUE_CANCEL_MIN_LEVEL." erforderlich!</td></tr>";
     		$cancelable = false;
     	} 
-		if ($cu->specialist->costsShip!=1)
-		{
-			echo "<br/><br/><b>Kostenreduktion durch ".$cu->specialist->name.":</b> ".get_percent_string($cu->specialist->costsShip);
-		}
-    	echo "</td></tr>";   	
-
-			
+		tableEnd();			
 			
 	/*************
 	* Sortierbox *
 	*************/
+
+		echo "<form action=\"?page=$page\" method=\"post\">";
+		iBoxStart("Filter");
 	
 			//Legt Sortierwerte in einem Array fest
 			$values = array(
@@ -352,8 +354,7 @@
 											"costs_fuel"=>"Tritium"
 											);
 											
-			echo "<tr>
-							<td style=\"text-align:center;\">
+			echo "<div style=\"text-align:center;\">
 								<select name=\"sort_value\">";
 								foreach ($values as $value => $name)
 								{		
@@ -381,9 +382,8 @@
 					echo "</select>						
 							
 								<input type=\"submit\" class=\"button\" name=\"sort_submit\" value=\"Sortieren\"/>
-							</td>
-						</tr>";
-			tableEnd();
+							</div>";
+			iBoxEnd();
 			echo "</form>";
 
 			echo "<form action=\"?page=".$page."\" method=\"post\" style=\"clear:both;\">";
