@@ -162,15 +162,22 @@
 			);
 			add_log(3,"Der Benutzer ".$newUser->nick." (".$newUser->realName.", ".$newUser->email.") hat sich registriert!");
 		
-			$newUser->setVerified(false);
-			$verificationUrl = Config::getInstance()->roundurl.'/show.php?index=verifymail&key='.$cu->verificationKey;
+			$verificationRequired = Config::getInstance()->email_verification_required->v;
+			if ($verificationRequired) {
+				$newUser->setVerified(false);
+				$verificationUrl = Config::getInstance()->roundurl.'/show.php?index=verifymail&key='.$cu->verificationKey;
+			} else {
+				$newUser->setVerified(true);
+			}
 		
 			$email_text = "Hallo ".$newUser->nick."\n\nDu hast dich erfolgreich beim Sci-Fi Browsergame Escape to Andromeda für die ".Config::getInstance()->roundname->v." registriert.\nHier nochmals deine Daten:\n\n";
 			$email_text.= "Name: ".$newUser->realName."\n";
 			$email_text.= "E-Mail: ".$newUser->email."\n";
 			$email_text.= "Nick: ".$newUser->nick."\n\n";
-			$email_text.= "Klicke auf den folgenden Link um deine E-Mail Adresse zu bestätigen\n\n";
-			$email_text.= $verificationUrl."\n\n";
+			if ($verificationRequired) {
+				$email_text.= "Klicke auf den folgenden Link um deine E-Mail Adresse zu bestätigen\n\n";
+				$email_text.= $verificationUrl."\n\n";
+			}
 			$email_text.= "WICHTIG: Gib dein Passwort an niemanden weiter. Gib dein Passwort auch auf keiner Seite ausser unserer Loginseite ein. Ein Game-Admin oder Entwickler wird dich auch nie nach dem Passwort fragen!\n";
 			$email_text.= "Desweiteren solltest du dich mit den Regeln (".RULES_URL.") bekannt machen, da ein Regelverstoss eine (zeitweilige) Sperrung deines Accounts zur Folge haben kann!\n\n";
 			$email_text.= "Viel Spass beim Spielen!\nDas EtoA-Team";
@@ -179,8 +186,11 @@
 			$mail->send($newUser->email);
 		
 			iBoxStart("Registration erfolgreich!");
-			echo "Es wurde eine Bestätigungsnachricht an <b>".$_POST['register_user_email']."</b> verschickt.<br/><br/>
-			Solltest du innerhalb der n&auml;chsten 5 Minuten keine E-Mail erhalten, pr&uuml;fe zun&auml;chst dein Spam-Verzeichnis.<br/><br/>
+			echo "Es wurde eine Bestätigungsnachricht an <b>".$_POST['register_user_email']."</b> verschickt.";
+			if ($verificationRequired) {
+				echo " Klicke auf den Link in der Nachricht um deinen Account zu bestätigen!";
+			}
+			echo "<br/><br/>Solltest du innerhalb der n&auml;chsten 5 Minuten keine E-Mail erhalten, pr&uuml;fe zun&auml;chst dein Spam-Verzeichnis.<br/><br/>
 			Melde dich bei einem <a href=\"?index=contact\">Admin</a>, falls du keine E-Mail erh&auml;ltst oder andere Anmeldeprobleme auftreten.";
 			iBoxEnd();
 			
