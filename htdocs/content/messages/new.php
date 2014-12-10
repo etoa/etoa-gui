@@ -18,10 +18,19 @@
 	//
 	//
 
-	if (!isset($_SESSION['messagesSent']))
+	if (!$cu->isVerified)
 	{
-		$_SESSION['messagesSent'] = array();
+		iBoxStart("Funktion gesperrt");
+		echo "Solange deine E-Mail Adresse nicht bestätigt ist, kannst du keine Nachrichten versenden!";
+		iBoxEnd();
 	}
+	else
+	{
+	
+		if (!isset($_SESSION['messagesSent']))
+		{
+			$_SESSION['messagesSent'] = array();
+		}
 
 		if (isset($_POST['submit']) && checker_verify())
 		{
@@ -298,4 +307,5 @@
 		echo "</script>";
 		echo "<input type=\"submit\" name=\"submit\" value=\"Senden\" onclick=\"if (document.getElementById('message_user_to').value=='') {window.alert('Empf&auml;nger fehlt!');document.getElementById('message_user_to').focus();return false;}\">";
 		echo "</form>";
+	}
 ?>
