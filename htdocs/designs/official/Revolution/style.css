@@ -1381,6 +1381,12 @@ a:hover {
 	color: #f00;
 }
 
+.errorBox	{
+	border:1px #4E4E4F solid;
+	background:rgba(24, 35, 59, 1);
+	color:#fcc;
+}
+
 /* Tables */
 
 table.tb	{
@@ -1971,14 +1977,8 @@ visibility:visible;
 }
 
 /*
-* Messages and errors
+* Code blocks
 */
-
-.errorBox	{
-	border:1px #4E4E4F solid;
-	background:rgba(24, 35, 59, 1);
-	color:#fcc;
-}
 
 pre.code	{
 	margin:0;
@@ -1989,6 +1989,10 @@ pre.code	{
 	border-radius:2px;
 	text-align: left;
 }
+
+/*
+* Installation wizard
+*/
 
 .installContainer {
 	width: 550px;
