@@ -2401,7 +2401,7 @@ function imagecreatefromfile($path, $user_functions = false)
 
 	function popUp($caption, $args,$width=800,$height=600)
 	{
-		return "<a href=\"?".$args."\" onclick=\"window.open('show.php?".$args."','popup','status=no,width=".$width.",height=".$height.",scrollbars=yes');return false;\">".$caption."</a> ";		
+		return "<a href=\"?".$args."\" onclick=\"window.open('popup.php?".$args."','popup','status=no,width=".$width.",height=".$height.",scrollbars=yes');return false;\">".$caption."</a> ";		
 	}
 	
 	function userPopUp($userId, $userNick, $msg=1, $strong=0)
@@ -2436,21 +2436,21 @@ function imagecreatefromfile($path, $user_functions = false)
 	{
 		$width=700;
 		$height=600;
-		return "<a href=\"?page=ticket&amp;cat=".$category."\" onclick=\"window.open('show.php?page=ticket&amp;cat=".$category."','popup','status=no,width=".$width.",height=".$height.",scrollbars=yes');return false;\">".$caption."</a>";		
+		return "<a href=\"?page=ticket&amp;cat=".$category."\" onclick=\"window.open('popup.php?page=ticket&amp;cat=".$category."','popup','status=no,width=".$width.",height=".$height.",scrollbars=yes');return false;\">".$caption."</a>";		
 	}
 
 	function helpLink($site,$caption="Hilfe",$style="")
 	{
 		$width=900;
 		$height=600;
-		return "<a href=\"?page=help&amp;site=".$site."\" style=\"$style\" onclick=\"window.open('show.php?page=help&amp;site=".$site."','popup','status=no,width=".$width.",height=".$height.",scrollbars=yes');return false;\">".$caption."</a>";		
+		return "<a href=\"?page=help&amp;site=".$site."\" style=\"$style\" onclick=\"window.open('popup.php?page=help&amp;site=".$site."','popup','status=no,width=".$width.",height=".$height.",scrollbars=yes');return false;\">".$caption."</a>";		
 	}
 
 	function helpImageLink($site,$url,$alt="Item",$style="")
 	{
 		$width=900;
 		$height=600;
-		return "<a href=\"?page=help&amp;site=".$site."\" onclick=\"window.open('show.php?page=help&amp;site=".$site."','popup','status=no,width=".$width.",height=".$height.",scrollbars=yes');return false;\">
+		return "<a href=\"?page=help&amp;site=".$site."\" onclick=\"window.open('popup.php?page=help&amp;site=".$site."','popup','status=no,width=".$width.",height=".$height.",scrollbars=yes');return false;\">
 		<img src=\"".$url."\" alt=\"".$alt."\" style=\"border:none;".$style."\" />
 		</a>";		
 	}
