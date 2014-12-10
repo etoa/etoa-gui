@@ -982,7 +982,7 @@
 	*/
 	function success_msg($text)
 	{
-		$title = '<span class="success">Erfolg: </span>';
+		$title = '<span class="success">Erfolg:</span> ';
 		iBoxStart();
 		echo $title.text2html($text);
 		iBoxEnd();
@@ -995,7 +995,7 @@
 	*/
 	function info_msg($text)
 	{
-		$title = '<span class="information">Information: </span>';
+		$title = '<span class="information">Information:</span> ';
 		iBoxStart();
 		echo $title.text2html($text);
 		iBoxEnd();
@@ -1008,27 +1008,28 @@
 	*/
 	function error_msg($text,$type=0,$exit=0,$addition=0,$stacktrace=null)
 	{
-		// TODO: Do check on headers
-		
-		echo "<div class=\"errorBox\">";
 		switch($type)
 		{
 			case 1:
-				echo "";
+				$title = '';
 				break;
 			case 2:
-				echo "<b>Warnung:</b> ";
+				$title = '<span class="error">Warnung:</span> ';
 				break;
 			case 3:
-				echo "<b>Problem:</b> ";
+				$title = '<span class="error">Problem:</span> ';
 				break;
 			case 4:
-				echo "<b>Datenbankproblem:</b> ";
+				$title = '<span class="error">Datenbankproblem:</span> ';
 				break;
 			default:
-				echo "<b>Fehler:</b> ";
-		}		
-		echo text2html($text);
+				$title = '<span class="error">Fehler:</span> ';
+		}
+		
+		iBoxStart();
+		echo $title.text2html($text);
+
+		// Addition
 		switch($addition)
 		{		
 			case 1:
@@ -1040,12 +1041,14 @@
 			default:
 				echo '';
 		}
+
+		// Stacktrace
 		if (isset($stacktrace))
 		{
 			echo "<div style=\"text-align:left;border-top:1px solid #000;\">
 			<b>Stack-Trace:</b><br/>".nl2br($stacktrace)."<br/><a href=\"".DEVCENTER_PATH."\" target=\"_blank\">Fehler melden</a></div>";
 		}
-		echo "</div>";
+		iBoxEnd();
 		if ($exit>0) 
 		{
 			echo "</body></html>";
