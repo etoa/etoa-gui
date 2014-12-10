@@ -108,7 +108,7 @@
 		}
 		else
 		{
-			error_msg("Keine Notizen vorhanden!",1);
+			info_msg("Keine Notizen vorhanden!");
 		}
 		
 		
