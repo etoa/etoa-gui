@@ -162,11 +162,15 @@
 			);
 			add_log(3,"Der Benutzer ".$newUser->nick." (".$newUser->realName.", ".$newUser->email.") hat sich registriert!");
 		
-			$email_text = "Hallo ".$newUser->nick."\n\nDu hast dich erfolgreich beim Sci-Fi Browsergame Escape to Andromeda registriert.\nHier nochmals deine Daten:\n\n";
-			$email_text.= "Universum: ".Config::getInstance()->roundname->v."\n";
+			$newUser->setVerified(false);
+			$verificationUrl = Config::getInstance()->roundurl.'/show.php?index=verifymail&key='.$cu->verificationKey;
+		
+			$email_text = "Hallo ".$newUser->nick."\n\nDu hast dich erfolgreich beim Sci-Fi Browsergame Escape to Andromeda für die ".Config::getInstance()->roundname->v." registriert.\nHier nochmals deine Daten:\n\n";
 			$email_text.= "Name: ".$newUser->realName."\n";
-			$email_text.= "E-Mail: ".$newUser->email."\n\n";
+			$email_text.= "E-Mail: ".$newUser->email."\n";
 			$email_text.= "Nick: ".$newUser->nick."\n\n";
+			$email_text.= "Klicke auf den folgenden Link um deine E-Mail Adresse zu bestätigen\n\n";
+			$email_text.= $verificationUrl."\n\n";
 			$email_text.= "WICHTIG: Gib dein Passwort an niemanden weiter. Gib dein Passwort auch auf keiner Seite ausser unserer Loginseite ein. Ein Game-Admin oder Entwickler wird dich auch nie nach dem Passwort fragen!\n";
 			$email_text.= "Desweiteren solltest du dich mit den Regeln (".RULES_URL.") bekannt machen, da ein Regelverstoss eine (zeitweilige) Sperrung deines Accounts zur Folge haben kann!\n\n";
 			$email_text.= "Viel Spass beim Spielen!\nDas EtoA-Team";
