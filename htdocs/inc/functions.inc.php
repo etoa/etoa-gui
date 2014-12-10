@@ -870,31 +870,13 @@
 	/**
 	* Infobox-Header
 	*/
-	function iBoxStart($title="",$width=0)
+	function iBoxStart($title="", $class="")
 	{
-		if ($width>0)
-		{
-			$w = "width:".$width."px;";
-		}
-		elseif ($width!="")
-		{
-			$w = "width:".$width."";
-		}
-		else
-		{
-			global $cu;
-			if (isset($cu->properties) && $cu->properties->cssStyle=="Graphite")
-				$w = "width:650px";			
-			else
-				$w = "width:100%";
-		}
-		
-		echo "<div class=\"boxLayout\" style=\"".$w."\">";
-
+		echo '<div class="boxLayout '.$class.'">';
 		if ($title!="") {
-			echo "<div class=\"infoboxtitle\"><span>$title</span></div>";
+			echo '<div class="infoboxtitle"><span>'.$title.'</span></div>';
 		}
-		echo "<div class=\"infoboxcontent\">";
+		echo '<div class="infoboxcontent">';
 	}
 
 	/**
@@ -974,45 +956,17 @@
 		else
 			return false;
 	}
-
-	/*
-	* Formatierte Fehlermeldung anzeigen
-	*
-	* $msg: Fehlermeldung
-	*/
-	function err_msg($msg)
-	{
-		error_msg($msg);
-	}
 	
 	/**
-	* Formatierte OK-Meldung anzeigen
+	* Formatierte Erfolgsmeldung anzeigen
 	*
 	* $msg: OK-Meldung
 	*/
-	function ok_msg($msg)
+	function success_msg($text)
 	{
-		success_msg($msg);
-	}
-
-	/**
-	* Sucess msg
-	*/
-	function success_msg($text,$type=0)
-	{
-		echo "<div class=\"successBox\">";
-		switch($type)
-		{
-			case 1:
-				echo "";
-				break;
-			case 2:
-				echo "<b>Hurra:</b> ";
-				break;
-			default:
-				echo "<b>Erfolg:</b> ";
-		}		
-		echo text2html($text)."</div>";		
+		iBoxStart("Erfolg", "success");
+		echo text2html($text);
+		iBoxEnd();
 	}
 	
 	/**
@@ -1022,36 +976,40 @@
 	*/
 	function info_msg($text)
 	{
-		echo "<div class=\"infoMsgBox\">";
-		echo text2html($text)."</div>";	
+		iBoxStart("Information", "information");
+		echo text2html($text);
+		iBoxEnd();
 	}
-       
-  /**
-  * Error msg
-  */
+
+	/*
+	* Formatierte Fehlermeldung anzeigen
+	*
+	* $msg: Fehlermeldung
+	*/
 	function error_msg($text,$type=0,$exit=0,$addition=0,$stacktrace=null)
 	{
-		// TODO: Do check on headers
-		
-		echo "<div class=\"errorBox\">";
 		switch($type)
 		{
 			case 1:
-				echo "";
+				$title = '';
 				break;
 			case 2:
-				echo "<b>Warnung:</b> ";
+				$title = 'Warnung';
 				break;
 			case 3:
-				echo "<b>Problem:</b> ";
+				$title = 'Problem';
 				break;
 			case 4:
-				echo "<b>Datenbankproblem:</b> ";
+				$title = 'Datenbankproblem';
 				break;
 			default:
-				echo "<b>Fehler:</b> ";
-		}		
+				$title = 'Fehler';
+		}
+		
+		iBoxStart($title, "error");
 		echo text2html($text);
+
+		// Addition
 		switch($addition)
 		{		
 			case 1:
@@ -1063,12 +1021,14 @@
 			default:
 				echo '';
 		}
+
+		// Stacktrace
 		if (isset($stacktrace))
 		{
 			echo "<div style=\"text-align:left;border-top:1px solid #000;\">
 			<b>Stack-Trace:</b><br/>".nl2br($stacktrace)."<br/><a href=\"".DEVCENTER_PATH."\" target=\"_blank\">Fehler melden</a></div>";
 		}
-		echo "</div>";
+		iBoxEnd();
 		if ($exit>0) 
 		{
 			echo "</body></html>";

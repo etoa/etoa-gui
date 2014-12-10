@@ -381,7 +381,7 @@ class User
 					}
 					else
 					{
-						err_msg("Ungültige Mail-Adresse!");
+						error_msg("Ungültige Mail-Adresse!");
 					}
 				}
 			}

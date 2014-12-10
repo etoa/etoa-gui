@@ -1448,6 +1448,19 @@ td.havenTab:hover	{
 
 .boxLayout	{
 	 margin:15px auto;
+	 width: 100%;
+}
+
+.boxLayout.success .infoboxtitle {
+	color: #0f0;
+}
+
+.boxLayout.information .infoboxtitle {
+	color: #0ff;
+}
+
+.boxLayout.error .infoboxtitle {
+	color: #f00;
 }
 
 /* Resource */

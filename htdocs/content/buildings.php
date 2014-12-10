@@ -132,7 +132,7 @@ define('HELP_URL',"?page=help&site=buildings");
 			if (isset($_POST['submit_people_form']))
 			{
 				if ($bl->setPeopleWorking(BUILD_BUILDING_ID,nf_back($_POST['peopleWorking'])))
-					ok_msg("Arbeiter zugeteilt!");
+					success_msg("Arbeiter zugeteilt!");
 				else
 					error_msg('Arbeiter konnten nicht zugeteilt werden!');
 			}
@@ -142,7 +142,7 @@ define('HELP_URL',"?page=help&site=buildings");
 			{
 				if ($bl->build($bid))
 				{
-					ok_msg('Bauauftrag wurde erfolgreich gestartet!');
+					success_msg('Bauauftrag wurde erfolgreich gestartet!');
 				}
 				else
 				{
@@ -155,7 +155,7 @@ define('HELP_URL',"?page=help&site=buildings");
 			{
 				if ($bl->demolish($bid))
 				{
-					ok_msg('Abbruchauftrag wurde erfolgreich gestartet!');
+					success_msg('Abbruchauftrag wurde erfolgreich gestartet!');
 				}
 				else
 				{
@@ -168,7 +168,7 @@ define('HELP_URL',"?page=help&site=buildings");
 			{
 				if ($bl->cancelBuild($bid))
 				{
-					ok_msg('Bauauftrag wurde erfolgreich abgebrochen!');
+					success_msg('Bauauftrag wurde erfolgreich abgebrochen!');
 				}
 				else
 				{
@@ -181,7 +181,7 @@ define('HELP_URL',"?page=help&site=buildings");
 			{
 				if ($bl->cancelDemolish($bid))
 				{
-					ok_msg('Abbruchauftrag wurde erfolgreich abgebrochen!');
+					success_msg('Abbruchauftrag wurde erfolgreich abgebrochen!');
 				}
 				else
 				{
@@ -260,8 +260,8 @@ define('HELP_URL',"?page=help&site=buildings");
 						</tr>
 						<tr>
 							<td colspan="2" style="text-align:center;">
-								<div class="errorBox" id="errorBox" style="display:none;">&nbsp;</div>
-								<input type="submit" value="Speichern" name="submit_people_form" />&nbsp;';
+								<div id="changeWorkingPeopleError" style="display:none;">&nbsp;</div>
+								<input type="submit" value="Speichern" name="submit_people_form" id="submit_people_form" />&nbsp;';
 		
 		if ($cu->properties->itemShow=='full' && isset($bid) && $bid>0 && $bl->item($bid) !== false)
 		{

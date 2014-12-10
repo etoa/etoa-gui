@@ -148,7 +148,7 @@
 			$cnt = ceil($cnt);
 			$cnt = max($cnt,0);
 			if ($cnt==0)
-				err_msg("Warnung: 0 Schiffe hinzugefügt!");
+				error_msg("Warnung: 0 Schiffe hinzugefügt!");
 			dbquery("
 				UPDATE
 					shiplist

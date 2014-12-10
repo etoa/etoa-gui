@@ -68,7 +68,7 @@
 				'entity1_id'=>$cp->id,
 				), "shipcancel", $smid, $marr);
 
-				ok_msg("Angebot wurde gel&ouml;scht und du hast $returnCount (".(round($return_factor,2)*100)."%) der angebotenen Schiffe zur&uuml;ck erhalten (es wird abgerundet)");
+				success_msg("Angebot wurde gel&ouml;scht und du hast $returnCount (".(round($return_factor,2)*100)."%) der angebotenen Schiffe zur&uuml;ck erhalten (es wird abgerundet)");
 			}
 			else
 			{
@@ -134,7 +134,7 @@
 			WHERE
 				id='".$rmid."'");
 
-			ok_msg("Angebot wurde gel&ouml;scht und du hast ".(round($return_factor,2)*100)."% der angebotenen Rohstoffe zur&uuml;ck erhalten!");
+			success_msg("Angebot wurde gel&ouml;scht und du hast ".(round($return_factor,2)*100)."% der angebotenen Rohstoffe zur&uuml;ck erhalten!");
 		}
 		else
 		{
@@ -189,7 +189,7 @@
 				), "auctioncancel", $acid, $marr);
 			//add_log(7,"Der Spieler ".$cu->nick." zieht folgende Auktion zur&uuml;ck:\nRohstoffe:\n".RES_METAL.": ".$acrow['sell_metal']."\n".RES_CRYSTAL.": ".$acrow['sell_crystal']."\n".RES_PLASTIC.": ".$acrow['sell_plastic']."\n".RES_FUEL.": ".$acrow['sell_fuel']."\n".RES_FOOD.": ".$acrow['sell_food']."\n\nEr erh&auml;lt ".(round($return_factor,2)*100)."% der Waren erstattet!",time());
 
-			ok_msg("Auktion wurde gel&ouml;scht und du hast ".(round($return_factor,2)*100)."% der angebotenen Waren zur&uuml;ck erhalten (es wird abgerundet)!");
+			success_msg("Auktion wurde gel&ouml;scht und du hast ".(round($return_factor,2)*100)."% der angebotenen Waren zur&uuml;ck erhalten (es wird abgerundet)!");
 		}
 		else
 		{

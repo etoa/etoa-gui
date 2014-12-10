@@ -83,11 +83,11 @@ else
       } else {
         $hookResult = $fname();
       }
-			cms_ok_msg("Datensatz ge&auml;ndert! ".$hookResult);
+			cms_success_msg("Datensatz ge&auml;ndert! ".$hookResult);
 		}
 		else
 		{
-			cms_ok_msg("Neuer Datensatz gespeichert!");
+			cms_success_msg("Neuer Datensatz gespeichert!");
 		}
 	}
 
@@ -114,18 +114,18 @@ else
       } else {
         $hookResult = $fname();
       }
-			cms_ok_msg("Datensatz ge&auml;ndert! ".$hookResult);
+			cms_success_msg("Datensatz ge&auml;ndert! ".$hookResult);
 		}
 		else
 		{
-			cms_ok_msg("Datensatz ge&auml;ndert!");
+			cms_success_msg("Datensatz ge&auml;ndert!");
 		}
 	}
 
 	if (isset($_GET['action']) && $_GET['action']=="copy" && isset($_GET['id']))
 	{
 		DuplicateMySQLRecord(DB_TABLE,DB_TABLE_ID,$_GET['id']);
-		ok_msg("Datensatz kopiert!");
+		success_msg("Datensatz kopiert!");
 	}
 
 	if (isset($_GET['sortup']) && isset($_GET['parentid']))
@@ -167,7 +167,7 @@ else
 	if (isset($form_switches) && isset($_GET['switch']) && $_GET['id']>0)
 	{
 		dbquery("UPDATE ".DB_TABLE." SET `".$_GET['switch']."`=(`".$_GET['switch']."`+1)%2 WHERE `".DB_TABLE_ID."`=".$_GET['id']."");
-		ok_msg("Aktion ausgeführt!");
+		success_msg("Aktion ausgeführt!");
 	}	
 
 	// Show overview

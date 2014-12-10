@@ -182,7 +182,7 @@ class Ticket
 		{
 			return stripslashes($this->adminComment);
 		}
-		err_msg(__CLASS__.".get(): Feld $field nicht vorhanden!");
+		error_msg(__CLASS__.".get(): Feld $field nicht vorhanden!");
 		return null;
 	}
 
@@ -246,7 +246,7 @@ class Ticket
 			}
 			return false;
 		}
-		err_msg(__CLASS__.".set(): Feld $field nicht vorhanden!");
+		error_msg(__CLASS__.".set(): Feld $field nicht vorhanden!");
 		return false;
 	}
 

@@ -52,7 +52,7 @@ if (Alliance::checkActionRights('alliancenews'))
 			".time().",
 			".intval($_POST['alliance_id']).")");
 			
-			ok_msg("News wurde gesendet!");
+			success_msg("News wurde gesendet!");
 						
 			// Gebe nur Punkte falls Nachricht öffentlich oder an andere Allianz
 			if ($cu->allianceId!=$_POST['alliance_id'])

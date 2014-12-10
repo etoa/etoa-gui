@@ -33,7 +33,7 @@ if (isset($_GET['id']) && intval($_GET['id'])>0)
 		{
 			if ($ti->addMessage(array("user_id"=>$cu->id,"message"=>$_POST['message'])))
 			{
-				ok_msg("Nachricht hinzugefügt!");
+				success_msg("Nachricht hinzugefügt!");
 			}
 		}
 		if (isset($_GET['reopen']))
@@ -96,7 +96,7 @@ if (isset($_GET['id']) && intval($_GET['id'])>0)
 	}
 	else
 	{
-		err_msg("Ticket nicht vorhanden!");
+		error_msg("Ticket nicht vorhanden!");
 	}
 
 

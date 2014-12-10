@@ -187,50 +187,45 @@ img.resIcon	{
 * Message-Boxes
 */
 
-.errorBox	{
+.criticalErrorBox {
 	border:1px #f00 solid;
-	padding:5px;
-	background:#baa;
-	color:#400;
+	padding:0px;
+	background:#000;
+	color:#aaa;
 	width:90%;
 	margin:0px auto;
 	margin-top:15px;
 	margin-bottom:15px;
+	text-align:left;
 }
 
-.errorBox	h2 {
-	margin:0px 0px 10px 0px;
-	border:1px #f00 solid;
-	color:#500;
-	background:#fcc;
+.criticalErrorBox h2 {
+	margin:0px 0px 0px 0px;
+	border-bottom:1px #f00 solid;
+	color:#f00;
+	background:#222;
 	padding:10px;
 	font-size:12pt;
 }
 
-.errorBox	h2:before	{
+.criticalErrorBox h2:before {
 	content:none;
 }
 
-.errorBox	h2:after	{
+.criticalErrorBox h2:after {
 	content:none;
 }
 
-.successBox	{
-	border:1px #0f0 solid;
-	padding:5px;
-	background:#aba;
-	color:#040;
-	width:90%;
-	margin:15px auto;
+.criticalErrorBox a {
+	color: #aaa;
 }
 
-.infoMsgBox	{
-	border:1px #00f solid;
-	padding:5px;
-	background:#aab;
-	color:#004;
-	width:90%;
-	margin:15px auto;
+.criticalErrorBox a:hover{
+	color: #fff;
+}
+
+.criticalErrorBox div {
+	padding:10px;
 }
 
 /*

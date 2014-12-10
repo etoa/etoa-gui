@@ -52,7 +52,7 @@
 						AND buildlist_building_id='".intval($id)."'
 					;");
 				}
-				ok_msg("Änderungen gespeichert!");
+				success_msg("Änderungen gespeichert!");
 				
 				// Send
 				BackendMessage::updatePlanet($cp->id);
@@ -75,7 +75,7 @@
 		if (isset($_GET['action']) && $_GET['action']=="update")
 		{		
 			BackendMessage::updatePlanet($cp->id);
-			ok_msg("Planet wird neu berechnet!");
+			success_msg("Planet wird neu berechnet!");
 		}
 
 		//

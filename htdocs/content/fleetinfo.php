@@ -83,16 +83,16 @@
 			{
 				if ($fd->cancelFlight())
 				{
-					ok_msg("Flug erfolgreich abgebrochen!");
+					success_msg("Flug erfolgreich abgebrochen!");
 				}
 				else
 				{
-					err_msg("Flug konnte nicht abgebrochen werden. ".$fd->getError());
+					error_msg("Flug konnte nicht abgebrochen werden. ".$fd->getError());
 				}
 			}
 			else
 			{
-				err_msg("Flug konnte nicht abgebrochen werden, da die Rechte nicht vorhanden sind!");
+				error_msg("Flug konnte nicht abgebrochen werden, da die Rechte nicht vorhanden sind!");
 			}
 		}
 		
@@ -102,17 +102,17 @@
 			{
 				if ($fd->cancelFlight(true))
 				{
-					ok_msg("Flug erfolgreich abgebrochen!");
+					success_msg("Flug erfolgreich abgebrochen!");
 					add_log(13,"Der Spieler [b]".$cu->nick."[/b] bricht den ganzen Allianzflug seiner Flotte [b]".$fleet_id."[/b] ab",time());
 				}
 				else
 				{
-					err_msg("Flug konnte nicht abgebrochen werden. ".$fd->getError());
+					error_msg("Flug konnte nicht abgebrochen werden. ".$fd->getError());
 				}
 			}
 			else
 			{
-				err_msg("Flug konnte nicht abgebrochen werden, da die Rechte nicht vorhanden sind!");
+				error_msg("Flug konnte nicht abgebrochen werden, da die Rechte nicht vorhanden sind!");
 			}
 		}
 	

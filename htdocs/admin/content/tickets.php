@@ -62,19 +62,19 @@ elseif (isset($_GET['id']) && $_GET['id']>0)
 		$ti->adminComment = $_POST['admin_comment'];
 		
 		if ($ti->changed)
-			ok_msg("Ticket aktualisiert!");
+			success_msg("Ticket aktualisiert!");
 	}
 	if (isset($_POST['submit_assign']))
 	{
 		$ti->assign($cu->id);
 		if ($ti->changed)
-			ok_msg("Ticket aktualisiert!");
+			success_msg("Ticket aktualisiert!");
 	}
 	if (isset($_POST['submit_reopen']))
 	{
 		$ti->reopen();
 		if ($ti->changed)
-			ok_msg("Ticket aktualisiert!");
+			success_msg("Ticket aktualisiert!");
 	}
 
 	if (isset($_POST['submit_new_post']))
@@ -88,7 +88,7 @@ elseif (isset($_GET['id']) && $_GET['id']>0)
 				)
 			)
 		{
-			ok_msg("Nachricht hinzugefügt!");
+			success_msg("Nachricht hinzugefügt!");
 			if (isset($_POST['checkclose']))
 			{
 				$ti->close($_POST['solutionclose']);
@@ -272,7 +272,7 @@ else
 	{
 		if (Ticket::create($_POST))
 		{
-			ok_msg("Das Ticket wurde erstellt!");
+			success_msg("Das Ticket wurde erstellt!");
 		}
 	}
 

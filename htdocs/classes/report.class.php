@@ -210,7 +210,7 @@ abstract class Report
 			dbquery($sql);
 			return mysql_insert_id();
 		}
-		err_msg("Kein Report-Besitzer angegeben!");
+		error_msg("Kein Report-Besitzer angegeben!");
 		dump($data);
 		return null;
 	}

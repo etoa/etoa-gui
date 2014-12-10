@@ -51,12 +51,12 @@
 				{
 					if ($fd->cancelFlight())
 					{
-						ok_msg("Flug erfolgreich abgebrochen!");
+						success_msg("Flug erfolgreich abgebrochen!");
 						add_log(13,"Der Spieler [b]".$cu->nick."[/b] bricht den Flug seiner Flotte [b]".$fleet_id."[/b] ab",time());
 					}
 					else
 					{
-						err_msg("Flug konnte nicht abgebrochen werden. ".$fd->getError());
+						error_msg("Flug konnte nicht abgebrochen werden. ".$fd->getError());
 					}
 				}
 				
@@ -65,12 +65,12 @@
 				{
 					if ($fd->cancelFlight(true))
 					{
-						ok_msg("Flug erfolgreich abgebrochen!");
+						success_msg("Flug erfolgreich abgebrochen!");
 						add_log(13,"Der Spieler [b]".$cu->nick."[/b] bricht den ganzen Allianzflug seiner Flotte [b]".$fleet_id."[/b] ab",time());
 					}
 					else
 					{
-						err_msg("Flug konnte nicht abgebrochen werden. ".$fd->getError());
+						error_msg("Flug konnte nicht abgebrochen werden. ".$fd->getError());
 					}
 				}
 				
@@ -263,11 +263,11 @@
 		}
 		else
 		{
-			err_msg("Du besitzt nicht die notwendigen Rechte!");
+			error_msg("Du besitzt nicht die notwendigen Rechte!");
 		}
 	}
 	else
 	{
-		err_msg("Die Allianzflottenkontrolle wurde noch nicht genug ausgebaut!");
+		error_msg("Die Allianzflottenkontrolle wurde noch nicht genug ausgebaut!");
 	}
 ?>

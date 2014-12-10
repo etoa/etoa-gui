@@ -85,7 +85,7 @@ if (isset($cp)) {
 			$set_people = nf_back($_POST['peopleWorking']);
 			if (!$builing_something && $bl->setPeopleWorking(TECH_BUILDING_ID, $set_people,true))
 			{
-				ok_msg("Arbeiter zugeteilt!");
+				success_msg("Arbeiter zugeteilt!");
 				$new_people_set = true;
 			}
 			else
@@ -258,8 +258,8 @@ if (isset($cp)) {
 							</tr>
 							<tr>
 								<td colspan="2" style="text-align:center;">
-									<div class="errorBox" id="errorBox" style="display:none;">&nbsp;</div>
-									<input type="submit" value="Speichern" name="submit_people_form" />&nbsp;';
+									<div id="changeWorkingPeopleError" style="display:none;">&nbsp;</div>
+									<input type="submit" value="Speichern" name="submit_people_form" id="submit_people_form" />&nbsp;';
 
 			if (isset($bid) && $bid>0)
 			{

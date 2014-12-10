@@ -63,7 +63,7 @@ if (Alliance::checkActionRights('ranks'))
 										}
 									}
 								}
-								ok_msg("Änderungen wurden übernommen!");
+								success_msg("Änderungen wurden übernommen!");
 							}
 						}
 						echo "<form action=\"?page=$page&action=ranks\" method=\"post\">";

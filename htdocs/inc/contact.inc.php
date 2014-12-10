@@ -64,13 +64,13 @@
 						$mail = new Mail($subject, $text);
 						if ($mail->send($recipient, $sender))
 						{
-							ok_msg('Vielen Dank! Deine Nachricht wurde gesendet!');
+							success_msg('Vielen Dank! Deine Nachricht wurde gesendet!');
 							$showForm = false;
 						}
 					}
 					else
 					{
-						err_msg("Titel oder Text fehlt!");
+						error_msg("Titel oder Text fehlt!");
 					}
 				}
 			
@@ -92,7 +92,7 @@
 			}
 			else
 			{
-				err_msg("Kontakt nicht vorhanden!");
+				error_msg("Kontakt nicht vorhanden!");
 			}
 			echo '<input type="button" onclick="document.location=\''.$baseUrl.'\'" value="Zurück" /></div></form>';
 		}		

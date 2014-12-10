@@ -150,9 +150,9 @@
 					<td><textarea name=\"warning_text\" rows=\"5\" cols=\"70\"></textarea></td>
 				</tr>
 			</table><br/><input type=\"submit\" name=\"add\" value=\"Neue Verwarnung erteilen\" />
-		</form><br/>";
+		</form>";
 		
-		iBoxStart("Bestehende Verwarnungen","95%");
+		echo "<h2>Bestehende Verwarnungen</h2>";
 		$res = dbquery("
 		SELECT
 			user_nick,
@@ -224,7 +224,6 @@
 		{
 			echo "<i>Keine Verwarnungen vorhanden!</i>";
 		}
-		iBoxEnd();
 	}
 
 

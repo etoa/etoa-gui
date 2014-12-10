@@ -96,14 +96,14 @@
 					}
 				}
 				if ($msgCnt>0)
-					ok_msg("$msgCnt InGame-Nachrichten wurden versendet!");
+					success_msg("$msgCnt InGame-Nachrichten wurden versendet!");
 				if ($mailCnt>0)
-					ok_msg("$mailCnt Mails wurden versendet!");
+					success_msg("$mailCnt Mails wurden versendet!");
 
 			}
 			else
 			{
-				cms_err_msg("Nachricht konnte nicht gesendet werden! Text oder Titel fehlt!");
+				cms_error_msg("Nachricht konnte nicht gesendet werden! Text oder Titel fehlt!");
 			}
 			$subj = $_POST['message_subject'];
 			$text = $_POST['message_text'];

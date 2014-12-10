@@ -100,7 +100,7 @@
 				'content'=>$_POST['ship_text']
 				), "shipadd", mysql_insert_id(), $marr);
 
-			ok_msg("Angebot erfolgreich abgesendet!");
+			success_msg("Angebot erfolgreich abgesendet!");
 			return_btn();
 		}
         else

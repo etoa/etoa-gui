@@ -217,7 +217,7 @@
 				"founder" => new User($_POST['alliance_founder_id'])
 				),$errorCode))
 			{
-				ok_msg("Allianz wurde erstellt! [[page alliances sub=edit id=".$errorCode->id."]Details[/page]]");
+				success_msg("Allianz wurde erstellt! [[page alliances sub=edit id=".$errorCode->id."]Details[/page]]");
 			}
 			else
 			{
@@ -676,7 +676,7 @@
 				if ($ally->delete()) {
 					echo "Die Allianz wurde gel&ouml;scht!<br/><br/>";
 				} else {
-					cms_err_msg("Allianz konnte nicht gelöscht werden (ist sie in einem aktiven Krieg?)");
+					cms_error_msg("Allianz konnte nicht gelöscht werden (ist sie in einem aktiven Krieg?)");
 				}
 			}
 

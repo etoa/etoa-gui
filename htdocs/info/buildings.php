@@ -498,7 +498,7 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
 	}
   else
   {
-  	err_msg("Geb&auml;udeinfodaten nicht gefunden!");
+  	error_msg("Geb&auml;udeinfodaten nicht gefunden!");
   }
 
 	echo "<input type=\"button\" value=\"Geb&auml;ude&uuml;bersicht\" onclick=\"document.location='?$link&amp;site=$site'\" /> &nbsp; ";
@@ -626,7 +626,7 @@ elseif (isset($_GET['aid']))
 	}
   else
   {
-  	err_msg("Geb&auml;udeinfodaten nicht gefunden!");
+  	error_msg("Geb&auml;udeinfodaten nicht gefunden!");
   }
 
 	echo "<input type=\"button\" value=\"Geb&auml;ude&uuml;bersicht\" onclick=\"document.location='?page=$page&site=$site'\" /> &nbsp; ";

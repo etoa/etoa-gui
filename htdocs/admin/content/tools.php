@@ -10,12 +10,12 @@ if ($sub=="accesslog")
 	if (isset($_POST['submit_toggle']))
 	{
 		$cfg->set("accesslog",($cfg->accesslog->v+1)%2);
-		ok_msg("Einstellungen gespeichert");
+		success_msg("Einstellungen gespeichert");
 	}
 	if (isset($_POST['submit_truncate']))
 	{
 		dbquery("DELETE FROM accesslog;");
-		ok_msg("Aufzeichnungen gelöscht");
+		success_msg("Aufzeichnungen gelöscht");
 	}					
 	
 	

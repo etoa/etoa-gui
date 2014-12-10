@@ -479,6 +479,7 @@ img	{
 	border-collapse: collapse;
 	border:1px solid #111;
 	color:#fff;
+	width: 100%;
 }
 
 /* Infoboxes and -tables */
@@ -506,7 +507,17 @@ img	{
 	background:#4E4E50;
 }
 
+.boxLayout.success .infoboxtitle {
+	color: #0f0;
+}
 
+.boxLayout.information .infoboxtitle {
+	color: #0ff;
+}
+
+.boxLayout.error .infoboxtitle {
+	color: #f00;
+}
 
 /* Tables */
 
@@ -1076,26 +1087,8 @@ visibility:visible;
 }
 
 /*
-* Messages and errors
+* Code blocks
 */
-
-.errorBox	{
-	border:1px #4E4E4F solid;
-	background:#242426;
-	color:#fcc;
-}
-
-.successBox	{
-	border:1px #4E4E4F solid;
-	background:#242426;
-	color:#cfc;
-}
-
-.infoMsgBox	{
-	border:1px #4E4E4F solid;
-	background:#242426;
-	color:#ccf;
-}
 
 pre.code	{
 	margin:0;
@@ -1106,6 +1099,10 @@ pre.code	{
 	border-radius:2px;
 	text-align: left;
 }
+
+/*
+* Installation wizard
+*/
 
 .installContainer {
 	width: 550px;

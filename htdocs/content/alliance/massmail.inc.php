@@ -41,7 +41,7 @@ if (Alliance::checkActionRights('massmail'))
 				
 				Message::sendFromUserToUser($cu->id,$uarr['user_id'],$_POST['message_subject'],$_POST['message_text'],MSG_ALLYMAIL_CAT);
 			}
-			ok_msg("Nachricht wurde gesendet!");
+			success_msg("Nachricht wurde gesendet!");
 			echo "<input type=\"button\" value=\"Neue Nachricht schreiben\" onclick=\"document.location='?page=$page&action=massmail'\" /> &nbsp; ";
 			echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=$page'\" />";
 		}

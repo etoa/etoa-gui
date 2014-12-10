@@ -12,12 +12,12 @@
 		}
 		else
 		{
-			err_msg("Der Verifikationscode ist ungültig!");
+			error_msg("Der Verifikationscode ist ungültig!");
 		}
 	}
 	else
 	{
-		err_msg("Kein Verifikationscode angegeben!");
+		error_msg("Kein Verifikationscode angegeben!");
 	}
 ?>
 <p class="center">

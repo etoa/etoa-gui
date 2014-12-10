@@ -295,7 +295,7 @@
 			}
 			else
 			{
-				echo err_msg($fleet->error());
+				echo error_msg($fleet->error());
 			} 
 			echo "</form>";
 		}

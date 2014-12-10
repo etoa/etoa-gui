@@ -39,7 +39,7 @@
 						if ($imup->process())
 						{
 							$cu->avatar = $imup->getResultName();
-							ok_msg("Avatar hochgeladen!");
+							success_msg("Avatar hochgeladen!");
 						}           	
 					}
           
@@ -58,7 +58,7 @@
 						if ($imup->process())
 						{
 							$cu->profileImage = $imup->getResultName();
-							ok_msg("Profilbild hochgeladen!");
+							success_msg("Profilbild hochgeladen!");
 						}          	
           }
 

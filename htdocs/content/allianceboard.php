@@ -293,7 +293,7 @@
 							dbquery("INSERT INTO ".BOARD_POSTS_TABLE." (post_topic_id,post_user_id,post_user_nick,post_text,post_timestamp) VALUES (".$tpid.",".$cu->id.",'".$cu->nick."','".addslashes($_POST['post_text'])."',".time().");");
 							$mid=mysql_insert_id();
 							dbquery("UPDATE ".BOARD_TOPIC_TABLE." SET topic_timestamp=".time()." WHERE topic_id=".$tpid.";");			
-							ok_msg("Beitrag gespeichert!");
+							success_msg("Beitrag gespeichert!");
 							echo "<script type=\"text/javascript\">document.location='?page=$page&bnd=".$bid."&topic=".$tpid."#".$mid."';</script>";
 						}
 						else
@@ -306,7 +306,7 @@
 								dbquery("UPDATE ".BOARD_POSTS_TABLE." SET post_text='".addslashes($_POST['post_text'])."',post_changed=".time()." WHERE post_id=".$_POST['post_id'].";");
 							else
 								dbquery("UPDATE ".BOARD_POSTS_TABLE." SET post_text='".addslashes($_POST['post_text'])."',post_changed=".time()." WHERE post_id=".$_POST['post_id']." AND post_user_id=".$cu->id.";");
-							ok_msg("&Auml;nderungen gespeichert!");
+							success_msg("&Auml;nderungen gespeichert!");
 							echo "<script type=\"text/javascript\">document.location='?page=$page&bnd=".$bid."&topic=".$tpid."#".$_POST['post_id']."';</script>";
 						}
 						
@@ -318,7 +318,7 @@
 							else
 								dbquery("DELETE FROM ".BOARD_POSTS_TABLE." WHERE post_id=".$_POST['post_id']." AND post_user_id=".$cu->id.";");
 							
-							ok_msg("Beitrag gelöscht");
+							success_msg("Beitrag gelöscht");
 						}			
 				
 						$res=dbquery("SELECT * FROM ".BOARD_POSTS_TABLE." WHERE post_topic_id=".$tpid." ORDER BY post_timestamp ASC;");					
@@ -548,7 +548,7 @@
 						{
 							dbquery("DELETE FROM ".BOARD_POSTS_TABLE." WHERE post_topic_id=".$_POST['topic_id'].";");
 							dbquery("DELETE FROM ".BOARD_TOPIC_TABLE." WHERE topic_id=".$_POST['topic_id'].";");
-							ok_msg("Thema gelöscht!");
+							success_msg("Thema gelöscht!");
 						}			
 						
 						$res=dbquery("SELECT * FROM ".BOARD_TOPIC_TABLE." WHERE topic_cat_id=".$cat." ORDER BY topic_top DESC,topic_timestamp DESC, topic_subject ASC;");					
@@ -629,7 +629,7 @@
 						elseif (isset($_POST['topic_edit']) && isset($_POST['topic_subject']) && isset($_POST['topic_id']) && $_POST['topic_id']>0)
 						{
 							dbquery("UPDATE ".BOARD_TOPIC_TABLE." SET topic_subject='".$_POST['topic_subject']."',topic_top='".$_POST['topic_top']."',topic_closed='".$_POST['topic_closed']."',topic_bnd_id='".$_POST['topic_bnd_id']."' WHERE topic_id=".$_POST['topic_id']."");
-							ok_msg("&Auml;nderungen gespeichert!");
+							success_msg("&Auml;nderungen gespeichert!");
 							if ($_POST['topic_bnd_id']!=$bid)
 								echo "<script type=\"text/javascript\">document.location='?page=$page&amp;bnd=".$_POST['topic_bnd_id']."';</script>";
 						}
@@ -638,7 +638,7 @@
 						{
 							dbquery("DELETE FROM ".BOARD_POSTS_TABLE." WHERE post_topic_id=".$_POST['topic_id'].";");
 							dbquery("DELETE FROM ".BOARD_TOPIC_TABLE." WHERE topic_id=".$_POST['topic_id'].";");
-							ok_msg("Thema gelöscht!");
+							success_msg("Thema gelöscht!");
 						}
 			
 						
@@ -919,7 +919,7 @@
 								dbquery("INSERT INTO allianceboard_catranks (cr_cat_id,cr_rank_id) VALUES (".$cid.",$k);");
 							}
 						}
-						ok_msg("Neue Kategorie gespeichert!");
+						success_msg("Neue Kategorie gespeichert!");
 					}
 					elseif (isset($_POST['cat_edit']) && isset($_POST['cat_name']) && isset($_POST['cat_id']) && $_POST['cat_id']>0)
 					{
@@ -937,7 +937,7 @@
 								dbquery("INSERT INTO allianceboard_catranks (cr_cat_id,cr_rank_id) VALUES (".$_POST['cat_id'].",$k);");
 							}
 						}
-						ok_msg("&Auml;nderungen gespeichert!");
+						success_msg("&Auml;nderungen gespeichert!");
 					}
 					elseif (isset($_POST['cat_edit']) && isset($_POST['bnd_id']) && $_POST['bnd_id']>0)
 					{
@@ -949,7 +949,7 @@
 								dbquery("INSERT INTO allianceboard_catranks (cr_bnd_id,cr_rank_id) VALUES (".$_POST['bnd_id'].",$k);");
 							}
 						}
-						ok_msg("&Auml;nderungen gespeichert!");
+						success_msg("&Auml;nderungen gespeichert!");
 					}
 					elseif (isset($_POST['cat_delete']) && isset($_POST['cat_id']) && $_POST['cat_id']>0)
 					{
@@ -963,7 +963,7 @@
 							dbquery("DELETE FROM ".BOARD_TOPIC_TABLE." WHERE topic_cat_id=".$_POST['cat_id'].";");
 						}
 						dbquery("DELETE FROM ".BOARD_CAT_TABLE." WHERE cat_id=".$_POST['cat_id']." AND cat_alliance_id=".BOARD_ALLIANCE_ID.";");
-						ok_msg("Kategorie gelöscht!");
+						success_msg("Kategorie gelöscht!");
 					}
 					
 					$res=dbquery("SELECT * FROM ".BOARD_CAT_TABLE." WHERE cat_alliance_id=".BOARD_ALLIANCE_ID." ORDER BY cat_order, cat_name");		

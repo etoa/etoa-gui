@@ -148,7 +148,7 @@
 		echo "<h2>Geb&auml;udepunkte neu berechnen</h2><form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
 		if (isset($_POST['recalc']) && $_POST['recalc']!="")
 		{
-			cms_ok_msg(Ranking::calcBuildingPoints());
+			cms_success_msg(Ranking::calcBuildingPoints());
 		}
 		echo "Nach jeder &Auml;nderung an den Geb&auml;uden m&uuml;ssen die Geb&auml;udepunkte neu berechnet werden.<br/><br/>
 		Diese Aktion kann eine Weile dauern! ";

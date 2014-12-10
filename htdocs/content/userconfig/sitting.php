@@ -33,7 +33,7 @@
                 VALUES
                 ('".$cu->id."',UNIX_TIMESTAMP());");
 
-                ok_msg("Neuer User angelegt!");
+                success_msg("Neuer User angelegt!");
             }
 
 
@@ -77,7 +77,7 @@
                         }
                     }
                 }
-				if ($change) ok_msg("&Auml;nderungen &uuml;bernommen!");
+				if ($change) success_msg("&Auml;nderungen &uuml;bernommen!");
 
                 //Löscht alle angekreuzten user
                 if($_POST['del_multi'])
@@ -110,7 +110,7 @@
 	                            WHERE
 	                                user_id='".$cu->id."';");
 							}
-							ok_msg("Eintrag gelöscht!");
+							success_msg("Eintrag gelöscht!");
                         }
                     }
                 }
@@ -173,7 +173,7 @@
 										) VALUES (
 										".$cu->id.",".$sitterId.",'$pw',$tm_from,$tm_to
 										);");
-										ok_msg("Sitting eingerichtet!");
+										success_msg("Sitting eingerichtet!");
 										echo "<p>".button("Weiter","?page=$page&amp;mode=$mode&amp;")."</p>";
 										$form = false;
 									}
@@ -256,7 +256,7 @@
 		}
 		else
 		{
-			err_msg("Alle Sitting-Tage sind aufgebraucht!");
+			error_msg("Alle Sitting-Tage sind aufgebraucht!");
 			echo "<p>";
 		}
 		echo "".button("Abbrechen", "?page=$page&amp;mode=$mode")."</p>";
@@ -366,13 +366,13 @@
 		{
 			dbquery("DELETE FROM user_sitting WHERE id=".intval($_GET['remove_sitting'])." AND user_id=".$cu->id." AND date_from>".time().";");
 			if (mysql_affected_rows()>0)
-				ok_msg("Sitting entfernt!");
+				success_msg("Sitting entfernt!");
 		}
 		if (isset($_GET['cancel_sitting']) && intval($_GET['cancel_sitting'])>0)
 		{
 			$res = dbquery("UPDATE user_sitting SET date_to=".time()." WHERE id=".intval($_GET['cancel_sitting'])." AND user_id=".$cu->id." AND date_from<".time()." AND date_to>".time().";");
 			if (mysql_affected_rows()>0)
-				ok_msg("Sitting abgebrochen!");
+				success_msg("Sitting abgebrochen!");
 		}
 
 

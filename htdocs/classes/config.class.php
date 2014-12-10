@@ -58,7 +58,7 @@ class Config implements ISingleton
 				$this->_items[$arr['config_name']] = new ConfigItem($arr['config_value'], $arr['config_param1'], $arr['config_param2']);
 			}
 		} else {
-			err_msg("Config table empty!");
+			error_msg("Config table empty!");
 		}
 	}
 	

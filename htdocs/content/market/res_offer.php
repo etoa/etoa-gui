@@ -119,7 +119,7 @@
 							'content'=>$_POST['ressource_text']
 							), "resadd", mysql_insert_id(), $marr);
 
-						ok_msg("Angebot erfolgreich aufgegeben");
+						success_msg("Angebot erfolgreich aufgegeben");
 						return_btn();
 					}
 				}

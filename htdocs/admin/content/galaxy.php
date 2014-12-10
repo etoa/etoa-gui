@@ -410,7 +410,7 @@
 				echo "<input type=\"button\" onclick=\"document.location='?page=$page&sub=$sub&action=searchresults'\" value=\"Zur&uuml;ck zu den Suchergebnissen\"/></form>";
 			}
 			else
-				cms_err_msg("Datensatz wurde nicht gefunden!");
+				cms_error_msg("Datensatz wurde nicht gefunden!");
 		}
 		//
 		// Zellen Suchresultate
