@@ -94,11 +94,11 @@ function acceptBuddy($id, $callback=false)
 
 	if ( true || $bl->acceptBuddy($id) )
 	{
-		Design::okMsg('Anfrage wurde angenommen.');
+		success_msg('Anfrage wurde angenommen.');
 	}
 	else
 	{
-		Design::errorMsg($bl->lastError);
+		error_msg($bl->lastError);
 		$callback = false;
 	}
 	
@@ -127,10 +127,10 @@ function declineBuddy($id, $callback=false)
 	$bl = new Buddylist($uid);
 
 	if ( true || $bl->declineBuddy($id) ) {
-		Design::okMsg('Anfrage wurde abgelehnt.');
+		info_msg('Anfrage wurde abgelehnt.');
 	}
 	else {
-	 Design::errorMsg($bl->lastError);
+		error_msg($bl->lastError);
 	}
 	$ajax->append('info','innerHTML', ob_get_contents() );
 	ob_clean();
