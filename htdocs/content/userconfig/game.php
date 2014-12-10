@@ -37,8 +37,7 @@
   		$cu->properties->chatColor = $_POST['chat_color'];
   		if($_POST['chat_color'] == '000' || $_POST['chat_color'] == '000000')
   		{
-  			success_msg('Chatfarbe schwarz auf schwarz ist eine Weile ja ganz lustig, '.
-  				'aber in ein paar Minuten bitte zur&uuml;ck&auml;ndern ;)');
+  			success_msg('Chatfarbe schwarz auf schwarz ist eine Weile ja ganz lustig, aber in ein paar Minuten bitte zur&uuml;ck&auml;ndern ;)');
   		} else {
     		success_msg('Benutzer-Daten wurden ge&auml;ndert!');
   		}

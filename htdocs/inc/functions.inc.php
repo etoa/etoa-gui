@@ -998,19 +998,9 @@
 	/**
 	* Sucess msg
 	*/
-	function success_msg($text,$type=0)
+	function success_msg($text)
 	{
-		switch($type)
-		{
-			case 1:
-				$title = "";
-				break;
-			case 2:
-				$title = '<span class="success">Hurra: </span>';
-				break;
-			default:
-				$title = '<span class="success">Erfolg: </span>';
-		}		
+		$title = '<span class="success">Erfolg: </span>';
 		iBoxStart();
 		echo $title.text2html($text);
 		iBoxEnd();
