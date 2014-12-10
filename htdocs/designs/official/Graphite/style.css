@@ -557,7 +557,7 @@ table.tb td {
 }
 
 #galaxy_map_container {
-  background:black url('../../images/main_bg.jpg');
+  background:black url('../../../images/main_bg.jpg');
   text-align:center;
   padding:0;
 }
@@ -568,7 +568,7 @@ table.tb td {
 }
 
 #sector_map_container {
-  background:black url('../../images/main_bg.jpg');
+  background:black url('../../../images/main_bg.jpg');
   padding:0;
   margin:0;
 }
@@ -636,15 +636,15 @@ table.tb td {
 }
 
 #sector_map_table .sector_map_cell a img.hovered, #sector_map_table .sector_map_cell a img:hover {
-  background:url('../../images/map/hovercell.png');
+  background:url('../../../images/map/hovercell.png');
 }
 
 #sector_map_table .sector_map_cell a img.selected {
-  background:url('../../images/map/selectedcell.png');
+  background:url('../../../images/map/selectedcell.png');
 }
 
 #sector_map_table .sector_map_cell a img.owned {
-  background:url('../../images/map/owncell.png');
+  background:url('../../../images/map/owncell.png');
 }
 
 /* Resbox */
