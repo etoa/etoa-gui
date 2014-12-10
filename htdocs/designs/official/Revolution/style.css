@@ -1369,15 +1369,15 @@ a:hover {
 	padding:4px 8px;
 }
 
-.boxLayout .success {
+.boxLayout.success .infoboxtitle {
 	color: #0f0;
 }
 
-.boxLayout  .information {
+.boxLayout.information .infoboxtitle {
 	color: #0ff;
 }
 
-.boxLayout  .error {
+.boxLayout.error .infoboxtitle {
 	color: #f00;
 }
 

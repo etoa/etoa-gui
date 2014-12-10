@@ -964,9 +964,8 @@
 	*/
 	function success_msg($text)
 	{
-		$title = '<span class="success">Erfolg:</span> ';
-		iBoxStart();
-		echo $title.text2html($text);
+		iBoxStart("Erfolg", "success");
+		echo text2html($text);
 		iBoxEnd();
 	}
 	
@@ -977,9 +976,8 @@
 	*/
 	function info_msg($text)
 	{
-		$title = '<span class="information">Information:</span> ';
-		iBoxStart();
-		echo $title.text2html($text);
+		iBoxStart("Information", "information");
+		echo text2html($text);
 		iBoxEnd();
 	}
 
@@ -996,20 +994,20 @@
 				$title = '';
 				break;
 			case 2:
-				$title = '<span class="error">Warnung:</span> ';
+				$title = 'Warnung';
 				break;
 			case 3:
-				$title = '<span class="error">Problem:</span> ';
+				$title = 'Problem';
 				break;
 			case 4:
-				$title = '<span class="error">Datenbankproblem:</span> ';
+				$title = 'Datenbankproblem';
 				break;
 			default:
-				$title = '<span class="error">Fehler:</span> ';
+				$title = 'Fehler';
 		}
 		
-		iBoxStart();
-		echo $title.text2html($text);
+		iBoxStart($title, "error");
+		echo text2html($text);
 
 		// Addition
 		switch($addition)
