@@ -90,8 +90,8 @@
 			tableStart("Systemkarte");
 
 			echo "<tr><td colspan=\"6\" style=\"text-align:center;vertical-align:middle;\">
-			<a href=\"?page=galaxy\">Galaxie</a> &gt;&nbsp;
-			<a href=\"?page=sector&sector=".$cell->getSX().",".$cell->getSY()."\">Sektor ".$cell->getSX()."/".$cell->getSY()."</a> &gt; &nbsp;";
+			<a href=\"?page=galaxy\">Galaxie</a> &raquo;&nbsp;
+			<a href=\"?page=sector&sector=".$cell->getSX().",".$cell->getSY()."\">Sektor ".$cell->getSX()."/".$cell->getSY()."</a> &raquo; &nbsp;";
 			$cres = dbquery("
 			SELECT
 				id

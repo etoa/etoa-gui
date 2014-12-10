@@ -105,7 +105,7 @@
   
   // Navigation
 	echo "<tr><td id=\"sector_map_nav\">
-	<a href=\"?page=galaxy\">Galaxie</a> &gt; &nbsp;";
+	<a href=\"?page=galaxy\">Galaxie</a> &raquo; &nbsp;";
 	echo "<select name=\"sector\" onchange=\"document.location='?page=$page&sector='+this.value\">";
 	for ($x=1;$x<=$sx_num;$x++)
 	{
