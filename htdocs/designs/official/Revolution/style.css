@@ -1360,13 +1360,13 @@ a:hover {
 }
 
 .infoboxtitle span {
-	padding: 2px 8px;
+	padding: 2px 6px;
 	display: block;
 }
 
 .infoboxcontent	{
 	background: rgba(24, 35, 59, 0.9);
-	padding:4px 8px;
+	padding:4px 6px;
 }
 
 .boxLayout.success .infoboxtitle {
@@ -1396,7 +1396,7 @@ table.tb caption {
 	border-bottom: none;
 	text-align: left;
 	vertical-align: top;
-	padding: 2px;
+	padding: 4px 6px;
 	font-weight: bold;
 }
 
