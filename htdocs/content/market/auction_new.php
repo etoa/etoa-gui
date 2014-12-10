@@ -99,7 +99,7 @@
 
 		// todo: report
 
-        ok_msg("Auktion erfolgreich lanciert");
+        success_msg("Auktion erfolgreich lanciert");
         return_btn();
 
 	}

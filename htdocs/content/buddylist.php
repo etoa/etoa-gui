@@ -68,7 +68,7 @@
                           	{
                                   dbquery("INSERT INTO buddylist (bl_allow,bl_user_id,bl_buddy_id) VALUES (1,".$cu->id.",".$blid.");");
 	                        }
-	                        ok_msg("Erlaubnis erteilt!");
+	                        success_msg("Erlaubnis erteilt!");
 	                }
 	                else
 	                        err_msg("Die Erlaubnis kann nicht erteilt werden weil die Anfrage gel&ouml;scht wurde!");
@@ -95,7 +95,7 @@
 	                {
 	                        $arr=mysql_fetch_array($res);
 	                        dbquery("DELETE FROM buddylist WHERE bl_user_id=".$blid." AND bl_buddy_id=".$cu->id.";");
-	                        ok_msg("Die Anfrage wurde gel&ouml;scht!");
+	                        success_msg("Die Anfrage wurde gel&ouml;scht!");
 	                }
 	                else
 	                        err_msg("Die Anfrage konnte nicht gel&ouml;scht werden weil sie nicht mehr existiert!");
@@ -119,7 +119,7 @@
 	                                if (mysql_num_rows(dbquery("SELECT bl_user_id FROM buddylist WHERE bl_user_id='".$cu->id."' AND bl_buddy_id='".$arr['user_id']."';"))==0)
 	                                {
 	                                        dbquery("INSERT INTO buddylist (bl_user_id,bl_buddy_id,bl_allow) VALUES('".$cu->id."','".$arr['user_id']."',0);");
-	                                        ok_msg("[b]".$arr['user_nick']."[/b] wurde zu deiner Liste hinzugef&uuml;gt und ihm wurde eine Best&auml;tigungsnachricht gesendet!");
+	                                        success_msg("[b]".$arr['user_nick']."[/b] wurde zu deiner Liste hinzugef&uuml;gt und ihm wurde eine Best&auml;tigungsnachricht gesendet!");
 	                                        send_msg($arr['user_id'],5,"Buddylist-Anfrage von ".$cu->nick,"Der Spieler will dich zu seiner Freundesliste hinzuf&uuml;gen.\n\n[page buddylist]Anfrage bearbeiten[/page]");
 	                                }
 	                                else
@@ -145,7 +145,7 @@
 	                $c+=mysql_affected_rows();
 	                if ($c>0)
 	                {
-	                        ok_msg("Der Spieler wurde von der Freundesliste entfern!");
+	                        success_msg("Der Spieler wurde von der Freundesliste entfern!");
 	                }
 	        }
 	

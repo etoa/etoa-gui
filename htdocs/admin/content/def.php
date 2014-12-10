@@ -36,7 +36,7 @@
 		echo "<h2>Punkte neu berechnen</h2><form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
 		if (isset($_POST['recalc']) && $_POST['recalc']!="")
 		{
-			cms_ok_msg(Ranking::calcDefensePoints());
+			cms_success_msg(Ranking::calcDefensePoints());
 		}		
 		echo "Nach jeder direkter &Auml;nderung an den Verteidigungsanlagen via Datenbank m&uuml;ssen die Punkte neu berechnet werden: ";
 		echo "<br/><br/><input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";		

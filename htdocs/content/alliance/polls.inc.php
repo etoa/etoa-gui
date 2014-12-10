@@ -68,7 +68,7 @@ if (Alliance::checkActionRights('polls'))
 								'".mysql_real_escape_string($_POST['poll_a7_text'])."',
 								'".mysql_real_escape_string($_POST['poll_a8_text'])."'
 							);");
-							ok_msg("Umfrage wurde gespeichert!");
+							success_msg("Umfrage wurde gespeichert!");
 							$_SESSION['alliance_poll']=null;
 							$created=true;
 						}
@@ -207,7 +207,7 @@ if (Alliance::checkActionRights('polls'))
 				if (mysql_affected_rows()>0)
 				{
 					dbquery("DELETE FROM alliance_poll_votes WHERE vote_poll_id=".$did." AND vote_alliance_id=".$arr['alliance_id'].";");
-					ok_msg("Umfrage wurde gel&ouml;scht!");
+					success_msg("Umfrage wurde gel&ouml;scht!");
 				}
 			}
 			if (isset($_GET['deactivate']) && intval($_GET['deactivate']) > 0)

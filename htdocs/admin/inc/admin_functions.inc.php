@@ -76,7 +76,7 @@ function cms_err_msg($msg,$id="errmsg")
 *
 * @param string Message
 */
-function cms_ok_msg($msg,$id="okmsg")
+function cms_success_msg($msg,$id="okmsg")
 {
 	echo MessageBox::get("ok", "", text2html($msg));
 }

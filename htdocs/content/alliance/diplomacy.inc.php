@@ -438,7 +438,7 @@
 							".time().",
 							'".$cu->id."'
 						);");
-						ok_msg("Du hast einer Allianz erfolgreich ein B&uuml;ndnis angeboten!");
+						success_msg("Du hast einer Allianz erfolgreich ein B&uuml;ndnis angeboten!");
 
 						//Nachricht an den Leader der gegnerischen Allianz schreiben
 						$res=dbquery("SELECT alliance_founder_id FROM alliances WHERE alliance_id='".$id."'");
@@ -502,7 +502,7 @@
 							'".$cu->id."'
 						)");
 						
-						ok_msg("Du hast einer Allianz den Krieg erkl&auml;rt!");
+						success_msg("Du hast einer Allianz den Krieg erkl&auml;rt!");
 						
 						add_alliance_history($cu->allianceId,"Der Allianz [b][".$alliances[$id]['tag']."] ".$alliances[$id]['name']."[/b] wird der Krieg erkl&auml;rt!");
 						add_alliance_history($id,"Die Allianz [b][".$alliances[$cu->allianceId]['tag']."] ".$alliances[$cu->allianceId]['name']."[/b] erkl&auml;rt den Krieg!");
@@ -694,7 +694,7 @@
 						WHERE 
 							alliance_bnd_id=".$id." 
 						;");
-						ok_msg("Bündniss angenommen! Bitte denke daran, einen öffentlichen Text zum Bündnis hinzuzufügen!");
+						success_msg("Bündniss angenommen! Bitte denke daran, einen öffentlichen Text zum Bündnis hinzuzufügen!");
 					}
 				}
 
@@ -748,7 +748,7 @@
 						add_alliance_history($cu->allianceId,"Die Bündnisanfrage [b]".$arr['alliance_bnd_name']."[/b] der Allianz [b][".$arr['a2tag']."] ".$arr['a2name']."[/b] wird abgelehnt!");
 						add_alliance_history($arr['a2id'],"Die Bündnisanfrage [b]".$arr['alliance_bnd_name']."[/b] wird von der Allianz [b][".$arr['a1tag']."] ".$arr['a1name']."[/b] abgelehnt!");
 
-						ok_msg("Bündniss abgelehnt!");
+						success_msg("Bündniss abgelehnt!");
 					}
 				}
 
@@ -770,7 +770,7 @@
 						AND alliance_bnd_id='".$id."' 
 						AND alliance_bnd_level=2
 					");
-					ok_msg("Text gespeichert!");
+					success_msg("Text gespeichert!");
 				}
 
 				// Save public war text
@@ -791,7 +791,7 @@
 						AND alliance_bnd_id='".$id."' 
 						AND alliance_bnd_level=3
 					");
-					ok_msg("Text gespeichert!");
+					success_msg("Text gespeichert!");
 				}
 
 

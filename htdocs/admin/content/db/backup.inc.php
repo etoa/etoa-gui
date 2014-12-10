@@ -24,7 +24,7 @@
 			Log::add(Log::F_SYSTEM, Log::INFO, "[b]Datenbank-Backup[/b]\n".$log);
 			
 			// Show message
-			cms_ok_msg($log);
+			cms_success_msg($log);
 		}
 		catch (Exception $e)
 		{
@@ -70,7 +70,7 @@
 				Log::add(Log::F_SYSTEM, Log::INFO, "[b]Datenbank-Restore[/b]\n".$log);
 
 				// Show message
-				cms_ok_msg("Das Backup ".$restorePoint." wurde wiederhergestellt und es wurde eine Sicherungskopie der vorherigen Daten angelegt!");
+				cms_success_msg("Das Backup ".$restorePoint." wurde wiederhergestellt und es wurde eine Sicherungskopie der vorherigen Daten angelegt!");
 			}
 			catch (Exception $e) 
 			{
@@ -96,7 +96,7 @@
 		$cfg->set("backup_dir", $_POST['backup_dir']);
 		$cfg->set("backup_retention_time", $_POST['backup_retention_time']);
 		$cfg->set("backup_use_gzip", $_POST['backup_use_gzip']);
-		cms_ok_msg("Einstellungen gespeichert");
+		cms_success_msg("Einstellungen gespeichert");
 	}
 
 	echo $frm->begin();

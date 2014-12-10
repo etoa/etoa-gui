@@ -105,7 +105,7 @@
 						foreach ($planets as $pid) {
 							BackendMessage::updatePlanet($pid);
 						}
-						ok_msg('Der gewählte Spezialist wurde eingestellt!');
+						success_msg('Der gewählte Spezialist wurde eingestellt!');
 					}
 					else
 					{
@@ -211,7 +211,7 @@
 				$cu->specialistId = 0;
 				$cu->specialistTime = 0;
 
-				ok_msg('Der Spezialist wurde entlassen!');	
+				success_msg('Der Spezialist wurde entlassen!');	
 			}
 		}
 		else

@@ -175,7 +175,7 @@
 				  			'".time()."'
 						)");
 
-				ok_msg("Rohstoffe erfolgreich eingezahlt!");
+				success_msg("Rohstoffe erfolgreich eingezahlt!");
 			}
 			else
 				error_msg("Es sind zu wenig Rohstoffe auf dem Planeten!");
@@ -490,7 +490,7 @@
 											$sql .= "('".mysql_insert_id()."', '".$ship_id."', '".$build_cnt."')";
 											$fleet[$ship_id] += $build_cnt;
 											// Gibt einmalig eine OK-Medlung aus
-											ok_msg("Schiffe wurden erfolgreich hergestellt!");
+											success_msg("Schiffe wurden erfolgreich hergestellt!");
 										}
 										else
 										{
@@ -620,7 +620,7 @@
 			if(isset($_POST['building_id']) && $_POST['building_id']!=0)
 			{
 				if ($cu->alliance->buildlist->build($_POST['building_id']))
-					ok_msg("Gebäude wurde erfolgreich in Auftrag gegeben!");
+					success_msg("Gebäude wurde erfolgreich in Auftrag gegeben!");
 				else
 					error_msg($cu->alliance->buildlist->getLastError());
 			}
@@ -636,7 +636,7 @@
 			if(isset($_POST['research_id']) && $_POST['research_id']!=0)
 			{			
 				if ($cu->alliance->techlist->build($_POST['research_id']))
-					ok_msg("Forschung wurde erfolgreich in Auftrag gegeben!");
+					success_msg("Forschung wurde erfolgreich in Auftrag gegeben!");
 				else
 					error_msg($cu->alliance->techlist->getLastError());
 			}

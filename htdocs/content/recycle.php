@@ -71,7 +71,7 @@
 		}
 
 		if ($transformed_counter > 0) {
-			ok_msg("$transformed_counter Verteidigungsanlagen wurden verladen!");
+			success_msg("$transformed_counter Verteidigungsanlagen wurden verladen!");
 		}			
 	}
 
@@ -109,7 +109,7 @@
 		}
 
 		if ($transformed_counter > 0) {
-			ok_msg("$transformed_counter Verteidigungsanlagen wurden installiert!");
+			success_msg("$transformed_counter Verteidigungsanlagen wurden installiert!");
 		}			
 	}
 
@@ -303,7 +303,7 @@
 				add_log(12,$log,time());
 
 			}
-			ok_msg(nf($cnt)." Schiffe erfolgreich recycelt!");
+			success_msg(nf($cnt)." Schiffe erfolgreich recycelt!");
 		}
 
 
@@ -399,7 +399,7 @@
 
 				add_log(12,$log,time());
 			}
-			ok_msg("".nf($cnt)." Verteidigungsanlagen erfolgreich recycelt!");
+			success_msg("".nf($cnt)." Verteidigungsanlagen erfolgreich recycelt!");
 		}
 
 

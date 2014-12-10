@@ -73,7 +73,7 @@
 				if (mysql_num_rows($appres)>0)
 				{
 					$apparr = mysql_fetch_array($appres);
-         	ok_msg("Du hast dich am ".df($application_timestamp)." bei der Allianz <b>[".$apparr['alliance_tag']."] ".$apparr['alliance_name']."</b> beworben
+         	success_msg("Du hast dich am ".df($application_timestamp)." bei der Allianz <b>[".$apparr['alliance_tag']."] ".$apparr['alliance_name']."</b> beworben
          	und musst nun darauf warten, dass deine Bewerbung akzeptiert wird!");
          	echo "<input type=\"button\" onclick=\"document.location='?page=$page&action=cancelapplication';\" value=\"Bewerbung zurückziehen\" />";
 				}
@@ -206,7 +206,7 @@
 					);
 					");
 
-					ok_msg("Deine Bewerbung bei der Allianz [".$alliances[$aid]['tag']."] ".$alliances[$aid]['name']." wurde gespeichert! Die Allianzleitung wurde informiert und wird deine Bewerbung ansehen.");
+					success_msg("Deine Bewerbung bei der Allianz [".$alliances[$aid]['tag']."] ".$alliances[$aid]['name']." wurde gespeichert! Die Allianzleitung wurde informiert und wird deine Bewerbung ansehen.");
 					echo "<input value=\"&Uuml;bersicht\" type=\"button\" onclick=\"document.location='?page=$page'\" />";
 				}
 				else

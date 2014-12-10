@@ -54,7 +54,7 @@ if (Alliance::checkActionRights('editmembers'))
 						$ally->addHistory("Der Spieler [b]".get_user_nick($uid)."[/b] erhält den Rang [b]".$rank[$rid]."[/b].");
 					}
 				}
-				ok_msg("&Auml;nderungen wurden übernommen!");
+				success_msg("&Auml;nderungen wurden übernommen!");
 			}
 
 			// Handle user move from wing to wing or main
@@ -131,7 +131,7 @@ if (Alliance::checkActionRights('editmembers'))
 			{
 				$ally->founderId = $fid;
 				add_log(5,"Der Spieler [b]".$ally->founder."[/b] wird vom Spieler [b]".$cu."[/b] zum Gründer befördert.");
-				ok_msg("Gründer ge&auml;ndert!");
+				success_msg("Gründer ge&auml;ndert!");
 			}
 			else
 				error_msg("User nicht gefunden!");
@@ -148,7 +148,7 @@ if (Alliance::checkActionRights('editmembers'))
 				$ally->kickMember($kid);
 
 				add_log(5,"Der Spieler [b]".$tmpUser."[/b] wurde von [b]".$cu."[/b] aus der Allianz [b]".$ally."[/b] ausgeschlossen!",time());
-				ok_msg("Der Spieler [b]".$tmpUser."[/b] wurde aus der Allianz ausgeschlossen!");
+				success_msg("Der Spieler [b]".$tmpUser."[/b] wurde aus der Allianz ausgeschlossen!");
 				unset($tmpUser);
 			}
 			else

@@ -49,7 +49,7 @@
         	shiplist_ship_id='".intval($_POST['id'])."'
         	AND shiplist_user_id='".$cu->id."';");
 
-        ok_msg("Upgrade erfolgreich duchgeführt!");
+        success_msg("Upgrade erfolgreich duchgeführt!");
     }
 
 

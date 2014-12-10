@@ -139,7 +139,7 @@
 						WHERE
 							obj_flight_id=".intval($_GET['selfdestruct'])."
 						;");
-						ok_msg("Die Raketen haben sich selbst zerstört!");
+						success_msg("Die Raketen haben sich selbst zerstört!");
 					}			
 				}
 		
@@ -261,7 +261,7 @@
 							$lcnt+=$v;	
 						}						
 						$cnt-=$lcnt;
-						ok_msg("Raketen gestartet!");
+						success_msg("Raketen gestartet!");
 					}
 					else
 					{
@@ -406,7 +406,7 @@
 										$missilelist[$k]=$v;
 									}		
 									$cp->changeRes(-$mcosts[0],-$mcosts[1],-$mcosts[2],-$mcosts[3],-$mcosts[4]);	
-									ok_msg($v." ".$missiles[$k]['missile_name']." wurden gekauft!");
+									success_msg($v." ".$missiles[$k]['missile_name']." wurden gekauft!");
 								}
 								else
 								{
@@ -457,7 +457,7 @@
 								");
 								$missilelist[$k]-=$bc;				
 								$cnt-=$bc;		
-								ok_msg($bc." ".$missiles[$k]['missile_name']." wurden verschrottet!");
+								success_msg($bc." ".$missiles[$k]['missile_name']." wurden verschrottet!");
 							}			
 						}
 						if (!$valid)	

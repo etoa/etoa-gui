@@ -45,7 +45,7 @@ if (Alliance::checkActionRights('applications'))
 
 						$cnt++;
 						$new_member = true;
-						ok_msg($nick." wurde angenommen.");
+						success_msg($nick." wurde angenommen.");
 						
 						// Nachricht an den Bewerber schicken
 						send_msg($id,MSG_ALLYMAIL_CAT,"Bewerbung angenommen","Deine Allianzbewerbung wurde angenommen!\n\n[b]Antwort:[/b]\n".addslashes($_POST['application_answer_text'][$id]));
@@ -77,7 +77,7 @@ if (Alliance::checkActionRights('applications'))
 					elseif($answer==1)
 					{
 						$cnt++;
-						ok_msg($nick." wurde abgelehnt.");
+						success_msg($nick." wurde abgelehnt.");
 
 						// Nachricht an den Bewerber schicken
 						send_msg($id,MSG_ALLYMAIL_CAT,"Bewerbung abgelehnt","Deine Allianzbewerbung wurde abgelehnt!\n\n[b]Antwort:[/b]\n".addslashes($_POST['application_answer_text'][$id]));
@@ -103,7 +103,7 @@ if (Alliance::checkActionRights('applications'))
 							send_msg($id,MSG_ALLYMAIL_CAT,"Bewerbung: Nachricht","Antwort auf die Bewerbung an die Allianz [b][".$alliances[$cu->allianceId]['tag']."] ".$alliances[$cu->allianceId]['name']."[/b]:\n".$_POST['application_answer_text'][$id]."");
 							
 							$cnt++;
-							ok_msg($nick.": Nachricht gesendet");
+							success_msg($nick.": Nachricht gesendet");
 						}
 					}					
 				}
@@ -114,7 +114,7 @@ if (Alliance::checkActionRights('applications'))
 					$cu->alliance->calcMemberCosts();		
 				}
 				
-				ok_msg("Änderungen übernommen");
+				success_msg("Änderungen übernommen");
 			}
 		}
 

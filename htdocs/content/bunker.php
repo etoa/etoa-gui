@@ -83,7 +83,7 @@
 					if ($count>0)
 					{
 						echo "<br />";
-						ok_msg("Schiffe wurden ausgebunkert!");
+						success_msg("Schiffe wurden ausgebunkert!");
 					}
 				}
 					
@@ -220,7 +220,7 @@
 					if ($counter>0)
 					{
 						echo "<br />";
-						ok_msg("Schiffe wurden eingebunkert!");
+						success_msg("Schiffe wurden eingebunkert!");
 					}
 					else
 					{
@@ -329,7 +329,7 @@
 					$cp->chgBunker(5,nf_back($_POST['bunker_food'])/$percent);
 					
 					echo "<br />";
-					ok_msg("Änderungen wurden übernommen!");
+					success_msg("Änderungen wurden übernommen!");
 				}
 		
 				//

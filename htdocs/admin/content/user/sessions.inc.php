@@ -7,7 +7,7 @@ echo "<p>Das User-Timeout betr&auml;gt ".tf($conf['user_timeout']['v'])."</p>";
 if (isset($_GET['kick']))
 {
     UserSession::kick($_GET['kick']);
-    ok_msg("Session ".$_GET['kick']." gelöscht!");
+    success_msg("Session ".$_GET['kick']." gelöscht!");
 }
 if (isset($_POST['kick_all']))
 {	
@@ -22,7 +22,7 @@ if (isset($_POST['kick_all']))
         {        
             UserSession::kick($arr['id']);
         }
-        ok_msg("Alle Sessions gelöscht!");
+        success_msg("Alle Sessions gelöscht!");
     }
 }
 

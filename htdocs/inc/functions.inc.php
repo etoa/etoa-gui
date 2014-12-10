@@ -986,17 +986,9 @@
 	}
 	
 	/**
-	* Formatierte OK-Meldung anzeigen
+	* Formatierte Erfolgsmeldung anzeigen
 	*
 	* $msg: OK-Meldung
-	*/
-	function ok_msg($msg)
-	{
-		success_msg($msg);
-	}
-
-	/**
-	* Sucess msg
 	*/
 	function success_msg($text)
 	{

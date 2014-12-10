@@ -37,7 +37,7 @@
 		if($_GET['ressource_delete']>0)
 		{
 			dbquery("DELETE FROM market_ressource WHERE id=".$_GET['ressource_delete']."");
-			cms_ok_msg("Angebot gel&ouml;scht!");
+			cms_success_msg("Angebot gel&ouml;scht!");
 		}
 		$res=dbquery("SELECT * FROM market_ressource ORDER BY datum ASC");
 		if (mysql_num_rows($res)>0)
@@ -96,7 +96,7 @@
 		if ($_GET['ship_delete']!="")
 		{
 				dbquery("DELETE FROM market_ship WHERE id=".$_GET['ship_delete']."");
-				cms_ok_msg("Angebot gel&ouml;scht");
+				cms_success_msg("Angebot gel&ouml;scht");
 		}
 		$res=dbquery("SELECT * FROM market_ship ORDER BY datum DESC;");
 		if (mysql_num_rows($res)>0)
@@ -169,7 +169,7 @@
 		if ($_GET['auction_delete']!="")
 		{
 				dbquery("DELETE FROM market_auction WHERE id=".$_GET['auction_delete']."");
-				cms_ok_msg("Auktion gel&ouml;scht");
+				cms_success_msg("Auktion gel&ouml;scht");
 		}
 		$res=dbquery("SELECT * FROM market_auction ORDER BY date_end ASC;");
 		if (mysql_num_rows($res)>0)
@@ -378,7 +378,7 @@
 		if (isset($_GET['action']) && $_GET['action']=="updaterates")
 		{
 			$tr = new PeriodicTaskRunner();
-			ok_msg($tr->runTask('MarketrateUpdateTask'));
+			success_msg($tr->runTask('MarketrateUpdateTask'));
 		}
 
 		echo "<table class=\"tb\" style=\"width:200px;\">";

@@ -46,7 +46,7 @@
 		{
 			if ($star->setNewName($_POST['starname']))
 			{
-				ok_msg("Der Stern wurde benannt!");
+				success_msg("Der Stern wurde benannt!");
 			}
 			else
 			{

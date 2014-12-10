@@ -140,7 +140,7 @@
 							'".$speed."'
 						);");
 								
-					ok_msg("Der Favorit wurde hinzugef&uuml;gt!");
+					success_msg("Der Favorit wurde hinzugef&uuml;gt!");
 				}
 				elseif (isset($_POST['submitEdit']))
 				{
@@ -161,7 +161,7 @@
 							AND id='".intval($_POST['id'])."'
 						LIMIT 1;");
 					
-					ok_msg("Der Favorit wurde gespeichert!");
+					success_msg("Der Favorit wurde gespeichert!");
 				}
 			}
 			else
@@ -187,7 +187,7 @@
 			id='".$bmid."' 
 			AND user_id='".$cu->id."';");
 		if (mysql_affected_rows()>0)
-			ok_msg("Gelöscht");
+			success_msg("Gelöscht");
 	}
 	
 	if ($mode=="fleet")
@@ -717,7 +717,7 @@
 					id='".$bmid."' 
 					AND user_id='".$cu->id."';");
 				if (mysql_affected_rows()>0)
-					ok_msg("Gespeichert");
+					success_msg("Gespeichert");
 			}
 	
 			// Favorit löschen
@@ -732,7 +732,7 @@
 					id='".$bmid."' 
 					AND user_id='".$cu->id."';");
 				if (mysql_affected_rows()>0)
-					ok_msg("Gelöscht");
+					success_msg("Gelöscht");
 			}
 	
 			// Neuen Favorit speichern
@@ -786,7 +786,7 @@
 									'".$arr[0]."',
 									'".mysql_real_escape_string($_POST['bookmark_comment'])."');");
 								
-							ok_msg("Der Favorit wurde hinzugef&uuml;gt!");
+							success_msg("Der Favorit wurde hinzugef&uuml;gt!");
 						}
 						else
 						{
@@ -841,7 +841,7 @@
 							'".$arr[0]."',
 							'-');");
 								
-						ok_msg("Der Favorit wurde hinzugef&uuml;gt!");
+						success_msg("Der Favorit wurde hinzugef&uuml;gt!");
 					}
 					else
 					{

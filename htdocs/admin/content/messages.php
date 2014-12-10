@@ -96,9 +96,9 @@
 					}
 				}
 				if ($msgCnt>0)
-					ok_msg("$msgCnt InGame-Nachrichten wurden versendet!");
+					success_msg("$msgCnt InGame-Nachrichten wurden versendet!");
 				if ($mailCnt>0)
-					ok_msg("$mailCnt Mails wurden versendet!");
+					success_msg("$mailCnt Mails wurden versendet!");
 
 			}
 			else

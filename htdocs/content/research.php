@@ -85,7 +85,7 @@ if (isset($cp)) {
 			$set_people = nf_back($_POST['peopleWorking']);
 			if (!$builing_something && $bl->setPeopleWorking(TECH_BUILDING_ID, $set_people,true))
 			{
-				ok_msg("Arbeiter zugeteilt!");
+				success_msg("Arbeiter zugeteilt!");
 				$new_people_set = true;
 			}
 			else

@@ -45,7 +45,7 @@
 			  ".intval($_POST['target_id'])."
 			)
 			");		
-			ok_msg("Spieler wurde ignoriert!");
+			success_msg("Spieler wurde ignoriert!");
 		}
 		
 		
@@ -59,7 +59,7 @@
 				ignore_owner_id=".$cu->id."
 				AND ignore_target_id=".intval($_GET['remove'])."
 			;");		
-			ok_msg("Spieler wurde von der Liste entfernt!");
+			success_msg("Spieler wurde von der Liste entfernt!");
 		}		
 		
 		tableStart('Ignorierliste');

@@ -64,7 +64,7 @@
 						$mail = new Mail($subject, $text);
 						if ($mail->send($recipient, $sender))
 						{
-							ok_msg('Vielen Dank! Deine Nachricht wurde gesendet!');
+							success_msg('Vielen Dank! Deine Nachricht wurde gesendet!');
 							$showForm = false;
 						}
 					}

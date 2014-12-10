@@ -284,7 +284,7 @@ $cnt = 0;
 
 			if($cnt > 0)
 			{
-				ok_msg("".$cnt." Angebot(e) erfolgreich gekauft!");
+				success_msg("".$cnt." Angebot(e) erfolgreich gekauft!");
 			}
 			if($cnt_error > 0)
 			{

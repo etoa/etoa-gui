@@ -262,7 +262,7 @@
 						if (isset($_POST['submit_leave']))
 						{
 							if ($ally->kickMember($cu->id,0)) {
-								ok_msg("Du bist aus der Allianz ausgetreten!");
+								success_msg("Du bist aus der Allianz ausgetreten!");
 							} else {
 								error_msg("Du konntest nicht aus der Allianz austreten, da die Allianz entweder im Krieg ist oder du noch Allianzflotten in der Luft hast!!");
 							}
@@ -385,7 +385,7 @@
 							{
 								$alliance_img_string="alliance_img='".$imup->getResultName()."',
                 alliance_img_check=1,";
-								ok_msg("Allianzbild hochgeladen!");
+								success_msg("Allianzbild hochgeladen!");
 							}
 	          }
 
@@ -890,7 +890,7 @@
 						user_alliance_rank_id=0
 					WHERE
 						user_id=".$cu->id.";");
-					ok_msg("Die fehlerhafte Verkn&uuml;pfung wurde gel&ouml;st!");
+					success_msg("Die fehlerhafte Verkn&uuml;pfung wurde gel&ouml;st!");
 				}
 				else
 					echo "<form action=\"?page=$page\" method=\"post\">Diese Allianz existiert nicht!<br/><br/>

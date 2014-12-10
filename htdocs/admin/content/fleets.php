@@ -440,7 +440,7 @@
 								$cnt++;
 							}
 						}
-						cms_ok_msg("Es wurden ".$cnt." Flotten per R&uuml;ckflug zur&uuml;ckgeschickt!");
+						cms_success_msg("Es wurden ".$cnt." Flotten per R&uuml;ckflug zur&uuml;ckgeschickt!");
 					}
 					else
 						echo "Es konnten keine Flotten zur&uuml;ckgerufen werden da keine unterwegs sind!<br/><br/>";
@@ -474,7 +474,7 @@
 								$cnt++;
 							}
 						}
-						cms_ok_msg("Es wurden ".$cnt." Flotten per Flugabbruch zur&uuml;ckgeschickt!");
+						cms_success_msg("Es wurden ".$cnt." Flotten per Flugabbruch zur&uuml;ckgeschickt!");
 					}
 					else
 						echo "Es konnten keine Flotten zur&uuml;ckgerufen werden da keine unterwegs sind!<br/><br/>";
@@ -557,7 +557,7 @@
 					fetch_people='".intval($_POST['fetch_people'])."'
 				WHERE 
 					id='".$_GET['fleetedit']."';");
-				ok_msg("Flottendaten geändert!");
+				success_msg("Flottendaten geändert!");
 			}
 			
 			$ures=dbquery("SELECT user_id,user_nick FROM users ORDER BY user_nick;");
@@ -669,7 +669,7 @@
 							$trgEnt->changeRes($arr['res_metal'],$arr['res_crystal'],$arr['res_plastic'],$arr['res_fuel'],$arr['res_food'],$arr['res_power']);
 							$trgEnt->chgPeople($arr['pilots']+$arr['res_people']);
               if ($arr['res_metal'] + $arr['res_crystal'] + $arr['res_plastic'] + $arr['res_fuel'] + $arr['res_food'] + $arr['res_power'] + $arr['pilots'] + $arr['res_people'] > 0) {
-                ok_msg("Ressourcen transferiert!");
+                success_msg("Ressourcen transferiert!");
               }
 						}
 						
@@ -680,7 +680,7 @@
 							fleet
 						WHERE
 							id=".$_GET['fleetedit'].";");
-						ok_msg("Flotte gelandet!");
+						success_msg("Flotte gelandet!");
 						unset($arr);
 					}
 					else
@@ -928,18 +928,18 @@
 						dbquery("INSERT INTO fleet_ships (fs_fleet_id,fs_ship_id,fs_ship_cnt) VALUES (".$_GET['fleetedit'].",".$_POST['fs_ship_id_new'].",".$_POST['fs_ship_cnt_new'].");");
 					else
 						dbquery("UPDATE fleet_ships SET fs_ship_cnt=fs_ship_cnt+".$_POST['fs_ship_cnt_new']." WHERE fs_fleet_id=".$_GET['fleetedit']." AND fs_ship_id=".$_POST['fs_ship_id_new'].";");
-					ok_msg("Schiffe hinzugefügt");
+					success_msg("Schiffe hinzugefügt");
 				}
 				if ($_POST['editship_submit']!="")
 				{
 					foreach ($_POST['fs_ship_cnt'] as $ship=>$cnt)
 					dbquery("UPDATE fleet_ships SET fs_ship_cnt=$cnt WHERE fs_fleet_id=".$_GET['fleetedit']." AND fs_ship_id=$ship;");
-					ok_msg("Schiffe geändert");
+					success_msg("Schiffe geändert");
 				}
 				if ($_GET['shipdel']>0)
 				{
 					dbquery("DELETE FROM fleet_ships WHERE fs_fleet_id=".$_GET['fleetedit']." AND fs_ship_id=".$_GET['shipdel'].";");
-					ok_msg("Schiffe gelöscht");
+					success_msg("Schiffe gelöscht");
 				}
 	
 				$sres=dbquery("
@@ -1045,7 +1045,7 @@
 			{
 				dbquery("DELETE FROM fleet WHERE id='".$_GET['fleetdel']."';");
 				dbquery("DELETE FROM fleet_ships WHERE fs_fleet_id='".$_GET['fleetdel']."';");
-				cms_ok_msg("Die Flotte wurde gel&ouml;scht!");
+				cms_success_msg("Die Flotte wurde gel&ouml;scht!");
 			}
 
 			// Suchquery zusammenstellen
