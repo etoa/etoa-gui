@@ -870,13 +870,13 @@
 	/**
 	* Infobox-Header
 	*/
-	function iBoxStart($title="")
+	function iBoxStart($title="", $class="")
 	{
-		echo "<div class=\"boxLayout\">";
+		echo '<div class="boxLayout '.$class.'">';
 		if ($title!="") {
-			echo "<div class=\"infoboxtitle\"><span>$title</span></div>";
+			echo '<div class="infoboxtitle"><span>'.$title.'</span></div>';
 		}
-		echo "<div class=\"infoboxcontent\">";
+		echo '<div class="infoboxcontent">';
 	}
 
 	/**
