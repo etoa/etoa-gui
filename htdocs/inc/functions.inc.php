@@ -1000,19 +1000,20 @@
 	*/
 	function success_msg($text,$type=0)
 	{
-		echo "<div class=\"successBox\">";
 		switch($type)
 		{
 			case 1:
-				echo "";
+				$title = "";
 				break;
 			case 2:
-				echo "<b>Hurra:</b> ";
+				$title = '<span class="success">Hurra: </span>';
 				break;
 			default:
-				echo "<b>Erfolg:</b> ";
+				$title = '<span class="success">Erfolg: </span>';
 		}		
-		echo text2html($text)."</div>";		
+		iBoxStart();
+		echo $title.text2html($text);
+		iBoxEnd();
 	}
 	
 	/**
@@ -1022,8 +1023,10 @@
 	*/
 	function info_msg($text)
 	{
-		echo "<div class=\"infoMsgBox\">";
-		echo text2html($text)."</div>";	
+		$title = '<span class="information">Information: </span>';
+		iBoxStart();
+		echo $title.text2html($text);
+		iBoxEnd();
 	}
        
   /**

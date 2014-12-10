@@ -1369,6 +1369,18 @@ a:hover {
 	padding:4px 8px;
 }
 
+.boxLayout .success {
+	color: #0f0;
+}
+
+.boxLayout  .information {
+	color: #0ff;
+}
+
+.boxLayout  .error {
+	color: #f00;
+}
+
 /* Tables */
 
 table.tb	{
