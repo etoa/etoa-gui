@@ -165,7 +165,7 @@
 			$verificationRequired = Config::getInstance()->email_verification_required->v;
 			if ($verificationRequired) {
 				$newUser->setVerified(false);
-				$verificationUrl = Config::getInstance()->roundurl.'/show.php?index=verifymail&key='.$cu->verificationKey;
+				$verificationUrl = Config::getInstance()->roundurl.'/show.php?index=verifymail&key='.$newUser->verificationKey;
 			} else {
 				$newUser->setVerified(true);
 			}
