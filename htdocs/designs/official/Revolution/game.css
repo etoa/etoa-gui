@@ -189,20 +189,21 @@ img.resIcon	{
 
 .criticalErrorBox {
 	border:1px #f00 solid;
-	padding:5px;
-	background:#baa;
-	color:#400;
+	padding:0px;
+	background:#000;
+	color:#aaa;
 	width:90%;
 	margin:0px auto;
 	margin-top:15px;
 	margin-bottom:15px;
+	text-align:left;
 }
 
 .criticalErrorBox h2 {
-	margin:0px 0px 10px 0px;
-	border:1px #f00 solid;
-	color:#500;
-	background:#fcc;
+	margin:0px 0px 0px 0px;
+	border-bottom:1px #f00 solid;
+	color:#f00;
+	background:#222;
 	padding:10px;
 	font-size:12pt;
 }
@@ -213,6 +214,18 @@ img.resIcon	{
 
 .criticalErrorBox h2:after {
 	content:none;
+}
+
+.criticalErrorBox a {
+	color: #aaa;
+}
+
+.criticalErrorBox a:hover{
+	color: #fff;
+}
+
+.criticalErrorBox div {
+	padding:10px;
 }
 
 /*

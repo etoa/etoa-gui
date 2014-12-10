@@ -11,17 +11,18 @@
 				return $this->getErrStr();
 			} else {
 				if (isDebugEnabled()) {
-					$str = "<div class=\"criticalErrorBox\" style=\"text-align:left;\"><h2>Datenbankfehler</h2>
+					$str = "<div class=\"criticalErrorBox\"><h2>Datenbankfehler</h2>
+					<div>
 					<b>Datei:</b> ".parent::getFile().", <b>Zeile:</b> ".parent::getLine()."<br/>
 					<b>Abfrage:</b> ".nl2br(parent::getMessage())."<br/>
 					<b>Fehlermeldung:</b> ".nl2br(mysql_error())."<br/>				";
 					$str.="<hr/><b>Stack-Trace:</b><br/>".nl2br(parent::getTraceAsString())."<br/><hr/>";
 					$str.="<a href=\"".DEVCENTER_PATH."\" target=\"_blank\">Fehler melden</a>";
-					$str.="</div>";
+					$str.="</div></div>";
 					return $str;
 				} else {
-					return "<div class=\"criticalErrorBox\" style=\"text-align:left;\"><h2>Datenbankfehler</h2>Die gewünschte Abfrage konnte nicht durchgeführt werden!<br/>
-						Bitte versuchen Sie es später nochmals und <a href=\"".DEVCENTER_PATH."\" onclick=\"".DEVCENTER_ONCLICK.";return false;\">melden</a> Sie diesen Fehler falls er weiterhin auftritt!</div>";
+					return "<div class=\"criticalErrorBox\"><h2>Datenbankfehler</h2><div>Die gewünschte Abfrage konnte nicht durchgeführt werden!<br/>
+						Bitte versuchen Sie es später nochmals und <a href=\"".DEVCENTER_PATH."\" onclick=\"".DEVCENTER_ONCLICK.";return false;\">melden</a> Sie diesen Fehler falls er weiterhin auftritt!</div></div>";
 				}
 			}
 		}
