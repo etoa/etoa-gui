@@ -158,7 +158,7 @@ else
 					include($contentFile);
 					logAccess($page,"admin",$sub);
 				} else {
-					cms_err_msg("Die Seite $page wurde nicht gefunden!");
+					cms_error_msg("Die Seite $page wurde nicht gefunden!");
 				}
 			} else {
 				echo "<h1>Fehler</h1>Der Seitenname <b>".$page."</b> enth&auml;lt unerlaubte Zeichen!<br><br><a href=\"javascript:history.back();\">Zur&uuml;ck</a>";

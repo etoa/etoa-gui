@@ -1019,7 +1019,7 @@
 				}
 				else
 				{
-					cms_err_msg("Diese Flotte besitzt keine Schiffe!");
+					cms_error_msg("Diese Flotte besitzt keine Schiffe!");
 				}
 				}
 				else
@@ -1032,7 +1032,7 @@
 
 			}
 			else
-				cms_err_msg("Datensatz nicht vorhanden!");
+				cms_error_msg("Datensatz nicht vorhanden!");
 		}
 
 		//

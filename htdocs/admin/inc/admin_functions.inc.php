@@ -66,7 +66,7 @@ function db_show_result($res)
 *
 * @param string Message
 */
-function cms_err_msg($msg,$id="errmsg")
+function cms_error_msg($msg,$id="errmsg")
 {
 	echo MessageBox::get("error", "", text2html($msg));
 }

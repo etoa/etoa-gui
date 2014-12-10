@@ -24,7 +24,7 @@ if (isset($_POST['apply_submit']))
 	if (!mysql_error())
 		cms_success_msg("&Auml;nderungen wurden &uuml;bernommen!");
 	else
-		cms_err_msg("Fehler: ".mysql_error());
+		cms_error_msg("Fehler: ".mysql_error());
 		
 	$deleted=false;			
 	foreach ($_POST as $key=>$val)
@@ -43,7 +43,7 @@ if (isset($_POST['apply_submit']))
 		if (!mysql_error())
 			cms_success_msg("Bestimmte Daten wurden gel&ouml;scht!");
 		else
-			cms_err_msg("Fehler: ".mysql_error());
+			cms_error_msg("Fehler: ".mysql_error());
 	}
 }
 if (isset($_POST['new_submit']))
