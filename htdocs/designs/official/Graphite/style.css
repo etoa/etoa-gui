@@ -506,6 +506,18 @@ img	{
 	background:#4E4E50;
 }
 
+.boxLayout .success {
+	color: #0f0;
+}
+
+.boxLayout  .information {
+	color: #0ff;
+}
+
+.boxLayout  .error {
+	color: #f00;
+}
+
 /* Tables */
 
 table.tb {

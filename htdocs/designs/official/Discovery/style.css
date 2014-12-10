@@ -1450,6 +1450,18 @@ td.havenTab:hover	{
 	 margin:15px auto;
 }
 
+.boxLayout .success {
+	color: #0f0;
+}
+
+.boxLayout  .information {
+	color: #0ff;
+}
+
+.boxLayout  .error {
+	color: #f00;
+}
+
 /* Resource */
 #resbox	{
 	margin-bottom:20px;
