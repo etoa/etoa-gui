@@ -54,7 +54,7 @@
 				}
 			}
 			else
-				err_msg("Dies ist ein Hauptplanet! Hauptplaneten können nicht aufgegeben werden!");
+				error_msg("Dies ist ein Hauptplanet! Hauptplaneten können nicht aufgegeben werden!");
 		}
 
 		// Kolonie aufheben ausführen
@@ -92,16 +92,16 @@
 									$cpid = $main_arr['id'];
 								}
 								else
-									err_msg("Beim Aufheben der Kolonie trat ein Fehler auf! Bitte wende dich an einen Game-Admin!");
+									error_msg("Beim Aufheben der Kolonie trat ein Fehler auf! Bitte wende dich an einen Game-Admin!");
 							}
 							else
-								err_msg("Der Planet ist aktuell nicht ausgew&auml;hlt, er geh&ouml;rt nicht dir oder er ist ein Hauptplanet!");
+								error_msg("Der Planet ist aktuell nicht ausgew&auml;hlt, er geh&ouml;rt nicht dir oder er ist ein Hauptplanet!");
 						}
 						else
-					 		err_msg("Kolonie kann nicht gel&ouml;scht werden da Schiffe von/zu diesem Planeten unterwegs sind!");
+					 		error_msg("Kolonie kann nicht gel&ouml;scht werden da Schiffe von/zu diesem Planeten unterwegs sind!");
 					}
 					else
-						err_msg("Kolonie kann nicht gel&ouml;scht werden da noch Schiffe auf dem Planeten stationiert sind oder Schiffe noch im Bau sind!");
+						error_msg("Kolonie kann nicht gel&ouml;scht werden da noch Schiffe auf dem Planeten stationiert sind oder Schiffe noch im Bau sind!");
 				}
 				else
 				{
@@ -111,7 +111,7 @@
 				}
 			}
 			else
-				err_msg("Dies ist ein Hauptplanet! Hauptplaneten können nicht aufgegeben werden!");
+				error_msg("Dies ist ein Hauptplanet! Hauptplaneten können nicht aufgegeben werden!");
 		}
 
 		//

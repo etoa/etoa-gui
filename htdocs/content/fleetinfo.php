@@ -87,12 +87,12 @@
 				}
 				else
 				{
-					err_msg("Flug konnte nicht abgebrochen werden. ".$fd->getError());
+					error_msg("Flug konnte nicht abgebrochen werden. ".$fd->getError());
 				}
 			}
 			else
 			{
-				err_msg("Flug konnte nicht abgebrochen werden, da die Rechte nicht vorhanden sind!");
+				error_msg("Flug konnte nicht abgebrochen werden, da die Rechte nicht vorhanden sind!");
 			}
 		}
 		
@@ -107,12 +107,12 @@
 				}
 				else
 				{
-					err_msg("Flug konnte nicht abgebrochen werden. ".$fd->getError());
+					error_msg("Flug konnte nicht abgebrochen werden. ".$fd->getError());
 				}
 			}
 			else
 			{
-				err_msg("Flug konnte nicht abgebrochen werden, da die Rechte nicht vorhanden sind!");
+				error_msg("Flug konnte nicht abgebrochen werden, da die Rechte nicht vorhanden sind!");
 			}
 		}
 	

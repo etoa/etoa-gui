@@ -141,17 +141,17 @@
 					}
 					else
 					{
-						err_msg("Es sind noch Flotten unterwegs!");
+						error_msg("Es sind noch Flotten unterwegs!");
 					}
 				}
 				else
 				{
-					err_msg("Es sind noch Flotten unterwegs!");
+					error_msg("Es sind noch Flotten unterwegs!");
 				}
 			}
 			else
 			{
-				err_msg("Du musst mindestens ".$cfg->get("user_umod_min_length")." Tage nach deiner letzten Invasion warten, bis du in den Urlaubsmodus gehen kannst!");
+				error_msg("Du musst mindestens ".$cfg->get("user_umod_min_length")." Tage nach deiner letzten Invasion warten, bis du in den Urlaubsmodus gehen kannst!");
 			}
 				
 		}
@@ -296,7 +296,7 @@
 			}
 			else
 			{
-				err_msg("Urlaubsmodus kann nicht aufgehoben werden!");
+				error_msg("Urlaubsmodus kann nicht aufgehoben werden!");
 			}
 		}
 	

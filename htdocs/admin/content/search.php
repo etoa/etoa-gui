@@ -81,7 +81,7 @@
 	else
 	{
 		echo "<h1>Suche</h1>";
-		echo err_msg("Kein Suchbegriff eingegeben!");
+		echo error_msg("Kein Suchbegriff eingegeben!");
 	}
 
 	

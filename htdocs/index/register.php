@@ -200,7 +200,7 @@
 		}
 		catch (Exception $e)
 		{
-			err_msg("Die Registration hat leider nicht geklappt: ".$e->getMessage());
+			error_msg("Die Registration hat leider nicht geklappt: ".$e->getMessage());
 			drawRegForm();
 		}
 	}

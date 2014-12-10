@@ -109,22 +109,22 @@
 					}
 					else
 					{
-						err_msg('Zuwenig Rohstoffe vorhanden!');
+						error_msg('Zuwenig Rohstoffe vorhanden!');
 					}
 				}
 				else
 				{
-					err_msg('Zuwenig Punkte!');
+					error_msg('Zuwenig Punkte!');
 				}
 			}
 			else
 			{
-				err_msg('Spezialist nicht gefunden!');
+				error_msg('Spezialist nicht gefunden!');
 			}
 		}
 		else
 		{
-			err_msg('Es ist bereits ein Spezialist eingestellt.
+			error_msg('Es ist bereits ein Spezialist eingestellt.
 			Seine Anstellung dauert noch bis '.df($cu->specialistTime).'.
 			Du musst warten bis seine Anstellung beendet ist!');
 		}		
@@ -190,12 +190,12 @@
 			}
 			else
 			{
-				err_msg("Du hast einen Spezialist eingestellt, der gar nicht existiert. Cheater!");
+				error_msg("Du hast einen Spezialist eingestellt, der gar nicht existiert. Cheater!");
 			}
 
 			if ($inUse)
 			{
-				err_msg('Der Spezialist wird gerade verwendet!');
+				error_msg('Der Spezialist wird gerade verwendet!');
 			}
 			else
 			{
@@ -216,7 +216,7 @@
 		}
 		else
 		{
-			err_msg('Du kannst niemanden entlassen, da kein Spezialist angestellt ist!');
+			error_msg('Du kannst niemanden entlassen, da kein Spezialist angestellt ist!');
 		}		
 	}	
 	

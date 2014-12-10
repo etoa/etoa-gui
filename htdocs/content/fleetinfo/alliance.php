@@ -56,7 +56,7 @@
 					}
 					else
 					{
-						err_msg("Flug konnte nicht abgebrochen werden. ".$fd->getError());
+						error_msg("Flug konnte nicht abgebrochen werden. ".$fd->getError());
 					}
 				}
 				
@@ -70,7 +70,7 @@
 					}
 					else
 					{
-						err_msg("Flug konnte nicht abgebrochen werden. ".$fd->getError());
+						error_msg("Flug konnte nicht abgebrochen werden. ".$fd->getError());
 					}
 				}
 				
@@ -263,11 +263,11 @@
 		}
 		else
 		{
-			err_msg("Du besitzt nicht die notwendigen Rechte!");
+			error_msg("Du besitzt nicht die notwendigen Rechte!");
 		}
 	}
 	else
 	{
-		err_msg("Die Allianzflottenkontrolle wurde noch nicht genug ausgebaut!");
+		error_msg("Die Allianzflottenkontrolle wurde noch nicht genug ausgebaut!");
 	}
 ?>

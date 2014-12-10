@@ -27,7 +27,7 @@ if ($conf['allow_wings']['v'] && Alliance::checkActionRights('wings'))
 		if ($ally->removeWing(intval($_GET['remove'])))
 			success_msg("Wing entfernt!");
 		else
-			err_msg("Wing konnte nicht entfernt werden!");
+			error_msg("Wing konnte nicht entfernt werden!");
 	}
 	
 	if (isset($_GET['cancelreq']) && intval($_GET['cancelreq'])>0)
@@ -35,7 +35,7 @@ if ($conf['allow_wings']['v'] && Alliance::checkActionRights('wings'))
 		if ($ally->cancelWingRequest(intval($_GET['cancelreq'])))
 			success_msg("Anfrage zurückgezogen!");
 		else
-			err_msg("Anfrage konnte nicht zurückgezogen werden!");
+			error_msg("Anfrage konnte nicht zurückgezogen werden!");
 	}
 		
 	if (isset($_POST['add_wing_id']) && intval($_POST['add_wing_id'])>0)
@@ -43,7 +43,7 @@ if ($conf['allow_wings']['v'] && Alliance::checkActionRights('wings'))
 		if ($ally->addWingRequest(intval($_POST['add_wing_id'])))
 			success_msg("Winganfrage hinzugefügt. Der Gründer der angefragten Allianz wurde informiert!");		
 		else
-			err_msg("Es ist bereits eine Anfrage vorhanden oder die Allianz ist schon ein Wing einer anderen Allianz!");
+			error_msg("Es ist bereits eine Anfrage vorhanden oder die Allianz ist schon ein Wing einer anderen Allianz!");
 	}	
 
 	if (isset($_POST['grant_req']) && $ally->motherRequestId > 0)
@@ -51,7 +51,7 @@ if ($conf['allow_wings']['v'] && Alliance::checkActionRights('wings'))
 		if ($ally->grantWingRequest())
 			success_msg("Winganfrage bestätigt!");		
 		else
-			err_msg("Es ist ein Problem aufgetreten!");
+			error_msg("Es ist ein Problem aufgetreten!");
 	}	
 
 	if (isset($_POST['revoke_req']) && $ally->motherRequestId > 0)
@@ -59,7 +59,7 @@ if ($conf['allow_wings']['v'] && Alliance::checkActionRights('wings'))
 		if ($ally->revokeWingRequest())
 			success_msg("Winganfrage zurückgewiesen!");		
 		else
-			err_msg("Es ist ein Problem aufgetreten!");
+			error_msg("Es ist ein Problem aufgetreten!");
 	}	
 
 	if ($ally->motherRequestId > 0)

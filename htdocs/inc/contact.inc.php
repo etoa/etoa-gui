@@ -70,7 +70,7 @@
 					}
 					else
 					{
-						err_msg("Titel oder Text fehlt!");
+						error_msg("Titel oder Text fehlt!");
 					}
 				}
 			
@@ -92,7 +92,7 @@
 			}
 			else
 			{
-				err_msg("Kontakt nicht vorhanden!");
+				error_msg("Kontakt nicht vorhanden!");
 			}
 			echo '<input type="button" onclick="document.location=\''.$baseUrl.'\'" value="Zurück" /></div></form>';
 		}		

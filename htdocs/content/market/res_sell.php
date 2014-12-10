@@ -256,12 +256,12 @@ $cnt = 0;
 								}
 								else
 								{
-									err_msg($str);
+									error_msg($str);
 								}
 							}
 							else
 							{
-								err_msg($str);
+								error_msg($str);
 							}
 						}
 						else
@@ -279,7 +279,7 @@ $cnt = 0;
 			}
 			else
 			{
-				err_msg("Kein(e) Angebot(e) ausgewählt!");
+				error_msg("Kein(e) Angebot(e) ausgewählt!");
 			}
 
 			if($cnt > 0)

@@ -96,7 +96,7 @@ if (isset($_GET['id']) && intval($_GET['id'])>0)
 	}
 	else
 	{
-		err_msg("Ticket nicht vorhanden!");
+		error_msg("Ticket nicht vorhanden!");
 	}
 
 

@@ -166,12 +166,12 @@
 			}
 			else
 			{
-				err_msg('Ziel wurde noch nicht entdeckt.');
+				error_msg('Ziel wurde noch nicht entdeckt.');
 			}
 		}
 		else
 		{
-			err_msg("Es existiert kein Objekt an den angegebenen Koordinaten!");
+			error_msg("Es existiert kein Objekt an den angegebenen Koordinaten!");
 		}
 	}
 	

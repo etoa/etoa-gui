@@ -974,16 +974,6 @@
 		else
 			return false;
 	}
-
-	/*
-	* Formatierte Fehlermeldung anzeigen
-	*
-	* $msg: Fehlermeldung
-	*/
-	function err_msg($msg)
-	{
-		error_msg($msg);
-	}
 	
 	/**
 	* Formatierte Erfolgsmeldung anzeigen
@@ -1010,10 +1000,12 @@
 		echo $title.text2html($text);
 		iBoxEnd();
 	}
-       
-  /**
-  * Error msg
-  */
+
+	/*
+	* Formatierte Fehlermeldung anzeigen
+	*
+	* $msg: Fehlermeldung
+	*/
 	function error_msg($text,$type=0,$exit=0,$addition=0,$stacktrace=null)
 	{
 		// TODO: Do check on headers

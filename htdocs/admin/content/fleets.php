@@ -515,7 +515,7 @@
 				}
 				else
 				{
-					err_msg("Startentität nicht vorhanden");
+					error_msg("Startentität nicht vorhanden");
 				}
 				if ($trgEnt = Entity::createFactoryByCoords($_POST['sx_end'],$_POST['sy_end'],$_POST['cx_end'],$_POST['cy_end'],$_POST['p_end']))
 				{
@@ -523,7 +523,7 @@
 				}
 				else
 				{
-					err_msg("Zielentität nicht vorhanden");
+					error_msg("Zielentität nicht vorhanden");
 				}
 
 				dbquery("
@@ -685,7 +685,7 @@
 					}
 					else
 					{
-						err_msg("Kann Flotte nicht landen, Ziel ist unbewohnt oder Flottenbesitzer entspricht nicht Zielbesitzer.");
+						error_msg("Kann Flotte nicht landen, Ziel ist unbewohnt oder Flottenbesitzer entspricht nicht Zielbesitzer.");
 					}
 				}
 				
@@ -1060,7 +1060,7 @@
 					}
 					else
 					{
-						err_msg("Startentität existiert nicht, Bedingung ausgelassen!");
+						error_msg("Startentität existiert nicht, Bedingung ausgelassen!");
 					}					
 				}
 				
@@ -1072,7 +1072,7 @@
 					}
 					else
 					{
-						err_msg("Startentität existiert nicht, Bedingung ausgelassen!");
+						error_msg("Startentität existiert nicht, Bedingung ausgelassen!");
 					}					
 				}	
 				

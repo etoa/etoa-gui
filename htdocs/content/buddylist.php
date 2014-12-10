@@ -71,7 +71,7 @@
 	                        success_msg("Erlaubnis erteilt!");
 	                }
 	                else
-	                        err_msg("Die Erlaubnis kann nicht erteilt werden weil die Anfrage gel&ouml;scht wurde!");
+	                        error_msg("Die Erlaubnis kann nicht erteilt werden weil die Anfrage gel&ouml;scht wurde!");
 	        }
 	
 	        //
@@ -98,7 +98,7 @@
 	                        success_msg("Die Anfrage wurde gel&ouml;scht!");
 	                }
 	                else
-	                        err_msg("Die Anfrage konnte nicht gel&ouml;scht werden weil sie nicht mehr existiert!");
+	                        error_msg("Die Anfrage konnte nicht gel&ouml;scht werden weil sie nicht mehr existiert!");
 	        }
 	
 	        //
@@ -123,13 +123,13 @@
 	                                        send_msg($arr['user_id'],5,"Buddylist-Anfrage von ".$cu->nick,"Der Spieler will dich zu seiner Freundesliste hinzuf&uuml;gen.\n\n[page buddylist]Anfrage bearbeiten[/page]");
 	                                }
 	                                else
-	                                        err_msg("Dieser Eintrag ist schon vorhanden!");
+	                                        error_msg("Dieser Eintrag ist schon vorhanden!");
 	                        }
 	                        else
-	                                err_msg("Du kannst nicht dich selbst zur Buddyliste hinzuf&uuml;gen!");
+	                                error_msg("Du kannst nicht dich selbst zur Buddyliste hinzuf&uuml;gen!");
 	                }
 	                else
-	                        err_msg("Der Spieler [b]".$_POST['buddy_nick']."[/b] konnte nicht gefunden werden!");
+	                        error_msg("Der Spieler [b]".$_POST['buddy_nick']."[/b] konnte nicht gefunden werden!");
 	        }
 	
 	        //

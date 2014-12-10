@@ -256,7 +256,7 @@
 		}
 		else
 		{
-			err_msg("Alle Sitting-Tage sind aufgebraucht!");
+			error_msg("Alle Sitting-Tage sind aufgebraucht!");
 			echo "<p>";
 		}
 		echo "".button("Abbrechen", "?page=$page&amp;mode=$mode")."</p>";

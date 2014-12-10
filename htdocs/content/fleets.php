@@ -183,12 +183,12 @@
 			}
 			else
 			{
-				err_msg("Allianzflottenkontrolle wurde noch nicht gebaut!");
+				error_msg("Allianzflottenkontrolle wurde noch nicht gebaut!");
 			}
 		}
 		else
 		{
-			err_msg("Du gehörst noch keiner Allianz an.");
+			error_msg("Du gehörst noch keiner Allianz an.");
 		}
 	}	
 	

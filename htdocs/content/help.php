@@ -41,7 +41,7 @@
 			}
 			else
 			{
-				err_msg("Hilfedatei nicht gefunden!");
+				error_msg("Hilfedatei nicht gefunden!");
 			}
 		}
 		return_btn();
