@@ -870,27 +870,9 @@
 	/**
 	* Infobox-Header
 	*/
-	function iBoxStart($title="",$width=0)
+	function iBoxStart($title="")
 	{
-		if ($width>0)
-		{
-			$w = "width:".$width."px;";
-		}
-		elseif ($width!="")
-		{
-			$w = "width:".$width."";
-		}
-		else
-		{
-			global $cu;
-			if (isset($cu->properties) && $cu->properties->cssStyle=="Graphite")
-				$w = "width:650px";			
-			else
-				$w = "width:100%";
-		}
-		
-		echo "<div class=\"boxLayout\" style=\"".$w."\">";
-
+		echo "<div class=\"boxLayout\">";
 		if ($title!="") {
 			echo "<div class=\"infoboxtitle\"><span>$title</span></div>";
 		}

@@ -479,6 +479,7 @@ img	{
 	border-collapse: collapse;
 	border:1px solid #111;
 	color:#fff;
+	width: 100%;
 }
 
 /* Infoboxes and -tables */

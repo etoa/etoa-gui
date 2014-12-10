@@ -1448,6 +1448,7 @@ td.havenTab:hover	{
 
 .boxLayout	{
 	 margin:15px auto;
+	 width: 100%;
 }
 
 .boxLayout .success {
