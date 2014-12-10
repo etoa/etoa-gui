@@ -272,32 +272,46 @@ define('HELP_URL',"?page=help&site=buildings");
 					</td>
 				</tr>';				
 		
+		//
 		// create infobox incl. editable stuff for working people adjustements
-  		iBoxStart('Bauhof-Infos');
-  		echo '<div style="text-align:left;">';
-		if ($cu->specialist->buildTime!=1)
-		{
-			echo '<strong>Bauzeitverringerung durch '.$cu->specialist->name.':</strong> '.get_percent_string($cu->specialist->buildTime).'<br />';
-		}
-		
-  		echo '<strong>Eingestellte Arbeiter:</strong> <span id="people_working">'.nf($bl->getPeopleWorking(BUILD_BUILDING_ID)).'</span>';
-		if (!$bl->isUnderConstruction())
-			echo '&nbsp;<a href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
-		echo '<br />
-  			<strong>Zeitreduktion durch Arbeiter pro Auftrag:</strong> <span id="people_work_done">'.tf($cfg->value('people_work_done') * $bl->getPeopleWorking(BUILD_BUILDING_ID)).'</span><br />
-  			<strong>Nahrungsverbrauch durch Arbeiter pro Auftrag:</strong> <span id="people_food_require">'.nf($cfg->value('people_food_require') * $bl->getPeopleWorking(BUILD_BUILDING_ID)).'</span><br />
-  			<strong>Gentechnologie:</strong> '.$bl->tl->getLevel(GEN_TECH_ID).'<br />
-  			<strong>Minimale Bauzeit (mit Arbeiter):</strong> Bauzeit * '.(0.1-($bl->tl->getLevel(GEN_TECH_ID)/100));
-
+		//
+		$peopleWorking = $bl->getPeopleWorking(BUILD_BUILDING_ID);
+		$genTechLevel = $bl->tl->getLevel(GEN_TECH_ID);
+  		tableStart('Bauhof-Infos');
+		echo '<colgroup><col style="width:400px;"/><col/></colgroup>';
+		// Specialist
 		if ($cu->specialist->costsBuilding!=1)
 		{
-			echo '<br /><strong>Kostenreduktion durch '.$cu->specialist->name.':</strong> '.get_percent_string($cu->specialist->costsBuilding);
+			echo '<tr><td>Kostenreduktion durch '.$cu->specialist->name.':</td><td>'.get_percent_string($cu->specialist->costsBuilding).'</td></tr>';
 		}
-		if ($cfg->value('boost_system_enable') == 1) {		
-			echo '<br /><strong>Geschwindigkeitsboost:</strong> '.get_percent_string($cu->boostBonusBuilding+1);
+		if ($cu->specialist->buildTime!=1)
+		{
+			echo '<tr><td>Bauzeitverringerung durch '.$cu->specialist->name.':</td><td>'.get_percent_string($cu->specialist->buildTime).'</td></tr>';
 		}
-  		echo '</div>';   	
-  		iBoxEnd();
+		// Worker
+  		echo '<tr><td>Eingestellte Arbeiter:</td><td><span id="people_working">'.nf($peopleWorking).'</span>';
+		if (!$bl->isUnderConstruction())
+		{
+			echo '&nbsp;<a href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
+		}
+		echo '</td></tr>';
+		if ($peopleWorking > 0)
+		{
+			echo '<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td><span id="people_work_done">'.tf($cfg->value('people_work_done') * $peopleWorking).'</span></td></tr>';
+			echo '<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td><span id="people_food_require">'.nf($cfg->value('people_food_require') * $peopleWorking).'</span></td></tr>';
+		}
+		// Genetics technology level
+		if ($genTechLevel > 0)
+		{
+			echo '<tr><td>Gentechnologie:</td><td>'.$genTechLevel.'</td></tr>';
+			echo '<tr><td>Minimale Bauzeit (mit Arbeiter):</td><td>Bauzeit * '.(0.1-($genTechLevel/100)).'</td></tr>';
+		}
+		// Boost system
+		if ($cfg->value('boost_system_enable') == 1) 
+		{
+			echo '<tr><td>Geschwindigkeitsboost:</td><td>'.get_percent_string($cu->boostBonusBuilding+1).'</td></tr>';
+		}
+  		tableEnd();
 		
 		echo '<div id="changePeople" style="display:none;">';
 		tableStart("Arbeiter im Bauhof zuteilen");
