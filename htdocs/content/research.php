@@ -269,35 +269,47 @@ if (isset($cp)) {
 						</td>
 					</tr>';	
 
-	    	iBoxStart("Labor-Infos");
-	    	echo "<div style=\"text-align:left;\">
-	    	<b>Forschungszeitverringerung:</b> ";
+	    	tableStart("Labor-Infos");
+			echo '<colgroup><col style="width:400px;"/><col/></colgroup>';
+			// Specialist
+			if ($cu->specialist->costsResearch!=1)
+			{
+				echo "<tr><td>Kostenreduktion durch ".$cu->specialist->name.":</td><td>".get_percent_string($cu->specialist->costsResearch)."</td></tr>";
+			}
+			if ($cu->specialist->researchTime!=1) 
+			{
+				echo "<tr><td>Forschungszeitverringerung durch ".$cu->specialist->name.":</td><td>".get_percent_string($cu->specialist->researchTime)."</td></tr>";
+			}
+			// Building level time bonus
+	    	echo "<tr><td>Forschungszeitverringerung:</td><td>";
 	    	if ($need_bonus_level>=0)
 	    	{
-	    		echo get_percent_string($time_boni_factor)." durch Stufe ".CURRENT_LAB_LEVEL." (-".((1-$conf['build_time_boni_forschungslabor']['p2'])*100)."% maximum)<br/>";
+	    		echo get_percent_string($time_boni_factor)." durch Stufe ".CURRENT_LAB_LEVEL." (-".((1-$conf['build_time_boni_forschungslabor']['p2'])*100)."% maximum)";
 	    	}
 	    	else
 	    	{
-	    		echo "Stufe ".$conf['build_time_boni_forschungslabor']['p1']." erforderlich!<br/>";
+	    		echo "Stufe ".$conf['build_time_boni_forschungslabor']['p1']." erforderlich!";
 	    	}
-			if ($cu->specialist->researchTime!=1) {
-				echo "<b>Forschungszeitverringerung durch ".$cu->specialist->name.":</b> ".get_percent_string($cu->specialist->researchTime)."<br>";
-			}
-		  	echo"
-			<b>Eingestellte Arbeiter:</b> ". nf($peopleWorking);
+			echo '</td></tr>';
+			// Worker
+		  	echo"<tr><td>Eingestellte Arbeiter:</td><td>". nf($peopleWorking);
 			if (!$builing_something)
-				echo '&nbsp;<a href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
-			echo "<br/>
-		  	<b>Zeitreduktion durch Arbeiter pro Auftrag:</b> ".tf($peopleTimeReduction*$peopleWorking)."<br/>
-		  	<b>Nahrungsverbrauch durch Arbeiter pro Auftrag:</b> ".nf($peopleFoodConsumption*$peopleWorking)."<br/>
-		  	<b>Gentechnologie:</b> ".GEN_TECH_LEVEL."<br/>
-		  	<b>Minimale Forschungszeit (mit Arbeiter):</b> Forschungszeit * ".$minBuildTimeFactor;
-			if ($cu->specialist->costsResearch!=1)
 			{
-				echo "<br/><br/><b>Kostenreduktion durch ".$cu->specialist->name.":</b> ".get_percent_string($cu->specialist->costsResearch);
+				echo '&nbsp;<a href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
 			}
-		  	echo "</div>";   		    	
-	    	iBoxEnd();
+			echo '</td></tr>';
+			if ($peopleWorking > 0)
+			{
+				echo '<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td>'.tf($peopleTimeReduction*$peopleWorking).'</td></tr>';
+				echo '<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td>'.nf($peopleFoodConsumption*$peopleWorking).'</td></tr>';
+			}
+			// Genetics technology level
+			if (GEN_TECH_LEVEL > 0)
+			{
+				echo '<tr><td>Gentechnologie:</td><td>'.GEN_TECH_LEVEL.'</td></tr>';
+				echo '<tr><td>Minimale Forschungszeit (mit Arbeiter):</td><td>Forschungszeit * '.$minBuildTimeFactor.'</td></tr>';
+			}
+	    	tableEnd();
 
 			echo '<div id="changePeople" style="display:none;">';
 			tableStart("Arbeiter im Forschungslabor zuteilen");

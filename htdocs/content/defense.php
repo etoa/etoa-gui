@@ -291,43 +291,45 @@
 			}
 
 			// Infos anzeigen
-			echo "<form action=\"?page=$page\" method=\"post\">";
 			tableStart("Fabrik-Infos");
-			echo "<tr><td>";
-			echo "<b>Eingestellte Arbeiter:</b> ".nf($people_working)."<br/>
-			<b>Bauzeitverringerung:</b> ";
+			echo '<colgroup><col style="width:400px;"/><col/></colgroup>';
+			if ($cu->specialist->costsDefense!=1)
+			{
+				echo "<tr><td>Kostenreduktion durch ".$cu->specialist->name.":</td><td>".get_percent_string($cu->specialist->costsDefense).'</td></tr>';
+			}
+			if ($cu->specialist->defenseTime!=1) 
+			{
+				echo "<tr><td>Bauzeitverringerung durch ".$cu->specialist->name.":</td><td>".get_percent_string($cu->specialist->defenseTime)."</td></tr>";
+			}
+			echo "<tr><td>Eingestellte Arbeiter:</td><td>".nf($people_working)."</td></tr>";
+			echo '<tr><td>Bauzeitverringerung:</td><td>';
 			if ($need_bonus_level>=0)
 			{
-				echo get_percent_string($time_boni_factor)." durch Stufe ".CURRENT_FACTORY_LEVEL."<br/>";
+				echo get_percent_string($time_boni_factor)." durch Stufe ".CURRENT_FACTORY_LEVEL."";
 			}
 			else
 			{
-				echo "Stufe ".$cfg->p1('build_time_boni_waffenfabrik')." erforderlich!<br/>";
+				echo "Stufe ".$cfg->p1('build_time_boni_waffenfabrik')." erforderlich!";
 			}
-			if ($cu->specialist->defenseTime!=1) {
-				echo "<b>Bauzeitverringerung durch ".$cu->specialist->name.":</b> ".get_percent_string($cu->specialist->defenseTime)."<br/>";
-			}
+			echo '</td></tr>';
 			if ($cancel_res_factor>0)
 			{
-				echo "<b>Ressourcenrückgabe bei Abbruch:</b> ".($cancel_res_factor*100)."% (ohne ".RES_FOOD.", ".(DEFQUEUE_CANCEL_END*100)."% maximal)";
+				echo "<tr><td>Ressourcenrückgabe bei Abbruch:</td><td>".($cancel_res_factor*100)."% (ohne ".RES_FOOD.", ".(DEFQUEUE_CANCEL_END*100)."% maximal)</td></tr>";
 				$cancelable = true;
 			}
 			else
 			{
-				echo "<b>Abbruchmöglichkeit:</b> Stufe ".DEFQUEUE_CANCEL_MIN_LEVEL." erforderlich!";
+				echo "<tr><td>Abbruchmöglichkeit:</td><td>Stufe ".DEFQUEUE_CANCEL_MIN_LEVEL." erforderlich!</td></tr>";
 				$cancelable = false;
 			} 
-			if ($cu->specialist->costsDefense!=1)
-			{
-				echo "<br/><br/><b>Kostenreduktion durch ".$cu->specialist->name.":</b> ".get_percent_string($cu->specialist->costsDefense);
-			}
-			echo "</td></tr>";   	
-
-			
+			tableEnd();			
 			
 	/*************
 	* Sortierbox *
 	*************/
+		
+			echo "<form action=\"?page=$page\" method=\"post\">";		
+			iBoxStart("Filter");
 		
 			//Legt Sortierwerte in einem Array fest
 			$values = array(
@@ -344,8 +346,7 @@
 							"costs_fuel"=>"Tritium"
 							);
 			
-			echo "<tr>
-					<td style=\"text-align:center;\">
+			echo "<div style=\"text-align:center;\">
 						<select name=\"sort_value\">";
 						foreach ($values as $value => $name)
 						{		
@@ -373,9 +374,8 @@
 						echo "</select>						
 						
 						<input type=\"submit\" class=\"button\" name=\"sort_submit\" value=\"Sortieren\"/>
-					</td>
-				</tr>";
-			tableEnd();
+					</div>";
+			iBoxEnd();
 			echo "</form>";
 			
 			echo "<form action=\"?page=".$page."\" method=\"post\">";
