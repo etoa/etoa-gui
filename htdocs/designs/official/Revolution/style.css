@@ -1381,7 +1381,7 @@ a:hover {
 	color: #f00;
 }
 
-.errorBox	{
+.criticalErrorBox {
 	border:1px #4E4E4F solid;
 	background:rgba(24, 35, 59, 1);
 	color:#fcc;

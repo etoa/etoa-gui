@@ -187,7 +187,7 @@ img.resIcon	{
 * Message-Boxes
 */
 
-.errorBox	{
+.criticalErrorBox {
 	border:1px #f00 solid;
 	padding:5px;
 	background:#baa;
@@ -198,7 +198,7 @@ img.resIcon	{
 	margin-bottom:15px;
 }
 
-.errorBox	h2 {
+.criticalErrorBox h2 {
 	margin:0px 0px 10px 0px;
 	border:1px #f00 solid;
 	color:#500;
@@ -207,11 +207,11 @@ img.resIcon	{
 	font-size:12pt;
 }
 
-.errorBox	h2:before	{
+.criticalErrorBox h2:before {
 	content:none;
 }
 
-.errorBox	h2:after	{
+.criticalErrorBox h2:after {
 	content:none;
 }
 

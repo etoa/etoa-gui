@@ -11,7 +11,7 @@
 				return $this->getErrStr();
 			} else {
 				if (isDebugEnabled()) {
-					$str = "<div class=\"errorBox\" style=\"text-align:left;\"><h2>Datenbankfehler</h2>
+					$str = "<div class=\"criticalErrorBox\" style=\"text-align:left;\"><h2>Datenbankfehler</h2>
 					<b>Datei:</b> ".parent::getFile().", <b>Zeile:</b> ".parent::getLine()."<br/>
 					<b>Abfrage:</b> ".nl2br(parent::getMessage())."<br/>
 					<b>Fehlermeldung:</b> ".nl2br(mysql_error())."<br/>				";
@@ -20,7 +20,7 @@
 					$str.="</div>";
 					return $str;
 				} else {
-					return "<div class=\"errorBox\" style=\"text-align:left;\"><h2>Datenbankfehler</h2>Die gewünschte Abfrage konnte nicht durchgeführt werden!<br/>
+					return "<div class=\"criticalErrorBox\" style=\"text-align:left;\"><h2>Datenbankfehler</h2>Die gewünschte Abfrage konnte nicht durchgeführt werden!<br/>
 						Bitte versuchen Sie es später nochmals und <a href=\"".DEVCENTER_PATH."\" onclick=\"".DEVCENTER_ONCLICK.";return false;\">melden</a> Sie diesen Fehler falls er weiterhin auftritt!</div>";
 				}
 			}
