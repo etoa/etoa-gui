@@ -457,6 +457,9 @@ http://www.etoa.ch</v>
     <item name="profileimagecheck_done" cat="10">
       <v comment="User-Profilbilder gepr&#xFC;ft" type="timedate">1209569797</v>
     </item>
+    <item name="email_verification_required" cat="10">
+      <v comment="Bestätigung der E-Mailadresse erforderlich" type="onoff">1</v>
+    </item>
 
     <item name="admin_timeout" cat="11">
       <v comment="Admin-Timeout" type="text">1200</v>

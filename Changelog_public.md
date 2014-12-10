@@ -27,6 +27,7 @@ Version 3.5.0
 
  * Der Button zum Abreissen eines Gebäudes wird nun nicht mehr so prominent angezeigt
  * Die extern zugänglichen Seiten Rangliste, Hilfe, Spielstatistiken und Pranger wurden entfernt um die Code-Wartung zu vereinfachen. All diese Daten sind auch ingame verfügbar.
+ * Nach der Registration eines neuen Accounts muss die E-Mail Adresse bestätigt werden. Solange diese nicht bestätigt ist, können einige Features nicht verwendet werden.
 
 Version 3.4.0
 -------------

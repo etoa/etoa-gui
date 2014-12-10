@@ -79,6 +79,9 @@ class User
 	protected $buddylist = null;
 	protected $changedFields;
 	
+	protected $isVerified;
+	protected $verificationKey;
+	
 	protected $dmask;
 
 	/**
@@ -171,6 +174,9 @@ class User
 
 			$this->changedFields = array();
 
+			$this->isVerified = ($arr['verification_key'] == '');
+			$this->verificationKey = $arr['verification_key'];
+			
 			$this->isValid=true;
 		}
 		else
@@ -493,6 +499,44 @@ class User
 			user_alliance_rank_id=0,
 			user_alliance_id=".$id."
 		WHERE user_id='".$this->id."';");
+	}
+	
+	public function setVerified($verified)
+	{
+		if ($verified) {
+			$this->verificationKey = '';
+		} else {
+			$this->verificationKey = generateRandomString(64);
+		}
+		dbQuerySave("
+		UPDATE
+			".self::tableName."
+		SET
+			verification_key=?
+		WHERE
+			user_id=?
+		;", [
+			$this->verificationKey,
+			$this->id
+		]);
+		$this->isVerified = $verified;
+	}
+	
+	public static function findFirstByVerificationKey($verificationKey) {
+		$res = dbQuerySave("
+		SELECT
+			user_id
+		FROM
+			".self::tableName."
+		WHERE
+			verification_key=?
+		;", [
+			$verificationKey
+		]);
+		if ($arr = mysql_fetch_row($res)) {
+			return new User($arr[0]);
+		}
+		return null;
 	}
 	
 	public function isInactiv()

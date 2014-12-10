@@ -70,6 +70,7 @@
 					$_POST['user_race'],
 					$_POST['user_ghost']==1
 				);
+				$newUser->setVerified(true);
 				add_log(3,"Der Benutzer ".$newUser->nick." (".$newUser->realName.", ".$newUser->email.") wurde registriert!");					
 				ok_msg("Benutzer wurde erstellt! [[page user sub=edit id=".$newUser->id."]Details[/page]]");
 			}

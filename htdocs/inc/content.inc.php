@@ -67,6 +67,28 @@
 			}
 		}
 		
+		// E-Mail verification
+		if (!$cu->isVerified)
+		{
+			if (isset($_GET['resendverificationmail'])) {
+				$verificationUrl = Config::getInstance()->roundurl.'/show.php?index=verifymail&key='.$cu->verificationKey;
+				$email_text = "Hallo ".$cu->nick."\n\n";
+				$email_text.= "Damit du alle Funktionen von Escape to Andromeda benutzen kannst muss deine E-Mail Adresse verifiziert werden. Bitte klicke auf den folgenden Link, um die Verifikation für die ".Config::getInstance()->roundname->v." abzuschliessen:\n\n";
+				$email_text.= $verificationUrl."\n\n";
+				$email_text.= "Viel Spass beim Spielen!\nDas EtoA-Team";
+				$mail = new Mail("Account-Bestätigung", $email_text);
+				$mail->send($cu->email);
+				success_msg("Bestätigungsmail wurde gesendet!");
+			} 
+			else 
+			{
+				iBoxStart("Verifikation erforderlich");
+				echo "Deine E-Mailadresse <b>".$cu->email."</b> muss bestätigt werden, damit du alle Funktionen benutzen kannst!<br/><br/>";
+				echo '<a href="?page='.$page.'&resendverificationmail">Bestätigungsmail nochmals versenden</a>';
+				iBoxEnd();
+			}
+		}
+		
 		// Auf Löschung prüfen
 		if ($cu->deleted > 0 &&
 		$page != 'contact' &&

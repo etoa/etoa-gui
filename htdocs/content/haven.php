@@ -29,19 +29,27 @@
 
 	if ($cp)
 	{
-
 		echo '<h1>Raumschiffhafen des Planeten '.$cp->name.'</h1>';
 		echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
-	
-		//
-		// Kampfsperre prüfen
-		//
-		if ($cfg->get("battleban")!=0 && $cfg->param1("battleban_time")<=time() && $cfg->param2("battleban_time")>time())
+
+		if (!$cu->isVerified)
 		{
-			iBoxStart("Kampfsperre");
-			echo 'Es ist momentan nicht m&ouml;glich andere Spieler anzugreifen. Grund: '.text2html($cfg->param1("battleban")).'<br />Die Sperre dauert vom '.date("d.m.Y",$cfg->param1("battleban_time")).' um '.date("H:i",$cfg->param1("battleban_time")).' Uhr bis am '.date("d.m.Y",$cfg->param2("battleban_time"))." um ".date("H:i",$cfg->param2("battleban_time")).' Uhr!';
+			iBoxStart("Funktion gesperrt");
+			echo "Solange deine E-Mail Adresse nicht bestätigt ist, kannst du keine Flotten versenden!";
 			iBoxEnd();
 		}
+		else
+		{
+		
+			//
+			// Kampfsperre prüfen
+			//
+			if ($cfg->get("battleban")!=0 && $cfg->param1("battleban_time")<=time() && $cfg->param2("battleban_time")>time())
+			{
+				iBoxStart("Kampfsperre");
+				echo 'Es ist momentan nicht m&ouml;glich andere Spieler anzugreifen. Grund: '.text2html($cfg->param1("battleban")).'<br />Die Sperre dauert vom '.date("d.m.Y",$cfg->param1("battleban_time")).' um '.date("H:i",$cfg->param1("battleban_time")).' Uhr bis am '.date("d.m.Y",$cfg->param2("battleban_time"))." um ".date("H:i",$cfg->param2("battleban_time")).' Uhr!';
+				iBoxEnd();
+			}
 		
 			if (isset($_GET['target']) && intval($_GET['target'])>0)
 			{
@@ -71,5 +79,6 @@
 				<div id="havenContentAction" style="display:none;"></div>
 				</div>';
 				echo '<script type="text/javascript">xajax_havenShowShips();</script>';	
+		}
 	}
 ?>
