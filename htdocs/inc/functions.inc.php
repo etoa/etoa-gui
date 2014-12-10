@@ -2310,6 +2310,21 @@ function imagecreatefromfile($path, $user_functions = false)
 	    }
 	    return $strength;
 	}	
+
+	/**
+	* Generates a random string
+	*
+	* @param int Length of the string
+	*/
+	function generateRandomString($length = 10) {
+		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$charactersLength = strlen($characters);
+		$randomString = '';
+		for ($i = 0; $i < $length; $i++) {
+			$randomString .= $characters[rand(0, $charactersLength - 1)];
+		}
+		return $randomString;
+	}
 	
 	/**
 	* Displays a button which opens an abuse report dialog when clicked
