@@ -1980,18 +1980,6 @@ visibility:visible;
 	color:#fcc;
 }
 
-.successBox	{
-	border:1px #4E4E4F solid;
-	background:rgba(24, 35, 59, 1);
-	color:#cfc;
-}
-
-.infoMsgBox	{
-	border:1px #4E4E4F solid;
-	background:rgba(24, 35, 59, 1);
-	color:#ccf;
-}
-
 pre.code	{
 	margin:0;
 	padding:5px 10px ;

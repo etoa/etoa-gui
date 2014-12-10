@@ -215,24 +215,6 @@ img.resIcon	{
 	content:none;
 }
 
-.successBox	{
-	border:1px #0f0 solid;
-	padding:5px;
-	background:#aba;
-	color:#040;
-	width:90%;
-	margin:15px auto;
-}
-
-.infoMsgBox	{
-	border:1px #00f solid;
-	padding:5px;
-	background:#aab;
-	color:#004;
-	width:90%;
-	margin:15px auto;
-}
-
 /*
 * User and alliance info log
 */
