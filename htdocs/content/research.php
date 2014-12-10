@@ -258,7 +258,7 @@ if (isset($cp)) {
 							</tr>
 							<tr>
 								<td colspan="2" style="text-align:center;">
-									<div class="errorBox" id="errorBox" style="display:none;">&nbsp;</div>
+									<div class="errorBox" id="changeWorkingPeopleError" style="display:none;">&nbsp;</div>
 									<input type="submit" value="Speichern" name="submit_people_form" />&nbsp;';
 
 			if (isset($bid) && $bid>0)

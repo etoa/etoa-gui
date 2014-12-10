@@ -1304,13 +1304,11 @@ function addFontColor(id, colorId)
 		
 		if (error.length>0)
 		{
-			document.getElementById('errorBox').innerHTML = error;
-			document.getElementById('errorBox').style.display = 'block';
+			$('#changeWorkingPeopleError').html(error).show();
 		}
 		else
 		{
-			document.getElementById('errorBox').innerHTML = '';
-			document.getElementById('errorBox').style.display = 'none';
+			$('#changeWorkingPeopleError').html('').hide();
 		}
 		
 		document.getElementById('peopleWorking').value = FormatNumber('return',people,peopleFree, '', '');

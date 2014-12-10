@@ -260,7 +260,7 @@ define('HELP_URL',"?page=help&site=buildings");
 						</tr>
 						<tr>
 							<td colspan="2" style="text-align:center;">
-								<div class="errorBox" id="errorBox" style="display:none;">&nbsp;</div>
+								<div class="errorBox" id="changeWorkingPeopleError" style="display:none;">&nbsp;</div>
 								<input type="submit" value="Speichern" name="submit_people_form" />&nbsp;';
 		
 		if ($cu->properties->itemShow=='full' && isset($bid) && $bid>0 && $bl->item($bid) !== false)
