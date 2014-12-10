@@ -72,7 +72,7 @@
 				echo "<tr><th>E-Mail:</th>";
 				echo "<td>
 					<input type=\"text\" id=\"register_user_email\" name=\"register_user_email\" maxlength=\"50\" size=\"30\" value=\"".$userEmail."\"  autocomplete=\"off\" /></td>";
-				echo "<td>Du musst eine g&uuml;ltige E-Mail-Adresse eingeben. Auf diese wird dir ein Passwort zugeschickt mit dem du dich einloggen kannst.<br/><span id=\"emailStatus\"></span></td></tr>";
+				echo "<td>Du musst eine g&uuml;ltige E-Mail-Adresse eingeben. Falls du dein Passwort vergisst, kannst du ein neues an diese Adresse senden lassen.<br/><span id=\"emailStatus\"></span></td></tr>";
 
 				echo "<tr><th>Benutzername:</th>";
 				echo "<td>
