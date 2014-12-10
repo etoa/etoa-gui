@@ -806,6 +806,10 @@ div.Spielbereich_ {
 	text-align:center;
 }
 
+#contentwrap {
+	padding: 20px;
+}
+
 div.Toppanel {
 	position:absolute;
 	left:0px;
