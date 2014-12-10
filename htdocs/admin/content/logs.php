@@ -567,8 +567,8 @@
 		</script>
 		<?PHP
 
-		iBoxStart("Filter",800);
-		echo "<form action=\".\" method=\"post\" id=\"filterform\"><p>";
+		echo '<fieldset style="width:800px"><legend>Filter</legend>';
+		echo "<form action=\".\" method=\"post\" id=\"filterform\">";
 		echo "<label for=\"logsev\">Ab Schweregrad:</label>
 		<select id=\"logsev\" name=\"logsev\" onchange=\"applyFilter(0)\">";
 		foreach (Log::$severities as $k => $v)
@@ -595,8 +595,8 @@
 
 		echo "<input type=\"submit\" value=\"Anwenden\" onclick=\"applyFilter(0);return false;\" /> &nbsp;
 		<input type=\"button\" value=\"Reset\" onclick=\"resetFilter();\" />";
-		echo "</p></form>";
-		iBoxEnd();
+		echo "</form>";
+		echo '</fieldset>';
 
 		echo "<div id=\"log_contents\">";
 		showAttackAbuseLogs();
@@ -842,8 +842,8 @@
 		</script>
 		<?PHP
 
-		iBoxStart("Filter",950);
-		echo "<form action=\".\" method=\"post\" id=\"filterform\"><p>";
+		echo '<fieldset style="width:950px"><legend>Filter</legend>';
+		echo "<form action=\".\" method=\"post\" id=\"filterform\">";
 		echo "<label for=\"logsev\">Ab Schweregrad:</label>
 		<select id=\"logsev\" name=\"logsev\" onchange=\"applyFilter(0)\">";
 		foreach (GameLog::$severities as $k => $v)
@@ -878,8 +878,8 @@
 
 		echo " &nbsp; <input type=\"submit\" value=\"Anwenden\" onclick=\"applyFilter(0);return false;\" /> &nbsp;
 		<input type=\"button\" value=\"Reset\" onclick=\"resetFilter();\" />";
-		echo "</p></form>";
-		iBoxEnd();
+		echo "</form>";
+		echo '</fieldset>';
 
 		echo "<div id=\"log_contents\">";
 		showGameLogs();
@@ -911,8 +911,8 @@
 		</script>
 		<?PHP
 
-		iBoxStart("Filter",800);
-		echo "<form action=\".\" method=\"post\" id=\"filterform\"><p>";
+		echo '<fieldset style="width:800px"><legend>Filter</legend>';
+		echo "<form action=\".\" method=\"post\" id=\"filterform\">";
 		echo "<label for=\"logsev\">Ab Schweregrad:</label>
 		<select id=\"logsev\" name=\"logsev\" onchange=\"applyFilter(0)\">";
 		foreach (Log::$severities as $k => $v)
@@ -955,8 +955,8 @@
 		
 		echo "<input type=\"submit\" value=\"Anwenden\" onclick=\"applyFilter(0);return false;\" /> &nbsp;
 		<input type=\"button\" value=\"Reset\" onclick=\"resetFilter();\" />";
-		echo "</p></form>";
-		iBoxEnd();
+		echo "</form>";
+		echo '</fieldset>';
 
 		echo "<div id=\"log_contents\">";
 		showFleetLogs();
@@ -989,8 +989,8 @@
 		</script>
 		<?PHP
 
-		iBoxStart("Filter",900);
-		echo "<form action=\".\" method=\"post\" id=\"filterform\"><p>";
+		echo '<fieldset style="width:900px"><legend>Filter</legend>';
+		echo "<form action=\".\" method=\"post\" id=\"filterform\">";
 		echo "<label for=\"logsev\">Ab Schweregrad:</label>
 		<select id=\"logsev\" name=\"logsev\" onchange=\"applyFilter(0)\">";
 		foreach (Log::$severities as $k => $v)
@@ -1012,8 +1012,8 @@
 		echo " <label for=\"searchtext\">Suchtext:</label> <input type=\"text\" id=\"searchtext\" name=\"searchtext\" value=\"\" /> &nbsp;
 		<input type=\"submit\" value=\"Anwenden\" onclick=\"applyFilter(0);document.getElementById('searchtext').select();return false;\" /> &nbsp;
 		<input type=\"button\" value=\"Reset\" onclick=\"resetFilter();\" />";
-		echo "</p></form>";
-		iBoxEnd();
+		echo "</form>";
+		echo '</fieldset>';
 
 		echo "<div id=\"log_contents\">";
 		showLogs();
