@@ -1305,10 +1305,12 @@ function addFontColor(id, colorId)
 		if (error.length>0)
 		{
 			$('#changeWorkingPeopleError').html(error).show();
+			$('#submit_people_form').hide();
 		}
 		else
 		{
 			$('#changeWorkingPeopleError').html('').hide();
+			$('#submit_people_form').show();
 		}
 		
 		document.getElementById('peopleWorking').value = FormatNumber('return',people,peopleFree, '', '');
