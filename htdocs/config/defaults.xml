@@ -14,8 +14,7 @@
     <category id="12">Flotten</category>
     <category id="13">R&#xE4;nge</category>
     <category id="16">Allianz</category>
-    <!--<category id="17">Quests</category>-->
-    <!--<category id="18">Ereignisse</category>-->
+    <category id="17">Ereignisse</category>
     <category id="19">Logging</category>
     <category id="20">Eventhandler</category>	
     <category id="21">Datenbank</category>	
@@ -569,74 +568,8 @@ http://etoa.ch</v>
 
     <item name="discoverymask" cat="17">
       <v comment="Aufdeckung der Map der Flottenkontrolle pro Level (Radius): 1 + floor(level*this.value)" type="text">0.4</v>
-      <p1 comment="Wahrscheinlichkeit, dass ein Feld wieder vom Nebel bedeckt wird" type="text">10</p1>
-      <p2 comment="Anzahl Level (max 5 bei mind. 3x3), (f&#xFC;r 4 mind 2x2), (min 3)" type="text">5</p2>
     </item>
-    <item name="discover_percent_pirates" cat="17">
-      <v comment="Piraten % (Wird ben&#xF6;tigt beim erstellen der Map)" type="text">10</v>
-      <p1 comment="Ist m&#xF6;glich bei (entity's)" type="text">a,e,n,s,w</p1>
-      <p2 comment="Anzahl Piratenf&#xFC;rsten" type="text">7</p2>
-    </item>
-    <item name="discover_percent_aliens" cat="17">
-      <v comment="Alien &amp; (Wird ben&#xF6;tigt beim erstellen der Map)" type="text">5</v>
-      <p1 comment="Ist m&#xF6;glich bei (entity'S)" type="text">a,e,n,s,w</p1>
-      <p2 comment="Anzahl Sch&#xF6;pfer" type="text">1</p2>
-    </item>
-    <item name="discover_percent_resources" cat="17">
-      <v comment="Resources % (Wird ben&#xF6;tigt beim erstellen der Map)" type="text">35</v>
-      <p1 comment="Ist m&#xF6;glich bei (entity's)" type="text">a,e,n,s,w</p1>
-    </item>
-    <item name="discover_percent_ships" cat="17">
-      <v comment="Schiffe % (Wird ben&#xF6;tigt beim erstellen der Map)" type="text">25</v>
-      <p1 comment="Ist m&#xF6;glich bei (entity's)" type="text">a,e,n,s,w</p1>
-      <p2 comment="Schiffe, welche m&#xF6;glich sind" type="text"/>
-    </item>
-    <item name="discover_percent_total_lost" cat="17">
-      <v comment="Wahrscheinlichkeit, dass eine Flotte beim erkunden ohne Grund nicht zur&#xFC;ckkehrt" type="text">1</v>
-      <p1 comment="Ist m&#xF6;glich bei (entity's)" type="text">a,e,n,s,w</p1>
-    </item>
-    <item name="discover_percent_fast_flight" cat="17">
-      <v comment="Wahrscheinlichkeit f&#xFC;r einen schnellen R&#xFC;ckflug" type="text">8</v>
-      <p1 comment="Ist m&#xF6;glich bei (entity's)" type="text">a,e,n,s,w</p1>
-      <p2 comment="Maximaler Flugzeitbeschleunigunsfaktor" type="text">80</p2>
-    </item>
-    <item name="discover_percent_slow_fight" cat="17">
-      <v comment="Wahrscheinlichkeit, dass die Flotte sp&#xE4;ter zur&#xFC;ckkehrt" type="text">5</v>
-      <p1 comment="Ist m&#xF6;glich bei (entity's)" type="text">a,e,n,s,w</p1>
-      <p2 comment="Maximale verlangsamungsfaktor" type="text">1.80</p2>
-    </item>
-    <item name="discover_percent_sheet" cat="17">
-      <v comment="Tafel des Wissens % (Wird ben&#xF6;tigt beim erstellen der Map)" type="text">3</v>
-      <p1 comment="Ist m&#xF6;glich bei (entity's)" type="text">a,e,n,s,w</p1>
-    </item>
-    <item name="discover_pirates" cat="17">
-      <v comment="Startwert Schiffe" type="text">1</v>
-      <p1 comment="Maximaler Technologieunterschied" type="text">5</p1>
-      <p2 comment="XP Faktor, totale XP = factor*(time()-logintime)" type="text">1.5</p2>
-    </item>
-    <item name="discover_aliens" cat="17">
-      <v comment="Startwert Schiffe" type="text">5</v>
-      <p1 comment="Maximaler Technologieunterschied" type="text">10</p1>
-      <p2 comment="XP Faktor, totale XP = factor*(time()-logintime)" type="text">1.75</p2>
-    </item>
-    <item name="discover_resources" cat="17">
-      <v comment="Maximale Rohstoffe pro Typ" type="text">5000</v>
-      <p1 comment="Maximale Anzahl Bewohner" type="text">50</p1>
-      <p2 comment="Levelfaktor" type="text">5</p2>
-    </item>
-    <item name="discover_fleet" cat="17">
-      <v comment="Maximale Anzahl Schiffe pro Flug" type="text">5</v>
-      <p1 comment="Maximale Anzahl Typen pro Flug" type="text">1</p1>
-      <p2 comment="Maximale Anzahl Schiffe pro Feld" type="text">15</p2>
-    </item>
-
-    <item name="random_event_hits" cat="18">
-      <v comment="Zufallsereignis Hit (Statistik)" type="text">0</v>
-    </item>
-    <item name="random_event_misses" cat="18">
-      <v comment="Zufallsereignis Miss (Statistik)" type="text">0</v>
-    </item>
-
+	
     <item name="log_threshold_days" cat="19">
       <v comment="Aufbewahrungsdauer Logs" type="text">28</v>
     </item>
