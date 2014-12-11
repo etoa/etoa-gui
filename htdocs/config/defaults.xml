@@ -567,7 +567,7 @@ http://etoa.ch</v>
     </item>    
 
     <item name="discoverymask" cat="17">
-      <v comment="Aufdeckung der Map der Flottenkontrolle pro Level (Radius): 1 + floor(level*this.value)" type="text">0.4</v>
+      <v comment="Aufdeckung der Map der Flottenkontrolle pro Level (Radius): 1 + floor(level*this.value)" type="text">0.5</v>
     </item>
 	
     <item name="log_threshold_days" cat="19">
