@@ -572,7 +572,7 @@ http://etoa.ch</v>
     </item>
 	
 	<item name="shipyard_min_build_time" cat="18">
-      <v comment="Raumschiffswerft: Absolute minimal Bauzeit in Sekunden" type="text">20</v>
+      <v comment="Raumschiffswerft: Absolute minimal Bauzeit in Sekunden" type="text">1</v>
     </item>
 	<item name="shipqueue_cancel_min_level" cat="18">
       <v comment="Raumschiffswerft: Benötigter Level für Abbruch" type="text">5</v>
@@ -587,7 +587,7 @@ http://etoa.ch</v>
       <v comment="Raumschiffswerft: Maximale Resourcenrückgabe bei Abbruch" type="text">0.8</v>
     </item>
 	<item name="defense_min_build_time" cat="18">
-      <v comment="Waffenfabrik: Absolute minimal Bauzeit in Sekunden" type="text">20</v>
+      <v comment="Waffenfabrik: Absolute minimal Bauzeit in Sekunden" type="text">1</v>
     </item>
 	<item name="defqueue_cancel_min_level" cat="18">
       <v comment="Waffenfabrik: Benötigter Level für Abbruch" type="text">5</v>
