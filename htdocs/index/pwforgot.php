@@ -71,23 +71,30 @@
 				// Log hinzufügen
 				add_log(3,"Der Benutzer ".$_POST['user_nick']." hat ein neues Passwort per E-Mail angefordert!",time());
 	
-				echo "Deine Passwort-Anfrage war erfolgreich. Du solltest in einigen Minuten eine E-Mail mit dem neuen Passwort erhalten!<br/><br/>";
+				$_SESSION['pwforgot_success_msg'] = "Deine Passwort-Anfrage war erfolgreich. Du solltest in einigen Minuten eine E-Mail mit dem neuen Passwort erhalten!";
+				forward('?index='.$index);
 			}
 			else
 			{
-				echo "Es wurde kein entsprechender Datensatz gefunden!<br/><br/><input type=\"button\" onclick=\"javascript:history.back();\" value=\"Zur&uuml;ck\" /> &nbsp;";
+				error_msg("Es wurde kein entsprechender Datensatz gefunden!");
 			}
 		}
 		else
 		{
-			echo "Du hast keinen Benutzernamen oder keine E-Mail-Adresse eingegeben oder ein unerlaubtes Zeichen verwendet! <br/><br/><input type=\"button\" onclick=\"javascript:history.back();\" value=\"Zur&uuml;ck\" /> &nbsp;";
+			error_msg("Du hast keinen Benutzernamen oder keine E-Mail-Adresse eingegeben oder ein unerlaubtes Zeichen verwendet!");
 		}
+	}
+
+	if (isset($_SESSION['pwforgot_success_msg'])) {
+		$msg = $_SESSION['pwforgot_success_msg'];
+		unset($_SESSION['pwforgot_success_msg']);
+		success_msg($msg);
 	}
 	else
 	{
-		$cstr = checker_init();
 		?>
 		<form action="?index=pwforgot" method="post" class="styled-form styled-form-medium">
+			<?PHP checker_init(); ?>
 			<p>Hier kannst du ein neues Passwort für deinen Account in der <?=Config::getInstance()->roundname->v?> per E-Mail anfordern, wenn du deines vergessen hast:</p>
 			<p>Wenn du weitere Hilfe benötigst, kannst du <a href="?index=contact">hier</a> einen Game-Admin kontaktieren.</p>
 			<p>
@@ -98,11 +105,17 @@
 				<label for="user_email_fix">Deine E-Mail</label>
 				<input type="text" name="user_email_fix" id="user_email_fix" size="30" maxlength="255" />
 			</p>
-			<p class="form-buttons">			
+			<p class="form-buttons">
 				<input type="submit" name="submit_pwforgot" value="Passwort anfordern" class="button" /> &nbsp;
 				<a href="?index=login">Zurück zum Login</a>
 			</p>
 		</form>
+				
+		<script type="text/javascript">
+		$(function(){
+			$('#user_nick').focus();
+		});
+		</script>
 		<?PHP
 	}
 ?>
