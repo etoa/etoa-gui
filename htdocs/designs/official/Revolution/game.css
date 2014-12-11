@@ -450,35 +450,39 @@ table.stacktrace td, table.stacktrace th{
 	text-align: left;
 	border: 1px solid #aaa;
 }
- 
-.fleetInfoContainer {
-	padding: 3px;
+
+.fleetInfoContainer .infoboxcontent {
+	background:#000 url('../../../images/fleetbg.png') no-repeat top center!important;
+	padding:3px!important;
+}
+
+.fleetInfoWrap {
+	padding: 0px;
 	position:relative;
 	height:80px;
-	background:#000 url('../../../images/fleetbg.png') no-repeat top center;
+	width: 100%;
 }
 
 .fleetInfoSource {
-	position:absolute;
-	left:5px;
-	top:5px;
+	width:33%;
+	display:inline-block;
+}
+
+.fleetInfoAction {
+	width:34%;
+	display:inline-block;
+	text-align:center;
 }
 
 .fleetInfoTarget {
-	position:absolute;
-	right:5px;
-	top:5px;
+	width:33%;
+	display:inline-block;
 	text-align:right;
 }
+
+
 
 .fleetInfoProgress {
 	position:absolute;
 	top:17px;
-}
-
-.fleetInfoAction {
-	position:absolute;
-	left:270px;
-	top:46px;
-	text-align:center;
 }

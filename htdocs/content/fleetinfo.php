@@ -119,65 +119,53 @@
 	
 		echo "<table style=\"width:98%\">
 		<tr><td colspan=\"3\">";			
-
-		tableStart("Flugdaten");
-		
-		$progrssWidth = 590;
-		
-		$perc = ($fd->landTime()-$fd->launchTime()>0) ? (time()-$fd->launchTime()) / ($fd->landTime()-$fd->launchTime()) : 1;
-			
-		$perc = min(1,$perc);
-		$pxl = 25 + round($perc * $progrssWidth);
 				
-		echo "<tr>
-			<td style=\"background:black;padding:0\">
-				<div class=\"fleetInfoContainer\">
-					<div id=\"source\" class=\"fleetInfoSource\">";
-					if ($fd->getAction()->visibleSource())
-					{
-						if ($cu->discovered($fd->getSource()->getCell()->absX(),$fd->getSource()->getCell()->absY()))
-						{
-							echo $fd->getSource()->smallImage()."<br/>
-							<a href=\"?page=cell&amp;id=".$fd->getSource()->cellId()."&amp;hl=".$fd->getSource()->id()."\">".$fd->getSource()."</a><br/>";
-						}
-						else
-						{
-							$ent = Entity::createFactory('u',$fd->getSource()->id());
-							echo $ent->smallImage()."<br/>
-							<a href=\"?page=cell&amp;id=".$ent->cellId()."&amp;hl=".$ent->id()."\">".$ent."</a><br/>";
-						}
-					}
-					else
-					{
-						echo $fd->getSource()->smallImage()."<br />".$fd->getSource()->entityCodeString()."<br />";
-					}
-					echo "<b><span id=\"sourceLabel\">Start</span>:</b> ".date("d.m.Y H:i:s",$fd->launchTime())."
-					</div>
-					<div id=\"target\" class=\"fleetInfoTarget\">";
-					if ($cu->discovered($fd->getTarget()->getCell()->absX(),$fd->getTarget()->getCell()->absY()))
-					{
-						echo $fd->getTarget()->smallImage()."<br/>
-						<a href=\"?page=cell&amp;id=".$fd->getTarget()->cellId()."&amp;hl=".$fd->getTarget()->id()."\">".$fd->getTarget()."</a><br/>";
-					}
-					else
-					{
-						$ent = Entity::createFactory('u',$fd->getTarget()->id());
-						echo $ent->smallImage()."<br/>
-						<a href=\"?page=cell&amp;id=".$ent->cellId()."&amp;hl=".$ent->id()."\">".$ent."</a><br/>";
-					}
-					echo "<b><span id=\"targetLabel\">Landung</span>:</b> ".date("d.m.Y H:i:s",$fd->landTime())."
-					</div>						
-					<div class=\"fleetInfoProgress\" style=\"left:".$pxl."px;\" id=\"fleetProgress\">
-						<img src=\"images/fleetmove.png\" alt=\"Fleet\" />
-					</div>
-					<div class=\"fleetInfoAction\">
-						<div style=\"color:".FleetAction::$attitudeColor[$fd->getAction()->attitude()]."\">".$fd->getAction()->name()." [".FleetAction::$statusCode[$fd->status()]."]</div>
-						<div id=\"flighttime\"></div>
-					</div>
-				</div>
-			</td>
-		</tr>";
-		tableEnd();
+		iBoxStart("Flugdaten", "fleetInfoContainer");
+		echo "<div class=\"fleetInfoWrap\">";
+			echo "<div class=\"fleetInfoProgress\" id=\"fleetProgress\">
+				<img src=\"images/fleetmove.png\" alt=\"Fleet\" />
+			</div>";
+			echo "<div id=\"source\" class=\"fleetInfoSource\">";
+			if ($fd->getAction()->visibleSource())
+			{
+				if ($cu->discovered($fd->getSource()->getCell()->absX(),$fd->getSource()->getCell()->absY()))
+				{
+					echo $fd->getSource()->smallImage()."<br/>
+					<a href=\"?page=cell&amp;id=".$fd->getSource()->cellId()."&amp;hl=".$fd->getSource()->id()."\">".$fd->getSource()."</a><br/>";
+				}
+				else
+				{
+					$ent = Entity::createFactory('u',$fd->getSource()->id());
+					echo $ent->smallImage()."<br/>
+					<a href=\"?page=cell&amp;id=".$ent->cellId()."&amp;hl=".$ent->id()."\">".$ent."</a><br/>";
+				}
+			}
+			else
+			{
+				echo $fd->getSource()->smallImage()."<br />".$fd->getSource()->entityCodeString()."<br />";
+			}
+			echo "<b><span id=\"sourceLabel\">Start</span>:</b> ".date("d.m.Y H:i:s",$fd->launchTime())."
+			</div>";
+			echo "<div class=\"fleetInfoAction\">
+				<div style=\"color:".FleetAction::$attitudeColor[$fd->getAction()->attitude()]."\">".$fd->getAction()->name()." [".FleetAction::$statusCode[$fd->status()]."]</div>
+				<div><span id=\"flighttime\"></span> (<span id=\"flightPercent\"></span>)</div>
+			</div>";					
+			echo "<div id=\"target\" class=\"fleetInfoTarget\">";
+			if ($cu->discovered($fd->getTarget()->getCell()->absX(),$fd->getTarget()->getCell()->absY()))
+			{
+				echo $fd->getTarget()->smallImage()."<br/>
+				<a href=\"?page=cell&amp;id=".$fd->getTarget()->cellId()."&amp;hl=".$fd->getTarget()->id()."\">".$fd->getTarget()."</a><br/>";
+			}
+			else
+			{
+				$ent = Entity::createFactory('u',$fd->getTarget()->id());
+				echo $ent->smallImage()."<br/>
+				<a href=\"?page=cell&amp;id=".$ent->cellId()."&amp;hl=".$ent->id()."\">".$ent."</a><br/>";
+			}
+			echo "<b><span id=\"targetLabel\">Landung</span>:</b> ".date("d.m.Y H:i:s",$fd->landTime())."
+			</div>";	
+		echo "</div>";
+		iBoxEnd();
 		
 		echo "</td></tr><tr><td style=\"50%\">";
 		
@@ -268,20 +256,28 @@
 		
 		echo "</form>";
 		
-		countDown('flighttime',$fd->landTime());
-		
-		echo "<script type=\"text/javascript;\">
-		function moveFleet(t)
-		{
-			perc = (t-".$fd->launchTime().") / (".($fd->landTime()-$fd->launchTime()).");
-			perc = Math.min(1,perc);
-			pxl = 25 + Math.round(perc * ".$progrssWidth.");
-			document.getElementById('fleetProgress').style.left = pxl+'px';
-			
-			setTimeout(\"moveFleet(\"+(t+1)+\")\",1000);
-		}
-		moveFleet(".time().");
-		</script>";
+		countDown('flighttime', $fd->landTime());
+
+		$totalFlightTime = $fd->landTime() - $fd->launchTime();
+		?>
+			<script type="text/javascript;">
+				function moveFleet(t)
+				{
+					var progrssWidth = $('.fleetInfoWrap').width();
+					perc = <?=$totalFlightTime?> > 0 ? ((t - <?=$fd->launchTime()?>) / (<?=$totalFlightTime?>)) : 1;
+					perc = Math.min(1, perc);
+					pxl = Math.round(perc * progrssWidth);
+					$('#fleetProgress').css('left', pxl+'px');
+					$('#flightPercent').html(Math.round(perc*100)+"%");
+					setTimeout(function(){
+						moveFleet(t+1);
+					}, 1000);
+				}
+				$(function(){
+					moveFleet(<?=time()?>);
+				});
+			</script>
+		<?PHP
 		
 		//Some adjustements for special actions
 		if ($fd->getAction()->code() == "support" && $fd->status() == 3)
