@@ -37,6 +37,19 @@
 	define('NO_ITEMS_MSG',"In dieser Kategorie gibt es keine Schiffe!");
 	define('HELP_URL',"?page=help&site=shipyard");
 
+	// Absolute minimal Bauzeit in Sekunden
+	define("SHIPYARD_MIN_BUILD_TIME", $cfg->get('shipyard_min_build_time'));
+	
+	// Ben. Level für Autragsabbruch
+	define("SHIPQUEUE_CANCEL_MIN_LEVEL", $cfg->get('shipqueue_cancel_min_level'));
+	
+	define("SHIPQUEUE_CANCEL_START", $cfg->get('shipqueue_cancel_start'));
+	
+	define("SHIPQUEUE_CANCEL_FACTOR", $cfg->get('shipqueue_cancel_factor'));
+	
+	define("SHIPQUEUE_CANCEL_END", $cfg->get('shipqueue_cancel_end'));
+
+	
 	// BEGIN SKRIPT //
 
 	//Tabulator var setzten (für das fortbewegen des cursors im forumular)

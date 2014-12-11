@@ -15,6 +15,7 @@
     <category id="13">R&#xE4;nge</category>
     <category id="16">Allianz</category>
     <category id="17">Ereignisse</category>
+	<category id="18">Konstruktion</category>
     <category id="19">Logging</category>
     <category id="20">Eventhandler</category>	
     <category id="21">Datenbank</category>	
@@ -569,6 +570,37 @@ http://etoa.ch</v>
     <item name="discoverymask" cat="17">
       <v comment="Aufdeckung der Map der Flottenkontrolle pro Level (Radius): 1 + floor(level*this.value)" type="text">0.5</v>
     </item>
+	
+	<item name="shipyard_min_build_time" cat="18">
+      <v comment="Raumschiffswerft: Absolute minimal Bauzeit in Sekunden" type="text">20</v>
+    </item>
+	<item name="shipqueue_cancel_min_level" cat="18">
+      <v comment="Raumschiffswerft: Benötigter Level für Abbruch" type="text">5</v>
+    </item>
+	<item name="shipqueue_cancel_start" cat="18">
+      <v comment="Raumschiffswerft: Minimale Resourcenrückgabe bei Abbruch" type="text">0.3</v>
+    </item>
+	<item name="shipqueue_cancel_factor" cat="18">
+      <v comment="Raumschiffswerft: Faktor für Resourcenrückgabe bei Abbruch" type="text">0.03</v>
+    </item>
+	<item name="shipqueue_cancel_end" cat="18">
+      <v comment="Raumschiffswerft: Maximale Resourcenrückgabe bei Abbruch" type="text">0.8</v>
+    </item>
+	<item name="defense_min_build_time" cat="18">
+      <v comment="Waffenfabrik: Absolute minimal Bauzeit in Sekunden" type="text">20</v>
+    </item>
+	<item name="defqueue_cancel_min_level" cat="18">
+      <v comment="Waffenfabrik: Benötigter Level für Abbruch" type="text">5</v>
+    </item>
+	<item name="defqueue_cancel_start" cat="18">
+      <v comment="Waffenfabrik: Minimale Resourcenrückgabe bei Abbruch" type="text">0.3</v>
+    </item>
+	<item name="defqueue_cancel_factor" cat="18">
+      <v comment="Waffenfabrik: Faktor für Resourcenrückgabe bei Abbruch" type="text">0.03</v>
+    </item>
+	<item name="defqueue_cancel_end" cat="18">
+      <v comment="Waffenfabrik: Maximale Resourcenrückgabe bei Abbruch" type="text">0.8</v>
+    </item>	
 	
     <item name="log_threshold_days" cat="19">
       <v comment="Aufbewahrungsdauer Logs" type="text">28</v>
