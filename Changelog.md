@@ -12,6 +12,7 @@ Version 3.5.0
  * Added table of open sessions to login tab in user settings screen.
  * Added architect specialist which reduces build time by 10%
  * A password can now be specified when creating an account
+ * Added button to select a random race on first login
 
 #### Bugfixes ####
 

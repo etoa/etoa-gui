@@ -10,7 +10,8 @@ Version 3.5.0
  * Details zur aktuellen Session können nun in den Einstellungen im Tab "Login" angezeigt werden
  * Neuer Spezialist: Der Architekt reduziert die Bauzeit um 10%
  * Beim Erstellen eines Accounts kann nun direkt ein Passwort gewählt werden
-
+ * Es wurde ein Zufalls-Button zur Rassenauswahl hinzugefügt
+ 
 ### Bugfixes ###
 
  * Fehler beim Aufrufen der Detailseite eines Gebäudes behoben
