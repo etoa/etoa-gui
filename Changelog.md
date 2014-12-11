@@ -8,6 +8,7 @@ Version 3.5.0
 
 #### Features ####
 
+ * Added new default design "Revolution"
  * Added tab for banner in user settings screen
  * Added table of open sessions to login tab in user settings screen.
  * Added architect specialist which reduces build time by 10%
