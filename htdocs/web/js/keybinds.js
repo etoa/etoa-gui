@@ -17,7 +17,7 @@ var shiftKeys = new Array();
 // Initialize keybinding events
 function keybindsInit() {
 
-  if(window.enableKeybinds && $)
+  if ($)
   {
     // add an event handler for keypress
     $('body').keypress(function(e)
@@ -52,7 +52,7 @@ function keybindsInit() {
   }
 }
 
-if(window.enableKeybinds && $)
+if ($)
 {
     // catch undefined strings here, the keypress handler doesn't.
     keys[rightArrowKey]      = window.nextEntityUrl || "#";
