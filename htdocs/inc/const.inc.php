@@ -434,38 +434,6 @@
 	define("ALLIANCE_TECH_SPY_ID", 8);
 
 	//
-	// Schiffswerft
-	//
-	
-	// Absolute minimal Bauzeit in Sekunden
-	define("SHIPYARD_MIN_BUILD_TIME", 20);
-	
-	// Ben. Level für Autragsabbruch
-	define("SHIPQUEUE_CANCEL_MIN_LEVEL", 5);
-	
-	define("SHIPQUEUE_CANCEL_START", 0.3);
-	
-	define("SHIPQUEUE_CANCEL_FACTOR", 0.03);
-	
-	define("SHIPQUEUE_CANCEL_END", 0.8);
-
-	//
-	// Waffenfabrik
-	//
-	
-	// Absolute minimal Bauzeit in Sekunden
-	define("DEFENSE_MIN_BUILD_TIME", 20);
-	
-	// Ben. Level für Autragsabbruch
-	define("DEFQUEUE_CANCEL_MIN_LEVEL", 5);
-	
-	define("DEFQUEUE_CANCEL_START", 0.3);
-	
-	define("DEFQUEUE_CANCEL_FACTOR", 0.03);
-	
-	define("DEFQUEUE_CANCEL_END", 0.8);
-
-	//
 	// Raketensilo
 	//
 	

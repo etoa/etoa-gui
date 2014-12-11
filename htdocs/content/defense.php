@@ -36,7 +36,19 @@
 	define("ITEM_ORDER_FLD","def_order");
 	define("NO_ITEMS_MSG","In dieser Kategorie gibt es keine Verteidigungsanlagen!");
 	define("HELP_URL","?page=help&site=defense");
-
+	
+	// Absolute minimal Bauzeit in Sekunden
+	define("DEFENSE_MIN_BUILD_TIME", $cfg->get('shipyard_min_build_time'));
+	
+	// Ben. Level für Autragsabbruch
+	define("DEFQUEUE_CANCEL_MIN_LEVEL", $cfg->get('defqueue_cancel_min_level'));
+	
+	define("DEFQUEUE_CANCEL_START", $cfg->get('defqueue_cancel_start'));
+	
+	define("DEFQUEUE_CANCEL_FACTOR", $cfg->get('defqueue_cancel_factor'));
+	
+	define("DEFQUEUE_CANCEL_END", $cfg->get('defqueue_cancel_end'));
+	
 	// BEGIN SKRIPT //
 
 	//Tabulator var setzten (für das fortbewegen des cursors im forumular)
