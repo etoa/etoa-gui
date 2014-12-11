@@ -1,0 +1,143 @@
+body	{
+	background:#000 url('images/bg.jpg') 890px 310px;
+	color:#fff;
+	font-family:arial;
+	font-size:9pt;
+	margin:0px;
+	padding:0px;
+}
+
+input,select	{
+	border:1px solid #fff;
+	background:#111;
+	color:#fff;
+}
+
+#chatcontainer {
+	position:fixed;
+	top:0;
+	left:0;
+	right:0;
+	bottom:40px;
+}
+
+div.chatmsg, div.serverMessage {
+	font-size: 1em;
+}
+
+#chatitems	{ 
+	border-radius:2px;
+	padding:5px;	
+	margin-top:2px;	
+	background:rgba(0,0,0, 0.1);
+	overflow:auto;
+	vertical-align:middle;
+	font-family: Verdana, Arial, sans-serif;
+}
+
+#chatitems img {
+	vertical-align:middle;
+	margin-right:3px;
+}
+
+#chatitems .systemMessage {
+	color:#777;
+}
+
+#chatitems .serverMessage {
+	color:#aaa;
+}
+
+#chatitems .adminMessage {
+	color:#ff8;
+	font-weight:bold;
+}
+
+#chatitems a {
+	color:#fff;
+}
+
+#userlist	{
+	padding:5px 10px;
+}
+
+#userlist a	{
+	color:#fff;
+}
+
+#loading	{ 
+	position:fixed;
+	left:0px;
+	right:0px;
+	bottom:30px;
+	height:16px;
+	background:black;
+	color:#fff;
+	overflow:hidden;
+	vertical-align:middle;
+}
+
+#loadingAnimation { 
+	  display:inline-block;
+	  width:20px;
+}
+
+#loadingAnimation img { 
+	vertical-align:middle;
+}
+
+#loading span { 
+	vertical-align:middle;
+}
+
+#chatinput	{
+	position:fixed;
+	left:0px;
+	right:0px;
+	bottom:0px;
+	background:#222;
+	height:20px;
+	padding:5px 5px 5px 5px;
+}
+
+#ctext {
+	width:100%;
+	border-color: #555;
+}
+
+#ctext:focus {
+	border-color: #999;
+}
+
+#status {
+	float: right;
+	padding: 0 0.5em;
+	z-index: 10;
+	position: fixed;
+	right: 0;
+	/* should be #loading bottom +1px */
+	bottom: 31px;
+	/* not transparent, so it hides oversized msgFail text below */
+}
+
+#unread {
+	color: lime;
+	padding-left: 5px;
+}
+
+#usercount {
+	color: #ccc;
+	cursor: pointer;
+}
+
+#usercount:hover {
+	color: #fff;
+}
+
+#logoutButton {
+	display: none;
+}
+
+#logoutButton:hover {
+	display: none;
+}
