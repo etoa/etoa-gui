@@ -26,9 +26,10 @@ Version 3.5.0
 ### Änderungen ###
 
  * Der Button zum Abreissen eines Gebäudes wird nun nicht mehr so prominent angezeigt
- * Die extern zugänglichen Seiten Rangliste, Hilfe, Spielstatistiken und Pranger wurden entfernt um die Code-Wartung zu vereinfachen. All diese Daten sind auch ingame verfügbar.
- * Nach der Registration eines neuen Accounts muss die E-Mail Adresse bestätigt werden. Solange diese nicht bestätigt ist, können einige Features nicht verwendet werden.
-
+ * Die extern zugänglichen Seiten Rangliste, Hilfe, Spielstatistiken und Pranger wurden entfernt um die Code-Wartung zu vereinfachen. All diese Daten sind auch ingame verfügbar
+ * Nach der Registration eines neuen Accounts muss die E-Mail Adresse bestätigt werden. Solange diese nicht bestätigt ist, können einige Features nicht verwendet werden
+ * Durch den Ausbau der Flottenkontrolle wird bei jeder zweiten Stufe der Raum um den Planeten weiter aufgedeckt
+ 
 Version 3.4.0
 -------------
 

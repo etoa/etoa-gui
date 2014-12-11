@@ -33,6 +33,7 @@ Version 3.5.0
  * The button for demolishing a building is no longer shown so prominently
  * Removed externally accessible pages gamestats, help, ladded and pillory to reduce code maintenance
  * When registering a new account, the e-mail address has to be verified. Until verification is not complete, some features can not be used.
+ * Radius discovered by fleet control expands at every second level of the fleet control
  
 ### Administration ###
 
