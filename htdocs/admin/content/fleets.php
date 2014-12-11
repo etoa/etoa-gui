@@ -340,153 +340,6 @@
 			</table>
 			<p>".$battleban_button."</p>";
 
-
-		/*
-		//
-		// Kampfsperre
-		//
-		echo "<h2>Kampfsperre</h2><form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-		if ($_POST['battleban_deactivate']!="")
-		{
-			dbquery("UPDATE config SET config_value=0,config_param1='' WHERE config_name='battleban';");
-			$conf['battleban']['v']=0;
-		}
-		if ($_POST['battleban_activate']!="")
-		{
-			dbquery("UPDATE config SET config_value=1,config_param1='".addslashes($_POST['ban_reason'])."' WHERE config_name='battleban';");
-			$conf['battleban']['v']=1;
-			$conf['battleban']['p1']=addslashes($_POST['ban_reason']);
-		}
-		if ($conf['battleban']['v']==1)
-			echo "<div style=\"color:#f90\">Die Kampfsperre ist aktiviert! Es k&ouml;nnen keine Angriffe geflogen werden!</div><br/>Grund: ".text2html($conf['battleban']['p1'])."<br/><br/><input type=\"submit\" name=\"battleban_deactivate\" value=\"Deaktivieren\" />";
-		else
-			echo "<div style=\"color:#0f0\">Die Kampfsperre ist deaktiviert!</div><br/>Aktivierungsgrund:<br/><textarea name=\"ban_reason\" cols=\"50\" rows=\"3\"></textarea><br/><br/><input type=\"submit\" name=\"battleban_activate\" value=\"Aktivieren\" />";
-		echo "</form><br/>";
-		*/
-/*
-		//
-		// Schiffrückruf
-		//
-		echo "<h2>Flottenr&uuml;ckruf</h2><form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-		if ($_POST['flightrecall']!="" && $_POST['recall']!="")
-		{
-			switch ($_POST['recall'])
-			{
-				// Schiffe instantan zurückrufen
-				case "instant":
-					$fres=dbquery("SELECT * FROM fleet;");
-					if (mysql_num_rows($fres))
-					{
-						while ($farr=mysql_fetch_array($fres))
-						{
-							if (!stristr($farr['fleet_action'],"c") && !stristr($farr['fleet_action'],"r"))
-								$planet=$farr['fleet_planet_from'];
-							else
-								$planet=$farr['fleet_planet_to'];
-							dbquery("DELETE FROM fleet WHERE fleet_id=".$farr['fleet_id'].";");
-							dbquery("
-							UPDATE
-								planets
-							SET
-                                planet_res_metal=planet_res_metal+".max($farr['fleet_res_metal'],0).",
-                                planet_res_crystal=planet_res_crystal+".max($farr['fleet_res_crystal'],0).",
-                                planet_res_plastic=planet_res_plastic+".max($farr['fleet_res_plastic'],0).",
-                                planet_res_fuel=planet_res_fuel+".max($farr['fleet_res_fuel'],0).",
-                                planet_res_food=planet_res_food+".max($farr['fleet_res_food'],0).",
-                                planet_people=planet_people+".(max($farr['fleet_res_people'],0)+max($farr['fleet_pilots'],0))."
-							WHERE
-								id='$planet';");
-							$sres=dbquery("SELECT * FROM fleet_ships WHERE fs_fleet_id=".$farr['fleet_id'].";");
-							if (mysql_num_rows($sres)>0)
-							{
-								while ($sarr=mysql_fetch_array($sres))
-								{
-									dbquery("DELETE FROM fleet_ships WHERE fs_fleet_id=".$farr['fleet_id']." AND fs_ship_id=".$sarr['fs_ship_id'].";");
-									shiplistAdd($planet,$farr['fleet_user_id'],$sarr['fs_ship_id'],$sarr['fs_ship_cnt']);
-								}
-							}
-						}
-						echo "Es wurden ".mysql_num_rows($fres)." Flotten sofort zur&uuml;ckgerufen!<br/><br/>";
-					}
-					else
-						echo "Es konnten keine Flotten zur&uuml;ckgerufen werden da keine unterwegs sind!<br/><br/>";
-					break;
-				// Schiffe per Rückflug zuückrufen
-				case "return":
-					$res = dbquery("SELECT * FROM fleet;");
-					if (mysql_num_rows($res)>0)
-					{
-						$cnt=0;
-						while ($arr=mysql_fetch_array($res))
-						{
-							if (!stristr($arr['fleet_action'],"r") && !stristr($arr['fleet_action'],"c"))
-							{
-								$stime = time();
-								$etime = (2*time())-$arr['fleet_launchtime'];
-								$action = strtr($arr['fleet_action'],"o","r");
-								dbquery("
-								UPDATE
-									fleet
-								SET
-                                    fleet_launchtime='$stime',
-                                    fleet_landtime='$etime',
-                                    fleet_action='$action',
-                                    fleet_planet_from='".$arr['fleet_planet_to']."',
-                                    fleet_planet_to='".$arr['fleet_planet_from']."',
-                                    fleet_cell_from='".$arr['fleet_cell_to']."',
-                                    fleet_cell_to='".$arr['fleet_cell_from']."'
-								WHERE
-									fleet_id='".$arr['fleet_id']."';");
-								$cnt++;
-							}
-						}
-						cms_success_msg("Es wurden ".$cnt." Flotten per R&uuml;ckflug zur&uuml;ckgeschickt!");
-					}
-					else
-						echo "Es konnten keine Flotten zur&uuml;ckgerufen werden da keine unterwegs sind!<br/><br/>";
-					break;
-				// Schiffe per Abbruch zuückrufen
-				case "cancel":
-					$res = dbquery("SELECT * FROM fleet;");
-					if (mysql_num_rows($res)>0)
-					{
-						$cnt=0;
-						while ($arr=mysql_fetch_array($res))
-						{
-							if (!stristr($arr['fleet_action'],"r") && !stristr($arr['fleet_action'],"c"))
-							{
-								$stime = time();
-								$etime = (2*time())-$arr['fleet_launchtime'];
-								$action = $arr['fleet_action']."c";
-								dbquery("
-								UPDATE
-									fleet
-								SET
-                                    fleet_launchtime='$stime',
-                                    fleet_landtime='$etime',
-                                    fleet_action='$action',
-                                    fleet_planet_from='".$arr['fleet_planet_to']."',
-                                    fleet_planet_to='".$arr['fleet_planet_from']."',
-                                    fleet_cell_from='".$arr['fleet_cell_to']."',
-                                    fleet_cell_to='".$arr['fleet_cell_from']."'
-								WHERE
-									fleet_id='".$arr['fleet_id']."';");
-								$cnt++;
-							}
-						}
-						cms_success_msg("Es wurden ".$cnt." Flotten per Flugabbruch zur&uuml;ckgeschickt!");
-					}
-					else
-						echo "Es konnten keine Flotten zur&uuml;ckgerufen werden da keine unterwegs sind!<br/><br/>";
-					break;
-			}
-		}
-		echo "<input type=\"radio\" name=\"recall\" value=\"instant\"> Alle Flotten instantan zur&uuml;ckrufen<br/>";
-		echo "<input type=\"radio\" name=\"recall\" value=\"return\"> Alle Flotten zur&uuml;ckrufen (per R&uuml;ckflug)<br/>";
-		echo "<input type=\"radio\" name=\"recall\" value=\"cancel\"> Alle Flotten zur&uuml;ckrufen (per Flugabbruch)<br/>";
-		echo "<br/><input type=\"submit\" name=\"flightrecall\" value=\"Durchf&uuml;hren\" /></form>";
-
-*/
 		echo "</form>";
 	}
 	
@@ -1019,12 +872,12 @@
 				}
 				else
 				{
-					cms_error_msg("Diese Flotte besitzt keine Schiffe!");
+					echo MessageBox::error("", "Diese Flotte besitzt keine Schiffe!");
 				}
 				}
 				else
 				{
-					echo "Flotte nicht mehr vorhanden!";
+					echo MessageBox::error("", "Flotte nicht mehr vorhanden!");
 				}
 				
 				echo "<br/><br/><input type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&sub=$sub&action=searchresults'\" /> ";
@@ -1032,7 +885,7 @@
 
 			}
 			else
-				cms_error_msg("Datensatz nicht vorhanden!");
+				echo MessageBox::error("", "Datensatz nicht vorhanden!");
 		}
 
 		//
@@ -1045,7 +898,7 @@
 			{
 				dbquery("DELETE FROM fleet WHERE id='".$_GET['fleetdel']."';");
 				dbquery("DELETE FROM fleet_ships WHERE fs_fleet_id='".$_GET['fleetdel']."';");
-				cms_success_msg("Die Flotte wurde gel&ouml;scht!");
+				echo MessageBox::ok("", "Die Flotte wurde gel&ouml;scht!");
 			}
 
 			// Suchquery zusammenstellen

@@ -35,7 +35,7 @@
 		echo "<h2>Forschungpsunkte neu berechnen</h2><form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
 		if (isset($_POST['recalc']) && $_POST['recalc']!="")
 		{
-			cms_success_msg(Ranking::calcTechPoints());
+			echo MessageBox::ok("", Ranking::calcTechPoints());
 		}		
 		echo "Nach jeder &Auml;nderung an den Forschungen m&uuml;ssen die Forschungspunkte neu berechnet werden.<br/><br/> ";
 		echo "<input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";		

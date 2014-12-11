@@ -103,7 +103,7 @@
 			}
 			else
 			{
-				cms_error_msg("Nachricht konnte nicht gesendet werden! Text oder Titel fehlt!");
+				echo MessageBox::error("", "Nachricht konnte nicht gesendet werden! Text oder Titel fehlt!");
 			}
 			$subj = $_POST['message_subject'];
 			$text = $_POST['message_text'];

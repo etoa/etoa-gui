@@ -32,14 +32,14 @@ if ($s->user_id)
 	if (preg_match('/^[a-z\_]+$/',$page)  && strlen($page)<=50)
 	{
 		if (!include("content/".$page.".php"))
-			cms_error_msg("Die Seite $page wurde nicht gefunden!");
+			echo "<h1>Fehler</h1>Die Seite $page wurde nicht gefunden!";
 	}
 	else {
 		echo "<h1>Fehler</h1>Der Seitenname <b>".$page."</b> enth&auml;lt unerlaubte Zeichen!<br><br><a href=\"javascript:history.back();\">Zur&uuml;ck</a>";
 	}	
 }
 else {
-	cms_error_msg("Die Seite wurde nicht gefunden!");
+	echo "<h1>Fehler</h1>Die Seite wurde nicht gefunden!";
 }
 
 $tpl->assign("content_overflow", ob_get_clean());

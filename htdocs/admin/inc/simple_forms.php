@@ -22,9 +22,9 @@ if (isset($_POST['apply_submit']))
 		}
 	}		
 	if (!mysql_error())
-		cms_success_msg("&Auml;nderungen wurden &uuml;bernommen!");
+		echo MessageBox::ok("", "&Auml;nderungen wurden &uuml;bernommen!");
 	else
-		cms_error_msg("Fehler: ".mysql_error());
+		echo MessageBox::error("Fehler", mysql_error());
 		
 	$deleted=false;			
 	foreach ($_POST as $key=>$val)
@@ -41,9 +41,9 @@ if (isset($_POST['apply_submit']))
 	if ($deleted)	
 	{
 		if (!mysql_error())
-			cms_success_msg("Bestimmte Daten wurden gel&ouml;scht!");
+			echo MessageBox::ok("", "Bestimmte Daten wurden gel&ouml;scht!");
 		else
-			cms_error_msg("Fehler: ".mysql_error());
+			echo MessageBox::error("Fehler:", mysql_error());
 	}
 }
 if (isset($_POST['new_submit']))
@@ -74,7 +74,7 @@ if (isset($_POST['new_submit']))
 
 	dbquery($sql);	
 	if (!mysql_error())
-		cms_success_msg("Neuer leerer Datensatz wurde hinzugef&uuml;gt!");
+		echo MessageBox::ok("", "Neuer leerer Datensatz wurde hinzugef&uuml;gt!");
 }
 
 echo "<form action=\"?".URL_SEARCH_STRING."\" method=\"post\">";

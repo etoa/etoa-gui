@@ -168,7 +168,7 @@
 				$sql .= " WHERE id='".$id."';";
 				dbquery($sql);
 				
-				cms_success_msg("&Auml;nderungen wurden &uuml;bernommen!","submitresult");
+				echo MessageBox::ok("", "&Auml;nderungen wurden &uuml;bernommen!","submitresult");
 
 		
 			}

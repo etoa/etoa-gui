@@ -676,7 +676,7 @@
 				if ($ally->delete()) {
 					echo "Die Allianz wurde gel&ouml;scht!<br/><br/>";
 				} else {
-					cms_error_msg("Allianz konnte nicht gelöscht werden (ist sie in einem aktiven Krieg?)");
+					echo MessageBox::error("", "Allianz konnte nicht gelöscht werden (ist sie in einem aktiven Krieg?)");
 				}
 			}
 

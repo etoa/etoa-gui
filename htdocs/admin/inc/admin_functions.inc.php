@@ -62,26 +62,6 @@ function db_show_result($res)
 }
 
 /**
-* Shows a formated error message
-*
-* @param string Message
-*/
-function cms_error_msg($msg,$id="errmsg")
-{
-	echo MessageBox::get("error", "", text2html($msg));
-}
-
-/**
-* Shows a success error message
-*
-* @param string Message
-*/
-function cms_success_msg($msg,$id="okmsg")
-{
-	echo MessageBox::get("ok", "", text2html($msg));
-}
-
-/**
 * Generates a page for editing table date with
 * an advanced form
 *

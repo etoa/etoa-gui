@@ -83,11 +83,11 @@ else
       } else {
         $hookResult = $fname();
       }
-			cms_success_msg("Datensatz ge&auml;ndert! ".$hookResult);
+			echo MessageBox::ok("", "Datensatz ge&auml;ndert! ".$hookResult);
 		}
 		else
 		{
-			cms_success_msg("Neuer Datensatz gespeichert!");
+			echo MessageBox::ok("", "Neuer Datensatz gespeichert!");
 		}
 	}
 
@@ -114,11 +114,11 @@ else
       } else {
         $hookResult = $fname();
       }
-			cms_success_msg("Datensatz ge&auml;ndert! ".$hookResult);
+			echo MessageBox::ok("", "Datensatz ge&auml;ndert! ".$hookResult);
 		}
 		else
 		{
-			cms_success_msg("Datensatz ge&auml;ndert!");
+			echo MessageBox::ok("", "Datensatz ge&auml;ndert!");
 		}
 	}
 
