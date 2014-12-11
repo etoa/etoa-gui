@@ -122,9 +122,7 @@
 				
 		iBoxStart("Flugdaten", "fleetInfoContainer");
 		echo "<div class=\"fleetInfoWrap\">";
-			echo "<div class=\"fleetInfoProgress\" id=\"fleetProgress\">
-				<img src=\"images/fleetmove.png\" alt=\"Fleet\" />
-			</div>";
+			echo "<div class=\"fleetInfoProgress\" id=\"fleetProgress\"></div>";
 			echo "<div id=\"source\" class=\"fleetInfoSource\">";
 			if ($fd->getAction()->visibleSource())
 			{
@@ -263,10 +261,11 @@
 			<script type="text/javascript;">
 				function moveFleet(t)
 				{
-					var progrssWidth = $('.fleetInfoWrap').width();
+					var objectWidth = 40;
+					var progrssWidth = $('.fleetInfoWrap').width() - (2*objectWidth);
 					perc = <?=$totalFlightTime?> > 0 ? ((t - <?=$fd->launchTime()?>) / (<?=$totalFlightTime?>)) : 1;
 					perc = Math.min(1, perc);
-					pxl = Math.round(perc * progrssWidth);
+					pxl = objectWidth + Math.round(perc * progrssWidth);
 					$('#fleetProgress').css('left', pxl+'px');
 					$('#flightPercent').html(Math.round(perc*100)+"%");
 					setTimeout(function(){

@@ -451,6 +451,10 @@ table.stacktrace td, table.stacktrace th{
 	border: 1px solid #aaa;
 }
 
+/*
+* Fleet info box
+*/
+
 .fleetInfoContainer .infoboxcontent {
 	background:#000 url('../../../images/fleetbg.png') no-repeat top center!important;
 	padding:3px!important;
@@ -459,7 +463,6 @@ table.stacktrace td, table.stacktrace th{
 .fleetInfoWrap {
 	padding: 0px;
 	position:relative;
-	height:80px;
 	width: 100%;
 }
 
@@ -480,9 +483,10 @@ table.stacktrace td, table.stacktrace th{
 	text-align:right;
 }
 
-
-
 .fleetInfoProgress {
 	position:absolute;
 	top:17px;
+	width: 16px;
+	height: 16px;
+	background: url('../../../images/fleetmove.png');
 }
