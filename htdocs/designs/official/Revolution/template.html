@@ -23,7 +23,7 @@
 				<a class="right-tip" data-tips=" Admintool " href="admin" id="h_admin" target="_blank"></a>
 			{/if}
 			
-			<a href="?page=overview" id="h_overview" class="bottom-tip" data-tips=" Planetenübersicht [Leertaste] "></a>		
+			<a href="?page=overview" id="h_overview" class="bottom-tip" data-tips=" Planetenübersicht {if $enableKeybinds}[Leertaste] {/if}"></a>
 	
 			<div id="servertime">
 				{$serverTime}
@@ -64,23 +64,23 @@
 				
 				<a href="?page=cell" class="right-tip" data-tips=" System " id="navcell"></a>		
 				<a href="?page=sector" class="right-tip" data-tips=" Sektor " id="navsektor"></a>
-				<a href="?page=galaxy" class="right-tip" data-tips=" Galaxie [k] " id="navgalaxie"></a>		
+				<a href="?page=galaxy" class="right-tip" data-tips=" Galaxie {if $enableKeybinds}[k] {/if}" id="navgalaxie"></a>
 
-				<a href="?page=buildings" class="right-tip" data-tips=" Bauhof [g] " id="navbuildings"></a>
-				<a href="?page=research" class="right-tip" data-tips=" Forschung [f] " id="navresearch"></a>
-				<a href="?page=shipyard" class="right-tip" data-tips=" Schiffswerft [w] " id="navshipyard"></a>
-				<a href="?page=defense" class="right-tip" data-tips=" Waffenfabrik [d] " id="navdefense"></a>
-				<a href="?page=missiles" class="right-tip" data-tips=" Raketensilo [r] " id="navmissiles"></a>
+				<a href="?page=buildings" class="right-tip" data-tips=" Bauhof {if $enableKeybinds}[g] {/if}" id="navbuildings"></a>
+				<a href="?page=research" class="right-tip" data-tips=" Forschung {if $enableKeybinds}[f] {/if}" id="navresearch"></a>
+				<a href="?page=shipyard" class="right-tip" data-tips=" Schiffswerft {if $enableKeybinds}[w] {/if}" id="navshipyard"></a>
+				<a href="?page=defense" class="right-tip" data-tips=" Waffenfabrik {if $enableKeybinds}[d] {/if}" id="navdefense"></a>
+				<a href="?page=missiles" class="right-tip" data-tips=" Raketensilo {if $enableKeybinds}[r] {/if}" id="navmissiles"></a>
 
-				<a href="?page=economy" class="top-tip" data-tips=" Wirtschaft [p] " id="naveconomy"></a>
-				<a href="?page=population" class="top-tip" data-tips=" Bewohner [B] " id="navpopulation"></a>
+				<a href="?page=economy" class="top-tip" data-tips=" Wirtschaft {if $enableKeybinds}[p] {/if}" id="naveconomy"></a>
+				<a href="?page=population" class="top-tip" data-tips=" Bewohner {if $enableKeybinds}[B] {/if}" id="navpopulation"></a>
 		  		<a href="?page=planetoverview" class="top-tip" data-tips=" Planeteninfo " id="navplanetoverview"></a>
 				<a href="?page=techtree" class="top-tip" data-tips=" Technikbaum " id="navtechtree"></a>
 
-				<a href="?page=haven" id="navhaven"></a>				
-				<a href="?page=bookmarks" class="right-tip" data-tips=" Favoriten [v] " id="navfavorite"></a>			
+				<a href="?page=haven" class="top-tip" data-tips=" Raumhafen {if $enableKeybinds}[h] {/if}" id="navhaven"></a>
+				<a href="?page=bookmarks" class="right-tip" data-tips=" Favoriten {if $enableKeybinds}[v] {/if}" id="navfavorite"></a>
 
-				<a href="?page=market" class="bottom-tip" data-tips=" Marktplatz [m] " id="navmarket"></a>
+				<a href="?page=market" class="bottom-tip" data-tips=" Marktplatz {if $enableKeybinds}[m] {/if}" id="navmarket"></a>
 				<a href="?page=crypto" class="bottom-tip" data-tips=" Geheimdienst " id="navcrypto"></a>
 				<a href="?page=recycle" class="bottom-tip" data-tips=" Recycling " id="navrecycle"></a>
             <a href="?page=bunker" class="bottom-tip" data-tips=" Bunker " id="navbunker"></a>
@@ -110,15 +110,15 @@
 		<div id="wf">
 
 			{if $messages > 0}
-				<a href="?page=messages" class="top-tip" data-tips=" {if $messages == 1}{$messages} neue Nachricht [n] {else}{$messages} neue Nachrichten [n] {/if}" id="f_nachricht_aktive"></a>		
+				<a href="?page=messages" class="top-tip" data-tips=" {if $messages == 1}{$messages} neue Nachricht{else}{$messages} neue Nachrichten{/if} {if $enableKeybinds}[n] {/if}" id="f_nachricht_aktive"></a>		
 			{else}			
-				<a href="?page=messages" class="top-tip" data-tips=" Nachrichten [n] "  id="f_nachricht"></a>		
+				<a href="?page=messages" class="top-tip" data-tips=" Nachrichten {if $enableKeybinds}[n] {/if}"  id="f_nachricht"></a>		
 			{/if}	
 			
 			{if $newreports > 0}
-				<a href="?page=reports"  class="top-tip" data-tips=" {if $newreports == 1}{$newreports} neuer Bericht [b] {else}{$newreports} neue Berichte [b] {/if}" id="f_bericht_aktive"></a>
+				<a href="?page=reports"  class="top-tip" data-tips=" {if $newreports == 1}{$newreports} neuer Bericht{else}{$newreports} neue Berichte{/if} {if $enableKeybinds}[b] {/if}" id="f_bericht_aktive"></a>
 			{else}			
-				<a href="?page=reports"  class="top-tip" data-tips=" Berichte [b] " id="f_bericht"></a>
+				<a href="?page=reports"  class="top-tip" data-tips=" Berichte {if $enableKeybinds}[b] {/if}" id="f_bericht"></a>
 			{/if}	
 			
 			<a href="?page=notepad" id="f_notiz"></a>		
