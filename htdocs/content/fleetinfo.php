@@ -130,9 +130,9 @@
 		$pxl = 25 + round($perc * $progrssWidth);
 				
 		echo "<tr>
-			<td style=\"background:#000 url('images/fleetbg.png');\">
-				<div style=\"position:relative;height:80px;\">
-					<div id=\"source\" style=\"position:absolute;left:0px;top:5px;\">";
+			<td style=\"background:black;padding:0\">
+				<div class=\"fleetInfoContainer\">
+					<div id=\"source\" class=\"fleetInfoSource\">";
 					if ($fd->getAction()->visibleSource())
 					{
 						if ($cu->discovered($fd->getSource()->getCell()->absX(),$fd->getSource()->getCell()->absY()))
@@ -153,7 +153,7 @@
 					}
 					echo "<b><span id=\"sourceLabel\">Start</span>:</b> ".date("d.m.Y H:i:s",$fd->launchTime())."
 					</div>
-					<div id=\"target\" style=\"position:absolute;right:0px;top:5px;text-align:right;\">";
+					<div id=\"target\" class=\"fleetInfoTarget\">";
 					if ($cu->discovered($fd->getTarget()->getCell()->absX(),$fd->getTarget()->getCell()->absY()))
 					{
 						echo $fd->getTarget()->smallImage()."<br/>
@@ -167,12 +167,11 @@
 					}
 					echo "<b><span id=\"targetLabel\">Landung</span>:</b> ".date("d.m.Y H:i:s",$fd->landTime())."
 					</div>						
-					<div style=\"position:absolute;left:".$pxl."px;top:17px;\" id=\"fleetProgress\">
+					<div class=\"fleetInfoProgress\" style=\"left:".$pxl."px;\" id=\"fleetProgress\">
 						<img src=\"images/fleetmove.png\" alt=\"Fleet\" />
 					</div>
-					<div style=\"position:absolute;left:270px;top:46px;text-align:center;\">
-						<div style=\"color:".FleetAction::$attitudeColor[$fd->getAction()->attitude()]."\">
-			".$fd->getAction()->name()." [".FleetAction::$statusCode[$fd->status()]."]</div>
+					<div class=\"fleetInfoAction\">
+						<div style=\"color:".FleetAction::$attitudeColor[$fd->getAction()->attitude()]."\">".$fd->getAction()->name()." [".FleetAction::$statusCode[$fd->status()]."]</div>
 						<div id=\"flighttime\"></div>
 					</div>
 				</div>

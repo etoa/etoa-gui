@@ -451,3 +451,34 @@ table.stacktrace td, table.stacktrace th{
 	border: 1px solid #aaa;
 }
  
+.fleetInfoContainer {
+	padding: 3px;
+	position:relative;
+	height:80px;
+	background:#000 url('../../../images/fleetbg.png') no-repeat top center;
+}
+
+.fleetInfoSource {
+	position:absolute;
+	left:5px;
+	top:5px;
+}
+
+.fleetInfoTarget {
+	position:absolute;
+	right:5px;
+	top:5px;
+	text-align:right;
+}
+
+.fleetInfoProgress {
+	position:absolute;
+	top:17px;
+}
+
+.fleetInfoAction {
+	position:absolute;
+	left:270px;
+	top:46px;
+	text-align:center;
+}
