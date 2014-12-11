@@ -29,7 +29,7 @@
       <v comment="Runde-Name" type="text">Runde X</v>
     </item>
     <item name="roundurl" cat="1" base="yes">
-      <v comment="Runden-URL" type="text">http://roundx.live.etoa.net</v>
+      <v comment="Runden-URL" type="text">http://roundx.game.etoa.net</v>
     </item>
     <item name="loginurl" cat="1" base="yes">
       <v comment="Login-URL (leerlassen für lokales Login)" type="text">http://etoa.ch</v>
@@ -86,10 +86,8 @@
       <p1 comment="Aufbewahrungsdauer Berichte im Papierkorb" type="text">42</p1>
     </item>
     <item name="referers" cat="1" base="yes">
-      <v comment="Zugelassene Referers" type="textarea">http://roundx.live.etoa.net&#xD;
-http://dev.etoa.net&#xD;
-http://etoa.ch&#xD;
-http://www.etoa.ch</v>
+      <v comment="Zugelassene Referers" type="textarea">http://roundx.game.etoa.net&#xD;
+http://etoa.ch</v>
     </item>
     <item name="under_construction" cat="1">
       <v comment="Seite die in Bearbeitung sind (DB Updates, ...)" type="textarea"></v>
