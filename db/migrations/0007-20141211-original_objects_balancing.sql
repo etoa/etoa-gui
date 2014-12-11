@@ -1,3 +1,4 @@
+TRUNCATE TABLE `alliance_buildings`;
 INSERT INTO `alliance_buildings` VALUES 
 (1,'Zentrale','','Die Zentrale ist das Hauptgebäude der Allianzbasis. Baut dieses aus um weitere Objekte zu erhalten.',100000,100000,70000,35000,50000,3600,2.00,4,1,0,0),
 (2,'Handelszentrum','','Das Handelszentrum ermöglicht den risikofreien Handel unter den Allianzmitgliedern. Dieser erlaubt es die Angebote auf einem abgeschotteten Markt anzubieten, auf welchen nur Allianzmitglieder zutritt haben.',300000,250000,350000,35000,0,18000,2.00,10,1,1,1),
@@ -5,6 +6,8 @@ INSERT INTO `alliance_buildings` VALUES
 (4,'Flottenkontrolle','','Koordiniert die Flotten einer Allianz. Je weiter die Allianzflottenkontrolle ausgebaut ist, desto mehr Teilflotten können an einem Allianzangriff teilnehmen.',100000,75000,50000,25000,0,15000,2.01,99,1,1,1),
 (5,'Forschungslabor','','Ermöglicht das Erforschen von Allianztechnologien.',60000,90000,45000,35000,0,15000,2.00,99,1,1,1),
 (6,'Kryptocenter','','Das Kryptocenter ermöglicht das Entschlüsseln und Mithören gegnerischer Flottensignale.',250000,2250000,250000,3250000,0,20000,3.00,10,1,1,2);
+
+TRUNCATE TABLE `alliance_technologies`;
 INSERT INTO `alliance_technologies` VALUES 
 (4,'Tarntechnik','In Zeiten einer neuen Ära mit grösseren Flottenverbänden bestehend aus mehreren Teilflotten, reichte die gewöhnliche Tarntechnik nicht mehr aus. So setzten sich Spieler zusammen und teilten ihr Wissen und ihre Ressourcen, um auch diese Hürde zu überwinden.\r\nJe höher diese Technologie erforscht ist, desto länger bleiben Allianzverbände für den Gegner unentdeckt.','In Zeiten einer neuen Ära mit grösseren Flottenverbänden bestehend aus mehreren Teilflotten, reichte die gewöhnliche Tarntechnik nicht mehr aus. So setzten sich Spieler zusammen und teilten ihr Wissen und ihre Ressourcen, um auch diese Hürde zu überwinden.\r\nJe höher diese Technologie erforscht ist, desto länger bleiben Allianzverbände für den Gegner unentdeckt.',75000,25000,50000,50000,50000,900,1.60,50,1,0,0),
 (5,'Waffentechnik','','',0,0,0,0,0,0,1.00,50,1,5,2),
@@ -12,6 +15,8 @@ INSERT INTO `alliance_technologies` VALUES
 (7,'Panzerung','','',0,0,0,0,0,0,1.00,50,1,5,2),
 (8,'Spionagetechnik','','Durch den Zusammenschluss verschiedenster Forscher aus jeglichen Galaxien ergaben sich neue Möglichkeiten der Spionage.',50000,25000,75000,25000,25000,12600,1.60,50,1,4,3),
 (9,'Antriebstechnologie','','',0,0,0,0,0,0,1.00,0,1,5,11);
+
+TRUNCATE TABLE `buildings`;
 INSERT INTO `buildings` VALUES 
 (1,'Titanmine',2,'Produziert Titan.','Produziert Titan.',100,45,0,0,0,0,1.90,0.20,10,0,0,65,0,0,0,0,0,1.50,0,0,0,0,0,0.00,0,50,2,1,0,0,0,0,0,0),
 (2,'Siliziummine',2,'Produziert Silizium.','Produziert Silizium.',150,50,0,0,0,0,1.90,0.20,20,0,0,0,50,0,0,0,0,1.50,0,0,0,0,0,0.00,0,50,2,1,1,0,0,0,0,0),
@@ -40,6 +45,8 @@ INSERT INTO `buildings` VALUES
 (25,'Raketensilo',1,'Im Raketensilo werden Raketen gebaut und gestartet, um gegnerische Verteidigungsanlagen zu beschädigen.','Im Raketensilo werden Raketen gelagert und gestartet, mit denen man gegnerische Verteidigungsanlagen beschädigen oder ausser Gefecht setzen kann, sowie Raketen um gegnerische Raketen abzufangen. Je grösser das Silo ist, desto mehr Raketen können darin gelagert werden.',100000,50000,70000,20000,0,20000,1.40,0.00,50000,0,300,0,0,0,0,0,0,1.40,0,0,0,0,0,0.00,0,20,2,1,10,0,0,0,0,0),
 (26,'Rohstoffbunker',1,'In diesem Bunker kann im Falle eines Angriffs ein Teil der Rohstoffe versteckt werden.','In diesem Bunker kann im Falle eines Angriffs ein Teil der Rohstoffe versteckt werden, so dass sie nicht geklaut werden können. Das Verstecken geschieht automatisch. Auf Stufe 1 können 8000 Resourcen versteckt werden, pro Stufe verdoppelt sich diese Anzahl.',5000,1000,0,2000,0,0,2.00,0.20,0,0,0,0,0,0,0,0,0,0.00,0,0,0,0,0,2.00,0,15,0,1,8,0,0,8000,0,0),
 (27,'Flottenbunker',1,'','',20000,10000,0,5000,0,0,2.00,0.50,0,0,0,0,0,0,0,0,0,0.00,0,0,0,0,0,2.00,0,12,0,1,9,0,0,0,5,2500);
+
+TRUNCATE TABLE `building_requirements`;
 INSERT INTO `building_requirements` VALUES 
 (1,1,6,0,1),
 (2,2,6,0,1),
@@ -91,11 +98,15 @@ INSERT INTO `building_requirements` VALUES
 (63,27,0,3,5),
 (64,27,0,25,3),
 (65,27,0,11,5);
+
+TRUNCATE TABLE `building_types`;
 INSERT INTO `building_types` VALUES 
 (1,'Allgemeine Gebäude',1,'#ffffff'),
 (2,'Rohstoffgebäude',2,'#ffffff'),
 (3,'Kraftwerke',3,'#ffffff'),
 (4,'Speicher',4,'#ffffff');
+
+TRUNCATE TABLE `defense`;
 INSERT INTO `defense` VALUES 
 (1,'SPICA Flakkanone','Einfache und billige Abwehrwaffe.','Einfache und billige Abwehrwaffe.\r\nSie wird auf Gebäuden befestigt und braucht daher keine Felder. Sie ist aber nicht sehr effektiv. Darum ist es besser, sie nur am Anfang und auch dann nur in grossen Mengen zu bauen.',800,475,0,425,0,0,1,0,0,0,1,1,0,300,150,250,0,0,0,2,1000000,1.700),
 (2,'POLARIS Raketengeschütz','Die Raketen dieses Geschützes verfolgen ihr Ziel mittels Lasersteuerung.','Um den gegnerischen Schiffen mit Raketen beizukommen, wurde dieses Raketengeschütz entwickelt. Es schiesst kleinere Raketen ab, welche dann das Ziel bis zur Zerstörung verfolgen. Es ist jedoch nicht sehr stark und dient vor allem zu Beginn als gute und billige Verteidigungswaffe.',1000,700,300,500,0,0,3,0,0,0,1,1,2,450,325,350,0,0,0,2,1000000,2.500),
@@ -113,10 +124,14 @@ INSERT INTO `defense` VALUES
 (15,'POLARIS Raketengeschütz M','Die Raketen dieses Geschützes verfolgen ihr Ziel mittels Lasersteuerung. Mobile Version.','Um den gegnerischen Schiffen mit Raketen beizukommen, wurde dieses Raketengeschütz entwickelt. Es schiesst kleinere Raketen ab, welche dann das Ziel bis zur Zerstörung verfolgen. Es ist jedoch nicht sehr stark und dient vor allem zu Beginn als gute und billige Verteidigungswaffe. Kann auf andere Planeten transportiert werden.',1000,700,300,500,0,0,3,0,0,0,1,1,2,450,325,350,0,0,10,2,1000000,2.500),
 (16,'SPICA Flakkanone M','Einfache und billige Abwehrwaffe. Mobile Version.','Einfache und billige Abwehrwaffe.\r\nSie wird auf Gebäuden befestigt und braucht daher keine Felder. Sie ist aber nicht sehr effektiv. Darum ist es besser, sie nur am Anfang und auch dann nur in grossen Mengen zu bauen. Kann auf andere Planeten transportiert werden.',800,475,0,425,0,0,1,0,0,0,1,1,0,300,150,250,0,0,10,2,1000000,1.700),
 (17,'PHOENIX Reparaturplattform M','Diese Anlage repariert bei einem Kampf jede Runde eine gewisse Anzahl an Strukturpunkten, kann jedoch selbst auch zerstört werden. Mobile Version.','Diese Anlage repariert bei einem Kampf jede Runde eine gewisse Anzahl an Strukturpunkten, kann jedoch selbst auch zerstört werden.\r\nDie grundlegende Idee, welche zur Entwicklung dieser Reparaturplattform führte, fanden die Serrakin in den Mutterschiffen der Cardassianer. Kann auf andere Planeten transportiert werden.',6500,3500,3000,1900,0,0,0,0,0,0,1,1,10,3150,1900,1700,1000,0,10,3,1000000,14.900);
+
+TRUNCATE TABLE `def_cat`;
 INSERT INTO `def_cat` VALUES 
 (1,'Schilder',1,'#0080FF'),
 (2,'Geschütze',0,'#00ff00'),
 (3,'Spezialanlagen',2,'#B048F8');
+
+TRUNCATE TABLE `def_requirements`;
 INSERT INTO `def_requirements` VALUES 
 (35,12,0,16,8),
 (2,2,10,0,3),
@@ -168,16 +183,22 @@ INSERT INTO `def_requirements` VALUES
 (74,17,0,25,3),
 (76,17,0,19,3),
 (83,17,0,12,8);
+
+TRUNCATE TABLE `obj_transforms`;
 INSERT INTO `obj_transforms` VALUES 
 (1,14,79,0,0,0,0,0,0,0.0,1.0,1),
 (2,15,81,0,0,0,0,0,0,0.0,1.0,1),
 (3,16,80,0,0,0,0,0,0,0.0,1.0,1),
 (4,17,82,0,0,0,0,0,0,0.0,1.0,1);
+
+TRUNCATE TABLE `missiles`;
 INSERT INTO `missiles` VALUES 
 (1,'PHOBOS Rakete','Zerstört gegnerische Verteidigung.','Diese Rakete kann auf Verteidigungsanlagen eines feindlichen Planeten abgefeuert werden und verursacht an diesen einen gewissen Schaden, so dass einige Anlagen unter Umständen zerstört werden. Diese Raketen haben eine begrenzte Reichweite, treffen ihr Ziel aber immer.',18000,6000,5000,15000,0,25000,100000,3000,0,0,1,1),
 (2,'GEMINI Abfangrakete','Abfangraketen schiessen selbstständig gegnerische Raketen ab, die diesen Planeten anfliegen.','Bei einem Raketenangriff können diese Raketen jeweils eine fremde Rakete zerstören. Sie lösen sich selbständig aus und bieten so einen guten Schutz gegen anfliegende Raketen. Gegen feindliche Flotten können sie jedoch nichts ausrichten. Ausserdem ist die Rakete nach dem Abfangen verbraucht und muss jeweils wieder neu gekauft werden.',9000,18000,6000,4000,2000,0,0,0,0,1,0,1),
 (3,'VEGA EMP-Rakete','Kann ein gegnerisches Gebäude temporär deaktivieren.','Diese Rakete kann angreifen um ein gegnerisches Gebäude temporär ausser Kraft zu setzen. Sie richtet an der Verteidigung aber keinen Schaden an und kann ein Gebäude auch nicht vollständig zerstören! Die Rakete wird beim EMP-Angriff verbraucht und hat auch nur eine begrenzte Reichweite.',18000,6000,5000,15000,0,0,90000,3000,300,0,1,1),
 (4,'VIRGO Abfangrakete','Verbesserte Abfangrakete; schiesst selbstständig zwei gegnerische Raketen ab.','Bei einem Raketenangriff können diese Raketen jeweils zwei fremde Rakete zerstören. Sie lösen sich  selbständig aus und bieten so einen guten Schutz. Gegen feindliche Flotten können sie jedoch nichts ausrichten. Ausserdem ist die Rakete nach dem Abfangen verbraucht und muss jeweils wieder neu gekauft werden.',15000,23000,9000,4000,2000,0,0,0,0,2,0,1);
+
+TRUNCATE TABLE `missile_requirements`;
 INSERT INTO `missile_requirements` VALUES 
 (1,2,25,0,1),
 (2,2,0,25,1),
@@ -192,6 +213,8 @@ INSERT INTO `missile_requirements` VALUES
 (12,3,0,25,4),
 (13,3,0,17,8),
 (14,1,0,8,8);
+
+TRUNCATE TABLE `planet_types`;
 INSERT INTO `planet_types` VALUES 
 (1,'Erdähnlicher Planet',1,'Dieser Planet hat eine sehr ausgeglichene Umwelt und ähnelt unseren ehemaligen Erde am meisten. Da der Mensch ein Gewohnheitstier ist, sind erdähnliche Planeten ideal für das Heranwachsen einer Zivilisation geeignet, da die notwendigen Voraussetzungen für alle Bereiche gegeben sind.',1.20,0.90,1.30,1.05,1.40,1.10,1.20,1.00,1.00,0,1),
 (2,'Wasserplanet',1,'Die Oberfläche dieses Planeten besteht zum grössten Teil aus Ozeanen. Die wenigen Landteile sind nicht wirklich geeignet für grossflächigen Abbau von Mineralen, dafür kann aus dem Wasser Tritium gewonnen werden. Ebenfalls ist durch das viele vorhandene Wasser die Hauptgrundlage für Nahrungsabbau gelegt, ausserdem ist der Planet bestens geeignet, mit Hilfe von Wasserkraftwerken grosse Mengen an Energie zu erzeugen.',1.00,1.00,1.05,1.20,1.00,1.20,1.00,1.00,0.85,0,1),
@@ -200,6 +223,8 @@ INSERT INTO `planet_types` VALUES
 (5,'Dschungelplanet',1,'Riesige Wälder wachsen auf diesem Planeten, dessen Klima sehr gut für das Wachstum der Umwelt ist. Daher kann viel Nahrung für die Bevölkerung geerntet werden, welche sich auf einem Dschungelplaneten auch sonst sehr wohl fühlt.',0.90,1.20,1.15,1.20,1.40,1.00,1.10,1.00,1.00,0,1),
 (6,'Gebirgsplanet',1,'Den Namen hat dieser Planetentyp durch seine felsige Oberfläche erhalten. Ein Abbau von Erzen bietet sich optimalerweise an, hingegen ist der Abbau von Nahrung und die Herstellung von PVC mit Aufwand verbunden, da die Umgebung deren Anforderungen nicht gerecht wird.',1.55,1.00,0.90,1.00,0.90,1.10,0.90,1.00,0.90,0,1),
 (7,'Gasplanet',0,'Dieser Planet ist unbewohnbar, da er keine feste Oberfläche hat, sondern aus lauter gasartigen Nebeln besteht. Seine Gase lassen sich jedoch mit Hilfe von Gassaugern zu Tritium umwandeln.',0.50,0.60,0.40,3.00,0.30,1.20,0.30,1.20,1.20,1,1);
+
+TRUNCATE TABLE `races`;
 INSERT INTO `races` VALUES 
 (1,'Terraner','Die Terraner sind eine eher jüngere Rasse, deren Vorfahren ursprünglich vom Planeten Erde kamen. Die Menschen sind besonders gut in der Herstellung von Plastik und dem Anbau von Nahrung. Ihre Schwächen liegen im Abbau von Kristallen. ','Terraner bauen Ressourcen gleichmässig gut ab und haben relativ starke Schiffe.','terranischer','terranisches','terranische','Präsident der Terraner',1.00,1.00,1.00,1.15,0.90,1.25,0.95,1.40,1.00,1.00,1),
 (2,'Andorianer','Die Andorianer sind zugleich humanoid und insektoid. Sie haben graublaue Haut und weisses Haar. Auf ihrem Kopf haben sie zwei Fühler, die ihnen zur feinfühligen sinnlichen Wahrnehmung dienen. Ihre Stärke ist die Produktion künstlicher Stoffe wie Plastik. Ihre Schwäche ist der schlechte Umgang mit Energie.','Der Andorianer verfügt über grosses Wissen in der PVC-Herstellung','','','','Schwarmführer der Andorianer',1.00,1.00,1.00,1.00,1.10,1.60,1.00,1.00,1.00,1.40,1),
@@ -211,6 +236,8 @@ INSERT INTO `races` VALUES
 (7,'Vorgonen','Die Vorgonen sind eine Rasse die auf den Schiffbau ausgelegt ist. Entsprechend sind sie vor allem im Beschaffen von Treibstoff und Kunststoff für den Bau der Schiffe gut.','Vorgonen können Schiffe ohne Start und Landezeit bauen.','','','','Architekt der Vorgonen',1.00,1.00,1.10,0.95,0.95,1.40,1.20,1.10,1.10,1.00,1),
 (9,'Cardassianer','Seit einer grossen Hungersnot haben sich die Cardassianer auf die Nahrungsherstellung spezialisiert, haben aber den Abbau von Erzen vernachlässigt.\r\nIhre andere Stärke liegt in der Fähigkeit der Mutterschiffe zur Regeneration von ganzen Flottenverbänden.','Spezialist in der Nahrungsherstellung','','','','Zentralrat der Cardassianer',1.00,1.00,1.00,0.90,0.90,1.25,1.00,1.60,1.10,1.30,1),
 (10,'Serrakin','Die Serrakin sind eine sehr friedliche Rasse, welche sich nicht gerne in grosse Auseinandersetzungen einmischt. Sie weiss sich aber bei Angriffen sehr gut zu wehren, da die Verteidigungstechnologie ihr Spezialgebiet ist.','Der Serrakin setzt auf die Verteidigung seiner Kolonien','serrakinischer','','serrakinische','Beschützer der Serrakin',1.00,1.00,0.90,1.15,1.15,1.10,0.95,1.10,1.40,1.00,1);
+
+TRUNCATE TABLE `ships`;
 INSERT INTO `ships` VALUES 
 (1,'UNUKALHAI Transportschiff',1,'Dies ist ein grosses Transportschiff, dessen riesige Lagerräume alle Arten von Waren aufnehmen können. ','Nachdem die Algol Transportschiffe sich mit einem ungeahnten Erfolg im ganzen Universum verbreitet hatten, wurde das Unukalhai Transportschiff konzipiert, welches eine grössere Lagerkapzität aufweist. Da man die Konvois mit Antares schützte, war auch für die Unukalhais keine grössere Bewaffnung nötig; man konzentrierte sich ausserdem vor allem auch auf die grössere Sicherheit für die Navigationssysteme, weil diese bei den Algols viel wegen kosmischer Strahlung ausgefallen sind.',6000,1400,0,2100,0,0,0,45,70,10,0,65000,0,1,2850,600,300,1,1,0,'transport,fetch,position,attack,flight,support,alliance',0.30,0,400,100,27,0,1,0,2,0,0,0,0,0,1.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,9.500,0,0),
 (2,'ANTARES Jäger',1,'Kleines Kampfschiff, ideal für die Begleitung kleinerer Konvois. Auch geeignet für Raubzüge und Übergriffe auf schwach befestigte Planeten.','Der Antares Jäger wurde als erster kampftauglicher Jäger hergestellt, um die Rohstoffkonvois vor Piraten zu schützen. Sie eignen sich zu Beginn als Begleitschutz, aber ihre Technologie ist nicht sehr weit entwickelt, deshalb sind die Herstellungskosten im Vergleich mit ihrer Leistung relativ hoch. Die Antares wurden nicht für grössere Angriffe auf befestigte Planeten konzipiert, auch deshalb werden sie von den wenigsten Armeen in grösseren Mengen genutzt.',750,575,50,420,0,0,0,5,4,1,0,500,0,1,380,30,25,1,1,0,'transport,position,attack,flight,support,alliance',0.30,0,330,60,153,0,1,0,1,1,0,0,0,0,1.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,1.795,0,0),
@@ -294,6 +321,8 @@ INSERT INTO `ships` VALUES
 (95,'GOMEISA Gassauger',1,'Gassauger der Vorgonen.','Die immer grösser werdenden Flotten der Vorgonen führten zu Tritiumknappheit. Zum Beheben dieses Problems wurde der Gomeisa Gassauger entwickelt. Dieser Gassauger kann in kurzer Zeit von umliegenden Gasplaneten eine grössere Menge an Tritium abbauen. ',60000,28000,25000,60000,0,0,0,38,5,8,0,40000,0,3,1500,950,1450,1,1,0,'transport,position,attack,collectcrystal,collectfuel,flight,support,alliance',0.50,0,800,1000,5,7,1,0,4,0,0,0,0,0,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,173.000,0,0),
 (85,'KRISTNAS Explorer',1,'Frohe Festtage!','Frohe Festtage!',0,0,0,0,0,0,0,45,70,10,0,25000,0,1,20000,600,300,0,0,0,'transport,fetch,position,attack,collectmetal,collectcrystal,collectfuel,analyze,explore,flight,support,alliance',0.50,0,10000,3000,100,0,1,0,3,0,1,1,3,10000,10.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.000,0,0),
 (96,'Jubiläumskreuzer',1,'Zur Feier von Etoa\'s 10jährigem Bestehen wurde dieses Schiff kreiert.','Beschreibung folgt...',100000000,50000000,60000000,60000000,0,0,0,8000,80000,40000,0,6000000,0,990,20000,1750,1250,0,0,13,'flight',0.30,0,42500000,45000000,42750000,0,1,0,5,0,0,0,0,0,1.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,270000.000,0,0);
+
+TRUNCATE TABLE `ship_cat`;
 INSERT INTO `ship_cat` VALUES 
 (1,'Kriegsschiff',2,'#0080FF'),
 (2,'Ziviles Schiff',1,'#00FF00'),
@@ -301,6 +330,8 @@ INSERT INTO `ship_cat` VALUES
 (4,'Rassenspezifisches Schiff',3,'#f00'),
 (5,'NPC-Schiff',6,'#F07902'),
 (6,'Allianzschiff',5,'#ffffff');
+
+TRUNCATE TABLE `ship_requirements`;
 INSERT INTO `ship_requirements` VALUES 
 (1,1,9,0,2),
 (2,1,11,0,1),
@@ -577,6 +608,8 @@ INSERT INTO `ship_requirements` VALUES
 (366,59,0,5,10),
 (368,64,0,8,10),
 (379,67,0,5,10);
+
+TRUNCATE TABLE `sol_types`;
 INSERT INTO `sol_types` VALUES 
 (1,'Gelber Stern',1.35,1.30,1.10,1.00,0.90,1.10,1.10,1.10,'Die gelben Sterne gehören zu der Kategorie \"mittelgrosse Sterne\". Das Alter solcher Gelben Sterne kann extrem variieren; sie können zwischen einigen Jahrtausenden bis hin zu Jahrmillionen alt sein.<br>Generell gilt jedoch, dass auf Gelben Sternen gemässigte und gute Lebensbedingungen herrschen. Ausserdem ist die Geodiversität relativ gross, was den Abbau von Metallen genauso fördert wie die Entwicklung von Chemikalien. Dank dem mineralhaltigen Boden ist sogar ein gewisser Kristallabbau möglich.<br>Einzig der Nahrung scheint der mineralienhaltige Boden nicht ganz so gut zu bekommen...',1.00,1),
 (2,'Blauer Stern',1.00,1.30,1.00,1.00,1.05,0.90,1.00,1.00,'Diese Art von Sternen erscheint dem Beobachter meist blau; das liegt daran, dass im Innern des Sterns eine gewaltige Hitze herrscht, vergleichbar mit der blauen Färbung einer Flamme beim Schweissen.<br>Durch die gigantischen Hitzewellen sind die Lebensbedingungen im Umfeld Blauer Sterne für die verschiedenen Völker nicht optimal. Einige jedoch haben sich inzwischen dem heissen Klima anpassen können und nutzen genau dieses zur Verschmelzung von Kristallinem Material, um qualitativ hochstehende Kristallite herzustellen.<br>Bisher wollte es jedoch noch keinem Volk so richtig gelingen, aus dem heissen Klima einen weiteren Nutzen in Sachen Industrie zu ziehen. Im Gegenteil, meist ist die Stromproduktion und das Wachstum der Bevölkerung tiefer als in anderen Sternsystemen.',1.00,1),
@@ -585,6 +618,8 @@ INSERT INTO `sol_types` VALUES
 (5,'Violetter Stern',1.20,0.90,1.10,1.00,1.20,1.10,1.00,1.00,'Violette Sterne sind sehr junge Sterne, die sich meistens innerhalb von Gaswolken befinden. Die für den Betrachter violette Färbung der Sonne entsteht durch die vielen verschiedenen Nebel, welche das Sonnenlicht jeweils verschieden brechen.<br>Weil die Sterne noch ziemlich jung sind, ist noch nicht viel über sie bekannt; die Beobachtungen der verschiedenen Völker haben erst begonnen.',0.90,1),
 (6,'Schwarzer Stern',1.00,1.00,1.00,1.00,1.00,1.00,1.00,0.90,'Praktisch keiner weiss etwas über schwarze Sterne, da sie erst vor kurzem durch eine neuartige Objektivtechnologie sichtbar gemacht werden konnten.<br>Erst einzelne überragende Forscher haben angefangen, sich an diese Mysterien im All heranzuwagen.<br>Ungenannte Quellen munkeln jedoch, dass die schwarze Färbung durch aktive schwarze Löcher auftritt, was die Völker natürlich davor abschreckt, mehr über die Schwarzen Sterne rauszufinden.',1.00,1),
 (7,'Grüner Stern',1.40,1.10,1.00,1.00,1.20,1.00,1.00,1.10,'Grüne Sterne wirken auf den ersten Blick giftig - und so ganz unrecht ist das auch nicht. Durch Gase aus dem Inneren der Sterne werden immer wieder Epidemien ausgelöst, die Teile der Bewohner von Grünen Sternen dahinraffen.<br>Entgegen den unwirtlichen Lebensbedingungen wirken sich die Gase und die Geostruktur positiv auf die Steingefüge der Sterne aus.<br>Es verwundert daher nicht, dass in Grünen Sternen oftmals Raffinerien, Erzwerke und Metallverarbeitungsanlagen anzutreffen sind.',1.00,1);
+
+TRUNCATE TABLE `specialists`;
 INSERT INTO `specialists` VALUES 
 (1,'Admiral','Der Flottenadmiral ist ein kriegserfahrener Veteran und meisterhafter Stratege. Auch im heissesten Gefecht behält er im Gefechtsleitstand den Überblick und hält Kontakt mit den ihm unterstellten Admirälen. Ein weiser Herrscher kann sich auf seine Unterstützung im Kampf absolut verlassen und somit mehr Raumflotten gleichzeitig und schneller ins Gefecht führen.',1,100000,100000,100000,100000,100000,100000,7,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.10,3,1.00,0,0,1.00,1.00),
 (2,'Ingenieur','Der Ingenieur ist ein Spezialist für besonders durchdachte und stabile Verteidigungssysteme. Durch seine Mithilfe können Verteidigungsanlagen schneller und günstiger produziert werden. Nach einem Kampf kann er auch schwer beschädigte Anlagen wieder reparieren.',1,100000,100000,100000,100000,100000,100000,7,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,0.80,1.00,1.00,0.90,1.00,1.00,1.00,0,1.40,0,0,1.00,1.00),
@@ -595,6 +630,8 @@ INSERT INTO `specialists` VALUES
 (7,'Meisterhändler','Durch das Verhandlungsgeschick des Meisterhändlers fallen im Markt keine zusätzlichen Kosten an, er hat weniger Handelsbeschränkungen und seine Handelsschiffe fliegen schneller als alle anderen.',1,100000,100000,100000,100000,100000,100000,7,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,0,1.00,0,0,6.00,0.00),
 (8,'Chemiker','Der Chemiker kennt sich mit der Herstellung synthetischer und radioaktiver Rohstoffe aus. Durch sein Wissen im Bereich chemischer Herstellungsverfahren kann die Produktion von PVC und Tritium merklich gesteigert werden.',1,100000,100000,100000,100000,100000,100000,7,1.00,1.00,1.15,1.10,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,0,1.00,0,0,1.00,1.00),
 (0,'Nulldummy','Nicht löschen',0,0,0,0,0,0,0,14,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,0,1.00,0,0,1.00,1.00);
+
+TRUNCATE TABLE `technologies`;
 INSERT INTO `technologies` VALUES 
 (7,'Spionagetechnik',4,'Je höher die Spionagetechnik ist, desto mehr können Spionagesonden über gegnerische Planeten herausfinden.','Spionage ist die Auskundschaftung und Erlangung von fremden, wohlgehüteten Geheimnissen oder Wissen von fremden Planeten. Die erlangten Informationen werden dann in den eigenen wirtschaftlichen, politischen oder militärischen Machtbereich eingeführt, ohne dass eine eigenständige Erforschung erfolgen müsste. Annähernd sämtliche Imperien bedienen sich der Spionage oder \\\"nachrichtendienstlicher Mittel\\\", um andere Völker 
 (unabhängig der feindseligen oder freundlichen Einstellung zum eigenen Volk) auszuspionieren.\r\nEine weitere nützliche Eigenschaft der Spionagetechnik ist das Enttarnen von feindlichen Angriffen, welche mit höherer Spionagetechnik schneller vonstatten geht.',750,370,150,520,0,0,1.50,50,1,1,1),
@@ -627,6 +664,8 @@ INSERT INTO `technologies` VALUES
 (23,'Gentechnik',3,'Durch die Manipulierung der Gene ist es möglich, die Leistung der Arbeiter zu steigern und so die Bauzeit zu verringern.','Den Forschern ist ein absoluter Durchbruch im Bereich Genforschung gelungen. Bisher waren alle genmanipulierten Arbeiterversuche fehlgeschlagen und die meisten Versuchsobjekte überlebten dieses Experiment nicht. Doch nun gelang mit Hilfe von Hochpräzisionsmaschinen eine genetische Veränderung, sodass die Arbeiter zu höheren Leistungen fähig sind.\r\nDies hat zur Folge, dass die Bauzeit von jeglichen Produkten nochmals gesenkt werden kann.\r\nDiese revolutionäre Errungenschaft hat aber ihren Preis, denn der Eingriff ist extrem zeit- und kostenaufwändig. Viele Wissenschaftler sind sich aber dennoch einig, dass es sich allemal lohnt, diese Technologie zu verbessern und zu perfektionieren.',95000000,57000000,36100000,38000000,19000000,0,1.85,8,1,6,0),
 (24,'Raketentechnik',3,'Das Wissen um diese Technologie in Verbindung mit dem Raketensilo ermöglichen es, Raketen zu konstruieren.','Damit Raketen eingesetzt werden können, muss zuerst die Raketetechnik erforscht sein. Je höher die Raketentechnik erforscht ist, desto bessere und effektivere Raketen können gebaut werden.',30000,60000,400000,20000,0,0,1.20,10,1,6,1),
 (25,'Computertechnik',4,'Mit Computern können Forscher komplexe Gleichungssysteme lösen, um genauere Flugbahnen zu berechnen.','Mit Hilfe der Computerwissenschaft können Forscher komplexe Gleichungssysteme lösen, um damit zum Beispiel genaue Flugbahnen zu berechnen. Dies kann zu einem Vorteil in der gegnerischen Flottenüberwachung führen oder eine bessere Steuerbarkeit von Raketen ermöglichen.',500,5000,0,3000,0,0,1.30,15,1,4,1);
+
+TRUNCATE TABLE `tech_requirements`;
 INSERT INTO `tech_requirements` VALUES 
 (1,3,8,0,3),
 (2,4,8,0,4),
@@ -670,6 +709,8 @@ INSERT INTO `tech_requirements` VALUES
 (45,24,0,14,10),
 (46,25,0,3,5),
 (47,25,13,0,6);
+
+TRUNCATE TABLE `tech_types`;
 INSERT INTO `tech_types` VALUES 
 (1,'Antriebstechniken',1,'#ffffff'),
 (2,'Kriegstechnologien',2,'#ffffff'),
