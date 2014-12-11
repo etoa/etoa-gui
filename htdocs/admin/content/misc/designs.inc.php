@@ -225,7 +225,8 @@
 		'userPoints' => 'Punkte des Spielers',
 		'isAdmin' => 'Ist wahr falls der Spieler ein Admin ist',
 		'buddyreq' => 'Ist wahr falls Freundschaftsanfragen vorhanden sind',
-		'infoText' => 'InGame Infotext, falls definiert'
+		'infoText' => 'InGame Infotext, falls definiert',
+		'enableKeybinds' => 'Ist wahr wenn die Tastaturnavigation aktiviert ist'
 	));
 	
 	$tpl->assign('additionalCommonCssFiles', [
