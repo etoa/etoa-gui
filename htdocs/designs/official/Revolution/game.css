@@ -450,4 +450,43 @@ table.stacktrace td, table.stacktrace th{
 	text-align: left;
 	border: 1px solid #aaa;
 }
- 
+
+/*
+* Fleet info box
+*/
+
+.fleetInfoContainer .infoboxcontent {
+	background:#000 url('../../../images/fleetbg.png') no-repeat top center!important;
+	padding:3px!important;
+}
+
+.fleetInfoWrap {
+	padding: 0px;
+	position:relative;
+	width: 100%;
+}
+
+.fleetInfoSource {
+	width:33%;
+	display:inline-block;
+}
+
+.fleetInfoAction {
+	width:34%;
+	display:inline-block;
+	text-align:center;
+}
+
+.fleetInfoTarget {
+	width:33%;
+	display:inline-block;
+	text-align:right;
+}
+
+.fleetInfoProgress {
+	position:absolute;
+	top:17px;
+	width: 16px;
+	height: 16px;
+	background: url('../../../images/fleetmove.png');
+}
