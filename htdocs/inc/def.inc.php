@@ -285,7 +285,6 @@
 	// Nahrung Taxe
 	define("MARKET_FOOD_FACTOR", RuntimeDataStore::get('market_rate_4', 1));
 	
-	
 	// Mindestpreisgrenze der Schiffe 1=100%
 	define("SHIP_PRICE_FACTOR_MIN", $cfg->ship_price_factor_min->v);
 	
