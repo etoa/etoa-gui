@@ -187,7 +187,8 @@
 				FROM
 					wormholes
 				WHERE
-					target_id>'0'
+					persistent=0
+					AND target_id>'0'
 					AND changed<".($time-WH_UPDATE_AFFECT_TIME)."
 				ORDER BY
 					RAND()
