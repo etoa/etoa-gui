@@ -31,6 +31,10 @@
 	// Kosten an Tritium pro Kryptoanalyse
 	define("CRYPTO_FUEL_COSTS_PER_SCAN", $cfg->crypto_fuel_costs_per_scan->v);
 	
+	define("CRYPTO_DEFAULT_COOLDOWN", $cfg->value("cryptocenter"));
+	define("CRYPTO_COOLDOWN_REDUCTION_PER_LEVEL", $cfg->param1("cryptocenter"));
+	define("CRYPTO_MIN_COOLDOWN", $cfg->param2("cryptocenter"));
+	
 	// BEGIN SKRIPT //
 
 	echo "<form action=\"?page=$page\" method=\"post\">";
@@ -62,7 +66,7 @@
 			echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
 			
 			// Calculate cooldown
-			$cooldown = max($cfg->param2("cryptocenter"),$cfg->value("cryptocenter") - ($cfg->param1("cryptocenter")*($cryptoCenterLevel-1)));
+			$cooldown = max(CRYPTO_MIN_COOLDOWN, CRYPTO_DEFAULT_COOLDOWN - (CRYPTO_COOLDOWN_REDUCTION_PER_LEVEL*($cryptoCenterLevel-1)));
 			if ($cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID, $cu->id) > time())
 			{
 				$status_text = "Bereit in <span id=\"cdcd\">".tf($cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID, $cu->id)-time()."</span>");
@@ -473,7 +477,7 @@
 			echo "<tr><th>Kosten pro Scan:</th>
 					<td>".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." ".RES_FUEL." und ".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." ".RES_FUEL." Allianzrohstoffe</td></tr>";
 			echo "<tr><th>Abklingzeit:</th>
-					<td>".tf($cooldown)." (-".tf($cfg->param1("cryptocenter"))." pro Stufe, minimal ".tf($cfg->param2("cryptocenter")).")</td></tr>";
+					<td>".tf($cooldown)." (-".tf(CRYPTO_COOLDOWN_REDUCTION_PER_LEVEL)." pro Stufe, minimal ".tf(CRYPTO_MIN_COOLDOWN).")</td></tr>";
 			echo "<tr><th>Status:</th>
 					<td>".$status_text."</td></tr>";
 			tableEnd();
