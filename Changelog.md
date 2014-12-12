@@ -58,6 +58,7 @@ Version 3.5.0
  * Open each user surveillance session table in separate screen
  * Changed layout of detailed config editor
  * If no backup directory is defined, a default path will be used
+ * Backend status, current market rates and last statistics update timestamp are stored in new runtime_data storage table
  
 #### Bugfixes ####
 
