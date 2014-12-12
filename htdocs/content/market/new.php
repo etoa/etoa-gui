@@ -27,11 +27,11 @@
 				//<editor-fold>
 				if(MIN_MARKET_LEVEL_RESS<=MARKET_LEVEL)
 				{
-          //Hier wird das ganze für die Rohstoffe noch angezeigt
-          echo "<form action=\"?page=".$page."\" method=\"post\" name=\"ress_selector\" id=\"ress_selector\">\n";
-          $cstr=checker_init();
+		  //Hier wird das ganze für die Rohstoffe noch angezeigt
+		  echo "<form action=\"?page=".$page."\" method=\"post\" name=\"ress_selector\" id=\"ress_selector\">\n";
+		  $cstr=checker_init();
 
-          tableStart("Rohstoffe verkaufen");
+		  tableStart("Rohstoffe verkaufen");
 
 
 					//Header
@@ -124,7 +124,7 @@
 					<input type=\"text\" value=\"\" name=\"ressource_text\" id=\"ressource_text\" size=\"55\" maxlength=\"60\" style=\"width:98%\" ".tm("Text","Schreib einen kleinen Werbetext f&uuml;r deine Waren.")." onkeyup=\"calcMarketRessPrice('0');\"/>
 				</td>
 			</tr>";
-          
+		  
 			// Reservation
 			echo "<tr>
 			<th>Reservation</th>
@@ -142,11 +142,11 @@
 						<td colspan=\"5\" id=\"check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
 					</tr>";
 
-          tableEnd();
+		  tableEnd();
 
-          // Absend-Button (Per Ajax freigegeben)
-          echo "<input type=\"button\" class=\"button\" name=\"ressource_sell_submit\" id=\"ressource_sell_submit\" value=\"Angebot aufgeben\" style=\"color:#f00;\" disabled=\"disabled\" onclick=\"calcMarketRessPrice('1');checkUpdate('ress_selector', 'ress_last_update');\"/></form><br/><br/>";
-        }
+		  // Absend-Button (Per Ajax freigegeben)
+		  echo "<input type=\"button\" class=\"button\" name=\"ressource_sell_submit\" id=\"ressource_sell_submit\" value=\"Angebot aufgeben\" style=\"color:#f00;\" disabled=\"disabled\" onclick=\"calcMarketRessPrice('1');checkUpdate('ress_selector', 'ress_last_update');\"/></form><br/><br/>";
+		}
 				//</editor-fold>
 
 
@@ -164,52 +164,52 @@
 					WHERE
 						shiplist_entity_id='".$cp->id()."'");
 
-          //Zuerst wird überprüft ob auf dem Planeten Schiffe sind
-          if (mysql_result($check_res,0)>0)
-          {
-          	// Folgender Javascript Abschnitt, welcher von PHP-Teilen erzeugt wird, lädt die Daten von den Schiffen, welche sich auf dem aktuellen Planeten befinden, in ein JS-Array. Dies wird für die Preisberechnung benötigt. Das erzeugte PHP Array wird für die Schiffsauswahl (SELECT) verwendet.
+		  //Zuerst wird überprüft ob auf dem Planeten Schiffe sind
+		  if (mysql_result($check_res,0)>0)
+		  {
+			// Folgender Javascript Abschnitt, welcher von PHP-Teilen erzeugt wird, lädt die Daten von den Schiffen, welche sich auf dem aktuellen Planeten befinden, in ein JS-Array. Dies wird für die Preisberechnung benötigt. Das erzeugte PHP Array wird für die Schiffsauswahl (SELECT) verwendet.
 
-        		// Lädt Daten von den vorhandenen Schiffen auf dem aktuellen Planeten
-            $sres=dbquery("
-            SELECT
-                ships.ship_id,
-                ships.ship_name,
-                ships.ship_costs_metal,
-                ships.ship_costs_crystal,
-                ships.ship_costs_plastic,
-                ships.ship_costs_fuel,
-                ships.ship_costs_food,
-                shiplist.shiplist_count
-            FROM
-                shiplist
-                INNER JOIN
-                ships
-                ON shiplist.shiplist_ship_id=ships.ship_id
-            WHERE
-            		shiplist.shiplist_entity_id='".$cp->id()."'
-                AND shiplist.shiplist_count>'0'
-                AND ships.special_ship='0'
+				// Lädt Daten von den vorhandenen Schiffen auf dem aktuellen Planeten
+			$sres=dbquery("
+			SELECT
+				ships.ship_id,
+				ships.ship_name,
+				ships.ship_costs_metal,
+				ships.ship_costs_crystal,
+				ships.ship_costs_plastic,
+				ships.ship_costs_fuel,
+				ships.ship_costs_food,
+				shiplist.shiplist_count
+			FROM
+				shiplist
+				INNER JOIN
+				ships
+				ON shiplist.shiplist_ship_id=ships.ship_id
+			WHERE
+					shiplist.shiplist_entity_id='".$cp->id()."'
+				AND shiplist.shiplist_count>'0'
+				AND ships.special_ship='0'
 				AND ships.ship_alliance_costs='0'
-            ORDER BY
-                ships.ship_name;");
+			ORDER BY
+				ships.ship_name;");
 
-            echo "<script type=\"text/javascript\">";
+			echo "<script type=\"text/javascript\">";
 
-            echo "ships = new Array();\n";
-            $ships=array();
-            while ($sarr=mysql_fetch_array($sres))
-            {
-            	echo "ships[".$sarr['ship_id']."] = new Object();\n";
-            	echo "ships[".$sarr['ship_id']."][\"name\"] = \"".$sarr['ship_name']."\";";
-            	echo "ships[".$sarr['ship_id']."]['costs_metal'] = ".$sarr['ship_costs_metal'].";";
-            	echo "ships[".$sarr['ship_id']."]['costs_crystal'] = ".$sarr['ship_costs_crystal'].";";
-            	echo "ships[".$sarr['ship_id']."]['costs_plastic'] = ".$sarr['ship_costs_plastic'].";";
-            	echo "ships[".$sarr['ship_id']."]['costs_fuel'] = ".$sarr['ship_costs_fuel'].";";
-            	echo "ships[".$sarr['ship_id']."]['costs_food'] = ".$sarr['ship_costs_food'].";";
-            	echo "ships[".$sarr['ship_id']."][\"count\"] = ".$sarr['shiplist_count'].";";
+			echo "ships = new Array();\n";
+			$ships=array();
+			while ($sarr=mysql_fetch_array($sres))
+			{
+				echo "ships[".$sarr['ship_id']."] = new Object();\n";
+				echo "ships[".$sarr['ship_id']."][\"name\"] = \"".$sarr['ship_name']."\";";
+				echo "ships[".$sarr['ship_id']."]['costs_metal'] = ".$sarr['ship_costs_metal'].";";
+				echo "ships[".$sarr['ship_id']."]['costs_crystal'] = ".$sarr['ship_costs_crystal'].";";
+				echo "ships[".$sarr['ship_id']."]['costs_plastic'] = ".$sarr['ship_costs_plastic'].";";
+				echo "ships[".$sarr['ship_id']."]['costs_fuel'] = ".$sarr['ship_costs_fuel'].";";
+				echo "ships[".$sarr['ship_id']."]['costs_food'] = ".$sarr['ship_costs_food'].";";
+				echo "ships[".$sarr['ship_id']."][\"count\"] = ".$sarr['shiplist_count'].";";
 
-            	$ships[$sarr['ship_id']]=$sarr;
-            }
+				$ships[$sarr['ship_id']]=$sarr;
+			}
 
 						echo "</script>\n";
 
@@ -217,10 +217,10 @@
 	          echo $cstr;
 
 						// Vor dem Absenden des Formulars, wird die Überprüfung noch einmal gestartet. Bevor diese nicht das "OK" gibt, kann nicht gesendet werden
-        		echo "<input type=\"hidden\" value=\"0\" name=\"ship_last_update\" id=\"ship_last_update\"/>";
+				echo "<input type=\"hidden\" value=\"0\" name=\"ship_last_update\" id=\"ship_last_update\"/>";
 
-        		// Übergibt den Schiffsnamen zum Spichern an PHP weiter
-        		echo "<input type=\"hidden\" value=\"0\" name=\"ship_name\" id=\"ship_name\"/>";
+				// Übergibt den Schiffsnamen zum Spichern an PHP weiter
+				echo "<input type=\"hidden\" value=\"0\" name=\"ship_name\" id=\"ship_name\"/>";
 
 	          tableStart("Schiffe verkaufen");
 
@@ -233,12 +233,12 @@
 				              {
 				                echo "<option value=\"".$sarr['ship_id']."\">".$sarr['ship_name']." (".$sarr['shiplist_count'].")</option>";
 				              }
-            		echo "</select>
-            				</td>
-            				<td height=\"30\" colspan=\"2\" style=\"vertical-align:middle;\">
-            					<input type=\"text\" value=\"0\" name=\"ship_count\" id=\"ship_count\" size=\"5\" maxlength=\"7\" onkeyup=\"calcMarketShipPrice(1, 0);\" /> St&uuml;ck
-            				</td>
-            			</tr>";
+					echo "</select>
+							</td>
+							<td height=\"30\" colspan=\"2\" style=\"vertical-align:middle;\">
+								<input type=\"text\" value=\"0\" name=\"ship_count\" id=\"ship_count\" size=\"5\" maxlength=\"7\" onkeyup=\"calcMarketShipPrice(1, 0);\" /> St&uuml;ck
+							</td>
+						</tr>";
 
 
 						//Header Preis
@@ -340,8 +340,8 @@
 	          // Absend-Button (Per Ajax freigegeben)
 	          echo "<input type=\"button\" class=\"button\" name=\"ship_sell_submit\" id=\"ship_sell_submit\" value=\"Angebot aufgeben\" style=\"color:#f00;\" disabled=\"disabled\" onclick=\"calcMarketShipPrice(0, 1);checkUpdate('ship_selector', 'ship_last_update');\"/></form><br/><br/>";
 
-          }
-        }
+		  }
+		}
 
 
 
@@ -350,12 +350,12 @@
 				//
 				if(MIN_MARKET_LEVEL_AUCTION<=MARKET_LEVEL)
 				{
-          echo "<form action=\"?page=".$page."\" method=\"post\" name=\"auction_selector\" id=\"auction_selector\">\n";
-          echo $cstr;
-          tableStart("Rohstoffe versteigern");
+		  echo "<form action=\"?page=".$page."\" method=\"post\" name=\"auction_selector\" id=\"auction_selector\">\n";
+		  echo $cstr;
+		  tableStart("Rohstoffe versteigern");
 
-          // Frühstes Auktionsende
-          $auction_time = time() + (AUCTION_MIN_DURATION*24*3600);
+		  // Frühstes Auktionsende
+		  $auction_time = time() + (AUCTION_MIN_DURATION*24*3600);
 
 
 					//Header
@@ -463,7 +463,7 @@
 									</td>
 									<th colspan=\"2\" style=\"vertical-align:middle;\">&nbsp;</th>
 								</tr>";
-          
+		  
 			// Verkaufstext
 			echo "<tr>
 				<th>Beschreibung</th>
@@ -477,10 +477,10 @@
 				<td colspan=\"6\" name=\"auction_check_message\" id=\"auction_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
 			</tr>";
 
-          tableEnd();
+		  tableEnd();
 
-          // Absend-Button (Per Ajax freigegeben)
-          echo "<input type=\"button\" class=\"button\" name=\"auction_sell_submit\" id=\"auction_sell_submit\" value=\"Angebot aufgeben\" style=\"color:#f00;\" disabled=\"disabled\" onclick=\"checkMarketAuctionFormular(1);checkUpdate('auction_selector', 'auction_last_update');\"/></form><br/><br/>";
+		  // Absend-Button (Per Ajax freigegeben)
+		  echo "<input type=\"button\" class=\"button\" name=\"auction_sell_submit\" id=\"auction_sell_submit\" value=\"Angebot aufgeben\" style=\"color:#f00;\" disabled=\"disabled\" onclick=\"checkMarketAuctionFormular(1);checkUpdate('auction_selector', 'auction_last_update');\"/></form><br/><br/>";
 
 				}
 			}
