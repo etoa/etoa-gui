@@ -55,12 +55,14 @@
 			$marr = array();
 			foreach ($resNames as $rk => $rn)
 			{
+				$rate = RuntimeDataStore::get('market_rate_'.$rk, 1);
+			
 				// Errechnet Rohstoffwert vom Angebot
-				$sell_price += $arr['sell_'.$rk] * $cfg->{"market_rate_".$rk}->v;
+				$sell_price += $arr['sell_'.$rk] * $rate;
 				// Errechnet Rohstoffwert vom Höchstbietenden
-				$current_price += $arr['buy_'.$rk] * $cfg->{"market_rate_".$rk}->v;
+				$current_price += $arr['buy_'.$rk] * $rate;
 				// Errechnet Rohstoffwert vom abgegebenen Gebot
-				$new_price += $buyRes[$rk] * $cfg->{"market_rate_".$rk}->v;
+				$new_price += $buyRes[$rk] * $rate;
 
 				$currentBuyRes[$rk] = $arr['buy_'.$rk];
 				$marr['sell_'.$rk] = $arr['sell_'.$rk];

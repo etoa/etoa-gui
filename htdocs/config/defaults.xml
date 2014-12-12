@@ -62,9 +62,6 @@
       <p1 comment="Einheiten/Userpunkt" type="text">1000</p1>
       <p2 comment="Userpunkte/Allypunk" type="text">100</p2>
     </item>
-    <item name="statsupdate" cat="1">
-      <v comment="Statistikupdate" type="timedate">1240063202</v>
-    </item>
     <item name="show_hmod_users_stats" cat="1">
       <v comment="Spieler im Urlaubsmodus in den Statistiken anzeigen" type="onoff">1</v>
     </item>
@@ -348,21 +345,6 @@ http://etoa.ch</v>
     <item name="market_auction_delay_time" cat="6">
       <v comment="Anzeigedauer der Auktionen (Stunden)" type="text">24</v>
     </item>
-    <item name="market_rate_0" cat="6">
-      <v comment="Handelskurs Resource 0 (auto)" type="text">1</v>
-    </item>
-    <item name="market_rate_1" cat="6">
-      <v comment="Handelskurs Resource 1 (auto)" type="text">1</v>
-    </item>
-    <item name="market_rate_2" cat="6">
-      <v comment="Handelskurs Resource 2 (auto)" type="text">1</v>
-    </item>
-    <item name="market_rate_3" cat="6">
-      <v comment="Handelskurs Resource 3 (auto)" type="text">1</v>
-    </item>
-    <item name="market_rate_4" cat="6">
-      <v comment="Handelskurs Resource 4 (auto)" type="text">1</v>
-    </item>
     <item name="market_user_reservation_active" cat="6">
       <v comment="Reservation von Angeboten für einen bestimmten Spieler" type="onoff">1</v>
     </item>
@@ -622,9 +604,6 @@ http://etoa.ch</v>
     <item name="daemon_pidfile" cat="20" base="yes">
       <v comment="Evendhandler PID-File" type="text">/var/run/etoad/roundx.pid</v>
     </item>	
-    <item name="backend_status" cat="20">
-      <v comment="Eventhandler-Status" type="text">0</v>
-	</item>
     <item name="backend_offline_mail" cat="20">	 	  
       <v comment="Eventhandler Offline Mail" type="text">river@etoa.ch;mrcage@etoa.ch</v>
     </item>
