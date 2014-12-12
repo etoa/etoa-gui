@@ -52,6 +52,7 @@ Version 3.5.0
  * Time clock in header is now also ticking every second
  * A lot of market parameters can be configured in the settings
  * Crypto center cooldown can be configured in the settings
+ * Missile silo parameters can be configured in the settings
  
 #### Changes ####
 

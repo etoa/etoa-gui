@@ -23,6 +23,7 @@
     <category id="23">Kryptocenter</category>
     <category id="25">Chat</category>
     <category id="26">Boost-System</category>
+	<category id="27">Raketen</category>
   </categories>
   <items>
     <item name="roundname" cat="1" base="yes">
@@ -704,6 +705,16 @@ http://etoa.ch</v>
     </item>
     <item name="boost_system_max_building_speed_bonus" cat="26">
       <v comment="Maximaler Baugeschwindigkeitssbonus" type="text">2</v>
+    </item>
+	
+	<item name="missile_silo_missiles_per_level" cat="27">
+      <v comment="Raketen, die pro Stufe im Silo gelagert werden können (Vorfaktor)" type="text">5</v>
+    </item>
+	<item name="missile_silo_missiles_algo_base" cat="27">
+      <v comment="Basis für exponentiell steigende Raketenzahl" type="text">1.4</v>
+    </item>
+	<item name="missile_silo_flights_per_level" cat="27">
+      <v comment="Anzahl gleichzeitiger Flüge pro Silostufe" type="text">1</v>
     </item>
   </items>
 </config>
