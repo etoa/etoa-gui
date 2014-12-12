@@ -8,23 +8,34 @@
 		if (isset($_GET['action']))
 		{
 			$executable = $cfg->daemon_exe->v;
+			if (empty($executable))
+			{
+				$executable = RELATIVE_ROOT.'../eventhandler/target/etoad';
+			}
 			$instance = $cfg->daemon_instance->v;
 			$pidfile = $cfg->daemon_pidfile->v;
 
-			if ($_GET['action'] == "start")
+			if (file_exists($executable))
 			{
-				$out = EventHandlerManager::start($executable, $instance, $pidfile);
-				$tpl->assign('action_output', implode("\n", $out));
-				$tpl->assign('msg', "Dienst gestartet!");
+				if ($_GET['action'] == "start")
+				{
+					$out = EventHandlerManager::start($executable, $instance, $pidfile);
+					$tpl->assign('action_output', implode("\n", $out));
+					$tpl->assign('msg', "Dienst gestartet!");
+				}
+				else if ($_GET['action'] == "stop")
+				{
+					$out = EventHandlerManager::stop($executable, $instance, $pidfile);
+					$tpl->assign('action_output', implode("\n", $out));
+					$tpl->assign('msg', "Dienst gestoppt!");
+				}
+				
+				$tpl->assign("eventhandler_pid", EventHandlerManager::checkDaemonRunning($pidfile));
 			}
-			else if ($_GET['action'] == "stop")
+			else
 			{
-				$out = EventHandlerManager::stop($executable, $instance, $pidfile);
-				$tpl->assign('action_output', implode("\n", $out));
-				$tpl->assign('msg', "Dienst gestoppt!");
-			}
-			
-			$tpl->assign("eventhandler_pid", EventHandlerManager::checkDaemonRunning($pidfile));
+				$tpl->assign('errmsg', "Eventhandler executable $executable nicht vorhanden!");
+			}			
 		}
 	
 		$tpl->assign('message_queue_size', BackendMessage::getMessageQueueSize());

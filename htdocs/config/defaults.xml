@@ -642,7 +642,7 @@ http://etoa.ch</v>
     </item>
 
     <item name="daemon_exe" cat="20">
-      <v comment="Evendhandler Executable" type="text">/usr/local/bin/etoad</v>
+      <v comment="Evendhandler Executable (leerlassen für Standard)" type="text"></v>
     </item>
     <item name="daemon_instance" cat="20">
       <v comment="Evendhandler Instanzname" type="text">roundx</v>
