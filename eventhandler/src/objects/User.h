@@ -45,6 +45,7 @@ class User
 		SpecialistData* getSpecialist();
 		
 		void setDiscovered(short absX, short absY);
+		void setDiscovered(short absX, short absY, short radius);
 		void setLastInvasion();
 		
 		void addCollectedWf(double res);

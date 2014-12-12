@@ -86,6 +86,10 @@
 	}
 	
 	void User::setDiscovered(short absX, short absY) {
+	    this->setDiscovered(absX, absY, 1);
+    }    
+        
+    void User::setDiscovered(short absX, short absY, short radius) {
 		
 		Config &config = Config::instance();
 		int sxNum = (int)config.nget("num_of_sectors",1);
@@ -120,8 +124,8 @@
 			}
 		}
 						
-		for (int x = absX - 1; x <= absX + 1; x++) {
-			for (int y = absY - 1; y <= absY + 1; y++) {
+		for (int x = absX - radius; x <= absX + radius; x++) {
+			for (int y = absY - radius; y <= absY + radius; y++) {
 				int pos = x + (cyNum * syNum) * (y - 1) - 1;
 				if (pos >= 0 && pos <= sxNum * syNum * cxNum * cyNum) {
 					mask[pos] = '1';
