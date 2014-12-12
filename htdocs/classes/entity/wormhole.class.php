@@ -16,6 +16,7 @@
 		protected $cellId;
 		private $name;		
 		private $targetId;
+		private $persistent;
 		private $changed;
 		private $dataLoaded;
 		
@@ -80,8 +81,12 @@
 		function imagePath($opt="")
 		{
 			defineImagePaths();
-			$r = mt_rand(1,9);
-			return IMAGE_PATH."/wormholes/wormhole1_small.".IMAGE_EXT;
+			if (!$this->dataLoaded)
+			{
+				$this->loadData();
+			}
+			$prefix = $this->persistent ? 'wormhole_persistent' : 'wormhole';
+			return IMAGE_PATH."/wormholes/".$prefix."1_small.".IMAGE_EXT;
 		}
 
 		/**
@@ -120,6 +125,7 @@
 				$res=dbquery("
 				SELECT
 					target_id,
+					persistent,
 					changed
 				FROM
 					wormholes
@@ -128,9 +134,10 @@
 				");
 				if (mysql_num_rows($res)>0)
 				{
-					$arr=mysql_Fetch_array($res);
-					$this->targetId=$arr[0];
-					$this->changed=$arr[1];
+					$arr=mysql_fetch_assoc($res);
+					$this->targetId=$arr['target_id'];
+					$this->persistent=($arr['persistent']==1);
+					$this->changed=$arr['changed'];
 					$this->dataLoaded=true;
 				}
 			}
@@ -143,6 +150,15 @@
 				$this->loadData();
 			}
 			return $this->targetId;
+		}
+		
+		function isPersistent()
+		{
+			if (!$this->dataLoaded)
+			{
+				$this->loadData();
+			}
+			return $this->persistent;
 		}
 
 		function changed()
