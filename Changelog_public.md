@@ -24,7 +24,8 @@ Version 3.5.0
  * Diverse Rechtschreibefehler behoben
  * Probleme mit Encodings behoben
  * Mehrere Sicherheitslücken behoben
- * Mehrere Probleme im Graphite design behoben
+ * Mehrere Probleme im Graphite Design behoben
+ * Die Energieanzeige in der Wirtschaftsübersicht zeigen nun den korrekten Wert an (produzierte Energie - verbrauchte Energie)
 
 ### Änderungen ###
 

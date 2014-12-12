@@ -28,6 +28,7 @@ Version 3.5.0
  * Fixed multiple vulnerabilities which could have been exploited by XSS
  * Fixed several issues in the Graphite design
  * Removed BBcode tags in message preview
+ * Fixed calculation of available power in planet statistics screen
 
 #### Changes ####
 

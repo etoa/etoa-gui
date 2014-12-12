@@ -267,7 +267,7 @@
 	foreach ($planets as $p)
 	{
 		//Speichert die aktuellen Energieproduktionen in ein Array (Bewohnerproduktion [5] wird überschrieben)
-		$val_prod[$p->id][5]=floor($p->prodPower);
+		$val_prod[$p->id][5]=floor($p->prodPower - $p->usePower);
 		
 		// Gibt Min. / Max. aus
 		$max_prod[5]=max($max_prod[5],$val_prod[$p->id][5]);
