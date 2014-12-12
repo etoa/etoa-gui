@@ -50,7 +50,7 @@ namespace building
 					
 					int uid = (int)row["buildlist_user_id"];
 					int eid = (int)row["buildlist_entity_id"];
-					int radius = 1 + (int)((int)row["buildlist_current_level"] * factor);
+					int radius = (int)((int)row["buildlist_current_level"] * factor);
 				
                     Entity* e = EntityFactory::createEntityById(eid);
 
