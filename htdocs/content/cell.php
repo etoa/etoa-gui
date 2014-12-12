@@ -286,7 +286,11 @@
 						{
 							if ($ent->isPersistent())
 							{
-								echo " [persistent]";
+								echo " [stabil]";
+							}
+							else
+							{
+								echo " [veränderlich]";
 							}
 							$tent = new Wormhole($ent->targetId());
 							echo "<br/>Ziel: <a href=\"?page=cell&amp;id=".$tent->cellId()."\">".$tent."</a>";

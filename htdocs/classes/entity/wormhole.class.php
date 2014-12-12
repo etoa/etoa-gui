@@ -75,7 +75,11 @@
 		*/
 		function type()
 		{
-			return "";
+			if (!$this->dataLoaded)
+			{
+				$this->loadData();
+			}
+			return $this->persistent ? "stabil" : "veränderlich";
 		}							
 
 		function imagePath($opt="")
