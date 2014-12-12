@@ -8,7 +8,7 @@
 		{
 			$cfg = Config::getInstance();
 		
-			$currentStatus = checkDaemonRunning($cfg->daemon_pidfile)>0 ? true : false;
+			$currentStatus = EventHandlerManager::checkDaemonRunning($cfg->daemon_pidfile)>0 ? true : false;
 			$lastStatus = RuntimeDataStore::get('backend_status') == 1;
 			$change = $currentStatus != $lastStatus;
 			if ($change)

@@ -2488,25 +2488,6 @@ function imagecreatefromfile($path, $user_functions = false)
 		return " onmouseover=\"showTT('','".StringUtils::encodeDBStringToJS($content)."',1,event,this);\" onmouseout=\"hideTT();\" ";
 	}
 
-	function checkDaemonRunning($pidfile)
-	{
-		if ($fh = @fopen($pidfile,"r"))
-		{
-			$pid = intval(fread($fh,50));
-			fclose($fh);
-			if ($pid > 0)
-			{
-	     	$cmd = "ps $pid";
-	     	exec($cmd, $output);
-	     	if(count($output) >= 2)
-	     	{
-	      	return $pid;   
-	    	}
-			}
-		}
-		return false;
-	}
-
 	function icon($name)
 	{
 		return "<img src=\"".(defined('IMAGE_DIR')? IMAGE_DIR : 'images')."/icons/".$name.".png\" alt=\"$name\" />";
