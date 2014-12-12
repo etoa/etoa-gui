@@ -494,10 +494,7 @@
 	define("MARKET_SHIP_ID",16);
 	
 	// Log-Cat ID
-	define("LOG_CAT", 7);
-
-	// ??? :P
-	define("CANCEL_TIME", 1);
+	define("MARKET_LOG_CAT", 7);
 
 	// Mindestpreisgrenze der Schiffe 1=100%
 	define("SHIP_PRICE_FACTOR_MIN", 1);

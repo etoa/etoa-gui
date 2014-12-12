@@ -95,7 +95,7 @@
 			'content'=> $_POST['auction_text']
 			), "auctionadd", mysql_insert_id(), $marr);
 
-        add_log(LOG_CAT,"Der Spieler ".$cu->nick." hat folgende Rohstoffe zur versteigerung angeboten:\n\n".RES_METAL.": ".nf($_POST['auction_sell_0'])."\n".RES_CRYSTAL.": ".nf($_POST['auction_sell_1'])."\n".RES_PLASTIC.": ".nf($_POST['auction_sell_2'])."\n".RES_FUEL.": ".nf($_POST['auction_sell_3'])."\n".RES_FOOD.": ".nf($_POST['auction_sell_4'])."\n\nAuktionsende: ".date("d.m.Y H:i",$auction_end_time)."",time());
+        add_log(MARKET_LOG_CAT,"Der Spieler ".$cu->nick." hat folgende Rohstoffe zur versteigerung angeboten:\n\n".RES_METAL.": ".nf($_POST['auction_sell_0'])."\n".RES_CRYSTAL.": ".nf($_POST['auction_sell_1'])."\n".RES_PLASTIC.": ".nf($_POST['auction_sell_2'])."\n".RES_FUEL.": ".nf($_POST['auction_sell_3'])."\n".RES_FOOD.": ".nf($_POST['auction_sell_4'])."\n\nAuktionsende: ".date("d.m.Y H:i",$auction_end_time)."",time());
 
 		// todo: report
 
