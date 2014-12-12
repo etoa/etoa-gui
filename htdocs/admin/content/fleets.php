@@ -50,12 +50,12 @@
 					config 
 				SET 
 					config_value=1,
-					config_param1='".addslashes($_POST['flightban_reason'])."' 
+					config_param1='".mysql_real_escape_string($_POST['flightban_reason'])."' 
 				WHERE 
 					config_name='flightban';");
 					
 				$conf['flightban']['v']=1;
-				$conf['flightban']['p1']=addslashes($_POST['flightban_reason']);
+				$conf['flightban']['p1']=mysql_real_escape_string($_POST['flightban_reason']);
 				$conf['flightban_time']['p1']=$flightban_from;
 				$conf['flightban_time']['p2']=$flightban_to;
 			}
@@ -94,7 +94,7 @@
 					config 
 				SET 
 					config_value=1,
-					config_param1='".addslashes($_POST['battleban_reason'])."'
+					config_param1='".mysql_real_escape_string($_POST['battleban_reason'])."'
 				WHERE 
 					config_name='battleban';");
 					
@@ -102,8 +102,8 @@
 				UPDATE 
 					config 
 				SET 
-					config_param1='".addslashes($_POST['battleban_arrival_text_fleet'])."',
-					config_param2='".addslashes($_POST['battleban_arrival_text_missiles'])."'
+					config_param1='".mysql_real_escape_string($_POST['battleban_arrival_text_fleet'])."',
+					config_param2='".mysql_real_escape_string($_POST['battleban_arrival_text_missiles'])."'
 				WHERE 
 					config_name='battleban_arrival_text';");
 					
@@ -383,17 +383,17 @@
 				UPDATE 
 					fleet
 				SET 
-					user_id='".$_POST['user_id']."',
+					user_id='".intval($_POST['user_id'])."',
 					launchtime='$launchtime',
 					landtime='$landtime',
 					".$srcstr."
 					".$trgstr."
-					action='".$_POST['action']."',
-					status='".$_POST['status']."',
-					pilots='".$_POST['pilots']."',
-					usage_fuel='".$_POST['usage_fuel']."',
-					usage_food='".$_POST['usage_food']."',
-					usage_power='".$_POST['usage_power']."',
+					action='".mysql_real_escape_string($_POST['action'])."',
+					status='".intval($_POST['status'])."',
+					pilots='".intval($_POST['pilots'])."',
+					usage_fuel='".intval($_POST['usage_fuel'])."',
+					usage_food='".intval($_POST['usage_food'])."',
+					usage_power='".intval($_POST['usage_power'])."',
 					res_metal='".intval($_POST['res_metal'])."',
 					res_crystal='".intval($_POST['res_crystal'])."',
 					res_plastic='".intval($_POST['res_plastic'])."',
@@ -409,7 +409,7 @@
 					fetch_power='".intval($_POST['fetch_power'])."',
 					fetch_people='".intval($_POST['fetch_people'])."'
 				WHERE 
-					id='".$_GET['fleetedit']."';");
+					id='".intval($_GET['fleetedit'])."';");
 				success_msg("Flottendaten geändert!");
 			}
 			
@@ -425,7 +425,7 @@
 			FROM 
 				fleet
 			WHERE
-				id='".$_GET['fleetedit']."'
+				id='".intval($_GET['fleetedit'])."'
 			;");
 			if (mysql_num_rows($res)>0)
 			{
@@ -446,14 +446,14 @@
 						entity_to=".$arr['entity_from'].",
 						status='2'
 					WHERE 
-						id='".$_GET['fleetedit']."';");
+						id='".intval($_GET['fleetedit'])."';");
 					$res=dbquery("
 					SELECT 
 						*
 					FROM 
 						fleet
 					WHERE
-						id='".$_GET['fleetedit']."'
+						id='".intval($_GET['fleetedit'])."'
 					;");
 					$arr=mysql_fetch_array($res);
 				}
@@ -473,14 +473,14 @@
 						entity_to=".$arr['entity_from'].",
 						status='1'
 					WHERE 
-						id='".$_GET['fleetedit']."';");
+						id='".intval($_GET['fleetedit'])."';");
 					$res=dbquery("
 					SELECT 
 						*
 					FROM 
 						fleet
 					WHERE
-						id='".$_GET['fleetedit']."'
+						id='".intval($_GET['fleetedit'])."'
 					;");
 					$arr=mysql_fetch_array($res);
 				}
@@ -500,7 +500,7 @@
 						FROM
 			       	fleet_ships
 						WHERE
-			      	fs_fleet_id=".$_GET['fleetedit']."
+			      	fs_fleet_id=".intval($_GET['fleetedit'])."
 			      	AND fs_ship_faked='0';");
 						if (mysql_num_rows($sres)>0)
 						{
@@ -532,7 +532,7 @@
 						DELETE FROM
 							fleet
 						WHERE
-							id=".$_GET['fleetedit'].";");
+							id=".intval($_GET['fleetedit']).";");
 						success_msg("Flotte gelandet!");
 						unset($arr);
 					}
@@ -777,21 +777,21 @@
 				echo "<h3>Schiffe der Flotte bearbeiten</h3>";
 				if ($_POST['newship_submit']!="" && $_POST['fs_ship_cnt_new']>0 && $_POST['fs_ship_id_new']>0)
 				{
-					if (mysql_num_rows(dbquery("SELECT * FROM fleet_ships WHERE fs_fleet_id=".$_GET['fleetedit']." AND fs_ship_id=".$_POST['fs_ship_id_new'].";"))<1)
-						dbquery("INSERT INTO fleet_ships (fs_fleet_id,fs_ship_id,fs_ship_cnt) VALUES (".$_GET['fleetedit'].",".$_POST['fs_ship_id_new'].",".$_POST['fs_ship_cnt_new'].");");
+					if (mysql_num_rows(dbquery("SELECT * FROM fleet_ships WHERE fs_fleet_id=".intval($_GET['fleetedit'])." AND fs_ship_id=".intval($_POST['fs_ship_id_new']).";"))<1)
+						dbquery("INSERT INTO fleet_ships (fs_fleet_id,fs_ship_id,fs_ship_cnt) VALUES (".intval($_GET['fleetedit']).",".intval($_POST['fs_ship_id_new']).",".intval($_POST['fs_ship_cnt_new']).");");
 					else
-						dbquery("UPDATE fleet_ships SET fs_ship_cnt=fs_ship_cnt+".$_POST['fs_ship_cnt_new']." WHERE fs_fleet_id=".$_GET['fleetedit']." AND fs_ship_id=".$_POST['fs_ship_id_new'].";");
+						dbquery("UPDATE fleet_ships SET fs_ship_cnt=fs_ship_cnt+".intval($_POST['fs_ship_cnt_new'])." WHERE fs_fleet_id=".intval($_GET['fleetedit'])." AND fs_ship_id=".intval($_POST['fs_ship_id_new']).";");
 					success_msg("Schiffe hinzugefügt");
 				}
 				if ($_POST['editship_submit']!="")
 				{
 					foreach ($_POST['fs_ship_cnt'] as $ship=>$cnt)
-					dbquery("UPDATE fleet_ships SET fs_ship_cnt=$cnt WHERE fs_fleet_id=".$_GET['fleetedit']." AND fs_ship_id=$ship;");
+					dbquery("UPDATE fleet_ships SET fs_ship_cnt=intval($cnt) WHERE fs_fleet_id=".intval($_GET['fleetedit'])." AND fs_ship_id=intval($ship);");
 					success_msg("Schiffe geändert");
 				}
-				if ($_GET['shipdel']>0)
+				if (intval($_GET['shipdel'])>0)
 				{
-					dbquery("DELETE FROM fleet_ships WHERE fs_fleet_id=".$_GET['fleetedit']." AND fs_ship_id=".$_GET['shipdel'].";");
+					dbquery("DELETE FROM fleet_ships WHERE fs_fleet_id=".intval($_GET['fleetedit'])." AND fs_ship_id=".intval($_GET['shipdel']).";");
 					success_msg("Schiffe gelöscht");
 				}
 	
@@ -806,11 +806,11 @@
 	     		ships
 				WHERE
 	      	fs_ship_id=ship_id
-	      	AND fs_fleet_id=".$_GET['fleetedit']."
+	      	AND fs_fleet_id=".intval($_GET['fleetedit'])."
 	      	AND fs_ship_faked='0';");
 				if (mysql_num_rows($sres)>0)
 				{
-					echo "<form action=\"?page=$page&amp;sub=$sub&amp;fleetedit=".$_GET['fleetedit']."\" method=\"post\">";
+					echo "<form action=\"?page=$page&amp;sub=$sub&amp;fleetedit=".intval($_GET['fleetedit'])."\" method=\"post\">";
 					echo "<table class=\"tbl\">";
 					echo "<tr><th class=\"tbltitle\">Typ</th><th class=\"tbltitle\">Anzahl</th><th class=\"tbltitle\">&nbsp;</th></tr>";
 					while ($sarr=mysql_fetch_array($sres))
@@ -836,7 +836,7 @@
 	                    ships
 	                WHERE
 	                    fs_ship_id=ship_id
-	                    AND fs_fleet_id=".$_GET['fleetedit']."
+	                    AND fs_fleet_id=".intval($_GET['fleetedit'])."
 	                    AND fs_ship_faked='1';");
 	                if (mysql_num_rows($sfres)>0)
 	                {
@@ -894,10 +894,10 @@
 		elseif (isset($_POST['fleet_search']) || isset($_GET['action']) && $_GET['action']=="searchresults")
 		{
 			// Flotte löschen
-			if (isset($_GET['fleetdel']) && $_GET['fleetdel']>0)
+			if (isset($_GET['fleetdel']) && intval($_GET['fleetdel'])>0)
 			{
-				dbquery("DELETE FROM fleet WHERE id='".$_GET['fleetdel']."';");
-				dbquery("DELETE FROM fleet_ships WHERE fs_fleet_id='".$_GET['fleetdel']."';");
+				dbquery("DELETE FROM fleet WHERE id='".intval($_GET['fleetdel'])."';");
+				dbquery("DELETE FROM fleet_ships WHERE fs_fleet_id='".intval($_GET['fleetdel'])."';");
 				echo MessageBox::ok("", "Die Flotte wurde gel&ouml;scht!");
 			}
 
@@ -905,7 +905,7 @@
 			$sql="";
 			if ($_SESSION['fleetedit']['query']=="")
 			{
-				if ($_POST['sx_start']>0 && $_POST['sy_start']>0 && $_POST['cx_start']>0 && $_POST['cy_start']>0 && $_POST['p_start']!="")
+				if (intval($_POST['sx_start'])>0 && intval($_POST['sy_start'])>0 && intval($_POST['cx_start'])>0 && intval($_POST['cy_start'])>0 && $_POST['p_start']!="")
 				{
 					if ($srcEnt = Entity::createFactoryByCoords($_POST['sx_start'],$_POST['sy_start'],$_POST['cx_start'],$_POST['cy_start'],$_POST['p_start']))
 					{
@@ -917,7 +917,7 @@
 					}					
 				}
 				
-				if ($_POST['sx_end']>0 && $_POST['sy_end']>0 && $_POST['cx_end']>0 && $_POST['cy_end']>0 && $_POST['p_end']!="")
+				if (intval($_POST['sx_end'])>0 && intval($_POST['sy_end'])>0 && intval($_POST['cx_end'])>0 && intval($_POST['cy_end'])>0 && $_POST['p_end']!="")
 				{
 					if ($trgEnt = Entity::createFactoryByCoords($_POST['sx_end'],$_POST['sy_end'],$_POST['cx_end'],$_POST['cy_end'],$_POST['p_end']))
 					{
@@ -1222,13 +1222,13 @@
 						)
 						VALUES
 						( 
-							'".$_POST['user_id']."',
+							'".intval($_POST['user_id'])."',
 							".$launchtime.",
 							".$landtime.",
 							".$srcEnt->id().",
 							".$trgEnt->id().",
-							'".$_POST['action']."',
-							".$_POST['status']."
+							'".mysql_real_escape_string($_POST['action'])."',
+							".intval($_POST['status'])."
 						);");				
 						$fid = mysql_insert_id();
 						dbquery("
@@ -1242,8 +1242,8 @@
 						VALUES 
 						(
 							".$fid.",
-							".$_POST['fs_ship_id_new'].",
-							".$_POST['fs_ship_cnt_new']."
+							".intval($_POST['fs_ship_id_new']).",
+							".intval($_POST['fs_ship_cnt_new'])."
 						);");
 						$tpl->assign('msg', "Neue Flotte erstellt! <a href=\"?page=$page&amp;sub=$sub&fleetedit=".$fid."\">Details</a>");
 					}
@@ -1434,8 +1434,8 @@
 							VALUES
 							(
 								".$fid.",
-								".$_POST['fs_ship_id_new'].",
-								".$_POST['fs_ship_cnt_new']."
+								".intval($_POST['fs_ship_id_new']).",
+								".intval($_POST['fs_ship_cnt_new'])."
 							);");
 							$fi++;
 						}

@@ -290,7 +290,7 @@
 						// Save new post
 						if (isset($_POST['submit']) && isset($_POST['post_text']) && $cu->id>0 && $tarr['topic_closed']==0)
 						{
-							dbquery("INSERT INTO ".BOARD_POSTS_TABLE." (post_topic_id,post_user_id,post_user_nick,post_text,post_timestamp) VALUES (".$tpid.",".$cu->id.",'".$cu->nick."','".addslashes($_POST['post_text'])."',".time().");");
+							dbquery("INSERT INTO ".BOARD_POSTS_TABLE." (post_topic_id,post_user_id,post_user_nick,post_text,post_timestamp) VALUES (".$tpid.",".$cu->id.",'".$cu->nick."','".mysql_real_escape_string($_POST['post_text'])."',".time().");");
 							$mid=mysql_insert_id();
 							dbquery("UPDATE ".BOARD_TOPIC_TABLE." SET topic_timestamp=".time()." WHERE topic_id=".$tpid.";");			
 							success_msg("Beitrag gespeichert!");
@@ -303,9 +303,9 @@
 						if (isset($_POST['post_edit']) && isset($_POST['post_text']) && isset($_POST['post_id']) && ($cu->id>0 || $isAdmin))
 						{
 							if ($isAdmin)
-								dbquery("UPDATE ".BOARD_POSTS_TABLE." SET post_text='".addslashes($_POST['post_text'])."',post_changed=".time()." WHERE post_id=".$_POST['post_id'].";");
+								dbquery("UPDATE ".BOARD_POSTS_TABLE." SET post_text='".mysql_real_escape_string($_POST['post_text'])."',post_changed=".time()." WHERE post_id=".intval($_POST['post_id']).";");
 							else
-								dbquery("UPDATE ".BOARD_POSTS_TABLE." SET post_text='".addslashes($_POST['post_text'])."',post_changed=".time()." WHERE post_id=".$_POST['post_id']." AND post_user_id=".$cu->id.";");
+								dbquery("UPDATE ".BOARD_POSTS_TABLE." SET post_text='".mysql_real_escape_string($_POST['post_text'])."',post_changed=".time()." WHERE post_id=".intval($_POST['post_id'])." AND post_user_id=".$cu->id.";");
 							success_msg("&Auml;nderungen gespeichert!");
 							echo "<script type=\"text/javascript\">document.location='?page=$page&bnd=".$bid."&topic=".$tpid."#".$_POST['post_id']."';</script>";
 						}
@@ -314,14 +314,14 @@
 						if (isset($_POST['post_delete']) && isset($_POST['post_id']) && ($cu->id>0 || $isAdmin))
 						{
 							if ($isAdmin)
-								dbquery("DELETE FROM ".BOARD_POSTS_TABLE." WHERE post_id=".$_POST['post_id'].";");
+								dbquery("DELETE FROM ".BOARD_POSTS_TABLE." WHERE post_id=".intval($_POST['post_id']).";");
 							else
-								dbquery("DELETE FROM ".BOARD_POSTS_TABLE." WHERE post_id=".$_POST['post_id']." AND post_user_id=".$cu->id.";");
+								dbquery("DELETE FROM ".BOARD_POSTS_TABLE." WHERE post_id=".intval($_POST['post_id'])." AND post_user_id=".$cu->id.";");
 							
 							success_msg("Beitrag gelöscht");
 						}			
 				
-						$res=dbquery("SELECT * FROM ".BOARD_POSTS_TABLE." WHERE post_topic_id=".$tpid." ORDER BY post_timestamp ASC;");					
+						$res=dbquery("SELECT * FROM ".BOARD_POSTS_TABLE." WHERE post_topic_id=".$tpid." ORDER BY post_timestamp ASC;");
 						if (mysql_num_rows($res)>0)
 						{			
 							tableStart($tarr['topic_subject']);
@@ -906,10 +906,10 @@
 						cat_bullet,
 						cat_alliance_id
 						) VALUES(
-						'".addslashes($_POST['cat_name'])."',
-						'".addslashes($_POST['cat_desc'])."',
-						'".$_POST['cat_order']."',
-						'".$_POST['cat_bullet']."',
+						'".mysql_real_escape_string($_POST['cat_name'])."',
+						'".mysql_real_escape_string($_POST['cat_desc'])."',
+						'".intval($_POST['cat_order'])."',
+						'".mysql_real_escape_string($_POST['cat_bullet'])."',
 						'".BOARD_ALLIANCE_ID."');");
 						$cid=mysql_insert_id();
 						if (isset($_POST['cr']))
@@ -921,48 +921,51 @@
 						}
 						success_msg("Neue Kategorie gespeichert!");
 					}
-					elseif (isset($_POST['cat_edit']) && isset($_POST['cat_name']) && isset($_POST['cat_id']) && $_POST['cat_id']>0)
+					elseif (isset($_POST['cat_edit']) && isset($_POST['cat_name']) && isset($_POST['cat_id']) && intval($_POST['cat_id'])>0)
 					{
+						$catid = intval($_POST['cat_id']);
 						dbquery("UPDATE ".BOARD_CAT_TABLE." SET 
-						cat_name='".addslashes($_POST['cat_name'])."',
-						cat_desc='".addslashes($_POST['cat_desc'])."',
-						cat_order='".$_POST['cat_order']."',
-						cat_bullet='".$_POST['cat_bullet']."' 
-						WHERE cat_id=".$_POST['cat_id']." AND cat_alliance_id=".BOARD_ALLIANCE_ID.";");
-						dbquery("DELETE FROM allianceboard_catranks WHERE cr_cat_id=".$_POST['cat_id'].";");
+						cat_name='".mysql_real_escape_string($_POST['cat_name'])."',
+						cat_desc='".mysql_real_escape_string($_POST['cat_desc'])."',
+						cat_order='".intval($_POST['cat_order'])."',
+						cat_bullet='".mysql_real_escape_string($_POST['cat_bullet'])."' 
+						WHERE cat_id=".$catid." AND cat_alliance_id=".BOARD_ALLIANCE_ID.";");
+						dbquery("DELETE FROM allianceboard_catranks WHERE cr_cat_id=".$catid.";");
 						if (isset($_POST['cr']))
 						{
 							foreach ($_POST['cr'] as $k=>$v)
 							{
-								dbquery("INSERT INTO allianceboard_catranks (cr_cat_id,cr_rank_id) VALUES (".$_POST['cat_id'].",$k);");
+								dbquery("INSERT INTO allianceboard_catranks (cr_cat_id,cr_rank_id) VALUES (".$catid.",$k);");
 							}
 						}
 						success_msg("&Auml;nderungen gespeichert!");
 					}
-					elseif (isset($_POST['cat_edit']) && isset($_POST['bnd_id']) && $_POST['bnd_id']>0)
+					elseif (isset($_POST['cat_edit']) && isset($_POST['bnd_id']) && intval($_POST['bnd_id'])>0)
 					{
-						dbquery("DELETE FROM allianceboard_catranks WHERE cr_bnd_id=".$_POST['bnd_id'].";");
+						$bndid = intval($_POST['bnd_id']);
+						dbquery("DELETE FROM allianceboard_catranks WHERE cr_bnd_id=".$bndid.";");
 						if (isset($_POST['cr']))
 						{
 							foreach ($_POST['cr'] as $k=>$v)
 							{
-								dbquery("INSERT INTO allianceboard_catranks (cr_bnd_id,cr_rank_id) VALUES (".$_POST['bnd_id'].",$k);");
+								dbquery("INSERT INTO allianceboard_catranks (cr_bnd_id,cr_rank_id) VALUES (".$bndid.",$k);");
 							}
 						}
 						success_msg("&Auml;nderungen gespeichert!");
 					}
-					elseif (isset($_POST['cat_delete']) && isset($_POST['cat_id']) && $_POST['cat_id']>0)
+					elseif (isset($_POST['cat_delete']) && isset($_POST['cat_id']) && intval($_POST['cat_id'])>0)
 					{
-						$tres=dbquery("SELECT topic_id FROM ".BOARD_TOPIC_TABLE." WHERE topic_cat_id=".$_POST['cat_id'].";");
+						$catid = intval($_POST['cat_id']);
+						$tres=dbquery("SELECT topic_id FROM ".BOARD_TOPIC_TABLE." WHERE topic_cat_id=".$catid.";");
 						if (mysql_num_rows($tres)>0)
 						{
 							while ($tarr=mysql_fetch_array($tres))
 							{
 								dbquery("DELETE FROM ".BOARD_POSTS_TABLE." WHERE post_topic_id=".$tarr['topic_id'].";");
 							}
-							dbquery("DELETE FROM ".BOARD_TOPIC_TABLE." WHERE topic_cat_id=".$_POST['cat_id'].";");
+							dbquery("DELETE FROM ".BOARD_TOPIC_TABLE." WHERE topic_cat_id=".$catid.";");
 						}
-						dbquery("DELETE FROM ".BOARD_CAT_TABLE." WHERE cat_id=".$_POST['cat_id']." AND cat_alliance_id=".BOARD_ALLIANCE_ID.";");
+						dbquery("DELETE FROM ".BOARD_CAT_TABLE." WHERE cat_id=".$catid." AND cat_alliance_id=".BOARD_ALLIANCE_ID.";");
 						success_msg("Kategorie gelöscht!");
 					}
 					
@@ -982,7 +985,7 @@
 							if ($isAdmin || isset($myCat[$arr['cat_id']]))
 							{
 								$accessCnt++;
-								$pres=dbquery("SELECT topic_subject,post_id,topic_id,topic_timestamp,post_user_id,post_user_nick FROM ".BOARD_POSTS_TABLE.",".BOARD_TOPIC_TABLE." WHERE post_topic_id=topic_id AND topic_cat_id=".$arr['cat_id']." ORDER BY post_timestamp DESC LIMIT 1;");
+								$pres=dbquery("SELECT topic_subject,post_id,topic_id,topic_timestamp,post_user_id,post_user_nick FROM ".BOARD_POSTS_TABLE.",".BOARD_TOPIC_TABLE." WHERE post_topic_id=topic_id AND topic_cat_id=".intval($arr['cat_id'])." ORDER BY post_timestamp DESC LIMIT 1;");
 								if (mysql_num_rows($pres)>0)
 								{
 									$parr=mysql_fetch_row($pres);
@@ -993,7 +996,7 @@
 								echo "<tr>";
 								if ($arr['cat_bullet']=="" || !is_file(BOARD_BULLET_DIR."/".$arr['cat_bullet'])) $arr['cat_bullet']=BOARD_DEFAULT_IMAGE;
 								echo "<td style=\"width:40px;vertical-align:middle;\">
-									<a href=\"?page=$page&amp;bnd=0&cat=".$arr['cat_id']."\">
+									<a href=\"?page=$page&amp;bnd=0&cat=".intval($arr['cat_id'])."\">
 										<img src=\"".BOARD_BULLET_DIR."/".$arr['cat_bullet']."\" style=\"width:40px;height:40px;\" />
 									</a>
 								</td>";
@@ -1003,28 +1006,28 @@
 									$rstr="";
 									foreach ($rank as $k=>$v)
 									{
-										$crres=dbquery("SELECT cr_id FROM allianceboard_catranks WHERE cr_rank_id=".$k." AND cr_cat_id=".$arr['cat_id'].";");								
+										$crres=dbquery("SELECT cr_id FROM allianceboard_catranks WHERE cr_rank_id=".$k." AND cr_cat_id=".$arr['cat_id'].";");
 										if (mysql_num_rows($crres)>0)
 											$rstr.= $v.", ";
 									}									
 									if ($rstr!="") $rstr=substr($rstr,0,strlen($rstr)-2);
-									echo " ".tm("Admin-Info: ".stripslashes($arr['cat_name']),"<b>Position:</b> ".$arr['cat_order']."<br/><b>Zugriff:</b> ".$rstr)."";
+									echo " ".tm("Admin-Info: ".$arr['cat_name'],"<b>Position:</b> ".$arr['cat_order']."<br/><b>Zugriff:</b> ".$rstr)."";
 								}
 								echo ">
-								<b><a href=\"?page=$page&amp;bnd=0&cat=".$arr['cat_id']."\">".($arr['cat_name']!="" ? stripslashes($arr['cat_name']) : "Unbenannt")."</a></b>
+								<b><a href=\"?page=$page&amp;bnd=0&cat=".intval($arr['cat_id'])."\">".($arr['cat_name']!="" ? $arr['cat_name'] : "Unbenannt")."</a></b>
 								<br/>".text2html($arr['cat_desc'])."</td>";
-								$fres=dbquery("SELECT COUNT(*) FROM ".BOARD_POSTS_TABLE.",".BOARD_TOPIC_TABLE." WHERE post_topic_id=topic_id AND topic_cat_id=".$arr['cat_id'].";");
+								$fres=dbquery("SELECT COUNT(*) FROM ".BOARD_POSTS_TABLE.",".BOARD_TOPIC_TABLE." WHERE post_topic_id=topic_id AND topic_cat_id=".intval($arr['cat_id']).";");
 								$farr=mysql_fetch_row($fres);
 								echo "<td>".$farr[0]."</td>";
-								$fres=dbquery("SELECT COUNT(*) FROM ".BOARD_TOPIC_TABLE." WHERE topic_cat_id=".$arr['cat_id'].";");
+								$fres=dbquery("SELECT COUNT(*) FROM ".BOARD_TOPIC_TABLE." WHERE topic_cat_id=".intval($arr['cat_id']).";");
 								$farr=mysql_fetch_row($fres);
 								echo "<td>".$farr[0]."</td>";
 								echo "<td>$ps</td>";
 								if ($isAdmin)
 								{
 									echo "<td style=\"vertical-align:middle;text-align:center;\">
-										<a href=\"?page=$page&editcat=".$arr['cat_id']."\">".icon('edit')."</a> 
-										<a href=\"?page=$page&delcat=".$arr['cat_id']."\">".icon('delete')."</a>
+										<a href=\"?page=$page&editcat=".intval($arr['cat_id'])."\">".icon('edit')."</a> 
+										<a href=\"?page=$page&delcat=".intval($arr['cat_id'])."\">".icon('delete')."</a>
 									</td>";
 								}
 								echo "</tr>";			
@@ -1071,7 +1074,7 @@
 							if ($isAdmin || isset($myCat[$arr['alliance_bnd_id']]))
 							{
 								$accessCnt++;
-								$pres=dbquery("SELECT topic_subject,post_id,topic_id,topic_timestamp,post_user_id,post_user_nick FROM ".BOARD_POSTS_TABLE.",".BOARD_TOPIC_TABLE." WHERE post_topic_id=topic_id AND topic_bnd_id=".$arr['alliance_bnd_id']." ORDER BY post_timestamp DESC LIMIT 1;");
+								$pres=dbquery("SELECT topic_subject,post_id,topic_id,topic_timestamp,post_user_id,post_user_nick FROM ".BOARD_POSTS_TABLE.",".BOARD_TOPIC_TABLE." WHERE post_topic_id=topic_id AND topic_bnd_id=".intval($arr['alliance_bnd_id'])." ORDER BY post_timestamp DESC LIMIT 1;");
 								if (mysql_num_rows($pres)>0)
 								{
 									$parr=mysql_fetch_row($pres);
@@ -1090,7 +1093,7 @@
 									$rstr="";
 									foreach ($rank as $k=>$v)
 									{
-										$crres=dbquery("SELECT cr_id FROM allianceboard_catranks WHERE cr_rank_id=".$k." AND cr_bnd_id=".$arr['alliance_bnd_id'].";");								
+										$crres=dbquery("SELECT cr_id FROM allianceboard_catranks WHERE cr_rank_id=".$k." AND cr_bnd_id=".intval($arr['alliance_bnd_id']).";");								
 										if (mysql_num_rows($crres)>0)
 											$rstr.= $v.", ";
 									}									
@@ -1099,10 +1102,10 @@
 								}
 								echo "><b><a href=\"?page=$page&amp;cat=0&bnd=".$arr['alliance_bnd_id']."\"";
 								echo ">".stripslashes($alliance[$alliance_bnd_id]['name'])."</a></b><br/>".text2html($arr['alliance_bnd_text'])."</td>";
-								$fres=dbquery("SELECT COUNT(*) FROM ".BOARD_POSTS_TABLE.",".BOARD_TOPIC_TABLE." WHERE post_topic_id=topic_id AND topic_bnd_id=".$arr['alliance_bnd_id'].";");
+								$fres=dbquery("SELECT COUNT(*) FROM ".BOARD_POSTS_TABLE.",".BOARD_TOPIC_TABLE." WHERE post_topic_id=topic_id AND topic_bnd_id=".intval($arr['alliance_bnd_id']).";");
 								$farr=mysql_fetch_row($fres);
 								echo "<td>".$farr[0]."</td>";
-								$fres=dbquery("SELECT COUNT(*) FROM ".BOARD_TOPIC_TABLE." WHERE topic_bnd_id=".$arr['alliance_bnd_id'].";");
+								$fres=dbquery("SELECT COUNT(*) FROM ".BOARD_TOPIC_TABLE." WHERE topic_bnd_id=".intval($arr['alliance_bnd_id']).";");
 								$farr=mysql_fetch_row($fres);
 								echo "<td>".$farr[0]."</td>";
 								echo "<td>$ps</td>";
