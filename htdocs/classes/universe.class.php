@@ -321,7 +321,7 @@
 			shuffle($wh_persistent);
 			
 			// Reduce list of persistent wormholes if uneven
-			if (fmod($wh_persistent[0],2)!=0) 
+			if (fmod(count($wh_persistent),2)!=0) 
 			{
 				$lastWormHole = array_pop($wh_persistent);
 				dbquery("
