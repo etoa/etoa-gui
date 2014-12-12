@@ -525,15 +525,13 @@
 					
 					echo "<form action=\"?page=$page&sub=edit&id=".$id."\" method=\"post\" id=\"editform\">";
 					tableStart("<span style=\"color:".Entity::$entityColors[$earr['code']]."\">Wurmloch</span>","auto");
-					echo "<tr><th>Entstanden</th>
-					<td>
-						".df($arr['changed'])."
-					</td><tr/>";
+					echo "<tr><th>Entstanden</th><td>".df($arr['changed'])."</td><tr/>";
 					echo "<tr><th>Ziel</th>
 					<td>";
 					$ent = Entity::createFactoryById($arr['target_id']);
 					echo "<a href=\"?page=$page&amp;sub=$sub&amp;id=".$ent->id()."\">".$ent."</a>";
 					echo "</td></tr>";
+					echo "<tr><th>Persistent</th><td>".($arr['persistent'] == 1 ? "ja" : "nein")."</td><tr/>";
 					echo "</table>";
 					echo "<br/>
 								<input tabindex=\"26\" type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />&nbsp;";
