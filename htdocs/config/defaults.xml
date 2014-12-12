@@ -171,6 +171,9 @@ http://etoa.ch</v>
     <item name="space_percent_wormholes" cat="3">
       <v comment="Wurml&#xF6;cher %" type="text">12</v>
     </item>
+    <item name="persistent_wormholes_ratio" cat="3">
+      <v comment="Anteil persistenter Wurml&#xF6;cher %" type="text">30</v>
+    </item>	
     <item name="num_planet_images" cat="3">
       <v comment="Anzahl Planetenbilder" type="text">5</v>
     </item>

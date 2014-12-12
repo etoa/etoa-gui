@@ -13,6 +13,7 @@
     $cfg->set("space_percent_asteroids",intval($_POST['space_percent_asteroids']));
     $cfg->set("space_percent_nebulas",intval($_POST['space_percent_nebulas']));
     $cfg->set("space_percent_wormholes",intval($_POST['space_percent_wormholes']));
+    $cfg->set("persistent_wormholes_ratio",max(0, min(100, intval($_POST['persistent_wormholes_ratio']))));
     $cfg->set("num_planets","",$_POST['num_planets_p1'],$_POST['num_planets_p2']);
     $cfg->set("solsys_percent_planet",intval($_POST['solsys_percent_planet']));
     $cfg->set("solsys_percent_asteroids",intval($_POST['solsys_percent_asteroids']));
@@ -160,7 +161,7 @@
         echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
         echo "Alle Einstellungen werden von der <a href=\"?page=config&sub=editor&category=3\">Konfiguration</a> &uuml;bernommen!<br/><br/>";
         
-        tableStart("Galaxie",400);			
+        tableStart("Galaxie",420);			
         echo "<tr>
           <th>Sektoren:</th>
           <td>
@@ -175,7 +176,7 @@
           </td></tr>";
         echo "</table>";
         
-        tableStart("Verteilung der Systeme",300);				
+        tableStart("Verteilung der Systeme",420);				
         echo "<tr>
           <th>Sternensysteme:</th>
           <td><input type=\"text\" name=\"space_percent_solsys\" id=\"space_percent_solsys\" value=\"".$cfg->space_percent_solsys."\" size=\"2\" maxlength=\"2\" onkeyup=\"alignSystemPercentage()\" />%</td>
@@ -190,7 +191,9 @@
         </tr>";
         echo "<tr>
           <th>Wurmlöcher:</th>
-          <td><input type=\"text\" name=\"space_percent_wormholes\" id=\"space_percent_wormholes\" value=\"".$cfg->space_percent_wormholes."\" size=\"2\" maxlength=\"2\" onkeyup=\"alignSystemPercentage()\" />%</td>
+          <td><input type=\"text\" name=\"space_percent_wormholes\" id=\"space_percent_wormholes\" value=\"".$cfg->space_percent_wormholes."\" size=\"2\" maxlength=\"2\" onkeyup=\"alignSystemPercentage()\" />%
+		  davon <input type=\"text\" name=\"persistent_wormholes_ratio\" id=\"persistent_wormholes_ratio\" value=\"".$cfg->persistent_wormholes_ratio."\" size=\"2\" maxlength=\"2\" />% persistent
+		  </td>
         </tr>";
         echo "<tr>
           <th>Leerer Raum:</th>
@@ -198,7 +201,7 @@
         </tr>";
         echo "</table>";			
         
-        tableStart("Sternensystem",400);				
+        tableStart("Sternensystem",420);				
         echo "<tr>
           <th>Objekte pro Sternensystem:</th>
           <td><input type=\"text\" name=\"num_planets_p1\" value=\"".$cfg->num_planets->p1."\" size=\"2\" maxlength=\"2\" /> min, 
@@ -219,7 +222,7 @@
           
         echo "</table>";
   
-        tableStart("Planeten",400);				
+        tableStart("Planeten",420);				
         echo "<tr>
           <th>Felder pro Planet:</th>
           <td>
