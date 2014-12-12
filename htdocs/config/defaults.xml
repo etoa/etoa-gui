@@ -622,9 +622,6 @@ http://etoa.ch</v>
     <item name="daemon_pidfile" cat="20" base="yes">
       <v comment="Evendhandler PID-File" type="text">/var/run/etoad/roundx.pid</v>
     </item>	
-    <item name="backend_status" cat="20">
-      <v comment="Eventhandler-Status" type="text">0</v>
-	</item>
     <item name="backend_offline_mail" cat="20">	 	  
       <v comment="Eventhandler Offline Mail" type="text">river@etoa.ch;mrcage@etoa.ch</v>
     </item>
