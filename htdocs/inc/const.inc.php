@@ -433,13 +433,6 @@
 	
 	define("ALLIANCE_TECH_SPY_ID", 8);
 
-	//
-	// Raketensilo
-	//
-	
-	// Faktor mit dem die Schilde der Verteidigung bei einem Kampf mit einberechnet werden.
-	define("MISSILE_BATTLE_SHIELD_FACTOR", 0.3);
-
 	/*************************/
 	/* Flotten & Kampfsystem */
 	/*************************/

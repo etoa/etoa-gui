@@ -9,7 +9,10 @@ class MissileBattleHandler
 	static function battle($fid)
 	{
 		$cfg = Config::getInstance();
-			
+		
+		// Faktor mit dem die Schilde der Verteidigung bei einem Kampf mit einberechnet werden.
+		define("MISSILE_BATTLE_SHIELD_FACTOR", $cfg->value('missile_battle_shield_factor'));
+		
  		// Kampf abbrechen und Raketen zum Startplanet schicken wenn Kampfsperre aktiv ist
  	 	if ($cfg->value('battleban') != 0 && $cfg->p1('battleban_time') <= time() && $cfg->p2('battleban_time') > time())
 		{
