@@ -128,14 +128,18 @@
 			// Reservation
 			echo "<tr>
 			<th>Reservation</th>
-			<td colspan=\"4\">";
+			<td colspan=\"3\">";
+			echo "<input type=\"radio\" name=\"resource_offer_reservation\" id=\"resource_offer_reservation_0\" value=\"0\" checked=\"checked\" /> <label for=\"resource_offer_reservation_0\">Öffentliches Angebot</label><br/>";
+			echo "<input type=\"radio\" name=\"resource_offer_reservation\" id=\"resource_offer_reservation_1\" value=\"1\" /> <label for=\"resource_offer_reservation_1\">Für eine bestimmte Person</label><br/>";
 			//Für Allianzmitglied reservieren wenn in einer Allianz und diese den Allianzmarktplatz auf Stufe 1 oder höher hat
 			if($cu->allianceId!=0 && $alliance_market_level>=1 && !$cd_enabled)
 			{
-				echo "<input type=\"checkbox\" name=\"ressource_for_alliance\" id=\"ressource_for_alliance\" value=\"1\" /> 
-				<label for=\"ressource_for_alliance\" ".tm("Reservation","Fall dieses Angebot nur Spieler aus deiner Allianz kaufen sollen, mach hier ein H&auml;kchen").">F&uuml;r Allianzmitglieder Reservieren</label>";
+				echo "<input type=\"radio\" name=\"resource_offer_reservation\" id=\"resource_offer_reservation_2\" value=\"2\" /> 
+				<label for=\"resource_offer_reservation_2\" ".tm("Reservation","Fall dieses Angebot nur Spieler aus deiner Allianz kaufen sollen, mach hier ein H&auml;kchen").">F&uuml;r Allianzmitglieder</label>";
 			}
-			echo "</td></tr>";
+			echo "</td>";
+			echo "<td style=\"vertical-align:middle\"><input type=\"text\" name=\"resource_offer_user_nick\" id=\"resource_offer_user_nick\"  maxlength=\"".NICK_MAXLENGHT."\" size=\"25\" autocomplete=\"off\" value=\"\" onkeyup=\"xajax_searchUser(this.value,'resource_offer_user_nick')\"><br/><div class=\"citybox\" id=\"citybox\">&nbsp;</div></td>";
+			echo "</tr>";			
 
 			// Status Nachricht (Ajax Überprüfungstext)
 			echo "<tr>
@@ -143,6 +147,21 @@
 				</tr>";
 
 			tableEnd();
+			
+			?>
+			<script>
+				$(function(){
+					$('#resource_offer_user_nick').hide();
+					$('input[name=resource_offer_reservation]').click(function(){
+						if ($(this).val() == 1) {
+							$('#resource_offer_user_nick').show();	
+						} else {
+							$('#resource_offer_user_nick').hide();
+						}
+					});
+				});
+			</script>
+			<?PHP
 
 			// Absend-Button (Per Ajax freigegeben)
 			echo "<input type=\"button\" class=\"button\" name=\"ressource_sell_submit\" id=\"ressource_sell_submit\" value=\"Angebot aufgeben\" style=\"color:#f00;\" disabled=\"disabled\" onclick=\"calcMarketRessPrice('1');checkUpdate('ress_selector', 'ress_last_update');\"/></form><br/><br/>";
@@ -317,14 +336,18 @@
 				// Reservation
 				echo "<tr>
 				<th>Reservation</th>
-				<td colspan=\"4\">";
+				<td colspan=\"3\">";
+				echo "<input type=\"radio\" name=\"ship_offer_reservation\" id=\"ship_offer_reservation_0\" value=\"0\" checked=\"checked\" /> <label for=\"ship_offer_reservation_0\">Öffentliches Angebot</label><br/>";
+				echo "<input type=\"radio\" name=\"ship_offer_reservation\" id=\"ship_offer_reservation_1\" value=\"1\" /> <label for=\"ship_offer_reservation_1\">Für eine bestimmte Person</label><br/>";
 				//Für Allianzmitglied reservieren wenn in einer Allianz und diese den Allianzmarktplatz auf Stufe 2 oder höher hat
 				if($cu->allianceId!=0 && $alliance_market_level>=2 && !$cd_enabled)
 				{
-					echo "<input type=\"checkbox\" name=\"ship_for_alliance\" id=\"ship_for_alliance\" value=\"1\" /> 
-					<label for=\"ship_for_alliance\" ".tm("Reservation","Fall dieses Angebot nur Spieler aus deiner Allianz kaufen sollen, mach hier ein H&auml;kchen").">F&uuml;r Allianzmitglieder Reservieren</label>";
+					echo "<input type=\"radio\" name=\"ship_offer_reservation\" id=\"ship_offer_reservation_2\" value=\"2\" /> 
+					<label for=\"ship_offer_reservation_2\" ".tm("Reservation","Fall dieses Angebot nur Spieler aus deiner Allianz kaufen sollen, mach hier ein H&auml;kchen").">F&uuml;r Allianzmitglieder</label>";
 				}
-				echo "</td></tr>";
+				echo "</td>";
+				echo "<td style=\"vertical-align:middle\"><input type=\"text\" name=\"ship_offer_user_nick\" id=\"ship_offer_user_nick\"  maxlength=\"".NICK_MAXLENGHT."\" size=\"25\" autocomplete=\"off\" value=\"\" onkeyup=\"xajax_searchUser(this.value,'ship_offer_user_nick')\"><br/><div class=\"citybox\" id=\"citybox\">&nbsp;</div></td>";
+				echo "</tr>";
 
 				// Status Nachricht (Ajax Überprüfungstext)
 				echo "<tr>
@@ -332,6 +355,21 @@
 				</tr>";
 
 				tableEnd();
+				
+				?>
+				<script>
+					$(function(){
+						$('#ship_offer_user_nick').hide();
+						$('input[name=ship_offer_reservation]').click(function(){
+							if ($(this).val() == 1) {
+								$('#ship_offer_user_nick').show();	
+							} else {
+								$('#ship_offer_user_nick').hide();
+							}
+						});
+					});
+				</script>
+				<?PHP
 
 				// Absend-Button (Per Ajax freigegeben)
 				echo "<input type=\"button\" class=\"button\" name=\"ship_sell_submit\" id=\"ship_sell_submit\" value=\"Angebot aufgeben\" style=\"color:#f00;\" disabled=\"disabled\" onclick=\"calcMarketShipPrice(0, 1);checkUpdate('ship_selector', 'ship_last_update');\"/></form><br/><br/>";

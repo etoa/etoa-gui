@@ -18,35 +18,32 @@
 	//
 	//
 	
-		if(!isset($_POST['ship_for_alliance']))
+	$for_user = 0;
+	$for_alliance = 0;
+	
+	if ($_POST['ship_offer_reservation'] == 1)
+	{
+		$for_user = User::findIdByNick(trim($_POST['ship_offer_user_nick']));
+		if ($for_user == 0)
 		{
-			$_POST['ship_for_alliance']=0;
-			$for_alliance="";
+			$errMsg = "Reservation nicht möglich, Spieler nicht gefunden!";
 		}
-		elseif ($alliance_market_level>0 && !$cd_enabled)
+	}
+	if ($_POST['ship_offer_reservation'] == 2)
+	{
+		if ($alliance_market_level > 0 && !$cd_enabled)
 		{
-			$_POST['ship_for_alliance']=$cu->allianceId;
-			$for_alliance="f&uuml;r ein Allianzmitglied ";
-
-			// Set cooldown
-			$cd = time()+$cooldown;
-			dbquery("
-					UPDATE
-						alliance_buildlist
-					SET
-						alliance_buildlist_cooldown=".$cd."
-					WHERE
-						alliance_buildlist_alliance_id='".$cu->allianceId."'
-						AND alliance_buildlist_building_id='".ALLIANCE_MARKET_ID."';");
-
-			$cu->alliance->buildlist->setCooldown(ALLIANCE_MARKET_ID,$cd);
+			$for_alliance = $cu->allianceId;
 		}
 		else
 		{
-			$_POST['ship_for_alliance']=0;
-			$for_alliance="";
+			$errMsg = "Reservation nicht möglich, Allianzmarkt nicht vorhanden oder nicht bereit!";
 		}
+	}
 
+	if (empty($errMsg))
+	{
+		
 		$ship_id = $_POST['ship_list'];
 		$ship_count = nf_back($_POST['ship_count']);
 
@@ -80,6 +77,7 @@
 				ship_id,
 				`count`,
 				".$cf."
+				for_user,
 				for_alliance,
 				`text`,
 				datum
@@ -90,7 +88,8 @@
 					'".$ship_id."',
 					'".$ship_count."',
 					".$cv."
-					'".$_POST['ship_for_alliance']."',
+					'".$for_user."',
+					'".$for_alliance."',
 					'".mysql_real_escape_string($_POST['ship_text'])."',
 					'".time()."')");
 
@@ -100,6 +99,23 @@
 				'content'=>$_POST['ship_text']
 				), "shipadd", mysql_insert_id(), $marr);
 
+				
+			if ($for_alliance > 0) 
+			{
+				// Set cooldown
+				$cd = time()+$cooldown;
+				dbquery("
+						UPDATE
+							alliance_buildlist
+						SET
+							alliance_buildlist_cooldown=".$cd."
+						WHERE
+							alliance_buildlist_alliance_id='".$cu->allianceId."'
+							AND alliance_buildlist_building_id='".ALLIANCE_MARKET_ID."';");
+				
+				$cu->alliance->buildlist->setCooldown(ALLIANCE_MARKET_ID,$cd);
+			}
+				
 			success_msg("Angebot erfolgreich abgesendet!");
 			return_btn();
 		}
@@ -118,6 +134,9 @@
             error_msg("Die angegebenen Schiffe sind nicht mehr vorhanden!");
 			return_btn();
 		}
-
-
+	}
+	else
+	{
+		error_msg($errMsg);
+	}
 ?>
