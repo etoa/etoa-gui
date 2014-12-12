@@ -14,6 +14,7 @@ Version 3.5.0
  * Added architect specialist which reduces build time by 10%
  * A password can now be specified when creating an account
  * Added button to select a random race on first login
+ * Market offers can be reserved for a specified user
 
 #### Bugfixes ####
 

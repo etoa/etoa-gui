@@ -69,6 +69,7 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 			".($dfilter!="" ? $dfilter : 0)."
 			)
 			AND user_id!='".$_SESSION['user_id']."'
+			AND (for_user='".$_SESSION['user_id']."' OR for_user='0')
 			AND (for_alliance='".$_SESSION['alliance_id']."' OR for_alliance='0')
 			;";
 		
@@ -135,7 +136,17 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 			}
 
 
-			$cres = dbquery("SELECT COUNT(id) FROM market_ressource WHERE buyable=1 AND user_id!='".$_SESSION['user_id']."' AND (for_alliance='".$_SESSION['alliance_id']."' OR for_alliance='0')");
+			$cres = dbquery("
+			SELECT
+				COUNT(id) 
+			FROM 
+				market_ressource 
+			WHERE 
+				buyable=1
+				AND user_id!='".$_SESSION['user_id']."' 
+				AND (for_user='".$_SESSION['user_id']."' OR for_user='0')
+				AND (for_alliance='".$_SESSION['alliance_id']."' OR for_alliance='0')
+			;");
 			$carr = mysql_fetch_row($cres);
 			echo "<form action=\"?page=market&amp;mode=ressource\" method=\"post\" id=\"ress_buy_selector\">\n";
 			checker_init();
@@ -158,15 +169,15 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 			{
 				$i=0;
 
-				$for_alliance="";
-				// Für Allianzmitglied reserveriert
-				if($arr['for_alliance']!=0)
+				// Reservation
+				$reservation = "";
+				if($arr['for_user']!=0)
 				{
-						$for_alliance="<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied Reserviert</span>";
-				}
-				else
+					$reservation="<span class=\"userAllianceMemberColor\">F&uuml;r dich reserviert</span>";
+				}				
+				elseif($arr['for_alliance']!=0)
 				{
-						$for_alliance="";
+					$reservation="<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied reserviert</span>";
 				}
 
 				$cres = $arr['used_res'];
@@ -189,7 +200,7 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 												".tf($arr['duration'])."
 												</td>
 												<td rowspan=\"".$cres."\">
-													".$for_alliance."<br />
+													".$reservation."<br />
 													<span class=\"rtext\">".stripslashes($arr['text'])."</span>
 												</td>
 												<td rowspan=\"".$cres."\">
@@ -262,6 +273,7 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 			WHERE
 				buyable='1'
 			AND user_id!='".$_SESSION['user_id']."'
+			AND (for_user='".$_SESSION['user_id']."' OR for_user='0')
 			AND (for_alliance='".$_SESSION['alliance_id']."' OR for_alliance='0')
 			;");
 			$cnt=0;
@@ -297,10 +309,15 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 									</tr></thead>";
 						}
 						
-						if($arr['for_alliance']!=0)
-							$for_alliance="<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied Reserviert</span>";
-						else
-							$for_alliance="";
+						$reservation="";
+						if($arr['for_user']!=0)
+						{
+							$reservation="<span class=\"userAllianceMemberColor\">F&uuml;r dich reserviert</span>";
+						}							
+						elseif($arr['for_alliance']!=0)
+						{
+							$reservation="<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied reserviert</span>";
+						}
 
 						$i=0;
 						$resCnt = count($resNames);
@@ -320,7 +337,7 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 							{
 								$tu = new User($arr['user_id']);
 								echo "<td rowspan=\"$resCnt\" class=\"usrinfo\">".$tu->detailLink()."</td>";
-								echo "<td rowspan=\"$resCnt\">".$for_alliance."<br /><span class=\"rtext\">".stripslashes($arr['text'])."</span></td>";
+								echo "<td rowspan=\"$resCnt\">".$reservation."<br /><span class=\"rtext\">".stripslashes($arr['text'])."</span></td>";
 								echo "<td rowspan=\"$resCnt\">
 									<input type=\"checkbox\" name=\"ship_market_id[]\" id=\"ship_market_id_".$arr['id']."\" value=\"".$arr['id']."\" onclick=\"xajax_calcMarketShipBuy(xajax.getFormValues('ship_buy_selector'));\" />
 								</td>";

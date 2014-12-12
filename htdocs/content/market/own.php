@@ -233,11 +233,23 @@
 			$cnt=0;
 			while ($row=mysql_fetch_array($res))
 			{
-				if($row['for_alliance']!=0)
-					$for_alliance="<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied Reserviert</span>";
+				if ($row['for_user']!=0)
+				{
+					$reservedUser = new User($row['for_user']);
+					if ($reservedUser->isValid)
+					{
+						$reservation="<span class=\"userAllianceMemberColor\">F&uuml;r Spieler ".$reservedUser->nick." reserviert</span>";
+					}
+				}
+				else if ($row['for_alliance']!=0)
+				{
+					$reservation="<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied Reserviert</span>";
+				}
 				else
-					$for_alliance="";
-
+				{
+					$reservation="";
+				}
+				
 				$i = 0;
 
 				$te = Entity::createFactoryById($row['entity_id']);
@@ -258,7 +270,7 @@
 
 						echo "<td rowspan=\"5\">".($te->detailLink())."</td>";
 						echo "<td rowspan=\"5\">".date("d.m.Y  G:i:s", $row['datum'])."<br/><br/>".stripslashes($row['text'])."</td>";
-						echo "<td rowspan=\"5\" ".tt($info_string)."><input type=\"radio\" name=\"ressource_market_id\" value=\"".$row['id']."\"><br/><br/>".$for_alliance."</td></tr>";
+						echo "<td rowspan=\"5\" ".tt($info_string)."><input type=\"radio\" name=\"ressource_market_id\" value=\"".$row['id']."\"><br/><br/>".$reservation."</td></tr>";
 					}
 					echo "</tr>";
 				}
@@ -312,10 +324,22 @@
 			$cnt=0;
 			while ($arr=mysql_fetch_array($res))
 			{
-				if($arr['for_alliance']!=0)
-					$for_alliance="<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied Reserviert</span>";
+				if ($arr['for_user']!=0)
+				{
+					$reservedUser = new User($arr['for_user']);
+					if ($reservedUser->isValid)
+					{
+						$reservation="<span class=\"userAllianceMemberColor\">F&uuml;r Spieler ".$reservedUser->nick." reserviert</span>";
+					}
+				}
+				else if ($arr['for_alliance']!=0)
+				{
+					$reservation="<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied Reserviert</span>";
+				}
 				else
-					$for_alliance="";
+				{
+					$reservation="";
+				}
 
 				$i=0;
 				$resCnt = count($resNames);
@@ -335,7 +359,7 @@
 					if ($i++==0)
 					{
 						echo "<td rowspan=\"$resCnt\">".date("d.m.Y  G:i:s", $arr['datum'])."<br/><br/>".stripslashes($arr['text'])."</td>";
-						echo "<td rowspan=\"$resCnt\" ".tt($info_string)."><input type=\"radio\" name=\"ship_market_id\" value=\"".$arr['id']."\"><br/><br/>".$for_alliance."</td>";
+						echo "<td rowspan=\"$resCnt\" ".tt($info_string)."><input type=\"radio\" name=\"ship_market_id\" value=\"".$arr['id']."\"><br/><br/>".$reservation."</td>";
 
 					}
 					echo "</tr>";
