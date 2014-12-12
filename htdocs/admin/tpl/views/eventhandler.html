@@ -7,16 +7,13 @@
 	<h2>Daemon-Infos</h2>
 	<table class="tbl">
 	<tr><th>System</th><td>{$sys_id}</td></tr>
-	<tr><th>Pfad</th><td>{cfg key=daemon_exe}</td></tr>
-	<tr><th>Instanz</th><td>{cfg key=daemon_instance}</td></tr>
-	<tr><th>Logfile</th><td>{cfg key=daemon_logfile}</td></tr>
-	<tr><th>Pidfile</th><td>{cfg key=daemon_pidfile}</td></tr>
-	<tr><th>Message Queue</th><td>{$message_queue_size} Requests</td></tr>
 	<tr><th>Status</th><td class="{if $eventhandler_pid|default:0 gt 0}
 		color_ok">PID {$eventhandler_pid}
 	{else}
 		color_error">L&Auml;UFT NICHT
-	{/if}</td></tr></table>
+	{/if}</td></tr>
+	<tr><th>Message Queue</th><td>{$message_queue_size} Requests</td></tr>
+	</table>
 
 	<p>Die Einstellungen zum Eventhandler können in der <a href="?page=config&sub=editor&category=20">Konfiguration</a> angepasst werden.</p>
 	
