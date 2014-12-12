@@ -1,0 +1,3 @@
+#!/bin/bash
+
+[ -e /etc/init.d/etoad-manager ] && update-rc.d etoad-manager remove
