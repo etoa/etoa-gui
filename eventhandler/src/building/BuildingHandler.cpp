@@ -1,6 +1,8 @@
 
 #include "BuildingHandler.h"
 #include "../util/Debug.h"
+#include "../objects/User.h"
+#include "../entity/EntityFactory.h"
 
 namespace building
 {
@@ -14,6 +16,7 @@ namespace building
 		query << "SELECT "
 			<< "	buildlist_user_id, "
 			<< "	buildlist_current_level, "
+			<< "	buildlist_entity_id, "
 			<< "	cells.sx, "
 			<< "	cells.sy, "
 			<< "	cells.cx, "
@@ -38,60 +41,23 @@ namespace building
 			unsigned int resSize = res.size();
 			if (resSize>0) {
 				
-				int sxNum = (int)config.nget("num_of_sectors",1);
-				int cxNum = (int)config.nget("num_of_cells",1);
-				int syNum = (int)config.nget("num_of_sectors",2);
-				int cyNum = (int)config.nget("num_of_cells",2);
-				
-				// the mask
-				char mask[10000] = "";
-				
+				double factor = (double)config.nget("discoverymask",0);
+
 				mysqlpp::Row row;
 				
 				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) {
 	    			row = res.at(i);
 					
-					query << "SELECT "
-					<< "	discoverymask "
-					<< "FROM "
-					<< "	users "
-					<< "WHERE "
-					<< "	user_id='" << (int)row["buildlist_user_id"] << "' "
-					<< "LIMIT 1;";
-					RESULT_TYPE maskRes = query.store();
+					int uid = (int)row["buildlist_user_id"];
+					int eid = (int)row["buildlist_entity_id"];
+					int radius = 1 + (int)((int)row["buildlist_current_level"] * factor);
+				
+                    Entity* e = EntityFactory::createEntityById(eid);
 
-					if (maskRes) {
-						int maskSize = maskRes.size();
-						
-						if (maskSize > 0) {
-							mysqlpp::Row maskRow = maskRes.at(0);
-							strcpy( mask, maskRow["discoverymask"]);
-						}
-					}
-					
-					int radius = 1 + (int)((int)row["buildlist_current_level"] * config.nget("discoverymask",0));
-					int absX = (10 * ((int)row["sx"] - 1) + (int)row["cx"]);
-					int absY = (10 * ((int)row["sy"] - 1) + (int)row["cy"]);
-					
-					for (int x = absX - radius; x <= absX + radius; x++) {
-						for (int y = absY - radius; y <= absY + radius; y++) {
-							int pos = x + (cyNum * syNum) * (y - 1) - 1;
-							if (pos >= 0 && pos <= sxNum * syNum * cxNum * cyNum) {
-								mask[pos] = '1';
-							}
-						}
-					}
-					
-					// Update the mask
-					query << "UPDATE "
-						<< "	users "
-						<< "SET "
-						<< " discoverymask='" << mask << "' "
-						<< "WHERE "
-						<< "	user_id='" << (int)row["buildlist_user_id"] << "' "
-						<< "LIMIT 1;";
-					query.store();
-					
+				    User u(uid);
+                    u.setDiscovered(e->getAbsX(), e->getAbsY(), radius);
+
+                    delete e;
 				}
 			}
 		}
