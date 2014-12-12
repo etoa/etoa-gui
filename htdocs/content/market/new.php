@@ -130,7 +130,10 @@
 			<th>Reservation</th>
 			<td colspan=\"3\">";
 			echo "<input type=\"radio\" name=\"resource_offer_reservation\" id=\"resource_offer_reservation_0\" value=\"0\" checked=\"checked\" /> <label for=\"resource_offer_reservation_0\">Öffentliches Angebot</label><br/>";
-			echo "<input type=\"radio\" name=\"resource_offer_reservation\" id=\"resource_offer_reservation_1\" value=\"1\" /> <label for=\"resource_offer_reservation_1\">Für eine bestimmte Person</label><br/>";
+		    if ($cfg->market_user_reservation_active->v == 1)
+			{
+				echo "<input type=\"radio\" name=\"resource_offer_reservation\" id=\"resource_offer_reservation_1\" value=\"1\" /> <label for=\"resource_offer_reservation_1\">Für eine bestimmte Person</label><br/>";
+			}
 			//Für Allianzmitglied reservieren wenn in einer Allianz und diese den Allianzmarktplatz auf Stufe 1 oder höher hat
 			if($cu->allianceId!=0 && $alliance_market_level>=1 && !$cd_enabled)
 			{
@@ -338,7 +341,10 @@
 				<th>Reservation</th>
 				<td colspan=\"3\">";
 				echo "<input type=\"radio\" name=\"ship_offer_reservation\" id=\"ship_offer_reservation_0\" value=\"0\" checked=\"checked\" /> <label for=\"ship_offer_reservation_0\">Öffentliches Angebot</label><br/>";
-				echo "<input type=\"radio\" name=\"ship_offer_reservation\" id=\"ship_offer_reservation_1\" value=\"1\" /> <label for=\"ship_offer_reservation_1\">Für eine bestimmte Person</label><br/>";
+				if ($cfg->market_user_reservation_active->v == 1)
+				{
+					echo "<input type=\"radio\" name=\"ship_offer_reservation\" id=\"ship_offer_reservation_1\" value=\"1\" /> <label for=\"ship_offer_reservation_1\">Für eine bestimmte Person</label><br/>";
+				}
 				//Für Allianzmitglied reservieren wenn in einer Allianz und diese den Allianzmarktplatz auf Stufe 2 oder höher hat
 				if($cu->allianceId!=0 && $alliance_market_level>=2 && !$cd_enabled)
 				{

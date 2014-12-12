@@ -363,6 +363,9 @@ http://etoa.ch</v>
     <item name="market_rate_4" cat="6">
       <v comment="Handelskurs Resource 4 (auto)" type="text">1</v>
     </item>
+    <item name="market_user_reservation_active" cat="6">
+      <v comment="Reservation von Angeboten für einen bestimmten Spieler" type="onoff">1</v>
+    </item>
 
     <item name="default_image_path" cat="7">
       <v comment="Standard-Bildpaket" type="text">images/imagepacks/Discovery</v>
