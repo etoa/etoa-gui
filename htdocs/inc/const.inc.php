@@ -482,9 +482,6 @@
 			
 	// Anzahl Runden
 	define("BATTLE_ROUNDS", 5);
-	
-	$weaponNames = array("Strahlenwaffe","Raketen","Projektilwaffe");
-	$defenseNames = array("Schilder","Raketenabwehr","Rüstung");
 
   /*********/
   /* Markt */
