@@ -158,7 +158,7 @@
         <?PHP
         
         echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-        echo "Alle Einstellungen werden von der <a href=\"?page=config&cid=3\">Konfiguration</a> &uuml;bernommen!<br/><br/>";
+        echo "Alle Einstellungen werden von der <a href=\"?page=config&category=3\">Konfiguration</a> &uuml;bernommen!<br/><br/>";
         
         tableStart("Galaxie",400);			
         echo "<tr>
