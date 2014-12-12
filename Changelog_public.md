@@ -12,6 +12,7 @@ Version 3.5.0
  * Neuer Spezialist: Der Architekt reduziert die Bauzeit um 10%
  * Beim Erstellen eines Accounts kann nun direkt ein Passwort gewählt werden
  * Es wurde ein Zufalls-Button zur Rassenauswahl hinzugefügt
+ * Marktangeboten können für einen bestimmten Spieler reserviert werden
  
 ### Bugfixes ###
 
