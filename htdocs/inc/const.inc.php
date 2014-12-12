@@ -449,16 +449,6 @@
 	
 	// Faktor mit dem die Schilde der Verteidigung bei einem Kampf mit einberechnet werden.
 	define("MISSILE_BATTLE_SHIELD_FACTOR", 0.3);
-	
-	//
-	// Kryptocenter
-	//
-	
-	// Reichweite in AE für Kryptoanalyse pro Ausbaustufe
-	define("CRYPTO_RANGE_PER_LEVEL", 700);
-	
-	// Kosten an Tritium pro Kryptoanalyse
-	define("CRYPTO_FUEL_COSTS_PER_SCAN", 10000);
 
 	/*************************/
 	/* Flotten & Kampfsystem */

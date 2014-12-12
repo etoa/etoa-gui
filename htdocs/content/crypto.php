@@ -25,6 +25,12 @@
 	* @copyright Copyright (c) 2004-2009 by EtoA Gaming, www.etoa.net
 	*/	
 
+	// Reichweite in AE für Kryptoanalyse pro Ausbaustufe
+	define("CRYPTO_RANGE_PER_LEVEL", $cfg->crypto_range_per_level->v);
+	
+	// Kosten an Tritium pro Kryptoanalyse
+	define("CRYPTO_FUEL_COSTS_PER_SCAN", $cfg->crypto_fuel_costs_per_scan->v);
+	
 	// BEGIN SKRIPT //
 
 	echo "<form action=\"?page=$page\" method=\"post\">";

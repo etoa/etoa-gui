@@ -678,6 +678,12 @@ http://etoa.ch</v>
       <p1 comment="Kryptocenter Cooldown-Reduzierung/Stufe (sec)&#13;&#10;Uservalue 300" type="text">7200</p1>
       <p2 comment="Kryptocenter min Cooldown (sec)&#13;&#10;Uservalue 600" type="text">21600</p2>
     </item>
+	<item name="crypto_range_per_level" cat="23">
+      <v comment="Reichweite in AE für Kryptoanalyse pro Ausbaustufe" type="text">700</v>
+    </item>
+	<item name="crypto_fuel_costs_per_scan" cat="23">
+      <v comment="Kosten an Tritium pro Kryptoanalyse" type="text">10000</v>
+    </item>
 
     <item name="chat_recent_messages" cat="25">
       <v comment="Anzahl aktuelle Chat Nachrichten" type="text">200</v>
