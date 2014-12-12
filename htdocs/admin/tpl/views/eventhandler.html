@@ -1,6 +1,6 @@
 {if $title|default:'' ne ""}<h1>{$title}</h1>{/if}
 
-{if $msg|default:'' ne ""}{msg type="ok" text=$msg}{/if}
+{if $msg|default:'' ne ""}{msg type="info" text=$msg}{/if}
 {if $errmsg|default:'' ne ""}{msg type="err" text=$errmsg}{/if}
 
 {if $is_unix eq true}
@@ -22,8 +22,11 @@
 	
 	<h2>Management</h2>
 	<p>
-		<input type="button" value="Start" onclick="document.location='?page={$page}&amp;action=start';" />
-		<input type="button" value="Stop" onclick="document.location='?page={$page}&amp;action=stop';" />
+		{if $eventhandler_pid|default:0 gt 0}
+			<input type="button" value="Stop" onclick="document.location='?page={$page}&amp;action=stop';" />
+		{else}
+			<input type="button" value="Start" onclick="document.location='?page={$page}&amp;action=start';" />
+		{/if}
 	</p>
 	{if $action_output|default:'' ne ''}
 		<pre>

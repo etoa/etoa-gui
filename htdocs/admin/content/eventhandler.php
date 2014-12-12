@@ -15,12 +15,16 @@
 			{
 				$out = EventHandlerManager::start($executable, $instance, $pidfile);
 				$tpl->assign('action_output', implode("\n", $out));
+				$tpl->assign('msg', "Dienst gestartet!");
 			}
 			else if ($_GET['action'] == "stop")
 			{
 				$out = EventHandlerManager::stop($executable, $instance, $pidfile);
 				$tpl->assign('action_output', implode("\n", $out));
+				$tpl->assign('msg', "Dienst gestoppt!");
 			}
+			
+			$tpl->assign("eventhandler_pid", EventHandlerManager::checkDaemonRunning($pidfile);
 		}
 	
 		$tpl->assign('message_queue_size', BackendMessage::getMessageQueueSize());
