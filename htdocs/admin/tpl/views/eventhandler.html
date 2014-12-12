@@ -23,7 +23,7 @@
 	<h2>Management</h2>
 	<p>
 		{if $eventhandler_pid|default:0 gt 0}
-			<input type="button" value="Stop" onclick="document.location='?page={$page}&amp;action=stop';" />
+			<input type="button" value="Stop" onclick="if (confirm('Dienst wirklich stoppen?')) { document.location='?page={$page}&amp;action=stop'; }" />
 		{else}
 			<input type="button" value="Start" onclick="document.location='?page={$page}&amp;action=start';" />
 		{/if}
