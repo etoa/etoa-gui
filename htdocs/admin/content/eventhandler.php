@@ -5,6 +5,24 @@
 
 	if (UNIX)
 	{
+		if (isset($_GET['action']))
+		{
+			$executable = $cfg->daemon_exe->v;
+			$instance = $cfg->daemon_instance->v;
+			$pidfile = $cfg->daemon_pidfile->v;
+
+			if ($_GET['action'] == "start")
+			{
+				$out = EventHandlerManager::start($executable, $instance, $pidfile);
+				$tpl->assign('action_output', implode("\n", $out));
+			}
+			else if ($_GET['action'] == "stop")
+			{
+				$out = EventHandlerManager::stop($executable, $instance, $pidfile);
+				$tpl->assign('action_output', implode("\n", $out));
+			}
+		}
+	
 		$tpl->assign('message_queue_size', BackendMessage::getMessageQueueSize());
 
 		if (function_exists('posix_uname')) {

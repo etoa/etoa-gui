@@ -19,7 +19,18 @@
 	{/if}</td></tr></table>
 
 	<p>Die Einstellungen zum Eventhandler können in der <a href="?page=config&sub=editor&category=20">Konfiguration</a> angepasst werden.</p>
-		
+	
+	<h2>Management</h2>
+	<p>
+		<input type="button" value="Start" onclick="document.location='?page={$page}&amp;action=start';" />
+		<input type="button" value="Stop" onclick="document.location='?page={$page}&amp;action=stop';" />
+	</p>
+	{if $action_output|default:'' ne ''}
+		<pre>
+			{$action_output}
+		</pre>
+	{/if}
+	
 	<h2>Log</h2>
 	<div class="eventhandler_log">
 		{foreach from=$log item=l}
