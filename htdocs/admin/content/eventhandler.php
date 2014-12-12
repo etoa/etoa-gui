@@ -24,7 +24,7 @@
 				$tpl->assign('msg', "Dienst gestoppt!");
 			}
 			
-			$tpl->assign("eventhandler_pid", EventHandlerManager::checkDaemonRunning($pidfile);
+			$tpl->assign("eventhandler_pid", EventHandlerManager::checkDaemonRunning($pidfile));
 		}
 	
 		$tpl->assign('message_queue_size', BackendMessage::getMessageQueueSize());
