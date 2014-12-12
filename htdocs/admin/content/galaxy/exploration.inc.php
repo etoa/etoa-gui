@@ -37,6 +37,7 @@
 		$sy = 1;
 		$cx = 1;
 		$cy = 1;
+		$radius = 1;
 		
 		// Discover selected cell
 		if (isset($_POST['discover_selected'])) 
@@ -45,6 +46,7 @@
 			$sy = intval($_POST['sy']);
 			$cx = intval($_POST['cx']);
 			$cy = intval($_POST['cy']);
+			$radius = abs(intval($_POST['radius']));
 		
 			$res = dbQuerySave("
 			SELECT
@@ -68,7 +70,7 @@
 				$cell = new Cell($arr[0]);
 				if ($cell->isValid())
 				{
-					$user->setDiscovered($cell->absX(), $cell->absY());
+					$user->setDiscovered($cell->absX(), $cell->absY(), $radius);
 					$tpl->assign("msg", "Koordinaten erkundet!");
 				}
 			}
@@ -94,6 +96,7 @@
 		$tpl->assign("sy", $sy);
 		$tpl->assign("cx", $cx);
 		$tpl->assign("cy", $cy);
+		$tpl->assign("radius", $radius);
 		
 		$tpl->assign("discoveredPercent", $user->getDiscoveredPercent());
 	}

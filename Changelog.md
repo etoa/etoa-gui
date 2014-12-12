@@ -57,6 +57,7 @@ Version 3.5.0
  * Crypto center cooldown can be configured in the settings
  * Missile silo parameters can be configured in the settings
  * Added possibility to manage backend daemon (start / stop)
+ * Allow to select radius when changing user map discovery
  
 #### Changes ####
 

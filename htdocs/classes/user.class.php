@@ -1200,7 +1200,7 @@ die Spielleitung";
 		return 0;
 	}
 	
-	function setDiscovered($absX,$absY)
+	function setDiscovered($absX,$absY,$radius=1)
 	{
 		if (!isset($this->dmask))
 		{
@@ -1212,9 +1212,9 @@ die Spielleitung";
 		$sy_num=$cfg->param2('num_of_sectors');
 		$cy_num=$cfg->param2('num_of_cells');
 		
-		for ($x=$absX-1; $x<=$absX+1; $x++)
+		for ($x=$absX-$radius; $x<=$absX+$radius; $x++)
 		{
-			for ($y=$absY-1; $y<=$absY+1; $y++)
+			for ($y=$absY-$radius; $y<=$absY+$radius; $y++)
 			{
 				if ($x > 0 && $y > 0 && $x <= $sx_num * $cx_num && $y <= $sy_num * $cy_num)
 				{
