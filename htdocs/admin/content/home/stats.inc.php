@@ -628,7 +628,11 @@
 		$m = $conf['points_update']['v']/60;
 		echo "alle $m Minuten!<br/>";
 	}
-	echo "Letzte Aktualisierung: <b>".df($cfg->get('statsupdate'))." Uhr</b><br/>";
+	$statsUpdate = RuntimeDataStore::get('statsupdate');
+	if ($statsUpdate != null)
+	{
+		echo "Letzte Aktualisierung: <b>".df($statsUpdate)." Uhr</b><br/>";
+	}
 	echo "<b>Legende:</b> 
 	<span class=\"userLockedColor\">Gesperrt</span>, 
 	<span class=\"userHolidayColor\">Urlaubsmodus</span>, 

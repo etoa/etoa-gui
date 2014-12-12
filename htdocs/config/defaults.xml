@@ -62,9 +62,6 @@
       <p1 comment="Einheiten/Userpunkt" type="text">1000</p1>
       <p2 comment="Userpunkte/Allypunk" type="text">100</p2>
     </item>
-    <item name="statsupdate" cat="1">
-      <v comment="Statistikupdate" type="timedate">1240063202</v>
-    </item>
     <item name="show_hmod_users_stats" cat="1">
       <v comment="Spieler im Urlaubsmodus in den Statistiken anzeigen" type="onoff">1</v>
     </item>

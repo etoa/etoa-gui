@@ -1080,7 +1080,8 @@
 			unset($techs);
 			
 			// Zeit in Config speichern
-			$cfg->set('statsupdate',time());
+			RuntimeDataStore::set('statsupdate', time());
+
 			$num = mysql_num_rows($ures);
 
 			// Arrays löschen (Speicher freigeben)
