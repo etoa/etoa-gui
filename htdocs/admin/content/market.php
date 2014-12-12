@@ -384,8 +384,7 @@
 		echo "<table class=\"tb\" style=\"width:200px;\">";
 		for ($i=0;$i<NUM_RESOURCES;$i++)
 		{
-			$vname = "market_rate_".$i;
-			echo "<tr><th>".$resNames[$i]."</th><td>".$cfg->$vname->v."</td></tr>";
+			echo "<tr><th>".$resNames[$i]."</th><td>".RuntimeDataStore::get('market_rate_'.$i, 1)."</td></tr>";
 		}
 		echo "</table>";
 

@@ -1,7 +1,7 @@
 <?php
 class RuntimeDataStore
 {
-	public static function get($key)
+	public static function get($key, $default = null)
 	{
 		$res = dbQuerySave('
 		SELECT
@@ -17,7 +17,7 @@ class RuntimeDataStore
 		{
 			return $arr[0];
 		}
-		return null;
+		return $default;
 	}
 	
 	public static function set($key, $value)

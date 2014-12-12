@@ -1,5 +1,11 @@
 <?PHP
 
+	$currentRates = [];
+	for($i=0;$i<NUM_RESOURCES;$i++)
+	{
+		$currentRates[$i] = RuntimeDataStore::get('market_rate_'.$i, 1);
+	}
+
 	echo "<h2>Rohstoffkurse</h2>";
 
 	HelpUtil::breadCrumbs(array("Rohstoffkurse","rates"));
@@ -26,7 +32,7 @@
 				echo "<td>-</td>";
 			else
 			{
-				$r = round($cfg->{"market_rate_".$i}->v / $cfg->{"market_rate_".$j}->v,2);
+				$r = round($currentRates[$i] / $currentRates[$j], 2);
 				echo "<td".HelpUtil::colorizeMarketRate($r).">".$r."</td>";
 			}
 		}
@@ -34,8 +40,8 @@
 	}
 	echo "</table><br/>";
 
-	echo "<b>Beispiel:</b> Eine Tonne ".$resNames[0]." hat den Wert von ".round($cfg->{"market_rate_0"}->v / $cfg->{"market_rate_1"}->v,2)." Tonnen ".$resNames[1].".<br/>
-	Für eine Tonne ".$resNames[1]." muss man ".round($cfg->{"market_rate_1"}->v / $cfg->{"market_rate_0"}->v,2)." Tonnen ".$resNames[0]." aufwenden.<br/><br/>";
+	echo "<b>Beispiel:</b> Eine Tonne ".$resNames[0]." hat den Wert von ".round($currentRates[0] / $currentRates[1], 2)." Tonnen ".$resNames[1].".<br/>
+	Für eine Tonne ".$resNames[1]." muss man ".round($currentRates[1] / $currentRates[0], 2)." Tonnen ".$resNames[0]." aufwenden.<br/><br/>";
 	echo "<b>Legende:</b><br/><br/> kleiner Bedarf/grosses Angebot
 		<span style=\"background:#0f0;width;50px;\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 		<span style=\"background:#ff0;width;50px;\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -53,7 +59,7 @@
 	</tr>";
 	for($i=0;$i<NUM_RESOURCES;$i++)
 	{
-		$r = $cfg->{'market_rate_'.$i}->v;
+		$r = $currentRates[$i];
 		echo "<tr>
 			<th>".$resNames[$i]."</th>
 			<td".HelpUtil::colorizeMarketRate($r).">".$r."</td>

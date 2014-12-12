@@ -345,21 +345,6 @@ http://etoa.ch</v>
     <item name="market_auction_delay_time" cat="6">
       <v comment="Anzeigedauer der Auktionen (Stunden)" type="text">24</v>
     </item>
-    <item name="market_rate_0" cat="6">
-      <v comment="Handelskurs Resource 0 (auto)" type="text">1</v>
-    </item>
-    <item name="market_rate_1" cat="6">
-      <v comment="Handelskurs Resource 1 (auto)" type="text">1</v>
-    </item>
-    <item name="market_rate_2" cat="6">
-      <v comment="Handelskurs Resource 2 (auto)" type="text">1</v>
-    </item>
-    <item name="market_rate_3" cat="6">
-      <v comment="Handelskurs Resource 3 (auto)" type="text">1</v>
-    </item>
-    <item name="market_rate_4" cat="6">
-      <v comment="Handelskurs Resource 4 (auto)" type="text">1</v>
-    </item>
     <item name="market_user_reservation_active" cat="6">
       <v comment="Reservation von Angeboten für einen bestimmten Spieler" type="onoff">1</v>
     </item>
