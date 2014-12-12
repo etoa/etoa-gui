@@ -31,9 +31,9 @@
 	// Kosten an Tritium pro Kryptoanalyse
 	define("CRYPTO_FUEL_COSTS_PER_SCAN", $cfg->crypto_fuel_costs_per_scan->v);
 	
-	define("CRYPTO_DEFAULT_COOLDOWN", $cfg->value("cryptocenter"));
-	define("CRYPTO_COOLDOWN_REDUCTION_PER_LEVEL", $cfg->param1("cryptocenter"));
-	define("CRYPTO_MIN_COOLDOWN", $cfg->param2("cryptocenter"));
+	define("CRYPTO_DEFAULT_COOLDOWN", $cfg->value("crypto_default_cooldown"));
+	define("CRYPTO_COOLDOWN_REDUCTION_PER_LEVEL", $cfg->value("crypto_cooldown_reduction_per_level"));
+	define("CRYPTO_MIN_COOLDOWN", $cfg->value("crypto_min_cooldown"));
 	
 	// BEGIN SKRIPT //
 

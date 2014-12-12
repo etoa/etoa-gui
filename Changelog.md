@@ -51,6 +51,7 @@ Version 3.5.0
  * Show changed config values on "restore defaults" page
  * Time clock in header is now also ticking every second
  * A lot of market parameters can be configured in the settings
+ * Crypto center cooldown can be configured in the settings
  
 #### Changes ####
 

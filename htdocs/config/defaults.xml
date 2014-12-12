@@ -673,10 +673,14 @@ http://etoa.ch</v>
     <item name="crypto_enable" cat="23">
       <v comment="Kryptocenter aktivieren" type="onoff">1</v>
     </item>
-    <item name="cryptocenter" cat="23">
-      <v comment="Kryptocenter Standard-Cooldown (sec)&#13;&#10;Uservalue 3600" type="text">86400</v>
-      <p1 comment="Kryptocenter Cooldown-Reduzierung/Stufe (sec)&#13;&#10;Uservalue 300" type="text">7200</p1>
-      <p2 comment="Kryptocenter min Cooldown (sec)&#13;&#10;Uservalue 600" type="text">21600</p2>
+    <item name="crypto_default_cooldown" cat="23">
+      <v comment="Standard-Cooldown (sec)" type="text">86400</v>
+	</item>
+	<item name="crypto_cooldown_reduction_per_level" cat="23">
+      <v comment="Cooldown-Reduzierung/Stufe (sec)" type="text">7200</v>
+	</item>
+	<item name="crypto_min_cooldown" cat="23">
+      <v comment="Minimaler Cooldown (sec)" type="text">21600</v>
     </item>
 	<item name="crypto_range_per_level" cat="23">
       <v comment="Reichweite in AE für Kryptoanalyse pro Ausbaustufe" type="text">700</v>
