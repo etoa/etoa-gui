@@ -643,7 +643,10 @@ http://etoa.ch</v>
 
     <item name="daemon_exe" cat="20">
       <v comment="Evendhandler Executable" type="text">/usr/local/bin/etoad</v>
-    </item>	
+    </item>
+    <item name="daemon_instance" cat="20">
+      <v comment="Evendhandler Instanzname" type="text">roundx</v>
+    </item>
     <item name="daemon_logfile" cat="20" base="yes">
       <v comment="Evendhandler Logfile" type="text">/var/log/etoad/roundx.log</v>
     </item>
