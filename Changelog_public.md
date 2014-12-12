@@ -13,6 +13,7 @@ Version 3.5.0
  * Beim Erstellen eines Accounts kann nun direkt ein Passwort gewählt werden
  * Es wurde ein Zufalls-Button zur Rassenauswahl hinzugefügt
  * Marktangeboten können für einen bestimmten Spieler reserviert werden
+ * Stabile Wurmlöcher, welche ihre Position nicht verändern, wurden an verschiedenen Orten der Galaxie beobachtet
  
 ### Bugfixes ###
 

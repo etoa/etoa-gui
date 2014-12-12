@@ -513,7 +513,31 @@
 				}	
 				elseif ($earr['code']=='w')
 				{		
-								
+					//Daten Speichern
+					if (isset($_POST['save']))
+					{
+						$wh = new Wormhole($id);
+
+						dbquery("
+						UPDATE
+							wormholes
+						SET
+							persistent=".intval($_POST['wormhole_persistent'])."
+						WHERE
+							id='".$id."';");
+
+						$tid = $wh->targetId();
+						dbquery("
+						UPDATE
+							wormholes
+						SET
+							persistent=".intval($_POST['wormhole_persistent'])."
+						WHERE
+							id='".$tid."';");
+
+						success_msg("Änderungen übernommen");
+					}
+					
 					$res = dbquery("
 					SELECT 
 						* 
@@ -525,15 +549,16 @@
 					
 					echo "<form action=\"?page=$page&sub=edit&id=".$id."\" method=\"post\" id=\"editform\">";
 					tableStart("<span style=\"color:".Entity::$entityColors[$earr['code']]."\">Wurmloch</span>","auto");
-					echo "<tr><th>Entstanden</th>
-					<td>
-						".df($arr['changed'])."
-					</td><tr/>";
+					echo "<tr><th>Entstanden</th><td>".df($arr['changed'])."</td><tr/>";
 					echo "<tr><th>Ziel</th>
 					<td>";
 					$ent = Entity::createFactoryById($arr['target_id']);
 					echo "<a href=\"?page=$page&amp;sub=$sub&amp;id=".$ent->id()."\">".$ent."</a>";
 					echo "</td></tr>";
+					echo "<tr><th>Persistent</th><td>";
+					echo "<input type=\"radio\" name=\"wormhole_persistent\" id=\"wormhole_persistent_0\" value=\"0\" ".($arr['persistent'] == 0 ? " checked=\"checked\"" : "")."> <label for=\"wormhole_persistent_0\">Nein</label> ";
+					echo "<input type=\"radio\" name=\"wormhole_persistent\" id=\"wormhole_persistent_1\" value=\"1\" ".($arr['persistent'] == 1 ? " checked=\"checked\"" : "")."> <label for=\"wormhole_persistent_1\">Ja</label> ";
+					echo "</td><tr/>";
 					echo "</table>";
 					echo "<br/>
 								<input tabindex=\"26\" type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />&nbsp;";

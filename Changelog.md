@@ -15,6 +15,7 @@ Version 3.5.0
  * A password can now be specified when creating an account
  * Added button to select a random race on first login
  * Market offers can be reserved for a specified user
+ * Added persistent wormholes
 
 #### Bugfixes ####
 

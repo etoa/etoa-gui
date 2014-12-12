@@ -239,38 +239,39 @@
 				}
 			}
 			echo "Universum erstellt, prüfe Wurmlöcher...<br/>";
-	
-			//
-			// Wormhole-Linking
-			//
-			$wh = array();
-			$wh_new = array();
-			$res = dbquery("
-      SELECT
-				id,
-				target_id
-	   	FROM
-	    	wormholes
-			");
+
 			// Delete one wormhole if total count is odd
 			// Replace it with empty space
-			if (fmod(mysql_num_rows($res),2)!=0) 
+			$nwres = dbquery("
+			SELECT
+				COUNT(id)
+			FROM
+				wormholes
+			");
+			$nwarr = mysql_fetch_row($nwres);
+			if (fmod($nwarr[0],2)!=0) 
 			{
 				echo "<br>Ein Wurmloch ist zuviel, lösche es!<br>";
+				$res = dbquery("
+				SELECT
+					id
+				FROM
+					wormholes
+				");				
 				$arr=mysql_fetch_array($res);
 				dbquery("
-        UPDATE
-        	entities
-        SET
-        	code='e'
-        WHERE
-        	id='".$arr['id']."'
+					UPDATE
+						entities
+					SET
+						code='e'
+					WHERE
+						id='".$arr['id']."'
 				");
 				dbquery("
-        DELETE FROM
-        	wormholes
-        WHERE
-        	id='".$arr['id']."'
+					DELETE FROM
+						wormholes
+					WHERE
+						id='".$arr['id']."'
 				");
 				dbquery("
 					INSERT INTO
@@ -284,26 +285,61 @@
 						".$arr['id'].",
 						0
 					);
-				");
-	
-				$res = dbquery("
-				SELECT
-					id,
-					target_id
-				FROM
-					wormholes
-				");
+				");	
 			}
+			
+			//
+			// Wormhole-Linking
+			//
+			
+			// Get all wormholes
+			$wh = array();
+			$wh_persistent = array();
+			$res = dbquery("
+			SELECT
+				id,
+				target_id,
+				persistent
+			FROM
+				wormholes
+			");
+			$wormhole_count = mysql_num_rows($res);
 			while ($arr=mysql_fetch_array($res))
 			{
-				array_push($wh,$arr['id']);
+				if ($arr['persistent'] == 1)
+				{
+					array_push($wh_persistent, $arr['id']);
+				}
+				else
+				{
+					array_push($wh, $arr['id']);
+				}
 			}
+			
+			// Shuffle wormholes
 			shuffle($wh);
+			shuffle($wh_persistent);
+			
+			// Reduce list of persistent wormholes if uneven
+			if (fmod(count($wh_persistent),2)!=0) 
+			{
+				$lastWormHole = array_pop($wh_persistent);
+				dbquery("
+	            UPDATE
+	            	wormholes
+	            SET
+	            	persistent=0
+	            WHERE
+	            	id='".$lastWormHole."';
+				");
+				array_push($wh, $lastWormHole);
+			}
+			
+			$wh_new = array();
 			while (sizeof($wh)>0)
 			{
 				$wh_new[array_shift($wh)]=array_pop($wh);
 			}
-			$wormhole_count = mysql_num_rows($res);
 			foreach ($wh_new as $k=>$v)
 			{
 				dbquery("
@@ -322,7 +358,32 @@
 	            WHERE
 	            	id='".$k."';
 				");
-			} 
+			}
+
+			$wh_persistent_new = array();
+			while (sizeof($wh_persistent)>0)
+			{
+				$wh_persistent_new[array_shift($wh_persistent)]=array_pop($wh_persistent);
+			}
+			foreach ($wh_persistent_new as $k=>$v)
+			{
+				dbquery("
+	            UPDATE
+	            	wormholes
+	            SET
+	            	target_id='".$k."'
+	            WHERE
+	            	id='".$v."';
+				");
+				dbquery("
+	            UPDATE
+	            	wormholes
+	            SET
+	            	target_id='".$v."'
+	            WHERE
+	            	id='".$k."';
+				");
+			}			
 			
 			echo "Platziere Marktplatz...<br />";
 			dbquery("
@@ -592,6 +653,7 @@
 		private static function createWormhole($cell_id,$pos=0)
 		{
 			$cfg = Config::getInstance();
+			$persistent_wormholes_ratio = $cfg->value('persistent_wormholes_ratio');
 			$sql = "
 				INSERT INTO
 					entities
@@ -610,17 +672,20 @@
 			dbquery($sql);
 			$eid = mysql_insert_id();								
 
+			$persistent = (mt_rand(0,100) <= $persistent_wormholes_ratio) ? 1 : 0;
 			$sql = "
 				INSERT INTO
 					wormholes
 				(
 					id,
-					changed
+					changed,
+					persistent
 				)
 				VALUES
 				(
 					".$eid.",
-					".time()."
+					".time().",
+					".$persistent."
 				);
 			";
 			dbquery($sql);					
