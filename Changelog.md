@@ -39,6 +39,7 @@ Version 3.5.0
  * When registering a new account, the e-mail address has to be verified. Until verification is not complete, some features can not be used.
  * Radius discovered by fleet control expands at every second level of the fleet control
  * Minimal build time for ships and defenses is now 1 second
+ * Removed the ugly progessbars in building and research screen until a better solution has been found
  
 ### Administration ###
 

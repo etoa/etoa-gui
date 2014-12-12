@@ -2328,16 +2328,10 @@ function imagecreatefromfile($path, $user_functions = false)
 	function jsProgressBar($elem,$startTime,$endTime)
 	{
 		?>
-		<script type="text/javascript">
-			if (document.getElementById('<?PHP echo $elem;?>')!=null)
-			{
-				$(function() {
-					$('#<?PHP echo $elem;?>').progressbar({
-						value: 0, 
-					}).append('<span id="progress">%</span>');
-				});
-				updateProgressBar('<?PHP echo $elem;?>',<?PHP echo floor($startTime);?>,<?PHP echo ceil($endTime);?>,<?PHP echo time();?>);
-			}
+		<script>
+			$(function() {
+				updateProgressBar('#<?PHP echo $elem;?>', <?PHP echo floor($startTime);?>, <?PHP echo ceil($endTime);?>, <?PHP echo time();?>);
+			});
 		</script>
 		<?PHP	
 	}

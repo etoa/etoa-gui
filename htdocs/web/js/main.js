@@ -42,7 +42,7 @@
 	}
 	
 
-	function updateProgressBar(progresselem,startTime,endTime,cTime)
+	function updateProgressBar(progresselem, startTime, endTime, cTime)
 	{
 		if (progresselem)
 		{
@@ -51,17 +51,16 @@
 			{
 				perc = Math.ceil((cTime-startTime) / diff * 100);
 				cTime++;
-				
-				$(function() {
-				        $("#"+progresselem).progressbar("value",perc).find('span').text(perc+"%");
-					});
-				document.getElementById(progresselem).style.color="#000";
-				
-				setTimeout("updateProgressBar('"+progresselem+"',"+startTime+","+endTime+",'"+cTime+"')",1000);
+
+				$(progresselem).text(perc+"%");
+
+				setTimeout(function(){
+					updateProgressBar(progresselem, startTime, endTime, cTime);
+				},1000);
 			}
 			else
 			{
-				document.getElementById(progresselem).innerHTML="Abgeschlossen!";
+				$(progresselem).html("Abgeschlossen!");
 			}
 		}
 	}	

@@ -474,8 +474,8 @@ define('HELP_URL',"?page=help&site=buildings");
 		      					<td id="buildcancel">
 		      						<input type="submit" class="button" name="command_cbuild" value="Bau abbrechen" onclick="if (this.value==\'Bau abbrechen\'){return confirm(\'Wirklich abbrechen?\');}" />
 		      					</td>
-		      					<td id="buildtime">-</td>
-		      					<td colspan="6" id="progressbar" style="height:25px;background:#fff;text-align:center;"></td>
+		      					<td id="buildtime" style="vertical-align:middle;">-</td>
+		      					<td colspan="6" id="progressbar" style="text-align:center;vertical-align:middle;font-weight:bold;"></td>
 		      				</tr>';
 		      			if ($item->level < $item->building->maxLevel-1)
 		      			{
@@ -499,8 +499,8 @@ define('HELP_URL',"?page=help&site=buildings");
 		      					<td id="buildcancel">
 		      						<input type="submit" class="button" name="command_cdemolish" value="Abriss abbrechen" onclick="if (this.value==\'Abriss abbrechen\'){return confirm(\'Wirklich abbrechen?\');}" />
 		      					</td>
-		      					<td id="buildtime">-</td>
-		      					<td colspan="6"  id="progressbar" style="height:25px;background:#fff;text-align:center;"></td>
+		      					<td id="buildtime" style="vertical-align:middle;">-</td>
+		      					<td colspan="6"  id="progressbar" style="text-align:center;vertical-align:middle;font-weight:bold;"></td>
 		      				</tr>';
 					}
 					tableEnd();
@@ -706,8 +706,8 @@ define('HELP_URL',"?page=help&site=buildings");
 							}
 							elseif ($it->current()->buildType == 4 || $it->current()->buildType == 3)
 							{
-								echo '<td id="buildtime">-</td>
-							    	<td colspan="5"  id="progressbar" style="height:40px;background:#fff;text-align:center;"></td>
+								echo '<td id="buildtime" style="vertical-align:middle;">-</td>
+							    	<td colspan="5"  id="progressbar" style="text-align:center;vertical-align:middle;font-weight:bold;"></td>
 									<td id="buildcancel">
 										<form action="?page='.$page.'" method="post">
 											<input type="hidden" name="id['.$it->key().']" value="'.$it->key().'">';

@@ -679,8 +679,8 @@ if (isset($cp)) {
 						if ($planet_id==$cp->id())
 						{
 	              			echo "<tr><td><input type=\"submit\" class=\"button\" id=\"buildcancel\" name=\"command_cbuild\" value=\"Abbrechen\"  onclick=\"if (this.value=='Abbrechen'){return confirm('Wirklich abbrechen?');}\" /></td>";
-	              			echo '<td id="buildtime">-</td>
-					    	<td colspan="5"  id="progressbar" style="height:40px;background:#fff;text-align:center;"></td></tr>';
+	              			echo '<td id="buildtime" style="vertical-align:middle;">-</td>
+					    	<td colspan="5"  id="progressbar" style="text-align:center;vertical-align:middle;font-weight:bold;"></td></tr>';
 	              			if ($b_level<$arr['tech_last_level']-1)
 		         				echo "<tr><td width=\"90\">N&auml;chste Stufe:</td><td>".tf($btimen)."</td><td>".nf($bcn['metal'])."</td><td>".nf($bcn['crystal'])."</td><td>".nf($bcn['plastic'])."</td><td>".nf($bcn['fuel'])."</td><td>".nf($bcn['food'])."</td></tr>";
 		         			countDown("buildtime",$end_time,"buildcancel");
