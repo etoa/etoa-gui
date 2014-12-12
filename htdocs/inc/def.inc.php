@@ -271,18 +271,18 @@
 	define("AUCTION_DELAY_TIME", $cfg->market_auction_delay_time->v);
 	
 	// Titan Taxe
-	define("MARKET_METAL_FACTOR", $cfg->market_rate_0->v);
+	define("MARKET_METAL_FACTOR", RuntimeDataStore::get('market_rate_0', 1);
 	
 	// Silizium Taxe
-	define("MARKET_CRYSTAL_FACTOR", $cfg->market_rate_1->v);
+	define("MARKET_CRYSTAL_FACTOR", RuntimeDataStore::get('market_rate_1', 1);
 	
 	// PVC Taxe
-	define("MARKET_PLASTIC_FACTOR", $cfg->market_rate_2->v);
+	define("MARKET_PLASTIC_FACTOR", RuntimeDataStore::get('market_rate_2', 1);
 	
 	// Tritium Taxe
-	define("MARKET_FUEL_FACTOR", $cfg->market_rate_3->v);
+	define("MARKET_FUEL_FACTOR", RuntimeDataStore::get('market_rate_3', 1);
 	
 	// Nahrung Taxe
-	define("MARKET_FOOD_FACTOR", $cfg->market_rate_4->v);
+	define("MARKET_FOOD_FACTOR", RuntimeDataStore::get('market_rate_4', 1);
 
 ?>
