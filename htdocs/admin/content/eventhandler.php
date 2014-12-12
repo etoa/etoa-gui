@@ -44,7 +44,7 @@
 				$log[] = $l;
 			}
 			fclose($lf);
-			$tpl->assign('log', $log);
+			$tpl->assign('log', array_reverse($log));
 		}
 		else
 		{
