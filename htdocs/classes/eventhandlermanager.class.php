@@ -20,16 +20,16 @@ class EventHandlerManager
 		return false;
 	}
 	
-	public static function start($executable, $instance, $pidfile)
+	public static function start($executable, $instance, $configfile, $pidfile)
 	{
-		$cmd = $executable." ".$instance." -d -c /etc/etoad/instances-enabled/".$instance.".conf -p ".$pidfile;
+		$cmd = $executable." ".$instance." -d -c ".$configfile." -p ".$pidfile;
 		exec($cmd, $output);
 		return $output;
 	}
 	
-	public static function stop($executable, $instance, $pidfile)
+	public static function stop($executable, $instance, $configfile, $pidfile)
 	{
-		$cmd = $executable." ".$instance." -d -s -c /etc/etoad/instances-enabled/".$instance.".conf -p ".$pidfile;
+		$cmd = $executable." ".$instance." -d -s -c ".$configfile." -p ".$pidfile;
 		exec($cmd, $output);
 		return $output;
 	}
