@@ -70,7 +70,7 @@ Version 3.3.0
  * Keybinds hinzugefügt
  * Cleanup der Konfiguration (defaults.xml)
  * PNs lesen und schreiben ist nun auch während dem Urlaubsmodus möglich
- * Spezialist wird nun während den Urlaubsmodus pausiert
+ * Spezialist wird nun während dem Urlaubsmodus pausiert
  * User werden nun benachrichtigt bei Nachrichten von Admins im Ticketsystem
  * Kryptobericht wird gespeichert
  * Accounts im Urlaubsmodus werden nach einer Maximaldauer inaktiv
