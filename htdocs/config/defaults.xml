@@ -348,7 +348,52 @@ http://etoa.ch</v>
     <item name="market_user_reservation_active" cat="6">
       <v comment="Reservation von Angeboten für einen bestimmten Spieler" type="onoff">1</v>
     </item>
-
+	<item name="ship_price_factor_min" cat="6">
+      <v comment="Mindestpreisgrenze der Schiffe 1=100%" type="text">1</v>
+    </item>
+	<item name="ship_price_factor_max" cat="6">
+      <v comment="Höchstpreisgrenze der Schiffe" type="text">2</v>
+    </item>
+	<item name="res_price_factor_min" cat="6">
+      <v comment="Mindestpreisgrenze der Rohstoffe" type="text">0.7</v>
+    </item>
+	<item name="res_price_factor_max" cat="6">
+      <v comment="Höchstpreisgrenze der Schiffe" type="text">2</v>
+    </item>
+	<item name="auction_price_factor_min" cat="6">
+      <v comment="Mindestpreisgrenze der Autkionen (summiert aus Rohstoffen und Schiffen)" type="text">0.333</v>
+    </item>
+	<item name="auction_price_factor_max" cat="6">
+      <v comment="Höchstpreisgrenze der Autkionen (summiert aus Rohstoffen und Schiffen)" type="text">3</v>
+    </item>
+	<item name="auction_overbid" cat="6">
+      <v comment="Gebot muss mindestens X% höher sein als jenes des Vorgebotes entsprechen" type="text">0.01</v>
+    </item>
+	<item name="market_sell_tax" cat="6">
+      <v comment="Zuschlagsfaktor auf die Preise" type="text">1.005</v>
+    </item>
+	<item name="auction_min_duration" cat="6">
+      <v comment="Mindestdauer einer Autkion (in Tagen)" type="text">2</v>
+    </item>
+	<item name="min_market_level_res" cat="6">
+      <v comment="Mindest Marktlevel für Handel von Rohstoffe" type="text">1</v>
+    </item>
+	<item name="min_market_level_ship" cat="6">
+      <v comment="Mindest Marktlevel für Handel von Schiffen" type="text">3</v>
+    </item>
+	<item name="min_market_level_auction" cat="6">
+      <v comment="Mindest Marktlevel für Auktionen" type="text">5</v>
+    </item>
+	<item name="market_rates_count" cat="6">
+      <v comment="Anzahl vergangener Werte welche bei der Marktkursberechnung mit einbezogen werden" type="text">96</v>
+    </item>
+	<item name="market_rate_min" cat="6">
+      <v comment="Minimaler Marktkurs" type="text">0.1</v>
+    </item>
+	<item name="market_rate_max" cat="6">
+      <v comment="Maximaler Marktkurs" type="text">10</v>
+    </item>
+	
     <item name="default_image_path" cat="7">
       <v comment="Standard-Bildpaket" type="text">images/imagepacks/Discovery</v>
     </item>

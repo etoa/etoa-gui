@@ -284,5 +284,51 @@
 	
 	// Nahrung Taxe
 	define("MARKET_FOOD_FACTOR", RuntimeDataStore::get('market_rate_4', 1));
+	
+	
+	// Mindestpreisgrenze der Schiffe 1=100%
+	define("SHIP_PRICE_FACTOR_MIN", $cfg->ship_price_factor_min->v);
+	
+	// Höchstpreisgrenze der Schiffe
+	define("SHIP_PRICE_FACTOR_MAX", $cfg->ship_price_factor_max->v);
+	
+	// Mindestpreisgrenze der Rohstoffe
+	define("RESS_PRICE_FACTOR_MIN", $cfg->res_price_factor_min->v);
+	
+	// Höchstpreisgrenze der Schiffe
+	define("RESS_PRICE_FACTOR_MAX", $cfg->res_price_factor_max->v);
+	
+	// Mindestpreisgrenze der Autkionen (summiert aus Rohstoffen und Schiffen)
+	define("AUCTION_PRICE_FACTOR_MIN", $cfg->auction_price_factor_min->v);
+	
+	// Höchstpreisgrenze der Autkionen (summiert aus Rohstoffen und Schiffen)
+	define("AUCTION_PRICE_FACTOR_MAX", $cfg->auction_price_factor_max->v);
+	
+	// Gebot muss mindestens X% höher sein als jenes des Vorgebotes entsprechen
+	define("AUCTION_OVERBID", $cfg->auction_overbid->v);
+	
+	// Zuschlagsfaktor auf die Preise
+	define("MARKET_SELL_TAX", $cfg->market_sell_tax->v);
+	
+	// Mindestdauer einer Autkion (in Tagen)
+	define("AUCTION_MIN_DURATION", $cfg->auction_min_duration->v);
+	
+	// Mindest Marktlevel um Rohstoffe zu kaufen und verkaufen
+	define("MIN_MARKET_LEVEL_RESS", $cfg->min_market_level_res->v);
+	
+	// Mindest Marktlevel um Schiffe zu kaufen und verkaufen
+	define("MIN_MARKET_LEVEL_SHIP", $cfg->min_market_level_ship->v);
+	
+	// Mindest Marktlevel um Auktionen anzubieten und selber zu bieten
+	define("MIN_MARKET_LEVEL_AUCTION", $cfg->min_market_level_auction->v);
+	
+	// Legt fest, wieviele vergangene Werte bei der Marktkursberechnung mit einbezogen werden
+	define('MARKET_RATES_COUNT', $cfg->market_rates_count->v);
+	
+	// Minimaler Marktkurs
+	define('MARKET_RATE_MIN', $cfg->market_rate_min->v);
+	
+	// Maximaler Marktkurs
+	define('MARKET_RATE_MAX', $cfg->market_rate_max->v);
 
 ?>

@@ -495,51 +495,6 @@
 	
 	// Log-Cat ID
 	define("MARKET_LOG_CAT", 7);
-
-	// Mindestpreisgrenze der Schiffe 1=100%
-	define("SHIP_PRICE_FACTOR_MIN", 1);
-	
-	// Höchstpreisgrenze der Schiffe
-	define("SHIP_PRICE_FACTOR_MAX", 2);
-	
-	// Mindestpreisgrenze der Rohstoffe
-	define("RESS_PRICE_FACTOR_MIN", 0.7);
-	
-	// Höchstpreisgrenze der Schiffe
-	define("RESS_PRICE_FACTOR_MAX", 2);
-	
-	// Mindestpreisgrenze der Autkionen (summiert aus Rohstoffen und Schiffen)
-	define("AUCTION_PRICE_FACTOR_MIN", 0.333);
-	
-	// Höchstpreisgrenze der Autkionen (summiert aus Rohstoffen und Schiffen)
-	define("AUCTION_PRICE_FACTOR_MAX", 3);
-	
-	// Gebot muss mindestens X% höher sein als jenes des Vorgebotes entsprechen
-	define("AUCTION_OVERBID", 0.01);
-	
-	// Zuschlagsfaktor auf die Preise
-	define("MARKET_SELL_TAX", 1.005);
-	
-	// Mindestdauer einer Autkion (in Tagen)
-	define("AUCTION_MIN_DURATION", 2);
-	
-	// Mindest Marktlevel um Rohstoffe zu kaufen und verkaufen
-	define("MIN_MARKET_LEVEL_RESS", 1);
-	
-	// Mindest Marktlevel um Schiffe zu kaufen und verkaufen
-	define("MIN_MARKET_LEVEL_SHIP", 3);
-	
-	// Mindest Marktlevel um Auktionen anzubieten und selber zu bieten
-	define("MIN_MARKET_LEVEL_AUCTION", 5);
-	
-	// Legt fest, wieviele vergangene Werte bei der Marktkursberechnung mit einbezogen werden
-	define('MARKET_RATES_COUNT', 96);
-	
-	// Minimaler Marktkurs
-	define('MARKET_RATE_MIN', 0.1);
-	
-	// Maximaler Marktkurs
-	define('MARKET_RATE_MAX', 10);
 	
 	// Anzahl Rohstofftypen im Spiel
 	define('NUM_RESOURCES', 5);
