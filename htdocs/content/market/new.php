@@ -117,31 +117,30 @@
 									<th id=\"ress_min_max_food\" style=\"vertical-align:middle;\"> - </th>
 								</tr>";
 
-          //Verkaufstext und für Allianzmitglied reservieren
-          echo "<tr>
-          				<th colspan=\"5\" style=\"text-align:center;vertical-align:middle;\">Beschreibung und Reservation</th>
-          			</tr>
-          			<tr>
-          				<td colspan=\"4\" style=\"vertical-align:middle;\">
-          					<input type=\"text\" value=\"\" name=\"ressource_text\" id=\"ressource_text\" size=\"55\" maxlength=\"60\" ".tm("Text","Schreib einen kleinen Werbetext f&uuml;r deine Waren.")." onkeyup=\"calcMarketRessPrice('0');\"/>
-          				</td>";
-          //Für Allianzmitglied reservieren wenn in einer Allianz und diese den Allianzmarktplatz auf Stufe 1 oder höher hat
-          if($cu->allianceId!=0 && $alliance_market_level>=1 && !$cd_enabled)
-          {
-            echo "<td colspan=\"1\" style=\"vertical-align:middle;\" ".tm("Reservation","Fall dieses Angebot nur Spieler aus deiner Allianz kaufen sollen, mach hier ein H&auml;kchen").">
-            				<input type=\"checkbox\" name=\"ressource_for_alliance\" value=\"1\" /> F&uuml;r Allianzmitglieder Reservieren
-            			</td>
-            		</tr>";
-          }
-          else
-          {
-            echo "<td colspan=\"1\" style=\"vertical-align:middle;\">&nbsp;</td></tr>";
-          }
+			// Verkaufstext
+			echo "<tr>
+				<th>Beschreibung</th>
+				<td colspan=\"4\">
+					<input type=\"text\" value=\"\" name=\"ressource_text\" id=\"ressource_text\" size=\"55\" maxlength=\"60\" style=\"width:98%\" ".tm("Text","Schreib einen kleinen Werbetext f&uuml;r deine Waren.")." onkeyup=\"calcMarketRessPrice('0');\"/>
+				</td>
+			</tr>";
+          
+			// Reservation
+			echo "<tr>
+			<th>Reservation</th>
+			<td colspan=\"4\">";
+			//Für Allianzmitglied reservieren wenn in einer Allianz und diese den Allianzmarktplatz auf Stufe 1 oder höher hat
+			if($cu->allianceId!=0 && $alliance_market_level>=1 && !$cd_enabled)
+			{
+				echo "<input type=\"checkbox\" name=\"ressource_for_alliance\" id=\"ressource_for_alliance\" value=\"1\" /> 
+				<label for=\"ressource_for_alliance\" ".tm("Reservation","Fall dieses Angebot nur Spieler aus deiner Allianz kaufen sollen, mach hier ein H&auml;kchen").">F&uuml;r Allianzmitglieder Reservieren</label>";
+			}
+			echo "</td></tr>";
 
-					// Status Nachricht (Ajax Überprüfungstext)
-					echo "<tr>
-									<td colspan=\"5\" id=\"check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
-								</tr>";
+			// Status Nachricht (Ajax Überprüfungstext)
+			echo "<tr>
+						<td colspan=\"5\" id=\"check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
+					</tr>";
 
           tableEnd();
 
@@ -311,31 +310,30 @@
 										<th id=\"ship_min_max_food\" style=\"vertical-align:middle;\"> - </th>
 									</tr>";
 
-	          //Verkaufstext und für Allianzmitglied reservieren
-	          echo "<tr>
-	          				<th colspan=\"5\" style=\"text-align:center;vertical-align:middle;\">Beschreibung und Reservation</td>
-	          			</tr>
-	          			<tr>
-	          				<td colspan=\"4\" style=\"vertical-align:middle;\">
-	          					<input type=\"text\" value=\"\" name=\"ship_text\" id=\"ship_text\" size=\"55\" maxlength=\"60\" ".tm("Text","Schreib einen kleinen Werbetext f&uuml;r deine Waren.")." onkeyup=\"calcMarketShipPrice(0, 0);\"/>
-	          				</td>";
-	          //Für Allianzmitglied reservieren wenn in einer Allianz und diese den Allianzmarktplatz auf Stufe 2 oder höher hat
-          	if($cu->allianceId!=0 && $alliance_market_level>=2 && !$cd_enabled)
-          	{
-	            echo "<td colspan=\"1\" style=\"vertical-align:middle;\" ".tm("Reservation","Fall dieses Angebot nur Spieler aus deiner Allianz kaufen sollen, mach hier ein H&auml;kchen").">
-	            				<input type=\"checkbox\" name=\"ship_for_alliance\" value=\"1\"/> F&uuml;r Allianzmitglieder Reservieren
-	            			</td>
-	            		</tr>";
-	          }
-	          else
-	          {
-	            echo "<td colspan=\"1\" style=\"vertical-align:middle;\">&nbsp;</td></tr>";
-	          }
+	        // Verkaufstext
+			echo "<tr>
+				<th>Beschreibung</th>
+				<td colspan=\"4\">
+					<input type=\"text\" value=\"\" name=\"ship_text\" id=\"ship_text\" size=\"55\" maxlength=\"60\" style=\"width:98%\" ".tm("Text","Schreib einen kleinen Werbetext f&uuml;r deine Waren.")." onkeyup=\"calcMarketShipPrice('0');\"/>
+				</td>
+			</tr>";
 
-						// Status Nachricht (Ajax Überprüfungstext)
-						echo "<tr>
-										<td colspan=\"5\" id=\"ship_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
-									</tr>";
+			// Reservation
+			echo "<tr>
+			<th>Reservation</th>
+			<td colspan=\"4\">";
+			//Für Allianzmitglied reservieren wenn in einer Allianz und diese den Allianzmarktplatz auf Stufe 2 oder höher hat
+			if($cu->allianceId!=0 && $alliance_market_level>=2 && !$cd_enabled)
+			{
+				echo "<input type=\"checkbox\" name=\"ship_for_alliance\" id=\"ship_for_alliance\" value=\"1\" /> 
+				<label for=\"ship_for_alliance\" ".tm("Reservation","Fall dieses Angebot nur Spieler aus deiner Allianz kaufen sollen, mach hier ein H&auml;kchen").">F&uuml;r Allianzmitglieder Reservieren</label>";
+			}
+			echo "</td></tr>";
+
+			// Status Nachricht (Ajax Überprüfungstext)
+			echo "<tr>
+				<td colspan=\"5\" id=\"ship_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
+			</tr>";
 
 	          tableEnd();
 
@@ -465,19 +463,19 @@
 									</td>
 									<th colspan=\"2\" style=\"vertical-align:middle;\">&nbsp;</th>
 								</tr>";
-          //Verkaufstext und für Allianzmitglied reservieren
-          echo "<tr>
-          				<th colspan=\"6\" style=\"text-align:center;vertical-align:middle;\">Beschreibung</th>
-          			</tr>
-          			<tr>
-          				<td colspan=\"6\" style=\"text-align:left;vertical-align:middle;\">
-          					<input type=\"text\" value=\"\" name=\"auction_text\" id=\"auction_text\" size=\"55\" maxlength=\"60\" ".tm("Text","Schreib einen kleinen Werbetext f&uuml;r deine Waren.")." onkeyup=\"checkMarketAuctionFormular(0);\"/>
-          				</td>
-          			</tr>";
-					// Status Nachricht (Ajax Überprüfungstext)
-					echo "<tr>
-									<td colspan=\"6\" name=\"auction_check_message\" id=\"auction_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
-								</tr>";
+          
+			// Verkaufstext
+			echo "<tr>
+				<th>Beschreibung</th>
+				<td colspan=\"5\">
+					<input type=\"text\" value=\"\" name=\"auction_text\" id=\"auction_text\" size=\"55\" maxlength=\"60\" style=\"width:98%\" ".tm("Text","Schreib einen kleinen Werbetext f&uuml;r deine Waren.")." onkeyup=\"checkMarketAuctionFormular('0');\"/>
+				</td>
+			</tr>";
+
+			// Status Nachricht (Ajax Überprüfungstext)
+			echo "<tr>
+				<td colspan=\"6\" name=\"auction_check_message\" id=\"auction_check_message\" style=\"text-align:center;vertical-align:middle;height:30px;\">&nbsp;</td>
+			</tr>";
 
           tableEnd();
 
