@@ -383,8 +383,7 @@
 			
 	    	// Urlaubsmodus
 	    	echo "<tr><th style=\"width:150px;\">Urlaubsmodus</th>
-	    	<td>Im Urlaubsmodus kannst du nicht angegriffen werden, aber deine Produktion steht auch still. Du darfst nichts im Bau haben
-	    	um den Urlaubsmodus aktivieren zu können.<br/><b>Dauer:</b> mindestens ".MIN_UMOD_TIME." Tage</td>
+	    	<td>Im Urlaubsmodus kannst du nicht angegriffen werden, aber deine Produktion steht auch still. </br> Dauer: mindestens ".MIN_UMOD_TIME." Tage, nach ".MAX_UMOD_TIME." Tagen Urlaubsmodus wird der Account inaktiv und kann wieder angegriffen werden.</td>
 	    	<td>";
 			
 	    	if ($cu->hmode_from>0 && $cu->hmode_from<time() && $cu->hmode_to<time())
@@ -403,7 +402,7 @@
 	
 			// Account löschen
 	    	echo "<tr><th>Account l&ouml;schen</th>
-	    	<td>Hier kannst du deinen Account mitsamt aller Daten löschen.</td>
+	    	<td>Hier kannst du deinen Account mitsamt aller Daten löschen. Der Account wird erst nach ".$conf['user_delete_days']['v']." Tagen gelöscht.</td>
 	    	<td>";
 	    	if ($cu->deleted>0)
 	    	{

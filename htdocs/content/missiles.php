@@ -521,7 +521,7 @@
 								</tr>
 								<tr>
 									<td style="text-align:center;">
-										'.nf($cnt).' von '.nf($max_space).', '.round($cnt/$max_space*100,0).'% ('.MISSILE_SILO_MISSILES_PER_LEVEL.' pro Gebäudestufe)
+										'.nf($cnt).' von '.nf($max_space).', '.round($cnt/$max_space*100,0).'%
 								</tr>';
 					tableEnd();
 					

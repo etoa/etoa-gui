@@ -74,6 +74,9 @@
 	// Minimale Umode-Dauer
   	define("MIN_UMOD_TIME", $cfg->hmode_days->v);
 	
+  //MAximale Umode-Dauer
+    define("MAX_UMOD_TIME", $cfg->hmode_days->p1);
+    
 	// Vergangene Zeit bis Löschung eines Users (atm 21 Tage)
   	define("USER_INACTIVE_DELETE", $cfg->user_inactive_days->p1);
 	
