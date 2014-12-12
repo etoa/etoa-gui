@@ -592,6 +592,7 @@
 		private static function createWormhole($cell_id,$pos=0)
 		{
 			$cfg = Config::getInstance();
+			$persistent_wormholes_ratio = $cfg->value('persistent_wormholes_ratio');
 			$sql = "
 				INSERT INTO
 					entities
@@ -610,17 +611,20 @@
 			dbquery($sql);
 			$eid = mysql_insert_id();								
 
+			$persistent = (mt_rand(0,100) <= $persistent_wormholes_ratio) ? 1 : 0;
 			$sql = "
 				INSERT INTO
 					wormholes
 				(
 					id,
-					changed
+					changed,
+					persistent
 				)
 				VALUES
 				(
 					".$eid.",
-					".time()."
+					".time().",
+					".$persistent."
 				);
 			";
 			dbquery($sql);					
