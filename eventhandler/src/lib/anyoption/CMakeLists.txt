@@ -1,0 +1,5 @@
+SET(ANYOPTION_SRC_FILES
+	anyoption.cpp
+)
+
+ADD_LIBRARY(anyoption ${ANYOPTION_SRC_FILES})
