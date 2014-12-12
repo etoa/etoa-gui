@@ -71,6 +71,10 @@
 			$wormholeImageSrc = imagecreatefrompng(IMG_DIR."/wormholes/wormhole1_small.png");
 			$wormholeImage = imagecreatetruecolor(GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
 			ImageCopyResampled($wormholeImage,$wormholeImageSrc,0,0,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,imagesx($wormholeImageSrc),imagesy($wormholeImageSrc));
+			
+			$persistentWormholeImageSrc = imagecreatefrompng(IMG_DIR."/wormholes/wormhole_persistent1_small.png");
+			$persistentWormholeImage = imagecreatetruecolor(GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
+			ImageCopyResampled($persistentWormholeImage,$persistentWormholeImageSrc,0,0,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,imagesx($persistentWormholeImageSrc),imagesy($persistentWormholeImageSrc));
       
       $unexploredImages = array();
       for ($i=1;$i<7;$i++) {
@@ -264,7 +268,13 @@
               }
               elseif ($arr['code']=='w')
               {
-                ImageCopyResampled($im,$wormholeImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
+				$wh = new Wormhole($arr['id']);
+				if ($wh->isPersistent())
+				{
+					ImageCopyResampled($im,$persistentWormholeImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
+				} else {
+					ImageCopyResampled($im,$wormholeImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
+				}
               }
               elseif ($arr['code']=='a')
               {
