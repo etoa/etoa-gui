@@ -25,6 +25,8 @@
   	$cu->properties->spyShipCount = $_POST['spyship_count'];
   	$cu->properties->analyzeShipId = $_POST['analyzeship_id'];
   	$cu->properties->analyzeShipCount = $_POST['analyzeship_count'];
+  	$cu->properties->exploreShipId = $_POST['exploreship_id'];
+  	$cu->properties->exploreShipCount = $_POST['exploreship_count'];
   	$cu->properties->startUpChat = $_POST['startup_chat'];
 	$cu->properties->showCellreports = $_POST['show_cellreports'];
 	$cu->properties->enableKeybinds = $_POST['keybinds_enable'];
@@ -137,7 +139,51 @@
   	echo "Momentan steht kein Schiff zur Auswahl!";
   }
   echo "</td></tr>";
-	//Berichte im Sonnensystem (Aktiviert/Deaktiviert)
+  
+  // Default explore ship
+  echo "<tr>
+  	<th><b>Anzahl Erkundungsschiffe für Direkterkundung:</b></th>
+    <td>
+    	<input type=\"text\" name=\"exploreship_count\" maxlength=\"5\" size=\"5\" value=\"".$cu->properties->exploreShipCount."\">
+    </td>
+  </tr>";
+  
+  echo "<tr><th>Typ des Erkundungsschiffs für Direkterkundung:</th>
+  <td>";
+	$sres = dbquery("
+	SELECT 
+    ship_id, 
+    ship_name
+	FROM 
+		ships 
+	WHERE 
+		ship_buildable='1'
+		AND (
+		ship_actions LIKE '%,explore'
+		OR ship_actions LIKE 'explore,%'
+		OR ship_actions LIKE '%,explore,%'
+		OR ship_actions LIKE 'explore'
+		)
+	ORDER BY 
+		ship_name ASC");
+  if (mysql_num_rows($sres)>0)
+  {
+  	echo '<select name="exploreship_id"><option value="0">(keines)</option>';
+  	while ($sarr=mysql_fetch_array($sres))
+  	{
+  		echo '<option value="'.$sarr['ship_id'].'"';
+  		if ($cu->properties->exploreShipId == $sarr['ship_id'])
+  		 echo ' selected="selected"';
+  		echo '>'.$sarr['ship_name'].'</option>';
+  	}
+  }
+  else
+  {
+  	echo "Momentan steht kein Schiff zur Auswahl!";
+  }
+  echo "</td></tr>";  
+
+  //Berichte im Sonnensystem (Aktiviert/Deaktiviert)
   echo "<tr>
     			<th>Berichte im Sonnensystem:</th>
     			<td>

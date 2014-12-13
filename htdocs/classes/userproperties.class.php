@@ -25,6 +25,8 @@
 		private $spyShipCount;
 		private $analyzeShipId;
 		private $analyzeShipCount;
+		private $exploreShipId;
+		private $exploreShipCount;
 		private $showCellreports;
 		private $havenShipsButtons;
 		private $showAdds;
@@ -75,6 +77,8 @@
         		$this->spyShipCount = $arr['spyship_count'];
 				$this->analyzeShipId = $arr['analyzeship_id'];
 				$this->analyzeShipCount = $arr['analyzeship_count'];
+				$this->exploreShipId = $arr['exploreship_id'];
+				$this->exploreShipCount = $arr['exploreship_count'];
 				$this->showCellreports = $arr['show_cellreports'];
         		$this->havenShipsButtons = $arr['havenships_buttons'];
 		    	$this->showAdds = $arr['show_adds'];
@@ -249,6 +253,16 @@
 				{
 					$this->$key = max(1,intval($val));
 					$this->changedFields[$key] = "analyzeship_count";
+				}
+				elseif ($key == "exploreShipId")
+				{
+					$this->$key = $val;
+					$this->changedFields[$key] = "exploreship_id";
+				}
+				elseif ($key == "exploreShipCount")
+				{
+					$this->$key = max(1,intval($val));
+					$this->changedFields[$key] = "exploreship_count";
 				}
 				elseif ($key == "showCellreports")
 				{
