@@ -1,6 +1,13 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.1
+-------------
+
+### Änderungen ###
+
+ * Mobile Verteidigungsanlagen können nun im Raumhaven verladen werden
+
 Version 3.5.0
 -------------
 
@@ -35,7 +42,7 @@ Version 3.5.0
  * Nach der Registration eines neuen Accounts muss die E-Mail Adresse bestätigt werden. Solange diese nicht bestätigt ist, können einige Features nicht verwendet werden
  * Durch den Ausbau der Flottenkontrolle wird bei jeder zweiten Stufe der Raum um den Planeten weiter aufgedeckt
  * Die minimale Bauzeit für Schiffe und Verteidigungsanlagen beträgt nun 1 Sekunde
- * Mobile Verteidigungsanlagen können nun im Raumhaven verladen werden
+
  
 Version 3.4.0
 -------------

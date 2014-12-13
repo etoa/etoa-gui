@@ -1,6 +1,22 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.1
+-------------
+
+### Game ###
+
+#### Changes ####
+
+ * Mobile defense systems can now be transhipped on the haven screen
+
+### Administration ###
+
+#### Features ####
+
+ * Added recycling tech efficiency parameter to configuration
+
+
 Version 3.5.0
 -------------
 
@@ -41,7 +57,6 @@ Version 3.5.0
  * Radius discovered by fleet control expands at every second level of the fleet control
  * Minimal build time for ships and defenses is now 1 second
  * Removed the ugly progessbars in building and research screen until a better solution has been found
- * Mobile defense systems can now be transhipped on the haven screen
  
 ### Administration ###
 
@@ -59,7 +74,6 @@ Version 3.5.0
  * Missile silo parameters can be configured in the settings
  * Added possibility to manage backend daemon (start / stop)
  * Allow to select radius when changing user map discovery
- * Added recycling tech efficiency parameter to configuration
  
 #### Changes ####
 
