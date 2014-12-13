@@ -58,6 +58,7 @@ Version 3.5.0
  * Missile silo parameters can be configured in the settings
  * Added possibility to manage backend daemon (start / stop)
  * Allow to select radius when changing user map discovery
+ * Added recycling tech efficiency parameter to configuration
  
 #### Changes ####
 

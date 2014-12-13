@@ -30,6 +30,9 @@
 	define('HELP_URL_DEF',"?page=help&site=defense");
 	define('HELP_URL_SHIP',"?page=help&site=shipyard");
 
+	// Maxmimale Recyclingtech effizient
+	define("RECYC_MAX_PAYBACK", $cfg->recyc_max_payback->v);
+	
 	// BEGIN SKRIPT //
 
 	echo "<h1>Recyclingstation des Planeten ".$cp->name."</h1>";
