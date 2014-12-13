@@ -9,6 +9,7 @@ Version 3.5.1
 #### Changes ####
 
  * Mobile defense systems can now be transhipped on the haven screen
+ * EMP attacks may deactivate the market instead of the missile silo
 
 ### Administration ###
 
