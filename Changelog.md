@@ -41,6 +41,7 @@ Version 3.5.0
  * Radius discovered by fleet control expands at every second level of the fleet control
  * Minimal build time for ships and defenses is now 1 second
  * Removed the ugly progessbars in building and research screen until a better solution has been found
+ * Mobile defense systems can now be transhipped on the haven screen
  
 ### Administration ###
 
