@@ -16,6 +16,9 @@ Version 3.5.1
 
  * Added recycling tech efficiency parameter to configuration
 
+#### Bugfixes ####
+
+ * Fixed user nick / alliance name autocomplete field in user search screen
 
 Version 3.5.0
 -------------
