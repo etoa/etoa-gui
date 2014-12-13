@@ -56,15 +56,10 @@
   $cstr = checker_init();
   tableStart("Spieloptionen");
 
+  // Spy ships for direct scan
   echo "<tr>
-  	<th><b>Anzahl Spionagesonden für Direktscan:</b></th>
-    <td>
-    	<input type=\"text\" name=\"spyship_count\" maxlength=\"5\" size=\"5\" value=\"".$cu->properties->spyShipCount."\">
-    </td>
-  </tr>";
-            
-  echo "<tr><th>Typ des Spionageschiffs für Direktscan:</th>
-  <td>";
+  	<th><b>Spionagesonden für Direktscan:</b></th>
+    <td><input type=\"text\" name=\"spyship_count\" maxlength=\"5\" size=\"5\" value=\"".$cu->properties->spyShipCount."\"> ";
 	$sres = dbquery("
 	SELECT 
     ship_id, 
@@ -98,15 +93,10 @@
   }
   echo "</td></tr>";
   
+  // Analyzator ships for quick analysis
   echo "<tr>
-  	<th><b>Anzahl Analyzatoren für Quickanalyse:</b></th>
-    <td>
-    	<input type=\"text\" name=\"analyzeship_count\" maxlength=\"5\" size=\"5\" value=\"".$cu->properties->analyzeShipCount."\">
-    </td>
-  </tr>";
-  
-  echo "<tr><th>Typ des Analyzators für Quickanalyse:</th>
-  <td>";
+  	<th><b>Analyzatoren für Quickanalyse:</b></th>
+    <td><input type=\"text\" name=\"analyzeship_count\" maxlength=\"5\" size=\"5\" value=\"".$cu->properties->analyzeShipCount."\"> ";
 	$sres = dbquery("
 	SELECT 
     ship_id, 
@@ -142,14 +132,9 @@
   
   // Default explore ship
   echo "<tr>
-  	<th><b>Anzahl Erkundungsschiffe für Direkterkundung:</b></th>
+  	<th><b>Erkundungsschiffe für Direkterkundung:</b></th>
     <td>
-    	<input type=\"text\" name=\"exploreship_count\" maxlength=\"5\" size=\"5\" value=\"".$cu->properties->exploreShipCount."\">
-    </td>
-  </tr>";
-  
-  echo "<tr><th>Typ des Erkundungsschiffs für Direkterkundung:</th>
-  <td>";
+    	<input type=\"text\" name=\"exploreship_count\" maxlength=\"5\" size=\"5\" value=\"".$cu->properties->exploreShipCount."\"> ";
 	$sres = dbquery("
 	SELECT 
     ship_id, 
