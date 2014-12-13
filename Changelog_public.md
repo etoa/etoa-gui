@@ -7,6 +7,7 @@ Version 3.5.1
 ### Änderungen ###
 
  * Mobile Verteidigungsanlagen können nun im Raumhaven verladen werden
+ * EMP Angriffe können nun den Markt deaktivieren (anstatt das Raketensilo)
 
 Version 3.5.0
 -------------
