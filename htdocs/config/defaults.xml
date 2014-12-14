@@ -634,7 +634,10 @@ http://etoa.ch</v>
     </item>
 	<item name="defqueue_cancel_end" cat="18">
       <v comment="Waffenfabrik: Maximale Resourcenrückgabe bei Abbruch" type="text">0.8</v>
-    </item>	
+    </item>
+	<item name="recyc_max_payback" cat="18">
+      <v comment="Recycling: Maxmimale Effizienz der Recyclingtechnologie" type="text">0.9</v>
+    </item>
 	
     <item name="log_threshold_days" cat="19">
       <v comment="Aufbewahrungsdauer Logs" type="text">28</v>

@@ -27,6 +27,7 @@ class SectorMapRenderer {
   
   protected $cellUrl;
   protected $undiscoveredCellUrl;
+  protected $undiscoveredCellJavaScript;
   
   /**
   * Constructor
@@ -83,6 +84,13 @@ class SectorMapRenderer {
   */
   function setUndiscoveredCellUrl($undiscoveredCellUrl) {
     $this->undiscoveredCellUrl = $undiscoveredCellUrl;
+  }
+  
+  /**
+  * Sets the URL when clickong on an undiscovered cell
+  */
+  function setUndiscoveredCellJavaScript($undiscoveredCellJavaScript) {
+    $this->undiscoveredCellJavaScript = $undiscoveredCellJavaScript;
   }  
   
   /**
@@ -145,6 +153,8 @@ class SectorMapRenderer {
           $overlayClasses[] = 'owned';
         }
         
+	  $js = null;
+		
         // Discovered cell or no user specified
         if ($this->impersonatedUser == null || $this->impersonatedUser->discovered((($sx - 1) * $this->numberOfCellsX) + $xcoords, (($sy - 1) * $this->numberOfCellsY) + $ycoords))
         {
@@ -197,6 +207,9 @@ class SectorMapRenderer {
           }
           
           $url = isset($this->undiscoveredCellUrl) ? $this->undiscoveredCellUrl.$cells[$xcoords][$ycoords]['cid'] : '#';
+          if (isset($this->undiscoveredCellJavaScript)) {
+			$js = preg_replace('/##ID##/', $cells[$xcoords][$ycoords]['cid'], $this->undiscoveredCellJavaScript);
+		  }
           $img = IMAGE_PATH."/unexplored/".$fogImg.".png";
         }
 
@@ -213,7 +226,12 @@ class SectorMapRenderer {
         $class = count($classes) > 0 ? " class=\"".implode(' ', $classes)."\"": '';
         $overlayClass = count($overlayClasses) > 0 ? " class=\"".implode(' ', $overlayClasses)."\"": '';
 
-        echo "<a href=\"".$url."\" style=\"background:url('".$img."');\"$class$mouseOver>";
+		if ($js != null) {
+			echo "<a href=\"javascript:;\" onclick=\"".$js."\" ";
+		} else {
+			echo "<a href=\"".$url."\" ";
+		}		
+		echo " style=\"background:url('".$img."');\"$class$mouseOver>";
         echo "<img src=\"".RELATIVE_ROOT."images/blank.gif\" alt=\"Raumzelle\" ".$title." data-id=\"".$cells[$xcoords][$ycoords]['cid']."\" $overlayClass/></a>";
         
       }

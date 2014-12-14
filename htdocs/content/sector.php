@@ -25,6 +25,8 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
 
+	$_SESSION['currentEntity']=serialize($cp);
+	
 	// Wenn Planet aktiv, Koordinaten aus der DB lesen
 	if (isset($_GET['sector']))
 	{
@@ -220,7 +222,7 @@
   $sectorMap->setSelectedCell($cp->getCell());
   $sectorMap->setImpersonatedUser($cu);
   $sectorMap->setCellUrl("?page=cell&amp;id=");
-  $sectorMap->setUndiscoveredCellUrl("?page=haven&cellTarget=");
+  $sectorMap->setUndiscoveredCellJavaScript("xajax_launchExplorerProbe('##ID##')");
   echo $sectorMap->render($sx, $sy);
   
   echo "</td>";
@@ -296,6 +298,12 @@
   echo "<tr><td>Die Galaxie besteht aus $sx_num x $sy_num Sektoren.</td></tr>";
   
   tableEnd();
+  
+	echo "<div id=\"spy_info_box\" style=\"display:none;\">";
+	iBoxStart("Flotten");
+	echo "<div id=\"spy_info\"></div>";
+	iBoxEnd();
+	echo "</div>";
   
   echo "</form>";
 
