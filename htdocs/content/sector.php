@@ -25,6 +25,8 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/	
 
+	$_SESSION['currentEntity']=serialize($cp);
+	
 	// Wenn Planet aktiv, Koordinaten aus der DB lesen
 	if (isset($_GET['sector']))
 	{
