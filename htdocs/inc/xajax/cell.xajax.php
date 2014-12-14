@@ -174,7 +174,7 @@ $xajax->register(XAJAX_FUNCTION,'launchExplorerProbe');
 	
 	// add the following line to the php of the calling site:
 	// $_SESSION['currentEntity']=serialize($cp);
-	function launchExplorerProbe($tid)
+	function launchExplorerProbe($tcid)
 	{
 		$cp = unserialize($_SESSION['currentEntity']);
 		
@@ -191,21 +191,29 @@ $xajax->register(XAJAX_FUNCTION,'launchExplorerProbe');
 				{
 					if ($fleet->fixShips())
 					{
-						if ($ent = Entity::createFactoryById($tid))
+						$tc = new Cell($tcid);
+						if ($tc->isValid())
 						{
-							if ($fleet->setTarget($ent))
+							$tce = $tc->getEntities();
+							if (isset($tce[0]))
 							{
-								if ($fleet->checkTarget())
+								$ent = $tce[0];
+								if ($fleet->setTarget($ent))
 								{
-									if ($fleet->setAction("explore"))
+									if ($fleet->checkTarget())
 									{
-										if ($fid = $fleet->launch())
+										if ($fleet->setAction("explore"))
 										{
-											$flObj = new Fleet($fid);
-											
-											
-											$str= "$probeCount Explorer unterwegs. Ankunft in ".tf($flObj->remainingTime());
-											$launched = true;
+											if ($fid = $fleet->launch())
+											{
+												$flObj = new Fleet($fid);
+												
+												
+												$str= "$probeCount Explorer unterwegs. Ankunft in ".tf($flObj->remainingTime());
+												$launched = true;
+											}
+											else
+												$str= $fleet->error();
 										}
 										else
 											$str= $fleet->error();
@@ -217,11 +225,13 @@ $xajax->register(XAJAX_FUNCTION,'launchExplorerProbe');
 									$str= $fleet->error();
 							}
 							else
-								$str= $fleet->error();
+							{
+								$str= "Problem beim Finden des Zielobjekts (Objekt 0)!";
+							}
 						}
 						else
 						{
-							$str= "Problem beim Finden des Zielobjekts!";
+							$str= "Problem beim Finden des Zielobjekts (Zelle)!";
 						}
 					}
 					else
