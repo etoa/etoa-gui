@@ -6,6 +6,11 @@ Version 3.5.1
 
 ### Game ###
 
+### Features ###
+
+ * When clicking on an unknown space cell in the galaxy sector screen, an explorer fleet will be started (if available)
+ 
+
 #### Changes ####
 
  * Mobile defense systems can now be transhipped on the haven screen

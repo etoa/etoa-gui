@@ -4,6 +4,10 @@ Escape to Andromeda Changelog
 Version 3.5.1
 -------------
 
+### Features ###
+
+ * In der Galaxie-Sektor-Ansicht wird nun bei einem Klick auf einen unbekannte Raumzelle direkt eine Explorer Flotte gestartet (falls vorhanden)
+
 ### Änderungen ###
 
  * Mobile Verteidigungsanlagen können nun im Raumhaven verladen werden
