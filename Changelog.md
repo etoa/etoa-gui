@@ -1,6 +1,15 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.2
+-------------
+
+### Administration ###
+
+#### Bugfixes ####
+
+ * Fixed invalid entity / planet ID in link to planets in user economy tab 
+
 Version 3.5.1
 -------------
 

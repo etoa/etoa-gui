@@ -1,6 +1,8 @@
 <?PHP
 	$id = $_GET['id'];
-	$eres = dbquery("
+	if (isset($id) && $id > 0)
+	{
+		$eres = dbQuerySave("
 			SELECT 
 				e.id,
         c.id as cid,
@@ -16,8 +18,10 @@
 				cells c
 			ON
 				e.cell_id=c.id
-				AND e.id=".$id."
-			LIMIT 1;;");
+				AND e.id=?
+			LIMIT 1;", [
+				$id
+			]);
 			if (mysql_num_rows($eres)>0)
 			{
 				$earr = mysql_fetch_array($eres);
@@ -604,4 +608,9 @@
 			{
 				echo "Entität nicht vorhanden!";
 			}
+		}
+		else
+		{
+			echo "Ungültige ID!";
+		}
 ?>
