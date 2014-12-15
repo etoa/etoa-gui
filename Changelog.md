@@ -4,6 +4,12 @@ Escape to Andromeda Changelog
 Version 3.5.2
 -------------
 
+### Game ###
+
+### Changes ###
+
+ * The email sender address can now be changed in the admin contact form if a player is logged in
+
 ### Administration ###
 
 #### Bugfixes ####
@@ -18,7 +24,6 @@ Version 3.5.1
 ### Features ###
 
  * When clicking on an unknown space cell in the galaxy sector screen, an explorer fleet will be started (if available)
- 
 
 #### Changes ####
 

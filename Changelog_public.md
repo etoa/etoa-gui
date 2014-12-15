@@ -1,6 +1,14 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.2
+-------------
+
+## Änderungen ##
+
+ * Im Admin Kontaktformular kann die E-Mail Adresse des Senders nun geändert werden
+
+
 Version 3.5.1
 -------------
 

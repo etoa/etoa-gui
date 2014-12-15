@@ -77,12 +77,12 @@
 				if ($showForm)
 				{
 					tableStart('Nachricht an '.$admin->nick.' senden');
-					echo '<tr><th>E-Mail:</th><td>';
 					if (isset($cu)) {
-						echo ''.$cu->nick.'&lt;'.$cu->email.'&gt;';
+						$sender = $cu->nick.'&lt;'.$cu->email.'&gt;';
 					} else {
-						echo '<input type="text" name="mail_sender" value="" size="50" />';
+						$sender = '';
 					}
+					echo '<tr><th>Absender E-Mail:</th><td><input type="text" name="mail_sender" value="'.$sender.'" size="50" />';
 					echo '</td></tr>';
 					echo '<tr><th>Titel:</th><td><input type="text" name="mail_subject" value="'.$mail_subject.'" size="50" /></td></tr>';
 					echo '<tr><th>Text:</th><td><textarea name="mail_text" rows="6" cols="80">'.$mail_text.'</textarea></td></tr>';
