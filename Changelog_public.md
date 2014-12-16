@@ -1,6 +1,26 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.2
+-------------
+
+## Änderungen ##
+
+ * Im Admin Kontaktformular kann die E-Mail Adresse des Senders nun geändert werden
+
+
+Version 3.5.1
+-------------
+
+### Features ###
+
+ * In der Galaxie-Sektor-Ansicht wird nun bei einem Klick auf einen unbekannte Raumzelle direkt eine Explorer Flotte gestartet (falls vorhanden)
+
+### Änderungen ###
+
+ * Mobile Verteidigungsanlagen können nun im Raumhafen verladen werden
+ * EMP Angriffe können nun den Markt deaktivieren (anstatt das Raketensilo)
+
 Version 3.5.0
 -------------
 
@@ -35,6 +55,7 @@ Version 3.5.0
  * Nach der Registration eines neuen Accounts muss die E-Mail Adresse bestätigt werden. Solange diese nicht bestätigt ist, können einige Features nicht verwendet werden
  * Durch den Ausbau der Flottenkontrolle wird bei jeder zweiten Stufe der Raum um den Planeten weiter aufgedeckt
  * Die minimale Bauzeit für Schiffe und Verteidigungsanlagen beträgt nun 1 Sekunde
+
  
 Version 3.4.0
 -------------
@@ -70,7 +91,7 @@ Version 3.3.0
  * Keybinds hinzugefügt
  * Cleanup der Konfiguration (defaults.xml)
  * PNs lesen und schreiben ist nun auch während dem Urlaubsmodus möglich
- * Spezialist wird nun während den Urlaubsmodus pausiert
+ * Spezialist wird nun während dem Urlaubsmodus pausiert
  * User werden nun benachrichtigt bei Nachrichten von Admins im Ticketsystem
  * Kryptobericht wird gespeichert
  * Accounts im Urlaubsmodus werden nach einer Maximaldauer inaktiv

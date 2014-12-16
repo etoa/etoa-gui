@@ -39,7 +39,7 @@
 		{
 			require_once(RELATIVE_ROOT."inc/xajax/userconfig.xajax.php");
 		}
-		elseif ($page=="cell")
+		elseif ($page=="cell" || $page=="sector")
 		{
 			require_once(RELATIVE_ROOT."inc/xajax/cell.xajax.php");
 		}

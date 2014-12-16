@@ -9,12 +9,12 @@
 			$cfg = Config::getInstance();
 			
 			$backupDir = DBManager::getBackupDir();
-			$gzip = $cfg->backup_use_gzip=="1";
+			$gzip = $cfg->backup_use_gzip->v == "1";
 			
 			if ($backupDir != null) 
 			{
 				// Remove old backup files
-				$cleaned = DBManager::removeOldBackups($backupDir, $cfg->backup_retention_time);
+				$cleaned = DBManager::removeOldBackups($backupDir, $cfg->backup_retention_time->v);
 				
 				$log = DBManager::getInstance()->backupDB($backupDir, $gzip);
 				return $log.", $cleaned alte Backup-Dateien gelöscht";

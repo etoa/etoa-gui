@@ -1,6 +1,45 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.2
+-------------
+
+### Game ###
+
+### Changes ###
+
+ * The email sender address can now be changed in the admin contact form if a player is logged in
+
+### Administration ###
+
+#### Bugfixes ####
+
+ * Fixed invalid entity / planet ID in link to planets in user economy tab 
+
+Version 3.5.1
+-------------
+
+### Game ###
+
+### Features ###
+
+ * When clicking on an unknown space cell in the galaxy sector screen, an explorer fleet will be started (if available)
+
+#### Changes ####
+
+ * Mobile defense systems can now be transhipped on the haven screen
+ * EMP attacks may deactivate the market instead of the missile silo
+
+### Administration ###
+
+#### Features ####
+
+ * Added recycling tech efficiency parameter to configuration
+
+#### Bugfixes ####
+
+ * Fixed user nick / alliance name autocomplete field in user search screen
+
 Version 3.5.0
 -------------
 
@@ -57,6 +96,7 @@ Version 3.5.0
  * Crypto center cooldown can be configured in the settings
  * Missile silo parameters can be configured in the settings
  * Added possibility to manage backend daemon (start / stop)
+ * Allow to select radius when changing user map discovery
  
 #### Changes ####
 

@@ -268,9 +268,6 @@
 	define('BATTLE_POINTS_D_L', 0);
 	define('BATTLE_POINTS_SPECIAL', 1);
 
-	// Maxmimale Recyclingtech effizient
-	define("RECYC_MAX_PAYBACK", 0.9);
-
 	// Tipps beim Start aktivieren
 	define("ENABLE_TIPS", 1);
 

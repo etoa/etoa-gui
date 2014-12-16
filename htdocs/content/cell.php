@@ -453,8 +453,15 @@
 				}
 				echo "</select></div><br/>";				
 				echo "System noch nicht erkundet. Erforsche das System mit einer Erkundungsflotte um es sichtbar zu machen!<br/><br/>";
+				echo "<input type=\"button\" onclick=\"xajax_launchExplorerProbe(".$cellId.");\" value=\"Erkundungsflotte senden\" />";
 				iBoxEnd();
-				echo button("Erkundungsflotte senden","?page=haven&cellTarget=".$cellId)." &nbsp; ";
+				
+				echo "<div id=\"spy_info_box\" style=\"display:none;\">";
+				iBoxStart("Flotten");
+				echo "<div id=\"spy_info\"></div>";
+				iBoxEnd();
+				echo "</div>";
+				
 			}
 			
 			echo "<input type=\"button\" value=\"Zur Raumkarte\" onclick=\"document.location='?page=sector&amp;sx=".$cell->getSX()."&amp;sy=".$cell->getSY()."'\" /> &nbsp; ";

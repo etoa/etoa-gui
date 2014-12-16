@@ -990,7 +990,7 @@
 					$apoints = $tpoints + $bpoints + $sarr[0];
 					$points = $apoints + $upoints;
 					
-					dbquery("
+					dbQuerySave("
 					INSERT INTO
 						alliance_stats
 					(
@@ -1009,19 +1009,32 @@
 					) 
 					VALUES 
 					(
-						'".$arr['alliance_id']."',
-						'".$arr['alliance_tag']."',
-						'".$arr['alliance_name']."',
-						'".$points."',
-						'".$upoints."',
-						'".$apoints."',
-						'".$sarr[0]."',
-						'".$tpoints."',
-						'".$bpoints."',
-						'".$arr['uavg']."',
-						'".$arr['cnt']."',
-						'".$arr['alliance_rank_current']."'
-					);");
+						?,
+						?,
+						?,
+						?,
+						?,
+						?,
+						?,
+						?,
+						?,
+						?,
+						?,
+						?
+					);", [
+						$arr['alliance_id'],
+						$arr['alliance_tag'],
+						$arr['alliance_name'],
+						$points,
+						$upoints,
+						$apoints,
+						$sarr[0],
+						$tpoints,
+						$bpoints,
+						$arr['uavg'],
+						$arr['cnt'],
+						$arr['alliance_rank_current']
+					]);
 					
 					dbquery("
 					INSERT INTO
