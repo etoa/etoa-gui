@@ -181,9 +181,16 @@
 						echo tf($dur);
 					else
 						echo "-";
+					if ($dur > 60) {
+						$apm = round($si[1] / $dur * 60,1);
+					} else if ($dur > 0) {
+						$apm = $si[1];
+					} else {
+						$apm = '-';
+					}
 					echo "</td>
 					<td>".$si[1]."</td>
-					<td>".($dur>0 ? round($si[1] / $dur * 60,1) : '-')."</td>
+					<td>".$apm."</td>
 					<td><a href=\"?page=$page&sub=$sub&surveillance=".$_GET['surveillance']."&amp;session=".$si[0]."\">Details</a></td>
 					</tr>";
 				}
