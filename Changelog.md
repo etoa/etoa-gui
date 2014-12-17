@@ -19,6 +19,13 @@ Version 3.5.2
 #### Bugfixes ####
 
  * Fixed invalid entity / planet ID in link to planets in user economy tab 
+ 
+### Framework ### 
+
+#### Bugfixes ####
+
+ * Properly regenerate session IDs on login and logout
+
 
 Version 3.5.1
 -------------
