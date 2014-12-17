@@ -1,6 +1,18 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.2
+-------------
+
+## Änderungen ##
+
+ * Im Admin Kontaktformular kann die E-Mail Adresse des Senders nun geändert werden
+ * Die Farbe, welche einen inaktiven oder lang inaktiven Spieler kennzeichen wurden überarbeitet, so dass diese nun besser unterschieden werden können
+
+#### Bugfixes ####
+
+ * Ein Fehler in der Positionierung des Planetenkreises in der Übersichtsseite wurde behoben
+
 Version 3.5.1
 -------------
 

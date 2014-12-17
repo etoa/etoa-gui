@@ -565,8 +565,8 @@
 	
 	//Abstand
 	echo "<br><br><br><br><br><br><br><br>";
-	echo "<center>";
-	echo "<div align=\"center\" style=\"position:relative; left:0px; top:0px; width:".$absolute_width."px; height:".$absolute_height."px; vertical-align:middle;\">
+
+	echo "<div align=\"center\" style=\"position:relative; left:0px; top:0px; width:".$absolute_width."px; height:".$absolute_height."px; vertical-align:middle; margin: 0 auto\">
 	";
 
 	echo "<div align=\"center\" style=\"position:relative; left:0px; top:0px; width:".$d_planets."px; height:".$d_planets."px; text-align:center; vertical-align:middle;\" id=\"planet_circle_inner_container\">
@@ -870,7 +870,7 @@
 
 
 	$top_table=$middle_top+(($d_planets/2)*sin(deg2rad(55+270)));
-	echo "<center><table border=\"0\" width=\"65%\" style=\"text-align:center; vertical-align:middle;\">";
+	echo "<table border=\"0\" width=\"65%\" style=\"text-align:center; vertical-align:middle;margin: 0 auto\">";
 	echo "
 			<tr height=\"".$top_table."\">
 				<td colspan=\"3\">&nbsp;</td>
@@ -958,9 +958,9 @@
 				<td width=\"60%\" class=\"PlaniTextCenter\" id=\"planet_info_power\">&nbsp;</td>
 			</tr>
 
-	</table></center>";
+	</table>";
 
-echo "</div></div></center>
+echo "</div></div>
 ";
 
 ?>

@@ -103,11 +103,11 @@
 }
 
 .userInactiveColor, .tb .userInactiveColor		{
-	color:#ccc;
+	color:#aaa;
 }
 
 .userLongInactiveColor, .tb .userLongInactiveColor		{
-	color:#aaa;
+	color:#777;
 }
 
 .userGhostColor, .tb .userGhostColor		{

@@ -1,6 +1,34 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.2
+-------------
+
+### Game ###
+
+### Changes ###
+
+ * The email sender address can now be changed in the admin contact form if a player is logged in
+ * Changed the colors which indicate an inactive or long inactive user, so that they can now be better distinguished
+
+#### Bugfixes ####
+
+ * Fixed planet circle position in overview screen
+ 
+### Administration ###
+
+#### Bugfixes ####
+
+ * Fixed invalid entity / planet ID in link to planets in user economy tab 
+ * Fixed session APM calculation in user surveillance screen
+ 
+### Framework ### 
+
+#### Bugfixes ####
+
+ * Properly regenerate session IDs on login and logout
+
+
 Version 3.5.1
 -------------
 
@@ -9,7 +37,6 @@ Version 3.5.1
 ### Features ###
 
  * When clicking on an unknown space cell in the galaxy sector screen, an explorer fleet will be started (if available)
- 
 
 #### Changes ####
 

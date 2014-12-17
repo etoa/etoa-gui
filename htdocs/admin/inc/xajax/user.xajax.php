@@ -616,7 +616,7 @@ function loadEconomy($uid,$target)
 					{
 						echo "<tr>
 										<td class=\"tbldata\">
-											<a href=\"?page=galaxy&sub=edit&planet_id=".$p->id()."\">".$p."</a>
+											<a href=\"?page=galaxy&sub=edit&id=".$p->id()."\">".$p."</a>
 										</td>";
 						for ($x=0;$x<6;$x++)
 						{
