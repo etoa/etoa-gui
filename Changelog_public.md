@@ -8,6 +8,9 @@ Version 3.5.2
 
  * Im Admin Kontaktformular kann die E-Mail Adresse des Senders nun geändert werden
 
+#### Bugfixes ####
+
+ * Ein Fehler in der Positionierung des Planetenkreises in der Übersichtsseite wurde behoben
 
 Version 3.5.1
 -------------

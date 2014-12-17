@@ -10,6 +10,10 @@ Version 3.5.2
 
  * The email sender address can now be changed in the admin contact form if a player is logged in
 
+#### Bugfixes ####
+
+ * Fixed planet circle position in overview screen
+ 
 ### Administration ###
 
 #### Bugfixes ####
