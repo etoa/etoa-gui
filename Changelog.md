@@ -19,6 +19,7 @@ Version 3.5.2
 #### Bugfixes ####
 
  * Fixed invalid entity / planet ID in link to planets in user economy tab 
+ * Fixed session APM calculation in user surveillance screen
  
 ### Framework ### 
 
