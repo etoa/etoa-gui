@@ -9,6 +9,7 @@ Version 3.5.2
 ### Changes ###
 
  * The email sender address can now be changed in the admin contact form if a player is logged in
+ * Changed the colors which indicate an inactive or long inactive user, so that they can now be better distinguished
 
 #### Bugfixes ####
 

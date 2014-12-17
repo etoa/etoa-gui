@@ -7,6 +7,7 @@ Version 3.5.2
 ## Änderungen ##
 
  * Im Admin Kontaktformular kann die E-Mail Adresse des Senders nun geändert werden
+ * Die Farbe, welche einen inaktiven oder lang inaktiven Spieler kennzeichen wurden überarbeitet, so dass diese nun besser unterschieden werden können
 
 #### Bugfixes ####
 
