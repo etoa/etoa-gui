@@ -131,6 +131,8 @@ class UserSession extends Session
 										|| $this->sittingActive
 										|| ($uarr['user_password_temp']!="" && $uarr['user_password_temp']==$loginPassword))
 									{
+										session_regenerate_id(true);
+
 										$this->user_id = $uarr['user_id'];
 										$this->user_nick = $uarr['user_nick'];
 										$this->time_login = $t;
@@ -470,8 +472,8 @@ class UserSession extends Session
 		}
         if ($logoutPressed==1)
         {
+            session_regenerate_id(true);
             session_destroy();
-            session_regenerate_id();
         }
 	}
 

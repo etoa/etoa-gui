@@ -1,6 +1,13 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.4.1
+-------------
+
+### Bugfixes ###
+
+ * Properly regenerate session IDs on login and logout
+
 Version 3.4
 ------------
 

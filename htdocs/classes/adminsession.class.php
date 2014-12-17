@@ -46,6 +46,8 @@ class AdminSession extends Session
 				$uarr = mysql_fetch_assoc($ures);
 				if (validatePasswort($data['login_pw'], $uarr['user_password']))
 				{
+					session_regenerate_id(true);
+
 					$this->user_id = $uarr['user_id'];
 					$this->user_nick = $uarr['user_nick'];
 					$t = time();
@@ -229,8 +231,8 @@ class AdminSession extends Session
 		}
         if ($logoutPressed==1)
         {
+			session_regenerate_id(true);
             session_destroy();
-            session_regenerate_id();
         }
 	}
 
