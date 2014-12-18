@@ -7,7 +7,7 @@ $tpl->setView('install');
 $tpl->setLayout('empty');
 
 $tpl->assign("gameTitle", "Setup");
-$tpl->assign("templateDir","designs/official/Graphite");
+$tpl->assign("templateDir","designs/official/Revolution");
 
 $tpl->assign('title', 'EtoA Installation');
 $tpl->assign('version', getAppVersion());
