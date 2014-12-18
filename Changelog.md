@@ -1,5 +1,28 @@
-Escape to Andromeda Changelog
+﻿Escape to Andromeda Changelog
 =============================
+
+Version 3.5.3
+-------------
+
+### Game ###
+
+### Changes ###
+
+#### Bugfixes ####
+ 
+### Administration ###
+
+#### Bugfixes ####
+
+#### Features ####
+
+ * Added the name and email address from dualplayers to the player overview page
+ 
+### Framework ### 
+
+#### Bugfixes ####
+
+
 
 Version 3.5.2
 -------------

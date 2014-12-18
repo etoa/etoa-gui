@@ -376,6 +376,8 @@
 				echo "<th>Status</th>";
 				echo "<th>Name</th>";
 				echo "<th>E-Mail</th>";
+        echo "<th>Dual Name</th>";
+        echo "<th>Dual E-Mail</th>";
 				echo "<th>Punkte</th>";
 				echo "<th>Allianz</th>";
 				echo "<th>Rasse</th>
@@ -408,6 +410,8 @@
 					echo "<td ".$uCol.">".$status."</td>";
 					echo "<td title=\"".$arr['user_name']."\">".cut_string($arr['user_name'],15)."</td>";
 					echo "<td title=\"".$arr['user_email']."\">".cut_string($arr['user_email'],15)."</td>";
+          echo "<td title=\"".$arr['dual_name']."\">".cut_string($arr['dual_name'],15)."</td>";
+					echo "<td title=\"".$arr['dual_email']."\">".cut_string($arr['dual_email'],15)."</td>";
 					echo "<td>".nf($arr['user_points'])."</td>";
 					echo "<td>".($arr['user_alliance_id']>0 ? $allys[$arr['user_alliance_id']]['tag']:'-')."</td>";
 					echo "<td>".($arr['user_race_id']>0 ? $race[$arr['user_race_id']]['race_name'] : '-')."</td>";
