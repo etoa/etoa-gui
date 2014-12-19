@@ -17,6 +17,7 @@ Version 3.5.3
 #### Features ####
 
  * Added the name and email address from dualplayers to the player overview page
+ * Active sitters will now be shown in multi detection
  
 ### Framework ### 
 
