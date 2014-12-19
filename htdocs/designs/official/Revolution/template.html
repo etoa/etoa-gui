@@ -13,6 +13,16 @@
 	  	$('#content').css({'height':(($(window).height())-155)+'px'});
   		$(window).resize(function(){$('#content').css({'height':(($(window).height())-155)+'px'});});
   	});
+	window.onload = function() {
+		// blur the iframe
+		document.getElementById("c_aside").blur();
+    		// set focus on #planetimage
+    		document.getElementById("planetimage").focus();
+    		// when iframe tries to focus, focus #planetimage
+    		document.getElementById("planetimage").onblur = function() {
+        		this.focus();
+    		};
+	};
 	{/literal}
 	</script>
 
