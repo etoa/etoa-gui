@@ -101,6 +101,7 @@ a {
 	color:#dde;
 	font-weight:bold;
 	text-decoration:none;
+	outline: 0;
 }
 
 a:hover {
