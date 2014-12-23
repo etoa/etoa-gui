@@ -20,6 +20,11 @@
             "email": "river@etoa.ch"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "EtoA\\": "src/"
+        }
+    },
     "require": {
         "silex/silex": "~1.2"
     }
