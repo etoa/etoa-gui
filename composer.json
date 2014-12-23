@@ -1,0 +1,24 @@
+{
+    "name": "etoa/gui",
+    "description": "Escape to Andromeda",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Benjamin Kurt",
+            "email": "lamborghini@etoa.ch"
+        },
+        {
+            "name": "Nicolas Perrenoud",
+            "email": "mrcage@etoa.ch"
+        },
+        {
+            "name": "Stephan Vock",
+            "email": "glaubinix@etoa.ch"
+        },
+        {
+            "name": "River",
+            "email": "river@etoa.ch"
+        }
+    ],
+    "require": {}
+}
