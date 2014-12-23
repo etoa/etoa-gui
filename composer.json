@@ -20,5 +20,7 @@
             "email": "river@etoa.ch"
         }
     ],
-    "require": {}
+    "require": {
+        "silex/silex": "~1.2"
+    }
 }
