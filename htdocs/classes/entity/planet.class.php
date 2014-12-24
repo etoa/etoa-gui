@@ -77,7 +77,9 @@ class Planet extends Entity implements OwnableEntity
 	public static function getByArray($arr)
 	{
 		$p = new Planet();
-	
+	  global $cu;
+    $tl = new TechList($cu->id);
+  
 		$p->id = $arr['id'];
 		$p->cellId = $arr['cell_id'];
 		$p->userId = $arr['planet_user_id'];
@@ -176,7 +178,12 @@ class Planet extends Entity implements OwnableEntity
 		$p->prodPlastic = $arr['planet_prod_plastic'];
 		$p->prodFuel = $arr['planet_prod_fuel'];
 		$p->prodFood = $arr['planet_prod_food'];
-		$p->prodPower = zeroPlus($arr['planet_prod_power']);
+    
+    if ($tl->getLevel(3)>10)
+    	 $p->prodPower = zeroPlus($arr['planet_prod_power']+($arr['planet_prod_power']*(($tl->getLevel(3)-10)/20)));
+    else
+       $p->prodPower = zeroPlus($arr['planet_prod_power']);
+       
 		$p->prodPeople = $arr['planet_prod_people'];
 
 		$p->isMain = ($arr['planet_user_main']==1);
