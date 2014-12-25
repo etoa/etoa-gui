@@ -51,13 +51,13 @@
 		
     function getEnergybonus()
 		{
-			$level = 1;
+			$bonus = 1;
 			
 			if ($this->getLevel(3)>10)
 			{
-				$level = 1+(($this->getLevel(3)-10)/20);
+				$bonus = 1+(($this->getLevel(3)-10)/20);
 			}
-			return $level;	
+			return $bonus;	
 		}
     
 		function isBuildingSomething($onCurrentPlanet=false)

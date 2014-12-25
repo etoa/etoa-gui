@@ -1,5 +1,12 @@
-Escape to Andromeda Changelog
+﻿Escape to Andromeda Changelog
 =============================
+
+Version 3.5.3
+-------------
+
+### Features ###
+
+ * Energietechnik gibt jetz 5% mehr Energie für jede Stufe über 10 
 
 Version 3.5.2
 -------------
