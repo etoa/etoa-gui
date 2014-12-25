@@ -459,10 +459,13 @@
 				$cnt['power'] += $pwrt;
 			}
 		}		
-					
+		
+    echo "<tr><th style=\"height:2px;\" colspan=\"4\"></th></tr>";			
+		echo "<tr><th>Energiebonus</td><td colspan=\"3\">".nf($cnt['power']*($cu->techlist->getEnergybonus()-1))."</th></tr>";
+    			
 		$powerProduced = $cnt['power']; 
 		echo "<tr><th style=\"height:2px;\" colspan=\"4\"></th></tr>";			
-		echo "<tr><th>TOTAL produziert</td><td colspan=\"3\">".nf($powerProduced)."</th></tr>";
+		echo "<tr><th>TOTAL produziert</td><td colspan=\"3\">".nf($powerProduced*$cu->techlist->getEnergybonus())."</th></tr>";
 		if ($powerProduced!=0)
 		{
 			$powerFree = $powerProduced - $powerUsed;

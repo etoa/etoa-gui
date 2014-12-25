@@ -77,6 +77,7 @@ class User
 	protected $rating = null;
 	protected $properties = null;
 	protected $buddylist = null;
+  protected $techlist = null;
 	protected $changedFields;
 	
 	protected $isVerified;
@@ -432,6 +433,10 @@ class User
 			if ($key=="holiday" && $this->holiday==null)
 			{
 				$this->holiday = ($this->hmode_from!=0 && $this->hmode_to!=0) ? true : false;
+			}
+      if ($key=="techlist" && $this->techlist==null)
+			{
+				$this->techlist = (new TechList($this->id));
 			}
 			if ($key=="locked" && $this->locked==null)
 			{

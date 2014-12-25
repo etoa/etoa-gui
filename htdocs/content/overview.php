@@ -764,18 +764,10 @@
 			$planet_image_path = "".IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$arr_planet['planet_image']."_middle.gif";
 	
 			// Planet bild mit link zum bauhof und der informationen übergabe beim mouseover
-	    $elvl = mysql_fetch_array(dbquery("
-      SELECT 
-        techlist_current_level 
-      FROM 
-        techlist 
-      WHERE 
-        techlist_user_id = '".$cu->id."' 
-      AND techlist_tech_id = 3"));
-      
+	         
       //Energietechbonus beachten
-      if ($elvl['techlist_current_level']>11)
-        $eprod = zeroPlus($arr_planet['planet_prod_power']+($arr_planet['planet_prod_power']*(($elvl['techlist_current_level']-10)/20)));          
+      if ($cu->techlist->getLevel(3)>10)
+        $eprod = zeroPlus($arr_planet['planet_prod_power']+($arr_planet['planet_prod_power']*(($cu->techlist->getLevel(3)-10)/20)));          
       else
         $eprod = $arr_planet['planet_prod_power'];
       

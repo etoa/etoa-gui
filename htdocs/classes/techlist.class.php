@@ -49,6 +49,17 @@
 			return $level;	
 		}
 		
+    function getEnergybonus()
+		{
+			$level = 1;
+			
+			if ($this->getLevel(3)>10)
+			{
+				$level = 1+(($this->getLevel(3)-10)/20);
+			}
+			return $level;	
+		}
+    
 		function isBuildingSomething($onCurrentPlanet=false)
 		{
 			global $cu;
