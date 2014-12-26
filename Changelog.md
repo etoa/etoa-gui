@@ -8,9 +8,12 @@ Version 3.5.3
 
 ### Changes ###
 
-* Added Energytech-bonus 
+ * Added Energytech-bonus 
 
 #### Bugfixes ####
+  
+ * Planetoverview displaying now right values in defense tab, including mysticum bonus
+ * Healing bonus from mysticums will now be included in planetoverview
  
 ### Administration ###
 

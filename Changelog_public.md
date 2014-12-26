@@ -8,6 +8,11 @@ Version 3.5.3
 
  * Energietechnik gibt jetz 5% mehr Energie für jede Stufe über 10 
 
+### Bugfixes ###
+
+ * In der Planetenübersicht werden jetzt Mysticum-Boni zu den Verteidigungswerten dazugerechnet
+ * In der Planetenübersicht werden jetzt Heilungs-Boni vom Mysticum korrekt angezeigt  
+
 Version 3.5.2
 -------------
 
