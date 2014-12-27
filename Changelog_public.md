@@ -7,6 +7,7 @@ Version 3.5.3
 ### Features ###
 
  * Energietechnik gibt jetz 5% mehr Energie für jede Stufe über 10 
+ * Im Profil können nun gesammelte Ressourcen eingesehn werden
 
 ### Bugfixes ###
 

@@ -374,7 +374,8 @@
 								<td class=\"tbldata\">
 									Raids: ".nf($arr['user_res_from_raid'])." t<br/> 
 									Asteroiden: ".nf($arr['user_res_from_asteroid'])." t<br/>
-									Nebelfelder: ".nf($arr['user_res_from_nebula'])." t
+									Nebelfelder: ".nf($arr['user_res_from_nebula'])." t<br/>
+                  Trümmerfelder: ".nf($arr['user_res_from_tf'])." t
 								</td>
 							</tr>
 							<tr>

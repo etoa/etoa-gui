@@ -6,9 +6,10 @@ Version 3.5.3
 
 ### Game ###
 
-### Changes ###
+### Features ###
 
- * Added Energytech-bonus 
+ * Added Energytech-bonus
+ * Collected resources will now be shown in userinfo 
 
 #### Bugfixes ####
   
@@ -23,11 +24,7 @@ Version 3.5.3
 
  * Added the name and email address from dualplayers to the player overview page
  * Active sitters will now be shown in multi detection 
- 
-### Framework ### 
-
-#### Bugfixes ####
-
+ * Added collected resources from debris fields to userinformation
 
 
 Version 3.5.2

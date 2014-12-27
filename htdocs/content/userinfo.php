@@ -183,8 +183,29 @@
 					echo "Keine Nachrichten!";
 				}
 				iBoxEnd();
-			}
-			
+        
+        
+			  $res = dbquery("
+				SELECT
+					*
+				FROM
+					users
+				WHERE
+					users.user_id = ".$cu->id);
+          
+  			if (mysql_num_rows($res)>0)
+  			{
+  				// Load data				
+  				$arr = mysql_fetch_array($res);
+          
+          iBoxStart("Rohstoffe von...");
+          	echo"Raids: ".nf($arr['user_res_from_raid'])." t</br>";
+    				echo"Asteroiden: ".nf($arr['user_res_from_asteroid'])." t</br>";
+    				echo"Nebelfelder: ".nf($arr['user_res_from_nebula'])." t</br>";
+            echo"Trümmerfelder: ".nf($arr['user_res_from_tf'])." t";
+    			iBoxEnd();
+  			}
+      }           
 			if (!$popup)
 			{
 				echo "<input type=\"button\" value=\"Nachricht senden\" onclick=\"document.location='?page=messages&amp;mode=new&amp;message_user_to=".intval($user->id)."'\" /> &nbsp; ";
