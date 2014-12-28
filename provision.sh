@@ -11,7 +11,7 @@ echo "mysql-server mysql-server/root_password_again password " | debconf-set-sel
 sudo aptitude install -q -y -f mysql-server mysql-client nginx php5-fpm
 
 # Install commonly used php packages
-sudo aptitude install -q -y -f php5-mysql php5-curl php5-mcrypt php5-cli
+sudo aptitude install -q -y -f php5-curl php5-mcrypt php5-cli php5-mysql php5-gd
 
 sudo rm /etc/nginx/sites-available/default
 sudo cp /var/www/etoa/vagrant/nginx-default /etc/nginx/sites-available/default
