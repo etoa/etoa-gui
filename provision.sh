@@ -39,6 +39,9 @@ $PHP /var/www/etoa/bin/db.php migrate
 Q5="INSERT INTO config (config_name, config_value) VALUES ('loginurl','') ON DUPLICATE KEY UPDATE config_value='';"
 $MYSQL -uroot -D etoa -e "$Q5"
 
+# Setup cronjob
+echo "* * * * * php /var/www/etoa/bin/cronjob.php" | crontab
+
 # Install deps for eventhandler
 sudo aptitude install -q -y -f cmake libboost-all-dev libmysql++-dev g++
 
