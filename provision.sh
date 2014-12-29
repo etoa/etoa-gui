@@ -33,3 +33,19 @@ $MYSQL -uroot -e "$SQL"
 $PHP /var/www/etoa/bin/db.php migrate
 Q5="INSERT INTO config (config_name, config_value) VALUES ('loginurl','') ON DUPLICATE KEY UPDATE config_value='';"
 $MYSQL -uroot -D etoa -e "$Q5"
+
+# Install deps for eventhandler
+sudo aptitude install -q -y -f cmake libboost-all-dev libmysql++-dev g++
+
+# Build eventhandler
+cd /var/www/etoa/eventhandler
+cmake .
+make
+
+sudo mkdir -p /etc/etoad
+sudo mkdir -p /var/log/etoad
+sudo mkdir -p /var/run/etoad
+sudo chmod -R 777 /var/log/etoad
+sudo chmod -R 777 /var/run/etoad
+sudo cp /var/www/etoa/vagrant/roundx.conf /etc/etoad/roundx.conf
+sudo su vagrant -c"./target/etoad roundx -k -d"
