@@ -3,6 +3,23 @@ Escape to Andromeda Installation Guide
 
 Frontend - Version 1.0
 
+Vagrant Developer setup
+-----------------------
+
+Install [VirtualBox](https://www.virtualbox.org/).
+Install [Vagrant](https://www.vagrantup.com/).
+
+In your etoa root run "vagrant up"
+You can now reach etoa via http://192.168.33.10
+Cronjob, Eventhandler, DB, PHP, Nginx should be running.
+
+Additional steps because I havent figured out yet how to reset the db config via cli:
+* Go to: http://192.168.33.10/admin
+* Login as admin
+* Reset the Configuration in the admin tool, then set the loginurl back to "" (empty string)
+
+All steps below or only necessary if you dont want to use the vagrant box!!!!
+
 Files
 -----
 Copy all files to the gameservers root directory, e.g. /var/www/roundx.etoa.net/htdocs,
