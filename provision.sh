@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
+
+# only export does not seem to be enough for installing mysql
 export DEBIAN_FRONTEND=noninteractive
+echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 sudo aptitude update -q
+
+sudo aptitude install -g -y -f htop git
 
 # Force a blank root password for mysql
 echo "mysql-server mysql-server/root_password password " | debconf-set-selections
