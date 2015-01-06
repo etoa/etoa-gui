@@ -6,25 +6,24 @@ Version 3.5.3
 
 ### Game ###
 
-### Features ###
+#### Features ####
 
- * Added Energytech-bonus
+ * Added energy technology bonus (5% more per level starting from level 10)
  * Collected resources will now be shown in userinfo 
 
 #### Bugfixes ####
   
  * Planetoverview displaying now right values in defense tab, including mysticum bonus
- * Healing bonus from mysticums will now be included in planetoverview
+ * Healing bonus from mysticums will now be included in planet overview
  
 ### Administration ###
-
-#### Bugfixes ####
 
 #### Features ####
 
  * Added the name and email address from dualplayers to the player overview page
  * Active sitters will now be shown in multi detection 
- * Added collected resources from debris fields to userinformation
+ * Added collected resources from debris fields to user information
+ * Public and internal changelog can now be viewed (Overview -> Changelog) 
 
 
 Version 3.5.2
