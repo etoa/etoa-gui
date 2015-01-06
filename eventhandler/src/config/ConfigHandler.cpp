@@ -156,6 +156,7 @@
 		idConfig["MARKET_SHIP_ID"] = 16;
 		
 		//->Technologien
+		idConfig["ENERGY_TECH_ID"] = 3;
 		idConfig["SPY_TECH_ID"] = 7;
 		idConfig["STRUCTURE_TECH_ID"] = 9;
 		idConfig["TARN_TECH_ID"] = 11;
