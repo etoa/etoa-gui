@@ -26,6 +26,10 @@ Version 3.5.3
  * Added collected resources from debris fields to user information
  * Public and internal changelog can now be viewed (Overview -> Changelog) 
 
+#### Bugfixes ####
+  
+ * Fixed bugs in user research entry editor (status, time format)
+ 
 ### Framework ### 
 
 #### Features ####
