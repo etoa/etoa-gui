@@ -187,24 +187,23 @@
         
 			  $res = dbquery("
 				SELECT
-					*
+					user_res_from_raid,
+					user_res_from_asteroid,
+					user_res_from_nebula,
+					user_res_from_tf
 				FROM
 					users
 				WHERE
-					users.user_id = ".$cu->id);
-          
-  			if (mysql_num_rows($res)>0)
-  			{
-  				// Load data				
-  				$arr = mysql_fetch_array($res);
-          
-          iBoxStart("Rohstoffe von...");
-          	echo"Raids: ".nf($arr['user_res_from_raid'])." t</br>";
-    				echo"Asteroiden: ".nf($arr['user_res_from_asteroid'])." t</br>";
-    				echo"Nebelfelder: ".nf($arr['user_res_from_nebula'])." t</br>";
-            echo"Trümmerfelder: ".nf($arr['user_res_from_tf'])." t";
-    			iBoxEnd();
-  			}
+					user_id = ".$cu->id);
+			if ($arr = mysql_fetch_array($res))
+			{
+				iBoxStart("Rohstoffe von...");
+				echo"Raids: ".nf($arr['user_res_from_raid'])." t</br>";
+				echo"Asteroiden: ".nf($arr['user_res_from_asteroid'])." t</br>";
+				echo"Nebelfelder: ".nf($arr['user_res_from_nebula'])." t</br>";
+				echo"Trümmerfelder: ".nf($arr['user_res_from_tf'])." t";
+				iBoxEnd();
+			}
       }           
 			if (!$popup)
 			{
