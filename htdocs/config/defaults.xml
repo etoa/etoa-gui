@@ -329,6 +329,12 @@ http://etoa.ch</v>
       <p1 comment="SPECIALIST_MAX_COSTS_FACTOR" type="text">10</p1>
       <p2 comment="SPECIALIST_MIN_POINTS_REQ" type="text">100000</p2>
     </item>
+    <item name="energy_tech_power_bonus_required_level" cat="5">
+      <v comment="Energietechnik-Bonus auf Energieproduktion: Mindestlevel" type="text">10</v>
+    </item>
+    <item name="energy_tech_power_bonus_percent_per_level" cat="5">
+      <v comment="Energietechnik-Bonus auf Energieproduktion: Verbesserung pro Level (%)" type="text">5</v>
+    </item>	
 
     <item name="market_enabled" cat="6">
       <v comment="Marktplatz aktiv" type="onoff">1</v>
