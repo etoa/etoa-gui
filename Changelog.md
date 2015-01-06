@@ -15,6 +15,7 @@ Version 3.5.3
   
  * Planetoverview displaying now right values in defense tab, including mysticum bonus
  * Healing bonus from mysticums will now be included in planet overview
+ * Improvements of the chat frame representation in Revolution design
  
 ### Administration ###
 
@@ -24,6 +25,16 @@ Version 3.5.3
  * Active sitters will now be shown in multi detection 
  * Added collected resources from debris fields to user information
  * Public and internal changelog can now be viewed (Overview -> Changelog) 
+
+### Framework ### 
+
+#### Features ####
+
+ * Added helper script for DB migration when using Microsoft Windows as development environment
+
+#### Changes ####
+ 
+ * The Revolution design is now being used in the installation wizard
 
 
 Version 3.5.2

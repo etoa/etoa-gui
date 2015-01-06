@@ -13,6 +13,7 @@ Version 3.5.3
 
  * In der Planetenübersicht werden jetzt Mysticum-Boni zu den Verteidigungswerten dazugerechnet
  * In der Planetenübersicht werden jetzt Heilungs-Boni vom Mysticum korrekt angezeigt  
+ * Verbesserungen in der Anzeige des Chats im Revolution Design
 
 Version 3.5.2
 -------------
