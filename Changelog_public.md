@@ -1,15 +1,29 @@
-Escape to Andromeda Changelog
+﻿Escape to Andromeda Changelog
 =============================
+
+Version 3.5.3
+-------------
+
+### Features ###
+
+ * Energietechnik gibt jetz 5% mehr Energie für jede Stufe über 10 
+ * Im Spielerprofil können nun gesammelte Ressourcen eingesehen werden
+
+### Bugfixes ###
+
+ * In der Planetenübersicht werden jetzt Mysticum-Boni zu den Verteidigungswerten dazugerechnet
+ * In der Planetenübersicht werden jetzt Heilungs-Boni vom Mysticum korrekt angezeigt  
+ * Verbesserungen in der Anzeige des Chats im Revolution Design
 
 Version 3.5.2
 -------------
 
-## Änderungen ##
+### Änderungen ###
 
  * Im Admin Kontaktformular kann die E-Mail Adresse des Senders nun geändert werden
  * Die Farbe, welche einen inaktiven oder lang inaktiven Spieler kennzeichen wurden überarbeitet, so dass diese nun besser unterschieden werden können
 
-#### Bugfixes ####
+### Bugfixes ###
 
  * Ein Fehler in der Positionierung des Planetenkreises in der Übersichtsseite wurde behoben
 

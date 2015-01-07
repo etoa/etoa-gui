@@ -24,10 +24,13 @@ namespace planet
 		
     void markForUpdate(int planetId);
     void markForUpdate(std::vector<int>* planetIds);
+	void markUserUpdate(int userId);
+    void markUsersForUpdate(std::vector<int>* userIds);
 		void updatePlanet(int planetId);
 		void updatePlanets();
 		void updatePlanets(std::vector<int>* planetIds);
 		std::vector<int>* getUpdateableUserPlanets();
+		std::vector<int>* getUserPlanets(int userId);
 	private:
     std::vector<int> planetsMarkedForUpdate;
 	};

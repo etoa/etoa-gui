@@ -1,5 +1,45 @@
-Escape to Andromeda Changelog
+﻿Escape to Andromeda Changelog
 =============================
+
+Version 3.5.3
+-------------
+
+### Game ###
+
+#### Features ####
+
+ * Added energy technology bonus (5% more per level starting from level 10)
+ * Collected resources will now be shown in userinfo 
+
+#### Bugfixes ####
+  
+ * Planetoverview displaying now right values in defense tab, including mysticum bonus
+ * Healing bonus from mysticums will now be included in planet overview
+ * Improvements of the chat frame representation in Revolution design
+ 
+### Administration ###
+
+#### Features ####
+
+ * Added the name and email address from dualplayers to the player overview page
+ * Active sitters will now be shown in multi detection 
+ * Added collected resources from debris fields to user information
+ * Public and internal changelog can now be viewed (Overview -> Changelog) 
+
+#### Bugfixes ####
+  
+ * Fixed bugs in user research entry editor (status, time format)
+ 
+### Framework ### 
+
+#### Features ####
+
+ * Added helper script for DB migration when using Microsoft Windows as development environment
+
+#### Changes ####
+ 
+ * The Revolution design is now being used in the installation wizard
+
 
 Version 3.5.2
 -------------

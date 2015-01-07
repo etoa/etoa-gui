@@ -99,13 +99,19 @@
 	//
 	elseif ($sub=="changelog")
 	{
+		$tpl->setView("overview/changelog");
+		$tpl->assign("title", "Changelog");
+
+		$Parsedown = new Parsedown();
+		
 		$changelogFile = "../../Changelog.md";
 		if (is_file($changelogFile)) {
-			$Parsedown = new Parsedown();
-			echo $Parsedown->text(file_get_contents($changelogFile)); 
-		} else {
-			echo "<h1>Changelog</h1>";
-			error_msg("Changelog nicht verfügbar!",1);
+			$tpl->assign("changelog", $Parsedown->text(file_get_contents($changelogFile))); 
+		}
+		
+		$changelogFile = "../../Changelog_public.md";
+		if (is_file($changelogFile)) {
+			$tpl->assign("changelog_public", $Parsedown->text(file_get_contents($changelogFile))); 
 		}
 	}
 

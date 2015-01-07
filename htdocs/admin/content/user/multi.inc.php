@@ -173,7 +173,7 @@
 			if (count($multi_ips)>0)
 			{
 				echo "<table class=\"tbl\" width=\"100%\">";
-				echo "<tr><th class=\"tbltitle\">IP-Adresse</th><th class=\"tbltitle\">Nick</th><th class=\"tbltitle\">Realer Name</th><th class=\"tbltitle\">Zuletzt online</th><th class=\"tbltitle\">Eingetragene Multis</th></tr>";
+				echo "<tr><th class=\"tbltitle\">IP-Adresse</th><th class=\"tbltitle\">Nick</th><th class=\"tbltitle\">Realer Name</th><th class=\"tbltitle\">Zuletzt online</th><th class=\"tbltitle\">Eingetragene Multis</th><th class=\"tbltitle\">Wird gesittet von:</th></tr>";
 				$multi_ip_cnt=0;
 				$multi_total_cnt=0;
 				foreach ($multi_ips as $ip)
@@ -265,7 +265,7 @@
 						else
 							echo ">Noch nicht eingeloggt!";
 						echo "</td>";
-
+            
 						if(mysql_num_rows($multi_res)>0)
 						{
 							$multi = 1;
@@ -282,18 +282,34 @@
 
 								$multi++;
 							}
-							echo "</td></tr>";
+							echo "</td>";
 						}
 						else
 						{
-							echo "<td $uCol>-</td></tr>";
+							echo "<td $uCol>-</td>";
 						}
-
+            
+            $sitting = mysql_fetch_array(dbquery("
+                        SELECT
+                          user_nick
+                        FROM
+                          user_sitting,users
+                        WHERE
+                          users.user_id = sitter_id 
+                        AND
+                          user_sitting.user_id= '".$iparr['user_id']."' 
+                        AND
+                          ".time()." BETWEEN date_from AND date_to"));
+            if ($sitting)                  
+              echo "<td>".$sitting['user_nick']."</td></tr>";
+            else
+              echo "<td>-</td></tr>";
+                    
 						$multi_total_cnt++;
-					}
-					$multi_ip_cnt++;
-				}
-				echo "</table>";
+          }           
+          $multi_ip_cnt++;  
+				}  
+        echo "</table>";
 				echo "<p>Total $multi_ip_cnt IP-Adressen mit $multi_total_cnt Spielern entdeckt.</p>";
 			}
 			else

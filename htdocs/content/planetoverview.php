@@ -374,10 +374,13 @@
 					echo "</td></tr>";
 		  	echo "<tr><td><b>Reparatur:</b></td>
 					<td>".nf($sl->getTotalHeal())."</td>
-					<td>".nf($sl->getTotalHeal()*$heal_tech_a);
+					<td>".nf($sl->getTotalHeal()*($heal_tech_a+$sl->getBHeal()));
 					if ($heal_tech_a>1)
 					{
 						echo " (".get_percent_string($heal_tech_a,1)." durch ".$heal_tech_name." ".$heal_tech_level.")";
+            if ($sl->getBHeal()>0)
+							echo ", ".get_percent_string((1+$sl->getBHeal()),1)." durch Spezialschiffe";
+						echo ")";
 					}
 					echo "</td></tr>";
 		  	echo "<tr><td><b>Anzahl Schiffe:</b></td>
@@ -472,35 +475,47 @@
 		  	echo "<tr>
 					<td><b>Struktur:</b></td>
 					<td>".nf($dl->getTotalStrucure())."</td>
-					<td>".nf($dl->getTotalStrucure()*$structure_tech_a);
+					<td>".nf($dl->getTotalStrucure()*($structure_tech_a+$sl->getBStructure()));
 					if ($structure_tech_a>1)
 					{
 						echo " (".get_percent_string($structure_tech_a,1)." durch ".$structure_tech_name." ".$structure_tech_level.")";
+            if ($sl->getBStructure()>0)
+							echo ", ".get_percent_string((1+$sl->getBStructure()),1)." durch Spezialschiffe";
+						echo ")"; 
 					}
 					echo "</td></tr>";
 		  	echo "<tr><td><b>Schilder:</b></td>
 					<td>".nf($dl->getTotalShield())."</td>
-					<td>".nf($dl->getTotalShield()*$shield_tech_a);
+					<td>".nf($dl->getTotalShield()*($shield_tech_a+$sl->getBShield()));
 					if ($shield_tech_a>1)
 					{
 						echo " (".get_percent_string($shield_tech_a,1)." durch ".$shield_tech_name." ".$shield_tech_level.")";
+            if ($sl->getBShield()>0)
+							echo ", ".get_percent_string((1+$sl->getBShield()),1)." durch Spezialschiffe";
+						echo ")";
 					}
 					echo "</td></tr>";
 		  	echo "<tr><td><b>Waffen:</b></td>
 					<td>".nf($dl->getTotalWeapon())."</td>
-					<td>".nf($dl->getTotalWeapon()*$weapon_tech_a);
+					<td>".nf($dl->getTotalWeapon()*($weapon_tech_a+$sl->getBWeapon()));
 					if ($weapon_tech_a>1)
 					{
 						echo " (".get_percent_string($weapon_tech_a,1)." durch ".$weapon_tech_name." ".$weapon_tech_level.")";
+            if ($sl->getBWeapon()>0)
+							echo ", ".get_percent_string((1+$sl->getBWeapon()),1)." durch Spezialschiffe";
+						echo ")";
 					}
 					echo "</td></tr>";
 		  	echo "<tr><td><b>Reparatur:</b></td>
 					<td>".nf($dl->getTotalHeal())."</td>
-					<td>".nf($dl->getTotalHeal()*$heal_tech_a);
+					<td>".nf($dl->getTotalHeal()*($heal_tech_a+$sl->getBHeal()));
 					if ($heal_tech_a>1)
 					{
 						echo " (".get_percent_string($heal_tech_a,1)." durch ".$heal_tech_name." ".$heal_tech_level.")";
-					}
+					  if ($sl->getBHeal()>0)
+							echo ", ".get_percent_string((1+$sl->getBHeal()),1)." durch Spezialschiffe";
+						echo ")";
+          }
 					echo "</td></tr>";
 		  	echo "<tr><td><b>Anzahl Anlagen:</b></td>
 		  	<td colspan=\"2\">".nf($dl->count())."</td></tr>";

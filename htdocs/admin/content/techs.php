@@ -132,7 +132,7 @@
 		$tpl->assign('title', 'Forschungsliste');
 
 		$build_type[0]="Unt&auml;tig";
-		$build_type[1]="Forschen";
+		$build_type[3]="Forschen";
 	
 		if (isset($_POST['techlist_search']) || (isset($_GET['action']) && ($_GET['action']=="search" || $_GET['action']=="searchresults")) || isset($_POST['new']))
 		{
@@ -291,7 +291,7 @@
 				echo "</tr>";
 				while ($arr = mysql_fetch_array($res))
 				{
-					if ($arr['techlist_build_type']==1)
+					if ($arr['techlist_build_type']==3)
 						$style=" style=\"color:#0f0\"";
 					else
 						$style="";
@@ -365,7 +365,7 @@
 				
 				if ($arr['techlist_build_start_time']>0) $bst = date(DATE_FORMAT,$arr['techlist_build_start_time']); else $bst = "";
 				if ($arr['techlist_build_end_time']>0) $bet = date(DATE_FORMAT,$arr['techlist_build_end_time']); else $bet = "";
-				echo "<tr><td class=\"tbltitle\" valign=\"top\">Baustart</td><td class=\"tbldata\"><input type=\"text\" name=\"techlist_build_start_time\" id=\"techlist_build_start_time\" value=\"$bst\" size=\"20\" maxlength=\"30\" /> <input type=\"button\" value=\"Jetzt\" onclick=\"document.getElementById('techlist_build_start_time').value='".date("Y-d-m h:i")."'\" /></td></tr>";
+				echo "<tr><td class=\"tbltitle\" valign=\"top\">Baustart</td><td class=\"tbldata\"><input type=\"text\" name=\"techlist_build_start_time\" id=\"techlist_build_start_time\" value=\"$bst\" size=\"20\" maxlength=\"30\" /> <input type=\"button\" value=\"Jetzt\" onclick=\"document.getElementById('techlist_build_start_time').value='".date("Y-m-d H:i:s")."'\" /></td></tr>";
 				echo "<tr><td class=\"tbltitle\" valign=\"top\">Bauende</td><td class=\"tbldata\"><input type=\"text\" name=\"techlist_build_end_time\" value=\"$bet\" size=\"20\" maxlength=\"30\" /></td></tr>";
 				echo "</table>";
 				echo "<br/><input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" />&nbsp;";

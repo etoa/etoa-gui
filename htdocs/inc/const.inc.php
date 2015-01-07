@@ -308,6 +308,9 @@
 	// ID der Gentechnologie
 	define('GEN_TECH_ID', 23);
 	
+	// ID der Energietechnologie
+	define('ENERGY_TECH_ID', 3);
+	
 	// ID der Wurmlochforschung
 	define("TECH_WORMHOLE", 22);
 	

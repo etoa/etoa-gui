@@ -31,6 +31,7 @@
 				l.shiplist_special_ship_bonus_weapon as bweapon,
 				l.shiplist_special_ship_bonus_structure as bstructure,
 				l.shiplist_special_ship_bonus_shield as bshield,
+        l.shiplist_special_ship_bonus_heal as bheal,
 				s.*
 			FROM
 				shiplist l
@@ -50,11 +51,11 @@
 				$this->count += $arr['lcnt'];
 				if ($arr['special_ship'])
 				{
-					$this->special[$arr['lid']] = array($arr['bstructure'],$arr['bshield'],$arr['bweapon']);
+					$this->special[$arr['lid']] = array($arr['bstructure'],$arr['bshield'],$arr['bweapon'],$arr['bheal']);
 				}
 				else
 				{
-					$this->special[$arr['lid']] = array(0,0,0);
+					$this->special[$arr['lid']] = array(0,0,0,0);
 				}
 			}
 		}
@@ -294,6 +295,18 @@
 				foreach ($this->items as $k=>&$v)
 				{
 					$i+= $this->special[$k][2] * $v->bWeapon;
+				}
+				return $i;
+		}
+    
+    function getBHeal()
+		{
+  			if ($this->items == null)
+  				$this->load();			
+				$i = 0;
+				foreach ($this->items as $k=>&$v)
+				{
+					$i+= $this->special[$k][3] * $v->bWeapon;
 				}
 				return $i;
 		}

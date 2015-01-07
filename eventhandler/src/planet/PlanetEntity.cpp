@@ -315,12 +315,19 @@ namespace planet
         if (config.nget("boost_system_enable", 0) == 1) {
             boost += this->boostBonusProduction;
         }
+		
+		double energyTechPowerBonus = this->getEnergyTechnologyBonus(
+			(int)config.idget("ENERGY_TECH_ID"), 
+			(int)config.nget("energy_tech_power_bonus_required_level", 0), 
+			(int)config.nget("energy_tech_power_bonus_percent_per_level", 0)
+		);
+		
 		this->cnt[0] += (this->cnt[0] * (this->planet_->getTypeMetal() + this->race_->getRaceMetal() + this->sol_->getTypeMetal() + this->specialist_->getSpecialistProdMetal() - 4 + boost));
 		this->cnt[1] += (this->cnt[1] * (this->planet_->getTypeCrystal() + this->race_->getRaceCrystal() + this->sol_->getTypeCrystal() + this->specialist_->getSpecialistProdCrystal() - 4 + boost));
 		this->cnt[2] += (this->cnt[2] * (this->planet_->getTypePlastic() + this->race_->getRacePlastic() + this->sol_->getTypePlastic() + this->specialist_->getSpecialistProdPlastic() - 4 + boost));
 		this->cnt[3] += (this->cnt[3] * (this->planet_->getTypeFuel() + this->race_->getRaceFuel() + this->sol_->getTypeFuel() + this->specialist_->getSpecialistProdFuel() + this->solarFuelBonus - 5 + boost));
 		this->cnt[4] += (this->cnt[4] * (this->planet_->getTypeFood() + this->race_->getRaceFood() + this->sol_->getTypeFood() + this->specialist_->getSpecialistProdFood() - 4 + boost));
-		this->cnt[6] += (this->cnt[6] * (this->planet_->getTypePower() + this->race_->getRacePower() + this->sol_->getTypePower() + this->specialist_->getSpecialistPower() - 4));
+		this->cnt[6] += (this->cnt[6] * (this->planet_->getTypePower() + this->race_->getRacePower() + this->sol_->getTypePower() + this->specialist_->getSpecialistPower() + energyTechPowerBonus - 5));
 		
 		
 		// Bei ungenügend Energie Anpassung vornehmen
@@ -358,6 +365,31 @@ namespace planet
 			this->bunker[4] += floor(bunkerAdd/5);	
 		}
 
+	}
+	
+	double PlanetEntity::getEnergyTechnologyBonus(int energyTechID, int requiredLevel, int percentPerLevel) {
+		My &my = My::instance();
+		mysqlpp::Connection* con_ = my.get();
+		mysqlpp::Query query = con_->query();
+		query << "SELECT "
+			<< "	techlist_current_level-" << requiredLevel << " AS bonus_level "
+			<< "FROM "
+			<< "	techlist "
+			<< "WHERE "
+			<< "	techlist_tech_id='" << energyTechID << "' "
+			<< "	AND techlist_user_id='" << this->userId << "' "
+			<< "	AND techlist_current_level>" << requiredLevel << ";";
+		RESULT_TYPE res = query.store();
+		query.reset();
+		if (res) {
+			unsigned int sSize = res.size();
+			if (sSize) {
+				mysqlpp::Row row = res.at(0);
+				int percent = percentPerLevel * (int)row["bonus_level"];
+				return ((100.0 + percent) / 100.0);
+			}
+		}
+		return 1.0;
 	}
 	
 	void PlanetEntity::save() {
