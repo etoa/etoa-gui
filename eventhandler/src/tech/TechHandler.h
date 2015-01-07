@@ -24,9 +24,10 @@ namespace tech
 		~TechHandler() {};
 		void update();
 		inline bool changes() { return this->changes_; }
+		inline std::vector<int> getChangedUsers() { return this->changedUsers_; }
 	private:
 		bool changes_;
-		//std::vector<int> changedPlanets_;		
+		std::vector<int> changedUsers_;	
 	};
 }
 #endif

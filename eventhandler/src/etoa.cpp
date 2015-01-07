@@ -138,6 +138,10 @@ void etoamain()
       // Update technologies
 			tech::TechHandler* th = new tech::TechHandler();
 			th->update(); 
+			if (th->changes()) {
+				std::vector<int> v = th->getChangedUsers();
+				pm.markUsersForUpdate(&v);
+			}
 			delete th;
 			
       // Update buildings

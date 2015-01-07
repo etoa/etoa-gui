@@ -39,6 +39,31 @@ namespace planet
 		}
     return vec;
 	}
+	
+	std::vector<int>* PlanetManager::getUserPlanets(int userId)
+	{
+		My &my = My::instance();
+		mysqlpp::Connection* con_ = my.get();
+		mysqlpp::Query query = con_->query();
+		query << "SELECT "
+			<< "	id "
+			<< "FROM "
+			<< "  planets "
+			<< "WHERE planet_user_id = '" << userId << "';";
+		RESULT_TYPE res = query.store();
+		query.reset();		
+		std::vector<int>* vec = new std::vector<int>();
+		if (res) {
+			unsigned int resSize = res.size();
+			if (resSize) {
+				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) { 
+					mysqlpp::Row row = res.at(i);
+					vec->push_back((int)row["id"]);
+				}
+			}
+		}
+		return vec;
+	}
   
   void PlanetManager::markForUpdate(int planetId) {
     planetsMarkedForUpdate.push_back(planetId);
@@ -48,6 +73,18 @@ namespace planet
     planetsMarkedForUpdate.reserve(planetsMarkedForUpdate.size() + planetIds->size());
     planetsMarkedForUpdate.insert(planetsMarkedForUpdate.end(), planetIds->begin(), planetIds->end());
   }
+  
+  	void PlanetManager::markUserUpdate(int userId) {
+		std::vector<int>* up = getUserPlanets(userId);
+		markForUpdate(up);
+		delete up;
+	}
+	
+    void PlanetManager::markUsersForUpdate(std::vector<int>* userIds) {
+		for(std::vector<int>::iterator it = userIds->begin(); it != userIds->end(); ++it) {
+			markUserUpdate(*it);
+		}
+	}
 	
 	void PlanetManager::updatePlanets()
 	{

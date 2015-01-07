@@ -764,14 +764,7 @@
 			$planet_image_path = "".IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$arr_planet['planet_image']."_middle.gif";
 	
 			// Planet bild mit link zum bauhof und der informationen übergabe beim mouseover
-	         
-      //Energietechbonus beachten
-      if ($cu->techlist->getLevel(3)>10)
-        $eprod = zeroPlus($arr_planet['planet_prod_power']+($arr_planet['planet_prod_power']*(($cu->techlist->getLevel(3)-10)/20)));          
-      else
-        $eprod = $arr_planet['planet_prod_power'];
-      
-      $planet_link = "<a href=\"?page=buildings&change_entity=".$arr_planet['id']."\"><img id=\"Planet\" src=\"".$planet_image_path."\" width=\"".$pic_width."\" height=\"".$pic_height."\" border=\"0\" 
+	    $planet_link = "<a href=\"?page=buildings&change_entity=".$arr_planet['id']."\"><img id=\"Planet\" src=\"".$planet_image_path."\" width=\"".$pic_width."\" height=\"".$pic_height."\" border=\"0\" 
 	    onMouseOver=\"show_info(
 			'".$arr_planet['id']."',
 			'".StringUtils::encodeDBStringToJS($planet_name)."',
@@ -788,7 +781,7 @@
 			'".floor($arr_planet['planet_res_fuel'])."',
 			'".floor($arr_planet['planet_res_food'])."',
 			'".floor($arr_planet['planet_use_power'])."',
-			'".floor($eprod)."',
+			'".floor($arr_planet['planet_prod_power'])."',
 			'".floor($arr_planet['planet_store_metal'])."',
 			'".floor($arr_planet['planet_store_crystal'])."',
 			'".floor($arr_planet['planet_store_plastic'])."',

@@ -55,7 +55,7 @@ namespace planet
 		void loadShiplist();
 		void loadDeflist();
 		void addBoni();
-		
+		double getEnergyTechnologyBonus(int energyTechID, int requiredLevel, int percentPerLevel);
 
 		
 	};	
