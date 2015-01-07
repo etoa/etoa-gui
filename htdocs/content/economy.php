@@ -383,7 +383,12 @@
 		echo "<tr><th style=\"width:230px;\">Gebäude</th>
 		<th colspan=\"3\">".RES_ICON_POWER."Energie</th></tr>";
 
-		$cnt['power']=0;
+		// Summarize all bonus factors
+		$bonusFactor = 1 + ($cp->typePower + $cu->race->power + $cp->starPower + $cu->specialist->power - 4);
+		
+		$cnt['power'] = 0;
+		
+		// Power produced by buildings
 		$pres = dbquery("
 		SELECT 
 			b.building_id,
@@ -410,9 +415,11 @@
 		{
 			while ($parr = mysql_fetch_array($pres))
 			{
-				$bp['power'] 	= round($parr['building_prod_power'] * pow($parr['building_production_factor'],$parr['buildlist_current_level']-1));
-				// Addieren der Planeten- und Rassenboni
-				if ($bp['power']!="") $bp['power'] = $bp['power'] + ($bp['power'] * ($cp->typePower-1)) + ($bp['power'] * ($cu->race->power-1) + ($bp['power'] * ($cp->starPower-1) + ($bp['power'] * ($cu->specialist->power-1))));
+				// Calculate power production
+				$bp['power'] = round($parr['building_prod_power'] * pow($parr['building_production_factor'], $parr['buildlist_current_level'] - 1));
+				
+				// Add bonus
+				$bp['power'] *= $bonusFactor;
 
 				echo "<tr><th>".$parr['building_name']." (".$parr['buildlist_current_level'].")</th>";
 				echo "<td colspan=\"3\">".nf(floor($bp['power']))."</td></tr>";
@@ -421,9 +428,8 @@
 				$cnt['power'] += $bp['power'];
 			}
 		}
-	
-		$power_bonus = ($cp->typePower + $cu->race->power + $cp->starPower-2);
-	
+
+		// Power produced by ships
 		$sres = dbquery("
 		SELECT
 			shiplist_count,
@@ -448,18 +454,18 @@
 			
 			while ($sarr=mysql_fetch_array($sres))
 			{
-				$pwr = ($sarr['ship_prod_power']+ $dtemp) ;
-				if ($pwr!="") 
-					$pwr = $pwr * $power_bonus;
+				$pwr = ($sarr['ship_prod_power'] + $dtemp) ;
+				$pwr *= $bonusFactor;
 				$pwrt = $pwr * $sarr['shiplist_count'];
 				echo "<tr><th>".$sarr['ship_name']." (".nf($sarr['shiplist_count']).")</th>";
 				echo "<td colspan=\"3\">".nf($pwrt)." 
-				(Energie pro Satellit: ".(($pwr))." = ".$sarr['ship_prod_power']." Basis, ".$dtempstr." bedingt durch Entfernung zur Sonne, ".get_percent_string($power_bonus,1)." durch Energiebonus)</td>";
+				(Energie pro Satellit: ".(($pwr))." = ".$sarr['ship_prod_power']." Basis, ".$dtempstr." bedingt durch Entfernung zur Sonne, ".get_percent_string($bonusFactor, 1)." durch Energiebonus)</td>";
 				echo "</tr>";
 				$cnt['power'] += $pwrt;
 			}
 		}		
-					
+		
+		// Totals
 		$powerProduced = $cnt['power']; 
 		echo "<tr><th style=\"height:2px;\" colspan=\"4\"></th></tr>";			
 		echo "<tr><th>TOTAL produziert</td><td colspan=\"3\">".nf($powerProduced)."</th></tr>";
