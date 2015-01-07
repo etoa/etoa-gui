@@ -383,8 +383,20 @@
 		echo "<tr><th style=\"width:230px;\">Gebäude</th>
 		<th colspan=\"3\">".RES_ICON_POWER."Energie</th></tr>";
 
+		// Energy technology bonus
+		$energyTechPowerBonusFactor = 1;
+		$tl = new TechList($cu->id);
+		$energyTechLevel = $tl->getLevel(ENERGY_TECH_ID);
+		$energyTechPowerBonusRequiredLevel = $cfg->value('energy_tech_power_bonus_required_level');
+		if ($energyTechLevel > $energyTechPowerBonusRequiredLevel)
+		{
+			$percentPerLevel = $cfg->value('energy_tech_power_bonus_percent_per_level');
+			$percent = $percentPerLevel * ($energyTechLevel - $energyTechPowerBonusRequiredLevel);
+			$energyTechPowerBonusFactor = (100 + $percent) / 100;
+		}
+
 		// Summarize all bonus factors
-		$bonusFactor = 1 + ($cp->typePower + $cu->race->power + $cp->starPower + $cu->specialist->power - 4);
+		$bonusFactor = 1 + ($cp->typePower + $cu->race->power + $cp->starPower + $cu->specialist->power + $energyTechPowerBonusFactor - 5);
 		
 		$cnt['power'] = 0;
 		
