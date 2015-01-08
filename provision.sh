@@ -13,7 +13,7 @@ echo "mysql-server mysql-server/root_password password " | debconf-set-selection
 echo "mysql-server mysql-server/root_password_again password " | debconf-set-selections
 
 # Install mysql, nginx, php5-fpm
-sudo aptitude install -q -y -f mysql-server mysql-client nginx php5-fpm
+sudo aptitude install -q -y -f mysql-server mysql-client nginx php5-fpm php5-xdebug
 
 # Install commonly used php packages
 sudo aptitude install -q -y -f php5-curl php5-mcrypt php5-cli php5-mysql php5-gd
