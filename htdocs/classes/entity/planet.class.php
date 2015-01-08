@@ -13,7 +13,7 @@ class Planet extends Entity implements OwnableEntity
 
 	// TODO: Make protected and ad getter
 	public $resources;
-	
+
 	/**
 	* Constructor
 	* Erwartet ein Array mit dem Inhalt des MySQL-Datensatzes, oder die ID eines Planeten
@@ -25,7 +25,7 @@ class Planet extends Entity implements OwnableEntity
 		$this->isValid = false;
 		$this->isVisible = true;
 	}
-	
+
 	public static function getById($id)
 	{
 		$res = dbquery("
@@ -39,26 +39,26 @@ class Planet extends Entity implements OwnableEntity
 			pentity.pos,
 			planet_types.*,
 			sol_types.*
-		FROM 
+		FROM
 		(
 			planets
-			INNER JOIN 
-				planet_types 
+			INNER JOIN
+				planet_types
 				ON planets.planet_type_id = planet_types.type_id
 				AND planets.id='".intval($id)."'
 		)
-		INNER JOIN 
-		(	
+		INNER JOIN
+		(
 			entities AS pentity
-			INNER JOIN cells 
+			INNER JOIN cells
 				ON cells.id = pentity.cell_id
-			INNER JOIN 
+			INNER JOIN
 				entities AS sentity
 				ON cells.id = sentity.cell_id
 				AND sentity.pos =0
-			INNER JOIN stars 
+			INNER JOIN stars
 				ON stars.id = sentity.id
-			INNER JOIN sol_types 
+			INNER JOIN sol_types
 				ON sol_types.sol_type_id = stars.type_id
 		)
 		ON planets.id = pentity.id
@@ -73,11 +73,11 @@ class Planet extends Entity implements OwnableEntity
 		}
 		return null;
 	}
-	
+
 	public static function getByArray($arr)
 	{
 		$p = new Planet();
-	
+
 		$p->id = $arr['id'];
 		$p->cellId = $arr['cell_id'];
 		$p->userId = $arr['planet_user_id'];
@@ -87,9 +87,9 @@ class Planet extends Entity implements OwnableEntity
 		$p->updated = $arr['planet_last_updated'];
 		$p->userChanged = $arr['planet_user_changed'];
 		$p->lastUserId = $arr['planet_last_user_id'];
-		
+
 		$p->owner = new User($arr['planet_user_id']);
-		
+
 		$p->sx = $arr['sx'];
 		$p->sy = $arr['sy'];
 		$p->cx = $arr['cx'];
@@ -123,7 +123,7 @@ class Planet extends Entity implements OwnableEntity
 		$p->starPopulation = $arr['sol_type_f_population'];
 		$p->starResearchtime = $arr['sol_type_f_researchtime'];
 		$p->starBuildtime = $arr['sol_type_f_buildtime'];
-		
+
 		$p->debrisMetal = $arr['planet_wf_metal'];
 		$p->debrisCrystal = $arr['planet_wf_crystal'];
 		$p->debrisPlastic = $arr['planet_wf_plastic'];
@@ -133,12 +133,12 @@ class Planet extends Entity implements OwnableEntity
 		$p->fieldsBase = $arr['planet_fields'];
 		$p->fieldsExtra = $arr['planet_fields_extra'];
 		$p->fieldsUsed = $arr['planet_fields_used'];
-		
+
 		$p->fields_extra = $arr['planet_fields_extra'];
 		$p->fields_used = $arr['planet_fields_used'];
-		
+
 		$p->fields = $p->fieldsBase + $p->fieldsExtra;
-						
+
 		$p->temp_from = $arr['planet_temp_from'];
 		$p->temp_to = $arr['planet_temp_to'];
 		$p->people = zeroPlus($arr['planet_people']);
@@ -170,7 +170,7 @@ class Planet extends Entity implements OwnableEntity
 		$p->storePlastic = $arr['planet_store_plastic'];
 		$p->storeFuel = $arr['planet_store_fuel'];
 		$p->storeFood = $arr['planet_store_food'];
-		
+
 		$p->prodMetal = $arr['planet_prod_metal'];
 		$p->prodCrystal = $arr['planet_prod_crystal'];
 		$p->prodPlastic = $arr['planet_prod_plastic'];
@@ -180,10 +180,10 @@ class Planet extends Entity implements OwnableEntity
 		$p->prodPeople = $arr['planet_prod_people'];
 
 		$p->isMain = ($arr['planet_user_main']==1);
-		
+
 		return $p;
 	}
-	
+
     public function __get($var)
     {
         if($var == 'desc')
@@ -223,9 +223,9 @@ class Planet extends Entity implements OwnableEntity
 			}
     	if ($this->ownerId()==0 && $this->habitable)
     		$arr[] = "colonize";
-    	if ($this->debrisField)	
+    	if ($this->debrisField)
     		$arr[] = "collectdebris";
-    	if ($this->collectGas)	
+    	if ($this->collectGas)
     	{
     		$arr[] = "collectfuel";
     		$arr[] = "analyze";
@@ -243,7 +243,7 @@ class Planet extends Entity implements OwnableEntity
 		{
 			return "p";
 		}
-		
+
 
 		function entityCodeString()
 		{
@@ -253,22 +253,22 @@ class Planet extends Entity implements OwnableEntity
 		function ownerId()
 		{
 			return $this->userId;
-		}		
+		}
 
 		function owner()
 		{
 			return $this->owner;
 		}
-		
+
 		function ownerMain()
 		{
 			return $this->isMain;
-		}		
-		
+		}
+
 		function type()
 		{
 			return $this->typeName;
-		}		
+		}
 		function imagePath($opt="")
 		{
 			defineImagePaths();
@@ -279,15 +279,15 @@ class Planet extends Entity implements OwnableEntity
 			if ($opt=="m")
 			{
 				return IMAGE_PATH."/planets/planet".$this->image."_middle.".IMAGE_EXT;
-			}			
+			}
 			return IMAGE_PATH."/planets/planet".$this->image."_small.".IMAGE_EXT;
-		}		
-		
+		}
+
 		function name()
 		{
 			return $this->__get('name');//htmlspecialchars($this->name);
 		}
-        
+
         function getNoBrDesc()
         {
             return htmlspecialchars($this->desc, ENT_QUOTES, 'UTF-8', true);
@@ -297,7 +297,7 @@ class Planet extends Entity implements OwnableEntity
 		{
 			return $this->formatedCoords()." ".$this->name();
 		}
-		
+
 		function cellId()
 		{
 			return $this->cellId;
@@ -312,12 +312,12 @@ class Planet extends Entity implements OwnableEntity
 		{
 			return $this->sx."/".$this->sy." : ".$this->cx."/".$this->cy;
 		}
-		
+
 		function userChanged()
 		{
 			return $this->userChanged;
 		}
-		
+
 		/**
 		* Returns current coordinates
 		*
@@ -327,7 +327,7 @@ class Planet extends Entity implements OwnableEntity
 		{
 			return $this->formatedCoords();
 		}
-		
+
 		/**
 		* Changes resources on a planet
 		*/
@@ -385,8 +385,8 @@ class Planet extends Entity implements OwnableEntity
 				$v = -99;
 			}
 			return $v;
-		}	
-		
+		}
+
 		/**
 		* Calculate bonus power production based on temperature
 		*/
@@ -395,7 +395,7 @@ class Planet extends Entity implements OwnableEntity
 			$v = floor(($this->temp_from + $this->temp_to)/25);
 			return $v/100;
 		}
-		
+
 		function assignToUser($uid,$main=0)
 		{
 	    $sql = "
@@ -406,23 +406,23 @@ class Planet extends Entity implements OwnableEntity
 				planet_user_main=".intval($main)."
 	    WHERE
 	    	id='".$this->id."';";
-	    dbquery($sql);		
+	    dbquery($sql);
 		}
-		
+
 		function setNameAndComment($name,$comment)
 		{
 			dbquery("
-			UPDATE 
-				planets 
-			SET 
+			UPDATE
+				planets
+			SET
 				planet_name='".mysql_real_escape_string($name)."',
-				planet_desc='".mysql_real_escape_string($comment)."' 
-			WHERE 
+				planet_desc='".mysql_real_escape_string($comment)."'
+			WHERE
 				id='".$this->id."';");
 			$this->name=$name;
 			$this->desc=$comment;
 		}
-	
+
 		function setDefaultResources()
 		{
 			// Set default resources
@@ -437,9 +437,9 @@ class Planet extends Entity implements OwnableEntity
 	      planet_res_food='".USR_START_FOOD."',
 	      planet_people=".USR_START_PEOPLE."
 			WHERE
-				id=".$this->id().";");				
+				id=".$this->id().";");
 		}
-		
+
 		function reset()
 		{
 			dbquery("
@@ -480,8 +480,8 @@ class Planet extends Entity implements OwnableEntity
 				WHERE
 					id='".$this->id."';
 			");
-		}		
-	
+		}
+
 		//
 		// Getters
 		//
@@ -497,7 +497,7 @@ class Planet extends Entity implements OwnableEntity
 		function ownerHoliday() { return $this->owner->holiday; }
 		function ownerLocked() { return $this->owner->locked; }
 		function ownerAlliance() { return $this->owner->allianceId; }
-					
+
 		function chgPeople($diff)
 		{
 		    $sql = "
@@ -509,9 +509,9 @@ class Planet extends Entity implements OwnableEntity
 	    			id='".$this->id."';";
 			dbquery($sql);
 		}
-		
-		function getRes($i) 
-		{ 
+
+		function getRes($i)
+		{
 			switch ($i)
 			{
 				case 1:
@@ -526,10 +526,10 @@ class Planet extends Entity implements OwnableEntity
 					return $this->resFood;
 			}
 		}
-		
+
 		//Added getter with 0-5 like everywhere else
-		function getRes1($i) 
-		{ 
+		function getRes1($i)
+		{
 			switch ($i)
 			{
 				case 0:
@@ -544,9 +544,9 @@ class Planet extends Entity implements OwnableEntity
 					return $this->resFood;
 			}
 		}
-		
-		function getProd($i) 
-		{ 
+
+		function getProd($i)
+		{
 			switch ($i)
 			{
 				case 0:
@@ -564,13 +564,13 @@ class Planet extends Entity implements OwnableEntity
 
 		/**
 		 * Change resource on planet
-		 * 
+		 *
 		 * @deprecated See new function below
 		 */
 		function chgRes($i,$diff)
 		{
             $diff = intval($diff);
-            
+
 			switch ($i)
 			{
 				case 1:
@@ -593,15 +593,15 @@ class Planet extends Entity implements OwnableEntity
 					$str = "planet_res_food=planet_res_food+".$diff."";
 		    $this->resFood+=$diff;
 					break;
-			}			
+			}
 	    $sql = "
 	    UPDATE
 	    	planets
 	    SET
-        ".$str."      
+        ".$str."
 	    WHERE
 	    	id='".$this->id."';";
-	   	dbquery($sql);			
+	   	dbquery($sql);
 		}
 
 		/**
@@ -611,7 +611,7 @@ class Planet extends Entity implements OwnableEntity
 		 */
 		function addRes($data)
 		{
-			global $resNames;
+			$resNames = Globals::getResNames();
 
 			$str = "";
 			foreach ($resNames as $rk => $rn)
@@ -666,7 +666,7 @@ class Planet extends Entity implements OwnableEntity
 
 		function checkRes($data)
 		{
-			global $resNames;
+			$resNames = Globals::getResNames();
 
 			foreach ($resNames as $rk => $rn)
 			{
@@ -681,7 +681,7 @@ class Planet extends Entity implements OwnableEntity
 
 		function subRes($data)
 		{
-			global $resNames;
+			$resNames = Globals::getResNames();
 
 			$str = "";
 			foreach ($resNames as $rk => $rn)
@@ -741,7 +741,7 @@ class Planet extends Entity implements OwnableEntity
 		function chgBunker($i,$amount)
 		{
             $amount = intval($amount);
-            
+
 			switch ($i)
 			{
 				case 1:
@@ -771,12 +771,12 @@ class Planet extends Entity implements OwnableEntity
 	   			UPDATE
 	    			planets
 	    		SET
-		        	".$str."      
+		        	".$str."
 	    		WHERE
 	    			id='".$this->id."';";
-	   		dbquery($sql);			
+	   		dbquery($sql);
 		}
-		
+
 		function reloadRes()
 		{
 			$res = dbquery("
@@ -804,7 +804,7 @@ class Planet extends Entity implements OwnableEntity
 
 		/**
 		* Set this planet as the users main
-		* planet and remove main flag from all other 
+		* planet and remove main flag from all other
 		* planets of this user
 		*/
 		function setMain()
@@ -819,7 +819,7 @@ class Planet extends Entity implements OwnableEntity
 						planet_user_main=0
 					WHERE
 						planet_user_id='".$this->userId."'
-				");				
+				");
 				dbquery("
 					UPDATE
 						planets
@@ -827,7 +827,7 @@ class Planet extends Entity implements OwnableEntity
 						planet_user_main=1
 					WHERE
 						id='".$this->id."'
-				");			
+				");
 				return true;
 			}
 			return false;
@@ -845,13 +845,13 @@ class Planet extends Entity implements OwnableEntity
 						planet_user_main=0
 					WHERE
 						id='".$this->id."'
-				");			
+				");
 				return true;
 			}
 			return false;
 		}
-		
-		
+
+
 		/**
 		* ۢrnimmt einen Planeten (Invasion)
 		*
@@ -863,7 +863,7 @@ class Planet extends Entity implements OwnableEntity
 			$this->name = "Unbenannt";
 			$this->userId = intval($new_user_id);
 			$this->changed = time();
-			
+
       // Planet �hmen
 			dbquery("
 				UPDATE
@@ -886,8 +886,8 @@ class Planet extends Entity implements OwnableEntity
 			WHERE
 				buildlist_entity_id='".$this->id."';
 			");
-	
-	
+
+
 	    // Bestehende Schiffs-Eintr㦥 l�en
 	    dbquery("
 				DELETE FROM
@@ -900,10 +900,10 @@ class Planet extends Entity implements OwnableEntity
 					ship_queue
 				WHERE
 					queue_entity_id='".$this->id."';
-			");		
-			
-	
-	
+			");
+
+
+
 	    // Bestehende Verteidigungs-Eintr㦥 l�en
 	    dbquery("
 				DELETE FROM
@@ -917,19 +917,19 @@ class Planet extends Entity implements OwnableEntity
 				WHERE
 					queue_entity_id='".$this->id."';
 			");
-	
-		}		
-		
+
+		}
+
 		public function getFleetTargetForwarder()
 		{
 			return null;
 		}
-		
+
 		public function getResourceLog()
 		{
 			return $this->resMetal.":".$this->resCrystal.":".$this->resPlastic.":".$this->resFuel.":".$this->resFood.":".$this->people.":0,w,".$this->debrisMetal.":".$this->debrisCrystal.":".$this->debrisPlastic;
 		}
-		
+
 		public function lastUserCheck()
 		{
 			$t = $this->userChanged()+COLONY_DELETE_THRESHOLD;
@@ -939,6 +939,6 @@ class Planet extends Entity implements OwnableEntity
 			}
 			return 0;
 		}
-	
+
 	}
 ?>

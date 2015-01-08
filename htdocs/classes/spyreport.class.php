@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -18,7 +18,7 @@ class SpyReport extends Report
 		'surveillancefailed'=>'Raum&uuml;berwachung (verhindert)',
 		'analyze'=>'Ziel analysiert',
 		'analyzefailed'=>'Analyseversuch gescheitert',
-		
+
 	);
 
 	protected $subType = 'other';
@@ -30,10 +30,10 @@ class SpyReport extends Report
 	protected $spydefense;
 	protected $coverage;
 	protected $fleetId;
-	
+
 	function __construct($args)
 	{
-		global $resNames;
+		$resNames = Globals::getResNames();
 		parent::__construct($args);
 		if ($this->valid)
 		{
@@ -66,7 +66,7 @@ class SpyReport extends Report
 	{
 		return null;
 	}
-	
+
 	function createSubject()
 	{
 		switch ($this->subType)
@@ -78,25 +78,25 @@ class SpyReport extends Report
 				$ent1 = Entity::createFactoryById($this->entity1Id);
 				return 'Spionage fehlgeschlagen auf '.$ent1;
 			default:
-				return self::$subTypes[$this->subType];	
+				return self::$subTypes[$this->subType];
 		}
 	}
 
 	function __toString()
 	{
-		global $resNames;
+		$resNames = Globals::getResNames();
 
 		ob_start();
 		$ent1 = Entity::createFactoryById($this->entity1Id);
 		$ent2 = Entity::createFactoryById($this->entity2Id);
 		$user = new User($this->opponent1Id);
-		
+
 		switch ($this->subType)
 		{
 			case 'spy':
 				echo '<strong>Planet:</strong> '.$ent1->detailLink().'<br />';
 				echo '<strong>Besitzer:</strong> '.$user.'<br />';
-				
+
 				if ($this->buildings!='')
 				{
 					echo '<br /><strong>GEB&Auml;UDE:</strong><br />';
@@ -242,7 +242,7 @@ class SpyReport extends Report
 			case 'analyzefaild':
 				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' versuchte das Ziel '.$ent1->detailLink().' um '.df($this->timestamp).' zu analysiert, kehrte jedoch erfolglos wieder zurück.<br />';
 				break;
-			
+
 			default:
 				dump($this);
 		}
