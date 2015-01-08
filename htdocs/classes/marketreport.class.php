@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -41,7 +41,7 @@ class MarketReport extends Report
 
 	function __construct($args)
 	{
-		global $resNames;
+		$resNames = Globals::getResNames();
 		parent::__construct($args);
 		if ($this->valid)
 		{
@@ -73,7 +73,7 @@ class MarketReport extends Report
 
 	static function add($data,$subType,$recordId,$marketData)
 	{
-		global $resNames;
+		$resNames = Globals::getResNames();
 
 		$id = parent::add(array_merge($data,array("type"=>"market")));
 		if ($id!=null)
@@ -143,7 +143,7 @@ class MarketReport extends Report
 		}
 		return null;
 	}
-	
+
 	function createSubject()
 	{
 		return self::$subTypes[$this->subType];
@@ -151,7 +151,7 @@ class MarketReport extends Report
 
 	function __toString()
 	{
-		global $resNames;
+		$resNames = Globals::getResNames();
 
 		ob_start();
 		$ent = Entity::createFactoryById($this->entity1Id);

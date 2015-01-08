@@ -47,7 +47,7 @@ class BattleReport extends Report
 
 	function __construct($args)
 	{
-		global $resNames;
+		$resNames = Globals::getResNames();
 		parent::__construct($args);
 		if ($this->valid)
 		{
@@ -139,7 +139,7 @@ class BattleReport extends Report
 
 	function __toString()
 	{
-		global $resNames;
+		$resNames = Globals::getResNames();
 		$cfg = Config::getInstance();
 
 		ob_start();
@@ -397,7 +397,7 @@ class BattleReport extends Report
 								$shieldStructure = $initShieldStructure = $this->shield + $this->structure;
 								$entityShieldStructure = $entityInitShieldStructure = $this->entityShield + $this->entityStructure;
 								for ($rnd=1; $rnd<=5; $rnd++)
-								{	
+								{
 									$shieldStructure = max(0,$shieldStructure-$this->entityWeapon[$rnd]);
 									$entityShieldStructure = max(0,$entityShieldStructure-$this->weapon[$rnd]);
 
@@ -414,7 +414,7 @@ class BattleReport extends Report
 										$entityShieldStructure = min($entityInitShieldStructure,($entityShieldStructure+$this->entityHeal[$rnd]));
 										echo 'Die Einheiten des Verteidiger heilen '.nf($this->entityHeal[$rnd]).' Struktur- und Schildpunkte. Der Verteidiger hat danach wieder '.nf($entityShieldStructure).' Struktur- und Schildpunkte<br /><br />';
 									}
-									
+
 									if ($rnd==5 || $this->count[$rnd+1]==0 || $this->entityCount[$rnd+1]==0) break;
 								}
 

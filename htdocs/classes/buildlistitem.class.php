@@ -223,13 +223,14 @@
 			if (!(count($this->costs)  && !$levelUp) || !(count($this->nextCosts)  && $levelUp))
 			{
 				$cfg = Config::getInstance();
-				global $resNames, $cp, $cu, $bl;
+				$resNames = Globals::getResNames();
+				global $cp, $cu, $bl;
 				$bc = array();
 				foreach ($resNames as $rk => $rn)
 				{
 					$bc['costs'.$rk] = $cu->specialist->costsBuilding * $this->building->costs[$rk] * pow($this->building->costsFactor,$this->level+$levelUp);
 				}
-        
+
 				if ($this->level != 0)
         {
 				  $bc['costs5'] = ($cu->specialist->costsBuilding * $this->building->costs[5] * pow($this->building->prodFactor,$this->level+$levelUp))-
@@ -238,7 +239,7 @@
         else
         {
           $bc['costs5'] = ($cu->specialist->costsBuilding * $this->building->costs[5] * pow($this->building->prodFactor,$this->level+$levelUp));
-        } 
+        }
 
 				$bonus = $cu->race->buildTime + $cp->typeBuildtime + $cp->starBuildtime + $cu->specialist->buildTime - 3;
 
@@ -246,10 +247,10 @@
 				$bc['time'] *= $bonus;
 
 				// Boost
-				if ($cfg->value('boost_system_enable') == 1) {		
+				if ($cfg->value('boost_system_enable') == 1) {
 					$bc['time'] *= 1/($cu->boostBonusBuilding + 1);
 				}
-				
+
 				if ($bl->getPeopleWorking(BUILD_BUILDING_ID) > 0)
 				{
 					$bc['min_time'] = $bc['time'] * $this->minBuildTimeFactor();
@@ -279,7 +280,7 @@
 
 				foreach($this->demolishCosts as $id=>$element)
         {
-          if ($id == 'costs5') $element = 0; 
+          if ($id == 'costs5') $element = 0;
 					$this->demolishCosts[$id] = $element * $this->building->demolishCostsFactor;
 			  }
       }
@@ -361,7 +362,8 @@
 		public function getPeopleOptimized()
 		{
 			$cfg = Config::getInstance();
-			global $resNames, $cp, $cu;
+			$resNames = Globals::getResNames();
+			global $cp, $cu;
 			$bc = array();
 			foreach ($resNames as $rk => $rn)
 			{
@@ -520,7 +522,8 @@
 
 		public function getWaitingTime()
 		{
-			global $cp, $resNames;
+			$resNames = Globals::getResNames();
+			global $cp;
 
 			$costs = $this->getBuildCosts(0,0);
 			$wTime = array();
@@ -539,7 +542,8 @@
 
 		public function waitingTimeString($type='build')
 		{
-			global $cp, $resNames;
+			$resNames = Globals::getResNames();
+			global $cp;
 			$notAvStyle=" style=\"color:red;\"";
 			if ($type == 'build')
 				$costs = $this->getBuildCosts(0,0);

@@ -18,7 +18,7 @@
 		var $ownerId;
 
 		var $ships;
-		var $shipCount;	
+		var $shipCount;
 		var $shipsFixed;
 
 		var $speed;
@@ -37,15 +37,15 @@
 		var $capacityFuelUsed;
 		var $capacityPeopleTotal;
 		var $capacityPeopleLoaded;
-		
+
 		var $distance;
 		var $distance1;
-		
+
 		private $action;
 		private $resources;
 		private $error;
 		private $fleetLog;
-		
+
 		/**
 		* The constructor
 		*
@@ -53,7 +53,7 @@
 		*/
 		function Fleetlaunch(&$sourceEnt,&$ownerEnt)
 		{
-		
+
 			$this->sourceEntity = $sourceEnt;
 			$this->owner = $ownerEnt;
 			$this->ownerId = $ownerEnt->id;
@@ -63,7 +63,7 @@
 			$this->possibleFleetStarts = 0;
 			$this->fleetSlotsUsed = 0;
 			$this->fleetControlLevel =0;
-			
+
 			$this->ships = array();
 			$this->speedPercent=100;
 			$this->speed = 0;
@@ -107,12 +107,12 @@
 			$this->havenOk=false;
 			$this->shipsFixed=false;
 			$this->targetOk=false;
-			$this->actionOk=false;			
-			
+			$this->actionOk=false;
+
 			$this->error="";
-			
+
 			$this->fleetLog = new FleetLog($this->ownerId, $this->sourceEntity->id, $sourceEnt);
-			
+
 			//Create targetentity
 			if (isset($_SESSION['haven']['targetId'])) {
 				$this->targetEntity = Entity::createFactoryById($_SESSION['haven']['targetId']);
@@ -120,7 +120,7 @@
 			elseif (isset($_SESSION['haven']['cellTargetId'])) {
 				$this->targetEntity = Entity::createFactoryUnkownCell($_SESSION['haven']['cellTargetId']);
 			}
-			
+
 			//Wormhole enable?
 			$this->wormholeEnable=false;
 			$res = dbquery("SELECT techlist_current_level FROM techlist WHERE techlist_tech_id=".TECH_WORMHOLE." AND techlist_user_id='".$this->ownerId."';");
@@ -128,19 +128,19 @@
 			{
 				$arr = mysql_fetch_row($res);
 				$this->wormholeEnable=$arr[0];
-			}	
+			}
 
 		}
-		
+
 
 		//
 		// Main workflow
 		//
-		
+
 		/**
 		* Checks main conditions on source planet and
 		* returns true if they are ok.
-		* The conditions are: Disabled flightban, enabled fleetcontrol, a free fleet slot 
+		* The conditions are: Disabled flightban, enabled fleetcontrol, a free fleet slot
 		*
 		* >> Step 2 <<
 		*/
@@ -149,10 +149,10 @@
 			$cfg = Config::getInstance();
 
 			// Check if flights are possible
-			if ($cfg->value('flightban')==0 
-			|| $cfg->p1('flightban_time')>time() 
+			if ($cfg->value('flightban')==0
+			|| $cfg->p1('flightban_time')>time()
 			|| $cfg->p2('flightban_time')<time() )
-			{			
+			{
 
 				$bl = new BuildList($this->sourceEntity->id(),$this->ownerId);
 
@@ -166,16 +166,16 @@
 					$fm = new FleetManager($this->ownerId);
 					$this->fleetSlotsUsed = $fm->countControlledByEntity($this->sourceEntity->id());
 					unset($fm);
-			
+
 					$this->fleetControlLevel = $bl->getLevel(FLEET_CONTROL_ID);
 					$totalSlots = FLEET_NOCONTROL_NUM + $this->fleetControlLevel + $this->specialist->fleetMax;
 					$this->possibleFleetStarts = $totalSlots - $this->fleetSlotsUsed;
-					
+
 					if ($this->possibleFleetStarts > 0)
-					{					
+					{
 						// Piloten
 						$this->pilotsAvailable = floor($this->sourceEntity->people() - $bl->totalPeopleWorking());
-					
+
 						$this->havenOk = true;
 					}
 					else
@@ -185,12 +185,12 @@
 				}
 			}
 			else
-			{	
+			{
 				$this->error = "Wegen einer Flottensperre können bis ".df($cfg->p2('flightban_time'))." keine Flotten gestartet werden! ".$cfg->p1('flightban');
 			}
 			return $this->havenOk;
 		}
-		
+
 		/**
 		* Adds $cnt items of ship $sid to the fleet.
 		* Returns the effective number of added ships or false if no ship
@@ -203,7 +203,7 @@
 			if ($this->havenOk)
 			{
 				if (!$this->shipsFixed)
-				{	
+				{
 					$res = dbquery("
 					SELECT
 						*
@@ -238,7 +238,7 @@
 								r.obj_id=".$sid."
 							GROUP BY
 								r.id");
-							
+
 							$timefactor=$this->raceSpeedFactor() + $this->specialist->fleetSpeedFactor-1;
 							if (mysql_num_rows($vres)>0)
 							{
@@ -255,7 +255,7 @@
 								}
 							}
 						$cnt = min(nf_back($cnt),$arr['shiplist_count']);
-						
+
 						$this->ships[$sid] = array(
 						"count" => $cnt,
 						"speed" => ($arr['ship_speed']/FLEET_FACTOR_F)*$timefactor,
@@ -282,17 +282,17 @@
 						"sBonusAntraxFood" => $arr['shiplist_special_ship_bonus_antrax_food'],
 						"sBonusDeactivade" => $arr['shiplist_special_ship_bonus_deactivade']
 						);
-						
+
 						if ($arr['special_ship']) {
 							$this->sBonusSpeed += $arr['shiplist_special_ship_bonus_speed']*$arr['special_ship_bonus_speed'];
 							$this->sBonusReadiness += $arr['shiplist_special_ship_bonus_readiness']*$arr['special_ship_bonus_readiness'];
 							$this->sBonusPilots = max(0,$this->sBonusPilots-$arr['shiplist_special_ship_bonus_pilots']*$arr['special_ship_bonus_pilots']);
 							$this->sBonusCapacity += $arr['shiplist_special_ship_bonus_capacity']*$arr['special_ship_bonus_capacity'];
 						}
-			
+
 						$this->shipActions = array_merge($this->shipActions,explode(",",$arr['ship_actions']));
 						$this->shipActions = array_unique($this->shipActions);
-						
+
 						// Set global speed
 						if ($this->speed <= 0)
 						{
@@ -301,17 +301,17 @@
 						else
 						{
 							$this->speed = min($this->speed, ($arr['ship_speed']/FLEET_FACTOR_F)*$timefactor);
-						}													     
-						
+						}
+
 						$this->timeLaunchLand = max($this->timeLaunchLand, $arr['ship_time2land']/FLEET_FACTOR_S + $arr['ship_time2start']/FLEET_FACTOR_L);
-						$this->costsLaunchLand += 2 * ($arr['ship_fuel_use_launch'] + $arr['ship_fuel_use_landing']) * $cnt;						
+						$this->costsLaunchLand += 2 * ($arr['ship_fuel_use_launch'] + $arr['ship_fuel_use_landing']) * $cnt;
 						$this->pilots += $arr['ship_pilots'] * $cnt;
 						$this->capacityTotal += $arr['ship_capacity'] * $cnt;
 						$this->capacityPeopleTotal += $arr['ship_people_capacity'] * $cnt;
 						$this->shipCount += $cnt;
-						
+
 						return $cnt;
-					}		
+					}
 					else
 						$this->error = "Dieses Schiff ist hier nicht vorhanden!";
 				}
@@ -320,9 +320,9 @@
 			}
 			else
 				$this->error = "Kann kein Schiff hinzufügen, es liegt noch ein Problem mit der Flottenkontrolle vor.";
-			return false;	
+			return false;
 		}
-		
+
 		/**
 		* Fix ships, prevents the user from adding more ships
 		* and calculates the final costs per ae
@@ -330,23 +330,23 @@
 		* >> Step 4 <<
 		*/
 		function fixShips()
-		{	
+		{
 			if ($this->shipsFixed)
 			{
 				$this->costsPerHundredAE=0;
 				$this->shipsFixed=false;
 			}
-				
+
 			if ($this->shipCount > 0)
 			{
 				if ($this->pilotsAvailable() >= $this->getPilots())
-				{					
+				{
 					// Calc Costs for all ships, based on regulated speed
 					foreach ($this->ships as $sid => $sd)
 					{
 						$cpae = $sd['fuel_use'] * $this->speed / $sd['speed'];
 						$this->ships[$sid]['costs_per_ae'] = $cpae;
-						$this->costsPerHundredAE += $cpae;				
+						$this->costsPerHundredAE += $cpae;
 					}
 					$this->shipsFixed=true;
 					$this->error == "";
@@ -361,8 +361,8 @@
 			else
 				$this->error = "Kann Schiffauswahl nicht fertigstellen, die Flotte wurde bereits fertig zusammengestellt!";*/
 			return false;
-		}	
-		
+		}
+
 		/**
 		* Set the wormhole entity
 		*
@@ -412,19 +412,19 @@
 						$this->distance = $this->sourceEntity->distance($this->targetEntity);
 						$this->distance1 = 0;
 					}
-					
+
 					$this->setSpeedPercent($speedPercent);
-					
+
 					return true;
 				}
 				else
 					$this->error = "Ungültiges Zielobjekt";
 			}
 			else
-				$this->error = "Flotte nicht fertig zusammengestellt";					
+				$this->error = "Flotte nicht fertig zusammengestellt";
 			return false;
 		}
-			
+
 
 		/**
 		* Check if fleet can fly to this target
@@ -448,7 +448,7 @@
 				else
 					$this->error = "Zuwenig Nahrung! ".nf($this->sourceEntity->resFood())." t ".RES_FOOD." vorhanden, ".nf($this->getCostsFood())." t benötigt.";
 			}
-			else	
+			else
 				$this->error = "Zuwenig Treibstoff! ".nf($this->sourceEntity->resFuel())." t ".RES_FUEL." vorhanden, ".nf($this->getCosts())." t benötigt.";
 			return false;
 		}
@@ -466,7 +466,7 @@
 				if (isset($actions[$actionCode]))
 				{
 					$this->action = $actionCode;
-					
+
 					$this->actionOk = true;
 					return true;
 				}
@@ -475,7 +475,7 @@
 			return false;
 		}
 
-		
+
 		function launch()
 		{
 			if ($this->actionOk)
@@ -487,12 +487,12 @@
 
 				$totalSlots = FLEET_NOCONTROL_NUM + $this->fleetControlLevel + $this->specialist->fleetMax;
 				$this->possibleFleetStarts = $totalSlots - $this->fleetSlotsUsed;
-				
+
 				if ($this->possibleFleetStarts > 0)
-				{	
+				{
 					$time = time();
 					$this->landTime = ($time+$this->getDuration());
-					
+
 					// Subtract ships from source
 					$sl = new ShipList($this->sourceEntity->id(),$this->ownerId);
 					$addcnt = 0;
@@ -501,19 +501,19 @@
 						$this->ships[$sid]['count'] = $sl->remove($sid,$sda['count']);
 						$addcnt+=$this->ships[$sid]['count'];
 					}
-					
+
 					if ($addcnt > 0)
 					{
-						
+
 						// Load resource (is needed because of the xajax use)
 						// subtracts payload ressources from source
 						$this->finalLoadResource();
-						
+
 						// Subtract flight and support costs from source
 						$this->sourceEntity->chgRes(4,-$this->getCosts()-$this->getSupportFuel());
 						$this->sourceEntity->chgRes(5,-$this->getCostsFood()-$this->getSupportFood());
 						$this->sourceEntity->chgPeople(-($this->getPilots()+$this->capacityPeopleLoaded));
-						
+
 						if ($this->action=="alliance" && $this->leaderId!=0) {
 							$status=3;
 							$nextId = $this->sourceEntity->ownerAlliance();
@@ -527,7 +527,7 @@
 							$status = 0;
 							$nextId = 0;
 						}
-						
+
 						// Create fleet record
 						$sql = "
 						INSERT INTO
@@ -548,7 +548,7 @@
 							usage_food,
 							usage_power,
 							support_usage_food,
-							support_usage_fuel,				
+							support_usage_fuel,
 							res_metal,
 							res_crystal,
 							res_plastic,
@@ -596,7 +596,7 @@
 						";
 						dbquery($sql);
 						$fid = mysql_insert_id();
-						
+
 						$shipLog = "";
 						foreach ($this->ships as $sid => $sda)
 						{
@@ -686,7 +686,7 @@
 									);");
 							}
 						}
-						
+
 						//add all the cool stuff to the fleetLog
 						$this->fleetLog->fleetId = $fid;
 						$this->fleetLog->targetId = $this->targetEntity->id();
@@ -699,8 +699,8 @@
 						$this->fleetLog->addFleetRes($this->res,$this->capacityPeopleLoaded,$this->fetch);
 						$this->fleetLog->fleetShipEnd = $shipLog;
 						$this->fleetLog->launch();
-							
-						
+
+
 						if ($this->action=="alliance" && $this->leaderId==0) {
 							dbquery("
 									UPDATE
@@ -720,10 +720,10 @@
 					$this->error = "Von hier können keine weiteren Flotten starten, alle Slots (".$totalSlots.") sind belegt!";
 			}
 			else
-			{	
+			{
 				$this->error = "Aktion nocht nicht festgelegt!";
 			}
-			return false;		
+			return false;
 		}
 
 
@@ -731,14 +731,14 @@
 		//
 		// Helpers
 		//
-		
+
 		/**
 		* Unfixes ships and resets the ships array
 		* This can be used in the haven when revising
 		* the ship selection
 		*/
 		function resetShips()
-		{	
+		{
 			$this->ships = array();
 			$this->shipActions = array();
 			$this->res = array(0,0,0,0,0,0);
@@ -754,7 +754,7 @@
 			$this->capacityResLoaded=0;
 			$this->capacityFuelUsed=0;
 			$this->capacityPeopleTotal=0;
-			$this->capacityPeopleLoaded=0;		
+			$this->capacityPeopleLoaded=0;
 			$this->shipCount=0;
 			$this->distance=0;
 			$this->shipsFixed=false;
@@ -762,8 +762,8 @@
 			$this->sBonusPilots=1;
 			$this->sBonusSpeed=1;
 			$this->sBonusReadiness=1;
-		}				
-		
+		}
+
 		function unsetWormhole()
 		{
 			$this->wormholeEntryEntity=NULL;
@@ -773,17 +773,17 @@
 			$this->duration1=0;
 			$this->speedPercent1=0;
 		}
-		
-		
-		
+
+
+
 		/**
-		* 
+		*
 		*/
 		function getAllowedActions()
 		{
 			$cfg = Config::getInstance();
 			$this->error = '';
-			
+
 			//$allowed =  ($this->sFleets && count($this->sFleets) && ( $this->leaderId>0 || in_array($this->targetEntity->id,$this->sFleets))) ? true : false;
 			$allowed = true;
 			// Get possible actions by intersecting ship actions and allowed target actions
@@ -804,13 +804,13 @@
 			else
 			{
                 $noobProtectionErrorAdded = false;
-                
+
 				// Test each possible action
 				foreach ($actions as $i)
 				{
 					// variable to check whether a support overflow error message should be printed
 					$supportPossible = true;
-					
+
 					$ai = FleetAction::createFactory($i);
 
 					// Skip this action if it is an alliance action and ABS is disabled
@@ -842,7 +842,7 @@
                     {
 						continue;
 					}
-                    
+
 					// Permission checks
 					if (
 						// Action is allowed if:
@@ -885,8 +885,8 @@
 									{
 										if (!$battleban)
 										{
-											if ($ai->allowActivePlayerEntities() 
-												|| $this->targetEntity->owner->isInactivLong() 
+											if ($ai->allowActivePlayerEntities()
+												|| $this->targetEntity->owner->isInactivLong()
 												|| ($this->ownerId == $this->sourceEntity->lastUserCheck())
 												)
 											{
@@ -934,19 +934,19 @@
 					}
 				} // foreach ($actions as $i)
 			} // else Flottensperre
-			return $actionObjs;			
+			return $actionObjs;
 		}
-		
+
 		function getSpeed()
 		{
 			return $this->speed * $this->sBonusSpeed * $this->speedPercent / 100 ;
 		}
-		
+
 		function getShips()
 		{
-			return $this->ships;	
+			return $this->ships;
 		}
-		
+
 		function getCosts()
 		{
 			$this->costs = ceil($this->costsPerHundredAE / 100 * $this->distance * $this->speedPercent / 100) + ceil($this->costsPerHundredAE1 / 100 * $this->distance1 * $this->speedPercent1 / 100);
@@ -954,7 +954,7 @@
 			$this->capacityFuelUsed =$this->costs;
 			return $this->costs;
 		}
-		
+
 		function getCostsFood()
 		{
 			$cfg = Config::getInstance();
@@ -965,18 +965,18 @@
 		function getCostsPower()
 		{
 			return $this->costsPower;
-		}		
-		
+		}
+
 		function getDuration()
 		{
 			return $this->duration + $this->duration1;
 		}
-		
+
 		function getSpeedPercent()
 		{
 			return $this->speedPercent;
 		}
-		
+
 		function setSpeedPercent($perc)
 		{
 			$this->speedPercent = max(1,min(100,$perc));
@@ -985,22 +985,22 @@
 			$this->duration += $this->getTimeLaunchLand();	// Add launch and land time
 			$this->duration = ceil($this->duration);
 		}
-		
+
 		function getCostsPerHundredAE()
 		{
 			return ceil($this->costsPerHundredAE * $this->speedPercent / 100);
 		}
-		
+
 		function getTimeLaunchLand()
 		{
 			return ceil($this->timeLaunchLand * (2 - $this->sBonusReadiness));
 		}
-		
+
 		function getCostsLaunchLand()
 		{
 			return $this->costsLaunchLand;
-		}		
-		       
+		}
+
 		function getCapacity()
 		{
 			return $this->getTotalCapacity() - $this->capacityResLoaded - $this->capacityFuelUsed - $this->costsFood - $this->supportCostsFood - $this->supportCostsFuel;
@@ -1010,17 +1010,17 @@
 		{
 			return $this->capacityTotal * $this->sBonusCapacity;
 		}
-		
+
 		function getPeopleCapacity()
 		{
-			return $this->capacityPeopleTotal - $this->capacityPeopleLoaded;		
+			return $this->capacityPeopleTotal - $this->capacityPeopleLoaded;
 		}
-		
+
 		function getTotalPeopleCapacity()
 		{
-			return $this->capacityPeopleTotal;		
+			return $this->capacityPeopleTotal;
 		}
-		
+
 		private function calcResLoaded()
 		{
 			$this->capacityResLoaded = 0;
@@ -1029,12 +1029,12 @@
 				$this->capacityResLoaded += $i;
 			}
 		}
-		
+
 		function getLoadedRes($id)
 		{
 			return ($this->res[$id]>0) ? $this->res[$id] : 0;
 		}
-		
+
 		function loadResource($id,$ammount,$finalize=0)
 		{
 			// $ammount = max(0,$ammount);
@@ -1046,49 +1046,49 @@
 				{
 					$loaded = floor(min($ammount,$this->getCapacity(),$this->sourceEntity->getRes($id)-$this->getSupportFuel()-$this->getCosts()));
 				}
-				elseif ($id==5) 
+				elseif ($id==5)
 				{
 					$loaded = floor(min($ammount,$this->getCapacity(),$this->sourceEntity->getRes($id)-$this->getSupportFood()-$this->getCostsFood()));
 				}
-				else 
+				else
 				{
 					$loaded = floor(min($ammount,$this->getCapacity(),$this->sourceEntity->getRes($id)));
 				}
 			}
-			else 
+			else
 			{
 				if ($id==4)
 				{
 					$loaded = floor(min($this->getCapacity(),max(0,$this->sourceEntity->getRes($id) + $ammount - $this->getSupportFuel() - $this->getCosts())));
 				}
-				elseif ($id==5) 
+				elseif ($id==5)
 				{
 					$loaded = floor(min($this->getCapacity(),max(0,$this->sourceEntity->getRes($id) + $ammount - $this->getSupportFood() - $this->getCostsFood())));
 				}
-				else 
+				else
 				{
 					$loaded = floor(min($this->getCapacity(),max(0,$this->sourceEntity->getRes($id) + $ammount)));
 				}
-				
+
 			}
 			$this->res[$id] = $loaded;
 			$this->calcResLoaded();
-			
+
 			/*if ($finalize==1)
 			{
 				$this->sourceEntity->chgRes($id,-$loaded);
-			}*/		
+			}*/
 			return $loaded;
 		}
-		
+
 		// subtracts the payload ress (not support/flight fuel and food)
 		function finalLoadResource()
 		{
-			global $resNames;
-			
+			$resNames = Globals::getResNames();
+
 			$this->sourceEntity->reloadRes();
 			$resarr = array();
-			
+
 			foreach ($resNames as $rk => $rn)
 			{
 				$id = $rk+1;
@@ -1109,7 +1109,7 @@
 					else
 						$ammount = max(0,$this->sourceEntity->getRes($id) + $this->res[$id]);
 				}
-					
+
 				$this->res[$id] = 0;
 				$this->calcResLoaded();
 				if ($id==4) {
@@ -1124,21 +1124,21 @@
 				$this->res[$id] = $loaded;
 				$resarr[$rk] = $loaded;
 			}
-			
+
 			$this->calcResLoaded();
-			
+
 			$this->sourceEntity->subRes($resarr);
 		}
-		
+
 		function loadPeople($ammount)
 		{
 			$ammount = max(0,$ammount);
 			$this->capacityPeopleLoaded = floor(min($ammount,$this->capacityPeopleTotal,($this->pilotsAvailable()-$this->getPilots())));
-			
+
 			return $this->capacityPeopleLoaded;
 		}
-		
-			
+
+
 		function fetchResource($id,$ammount)
 		{
 			$ammount = max(0,$ammount);
@@ -1147,75 +1147,75 @@
 			$loaded = floor($ammount);
 			$this->fetch[$id] = $loaded;
 			$this->calcResLoaded();
-			
+
 			return $loaded;
 		}
-		
+
 		function resetSupport() {
 			$this->supportTime=0;
 			$this->supportCostsFood=0;
 			$this->supportCostsFuel=0;
 		}
-			
+
 		function getSupportTime() {
 			return $this->supportTime;
 		}
-		
+
 		function setSupportTime($time) {
 			$this->supportTime = $time;
-			
+
 			$this->supportCostsFood = ceil($time*$this->supportCostsFoodPerSec);
 			$this->supportCostsFuel = ceil($time*$this->supportCostsFuelPerSec);
 		}
-		
+
 		function getSupportFood() {
 			return $this->supportCostsFood;
 		}
-		
+
 		function getSupportFuel() {
 			return $this->supportCostsFuel;
 		}
-		
+
 		function getSupportMaxTime() {
 			$cfg = Config::getInstance();
-			
+
 			$this->supportCostsFuel = 0;
 			$this->supportCostsFood = 0;
-			
+
 			$this->supportCostsFoodPerSec = $this->pilots * $cfg->value('people_food_require')/36000;
 			$this->supportCostsFuelPerSec = $this->costsPerHundredAE*$this->getSpeed()/$this->getSpeedPercent()/3600000;
-			
+
 			$maxTime = $this->getCapacity() / ($this->supportCostsFuelPerSec+$this->supportCostsFoodPerSec);
-			
+
 			$supportTimeFuel = ($this->sourceEntity->getRes(4)-$this->getLoadedRes(4)-$this->getCosts())/$this->supportCostsFuelPerSec;
 			if ($this->supportCostsFoodPerSec)
 				$supportTimeFood = ($this->sourceEntity->getRes(5)-$this->getLoadedRes(5)-$this->getCostsFood())/$this->supportCostsFoodPerSec;
 			else
 				$supportTimeFood = $supportTimeFuel;
-				
+
 			$maxTime = min($maxTime,min($supportTimeFuel,$supportTimeFood));
-			
+
 			return floor($maxTime);
 		}
-		
+
 		function getSupport() {
 			return "Supportkosten";
 		}
-		
+
 		function getSupportDesc() {
 			$this->calcSupportTime();
-			
+
 			return "".RES_FUEL.": ".nf($this->supportCostsFuelPerSec*$this->supportTime)." (".nf($this->supportCostsFuelPerSec*3600)." pro h)<br style=\"clear:both\" />".RES_FOOD.": ".nf($this->supportCostsFoodPerSec*$this->supportTime)." (".nf($this->supportCostsFoodPerSec*3600)." pro h)";
 		}
-		
+
 		function setLeader($id) {
 			$this->leaderId = $id;
 		}
-		
+
 		function setFakeId($id) {
 			$this->fakeId = $id;
 		}
-		
+
 		function loadAllianceFleets() {
 			$this->sFleets = array();
 			$this->aFleets = array();
@@ -1240,7 +1240,7 @@
 						array_push($this->aFleets,$arr);
 					}
 				}
-				
+
 				$res = dbquery("
 							SELECT
 								entity_to
@@ -1258,20 +1258,20 @@
 				}
 			}
 		}
-						
+
 		function setAllianceSlots($num) {
 			$this->allianceSlots = $num + 1;
-			
+
 			$this->loadAllianceFleets();
 		}
-		
+
 		function getAllianceSlots() {
 			if ($this->sourceEntity->ownerAlliance() && isset($this->allianceSlots))
 			{
-				return $this->allianceSlots - count($this->aFleets) - count($this->sFleets);		
+				return $this->allianceSlots - count($this->aFleets) - count($this->sFleets);
 			}
 		}
-		
+
 		// Alliance attack already confirmed
 		function checkAttNum($leaderid)
 		{
@@ -1304,7 +1304,7 @@
 			}
 			return false;
 		}
-		
+
 		function checkDefNum()
 		{
 			$cfg = Config::getInstance();
@@ -1348,8 +1348,8 @@
 			}
 			return false;
 		}
-		
-		
+
+
 		//
 		// Getters
 		//
@@ -1370,12 +1370,12 @@
 		{
 			return $this->shipCount;
 		}
-		
+
 		function getPilots()
 		{
-			return $this->pilots * $this->sBonusPilots;	
+			return $this->pilots * $this->sBonusPilots;
 		}
-		
+
 		function getLeader() { return $this->leaderId; }
 
 
