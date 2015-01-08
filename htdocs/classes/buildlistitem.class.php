@@ -522,7 +522,8 @@
 
 		public function getWaitingTime()
 		{
-			global $cp, $resNames;
+			$resNames = Globals::getResNames();
+			global $cp;
 
 			$costs = $this->getBuildCosts(0,0);
 			$wTime = array();
@@ -541,7 +542,8 @@
 
 		public function waitingTimeString($type='build')
 		{
-			global $cp, $resNames;
+			$resNames = Globals::getResNames();
+			global $cp;
 			$notAvStyle=" style=\"color:red;\"";
 			if ($type == 'build')
 				$costs = $this->getBuildCosts(0,0);
