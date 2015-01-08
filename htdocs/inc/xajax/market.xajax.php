@@ -22,7 +22,7 @@ $xajax->register(XAJAX_FUNCTION,'showAuctionDetail');
 function marketSearch($form,$order="distance",$orderDirection=0)
 {
 	$resNames = Globals::getResNames();
-	global $resIcons;
+	$resIcons = Globals::getResIcons();
 	ob_start();
  	$ajax = new xajaxResponse();
 
@@ -489,7 +489,7 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 function showAuctionDetail($id)
 {
 	$resNames = Globals::getResNames();
-	global $resIcons;
+	$resIcons = Globals::getResIcons();
 	ob_start();
  	$ajax = new xajaxResponse();
 

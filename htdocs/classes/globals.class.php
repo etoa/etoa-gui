@@ -19,4 +19,18 @@ class Globals
 			RES_FOOD,
 		];
 	}
+
+	/**
+	 * @return string[]
+	 */
+	public static function getResIcons()
+	{
+		return [
+			RES_ICON_METAL,
+			RES_ICON_CRYSTAL,
+			RES_ICON_PLASTIC,
+			RES_ICON_FUEL,
+			RES_ICON_FOOD,
+		];
+	}
 }
