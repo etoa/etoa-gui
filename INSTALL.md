@@ -18,7 +18,7 @@ Additional steps because I havent figured out yet how to reset the db config via
 * Login as admin
 * Reset the Configuration in the admin tool, then set the loginurl back to "" (empty string)
 
-All steps below or only necessary if you dont want to use the vagrant box!!!!
+All steps below are only necessary if you dont want to use the vagrant box!!!!
 
 Files
 -----
