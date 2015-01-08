@@ -4,7 +4,7 @@
 export DEBIAN_FRONTEND=noninteractive
 echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
-sudo aptitude update -q
+sudo aptitude update
 
 sudo aptitude install -g -y -f htop git
 
