@@ -264,7 +264,6 @@ function display_field($type, $confname, $field)
 
 function create_sql_value($type,$confname,$field,$postarray)
 {
-	global $conf;
 	$sql_value = "";
 	switch ($type)
 	{
