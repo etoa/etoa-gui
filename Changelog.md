@@ -12,7 +12,7 @@ Version 3.5.3
   
  * Architekt can't be discharged anymore after starting a building
  * Admiral can't be discharged anymore after starting a fleet
- * EMP now correctly disable market 
+ * EMP now correctly disables market 
 
 
 Version 3.5.3
