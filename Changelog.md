@@ -1,5 +1,18 @@
-﻿Escape to Andromeda Changelog
+Escape to Andromeda Changelog
 =============================
+
+Version 3.5.3
+-------------
+
+### Game ###
+
+#### Features ####
+
+#### Bugfixes ####
+  
+ * Architekt can't be discharged anymore after starting a building
+ * Admiral can't be discharged anymore after starting a fleet
+
 
 Version 3.5.3
 -------------
