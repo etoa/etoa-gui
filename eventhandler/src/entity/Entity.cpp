@@ -1585,7 +1585,7 @@
 		query << "		buildlist_building_id='" << config.idget("FLEET_CONTROL_ID") << "' ";
 		query << "		OR buildlist_building_id='" << config.idget("FACTORY_ID") << "' ";
 		query << "		OR buildlist_building_id='" << config.idget("SHIPYARD_ID") << "' ";
-		query << "		OR buildlist_building_id='" << config.idget("MARKTPLATZ_ID") << "' ";
+		query << "		OR buildlist_building_id='" << config.idget("MARKET_ID") << "' ";
 		query << "		)";
 		query << "ORDER BY ";
 		query << "	RAND() ";

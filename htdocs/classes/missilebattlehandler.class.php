@@ -351,7 +351,7 @@ class MissileBattleHandler
 								buildlist_building_id='".FLEET_CONTROL_ID."' 
 								OR buildlist_building_id='".FACTORY_ID."' 
 								OR buildlist_building_id='".SHIPYARD_ID."'
-								OR buildlist_building_id='".BUILD_MISSILE_ID."'
+								OR buildlist_building_id='".MARKTPLATZ_ID."'
 								OR buildlist_building_id='".BUILD_CRYPTO_ID."'
 								)
 								AND buildlist_deactivated<".$time."
