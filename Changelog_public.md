@@ -4,8 +4,6 @@ Escape to Andromeda Changelog
 Version 3.5.4
 -------------
 
-### Features ###
-
 ### Bugfixes ###
 
  * Architekt kann nicht mehr entlassen werden, nachdem ein Gebäude gestartet wurde
