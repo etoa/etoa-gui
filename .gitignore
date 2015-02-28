@@ -18,3 +18,8 @@ htdocs/log/*.log
 /htdocs/designs/custom/*
 /htdocs/config/debug
 /htdocs/config/eventhandler.conf
+
+*cmake_install.cmake
+*Makefile
+*CMakeFiles*
+CMakeCache.txt

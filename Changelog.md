@@ -1,5 +1,15 @@
-﻿Escape to Andromeda Changelog
+Escape to Andromeda Changelog
 =============================
+
+Version 3.5.4
+-------------
+
+#### Bugfixes ####
+  
+ * Architekt can't be discharged anymore after starting a building
+ * Admiral can't be discharged anymore after starting a fleet
+ * EMP now correctly disable market 
+
 
 Version 3.5.3
 -------------

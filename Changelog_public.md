@@ -1,5 +1,14 @@
-﻿Escape to Andromeda Changelog
+Escape to Andromeda Changelog
 =============================
+
+Version 3.5.4
+-------------
+
+### Bugfixes ###
+
+ * Architekt kann nicht mehr entlassen werden, nachdem ein Gebäude gestartet wurde
+ * Admiral kann nicht mehr entlassen werden, nachdem eine Flotte gestartet wurde  
+ * EMP deaktiviert nun wirklich den Markt 
 
 Version 3.5.3
 -------------
