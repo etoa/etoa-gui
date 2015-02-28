@@ -155,8 +155,8 @@
 				
 				// check if a research is in progress if using the professor
 				switch ($cu->specialistId) {
-					case 4:
-					case 6:
+					case 4:           //Prof
+					case 6:           //Spion
 						$res = dbquery("SELECT techlist_id, techlist_build_start_time FROM techlist WHERE techlist_user_id='".$cu->id."' AND techlist_build_end_time > '".$t."';");
 						if (mysql_num_rows($res) > 0)
 						{
@@ -184,6 +184,34 @@
 							}
 						}
 						break;
+          case 10: //Architekt
+						$res = dbquery("SELECT buildlist_build_start_time FROM buildlist WHERE buildlist_user_id='" . $cu->id ."' AND buildlist_build_end_time > '".$t."';");
+						if (mysql_num_rows($res) > 0) 
+						{
+							while($arr = mysql_fetch_assoc($res))
+							{
+								if($arr['buildlist_build_start_time'] > $inittime)
+								{
+									$inUse = true;
+									break;
+								}
+							}
+						}
+						break;  
+          case 1: //Admiral
+						$res = dbquery("SELECT launchtime FROM fleet WHERE user_id='" . $cu->id ."' AND landtime > '".$t."';");
+					  if (mysql_num_rows($res) > 0) 
+						{
+							while($arr = mysql_fetch_assoc($res))
+							{ 
+								if($arr['launchtime'] > $inittime)
+								{
+									$inUse = true;
+									break;
+								}
+							}
+						}
+						break;    
 					default:
 						break;
 				}
