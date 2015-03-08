@@ -377,7 +377,7 @@
 					<td>".nf($sl->getTotalHeal()*($heal_tech_a+$sl->getBHeal()));
 					if ($heal_tech_a>1)
 					{
-						echo " (".get_percent_string($heal_tech_a,1)." durch ".$heal_tech_name." ".$heal_tech_level.")";
+						echo " (".get_percent_string($heal_tech_a,1)." durch ".$heal_tech_name." ".$heal_tech_level;
             if ($sl->getBHeal()>0)
 							echo ", ".get_percent_string((1+$sl->getBHeal()),1)." durch Spezialschiffe";
 						echo ")";
@@ -478,7 +478,7 @@
 					<td>".nf($dl->getTotalStrucure()*($structure_tech_a+$sl->getBStructure()));
 					if ($structure_tech_a>1)
 					{
-						echo " (".get_percent_string($structure_tech_a,1)." durch ".$structure_tech_name." ".$structure_tech_level.")";
+						echo " (".get_percent_string($structure_tech_a,1)." durch ".$structure_tech_name." ".$structure_tech_level;
             if ($sl->getBStructure()>0)
 							echo ", ".get_percent_string((1+$sl->getBStructure()),1)." durch Spezialschiffe";
 						echo ")"; 
@@ -489,7 +489,7 @@
 					<td>".nf($dl->getTotalShield()*($shield_tech_a+$sl->getBShield()));
 					if ($shield_tech_a>1)
 					{
-						echo " (".get_percent_string($shield_tech_a,1)." durch ".$shield_tech_name." ".$shield_tech_level.")";
+						echo " (".get_percent_string($shield_tech_a,1)." durch ".$shield_tech_name." ".$shield_tech_level;
             if ($sl->getBShield()>0)
 							echo ", ".get_percent_string((1+$sl->getBShield()),1)." durch Spezialschiffe";
 						echo ")";
@@ -500,7 +500,7 @@
 					<td>".nf($dl->getTotalWeapon()*($weapon_tech_a+$sl->getBWeapon()));
 					if ($weapon_tech_a>1)
 					{
-						echo " (".get_percent_string($weapon_tech_a,1)." durch ".$weapon_tech_name." ".$weapon_tech_level.")";
+						echo " (".get_percent_string($weapon_tech_a,1)." durch ".$weapon_tech_name." ".$weapon_tech_level;
             if ($sl->getBWeapon()>0)
 							echo ", ".get_percent_string((1+$sl->getBWeapon()),1)." durch Spezialschiffe";
 						echo ")";
@@ -511,7 +511,7 @@
 					<td>".nf($dl->getTotalHeal()*($heal_tech_a+$sl->getBHeal()));
 					if ($heal_tech_a>1)
 					{
-						echo " (".get_percent_string($heal_tech_a,1)." durch ".$heal_tech_name." ".$heal_tech_level.")";
+						echo " (".get_percent_string($heal_tech_a,1)." durch ".$heal_tech_name." ".$heal_tech_level;
 					  if ($sl->getBHeal()>0)
 							echo ", ".get_percent_string((1+$sl->getBHeal()),1)." durch Spezialschiffe";
 						echo ")";

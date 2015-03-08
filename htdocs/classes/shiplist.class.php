@@ -306,7 +306,7 @@
 				$i = 0;
 				foreach ($this->items as $k=>&$v)
 				{
-					$i+= $this->special[$k][3] * $v->bWeapon;
+					$i+= $this->special[$k][3] * $v->bHeal;
 				}
 				return $i;
 		}
