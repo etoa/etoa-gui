@@ -1,5 +1,12 @@
-Escape to Andromeda Changelog
+﻿Escape to Andromeda Changelog
 =============================
+
+Version 3.5.5
+-------------
+
+#### Bugfixes ####
+  
+ * Missiles can't be bought anymore when the required tech is 0
 
 Version 3.5.4
 -------------

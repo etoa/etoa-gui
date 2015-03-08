@@ -552,7 +552,7 @@
 								}
 							}
 						}								
-						if (count($b_req[$mid]['t'])>0)
+						if (count($b_req[$mid]['t'])>=0)
 						{
 							foreach ($b_req[$mid]['t'] as $id => $l)
 							{

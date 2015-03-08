@@ -1,5 +1,12 @@
-Escape to Andromeda Changelog
+﻿Escape to Andromeda Changelog
 =============================
+
+Version 3.5.5
+-------------
+
+### Bugfixes ###
+
+ * Raketen können nicht mehr gekauft werden, wenn die benötigte Technologiestufe 0 ist
 
 Version 3.5.4
 -------------
