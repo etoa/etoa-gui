@@ -43,6 +43,8 @@
 			$this->bStructure = $arr['special_ship_bonus_structure'];
 			$this->bShield = $arr['special_ship_bonus_shield'];
 			$this->bWeapon = $arr['special_ship_bonus_weapon'];
+      $this->bHeal = $arr['special_ship_bonus_heal'];
+      
 
 			$this->actionString = $arr['ship_actions'];
 

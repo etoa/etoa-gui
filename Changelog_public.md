@@ -1,5 +1,13 @@
-Escape to Andromeda Changelog
+﻿Escape to Andromeda Changelog
 =============================
+
+Version 3.5.5
+-------------
+
+### Bugfixes ###
+
+ * Raketen können nicht mehr gekauft werden, wenn die benötigte Technologiestufe 0 ist
+ * Der Heilungsbonus vom Cardassia Mysticum wird nun korrekt in der Übersicht angezeigt
 
 Version 3.5.4
 -------------

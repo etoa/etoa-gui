@@ -1,5 +1,13 @@
-Escape to Andromeda Changelog
+﻿Escape to Andromeda Changelog
 =============================
+
+Version 3.5.5
+-------------
+
+#### Bugfixes ####
+  
+ * Missiles can't be bought anymore when the required tech is 0
+ * Cardassia Mysticum now displays the correct healvalue
 
 Version 3.5.4
 -------------
@@ -8,7 +16,7 @@ Version 3.5.4
   
  * Architekt can't be discharged anymore after starting a building
  * Admiral can't be discharged anymore after starting a fleet
- * EMP now correctly disable market 
+ * EMP now correctly disables market 
 
 
 Version 3.5.3
