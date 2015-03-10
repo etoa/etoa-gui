@@ -552,12 +552,12 @@
 								}
 							}
 						}								
-						if (count($b_req[$mid]['t'])>=0)
-						{
+						if (count($b_req[$mid]['t'])>0)
+						{                            
 							foreach ($b_req[$mid]['t'] as $id => $l)
-							{
-								if (isset($techlist[$id]) && $techlist[$id] < $l)
-								{
+							{   
+								if ($techlist[$id] < $l)
+								{  
 									$requirements_passed = false;
 								}
 							}

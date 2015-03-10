@@ -95,7 +95,7 @@
   
   // Analyzator ships for quick analysis
   echo "<tr>
-  	<th><b>Analyzatoren für Quickanalyse:</b></th>
+  	<th><b>Analysatoren für Quickanalyse:</b></th>
     <td><input type=\"text\" name=\"analyzeship_count\" maxlength=\"5\" size=\"5\" value=\"".$cu->properties->analyzeShipCount."\"> ";
 	$sres = dbquery("
 	SELECT 
