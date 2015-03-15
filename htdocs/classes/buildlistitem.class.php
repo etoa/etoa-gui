@@ -229,8 +229,18 @@
 				{
 					$bc['costs'.$rk] = $cu->specialist->costsBuilding * $this->building->costs[$rk] * pow($this->building->costsFactor,$this->level+$levelUp);
 				}
+                
+				$bonus = $cu->race->buildTime + $cp->typeBuildtime + $cp->starBuildtime + $cu->specialist->buildTime - 3;
         
-				if ($this->level != 0)
+				$bc['time'] = (array_sum($bc)) / GLOBAL_TIME * BUILD_BUILD_TIME;
+				$bc['time'] *= $bonus;
+        
+				// Boost
+				if ($cfg->value('boost_system_enable') == 1) {		
+					$bc['time'] *= 1/($cu->boostBonusBuilding + 1);
+				}
+				
+        if ($this->level != 0)
         {
 				  $bc['costs5'] = ($cu->specialist->costsBuilding * $this->building->costs[5] * pow($this->building->prodFactor,$this->level+$levelUp))-
                           ($cu->specialist->costsBuilding * $this->building->costs[5] * pow($this->building->prodFactor,$this->level-1));
@@ -239,17 +249,7 @@
         {
           $bc['costs5'] = ($cu->specialist->costsBuilding * $this->building->costs[5] * pow($this->building->prodFactor,$this->level+$levelUp));
         } 
-
-				$bonus = $cu->race->buildTime + $cp->typeBuildtime + $cp->starBuildtime + $cu->specialist->buildTime - 3;
-
-				$bc['time'] = (array_sum($bc)) / GLOBAL_TIME * BUILD_BUILD_TIME;
-				$bc['time'] *= $bonus;
-
-				// Boost
-				if ($cfg->value('boost_system_enable') == 1) {		
-					$bc['time'] *= 1/($cu->boostBonusBuilding + 1);
-				}
-				
+        
 				if ($bl->getPeopleWorking(BUILD_BUILDING_ID) > 0)
 				{
 					$bc['min_time'] = $bc['time'] * $this->minBuildTimeFactor();
@@ -367,12 +367,14 @@
 			{
 				$bc['costs'.$rk] = $cu->specialist->costsBuilding * $this->building->costs[$rk] * pow($this->building->costsFactor,$this->level);
 			}
-			$bc['costs5'] = $cu->specialist->costsBuilding * $this->building->costs[5] * pow($this->building->costsFactor,$this->level);
+			$bc['costs5'] = 0;      //Energie nicht als Ressource zählen
 
 			$bonus = $cu->race->buildTime + $cp->typeBuildtime + $cp->starBuildtime + $cu->specialist->buildTime - 3;
 
 			$bc['time'] = (array_sum($bc)) / GLOBAL_TIME * BUILD_BUILD_TIME;
-			$bc['time'] *= $bonus;
+      $bc['time'] *= $bonus;
+      $bc['time'] /= $cu->boostBonusBuilding+1;
+      
 			$maxReduction = $bc['time'] - $bc['time'] * $this->minBuildTimeFactor();
 
 			return ceil($maxReduction / $cfg->value('people_work_done'));

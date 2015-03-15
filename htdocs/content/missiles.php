@@ -487,7 +487,7 @@
 				{
 					$time = time();
 					tableStart("Abgefeuerte Raketen");
-					echo "<tr><th>Ziel</th><th>Flugdauer</th><th>Ankunfszeit</th><th>Raketen</th><th>Optionen</th></tr>";
+					echo "<tr><th>Ziel</th><th>Flugdauer</th><th>Ankunftszeit</th><th>Raketen</th><th>Optionen</th></tr>";
 					foreach ($flights as $flid => $fl)
 					{
 						$countdown = ($fl['landtime']-$time>=0) ? tf($fl['landtime']-$time) : 'Im Ziel';

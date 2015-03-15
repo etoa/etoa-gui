@@ -1,5 +1,13 @@
-﻿Escape to Andromeda Changelog
+Escape to Andromeda Changelog
 =============================
+
+Version 3.5.6
+-------------
+
+#### Bugfixes ####
+  
+ * Fixed several spelling mistakes
+ * Optimizing function now uses the correct amount of workers 
 
 Version 3.5.5
 -------------
