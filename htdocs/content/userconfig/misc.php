@@ -104,7 +104,7 @@
 						dbquery("UPDATE 
 									buildlist 
 								SET 
-									buildlist_build_type = buildlist_build_type - 2
+									buildlist_build_type = 1
 								WHERE 
 									buildlist_user_id='".$cu->id."' 
 									AND buildlist_build_start_time>0;");
