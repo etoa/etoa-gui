@@ -77,7 +77,7 @@ else
 		if (defined('POST_INSERT_UPDATE_METHOD'))
 		{
 			$fname = POST_INSERT_UPDATE_METHOD;
-      if (stristr('::', $fname)) {
+      if (stristr($fname, '::')) {
         list($class, $method) = explode('::', $fname);
         $hookResult = $class::$method();
       } else {
@@ -111,8 +111,8 @@ else
       if (stristr($fname, '::')) {
         list($class, $method) = explode('::', $fname);
         $hookResult = $class::$method();
-      } else {
-        $hookResult = $fname();
+      } else {           
+        $hookResult = $fname(); 
       }
 			echo MessageBox::ok("", "Datensatz ge&auml;ndert! ".$hookResult);
 		}

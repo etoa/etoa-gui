@@ -1,13 +1,21 @@
-Escape to Andromeda Changelog
+﻿Escape to Andromeda Changelog
 =============================
 
 Version 3.5.6
 -------------
 
+### Game ###
+
 #### Bugfixes ####
   
  * Fixed several spelling mistakes
  * Optimizing function now uses the correct amount of workers 
+
+### Administration ###
+
+#### Bugfixes ####
+
+ * Fixed shipcreation 
 
 Version 3.5.5
 -------------
