@@ -1,12 +1,14 @@
-Escape to Andromeda README
-==========================
+Escape to Andromeda Browsergame
+===============================
 
-(C) 2003 Nicolas Perrenoud and EtoA Gaming
-
-See [INSTALL](INSTALL.md) for detailed instructions on 
-how to set up the game.
+See [INSTALL](INSTALL.md) for detailed instructions on how to set up the game.
 
 See [LICENSE](LICENSE.md) for legal information.
+
+See [RELEASING](RELEASING.md) for creating a new release and deploying the game code onto the game server.
+
+Disclaimer
+----------
 
 This program is distributed in the hope that it will be useful, 
 but WITHOUT ANY WARRANTY; without even the implied warranty of 
