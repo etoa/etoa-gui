@@ -1,6 +1,14 @@
-﻿Escape to Andromeda Changelog
+Escape to Andromeda Changelog
 =============================
 
+Version 3.5.6
+-------------
+
+### Bugfixes ###
+
+ * Verschiedene Rechtschreibfehler behoben 
+ * Bewohneroptimierung stellt nun den richtigen Wert ein
+   
 Version 3.5.5
 -------------
 

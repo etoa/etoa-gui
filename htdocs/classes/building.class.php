@@ -160,8 +160,8 @@
 			$level = max(1,$level);
 			$bc=array();
 			for ($i=1;$i<=6;$i++)
-				$bc[$i] = $this->costs[$i] * pow($this->costsFactor,$level);
-			return $bc;
+      	$bc[$i] = $this->costs[$i] * pow($this->costsFactor,$level);
+      return $bc;
 		}	
 		
 		private function loadRequirements()

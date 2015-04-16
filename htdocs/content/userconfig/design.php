@@ -213,7 +213,7 @@
         
 			//Notizbox (Aktiviert/Deaktiviert)
       echo "<tr>
-        			<th>Separater Notizbox:</th>
+        			<th>Separate Notizbox:</th>
         			<td>
                   <input type=\"radio\" name=\"notebox\" value=\"1\" ";
                   if ($cu->properties->noteBox==1) echo " checked=\"checked\"";
@@ -243,7 +243,7 @@
       		</tr>";   
       		
       echo "<tr>
-        			<th>Schlanke Resourcenanzeige:</th>
+        			<th>Schlanke Ressourcenanzeige:</th>
         			<td>
                   <input type=\"radio\" name=\"small_res_box\" value=\"1\" ";
                   if ($cu->properties->smallResBox==1) echo " checked=\"checked\"";
