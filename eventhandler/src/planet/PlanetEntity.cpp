@@ -138,7 +138,7 @@ namespace planet
 		}
 
 		this->birthRate = 1.1 + this->planet_->getTypePopulation() + this->race_->getRacePopulation() + this->sol_->getTypePopulation() + this->specialist_->getSpecialistPopulation() - 4;
-		this->ressource[6] = this->ressource[5] / 50 * this->birthRate;
+		this->ressource[6] = this->ressource[5] / 2 * this->birthRate;
 		this->ressource[6] = (this->ressource[6] <= 3) ? 3 : this->ressource[6];
 		
 		if (!this->ressource[5] && this->isMain)
