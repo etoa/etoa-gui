@@ -1,5 +1,12 @@
-Escape to Andromeda Changelog
+﻿Escape to Andromeda Changelog
 =============================
+
+Version 3.5.7
+-------------
+
+### Bugfixes ###
+
+ * Bevölkerungswachstum wird nun korrekt berechnet
 
 Version 3.5.6
 -------------

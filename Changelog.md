@@ -1,6 +1,13 @@
 ﻿Escape to Andromeda Changelog
 =============================
 
+Version 3.5.7
+-------------
+
+### Bugfixes ###
+
+ * Fixed birthrate
+
 Version 3.5.6
 -------------
 
