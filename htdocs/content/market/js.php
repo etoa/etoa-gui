@@ -511,9 +511,13 @@
 					ship_buy_plastic = document.getElementById('ship_buy_plastic').value.replace(/`/g, "");
 					ship_buy_fuel = document.getElementById('ship_buy_fuel').value.replace(/`/g, "");
 					ship_buy_food = document.getElementById('ship_buy_food').value.replace(/`/g, "");
-
+    
+          
 					// Die Anzahl Schiffe formatieren (Trennzeichen entfernen) und in Variable speichern
 					var ship_count = document.getElementById('ship_count').value.replace(/`/g, "");
+          
+          //Die %-Zahl ermitteln und in Variable speichern
+          var ship_percent = document.getElementById('ship_percent').value;
 
 					// Die Schiffsdaten aus dem mit PHP erstellen JS-Array werden in einer neuer Variable gespeichert
 					var ship_id = document.getElementById('ship_list').value;
@@ -539,7 +543,14 @@
 					}
 					ship_count = Math.abs(ship_count);
 
-
+					// % checken
+				  if(istZahl(ship_percent)==false || ship_percent=='')
+					{
+						ship_percent = 100;
+						document.getElementById('ship_percent').value=ship_percent;
+					}
+					ship_percent /= 100;
+					
 					// Die verlangten Rohstoffe (Preis)
 					// Titan
 					if(istZahl(ship_buy_metal)==false || ship_buy_metal=='')
@@ -581,48 +592,45 @@
 					}
 					ship_buy_food = Math.abs(ship_buy_food);
 
-
-
-				  //
-				  // Verrechnung der Daten
-				  //
-
-				  // Ermittelt die Anzahl Schiffe. Entweder die eingegebene Zahl, oder soviel, wie auf dem Planeten vorhanden ist
-				 	var ship_count = Math.min(ship_count, ship_max_count);
+          
+					//
+					// Verrechnung der Daten
+					//
+					// Ermittelt die Anzahl Schiffe. Entweder die eingegebene Zahl, oder soviel, wie auf dem Planeten vorhanden ist
+					var ship_count = Math.min(ship_count, ship_max_count);
 
 					// Rechnet Gesamtkosten pro Rohstoff (Kosten * Anzahl) (Dient als Basis für Min/Max rechnung)
-				  var ship_costs_metal_total = ship_costs_metal * ship_count;
-				  var ship_costs_crystal_total = ship_costs_crystal * ship_count;
-				  var ship_costs_plastic_total = ship_costs_plastic * ship_count;
-				  var ship_costs_fuel_total = ship_costs_fuel * ship_count;
-				  var ship_costs_food_total = ship_costs_food * ship_count;
+					var ship_costs_metal_total = ship_costs_metal * ship_count;
+					var ship_costs_crystal_total = ship_costs_crystal * ship_count;
+					var ship_costs_plastic_total = ship_costs_plastic * ship_count;
+					var ship_costs_fuel_total = ship_costs_fuel * ship_count;
+					var ship_costs_food_total = ship_costs_food * ship_count;
 
-				  // Ändert den Verkaufswert (Angebot) auf die aktuellen Kosten
-				  ship_sell_metal = ship_costs_metal_total;
-			  	ship_sell_crystal = ship_costs_crystal_total;
-			  	ship_sell_plastic = ship_costs_plastic_total;
-			  	ship_sell_fuel = ship_costs_fuel_total;
-			  	ship_sell_food = ship_costs_food_total;
+					// Ändert den Verkaufswert (Angebot) auf die aktuellen Kosten
+					ship_sell_metal = ship_costs_metal_total;
+				  ship_sell_crystal = ship_costs_crystal_total;
+				  ship_sell_plastic = ship_costs_plastic_total;
+				  ship_sell_fuel = ship_costs_fuel_total;
+				  ship_sell_food = ship_costs_food_total;
 
-			  	// Schreibt Originalpreise in "Preis-Felder" und berechnet Min/Max wenn eine neue Eingabe gemacht wurde
-			  	if(new_ship==1)
-			  	{
-			  		ship_buy_metal = ship_costs_metal_total;
-			  		ship_buy_crystal = ship_costs_crystal_total;
-			  		ship_buy_plastic = ship_costs_plastic_total;
-			  		ship_buy_fuel = ship_costs_fuel_total;
-			  		ship_buy_food = ship_costs_food_total;
+				  	// Schreibt Originalpreise in "Preis-Felder" und berechnet Min/Max wenn eine neue Eingabe gemacht wurde
+				  	if(new_ship==1)
+			  	{   
+			  	  ship_buy_metal = ship_costs_metal_total*ship_percent;
+			  	  ship_buy_crystal = ship_costs_crystal_total*ship_percent;
+			  	  ship_buy_plastic = ship_costs_plastic_total*ship_percent;
+			  	  ship_buy_fuel = ship_costs_fuel_total*ship_percent;
+			  	  ship_buy_food = ship_costs_food_total*ship_percent;
 
 				  	//Ändert Daten beim "Angebot Feld" welches gesperrt ist für Änderungen
 				  	document.getElementById('ship_sell_metal').value=FormatNumber('return',ship_buy_metal,'','','');
 				  	document.getElementById('ship_sell_crystal').value=FormatNumber('return',ship_buy_crystal,'','','');
 				  	document.getElementById('ship_sell_plastic').value=FormatNumber('return',ship_buy_plastic,'','','');
 				  	document.getElementById('ship_sell_fuel').value=FormatNumber('return',ship_buy_fuel,'','','');
-				  	document.getElementById('ship_sell_food').value=FormatNumber('return',ship_buy_food,'','','');
-			  	}
+				    document.getElementById('ship_sell_food').value=FormatNumber('return',ship_buy_food,'','','');
+				  }
 
-
-
+				  
 				  //
 			  	// Errechnet und formatiert Preise
 			  	//
@@ -674,39 +682,39 @@
 
 
 
-			  		// MaxBetrag
-			  		// Errechnet Grundbetrag (Noch ohne Abzüge von eingegebenen Preisen)
-			  		ship_buy_max[res] =	ship_sell_metal / actuel_res_factor * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MAX
-					  										+ ship_sell_crystal / actuel_res_factor * MARKET_CRYSTAL_FACTOR * SHIP_PRICE_FACTOR_MAX
-					  										+ ship_sell_plastic / actuel_res_factor * MARKET_PLASTIC_FACTOR * SHIP_PRICE_FACTOR_MAX
-					  										+ ship_sell_fuel / actuel_res_factor * MARKET_FUEL_FACTOR * SHIP_PRICE_FACTOR_MAX
-					  										+ ship_sell_food / actuel_res_factor * MARKET_FOOD_FACTOR * SHIP_PRICE_FACTOR_MAX;
+	  		    // MaxBetrag
+	  		    // Errechnet Grundbetrag (Noch ohne Abzüge von eingegebenen Preisen)
+	  		    ship_buy_max[res] =	ship_sell_metal / actuel_res_factor * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MAX
+			  										+ ship_sell_crystal / actuel_res_factor * MARKET_CRYSTAL_FACTOR * SHIP_PRICE_FACTOR_MAX
+			  										+ ship_sell_plastic / actuel_res_factor * MARKET_PLASTIC_FACTOR * SHIP_PRICE_FACTOR_MAX
+			  										+ ship_sell_fuel / actuel_res_factor * MARKET_FUEL_FACTOR * SHIP_PRICE_FACTOR_MAX
+			  										+ ship_sell_food / actuel_res_factor * MARKET_FOOD_FACTOR * SHIP_PRICE_FACTOR_MAX;
 
-					  // Errechnet Grundbetrag abzüglich bereits eingebener Preise
-					  ship_buy_max[res] =  ship_buy_max[res]
-					  										-	ship_buy_metal * MARKET_METAL_FACTOR / actuel_res_factor
-					  										- ship_buy_crystal * MARKET_CRYSTAL_FACTOR / actuel_res_factor
-					  										- ship_buy_plastic * MARKET_PLASTIC_FACTOR / actuel_res_factor
-					  										- ship_buy_fuel * MARKET_FUEL_FACTOR / actuel_res_factor
-					  										- ship_buy_food * MARKET_FOOD_FACTOR / actuel_res_factor;
-					  ship_buy_max[res] = Math.floor(ship_buy_max[res]);		// Der Anzeigewert & Prüfwert
+				    // Errechnet Grundbetrag abzüglich bereits eingebener Preise
+				    ship_buy_max[res] =  ship_buy_max[res]
+				  										- ship_buy_metal * MARKET_METAL_FACTOR / actuel_res_factor
+				  										- ship_buy_crystal * MARKET_CRYSTAL_FACTOR / actuel_res_factor
+				  										- ship_buy_plastic * MARKET_PLASTIC_FACTOR / actuel_res_factor
+				  										- ship_buy_fuel * MARKET_FUEL_FACTOR / actuel_res_factor
+				  										- ship_buy_food * MARKET_FOOD_FACTOR / actuel_res_factor;
+				    ship_buy_max[res] = Math.floor(ship_buy_max[res]);		// Der Anzeigewert & Prüfwert
 
 
-			  		// MinBetrag
-			  		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-			  		ship_buy_min[res] =	ship_sell_metal / actuel_res_factor * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MIN
-					  										+ ship_sell_crystal / actuel_res_factor * MARKET_CRYSTAL_FACTOR * SHIP_PRICE_FACTOR_MIN
-					  										+ ship_sell_plastic / actuel_res_factor * MARKET_PLASTIC_FACTOR * SHIP_PRICE_FACTOR_MIN
-					  										+ ship_sell_fuel / actuel_res_factor * MARKET_FUEL_FACTOR * SHIP_PRICE_FACTOR_MIN
-					  										+ ship_sell_food / actuel_res_factor * MARKET_FOOD_FACTOR * SHIP_PRICE_FACTOR_MIN;
-					  // Errechnet Grundbetrag abzüglich bereits eingebener Preise
-					  ship_buy_min[res] =  ship_buy_min[res]
-					  										-	ship_buy_metal * MARKET_METAL_FACTOR / actuel_res_factor
-					  										- ship_buy_crystal * MARKET_CRYSTAL_FACTOR / actuel_res_factor
-					  										- ship_buy_plastic * MARKET_PLASTIC_FACTOR / actuel_res_factor
-					  										- ship_buy_fuel * MARKET_FUEL_FACTOR / actuel_res_factor
-					  										- ship_buy_food * MARKET_FOOD_FACTOR / actuel_res_factor;
-					  ship_buy_min[res] = Math.floor(ship_buy_min[res]);					// Der Anzeigewert & Prüfwert
+		  		  // MinBetrag
+		  		  // Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
+		  		  ship_buy_min[res] =	ship_sell_metal / actuel_res_factor * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MIN
+				  										+ ship_sell_crystal / actuel_res_factor * MARKET_CRYSTAL_FACTOR * SHIP_PRICE_FACTOR_MIN
+				  										+ ship_sell_plastic / actuel_res_factor * MARKET_PLASTIC_FACTOR * SHIP_PRICE_FACTOR_MIN
+				  										+ ship_sell_fuel / actuel_res_factor * MARKET_FUEL_FACTOR * SHIP_PRICE_FACTOR_MIN
+				  										+ ship_sell_food / actuel_res_factor * MARKET_FOOD_FACTOR * SHIP_PRICE_FACTOR_MIN;
+				    // Errechnet Grundbetrag abzüglich bereits eingebener Preise
+				    ship_buy_min[res] =  ship_buy_min[res]
+				  										- ship_buy_metal * MARKET_METAL_FACTOR / actuel_res_factor
+				  										- ship_buy_crystal * MARKET_CRYSTAL_FACTOR / actuel_res_factor
+				  										- ship_buy_plastic * MARKET_PLASTIC_FACTOR / actuel_res_factor
+				  										- ship_buy_fuel * MARKET_FUEL_FACTOR / actuel_res_factor
+				  										- ship_buy_food * MARKET_FOOD_FACTOR / actuel_res_factor;
+				    ship_buy_min[res] = Math.floor(ship_buy_min[res]);					// Der Anzeigewert & Prüfwert
 
 
 						// Definiert die Zahl, welche in das Preisfeld geschrieben wird nach dem Klick auf den Min/Max Link
@@ -717,12 +725,10 @@
 						var ship_max = FormatNumber('return',ship_buy_max[res],'','','');
 
 						// Definiert die "Min./Max." Ausgabe
-					  out_ship_min_max[res]="<a href=\"javascript:;\" onclick=\"document.getElementById('"+buy_field+"').value="+sum_min+";calcMarketShipPrice(0, 0);FormatNumber('"+buy_field+"','"+sum_min+"','','','');\">"+ship_min+"</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('"+buy_field+"').value="+sum_max+";calcMarketShipPrice(0, 0);FormatNumber('"+buy_field+"','"+sum_max+"','','','');\">"+ship_max+"</a>";
+					    out_ship_min_max[res]="<a href=\"javascript:;\" onclick=\"document.getElementById('"+buy_field+"').value="+sum_min+";calcMarketShipPrice(0, 0);FormatNumber('"+buy_field+"','"+sum_min+"','','','');\">"+ship_min+"</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('"+buy_field+"').value="+sum_max+";calcMarketShipPrice(0, 0);FormatNumber('"+buy_field+"','"+sum_max+"','','','');\">"+ship_max+"</a>";
 					}
-
-
-
-				  //
+       
+					//
 			  	// End Prüfung ob Angebot OK ist
 			  	//
 
@@ -731,9 +737,9 @@
 			  	{
 			  		var ship_check_message = "<div style=\"color:red;font-weight:bold;\">Gib ein Angebot ein!</div>";
 
-			  		// Sperrt Sendebutton
-			  		document.getElementById('ship_sell_submit').disabled=true;
-						document.getElementById('ship_sell_submit').style.color='#f00';
+			  	// Sperrt Sendebutton
+			  	document.getElementById('ship_sell_submit').disabled=true;
+					document.getElementById('ship_sell_submit').style.color='#f00';
 			  	}
 			  	// Zu hohe Preise
 			  	else if(ship_buy_max['0']<0
@@ -784,20 +790,18 @@
 			  		document.getElementById('ship_last_update').value=last_update;
 			  	}
 
-
-
-			   	//
+         	//
 			   	// Daten Ändern
-			   	//
+		  	 	//
 
 			   	// Ändert Daten in den Min/Max Feldern
-			   	document.getElementById('ship_min_max_metal').innerHTML=out_ship_min_max['0'];
+			  	document.getElementById('ship_min_max_metal').innerHTML=out_ship_min_max['0'];
 					document.getElementById('ship_min_max_crystal').innerHTML=out_ship_min_max['1'];
 					document.getElementById('ship_min_max_plastic').innerHTML=out_ship_min_max['2'];
 					document.getElementById('ship_min_max_fuel').innerHTML=out_ship_min_max['3'];
 					document.getElementById('ship_min_max_food').innerHTML=out_ship_min_max['4'];
-
-					// Gibt die eingegebenen Zahlen formatiert aus
+          
+          // Gibt die eingegebenen Zahlen formatiert aus
 					document.getElementById('ship_count').value=FormatNumber('return',ship_count,'','','');
 					document.getElementById('ship_buy_metal').value=FormatNumber('return',ship_buy_metal,'','','');
 					document.getElementById('ship_buy_crystal').value=FormatNumber('return',ship_buy_crystal,'','','');
@@ -812,9 +816,8 @@
 					document.getElementById('ship_name').value=ship_name;
 
 				}
-
-
-
+      
+        
 				/**************************************************************************/
 				/* Markt: Auktions Check		            															    */
 				/* Berechnet und überprüft die Korrektheit der Eingaben     							*/
