@@ -4,6 +4,10 @@
 Version 3.5.7
 -------------
 
+### Features ###
+
+ * Neues Feld im Marktplatz um Schiffe zu einem bestimmen Prozentsatz zu verkaufen
+
 ### Bugfixes ###
 
  * Bevölkerungswachstum wird nun korrekt berechnet

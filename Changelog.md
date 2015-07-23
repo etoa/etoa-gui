@@ -8,6 +8,10 @@ Version 3.5.7
 
  * Fixed birthrate
 
+#### Features ####
+
+ * Added field for %-calculation at market
+
 Version 3.5.6
 -------------
 

@@ -608,32 +608,32 @@
 
 					// Ändert den Verkaufswert (Angebot) auf die aktuellen Kosten
 					ship_sell_metal = ship_costs_metal_total;
-				  ship_sell_crystal = ship_costs_crystal_total;
-				  ship_sell_plastic = ship_costs_plastic_total;
-				  ship_sell_fuel = ship_costs_fuel_total;
-				  ship_sell_food = ship_costs_food_total;
+				    ship_sell_crystal = ship_costs_crystal_total;
+				    ship_sell_plastic = ship_costs_plastic_total;
+				    ship_sell_fuel = ship_costs_fuel_total;
+				    ship_sell_food = ship_costs_food_total;
 
 				  	// Schreibt Originalpreise in "Preis-Felder" und berechnet Min/Max wenn eine neue Eingabe gemacht wurde
 				  	if(new_ship==1)
-			  	{   
-			  	  ship_buy_metal = ship_costs_metal_total*ship_percent;
-			  	  ship_buy_crystal = ship_costs_crystal_total*ship_percent;
-			  	  ship_buy_plastic = ship_costs_plastic_total*ship_percent;
-			  	  ship_buy_fuel = ship_costs_fuel_total*ship_percent;
-			  	  ship_buy_food = ship_costs_food_total*ship_percent;
+			  	    {   
+				  	    ship_buy_metal = ship_costs_metal_total*ship_percent;
+				  	    ship_buy_crystal = ship_costs_crystal_total*ship_percent;
+				    	ship_buy_plastic = ship_costs_plastic_total*ship_percent;
+				    	ship_buy_fuel = ship_costs_fuel_total*ship_percent;
+				  	    ship_buy_food = ship_costs_food_total*ship_percent;
 
-				  	//Ändert Daten beim "Angebot Feld" welches gesperrt ist für Änderungen
-				  	document.getElementById('ship_sell_metal').value=FormatNumber('return',ship_buy_metal,'','','');
-				  	document.getElementById('ship_sell_crystal').value=FormatNumber('return',ship_buy_crystal,'','','');
-				  	document.getElementById('ship_sell_plastic').value=FormatNumber('return',ship_buy_plastic,'','','');
-				  	document.getElementById('ship_sell_fuel').value=FormatNumber('return',ship_buy_fuel,'','','');
-				    document.getElementById('ship_sell_food').value=FormatNumber('return',ship_buy_food,'','','');
-				  }
+					  	//Ändert Daten beim "Angebot Feld" welches gesperrt ist für Änderungen
+					  	document.getElementById('ship_sell_metal').value=FormatNumber('return',ship_costs_metal_total,'','','');
+					  	document.getElementById('ship_sell_crystal').value=FormatNumber('return',ship_costs_crystal_total,'','','');
+					  	document.getElementById('ship_sell_plastic').value=FormatNumber('return',ship_costs_plastic_total,'','','');
+					  	document.getElementById('ship_sell_fuel').value=FormatNumber('return',ship_costs_fuel_total,'','','');
+					    document.getElementById('ship_sell_food').value=FormatNumber('return',ship_costs_food_total,'','','');
+    			   }
 
 				  
-				  //
-			  	// Errechnet und formatiert Preise
-			  	//
+				    //
+			  	    // Errechnet und formatiert Preise
+			  	    //
 
 					var ship_buy_max = new Array();
 					var log_ship_buy_max = new Array();
@@ -682,13 +682,13 @@
 
 
 
-	  		    // MaxBetrag
-	  		    // Errechnet Grundbetrag (Noch ohne Abzüge von eingegebenen Preisen)
-	  		    ship_buy_max[res] =	ship_sell_metal / actuel_res_factor * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MAX
-			  										+ ship_sell_crystal / actuel_res_factor * MARKET_CRYSTAL_FACTOR * SHIP_PRICE_FACTOR_MAX
-			  										+ ship_sell_plastic / actuel_res_factor * MARKET_PLASTIC_FACTOR * SHIP_PRICE_FACTOR_MAX
-			  										+ ship_sell_fuel / actuel_res_factor * MARKET_FUEL_FACTOR * SHIP_PRICE_FACTOR_MAX
-			  										+ ship_sell_food / actuel_res_factor * MARKET_FOOD_FACTOR * SHIP_PRICE_FACTOR_MAX;
+            // MaxBetrag
+            // Errechnet Grundbetrag (Noch ohne Abzüge von eingegebenen Preisen)
+            ship_buy_max[res] =	ship_sell_metal / actuel_res_factor * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MAX
+										+ ship_sell_crystal / actuel_res_factor * MARKET_CRYSTAL_FACTOR * SHIP_PRICE_FACTOR_MAX
+										+ ship_sell_plastic / actuel_res_factor * MARKET_PLASTIC_FACTOR * SHIP_PRICE_FACTOR_MAX
+										+ ship_sell_fuel / actuel_res_factor * MARKET_FUEL_FACTOR * SHIP_PRICE_FACTOR_MAX
+										+ ship_sell_food / actuel_res_factor * MARKET_FOOD_FACTOR * SHIP_PRICE_FACTOR_MAX;
 
 				    // Errechnet Grundbetrag abzüglich bereits eingebener Preise
 				    ship_buy_max[res] =  ship_buy_max[res]
@@ -790,18 +790,19 @@
 			  		document.getElementById('ship_last_update').value=last_update;
 			  	}
 
-         	//
+             	//
 			   	// Daten Ändern
 		  	 	//
 
 			   	// Ändert Daten in den Min/Max Feldern
 			  	document.getElementById('ship_min_max_metal').innerHTML=out_ship_min_max['0'];
-					document.getElementById('ship_min_max_crystal').innerHTML=out_ship_min_max['1'];
-					document.getElementById('ship_min_max_plastic').innerHTML=out_ship_min_max['2'];
-					document.getElementById('ship_min_max_fuel').innerHTML=out_ship_min_max['3'];
-					document.getElementById('ship_min_max_food').innerHTML=out_ship_min_max['4'];
+			  	document.getElementById('ship_min_max_crystal').innerHTML=out_ship_min_max['1'];
+			  	document.getElementById('ship_min_max_plastic').innerHTML=out_ship_min_max['2'];
+			  	document.getElementById('ship_min_max_fuel').innerHTML=out_ship_min_max['3'];
+			  	document.getElementById('ship_min_max_food').innerHTML=out_ship_min_max['4'];
           
-          // Gibt die eingegebenen Zahlen formatiert aus
+                // Gibt die eingegebenen Zahlen formatiert aus
+
 					document.getElementById('ship_count').value=FormatNumber('return',ship_count,'','','');
 					document.getElementById('ship_buy_metal').value=FormatNumber('return',ship_buy_metal,'','','');
 					document.getElementById('ship_buy_crystal').value=FormatNumber('return',ship_buy_crystal,'','','');

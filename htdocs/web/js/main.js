@@ -853,7 +853,7 @@ function setFocus(theForm) {
 function FormatNumber(id, num, max, decpoint, sep)
 {
 	// Macht aus der Zahl einen String (sonst funktioniert replace nicht richtig)
-	var num = num.toString();
+	var num = Math.round(num).toString();
 
 	// Löscht Trennzeichen aus der Zahl
 	var num = num.replace(/`/g, "");
