@@ -119,9 +119,9 @@
 
 
 
-	//
-	// Flotten  
-	//
+	 //
+	 // Flotten  
+	 //
 
 		//
 		// Eigene Flotten
@@ -184,7 +184,8 @@
 	      technologies
 	      ON technologies.tech_id=techlist.techlist_tech_id
 	      AND techlist.techlist_user_id='".$cu->id."'
-	      AND techlist.techlist_build_type>'0';");
+	      AND techlist.techlist_build_type>'0'
+	      AND techlist.techlist_tech_id != '23';");
 		if (mysql_num_rows($bres)>0)
 		{
 			$barr = mysql_fetch_array($bres);
@@ -206,7 +207,49 @@
 		{
 			echo "<td>Es wird nirgendwo geforscht!</td></tr>";
 		}
-		
+				
+    //
+    //Gentech
+    //
+    $bres = dbquery("
+	  SELECT
+	      technologies.tech_name,
+	      techlist.techlist_build_end_time,
+	      techlist.techlist_entity_id
+	  FROM
+	      techlist
+	      INNER JOIN
+	      technologies
+	      ON technologies.tech_id=techlist.techlist_tech_id
+	      AND techlist.techlist_user_id='".$cu->id."'
+	      AND techlist.techlist_build_type>'0'
+	      AND techlist.techlist_tech_id= '23';");
+		if (mysql_num_rows($bres)>0)
+		{
+      echo"
+        <tr >
+          <th colspan =3></th>
+          <th>Gentechnik</th>
+		   	</tr>
+			  <tr>";
+
+			$garr = mysql_fetch_array($bres);
+			echo"<td colspan =3>";
+			echo "<td><a href=\"?page=research&amp;change_entity=".$garr['techlist_entity_id']."\" id=\"tech_gen\">";
+			//Forschung ist fertig
+			if($garr['techlist_build_end_time']-time()<=0)
+			{
+				echo "".$garr['tech_name']." Fertig";
+			}
+			//Noch am forschen
+			else
+			{
+				echo startTime($garr['techlist_build_end_time']-time(), 'tech_gen', 0, ''.$garr['tech_name'].' TIME');
+			}
+	
+			echo "</a></td></tr>";
+		}
+
 		//
 		// Allianzegebäude 
 		//

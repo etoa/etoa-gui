@@ -54,6 +54,7 @@ if (isset($cp)) {
 		$tl = new TechList($cu->id);
 		define("GEN_TECH_LEVEL",$tl->getLevel(GEN_TECH_ID));
 		$minBuildTimeFactor = (0.1-(GEN_TECH_LEVEL/100));
+      
 
 		// Überschrift
 		echo "<h1>Forschungslabor (Stufe ".CURRENT_LAB_LEVEL.") des Planeten ".$cp->name."</h1>";
@@ -67,17 +68,26 @@ if (isset($cp)) {
 			techlist 
 		WHERE 
 			techlist_user_id='".$cu->id."';");
-		$builing_something=false;
+		$building_something=false;
+		$building_gen = false;
 		while ($tarr = mysql_fetch_array($tres)) {
 			$techlist[$tarr['techlist_tech_id']]=$tarr;
             // Check, ob schon eine Technik geforscht wird
             // BUGFIX: this is tech, NO check for same planet,
             // because only one tech at the same time per user
+			
 			if ($tarr['techlist_build_type']>2) {
-				$builing_something=true;
+				if ($tarr['techlist_tech_id']==23)
+				{
+          $building_gen = true;
+				}
+				else
+				{
+				  $building_something=true;
+				}
 			}
 		}
-
+    
 		$new_people_set = false;
 		// people working changed
 		if (isset($_POST['submit_people_form']))
@@ -269,7 +279,7 @@ if (isset($cp)) {
 						</td>
 					</tr>';	
 
-	    	tableStart("Labor-Infos");
+	    tableStart("Labor-Infos");
 			echo '<colgroup><col style="width:400px;"/><col/></colgroup>';
 			// Specialist
 			if ($cu->specialist->costsResearch!=1)
@@ -401,10 +411,10 @@ if (isset($cp)) {
 										UPDATE 
 											techlist 
 										SET
-		                  					techlist_build_type='3',
-		                  					techlist_build_start_time='".time()."',
-		                  					techlist_build_end_time='".$end_time."',
-		                  					techlist_entity_id='".$cp->id()."'
+            					techlist_build_type='3',
+            					techlist_build_start_time='".time()."',
+            					techlist_build_end_time='".$end_time."',
+            					techlist_entity_id='".$cp->id()."'
 										WHERE
 											techlist_tech_id='".$arr['tech_id']."'
 											AND techlist_user_id='".$cu->id."';");
@@ -442,27 +452,27 @@ if (isset($cp)) {
 									//Log schreiben
 									$log_text = "[b]Forschung Ausbau[/b]
 
-[b]Erforschungsdauer:[/b] ".tf($btime)."
-[b]Ende:[/b] ".date("d.m.Y H:i:s",$end_time)."
-[b]Forschungslabor Level:[/b] ".CURRENT_LAB_LEVEL."
-[b]Eingesetzte Bewohner:[/b] ".nf($peopleWorking)."
-[b]Gen-Tech Level:[/b] ".GEN_TECH_LEVEL."
-[b]Eingesetzter Spezialist:[/b] ".$cu->specialist->name."
+									[b]Erforschungsdauer:[/b] ".tf($btime)."
+									[b]Ende:[/b] ".date("d.m.Y H:i:s",$end_time)."
+									[b]Forschungslabor Level:[/b] ".CURRENT_LAB_LEVEL."
+									[b]Eingesetzte Bewohner:[/b] ".nf($peopleWorking)."
+									[b]Gen-Tech Level:[/b] ".GEN_TECH_LEVEL."
+									[b]Eingesetzter Spezialist:[/b] ".$cu->specialist->name."
 
-[b]Kosten[/b]
-[b]".RES_METAL.":[/b] ".nf($bc['metal'])."
-[b]".RES_CRYSTAL.":[/b] ".nf($bc['crystal'])."
-[b]".RES_PLASTIC.":[/b] ".nf($bc['plastic'])."
-[b]".RES_FUEL.":[/b] ".nf($bc['fuel'])."
-[b]".RES_FOOD.":[/b] ".nf($bc['food'])."
+									[b]Kosten[/b]
+									[b]".RES_METAL.":[/b] ".nf($bc['metal'])."
+									[b]".RES_CRYSTAL.":[/b] ".nf($bc['crystal'])."
+									[b]".RES_PLASTIC.":[/b] ".nf($bc['plastic'])."
+									[b]".RES_FUEL.":[/b] ".nf($bc['fuel'])."
+									[b]".RES_FOOD.":[/b] ".nf($bc['food'])."
 
-[b]Restliche Rohstoffe auf dem Planeten[/b]
-[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
-[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
-[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
-[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
-[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
-									
+									[b]Restliche Rohstoffe auf dem Planeten[/b]
+									[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
+									[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
+									[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
+									[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
+									[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
+																	
 									//Log Speichern
 									GameLog::add(GameLog::F_TECH, GameLog::INFO, $log_text, $cu->id,$cu->allianceId,$cp->id,$arr['tech_id'], $b_status, $b_level);
 								}
@@ -502,23 +512,23 @@ if (isset($cp)) {
 							//Log schreiben
 							$log_text = "[b]Forschung Abbruch[/b]
 
-[b]Start der Forschung:[/b] ".date("d.m.Y H:i:s",$start_time)."
-[b]Ende der Forschung:[/b] ".date("d.m.Y H:i:s",$end_time)."
+							[b]Start der Forschung:[/b] ".date("d.m.Y H:i:s",$start_time)."
+							[b]Ende der Forschung:[/b] ".date("d.m.Y H:i:s",$end_time)."
 
-[b]Erhaltene Rohstoffe[/b]
-[b]Faktor:[/b] ".$fac."
-[b]".RES_METAL.":[/b] ".nf($bc['metal']*$fac)."
-[b]".RES_CRYSTAL.":[/b] ".nf($bc['crystal']*$fac)."
-[b]".RES_PLASTIC.":[/b] ".nf($bc['plastic']*$fac)."
-[b]".RES_FUEL.":[/b] ".nf($bc['fuel']*$fac)."
-[b]".RES_FOOD.":[/b] ".nf($bc['food']*$fac)."
+							[b]Erhaltene Rohstoffe[/b]
+							[b]Faktor:[/b] ".$fac."
+							[b]".RES_METAL.":[/b] ".nf($bc['metal']*$fac)."
+							[b]".RES_CRYSTAL.":[/b] ".nf($bc['crystal']*$fac)."
+							[b]".RES_PLASTIC.":[/b] ".nf($bc['plastic']*$fac)."
+							[b]".RES_FUEL.":[/b] ".nf($bc['fuel']*$fac)."
+							[b]".RES_FOOD.":[/b] ".nf($bc['food']*$fac)."
 
-[b]Rohstoffe auf dem Planeten[/b]
-[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
-[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
-[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
-[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
-[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
+							[b]Rohstoffe auf dem Planeten[/b]
+							[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
+							[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
+							[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
+							[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
+							[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
 							
 							//Log Speichern
 							GameLog::add(GameLog::F_TECH, GameLog::INFO, $log_text, $cu->id,$cu->allianceId,$cp->id,$arr['tech_id'], $b_status, $b_level);
@@ -552,7 +562,7 @@ if (isset($cp)) {
 					echo "<tr><th height=\"20\" width=\"50%\">Status:</th>";
 					echo "<td id=\"buildstatus\" width=\"50%\" style=\"".$color."\">$status_text</td></tr>";
 					echo "<tr><th height=\"20\" width=\"50%\">Stufe:</th>";
-	
+	       
 					if ($b_level>0)
 					{
 						echo "<td id=\"buildlevel\" width=\"50%\">".$b_level."</td></tr>";
@@ -613,63 +623,82 @@ if (isset($cp)) {
 					// Bauen
 					if ($b_status==0)
 					{
-							// Wartezeiten auf Ressourcen berechnen
-							if ($cp->prodMetal>0) $bwait['metal']=ceil(($bc['metal']-$cp->resMetal)/$cp->prodMetal*3600);else $bwait['metal']=0;
-							if ($cp->prodCrystal>0) $bwait['crystal']=ceil(($bc['crystal']-$cp->resCrystal)/$cp->prodCrystal*3600);else $bwait['crystal']=0;
-							if ($cp->prodPlastic>0) $bwait['plastic']=ceil(($bc['plastic']-$cp->resPlastic)/$cp->prodPlastic*3600);else $bwait['plastic']=0;
-							if ($cp->prodFuel>0) $bwait['fuel']=ceil(($bc['fuel']-$cp->resFuel)/$cp->prodFuel*3600);else $bwait['fuel']=0;
-							if ($cp->prodFood>0) $bwait['food']=ceil(($bc['food']-$cp->resFood)/$cp->prodFood*3600);else $bwait['food']=0;
-							$bwmax=max($bwait['metal'],$bwait['crystal'],$bwait['plastic'],$bwait['fuel'],$bwait['food']);
-							
-							// Baukosten-String
-							$bcstring = "<td";
-							if ($bc['metal']>$cp->resMetal)
-								$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff","<b>".nf($bc['metal']-$cp->resMetal)."</b> ".RES_METAL."<br/>Bereit in <b>".tf($bwait['metal'])."</b>");
-							$bcstring.= ">".nf($bc['metal'])."</td><td";
-							if ($bc['crystal']>$cp->resCrystal)
-								$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['crystal']-$cp->resCrystal)." ".RES_CRYSTAL."<br/>Bereit in <b>".tf($bwait['crystal'])."</b>");
-							$bcstring.= ">".nf($bc['crystal'])."</td><td";
-							if ($bc['plastic']>$cp->resPlastic)
-								$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['plastic']-$cp->resPlastic)." ".RES_PLASTIC."<br/>Bereit in <b>".tf($bwait['plastic'])."</b>");
-							$bcstring.= ">".nf($bc['plastic'])."</td><td";
-							if ($bc['fuel']>$cp->resFuel)
-								$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['fuel']-$cp->resFuel)." ".RES_FUEL."<br/>Bereit in <b>".tf($bwait['fuel'])."</b>");
-							$bcstring.= ">".nf($bc['fuel'])."</td><td";
-							if ($bc['food']>$cp->resFood)
-								$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['food']-$cp->resFood)." ".RES_FOOD."<br/>Bereit in <b>".tf($bwait['food'])."</b>");
-							$bcstring.= ">".nf($bc['food'])."</td></tr>";
-		
-							// Maximale Stufe erreicht
-							if ($b_level>=$arr['tech_last_level'])
-							{
-								echo "<tr><td colspan=\"7\"><i>Keine Weiterentwicklung m&ouml;glich.</i></td></tr>";
-							}
-							// Es wird bereits geforscht
-							elseif ($builing_something)
-							{
-								echo "<tr><td style=\"color:red;\">Erforschen</td><td>".tf($btime)."</td>";
+						// Wartezeiten auf Ressourcen berechnen
+						if ($cp->prodMetal>0) $bwait['metal']=ceil(($bc['metal']-$cp->resMetal)/$cp->prodMetal*3600);else $bwait['metal']=0;
+						if ($cp->prodCrystal>0) $bwait['crystal']=ceil(($bc['crystal']-$cp->resCrystal)/$cp->prodCrystal*3600);else $bwait['crystal']=0;
+						if ($cp->prodPlastic>0) $bwait['plastic']=ceil(($bc['plastic']-$cp->resPlastic)/$cp->prodPlastic*3600);else $bwait['plastic']=0;
+						if ($cp->prodFuel>0) $bwait['fuel']=ceil(($bc['fuel']-$cp->resFuel)/$cp->prodFuel*3600);else $bwait['fuel']=0;
+						if ($cp->prodFood>0) $bwait['food']=ceil(($bc['food']-$cp->resFood)/$cp->prodFood*3600);else $bwait['food']=0;
+						$bwmax=max($bwait['metal'],$bwait['crystal'],$bwait['plastic'],$bwait['fuel'],$bwait['food']);
+						
+						// Baukosten-String
+						$bcstring = "<td";
+						if ($bc['metal']>$cp->resMetal)
+							$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff","<b>".nf($bc['metal']-$cp->resMetal)."</b> ".RES_METAL."<br/>Bereit in <b>".tf($bwait['metal'])."</b>");
+						$bcstring.= ">".nf($bc['metal'])."</td><td";
+						if ($bc['crystal']>$cp->resCrystal)
+							$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['crystal']-$cp->resCrystal)." ".RES_CRYSTAL."<br/>Bereit in <b>".tf($bwait['crystal'])."</b>");
+						$bcstring.= ">".nf($bc['crystal'])."</td><td";
+						if ($bc['plastic']>$cp->resPlastic)
+							$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['plastic']-$cp->resPlastic)." ".RES_PLASTIC."<br/>Bereit in <b>".tf($bwait['plastic'])."</b>");
+						$bcstring.= ">".nf($bc['plastic'])."</td><td";
+						if ($bc['fuel']>$cp->resFuel)
+							$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['fuel']-$cp->resFuel)." ".RES_FUEL."<br/>Bereit in <b>".tf($bwait['fuel'])."</b>");
+						$bcstring.= ">".nf($bc['fuel'])."</td><td";
+						if ($bc['food']>$cp->resFood)
+							$bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['food']-$cp->resFood)." ".RES_FOOD."<br/>Bereit in <b>".tf($bwait['food'])."</b>");
+						$bcstring.= ">".nf($bc['food'])."</td></tr>";
+	          // Maximale Stufe erreicht
+						//$techlist[$bid]
+
+						if ($b_level>=$arr['tech_last_level'])
+						{
+							echo "<tr><td colspan=\"7\"><i>Keine Weiterentwicklung m&ouml;glich.</i></td></tr>";
+						}
+						// Es wird bereits geforscht
+						elseif ($building_something)
+						{
+							//Sonderfeld Gentech
+							if ($arr['tech_id'] == GEN_TECH_ID)
+							{ 
+								if (!$building_gen)
+                { 
+	                echo "<tr><td><input type=\"submit\" class=\"button\" name=\"command_build\" value=\"Erforschen\"></td><td>".tf($btime)."</td>";
+								  echo "<td>".nf($bc['metal'])."</td><td>".nf($bc['crystal'])."</td><td>".nf($bc['plastic'])."</td><td>".nf($bc['fuel'])."</td><td>".nf($bc['food'])."</td></tr>";
+							  }	
+								else
+								{
+									echo "<tr><td style=\"color:red;\">Erforschen</td><td>".tf($btime)."</td>";
+									echo $bcstring;
+									echo "<tr><td colspan=\"7\"><i>Es kann nichts erforscht werden da gerade an einer anderen Technik geforscht wird!</i></td></tr>";
+							  }
+						  }
+						  else
+						  {
+						  	echo "<tr><td style=\"color:red;\">Erforschen</td><td>".tf($btime)."</td>";
 								echo $bcstring;
 								echo "<tr><td colspan=\"7\"><i>Es kann nichts erforscht werden da gerade an einer anderen Technik geforscht wird!</i></td></tr>";
-							}
-							// Zuwenig Rohstoffe vorhanden
-							elseif ($cp->resMetal<$bc['metal'] || $cp->resCrystal<$bc['crystal']  || $cp->resPlastic<$bc['plastic']  || $cp->resFuel<$bc['fuel']  || $cp->resFood<$bc['food'])
-							{
-								echo "<tr><td style=\"color:red;\">Erforschen</td><td>".tf($btime)."</td>";
-								echo $bcstring;
-								echo "<tr><td colspan=\"7\"><i>Keine Weiterentwicklung m&ouml;glich, zuwenig Rohstoffe!</i></td></tr>";
-							}
-							// Forschen
-							elseif ($b_level==0)
-							{
-								echo "<tr><td><input type=\"submit\" class=\"button\" name=\"command_build\" value=\"Erforschen\"></td><td>".tf($btime)."</td>";
-								echo "<td>".nf($bc['metal'])."</td><td>".nf($bc['crystal'])."</td><td>".nf($bc['plastic'])."</td><td>".nf($bc['fuel'])."</td><td>".nf($bc['food'])."</td></tr>";
-							}
-							// Ausbauen
-							else
-							{
-								echo "<tr><td><input type=\"submit\" class=\"button\" name=\"command_build\" value=\"Erforschen\"></td><td>".tf($btime)."</td>";
-								echo "<td>".nf($bc['metal'])."</td><td>".nf($bc['crystal'])."</td><td>".nf($bc['plastic'])."</td><td>".nf($bc['fuel'])."</td><td>".nf($bc['food'])."</td></tr>";
-							}
+						  }	
+						}
+						// Zuwenig Rohstoffe vorhanden
+						elseif ($cp->resMetal<$bc['metal'] || $cp->resCrystal<$bc['crystal']  || $cp->resPlastic<$bc['plastic']  || $cp->resFuel<$bc['fuel']  || $cp->resFood<$bc['food'])
+						{
+							echo "<tr><td style=\"color:red;\">Erforschen</td><td>".tf($btime)."</td>";
+							echo $bcstring;
+							echo "<tr><td colspan=\"7\"><i>Keine Weiterentwicklung m&ouml;glich, zuwenig Rohstoffe!</i></td></tr>";
+						}
+						// Forschen
+						elseif ($b_level==0)
+						{
+							echo "<tr><td><input type=\"submit\" class=\"button\" name=\"command_build\" value=\"Erforschen\"></td><td>".tf($btime)."</td>";
+							echo "<td>".nf($bc['metal'])."</td><td>".nf($bc['crystal'])."</td><td>".nf($bc['plastic'])."</td><td>".nf($bc['fuel'])."</td><td>".nf($bc['food'])."</td></tr>";
+						}
+						// Ausbauen
+						else
+						{echo($building_something);
+							echo "<tr><td><input type=\"submit\" class=\"button\" name=\"command_build\" value=\"Erforschen\"></td><td>".tf($btime)."</td>";
+							echo "<td>".nf($bc['metal'])."</td><td>".nf($bc['crystal'])."</td><td>".nf($bc['plastic'])."</td><td>".nf($bc['fuel'])."</td><td>".nf($bc['food'])."</td></tr>";
+						}
 					}
 	
 	

@@ -11,6 +11,7 @@ Version 3.5.7
 #### Features ####
 
  * Added field for %-calculation at market
+ * Gentech counts as special tech now(allows researching of Gentech+other tech at same time)
 
 Version 3.5.6
 -------------
