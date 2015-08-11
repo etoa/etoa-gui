@@ -13,6 +13,10 @@ Version 3.5.7
  * Added field for %-calculation at market
  * Gentech counts as special tech now(allows researching of Gentech+other tech at same time)
 
+ ### Administration ###
+
+ * Added function to add all buildings at once
+
 Version 3.5.6
 -------------
 
