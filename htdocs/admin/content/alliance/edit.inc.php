@@ -132,13 +132,13 @@
 			{	
 			dbquery("UPDATE alliance_buildlist SET alliance_buildlist_current_level =".$_POST['level'].", alliance_buildlist_member_for =".$_POST['amount']." WHERE alliance_buildlist_alliance_id =".$id." 
 					 AND alliance_buildlist_building_id =(select alliance_building_id from alliance_buildings where alliance_building_name='".$_POST['selected']."')");
-			$tpl->assign('msg',mysql_num_rows($test));
+			$tpl->assign('msg','Datensatz erfolgreich bearbeitet!');
 			}
 			else
 			{	
 				dbquery("INSERT into alliance_buildlist(alliance_buildlist_alliance_id,alliance_buildlist_building_id,alliance_buildlist_current_level,alliance_buildlist_build_start_time,alliance_buildlist_build_end_time,alliance_buildlist_cooldown,alliance_buildlist_member_for)
 				VALUES(".$id.",(select alliance_building_id from alliance_buildings where alliance_building_name='".$_POST['selected']."'),".$_POST['level'].",0,1,0,".$_POST['amount'].")");
-				$tpl->assign('msg', 'nope!');
+				$tpl->assign('msg', 'Datensatz erfolgreich eingefügt!');
 			}		
 		}
 		
