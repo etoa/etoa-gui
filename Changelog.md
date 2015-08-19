@@ -7,6 +7,7 @@ Version 3.5.7
 ### Bugfixes ###
 
  * Fixed birthrate
+ * Fxied typos 
 
 #### Features ####
 
@@ -16,6 +17,7 @@ Version 3.5.7
  ### Administration ###
 
  * Added function to add all buildings at once
+ * Added function to add alliance buildings
 
 Version 3.5.6
 -------------
