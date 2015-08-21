@@ -37,7 +37,7 @@
 	
 	// BEGIN SKRIPT //
 
-	echo "<form action=\"?page=$page\" method=\"post\">";
+	echo "<form action=\"?page=$page\" id='targetForm' method=\"post\">";
 	
 	// Gebäude Level und Arbeiter laden
 	if ($cu->allianceId!=0)
@@ -474,6 +474,8 @@
 			tableStart("Kryptocenter-Infos");
 			echo "<tr><th>Aktuelle Reichweite:</th>
 					<td>".(CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel)." AE ~".floor(CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel/$cfg->value('cell_length'))." Systeme (+".CRYPTO_RANGE_PER_LEVEL." pro Stufe) </td></tr>";
+			echo'<tr><th>Entfernung:</th><td id="distance">-
+					</td></tr>';	
 			echo "<tr><th>Kosten pro Scan:</th>
 					<td>".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." ".RES_FUEL." und ".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." ".RES_FUEL." Allianzrohstoffe</td></tr>";
 			echo "<tr><th>Abklingzeit:</th>
@@ -505,7 +507,10 @@
 					$coords[3] = $cp->cy;
 					$coords[4] = $cp->pos;
 				}
-				echo '<form action="?page='.$page.'" method="post">';		
+				
+				$keyup_command = 'xajax_getCryptoDistance(xajax.getFormValues(\'targetForm\'),'.$cp->sx.','.$cp->sy.','.$cp->cx.','.$cp->cy.','.$cp->pos.');';
+				echo '<form action="?page='.$page.'" method="post" id="targetForm">';	
+				echo '<input type="hidden" value='.CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel.' name="range" />';	
 				checker_init();
 				iBoxStart("Ziel für Flottenanalyse wahlen:");
 				
@@ -516,11 +521,11 @@
 				$bm = new BookmarkManager($cu->id);
 				
 				echo 'Koordinaten eingeben: 
-						<input type="text" name="sx" id="sx" value="'.$coords[0].'" size="2" maxlength="2" /> / 
-						<input type="text" name="sy" id="sy" value="'.$coords[1].'" size="2" maxlength="2" /> :
-						<input type="text" name="cx" id="cx" value="'.$coords[2].'" size="2" maxlength="2" /> /
-						<input type="text" name="cy" id="cy" value="'.$coords[3].'" size="2" maxlength="2" /> :
-						<input type="text" name="p" id="p" value="'.$coords[4].'" size="2" maxlength="2" /><br /><br />';
+						<input type="text" onkeyup="'.$keyup_command.'" name="sx" id="sx" value="'.$coords[0].'" size="2" maxlength="2" /> / 
+						<input type="text" onkeyup="'.$keyup_command.'" name="sy" id="sy" value="'.$coords[1].'" size="2" maxlength="2" /> :
+						<input type="text" onkeyup="'.$keyup_command.'" name="cx" id="cx" value="'.$coords[2].'" size="2" maxlength="2" /> /
+						<input type="text" onkeyup="'.$keyup_command.'" name="cy" id="cy" value="'.$coords[3].'" size="2" maxlength="2" /> :
+						<input type="text" onkeyup="'.$keyup_command.'" name="p" id="p" value="'.$coords[4].'" size="2" maxlength="2" /><br /><br />';
 				
 				// Bookmarkliste anzeigen
 				echo '<i>oder</i> Favorit wählen: ';
@@ -563,5 +568,5 @@
     info_msg("Aufgrund eines intergalaktischen Moratoriums der Völkerföderation der Galaxie Andromeda 
     sind sämtliche elektronischen Spionagetätigkeiten zurzeit nicht erlaubt!");
   }
-  
+ 
 ?>
