@@ -79,19 +79,33 @@ if (isset($cp)) {
 			if ($tarr['techlist_build_type']>2) {
 				if ($tarr['techlist_tech_id']==23)
 				{
-          $building_gen = true;
+         			$building_gen = true;
 				}
 				else
 				{
-				  $building_something=true;
+				  	$building_something=true;
 				}
 			}
 		}
     
 		$new_people_set = false;
 		// people working changed
-		if (isset($_POST['submit_people_form']))
+		if (isset($_POST['submit_people_form_gen']))
 		{
+			$set_people = nf_back($_POST['peopleWorking']);
+			if (!$builing_something && $bl->setPeopleWorkingGen(TECH_BUILDING_ID, $set_people,true))
+			{
+				success_msg("Arbeiter zugeteilt!");
+				$new_people_set = true;
+			}
+			else
+			{
+				error_msg('Arbeiter konnten nicht zugeteilt werden!');
+			}
+		}	
+
+		if (isset($_POST['submit_people_form']))
+		{	
 			$set_people = nf_back($_POST['peopleWorking']);
 			if (!$builing_something && $bl->setPeopleWorking(TECH_BUILDING_ID, $set_people,true))
 			{
@@ -103,6 +117,7 @@ if (isset($cp)) {
 				error_msg('Arbeiter konnten nicht zugeteilt werden!');
 			}
 		}
+		
 		// reload buildlist and techlist in case the number of workers has changed.
         // re-define constants dependent on these objects
 		$bl = new BuildList($cp->id(),$cu->id);
@@ -161,6 +176,8 @@ if (isset($cp)) {
 		}
 
 		$bid = 0;
+		
+
 		if ((isset($_GET['id']) && intval($_GET['id']) >0) || (count($_POST)>0	&& checker_verify())) {
 			if (isset($_GET['id']) && intval($_GET['id']) >0) {
 				$bid = intval($_GET['id']);
@@ -189,6 +206,7 @@ if (isset($cp)) {
 		$peopleFree = floor($cp->people) - $bl->totalPeopleWorking() + $peopleWorking;
 		$peopleOptimized = 0;
 		if ($bid) {
+
 			// Forschungsdaten laden
 			$res = dbquery("
 			SELECT 
@@ -229,6 +247,7 @@ if (isset($cp)) {
 				$peopleOptimized = ceil($maxReduction / $cfg->value('people_work_done'));
 			}
 		}
+		
 
 			// create box to change people working
 			$box =	'
@@ -241,6 +260,14 @@ if (isset($cp)) {
 			} else {
 				$box .= '<input type="hidden" name="peopleOptimized" id="peopleOptimized" value="0" />';	
 			}
+
+			$form_button = 'submit_people_form';		
+			if ($bid ==23) {
+
+				$form_button = 'submit_people_form_gen';
+				$peopleWorking= $bl->getPeopleWorkingGen(TECH_BUILDING_ID);
+			};
+
 			$box .= '	<tr>
 								<th>Eingestellte Arbeiter</th>
 								<td>
@@ -269,7 +296,7 @@ if (isset($cp)) {
 							<tr>
 								<td colspan="2" style="text-align:center;">
 									<div id="changeWorkingPeopleError" style="display:none;">&nbsp;</div>
-									<input type="submit" value="Speichern" name="submit_people_form" id="submit_people_form" />&nbsp;';
+									<input type="submit" value="Speichern" name="'.$form_button.'" id="'.$form_button.'" />&nbsp;';
 
 			if (isset($bid) && $bid>0)
 			{
@@ -303,7 +330,7 @@ if (isset($cp)) {
 			echo '</td></tr>';
 			// Worker
 		  	echo"<tr><td>Eingestellte Arbeiter:</td><td>". nf($peopleWorking);
-			if (!$builing_something)
+		  	if (!$builing_something && $bid>0)
 			{
 				echo '&nbsp;<a href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
 			}
@@ -327,7 +354,6 @@ if (isset($cp)) {
 				'.$checker.$box.'</form>';
 			tableEnd();
 			echo '</div>';
-
 
 			//
 			//Forschung erforschen/abbrechen
