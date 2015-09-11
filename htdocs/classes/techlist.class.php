@@ -111,21 +111,6 @@
                 	buildlist_entity_id=".$cp->id.'');
             return true;
 		}
-
-		function setPeopleWorkingGen($people,$bid)
-		{
-			global $cp;
-            dbquery("
-            	UPDATE
-                	buildlist
-            	SET
-                	buildlist_gen_people_working='".$people."'
-            	WHERE
-                	buildlist_building_id='".$bid."'
-                AND
-                	buildlist_entity_id=".$cp->id.'');
-            return true;
-		}
 	}
 
 ?>

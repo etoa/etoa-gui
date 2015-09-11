@@ -13,7 +13,6 @@
 		private $endTime = 0;
 		private $prodPercent = 1;
 		private $peopleWorking = 0;
-		private $peopleWorkingGen =0;
 		private $peopleWorkingStatus = 0;
 		private $deactivated = 0;
 		private $cooldown = 0;
@@ -63,7 +62,6 @@
 				$this->endTime = $arr['buildlist_build_end_time'];
 				$this->prodPercent = $arr['buildlist_prod_percent'];
 				$this->peopleWorking = $arr['buildlist_people_working'];
-				$this->peopleWorkingGen= $arr['buildlist_gen_people_working'];
 				$this->peopleWorkingStatus = $arr['buildlist_people_working_status'];
 				$this->deactivated = $arr['buildlist_deactivated'];
 				$this->cooldown = $arr['buildlist_cooldown'];
