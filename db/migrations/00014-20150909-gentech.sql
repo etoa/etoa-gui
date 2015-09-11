@@ -1,1 +1,0 @@
-ALTER TABLE `buildlist` ADD `buildlist_gen_people_working` INT unsigned NOT NULL DEFAULT '0' AFTER `buildlist_people_working` ;
