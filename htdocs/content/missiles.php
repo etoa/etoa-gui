@@ -447,13 +447,15 @@
 						$valid=false;
 						foreach($_POST['missile_count'] as $k => $v)
 						{
-							$v = intval($v);
-							$k = intval($k);
 							
+							$v = nf_back($v);
+							$k = intval($k);
+														
 							if ($v > 0)
 							{
 								$valid=true;
 								$bc = min($v,$missilelist[$k]);
+
 								dbquery("
 								UPDATE
 									missilelist

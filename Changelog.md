@@ -7,7 +7,8 @@ Version 3.5.7
 ### Bugfixes ###
 
  * Fixed birthrate
- * Fxied typos 
+ * Fixed typos
+ * Fixed bug where u couldnt destroy more than 999 missles at once	 
 
 #### Features ####
 
