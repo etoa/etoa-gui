@@ -253,7 +253,8 @@
 				$this->load();
 			
 			// BUGFIX: if first part is false, check for $tech in second part!
-			if ((!$tech && !$this->isUnderConstruction($bid)) || ($tech && !$this->tl->isBuildingSomething(true)))
+      
+			if ((!$tech && !$this->isUnderConstruction($bid)) || ($tech))
 			{
 				if (isset($this->items[$bid]))
 				{
@@ -280,25 +281,22 @@
 		{
 			if ($this->items==null)
 				$this->load();
-			
-			// BUGFIX: if first part is false, check for $tech in second part!
-			if ((!$tech && !$this->isUnderConstruction($bid)) || ($tech && !$this->tl->isBuildingSomething(true)))
+						
+			if (isset($this->items[$bid]))
 			{
-				if (isset($this->items[$bid]))
+				global $cp;
+				// Free: Total people on planet minus total working people on planet
+				// PLUS people working in this building (these can be set again)
+				$free = $cp->people - $this->totalPeopleWorking() + $this->items[$bid]->peopleWorking;
+				if ($free >= $people)
 				{
-					global $cp;
-					// Free: Total people on planet minus total working people on planet
-					// PLUS people working in this building (these can be set again)
-					$free = $cp->people - $this->totalPeopleWorking() + $this->items[$bid]->peopleWorking;
-					if ($free >= $people)
+					if ($tech && $this->tl->setPeopleWorkingGen($people,$bid))
 					{
-						if ($tech && $this->tl->setPeopleWorkingGen($people,$bid))
-						{
-							return true;
-						}
+						return true;
 					}
 				}
 			}
+			
 			return false;
 		}
 

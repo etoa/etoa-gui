@@ -80,6 +80,7 @@ if (isset($cp)) {
 				if ($tarr['techlist_tech_id']==23)
 				{
          			$building_gen = true;
+             
 				}
 				else
 				{
@@ -90,10 +91,10 @@ if (isset($cp)) {
     
 		$new_people_set = false;
 		// people working changed
-		if (isset($_POST['submit_people_form_gen']))
+    if (isset($_POST['submit_people_form_gen']))
 		{
 			$set_people = nf_back($_POST['peopleWorking']);
-			if (!$builing_something && $bl->setPeopleWorkingGen(TECH_BUILDING_ID, $set_people,true))
+			if (!$builing_gen && $bl->setPeopleWorkingGen(TECH_BUILDING_ID, $set_people,true))
 			{
 				success_msg("Arbeiter zugeteilt!");
 				$new_people_set = true;
@@ -128,12 +129,23 @@ if (isset($cp)) {
 		$minBuildTimeFactor = (0.1-(GEN_TECH_LEVEL/100));
 
 		// People working in the tech building.
-		$peopleWorking = (
-			($new_people_set && isset($set_people)) ?
-			$set_people :
-			$bl->getPeopleWorking(TECH_BUILDING_ID)
-		);	
-
+    if($building_gen) 
+    {
+  		 $peopleWorking = (
+  			($new_people_set && isset($set_people)) ?
+  			$set_people :
+  			$bl->getPeopleWorking(TECH_BUILDING_ID)
+  		);	
+    }
+    else
+    {
+      $peopleWorking = (
+  			($new_people_set && isset($set_people)) ?
+  			$set_people :
+  			$bl->getPeopleWorkingGen(TECH_BUILDING_ID)
+  		); 
+    }
+    
 		$peopleTimeReduction = $cfg->value('people_work_done');
 		$peopleFoodConsumption = $cfg->value('people_food_require');
 
@@ -329,11 +341,22 @@ if (isset($cp)) {
 	    	}
 			echo '</td></tr>';
 			// Worker
-		  	echo"<tr><td>Eingestellte Arbeiter:</td><td>". nf($peopleWorking);
-		  	if (!$builing_something && $bid>0)
-			{
-				echo '&nbsp;<a href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
-			}
+      echo"<tr><td>Eingestellte Arbeiter:</td><td>". nf($peopleWorking);
+      if ($bid>0)
+      {
+        if(($bid == 23) && ($building_gen <>1))
+			  {
+				  echo '&nbsp;<a href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
+			  }
+        
+        if(($bid <> 23) && ($building_something <>1))
+			  {
+				  echo '&nbsp;<a href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
+			  }
+      }
+      
+      
+        
 			echo '</td></tr>';
 			if ($peopleWorking > 0)
 			{
@@ -498,7 +521,7 @@ if (isset($cp)) {
 									[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
 									[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
 									[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
-																	
+									header("Refresh:0");								
 									//Log Speichern
 									GameLog::add(GameLog::F_TECH, GameLog::INFO, $log_text, $cu->id,$cu->allianceId,$cp->id,$arr['tech_id'], $b_status, $b_level);
 								}
@@ -555,7 +578,7 @@ if (isset($cp)) {
 							[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
 							[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
 							[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
-							
+							header("Refresh:0");	
 							//Log Speichern
 							GameLog::add(GameLog::F_TECH, GameLog::INFO, $log_text, $cu->id,$cu->allianceId,$cp->id,$arr['tech_id'], $b_status, $b_level);
 
