@@ -516,8 +516,8 @@
 					// Die Anzahl Schiffe formatieren (Trennzeichen entfernen) und in Variable speichern
 					var ship_count = document.getElementById('ship_count').value.replace(/`/g, "");
           
-          //Die %-Zahl ermitteln und in Variable speichern
-          var ship_percent = document.getElementById('ship_percent').value;
+          			//Die %-Zahl ermitteln und in Variable speichern
+          			var ship_percent = document.getElementById('ship_percent').value;
 
 					// Die Schiffsdaten aus dem mit PHP erstellen JS-Array werden in einer neuer Variable gespeichert
 					var ship_id = document.getElementById('ship_list').value;
@@ -616,11 +616,11 @@
 				  	// Schreibt Originalpreise in "Preis-Felder" und berechnet Min/Max wenn eine neue Eingabe gemacht wurde
 				  	if(new_ship==1)
 			  	    {   
-				  	    ship_buy_metal = ship_costs_metal_total*ship_percent;
-				  	    ship_buy_crystal = ship_costs_crystal_total*ship_percent;
-				    	ship_buy_plastic = ship_costs_plastic_total*ship_percent;
-				    	ship_buy_fuel = ship_costs_fuel_total*ship_percent;
-				  	    ship_buy_food = ship_costs_food_total*ship_percent;
+				  	    ship_buy_metal = Math.round(ship_costs_metal_total*ship_percent);
+				  	    ship_buy_crystal = Math.round(ship_costs_crystal_total*ship_percent);
+				    	ship_buy_plastic = Math.round(ship_costs_plastic_total*ship_percent);
+				    	ship_buy_fuel = Math.round(ship_costs_fuel_total*ship_percent);
+				  	    ship_buy_food = Math.round(ship_costs_food_total*ship_percent);
 
 					  	//Ändert Daten beim "Angebot Feld" welches gesperrt ist für Änderungen
 					  	document.getElementById('ship_sell_metal').value=FormatNumber('return',ship_costs_metal_total,'','','');
