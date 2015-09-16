@@ -109,7 +109,7 @@
                         UPDATE
                             buildlist
                         SET
-                            buildlist_people_working='".$work."'
+                            buildlist_people_working='".$work."
                         WHERE
                             buildlist_building_id='".intval($id)."'
                         AND buildlist_entity_id=".$cp->id."");
@@ -171,7 +171,8 @@
             WHERE
                 techlist_entity_id='".$cp->id."'
             AND techlist_user_id='".$cu->id."'
-            AND techlist_build_type>'2';";
+            AND techlist_build_type>'2'
+            AND techlist_tech_id <>".GEN_TECH_ID;
             $tres = dbquery($sql);
             $tarr=mysql_fetch_row($tres);
             $w[TECH_BUILDING_ID]=$tarr[0];
@@ -279,7 +280,7 @@
                             AND buildlist_user_id='".$cu->id."'
                             AND buildlist_entity_id='".$cp->id."'");
                     }
-                echo '</td><td>'.(nf($sp_arr['buildlist_people_working']*$cfg->get('people_food_require'))).' t</td></tr>';
+                    echo '</td><td>'.(nf($sp_arr['buildlist_people_working']*$cfg->get('people_food_require'))).' t</td></tr>';
                 }
             }
 
