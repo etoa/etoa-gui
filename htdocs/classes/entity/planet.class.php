@@ -410,7 +410,10 @@ class Planet extends Entity implements OwnableEntity
 		}
 		
 		function setNameAndComment($name,$comment)
-		{
+		{      
+      $name = str_replace("'", '', $name);
+      $comment = str_replace("'", '', $comment);
+      
 			dbquery("
 			UPDATE 
 				planets 
