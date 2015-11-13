@@ -9,6 +9,8 @@ Version 3.5.7
  * Fixed birthrate
  * Fixed typos
  * Fixed bug where u couldnt destroy more than 999 missles at once	 
+ * Infra ships now dont give any exp at all anymore
+ * Exp gained from alliatk will now be divided by the amount of attackers
 
 #### Features ####
 
