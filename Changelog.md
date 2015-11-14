@@ -12,6 +12,7 @@ Version 3.5.7
  * Infra ships now dont give any exp at all anymore
  * Exp gained from alliatk will now be divided by the amount of attackers
  * Removed ' from planetnames to avoid sql problems
+ * Fixed problem with stealth from minbari mysli
 
 #### Features ####
 
