@@ -206,29 +206,51 @@
 		
 		// check for $conf['hmode_days']['p2'] BEFORE calling this function
 		static function setUmodToInactive()
-		{
+		{/*
 			$cfg = Config::getInstance();
             $now = time();
 			// set all users who are inactive 
-			dbquery('UPDATE
-						`users`
-					SET
-						`user_hmode_from`=0,
-						`user_hmode_to`=0,
-						`user_logouttime`="'.(time()-USER_INACTIVE_LONG*86400).'" 
-					WHERE
-						`user_ghost`="0"
-					AND
-						`admin`=0
-                    AND
-                        `user_blocked_to`<'.$now.' 
-                    AND 
-                        `user_hmode_from`>0
-					AND
-						`user_hmode_from`<"'.(time()-$cfg->p1('hmode_days')*86400).'" 
-					;');
+            
+      $res = dbquery('SELCT 
+                        user_id 
+                      FROM 
+                        users 
+                      WHERE
+        						    user_ghost=0
+        					    AND
+        						    admin=0
+                      AND
+                        user_blocked_to <'.$now.' 
+                      AND 
+                        user_hmode_from > 0
+        					    AND
+        						    user_hmode_from<'.(time()-$cfg->p1("hmode_days")*86400).');'
+                    );
+      
+      while ($arr=mysql_fetch_row($res)) {
+        dbquery('UPDATE
+					         	`users`
+					       SET
+						        `user_hmode_from`=0,
+						        `user_hmode_to`=0,
+						        `user_logouttime`="'.(time()-USER_INACTIVE_LONG*86400).'" 
+					       WHERE
+						        `user_id`='.$arr[0]);
+        dbquery("UPDATE
+								buildlist
+							SET
+								buildlist_build_type= 3,
+								buildlist_build_start_time=(buildlist_build_start_time+".MAX_UMOD_TIME*86400."),
+								buildlist_build_end_time=(buildlist_build_end_time+".MAX_UMOD_TIME*86400.")
+							WHERE
+								buildlist_id='".$barr[0]."';");       
+          
+          
+          
+      };       
+      			
 			return mysql_affected_rows();
-		}
+		}*/
 		
 	}
 
