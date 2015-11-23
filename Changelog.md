@@ -8,11 +8,12 @@ Version 3.5.7
 
  * Fixed birthrate
  * Fixed typos
- * Fixed bug where u couldnt destroy more than 999 missles at once	 
+ * Fixed bug where you couldnt destroy more than 999 missles at once	 
  * Infra ships now dont give any exp at all anymore
  * Exp gained from alliatk will now be divided by the amount of attackers
  * Removed ' from planetnames to avoid sql problems
  * Fixed problem with stealth from minbari mysli
+ * Fixed an exploit where you could see disabled techs+buildings in helpmenu 
 
 #### Features ####
 
