@@ -99,6 +99,10 @@
 	short Object::getSBonusDeactivade() {
 		return this->sBonusDeactivade;
 	}
+
+	short Object::getSBonusReadines() {
+		return this->sBonusReadines;
+	}
 	
 	void Object::setPercentSurvive(double percentage, int count) {
 		this->isChanged = true;

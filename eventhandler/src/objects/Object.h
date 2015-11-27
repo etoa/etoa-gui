@@ -60,6 +60,7 @@ class Object
 		short getSBonusBuildDestroy();
 		short getSBonusAntraxFood();
 		short getSBonusDeactivade();
+		short getSBonusReadines();
 		
 		void setPercentSurvive(double percentage, int count=-1);
 		
@@ -83,7 +84,7 @@ class Object
 		bool special;
 		short sLevel;
 		double sExp;
-		short sBonusWeapon, sBonusStructure, sBonusShield, sBonusHeal, sBonusCapacity,  sBonusSpeed, sBonusPilots, sBonusTarn, sBonusAntrax, sBonusForsteal, sBonusBuildDestroy, sBonusAntraxFood, sBonusDeactivade;
+		short sBonusWeapon, sBonusStructure, sBonusShield, sBonusHeal, sBonusCapacity,  sBonusSpeed, sBonusPilots, sBonusTarn, sBonusAntrax, sBonusForsteal, sBonusBuildDestroy, sBonusAntraxFood, sBonusDeactivade, sBonusReadines;
 		
 		bool isChanged;
 		bool rebuildIsCalced;

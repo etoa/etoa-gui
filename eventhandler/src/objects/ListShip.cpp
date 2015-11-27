@@ -25,6 +25,7 @@
 		this->sBonusBuildDestroy = (short)oRow["shiplist_special_ship_bonus_build_destroy"];
 		this->sBonusAntraxFood = (short)oRow["shiplist_special_ship_bonus_antrax_food"];
 		this->sBonusDeactivade = (short)oRow["shiplist_special_ship_bonus_deactivade"];
+		this->sBonusReadines = (short)oRow["shiplist_special_ship_bonus_readines"];
 	}
 	
 	ListShip::~ListShip() {

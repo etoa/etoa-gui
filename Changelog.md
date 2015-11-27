@@ -1,4 +1,4 @@
-Escape to Andromeda Changelog
+﻿Escape to Andromeda Changelog
 =============================
 
 Version 3.5.7
@@ -13,6 +13,7 @@ Version 3.5.7
  * Exp gained from alliatk will now be divided by the amount of attackers
  * Removed ' from planetnames to avoid sql problems
  * Fixed problem with stealth from minbari mysli
+ * Fixed problem with readines-lvl from vorgonia mysli
 
 #### Features ####
 
