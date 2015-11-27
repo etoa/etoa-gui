@@ -41,7 +41,7 @@ void FleetAction::fleetLand(int fleetAction)
             << "	`shiplist_special_ship_bonus_build_destroy` , "
             << "	`shiplist_special_ship_bonus_antrax_food` , "
             << "	`shiplist_special_ship_bonus_deactivade` ,"
-            << "	`shiplist_special_ship_bonus_readines` "
+            << "	`shiplist_special_ship_bonus_readiness` "
             << ") VALUES ";
 
             std::vector<Object*>::iterator ot;
@@ -71,8 +71,8 @@ void FleetAction::fleetLand(int fleetAction)
                     query << (*ot)->getSBonusForsteal() << "', '";
                     query << (*ot)->getSBonusBuildDestroy() << "', '";
                     query << (*ot)->getSBonusAntraxFood() << "', '";
-                    query << (*ot)->getSBonusDeactivade() << "', ";
-                    query << (*ot)->getSBonusReadines() << "' ";
+                    query << (*ot)->getSBonusDeactivade() << "', '";
+                    query << (*ot)->getSBonusReadiness() << "' ";
                     query << ")";
                 }
             }
@@ -94,7 +94,7 @@ void FleetAction::fleetLand(int fleetAction)
             << "		shiplist.`shiplist_special_ship_bonus_build_destroy` = VALUES(shiplist.`shiplist_special_ship_bonus_build_destroy`) , "
             << "		shiplist.`shiplist_special_ship_bonus_antrax_food` = VALUES(shiplist.`shiplist_special_ship_bonus_antrax_food`) , "
             << "		shiplist.`shiplist_special_ship_bonus_deactivade` = VALUES(shiplist.`shiplist_special_ship_bonus_deactivade`) ,"
-            << "		shiplist.`shiplist_special_ship_bonus_readines` = VALUES(shiplist.`shiplist_special_ship_bonus_readines`);";
+            << "		shiplist.`shiplist_special_ship_bonus_readiness` = VALUES(shiplist.`shiplist_special_ship_bonus_readiness`);";
             query.store();
             query.reset();
         }

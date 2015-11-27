@@ -14,7 +14,7 @@ Version 3.5.7
  * Removed ' from planetnames to avoid sql problems
  * Fixed problem with stealth from minbari mysli
  * Fixed an exploit where u could see disabled buildings at helppage
- * Fixed problem with readines-lvl from vorgonia mysli
+ * Fixed problem with readiness-lvl from vorgonia mysli
  * Fixed bug after getting kicked out of umode because of inactivity
 
 #### Features ####
