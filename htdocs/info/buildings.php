@@ -14,7 +14,7 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
 	
 	$b_level = 1;
 
-	$res = dbquery("SELECT * FROM buildings WHERE building_id='".$bid."';");
+	$res = dbquery("SELECT * FROM buildings WHERE building_show=1 AND building_id='".$bid."';");
 	if ($arr = @mysql_fetch_array($res))
 	{
 		HelpUtil::breadCrumbs(array("Geb&auml;ude","buildings"),array(text2html($arr['building_name']),$arr['building_id']),1);

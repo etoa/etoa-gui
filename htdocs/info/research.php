@@ -25,6 +25,8 @@
 		FROM 
 			technologies 
 		WHERE 
+      tech_show=1 
+    AND  
 			tech_id='".$tid."'
 			;");
 		
