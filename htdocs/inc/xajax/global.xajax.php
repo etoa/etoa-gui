@@ -364,7 +364,83 @@ function getCryptoDistance($f,$sx1,$sy1,$cx1,$cy1,$p1)
 		$p=$conf['num_planets']['p2'];
 		$objResponse->assign("p","value",$p);										
 	}
+    
+    //
+    if ($p>0)
+	{
+		$res = dbquery("
+		SELECT
+			planet_name,
+			user_nick,
+			user_id,
+			entities.cell_id,
+			planets.id
 
+		FROM 
+			entities
+		INNER JOIN 
+			cells 
+		ON 
+			entities.cell_id = cells.id
+			AND entities.pos=".intval($p)."
+			AND cells.sx=".intval($sx)."
+			AND cells.sy=".intval($sy)."
+			AND cells.cx=".intval($cx)."
+			AND cells.cy=".intval($cy)."
+		INNER JOIN
+			planets
+		ON 
+			entities.id=planets.id
+		LEFT JOIN
+			users
+		ON planet_user_id=user_id				
+			
+		");
+		$out = mysql_num_rows($res);
+		if (mysql_num_rows($res)>0)
+		{
+			$arr=mysql_fetch_array($res);
+			if ($arr['planet_name']!='')
+			{
+				$out = "<b>Planet:</b> ".$arr['planet_name'];
+			}
+			else
+			{
+				$out = "<i>Unbenannter Planet</i>";
+			}
+			if ($arr['user_id']>0) 
+			{
+				$out.=" <b>Besitzer:</b> ".$arr['user_nick'];
+				if ($s->getInstance()->user_id==$arr['user_id'] && $arr['user_id']>0)
+				{
+					$out.=' (Eigener Planet)';								
+					$objResponse->assign("targetinfo","style.color",'#f00');								
+					$launch=false;
+				}
+				else
+				{
+					$objResponse->assign("targetinfo","style.color",'#0f0');								
+				}
+			}
+			else
+			{			
+				$objResponse->assign("targetinfo","style.color",'#f00');								
+				$launch=false;
+			}
+			$objResponse->assign("targetinfo","innerHTML",$out);								
+			$objResponse->assign("targetcell","value",$arr['cell_id']);								
+			$objResponse->assign("targetplanet","value",$arr['id']);								
+		}			
+		else
+		{
+			$objResponse->assign("targetinfo","innerHTML","Hier existiert kein Planet!");				
+			$objResponse->assign("targetinfo","style.color",'#f00');		
+			$launch=false;						
+			$objResponse->assign("targetcell","value",0);								
+			$objResponse->assign("targetplanet","value",0);								
+		}
+	}	
+    //
 
 	$launch=false;		
 	

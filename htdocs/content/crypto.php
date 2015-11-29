@@ -479,6 +479,9 @@
 			tableStart("Kryptocenter-Infos");
 			echo "<tr><th>Aktuelle Reichweite:</th>
 					<td>".(CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel)." AE ~".floor(CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel/$cfg->value('cell_length'))." Systeme (+".CRYPTO_RANGE_PER_LEVEL." pro Stufe) </td></tr>";
+			echo'<tr><th>Zielinfo:</th><td id="targetinfo">
+								Wähle bitte ein Ziel...
+								</td></tr>';	
 			echo'<tr><th>Entfernung:</th><td id="distance">-
 					</td></tr>';	
 			echo "<tr><th>Kosten pro Scan:</th>
