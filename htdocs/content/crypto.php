@@ -37,7 +37,7 @@
 	
 	// BEGIN SKRIPT //
 
-	echo "<form action=\"?page=$page\" id='targetForm' method=\"post\">";
+	//echo "<form action=\"?page=$page\" id='targetForm' method=\"post\">";
 	
 	// Gebäude Level und Arbeiter laden
 	if ($cu->allianceId!=0)
@@ -255,8 +255,8 @@
 														}
 														
 														if ($decryptlevel>30)
-														{       
-															$out.=", [b]Aktion:[/b] ".$fd->getAction()."\n";
+														{   
+															$out.=", [b]Aktion:[/b] ".substr($fd->getAction(),25,-7)."\n";
 														}
 														else
 															$out.="\n";
@@ -270,7 +270,7 @@
 																			FROM
 																				fleet_ships
 																			INNER JOIN
-																				ships
+				 																ships
 																			ON ship_id=fs_ship_id
 																				AND fs_fleet_id=".$farr[0].";");
 															if (mysql_num_rows($sres)>0)
@@ -352,7 +352,7 @@
 														
 														if ($decryptlevel>30)
 														{
-															$out.=", [b]Aktion:[/b] ".$fd->getAction()."\n";
+															$out.=", [b]Aktion:[/b] ".substr($fd->getAction(),25,-7)."\n";
 														}
 														else
 															$out.="\n";
@@ -439,6 +439,11 @@
 												send_msg($target->ownerId(),SHIP_SPY_MSG_CAT_ID,"Störsender erfolgreich","Eure Techniker haben festgestellt, dass von einem anderen Planeten eine Entschlüsselung eures Funkverkehrs versucht wurde. Daraufhin haben eure Störsender die Funknetze mit falschen Werten überlastet, so dass die gegnerische Analyse fehlschlug!");
 											}
 											error_msg("Die Analyse schlug leider fehl! Eure Empfangsgeräte haben zu viel Rauschen aufgenommen; anscheinend hat der Zielplanet ein aktives Störfeld oder die dortige Flottenkontrolle ist zu gut getarnt (Chance: ".$chance.")!");
+										    $cd = time()+$cooldown;
+											$cu->alliance->buildlist->setCooldown(ALLIANCE_CRYPTO_ID, $cd, $cu->id);
+											
+											$cu->alliance->addHistory("Der Spieler [b]".$cu."[/b] hat den Planeten ".$target->name()."[/b] (".$sx."/".$sy." : ".$cx."/".$cy." : ".$pp.") gescannt!");
+											
 										}
 									}
 									else
@@ -509,38 +514,39 @@
 				}
 				
 				$keyup_command = 'xajax_getCryptoDistance(xajax.getFormValues(\'targetForm\'),'.$cp->sx.','.$cp->sy.','.$cp->cx.','.$cp->cy.','.$cp->pos.');';
-				echo '<form action="?page='.$page.'" method="post" id="targetForm">';	
-				echo '<input type="hidden" value='.CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel.' name="range" />';	
-				checker_init();
-				iBoxStart("Ziel für Flottenanalyse wahlen:");
-				
-				//
-				// Bookmarks laden
-				//
-				
-				$bm = new BookmarkManager($cu->id);
-				
-				echo 'Koordinaten eingeben: 
-						<input type="text" onkeyup="'.$keyup_command.'" name="sx" id="sx" value="'.$coords[0].'" size="2" maxlength="2" /> / 
-						<input type="text" onkeyup="'.$keyup_command.'" name="sy" id="sy" value="'.$coords[1].'" size="2" maxlength="2" /> :
-						<input type="text" onkeyup="'.$keyup_command.'" name="cx" id="cx" value="'.$coords[2].'" size="2" maxlength="2" /> /
-						<input type="text" onkeyup="'.$keyup_command.'" name="cy" id="cy" value="'.$coords[3].'" size="2" maxlength="2" /> :
-						<input type="text" onkeyup="'.$keyup_command.'" name="p" id="p" value="'.$coords[4].'" size="2" maxlength="2" /><br /><br />';
-				
-				// Bookmarkliste anzeigen
-				echo '<i>oder</i> Favorit wählen: ';
-				$bm->drawSelector("bookmarkselect","applyBookmark();");
-				iBoxEnd();
-				
-				if ($cp->resFuel >= CRYPTO_FUEL_COSTS_PER_SCAN)
-				{
-					echo '<input type="submit" name="scan" value="Analyse für '.nf(CRYPTO_FUEL_COSTS_PER_SCAN).' '.RES_FUEL.' starten" />';
-				}
-				else
-				{
-					echo "Zuwenig Rohstoffe für eine Analyse vorhanden, ".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." ".RES_FUEL." benötigt, ".nf($cp->resFuel)." vorhanden!";
-				}
-				echo '</form>';
+				echo'<body onload="'.$keyup_command.'">';
+					echo '<form action="?page='.$page.'" method="post" id="targetForm">';	
+						echo '<input type="hidden" value='.CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel.' name="range" />';	
+						checker_init();
+						iBoxStart("Ziel für Flottenanalyse wahlen:");
+						
+						//
+						// Bookmarks laden
+						//
+				        
+						$bm = new BookmarkManager($cu->id);
+						echo 'Koordinaten eingeben: 
+								<input type="text" onkeyup="'.$keyup_command.'" name="sx" id="sx" value="'.$coords[0].'" size="2" maxlength="2" /> / 
+								<input type="text" onkeyup="'.$keyup_command.'" name="sy" id="sy" value="'.$coords[1].'" size="2" maxlength="2" /> :
+								<input type="text" onkeyup="'.$keyup_command.'" name="cx" id="cx" value="'.$coords[2].'" size="2" maxlength="2" /> /
+								<input type="text" onkeyup="'.$keyup_command.'" name="cy" id="cy" value="'.$coords[3].'" size="2" maxlength="2" /> :
+								<input type="text" onkeyup="'.$keyup_command.'" name="p" id="p" value="'.$coords[4].'" size="2" maxlength="2" /><br /><br />';
+									
+						// Bookmarkliste anzeigen
+						echo '<i>oder</i> Favorit wählen: ';
+						$bm->drawSelector("bookmarkselect","applyBookmark();");
+						iBoxEnd();
+						
+						if ($cp->resFuel >= CRYPTO_FUEL_COSTS_PER_SCAN)
+						{
+							echo '<input type="submit" name="scan" value="Analyse für '.nf(CRYPTO_FUEL_COSTS_PER_SCAN).' '.RES_FUEL.' starten" />';
+						}
+						else
+						{
+							echo "Zuwenig Rohstoffe für eine Analyse vorhanden, ".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." ".RES_FUEL." benötigt, ".nf($cp->resFuel)." vorhanden!";
+						}
+					echo '</form>';
+				echo '</body>';
 			}
 			else
 			{
