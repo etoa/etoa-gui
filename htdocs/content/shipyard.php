@@ -636,10 +636,10 @@
 	    				// TODO: Überprüfen
 							//Rechnet zeit wenn arbeiter eingeteilt sind
 							$btime_min=$btime*(0.1-($gen_tech_level/100));
-							if ($btime_min<SHIPYARD_MIN_BUILD_TIME) $btime_min=SHIPYARD_MIN_BUILD_TIME;
-							$btime=$btime-$people_working*$cfg->value('people_work_done');
+						 	if ($btime_min<SHIPYARD_MIN_BUILD_TIME) $btime_min=SHIPYARD_MIN_BUILD_TIME;
+							$btime=ceil($btime-$people_working*$cfg->value('people_work_done'));
 							if ($btime<$btime_min) $btime=$btime_min;
-							$obj_time=ceil($btime);
+							$obj_time=$btime;
 
 							// Gesamte Bauzeit berechnen
 							$duration=$build_cnt*$obj_time;

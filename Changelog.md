@@ -23,6 +23,7 @@ Version 3.5.7
  * Gentech counts as special tech now(allows researching of Gentech+other tech at same time)
  * Crytocenter now shows more infos about target(e.g. distance, name, planet)
  * Reworked 404-page  
+ * Added optimizing button for each ship
 
  ### Administration ###
 
