@@ -403,7 +403,7 @@
         echo '</div>';
 
         // people working changed
-        if (isset($_POST['submit_people_form']))
+        if (isset($_POST['submit_people_form']) && checker_verify())
         {
             if ($bl->setPeopleWorking(SHIP_BUILDING_ID,nf_back($_POST['peopleWorking'])))
                 success_msg("Arbeiter zugeteilt!");
@@ -616,12 +616,12 @@
 							$bc['fuel']=$ships[$ship_id]['ship_costs_fuel']*$build_cnt;
 							$bc['food']=(intval($_POST['additional_food_costs'])+$ships[$ship_id]['ship_costs_food'])*$build_cnt;
 
-    	        //Berechnete Ress provisorisch abziehen
-    	        $cp->resMetal-=$bc['metal'];
-    	        $cp->resCrystal-=$bc['crystal'];
-    	        $cp->resPlastic-=$bc['plastic'];
-    	        $cp->resFuel-=$bc['fuel'];
-    	        $cp->resFood-=$bc['food'];
+                	        //Berechnete Ress provisorisch abziehen
+                	        $cp->resMetal-=$bc['metal'];
+                	        $cp->resCrystal-=$bc['crystal'];
+                	        $cp->resPlastic-=$bc['plastic'];
+                	        $cp->resFuel-=$bc['fuel'];
+                	        $cp->resFood-=$bc['food'];
 
 							// Bauzeit pro Schiff berechnen
 							$btime = ($ships[$ship_id]['ship_costs_metal'] 
@@ -633,7 +633,7 @@
 							* $time_boni_factor
 							* $cu->specialist->shipTime;
 
-	    				// TODO: Überprüfen
+	    				    // TODO: Überprüfen
 							//Rechnet zeit wenn arbeiter eingeteilt sind
 							$btime_min=$btime*(0.1-($gen_tech_level/100));
 						 	if ($btime_min<SHIPYARD_MIN_BUILD_TIME) $btime_min=SHIPYARD_MIN_BUILD_TIME;
@@ -649,25 +649,25 @@
 							$end_time = $start_time + $duration;
 
 							// Auftrag speichern
-    	        dbquery("
-    	        INSERT INTO
-    	        ship_queue
-    	            (queue_user_id,
-    	            queue_ship_id,
-    	            queue_entity_id,
-    	            queue_cnt,
-    	            queue_starttime,
-    	            queue_endtime,
-    	            queue_objtime)
-    	        VALUES
-    	            ('".$cu->id."',
-    	            '".$ship_id."',
-    	            '".$cp->id."',
-    	            '".$build_cnt."',
-    	            '".$start_time."',
-    	            '".$end_time."',
-    	            '".$obj_time."');");
-    	        $shiplist_id = mysql_insert_id();
+                	        dbquery("
+                	        INSERT INTO
+                	        ship_queue
+                	            (queue_user_id,
+                	            queue_ship_id,
+                	            queue_entity_id,
+                	            queue_cnt,
+                	            queue_starttime,
+                	            queue_endtime,
+                	            queue_objtime)
+                	        VALUES
+                	            ('".$cu->id."',
+                	            '".$ship_id."',
+                	            '".$cp->id."',
+                	            '".$build_cnt."',
+                	            '".$start_time."',
+                	            '".$end_time."',
+                	            '".$obj_time."');");
+                	        $shiplist_id = mysql_insert_id();
 
 
 							// Queue Array aktualisieren
@@ -684,28 +684,28 @@
 							//Log schreiben
 							$log_text = "[b]Schiffsauftrag Bauen[/b]
 
-[b]Start:[/b] ".date("d.m.Y H:i:s",$end_time)."
-[b]Ende:[/b] ".date("d.m.Y H:i:s",$end_time)."
-[b]Dauer:[/b] ".tf($duration)."
-[b]Dauer pro Einheit:[/b] ".tf($obj_time)."
-[b]Schiffswerft Level:[/b] ".CURRENT_SHIPYARD_LEVEL."
-[b]Eingesetzte Bewohner:[/b] ".nf($people_working)."
-[b]Gen-Tech Level:[/b] ".$gen_tech_level."
-[b]Eingesetzter Spezialist:[/b] ".$cu->specialist->name."
+                            [b]Start:[/b] ".date("d.m.Y H:i:s",$end_time)."
+                            [b]Ende:[/b] ".date("d.m.Y H:i:s",$end_time)."
+                            [b]Dauer:[/b] ".tf($duration)."
+                            [b]Dauer pro Einheit:[/b] ".tf($obj_time)."
+                            [b]Schiffswerft Level:[/b] ".CURRENT_SHIPYARD_LEVEL."
+                            [b]Eingesetzte Bewohner:[/b] ".nf($people_working)."
+                            [b]Gen-Tech Level:[/b] ".$gen_tech_level."
+                            [b]Eingesetzter Spezialist:[/b] ".$cu->specialist->name."
 
-[b]Kosten[/b]
-[b]".RES_METAL.":[/b] ".nf($bc['metal'])."
-[b]".RES_CRYSTAL.":[/b] ".nf($bc['crystal'])."
-[b]".RES_PLASTIC.":[/b] ".nf($bc['plastic'])."
-[b]".RES_FUEL.":[/b] ".nf($bc['fuel'])."
-[b]".RES_FOOD.":[/b] ".nf($bc['food'])."
+                            [b]Kosten[/b]
+                            [b]".RES_METAL.":[/b] ".nf($bc['metal'])."
+                            [b]".RES_CRYSTAL.":[/b] ".nf($bc['crystal'])."
+                            [b]".RES_PLASTIC.":[/b] ".nf($bc['plastic'])."
+                            [b]".RES_FUEL.":[/b] ".nf($bc['fuel'])."
+                            [b]".RES_FOOD.":[/b] ".nf($bc['food'])."
 
-[b]Rohstoffe auf dem Planeten[/b]
-[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
-[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
-[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
-[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
-[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
+                            [b]Rohstoffe auf dem Planeten[/b]
+                            [b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
+                            [b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
+                            [b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
+                            [b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
+                            [b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
 
 							GameLog::add(GameLog::F_SHIP, GameLog::INFO,$log_text,$cu->id,$cu->allianceId,$cp->id, $ship_id, 1, $build_cnt);
 
@@ -729,11 +729,11 @@
 				}
 				
 				// Die Rohstoffe der $c-variablen wieder beigeben, da sie sonst doppelt abgezogen werden
-        $cp->resMetal+=$total_metal;
-        $cp->resCrystal+=$total_crystal;
-        $cp->resPlastic+=$total_plastic;
-        $cp->resFuel+=$total_fuel;
-        $cp->resFood+=$total_food;				
+                $cp->resMetal+=$total_metal;
+                $cp->resCrystal+=$total_crystal;
+                $cp->resPlastic+=$total_plastic;
+                $cp->resFuel+=$total_fuel;
+                $cp->resFood+=$total_food;				
 				
 				//Rohstoffe vom Planeten abziehen und aktualisieren
 				$cp->changeRes(-$total_metal,-$total_crystal,-$total_plastic,-$total_fuel,-$total_food);
@@ -743,14 +743,15 @@
 					echo "<tr><td>Keine Schiffe gew&auml;hlt!</td></tr>";
 				}
 				tableEnd();
+                header("Refresh:0");
 			}
 
 			
 			checker_init();
 
-	/*********************
-	* Auftrag abbrechen  *
-	*********************/
+        	/*********************
+        	* Auftrag abbrechen  *
+        	*********************/
 			if (isset($_GET['cancel']) && intval($_GET['cancel'])>0 && $cancelable)
 			{	
 				$id = intval($_GET['cancel']);
@@ -835,33 +836,34 @@
 					//Log schreiben
 					$log_text = "[b]Schiffsauftrag Abbruch[/b]
 
-[b]Auftragsdauer:[/b] ".tf($queue_objtime*$queue_count)."
+                    [b]Auftragsdauer:[/b] ".tf($queue_objtime*$queue_count)."
 
-[b]Erhaltene Rohstoffe[/b]
-[b]Faktor:[/b] ".$cancel_res_factor."
-[b]".RES_METAL.":[/b] ".nf($ret['metal'])."
-[b]".RES_CRYSTAL.":[/b] ".nf($ret['crystal'])."
-[b]".RES_PLASTIC.":[/b] ".nf($ret['plastic'])."
-[b]".RES_FUEL.":[/b] ".nf($ret['fuel'])."
-[b]".RES_FOOD.":[/b] ".nf($ret['food'])."
+                    [b]Erhaltene Rohstoffe[/b]
+                    [b]Faktor:[/b] ".$cancel_res_factor."
+                    [b]".RES_METAL.":[/b] ".nf($ret['metal'])."
+                    [b]".RES_CRYSTAL.":[/b] ".nf($ret['crystal'])."
+                    [b]".RES_PLASTIC.":[/b] ".nf($ret['plastic'])."
+                    [b]".RES_FUEL.":[/b] ".nf($ret['fuel'])."
+                    [b]".RES_FOOD.":[/b] ".nf($ret['food'])."
 
-[b]Rohstoffe auf dem Planeten[/b]
-[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
-[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
-[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
-[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
-[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
+                    [b]Rohstoffe auf dem Planeten[/b]
+                    [b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
+                    [b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
+                    [b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
+                    [b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
+                    [b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
 					
 					//Log Speichern
 					GameLog::add(GameLog::F_SHIP, GameLog::INFO,$log_text,$cu->id,$cu->allianceId,$cp->id, $ship_id, 0, $queue_count);
-
-				}
+				    header("Refresh:0");
+                }
+               
 			}
 
 
-	/*********************************
-	* Liste der Bauaufträge anzeigen *
-	*********************************/
+        	/*********************************
+        	* Liste der Bauaufträge anzeigen *
+        	*********************************/
 			if(isset($queue) && !empty($queue))
 			{
 				tableStart("Bauliste");
@@ -1301,7 +1303,12 @@
                                         
 								 		echo "<th height=\"30\">In Aufrag geben:</th>
 				    			   	      			<td><input type=\"text\" value=\"0\" name=\"build_count[".$data['ship_id']."]\" id=\"build_count_".$data['ship_id']."\" size=\"4\" maxlength=\"9\" ".tm("",$tm_cnt)." tabindex=\"".$tabulator."\" onkeyup=\"FormatNumber(this.id,this.value, ".$ship_max_build.", '', '');\"/> St&uuml;ck<br><a href=\"javascript:;\" onclick=\"document.getElementById('build_count_".$data['ship_id']."').value=".$ship_max_build.";\">max</a>";
-                                                    echo '&nbsp;<a href="javascript:;" onclick="if(document.getElementById(\'changePeople\').style.display==\'none\') {toggleBox(\'changePeople\')};updatePeopleWorkingBox(\''.$peopleOptimized.'\',\'-1\',\'^-1\');">optimieren</a>';
+                                                    if (!isset($queue) && empty($queue))
+													{
+														echo '&nbsp;<a href="#changePeople" onclick="javascript:if(document.getElementById(\'changePeople\').style.display==\'none\') {toggleBox(\'changePeople\')};updatePeopleWorkingBox(\''.$peopleOptimized.'\',\'-1\',\'^-1\');">optimieren</a>';
+													}
+
+
                                         echo"</td>";
 								 	}
 								 	echo "</tr>";
