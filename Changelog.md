@@ -24,7 +24,8 @@ Version 3.5.7
  * Crytocenter now shows more infos about target(e.g. distance, name, planet)
  * Reworked 404-page  
  * Added optimizing button for each ship
- * market reservations for a person will now be displayed at top
+ * Market reservations for a person will now be displayed at top
+ * Players wont be able to join another alliance for x hours after leaving old one
 
  ### Administration ###
 

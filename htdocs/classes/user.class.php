@@ -56,6 +56,7 @@ class User
 	protected $allianceName;
 	protected $allianceTag;
 	protected $allianceRankName;
+	protected $allianceLeave;
 	protected $rank;
 	protected $rankHighest;
 	protected $specialistId;
@@ -150,6 +151,7 @@ class User
 
 			$this->allianceId = $arr['user_alliance_id'];
 			$this->allianceRankId = $arr['user_alliance_rank_id'];
+			$this->allianceLeave = $arr['user_alliance_leave'];
 
 			$this->sittingDays = $arr['user_sitting_days'];
 
@@ -237,10 +239,12 @@ class User
 				$sql.= " user_visits=".$this->visits.",";
 				elseif ($k=="email")
 				$sql.= " user_email='".$this->email."',";
-        elseif ($k=="d_realName")
+        		elseif ($k=="d_realName")
 				$sql.= " dual_name='".$this->d_realName."',";
-        elseif ($k=="d_email")
+                elseif ($k=="d_email")
 				$sql.= " dual_email='".$this->d_email."',";
+                elseif ($k=="allianceLeave")
+                $sql.= " user_alliance_leave='".$this->allianceLeave."',";
 				elseif ($k=="profileText")
 				$sql.= " user_profile_text='".$this->profileText."',";
 				elseif ($k=="signature")

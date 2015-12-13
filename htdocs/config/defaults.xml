@@ -582,6 +582,9 @@ http://etoa.ch</v>
     <item name="alliance_membercosts_factor" cat="16">
       <v comment="Kosten pro Member&#13;&#10;&#13;&#10;Calc: 1 + this.value*(member.count-1)" type="text">0.9</v>
     </item>
+    <item name="user_alliance_leave" cat="16">
+      <v comment="Zeitgrenze, bevor man sich wieder bewerben kann" type="text">7200</v>
+    </item>
     <item name="alliance_shippoints_per_hour" cat="16">
       <v comment="Schiffspunkte pro Stunde und Werftlevel" type="text">5</v>
     </item>
