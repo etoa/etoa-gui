@@ -1477,13 +1477,13 @@
 <script type="text/javascript">
 	var uname = '';
 	function jqinit()
-	{
+	{            
 		$(".offer").each(function()
-		{
+		{ 
 			var $th = $(this);
 			var $pa = $th.parent();
 			var $sp;
-			if($(this).find('.rtext').html().toLowerCase().indexOf(uname.toLowerCase()) > -1)
+      if(($(this).find('.rtext').html().toLowerCase().indexOf(uname.toLowerCase()) > -1) || ($(this).find(".top").length > 0))
 			{
 				$sp = (($th.next().size() > 0 ? ($th.next()) : ($th.prev())).detach());
 				$th.addClass('foryou').detach().after($sp).prependTo($pa);

@@ -1,4 +1,4 @@
-﻿Escape to Andromeda Changelog
+Escape to Andromeda Changelog
 =============================
 
 Version 3.5.7
@@ -24,6 +24,7 @@ Version 3.5.7
  * Crytocenter now shows more infos about target(e.g. distance, name, planet)
  * Reworked 404-page  
  * Added optimizing button for each ship
+ * market reservations for a person will now be displayed at top
 
  ### Administration ###
 
