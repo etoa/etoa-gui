@@ -209,24 +209,149 @@
 		{
 			$cfg = Config::getInstance();
             $now = time();
+
 			// set all users who are inactive 
-			dbquery('UPDATE
-						`users`
-					SET
-						`user_hmode_from`=0,
-						`user_hmode_to`=0,
-						`user_logouttime`="'.(time()-USER_INACTIVE_LONG*86400).'" 
-					WHERE
-						`user_ghost`="0"
-					AND
-						`admin`=0
-                    AND
-                        `user_blocked_to`<'.$now.' 
-                    AND 
-                        `user_hmode_from`>0
-					AND
-						`user_hmode_from`<"'.(time()-$cfg->p1('hmode_days')*86400).'" 
-					;');
+            
+		    $res = dbquery("SELECT 
+		                        user_id 
+		                    FROM 
+		                        users 
+		                    WHERE
+		         			    user_ghost=0
+		        		    AND
+		        			    admin=0
+		                    AND
+		                        user_blocked_to <".$now 
+		                    ." AND 
+		                        user_hmode_from > 0
+		        		    AND
+		        			    user_hmode_from<".(time()-MAX_UMOD_TIME*86400));
+		      
+		    while ($arr=mysql_fetch_row($res)) 
+		    {  
+		        dbquery("UPDATE
+				         	users
+			            SET
+					        user_hmode_from=0,
+					        user_hmode_to=0,
+					        user_logouttime=".(time()-USER_INACTIVE_LONG*86400)." 
+				        WHERE
+						    user_id=".$arr[0]);
+		       
+
+				$bres = dbquery("
+								SELECT
+									buildlist_id,
+									buildlist_build_end_time,
+									buildlist_build_start_time,
+									buildlist_build_type
+								FROM
+									buildlist
+								WHERE
+									buildlist_build_start_time>0
+									AND buildlist_build_type>0
+									AND buildlist_user_id=".$arr[0]);
+
+				while ($barr=mysql_fetch_row($bres))
+				{
+			        dbquery("UPDATE
+								buildlist
+							SET
+					     		buildlist_build_type= 3,
+								buildlist_build_start_time=buildlist_build_start_time+".MAX_UMOD_TIME*86400
+								.",buildlist_build_end_time=buildlist_build_end_time+".MAX_UMOD_TIME*86400
+							." WHERE
+								buildlist_id=".$barr[0]);       
+		   		}
+		        
+			    $tres = dbquery("
+								SELECT
+									techlist_id,
+									techlist_build_end_time,
+									techlist_build_start_time,
+									techlist_build_type
+								FROM
+									techlist
+								WHERE
+									techlist_build_start_time>0
+									AND techlist_build_type>0
+									AND techlist_user_id=".$arr[0]);
+			 						
+				while ($tarr=mysql_fetch_row($tres))
+				{
+					dbquery("UPDATE
+								techlist
+							SET
+								techlist_build_type=3,
+								techlist_build_start_time=techlist_build_start_time+".MAX_UMOD_TIME*86400
+								.",techlist_build_end_time=techlist_build_end_time+".MAX_UMOD_TIME*86400
+							." WHERE
+								techlist_id=".$tarr[0]);
+				}
+				
+				$sres = dbquery("SELECT 
+									queue_id,
+									queue_endtime,
+									queue_starttime
+								 FROM 
+								 	ship_queue 
+								WHERE 
+									queue_user_id='".$tarr[0]."'
+								ORDER BY 
+									queue_starttime ASC;");
+				
+				while ($sarr=mysql_fetch_row($sres))
+				{
+					dbquery("UPDATE 
+								ship_queue
+							SET
+								queue_build_type=0,
+								queue_starttime=queue_starttime+".MAX_UMOD_TIME*86400
+								.",queue_endtime=queue_endtime+".MAX_UMOD_TIME*86400
+							." WHERE
+								queue_id=".$sarr[0].";");
+				}
+				
+				$dres = dbquery("SELECT 
+										queue_id,
+										queue_endtime,
+										queue_starttime
+									 FROM 
+									 	def_queue 
+									WHERE 
+										queue_user_id='".$tarr[0]."'
+									ORDER BY 
+										queue_starttime ASC;");
+				
+				while ($darr=mysql_fetch_row($dres))
+				{
+					dbquery("UPDATE 
+								def_queue
+							SET
+								queue_build_type=0,
+								queue_starttime=queue_starttime+".MAX_UMOD_TIME*86400
+								.",queue_endtime=queue_endtime+".MAX_UMOD_TIME*86400
+							." WHERE
+								queue_id=".$darr[0].";");
+				}
+
+			    dbquery("
+        			UPDATE
+          				users
+        			SET
+          				user_specialist_time=user_specialist_time+".MAX_UMOD_TIME*86400
+        			." WHERE
+          				user_specialist_id > 0
+          			AND user_id=".$arr[0]);
+        		 
+        		dbquery ("UPDATE planets SET planet_last_updated=".time()." WHERE planet_user_id=".$arr[0]);
+				/*
+				foreach ($planets as $pid) {
+					BackendMessage::updatePlanet($pid);
+				} */
+			};
+		
+      			
 			return mysql_affected_rows();
 		}
 		

@@ -49,6 +49,7 @@
 	
 	define("SHIPQUEUE_CANCEL_END", $cfg->get('shipqueue_cancel_end'));
 
+    $bl = new Buildlist($cp->id,$cu->id);
 	
 	// BEGIN SKRIPT //
 
@@ -70,9 +71,9 @@
   	AND buildlist_user_id='".$cu->id."'");
 
   // Prüfen ob Werft gebaut ist
-  if (mysql_num_rows($werft_res)>0)
-  {
-		$werft_arr = mysql_fetch_assoc($werft_res);
+    if (mysql_num_rows($werft_res)>0)
+    {    
+    	$werft_arr = mysql_fetch_assoc($werft_res);
         define('CURRENT_SHIPYARD_LEVEL',$werft_arr['buildlist_current_level']);
 
 		// Titel
@@ -309,7 +310,7 @@
     		$cancel_res_factor=0;
     	}
 
-    	// Infos anzeigen
+       	// Infos anzeigen
     	tableStart("Werft-Infos");
 		echo '<colgroup><col style="width:400px;"/><col/></colgroup>';
 		if ($cu->specialist->costsShip!=1)
@@ -320,7 +321,22 @@
 		{
 			echo "<tr><td>Bauzeitverringerung durch ".$cu->specialist->name.":</td><td>".get_percent_string($cu->specialist->shipTime)."</td></tr>";
 		}
-    	echo "<tr><td>Eingestellte Arbeiter:</td><td>".nf($people_working)."</td></tr>";
+    	echo "<tr><td>Eingestellte Arbeiter:</td><td>".nf($bl->getPeopleWorking(SHIP_BUILDING_ID));
+    	if (!isset($queue) && empty($queue))
+		{
+			echo '&nbsp;<a href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
+		}
+		echo "</td></tr>";
+    	if ($bl->getPeopleWorking(SHIP_BUILDING_ID) > 0)
+		{
+			echo '<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td><span id="people_work_done">'.tf($cfg->value('people_work_done') *$bl->getPeopleWorking(SHIP_BUILDING_ID)).'</span></td></tr>';
+			echo '<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td><span id="people_food_require">'.nf($cfg->value('people_food_require') * $bl->getPeopleWorking(SHIP_BUILDING_ID)).'</span></td></tr>';
+		}
+		if ($gen_tech_level  > 0)
+		{
+			echo '<tr><td>Gentechnologie:</td><td>'.$gen_tech_level .'</td></tr>';
+			echo '<tr><td>Minimale Bauzeit (mit Arbeiter):</td><td>Bauzeit * '.(0.1-($genTechLevel/100)).'</td></tr>';
+		}
     	echo "<tr><td>Bauzeitverringerung:</td><td>";
     	if ($need_bonus_level>=0)
     	{
@@ -342,7 +358,61 @@
     		$cancelable = false;
     	} 
 		tableEnd();			
-			
+	    $peopleFree = floor($cp->people) - $bl->totalPeopleWorking() + $bl->getPeopleWorking(SHIP_BUILDING_ID);
+        $box =  '
+                    <input type="hidden" name="workDone" id="workDone" value="'.$cfg->value('people_work_done').'" />
+                    <input type="hidden" name="foodRequired" id="foodRequired" value="'.$cfg->value('people_food_require').'" />
+                    <input type="hidden" name="peopleFree" id="peopleFree" value="'.$peopleFree.'" />
+                    <input type="hidden" name="foodAvaiable" id="foodAvaiable" value="'.$cp->getRes1(4).'" />
+                    <input type="hidden" name="peopleOptimized" id="peopleOptimized" value="0" />';
+
+        $box .= '   <tr>
+                            <th>Eingestellte Arbeiter</th>
+                            <td>
+                                <input  type="text" 
+                                        name="peopleWorking" 
+                                        id="peopleWorking" 
+                                        value="'.nf($bl->getPeopleWorking(SHIP_BUILDING_ID)).'" 
+                                        onkeyup="updatePeopleWorkingBox(this.value,\'-1\',\'-1\');"/>
+                        </td>
+                        </tr>
+                        <tr>
+                            <th>Zeitreduktion</th>
+                            <td><input  type="text"
+                                        name="timeReduction"
+                                        id="timeReduction"
+                                        value="'.tf($cfg->value('people_work_done') * $bl->getPeopleWorking(SHIP_BUILDING_ID)).'"
+                                        onkeyup="updatePeopleWorkingBox(\'-1\',this.value,\'-1\');" /></td>
+                        </tr>
+                            <th>Nahrungsverbrauch</th>
+                            <td><input  type="text"
+                                        name="foodUsing"
+                                        id="foodUsing"
+                                        value="'.nf($cfg->value('people_food_require') * $bl->getPeopleWorking(SHIP_BUILDING_ID)).'"
+                                        onkeyup="updatePeopleWorkingBox(\'-1\',\'-1\',this.value);" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="text-align:center;">
+                                <div id="changeWorkingPeopleError" style="display:none;">&nbsp;</div>
+                                <input type="submit" value="Speichern" name="submit_people_form" id="submit_people_form" />&nbsp;';
+        echo '<div id="changePeople" style="display:none;">';             
+    	tableStart("Arbeiter im Bauhof zuteilen");
+        echo '<form id="changeWorkingPeople" method="post" action="?page='.$page.'">
+            '.$box.'</form>';
+        tableEnd();
+        echo '</div>';
+
+        // people working changed
+        if (isset($_POST['submit_people_form']))
+        {
+            if ($bl->setPeopleWorking(SHIP_BUILDING_ID,nf_back($_POST['peopleWorking'])))
+                success_msg("Arbeiter zugeteilt!");
+            else
+                error_msg('Arbeiter konnten nicht zugeteilt werden!');
+            header("Refresh:0");
+        }
+
+
 	/*************
 	* Sortierbox *
 	*************/
@@ -566,10 +636,10 @@
 	    				// TODO: Überprüfen
 							//Rechnet zeit wenn arbeiter eingeteilt sind
 							$btime_min=$btime*(0.1-($gen_tech_level/100));
-							if ($btime_min<SHIPYARD_MIN_BUILD_TIME) $btime_min=SHIPYARD_MIN_BUILD_TIME;
-							$btime=$btime-$people_working*$cfg->value('people_work_done');
+						 	if ($btime_min<SHIPYARD_MIN_BUILD_TIME) $btime_min=SHIPYARD_MIN_BUILD_TIME;
+							$btime=ceil($btime-$people_working*$cfg->value('people_work_done'));
 							if ($btime<$btime_min) $btime=$btime_min;
-							$obj_time=ceil($btime);
+							$obj_time=$btime;
 
 							// Gesamte Bauzeit berechnen
 							$duration=$build_cnt*$obj_time;
@@ -946,12 +1016,12 @@
     			      			{
 									$ship_count += $fleet[$data['ship_id']];
 								}
-								
-								
+														
 								// Bauzeit berechnen
 								$btime = ($data['ship_costs_metal'] + $data['ship_costs_crystal'] + $data['ship_costs_plastic'] + $data['ship_costs_fuel'] + $data['ship_costs_food']) / GLOBAL_TIME * SHIP_BUILD_TIME * $time_boni_factor * $cu->specialist->shipTime;
 								$btime_min = $btime * (0.1 - ($gen_tech_level / 100));
-								
+								$peopleOptimized= ceil(($btime-$btime_min)/$cfg->value('people_work_done'));
+
 								//Mindest Bauzeit
     			      			if ($btime_min < SHIPYARD_MIN_BUILD_TIME) 
 								{
@@ -1226,9 +1296,13 @@
 								 		echo "<th height=\"30\" colspan=\"2\"><i>Maximalanzahl erreicht</i></th>";
 								 	}
 								 	else
-								 	{
+								 	{   
+                                      
+                                        
 								 		echo "<th height=\"30\">In Aufrag geben:</th>
-				    			   	      			<td><input type=\"text\" value=\"0\" name=\"build_count[".$data['ship_id']."]\" id=\"build_count_".$data['ship_id']."\" size=\"4\" maxlength=\"9\" ".tm("",$tm_cnt)." tabindex=\"".$tabulator."\" onkeyup=\"FormatNumber(this.id,this.value, ".$ship_max_build.", '', '');\"/> St&uuml;ck<br><a href=\"javascript:;\" onclick=\"document.getElementById('build_count_".$data['ship_id']."').value=".$ship_max_build.";\">max</a></td>";
+				    			   	      			<td><input type=\"text\" value=\"0\" name=\"build_count[".$data['ship_id']."]\" id=\"build_count_".$data['ship_id']."\" size=\"4\" maxlength=\"9\" ".tm("",$tm_cnt)." tabindex=\"".$tabulator."\" onkeyup=\"FormatNumber(this.id,this.value, ".$ship_max_build.", '', '');\"/> St&uuml;ck<br><a href=\"javascript:;\" onclick=\"document.getElementById('build_count_".$data['ship_id']."').value=".$ship_max_build.";\">max</a>";
+                                                    echo '&nbsp;<a href="javascript:;" onclick="if(document.getElementById(\'changePeople\').style.display==\'none\') {toggleBox(\'changePeople\')};updatePeopleWorkingBox(\''.$peopleOptimized.'\',\'-1\',\'^-1\');">optimieren</a>';
+                                        echo"</td>";
 								 	}
 								 	echo "</tr>";
 								 	echo "<tr>

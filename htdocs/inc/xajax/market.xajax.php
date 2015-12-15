@@ -170,13 +170,16 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 				$i=0;
 
 				// Reservation
-				$reservation = "";
+				$reservation = ""; 
+        $top = "";  
 				if($arr['for_user']!=0)
 				{
-					$reservation="<span class=\"userAllianceMemberColor\">F&uuml;r dich reserviert</span>";
+          $class = "top";
+					$reservation="<span class=\"userAllianceMemberColor\">F&uuml;r dich reserviert</span>";  
 				}				
 				elseif($arr['for_alliance']!=0)
 				{
+          $class = "top";
 					$reservation="<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied reserviert</span>";
 				}
 
@@ -201,7 +204,7 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 												</td>
 												<td rowspan=\"".$cres."\">
 													".$reservation."<br />
-													<span class=\"rtext\">".stripslashes($arr['text'])."</span>
+													<span class='rtext ".$class."'  >".stripslashes($arr['text'])."</span>
 												</td>
 												<td rowspan=\"".$cres."\">
 													<input type=\"checkbox\" name=\"ressource_market_id[]\" id=\"ressource_market_id\" value=\"".$arr['id']."\" /><br/><br/>

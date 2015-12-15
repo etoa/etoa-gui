@@ -1,5 +1,35 @@
-﻿Escape to Andromeda Changelog
+Escape to Andromeda Changelog
 =============================
+
+Version 3.5.7
+-------------
+
+### Bugfixes ###
+
+ * Fixed birthrate
+ * Fixed typos
+ * Fixed bug where u couldnt destroy more than 999 missles at once	 
+ * Infra ships now dont give any exp at all anymore
+ * Exp gained from alliatk will now be divided by the amount of attackers
+ * Removed ' from planetnames to avoid sql problems
+ * Fixed problem with stealth from minbari mysli
+ * Fixed an exploit where u could see disabled buildings at helppage
+ * Fixed problem with readiness-lvl from vorgonia mysli
+ * Fixed bug after getting kicked out of umode because of inactivity
+
+#### Features ####
+
+ * Added field for %-calculation at market
+ * Gentech counts as special tech now(allows researching of Gentech+other tech at same time)
+ * Crytocenter now shows more infos about target(e.g. distance, name, planet)
+ * Reworked 404-page  
+ * Added optimizing button for each ship
+ * market reservations for a person will now be displayed at top
+
+ ### Administration ###
+
+ * Added function to add all buildings at once
+ * Added function to add alliance buildings
 
 Version 3.5.6
 -------------

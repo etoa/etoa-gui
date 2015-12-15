@@ -1296,8 +1296,8 @@ function addFontColor(id, colorId)
 		
 		if (people > peopleFree)
 			error = "Nicht genug freie Arbeiter vorhanden!";
-		else if (food > foodAvaiable)
-			error = "Nicht genug Nahrung vorhanden!";
+		//else if (food > foodAvaiable)
+		//	error = "Nicht genug Nahrung vorhanden!";
 		else if (peopleOptimized!=0 && people > peopleOptimized)
 			error = "Mehr Arbeiter als notwendig ausgewählt!";
 		

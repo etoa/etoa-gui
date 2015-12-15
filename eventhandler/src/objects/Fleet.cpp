@@ -815,7 +815,9 @@ double Fleet::getExp() {
     std::vector<Object*>::iterator ot;
     for (ot = this->objects.begin() ; ot < this->objects.end(); ot++) {
         ShipData *data = DataHandler.getShipById((*ot)->getTypeId());
-        exp += ((*ot)->getInitCount() - (*ot)->getCount()) * data->getCosts();
+        if((data)->getCatId() != 2) {
+            exp += ((*ot)->getInitCount() - (*ot)->getCount()) * data->getCosts();
+        }
     }
     if (fleets.size()) {
         std::vector<Fleet*>::iterator it;

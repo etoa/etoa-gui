@@ -25,6 +25,7 @@ $xajax->register(XAJAX_FUNCTION,"submitEditDefense");
 
 $xajax->register(XAJAX_FUNCTION,"showBuildingsOnPlanet");
 $xajax->register(XAJAX_FUNCTION,"addBuildingToPlanet");
+$xajax->register(XAJAX_FUNCTION,"addAllBuildingToPlanet");
 $xajax->register(XAJAX_FUNCTION,"removeBuildingFromPlanet");
 $xajax->register(XAJAX_FUNCTION,"editBuilding");
 $xajax->register(XAJAX_FUNCTION,"submitEditBuilding");
@@ -986,6 +987,28 @@ function addBuildingToPlanet($form)
   	$out="Planet unbewohnt. Kann keine Gebäude hier bauen!";
    	$objResponse->assign("shipsOnPlanet","innerHTML", $out); 	
   }
+	return $objResponse;			
+}
+
+function addAllBuildingToPlanet($form,$num)
+{
+	$objResponse = new xajaxResponse();	
+	
+	$updata=explode(":",$form['entity_id']);
+	if ($updata[1]>0)
+	{
+		for($i=1;$i<=$num;$i++)
+		{
+			buildlistAdd($updata[0],$updata[1],$i,intval($form['buildlist_current_level']));	
+		}
+		
+  		$objResponse->script("xajax_showBuildingsOnPlanet('".$form['entity_id']."')");
+    }
+    else
+    {
+	  	$out="Planet unbewohnt. Kann keine Gebäude hier bauen!";
+	   	$objResponse->assign("shipsOnPlanet","innerHTML", $out); 	
+    }
 	return $objResponse;			
 }
 

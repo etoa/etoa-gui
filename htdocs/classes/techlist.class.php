@@ -74,6 +74,25 @@
 			return false;
 		}
 		
+    function isBuilding($bid)   
+    {
+    	global $cu;
+      $tres = dbquery("
+			SELECT 
+				COUNT(techlist_id)
+			FROM 
+				techlist 
+			WHERE 
+				techlist_user_id='".$cu->id."' AND techlist_tech_id= ".$bid." AND techlist_build_type > '2'
+			;");
+			$tarr=mysql_fetch_row($tres);	
+			if($tarr[0] >0)
+			{
+				return true;
+			}
+			return false;
+    } 
+
 		/* IMPORTANT:
 		 * Check available workers
 		 * before calling this function!
@@ -92,6 +111,22 @@
                 	buildlist_entity_id=".$cp->id.'');
             return true;
 		}
+
+		function setPeopleWorkingGen($people,$bid)
+		{
+			global $cp;
+            dbquery("
+            	UPDATE
+                	buildlist
+            	SET
+                	buildlist_gen_people_working='".$people."'
+            	WHERE
+                	buildlist_building_id='".$bid."'
+                AND
+                	buildlist_entity_id=".$cp->id.'');
+            return true;
+		}
+
 	}
 
 ?>

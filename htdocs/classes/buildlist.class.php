@@ -235,6 +235,17 @@
 			return 0;
 		}
 
+		function getPeopleWorkingGen($bid)
+		{
+			if ($this->items==null)
+				$this->load();
+			if (isset($this->items[$bid]))
+			{
+				return $this->items[$bid]->peopleWorkingGen;
+			}
+			return 0;
+		}
+
 		// use only for tech and buildings
 		function setPeopleWorking($bid,$people,$tech=false)
 		{
@@ -242,7 +253,8 @@
 				$this->load();
 			
 			// BUGFIX: if first part is false, check for $tech in second part!
-			if ((!$tech && !$this->isUnderConstruction($bid)) || ($tech && !$this->tl->isBuildingSomething(true)))
+      
+			if ((!$tech && !$this->isUnderConstruction($bid)) || ($tech))
 			{
 				if (isset($this->items[$bid]))
 				{
@@ -262,6 +274,29 @@
 					}
 				}
 			}
+			return false;
+		}
+
+		function setPeopleWorkingGen($bid,$people,$tech=false)
+		{
+			if ($this->items==null)
+				$this->load();
+						
+			if (isset($this->items[$bid]))
+			{
+				global $cp;
+				// Free: Total people on planet minus total working people on planet
+				// PLUS people working in this building (these can be set again)
+				$free = $cp->people - $this->totalPeopleWorking() + $this->items[$bid]->peopleWorking;
+				if ($free >= $people)
+				{
+					if ($tech && $this->tl->setPeopleWorkingGen($people,$bid))
+					{
+						return true;
+					}
+				}
+			}
+			
 			return false;
 		}
 
@@ -309,7 +344,19 @@
 							WHERE
 								buildlist_entity_id='".$this->entityId."';");
 			$pbarr = mysql_fetch_row($res);
+
 			$this->totalPeopleWorking = $pbarr[0];
+
+			$res = dbquery("SELECT
+								SUM(buildlist_gen_people_working)
+							FROM
+								buildlist
+							WHERE
+								buildlist_entity_id='".$this->entityId."';");
+			$pbarr = mysql_fetch_row($res);
+
+			$this->totalPeopleWorking += $pbarr[0];
+
 			return $this->totalPeopleWorking;
 		}
 

@@ -122,6 +122,25 @@
 					LIMIT 1;");
 			$tpl->assign('msg', 'Ressourcen aktualisiert!');
 		}
+		elseif (isset($_POST['buildings']) && $_POST['buildings']!="")
+		{
+			
+			$test= dbquery("SELECT alliance_buildlist_id FROM alliance_buildlist WHERE alliance_buildlist_alliance_id =".$id." 
+							AND alliance_buildlist_building_id =(select alliance_building_id from alliance_buildings where alliance_building_name='".$_POST['selected']."')");
+			
+			if (mysql_num_rows($test)>0)
+			{	
+			dbquery("UPDATE alliance_buildlist SET alliance_buildlist_current_level =".$_POST['level'].", alliance_buildlist_member_for =".$_POST['amount']." WHERE alliance_buildlist_alliance_id =".$id." 
+					 AND alliance_buildlist_building_id =(select alliance_building_id from alliance_buildings where alliance_building_name='".$_POST['selected']."')");
+			$tpl->assign('msg','Datensatz erfolgreich bearbeitet!');
+			}
+			else
+			{	
+				dbquery("INSERT into alliance_buildlist(alliance_buildlist_alliance_id,alliance_buildlist_building_id,alliance_buildlist_current_level,alliance_buildlist_build_start_time,alliance_buildlist_build_end_time,alliance_buildlist_cooldown,alliance_buildlist_member_for)
+				VALUES(".$id.",(select alliance_building_id from alliance_buildings where alliance_building_name='".$_POST['selected']."'),".$_POST['level'].",0,1,0,".$_POST['amount'].")");
+				$tpl->assign('msg', 'Datensatz erfolgreich eingefügt!');
+			}		
+		}
 		
 		$res = dbquery("SELECT * FROM alliances WHERE alliance_id='".$id."';");
 		$arr = mysql_fetch_assoc($res);
@@ -470,6 +489,14 @@
 						ON
 							alliance_buildings.alliance_building_id=alliance_buildlist.alliance_buildlist_building_id
 							AND	alliance_buildlist_alliance_id='".$id."';");
+
+			$buildings = dbquery("
+						SELECT
+							alliance_building_id,
+							alliance_building_name
+						FROM
+							alliance_buildings;");
+
 			tableStart();
 			echo "<tr>
 					<th>Gebäude</th><th>Stufe</th><th>Useranzahl</th><th>Status</th>
@@ -484,12 +511,38 @@
 					else echo "Untätig";
 					echo "</td>";
 					echo "</tr>";
-					echo "<tr id=\"buildlist_".$arr['alliance_buildlist_id']."\" style=\"display: none;\"><td>test</td></tr>";
+					
 				}
 			}
 			else
 				echo "<tr><td colspan=\"4\">Keine Gebäude vorhanden!</td></tr>";
+			
 			tableEnd();
+		    
+		    echo '<br><h2>Gebäude hinzufügen</h2>';
+            
+			tableStart();
+
+            echo "<tr>
+					<th>Gebäude</th><th>Stufe</th><th>Useranzahl</th>
+				</tr>"; 
+			echo'<tr><td>';
+
+            if (mysql_num_rows($buildings)>0)
+			{   
+				echo'<select name="selected">';
+				while ($arr = mysql_fetch_assoc($buildings))
+				{
+					echo "<option>".$arr['alliance_building_name']."</option>";
+				}
+				echo"</select>";
+			}
+
+			echo '</td><td><input type=number value=1 name="level"></td><td><input type=number value=1 name="amount"></td></tr>';
+
+			tableEnd();	
+
+			echo'<input type="submit" name="buildings">';
 
 			echo '</div><div id="tabs-8">';
 			

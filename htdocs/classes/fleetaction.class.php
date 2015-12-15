@@ -44,7 +44,7 @@
 
 		// Colors for different attitudes
 		static public $attitudeColor = array("#ff0","#0f0","#f90","#f00","#999");
-		static public $attitudeString = array("Neutral","Friedlich","Agressiv","Feindlich","Unbekannt");
+		static public $attitudeString = array("Neutral","Friedlich","Aggressiv","Feindlich","Unbekannt");
 		
 		// Status descriptions
 		static public $statusCode = array("Hinflug","R&uuml;ckflug","Abgebrochen","Allianz");

@@ -1,5 +1,16 @@
-Escape to Andromeda Changelog
+﻿Escape to Andromeda Changelog
 =============================
+
+Version 3.5.7
+-------------
+
+### Features ###
+
+ * Neues Feld im Marktplatz um Schiffe zu einem bestimmen Prozentsatz zu verkaufen
+
+### Bugfixes ###
+
+ * Bevölkerungswachstum wird nun korrekt berechnet
 
 Version 3.5.6
 -------------

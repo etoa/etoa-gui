@@ -115,7 +115,22 @@
                         AND buildlist_entity_id=".$cp->id."");
                     }
                 }
-            }
+
+                if(!$gen_research) {
+                    if($gen_workers <> $_POST['gen']) {
+                        dbquery("
+                        UPDATE
+                            buildlist
+                        SET
+                            buildlist.buildlist_gen_people_working =".nf_back($_POST['gen'])."
+                        WHERE
+                            buildlist.buildlist_user_id =".$cu->id."
+                            AND buildlist.buildlist_entity_id =".$cp->id()."
+                            AND buildlist.buildlist_building_id =".TECH_BUILDING_ID);
+                    }
+                }
+            }    
+          
 
             //überprüft tätigkeit des Schiffswerftes
             $sql = "
@@ -156,7 +171,8 @@
             WHERE
                 techlist_entity_id='".$cp->id."'
             AND techlist_user_id='".$cu->id."'
-            AND techlist_build_type>'2';";
+            AND techlist_build_type>'2'
+            AND techlist_tech_id <>".GEN_TECH_ID;
             $tres = dbquery($sql);
             $tarr=mysql_fetch_row($tres);
             $w[TECH_BUILDING_ID]=$tarr[0];
@@ -245,7 +261,8 @@
                             AND buildlist_entity_id='".$cp->id."'");
                     }
                     else
-                    {
+                    {   
+                        
                         echo '<input type="text" id="'.$sp_arr['building_id'].'" name="people_work['.$sp_arr['building_id'].']" value="'.$sp_arr['buildlist_people_working'].'" size="8" maxlength="20" onKeyUp="FormatNumber(this.id,this.value, '.$cp->people.', \'\', \'\');"/>';
 
                         //onKeyPress=\"return nurZahlen(event)\"
@@ -263,9 +280,76 @@
                             AND buildlist_user_id='".$cu->id."'
                             AND buildlist_entity_id='".$cp->id."'");
                     }
-                echo '</td><td>'.(nf($sp_arr['buildlist_people_working']*$cfg->get('people_food_require'))).' t</td></tr>';
+                    echo '</td><td>'.(nf($sp_arr['buildlist_people_working']*$cfg->get('people_food_require'))).' t</td></tr>';
                 }
             }
+
+            //Spezialfall Gentech
+            
+            $requirements_passed = true;
+            $rres = dbquery("
+            SELECT 
+                * 
+            FROM 
+                tech_requirements where obj_id=".GEN_TECH_ID);
+            
+            $bl = new BuildList($cp->id(),$cu->id);
+            $tl = new TechList($cu->id);
+
+            while ($rarr = mysql_fetch_array($rres)) {
+                if ($rarr['req_tech_id']>0) {
+                    if (($rarr['req_level']) > ($tl->getLevel($rarr['req_tech_id']))) {
+                        $requirements_passed = false;
+                    }
+                }
+                if ($rarr['req_building_id']>0) {
+
+                    if (($rarr['req_level']) > ($bl->getLevel($rarr['req_building_id']))) {
+                        $requirements_passed = false;
+                    }
+                }
+            }
+
+
+
+            if ($requirements_passed) {
+                echo'<tr><td>Genlabor</td>';    
+ 
+                $rres = dbquery("
+                SELECT 
+                    buildlist_gen_people_working 
+                FROM 
+                    buildlist 
+                WHERE  
+                    buildlist.buildlist_user_id =".$cu->id."
+                    AND buildlist.buildlist_entity_id =".$cp->id()."
+                    AND buildlist.buildlist_building_id =".TECH_BUILDING_ID);
+
+                $gen_workers = mysql_result($rres,0);
+                               
+                $rres = dbquery("
+                SELECT 
+                    * 
+                FROM 
+                    techlist 
+                WHERE  
+                    techlist.techlist_user_id =".$cu->id."
+                    AND techlist.techlist_entity_id =".$cp->id()."
+                    AND techlist.techlist_tech_id = ".GEN_TECH_ID."
+                    AND techlist.techlist_build_type = 3");
+                if(mysql_num_rows($rres) >0) {
+                    $gen_research = true;
+                    echo '<td>'.$gen_workers.'</td>';
+                }
+                else
+                {    
+                    $gen_research = false;
+                    echo '<td><input type="text" id="gen" name="gen" value="'.$gen_workers.'" size="8" maxlength="20" onKeyUp="FormatNumber(this.id,this.value, '.$cp->people.', \'\', \'\');"/></td>';    
+                }
+                echo '</td><td>'.nf($gen_workers*$cfg->get('people_food_require')).' t</td></tr>';
+
+            }
+
 
             if ($work_available)
             {
@@ -291,11 +375,11 @@
             WHERE
                 buildlist_entity_id=".$cp->id.";");
             $barr = mysql_fetch_array($bres);
-            $people_working = $barr[0];
+            $people_working = $barr[0]+$gen_workers;
 
         // Infodaten
             $people_free = floor($cp->people)-$people_working;
-            $people_div = $cp->people/50 * ($cfg->get('people_multiply') + $cp->typePopulation + $cu->race->population + $cp->starPopulation -3);
+            $people_div = $cp->people/2 * ($cfg->get('people_multiply') + $cp->typePopulation + $cu->race->population + $cp->starPopulation -3);
             if($people_div<=3) $people_div=3;
             tableStart("Daten",500);
             echo '<tr><th style="width:300px">Bev&ouml;lkerung total</th><td>'.nf(floor($cp->people)).'</td></tr>';

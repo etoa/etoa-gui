@@ -515,7 +515,7 @@ aLettersType[26]=1
 				strReturn = GetName(3 + GenNumber(3), 2, 2, 50, false, false, false, false, 5, true, 5, true, "") + "-" + GetName(3 + GenNumber(3), 2, 2, 50, false, false, false, false, 5, true, 5, true, "");
 				break;
 			case 6:
-				strReturn = GetName(1 + GenNumber(2), 1, 1, 50, false, false, false, false, 0, true, 0, true, "") + "'" +GetName(4 + GenNumber(3), 2, 2, 50, false, false, false, false, 5, true, 5, true, "");
+				strReturn = GetName(1 + GenNumber(2), 1, 1, 50, false, false, false, false, 0, true, 0, true, "") + GetName(4 + GenNumber(3), 2, 2, 50, false, false, false, false, 5, true, 5, true, "");
 				break;
 		}
 

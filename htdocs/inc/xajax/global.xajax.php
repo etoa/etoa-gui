@@ -2,6 +2,7 @@
 
 $xajax->register(XAJAX_FUNCTION,'searchUser');
 $xajax->register(XAJAX_FUNCTION,'getFlightTargetInfo');
+$xajax->register(XAJAX_FUNCTION,'getCryptoDistance');
 $xajax->register(XAJAX_FUNCTION,'formatNumbers');
 
 $xajax->register(XAJAX_FUNCTION,'sendMsg');
@@ -289,6 +290,196 @@ function getFlightTargetInfo($f,$sx1,$sy1,$cx1,$cy1,$p1)
 	{
 		$objResponse->assign("launchbutton","style.color",'#f00');				
 		$objResponse->assign("launchbutton","disabled",true);				
+	}
+	
+	$objResponse->append("targetinfo","innerHTML",ob_get_contents());				
+	ob_end_clean();
+  return $objResponse;	
+}
+
+
+function getCryptoDistance($f,$sx1,$sy1,$cx1,$cy1,$p1)
+{
+	global $conf, $s;
+	$objResponse = new xajaxResponse();
+	ob_start();
+	$launch = true;
+	
+
+	$sx=intval($f['sx']);
+	$sy=intval($f['sy']);
+	$cx=intval($f['cx']);
+	$cy=intval($f['cy']);
+	$p=intval($f['p']);
+	
+	$range= $f['range'];
+
+	if ($sx<1)
+	{
+		$sx=1;
+		$objResponse->assign("sx","value",1);										
+	}
+	if ($sy<1)
+	{
+		$sy=1;
+		$objResponse->assign("sy","value",1);										
+	}
+	if ($cx<1)
+	{
+		$cx=1;
+		$objResponse->assign("cx","value",1);										
+	}
+	if ($cy<1)
+	{
+		$cy=1;
+		$objResponse->assign("cy","value",1);										
+	}
+	if ($sx>$conf['num_of_sectors']['p1'])
+	{
+		$sx=$conf['num_of_sectors']['p1'];
+		$objResponse->assign("sx","value",$sx);										
+	}
+	if ($sy>$conf['num_of_sectors']['p2'])
+	{
+		$sy=$conf['num_of_sectors']['p2'];
+		$objResponse->assign("sy","value",$sy);										
+	}
+	if ($cx>$conf['num_of_cells']['p1'])
+	{
+		$cx=$conf['num_of_cells']['p1'];
+		$objResponse->assign("cx","value",$cx);										
+	}
+	if ($cy>$conf['num_of_cells']['p2'])
+	{
+		$cy=$conf['num_of_cells']['p2'];
+		$objResponse->assign("cy","value",$cy);										
+	}
+	if ($p<1)
+	{
+		$p=1;
+		$objResponse->assign("p","value",$p);										
+	}
+	if ($p>$conf['num_planets']['p2'])
+	{
+		$p=$conf['num_planets']['p2'];
+		$objResponse->assign("p","value",$p);										
+	}
+    
+    //
+    if ($p>0)
+	{
+		$res = dbquery("
+		SELECT
+			planet_name,
+			user_nick,
+			user_id,
+			entities.cell_id,
+			planets.id
+
+		FROM 
+			entities
+		INNER JOIN 
+			cells 
+		ON 
+			entities.cell_id = cells.id
+			AND entities.pos=".intval($p)."
+			AND cells.sx=".intval($sx)."
+			AND cells.sy=".intval($sy)."
+			AND cells.cx=".intval($cx)."
+			AND cells.cy=".intval($cy)."
+		INNER JOIN
+			planets
+		ON 
+			entities.id=planets.id
+		LEFT JOIN
+			users
+		ON planet_user_id=user_id				
+			
+		");
+		$out = mysql_num_rows($res);
+		if (mysql_num_rows($res)>0)
+		{
+			$arr=mysql_fetch_array($res);
+			if ($arr['planet_name']!='')
+			{
+				$out = "<b>Planet:</b> ".$arr['planet_name'];
+			}
+			else
+			{
+				$out = "<i>Unbenannter Planet</i>";
+			}
+			if ($arr['user_id']>0) 
+			{
+				$out.=" <b>Besitzer:</b> ".$arr['user_nick'];
+				if ($s->getInstance()->user_id==$arr['user_id'] && $arr['user_id']>0)
+				{
+					$out.=' (Eigener Planet)';								
+					$objResponse->assign("targetinfo","style.color",'#f00');								
+					$launch=false;
+				}
+				else
+				{
+					$objResponse->assign("targetinfo","style.color",'#0f0');								
+				}
+			}
+			else
+			{			
+				$objResponse->assign("targetinfo","style.color",'#f00');								
+				$launch=false;
+			}
+			$objResponse->assign("targetinfo","innerHTML",$out);								
+			$objResponse->assign("targetcell","value",$arr['cell_id']);								
+			$objResponse->assign("targetplanet","value",$arr['id']);								
+		}			
+		else
+		{
+			$objResponse->assign("targetinfo","innerHTML","Hier existiert kein Planet!");				
+			$objResponse->assign("targetinfo","style.color",'#f00');		
+			$launch=false;						
+			$objResponse->assign("targetcell","value",0);								
+			$objResponse->assign("targetplanet","value",0);								
+		}
+	}	
+    //
+
+	$launch=false;		
+	
+	$nx=$conf['num_of_cells']['p1'];		// Anzahl Zellen Y
+	$ny=$conf['num_of_cells']['p2'];		// Anzahl Zellen X
+	$ae=$conf['cell_length']['v'];			// Länge vom Solsys in AE
+	$np=$conf['num_planets']['p2'];			// Max. Planeten im Solsys
+	$dx = abs(((($sx-1) * $nx) + $cx) - ((($sx1-1) * $nx) + $cx1));
+	$dy = abs(((($sy-1) * $nx) + $cy) - ((($sy1-1) * $nx) + $cy1));
+	$sd = sqrt(pow($dx,2)+pow($dy,2));			// Distanze zwischen den beiden Zellen
+	$sae = $sd * $ae;											// Distance in AE units
+	if ($sx1==$sx && $sy1==$sy && $cx1==$cx && $cy1=$cy)
+		$ps = abs($p-$p1)*$ae/4/$np;				// Planetendistanz wenn sie im selben Solsys sind
+	else
+		$ps = ($ae/2) - (($p)*$ae/4/$np);	// Planetendistanz wenn sie nicht im selben Solsys sind
+	$ssae = $sae + $ps;
+									
+	$objResponse->assign("distance","innerHTML",nf($ssae)." AE");								
+	if ($ssae > $range)
+	{
+		$objResponse->assign("distance","style.color","#f00");		
+		$objResponse->append("distance","innerHTML"," (zu weit entfernt, ".nf($range)." max)");								
+		$launch=false;						
+	}
+	else
+	{
+		$objResponse->assign("distance","style.color","#0f0");		
+	}
+	
+
+	if ($launch)
+	{
+		$objResponse->assign("scan","style.color",'#0f0');				
+		$objResponse->assign("scan","disabled",false);				
+	}
+	else
+	{
+		$objResponse->assign("scan","style.color",'#f00');				
+		$objResponse->assign("scan","disabled",true);				
 	}
 	
 	$objResponse->append("targetinfo","innerHTML",ob_get_contents());				

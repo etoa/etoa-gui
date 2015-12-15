@@ -256,9 +256,14 @@
 					</td>
 					<td height=\"30\" colspan=\"2\" style=\"vertical-align:middle;\">
 						<input type=\"text\" value=\"0\" name=\"ship_count\" id=\"ship_count\" size=\"5\" maxlength=\"7\" onkeyup=\"calcMarketShipPrice(1, 0);\" /> St&uuml;ck
+					    &nbsp;
+					    <input type=\"text\" value=\"100\" name=\"ship_percent\" id=\"ship_percent\" size=\"5\" maxlength=\"7\" onkeyup=\"calcMarketShipPrice(1, 0);\" /> Verkaufspreis in %
 					</td>
+					
+					  
+					
 				</tr>";
-
+				
 				//Header Preis
 				echo "<tr>
 						<th style=\"width:15%;vertical-align:middle;\">Rohstoff</th>
