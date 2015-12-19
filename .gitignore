@@ -23,3 +23,10 @@ htdocs/log/*.log
 *Makefile
 *CMakeFiles*
 CMakeCache.txt
+/.idea/.name
+/.idea/encodings.xml
+/.idea/etoa-gui.iml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/vcs.xml
+/.idea/workspace.xml
