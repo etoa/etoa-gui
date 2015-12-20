@@ -1,4 +1,4 @@
-Escape to Andromeda Changelog
+﻿Escape to Andromeda Changelog
 =============================
 
 Version 3.5.7
@@ -30,6 +30,7 @@ Version 3.5.7
 
  * Added function to add all buildings at once
  * Added function to add alliance buildings
+ * Added bounty-field to ships
 
 Version 3.5.6
 -------------
