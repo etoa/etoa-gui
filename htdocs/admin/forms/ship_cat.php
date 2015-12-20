@@ -34,7 +34,21 @@
 	// select_elem_checked				// Value of default checked Select Element (desc=>value)
 	// show_overview							// Set 1 to show on overview page
   
-	$db_fields = array ( 0	=> 	array	(	"name" => "cat_name",
+	$db_fields = array ( 0	=> 	array	(	"name" => "cat_id",
+																		"text" => "ID",
+																		"type" => "text",
+																		"def_val" => "",
+																		"size" => "1",
+																		"maxlen" => "0",
+																		"rows" => "0",
+																		"cols" => "0",
+																		"rcb_elem" => "",
+																		"rcb_elem_chekced" => "",
+																		"select_elem" => "",
+																		"select_elem_checked" => "",
+																		"show_overview" => 1
+																	),
+												1	=> 	array	(	"name" => "cat_name",
 																		"text" => "Kategoriename",
 																		"type" => "text",
 																		"def_val" => "",
@@ -48,7 +62,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
 																	),
-												1	=> 	array	(	"name" => "cat_order",
+												2	=> 	array	(	"name" => "cat_order",
 																		"text" => "Sortierung",
 																		"type" => "numeric",
 																		"def_val" => "1",
@@ -62,7 +76,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
 																	)	,
-												2	=> 	array	(	"name" => "cat_color",
+												3	=> 	array	(	"name" => "cat_color",
 																		"text" => "Farbe",
 																		"type" => "text",
 																		"def_val" => "#ffffff",
