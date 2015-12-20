@@ -6,8 +6,6 @@ echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 sudo aptitude update
 
-sudo aptitude install -g -y -f htop git
-
 # Force a blank root password for mysql
 echo "mysql-server mysql-server/root_password password " | debconf-set-selections
 echo "mysql-server mysql-server/root_password_again password " | debconf-set-selections
@@ -27,7 +25,7 @@ sudo service php5-fpm restart
 
 MYSQL=`which mysql`
 PHP=`which php`
-  
+
 Q1="CREATE DATABASE IF NOT EXISTS etoa;"
 Q2="GRANT USAGE ON *.* TO etoa@localhost IDENTIFIED BY 'etoa';"
 Q3="GRANT ALL PRIVILEGES ON etoa.* TO etoa@localhost;"

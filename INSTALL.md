@@ -10,11 +10,11 @@ Install [VirtualBox](https://www.virtualbox.org/).
 Install [Vagrant](https://www.vagrantup.com/).
 
 In your etoa root run "vagrant up"
-You can now reach etoa via http://192.168.33.10
+You can now reach etoa via http://192.168.33.11
 Cronjob, Eventhandler, DB, PHP, Nginx should be running.
 
 Additional steps because I havent figured out yet how to reset the db config via cli:
-* Go to: http://192.168.33.10/admin
+* Go to: http://192.168.33.11/admin
 * Login as admin
 * Reset the Configuration in the admin tool, then set the loginurl back to "" (empty string)
 
@@ -26,12 +26,12 @@ Copy all files to the gameservers root directory, e.g. /var/www/roundx.etoa.net/
 or user svn checkout:
 
     $ svn co http://dev.etoa.net/svn/game/trunk /var/www/roundx.etoa.net/htdocs
-	
-	
+
+
 Permissions
 -----------
 Execute the following command:
-	
+
     $ chmod 777 -R /var/www/roundx.etoa.net/htdocs/cache
 
 to allow writing to the cache directory
@@ -52,14 +52,14 @@ Execute scripts/reset_admin_pw.sh for setting the admin mode htaccess password t
 
 Cronjobs
 --------
-On the unix shell, execute 
+On the unix shell, execute
 
     $ crontab -e
 
 this will open the cron editor. Insert the following text (when using vi as editor, press INSERT first)
- 
+
     * * * * * php /path/to/etoa/bin/cronjob.php
-	
+
 Save and exit (in vi, press CTRL+C, then write wq and press ENTER), type
 
     $ crontab -l
@@ -74,27 +74,27 @@ The admin panel can be accessed at roundx/admin.
 
  * Go to Admin-Panel => Config => Imagepacks and generate the downloadable imagepack files
  * Go to Admin-Panel => Config => Generate Universe to create the universe for this round
- 
+
 Debug mode
 ----------
 
 Create an empty file `config/debug` to enable the debug mode.
 
- 
+
 Sample installation on host.etoa.net
 ------------------------------------
 
-Assuming round name 'round12'. 
+Assuming round name 'round12'.
 
 Create directory and checkout code from SCM:
 
     $ mkdir -p /var/www/etoa/round12/htdocs
     $ ln -s /var/www/etoa/round12/htdocs ~/round12
     $ cd ~/round12
-    $ svn co https://devel.etoa.net/svn/etoa-gui/trunk/htdocs 
-    
+    $ svn co https://devel.etoa.net/svn/etoa-gui/trunk/htdocs
+
 Set permissions on cache directory:
-    
+
     $ chmod -R 777 cache/
 
 Create database config:
@@ -105,9 +105,9 @@ Create database config:
 Create database and user and import schema and data sql using e.g. phpMyAdmin on http://host.etoa.net/phpmyadmin
 
 Create apache config (Root account required):
-    
+
     $ vim /etc/apache2/sites-available/4_etoa_round12
-    
+
     <VirtualHost *:80>
             ServerAdmin mail@etoa.ch
             DocumentRoot "/var/www/etoa/round12/htdocs/"
@@ -125,18 +125,18 @@ Create apache config (Root account required):
             ErrorDocument 403 /error/error.php
             ErrorDocument 404 /error/error.php
     </VirtualHost>
-    
+
     $ ln -s /etc/apache2/sites-available/4_etoa_round12 /etc/apache2/sites-enabled/
     $ service apache2 reload
 
 Access admin panel on http://round12.live.etoa.net/admin
 
-Visit the base config page on [http://round12.live.etoa.net/admin/?page=config](http://round12.live.etoa.net/admin/?page=config) and change the settings to match the round name. 
+Visit the base config page on [http://round12.live.etoa.net/admin/?page=config](http://round12.live.etoa.net/admin/?page=config) and change the settings to match the round name.
 
 The eventhandler IPC-Key can be obtained by starting the eventhandler backend for this round in debug mode.
 
 
-Setup test instance on an Ubuntu server 
+Setup test instance on an Ubuntu server
 ---------------------------------------
 
 Install Ununtu server, choose OpenSSH and LAMP as server profile.
@@ -151,7 +151,7 @@ GUI:
 
 Create database and database user using phpmyadmin
 
-Backend: 
+Backend:
 
     supt apt-get install build-essential cmake libboost-all-dev libmysql++-dev
     svn co https://dev.etoa.net/svn/etoa-eventhandler/trunk ~/backend
