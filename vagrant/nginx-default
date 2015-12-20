@@ -1,0 +1,34 @@
+server {
+    server_name _;
+    listen 80;
+
+    root /var/www/etoa//htdocs;
+    index index.php;
+
+    location / {
+        try_files $uri /index.php$is_args$args;
+    }
+
+    location /admin {
+        alias /var/www/etoa/htdocs/admin;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass unix:/var/run/php5-fpm.sock;
+        fastcgi_split_path_info ^(.+\.php)(/.*)$;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param HTTPS off;
+    }
+
+    location ~ /\. {
+        access_log on;
+        log_not_found on; 
+        deny all;
+    }
+
+    location ~* \.(jpg|jpeg|gif|png|css|js|ico|xml)$ {
+        log_not_found     on;
+    }
+}
+
