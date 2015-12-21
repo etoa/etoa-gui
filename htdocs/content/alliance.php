@@ -43,12 +43,12 @@
 /**************************************************/
 	elseif ($cu->allianceId == 0)
 	{	
-		if (time()>$cu->allianceLeave+$cfg->get("user_alliance_leave"))
+		if (time()>$cu->allianceLeave+$cfg->get("alliance_leave_cooldown"))
 		{
 			require("alliance/foreign.inc.php");
 	    }
 	    else 
-	    	echo '<p><b>Du musst 2h warten bis du dich bei einer neuen Allianz bewerben kannst!</b></p>';
+	    	echo '<p><b>Du musst '.(floor((($cu->allianceLeave+$cfg->get("alliance_leave_cooldown"))-time())/60)).' Minuten warten bis du dich bei einer neuen Allianz bewerben kannst!</b></p>';
 	}
 	else
 	{
