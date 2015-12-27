@@ -1,16 +1,129 @@
-﻿Escape to Andromeda Changelog
+Escape to Andromeda Changelog
 =============================
 
-Version 3.5.7
+Version 3.5.7 (Runde 15)
 -------------
 
 ### Features ###
 
  * Neues Feld im Marktplatz um Schiffe zu einem bestimmen Prozentsatz zu verkaufen
+ * Exp bei Allianzangriffen wird nun aufgeteilt
+ * Infra-Schiffe geben nun 0 Exp
+ * Gentech zählt nun als Spezialtech und kann zeitgleich mit anderen Techs geforscht werden
+ * Kryptocenter(nicht der Bericht) zeigt nun mehr Infos über das Ziel (Distanz, Name, Planet) 
+ * Optimieren-Button für jedes Schiff
+ * Marktreservierungen für eine Person erscheinen nun ganz oben
+ * Nach dem Verlassen einer Allianz ist es nicht mehr möglich, für eine bestimmte Zeit einer anderen beizutreten (2h aktuell)
+ * Neue Bilder für Supra-Schiffe
+ * Aliens sind in der Nähe eines Schwarzen Lochs aufgetaucht (viel Spaß beim Suchen bzw. was damit gemeint ist :P)
 
 ### Bugfixes ###
 
  * Bevölkerungswachstum wird nun korrekt berechnet
+ * Verschiedene Rechtschreibfehler behoben
+ * Im Silo können nun mehr als 999 Raketen gleichzeitig zerstört werden
+ * Das '-Zeichen ist nicht mehr in Planetennamen erlaubt um Probleme beim Invasieren zu verhindern
+ * Das Minbari Mysticum tarnt nun richtig
+ * Im Tool deaktivierte Gebäude können nun nicht mehr der Hilfsseite angezeigt werden
+ * Das Vorgonen Mysticum resetet nicht mehr beim Umstationieren
+ * Gebäude frieren nicht mehr ein wenn die Maximaldauer des U-Modes abgelaufen ist
+ * Es wird nun die richtige Nachricht angezeigt, wenn man ein Allianzmitglied kicken will während ein Allianzangriff läuft
+ * Entfernen von HTML-Code, der in seltenen Fällen im Krypto-Bericht angezeigt wurde 
+
+### Balancing ###
+ 
+## Rassen ##
+
+# Minbari #
+ * PVC Bonus von -5% auf 0%
+ 
+# Orioner #
+ * Tritiumbonus von -5% auf 10%
+
+## Sterne ##
+
+# Roter Stern #
+ * Tritiumbonus von 0% auf -15%
+  
+# Schwarzer Stern #
+ * Tritiumbonus von 0% auf -10%
+
+## Planeten ## 
+
+# Gebirgsplanet #
+ * Tritiumbonus von 0% auf -10%
+
+# Wüstenplanet # 
+ * Tritiumbonus von 0% auf -10%
+
+# Wasserplanet # 
+ * Tritiumbonus von 20% auf -15%
+ * Nahrungsbonus von 0% auf 10%
+
+## Schiffe ##
+ * Flugkosten aller Schiffe halbiert
+ * Start- und Landekosten aller Schiffe halbiert
+
+# WEZEA Fighter # 
+ * Komplett überarbeitet
+ 
+ * Ionenantrieb 3
+ * Wasserstoffantrieb 3
+ * Schiffswerft 3
+ * Rassentechnik 1
+  
+ * Panzerung: 725
+ * Schutzschild: 350
+ * Waffen: 572
+ * Frachtraum: 1250
+ * Start- und Landezeit: 16 Minuten
+ * Grundgeschwindigkeit: 2200AE/h
+ * Flugkosten: 0
+ * Start- und Landekosten: 2
+ * Piloten: 1
+  
+ * Titan: 1400
+ * Silizium: 700
+ * PVC: 800
+ * Tritium: 900
+
+# MINBARI Jäger #
+ * Panzerung von 13000 auf 12000
+ * Waffen von 4500 auf 5500
+ 
+# GOMEISA Gassauger #
+ * Kapazität von 40000 auf 35000
+
+# PEGASUS Gassauger #
+ * Kapazität von 140000 auf 100000
+
+# RUTICULUS Sammler #
+ * Kapazität von 20000 auf 5000
+
+# FORNAX Asteroidensammler #
+ * Kapazität von 45000 auf 14000
+  
+## Allianzkampfsystem ##
+ * Maximale Anzahl Angreifer/Verteidiger auf 2 beschränken.
+
+## Sammeln ##
+ * Verluste beim Asteroidensammeln von 20 auf 40
+ * Wahrscheinlichkeit der Verluste beim Gassaugen von 20 auf 30
+ * Verluste beim Gassaugen von 10 auf 40
+
+## Gebäude ##
+ * Tritiumsynthesizer:
+ * Grundproduktion von 40 auf 65
+
+## Raiden ##
+ * Maximale Beute von 30% auf 25%
+
+## Mysticums ##
+ * Start- und Landezeit auf 0
+ * Fluggeschwindigkeit von 5000 auf 30000
+ * Kapazität auf 0 
+ 
+ 
 
 Version 3.5.6
 -------------
