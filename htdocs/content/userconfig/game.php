@@ -50,6 +50,14 @@
     	error_msg('Ung&uuml;ltiger RGB-Farbwert, Standardwert #FFF wurde eingef&uuml;gt.');
 	}
   }
+
+
+  if (isset($_POST['show_tut']) && checker_verify())
+  {
+    $ttm = new TutorialManager();
+    $ttm->reopenAllTutorials($cu->id);
+    echo '<script type="text/javascript">showTutorialText(1,0)</script>';
+  }
 			
 
   echo "<form action=\"?page=$page&mode=game\" method=\"post\" enctype=\"multipart/form-data\">";
@@ -194,6 +202,14 @@
     					echo "/> Deaktiviert
     		</td>
   		</tr>";  
+
+   echo "<tr>
+            <th>Tutorial:</th>
+            <td>
+                <input type=\"submit\" name=\"show_tut\" value=\"Anzeigen\"/>
+            </td>
+        </tr>";  
+
 // Chat font color
 echo "<tr>
   			<th>Chat Schriftfarbe:</th>

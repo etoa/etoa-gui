@@ -142,5 +142,16 @@ class TutorialManager {
 			array($userId, $tutorialId));
 	}
 
+	function reopenAllTutorials($userId) {
+		dbquery('
+			UPDATE
+				tutorial_user_progress
+			SET
+				tup_closed=0
+			WHERE
+				tup_user_id='.$userId);
+				
+	}
+
 }
 ?>

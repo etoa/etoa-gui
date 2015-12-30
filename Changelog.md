@@ -12,6 +12,7 @@ Version 3.5.8
 #### Features ####
 
  * added growing to asterio fields
+ * tutorial can now be reopend at configurations
 
 ### Administration ###
 
