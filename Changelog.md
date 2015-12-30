@@ -7,6 +7,7 @@ Version 3.5.8
 ### Bugfixes ###
 
  * fixed admiral bug
+ * fixed html code at alliance
 
 #### Features ####
 

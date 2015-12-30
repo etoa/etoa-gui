@@ -73,7 +73,7 @@
 				if (mysql_num_rows($appres)>0)
 				{
 					$apparr = mysql_fetch_array($appres);
-         	success_msg("Du hast dich am ".df($application_timestamp)." bei der Allianz <b>[".$apparr['alliance_tag']."] ".$apparr['alliance_name']."</b> beworben
+         	success_msg("Du hast dich am ".df($application_timestamp)." bei der Allianz [".$apparr['alliance_tag']."] ".$apparr['alliance_name']." beworben
          	und musst nun darauf warten, dass deine Bewerbung akzeptiert wird!");
          	echo "<input type=\"button\" onclick=\"document.location='?page=$page&action=cancelapplication';\" value=\"Bewerbung zurückziehen\" />";
 				}
