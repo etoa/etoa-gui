@@ -8,6 +8,7 @@ Version 3.5.8
 
  * fixed admiral bug
  * fixed html code at alliance
+ * fixed a bug where lab didnt count workers
 
 #### Features ####
 
