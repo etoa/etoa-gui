@@ -145,11 +145,16 @@ if (Alliance::checkActionRights('editmembers'))
 			if (isset($ally->members[$kid]))
 			{
 				$tmpUser = $ally->members[$kid];
-				$ally->kickMember($kid);
-
-				add_log(5,"Der Spieler [b]".$tmpUser."[/b] wurde von [b]".$cu."[/b] aus der Allianz [b]".$ally."[/b] ausgeschlossen!",time());
-				success_msg("Der Spieler [b]".$tmpUser."[/b] wurde aus der Allianz ausgeschlossen!");
-				unset($tmpUser);
+				if ($ally->kickMember($kid)) 
+				{	
+					add_log(5,"Der Spieler [b]".$tmpUser."[/b] wurde von [b]".$cu."[/b] aus der Allianz [b]".$ally."[/b] ausgeschlossen!",time());
+					success_msg("Der Spieler [b]".$tmpUser."[/b] wurde aus der Allianz ausgeschlossen!");
+					unset($tmpUser);
+				}
+				else
+				{
+					error_msg("Der Spieler konnte nicht aus der Allianz ausgeschlossen werden, da er in einem Allianzangriff unterwegs ist!");
+				}	
 			}
 			else
 			{

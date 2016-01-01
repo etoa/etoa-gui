@@ -816,7 +816,9 @@ double Fleet::getExp() {
     for (ot = this->objects.begin() ; ot < this->objects.end(); ot++) {
         ShipData *data = DataHandler.getShipById((*ot)->getTypeId());
         if((data)->getCatId() != 2) {
-            exp += ((*ot)->getInitCount() - (*ot)->getCount()) * data->getCosts();
+            if((data)->getCatId() != 7) {
+                exp += ((*ot)->getInitCount() - (*ot)->getCount()) * data->getCosts();
+            }
         }
     }
     if (fleets.size()) {

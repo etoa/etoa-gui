@@ -23,3 +23,6 @@ htdocs/log/*.log
 *Makefile
 *CMakeFiles*
 CMakeCache.txt
+/.idea
+
+.vagrant

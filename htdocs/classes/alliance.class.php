@@ -353,8 +353,9 @@
 				if (mysql_num_rows($res) == 0) {
 					$this->getMembers();
 					if ($this->members[$userId]->isValid)
-					{
+					{	
 						$this->members[$userId]->alliance = null;
+						$this->members[$userId]->allianceLeave = time();
 						if ($this->members[$userId]->allianceId == 0)
 						{
 							if ($kick==1) {

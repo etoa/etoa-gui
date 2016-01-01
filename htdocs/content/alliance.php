@@ -42,8 +42,13 @@
 /* User ist NICHT in einer Allianz                */
 /**************************************************/
 	elseif ($cu->allianceId == 0)
-	{
-		require("alliance/foreign.inc.php");
+	{	
+		if (time()>$cu->allianceLeave+$cfg->get("alliance_leave_cooldown"))
+		{
+			require("alliance/foreign.inc.php");
+	    }
+	    else 
+	    	echo '<p><b>Du musst '.(floor((($cu->allianceLeave+$cfg->get("alliance_leave_cooldown"))-time())/60)).' Minuten warten bis du dich bei einer neuen Allianz bewerben kannst!</b></p>';
 	}
 	else
 	{

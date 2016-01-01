@@ -293,6 +293,21 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
 																	),
+											array	(	"name" => "ship_bounty_bonus",
+																		"text" => "max Beute",
+																		"type" => "text",
+																		"def_val" => "",
+																		"size" => "20",
+																		"maxlen" => "250",
+																		"rows" => "",
+																		"cols" => "",
+																		"rcb_elem" => "",
+																		"rcb_elem_chekced" => "",
+																		"select_elem" => "",
+																		"select_elem_checked" => "",
+																		"show_overview" => 0
+																	),
+
 											array	(	"name" => "ship_speed",
 																		"text" => "Geschwindigkeit",
 																		"type" => "text",

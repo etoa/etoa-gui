@@ -17,13 +17,13 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 	/**
 	* Construct ships
 	*
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/	
+	*/
 
 	//Definition für "Info" Link
 	define('ITEMS_TBL',"ships");
@@ -39,18 +39,18 @@
 
 	// Absolute minimal Bauzeit in Sekunden
 	define("SHIPYARD_MIN_BUILD_TIME", $cfg->get('shipyard_min_build_time'));
-	
+
 	// Ben. Level für Autragsabbruch
 	define("SHIPQUEUE_CANCEL_MIN_LEVEL", $cfg->get('shipqueue_cancel_min_level'));
-	
+
 	define("SHIPQUEUE_CANCEL_START", $cfg->get('shipqueue_cancel_start'));
-	
+
 	define("SHIPQUEUE_CANCEL_FACTOR", $cfg->get('shipqueue_cancel_factor'));
-	
+
 	define("SHIPQUEUE_CANCEL_END", $cfg->get('shipqueue_cancel_end'));
 
     $bl = new Buildlist($cp->id,$cu->id);
-	
+
 	// BEGIN SKRIPT //
 
 	//Tabulator var setzten (für das fortbewegen des cursors im forumular)
@@ -72,7 +72,7 @@
 
   // Prüfen ob Werft gebaut ist
     if (mysql_num_rows($werft_res)>0)
-    {    
+    {
     	$werft_arr = mysql_fetch_assoc($werft_res);
         define('CURRENT_SHIPYARD_LEVEL',$werft_arr['buildlist_current_level']);
 
@@ -101,12 +101,12 @@
 				$cu->properties->itemOrderShip = $_POST['sort_value'];
        			$cu->properties->itemOrderWay = $_POST['sort_way'];
 			}
-			
-			
+
+
 			//
 			// Läd alle benötigten Daten in PHP-Arrays
 			//
-			
+
 			// Vorausetzungen laden
 			$req = array();
 			$res = dbquery("
@@ -117,13 +117,13 @@
 			while ($arr = mysql_fetch_assoc($res))
 			{
 				//Gebäude Vorausetzungen
-				if ($arr['req_building_id']>0) 
+				if ($arr['req_building_id']>0)
 				{
 					$req[$arr['obj_id']]['b'][$arr['req_building_id']]=$arr['req_level'];
 				}
-				
+
 				//Technologie Voraussetzungen
-				if ($arr['req_tech_id']>0) 
+				if ($arr['req_tech_id']>0)
 				{
 					$req[$arr['obj_id']]['t'][$arr['req_tech_id']]=$arr['req_level'];
 				}
@@ -143,7 +143,7 @@
 			while ($arr = mysql_fetch_assoc($res))
 			{
 				$techlist[$arr['techlist_tech_id']]=$arr['techlist_current_level'];
-				
+
 				if($arr['techlist_tech_id']==GEN_TECH_ID && $arr['techlist_current_level']>0)
 				{
 					$gen_tech_level = $arr['techlist_current_level'];
@@ -163,7 +163,7 @@
 			{
 				$buildlist[$arr['buildlist_building_id']]=$arr['buildlist_current_level'];
 			}
-			
+
 			// Gebaute Schiffe laden
 			$res = dbquery("
 			SELECT
@@ -201,7 +201,7 @@
 			{
 				$queue[$arr['queue_id']] = $arr;
 			}
-			
+
 			// Bauliste vom allen Planeten laden und nach Schiffe zusammenfassen
 			$res = dbquery("
 			SELECT
@@ -218,7 +218,7 @@
 			while ($arr = mysql_fetch_assoc($res))
 			{
 				$queue_total[$arr['queue_ship_id']] = $arr['cnt'];
-			}	
+			}
 
 			// Flotten laden
 			$res = dbquery("
@@ -287,7 +287,7 @@
 				$arr['ship_costs_food'] *= $cu->specialist->costsShip;
 				$ships[$arr['ship_id']] = $arr;
 			}
-			
+
     	// level zählen welches die schiffswerft über dem angegeben level ist und faktor berechnen
     	$need_bonus_level = CURRENT_SHIPYARD_LEVEL - $conf['build_time_boni_schiffswerft']['p1'];
     	if($need_bonus_level <= 0)
@@ -356,8 +356,8 @@
     	{
     		echo "<tr><td>Abbruchmöglichkeit:</td><td>Stufe ".SHIPQUEUE_CANCEL_MIN_LEVEL." erforderlich!</td></tr>";
     		$cancelable = false;
-    	} 
-		tableEnd();			
+    	}
+		tableEnd();
 	    $peopleFree = floor($cp->people) - $bl->totalPeopleWorking() + $bl->getPeopleWorking(SHIP_BUILDING_ID);
         $box =  '
                     <input type="hidden" name="workDone" id="workDone" value="'.$cfg->value('people_work_done').'" />
@@ -372,7 +372,7 @@
                                 <input  type="text" 
                                         name="peopleWorking" 
                                         id="peopleWorking" 
-                                        value="'.nf($bl->getPeopleWorking(SHIP_BUILDING_ID)).'" 
+                                        value="'.nf($bl->getPeopleWorking(SHIP_BUILDING_ID)).'"
                                         onkeyup="updatePeopleWorkingBox(this.value,\'-1\',\'-1\');"/>
                         </td>
                         </tr>
@@ -395,7 +395,7 @@
                             <td colspan="2" style="text-align:center;">
                                 <div id="changeWorkingPeopleError" style="display:none;">&nbsp;</div>
                                 <input type="submit" value="Speichern" name="submit_people_form" id="submit_people_form" />&nbsp;';
-        echo '<div id="changePeople" style="display:none;">';             
+        echo '<div id="changePeople" style="display:none;">';
     	tableStart("Arbeiter im Bauhof zuteilen");
         echo '<form id="changeWorkingPeople" method="post" action="?page='.$page.'">
             '.$box.'</form>';
@@ -405,9 +405,18 @@
         // people working changed
         if (isset($_POST['submit_people_form']))
         {
-            if ($bl->setPeopleWorking(SHIP_BUILDING_ID,nf_back($_POST['peopleWorking'])))
-                success_msg("Arbeiter zugeteilt!");
-            else
+            if (!isset($queue) && empty($queue)) {
+				dbquery("
+                        UPDATE
+                            buildlist
+                        SET
+                            buildlist_people_working='".nf_back($_POST['peopleWorking']). "'
+                        WHERE
+                            buildlist_building_id='".SHIP_BUILDING_ID."'
+                        AND buildlist_entity_id=" . $cp->id);
+				//success_msg("Arbeiter zugeteilt!");
+			}
+			else
                 error_msg('Arbeiter konnten nicht zugeteilt werden!');
             header("Refresh:0");
         }
@@ -419,7 +428,7 @@
 
 		echo "<form action=\"?page=$page\" method=\"post\">";
 		iBoxStart("Filter");
-	
+
 			//Legt Sortierwerte in einem Array fest
 			$values = array(
 											"name"=>"Name",
@@ -436,33 +445,33 @@
 											"costs_plastic"=>"PVC",
 											"costs_fuel"=>"Tritium"
 											);
-											
+
 			echo "<div style=\"text-align:center;\">
 								<select name=\"sort_value\">";
 								foreach ($values as $value => $name)
-								{		
+								{
 									echo "<option value=\"".$value."\"";
 									if($cu->properties->itemOrderShip==$value)
 									{
 										echo " selected=\"selected\"";
 									}
-									echo ">".$name."</option>";							
-								}																																																							
+									echo ">".$name."</option>";
+								}
 					echo "</select>
 							
 								<select name=\"sort_way\">";
-								
+
 									//Aufsteigend
 									echo "<option value=\"ASC\"";
 									if($cu->properties->itemOrderWay=='ASC') echo " selected=\"selected\"";
 									echo ">Aufsteigend</option>";
-									
+
 									//Absteigend
 									echo "<option value=\"DESC\"";
 									if($cu->properties->itemOrderWay=='DESC') echo " selected=\"selected\"";
-									echo ">Absteigend</option>";	
-																	
-					echo "</select>						
+									echo ">Absteigend</option>";
+
+					echo "</select>
 							
 								<input type=\"submit\" class=\"button\" name=\"sort_submit\" value=\"Sortieren\"/>
 							</div>";
@@ -480,7 +489,7 @@
 			{
 				tableStart();
 				echo "<tr><th>Ergebnisse des Bauauftrags</th></tr>";
-				
+
 				//Log variablen setzten
 				$log_ships="";
 				$total_duration=0;
@@ -489,7 +498,7 @@
 				$total_plastic=0;
 				$total_fuel=0;
 				$total_food=0;
-				
+
 				// Endzeit bereits laufender Aufträge laden
 				$end_time=time();
 				if(isset($queue))
@@ -509,13 +518,13 @@
 				foreach ($_POST['build_count'] as $ship_id => $build_cnt)
 				{
 				  $ship_id = intval($ship_id);
-				  
+
 					$build_cnt=nf_back($build_cnt);
 
 					if ($build_cnt>0 && isset($ships[$ship_id]))
 					{
 						$buildCountOriginal = $build_cnt;
-						
+
 			      // Zählt die Anzahl Schiffe dieses Typs im ganzen Account...
 			      $ship_count = 0;
 			      // ... auf den Planeten
@@ -538,7 +547,7 @@
 			      {
 			      	$ship_count += $fleet[$ship_id];
 			      }
-			      
+
 						//Anzahl überprüfen, ob diese die maximalzahl übersteigt, gegebenenfalls ändern
 						if ($build_cnt + $ship_count > $ships[$ship_id]['ship_max_count'] && $ships[$ship_id]['ship_max_count']!=0)
 						{
@@ -566,20 +575,20 @@
 							$bc['crystal']=0;
 						}
 						//PVC
-						if ($ships[$ship_id]['ship_costs_plastic']>0) 
+						if ($ships[$ship_id]['ship_costs_plastic']>0)
 						{
-							$bf['plastic']=$cp->resPlastic/$ships[$ship_id]['ship_costs_plastic']; 
+							$bf['plastic']=$cp->resPlastic/$ships[$ship_id]['ship_costs_plastic'];
 						}
-						else 
+						else
 						{
 							$bc['plastic']=0;
 						}
 						//Tritium
-						if ($ships[$ship_id]['ship_costs_fuel']>0) 
+						if ($ships[$ship_id]['ship_costs_fuel']>0)
 						{
-							$bf['fuel']=$cp->resFuel/$ships[$ship_id]['ship_costs_fuel']; 
+							$bf['fuel']=$cp->resFuel/$ships[$ship_id]['ship_costs_fuel'];
 						}
-						else 
+						else
 						{
 							$bc['fuel']=0;
 						}
@@ -588,7 +597,7 @@
 						{
 							 $bf['food']=$cp->resFood/(intval($_POST['additional_food_costs'])+$ships[$ship_id]['ship_costs_food']);
 						}
-						else 
+						else
 						{
 							$bc['food']=0;
 						}
@@ -598,14 +607,14 @@
 						{
 							$build_cnt=floor(min($bf));
 						}
-						
+
 						//Check for Rene-Bug
 						$additional_food_costs = $people_working*$cfg->value('people_food_require');
-						if ($additional_food_costs!=intval($_POST['additional_food_costs']) || intval($_POST['additional_food_costs'])<0) 
+						if ($additional_food_costs!=intval($_POST['additional_food_costs']) || intval($_POST['additional_food_costs'])<0)
 						{
 							$build_cnt=0;
 						}
-						
+
 						//Anzahl muss grösser als 0 sein
 						if ($build_cnt>0)
 						{
@@ -616,24 +625,24 @@
 							$bc['fuel']=$ships[$ship_id]['ship_costs_fuel']*$build_cnt;
 							$bc['food']=(intval($_POST['additional_food_costs'])+$ships[$ship_id]['ship_costs_food'])*$build_cnt;
 
-    	        //Berechnete Ress provisorisch abziehen
-    	        $cp->resMetal-=$bc['metal'];
-    	        $cp->resCrystal-=$bc['crystal'];
-    	        $cp->resPlastic-=$bc['plastic'];
-    	        $cp->resFuel-=$bc['fuel'];
-    	        $cp->resFood-=$bc['food'];
+                	        //Berechnete Ress provisorisch abziehen
+                	        $cp->resMetal-=$bc['metal'];
+                	        $cp->resCrystal-=$bc['crystal'];
+                	        $cp->resPlastic-=$bc['plastic'];
+                	        $cp->resFuel-=$bc['fuel'];
+                	        $cp->resFood-=$bc['food'];
 
 							// Bauzeit pro Schiff berechnen
-							$btime = ($ships[$ship_id]['ship_costs_metal'] 
-							+ $ships[$ship_id]['ship_costs_crystal'] 
-							+ $ships[$ship_id]['ship_costs_plastic'] 
-							+ $ships[$ship_id]['ship_costs_fuel'] 
-							+ $ships[$ship_id]['ship_costs_food']) 
-							/ GLOBAL_TIME * SHIP_BUILD_TIME 
+							$btime = ($ships[$ship_id]['ship_costs_metal']
+							+ $ships[$ship_id]['ship_costs_crystal']
+							+ $ships[$ship_id]['ship_costs_plastic']
+							+ $ships[$ship_id]['ship_costs_fuel']
+							+ $ships[$ship_id]['ship_costs_food'])
+							/ GLOBAL_TIME * SHIP_BUILD_TIME
 							* $time_boni_factor
 							* $cu->specialist->shipTime;
 
-	    				// TODO: Überprüfen
+	    				    // TODO: Überprüfen
 							//Rechnet zeit wenn arbeiter eingeteilt sind
 							$btime_min=$btime*(0.1-($gen_tech_level/100));
 						 	if ($btime_min<SHIPYARD_MIN_BUILD_TIME) $btime_min=SHIPYARD_MIN_BUILD_TIME;
@@ -649,25 +658,25 @@
 							$end_time = $start_time + $duration;
 
 							// Auftrag speichern
-    	        dbquery("
-    	        INSERT INTO
-    	        ship_queue
-    	            (queue_user_id,
-    	            queue_ship_id,
-    	            queue_entity_id,
-    	            queue_cnt,
-    	            queue_starttime,
-    	            queue_endtime,
-    	            queue_objtime)
-    	        VALUES
-    	            ('".$cu->id."',
-    	            '".$ship_id."',
-    	            '".$cp->id."',
-    	            '".$build_cnt."',
-    	            '".$start_time."',
-    	            '".$end_time."',
-    	            '".$obj_time."');");
-    	        $shiplist_id = mysql_insert_id();
+                	        dbquery("
+                	        INSERT INTO
+                	        ship_queue
+                	            (queue_user_id,
+                	            queue_ship_id,
+                	            queue_entity_id,
+                	            queue_cnt,
+                	            queue_starttime,
+                	            queue_endtime,
+                	            queue_objtime)
+                	        VALUES
+                	            ('".$cu->id."',
+                	            '".$ship_id."',
+                	            '".$cp->id."',
+                	            '".$build_cnt."',
+                	            '".$start_time."',
+                	            '".$end_time."',
+                	            '".$obj_time."');");
+                	        $shiplist_id = mysql_insert_id();
 
 
 							// Queue Array aktualisieren
@@ -677,35 +686,35 @@
 							$queue[$shiplist_id]['queue_starttime'] = $start_time;
 							$queue[$shiplist_id]['queue_endtime'] = $end_time;
 							$queue[$shiplist_id]['queue_objtime'] = $obj_time;
-							
-								
+
+
 							echo "<tr><td>".nf($build_cnt)." ".$ships[$ship_id]['ship_name']." in Auftrag gegeben!</td></tr>";
 
 							//Log schreiben
 							$log_text = "[b]Schiffsauftrag Bauen[/b]
 
-[b]Start:[/b] ".date("d.m.Y H:i:s",$end_time)."
-[b]Ende:[/b] ".date("d.m.Y H:i:s",$end_time)."
-[b]Dauer:[/b] ".tf($duration)."
-[b]Dauer pro Einheit:[/b] ".tf($obj_time)."
-[b]Schiffswerft Level:[/b] ".CURRENT_SHIPYARD_LEVEL."
-[b]Eingesetzte Bewohner:[/b] ".nf($people_working)."
-[b]Gen-Tech Level:[/b] ".$gen_tech_level."
-[b]Eingesetzter Spezialist:[/b] ".$cu->specialist->name."
+                            [b]Start:[/b] ".date("d.m.Y H:i:s",$end_time)."
+                            [b]Ende:[/b] ".date("d.m.Y H:i:s",$end_time)."
+                            [b]Dauer:[/b] ".tf($duration)."
+                            [b]Dauer pro Einheit:[/b] ".tf($obj_time)."
+                            [b]Schiffswerft Level:[/b] ".CURRENT_SHIPYARD_LEVEL."
+                            [b]Eingesetzte Bewohner:[/b] ".nf($people_working)."
+                            [b]Gen-Tech Level:[/b] ".$gen_tech_level."
+                            [b]Eingesetzter Spezialist:[/b] ".$cu->specialist->name."
 
-[b]Kosten[/b]
-[b]".RES_METAL.":[/b] ".nf($bc['metal'])."
-[b]".RES_CRYSTAL.":[/b] ".nf($bc['crystal'])."
-[b]".RES_PLASTIC.":[/b] ".nf($bc['plastic'])."
-[b]".RES_FUEL.":[/b] ".nf($bc['fuel'])."
-[b]".RES_FOOD.":[/b] ".nf($bc['food'])."
+                            [b]Kosten[/b]
+                            [b]".RES_METAL.":[/b] ".nf($bc['metal'])."
+                            [b]".RES_CRYSTAL.":[/b] ".nf($bc['crystal'])."
+                            [b]".RES_PLASTIC.":[/b] ".nf($bc['plastic'])."
+                            [b]".RES_FUEL.":[/b] ".nf($bc['fuel'])."
+                            [b]".RES_FOOD.":[/b] ".nf($bc['food'])."
 
-[b]Rohstoffe auf dem Planeten[/b]
-[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
-[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
-[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
-[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
-[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
+                            [b]Rohstoffe auf dem Planeten[/b]
+                            [b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
+                            [b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
+                            [b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
+                            [b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
+                            [b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
 
 							GameLog::add(GameLog::F_SHIP, GameLog::INFO,$log_text,$cu->id,$cu->allianceId,$cp->id, $ship_id, 1, $build_cnt);
 
@@ -718,49 +727,50 @@
 
 							//Daten für Log speichern
 							$log_ships.="<b>".$ships[$ship_id]['ship_name']."</b>: ".nf($build_cnt)." (".tf($duration).")<br>";
-							$total_duration+=$duration;							
+							$total_duration+=$duration;
 						}
 						else
 						{
 							echo "<tr><td>".$ships[$ship_id]['ship_name'].": Zu wenig Rohstoffe für diese Anzahl ($buildCountOriginal)!</td></tr>";
 						}
 						$counter++;
-					}							
+					}
 				}
-				
+
 				// Die Rohstoffe der $c-variablen wieder beigeben, da sie sonst doppelt abgezogen werden
-        $cp->resMetal+=$total_metal;
-        $cp->resCrystal+=$total_crystal;
-        $cp->resPlastic+=$total_plastic;
-        $cp->resFuel+=$total_fuel;
-        $cp->resFood+=$total_food;				
-				
+                $cp->resMetal+=$total_metal;
+                $cp->resCrystal+=$total_crystal;
+                $cp->resPlastic+=$total_plastic;
+                $cp->resFuel+=$total_fuel;
+                $cp->resFood+=$total_food;
+
 				//Rohstoffe vom Planeten abziehen und aktualisieren
 				$cp->changeRes(-$total_metal,-$total_crystal,-$total_plastic,-$total_fuel,-$total_food);
-												
+
 				if ($counter==0)
 				{
 					echo "<tr><td>Keine Schiffe gew&auml;hlt!</td></tr>";
 				}
 				tableEnd();
+                header("Refresh:0");
 			}
 
-			
+
 			checker_init();
 
-	/*********************
-	* Auftrag abbrechen  *
-	*********************/
+        	/*********************
+        	* Auftrag abbrechen  *
+        	*********************/
 			if (isset($_GET['cancel']) && intval($_GET['cancel'])>0 && $cancelable)
-			{	
+			{
 				$id = intval($_GET['cancel']);
 				if (isset($queue[$id]))
 				{
-					
+
 					//Zu erhaltende Rohstoffe errechnen
 					$obj_cnt = min(ceil(($queue[$id]['queue_endtime']-max($time,$queue[$id]['queue_starttime']))/$queue[$id]['queue_objtime']),$queue[$id]['queue_cnt']);
 					echo "Breche den Bau von ".$obj_cnt." ".$ships[$queue[$id]['queue_ship_id']]['ship_name']." ab...<br/>";
-									
+
 					$ret['metal']=$ships[$queue[$id]['queue_ship_id']]['ship_costs_metal']*$obj_cnt*$cancel_res_factor;
 					$ret['crystal']=$ships[$queue[$id]['queue_ship_id']]['ship_costs_crystal']*$obj_cnt*$cancel_res_factor;
 					$ret['plastic']=$ships[$queue[$id]['queue_ship_id']]['ship_costs_plastic']*$obj_cnt*$cancel_res_factor;
@@ -774,15 +784,15 @@
 					$queue_objtime = $queue[$id]['queue_objtime'];
 					$start_time = $queue[$id]['queue_starttime'];
 					$end_time = $queue[$id]['queue_endtime'];
-					
-										
+
+
 					//Auftrag löschen
 					dbquery("
 					DELETE FROM
 					 ship_queue
 					WHERE
 						queue_id='".$id."';");
-						
+
 					// Nachkommende Aufträge werden Zeitlich nach vorne verschoben
 					$tres=dbquery("
 					SELECT
@@ -801,7 +811,7 @@
 						queue_starttime ASC
 					;");
 					if (mysql_num_rows($tres)>0)
-					{						
+					{
 						$new_starttime=max($start_time,time());
 						while ($tarr=mysql_fetch_assoc($tres))
 						{
@@ -815,53 +825,54 @@
 							WHERE
 								queue_id='".$tarr['queue_id']."'
 							");
-							
+
 							// Aktualisiert das Queue-Array
 							$queue[$tarr['queue_id']]['queue_starttime'] = $new_starttime;
 							$queue[$tarr['queue_id']]['queue_endtime'] = $new_endtime;
-							 
+
 							$new_starttime=$new_endtime;
 						}
 					}
-					
+
 					// Auftrag aus Array löschen
 					$queue[$id] = NULL;
-					
+
 					//Rohstoffe dem Planeten gutschreiben und aktualisieren
-					$cp->changeRes($ret['metal'],$ret['crystal'],$ret['plastic'],$ret['fuel'],$ret['food']);						
-						
+					$cp->changeRes($ret['metal'],$ret['crystal'],$ret['plastic'],$ret['fuel'],$ret['food']);
+
 					echo "Der Auftrag wurde abgebrochen!<br/><br/>";
-						
+
 					//Log schreiben
 					$log_text = "[b]Schiffsauftrag Abbruch[/b]
 
-[b]Auftragsdauer:[/b] ".tf($queue_objtime*$queue_count)."
+                    [b]Auftragsdauer:[/b] ".tf($queue_objtime*$queue_count)."
 
-[b]Erhaltene Rohstoffe[/b]
-[b]Faktor:[/b] ".$cancel_res_factor."
-[b]".RES_METAL.":[/b] ".nf($ret['metal'])."
-[b]".RES_CRYSTAL.":[/b] ".nf($ret['crystal'])."
-[b]".RES_PLASTIC.":[/b] ".nf($ret['plastic'])."
-[b]".RES_FUEL.":[/b] ".nf($ret['fuel'])."
-[b]".RES_FOOD.":[/b] ".nf($ret['food'])."
+                    [b]Erhaltene Rohstoffe[/b]
+                    [b]Faktor:[/b] ".$cancel_res_factor."
+                    [b]".RES_METAL.":[/b] ".nf($ret['metal'])."
+                    [b]".RES_CRYSTAL.":[/b] ".nf($ret['crystal'])."
+                    [b]".RES_PLASTIC.":[/b] ".nf($ret['plastic'])."
+                    [b]".RES_FUEL.":[/b] ".nf($ret['fuel'])."
+                    [b]".RES_FOOD.":[/b] ".nf($ret['food'])."
 
-[b]Rohstoffe auf dem Planeten[/b]
-[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
-[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
-[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
-[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
-[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
-					
+                    [b]Rohstoffe auf dem Planeten[/b]
+                    [b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
+                    [b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
+                    [b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
+                    [b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
+                    [b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
+
 					//Log Speichern
 					GameLog::add(GameLog::F_SHIP, GameLog::INFO,$log_text,$cu->id,$cu->allianceId,$cp->id, $ship_id, 0, $queue_count);
+				    header("Refresh:0");
+                }
 
-				}
 			}
 
 
-	/*********************************
-	* Liste der Bauaufträge anzeigen *
-	*********************************/
+        	/*********************************
+        	* Liste der Bauaufträge anzeigen *
+        	*********************************/
 			if(isset($queue) && !empty($queue))
 			{
 				tableStart("Bauliste");
@@ -880,9 +891,9 @@
 								$obj_t_remaining = $data['queue_objtime'];
 							}
 							$obj_time = $data['queue_objtime'];
-	
+
 							$absolute_starttime=$data['queue_starttime'];
-	
+
 							$obj_t_passed = $data['queue_objtime']-$obj_t_remaining;
 							echo "<tr>
 									<th colspan=\"2\">Aktuell</th>
@@ -904,9 +915,9 @@
 									<th style=\"width:150px;\">Verbleibend</th>
 									<th style=\"width:80px;\">Aktionen</th>
 								</tr>";
-							$first=false; 
+							$first=false;
 						}
-	
+
 						echo "<tr>";
 						echo "<td id=\"objcount\">".$data['queue_cnt']."</td>";
 						echo "<td>".$ships[$data['queue_ship_id']]['ship_name']."</td>";
@@ -924,7 +935,7 @@
 						}
 						echo "</td>
 						</tr>";
-	
+
 						//Setzt die Startzeit des nächsten Schiffes, auf die Endzeit des jetztigen Schiffes
 						$absolute_starttime=$data['queue_endtime'];
 					}
@@ -946,7 +957,7 @@
 					tableStart($cat_name);
 					$ccnt = 0;
 
-					// Auflistung der Schiffe (auch diese, die noch nicht gebaut wurden) 
+					// Auflistung der Schiffe (auch diese, die noch nicht gebaut wurden)
 					if (isset($ships))
 					{
 						//Einfache Ansicht
@@ -963,7 +974,7 @@
 											<th class="tbltitle">Anzahl</th>
 										</tr>';
 						}
-						
+
 						foreach ($ships as $data)
 						{
 							// Prüfen ob Schiff gebaut werden kann
@@ -990,7 +1001,7 @@
 									}
 								}
 							}
-							
+
 							// Schiffdatensatz zeigen wenn die Voraussetzungen erfüllt sind und das Schiff in diese Kategorie gehört
 							if ($build_ship == 1 && $data['ship_cat_id'] == $cat_id)
 							{
@@ -1016,35 +1027,35 @@
     			      			{
 									$ship_count += $fleet[$data['ship_id']];
 								}
-														
+
 								// Bauzeit berechnen
 								$btime = ($data['ship_costs_metal'] + $data['ship_costs_crystal'] + $data['ship_costs_plastic'] + $data['ship_costs_fuel'] + $data['ship_costs_food']) / GLOBAL_TIME * SHIP_BUILD_TIME * $time_boni_factor * $cu->specialist->shipTime;
 								$btime_min = $btime * (0.1 - ($gen_tech_level / 100));
 								$peopleOptimized= ceil(($btime-$btime_min)/$cfg->value('people_work_done'));
 
 								//Mindest Bauzeit
-    			      			if ($btime_min < SHIPYARD_MIN_BUILD_TIME) 
+    			      			if ($btime_min < SHIPYARD_MIN_BUILD_TIME)
 								{
 									$btime_min = SHIPYARD_MIN_BUILD_TIME;
 								}
-								
+
 								$btime = ceil($btime - $people_working * $cfg->value('people_work_done'));
-								if ($btime < $btime_min) 
+								if ($btime < $btime_min)
 								{
 									$btime = $btime_min;
 								}
-								
+
 								//Nahrungskosten berechnen
 								$food_costs = $people_working * $cfg->value('people_food_require');
-								
+
 								//Nahrungskosten versteckt übermitteln
 								echo "<input type=\"hidden\" name=\"additional_food_costs\" value=\"".$food_costs."\" />";
 								$food_costs += $data['ship_costs_food'];
-								
-								
-								
+
+
+
 								//Errechnet wie viele Schiffe von diesem Typ maximal Gebaut werden können mit den aktuellen Rohstoffen
-								
+
 								//Titan
 								if($data['ship_costs_metal'] > 0)
 								{
@@ -1064,7 +1075,7 @@
 								{
 									$build_cnt_crystal = 99999999999;
 								}
-						
+
 								//PVC
 								if($data['ship_costs_plastic'] > 0)
 								{
@@ -1074,7 +1085,7 @@
 								{
 									$build_cnt_plastic = 99999999999;
 								}
-								
+
 								//Tritium
 								if($data['ship_costs_fuel'] > 0)
 								{
@@ -1107,7 +1118,7 @@
 
 								//Effetiv max. baubare Schiffe in Betrachtung der Rohstoffe und des Baumaximums
 								$ship_max_build = min($build_cnt_metal,$build_cnt_crystal,$build_cnt_plastic,$build_cnt_fuel,$build_cnt_food,$max_cnt);
-								
+
 								//Tippbox Nachricht generieren
 								//X Schiffe baubar
 								if($ship_max_build > 0)
@@ -1128,7 +1139,7 @@
 										$bwait['metal'] = 0;
 										$bwmsg['metal'] = '';
 									}
-									
+
 									//Wartezeit Silizium
 									if ($cp->prodCrystal > 0)
 									{
@@ -1136,11 +1147,11 @@
 										$bwmsg['crystal'] = tm("Fehlender Rohstoff",nf($data['ship_costs_crystal']-$cp->resCrystal)." Silizium<br />Bereit in ".tf($bwait['crystal'])."");
 									}
 									else
-									{ 
+									{
 										$bwait['crystal'] = 0;
 										$bwmsg['crystal'] = '';
 									}
-									
+
 									//Wartezeit PVC
 									if ($cp->prodPlastic > 0)
 									{
@@ -1148,11 +1159,11 @@
 										$bwmsg['plastic'] = tm("Fehlender Rohstoff",nf($data['ship_costs_plastic']-$cp->resPlastic)." PVC<br />Bereit in ".tf($bwait['plastic'])."");
 									}
 									else
-									{ 
+									{
 										$bwait['plastic'] = 0;
 										$bwmsg['plastic'] = '';
 									}
-									
+
 									//Wartezeit Tritium
 									if ($cp->prodFuel > 0)
 									{
@@ -1160,11 +1171,11 @@
 										$bwmsg['fuel'] = tm("Fehlender Rohstoff",nf($data['ship_costs_fuel']-$cp->resFuel)." Tritium<br />Bereit in ".tf($bwait['fuel'])."");
 									}
 									else
-									{ 
+									{
 										$bwait['fuel'] = 0;
 										$bwmsg['fuel'] = '';
 									}
-									
+
 									//Wartezeit Nahrung
 									if ($cp->prodFood > 0)
 									{
@@ -1176,10 +1187,10 @@
 										$bwait['food'] = 0;
 										$bwmsg['food'] = '';
 									}
-									
+
 									//Maximale Wartezeit ermitteln
 									$bwmax = max($bwait['metal'],$bwait['crystal'],$bwait['plastic'],$bwait['fuel'],$bwait['food']);
-									
+
 									$tm_cnt="Rohstoffe verf&uuml;gbar in ".tf($bwmax)."";
 								}
 								else
@@ -1197,7 +1208,7 @@
 								{
 									$ress_style_metal="";
 								}
-								
+
 								//Silizium
 								if($data['ship_costs_crystal']>$cp->resCrystal)
 								{
@@ -1207,7 +1218,7 @@
 								{
 									$ress_style_crystal="";
 								}
-								
+
 								//PVC
 								if($data['ship_costs_plastic']>$cp->resPlastic)
 								{
@@ -1217,7 +1228,7 @@
 								{
 									$ress_style_plastic="";
 								}
-								
+
 								//Tritium
 								if($data['ship_costs_fuel']>$cp->resFuel)
 								{
@@ -1227,7 +1238,7 @@
 								{
 									$ress_style_fuel="";
 								}
-								
+
 								//Nahrung
 								if($food_costs>$cp->resFood)
 								{
@@ -1237,7 +1248,7 @@
 								{
 									$ress_style_food="";
 								}
-								
+
 								// Sicherstellen dass epische Spezialschiffe nur auf dem Hauptplanet gebaut werden
 								if ($data['special_ship']==0 || $cp->isMain)
 								{
@@ -1250,7 +1261,7 @@
  			      				{
  			      					$shiplist_count = 0;
  			      				}
-								
+
 								// Volle Ansicht
     			      			if($cu->properties->itemShow=='full')
     			      			{
@@ -1261,13 +1272,13 @@
     			      							</tr>";
     			      				}
     			      	  		 	$s_img = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$data['ship_id']."_middle.".IMAGE_EXT;
-								 	
+
     			      	  		 	echo "<tr>
     			      	  		 			<th colspan=\"5\" height=\"20\">".$data['ship_name']."</th>
     			      	  		 		</tr>
     			      	  		 		<tr>
     			      	  		 			<td width=\"120\" height=\"120\" rowspan=\"3\">";
-    			      	  		 	
+
 								 	//Bei Spezialschiffen nur Bild ohne Link darstellen
 								 	if ($data['special_ship']==1)
 								 	{
@@ -1289,19 +1300,24 @@
 								 		<tr>
 								 			<th height=\"30\">Bauzeit</th>
     			      	  		 			<td>".tf($btime)."</td>";
-    			      	  		 	
+
 								 	//Maximale Anzahl erreicht
 								 	if ($ship_count>=$data['ship_max_count'] && $data['ship_max_count']!=0)
 								 	{
 								 		echo "<th height=\"30\" colspan=\"2\"><i>Maximalanzahl erreicht</i></th>";
 								 	}
 								 	else
-								 	{   
-                                      
-                                        
+								 	{
+
+
 								 		echo "<th height=\"30\">In Aufrag geben:</th>
 				    			   	      			<td><input type=\"text\" value=\"0\" name=\"build_count[".$data['ship_id']."]\" id=\"build_count_".$data['ship_id']."\" size=\"4\" maxlength=\"9\" ".tm("",$tm_cnt)." tabindex=\"".$tabulator."\" onkeyup=\"FormatNumber(this.id,this.value, ".$ship_max_build.", '', '');\"/> St&uuml;ck<br><a href=\"javascript:;\" onclick=\"document.getElementById('build_count_".$data['ship_id']."').value=".$ship_max_build.";\">max</a>";
-                                                    echo '&nbsp;<a href="javascript:;" onclick="if(document.getElementById(\'changePeople\').style.display==\'none\') {toggleBox(\'changePeople\')};updatePeopleWorkingBox(\''.$peopleOptimized.'\',\'-1\',\'^-1\');">optimieren</a>';
+                                                    if (!isset($queue) && empty($queue))
+													{
+														echo '&nbsp;<a href="#changePeople" onclick="javascript:if(document.getElementById(\'changePeople\').style.display==\'none\') {toggleBox(\'changePeople\')};updatePeopleWorkingBox(\''.$peopleOptimized.'\',\'-1\',\'^-1\');">optimieren</a>';
+													}
+
+
                                         echo"</td>";
 								 	}
 								 	echo "</tr>";
@@ -1333,10 +1349,10 @@
 								else
 								{
 									$s_img = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$data['ship_id']."_small.".IMAGE_EXT;
-									
+
 									echo "<tr>
   			      							<td>";
-  			      						
+
 	  			      				//Spezialschiffe ohne Link darstellen
 				  			      	if ($data['special_ship']==1)
 									{
@@ -1347,7 +1363,7 @@
 				  			      	{
 				  			      		echo "<a href=\"".HELP_URL."&amp;id=".$data[ITEM_ID_FLD]."\"><img src=\"".$s_img."\" width=\"40\" height=\"40\" border=\"0\" /></a></td>";
 				  			      	}
-									
+
 	  			      				echo "<th width=\"30%\">
 	  			      							<span style=\"font-weight:500\">".$data['ship_name']."<br/>
 	  			      							Gebaut:</span> ".nf($shiplist_count)."
@@ -1411,8 +1427,8 @@
 	else
 	{
 		// Titel
-		echo "<h1>Raumschiffswerft des Planeten ".$cp->name."</h1>";		
-		
+		echo "<h1>Raumschiffswerft des Planeten ".$cp->name."</h1>";
+
 		// Ressourcen anzeigen
 		echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
 		info_msg("Die Raumschiffswerft wurde noch nicht gebaut!");

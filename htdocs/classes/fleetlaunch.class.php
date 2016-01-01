@@ -891,8 +891,14 @@
 												)
 											{
 												if($this->owner->canAttackPlanet($this->targetEntity))
-												{
-													$actionObjs[$i] = $ai;
+												{	
+													if (strpos($ai,'Bombardierung'))
+													{	
+														if($this->owner->alliance->checkWar($this->targetEntity->owner->alliance->id))
+															$actionObjs[$i] = $ai;
+													}		 		
+													else
+														$actionObjs[$i] = $ai;
 												}
 												else if (!$noobProtectionErrorAdded)
 												{
@@ -908,7 +914,7 @@
 										} // if (!$battleban)
 									} // if ($ai->attitude() > 1)
 									else
-									{
+									{	
 										$actionObjs[$i] = $ai;
 									}
 								} // if (!$this->targetEntity->ownerHoliday() || $ai->allowOnHoliday())
@@ -918,7 +924,7 @@
 								}
 							} // if($this->targetEntity->ownerId()>0)
 							else
-							{
+							{	
 								$actionObjs[$i] = $ai;
 							}
 						} // if ($exclusiceAllowed)
@@ -934,6 +940,7 @@
 					}
 				} // foreach ($actions as $i)
 			} // else Flottensperre
+			//echo dump($actionObjs);
 			return $actionObjs;			
 		}
 		

@@ -1,4 +1,4 @@
-Escape to Andromeda Changelog
+﻿Escape to Andromeda Changelog
 =============================
 
 Version 3.5.7
@@ -16,6 +16,7 @@ Version 3.5.7
  * Fixed an exploit where u could see disabled buildings at helppage
  * Fixed problem with readiness-lvl from vorgonia mysli
  * Fixed bug after getting kicked out of umode because of inactivity
+ * Fixed wrong message when trying to kick an alliance member during allianceattack
 
 #### Features ####
 
@@ -24,12 +25,15 @@ Version 3.5.7
  * Crytocenter now shows more infos about target(e.g. distance, name, planet)
  * Reworked 404-page  
  * Added optimizing button for each ship
- * market reservations for a person will now be displayed at top
+ * Market reservations for a person will now be displayed at top
+ * Players wont be able to join another alliance for x hours after leaving old one
+ * Bombing buildings is now only allowed at war 
 
  ### Administration ###
 
  * Added function to add all buildings at once
  * Added function to add alliance buildings
+ * Added bounty-field to ships
 
 Version 3.5.6
 -------------
