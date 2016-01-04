@@ -1,6 +1,20 @@
 ﻿Escape to Andromeda Changelog
 =============================
 
+Version 3.5.8
+-------------
+
+### Bugfixes ###
+
+ 
+#### Features ####
+
+ * added growing to asterio fields
+
+### Administration ###
+
+ 
+
 Version 3.5.7
 -------------
 
@@ -28,6 +42,7 @@ Version 3.5.7
  * Market reservations for a person will now be displayed at top
  * Players wont be able to join another alliance for x hours after leaving old one
  * Bombing buildings is now only allowed at war 
+ * New pictures for supra ships
 
  ### Administration ###
 

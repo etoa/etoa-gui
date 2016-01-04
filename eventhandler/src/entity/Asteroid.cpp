@@ -94,10 +94,78 @@
 			query.store();
 			query.reset();
 			
+			//
+
+            std::map<int,double> shipCount;
+
+			query << "SELECT "
+            << "    sum(shiplist_count) AS sl_count, "
+			<< "	shiplist_user_id "
+            << "FROM "
+            << "    shiplist "
+            << "INNER JOIN "
+            << "    ships "
+            << "ON "
+            << "    ship_id=shiplist_ship_id "
+            << "    AND ship_actions LIKE '%collectmetal%' ";
+            RESULT_TYPE res = query.store();
+            query.reset();
+            
+            if (res) {
+                unsigned int resSize = res.size();
+                
+                if (resSize>0) {
+                    mysqlpp::Row row;
+                    for (mysqlpp::Row::size_type i = 0; i<resSize; i++) {
+                        row = res.at(i);
+                        
+                        shipCount[(int)row["shiplist_user_id"] ] = (double)row["sl_count"];
+                    }
+                }
+            }
+            
+            query << "SELECT "
+                << "	sum(fs_ship_cnt) AS fs_count, "
+				<< "	user_id "
+                << "FROM "
+                << "    fleet "
+                << "INNER JOIN "
+                << "    fleet_ships "
+                << "ON "
+                << "    id=fs_fleet_id "
+                << "INNER JOIN "
+                << "    ships "
+                << "ON "
+                << "    fs_ship_id=ship_id "
+                << "    AND ship_actions LIKE '%collectmetal%' ";
+            res = query.store();
+            query.reset();
+            
+            if (res) {
+                unsigned int resSize = res.size();
+                
+                if (resSize>0) {
+                    mysqlpp::Row row;
+                    for (mysqlpp::Row::size_type i = 0; i<resSize; i++) {
+                        row = res.at(i);
+                        
+                        shipCount[(int)row["user_id"] ] += (double)row["fs_count"];
+                    }
+                }
+            }
+
+            int shipsTotal =0;
+            std::map<int,double>::iterator it;
+            for ( it=shipCount.begin() ; it != shipCount.end(); it++ )
+            shipsTotal = (*it).second;
+
+			//
+
 			// Create a new one
-			double newMetal = config.nget("asteroid_ress",1) + (rand() % (int)(config.nget("asteroid_ress",2) - config.nget("asteroid_ress",1) + 1));
-			double newCrystal = config.nget("asteroid_ress",1) + (rand() % (int)(config.nget("asteroid_ress",2) - config.nget("asteroid_ress",1) + 1));
-			double newPlastic = config.nget("asteroid_ress",1) + (rand() % (int)(config.nget("asteroid_ress",2) - config.nget("asteroid_ress",1) + 1));
+            double x = log(shipsTotal);
+			double newMetal = config.nget("asteroid_ress",1) + (200000*pow(2.0,x));
+			double newCrystal = config.nget("asteroid_ress",1) + (200000*pow(2.0,x));
+			double newPlastic = config.nget("asteroid_ress",1) + (200000*pow(2.0,x));
 
 			
 			// Check if there is an empty field left
