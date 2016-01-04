@@ -162,7 +162,7 @@
 			//
 
 			// Create a new one
-            double x = log(shipsTotal);
+            double x = log10(shipsTotal);
 			double newMetal = config.nget("asteroid_ress",1) + (200000*pow(2.0,x));
 			double newCrystal = config.nget("asteroid_ress",1) + (200000*pow(2.0,x));
 			double newPlastic = config.nget("asteroid_ress",1) + (200000*pow(2.0,x));
