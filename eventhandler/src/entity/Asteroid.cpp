@@ -96,12 +96,11 @@
 			
 			//
 
-            std::map<int,double> shipCount;
+            double shipCount =0;
 
 			query << "SELECT "
-            << "    sum(shiplist_count) AS sl_count, "
-			<< "	shiplist_user_id "
-            << "FROM "
+            << "    sum(shiplist_count) AS sl_count "
+			<< "FROM "
             << "    shiplist "
             << "INNER JOIN "
             << "    ships "
@@ -119,15 +118,14 @@
                     for (mysqlpp::Row::size_type i = 0; i<resSize; i++) {
                         row = res.at(i);
                         
-                        shipCount[(int)row["shiplist_user_id"] ] = (double)row["sl_count"];
+                        shipCount = (double)row["sl_count"];
                     }
                 }
             }
             
             query << "SELECT "
-                << "	sum(fs_ship_cnt) AS fs_count, "
-				<< "	user_id "
-                << "FROM "
+                << "	sum(fs_ship_cnt) AS fs_count "
+				<< "FROM "
                 << "    fleet "
                 << "INNER JOIN "
                 << "    fleet_ships "
@@ -149,20 +147,15 @@
                     for (mysqlpp::Row::size_type i = 0; i<resSize; i++) {
                         row = res.at(i);
                         
-                        shipCount[(int)row["user_id"] ] += (double)row["fs_count"];
+                        shipCount += (double)row["fs_count"];
                     }
                 }
             }
 
-            int shipsTotal =0;
-            std::map<int,double>::iterator it;
-            for ( it=shipCount.begin() ; it != shipCount.end(); it++ )
-            shipsTotal = (*it).second;
-
-			//
+            //
 
 			// Create a new one
-            double x = log10(shipsTotal);
+            double x = log10(shipCount);
 			double newMetal = config.nget("asteroid_ress",1) + (200000*pow(2.0,x));
 			double newCrystal = config.nget("asteroid_ress",1) + (200000*pow(2.0,x));
 			double newPlastic = config.nget("asteroid_ress",1) + (200000*pow(2.0,x));
