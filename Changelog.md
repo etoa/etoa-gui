@@ -6,7 +6,8 @@ Version 3.5.8
 
 ### Bugfixes ###
 
- 
+ * fixed admiral bug
+
 #### Features ####
 
  * added growing to asterio fields

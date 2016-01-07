@@ -199,7 +199,7 @@
 						}
 						break;  
           case 1: //Admiral
-						$res = dbquery("SELECT launchtime FROM fleet WHERE user_id='" . $cu->id ."' AND landtime > '".$t."';");
+						$res = dbquery("SELECT launchtime FROM fleet WHERE user_id='" . $cu->id ."' AND status = 0 AND landtime > '".$t."';");
 					  if (mysql_num_rows($res) > 0) 
 						{
 							while($arr = mysql_fetch_assoc($res))
