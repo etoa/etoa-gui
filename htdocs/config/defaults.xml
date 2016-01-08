@@ -230,10 +230,10 @@ http://etoa.ch</v>
     </item>
 
     <item name="user_attack_min_points" cat="4">
-      <v comment="Noobschutz: Min Punkte" type="text">5000</v>
+      <v comment="Noobschutz: Min Punkte" type="text">80</v>
     </item>
     <item name="user_attack_percentage" cat="4">
-      <v comment="Noobschutz: Punkteverh&#xE4;ltnis %" type="text">0.2</v>
+      <v comment="Noobschutz: Punkteverh&#xE4;ltnis %" type="text">0.3</v>
     </item>
     <item name="invade_possibility" cat="4">
       <v comment="Grundinvasionschace" type="text">0.5</v>
