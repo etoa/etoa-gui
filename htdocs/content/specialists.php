@@ -199,15 +199,29 @@
 						}
 						break;  
           case 1: //Admiral
-						$res = dbquery("SELECT launchtime FROM fleet WHERE user_id='" . $cu->id ."' AND status = 0 AND landtime > '".$t."';");
+						$res = dbquery("SELECT launchtime,landtime,status FROM fleet WHERE user_id=".$cu->id);
 					  if (mysql_num_rows($res) > 0) 
 						{
 							while($arr = mysql_fetch_assoc($res))
-							{ 
+							{ 	
 								if($arr['launchtime'] > $inittime)
-								{
-									$inUse = true;
-									break;
+								{	
+									if ($arr[status] == 0)
+									{	
+										$inUse = true;
+										break;
+									}
+									else 
+									{	
+										$duration= $arr['landtime'] - $arr['launchtime'];
+										$org_launchtime = $arr['launchtime']-$duration;
+																				 
+										if ($org_launchtime >= $inittime) 
+										{
+											$inUse = true;
+											break;
+										}	
+									}	
 								}
 							}
 						}
