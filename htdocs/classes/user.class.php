@@ -1023,6 +1023,7 @@ die Spielleitung";
 				user_name,
 				user_nick,
 				user_password,
+				user_logouttime,
 				user_email,
 				user_email_fix,
 				user_race_id,
@@ -1039,12 +1040,14 @@ die Spielleitung";
 				?,
 				?,
 				?,
+				?,
 				UNIX_TIMESTAMP(),
 				?
 			);", [
 				$name,
 				$nick,
 				saltPasswort($password),
+				time(),
 				$email,
 				$email,
 				(isset($race) ? intval($race) : 0),
