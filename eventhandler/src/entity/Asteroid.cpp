@@ -94,8 +94,6 @@
 			query.store();
 			query.reset();
 			
-			//
-
             double shipCount =0;
 
 			query << "SELECT "
@@ -152,13 +150,11 @@
                 }
             }
 
-            //
-
-			// Create a new one
-            double x = log10(shipCount);
-			double newMetal = config.nget("asteroid_ress",1) + (200000*pow(2.0,x));
-			double newCrystal = config.nget("asteroid_ress",1) + (200000*pow(2.0,x));
-			double newPlastic = config.nget("asteroid_ress",1) + (200000*pow(2.0,x));
+        	// Create a new one
+            double x = config.nget("asteroid_ress",1) + (400000*pow(2.0,log10(shipCount)));
+			double newMetal = rand() % (int)(0.45*x) + (int)(0.21*x); 
+			double newCrystal = rand() % (int)(0.45*x) + (int)(0.21*x);
+			double newPlastic = x-(newCrystal+newMetal);
 
 			
 			// Check if there is an empty field left
