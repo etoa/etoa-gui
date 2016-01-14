@@ -1,5 +1,14 @@
-Escape to Andromeda Changelog
+﻿Escape to Andromeda Changelog
 =============================
+
+Version 3.5.9
+-------------
+
+### Bugfixes ###
+
+ * fixed support from ships with 0 fuelcost 
+
+#### Features ####
 
 Version 3.5.8
 -------------

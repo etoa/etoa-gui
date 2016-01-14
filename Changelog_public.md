@@ -120,7 +120,7 @@ Version 3.5.7 (Runde 15)
  * Kapazität von 20000 auf 5000
 
 # FORNAX Asteroidensammler #
- * Kapazität von 45000 auf 14000
+ * Kapazität von 45000 auf 17500
   
 ## Allianzkampfsystem ##
  * Maximale Anzahl Angreifer/Verteidiger auf 2 beschränken.

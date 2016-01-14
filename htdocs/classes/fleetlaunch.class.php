@@ -1195,13 +1195,17 @@
 			$maxTime = $this->getCapacity() / ($this->supportCostsFuelPerSec+$this->supportCostsFoodPerSec);
 			
 			$supportTimeFuel = ($this->sourceEntity->getRes(4)-$this->getLoadedRes(4)-$this->getCosts())/$this->supportCostsFuelPerSec;
+						
 			if ($this->supportCostsFoodPerSec)
 				$supportTimeFood = ($this->sourceEntity->getRes(5)-$this->getLoadedRes(5)-$this->getCostsFood())/$this->supportCostsFoodPerSec;
 			else
 				$supportTimeFood = $supportTimeFuel;
-				
-			$maxTime = min($maxTime,min($supportTimeFuel,$supportTimeFood));
 			
+			if($supportTimeFuel>0)
+				$maxTime = min($maxTime,min($supportTimeFuel,$supportTimeFood));
+			else
+				$maxTime = min($maxTime,$supportTimeFood);	
+
 			return floor($maxTime);
 		}
 		
