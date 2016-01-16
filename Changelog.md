@@ -7,6 +7,7 @@ Version 3.5.9
 ### Bugfixes ###
 
  * fixed support from ships with 0 fuelcost 
+ * fixed marketreservation
 
 #### Features ####
 
