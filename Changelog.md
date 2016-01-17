@@ -1,4 +1,4 @@
-﻿Escape to Andromeda Changelog
+Escape to Andromeda Changelog
 =============================
 
 Version 3.5.8
@@ -15,10 +15,6 @@ Version 3.5.8
 
  * added growing to asterio fields
  * tutorial can now be reopend at configurations
-
-### Administration ###
-
- 
 
 Version 3.5.7
 -------------
