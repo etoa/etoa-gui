@@ -1,6 +1,21 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.8
+-------------
+
+### Bugfixes ###
+
+ * Admiralbug gefixed
+ * Angezeigten HTML-Code bei Allianzbewerbung entfernt
+ * Lab etwas überarbeitet und Bewohnerbug gefixed
+ * Spieler haben nach Registration nun 7 Tage Zeit sich einzuloggen, bevor sie als inaktiv gekennzeichnet werden
+
+#### Features ####
+
+ * Asteroidenfelder wachsen nun im Laufe der Runde
+ * Tutorial kann nun in den Einstellungen wieder geöffnet werden
+
 Version 3.5.7 (Runde 15)
 -------------
 

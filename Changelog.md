@@ -1,5 +1,20 @@
-﻿Escape to Andromeda Changelog
+Escape to Andromeda Changelog
 =============================
+
+Version 3.5.8
+-------------
+
+### Bugfixes ###
+
+ * fixed admiral bug
+ * fixed html code at alliance
+ * fixed a bug where lab didnt count workers
+ * inactivity will now be displayed 7 days after registration
+
+#### Features ####
+
+ * added growing to asterio fields
+ * tutorial can now be reopend at configurations
 
 Version 3.5.7
 -------------
@@ -28,6 +43,7 @@ Version 3.5.7
  * Market reservations for a person will now be displayed at top
  * Players wont be able to join another alliance for x hours after leaving old one
  * Bombing buildings is now only allowed at war 
+ * New pictures for supra ships
 
  ### Administration ###
 

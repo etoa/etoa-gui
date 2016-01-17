@@ -91,8 +91,8 @@ if (isset($cp)) {
     
 		$new_people_set = false;
 		// people working changed
-    if (isset($_POST['submit_people_form_gen']))
-		{
+        if (isset($_POST['submit_people_form_gen']))
+		{        
 			$set_people = nf_back($_POST['peopleWorking']);
 			if (!$builing_gen && $bl->setPeopleWorkingGen(TECH_BUILDING_ID, $set_people,true))
 			{
@@ -129,22 +129,8 @@ if (isset($cp)) {
 		$minBuildTimeFactor = (0.1-(GEN_TECH_LEVEL/100));
 
 		// People working in the tech building.
-    if($building_gen) 
-    {
-  		 $peopleWorking = (
-  			($new_people_set && isset($set_people)) ?
-  			$set_people :
-  			$bl->getPeopleWorking(TECH_BUILDING_ID)
-  		);	
-    }
-    else
-    {
-      $peopleWorking = (
-  			($new_people_set && isset($set_people)) ?
-  			$set_people :
-  			$bl->getPeopleWorkingGen(TECH_BUILDING_ID)
-  		); 
-    }
+     	$peopleWorking = $bl->getPeopleWorking(TECH_BUILDING_ID);
+  	    $peopleWorkingGen = $bl->getPeopleWorkingGen(TECH_BUILDING_ID);
     
 		$peopleTimeReduction = $cfg->value('people_work_done');
 		$peopleFoodConsumption = $cfg->value('people_food_require');
@@ -272,13 +258,17 @@ if (isset($cp)) {
 			} else {
 				$box .= '<input type="hidden" name="peopleOptimized" id="peopleOptimized" value="0" />';	
 			}
-
-			$form_button = 'submit_people_form';		
-			if ($bid ==23) {
-
+					
+			if ($bid ==23) 
+            {
 				$form_button = 'submit_people_form_gen';
-				$peopleWorking= $bl->getPeopleWorkingGen(TECH_BUILDING_ID);
-			};
+				$people= $peopleWorkingGen;
+			}
+            else
+            {
+                $form_button = 'submit_people_form';
+                $people= $peopleWorking;            
+            }    
 
 			$box .= '	<tr>
 								<th>Eingestellte Arbeiter</th>
@@ -286,7 +276,7 @@ if (isset($cp)) {
 									<input 	type="text" 
 											name="peopleWorking" 
 											id="peopleWorking" 
-											value="'.nf($peopleWorking).'" 
+											value="'.nf($people).'" 
 											onkeyup="updatePeopleWorkingBox(this.value,\'-1\',\'-1\');"/>
 							</td>
 						</tr>';
@@ -295,14 +285,14 @@ if (isset($cp)) {
 								<td><input	type="text"
 											name="timeReduction"
 											id="timeReduction"
-											value="'.tf($cfg->value('people_work_done') * $peopleWorking).'"
+											value="'.tf($cfg->value('people_work_done') * $people).'"
 											onkeyup="updatePeopleWorkingBox(\'-1\',this.value,\'-1\');" /></td>
 							</tr>
 								<th>Nahrungsverbrauch</th>
 								<td><input	type="text"
 											name="foodUsing"
 											id="foodUsing"
-											value="'.nf($cfg->value('people_food_require') * $peopleWorking).'"
+											value="'.nf($cfg->value('people_food_require') * $people).'"
 											onkeyup="updatePeopleWorkingBox(\'-1\',\'-1\',this.value);" /></td>
 							</tr>
 							<tr>
@@ -318,8 +308,9 @@ if (isset($cp)) {
 						</td>
 					</tr>';	
 
-	    tableStart("Labor-Infos");
-			echo '<colgroup><col style="width:400px;"/><col/></colgroup>';
+	        tableStart("Allgemeine-Infos");
+			
+            echo '<colgroup><col style="width:400px;"/><col/></colgroup>';
 			// Specialist
 			if ($cu->specialist->costsResearch!=1)
 			{
@@ -340,37 +331,43 @@ if (isset($cp)) {
 	    		echo "Stufe ".$conf['build_time_boni_forschungslabor']['p1']." erforderlich!";
 	    	}
 			echo '</td></tr>';
-			// Worker
-      echo"<tr><td>Eingestellte Arbeiter:</td><td>". nf($peopleWorking);
-      if ($bid>0)
-      {
-        if(($bid == 23) && ($building_gen <>1))
-			  {
-				  echo '&nbsp;<a href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
-			  }
-        
-        if(($bid <> 23) && ($building_something <>1))
-			  {
-				  echo '&nbsp;<a href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
-			  }
-      }
-      
-      
-        
-			echo '</td></tr>';
-			if ($peopleWorking > 0)
-			{
-				echo '<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td>'.tf($peopleTimeReduction*$peopleWorking).'</td></tr>';
-				echo '<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td>'.nf($peopleFoodConsumption*$peopleWorking).'</td></tr>';
-			}
-			// Genetics technology level
-			if (GEN_TECH_LEVEL > 0)
-			{
-				echo '<tr><td>Gentechnologie:</td><td>'.GEN_TECH_LEVEL.'</td></tr>';
-				echo '<tr><td>Minimale Forschungszeit (mit Arbeiter):</td><td>Forschungszeit * '.$minBuildTimeFactor.'</td></tr>';
-			}
-	    	tableEnd();
 
+            // Genetics technology level
+            if (GEN_TECH_LEVEL > 0)
+            {
+                echo "<tr><td>Gentechnologie:</td><td>".GEN_TECH_LEVEL."</td></tr>";
+                echo "<tr><td>Minimale Forschungszeit (mit Arbeiter):</td><td>Forschungszeit * $minBuildTimeFactor</td></tr>";
+            }
+
+            tableEnd();
+
+            tableStart("Labor-Infos");
+            echo '<colgroup><col span="3" style="width:400px;"/><col/></colgroup>';
+
+			// Worker
+            echo"<tr><td><th>Normal</th></td><th>Gentech</th></tr>";      
+            echo"<tr><td>Eingestellte Arbeiter:</td><td>". nf($peopleWorking);
+              
+            if(($building_something <>1)&&($bid>0)&&($bid<>23))
+    		{
+    		    echo '&nbsp;<a id ="link" href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
+    		}
+          	echo '</td><td>'.nf($peopleWorkingGen);
+
+            if(($building_gen <>1)&&($bid==23))
+            {
+                echo '&nbsp;<a id ="link" href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
+            }
+
+            '</td></tr>';
+			if (($peopleWorking > 0) || ($peopleWorkingGen > 0))
+			{
+				echo "<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td>".tf($peopleTimeReduction*$peopleWorking)."</td><td>".tf($peopleTimeReduction*$peopleWorkingGen)."</td></tr>";
+				echo "<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td>".nf($peopleFoodConsumption*$peopleWorking)."</td><td>".nf($peopleFoodConsumption*$peopleWorkingGen)."</td></tr>";
+			}
+			
+		    tableEnd();	
+	    	
 			echo '<div id="changePeople" style="display:none;">';
 			tableStart("Arbeiter im Forschungslabor zuteilen");
 			echo '<form id="changeWorkingPeople" action="?page='.$page.'&amp;id='.$bid.'" method="post">
@@ -449,86 +446,88 @@ if (isset($cp)) {
 						if (!$builing_something)
 						{
 	
-								if ($cp->resMetal >= $bc['metal'] && $cp->resCrystal >= $bc['crystal'] && $cp->resPlastic >= $bc['plastic']  && $cp->resFuel >= $bc['fuel']  && $cp->resFood >= $bc['food'])
+							if ($cp->resMetal >= $bc['metal'] && $cp->resCrystal >= $bc['crystal'] && $cp->resPlastic >= $bc['plastic']  && $cp->resFuel >= $bc['fuel']  && $cp->resFood >= $bc['food'])
+							{
+								$start_time = time();
+								$end_time = time()+$btime;
+								// if (sizeof($techlist[$arr['tech_id']])>0)
+								if (isset($techlist[$arr['tech_id']]))
 								{
-									$start_time = time();
-									$end_time = time()+$btime;
-									// if (sizeof($techlist[$arr['tech_id']])>0)
-									if (isset($techlist[$arr['tech_id']]))
-									{
-										dbquery("
-										UPDATE 
-											techlist 
-										SET
-            					techlist_build_type='3',
-            					techlist_build_start_time='".time()."',
-            					techlist_build_end_time='".$end_time."',
-            					techlist_entity_id='".$cp->id()."'
-										WHERE
-											techlist_tech_id='".$arr['tech_id']."'
-											AND techlist_user_id='".$cu->id."';");
-									}
-									else
-									{
-										dbquery("
-										INSERT INTO 
+									dbquery("
+									UPDATE 
 										techlist 
-										(
-											techlist_entity_id,
-											techlist_build_type,
-											techlist_build_start_time,
-											techlist_build_end_time,
-											techlist_tech_id,
-											techlist_user_id
-										)
-										VALUES
-										(
-											'".$cp->id()."',
-											'3',
-											'".time()."',
-											'".$end_time."',
-											'".$arr['tech_id']."',
-											'".$cu->id."'
-										);");
-	
-									}
-									$planet_id=$cp->id();
-									
-									//Rohstoffe vom Planeten abziehen und aktualisieren
-									$cp->changeRes(-$bc['metal'],-$bc['crystal'],-$bc['plastic'],-$bc['fuel'],-$bc['food']);
-									$b_status=3;
-									
-									//Log schreiben
-									$log_text = "[b]Forschung Ausbau[/b]
-
-									[b]Erforschungsdauer:[/b] ".tf($btime)."
-									[b]Ende:[/b] ".date("d.m.Y H:i:s",$end_time)."
-									[b]Forschungslabor Level:[/b] ".CURRENT_LAB_LEVEL."
-									[b]Eingesetzte Bewohner:[/b] ".nf($peopleWorking)."
-									[b]Gen-Tech Level:[/b] ".GEN_TECH_LEVEL."
-									[b]Eingesetzter Spezialist:[/b] ".$cu->specialist->name."
-
-									[b]Kosten[/b]
-									[b]".RES_METAL.":[/b] ".nf($bc['metal'])."
-									[b]".RES_CRYSTAL.":[/b] ".nf($bc['crystal'])."
-									[b]".RES_PLASTIC.":[/b] ".nf($bc['plastic'])."
-									[b]".RES_FUEL.":[/b] ".nf($bc['fuel'])."
-									[b]".RES_FOOD.":[/b] ".nf($bc['food'])."
-
-									[b]Restliche Rohstoffe auf dem Planeten[/b]
-									[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
-									[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
-									[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
-									[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
-									[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
-									header("Refresh:0");								
-									//Log Speichern
-									GameLog::add(GameLog::F_TECH, GameLog::INFO, $log_text, $cu->id,$cu->allianceId,$cp->id,$arr['tech_id'], $b_status, $b_level);
+									SET
+                    					techlist_build_type='3',
+                    					techlist_build_start_time='".time()."',
+                    					techlist_build_end_time='".$end_time."',
+                    					techlist_entity_id='".$cp->id()."'
+									WHERE
+										techlist_tech_id='".$arr['tech_id']."'
+										AND techlist_user_id='".$cu->id."';");
 								}
 								else
 								{
-									echo "<i>Forschung kann nicht gestartet werden, zuwenig Rohstoffe vorhanden!</i><br/><br/>";
+									dbquery("
+									INSERT INTO 
+									techlist 
+									(
+										techlist_entity_id,
+										techlist_build_type,
+										techlist_build_start_time,
+										techlist_build_end_time,
+										techlist_tech_id,
+										techlist_user_id
+									)
+									VALUES
+									(
+										'".$cp->id()."',
+										'3',
+										'".time()."',
+										'".$end_time."',
+										'".$arr['tech_id']."',
+										'".$cu->id."'
+									);");
+
 								}
+								$planet_id=$cp->id();
+								
+								//Rohstoffe vom Planeten abziehen und aktualisieren
+								$cp->changeRes(-$bc['metal'],-$bc['crystal'],-$bc['plastic'],-$bc['fuel'],-$bc['food']);
+								$b_status=3;
+								
+								//Log schreiben
+								$log_text = "[b]Forschung Ausbau[/b]
+
+								[b]Erforschungsdauer:[/b] ".tf($btime)."
+								[b]Ende:[/b] ".date("d.m.Y H:i:s",$end_time)."
+								[b]Forschungslabor Level:[/b] ".CURRENT_LAB_LEVEL."
+								[b]Eingesetzte Bewohner:[/b] ".nf($peopleWorking)."
+								[b]Gen-Tech Level:[/b] ".GEN_TECH_LEVEL."
+								[b]Eingesetzter Spezialist:[/b] ".$cu->specialist->name."
+
+								[b]Kosten[/b]
+								[b]".RES_METAL.":[/b] ".nf($bc['metal'])."
+								[b]".RES_CRYSTAL.":[/b] ".nf($bc['crystal'])."
+								[b]".RES_PLASTIC.":[/b] ".nf($bc['plastic'])."
+								[b]".RES_FUEL.":[/b] ".nf($bc['fuel'])."
+								[b]".RES_FOOD.":[/b] ".nf($bc['food'])."
+
+								[b]Restliche Rohstoffe auf dem Planeten[/b]
+								[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
+								[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
+								[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
+								[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
+								[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
+                                
+                                echo '<script>toggleBox(\'link\'); </script>';
+							
+                                //Log Speichern
+								GameLog::add(GameLog::F_TECH, GameLog::INFO, $log_text, $cu->id,$cu->allianceId,$cp->id,$arr['tech_id'], $b_status, $b_level);
+							}
+							else
+							{
+								echo "<i>Forschung kann nicht gestartet werden, zuwenig Rohstoffe vorhanden!</i><br/><br/>";
+							}
 						}
 						else
 						{
@@ -578,7 +577,9 @@ if (isset($cp)) {
 							[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
 							[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
 							[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
-							header("Refresh:0");	
+							
+                            header("Refresh:0; url=?page=research&id=".$bid);
+                            
 							//Log Speichern
 							GameLog::add(GameLog::F_TECH, GameLog::INFO, $log_text, $cu->id,$cu->allianceId,$cp->id,$arr['tech_id'], $b_status, $b_level);
 
