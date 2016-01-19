@@ -16,6 +16,10 @@ Version 3.5.8
  * added growing to asterio fields
  * tutorial can now be reopend at configurations
 
+### Hotfix ### 
+
+ * Fixed analyzing and collecting fuel
+
 Version 3.5.7
 -------------
 

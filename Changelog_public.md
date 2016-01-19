@@ -11,10 +11,14 @@ Version 3.5.8
  * Lab etwas überarbeitet und Bewohnerbug gefixed
  * Spieler haben nach Registration nun 7 Tage Zeit sich einzuloggen, bevor sie als inaktiv gekennzeichnet werden
 
-#### Features ####
+### Features ###
 
  * Asteroidenfelder wachsen nun im Laufe der Runde
  * Tutorial kann nun in den Einstellungen wieder geöffnet werden
+
+### Hotfix ### 
+ 
+ * Gasplanten können wieder analysiert und leergesaugt werden
 
 Version 3.5.7 (Runde 15)
 -------------
