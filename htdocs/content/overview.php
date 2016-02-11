@@ -62,7 +62,7 @@
 	if ($s->sittingActive)
 	{
 		iBoxStart("Sitting-Modus aktiv");
-		echo "Du sittest diesen Account im Auftrag von ".$cu->nick." bis ".df($s->sittingUntil).". Bitte beachte die speziellen Sittingregeln!";
+		echo "Du sittest diesen Account im Auftrag von ".$cu->nick." bis ".df($s->sittingUntil).".<br> Bitte beachte die speziellen <a href= '#' onclick=\"window.open('http://www.etoa.ch/regeln','rules','width=600,height=500,scrollbars=yes');\">Sittingregeln</a> unter §3 - (5):<br>Während eines aktiven Sittings sind Handeln und Angreifen zwischen Sitter und Gesittetem ohne Ausnahme verboten. Gemeinsame Allianzangriffe/-verteidigungen sind hingegen gestattet.";
 		iBoxEnd();
 	}
 

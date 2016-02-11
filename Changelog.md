@@ -1,4 +1,4 @@
-﻿Escape to Andromeda Changelog
+Escape to Andromeda Changelog
 =============================
 
 Version 3.5.9
@@ -10,6 +10,7 @@ Version 3.5.9
  * fixed marketreservation
 
 #### Features ####
+ * Changed message when sitting an acc
 
 Version 3.5.8
 -------------
