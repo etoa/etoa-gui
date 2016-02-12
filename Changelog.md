@@ -8,6 +8,7 @@ Version 3.5.9
 
  * fixed support from ships with 0 fuelcost 
  * fixed marketreservation
+ * fixed titles
 
 #### Features ####
  * Changed message when sitting an acc

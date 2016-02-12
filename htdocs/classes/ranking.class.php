@@ -17,7 +17,7 @@
 			
 			$titles=array(
 				"total"=>"",
-				"battle"=>"_ships",
+				"fleet"=>"_ships",
 				"tech"=>"_tech",
 				"buildings"=>"_buildings",
 				"exp"=>"_exp");
