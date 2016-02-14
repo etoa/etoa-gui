@@ -1,6 +1,19 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.9
+-------------
+
+### Bugfixes ###
+
+ * fixed support from ships with 0 fuelcost 
+ * fixed marketreservation
+ * fixed titles
+
+#### Features ####
+ * Changed message when sitting an acc
+ * Changed public memberlist to default true
+
 Version 3.5.8
 -------------
 
@@ -15,6 +28,10 @@ Version 3.5.8
 
  * added growing to asterio fields
  * tutorial can now be reopend at configurations
+
+### Hotfix ### 
+
+ * Fixed analyzing and collecting fuel
 
 Version 3.5.7
 -------------

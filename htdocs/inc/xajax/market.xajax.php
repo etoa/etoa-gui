@@ -171,7 +171,7 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 
 				// Reservation
 				$reservation = ""; 
-        $top = "";  
+        $class = "";  
 				if($arr['for_user']!=0)
 				{
           $class = "top";

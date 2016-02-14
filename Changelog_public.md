@@ -1,6 +1,19 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.9
+-------------
+
+### Bugfixes ###
+
+ * Support von Schiffen mit 0 Tritiumverbrauch (Wezea/Haarps) funktioniert jetzt
+ * Marktreservierung gefixed
+ * Bug bei der Titelanzeige entfernt
+
+#### Features ####
+ * Infonachricht beim Accountsitting genauer gemacht
+ * Beim Erstellen von Allianzen wird jetzt "Öffentliche Mitgliederliste" standardmäsig auf Ja gesetzt
+
 Version 3.5.8
 -------------
 
@@ -11,10 +24,14 @@ Version 3.5.8
  * Lab etwas überarbeitet und Bewohnerbug gefixed
  * Spieler haben nach Registration nun 7 Tage Zeit sich einzuloggen, bevor sie als inaktiv gekennzeichnet werden
 
-#### Features ####
+### Features ###
 
  * Asteroidenfelder wachsen nun im Laufe der Runde
  * Tutorial kann nun in den Einstellungen wieder geöffnet werden
+
+### Hotfix ### 
+ 
+ * Gasplanten können wieder analysiert und leergesaugt werden
 
 Version 3.5.7 (Runde 15)
 -------------
@@ -116,7 +133,7 @@ Version 3.5.7 (Runde 15)
  * Kapazität von 20000 auf 5000
 
 # FORNAX Asteroidensammler #
- * Kapazität von 45000 auf 14000
+ * Kapazität von 45000 auf 17500
   
 ## Allianzkampfsystem ##
  * Maximale Anzahl Angreifer/Verteidiger auf 2 beschränken.

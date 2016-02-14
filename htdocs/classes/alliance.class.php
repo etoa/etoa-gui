@@ -820,15 +820,18 @@
 									alliance_tag,
 									alliance_name,
 									alliance_founder_id,
-									alliance_foundation_date
+									alliance_foundation_date,
+									alliance_public_memberlist
 								)
 								VALUES
-								(?,?,?,?);",
+								(?,?,?,?,?);",
                   array(
                     $data['tag'], 
                     $data['name'], 
                     $data['founder']->id, 
-                    time())
+                    time(),
+					1)
+
                 );
 								$returnMsg = new Alliance(mysql_insert_id());
 								$data['founder']->alliance = $returnMsg;
