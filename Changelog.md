@@ -12,6 +12,7 @@ Version 3.5.9
 
 #### Features ####
  * Changed message when sitting an acc
+ * Changed public memberlist to default true
 
 Version 3.5.8
 -------------
