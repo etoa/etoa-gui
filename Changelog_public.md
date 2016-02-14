@@ -1,6 +1,19 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.9
+-------------
+
+### Bugfixes ###
+
+ * Support von Schiffen mit 0 Tritiumverbrauch (Wezea/Haarps) funktioniert jetzt
+ * Marktreservierung gefixed
+ * Bug bei der Titelanzeige entfernt
+
+#### Features ####
+ * Infonachricht beim Accountsitting genauer gemacht
+ * Beim Erstellen von Allianzen wird jetzt "Öffentliche Mitgliederliste" standardmäsig auf Ja gesetzt
+
 Version 3.5.8
 -------------
 
