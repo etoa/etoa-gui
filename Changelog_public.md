@@ -11,6 +11,7 @@ Version 3.5.9
  * Bug bei der Titelanzeige entfernt
 
 #### Features ####
+
  * Infonachricht beim Accountsitting genauer gemacht
  * Beim Erstellen von Allianzen wird jetzt "Öffentliche Mitgliederliste" standardmäsig auf Ja gesetzt
 
