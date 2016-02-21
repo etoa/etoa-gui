@@ -1,6 +1,17 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.10
+-------------
+
+### Bugfixes ###
+
+ * fixed calculation for gen (used ppl for normal lab instead of genlab)
+
+#### Features ####
+ * Changed message when sitting an acc
+ * Changed public memberlist to default true
+
 Version 3.5.9
 -------------
 

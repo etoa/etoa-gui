@@ -429,14 +429,21 @@ if (isset($cp)) {
 	
 					// Berechnet mindest Bauzeit in beachtung von Gentechlevel
 					$btime_min=$btime*$minBuildTimeFactor;
-					$btime=$btime-$peopleWorking*$peopleTimeReduction;
-					if ($btime < $btime_min) 
-					{
-						$btime=$btime_min;
+					if (!$bid == GEN_TECH_ID) {
+						$btime = $btime - $peopleWorking * $peopleTimeReduction;
+						if ($btime < $btime_min) {
+							$btime = $btime_min;
+						}
+						$bc['food'] += $peopleWorking * $peopleFoodConsumption;
 					}
-					$bc['food']+=$peopleWorking*$peopleFoodConsumption;
-					
-	
+					else {
+						$btime = $btime - $peopleWorkingGen * $peopleTimeReduction;
+						if ($btime < $btime_min) {
+							$btime = $btime_min;
+						}
+						$bc['food'] += $peopleWorkingGen * $peopleFoodConsumption;
+					}
+						
 					//
 					// Befehle ausführen
 					//
