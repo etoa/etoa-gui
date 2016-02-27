@@ -221,7 +221,8 @@
                         UPDATE
                             buildlist
                         SET
-                            buildlist_people_working='0'
+                            buildlist_people_working='0',
+                            buildlist_gen_people_working ='0'
                         WHERE
                             buildlist_building_id='".$id."'
                         AND buildlist_user_id='".$cu->id."'
