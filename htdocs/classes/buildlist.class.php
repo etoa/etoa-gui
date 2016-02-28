@@ -287,7 +287,7 @@
 				global $cp;
 				// Free: Total people on planet minus total working people on planet
 				// PLUS people working in this building (these can be set again)
-				$free = $cp->people - $this->totalPeopleWorking() + $this->items[$bid]->peopleWorking;
+				$free = $cp->people - $this->totalPeopleWorking() + $this->items[$bid]->peopleWorkingGen;
 				if ($free >= $people)
 				{
 					if ($tech && $this->tl->setPeopleWorkingGen($people,$bid))
@@ -325,13 +325,14 @@
 		function totalPeopleWorking()
 		{
 			if ($this->totalPeopleWorking>-1)
+
 				return $this->totalPeopleWorking;
 			if ($this->items!=null)
 			{
 				$this->totalPeopleWorking = 0;
 				foreach ($this->items as $k=>&$v)
 				{
-					$this->totalPeopleWorking+=$v->peopleWorking;
+					$this->totalPeopleWorking+=($v->peopleWorking+$v->peopleWorkingGen);
 				}
 				unset($v);
 				return $this->totalPeopleWorking;

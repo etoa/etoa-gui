@@ -1,6 +1,14 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.10
+-------------
+
+### Bugfixes ###
+
+ * fixed calculation for gen (used ppl for normal lab instead of genlab)
+ * fixed bug where u could use more workers than available
+
 Version 3.5.9
 -------------
 

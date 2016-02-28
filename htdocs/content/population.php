@@ -29,7 +29,6 @@
 
     if ($cp)
     {
-
         echo '<h1>Bev&ouml;lkerungs&uuml;bersicht des Planeten '.$cp->name.'</h1>';
         echo '<div id="population_info"></div>'; // Nur zu testzwecken
         echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
@@ -84,53 +83,98 @@
                 WHERE
                     buildlist_entity_id=".$cp->id."
                 AND buildlist_people_working_status='1';");
+
+                //Check workers for gen
+
+                $sql = "
+                SELECT
+                    techlist_build_type
+                FROM
+                    techlist
+                WHERE
+                    techlist_tech_id=".GEN_TECH_ID."
+                AND techlist_user_id=".$cu->id;
+
+                $tres = mysql_query($sql);
+                $tarr=mysql_fetch_assoc($tres);
+
+                if($tarr['techlist_build_type']==3) {
+                    $check_res_gen = dbquery("
+                    SELECT
+                        sum(buildlist_gen_people_working)
+                    FROM
+                        buildlist
+                    WHERE
+                        buildlist_entity_id=".$cp->id);
+                    $check_arr_gen = mysql_fetch_array($check_res_gen);
+                }
+
                 $working = 0;
                 $check_arr = mysql_fetch_array($check_res);
                 // Frei = total auf Planet - gesperrt auf Planet
-                $free_people=floor($cp->people)-$check_arr[0];
-                // Falls für eines der Gebäude die Anzahl Arbeiter
-                // geändert wurde
-                if (count($_POST['people_work'])>0)
+                $free_people=floor($cp->people)-$check_arr[0]-$check_arr_gen[0];
+
+                foreach ($_POST['people_work'] as $id=>$num)
                 {
-                    foreach ($_POST['people_work'] as $id=>$num)
-                    {
-                        $working+=nf_back($num);
-                    }
-                    $available = min($free_people,$working);
-                    foreach ($_POST['people_work'] as $id=>$num)
-                    {
-                        $num = nf_back($num);
-                        if ($available>0)
-                            $work = min($num,$available);
-                        else
-                            $work = 0;
-                        $available-=$num;
-                        dbquery("
-                        UPDATE
-                            buildlist
-                        SET
-                            buildlist_people_working='".$work."'
-                        WHERE
-                            buildlist_building_id='".intval($id)."'
-                        AND buildlist_entity_id=".$cp->id."");
-                    }
+                    $working+=nf_back($num);
                 }
 
-                if(!$gen_research) {
-                    if($gen_workers <> $_POST['gen']) {
-                        dbquery("
-                        UPDATE
-                            buildlist
-                        SET
-                            buildlist.buildlist_gen_people_working =".nf_back($_POST['gen'])."
-                        WHERE
-                            buildlist.buildlist_user_id =".$cu->id."
-                            AND buildlist.buildlist_entity_id =".$cp->id()."
-                            AND buildlist.buildlist_building_id =".TECH_BUILDING_ID);
-                    }
+                //add ppl from genlab
+                $working += nf_back($_POST['gen']);
+                
+                $available = min($free_people,$working);
+
+                foreach ($_POST['people_work'] as $id=>$num)
+                {
+                    $num = nf_back($num);
+                    if ($available>0)
+                        $work = min($num,$available);
+                    else
+                        $work = 0;
+                    $available-=$num;
+                    dbquery("
+                    UPDATE
+                        buildlist
+                    SET
+                        buildlist_people_working='".$work."'
+                    WHERE
+                        buildlist_building_id='".intval($id)."'
+                    AND buildlist_entity_id=".$cp->id);
                 }
-            }    
-          
+
+                $sql = "
+                SELECT
+                    techlist_build_type
+                FROM
+                    techlist
+                WHERE
+                    techlist_tech_id=".GEN_TECH_ID."
+                AND techlist_user_id=".$cu->id;
+
+                $tres = mysql_query($sql);
+                $tarr=mysql_fetch_assoc($tres);
+
+                if($tarr['techlist_build_type']!=3){
+
+                    $num = nf_back($_POST['gen']);
+                    if ($available>0)
+                        $work = min($num,$available);
+                    else
+                        $work = 0;
+                    $available-=$num;
+
+                    dbquery("
+                    UPDATE
+                        buildlist
+                    SET
+                        buildlist_gen_people_working = $work
+                    WHERE
+                        buildlist_user_id =".$cu->id."
+                        AND buildlist_entity_id =".$cp->id()."
+                        AND buildlist_building_id =".TECH_BUILDING_ID);
+                }
+
+            }
 
             //überprüft tätigkeit des Schiffswerftes
             $sql = "
@@ -209,6 +253,29 @@
                         AND buildlist_user_id='".$cu->id."'
                         AND buildlist_entity_id='".$cp->id."'");
                     }
+                }
+
+                $sql = "
+                SELECT
+                    techlist_build_type
+                FROM
+                    techlist
+                WHERE
+                    techlist_tech_id=".GEN_TECH_ID."
+                AND techlist_user_id=".$cu->id;
+
+                $tres = mysql_query($sql);
+                $tarr=mysql_fetch_assoc($tres);
+
+                if($tarr['techlist_build_type']!=3){
+                    dbquery("
+                        UPDATE
+                            buildlist
+                        SET
+                            buildlist_gen_people_working='0'
+                        WHERE
+                        buildlist_user_id='".$cu->id."'
+                        AND buildlist_entity_id='".$cp->id."'");
                 }
             }
             echo '<form action="?page='.$page.'" method="post">';
@@ -338,13 +405,11 @@
                     AND techlist.techlist_tech_id = ".GEN_TECH_ID."
                     AND techlist.techlist_build_type = 3");
                 if(mysql_num_rows($rres) >0) {
-                    $gen_research = true;
                     echo '<td>'.$gen_workers.'</td>';
                 }
                 else
                 {    
-                    $gen_research = false;
-                    echo '<td><input type="text" id="gen" name="gen" value="'.$gen_workers.'" size="8" maxlength="20" onKeyUp="FormatNumber(this.id,this.value, '.$cp->people.', \'\', \'\');"/></td>';    
+                    echo '<td><input type="text" id="gen" name="gen" value="'.$gen_workers.'" size="8" maxlength="20" onKeyUp="FormatNumber(this.id,this.value, '.$cp->people.', \'\', \'\');"/></td>';
                 }
                 echo '</td><td>'.nf($gen_workers*$cfg->get('people_food_require')).' t</td></tr>';
 

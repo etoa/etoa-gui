@@ -92,7 +92,8 @@ if (isset($cp)) {
 		$new_people_set = false;
 		// people working changed
         if (isset($_POST['submit_people_form_gen']))
-		{        
+		{
+
 			$set_people = nf_back($_POST['peopleWorking']);
 			if (!$builing_gen && $bl->setPeopleWorkingGen(TECH_BUILDING_ID, $set_people,true))
 			{
@@ -201,7 +202,11 @@ if (isset($cp)) {
 		$checker = ob_get_contents();
 		ob_end_clean();
 
-		$peopleFree = floor($cp->people) - $bl->totalPeopleWorking() + $peopleWorking;
+		if($bid==GEN_TECH_ID)
+			$peopleFree = floor($cp->people) - $bl->totalPeopleWorking() + ($peopleWorkingGen);
+		else
+			$peopleFree = floor($cp->people) - $bl->totalPeopleWorking() + ($peopleWorking);
+
 		$peopleOptimized = 0;
 		if ($bid) {
 
@@ -429,14 +434,21 @@ if (isset($cp)) {
 	
 					// Berechnet mindest Bauzeit in beachtung von Gentechlevel
 					$btime_min=$btime*$minBuildTimeFactor;
-					$btime=$btime-$peopleWorking*$peopleTimeReduction;
-					if ($btime < $btime_min) 
-					{
-						$btime=$btime_min;
+					if ($bid != GEN_TECH_ID) {
+						$btime = $btime - $peopleWorking * $peopleTimeReduction;
+						if ($btime < $btime_min) {
+							$btime = $btime_min;
+						}
+						$bc['food'] += $peopleWorking * $peopleFoodConsumption;
 					}
-					$bc['food']+=$peopleWorking*$peopleFoodConsumption;
-					
-	
+					else {
+						$btime = $btime - $peopleWorkingGen * $peopleTimeReduction;
+						if ($btime < $btime_min) {
+							$btime = $btime_min;
+						}
+						$bc['food'] += $peopleWorkingGen * $peopleFoodConsumption;
+					}
+						
 					//
 					// Befehle ausführen
 					//
