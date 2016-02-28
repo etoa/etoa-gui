@@ -434,7 +434,7 @@ if (isset($cp)) {
 	
 					// Berechnet mindest Bauzeit in beachtung von Gentechlevel
 					$btime_min=$btime*$minBuildTimeFactor;
-					if (!$bid == GEN_TECH_ID) {
+					if ($bid != GEN_TECH_ID) {
 						$btime = $btime - $peopleWorking * $peopleTimeReduction;
 						if ($btime < $btime_min) {
 							$btime = $btime_min;
