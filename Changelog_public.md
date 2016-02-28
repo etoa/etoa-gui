@@ -1,6 +1,15 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.10
+-------------
+
+### Bugfixes ###
+
+ * Es werden nun die richtigen Arbeiter für die Genforschung genommen(Genlabor anstatt normales Labor)
+ * Es können nicht mehr Arbeiter eingestellt werden als vorhanden
+ * Bug entfernt, bei dem Arbeiter 0 Nah beim Forschen verbraucht haben
+
 Version 3.5.9
 -------------
 
