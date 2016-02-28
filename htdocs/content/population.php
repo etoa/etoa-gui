@@ -29,7 +29,6 @@
 
     if ($cp)
     {
-
         echo '<h1>Bev&ouml;lkerungs&uuml;bersicht des Planeten '.$cp->name.'</h1>';
         echo '<div id="population_info"></div>'; // Nur zu testzwecken
         echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
@@ -86,18 +85,32 @@
                 AND buildlist_people_working_status='1';");
 
                 //Check workers for gen
-                $check_res_gen=dbquery("
+
+                $sql = "
                 SELECT
-                    buildlist_gen_people_working
+                    techlist_build_type
                 FROM
-                    buildlist
+                    techlist
                 WHERE
-                    buildlist_entity_id=".$cp->id."
-                AND buildlist_people_working_status='1';");
+                    techlist_tech_id=".GEN_TECH_ID."
+                AND techlist_user_id=".$cu->id;
+
+                $tres = mysql_query($sql);
+                $tarr=mysql_fetch_assoc($tres);
+
+                if($tarr['techlist_build_type']==3) {
+                    $check_res_gen = dbquery("
+                    SELECT
+                        sum(buildlist_gen_people_working)
+                    FROM
+                        buildlist
+                    WHERE
+                        buildlist_entity_id=".$cp->id);
+                    $check_arr_gen = mysql_fetch_array($check_res_gen);
+                }
 
                 $working = 0;
                 $check_arr = mysql_fetch_array($check_res);
-                $check_arr_gen = mysql_fetch_array($check_res_gen);
                 // Frei = total auf Planet - gesperrt auf Planet
                 $free_people=floor($cp->people)-$check_arr[0]-$check_arr_gen[0];
 
@@ -129,7 +142,20 @@
                     AND buildlist_entity_id=".$cp->id);
                 }
 
-                if(!$gen_research) {
+                $sql = "
+                SELECT
+                    techlist_build_type
+                FROM
+                    techlist
+                WHERE
+                    techlist_tech_id=".GEN_TECH_ID."
+                AND techlist_user_id=".$cu->id;
+
+                $tres = mysql_query($sql);
+                $tarr=mysql_fetch_assoc($tres);
+
+                if($tarr['techlist_build_type']!=3){
+
                     $num = nf_back($_POST['gen']);
                     if ($available>0)
                         $work = min($num,$available);
@@ -221,13 +247,35 @@
                         UPDATE
                             buildlist
                         SET
-                            buildlist_people_working='0',
-                            buildlist_gen_people_working ='0'
+                            buildlist_people_working='0'
                         WHERE
                             buildlist_building_id='".$id."'
                         AND buildlist_user_id='".$cu->id."'
                         AND buildlist_entity_id='".$cp->id."'");
                     }
+                }
+
+                $sql = "
+                SELECT
+                    techlist_build_type
+                FROM
+                    techlist
+                WHERE
+                    techlist_tech_id=".GEN_TECH_ID."
+                AND techlist_user_id=".$cu->id;
+
+                $tres = mysql_query($sql);
+                $tarr=mysql_fetch_assoc($tres);
+
+                if($tarr['techlist_build_type']!=3){
+                    dbquery("
+                        UPDATE
+                            buildlist
+                        SET
+                            buildlist_gen_people_working='0'
+                        WHERE
+                        buildlist_user_id='".$cu->id."'
+                        AND buildlist_entity_id='".$cp->id."'");
                 }
             }
             echo '<form action="?page='.$page.'" method="post">';
@@ -357,13 +405,11 @@
                     AND techlist.techlist_tech_id = ".GEN_TECH_ID."
                     AND techlist.techlist_build_type = 3");
                 if(mysql_num_rows($rres) >0) {
-                    $gen_research = true;
                     echo '<td>'.$gen_workers.'</td>';
                 }
                 else
                 {    
-                    $gen_research = false;
-                    echo '<td><input type="text" id="gen" name="gen" value="'.$gen_workers.'" size="8" maxlength="20" onKeyUp="FormatNumber(this.id,this.value, '.$cp->people.', \'\', \'\');"/></td>';    
+                    echo '<td><input type="text" id="gen" name="gen" value="'.$gen_workers.'" size="8" maxlength="20" onKeyUp="FormatNumber(this.id,this.value, '.$cp->people.', \'\', \'\');"/></td>';
                 }
                 echo '</td><td>'.nf($gen_workers*$cfg->get('people_food_require')).' t</td></tr>';
 
