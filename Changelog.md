@@ -1,6 +1,14 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.11
+-------------
+
+### Bugfixes ###
+
+ * fixed ressource symbols for revolution design
+
+
 Version 3.5.10
 -------------
 
