@@ -9,7 +9,7 @@ namespace analyze
 		/**
 		* Fleet action: Analyze
 		*/
-		
+		Config &config = Config::instance();
 		// Precheck action==possible?
 		if (this->f->actionIsAllowed()) {
 			
@@ -21,7 +21,7 @@ namespace analyze
 			// If entity is a analyzable
 			if (this->targetEntity->getCode()=='n'
 				|| this->targetEntity->getCode()=='a'
-				|| (this->targetEntity->getCode()=='p' && this->targetEntity->getTypeId()==7)) {
+				|| (this->targetEntity->getCode()=='p' && this->targetEntity->getTypeId()==config.nget("gasplanet",0))) {
 				
 				report->setRes(floor(this->targetEntity->getResMetal()),
 							   floor(this->targetEntity->getResCrystal()),
