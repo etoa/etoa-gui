@@ -166,6 +166,7 @@
 		idConfig["EMP_TECH_ID"] = 17;
 		idConfig["POISON_TECH_ID"] = 18;
 		idConfig["REGENA_TECH_ID"] = 19;
+		idConfig["GEN_TECH_ID"] = 23;
 		
 		//->Gebäude
 		idConfig["FLEET_CONTROL_ID"] = 11;
