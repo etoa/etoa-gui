@@ -1,4 +1,4 @@
-Escape to Andromeda Changelog
+﻿Escape to Andromeda Changelog
 =============================
 
 Version 3.5.11
@@ -8,6 +8,10 @@ Version 3.5.11
 
  * fixed ressource symbols for revolution design
 
+
+### Administration ###
+ 
+ * even if all ships are bunkered they will be still shown in tool	
 
 Version 3.5.10
 -------------
