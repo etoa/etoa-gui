@@ -19,8 +19,8 @@
 				user_email='".$_POST['user_email']."',
 				user_password_temp='".$_POST['user_password_temp']."',
 				user_email_fix='".$_POST['user_email_fix']."',
-        dual_name ='".$_POST['dual_name']."',
-        dual_email ='".$_POST['dual_email']."',
+        		dual_name ='".$_POST['dual_name']."',
+        		dual_email ='".$_POST['dual_email']."',
 				user_race_id='".$_POST['user_race_id']."',
 				user_alliance_id='".$_POST['user_alliance_id']."',
 				user_profile_text='".addslashes($_POST['user_profile_text'])."',
@@ -43,7 +43,30 @@
 					$sql.= ",user_profile_img_check=0";
 				}
 				
-				
+				if ($_POST['new_multi']!="")
+            	{
+	                echo $_POST['new_multi'];
+                    if (get_user_id($_POST['new_multi'])==0)
+                    {
+                        error_msg("Dieser User exisitert nicht!");
+                    }
+                    //ist der eigene nick eingetragen
+                    elseif (get_user_id($_POST['new_multi'])==$_GET['id'])
+                    {
+                        error_msg("Du kannst nicht dich selber eintragen!");
+                    }
+                    else
+                    {
+		                dbquery("
+		                INSERT INTO
+		                	user_multi
+		                (user_id,multi_id,connection,timestamp)
+		                VALUES
+		                (".$_GET['id'].",".get_user_id($_POST['new_multi']).",".$_GET['multi_reason'].",UNIX_TIMESTAMP())");
+
+		                success_msg("Neuer User angelegt!");
+	                }
+            	}
 
 				// Handle specialist decision
 				if ($_POST['user_specialist_id']>0 && $_POST['user_specialist_time_h']>0)
@@ -877,6 +900,7 @@
 							<th>Name</th>
 							<th>Begründung</th>
 							<th>Eingetragen</th>
+							<th>Löschen</th>
 						</tr>';							
 				while ($multi_arr = mysql_fetch_array($multi_res))
 				{
@@ -889,6 +913,9 @@
 							</td>
 							<td>
 								'.($multi_arr['timestamp'] > 0 ? df($multi_arr['timestamp']) : '-').'
+							</td>
+							<td style="text-align:center">
+								<input type="checkbox" name="del_multi['.$multi_arr["multi_id"].']">
 							</td>							
 						</tr>';
 				}
@@ -940,7 +967,7 @@
 				echo '<tr>
 						<th rowspan="'.(mysql_num_rows($sitted_res)+1).'" valign="top">Hat gesittet</th>
 						<th>Gesitteter User</th>
-						<th>Start</th>¨
+						<th>Start</th><br>
 						<th>Ende</th>
 					</tr>';
 				while ($sitted_arr = mysql_fetch_array($sitted_res))
@@ -957,9 +984,49 @@
 							</td>
 						</tr>';
 				}
-				echo '</table>';
+				echo '</table>
+
+				<h2>Multi einrichten</h2>
+
+				<table class="tb" style="width:35%">
+					<tr>
+						<td>User</td>
+						<td>
+							<input type="text" name="muti_reason" style="width:92%">
+						</td>
+					</tr>
+					<tr>
+						<td>Beziehung</td>
+						<td>
+							<input type="text" name="new_multi" style="width:92%">
+						</td>
+					</tr>
+				</table>	
+
+				<h2>Sitting einrichten</h2>
+
+				<table class="tb" style="width:35%">
+					<tr>
+						<td>Sitter</td>
+						<td>
+							<input type="text" style="width:92%">
+						</td>
+					</tr>
+				    <tr>
+						<td>Von</td>
+						<td>';
+							showDatepicker("battleban_time_from", time(), true);
+				   echo'</td>
+					</tr>
+					<tr>
+						<td>Bis</td>
+					 	<td>';
+						    showDatepicker("battleban_time_to", time(), true);
+				   echo'</td>
+						</tr>
+				</table>
 				
-				echo '</div><div id="tabs-5">';
+				</div><div id="tabs-5">';
 
 				/**
 				* Profil
