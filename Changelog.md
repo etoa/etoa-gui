@@ -7,6 +7,7 @@ Version 3.5.11
 ### Bugfixes ###
 
  * fixed ressource symbols for revolution design
+ * admins wont be shown in diplomacy rating anymore
 
 
 ### Administration ###
