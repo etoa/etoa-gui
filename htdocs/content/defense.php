@@ -54,8 +54,8 @@
 	//Tabulator var setzten (für das fortbewegen des cursors im forumular)
 	$tabulator = 1;
 
-	// Schiffswerft Level und Arbeiter laden
-	$werft_res = dbquery("
+	//Fabrik Level und Arbeiter laden
+	$factory_res = dbquery("
 						 SELECT
 						 	buildlist_current_level,
 							buildlist_people_working,
@@ -68,11 +68,11 @@
 							AND buildlist_current_level>='1'
 							AND buildlist_user_id='".$cu->id."'");
 	
-	// Prüfen ob Werft gebaut ist
-	if (mysql_num_rows($werft_res)>0)
+	// Prüfen ob Fabrik gebaut ist
+	if (mysql_num_rows($factory_res)>0)
 	{
-		$werft_arr = mysql_fetch_assoc($werft_res);
-		define('CURRENT_FACTORY_LEVEL',$werft_arr['buildlist_current_level']);
+		$factory_arr = mysql_fetch_assoc($factory_res);
+		define('CURRENT_FACTORY_LEVEL',$factory_arr['buildlist_current_level']);
 		
 		// Titel
 		echo "<h1>Waffenfabrik (Stufe ".CURRENT_FACTORY_LEVEL.") des Planeten ".$cp->name."</h1>";
@@ -81,10 +81,10 @@
 		echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
 
 		// Prüfen ob dieses Gebäude deaktiviert wurde
-		if ($werft_arr['buildlist_deactivated']>time())
+		if ($factory_arr['buildlist_deactivated']>time())
 		{
 			iBoxStart("Geb&auml;ude nicht bereit");
-			echo "Diese Waffenfabrik ist bis ".date("d.m.Y H:i",$werft_arr['buildlist_deactivated'])." deaktiviert.";
+			echo "Diese Waffenfabrik ist bis ".date("d.m.Y H:i",$factory_arr['buildlist_deactivated'])." deaktiviert.";
 			iBoxEnd();
 		}
 		// Werft anzeigen
@@ -174,7 +174,7 @@
 						FROM
 							deflist
 						WHERE
-							deflist_user_id='".$cu->id."';");
+							deflist_entity_id ='".$cp->id."';");
 			
 			while ($arr = mysql_fetch_assoc($res))
 			{
@@ -257,7 +257,7 @@
 				$defs[$arr['def_id']] = $arr;
 			}
 			
-			// Bauliste vom allen Planeten laden und nach Verteidigung zusammenfassen
+			// Bauliste vom Planeten laden und nach Verteidigung zusammenfassen
 			$queue_fields = 0;
 			$res = dbquery("
 						SELECT
@@ -267,7 +267,7 @@
 						FROM
 							def_queue
 						WHERE
-							queue_user_id='".$cu->id."'
+							queue_entity_id='".$cp->id."'
 							AND queue_endtime>'".$time."'
 						GROUP BY
 							queue_def_id;");
@@ -290,7 +290,7 @@
 			{
 				$time_boni_factor=1-($need_bonus_level*($cfg->get('build_time_boni_waffenfabrik')/100));
 			}
-			$people_working = $werft_arr['buildlist_people_working'];
+			$people_working = $factory_arr['buildlist_people_working'];
 	
 			// Faktor der zurückerstatteten Ressourcen bei einem Abbruch des Auftrags berechnen
 			if (CURRENT_FACTORY_LEVEL>=DEFQUEUE_CANCEL_MIN_LEVEL)
@@ -604,28 +604,28 @@
 							//Log schreiben
 							$log_text = "[b]Verteidigungsauftrag Bauen[/b]
 
-[b]Start:[/b] ".date("d.m.Y H:i:s",$start_time)."
-[b]Ende:[/b] ".date("d.m.Y H:i:s",$end_time)."
-[b]Dauer:[/b] ".tf($duration)."
-[b]Dauer pro Einheit:[/b] ".tf($obj_time)."
-[b]Waffenfabrik Level:[/b] ".CURRENT_FACTORY_LEVEL."
-[b]Eingesetzte Bewohner:[/b] ".nf($people_working)."
-[b]Gen-Tech Level:[/b] ".$gen_tech_level."
-[b]Eingesetzter Spezialist:[/b] ".$cu->specialist->name."
+							[b]Start:[/b] ".date("d.m.Y H:i:s",$start_time)."
+							[b]Ende:[/b] ".date("d.m.Y H:i:s",$end_time)."
+							[b]Dauer:[/b] ".tf($duration)."
+							[b]Dauer pro Einheit:[/b] ".tf($obj_time)."
+							[b]Waffenfabrik Level:[/b] ".CURRENT_FACTORY_LEVEL."
+							[b]Eingesetzte Bewohner:[/b] ".nf($people_working)."
+							[b]Gen-Tech Level:[/b] ".$gen_tech_level."
+							[b]Eingesetzter Spezialist:[/b] ".$cu->specialist->name."
 
-[b]Kosten[/b]
-[b]".RES_METAL.":[/b] ".nf($bc['metal'])."
-[b]".RES_CRYSTAL.":[/b] ".nf($bc['crystal'])."
-[b]".RES_PLASTIC.":[/b] ".nf($bc['plastic'])."
-[b]".RES_FUEL.":[/b] ".nf($bc['fuel'])."
-[b]".RES_FOOD.":[/b] ".nf($bc['food'])."
+							[b]Kosten[/b]
+							[b]".RES_METAL.":[/b] ".nf($bc['metal'])."
+							[b]".RES_CRYSTAL.":[/b] ".nf($bc['crystal'])."
+							[b]".RES_PLASTIC.":[/b] ".nf($bc['plastic'])."
+							[b]".RES_FUEL.":[/b] ".nf($bc['fuel'])."
+							[b]".RES_FOOD.":[/b] ".nf($bc['food'])."
 
-[b]Rohstoffe auf dem Planeten[/b]
-[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
-[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
-[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
-[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
-[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
+							[b]Rohstoffe auf dem Planeten[/b]
+							[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
+							[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
+							[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
+							[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
+							[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
 
 							//Log Speichern
 							GameLog::add(GameLog::F_DEF, GameLog::INFO,$log_text,$cu->id,$cu->allianceId,$cp->id, $def_id, 1, $build_cnt);
@@ -674,9 +674,9 @@
 			
 			checker_init();
 
-	/*********************
-	* Auftrag abbrechen  *
-	*********************/
+			/*********************
+			* Auftrag abbrechen  *
+			*********************/
 			if (isset($_GET['cancel']) && intval($_GET['cancel'])>0 && $cancelable)
 			{
 				$id = intval($_GET['cancel']);
@@ -767,22 +767,22 @@
 					//Log schreiben
 					$log_text = "[b]Verteidigungsauftrag Abbruch[/b]
 
-[b]Auftragsdauer:[/b] ".tf($queue_objtime* $queue_count )."
+					[b]Auftragsdauer:[/b] ".tf($queue_objtime* $queue_count )."
 
-[b]Erhaltene Rohstoffe[/b]
-[b]Faktor:[/b] ".$cancel_res_factor."
-[b]".RES_METAL.":[/b] ".nf($ret['metal'])."
-[b]".RES_CRYSTAL.":[/b] ".nf($ret['crystal'])."
-[b]".RES_PLASTIC.":[/b] ".nf($ret['plastic'])."
-[b]".RES_FUEL.":[/b] ".nf($ret['fuel'])."
-[b]".RES_FOOD.":[/b] ".nf($ret['food'])."
+					[b]Erhaltene Rohstoffe[/b]
+					[b]Faktor:[/b] ".$cancel_res_factor."
+					[b]".RES_METAL.":[/b] ".nf($ret['metal'])."
+					[b]".RES_CRYSTAL.":[/b] ".nf($ret['crystal'])."
+					[b]".RES_PLASTIC.":[/b] ".nf($ret['plastic'])."
+					[b]".RES_FUEL.":[/b] ".nf($ret['fuel'])."
+					[b]".RES_FOOD.":[/b] ".nf($ret['food'])."
 
-[b]Rohstoffe auf dem Planeten[/b]
-[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
-[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
-[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
-[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
-[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
+					[b]Rohstoffe auf dem Planeten[/b]
+					[b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
+					[b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
+					[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
+					[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
+					[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
 					
 					//Log Speichern
 					GameLog::add(GameLog::F_DEF, GameLog::INFO,$log_text,$cu->id,$cu->allianceId,$cp->id, $defId, 0, $queue_count);
@@ -790,9 +790,9 @@
 			}
 
 
-	/*********************************
-	* Liste der Bauaufträge anzeigen *
-	*********************************/
+			/*********************************
+			* Liste der Bauaufträge anzeigen *
+			*********************************/
 			if(isset($queue) && !empty($queue))
 			{
 				tableStart("Bauliste");
@@ -820,41 +820,41 @@
 									<th style=\"width:150px;\">Start</th>
 									<th style=\"width:150px;\">Ende</th>
 									<th style=\"width:80px;\" colspan=\"2\">Verbleibend</th>
-								</tr>";
-							echo "<tr>";
-							echo "<td colspan=\"2\">".$defs[$data['queue_def_id']]['def_name']."</td>";
-							echo "<td>".df(time()-$obj_t_passed,1)."</td>";
-							echo "<td>".df(time()+$obj_t_remaining,1)."</td>";
-							echo "<td colspan=\"2\">".tf($obj_t_remaining)."</td>
+								</tr>
+								<tr>
+								<td colspan=\"2\">".$defs[$data['queue_def_id']]['def_name']."</td>
+								<td>".df(time()-$obj_t_passed,1)."</td>
+								<td>".df(time()+$obj_t_remaining,1)."</td>
+								<td colspan=\"2\">".tf($obj_t_remaining)."</td>
+							</tr>
+							<tr>
+								<th style=\"width:40px;\">Anzahl</th>
+								<th>Bauauftrag</th>
+								<th style=\"width:150px;\">Start</th>
+								<th style=\"width:150px;\">Ende</th>
+								<th style=\"width:150px;\">Verbleibend</th>
+								<th style=\"width:80px;\">Aktionen</th>
 							</tr>";
-							echo "<tr>
-									<th style=\"width:40px;\">Anzahl</th>
-									<th>Bauauftrag</th>
-									<th style=\"width:150px;\">Start</th>
-									<th style=\"width:150px;\">Ende</th>
-									<th style=\"width:150px;\">Verbleibend</th>
-									<th style=\"width:80px;\">Aktionen</th>
-								</tr>";
 							$first=false; 
 						}
 	
-						echo "<tr>";
-						echo "<td id=\"objcount\">".$data['queue_cnt']."</td>";
-						echo "<td>".$defs[$data['queue_def_id']]['def_name']."</td>";
-						echo "<td>".df($absolute_starttime,1)."</td>";
-						echo "<td>".df($absolute_starttime+$data['queue_endtime']-$data['queue_starttime'],1)."</td>";
-						echo "<td>".tf($data['queue_endtime']-time(),1)."</td>";
-						echo "<td id=\"cancel\">";
-						if ($cancelable)
-						{
-							echo "<a href=\"?page=$page&amp;cancel=".$data['queue_id']."\" onclick=\"return confirm('Soll dieser Auftrag wirklich abgebrochen werden?');\">Abbrechen</a>";
-						}
-						else
-						{
-							echo "-";
-						}
-						echo "</td>
-						</tr>";
+						echo"<tr>
+								<td id=\"objcount\">".$data['queue_cnt']."</td>
+								<td>".$defs[$data['queue_def_id']]['def_name']."</td>
+								<td>".df($absolute_starttime,1)."</td>
+								<td>".df($absolute_starttime+$data['queue_endtime']-$data['queue_starttime'],1)."</td>
+								<td>".tf($data['queue_endtime']-time(),1)."</td>
+								<td id=\"cancel\">";
+								if ($cancelable)
+								{
+									echo "<a href=\"?page=$page&amp;cancel=".$data['queue_id']."\" onclick=\"return confirm('Soll dieser Auftrag wirklich abgebrochen werden?');\">Abbrechen</a>";
+								}
+								else
+								{
+									echo "-";
+								}
+								echo "</td>
+							</tr>";
 	
 						//Setzt die Startzeit des nächsten Schiffes, auf die Endzeit des jetztigen Schiffes
 						$absolute_starttime=$data['queue_endtime'];
@@ -865,9 +865,9 @@
 
 
 
-	/***********************
-	* Verteidigung auflisten    *
-	***********************/
+			/***********************
+			* Verteidigung auflisten    *
+			***********************/
 
 			$cnt = 0;
 			if (isset($cat))
@@ -1214,14 +1214,14 @@
 				    			      	      <td><input type=\"text\" value=\"0\" name=\"build_count[".$data['def_id']."]\" id=\"build_count_".$data['def_id']."\" size=\"4\" maxlength=\"9\" ".tm("",$tm_cnt)." tabindex=\"".$tabulator."\" onkeyup=\"FormatNumber(this.id,this.value, ".$def_max_build.", '', '');\"/> St&uuml;ck<br><a href=\"javascript:;\" onclick=\"document.getElementById('build_count_".$data['def_id']."').value=".$def_max_build.";\">max</a></td>";
 									}
 									
-									echo "</tr>";
-									echo "<tr>
+									echo "</tr>
+										  <tr>
 				    			    	  	  <th height=\"20\" width=\"110\">".RES_METAL.":</th>
 				    			    	  	  <th height=\"20\" width=\"97\">".RES_CRYSTAL.":</th>
 				    			    	  	  <th height=\"20\" width=\"98\">".RES_PLASTIC.":</th>
 				    			    	  	  <th height=\"20\" width=\"97\">".RES_FUEL.":</th>
-				    			    	  	  <th height=\"20\" width=\"98\">".RES_FOOD."</th></tr>";
-									echo "<tr>
+				    			    	  	  <th height=\"20\" width=\"98\">".RES_FOOD."</th></tr>
+											<tr>
     			      	  					<td height=\"20\" width=\"110\" ".$ress_style_metal.">
     			      	  						".nf($data['def_costs_metal'])."
     			      	  					</td>
@@ -1315,8 +1315,6 @@
 		// Ressourcen anzeigen
 		echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
 		info_msg("Die Waffenfabrik wurde noch nicht gebaut!");
-
-
 	}
 	echo "</form>";
 
