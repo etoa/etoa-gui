@@ -157,8 +157,8 @@ class ResourceBoxDrawer
 
 		return mTT(
 			$title,
-			sprintf('
-				<img width="40px" height="40px" src="%s" style="float:left;margin-right:5px;"/> <b>Vorhanden:</b> %s<br/><b>Speicher:</b> %s%s<br style=\"clear:both;\"/>',
+			sprintf(
+				'<img width="40px" height="40px" src="%s" style="float:left;margin-right:5px;"/> <b>Vorhanden:</b> %s<br/><b>Speicher:</b> %s%s<br style=\"clear:both;\"/>',
 				$icon,
 				nf($amount),
 				nf($store),
