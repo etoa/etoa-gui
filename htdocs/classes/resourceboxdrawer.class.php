@@ -63,12 +63,12 @@ class ResourceBoxDrawer
 		<th class=\"resBoxTitleCell\"><div class=\"respower\">Energie</div></th>
 		</tr><tr>"
 
-			. self::getResourceRow($style0, RES_METAL, "images/resources/metal.png", $p->resMetal(), $p->storeMetal)
-			. self::getResourceRow($style1, RES_CRYSTAL, "images/resources/crystal.png", $p->resCrystal(), $p->storeCrystal)
-			. self::getResourceRow($style2, RES_PLASTIC, "images/resources/plastic.png", $p->resPlastic(), $p->storePlastic)
-			. self::getResourceRow($style3, RES_FUEL, "images/resources/fuel.png", $p->resFuel(), $p->storeFuel)
-			. self::getResourceRow($style4, RES_FOOD, "images/resources/food.png", $p->resFood(), $p->storeFood)
-			. self::getResourceRow($style5, "Bevölkerung", "images/resources/people.png", $p->people(), $p->people_place)
+			. self::getResourceRow($style0, RES_METAL, "images/resources/metal.png", $p->resMetal(), $p->storeMetal, $p->prodMetal)
+			. self::getResourceRow($style1, RES_CRYSTAL, "images/resources/crystal.png", $p->resCrystal(), $p->storeCrystal, $p->prodCrystal)
+			. self::getResourceRow($style2, RES_PLASTIC, "images/resources/plastic.png", $p->resPlastic(), $p->storePlastic, $p->prodPlastic)
+			. self::getResourceRow($style3, RES_FUEL, "images/resources/fuel.png", $p->resFuel(), $p->storeFuel, $p->prodFuel)
+			. self::getResourceRow($style4, RES_FOOD, "images/resources/food.png", $p->resFood(), $p->storeFood, $p->prodFood)
+			. self::getResourceRow($style5, "Bevölkerung", "images/resources/people.png", $p->people(), $p->people_place, $p->prodPeople)
 
 			. "<td class=\"$style6\" ".mTT(RES_POWER,"<img width=\"40px\" height=\"40px\" src=\"images/resources/power.png\" style=\"float:left;margin-right:5px;\"/> <b>Produktion:</b> ".nf($p->prodPower)."<br/><b>Verfügbar:</b> ".nf($power_rest)."<br/><b>Verbrauch:</b> ".nf($p->usePower)."<br style=\"clear:both;\"/>").">".nf($power_rest)."</td>
 		</tr></table>";
@@ -123,12 +123,12 @@ class ResourceBoxDrawer
 		<div id=\"resboxheader\">Resourcen</div>
 		<div id=\"resboxcontent\">"
 
-			. self::getResourceRow($style0, RES_METAL, "images/resources/metal.png", $p->resMetal(), $p->storeMetal, true)
-			. self::getResourceRow($style1, RES_CRYSTAL, "images/resources/crystal.png", $p->resCrystal(), $p->storeCrystal, true)
-			. self::getResourceRow($style2, RES_PLASTIC, "images/resources/plastic.png", $p->resPlastic(), $p->storePlastic, true)
-			. self::getResourceRow($style3, RES_FUEL, "images/resources/fuel.png", $p->resFuel(), $p->storeFuel, true)
-			. self::getResourceRow($style4, RES_FOOD, "images/resources/food.png", $p->resFood(), $p->storeFood, true)
-			. self::getResourceRow($style5, "Bevölkerung", "images/resources/people.png", $p->people(), $p->people_place, true)
+			. self::getResourceRow($style0, RES_METAL, "images/resources/metal.png", $p->resMetal(), $p->storeMetal, $p->prodMetal, true)
+			. self::getResourceRow($style1, RES_CRYSTAL, "images/resources/crystal.png", $p->resCrystal(), $p->storeCrystal, $p->prodCrystal, true)
+			. self::getResourceRow($style2, RES_PLASTIC, "images/resources/plastic.png", $p->resPlastic(), $p->storePlastic, $p->prodPlastic, true)
+			. self::getResourceRow($style3, RES_FUEL, "images/resources/fuel.png", $p->resFuel(), $p->storeFuel, $p->prodFuel, true)
+			. self::getResourceRow($style4, RES_FOOD, "images/resources/food.png", $p->resFood(), $p->storeFood, $p->prodFood, true)
+			. self::getResourceRow($style5, "Bevölkerung", "images/resources/people.png", $p->people(), $p->people_place, $p->prodPeople, true)
 
 			. "<span class=\"respower ".$style6."\" ".mTT(RES_POWER,"<img src=\"images/resources/power.png\" style=\"float:left;margin-right:5px;\"/> <b>Produktion:</b> ".nf($p->prodPower)."<br/><b>Verfügbar:</b> ".nf($power_rest)."<br/><b>Verbrauch:</b> ".nf($p->usePower)."<br style=\"clear:both;\"/>").">".nf($power_rest,0,1)."</span>
 		</div>
@@ -137,25 +137,32 @@ class ResourceBoxDrawer
 		return $rtn;
 	}
 
-	private static function getResourceRow($style, $title, $icon, $amount, $store, $shortAmount = false)
+	private static function getResourceRow($style, $title, $icon, $amount, $store, $production, $shortAmount = false)
 	{
 		return sprintf(
 			$shortAmount ? '<span class="%s" %s>%s</span>' : '<td class="%s" %s>%s</td>',
 			$style,
-			self::getResourceTootltip($title, $icon, $amount, $store),
+			self::getResourceTootltip($title, $icon, $amount, $store, $production),
 			$shortAmount ? nf($amount, 0, 1) : nf(floor($amount))
 		);
 	}
 
-	private static function getResourceTootltip($title, $icon, $amount, $store)
+	private static function getResourceTootltip($title, $icon, $amount, $store, $production)
 	{
+		$remainingStore = $store - $amount;
+		$storeFullMessage = '';
+		if ($production > 0 && $remainingStore > 0) {
+			$storeFullMessage = sprintf('<br><b>Voll in:</b> %s', tf(($remainingStore / $production) * 3600));
+		}
+
 		return mTT(
 			$title,
 			sprintf('
-				<img width="40px" height="40px" src="%s" style="float:left;margin-right:5px;"/> <b>Vorhanden:</b> %s<br/><b>Speicher:</b> %s<br style=\"clear:both;\"/>',
+				<img width="40px" height="40px" src="%s" style="float:left;margin-right:5px;"/> <b>Vorhanden:</b> %s<br/><b>Speicher:</b> %s%s<br style=\"clear:both;\"/>',
 				$icon,
 				nf($amount),
-				nf($store)
+				nf($store),
+				$storeFullMessage
 			)
 		);
 	}
