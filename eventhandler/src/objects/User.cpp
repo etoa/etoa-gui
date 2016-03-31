@@ -336,7 +336,7 @@
 						this->userNick = std::string(uRow["user_nick"]);
 						this->points = (double)uRow["user_points"];
 						this->spyattackCount = (int)uRow["spyattack_counter"];
-						this->inactiv = (int)uRow["user_hmode_from"] == 0 && ((int)uRow["user_logouttime"] < (time(NULL) - 14 * 86400)) ? true : false;
+						this->inactiv = (int)uRow["user_hmode_from"] == 0 && ((int)uRow["user_logouttime"] < (time(NULL) - Config::instance().idget("USER_INACTIVE_DAYS") * 86400)) ? true : false;
 						
 						DataHandler &DataHandler = DataHandler::instance();
 						if ((int)uRow["user_specialist_id"]>0 && (int)uRow["user_specialist_time"]>time(0)) {
