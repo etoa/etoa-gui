@@ -82,7 +82,7 @@
 				echo "<tr><th>Passwort:</th>";
 				echo "<td>
 					<input type=\"password\" id=\"register_user_password\" name=\"register_user_password\" size=\"20\" value=\"".$userPassword."\" autocomplete=\"off\" /></td>";
-				echo "<td>Wähle ein sicheres Passwort damit niemand unbefugt in deinen Account einloggen kann.</b><br/><span id=\"passwordStatus\"></span></td></tr>";
+				echo "<td>Wähle ein sicheres Passwort, damit sich niemand unbefugt in deinen Account einloggen kann.</b><br/><span id=\"passwordStatus\"></span></td></tr>";
 				?>
 				
 				<tr><td colspan="3"><br/>
@@ -92,7 +92,6 @@
 				<br/>
 				<ul style="text-align:left;margin-left:30px">
 					<li>Pro Person darf nur 1 Account verwendet werden. Multis werden rigoros gesperrt</a>!</li>
-					<li>Nach der Registration wird ein automatisch generiertes Passwort an die angegebene E-Mail-Adresse gesendet.</li>
 					<li>Der Name und die E-Mail-Adresse können nur von den Game-Administratoren eingesehen werden und werden nicht weitergegeben.</li>
 				</ul>
 				</td></tr>

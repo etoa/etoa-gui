@@ -362,7 +362,7 @@
 		$tpl->setView("overview");
 		$tpl->assign("title", "&Uuml;bersicht");
 
-		$tpl->assign("welcome_msg", "Hallo <b>".$cu->nick."</b>, willkommen im Administrationsmodus! Dein Rollen: <b>".$cu->getRolesStr().".</b>");
+		$tpl->assign("welcome_msg", "Hallo <b>".$cu->nick."</b>, willkommen im Administrationsmodus! Deine Rolle(n): <b>".$cu->getRolesStr().".</b>");
 		
 		//
 		// Universum generieren

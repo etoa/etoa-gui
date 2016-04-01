@@ -445,7 +445,7 @@
 				echo "$cnt Allianzen von ".count($alliances)." sind leer! <a href=\"?page=$page&amp;sub=$sub&amp;action=dropinactive\">L&ouml;schen?</a>";			
 		}
 		else
-			echo "Keine Allianten vorhanden!";
+			echo "Keine Allianzen vorhanden!";
 	}
 	else
 	{

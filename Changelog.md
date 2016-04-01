@@ -1,4 +1,4 @@
-Escape to Andromeda Changelog
+﻿Escape to Andromeda Changelog
 =============================
 
 Version 3.5.11
@@ -9,6 +9,8 @@ Version 3.5.11
  * fixed ressource symbols for revolution design
  * admins wont be shown in diplomacy rating anymore
  * fixed defense bug 
+ * fixed steal bug while gen was researching
+ * fixed some typos
 
 ### Administration ###
  
