@@ -1,12 +1,13 @@
 .DEFAULT_GOAL := help
 
-install: ## Setup etoa via vagrant
+install: ## Setup EtoA via vagrant
 	./composer.phar install
 	vagrant up --provision
 
-update: ## Update etoa
+update: ## Update EtoA via vagrant
 	./composer.phar install
 	vagrant up --provision
+	vagrant ssh -c "/var/www/etoa/bin/db.php migrate"
 
 ci: ## Run continuous integration tasks (tests and code style fixes)
 	./vendor/bin/phpunit tests
@@ -15,6 +16,9 @@ ci: ## Run continuous integration tasks (tests and code style fixes)
 
 deploy-update: ## Everything which needs to be run during deploy
 	./composer.phar install -o
+	bin/db.php migrate
+	eventhandler/bin/build.sh
+	@echo "Restart the event handler in the web-based admin tool."
 
 .PHONY: help
 
