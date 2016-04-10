@@ -2,9 +2,10 @@
 
 # only export does not seem to be enough for installing mysql
 export DEBIAN_FRONTEND=noninteractive
+sudo add-apt-repository ppa:ondrej/php5-5.6
 echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
-sudo aptitude update
+sudo apt-get update && sudo apt-get upgrade
 
 # Force a blank root password for mysql
 echo "mysql-server mysql-server/root_password password " | debconf-set-selections
