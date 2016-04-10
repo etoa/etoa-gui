@@ -20,7 +20,7 @@ htdocs/log/*.log
 /htdocs/config/eventhandler.conf
 
 *cmake_install.cmake
-*Makefile
+eventhandler/**/Makefile
 *CMakeFiles*
 CMakeCache.txt
 /.idea
