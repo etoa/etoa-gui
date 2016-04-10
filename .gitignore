@@ -26,3 +26,5 @@ CMakeCache.txt
 /.idea
 
 .vagrant
+
+/vendor/

@@ -1,0 +1,17 @@
+{
+    "name": "etoa/etoa",
+    "description": "Escape to Andromeda",
+    "autoload": {
+        "psr-4": {
+            "EtoA\\": "src/"
+        }
+    },
+    "require": {
+    },
+    "license": "proprietary",
+    "minimum-stability": "stable",
+    "require-dev": {
+        "phpunit/phpunit": "^5.3",
+        "fabpot/php-cs-fixer": "^1.11"
+    }
+}
