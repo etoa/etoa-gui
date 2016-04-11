@@ -42,31 +42,69 @@
 				{
 					$sql.= ",user_profile_img_check=0";
 				}
-				
-				if ($_POST['new_multi']!="")
+
+				//new Multi
+				if (($_POST['new_multi']!="")&&(($_POST['multi_reason']!="")))
             	{
-	                echo $_POST['new_multi'];
-                    if (get_user_id($_POST['new_multi'])==0)
+	                if (get_user_id($_POST['new_multi'])==0)
                     {
                         error_msg("Dieser User exisitert nicht!");
                     }
                     //ist der eigene nick eingetragen
                     elseif (get_user_id($_POST['new_multi'])==$_GET['id'])
                     {
-                        error_msg("Du kannst nicht dich selber eintragen!");
+                        error_msg("Man kann nicht den selben Nick im Sitting eintragen!");
                     }
                     else
                     {
-		                dbquery("
-		                INSERT INTO
-		                	user_multi
-		                (user_id,multi_id,connection,timestamp)
-		                VALUES
-		                (".$_GET['id'].",".get_user_id($_POST['new_multi']).",".$_GET['multi_reason'].",UNIX_TIMESTAMP())");
-
-		                success_msg("Neuer User angelegt!");
+						$res = dbquery("SELECT * FROM user_multi WHERE user_id=".$_GET['id']."
+										AND multi_id =".get_user_id($_POST['new_multi']));
+						if (mysql_num_rows($res)==0) {
+							dbquery("
+							INSERT INTO
+								user_multi
+							(user_id,multi_id,connection,timestamp)
+							VALUES
+							(".$_GET['id'].",".get_user_id($_POST['new_multi']).",'".mysql_real_escape_string($_POST['multi_reason'])."',UNIX_TIMESTAMP())");
+     					}
+						else
+						{
+							dbquery("
+							UPDATE
+								user_multi
+							SET
+								activ=1,
+							connection='".mysql_real_escape_string($_POST['multi_reason'])."',
+							timestamp=UNIX_TIMESTAMP()
+							WHERE
+								user_id=".$_GET['id']."
+							AND
+								multi_id = ".get_user_id($_POST['new_multi']));
+						}
+						success_msg("Neuer User angelegt!");
 	                }
             	}
+
+				//new sitting
+				if ($_POST['sitter_nick']!="")
+				{
+					if ($_POST['sitter_password1']==$_POST['sitter_password2'] && $_POST['sitter_password1']!="")
+					{
+						$sitting_from = parseDatePicker('sitting_time_from', $_POST);
+						$sitting_to = parseDatePicker('sitting_time_to', $_POST);
+						$pw = saltPasswort($_POST['sitter_password1']);
+						$sitterId = get_user_id($_POST['sitter_nick']);
+						if($sitterId<>0) {
+							dbquery("INSERT INTO user_sitting (
+										user_id,sitter_id,password,date_from,date_to
+										) VALUES (".
+										$_GET['id'].",$sitterId,'$pw',$sitting_from,$sitting_to);");
+						}
+						else {
+							error_msg("Dieser Sitternick exisitert nicht!");
+						}
+					}
+				}
 
 				// Handle specialist decision
 				if ($_POST['user_specialist_id']>0 && $_POST['user_specialist_time_h']>0)
@@ -133,7 +171,7 @@
 					$usr = new User($id);
 
 					$usr->addToUserLog("account","{nick} wird von [b]".date("d.m.Y H:i",$ban_from)."[/b] bis [b]".date("d.m.Y H:i",$ban_to)."[/b] gesperrt.\n[b]Grund:[/b] ".addslashes($_POST['user_ban_reason'])."\n[b]Verantwortlich: [/b] ".mysql_fetch_array(dbquery("SELECT user_nick FROM admin_users WHERE user_id = ".$_POST['user_ban_admin_id'] ))['user_nick'],1);
-        }
+        		}
 				else
 				{
 					$sql.= ",user_blocked_from=0";
@@ -185,15 +223,65 @@
 				analyzeship_count='".$_POST['analyzeship_count']."',
 				havenships_buttons=".$_POST['havenships_buttons'].",
 				show_adds=".$_POST['show_adds'].",
-				fleet_rtn_msg=".$_POST['fleet_rtn_msg']."";	
+				fleet_rtn_msg=".$_POST['fleet_rtn_msg']."";
 				
 				// Perform query
 				$sql .= " WHERE id='".$id."';";
 				dbquery($sql);
-				
-				echo MessageBox::ok("", "&Auml;nderungen wurden &uuml;bernommen!","submitresult");
 
-		
+
+				if($_POST['del_multi'])
+				{
+					//Multi löschen
+    				foreach ($_POST['del_multi'] as $m_id=>$data)
+					{
+						$m_id = intval($m_id);
+
+						if ($_POST['del_multi'][$m_id]==1)
+						{
+							dbquery("UPDATE
+								user_multi
+							SET
+								activ='0',
+								timestamp=UNIX_TIMESTAMP()
+							WHERE
+								user_id=".$_GET['id']."
+							AND multi_id=".$_POST['multi_nick'][$m_id]);
+
+							dbquery("UPDATE
+								users
+							SET
+								user_multi_delets=user_multi_delets+1
+							WHERE
+								user_id=".$_GET['id']);
+
+							success_msg("Eintrag gelöscht!");
+						}
+					}
+				}
+
+				//Sitting löschen
+				if($_POST['del_sitting'])
+				{
+					foreach ($_POST['del_sitting'] as $s_id=>$data)
+					{
+						$s_id = intval($s_id);
+
+						if ($_POST['del_sitting'][$s_id]==1)
+						{
+							dbquery("UPDATE
+								user_sitting
+							SET
+								date_to =UNIX_TIMESTAMP()
+							WHERE
+								id =$s_id");
+
+							success_msg("Eintrag gelöscht!");
+						}
+					}
+				}
+
+				echo MessageBox::ok("", "&Auml;nderungen wurden &uuml;bernommen!","submitresult");
 			}
 
 			// User löschen
@@ -507,48 +595,48 @@
 
 				echo "<table class=\"tbl\">";
 				echo "<tr>
-								<td class=\"tbltitle\">Nick:</td>
-								<td class=\"tbldata\">
-									<input type=\"text\" name=\"user_nick\" value=\"".$arr['user_nick']."\" size=\"35\" maxlength=\"250\" />
-								</td>
-								<td>Eine Nickänderung ist grundsätzlich nicht erlaubt</td>
-							</tr>
-							<tr>
-								<td class=\"tbltitle\">E-Mail:</td>
-								<td class=\"tbldata\">
-									<input type=\"text\" name=\"user_email\" value=\"".$arr['user_email']."\" size=\"35\" maxlength=\"250\" />
-								</td>
-								<td>Rundmails gehen an diese Adresse</td>
-							</tr>
-							<tr>
-								<td class=\"tbltitle\">Name:</td>
-								<td class=\"tbldata\">
-									<input type=\"text\" name=\"user_name\" value=\"".$arr['user_name']."\" size=\"35\" maxlength=\"250\" />
-								</td>
-								<td>Bei Accountübergabe anpassen</td>
-							</tr>
-							<tr>
-								<td class=\"tbltitle\">E-Mail fix:</td>
-								<td class=\"tbldata\">
-									<input type=\"text\" name=\"user_email_fix\" value=\"".$arr['user_email_fix']."\" size=\"35\" maxlength=\"250\" />
-								</td>
-								<td>Bei Accountübergabe anpassen</td>
-							</tr>
-              <tr>
+							<td class=\"tbltitle\">Nick:</td>
+							<td class=\"tbldata\">
+								<input type=\"text\" name=\"user_nick\" value=\"".$arr['user_nick']."\" size=\"35\" maxlength=\"250\" />
+							</td>
+							<td>Eine Nickänderung ist grundsätzlich nicht erlaubt</td>
+						</tr>
+						<tr>
+							<td class=\"tbltitle\">E-Mail:</td>
+							<td class=\"tbldata\">
+								<input type=\"text\" name=\"user_email\" value=\"".$arr['user_email']."\" size=\"35\" maxlength=\"250\" />
+							</td>
+							<td>Rundmails gehen an diese Adresse</td>
+						</tr>
+						<tr>
+							<td class=\"tbltitle\">Name:</td>
+							<td class=\"tbldata\">
+								<input type=\"text\" name=\"user_name\" value=\"".$arr['user_name']."\" size=\"35\" maxlength=\"250\" />
+							</td>
+							<td>Bei Accountübergabe anpassen</td>
+						</tr>
+						<tr>
+							<td class=\"tbltitle\">E-Mail fix:</td>
+							<td class=\"tbldata\">
+								<input type=\"text\" name=\"user_email_fix\" value=\"".$arr['user_email_fix']."\" size=\"35\" maxlength=\"250\" />
+							</td>
+							<td>Bei Accountübergabe anpassen</td>
+						</tr>
+              		</tr>
 								<td class=\"tbltitle\">Name Dual:</td>
 								<td class=\"tbldata\">
 									<input type=\"text\" name=\"dual_name\" value=\"".$arr['dual_name']."\" size=\"35\" maxlength=\"250\" />
 								</td>
 								<td>Bei Dualänderung anpassen</td>
 							</tr>
-              <tr>
+              		<tr>
 								<td class=\"tbltitle\">E-Mail Dual:</td>
 								<td class=\"tbldata\">
 									<input type=\"text\" name=\"dual_email\" value=\"".$arr['dual_email']."\" size=\"35\" maxlength=\"250\" />
 								</td>
 								<td>Bei Dualänderung anpassen</td>
 							</tr>
-              <tr>
+             		<tr>
 								<td class=\"tbltitle\">Passwort:</td>
 								<td class=\"tbldata\">
 									<input type=\"text\" name=\"user_password\" value=\"\" size=\"35\" maxlength=\"250\" />
@@ -867,17 +955,17 @@
 							
 				// Multis & Sitting
 				echo "<tr>
-								<td class=\"tbltitle\" valign=\"top\">Gel&ouml;schte Multis</td>
-								<td class=\"tbldata\">
-									<input type=\"text\" name=\"user_multi_delets\" value=\"".$arr['user_multi_delets']."\" size=\"3\" maxlength=\"3\" />
-								</td>
-							</tr>
-							<tr>
-								<td class=\"tbltitle\" valign=\"top\">Sittertage</td>
-								<td class=\"tbldata\">
-									<input type=\"text\" name=\"user_sitting_days\" value=\"".$arr['user_sitting_days']."\" size=\"3\" maxlength=\"3\" />
-								</td>
-							</tr>";
+						<td class=\"tbltitle\" valign=\"top\">Gel&ouml;schte Multis</td>
+						<td class=\"tbldata\">
+							<input type=\"text\" name=\"user_multi_delets\" value=\"".$arr['user_multi_delets']."\" size=\"3\" maxlength=\"3\" />
+						</td>
+					  </tr>
+					  <tr>
+						<td class=\"tbltitle\" valign=\"top\">Sittertage</td>
+						<td class=\"tbldata\">
+							<input type=\"text\" name=\"user_sitting_days\" value=\"".$arr['user_sitting_days']."\" size=\"3\" maxlength=\"3\" />
+						</td>
+					  </tr>";
 
 						
 					echo "</table>";
@@ -906,7 +994,8 @@
 				{
 					echo '<tr>
 							<td>
-								<a href="?page=user&sub=edit&user_id='.$multi_arr['multi_id'].'">'.get_user_nick($multi_arr['multi_id']).'</a>
+								<a href="?page=user&sub=edit&user_id='.$multi_arr['multi_id'].'" name="multi_nick"".">'.get_user_nick($multi_arr['multi_id']).'</a>
+								<input type="hidden" name="multi_nick['.$multi_arr['multi_id'].']" value="'.$multi_arr['multi_id'].'" readonly="readonly">
 							</td>
 							<td>
 								'.$multi_arr['connection'].'
@@ -914,8 +1003,8 @@
 							<td>
 								'.($multi_arr['timestamp'] > 0 ? df($multi_arr['timestamp']) : '-').'
 							</td>
-							<td style="text-align:center">
-								<input type="checkbox" name="del_multi['.$multi_arr["multi_id"].']">
+							<td>
+								<input type="checkbox" name="del_multi['.$multi_arr["multi_id"].']" value="1">
 							</td>							
 						</tr>';
 				}
@@ -924,6 +1013,7 @@
 							<th>Name</th>
 							<th>Begründung</th>
 							<th>Gelöscht</th>
+							<th></th>
 						</tr>';	
 				while ($del_multi_arr = mysql_fetch_array($del_multi_res))
 				{
@@ -949,9 +1039,11 @@
 							<th>Sitter</th>
 							<th>Start</th>
 							<th>Ende</th>
+							<th>Abbrechen</th>
 						</tr>';
 				while ($sitting_arr = mysql_fetch_array($sitting_res))
 				{
+					$time = time();
 					echo '<tr>
 							<td>
 								<a href="?page=user&sub=edit&user_id='.$sitting_arr['sitter_id'].'">'.get_user_nick($sitting_arr['sitter_id']).'</a>
@@ -961,9 +1053,19 @@
 							</td>
 							<td>
 								'.df($sitting_arr['date_to']).'
-							</td>
-						</tr>';
-					}
+							</td>';
+							if ($sitting_arr['date_to']>$time) {
+								echo'<td>
+										<input type="checkbox" name="del_sitting['.$sitting_arr["id"].']" value="1">
+									</td>';
+							}
+							else {
+								echo'<td/>';
+							}
+						echo'</tr>';
+
+				}
+
 				echo '<tr>
 						<th rowspan="'.(mysql_num_rows($sitted_res)+1).'" valign="top">Hat gesittet</th>
 						<th>Gesitteter User</th>
@@ -988,40 +1090,52 @@
 
 				<h2>Multi einrichten</h2>
 
-				<table class="tb" style="width:35%">
+				<table class="tb">
 					<tr>
 						<td>User</td>
 						<td>
-							<input type="text" name="muti_reason" style="width:92%">
+							<input type="text" name="new_multi" maxlength="20" size="20"  autocomplete="off" placeholder="Usernick"">
 						</td>
 					</tr>
 					<tr>
 						<td>Beziehung</td>
 						<td>
-							<input type="text" name="new_multi" style="width:92%">
+							<input type="text" name="multi_reason" maxlength="20" size="20"">
 						</td>
 					</tr>
 				</table>	
 
 				<h2>Sitting einrichten</h2>
 
-				<table class="tb" style="width:35%">
+				<table class="tb">
 					<tr>
 						<td>Sitter</td>
 						<td>
-							<input type="text" style="width:92%">
+							<input type="text" maxlength="20" size="20" name="sitter_nick">
+						</td>
+					</tr>
+					<tr>
+						<td>Passwort</td>
+						<td>
+							<input type="text" maxlength="20" size="20" name="sitter_password1">
+						</td>
+					</tr>
+					<tr>
+						<td>Passwort wiederholen</td>
+						<td>
+							<input type="text" maxlength="20" size="20" name="sitter_password2">
 						</td>
 					</tr>
 				    <tr>
 						<td>Von</td>
 						<td>';
-							showDatepicker("battleban_time_from", time(), true);
+							showDatepicker("sitting_time_from", time(), true);
 				   echo'</td>
 					</tr>
 					<tr>
 						<td>Bis</td>
 					 	<td>';
-						    showDatepicker("battleban_time_to", time(), true);
+						    showDatepicker("sitting_time_to", time(), true);
 				   echo'</td>
 						</tr>
 				</table>
