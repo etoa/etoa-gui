@@ -85,27 +85,6 @@
 	                }
             	}
 
-				//new sitting
-				if ($_POST['sitter_nick']!="")
-				{
-					if ($_POST['sitter_password1']==$_POST['sitter_password2'] && $_POST['sitter_password1']!="")
-					{
-						$sitting_from = parseDatePicker('sitting_time_from', $_POST);
-						$sitting_to = parseDatePicker('sitting_time_to', $_POST);
-						$pw = saltPasswort($_POST['sitter_password1']);
-						$sitterId = get_user_id($_POST['sitter_nick']);
-						if($sitterId<>0) {
-							dbquery("INSERT INTO user_sitting (
-										user_id,sitter_id,password,date_from,date_to
-										) VALUES (".
-										$_GET['id'].",$sitterId,'$pw',$sitting_from,$sitting_to);");
-						}
-						else {
-							error_msg("Dieser Sitternick exisitert nicht!");
-						}
-					}
-				}
-
 				// Handle specialist decision
 				if ($_POST['user_specialist_id']>0 && $_POST['user_specialist_time_h']>0)
 				{
@@ -281,6 +260,40 @@
 					}
 				}
 
+				//new sitting
+				if ($_POST['sitter_nick']!="")
+				{
+					if ($_POST['sitter_password1']==$_POST['sitter_password2'] && $_POST['sitter_password1']!="")
+					{
+						$sitting_from = parseDatePicker('sitting_time_from', $_POST);
+						$sitting_to = parseDatePicker('sitting_time_to', $_POST);
+						$diff = ceil(($sitting_to - $sitting_from)/86400);
+						$pw = saltPasswort($_POST['sitter_password1']);
+						$sitterId = get_user_id($_POST['sitter_nick']);
+
+						if($diff<0)
+							$diff =0;
+
+						if($sitterId<>0) {
+							if($diff<=$_POST['user_sitting_days']) {
+								dbquery("INSERT INTO user_sitting (
+											user_id,sitter_id,password,date_from,date_to
+											) VALUES (".
+									$_GET['id'].",$sitterId,'$pw',$sitting_from,$sitting_to);");
+
+								dbquery("UPDATE users
+										 SET user_sitting_days = user_sitting_days - ".$diff."
+										 WHERE user_id =".$_GET['id']);
+							}
+							else {
+								error_msg("So viele Tage sind nicht mehr vorhanden!!");
+							}
+						}
+						else {
+							error_msg("Dieser Sitternick exisitert nicht!");
+						}
+					}
+				}
 				echo MessageBox::ok("", "&Auml;nderungen wurden &uuml;bernommen!","submitresult");
 			}
 
@@ -1108,6 +1121,12 @@
 				<h2>Sitting einrichten</h2>
 
 				<table class="tb">
+					<tr>
+						<td>Übrige Tage</td>
+						<td>
+							'.$arr['user_sitting_days'].'
+						</td>
+					</tr>
 					<tr>
 						<td>Sitter</td>
 						<td>

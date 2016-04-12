@@ -1,4 +1,4 @@
-﻿Escape to Andromeda Changelog
+Escape to Andromeda Changelog
 =============================
 
 Version 3.5.11
@@ -15,6 +15,7 @@ Version 3.5.11
 ### Administration ###
  
  * even if all ships are bunkered they will be still shown in tool	
+ * sitting+multi edit
 
 Version 3.5.10
 -------------
