@@ -16,6 +16,7 @@ Version 3.5.11
  
  * even if all ships are bunkered they will be still shown in tool	
  * sitting+multi edit
+ * search for dual in tool
 
 #### Features ####
 
