@@ -391,9 +391,9 @@ class Ticket
 		
 		$formatedtid = sprintf("%'.06d", $tid);
 		
-		$text = "Hallo!\n\nDein [page ticket id=".$formatedtid."]Ticket #".$formatedtid."[/page] wurde erstellt!";
+		$text = "Hallo!\n\nDein [page ticket id=".$formatedtid."]Ticket #".$formatedtid."[/page] wurde erfolgreich erstellt. Es wird sich in Kürze ein Admin um dein Anliegen kümmern.\n\n Dein Admin Team";
 		
-		Message::sendFromUserToUser(0,$data['user_id'],"Ticket $formatedtid",$text);
+		Message::sendFromUserToUser(0,$data['user_id'],"Dein Ticket $formatedtid",$text);
 	
 		return $tid;
 	}

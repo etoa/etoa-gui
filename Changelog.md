@@ -22,7 +22,7 @@ Version 3.5.11
 #### Features ####
 
  * showing time till storage is full
- * Message after creating Ticket
+ * message after creating Ticket
 
 #### Others ####
 
