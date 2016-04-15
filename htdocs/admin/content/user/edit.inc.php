@@ -271,27 +271,25 @@
 						$pw = saltPasswort($_POST['sitter_password1']);
 						$sitterId = get_user_id($_POST['sitter_nick']);
 
-						if($diff<0)
-							$diff =0;
-
-						if($sitterId<>0) {
-							if($diff<=$_POST['user_sitting_days']) {
-								dbquery("INSERT INTO user_sitting (
-											user_id,sitter_id,password,date_from,date_to
-											) VALUES (".
-									$_GET['id'].",$sitterId,'$pw',$sitting_from,$sitting_to);");
-
-								dbquery("UPDATE users
-										 SET user_sitting_days = user_sitting_days - ".$diff."
-										 WHERE user_id =".$_GET['id']);
+						if($diff>0) {
+								if($sitterId<>0) {
+								if($diff<=$_POST['user_sitting_days']) {
+									dbquery("INSERT INTO user_sitting (
+												user_id,sitter_id,password,date_from,date_to
+												) VALUES (".
+										$_GET['id'].",$sitterId,'$pw',$sitting_from,$sitting_to);");
+								}
+								else {
+									error_msg("So viele Tage sind nicht mehr vorhanden!!");
+								}
 							}
 							else {
-								error_msg("So viele Tage sind nicht mehr vorhanden!!");
+								error_msg("Dieser Sitternick exisitert nicht!");
 							}
 						}
 						else {
-							error_msg("Dieser Sitternick exisitert nicht!");
-						}
+							error_msg("Enddatum muss größer als Startdatum sein!");
+						}	
 					}
 				}
 				echo MessageBox::ok("", "&Auml;nderungen wurden &uuml;bernommen!","submitresult");
@@ -1055,7 +1053,9 @@
 							<th>Abbrechen</th>
 						</tr>';
 				while ($sitting_arr = mysql_fetch_array($sitting_res))
-				{
+				{	
+					$used_days += (($sitting_arr['date_to']-$sitting_arr['date_from'])/86400);
+
 					$time = time();
 					echo '<tr>
 							<td>
@@ -1076,7 +1076,6 @@
 								echo'<td/>';
 							}
 						echo'</tr>';
-
 				}
 
 				echo '<tr>
@@ -1124,7 +1123,7 @@
 					<tr>
 						<td>Übrige Tage</td>
 						<td>
-							'.$arr['user_sitting_days'].'
+							'.floor($arr['user_sitting_days']-$used_days).'
 						</td>
 					</tr>
 					<tr>
