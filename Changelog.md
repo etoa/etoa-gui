@@ -1,4 +1,4 @@
-Escape to Andromeda Changelog
+﻿Escape to Andromeda Changelog
 =============================
 
 Version 3.5.11
@@ -20,6 +20,11 @@ Version 3.5.11
 #### Features ####
 
  * showing time till storage is full
+ * Message after creating Ticket
+
+#### Others ####
+
+ * increased popup size from rules
 
 Version 3.5.10
 -------------

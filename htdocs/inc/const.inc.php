@@ -140,7 +140,7 @@
 
 	// Game-Rules
 	define('RULES_URL', 'http://www.etoa.ch/regeln');
-	define('RULES_ONCLICK', "window.open('".RULES_URL."','rules','width=600,height=500,scrollbars=yes');");
+	define('RULES_ONCLICK', "window.open('".RULES_URL."','rules','width=auto,height=auto,scrollbars=yes');");
 	
 	// Privacy statement
 	define('PRIVACY_URL', 'http://www.etoa.ch/privacy');
