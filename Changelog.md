@@ -16,6 +16,7 @@ Version 3.5.7
  * Fixed an exploit where u could see disabled buildings at helppage
  * Fixed problem with readiness-lvl from vorgonia mysli
  * Fixed bug after getting kicked out of umode because of inactivity
+ * Fixed wrong message when trying to kick an alliance member during allianceattack
 
 #### Features ####
 
