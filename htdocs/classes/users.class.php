@@ -213,7 +213,8 @@
 			// set all users who are inactive 
             
 		    $res = dbquery("SELECT 
-		                        user_id 
+		                        user_id,
+		                        user_hmode_from 
 		                    FROM 
 		                        users 
 		                    WHERE
@@ -228,7 +229,7 @@
 		        			    user_hmode_from<".(time()-MAX_UMOD_TIME*86400));
 		      
 		    while ($arr=mysql_fetch_row($res)) 
-		    {  
+		    {  	$hmodTime = time() - $arr[1];
 		        dbquery("UPDATE
 				         	users
 			            SET
@@ -258,8 +259,8 @@
 								buildlist
 							SET
 					     		buildlist_build_type= 3,
-								buildlist_build_start_time=buildlist_build_start_time+".MAX_UMOD_TIME*86400
-								.",buildlist_build_end_time=buildlist_build_end_time+".MAX_UMOD_TIME*86400
+								buildlist_build_start_time=buildlist_build_start_time+".$hmodTime
+								.",buildlist_build_end_time=buildlist_build_end_time+".$hmodTime
 							." WHERE
 								buildlist_id=".$barr[0]);       
 		   		}
@@ -283,8 +284,8 @@
 								techlist
 							SET
 								techlist_build_type=3,
-								techlist_build_start_time=techlist_build_start_time+".MAX_UMOD_TIME*86400
-								.",techlist_build_end_time=techlist_build_end_time+".MAX_UMOD_TIME*86400
+								techlist_build_start_time=techlist_build_start_time+".$hmodTime
+								.",techlist_build_end_time=techlist_build_end_time+".$hmodTime
 							." WHERE
 								techlist_id=".$tarr[0]);
 				}
@@ -306,8 +307,8 @@
 								ship_queue
 							SET
 								queue_build_type=0,
-								queue_starttime=queue_starttime+".MAX_UMOD_TIME*86400
-								.",queue_endtime=queue_endtime+".MAX_UMOD_TIME*86400
+								queue_starttime=queue_starttime+".$hmodTime
+								.",queue_endtime=queue_endtime+".$hmodTime
 							." WHERE
 								queue_id=".$sarr[0].";");
 				}
@@ -329,8 +330,8 @@
 								def_queue
 							SET
 								queue_build_type=0,
-								queue_starttime=queue_starttime+".MAX_UMOD_TIME*86400
-								.",queue_endtime=queue_endtime+".MAX_UMOD_TIME*86400
+								queue_starttime=queue_starttime+".$hmodTime
+								.",queue_endtime=queue_endtime+".$hmodTime
 							." WHERE
 								queue_id=".$darr[0].";");
 				}
@@ -339,19 +340,26 @@
         			UPDATE
           				users
         			SET
-          				user_specialist_time=user_specialist_time+".MAX_UMOD_TIME*86400
+          				user_specialist_time=user_specialist_time+".$hmodTime
         			." WHERE
           				user_specialist_id > 0
           			AND user_id=".$arr[0]);
         		 
         		dbquery ("UPDATE planets SET planet_last_updated=".time()." WHERE planet_user_id=".$arr[0]);
-				/*
-				foreach ($planets as $pid) {
+				        		
+        		$pres = dbquery("SELECT 
+										id
+									 FROM 
+									 	planets
+									WHERE 
+										planet_user_id=".$arr[0]);
+									
+				while ($darr=mysql_fetch_row($pres))
+				{
 					BackendMessage::updatePlanet($pid);
-				} */
-			};
-		
-      			
+				}
+       		};
+		      			
 			return mysql_affected_rows();
 		}
 		
