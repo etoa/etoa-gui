@@ -45,14 +45,4 @@ echo "* * * * * php /var/www/etoa/bin/cronjob.php" | crontab
 sudo aptitude install -q -y -f cmake libboost-all-dev libmysql++-dev g++
 
 # Build eventhandler
-cd /var/www/etoa/eventhandler
-cmake .
-make
-
-sudo mkdir -p /etc/etoad
-sudo mkdir -p /var/log/etoad
-sudo mkdir -p /var/run/etoad
-sudo chmod -R 777 /var/log/etoad
-sudo chmod -R 777 /var/run/etoad
-sudo cp /var/www/etoa/vagrant/roundx.conf /etc/etoad/roundx.conf
-sudo su vagrant -c"./target/etoad roundx -k -d"
+cd /var/www/etoa && make eventhandler
