@@ -9,6 +9,10 @@ Version 3.5.12
  * fixed krypto distance
  * fixed start/landtime from vorgonia mysli when joining alli atk
  * fixed wrong display of min buildtime in shipyard
+
+### Administration ###
+ 
+ * adding from alli techs
   
 Version 3.5.11
 -------------

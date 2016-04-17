@@ -141,6 +141,24 @@
 				$tpl->assign('msg', 'Datensatz erfolgreich eingefügt!');
 			}		
 		}
+		elseif (isset($_POST['techs']) && $_POST['techs']!="")
+		{
+			$test= dbquery("SELECT alliance_techlist_id FROM alliance_techlist WHERE alliance_techlist_alliance_id =".$id." 
+							AND alliance_techlist_tech_id =(select alliance_tech_id from alliance_technologies where alliance_tech_name='".$_POST['selected']."')");
+			
+			if (mysql_num_rows($test)>0)
+			{	
+			dbquery("UPDATE alliance_techlist SET alliance_techlist_current_level =".$_POST['level'].", alliance_techlist_member_for =".$_POST['amount']." WHERE alliance_techlist_alliance_id =".$id." 
+					 AND alliance_techlist_tech_id =(select alliance_tech_id from alliance_technologies where alliance_tech_name='".$_POST['selected']."')");
+			$tpl->assign('msg','Datensatz erfolgreich bearbeitet!');
+			}
+			else
+			{	
+				dbquery("INSERT into alliance_techlist(alliance_techlist_alliance_id,alliance_techlist_tech_id,alliance_techlist_current_level,alliance_techlist_build_start_time,alliance_techlist_build_end_time,alliance_techlist_member_for)
+				VALUES(".$id.",(select alliance_tech_id from alliance_technologies where alliance_tech_name='".$_POST['selected']."'),".$_POST['level'].",0,1,".$_POST['amount'].")");
+				$tpl->assign('msg', 'Datensatz erfolgreich eingefügt!');
+			}		
+		}
 		
 		$res = dbquery("SELECT * FROM alliances WHERE alliance_id='".$id."';");
 		$arr = mysql_fetch_assoc($res);
@@ -542,7 +560,7 @@
 
 			tableEnd();	
 
-			echo'<input type="submit" name="buildings">';
+			echo'<br><input type="submit" name="buildings">';
 
 			echo '</div><div id="tabs-8">';
 			
@@ -560,9 +578,16 @@
 						ON
 							alliance_technologies.alliance_tech_id=alliance_techlist.alliance_techlist_tech_id
 							AND	alliance_techlist_alliance_id='".$id."';");
+			$techs = dbquery("
+						SELECT
+							alliance_tech_id,
+							alliance_tech_name
+						FROM
+							alliance_technologies;");
+
 			tableStart();
 			echo "<tr>
-					<th>Gebäude</th><th>Stufe</th><th>Useranzahl</th><th>Status</th>
+					<th>Technologie</th><th>Stufe</th><th>Useranzahl</th><th>Status</th>
 				</tr>";
 			if (mysql_num_rows($res)>0)
 			{
@@ -580,6 +605,31 @@
 				echo "<tr><td colspan=\"4\">Keine Technologien vorhanden!</td></tr>";
 			tableEnd();
 			
+			echo '<br><h2>Technologien hinzufügen</h2>';
+            
+			tableStart();
+
+            echo "<tr>
+					<th>Technologie</th><th>Stufe</th><th>Useranzahl</th>
+				</tr>"; 
+			echo'<tr><td>';
+
+            if (mysql_num_rows($techs)>0)
+			{   
+				echo'<select name="selected">';
+				while ($arr = mysql_fetch_assoc($techs))
+				{
+					echo "<option>".$arr['alliance_tech_name']."</option>";
+				}
+				echo"</select>";
+			}
+
+			echo '</td><td><input type=number value=1 name="level"></td><td><input type=number value=1 name="amount"></td></tr>';
+
+			tableEnd();	
+
+			echo'<br><input type="submit" name="techs">';
+
 			echo '
 				</div>
 			</div>';
