@@ -50,6 +50,7 @@
 	define("SHIPQUEUE_CANCEL_END", $cfg->get('shipqueue_cancel_end'));
 
     $bl = new Buildlist($cp->id,$cu->id);
+    $tl = new Techlist($cu->id);
 
 	// BEGIN SKRIPT //
 
@@ -105,7 +106,7 @@
 
 			//
 			// Läd alle benötigten Daten in PHP-Arrays
-			//
+			//Gentechnologie:
 
 			// Vorausetzungen laden
 			$req = array();
@@ -130,26 +131,9 @@
 			}
 
 
-			//Technologien laden und Gentechlevel definieren
-			$gen_tech_level = 0;
-			$res = dbquery("
-			SELECT 
-				techlist_tech_id,
-				techlist_current_level
-			FROM 
-				techlist 
-			WHERE 
-				techlist_user_id='".$cu->id."';");
-			while ($arr = mysql_fetch_assoc($res))
-			{
-				$techlist[$arr['techlist_tech_id']]=$arr['techlist_current_level'];
-
-				if($arr['techlist_tech_id']==GEN_TECH_ID && $arr['techlist_current_level']>0)
-				{
-					$gen_tech_level = $arr['techlist_current_level'];
-				}
-			}
-
+			//Gentechlevel definieren
+			$gen_tech_level = $tl->getLevel(GEN_TECH_ID);
+			
 			//Gebäude laden
 			$res = dbquery("
 			SELECT 
@@ -335,7 +319,7 @@
 		if ($gen_tech_level  > 0)
 		{
 			echo '<tr><td>Gentechnologie:</td><td>'.$gen_tech_level .'</td></tr>';
-			echo '<tr><td>Minimale Bauzeit (mit Arbeiter):</td><td>Bauzeit * '.(0.1-($genTechLevel/100)).'</td></tr>';
+			echo '<tr><td>Minimale Bauzeit (mit Arbeiter):</td><td>Bauzeit * '.(0.1-($gen_tech_level/100)).'</td></tr>';
 		}
     	echo "<tr><td>Bauzeitverringerung:</td><td>";
     	if ($need_bonus_level>=0)

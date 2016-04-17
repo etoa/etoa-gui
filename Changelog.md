@@ -1,4 +1,4 @@
-Escape to Andromeda Changelog
+﻿Escape to Andromeda Changelog
 =============================
 
 Version 3.5.12
@@ -6,7 +6,9 @@ Version 3.5.12
 
 ### Bugfixes ###
 
- * Fixed krypto distance
+ * fixed krypto distance
+ * fixed start/landtime from vorgonia mysli when joining alli atk
+ * fixed wrong display of min buildtime in shipyard
   
 Version 3.5.11
 -------------
