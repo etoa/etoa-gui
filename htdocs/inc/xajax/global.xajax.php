@@ -22,7 +22,7 @@ function searchUser($val,$field_id='user_nick',$box_id='citybox',$separator=";")
 	}
 	$sOut = "";
 	$nCount = 0;
-	
+
 	$res=dbquery("SELECT user_nick FROM users WHERE user_nick LIKE '".$val."%' LIMIT 20;");
 	if (mysql_num_rows($res)>0)
 	{
@@ -33,14 +33,14 @@ function searchUser($val,$field_id='user_nick',$box_id='citybox',$separator=";")
 			$sLastHit = $arr[0];
 		}
 	}
-	
+
 	if($nCount > 20)
 	{
 		$sOut = "";
 	}
-	
+
 	$objResponse = new xajaxResponse();
-	
+
 	if(strlen($sOut) > 0)
 	{
 		$sOut = "".$sOut."";
@@ -50,7 +50,7 @@ function searchUser($val,$field_id='user_nick',$box_id='citybox',$separator=";")
 	{
 		$objResponse->script("document.getElementById('".$box_id."').style.display = \"none\"");
 	}
-	
+
 	//Wenn nur noch ein User in frage kommt, diesen Anzeigen
 	if($nCount == 1)
 	{
@@ -59,7 +59,7 @@ function searchUser($val,$field_id='user_nick',$box_id='citybox',$separator=";")
 		$objResponse->script("document.getElementById('".$field_id."').focus()");
 	}
 	$objResponse->assign($box_id, "innerHTML", $sOut);
-	
+
 	return $objResponse;
 }
 
@@ -70,62 +70,62 @@ function getFlightTargetInfo($f,$sx1,$sy1,$cx1,$cy1,$p1)
 	$objResponse = new xajaxResponse();
 	ob_start();
 	$launch = true;
-	
+
 	$sx=intval($f['sx']);
 	$sy=intval($f['sy']);
 	$cx=intval($f['cx']);
 	$cy=intval($f['cy']);
 	$p=intval($f['p']);
-		
+
 	if ($sx<1)
 	{
 		$sx=1;
-		$objResponse->assign("sx","value",1);										
+		$objResponse->assign("sx","value",1);
 	}
 	if ($sy<1)
 	{
 		$sy=1;
-		$objResponse->assign("sy","value",1);										
+		$objResponse->assign("sy","value",1);
 	}
 	if ($cx<1)
 	{
 		$cx=1;
-		$objResponse->assign("cx","value",1);										
+		$objResponse->assign("cx","value",1);
 	}
 	if ($cy<1)
 	{
 		$cy=1;
-		$objResponse->assign("cy","value",1);										
+		$objResponse->assign("cy","value",1);
 	}
 	if ($sx>$conf['num_of_sectors']['p1'])
 	{
 		$sx=$conf['num_of_sectors']['p1'];
-		$objResponse->assign("sx","value",$sx);										
+		$objResponse->assign("sx","value",$sx);
 	}
 	if ($sy>$conf['num_of_sectors']['p2'])
 	{
 		$sy=$conf['num_of_sectors']['p2'];
-		$objResponse->assign("sy","value",$sy);										
+		$objResponse->assign("sy","value",$sy);
 	}
 	if ($cx>$conf['num_of_cells']['p1'])
 	{
 		$cx=$conf['num_of_cells']['p1'];
-		$objResponse->assign("cx","value",$cx);										
+		$objResponse->assign("cx","value",$cx);
 	}
 	if ($cy>$conf['num_of_cells']['p2'])
 	{
 		$cy=$conf['num_of_cells']['p2'];
-		$objResponse->assign("cy","value",$cy);										
+		$objResponse->assign("cy","value",$cy);
 	}
 	if ($p<1)
 	{
 		$p=1;
-		$objResponse->assign("p","value",$p);										
+		$objResponse->assign("p","value",$p);
 	}
 	if ($p>$conf['num_planets']['p2'])
 	{
 		$p=$conf['num_planets']['p2'];
-		$objResponse->assign("p","value",$p);										
+		$objResponse->assign("p","value",$p);
 	}
 
 	// Total selected missiles
@@ -147,7 +147,7 @@ function getFlightTargetInfo($f,$sx1,$sy1,$cx1,$cy1,$p1)
 				$total+=$f['count'][$k];
 			}
 		}
-		
+
 		// Calc range
 		foreach ($f['range'] as $k => $v)
 		{
@@ -161,7 +161,7 @@ function getFlightTargetInfo($f,$sx1,$sy1,$cx1,$cy1,$p1)
 			}
 		}
 	}
-	
+
 	if ($total>0)
 	{
 		if ($p>0)
@@ -206,36 +206,36 @@ function getFlightTargetInfo($f,$sx1,$sy1,$cx1,$cy1,$p1)
 				{
 					$out = "<i>Unbenannter Planet</i>";
 				}
-				if ($arr['user_id']>0) 
+				if ($arr['user_id']>0)
 				{
 					$out.=" <b>Besitzer:</b> ".$arr['user_nick'];
 					if ($s->getInstance()->user_id==$arr['user_id'] && $arr['user_id']>0)
 					{
-						$out.=' (Eigener Planet)';								
-						$objResponse->assign("targetinfo","style.color",'#f00');								
+						$out.=' (Eigener Planet)';
+						$objResponse->assign("targetinfo","style.color",'#f00');
 						$launch=false;
 					}
 					else
 					{
-						$objResponse->assign("targetinfo","style.color",'#0f0');								
+						$objResponse->assign("targetinfo","style.color",'#0f0');
 					}
 				}
 				else
-				{			
-					$objResponse->assign("targetinfo","style.color",'#f00');								
+				{
+					$objResponse->assign("targetinfo","style.color",'#f00');
 					$launch=false;
 				}
-				$objResponse->assign("targetinfo","innerHTML",$out);								
-				$objResponse->assign("targetcell","value",$arr['cell_id']);								
-				$objResponse->assign("targetplanet","value",$arr['id']);								
-			}			
+				$objResponse->assign("targetinfo","innerHTML",$out);
+				$objResponse->assign("targetcell","value",$arr['cell_id']);
+				$objResponse->assign("targetplanet","value",$arr['id']);
+			}
 			else
 			{
-				$objResponse->assign("targetinfo","innerHTML","Hier existiert kein Planet!");				
-				$objResponse->assign("targetinfo","style.color",'#f00');		
-				$launch=false;						
-				$objResponse->assign("targetcell","value",0);								
-				$objResponse->assign("targetplanet","value",0);								
+				$objResponse->assign("targetinfo","innerHTML","Hier existiert kein Planet!");
+				$objResponse->assign("targetinfo","style.color",'#f00');
+				$launch=false;
+				$objResponse->assign("targetcell","value",0);
+				$objResponse->assign("targetplanet","value",0);
 			}
 
 			// Calc time and distance
@@ -253,21 +253,21 @@ function getFlightTargetInfo($f,$sx1,$sy1,$cx1,$cy1,$p1)
 				$ps = ($ae/2) - (($p)*$ae/4/$np);	// Planetendistanz wenn sie nicht im selben Solsys sind
 			$ssae = $sae + $ps;
 			$timeforflight = $ssae / $speed * 3600;
-					
-			$objResponse->assign("time","innerHTML",tf($timeforflight));								
-			$objResponse->assign("timeforflight","value",$timeforflight);								
-			$objResponse->assign("distance","innerHTML",nf($ssae)." AE");								
+
+			$objResponse->assign("time","innerHTML",tf($timeforflight));
+			$objResponse->assign("timeforflight","value",$timeforflight);
+			$objResponse->assign("distance","innerHTML",nf($ssae)." AE");
 			if ($ssae > $range)
 			{
-				$objResponse->assign("distance","style.color","#f00");		
-				$objResponse->append("distance","innerHTML"," (zu weit entfernt, ".nf($range)." max)");								
-				$launch=false;						
+				$objResponse->assign("distance","style.color","#f00");
+				$objResponse->append("distance","innerHTML"," (zu weit entfernt, ".nf($range)." max)");
+				$launch=false;
 			}
 			else
 			{
-				$objResponse->assign("distance","style.color","#0f0");		
+				$objResponse->assign("distance","style.color","#0f0");
 			}
-			$objResponse->assign("speed","innerHTML",round($speed,2)." AE/h");			
+			$objResponse->assign("speed","innerHTML",round($speed,2)." AE/h");
 
 		}
 		else
@@ -277,24 +277,24 @@ function getFlightTargetInfo($f,$sx1,$sy1,$cx1,$cy1,$p1)
 	}
 	else
 	{
-		$objResponse->assign("targetinfo","innerHTML","Keine Raketen gewählt!");								
-		$launch=false;		
+		$objResponse->assign("targetinfo","innerHTML","Keine Raketen gewählt!");
+		$launch=false;
 	}
-	
+
 	if ($launch)
 	{
-		$objResponse->assign("launchbutton","style.color",'#0f0');				
-		$objResponse->assign("launchbutton","disabled",false);				
+		$objResponse->assign("launchbutton","style.color",'#0f0');
+		$objResponse->assign("launchbutton","disabled",false);
 	}
 	else
 	{
-		$objResponse->assign("launchbutton","style.color",'#f00');				
-		$objResponse->assign("launchbutton","disabled",true);				
+		$objResponse->assign("launchbutton","style.color",'#f00');
+		$objResponse->assign("launchbutton","disabled",true);
 	}
-	
-	$objResponse->append("targetinfo","innerHTML",ob_get_contents());				
+
+	$objResponse->append("targetinfo","innerHTML",ob_get_contents());
 	ob_end_clean();
-  return $objResponse;	
+  return $objResponse;
 }
 
 
@@ -303,188 +303,124 @@ function getCryptoDistance($f,$sx1,$sy1,$cx1,$cy1,$p1)
 	global $conf, $s;
 	$objResponse = new xajaxResponse();
 	ob_start();
-	$launch = true;
-	
 
 	$sx=intval($f['sx']);
 	$sy=intval($f['sy']);
 	$cx=intval($f['cx']);
 	$cy=intval($f['cy']);
 	$p=intval($f['p']);
-	
+
 	$range= $f['range'];
 
 	if ($sx<1)
 	{
 		$sx=1;
-		$objResponse->assign("sx","value",1);										
+		$objResponse->assign("sx","value",1);
 	}
 	if ($sy<1)
 	{
 		$sy=1;
-		$objResponse->assign("sy","value",1);										
+		$objResponse->assign("sy","value",1);
 	}
 	if ($cx<1)
 	{
 		$cx=1;
-		$objResponse->assign("cx","value",1);										
+		$objResponse->assign("cx","value",1);
 	}
 	if ($cy<1)
 	{
 		$cy=1;
-		$objResponse->assign("cy","value",1);										
+		$objResponse->assign("cy","value",1);
 	}
 	if ($sx>$conf['num_of_sectors']['p1'])
 	{
 		$sx=$conf['num_of_sectors']['p1'];
-		$objResponse->assign("sx","value",$sx);										
+		$objResponse->assign("sx","value",$sx);
 	}
 	if ($sy>$conf['num_of_sectors']['p2'])
 	{
 		$sy=$conf['num_of_sectors']['p2'];
-		$objResponse->assign("sy","value",$sy);										
+		$objResponse->assign("sy","value",$sy);
 	}
 	if ($cx>$conf['num_of_cells']['p1'])
 	{
 		$cx=$conf['num_of_cells']['p1'];
-		$objResponse->assign("cx","value",$cx);										
+		$objResponse->assign("cx","value",$cx);
 	}
 	if ($cy>$conf['num_of_cells']['p2'])
 	{
 		$cy=$conf['num_of_cells']['p2'];
-		$objResponse->assign("cy","value",$cy);										
+		$objResponse->assign("cy","value",$cy);
 	}
 	if ($p<1)
 	{
 		$p=1;
-		$objResponse->assign("p","value",$p);										
+		$objResponse->assign("p","value",$p);
 	}
 	if ($p>$conf['num_planets']['p2'])
 	{
 		$p=$conf['num_planets']['p2'];
-		$objResponse->assign("p","value",$p);										
+		$objResponse->assign("p","value",$p);
 	}
-    
-    //
-    if ($p>0)
-	{
-		$res = dbquery("
-		SELECT
-			planet_name,
-			user_nick,
-			user_id,
-			entities.cell_id,
-			planets.id
 
-		FROM 
-			entities
-		INNER JOIN 
-			cells 
-		ON 
-			entities.cell_id = cells.id
-			AND entities.pos=".intval($p)."
-			AND cells.sx=".intval($sx)."
-			AND cells.sy=".intval($sy)."
-			AND cells.cx=".intval($cx)."
-			AND cells.cy=".intval($cy)."
-		INNER JOIN
-			planets
-		ON 
-			entities.id=planets.id
-		LEFT JOIN
-			users
-		ON planet_user_id=user_id				
-			
-		");
-		$out = mysql_num_rows($res);
-		if (mysql_num_rows($res)>0)
-		{
-			$arr=mysql_fetch_array($res);
-			if ($arr['planet_name']!='')
-			{
-				$out = "<b>Planet:</b> ".$arr['planet_name'];
-			}
-			else
-			{
-				$out = "<i>Unbenannter Planet</i>";
-			}
-			if ($arr['user_id']>0) 
-			{
-				$out.=" <b>Besitzer:</b> ".$arr['user_nick'];
-				if ($s->getInstance()->user_id==$arr['user_id'] && $arr['user_id']>0)
-				{
-					$out.=' (Eigener Planet)';								
-					$objResponse->assign("targetinfo","style.color",'#f00');								
-					$launch=false;
-				}
-				else
-				{
-					$objResponse->assign("targetinfo","style.color",'#0f0');								
-				}
-			}
-			else
-			{			
-				$objResponse->assign("targetinfo","style.color",'#f00');								
-				$launch=false;
-			}
-			$objResponse->assign("targetinfo","innerHTML",$out);								
-			$objResponse->assign("targetcell","value",$arr['cell_id']);								
-			$objResponse->assign("targetplanet","value",$arr['id']);								
-		}			
-		else
-		{
-			$objResponse->assign("targetinfo","innerHTML","Hier existiert kein Planet!");				
-			$objResponse->assign("targetinfo","style.color",'#f00');		
-			$launch=false;						
-			$objResponse->assign("targetcell","value",0);								
-			$objResponse->assign("targetplanet","value",0);								
+	$target = Entity::createFactoryByCoords($sx,$sy,$cx,$cy,$p);
+	if (!$target instanceof Planet) {
+		$objResponse->assign("targetinfo","innerHTML","Hier existiert kein Planet!");
+		$objResponse->assign("targetinfo","style.color",'#f00');
+		$objResponse->assign("targetcell","value",0);
+		$objResponse->assign("targetplanet","value",0);
+		$objResponse->assign("distance", "innerHTML", "-");
+		$objResponse->assign("distance","style.color","#f00");
+
+		return $objResponse;
+	}
+
+	if ($target->name) {
+		$out = "<b>Planet:</b> " . $target->name;
+	} else {
+		$out = "<i>Unbenannter Planet</i>";
+	}
+
+	if ($target->owner()->isValid) {
+		$owner = $target->owner();
+		$out .= " <b>Besitzer:</b> " . $owner->nick;
+		if ($s->getInstance()->user_id == $owner->id && $owner->id > 0) {
+			$out.=' (Eigener Planet)';
+			$objResponse->assign("targetinfo","style.color",'#f00');
+		} else {
+			$objResponse->assign("targetinfo","style.color",'#0f0');
 		}
-	}	
-    //
+	} else {
+		$objResponse->assign("targetinfo","style.color",'#f00');
+	}
 
-	$launch=false;		
-	
-	$nx=$conf['num_of_cells']['p1'];		// Anzahl Zellen Y
-	$ny=$conf['num_of_cells']['p2'];		// Anzahl Zellen X
-	$ae=$conf['cell_length']['v'];			// Länge vom Solsys in AE
-	$np=$conf['num_planets']['p2'];			// Max. Planeten im Solsys
-	$dx = abs(((($sx-1) * $nx) + $cx) - ((($sx1-1) * $nx) + $cx1));
-	$dy = abs(((($sy-1) * $nx) + $cy) - ((($sy1-1) * $nx) + $cy1));
-	$sd = sqrt(pow($dx,2)+pow($dy,2));			// Distanze zwischen den beiden Zellen
-	$sae = $sd * $ae;											// Distance in AE units
-	if ($sx1==$sx && $sy1==$sy && $cx1==$cx && $cy1=$cy)
-		$ps = abs($p-$p1)*$ae/4/$np;				// Planetendistanz wenn sie im selben Solsys sind
-	else
-		$ps = ($ae/2) - (($p)*$ae/4/$np);	// Planetendistanz wenn sie nicht im selben Solsys sind
-	$ssae = $sae + $ps;
-									
-	$objResponse->assign("distance","innerHTML",nf($ssae)." AE");								
-	if ($ssae > $range)
-	{
-		$objResponse->assign("distance","style.color","#f00");		
-		$objResponse->append("distance","innerHTML"," (zu weit entfernt, ".nf($range)." max)");								
-		$launch=false;						
-	}
-	else
-	{
-		$objResponse->assign("distance","style.color","#0f0");		
-	}
-	
+	$objResponse->assign("targetinfo","innerHTML",$out);
+	$objResponse->assign("targetcell","value", $target->cellId());
+	$objResponse->assign("targetplanet","value", $target->id());
 
-	if ($launch)
-	{
-		$objResponse->assign("scan","style.color",'#0f0');				
-		$objResponse->assign("scan","disabled",false);				
+	$launch=false;
+	$distance = $target->distanceByCoords($sx1, $sy1, $cx1, $cy1, $p1);
+
+	$objResponse->assign("distance","innerHTML",nf($distance)." AE");
+	if ($distance > $range) {
+		$objResponse->assign("distance","style.color","#f00");
+		$objResponse->append("distance","innerHTML"," (zu weit entfernt, ".nf($range)." max)");
+		$launch=false;
+	} else {
+		$objResponse->assign("distance","style.color","#0f0");
 	}
-	else
-	{
-		$objResponse->assign("scan","style.color",'#f00');				
-		$objResponse->assign("scan","disabled",true);				
+
+	if ($launch) {
+		$objResponse->assign("scan","style.color",'#0f0');
+		$objResponse->assign("scan","disabled",false);
+	} else {
+		$objResponse->assign("scan","style.color",'#f00');
+		$objResponse->assign("scan","disabled",true);
 	}
-	
-	$objResponse->append("targetinfo","innerHTML",ob_get_contents());				
+
+	$objResponse->append("targetinfo","innerHTML",ob_get_contents());
 	ob_end_clean();
-  return $objResponse;	
+    return $objResponse;
 }
 
 
@@ -496,15 +432,15 @@ function formatNumbers($field_id,$val,$format=0,$max)
 	$val = str_replace('`', '', $val);
 	$val = str_replace('k', '000', $val);
 	$val = str_replace('m', '000000', $val);
-	
+
 	if($max!="")
 	{
 		$val = min($val,$max);
 	}
-	
+
 	$val = abs(intval($val));
-	
-	if(is_integer($val))	
+
+	if(is_integer($val))
 	{
 		if($format==1)
 		{
@@ -521,16 +457,16 @@ function formatNumbers($field_id,$val,$format=0,$max)
 	}
 
 	$objResponse->assign($field_id,"value",$out);
-	
+
 	$objResponse->assign("population_info","innerHTML",ob_get_contents());
 	ob_end_clean();
-  return $objResponse;	
+  return $objResponse;
 }
 
 function sendMsg($userString, $subject, $message)
 {
 	 $objResponse = new xajaxResponse();
-	
+
 	 $userArr = explode(";", $userString);
 	 $senderId = $_SESSION['user_id'];
 	 foreach ($userArr as $userToNick)
