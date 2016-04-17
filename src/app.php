@@ -7,4 +7,6 @@ $app = new Pimple\Container([
 ]);
 (new \EtoA\Core\DoctrineServiceProvider())->register($app);
 
+(new \EtoA\Race\RaceServiceProvider())->register($app);
+
 return $app;
