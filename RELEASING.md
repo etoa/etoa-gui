@@ -40,7 +40,7 @@ Update game code on server
 Login to the server
 run the command "update-game-round <roundname>". Example:
     
-  update-game-round round-15
+  update-game-round round15
 
 Restart the event handler in the web-based admin tool.
 
