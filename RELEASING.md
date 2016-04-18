@@ -36,7 +36,15 @@ Set development version on master:
 
 Update game code on server
 --------------------------
-	
+
+Login to the server
+run the command "update-game-round <roundname>". Example:
+    
+  update-game-round round-15
+
+Restart the event handler in the web-based admin tool.
+
+//Use this only if script above fails	
 Login to the server, become the user running the game round and change into the game round directory, for example:
 	
 	sudo -u etoa -s
