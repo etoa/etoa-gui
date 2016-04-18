@@ -1,5 +1,32 @@
-Escape to Andromeda Changelog
+﻿Escape to Andromeda Changelog
 =============================
+
+Version 3.5.11
+-------------
+
+### Bugfixes ###
+
+ * fixed ressource symbols for revolution design
+ * admins wont be shown in diplomacy rating anymore
+ * fixed defense bug 
+ * fixed steal bug while gen was researching
+ * fixed some typos
+
+### Administration ###
+ 
+ * even if all ships are bunkered they will be still shown in tool	
+ * sitting+multi edit
+ * search for dual in tool
+ * button to add all techs at once for 1 person
+
+#### Features ####
+
+ * showing time till storage is full
+ * message after creating Ticket
+
+#### Others ####
+
+ * increased popup size from rules
 
 Version 3.5.10
 -------------

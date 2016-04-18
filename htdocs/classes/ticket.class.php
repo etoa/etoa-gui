@@ -345,7 +345,7 @@ class Ticket
 			{
 				$text = "Hallo!\n\nDein [page ticket id=".$this->id."]Ticket ".$this->idString.
 						"[/page] wurde aktualisiert!\n\n[page ticket id=".$this->id."]".
-						"klicke HIER um die Änderungen anzusehen.[/page]\n\nDein Adminteam";
+						"Klicke HIER um die Änderungen anzusehen.[/page]\n\nDein Adminteam";
 				send_msg($this->userId,USER_MSG_CAT_ID,"Dein Ticket ".$this->id."",$text);
 			}
 			$this->changed = true;
@@ -388,6 +388,13 @@ class Ticket
 		);");
 		$tid = mysql_insert_id();
 		TicketMessage::create(array("ticket_id"=>$tid,"user_id"=>$data['user_id'],"message"=>$data['message']));
+		
+		$formatedtid = sprintf("%'.06d", $tid);
+		
+		$text = "Hallo!\n\nDein [page ticket id=".$formatedtid."]Ticket #".$formatedtid."[/page] wurde erfolgreich erstellt. Es wird sich in Kürze ein Admin um dein Anliegen kümmern.\n\n Dein Admin Team";
+		
+		Message::sendFromUserToUser(0,$data['user_id'],"Dein Ticket $formatedtid",$text);
+	
 		return $tid;
 	}
 

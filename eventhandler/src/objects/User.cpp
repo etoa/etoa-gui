@@ -1,5 +1,6 @@
 
 #include "User.h"
+#include "../config/ConfigHandler.h"
 
 	int User::getAllianceId() {
 		if (!this->dataLoaded)
@@ -361,6 +362,7 @@
 	void User::loadTechs() {
 		if (!this->techsLoaded) {
 			My &my = My::instance();
+			
 			mysqlpp::Connection *con_ = my.get();
 			
 			mysqlpp::Query query = con_->query();
@@ -372,7 +374,7 @@
 				<< " techlist "
 				<< "WHERE "
 				<< "	techlist_user_id='" << this->userId << "' "
-				<< "	AND techlist_current_level>'0';";
+				<< "	AND techlist_current_level>'0' ";
 			RESULT_TYPE tRes = query.store();
 			query.reset();
 			
@@ -385,8 +387,8 @@
 					for (int i=0; i<tSize; i++) {
 						tRow = tRes.at(i);
 						this->techs[(int)tRow["techlist_tech_id"]] = (int)tRow["techlist_current_level"];
-						if ((int)tRow["techlist_build_type"]==3) 
-							techAtWork = (int)tRow["techlist_tech_id"];
+						if (((int)tRow["techlist_build_type"]==3)&&((int)tRow["techlist_tech_id"]!=Config::instance().idget("GEN_TECH_ID"))) 
+							techAtWork = tRow["techlist_tech_id"];
 					}
 				}
 			}

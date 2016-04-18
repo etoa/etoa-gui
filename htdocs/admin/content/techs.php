@@ -194,20 +194,54 @@
  	
 			// Forschung hinzufügen
 			if (isset($_POST['new']))
-			{
-				$updata=explode(":",$_POST['planet_id']);
-				if (mysql_num_rows(dbquery("SELECT techlist_id FROM techlist WHERE techlist_user_id=".$updata[1]." AND techlist_tech_id=".$_POST['tech_id'].";"))==0)
-				{
-					dbquery("INSERT INTO techlist (techlist_entity_id,techlist_user_id,techlist_tech_id,techlist_current_level) VALUES (".$updata[0].",".$updata[1].",".$_POST['tech_id'].",".$_POST['techlist_current_level'].");");					
-					echo "Technologie wurde hinzugef&uuml;gt!<br/>";
-				}
-				else
-				{
-					echo "Technologie existiert bereits!<br/>";
-				}
+			{	
+     			$updata=explode(":",$_POST['planet_id']);
+				
+     			if(isset($_POST['all_techs'])) {
+     				$res=dbquery("SELECT
+						tech_id,
+						tech_name
+					FROM technologies
+					ORDER BY tech_order,tech_name;");
+					if (mysql_num_rows($res)>0)
+					{
+						while ($arr=mysql_fetch_array($res))
+						{
+							if (mysql_num_rows(dbquery("SELECT techlist_id FROM techlist WHERE techlist_user_id=".$updata[1]." AND techlist_tech_id=".$arr['tech_id'].";"))==0)
+							{
+								dbquery("INSERT INTO techlist (techlist_entity_id,techlist_user_id,techlist_tech_id,techlist_current_level) VALUES (".$updata[0].",".$updata[1].",".$arr['tech_id'].",".$_POST['techlist_current_level'].");");					
+							}
+							else
+							{
+								dbquery("UPDATE techlist 
+										 SET techlist_current_level = ".$_POST['techlist_current_level']."
+										 WHERE techlist_user_id = ".$updata[1]."
+										 AND techlist_tech_id = ".$arr['tech_id']);					
+							}
+
+						}
+					}	
+					echo "Technologien wurden aktualisiert!<br/>";	
+     			}	
+     			else {
+	     			if (mysql_num_rows(dbquery("SELECT techlist_id FROM techlist WHERE techlist_user_id=".$updata[1]." AND techlist_tech_id=".$_POST['tech_id'].";"))==0)
+					{
+						dbquery("INSERT INTO techlist (techlist_entity_id,techlist_user_id,techlist_tech_id,techlist_current_level) VALUES (".$updata[0].",".$updata[1].",".$_POST['tech_id'].",".$_POST['techlist_current_level'].");");					
+						echo "Technologie wurde hinzugef&uuml;gt!<br/>";
+					}
+					else
+					{
+						dbquery("UPDATE techlist 
+								 SET techlist_current_level = ".$_POST['techlist_current_level']."
+								 WHERE techlist_user_id = ".$updata[1]."
+								 AND techlist_tech_id = ".$_POST['tech_id']);					
+						echo "Technologie wurde aktualisiert!<br/>";
+					}	
+     			}
+				
 				$sql= " AND user_id=".$updata[1];
 				$_SESSION['search']['tech']['query']=null;
-				
+
 				// Technologien laden
 				$bres = dbquery("SELECT tech_id,tech_name FROM technologies ORDER BY tech_type_id,tech_order,tech_name;");
 				$tlist=array();
@@ -423,7 +457,7 @@
 			echo "<tr><th class=\"tbltitle\">Technologie</th><td class=\"tbldata\"><select name=\"tech_id\">";
 			foreach ($tlist as $k=>$v)
 				echo "<option value=\"".$k."\">".$v."</option>";
-			echo "</select></td></tr>";
+			echo "</select><br>Alle Techs <input type='checkbox' name='all_techs'></td></tr>";
 			echo "<tr><th class=\"tbltitle\">Stufe</th><td class=\"tbldata\"><input type=\"text\" name=\"techlist_current_level\" value=\"1\" size=\"1\" maxlength=\"3\" /></td></tr>";
 			echo "<tr><th class=\"tbltitle\">f&uuml;r den Spieler</th><td class=\"tbldata\"> <select name=\"planet_id\"><";
 			$pres=dbquery("SELECT 

@@ -1,6 +1,26 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.11
+-------------
+
+### Bugfixes ###
+
+ * Symbol bei Ressourcenanzeige im Revolution Design gefixt
+ * Admins können nicht mehr den Titel "Botschafter von Andromeda" bekommen (sry Wawa)
+ * Einen Bug in Waffenfabrik gefixt wo man trotz freier Felder nichts mehr bauen konnte
+ * Bug gefixt wo man forschende Techs klauen konnte
+ * Verschiedene Rechtschreibfehler korrigiert
+ 
+### Features ###
+
+ * Hover über Ressourcen zeigt an, wie lang es dauert, bis Speicher voll sind 
+ * Man bekommt eine Nachricht nach Erstellen eines Tickets
+
+### Anderes ###
+ 
+ * Popupfenster von Regeln vergrößert
+
 Version 3.5.10
 -------------
 

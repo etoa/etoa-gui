@@ -168,7 +168,7 @@
 		echo "<tr><th>Rückzugsgebühren:</th>
 				<td>Wenn du ein Angebot von diesem Planet zur&uuml;ckziehst erh&auml;lst du ".(round($return_factor,2)*100)."% des Angebotes zur&uuml;ck (abgerundet).</td></tr>";
 		echo "<tr><th>Verkaufsgebühren:</th>
-				<td>Der Verkaufsgeb&uuml;hr des Marktplatzes betr&auml;gt ".get_percent_string(MARKET_TAX,1,1)."";
+				<td>Die Verkaufsgeb&uuml;hr des Marktplatzes betr&auml;gt ".get_percent_string(MARKET_TAX,1,1)."";
 		if ($cu->specialist->tradeBonus!=1)
 		{
 			echo " (inkl ".get_percent_string($cu->specialist->tradeBonus,1,1)." Kostenverringerung durch ".$cu->specialist->name."!";

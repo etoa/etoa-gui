@@ -78,6 +78,7 @@
 				ON user_id=id
 				AND
 					".$v."_rating>0
+				AND user_ghost=0	
 				ORDER BY 
 					".$v."_rating DESC 
 				LIMIT 1;");

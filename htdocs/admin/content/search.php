@@ -16,6 +16,8 @@
 			OR user_name LIKE '%".$search."%'		
 			OR user_email LIKE '%".$search."%'		
 			OR user_email_fix LIKE '%".$search."%'
+			OR dual_email LIKE '%".$search."%'	
+			OR dual_name LIKE '%".$search."%'	
 		ORDER BY
 			user_nick
 		LIMIT 30;			

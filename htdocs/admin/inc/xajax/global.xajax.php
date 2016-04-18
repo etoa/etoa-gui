@@ -243,7 +243,7 @@ function showShipsOnPlanet($form)
 			ships
 			ON shiplist_ship_id=ship_id
 			AND shiplist_entity_id='".$eid."'
-			AND shiplist_count>0
+			AND (shiplist_count+shiplist_bunkered)>0
 		ORDER BY
 			ship_name
 		;");

@@ -251,7 +251,7 @@
 				}
 				echo "</select></td></tr>";
 				tableEnd();
-				echo "<p>Mit dem Speichern dieses Eintrags werden die entsprechnden Sittingtage von deinem Account abgezogen.<br/><br/><input type=\"submit\" name=\"sitting_add\" value=\"Speichern\" /> ";
+				echo "<p>Mit dem Speichern dieses Eintrags werden die entsprechenden Sittingtage von deinem Account abgezogen.<br/><br/><input type=\"submit\" name=\"sitting_add\" value=\"Speichern\" /> ";
 			}
 		}
 		else

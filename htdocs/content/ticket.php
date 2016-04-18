@@ -109,6 +109,7 @@ else
 	{
 		Ticket::create(array_merge($_POST,array("user_id"=>$cu->id)));
 		echo "<br/>Vielen Dank, dein Text wurde gespeichert.<br/>Ein Game-Administrator wird sich dem Problem annehmen.<br/><br/>";
+		
 		if ($ext)
 			echo "<input type=\"button\" onclick=\"document.location='?page=ticket'\" value=\"Weiter\" />";
 	}

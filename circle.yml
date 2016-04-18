@@ -1,0 +1,8 @@
+machine:
+  php:
+    version: 5.4.5
+
+test:
+  override:
+    - php composer.phar install --prefer-dist
+    - make ci
