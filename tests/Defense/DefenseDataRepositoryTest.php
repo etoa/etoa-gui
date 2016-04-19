@@ -30,4 +30,3 @@ class DefenseDataRepositoryTest extends \PHPUnit_Framework_TestCase
         }
     }
 }
-
