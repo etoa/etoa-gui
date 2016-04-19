@@ -13,7 +13,7 @@ class RaceDataRepositoryTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
-        $app = require_once dirname(dirname(__DIR__)).'/src/app.php';
+        $app = require dirname(dirname(__DIR__)).'/src/app.php';
 
         $this->raceDataRepository = $app['etoa.race.datarepository'];
     }
