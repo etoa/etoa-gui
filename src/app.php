@@ -13,5 +13,6 @@ $app = new Pimple\Container([
 (new \EtoA\Defense\DefenseServiceProvider())->register($app);
 (new \EtoA\Race\RaceServiceProvider())->register($app);
 (new \EtoA\Ship\ShipServiceProvider())->register($app);
+(new \EtoA\Technology\TechnologyServiceProvider())->register($app);
 
 return $app;
