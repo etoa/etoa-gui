@@ -9,6 +9,7 @@ $app = new Pimple\Container([
 ]);
 (new \EtoA\Core\DoctrineServiceProvider())->register($app);
 
+(new \EtoA\Building\BuildingServiceProvider())->register($app);
 (new \EtoA\Defense\DefenseServiceProvider())->register($app);
 (new \EtoA\Race\RaceServiceProvider())->register($app);
 (new \EtoA\Ship\ShipServiceProvider())->register($app);
