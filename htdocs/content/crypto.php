@@ -17,28 +17,28 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 	/**
 	* Manages the cryptocenter
 	*
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2009 by EtoA Gaming, www.etoa.net
-	*/	
+	*/
 
 	// Reichweite in AE für Kryptoanalyse pro Ausbaustufe
 	define("CRYPTO_RANGE_PER_LEVEL", $cfg->crypto_range_per_level->v);
-	
+
 	// Kosten an Tritium pro Kryptoanalyse
 	define("CRYPTO_FUEL_COSTS_PER_SCAN", $cfg->crypto_fuel_costs_per_scan->v);
-	
+
 	define("CRYPTO_DEFAULT_COOLDOWN", $cfg->value("crypto_default_cooldown"));
 	define("CRYPTO_COOLDOWN_REDUCTION_PER_LEVEL", $cfg->value("crypto_cooldown_reduction_per_level"));
 	define("CRYPTO_MIN_COOLDOWN", $cfg->value("crypto_min_cooldown"));
-	
+
 	// BEGIN SKRIPT //
 
 	//echo "<form action=\"?page=$page\" id='targetForm' method=\"post\">";
-	
+
 	// Gebäude Level und Arbeiter laden
 	if ($cu->allianceId!=0)
 	{
@@ -57,14 +57,14 @@
 	  * Abschnitt mit Crypto als Allianzgebäude
 	  *
 	  **/
-	  
+
 	  // Prüfen ob Gebäude gebaut ist
 	  if ($cryptoCenterLevel > 0)
 	  {
 			// Titel
-			echo "<h1>Allianzkryptocenter (Stufe ".$cryptoCenterLevel.") der Allianz ".$cu->alliance."</h1>";		
+			echo "<h1>Allianzkryptocenter (Stufe ".$cryptoCenterLevel.") der Allianz ".$cu->alliance."</h1>";
 			echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
-			
+
 			// Calculate cooldown
 			$cooldown = max(CRYPTO_MIN_COOLDOWN, CRYPTO_DEFAULT_COOLDOWN - (CRYPTO_COOLDOWN_REDUCTION_PER_LEVEL*($cryptoCenterLevel-1)));
 			if ($cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID, $cu->id) > time())
@@ -77,7 +77,7 @@
 				$status_text = "Bereit";
 				$cd_enabled=false;
 			}
-			
+
 			// Scan
 			if (isset($_POST['scan']) && checker_verify() && !$cd_enabled)
 			{
@@ -118,8 +118,8 @@
 											$jarr=mysql_fetch_row($jres);
 											$op_jam += $jarr[0];
 										}
-										
-										// Load oponents computer and stealth technologies 
+
+										// Load oponents computer and stealth technologies
 										$op_stealth = 0;
 										$tres = dbquery("
 														SELECT
@@ -134,13 +134,13 @@
 											$op_stealth += $target->owner->alliance->techlist->getLevel(ALLIANCE_TECH_TARN_ID);
 										}
 										$op_stealth += $target->owner->specialist->tarnLevel;
-										
+
 										if (mysql_num_rows($tres)>0)
 										{
 											$jarr=mysql_fetch_row($tres);
 											$op_stealth += $jarr[0];
 										}
-										
+
 										$tres = dbquery("
 														SELECT
 															techlist_current_level
@@ -155,7 +155,7 @@
 											$jarr=mysql_fetch_row($tres);
 											$op_computer += $jarr[0];
 										}
-										
+
 										// Load own computer and spy technologies
 										$tres = dbquery("
 														SELECT
@@ -166,7 +166,7 @@
 															techlist_tech_id=".SPY_TECH_ID."
 															AND techlist_user_id=".$cu->id."");
 										$self_spy = $cu->alliance->techlist->getLevel(ALLIANCE_TECH_SPY_ID) + $cu->specialist->spyLevel;
-										
+
 										if (mysql_num_rows($tres)>0)
 										{
 											$jarr=mysql_fetch_row($tres);
@@ -186,15 +186,15 @@
 											$jarr=mysql_fetch_row($tres);
 											$self_computer += $jarr[0];
 										}
-										
+
 										// Calculate success chance
 										$chance = ($cryptoCenterLevel-$op_jam) + (0.3*($self_spy - $op_stealth)) + mt_rand(0,2)-1;
-										
+
 										// Do the scan if chance >= 0
 										if ($chance >= 0)
 										{
-											$decryptlevel = ($cryptoCenterLevel-$op_jam) + (0.75*($self_spy + $self_computer - $op_stealth - $op_computer)) + mt_rand(0,2)-1;  
-											
+											$decryptlevel = ($cryptoCenterLevel-$op_jam) + (0.75*($self_spy + $self_computer - $op_stealth - $op_computer)) + mt_rand(0,2)-1;
+
 											// Decrypt level
 											// < 0 Only show that there are some fleets
 											// 0 <= 10 Show that there are x fleets
@@ -203,9 +203,9 @@
 											// 20 <= 25 Also show count of ships and time in minutes
 											// 25 <= 30 Also show count of every ship and exact time
 											// >30 Show action
-											
+
 											$out="[b]Flottenscan vom Planeten ".$target->name()."[/b] (".$sx."/".$sy." : ".$cx."/".$cy." : ".$pp.")\n\n";
-											
+
 											$out.="[b]Eintreffende Flotten[/b]\n\n";
 											$fres = dbquery("
 															SELECT
@@ -218,11 +218,11 @@
 											{
 												if ($decryptlevel<0)
 												{
-													$out.="Es sind Flotten unterwegs\n"; 
+													$out.="Es sind Flotten unterwegs\n";
 												}
 												else if ($decryptlevel<10)
 												{
-													$out.="Es sind ".mysql_num_rows($fres)." Flotten unterwegs\n"; 
+													$out.="Es sind ".mysql_num_rows($fres)." Flotten unterwegs\n";
 												}
 												else
 												{
@@ -231,10 +231,10 @@
 														$fd = new Fleet($farr[0]);
 														$source = $fd->getSource();
 														$owner = new User($fd->ownerId());
-														
+
 														$out.='[b]Herkunft:[/b] '.$source.', [b]Besitzer:[/b] '.$owner;
 														$out.= "\n[b]Ankunft:[/b] ";
-														
+
 														if ($decryptlevel<=15)
 														{
 															$rand = mt_rand(0,30*60*2);
@@ -247,20 +247,20 @@
 														}
 														elseif ($decryptlevel<=25)
 														{
-															$out.=date("d.m.Y H:i",$fd->landTime())." Uhr";                            
+															$out.=date("d.m.Y H:i",$fd->landTime())." Uhr";
 														}
 														else
 														{
-															$out.=date("d.m.Y H:i:s",$fd->landTime())." Uhr";                            
+															$out.=date("d.m.Y H:i:s",$fd->landTime())." Uhr";
 														}
-														
+
 														if ($decryptlevel>30)
-														{   
+														{
 															$out.=", [b]Aktion:[/b] ".substr($fd->getAction(),25,-7)."\n";
 														}
 														else
 															$out.="\n";
-														
+
 														if ($decryptlevel>=15)
 														{
 															$sres = dbquery("
@@ -290,7 +290,7 @@
 																}
 																if ($decryptlevel >20)
 																{
-																	$out.=$cntr." Schiffe total\n"; 
+																	$out.=$cntr." Schiffe total\n";
 																}
 															}
 														}
@@ -302,7 +302,7 @@
 											{
 												$out.="Keine eintreffenden Flotten gefunden!\n\n";
 											}
-											
+
 											$out.="[b]Wegfliegende Flotten[/b]\n\n";
 											$fres = dbquery("
 															SELECT
@@ -316,11 +316,11 @@
 											{
 												if ($decryptlevel<0)
 												{
-													$out.="Es sind Flotten unterwegs\n"; 
+													$out.="Es sind Flotten unterwegs\n";
 												}
 												else if ($decryptlevel<10)
 												{
-													$out.="Es sind ".mysql_num_rows($fres)." Flotten unterwegs\n"; 
+													$out.="Es sind ".mysql_num_rows($fres)." Flotten unterwegs\n";
 												}
 												else
 												{
@@ -329,10 +329,10 @@
 														$fd = new Fleet($farr[0]);
 														$source = $fd->getTarget();
 														$owner = new User($fd->ownerId());
-														
+
 														$out.='[b]Ziel:[/b] '.$source.', [b]Besitzer:[/b] '.$owner;
 														$out.= "\n[b]Ankunft:[/b] ";
-														
+
 														if ($decryptlevel<=15)
 														{
 															$out.="Zwischen ".date("d.m.Y H:i",$fd->landTime()-(30*60))." und ".date("d.m.Y H:i",$fd->landTime()+(30*60))." Uhr";
@@ -340,7 +340,7 @@
 														elseif ($decryptlevel<=20)
 														{
 															$out.="Zwischen ".date("d.m.Y H:i",$fd->landTime()-(7*60))." und ".date("d.m.Y H:i",$fd->landTime()+(7*60))." Uhr";
-														}                          
+														}
 														elseif ($decryptlevel<=25)
 														{
 															$out.=date("d.m.Y H:i",$fd->landTime())." Uhr";
@@ -349,14 +349,14 @@
 														{
 															$out.=date("d.m.Y H:i:s",$fd->landTime())." Uhr";
 														}
-														
+
 														if ($decryptlevel>30)
 														{
 															$out.=", [b]Aktion:[/b] ".substr($fd->getAction(),25,-7)."\n";
 														}
 														else
 															$out.="\n";
-														
+
 														if ($decryptlevel>=15)
 														{
 															$cntr=0;
@@ -376,7 +376,7 @@
 															}
 															if ($decryptlevel >20)
 															{
-																$out.=$cntr." Schiffe total\n"; 
+																$out.=$cntr." Schiffe total\n";
 															}
 														}
 														$out.="\n";
@@ -387,40 +387,40 @@
 											{
 												$out.='Keine abfliegenden Flotten gefunden!';
 											}
-											
+
 											$out.="\n\nEntschlüsselchance: $decryptlevel";
-											
+
 											// Subtract resources
 											$cp->changeRes(0,0,0,-CRYPTO_FUEL_COSTS_PER_SCAN,0);
 											$cu->alliance->changeRes(0,0,0,-CRYPTO_FUEL_COSTS_PER_SCAN,0);
-											
+
 											// Inform oponent
 											if ($target->ownerId()>0)
 											{
 												send_msg($target->ownerId(),SHIP_SPY_MSG_CAT_ID,"Funkstörung","Eure Flottenkontrolle hat soeben eine kurzzeitige Störung des Kommunikationsnetzes festgestellt. Es kann sein, dass fremde Spione in das Netz eingedrungen sind und Flottendaten geklaut haben.");
 											}
-											
+
 											// Display result
 											iBoxStart("Ergebnis der Analyse");
 											echo text2html($out);
 											iBoxEnd();
-											
+
 											// Add note to user's notepad if selected
 											if (isset($_POST['scan_to_notes']))
 											{
 												$np = new Notepad($cu->id);
 												$np->add("Flottenscan: ".$target,$out);
-											}										                   
-											
+											}
+
 											// Mail result
 											send_msg($cu->id,SHIP_MISC_MSG_CAT_ID,"Kryptocenter-Bericht",$out);
-											
+
 											// Set cooldown
 											$cd = time()+$cooldown;
 											$cu->alliance->buildlist->setCooldown(ALLIANCE_CRYPTO_ID, $cd, $cu->id);
-											
+
 											$cu->alliance->addHistory("Der Spieler [b]".$cu."[/b] hat den Planeten ".$target->name()."[/b] (".$sx."/".$sy." : ".$cx."/".$cy." : ".$pp.") gescannt!");
-											
+
 											if ($cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID, $cu->id) > time())
 											{
 												$status_text = "Bereit in <span id=\"cdcd\">".tf($cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID, $cu->id)-time()."</span>");
@@ -441,15 +441,15 @@
 											error_msg("Die Analyse schlug leider fehl! Eure Empfangsgeräte haben zu viel Rauschen aufgenommen; anscheinend hat der Zielplanet ein aktives Störfeld oder die dortige Flottenkontrolle ist zu gut getarnt (Chance: ".$chance.")!");
 										    $cd = time()+$cooldown;
 											$cu->alliance->buildlist->setCooldown(ALLIANCE_CRYPTO_ID, $cd, $cu->id);
-											
+
 											$cu->alliance->addHistory("Der Spieler [b]".$cu."[/b] hat den Planeten ".$target->name()."[/b] (".$sx."/".$sy." : ".$cx."/".$cy." : ".$pp.") gescannt!");
-											
+
 										}
 									}
 									else
 									{
-										error_msg("Das Ziel ist zu weit entfernt (".ceil($dist)." AE, momentan sind ".CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel." möglich, ".CRYPTO_RANGE_PER_LEVEL." pro Gebäudestufe)!");
-									}									
+										error_msg("Das Ziel ist zu weit entfernt (".nf(ceil($dist))." AE, momentan sind ".nf(CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel)." möglich, ".CRYPTO_RANGE_PER_LEVEL." pro Gebäudestufe)!");
+									}
 								}
 								else
 								{
@@ -474,16 +474,16 @@
 				else
 					error_msg("Du besitzt nicht die notwendigen Rechte!");
 			}
-			
-			
+
+
 			tableStart("Kryptocenter-Infos");
 			echo "<tr><th>Aktuelle Reichweite:</th>
-					<td>".(CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel)." AE ~".floor(CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel/$cfg->value('cell_length'))." Systeme (+".CRYPTO_RANGE_PER_LEVEL." pro Stufe) </td></tr>";
+					<td>".nf(CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel)." AE ~".floor(CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel/$cfg->value('cell_length'))." Systeme (+".CRYPTO_RANGE_PER_LEVEL." pro Stufe) </td></tr>";
 			echo'<tr><th>Zielinfo:</th><td id="targetinfo">
 								Wähle bitte ein Ziel...
-								</td></tr>';	
+								</td></tr>';
 			echo'<tr><th>Entfernung:</th><td id="distance">-
-					</td></tr>';	
+					</td></tr>';
 			echo "<tr><th>Kosten pro Scan:</th>
 					<td>".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." ".RES_FUEL." und ".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." ".RES_FUEL." Allianzrohstoffe</td></tr>";
 			echo "<tr><th>Abklingzeit:</th>
@@ -491,7 +491,7 @@
 			echo "<tr><th>Status:</th>
 					<td>".$status_text."</td></tr>";
 			tableEnd();
-			
+
 			if (!$cd_enabled)
 			{
 				if (isset($_GET['target']) && intval($_GET['target'])>0)
@@ -515,18 +515,18 @@
 					$coords[3] = $cp->cy;
 					$coords[4] = $cp->pos;
 				}
-				
+
 				$keyup_command = 'xajax_getCryptoDistance(xajax.getFormValues(\'targetForm\'),'.$cp->sx.','.$cp->sy.','.$cp->cx.','.$cp->cy.','.$cp->pos.');';
 				echo'<body onload="'.$keyup_command.'">';
-					echo '<form action="?page='.$page.'" method="post" id="targetForm">';	
-						echo '<input type="hidden" value='.CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel.' name="range" />';	
+					echo '<form action="?page='.$page.'" method="post" id="targetForm">';
+						echo '<input type="hidden" value='.CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel.' name="range" />';
 						checker_init();
 						iBoxStart("Ziel für Flottenanalyse wahlen:");
-						
+
 						//
 						// Bookmarks laden
 						//
-				        
+
 						$bm = new BookmarkManager($cu->id);
 						echo 'Koordinaten eingeben: 
 								<input type="text" onkeyup="'.$keyup_command.'" name="sx" id="sx" value="'.$coords[0].'" size="2" maxlength="2" /> / 
@@ -534,12 +534,12 @@
 								<input type="text" onkeyup="'.$keyup_command.'" name="cx" id="cx" value="'.$coords[2].'" size="2" maxlength="2" /> /
 								<input type="text" onkeyup="'.$keyup_command.'" name="cy" id="cy" value="'.$coords[3].'" size="2" maxlength="2" /> :
 								<input type="text" onkeyup="'.$keyup_command.'" name="p" id="p" value="'.$coords[4].'" size="2" maxlength="2" /><br /><br />';
-									
+
 						// Bookmarkliste anzeigen
 						echo '<i>oder</i> Favorit wählen: ';
 						$bm->drawSelector("bookmarkselect","applyBookmark();");
 						iBoxEnd();
-						
+
 						if ($cp->resFuel >= CRYPTO_FUEL_COSTS_PER_SCAN)
 						{
 							echo '<input type="submit" name="scan" value="Analyse für '.nf(CRYPTO_FUEL_COSTS_PER_SCAN).' '.RES_FUEL.' starten" />';
@@ -555,14 +555,14 @@
 			{
 				echo "<b>Diese Funktion wurde vor kurzem benutzt! <br/>
 					Du musst bis ".df($cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID, $cu->id))." warten, um die Funktion wieder zu benutzen!</b>";
-				
+
 				countDown("cdcd",$cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID, $cu->id));
 			}
 		}
 		else
 		{
 			// Titel
-			echo "<h1>Kryptocenter des Planeten ".$cp->name."</h1>";		
+			echo "<h1>Kryptocenter des Planeten ".$cp->name."</h1>";
 			echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
 
 			info_msg("Das Kryptocenter wurde noch nicht gebaut!");
@@ -571,11 +571,11 @@
   else
   {
     // Titel
-    echo "<h1>Kryptocenter des Planeten ".$cp->name."</h1>";    
+    echo "<h1>Kryptocenter des Planeten ".$cp->name."</h1>";
     echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
 
     info_msg("Aufgrund eines intergalaktischen Moratoriums der Völkerföderation der Galaxie Andromeda 
     sind sämtliche elektronischen Spionagetätigkeiten zurzeit nicht erlaubt!");
   }
- 
+
 ?>
