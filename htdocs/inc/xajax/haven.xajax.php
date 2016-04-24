@@ -1930,7 +1930,7 @@
 							$duration = $fleet->distance / $fleet->getSpeed();	// Calculate duration
 							$duration *= 3600;	// Convert to seconds
 							$duration = ceil($duration);
-							$maxTime = $arr["landtime"] - time() - $fleet->timeLaunchLand - $fleet->duration1 - 120;
+							$maxTime = $arr["landtime"] - time() - $fleet->getTimeLaunchLand() - $fleet->duration1 - 120;
 						
 							if ($duration < $maxTime) {
 								$percentageSpeed =  ceil(100 * $duration / $maxTime);
