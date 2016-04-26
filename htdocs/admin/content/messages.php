@@ -701,7 +701,18 @@
 		}
 
 		elseif (isset($_GET['sub']) && $_GET['sub']=="edit")
-		{
+		{	
+			if (isset($_POST['msg_edit'])) {
+				 
+				isset($_POST['check'])?$check =1:$check =0;
+				dbquery("UPDATE 
+				 		   messages
+				         SET 
+				 		   message_deleted=".$check."
+				 		 WHERE 
+				 		   message_id=".$_GET['message_id']);
+			}
+
 			$res = dbquery("
 			SELECT 
 				* 
@@ -718,6 +729,7 @@
 				$uidt = get_user_nick($arr['message_user_to']);
 			else
 				$uidt = "<i>System</i>";
+			echo "<form action=\"?page=$page&sub=edit&message_id=".$_GET['message_id']."\" method=\"post\">";
 			echo "<table class=\"tbl\">";
 			echo "<tr><td class=\"tbltitle\" valign=\"top\">ID</td><td class=\"tbldata\">".$arr['message_id']."</td></tr>";
 			echo "<tr><td class=\"tbltitle\" valign=\"top\">Sender</td><td class=\"tbldata\">$uidf</td></tr>";
@@ -736,8 +748,10 @@
 			echo "<tr><td class=\"tbltitle\" valign=\"top\">Gel&ouml;scht?</td><td class=\"tbldata\">";
 			switch ($arr['message_deleted'])
 			{
-				case 1: echo "Ja"; break;case 0: echo "Nein";break;
+				case 1: $checked='checked'; break;case 0: $checked='';break;
 			}
+			echo '<input type="checkbox" name="check" '.$checked.'>';
+			echo " <input type=\"submit\" name=\"msg_edit\" value=\"Speichern\" />"; 
 			echo "</td></tr>";
 			echo "<tr><td class=\"tbltitle\" valign=\"top\">Rundmail?</td><td class=\"tbldata\">";
 			switch ($arr['message_massmail'])
@@ -748,6 +762,7 @@
 
 			echo "</table><br/><input type=\"button\" onclick=\"document.location='?page=$page&amp;action=searchresults'\" value=\"Zur&uuml;ck zu den Suchergebnissen\" /> &nbsp;
 			<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" />";
+			echo "</form>";
 		}
 
 		elseif (isset($_GET['sub']) && $_GET['sub']=="trash")

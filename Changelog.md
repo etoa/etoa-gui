@@ -13,6 +13,7 @@ Version 3.5.12
 ### Administration ###
  
  * adding from alli techs
+ * added function to restore messages (reports will follow later)
   
 Version 3.5.11
 -------------
