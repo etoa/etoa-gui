@@ -144,18 +144,18 @@
 		elseif (isset($_POST['techs']) && $_POST['techs']!="")
 		{
 			$test= dbquery("SELECT alliance_techlist_id FROM alliance_techlist WHERE alliance_techlist_alliance_id =".$id." 
-							AND alliance_techlist_tech_id =(select alliance_tech_id from alliance_technologies where alliance_tech_name='".$_POST['selected']."')");
+							AND alliance_techlist_tech_id =(select alliance_tech_id from alliance_technologies where alliance_tech_name='".$_POST['selected_tech']."')");
 			
 			if (mysql_num_rows($test)>0)
 			{	
-			dbquery("UPDATE alliance_techlist SET alliance_techlist_current_level =".$_POST['level'].", alliance_techlist_member_for =".$_POST['amount']." WHERE alliance_techlist_alliance_id =".$id." 
-					 AND alliance_techlist_tech_id =(select alliance_tech_id from alliance_technologies where alliance_tech_name='".$_POST['selected']."')");
+			dbquery("UPDATE alliance_techlist SET alliance_techlist_current_level =".$_POST['tech_level'].", alliance_techlist_member_for =".$_POST['tech_amount']." WHERE alliance_techlist_alliance_id =".$id."
+					 AND alliance_techlist_tech_id =(select alliance_tech_id from alliance_technologies where alliance_tech_name='".$_POST['selected_tech']."')");
 			$tpl->assign('msg','Datensatz erfolgreich bearbeitet!');
 			}
 			else
 			{	
 				dbquery("INSERT into alliance_techlist(alliance_techlist_alliance_id,alliance_techlist_tech_id,alliance_techlist_current_level,alliance_techlist_build_start_time,alliance_techlist_build_end_time,alliance_techlist_member_for)
-				VALUES(".$id.",(select alliance_tech_id from alliance_technologies where alliance_tech_name='".$_POST['selected']."'),".$_POST['level'].",0,1,".$_POST['amount'].")");
+				VALUES(".$id.",(select alliance_tech_id from alliance_technologies where alliance_tech_name='".$_POST['selected_tech']."'),".$_POST['tech_level'].",0,1,".$_POST['tech_amount'].")");
 				$tpl->assign('msg', 'Datensatz erfolgreich eingefügt!');
 			}		
 		}
@@ -616,7 +616,7 @@
 
             if (mysql_num_rows($techs)>0)
 			{   
-				echo'<select name="selected">';
+				echo'<select name="selected_tech">';
 				while ($arr = mysql_fetch_assoc($techs))
 				{
 					echo "<option>".$arr['alliance_tech_name']."</option>";
@@ -624,7 +624,7 @@
 				echo"</select>";
 			}
 
-			echo '</td><td><input type=number value=1 name="level"></td><td><input type=number value=1 name="amount"></td></tr>';
+			echo '</td><td><input type=number value=1 name="tech_level"></td><td><input type=number value=1 name="tech_amount"></td></tr>';
 
 			tableEnd();	
 
