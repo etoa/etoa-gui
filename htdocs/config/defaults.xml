@@ -679,7 +679,7 @@ http://etoa.ch</v>
       <v comment="Backup-Pfad (leerlassen für Standardpfad)" type="text"></v>
 	</item>
     <item name="backup_retention_time" cat="21" base="yes">
-      <v comment="Backup-Aufbewahrungsdauer (Tage)" type="text">14</v>
+      <v comment="Backup-Aufbewahrungsdauer (Tage)" type="text">7</v>
     </item>
     <item name="backup_use_gzip" cat="21" base="yes">
       <v comment="Backup mit GZIP komprimieren" type="onoff">0</v>
