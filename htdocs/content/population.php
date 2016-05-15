@@ -17,7 +17,7 @@
     //////////////////////////////////////////////////
     //
     //
-    
+
     /**
     * Shows information about the planetar population
     *
@@ -121,7 +121,7 @@
 
                 //add ppl from genlab
                 $working += nf_back($_POST['gen']);
-                
+
                 $available = min($free_people,$working);
 
                 foreach ($_POST['people_work'] as $id=>$num)
@@ -328,8 +328,8 @@
                             AND buildlist_entity_id='".$cp->id."'");
                     }
                     else
-                    {   
-                        
+                    {
+
                         echo '<input type="text" id="'.$sp_arr['building_id'].'" name="people_work['.$sp_arr['building_id'].']" value="'.$sp_arr['buildlist_people_working'].'" size="8" maxlength="20" onKeyUp="FormatNumber(this.id,this.value, '.$cp->people.', \'\', \'\');"/>';
 
                         //onKeyPress=\"return nurZahlen(event)\"
@@ -352,14 +352,14 @@
             }
 
             //Spezialfall Gentech
-            
+
             $requirements_passed = true;
             $rres = dbquery("
             SELECT 
                 * 
             FROM 
                 tech_requirements where obj_id=".GEN_TECH_ID);
-            
+
             $bl = new BuildList($cp->id(),$cu->id);
             $tl = new TechList($cu->id);
 
@@ -380,8 +380,8 @@
 
 
             if ($requirements_passed) {
-                echo'<tr><td>Genlabor</td>';    
- 
+                echo'<tr><td>Genlabor</td>';
+
                 $rres = dbquery("
                 SELECT 
                     buildlist_gen_people_working 
@@ -393,7 +393,7 @@
                     AND buildlist.buildlist_building_id =".TECH_BUILDING_ID);
 
                 $gen_workers = mysql_result($rres,0);
-                               
+
                 $rres = dbquery("
                 SELECT 
                     * 
@@ -408,7 +408,7 @@
                     echo '<td>'.$gen_workers.'</td>';
                 }
                 else
-                {    
+                {
                     echo '<td><input type="text" id="gen" name="gen" value="'.$gen_workers.'" size="8" maxlength="20" onKeyUp="FormatNumber(this.id,this.value, '.$cp->people.', \'\', \'\');"/></td>';
                 }
                 echo '</td><td>'.nf($gen_workers*$cfg->get('people_food_require')).' t</td></tr>';
