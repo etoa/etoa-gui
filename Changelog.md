@@ -10,6 +10,8 @@ Version 3.5.12
  * fixed start/landtime from vorgonia mysli when joining alli atk
  * fixed wrong display of min buildtime in shipyard
  * fixed missle distance
+ * fixed gen tech worker cannot be picked up anymore
+ * fixed spy attack has no effect on stats/elo anymore
 
 ### Administration ###
  
