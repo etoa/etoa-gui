@@ -52,30 +52,18 @@
     $bl = new Buildlist($cp->id,$cu->id);
     $tl = new Techlist($cu->id);
 
+	$shipyard = $bl->item(SHIP_BUILDING_ID);
+
+
 	// BEGIN SKRIPT //
 
 	//Tabulator var setzten (für das fortbewegen des cursors im forumular)
 	$tabulator = 1;
 
-	// Schiffswerft Level und Arbeiter laden
-  $werft_res = dbquery("
-  SELECT
-  	buildlist_current_level,
-  	buildlist_people_working,
-  	buildlist_deactivated
-  FROM
-  	buildlist
-  WHERE
-  	buildlist_entity_id='".$cp->id."'
-  	AND buildlist_building_id='".SHIPYARD_ID."'
-  	AND buildlist_current_level>='1'
-  	AND buildlist_user_id='".$cu->id."'");
-
-  // Prüfen ob Werft gebaut ist
-    if (mysql_num_rows($werft_res)>0)
+  	// Prüfen ob Werft gebaut ist
+    if ($shipyard && $shipyard->level)
     {
-    	$werft_arr = mysql_fetch_assoc($werft_res);
-        define('CURRENT_SHIPYARD_LEVEL',$werft_arr['buildlist_current_level']);
+        define('CURRENT_SHIPYARD_LEVEL', $shipyard->level);
 
 		// Titel
 		echo "<h1>Raumschiffswerft (Stufe ".CURRENT_SHIPYARD_LEVEL.") des Planeten ".$cp->name."</h1>";
@@ -84,10 +72,10 @@
 		echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
 
 		// Prüfen ob dieses Gebäude deaktiviert wurde
-		if ($werft_arr['buildlist_deactivated']>time())
+		if ($shipyard->deactivated > time())
 		{
 			iBoxStart("Geb&auml;ude nicht bereit");
-			echo "Diese Schiffswerft ist bis ".date("d.m.Y H:i",$werft_arr['buildlist_deactivated'])." deaktiviert.";
+			echo "Diese Schiffswerft ist bis ".date("d.m.Y H:i", $shipyard->deactivated)." deaktiviert.";
 			iBoxEnd();
 		}
 		// Werft anzeigen
@@ -130,23 +118,8 @@
 				}
 			}
 
-
 			//Gentechlevel definieren
 			$gen_tech_level = $tl->getLevel(GEN_TECH_ID);
-			
-			//Gebäude laden
-			$res = dbquery("
-			SELECT 
-				buildlist_building_id,
-				buildlist_current_level 
-			FROM 
-				buildlist 
-			WHERE 
-				buildlist_entity_id='".$cp->id."';");
-			while ($arr = mysql_fetch_assoc($res))
-			{
-				$buildlist[$arr['buildlist_building_id']]=$arr['buildlist_current_level'];
-			}
 
 			// Gebaute Schiffe laden
 			$res = dbquery("
@@ -282,7 +255,7 @@
     	{
     		$time_boni_factor=1-($need_bonus_level*($conf['build_time_boni_schiffswerft']['v']/100));
     	}
-    	$people_working = $werft_arr['buildlist_people_working'];
+    	$people_working = $bl->getPeopleWorking(SHIP_BUILDING_ID);
 
     	// Faktor der zurückerstatteten Ressourcen bei einem Abbruch des Auftrags berechnen
     	if (CURRENT_SHIPYARD_LEVEL>=SHIPQUEUE_CANCEL_MIN_LEVEL)
@@ -968,7 +941,7 @@
 							{
 								foreach ($req[$data['ship_id']]['b'] as $id=>$level)
 								{
-									if (!isset($buildlist[$id]) || $buildlist[$id]<$level)
+									if ($bl->getLevel($id) < $level)
 									{
 										$build_ship = 0;
 									}
@@ -979,7 +952,7 @@
 							{
 								foreach ($req[$data['ship_id']]['t'] as $id=>$level)
 								{
-									if (!isset($techlist[$id]) || $techlist[$id]<$level)
+									if ($tl->getLevel($id) < $level)
 									{
 										$build_ship = 0;
 									}
