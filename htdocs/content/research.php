@@ -17,13 +17,13 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 	/**
 	* Manages technology research
 	*
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/	
+	*/
 
    // DEFINITIONEN //
 
@@ -35,8 +35,8 @@ if ($cu->properties->cssStyle=="Classic" || $cu->properties->cssStyle=="Dark") {
   define('NUM_BUILDINGS_PER_ROW',5);
   define('CELL_WIDTH',120);
   define('TABLE_WIDTH','auto');
-}	
-  
+}
+
 // Aktiviert / Deaktiviert Bildfilter
 if ($cu->properties->imageFilter ==1) {
 	$use_img_filter = true;
@@ -54,12 +54,12 @@ if (isset($cp)) {
 		$tl = new TechList($cu->id);
 		define("GEN_TECH_LEVEL",$tl->getLevel(GEN_TECH_ID));
 		$minBuildTimeFactor = (0.1-(GEN_TECH_LEVEL/100));
-      
+
 
 		// Überschrift
 		echo "<h1>Forschungslabor (Stufe ".CURRENT_LAB_LEVEL.") des Planeten ".$cp->name."</h1>";
 		echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
-		
+
 		// Forschungsliste laden && Gentech level definieren
 		$tres = dbquery("
 		SELECT 
@@ -75,12 +75,12 @@ if (isset($cp)) {
             // Check, ob schon eine Technik geforscht wird
             // BUGFIX: this is tech, NO check for same planet,
             // because only one tech at the same time per user
-			
+
 			if ($tarr['techlist_build_type']>2) {
 				if ($tarr['techlist_tech_id']==23)
 				{
          			$building_gen = true;
-             
+
 				}
 				else
 				{
@@ -88,14 +88,14 @@ if (isset($cp)) {
 				}
 			}
 		}
-    
+
 		$new_people_set = false;
 		// people working changed
         if (isset($_POST['submit_people_form_gen']))
 		{
 
 			$set_people = nf_back($_POST['peopleWorking']);
-			if (!$builing_gen && $bl->setPeopleWorkingGen(TECH_BUILDING_ID, $set_people,true))
+			if (!$builing_gen && $bl->setPeopleWorking(PEOPLE_BUILDING_ID, $set_people, true))
 			{
 				success_msg("Arbeiter zugeteilt!");
 				$new_people_set = true;
@@ -104,10 +104,10 @@ if (isset($cp)) {
 			{
 				error_msg('Arbeiter konnten nicht zugeteilt werden!');
 			}
-		}	
+		}
 
 		if (isset($_POST['submit_people_form']))
-		{	
+		{
 			$set_people = nf_back($_POST['peopleWorking']);
 			if (!$builing_something && $bl->setPeopleWorking(TECH_BUILDING_ID, $set_people,true))
 			{
@@ -119,7 +119,7 @@ if (isset($cp)) {
 				error_msg('Arbeiter konnten nicht zugeteilt werden!');
 			}
 		}
-		
+
 		// reload buildlist and techlist in case the number of workers has changed.
         // re-define constants dependent on these objects
 		$bl = new BuildList($cp->id(),$cu->id);
@@ -131,8 +131,8 @@ if (isset($cp)) {
 
 		// People working in the tech building.
      	$peopleWorking = $bl->getPeopleWorking(TECH_BUILDING_ID);
-  	    $peopleWorkingGen = $bl->getPeopleWorkingGen(TECH_BUILDING_ID);
-    
+  	    $peopleWorkingGen = $bl->getPeopleWorking(PEOPLE_BUILDING_ID);
+
 		$peopleTimeReduction = $cfg->value('people_work_done');
 		$peopleFoodConsumption = $cfg->value('people_food_require');
 
@@ -147,7 +147,7 @@ if (isset($cp)) {
 		//
 		// Läd alle benötgten Daten in Arrays
 		//
-	
+
 		// Load built buildings
 		$blres = dbquery("
 			SELECT 
@@ -160,7 +160,7 @@ if (isset($cp)) {
 		while ($blarr = mysql_fetch_array($blres)) {
 			$buildlist[$blarr['buildlist_building_id']]=$blarr['buildlist_current_level'];
 		}
-			
+
 		// Load requirements
 		$rres = dbquery("
 			SELECT 
@@ -168,19 +168,18 @@ if (isset($cp)) {
 			FROM 
 				tech_requirements;");
 		while ($rarr = mysql_fetch_array($rres)) {
-			if ($rarr['req_building_id']>0) 
+			if ($rarr['req_building_id']>0)
 				$b_req[$rarr['obj_id']]['b'][$rarr['req_building_id']]=$rarr['req_level'];
-			if ($rarr['req_tech_id']>0) 
+			if ($rarr['req_tech_id']>0)
 				$b_req[$rarr['obj_id']]['t'][$rarr['req_tech_id']]=$rarr['req_level'];
 		}
 
 		$bid = 0;
-		
 
 		if ((isset($_GET['id']) && intval($_GET['id']) >0) || (count($_POST)>0	&& checker_verify())) {
 			if (isset($_GET['id']) && intval($_GET['id']) >0) {
 				$bid = intval($_GET['id']);
-			} else {				
+			} else {
 				foreach ($_POST as $k => $v) {
 					if(stristr($k,'_x')) {
 						$bid = intval(preg_replace('/show_([0-9]+)_x/', '\1', $k));
@@ -192,7 +191,7 @@ if (isset($cp)) {
 				}
 				if ($bid==0 && isset($_POST['id'])) {
 					$bid = intval($_POST['id']);
-				}			
+				}
 			}
 		}
 
@@ -242,15 +241,15 @@ if (isset($cp)) {
 
 				$bonus = $cu->race->researchTime + $cp->typeResearchtime + $cp->starResearchtime - 2;
 				$bonus *= $cu->specialist->researchTime;
-				
+
 				$bc['time'] = (array_sum($bc)) / GLOBAL_TIME * RES_BUILD_TIME * $time_boni_factor;
 				$bc['time'] *= $bonus;
 				$maxReduction = $bc['time'] - $bc['time'] * $minBuildTimeFactor;
-				
+
 				$peopleOptimized = ceil($maxReduction / $cfg->value('people_work_done'));
 			}
 		}
-		
+
 
 			// create box to change people working
 			$box =	'
@@ -261,10 +260,10 @@ if (isset($cp)) {
 			if ($cu->properties->itemShow=='full' && isset($bid) && $bid>0) {
 				$box .= '<input type="hidden" name="peopleOptimized" id="peopleOptimized" value="' . $peopleOptimized . '" />';
 			} else {
-				$box .= '<input type="hidden" name="peopleOptimized" id="peopleOptimized" value="0" />';	
+				$box .= '<input type="hidden" name="peopleOptimized" id="peopleOptimized" value="0" />';
 			}
-					
-			if ($bid ==23) 
+
+			if ($bid ==23)
             {
 				$form_button = 'submit_people_form_gen';
 				$people= $peopleWorkingGen;
@@ -272,8 +271,8 @@ if (isset($cp)) {
             else
             {
                 $form_button = 'submit_people_form';
-                $people= $peopleWorking;            
-            }    
+                $people= $peopleWorking;
+            }
 
 			$box .= '	<tr>
 								<th>Eingestellte Arbeiter</th>
@@ -311,17 +310,17 @@ if (isset($cp)) {
 			}
 			$box .= '
 						</td>
-					</tr>';	
+					</tr>';
 
 	        tableStart("Allgemeine-Infos");
-			
+
             echo '<colgroup><col style="width:400px;"/><col/></colgroup>';
 			// Specialist
 			if ($cu->specialist->costsResearch!=1)
 			{
 				echo "<tr><td>Kostenreduktion durch ".$cu->specialist->name.":</td><td>".get_percent_string($cu->specialist->costsResearch)."</td></tr>";
 			}
-			if ($cu->specialist->researchTime!=1) 
+			if ($cu->specialist->researchTime!=1)
 			{
 				echo "<tr><td>Forschungszeitverringerung durch ".$cu->specialist->name.":</td><td>".get_percent_string($cu->specialist->researchTime)."</td></tr>";
 			}
@@ -350,9 +349,9 @@ if (isset($cp)) {
             echo '<colgroup><col span="3" style="width:400px;"/><col/></colgroup>';
 
 			// Worker
-            echo"<tr><td><th>Normal</th></td><th>Gentech</th></tr>";      
+            echo"<tr><td><th>Normal</th></td><th>Gentech</th></tr>";
             echo"<tr><td>Eingestellte Arbeiter:</td><td>". nf($peopleWorking);
-              
+
             if(($building_something <>1)&&($bid>0)&&($bid<>23))
     		{
     		    echo '&nbsp;<a id ="link" href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
@@ -370,9 +369,9 @@ if (isset($cp)) {
 				echo "<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td>".tf($peopleTimeReduction*$peopleWorking)."</td><td>".tf($peopleTimeReduction*$peopleWorkingGen)."</td></tr>";
 				echo "<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td>".nf($peopleFoodConsumption*$peopleWorking)."</td><td>".nf($peopleFoodConsumption*$peopleWorkingGen)."</td></tr>";
 			}
-			
-		    tableEnd();	
-	    	
+
+		    tableEnd();
+
 			echo '<div id="changePeople" style="display:none;">';
 			tableStart("Arbeiter im Forschungslabor zuteilen");
 			echo '<form id="changeWorkingPeople" action="?page='.$page.'&amp;id='.$bid.'" method="post">
@@ -387,12 +386,12 @@ if (isset($cp)) {
 			{
 				$arr = $currentTechData;
 				if ($arr)
-				{	
+				{
 					// Prüft, ob Technik schon erforscht wurde und setzt Variablen
 					if(isset($techlist[$arr['tech_id']]))
 					{
 						$built = true;
-						
+
 						$b_level = $techlist[$arr['tech_id']]['techlist_current_level'];
 						$b_status = $techlist[$arr['tech_id']]['techlist_build_type'];
 						$start_time = $techlist[$arr['tech_id']]['techlist_build_start_time'];
@@ -403,35 +402,35 @@ if (isset($cp)) {
 					else
 					{
 						$built = false;
-						
+
 						$b_level = 0;
 						$b_status=0;
 						$start_time = 0;
 						$end_time = 0;
 						$planet_id = 0;
 					}
-					
-	
+
+
 					$bc = calcTechCosts($arr,$b_level,$cu->specialist->costsResearch);
-	
+
 					$bcn['metal'] = $cu->specialist->costsResearch * $arr['tech_costs_metal'] * pow($arr['tech_build_costs_factor'],$b_level+1);
 					$bcn['crystal'] = $cu->specialist->costsResearch * $arr['tech_costs_crystal'] * pow($arr['tech_build_costs_factor'],$b_level+1);
 					$bcn['plastic'] = $cu->specialist->costsResearch * $arr['tech_costs_plastic'] * pow($arr['tech_build_costs_factor'],$b_level+1);
 					$bcn['fuel'] = $cu->specialist->costsResearch * $arr['tech_costs_fuel'] * pow($arr['tech_build_costs_factor'],$b_level+1);
 					$bcn['food'] = $cu->specialist->costsResearch * $arr['tech_costs_food'] * pow($arr['tech_build_costs_factor'],$b_level+1);
-	
-	
+
+
 					// Bauzeit
 					$bonus = $cu->race->researchTime + $cp->typeResearchtime + $cp->starResearchtime - 2;
-	
+
 					$btime = ($bc['metal']+$bc['crystal']+$bc['plastic']+$bc['fuel']+$bc['food']) / GLOBAL_TIME * RES_BUILD_TIME * $time_boni_factor;
 					$btime *= $bonus * $cu->specialist->researchTime;
-	
+
 					//Nächste Stufe
 					$btimen = ($bcn['metal']+$bcn['crystal']+$bcn['plastic']+$bcn['fuel']+$bcn['food']) / GLOBAL_TIME * RES_BUILD_TIME * $time_boni_factor;
 					$btimen  *= $bonus * $cu->specialist->researchTime;
-	
-	
+
+
 					// Berechnet mindest Bauzeit in beachtung von Gentechlevel
 					$btime_min=$btime*$minBuildTimeFactor;
 					if ($bid != GEN_TECH_ID) {
@@ -448,16 +447,16 @@ if (isset($cp)) {
 						}
 						$bc['food'] += $peopleWorkingGen * $peopleFoodConsumption;
 					}
-						
+
 					//
 					// Befehle ausführen
 					//
-	
+
 					if (isset($_POST['command_build']) && $b_status==0)
 					{
 						if (!$builing_something)
 						{
-	
+
 							if ($cp->resMetal >= $bc['metal'] && $cp->resCrystal >= $bc['crystal'] && $cp->resPlastic >= $bc['plastic']  && $cp->resFuel >= $bc['fuel']  && $cp->resFood >= $bc['food'])
 							{
 								$start_time = time();
@@ -502,11 +501,11 @@ if (isset($cp)) {
 
 								}
 								$planet_id=$cp->id();
-								
+
 								//Rohstoffe vom Planeten abziehen und aktualisieren
 								$cp->changeRes(-$bc['metal'],-$bc['crystal'],-$bc['plastic'],-$bc['fuel'],-$bc['food']);
 								$b_status=3;
-								
+
 								//Log schreiben
 								$log_text = "[b]Forschung Ausbau[/b]
 
@@ -530,9 +529,9 @@ if (isset($cp)) {
 								[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
 								[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
 								[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
-                                
+
                                 echo '<script>toggleBox(\'link\'); </script>';
-							
+
                                 //Log Speichern
 								GameLog::add(GameLog::F_TECH, GameLog::INFO, $log_text, $cu->id,$cu->allianceId,$cp->id,$arr['tech_id'], $b_status, $b_level);
 							}
@@ -546,8 +545,8 @@ if (isset($cp)) {
 							echo "<i>Forschung kann nicht gestartet werden, es wird bereits an einer Technologie geforscht!</i><br/><br/>";
 						}
 					}
-	
-	
+
+
 					if (isset($_POST['command_cbuild']) && $b_status==3)
 					{
 						if (isset($techlist[$arr['tech_id']]['techlist_build_end_time']) && $techlist[$arr['tech_id']]['techlist_build_end_time'] > time())
@@ -563,12 +562,12 @@ if (isset($cp)) {
 							WHERE 
 								techlist_tech_id='".$arr['tech_id']."'
 								AND techlist_user_id='".$cu->id."';");
-	
+
 							//Rohstoffe zurückgeben und aktualisieren
 							$cp->changeRes($bc['metal']*$fac,$bc['crystal']*$fac,$bc['plastic']*$fac,$bc['fuel']*$fac,$bc['food']*$fac);
 							$b_status=0;
 							$builing_something=false;
-							
+
 							//Log schreiben
 							$log_text = "[b]Forschung Abbruch[/b]
 
@@ -589,9 +588,9 @@ if (isset($cp)) {
 							[b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
 							[b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
 							[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
-							
+
                             header("Refresh:0; url=?page=research&id=".$bid);
-                            
+
 							//Log Speichern
 							GameLog::add(GameLog::F_TECH, GameLog::INFO, $log_text, $cu->id,$cu->allianceId,$cp->id,$arr['tech_id'], $b_status, $b_level);
 
@@ -601,7 +600,7 @@ if (isset($cp)) {
 							echo "<i>Bauauftrag kann nicht mehr abgebrochen werden, die Arbeit ist bereits fertiggestellt!</i><br/><br/>";
 						}
 					}
-	
+
 					if ($b_status==3)
 					{
 						$color="color:#0f0;";
@@ -612,7 +611,7 @@ if (isset($cp)) {
 						$color="";
 						$status_text="Unt&auml;tig";
 					}
-	
+
 					//
 					// Forschungsdaten anzeigen
 					//
@@ -624,7 +623,7 @@ if (isset($cp)) {
 					echo "<tr><th height=\"20\" width=\"50%\">Status:</th>";
 					echo "<td id=\"buildstatus\" width=\"50%\" style=\"".$color."\">$status_text</td></tr>";
 					echo "<tr><th height=\"20\" width=\"50%\">Stufe:</th>";
-	       
+
 					if ($b_level>0)
 					{
 						echo "<td id=\"buildlevel\" width=\"50%\">".$b_level."</td></tr>";
@@ -634,8 +633,8 @@ if (isset($cp)) {
 						echo "<td id=\"buildlevel\" width=\"50%\">Noch nicht erforscht</td></tr>";
 					}
 					tableEnd();
-	
-	
+
+
 					// Check requirements for this building
 					$requirements_passed = true;
 					$bid = $arr['tech_id'];
@@ -659,15 +658,15 @@ if (isset($cp)) {
 							}
 						}
 					}
-	
+
 					//
 					// Baumenü
 					//
 					echo "<form action=\"?page=$page\" method=\"post\">";
 	                echo "<input type=\"hidden\" name=\"id\" value=\"".$arr['tech_id']."\">";
 	                echo $checker;
-	                
-	                
+
+
 					if ($requirements_passed)
 					{
 					tableStart("Forschoptionen");
@@ -679,9 +678,9 @@ if (isset($cp)) {
 					<th width=\"14%\">".RES_PLASTIC."</th>
 					<th width=\"14%\">".RES_FUEL."</th>
 					<th width=\"14%\">".RES_FOOD."</th></tr>";
-	
+
 					$notAvStyle=" style=\"color:red;\"";
-	
+
 					// Bauen
 					if ($b_status==0)
 					{
@@ -692,7 +691,7 @@ if (isset($cp)) {
 						if ($cp->prodFuel>0) $bwait['fuel']=ceil(($bc['fuel']-$cp->resFuel)/$cp->prodFuel*3600);else $bwait['fuel']=0;
 						if ($cp->prodFood>0) $bwait['food']=ceil(($bc['food']-$cp->resFood)/$cp->prodFood*3600);else $bwait['food']=0;
 						$bwmax=max($bwait['metal'],$bwait['crystal'],$bwait['plastic'],$bwait['fuel'],$bwait['food']);
-						
+
 						// Baukosten-String
 						$bcstring = "<td";
 						if ($bc['metal']>$cp->resMetal)
@@ -722,12 +721,12 @@ if (isset($cp)) {
 						{
 							//Sonderfeld Gentech
 							if ($arr['tech_id'] == GEN_TECH_ID)
-							{ 
+							{
 								if (!$building_gen)
-                { 
+                {
 	                echo "<tr><td><input type=\"submit\" class=\"button\" name=\"command_build\" value=\"Erforschen\"></td><td>".tf($btime)."</td>";
 								  echo "<td>".nf($bc['metal'])."</td><td>".nf($bc['crystal'])."</td><td>".nf($bc['plastic'])."</td><td>".nf($bc['fuel'])."</td><td>".nf($bc['food'])."</td></tr>";
-							  }	
+							  }
 								else
 								{
 									echo "<tr><td style=\"color:red;\">Erforschen</td><td>".tf($btime)."</td>";
@@ -740,7 +739,7 @@ if (isset($cp)) {
 						  	echo "<tr><td style=\"color:red;\">Erforschen</td><td>".tf($btime)."</td>";
 								echo $bcstring;
 								echo "<tr><td colspan=\"7\"><i>Es kann nichts erforscht werden da gerade an einer anderen Technik geforscht wird!</i></td></tr>";
-						  }	
+						  }
 						}
 						// Zuwenig Rohstoffe vorhanden
 						elseif ($cp->resMetal<$bc['metal'] || $cp->resCrystal<$bc['crystal']  || $cp->resPlastic<$bc['plastic']  || $cp->resFuel<$bc['fuel']  || $cp->resFood<$bc['food'])
@@ -762,8 +761,8 @@ if (isset($cp)) {
 							echo "<td>".nf($bc['metal'])."</td><td>".nf($bc['crystal'])."</td><td>".nf($bc['plastic'])."</td><td>".nf($bc['fuel'])."</td><td>".nf($bc['food'])."</td></tr>";
 						}
 					}
-	
-	
+
+
 					// Bau abbrechen
 					if ($b_status==3)
 					{
@@ -779,18 +778,18 @@ if (isset($cp)) {
 						}
 						else
 						{
-							echo "<tr><td colspan=\"7\">Technologie wird auf einem anderen Planeten bereits erforscht!</td></tr>";					
+							echo "<tr><td colspan=\"7\">Technologie wird auf einem anderen Planeten bereits erforscht!</td></tr>";
 						}
 					}
-	
-	
+
+
 					tableEnd();
-	
+
 					if (isset($bwmax) && $bwmax>0)
 						echo "Wartezeit bis gen&uuml;gend Rohstoffe zum Forschen vorhanden sind: <b>".tf($bwmax)."</b><br/><br/>";
-	
-	
-	
+
+
+
 						/*if ($b_status==3 || $b_status==4)
 						{
 							?>
@@ -804,7 +803,7 @@ if (isset($cp)) {
 										tc = cTime + cnt;
 										window.status = tc;
 										ts = te - tc;
-	
+
 										if(b_level>0)
 										{
 											b_level=b_level+1;
@@ -813,7 +812,7 @@ if (isset($cp)) {
 										{
 											b_level=1;
 										}
-	
+
 										if (ts>=0)
 										{
 											t = Math.floor(ts / 3600 / 24);
@@ -847,7 +846,7 @@ if (isset($cp)) {
 					{
 						echo "<a href=\"?page=techtree\">Voraussetzungen</a> noch nicht erfüllt!<br/><br/>";
 					}
-	
+
 					echo "<input type=\"submit\" name=\"command_show\" value=\"Aktualisieren\" /> &nbsp; ";
 					echo "<input type=\"button\" value=\"Zur&uuml;ck zur &Uuml;bersicht\" onclick=\"document.location='?page=$page'\" />";
 					echo "</form>";
@@ -858,14 +857,14 @@ if (isset($cp)) {
 					return_btn();
 				}
 			}
-	
+
 			//
 			// Übersicht anziegen
 			//
 			else
-			{			
-				
-				
+			{
+
+
 				// Load categories
 				$tres = dbquery("
 				SELECT
@@ -874,10 +873,10 @@ if (isset($cp)) {
 	        tech_types
 				ORDER BY
 					type_order ASC
-				;");				
+				;");
 				if (mysql_num_rows($tres)>0)
-				{			
-	
+				{
+
 					// Load technologies
 					$bres = dbquery("
 					SELECT
@@ -900,9 +899,9 @@ if (isset($cp)) {
 					ORDER BY
 						tech_order,
 						tech_name
-					;");	
+					;");
 					$tech = array();
-					if (mysql_num_rows($bres)>0)			
+					if (mysql_num_rows($bres)>0)
 					{
 						while ($barr = mysql_fetch_Array($bres))
 						{
@@ -920,7 +919,7 @@ if (isset($cp)) {
 							$tech[$tid][$bid]['show'] = $barr['tech_show'];
 						}
 					}
-				
+
 					$cstr=$checker;
 					echo "<form action=\"?page=$page\" method=\"post\"><div>";
 					echo $cstr;
@@ -929,15 +928,15 @@ if (isset($cp)) {
 						tableStart($tarr['type_name'],TABLE_WIDTH);
 						$cnt = 0; // Counter for current row
 						$scnt = 0; // Counter for shown techs
-	
+
 						// Check if techs are avalaiable in this category
 						$bdata = $tech[$tarr['type_id']];
 						if (isset($bdata) && count($bdata)>0)
 						{
 							// Run through all techs in this cat
 							foreach ($bdata as $bid => $bv)
-							{						
-								
+							{
+
 								// Aktuellen Level feststellen wenn Tech vorhanden
 								if(isset($techlist[$bid]))
 								{
@@ -950,11 +949,11 @@ if (isset($cp)) {
 									$b_level = 0;
 									$end_time = 0;
 								}
-								
+
 								// Check requirements for this tech
 								$requirements_passed = true;
 								$b_req_info = array();
-								$t_req_info = array();								
+								$t_req_info = array();
 								if (isset($b_req[$bid]['t']) && count($b_req[$bid]['t'])>0)
 								{
 									foreach ($b_req[$bid]['t'] as $b=>$l)
@@ -981,7 +980,7 @@ if (isset($cp)) {
 											$b_req_info[] = array($id,$level,true);
 	              	}
 	              }
-	
+
 								if ($bv['show']==0 && $b_level>0)
 								{
 									$subtitle =  'Kann nicht erforscht werden';
@@ -994,7 +993,7 @@ if (isset($cp)) {
 									else
 									{
 										$img="".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."";
-									}		
+									}
 								}
 								elseif ($bv['show']==1)
 								{
@@ -1003,7 +1002,7 @@ if (isset($cp)) {
 									{
 										$subtitle =  'Voraussetzungen fehlen';
 										$tmtext = '<span style="color:#999">Baue zuerst die nötigen Gebäude und erforsche die nötigen Technologien um diese Technologie zu erforschen!</span><br/>';
-										
+
 										foreach ($b_req_info as $v)
 										{
 											$b = new Building($v[0]);
@@ -1016,8 +1015,8 @@ if (isset($cp)) {
 											$tmtext .= "<div style=\"color:".($v[2]?'#0f0':'#f30')."\">".$b." Stufe ".$v[1]."</div>";
 											unset($b);
 										}
-																			
-										
+
+
 										$color = '#999';
 										if($use_img_filter)
 										{
@@ -1026,7 +1025,7 @@ if (isset($cp)) {
 										else
 										{
 											$img="".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."";
-										}							
+										}
 									}
 									// Ist im Bau
 									elseif (isset($techlist[$bid]['techlist_build_type']) && $techlist[$bid]['techlist_build_type']==3)
@@ -1052,7 +1051,7 @@ if (isset($cp)) {
 	              	  $bc['plastic'] = $bv['tech_costs_plastic'] * $cu->specialist->costsResearch * pow($bv['tech_build_costs_factor'],$b_level);
 	              	  $bc['fuel'] = $bv['tech_costs_fuel'] * $cu->specialist->costsResearch * pow($bv['tech_build_costs_factor'],$b_level);
 	              	  $bc['food'] = $bv['tech_costs_food'] * $cu->specialist->costsResearch * pow($bv['tech_build_costs_factor'],$b_level);
-										
+
 										// Zuwenig Ressourcen
 										if($b_level<$bv['last_level'] && ($cp->resMetal < $bc['metal'] || $cp->resCrystal < $bc['crystal']  || $cp->resPlastic < $bc['plastic']  || $cp->resFuel < $bc['fuel']  || $cp->resFood < $bc['food']))
 										{
@@ -1073,7 +1072,7 @@ if (isset($cp)) {
 											$color = '#fff';
 											$img="".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."";
 										}
-										
+
 										if ($b_level==0)
 										{
 											$subtitle = "Noch nicht erforscht";
@@ -1089,21 +1088,21 @@ if (isset($cp)) {
 									}
 	              }
 
-	              
+
 								// Display all buildings that are buildable or are already built
 								if (($bv['show']==1) || $b_level>0)
-								{			
+								{
 									$img="".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid."_middle.".IMAGE_EXT."";
-	
+
 									if (!$requirements_passed)
 										$img = "misc/imagefilter.php?file=$img&filter=req";
-	
-									// Display row starter if needed				
-									if ($cnt==0) 
+
+									// Display row starter if needed
+									if ($cnt==0)
 									{
 										echo "<tr>";
 									}
-									
+
 									if ($cu->properties->cssStyle=="Classic" || $cu->properties->cssStyle=="Dark")
 									{
 										echo "<td style=\"color:".$color.";text-align:center;width:".CELL_WIDTH."\">
@@ -1119,7 +1118,7 @@ if (isset($cp)) {
 											<div style=\"position:relative;height:".CELL_WIDTH."px;overflow:hidden\">
 											<div class=\"buildOverviewObjectTitle\">".$bv['name']."</div>";
 										echo "<a href=\"?page=$page&amp;id=".$bid."\" ".tm($bv['name'],"<b>".$subtitle."</b><br/>".$tmtext.$bv['shortcomment'])." style=\"display:block;height:180px;\"></a>";
-										if ($b_level>0 || ($b_level==0 && isset($techlist[$bid]['techlist_build_type']) && $techlist[$bid]['techlist_build_type']==3)) 
+										if ($b_level>0 || ($b_level==0 && isset($techlist[$bid]['techlist_build_type']) && $techlist[$bid]['techlist_build_type']==3))
 										{
 											echo "<div class=\"buildOverviewObjectLevel\" style=\"color:".$color."\">".$b_level."</div>";
 										}
@@ -1134,19 +1133,19 @@ if (isset($cp)) {
 													<input name=\"show_".$bid."\" type=\"image\" value=\"".$bid."\" src=\"".$img."\" ".tm($bv['name'],$tmtext.$bv['shortcomment'])." style=\"width:120px;height:120px;\" />
 									</td>\n";
 									*/
-									
+
 									$cnt++;
 									$scnt++;
 								}
-									
-								// Display row finisher if needed			
+
+								// Display row finisher if needed
 								if ($cnt==NUM_BUILDINGS_PER_ROW)
 								{
 									echo "</tr>";
 									$cnt = 0;
-								}	
+								}
 							}
-	
+
 							// Fill up missing cols and end row
 							if ($cnt<NUM_BUILDINGS_PER_ROW && $cnt>0)
 							{
@@ -1155,18 +1154,18 @@ if (isset($cp)) {
 									echo "<td class=\"buildOverviewObjectNone\" style=\"width:".CELL_WIDTH."px;padding:0px;\">&nbsp;</td>";
 								}
 								echo '</tr>';
-							}							
-							
+							}
+
 							// Display message if no tech can be researched
 							if ($scnt==0)
-							{								
+							{
 								echo "<tr>
 												<td class=\"tbldata\" colspan=\"".NUM_BUILDINGS_PER_ROW."\" style=\"text-align:center;border:0;width:100%\">
 													<i>In dieser Kategorie kann momentan noch nichts geforscht werden!</i>
 												</td>
-											</tr>";								
-							}	
-	
+											</tr>";
+							}
+
 						}
 						else
 						{
@@ -1174,14 +1173,14 @@ if (isset($cp)) {
 						}
 						tableEnd();
 					}
-					echo '</div></form>';				
+					echo '</div></form>';
 				}
 				else
 				{
 					echo "<i>Es k&ouml;nnen noch keine Forschungen erforscht werden!</i>";
 				}
 			}
-			
+
 		}
 		else
 		{
