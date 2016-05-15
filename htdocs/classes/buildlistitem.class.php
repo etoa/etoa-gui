@@ -13,7 +13,6 @@
 		private $endTime = 0;
 		private $prodPercent = 1;
 		private $peopleWorking = 0;
-		private $peopleWorkingGen =0;
 		private $peopleWorkingStatus = 0;
 		private $deactivated = 0;
 		private $cooldown = 0;
@@ -63,7 +62,6 @@
 				$this->endTime = $arr['buildlist_build_end_time'];
 				$this->prodPercent = $arr['buildlist_prod_percent'];
 				$this->peopleWorking = $arr['buildlist_people_working'];
-				$this->peopleWorkingGen= $arr['buildlist_gen_people_working'];
 				$this->peopleWorkingStatus = $arr['buildlist_people_working_status'];
 				$this->deactivated = $arr['buildlist_deactivated'];
 				$this->cooldown = $arr['buildlist_cooldown'];
@@ -195,9 +193,9 @@
 			$this->demolishCosts = array();
 		}
 
-		public function setPeopleWorking($people)
+		public function setPeopleWorking($people, $force = false)
 		{
-			if ($this->buildType==0)
+			if ($this->buildType==0 || $force)
 			{
 				$this->peopleWorking = $people;
 				dbquery("UPDATE buildlist SET buildlist_people_working='".$people."' WHERE buildlist_id='".$this->id."' LIMIT 1;");
@@ -231,17 +229,17 @@
 				{
 					$bc['costs'.$rk] = $cu->specialist->costsBuilding * $this->building->costs[$rk] * pow($this->building->costsFactor,$this->level+$levelUp);
 				}
-                
+
 				$bonus = $cu->race->buildTime + $cp->typeBuildtime + $cp->starBuildtime + $cu->specialist->buildTime - 3;
-        
+
 				$bc['time'] = (array_sum($bc)) / GLOBAL_TIME * BUILD_BUILD_TIME;
 				$bc['time'] *= $bonus;
-        
+
 				// Boost
-				if ($cfg->value('boost_system_enable') == 1) {		
+				if ($cfg->value('boost_system_enable') == 1) {
 					$bc['time'] *= 1/($cu->boostBonusBuilding + 1);
 				}
-				
+
         if ($this->level != 0)
         {
 				  $bc['costs5'] = ($cu->specialist->costsBuilding * $this->building->costs[5] * pow($this->building->prodFactor,$this->level+$levelUp))-
@@ -250,8 +248,8 @@
         else
         {
           $bc['costs5'] = ($cu->specialist->costsBuilding * $this->building->costs[5] * pow($this->building->prodFactor,$this->level+$levelUp));
-        } 
-        
+        }
+
 				if ($bl->getPeopleWorking(BUILD_BUILDING_ID) > 0)
 				{
 					$bc['min_time'] = $bc['time'] * $this->minBuildTimeFactor();
@@ -281,7 +279,7 @@
 
 				foreach($this->demolishCosts as $id=>$element)
         {
-          if ($id == 'costs5') $element = 0; 
+          if ($id == 'costs5') $element = 0;
 					$this->demolishCosts[$id] = $element * $this->building->demolishCostsFactor;
 			  }
       }
@@ -376,7 +374,7 @@
 			$bc['time'] = (array_sum($bc)) / GLOBAL_TIME * BUILD_BUILD_TIME;
       $bc['time'] *= $bonus;
       $bc['time'] /= $cu->boostBonusBuilding+1;
-      
+
 			$maxReduction = $bc['time'] - $bc['time'] * $this->minBuildTimeFactor();
 
 			return ceil($maxReduction / $cfg->value('people_work_done'));

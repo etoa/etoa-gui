@@ -84,31 +84,6 @@
                     buildlist_entity_id=".$cp->id."
                 AND buildlist_people_working_status='1';");
 
-                //Check workers for gen
-
-                $sql = "
-                SELECT
-                    techlist_build_type
-                FROM
-                    techlist
-                WHERE
-                    techlist_tech_id=".GEN_TECH_ID."
-                AND techlist_user_id=".$cu->id;
-
-                $tres = mysql_query($sql);
-                $tarr=mysql_fetch_assoc($tres);
-
-                if($tarr['techlist_build_type']==3) {
-                    $check_res_gen = dbquery("
-                    SELECT
-                        sum(buildlist_gen_people_working)
-                    FROM
-                        buildlist
-                    WHERE
-                        buildlist_entity_id=".$cp->id);
-                    $check_arr_gen = mysql_fetch_array($check_res_gen);
-                }
-
                 $working = 0;
                 $check_arr = mysql_fetch_array($check_res);
                 // Frei = total auf Planet - gesperrt auf Planet
@@ -167,11 +142,11 @@
                     UPDATE
                         buildlist
                     SET
-                        buildlist_gen_people_working = $work
+                        buildlist_people_working = $work
                     WHERE
                         buildlist_user_id =".$cu->id."
                         AND buildlist_entity_id =".$cp->id()."
-                        AND buildlist_building_id =".TECH_BUILDING_ID);
+                        AND buildlist_building_id =".MAIN_BUILDING_ID);
                 }
 
             }
@@ -272,10 +247,12 @@
                         UPDATE
                             buildlist
                         SET
-                            buildlist_gen_people_working='0'
+                            buildlist_people_working='0'
                         WHERE
                         buildlist_user_id='".$cu->id."'
-                        AND buildlist_entity_id='".$cp->id."'");
+                        AND buildlist_entity_id='".$cp->id."'
+                        AND buildlist_building_id='".MAIN_BUILDING_ID."'
+                    ");
                 }
             }
             echo '<form action="?page='.$page.'" method="post">';
@@ -384,13 +361,13 @@
 
                 $rres = dbquery("
                 SELECT 
-                    buildlist_gen_people_working 
+                    buildlist_people_working 
                 FROM 
                     buildlist 
                 WHERE  
                     buildlist.buildlist_user_id =".$cu->id."
                     AND buildlist.buildlist_entity_id =".$cp->id()."
-                    AND buildlist.buildlist_building_id =".TECH_BUILDING_ID);
+                    AND buildlist.buildlist_building_id =".MAIN_BUILDING_ID);
 
                 $gen_workers = mysql_result($rres,0);
 
