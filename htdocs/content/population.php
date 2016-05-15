@@ -69,49 +69,6 @@
             echo '<tr><th>TOTAL</b></th><td><b>'.nf($pcnt).'</b></td></tr>';
             tableEnd();
 
-        //
-        // Arbeiter zuteilen
-        //
-            if (isset($_POST['submit_people_work']) && checker_verify())
-            {
-                //zählt gesperrte Arbeiter auf dem aktuellen Planet
-                $check_res = dbquery("
-                SELECT
-                    SUM(buildlist_people_working)
-                FROM
-                    buildlist
-                WHERE
-                    buildlist_entity_id=".$cp->id."
-                AND buildlist_people_working_status='1';");
-
-                $working = 0;
-                $check_arr = mysql_fetch_array($check_res);
-                // Frei = total auf Planet - gesperrt auf Planet
-                $free_people=floor($cp->people)-$check_arr[0];
-
-                foreach ($_POST['people_work'] as $id=>$num)
-                {
-                    $working+=nf_back($num);
-                }
-
-                $available = min($free_people,$working);
-
-                foreach ($_POST['people_work'] as $id=>$num)
-                {
-                    $num = nf_back($num);
-                    $work = $available > 0 ? min($num, $available) : 0;
-                    $available-=$num;
-                    dbquery("
-                    UPDATE
-                        buildlist
-                    SET
-                        buildlist_people_working='".$work."'
-                    WHERE
-                        buildlist_building_id='".intval($id)."'
-                    AND buildlist_entity_id=".$cp->id);
-                }
-            }
-
             //überprüft tätigkeit des Schiffswerftes
             $sql = "
             SELECT
@@ -185,6 +142,53 @@
             $tres = mysql_query($sql);
             $tarr = mysql_fetch_row($tres);
             $w[PEOPLE_BUILDING_ID] = (int)isset($tarr[0]);
+
+        //
+        // Arbeiter zuteilen
+        //
+            if (isset($_POST['submit_people_work']) && checker_verify())
+            {
+                //zählt gesperrte Arbeiter auf dem aktuellen Planet
+                $check_res = dbquery("
+                SELECT
+                    SUM(buildlist_people_working)
+                FROM
+                    buildlist
+                WHERE
+                    buildlist_entity_id=".$cp->id."
+                AND buildlist_people_working_status='1';");
+
+                $working = 0;
+                $check_arr = mysql_fetch_array($check_res);
+                // Frei = total auf Planet - gesperrt auf Planet
+                $free_people=floor($cp->people)-$check_arr[0];
+
+                foreach ($_POST['people_work'] as $id=>$num)
+                {
+                    if (!$w[$id]) {
+                        $working+=nf_back($num);
+                    }
+                }
+
+                $available = min($free_people,$working);
+
+                foreach ($_POST['people_work'] as $id=>$num)
+                {
+                    if (!$w[$id]) {
+                        $num = nf_back($num);
+                        $work = $available > 0 ? min($num, $available) : 0;
+                        $available-=$num;
+                        dbquery("
+                    UPDATE
+                        buildlist
+                    SET
+                        buildlist_people_working='".$work."'
+                    WHERE
+                        buildlist_building_id='".intval($id)."'
+                    AND buildlist_entity_id=".$cp->id);
+                    }
+                }
+            }
 
             // Alle Arbeiter freistellen (solange sie nicht noch an einer Arbeit sind)
             if (isset($_POST['submit_people_free']) && checker_verify())
