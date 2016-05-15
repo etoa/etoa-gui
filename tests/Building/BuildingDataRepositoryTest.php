@@ -1,13 +1,13 @@
 <?php
 
-namespace EtoA\Tests\Race;
+namespace EtoA\Tests\Building;
 
-use EtoA\Race\RaceDataRepository;
+use EtoA\Building\BuildingDataRepository;
 
-class RaceDataRepositoryTest extends \PHPUnit_Framework_TestCase
+class BuildingDataRepositoryTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var RaceDataRepository */
-    private $raceDataRepository;
+    /** @var BuildingDataRepository */
+    private $buildingDataRepository;
 
     protected function setUp()
     {
@@ -15,12 +15,12 @@ class RaceDataRepositoryTest extends \PHPUnit_Framework_TestCase
 
         $app = require dirname(dirname(__DIR__)).'/src/app.php';
 
-        $this->raceDataRepository = $app['etoa.race.datarepository'];
+        $this->buildingDataRepository = $app['etoa.building.datarepository'];
     }
 
     public function testGetRaceNames()
     {
-        $names = $this->raceDataRepository->getRaceNames();
+        $names = $this->buildingDataRepository->getBuildingNames();
         $this->assertInternalType('array', $names);
         $this->assertNotEmpty($names);
 
