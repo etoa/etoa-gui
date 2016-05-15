@@ -146,7 +146,7 @@
                     WHERE
                         buildlist_user_id =".$cu->id."
                         AND buildlist_entity_id =".$cp->id()."
-                        AND buildlist_building_id =".MAIN_BUILDING_ID);
+                        AND buildlist_building_id =".PEOPLE_BUILDING_ID);
                 }
 
             }
@@ -251,7 +251,7 @@
                         WHERE
                         buildlist_user_id='".$cu->id."'
                         AND buildlist_entity_id='".$cp->id."'
-                        AND buildlist_building_id='".MAIN_BUILDING_ID."'
+                        AND buildlist_building_id='".PEOPLE_BUILDING_ID."'
                     ");
                 }
             }
@@ -367,7 +367,7 @@
                 WHERE  
                     buildlist.buildlist_user_id =".$cu->id."
                     AND buildlist.buildlist_entity_id =".$cp->id()."
-                    AND buildlist.buildlist_building_id =".MAIN_BUILDING_ID);
+                    AND buildlist.buildlist_building_id =".PEOPLE_BUILDING_ID);
 
                 $gen_workers = mysql_result($rres,0);
 

@@ -95,7 +95,7 @@ if (isset($cp)) {
 		{
 
 			$set_people = nf_back($_POST['peopleWorking']);
-			if (!$builing_gen && $bl->setPeopleWorking(MAIN_BUILDING_ID, $set_people, true))
+			if (!$builing_gen && $bl->setPeopleWorking(PEOPLE_BUILDING_ID, $set_people, true))
 			{
 				success_msg("Arbeiter zugeteilt!");
 				$new_people_set = true;
@@ -131,7 +131,7 @@ if (isset($cp)) {
 
 		// People working in the tech building.
      	$peopleWorking = $bl->getPeopleWorking(TECH_BUILDING_ID);
-  	    $peopleWorkingGen = $bl->getPeopleWorking(MAIN_BUILDING_ID);
+  	    $peopleWorkingGen = $bl->getPeopleWorking(PEOPLE_BUILDING_ID);
 
 		$peopleTimeReduction = $cfg->value('people_work_done');
 		$peopleFoodConsumption = $cfg->value('people_food_require');
