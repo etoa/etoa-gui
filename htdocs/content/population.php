@@ -211,6 +211,20 @@
             $tarr=mysql_fetch_row($tres);
             $w[BUILD_BUILDING_ID]=$tarr[0];
 
+            $sql = "
+                SELECT
+                    1
+                FROM
+                    techlist
+                WHERE
+                    techlist_tech_id=".GEN_TECH_ID."
+                AND techlist_user_id=".$cu->id."
+                AND techlist_build_type>2";
+
+            $tres = mysql_query($sql);
+            $tarr = mysql_fetch_row($tres);
+            $w[PEOPLE_BUILDING_ID] = (int)isset($tarr[0]);
+
             // Alle Arbeiter freistellen (solange sie nicht noch an einer Arbeit sind)
             if (isset($_POST['submit_people_free']) && checker_verify())
             {
@@ -228,31 +242,6 @@
                         AND buildlist_user_id='".$cu->id."'
                         AND buildlist_entity_id='".$cp->id."'");
                     }
-                }
-
-                $sql = "
-                SELECT
-                    techlist_build_type
-                FROM
-                    techlist
-                WHERE
-                    techlist_tech_id=".GEN_TECH_ID."
-                AND techlist_user_id=".$cu->id;
-
-                $tres = mysql_query($sql);
-                $tarr=mysql_fetch_assoc($tres);
-
-                if($tarr['techlist_build_type']!=3){
-                    dbquery("
-                        UPDATE
-                            buildlist
-                        SET
-                            buildlist_people_working='0'
-                        WHERE
-                        buildlist_user_id='".$cu->id."'
-                        AND buildlist_entity_id='".$cp->id."'
-                        AND buildlist_building_id='".PEOPLE_BUILDING_ID."'
-                    ");
                 }
             }
             echo '<form action="?page='.$page.'" method="post">';
@@ -282,11 +271,42 @@
                 $work_available=true;
                 while ($sp_arr=mysql_fetch_array($sp_res))
                 {
+                    if ($sp_arr['building_id'] == PEOPLE_BUILDING_ID) {
+                        $requirements_passed = true;
+                        $rres = dbquery("SELECT * FROM tech_requirements where obj_id=".GEN_TECH_ID);
+                        $bl = new BuildList($cp->id(),$cu->id);
+                        $tl = new TechList($cu->id);
+
+                        while ($rarr = mysql_fetch_array($rres)) {
+                            if ($rarr['req_tech_id']>0) {
+                                if (($rarr['req_level']) > ($tl->getLevel($rarr['req_tech_id']))) {
+                                    $requirements_passed = false;
+                                }
+                            }
+                            if ($rarr['req_building_id']>0) {
+
+                                if (($rarr['req_level']) > ($bl->getLevel($rarr['req_building_id']))) {
+                                    $requirements_passed = false;
+                                }
+                            }
+                        }
+
+                        if (!$requirements_passed) {
+                            continue;
+                        }
+                    }
+
                     echo '<tr><td style="width:150px">';
-                    if (BUILD_BUILDING_ID==$sp_arr['building_id'])
-                        echo 'Bauhof';
-                    else
-                        echo $sp_arr['building_name'];
+                    switch ($sp_arr['building_id']) {
+                        case BUILD_BUILDING_ID:
+                            echo 'Bauhof';
+                            break;
+                        case PEOPLE_BUILDING_ID:
+                            echo 'Genlabor';
+                            break;
+                        default:
+                            echo $sp_arr['building_name'];
+                    }
                     echo '</td><td>';
 
                     if ($w[$sp_arr['building_id']]>0)
@@ -328,71 +348,6 @@
                 }
             }
 
-            //Spezialfall Gentech
-
-            $requirements_passed = true;
-            $rres = dbquery("
-            SELECT 
-                * 
-            FROM 
-                tech_requirements where obj_id=".GEN_TECH_ID);
-
-            $bl = new BuildList($cp->id(),$cu->id);
-            $tl = new TechList($cu->id);
-
-            while ($rarr = mysql_fetch_array($rres)) {
-                if ($rarr['req_tech_id']>0) {
-                    if (($rarr['req_level']) > ($tl->getLevel($rarr['req_tech_id']))) {
-                        $requirements_passed = false;
-                    }
-                }
-                if ($rarr['req_building_id']>0) {
-
-                    if (($rarr['req_level']) > ($bl->getLevel($rarr['req_building_id']))) {
-                        $requirements_passed = false;
-                    }
-                }
-            }
-
-
-
-            if ($requirements_passed) {
-                echo'<tr><td>Genlabor</td>';
-
-                $rres = dbquery("
-                SELECT 
-                    buildlist_people_working 
-                FROM 
-                    buildlist 
-                WHERE  
-                    buildlist.buildlist_user_id =".$cu->id."
-                    AND buildlist.buildlist_entity_id =".$cp->id()."
-                    AND buildlist.buildlist_building_id =".PEOPLE_BUILDING_ID);
-
-                $gen_workers = mysql_result($rres,0);
-
-                $rres = dbquery("
-                SELECT 
-                    * 
-                FROM 
-                    techlist 
-                WHERE  
-                    techlist.techlist_user_id =".$cu->id."
-                    AND techlist.techlist_entity_id =".$cp->id()."
-                    AND techlist.techlist_tech_id = ".GEN_TECH_ID."
-                    AND techlist.techlist_build_type = 3");
-                if(mysql_num_rows($rres) >0) {
-                    echo '<td>'.$gen_workers.'</td>';
-                }
-                else
-                {
-                    echo '<td><input type="text" id="gen" name="gen" value="'.$gen_workers.'" size="8" maxlength="20" onKeyUp="FormatNumber(this.id,this.value, '.$cp->people.', \'\', \'\');"/></td>';
-                }
-                echo '</td><td>'.nf($gen_workers*$cfg->get('people_food_require')).' t</td></tr>';
-
-            }
-
-
             if ($work_available)
             {
                 echo '<tr><td>&nbsp;</td>
@@ -417,7 +372,7 @@
             WHERE
                 buildlist_entity_id=".$cp->id.";");
             $barr = mysql_fetch_array($bres);
-            $people_working = $barr[0]+$gen_workers;
+            $people_working = $barr[0];
 
         // Infodaten
             $people_free = floor($cp->people)-$people_working;
