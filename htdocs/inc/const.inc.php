@@ -375,6 +375,9 @@
 
 	define("RES_BUILDING_CAT", 2);
 
+	// Gebäude welches den Status der Planetenbasis wiedergibt
+	define("MAIN_BUILDING_ID", 1);
+
 	// Gebäude welches den Status des Bauhofes wiedergibt
 	define("BUILD_BUILDING_ID", 6);
 
