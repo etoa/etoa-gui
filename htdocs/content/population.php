@@ -87,25 +87,19 @@
                 $working = 0;
                 $check_arr = mysql_fetch_array($check_res);
                 // Frei = total auf Planet - gesperrt auf Planet
-                $free_people=floor($cp->people)-$check_arr[0]-$check_arr_gen[0];
+                $free_people=floor($cp->people)-$check_arr[0];
 
                 foreach ($_POST['people_work'] as $id=>$num)
                 {
                     $working+=nf_back($num);
                 }
 
-                //add ppl from genlab
-                $working += nf_back($_POST['gen']);
-
                 $available = min($free_people,$working);
 
                 foreach ($_POST['people_work'] as $id=>$num)
                 {
                     $num = nf_back($num);
-                    if ($available>0)
-                        $work = min($num,$available);
-                    else
-                        $work = 0;
+                    $work = $available > 0 ? min($num, $available) : 0;
                     $available-=$num;
                     dbquery("
                     UPDATE
@@ -116,39 +110,6 @@
                         buildlist_building_id='".intval($id)."'
                     AND buildlist_entity_id=".$cp->id);
                 }
-
-                $sql = "
-                SELECT
-                    techlist_build_type
-                FROM
-                    techlist
-                WHERE
-                    techlist_tech_id=".GEN_TECH_ID."
-                AND techlist_user_id=".$cu->id;
-
-                $tres = mysql_query($sql);
-                $tarr=mysql_fetch_assoc($tres);
-
-                if($tarr['techlist_build_type']!=3){
-
-                    $num = nf_back($_POST['gen']);
-                    if ($available>0)
-                        $work = min($num,$available);
-                    else
-                        $work = 0;
-                    $available-=$num;
-
-                    dbquery("
-                    UPDATE
-                        buildlist
-                    SET
-                        buildlist_people_working = $work
-                    WHERE
-                        buildlist_user_id =".$cu->id."
-                        AND buildlist_entity_id =".$cp->id()."
-                        AND buildlist_building_id =".PEOPLE_BUILDING_ID);
-                }
-
             }
 
             //überprüft tätigkeit des Schiffswerftes
