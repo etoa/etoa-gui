@@ -29,7 +29,7 @@ class BattleHandler
 	public:
 		BattleHandler() { }
 		BattleHandler(Message *message) {	}
-		void battle(Fleet* fleet, Entity* entity, Log* log);
+		void battle(Fleet* fleet, Entity* entity, Log* log, bool ratingEffect = true);
 
 		~BattleHandler() {	}
 

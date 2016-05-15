@@ -1,7 +1,7 @@
 
 #include "BattleHandler.h"
 
-void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
+void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log, bool ratingEffect)
 {
     Config &config = Config::instance();
     std::time_t time = std::time(0);
@@ -76,7 +76,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
         } else {
             this->alliancesHaveWar = false;
         }
-        
+
         //Report
         report->setShield(fleet->getShield(true));
         report->setStructure(fleet->getStructure(true));
@@ -385,7 +385,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log)
         std::string attReason = "Angriff gegen" + entity->getUserNicks();
         std::string defReason = "Verteidigung gegen" + fleet->getUserNicks();
 
-        if (initAttWeapon>0) {
+        if (initAttWeapon>0 && ratingEffect) {
             std::string users = fleet->getUserIds();
             found=users.find_first_of(",");
             while (found!=std::string::npos) {
