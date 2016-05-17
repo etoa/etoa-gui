@@ -30,10 +30,10 @@
       <v comment="Runde-Name" type="text">Runde X</v>
     </item>
     <item name="roundurl" cat="1" base="yes">
-      <v comment="Runden-URL" type="text">http://roundx.game.etoa.net</v>
+      <v comment="Runden-URL" type="text">https://roundx.game.etoa.net</v>
     </item>
     <item name="loginurl" cat="1" base="yes">
-      <v comment="Login-URL (leerlassen für lokales Login)" type="text">http://etoa.ch</v>
+      <v comment="Login-URL (leerlassen für lokales Login)" type="text">https://etoa.ch</v>
     </item>
     <item name="user_timeout" cat="1">
       <v comment="User-Timeout (wenn man so lange nichts macht, muss man sich neu einloggen) in Sekunden" type="text">2400</v>
@@ -70,10 +70,10 @@
       <v comment="Statistik Anzahl Daten/Seite" type="text">50</v>
     </item>
     <item name="url_rules" cat="1">
-      <v comment="URL: Regeln" type="text">http://etoa.ch/rules</v>
+      <v comment="URL: Regeln" type="text">https://etoa.ch/rules</v>
     </item>
     <item name="url_teamspeak" cat="1">
-      <v comment="URL: TeamSpeak" type="text">http://etoa.ch/404.html</v>
+      <v comment="URL: TeamSpeak" type="text">https://etoa.ch/404.html</v>
     </item>
     <item name="messages_threshold_days" cat="1">
       <v comment="Aufbewahrungsdauer Nachrichten" type="text">28</v>
@@ -84,8 +84,8 @@
       <p1 comment="Aufbewahrungsdauer Berichte im Papierkorb" type="text">42</p1>
     </item>
     <item name="referers" cat="1" base="yes">
-      <v comment="Zugelassene Referers" type="textarea">http://roundx.game.etoa.net&#xD;
-http://etoa.ch</v>
+      <v comment="Zugelassene Referers" type="textarea">https://roundx.game.etoa.net&#xD;
+https://etoa.ch</v>
     </item>
     <item name="under_construction" cat="1">
       <v comment="Seite die in Bearbeitung sind (DB Updates, ...)" type="textarea"></v>
