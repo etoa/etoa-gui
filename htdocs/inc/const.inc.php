@@ -94,6 +94,9 @@
 	// Imagepack configuration file name
 	define("IMAGEPACK_CONFIG_FILE_NAME", "imagepack.xml");
 
+    // Eventhandler configuration file name
+    define('EVENTHANDLER_CONFIG_FILE_NAME', 'eventhandler.conf');
+
 	// Tech Ordner
 	define("IMAGE_TECHNOLOGY_DIR", "technologies");
 
@@ -114,6 +117,13 @@
 
 	// Allianztech
 	define("IMAGE_ALLIANCE_TECHNOLOGY_DIR", "atechnologies");
+
+  /***********************************/
+  /* Installer */
+    /***********************************/
+
+    // Default login server URL
+    define('INSTALLER_DEFAULT_LOGINSERVER_URL', 'https://etoa.ch');
 
   /***********************************/
   /* Design, Layout, Allgmeine Pfade */

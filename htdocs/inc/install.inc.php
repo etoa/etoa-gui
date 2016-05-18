@@ -24,7 +24,12 @@ if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 {
 	ob_start();
 	
-	$numSteps = 4;
+    $steps = [
+        1 => 'MySQL-Datenbank',
+        2 => 'Allgemeine Daten',
+        3 => 'Weitere Einstellungen',
+        4 => 'Anschluss'
+    ];
 	
 	if (isset($_POST['install_check']))
 	{
@@ -104,11 +109,11 @@ if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 	}
 
 	$navElems = array();
-	for ($i=1; $i <= $numSteps; $i++) {
+	for ($i=1; $i <= count($steps); $i++) {
 		if ($i <= $step) {
-			$navElems['Schritt '.$i] = '?step='.$i;
+			$navElems[$steps[$i]] = '?step='.$i;
 		} else {
-			$navElems['Schritt '.$i] = null;
+			$navElems[$steps[$i]] = null;
 		}
 	}
 	$tpl->assign('installMenu', $navElems);
@@ -123,7 +128,7 @@ if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 		);			
 		DBManager::getInstance()->connect(0, $dbCfg);
 
-		$dbConfigSting = json_encode($dbCfg);
+		$dbConfigSting = json_encode($dbCfg, JSON_PRETTY_PRINT);
 		
 		$dbConfigStingEventHandler = "[mysql]
 host = ".$dbCfg['host']."
@@ -131,27 +136,29 @@ database = ".$dbCfg['dbname']."
 user = ".$dbCfg['user']."
 password = ".$dbCfg['password']."
 ";
-		$eventhandlerFile = "/etc/etoad/roundx.cfg";
-		
 		$cfg = Config::getInstance();
 		$cfg->set("referers",$_SESSION['INSTALL']['referers']);
 		$cfg->set("roundname",$_SESSION['INSTALL']['round_name']);
 		$cfg->set("loginurl",$_SESSION['INSTALL']['loginserver_url']);
 
 		writeConfigFile(DBManager::getInstance()->getConfigFile(), $dbConfigSting);
+		writeConfigFile(EVENTHANDLER_CONFIG_FILE_NAME, $dbConfigStingEventHandler);
 		
 		$tpl->assign('msg', 'Konfiguration gespeichert!');
 		
 		if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 		{
-			echo "Fertig! Du musst nun den folgenden Inhalt in eine neue Textdatei namens <b>".getConfigFilePath(DBManager::getInstance()->getConfigFile())."</b> speichern!<br/><br/>
+			echo "<p>Du musst nun den folgenden Inhalt in eine neue Textdatei namens <b>".getConfigFilePath(DBManager::getInstance()->getConfigFile())."</b> speichern:</p>
 			<pre class=\"code\">".$dbConfigSting."</pre><br /><br />";
 		} else {
 			$_SESSION['INSTALL']['step'] = 1;
 		}
-		
-		echo "Für den Eventhandler musst du noch den folgenden Inhalt in eine Konfigurationsdatei, z.B. <b>".$eventhandlerFile."</b>, speichern:<br/><br/>
-			<pre class=\"code\">".$dbConfigStingEventHandler."</pre>";
+
+        if (!configFileExists(EVENTHANDLER_CONFIG_FILE_NAME)) {
+            echo "<p>Für den Eventhandler musst du noch den folgenden Inhalt in eine Konfigurationsdatei <b>".getConfigFilePath(EVENTHANDLER_CONFIG_FILE_NAME)."</b> speichern:</p>
+            <pre class=\"code\">".$bConfigStingEventHandler."</pre>";
+        }
+
 		echo "<p><input type=\"button\" onclick=\"document.location='admin'\" value=\"Zum Admin-Login\"/> &nbsp; 
 		<input type=\"button\" onclick=\"document.location='".getLoginUrl()."'\" value=\"Zum Loginserver\"/></p>";
 	
@@ -179,9 +186,8 @@ password = ".$dbCfg['password']."
 		
 		$cfg = Config::getInstance();
 		
-		$str = "<form action=\"?\" method=\"post\">
-		<fieldset>
-			<legend>Weitere Einstellungen</legend>
+        $str = "<form action=\"?\" method=\"post\">
+		<div>
 			<table>
 				<tr>
 					<th>Referers:</th>
@@ -190,7 +196,7 @@ password = ".$dbCfg['password']."
 					<td></td>
 				</tr>
 			</table>
-		</fieldset>		
+		</div>
 		<p><input type=\"submit\" name=\"step3_submit\" value=\"Weiter\" /></p>";
 		$tpl->assign('installform', $str);
 	}		
@@ -198,8 +204,7 @@ password = ".$dbCfg['password']."
 	elseif($step==2)
 	{
 		$str = "<form action=\"?\" method=\"post\">
-		<fieldset>
-			<legend>Allgemeine Daten</legend>
+		<div>
 			<table>
 				<tr>
 					<th>Name der Runde:</th>
@@ -208,32 +213,31 @@ password = ".$dbCfg['password']."
 				</tr>
 				<tr>
 					<th>Loginserver-URL:</th>
-					<td><input type=\"text\" name=\"loginserver_url\" value=\"".(isset($_SESSION['INSTALL']['loginserver_url']) ? $_SESSION['INSTALL']['loginserver_url'] : 'http://www.etoa.ch')."\" /></td>
-					<td>(z.b. http://www.etoa.ch, leerlassen für lokales Login)</td>
+					<td><input type=\"text\" name=\"loginserver_url\" value=\"".(isset($_SESSION['INSTALL']['loginserver_url']) ? $_SESSION['INSTALL']['loginserver_url'] : INSTALLER_DEFAULT_LOGINSERVER_URL)."\" /></td>
+					<td>(z.b. ".INSTALLER_DEFAULT_LOGINSERVER_URL.", leerlassen für lokales Login)</td>
 				</tr>
 			</table>
-		</fieldset>		
+		</div>
 		<p><input type=\"submit\" name=\"step2_submit\" value=\"Weiter\" /></p>";
 		$tpl->assign('installform', $str);
 	}	
 	else
 	{
-		$str = "<fieldset>
-			<legend>MySQL-Datenbank</legend>
+		$str = "<div>
 			<table>
 				<tr>
 					<th>Server:</th>
-					<td><input type=\"text\" name=\"db_server\" value=\"".(isset($_SESSION['INSTALL']['db_server']) ? $_SESSION['INSTALL']['db_server'] : '')."\" autocomplete=\"off\" /></td>
+					<td><input type=\"text\" name=\"db_server\" value=\"".(isset($_SESSION['INSTALL']['db_server']) ? $_SESSION['INSTALL']['db_server'] : 'localhost')."\" autocomplete=\"off\" /></td>
 					<td>(z.b. localhost)</td>
 				</tr>
 				<tr>
 					<th>Datenbank:</th>
-					<td><input type=\"text\" name=\"db_name\" value=\"".(isset($_SESSION['INSTALL']['db_name']) ? $_SESSION['INSTALL']['db_name'] : '')."\" autocomplete=\"off\" /></td>
+					<td><input type=\"text\" name=\"db_name\" value=\"".(isset($_SESSION['INSTALL']['db_name']) ? $_SESSION['INSTALL']['db_name'] : 'etoa_roundx')."\" autocomplete=\"off\" /></td>
 					<td>(z.b. etoaroundx)</td>
 				</tr>
 				<tr>
 					<th>User:</th>
-					<td><input type=\"text\" name=\"db_user\" value=\"".(isset($_SESSION['INSTALL']['db_user']) ? $_SESSION['INSTALL']['db_user'] : '')."\" autocomplete=\"off\" /></td>
+					<td><input type=\"text\" name=\"db_user\" value=\"".(isset($_SESSION['INSTALL']['db_user']) ? $_SESSION['INSTALL']['db_user'] : 'etoa_roundx')."\" autocomplete=\"off\" /></td>
 					<td>(z.b. etoauser)</td>
 				</tr>
 				<tr>
@@ -242,9 +246,9 @@ password = ".$dbCfg['password']."
 					<td>(mind. 10 Zeichen)</td>
 				</tr>
 			</table>
-		</fieldset>		
+		</div>
 		<p><input type=\"submit\" name=\"install_check\" value=\"Eingaben prüfen\" /></p>";	
-		$tpl->assign('installform', $str);
+        $tpl->assign('installform', $str);
 	}
 	$tpl->assign('content', ob_get_clean());
 }

@@ -13,7 +13,7 @@
 				$executable = realpath(RELATIVE_ROOT.'../eventhandler/target/etoad');
 			}
 			$instance = $cfg->daemon_instance->v;
-			$configfile = realpath(RELATIVE_ROOT.'config/eventhandler.conf');
+			$configfile = realpath(RELATIVE_ROOT.'config/'.EVENTHANDLER_CONFIG_FILE_NAME);
 			$pidfile = $cfg->daemon_pidfile->v;
 
 			if (file_exists($executable))

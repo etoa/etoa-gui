@@ -1965,7 +1965,7 @@ pre.code	{
 */
 
 .installContainer {
-	width: 550px;
+	width: 600px;
 	margin: 20px auto;
 	text-align: center;
 }
@@ -1975,6 +1975,7 @@ pre.code	{
 	color:#666;
 	text-align: center;
 	list-style-type: none;
+    margin-left: 0;
 }
 
 .installMenu li {
@@ -1996,6 +1997,7 @@ pre.code	{
 
 .installContainer table td, .installContainer table th {
 	text-align: left;
+    padding: 3px;
 }
 
 .installContainer .messagebox {
