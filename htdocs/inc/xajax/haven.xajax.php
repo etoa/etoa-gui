@@ -671,7 +671,7 @@
 				else 
 					$code = '';
 
-				$res = dbquery("
+				$res = dbQuerySave("
 				SELECT
 					entities.id,
 					entities.code
@@ -681,12 +681,18 @@
 					cells
 				ON
 					entities.cell_id=cells.id
-					AND cells.sx=".$form['man_sx']."
-					AND cells.sy=".$form['man_sy']."
-					AND cells.cx=".$form['man_cx']."
-					AND cells.cy=".$form['man_cy']."
-					AND entities.pos=".$form['man_p']."
-				");
+					AND cells.sx=?
+					AND cells.sy=?
+					AND cells.cx=?
+					AND cells.cy=?
+					AND entities.pos=?
+                ;", [
+                    $form['man_sx'],
+                    $form['man_sy'],
+                    $form['man_cx'],
+                    $form['man_cy'],
+                    $form['man_p']
+                ]);
 				if (mysql_num_rows($res)>0)
 				{
 					$arr=mysql_fetch_row($res);
@@ -989,7 +995,7 @@
 			else 
 				$code = '';
 			
-			$res = dbquery("
+			$res = dbQuerySave("
 			SELECT
 				entities.id,
 				entities.code
@@ -999,12 +1005,18 @@
 				cells
 			ON
 				entities.cell_id=cells.id
-				AND cells.sx=".$form['man_sx']."
-				AND cells.sy=".$form['man_sy']."
-				AND cells.cx=".$form['man_cx']."
-				AND cells.cy=".$form['man_cy']."
-				AND entities.pos=".$form['man_p']."
-			");
+				AND cells.sx=?
+				AND cells.sy=?
+				AND cells.cx=?
+				AND cells.cy=?
+				AND entities.pos=?
+            ", [
+                $form['man_sx'],
+                $form['man_sy'],
+                $form['man_cx'],
+                $form['man_cy'],
+                $form['man_p']
+            ]);
 			if (mysql_num_rows($res)>0)
 			{
 				$arr=mysql_fetch_row($res);
@@ -1360,13 +1372,13 @@
 					cells
 				ON
 					entities.cell_id=cells.id
-					AND cells.sx=".$sx."
-					AND cells.sy=".$sy."
-					AND cells.cx=".$cx."
-					AND cells.cy=".$cy."
-					AND entities.pos=".$pos."
-				";
-			$res = dbquery($sql);
+					AND cells.sx=?
+					AND cells.sy=?
+					AND cells.cx=?
+					AND cells.cy=?
+					AND entities.pos=?
+				;";
+            $res = dbQuerySave($sql, [$sx, $sy, $cx, $cy, $pos]);
 			if (mysql_num_rows($res)>0 && !($code=='u' && $pos))
 			{
 				$arr=mysql_fetch_row($res);
@@ -1516,7 +1528,7 @@
 		else 
 			$code = '';
 		
-			$res = dbquery("
+			$res = dbQuerySave("
 			SELECT
 				entities.id,
 				entities.code
@@ -1526,12 +1538,12 @@
 				cells
 			ON
 				entities.cell_id=cells.id
-				AND cells.sx=".$csx."
-				AND cells.sy=".$csy."
-				AND cells.cx=".$ccx."
-				AND cells.cy=".$ccy."
-				AND entities.pos=".$psp."
-			");
+				AND cells.sx=?
+				AND cells.sy=?
+				AND cells.cx=?
+				AND cells.cy=?
+				AND entities.pos=?
+			;", [$csx, $csy, $ccx, $ccy, $psp]);
 		if (mysql_num_rows($res)>0 && !($code=='u' && $psp))
 			{
 				$arr=mysql_fetch_row($res);
@@ -1900,7 +1912,7 @@
 		
 		if ($id > 0 && $fleet->getLeader()!=$id) {
 
-			$res = dbquery("
+			$res = dbQuerySave("
 							SELECT
 								id,
 								user_id,
@@ -1909,22 +1921,21 @@
 							FROM
 								fleet
 							WHERE
-								id='$id'
-							LIMIT 1;");
-
+								id=?
+							LIMIT 1;", [$id]);
 			if (mysql_num_rows($res)>0) {
 				$arr=mysql_fetch_assoc($res);
 				if ($arr['next_id']==$fleet->sourceEntity->ownerAlliance()) {
 					if($fleet->checkAttNum($id,$u))
 					{
-						$cres = dbquery("
+						$cres = dbQuerySave("
 										SELECT
 											COUNT(id) as cnt
 										FROM
 											fleet
 										WHERE
-											leader_id='$id'
-										;");
+											leader_id=?
+										;", [$id]);
 						$carr=mysql_fetch_assoc($cres);
 						if ($carr['cnt']<=$fleet->allianceSlots) {
 							$duration = $fleet->distance / $fleet->getSpeed();	// Calculate duration
