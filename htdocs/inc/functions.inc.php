@@ -2529,11 +2529,11 @@ function imagecreatefromfile($path, $user_functions = false)
 		
 		if (!defined('IMAGE_PATH'))
 		{
-			if (!isset($cu))
+			if (!isset($cu) && isset($_SESSION['user_id']))
 				$cu = new CurrentUser($_SESSION['user_id']);
 
 			$design = DESIGN_DIRECTORY."/official/".$cfg->value('default_css_style');
-			if ($cu->properties->cssStyle !='')
+			if (isset($cu) && $cu->properties->cssStyle !='')
 			{
 				if (is_dir(DESIGN_DIRECTORY."/custom/".$cu->properties->cssStyle))
 				{
@@ -2545,10 +2545,10 @@ function imagecreatefromfile($path, $user_functions = false)
 				}
 			}
 			define('CSS_STYLE', $design);
-			define('GAME_WIDTH', $cu->properties->gameWidth);
+			define('GAME_WIDTH', isset($cu) ? $cu->properties->gameWidth : 90);
 
 			// Image paths
-			if ($cu->properties->imageUrl != '' && $cu->properties->imageExt != '')
+			if (isset($cu) && $cu->properties->imageUrl != '' && $cu->properties->imageExt != '')
 			{
 				define('IMAGE_PATH',$cu->properties->imageUrl);
 				define('IMAGE_EXT',$cu->properties->imageExt);

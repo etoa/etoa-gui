@@ -43,14 +43,14 @@
 			$this->id = $id;
 			$this->changedFields = array();
 			
-			$res = dbquery("
+			$res = dbQuerySave("
 			SELECT
 				*
 			FROM 
 				user_properties 
 			WHERE 
-				id=".$this->id."
-			LIMIT 1;");
+				id=?
+			LIMIT 1;", [$this->id]);
 			if (mysql_num_rows($res)>0)
 			{
 				$arr = mysql_fetch_assoc($res);
