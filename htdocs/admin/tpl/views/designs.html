@@ -19,6 +19,7 @@
 			<th>Eingeschränkte Nutzung</th>
 			<th>Users</th>
 			<th>Offizielles Design</th>
+			<th>Standard</th>
 			<th>Aktionen</th>
 		</tr>
 	</thead>
@@ -34,6 +35,7 @@
 			<td>{if $d.restricted}ja{else}nein{/if}</td>
 			<td>{$d.users}</td>
 			<td>{if $d.custom}nein{else}ja{/if}</td>
+            <td>{if $d.default}ja{else}nein{/if}</td>
 			<td style="width:130px">
 				<a href="?page={$page}&sub={$sub}&download={$k}">Download</a>
 				{if $d.custom}
