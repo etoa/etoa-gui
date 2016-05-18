@@ -175,7 +175,20 @@
 			$k
 		));
 		$arr = mysql_fetch_row($res);
-		$designs[$k]['users'] = $arr[0];
+        $designs[$k]['users'] = $arr[0];
+        $designs[$k]['default'] = ($k == $cfg->value('default_css_style'));
+        // If it is the default design, add all users who have not explicitly selected a design
+        if ($k == $cfg->value('default_css_style')) {
+            $res = dbQuerySave("
+            SELECT
+                COUNT(id) as cnt
+            FROM
+                user_properties
+            WHERE
+                css_style='';");
+            $arr = mysql_fetch_row($res);
+            $designs[$k]['users'] += $arr[0];
+        }
 	}
 	
 	$tpl->assign('designs', $designs);
