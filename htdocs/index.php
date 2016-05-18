@@ -301,7 +301,7 @@
 		else
 		{
 			$tpl->assign("currentPlanetName","Unbekannt");
-			$tpl->assign("planetList", "");
+			$tpl->assign("planetList", []);
 			$tpl->assign("nextPlanetId",0);
 			$tpl->assign("prevPlanetId",0);
 			$tpl->assign("selectField","");		
