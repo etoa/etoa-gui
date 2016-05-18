@@ -1,6 +1,21 @@
 ﻿Escape to Andromeda Changelog
 =============================
 
+Version 3.5.12
+--------------
+
+### Bugfixes ###
+
+ * Fixed database error related to fleet start in haven (using more robust database queries)
+ * Fixed database error related to loading user properties for image path and type in haven
+ * Added missing ship gif images, fixed image size
+ * Fixed an issue with invalid variables which ocurred when a user who had not yet choosen a planet opened the planet selector
+
+### Administration ###
+
+ * Corrected number of users using the default design in the design statistics
+ * Default backup file retention time set to 7 days
+
 Version 3.5.11
 -------------
 

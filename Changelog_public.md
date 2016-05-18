@@ -1,6 +1,15 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.12
+--------------
+
+### Bugfixes ###
+
+ * Mehrere Datenbankfehler im Raumhafen behoben
+ * Fehlende GIF-Versionen einiger Schiffsbilder hinzugefügt
+ * Fehler in der Planetenauswahl behoben, wenn ein Spieler noch keinen Hauptplaneten ausgewählt hat
+
 Version 3.5.11
 -------------
 
