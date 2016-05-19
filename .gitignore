@@ -15,6 +15,7 @@ htdocs/config/db.conf
 htdocs/config/periodictasks-overrides.conf
 backup/
 htdocs/log/*.log
+htdocs/tmp/*.pid
 /htdocs/designs/custom/*
 /htdocs/config/debug
 /htdocs/config/eventhandler.conf

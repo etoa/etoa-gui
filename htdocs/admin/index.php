@@ -92,7 +92,7 @@ else
 	// Status widget
 	$tpl->assign("is_unix", UNIX);
 	if (UNIX) {
-		$tpl->assign("eventhandler_pid", EventHandlerManager::checkDaemonRunning($cfg->daemon_pidfile));
+		$tpl->assign("eventhandler_pid", EventHandlerManager::checkDaemonRunning(getAbsPath($cfg->daemon_pidfile)));
 		intval(exec("cat /proc/cpuinfo | grep processor | wc -l", $out));
 		$load = sys_getloadavg();
 		$tpl->assign("sys_load", round($load[2]/intval($out[0])*100, 2) );

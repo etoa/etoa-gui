@@ -14,7 +14,7 @@
 			}
 			$instance = $cfg->daemon_instance->v;
 			$configfile = realpath(RELATIVE_ROOT.'config/'.EVENTHANDLER_CONFIG_FILE_NAME);
-			$pidfile = $cfg->daemon_pidfile->v;
+			$pidfile = getAbsPath($cfg->daemon_pidfile->v);
 
 			if (file_exists($executable))
 			{
@@ -67,7 +67,7 @@
 		}
 		else
 		{
-			$tpl->assign('errmsg', "Die Logdatei ".$cfg->daemon_logfile." kann nicht geöffnet werden!");
+			$tpl->assign('log', "<em>Die Logdatei ".$cfg->daemon_logfile." kann nicht geöffnet werden!</em>");
 		}
 	}
 

@@ -2698,7 +2698,11 @@ function imagecreatefromfile($path, $user_functions = false)
 		}
 		return false;
 	}
-	
+
+    function getAbsPath($path) {
+        return (substr($path, 0, 1) != "/" ? realpath(RELATIVE_ROOT).'/' : '').$path;
+    }
+
 	/**
 	* Textfunktionen einbinden
 	*/

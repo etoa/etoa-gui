@@ -663,13 +663,13 @@ https://etoa.ch</v>
       <v comment="Evendhandler Instanzname" type="text">roundx</v>
     </item>
     <item name="daemon_logfile" cat="20" base="yes">
-      <v comment="Evendhandler Logfile" type="text">/var/log/etoad/roundx.log</v>
+      <v comment="Evendhandler Logfile" type="text">log/eventhandler.log</v>
     </item>
     <item name="daemon_pidfile" cat="20" base="yes">
-      <v comment="Evendhandler PID-File" type="text">/var/run/etoad/roundx.pid</v>
+      <v comment="Evendhandler PID-File" type="text">tmp/eventhandler.pid</v>
     </item>	
     <item name="backend_offline_mail" cat="20">	 	  
-      <v comment="Eventhandler Offline Mail" type="text">river@etoa.ch;mrcage@etoa.ch</v>
+      <v comment="Eventhandler Offline Mail" type="text">mail@etoa.ch</v>
     </item>
     <item name="update_enabled" cat="20">
       <v comment="Periodische Updates aktiv (Updateskript Cronjob)" type="onoff">1</v>
