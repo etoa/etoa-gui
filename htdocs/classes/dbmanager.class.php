@@ -215,6 +215,9 @@ class DBManager implements ISingleton	{
 	 */
 	function escapeStr($string)
 	{
+		if (!$this->isOpen) {
+			$this->connect();
+		}
 		$string = trim($string);
 		if(get_magic_quotes_gpc())
 			$string = stripslashes($string);
