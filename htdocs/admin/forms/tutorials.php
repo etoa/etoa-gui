@@ -18,7 +18,7 @@
 	//////////////////////////////////////////////////
 	//
 	// 	Dateiname: ships.php
-	// 	Topic: Formular-Definitionen für Schiffe
+	// 	Topic: Formular-Definitionen fÃ¼r Schiffe
 	// 	Autor: Nicolas Perrenoud alias MrCage
 	// 	Erstellt: 01.12.2004
 	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage

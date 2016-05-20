@@ -18,7 +18,7 @@
 	//////////////////////////////////////////////////	
 	//
 	// 	Dateiname: races.php	
-	// 	Topic: Formular-Definitionen für Rassen 
+	// 	Topic: Formular-Definitionen fÃ¼r Rassen 
 	// 	Autor: Nicolas Perrenoud alias MrCage							
 	// 	Erstellt: 01.12.2004
 	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage

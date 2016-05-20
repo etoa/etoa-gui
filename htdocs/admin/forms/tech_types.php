@@ -18,7 +18,7 @@
 	//////////////////////////////////////////////////	
 	//
 	// 	Dateiname: tech_types.php	
-	// 	Topic: Formular-Definitionen für Technologie-Typen 
+	// 	Topic: Formular-Definitionen fÃ¼r Technologie-Typen 
 	// 	Autor: Nicolas Perrenoud alias MrCage							
 	// 	Erstellt: 01.12.2004
 	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage

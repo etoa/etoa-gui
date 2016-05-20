@@ -124,7 +124,7 @@
 		{
 			$black = imagecolorallocate($im,0,0,0);
 			$white = imagecolorallocate($im,255,255,255);
-			imagestring($im,2,5,5,"Fehler: Ungültiger Dateityp!",$white);
+			imagestring($im,2,5,5,"Fehler: UngÃ¼ltiger Dateityp!",$white);
 		}
 		
 		switch($fi['extension'])

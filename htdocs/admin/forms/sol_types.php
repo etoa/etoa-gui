@@ -18,7 +18,7 @@
 	//////////////////////////////////////////////////	
 	//
 	// 	Dateiname: sol_types.php	
-	// 	Topic: Formular-Definitionen für Sonnentypen 
+	// 	Topic: Formular-Definitionen fÃ¼r Sonnentypen 
 	// 	Autor: Nicolas Perrenoud alias MrCage							
 	// 	Erstellt: 01.12.2004
 	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage
@@ -168,7 +168,7 @@
 																		"show_overview" => 0
 																	),
 												9	=> 	array	(	"name" => "sol_type_f_population",
-																		"text" => "Bevölkerungsfaktor",
+																		"text" => "BevÃ¶lkerungsfaktor",
 																		"type" => "text",
 																		"def_val" => "1",
 																		"size" => "5",

@@ -18,7 +18,7 @@
 	//////////////////////////////////////////////////
 	//
 	// 	Dateiname: defense.php
-	// 	Topic: Formular-Definitionen für Verteidigung
+	// 	Topic: Formular-Definitionen fÃ¼r Verteidigung
 	// 	Autor: Nicolas Perrenoud alias MrCage
 	// 	Erstellt: 01.12.2004
 	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage
