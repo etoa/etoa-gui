@@ -15,7 +15,7 @@
   {  
     if($_POST['planets']>$planets)
     {
-      for($x=1;x <($_POST['planets']-$planets);x++)
+      for($x=1;$x <($_POST['planets']-$planets);$x++)
       {
          mysql_query("update planets set type_id =".$exo_id." WHERE id = (SELECT id FROM planets where planet_user_id=0 limit 1); "); 
       }
