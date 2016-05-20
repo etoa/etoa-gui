@@ -18,7 +18,6 @@ Version 3.5-dev
  * adding from alli techs
  * added function to restore messages (reports will follow later)
  * Backend eventhandler PID file can now be stored locally
- * Fixed error related to mysql string escaping on admin overview page
  * Cronjob can be set up automatically
  * Fixed JavaSCript error on start-objects screen 
  
@@ -28,6 +27,10 @@ Version 3.5.13
 ### Bugfixes ###
 
  * Fixed css class name for full crystal stora in small resource box
+
+### Administration ###
+ 
+ * Fixed error related to mysql string escaping on admin overview page
 
 Version 3.5.12
 --------------
