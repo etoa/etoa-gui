@@ -27,8 +27,7 @@ if (!configFileExists(DBManager::getInstance()->getConfigFile()))
     $steps = [
         1 => 'MySQL-Datenbank',
         2 => 'Allgemeine Daten',
-        3 => 'Weitere Einstellungen',
-        4 => 'Anschluss'
+        3 => 'Abschluss'
     ];
 	
 	if (isset($_POST['install_check']))
@@ -73,6 +72,7 @@ if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 		$_SESSION['INSTALL']['round_name'] = $_POST['round_name'];
 		$_SESSION['INSTALL']['round_url'] = $_POST['round_url'];
 		$_SESSION['INSTALL']['loginserver_url'] = $_POST['loginserver_url'];
+		$_SESSION['INSTALL']['referers'] = $_POST['referers'];
 
 		if ($_POST['round_name'] != "")
 		{
@@ -85,20 +85,6 @@ if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 			$tpl->assign('errmsg', 'Achtung! Du hast nicht alle Felder ausgef&uuml;lt!');
 		}		
 	}	
-	elseif(isset($_POST['step3_submit']) && $_POST['step3_submit'])
-	{
-		$step = 3;
-		if ($_POST['referers'] != "")
-		{
-			$step = 4;
-			$_SESSION['INSTALL']['step'] = 4;
-			$_SESSION['INSTALL']['referers'] = $_POST['referers'];
-		}
-		else
-		{
-			$tpl->assign('errmsg', 'Achtung! Du hast nicht alle Felder ausgef&uuml;lt!');
-		}
-	}		
 	
 	if (isset($_SESSION['INSTALL']['step']) && isset($_GET['step']) && $_GET['step']>0)
 	{
@@ -119,7 +105,7 @@ if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 	}
 	$tpl->assign('installMenu', $navElems);
 	
-	if($step==4)
+	if ($step==3)
 	{
 		$dbCfg = array(
 			'host' => $_SESSION['INSTALL']['db_server'],
@@ -156,17 +142,18 @@ password = ".$dbCfg['password']."
 			$_SESSION['INSTALL']['step'] = 1;
 		}
 
-        if (!configFileExists(EVENTHANDLER_CONFIG_FILE_NAME)) {
-            echo "<p>Für den Eventhandler musst du noch den folgenden Inhalt in eine Konfigurationsdatei <b>".getConfigFilePath(EVENTHANDLER_CONFIG_FILE_NAME)."</b> speichern:</p>
-            <pre class=\"code\">".$bConfigStingEventHandler."</pre>";
-        }
+		if (!configFileExists(EVENTHANDLER_CONFIG_FILE_NAME)) {
+			echo "<p>Für den Eventhandler musst du noch den folgenden Inhalt in eine Konfigurationsdatei <b>".getConfigFilePath(EVENTHANDLER_CONFIG_FILE_NAME)."</b> speichern:</p>
+			<pre class=\"code\">".$bConfigStingEventHandler."</pre>";
+		}
 
 		echo "<p><input type=\"button\" onclick=\"document.location='admin'\" value=\"Zum Admin-Login\"/> &nbsp; 
 		<input type=\"button\" onclick=\"document.location='".getLoginUrl()."'\" value=\"Zum Loginserver\"/></p>";
 	
 	}		
 	
-	elseif($step==3)
+	
+	elseif ($step==2)
 	{
 		$dbCfg = array(
 			'host' => $_SESSION['INSTALL']['db_server'],
@@ -185,33 +172,17 @@ password = ".$dbCfg['password']."
 			Config::restoreDefaults();
 			Config::getInstance()->reload();			
 		}
-		
 		$cfg = Config::getInstance();
-		
-        $str = "<form action=\"?\" method=\"post\">
-		<div>
-			<table>
-				<tr>
-					<th>Referers:</th>
-					<td><textarea name=\"referers\" rows=\"6\" cols=\"50\">".(isset($_SESSION['INSTALL']['referers']) ? $_SESSION['INSTALL']['referers'] : $cfg->get('referers'))."</textarea><br/>
-					(alle Seiten, welche als Absender gelten sollen. Also der Loginserver, sowie der aktuelle Server. Mache für jeden Eintrag eine neue Linie!)</td>
-					<td></td>
-				</tr>
-			</table>
-		</div>
-		<p><input type=\"submit\" name=\"step3_submit\" value=\"Weiter\" /></p>";
-		$tpl->assign('installform', $str);
-	}		
-	
-	elseif($step==2)
-	{
+
 		if (isset($_SERVER['HTTP_HOST']) && !empty($_SERVER['HTTP_HOST']))
 		{
 			$default_round_url = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'];
+			$default_referers = $default_round_url."\n".INSTALLER_DEFAULT_LOGINSERVER_URL;
 		}
 		else
 		{
-			$default_round_url = Config::getInstance()->get('roundurl');
+			$default_round_url = $cfg->get('roundurl');
+			$default_referers = $cfg->get('referers');
 		}
 
 		$str = "<form action=\"?\" method=\"post\">
@@ -231,6 +202,12 @@ password = ".$dbCfg['password']."
 					<th>Loginserver-URL:</th>
 					<td><input type=\"text\" name=\"loginserver_url\" value=\"".(isset($_SESSION['INSTALL']['loginserver_url']) ? $_SESSION['INSTALL']['loginserver_url'] : INSTALLER_DEFAULT_LOGINSERVER_URL)."\" /></td>
 					<td>(z.b. ".INSTALLER_DEFAULT_LOGINSERVER_URL.", leerlassen für lokales Login)</td>
+				</tr>
+				<tr>
+					<th>Referers:</th>
+					<td><textarea name=\"referers\" rows=\"6\" cols=\"50\">".(isset($_SESSION['INSTALL']['referers']) ? $_SESSION['INSTALL']['referers'] : $default_referers)."</textarea><br/>
+					(alle Seiten, welche als Absender gelten sollen. Also der Loginserver, sowie der aktuelle Server. Mache für jeden Eintrag eine neue Linie!)</td>
+					<td></td>
 				</tr>
 			</table>
 		</div>
