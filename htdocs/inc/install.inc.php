@@ -71,6 +71,7 @@ if (!configFileExists(DBManager::getInstance()->getConfigFile()))
 		$step = 2;
 
 		$_SESSION['INSTALL']['round_name'] = $_POST['round_name'];
+		$_SESSION['INSTALL']['round_url'] = $_POST['round_url'];
 		$_SESSION['INSTALL']['loginserver_url'] = $_POST['loginserver_url'];
 
 		if ($_POST['round_name'] != "")
@@ -139,6 +140,7 @@ password = ".$dbCfg['password']."
 		$cfg = Config::getInstance();
 		$cfg->set("referers",$_SESSION['INSTALL']['referers']);
 		$cfg->set("roundname",$_SESSION['INSTALL']['round_name']);
+		$cfg->set("roundurl",$_SESSION['INSTALL']['round_url']);
 		$cfg->set("loginurl",$_SESSION['INSTALL']['loginserver_url']);
 
 		writeConfigFile(DBManager::getInstance()->getConfigFile(), $dbConfigSting);
@@ -203,6 +205,15 @@ password = ".$dbCfg['password']."
 	
 	elseif($step==2)
 	{
+		if (isset($_SERVER['HTTP_HOST']) && !empty($_SERVER['HTTP_HOST']))
+		{
+			$default_round_url = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'];
+		}
+		else
+		{
+			$default_round_url = Config::getInstance()->get('roundurl');
+		}
+
 		$str = "<form action=\"?\" method=\"post\">
 		<div>
 			<table>
@@ -210,6 +221,11 @@ password = ".$dbCfg['password']."
 					<th>Name der Runde:</th>
 					<td><input type=\"text\" name=\"round_name\" value=\"".(isset($_SESSION['INSTALL']['round_name']) ? $_SESSION['INSTALL']['round_name'] : 'Runde X')."\" /></td>
 					<td>(z.b. Runde 1)</td>
+				</tr>
+				<tr>
+					<th>Basis-URL der Runde:</th>
+					<td><input type=\"text\" name=\"round_url\" value=\"".(isset($_SESSION['INSTALL']['round_url']) ? $_SESSION['INSTALL']['round_url'] : $default_round_url)."\" /></td>
+					<td>(z.b. '.$default_round_url.')</td>
 				</tr>
 				<tr>
 					<th>Loginserver-URL:</th>
