@@ -8,6 +8,10 @@ Version 3.5.13
 
  * Fixed css class name for full crystal stora in small resource box
 
+### Administration ###
+ 
+ * Fixed error related to mysql string escaping on admin overview page
+
 Version 3.5.12
 --------------
 
