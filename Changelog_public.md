@@ -1,6 +1,13 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.13
+--------------
+
+### Bugfixes ###
+
+ * Bei der schlanken Ressourcenanzeige wird bei vollem Silizium-Speicher die Schrift nun korrekt rot angezeigt
+
 Version 3.5.12
 --------------
 
