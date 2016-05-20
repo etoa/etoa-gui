@@ -19,8 +19,21 @@
 
 		$tpl->assign('crontab_user', trim(shell_exec('id')));
 
+		// Get current crontab
 		$crontab = array();
 		exec("crontab -l", $crontab);
+
+		// Enable cronjob
+		if (isset($_GET['enablecronjob']) && !in_array($cronjob, $crontab))
+		{
+			$out = shell_exec('(crontab -l 2>/dev/null; echo "'.$cronjob.'") | crontab -');
+			if (!empty($out))
+			{
+				$tpl->assign('errmsg', "Cronjob konnte nicht aktiviert werden: ".$out);
+			}
+			exec("crontab -l", $crontab);
+		}
+
 		$tpl->assign('crontab', implode("\n", $crontab));
 		
 		$tpl->assign('crontab_check', in_array($cronjob, $crontab));

@@ -15,6 +15,8 @@
 	{else}
 		{msg type="warn" text="Cronjob ist möglicherweise nicht korrekt eingerichtet!"}
 		<h3>Unix-Cronjob einrichten</h3>
+		<p><input type="button" value="Automatisch einrichten" onclick="document.location='?page={$page}&enablecronjob'" /</p>
+		<p><em>oder</em></p>
 		<ol>
 			<li>Auf den Server einloggen (z.B. via SSH) resp. eine Shell/Kommandozeile öffnen</li>
 			<li>Folgenden Befehl eingeben: <pre class="code">crontab -e</pre></li>

@@ -19,6 +19,7 @@ Version 3.5-dev
  * added function to restore messages (reports will follow later)
  * Backend eventhandler PID file can now be stored locally
  * Fixed error related to mysql string escaping on admin overview page
+ * Cronjob can be set up automatically
   
 Version 3.5.12
 --------------
