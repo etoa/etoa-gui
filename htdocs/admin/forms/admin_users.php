@@ -18,7 +18,7 @@
 	//////////////////////////////////////////////////	
 	//
 	// 	Dateiname: admin_users.php	
-	// 	Topic: Formular-Definitionen für Admin-User 
+	// 	Topic: Formular-Definitionen fÃ¼r Admin-User 
 	// 	Autor: Nicolas Perrenoud alias MrCage							
 	// 	Erstellt: 01.12.2004
 	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage

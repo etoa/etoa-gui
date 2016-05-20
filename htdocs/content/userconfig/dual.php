@@ -18,7 +18,7 @@
 	//
 	//
     
-    // Datenänderung übernehmen
+    // DatenÃ¤nderung Ã¼bernehmen
   if (isset($_POST['data_submit']) && $_POST['data_submit']!="" && checker_verify())
   { 
     if (checkEmail($_POST['dual_email']))

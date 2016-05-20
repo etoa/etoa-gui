@@ -18,7 +18,7 @@
 	//////////////////////////////////////////////////	
 	//
 	// 	Dateiname: config.php	
-	// 	Topic: Formular-Definitionen für Konfiguration 
+	// 	Topic: Formular-Definitionen fÃ¼r Konfiguration 
 	// 	Autor: Nicolas Perrenoud alias MrCage							
 	// 	Erstellt: 01.12.2004
 	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage

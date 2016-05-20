@@ -18,7 +18,7 @@
 	//////////////////////////////////////////////////	
 	//
 	// 	Dateiname: buildings.php	
-	// 	Topic: Formular-Definitionen für Gebäude 
+	// 	Topic: Formular-Definitionen fÃ¼r GebÃ¤ude 
 	// 	Autor: Nicolas Perrenoud alias MrCage							
 	// 	Erstellt: 01.12.2004
 	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage

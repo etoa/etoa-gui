@@ -18,7 +18,7 @@
 	//////////////////////////////////////////////////	
 	//
 	// 	Dateiname: technologies.php	
-	// 	Topic: Formular-Definitionen für Technologien 
+	// 	Topic: Formular-Definitionen fÃ¼r Technologien 
 	// 	Autor: Nicolas Perrenoud alias MrCage							
 	// 	Erstellt: 01.12.2004
 	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage

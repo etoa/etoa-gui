@@ -59,7 +59,7 @@
 	         	$ext = substr($ims['mime'],strrpos($ims['mime'],"/")+1);
 	         	if ($ext=="jpg" || $ext=="jpeg" || $ext=="gif" || $ext=="png")
 	         	{                  
-	            //überprüft Bildgrösse
+	            //Ã¼berprÃ¼ft BildgrÃ¶sse
 	            if ($ims[0] <= $this->maxDim[0] && $ims[1] <= $this->maxDim[1])
 	            {
                 $fname = $this->targetName.".".$ext;
@@ -78,7 +78,7 @@
 								{
 									if (!resizeImage($fpath,$fpath,$this->resize[0],$this->resize[1],$ext))
 									{
-										error_msg("Bildgrösse konnte nicht angepasst werden!");
+										error_msg("BildgrÃ¶sse konnte nicht angepasst werden!");
                     @unlink($fpath);
                     return false;
 									}
@@ -98,7 +98,7 @@
 					}
 					else
 					{
-						error_msg("Ungültige Bilddatei!");
+						error_msg("UngÃ¼ltige Bilddatei!");
 					}
 				}	                 	
        	else

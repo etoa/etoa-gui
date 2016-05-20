@@ -32,7 +32,7 @@
 	}
 
 	//
-	// Übersicht
+	// Ãœbersicht
 	//
 	else
 	{
@@ -46,7 +46,7 @@
 				$slist[$barr['missile_id']]=$barr['missile_name'];
 			}
 		
-			// Hinzufügen
+			// HinzufÃ¼gen
 			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\" id=\"selector\">";
 			tableStart();
 			
@@ -79,7 +79,7 @@
 			//Planeten
 			echo "<tr><th class=\"tbltitle\">Planeten</th><td class=\"tbldata\" id=\"planetSelector\">Sonnensystem oder User w&auml;hlen...</td></tr>";
 			
-			//Schiffe Hinzufügen
+			//Schiffe HinzufÃ¼gen
 			echo "<tr><th class=\"tbltitle\">Hinzuf&uuml;gen:</th><td class=\"tbldata\">
 			<input type=\"text\" name=\"shiplist_count\" value=\"1\" size=\"1\" maxlength=\"3\" />
 			<select name=\"ship_id\">";
