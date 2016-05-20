@@ -84,7 +84,7 @@ if (mysql_num_rows($res)>0)
 			<option value=\"d\">Verteidigung</option>
 			</select> <span id=\"itemlist_".$arr['set_id']."\"></span></form>";			
 		echo "</fieldset><br/>
-		<script type=\"text/javascript\">showLoaderInline('setcontent_".$arr['set_id']."');xajax_loadItemSet(".$arr['set_id'].");</script>";
+		<script type=\"text/javascript\">$(function(){ showLoaderInline('setcontent_".$arr['set_id']."');xajax_loadItemSet(".$arr['set_id']."); });</script>";
 	}
 }
 else

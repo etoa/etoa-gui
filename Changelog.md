@@ -20,7 +20,8 @@ Version 3.5-dev
  * Backend eventhandler PID file can now be stored locally
  * Fixed error related to mysql string escaping on admin overview page
  * Cronjob can be set up automatically
-  
+ * Fixed JavaSCript error on start-objects screen 
+ 
 Version 3.5.12
 --------------
 
