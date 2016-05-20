@@ -17,6 +17,8 @@ Version 3.5-dev
  
  * adding from alli techs
  * added function to restore messages (reports will follow later)
+ * Backend eventhandler PID file can now be stored locally
+ * Fixed error related to mysql string escaping on admin overview page
   
 Version 3.5.12
 --------------
