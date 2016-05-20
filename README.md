@@ -21,6 +21,7 @@ Authors
  * Nicolas Perrenoud <mrcage@etoa.ch>
  * Stephan Vock <glaubinix@etoa.ch>
  * River <river@etoa.ch>
+ * coo1ness <coo1ness@etoa.ch>
 
 Contributors
 ------------
@@ -30,4 +31,3 @@ Contributors
  * Demora <demora@etoa.ch>
  * Yanneck Boss <yanneck@etoa.ch>
  * fabiator <fabiator@etoa.ch>
- * coo1ness <coo1ness@etoa.ch>
