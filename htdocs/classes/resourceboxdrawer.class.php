@@ -92,7 +92,7 @@ class ResourceBoxDrawer
 		}
 		if ($p->storeCrystal<=floor($p->resCrystal) && floor($p->resCrystal)>0)
 		{
-			$style1 .= 'resfullcolor';
+			$style1 .= ' resfullcolor';
 		}
 		if ($p->storePlastic<=floor($p->resPlastic) && floor($p->resPlastic)>0)
 		{

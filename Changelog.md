@@ -1,6 +1,13 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.13
+--------------
+
+### Bugfixes ###
+
+ * Fixed css class name for full crystal stora in small resource box
+
 Version 3.5.12
 --------------
 
