@@ -976,6 +976,7 @@ if (isset($cp)) {
 	              	}
 	              }
 	
+								$filterStyleClass = "";
 								if ($bv['show']==0 && $b_level>0)
 								{
 									$subtitle =  'Kann nicht erforscht werden';
@@ -983,12 +984,9 @@ if (isset($cp)) {
 									$color = '#999';
 									if($use_img_filter)
 									{
-										$img = "misc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."&filter=na";
+										$filterStyleClass = "filter-unavailable";
 									}
-									else
-									{
-										$img="".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."";
-									}		
+									$img="".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."";
 								}
 								elseif ($bv['show']==1)
 								{
@@ -1015,12 +1013,9 @@ if (isset($cp)) {
 										$color = '#999';
 										if($use_img_filter)
 										{
-											$img = "misc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."&filter=na";
+											$filterStyleClass = "filter-unavailable";
 										}
-										else
-										{
-											$img="".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."";
-										}							
+										$img="".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."";
 									}
 									// Ist im Bau
 									elseif (isset($techlist[$bid]['techlist_build_type']) && $techlist[$bid]['techlist_build_type']==3)
@@ -1030,12 +1025,9 @@ if (isset($cp)) {
 										$color = '#0f0';
 										if($use_img_filter)
 										{
-											$img = "misc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."&filter=building";
+											$filterStyleClass = "filter-building";
 										}
-										else
-										{
-											$img="".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."";
-										}
+										$img="".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."";
 									}
 									// Untätig
 									else
@@ -1054,12 +1046,9 @@ if (isset($cp)) {
 											$color = '#f00';
 											if($use_img_filter)
 											{
-												$img = "misc/imagefilter.php?file=".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."&filter=lowres";
+												$filterStyleClass = "filter-noresources";
 											}
-											else
-											{
-												$img="".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."";
-											}
+											$img="".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid.".".IMAGE_EXT."";
 										}
 										else
 										{
@@ -1089,8 +1078,9 @@ if (isset($cp)) {
 								{			
 									$img="".IMAGE_PATH."/".IMAGE_TECHNOLOGY_DIR."/technology".$bid."_middle.".IMAGE_EXT."";
 	
-									if (!$requirements_passed)
-										$img = "misc/imagefilter.php?file=$img&filter=req";
+									if (!$requirements_passed) {
+										$filterStyleClass = "filter-unavailable";
+									}
 	
 									// Display row starter if needed				
 									if ($cnt==0) 
@@ -1098,10 +1088,10 @@ if (isset($cp)) {
 										echo "<tr>";
 									}
 									
-										echo "<td style=\"background:url('".$img."') no-repeat;width:".CELL_WIDTH."px;height:".CELL_WIDTH."px ;padding:0px;\">
+										echo "<td style=\"width:".CELL_WIDTH."px;height:".CELL_WIDTH."px ;padding:0px;\">
 											<div style=\"position:relative;height:".CELL_WIDTH."px;overflow:hidden\">
 											<div class=\"buildOverviewObjectTitle\">".$bv['name']."</div>";
-										echo "<a href=\"?page=$page&amp;id=".$bid."\" ".tm($bv['name'],"<b>".$subtitle."</b><br/>".$tmtext.$bv['shortcomment'])." style=\"display:block;height:180px;\"></a>";
+										echo "<a href=\"?page=$page&amp;id=".$bid."\" ".tm($bv['name'],"<b>".$subtitle."</b><br/>".$tmtext.$bv['shortcomment'])." style=\"display:block;height:180px;\"><img class=\"".$filterStyleClass."\" src=\"".$img."\"/></a>";
 										if ($b_level>0 || ($b_level==0 && isset($techlist[$bid]['techlist_build_type']) && $techlist[$bid]['techlist_build_type']==3)) 
 										{
 											echo "<div class=\"buildOverviewObjectLevel\" style=\"color:".$color."\">".$b_level."</div>";
