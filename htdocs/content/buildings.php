@@ -600,6 +600,7 @@ define('HELP_URL',"?page=help&site=buildings");
 							$img = $it->current()->building->imgPathSmall();
 						else
 							$img = $it->current()->building->imgPathMiddle();
+						$filterStyleClass = "";
 						
 						if (!$bl->requirementsPassed($it->key()))
 						{
@@ -621,7 +622,7 @@ define('HELP_URL',"?page=help&site=buildings");
 							$color = '#999';
 							if($use_img_filter)
 							{
-								$img = "misc/imagefilter.php?file=".$img."&filter=na";
+								$filterStyleClass = "filter-unavailable";
 							}
 						}
 						// Ist im Bau
@@ -632,7 +633,7 @@ define('HELP_URL',"?page=help&site=buildings");
 							$color = '#0f0';
 							if($use_img_filter)
 							{
-								$img = "misc/imagefilter.php?file=".$img."&filter=building";
+								$filterStyleClass = "filter-building";
 							}
 						}
 						//Wird abgerissen
@@ -643,7 +644,7 @@ define('HELP_URL',"?page=help&site=buildings");
 							$color = '#f90';
 							if($use_img_filter)
 							{
-								$img = "misc/imagefilter.php?file=".$img."&filter=destructing";
+								$filterStyleClass = "filter-destructing";
 							}
 						}
 						// Untätig
@@ -658,7 +659,7 @@ define('HELP_URL',"?page=help&site=buildings");
 								
 								if($use_img_filter)
 								{
-									$img = "misc/imagefilter.php?file=".$img."&filter=lowres";
+									$filterStyleClass = "filter-noresources";
 								}
 							}
 							else
@@ -688,7 +689,7 @@ define('HELP_URL',"?page=help&site=buildings");
 						{
 					 		echo "<tr>
 			  		 				<td>
-							  			<a href=\"".HELP_URL."&amp;id=".$it->key()."\"><img src=\"".$img."\" width=\"40px\" height=\"40px\" border=\"0\" /></a>
+							  			<a href=\"".HELP_URL."&amp;id=".$it->key()."\"><img class=\"".$filterStyleClass."\" src=\"".$img."\" width=\"40px\" height=\"40px\" border=\"0\" /></a>
 									</td>
 									<th width=\"45%\">
 										<span style=\"font-weight:500\">".$it->current()->building."<br/>
@@ -743,10 +744,10 @@ define('HELP_URL',"?page=help&site=buildings");
 									echo "<tr>";
 								}
 								
-									echo "<td style=\"background:url('".$img."') no-repeat;width:".CELL_WIDTH."px;height:".CELL_WIDTH."px ;padding:0px;\">";
-									echo "<div style=\"position:relative;height:".CELL_WIDTH."px;overflow:hidden;\">
-										<div class=\"buildOverviewObjectTitle\">".$it->current()->building."</div>";
-									echo "<a href=\"?page=$page&amp;id=".$it->key()."\" ".tm($it->current()->building,"<b>".$subtitle."</b><br/>".$tmtext.$it->current()->building->shortDesc)." style=\"display:block;height:180px;\"></a>";
+									echo "<td style=\"width:".CELL_WIDTH."px;height:".CELL_WIDTH."px ;padding:0px;\">";
+									echo "<div style=\"position:relative;height:".CELL_WIDTH."px;overflow:hidden;\">";
+									echo "<div class=\"buildOverviewObjectTitle\">".$it->current()->building."</div>";
+									echo "<a href=\"?page=$page&amp;id=".$it->key()."\" ".tm($it->current()->building,"<b>".$subtitle."</b><br/>".$tmtext.$it->current()->building->shortDesc)." style=\"display:block;height:180px;\"><img class=\"".$filterStyleClass."\" src=\"".$img."\"/></a>";
 									if ($it->current()->level || ($it->current()->level==0 && isset($it->current()->buildType) && $buildlist[$bid]['buildlist_build_type']==3)) 
 									{
 										echo "<div class=\"buildOverviewObjectLevel\" style=\"color:".$color."\">".$it->current()->level."</div>";

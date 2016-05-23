@@ -1563,6 +1563,7 @@ table.tb td	{
 	padding:3px 15px 3px 3px;
 	font-size:8pt;
    float:left;
+   z-index: 10;
 }
 
 .buildOverviewObjectSubTitle {
