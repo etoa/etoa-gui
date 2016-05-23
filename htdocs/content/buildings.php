@@ -32,12 +32,6 @@ if ($cu->properties->itemShow!='full')
 	define('NUM_BUILDINGS_PER_ROW',9);
 	define('TABLE_WIDTH','');
 }
-elseif ($cu->properties->cssStyle=="Classic" || $cu->properties->cssStyle=="Dark")
-{
-  define('NUM_BUILDINGS_PER_ROW',4);
-  define('CELL_WIDTH','25%');
-  define('TABLE_WIDTH','');
-}
 else
 {
   define('NUM_BUILDINGS_PER_ROW',5);
@@ -749,17 +743,6 @@ define('HELP_URL',"?page=help&site=buildings");
 									echo "<tr>";
 								}
 								
-								if ($cu->properties->cssStyle=="Classic" || $cu->properties->cssStyle=="Dark")
-								{
-									echo "<td style=\"color:".$color.";text-align:center;width:".CELL_WIDTH."\">
-												<b>".$it->current()->building."";
-												if ($it->current()->level>0) echo ' '.$it->current()->level;
-												echo "</b><br/>".$subtitle."<br/>
-													<input name=\"show_".$it->key()."\" type=\"image\" value=\"".$it->key()."\" src=\"".$img."\" ".tm($it->current()->building,"<b>".$subtitle."</b><br/>".$tmtext.$it->current()->building->shortDesc)." style=\"width:120px;height:120px;\" />
-													</td>\n";
-								}
-								else
-								{
 									echo "<td style=\"background:url('".$img."') no-repeat;width:".CELL_WIDTH."px;height:".CELL_WIDTH."px ;padding:0px;\">";
 									echo "<div style=\"position:relative;height:".CELL_WIDTH."px;overflow:hidden;\">
 										<div class=\"buildOverviewObjectTitle\">".$it->current()->building."</div>";
@@ -770,7 +753,7 @@ define('HELP_URL',"?page=help&site=buildings");
 									}
 									echo "</div>";
 									echo "</td>\n";
-								}
+
 								$cnt++;
 								$scnt++;
 							}

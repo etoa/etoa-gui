@@ -6,7 +6,6 @@
 		private $cssStyle;
 		private $imageUrl;
 		private $imageExt;
-		private $gameWidth;
 		private $planetCircleWidth;
 		private $itemShow;
 		private $itemOrderShip;
@@ -58,7 +57,6 @@
 				$this->cssStyle = $arr['css_style'];
 				$this->imageUrl = $arr['image_url'];
 				$this->imageExt = $arr['image_ext'];
-				$this->gameWidth = $arr['game_width'];
 				$this->planetCircleWidth = $arr['planet_circle_width'];
 				$this->itemShow = $arr['item_show'];
 				$this->itemOrderShip = $arr['item_order_ship'];
@@ -158,11 +156,6 @@
 				{
 					$this->$key = $val;
 					$this->changedFields[$key] = "image_ext";
-				}
-				elseif ($key == "gameWidth")
-				{
-					$this->$key = $val;
-					$this->changedFields[$key] = "game_width";
 				}
 				elseif ($key == "planetCircleWidth")
 				{
