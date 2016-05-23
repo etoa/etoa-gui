@@ -744,10 +744,10 @@ define('HELP_URL',"?page=help&site=buildings");
 									echo "<tr>";
 								}
 								
-									echo "<td style=\"background:url('".$img."') no-repeat;width:".CELL_WIDTH."px;height:".CELL_WIDTH."px ;padding:0px;\">";
-									echo "<div style=\"position:relative;height:".CELL_WIDTH."px;overflow:hidden;\">
-										<div class=\"buildOverviewObjectTitle\">".$it->current()->building."</div>";
-									echo "<a href=\"?page=$page&amp;id=".$it->key()."\" ".tm($it->current()->building,"<b>".$subtitle."</b><br/>".$tmtext.$it->current()->building->shortDesc)." style=\"display:block;height:180px;\"></a>";
+									echo "<td style=\"width:".CELL_WIDTH."px;height:".CELL_WIDTH."px ;padding:0px;\">";
+									echo "<div style=\"position:relative;height:".CELL_WIDTH."px;overflow:hidden;\">";
+									echo "<div class=\"buildOverviewObjectTitle\">".$it->current()->building."</div>";
+									echo "<a href=\"?page=$page&amp;id=".$it->key()."\" ".tm($it->current()->building,"<b>".$subtitle."</b><br/>".$tmtext.$it->current()->building->shortDesc)." style=\"display:block;height:180px;\"><img class=\"".$filterStyleClass."\" src=\"".$img."\"/></a>";
 									if ($it->current()->level || ($it->current()->level==0 && isset($it->current()->buildType) && $buildlist[$bid]['buildlist_build_type']==3)) 
 									{
 										echo "<div class=\"buildOverviewObjectLevel\" style=\"color:".$color."\">".$it->current()->level."</div>";
