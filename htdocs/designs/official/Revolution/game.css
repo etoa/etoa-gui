@@ -139,6 +139,30 @@
 }
 
 /*
+* Image filters
+*/
+
+.filter-unavailable {
+	filter: blur(1px) grayscale(1);
+   -webkit-filter: blur(1px) grayscale(1);
+}
+
+.filter-building {
+	filter: sepia(1) hue-rotate(90deg) saturate(4);
+   -webkit-filter: sepia(1) hue-rotate(90deg) saturate(4);
+}
+
+.filter-destructing {
+	filter: sepia(1) hue-rotate(-30deg) saturate(4);
+   -webkit-filter: sepia(1) hue-rotate(-30deg) saturate(4);
+}
+
+.filter-noresources {
+	filter: sepia(1) hue-rotate(-50deg) saturate(4);
+   -webkit-filter: sepia(1) hue-rotate(-50deg) saturate(4);
+}
+
+/*
 * Search-Box 
 */
 
