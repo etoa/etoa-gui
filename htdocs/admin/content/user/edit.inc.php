@@ -185,7 +185,6 @@
 				image_url='".$_POST['image_url']."',
 				image_ext='".$_POST['image_ext']."',
 				css_style='".$_POST['css_style']."',
-				game_width=".$_POST['game_width'].",
 				planet_circle_width=".$_POST['planet_circle_width'].",
 				item_show='".$_POST['item_show']."',
 				image_filter=".$_POST['image_filter'].",
@@ -1282,20 +1281,7 @@
 			            }
 			            echo "</select>
 			          </td>
-							</tr>
-							<tr>
-                <td class=\"tbltitle\">Spielgrösse: (nur alte Designs)</td>
-                <td class=\"tbldata\" width=\"64%\" colspan=\"4\">
-                    <select name=\"game_width\">";
-                    for ($x=70;$x<=100;$x+=10)
-                    {
-                        echo "<option value=\"$x\"";
-                        if ($arr['game_width']==$x) echo " selected=\"selected\"";
-                        echo ">".$x."%</option>";
-                    }
-                    echo "</select>
-                </td>
-             </tr>
+			</tr>
              <tr>
                 <td class=\"tbltitle\">Planetkreisgr&ouml;sse:</td>
                 <td class=\"tbldata\" width=\"64%\" colspan=\"4\">

@@ -2545,7 +2545,6 @@ function imagecreatefromfile($path, $user_functions = false)
 				}
 			}
 			define('CSS_STYLE', $design);
-			define('GAME_WIDTH', isset($cu) ? $cu->properties->gameWidth : 90);
 
 			// Image paths
 			if (isset($cu) && $cu->properties->imageUrl != '' && $cu->properties->imageExt != '')

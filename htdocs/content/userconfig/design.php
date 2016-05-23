@@ -40,7 +40,6 @@
     		$cu->properties->smallResBox = $_POST['small_res_box'];
     	}
     	
-      $cu->properties->gameWidth=$_POST['game_width'];
       $cu->properties->planetCircleWidth=$_POST['planet_circle_width'];
       $cu->properties->itemShow=$_POST['item_show'];
       $cu->properties->imageFilter=$_POST['image_filter'];
@@ -134,21 +133,6 @@
                 echo "<script type=\"text/javascript;\">xajax_imagePackInfo(document.getElementById('image_select').options[document.getElementById('image_select').selectedIndex].value,'".$cu->properties->imageExt."','".$cu->properties->imageUrl."');</script>";
          echo "</td>";
     echo "</tr>";
-
-    //Spielgrösse
-    echo "<tr>
-            <th>Spielgr&ouml;sse: (nur alte Designs)</th>
-            <td width=\"64%\" colspan=\"4\">
-                <select name=\"game_width\">";
-                for ($x=70;$x<=100;$x+=10)
-                {
-                    echo "<option value=\"$x\"";
-                    if ($cu->properties->gameWidth==$x) echo " selected=\"selected\"";
-                    echo ">".$x."%</option>";
-                }
-                echo "</select> <span ".tm("Info","Das Spiel wurde optimiert f&uuml;r eine Aufl&ouml;sung von 1280*1024 Pixeln! Wenn du diese besitzt empfiehlt es sich bei den Classic Designs (Blue und Dark) eine Spielgr&ouml;sse von 80% zu w&auml;hlen. Bei einer kleineren Aufl&ouml;sung empfiehlt es sich eine Spielgr&ouml;sse von 100% einzustellen!",1)."><u>Info</u></span>
-            </td>
-         </tr>";
 
     //Planetkreisgrösse
     echo "<tr>

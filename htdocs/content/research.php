@@ -27,15 +27,9 @@
 
    // DEFINITIONEN //
 
-if ($cu->properties->cssStyle=="Classic" || $cu->properties->cssStyle=="Dark") {
-  define('NUM_BUILDINGS_PER_ROW',4);
-  define('CELL_WIDTH','25%');
-  define('TABLE_WIDTH','');
-} else {
   define('NUM_BUILDINGS_PER_ROW',5);
   define('CELL_WIDTH',120);
   define('TABLE_WIDTH','auto');
-}
 
 // Aktiviert / Deaktiviert Bildfilter
 if ($cu->properties->imageFilter ==1) {
@@ -1103,17 +1097,6 @@ if (isset($cp)) {
 										echo "<tr>";
 									}
 
-									if ($cu->properties->cssStyle=="Classic" || $cu->properties->cssStyle=="Dark")
-									{
-										echo "<td style=\"color:".$color.";text-align:center;width:".CELL_WIDTH."\">
-													<b>".$bv['name']."";
-													if ($b_level>0) echo ' '.$b_level;
-													echo "</b><br/>".$subtitle."<br/>
-													<input name=\"show_".$bid."\" type=\"image\" value=\"".$bid."\" src=\"".$img."\" ".tm($bv['name'],$tmtext.$bv['shortcomment'])." style=\"width:120px;height:120px;\" />
-									</td>\n";
-									}
-									else
-									{
 										echo "<td style=\"background:url('".$img."') no-repeat;width:".CELL_WIDTH."px;height:".CELL_WIDTH."px ;padding:0px;\">
 											<div style=\"position:relative;height:".CELL_WIDTH."px;overflow:hidden\">
 											<div class=\"buildOverviewObjectTitle\">".$bv['name']."</div>";
@@ -1123,16 +1106,6 @@ if (isset($cp)) {
 											echo "<div class=\"buildOverviewObjectLevel\" style=\"color:".$color."\">".$b_level."</div>";
 										}
 										echo "</div></td>\n";
-									}
-
-									/*
-										echo "<td class=\"tbldata\" style=\"color:".$color.";text-align:center;width:".CELL_WIDTH."px\">
-													<b>".$bv['name']."";
-													if ($b_level>0) echo ' '.$b_level;
-													echo "</b><br/>".$subtitle."<br/>
-													<input name=\"show_".$bid."\" type=\"image\" value=\"".$bid."\" src=\"".$img."\" ".tm($bv['name'],$tmtext.$bv['shortcomment'])." style=\"width:120px;height:120px;\" />
-									</td>\n";
-									*/
 
 									$cnt++;
 									$scnt++;
