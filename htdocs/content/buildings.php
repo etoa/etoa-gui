@@ -600,6 +600,7 @@ define('HELP_URL',"?page=help&site=buildings");
 							$img = $it->current()->building->imgPathSmall();
 						else
 							$img = $it->current()->building->imgPathMiddle();
+						$filterStyleClass = "";
 						
 						if (!$bl->requirementsPassed($it->key()))
 						{
@@ -621,7 +622,7 @@ define('HELP_URL',"?page=help&site=buildings");
 							$color = '#999';
 							if($use_img_filter)
 							{
-								$img = "misc/imagefilter.php?file=".$img."&filter=na";
+								$filterStyleClass = "filter-unavailable";
 							}
 						}
 						// Ist im Bau
@@ -632,7 +633,7 @@ define('HELP_URL',"?page=help&site=buildings");
 							$color = '#0f0';
 							if($use_img_filter)
 							{
-								$img = "misc/imagefilter.php?file=".$img."&filter=building";
+								$filterStyleClass = "filter-building";
 							}
 						}
 						//Wird abgerissen
@@ -643,7 +644,7 @@ define('HELP_URL',"?page=help&site=buildings");
 							$color = '#f90';
 							if($use_img_filter)
 							{
-								$img = "misc/imagefilter.php?file=".$img."&filter=destructing";
+								$filterStyleClass = "filter-destructing";
 							}
 						}
 						// Untätig
@@ -658,7 +659,7 @@ define('HELP_URL',"?page=help&site=buildings");
 								
 								if($use_img_filter)
 								{
-									$img = "misc/imagefilter.php?file=".$img."&filter=lowres";
+									$filterStyleClass = "filter-noresources";
 								}
 							}
 							else
@@ -688,7 +689,7 @@ define('HELP_URL',"?page=help&site=buildings");
 						{
 					 		echo "<tr>
 			  		 				<td>
-							  			<a href=\"".HELP_URL."&amp;id=".$it->key()."\"><img src=\"".$img."\" width=\"40px\" height=\"40px\" border=\"0\" /></a>
+							  			<a href=\"".HELP_URL."&amp;id=".$it->key()."\"><img class=\"".$filterStyleClass."\" src=\"".$img."\" width=\"40px\" height=\"40px\" border=\"0\" /></a>
 									</td>
 									<th width=\"45%\">
 										<span style=\"font-weight:500\">".$it->current()->building."<br/>
