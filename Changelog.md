@@ -28,6 +28,10 @@ Version 3.5.13
 
  * Fixed css class name for full crystal stora in small resource box
 
+### Changes ###
+
+ * Replace image filter script on building and research screens with CSS3 filter effects
+
 ### Administration ###
  
  * Fixed error related to mysql string escaping on admin overview page

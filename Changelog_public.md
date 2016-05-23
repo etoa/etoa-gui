@@ -8,6 +8,10 @@ Version 3.5.13
 
  * Bei der schlanken Ressourcenanzeige wird bei vollem Silizium-Speicher die Schrift nun korrekt rot angezeigt
 
+### Änderungen ###
+
+ * Bildfilter im Bauhof und im Forschungslabor werden nun durch CSS3-Effekte erzeugt; dies verringert die Serverlast
+
 Version 3.5.12
 --------------
 
