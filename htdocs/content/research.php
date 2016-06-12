@@ -451,27 +451,23 @@ if (isset($cp)) {
 						if (!$builing_something)
 						{
 
-							if ($cp->resMetal >= $bc['metal'] && $cp->resCrystal >= $bc['crystal'] && $cp->resPlastic >= $bc['plastic']  && $cp->resFuel >= $bc['fuel']  && $cp->resFood >= $bc['food'])
-							{
+							if ($cp->resMetal >= $bc['metal'] && $cp->resCrystal >= $bc['crystal'] && $cp->resPlastic >= $bc['plastic']  && $cp->resFuel >= $bc['fuel']  && $cp->resFood >= $bc['food']) {
 								$start_time = time();
-								$end_time = time()+$btime;
+								$end_time = time() + $btime;
 								// if (sizeof($techlist[$arr['tech_id']])>0)
-								if (isset($techlist[$arr['tech_id']]))
-								{
+								if (isset($techlist[$arr['tech_id']])) {
 									dbquery("
 									UPDATE 
 										techlist 
 									SET
                     					techlist_build_type='3',
-                    					techlist_build_start_time='".time()."',
-                    					techlist_build_end_time='".$end_time."',
-                    					techlist_entity_id='".$cp->id()."'
+                    					techlist_build_start_time='" . time() . "',
+                    					techlist_build_end_time='" . $end_time . "',
+                    					techlist_entity_id='" . $cp->id() . "'
 									WHERE
-										techlist_tech_id='".$arr['tech_id']."'
-										AND techlist_user_id='".$cu->id."';");
-								}
-								else
-								{
+										techlist_tech_id='" . $arr['tech_id'] . "'
+										AND techlist_user_id='" . $cu->id . "';");
+								} else {
 									dbquery("
 									INSERT INTO 
 									techlist 
@@ -485,15 +481,38 @@ if (isset($cp)) {
 									)
 									VALUES
 									(
-										'".$cp->id()."',
+										'" . $cp->id() . "',
 										'3',
-										'".time()."',
-										'".$end_time."',
-										'".$arr['tech_id']."',
-										'".$cu->id."'
+										'" . time() . "',
+										'" . $end_time . "',
+										'" . $arr['tech_id'] . "',
+										'" . $cu->id . "'
 									);");
-
 								}
+
+								if ($arr['tech_id'] == GEN_TECH_ID) {
+									dbquery("
+										UPDATE
+											buildlist
+										SET
+											buildlist_people_working_status='1'
+										WHERE
+											buildlist_building_id='" . PEOPLE_BUILDING_ID . "'
+											AND buildlist_user_id='" . $cu->id . "'
+											AND buildlist_entity_id='" . $cp->id . "'");
+								}
+								else {
+									dbquery("
+										UPDATE
+											buildlist
+										SET
+											buildlist_people_working_status='1'
+										WHERE
+											buildlist_building_id='" . TECH_BUILDING_ID . "'
+											AND buildlist_user_id='" . $cu->id . "'
+											AND buildlist_entity_id='" . $cp->id . "'");
+								}
+
 								$planet_id=$cp->id();
 
 								//Rohstoffe vom Planeten abziehen und aktualisieren
@@ -556,6 +575,29 @@ if (isset($cp)) {
 							WHERE 
 								techlist_tech_id='".$arr['tech_id']."'
 								AND techlist_user_id='".$cu->id."';");
+
+							if ($arr['tech_id'] == GEN_TECH_ID) {
+								dbquery("
+										UPDATE
+											buildlist
+										SET
+											buildlist_people_working_status='0'
+										WHERE
+											buildlist_building_id='" . PEOPLE_BUILDING_ID . "'
+											AND buildlist_user_id='" . $cu->id . "'
+											AND buildlist_entity_id='" . $cp->id . "'");
+							}
+							else {
+								dbquery("
+										UPDATE
+											buildlist
+										SET
+											buildlist_people_working_status='0'
+										WHERE
+											buildlist_building_id='" . TECH_BUILDING_ID . "'
+											AND buildlist_user_id='" . $cu->id . "'
+											AND buildlist_entity_id='" . $cp->id . "'");
+							}
 
 							//Rohstoffe zurückgeben und aktualisieren
 							$cp->changeRes($bc['metal']*$fac,$bc['crystal']*$fac,$bc['plastic']*$fac,$bc['fuel']*$fac,$bc['food']*$fac);

@@ -300,7 +300,8 @@
 
 			if ($this->id>0)
 			{
-				dbquery("UPDATE buildlist SET buildlist_build_type='3', buildlist_build_start_time='".$this->startTime."', buildlist_build_end_time='".$this->endTime."' WHERE buildlist_id='".$this->id."' LIMIT 1;");
+				dbquery("UPDATE buildlist SET buildlist_build_type='3', buildlist_build_start_time='".$this->startTime.
+					"', buildlist_build_end_time='".$this->endTime."', buildlist_people_working_status = '1' WHERE buildlist_id='".$this->id."' LIMIT 1;");
 			}
 			else
 			{
@@ -313,7 +314,8 @@
 							buildlist_build_type,
 							buildlist_current_level,
 							buildlist_build_start_time,
-							buildlist_build_end_time
+							buildlist_build_end_time,
+							buildlist_people_working_status
 						)
 						VALUES
 						(
@@ -323,7 +325,8 @@
 							'".$this->buildType."',
 							'".$this->level."',
 							'".$this->startTime."',
-							'".floor($this->endTime)."'
+							'".floor($this->endTime)."',
+							'1'
 						);");
 			}
 			Buildlist::$underConstruction = true;
@@ -439,7 +442,7 @@
 				$this->startTime = 0;
 				$this->buildType = 0;
 
-				dbquery("UPDATE buildlist SET buildlist_build_type='0', buildlist_build_start_time='0', buildlist_build_end_time='0' WHERE buildlist_id='".$this->id."' LIMIT 1;");
+				dbquery("UPDATE buildlist SET buildlist_build_type='0', buildlist_build_start_time='0', buildlist_build_end_time='0', buildlist_people_working_status = '0' WHERE buildlist_id='".$this->id."' LIMIT 1;");
 				Buildlist::$underConstruction = false;
 				//Rohstoffe vom Planeten abziehen und aktualisieren
 				$cp->changeRes($costs['costs0']*$fac,$costs['costs1']*$fac,$costs['costs2']*$fac,$costs['costs3']*$fac,$costs['costs4']*$fac);

@@ -467,7 +467,6 @@
 					}
 				}
 
-
 				//
 				// Bauaufträge speichern
 				//
@@ -635,6 +634,15 @@
                 	            '".$obj_time."');");
                 	        $shiplist_id = mysql_insert_id();
 
+							dbquery("
+								UPDATE
+									buildlist
+								SET
+									buildlist_people_working_status='1'
+								WHERE
+									buildlist_building_id='" . SHIPYARD_ID . "'
+									AND buildlist_user_id='" . $cu->id . "'
+									AND buildlist_entity_id='" . $cp->id . "'");
 
 							// Queue Array aktualisieren
 							$queue[$shiplist_id]['queue_id'] = $shiplist_id;
@@ -749,6 +757,16 @@
 					 ship_queue
 					WHERE
 						queue_id='".$id."';");
+
+					dbquery("
+					UPDATE
+						buildlist
+					SET
+						buildlist_people_working_status='0'
+					WHERE
+						buildlist_building_id='" . SHIPYARD_ID . "'
+						AND buildlist_user_id='" . $cu->id . "'
+						AND buildlist_entity_id='" . $cp->id . "'");
 
 					// Nachkommende Aufträge werden Zeitlich nach vorne verschoben
 					$tres=dbquery("
