@@ -1510,7 +1510,7 @@
         	<< "FROM "
         	<< "	buildlist "
         	<< "WHERE "
-        	<< "	buildlist_entity_id='" << this->id;
+        	<< "	buildlist_entity_id='" << this->id << "'";
         
 		RESULT_TYPE pRes = query.store();
 		query.reset();
