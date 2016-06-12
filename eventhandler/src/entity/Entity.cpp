@@ -1510,8 +1510,7 @@
         	<< "FROM "
         	<< "	buildlist "
         	<< "WHERE "
-        	<< "	buildlist_entity_id='" << this->id << "' "
-			<< "	AND buildlist_people_working_status='1';";
+        	<< "	buildlist_entity_id='" << this->id;
         
 		RESULT_TYPE pRes = query.store();
 		query.reset();
