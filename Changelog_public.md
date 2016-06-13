@@ -1,6 +1,18 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.14
+---------------
+
+### Bugfixes ###
+
+ * Krytodistanz wird jetzt richtig angezeigt
+ * Zeit zum Beitreten eines Allianzangriffs wird jetzt beim Vorgonia Mysticum richtig berechnet
+ * Falsche Anzeige der Bauzeit in Werft korrigiert
+ * Raketendistanz wird jetzt richtig berechnet
+ * Eingestellte Arbeiter können nicht mehr abgeholt werden (verhindert einen Bug, mit dem man -Arbeiter bekommen konnte)
+ * Spionageangriffe zählen nicht mehr ins Rating
+
 Version 3.5.13
 --------------
 
