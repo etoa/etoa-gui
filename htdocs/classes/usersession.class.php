@@ -35,7 +35,8 @@ class UserSession extends Session
 			$logintoken = sha1($_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_USER_AGENT'].$t).dechex($t);
 
 			// Check token (except if user is form localhost = developer)
-			if ($logintoken == $data['token'] || $_SERVER['REMOTE_ADDR']=="127.0.0.1" || $_SERVER['REMOTE_ADDR']=="::1")
+			// Disable this check until https login proglems solved
+			if (true || $logintoken == $data['token'] || $_SERVER['REMOTE_ADDR']=="127.0.0.1" || $_SERVER['REMOTE_ADDR']=="::1")
 			{
 				if (!isset($_SESSION['used_login_tokens']))
 					$_SESSION['used_login_tokens'] = array();
