@@ -1,6 +1,13 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.14.1
+---------------
+
+### Bugfixes ###
+
+ * fixed log-in problems caused by https
+ 
 Version 3.5.14
 ---------------
 
