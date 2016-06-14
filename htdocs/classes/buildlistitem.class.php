@@ -314,7 +314,7 @@
 							buildlist_build_type,
 							buildlist_current_level,
 							buildlist_build_start_time,
-							buildlist_build_end_time,
+							buildlist_build_end_time
 						)
 						VALUES
 						(

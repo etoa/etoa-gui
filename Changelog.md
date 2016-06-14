@@ -7,6 +7,7 @@ Version 3.5.14.1
 ### Bugfixes ###
 
  * fixed log-in problems caused by https
+ * fixed problem with lvl 1 buildings
  
 Version 3.5.14
 ---------------
