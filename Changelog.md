@@ -8,6 +8,10 @@ Version 3.5.15
 
  * fixed allianceattack bug where u could join without timelimit
 
+### Features ###
+ 
+ * reservated ships will be shown at top of market now
+
 Version 3.5.14.1
 ---------------
 

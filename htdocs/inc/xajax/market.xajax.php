@@ -313,12 +313,15 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 						}
 						
 						$reservation="";
+						$class = "";
 						if($arr['for_user']!=0)
 						{
+							$class = "top";
 							$reservation="<span class=\"userAllianceMemberColor\">F&uuml;r dich reserviert</span>";
 						}							
 						elseif($arr['for_alliance']!=0)
 						{
+							$class = "top";
 							$reservation="<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied reserviert</span>";
 						}
 
@@ -340,7 +343,7 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 							{
 								$tu = new User($arr['user_id']);
 								echo "<td rowspan=\"$resCnt\" class=\"usrinfo\">".$tu->detailLink()."</td>";
-								echo "<td rowspan=\"$resCnt\">".$reservation."<br /><span class=\"rtext\">".stripslashes($arr['text'])."</span></td>";
+								echo "<td rowspan=\"$resCnt\">".$reservation."<br /><span class='rtext ".$class."'  >".stripslashes($arr['text'])."</span></td>";
 								echo "<td rowspan=\"$resCnt\">
 									<input type=\"checkbox\" name=\"ship_market_id[]\" id=\"ship_market_id_".$arr['id']."\" value=\"".$arr['id']."\" onclick=\"xajax_calcMarketShipBuy(xajax.getFormValues('ship_buy_selector'));\" />
 								</td>";
