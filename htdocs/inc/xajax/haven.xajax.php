@@ -1250,66 +1250,73 @@
 				{
 					$fleet->setFakeId($form['fakeShip']);
 				}
-				
-				if ($fid = $fleet->launch())
-				{
-					ob_start();
-					$ac = FleetAction::createFactory($form['fleet_action']);
-					
-					// bugfix - check for alliance added by river
-					if ($form['fleet_action']=="alliance" && $fleet->getLeader()==0 && $fleet->owner->alliance && count($form['msgUser'])>0)
-					{
-						$subject = "Allianzangriff (".$fleet->targetEntity.")";
-						$text = "[b]Angriffsdaten:[/b][table][tr][td]Flottenkennzeichen:[/td][td]".$fleet->owner->alliance->tag."-".$fid."[/td][/tr][tr][td]Flottenleader:[/td][td]".$fleet->owner->nick."[/td][/tr][tr][td]Zielplanet:[/td][td]".$fleet->targetEntity."[/td][/tr][tr][td]Ankunftszeit:[/td][td]".date("d.m.y, H:i:s",$fleet->landTime)."[/td][/tr][/table]".$form['message_text'];
-						foreach ($form['msgUser'] as $uid)
-						{
-							Message::sendFromUserToUser($fleet->ownerId(),$uid,$subject,$text,6,$fid);
+
+				$duration = $fleet->distance / $fleet->getSpeed();	// Calculate duration
+				$duration *= 3600;	// Convert to seconds
+				$duration = ceil($duration);
+				$maxTime = $fleet->aFleets[0]['landtime'] - time() - $fleet->getTimeLaunchLand() - $fleet->duration1;
+
+				//check for alliance+time to join
+				if (($duration < $maxTime)|| $form['fleet_action']!="alliance" || $maxTime<0) {
+					if ($fid = $fleet->launch()) {
+						ob_start();
+						$ac = FleetAction::createFactory($form['fleet_action']);
+
+						// bugfix - check for alliance added by river
+						if ($form['fleet_action'] == "alliance" && $fleet->getLeader() == 0 && $fleet->owner->alliance && count($form['msgUser']) > 0) {
+							$subject = "Allianzangriff (" . $fleet->targetEntity . ")";
+							$text = "[b]Angriffsdaten:[/b][table][tr][td]Flottenkennzeichen:[/td][td]" . $fleet->owner->alliance->tag . "-" . $fid . "[/td][/tr][tr][td]Flottenleader:[/td][td]" . $fleet->owner->nick . "[/td][/tr][tr][td]Zielplanet:[/td][td]" . $fleet->targetEntity . "[/td][/tr][tr][td]Ankunftszeit:[/td][td]" . date("d.m.y, H:i:s", $fleet->landTime) . "[/td][/tr][/table]" . $form['message_text'];
+							foreach ($form['msgUser'] as $uid) {
+								Message::sendFromUserToUser($fleet->ownerId(), $uid, $subject, $text, 6, $fid);
+							}
 						}
+
+						tableStart();
+						echo "<tr>
+							<th colspan=\"2\" style=\"color:#0f0\">Flotte gestartet!</th>
+						</tr>";
+						echo "<tr>
+							<td style=\"width:50%\"><b>Aktion:</b></td>
+							<td style=\"color:" . FleetAction::$attitudeColor[$ac->attitude()] . "\">" . $ac->name() . "</td>
+						</tr>";
+						echo "<tr>
+							<td><b>Ladung: " . RES_METAL . "</b></td>
+							<td>" . nf($fleet->getLoadedRes(1)) . "</td>
+						</tr>";
+						echo "<tr>
+							<td><b>Ladung: " . RES_CRYSTAL . "</b></td>
+							<td>" . nf($fleet->getLoadedRes(2)) . "</td>
+						</tr>";
+						echo "<tr>
+							<td><b>Ladung: " . RES_PLASTIC . "</b></td>
+							<td>" . nf($fleet->getLoadedRes(3)) . "</td>
+						</tr>";
+						echo "<tr>
+							<td><b>Ladung: " . RES_FUEL . "</b></td>
+							<td>" . nf($fleet->getLoadedRes(4)) . "</td>
+						</tr>";
+						echo "<tr>
+							<td><b>Ladung: " . RES_FOOD . "</b></td>
+							<td>" . nf($fleet->getLoadedRes(5)) . "</td>
+						</tr>";
+						tableEnd();
+						echo "<input type=\"button\" onclick=\"xajax_havenReset()\" value=\"Weitere Flotte starten\" />
+						&nbsp; <input type=\"button\" onclick=\"document.location='?page=fleetinfo&amp;id=" . $fid . "'\" value=\"Flotte beobachten\" />";
+
+						$response->assign("havenContentAction", "innerHTML", ob_get_contents());
+						$response->assign("havenContentAction", "style.display", '');
+						$response->assign('support', 'innerHTML', tf($fleet->getSupportTime()));
+						ob_end_clean();
+						$_SESSION['haven']['fleetObj'] = serialize($fleet);
+					} else {
+						$response->alert("Fehler! Kann Flotte nicht starten! ".$fleet->error());
 					}
-					
-					tableStart();
-					echo "<tr>
-						<th colspan=\"2\" style=\"color:#0f0\">Flotte gestartet!</th>
-					</tr>";				
-					echo "<tr>
-						<td style=\"width:50%\"><b>Aktion:</b></td>
-						<td style=\"color:".FleetAction::$attitudeColor[$ac->attitude()]."\">".$ac->name()."</td>
-					</tr>";
-					echo "<tr>
-						<td><b>Ladung: ".RES_METAL."</b></td>
-						<td>".nf($fleet->getLoadedRes(1))."</td>
-					</tr>";				
-					echo "<tr>
-						<td><b>Ladung: ".RES_CRYSTAL."</b></td>
-						<td>".nf($fleet->getLoadedRes(2))."</td>
-					</tr>";				
-					echo "<tr>
-						<td><b>Ladung: ".RES_PLASTIC."</b></td>
-						<td>".nf($fleet->getLoadedRes(3))."</td>
-					</tr>";				
-					echo "<tr>
-						<td><b>Ladung: ".RES_FUEL."</b></td>
-						<td>".nf($fleet->getLoadedRes(4))."</td>
-					</tr>";				
-					echo "<tr>
-						<td><b>Ladung: ".RES_FOOD."</b></td>
-						<td>".nf($fleet->getLoadedRes(5))."</td>
-					</tr>";				
-					tableEnd();
-					echo "<input type=\"button\" onclick=\"xajax_havenReset()\" value=\"Weitere Flotte starten\" />
-					&nbsp; <input type=\"button\" onclick=\"document.location='?page=fleetinfo&amp;id=".$fid."'\" value=\"Flotte beobachten\" />";
-					
-					$response->assign("havenContentAction","innerHTML",ob_get_contents());
-					$response->assign("havenContentAction","style.display",'');
-					$response->assign('support','innerHTML',tf($fleet->getSupportTime()) );
-					ob_end_clean();
-					$_SESSION['haven']['fleetObj']=serialize($fleet);				
-				
 				}
-				else
+				else 
 				{
-					$response->alert("Fehler! Kann Flotte nicht starten! ".$fleet->error());
-				}		
+					$response->assign("submitbutton", "innerHTML","<input type=\"button\" onclick=\"xajax_havenReset()\" value=\"Zurück zur Flottenübersicht\" />");
+					$response->alert("Fehler! Angriff kann nicht mehr erreicht werden!".$fleet->error());
+				}
 			}
 			else
 			{
@@ -1957,8 +1964,6 @@
 				}
 				else $comment = "Der gewählte Angriff gehört nicht zu unserem Imperium";
 			}
-				
-				
 		}
 		elseif ($fleet->getLeader()==$id) $fleet->setLeader(0);
 		ob_start();

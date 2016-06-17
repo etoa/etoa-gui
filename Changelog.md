@@ -1,6 +1,13 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.15
+--------------
+
+### Bugfixes ###
+
+ * fixed allianceattack bug where u could join without timelimit
+
 Version 3.5.14.1
 ---------------
 
