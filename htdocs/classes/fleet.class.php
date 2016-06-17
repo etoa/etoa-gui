@@ -420,11 +420,14 @@
 		function getCapacity()
 		{
 			$this->capacity = 0;
+			$this-> BCapa = 1;
 			foreach ($this->getShips() as $sid => $sobj)
 			{
 				$this->capacity += $sobj->capacity() * $this->shipsIds[$sid];
+				$this-> BCapa += $sobj->bCapa*10;
 			}
-			return $this->capacity;
+
+			return $this->capacity*$this->BCapa;
 		}
 
 		/**
