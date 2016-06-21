@@ -7,6 +7,7 @@ Version 3.5.15
 ### Bugfixes ###
 
  * fixed allianceattack bug where u could join without timelimit
+ * fixed bonuscapacity from myslis for capacity in flightoverview, fetch and collect actions
 
 ### Features ###
  

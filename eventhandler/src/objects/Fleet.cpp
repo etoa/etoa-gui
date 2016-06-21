@@ -275,7 +275,7 @@ double Fleet::getCapacity(bool total) {
         this->loadShips();
     if (this->shipsChanged)
         this->recalcShips();
-    double capacity = this->capacity - this->getResLoaded() - this->usageFuel - this->usageFood - this->supportUsageFuel - this->supportUsageFood;
+    double capacity = this->capacity * (1 + this->getSpecialShipBonusCapacity() * 10) - this->getResLoaded() - this->usageFuel - this->usageFood - this->supportUsageFuel - this->supportUsageFood;
 
     if (total && fleets.size()) {
         std::vector<Fleet*>::iterator it;
@@ -294,7 +294,7 @@ double Fleet::getActionCapacity(bool total) {
         this->loadShips();
     if (this->shipsChanged)
         this->recalcShips();
-    double actionCapacity = std::min(this->actionCapacity,this->getCapacity());
+    double actionCapacity = std::min(this->actionCapacity * (1 + this->getSpecialShipBonusCapacity() * 10),this->getCapacity());
 
     if (total && fleets.size()) {
         std::vector<Fleet*>::iterator it;
@@ -885,6 +885,16 @@ double Fleet::getSpecialShipBonusForsteal() {
     return forstealBonus;
 }
 
+double Fleet::getSpecialShipBonusCapacity() {
+    double capacityBonus = this->capacityBonus;
+    if (fleets.size()) {
+        std::vector<Fleet*>::iterator it;
+        for ( it=fleets.begin() ; it < fleets.end(); it++ )
+            capacityBonus += (*it)->getSpecialShipBonusCapacity();
+    }
+    return capacityBonus;
+}
+
 void Fleet::deleteActionShip(int count) {
     this->shipsChanged = true;
     std::vector<Object*>::iterator ot;
@@ -1445,6 +1455,7 @@ void Fleet::loadShips() {
                             this->destroyBonus += object->getCount() * object->getSBonusBuildDestroy() * data->getBonusBuildDestroy();
                             this->empBonus += object->getCount() * object->getSBonusDeactivade() * data->getBonusDeactivade();
                             this->forstealBonus += object->getCount() * object->getSBonusForsteal() * data->getBonusForsteal();
+                            this->capacityBonus += object->getCount() * object->getSBonusCapacity() * data->getBonusCapacity();
                             this->specialObjects.push_back(object);
                         }
                     }
@@ -1479,6 +1490,7 @@ void Fleet::recalcShips() {
         this->destroyBonus = 0;
         this->empBonus = 0;
         this->forstealBonus = 0;
+        this->capacityBonus = 0;
 
         this->techsAdded = false;
 
@@ -1536,6 +1548,7 @@ void Fleet::recalcShips() {
                 this->destroyBonus += (*it)->getCount() * (*it)->getSBonusBuildDestroy() * data->getBonusBuildDestroy();
                 this->empBonus += (*it)->getCount() * (*it)->getSBonusDeactivade() * data->getBonusDeactivade();
                 this->forstealBonus += (*it)->getCount() * (*it)->getSBonusForsteal() * data->getBonusForsteal();
+                this->capacityBonus += (*it)->getCount() * (*it)->getSBonusCapacity() * data->getBonusCapacity();
             }
         }
 
