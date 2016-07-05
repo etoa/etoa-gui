@@ -36,4 +36,12 @@ function showLoaderInline(elem)
 {
 	document.getElementById(elem).innerHTML='<span style=\"text-align:center;padding:10px;\"><img src="web/images/ajax-loader-circle.gif" /></span>';
 }
+
+function createFields()
+{	
+	for(var x = 0; x < $('#number_fields').val(); x++)
+	{
+		console.log('blub');
+	}
+}
 	
