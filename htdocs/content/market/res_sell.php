@@ -60,7 +60,13 @@ $cnt = 0;
 							$cp->subRes($buyarr);
 							
 							$seller = new User($arr['user_id']);
-							$sellerEntity = Entity::createFactoryById($arr['entity_id']);
+							$sellerEntity = Entity::createFactoryById(1079);
+
+							$id = $sellerEntity->id;
+
+							if (!isset($id)) {
+								$id = 0;
+							};
 
 							$tradeShip = new Ship(MARKET_SHIP_ID);
 							$numSellerShip = ($tradeShip->capacity>0) ? ceil(array_sum($sellarr) / $tradeShip->capacity) : 1;
@@ -95,7 +101,7 @@ $cnt = 0;
 							VALUES
 							(
 								".$cu->id.",
-								".$sellerEntity->id.",
+								".$id.",
 								".$cp->id.",
 								".$launchtime.",
 								".$buyerLandtime.",

@@ -39,13 +39,13 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 			{
 				if ($sfilter!="")
 					$sfilter.=" OR ";
-				$sfilter.= " sell_".$rk.">0 ";
+				$sfilter.= " sell_".$rk.">=0 ";
 			}
 			if (isset($form['market_search_filter_demand_'.$rk]) && $form['market_search_filter_demand_'.$rk]==1)
 			{
 				if ($dfilter!="")
 					$dfilter.=" OR ";
-				$dfilter.= " buy_".$rk.">0 ";
+				$dfilter.= " buy_".$rk.">=0 ";
 			}
 		}
 
