@@ -12,6 +12,7 @@ Version 3.5.15
 ### Features ###
  
  * reservated ships will be shown at top of market now
+ * colorpicker for chatcolor
 
 Version 3.5.14.1
 ---------------
