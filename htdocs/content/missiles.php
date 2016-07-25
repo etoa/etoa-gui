@@ -419,7 +419,7 @@
 								}
 								else
 								{
-									error_msg("Konnte '.$missiles[$k]['missile_name'].' nicht kaufen, zu wenig Ressourcen!");
+									error_msg("Konnte ".$missiles[$k]['missile_name']." nicht kaufen, zu wenig Ressourcen!");
 								}
 							}
 							if ($bc==0)

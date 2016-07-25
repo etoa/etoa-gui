@@ -8,6 +8,7 @@ Version 3.5.15
 
  * fixed allianceattack bug where u could join without timelimit
  * fixed bonuscapacity from myslis for capacity in flightoverview, fetch and collect actions
+ * fixed wrong error msg after trying to buy missles without enough ressources
 
 ### Features ###
  
