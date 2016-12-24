@@ -2017,3 +2017,9 @@ pre.code	{
 #logoutButton {
 	display:none;
 }
+
+.xmas {
+	position: absolute;
+	top: 540px;
+	left: 40px;
+}
