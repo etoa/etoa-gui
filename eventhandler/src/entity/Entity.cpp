@@ -682,7 +682,7 @@
 		return structShield;
 	}
 
-
+    double heal=0;
 	double Entity::getHeal(bool total) {
 		if (!this->shipsLoaded)
 			this->loadShips();
