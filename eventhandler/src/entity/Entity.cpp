@@ -682,7 +682,7 @@
 		return structShield;
 	}
 
-    double heal=0;
+
 	double Entity::getHeal(bool total) {
 		if (!this->shipsLoaded)
 			this->loadShips();
@@ -694,7 +694,8 @@
 			this->addTechs();
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
-			for ( it=fleets.begin() ; it < fleets.end(); it++ )
+        double heal=0;
+            for ( it=fleets.begin() ; it < fleets.end(); it++ )
 				heal += (*it)->getHeal(total);
 		}
 		return heal;
