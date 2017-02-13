@@ -1,6 +1,7 @@
 
 #include "BattleHandler.h"
 
+
 void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log, bool ratingEffect)
 {
     Config &config = Config::instance();
@@ -154,9 +155,10 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log, bool ratingEf
 
             fleet->setPercentSurvive(attPercent,true);
             entity->setPercentSurvive(defPercent,true);
-
+            double heal;
+            heal = entity->getHeal(true);
             report->setHeal(fleet->getHeal(true));
-            report->setEntityHeal(entity->getHeal(true));
+            report->setEntityHeal(heal);
 
             if (fleet->getHeal(true) > 0) {
                 cAttStructureShield += fleet->getHeal(true);
@@ -166,8 +168,8 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log, bool ratingEf
                 fleet->setPercentSurvive(cAttStructureShield/initAttStructureShield,true);
             }
 
-            if (entity->getHeal(true) > 0) {
-                cDefStructureShield += entity->getHeal(true);
+            if (heal > 0) {
+                cDefStructureShield += heal;
                 if (cDefStructureShield > initDefStructureShield)
                     cDefStructureShield = initDefStructureShield;
 
