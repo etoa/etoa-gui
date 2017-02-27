@@ -115,6 +115,9 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log, bool ratingEf
 
         double cAttStructureShield = initAttStructureShield;
         double cDefStructureShield = initDefStructureShield;
+        
+        
+        
 
         //
         //Der Kampf!
@@ -126,6 +129,9 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log, bool ratingEf
             report->setEntityWeapon(entity->getWeapon(true));
             report->setEntityCount(entity->getCount(true));
 
+            double FleetAtt = fleet->getWeapon(true);
+            double EntityAtt = entity ->getWeapon(true);
+            
             cAttStructureShield -= entity->getWeapon(true);
             cDefStructureShield -= fleet->getWeapon(true);
 
@@ -155,19 +161,36 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log, bool ratingEf
             fleet->setPercentSurvive(attPercent,true);
             entity->setPercentSurvive(defPercent,true);
 
-            report->setHeal(fleet->getHeal(true));
-            report->setEntityHeal(entity->getHeal(true));
+            
+            // Heal
+            double fleetheal = fleet->getHeal(true);
+            double entityheal = entity->getHeal(true);
+            
+            
+            // Restrict healing to maximal 90% of the damage received
+            
+             if (fleetheal > 0.9*EntityAtt) {
+                 fleetheal=0.9*EntityAtt;
+             }
+             
+             if (entityheal > 0.9*FleetAtt) {
+                 entityheal=0.9*FleetAtt;
+             }
+            
 
-            if (fleet->getHeal(true) > 0) {
-                cAttStructureShield += fleet->getHeal(true);
+            report->setHeal(fleetheal);
+            report->setEntityHeal(entityheal);
+
+            if (fleetheal > 0) {
+                cAttStructureShield += fleetheal;
                 if (cAttStructureShield > initAttStructureShield)
                     cAttStructureShield = initAttStructureShield;
 
                 fleet->setPercentSurvive(cAttStructureShield/initAttStructureShield,true);
             }
 
-            if (entity->getHeal(true) > 0) {
-                cDefStructureShield += entity->getHeal(true);
+            if (entityheal > 0) {
+                cDefStructureShield += entityheal;
                 if (cDefStructureShield > initDefStructureShield)
                     cDefStructureShield = initDefStructureShield;
 
