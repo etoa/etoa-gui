@@ -9,11 +9,13 @@ Version 3.5.15
  * fixed allianceattack bug where u could join without timelimit
  * fixed bonuscapacity from myslis for capacity in flightoverview, fetch and collect actions
  * fixed wrong error msg after trying to buy missles without enough ressources
+ * healbug fixed where supportfleets healed too much
 
 ### Features ###
  
  * reservated ships will be shown at top of market now
  * colorpicker for chatcolor
+ * maximal heal rate in relation to damage received added, adjustable in the admin tool
 
 Version 3.5.14.1
 ---------------
