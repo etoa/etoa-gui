@@ -169,12 +169,12 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log, bool ratingEf
             
             // Restrict healing to maximal 90% of the damage received
             
-             if (fleetheal > 0.9*EntityAtt) {
-                 fleetheal=0.9*EntityAtt;
+             if (fleetheal > (double)config.nget("max_heal",0)*EntityAtt) {
+                 fleetheal=(double)config.nget("max_heal",0)*EntityAtt;
              }
              
-             if (entityheal > 0.9*FleetAtt) {
-                 entityheal=0.9*FleetAtt;
+             if (entityheal > (double)config.nget("max_heal",0)*FleetAtt) {
+                 entityheal=(double)config.nget("max_heal",0)*FleetAtt;
              }
             
 
@@ -284,6 +284,13 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log, bool ratingEf
         report->setEntityShipsEnd(entity->getShipString());
         report->setEntityDefEnd(entity->getDefString(true));
         report->setRestore(round((config.nget("def_restore_percent",0) + entity->getUser()->getSpecialist()->getSpecialistDefRepair() - 1)*100));
+        /*
+         // Restore civil ships for defender.
+         
+         report->setRestore(round((config.nget("ship_restore_percent",0) - 1)*100));
+         
+         
+         */
 
         //Log schreiben
         query << "INSERT DELAYED INTO "

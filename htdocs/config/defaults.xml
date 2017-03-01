@@ -262,6 +262,9 @@ https://etoa.ch</v>
     <item name="battle_rounds" cat="4">
       <v comment="Anzahl Runden (Kampf)" type="text">5</v>
     </item>
+    <item name="max_heal" cat="4">
+        <v comment="Max Heal" type="text">0.9</v>
+    </item>
     <item name="gasattack_action" cat="4">
       <v comment="Gasangriff: Minimale Chance f&#xFC;r erfolgreichen Angriff" type="text">25</v>
       <p1 comment="Gasangriff: Maximaler Schaden in %" type="text">95</p1>
