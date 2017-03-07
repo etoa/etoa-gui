@@ -96,30 +96,51 @@
 			echo "</td></tr>";
 		}
 		tableEnd();
-						
-		// Schiffe auflisten
-		$res = dbquery("
-		SELECT
-			*
-		FROM
-	    shiplist AS sl
-		INNER JOIN
-		  ships AS s
-		ON
-	    s.ship_id=sl.shiplist_ship_id
-			AND sl.shiplist_user_id='".$fleet->ownerId()."'
-			AND sl.shiplist_entity_id='".$fleet->sourceEntity->Id()."'
-	    AND sl.shiplist_count>0
-		ORDER BY
-			s.special_ship DESC,
-			s.ship_launchable DESC,
-			s.ship_name;");
+
+        if ($_GET['alliance'] || $fleet->targetEntity->typeId == CHECKPOINT_PLANET_ID) {
+        	$res = dbquery("
+			SELECT
+				*
+			FROM
+			shiplist AS sl
+			INNER JOIN
+			  ships AS s
+			ON
+			s.ship_id=sl.shiplist_ship_id
+				AND sl.shiplist_user_id='".$fleet->ownerId()."'
+				AND sl.shiplist_entity_id='".$fleet->sourceEntity->Id()."'
+				AND sl.shiplist_count>0
+				AND s.ship_cat_id ='".ALLIANZ_SHIP_ID."'
+			ORDER BY
+				s.special_ship DESC,
+				s.ship_launchable DESC,
+				s.ship_name;");
+		}
+		else {
+            $res = dbquery("
+			SELECT
+				*
+			FROM
+			shiplist AS sl
+			INNER JOIN
+			  ships AS s
+			ON
+			s.ship_id=sl.shiplist_ship_id
+				AND sl.shiplist_user_id='".$fleet->ownerId()."'
+				AND sl.shiplist_entity_id='".$fleet->sourceEntity->Id()."'
+				AND sl.shiplist_count>0
+				AND s.ship_cat_id <>'".ALLIANZ_SHIP_ID."'
+			ORDER BY
+				s.special_ship DESC,
+				s.ship_launchable DESC,
+				s.ship_name;");
+		}
 
 		if (mysql_num_rows($res)!=0)
 		{
 			$ships = $fleet->getShips();
-						
-	    $tabulator=1;
+
+			$tabulator=1;
 			echo "<form id=\"shipForm\" onsubmit=\"xajax_havenShowTarget(xajax.getFormValues('shipForm')); return false;\">";
 			tableStart("Vorhandene Raumschiffe");
 			echo "<tr>
@@ -369,7 +390,7 @@
 					</tr>\n";	
 					$shipCount=0;
 					foreach ($fleet->getShips() as $sid => $sd)
-					{				
+					{
 						echo "<tr>
 						<td>".nf($sd['count'])."</td>
 						<td>".$sd['name']."</td>
@@ -406,9 +427,7 @@
 					//
 					ob_start();
 					echo "<form id=\"targetForm\" onsubmit=\"xajax_havenShowAction(xajax.getFormValues('targetForm'));return false;\" >";
-					
 					tableStart("Zielwahl");
-
 					if (isset($fleet->targetEntity))
 					{
 						$csx = $fleet->targetEntity->sx(); 
@@ -619,8 +638,7 @@
 					echo "<div id=\"submitbutton\"></div>";
 					
 					echo "</form>";
-					
-					$response->assign("havenContentTarget","innerHTML",ob_get_contents());				
+					$response->assign("havenContentTarget","innerHTML",ob_get_contents());
 					$response->assign("havenContentTarget","style.display",'');			
 					
 					$response->assign("havenContentAction","innerHTML","");				
@@ -1082,32 +1100,60 @@
 							<th>Aktionswahl</th>
 							<th colspan=\"2\">Ladung</th>
 						</tr>";
-						echo "<tr><td rowspan=\"9\">";
+                        echo "<tr><td rowspan=\"9\">";
 						$actionsAvailable = 0;
-						foreach ($fleet->getAllowedActions() as $ac)
-						{
-							if ($fleet->getLeader()>0) {
-								if ($ac->code() == "alliance") {
+
+						if($fleet->targetEntity->typeId == CHECKPOINT_PLANET_ID) {
+                        	//Kontrollpunkte dürfen nur von Allianzschiffen angeflogen werden
+                        	$ok = true;
+                            foreach ($fleet->getShips() as $sid => $sd) {
+                                if ($sd['cat'] != ALLIANZ_SHIP_ID) {
+
+                                	$ok = false;
+                                	$text = 'Kontrollpunkte dürfen nur von Allianzschiffen angeflogen werden!';
+								}
+                            }
+						}
+						else {
+                            //Normale Planeten dürfen nicht von Allianzschiffen angeflogen werden
+                            $ok = true;
+                            foreach ($fleet->getShips() as $sid => $sd) {
+                                if ($sd['cat'] == ALLIANZ_SHIP_ID) {
+                                    $ok = false;
+                                    $text = 'Normale Planeten dürfen nicht von Allianzschiffen angeflogen werden!';
+                                }
+                            }
+						}
+
+						if ($ok) {
+							foreach ($fleet->getAllowedActions() as $ac)
+							{
+								if ($fleet->getLeader()>0) {
+									if ($ac->code() == "alliance") {
+										echo "<input type=\"radio\" onchange=\"xajax_havenCheckAction('".$ac->code()."');\" name=\"fleet_action\" value=\"".$ac->code()."\" id=\"action_".$ac->code()."\"";
+
+										echo " checked=\"checked\"";
+										echo " /><label for=\"action_".$ac->code()."\" ".tm($ac->name(),$ac->desc())."> ".$ac." (unterstützen)</label><br/>";
+										$actionsAvailable++;
+									}
+								} else {
 									echo "<input type=\"radio\" onchange=\"xajax_havenCheckAction('".$ac->code()."');\" name=\"fleet_action\" value=\"".$ac->code()."\" id=\"action_".$ac->code()."\"";
 
-									echo " checked=\"checked\"";
-									echo " /><label for=\"action_".$ac->code()."\" ".tm($ac->name(),$ac->desc())."> ".$ac." (unterstützen)</label><br/>";
+									if ($actionsAvailable == 0)
+										echo " checked=\"checked\"";
+									echo " /><label for=\"action_".$ac->code()."\" ".tm($ac->name(),$ac->desc())."> ".$ac."</label><br/>";
 									$actionsAvailable++;
 								}
-							} else {									
-								echo "<input type=\"radio\" onchange=\"xajax_havenCheckAction('".$ac->code()."');\" name=\"fleet_action\" value=\"".$ac->code()."\" id=\"action_".$ac->code()."\"";
-
-								if ($actionsAvailable == 0)
-									echo " checked=\"checked\"";
-								echo " /><label for=\"action_".$ac->code()."\" ".tm($ac->name(),$ac->desc())."> ".$ac."</label><br/>";
-								$actionsAvailable++;
 							}
+							if ($actionsAvailable==0)
+							{
+								echo "<i>Keine Aktion auf dieses Ziel verfügbar!</i><br/>";
+							}
+							echo "<br/>".$fleet->error();
+                        }
+                        else {
+                        	echo "<i>$text</i><br/>";
 						}
-						if ($actionsAvailable==0)
-						{
-							echo "<i>Keine Aktion auf dieses Ziel verfügbar!</i><br/>";
-						}
-						echo "<br/>".$fleet->error();
 						
 						$tabindex = 1;
 						

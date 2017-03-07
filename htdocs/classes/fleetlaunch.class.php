@@ -257,8 +257,8 @@
 						$cnt = min(nf_back($cnt),$arr['shiplist_count']);
 						
 						$this->ships[$sid] = array(
-						"count" => $cnt,
-						"speed" => ($arr['ship_speed']/FLEET_FACTOR_F)*$timefactor,
+						"count" => $cnt, "speed" => ($arr['ship_speed']/FLEET_FACTOR_F)*$timefactor,
+                        "cat" => $arr['ship_cat_id'],
 						"fuel_use" => $arr['ship_fuel_use'] * $cnt,
 						"fake" => strpos($arr['ship_actions'],"fakeattack"),
 						"name" => $arr['ship_name'],

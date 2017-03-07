@@ -26,6 +26,7 @@
 	// Schiffswerft gebaut?
 	$shipyard = ($cu->alliance->buildlist->getLevel(ALLIANCE_SHIPYARD_ID)>=1) ? TRUE : FALSE;
 	$research = ($cu->alliance->buildlist->getLevel(ALLIANCE_RESEARCH_ID)>=1) ? TRUE : FALSE;
+    $haven = ($cu->alliance->buildlist->getLevel(ALLIANCE_HAVEN_ID)>=1) ? TRUE : FALSE;
 	
 	//
 	// Navigation
@@ -57,6 +58,11 @@
 	if($shipyard) {
 		$ddm->add('sw','Schiffswerft',"showTab('tabShipyard');");
 	}
+
+    if($haven) {
+        $ddm->add('ah','Allianzhafen',"switchHaven()");
+    }
+
 	echo $ddm; 
 	
 	echo "<br>";
@@ -77,6 +83,10 @@
 		document.getElementById('tabShipyard').style.display='none';
 		
 		document.getElementById(idx).style.display='';
+	}
+	
+	function switchHaven(){
+	    window.location.href = '?page=haven&alliance=1';
 	}
 	
 	// Schreibt definierte Zahlen in die Einzahlen-Felder und wechselt auf diese Seite

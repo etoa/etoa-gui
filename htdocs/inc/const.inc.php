@@ -434,6 +434,8 @@
 	// ID des Allianzschiffwerftes
 	define("ALLIANCE_SHIPYARD_ID", 3);
 
+	define("ALLIANCE_HAVEN_ID", 7);
+
 	define("ALLIANCE_CRYPTO_ID", 6);
 
 	define("ALLIANCE_MAIN_ID", 1);
@@ -468,6 +470,9 @@
 
 	// Anzahl Runden
 	define("BATTLE_ROUNDS", 5);
+
+	//Kategoerie-ID für Allianzschiffe
+	define("ALLIANZ_SHIP_ID", 6);
 
   /*********/
   /* Markt */
@@ -587,6 +592,8 @@
 
 	// Suffix that an administrators mail address must have to be shown in admin contact list (empty string disables this check)
 	define('CONTACT_REQUIRED_MAIL_SUFFIX', "@etoa.ch");
+
+	define('CHECKPOINT_PLANET_ID', 9);
 
 	/***********
 	* Updates *
