@@ -953,7 +953,7 @@ die Spielleitung";
 	/**
 	* Registers a new user
 	*/
-	static public function register($name, $email, $nick, $password, $race=null, $ghost=false)
+	static public function register($name, $email, $nick, $password, $race=null, $ghost=false, $allianceId =0, $npc=0)
 	{
 		$cfg = Config::getInstance();
 
@@ -1010,7 +1010,7 @@ die Spielleitung";
 			$nick,
 			$email
 		]);
-		if (mysql_num_rows($res)>0)
+		if (mysql_num_rows($res)>0 && $npc == 0)
 		{
 			throw new Exception("Der Benutzer mit diesem Nicknamen oder dieser E-Mail-Adresse existiert bereits!");
 		}
@@ -1027,9 +1027,11 @@ die Spielleitung";
 				user_email,
 				user_email_fix,
 				user_race_id,
+				user_alliance_id,
 				user_ghost,
 				user_registered,
-				user_sitting_days
+				user_sitting_days,
+				npc
 			)
 			VALUES
 			(
@@ -1041,7 +1043,9 @@ die Spielleitung";
 				?,
 				?,
 				?,
+				?,
 				UNIX_TIMESTAMP(),
+				?,
 				?
 			);", [
 				$name,
@@ -1051,8 +1055,10 @@ die Spielleitung";
 				$email,
 				$email,
 				(isset($race) ? intval($race) : 0),
+				$allianceId,
 				($ghost ? 1 : 0),
-				$cfg->get("user_sitting_days")
+				$cfg->get("user_sitting_days"),
+				$npc
 			]))
 		{
 			$uid = mysql_insert_id();

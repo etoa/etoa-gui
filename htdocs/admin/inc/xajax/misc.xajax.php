@@ -295,7 +295,8 @@ function searchUser($val)
 	FROM 
 		users 
 	WHERE 
-		user_nick LIKE '".$val."%' 
+		user_nick LIKE '".$val."%'
+	AND ghost = 0	 
 	LIMIT 20;");
 	if (mysql_num_rows($res)>0)
   {

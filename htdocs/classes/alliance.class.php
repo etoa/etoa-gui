@@ -90,6 +90,7 @@
 	  		ON user_alliance_id=alliance_id
 	  	WHERE
 	  		alliance_id=".$this->id."
+	  	AND npc = 0
 	  	GROUP BY
 	  		alliance_id
 	  	LIMIT 1;
@@ -300,7 +301,7 @@
 					users
 				WHERE
 					user_alliance_id=".$this->id."
-				");
+				AND npc = 0");
 				if (mysql_num_rows($res)>0)
 				{
 					while ($arr = mysql_fetch_row($res))
@@ -722,7 +723,15 @@
 				WHERE
 					alliance_mother_request='".$this->id."';");
 
-				// Set user alliance link to null
+                //RIP Alliance npc
+                dbquery("
+				DELETE FROM
+					users
+				WHERE
+					user_alliance_id='".$this->id."' 
+				AND npc = 1;");
+
+                // Set user alliance link to null
 				if ($this->members==null)
 					$this->getMembers();
 				foreach ($this->members as &$member) {
@@ -833,11 +842,14 @@
 					1)
 
                 );
-								$returnMsg = new Alliance(mysql_insert_id());
-								$data['founder']->alliance = $returnMsg;
-								$data['founder']->addToUserLog("alliance","{nick} hat die Allianz [b]".$returnMsg."[/b] gegründet.");
-								$returnMsg->addHistory("Die Allianz [b]".$returnMsg."[/b] wurde von [b]".$data['founder']."[/b] gegründet!");
-								return true;
+								$id = mysql_insert_id();
+                                $returnMsg = new Alliance(mysql_insert_id());
+                                $data['founder']->alliance = $returnMsg;
+                                $data['founder']->addToUserLog("alliance","{nick} hat die Allianz [b]".$returnMsg."[/b] gegründet.");
+                                $returnMsg->addHistory("Die Allianz [b]".$returnMsg."[/b] wurde von [b]".$data['founder']."[/b] gegründet!");
+
+                                User::register('bot','bot@bot.de','bot',generatePasswort(),null,true,$id,1);
+                                return true;
 							}
 							else
 								$returnMsg = "Eine Allianz mit diesem Tag oder Namen existiert bereits!";
@@ -1212,6 +1224,7 @@
 			users
 		WHERE
 			user_alliance_id=".$allianceId."
+		AND npc = 0	
 		;"));
 		return $narr[0];
 	}

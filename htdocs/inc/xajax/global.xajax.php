@@ -23,7 +23,7 @@ function searchUser($val,$field_id='user_nick',$box_id='citybox',$separator=";")
 	$sOut = "";
 	$nCount = 0;
 
-	$res=dbquery("SELECT user_nick FROM users WHERE user_nick LIKE '".$val."%' LIMIT 20;");
+	$res=dbquery("SELECT user_nick FROM users WHERE user_nick LIKE '".$val."%' AND ghost = 0 LIMIT 20;");
 	if (mysql_num_rows($res)>0)
 	{
 		while($arr=mysql_fetch_row($res))
