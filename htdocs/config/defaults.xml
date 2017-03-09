@@ -616,7 +616,29 @@ https://etoa.ch</v>
     <item name="discoverymask" cat="17">
       <v comment="Aufdeckung der Map der Flottenkontrolle pro Level (Radius): 1 + floor(level*this.value)" type="text">0.5</v>
     </item>
-	
+    <item name="bonus_metal" cat="17">
+      <v comment="Kleinster Titanbonus für jeden Kontrollpunkt in %" type="text">1</v>
+      <p1 comment="Größter Titanbonus für jeden Kontrollpunkt in %" type="text">5</p1>
+    </item>
+    <item name="bonus_crystal" cat="17">
+      <v comment="Kleinster Siliziumbonus für jeden Kontrollpunkt in %" type="text">1</v>
+      <p1 comment="Größter Siliziumbonus für jeden Kontrollpunkt in %" type="text">5</p1>
+    </item>
+    <item name="bonus_plastic" cat="17">
+      <v comment="Kleinster PCV-Bonus für jeden Kontrollpunkt in %" type="text">1</v>
+      <p1 comment="Größter PVC-Bonus für jeden Kontrollpunkt in %" type="text">5</p1>
+    </item>
+    <item name="bonus_fuel" cat="17">
+      <v comment="Kleinster Tritiumbonus für jeden Kontrollpunkt in %" type="text">1</v>
+      <p1 comment="Größter Tritiumbonus für jeden Kontrollpunkt in %" type="text">5</p1>
+    </item>
+    <item name="bonus_food" cat="17">
+      <v comment="Kleinster Nahrungsbonus für jeden Kontrollpunkt in %" type="text">1</v>
+      <p1 comment="Größter Nahrungsbonus für jeden Kontrollpunkt in %" type="text">5</p1>
+    </item>
+    <item name="timespan" cat="17">
+      <v comment="Produktionszeitspanne in Stunden (24 z.b. gibt x% Bonus auf eine Tagesproduktion)" type="text">24</v>
+    </item>
 	<item name="shipyard_min_build_time" cat="18">
       <v comment="Raumschiffswerft: Absolute minimal Bauzeit in Sekunden" type="text">1</v>
     </item>

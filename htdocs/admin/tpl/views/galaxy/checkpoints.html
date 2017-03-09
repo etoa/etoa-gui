@@ -1,0 +1,19 @@
+{if $title|default:'' ne ""}<h1>{$title}</h1>{/if}
+
+{if $msg|default:'' ne ""}{msg type="ok" text=$msg}{/if}
+{if $infomsg|default:'' ne ""}{msg type="info" text=$infomsg}{/if}
+{if $errmsg|default:'' ne ""}{msg type="err" text=$errmsg}{/if}
+
+<p>
+    Gibt allen Kontrollpunkten zufällige Boni. Die Min- und Maxwerte können <a href="/admin/?page=config&sub=editor&category=17">hier</a> geändert werden.
+</p>
+<form method="post">
+    <input type="submit" value="Generieren" name="generator">
+</form>
+
+<p>
+    Setzt alle Boni auf 0 zurück
+</p>
+<form method="post">
+    <input type="submit" value="Zurücksetzen" name="reset">
+</form>

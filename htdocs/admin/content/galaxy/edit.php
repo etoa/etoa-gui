@@ -91,6 +91,11 @@
               planet_wf_metal='".intval($_POST['planet_wf_metal'])."',
               planet_wf_crystal='".intval($_POST['planet_wf_crystal'])."',
               planet_wf_plastic='".intval($_POST['planet_wf_plastic'])."',
+              planet_bonus_metal='".intval($_POST['planet_bonus_metal'])."',
+              planet_bonus_crystal='".intval($_POST['planet_bonus_crystal'])."',
+              planet_bonus_plastic='".intval($_POST['planet_bonus_plastic'])."',
+              planet_bonus_fuel='".intval($_POST['planet_bonus_fuel'])."',
+              planet_bonus_food='".intval($_POST['planet_bonus_food'])."',
               planet_people='".intval($_POST['planet_people'])."',
               planet_people=planet_people+'".intval($_POST['planet_people_add'])."',
               planet_desc='".mysql_real_escape_string($_POST['planet_desc'])."'
@@ -239,24 +244,33 @@
 					echo "</tr>";
 					
 					echo "<td style=\"height:2px;\" colspan=\"4\"></td></tr>";
-					
+
+
+					if ($arr['planet_type_id'] == CHECKPOINT_PLANET_ID) {
+					    $bonusMetal = '<br/>gibt <input type="text" name="planet_bonus_metal" value='.intval($arr["planet_bonus_metal"]).' size="4" maxlength="20" />% Kontrollbonus';
+                        $bonusCrystal = '<br/>gibt <input type="text" name="planet_bonus_crystal" value='.intval($arr["planet_bonus_crystal"]).' size="4" maxlength="20" />% Kontrollbonus';
+                        $bonusPlastic = '<br/>gibt <input type="text" name="planet_bonus_plastic" value='.intval($arr["planet_bonus_plastic"]).' size="4" maxlength="20" />% Kontrollbonus';
+                        $bonusFuel = '<br/>gibt <input type="text" name="planet_bonus_fuel" value='.intval($arr["planet_bonus_fuel"]).' size="4" maxlength="20" />% Kontrollbonus';
+                        $bonusFood = '<br/>gibt <input type="text" name="planet_bonus_food" value='.intval($arr["planet_bonus_food"]).' size="4" maxlength="20" />% Kontrollbonus';
+                    }
+
 					echo "<tr><th class=\"resmetalcolor\">Titan</th>
 					<td><input type=\"text\" name=\"planet_res_metal\" value=\"".intval($arr['planet_res_metal'])."\" size=\"12\" maxlength=\"20\" /><br/>
-					+/-: <input type=\"text\" name=\"planet_res_metal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
+					+/-: <input type=\"text\" name=\"planet_res_metal_add\" value=\"0\" size=\"8\" maxlength=\"20\" />".$bonusMetal."</td>";
 					echo "<th class=\"rescrystalcolor\">Silizium</th>
 					<td><input type=\"text\" name=\"planet_res_crystal\" value=\"".intval($arr['planet_res_crystal'])."\" size=\"12\" maxlength=\"20\" /><br/>
-					+/-: <input type=\"text\" name=\"planet_res_crystal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
+					+/-: <input type=\"text\" name=\"planet_res_crystal_add\" value=\"0\" size=\"8\" maxlength=\"20\" />".$bonusCrystal."</td></tr>";
 					
 					echo "<tr><th class=\"resplasticcolor\">PVC</th>
 					<td><input type=\"text\" name=\"planet_res_plastic\" value=\"".intval($arr['planet_res_plastic'])."\" size=\"12\" maxlength=\"20\" /><br/>
-					+/-: <input type=\"text\" name=\"planet_res_plastic_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
+					+/-: <input type=\"text\" name=\"planet_res_plastic_add\" value=\"0\" size=\"8\" maxlength=\"20\" />".$bonusPlastic."</td>";
 					echo "<th class=\"resfuelcolor\">Tritium</th>
 					<td><input type=\"text\" name=\"planet_res_fuel\" value=\"".intval($arr['planet_res_fuel'])."\" size=\"12\" maxlength=\"20\" /><br/>
-					+/-: <input type=\"text\" name=\"planet_res_fuel_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
+					+/-: <input type=\"text\" name=\"planet_res_fuel_add\" value=\"0\" size=\"8\" maxlength=\"20\" />".$bonusFuel."</td></tr>";
 					
 					echo "<tr><th class=\"resfoodcolor\">Nahrung</th>
 					<td><input type=\"text\" name=\"planet_res_food\" value=\"".intval($arr['planet_res_food'])."\" size=\"12\" maxlength=\"20\" /><br/>
-					+/-: <input type=\"text\" name=\"planet_res_food_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
+					+/-: <input type=\"text\" name=\"planet_res_food_add\" value=\"0\" size=\"8\" maxlength=\"20\" />".$bonusFood."</td>";
 					echo "<th class=\"respeoplecolor\">Bevölkerung</th>
 					<td><input type=\"text\" name=\"planet_people\" value=\"".intval($arr['planet_people'])."\" size=\"12\" maxlength=\"20\" /><br/>
 					+/-: <input type=\"text\" name=\"planet_people_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";

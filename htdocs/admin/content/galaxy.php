@@ -66,7 +66,12 @@
 	{
 		advanced_form("sol_types", $tpl);
 	}
-	
+
+    elseif ($sub=="checkpoints")
+    {
+        require("galaxy/checkpoints.inc.php");
+    }
+
 	else
 	{
 		$order_array=array();		
@@ -252,7 +257,7 @@
 			FROM ".$table." 
 			".$joins." 
 			WHERE 1 ".$sql;
-			
+
 			// Execute query
 			$res = dbquery($sql);
 			$nr = mysql_num_rows($res);
@@ -302,6 +307,7 @@
 					echo " selected=\"selected\"";
 				echo ">$x</option>";
 			}
+			/*
 			echo "</select> Datensätze sortiert nach <select name=\"search_order\">";
 			foreach ($order_array as $k=>$v)
 			{
@@ -309,7 +315,7 @@
 				if (isset($so[$k]))
 					echo " selected=\"selected\"";
 				echo ">".$v."</option>";
-			}
+			}*/
 			echo "</select> <input type=\"submit\" value=\"Anzeigen\" name=\"search_resubmit\" /></form><br/>";
 			
 			if ($nr > 0)
@@ -332,7 +338,7 @@
 				while ($arr = mysql_fetch_array($res))
 				{
 					$ent = Entity::createFactory($arr['code'],$arr['id']);
-					
+
 					echo "<tr>";
 					echo "<td>
 						<a href=\"?page=$page&sub=edit&id=".$arr['id']."\">

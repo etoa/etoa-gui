@@ -1,11 +1,11 @@
 <?php
-
+/*
   $exo_id = mysql_query("select type_id from planet_types where type_name='Exoplanet'");
   $planets = mysql_num_rows(mysql_query("SELECT * FROM planets WHERE planet_type_id=".$exo_id));
    
   echo "<h1>Alienconfig</h1>";
   $sql = dbquery('select * from alien_class');
-  
+
   if (isset($_POST['save']))
   {  
     mysql_query("insert into alien_class (alien_class_name) values('".$_POST['name']."')"); 
@@ -25,7 +25,7 @@
       
     }  
   }
-  
+
   echo'<form method="post">';
   tableStart('Vorhandene Alienklassen');
   echo'<tr><td>Klassenname</td><td>Flottenpunkte von</td><td>Flottenpunkte bis</td></tr>';
@@ -50,5 +50,5 @@
   echo'</p>';
   
   echo'</form>'
-    
+
 ?>
