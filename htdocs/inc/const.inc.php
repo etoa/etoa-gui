@@ -434,6 +434,8 @@
 	// ID des Allianzschiffwerftes
 	define("ALLIANCE_SHIPYARD_ID", 3);
 
+	define("ALLIANCE_FACTORY_ID", 8);
+
 	define("ALLIANCE_HAVEN_ID", 7);
 
 	define("ALLIANCE_CRYPTO_ID", 6);
@@ -473,6 +475,9 @@
 
 	//Kategoerie-ID für Allianzschiffe
 	define("ALLIANZ_SHIP_ID", 6);
+
+	//Kategoerie-ID für Allianzsdef
+	define("ALLIANZ_DEF_ID", 4);
 
   /*********/
   /* Markt */

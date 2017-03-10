@@ -27,6 +27,7 @@
 	$shipyard = ($cu->alliance->buildlist->getLevel(ALLIANCE_SHIPYARD_ID)>=1) ? TRUE : FALSE;
 	$research = ($cu->alliance->buildlist->getLevel(ALLIANCE_RESEARCH_ID)>=1) ? TRUE : FALSE;
     $haven = ($cu->alliance->buildlist->getLevel(ALLIANCE_HAVEN_ID)>=1) ? TRUE : FALSE;
+    $factory = ($cu->alliance->buildlist->getLevel(ALLIANCE_FACTORY_ID)>=1) ? TRUE : FALSE;
 	
 	//
 	// Navigation
@@ -59,6 +60,10 @@
 		$ddm->add('sw','Schiffswerft',"showTab('tabShipyard');");
 	}
 
+    if($factory) {
+        $ddm->add('f','Waffenfabrik',"showTab('tabFactory');");
+    }
+
     if($haven) {
         $ddm->add('ah','Allianzhafen',"switchHaven()");
     }
@@ -84,6 +89,7 @@
 		document.getElementById('tabStorage').style.display='none';
 		document.getElementById('tabShipyard').style.display='none';
 		document.getElementById('tabWarehouse').style.display='none';
+		document.getElementById('tabFactory').style.display='none';
 		
 		document.getElementById(idx).style.display='';
 	}
@@ -291,7 +297,27 @@
 			$ships[$arr['ship_id']] = $arr;
 		}
 	}
-	
+
+	//Allianzdef
+    if($factory)
+    {
+        $res = dbquery("
+            SELECT
+                *
+            FROM
+                defense
+            WHERE
+                def_alliance_factory_level<='".$cu->alliance->buildlist->getLevel(ALLIANCE_SHIPYARD_ID)."'
+                AND def_alliance_factory_level>0
+                AND def_cat_id = ".ALLIANZ_DEF_ID."
+            ORDER BY
+                def_alliance_factory_level;");
+        while($arr=mysql_fetch_assoc($res))
+        {
+            $def[$arr['def_id']] = $arr;
+        }
+    }
+
 	// Userschiffe laden (wenn Schiffswerft gebaut=
 	// Gebaute Schiffe laden
 	$res = dbquery("
@@ -587,12 +613,66 @@
 		}
 		else
 		{
-			$error_msg("Keine Berechtigung!");
+			error_msg("Keine Berechtigung!");
 		}
-	}	
-		
-	
-	//
+	}
+
+    if(isset($_POST['def_submit']) && checker_verify()) {
+        if ($cu->alliance->checkActionRightsNA("buildminister") || $cu->id == $_POST['user_buy_def']) {
+
+            //Prüft ob User ausgewählt
+            if ($_POST['user_buy_def'] > 0) {
+                $def_costs = 0;
+                foreach ($_POST['buy_def'] as $def_id => $def_cnt) {
+
+                    // Formatiert die eingegebene Zahl (entfernt z.B. die Trennzeichen)
+                    $def_cnt = nf_back($def_cnt);
+
+                    if ($def_cnt > 0) {
+                        $def_costs += $def[$def_id]['def_alliance_costs'];
+                    }
+                }
+
+                if ($def_costs > 0) {
+                    // Prüft ob Schiffspunkte noch ausreichend sind
+                    if ($cu->alliance->members[$_POST['user_buy_def']]->allianceShippoints >= $def_costs) {
+
+                        // Zieht Punkte vom Konto ab
+                        dbquery("
+                                    UPDATE
+                                        users
+                                    SET
+                                        user_alliace_shippoints=user_alliace_shippoints-'" . $def_costs . "',
+                                        user_alliace_shippoints_used=user_alliace_shippoints_used+'" . $def_costs . "'
+                                    WHERE
+                                        user_id='" . $_POST['user_buy_ship'] . "'
+                                ");
+
+                        foreach ($_POST['buy_def'] as $def_id => $def_cnt) {
+
+                            $dl = new DefList($_POST['planet'],Alliance::getNpcId($cu->allianceId()));
+                            $dl->add($def_id,$def_cnt);
+
+                            $log .= "[b]" . $_POST['def_name_' . $def_id . ''] . ":[/b] " . nf($def_cnt) . "\n";
+
+                            // Zur Allianzgeschichte hinzufügen
+                            add_alliance_history($cu->allianceId, "Folgende Schiffe wurden für [b]" . get_user_nick($_POST['user_buy_def']) . "[/b] hergestellt:\n" . $log . "\n" . nf($def_cnt)*$def[$def_id]['def_alliance_costs'] . " Teile wurden dafür benötigt.");
+                        }
+                    }
+                    else
+                        error_msg("Der gewählte User hat nicht genügend Teile übrig!");
+                }
+                else
+                    error_msg("Keine Verteidigung ausgewählt");
+            }
+            else
+                error_msg("Es wurde kein User ausgewählt!");
+        }
+        else
+            error_msg("Keine Berechtigung!");
+    }
+
+    //
 	// ResBox
 	//	
 	
@@ -1444,7 +1524,113 @@
   		
 		echo "</form>";
 	}
-	
-	echo "</div>";
+    echo "</div>";
 
-?>
+
+    if($action2=="factory")
+    {
+        $display = "";
+    }
+    else
+    {
+        $display = "none";
+    }
+    echo "<div id=\"tabFactory\" style=\"display:".$display.";\">";
+
+    if($factory)
+    {
+        echo "<h1>Waffenfabrik</h1>";
+
+        echo "<form action=\"?page=".$page."&amp;action=".$_GET['action']."&amp;action2=factory\" method=\"post\" id=\"alliance_shipyard\">\n";
+        echo $cstr;
+
+        tableStart("Guthaben Übersicht");
+
+        echo "<tr>";
+        if ($cu->alliance->resMetal<0 || $cu->alliance->resCrystal<0 || $cu->alliance->resPlastic<0 || $cu->alliance->resFuel<0 || $cu->alliance->resFood<0)
+        {
+            echo "<td style=\"text-align:center;\"><span ".tm("Produktionsstop","Die Produktion wurde unterbrochen, da negative Rohstoffe vorhanden sind.").">Schiffsteile pro Stunde: 0</span></td>";
+        }
+        else
+        {
+            // if changed, also change classes/alliance.class.php
+            echo "<td style=\"text-align:center;\">Schiffsteile pro Stunde: ".ceil($cfg->get('alliance_shippoints_per_hour')*pow($cfg->get('alliance_shippoints_base'),($cu->alliance->buildlist->getLevel(ALLIANCE_SHIPYARD_ID)-1)))."</td>";
+        }
+        echo "</tr>
+            <tr>
+                <td style=\"text-align:center;\">Vorhandene Teile: ".($cu->allianceShippoints-$ship_costed)."</td>
+            </tr>";
+
+        tableEnd();
+
+
+        // Listet Schiffe auf
+        if(isset($def))
+        {
+            foreach($def as $id => $data)
+            {
+
+                $path = IMAGE_PATH."/".IMAGE_DEF_DIR."/def".$data['def_id']."_middle.".IMAGE_EXT;
+                tableStart($data['def_name']);
+                echo "<tr>
+                        <td style=\"width:120px;background:#000;vertical-align:middle;padding:0px;\">
+                        <img src=\"".$path."\" style=\"width:120px;height:120px;border:none;margin:0px;\" alt=\"".$data['def_name']."\"/>
+                            <input type=\"hidden\" value=\"".$data['def_name']."\" id=\"def_name_".$data['def_id']."\" name=\"def_name_".$data['def_id']."\" />
+                        </td>
+                        <td style=\"vertical-align:top;height:100px;\" colspan=\"7\">
+                            ".$data['def_longcomment']."
+                        </td>
+                         </tr>
+                         <tr>
+                                    <th style=\"width:13%\">Waffen</th>
+                                    <th style=\"width:13%\">Struktur</th>
+                                    <th style=\"width:13%\">Schild</th>
+                                    <th style=\"width:12%\">Kosten</th>
+                                    <th style=\"width:10%\">Anzahl</th>
+                                </tr>
+                                <tr>
+                                    <td>".nf($data['def_weapon'])."</td>
+                                    <td>".nf($data['def_structure'])."</td>
+                                    <td>".nf($data['def_shield'])."</td>";
+
+                echo "<td>".nf($data['def_alliance_costs'])." <input type=\"hidden\" value=\"".$data['def_alliance_costs']."\" id=\"ship_costs_".$data['def_id']."\" name=\"ship_costs_".$data['def_id']."\" /></td>
+                                <td>
+                                    <input type=\"text\" value=\"0\" name=\"buy_def[".$data['def_id']."]\" id=\"buy_def_".$data['def_id']."\" size=\"4\" maxlength=\"6\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/>";
+                tableEnd();
+            }
+        }
+        else
+        {
+            iBoxStart("Schiffe");
+            echo "Es sind keine Allianzverteidigungen vorhanden!";
+            iBoxEnd();
+        }
+
+        tableStart("Fertigung");
+        if ($cu->planets()) {
+            echo "<tr>
+                    <td style=\"text-align:center;\">
+                        <select id=\"planet\" name=\"planet\">";
+                            foreach($cu->planets()->itemObjects() as $planet) {
+                                echo "<option value = ".$planet->id.">$planet</option>";
+                            }
+                  echo "</select><br/><br/>
+                        <select id=\"user_buy_def\" name=\"user_buy_def\">
+                            <option value=\"".$cu->id."\">".$cu." (".nf($cu->allianceShippoints-$ship_costed).")</option>
+                        </select><br/><br/>
+                    <input type=\"submit\" class=\"button\" name=\"def_submit\" id=\"def_submit\" value=\"Verteidigung herstellen\" ".tm("Verteidigung herstellen","Stellt aus den vorhandenen Teilen die gewünschte Verteidigung für den ausgewählten Planeten her.").">
+                    </td>
+                  </tr>";
+
+            tableEnd();
+
+            echo "</form>";
+        }
+        else {
+            iBoxStart("Verteidigung");
+            echo "Es sind keine Planeten zum Verteidigen vorhanden!";
+            iBoxEnd();
+        }
+    }
+
+echo "</div>";

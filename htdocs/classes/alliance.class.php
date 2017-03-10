@@ -1228,5 +1228,18 @@
 		;"));
 		return $narr[0];
 	}
+
+    static public function getNpcId($allianceId) {
+        $narr = mysql_fetch_row(dbquery("
+        SELECT
+            user_id
+        FROM
+            users
+        WHERE
+            user_alliance_id=".$allianceId."
+        AND npc = 1	
+        ;"));
+            return $narr[0];
+    }
 }
 ?>

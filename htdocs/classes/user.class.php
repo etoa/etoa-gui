@@ -525,7 +525,28 @@ class User
 			user_alliance_id=".$id."
 		WHERE user_id='".$this->id."';");
 	}
-	
+
+    public function planets() {
+        $res = dbquery("
+                        SELECT
+                            id,
+                            planet_user_main
+                        FROM	
+                            planets
+                        WHERE
+                            planet_user_id=".$this->id."
+                        ORDER BY
+                            planet_user_main DESC,
+                            planet_name ASC
+                    ");
+            $planets = array();
+            while ($arr = mysql_fetch_row($res)) {
+                $planets[] = $arr[0];
+            }
+
+            return new PlanetManager($planets);
+    }
+
 	public function setVerified($verified)
 	{
 		if ($verified) {
@@ -546,7 +567,7 @@ class User
 		]);
 		$this->isVerified = $verified;
 	}
-	
+
 	public static function findFirstByVerificationKey($verificationKey) {
 		$res = dbQuerySave("
 		SELECT

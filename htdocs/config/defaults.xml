@@ -592,7 +592,7 @@ https://etoa.ch</v>
       <v comment="Schiffspunkte pro Stunde und Werftlevel" type="text">5</v>
     </item>
     <item name="alliance_shipcosts_factor" cat="16">
-      <v comment="Kostenfaktor pro Schiff&#13;&#10;&#13;&#10;calc: this.value * ships" type="text">1.02</v>
+      <v comment="Kostenfaktor pro Schiff&#13;&#10;&#13;&#10;calc: this.value * ships" type="text">1.00</v>
     </item>
     <item name="alliance_tech_bonus" cat="16">
       <v comment="Grundbonus der Kampftechniken" type="text">10</v>
