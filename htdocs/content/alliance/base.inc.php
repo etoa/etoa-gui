@@ -22,13 +22,16 @@
 	echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
 	
 	echo "<h2><a href=\"?page=".$page."&amp;action=".$_GET['action']."\">Allianzbasis</a></h2>";
-	
+
+	$npc = new User(Alliance::getNpcId($cu->allianceId()));
+
 	// Schiffswerft gebaut?
 	$shipyard = ($cu->alliance->buildlist->getLevel(ALLIANCE_SHIPYARD_ID)>=1) ? TRUE : FALSE;
 	$research = ($cu->alliance->buildlist->getLevel(ALLIANCE_RESEARCH_ID)>=1) ? TRUE : FALSE;
     $haven = ($cu->alliance->buildlist->getLevel(ALLIANCE_HAVEN_ID)>=1) ? TRUE : FALSE;
     $factory = ($cu->alliance->buildlist->getLevel(ALLIANCE_FACTORY_ID)>=1) ? TRUE : FALSE;
-	
+    $checkpoints = ($npc->planets()) ? TRUE : FALSE;
+
 	//
 	// Navigation
 	//
@@ -70,6 +73,10 @@
 
     $ddm->add('wh','Lager',"showTab('tabWarehouse');");
 
+	if($checkpoints) {
+        $ddm->add('cp','Kontrollpunkte',"showTab('tabCheckpoints');");
+    }
+
 	echo $ddm; 
 	
 	echo "<br>";
@@ -90,6 +97,7 @@
 		document.getElementById('tabShipyard').style.display='none';
 		document.getElementById('tabWarehouse').style.display='none';
 		document.getElementById('tabFactory').style.display='none';
+		document.getElementById('tabCheckpoints').style.display='none';
 		
 		document.getElementById(idx).style.display='';
 	}
@@ -1527,6 +1535,9 @@
     echo "</div>";
 
 
+
+	//Fabrik
+
     if($action2=="factory")
     {
         $display = "";
@@ -1564,7 +1575,7 @@
         tableEnd();
 
 
-        // Listet Schiffe auf
+        // Listet Verteidigung auf
         if(isset($def))
         {
             foreach($def as $id => $data)
@@ -1634,3 +1645,64 @@
     }
 
 echo "</div>";
+
+
+// Kontrollpunkte
+if($action2=="checkpoints")
+{
+    $display = "";
+}
+else
+{
+    $display = "none";
+}
+echo "<div id=\"tabCheckpoints\" style=\"display:".$display.";\">";
+
+if($checkpoints)
+{
+    $fm = new FleetManager($npc->id,$cu->allianceId);
+    echo dump($fm->loadForeign());
+
+
+
+
+    echo "<h1>Übersicht Kontrollpunkte</h1>";
+    foreach($npc->planets()->itemObjects() as $pid => $data)
+    {
+
+        tableStart('Vorhandene Kontrollpunkte');
+        echo "<td colspan='4'>$data</td>";
+
+
+        foreach ($fm->getAll() as $fid=>$fd)
+        {
+            $attitude = $fd->getAction()->attitude();
+            $attitudeColor = FleetAction::$attitudeColor[$attitude];
+            $attitudeString = FleetAction::$attitudeString[$attitude];
+            echo dump($attitudeColor);
+            echo "<tr>
+                <th>Start / Ziel</th>
+                <th>Startzeit / Landezeit</th>
+                <th>Gesinnung</th>
+                <th>Spieler</th>
+                </tr>";
+            echo "<tr>
+					<td><b>".$fd->getSource()->entityCodeString()."</b> 
+					<a href=\"?page=cell&amp;id=".$fd->getSource()->cellId()."&amp;hl=".$fd->getSource()->id()."\">".$fd->getSource()."</a><br/>";
+            echo "<b>".$fd->getTarget()->entityCodeString()."</b> 
+					<a href=\"?page=cell&amp;id=".$fd->getTarget()->cellId()."&amp;hl=".$fd->getTarget()->id()."\">".$fd->getTarget()."</a></td>";
+            echo "<td>
+					".date("d.m.y, H:i:s",$fd->launchTime())."<br/>";
+            echo date("d.m.y, H:i:s",$fd->landTime())."</td>";
+            echo "<td>
+					<span style=\"color:".$attitudeColor."\">
+					".$shipAction."
+					</span> [".FleetAction::$statusCode[$fd->status()]."]<br/>";
+            echo "<td>
+					<a href=\"?page=messages&mode=new&message_user_to=".$fd->ownerId()."\">".get_user_nick($fd->ownerId())."</a>
+					</td>";
+            echo "</tr>";
+        }
+        tableEnd();
+    }
+}
