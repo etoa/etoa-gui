@@ -285,7 +285,7 @@
 																		"rcb_elem_chekced" => "",
 																		"select_elem" => admin_get_select_elements('def_cat',"cat_id","cat_name","cat_name",array("0"=>"(Keine)")),
 																		"select_elem_checked" => "",
-																		"show_overview" => 1
+																		"show_overview" => 1,
 																	),																	
 											array	(	"name" => "def_race_id",
 																		"text" => "Rasse",
@@ -299,7 +299,37 @@
 																		"rcb_elem_chekced" => "",
 																		"select_elem" => admin_get_select_elements('races',"race_id","race_name","race_name",array("0"=>"(Keine)")),
 																		"select_elem_checked" => "",
-																		"show_overview" => 1
+																		"show_overview" => 1,
+                                                						"line"=> 1
+																	),
+											array	(	"name" => "def_alliance_factory_level",
+																		"text" => "Allianzverteidigung: Ben&ouml;tigte Fabrikstufe",
+																		"type" => "text",
+																		"def_val" => "",
+																		"size" => "2",
+																		"maxlen" => "3",
+																		"rows" => "",
+																		"cols" => "",
+																		"rcb_elem" => "",
+																		"rcb_elem_chekced" => "",
+																		"select_elem" => "",
+																		"select_elem_checked" => "",
+																		"show_overview" => 0,
+                                            						),
+											array	(	"name" => "def_alliance_costs",
+																		"text" => "Allianzverteidigung: Kosten (Schiffsteile)",
+																		"type" => "text",
+																		"def_val" => "",
+																		"size" => "20",
+																		"maxlen" => "250",
+																		"rows" => "",
+																		"cols" => "",
+																		"rcb_elem" => "",
+																		"rcb_elem_chekced" => "",
+																		"select_elem" => "",
+																		"select_elem_checked" => "",
+																		"show_overview" => 0,
+																		"line"=> 1
 																	)
 											);
 

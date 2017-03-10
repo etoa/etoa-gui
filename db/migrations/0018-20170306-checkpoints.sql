@@ -17,3 +17,9 @@ ALTER TABLE `planets` ADD `planet_bonus_crystal` TINYINT DEFAULT '0';
 ALTER TABLE `planets` ADD `planet_bonus_plastic` TINYINT DEFAULT '0';
 ALTER TABLE `planets` ADD `planet_bonus_fuel` TINYINT DEFAULT '0';
 ALTER TABLE `planets` ADD `planet_bonus_food` TINYINT DEFAULT '0';
+
+INSERT INTO `def_cat` VALUES
+  (4, 'Allianzverteidigung',3,'#080DC7');
+
+ALTER TABLE `defense` ADD `def_alliance_factory_level` TINYINT DEFAULT '0';
+ALTER TABLE `defense` ADD `def_alliance_costs` MEDIUMINT DEFAULT '0';
