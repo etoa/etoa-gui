@@ -63,6 +63,8 @@
         $ddm->add('ah','Allianzhafen',"switchHaven()");
     }
 
+    $ddm->add('wh','Lager',"showTab('tabWarehouse');");
+
 	echo $ddm; 
 	
 	echo "<br>";
@@ -81,6 +83,7 @@
 		document.getElementById('tabResearch').style.display='none';
 		document.getElementById('tabStorage').style.display='none';
 		document.getElementById('tabShipyard').style.display='none';
+		document.getElementById('tabWarehouse').style.display='none';
 		
 		document.getElementById(idx).style.display='';
 	}
@@ -193,7 +196,40 @@
 		else
 			error_msg("Du hast keine Rohstoffe angegeben!");
 	}
- 	
+
+
+    if(isset($_POST['warehouse_submit']) && checker_verify())
+    {
+        $metal = nf_back($_POST['store_metal']);
+        $crystal = nf_back($_POST['store_crystal']);
+        $plastic = nf_back($_POST['store_plastic']);
+        $fuel = nf_back($_POST['store_fuel']);
+        $food = nf_back($_POST['store_food']);
+
+        if($metal>0
+            || $crystal>0
+            || $plastic>0
+            || $fuel>0
+            || $food>0)
+        {
+            $res = [$metal,$crystal, $plastic, $fuel, $food];
+            // Prüft, ob Rohstoffe noch vorhanden sind
+            if($cu->storageMetal >= $metal
+                && $cu->storageCrystal >= $crystal
+                && $cu->storagePlastic >= $plastic
+                && $cu->storageFuel >= $fuel
+                && $cu->storageFood >= $food)
+            {
+                $cp->addRes($res);
+                $cu->subRessFromWarehouse($res);
+            }
+            else
+                error_msg("Es sind zu wenig Rohstoffe in deinem Lager!");
+        }
+        else
+            error_msg("Du hast keine Rohstoffe angegeben!");
+    }
+
  	// Einzahlungs Filter aktivieren
 
 	// Default Werte setzen
@@ -1197,13 +1233,86 @@
 	}
 
 	echo "</div>";
-	
-	
-	
+
+    if($action2=="warehouse")
+    {
+        $display = "";
+    }
+    else
+    {
+        $display = "none";
+    }
+
+    echo "<div id=\"tabWarehouse\" style=\"display:".$display.";\">";
+
+    echo "<form action=\"?page=".$page."&amp;action=".$_GET['action']."&amp;action2=warehouse\" method=\"post\" id=\"alliance_warehouse\">\n";
+    echo $cstr;
+
+    tableStart("Persönliches Lager");
+    echo "<tr>
+                        <th style=\"width:20%;vertical-align:middle;\">".RES_ICON_METAL." ".RES_METAL."</th>
+                        <th style=\"width:20%;vertical-align:middle;\">".RES_ICON_CRYSTAL." ".RES_CRYSTAL."</th>
+                        <th style=\"width:20%;vertical-align:middle;\">".RES_ICON_PLASTIC." ".RES_PLASTIC."</th>
+                        <th style=\"width:20%;vertical-align:middle;\">".RES_ICON_FUEL." ".RES_FUEL."</th>
+                        <th style=\"width:20%;vertical-align:middle;\">".RES_ICON_FOOD." ".RES_FOOD."</th>
+                    </tr>
+                    <tr>
+                        <td ".$style0." id=\"resBoxMetal\">".nf($cu->storageMetal)." t</td>
+                        <td ".$style1." id=\"resBoxCrystal\">".nf($cu->storageCrystal)." t</td>
+                        <td ".$style2."id=\"resBoxPlastic\">".nf($cu->storagePlastic)." t</td>
+                        <td ".$style3."id=\"resBoxFuel\">".nf($cu->storageFuel)." t</td>
+                        <td ".$style4."id=\"resBoxFood\">".nf($cu->storageFood)." t</td>
+                    </tr>";
+    tableEnd();
+
+    tableStart("Rohstoffe abheben");
+
+    // Titan
+    echo "<tr>
+                        <th style=\"width:100px;\">".RES_METAL."</th>
+                        <td style=\"width:150px;\">
+                            <input type=\"text\" value=\"0\" name=\"store_metal\" id=\"store_metal\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cu->storageMetal.",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('store_metal').value='".nf($cu->storageMetal)."';\">alles</a>
+                        </td>
+                    </tr>";
+
+    // Silizium
+    echo "<tr>
+                        <th>".RES_CRYSTAL."</th>
+                        <td>
+                            <input type=\"text\" value=\"0\" name=\"store_crystal\" id=\"store_crystal\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cu->storageCrystal.",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('store_crystal').value='".nf($cu->storageCrystal)."';\">alles</a>
+                        </td>
+                    </tr>";
+    // PVC
+    echo "<tr>
+                        <th>".RES_PLASTIC."</th>
+                        <td>
+                            <input type=\"text\" value=\"0\" name=\"store_plastic\" id=\"store_plastic\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cu->storagePlastic.",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('store_plastic').value='".nf($cu->storagePlastic)."';\">alles</a>
+                        </td>
+                    </tr>";
+    // Tritium
+    echo "<tr>
+                        <th>".RES_FUEL."</th>
+                        <td>
+                            <input type=\"text\" value=\"0\" name=\"store_fuel\" id=\"store_fuel\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cu->storageFuel.",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('store_fuel').value='".nf($cu->storageFuel)."';\">alles</a>
+                        </td>
+                    </tr>";
+    // Nahrung
+    echo "<tr>
+                        <th>".RES_FOOD."</th>
+                        <td>
+                            <input type=\"text\" value=\"0\" name=\"store_food\" id=\"store_food\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cu->storageFood.",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('store_food').value='".nf($cu->storageFood)."';\">alles</a>
+                        </td>
+                    </tr>";
+    tableEnd();
+
+    echo "<input type=\"submit\" class=\"button\" name=\"warehouse_submit\" id=\"warehouse_submit\" value=\"Abheben\"/>";
+    echo "</form><br><br><br><br></div>";
+
+
 	//
 	// Schiffswerft
 	//
-	
+
 	if($action2=="shipyard")
 	{
 		$display = "";
@@ -1217,7 +1326,7 @@
 	if($shipyard)
 	{
 		echo "<h1>Schiffswerft</h1>";
-		
+
  		echo "<form action=\"?page=".$page."&amp;action=".$_GET['action']."&amp;action2=shipyard\" method=\"post\" id=\"alliance_shipyard\">\n";
 		echo $cstr;
 		

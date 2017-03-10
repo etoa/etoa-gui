@@ -98,6 +98,8 @@
 		tableEnd();
 
         if ($_GET['alliance'] || $fleet->targetEntity->typeId == CHECKPOINT_PLANET_ID) {
+
+        	//Allianzschiffe
         	$res = dbquery("
 			SELECT
 				*
@@ -117,6 +119,8 @@
 				s.ship_name;");
 		}
 		else {
+
+        	//Normale Schiffe
             $res = dbquery("
 			SELECT
 				*

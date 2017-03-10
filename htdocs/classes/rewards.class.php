@@ -81,50 +81,17 @@ class Rewards
                             $prodFood += $value->prodFood;
                         }
 
-                        $bonusMetal = $prodMetal * ($bonus[0]/100) * $cfg['timespan']['v'];
-                        $bonusCrystal = $prodCrystal * ($bonus[1]/100) * $cfg['timespan']['v'];
-                        $bonusPlastic = $prodPlastic * ($bonus[2]/100) * $cfg['timespan']['v'];
-                        $bonusFuel = $prodFuel * ($bonus[3]/100) * $cfg['timespan']['v'];
-                        $bonusFood = $prodFood * ($bonus[4]/100) * $cfg['timespan']['v'];
+                        $bonus = [
+                            $prodMetal * ($bonus[0]/100) * $cfg['timespan']['v'],
+                            $prodCrystal * ($bonus[1]/100) * $cfg['timespan']['v'],
+                            $prodPlastic * ($bonus[2]/100) * $cfg['timespan']['v'],
+                            $prodFuel * ($bonus[3]/100) * $cfg['timespan']['v'],
+                            $prodFood * ($bonus[4]/100) * $cfg['timespan']['v']
+                        ];
 
+                        $user = new User($member->id);
+                        $user->addRessToWarehouse($bonus);
 
-
-
-                        $checkUser = dbquery("
-                            SELECT
-                                storage_user_id
-                            FROM	
-                                reward_storage
-                            WHERE
-                                storage_user_id=".$member->id);
-
-                        echo $bonusMetal;
-                        echo $bonusCrystal;
-                        echo $bonusPlastic;
-                        echo $bonusFuel;
-                        echo $bonusFood;
-
-                        if  (mysql_num_rows($checkUser)>0) {
-                            dbquery("
-                            UPDATE
-                                reward_storage
-                            SET	
-                                storage_res_metal = storage_res_metal + $bonusMetal,
-                                storage_res_crystal = storage_res_crystal + $bonusCrystal,
-                                storage_res_plastic = storage_res_plastic + $bonusPlastic,
-                                storage_res_fuel = storage_res_fuel + $bonusFuel,
-                                storage_res_food = storage_res_food + $bonusFood
-                            WHERE
-                                storage_user_id=".$member->id);
-                        }
-                        else {
-                            dbquery("
-                                INSERT INTO
-                                    reward_storage
-                                VALUES	
-                                    (".$member->id.",$bonusMetal,$bonusCrystal,$bonusPlastic,$bonusFuel,$bonusFood)"
-                            );
-                        }
                     }
                 }
             }

@@ -85,6 +85,13 @@ class User
 	
 	protected $dmask;
 
+	protected $storageMetal;
+    protected $storageCrystal;
+    protected $storagePlastic;
+    protected $storageFuel;
+    protected $storageFood;
+    protected $storage;
+
 	/**
 	* The constructor initializes and loads
 	* all importand data about this user
@@ -180,6 +187,20 @@ class User
 			$this->verificationKey = $arr['verification_key'];
 			
 			$this->isValid=true;
+
+			$this->storageMetal = $arr['user_storage_metal'];
+            $this->storageCrystal = $arr['user_storage_crystal'];
+            $this->storagePlastic = $arr['user_storage_plastic'];
+            $this->storageFuel = $arr['user_storage_fuel'];
+            $this->storageFood = $arr['user_storage_food'];
+
+			$this->storage = array(
+                $this->storageMetal,
+                $this->storageCrystal,
+				$this->storagePlastic,
+				$this->storageFuel,
+				$this->storageFood
+			);
 		}
 		else
 		{
@@ -1276,6 +1297,117 @@ die Spielleitung";
 			user_id=".$this->id."
 		");
 	}
+
+    function addRessToWarehouse($data)
+    {
+        global $resNames;
+
+        $str = "";
+        foreach ($resNames as $rk => $rn)
+        {
+            if (isset($data[$rk]) && intval($data[$rk])>0)
+            {
+                $diff = intval($data[$rk]);
+
+                if ($str!="")
+                    $str.=",";
+                switch ($rk)
+                {
+                    case 0:
+                        $str.= "user_storage_metal=user_storage_metal+".$diff."";
+                        $this->storageMetal+=$diff;
+                        break;
+                    case 1:
+                        $str.= "user_storage_crystal=user_storage_crystal+".$diff."";
+                        $this->storageCrystal+=$diff;
+                        break;
+                    case 2:
+                        $str.= "user_storage_plastic=user_storage_plastic+".$diff."";
+                        $this->storagePlastic+=$diff;
+                        break;
+                    case 3:
+                        $str.= "user_storage_fuel=user_storage_fuel+".$diff."";
+                        $this->storageFuel+=$diff;
+                        break;
+                    case 4:
+                        $str.= "user_storage_food=user_storage_food+".$diff."";
+                        $this->storageFood+=$diff;
+                        break;
+                }
+                $this->storage[$rk] += $diff;
+            }
+        }
+        if ($str!="")
+        {
+            $sql = "
+				UPDATE
+					users
+				SET
+					".$str."
+				WHERE
+					user_id='".$this->id."';";
+            dbquery($sql);
+            return true;
+        }
+        return false;
+    }
+
+    function subRessFromWarehouse($data) {
+        global $resNames;
+
+        $str = "";
+        foreach ($resNames as $rk => $rn)
+        {
+            if (isset($data[$rk]) && intval($data[$rk])>0)
+            {
+                $diff = intval($data[$rk]);
+
+                if ($this->storage[$rk] - $diff < 0)
+                    return false;
+
+                if ($str!="")
+                    $str.=",";
+                switch ($rk)
+                {
+                    case 0:
+                        $str.= "user_storage_metal=user_storage_metal-".$diff."";
+                        $this->storageMetal-=$diff;
+                        break;
+                    case 1:
+                        $str.= "user_storage_crystal=user_storage_crystal-".$diff."";
+                        $this->storageCrystal-=$diff;
+                        break;
+                    case 2:
+                        $str.= "user_storage_plastic=user_storage_plastic-".$diff."";
+                        $this->storagePlastic-=$diff;
+                        break;
+                    case 3:
+                        $str.= "user_storage_fuel=user_storage_fuel-".$diff."";
+                        $this->storageFuel-=$diff;
+                        break;
+                    case 4:
+                        $str.= "user_storage_food=user_storage_food-".$diff."";
+                        $this->storageFood-=$diff;
+                        break;
+                }
+                $this->storage[$rk] -= $diff;
+            }
+        }
+        if ($str!="")
+        {
+            $sql = "
+				UPDATE
+					users
+				SET
+					".$str."
+				WHERE
+					user_id='".$this->id."';";
+            dbquery($sql);
+            return true;
+        }
+        return false;
+	}
+
 
 }
 ?>
