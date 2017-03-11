@@ -6,12 +6,15 @@ Version 3.5.15
 
 ### Bugfixes ###
 
+ * fixed heal bug where support fleets overhealed
  * fixed allianceattack bug where u could join without timelimit
  * fixed bonuscapacity from myslis for capacity in flightoverview, fetch and collect actions
  * fixed wrong error msg after trying to buy missles without enough ressources
 
 ### Features ###
- 
+    
+ * Added logistic population growth tied to inhabitant capacity of planet
+ * Added maximal heal limitation - adjustable in the tool
  * reservated ships will be shown at top of market now
  * colorpicker for chatcolor
 
