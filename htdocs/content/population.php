@@ -341,8 +341,9 @@
 
         // Infodaten
             $people_free = floor($cp->people)-$people_working;
-            $people_div = $cp->people/50 * ($cfg->get('people_multiply') + $cp->typePopulation + $cu->race->population + $cp->starPopulation -3);
-            if($people_div<=3) $people_div=3;
+            $people_div = $cp->people * (($cfg->get('people_multiply')  + $cp->typePopulation + $cu->race->population + $cp->starPopulation + $cu->specialist->population -4)* (1-($cp->people/$cp->people_place))/24);
+                            
+          
             tableStart("Daten",500);
             echo '<tr><th style="width:300px">Bev&ouml;lkerung total</th><td>'.nf(floor($cp->people)).'</td></tr>';
             echo '<tr><th>Arbeiter</th><td>'.nf($people_working).'</td></tr>';
