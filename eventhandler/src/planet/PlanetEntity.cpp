@@ -139,7 +139,7 @@ namespace planet
 				this->ressource[i] = 0;
 		}
 // logistic population growth
-		this->birthRate = ((double)config.nget("people_multiply", 0) * (1-(this->ressource[5] / this->store [5])) + this->planet_->getTypePopulation() + this->race_->getRacePopulation() + this->sol_->getTypePopulation() + this->specialist_->getSpecialistPopulation() - 4)/24;
+		this->birthRate = ((double)config.nget("people_multiply", 0)  + this->planet_->getTypePopulation() + this->race_->getRacePopulation() + this->sol_->getTypePopulation() + this->specialist_->getSpecialistPopulation() - 4)* (1-(this->ressource[5] / this->store [5]))/24;
         
 		this->ressource[6] = ((this->ressource[5] * this->birthRate)  / 3600);
 		
