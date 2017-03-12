@@ -26,5 +26,6 @@ class AbstractDbTestCase extends TestCase
         $this->connection->query('TRUNCATE planets');
         $this->connection->query('TRUNCATE shiplist');
         $this->connection->query('TRUNCATE deflist');
+        $this->connection->query('TRUNCATE missilelist');
     }
 }

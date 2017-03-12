@@ -16,14 +16,14 @@ class ShipRepositoryTest extends AbstractDbTestCase
         $this->repository = $this->app['etoa.ship.repository'];
     }
 
-    public function testAddShips()
+    public function testAddShip()
     {
         $userId = 3;
         $shipId = 5;
         $entityId = 10;
 
-        $this->repository->addShips($shipId, 1, $userId, $entityId);
-        $this->repository->addShips($shipId, 29, $userId, $entityId);
+        $this->repository->addShip($shipId, 1, $userId, $entityId);
+        $this->repository->addShip($shipId, 29, $userId, $entityId);
 
         $ships = $this->connection->createQueryBuilder()->select('s.*')->from('shiplist', 's')->execute()->fetchAll();
 

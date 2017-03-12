@@ -13,6 +13,7 @@ $app = new Pimple\Container([
 
 $app->register(new \EtoA\Core\DoctrineServiceProvider());
 $app->register(new \EtoA\Defense\DefenseServiceProvider());
+$app->register(new \EtoA\Missile\MissileServiceProvider());
 $app->register(new \EtoA\Race\RaceServiceProvider());
 $app->register(new \EtoA\Planet\PlanetServiceProvider());
 $app->register(new \EtoA\Quest\QuestServiceProvider());

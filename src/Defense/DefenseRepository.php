@@ -7,7 +7,7 @@ class DefenseRepository extends \EtoA\Core\AbstractRepository
     public function addDefense($defenseId, $amount, $userId, $entityId)
     {
         $hasShips = $this->createQueryBuilder()
-            ->select('deflist_def_id')
+            ->select('deflist_id')
             ->from('deflist')
             ->where('deflist_user_id = :userId')
             ->andWhere('deflist_entity_id = :entityId')

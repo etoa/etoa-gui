@@ -2,25 +2,25 @@
 
 namespace EtoA\Quest\Reward;
 
+use EtoA\Missile\MissileRepository;
 use EtoA\Planet\PlanetRepository;
-use EtoA\Ship\ShipRepository;
 use LittleCubicleGames\Quests\Definition\Reward\Reward;
 use LittleCubicleGames\Quests\Definition\Reward\RewardInterface;
 use LittleCubicleGames\Quests\Entity\QuestInterface;
 use LittleCubicleGames\Quests\Reward\Collect\CollectorInterface;
 
-class ShipRewardCollector implements CollectorInterface
+class MissileRewardCollector implements CollectorInterface
 {
-    const TYPE = 'ships';
+    const TYPE = 'missile';
 
-    /** @var ShipRepository */
-    private $shipRepository;
+    /** @var MissileRepository */
+    private $missileRepository;
     /** @var PlanetRepository */
     private $planetRepository;
 
-    public function __construct(ShipRepository $shipRepository, PlanetRepository $planetRepository)
+    public function __construct(MissileRepository $missileRepository, PlanetRepository $planetRepository)
     {
-        $this->shipRepository = $shipRepository;
+        $this->missileRepository = $missileRepository;
         $this->planetRepository = $planetRepository;
     }
 
@@ -30,7 +30,7 @@ class ShipRewardCollector implements CollectorInterface
             $data = $reward->getData();
 
             $mainPlanetId = $this->planetRepository->getUserMainId($quest->getUser());
-            $this->shipRepository->addShip($data['ship_id'], $data['value'], $quest->getUser(), $mainPlanetId);
+            $this->missileRepository->addMissile($data['missile_id'], $data['value'], $quest->getUser(), $mainPlanetId);
         }
     }
 

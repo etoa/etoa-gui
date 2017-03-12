@@ -6,7 +6,7 @@ use EtoA\Core\AbstractRepository;
 
 class ShipRepository extends AbstractRepository
 {
-    public function addShips($shipId, $amount, $userId, $entityId)
+    public function addShip($shipId, $amount, $userId, $entityId)
     {
         $hasShips = $this->createQueryBuilder()
             ->select('shiplist_id')

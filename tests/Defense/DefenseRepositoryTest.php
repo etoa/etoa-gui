@@ -16,22 +16,22 @@ class DefenseRepositoryTest extends AbstractDbTestCase
         $this->repository = $this->app['etoa.defense.repository'];
     }
 
-    public function testAddShips()
+    public function testAddDefense()
     {
         $userId = 3;
-        $shipId = 5;
+        $defenseId = 5;
         $entityId = 10;
 
-        $this->repository->addDefense($shipId, 1, $userId, $entityId);
-        $this->repository->addDefense($shipId, 29, $userId, $entityId);
+        $this->repository->addDefense($defenseId, 1, $userId, $entityId);
+        $this->repository->addDefense($defenseId, 29, $userId, $entityId);
 
-        $ships = $this->connection->createQueryBuilder()->select('d.*')->from('deflist', 'd')->execute()->fetchAll();
+        $defenses = $this->connection->createQueryBuilder()->select('d.*')->from('deflist', 'd')->execute()->fetchAll();
 
-        $this->assertCount(1, $ships);
-        $ship = $ships[0];
-        $this->assertEquals($shipId, $ship['deflist_def_id']);
-        $this->assertEquals($userId, $ship['deflist_user_id']);
-        $this->assertEquals($entityId, $ship['deflist_entity_id']);
-        $this->assertEquals(30, $ship['deflist_count']);
+        $this->assertCount(1, $defenses);
+        $defense = $defenses[0];
+        $this->assertEquals($defenseId, $defense['deflist_def_id']);
+        $this->assertEquals($userId, $defense['deflist_user_id']);
+        $this->assertEquals($entityId, $defense['deflist_entity_id']);
+        $this->assertEquals(30, $defense['deflist_count']);
     }
 }

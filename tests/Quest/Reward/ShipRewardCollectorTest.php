@@ -49,7 +49,7 @@ class ShipRewardCollectorTest extends TestCase
 
         $this->shipRepository
             ->expects($this->once())
-            ->method('addShips')
+            ->method('addShip')
             ->with($this->equalTo($shipId), $this->equalTo($amount), $this->equalTo($userId), $this->equalTo($mainPlanetId));
 
         $this->collector->collect($reward, $quest);
