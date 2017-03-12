@@ -2,10 +2,9 @@
 
 namespace EtoA\Ship;
 
-use Doctrine\DBAL\Query\QueryBuilder;
-use PHPUnit\Framework\TestCase;
+use EtoA\AbstractDbTestCase;
 
-class ShipRepositoryTest extends TestCase
+class ShipRepositoryTest extends AbstractDbTestCase
 {
     /** @var ShipRepository */
     private $repository;
@@ -14,10 +13,7 @@ class ShipRepositoryTest extends TestCase
     {
         parent::setUp();
 
-        $app = require dirname(dirname(__DIR__)).'/src/app.php';
-
-        $this->repository = $app['etoa.ship.repository'];
-        $this->connection = $app['db'];
+        $this->repository = $this->app['etoa.ship.repository'];
     }
 
     public function testAddShips()
@@ -29,7 +25,7 @@ class ShipRepositoryTest extends TestCase
         $this->repository->addShips($shipId, 1, $userId, $entityId);
         $this->repository->addShips($shipId, 29, $userId, $entityId);
 
-        $ships = (new QueryBuilder($this->connection))->select('s.*')->from('shiplist', 's')->execute()->fetchAll();
+        $ships = $this->connection->createQueryBuilder()->select('s.*')->from('shiplist', 's')->execute()->fetchAll();
 
         $this->assertCount(1, $ships);
         $ship = $ships[0];

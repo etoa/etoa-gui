@@ -21,6 +21,6 @@
         "fabpot/php-cs-fixer": "^1.11"
     },
     "autoload-dev": {
-        "psr-4": { "EtoA\\Tests\\": "tests/" }
+        "psr-4": { "EtoA\\": "tests/" }
     }
 }

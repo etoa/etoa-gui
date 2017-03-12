@@ -16,5 +16,8 @@ class QuestServiceProvider implements ServiceProviderInterface
         $pimple['etoa.quest.reward.shipcollector'] = function (Container $pimple) {
             return new ShipRewardCollector($pimple['etoa.ship.repository'], $pimple['etoa.planet.repository']);
         };
+        $pimple['etoa.quest.reward.defensecollector'] = function (Container $pimple) {
+            return new ShipRewardCollector($pimple['etoa.defense.repository'], $pimple['etoa.planet.repository']);
+        };
     }
 }

@@ -2,10 +2,9 @@
 
 namespace EtoA\Planet;
 
-use Doctrine\DBAL\Query\QueryBuilder;
-use PHPUnit\Framework\TestCase;
+use EtoA\AbstractDbTestCase;
 
-class PlanetRepositoryTest extends TestCase
+class PlanetRepositoryTest extends AbstractDbTestCase
 {
     /** @var PlanetRepository */
     private $repository;
@@ -14,16 +13,13 @@ class PlanetRepositoryTest extends TestCase
     {
         parent::setUp();
 
-        $app = require dirname(dirname(__DIR__)).'/src/app.php';
-
-        $this->repository = $app['etoa.planet.repository'];
-        $this->connection = $app['db'];
+        $this->repository = $this->app['etoa.planet.repository'];
     }
 
     public function testGetUserMainId()
     {
         $userId = 1;
-        (new QueryBuilder($this->connection))->insert('planets')->values([
+        $this->connection->createQueryBuilder()->insert('planets')->values([
             'id' => ':id',
             'planet_user_id' => ':userId',
             'planet_user_main' => ':isMain',

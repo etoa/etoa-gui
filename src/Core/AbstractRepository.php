@@ -3,7 +3,6 @@
 namespace EtoA\Core;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Query\QueryBuilder;
 
 abstract class AbstractRepository
 {
@@ -17,6 +16,6 @@ abstract class AbstractRepository
 
     protected function createQueryBuilder()
     {
-        return new QueryBuilder($this->connection);
+        return $this->connection->createQueryBuilder();
     }
 }

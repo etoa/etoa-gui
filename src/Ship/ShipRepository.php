@@ -13,7 +13,9 @@ class ShipRepository extends AbstractRepository
             ->from('shiplist')
             ->where('shiplist_user_id = :userId')
             ->andWhere('shiplist_entity_id = :entityId')
+            ->andWhere('shiplist_ship_id = :shipId')
             ->setParameters([
+                'shipId' => $shipId,
                 'userId' => $userId,
                 'entityId' => $entityId,
             ])->execute()->fetchColumn();

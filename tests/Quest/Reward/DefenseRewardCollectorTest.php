@@ -2,24 +2,24 @@
 
 namespace EtoA\Quest\Reward;
 
+use EtoA\Defense\DefenseRepository;
 use EtoA\Planet\PlanetRepository;
-use EtoA\Ship\ShipRepository;
 use LittleCubicleGames\Quests\Definition\Reward\Reward;
 use LittleCubicleGames\Quests\Entity\QuestInterface;
 use PHPUnit\Framework\TestCase;
 
-class ShipRewardCollectorTest extends TestCase
+class DefenseRewardCollectorTest extends TestCase
 {
     /** @var ShipRewardCollector */
     private $collector;
-    private $shipRepository;
+    private $defenseRepository;
     private $planetRepository;
 
     protected function setUp()
     {
-        $this->shipRepository = $this->getMockBuilder(ShipRepository::class)->disableOriginalConstructor()->getMock();
+        $this->defenseRepository = $this->getMockBuilder(DefenseRepository::class)->disableOriginalConstructor()->getMock();
         $this->planetRepository = $this->getMockBuilder(PlanetRepository::class)->disableOriginalConstructor()->getMock();
-        $this->collector = new ShipRewardCollector($this->shipRepository, $this->planetRepository);
+        $this->collector = new DefenseRewardCollector($this->defenseRepository, $this->planetRepository);
     }
 
     public function testCollect()
@@ -30,9 +30,9 @@ class ShipRewardCollectorTest extends TestCase
         $amount = 5;
 
         $reward = new Reward([
-            'type' => ShipRewardCollector::TYPE,
+            'type' => DefenseRewardCollector::TYPE,
             'value' => $amount,
-            'ship_id' => $shipId,
+            'defense_id' => $shipId,
         ]);
 
         $quest = $this->getMockBuilder(QuestInterface::class)->disableOriginalConstructor()->getMock();
@@ -47,9 +47,9 @@ class ShipRewardCollectorTest extends TestCase
             ->with($this->equalTo($userId))
             ->willReturn($mainPlanetId);
 
-        $this->shipRepository
+        $this->defenseRepository
             ->expects($this->once())
-            ->method('addShips')
+            ->method('addDefense')
             ->with($this->equalTo($shipId), $this->equalTo($amount), $this->equalTo($userId), $this->equalTo($mainPlanetId));
 
         $this->collector->collect($reward, $quest);
