@@ -6,12 +6,17 @@ $app = new Pimple\Container([
     'app.config_dir' => sprintf('%s/htdocs/config/', dirname(__DIR__)),
     'db.options.file' => 'db.conf',
 ]);
-//(new \EtoA\Core\MonologServiceProvider())->register($app);
+//$app->register(new \EtoA\Core\MonologServiceProvider());
 
 // register error handler
 //\Monolog\ErrorHandler::register($app['logger']);
 
-(new \EtoA\Core\DoctrineServiceProvider())->register($app);
-(new \EtoA\Race\RaceServiceProvider())->register($app);
+$app->register(new \EtoA\Core\DoctrineServiceProvider());
+$app->register(new \EtoA\Race\RaceServiceProvider());
+$app->register(new \EtoA\Planet\PlanetServiceProvider());
+$app->register(new \EtoA\Quest\QuestServiceProvider());
+$app->register(new \EtoA\Ship\ShipServiceProvider());
+
+$app->register(new \LittleCubicleGames\Quests\ServiceProvider());
 
 return $app;
