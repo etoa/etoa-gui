@@ -1,6 +1,6 @@
 machine:
   php:
-    version: 5.6
+    version: 5.6.30
 
 test:
   override:
