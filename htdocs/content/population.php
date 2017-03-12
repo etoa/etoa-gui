@@ -340,8 +340,13 @@
             $people_working = $barr[0];
 
         // Infodaten
+            $capacity = $cp->people_place;
+            if ($capacity < 200)
+            {
+                            $capacity=200;
+            }
             $people_free = floor($cp->people)-$people_working;
-            $people_div = $cp->people * (($cfg->get('people_multiply')  + $cp->typePopulation + $cu->race->population + $cp->starPopulation + $cu->specialist->population -4)* (1-($cp->people/$cp->people_place))/24);
+            $people_div = $cp->people * (($cfg->get('people_multiply')  + $cp->typePopulation + $cu->race->population + $cp->starPopulation + $cu->specialist->population -4)* (1-($cp->people/($capacity+1)))/24);
                             
           
             tableStart("Daten",500);
