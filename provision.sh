@@ -2,7 +2,7 @@
 
 # only export does not seem to be enough for installing mysql
 export DEBIAN_FRONTEND=noninteractive
-sudo add-apt-repository ppa:ondrej/php5-5.6
+sudo add-apt-repository ppa:ondrej/php
 echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 sudo apt-get update && sudo apt-get upgrade
@@ -12,10 +12,10 @@ echo "mysql-server mysql-server/root_password password " | debconf-set-selection
 echo "mysql-server mysql-server/root_password_again password " | debconf-set-selections
 
 # Install mysql, nginx, php5-fpm
-sudo aptitude install -q -y -f mysql-server mysql-client nginx php5-fpm php5-xdebug
+sudo aptitude install -q -y -f git mysql-server mysql-client nginx php5.6 php5.6-fpm php5.6-xdebug
 
 # Install commonly used php packages
-sudo aptitude install -q -y -f php5-curl php5-mcrypt php5-cli php5-mysql php5-gd
+sudo aptitude install -q -y -f php5.6-curl php5.6-mcrypt php5.6-cli php5.6-mysql php5.6-gd php5.6-dom php5.6-zip
 
 sudo rm /etc/nginx/sites-available/default
 sudo cp /var/www/etoa/vagrant/nginx-default /etc/nginx/sites-available/default
