@@ -12,7 +12,8 @@
         "monolog/monolog": "^1.19"
     },
     "license": "proprietary",
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "require-dev": {
         "phpunit/phpunit": "^4.8.24",
         "fabpot/php-cs-fixer": "^1.11"
