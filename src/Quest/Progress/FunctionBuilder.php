@@ -11,6 +11,8 @@ class FunctionBuilder implements ProgressFunctionBuilderInterface
         switch ($taskName) {
             case Functions\LaunchMissile::NAME:
                 return new Functions\LaunchMissile();
+            case Functions\BuyMissile::NAME:
+                return new Functions\BuyMissile();
         }
     }
 }
