@@ -2,17 +2,17 @@
 
 namespace EtoA\Quest;
 
+use EtoA\Quest\Progress\FunctionBuilder;
 use EtoA\Quest\Reward\DefenseRewardCollector;
 use EtoA\Quest\Reward\MissileRewardCollector;
 use EtoA\Quest\Reward\ShipRewardCollector;
+use LittleCubicleGames\Quests\Progress\ProgressFunctionBuilder;
+use LittleCubicleGames\Quests\Progress\StateFunctionBuilder;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
 class QuestServiceProvider implements ServiceProviderInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function register(Container $pimple)
     {
         $pimple['etoa.quest.reward.shipcollector'] = function (Container $pimple) {
@@ -31,6 +31,13 @@ class QuestServiceProvider implements ServiceProviderInterface
                 $pimple['etoa.quest.reward.defensecollector'],
                 $pimple['etoa.quest.reward.missilecollector'],
             ];
+        };
+
+        $pimple['cubicle.quests.progress.function.builder'] = function () {
+            return new ProgressFunctionBuilder([
+                new StateFunctionBuilder(),
+                new FunctionBuilder(),
+            ]);
         };
     }
 }
