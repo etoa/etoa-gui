@@ -15,6 +15,14 @@ class QuestServiceProvider implements ServiceProviderInterface
 {
     public function register(Container $pimple)
     {
+        $pimple['etoa.quest.repository'] = function (Container $pimple) {
+            return new QuestRepository($pimple['db']);
+        };
+
+        $pimple['cubicle.quests.storage'] = function (Container $pimple) {
+            return $pimple['etoa.quest.repository'];
+        };
+
         $pimple['etoa.quest.reward.shipcollector'] = function (Container $pimple) {
             return new ShipRewardCollector($pimple['etoa.ship.repository'], $pimple['etoa.planet.repository']);
         };
