@@ -44,6 +44,7 @@ class QuestRepositoryTest extends AbstractDbTestCase
         $userId = 1;
         $quest = new Quest(null, 99, $userId, 'merchant', QuestDefinitionInterface::STATE_AVAILABLE, []);
         $this->repository->save($quest);
+        $this->repository->save($quest);
 
         $quests = $this->repository->getActiveQuests($userId);
         $this->assertCount(1, $quests);

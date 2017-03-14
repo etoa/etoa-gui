@@ -51,10 +51,11 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
         if ($quest->getId()) {
             $this->createQueryBuilder()
                 ->update('quests')
-                ->set('state', $quest->getState())
+                ->set('state', ':state')
                 ->where('id = :id')
                 ->setParameters([
                     'id' => $quest->getId(),
+                    'state' => $quest->getState(),
                 ])->execute();
 
             foreach ($quest->getTasks() as $task) {
