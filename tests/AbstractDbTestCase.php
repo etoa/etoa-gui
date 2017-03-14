@@ -28,6 +28,7 @@ class AbstractDbTestCase extends TestCase
         $this->connection->query('TRUNCATE deflist');
         $this->connection->query('TRUNCATE missilelist');
         $this->connection->query('TRUNCATE quest_tasks');
+        $this->connection->query('TRUNCATE quest_log');
         $this->connection->query('DELETE FROM quests');
     }
 }

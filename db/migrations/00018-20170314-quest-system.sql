@@ -20,3 +20,15 @@ CREATE TABLE quest_tasks (
 CREATE INDEX quest_idx ON quest_tasks (quest_id);
 
 ALTER TABLE quest_tasks ADD CONSTRAINT quest_fk FOREIGN KEY (quest_id) REFERENCES quests (id);
+
+CREATE TABLE quest_log (
+  id INT NOT NULL AUTO_INCREMENT,
+  quest_id INT NOT NULL,
+  user_id INT NOT NULL,
+  quest_data_id INT NOT NULL,
+  slot_id VARCHAR(255) COLLATE utf8_unicode_ci NOT NULL,
+  previous_state VARCHAR(255) COLLATE utf8_unicode_ci NOT NULL,
+  new_state VARCHAR(255) COLLATE utf8_unicode_ci NOT NULL,
+  date INT NOT NULL,
+  PRIMARY KEY(id)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
