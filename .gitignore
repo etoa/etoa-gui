@@ -29,3 +29,4 @@ CMakeCache.txt
 .vagrant
 
 /vendor/
+.php_cs.cache
