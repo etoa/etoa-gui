@@ -11,7 +11,7 @@ sudo apt-get update && sudo apt-get upgrade
 echo "mysql-server mysql-server/root_password password " | debconf-set-selections
 echo "mysql-server mysql-server/root_password_again password " | debconf-set-selections
 
-# Install mysql, nginx, php5-fpm
+# Install mysql, nginx, php5.6-fpm
 sudo aptitude install -q -y -f git mysql-server mysql-client nginx php5.6 php5.6-fpm php5.6-xdebug
 
 # Install commonly used php packages
@@ -22,7 +22,7 @@ sudo cp /var/www/etoa/vagrant/nginx-default /etc/nginx/sites-available/default
 cp /var/www/etoa/vagrant/db.conf /var/www/etoa/htdocs/config
 
 sudo service nginx restart
-sudo service php5-fpm restart
+sudo service php5.6-fpm restart
 
 MYSQL=`which mysql`
 PHP=`which php`
