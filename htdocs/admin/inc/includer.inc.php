@@ -10,7 +10,7 @@
 define('RELATIVE_ROOT','../');
 define('ADMIN_MODE',true);
 
-require_once("../inc/bootstrap.inc.php");
+require_once __DIR__ . '/../../inc/bootstrap.inc.php';
 
 // Renderzeit-Start festlegen
 $render_time = explode(" ",microtime());
@@ -34,9 +34,8 @@ define('USER_BLOCKED_DEFAULT_TIME',3600*24*$conf['user_ban_min_length']['v']);	/
 define('USER_HMODE_DEFAULT_TIME',3600*24*$conf['user_umod_min_length']['v']);	// Standardurlaubszeit
 
 define('ADMIN_FILESHARING_DIR',CACHE_ROOT."/admin");
-	
+
 ini_set('display_errors', 1);
 
 $css_theme = (!isset($themePath) || !is_file("web/css/themes/".$themePath."css")) ? "default" : $themePath;
-	
-?>
+
