@@ -2,6 +2,7 @@
 
 $app = new Pimple\Container([
     'debug' => false,
+    'app.environment' => isset($environment) ? $environment : 'production',
     'app.root' => dirname(__DIR__),
     'app.config_dir' => sprintf('%s/htdocs/config/', dirname(__DIR__)),
     'db.options.file' => 'db.conf',

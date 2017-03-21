@@ -17,6 +17,7 @@ class AbstractDbTestCase extends TestCase
     {
         parent::setUp();
 
+        $environment = 'testing';
         $this->app = require dirname(__DIR__).'/src/app.php';
         $this->connection = $this->app['db'];
     }
