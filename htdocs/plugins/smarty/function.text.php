@@ -2,10 +2,10 @@
 function smarty_function_text($params, &$smarty)
 {
 	if (isset($params['key']) && trim($params['key']) != "")
-	{	
+	{
 		$tm = new TextManager();
 		$text = $tm->getText($params['key']);
-		if (text != null) {
+		if ($text !== null) {
 			if ($text->enabled && !empty($text->content))
 			{
 				if (isset($params['assign'])) {
@@ -23,4 +23,3 @@ function smarty_function_text($params, &$smarty)
 	}
 	return MessageBox::error("Smarty Plugin Error", "Invalid or missing 'key' for cfg plugin!");
 }
-?>
