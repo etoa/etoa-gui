@@ -34,6 +34,26 @@ class QuestRepositoryTest extends AbstractDbTestCase
         }
     }
 
+    public function testGetUserQuestEmpty()
+    {
+        $this->assertNull($this->repository->getUserQuest(1, 1));
+    }
+
+    public function testGetUserQuest()
+    {
+        $userId = 1;
+        $quest = new Quest(null, 99, $userId, 'merchant', QuestDefinitionInterface::STATE_AVAILABLE, [
+            1 => new Task(null, 1, 11),
+            2 => new Task(null, 2, 22),
+            3 => new Task(null, 3, 33),
+        ]);
+        $this->repository->save($quest);
+
+        $quest = $this->repository->getUserQuest($userId, $quest->getId());
+        $this->assertInstanceOf(Quest::class, $quest);
+        $this->assertCount(3, $quest->getTasks());
+    }
+
     public function testGetActiveQuestsEmpty()
     {
         $this->assertSame([], $this->repository->getActiveQuests(99));

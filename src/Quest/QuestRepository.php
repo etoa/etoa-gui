@@ -13,6 +13,33 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
 {
     /**
      * @param int $userId
+     * @param int $questId
+     * @return Quest|null
+     */
+    public function getUserQuest($userId, $questId)
+    {
+        $result = $this->createQueryBuilder()
+            ->select('q.id AS qid')
+            ->addSelect('q.*')
+            ->addSelect('t.*')
+            ->from('quests', 'q')
+            ->leftJoin('q', 'quest_tasks', 't', 't.quest_id = q.id')
+            ->where('q.user_id = :userId')
+            ->andWhere('q.id = :questId')
+            ->setParameters([
+                'userId' => $userId,
+                'questId' => $questId,
+            ])->execute()->fetchAll(\PDO::FETCH_ASSOC);
+
+        if (!$result) {
+            return null;
+        }
+
+        return $this->buildQuest($result[0]['qid'], $result);
+    }
+
+    /**
+     * @param int $userId
      * @return QuestInterface[]
      */
     public function getActiveQuests($userId)
@@ -33,17 +60,22 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
             ])->execute()->fetchAll(\PDO::FETCH_ASSOC | \PDO::FETCH_GROUP);
 
         foreach ($result as $questId => $questData) {
-            $tasks = [];
-            if (null !== $questData[0]['task_id']) {
-                foreach ($questData as $row) {
-                    $tasks[$row['task_id']] = new Task($row['id'], $row['task_id'], $row['progress']);
-                }
-            }
-
-            $quests[] = new Quest($questId, $questData[0]['quest_data_id'], $questData[0]['user_id'], $questData[0]['slot_id'], $questData[0]['state'], $tasks);
+            $quests[] = $this->buildQuest($questId, $questData);
         }
 
         return $quests;
+    }
+
+    private function buildQuest($questId, array $questData)
+    {
+        $tasks = [];
+        if (null !== $questData[0]['task_id']) {
+            foreach ($questData as $row) {
+                $tasks[$row['task_id']] = new Task($row['id'], $row['task_id'], $row['progress']);
+            }
+        }
+
+        return new Quest($questId, $questData[0]['quest_data_id'], $questData[0]['user_id'], $questData[0]['slot_id'], $questData[0]['state'], $tasks);
     }
 
     public function save(QuestInterface $quest)
