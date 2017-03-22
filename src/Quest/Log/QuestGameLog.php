@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<?php
 
 namespace EtoA\Quest\Log;
 
@@ -16,8 +16,8 @@ class QuestGameLog implements QuestLoggerInterface
         QuestDefinitionInterface::TRANSITION_REJECT => 4,
     ];
 
-    public function log(QuestInterface $quest, $previousState, $newState)
+    public function log(QuestInterface $quest, $previousState, $transitionName)
     {
-        \GameLog::add(\GameLog::F_QUESTS, \GameLog::INFO, '', $quest->getUser(), 0, 0, $quest->getQuestId(), 0, self::TRANSITION_MAP[$newState]);
+        \GameLog::add(\GameLog::F_QUESTS, \GameLog::INFO, '', $quest->getUser(), 0, 0, $quest->getQuestId(), 0, self::TRANSITION_MAP[$transitionName]);
     }
 }

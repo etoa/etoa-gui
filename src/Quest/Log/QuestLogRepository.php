@@ -8,7 +8,7 @@ use LittleCubicleGames\Quests\Log\QuestLoggerInterface;
 
 class QuestLogRepository extends AbstractRepository implements QuestLoggerInterface
 {
-    public function log(QuestInterface $quest, $previousState, $newState)
+    public function log(QuestInterface $quest, $previousState, $transitionName)
     {
         $this->createQueryBuilder()
             ->insert('quest_log')
@@ -26,7 +26,7 @@ class QuestLogRepository extends AbstractRepository implements QuestLoggerInterf
                 'questDataId' => $quest->getQuestId(),
                 'slotId' => $quest->getSlotId(),
                 'previousState' => $previousState,
-                'newState' => $newState,
+                'newState' => $transitionName,
                 'date' => time(),
             ])->execute();
     }
