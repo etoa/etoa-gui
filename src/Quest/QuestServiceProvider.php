@@ -2,6 +2,8 @@
 
 namespace EtoA\Quest;
 
+use EtoA\Quest\Initialization\QuestBuilder;
+use EtoA\Quest\Log\QuestGameLog;
 use EtoA\Quest\Log\QuestLogRepository;
 use EtoA\Quest\Progress\FunctionBuilder;
 use EtoA\Quest\Reward\DefenseRewardCollector;
@@ -31,7 +33,12 @@ class QuestServiceProvider implements ServiceProviderInterface
         $pimple['cubicle.quests.logger'] = function (Container $pimple) {
             return [
                 $pimple['etoa.quest.log.repository'],
+                new QuestGameLog(),
             ];
+        };
+
+        $pimple['cubicle.quests.initializer.questbuilder'] = function () {
+            return new QuestBuilder();
         };
 
         $pimple['etoa.quest.reward.shipcollector'] = function (Container $pimple) {

@@ -1394,6 +1394,11 @@ function showGameLogs($args=null,$limit=0)
 						default: $obStatus='-';
 					}
 					break;
+				case GameLog::F_QUESTS:
+					$questStates = array_flip(\EtoA\Quest\Log\QuestGameLog::TRANSITION_MAP);
+                    $ob = $arr['object_id'];
+                    $obStatus= str_replace('_', ' ', $questStates[$arr['object_id']]);
+                    break;
 				default:
 					$ob = "-";
 					$obStatus= "-";
