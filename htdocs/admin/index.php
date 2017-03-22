@@ -9,7 +9,7 @@
 
 ob_start();
 
-//require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 try {
 	require __DIR__ .'/inc/includer.inc.php';
@@ -18,6 +18,8 @@ try {
 	echo $ex;
 	exit();
 }
+
+$request = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
 
 // Create template object
 $tpl = new TemplateEngine('admin/tpl');
