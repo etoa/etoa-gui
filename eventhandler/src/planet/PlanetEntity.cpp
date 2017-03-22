@@ -73,6 +73,8 @@ namespace planet
 				this->solarPowerBonus = etoa::getSolarPowerBonus((int)pRow["planet_temp_from"], (int)pRow["planet_temp_to"]);
 				this->solarFuelBonus = 1 - (etoa::getSolarFuelBonus((int)pRow["planet_temp_from"], (int)pRow["planet_temp_to"]));
 				this->t = time(0) - (int)pRow["planet_last_updated"];
+                if (this->t > 300)
+                    this->t=300;
 				
 				this->isMain = (bool)pRow["planet_user_main"];
 				
@@ -138,25 +140,28 @@ namespace planet
 			else
 				this->ressource[i] = 0;
 		}
+        
+
+        
 // logistic population growth
         
         if (this->store[5] < config.nget("user_start_people", 1))
             this->store[5] = config.nget("user_start_people", 1);
         
         
-		this->birthRate = ((double)config.nget("people_multiply", 0)  + this->planet_->getTypePopulation() + this->race_->getRacePopulation() + this->sol_->getTypePopulation() + this->specialist_->getSpecialistPopulation() - 4)* (1-(this->ressource[5] / (this->store [5]+1)))/24;
+		this->birthRate = ((double)config.nget("people_multiply", 0)  + this->planet_->getTypePopulation() + this->race_->getRacePopulation() + this->sol_->getTypePopulation() + this->specialist_->getSpecialistPopulation() - 4)* (1-(this->ressource[5] / (this->store[5]+1)))/24;
         
 		this->ressource[6] = ((this->ressource[5] * this->birthRate)  / 3600);
-        this->ressource[6] = (this->ressource[6] <= 3) ? 3 : this->ressource[6];
+        
 
 		
 		if (!this->ressource[5] && this->isMain)
 			this->ressource[5] = 1;
         else if (this->store[5] <= (this->ressource[6] * this->t) && this->birthRate>0)
-            this->ressource[5] = this->store[5]
+            this->ressource[5] = this->ressource[5];
         else if (this->store[5] > (this->ressource[6] * this->t) && this->birthRate<0)
-            this->ressource[5] = this->store[5]
-        else
+            this->ressource[5] = this->ressource[5];
+        
 			this->ressource[5] =  this->ressource[6]  * this->t;
 		
 	}
