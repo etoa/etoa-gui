@@ -19,8 +19,6 @@ try {
 	exit();
 }
 
-$request = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
-
 // Create template object
 $tpl = new TemplateEngine('admin/tpl');
 
