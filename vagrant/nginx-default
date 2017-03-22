@@ -14,7 +14,7 @@ server {
     }
 
     location ~ \.php$ {
-        fastcgi_pass unix:/var/run/php5-fpm.sock;
+        fastcgi_pass unix:/run/php/php5.6-fpm.sock;
         fastcgi_split_path_info ^(.+\.php)(/.*)$;
         include fastcgi_params;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
@@ -23,7 +23,7 @@ server {
 
     location ~ /\. {
         access_log on;
-        log_not_found on; 
+        log_not_found on;
         deny all;
     }
 

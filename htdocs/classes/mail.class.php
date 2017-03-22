@@ -1,7 +1,12 @@
 <?php
 class Mail
 {
-	function __construct($subject,$text,$useTemplate=1)
+	/** @var string */
+	private $body;
+	/** @var string */
+	private $headers;
+
+	public function __construct($subject,$text,$useTemplate=1)
 	{
 		$this->subject = APP_NAME.' '.Config::getInstance()->roundname->v.": ".$subject;
 		if ($useTemplate)
@@ -39,9 +44,8 @@ Forum: ".FORUM_URL;
 		if (mail($rcpt, $this->subject, $this->body, $headers)) {
 			return true;
 		}
-			
+
 		error_msg("Mail wurde nicht gesendet!\n\nTo: $rcpt\nSubject:".$this->subject."\n\nHeader:\n\n$headers\n\nBody:\n\n".$this->body);
 		return false;
 	}
 }
-?>

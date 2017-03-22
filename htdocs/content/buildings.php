@@ -17,13 +17,13 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 	/**
 	* Bauhof-Modul
 	*
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/	
+	*/
 
   // DEFINITIONEN //
 
@@ -40,7 +40,7 @@ else
 }
 
 define('HELP_URL',"?page=help&site=buildings");
-	
+
 	// Aktiviert / Deaktiviert Bildfilter
 	if ($cu->properties->imageFilter==1)
 	{
@@ -56,14 +56,14 @@ define('HELP_URL',"?page=help&site=buildings");
 	if (isset($cp))
 	{
 		echo "<h1>Bauhof des Planeten ".$cp->name()."</h1>";
-		
+
 		echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
-		
+
 		// Load buildlist object
-		$bl = new Buildlist($cp->id,$cu->id,2);
+		$bl = new BuildList($cp->id,$cu->id,2);
 		$bid=0;
-		
-		
+
+
 		// create posted id for small view
 		if (isset($_POST['command_build']) && is_array($_POST['command_build']))
 		{
@@ -119,9 +119,9 @@ define('HELP_URL',"?page=help&site=buildings");
 				if ($bid==0 && isset($_POST['id']))
 				{
 					$bid = intval($_POST['id']);
-				}			
+				}
 			}
-            
+
 			// people working changed
 			if (isset($_POST['submit_people_form']))
 			{
@@ -130,7 +130,7 @@ define('HELP_URL',"?page=help&site=buildings");
 				else
 					error_msg('Arbeiter konnten nicht zugeteilt werden!');
 			}
-			
+
 			// build building
 			if (isset($_POST['command_build']) && $bl->getStatus($bid)==0)
 			{
@@ -143,7 +143,7 @@ define('HELP_URL',"?page=help&site=buildings");
 					error_msg($bl->getLastError());
 				}
 			}
-			
+
 			// demolish building
 			elseif (isset($_POST['command_demolish']) && $bl->getStatus($bid)==0)
 			{
@@ -156,7 +156,7 @@ define('HELP_URL',"?page=help&site=buildings");
 					error_msg($bl->getLastError());
 				}
 			}
-			
+
 			// cancel build building
 			elseif (isset($_POST['command_cbuild']) && $bl->getStatus($bid)==3)
 			{
@@ -169,7 +169,7 @@ define('HELP_URL',"?page=help&site=buildings");
 					error_msg($bl->getLastError());
 				}
 			}
-			
+
 			// cancel demolish building
 			elseif (isset($_POST['command_cdemolish']) && $bl->getStatus($bid)==4)
 			{
@@ -182,7 +182,7 @@ define('HELP_URL',"?page=help&site=buildings");
 					error_msg($bl->getLastError());
 				}
 			}
-			
+
 			// create design relateted stuff
 			if ($bl->getStatus($bid)==3 && $bl->getLevel($bid)>0)
 			{
@@ -205,13 +205,13 @@ define('HELP_URL',"?page=help&site=buildings");
 				$status_text="";
 			}
 		}
-		
+
 		// cache checker to add it to several forms
 		ob_start();
 		checker_init();
 		$checker = ob_get_contents();
 		ob_end_clean();
-		
+
 		$peopleFree = floor($cp->people) - $bl->totalPeopleWorking() + $bl->getPeopleWorking(BUILD_BUILDING_ID);
 		// create box to change people working
 		$box =	'
@@ -225,7 +225,7 @@ define('HELP_URL',"?page=help&site=buildings");
 		}
 		else
 		{
-			$box .= '<input type="hidden" name="peopleOptimized" id="peopleOptimized" value="0" />';	
+			$box .= '<input type="hidden" name="peopleOptimized" id="peopleOptimized" value="0" />';
 		}
 		$box .= '	<tr>
 							<th>Eingestellte Arbeiter</th>
@@ -256,7 +256,7 @@ define('HELP_URL',"?page=help&site=buildings");
 							<td colspan="2" style="text-align:center;">
 								<div id="changeWorkingPeopleError" style="display:none;">&nbsp;</div>
 								<input type="submit" value="Speichern" name="submit_people_form" id="submit_people_form" />&nbsp;';
-		
+
 		if ($cu->properties->itemShow=='full' && isset($bid) && $bid>0 && $bl->item($bid) !== false)
 		{
 			$peopleOptimized = $bl->item($bid)->getPeopleOptimized();
@@ -264,8 +264,8 @@ define('HELP_URL',"?page=help&site=buildings");
 		}
 		$box .= '
 					</td>
-				</tr>';				
-		
+				</tr>';
+
 		//
 		// create infobox incl. editable stuff for working people adjustements
 		//
@@ -301,23 +301,23 @@ define('HELP_URL',"?page=help&site=buildings");
 			echo '<tr><td>Minimale Bauzeit (mit Arbeiter):</td><td>Bauzeit * '.(0.1-($genTechLevel/100)).'</td></tr>';
 		}
 		// Boost system
-		if ($cfg->value('boost_system_enable') == 1) 
+		if ($cfg->value('boost_system_enable') == 1)
 		{
 			echo '<tr><td>Geschwindigkeitsboost:</td><td>'.get_percent_string($cu->boostBonusBuilding+1).'</td></tr>';
 		}
   		tableEnd();
-		
+
 		echo '<div id="changePeople" style="display:none;">';
 		tableStart("Arbeiter im Bauhof zuteilen");
 		echo '<form id="changeWorkingPeople" action="?page='.$page.'&amp;id='.$bid.'" method="post">
 			'.$checker.$box.'</form>';
 		tableEnd();
 		echo '</div>';
-		
+
 		// if full view and detail view selected, show it
 		if (isset($bid) && $bid>0 && $bl->item($bid) !== false && $cu->properties->itemShow=='full')
 		{
-			
+
 			//
 			// Gebäudedaten anzeigen
 			//
@@ -346,14 +346,14 @@ define('HELP_URL',"?page=help&site=buildings");
 					<td>'.$f.' '.($f!=1 ? 'Felder' : 'Feld').'</td>
 				</tr>';
 			tableEnd();
-			
+
 			//
 			// Baumenü
 			//
 			echo '<form action="?page='.$page.'" method="post">';
 			echo '<input type="hidden" name="id" value="'.$bid.'">';
 			echo $checker;
-			
+
 			// Voraussetzungen sind erfüllt
 			if ($bl->requirementsPassed($bid))
 			{
@@ -370,7 +370,7 @@ define('HELP_URL',"?page=help&site=buildings");
 						<th width="14%">'.RES_ICON_FOOD.'</td>
 						<th width="14%">'.RES_ICON_POWER.'</td>
 					</tr>';
-				
+
 				// Bauen
 				if ($item->buildType==0)
 				{
@@ -386,13 +386,13 @@ define('HELP_URL',"?page=help&site=buildings");
 									<td>'.nf($costs['costs5']).'</td>
 								</tr>';
 						}
-						
+
 						echo '<tr>
 								<td colspan="8">
 									<i>'.$bl->getLastError().'</i>
 								</td>
-							</tr>'; 
-						
+							</tr>';
+
 					}
 					else
 					{
@@ -422,7 +422,7 @@ define('HELP_URL',"?page=help&site=buildings");
 							echo '</tr>';
 						}
 					}
-	
+
 					// Abreissen
 					$canDemolish = ($item->level>0 && $item->building->demolishCostsFactor!=0 && $item->buildType==0);
 					if ($canDemolish)
@@ -441,7 +441,7 @@ define('HELP_URL',"?page=help&site=buildings");
 									<td colspan="8">
 										<i>'.$bl->getLastError().'</i>
 									</td>
-								</tr>'; 
+								</tr>';
 
 						}
 						else
@@ -459,8 +459,8 @@ define('HELP_URL',"?page=help&site=buildings");
 							echo '</tr>';
 						}
 					}
-					
-	
+
+
 					// Bau abbrechen
 					if ($item->buildType==3)
 					{
@@ -485,7 +485,7 @@ define('HELP_URL',"?page=help&site=buildings");
 							echo '</tr>';
 		         		}
 					}
-	
+
 					// Abriss abbrechen
 					if ($item->buildType==4)
 					{
@@ -498,7 +498,7 @@ define('HELP_URL',"?page=help&site=buildings");
 		      				</tr>';
 					}
 					tableEnd();
-					
+
 					if ($canDemolish) {
 						echo '<div>Falls mehr Platz benötigt wird, kann dieses Gebäude <a href="javascript:;" onclick="$(\'.demolishActionContainer\').show();$(this).parent().hide();return false;">abgerissen</a> werden.</div>';
 						?>
@@ -507,9 +507,9 @@ define('HELP_URL',"?page=help&site=buildings");
 							$('.demolishActionContainer').hide();
 						});
 						</script>
-						<?PHP	
+						<?PHP
 					}
-					
+
 					if ($item->getWaitingTime()>0)
 					{
 						echo "Wartezeit bis gen&uuml;gend Rohstoffe zum Bau vorhanden sind: <b>".tf($item->getWaitingTime())."</b><br/>";
@@ -519,13 +519,13 @@ define('HELP_URL',"?page=help&site=buildings");
 						echo "Wartezeit bis gen&uuml;gend Rohstoffe zum Abriss vorhanden sind: <b>".tf($dWaitArray[1])."</b><br/>";
 					}
 					echo "<br/>";
-	
+
 					if ($item->buildType==3 || $item->buildType==4)
 					{
 						countDown("buildtime",$item->endTime,"buildcancel");
 						jsProgressBar("progressbar",$item->startTime,$item->endTime);
 					}
-				
+
 				}
 				else
 				{
@@ -547,7 +547,7 @@ define('HELP_URL',"?page=help&site=buildings");
 
 		else
 		{
-	
+
 			$tabitems = array(
 				"all"=>"Alle anzeigen",
 					"buildable"=>"Baubare Gebäude",
@@ -555,7 +555,7 @@ define('HELP_URL',"?page=help&site=buildings");
 			);
 			show_tab_menu("mode",$tabitems);
 			$mode = (isset($_GET['mode']) && ctype_alpha($_GET['mode'])) ? $_GET['mode'] : "all";
-			
+
 			$tres = dbquery("SELECT
 								type_id,
 								type_name
@@ -563,17 +563,17 @@ define('HELP_URL',"?page=help&site=buildings");
         						building_types
 							ORDER BY
 								type_order ASC
-			;");				
+			;");
 			if (mysql_num_rows($tres)>0)
 			{
 				// Jede Kategorie durchgehen
 				echo '<form action="?page='.$page.'" method="post"><div>';
 				echo $checker;
-				
+
 				while ($tarr = mysql_fetch_array($tres))
 				{
 					tableStart($tarr['type_name'],TABLE_WIDTH);
-					
+
 					//Einfache Ansicht
 					if ($cu->properties->itemShow!='full')
 					{
@@ -588,12 +588,12 @@ define('HELP_URL',"?page=help&site=buildings");
 								<th>Ausbau</th>
 							</tr>";
 					}
-					
+
 					$cnt = 0; // Counter for current row
 					$scnt = 0; // Counter for shown buildings
-					
+
 					$it = $bl->getCatIterator($tarr['type_id'],$mode);
-					
+
 					while( $it->valid() )
 					{
 						if ($cu->properties->itemShow!='full')
@@ -601,7 +601,7 @@ define('HELP_URL',"?page=help&site=buildings");
 						else
 							$img = $it->current()->building->imgPathMiddle();
 						$filterStyleClass = "";
-						
+
 						if (!$bl->requirementsPassed($it->key()))
 						{
 							$subtitle =  'Voraussetzungen fehlen';
@@ -656,7 +656,7 @@ define('HELP_URL',"?page=help&site=buildings");
 							{
 								$tmtext = "<span style=\"color:#f00\">Zuwenig Ressourcen f&uuml;r weiteren Ausbau!</span><br/>";
 								$color = '#f00';
-								
+
 								if($use_img_filter)
 								{
 									$filterStyleClass = "filter-noresources";
@@ -668,7 +668,7 @@ define('HELP_URL',"?page=help&site=buildings");
 								$color = '#fff';
 								$style['metal'] = $style['crystal'] = $style['plastic'] = $style['food'] = "";
 							}
-							
+
 							if ($it->current()->level==0)
 							{
 								$subtitle = "Noch nicht gebaut";
@@ -683,7 +683,7 @@ define('HELP_URL',"?page=help&site=buildings");
 								$subtitle = 'Stufe '.$it->current()->level;
 							}
 						}
-						
+
 						//Einfache Ansicht
 						if ($cu->properties->itemShow!='full')
 						{
@@ -735,20 +735,20 @@ define('HELP_URL',"?page=help&site=buildings");
 						}
 						else
 						{
-							
+
 							if ($cu->properties->itemShow=='full')
 							{
-								// Display row starter if needed				
-								if ($cnt==0) 
+								// Display row starter if needed
+								if ($cnt==0)
 								{
 									echo "<tr>";
 								}
-								
+
 									echo "<td style=\"width:".CELL_WIDTH."px;height:".CELL_WIDTH."px ;padding:0px;\">";
 									echo "<div style=\"position:relative;height:".CELL_WIDTH."px;overflow:hidden;\">";
 									echo "<div class=\"buildOverviewObjectTitle\">".$it->current()->building."</div>";
 									echo "<a href=\"?page=$page&amp;id=".$it->key()."\" ".tm($it->current()->building,"<b>".$subtitle."</b><br/>".$tmtext.$it->current()->building->shortDesc)." style=\"display:block;height:180px;\"><img class=\"".$filterStyleClass."\" src=\"".$img."\"/></a>";
-									if ($it->current()->level || ($it->current()->level==0 && isset($it->current()->buildType) && $buildlist[$bid]['buildlist_build_type']==3)) 
+									if ($it->current()->level || ($it->current()->level==0 && isset($it->current()->buildType) && $buildlist[$bid]['buildlist_build_type']==3))
 									{
 										echo "<div class=\"buildOverviewObjectLevel\" style=\"color:".$color."\">".$it->current()->level."</div>";
 									}
@@ -760,7 +760,7 @@ define('HELP_URL',"?page=help&site=buildings");
 							}
 						}
 
-						// Display row finisher if needed			
+						// Display row finisher if needed
 						if ($cnt==NUM_BUILDINGS_PER_ROW)
 						{
 							echo "</tr>";
@@ -777,7 +777,7 @@ define('HELP_URL',"?page=help&site=buildings");
 						}
 						echo '</tr>';
 					}
-					
+
 					if ($scnt==0)
 					{
 						echo "<tr>
@@ -787,10 +787,10 @@ define('HELP_URL',"?page=help&site=buildings");
 								</tr>";
 					}
 					tableEnd();
-				}				
+				}
 				echo '</div></form>';
 			}
-		}		
+		}
 	}
 	// ENDE SKRIPT //
 

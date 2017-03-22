@@ -23,7 +23,7 @@ function popupLink($type,$title,$class="",$params="")
 			$res .= " onclick=\"window.open('popup.php?page=sendmessage".$p."','Message','width=500, height=300, status=no, scrollbars=no')\"";
 			break;
 		default:
-			
+
 	}
 	$res .=">".$title."</a>";
 	return $res;
@@ -38,7 +38,7 @@ function openerLink($target,$title,$css="")
 * Shows a table view of a given mysql result
 *
 * @param string MySQL result pointer
-*/	
+*/
 function db_show_result($res)
 {
 	echo '<table class="tb"><thead><tr>';
@@ -47,7 +47,7 @@ function db_show_result($res)
 	{
 		echo '<th>'.$fo->name.'</th>';
 		$fc++;
-	}		
+	}
 	echo '</tr></thead><tbody>';
 	while ($arr=mysql_fetch_row($res))
 	{
@@ -58,7 +58,7 @@ function db_show_result($res)
 		}
 		echo '</tr>';
 	}
-	echo '</tbody></table>';		
+	echo '</tbody></table>';
 }
 
 /**
@@ -148,7 +148,7 @@ function cb_button($url)
 		return "<a href=\"clipboard.php?".$url."\" target=\"clipboard\"><img src=\"../images/clipboard.png\" alt=\"Zwischenablage\" style=\"width:16px;height:18px;border:none;\" title=\"Zwischenablage\" /></a>";
 	}
 	return "";
-}	
+}
 
 
 /**
@@ -200,11 +200,16 @@ function display_field($type, $confname, $field)
 			echo " /> <label for=\"".$id."_0\">Nein</label>";
 			break;
 		case "timedate":
+            $confValue = $cfg->$confname->$field;
+            if ($confValue instanceof SimpleXMLElement) {
+                $confValue = (string)$confValue;
+            }
+
 			echo "<select name=\"config_".$field."_d[".$confname."]\" class=\"inputfield-$type\">";
 			for ($x=1;$x<32;$x++)
 			{
 				echo "<option value=\"$x\"";
-				if (date("d",$cfg->$confname->$field)==$x) echo " selected=\"selected\"";
+				if (date("d",$confValue)==$x) echo " selected=\"selected\"";
 				echo ">";
 				if ($x<10) echo 0;
 				echo "$x</option>";
@@ -214,7 +219,7 @@ function display_field($type, $confname, $field)
 			for ($x=1;$x<32;$x++)
 			{
 				echo "<option value=\"$x\"";
-				if (date("m",$cfg->$confname->$field)==$x) echo " selected=\"selected\"";
+				if (date("m",$confValue)==$x) echo " selected=\"selected\"";
 				echo ">";
 				if ($x<10) echo 0;
 				echo "$x</option>";
@@ -224,7 +229,7 @@ function display_field($type, $confname, $field)
 			for ($x=date("Y")-50;$x<date("Y")+50;$x++)
 			{
 				echo "<option value=\"$x\"";
-				if (date("Y",$cfg->$confname->$field)==$x) echo " selected=\"selected\"";
+				if (date("Y",$confValue)==$x) echo " selected=\"selected\"";
 				echo ">$x</option>";
 			}
 			echo "</select> ";
@@ -232,7 +237,7 @@ function display_field($type, $confname, $field)
 			for ($x=0;$x<25;$x++)
 			{
 				echo "<option value=\"$x\"";
-				if (date("H",$cfg->$confname->$field)==$x) echo " selected=\"selected\"";
+				if (date("H",$confValue)==$x) echo " selected=\"selected\"";
 				echo ">";
 				if ($x<10) echo 0;
 				echo "$x</option>";
@@ -242,7 +247,7 @@ function display_field($type, $confname, $field)
 			for ($x=0;$x<60;$x++)
 			{
 				echo "<option value=\"$x\"";
-				if (date("i",$cfg->$confname->$field)==$x) echo " selected=\"selected\"";
+				if (date("i",$confValue)==$x) echo " selected=\"selected\"";
 				echo ">";
 				if ($x<10) echo 0;
 				echo "$x</option>";
@@ -252,7 +257,7 @@ function display_field($type, $confname, $field)
 			for ($x=0;$x<60;$x++)
 			{
 				echo "<option value=\"$x\"";
-				if (date("s",$cfg->$confname->$field)==$x) echo " selected=\"selected\"";
+				if (date("s",$confValue)==$x) echo " selected=\"selected\"";
 				echo ">";
 				if ($x<10) echo 0;
 				echo "$x</option>";
@@ -289,14 +294,14 @@ function encode_logtext($string)
 {
 	$string = eregi_replace('\[USER_ID=([0-9]*);USER_NICK=([^\[]*)\]', '<a href="?page=user&sub=edit&user_id=\1">\2</a>', $string);
 	$string = eregi_replace('\[PLANET_ID=([0-9]*);PLANET_NAME=([^\[]*)\]', '<a href="?page=galaxy&sub=edit&id=\1">\2</a>', $string);
-	
+
 	return $string;
 }
 
 /**
 * DEPRECATED!
-* Displays a select box for choosing the search method 
-* for varchar/text mysql table fields ('contains', 'part of' 
+* Displays a select box for choosing the search method
+* for varchar/text mysql table fields ('contains', 'part of'
 * and negotiations of those two)
 *
 * @param string Field name
@@ -351,24 +356,24 @@ function searchQueryUrl($str)
 /**
 * Builds a search query and sort array
 * based on GET,POST or SESSION data.
-*  
+*
 * @param array Pointer to query array
 * @param array Pointer to order/limit array
 * @author Nicolas Perrenoud <mrcage@etoa.ch>
-*/		
+*/
 function searchQueryArray(&$arr,&$oarr)
 {
 	$arr = array();
 	$oarr = array();
-	
+
 	if (isset($_GET['newsearch']))
 	{
 		searchQueryReset();
 		return false;
 	}
-	
+
 	if (isset($_GET['sq']))
-	{		
+	{
 		$sq = base64_decode($_GET['sq']);
 		$ob = explode(";",$sq);
 		foreach ($ob as $o)
@@ -393,20 +398,20 @@ function searchQueryArray(&$arr,&$oarr)
 					{
 						$chk = spliti(":",$v);
 						if ($chk[1]=="d")
-							$oarr[$chk[0]] = "d"; 
+							$oarr[$chk[0]] = "d";
 						else
-							$oarr[$chk[0]] = "a"; 						
+							$oarr[$chk[0]] = "a";
 					}
 					else
-						$oarr[$v] = "a"; 						
-					continue;					
+						$oarr[$v] = "a";
+					continue;
 				}
 				if ($fname == "limit")
 				{
-					$oarr['limit'] = min(max(1,intval($v)),5000); 						
-					continue;					
-				}					
-				
+					$oarr['limit'] = min(max(1,intval($v)),5000);
+					continue;
+				}
+
 				if (isset($_POST['qmode'][$fname]))
 				{
 					$arr[$fname] = array($_POST['qmode'][$fname],$v);
@@ -423,7 +428,7 @@ function searchQueryArray(&$arr,&$oarr)
 				{
 					$arr[$fname] = array("%",$v);
 				}
-			}			
+			}
 		}
 		if (!isset($oarr['limit']))
 			$oarr['limit'] = 100;
@@ -441,17 +446,17 @@ function searchQueryArray(&$arr,&$oarr)
 				{
 					$chk = spliti(":",$_POST['search_order']);
 					if ($chk[1]=="d")
-						$oarr[$chk[0]] = "d"; 
+						$oarr[$chk[0]] = "d";
 					else
-						$oarr[$chk[0]] = "a"; 						
+						$oarr[$chk[0]] = "a";
 				}
 				else
-					$oarr[$_POST['search_order']] = "a"; 					
-			}		
+					$oarr[$_POST['search_order']] = "a";
+			}
 			if (isset($_POST['search_limit']))
 			{
-				$oarr['limit'] = min(max(1,intval($_POST['search_limit'])),5000); 						
-			}											
+				$oarr['limit'] = min(max(1,intval($_POST['search_limit'])),5000);
+			}
 		}
 		return true;
 	}
@@ -471,8 +476,8 @@ function searchQueryReset()
 
 
 /**
-* Displays a select box for choosing the search method 
-* for varchar/text mysql table fields ('contains', 'part of' 
+* Displays a select box for choosing the search method
+* for varchar/text mysql table fields ('contains', 'part of'
 * and negotiations of those two)
 *
 * @param string Field name
@@ -489,11 +494,11 @@ function searchFieldTextOptions($name)
 	$res = ob_get_contents();
 	ob_end_clean();
 	return $res;
-}	
+}
 
 /**
-* Displays a select box for choosing the search method 
-* for varchar/text mysql table fields ('contains', 'part of' 
+* Displays a select box for choosing the search method
+* for varchar/text mysql table fields ('contains', 'part of'
 * and negotiations of those two)
 *
 * @param string Field name
@@ -512,7 +517,7 @@ function searchFieldNumberOptions($name)
 	$res = ob_get_contents();
 	ob_end_clean();
 	return $res;
-}	
+}
 
 /**
 * Resolves the name of a given search operator
@@ -524,24 +529,24 @@ function searchFieldOptionsName($operator='')
 	switch ($operator)
 	{
 		case "=":
-			return "gleich";			
+			return "gleich";
 		case "!=":
-			return "ungleich";			
+			return "ungleich";
 		case "%":
-			return "enthält";			
+			return "enthält";
 		case "!%":
-			return "enthält nicht";			
+			return "enthält nicht";
 		case "<":
-			return "kleiner als";			
+			return "kleiner als";
 		case "<=":
-			return "kleiner gleich";			
+			return "kleiner gleich";
 		case ">":
-			return "grösser als";			
+			return "grösser als";
 		case ">=":
-			return "grösser gleich";			
+			return "grösser gleich";
 		default:
-			return "gleich";			
-	
+			return "gleich";
+
 	}
 }
 
@@ -552,24 +557,24 @@ function searchFieldSql($item)
 	switch ($operator)
 	{
 		case "=":
-			return " LIKE '".$value."' ";			
+			return " LIKE '".$value."' ";
 		case "!=":
-			return " NOT LIKE '".$value."' ";			
+			return " NOT LIKE '".$value."' ";
 		case "%":
-			return " LIKE '%".$value."%' ";			
+			return " LIKE '%".$value."%' ";
 		case "!%":
-			return " NOT LIKE '%".$value."%' ";			
+			return " NOT LIKE '%".$value."%' ";
 		case "<":
-			return " < ".intval($value)." ";			
+			return " < ".intval($value)." ";
 		case "<=":
-			return " <= ".intval($value)." ";			
+			return " <= ".intval($value)." ";
 		case ">":
-			return " > ".intval($value)." ";			
+			return " > ".intval($value)." ";
 		case ">=":
-			return " >= ".intval($value)." ";			
+			return " >= ".intval($value)." ";
 		default:
-			return " ='".$value."'";			
-	}		
+			return " ='".$value."'";
+	}
 }
 
 
@@ -597,17 +602,17 @@ function tail($file, $num_to_get=10)
 	  return $data;
 	}
 	return false;
-} 
+}
 
 function DuplicateMySQLRecord ($table, $id_field, $id) {
     // load the original record into an array
     $result = dbquery("SELECT * FROM {$table} WHERE {$id_field}={$id}");
     $original_record = mysql_fetch_assoc($result);
-    
+
     // insert the new record and get the new auto_increment id
     mysql_query("INSERT INTO {$table} (`{$id_field}`) VALUES (NULL)");
     $newid = mysql_insert_id();
-    
+
     // generate the query to update the new record with the previous values
     $query = "UPDATE {$table} SET ";
     foreach ($original_record as $key => $value) {
@@ -618,7 +623,7 @@ function DuplicateMySQLRecord ($table, $id_field, $id) {
     $query = substr($query,0,strlen($query)-2); # lop off the extra trailing comma
     $query .= " WHERE {$id_field}={$newid}";
     dbquery($query);
-    
+
     // return the new id
     return $newid;
 }
@@ -773,20 +778,20 @@ function showLogs($args=null,$limit=0)
 function showAttackAbuseLogs($args=null,$limit=-1,$load=true)
 {
 	$paginationLimit = 50;
-	
+
 	if ($load)
 	{
 		$action = is_array($args) && isset($args['flaction']) ? $args['flaction'] : 0;
 		$sev = is_array($args) && isset($args['logsev'])  ? $args['logsev'] : 0;
-		
+
 		$landtime = is_array($args) ? mktime($args['searchtime_h'],$args['searchtime_i'],$args['searchtime_s'],$args['searchtime_m'],$args['searchtime_d'],$args['searchtime_y']) : time();
-		
+
 		$order = "timestamp ASC";
-		
+
 		$sql1 = "SELECT ";
 		$sql2 = " * ";
 		$sql3 = " FROM logs_battle l ";
-		
+
 		if (isset($args['searchfuser']) && $args['searchfuser']!="" && !is_numeric($args['searchfuser']))
 		{
 			$args['searchfuser'] = get_user_id($args['searchfuser']);
@@ -795,7 +800,7 @@ function showAttackAbuseLogs($args=null,$limit=-1,$load=true)
 		{
 			$args['searcheuser'] = get_user_id($args['searcheuser']);
 		}
-		
+
 		$sql3.= " WHERE fleet_weapon>0 AND landtime<='".$landtime."' AND landtime>'".($landtime-3600*24)."' ";
 		if ($action!="")
 		{
@@ -814,29 +819,29 @@ function showAttackAbuseLogs($args=null,$limit=-1,$load=true)
 			$sql3.=" AND l.entity_user_id LIKE '%,".intval($args['searcheuser']).",%' ";
 		}
 		$sql3.= " ORDER BY $order";
-		
+
 		$res=dbquery($sql1.$sql2.$sql3);
-		
+
 		$bans = array();
 		$actions = array();
-		
+
 		if (mysql_num_rows($res)>0)
 		{
 			$data = array();
-			
+
 			$waveMaxCnt = array(3,4);				// Max. 3er/4er Wellen...
 			$waveTime = 15*60;						// ...innerhalb 15mins
-			
+
 			$attacksPerEntity = array(2,4);			// Max. 2/4 mal den gleichen Planeten angreiffen
-			
+
 			$attackedEntitiesMax = array(5,10);		// Max. Anzahl Planeten die angegriffen werden können...
 			$timeBetweenAttacksOnEntity = 6*3600;	// ...innerhalb 6h
-			
+
 			$banRange = 24*3600;					// alle Regeln gelten innerhalb von 24h
-			
+
 			$first_ban_time = 12*3600;							// Sperrzeit beim ersten Vergehen: 12h
 			$add_ban_time = 12*3600;								// Sperrzeit bei jedem weiteren Vergehen: 12h (wird immer dazu addiert)
-			
+
 			//Alle Daten werden in einem Array gespeichert, da mehr als 1 Angriffer möglich ist funktioniert das alte Tool nicht mehr
 			while ($arr=mysql_fetch_array($res))
 			{
@@ -858,7 +863,7 @@ function showAttackAbuseLogs($args=null,$limit=-1,$load=true)
 					}
 				}
 			}
-			
+
 			foreach ($data as $fUser=>$eUserArr)
 			{
 				foreach ($eUserArr as $eUser=>$eArr)
@@ -866,7 +871,7 @@ function showAttackAbuseLogs($args=null,$limit=-1,$load=true)
 					$firstTime = 0;
 					$attackCntTotal = 0;
 					$attackedEntities = count($eArr);
-					
+
 					foreach ($eArr as $entity=>$eDataArr)
 					{
 						$firstPlanetTime = 0;
@@ -874,14 +879,14 @@ function showAttackAbuseLogs($args=null,$limit=-1,$load=true)
 						$attackCntEntity = 0;
 						$waveStart=0;
 						$waveEnd = 0;
-						
+
 						foreach($eDataArr as $eData)
 						{
 							$ban = 0;
 							$banReason = "";
 							if ($frstTime==0) {
 								$firsTime = $eData[0];
-								
+
 								// Wenn mehr als 5 Planeten angegrifen wurden
 								if ($attackedEntities>$attackedEntitiesMax[$eData[1]])
 								{
@@ -891,7 +896,7 @@ function showAttackAbuseLogs($args=null,$limit=-1,$load=true)
 							}
 							if ($firstPlanetTime==0) $firstPlanetTime = $eData[0];
 							if ($lastPlanetTime==0) $lastPlanetTime = $eData[0];
-							
+
 							//Wellenreset
 							if ($waveStart==0 || $waveEnd<=$eData[0]-$waveTime)
 							{
@@ -906,11 +911,11 @@ function showAttackAbuseLogs($args=null,$limit=-1,$load=true)
 								++$waveCnt;
 								$waveEnd = $eData[0];
 							}
-							
+
 							//
 							// Überprüfungen
 							//
-							
+
 							//Zu viele Angriffe in einer Welle
 							if ($waveCnt>$waveMaxCnt[$eData[1]])
 							{
@@ -929,7 +934,7 @@ function showAttackAbuseLogs($args=null,$limit=-1,$load=true)
 								$ban = 1;
 								$banReason .= "Mehr als ".$attacksPerEntity[$eData[1]]." Angriffe/Wellen auf ein Ziel.<br />Anzahl:".$attackCntEntity."<br /><br />";
 							}
-							
+
 							// Es liegt eine Angriffsverletzung vor
 							if($ban==1)
 								array_push($bans,array("action"=>$eData[2],"timestamp"=>$eData[0],"fUser"=>$fUser,"eUser"=>$eUser,"entity"=>$entity,"ban"=>$banReason));
@@ -940,7 +945,7 @@ function showAttackAbuseLogs($args=null,$limit=-1,$load=true)
 		}
 		$_SESSION['logs']['attackObj'] = serialize($bans);
 	}
-	
+
 	$bans = unserialize($_SESSION['logs']['attackObj']);
 	$nr = count($bans);
 	if ($nr>0)
@@ -989,7 +994,7 @@ function showAttackAbuseLogs($args=null,$limit=-1,$load=true)
 			$eUser = new User($banData['eUser']);
 			$action = FleetAction::createFactory($banData['action']);
 			$entity = Entity::createFactoryById($banData['entity']);
-			
+
 			echo "<tr>
 			<td>".df($banData['timestamp'])."</td>
 			<td>".Log::$severities[$banData['severity']]."</td>
@@ -1011,7 +1016,7 @@ function showAttackAbuseLogs($args=null,$limit=-1,$load=true)
 	}
 }
 
-	
+
 
 function showFleetLogs($args=null,$limit=0)
 {
@@ -1020,7 +1025,7 @@ function showFleetLogs($args=null,$limit=0)
 
 	$action = is_array($args) && isset($args['flaction']) ? $args['flaction'] : 0;
 	$sev = is_array($args) && isset($args['logsev'])  ? $args['logsev'] : 0;
-	
+
 	$order = "timestamp DESC";
 
 	$sql1 = "SELECT ";
@@ -1031,7 +1036,7 @@ function showFleetLogs($args=null,$limit=0)
 	{
 		$sql3.=" INNER JOIN users u ON u.user_id=l.user_id AND u.user_nick LIKE '%".$args['searchuser']."%' ";
 	}
-	
+
 	if (isset($args['searcheuser']) && $args['searcheuser']!="" && !is_numeric($args['searcheuser']))
 	{
 		$sql3.=" INNER JOIN users eu ON eu.user_id=l.entity_user_id AND eu.user_nick LIKE '%".$args['searcheuser']."%' ";
@@ -1070,7 +1075,7 @@ function showFleetLogs($args=null,$limit=0)
 	$limitstring = "$limit,$paginationLimit";
 
 	$sql4 = " LIMIT $limitstring";
-	
+
 	$res = dbquery($sql1.$sql2.$sql3.$sql4);
 	$nr = mysql_num_rows($res);
 	if ($nr>0)
@@ -1194,7 +1199,7 @@ function showFleetLogs($args=null,$limit=0)
 			}
 			echo "<tr><td>Bewoner</td><td>".nf($sres[5])."</td><td>".nf($eres[5])."</td></tr>";
 			echo tableEnd();
-			
+
 			//Will not show Resmessage if entity was not touched (fleet cancel)
 			if ($arr['entity_res_start']!="untouched" || $arr['entity_res_end']!="untouched")
 			{
@@ -1218,7 +1223,7 @@ function showFleetLogs($args=null,$limit=0)
 				}
 				echo "<tr><td>Bewoner</td><td>".nf($sres[5])."</td><td>".nf($eres[5])."</td></tr>";
 				echo tableEnd();
-			} 
+			}
 			echo $arr["message"];
 			echo "</td></tr>";
 		}
@@ -1360,7 +1365,7 @@ function showGameLogs($args=null,$limit=0)
 						case 3: $obStatus="Ausbau";break;
 						case 4: $obStatus="Abriss";break;
 						default: $obStatus='-';
-					}					
+					}
 					break;
 				case GameLog::F_TECH:
 					$ob = new Technology($arr['object_id'])." ".($arr['level']>0 ? $arr['level'] : '');
@@ -1393,7 +1398,7 @@ function showGameLogs($args=null,$limit=0)
 					$ob = "-";
 					$obStatus= "-";
 			}
-			
+
 			echo "<tr>
 			<td>".df($arr['timestamp'])."</td>
 			<td>".GameLog::$severities[$arr['severity']]."</td>
@@ -1430,40 +1435,40 @@ function showGameLogs($args=null,$limit=0)
 			}
 		}
 	}
-	
+
 	/**
 	* Parse value submitted by datepicker field
 	*/
 	function parseDatePicker($element_name, $data) {
-		
+
 		$str = $data[$element_name];
 		if (isset($data[$element_name."_time"])) {
 			$str.= " ".$data[$element_name."_time"];
-		}		
+		}
 		return strtotime($str);
 	}
-	
+
 	/**
 	* Create file downlad link
 	*/
 	function createDownloadLink($file) {
-		
+
 		$encodedName = base64_encode($file);
 		if (!isset($_SESSION['filedownload'][$encodedName])) {
 			$_SESSION['filedownload'][$encodedName] = uniqid(true);
-		}		
+		}
 		return "dl.php?path=".$encodedName."&hash=".sha1($encodedName.$_SESSION['filedownload'][$encodedName]);
 	}
-	
+
 	/**
 	* $Parse file downlad link
 	*/
 	function parseDownloadLink($arr) {
-		
+
 		if (isset($arr['path']) && $arr['path']!="" && isset($arr['hash']) && $arr['hash']!="")
 		{
 			$encodedName = $arr['path'];
-			$file = base64_decode($encodedName); 
+			$file = base64_decode($encodedName);
 			if (isset($_SESSION['filedownload'][$encodedName]) && $arr['hash'] == sha1($encodedName.$_SESSION['filedownload'][$encodedName])) {
 				return $file;
 				unset($_SESSION['filedownload'][$encodedName]);

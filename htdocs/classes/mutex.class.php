@@ -19,7 +19,7 @@
 
 	/**
 	* Handles mutual exclusions using UNIX IPC-Semaphores. Thus
-	* race conditions in critical sections can be avoided. 
+	* race conditions in critical sections can be avoided.
 	* It uses the semaphore php extension.
 	*
 	* @author Nicolas Perrenoud <mrcage@etoa.ch>
@@ -28,11 +28,12 @@
 	{
 		private $key;
 		private $sem;
-		
+
 		private static function isSupported() {
-			return UNIX && !preg_match('/^win/i', $_SERVER['OS']);
+			$os = isset($_SERVER['OS']) ? $_SERVER['OS'] : '';
+			return UNIX && !preg_match('/^win/i', $os);
 		}
-		
+
 		/**
 		* Class constructor. Initializes the semaphore key
 		* for this project based on this file's directory name
@@ -57,7 +58,7 @@
 				sem_acquire($this->sem);
 			}
 		}
-		
+
 		/**
 		* Releases the semaphore. This method must be called after a criticcal section.
 		*/
@@ -65,7 +66,7 @@
 		{
 			if (self::isSupported())
 			{
-				sem_release($this->sem);		
+				sem_release($this->sem);
 			}
 		}
 	}

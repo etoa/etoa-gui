@@ -143,7 +143,7 @@
 			{
 				while ($arr = mysql_fetch_assoc($res))
 				{
-					$this->items[$arr['building_id']] = new BuildlistItem($arr);
+					$this->items[$arr['building_id']] = new BuildListItem($arr);
 					$this->count++;
 
 					if (($arr['buildlist_build_type']==3 || $arr['buildlist_build_type']==4) && $arr['buildlist_build_end_time']>time())

@@ -9,8 +9,10 @@
 
 ob_start();
 
+require_once __DIR__ . '/../../vendor/autoload.php';
+
 try {
-	require("inc/includer.inc.php");
+	require __DIR__ .'/inc/includer.inc.php';
 } catch (DBException $ex) {
 	ob_clean();
 	echo $ex;
@@ -38,7 +40,7 @@ if (isset($_POST['login_submit']))
 {
 	if (! $s->login($_POST))
 	{
-		include("inc/admin_login.inc.php");
+		include __DIR__ .'/inc/admin_login.inc.php';
 	}
 	if (!empty($_SERVER['QUERY_STRING'])) {
 		forward("?".$_SERVER['QUERY_STRING']);
@@ -57,7 +59,7 @@ if (isset($_GET['logout']) && $_GET['logout']!=null)
 // Validate session
 if (!$s->validate())
 {
-	include("inc/admin_login.inc.php");
+    include __DIR__ .'/inc/admin_login.inc.php';
 }
 else
 {
@@ -70,13 +72,13 @@ else
 		$s->clipboard = null;
 	}
 	$cb = isset ($s->clipboard) && $s->clipboard==1 ? true : false;
-	
-	
+
+
 	$tpl->assign("search_query",(isset($_POST['search_query']) ? $_POST['search_query'] : '' ));
 
 	$navmenu = fetchJsonConfig("admin-menu.conf");
 	$tpl->assign("navmenu",$navmenu);
-	
+
 	$tpl->assign("page",$page);
 	$tpl->assign("sub", $sub);
 	$tpl->assign("time", time());
@@ -86,9 +88,9 @@ else
 	$tpl->assign("num_notes", $narr[0]);
 	$tpl->assign("num_tickets", Ticket::countAssigned($s->user_id) + Ticket::countNew());
 
-	$tpl->assign("current_user_nick", $cu->nick);	
-	$tpl->assign("user_roles", $cu->roles);	
-	
+	$tpl->assign("current_user_nick", $cu->nick);
+	$tpl->assign("user_roles", $cu->roles);
+
 	// Status widget
 	$tpl->assign("is_unix", UNIX);
 	if (UNIX) {
@@ -97,7 +99,7 @@ else
 		$load = sys_getloadavg();
 		$tpl->assign("sys_load", round($load[2]/intval($out[0])*100, 2) );
 	}
-	
+
 	$ures=dbquery("SELECT count(*) FROM users;");
 	$uarr=mysql_fetch_row($ures);
 
@@ -113,17 +115,17 @@ else
 	$tpl->assign("admins_online", $a1arr[0]);
 	$tpl->assign("admins_count", AdminUser::countAll());
 	$tpl->assign("db_size", DBManager::getInstance()->getDbSize());
-	
+
 	$tpl->assign("side_nav_widgets", $tpl->getChunk("status_widget"));
-			
+
 	// Inhalt einbinden
 	if (isset($_GET['adminlist']))
 	{
-		require("inc/adminlist.inc.php");
+		require __DIR__ . '/inc/adminlist.inc.php';
 	}
 	elseif (isset($_GET['myprofile']))
 	{
-		require("inc/myprofile.inc.php");
+        require __DIR__ . '/inc/myprofile.inc.php';
 	}
 	else
 	{
@@ -131,7 +133,7 @@ else
 		$allow_inc=false;
 		$found = false;
 		$rm = new AdminRoleManager();
-		
+
 		foreach ($navmenu as $cat=> $item) 	{
 			if ($item['page']==$page && $sub=="") {
 				$found = true;
@@ -167,7 +169,7 @@ else
 			echo "<h1>Kein Zugriff</h1> Du hast keinen Zugriff auf diese Seite!";
 		}
 	}
-	
+
 	// Write all changes of $s to the session variable
 	$_SESSION[SESSION_NAME]=$s;
 	dbclose();
@@ -185,4 +187,3 @@ else
 	$tpl->assign("content_overflow", $ex);
 	$tpl->render();
 }
-?>
