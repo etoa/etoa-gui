@@ -1660,49 +1660,31 @@ echo "<div id=\"tabCheckpoints\" style=\"display:".$display.";\">";
 
 if($checkpoints)
 {
+
+    echo '<div>'
+    echo '<script type="text/javascript">xajax_havenShowShips();</script>';
+
     $fm = new FleetManager($npc->id,$cu->allianceId);
-    echo dump($fm->loadForeign());
+    $fm->loadForeign();
 
-
-
-
-    echo "<h1>Übersicht Kontrollpunkte</h1>";
-    foreach($npc->planets()->itemObjects() as $pid => $data)
+    foreach($npc->planets()->itemObjects() as $obj)
     {
+        echo "<h1>$obj</h1>";
 
-        tableStart('Vorhandene Kontrollpunkte');
-        echo "<td colspan='4'>$data</td>";
-
-
-        foreach ($fm->getAll() as $fid=>$fd)
+        $dl = new DefList($obj->id,$npc->id,1);
+        tableStart("Verteidigung");
+        echo "<tr><th>Typ</th><th>Anzahl</th></tr>";
+        foreach ($dl as $k => &$v)
         {
-            $attitude = $fd->getAction()->attitude();
-            $attitudeColor = FleetAction::$attitudeColor[$attitude];
-            $attitudeString = FleetAction::$attitudeString[$attitude];
-            echo dump($attitudeColor);
             echo "<tr>
-                <th>Start / Ziel</th>
-                <th>Startzeit / Landezeit</th>
-                <th>Gesinnung</th>
-                <th>Spieler</th>
-                </tr>";
-            echo "<tr>
-					<td><b>".$fd->getSource()->entityCodeString()."</b> 
-					<a href=\"?page=cell&amp;id=".$fd->getSource()->cellId()."&amp;hl=".$fd->getSource()->id()."\">".$fd->getSource()."</a><br/>";
-            echo "<b>".$fd->getTarget()->entityCodeString()."</b> 
-					<a href=\"?page=cell&amp;id=".$fd->getTarget()->cellId()."&amp;hl=".$fd->getTarget()->id()."\">".$fd->getTarget()."</a></td>";
-            echo "<td>
-					".date("d.m.y, H:i:s",$fd->launchTime())."<br/>";
-            echo date("d.m.y, H:i:s",$fd->landTime())."</td>";
-            echo "<td>
-					<span style=\"color:".$attitudeColor."\">
-					".$shipAction."
-					</span> [".FleetAction::$statusCode[$fd->status()]."]<br/>";
-            echo "<td>
-					<a href=\"?page=messages&mode=new&message_user_to=".$fd->ownerId()."\">".get_user_nick($fd->ownerId())."</a>
-					</td>";
-            echo "</tr>";
+					<td>".$v."</td>
+					<td>".nf($dl->count($k))."</td>
+					
+					</tr>";
         }
+        unset($v);
+
         tableEnd();
     }
 }
+

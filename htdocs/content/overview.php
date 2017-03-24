@@ -127,7 +127,10 @@
 		// Eigene Flotten
 		//
 		$fm = new FleetManager($cu->id,$cu->allianceId);
-		$fm->loadOwn();	
+        $npc = new User(Alliance::getNpcId($cu->allianceId()));
+        $fmNpc = new FleetManager($npc->id,$cu->allianceId);
+
+		$fm->loadOwn();
 		
 		//Mehrere Flotten
 		if ($fm->count() > 1)
@@ -150,15 +153,21 @@
 		// Fremde Flotten
 		//
 		$fm->loadForeign();
+		$fmNpc->loadForeign();
+
+		$attitude = $fmNpc->count() ? $fmNpc->attitude() : $fm->attitude();
+        $page = $fmNpc->count() ? '?page=fleets&mode=alliance' : '?page=fleets';
+
+
 		//Mehrere Flotten
-		if ($fm->count() > 1)
+		if ($fm->count()+$fmNpc->count() > 1)
 		{
-			echo "<td><a href=\"?page=fleets\" style=\"".$fm->attitude()."\"><b>".$fm->count()."</b> fremde Flotten</a></td>";
+			echo "<td><a href=\"$page\" style=\"".$attitude."\"><b>".($fm->count()+$fmNpc->count())."</b> fremde Flotten</a></td>";
 		}
 		//Eine Flotte
-		elseif ($fm->count()==1)
+		elseif ($fm->count()+$fmNpc->count() == 1)
 		{
-			echo "<td><a href=\"?page=fleets\" style=\"".$fm->attitude()."\"><b>".$fm->count()."</b> fremde Flotte</a></td>";
+			echo "<td><a href=\"$page\" style=\"".$attitude."\"><b>1</b> fremde Flotte</a></td>";
 		}
 		//Keine Flotten
 		else

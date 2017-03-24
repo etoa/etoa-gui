@@ -180,6 +180,79 @@
 					echo "Es sind keine Allianz Angriffe unterwegs!";
 					iBoxEnd();
 				}
+
+
+                $npc = new User(Alliance::getNpcId($cu->allianceId()));
+                $fm = new FleetManager($npc->id,$cu->allianceId);
+                $fm->loadForeign();
+
+                if ($fm->count() > 0)
+                {
+                    $cdarr = array();
+
+                    echo "Klicke auf den Auftrag um die Details einer Flotte anzuzeigen<br/><br/>";
+
+                    tableStart("Allianz Kontrollpunkte");
+                    echo "<tr>
+							<th>Auftrag</th>
+							<th>Start / Ziel</th>
+							<th>Start / Landung</th>
+						</tr>";
+                    foreach ($fm->getAll() as $fid=>$fd)
+                    {
+                        $cdarr["cd".$fid] = $fd->landTime();
+
+                        echo "<tr>";
+                        echo "<td>";
+                        if ($cu->alliance->checkActionRightsNA('fleetminister'))
+                            echo "<a href=\"?page=fleetinfo&id=".$fid."\">";
+
+                        echo "<span style=\"font-weight:bold;color:".FleetAction::$attitudeColor[$fd->getAction()->attitude()]."\">
+										".$fd->getAction()->name()."
+									</span> [".FleetAction::$statusCode[$fd->status()]."]
+								</a><br/>";
+                        if ($fd->landTime() < time())
+                        {
+                            if ($fd->status() > 0)
+                            {
+                                echo "Flotte landet...";
+                            }
+                            else
+                            {
+                                echo "Zielaktion wird durchgef&uuml;hrt...";
+                            }
+                        }
+                        else
+                        {
+                            echo "Ankunft in <b><span id=\"cd".$fid."\">-</span></b>";
+                        }
+                        echo "</td>";
+                        echo "<td><b>".$fd->getSource()->entityCodeString()."</b> 
+								<a href=\"?page=cell&amp;id=".$fd->getSource()->cellId()."&amp;hl=".$fd->getSource()->id()."\">".$fd->getSource()."</a><br/>
+								<b>".$fd->getTarget()->entityCodeString()."</b> 
+								<a href=\"?page=cell&amp;id=".$fd->getTarget()->cellId()."&amp;hl=".$fd->getTarget()->id()."\">".$fd->getTarget()."</a>
+							</td>
+							<td>".
+                            date("d.m.y, H:i:s",$fd->launchTime())."<br/>".
+                            date("d.m.y, H:i:s",$fd->landTime())."
+							</td>";
+
+                        echo "</tr>";
+                    }
+                    tableEnd();
+
+                    foreach ($cdarr as $elem=>$t)
+                    {
+                        countDown($elem,$t);
+                    }
+                }
+                else
+                {
+                    iBoxStart("Allianz Supportflotten");
+                    echo "Es sind keine Allianz Supportflotten unterwegs!";
+                    iBoxEnd();
+                }
+
 			}
 			else
 			{

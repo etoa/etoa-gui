@@ -775,7 +775,7 @@
 				
 				// Ships
 				echo "<h3>Schiffe der Flotte bearbeiten</h3>";
-				if ($_POST['newship_submit']!="" && $_POST['fs_ship_cnt_new']>0 && $_POST['fs_ship_id_new']>0)
+				if ($_POST['newship_submit']!="" && $_POST['fs_ship_cnt']>0 && $_POST['fs_ship_id_new']>0)
 				{
 					if (mysql_num_rows(dbquery("SELECT * FROM fleet_ships WHERE fs_fleet_id=".intval($_GET['fleetedit'])." AND fs_ship_id=".intval($_POST['fs_ship_id_new']).";"))<1)
 						dbquery("INSERT INTO fleet_ships (fs_fleet_id,fs_ship_id,fs_ship_cnt) VALUES (".intval($_GET['fleetedit']).",".intval($_POST['fs_ship_id_new']).",".intval($_POST['fs_ship_cnt_new']).");");
@@ -786,7 +786,7 @@
 				if ($_POST['editship_submit']!="")
 				{
 					foreach ($_POST['fs_ship_cnt'] as $ship=>$cnt)
-					dbquery("UPDATE fleet_ships SET fs_ship_cnt=intval($cnt) WHERE fs_fleet_id=".intval($_GET['fleetedit'])." AND fs_ship_id=intval($ship);");
+					dbquery("UPDATE fleet_ships SET fs_ship_cnt=".intval($cnt)." WHERE fs_fleet_id=".intval($_GET['fleetedit'])." AND fs_ship_id=".intval($ship));
 					success_msg("Schiffe geändert");
 				}
 				if (intval($_GET['shipdel'])>0)
@@ -1205,8 +1205,8 @@
 				{
 					if ($trgEnt = Entity::createFactoryByCoords($_POST['sx_end'],$_POST['sy_end'],$_POST['cx_end'],$_POST['cy_end'],$_POST['p_end']))
 					{
-						$launchtime = parseDatePicker('launchtime', $_POST);
-						$landtime = parseDatePicker('landtime', $_POST);
+                        $launchtime = parseDatePicker('launchtime_create', $_POST);
+                        $landtime = parseDatePicker('landtime_create', $_POST);
 
 						dbquery("
 						INSERT INTO 
@@ -1242,8 +1242,8 @@
 						VALUES 
 						(
 							".$fid.",
-							".intval($_POST['fs_ship_id_new']).",
-							".intval($_POST['fs_ship_cnt_new'])."
+							".intval($_POST['fs_ship_id_create']).",
+							".intval($_POST['fs_ship_cnt_create'])."
 						);");
 						$tpl->assign('msg', "Neue Flotte erstellt! <a href=\"?page=$page&amp;sub=$sub&fleetedit=".$fid."\">Details</a>");
 					}
@@ -1275,10 +1275,11 @@
 					
 			// Time Data
 			echo "<tr><th class=\"tbltitle\">Startzeit:</th><td class=\"tbldata\">";
-			showDatepicker("launchtime",time()+10, true, true);
+			//not very smart to use same name for 2 datepickers
+			showDatepicker("launchtime_create",time()+10, true, true);
 			echo "</td></tr>";
 			echo "<tr><th class=\"tbltitle\">Landezeit:</th><td class=\"tbldata\">";
-			showDatepicker("landtime",time()+90,  true, true);
+			showDatepicker("landtime_create",time()+90,  true, true);
 			echo " </td></tr>";
 					
 			// Source and Target Data
@@ -1368,8 +1369,8 @@
 			echo "<tr>
 			<td class=\"tbltitle\">Schiffe:</td>
 				<td class=\"tbldata\">
-					<input type=\"text\" name=\"fs_ship_cnt_new\" value=\"1\" size=\"5\" /> 
-					<select name=\"fs_ship_id_new\">";
+					<input type=\"text\" name=\"fs_ship_cnt_create\" value=\"1\" size=\"5\" /> 
+					<select name=\"fs_ship_id_create\">";
 					$ssres=dbquery("SELECT ship_id,ship_name FROM ships ORDER BY ship_name;");
 					while ($ssarr=mysql_fetch_array($ssres))
 					{
