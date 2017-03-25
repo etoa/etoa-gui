@@ -1,5 +1,5 @@
-<?PHP	
-	
+<?PHP
+
 	$time = time();
 
 	// Get tutorial
@@ -11,10 +11,15 @@
 		$tpl->assign('tutorial_id', 2);
 	}
 
+	// Initialize quest
+	if ($cu->isSetup() && $ttm->hasReadTutorial($cu->id, 2)) {
+        $app['cubicle.quests.initializer']->initialize($cu->id);
+	}
+
 	// Go to user setup page if user wasn't set up correctly
 	if (!$cu->isSetup() && $page!="help" && $page!="contact")
 	{
-		require("inc/usersetup.inc.php");		
+		require("inc/usersetup.inc.php");
 	}
 	else
 	{
@@ -41,7 +46,7 @@
 				iBoxEnd();
 			}
 		}
-		
+
 		$tm = new TextManager();
 
 		// SYSTEMNACHRICHT //
@@ -53,7 +58,7 @@
 			echo text2html($systemMessage->content);
 			iBoxEnd();
 		}
-		
+
 		//Eventhandler //
 		$backendStatus = RuntimeDataStore::get('backend_status');
 		if ($backendStatus != null && $backendStatus == 0)
@@ -67,7 +72,7 @@
 				iBoxEnd();
 			}
 		}
-		
+
 		// E-Mail verification
 		if (!$cu->isVerified)
 		{
@@ -80,8 +85,8 @@
 				$mail = new Mail("Account-Bestätigung", $email_text);
 				$mail->send($cu->email);
 				success_msg("Bestätigungsmail wurde gesendet!");
-			} 
-			else 
+			}
+			else
 			{
 				iBoxStart("Verifikation erforderlich");
 				echo "Deine E-Mailadresse <b>".$cu->email."</b> muss bestätigt werden, damit du alle Funktionen benutzen kannst!<br/><br/>";
@@ -89,21 +94,21 @@
 				iBoxEnd();
 			}
 		}
-		
+
 		// Auf Löschung prüfen
 		if ($cu->deleted > 0 &&
 		$page != 'contact' &&
 		$page != 'userconfig')
 		{
-			echo '<h1>Dein Account ist zut Löschung vorgeschlagen!</h1>';		
+			echo '<h1>Dein Account ist zut Löschung vorgeschlagen!</h1>';
 			echo 'Die Löschung erfolgt frühestens um <b>'.df($cu->deleted).'</b>!<br/><br/>
 			<input type="button" onclick="document.location=\'?page=userconfig&mode=misc\'" value="Löschung aufheben" /> 
 			<input type="button" onclick="document.location=\'?page=contact\'" value="Admin kontaktieren" /> ';
 		}
-		
+
 		// Auf Sperrung prüfen
-		elseif ($cu->blocked_from > 0 && 
-		$cu->blocked_from < $time && 
+		elseif ($cu->blocked_from > 0 &&
+		$cu->blocked_from < $time &&
 		$cu->blocked_to > $time &&
 		$page != 'contact' &&
 		$page != 'help')
@@ -131,9 +136,9 @@
 			echo '<br/>Solltest du Fragen zu dieser Sperrung haben oder dich ungerecht behandelt fühlen,<br/>
 			dann <a href="?page=contact">melde</a> dich bei einem Game-Administrator.';
 		}
-		
+
 		// Aus Urlaub prüfen
-		elseif ($cu->hmode_from>0 && 
+		elseif ($cu->hmode_from>0 &&
 		$page != 'userconfig' &&
 		$page != 'messages' &&
 		$page != 'stats' &&
@@ -196,7 +201,7 @@
 							$post.="[b]".$k.":[/b] ".$v."\n";
 					}
 				}
-				
+
 				dbQuerySave("INSERT DELAYED INTO
 					user_surveillance
 				(
@@ -214,7 +219,7 @@
 					?, ?, ?, ?, ?, ?
 				)", array($cu->id, $page, $req, $_SERVER['QUERY_STRING'], $post, $s->id));
 			}
-		
+
 			// Change display mode (full/small) if requested
 			if (isset($_GET['change_display_mode'])) {
 				if ($_GET['change_display_mode'] == 'small') {
@@ -225,15 +230,15 @@
 				}
 				forward("?page=$page");
 			}
-			
+
 			if (true)
 			{
 				if (preg_match('/^[a-z\_]+$/',$page)  && strlen($page)<=50)
 				{
 					// DEBUG
-					$query_counter=0; 
+					$query_counter=0;
 					$queries=array();
-					
+
 					// Content includen
 					$contentFile = "content/".$page.".php";
 					if (!file_exists($contentFile) || !include($contentFile))
@@ -262,6 +267,6 @@
 				}
 			}
 		}
-	}	
-	
-?>
+	}
+
+	$tpl->assign('quests', $app['etoa.quest.responselistener']->getQuests());

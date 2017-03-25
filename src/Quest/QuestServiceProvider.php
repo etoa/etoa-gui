@@ -13,8 +13,10 @@ use LittleCubicleGames\Quests\Progress\ProgressFunctionBuilder;
 use LittleCubicleGames\Quests\Progress\StateFunctionBuilder;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
+use Silex\Api\EventListenerProviderInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class QuestServiceProvider implements ServiceProviderInterface
+class QuestServiceProvider implements ServiceProviderInterface, EventListenerProviderInterface
 {
     public function register(Container $pimple)
     {
@@ -65,5 +67,18 @@ class QuestServiceProvider implements ServiceProviderInterface
                 new FunctionBuilder(),
             ]);
         };
+
+        $pimple['etoa.quest.presenter'] = function (Container $pimple) {
+            return new QuestPresenter($pimple['cubicle.quests.registry']);
+        };
+
+        $pimple['etoa.quest.responselistener'] = function (Container $pimple) {
+            return new QuestResponseListener($pimple['etoa.quest.presenter']);
+        };
+    }
+
+    public function subscribe(Container $app, EventDispatcherInterface $dispatcher)
+    {
+        $dispatcher->addSubscriber($app['etoa.quest.responselistener']);
     }
 }
