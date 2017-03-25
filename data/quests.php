@@ -37,7 +37,7 @@ return [
         'task' => [
             'id' => 0,
             'type' => 'discharge-specialist',
-            'operator' => 'equal-to',
+            'operator' => 'equal-to-or-more',
             'description' => 'Entlasse den Verräter',
             'value' => 1,
         ],
@@ -66,7 +66,7 @@ return [
         'task' => [
             'id' => 0,
             'type' => 'buy-missile',
-            'operator' => 'equal-to',
+            'operator' => 'equal-to-or-more',
             'description' => 'Kaufe 10 Raketen',
             'value' => 10,
         ],
@@ -95,7 +95,7 @@ return [
         'task' => [
             'id' => 0,
             'type' => 'recycle-ship',
-            'operator' => 'equal-to',
+            'operator' => 'equal-to-or-more',
             'description' => 'Recycle 5 Schiffe',
             'value' => 5,
         ],
@@ -114,7 +114,7 @@ return [
         'task' => [
             'id' => 0,
             'type' => 'recycle-defense',
-            'operator' => 'equal-to',
+            'operator' => 'equal-to-or-more',
             'description' => 'Recycle 5 Verteidigungsanlagen',
             'value' => 5,
         ],
