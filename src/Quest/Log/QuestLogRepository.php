@@ -18,7 +18,7 @@ class QuestLogRepository extends AbstractRepository implements QuestLoggerInterf
                 'quest_data_id' => ':questDataId',
                 'slot_id' => ':slotId',
                 'previous_state' => ':previousState',
-                'new_state' => ':newState',
+                'transition' => ':transition',
                 'date' => ':date',
             ])->setParameters([
                 'userId' => $quest->getUser(),
@@ -26,7 +26,7 @@ class QuestLogRepository extends AbstractRepository implements QuestLoggerInterf
                 'questDataId' => $quest->getQuestId(),
                 'slotId' => $quest->getSlotId(),
                 'previousState' => $previousState,
-                'newState' => $transitionName,
+                'transition' => $transitionName,
                 'date' => time(),
             ])->execute();
     }

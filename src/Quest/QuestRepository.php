@@ -6,6 +6,7 @@ use EtoA\Core\AbstractRepository;
 use EtoA\Quest\Entity\Quest;
 use EtoA\Quest\Entity\Task;
 use LittleCubicleGames\Quests\Entity\QuestInterface;
+use LittleCubicleGames\Quests\Storage\QuestNotFoundException;
 use LittleCubicleGames\Quests\Storage\QuestStorageInterface;
 use LittleCubicleGames\Quests\Workflow\QuestDefinitionInterface;
 
@@ -32,7 +33,7 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
             ])->execute()->fetchAll(\PDO::FETCH_ASSOC);
 
         if (!$result) {
-            return null;
+            throw new QuestNotFoundException();
         }
 
         return $this->buildQuest($result[0]['qid'], $result);

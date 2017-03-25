@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "542a2de0d0f1c47bc0eaf3d931610be0",
+    "content-hash": "d538ec56faaa402f8f2d8c5b70ada20d",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -612,12 +612,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/littlecubiclegames/quests.git",
-                "reference": "acedfd7"
+                "reference": "5eaa8c5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/littlecubiclegames/quests/zipball/acedfd7",
-                "reference": "acedfd7",
+                "url": "https://api.github.com/repos/littlecubiclegames/quests/zipball/5eaa8c5",
+                "reference": "5eaa8c5",
                 "shasum": ""
             },
             "require": {
@@ -650,7 +650,7 @@
                 }
             ],
             "description": "Quest Component",
-            "time": "2017-03-25 09:51:10"
+            "time": "2017-03-25 14:00:19"
         },
         {
             "name": "monolog/monolog",

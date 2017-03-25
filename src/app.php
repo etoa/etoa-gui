@@ -11,7 +11,6 @@ $app->register(new \EtoA\Core\MonologServiceProvider());
 
 // register error handler
 \Monolog\ErrorHandler::register($app['logger']);
-//Symfony\Component\Debug\Debug::enable();
 
 $app->register(new \LittleCubicleGames\Quests\ServiceProvider());
 

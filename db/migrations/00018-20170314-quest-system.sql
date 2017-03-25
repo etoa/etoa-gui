@@ -28,7 +28,7 @@ CREATE TABLE quest_log (
   quest_data_id INT NOT NULL,
   slot_id VARCHAR(255) COLLATE utf8_unicode_ci NOT NULL,
   previous_state VARCHAR(255) COLLATE utf8_unicode_ci NOT NULL,
-  new_state VARCHAR(255) COLLATE utf8_unicode_ci NOT NULL,
+  transition VARCHAR(255) COLLATE utf8_unicode_ci NOT NULL,
   date INT NOT NULL,
   PRIMARY KEY(id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
