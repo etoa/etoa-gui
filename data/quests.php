@@ -88,4 +88,23 @@ return [
             ],
         ],
     ],
+    3 => [
+        'id' => 3,
+        'title' => 'Schrott entsorgen',
+        'description' => 'Eure Exzellenz, anonyme Quellen haben wir mitgeteilt, dass einige unserer Schiffe schon etwas älter sind und die Crews sich gar weigern mit einigen Schiffen zu fliegen. Wir sollten ein paar Schiffe recyclen, damit wir später aus den Rohstoffen zuverlässigere Schiffe bauen können. ',
+        'task' => [
+            'id' => 0,
+            'type' => 'recycle-ship',
+            'operator' => 'equal-to',
+            'description' => 'Recycle 5 Schiffe',
+            'value' => 5,
+        ],
+        'rewards' => [
+            [
+                'type' => 'ship',
+                'value' => 1,
+                'ship_id' => 8,
+            ]
+        ],
+    ],
 ];

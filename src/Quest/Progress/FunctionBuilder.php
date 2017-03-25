@@ -17,6 +17,8 @@ class FunctionBuilder implements ProgressFunctionBuilderInterface
                 return new Functions\HireSpecialist();
             case Functions\DischargeSpecialist::NAME:
                 return new Functions\DischargeSpecialist();
+            case Functions\RecycleShip::NAME:
+                return new Functions\RecycleShip();
         }
     }
 }
