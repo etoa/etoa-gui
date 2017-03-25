@@ -9,10 +9,7 @@
 	}
 	else if ($cu->isSetup() && !$ttm->hasReadTutorial($cu->id, 2)) {
 		$tpl->assign('tutorial_id', 2);
-	}
-
-	// Initialize quest
-	if ($cu->isSetup() && $ttm->hasReadTutorial($cu->id, 2)) {
+	} elseif ($cu->isSetup() && $ttm->hasReadTutorial($cu->id, 2)) {
         $app['cubicle.quests.initializer']->initialize($cu->id);
 	}
 

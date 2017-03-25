@@ -7,7 +7,7 @@
                 </span><br style="clear:both;">
             </div>
             {foreach from=$quests item=quest}
-                <div data-quest-id="{$quest.id}">
+                <div>
                     <div class="tutorialContent">
                         <h3>{$quest.title}</h3>
                         <div>{$quest.description}</div>
@@ -20,7 +20,7 @@
                             {/foreach}
                         </p>
                         {if $quest.transition}
-                            <input type="button" data-transition-id="{$quest.transition.transition}" value="{$quest.transition.name}" />
+                            <input data-id="quest-advance" type="button" data-user-id="{$quest.user}" data-quest-id="{$quest.id}" data-transition-id="{$quest.transition.transition}" value="{$quest.transition.name}" />
                         {/if}
                     </div>
                     {if $quests|count > 1}
@@ -36,4 +36,13 @@
             <input type="button" value="Quests" class="tutorialRestore" />
         </div>
     </div>
+
+    <script>
+        openTutorial();
+        $(function(){
+            $('[data-id="quest-advance"]').on('click', function () {
+                advanceQuest($(this).attr('data-user-id'), $(this).attr('data-quest-id'), $(this).attr('data-transition-id'))
+            });
+        });
+    </script>
 {/if}

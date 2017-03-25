@@ -6,9 +6,9 @@
 	function setCountdown(elem,time,diff,elemToSetEmpty)
 	{
 		var ts;
-		
+
 		d = diff - time;
-		
+
 		ts = diff - time - cnt[elem];
 		if (ts>=0)
 		{
@@ -25,7 +25,7 @@
 				nv = m+"m "+s+"s";
 
 			perc = Math.ceil(cnt[elem] / d * 100);
-		
+
 			if (document.getElementById(elem))
 			{
 				document.getElementById(elem).innerHTML=nv;
@@ -40,7 +40,7 @@
 			document.getElementById(elemToSetEmpty).innerHTML="";
 		}
 	}
-	
+
 
 	function updateProgressBar(progresselem, startTime, endTime, cTime)
 	{
@@ -63,9 +63,9 @@
 				$(progresselem).html("Abgeschlossen!");
 			}
 		}
-	}	
-	
-		
+	}
+
+
 	/**
 	* Dynamische Zeitangabe
 	*
@@ -78,7 +78,7 @@
 	{
 		if (!text)
 			var text = "";
-		
+
 		// Countdown
 		if(format==0)
 		{
@@ -86,8 +86,8 @@
 			var d = Math.floor(time / 3600 / 24);
 			var h = Math.floor((time - d*3600*24) / 3600);
 			var m = Math.floor((time - d*3600*24 - h*3600) / 60);
-			var s = Math.floor(time - d*3600*24 - h*3600 - m*60);		
-			
+			var s = Math.floor(time - d*3600*24 - h*3600 - m*60);
+
 			// Gibt Zeitstring an
 			if(time>=0)
 			{
@@ -105,7 +105,7 @@
 			{
 				var time_string = "Fertig";
 			}
-	
+
 			// Text wird eingebunden
 			if(text!="")
 			{
@@ -116,28 +116,28 @@
 			{
 				var out = time_string;
 			}
-	
+
 			$('#'+target).html(out);
 			time = time - 1;
 		}
-		
+
 		// Uhr
 		else if(format==1)
 		{
 			// Wandelt Timestamp in Javascript Timestamp um (Milliskunden)
 			var timestamp = time * 1000;
 
-				
 
-			
+
+
 			// Setzt Datum
 			clock = new Date(timestamp);
-	
+
 			// Wandelt Timestamp in Stunden, Minuten und Sekunden um
 			var h = clock.getHours();
 			var m = clock.getMinutes();
 			var s = clock.getSeconds();
-			
+
 			// Gibt Zahlen formatiert aus -> 05 statt 5
 			if(h>=0 && h<=9)
 			{
@@ -151,7 +151,7 @@
 			{
 				var s = "0"+s+"";
 			}
-			
+
 			// Gibt Zeitstring an
 			var time_string = h+":"+m+":"+s;
 
@@ -166,24 +166,24 @@
 				var out = time_string;
 			}
 
-	
+
 			$('#'+target).html(out);
 			time = time + 1;
 		}
-		
+
 		setTimeout("time("+time+", '"+target+"', "+format+", '"+text+"')",1000);
-	}	
-		
-		
-		
-		
+	}
+
+
+
+
 	var cdarray = new Object();
 
 	function detectChangeRegister(elem,keyname)
 	{
 		cdarray[keyname] = elem.value;
 	}
-	
+
 	function detectChangeTest(elem,keyname)
 	{
 		if (cdarray[keyname] != elem.value)
@@ -198,7 +198,7 @@
 	{
 		document.getElementById(elemId).innerHTML = '<img src=\"images/loading.gif\" alt=\"Loading\" /> Lade Daten...';
 	}
-	
+
 	function loadingMsg(trg,msg)
 	{
 		document.getElementById(trg).innerHTML='<div class=\"loadingMsg\">'+msg+'</div>';
@@ -228,12 +228,12 @@
 	{
 		if (document.getElementById(elemId).style.display=='none')
 		{
-			document.getElementById(elemId).style.display='';	
+			document.getElementById(elemId).style.display='';
 		}
 		else
 		{
-			document.getElementById(elemId).style.display='none';					
-		}		
+			document.getElementById(elemId).style.display='none';
+		}
 	}
 
 
@@ -857,17 +857,17 @@ function FormatNumber(id, num, max, decpoint, sep)
 
 	// Löscht Trennzeichen aus der Zahl
 	var num = num.replace(/`/g, "");
-	
+
 	// Prüft, ob Wert eine Zahl ist
 	if(istZahl(num)==false)
 	{
 		var num = 0;
 	}
-	
+
 	// Erstellt den Absolut Wert der Zahl
 	var num = Math.abs(num);
-	
-	// check for missing parameters and use defaults if so 
+
+	// check for missing parameters and use defaults if so
 	if (decpoint == '')
 	{
 		decpoint = ".";
@@ -875,17 +875,17 @@ function FormatNumber(id, num, max, decpoint, sep)
 	if (sep == '')
 	{
 		sep = "`";
-	} 
- 
+	}
+
 	if(max != '')
 	{
 		var num = Math.min(max,num);
 	}
-   
+
 	// Rundet die Zahl ab
-	var num = Math.floor(num);   
-   
-   
+	var num = Math.floor(num);
+
+
 	// need a string for operations
 	num = num.toString();
 	// separate the whole number and the fraction if possible
@@ -895,23 +895,23 @@ function FormatNumber(id, num, max, decpoint, sep)
 	var z = "";
 
 
-	if (typeof(x) != "undefined") 
+	if (typeof(x) != "undefined")
 	{
-			
+
 		// reverse the digits. regexp works from left to right.
 		for (var i=x.length-1;i>=0;i--)
 		{
 			z += x.charAt(i);
 		}
-    
+
 		// add seperators. but undo the trailing one, if there
 		z = z.replace(/(\d{3})/g, "$1" + sep);
 		if (z.slice(-sep.length) == sep)
 		{
 			z = z.slice(0, -sep.length);
 		}
-		
-		x = "";	
+
+		x = "";
 		// reverse again to get back the number
 		for (var i=z.length-1;i>=0;i--)
 		{
@@ -922,7 +922,7 @@ function FormatNumber(id, num, max, decpoint, sep)
 		{
 			x += decpoint + y;
 		}
-  
+
 		if (id!='return')
 		{
 			document.getElementById(id).value=x;
@@ -949,17 +949,17 @@ function FormatSignedNumber(id, num, max, decpoint, sep)
 	//}
 		// Löscht Trennzeichen aus der Zahl
 		var num = num.replace(/`/g, "");
-	
+
 		// Prüft, ob Wert eine Zahl ist
 		if(istSignedZahl(num)==false)
 		{
 			var num = 0;
 		}
-	
+
 		// Erstellt den Absolut Wert der Zahl
 		// var num = Math.abs(num);
-	
-		// check for missing parameters and use defaults if so 
+
+		// check for missing parameters and use defaults if so
 		if (decpoint == '')
 		{
 			decpoint = ".";
@@ -967,17 +967,17 @@ function FormatSignedNumber(id, num, max, decpoint, sep)
 		if (sep == '')
 		{
 			sep = "`";
-		} 
-  
+		}
+
 		if(max != '')
 		{
 			var num = Math.min(max,num);
 		}
-   
+
 		// Rundet die Zahl ab
-		var num = Math.floor(num);   
-   
-   
+		var num = Math.floor(num);
+
+
 		// need a string for operations
 		num = num.toString();
 		// separate the whole number and the fraction if possible
@@ -987,7 +987,7 @@ function FormatSignedNumber(id, num, max, decpoint, sep)
 		var z = "";
 
 
-		if (typeof(x) != "undefined") 
+		if (typeof(x) != "undefined")
 		{
 			var sign = false;
 			if (x.charAt(0) == "-")
@@ -996,25 +996,25 @@ function FormatSignedNumber(id, num, max, decpoint, sep)
 				x = x.replace(/-/g, "");
 				sign = true;
 			}
-			
+
 			// reverse the digits. regexp works from left to right.
 			for (var i=x.length-1;i>=0;i--)
 			{
 				z += x.charAt(i);
 			}
-    
+
 			// add seperators. but undo the trailing one, if there
 			z = z.replace(/(\d{3})/g, "$1" + sep);
 			if (z.slice(-sep.length) == sep)
 			{
 				z = z.slice(0, -sep.length);
 			}
-			
+
 			if(sign)
 				x = "-";
 			else
 				x = "";
-    
+
 			// reverse again to get back the number
 			for (var i=z.length-1;i>=0;i--)
 			{
@@ -1026,7 +1026,7 @@ function FormatSignedNumber(id, num, max, decpoint, sep)
 				x += decpoint + y;
 			}
 		}
-  
+
 		if (id!='return')
 		{
 			document.getElementById(id).value=x;
@@ -1035,7 +1035,7 @@ function FormatSignedNumber(id, num, max, decpoint, sep)
 		{
 			return x;
 		}
-	} // if (typeof(x) != "undefined") 
+	} // if (typeof(x) != "undefined")
 } // function FormatSignedNumber(id, num, max, decpoint, sep)
 
 function istZahl(field)
@@ -1067,7 +1067,7 @@ function istSignedZahl(field)
 					Wert=false;
 				}
 				else
-				{					
+				{
 				}
 			}
 			else
@@ -1086,10 +1086,10 @@ function istSignedZahl(field)
 function check_illegal_signs(str)
 {
 	var result = false;
-	
+
 	// Stellt sicher, dass die Variable vom Typ String ist
 	var str = str.toString();
-		
+
 	if(str.search(/\'/) != -1
 		|| str.search(/</) != -1
 		|| str.search(/>/) != -1
@@ -1104,7 +1104,7 @@ function check_illegal_signs(str)
 	{
 		var result = true;
 	}
-	
+
 	return result;
 }
 
@@ -1135,7 +1135,7 @@ function tabActivate(tabName,elemId)
 			break;
 		}
 	}
-	
+
 }
 
 function addFontColor(id, colorId)
@@ -1178,21 +1178,21 @@ function addFontColor(id, colorId)
 		text = text.replace(/\[\/c\]/gi, "</div>");
 		text = text.replace(/\[bc\]/gi, "<blockquote class='blockquotecode'><code>");
 		text = text.replace(/\[\/bc\]/gi, "</code></blockquote>");
-		
+
 		text = text.replace(/\[h1\]/gi, "<h1>");
 		text = text.replace(/\[\/h1\]/gi, "</h1>");
 		text = text.replace(/\[h2\]/gi, "<h2>");
 		text = text.replace(/\[\/h2\]/gi, "</h2>");
 		text = text.replace(/\[h3\]/gi, "<h3>");
 		text = text.replace(/\[\/h3\]/gi, "</h3>");
-		
+
 		text = text.replace(/\[center\]/gi, "<div style='text-align:center'>");
 		text = text.replace(/\[\/center\]/gi, "</div>");
 		text = text.replace(/\[right\]/gi, "<div style='text-align:right'>");
 		text = text.replace(/\[\/right\]/gi, "</div>");
 		text = text.replace(/\[headline\]/gi, "<div style='text-align:center'><b>");
 		text = text.replace(/\[\/headline\]/gi, "</b></div>");
-		
+
 		text = text.replace(/\[\*\]/gi, "<li>");
 		text = text.replace(/\[\/\*\]/gi, "</li>");
 		text = text.replace(/\[list\]/gi, "<ul>");
@@ -1205,18 +1205,18 @@ function addFontColor(id, colorId)
 		text = text.replace(/\[URL\](.*?)\[\/URL\]/gi, "<a href='$1' target='_blank'>$1</a>");
 		text = text.replace(/\[email=(.*?)\](.*?)\[\/email\]/gi, "<a href='mailto:$1'>$2</a>");
 		text = text.replace(/\[email\](.*?)\[\/email\]/gi, "<a href='mailto:$1'>$1</a>");
-		
+
 		// Zitate
 		text = text.replace(/\[quote\](.*?)\[\/quote\]/gi, "<fieldset class='quote'><legend class='quote'><b>Zitat</b></legend>$1</fieldset>");
 		text = text.replace(/\[quote=(.*?)\](.*?)\[\/quote\]/gi, "<fieldset class='quote'><legend class='quote'><b>Zitat von:</b> $1</legend>$2</fieldset>");
 		text = text.replace(/\[quote (.*?)\](.*?)\[\/quote\]/gi, "<fieldset class='quote'><legend class='quote'><b>Zitat von:</b> $1</legend>$2</fieldset>");
-		
-		
+
+
 		// Bilder
 		text = text.replace(/\[img\](.*?)\[\/img\]/gi, "<img src=\"$1\" alt=\"Bild: $1\">");
 		text = text.replace(/\[flag (.*?)\]/gi, "<img src='images/flags/$1.gif' border='0' alt='Flagge $1' class='flag' />");
 		text = text.replace(/\[thumb (.*?)\](.*?)\[\/thumb\]/gi, "<a href='$2'><img src='$2' alt='$2' width='$1' border='0' /></a>");
-		
+
 		// Farben
 		text = text.replace(/\[font=(.*?)\]/gi, "<font style='font-family:$1'>");
 		text = text.replace(/\[color=(.*?)\]/gi, "<font style='color:$1'>");
@@ -1224,7 +1224,7 @@ function addFontColor(id, colorId)
 		text = text.replace(/\[\/font\]/gi, "</font>");
 		text = text.replace(/\[\/color\]/gi, "</font>");
 		text = text.replace(/\[\/size\]/gi, "</font>");
-		
+
 		// Tabelle
 		text = text.replace(/\[table\]/gi, "<table class='bbtable'>");
 		text = text.replace(/\[\/table\]/gi, "</table>");
@@ -1234,7 +1234,7 @@ function addFontColor(id, colorId)
 		text = text.replace(/\[\/tr\]/gi, "</tr>");
 		text = text.replace(/\[td\]/gi, "<th>");
 		text = text.replace(/\[\/td\]/gi, "</td>");
-		
+
 		// Smilies
 		text = text.replace(/:angry:/gi, "<img src='images/smilies/angry.gif' style='border:none;' alt='Smilie' title='Smilie' />");
 		text = text.replace(/:sad:/gi, "<img src='images/smilies/sad.gif' style='border:none;' alt='Smilie' title='Smilie' />");
@@ -1260,7 +1260,7 @@ function addFontColor(id, colorId)
 
 		document.getElementById(target).innerHTML=text;
 	}
-	
+
 	function updatePeopleWorkingBox(people,time,food)
 	{
 		var peopleOptimized	= parseFloat(document.getElementById('peopleOptimized').value);
@@ -1289,18 +1289,18 @@ function addFontColor(id, colorId)
 				time = parseFloat(tf_back(time));
 				people = Math.floor(time / workDone);
 				food = people * foodRequired;
-				
+
 			}
 			else return;
 		}
-		
+
 		if (people > peopleFree)
 			error = "Nicht genug freie Arbeiter vorhanden!";
 		//else if (food > foodAvaiable)
 		//	error = "Nicht genug Nahrung vorhanden!";
 		else if (peopleOptimized!=0 && people > peopleOptimized)
 			error = "Mehr Arbeiter als notwendig ausgewählt!";
-		
+
 		if (error.length>0)
 		{
 			$('#changeWorkingPeopleError').html(error).show();
@@ -1311,17 +1311,17 @@ function addFontColor(id, colorId)
 			$('#changeWorkingPeopleError').html('').hide();
 			$('#submit_people_form').show();
 		}
-		
+
 		document.getElementById('peopleWorking').value = FormatNumber('return',people,peopleFree, '', '');
 		document.getElementById('foodUsing').value = FormatNumber('return',food,0, '', '');
 		document.getElementById('timeReduction').value = tf(time);
 	}
-	
+
 	// checks if the last sign is a letter
 	function is_tf(time)
 	{
 		time = time.replace(/\s+/g,'');
-		
+
 		if (time[time.length-1]=='s' || time[time.length-1]=='m' || time[time.length-1]=='h' || time[time.length-1]=='d'  | time[time.length-1]=='w')
 			return true;
 		else return false;
@@ -1362,7 +1362,7 @@ function addFontColor(id, colorId)
 		}
 		return value;
 	}
-	
+
 	function tf(time)	// Time format
 	{
 		var w = Math.floor(time / 3600 / 24 / 7);
@@ -1383,15 +1383,15 @@ function addFontColor(id, colorId)
 			str += m.toString() + "m ";
 		if (s>0)
 			str += s.toString()  + "s ";
-		
+
 		if (str.length==0)
 			str = "0s ";
 
 		return str;
 	}
-	
+
 	//
-	// Javascript für dynamischen Planetkreis   
+	// Javascript für dynamischen Planetkreis
 	//
     function show_info(
     planet_id,
@@ -1429,7 +1429,7 @@ function addFontColor(id, colorId)
 
         document.getElementById("planet_info_defense_name").firstChild.nodeValue=defense_name;
         document.getElementById("planet_info_defense_time").firstChild.nodeValue=defense_time;
-		
+
 		//Überprüfen ob Speicher voll ist
 		var check_metal = store_metal-res_metal;
 		var check_crystal = store_crystal-res_crystal;
@@ -1539,7 +1539,7 @@ function addFontColor(id, colorId)
         document.getElementById("planet_info_res_food").firstChild.nodeValue=''+res_food+' t';
         document.getElementById("planet_info_power").firstChild.nodeValue=rest_power;
         document.getElementById("planet_info_people").firstChild.nodeValue=people;
-		
+
 
 		//Alle Beschriftungen anzeigen
 		document.getElementById("planet_info_text_building").innerHTML ='<a href=\"?page=buildings&change_entity='+planet_id+'\">Bauhof:</a>';
@@ -1561,11 +1561,11 @@ function addFontColor(id, colorId)
 		document.getElementById("planet_info_text_people").firstChild.nodeValue='Bewohner:';
 		document.getElementById("planet_info_text_power").firstChild.nodeValue='Energie:';
     }
-	
+
 	function htmlEntities(str) {
 		return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 	}
-  
+
 /**
  * Executes a simple ajax request which returns a data object
  */
@@ -1614,7 +1614,7 @@ function fleetBookmarkSearchShipList(val) {
       $.each(data.entries, function(key, val) {
         items.push(val.name);
       });
-      alert(items.join('\n'));      
+      alert(items.join('\n'));
     }
   }, alert);
 }
@@ -1627,7 +1627,7 @@ function fleetBookmarkAddShipToList(shipId, shipCount) {
   ajaxRequest('get_ship_info', { ship:shipId }, function(data) {
     if (data.id) {
       if ($('#ship_row_' + data.id).length == 0) {
-      
+
         var numberInput = '-';
         if (data.launchable == 1) {
           numberInput = $('<input>')
@@ -1639,7 +1639,7 @@ function fleetBookmarkAddShipToList(shipId, shipCount) {
             .click(function(evt){evt.currentTarget.select();})
             .keyup(function(evt){FormatNumber(evt.currentTarget.id, evt.currentTarget.value, '', '', '')});
         }
-      
+
         $('#bookmarkShiplistInputTable > tbody:last').append($('<tr>')
           .attr('id', 'ship_row_' + data.id)
           .append($('<td>')
@@ -1667,7 +1667,7 @@ function fleetBookmarkAddShipToList(shipId, shipCount) {
               )
               .click(function(){fleetBookmarkRemoveShipFromList(data.id)})
             )
-          )        
+          )
         );
       }
       $('#shipname').val('');
@@ -1704,15 +1704,15 @@ restoreTutorial = function(){
 openTutorial = function(){
 	$('#tutorialContainer').show();
 	$('.tutorialBoxReduced').hide();
-	
+
 	if ($.cookie('tutorial_minimize') == 'yes') {
 		minimizeTutorial();
-	}	
+	}
 }
 
 closeTutorial = function(){
 	$('#tutorialContainer').hide();
-	ajaxRequest('close_tutorial', { id:$('#tutorialContainer').attr('data-tutorial') }, function(data) {}, alert);	
+	ajaxRequest('close_tutorial', { id:$('#tutorialContainer').attr('data-tutorial') }, function(data) {}, alert);
 }
 
 function showTutorialText(id, step) {
@@ -1750,8 +1750,8 @@ $(function(){
 	$('.tutorialMinimize').click(minimizeTutorial);
 	$('.tutorialRestore').click(restoreTutorial);
 	$('.tutorialClose').click(function(){
-		if (confirm('Tutorial wirklich schliessen?')) { 
-			closeTutorial() 
+		if (confirm('Tutorial wirklich schliessen?')) {
+			closeTutorial()
 		}
 	});
 	$('.tutorialFinish').click(closeTutorial);
@@ -1785,4 +1785,14 @@ function getRaceInfo(id) {
 		$('#submit_setup1').hide();
 	}
   }, alert);
+}
+
+function advanceQuest(userId, questId, transition) {
+    ajaxRequest('quest_transition', { userId:userId, questId:questId, transition:transition }, function(data) {
+        if (transition === 'start') {
+            $('[data-id="quest-advance"]').hide();
+        } else if (transition === 'collect_reward') {
+            $('[data-id="quest-container"]').hide();
+        }
+    }, alert);
 }
