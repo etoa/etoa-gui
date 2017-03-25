@@ -107,4 +107,23 @@ return [
             ]
         ],
     ],
+    4 => [
+        'id' => 4,
+        'title' => '"Friendly Fire"',
+        'description' => 'Eure Exzellenz, einige Piloten haben sich in letzter Zeit immer wieder beklagt, dass unsere eigenen Verteidigungsanlagen auch auf eigene Schiffe schiessen. Es ist an der Zeit die defekten Anlagen zu abzubauen und statt dessen Anlagen der neusten Generation aufzubauen.',
+        'task' => [
+            'id' => 0,
+            'type' => 'recycle-defense',
+            'operator' => 'equal-to',
+            'description' => 'Recycle 5 Verteidigungsanlagen',
+            'value' => 5,
+        ],
+        'rewards' => [
+            [
+                'type' => 'defense',
+                'value' => 1,
+                'defense_id' => 8,
+            ]
+        ],
+    ],
 ];

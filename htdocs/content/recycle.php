@@ -75,6 +75,7 @@
 			//Anzahl muss grösser als 0 sein
 			if (count($_POST['ship_count'])>0)
 			{
+			    $recycled = [];
 				foreach ($_POST['ship_count'] as $id=>$num)
 				{
 					$id = intval($id);
@@ -130,6 +131,7 @@
                 $cnt+=$num;
 
                 $log_ships.="[B]".$arr['ship_name'].":[/B] ".$num."\n";
+                $recycled[$id] = $num;
 
             }
         	}
@@ -164,7 +166,7 @@
 
 			}
 			success_msg(nf($cnt)." Schiffe erfolgreich recycelt!");
-            foreach ($_POST['ship_count'] as $id => $num) {
+            foreach ($recycled as $id => $num) {
                 $app['dispatcher']->dispatch(\EtoA\Ship\Event\ShipRecycle::RECYCLE_SUCCESS, new \EtoA\Ship\Event\ShipRecycle($id, $num));
             }
 		}
@@ -177,6 +179,7 @@
 			if (count($_POST['def_count'])>0)
 			{
 				$fields = 0;
+                $recycled = [];
 				foreach ($_POST['def_count'] as $id=>$num)
 				{
 					$num=abs($num);
@@ -232,6 +235,7 @@
                 $cnt+=$num;
 
                 $log_def.="[B]".$arr['def_name'].":[/B] ".$num."\n";
+                $recycled[$id] = $num;
             }
         	}
 				}
@@ -263,6 +267,9 @@
 				add_log(12,$log,time());
 			}
 			success_msg("".nf($cnt)." Verteidigungsanlagen erfolgreich recycelt!");
+            foreach ($recycled as $id => $num) {
+                $app['dispatcher']->dispatch(\EtoA\Defense\Event\DefenseRecycle::RECYCLE_SUCCESS, new \EtoA\Defense\Event\DefenseRecycle($id, $num));
+            }
 		}
 
 

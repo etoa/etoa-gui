@@ -19,6 +19,8 @@ class FunctionBuilder implements ProgressFunctionBuilderInterface
                 return new Functions\DischargeSpecialist();
             case Functions\RecycleShip::NAME:
                 return new Functions\RecycleShip();
+            case Functions\RecycleDefense::NAME:
+                return new Functions\RecycleDefense();
         }
     }
 }
