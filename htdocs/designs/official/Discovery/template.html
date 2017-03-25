@@ -183,7 +183,7 @@
 			onmouseout="changeImages('nb_raketen', '{$templateDir}/images/nb_raketen.gif'); return true;"
 			onmousedown="changeImages('nb_raketen', '{$templateDir}/images/nb_raketen-down.gif'); return true;"
 			onmouseup="changeImages('nb_raketen', '{$templateDir}/images/nb_raketen-over.gif'); return true;">
-			<img width="164px" height="21px" id="nb_raketen" src="{$templateDir}/images/nb_raketen.gif" alt="raketen" /></a></div>			
+			<img width="164px" height="21px" id="nb_raketen" src="{$templateDir}/images/nb_raketen.gif" alt="raketen" /></a></div>
 	<div class="nb-marktplatz_">
 		<a href="?page=market"
 			onmouseover="changeImages('nb_marktplatz', '{$templateDir}/images/nb_marktplatz-over.gif'); return true;"
@@ -273,6 +273,7 @@
 {/if}
 
 {chunk name='tutorial'}
+{chunk name='quests'}
 
 <div class="Spielbereich_">
 	<div id="contentwrap">
@@ -291,7 +292,7 @@
 {*---------------------------------------------- Imagemaps linker Menueleiste ---------------------------------------------------*}
 
 <map name="pb_info_Map">
-<area shape="circle" alt="" coords="28,31,18" 
+<area shape="circle" alt="" coords="28,31,18"
 	{if $helpBox eq "true"}
 		href="javascript:;" onclick="window.open('popup.php?page=help','help','status=no,width=800,height=600,scrollbars=yes,resizable=yes');"
 	{else}
@@ -345,7 +346,7 @@
 	onmouseup="changeImages('pb_report', '{$templateDir}/images/pb_report-sp_pb_report_over.gif'); return true;">
 </map>
 <map name="pb_notes_Map">
-<area shape="circle" alt="" coords="23,32,18" 
+<area shape="circle" alt="" coords="23,32,18"
 	{if $noteBox == true}
 		href="javascript:;" onclick="window.open('popup.php?page=notepad','notes','status=no,width=800,height=600,scrollbars=yes,resizable=yes');"
 	{else}
@@ -474,7 +475,7 @@
 	onmouseout="changeImages('TopPanel_05', '{$templateDir}/images/TopPanel_05.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09.gif'); return true;"
 	onmousedown="changeImages('TopPanel_05', '{$templateDir}/images/TopPanel_05-imap_logout_down.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09-imap_logout_down.gif'); return true;"
 	onmouseup="changeImages('TopPanel_05', '{$templateDir}/images/TopPanel_05-imap_logout_up.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09-imap_logout_over.gif'); return true;" />
-<area shape="poly" alt="" coords="50,-28, 141,-28, 129,11, 37,11" href="javascript:;" onclick="{$helpcenterOnclick}" 
+<area shape="poly" alt="" coords="50,-28, 141,-28, 129,11, 37,11" href="javascript:;" onclick="{$helpcenterOnclick}"
 	onmouseover="changeImages('TopPanel_05', '{$templateDir}/images/TopPanel_05-imap_helpcenter_over.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09-imap_helpcenter_over.gif'); return true;"
 	onmouseout="changeImages('TopPanel_05', '{$templateDir}/images/TopPanel_05.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09.gif'); return true;"
 	onmousedown="changeImages('TopPanel_05', '{$templateDir}/images/TopPanel_05-imap_helpcenter_down.gif', 'TopPanel_09', '{$templateDir}/images/TopPanel_09-imap_helpcenter_down.gif'); return true;"

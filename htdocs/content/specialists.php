@@ -17,15 +17,15 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
-	$t = time();	
+
+	$t = time();
 
 	$uCnt = User::count();
 	$totAvail = ceil($uCnt*SPECIALIST_AVAILABILITY_FACTOR);
 
-	echo '<h1>Spezialisten</h1>';    
+	echo '<h1>Spezialisten</h1>';
 	echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
-	
+
 	//
 	// Engage specialist
 	//
@@ -93,19 +93,20 @@
 						;");
 						$cu->specialistId = $arr['specialist_id'];
 						$cu->specialistTime = $st;
-						
+
 						$cp->changeRes(
 						-$arr['specialist_costs_metal'] * $factor,
 						-$arr['specialist_costs_crystal'] * $factor,
 						-$arr['specialist_costs_plastic'] * $factor,
 						-$arr['specialist_costs_fuel'] * $factor,
 						-$arr['specialist_costs_food'] * $factor);
-						
+
 						//Update every planet
 						foreach ($planets as $pid) {
 							BackendMessage::updatePlanet($pid);
 						}
 						success_msg('Der gewählte Spezialist wurde eingestellt!');
+                        $app['dispatcher']->dispatch(\EtoA\Specialist\Event\SpecialistHire::HIRE_SUCCESS, new \EtoA\Specialist\Event\SpecialistHire($cu->specialistId));
 					}
 					else
 					{
@@ -127,9 +128,9 @@
 			error_msg('Es ist bereits ein Spezialist eingestellt.
 			Seine Anstellung dauert noch bis '.df($cu->specialistTime).'.
 			Du musst warten bis seine Anstellung beendet ist!');
-		}		
+		}
 	}
-	
+
 	//
 	// Discharge specialist
 	//
@@ -152,7 +153,7 @@
 			{
 				$specArr = mysql_fetch_assoc($specQuery);
 				$inittime = $cu->specialistTime - (86400 *$specArr['specialist_days']);
-				
+
 				// check if a research is in progress if using the professor
 				switch ($cu->specialistId) {
 					case 4:           //Prof
@@ -172,7 +173,7 @@
 						break;
 					case 2: //Ingenieur
 						$res = dbquery("SELECT queue_id, queue_user_click_time FROM def_queue WHERE queue_user_id='" . $cu->id ."' AND queue_endtime > '".$t."';");
-						if (mysql_num_rows($res) > 0) 
+						if (mysql_num_rows($res) > 0)
 						{
 							while($arr = mysql_fetch_assoc($res))
 							{
@@ -186,7 +187,7 @@
 						break;
           case 10: //Architekt
 						$res = dbquery("SELECT buildlist_build_start_time FROM buildlist WHERE buildlist_user_id='" . $cu->id ."' AND buildlist_build_end_time > '".$t."';");
-						if (mysql_num_rows($res) > 0) 
+						if (mysql_num_rows($res) > 0)
 						{
 							while($arr = mysql_fetch_assoc($res))
 							{
@@ -197,35 +198,35 @@
 								}
 							}
 						}
-						break;  
+						break;
           case 1: //Admiral
 						$res = dbquery("SELECT launchtime,landtime,status FROM fleet WHERE user_id=".$cu->id);
-					  if (mysql_num_rows($res) > 0) 
+					  if (mysql_num_rows($res) > 0)
 						{
 							while($arr = mysql_fetch_assoc($res))
-							{ 	
+							{
 								if($arr['launchtime'] > $inittime)
-								{	
+								{
 									if ($arr[status] == 0)
-									{	
+									{
 										$inUse = true;
 										break;
 									}
-									else 
-									{	
+									else
+									{
 										$duration= $arr['landtime'] - $arr['launchtime'];
 										$org_launchtime = $arr['launchtime']-$duration;
-																				 
-										if ($org_launchtime >= $inittime) 
+
+										if ($org_launchtime >= $inittime)
 										{
 											$inUse = true;
 											break;
-										}	
-									}	
+										}
+									}
 								}
 							}
 						}
-						break;    
+						break;
 					default:
 						break;
 				}
@@ -250,18 +251,20 @@
 				WHERE
 					user_id=".$cu->id."
 				;");
+				$specialistId = $cu->specialistId;
 				$cu->specialistId = 0;
 				$cu->specialistTime = 0;
 
-				success_msg('Der Spezialist wurde entlassen!');	
+				success_msg('Der Spezialist wurde entlassen!');
+				$app['dispatcher']->dispatch(\EtoA\Specialist\Event\SpecialistDischarge::DISCHARGE_SUCCESS, new \EtoA\Specialist\Event\SpecialistDischarge($specialistId));
 			}
 		}
 		else
 		{
 			error_msg('Du kannst niemanden entlassen, da kein Spezialist angestellt ist!');
-		}		
-	}	
-	
+		}
+	}
+
 	//
 	// Show current engaged specialist
 	//
@@ -269,7 +272,7 @@
 	if ($cu->specialistId > 0 && $cu->specialistTime > $t)
 	{
 		$s_active = true;
-		
+
 		$res = dbquery("
 		SELECT
 			*
@@ -278,9 +281,9 @@
 		WHERE
 			specialist_id=".$cu->specialistId."		
 			AND specialist_enabled = 1
-		");	
+		");
 		$arr = mysql_fetch_assoc($res);
-		echo "<form action=\"?page=".$page."\" method=\"post\">";		
+		echo "<form action=\"?page=".$page."\" method=\"post\">";
 		tableStart("Momentan eingestellter Spezialist");
 		echo '<tr>
 		<th>Funktion</th>
@@ -303,13 +306,13 @@
 		onclick="return confirm(\'Willst du den Spezialisten wirklich entlassen? Es werden keine Ressourcen zurückerstattet, da der Spezialist diese als Abgangsentschädigung behält!\')" />';
 		echo '</td>
 		</tr>';
-		tableEnd();		
+		tableEnd();
 		echo "</form>";
 		if ($cu->specialistTime - $t > 0)
 			countDown("countDownElem",$cu->specialistTime,"dischargeElem");
 	}
-	
-	
+
+
 	//
 	// Show all specialists
 	//
@@ -335,12 +338,12 @@
 	<th>Verfügbar</th>
 	<th>Kosten</th>";
 	if (!$s_active)
-	{		
+	{
 		echo "<th>Auswahl</th>";
 	}
 	echo "</tr>";
-	
-	
+
+
 	while ($arr=mysql_fetch_array($res))
 	{
 		$tres = dbquery("
@@ -389,31 +392,31 @@
 				$cp->resFood >= $arr['specialist_costs_food']*$factor &&
 				$cu->points >= $arr['specialist_points_req']
 				)
-				{					
+				{
 					echo '<input type="radio" name="engage" value="'.$arr['specialist_id'].'" />';
 				}
 				else
 				{
 					echo 'Zuwenig Rohstoffe/Punkte';
-				}				
+				}
 			}
 			else
 			{
 				echo "Zurzeit nicht verfügbar!";
-			}			
-			echo '</td>';			
+			}
+			echo '</td>';
 		}
 		echo '</tr>';
 	}
-	tableEnd();		
-	
-	
+	tableEnd();
+
+
 	if (!$s_active)
 	{
 		echo '<input type="submit" name="submit_engage" value="Gewählten Spezialisten einstellen" /></form>';
 	}
 
 	echo '<div><br/><input type="button" onclick="document.location=\'?page=economy\'" value="Wirtschaft des aktuellen Planeten anzeigen" /></div>';
-	
-	
+
+
 ?>

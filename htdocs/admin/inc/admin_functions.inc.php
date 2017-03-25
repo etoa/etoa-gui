@@ -1237,6 +1237,8 @@ function showFleetLogs($args=null,$limit=0)
 
 function showGameLogs($args=null,$limit=0)
 {
+	global $app;
+
 	$paginationLimit = 25;
 
 	$cat = is_array($args) && isset($args['logcat']) ? $args['logcat'] : 0;
@@ -1394,6 +1396,12 @@ function showGameLogs($args=null,$limit=0)
 						default: $obStatus='-';
 					}
 					break;
+				case GameLog::F_QUESTS:
+                    $quest = $app['cubicle.quests.registry']->getQuest($arr['object_id']);
+					$questStates = array_flip(\EtoA\Quest\Log\QuestGameLog::TRANSITION_MAP);
+                    $ob = $quest->getData()['title'];
+                    $obStatus= str_replace('_', ' ', $questStates[$arr['status']]);
+                    break;
 				default:
 					$ob = "-";
 					$obStatus= "-";
