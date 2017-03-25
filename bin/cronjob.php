@@ -34,7 +34,7 @@
 		echo "Script has to be executed on command line!";
 		exit(1);
 	}
-	
+
 	// Initialisieren
 	$init = "inc/init.inc.php";
 	if (!@include($init))
@@ -42,7 +42,7 @@
 		echo "Could not load bootstrap file ".getcwd()."/".($init)."\n";
 		exit(1);
 	}
-	
+
 	// Connect to database
 	try {
 		dbconnect();
@@ -50,30 +50,31 @@
 		echo $ex;
 		exit(1);
 	}
-	
+
 	// Load default values
 	require_once(RELATIVE_ROOT."inc/def.inc.php");
-	
+
 	$args = array_splice($_SERVER['argv'], 1);
 
 	$verbose = in_array("-v", $args);
-		
+
 	try {
-	
+
 		// Prüfen ob Updates eingeschaltet sind
 		if (Config::getInstance()->update_enabled->v==1)
 		{
 			$time = time();
-					
+
 			// Execute tasks
 			$tr = new PeriodicTaskRunner();
+			$log = '';
 			foreach (PeriodicTaskRunner::getScheduleFromConfig() as $tc) {
 				if (PeriodicTaskRunner::shouldRun($tc['schedule'], $time)) {
 					$log.= $tc['name'].': '.$tr->runTask($tc['name']);
 				}
 			}
 			$log.= "\nTotal: ".$tr->getTotalDuration().' sec';
-			
+
 			// Write log
 			if (LOG_UPDATES) {
 				$severity = Log::INFO;
@@ -84,7 +85,7 @@
 			}
 			$text = "Periodische Tasks (".date("d.m.Y H:i:s",$time)."):\n\n".$log;
 			Log::add(Log::F_UPDATES, $severity, $text);
-			
+
 			if ($verbose) {
 				echo $text;
 			}
@@ -97,4 +98,3 @@
 		echo $ex;
 		exit(1);
 	}
-?>
