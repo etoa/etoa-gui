@@ -90,6 +90,8 @@ class QuestPresenterTest extends TestCase
             'taskProgress' => [
                 ['maxProgress' => 10, 'progress' => $progress],
             ],
+            'rewards' => [
+            ],
         ];
         $result = $this->presenter->present($quest, $slot);
 

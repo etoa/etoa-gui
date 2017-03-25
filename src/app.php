@@ -43,8 +43,8 @@ $app->register(new \EtoA\Quest\QuestServiceProvider(), [
                     'type' => 'missile',
                     'value' => 1,
                     'missile_id' => 4,
-                ]
-            ]
+                ],
+            ],
         ],
     ],
 ]);
