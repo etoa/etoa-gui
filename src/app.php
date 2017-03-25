@@ -10,7 +10,7 @@ $app = new \Silex\Application([
 $app->register(new \EtoA\Core\MonologServiceProvider());
 
 // register error handler
-\Monolog\ErrorHandler::register($app['logger']);
+//\Monolog\ErrorHandler::register($app['logger']);
 
 $app->register(new \LittleCubicleGames\Quests\ServiceProvider());
 
