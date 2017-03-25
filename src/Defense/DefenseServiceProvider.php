@@ -15,5 +15,8 @@ class DefenseServiceProvider implements ServiceProviderInterface
         $pimple['etoa.defense.repository'] = function (Container $pimple) {
             return new DefenseRepository($pimple['db']);
         };
+        $pimple['etoa.defense.datarepository'] = function (Container $pimple) {
+            return new DefenseDataRepository($pimple['db'], $pimple['db.cache']);
+        };
     }
 }

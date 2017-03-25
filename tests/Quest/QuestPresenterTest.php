@@ -2,6 +2,9 @@
 
 namespace EtoA\Quest;
 
+use EtoA\Defense\DefenseDataRepository;
+use EtoA\Missile\MissileDataRepository;
+use EtoA\Ship\ShipDataRepository;
 use LittleCubicleGames\Quests\Definition\Quest\Quest;
 use LittleCubicleGames\Quests\Definition\Registry\RegistryInterface;
 use LittleCubicleGames\Quests\Definition\Slot\Slot;
@@ -13,11 +16,22 @@ class QuestPresenterTest extends TestCase
     /** @var QuestPresenter */
     private $presenter;
     private $registry;
+    private $missileDataRepository;
+    private $shipDataRepository;
+    private $defenseDataRepository;
 
     protected function setUp()
     {
         $this->registry = $this->getMockBuilder(RegistryInterface::class)->getMock();
-        $this->presenter = new QuestPresenter($this->registry);
+        $this->missileDataRepository = $this->getMockBuilder(MissileDataRepository::class)->disableOriginalConstructor()->getMock();
+        $this->shipDataRepository = $this->getMockBuilder(ShipDataRepository::class)->disableOriginalConstructor()->getMock();
+        $this->defenseDataRepository = $this->getMockBuilder(DefenseDataRepository::class)->disableOriginalConstructor()->getMock();
+        $this->presenter = new QuestPresenter(
+            $this->registry,
+            $this->missileDataRepository,
+            $this->shipDataRepository,
+            $this->defenseDataRepository
+        );
     }
 
     public function testPresent()

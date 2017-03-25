@@ -2,6 +2,7 @@
 
 namespace EtoA\Core;
 
+use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\EventManager;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
@@ -54,6 +55,10 @@ class DoctrineServiceProvider implements ServiceProviderInterface
 
         $pimple['db.querybuilder'] = function (Container $pimple) {
             return new QueryBuilder($pimple['db']);
+        };
+
+        $pimple['db.cache'] = function () {
+            return new ArrayCache();
         };
     }
 }

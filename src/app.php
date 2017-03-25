@@ -44,6 +44,16 @@ $app->register(new \EtoA\Quest\QuestServiceProvider(), [
                     'value' => 1,
                     'missile_id' => 4,
                 ],
+                [
+                    'type' => 'ship',
+                    'value' => 1,
+                    'ship_id' => 4,
+                ],
+                [
+                    'type' => 'defense',
+                    'value' => 1,
+                    'defense_id' => 4,
+                ],
             ],
         ],
     ],
