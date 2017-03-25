@@ -13,6 +13,10 @@ class FunctionBuilder implements ProgressFunctionBuilderInterface
                 return new Functions\LaunchMissile();
             case Functions\BuyMissile::NAME:
                 return new Functions\BuyMissile();
+            case Functions\HireSpecialist::NAME:
+                return new Functions\HireSpecialist();
+            case Functions\DischargeSpecialist::NAME:
+                return new Functions\DischargeSpecialist();
         }
     }
 }

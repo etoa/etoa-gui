@@ -3,14 +3,9 @@
 namespace EtoA\Quest\Progress\Functions;
 
 use EtoA\Missile\Event\MissileLaunch;
-use LittleCubicleGames\Quests\Entity\TaskInterface;
-use PHPUnit\Framework\TestCase;
 
-class LaunchMissileTest extends TestCase
+class LaunchMissileTest extends AbsractProgressFunctionTestCase
 {
-    /** @var LaunchMissile */
-    protected $progressFunction;
-
     protected function setUp()
     {
         $this->progressFunction = new LaunchMissile();
@@ -21,15 +16,7 @@ class LaunchMissileTest extends TestCase
      */
     public function testHandle($currentProgress, array $missiles, $expectedProgress)
     {
-        $task = $this->getMockBuilder(TaskInterface::class)->getMock();
-        $task
-            ->expects($this->once())
-            ->method('getProgress')
-            ->willReturn($currentProgress);
-
-        $progress = $this->progressFunction->handle($task, new MissileLaunch($missiles));
-
-        $this->assertSame($expectedProgress, $progress);
+        $this->simulateHandle(new MissileLaunch($missiles), $currentProgress, $expectedProgress);
     }
 
     public function providerHandle()
