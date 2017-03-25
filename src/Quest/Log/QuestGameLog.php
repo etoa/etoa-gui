@@ -18,6 +18,6 @@ class QuestGameLog implements QuestLoggerInterface
 
     public function log(QuestInterface $quest, $previousState, $transitionName)
     {
-        \GameLog::add(\GameLog::F_QUESTS, \GameLog::INFO, '', $quest->getUser(), 0, 0, $quest->getQuestId(), 0, self::TRANSITION_MAP[$transitionName]);
+        \GameLog::add(\GameLog::F_QUESTS, \GameLog::INFO, '', $quest->getUser(), 0, 0, $quest->getQuestId(), self::TRANSITION_MAP[$transitionName]);
     }
 }
