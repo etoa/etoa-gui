@@ -177,7 +177,7 @@
 			return $this->count;
 		}
 
-		function & item($bid)
+		function item($bid)
 		{
 			if ($this->items==null)
 				$this->load();
