@@ -11,7 +11,7 @@ use LittleCubicleGames\Quests\Reward\Collect\CollectorInterface;
 
 class ShipRewardCollector implements CollectorInterface
 {
-    const TYPE = 'ships';
+    const TYPE = 'ship';
 
     /** @var ShipRepository */
     private $shipRepository;
