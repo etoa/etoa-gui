@@ -19,6 +19,12 @@
                                 {$progress.progress|default:0}/{$progress.maxProgress}
                             {/foreach}
                         </p>
+                        <h5>Belohnung</h5>
+                        {foreach from=$quest.rewards item=reward}
+                            <p>{$reward}</p>
+                        {foreachelse}
+                            <p><i>Keine Belohnung!</i></p>
+                        {/foreach}
                         {if $quest.transition}
                             <input data-id="quest-advance" type="button" data-user-id="{$quest.user}" data-quest-id="{$quest.id}" data-transition-id="{$quest.transition.transition}" value="{$quest.transition.name}" />
                         {/if}

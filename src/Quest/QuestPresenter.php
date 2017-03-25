@@ -46,6 +46,7 @@ class QuestPresenter
             'transition' => isset($this->transitions[$quest->getState()]) ? $this->transitions[$quest->getState()] : null,
             'taskDescription' => $questData['task']['description'],
             'taskProgress' => $this->buildProgress($quest->getProgressMap(), $questData['task']),
+            'rewards' => $this->buildRewards($questData),
         ];
     }
 
@@ -78,5 +79,16 @@ class QuestPresenter
                     'progress' => $progressMap[$taskData['id']],
                 ]];
         }
+    }
+
+    private function buildRewards($data)
+    {
+        if (!isset($data['rewards'])) {
+            return [];
+        }
+
+        return array_map(function (array $reward) {
+            return $reward['value'] . ' ' . $reward['type'];
+        }, $data['rewards']);
     }
 }

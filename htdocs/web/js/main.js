@@ -1789,10 +1789,11 @@ function getRaceInfo(id) {
 
 function advanceQuest(userId, questId, transition) {
     ajaxRequest('quest_transition', { userId:userId, questId:questId, transition:transition }, function(data) {
-        if (transition === 'start') {
+    	if (data.state === 'finished') {
+    		console.log('test');
+            window.location.reload(true);
+		} else {
             $('[data-id="quest-advance"]').hide();
-        } else if (transition === 'collect_reward') {
-            $('[data-id="quest-container"]').hide();
         }
     }, alert);
 }

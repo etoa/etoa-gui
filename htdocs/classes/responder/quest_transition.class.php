@@ -20,7 +20,7 @@ class QuestTransitionJsonResponder extends JsonResponder
     public function getResponse($params)
     {
         try {
-            $this->questAdvancer->advanceQuest($params['questId'], $params['userId'], $params['transition']);
+            $quest = $this->questAdvancer->advanceQuest($params['questId'], $params['userId'], $params['transition']);
         } catch (\Symfony\Component\Workflow\Exception\LogicException $e) {
             return [
                 'status' => 'error',
@@ -28,6 +28,9 @@ class QuestTransitionJsonResponder extends JsonResponder
             ];
         }
 
-        return ['status' => 'ok'];
+        return [
+            'status' => 'ok',
+            'state' => $quest->getState(),
+        ];
     }
 }

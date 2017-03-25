@@ -418,6 +418,8 @@
 									}
 									$cp->changeRes(-$mcosts[0],-$mcosts[1],-$mcosts[2],-$mcosts[3],-$mcosts[4]);
 									success_msg($v." ".$missiles[$k]['missile_name']." wurden gekauft!");
+
+									$app['dispatcher']->dispatch(\EtoA\Missile\Event\MissileBuy::BUY_SUCCESS, new \EtoA\Missile\Event\MissileBuy($k, $v));
 								}
 								else
 								{

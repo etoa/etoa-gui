@@ -38,6 +38,13 @@ $app->register(new \EtoA\Quest\QuestServiceProvider(), [
                 'description' => 'Kaufe 10 PHOBOS Raketen',
                 'value' => 10,
             ],
+            'rewards' => [
+                [
+                    'type' => 'missile',
+                    'value' => 1,
+                    'missile_id' => 4,
+                ]
+            ]
         ],
     ],
 ]);

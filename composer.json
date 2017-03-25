@@ -10,7 +10,7 @@
         "pimple/pimple": "^3.0",
         "doctrine/dbal": "^2.5",
         "monolog/monolog": "^1.19",
-        "littlecubiclegames/quests": "dev-php-56#5eaa8c5",
+        "littlecubiclegames/quests": "dev-php-56#cbe9c60",
         "silex/silex": "^2.0",
         "symfony/debug": "^3.2"
     },
