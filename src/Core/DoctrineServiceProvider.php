@@ -22,9 +22,13 @@ class DoctrineServiceProvider implements ServiceProviderInterface
             'password' => null,
         ];
 
-        $pimple['db.config'] = function () {
-            return new Configuration();
+        $pimple['db.config'] = function (Container $pimple) {
+            $configuration = new Configuration();
+            $configuration->setSQLLogger(new SqlLogger($pimple['logger']));
+
+            return $configuration;
         };
+
         $pimple['db.event_manager'] = function () {
             new EventManager();
         };
