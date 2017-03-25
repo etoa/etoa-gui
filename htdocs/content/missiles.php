@@ -273,6 +273,7 @@
 						}
 						$cnt-=$lcnt;
 						success_msg("Raketen gestartet!");
+						$app['dispatcher']->dispatch(\EtoA\Missile\Event\MissileLaunch::LAUNCH_SUCCESS, new \EtoA\Missile\Event\MissileLaunch($launch));
 					}
 					else
 					{
