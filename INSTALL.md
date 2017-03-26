@@ -1,6 +1,17 @@
 Escape to Andromeda Installation Guide
 ======================================
 
+Requirements
+------------
+
+* PHP 5.6 with the following extensions
+** mysql
+** gd
+** curl
+* composer
+* MySQL/MariaDB
+* Linux-based OS for the eventhandler
+
 Frontend - Version 1.0
 
 Vagrant Developer setup
