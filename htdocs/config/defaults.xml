@@ -616,6 +616,9 @@ https://etoa.ch</v>
     <item name="discoverymask" cat="17">
       <v comment="Aufdeckung der Map der Flottenkontrolle pro Level (Radius): 1 + floor(level*this.value)" type="text">0.5</v>
     </item>
+    <item name="explor_radius" cat="17">
+        <v comment="Aufdeckung der Map durch Explorer (1: 3x3; 2:5x5)" type="text">1</v>
+    </item>
 	
 	<item name="shipyard_min_build_time" cat="18">
       <v comment="Raumschiffswerft: Absolute minimal Bauzeit in Sekunden" type="text">1</v>
