@@ -11,6 +11,7 @@
 			add_log(8,$cu->nick." aktiviert Zwei-Faktor-Authentifizierung");
 			forward('?myprofile');
 		} else {
+			$secret = $_SESSION['tfa_activate_secret'];
 			$tpl->assign("errmsg", "Der eigegebene Code ist ungütig! Bitte wiederhole den Vorgang!");
 		}
 	} else if (isset($_POST['tfa_disable'])) {
@@ -26,11 +27,12 @@
 	}
 
 	if (empty($cu->tfaSecret)) {
-		if (empty($_SESSION['tfa_activate_secret'])) {
-			$_SESSION['tfa_activate_secret'] = $tfa->createSecret();
+		if (!isset($secret)) {
+			$secret = $tfa->createSecret();
+			$_SESSION['tfa_activate_secret'] = $secret;
 		}
 		$label = Config::getInstance()->roundname->v . ' : ' . $cu->name;
-		$tpl->assign('tfa_qr_code', $tfa->getQRCodeImageAsDataUri($label, $_SESSION['tfa_activate_secret']));
+		$tpl->assign('tfa_qr_code', $tfa->getQRCodeImageAsDataUri($label, $secret));
 		$tpl->setView("tfa_activate");
 	} else {
 		$tpl->setView("tfa_disable");
