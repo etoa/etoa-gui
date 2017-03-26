@@ -1,5 +1,5 @@
 <?PHP
-class MissileBattleHandler 
+class MissileBattleHandler
 {
 	/**
 	* Handles missile assault
@@ -9,10 +9,10 @@ class MissileBattleHandler
 	static function battle($fid)
 	{
 		$cfg = Config::getInstance();
-		
+
 		// Faktor mit dem die Schilde der Verteidigung bei einem Kampf mit einberechnet werden.
 		define("MISSILE_BATTLE_SHIELD_FACTOR", $cfg->value('missile_battle_shield_factor'));
-		
+
  		// Kampf abbrechen und Raketen zum Startplanet schicken wenn Kampfsperre aktiv ist
  	 	if ($cfg->value('battleban') != 0 && $cfg->p1('battleban_time') <= time() && $cfg->p2('battleban_time') > time())
 		{
@@ -24,11 +24,11 @@ class MissileBattleHandler
 				missile_flights
 			WHERE
 				flight_id=".$fid."
-			;");		
+			;");
 			if (mysql_num_rows($res)>0)
 			{
 				$arr = mysql_fetch_assoc($res);
-				
+
 				// Transferiert Raketen zum Startplanet
 				$mres = dbquery("
 				SELECT
@@ -50,7 +50,7 @@ class MissileBattleHandler
 						AND missilelist_missile_id=".$marr['obj_missile_id']."								
 					;");
 				}
-				
+
 				// Löscht Flug
 				dbquery("
 				DELETE FROM 
@@ -58,7 +58,7 @@ class MissileBattleHandler
 				WHERE
 					flight_id=".$fid."
 				;");
-			
+
 				// Löscht Raketen
 				dbquery("
 				DELETE FROM 
@@ -66,16 +66,16 @@ class MissileBattleHandler
 				WHERE
 					obj_flight_id=".$fid."
 				;");
-				
+
 				// Schickt Nachricht an den Angreifer
 				$msg = $cfg->p2('battleban_arrival_text');
 				$uid = get_user_id_by_planet($arr['flight_entity_from']);
 				send_msg($uid,SHIP_WAR_MSG_CAT_ID,'Ergebnis des Raketenangriffs',$msg);
 			}
-			
+
 			return;
-		}		
-		
+		}
+
 		$res = dbquery("
 		SELECT
 			flight_entity_to,
@@ -91,7 +91,7 @@ class MissileBattleHandler
 			planets as pf
 			ON flight_entity_from=pf.id
 			AND flight_id=".$fid."
-		;");		
+		;");
 		if (mysql_num_rows($res)>0)
 		{
 			$arr=mysql_fetch_array($res);
@@ -118,7 +118,7 @@ class MissileBattleHandler
 				AND obj_flight_id='".$fid."'");
 			if (mysql_num_rows($mres)>0)
 			{
-				// Select all attacking missiles 
+				// Select all attacking missiles
 				$m = array();
 				$mcnt=0;
 				while($marr=mysql_fetch_array($mres))
@@ -138,8 +138,8 @@ class MissileBattleHandler
 					missile_flights_obj
 				WHERE
 					obj_flight_id=".$fid."
-				;");				
-				
+				;");
+
 				// Select anti-missiles from target
 				$dres =  dbquery("
 				SELECT
@@ -159,11 +159,11 @@ class MissileBattleHandler
 				$dm = array();
 				$dmid = array();
 				$dmcnt=0;
-				if (mysql_num_rows($dres)>0)			
+				if (mysql_num_rows($dres)>0)
 				{
 					while($darr=mysql_fetch_array($dres))
-					{			
-						array_push($dmid,$darr['missilelist_id']);		
+					{
+						array_push($dmid,$darr['missilelist_id']);
 						for ($x=0;$x<$darr['missilelist_count'];$x++)
 						{
 							$dm[$dmcnt]['id']=$darr['missilelist_id'];
@@ -176,18 +176,18 @@ class MissileBattleHandler
 				foreach ($dmid as $k)
 				{
 					dbquery("UPDATE missilelist SET missilelist_count=0 WHERE missilelist_id=".$k.";");
-				}								
+				}
 				$dmcnt_start = $dmcnt;
 
-				shuffle($dm);								
-				
+				shuffle($dm);
+
 				$dm_copy = $dm;
 				$dmcnt_copy = $dmcnt;
 				$def_report = "";
 				for ($x=0;$x < $dmcnt;$x++)
 				{
 					$def_report.= "Feuere ".$dm_copy[$x]['n']." ab...\n";
-					for ($y=0;$y < $dm_copy[$x]['d'];$y++)					
+					for ($y=0;$y < $dm_copy[$x]['d'];$y++)
 					{
 						$def_report.= "Angreifende Rakete wird getroffen!\n";
 						array_pop($m);
@@ -217,12 +217,12 @@ class MissileBattleHandler
 					}
 				}
 
-				
+
 				// Check if missiles are left
 				if ($mcnt>0)
 				{
 					$msg_a = "Eure Raketen haben den Planeten [b]".$tname."[/b] angegriffen! ";
-					$msg_d = "Eurer Planet [b]".$tname."[/b] wurde von einem Raketenangriff getroffen!\n";
+					$msg_d = "Euer Planet [b]".$tname."[/b] wurde von einem Raketenangriff getroffen!\n";
 					if ($dmcnt_start>0)
 					{
 						$msg_d .= "Eure Abfangraketen schossen zwar einige angreifende Raketen ab, jedoch kamen die restlichen Raketen trotzdem durch.\n ";
@@ -261,24 +261,24 @@ class MissileBattleHandler
 							$def[$darr['deflist_id']]['name']=$darr['def_name'];
 							$def[$darr['deflist_id']]['structure']=$darr['def_structure'];
 							$msg_d.="".$darr['deflist_count']." ".$darr['def_name']."\n";
-						}				
-						shuffle($def);			
-						
+						}
+						shuffle($def);
+
 						// Missile damage
-						$mdmg = 0;		
+						$mdmg = 0;
 						foreach ($m as $mv)
 						{
 							$mdmg += $mv['dmg'];
 						}
-						
+
 						$msg_d.="\nDie Raketen verursachen $mdmg Schaden.\n";
-						
+
 						$sh_rem = $sh - $mdmg;
 						if ($sh_rem < 0)
 						{
 							$msg_d.="Die Schilde halten $sh Schaden auf.\n";
 
-							$str_rem = $str + $sh_rem;  
+							$str_rem = $str + $sh_rem;
 							if ($str_rem > 0)
 							{
 								$str_det = $str-$str_rem;
@@ -296,7 +296,7 @@ class MissileBattleHandler
 										$str_det -= ($do['structure']*$do['count']);
 									}
 								}
-								
+
 								$msg_d.="\nAnlagen nach dem Angriff:\n\n";
 								foreach ($def as $v)
 								{
@@ -307,7 +307,7 @@ class MissileBattleHandler
 										deflist_count=".$v['count']."
 									WHERE
 										deflist_id=".$v['id']."");
-								}								
+								}
 							}
 							else
 							{
@@ -324,13 +324,13 @@ class MissileBattleHandler
 						else
 						{
 							$msg_d .= 'Es wurden aber keine Schäden festgestellt da eure Schilde allen Schaden abgefangen haben.'."\n";
-						}						
+						}
 					}
 					else
 					{
 						$msg_d .= 'Es wurden aber keine Schäden festgestellt da Ihr keine Verteidigungsanlagen habt.'."\n";
 					}
-					
+
 					// EMP
 					$time = time();
 					foreach ($m as $mo)
@@ -371,8 +371,8 @@ class MissileBattleHandler
 									buildlist_deactivated=".($time+$mo['emp'])."
 								WHERE
 									buildlist_id=".$arr['buildlist_id']."
-								;");	
-							}							
+								;");
+							}
 						}
 					}
 
@@ -383,10 +383,10 @@ class MissileBattleHandler
 					$msg_a = "Der Kontakt zu den Raketen die den Planeten [b]".$tname."[/b] angreifen sollten ist verlorengegangen!";
 					$msg_d = "Eure Defensivraketen auf [b]".$tname."[/b] haben erfolgreich einen feindlichen Raketenangriff abgewehrt!";
 					$msg_d.= "\n\n".$def_report;
-				}		
-				
+				}
+
 				// Set remaining defense missiles
-				foreach ($dm as $dm_obj)			   
+				foreach ($dm as $dm_obj)
 				{
 					dbquery("
 					UPDATE
@@ -397,11 +397,11 @@ class MissileBattleHandler
 						missilelist_id=".$dm_obj['id']."
 					");
 				}
-				 
+
 				send_msg($fuid,SHIP_WAR_MSG_CAT_ID,'Ergebnis des Raketenangriffs',$msg_a);
-				send_msg($tuid,SHIP_WAR_MSG_CAT_ID,'Raketenangriff',$msg_d);				
-			}			
-		}		
+				send_msg($tuid,SHIP_WAR_MSG_CAT_ID,'Raketenangriff',$msg_d);
+			}
+		}
 	}
 }
 ?>
