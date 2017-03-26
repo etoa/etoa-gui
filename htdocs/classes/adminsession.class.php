@@ -27,13 +27,22 @@ class AdminSession extends Session
 	{
 		self::cleanup();
 		
+		// If user login data has been temporary stored (two factor authentication challenge), restore it
+		if (empty($data['login_nick']) && !empty($this->tfa_login_nick)) {
+			$data['login_nick'] = $this->tfa_login_nick;
+		}
+		if (empty($data['login_pw']) && !empty($this->tfa_login_pw)) {
+			$data['login_pw'] = $this->tfa_login_pw;
+		}
+		
 		if (!empty($data['login_nick']) && !empty($data['login_pw']))
 		{
 			$sql = "
 			SELECT
 				user_id,
 				user_nick,
-				user_password
+				user_password,
+				tfa_secret
 			FROM
 				".self::tableUser."
 			WHERE
@@ -46,6 +55,32 @@ class AdminSession extends Session
 				$uarr = mysql_fetch_assoc($ures);
 				if (validatePasswort($data['login_pw'], $uarr['user_password']))
 				{
+					// Check if two factor authentication is enabled for this user
+					if (!empty($uarr['tfa_secret'])) {
+						// Check if user supplied challenge
+						if (!empty($data['login_challenge'])) {
+							$tfa = new RobThree\Auth\TwoFactorAuth('Escape to Andromeda');
+							// Validate challenge. If false, return to challenge input
+							if (!$tfa->verifyCode($uarr['tfa_secret'], $data['login_challenge'])) {
+								$this->lastError = "Ungültiger Code!";
+								$this->lastErrorCode = "tfa_challenge";
+								return false;
+							}
+						}
+						// User needs to supply challenge
+						else {
+							// Temporary store users login data
+							$this->tfa_login_nick = $data['login_nick'];
+							$this->tfa_login_pw = $data['login_pw'];
+							$this->lastErrorCode = "tfa_challenge";
+							return false;
+						}				
+					}
+
+					// Unset temporary stored user login data
+					unset($this->tfa_login_nick);
+					unset($this->tfa_login_pw);
+
 					session_regenerate_id(true);
 
 					$this->user_id = $uarr['user_id'];
@@ -75,6 +110,9 @@ class AdminSession extends Session
 			$this->lastError = "Kein Benutzername oder Passwort eingegeben oder ungültige Zeichen verwendet!";
 			$this->lastErrorCode = "name";
 		}
+		// Unset temporary stored user login data
+		unset($this->tfa_login_nick);
+		unset($this->tfa_login_pw);
 		return false;
 	}
 

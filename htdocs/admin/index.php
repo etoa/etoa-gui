@@ -127,6 +127,10 @@ else
 	{
         require __DIR__ . '/inc/myprofile.inc.php';
 	}
+	elseif (isset($_GET['tfa']))
+	{
+        require __DIR__ . '/inc/tfa.inc.php';
+	}
 	else
 	{
 		// Check permissions
