@@ -7,7 +7,7 @@
 {msg type="warn" title="Passwortwiederherstellung" text="Dein Passwort wurde seit der letzten automatischen Generierung noch nicht geändert. Bitte mache das jetzt <a href=\"?myprofile=1\">hier</a>!"}
 {/if}
 
-{if ! $cu->tfaSecret}
+{if ! $has_tfa}
 {msg type="info" title="Zwei-Faktor-Authentifizierung" text="Aktiviere <a href=\"?tfa\">Zwei-Faktor-Authentifizierung</a> um Sicherheit deines Account zu verbessern!"}
 {/if}
 

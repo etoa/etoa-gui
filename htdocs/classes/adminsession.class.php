@@ -59,7 +59,7 @@ class AdminSession extends Session
 					if (!empty($uarr['tfa_secret'])) {
 						// Check if user supplied challenge
 						if (!empty($data['login_challenge'])) {
-							$tfa = new RobThree\Auth\TwoFactorAuth('Escape to Andromeda');
+							$tfa = new RobThree\Auth\TwoFactorAuth(APP_NAME);
 							// Validate challenge. If false, return to challenge input
 							if (!$tfa->verifyCode($uarr['tfa_secret'], $data['login_challenge'])) {
 								$this->lastError = "Ungültiger Code!";

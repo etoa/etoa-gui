@@ -1,7 +1,7 @@
 <?php	
 	$tpl->assign("title", "Mein Profil");
 
-	$tfa = new RobThree\Auth\TwoFactorAuth('Escape to Andromeda');
+	$tfa = new RobThree\Auth\TwoFactorAuth(APP_NAME);
 	if (isset($_POST['tfa_activate']))
 	{
 		if (!empty($_POST['tfa_challenge']) && $tfa->verifyCode($_SESSION['tfa_activate_secret'], $_POST['tfa_challenge'])) {
