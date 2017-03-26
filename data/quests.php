@@ -126,4 +126,23 @@ return [
             ]
         ],
     ],
+    5 => [
+        'id' => 5,
+        'title' => 'Für noch mehr Ruhm',
+        'description' => 'Eure Exzellenz, wir mussten feststellen, dass fremde Imperien nicht von unseren Heldentaten berichten, weil sie nicht wissen, wie man unseren schönen Planeten nennt. Wir müssen unserem Planeten einen Namen geben, welcher unvergesslich in die Geschichtsbücher eingehen wird.',
+        'task' => [
+            'id' => 0,
+            'type' => 'rename-planet',
+            'operator' => 'equal-to-or-more',
+            'description' => 'Gib dem Planeten einen Namen',
+            'value' => 1,
+        ],
+        'rewards' => [
+            [
+                'type' => 'defense',
+                'value' => 20,
+                'defense_id' => 9,
+            ]
+        ],
+    ],
 ];
