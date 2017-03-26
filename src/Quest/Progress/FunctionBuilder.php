@@ -25,6 +25,8 @@ class FunctionBuilder implements ProgressFunctionBuilderInterface
                 return new Functions\RenamePlanet();
             case Functions\SendMessage::NAME:
                 return new Functions\SendMessage();
+            case Functions\LaunchFleet::NAME:
+                return new Functions\LaunchFleet();
         }
     }
 }

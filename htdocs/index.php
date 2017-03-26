@@ -25,9 +25,9 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 	// Funktionen und Config einlesen
 	try {
-		require_once __DIR__ . '/inc/bootstrap.inc.php';
         $app = require __DIR__ .'/../src/app.php';
         $app->boot();
+		require_once __DIR__ . '/inc/bootstrap.inc.php';
 	} catch (DBException $ex) {
 		$tpl = new TemplateEngine();
 		$tpl->assign("content_for_layout", $ex);

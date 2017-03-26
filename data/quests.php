@@ -164,4 +164,23 @@ return [
             ]
         ],
     ],
+    7 => [
+        'id' => 7,
+        'title' => 'Frische Luft schnappen',
+        'description' => 'Eure Exzellenz, unsere Piloten langweilen sich! Vielleicht sollten wir einen kleinen Überraschungsangriff starten? Je grösser die Beute dabei, desto besser.',
+        'task' => [
+            'id' => 0,
+            'type' => 'launch-fleet',
+            'operator' => 'equal-to-or-more',
+            'description' => 'Starte eine Flotte',
+            'value' => 1,
+        ],
+        'rewards' => [
+            [
+                'type' => 'ship',
+                'value' => 1,
+                'ship_id' => 12,
+            ]
+        ],
+    ],
 ];
