@@ -13,6 +13,7 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 try {
 	require __DIR__ .'/inc/includer.inc.php';
+	$app = require __DIR__ . '/../../src/app.php';
 } catch (DBException $ex) {
 	ob_clean();
 	echo $ex;

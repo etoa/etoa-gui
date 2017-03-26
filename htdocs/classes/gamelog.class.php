@@ -5,18 +5,19 @@ class GameLog extends BaseLog
 	protected static $queueTable = "logs_game_queue";
 
 	// Facilities
-	
+
 	/**
 	 * Others
 	 */
 	const F_OTHER = 0;
-	/** 
+	/**
 	 * Buildings 1
 	 */
 	const F_BUILD = 1;
 	const F_TECH = 2;
 	const F_SHIP = 3;
 	const F_DEF = 4;
+	const F_QUESTS = 5;
 
 	static public $facilities = array(
 	"Sonstiges",
@@ -24,11 +25,12 @@ class GameLog extends BaseLog
 	"Forschungen",
 	"Schiffe",
 	"Verteidigungsanlagen",
+	"Quests",
 	);
 
 	static function add($facility, $severity, $msg,$userId, $allianceId, $entityId, $objectId=0, $status=0, $level=0)
 	{
-		if (!is_numeric($facility) || $facility < 0 || $facility > 4)
+		if (!is_numeric($facility) || $facility < 0 || $facility > 5)
 		{
 			$facility = self::F_OTHER;
 		}
@@ -71,9 +73,9 @@ class GameLog extends BaseLog
 			);");
 		}
 	}
-	
+
 	/**
-	* Processes the log queue and stores 
+	* Processes the log queue and stores
 	* all items in the persistend log table
 	*/
 	static function processQueue()	{
@@ -118,7 +120,7 @@ class GameLog extends BaseLog
 		}
 		return $numRecords;
 	}
-	
+
 	/**
 	* Removes up old logs from the persistend log table
 	*
@@ -133,6 +135,6 @@ class GameLog extends BaseLog
 				timestamp<'".$threshold."'
 		");
 		return mysql_affected_rows();
-	}	
+	}
 }
 ?>

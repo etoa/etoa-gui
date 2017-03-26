@@ -2,18 +2,10 @@
 
 namespace EtoA\Race;
 
-use Doctrine\DBAL\Query\QueryBuilder;
+use EtoA\Core\AbstractRepository;
 
-class RaceDataRepository
+class RaceDataRepository extends AbstractRepository
 {
-    /** @var QueryBuilder */
-    private $queryBuilder;
-
-    public function __construct(QueryBuilder $queryBuilder)
-    {
-        $this->queryBuilder = $queryBuilder;
-    }
-
     /**
      * Returns an array of race names indexed by the race id.
      *
@@ -21,10 +13,10 @@ class RaceDataRepository
      */
     public function getRaceNames()
     {
-        return $this->queryBuilder
-            ->select('race_id, race_name')
-            ->from('races')
-            ->orderBy('race_name')
+        return $this->createQueryBuilder()
+            ->select('r.race_id, r.race_name')
+            ->from('races', 'r')
+            ->orderBy('r.race_name')
             ->execute()
             ->fetchAll(\PDO::FETCH_KEY_PAIR);
     }
