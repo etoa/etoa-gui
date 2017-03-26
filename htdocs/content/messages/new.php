@@ -26,7 +26,7 @@
 	}
 	else
 	{
-	
+
 		if (!isset($_SESSION['messagesSent']))
 		{
 			$_SESSION['messagesSent'] = array();
@@ -41,7 +41,7 @@
 			iBoxStart("Nachrichtenversand");
 			foreach ($rcptarr as $rcpt)
 			{
-				$uid = get_user_id($rcpt);	
+				$uid = get_user_id($rcpt);
 				if ($uid>0)
 				{
 					// Prüfe Flooding
@@ -60,16 +60,17 @@
 						;");
 						$arr=mysql_fetch_row($res);
 						if ($arr[0]==0)
-						{					
+						{
 							// Prüfe Titel
 							$check_subject=check_illegal_signs($_POST['message_subject']);
 							if($check_subject=="")
 							{
 									$_SESSION['messagesSent'][$uid] = $time;
 									Message::sendFromUserToUser($cu->id,$uid,$_POST['message_subject'],$_POST['message_text']);
-	
+
 	         					    echo "Nachricht wurde an <b>".$rcpt."</b> gesendet! ";
 	         		    			$_POST['message_user_to']=null;
+	         		    			$app['dispatcher']->dispatch(\EtoA\Message\Event\MessageSend::SEND_SUCCESS, new \EtoA\Message\Event\MessageSend());
 	         				}
 	         				else
 	         				{
@@ -79,7 +80,7 @@
 						else
 						{
 							echo "<b>Fehler:</b> Dieser Benutzer hat dich ignoriert, die Nachricht wurde nicht gesendet!<br/>";
-						}         	
+						}
 					}
 					else
 					{
@@ -91,9 +92,9 @@
 					echo "<b>Fehler:</b> Der Benutzer <b>".$rcpt."</b> existiert nicht!<br/>";
 				}
 			}
-			iBoxEnd();			
+			iBoxEnd();
 		}
-			
+
 		// User zuweisen
 		// Wenn Username durch Link weitergegeben wird (z.b. Stats -> mail)
 		if(isset($_GET['message_user_to']))
@@ -112,9 +113,9 @@
 		}
 		else
 		{
-			$user = ''; 
+			$user = '';
 		}
-			
+
 		// Betreff zuweisen
 		if (isset($_GET['message_subject']))
 		{
@@ -140,13 +141,13 @@
 		else
 		{
 			$subj = '';
-		}				
-		
+		}
+
 		// Text zuweisen
 		/*if (isset($_GET['body']))
 		{
 			$text = stripslashes(base64_decode($_GET['body']));
-		}	*/		
+		}	*/
 		if (isset($_POST['message_text']))
 		{
 			if (isset($_POST['message_sender']))
@@ -162,7 +163,7 @@
 		{
 			$sql = "SELECT text FROM message_data INNER JOIN messages ON id=message_id AND message_user_to='".$cu->id."' AND id='".intval(base64_decode(stripslashes($_GET['message_text'])))."'  LIMIT 1;";
 			$mres = dbquery($sql);
-			
+
 			if (isset($_GET['message_sender']))
 			{
 				if (mysql_num_rows($mres))
@@ -179,7 +180,7 @@
 	    else
 	    {
 	    	$text = '';
-	    }			
+	    }
 
 		if ($cu->properties->msgSignature)
 	    {
@@ -217,7 +218,7 @@
 					echo "onkeyup=\"text2html(this.value,'msgPreview');\"";
 				}
 				echo ">".$text.'</textarea><br/>'.helpLink('textformat', 'Hilfe zur Formatierung').'</td>';
-				
+
 				if ($msgcreatpreview)
 				{
 					$prevstr="text2html(document.getElementById('message').value,'msgPreview');";

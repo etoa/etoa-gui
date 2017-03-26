@@ -23,6 +23,8 @@ class FunctionBuilder implements ProgressFunctionBuilderInterface
                 return new Functions\RecycleDefense();
             case Functions\RenamePlanet::NAME:
                 return new Functions\RenamePlanet();
+            case Functions\SendMessage::NAME:
+                return new Functions\SendMessage();
         }
     }
 }

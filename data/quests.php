@@ -145,4 +145,23 @@ return [
             ]
         ],
     ],
+    6 => [
+        'id' => 6,
+        'title' => 'Kontakte Knüpfen',
+        'description' => 'Eure Exzellenz, wir haben so viele Nachbarn, aber zu keinem wirklich Kontakt. Wenn ihr einen unseren Nachbarn kontaktieren und auf unsere Seite bringen können, dann wird es einfacher für uns sein unsere Ziele zu erreichen. Selbstverständlich können wir diesen Nachbarn am Ende immer noch hintergehen.',
+        'task' => [
+            'id' => 0,
+            'type' => 'send-message',
+            'operator' => 'equal-to-or-more',
+            'description' => 'Sende 1 Nachricht',
+            'value' => 1,
+        ],
+        'rewards' => [
+            [
+                'type' => 'ship',
+                'value' => 1,
+                'ship_id' => 13,
+            ]
+        ],
+    ],
 ];
