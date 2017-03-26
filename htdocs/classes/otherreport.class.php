@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -44,7 +44,7 @@ class OtherReport extends Report
 	protected $fleetId;
 	protected $status;
 	protected $actionCode;
-	
+
 	function __construct($args)
 	{
 		global $resNames;
@@ -73,11 +73,11 @@ class OtherReport extends Report
 		}
 	}
 
-	static function add($data,$subType,$recordId,$spyData)
+	static function add($data)
 	{
 		return null;
 	}
-	
+
 	function createSubject()
 	{
 		return self::$subTypes[$this->subType];
@@ -92,7 +92,7 @@ class OtherReport extends Report
 		ob_start();
 		$ent1 = Entity::createFactoryById($this->entity1Id);
 		$ent2 = Entity::createFactoryById($this->entity2Id);
-		
+
 		switch ($this->subType)
 		{
 			case 'return':
@@ -103,7 +103,7 @@ class OtherReport extends Report
 				echo '<strong>Start: </strong>'.$ent2->detailLink().'<br />';
 				echo '<strong>Zeit: </strong>'.df($this->timestamp).'<br />';
 				echo '<strong>Auftrag: </strong>'.$action->name().' ['.FleetAction::$statusCode[$this->status].']<br /><br />';
-				
+
 				echo '<strong>SCHIFFE</strong><br />';
 				if ($this->ships=='' || $this->ships=='0')
 					echo '<i>Nichts vorhanden!</i><br />';
@@ -125,7 +125,7 @@ class OtherReport extends Report
 					}
 					echo '</table>';
 				}
-				
+
 				echo '<br /><strong>WAREN</strong><br />';
 				echo '<table>';
 				foreach ($resNames as $k=>$v)
@@ -332,7 +332,7 @@ class OtherReport extends Report
 					}
 					echo '</table>';
 				}
-				
+
 				echo '<br /><strong>WAREN</strong><br />';
 				echo '<table>';
 				foreach ($resNames as $k=>$v)
