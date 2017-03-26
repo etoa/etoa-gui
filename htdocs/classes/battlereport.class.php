@@ -397,24 +397,24 @@ class BattleReport extends Report
 								$shieldStructure = $initShieldStructure = $this->shield + $this->structure;
 								$entityShieldStructure = $entityInitShieldStructure = $this->entityShield + $this->entityStructure;
 								for ($rnd=1; $rnd<=5; $rnd++)
-								{	
+								{
 									$shieldStructure = max(0,$shieldStructure-$this->entityWeapon[$rnd]);
 									$entityShieldStructure = max(0,$entityShieldStructure-$this->weapon[$rnd]);
 
-									echo '<br />'.nf($this->count[$rnd]).' Einheiten des Angreifes schiessen mit einer Stärke von '.nf($this->weapon[$rnd]).' auf den Verteidiger. Der Verteidiger hat danach noch '.nf($entityShieldStructure).' Struktur- und Schildpunkte.<br /><br />';
+									echo '<br />'.nf($this->count[$rnd]).' Einheiten des Angreifers schiessen mit einer Stärke von '.nf($this->weapon[$rnd]).' auf den Verteidiger. Der Verteidiger hat danach noch '.nf($entityShieldStructure).' Struktur- und Schildpunkte.<br /><br />';
 									echo nf($this->entityCount[$rnd]).' Einheiten des Verteidigers schiessen mit einer Stärke von '.nf($this->entityWeapon[$rnd]).' auf den Angreifer. Der Angreifer hat danach noch '.nf($shieldStructure).' Struktur- und Schildpunkte.<br /><br />';
 
 									if ($this->heal[$rnd]>0 && $shieldStructure<$initShieldStructure)
 									{
 										$shieldStructure = min($initShieldStructure,($shieldStructure+$this->heal[$rnd]));
-										echo 'Die Einheiten des Angreifes heilen '.nf($this->heal[$rnd]).' Struktur- und Schildpunkte. Der Angreifer hat danach wieder '.nf($shieldStructure).' Struktur- und Schildpunkte<br /><br />';
+										echo 'Die Einheiten des Angreifers heilen '.nf($this->heal[$rnd]).' Struktur- und Schildpunkte. Der Angreifer hat danach wieder '.nf($shieldStructure).' Struktur- und Schildpunkte<br /><br />';
 									}
 									if ($this->entityHeal[$rnd]>0 && $entityShieldStructure<$entityInitShieldStructure)
 									{
 										$entityShieldStructure = min($entityInitShieldStructure,($entityShieldStructure+$this->entityHeal[$rnd]));
 										echo 'Die Einheiten des Verteidiger heilen '.nf($this->entityHeal[$rnd]).' Struktur- und Schildpunkte. Der Verteidiger hat danach wieder '.nf($entityShieldStructure).' Struktur- und Schildpunkte<br /><br />';
 									}
-									
+
 									if ($rnd==5 || $this->count[$rnd+1]==0 || $this->entityCount[$rnd+1]==0) break;
 								}
 
@@ -428,7 +428,7 @@ class BattleReport extends Report
 										echo 'Der Verteidiger hat den Kampf gewonnen!';
 										break;
 									case '3':
-										echo 'Der Kampf endete unentschieden, da sowohl die Einheiten des Angreifes als auch die Einheiten des Verteidigers alle zerst&ouml;rt wurden!';
+										echo 'Der Kampf endete unentschieden, da sowohl die Einheiten des Angreifers als auch die Einheiten des Verteidigers alle zerst&ouml;rt wurden!';
 										break;
 									default:
 										echo 'Der Kampf endete unentschieden und die Flotten zogen sich zur&uuml;ck!';
