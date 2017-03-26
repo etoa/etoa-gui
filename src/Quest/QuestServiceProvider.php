@@ -3,6 +3,7 @@
 namespace EtoA\Quest;
 
 use EtoA\Quest\Initialization\QuestBuilder;
+use EtoA\Quest\Initialization\QuestInitializer;
 use EtoA\Quest\Log\QuestGameLog;
 use EtoA\Quest\Log\QuestLogRepository;
 use EtoA\Quest\Progress\FunctionBuilder;
@@ -59,6 +60,13 @@ class QuestServiceProvider implements ServiceProviderInterface, EventListenerPro
                 $pimple['etoa.quest.log.repository'],
                 new QuestGameLog(),
             ];
+        };
+
+        $pimple['cubicle.quests.initializer'] = function (Container $pimple) {
+            $initializer = new QuestInitializer($pimple['cubicle.quests.storage'], $pimple['cubicle.quests.listener.progress'], $pimple['cubicle.quests.slot.loader'], $pimple['cubicle.quests.initializer.queststarter'], $pimple['dispatcher']);
+            $initializer->setIsQuestSystemOn($pimple['etoa.quests.enabled']);
+
+            return $initializer;
         };
 
         $pimple['cubicle.quests.initializer.questbuilder'] = function () {
