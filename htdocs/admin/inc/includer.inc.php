@@ -37,5 +37,5 @@ define('ADMIN_FILESHARING_DIR',CACHE_ROOT."/admin");
 
 ini_set('display_errors', 1);
 
-$css_theme = (!isset($themePath) || !is_file("web/css/themes/".$themePath."css")) ? "default" : $themePath;
+$css_theme = (!isset($themePath) || !is_file("web/css/themes/".$themePath."css")) ? "bootstrap" : $themePath;
 

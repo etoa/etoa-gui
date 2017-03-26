@@ -14,11 +14,11 @@ if (isset($_GET['action']) && $_GET['action']=="new")
   $tpl->assign("subtitle", "Neuer Datensatz");
 	echo "<p>Gib die Daten des neuen Datensatzes in die untenstehende Maske ein:</p>";
 	echo "<form action=\"?".URL_SEARCH_STRING."\" method=\"post\">";
-	echo "<table>";
+	echo "<table class=\"table table-condensed table-striped table-bordered\">";
 	admin_create_new_dataset($db_fields);
 	echo "</table><br/>";
-	echo "<input type=\"submit\" value=\"Neuen Datensatz speichern\" name=\"new\" />&nbsp;";
-	echo "<input type=\"button\" value=\"Abbrechen\" name=\"newcancel\" onclick=\"document.location='?".URL_SEARCH_STRING."'\" />";
+	echo "<input type=\"submit\" value=\"Neuen Datensatz speichern\" name=\"new\" class=\"btn btn-primary\"/>&nbsp;";
+	echo "<input type=\"button\" value=\"Abbrechen\" name=\"newcancel\" onclick=\"document.location='?".URL_SEARCH_STRING."'\" class=\"btn btn-default\"/>";
 	echo "</form>";
 }
 
@@ -31,15 +31,15 @@ elseif (isset($_GET['action']) && $_GET['action']=="edit")
   $tpl->assign("subtitle", "Datensatz bearbeiten");
 	echo "<p>&Auml;ndere die Daten des Datensatzes und klicke auf '&Uuml;bernehmen', um die Daten zu speichern:</p>";
 	echo "<form action=\"?".URL_SEARCH_STRING."\" method=\"post\">";
-	echo "<input type=\"submit\" value=\"&Uuml;bernehmen\" name=\"edit\" />&nbsp;";
-	echo "<input type=\"button\" value=\"Abbrechen\" name=\"editcancel\" onclick=\"document.location='?".URL_SEARCH_STRING."'\" /><br/><br/>";
+	echo "<input type=\"submit\" value=\"&Uuml;bernehmen\" name=\"edit\" class=\"btn btn-primary\"/>&nbsp;";
+	echo "<input type=\"button\" value=\"Abbrechen\" name=\"editcancel\" onclick=\"document.location='?".URL_SEARCH_STRING."'\" class=\"btn btn-default\"/><br/><br/>";
 
 	echo "<input type=\"hidden\" name=\"".DB_TABLE_ID."\" value=\"".$_GET['id']."\" />";
-	echo "<table>";
+	echo "<table class=\"table table-condensed table-striped table-bordered\">";
 	admin_edit_dataset($db_fields,$arr);
 	echo "</table><br/>";
-	echo "<input type=\"submit\" value=\"&Uuml;bernehmen\" name=\"edit\" />&nbsp;";
-	echo "<input type=\"button\" value=\"Abbrechen\" name=\"editcancel\" onclick=\"document.location='?".URL_SEARCH_STRING."'\" />";
+	echo "<input type=\"submit\" value=\"&Uuml;bernehmen\" name=\"edit\" class=\"btn btn-primary\" />&nbsp;";
+	echo "<input type=\"button\" value=\"Abbrechen\" name=\"editcancel\" onclick=\"document.location='?".URL_SEARCH_STRING."'\" class=\"btn btn-default\"/>";
 	echo "</form>";
 }
 
@@ -53,11 +53,11 @@ elseif (isset($_GET['action']) && $_GET['action']=="del")
 	echo "<p>Bitte best&auml;tige das L&ouml;schen des folgenden Datensatzes:</p>";
 	echo "<form action=\"?".URL_SEARCH_STRING."\" method=\"post\">";
 	echo "<input type=\"hidden\" name=\"".DB_TABLE_ID."\" value=\"".$_GET['id']."\" />";
-	echo "<table>";
+	echo "<table class=\"table table-condensed table-striped table-bordered\">";
 	admin_delete_dataset($db_fields,$arr);
 	echo "</table><br/>";
-	echo "<input type=\"submit\" value=\"L&ouml;schen\" name=\"del\" />&nbsp;";
-	echo "<input type=\"button\" value=\"Abbrechen\" name=\"delcancel\" onclick=\"document.location='?".URL_SEARCH_STRING."'\" />";
+	echo "<input type=\"submit\" value=\"L&ouml;schen\" name=\"del\" class=\"btn btn-primary\"/>&nbsp;";
+	echo "<input type=\"button\" value=\"Abbrechen\" name=\"delcancel\" onclick=\"document.location='?".URL_SEARCH_STRING."'\" class=\"btn btn-default\"/>";
 	echo "</form>";
 }
 
@@ -172,7 +172,7 @@ else
 
 	// Show overview
 	echo "<form action=\"?".URL_SEARCH_STRING."\" method=\"post\">";
-	echo "<input type=\"button\" value=\"Neuer Datensatz hinzuf&uuml;gen\" name=\"new\" onclick=\"document.location='?".URL_SEARCH_STRING."&amp;action=new'\" /><br/><br/>";
+	echo "<input type=\"button\" value=\"Neuer Datensatz hinzuf&uuml;gen\" name=\"new\" onclick=\"document.location='?".URL_SEARCH_STRING."&amp;action=new'\" class=\"btn btn-primary\"/><br/><br/>";
 
 	if (!defined("DB_OVERVIEW_ORDER")) define("DB_OVERVIEW_ORDER","ASC");
 	if (defined("DB_CONDITION"))
@@ -181,7 +181,7 @@ else
 		$sql = "SELECT * FROM ".DB_TABLE." ORDER BY ".DB_OVERVIEW_ORDER_FIELD." ".DB_OVERVIEW_ORDER.";";
 	if ($res = dbquery($sql))
 	{
-		echo "<table width=\"100%\" cellpadding=\"3\" cellspacing=\"1\" align=\"center\"><tr>";
+		echo "<table class=\"table table-condensed table-striped table-bordered\"><tr>";
 		if (defined('DB_IMAGE_PATH'))
 		{
 			echo "<th valign=\"top\" class=\"tbltitle\">Bild</a>";

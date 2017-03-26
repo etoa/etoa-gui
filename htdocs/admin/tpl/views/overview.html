@@ -45,13 +45,6 @@
 </fieldset>
 {/ifadminrole}
 
-{ifadminrole provided=$user_roles required="master,super-admin,game-admin,trial-game-admin"}
-<fieldset class="overview_widget"><legend>Ticket-System</legend>
-{popuplink type="tickets" title="$num_new_tickets neue Tickets"} vorhanden<br/>
-{popupLink type="tickets" title="$num_open_tickets offene Tickets"} vorhanden
-</fieldset>
-{/ifadminrole}
-
 {if $fleet_ban_title|default:"" ne ""}
 	{msg type="info" title="{$fleet_ban_title}" text="{$fleet_ban_text}"}
 {/if}

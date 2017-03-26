@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "0ff59cc7795d0a16242d1eb60f36ee9a",
+    "content-hash": "551266ab7a46131aefe0b4d88820c4f5",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1722,7 +1722,7 @@
                 "uri",
                 "url"
             ],
-            "time": "2017-03-02T15:58:09+00:00"
+            "time": "2016-10-10T12:19:37+00:00"
         },
         {
             "name": "symfony/workflow",
@@ -1784,6 +1784,59 @@
                 "workflow"
             ],
             "time": "2017-03-08T14:32:26+00:00"
+        },
+        {
+            "name": "twbs/bootstrap-sass",
+            "version": "v3.3.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/twbs/bootstrap-sass.git",
+                "reference": "5d6b2ebba0c2a5885ce2f0e01e9218db3d3b5e47"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/twbs/bootstrap-sass/zipball/5d6b2ebba0c2a5885ce2f0e01e9218db3d3b5e47",
+                "reference": "5d6b2ebba0c2a5885ce2f0e01e9218db3d3b5e47",
+                "shasum": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.3.x-dev"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mark Otto"
+                },
+                {
+                    "name": "Thomas McDonald"
+                },
+                {
+                    "name": "Tristan Harward"
+                },
+                {
+                    "name": "Peter Gumeson"
+                },
+                {
+                    "name": "Gleb Mazovetskiy"
+                },
+                {
+                    "name": "Jacob Thornton"
+                }
+            ],
+            "description": "bootstrap-sass is a Sass-powered version of Bootstrap 3, ready to drop right into your Sass powered applications.",
+            "homepage": "http://github.com/twbs/bootstrap-sass",
+            "keywords": [
+                "bootstrap",
+                "css",
+                "sass"
+            ],
+            "time": "2016-07-25T19:58:53+00:00"
         }
     ],
     "packages-dev": [
@@ -1895,6 +1948,96 @@
                 "password"
             ],
             "time": "2014-11-20T16:49:30+00:00"
+        },
+        {
+            "name": "leafo/scssphp",
+            "version": "v0.0.14",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/leafo/scssphp.git",
+                "reference": "dfb793daf3ecdce82c40fb6e6c3a84b6ab230364"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/leafo/scssphp/zipball/dfb793daf3ecdce82c40fb6e6c3a84b6ab230364",
+                "reference": "dfb793daf3ecdce82c40fb6e6c3a84b6ab230364",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.0"
+            },
+            "require-dev": {
+                "php": ">=5.3.0",
+                "phpunit/phpunit": "3.7.*"
+            },
+            "bin": [
+                "pscss"
+            ],
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "scss.inc.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT",
+                "GPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Leaf Corcoran",
+                    "email": "leafot@gmail.com",
+                    "homepage": "http://leafo.net"
+                }
+            ],
+            "description": "scssphp is a compiler for SCSS written in PHP.",
+            "homepage": "http://leafo.net/scssphp/",
+            "time": "2014-08-05T05:45:15+00:00"
+        },
+        {
+            "name": "panique/laravel-sass",
+            "version": "1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/panique/laravel-sass.git",
+                "reference": "23e7b9ced6f8a646f84c12307d7f6a4df85d3b86"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/panique/laravel-sass/zipball/23e7b9ced6f8a646f84c12307d7f6a4df85d3b86",
+                "reference": "23e7b9ced6f8a646f84c12307d7f6a4df85d3b86",
+                "shasum": ""
+            },
+            "require": {
+                "leafo/scssphp": "v0.0.14",
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "sass-compiler.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Panique",
+                    "homepage": "http://careers.stackoverflow.com/panique",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Compiles your SASS .scss files to .css every time you run your app (in development)",
+            "homepage": "https://github.com/panique/laravel-sass",
+            "keywords": [
+                "css",
+                "sass",
+                "scss"
+            ],
+            "time": "2014-11-09T01:35:34+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",

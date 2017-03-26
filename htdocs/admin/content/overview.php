@@ -427,11 +427,6 @@
 		$_SESSION['admin']['user_query']="";
 		$_SESSION['admin']['queries']['alliances']="";
 	
-		// Tickets
-		$tpl->assign("num_new_tickets", Ticket::countNew());
-		$tpl->assign("num_open_tickets", Ticket::countAssigned($cu->id));
-
-
 		/*
 		// Beobachter
 		$res = dbquery("

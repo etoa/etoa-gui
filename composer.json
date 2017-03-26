@@ -11,14 +11,16 @@
         "doctrine/dbal": "^2.5",
         "monolog/monolog": "^1.19",
         "littlecubiclegames/quests": "dev-php-56#9a4c412",
-        "silex/silex": "^2.0"
+        "silex/silex": "^2.0",
+        "twbs/bootstrap-sass": "^3.3"
     },
     "license": "proprietary",
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require-dev": {
         "phpunit/phpunit": "^4.8.24",
-        "friendsofphp/php-cs-fixer": "^2.1"
+        "friendsofphp/php-cs-fixer": "^2.1",
+        "panique/laravel-sass": "^1.0"
     },
     "autoload-dev": {
         "psr-4": { "EtoA\\": "tests/" }

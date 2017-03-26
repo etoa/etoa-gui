@@ -23,7 +23,7 @@ try {
 // Create template object
 $tpl = new TemplateEngine('admin/tpl');
 
-$tpl->setLayout("default/main");
+$tpl->setLayout("bootstrap/main");
 $tpl->setView("default");
 
 $tpl->assign("css_theme", $css_theme);
@@ -116,6 +116,10 @@ else
 	$tpl->assign("admins_online", $a1arr[0]);
 	$tpl->assign("admins_count", AdminUser::countAll());
 	$tpl->assign("db_size", DBManager::getInstance()->getDbSize());
+	
+	// Tickets
+	$tpl->assign("num_new_tickets", Ticket::countNew());
+	$tpl->assign("num_open_tickets", Ticket::countAssigned($cu->id));
 
 	$tpl->assign("side_nav_widgets", $tpl->getChunk("status_widget"));
 
@@ -174,6 +178,9 @@ else
 	// Write all changes of $s to the session variable
 	$_SESSION[SESSION_NAME]=$s;
 	dbclose();
+
+	SassCompiler::run("web/scss/themes/", "web/css/themes/");
+	copy("../../vendor/twbs/bootstrap-sass/assets/javascripts/bootstrap.min.js", "web/js/bootstrap.min.js");
 
 	$tpl->assign("content_overflow", ob_get_clean());
 	$render_time = explode(" ",microtime());

@@ -1,0 +1,88 @@
+{chunk name='header'}
+
+<!-- Fixed navbar -->
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container-fluid">
+	<div class="navbar-header">
+	  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+		<span class="sr-only">Toggle navigation</span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+	  </button>
+	  <a class="navbar-brand" href="?">{*<img id="logo" src="web/images/logo.png" alt="Logo" style="height: 30px;" />*}{cfg key="roundname"}</a>
+	</div>
+	<div id="navbar" class="navbar-collapse collapse">
+	  <ul class="nav navbar-nav">
+		{strip}{foreach from=$navmenu key=c item=i}
+			{ifadminrole provided=$user_roles required=$i.roles}
+			{if $i.children|default:'' ne '' && $i.children|count gt 0}
+				<li class="dropdown{if $page eq  $i.page} active{/if}">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{$c} <span class="caret"></span></a>
+				<ul class="dropdown-menu">
+					{if !empty($i.page)}
+						<li><a href="?page={$i.page}{if $i.sub|default:'' ne ''}&amp;sub={$i.sub}{/if}">{$c}</a></li>
+					{/if}
+				{foreach from=$i.children key=cc item=ci}
+					{ifadminrole provided=$user_roles required=$ci.roles}
+						{if isset($ci.page)} 
+							<li><a href="?page={$ci.page}&amp;sub={$ci.sub}">{$ci.label}</a></li>
+						{else if isset($ci.label)}
+							<li class="dropdown-header">{$ci.label}</li>
+						{else}
+							<li role="separator" class="divider"></li>
+						{/if}						
+					{/ifadminrole}
+				{/foreach}
+				</ul>
+			{else}
+				<li{if $page eq  $i.page} class="active"{/if}><a href="?page={$i.page}{if $i.sub|default:'' ne ''}&amp;sub={$i.sub}{/if}">{$c}</a>
+			{/if}
+			</li>
+			{/ifadminrole}
+		{/foreach}{/strip}
+	  </ul>
+		<ul class="nav navbar-nav navbar-right">
+			<li>{if $num_notes gt 0}{popuplink type="notepad" title="Notizblock ($num_notes)" class="highlight"}{else}{popuplink type="notepad" title="Notizblock"}{/if}</li>
+			{if !$is_cb|default:false}<li><a href="frameset.php?page={$page}{if $i.sub|default:'' ne ''}&amp;sub={$sub}{/if}" target="_top">Zwischenablage</a></li>{/if}
+			<li><a href="{$game_login_url}" target="_blank">Spiel-Login</a></li>
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{$current_user_nick} <span class="caret"></span></a>
+				<ul class="dropdown-menu">
+					<li><a href="?myprofile=1">Mein Account</a></li>
+					<li><a href="?adminlist=1">Adminliste</a></li>
+					<li role="separator" class="divider"></li>
+					<li><a href="?logout=1">Logout</a></li>
+				</ul>
+			</li>
+		</ul>
+	</div><!--/.nav-collapse -->
+  </div>
+</nav>
+
+<div class="container-fluid" id="main">
+	<div class="row">
+		<div class="col-md-10">
+			<div class="main-content container-fluid">
+			{$content_for_layout}
+			{$content_overflow|default:''}
+			</div>
+		</div>
+		<div class="col-md-2">
+			<div class="sidebar container-fluid">
+				<div id="quicksearch">
+					<form action="?page=search" method="post">
+						 <input class="search" type="text" name="search_query" value="{$search_query}" autocomplete="off" placeholder="Suche" />
+					</form>
+				</div>
+				{$side_nav_widgets}
+			</div>
+		</div>
+	</div>
+</div>
+<div class="container-fluid footer">
+	<span>&copy; {$time|date_format:"%Y"} by etoa.ch</span>
+	<span class="pull-right">Zeit: <span id="servertime">{$time|date_format:"%T"}</span> | Seite generiert in {$render_time} sec</span>
+</div>
+
+{chunk name='footer'}
