@@ -72,6 +72,12 @@
 				<th>Neues Passwort:</th>
 				<td><input type=\"password\" name=\"user_password\" autocomplete=\"off\" /></td>
 			</tr>";
+			if (!empty($au->tfaSecret)) {
+				echo "<tr>
+					<th>Zwei-Faktor-Authentifizierung:</th>
+					<td><input type=\"checkbox\" name=\"tfa_remove\" id=\"tfa_remove\" value=\"1\" /> <label for=\"tfa_remove\">Zwei-Faktor-Authentifizierung deaktivieren</label></td>
+				</tr>";
+			}
 			echo "<tr>
 				<th>Rollen:</th>
 				<td>";
@@ -171,6 +177,10 @@
 				$au->nick = $_POST['user_nick'];
 				$au->name = $_POST['user_name'];
 				$au->email = $_POST['user_email'];
+				if (isset($_POST['tfa_remove'])) {
+					$au->tfaSecret = "";
+					add_log(8,"Der Administrator ".$cu->nick." deaktiviert die Zwei-Faktor-Authentifizierung des Administrators ".$_POST['user_nick']."(".$_POST['user_id'].").");
+				}
 				$au->locked = ($_POST['user_locked'] > 0);
 				$au->isContact = ($_POST['is_contact'] > 0);
 				$au->roles = isset($_POST['roles']) ? $_POST['roles'] : array();
@@ -197,6 +207,7 @@
 			<th>Nick</th>
 			<th>Name</th>
 			<th>E-Mail</th>
+			<th>Zwei-Faktor-Authentifizierung</th>
 			<th>Rollen</th>
 			<th>Gesperrt</th>
 			<th></th>
@@ -206,6 +217,7 @@
 				<td>".$arr->nick."</td>
 				<td>".$arr->name."</td>
 				<td><a href=\"mailto:".$arr->email."\">".$arr->email."</a></td>
+				<td>".($arr->tfaSecret ? "Aktiv" : "Nicht aktiviert")."</td>
 				<td>".$arr->getRolesStr()."</td>
 				<td>".($arr->locked==1 ? "<span style=\"color:red\">Ja</span>" : "Nein")."</td>
 				<td style=\"width:40px;\">".edit_button("?page=$page&amp;sub=$sub&amp;edit=".$arr->id."")." ";
