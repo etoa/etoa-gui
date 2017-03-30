@@ -154,15 +154,22 @@ namespace planet
         
 		this->birthRate = ((double)config.nget("people_multiply", 0)  + this->planet_->getTypePopulation() + this->race_->getRacePopulation() + this->sol_->getTypePopulation() + this->specialist_->getSpecialistPopulation() - 4)* (1-(this->ressource[5] / (this->store[5]+1)))/24;
         
-		this->ressource[6] = ((this->ressource[5] * this->birthRate)  / 3600 * this->t);
+		this->ressource[6] = ((this->ressource[5] * this->birthRate)  / 3600);
         
 
 		
-		if (!this->ressource[5] && this->isMain)
+		if (!this->ressource[5])
 			this->ressource[5] = 1;
         
-        
-            this->ressource[5] =  this->ressource[6];
+        if      (this->store[5] >= (this->ressource[5] + this->ressource[6]*this->t) && this->birthRate < 0)
+                              this->ressource[5]=(this->store[5]-this->ressource[5]);
+    
+                              
+        else if (this->store[5] < (this->ressource[5] + this->ressource[6]*this->t) && this->birthRate > 0)
+                              this->ressource[5]=(this->store[5]-this->ressource[5]);
+                              
+        else
+                              this->ressource[5] = (this->ressource[6]*this->t);
 		
 	}
   
