@@ -26,17 +26,6 @@ abstract class WebTestCase extends \Silex\WebTestCase
     public function loginUser($userId)
     {
         $loginTime = time();
-        $session = \UserSession::getInstance();
-        $reflectionClass = new \ReflectionClass('UserSession');
-        $userProperty = $reflectionClass->getProperty('user_id');
-        $userProperty->setAccessible(true);
-        $userProperty->setValue($session, $userId);
-        $timeProperty = $reflectionClass->getProperty('time_login');
-        $timeProperty->setAccessible(true);
-        $timeProperty->setValue($session, $loginTime);
-        $actionProperty = $reflectionClass->getProperty('time_action');
-        $actionProperty->setAccessible(true);
-        $actionProperty->setValue($session, $loginTime);
 
         $this->connection
             ->createQueryBuilder()
@@ -64,6 +53,8 @@ abstract class WebTestCase extends \Silex\WebTestCase
 
         $_SESSION = [];
         $_SESSION['user_id'] = 1;
+        $_SESSION['time_login'] = $loginTime;
+        $_SESSION['time_action'] = $loginTime;
         $userAgent = $_SERVER['HTTP_USER_AGENT'] = 'testing';
         $this->connection
             ->createQueryBuilder()

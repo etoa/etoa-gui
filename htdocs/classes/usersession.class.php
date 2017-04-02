@@ -13,13 +13,6 @@ class UserSession extends Session
 
 	protected $namePrefix = "user";
 
-	/** @var int */
-    private $user_id;
-    /** @var int */
-    private $time_login;
-    /** @var int */
-    private $time_action;
-
     /**
 	 * Returns the single instance of this class
 	 *
