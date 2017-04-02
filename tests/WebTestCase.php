@@ -43,8 +43,23 @@ abstract class WebTestCase extends \Silex\WebTestCase
             ->insert('users')
             ->values([
                 'user_id' => ':userId',
+                'user_setup' => ':setup',
             ])->setParameters([
                 'userId' => $userId,
+                'setup' => 1,
+            ])->execute();
+
+        $this->connection
+            ->createQueryBuilder()
+            ->insert('tutorial_user_progress')
+            ->values([
+                'tup_user_id' => ':userId',
+                'tup_tutorial_id' => ':tutorialId',
+                'tup_closed' => ':closed'
+            ])->setParameters([
+                'userId' => $userId,
+                'tutorialId' => 2,
+                'closed' => 1,
             ])->execute();
 
         $_SESSION = [];
