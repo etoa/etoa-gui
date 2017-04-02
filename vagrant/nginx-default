@@ -2,33 +2,36 @@ server {
     server_name _;
     listen 80;
 
-    root /var/www/etoa//htdocs;
-    index index.php;
+    root /var/www/etoa/htdocs;
+
+    location /admin/ {
+        try_files $uri /admin/index.php$is_args$args;
+    }
+
+    location /api/ {
+        try_files $uri /api.php$is_args$args;
+    }
 
     location / {
         try_files $uri /index.php$is_args$args;
     }
 
-    location /admin {
-        alias /var/www/etoa/htdocs/admin;
-    }
-
-    location ~ \.php$ {
+    location ~ ^/(index|show|popup|chat|chatframe|api|responder|version|admin\/index|admin\/dl|admin\/clipboard|admin\/frameset|admin\/popup)\.php(/|$) {
         fastcgi_pass unix:/run/php/php5.6-fpm.sock;
         fastcgi_split_path_info ^(.+\.php)(/.*)$;
         include fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        fastcgi_param HTTPS off;
+        # When you are using symlinks to link the document root to the
+        # current version of your application, you should pass the real
+        # application path instead of the path to the symlink to PHP
+        # FPM.
+        # Otherwise, PHP's OPcache may not properly detect changes to
+        # your PHP files (see https://github.com/zendtech/ZendOptimizerPlus/issues/126
+        # for more information).
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        fastcgi_param DOCUMENT_ROOT $realpath_root;
     }
 
-    location ~ /\. {
-        access_log on;
-        log_not_found on;
-        deny all;
-    }
-
-    location ~* \.(jpg|jpeg|gif|png|css|js|ico|xml)$ {
-        log_not_found     on;
+    location ~ \.php$ {
+      return 404;
     }
 }
-
