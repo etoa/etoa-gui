@@ -55,7 +55,7 @@
 	define('SMARTY_COMPILE_DIR', CACHE_ROOT."/smarty_compile");
 
 	// xAjax
-	define('XAJAX_DIR', __DIR__ . '/../libs/xajax');
+	define('XAJAX_DIR', RELATIVE_ROOT."libs/xajax");
 	define('XAJAX_DEBUG', false);
 
 	// Admin mode?
