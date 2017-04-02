@@ -15,7 +15,7 @@
 	// www.nicu.ch | mail@nicu.ch								 		//
 	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
 	//////////////////////////////////////////////////
-
+	require_once __DIR__ . '/../../vendor/autoload.php';
 	require __DIR__ . '/init.inc.php';
 
 	// Connect to database
