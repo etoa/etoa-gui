@@ -2,7 +2,7 @@
 /**
 * Class for getting and setting config values
 * from the config database table
-* It use the singleton design pattern, so 
+* It use the singleton design pattern, so
 * use this class by calling
 * $cfg = Config::getInstance();
 * The first really useful [TM] class in EtoA ;)
@@ -19,8 +19,8 @@ class Config implements ISingleton
 	private $_items;
 
 	private $defaultsXml;
-	
-	const DEFAULTS_FILE_PATH = "config/defaults.xml";
+
+	const DEFAULTS_FILE_PATH = __DIR__ . '/../config/defaults.xml';
 
 	/**
 	* Get instance with this very nice singleton design pattern
@@ -61,14 +61,14 @@ class Config implements ISingleton
 			error_msg("Config table empty!");
 		}
 	}
-	
+
 	/**
 	* Reloads all values from the database
 	*/
 	public function reload() {
 		$this->load();
 	}
-	
+
 	/**
 	* Adds a given value to a keyword
 	*/
@@ -113,14 +113,14 @@ class Config implements ISingleton
 	public function set($name,$val,$param1="",$param2="") {
 		$this->add($name,$val,$param1,$param2);
 	}
-			
+
 	/**
 	* Getter for value
 	*/
 	public function get($key) {
 		return $this->_items[$key]->v;
 	}
-	
+
 	/**
 	* Getter for value (alias)
 	*/
@@ -134,28 +134,28 @@ class Config implements ISingleton
 	public function param1($key) {
 		return $this->_items[$key]->p1;
 	}
-	
+
 	/**
 	* Getter for parameter 1 (alias)
 	*/
 	public function p1($key) {
 		return $this->_items[$key]->p1;
-	}	    
-	
+	}
+
 	/**
 	* Getter for parameter 2
 	*/
 	public function param2($key) {
 		return $this->_items[$key]->p2;
-	}	 
+	}
 
 	/**
 	* Getter for parameter 2 (alias)
 	*/
 	public function p2($key) {
 		return $this->_items[$key]->p2;
-	}	    	    
-	
+	}
+
 	/**
 	* Wrapper for saving all values in an array (classic-style)
 	*/
@@ -168,7 +168,7 @@ class Config implements ISingleton
 		}
 		unset($i);
 		return $conf;
-	}	       	    	    
+	}
 
 	public function __isset($name) {
 		return isset($this->_items[$name]);
@@ -188,12 +188,12 @@ class Config implements ISingleton
 		} catch (EException $e) {
 			echo $e;
 			return null;
-		}			   		
+		}
 	}
 
 	public static function restoreDefaults() {
 		try {
-			if ($xml = simplexml_load_file(RELATIVE_ROOT.self::DEFAULTS_FILE_PATH)) {
+			if ($xml = simplexml_load_file(self::DEFAULTS_FILE_PATH)) {
 				dbquery("TRUNCATE TABLE config;");
 				$cnt = 0;
 				foreach ($xml->items->item as $i) {
@@ -229,7 +229,7 @@ class Config implements ISingleton
 
 	function loadDefault($key) {
 		if ($this->defaultsXml==null) {
-			$this->defaultsXml = simplexml_load_file(RELATIVE_ROOT.self::DEFAULTS_FILE_PATH);
+			$this->defaultsXml = simplexml_load_file(self::DEFAULTS_FILE_PATH);
 		}
 		$arr = $this->defaultsXml->xpath("/config/items/item[@name='".$key."']");
 		if ($arr != null && count($arr) > 0) {
@@ -256,7 +256,7 @@ class Config implements ISingleton
 		}
 		return $this->defaultsXml->xpath("/config/items/item[@cat='".$cat."']");
 	}
-	
+
 	function getBaseItems() {
 		if ($this->defaultsXml==null) {
 			$this->defaultsXml = simplexml_load_file(RELATIVE_ROOT.self::DEFAULTS_FILE_PATH);
@@ -273,25 +273,24 @@ class ConfigItem
 		$this->_p1 = $p1;
 		$this->_p2 = $p2;
 	}
-	
+
 	function __toString() {
 		return (string)$this->_v;
 	}
-	
+
 	public function __get($name) {
 		try {
-			if ($name=="p1")		
+			if ($name=="p1")
 				return $this->_p1;
-			if ($name=="p2")		
+			if ($name=="p2")
 				return $this->_p2;
-			if ($name=="v")		
+			if ($name=="v")
 				return $this->_v;
 				throw new EException("Property $name der Klasse  ".__CLASS__." existiert nicht!");
 				return null;
 		} catch (EException $e) {
 			echo $e;
 			return null;
-		}			   		
+		}
 	}
 }
-?>
