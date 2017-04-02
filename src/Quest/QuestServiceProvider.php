@@ -13,13 +13,32 @@ use LittleCubicleGames\Quests\Progress\ProgressFunctionBuilder;
 use LittleCubicleGames\Quests\Progress\StateFunctionBuilder;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
+use Silex\Api\BootableProviderInterface;
+use Silex\Api\ControllerProviderInterface;
 use Silex\Api\EventListenerProviderInterface;
+use Silex\Application;
+use Silex\ControllerCollection;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Request;
 
-class QuestServiceProvider implements ServiceProviderInterface, EventListenerProviderInterface
+class QuestServiceProvider implements ServiceProviderInterface, EventListenerProviderInterface, ControllerProviderInterface, BootableProviderInterface
 {
+    public function connect(Application $app)
+    {
+        /** @var ControllerCollection $controllers */
+        $controllers = $app['controllers_factory'];
+
+        $controllers->put('/api/quests/{questId}/advance/{transition}', 'etoa.quest.controller:advanceAction');
+
+        return $controllers;
+    }
+
     public function register(Container $pimple)
     {
+        $pimple['etoa.quest.controller'] = function (Container $pimple) {
+            return new QuestController($pimple['cubicle.quests.advancer']);
+        };
+
         $pimple['etoa.quest.repository'] = function (Container $pimple) {
             return new QuestRepository($pimple['db']);
         };
@@ -85,5 +104,16 @@ class QuestServiceProvider implements ServiceProviderInterface, EventListenerPro
     public function subscribe(Container $app, EventDispatcherInterface $dispatcher)
     {
         $dispatcher->addSubscriber($app['etoa.quest.responselistener']);
+    }
+
+    public function boot(Application $app)
+    {
+        $app->before(function (Request $request, Application $app) {
+            /** @var \CurrentUser $currentUser */
+            $currentUser = $request->attributes->get('currentUser');
+            if ($currentUser->isSetup() && $app['etoa.tutorial.userprogressrepository']->hasFinishedTutorial($currentUser->id)) {
+                $app['cubicle.quests.initializer']->initialize($currentUser->id);
+            }
+        });
     }
 }

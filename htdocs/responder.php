@@ -31,12 +31,6 @@ if ($action != null && preg_match('/^[a-z\_]+$/', $action) && strlen($action) <=
     unset($params['action']);
     $responder = JsonResponder::createFactory($action);
 
-    if ($responder instanceof QuestTransitionJsonResponder) {
-        $app = require __DIR__ . '/../src/app.php';
-        $app->boot();
-        $responder->setQuestAdvancer($app['cubicle.quests.advancer']);
-    }
-
     if($responder->validateSession())
     {
       if (!$responder->validateParams($params)) {
