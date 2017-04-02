@@ -50,12 +50,12 @@
 	}
 
 	// Smarty Path
-	define('SMARTY_DIR', RELATIVE_ROOT."libs/smarty/");
+	define('SMARTY_DIR', __DIR__ . '/../libs/smarty/');
 	define('SMARTY_TEMPLATE_DIR', CACHE_ROOT."/smarty_templates");
 	define('SMARTY_COMPILE_DIR', CACHE_ROOT."/smarty_compile");
 
 	// xAjax
-	define('XAJAX_DIR', RELATIVE_ROOT."libs/xajax");
+	define('XAJAX_DIR', __DIR__ . '/../libs/xajax');
 	define('XAJAX_DEBUG', false);
 
 	// Admin mode?
@@ -608,5 +608,3 @@
 	define('USERBANNER_BACKGROUND_IMAGE', RELATIVE_ROOT."images/userbanner/userbanner1.png");
 	define('USERBANNER_FONT', RELATIVE_ROOT."images/userbanner/calibri.ttf");
 	define('USERBANNER_DIR', CACHE_ROOT.'/userbanner');
-
-?>

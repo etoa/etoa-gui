@@ -16,7 +16,7 @@
 	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
 	//////////////////////////////////////////////////
 
-	require("init.inc.php");
+	require __DIR__ . '/init.inc.php';
 
 	// Connect to database
 	dbconnect();
@@ -24,9 +24,9 @@
 	// Load config
 	$cfg = Config::getInstance();
 	$conf = $cfg->getArray();
-	
+
 	// Load default values
-	require_once(RELATIVE_ROOT."inc/def.inc.php");
+	require_once __DIR__ . '/def.inc.php';
 
 	// Init session
 	if (ADMIN_MODE) {
@@ -34,7 +34,7 @@
 	} else {
 		$s = UserSession::getInstance();
 	}
-	
+
 	// Create template engine object
 	$tpl = new TemplateEngine();
 
@@ -58,4 +58,3 @@
 
 	// Set popup identifiert to false
 	$popup = false;
-?>
