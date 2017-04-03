@@ -2,12 +2,14 @@
 
 namespace EtoA\Core;
 
+use EtoA\User\UserInterface;
+
 class TokenContext
 {
-    /** @var \CurrentUser */
+    /** @var UserInterface */
     private $currentUser;
 
-    public function __construct(\CurrentUser $currentUser)
+    public function __construct(UserInterface $currentUser)
     {
         $this->currentUser = $currentUser;
     }

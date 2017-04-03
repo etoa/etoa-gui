@@ -2,6 +2,7 @@
 
 namespace EtoA\Core;
 
+use EtoA\User\ChatUser;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 use Silex\Api\BootableProviderInterface;
@@ -19,17 +20,42 @@ class SessionServiceProvider implements ServiceProviderInterface, BootableProvid
     {
         $app->before(function (Request $request) {
             $session = \UserSession::getInstance();
-            if (!$session->validate(0)) {
-                throw new AccessDeniedHttpException();
-            }
-
-            global $cu;
-            if (isset($cu)) {
-                $request->attributes->set('currentUser', $cu);
+            if (strpos($request->attributes->get('_route'), 'api.chat') === 0) {
+                $currentUser = $this->validateChatUser($session);
             } else {
-                $request->attributes->set('currentUser', new \CurrentUser(\UserSession::getInstance()->user_id));
+                $currentUser = $this->validateUser($session);
             }
 
+            $request->attributes->set('currentUser', $currentUser);
         }, Application::EARLY_EVENT);
+    }
+
+    private function validateChatUser(\UserSession $session)
+    {
+        if (!$session->chatValidate()) {
+            throw new AccessDeniedHttpException();
+        }
+
+        return new ChatUser($session->user_id, $session->user_nick);
+    }
+
+    private function validateUser(\UserSession $session)
+    {
+        if (!$session->validate(0)) {
+            throw new AccessDeniedHttpException();
+        }
+
+        global $cu;
+        if (isset($cu)) {
+            $currentUser = $cu;
+        } else {
+            $currentUser = new \CurrentUser(\UserSession::getInstance()->user_id);
+        }
+
+        if (!$currentUser->isValid) {
+            throw new AccessDeniedHttpException();
+        }
+
+        return $currentUser;
     }
 }

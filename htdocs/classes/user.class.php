@@ -13,7 +13,7 @@
 *
 * @author Nicolas Perrenoud<mrcage@etoa.ch>
 */
-class User
+class User implements \EtoA\User\UserInterface
 {
 	const tableName = "users";
 
@@ -79,10 +79,10 @@ class User
 	protected $properties = null;
 	protected $buddylist = null;
 	protected $changedFields;
-	
+
 	protected $isVerified;
 	protected $verificationKey;
-	
+
 	protected $dmask;
 
 	/**
@@ -164,21 +164,21 @@ class User
 
 			$this->specialistId = $arr['user_specialist_id'];
 			$this->specialistTime = $arr['user_specialist_time'];
-			
+
 			$this->boostBonusProduction = $arr['boost_bonus_production'];
 			$this->boostBonusBuilding = $arr['boost_bonus_building'];
-			
+
 			$this->lastInvasion = $arr['lastinvasion'];
 
 			$this->raceId = $arr['user_race_id'];
-			
+
 			$this->allianceShippoints = $arr['user_alliace_shippoints'];
 
 			$this->changedFields = array();
 
 			$this->isVerified = ($arr['verification_key'] == '');
 			$this->verificationKey = $arr['verification_key'];
-			
+
 			$this->isValid=true;
 		}
 		else
@@ -203,7 +203,7 @@ class User
 
 			$this->specialistId = 0;
 			$this->specialistTime = 0;
-			
+
 			$this->lastInvasion = 0;
 
 			$this->raceId = 0;
@@ -212,9 +212,19 @@ class User
 		}
 	}
 
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getNick()
+    {
+        return $this->nick;
+    }
+
 	/**
 	 * The destructor saves pedning changes
-	 */	
+	 */
 	function __destruct()
 	{
 		$cnt = count($this->changedFields);
@@ -467,7 +477,7 @@ class User
 	}
 
 	final public function isSetup() {
-		return $this->setup; 
+		return $this->setup;
 	}
 
 	final public function allianceId()
@@ -504,7 +514,7 @@ class User
 			user_alliance_id=".$id."
 		WHERE user_id='".$this->id."';");
 	}
-	
+
 	public function setVerified($verified)
 	{
 		if ($verified) {
@@ -525,7 +535,7 @@ class User
 		]);
 		$this->isVerified = $verified;
 	}
-	
+
 	public static function findFirstByVerificationKey($verificationKey) {
 		$res = dbQuerySave("
 		SELECT
@@ -542,7 +552,7 @@ class User
 		}
 		return null;
 	}
-	
+
 	public function isInactiv()
 	{
 		if (!$this->admin)
@@ -572,7 +582,7 @@ class User
 		}
 		return false;
 	}
-	
+
 	//
 	// Methods
 	//
@@ -962,7 +972,7 @@ die Spielleitung";
 		{
 			throw new Exception("Nicht alle Felder sind ausgef&uuml;llt!");
 		}
-		
+
 		// Validate email
 		if (!checkEmail($email))
 		{
@@ -974,7 +984,7 @@ die Spielleitung";
 		{
 			throw new Exception("Du hast ein unerlaubtes Zeichen im vollst&auml;ndigen Namen!");
 		}
-		
+
 		// Validate nickname
 		$nick = trim($nick);
 		if (!checkValidNick($nick))
@@ -1057,7 +1067,7 @@ die Spielleitung";
 		{
 			$uid = mysql_insert_id();
 			$rating = new UserRating($uid);
-			$properties = new UserProperties($uid);			
+			$properties = new UserProperties($uid);
 			return new User($uid);
 		}
 		throw new Exception("Ein unbekannter Fehler trat auf! ".mysql_error());
@@ -1096,7 +1106,7 @@ die Spielleitung";
 	{
 		return "<a href=\"?page=userinfo&amp;id=".$this->id."\">".$this->__toString()."</a>";
 	}
-    
+
     public function isUserNoobProtected(User $u)
     {
         // check whether user points are outside limits
@@ -1105,12 +1115,12 @@ die Spielleitung";
                 || ($this->points <= USER_ATTACK_MIN_POINTS)
                 || ($u->points <= USER_ATTACK_MIN_POINTS);
     }
-    
+
     public function canAttackUser(User $u)
     {
         // somehow $this->alliance doesn't use the getter
         // neither does $u->locked, wtf
-        
+
         // att allowed if war is active
         // or att allowed if target user is not noob protected
         // or att allowed if target user is inactive
@@ -1119,24 +1129,24 @@ die Spielleitung";
         {
             return $this->__get('alliance')->checkWar($u->allianceId())
                 || !$this->isUserNoobProtected($u)
-                || $u->isInactiv() 
+                || $u->isInactiv()
                 || $u->__get('locked');
         }
         else
         {
             return !$this->isUserNoobProtected($u)
-                || $u->isInactiv() 
+                || $u->isInactiv()
                 || $u->__get('locked');
         }
     }
-    
+
     public function canAttackPlanet(Planet $p)
     {
         // Planet is attackable if user is attackable
         // or if last owner == this owner (invade time threshold)
         return $this->canAttackUser($p->owner()) || $this->id == $p->lastUserCheck();
     }
-	
+
 	private function loadDiscoveryMask()
 	{
 		$cfg = Config::getInstance();
@@ -1144,7 +1154,7 @@ die Spielleitung";
 		$cx_num=$cfg->param1('num_of_cells');
 		$sy_num=$cfg->param2('num_of_sectors');
 		$cy_num=$cfg->param2('num_of_cells');
-		
+
 		$res = dbquery("
 		SELECT
 			discoverymask
@@ -1184,16 +1194,16 @@ die Spielleitung";
 		$cfg = Config::getInstance();
 		$sy_num=$cfg->param2('num_of_sectors');
 		$cy_num=$cfg->param2('num_of_cells');
-		
+
 		if (!isset($this->dmask))
 		{
 			$this->loadDiscoveryMask();
-		}	
-		
+		}
+
 		$pos = $absX + ($cy_num*$sy_num)*($absY-1)-1;
 		return (($pos < strlen($this->dmask)) ? $this->dmask{$pos} > 0 : false);
 	}
-	
+
 	function getDiscoveredPercent()
 	{
 		if (!isset($this->dmask))
@@ -1206,7 +1216,7 @@ die Spielleitung";
 		}
 		return 0;
 	}
-	
+
 	function setDiscovered($absX,$absY,$radius=1)
 	{
 		if (!isset($this->dmask))
@@ -1218,7 +1228,7 @@ die Spielleitung";
 		$cx_num=$cfg->param1('num_of_cells');
 		$sy_num=$cfg->param2('num_of_sectors');
 		$cy_num=$cfg->param2('num_of_cells');
-		
+
 		for ($x=$absX-$radius; $x<=$absX+$radius; $x++)
 		{
 			for ($y=$absY-$radius; $y<=$absY+$radius; $y++)
@@ -1232,9 +1242,9 @@ die Spielleitung";
 					}
 				}
 			}
-		}	
+		}
 		$this->saveDiscoveryMask();
-	}	
+	}
 
 	function setDiscoveredAll($discovered)
 	{
@@ -1247,7 +1257,7 @@ die Spielleitung";
 		$cx_num=$cfg->param1('num_of_cells');
 		$sy_num=$cfg->param2('num_of_sectors');
 		$cy_num=$cfg->param2('num_of_cells');
-		
+
 		for ($x=1; $x <= $sx_num * $cx_num; $x++)
 		{
 			for ($y=1; $y <= $sy_num * $cy_num; $y++)
@@ -1255,10 +1265,10 @@ die Spielleitung";
 				$pos = $x + ($cy_num*$sy_num)*($y-1)-1;
 				$this->dmask{$pos} = $discovered ? '1' : '0';
 			}
-		}	
+		}
 		$this->saveDiscoveryMask();
 	}
-	
+
 	private function saveDiscoveryMask()
 	{
 		dbquery("
@@ -1272,4 +1282,3 @@ die Spielleitung";
 	}
 
 }
-?>

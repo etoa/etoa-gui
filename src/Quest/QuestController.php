@@ -19,7 +19,7 @@ class QuestController
     public function advanceAction(TokenContext $context, $questId, $transition)
     {
         try {
-            $quest = $this->questAdvancer->advanceQuest($questId, $context->getCurrentUser()->id, $transition);
+            $quest = $this->questAdvancer->advanceQuest($questId, $context->getCurrentUser()->getId(), $transition);
         } catch (\Symfony\Component\Workflow\Exception\LogicException $e) {
             return new JsonResponse([
                 'status' => 'error',
