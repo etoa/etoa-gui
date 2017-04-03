@@ -241,7 +241,7 @@ class Config implements ISingleton
 
 	function categories() {
 		if ($this->defaultsXml==null) {
-			$this->defaultsXml = simplexml_load_file(RELATIVE_ROOT.self::DEFAULTS_FILE_PATH);
+			$this->defaultsXml = simplexml_load_file(self::DEFAULTS_FILE_PATH);
 		}
 		$c = array();
 		foreach ($this->defaultsXml->categories->category as $i) {
@@ -252,14 +252,14 @@ class Config implements ISingleton
 
 	function itemInCategory($cat) {
 		if ($this->defaultsXml==null) {
-			$this->defaultsXml = simplexml_load_file(RELATIVE_ROOT.self::DEFAULTS_FILE_PATH);
+			$this->defaultsXml = simplexml_load_file(self::DEFAULTS_FILE_PATH);
 		}
 		return $this->defaultsXml->xpath("/config/items/item[@cat='".$cat."']");
 	}
 
 	function getBaseItems() {
 		if ($this->defaultsXml==null) {
-			$this->defaultsXml = simplexml_load_file(RELATIVE_ROOT.self::DEFAULTS_FILE_PATH);
+			$this->defaultsXml = simplexml_load_file(self::DEFAULTS_FILE_PATH);
 		}
 		return $this->defaultsXml->xpath("/config/items/item[@base='yes']");
 	}
