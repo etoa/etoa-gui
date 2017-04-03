@@ -28,7 +28,10 @@ class QuestServiceProvider implements ServiceProviderInterface, EventListenerPro
         /** @var ControllerCollection $controllers */
         $controllers = $app['controllers_factory'];
 
-        $controllers->put('/api/quests/{questId}/advance/{transition}', 'etoa.quest.controller:advanceAction');
+        $controllers
+            ->put('/api/quests/{questId}/advance/{transition}', 'etoa.quest.controller:advanceAction')
+            ->assert('questId', '\d+')
+            ->bind('api.quest.advance');
 
         return $controllers;
     }
@@ -111,7 +114,7 @@ class QuestServiceProvider implements ServiceProviderInterface, EventListenerPro
         $app->before(function (Request $request, Application $app) {
             /** @var \CurrentUser $currentUser */
             $currentUser = $request->attributes->get('currentUser');
-            if ($currentUser->isSetup() && $app['etoa.tutorial.userprogressrepository']->hasFinishedTutorial($currentUser->id)) {
+            if ($currentUser instanceof \CurrentUser && $currentUser->isSetup() && $app['etoa.tutorial.userprogressrepository']->hasFinishedTutorial($currentUser->id)) {
                 $app['cubicle.quests.initializer']->initialize($currentUser->id);
             }
         });

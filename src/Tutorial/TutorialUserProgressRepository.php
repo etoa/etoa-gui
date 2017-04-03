@@ -24,4 +24,19 @@ class TutorialUserProgressRepository extends AbstractRepository
             ->execute()
             ->fetchColumn();
     }
+
+    public function closeTutorial($userId, $tutorial)
+    {
+        $this->createQueryBuilder()
+            ->update('tutorial_user_progress')
+            ->set('tup_closed', ':closed')
+            ->where('tup_user_id = :userId')
+            ->andWhere('tup_tutorial_id = :tutorialId')
+            ->setParameters([
+                'closed' => 1,
+                'userId' => $userId,
+                'tutorialId' => $tutorial,
+            ])
+            ->execute();
+    }
 }

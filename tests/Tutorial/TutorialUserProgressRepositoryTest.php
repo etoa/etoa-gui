@@ -45,4 +45,22 @@ class TutorialUserProgressRepositoryTest extends AbstractDbTestCase
             [true],
         ];
     }
+
+    public function testCloseTutorial()
+    {
+        $userId = 1;
+        $tutorialId = 1;
+        $this->connection
+            ->createQueryBuilder()
+            ->insert('tutorial_user_progress')
+            ->values([
+                'tup_user_id' => $userId,
+                'tup_tutorial_id' => $tutorialId,
+                'tup_closed' => 0,
+            ])->execute();
+
+        $this->repository->closeTutorial($userId, $tutorialId);
+
+        $this->assertTrue($this->repository->hasReadTutorial($userId, $tutorialId));
+    }
 }
