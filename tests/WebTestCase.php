@@ -22,7 +22,6 @@ abstract class WebTestCase extends \Silex\WebTestCase
         return $app;
     }
 
-
     public function loginUser($userId)
     {
         $loginTime = time();
@@ -44,7 +43,7 @@ abstract class WebTestCase extends \Silex\WebTestCase
             ->values([
                 'tup_user_id' => ':userId',
                 'tup_tutorial_id' => ':tutorialId',
-                'tup_closed' => ':closed'
+                'tup_closed' => ':closed',
             ])->setParameters([
                 'userId' => $userId,
                 'tutorialId' => 2,

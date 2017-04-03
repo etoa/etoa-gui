@@ -11,7 +11,8 @@ class TutorialUserProgressRepository extends AbstractRepository
         return $this->hasReadTutorial($userId, 2);
     }
 
-    public function hasReadTutorial($userId, $tutorialId) {
+    public function hasReadTutorial($userId, $tutorialId)
+    {
         return (bool)$this->createQueryBuilder()
             ->select('tup_closed')
             ->from('tutorial_user_progress')

@@ -8,6 +8,7 @@ trait DbTestTrait
     {
         $environment = 'testing';
         $debug = true;
+
         return require dirname(__DIR__).'/src/app.php';
     }
 
