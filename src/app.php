@@ -36,6 +36,7 @@ $app->register($questProvider = new \EtoA\Quest\QuestServiceProvider(), [
 $app->register(new \EtoA\Ship\ShipServiceProvider());
 $app->register(new \EtoA\Technology\TechnologyServiceProvider());
 $app->register($tutorialProvider = new \EtoA\Tutorial\TutorialServiceProvider());
+$app->register(new \EtoA\User\UserServiceProvider());
 
 $app->mount('/', $questProvider);
 $app->mount('/', $tutorialProvider);

@@ -257,11 +257,30 @@ return [
             'id' => 0,
             'type' => 'upgrade-ship',
             'operator' => 'equal-to-or-more',
-            'description' => 'Führe ein Mysticum upgrade aus.',
+            'description' => 'Führe ein Mysticum upgrade aus',
             'value' => 1,
             'attributes' => [
                 'defense_id' => 7,
             ],
+        ],
+        'rewards' => [
+            [
+                'type' => 'defense',
+                'value' => 1,
+                'defense_id' => 7,
+            ]
+        ],
+    ],
+    12 => [
+        'id' => 12,
+        'title' => '',
+        'description' => 'Eure Exzellenz, die Galaxy ist gross und bietet  viele Überraschungen. Wir sollten alles erkunden!',
+        'task' => [
+            'id' => 0,
+            'type' => 'have-galaxy-discovered',
+            'operator' => 'equal-to-or-more',
+            'description' => 'Erkunde die ganze Galaxy.',
+            'value' => 1,
         ],
         'rewards' => [
             [
