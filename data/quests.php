@@ -249,4 +249,26 @@ return [
             ]
         ],
     ],
+    11 => [
+        'id' => 11,
+        'title' => '',
+        'description' => 'Eure Exzellenz, ein Upgrade für unser Mysticum ist bereit. Mit dem Upgrade hat unsere Flotte erhebliche Vorteile.',
+        'task' => [
+            'id' => 0,
+            'type' => 'upgrade-ship',
+            'operator' => 'equal-to-or-more',
+            'description' => 'Führe ein Mysticum upgrade aus.',
+            'value' => 1,
+            'attributes' => [
+                'defense_id' => 7,
+            ],
+        ],
+        'rewards' => [
+            [
+                'type' => 'defense',
+                'value' => 1,
+                'defense_id' => 7,
+            ]
+        ],
+    ],
 ];
