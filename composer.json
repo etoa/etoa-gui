@@ -11,7 +11,7 @@
         "pimple/pimple": "^3.0",
         "doctrine/dbal": "^2.5",
         "monolog/monolog": "^1.19",
-        "littlecubiclegames/quests": "dev-php-56#9a4c412",
+        "littlecubiclegames/quests": "dev-php-56#d8d77da",
         "silex/silex": "^2.0",
         "symfony/stopwatch": "^3.2"
     },

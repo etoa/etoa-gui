@@ -14,10 +14,13 @@
 
                         <h5>Aufgaben</h5>
                         <p>
-                            {$quest.taskDescription}:
-                            {foreach from=$quest.taskProgress item=progress}
-                                {$progress.progress|default:0}/{$progress.maxProgress}
-                            {/foreach}
+                            {$quest.taskDescription}
+                            {if $quest.state != 'available'}
+                                :
+                                {foreach from=$quest.taskProgress item=progress}
+                                    {$progress.progress|default:0}/{$progress.maxProgress}
+                                {/foreach}
+                            {/if}
                         </p>
                         <h5>Belohnung</h5>
                         {foreach from=$quest.rewards item=reward}

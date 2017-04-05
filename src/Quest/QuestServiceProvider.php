@@ -3,8 +3,10 @@
 namespace EtoA\Quest;
 
 use EtoA\Quest\Initialization\QuestBuilder;
+use EtoA\Quest\Initialization\QuestInitializer;
 use EtoA\Quest\Log\QuestGameLog;
 use EtoA\Quest\Log\QuestLogRepository;
+use EtoA\Quest\Progress\ContainerAwareFunctionBuilder;
 use EtoA\Quest\Progress\FunctionBuilder;
 use EtoA\Quest\Reward\DefenseRewardCollector;
 use EtoA\Quest\Reward\MissileRewardCollector;
@@ -61,6 +63,13 @@ class QuestServiceProvider implements ServiceProviderInterface, EventListenerPro
             ];
         };
 
+        $pimple['cubicle.quests.initializer'] = function (Container $pimple) {
+            $initializer = new QuestInitializer($pimple['cubicle.quests.storage'], $pimple['cubicle.quests.listener.progress'], $pimple['cubicle.quests.slot.loader'], $pimple['cubicle.quests.initializer.queststarter'], $pimple['dispatcher']);
+            $initializer->setIsQuestSystemOn($pimple['etoa.quests.enabled']);
+
+            return $initializer;
+        };
+
         $pimple['cubicle.quests.initializer.questbuilder'] = function () {
             return new QuestBuilder();
         };
@@ -83,10 +92,11 @@ class QuestServiceProvider implements ServiceProviderInterface, EventListenerPro
             ];
         };
 
-        $pimple['cubicle.quests.progress.function.builder'] = function () {
+        $pimple['cubicle.quests.progress.function.builder'] = function (Container $pimple) {
             return new ProgressFunctionBuilder([
                 new StateFunctionBuilder(),
                 new FunctionBuilder(),
+                new ContainerAwareFunctionBuilder($pimple),
             ]);
         };
 

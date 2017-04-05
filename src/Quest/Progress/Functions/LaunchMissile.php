@@ -4,9 +4,9 @@ namespace EtoA\Quest\Progress\Functions;
 
 use EtoA\Missile\Event\MissileLaunch;
 use LittleCubicleGames\Quests\Entity\TaskInterface;
-use LittleCubicleGames\Quests\Progress\Functions\HandlerFunctionInterface;
+use LittleCubicleGames\Quests\Progress\Functions\EventHandlerFunctionInterface;
 
-class LaunchMissile implements HandlerFunctionInterface
+class LaunchMissile implements EventHandlerFunctionInterface
 {
     const NAME = 'launch-missile';
 

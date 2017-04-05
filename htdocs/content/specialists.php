@@ -207,7 +207,7 @@
 							{
 								if($arr['launchtime'] > $inittime)
 								{
-									if ($arr[status] == 0)
+									if ($arr['status'] == 0)
 									{
 										$inUse = true;
 										break;

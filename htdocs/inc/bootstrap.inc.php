@@ -35,6 +35,12 @@
 		$s = UserSession::getInstance();
 	}
 
+    if (!isset($app)) {
+        $questSystemEnabled = $cfg->get('quest_system_enable');
+        $app = require __DIR__ .'/../../src/app.php';
+        $app->boot();
+    }
+
 	// Create template engine object
 	$tpl = new TemplateEngine();
 

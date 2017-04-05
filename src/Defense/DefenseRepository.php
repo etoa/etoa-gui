@@ -48,4 +48,18 @@ class DefenseRepository extends \EtoA\Core\AbstractRepository
                 ])->execute();
         }
     }
+
+    public function getDefenseCount($userId, $defenseId)
+    {
+        return (int)$this->createQueryBuilder()
+            ->select('SUM(deflist_count)')
+            ->from('deflist')
+            ->where('deflist_user_id = :userId')
+            ->andWhere('deflist_def_id = :defenseId')
+            ->setParameters([
+                'userId' => $userId,
+                'defenseId' => $defenseId,
+            ])->execute()
+            ->fetchColumn();
+    }
 }

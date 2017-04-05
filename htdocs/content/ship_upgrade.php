@@ -17,13 +17,13 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 	/**
 	* Manages epic ships (leveling, additions)
 	*
 	* @author Lamborghini <lamborghini@etoa.ch>
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/	
+	*/
 
 	//
 	// Upgrade menu eines spezial Schiffes
@@ -50,6 +50,8 @@
         	AND shiplist_user_id='".$cu->id."';");
 
         success_msg("Upgrade erfolgreich duchgeführt!");
+
+        $app['dispatcher']->dispatch(\EtoA\Ship\Event\ShipUpgrade::UPGRADE_SUCCESS, new \EtoA\Ship\Event\ShipUpgrade());
     }
 
 

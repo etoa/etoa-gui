@@ -8,6 +8,7 @@ trait DbTestTrait
     {
         $environment = 'testing';
         $debug = true;
+        $questSystemEnabled = true;
 
         return require dirname(__DIR__).'/src/app.php';
     }
@@ -15,6 +16,8 @@ trait DbTestTrait
     protected function tearDown()
     {
         $this->connection->query('TRUNCATE planets');
+        $this->connection->query('TRUNCATE techlist');
+        $this->connection->query('TRUNCATE buildlist');
         $this->connection->query('TRUNCATE shiplist');
         $this->connection->query('TRUNCATE deflist');
         $this->connection->query('TRUNCATE missilelist');
