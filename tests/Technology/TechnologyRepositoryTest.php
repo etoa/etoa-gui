@@ -4,16 +4,16 @@ namespace EtoA\Technology;
 
 use EtoA\AbstractDbTestCase;
 
-class TechListRepositoryTest extends AbstractDbTestCase
+class TechnologyRepositoryTest extends AbstractDbTestCase
 {
-    /** @var TechListRepository */
+    /** @var TechnologyRepository */
     private $repository;
 
     protected function setUp()
     {
         parent::setUp();
 
-        $this->repository = $this->app['etoa.technology.techlistrepository'];
+        $this->repository = $this->app['etoa.technology.repository'];
     }
 
     public function testGetUserLevelNoTechnology()

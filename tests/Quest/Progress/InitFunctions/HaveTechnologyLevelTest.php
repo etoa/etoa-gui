@@ -2,7 +2,7 @@
 
 namespace EtoA\Quest\Progress\InitFunctions;
 
-use EtoA\Technology\TechListRepository;
+use EtoA\Technology\TechnologyRepository;
 use LittleCubicleGames\Quests\Entity\QuestInterface;
 use LittleCubicleGames\Quests\Entity\TaskInterface;
 use PHPUnit\Framework\TestCase;
@@ -14,7 +14,7 @@ class HaveTechnologyLevelTest extends TestCase
         $userId = 1;
         $technologyId = 12;
         $progress = 7;
-        $repository = $this->getMockBuilder(TechListRepository::class)->disableOriginalConstructor()->getMock();
+        $repository = $this->getMockBuilder(TechnologyRepository::class)->disableOriginalConstructor()->getMock();
         $repository
             ->expects($this->once())
             ->method('getTechnologyLevel')

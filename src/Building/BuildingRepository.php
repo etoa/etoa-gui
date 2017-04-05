@@ -4,7 +4,7 @@ namespace EtoA\Building;
 
 use EtoA\Core\AbstractRepository;
 
-class BuildListRepository extends AbstractRepository
+class BuildingRepository extends AbstractRepository
 {
     public function getBuildingLevel($userId, $buildingId)
     {

@@ -4,16 +4,16 @@ namespace EtoA\Building;
 
 use EtoA\AbstractDbTestCase;
 
-class BuildListRepositoryTest extends AbstractDbTestCase
+class BuildingRepositoryTest extends AbstractDbTestCase
 {
-    /** @var BuildListRepository */
+    /** @var BuildingRepository */
     private $repository;
 
     protected function setUp()
     {
         parent::setUp();
 
-        $this->repository = $this->app['etoa.building.buildlistrepository'];
+        $this->repository = $this->app['etoa.building.repository'];
     }
 
     public function testGetUserLevelNoBuilding()

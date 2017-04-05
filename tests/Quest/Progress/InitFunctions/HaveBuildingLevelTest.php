@@ -2,7 +2,7 @@
 
 namespace EtoA\Quest\Progress\InitFunctions;
 
-use EtoA\Building\BuildListRepository;
+use EtoA\Building\BuildingRepository;
 use LittleCubicleGames\Quests\Entity\QuestInterface;
 use LittleCubicleGames\Quests\Entity\TaskInterface;
 use PHPUnit\Framework\TestCase;
@@ -14,7 +14,7 @@ class HaveBuildingLevelTest extends TestCase
         $userId = 1;
         $buildingId = 12;
         $progress = 7;
-        $repository = $this->getMockBuilder(BuildListRepository::class)->disableOriginalConstructor()->getMock();
+        $repository = $this->getMockBuilder(BuildingRepository::class)->disableOriginalConstructor()->getMock();
         $repository
             ->expects($this->once())
             ->method('getBuildingLevel')

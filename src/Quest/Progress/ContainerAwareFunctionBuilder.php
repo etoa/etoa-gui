@@ -22,9 +22,9 @@ class ContainerAwareFunctionBuilder implements ProgressFunctionBuilderInterface
     {
         switch ($taskName) {
             case HaveBuildingLevel::NAME:
-                return new HaveBuildingLevel($attributes, $this->container['etoa.building.buildlistrepository']);
+                return new HaveBuildingLevel($attributes, $this->container['etoa.building.repository']);
             case HaveTechnologyLevel::NAME:
-                return new HaveTechnologyLevel($attributes, $this->container['etoa.technology.techlistrepository']);
+                return new HaveTechnologyLevel($attributes, $this->container['etoa.technology.repository']);
             case HaveDefense::NAME:
                 return new HaveDefense($attributes, $this->container['etoa.defense.repository']);
         }

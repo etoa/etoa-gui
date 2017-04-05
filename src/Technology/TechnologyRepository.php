@@ -4,7 +4,7 @@ namespace EtoA\Technology;
 
 use EtoA\Core\AbstractRepository;
 
-class TechListRepository extends AbstractRepository
+class TechnologyRepository extends AbstractRepository
 {
     public function getTechnologyLevel($userId, $technologyId)
     {
