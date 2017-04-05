@@ -7,12 +7,18 @@
 			else
 				$id = 0;
 
+            $nick = mysql_fetch_row(dbquery("SELECT user_nick FROM users WHERE user_id=".$id.";"))[0];
 
 			// Geänderte Daten speichern
 			if (isset($_POST['save']))
 			{
-				
-				// Speichert Usertdaten in der Tabelle "users"
+                if ($nick !== $_POST['user_nick']) {
+
+                    $user = new User($id);
+                    $user->addToUserLog("settings","{nick} hat seinen Namen zu ".$_POST['user_nick']." geändert.",1);
+                }
+
+                // Speichert Usertdaten in der Tabelle "users"
 				$sql = "UPDATE users SET
 				user_name='".$_POST['user_name']."',
 				user_nick='".$_POST['user_nick']."',
