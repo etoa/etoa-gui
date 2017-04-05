@@ -205,4 +205,26 @@ return [
             ]
         ],
     ],
+    9 => [
+        'id' => 9,
+        'title' => 'Fortschritt duch Technik (2)',
+        'description' => 'Eure Exzellenz, Investment in die Forschung wird uns technische Überlegenheit garantieren und die Bevölkerung wird sogar noch mehr bewundern.',
+        'task' => [
+            'id' => 0,
+            'type' => 'have-technology-level',
+            'operator' => 'equal-to-or-more',
+            'description' => 'Forsche Energietechnik bis Level 5',
+            'value' => 5,
+            'attributes' => [
+                'technology_id' => 3,
+            ],
+        ],
+        'rewards' => [
+            [
+                'type' => 'ship',
+                'value' => 1,
+                'ship_id' => 12,
+            ]
+        ],
+    ],
 ];

@@ -34,6 +34,7 @@ $app->register($questProvider = new \EtoA\Quest\QuestServiceProvider(), [
     'cubicle.quests.quests' => require __DIR__ . '/../data/quests.php',
 ]);
 $app->register(new \EtoA\Ship\ShipServiceProvider());
+$app->register(new \EtoA\Technology\TechnologyServiceProvider());
 $app->register($tutorialProvider = new \EtoA\Tutorial\TutorialServiceProvider());
 
 $app->mount('/', $questProvider);

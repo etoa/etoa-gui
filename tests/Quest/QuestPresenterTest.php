@@ -93,6 +93,7 @@ class QuestPresenterTest extends TestCase
             'id' => $id,
             'canClose' => false,
             'questId' => $questId,
+            'state' => QuestDefinitionInterface::STATE_AVAILABLE,
             'user' => $userId,
             'title' => 'title',
             'description' => 'description',
