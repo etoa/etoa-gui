@@ -15,6 +15,7 @@ $app->register(new Silex\Provider\ServiceControllerServiceProvider());
 
 $app->register(new \LittleCubicleGames\Quests\ServiceProvider());
 
+$app->register(new \EtoA\Building\BuidingServiceProvider());
 $app->register(new \EtoA\Core\DoctrineServiceProvider());
 $app->register(new \EtoA\Core\ParamConverterServiceProvider());
 $app->register(new \EtoA\Core\SessionServiceProvider());

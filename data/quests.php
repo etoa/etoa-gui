@@ -183,4 +183,26 @@ return [
             ]
         ],
     ],
+    8 => [
+        'id' => 8,
+        'title' => 'Fortschritt duch Technik',
+        'description' => 'Eure Exzellenz, Investment in die Forschung wird uns technische Überlegenheit garantieren und die Bevölkerung wird sogar noch mehr bewundern.',
+        'task' => [
+            'id' => 0,
+            'type' => 'have-building-level',
+            'operator' => 'equal-to-or-more',
+            'description' => 'Bau das Forschungslabor',
+            'value' => 1,
+            'attributes' => [
+                'building_id' => 8,
+            ],
+        ],
+        'rewards' => [
+            [
+                'type' => 'ship',
+                'value' => 1,
+                'ship_id' => 12,
+            ]
+        ],
+    ],
 ];

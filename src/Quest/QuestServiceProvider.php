@@ -6,6 +6,7 @@ use EtoA\Quest\Initialization\QuestBuilder;
 use EtoA\Quest\Initialization\QuestInitializer;
 use EtoA\Quest\Log\QuestGameLog;
 use EtoA\Quest\Log\QuestLogRepository;
+use EtoA\Quest\Progress\ContainerAwareFunctionBuilder;
 use EtoA\Quest\Progress\FunctionBuilder;
 use EtoA\Quest\Reward\DefenseRewardCollector;
 use EtoA\Quest\Reward\MissileRewardCollector;
@@ -91,10 +92,11 @@ class QuestServiceProvider implements ServiceProviderInterface, EventListenerPro
             ];
         };
 
-        $pimple['cubicle.quests.progress.function.builder'] = function () {
+        $pimple['cubicle.quests.progress.function.builder'] = function (Container $pimple) {
             return new ProgressFunctionBuilder([
                 new StateFunctionBuilder(),
                 new FunctionBuilder(),
+                new ContainerAwareFunctionBuilder($pimple),
             ]);
         };
 
