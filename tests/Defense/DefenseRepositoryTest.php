@@ -34,4 +34,25 @@ class DefenseRepositoryTest extends AbstractDbTestCase
         $this->assertEquals($entityId, $defense['deflist_entity_id']);
         $this->assertEquals(30, $defense['deflist_count']);
     }
+
+    public function testGetDefenseCount()
+    {
+        $userId = 3;
+        $defenseId = 5;
+        $entityId = 10;
+
+        $this->repository->addDefense($defenseId, 1, $userId, $entityId);
+        $this->repository->addDefense($defenseId, 29, $userId, $entityId + 1);
+        $this->repository->addDefense($defenseId + 1, 29, $userId, $entityId);
+
+        $this->assertSame(30, $this->repository->getDefenseCount($userId, $defenseId));
+    }
+
+    public function testGetDefenseCountNoDef()
+    {
+        $userId = 3;
+        $defenseId = 5;
+
+        $this->assertSame(0, $this->repository->getDefenseCount($userId, $defenseId));
+    }
 }

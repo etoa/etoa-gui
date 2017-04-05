@@ -227,4 +227,26 @@ return [
             ]
         ],
     ],
+    10 => [
+        'id' => 10,
+        'title' => '',
+        'description' => 'Eure Exzellenz, unsere Nachbarn haben unseren Reichtum entdeckt und gesehen, dass wir nicht wirklich Verteidigungsanlagen haben, um diesen zu beschützen',
+        'task' => [
+            'id' => 0,
+            'type' => 'have-defense',
+            'operator' => 'equal-to-or-more',
+            'description' => 'Baue NEKKAR Plasmawerfer bis du insgesamt 10 hast.',
+            'value' => 10,
+            'attributes' => [
+                'defense_id' => 7,
+            ],
+        ],
+        'rewards' => [
+            [
+                'type' => 'defense',
+                'value' => 1,
+                'defense_id' => 7,
+            ]
+        ],
+    ],
 ];
