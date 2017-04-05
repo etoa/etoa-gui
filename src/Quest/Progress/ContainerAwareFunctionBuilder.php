@@ -5,6 +5,7 @@ namespace EtoA\Quest\Progress;
 use EtoA\Quest\Progress\InitFunctions\HaveBuildingLevel;
 use EtoA\Quest\Progress\InitFunctions\HaveDefense;
 use EtoA\Quest\Progress\InitFunctions\HaveGalaxyDiscovered;
+use EtoA\Quest\Progress\InitFunctions\HavePoints;
 use EtoA\Quest\Progress\InitFunctions\HaveTechnologyLevel;
 use LittleCubicleGames\Quests\Progress\ProgressFunctionBuilderInterface;
 use Pimple\Container;
@@ -30,6 +31,8 @@ class ContainerAwareFunctionBuilder implements ProgressFunctionBuilderInterface
                 return new HaveDefense($attributes, $this->container['etoa.defense.repository']);
             case HaveGalaxyDiscovered::NAME:
                 return new HaveGalaxyDiscovered($this->container['etoa.user.repository']);
+            case HavePoints::NAME:
+                return new HavePoints($this->container['etoa.user.repository']);
         }
     }
 }

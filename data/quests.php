@@ -309,4 +309,23 @@ return [
             ]
         ],
     ],
+    14 => [
+        'id' => 14,
+        'title' => 'Punktesammler',
+        'description' => 'Eure Exzellenz, Punkte müssen her! Viele! Los geht\'s!',
+        'task' => [
+            'id' => 0,
+            'type' => 'have-points',
+            'operator' => 'equal-to-or-more',
+            'description' => 'Hab mindestens 200 Punkte',
+            'value' => 200,
+        ],
+        'rewards' => [
+            [
+                'type' => 'defense',
+                'value' => 20,
+                'defense_id' => 9,
+            ]
+        ],
+    ],
 ];

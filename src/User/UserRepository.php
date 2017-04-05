@@ -16,4 +16,15 @@ class UserRepository extends AbstractRepository
             ->execute()
             ->fetchColumn();
     }
+
+    public function getPoints($userId)
+    {
+        return (int)$this->createQueryBuilder()
+            ->select('user_points')
+            ->from('users')
+            ->where('user_id = :userId')
+            ->setParameter('userId', $userId)
+            ->execute()
+            ->fetchColumn();
+    }
 }

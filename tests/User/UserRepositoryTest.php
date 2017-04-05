@@ -34,4 +34,23 @@ class UserRepositoryTest extends AbstractDbTestCase
 
         $this->assertSame($discoverMask, $this->repository->getDiscoverMask($userId));
     }
+
+    public function testGetPoints()
+    {
+        $userId = 10;
+        $points = 100;
+
+        $this->connection
+            ->createQueryBuilder()
+            ->insert('users')
+            ->values([
+                'user_id' => ':userId',
+                'user_points' => ':points',
+            ])->setParameters([
+                'userId' => $userId,
+                'points' => $points,
+            ])->execute();
+
+        $this->assertSame($points, $this->repository->getPoints($userId));
+    }
 }
