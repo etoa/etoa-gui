@@ -6,7 +6,7 @@ use LittleCubicleGames\Quests\Progress\ProgressFunctionBuilderInterface;
 
 class FunctionBuilder implements ProgressFunctionBuilderInterface
 {
-    public function build($taskName)
+    public function build($taskName, array $attributes)
     {
         switch ($taskName) {
             case Functions\LaunchMissile::NAME:

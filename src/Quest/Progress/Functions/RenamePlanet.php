@@ -4,9 +4,9 @@ namespace EtoA\Quest\Progress\Functions;
 
 use EtoA\Planet\Event\PlanetRename;
 use LittleCubicleGames\Quests\Entity\TaskInterface;
-use LittleCubicleGames\Quests\Progress\Functions\HandlerFunctionInterface;
+use LittleCubicleGames\Quests\Progress\Functions\EventHandlerFunctionInterface;
 
-class RenamePlanet implements HandlerFunctionInterface
+class RenamePlanet implements EventHandlerFunctionInterface
 {
     const NAME = 'rename-planet';
 

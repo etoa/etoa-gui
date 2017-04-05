@@ -4,9 +4,9 @@ namespace EtoA\Quest\Progress\Functions;
 
 use EtoA\Defense\Event\DefenseRecycle;
 use LittleCubicleGames\Quests\Entity\TaskInterface;
-use LittleCubicleGames\Quests\Progress\Functions\HandlerFunctionInterface;
+use LittleCubicleGames\Quests\Progress\Functions\EventHandlerFunctionInterface;
 
-class RecycleDefense implements HandlerFunctionInterface
+class RecycleDefense implements EventHandlerFunctionInterface
 {
     const NAME = 'recycle-defense';
 

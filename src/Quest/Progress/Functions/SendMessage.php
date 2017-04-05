@@ -4,9 +4,9 @@ namespace EtoA\Quest\Progress\Functions;
 
 use EtoA\Message\Event\MessageSend;
 use LittleCubicleGames\Quests\Entity\TaskInterface;
-use LittleCubicleGames\Quests\Progress\Functions\HandlerFunctionInterface;
+use LittleCubicleGames\Quests\Progress\Functions\EventHandlerFunctionInterface;
 
-class SendMessage implements HandlerFunctionInterface
+class SendMessage implements EventHandlerFunctionInterface
 {
     const NAME = 'send-message';
 
