@@ -31,6 +31,8 @@ class FunctionBuilder implements ProgressFunctionBuilderInterface
                 return new Functions\UpgradeShip();
             case Functions\RenameStar::NAME:
                 return new Functions\RenameStar();
+            case Functions\CreateAlliance::NAME:
+                return new Functions\CreateAlliance();
         }
     }
 }
