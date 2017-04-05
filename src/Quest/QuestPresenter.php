@@ -56,6 +56,7 @@ class QuestPresenter
             'id' => $quest->getId(),
             'questId' => $quest->getQuestId(),
             'canClose' => false,
+            'state' => $quest->getState(),
             'user' => $quest->getUser(),
             'title' => $questData['title'],
             'description' => $questData['description'],
