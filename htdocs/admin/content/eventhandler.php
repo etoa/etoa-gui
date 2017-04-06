@@ -54,9 +54,13 @@
 		}
 
 		// Warning: Open-Basedir restrictions may appply
-		if (is_file($cfg->daemon_logfile))
+		$logfile = $cfg->daemon_logfile;
+		if (!preg_match('#^/#', $logfile)) {
+			$logfile = '../'.$logfile;
+		}
+		if (is_file($logfile))
 		{
-			$lf = fopen($cfg->daemon_logfile,"r");
+			$lf = fopen($logfile,"r");
 			$log = array();
 			while($l = fgets($lf))
 			{

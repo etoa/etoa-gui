@@ -155,9 +155,11 @@ To start etoad-manager automatically on system boot execute
 
 ### Logging ###
 
-Etoad sends its log messages to the default Unix `logger`. The messages will appear in the system 
-log file (e.g. `/var/log/messages`). 
-To collect the messages in a dedicated logfile, you can use the following rules (assuming you use Syslog-NG):
+Etoad sends its log messages to the default Unix `logger`. The messages will appear in the system log file (e.g. `/var/log/messages`).
+
+#### Syslog-NG ####
+
+To collect the messages in a dedicated logfile, you can use the following rules in `/etc/syslog-ng/syslog-ng.conf`:
 
 	destination d_etoad { file("/var/log/etoad.log" owner(etoa) group(etoa) perm(0644)); };
 	filter f_etoad { program("etoad.*"); };
@@ -165,12 +167,19 @@ To collect the messages in a dedicated logfile, you can use the following rules 
 
 Etoad presents itself to the logger with the name `etoad.<INSTANCE>`, you can therefore also create per-instance logfiles:
 
-	destination d_etoad_<INSTANCE> { file("/var/log/etoad/<INSTANCE>.log" owner(etoa) group(etoa) perm(0644) dir_perm(0755) create_dirs(yes)); };
+	destination d_etoad_<INSTANCE> { file("/var/lib/etoa/<INSTANCE>/htdocs/log/eventhandler.log" owner(etoa) group(etoa) perm(0644) dir_perm(0755) create_dirs(yes)); };
 	filter f_etoad_<INSTANCE> { program("etoad.<INSTANCE>"); };
 	log { source(s_src); filter(f_etoad_<INSTANCE>); destination(d_etoad_<INSTANCE>); };
 
-Remember to replace `<INSTANCE>` with the name of your instance! The files will be stored in the directory `/var/log/etoad/`.
+Remember to replace `<INSTANCE>` with the name of your instance! The files will be stored in the directory `/var/lib/etoa/<INSTANCE>/htdocs/log/eventhandler.log`.
 
+#### Rsyslog ####
+
+To collect the messages in a dedicated logfile per instance, you can use the following rules in `/etc/rsyslog.conf`:
+
+	if $programname == 'etoad.<INSTANCE>' then /var/lib/etoa/<INSTANCE>/htdocs/log/eventhandler.log
+
+Remember to replace `<INSTANCE>` with the name of your instance! The files will be stored in the directory `/var/lib/etoa/<INSTANCE>/htdocs/log/eventhandler.log`.
 
 Authors and Contributors
 ------------------------

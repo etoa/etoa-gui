@@ -12,15 +12,20 @@
 *
 * @author MrCage <mrcage@etoa.ch>
 * @copyright Copyright (c) 2004 EtoA Gaming, www.etoa.ch
-*/	
+*/
 
 	//
 	// Basics
 	//
+require_once __DIR__ . '/../vendor/autoload.php';
+
+	// Render time measurement
+	$watch = new \Symfony\Component\Stopwatch\Stopwatch();
+	$watch->start('render');
 
 	// Funktionen und Config einlesen
 	try {
-		require_once("inc/bootstrap.inc.php");
+		require_once __DIR__ . '/inc/bootstrap.inc.php';
 	} catch (DBException $ex) {
 		$tpl = new TemplateEngine();
 		$tpl->assign("content_for_layout", $ex);
@@ -30,9 +35,6 @@
 
 	// Set no-cache header
 	header("Cache-Control: no-cache, must-revalidate");
-
-	// Render time measurement
-	$tmr = new Timer();
 
 	//
 	// User and session checks
@@ -51,7 +53,7 @@
 	// Check for modified etoa tool by pain
 	if (isset($_GET['ttool']) || isset($_POST['ttool']) && $_POST['ttool']!="")
 	{
-		file_put_contents("cache/log/paintool.log", "[".date("d.m.Y, H:i:s")."] Pain's modified tool used by ".$_POST['login_nick']." (".$s->user_id.") from ".$_SERVER['REMOTE_ADDR']." on ".(isset($_GET['page']) ? $_GET['page'] : 'index')."\n", FILE_APPEND);			
+		file_put_contents("cache/log/paintool.log", "[".date("d.m.Y, H:i:s")."] Pain's modified tool used by ".$_POST['login_nick']." (".$s->user_id.") from ".$_SERVER['REMOTE_ADDR']." on ".(isset($_GET['page']) ? $_GET['page'] : 'index')."\n", FILE_APPEND);
 	}
 
 
@@ -65,7 +67,7 @@
 	// Validate session
 	if (!$s->validate())
 	{
-		if (empty(Config::getInstance()->loginurl->v)) 
+		if (empty(Config::getInstance()->loginurl->v))
 		{
 			forward(getLoginUrl());
 		}
@@ -90,13 +92,13 @@
 
 	// Design
 	defineImagePaths();
-	
+
 	//
 	// Page header
 	//
-	
+
 	$layoutTemplate = "tpl/layouts/empty.html";
-	
+
 	$tpl->assign("gameTitle", getGameIdentifier());
 	$tpl->assign("templateDir", CSS_STYLE);
 
@@ -109,7 +111,7 @@
 	//
 	// Page content
 	//
-	
+
 	// Referers prŸfen
 	$referer_allow=false;
 	if (isset($_SERVER["HTTP_REFERER"]))
@@ -133,10 +135,10 @@
 	}
 	try {
 	ob_start();
-	
+
 	// Spiel ist generell gesperrt (ausser fŸr erlaubte IP's)
 	$allowed_ips = explode("\n",$cfg->value('offline_ips_allow'));
-	
+
 	if ($cfg->value('offline')==1 && !in_array($_SERVER['REMOTE_ADDR'],$allowed_ips))
 	{
 		iBoxStart("Spiel offline",750,"margin:50px auto;text-align:center");
@@ -174,7 +176,7 @@
 		<h1>Falscher Referer</h1>
 		Der Zugriff auf das Spiel ist nur anderen internen Seiten aus m&ouml;glich! Ein externes Verlinken direkt in das Game hinein ist nicht gestattet! Dein Referer: ".$_SERVER["HTTP_REFERER"]."<br/><br/>
 		<a href=\"".getLoginUrl() ."\">Hauptseite</a></div>";
-		
+
 	}
 	// Zugriff erlauben und Inhalt anzeigen
 	else
@@ -182,8 +184,8 @@
 		if ($s->firstView && $cu->properties->startUpChat==1)
 		{
 			echo "<script type=\"text/javascript\">".CHAT_ONCLICK."</script>";
-		}			
-		
+		}
+
 		if ($cu->isSetup())
 		{
 			//
@@ -211,14 +213,14 @@
 					if ($arr[1]==1)
 					{
 						$mainplanet = $arr[0];
-					}							
+					}
 				}
 				// Todo: check if mainplanet is still 0
-				
+
 				// Wenn eine ID angegeben wurde (Wechsel des Planeten) wird diese ŸberprŸft
 				//if (!isset($s->echng_key))
 				//	$s->echng_key = mt_rand(100,9999999);
-				
+
 				$eid=0;
 				if (isset($_GET['change_entity']))
 				{
@@ -228,19 +230,19 @@
 				{
 						$cpid = $eid;
 						$s->cpid = $cpid;
-				}	
+				}
 				elseif (isset($s->cpid) && in_array($s->cpid,$planets))
 				{
 					$cpid = $s->cpid;
 				}
-				else					
+				else
 				{
 					$cpid = $mainplanet;
 					$s->cpid = $cpid;
-				}										
+				}
 
 				$cp = Planet::getById($cpid);
-				
+
 				$pm = new PlanetManager($planets);
 			}
 			else
@@ -259,11 +261,11 @@
 		// Count users
 		$ucres=dbquery('SELECT COUNT(user_id) FROM users;');
 		$ucarr=mysql_fetch_row($ucres);
-		
+
 		// Count online users
 		$gres=dbquery('SELECT COUNT(user_id) FROM user_sessions;');
 		$garr=mysql_fetch_row($gres);
-		
+
 		// Count notes
 		$np = new Notepad($cu->id);
 		$numNotes = $np->numNotes();
@@ -283,12 +285,12 @@
 		$fm->loadOwn();
 		$tpl->assign("ownFleetCount", $fm->count());
 		unset($fm);
-		
+
 		$tpl->assign("serverTime",date('H:i:s'));
 		$tpl->assign("serverTimeUnix",time());
 		$tpl->assign('enableKeybinds', $cu->properties->enableKeybinds);
 		$tpl->assign('isAdmin', $cu->admin);
-		
+
 		if (isset($cp))
 		{
 			$tpl->assign("currentPlanetName",$cp);
@@ -304,10 +306,10 @@
 			$tpl->assign("planetList", []);
 			$tpl->assign("nextPlanetId",0);
 			$tpl->assign("prevPlanetId",0);
-			$tpl->assign("selectField","");		
-			
+			$tpl->assign("selectField","");
+
 		}
-		
+
 		$tpl->assign("usersOnline",$garr[0]);
 		$tpl->assign("usersTotal",$ucarr[0]);
 		$tpl->assign("notes",$numNotes);
@@ -315,12 +317,12 @@
 		$tpl->assign("userNick",$cu->nick);
 		$tpl->assign("page",$page);
 		$tpl->assign("mode",$mode);
-		
+
 		// Navigation laden
 		$gameMenu = new GameMenu("game-menu.conf");
 		$tpl->assign("topNav", $gameMenu->getTopNav());
 		$tpl->assign("mainNav", $gameMenu->getMainNav());
-		
+
 		$tpl->assign("teamspeakUrl",TEAMSPEAK_URL);
 		$tpl->assign("teamspeakOnclick",TEAMSPEAK_ONCLICK);
 		$tpl->assign("rulesUrl",RULES_URL);
@@ -330,18 +332,18 @@
 		$tpl->assign("helpcenterOnclick",HELPCENTER_ONCLICK);
 		$tpl->assign("devcenterOnclick",DEVCENTER_ONCLICK);
 		$tpl->assign("bugreportUrl",DEVCENTER_PATH);
-		
+
 		$tm = new TextManager();
 		$infoText = $tm->getText('info');
 		if ($infoText->enabled && !empty($infoText->content))
 		{
 			$tpl->assign("infoText", $infoText->content);
 		}
-		
+
 		$tpl->assign("chatUrl",CHAT_URL);
 		$tpl->assign("chatOnclick",CHAT_ONCLICK);
-				
-		if (ADD_BANNER=="")		
+
+		if (ADD_BANNER=="")
 			$tpl->assign("adds",false);
 		elseif ($cu->properties->showAdds==1 || FORCE_ADDS==1)
 			$tpl->assign("adds",true);
@@ -359,9 +361,9 @@
 
 		// Include content
 		require("inc/content.inc.php");
-		
-		$tpl->assign("renderTime",$tmr->getRoundedTime());
-						
+
+		$tpl->assign("renderTime", $watch->stop('render')->getDuration() / 1000);
+
 		// Display main template
 		$layoutTemplate = CSS_STYLE."/".DESIGN_TEMPLATE_FILE_NAME;
 	}
@@ -370,16 +372,16 @@
 		ob_clean();
 		$tpl->assign("content_for_layout", $ex);
 	}
-	
+
 	try {
 		$tpl->display($layoutTemplate);
 	} catch (SmartyException $e) {
 		$tpl->assign('message', $e->getMessage());
-		$func = function($value) { 
+		$func = function($value) {
 			if (isset($value['file'])) {
 				$value['file'] = substr($value['file'], strlen(__DIR__)+1);
 			}
-			return $value; 
+			return $value;
 		};
 		$tpl->assign('trace', array_map($func, $e->getTrace()));
 		$tpl->setView('exception');

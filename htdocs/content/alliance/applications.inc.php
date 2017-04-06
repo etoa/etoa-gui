@@ -29,12 +29,12 @@ if (Alliance::checkActionRights('applications'))
 				$cnt = 0;
 				$alliances = get_alliance_names();
 				$new_member = false;
-				
+
 				foreach ($_POST['application_answer'] as $id=>$answer)
 				{
 
 					$nick = $_POST['application_user_nick_'.$id.''];
-					
+
 					// Anfrage annehmen
 					if ($answer==2)
 					{
@@ -46,17 +46,17 @@ if (Alliance::checkActionRights('applications'))
 						$cnt++;
 						$new_member = true;
 						success_msg($nick." wurde angenommen.");
-						
+
 						// Nachricht an den Bewerber schicken
 						send_msg($id,MSG_ALLYMAIL_CAT,"Bewerbung angenommen","Deine Allianzbewerbung wurde angenommen!\n\n[b]Antwort:[/b]\n".addslashes($_POST['application_answer_text'][$id]));
-						
+
 						// Log schreiben
 						add_alliance_history($cu->allianceId,"Die Bewerbung von [b]".$nick."[/b] wurde akzeptiert!");
 						add_log(5,"Der Spieler [b]".$nick."[/b] tritt der Allianz [b][".$alliances[$cu->allianceId]['tag']."] ".$alliances[$cu->allianceId]['name']."[/b] bei!",time());
-						
+
 						$tu = new User($id);
-						$tu->addToUserLog("alliance","{nick} ist nun ein Mitglied der der Allianz ".$alliances[$cu->allianceId]['name'].".");
-						
+						$tu->addToUserLog("alliance","{nick} ist nun ein Mitglied der Allianz ".$alliances[$cu->allianceId]['name'].".");
+
 						// Speichern
 						dbquery("
 						UPDATE 
@@ -65,13 +65,13 @@ if (Alliance::checkActionRights('applications'))
 							user_alliance_id=".$cu->allianceId."
 						WHERE 
 							user_id='".$id."';");
-							
+
 						dbquery("
 						DELETE FROM
 							alliance_applications 
 						WHERE
 							user_id=".$id."
-							AND alliance_id=".$cu->allianceId.";");								
+							AND alliance_id=".$cu->allianceId.";");
 					}
 					// Anfrage ablehnen
 					elseif($answer==1)
@@ -81,17 +81,17 @@ if (Alliance::checkActionRights('applications'))
 
 						// Nachricht an den Bewerber schicken
 						send_msg($id,MSG_ALLYMAIL_CAT,"Bewerbung abgelehnt","Deine Allianzbewerbung wurde abgelehnt!\n\n[b]Antwort:[/b]\n".addslashes($_POST['application_answer_text'][$id]));
-						
+
 						// Log schreiben
 						add_alliance_history($cu->allianceId,"Die Bewerbung von [b]".$nick."[/b] wurde abgelehnt!");
-						
+
 						// Anfrage löschen
 						dbquery("
 						DELETE FROM
 							alliance_applications 
 						WHERE
 							user_id=".$id."
-							AND alliance_id=".$cu->allianceId.";");								
+							AND alliance_id=".$cu->allianceId.";");
 					}
 					// Anfrage unbearbeitet lassen, jedoch Nachricht verschicken wenn etwas geschrieben ist
 					else
@@ -101,19 +101,19 @@ if (Alliance::checkActionRights('applications'))
 						{
 							// Nachricht an den Bewerber schicken
 							send_msg($id,MSG_ALLYMAIL_CAT,"Bewerbung: Nachricht","Antwort auf die Bewerbung an die Allianz [b][".$alliances[$cu->allianceId]['tag']."] ".$alliances[$cu->allianceId]['name']."[/b]:\n".$_POST['application_answer_text'][$id]."");
-							
+
 							$cnt++;
 							success_msg($nick.": Nachricht gesendet");
 						}
-					}					
+					}
 				}
-				
+
 				// Wenn neue Members hinzugefügt worde sind werden ev. die Allianzrohstoffe angepasst
 				if($new_member)
 				{
-					$cu->alliance->calcMemberCosts();		
+					$cu->alliance->calcMemberCosts();
 				}
-				
+
 				success_msg("Änderungen übernommen");
 			}
 		}
@@ -152,7 +152,7 @@ if (Alliance::checkActionRights('applications'))
 				echo "<tr>
 				<td ".tm("Info","Rang: ".$arr['user_rank']."<br>Punkte: ".nf($arr['user_points'])."<br>Registriert: ".date("d.m.Y H:i",$arr['user_registered'])."").">
 					<a href=\"?page=userinfo&id=".$arr['user_id']."\">".$arr['user_nick']."</a>";
-					
+
 					// Übergibt Usernick dem Formular, damit beim Submit nicht nochmals eine DB Abfrage gestartet werden muss
 					echo "<input type=\"hidden\" name=\"application_user_nick_".$arr['user_id']."\" value=\"".$arr['user_nick']."\" />
 				</td>

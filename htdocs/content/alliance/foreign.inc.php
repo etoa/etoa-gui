@@ -109,6 +109,8 @@
 					success_msg("Allianz [b]".$rtnMsg."[/b] gegründet!");
 					echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Weiter\" />";
 					$finish = true;
+
+					$app['dispatcher']->dispatch(\EtoA\Alliance\Event\AllianceCreate::CREATE_SUCCESS, new \EtoA\Alliance\Event\AllianceCreate());
 				}
 				else
 				{
@@ -184,7 +186,7 @@
 				if ($_POST['user_alliance_application']!='')
 				{
 					$aid = intval($_POST['user_alliance_id']);
-					
+
 					$alliances = get_alliance_names();
 					send_msg($alliances[$aid]['founder_id'],MSG_ALLYMAIL_CAT,"Bewerbung","Der Spieler ".$cu->nick." hat sich bei deiner Allianz beworben. Gehe auf die [page=alliance&action=applications]Allianzseite[/page] für Details!");
 					add_alliance_history($aid,"Der Spieler [b]".$cu->nick."[/b] bewirbt sich sich bei der Allianz.");

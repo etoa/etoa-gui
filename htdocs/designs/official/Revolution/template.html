@@ -1,12 +1,12 @@
-<!-- 
-   ETOA Design Revolution by HeaX	
+<!--
+   ETOA Design Revolution by HeaX
 	umgesetzt durch :	ETOA-Team - Lukulus
 	Stand: 02. Dezember 14
 	Version: 0.9 Beta
  -->
 
 	{chunk name='header'}
-	
+
 	<script type='text/javascript'>
 	{literal}
 		$(function(){
@@ -22,9 +22,9 @@
 			{if $isAdmin}
 				<a class="right-tip" data-tips=" Admintool " href="admin" id="h_admin" target="_blank"></a>
 			{/if}
-			
+
 			<a href="?page=overview" id="h_overview" class="bottom-tip" data-tips=" Planetenübersicht {if $enableKeybinds}[Leertaste] {/if}"></a>
-	
+
 			<div id="servertime">
 				{$serverTime}
 			</div>
@@ -36,12 +36,12 @@
 			<a href="?page=ticket" id="h_tickets"></a>
 			<a href="?page=help" id="h_wiki" class="bottom-tip" data-tips=" ETOA - Wiki "></a>
 			<a href="?logout=1" id="h_logout" class="bottom-tip" data-tips=" abmelden "></a>
-				
+
 		</div>
 
 		<!-- Inhaltsbereich -->
 		<div id="wc">
-		
+
 			<!-- Haupfnavigation links -->
 			<nav id="nav">
 
@@ -52,17 +52,17 @@
 					<a href="?page=overview" id="planetimage"><img src="{$templateDir}/images/dummy.gif" width="73.5" height="73.5" align="middle"></a>
 					<div id="planetname">noch nicht ausgewählt</div>
 				{/if}
-						
+
 				<a id="prevplanet" href="?page={$page}&amp;mode={$mode}&amp;change_entity={$prevPlanetId}"></a>
 				<a id="nextplanet" href="?page={$page}&amp;mode={$mode}&amp;change_entity={$nextPlanetId}"></a>
-				<a id="navplanetlist" href="#" onclick="js_planetlist(true); return true"></a>				
+				<a id="navplanetlist" href="#" onclick="js_planetlist(true); return true"></a>
 				<div id="planetlist" onmouseover="js_planetlist(true); return true;" onmouseout="js_planetlist(false); return true;">
 					{foreach from=$planetList item=p}
 						<a href="{$p.url}" {if $p.current}class="active"{/if}>{$p.label}</a>
 					{/foreach}
-				</div>		
-				
-				<a href="?page=cell" class="right-tip" data-tips=" System " id="navcell"></a>		
+				</div>
+
+				<a href="?page=cell" class="right-tip" data-tips=" System " id="navcell"></a>
 				<a href="?page=sector" class="right-tip" data-tips=" Sektor " id="navsektor"></a>
 				<a href="?page=galaxy" class="right-tip" data-tips=" Galaxie {if $enableKeybinds}[k] {/if}" id="navgalaxie"></a>
 
@@ -87,41 +87,42 @@
 
 			</nav>
 
-	      {chunk name='tutorial'}
+			{chunk name='tutorial'}
+			{chunk name='quests'}
 
 			<!-- zentraler Inhaltsbereich -->
   			<section id="content">
 					<div id="contentwrap">
-					{$content_for_layout}	
+					{$content_for_layout}
 					</div>
 					<img src="{$templateDir}/images/content_footerabstand.gif" width="142" height="50" alt="">
   			</section>
 
 		<!-- Seitenbereich, rechts -->
   			<aside id="aside">
-				<!-- dieser Inhalt wird über jquery (buttongesteuert) durch ein iframe mit dem Chat ersetzt!  -->				
+				<!-- dieser Inhalt wird über jquery (buttongesteuert) durch ein iframe mit dem Chat ersetzt!  -->
 				<div id="c_aside">
-					{$infoText|text2html}
-				</div>    			
-  			</aside> 
+					{$infoText|default:''|text2html}
+				</div>
+  			</aside>
 		</div>
-		
+
 		<!-- Fussbereich -->
 		<div id="wf">
 
 			{if $messages > 0}
-				<a href="?page=messages" class="top-tip" data-tips=" {if $messages == 1}{$messages} neue Nachricht{else}{$messages} neue Nachrichten{/if} {if $enableKeybinds}[n] {/if}" id="f_nachricht_aktive"></a>		
-			{else}			
-				<a href="?page=messages" class="top-tip" data-tips=" Nachrichten {if $enableKeybinds}[n] {/if}"  id="f_nachricht"></a>		
-			{/if}	
-			
+				<a href="?page=messages" class="top-tip" data-tips=" {if $messages == 1}{$messages} neue Nachricht{else}{$messages} neue Nachrichten{/if} {if $enableKeybinds}[n] {/if}" id="f_nachricht_aktive"></a>
+			{else}
+				<a href="?page=messages" class="top-tip" data-tips=" Nachrichten {if $enableKeybinds}[n] {/if}"  id="f_nachricht"></a>
+			{/if}
+
 			{if $newreports > 0}
 				<a href="?page=reports"  class="top-tip" data-tips=" {if $newreports == 1}{$newreports} neuer Bericht{else}{$newreports} neue Berichte{/if} {if $enableKeybinds}[b] {/if}" id="f_bericht_aktive"></a>
-			{else}			
+			{else}
 				<a href="?page=reports"  class="top-tip" data-tips=" Berichte {if $enableKeybinds}[b] {/if}" id="f_bericht"></a>
-			{/if}	
-			
-			<a href="?page=notepad" id="f_notiz"></a>		
+			{/if}
+
+			<a href="?page=notepad" id="f_notiz"></a>
 			<a href="?page=townhall" id="f_rathaus"></a>
 
 			<div id="f_eigene">{$ownFleetCount}</div>
@@ -134,8 +135,8 @@
 
 			<div id="f_angriffe">{$fleetAttack}</div>
 
-			<a href="?page=alliance" id="f_allianz"></a>		
-			
+			<a href="?page=alliance" id="f_allianz"></a>
+
 			{if $buddyreq > 0}
 				<a href="?page=buddylist" id="f_buddylist_reg"></a>
 			{elseif $buddys > 0}
@@ -143,7 +144,7 @@
 			{else}
 				<a href="?page=buddylist" id="f_buddylist"></a>
 			{/if}
-			
+
 			<a href="#" id="f_chat" ></a>
 			<a href="#" id="f_chat_on" ></a>
 

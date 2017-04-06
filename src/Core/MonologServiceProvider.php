@@ -35,7 +35,7 @@ class MonologServiceProvider implements ServiceProviderInterface
 
         $pimple['monolog.handler'] = function (Container $pimple) {
             return new FingersCrossedHandler(
-                $pimple['monolog.udp.handler'],
+                $pimple['debug']? $pimple['monolog.syslog.handler'] : $pimple['monolog.udp.handler'],
                 $pimple['debug'] ? Logger::DEBUG : Logger::WARNING
             );
         };

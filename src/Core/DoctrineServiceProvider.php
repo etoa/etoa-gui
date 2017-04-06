@@ -2,6 +2,7 @@
 
 namespace EtoA\Core;
 
+use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\EventManager;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
@@ -21,9 +22,13 @@ class DoctrineServiceProvider implements ServiceProviderInterface
             'password' => null,
         ];
 
-        $pimple['db.config'] = function () {
-            return new Configuration();
+        $pimple['db.config'] = function (Container $pimple) {
+            $configuration = new Configuration();
+            $configuration->setSQLLogger(new SqlLogger($pimple['logger']));
+
+            return $configuration;
         };
+
         $pimple['db.event_manager'] = function () {
             new EventManager();
         };
@@ -45,12 +50,21 @@ class DoctrineServiceProvider implements ServiceProviderInterface
             }
 
             $options = array_replace($pimple['db.default_options'], $pimple['db.options']);
+            if ($pimple['app.environment'] === 'testing') {
+                $options['dbname'] = $options['dbname'] . '_test';
+            }
+
+            \DBManager::getInstance()->setDatabaseConfig($options);
 
             return DriverManager::getConnection($options, $pimple['db.config'], $pimple['db.event_manager']);
         };
 
         $pimple['db.querybuilder'] = function (Container $pimple) {
             return new QueryBuilder($pimple['db']);
+        };
+
+        $pimple['db.cache'] = function () {
+            return new ArrayCache();
         };
     }
 }

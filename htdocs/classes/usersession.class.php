@@ -13,7 +13,7 @@ class UserSession extends Session
 
 	protected $namePrefix = "user";
 
-	/**
+    /**
 	 * Returns the single instance of this class
 	 *
 	 * @return AdminSession Instance of this class
@@ -26,9 +26,9 @@ class UserSession extends Session
 	function login($data)
 	{
 		self::cleanup();
-		
+
 		$loginTimeDifferenceThreshold = 3600;
-		
+
 		if (isset($data['token']))
 		{
 			$t = hexdec(substr($data['token'],40));
@@ -46,7 +46,7 @@ class UserSession extends Session
 				$passwordField = sha1("password".$logintoken.$t);
 
 				$this->passwordField = $passwordField;
-				
+
 				// Check if token has not already been used (multi logins with browser auto-refresher)
 				if (!in_array($logintoken,$_SESSION['used_login_tokens']))
 				{
@@ -126,7 +126,7 @@ class UserSession extends Session
 											$uarr['user_password'] = $newPw;
 										}
 									}
-									
+
 									if (validatePasswort($loginPassword, $uarr['user_password'])
 										|| $this->sittingActive
 										|| ($uarr['user_password_temp']!="" && $uarr['user_password_temp']==$loginPassword))
@@ -140,7 +140,7 @@ class UserSession extends Session
 										$this->registerSession();
 										$this->bot_count = 0;
 										$this->firstView = true;
-										
+
 										// do not use this values for real verification
 										// intended only for chat session pseudo-validation
 										$this->cRemoteAddr = $_SERVER['REMOTE_ADDR'];
@@ -148,7 +148,7 @@ class UserSession extends Session
 										// does not guarantee valid login, see above.
 										// this isn't set to false on session timeout
 										$this->cLogin = true;
-										
+
 										return true;
 									}
 									else
@@ -212,7 +212,7 @@ class UserSession extends Session
 				$this->lastError = "Login ungültig, falsches Token!";
 				$this->lastErrorCode = "wrongloginkey";
 				$tokenlog = true;
-			}			
+			}
 		}
 		else
 		{
@@ -235,7 +235,7 @@ class UserSession extends Session
 			$text.= "Referer: ".$_SERVER['HTTP_REFERER']."\n";
 			Log::add(Log::F_ILLEGALACTION, Log::WARNING, $text);
 		}
-		
+
 		return false;
 	}
 
@@ -278,7 +278,7 @@ class UserSession extends Session
 						$this->last_span = $t-$this->time_action;
 						$this->bot_count=0;
 					}
-					
+
 					if ($this->sittingActive)
 					{
 						if (time() < $this->sittingUntil)
@@ -314,7 +314,7 @@ class UserSession extends Session
 							WHERE
 								id='".session_id()."'
 							;");
-							
+
 							$this->time_action = $t;
 							return true;
 						}
@@ -351,7 +351,7 @@ class UserSession extends Session
 		}
 		return false;
 	}
-	
+
 	/**
 	 * only for session validation in chat, do not use
 	 * for real validation
@@ -411,7 +411,7 @@ class UserSession extends Session
 
 	/**
 	 * Unregisters a session and save session to session-log
-	 * 
+	 *
 	 * @param string $sid Session-ID. If null, the current user's session id will be taken
 	 * @param bool $logoutPressed True if it was manual logout
 	 */
@@ -460,7 +460,7 @@ class UserSession extends Session
 			WHERE
 				id='".$sid."'
 			;");
-			
+
 			dbquery("
 					UPDATE
 						users
@@ -483,7 +483,7 @@ class UserSession extends Session
 	static function cleanup()
 	{
 		$cfg = Config::getInstance();
-		
+
 		$res = dbquery("
 		SELECT
 			id

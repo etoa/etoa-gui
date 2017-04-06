@@ -17,13 +17,13 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 	/**
 	* Recycles ships and defense
 	*
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/	
+	*/
 
 	// DEFINITIONEN //
 
@@ -32,12 +32,12 @@
 
 	// Maxmimale Recyclingtech effizient
 	define("RECYC_MAX_PAYBACK", $cfg->recyc_max_payback->v);
-	
+
 	// BEGIN SKRIPT //
 
 	echo "<h1>Recyclingstation des Planeten ".$cp->name."</h1>";
 	echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
-	
+
 	//Recycling Level laden
 	$rtres = dbquery("
 	SELECT
@@ -64,7 +64,7 @@
 		$cnt=0;
 		$log_ships="";
 		$log_def="";
-		
+
 		tableStart("Recycling");
  		echo "<tr><td>Deine Recyclingtechnologie ist auf Stufe ".$tech_level." entwickelt. Es werden ".$pb_percent." % der Kosten zur&uuml;ckerstattet.<br/>Der Recyclingvorgang kann nicht r&uuml;ckg&auml;ngig gemacht werden, die Objekte werden sofort verschrottet!</td></tr>";
 		tableEnd();
@@ -75,10 +75,11 @@
 			//Anzahl muss grösser als 0 sein
 			if (count($_POST['ship_count'])>0)
 			{
+			    $recycled = [];
 				foreach ($_POST['ship_count'] as $id=>$num)
 				{
 					$id = intval($id);
-					
+
 					$num=abs($num);
 					if($num>0)
 					{
@@ -103,13 +104,13 @@
             if (mysql_num_rows($res)>0)
             {
                 $arr = mysql_fetch_array($res);
-                
+
                 //Anzahl anpassen, wenn angegebene Anzahl grösser ist, als die effektive Anzahl auf dem Planeten
                 if($num > $arr['shiplist_count'])
                 {
                 	$num=$arr['shiplist_count'];
               	}
-              	
+
                 //Schiffe vom Planeten abziehen
                 dbquery("
                 UPDATE
@@ -130,11 +131,12 @@
                 $cnt+=$num;
 
                 $log_ships.="[B]".$arr['ship_name'].":[/B] ".$num."\n";
-              	
+                $recycled[$id] = $num;
+
             }
         	}
 				}
-				
+
 				//Rohstoffe Updaten
 				dbquery("
 				UPDATE
@@ -147,14 +149,14 @@
           planet_res_food=planet_res_food+".$pb[4]."
 				WHERE
 					id='".$cp->id()."';");
-					
-					
+
+
 				//Rohstoffe auf dem Planeten aktualisieren
 		    $cp->resMetal+=$pb[0];
 		    $cp->resCrystal+=$pb[1];
 		    $cp->resPlastic+=$pb[2];
 		    $cp->resFuel+=$pb[3];
-		    $cp->resFood+=$pb[4];				
+		    $cp->resFood+=$pb[4];
 
 
 				//Log schreiben
@@ -164,6 +166,9 @@
 
 			}
 			success_msg(nf($cnt)." Schiffe erfolgreich recycelt!");
+            foreach ($recycled as $id => $num) {
+                $app['dispatcher']->dispatch(\EtoA\Ship\Event\ShipRecycle::RECYCLE_SUCCESS, new \EtoA\Ship\Event\ShipRecycle($id, $num));
+            }
 		}
 
 
@@ -174,6 +179,7 @@
 			if (count($_POST['def_count'])>0)
 			{
 				$fields = 0;
+                $recycled = [];
 				foreach ($_POST['def_count'] as $id=>$num)
 				{
 					$num=abs($num);
@@ -201,13 +207,13 @@
             if (mysql_num_rows($res)>0)
             {
                 $arr = mysql_fetch_array($res);
-                
+
                  //Anzahl anpassen, wenn angegebene Anzahl grösser ist, als die effektive Anzahl auf dem Planeten
                 if($num > $arr['deflist_count'])
                 {
                 	$num=$arr['deflist_count'];
               	}
-              	               
+
                 //Defese vom Planeten Abziehen
                 dbquery("
                 UPDATE
@@ -229,10 +235,11 @@
                 $cnt+=$num;
 
                 $log_def.="[B]".$arr['def_name'].":[/B] ".$num."\n";
+                $recycled[$id] = $num;
             }
         	}
 				}
-				
+
 				//Rohstoffe und Felder updaten
 				dbquery("
 				UPDATE
@@ -260,6 +267,9 @@
 				add_log(12,$log,time());
 			}
 			success_msg("".nf($cnt)." Verteidigungsanlagen erfolgreich recycelt!");
+            foreach ($recycled as $id => $num) {
+                $app['dispatcher']->dispatch(\EtoA\Defense\Event\DefenseRecycle::RECYCLE_SUCCESS, new \EtoA\Defense\Event\DefenseRecycle($id, $num));
+            }
 		}
 
 
@@ -307,7 +317,7 @@
 								</td>
 						</tr>\n";
 			}
-			
+
 			tableEnd();
 			echo "<input type=\"submit\" class=\"button\" name=\"submit_recycle_ships\" value=\"Ausgew&auml;hlte Schiffe recyceln\"><br/></form>";
 		}

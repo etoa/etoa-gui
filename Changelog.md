@@ -6,15 +6,20 @@ Version 3.5.15
 
 ### Bugfixes ###
 
+ * heal-bug fixed where joint defending lead to overhealing
  * fixed allianceattack bug where u could join without timelimit
  * fixed bonuscapacity from myslis for capacity in flightoverview, fetch and collect actions
  * fixed wrong error msg after trying to buy missles without enough ressources
 
 ### Features ###
- 
+
+ * Heal limitation added, adjustable in the tool
+ * Logistic population growth added
  * reservated ships will be shown at top of market now
  * colorpicker for chatcolor
-
+ * added log for nickchange
+ * deleting request will trigger umode now
+ 
 Version 3.5.14.1
 ---------------
 

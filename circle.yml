@@ -1,10 +1,11 @@
 machine:
   php:
-    version: 5.4.5
+    version: 5.6.5
 
 test:
   override:
     - echo '{"host":"127.0.0.1","dbname":"circle_test","user":"ubuntu","password":""}' > htdocs/config/db.conf
     - php composer.phar install --prefer-dist
     - php bin/db.php migrate
+    - echo '{"host":"127.0.0.1","dbname":"circle","user":"ubuntu","password":""}' > htdocs/config/db.conf
     - make ci

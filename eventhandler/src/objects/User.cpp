@@ -87,9 +87,10 @@
 	}
 	
 	void User::setDiscovered(short absX, short absY) {
-	    this->setDiscovered(absX, absY, 1);
+        Config &config = Config::instance();
+	    this->setDiscovered(absX, absY, (int)config.nget("explor_radius",0));
     }    
-        
+
     void User::setDiscovered(short absX, short absY, short radius) {
 		
 		Config &config = Config::instance();

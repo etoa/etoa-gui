@@ -17,13 +17,13 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 	/**
 	* The townhall, a public alliance messageboard
 	*
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/	
+	*/
 
 	//
 	// Script zum Anzeigen/Verbergen von Texten
@@ -34,29 +34,29 @@
 	{
 		if (document.getElementById(switchId).innerHTML=="Anzeigen")
 		{
-			document.getElementById(elemId).style.display='';	
+			document.getElementById(elemId).style.display='';
 			document.getElementById(switchId).innerHTML="Verbergen";
 		}
 		else
 		{
-			document.getElementById(elemId).style.display='none';					
+			document.getElementById(elemId).style.display='none';
 			document.getElementById(switchId).innerHTML="Anzeigen";
-		}		
+		}
 	}
-	
+
 	</script>
 	<?PHP
 
-	echo "<h1>Ratshaus</h1>";
+	echo "<h1>Rathaus</h1>";
 	echo "Im Rathaus k&ouml;nnen Allianzen Nachrichten an ihre Mitglieder oder an 
 	andere Allianzen ver&ouml;ffentlichen; diese Nachrichten k&ouml;nnen &ouml;ffentlich 
 	gemacht oder nur f&uuml;r die Empf&auml;nger lesbar publiziert werden. 
 	Zum Verfassen einer Nachricht benutze die entsprechende Option auf der Allianzseite.<br><br><br>";
-	
-	
+
+
 	//
 	// Neuste Nachrichten
-	//	
+	//
 	$anres=dbquery("
 	SELECT 
 		alliance_news_title,
@@ -97,7 +97,7 @@
 		while ($anarr=mysql_fetch_array($anres))
 		{
 			$id = "th".$anarr['alliance_news_id'];
-			$sid = "sth".$anarr['alliance_news_id'];				
+			$sid = "sth".$anarr['alliance_news_id'];
 
 			echo "<tr><td>".text2html($anarr['alliance_news_title'])."</td>";
 			echo "<td>".df($anarr['alliance_news_date'])."</td>";
@@ -124,11 +124,11 @@
 				else
 				{
 					echo "<i>Unbekannter Verfasser</i>";
-				}					
+				}
 				echo "</td>
-			</tr>";				
+			</tr>";
 		}
-		tableEnd();		
+		tableEnd();
 	}
 	else
 	{
@@ -181,7 +181,7 @@
 		while ($anarr=mysql_fetch_array($anres))
 		{
 			$id = "th".$anarr['alliance_news_id'];
-			$sid = "sth".$anarr['alliance_news_id'];				
+			$sid = "sth".$anarr['alliance_news_id'];
 
 			echo "<tr><td>".text2html($anarr['alliance_news_title'])."</td>";
 			echo "<td>".df($anarr['alliance_news_date'])."</td>";
@@ -209,11 +209,11 @@
 				else
 				{
 					echo "<i>Unbekannter Verfasser</i>";
-				}					
+				}
 				echo "</td>
-			</tr>";				
+			</tr>";
 		}
-		tableEnd();		
+		tableEnd();
 	}
 	else
 	{
@@ -266,7 +266,7 @@
 		while ($arr=mysql_fetch_array($res))
 		{
 			$id = "bnd".$arr['alliance_bnd_id'];
-			$sid = "sbnd".$arr['alliance_bnd_id'];			
+			$sid = "sbnd".$arr['alliance_bnd_id'];
 			echo "<tr>
 				<td><a href=\"?page=alliance&amp;info_id=".$arr['aid1']."\" ".tm($arr['at1'],text2html($arr['an1'])).">".text2html($arr['an1'])."</td>
 				<td><a href=\"?page=alliance&amp;info_id=".$arr['aid2']."\" ".tm($arr['at2'],text2html($arr['an2'])).">".text2html($arr['an2'])."</td>
@@ -282,11 +282,11 @@
 					echo "-";
 				}
 				echo "</td>
-			</tr>";			
+			</tr>";
 			echo "<tr id=\"".$id."\" style=\"display:none;\">
 				<td colspan=\"5\">".text2html(stripslashes($arr['alliance_bnd_text_pub']))."</td>
 			</tr>";
-		}		
+		}
 		tableEnd();
 	}
 	else
@@ -295,7 +295,7 @@
 		echo "Es sind momentan keine Nachrichten vorhanden!";
 		iBoxEnd();
 	}
-	
+
 
 	//
 	// Kriege
@@ -353,11 +353,11 @@
 					echo "-";
 				}
 				echo "</td>
-			</tr>";			
+			</tr>";
 			echo "<tr id=\"".$id."\" style=\"display:none;\">
 				<td colspan=\"5\">".text2html(stripslashes($arr['alliance_bnd_text_pub']))."</td>
 			</tr>";
-		}		
+		}
 		tableEnd();
 	}
 	else
@@ -366,7 +366,7 @@
 		echo "Es sind momentan keine Nachrichten vorhanden!";
 		iBoxEnd();
 	}
-	
+
 
 	//
 	// Friedensabkommen
@@ -409,8 +409,8 @@
 				<td><a href=\"?page=alliance&amp;info_id=".$arr['aid2']."\" ".tm($arr['at2'],text2html($arr['an2'])).">".text2html($arr['an2'])."</td>
 				<td>".df($arr['alliance_bnd_date'])."</td>
 				<td>".df($arr['alliance_bnd_date']+PEACE_DURATION)."</td>
-			</tr>";			
-		}		
+			</tr>";
+		}
 		tableEnd();
 	}
 	else

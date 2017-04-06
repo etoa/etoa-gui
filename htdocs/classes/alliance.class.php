@@ -264,7 +264,7 @@
 				if ($key == "techlist" && $this->techlist == null)
 					$this->techlist = new AllianceTechlist($this->id,TRUE);
 				if ($key == "buildlist" && $this->buildlist == null)
-					$this->buildlist = new AllianceBuildlist($this->id,TRUE);
+					$this->buildlist = new AllianceBuildList($this->id,TRUE);
 
 
 				// Protected properties
@@ -354,7 +354,7 @@
 				if (mysql_num_rows($res) == 0) {
 					$this->getMembers();
 					if ($this->members[$userId]->isValid)
-					{	
+					{
 						$this->members[$userId]->alliance = null;
 						$this->members[$userId]->allianceLeave = time();
 						if ($this->members[$userId]->allianceId == 0)
@@ -817,7 +817,7 @@
 							WHERE
 								alliance_tag=?
 								OR alliance_name=?
-							LIMIT 1;", 
+							LIMIT 1;",
                 array($data['tag'], $data['name'])
               );
 							if (mysql_result($res,0)==0)
@@ -835,9 +835,9 @@
 								VALUES
 								(?,?,?,?,?);",
                   array(
-                    $data['tag'], 
-                    $data['name'], 
-                    $data['founder']->id, 
+                    $data['tag'],
+                    $data['name'],
+                    $data['founder']->id,
                     time(),
 					1)
 
@@ -965,7 +965,7 @@
 		// Berechnet Kostendifferenz
 
 		if ($this->buildlist == null)
-				$this->buildlist = new AllianceBuildlist($this->id);
+				$this->buildlist = new AllianceBuildList($this->id);
 		$buildingIterator = $this->buildlist->getIterator();
 
 		while ($buildingIterator->valid())
