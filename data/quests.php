@@ -219,6 +219,15 @@ return [
                 'technology_id' => 3,
             ],
         ],
+        'trigger' => [
+            'id' => 0,
+            'type' => 'have-technology-level',
+            'operator' => 'less-than',
+            'value' => 5,
+            'attributes' => [
+                'technology_id' => 3,
+            ],
+        ],
         'rewards' => [
             [
                 'type' => 'ship',
@@ -236,6 +245,15 @@ return [
             'type' => 'have-defense',
             'operator' => 'equal-to-or-more',
             'description' => 'Baue NEKKAR Plasmawerfer bis du insgesamt 10 hast.',
+            'value' => 10,
+            'attributes' => [
+                'defense_id' => 7,
+            ],
+        ],
+        'trigger' => [
+            'id' => 0,
+            'type' => 'have-defense',
+            'operator' => 'less-than',
             'value' => 10,
             'attributes' => [
                 'defense_id' => 7,
@@ -319,6 +337,12 @@ return [
             'operator' => 'equal-to-or-more',
             'description' => 'Hab mindestens 200 Punkte',
             'value' => 200,
+        ],
+        'trigger' => [
+            'id' => 0,
+            'type' => 'have-points',
+            'operator' => 'less-than',
+            'value' => 150,
         ],
         'rewards' => [
             [
