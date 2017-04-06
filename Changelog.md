@@ -17,7 +17,9 @@ Version 3.5.15
  * Logistic population growth added
  * reservated ships will be shown at top of market now
  * colorpicker for chatcolor
-
+ * added log for nickchange
+ * deleting request will trigger umode now
+ 
 Version 3.5.14.1
 ---------------
 

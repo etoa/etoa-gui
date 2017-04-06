@@ -24,10 +24,11 @@ class User implements \EtoA\User\UserInterface
 	protected $isValid; // Checker if class instance belongs to valid user
 	protected $maskMatrix; // Matrix for the "fog of war" effect in the space map
 	protected $realName;
+	protected $pw;
 	protected $email;
 	protected $emailFix;
-  protected $d_email;   //Dual E-mail
-  protected $d_realName; //Dual name
+    protected $d_email;   //Dual E-mail
+    protected $d_realName; //Dual name
 	protected $lastOnline;
 	protected $acttime;
 	protected $points;
@@ -108,12 +109,13 @@ class User implements \EtoA\User\UserInterface
 			$arr = mysql_fetch_assoc($res);
 
 			$this->nick=$arr['user_nick'];
+			$this->pw = $arr['user_password'];
 			$this->realName=$arr['user_name'];
 			$this->email=$arr['user_email'];
 			$this->emailFix=$arr['user_email_fix'];
 
-      $this -> d_email = $arr['dual_email'];
-      $this -> d_realName = $arr['dual_name'];
+            $this -> d_email = $arr['dual_email'];
+            $this -> d_realName = $arr['dual_name'];
 
 			$this->lastOnline=$arr['user_logouttime'];
 			$this->acttime = null;
@@ -749,6 +751,44 @@ class User implements \EtoA\User\UserInterface
 		");
 	}
 
+    /**
+     * Löschantrag stellen
+     */
+    function deleteRequest($pw) {
+        if (validatePasswort($pw, $this->pw))
+        {
+            $t = time() + (USER_DELETE_DAYS*3600*24);
+            dbquery("
+				UPDATE
+					users
+				SET
+					user_deleted=".$t."
+				WHERE
+					user_id=".$this->id."
+				;");
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /**
+     * Löschantrag widerrufen
+     */
+
+    function revokeDelete() {
+        dbquery("
+			UPDATE
+				users
+			SET
+				user_deleted=0
+			WHERE
+				user_id=".$this->id."
+			;");
+    }
+
 	/**
 	* Benutzer löschen
 	*/
@@ -959,6 +999,252 @@ die Spielleitung";
 			error_msg("Konnte UserXML für ".$this->id." nicht exportieren, User nicht gelöscht!");
 		}
 	}
+
+
+    /**
+     * Umode aktivieren
+     */
+
+    function activateUmode($force = false)
+    {
+
+        $cres = dbquery("SELECT id FROM fleet WHERE user_id='" . $this->id . "';");
+        $carr = mysql_fetch_row($cres);
+        if ($carr[0] == 0 || $force) {
+            $pres = dbquery("SELECT 
+                                    f.id 
+                                FROM 
+                                    fleet as f
+                                INNER JOIN
+                                    planets as p
+                                ON f.entity_to=p.id
+                                AND p.planet_user_id='" . $this->id . "'
+                                AND (f.user_id='" . $this->id . "' OR (status=0 AND action NOT IN ('collectdebris','explore','flight','createdebris')));");
+            $parr = mysql_fetch_row($pres);
+            if ($parr[0] == 0 || $force) {
+                $sres = dbquery("SELECT 
+                                        queue_id,
+                                        queue_starttime 
+                                    FROM 
+                                        ship_queue 
+                                    WHERE 
+                                        queue_user_id='" . $this->id . "';");
+                while ($sarr = mysql_fetch_row($sres)) {
+                    if ($sarr[1] > time()) {
+                        dbquery("UPDATE 
+                                        ship_queue 
+                                    SET 
+                                        queue_build_type=1
+                                    WHERE 
+                                        queue_user_id='" . $this->id . "';");
+                    } else {
+                        dbquery("UPDATE 
+                                        ship_queue 
+                                    SET 
+                                        queue_build_type=1
+                                    WHERE 
+                                        queue_user_id='" . $this->id . "';");
+                    }
+                }
+                $sres = dbquery("SELECT 
+                                        queue_id,
+                                        queue_starttime 
+                                    FROM 
+                                        def_queue 
+                                    WHERE 
+                                        queue_user_id='" . $this->id . "';");
+                while ($sarr = mysql_fetch_row($sres)) {
+                    if ($sarr[1] > time()) {
+                        dbquery("UPDATE 
+                                        def_queue 
+                                    SET 
+                                        queue_build_type=1
+                                    WHERE 
+                                        queue_user_id='" . $this->id . "';");
+                    } else {
+                        dbquery("UPDATE 
+                                        def_queue 
+                                    SET 
+                                        queue_build_type=1
+                                    WHERE 
+                                        queue_user_id='" . $this->id . "';");
+                    }
+                }
+
+                dbquery("UPDATE 
+                                buildlist 
+                            SET 
+                                buildlist_build_type = 1
+                            WHERE 
+                                buildlist_user_id='" . $this->id . "' 
+                                AND buildlist_build_start_time>0;");
+                dbquery("UPDATE 
+                                techlist 
+                            SET 
+                                techlist_build_type=1
+                            WHERE 
+                                techlist_user_id='" . $this->id . "' 
+                                AND techlist_build_start_time>0;");
+
+                $hfrom = time();
+
+                $hto = $hfrom + (MIN_UMOD_TIME*24*3600);
+                dbquery("
+                        UPDATE
+                            planets
+                        SET
+                            planet_last_updated='0',
+                            planet_prod_metal=0,
+                            planet_prod_crystal=0,
+                            planet_prod_plastic=0,
+                            planet_prod_fuel=0,
+                            planet_prod_food=0
+                        WHERE
+                            planet_user_id='" . $this->id . "';");
+
+                dbquery("UPDATE users SET user_hmode_from=$hfrom,user_hmode_to=$hto,user_logouttime='" . time() . "' WHERE user_id='" . $this->id . "';");
+
+                $this->hmode_from = $hfrom;
+                $this->hmode_to = $hto;
+                return true;
+            }
+            else
+                return false;
+        }
+        else
+            return false;
+
+    }
+
+    /**
+     * Umode aufheben
+     */
+
+    function removeUmode($force = false) {
+
+        if (($this->hmode_from > 0 && $this->hmode_from < time() && $this->hmode_to < time()) || $force) {
+            $hmodTime = time() - $this->hmode_from;
+            $bres = dbquery("
+								SELECT
+									buildlist_id,
+									buildlist_build_end_time,
+									buildlist_build_start_time,
+									buildlist_build_type
+								FROM
+									buildlist
+								WHERE
+									buildlist_build_start_time>0
+									AND buildlist_build_type>0
+									AND buildlist_user_id=" . $this->id . ";");
+
+            while ($barr = mysql_fetch_row($bres)) {
+                $start = $barr[2] + $hmodTime;
+                $end = $barr[1] + $hmodTime;
+                $status = $barr[3] + 2;
+                dbquery("UPDATE
+								buildlist
+							SET
+								buildlist_build_type='" . $status . "',
+								buildlist_build_start_time='" . $start . "',
+								buildlist_build_end_time='" . $end . "'
+							WHERE
+								buildlist_id='" . $barr[0] . "';");
+            }
+
+            $tres = dbquery("
+								SELECT
+									techlist_id,
+									techlist_build_end_time,
+									techlist_build_start_time,
+									techlist_build_type
+								FROM
+									techlist
+								WHERE
+									techlist_build_start_time>0
+									AND techlist_build_type>0
+									AND techlist_user_id=" . $this->id . ";");
+
+            while ($tarr = mysql_fetch_row($tres)) {
+                $status = $tarr[3] + 2;
+                $start = $tarr[2] + $hmodTime;
+                $end = $tarr[1] + $hmodTime;
+                dbquery("UPDATE
+								techlist
+							SET
+								techlist_build_type='" . $status . "',
+								techlist_build_start_time='" . $start . "',
+								techlist_build_end_time='" . $end . "'
+							WHERE
+								techlist_id=" . $tarr[0] . ";");
+            }
+
+            $sres = dbquery("SELECT 
+									queue_id,
+									queue_endtime,
+									queue_starttime
+								 FROM 
+								 	ship_queue 
+								WHERE 
+									queue_user_id='" . $this->id . "'
+								ORDER BY 
+									queue_starttime ASC;");
+            $time = time();
+            while ($sarr = mysql_fetch_row($sres)) {
+                $start = $sarr[2] + $hmodTime;
+                $end = $sarr[1] + $hmodTime;
+                dbquery("UPDATE 
+								ship_queue
+							SET
+								queue_build_type=0,
+								queue_starttime='" . $start . "',
+								queue_endtime='" . $end . "'
+							WHERE
+								queue_id=" . $sarr[0] . ";");
+            }
+
+            $dres = dbquery("SELECT 
+									queue_id,
+									queue_endtime,
+									queue_starttime
+								 FROM 
+								 	def_queue 
+								WHERE 
+									queue_user_id='" . $this->id . "'
+								ORDER BY 
+									queue_starttime ASC;");
+            $time = time();
+            while ($darr = mysql_fetch_row($dres)) {
+                $start = $darr[2] + $hmodTime;
+                $end = $darr[1] + $hmodTime;
+                dbquery("UPDATE 
+								def_queue
+							SET
+								queue_build_type=0,
+							queue_starttime='" . $start . "',
+								queue_endtime='" . $end . "'
+							WHERE
+								queue_id=" . $darr[0] . ";");
+            }
+
+            // Prolong specialist contract
+            dbquery("
+                UPDATE
+                  users
+                SET
+                  user_specialist_time=user_specialist_time+" . $hmodTime . "
+                WHERE
+                  user_specialist_id > 0
+                  AND user_id=" . $this->id . "
+                ;");
+
+            dbquery("UPDATE users SET user_hmode_from=0,user_hmode_to=0,user_logouttime='" . time() . "' WHERE user_id='" . $this->id . "';");
+            dbquery("UPDATE planets SET planet_last_updated=" . time() . " WHERE planet_user_id='" . $this->id . "';");
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 
 	/**
 	* Registers a new user
