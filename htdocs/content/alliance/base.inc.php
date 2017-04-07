@@ -1661,7 +1661,6 @@ echo "<div id=\"tabCheckpoints\" style=\"display:".$display.";\">";
 if($checkpoints)
 {
 
-    echo '<div>'
     echo '<script type="text/javascript">xajax_havenShowShips();</script>';
 
     $fm = new FleetManager($npc->id,$cu->allianceId);
