@@ -845,8 +845,8 @@
 								$id = mysql_insert_id();
                                 $returnMsg = new Alliance(mysql_insert_id());
                                 $data['founder']->alliance = $returnMsg;
-                                $data['founder']->addToUserLog("alliance","{nick} hat die Allianz [b]".$returnMsg."[/b] gegründet.");
-                                $returnMsg->addHistory("Die Allianz [b]".$returnMsg."[/b] wurde von [b]".$data['founder']."[/b] gegründet!");
+                                $data['founder']->addToUserLog("alliance","{nick} hat die Allianz [b]".$data['name']."[/b] gegründet.");
+                                $returnMsg->addHistory("Die Allianz [b]".$data['name']."[/b] wurde von [b]".$data['founder']."[/b] gegründet!");
 
                                 User::register('bot','bot@bot.de','bot',generatePasswort(),null,true,$id,1);
                                 return true;

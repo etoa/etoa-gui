@@ -106,7 +106,7 @@
 					"founder" => $cu
 					),$rtnMsg))
 				{
-					success_msg("Allianz [b]".$rtnMsg."[/b] gegründet!");
+					success_msg("Allianz [b]".$_POST['alliance_name']."[/b] gegründet!");
 					echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Weiter\" />";
 					$finish = true;
 
