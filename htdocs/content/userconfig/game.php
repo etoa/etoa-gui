@@ -211,14 +211,15 @@
         </tr>";  
 
 // Chat font color
+echo '<script type="text/javascript" src="web/js/vendor/jscolor.min.js"></script>';
 echo "<tr>
   			<th>Chat Schriftfarbe:</th>
   			<td>
             #<input type=\"text\"
+            		class='jscolor'
 					id=\"chat_color\"
 					name=\"chat_color\"
 					size=\"6\"
-					maxsize=\"6\"
 					value=\"".$cu->properties->chatColor."\"
 					onkeyup=\"addFontColor(this.id,'chatPreview')\"
 					onchange=\"addFontColor(this.id,'chatPreview')\"/>&nbsp;

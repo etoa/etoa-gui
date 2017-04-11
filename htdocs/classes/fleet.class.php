@@ -1,5 +1,5 @@
 <?PHP
-	
+
 	/**
 	* Handles data and actions for a fleet object
 	*
@@ -21,7 +21,7 @@
 		private $landTime;
 		private $nextActionTime;
 		private $ships;
-		
+
 		/**
 		* Constructor
 		*
@@ -35,13 +35,13 @@
 			} else {
 				$uidStr = "";
 			}
-				
+
 			if ($leadid>0) {
 				$leadStr = " leader_id=".$leadid."";
 			} else {
 				$leadStr = " id=".$fid."";
 			}
-			
+
 			$this->valid = false;
 			$res = dbquery("
 			SELECT
@@ -81,9 +81,9 @@
 				$this->resFood = $arr['res_food'];
 				$this->resPower = $arr['res_power'];
 				$this->resPeople = $arr['res_people'];
-                
+
 				$this->valid = true;
-				
+
 				// TODO: Needs some improvement / redesign
 				if (mysql_num_rows($res) > 1)
 				{
@@ -99,7 +99,7 @@
 					$this->fleets = array(); // Hack to avoid notice error!
 			}
 		}
-		
+
 		//
 		// Getters
 		//
@@ -109,7 +109,7 @@
 		function leaderId() { return $this->leaderId; }
 		function launchTime() {	return $this->launchTime; }
 		function landTime() {	return $this->landTime;	}
-		
+
 		function ownerAllianceId()
 		{
 			$res = dbquery("
@@ -124,9 +124,9 @@
 			return $arr[0];
 		}
 
-		function remainingTime() 
-		{	
-			return max(0,$this->landTime-time()); 
+		function remainingTime()
+		{
+			return max(0,$this->landTime-time());
 		}
 
 		function pilots($fleet=-1)
@@ -140,11 +140,11 @@
 				}
 			}
 			return $this->pilots + $cnt;
-		
-		}		
-		function status() 
-		{ 
-			return $this->status; 
+
+		}
+		function status()
+		{
+			return $this->status;
 		}
 
 		function usageFuel($fleet=-1) {
@@ -158,7 +158,7 @@
 			}
 			return $this->usageFuel + $cnt;
 		}
-		
+
 		function usageFood($fleet=-1) {
 			$cnt = 0;
 			if ($fleet<0 && count($this->fleets))
@@ -170,7 +170,7 @@
 			}
 			return $this->usageFood + $cnt;
 		}
-		
+
 		function usagePower($fleet=-1) {
 			$cnt = 0;
 			if ($fleet<0 && count($this->fleets))
@@ -182,7 +182,7 @@
 			}
 			return $this->usagePower + $cnt;
 		}
-	
+
 		function resMetal($fleet=-1) {
 			$cnt = 0;
 			if ($fleet<0 && count($this->fleets))
@@ -194,7 +194,7 @@
 			}
 			return $this->resMetal + $cnt;
 		}
-	
+
 		function resCrystal($fleet=-1) {
 			$cnt = 0;
 			if (count($this->fleets) && $fleet<0)
@@ -206,7 +206,7 @@
 			}
 			return $this->resCrystal + $cnt;
 		}
-	
+
 		function resPlastic($fleet=-1) {
 			$cnt = 0;
 			if (count($this->fleets) && $fleet<0)
@@ -218,7 +218,7 @@
 			}
 			return $this->resPlastic + $cnt;
 		}
-	
+
 		function resFuel($fleet=-1) {
 			$cnt = 0;
 			if (count($this->fleets) && $fleet<0)
@@ -230,7 +230,7 @@
 			}
 			return $this->resFuel + $cnt;
 		}
-	
+
 		function resFood($fleet=-1) {
 			$cnt = 0;
 			if (count($this->fleets) && $fleet<0)
@@ -242,7 +242,7 @@
 			}
 			return $this->resFood + $cnt;
 		}
-	
+
 		function resPower($fleet=-1) {
 			$cnt = 0;
 			if (count($this->fleets) && $fleet<0)
@@ -254,7 +254,7 @@
 			}
 			return $this->resPower + $cnt;
 		}
-	
+
 		function resPeople($fleet=-1) {
 			$cnt = 0;
 			if (count($this->fleets) && $fleet<0)
@@ -266,10 +266,10 @@
 			}
 			return $this->resPeople + $cnt;
 		}
-		
+
 		/**
 		* Loads the source entity (if needed) and returns it
-		*/		
+		*/
 		function & getSource()
 		{
 			if (!isset($this->source))
@@ -280,7 +280,7 @@
 					$this->source = Entity::createFactory($this->getAction()->sourceCode());
 			}
 			return $this->source;
-		}		
+		}
 
 		/**
 		* Loads the target entity (if needed) and returns it
@@ -293,7 +293,7 @@
 			}
 			return $this->target;
 		}
-		
+
 		/**
 		* Loads the home entity (if needed) and returns it, special for the support action!!
 		*/
@@ -305,7 +305,7 @@
 			}
 			return $this->home;
 		}
-		
+
 		/**
 		* Loads and returns the flet action object
 		*/
@@ -317,18 +317,18 @@
 			}
 			return $this->action;
 		}
-		
-		
+
+
 		/**
-		* Load fleet's ship id's and stores them 
+		* Load fleet's ship id's and stores them
 		* in the shipIds array
 		*/
 		private function loadShipIds($fleet=-1)
 		{
 			$this->shipsIds = array();
-			$this->shipCount = 0;	
+			$this->shipCount = 0;
 			if (count($this->fleets) && $fleet<0)
-			{	
+			{
 				$sres = dbquery("
 					SELECT 
 						fs_ship_id, 
@@ -345,7 +345,7 @@
 					GROUP BY 
 						fs_ship_id
 				;");
-				
+
 			}
 			else
 			{
@@ -371,7 +371,7 @@
 				}
 			}
 		}
-		
+
 		/**
 		* Returns the total amount of ships
 		* in the fleet (load them first if needed)
@@ -382,9 +382,9 @@
 			{
 				$this->loadShipIds();
 			}
-			return $this->shipCount;			
+			return $this->shipCount;
 		}
-		
+
 		/**
 		* Returns the array of the ship id's
 		*/
@@ -394,9 +394,9 @@
 			{
 				$this->loadShipIds();
 			}
-			return $this->shipsIds;			
+			return $this->shipsIds;
 		}
-		
+
 		/**
 		* Loads and returns an array of
 		* all ship objects
@@ -409,22 +409,25 @@
 				foreach ($this->getShipIds() as $sid=>$cnt)
 				{
 					$this->ships[$sid] = new Ship($sid);
-				}		
+				}
 			}
-			return $this->ships;			
+			return $this->ships;
 		}
-		
+
 		/**
 		* Returns the full storage capacity
 		*/
 		function getCapacity()
 		{
 			$this->capacity = 0;
+			$this-> BCapa = 1;
 			foreach ($this->getShips() as $sid => $sobj)
 			{
 				$this->capacity += $sobj->capacity() * $this->shipsIds[$sid];
+				$this-> BCapa += $sobj->bCapa*10;
 			}
-			return $this->capacity;
+
+			return $this->capacity*$this->BCapa;
 		}
 
 		/**
@@ -447,13 +450,13 @@
 		{
 			return $this->getPeopleCapacity() - $this->resPeople;
 		}
-		
+
 		/**
 		* Returns the free storage capacity
 		*/
 		function getFreeCapacity()
 		{
-			return $this->getCapacity() 
+			return $this->getCapacity()
 			- $this->usageFuel
 			- $this->usageFood
 			-	$this->usagePower
@@ -464,7 +467,7 @@
 			-	$this->resFood
 			-	$this->resPower;
 		}
-		
+
 		/**
 		* Cancels the flight, this means that it sets on a
 		* return course with the cancelled status flag enabled.
@@ -515,26 +518,26 @@
 												leader_id='".$arr[0]."'
 											WHERE
 												leader_id='".$this->id."';");
-								}	
+								}
 							}
 						}
-						
-						$log = new Fleetlog($this->ownerId,$this->sourceId);
+
+						$log = new FleetLog($this->ownerId,$this->sourceId);
 						$log->cancel($this->id,$this->launchTime,$this->landTime,$this->targetId,$this->actionCode,$this->status,$this->pilots);
 						$log->addFleetRes(array($this->resMetal,$this->resCrystal,$this->resPlastic,$this->resFuel,$this->resFood),$this->resPeople,null,false);
-						
+
                         // ### STATUS ###
                         // 0: Hinflug
                         // 1: Rückflug
                         // 2: Abgebrochen
                         // 3: Supporting
-                        
+
 						$time = time();
 						// how long is the fleet already flying
 						$difftime = 0;//time() - $this->launchTime;
 						// what is the total flight time (one-way plus supporting time)
 						$tottime = 0;//$this->landTime() - $this->launchTime + $this->nextActionTime;
-						
+
 						// status 3 => supporting at target
 						if ($this->actionCode=="support" && $this->status==3)
 						{
@@ -543,12 +546,12 @@
 							$difftime = $time - $this->launchTime + $this->nextActionTime;
 							// total support time plus single way from source to target
 							$tottime = $this->landTime() - $this->launchTime + $this->nextActionTime;
-							
+
 							$this->launchTime = $time;
 							$this->landTime = $time + $this->nextActionTime;
-							
+
 							$this->targetId = $this->nextId;
-                            
+
                             $this->removeSupportRes();
 						}
 						else
@@ -566,15 +569,15 @@
 								// single way from source to target
 								$tottime = $this->landTime() - $this->launchTime;
 							}
-							
+
 							$this->launchTime = $time;
 							$this->landTime = $time + $difftime ;
-							
+
 							$tmp = $this->targetId;
 							$this->targetId = $this->sourceId;
 							$this->sourceId = $tmp;
 						}
-						
+
 						$this->status = 2;
 						$this->leaderId = 0;
 						$passed = $difftime / $tottime;
@@ -588,7 +591,7 @@
 						$this->usageFuel = floor($this->usageFuel * $passed);
 						$this->usageFood = floor($this->usageFood * $passed);
 						$this->usagePower = floor($this->usagePower * $passed);
-						
+
 						$log->fuel = $this->usageFuel;
 						$log->food = $this->usageFood;
 						$log->addFleetRes(array($this->resMetal,$this->resCrystal,$this->resPlastic,$this->resFuel,$this->resFood),$this->resPeople,null,true);
@@ -621,25 +624,25 @@
 					$difftime = $this->landTime() - $this->launchTime;
 				else
 					$difftime = time() - $this->launchTime;
-				
+
 				$this->launchTime = time();
 				$this->landTime = $this->launchTime + $difftime ;
-				
+
 				$tmp = $this->targetId;
 				$this->targetId = $this->sourceId;
 				$this->sourceId = $tmp;
-				
+
 				$this->status = 1;
 				$this->leaderId = 0;
-	
-				$this->update();	
-				return true;			
+
+				$this->update();
+				return true;
 			}
 			else
 				$this->error = "Flotte ist bereits auf dem R�ckflug!";
 			return false;
 		}
-		
+
 		/**
 		* Updates changed data with the database
 		*/
@@ -666,13 +669,13 @@
 				res_power='".$this->resPower."',
 				res_people='".$this->resPeople."'
 			WHERE 
-				id='".$this->id."';");			
+				id='".$this->id."';");
 			if (mysql_affected_rows()>0)
 				return true;
 			return false;
 		}
 
-		/** 
+		/**
 		* Add a given ammount of ships specified by
 		* their id to the fleet
 		*/
@@ -706,7 +709,7 @@
 			$this->shipIds[$shipId] = $this->shipIds[$shipId] + $count;
 			return true;
 		}
-		
+
 		/**
 		* Remove all ships of the given ship id from the fleet
 		*/
@@ -718,12 +721,12 @@
 			WHERE
 				fs_ship_id=".$shipId."
 				AND fs_fleet_id=".$this->id."
-			;");		
+			;");
 			unset ($this->shipIds[$shipId]);
 			unset ($this->ships[$shipId]);
 			return (boolean)mysql_affected_rows();
 		}
-		
+
 
 		/**
 		* Land fleet
@@ -739,27 +742,27 @@
 					$sl->add($sid,$scnt);
 					$this->removeShips($sid);
 				}
-				
+
 				// TODO: Perhaps all entities can get res in the future...
 				if ($this->getTarget()->code == 'p')
 				{
 					$this->getTarget()->changeRes($this->resMetal,$this->resCrystal,$this->resPlasic,$this->resFuel,$this->resFood,$this->resPower);
 					$this->getTarget()->chgPeople($this->pilots + $this->resPeople);
 
-					// Add halve of the resources used for the engines to the target, 
+					// Add halve of the resources used for the engines to the target,
 					// if the action, for example, is colonize or position
 					if ($this->status == 0)
 					{
 						$this->getTarget()->changeRes(0,0,0,$this->usageFuel/2,$this->usageFood/2,$this->usagePower/2);
 					}
 				}
-				
+
 				dbquery("
 				DELETE FROM
 					fleet
 				WHERE
 					id=".$_GET['fleetedit'].";");
-				
+
 				$this->valid = false;
 				return true;
 			}
@@ -769,7 +772,7 @@
 			}
 			return false;
 		}
-        
+
         /**
          * Removes support fuel/food for
          * cancelled fleet
@@ -786,7 +789,7 @@
 				id='".$this->id."';");
         }
 
-		
+
 		/**
 		* Returns an error message (if setup)
 		* or false
@@ -797,7 +800,7 @@
 				return $this->error;
 			return false;
 		}
-		
+
 	}
 
 ?>

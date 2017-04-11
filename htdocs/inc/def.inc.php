@@ -131,6 +131,9 @@
 	
 	// Maximale Anzahl Planeten
 	define("USER_MAX_PLANETS", $cfg->user_max_planets->v);
+
+	//Zeit bis Löschantrag ausgeführt wird
+    define ("USER_DELETE_DAYS", $cfg->user_delete_days->v);
 	
 	//
 	// Spezialiasten

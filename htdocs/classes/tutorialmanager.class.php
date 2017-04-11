@@ -20,7 +20,7 @@ class TutorialManager {
 			$t->title = $arr['text_title'];
 			$t->content = $arr['text_content'];
 			$t->step = $arr['text_step'];
-			
+
 			$pres = dbQuerySave('
 				SELECT
 					text_step
@@ -36,7 +36,7 @@ class TutorialManager {
 			if ($parr = mysql_fetch_row($pres)) {
 				$t->prev = $parr[0];
 			}
-			
+
 			$nres = dbQuerySave('
 				SELECT
 					text_step
@@ -52,12 +52,12 @@ class TutorialManager {
 			if ($narr = mysql_fetch_row($nres)) {
 				$t->next = $narr[0];
 			}
-			
+
 			return $t;
 		}
 		return null;
 	}
-	
+
 	function getText($tutorialId, $step=0) {
 		$res = dbQuerySave('
 			SELECT
@@ -76,7 +76,7 @@ class TutorialManager {
 		}
 		return null;
 	}
-	
+
 	function setUserProgess($userId, $tutorialId, $textStep) {
 		dbQuerySave('
 			REPLACE INTO
@@ -85,7 +85,7 @@ class TutorialManager {
 			VALUES (?,?,?);',
 			array($userId, $tutorialId, $textStep));
 	}
-	
+
 	function getUserProgess($userId, $tutorialId) {
 		$res = dbQuerySave('
 			SELECT
@@ -101,7 +101,7 @@ class TutorialManager {
 		}
 		return 0;
 	}
-	
+
 	function hasReadTutorial($userId, $tutorialId) {
 		$res = dbQuerySave('
 			SELECT
@@ -117,19 +117,7 @@ class TutorialManager {
 		}
 		return false;
 	}
-	
-	function closeTutorial($userId, $tutorialId) {
-		dbQuerySave('
-			UPDATE
-				tutorial_user_progress
-			SET
-				tup_closed=1
-			WHERE
-				tup_user_id=?
-				AND tup_tutorial_id=?;',
-			array($userId, $tutorialId));
-	}
-	
+
 	function reopenTutorial($userId, $tutorialId) {
 		dbQuerySave('
 			UPDATE
@@ -150,7 +138,7 @@ class TutorialManager {
 				tup_closed=0
 			WHERE
 				tup_user_id='.$userId);
-				
+
 	}
 
 }

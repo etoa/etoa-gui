@@ -137,6 +137,10 @@ input,select,textarea	{
 	border:1px solid #fff;
 }
 
+#chat_color {
+	width: 60px;
+}
+
 #topbar	{
  	text-align:right;
  	padding-right:10px;

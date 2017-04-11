@@ -339,7 +339,7 @@
 					AND buildlist_entity_id='" . $cp->id . "'");
 
 
-			Buildlist::$underConstruction = true;
+			BuildList::$underConstruction = true;
 			$cp->changeRes(-$costs['costs0'],-$costs['costs1'],-$costs['costs2'],-$costs['costs3'],-$costs['costs4']);
 
 			//Log schreiben
@@ -396,7 +396,7 @@
 
 		public function minBuildTimeFactor()
 		{
-			return (0.1-(Buildlist::$GENTECH/100));
+			return (0.1-(BuildList::$GENTECH/100));
 		}
 
 		public function demolish()
@@ -412,7 +412,7 @@
 			$this->buildType = 4;
 
 			dbquery("UPDATE buildlist SET buildlist_build_type='4', buildlist_build_start_time='".$this->startTime."', buildlist_build_end_time='".$this->endTime."' WHERE buildlist_id='".$this->id."' LIMIT 1;");
-			Buildlist::$underConstruction = true;
+			BuildList::$underConstruction = true;
 			$cp->changeRes(-$costs['costs0'],-$costs['costs1'],-$costs['costs2'],-$costs['costs3'],-$costs['costs4']);
 
 			//Log schreiben
@@ -464,7 +464,7 @@
 						AND buildlist_user_id='" . $cu->id . "'
 						AND buildlist_entity_id='" . $cp->id . "'");
 
-				Buildlist::$underConstruction = false;
+				BuildList::$underConstruction = false;
 				//Rohstoffe vom Planeten abziehen und aktualisieren
 				$cp->changeRes($costs['costs0']*$fac,$costs['costs1']*$fac,$costs['costs2']*$fac,$costs['costs3']*$fac,$costs['costs4']*$fac);
 
@@ -510,7 +510,7 @@
 				$this->buildType = 0;
 
 				dbquery("UPDATE buildlist SET buildlist_build_type='0', buildlist_build_start_time='0', buildlist_build_end_time='0' WHERE buildlist_id='".$this->id."' LIMIT 1;");
-				Buildlist::$underConstruction = false;
+				BuildList::$underConstruction = false;
 				//Rohstoffe vom Planeten abziehen und aktualisieren
 				$cp->changeRes($costs['costs0']*$fac,$costs['costs1']*$fac,$costs['costs2']*$fac,$costs['costs3']*$fac,$costs['costs4']*$fac);
 

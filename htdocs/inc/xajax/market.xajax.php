@@ -39,13 +39,13 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 			{
 				if ($sfilter!="")
 					$sfilter.=" OR ";
-				$sfilter.= " sell_".$rk.">0 ";
+				$sfilter.= " sell_".$rk.">=0 ";
 			}
 			if (isset($form['market_search_filter_demand_'.$rk]) && $form['market_search_filter_demand_'.$rk]==1)
 			{
 				if ($dfilter!="")
 					$dfilter.=" OR ";
-				$dfilter.= " buy_".$rk.">0 ";
+				$dfilter.= " buy_".$rk.">=0 ";
 			}
 		}
 
@@ -313,12 +313,15 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 						}
 						
 						$reservation="";
+						$class = "";
 						if($arr['for_user']!=0)
 						{
+							$class = "top";
 							$reservation="<span class=\"userAllianceMemberColor\">F&uuml;r dich reserviert</span>";
 						}							
 						elseif($arr['for_alliance']!=0)
 						{
+							$class = "top";
 							$reservation="<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied reserviert</span>";
 						}
 
@@ -340,7 +343,7 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 							{
 								$tu = new User($arr['user_id']);
 								echo "<td rowspan=\"$resCnt\" class=\"usrinfo\">".$tu->detailLink()."</td>";
-								echo "<td rowspan=\"$resCnt\">".$reservation."<br /><span class=\"rtext\">".stripslashes($arr['text'])."</span></td>";
+								echo "<td rowspan=\"$resCnt\">".$reservation."<br /><span class='rtext ".$class."'  >".stripslashes($arr['text'])."</span></td>";
 								echo "<td rowspan=\"$resCnt\">
 									<input type=\"checkbox\" name=\"ship_market_id[]\" id=\"ship_market_id_".$arr['id']."\" value=\"".$arr['id']."\" onclick=\"xajax_calcMarketShipBuy(xajax.getFormValues('ship_buy_selector'));\" />
 								</td>";

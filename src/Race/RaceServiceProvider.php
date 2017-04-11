@@ -13,7 +13,7 @@ class RaceServiceProvider implements ServiceProviderInterface
     public function register(Container $pimple)
     {
         $pimple['etoa.race.datarepository'] = function (Container $pimple) {
-            return new RaceDataRepository($pimple['db.querybuilder']);
+            return new RaceDataRepository($pimple['db']);
         };
     }
 }

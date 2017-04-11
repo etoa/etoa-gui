@@ -691,9 +691,11 @@
 			this->loadDef();
 		if (!this->techsAdded)
 			this->addTechs();
+        double heal = this->heal;
+        
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
-			for ( it=fleets.begin() ; it < fleets.end(); it++ )
+            for ( it=fleets.begin() ; it < fleets.end(); it++ )
 				heal += (*it)->getHeal(total);
 		}
 		return heal;

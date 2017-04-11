@@ -1,3 +1,4 @@
+{if $tutorial_id|default:0 gt 0}
 <div id="tutorialContainer" style="display:none;" data-tutorial="0">
 	<div class="tutorialBox">
 		<div class="tutorialTitle">Tutorial: <span class="tutorialTitleContent"></span>
@@ -19,7 +20,6 @@
 		<input type="button" value="Tutorial" class="tutorialRestore" />
 	</div>
 </div>
-{if $tutorial_id|default:0 gt 0}
 <script>
 $(function(){
 	showTutorialText({$tutorial_id});

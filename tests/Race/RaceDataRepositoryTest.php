@@ -1,10 +1,10 @@
 <?php
 
-namespace EtoA\Tests\Race;
+namespace EtoA\Race;
 
-use EtoA\Race\RaceDataRepository;
+use EtoA\AbstractDbTestCase;
 
-class RaceDataRepositoryTest extends \PHPUnit_Framework_TestCase
+class RaceDataRepositoryTest extends AbstractDbTestCase
 {
     /** @var RaceDataRepository */
     private $raceDataRepository;
@@ -13,9 +13,7 @@ class RaceDataRepositoryTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
-        $app = require_once dirname(dirname(__DIR__)).'/src/app.php';
-
-        $this->raceDataRepository = $app['etoa.race.datarepository'];
+        $this->raceDataRepository = $this->app['etoa.race.datarepository'];
     }
 
     public function testGetRaceNames()

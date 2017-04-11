@@ -52,6 +52,12 @@
 	if (isset($page) && $page=="logs")
 	{
 		require_once("inc/xajax/logs.xajax.php");
-	}	
+	}
+
+	if (isset($page) && $page=="tfcalculator")
+	{
+		require_once("inc/xajax/tfcalculator.xajax.php");
+	}
+
 	$xajax->processRequest();
 ?>

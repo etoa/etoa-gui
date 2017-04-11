@@ -13,7 +13,7 @@
 *
 * @author Nicolas Perrenoud<mrcage@etoa.ch>
 */
-class User
+class User implements \EtoA\User\UserInterface
 {
 	const tableName = "users";
 
@@ -24,10 +24,11 @@ class User
 	protected $isValid; // Checker if class instance belongs to valid user
 	protected $maskMatrix; // Matrix for the "fog of war" effect in the space map
 	protected $realName;
+	protected $pw;
 	protected $email;
 	protected $emailFix;
-  protected $d_email;   //Dual E-mail
-  protected $d_realName; //Dual name
+    protected $d_email;   //Dual E-mail
+    protected $d_realName; //Dual name
 	protected $lastOnline;
 	protected $acttime;
 	protected $points;
@@ -79,10 +80,10 @@ class User
 	protected $properties = null;
 	protected $buddylist = null;
 	protected $changedFields;
-	
+
 	protected $isVerified;
 	protected $verificationKey;
-	
+
 	protected $dmask;
 
 	/**
@@ -108,12 +109,13 @@ class User
 			$arr = mysql_fetch_assoc($res);
 
 			$this->nick=$arr['user_nick'];
+			$this->pw = $arr['user_password'];
 			$this->realName=$arr['user_name'];
 			$this->email=$arr['user_email'];
 			$this->emailFix=$arr['user_email_fix'];
 
-      $this -> d_email = $arr['dual_email'];
-      $this -> d_realName = $arr['dual_name'];
+            $this -> d_email = $arr['dual_email'];
+            $this -> d_realName = $arr['dual_name'];
 
 			$this->lastOnline=$arr['user_logouttime'];
 			$this->acttime = null;
@@ -164,21 +166,21 @@ class User
 
 			$this->specialistId = $arr['user_specialist_id'];
 			$this->specialistTime = $arr['user_specialist_time'];
-			
+
 			$this->boostBonusProduction = $arr['boost_bonus_production'];
 			$this->boostBonusBuilding = $arr['boost_bonus_building'];
-			
+
 			$this->lastInvasion = $arr['lastinvasion'];
 
 			$this->raceId = $arr['user_race_id'];
-			
+
 			$this->allianceShippoints = $arr['user_alliace_shippoints'];
 
 			$this->changedFields = array();
 
 			$this->isVerified = ($arr['verification_key'] == '');
 			$this->verificationKey = $arr['verification_key'];
-			
+
 			$this->isValid=true;
 		}
 		else
@@ -203,7 +205,7 @@ class User
 
 			$this->specialistId = 0;
 			$this->specialistTime = 0;
-			
+
 			$this->lastInvasion = 0;
 
 			$this->raceId = 0;
@@ -212,9 +214,19 @@ class User
 		}
 	}
 
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getNick()
+    {
+        return $this->nick;
+    }
+
 	/**
 	 * The destructor saves pedning changes
-	 */	
+	 */
 	function __destruct()
 	{
 		$cnt = count($this->changedFields);
@@ -467,7 +479,7 @@ class User
 	}
 
 	final public function isSetup() {
-		return $this->setup; 
+		return $this->setup;
 	}
 
 	final public function allianceId()
@@ -504,7 +516,7 @@ class User
 			user_alliance_id=".$id."
 		WHERE user_id='".$this->id."';");
 	}
-	
+
 	public function setVerified($verified)
 	{
 		if ($verified) {
@@ -525,7 +537,7 @@ class User
 		]);
 		$this->isVerified = $verified;
 	}
-	
+
 	public static function findFirstByVerificationKey($verificationKey) {
 		$res = dbQuerySave("
 		SELECT
@@ -542,7 +554,7 @@ class User
 		}
 		return null;
 	}
-	
+
 	public function isInactiv()
 	{
 		if (!$this->admin)
@@ -572,7 +584,7 @@ class User
 		}
 		return false;
 	}
-	
+
 	//
 	// Methods
 	//
@@ -738,6 +750,44 @@ class User
 			);
 		");
 	}
+
+    /**
+     * Löschantrag stellen
+     */
+    function deleteRequest($pw) {
+        if (validatePasswort($pw, $this->pw))
+        {
+            $t = time() + (USER_DELETE_DAYS*3600*24);
+            dbquery("
+				UPDATE
+					users
+				SET
+					user_deleted=".$t."
+				WHERE
+					user_id=".$this->id."
+				;");
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /**
+     * Löschantrag widerrufen
+     */
+
+    function revokeDelete() {
+        dbquery("
+			UPDATE
+				users
+			SET
+				user_deleted=0
+			WHERE
+				user_id=".$this->id."
+			;");
+    }
 
 	/**
 	* Benutzer löschen
@@ -950,6 +1000,252 @@ die Spielleitung";
 		}
 	}
 
+
+    /**
+     * Umode aktivieren
+     */
+
+    function activateUmode($force = false)
+    {
+
+        $cres = dbquery("SELECT id FROM fleet WHERE user_id='" . $this->id . "';");
+        $carr = mysql_fetch_row($cres);
+        if ($carr[0] == 0 || $force) {
+            $pres = dbquery("SELECT 
+                                    f.id 
+                                FROM 
+                                    fleet as f
+                                INNER JOIN
+                                    planets as p
+                                ON f.entity_to=p.id
+                                AND p.planet_user_id='" . $this->id . "'
+                                AND (f.user_id='" . $this->id . "' OR (status=0 AND action NOT IN ('collectdebris','explore','flight','createdebris')));");
+            $parr = mysql_fetch_row($pres);
+            if ($parr[0] == 0 || $force) {
+                $sres = dbquery("SELECT 
+                                        queue_id,
+                                        queue_starttime 
+                                    FROM 
+                                        ship_queue 
+                                    WHERE 
+                                        queue_user_id='" . $this->id . "';");
+                while ($sarr = mysql_fetch_row($sres)) {
+                    if ($sarr[1] > time()) {
+                        dbquery("UPDATE 
+                                        ship_queue 
+                                    SET 
+                                        queue_build_type=1
+                                    WHERE 
+                                        queue_user_id='" . $this->id . "';");
+                    } else {
+                        dbquery("UPDATE 
+                                        ship_queue 
+                                    SET 
+                                        queue_build_type=1
+                                    WHERE 
+                                        queue_user_id='" . $this->id . "';");
+                    }
+                }
+                $sres = dbquery("SELECT 
+                                        queue_id,
+                                        queue_starttime 
+                                    FROM 
+                                        def_queue 
+                                    WHERE 
+                                        queue_user_id='" . $this->id . "';");
+                while ($sarr = mysql_fetch_row($sres)) {
+                    if ($sarr[1] > time()) {
+                        dbquery("UPDATE 
+                                        def_queue 
+                                    SET 
+                                        queue_build_type=1
+                                    WHERE 
+                                        queue_user_id='" . $this->id . "';");
+                    } else {
+                        dbquery("UPDATE 
+                                        def_queue 
+                                    SET 
+                                        queue_build_type=1
+                                    WHERE 
+                                        queue_user_id='" . $this->id . "';");
+                    }
+                }
+
+                dbquery("UPDATE 
+                                buildlist 
+                            SET 
+                                buildlist_build_type = 1
+                            WHERE 
+                                buildlist_user_id='" . $this->id . "' 
+                                AND buildlist_build_start_time>0;");
+                dbquery("UPDATE 
+                                techlist 
+                            SET 
+                                techlist_build_type=1
+                            WHERE 
+                                techlist_user_id='" . $this->id . "' 
+                                AND techlist_build_start_time>0;");
+
+                $hfrom = time();
+
+                $hto = $hfrom + (MIN_UMOD_TIME*24*3600);
+                dbquery("
+                        UPDATE
+                            planets
+                        SET
+                            planet_last_updated='0',
+                            planet_prod_metal=0,
+                            planet_prod_crystal=0,
+                            planet_prod_plastic=0,
+                            planet_prod_fuel=0,
+                            planet_prod_food=0
+                        WHERE
+                            planet_user_id='" . $this->id . "';");
+
+                dbquery("UPDATE users SET user_hmode_from=$hfrom,user_hmode_to=$hto,user_logouttime='" . time() . "' WHERE user_id='" . $this->id . "';");
+
+                $this->hmode_from = $hfrom;
+                $this->hmode_to = $hto;
+                return true;
+            }
+            else
+                return false;
+        }
+        else
+            return false;
+
+    }
+
+    /**
+     * Umode aufheben
+     */
+
+    function removeUmode($force = false) {
+
+        if (($this->hmode_from > 0 && $this->hmode_from < time() && $this->hmode_to < time()) || $force) {
+            $hmodTime = time() - $this->hmode_from;
+            $bres = dbquery("
+								SELECT
+									buildlist_id,
+									buildlist_build_end_time,
+									buildlist_build_start_time,
+									buildlist_build_type
+								FROM
+									buildlist
+								WHERE
+									buildlist_build_start_time>0
+									AND buildlist_build_type>0
+									AND buildlist_user_id=" . $this->id . ";");
+
+            while ($barr = mysql_fetch_row($bres)) {
+                $start = $barr[2] + $hmodTime;
+                $end = $barr[1] + $hmodTime;
+                $status = $barr[3] + 2;
+                dbquery("UPDATE
+								buildlist
+							SET
+								buildlist_build_type='" . $status . "',
+								buildlist_build_start_time='" . $start . "',
+								buildlist_build_end_time='" . $end . "'
+							WHERE
+								buildlist_id='" . $barr[0] . "';");
+            }
+
+            $tres = dbquery("
+								SELECT
+									techlist_id,
+									techlist_build_end_time,
+									techlist_build_start_time,
+									techlist_build_type
+								FROM
+									techlist
+								WHERE
+									techlist_build_start_time>0
+									AND techlist_build_type>0
+									AND techlist_user_id=" . $this->id . ";");
+
+            while ($tarr = mysql_fetch_row($tres)) {
+                $status = $tarr[3] + 2;
+                $start = $tarr[2] + $hmodTime;
+                $end = $tarr[1] + $hmodTime;
+                dbquery("UPDATE
+								techlist
+							SET
+								techlist_build_type='" . $status . "',
+								techlist_build_start_time='" . $start . "',
+								techlist_build_end_time='" . $end . "'
+							WHERE
+								techlist_id=" . $tarr[0] . ";");
+            }
+
+            $sres = dbquery("SELECT 
+									queue_id,
+									queue_endtime,
+									queue_starttime
+								 FROM 
+								 	ship_queue 
+								WHERE 
+									queue_user_id='" . $this->id . "'
+								ORDER BY 
+									queue_starttime ASC;");
+            $time = time();
+            while ($sarr = mysql_fetch_row($sres)) {
+                $start = $sarr[2] + $hmodTime;
+                $end = $sarr[1] + $hmodTime;
+                dbquery("UPDATE 
+								ship_queue
+							SET
+								queue_build_type=0,
+								queue_starttime='" . $start . "',
+								queue_endtime='" . $end . "'
+							WHERE
+								queue_id=" . $sarr[0] . ";");
+            }
+
+            $dres = dbquery("SELECT 
+									queue_id,
+									queue_endtime,
+									queue_starttime
+								 FROM 
+								 	def_queue 
+								WHERE 
+									queue_user_id='" . $this->id . "'
+								ORDER BY 
+									queue_starttime ASC;");
+            $time = time();
+            while ($darr = mysql_fetch_row($dres)) {
+                $start = $darr[2] + $hmodTime;
+                $end = $darr[1] + $hmodTime;
+                dbquery("UPDATE 
+								def_queue
+							SET
+								queue_build_type=0,
+							queue_starttime='" . $start . "',
+								queue_endtime='" . $end . "'
+							WHERE
+								queue_id=" . $darr[0] . ";");
+            }
+
+            // Prolong specialist contract
+            dbquery("
+                UPDATE
+                  users
+                SET
+                  user_specialist_time=user_specialist_time+" . $hmodTime . "
+                WHERE
+                  user_specialist_id > 0
+                  AND user_id=" . $this->id . "
+                ;");
+
+            dbquery("UPDATE users SET user_hmode_from=0,user_hmode_to=0,user_logouttime='" . time() . "' WHERE user_id='" . $this->id . "';");
+            dbquery("UPDATE planets SET planet_last_updated=" . time() . " WHERE planet_user_id='" . $this->id . "';");
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
 	/**
 	* Registers a new user
 	*/
@@ -962,7 +1258,7 @@ die Spielleitung";
 		{
 			throw new Exception("Nicht alle Felder sind ausgef&uuml;llt!");
 		}
-		
+
 		// Validate email
 		if (!checkEmail($email))
 		{
@@ -974,7 +1270,7 @@ die Spielleitung";
 		{
 			throw new Exception("Du hast ein unerlaubtes Zeichen im vollst&auml;ndigen Namen!");
 		}
-		
+
 		// Validate nickname
 		$nick = trim($nick);
 		if (!checkValidNick($nick))
@@ -1057,7 +1353,7 @@ die Spielleitung";
 		{
 			$uid = mysql_insert_id();
 			$rating = new UserRating($uid);
-			$properties = new UserProperties($uid);			
+			$properties = new UserProperties($uid);
 			return new User($uid);
 		}
 		throw new Exception("Ein unbekannter Fehler trat auf! ".mysql_error());
@@ -1096,7 +1392,7 @@ die Spielleitung";
 	{
 		return "<a href=\"?page=userinfo&amp;id=".$this->id."\">".$this->__toString()."</a>";
 	}
-    
+
     public function isUserNoobProtected(User $u)
     {
         // check whether user points are outside limits
@@ -1105,12 +1401,12 @@ die Spielleitung";
                 || ($this->points <= USER_ATTACK_MIN_POINTS)
                 || ($u->points <= USER_ATTACK_MIN_POINTS);
     }
-    
+
     public function canAttackUser(User $u)
     {
         // somehow $this->alliance doesn't use the getter
         // neither does $u->locked, wtf
-        
+
         // att allowed if war is active
         // or att allowed if target user is not noob protected
         // or att allowed if target user is inactive
@@ -1119,24 +1415,24 @@ die Spielleitung";
         {
             return $this->__get('alliance')->checkWar($u->allianceId())
                 || !$this->isUserNoobProtected($u)
-                || $u->isInactiv() 
+                || $u->isInactiv()
                 || $u->__get('locked');
         }
         else
         {
             return !$this->isUserNoobProtected($u)
-                || $u->isInactiv() 
+                || $u->isInactiv()
                 || $u->__get('locked');
         }
     }
-    
+
     public function canAttackPlanet(Planet $p)
     {
         // Planet is attackable if user is attackable
         // or if last owner == this owner (invade time threshold)
         return $this->canAttackUser($p->owner()) || $this->id == $p->lastUserCheck();
     }
-	
+
 	private function loadDiscoveryMask()
 	{
 		$cfg = Config::getInstance();
@@ -1144,7 +1440,7 @@ die Spielleitung";
 		$cx_num=$cfg->param1('num_of_cells');
 		$sy_num=$cfg->param2('num_of_sectors');
 		$cy_num=$cfg->param2('num_of_cells');
-		
+
 		$res = dbquery("
 		SELECT
 			discoverymask
@@ -1184,16 +1480,16 @@ die Spielleitung";
 		$cfg = Config::getInstance();
 		$sy_num=$cfg->param2('num_of_sectors');
 		$cy_num=$cfg->param2('num_of_cells');
-		
+
 		if (!isset($this->dmask))
 		{
 			$this->loadDiscoveryMask();
-		}	
-		
+		}
+
 		$pos = $absX + ($cy_num*$sy_num)*($absY-1)-1;
 		return (($pos < strlen($this->dmask)) ? $this->dmask{$pos} > 0 : false);
 	}
-	
+
 	function getDiscoveredPercent()
 	{
 		if (!isset($this->dmask))
@@ -1206,7 +1502,7 @@ die Spielleitung";
 		}
 		return 0;
 	}
-	
+
 	function setDiscovered($absX,$absY,$radius=1)
 	{
 		if (!isset($this->dmask))
@@ -1218,7 +1514,7 @@ die Spielleitung";
 		$cx_num=$cfg->param1('num_of_cells');
 		$sy_num=$cfg->param2('num_of_sectors');
 		$cy_num=$cfg->param2('num_of_cells');
-		
+
 		for ($x=$absX-$radius; $x<=$absX+$radius; $x++)
 		{
 			for ($y=$absY-$radius; $y<=$absY+$radius; $y++)
@@ -1232,9 +1528,9 @@ die Spielleitung";
 					}
 				}
 			}
-		}	
+		}
 		$this->saveDiscoveryMask();
-	}	
+	}
 
 	function setDiscoveredAll($discovered)
 	{
@@ -1247,7 +1543,7 @@ die Spielleitung";
 		$cx_num=$cfg->param1('num_of_cells');
 		$sy_num=$cfg->param2('num_of_sectors');
 		$cy_num=$cfg->param2('num_of_cells');
-		
+
 		for ($x=1; $x <= $sx_num * $cx_num; $x++)
 		{
 			for ($y=1; $y <= $sy_num * $cy_num; $y++)
@@ -1255,10 +1551,10 @@ die Spielleitung";
 				$pos = $x + ($cy_num*$sy_num)*($y-1)-1;
 				$this->dmask{$pos} = $discovered ? '1' : '0';
 			}
-		}	
+		}
 		$this->saveDiscoveryMask();
 	}
-	
+
 	private function saveDiscoveryMask()
 	{
 		dbquery("
@@ -1272,4 +1568,3 @@ die Spielleitung";
 	}
 
 }
-?>

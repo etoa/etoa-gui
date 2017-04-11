@@ -5,15 +5,15 @@
 
 {if $force_password_change|default:false}
 {msg type="warn" title="Passwortwiederherstellung" text="Dein Passwort wurde seit der letzten automatischen Generierung noch nicht geändert. Bitte mache das jetzt <a href=\"?myprofile=1\">hier</a>!"}
-{/if}			
+{/if}
 
 {text key="admininfo" assign="admininfo"}
-{if "$admininfo" ne ""}
+{if "$admininfo"|default:'' ne ""}
 {msg type="info" title="Admin-News" text="{$admininfo|text2html}"}
 {/if}
 
 {text key="system_message" assign="system_message"}
-{if "$system_message" ne ""}
+{if "$system_message"|default:'' ne ""}
 {msg type="info" title="Systemnachricht aktiv!" text="{$system_message|text2html} <br/><a href=\"?page=texts&amp;id=system_message\">Bearbeiten/Deaktivieren</a>"}
 {/if}
 

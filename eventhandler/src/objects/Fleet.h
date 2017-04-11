@@ -57,7 +57,7 @@ class Fleet
 	
 	double exp;
 	
-	double antraxBonus, antraxFoodBonus, destroyBonus, empBonus, forstealBonus;
+	double antraxBonus, antraxFoodBonus, destroyBonus, empBonus, forstealBonus, capacityBonus;
 	
 	bool techsAdded, allianceTechsLoaded;
 	
@@ -170,6 +170,7 @@ public:
 	double getSpecialShipBonusBuildDestroy();
 	double getSpecialShipBonusEMP();
 	double getSpecialShipBonusForsteal();
+	double getSpecialShipBonusCapacity();
 	
 	void deleteActionShip(int count);
 	
