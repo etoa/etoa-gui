@@ -138,7 +138,7 @@
 	{
 		$tpl->assign("title", "Schiff-Bauliste");
 		
-		if (isset($_POST['shipqueue_search']) || isset($_POST['action']) && $_GET['action']=="searchresults")
+		if (isset($_POST['shipqueue_search']) || isset($_GET['action']) && $_GET['action']=="searchresults")
 		{
 			$sqlstart = "
 			SELECT
@@ -327,7 +327,7 @@
 		//
 		// Auftrag bearbeiten
 		//
-		elseif (isset($_POST['action']) && $_GET['action']=="edit" && $_GET['id']>0)
+		elseif (isset($_GET['action']) && $_GET['action']=="edit" && $_GET['id']>0)
 		{
 			// Änderungen speichern
 			if ($_POST['save']!="")
