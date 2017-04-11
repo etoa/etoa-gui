@@ -102,8 +102,7 @@
 		elseif (isset($_POST['remove_cancel']) && checker_verify())
 		{
 		    $cu->revokeDelete();
-		    $cu->removeUmode(true);
-			success_msg("Löschantrag aufgehoben!");
+		    success_msg("Löschantrag aufgehoben!");
 			$cu->addToUserLog("settings","{nick} hat seine Accountlöschung aufgehoben.",1);
 			echo '<input type="button" value="Weiter" onclick="document.location=\'?page=userconfig&mode=misc\'" />';
 		}
