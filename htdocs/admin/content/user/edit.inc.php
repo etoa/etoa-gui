@@ -168,13 +168,15 @@
 				// Handle holiday mode
 				if ($_POST['umod_enable']==1)
 				{
+                    $usr = new User($id);
+                    $usr->activateUmode(true);
 					$sql.= ",user_hmode_from='".parseDatePicker('user_hmode_from', $_POST)."'";
 					$sql.= ",user_hmode_to='".parseDatePicker('user_hmode_to', $_POST)."'";
 				}
 				else
 				{
-					$sql.= ",user_hmode_from=0";
-					$sql.= ",user_hmode_to=0";
+                    $usr = new User($id);
+                    $usr->removeUmode(true);
 				}
 
 				// Perform query
