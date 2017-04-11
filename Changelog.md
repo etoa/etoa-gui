@@ -20,6 +20,10 @@ Version 3.5.15
  * added log for nickchange
  * deleting request will trigger umode now
  
+### Administration ###
+ 
+ * fixed editing for already building ships 
+ 
 Version 3.5.14.1
 ---------------
 
