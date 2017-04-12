@@ -77,15 +77,17 @@ else
 	else
 	{
 		$str = $s->lastError;
+		if ($s->lastErrorCode == "tfa_challenge") {
+			$tpl->setView("tfa_challenge");
+		} else {
+			$tpl->setView("login");
+		}
 		if ($str!="" && $s->lastErrorCode!="nologin")
 		{
 			$tpl->assign('msg_style', "color_warn");
 			$tpl->assign('msg', $str);
 		}
-		
 		$tpl->assign('login_target', "?".$_SERVER['QUERY_STRING']);
-		
-		$tpl->setView("login");
 	}
 }
 $tpl->assign("content_overflow", ob_get_clean());

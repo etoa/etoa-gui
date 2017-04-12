@@ -1,6 +1,13 @@
 Escape to Andromeda Changelog
 =============================
 
+Version NEXT
+--------------
+
+### Administration ###
+
+ * added two-factor authentication for administrators
+
 Version 3.5.15(round 16)
 ------------------------
 

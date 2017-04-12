@@ -363,6 +363,7 @@
 		$tpl->assign("title", "&Uuml;bersicht");
 
 		$tpl->assign("welcome_msg", "Hallo <b>".$cu->nick."</b>, willkommen im Administrationsmodus! Deine Rolle(n): <b>".$cu->getRolesStr().".</b>");
+		$tpl->assign('has_tfa', !empty($cu->tfaSecret));
 		
 		//
 		// Universum generieren
