@@ -7,20 +7,20 @@ use LittleCubicleGames\Quests\Entity\QuestInterface;
 use LittleCubicleGames\Quests\Entity\TaskInterface;
 use PHPUnit\Framework\TestCase;
 
-class HaveAllianceTest extends TestCase
+class HaveSpecialistTypeTest extends TestCase
 {
     /**
-     * @dataProvider allianceProvider
+     * @dataProvider specialistProvider
      */
-    public function testInitProgress($allianceId, $expected)
+    public function testInitProgress($specialistId, $questSpecialistId, $expected)
     {
         $userId = 1;
         $repository = $this->getMockBuilder(UserRepository::class)->disableOriginalConstructor()->getMock();
         $repository
             ->expects($this->once())
-            ->method('getAllianceId')
+            ->method('getSpecialistId')
             ->with($this->equalTo($userId))
-            ->willReturn($allianceId);
+            ->willReturn($specialistId);
 
         $quest = $this->getMockBuilder(QuestInterface::class)->getMock();
         $quest
@@ -30,16 +30,17 @@ class HaveAllianceTest extends TestCase
 
         $task = $this->getMockBuilder(TaskInterface::class)->getMock();
 
-        $function = new HaveAlliance($repository);
+        $function = new HaveSpecialistType(['specialist_id' => $questSpecialistId], $repository);
 
         $this->assertSame($expected, $function->initProgress($quest, $task));
     }
 
-    public function allianceProvider()
+    public function specialistProvider()
     {
         return [
-            [100, 1],
-            [0, 0],
+            [3, 3, 1],
+            [2, 3, 0],
+            [0, 3, 0],
         ];
     }
 }

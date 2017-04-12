@@ -8,30 +8,28 @@ class UserRepository extends AbstractRepository
 {
     public function getDiscoverMask($userId)
     {
-        return $this->createQueryBuilder()
-            ->select('discoverymask')
-            ->from('users')
-            ->where('user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->execute()
-            ->fetchColumn();
+        return $this->getUserProperty($userId, 'discoverymask');
     }
 
     public function getPoints($userId)
     {
-        return (int)$this->createQueryBuilder()
-            ->select('user_points')
-            ->from('users')
-            ->where('user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->execute()
-            ->fetchColumn();
+        return (int)$this->getUserProperty($userId, 'user_points');
     }
 
     public function getAllianceId($userId)
     {
-        return (int)$this->createQueryBuilder()
-            ->select('user_alliance_id')
+        return (int)$this->getUserProperty($userId, 'user_alliance_id');
+    }
+
+    public function getSpecialistId($userid)
+    {
+        return (int)$this->getUserProperty($userid, 'user_specialist_id');
+    }
+
+    private function getUserProperty($userId, $property)
+    {
+        return $this->createQueryBuilder()
+            ->select($property)
             ->from('users')
             ->where('user_id = :userId')
             ->setParameter('userId', $userId)
