@@ -115,12 +115,9 @@ if (isset($cp)) {
 		}
 
 		// reload buildlist and techlist in case the number of workers has changed.
-        // re-define constants dependent on these objects
 		$bl = new BuildList($cp->id(),$cu->id);
-		define('CURRENT_LAB_LEVEL',$bl->getLevel(TECH_BUILDING_ID));
 
 		$tl = new TechList($cu->id);
-		define("GEN_TECH_LEVEL",$tl->getLevel(GEN_TECH_ID));
 		$minBuildTimeFactor = (0.1-(GEN_TECH_LEVEL/100));
 
 		// People working in the tech building.
