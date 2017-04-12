@@ -1,12 +1,13 @@
 <?PHP
-	require_once("inc/bootstrap.inc.php");
+	require_once __DIR__ . '/inc/bootstrap.inc.php';
+	$app = require __DIR__ . '/../src/app.php';
 
-				
+
 	$tpl->assign("gameTitle", getGameIdentifier());
 	$tpl->assign("gameIdentifier", getGameIdentifier());
 	$tpl->assign("loginurl", getLoginUrl());
 	$tpl->assign("roundname",Config::getInstance()->roundname->v);
-	
+
 	$loggedIn = false;
 	if ($s->validate(0))
 	{
@@ -16,11 +17,11 @@
 			$loggedIn = true;
 		}
 	}
-	
+
 	$design = DESIGN_DIRECTORY."/official/".$cfg->value('default_css_style');
 	if (isset($cu) && $cu->properties->cssStyle !='')
 	{
-		if (is_dir(DESIGN_DIRECTORY."/custom/".$cu->properties->cssStyle)) 
+		if (is_dir(DESIGN_DIRECTORY."/custom/".$cu->properties->cssStyle))
 		{
 			$design = DESIGN_DIRECTORY."/custom/".$cu->properties->cssStyle;
 		}
@@ -51,29 +52,27 @@
 	try {
 
 		ob_start();
-		
+
 		if ($loggedIn)
 		{
 			if ($page!="" && $page!=DEFAULT_PAGE)
 			{
 				$popup = true;
-				require("inc/content.inc.php");
+				require __DIR__ . '/inc/content.inc.php';
 			}
 		}
 		else
 		{
 			error_msg("Du bist nicht eingeloggt!");
 		}
-		
+
 		$tpl->assign("content_for_layout", ob_get_clean());
-	
+
 	} catch (DBException $ex) {
 		ob_clean();
 		$tpl->assign("content_for_layout", $ex);
 	}
 
 	$tpl->display("tpl/layouts/popup.html");
-	
-	dbclose();
 
-?>
+	dbclose();

@@ -15,7 +15,7 @@
 	// www.nicu.ch | mail@nicu.ch								 		//
 	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
 	//////////////////////////////////////////////////
-	
+
 	//Fehler ausgabe definiert
 	ini_set('display_errors', 1);
 	ini_set('arg_separator.output',  '&amp;');
@@ -24,21 +24,21 @@
 	if (!defined('RELATIVE_ROOT')) {
 		define('RELATIVE_ROOT', '');
 	}
-	
+
 	// Load constants
-	require_once(RELATIVE_ROOT."inc/const.inc.php");
+	require_once __DIR__ . '/const.inc.php';
 
 	// Load functions
-	require_once(RELATIVE_ROOT."inc/functions.inc.php");
+	require_once __DIR__ . '/functions.inc.php';
 
 	// Load specific admin functions
 	if (ADMIN_MODE) {
-		require(RELATIVE_ROOT."admin/inc/admin_functions.inc.php");
+		require __DIR__ . '/../admin/inc/admin_functions.inc.php';
 	}
-	
+
 	// Set timezone
 	date_default_timezone_set(TIMEZONE);
-	
+
 	// Enable debug error reporting
 	if (isDebugEnabled()) {
 		error_reporting(E_ALL);

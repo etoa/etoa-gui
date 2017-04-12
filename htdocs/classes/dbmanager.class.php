@@ -5,7 +5,7 @@
 * @author Nicolas Perrenoud <mrcage@etoa.ch>
 */
 class DBManager implements ISingleton	{
-	
+
 	static private $instance;
 	const configFile = "db.conf";
 	private $dbCfg;
@@ -14,9 +14,9 @@ class DBManager implements ISingleton	{
 	private $queries  = array();
 	private $isOpen = false;
 	private $logQueries = false;
-	
+
 	const SCHEMA_MIGRATIONS_TABLE = "schema_migrations";
-	
+
 	/**
 	* Get instance with this very nice singleton design pattern
 	*/
@@ -48,39 +48,39 @@ class DBManager implements ISingleton	{
 	private function loadConfig() {
 		$this->dbCfg = fetchJsonConfig(self::configFile);
 	}
-	
+
 	function getConfigFile() {
 		return self::configFile;
 	}
-	
+
 	function getHost() {
 		if ($this->dbCfg == null) {
 			$this->loadConfig();
-		}	
+		}
 		return $this->dbCfg['host'];
-	}	
+	}
 
 	function getDbName() {
 		if ($this->dbCfg == null) {
 			$this->loadConfig();
-		}	
+		}
 		return $this->dbCfg['dbname'];
-	}	
+	}
 
 	private function getUser() {
 		if ($this->dbCfg == null) {
 			$this->loadConfig();
-		}	
+		}
 		return $this->dbCfg['user'];
-	}	
-	
+	}
+
 	private function getPassword() {
 		if ($this->dbCfg == null) {
 			$this->loadConfig();
-		}	
+		}
 		return $this->dbCfg['password'];
-	}		
-	
+	}
+
 	/**
 	* Baut die Datenbankverbindung auf
 	*/
@@ -110,8 +110,8 @@ class DBManager implements ISingleton	{
 					return false;
 			}
 			$this->isOpen = true;
-			dbquery("SET NAMES 'utf8';"); 
-			return true;		
+			dbquery("SET NAMES 'utf8';");
+			return true;
 		}
 		catch (DBException $e)
 		{
@@ -154,9 +154,9 @@ class DBManager implements ISingleton	{
 	function query($string, $fehler=1)
 	{
 		if (!$this->isOpen) {
-			$this->connect();			
+			$this->connect();
 		}
-			
+
 		$this->queryCount++;
 		if ($this->logQueries && stristr($string,"SELECT"))
 		{
@@ -170,7 +170,7 @@ class DBManager implements ISingleton	{
 		{
 			try
 			{
-				throw new DBException($string);	
+				throw new DBException($string);
 			}
 			catch (DBException $e)
 			{
@@ -186,30 +186,30 @@ class DBManager implements ISingleton	{
 	* @param string $query SQL-Query
 	* @param array $params Array of arguments
 	*/
-	function safeQuery($query, $params=array()) 
+	function safeQuery($query, $params=array())
 	{
-		if (is_array($params) && count($params)>0) 
+		if (is_array($params) && count($params)>0)
 		{
-			foreach ($params as &$v) 
-			{ 
-				$v = $this->escapeStr($v); 
-			}    
+			foreach ($params as &$v)
+			{
+				$v = $this->escapeStr($v);
+			}
 			# Escaping parameters
 			# str_replace - replacing ? -> %s. %s is ugly in raw sql query
 			# vsprintf - replacing all %s to parameters
-			$sql = vsprintf( str_replace("?","'%s'",$query), $params );   
-		} 
-		else 
+			$sql = vsprintf( str_replace("?","'%s'",$query), $params );
+		}
+		else
 		{
 			$sql = $query;    # If no params...
 		}
 		return $this->query($sql);
-	} 
+	}
 
 	/**
 	 * Prepares a user string for sql queries and
 	 * escapes all malicious characters, e.g. '
-	 * 
+	 *
 	 * @param string $string
 	 * @return string
 	 */
@@ -295,7 +295,7 @@ class DBManager implements ISingleton	{
 		$res = $this->query("EXPLAIN ".$sql."");
 		$this->drawQueryResult($res);
 	}
-	
+
 	/**
 	* Tabellen optimieren
 	*/
@@ -355,7 +355,7 @@ class DBManager implements ISingleton	{
 		{
 			add_log("4",$n." Tabellen wurden repariert!",time());
 			return $n;
-		}	
+		}
 	}
 
 	/**
@@ -379,7 +379,7 @@ class DBManager implements ISingleton	{
 		$ores = $this->query("CHECK TABLE ".$tbls.";");
 		return $ores;
 	}
-	
+
 	/**
 	* Tabellen analysieren
 	*/
@@ -401,21 +401,21 @@ class DBManager implements ISingleton	{
 		$ores = $this->query("ANALYZE TABLE ".$tbls.";");
 		return $ores;
 	}
-	
+
 	public function backupDB($backupDir, $gzip)
 	{
 		$mysqldump = WINDOWS ? WINDOWS_MYSQLDUMP_PATH : "mysqldump";
-		
-		if (is_dir($backupDir)) 
-		{		
+
+		if (is_dir($backupDir))
+		{
 			$file = $backupDir."/".$this->getDbName()."-".date("Y-m-d-H-i").".sql";
-			
+
 			if ($gzip)
 			{
 				if (!UNIX)
 				{
 					throw new Exception("Das Erstellen von GZIP Backups wird nur auf UNIX Systemen unterstützt!");
-				}			
+				}
 				$file.=".gz";
 				$cmd = $mysqldump." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." --default-character-set=utf8 ".$this->getDbName()." | gzip > ".$file;
 			}
@@ -423,7 +423,7 @@ class DBManager implements ISingleton	{
 			{
 				$cmd = $mysqldump." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." --default-character-set=utf8 ".$this->getDbName()." -r ".$file;
 			}
-			
+
 			if (WINDOWS && !file_exists($mysqldump) || UNIX && !unix_command_exists($mysqldump))
 			{
 				$this->dumpIntoFile($file);
@@ -443,10 +443,10 @@ class DBManager implements ISingleton	{
 			throw new Exception("Das Backup Verzeichnis ".$backupDir." existiert nicht!");
 		}
 	}
-	
+
 	public function restoreDB($backupDir, $restorePoint)
 	{
-		if (is_dir($backupDir)) 
+		if (is_dir($backupDir))
 		{
 			$file = $backupDir."/".$this->getDbName()."-".$restorePoint.".sql";
 			if (file_exists($file.".gz"))
@@ -461,7 +461,7 @@ class DBManager implements ISingleton	{
 			throw new Exception("Backup directory $backupDir does not exist!");
 		}
 	}
-	
+
 	public function restoreDBFromFile($file)
 	{
 		if (file_exists($file))
@@ -477,9 +477,9 @@ class DBManager implements ISingleton	{
 		}
 		else
 		{
-			throw new Exception("Backup file $file not found!");	
+			throw new Exception("Backup file $file not found!");
 		}
-	}	
+	}
 
 	private function loadFile($file) {
 		$mysql = WINDOWS ? WINDOWS_MYSQL_PATH : "mysql";
@@ -498,7 +498,7 @@ class DBManager implements ISingleton	{
 			{
 				$cmd = $mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." --default-character-set=utf8 ".$this->getDbName()." < ".$file;
 			}
-			
+
 			if (WINDOWS && !file_exists($mysql) || UNIX && !unix_command_exists($mysqldump))
 			{
 				$this->importFromFile($file);
@@ -514,10 +514,10 @@ class DBManager implements ISingleton	{
 		}
 		else
 		{
-			throw new Exception("File $file not found!");	
+			throw new Exception("File $file not found!");
 		}
 	}
-	
+
 	/**
 	* Import SQL file using PHP functionality only
 	*/
@@ -548,7 +548,7 @@ class DBManager implements ISingleton	{
 		}
 		return false;
 	}
-	
+
 	/**
 	* Import database or tables to SQL file using PHP functionality only
 	*/
@@ -568,23 +568,23 @@ class DBManager implements ISingleton	{
 		{
 			$tables = is_array($tables) ? $tables : explode(',',$tables);
 		}
-		
+
 		//cycle through
 		foreach($tables as $table)
 		{
 			$result = $this->query('SELECT * FROM '.$table);
 			$num_fields = mysql_num_fields($result);
-			
+
 			$return.= 'DROP TABLE '.$table.';';
 			$row2 = mysql_fetch_row($this->query('SHOW CREATE TABLE '.$table));
 			$return.= "\n\n".$row2[1].";\n\n";
-			
-			for ($i = 0; $i < $num_fields; $i++) 
+
+			for ($i = 0; $i < $num_fields; $i++)
 			{
 				while($row = mysql_fetch_row($result))
 				{
 					$return.= 'INSERT INTO '.$table.' VALUES(';
-					for($j=0; $j<$num_fields; $j++) 
+					for($j=0; $j<$num_fields; $j++)
 					{
 						$row[$j] = addslashes($row[$j]);
 						$row[$j] = ereg_replace("\n","\\n",$row[$j]);
@@ -596,17 +596,17 @@ class DBManager implements ISingleton	{
 			}
 			$return.="\n\n\n";
 		}
-		
+
 		//save file
 		$handle = fopen($file, 'w+');
 		fwrite($handle,$return);
 		fclose($handle);
 	}
-	
+
 	public function getBackupImages($dir, $strip=1)
 	{
 		$bfiles=array();
-		if ($dir != null && is_dir($dir)) 
+		if ($dir != null && is_dir($dir))
 		{
 			if ($d = opendir($dir))
 			{
@@ -625,7 +625,7 @@ class DBManager implements ISingleton	{
 		}
 		return $bfiles;
 	}
-	
+
 	/**
 	* Returns the backup directory path, if it exists
 	*/
@@ -644,7 +644,7 @@ class DBManager implements ISingleton	{
 		}
 		return null;
 	}
-	
+
 	/**
 	* Removes old backup files
 	* @return The number of removed files
@@ -661,7 +661,7 @@ class DBManager implements ISingleton	{
 		}
 		return $deleted;
 	}
-	
+
 	public function getDbSize() {
 		$res = $this->safeQuery("
 			SELECT round(sum( data_length + index_length ) / 1024 / 1024,2)
@@ -702,7 +702,7 @@ class DBManager implements ISingleton	{
 		}
 		return $tbls;
 	}
-	
+
 	/**
 	* Drops all tables
 	*/
@@ -715,14 +715,14 @@ class DBManager implements ISingleton	{
 		}
 		return count($tbls);
 	}
-	
+
 	public function migrate() {
-	
+
 		$res = $this->safeQuery("SELECT * FROM information_schema.TABLES WHERE table_schema=? AND table_name=?;", array($this->getDbName(), self::SCHEMA_MIGRATIONS_TABLE));
 		if (!($arr = mysql_fetch_row($res))) {
 			$this->loadFile(RELATIVE_ROOT.'../db/init_schema_migrations.sql');
 		}
-			
+
 		$files = glob(RELATIVE_ROOT.'../db/migrations/*.sql');
 		natsort($files);
 		$cnt = 0;
@@ -732,14 +732,14 @@ class DBManager implements ISingleton	{
 			if (!($arr = mysql_fetch_row($res))) {
 				echo $pi."\n";
 				$this->loadFile($f);
-				$this->safeQuery("INSERT INTO `".self::SCHEMA_MIGRATIONS_TABLE."` (`version`, `date`) VALUES (?, CURRENT_TIMESTAMP);", array($pi));	
+				$this->safeQuery("INSERT INTO `".self::SCHEMA_MIGRATIONS_TABLE."` (`version`, `date`) VALUES (?, CURRENT_TIMESTAMP);", array($pi));
 				$cnt++;
 			}
 		}
 		return $cnt;
 	}
-	
-	public function getPendingMigrations() 
+
+	public function getPendingMigrations()
 	{
 		$files = glob(RELATIVE_ROOT.'../db/migrations/*.sql');
 		natsort($files);
@@ -753,5 +753,9 @@ class DBManager implements ISingleton	{
 		}
 		return $migrations;
 	}
+
+    public function setDatabaseConfig(array $config)
+    {
+		$this->dbCfg = $config;
+	}
 }
-?>

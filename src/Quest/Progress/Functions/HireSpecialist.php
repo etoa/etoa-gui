@@ -4,9 +4,9 @@ namespace EtoA\Quest\Progress\Functions;
 
 use EtoA\Specialist\Event\SpecialistHire;
 use LittleCubicleGames\Quests\Entity\TaskInterface;
-use LittleCubicleGames\Quests\Progress\Functions\HandlerFunctionInterface;
+use LittleCubicleGames\Quests\Progress\Functions\EventHandlerFunctionInterface;
 
-class HireSpecialist implements HandlerFunctionInterface
+class HireSpecialist implements EventHandlerFunctionInterface
 {
     const NAME = 'hire-specialist';
 

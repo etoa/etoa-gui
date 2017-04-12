@@ -1,6 +1,23 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.15(round 16)
+------------------------
+
+### Features ###
+
+ * Logistisches Bevölkerungswachstum hinzugefügt
+ * Reservierte Schiffe werden nun oben im Markt angezeigt
+ * Colorpicker für Chatfarbe
+
+### Bugfixes ###
+
+ * Bug gefixt, bei dem verteidigende Mutterschiffe mehr geheilt haben als sie sollten
+ * Bug gefixt, mit dem man Allianzangriffe ohne Zeitbeschränkung beitreten konnte
+ * Bonuskapaztät wird nun bei allen Aktionen richtig angezeigt
+ * Anzeige gefixt, wenn man versucht hat, Raketen ohne genügend Rohstoffe zu kaufen
+
+
 Version 3.5.14.1
 ---------------
 

@@ -19,11 +19,13 @@
 	//
 require_once __DIR__ . '/../vendor/autoload.php';
 
+	// Render time measurement
+	$watch = new \Symfony\Component\Stopwatch\Stopwatch();
+	$watch->start('render');
+
 	// Funktionen und Config einlesen
 	try {
 		require_once __DIR__ . '/inc/bootstrap.inc.php';
-        $app = require __DIR__ .'/../src/app.php';
-        $app->boot();
 	} catch (DBException $ex) {
 		$tpl = new TemplateEngine();
 		$tpl->assign("content_for_layout", $ex);
@@ -33,9 +35,6 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 	// Set no-cache header
 	header("Cache-Control: no-cache, must-revalidate");
-
-	// Render time measurement
-	$tmr = new Timer();
 
 	//
 	// User and session checks
@@ -363,7 +362,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 		// Include content
 		require("inc/content.inc.php");
 
-		$tpl->assign("renderTime",$tmr->getRoundedTime());
+		$tpl->assign("renderTime", $watch->stop('render')->getDuration() / 1000);
 
 		// Display main template
 		$layoutTemplate = CSS_STYLE."/".DESIGN_TEMPLATE_FILE_NAME;

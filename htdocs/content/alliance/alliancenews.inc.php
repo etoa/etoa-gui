@@ -34,7 +34,7 @@ if (Alliance::checkActionRights('alliancenews'))
 		elseif (isset($_POST['newssubmitsend']) && isset($_POST['news_text']) && $_POST['news_text']!="")
 		{
 			$_SESSION['alliance']=array();
-			
+
 			dbquery("
 			INSERT INTO 
 			alliance_news
@@ -51,18 +51,18 @@ if (Alliance::checkActionRights('alliancenews'))
 			'".mysql_real_escape_string($_POST['news_text'])."',
 			".time().",
 			".intval($_POST['alliance_id']).")");
-			
+
 			success_msg("News wurde gesendet!");
-						
+
 			// Gebe nur Punkte falls Nachricht öffentlich oder an andere Allianz
 			if ($cu->allianceId!=$_POST['alliance_id'])
 			{
 				// 2nd param is only for logging, Log::add() escapes string properly
 				$cu->rating->addDiplomacyRating(DIPLOMACY_POINTS_PER_NEWS,"Rathausnews verfasst (ID:".mysql_insert_id().", ".$_POST['news_text'].")");
 			}
-			
+
 			// Update rss file
-			Townhall::genRss();			
+			Townhall::genRss();
 		}
 		elseif (isset($_POST['news_title']) && isset($_POST['news_text']) && $_POST['news_title']!="" && $_POST['news_text']!="")
 		{
@@ -93,7 +93,7 @@ if (Alliance::checkActionRights('alliancenews'))
 	{
 		$_SESSION['alliance']['news']['news_title']=$_GET['message_subject'];
 	}
-	
+
 	tableStart("Neue Allianzenews");
 	if(isset($_SESSION['alliance']['news']['alliance_id']) && $_SESSION['alliance']['news']['alliance_id']!=0)
 	{
@@ -102,8 +102,8 @@ if (Alliance::checkActionRights('alliancenews'))
 	else
 	{
 		$aid = $cu->allianceId;
-	} 
-	
+	}
+
 	if(isset($_SESSION['alliance']['news']['news_title']))
 	{
 		$news_title = $_SESSION['alliance']['news']['news_title'];
@@ -112,7 +112,7 @@ if (Alliance::checkActionRights('alliancenews'))
 	{
 		$news_title = "";
 	}
-	
+
 	if(isset($_SESSION['alliance']['news']['news_text']))
 	{
 		$news_text = $_SESSION['alliance']['news']['news_text'];
@@ -132,7 +132,7 @@ if (Alliance::checkActionRights('alliancenews'))
 
 	$aid = (isset($_POST['alliance_id'])) ? intval($_POST['alliance_id']) : $cu->allianceId();
 
-	echo "<tr><th colspan=\"3\">Sende diese Nachricht nur ab, wenn du dir bezüglich der Ratshausreglen sicher bist! Eine Missachtung kann zur Sperrung des Accounts führen!</th></tr>";
+	echo "<tr><th colspan=\"3\">Sende diese Nachricht nur ab, wenn du dir bezüglich der Rathausreglen sicher bist! Eine Missachtung kann zur Sperrung des Accounts führen!</th></tr>";
 	echo "<tr>
 		<th width=\"170\">Betreff:</td>
 		<td colspan=\"2\"><input type=\"text\" name=\"news_title\" value=\"".StringUtils::encodeDBStringToPlaintext($news_title)."\" size=\"62\" maxlength=\"255\"></td></tr>";
@@ -144,7 +144,7 @@ if (Alliance::checkActionRights('alliancenews'))
 		<th width=\"170\">Ziel:</td>
 		<td colspan=2>
 			<select name=\"alliance_id\">";
-		
+
 
 		$selected = '';
 		if ($aid == 0)
@@ -152,7 +152,7 @@ if (Alliance::checkActionRights('alliancenews'))
 			$selected = 'selected="selected" ';
 		}
 		echo '<option '.$selected.' value="0" style="font-weight:bold;color:#0f0;">Öffentliches Rathaus</option>';
-				
+
 		$alliance=dbquery("
 		SELECT
       alliance_id,
@@ -160,19 +160,19 @@ if (Alliance::checkActionRights('alliancenews'))
       alliance_name
 		FROM
 			alliances");
-			
+
 		while ($alliances=mysql_fetch_assoc($alliance))
 		{
 			$selected = ($aid == $alliances['alliance_id']) ? 'selected="selected" ' : "";
-			
+
 			echo '<option value="'.$alliances['alliance_id'].'" '.$selected.'>['.$alliances['alliance_tag']."]  ".$alliances['alliance_name']."</option>";
 		}
 		echo "</select></td>
 	</tr>";
 	tableEnd();
-	
+
 	echo $send;
-	
+
 	echo "<input type=\"submit\" name=\"newssubmit\" value=\"Vorschau\">";
 	echo " &nbsp; <input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" />";
 	echo "</form>";

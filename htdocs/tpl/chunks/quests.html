@@ -14,10 +14,13 @@
 
                         <h5>Aufgaben</h5>
                         <p>
-                            {$quest.taskDescription}:
-                            {foreach from=$quest.taskProgress item=progress}
-                                {$progress.progress|default:0}/{$progress.maxProgress}
-                            {/foreach}
+                            {$quest.taskDescription}
+                            {if $quest.state != 'available'}
+                                :
+                                {foreach from=$quest.taskProgress item=progress}
+                                    {$progress.progress|default:0}/{$progress.maxProgress}
+                                {/foreach}
+                            {/if}
                         </p>
                         <h5>Belohnung</h5>
                         {foreach from=$quest.rewards item=reward}
@@ -47,7 +50,7 @@
         openTutorial();
         $(function(){
             $('[data-id="quest-advance"]').on('click', function () {
-                advanceQuest($(this).attr('data-user-id'), $(this).attr('data-quest-id'), $(this).attr('data-transition-id'))
+                advanceQuest($(this).attr('data-quest-id'), $(this).attr('data-transition-id'))
             });
         });
     </script>

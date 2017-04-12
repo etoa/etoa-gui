@@ -17,13 +17,13 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 	/**
 	* Shows information about the current planet
 	*
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/	
+	*/
 
 	// BEGIN SKRIPT //
 
@@ -33,12 +33,12 @@
 		if (isset($_GET['action']) && $_GET['action']=="remove")
 		{
 			if (!$cp->isMain)
-			{		
+			{
 				echo "<h2>:: Kolonie auf diesem Planeten aufheben ::</h2>";
-				
+
 				$t = $cp->userChanged()+COLONY_DELETE_THRESHOLD;
 				if ($t < time())
-				{			
+				{
 					echo "<form action=\"?page=$page\" method=\"POST\">";
 					iBoxStart("Sicherheitsabfrage");
 					echo "Willst du die Kolonie auf dem Planeten <b>".$cp->name()."</b> wirklich l&ouml;schen?";
@@ -61,10 +61,10 @@
 		elseif (isset($_POST['submit_remove']) && $_POST['submit_remove']!="")
 		{
 			if (!$cp->isMain)
-			{			
+			{
 				$t = $cp->userChanged()+COLONY_DELETE_THRESHOLD;
 				if ($t < time())
-				{							
+				{
 					if (mysql_num_rows(dbquery("SELECT shiplist_id FROM shiplist WHERE shiplist_entity_id='".$cp->id."' AND shiplist_count>0;"))==0)
 					{
 						if (mysql_num_rows(dbquery("SELECT id FROM fleet WHERE entity_to='".$cp->id."' OR entity_from='".$cp->id."';"))==0)
@@ -83,7 +83,7 @@
 		                                planet_user_id='".$cu->id."'
 		                                AND planet_user_main=1;");
 									$main_arr=mysql_fetch_array($main_res);
-		
+
 									echo "<br>Die Kolonie wurde aufgehoben!<br>";
 									echo "<a href=\"?page=overview&planet_id=".$main_arr['id']."\">Zur &Uuml;bersicht</a>";
 
@@ -124,13 +124,17 @@
 				if ($_POST['planet_name']!="")
 				{
 					// setNameAndComment() escapes strings
+					$initialName = $cp->name;
 					$cp->setNameAndComment($_POST['planet_name'],$_POST['planet_desc']);
+					if ($initialName !== $cp->name) {
+						$app['dispatcher']->dispatch(\EtoA\Planet\Event\PlanetRename::RENAME_SUCCESS, new \EtoA\Planet\Event\PlanetRename());
+					}
 				}
 			}
-			
+
 			$sl = new ShipList($cp->id,$cu->id,1);
-			$dl = new DefList($cp->id,$cu->id,1);			
-	
+			$dl = new DefList($cp->id,$cu->id,1);
+
 		 	echo "<h1>&Uuml;bersicht &uuml;ber den Planeten ".$cp->name()."</h1>";
 			echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
 
@@ -166,7 +170,7 @@
 			echo $ddm;
 
 			echo "<div id=\"tabOverview\" style=\"".($sub=="" ? '' : 'display:none')."\">";
-			
+
 			iBoxStart("Übersicht");
 			echo "<div style=\"position:relative;height:320px;padding:0px;background:#000 url('images/stars_middle.jpg');\">
 			<div style=\"position:absolute;right:20px;top:20px;\">
@@ -187,22 +191,22 @@
 				<span class=\"rescrystal\">".nf($cp->debrisCrystal,0,1)."</span>
 				<span class=\"resplastic\">".nf($cp->debrisPlastic,0,1)."</span>
 				<br style=\"clear:left;\"/>";
-			}			
+			}
 			if ($cp->desc!="") {
 				if (strlen($cp->desc) > 90) {
 					echo "<div class=\"planetOverviewItem\">Beschreibung</div><span ".mTT('Beschreibung', $cp->desc)."> ".substr($cp->desc,0,90)." ...</span><br style=\"clear:left;\"/>";
 				} else {
 					echo "<div class=\"planetOverviewItem\">Beschreibung</div> ".$cp->desc."<br style=\"clear:left;\"/>";
 				}
-			}	
-			if ($cp->isMain)				
+			}
+			if ($cp->isMain)
 				echo "<div class=\"planetOverviewItem\">Hauptplanet</div> Dies ist dein Hauptplanet. Hauptplaneten können nicht invasiert oder aufgegeben werden!<br style=\"clear:left;\"/>";
 			echo "</div>";
 			echo "</div>";
 			iBoxEnd();
 			echo "</div>";
-	
-	
+
+
 			echo "<div id=\"tabName\" style=\"".($sub=="name" ? '' : 'display:none;')."\">";
 			echo '<script type="text/javascript" src="web/js/vendor/planetname.js"></script>';
 			echo "<form action=\"?page=$page\" method=\"POST\" style=\"text-align:center;\">";
@@ -215,12 +219,12 @@
 			echo "<input type=\"submit\" name=\"submit_change\" value=\"Speichern\" /> &nbsp; ";
 			echo "</form>";
 			echo "</div>";
-	
-	
+
+
 			//
 			// Felder
 			//
-	
+
 			echo "<div id=\"tabFields\" style=\"".($sub=="fields" ? '' : 'display:none;')."\">";
 			tableStart("Felderbelegung");
 			echo "<tr>
@@ -249,7 +253,7 @@
 			}
 			else
 				echo "<tr><td><i>Keine Geb&auml;ude vorhanden!</i></td></tr>";
-			tableEnd();				
+			tableEnd();
 			echo "</td><td style=\"width:50%;vertical-align:top;padding:5px;\">";
 			tableStart("Verteidigungsanlagen",'100%');
 			if ($dl->count() > 0)
@@ -271,22 +275,22 @@
 			tableEnd();
 			echo "</table>";
 			echo "</div>";
-	
+
 			//
 			// Schiffe
 			//
-	
+
 			echo "<div id=\"tabShips\" style=\"".($sub=="ships" ? '' : 'display:none;')."\">";
 			tableStart("Kampfstärke");
 		  if ($sl->count() > 0)
 		  {
-				// Forschung laden und bonus dazu rechnen 
+				// Forschung laden und bonus dazu rechnen
 		    // Liest Level der Waffen-,Schild-,Panzerungs-,Regena Tech aus Datenbank (att)
 				$weapon_tech_a=1;
 				$structure_tech_a=1;
 		    $shield_tech_a=1;
 		    $heal_tech_a=1;
-		
+
 		    $techres_a = dbquery("
 				SELECT
 					techlist_tech_id,
@@ -308,7 +312,7 @@
 						OR techlist_tech_id='".REGENA_TECH_ID."'
 					)
 		  		;");
-		
+
 		      while ($techarr_a = mysql_fetch_array($techres_a))
 		      {
 		          if ($techarr_a['techlist_tech_id']==SHIELD_TECH_ID)
@@ -336,7 +340,7 @@
 									$heal_tech_level = $techarr_a["techlist_current_level"];
 							}
 		      }
-		
+
 				echo "<tr><th><b>Einheit</b></th><th>Grundwerte</th><th>Aktuelle Werte</th></tr>";
 		  	echo "<tr>
 					<td><b>Struktur:</b></td>
@@ -391,7 +395,7 @@
 		  	echo "<tr><td><i>Keine Schiffe vorhanden!</i></td></tr>";
 		  }
 		  tableEnd();
-			
+
 			tableStart("Details");
 			echo "<tr><th>Typ</th><th>Anzahl</th><th>Eingebunkert</th></tr>";
 			foreach ($sl as $k => &$v)
@@ -405,22 +409,22 @@
 			unset($v);
 			tableEnd();
 			echo "</div>";
-	
+
 			//
 			// Defense overview
 			//
-				
+
 			echo "<div id=\"tabDefense\" style=\"".($sub=="defense" ? '' : 'display:none;')."\">";
 			tableStart("Kampfstärke");
 		  if (mysql_num_rows($res)>0)
 		  {
-				// Forschung laden und bonus dazu rechnen 
+				// Forschung laden und bonus dazu rechnen
 		    // Liest Level der Waffen-,Schild-,Panzerungs-,Regena Tech aus Datenbank (att)
 				$weapon_tech_a=1;
 				$structure_tech_a=1;
 		    $shield_tech_a=1;
 		    $heal_tech_a=1;
-		
+
 		    $techres_a = dbquery("
 				SELECT
 					techlist_tech_id,
@@ -442,7 +446,7 @@
 						OR techlist_tech_id='".REGENA_TECH_ID."'
 					)
 		  		;");
-		
+
 		      while ($techarr_a = mysql_fetch_array($techres_a))
 		      {
 		          if ($techarr_a['techlist_tech_id']==SHIELD_TECH_ID)
@@ -470,7 +474,7 @@
 									$heal_tech_level = $techarr_a["techlist_current_level"];
 							}
 		      }
-		
+
 				echo "<tr><th><b>Einheit</b></th><th>Grundwerte</th><th>Aktuelle Werte</th></tr>";
 		  	echo "<tr>
 					<td><b>Struktur:</b></td>
@@ -481,7 +485,7 @@
 						echo " (".get_percent_string($structure_tech_a,1)." durch ".$structure_tech_name." ".$structure_tech_level;
             if ($sl->getBStructure()>0)
 							echo ", ".get_percent_string((1+$sl->getBStructure()),1)." durch Spezialschiffe";
-						echo ")"; 
+						echo ")";
 					}
 					echo "</td></tr>";
 		  	echo "<tr><td><b>Schilder:</b></td>
@@ -538,16 +542,16 @@
 			}
 			unset($v);
 			tableEnd();
-			
+
 			echo "</div>";
 
-	
-			
+
+
 			if (!$cp->isMain)
 			{
 				echo "&nbsp;<input type=\"button\" value=\"Kolonie aufheben\" onclick=\"document.location='?page=$page&action=remove'\" />";
 			}
-	
+
 		}
 	}
 	else

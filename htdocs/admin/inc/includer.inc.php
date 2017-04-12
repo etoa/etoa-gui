@@ -9,7 +9,7 @@
 
 define('RELATIVE_ROOT','../');
 define('ADMIN_MODE',true);
-
+require_once __DIR__ . '/../../../vendor/autoload.php';
 require_once __DIR__ . '/../../inc/bootstrap.inc.php';
 
 // Renderzeit-Start festlegen

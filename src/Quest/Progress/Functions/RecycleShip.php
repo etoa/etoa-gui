@@ -4,9 +4,9 @@ namespace EtoA\Quest\Progress\Functions;
 
 use EtoA\Ship\Event\ShipRecycle;
 use LittleCubicleGames\Quests\Entity\TaskInterface;
-use LittleCubicleGames\Quests\Progress\Functions\HandlerFunctionInterface;
+use LittleCubicleGames\Quests\Progress\Functions\EventHandlerFunctionInterface;
 
-class RecycleShip implements HandlerFunctionInterface
+class RecycleShip implements EventHandlerFunctionInterface
 {
     const NAME = 'recycle-ship';
 

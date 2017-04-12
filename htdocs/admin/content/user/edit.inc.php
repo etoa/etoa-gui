@@ -7,12 +7,18 @@
 			else
 				$id = 0;
 
+            $nick = mysql_fetch_row(dbquery("SELECT user_nick FROM users WHERE user_id=".$id.";"))[0];
 
 			// Geänderte Daten speichern
 			if (isset($_POST['save']))
 			{
-				
-				// Speichert Usertdaten in der Tabelle "users"
+                if ($nick !== $_POST['user_nick']) {
+
+                    $user = new User($id);
+                    $user->addToUserLog("settings","{nick} hat seinen Namen zu ".$_POST['user_nick']." geändert.",1);
+                }
+
+                // Speichert Usertdaten in der Tabelle "users"
 				$sql = "UPDATE users SET
 				user_name='".$_POST['user_name']."',
 				user_nick='".$_POST['user_nick']."',
@@ -162,13 +168,15 @@
 				// Handle holiday mode
 				if ($_POST['umod_enable']==1)
 				{
+                    $usr = new User($id);
+                    $usr->activateUmode(true);
 					$sql.= ",user_hmode_from='".parseDatePicker('user_hmode_from', $_POST)."'";
 					$sql.= ",user_hmode_to='".parseDatePicker('user_hmode_to', $_POST)."'";
 				}
 				else
 				{
-					$sql.= ",user_hmode_from=0";
-					$sql.= ",user_hmode_to=0";
+                    $usr = new User($id);
+                    $usr->removeUmode(true);
 				}
 
 				// Perform query

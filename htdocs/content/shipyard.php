@@ -49,8 +49,8 @@
 
 	define("SHIPQUEUE_CANCEL_END", $cfg->get('shipqueue_cancel_end'));
 
-    $bl = new Buildlist($cp->id,$cu->id);
-    $tl = new Techlist($cu->id);
+    $bl = new BuildList($cp->id,$cu->id);
+    $tl = new TechList($cu->id);
 
 	$shipyard = $bl->item(SHIP_BUILDING_ID);
 

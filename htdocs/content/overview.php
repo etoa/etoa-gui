@@ -17,17 +17,17 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 	/**
 	* Welcome page and overview over all planets
 	*
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/	
+	*/
 
 	// BEGIN SKRIPT //
 	echo "<h1>&Uuml;bersicht</h1>";
-	
+
 	if ($s->firstView)
 	{
 		if ($cfg->get("round_end")==1)
@@ -39,7 +39,7 @@
 				echo " ".$cfg->p2("round_end");
 			}
 			echo "</div>";
-			iBoxEnd();	
+			iBoxEnd();
 		}
 		$res = dbquery("
 		SELECT
@@ -91,9 +91,9 @@
 
 
 	//
-	// Ratshaus   
+	// Rathaus
 	//
-	
+
 		$anres=dbquery("
 		SELECT
 			alliance_news_id
@@ -120,15 +120,15 @@
 
 
 	 //
-	 // Flotten  
+	 // Flotten
 	 //
 
 		//
 		// Eigene Flotten
 		//
 		$fm = new FleetManager($cu->id,$cu->allianceId);
-		$fm->loadOwn();	
-		
+		$fm->loadOwn();
+
 		//Mehrere Flotten
 		if ($fm->count() > 1)
 		{
@@ -144,8 +144,8 @@
 		{
 			echo "<td>Keine eigenen Flotten</td>";
 		}
-	
-	
+
+
 		//
 		// Fremde Flotten
 		//
@@ -169,9 +169,9 @@
 
 
 	//
-	// Technologien   
+	// Technologien
 	//
-	
+
 		//Lädt forschende Tech
 	  $bres = dbquery("
 	  SELECT
@@ -200,14 +200,14 @@
 			{
 				echo startTime($barr['techlist_build_end_time']-time(), 'tech_counter', 0, ''.$barr['tech_name'].' TIME');
 			}
-	
+
 			echo "</a></td></tr>";
 		}
 		else
 		{
 			echo "<td>Es wird nirgendwo geforscht!</td></tr>";
 		}
-				
+
     //
     //Gentech
     //
@@ -246,17 +246,17 @@
 			{
 				echo startTime($garr['techlist_build_end_time']-time(), 'tech_gen', 0, ''.$garr['tech_name'].' TIME');
 			}
-	
+
 			echo "</a></td></tr>";
 		}
 
 		//
-		// Allianzegebäude 
+		// Allianzegebäude
 		//
-		
+
 		if($cu->allianceId!=0)
 		{
-			
+
 			echo "<tr>
 							<th>Allianzgebäude</th>
 							<th>Supportflotten</th>
@@ -264,7 +264,7 @@
 							<th>Allianzforschungen</th>
 						</tr>
 						<tr>";
-						
+
 			// Lädt bauende Allianzgebäude
 		  $res = dbquery("
 		  SELECT
@@ -283,7 +283,7 @@
 				$arr = mysql_fetch_array($res);
 				echo "<td>
 								<a href=\"?page=alliance&amp;action=base&amp;action2=buildings\" id=\"alliance_building_counter\">";
-								
+
 								//Forschung ist fertig
 								if($arr['alliance_buildlist_build_end_time']-time()<=0)
 								{
@@ -294,15 +294,15 @@
 								{
 									echo startTime($arr['alliance_buildlist_build_end_time']-time(), 'alliance_building_counter', 0, ''.$arr['alliance_building_name'].' TIME');
 								}
-		
+
 					echo "</a>
 							</td>";
 			}
 			else
 			{
 				echo "<td>Es wird nichts gebaut!</td>";
-			}	
-			
+			}
+
 		//
 		// Supportflotten Flotten
 		//
@@ -322,7 +322,7 @@
 		{
 			echo "<td>Keine Supportflotten</td>";
 		}
-		
+
 		//
 		// Allianzangriffs
 		//
@@ -342,8 +342,8 @@
 		{
 			echo "<td>Keine Allianzangriffe</td>";
 		}
-				
-				
+
+
 			// Lädt forschende Allianztech
 		  $res = dbquery("
 		  SELECT
@@ -362,7 +362,7 @@
 				$arr = mysql_fetch_array($res);
 				echo "<td>
 								<a href=\"?page=alliance&amp;action=base&amp;action2=research\" id=\"alliance_tech_counter\">";
-								
+
 								//Forschung ist fertig
 								if($arr['alliance_techlist_build_end_time']-time()<=0)
 								{
@@ -373,7 +373,7 @@
 								{
 									echo startTime($arr['alliance_techlist_build_end_time']-time(), 'alliance_tech_counter', 0, ''.$arr['alliance_tech_name'].' TIME');
 								}
-		
+
 					echo "</a>
 							</td>";
 			}
@@ -382,16 +382,16 @@
 				echo "<td>Es wird nichts geforscht!</td>";
 			}
 		}
-		
+
 		echo "</tr>";
-		
+
 		tableEnd();
 
 
 
 
 	//
-	// Javascript für dynamischen Planetkreis   
+	// Javascript für dynamischen Planetkreis
 	//
 
 
@@ -433,7 +433,7 @@
 
             document.getElementById("planet_info_defense_name").firstChild.nodeValue=defense_name;
             document.getElementById("planet_info_defense_time").firstChild.nodeValue=defense_time;
-			
+
 			//Überprüfen ob Speicher voll ist
 			var check_metal = store_metal-res_metal;
 			var check_crystal = store_crystal-res_crystal;
@@ -441,7 +441,7 @@
 			var check_fuel = store_fuel-res_fuel;
 			var check_food = store_food-res_food;
 			var check_people = people_place-people;
-	
+
 			var rest_power = prod_power-use_power;
 
 			//Wenn Speicher voll, anders darstellen als normal
@@ -543,7 +543,7 @@
             document.getElementById("planet_info_res_food").firstChild.nodeValue=''+res_food+' t';
             document.getElementById("planet_info_power").firstChild.nodeValue=rest_power;
             document.getElementById("planet_info_people").firstChild.nodeValue=people;
-			
+
 
 			//Alle Beschriftungen anzeigen
 			document.getElementById("planet_info_text_building").innerHTML ='<a href=\"?page=buildings&change_entity='+planet_id+'\">Bauhof:</a>';
@@ -588,7 +588,7 @@
 
 
 	//
-	// Planetkreis   
+	// Planetkreis
 	//
 
 	//Kreis Definitionen
@@ -605,7 +605,7 @@
 	$middle_top=$d_planets/2-$pic_width/2;
 	$absolute_width=$d_infos+$info_box_width+$pic_width;
 	$absolute_height=$d_infos+$info_box_height+$pic_height;
-	
+
 	//Abstand
 	echo "<br><br><br><br><br><br><br><br>";
 
@@ -643,19 +643,19 @@
       p.planet_user_main DESC,
       p.planet_name;";
 		$res_planet = dbquery($psql);
-	
-		
+
+
 		while ($arr_planet = mysql_fetch_array($res_planet))
 		{
 			if ($arr_planet['planet_name']!="")
 			{
 				$planet_name = $arr_planet['planet_name'];
 			}
-			else 
+			else
 			{
 				$planet_name = "Unbenannt";
 			}
-			
+
       // Bauhof infos
       $res_building = dbquery("
       SELECT
@@ -684,7 +684,7 @@
 
         $building_time = $building_zeit;
         $building_name =  $arr_building['building_name'];
-        
+
         // Zeigt Ausbaulevel bei Abriss
         if($arr_building['buildlist_build_type'] == 2)
         {
@@ -695,7 +695,7 @@
         {
         	$building_level =  $arr_building['buildlist_current_level']+1;
         }
-        
+
         if($building_rest_time<=0)
         {
         	$building_time="Fertig";
@@ -731,12 +731,12 @@
       if (mysql_num_rows($res_shipyard)>0)
       {
       	$arr_shipyard = mysql_fetch_array($res_shipyard);
-      	
+
       	//Verbleibende Zeit bis zur fertigstellung des aktuellen Auftrages
       	$shipyard_rest_time[$arr_planet['id']] = $arr_shipyard['queue_endtime']-time();
       	//Schiffsname
       	$shipyard_name[$arr_planet['id']] =  $arr_shipyard['ship_name'];
-      	
+
         //infos über den raumschiffswerft
         $shipyard_h=floor($shipyard_rest_time[$arr_planet['id']]/3600);
         $shipyard_m=floor(($shipyard_rest_time[$arr_planet['id']]-$shipyard_h*3600)/60);
@@ -800,12 +800,12 @@
         $defense_time[$arr_planet['id']] = "";
         $defense_name[$arr_planet['id']] = "";
       }
-	
+
 			$planet_info = "<b class=\"planet_name\">".StringUtils::encodeDBStringToPlaintext($planet_name)."</b><br>
 			".$building_name." ".$building_level."
 			";
 			$planet_image_path = "".IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$arr_planet['planet_image']."_middle.gif";
-	
+
 			// Planet bild mit link zum bauhof und der informationen übergabe beim mouseover
 	    $planet_link = "<a href=\"?page=buildings&change_entity=".$arr_planet['id']."\"><img id=\"Planet\" src=\"".$planet_image_path."\" width=\"".$pic_width."\" height=\"".$pic_height."\" border=\"0\" 
 	    onMouseOver=\"show_info(
@@ -833,21 +833,21 @@
 			'".floor($arr_planet['planet_people_place'])."'
 			);\"/></a>
 			";
-	
-	
+
+
 			if($degree==0)
 				$text="center";
 			elseif($degree>0 && $degree<=180)
 				$text="left";
 			else
 				$text="right";
-	
+
 			$left2=$middle_left+(($d_planets/2)*cos(deg2rad($degree+270)));
 			$top2=$middle_top+(($d_planets/2)*sin(deg2rad($degree+270)));
-	
+
 			echo "<div style=\"position:absolute; left:".$left2."px; top:".$top2."px; text-align:center; vertical-align:middle;\">".$planet_link."</div>
 			";
-	
+
 			if($degree==0)
 			{
 				$left=$middle_left+(($d_infos/2)*cos(deg2rad($degree+270)))-($info_box_width-$pic_width)/2;
@@ -893,19 +893,19 @@
 				$left=$middle_left+(($d_infos/2)*cos(deg2rad($degree+270)))-$pic_width-($info_box_width-$pic_width);
 				$top=$middle_top+(($d_infos/2)*sin(deg2rad($degree+270)))-$pic_height/2;
 			}
-	
+
 			echo "<div id=\"planet_info_".$arr_planet['id']."\" style=\"position:absolute; left:".$left."px; top:".$top."px; width:".$info_box_width."px; height:".$info_box_height."px; text-align:".$text."; vertical-align:middle;\">
 			";
-			
+
 			echo $planet_info;
 			echo '<span id="planet_timer_'.$arr_planet['id'].'">';
-			
+
 			// Stellt Zeit Counter dar, wenn ein Gebäude in bau ist
 			if(isset($building_rest_time) && $building_rest_time>0)
 			{
 				echo startTime($building_rest_time, "planet_timer_".$arr_planet['id']."", 0, "<br>(TIME)")."";
 			}
-			
+
 			echo "</span></div>
 			";
 			$degree = $degree + (360/$division);

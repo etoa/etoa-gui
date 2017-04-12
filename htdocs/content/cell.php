@@ -17,13 +17,13 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 	/**
 	* Stellar system map
 	*
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/	
+	*/
 
 	// BEGIN SKRIPT //
 
@@ -35,9 +35,9 @@
 	{
 		$cellId = $cp->cellId();
 	}
-	
+
 	$_SESSION['currentEntity']=serialize($cp);
-	
+
 	// Systemnamen updaten
 	if (isset($_POST['starname_submit']) && $_POST['starname']!="" && intval($_POST['starname_id'])>0 && checker_verify())
 	{
@@ -47,6 +47,8 @@
 			if ($star->setNewName($_POST['starname']))
 			{
 				success_msg("Der Stern wurde benannt!");
+
+				$app['dispatcher']->dispatch(\EtoA\Galaxy\Event\StarRename::RENAME_SUCCESS, new \EtoA\Galaxy\Event\StarRename());
 			}
 			else
 			{
@@ -55,14 +57,14 @@
 		}
 		unset($star);
 	}
-		
+
 		$cell = new Cell($cellId);
 		if ($cell->isValid())
 		{
 
 
 			$entities = $cell->getEntities();
-			
+
 			echo "<h1>System ".$cell."</h1>";
 
 			$sx_num=$cfg->param1('num_of_sectors');
@@ -70,7 +72,7 @@
 			$cx_num=$cfg->param1('num_of_cells');
 			$cy_num=$cfg->param2('num_of_cells');
 
-			
+
 			if ($cu->discovered($cell->absX(),$cell->absY()))
 			{
 			$ares = dbquery("SELECT
@@ -83,7 +85,7 @@
 			while ($arow = mysql_fetch_row($ares)) {
 				array_push($admins,$arow[0]);
 			}
-			
+
 			//
 			// Systamkarte
 			//
@@ -109,7 +111,7 @@
 			for ($x=1;$x<=$cx_num;$x++)
 			{
 				for ($y=1;$y<=$cy_num;$y++)
-				{		
+				{
 					echo "<option value=\"".$cid."\"";
 					if ($cell->getCX()==$x && $cell->getCY()==$y)
 						echo " selected=\"selected\"";
@@ -118,9 +120,9 @@
 				}
 			}
 			echo "</select>";
-			echo "</td></tr>";				
+			echo "</td></tr>";
 
-			
+
 				echo "<tr>
 					<th colspan=\"2\" style=\"width:60px;\">Position</th>
 					<th>Typ</th>
@@ -128,7 +130,7 @@
 					<th>Besitzer</th>
 					<th style=\"width:150px;\">Aktionen</th>
 				</tr>";
-	
+
 				$hasPlanetInSystem = false;
 				$starNameEmpty = false;
 				foreach ($entities as $ent)
@@ -137,7 +139,7 @@
 					{
 						echo "<tr>
 							<td style=\"height:3px;background:#000;\" colspan=\"6\"></td>
-						</tr>";			
+						</tr>";
 					}
 					$addstyle=" style=\"vertical-align:middle;";
 					if (isset($_GET['hl']) && $_GET['hl']==$ent->id())
@@ -145,14 +147,14 @@
 						$addstyle.="background:#003D6F;";
 					}
 					$addstyle.="\" ";
-					
+
 					$class = " class=\"";
 					if ($ent->ownerId()>0)
 					{
 					  //Admin
 					  if (in_array($ent->ownerId(),$admins)) {
 						  $class .= "adminColor";
-						  $tm_info = "Admin/Entwickler";						  
+						  $tm_info = "Admin/Entwickler";
 					  }
 					  // Krieg
 					  elseif ($ent->owner->allianceId>0 && $cu->allianceId>0 && $cu->alliance->checkWar($ent->owner->allianceId))
@@ -183,7 +185,7 @@
 					  {
 						  $class .= "userLongInactiveColor";
 						  $tm_info = "Lange Inaktiv";
-					  }		
+					  }
 					  // Inaktiv
 					  elseif ($ent->owner->lastOnline<time()-USER_INACTIVE_SHOW*86400)
 					  {
@@ -220,7 +222,7 @@
 					  $tm_info="";
 					}
 					$class .="\" ";
-					
+
 					if ($ent->entityCode()=='p')
 					{
 						$tm="";
@@ -265,10 +267,10 @@
 						else
 						{
 							$tm.= "<span style=\"color:#f00\">".$spw."%</span>";
-						}				
+						}
 						$tm.= " ".RES_FUEL."-Produktion";
 					}
-						
+
 					echo "<tr>
 						<td $class style=\"width:40px;background:#000;\">
 							<a href=\"?page=entity&amp;id=".$ent->id()."\">
@@ -281,7 +283,7 @@
 							echo "<span ".tm($ent->type(),$tm).">".$ent->type()."</span>";
 						else
 							echo $ent->entityCodeString();
-						
+
 						if ($ent->entityCode()=='w')
 						{
 							if ($ent->isPersistent())
@@ -294,11 +296,11 @@
 							}
 							$tent = new Wormhole($ent->targetId());
 							echo "<br/>Ziel: <a href=\"?page=cell&amp;id=".$tent->cellId()."\">".$tent."</a>";
-						}				
-						elseif ($ent->entityCode()=='p' && $ent->debrisField)					
-						{				
+						}
+						elseif ($ent->entityCode()=='p' && $ent->debrisField)
+						{
 							echo "<br/><span style=\"color:#817339;font-weight:bold\" ".tm("Trümmerfeld",RES_ICON_METAL.nf($ent->debrisMetal)." ".RES_METAL."<br style=\"clear:both\" />".RES_ICON_CRYSTAL.nf($ent->debrisCrystal)." ".RES_CRYSTAL."<br style=\"clear:both\" />".RES_ICON_PLASTIC.nf($ent->debrisPlastic)." ".RES_PLASTIC."<br style=\"clear:both\" />").">Trümmerfeld</span> ";
-						}	
+						}
 						echo "</td>
 						<td $addstyle><a $class href=\"?page=entity&amp;id=".$ent->id()."\">".text2html($ent->name())."</a></td>
 						<td $addstyle>";
@@ -316,20 +318,20 @@
 							echo $ent->owner();
 						echo "</td>
 						<td $addstyle>";
-	
+
 							// Favorit
 						if ($cu->id!=$ent->ownerId())
 						{
 							echo "<a href=\"?page=bookmarks&amp;add=".$ent->id()."\" title=\"Zu den Favoriten hinzuf&uuml;gen\">".icon("favorite")."</a> ";
-						}		
-	
+						}
+
 						// Flotte
 						if ($ent->entityCode()=='p' || $ent->entityCode()=='a' || $ent->entityCode()=='w' || $ent->entityCode()=='n' || $ent->entityCode()=='e')
 						{
 							echo "<a href=\"?page=haven&amp;target=".$ent->id()."\" title=\"Flotte hinschicken\">".icon('fleet')."</a> ";
 						}
-	
-						if ($ent->entityCode()=='s')					
+
+						if ($ent->entityCode()=='s')
 						{
 							if (!$ent->named)
 							{
@@ -337,19 +339,19 @@
 								$starToBeNamed = $ent->id();
 							}
 						}
-						elseif ($ent->entityCode()=='p')					
+						elseif ($ent->entityCode()=='p')
 						{
 							if ($ent->ownerId()>0 && $cu->id==$ent->ownerId())
 							{
 								$hasPlanetInSystem = true;
 							}
-							
+
 							// Nachrichten-Link
 							if ($ent->ownerId()>0 && $cu->id!=$ent->ownerId())
 							{
 								echo "<a href=\"?page=messages&amp;mode=new&amp;message_user_to=".$ent->ownerId()."\" title=\"Nachricht senden\">".icon("mail")."</a> ";
 							}
-								
+
 							// Diverse Links
 							if ($cu->id!=$ent->ownerId())
 							{
@@ -358,11 +360,11 @@
 								{
 									echo "<a href=\"javascript:;\" onclick=\"xajax_launchSypProbe(".$ent->id().");\" title=\"Ausspionieren\">".icon("spy")."</a>";
 									echo "<a href=\"?page=missiles&amp;target=".$ent->id()."\" title=\"Raketenangriff starten\">".icon("missile")."</a> ";
-									echo "<a href=\"?page=crypto&amp;target=".$ent->id()."\" title=\"Flottenbewegungen analysieren\">".icon("crypto")."</a> ";					
+									echo "<a href=\"?page=crypto&amp;target=".$ent->id()."\" title=\"Flottenbewegungen analysieren\">".icon("crypto")."</a> ";
 								}
 							}
 						}
-						
+
 						if (in_array("analyze",$ent->allowedFleetActions()))
 						{
 							if ($cu->properties->showCellreports)
@@ -370,7 +372,7 @@
 								$reports = Report::find(array("type"=>"spy","user_id"=>$cu->id, "entity1_id"=>$ent->id()),"timestamp DESC",1,0,true);
 								if (count($reports)) {
 									$r = array_pop($reports);
-									echo "<span ".tm($r->subject,$r."<br style=\"clear:both\" />")."><a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(".$ent->id().");\" title=\"Analysieren\">".icon("spy")."</a></span>";	
+									echo "<span ".tm($r->subject,$r."<br style=\"clear:both\" />")."><a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(".$ent->id().");\" title=\"Analysieren\">".icon("spy")."</a></span>";
 								}
 								else
 									echo "<a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(".$ent->id().");\" title=\"Analysieren\">".icon("spy")."</a> ";
@@ -379,14 +381,14 @@
 								echo "<a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(".$ent->id().");\" title=\"Analysieren\">".icon("spy")."</a> ";
 						}
 
-			
+
 						echo "</td></tr>";
-					
+
 				}
-				
+
 				tableEnd();
-				
-				
+
+
 				// System benennen
 				if ($hasPlanetInSystem && $starNameEmpty)
 				{
@@ -397,15 +399,15 @@
 	 		    <input type=\"hidden\" name=\"starname_id\" value=\"". $starToBeNamed."\" /> 
 	 		    <input type=\"submit\" name=\"starname_submit\" value=\"Speichern\" /><br/><br/></form>";
 	      }
-							
-				
-				
+
+
+
 				echo "<div id=\"spy_info_box\" style=\"display:none;\">";
 				iBoxStart("Flotten");
 				echo "<div id=\"spy_info\"></div>";
 				iBoxEnd();
 				echo "</div>";
-				
+
 				iBoxStart("Legende");
 				echo "
 				<span class=\"userSelfColor\">Eigener Planet</span>, 
@@ -443,7 +445,7 @@
 				for ($x=1;$x<=$cx_num;$x++)
 				{
 					for ($y=1;$y<=$cy_num;$y++)
-					{		
+					{
 						echo "<option value=\"".$cid."\"";
 						if ($cell->getCX()==$x && $cell->getCY()==$y)
 							echo " selected=\"selected\"";
@@ -451,19 +453,19 @@
 						$cid++;
 					}
 				}
-				echo "</select></div><br/>";				
+				echo "</select></div><br/>";
 				echo "System noch nicht erkundet. Erforsche das System mit einer Erkundungsflotte um es sichtbar zu machen!<br/><br/>";
 				echo "<input type=\"button\" onclick=\"xajax_launchExplorerProbe(".$cellId.");\" value=\"Erkundungsflotte senden\" />";
 				iBoxEnd();
-				
+
 				echo "<div id=\"spy_info_box\" style=\"display:none;\">";
 				iBoxStart("Flotten");
 				echo "<div id=\"spy_info\"></div>";
 				iBoxEnd();
 				echo "</div>";
-				
+
 			}
-			
+
 			echo "<input type=\"button\" value=\"Zur Raumkarte\" onclick=\"document.location='?page=sector&amp;sx=".$cell->getSX()."&amp;sy=".$cell->getSY()."'\" /> &nbsp; ";
 
 		}

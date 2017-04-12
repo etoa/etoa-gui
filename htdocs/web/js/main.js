@@ -1712,7 +1712,11 @@ openTutorial = function(){
 
 closeTutorial = function(){
 	$('#tutorialContainer').hide();
-	ajaxRequest('close_tutorial', { id:$('#tutorialContainer').attr('data-tutorial') }, function(data) {}, alert);
+    $.ajax({
+        type: 'PUT',
+        url: '/api/tutorials/'+$('#tutorialContainer').attr('data-tutorial')+'/close',
+        contentType: 'application/json'
+    }).fail(alert);
 }
 
 function showTutorialText(id, step) {
@@ -1787,13 +1791,16 @@ function getRaceInfo(id) {
   }, alert);
 }
 
-function advanceQuest(userId, questId, transition) {
-    ajaxRequest('quest_transition', { userId:userId, questId:questId, transition:transition }, function(data) {
-    	if (data.state === 'finished') {
-    		console.log('test');
+function advanceQuest(questId, transition) {
+    $.ajax({
+        type: 'PUT',
+        url: '/api/quests/'+questId+'/advance/'+transition,
+        contentType: 'application/json'
+    }).done(function (data) {
+        if (data.state === 'finished') {
             window.location.reload(true);
-		} else {
+        } else {
             $('[data-id="quest-advance"]').hide();
         }
-    }, alert);
+	});
 }

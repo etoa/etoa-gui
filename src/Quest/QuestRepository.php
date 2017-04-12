@@ -58,7 +58,9 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
             ->andWhere($qb->expr()->notIn('q.state', ["'" . QuestDefinitionInterface::STATE_FINISHED . "'", "'" . QuestDefinitionInterface::STATE_REJECTED . "'"]))
             ->setParameters([
                 'userId' => $userId,
-            ])->execute()->fetchAll(\PDO::FETCH_ASSOC | \PDO::FETCH_GROUP);
+            ])
+            ->orderBy('q.id')
+            ->execute()->fetchAll(\PDO::FETCH_ASSOC | \PDO::FETCH_GROUP);
 
         foreach ($result as $questId => $questData) {
             $quests[] = $this->buildQuest($questId, $questData);

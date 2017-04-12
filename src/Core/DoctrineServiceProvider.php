@@ -54,6 +54,8 @@ class DoctrineServiceProvider implements ServiceProviderInterface
                 $options['dbname'] = $options['dbname'] . '_test';
             }
 
+            \DBManager::getInstance()->setDatabaseConfig($options);
+
             return DriverManager::getConnection($options, $pimple['db.config'], $pimple['db.event_manager']);
         };
 
