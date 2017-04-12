@@ -33,4 +33,27 @@ class PlanetRepositoryTest extends AbstractDbTestCase
 
         $this->assertEquals(1, $id);
     }
+
+    public function testGetPlanetCount()
+    {
+        $userId = 1;
+        for ($i = 0; $i < 5; $i++) {
+            $this->connection->createQueryBuilder()->insert('planets')->values([
+                'id' => ':id',
+                'planet_user_id' => ':userId',
+                'planet_user_main' => ':isMain',
+            ])->setParameters([
+                'id' => $i,
+                'userId' => $userId,
+                'isMain' => 0,
+            ])->execute();
+        }
+
+        $this->assertSame(5, $this->repository->getPlanetCount($userId));
+    }
+
+    public function testGetPlanetCountNoPlanets()
+    {
+        $this->assertSame(0, $this->repository->getPlanetCount(1));
+    }
 }

@@ -53,4 +53,42 @@ class UserRepositoryTest extends AbstractDbTestCase
 
         $this->assertSame($points, $this->repository->getPoints($userId));
     }
+
+    public function testGetAllianceId()
+    {
+        $userId = 10;
+        $allianceId = 100;
+
+        $this->connection
+            ->createQueryBuilder()
+            ->insert('users')
+            ->values([
+                'user_id' => ':userId',
+                'user_alliance_id' => ':allianceId',
+            ])->setParameters([
+                'userId' => $userId,
+                'allianceId' => $allianceId,
+            ])->execute();
+
+        $this->assertSame($allianceId, $this->repository->getAllianceId($userId));
+    }
+
+    public function testGetSpecialistId()
+    {
+        $userId = 10;
+        $specialistId = 3;
+
+        $this->connection
+            ->createQueryBuilder()
+            ->insert('users')
+            ->values([
+                'user_id' => ':userId',
+                'user_specialist_id' => ':specialistId',
+            ])->setParameters([
+                'userId' => $userId,
+                'specialistId' => $specialistId,
+            ])->execute();
+
+        $this->assertSame($specialistId, $this->repository->getSpecialistId($userId));
+    }
 }

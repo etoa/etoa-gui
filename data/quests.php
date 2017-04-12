@@ -12,6 +12,12 @@ return [
             'description' => 'Stelle einen Spezialisten ein',
             'value' => 1,
         ],
+        'trigger' => [
+            'id' => 0,
+            'type' => 'have-specialist',
+            'operator' => 'equal-to',
+            'value' => 0,
+        ],
         'rewards' => [
             [
                 'type' => 'missile',
@@ -39,6 +45,12 @@ return [
             'type' => 'discharge-specialist',
             'operator' => 'equal-to-or-more',
             'description' => 'Entlasse den Verräter',
+            'value' => 1,
+        ],
+        'trigger' => [
+            'id' => 0,
+            'type' => 'have-specialist',
+            'operator' => 'equal-to',
             'value' => 1,
         ],
         'rewards' => [
