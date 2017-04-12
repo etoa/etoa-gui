@@ -17,4 +17,15 @@ class PlanetRepository extends AbstractRepository
                 'userId' => $userId,
             ])->execute()->fetchColumn();
     }
+
+    public function getPlanetCount($userId)
+    {
+        return (int)$this->createQueryBuilder()
+            ->select('COUNT(p.id)')
+            ->from('planets', 'p')
+            ->where('p.planet_user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+            ])->execute()->fetchColumn();
+    }
 }
