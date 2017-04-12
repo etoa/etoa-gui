@@ -89,7 +89,7 @@ if (isset($cp)) {
 		{
 
 			$set_people = nf_back($_POST['peopleWorking']);
-			if (!$builing_gen && $bl->setPeopleWorking(PEOPLE_BUILDING_ID, $set_people, true))
+			if (!$building_gen && $bl->setPeopleWorking(PEOPLE_BUILDING_ID, $set_people, true))
 			{
 				success_msg("Arbeiter zugeteilt!");
 				$new_people_set = true;
