@@ -2,6 +2,7 @@
 
 namespace EtoA\Quest\Progress;
 
+use EtoA\Quest\Progress\InitFunctions\HaveAlliance;
 use EtoA\Quest\Progress\InitFunctions\HaveBuildingLevel;
 use EtoA\Quest\Progress\InitFunctions\HaveDefense;
 use EtoA\Quest\Progress\InitFunctions\HaveGalaxyDiscovered;
@@ -36,6 +37,8 @@ class ContainerAwareFunctionBuilder implements ProgressFunctionBuilderInterface
                 return new HavePoints($this->container['etoa.user.repository']);
             case HavePlanetCount::NAME:
                 return new HavePlanetCount($this->container['etoa.planet.repository']);
+            case HaveAlliance::NAME:
+                return new HaveAlliance($this->container['etoa.user.repository']);
         }
     }
 }

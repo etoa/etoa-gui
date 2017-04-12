@@ -27,4 +27,15 @@ class UserRepository extends AbstractRepository
             ->execute()
             ->fetchColumn();
     }
+
+    public function getAllianceId($userId)
+    {
+        return (int)$this->createQueryBuilder()
+            ->select('user_alliance_id')
+            ->from('users')
+            ->where('user_id = :userId')
+            ->setParameter('userId', $userId)
+            ->execute()
+            ->fetchColumn();
+    }
 }
