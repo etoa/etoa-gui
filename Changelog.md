@@ -1,8 +1,14 @@
 Escape to Andromeda Changelog
 =============================
 
-Version NEXT
---------------
+Version 3.5.15.1
+----------------
+
+### Bugfixes ###
+
+ * fixed periodic tasks
+ * fixed help for planets
+
 
 ### Administration ###
 

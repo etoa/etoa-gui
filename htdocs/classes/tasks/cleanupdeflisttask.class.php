@@ -6,7 +6,7 @@
 	{		
 		function run()
 		{
-			$nr = Deflist::cleanUp();
+			$nr = DefList::cleanUp();
 			return "$nr alte Verteidigungseinträge gelöscht";
 		}
 		

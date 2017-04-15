@@ -52,11 +52,11 @@
 		
 			echo "<tr><td class=\"tbldata\" style=\"width:40px;background:#000;\">";
 
-			$tt = new ToolTip();
+			$tt = new Tooltip();
 			$tt->addImage(IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$arr['type_id']."_".$x.".gif");
 			echo "<img src=\"".IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$arr['type_id']."_".$x."_small.gif\" width=\"40\" height=\"40\" alt=\"planet\" border=\"0\" / ".$tt."></td>";
 
-			$tt = new ToolTip();
+			$tt = new Tooltip();
 			$tt->addIcon(IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$arr['type_id']."_".$x."_small.gif");
 			$tt->addTitle($arr['type_name']);
 			if ($arr['type_habitable']==1) 
