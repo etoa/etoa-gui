@@ -1,5 +1,6 @@
 <?php
-
+echo'Under Construction';
+/*
   $exo_id = mysql_query("select type_id from planet_types where type_name='Exoplanet'");
   $planets = mysql_num_rows(mysql_query("SELECT * FROM planets WHERE planet_type_id=".$exo_id));
    
