@@ -8,6 +8,7 @@ Version 3.5.15.1
 
  * fixed periodic tasks
  * fixed help for planets
+ * fixed some error msg at population
 
 
 ### Administration ###
