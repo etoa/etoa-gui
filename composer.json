@@ -11,6 +11,7 @@
         "pimple/pimple": "^3.0",
         "doctrine/dbal": "^2.5",
         "monolog/monolog": "^1.19",
+        "robthree/twofactorauth": "^1.6",
         "littlecubiclegames/quests": "dev-php-56#100c8e0Ques",
         "silex/silex": "^2.0",
         "symfony/stopwatch": "^3.2"

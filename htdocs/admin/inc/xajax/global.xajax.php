@@ -944,7 +944,7 @@ function showBuildingsOnPlanet($form)
 		;");
 		if (mysql_num_rows($res)>0)
 		{
-			$out.="<table class=\"tb\">";
+			$out.="<table class=\"tb\" id =\"tb\">";
 			while ($arr=mysql_fetch_array($res))
 			{
 				$out.="<tr><td style=\"width:80px\" id=\"cnt_".$arr['buildlist_id']."\">".$arr['buildlist_current_level']."</td>
@@ -1033,52 +1033,51 @@ function editBuilding($form,$listId)
 	$objResponse = new xajaxResponse();	
 	
 	$updata=explode(":",$form['entity_id']);
-	$res=dbquery("
-	SELECT
-		buildlist_current_level,
-		buildlist_build_start_time,
-		buildlist_build_end_time,
-		buildlist_build_type,
-		buildlist_id
-	FROM
-		buildlist
-	WHERE
-		buildlist_entity_id=".$updata[0]."
-	;");
-	if (mysql_num_rows($res))
-	{
-		$buildTypes = Building::getBuildTypes();
-		while ($arr=mysql_fetch_array($res))
-		{
-			if ($arr['buildlist_id']==$listId)
-			{
-				ob_start();
-				echo "Start: ";
-				show_timebox("editstart_".$listId,$arr['buildlist_build_start_time']);
-				echo "<br />Ende: ";
-				show_timebox("editend_".$listId,$arr['buildlist_build_end_time']);
-		 		$objResponse->assign("time_".$listId,"innerHTML", ob_get_clean());
-				ob_start();
-				echo '<select name="editbuildtype_'.$listId.'">';
-				foreach($buildTypes as $id=>$type)
-				{
-					echo '<option value="'.$id.'"';
-					if ($id==$arr['buildlist_build_type']) echo ' selected';
-					echo '>'.$type.'</option>';
+	if($updata[0]) {
+		$res = dbquery("
+		SELECT
+			buildlist_current_level,
+			buildlist_build_start_time,
+			buildlist_build_end_time,
+			buildlist_build_type,
+			buildlist_id
+		FROM
+			buildlist
+		WHERE
+			buildlist_entity_id=" . $updata[0] . "
+		;");
+		if (mysql_num_rows($res)) {
+			$buildTypes = Building::getBuildTypes();
+			while ($arr = mysql_fetch_array($res)) {
+				if ($arr['buildlist_id'] == $listId) {
+					ob_start();
+					echo "Start: ";
+					show_timebox("editstart_" . $listId, $arr['buildlist_build_start_time']);
+					echo "<br />Ende: ";
+					show_timebox("editend_" . $listId, $arr['buildlist_build_end_time']);
+					$objResponse->assign("time_" . $listId, "innerHTML", ob_get_clean());
+					ob_start();
+					echo '<select name="editbuildtype_' . $listId . '">';
+					foreach ($buildTypes as $id => $type) {
+						echo '<option value="' . $id . '"';
+						if ($id == $arr['buildlist_build_type']) echo ' selected';
+						echo '>' . $type . '</option>';
+					}
+					echo '</select>';
+					$objResponse->assign("type_" . $listId, "innerHTML", ob_get_clean());
+					$out = "<input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editcnt_" . $listId . "\" value=\"" . $arr['buildlist_current_level'] . "\" />";
+					$objResponse->assign("cnt_" . $listId, "innerHTML", $out);
+					$out = "<a href=\"javaScript:;\" onclick=\"xajax_submitEditBuilding(xajax.getFormValues('selector')," . $listId . ");\">Speichern</a> ";
+					$out .= "<a href=\"javaScript:;\" onclick=\"xajax_showBuildingsOnPlanet('" . $form['entity_id'] . "');\">Abbrechen</a>";
+					$objResponse->assign("actions_" . $listId, "innerHTML", $out);
+				} else {
+					$objResponse->assign("actions_" . $arr['buildlist_id'], "innerHTML", "");
 				}
-				echo '</select>';
-		 		$objResponse->assign("type_".$listId,"innerHTML", ob_get_clean());
-				$out="<input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editcnt_".$listId."\" value=\"".$arr['buildlist_current_level']."\" />";
-		 		$objResponse->assign("cnt_".$listId,"innerHTML", $out);
-		 		$out="<a href=\"javaScript:;\" onclick=\"xajax_submitEditBuilding(xajax.getFormValues('selector'),".$listId.");\">Speichern</a> ";
-		 		$out.="<a href=\"javaScript:;\" onclick=\"xajax_showBuildingsOnPlanet('".$form['entity_id']."');\">Abbrechen</a>";
-		 		$objResponse->assign("actions_".$listId,"innerHTML", $out); 	
-			}
-			else
-			{
-		 		$objResponse->assign("actions_".$arr['buildlist_id'],"innerHTML", ""); 					
 			}
 		}
+	}
+	else {
+		$objResponse->assign("tb", "innerHTML", "Fehlerhafte Plantenid!");
 	}
   
 	return $objResponse;		

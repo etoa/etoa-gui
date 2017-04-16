@@ -163,29 +163,30 @@
                 // Frei = total auf Planet - gesperrt auf Planet
                 $free_people=floor($cp->people)-$check_arr[0];
 
-                foreach ($_POST['people_work'] as $id=>$num)
-                {
-                    if (!$w[$id]) {
-                        $working+=nf_back($num);
+                if(gettype($_POST['people_work']) == 'array') {
+
+                    foreach ($_POST['people_work'] as $id => $num) {
+                        if (!$w[$id]) {
+                            $working += nf_back($num);
+                        }
                     }
-                }
 
-                $available = min($free_people,$working);
+                    $available = min($free_people, $working);
 
-                foreach ($_POST['people_work'] as $id=>$num)
-                {
-                    if (!$w[$id]) {
-                        $num = nf_back($num);
-                        $work = $available > 0 ? min($num, $available) : 0;
-                        $available-=$num;
-                        dbquery("
-                    UPDATE
-                        buildlist
-                    SET
-                        buildlist_people_working='".$work."'
-                    WHERE
-                        buildlist_building_id='".intval($id)."'
-                    AND buildlist_entity_id=".$cp->id);
+                    foreach ($_POST['people_work'] as $id => $num) {
+                        if (!$w[$id]) {
+                            $num = nf_back($num);
+                            $work = $available > 0 ? min($num, $available) : 0;
+                            $available -= $num;
+                            dbquery("
+                        UPDATE
+                            buildlist
+                        SET
+                            buildlist_people_working='" . $work . "'
+                        WHERE
+                            buildlist_building_id='" . intval($id) . "'
+                        AND buildlist_entity_id=" . $cp->id);
+                        }
                     }
                 }
             }

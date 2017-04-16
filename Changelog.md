@@ -1,6 +1,21 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.15.1
+----------------
+
+### Bugfixes ###
+
+ * fixed periodic tasks
+ * fixed help for planets
+ * fixed some error msg at population
+ * fixed tutorial close
+
+
+### Administration ###
+
+ * added two-factor authentication for administrators
+
 Version 3.5.15(round 16)
 ------------------------
 

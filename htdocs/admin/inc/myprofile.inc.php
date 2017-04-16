@@ -55,7 +55,7 @@
 		$tpl->assign("msg", "Die Daten wurden ge&auml;ndert!");
 		add_log(8,$cu->nick." ändert seine Daten");
 	}
-	
+
 	$tpl->assign("user", $cu);
 	$tpl->assign("users", Users::getArray());
 

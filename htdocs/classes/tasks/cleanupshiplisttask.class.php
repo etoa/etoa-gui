@@ -6,7 +6,7 @@
 	{		
 		function run()
 		{		
-			$nr = Shiplist::cleanUp();
+			$nr = ShipList::cleanUp();
 			return "$nr alte Schiffseinträge gelöscht";
 		}
 		

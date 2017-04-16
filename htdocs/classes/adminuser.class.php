@@ -19,6 +19,7 @@ class AdminUser {
 	public $nick = "";
 	public $name = "";
 	public $email = "";
+	public $tfaSecret = "";
 	public $playerId = 0;
 	public $boardUrl = "";
 	public $userTheme = "";
@@ -48,6 +49,7 @@ class AdminUser {
 
 				$this->name = $arr['user_name'];
 				$this->email = $arr['user_email'];
+				$this->tfaSecret = $arr['tfa_secret'];
 				$this->playerId = $arr['player_id'];
 				$this->boardUrl = $arr['user_board_url'];
 				$this->userTheme = $arr['user_theme'];
@@ -113,6 +115,7 @@ class AdminUser {
 				user_nick=?,
 				user_name=?,
 				user_email=?,
+				tfa_secret=?,
 				user_board_url=?,
 				user_theme=?,
 				ticketmail=?,
@@ -126,6 +129,7 @@ class AdminUser {
 					$this->nick,
 					$this->name,
 					$this->email,
+					$this->tfaSecret,
 					$this->boardUrl,
 					$this->userTheme,
 					($this->ticketEmail ? 1 : 0),
@@ -142,6 +146,7 @@ class AdminUser {
 				user_nick,
 				user_name,
 				user_email,
+				tfa_secret,
 				user_board_url,
 				user_theme,
 				ticketmail,
@@ -151,12 +156,13 @@ class AdminUser {
 				roles,
 				user_password
 			) VALUES (
-				?,?,?,?,?,?,?,?,?,?,?
+				?,?,?,?,?,?,?,?,?,?,?,?
 			);", 
 			array(
 				$this->nick,
 				$this->name,
 				$this->email,
+				$this->tfaSecret,
 				$this->boardUrl,
 				$this->userTheme,
 				($this->ticketEmail ? 1 : 0),

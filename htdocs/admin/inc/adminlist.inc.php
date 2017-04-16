@@ -6,6 +6,7 @@
 		<th>Nick</th>
 		<th>Name</th>
 		<th>E-Mail</th>
+		<th>Zwei-Faktor-Authentifizierung</th>
 		<th>Gruppe</th>
 		<th>Foren-Profil</th>
 	</tr>";
@@ -14,6 +15,7 @@
 			<td>".$arr->nick."</td>
 			<td>".$arr->name."</td>
 			<td><a href=\"mailto:".$arr->email."\">".$arr->email."</a></td>
+			<td>".($arr->tfaSecret ? "Aktiv" : "Nicht aktiviert")."</td>
 			<td>".$arr->getRolesStr()."</td>
 			<td>".($arr->boardUrl ? "<a href=\"".$arr->boardUrl."\" target=\"_blank\">Profil</a>" : "")."</td>
 		</tr>";

@@ -33,3 +33,13 @@
 		<p class="buttons"><input type="submit" name="submitpw" value="&Uuml;bernehmen" /></p>
 	</fieldset>
 </form>
+
+<form action="?myprofile=1" method="post" class="blocklables label_width_200">
+	<fieldset><legend>Zwei-Faktor-Authentifizierung</legend>
+		{if $user->tfaSecret}
+			<p>Zwei-Faktor-Authentifizierung ist aktiv. <a href="?tfa" class="">Deaktivieren</a></p>
+		{else}
+			<p>Zwei-Faktor-Authentifizierung ist NICHT aktiv. <a href="?tfa" class="">Aktivieren</a></p>
+		{/if}
+	</fieldset>
+</form>

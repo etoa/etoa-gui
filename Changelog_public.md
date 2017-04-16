@@ -1,6 +1,17 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.15.1
+----------------
+
+### Bugfixes ###
+
+ * Statistik gefixt
+ * Hilfe->Planten gefixt
+ * selten auftretende Fehlermeldung im Bevölkerungsmenü gefixt
+ * schließen des Tutorials gefixt
+
+
 Version 3.5.15(round 16)
 ------------------------
 
