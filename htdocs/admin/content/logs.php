@@ -962,7 +962,54 @@
 		showFleetLogs();
 		echo "</div>";
 	}
+    elseif ($sub=="debrislog")
+    {
+        echo "<h2>Trümmerfeld Logs</h2>";
 
+        ?>
+        <script type="text/javascript">
+            <!--
+            function applyFilter(limit)
+            {
+                xajax_applyDebrisLogFilter(xajax.getFormValues('filterform'),limit);
+            }
+            function resetFilter()
+            {
+
+                var clock = new Date();
+                document.getElementById('searchtime_y').value = clock.getFullYear();
+                document.getElementById('searchtime_m').value = clock.getMonth()+1;
+                document.getElementById('searchtime_d').value = clock.getUTCDate();
+                document.getElementById('searchtime_h').value = clock.getHours();
+                document.getElementById('searchtime_i').value = clock.getMinutes();
+                document.getElementById('searchuser').value='';
+                document.getElementById('searchadmin').value='';
+                applyFilter(0);
+            }
+            -->
+        </script>
+        <?PHP
+
+        echo '<fieldset style="width:950px"><legend>Filter</legend>';
+        echo "<form action=\".\" method=\"post\" id=\"filterform\">";
+
+        echo " <label for=\"searchuser\">User:</label> <input type=\"text\" id=\"searchuser\" name=\"searchuser\" value=\"\" autocomplete=\"off\" /> &nbsp; ";
+        echo " <label for=\"searchadmin\">Admin:</label> <input type=\"text\" id=\"searchadmin\" name=\"searchadmin\" value=\"\" autocomplete=\"off\" /> &nbsp; ";
+        // Todo: extend to any entity
+        echo "<br/><br/>";
+
+        echo " <label for=\"searchtime\">Zeit:</label> ";
+        show_timebox("searchtime",time());
+
+        echo " &nbsp; <input type=\"submit\" value=\"Anwenden\" onclick=\"applyFilter(0);return false;\" /> &nbsp;
+		<input type=\"button\" value=\"Reset\" onclick=\"resetFilter();\" />";
+        echo "</form>";
+        echo '</fieldset>';
+
+        echo "<div id=\"log_contents\">";
+        showDebrisLogs();
+        echo "</div>";
+    }
 	//
 	// New simple AJAX based general log viewer
 	//		

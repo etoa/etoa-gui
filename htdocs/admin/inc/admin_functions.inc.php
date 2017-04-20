@@ -1235,6 +1235,100 @@ function showFleetLogs($args=null,$limit=0)
 	}
 }
 
+function showDebrisLogs($args=null,$limit=0) {
+    global $resNames;
+
+    $maxtime = is_array($args) ? mktime($args['searchtime_h'],$args['searchtime_i'],$args['searchtime_s'],$args['searchtime_m'],$args['searchtime_d'],$args['searchtime_y']) : time();
+
+    $paginationLimit = 50;
+
+    $sql = "SELECT * from logs_debris";
+	$sql2 =" WHERE time<".$maxtime;
+
+
+    if (isset($args['searchuser']) && trim($args['searchuser']) != '')
+    {
+        $sql2 .=" AND user_id = ".User::findIdByNick($args['searchuser'])." ";
+    };
+    if (isset($args['searchadmin']) && trim($args['searchadmin']) != '')
+    {
+        $sql2 .=" AND admin_id=".(AdminUser::findByNick($args['searchadmin'] ? (AdminUser::findByNick($args['searchadmin'])) : 0));
+    };
+
+
+    $res = dbquery(" SELECT COUNT(id) as cnt from logs_debris".$sql2);
+    $arr = mysql_fetch_row($res);
+    $total = $arr[0];
+
+    $limit = max(0,$limit);
+    $limit = min($total,$limit);
+    $limit -= $limit % $paginationLimit;
+    $limitstring = "$limit,$paginationLimit";
+
+    $sql4 = " LIMIT $limitstring";
+
+    $res = dbquery($sql.$sql2);
+
+    $nr = mysql_num_rows($res);
+    if ($nr>0)
+    {
+        echo "<table class=\"tb\">";
+        echo "<tr><th colspan=\"10\">
+		<div style=\"float:left;\">";
+
+        if ($limit>0)
+        {
+            echo "<input type=\"button\" value=\"&lt;&lt;\" onclick=\"applyFilter(0)\" /> ";
+            echo "<input type=\"button\" value=\"&lt;\" onclick=\"applyFilter(".($limit-$paginationLimit).")\" /> ";
+        }
+        else
+        {
+            echo "<input type=\"button\" value=\"&lt;&lt;\" disabled=\"disabled\" /> ";
+            echo "<input type=\"button\" value=\"&lt;\" disabled=\"disabled\" /> ";
+        }
+        if ($limit < $total-$paginationLimit)
+        {
+            echo "<input type=\"button\" value=\"&gt;\" onclick=\"applyFilter(".($limit+$paginationLimit).")\" /> ";
+            echo "<input type=\"button\" value=\"&gt;&gt;\" onclick=\"applyFilter(".($total-($total%$paginationLimit)).")\" /> ";
+        }
+        else
+        {
+            echo "<input type=\"button\" value=\"&gt;\" disabled=\"disabled\" /> ";
+            echo "<input type=\"button\" value=\"&gt;&gt;\" disabled=\"disabled\" /> ";
+        }
+
+        echo "</div><div style=\"float:right\">
+		".($limit+1)." - ".($limit+$nr)." von $total
+		</div><br style=\"clear:both;\" />
+		</th></tr>";
+        echo "<tr>
+			<th style=\"width:140px;\">Datum</th>
+			<th>Admin</th>
+			<th>User</th>
+			<th>Titan</th>
+			<th>Silizium</th>
+			<th>PVC</th>
+		</tr>";
+        while ($arr = mysql_fetch_assoc($res))
+        {
+        	$admin = new AdminUser($arr['admin_id']);
+            echo "<tr>
+			<td>".date('d M Y H:i:s',$arr['time'])."</td>
+			<td>".$admin->nick."</td>
+			<td>".new User($arr['user_id'])."</td>
+			<td>".$arr['metal']."</td>
+			<td>".$arr['crystal']."</td>
+			<td>".$arr['plastic']."</td>
+			</tr>";
+        }
+        echo "</table>";
+    }
+    else
+    {
+        echo "<p>Keine Daten gefunden!</p>";
+    }
+}
+
 function showGameLogs($args=null,$limit=0)
 {
 	global $app;

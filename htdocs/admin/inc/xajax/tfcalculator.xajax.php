@@ -187,6 +187,24 @@ function splitDebris($formValues,$formPlayers) {
                         " . $entity->userId . ",
                         'Trümmerfeld',
                         " . time() . "
+                    );";
+                $logs = "
+                    INSERT INTO
+                    logs_debris
+                            (
+                            time,
+                            admin_id,
+                            user_id,
+                            metal,
+                            crystal,
+                            plastic)
+                    VALUES (
+                        " . time() . ",
+                        " . $_SESSION['user_id'] . ",
+                        " . $entity->userId . ",
+                        " . (-1*(intval($formPlayers['total_tit']) - intval($formValues['tit' . $fields]))) . ",
+                        " . (-1*(intval($formPlayers['total_sili']) - intval($formValues['sili' . $fields]))) . ",
+                        " . (-1*(intval($formPlayers['total_pvc']) - intval($formValues['pvc' . $fields]))) . "
                     )";
             } else {
                 $sql = "
@@ -208,9 +226,29 @@ function splitDebris($formValues,$formPlayers) {
                         " . $entity->userId . ",
                         'Trümmerfeld',
                         " . time() . "
+                    );";
+                $logs = "    
+                    INSERT INTO
+                    logs_debris
+                            (
+                            time,
+                            admin_id,
+                            user_id,
+                            metal,
+                            crystal,
+                            plastic)
+                    VALUES (
+                        " . time() . ",
+                        " . $_SESSION['user_id'] . ",
+                        " . $entity->userId . ",
+                        " . $formValues['tit' . $fields] . ",
+                        " . $formValues['sili' . $fields] . ",
+                         " . $formValues['pvc' . $fields] . "
                     )";
             }
             dbquery($sql);
+            dbquery($logs);
+
             $response->assign("tfContent","innerHTML", "Trümmerfeld aufgeteilt!");
         }
         else {
