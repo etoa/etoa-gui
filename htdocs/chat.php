@@ -29,9 +29,9 @@
 			$_SESSION['ccolor'] = $cu->properties->chatColor;
 			$tpl->assign('chatColor', $cu->properties->chatColor);
 		}
+        $tpl->assign('login', $login);
 	}
-	$tpl->assign('login', $login);
-	
+
 	// Select design
 	$design = DESIGN_DIRECTORY."/official/".$cfg->value('default_css_style');
 	if (isset($cu) && $cu->properties->cssStyle !='')

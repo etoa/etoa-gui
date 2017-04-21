@@ -1265,8 +1265,6 @@ function showDebrisLogs($args=null,$limit=0) {
     $limit -= $limit % $paginationLimit;
     $limitstring = "$limit,$paginationLimit";
 
-    $sql4 = " LIMIT $limitstring";
-
     $res = dbquery($sql.$sql2);
 
     $nr = mysql_num_rows($res);
