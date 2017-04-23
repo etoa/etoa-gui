@@ -1,6 +1,19 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.6
+-------------
+
+### Bugfixes ###
+
+ * fixed mp bug 
+ 
+### Administration ###
+
+ * added createable userlogs
+ * fixed fleetlog bug
+
+
 Version 3.5.15.1
 ----------------
 
