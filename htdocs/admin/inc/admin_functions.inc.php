@@ -1135,7 +1135,7 @@ function showFleetLogs($args=null,$limit=0)
 			echo "<tr>
 			<td>".df($arr['timestamp'])."</td>
 			<td>".Log::$severities[$arr['severity']]."</td>
-			<td>".Fleetlog::$facilities[$arr['facility']]."</td>
+			<td>".FleetLog::$facilities[$arr['facility']]."</td>
 			<td>$owner</td>
 			<td>".$fa." [".FleetAction::$statusCode[$arr["status"] ]."]</td>
 			<td>".$startEntity."<br/>".$startEntity->entityCodeString().", ".$startEntity->owner()."</td>
