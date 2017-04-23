@@ -7,6 +7,7 @@ Version 3.5.6
 ### Bugfixes ###
 
  * fixed mp bug 
+ * fixed deff text at help page
  
 ### Administration ###
 
