@@ -8,11 +8,14 @@ Version 3.5.6
 
  * fixed mp bug 
  * fixed deff text at help page
+ * fixed white page when session expired
+ * fixed capacity from ships
  
 ### Administration ###
 
  * added createable userlogs
  * fixed fleetlog bug
+ * added log for debris splitting
 
 
 Version 3.5.15.1
