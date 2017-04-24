@@ -5,6 +5,8 @@ $xajax->register(XAJAX_FUNCTION,"allianceRankSelector");
 $xajax->register(XAJAX_FUNCTION,"userPointsTable");
 $xajax->register(XAJAX_FUNCTION,"addUserComment");
 $xajax->register(XAJAX_FUNCTION,"delUserComment");
+$xajax->register(XAJAX_FUNCTION,"userLogs");
+$xajax->register(XAJAX_FUNCTION,"addUserLog");
 $xajax->register(XAJAX_FUNCTION,"userTickets");
 $xajax->register(XAJAX_FUNCTION,"userComments");
 $xajax->register(XAJAX_FUNCTION,"sendUrgendMsg");
@@ -405,6 +407,61 @@ function delUserComment($uid,$target,$id)
 	else
 	{
 		$or->alert("Fehler! Falsche ID!");
+
+	}
+	return $or;
+}
+
+
+function userLogs($uid,$target)
+{
+	$or = new xajaxResponse();
+	ob_start();
+	tableStart("",'100%');
+	echo "<tr><th>Nachricht</th><th>Datum</th><th>IP</th></tr>";
+	$lres = dbquery("
+					SELECT
+						*
+					FROM
+						user_log
+					WHERE
+						user_id=".$uid."
+					ORDER BY timestamp DESC
+					LIMIT 100;");
+	if (mysql_num_rows($lres) > 0)
+	{
+		while ($larr = mysql_fetch_array($lres))
+		{
+			echo "<tr><td>".text2html($larr['message'])."</td>
+							<td>".df($larr['timestamp'])."</td>
+							<td><a href=\"?page=user&amp;sub=ipsearch&amp;ip=".$larr['host']."\">".$larr['host']."</a></td></tr>";
+		}
+	}
+	tableEnd();
+
+	echo "<h2>Neuer Log:</h2><textarea rows=\"4\" cols=\"70\" id=\"new_log\"></textarea><br/><br/>";
+
+	echo "<input type=\"button\" onclick=\"xajax_addUserLog('$uid','$target',document.getElementById('new_log').value);\" value=\"Speichern\" />";
+
+
+	$out = ob_get_contents();
+	ob_end_clean();
+	$or->assign($target,"innerHTML",$out);
+	return $or;
+}
+
+function addUserLog($uid,$target,$text) {
+	$or = new xajaxResponse();
+	if ($text!="")
+	{
+		$or->script("showLoader('$target');");
+		$user = new User($uid);
+		$user->addToUserLog("settings",$text,1);
+		$or->script("xajax_userLogs('$uid','$target')");
+	}
+	else
+	{
+		$or->alert("Fehler! Kein Text!");
 
 	}
 	return $or;

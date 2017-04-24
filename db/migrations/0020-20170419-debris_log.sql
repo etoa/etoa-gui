@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS logs_debris (
+  id INT NOT NULL AUTO_INCREMENT,
+  time INT(10) NOT NULL,
+  admin_id INT NOT NULL,
+  user_id INT NOT NULL,
+  metal BIGINT NOT NULL,
+  crystal BIGINT NOT NULL,
+  plastic BIGINT NOT NULL,
+
+  PRIMARY KEY(id)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;

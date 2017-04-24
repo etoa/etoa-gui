@@ -60,7 +60,7 @@ $cnt = 0;
 							$cp->subRes($buyarr);
 							
 							$seller = new User($arr['user_id']);
-							$sellerEntity = Entity::createFactoryById(1079);
+							$sellerEntity = Entity::createFactoryById($arr['entity_id']);
 
 							$id = $sellerEntity->id;
 

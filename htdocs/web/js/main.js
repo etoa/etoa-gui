@@ -224,6 +224,7 @@
 	{
 		document.getElementById(elem).innerHTML='<span style=\"text-align:center;padding:10px;\"><img src="images/loading.gif" /></span>';
 	}
+
 	function toggleBox(elemId)
 	{
 		if (document.getElementById(elemId).style.display=='none')
@@ -235,6 +236,18 @@
 			document.getElementById(elemId).style.display='none';
 		}
 	}
+
+    function showElement(elemId,value)
+    {
+    	if (typeof value == "boolean") {
+    		if(value)
+				document.getElementById(elemId).style.display='';
+			else
+			{
+				document.getElementById(elemId).style.display='none';
+			}
+        }
+    }
 
 
 function changeNav(selIndex,page)

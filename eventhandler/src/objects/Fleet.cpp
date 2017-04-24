@@ -70,6 +70,7 @@ Fleet::Fleet(mysqlpp::Row &fleet) {
     this->destroyBonus = 0;
     this->empBonus = 0;
     this->forstealBonus = 0;
+    this->capacityBonus = 0;
 
     this->capacity = 0;
     this->peopleCapacity = 0;

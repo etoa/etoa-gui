@@ -1597,29 +1597,13 @@
 				
 				/**
 				* Log
-				*/					
-					tableStart("",'100%');
-					echo "<tr><th>Nachricht</th><th>Datum</th><th>IP</th></tr>";
-					$lres = dbquery("
-					SELECT
-						*
-					FROM
-						user_log
-					WHERE
-						user_id=".$id." 
-					ORDER BY timestamp DESC
-					LIMIT 100;");
-					if (mysql_num_rows($lres) > 0)
-					{
-						while ($larr = mysql_fetch_array($lres))
-						{
-							echo "<tr><td>".text2html($larr['message'])."</td>
-							<td>".df($larr['timestamp'])."</td>
-							<td><a href=\"?page=user&amp;sub=ipsearch&amp;ip=".$larr['host']."\">".$larr['host']."</a></td></tr>";
-						}
-					}
-					tableEnd();
-					
+				*/
+				echo "<div id=\"logsBox\">
+					<div style=\"text-align:center;\"></div>
+				</div>";
+
+
+
 				echo '</div><div id="tabs-13">';
 				
 				/**
@@ -1685,6 +1669,8 @@
 								xajax_userTickets('.$id.',"ticketsBox");
 							} else if (ui.index == 10) {
 								xajax_userComments('.$id.',"commentsBox");
+							} else if (ui.index == 11) {
+								xajax_userLogs('.$id.',"logsBox");
 							}
 						});						
 					});

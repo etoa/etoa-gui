@@ -20,7 +20,8 @@
 						`def_weapon`,
 						`def_heal`,
 						`def_fields`,
-						`def_max_count`
+						`def_max_count`,
+						`def_longcomment`
 					FROM defense WHERE `def_id`='".$did."';");
 		if ($arr = mysql_fetch_array($res))
 		{
