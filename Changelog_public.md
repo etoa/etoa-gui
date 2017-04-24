@@ -1,6 +1,17 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.16
+--------------
+
+### Bugfixes ###
+
+ * Fehler gefixt, der während dem Handeln auftrat 
+ * Hilfeseite für Verteidigung zeigt nun den Text an
+ * Abgelaufene Session mit geöffneten Chat zeigt nun keine weissse Seite mehr an
+ * Kapazität von Schiffen gefixt
+
+
 Version 3.5.15.1
 ----------------
 
