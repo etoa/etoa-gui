@@ -1,6 +1,13 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.17
+--------------
+
+### Bugfixes ###
+
+ * fix for display of people growth (e.g. "voll in:")
+
 Version 3.5.16
 --------------
 

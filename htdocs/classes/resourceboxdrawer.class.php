@@ -151,7 +151,7 @@ class ResourceBoxDrawer
 	{
 		$remainingStore = $store - $amount;
 		$storeFullMessage = '';
-		if ($production > 0 && $remainingStore > 0) {
+		if ($production > 0 && $remainingStore > 0 && $title != 'Bevölkerung') {
 			$storeFullMessage = sprintf('<br><b>Voll in:</b> %s', tf(($remainingStore / $production) * 3600));
 		}
 
