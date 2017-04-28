@@ -1122,7 +1122,7 @@ die Spielleitung";
 
     function removeUmode($force = false) {
 
-        if (($this->hmode_from > 0 && $this->hmode_from < time() && $this->hmode_to < time()) || $force) {
+        if ($this->hmode_from > 0 && (($this->hmode_from < time() && $this->hmode_to < time()) || $force)) {
             $hmodTime = time() - $this->hmode_from;
             $bres = dbquery("
 								SELECT

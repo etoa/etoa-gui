@@ -7,6 +7,7 @@ Version 3.5.17
 ### Bugfixes ###
 
  * fix for display of people growth (e.g. "voll in:")
+ * fix for too long buildtime
 
 Version 3.5.16
 --------------
