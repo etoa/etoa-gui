@@ -8,6 +8,13 @@ Version 3.5.17
 
  * fix for display of people growth (e.g. "voll in:")
  * fix for too long buildtime
+ * fix for early sign up
+ * fix for taking over planets when setting up account
+ * fix for selecting unhabitable planets as startplanet
+    
+### Administration ###
+
+ * fix for market->ships
 
 Version 3.5.16
 --------------

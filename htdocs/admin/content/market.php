@@ -104,7 +104,7 @@
 			while ($arr=mysql_fetch_array($res))
 			{
 				$username=get_user_nick($arr['user_id']);
-				$ship = new ship($arr['ship_id']);
+				$ship = new Ship($arr['ship_id']);
 				echo "<form action=\"?page=$page&sub=$sub\" method=\"POST\">\n";
 				echo "<input type=\"hidden\" name=\"ship_market_id\" value=\"".$arr['id']."\">";
 				echo "<table class=\"tb\">
