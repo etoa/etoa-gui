@@ -39,13 +39,13 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 			{
 				if ($sfilter!="")
 					$sfilter.=" OR ";
-				$sfilter.= " sell_".$rk.">=0 ";
+				$sfilter.= " sell_".$rk.">0 ";
 			}
 			if (isset($form['market_search_filter_demand_'.$rk]) && $form['market_search_filter_demand_'.$rk]==1)
 			{
 				if ($dfilter!="")
 					$dfilter.=" OR ";
-				$dfilter.= " buy_".$rk.">=0 ";
+				$dfilter.= " buy_".$rk.">0 ";
 			}
 		}
 
@@ -64,9 +64,11 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 			buyable='1'
 			AND (
 			".($sfilter!="" ? $sfilter : 0)."
+			OR user_id = 0
 			)
 			AND (
 			".($dfilter!="" ? $dfilter : 0)."
+			OR user_id = 0
 			)
 			AND user_id!='".$_SESSION['user_id']."'
 			AND (for_user='".$_SESSION['user_id']."' OR for_user='0')
