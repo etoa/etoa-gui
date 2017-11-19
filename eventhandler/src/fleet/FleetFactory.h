@@ -123,6 +123,9 @@ class FleetFactory
 					case 24:
 						return new alliance::AllianceHandler(fRow);				
 						break;
+					case 25:
+						return new attack::AttackHandler(fRow);
+						break;
 					default:
 						return new defaul::DefaultHandler(fRow);
 				}

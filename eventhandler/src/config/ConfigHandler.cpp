@@ -214,6 +214,7 @@
 		actions["support"] = 22;
 		actions["transport"] = 23;
 		actions["alliance"] = 24;
+		actions ["fakeattack"] = 25;
 		
 		actionName["analyze"] = "Analysieren";
 		actionName["antrax"] = "Antraxangriff";
