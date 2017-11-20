@@ -12,6 +12,7 @@ Version 3.5.17
  * fix for taking over planets when setting up account
  * fix for selecting unhabitable planets as startplanet
  * fix for mp filter
+ * fix for fake attacks
     
 ### Administration ###
 

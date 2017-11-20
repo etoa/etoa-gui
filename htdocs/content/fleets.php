@@ -311,7 +311,6 @@
 								fleet_ships
 							WHERE 
 								fs_fleet_id='".$fid." '
-								AND fs_ship_faked>'0' 
 							GROUP BY 
 								fs_fleet_id;");
 						 $fsarr= mysql_fetch_row($fsres);
@@ -330,39 +329,11 @@
 				if(SPY_TECH_SHOW_SHIPS<=$fm->spyTech())
 				{
 					$showShips = true;
-					if($fd->getAction()->code()=="fakeattack")
-					{
-						$fshipres = dbquery("
-							SELECT
-								fs.fs_ship_cnt,
-								s.ship_name
-							 FROM
-							  fleet_ships AS fs
-							INNER JOIN
-								ships AS s
-							ON fs.fs_ship_faked=s.ship_id
-								AND fs.fs_fleet_id='".$fid."'
-								AND fs.fs_ship_faked>'0';");
-						
-						while ($fshiparr = mysql_fetch_assoc($fshipres))
-						{
-							$str = "";
-							
-							//Opfer sieht die genau Anzahl jedes Schifftypes in einer Flotte
-							if (SPY_TECH_SHOW_NUMSHIPS<=$fm->spyTech())
-							{
-								$str= "".$fshiparr["fs_ship_cnt"]." ";
-							}
-								$str.= "".$fshiparr["ship_name"];
-								$shipStr[] = $str;
-						}
-					}
-					else
 					{
 						foreach ($fd->getShipIds() as $sid=> $scnt)
 						{
 							$str = "";
-							$ship = new Ship($sid);
+							$ship = new Ship($fd->parseFake($sid));
 							
 							//Opfer sieht die genau Anzahl jedes Schifftypes in einer Flotte
 							if (SPY_TECH_SHOW_NUMSHIPS<=$fm->spyTech())
