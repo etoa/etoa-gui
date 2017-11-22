@@ -17,6 +17,7 @@ Version 3.5.17
 ### Administration ###
 
  * fix for market->ships
+ * option to disable alliances
 
 Version 3.5.16
 --------------

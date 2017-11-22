@@ -580,6 +580,9 @@ https://etoa.ch</v>
       <v comment="Spielerrang: Erfahrung" type="text">Kriegsheld von Andromeda</v>
     </item>
 
+    <item name="alliance_allow" cat="16">
+      <v comment="Allianzen erlauben" type="text">1</v>
+    </item>
     <item name="alliance_max_member_count" cat="16">
       <v comment="Maximale Anzahl von Allianzmitgliedern. 0=unendlich" type="text">7</v>
     </item>
