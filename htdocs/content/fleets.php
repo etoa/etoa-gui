@@ -333,7 +333,7 @@
 						foreach ($fd->getShipIds() as $sid=> $scnt)
 						{
 							$str = "";
-							$ship = new Ship($fd->parseFake($sid));
+							$ship = new Ship($sid);
 							
 							//Opfer sieht die genau Anzahl jedes Schifftypes in einer Flotte
 							if (SPY_TECH_SHOW_NUMSHIPS<=$fm->spyTech())
