@@ -364,10 +364,7 @@
 			{
 				while ($arr=mysql_fetch_row($sres))
 				{
-					//needed to add up real and fake ships
-					array_key_exists($this->parseFake($arr[0]), $this->shipsIds) ? 
-						$this->shipsIds[$this->parseFake($arr[0])] = $this->shipsIds[$this->parseFake($arr[0])] + $arr[1] :
-						$this->shipsIds[$this->parseFake($arr[0])] = $arr[1];
+					$this->shipsIds[$arr[0]] = $arr[1];
 					$this->shipCount += $arr[1];
 				}
 			}

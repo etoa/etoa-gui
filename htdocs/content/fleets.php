@@ -330,7 +330,18 @@
 				{
 					$showShips = true;
 					{
+
+						$ships = array();
+
+						//build new array with possible fake ships
 						foreach ($fd->getShipIds() as $sid=> $scnt)
+						{
+							array_key_exists($fd->parseFake($sid), $ships) ? 
+								$ships[$fd->parseFake($sid)] = $ships[$fd->parseFake($sid)] + $scnt :
+								$ships[$fd->parseFake($sid)] = $scnt;
+						}
+						
+						foreach ($ships as $sid=> $scnt)
 						{
 							$str = "";
 							$ship = new Ship($sid);
