@@ -1,6 +1,19 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.17
+--------------
+
+### Bugfixes ###
+
+ * Anzeige für Bewohner optimiert ("voll in:")
+ * Nach Zwangsverlassen des U-Modes konnte es vorkommen, dass die Bauzeit von Gebäuden zu lang war
+ * Fix für zu frühe Anmeldung
+ * Fix für Übernahme von bewohnten Planten während der Auswahl des Hauptplaneten
+ * Man kann bei der Auswahl des Hauptplanten keine unbewohnbaren Planeten mehr auswählen
+ * Fix für MP Filter
+ * Fakeangriffe erzeugen nun einen KB
+
 Version 3.5.16
 --------------
 

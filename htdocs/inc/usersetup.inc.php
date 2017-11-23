@@ -22,38 +22,44 @@
 	}
 	elseif (isset($_POST['submit_chooseplanet']) && intval($_POST['choosenplanetid'])>0 && checker_verify() && !isset($cp))
 	{
+
 		$tp = Planet::getById($_POST['choosenplanetid']);
-		$tp->reset();
-		$tp->assignToUser($cu->id,1);
-		$tp->setDefaultResources();	
-		
-		$cu->addToUserLog("planets","{nick} wählt [b]".$tp."[/b] als Hauptplanet aus.",0);
-		
-		$res = dbquery("
-		SELECT
-			set_id,
-			set_name
-		FROM
-			default_item_sets
-		WHERE
-			set_active=1
-		");
-		if (mysql_num_rows($res)>1)
-		{
-			$mode="itemsets";
-		}
-		elseif(mysql_num_rows($res)==1)
-		{
-			$arr = mysql_fetch_array($res);
-			Usersetup::addItemSetListToPlanet($tp->id,$cu->id,$arr['set_id']);							
-			$cu->setSetupFinished();
-			$mode = "finished";
-		}
-		else 
-		{
-			$cu->setSetupFinished();
-			$mode = "finished";
-		}				
+        $cfg = Config::getInstance();
+
+		if($tp && $tp->habitable && $tp->userId == 0 && $tp->fields>$cfg->value('user_min_fields')) {
+
+            $tp->reset();
+            $tp->assignToUser($cu->id,1);
+            $tp->setDefaultResources();
+
+            $cu->addToUserLog("planets","{nick} wählt [b]".$tp."[/b] als Hauptplanet aus.",0);
+
+            $res = dbquery("
+                SELECT
+                    set_id,
+                    set_name
+                FROM
+                    default_item_sets
+                WHERE
+                    set_active=1
+                ");
+            if (mysql_num_rows($res)>1)
+            {
+                $mode="itemsets";
+            }
+            elseif(mysql_num_rows($res)==1)
+            {
+                $arr = mysql_fetch_array($res);
+                Usersetup::addItemSetListToPlanet($tp->id,$cu->id,$arr['set_id']);
+                $cu->setSetupFinished();
+                $mode = "finished";
+            }
+            else
+            {
+                $cu->setSetupFinished();
+                $mode = "finished";
+            }
+        }
 	}
 	elseif (isset($_GET['setup_sx']) && isset($_GET['setup_sy']) && $_GET['setup_sx']>0 && $_GET['setup_sy']>0 && $_GET['setup_sx']<=$sx_num && $_GET['setup_sy']<=$sy_num)
 	{

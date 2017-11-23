@@ -341,7 +341,6 @@
 						fleet.id = fs_fleet_id
 						AND fleet.leader_id = '".$this->id."'
 						AND (fs_ship_cnt > '0')
-						AND fs_ship_faked = '0'
 					GROUP BY 
 						fs_ship_id
 				;");
@@ -359,8 +358,7 @@
 				WHERE
 			fs_fleet_id='".$this->id."'
 			AND fs_ship_cnt > '0'
-			AND fs_ship_faked='0'
-				;");
+			;");
 			}
 			if (mysql_num_rows($sres)>0)
 			{
@@ -370,6 +368,29 @@
 					$this->shipCount += $arr[1];
 				}
 			}
+		}
+
+
+		/**
+		* Only used for fake attacks
+		* Parses the id from original ship to id from fakeship 
+		*/
+		function parseFake($id) {
+			$res = dbquery("
+				SELECT
+					fs_ship_faked
+				FROM
+					fleet_ships
+				WHERE
+					fs_fleet_id='".$this->id."'
+					AND fs_ship_cnt > '0'
+					AND fs_ship_id = '".$id."'
+					AND fs_ship_faked > 0;"
+			);
+			if (mysql_num_rows($res)) 
+				return mysql_result($res,0);
+			
+			return $id;
 		}
 
 		/**

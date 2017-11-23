@@ -806,8 +806,7 @@
 	     		ships
 				WHERE
 	      	fs_ship_id=ship_id
-	      	AND fs_fleet_id=".intval($_GET['fleetedit'])."
-	      	AND fs_ship_faked='0';");
+	      	AND fs_fleet_id=".intval($_GET['fleetedit']));
 				if (mysql_num_rows($sres)>0)
 				{
 					echo "<form action=\"?page=$page&amp;sub=$sub&amp;fleetedit=".intval($_GET['fleetedit'])."\" method=\"post\">";
