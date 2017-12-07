@@ -1,6 +1,14 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.18
+--------------
+
+### Features ###
+
+ * boost working with total points
+
+
 Version 3.5.17
 --------------
 
