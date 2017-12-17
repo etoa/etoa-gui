@@ -292,8 +292,8 @@ function create_sql_value($type,$confname,$field,$postarray)
 // Wandelt den Text in brauchbare HTML um
 function encode_logtext($string)
 {
-	$string = eregi_replace('\[USER_ID=([0-9]*);USER_NICK=([^\[]*)\]', '<a href="?page=user&sub=edit&user_id=\1">\2</a>', $string);
-	$string = eregi_replace('\[PLANET_ID=([0-9]*);PLANET_NAME=([^\[]*)\]', '<a href="?page=galaxy&sub=edit&id=\1">\2</a>', $string);
+	$string = preg_replace('/\[USER_ID=([0-9]*);USER_NICK=([^\[]*)\]/i', '<a href="?page=user&sub=edit&user_id=\1">\2</a>', $string);
+	$string = preg_replace('/\[PLANET_ID=([0-9]*);PLANET_NAME=([^\[]*)\]/i', '<a href="?page=galaxy&sub=edit&id=\1">\2</a>', $string);
 
 	return $string;
 }
