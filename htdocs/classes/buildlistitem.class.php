@@ -34,7 +34,7 @@
 		 * @param <type> $arr
 		 * @param <type> $load
 		 */
-		function BuildListItem($id,$load=0)
+        public function __construct($id,$load=0)
 		{
 			if (is_array($id))
 			{

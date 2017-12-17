@@ -3,7 +3,7 @@
 	class FleetActionAnalyze extends FleetAction
 	{
 
-		function FleetActionAnalyze()
+        public function __construct()
 		{
 			$this->code = "analyze";
 			$this->name = "Analysieren";
@@ -12,7 +12,7 @@
 			$this->visible = false;
 			$this->exclusive = false;
 			$this->attitude = 0;
-			
+
 			$this->allowPlayerEntities = false;
 			$this->allowActivePlayerEntities = false;
 			$this->allowOwnEntities = false;
@@ -22,11 +22,11 @@
 			$this->allianceAction = false;
 		}
 
-		function startAction() {} 
-		function cancelAction() {}		
-		function targetAction() {} 
-		function returningAction() {}		
-		
+		function startAction() {}
+		function cancelAction() {}
+		function targetAction() {}
+		function returningAction() {}
+
 	}
 
 ?>

@@ -3,7 +3,7 @@
 	class FleetActionExplore extends FleetAction
 	{
 
-		function FleetActionExplore()
+        public function __construct()
 		{
 			$this->code = "explore";
 			$this->name = "Erkunden";
@@ -16,9 +16,9 @@
 			Die Explorer-Sonde deckt mit dieser Aktion jeweils die Ziel-Zelle und alle umliegenden Zellen auf. 
 			Manchmal bringt die Expedition auch Souvenirs von ihrer Reise mit, manchmal schlägt sie aber auch fehl und kommt gar nicht mehr zur&uuml;ck.";
 			$this->visible = false;
-			$this->exclusive = false;			
+			$this->exclusive = false;
 			$this->attitude = 0;
-			
+
 			$this->allowPlayerEntities = false;
 			$this->allowActivePlayerEntities = false;
 			$this->allowOwnEntities = false;
@@ -28,11 +28,11 @@
 			$this->allianceAction = false;
 		}
 
-		function startAction() {} 
-		function cancelAction() {}		
-		function targetAction() {} 
-		function returningAction() {}		
-		
+		function startAction() {}
+		function cancelAction() {}
+		function targetAction() {}
+		function returningAction() {}
+
 	}
 
 ?>

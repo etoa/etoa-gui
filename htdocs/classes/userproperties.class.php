@@ -2,7 +2,7 @@
 	class UserProperties
 	{
 		private $id;
-		
+
 		private $cssStyle;
 		private $imageUrl;
 		private $imageExt;
@@ -34,14 +34,14 @@
 		private $startUpChat;
 		private $chatColor;
 		private $enableKeybinds;
-		
+
 		private $changedFields;
-		
-		public function UserProperties($id)
+
+        public function __construct($id)
 		{
 			$this->id = $id;
 			$this->changedFields = array();
-			
+
 			$res = dbQuerySave("
 			SELECT
 				*
@@ -96,10 +96,10 @@
 				VALUES
 				(".$this->id.")
 				");
-			}	  
-	    
+			}
+
 		}
-		
+
 		function __destruct()
 		{
 			$cnt = count($this->changedFields);
@@ -121,22 +121,22 @@
 				dbquery($sql);
 			}
 			unset($this->changedFields);
-			
-		}		
-		
-		
+
+		}
+
+
 		public function __set($key, $val)
 		{
 			try
 			{
 				if (!property_exists($this,$key))
 					throw new EException("Property $key existiert nicht in der Klasse ".__CLASS__);
-					
+
 				if ($key == "cssStyle")
 				{
 					$this->$key = $val;
 					$this->changedFields[$key] = "css_style";
-				}				
+				}
 				elseif ($key == "startUpChat")
 				{
 					$this->$key = $val;
@@ -297,14 +297,14 @@
 				echo $e;
 			}
 		}
-		
+
 		public function __get($key)
 		{
 			try
 			{
 				if (!property_exists($this,$key))
 					throw new EException("Property $key existiert nicht in ".__CLASS__);
-					
+
 				return $this->$key;
 			}
 			catch (EException $e)
@@ -312,10 +312,10 @@
 				echo $e;
 				return null;
 			}
-		}		
-		
-		
-		
+		}
+
+
+
 	}
 
 ?>

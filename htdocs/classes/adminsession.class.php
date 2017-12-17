@@ -18,7 +18,7 @@ class AdminSession extends Session
 	 *
 	 * @return AdminSession Instance of this class
 	 */
-	public static function getInstance()
+	public static function getInstance($className = null)
 	{
 		return parent::getInstance(__CLASS__);
 	}
@@ -26,7 +26,7 @@ class AdminSession extends Session
 	function login($data)
 	{
 		self::cleanup();
-		
+
 		// If user login data has been temporary stored (two factor authentication challenge), restore it
 		if (empty($data['login_nick']) && !empty($this->tfa_login_nick)) {
 			$data['login_nick'] = $this->tfa_login_nick;
@@ -34,7 +34,7 @@ class AdminSession extends Session
 		if (empty($data['login_pw']) && !empty($this->tfa_login_pw)) {
 			$data['login_pw'] = $this->tfa_login_pw;
 		}
-		
+
 		if (!empty($data['login_nick']) && !empty($data['login_pw']))
 		{
 			$sql = "
@@ -74,7 +74,7 @@ class AdminSession extends Session
 							$this->tfa_login_pw = $data['login_pw'];
 							$this->lastErrorCode = "tfa_challenge";
 							return false;
-						}				
+						}
 					}
 
 					// Unset temporary stored user login data
@@ -217,7 +217,7 @@ class AdminSession extends Session
 
 	/**
 	 * Unregisters a session and save session to session-log
-	 * 
+	 *
 	 * @param string $sid Session-ID. If null, the current user's session id will be taken
 	 * @param bool $logoutPressed True if it was manual logout
 	 */
@@ -280,7 +280,7 @@ class AdminSession extends Session
 	static function cleanup()
 	{
 		$cfg = Config::getInstance();
-		
+
 		$res = dbquery("
 		SELECT
 			id

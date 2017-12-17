@@ -9,15 +9,15 @@
 		private $bunkeredArr = null;
 		private $count = null;
 		private $special = null;
-		
-		function ShipList($entityId,$userId,$load = 0)
+
+        public function __construct($entityId,$userId,$load = 0)
 		{
 			$this->userId = $userId;
 			$this->entityId = $entityId;
 			if ($load==1)
 				$this->load();
 		}
-		
+
 		private function load()
 		{
 			$this->items = array();
@@ -60,7 +60,7 @@
 			}
 		}
 
-  	public function getIterator() 
+  	public function getIterator()
   	{
   		if ($this->items == null)
   			$this->load();
@@ -78,7 +78,7 @@
 		{
 			if ($this->countArr != null)
 				return $item>0 ? $this->countArr[$item] : $this->count;
-			
+
 			if ($this->count != null)
 				return $this->count;
 
@@ -95,11 +95,11 @@
 			$arr = mysql_fetch_row($res);
 			return $arr[0];
 		}
-		
+
 		function getTotalStrucure()
 		{
   		if ($this->items == null)
-  			$this->load();			
+  			$this->load();
 			$i = 0;
 			foreach ($this->items as $k=>&$v)
 			{
@@ -107,43 +107,43 @@
 			}
 			return $i;
 		}
-		
+
 		function getTotalShield()
 		{
   		if ($this->items == null)
-  			$this->load();			
+  			$this->load();
 			$i = 0;
 			foreach ($this->items as $k=>&$v)
 			{
 				$i+= $this->countArr[$k] * $v->shield;
 			}
 			return $i;
-		}		
-		
+		}
+
 		function getTotalWeapon()
 		{
   		if ($this->items == null)
-  			$this->load();			
+  			$this->load();
 			$i = 0;
 			foreach ($this->items as $k=>&$v)
 			{
 				$i+= $this->countArr[$k] * $v->weapon;
 			}
 			return $i;
-		}				
-		
+		}
+
 		function getTotalHeal()
 		{
   		if ($this->items == null)
-  			$this->load();			
+  			$this->load();
 			$i = 0;
 			foreach ($this->items as $k=>&$v)
 			{
 				$i+= $this->countArr[$k] * $v->heal;
 			}
 			return $i;
-		}					
-		
+		}
+
 		function add($shipId,$cnt)
 		{
 			$cnt = ceil($cnt);
@@ -159,7 +159,7 @@
 					shiplist_user_id='".$this->userId."'
 					AND shiplist_entity_id='".$this->entityId."'
 					AND shiplist_ship_id='".$shipId."';
-			");			
+			");
 			if(mysql_affected_rows()==0)
 			{
 				dbquery("
@@ -181,7 +181,7 @@
 				");
 			}
 		}
-		
+
 		function remove($shipId,$cnt)
 		{
 			$res = dbquery("SELECT 
@@ -196,7 +196,7 @@
 			$arr = mysql_fetch_row($res);
 
 			$delable = min($cnt,$arr[1]);
-			
+
 			dbquery("UPDATE
 						shiplist
 					SET
@@ -208,7 +208,7 @@
 
 			return $delable;
 		}
-		
+
 		function bunker($shipId,$cnt)
 		{
 			$res = dbquery("SELECT 
@@ -221,9 +221,9 @@
 								AND shiplist_user_id='".$this->userId."' 
 								AND shiplist_entity_id='".$this->entityId."';");
 			$arr = mysql_fetch_row($res);
-			
+
 			$delable = max(0,min($cnt,$arr[1]));
-			
+
 			dbquery("UPDATE
 						shiplist
 					SET
@@ -233,10 +233,10 @@
 						shiplist_ship_id=".$shipId."
 						AND shiplist_id='".$arr[0]."'
 					LIMIT 1;");
-			
+
 			return $delable;
 		}
-		
+
 		function leaveShelter($shipId,$cnt)
 		{
 			$res = dbquery("SELECT 
@@ -251,7 +251,7 @@
 			$arr = mysql_fetch_row($res);
 
 			$delable = max(0,min($cnt,$arr[1]));
-			
+
 			dbquery("UPDATE
 						shiplist
 					SET
@@ -262,11 +262,11 @@
 						AND shiplist_id='".$arr[0]."'
 					LIMIT 1;");
 		}
-		
+
 		function getBStructure()
 		{
   			if ($this->items == null)
-  				$this->load();			
+  				$this->load();
 				$i = 0;
 				foreach ($this->items as $k=>&$v)
 				{
@@ -274,11 +274,11 @@
 				}
 				return $i;
 		}
-		
+
 		function getBShield()
 		{
   			if ($this->items == null)
-  				$this->load();			
+  				$this->load();
 				$i = 0;
 				foreach ($this->items as $k=>&$v)
 				{
@@ -286,11 +286,11 @@
 				}
 				return $i;
 		}
-		
+
 		function getBWeapon()
 		{
   			if ($this->items == null)
-  				$this->load();			
+  				$this->load();
 				$i = 0;
 				foreach ($this->items as $k=>&$v)
 				{
@@ -298,11 +298,11 @@
 				}
 				return $i;
 		}
-    
+
     function getBHeal()
 		{
   			if ($this->items == null)
-  				$this->load();			
+  				$this->load();
 				$i = 0;
 				foreach ($this->items as $k=>&$v)
 				{
@@ -310,7 +310,7 @@
 				}
 				return $i;
 		}
-		
+
 		/**
 		* Remove empty data
 		*/
@@ -327,8 +327,8 @@
 			add_log("4","$nr leere Schiffsdatensätze wurden gelöscht!");
 			return $nr;
 		}
-	
-	
+
+
 	}
 
 

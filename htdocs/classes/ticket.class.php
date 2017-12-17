@@ -34,7 +34,7 @@ class Ticket
 
 	/**
 	 * Ticket categories
-	 * 
+	 *
 	 * @var array
 	 */
 	static $categories = array();
@@ -43,7 +43,7 @@ class Ticket
 	 * Initializes the class and loads data from database
 	 * @param int $id Ticket-ID
 	 */
-	function __construct($id)
+    public function __construct($id)
 	{
 		try
 		{
@@ -253,7 +253,7 @@ class Ticket
 	/**
 	 * Assigns the ticket to an admin
 	 *
-	 * @param int $adminId ID 
+	 * @param int $adminId ID
 	 */
 	function assign($adminId)
 	{
@@ -265,7 +265,7 @@ class Ticket
 
 	/**
 	 * Closes the ticket and adds a message to the ticket
-	 * @param <type> $solution 
+	 * @param <type> $solution
 	 */
 	function close($solution)
 	{
@@ -388,13 +388,13 @@ class Ticket
 		);");
 		$tid = mysql_insert_id();
 		TicketMessage::create(array("ticket_id"=>$tid,"user_id"=>$data['user_id'],"message"=>$data['message']));
-		
+
 		$formatedtid = sprintf("%'.06d", $tid);
-		
+
 		$text = "Hallo!\n\nDein [page ticket id=".$formatedtid."]Ticket #".$formatedtid."[/page] wurde erfolgreich erstellt. Es wird sich in Kürze ein Admin um dein Anliegen kümmern.\n\n Dein Admin Team";
-		
+
 		Message::sendFromUserToUser(0,$data['user_id'],"Dein Ticket $formatedtid",$text);
-	
+
 		return $tid;
 	}
 
@@ -474,7 +474,7 @@ class Ticket
 
 	/**
 	 * Counts all new tickets
-	 * 
+	 *
 	 * @return int Number of new tickets
 	 */
 	static function countNew()
@@ -672,7 +672,7 @@ class TicketMessage
 					$order.=",";
 			}
 		}
-		
+
 		$rtn = array();
 		$res = dbquery("
 		SELECT

@@ -3,7 +3,7 @@
 	class FleetActionAttack extends FleetAction
 	{
 
-		function FleetActionAttack()
+        public function __construct()
 		{
 			$this->code = "attack";
 			$this->name = "Angriff";
@@ -12,7 +12,7 @@
 			$this->visible = true;
 			$this->exclusive = false;
 			$this->attitude = 3;
-			
+
 			$this->allowPlayerEntities = true;
 			$this->allowActivePlayerEntities = true;
 			$this->allowOwnEntities = false;
@@ -22,11 +22,11 @@
 			$this->allianceAction = false;
 		}
 
-		function startAction() {} 
-		function cancelAction() {}		
-		function targetAction() {} 
-		function returningAction() {}		
-		
+		function startAction() {}
+		function cancelAction() {}
+		function targetAction() {}
+		function returningAction() {}
+
 	}
 
 ?>

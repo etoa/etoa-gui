@@ -13,7 +13,7 @@
 		private $itemObjects;
 		private $loaded;
 		private $num;
-		function PlanetManager(Array $i)
+        public function __construct(Array $i)
 		{
 			$this->items = $i;
 			$this->loaded=false;
@@ -23,7 +23,7 @@
 
 		public function itemObjects()
 		{
-			$this->load();			
+			$this->load();
 			return $this->itemObjects;
 		}
 
@@ -50,21 +50,21 @@
 					AND planets.planet_fields>'".$cfg->value('user_min_fields')."'
 					AND planets.planet_user_id='0'
  				)
-				ON entities.cell_id=cells.id ";					
+				ON entities.cell_id=cells.id ";
 			if ($sx>0)
 				$sql.=" AND cells.sx=".$sx." ";
 			if ($sy>0)
 				$sql.=" AND cells.sy=".$sy." ";
-	
+
 			$sql.="ORDER BY
 					RAND()
 			LIMIT 1";
-			$tres = dbquery($sql);				
+			$tres = dbquery($sql);
 			if (mysql_num_rows($tres)==0)
 			{
 				return false;
 			}
-			$tarr = mysql_fetch_row($tres);			
+			$tarr = mysql_fetch_row($tres);
 			return $tarr[0];
 		}
 
@@ -106,7 +106,7 @@
 		function getSelectField($currendId)
 		{
 			global $page, $mode;
-			
+
 			if ($mode!="")
 				$req = "&amp;mode=$mode&amp;change_entity=";
 			else
@@ -124,12 +124,12 @@
 			}
 			echo "</select>";
 			$str = ob_get_contents();
-			ob_end_clean();			
+			ob_end_clean();
 			return $str;
-		}		
-		
+		}
+
 		function getLinkList($currendId, $page, $mode)
-		{	
+		{
 			if ($mode!="")
 			{
 				$req = "&amp;mode=$mode&amp;change_entity=";

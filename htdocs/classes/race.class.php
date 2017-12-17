@@ -12,9 +12,9 @@
 		private $fuel = 1;
 		private $food;
 		private $power;
-		private $population;	  		
-		
-		public function Race($id=0)
+		private $population;
+
+        public function __construct($id=0)
 		{
 			if (intval($id) > 0)
 			{
@@ -40,7 +40,7 @@
 					$this->fuel = $rarr['race_f_fuel'];
 					$this->food = $rarr['race_f_food'];
 					$this->power = $rarr['race_f_power'];
-					$this->population = $rarr['race_f_population'];		
+					$this->population = $rarr['race_f_population'];
 					return;
 				}
 			}
@@ -56,15 +56,15 @@
 			$this->fuel = 1;
 			$this->food = 1;
 			$this->power = 1;
-			$this->population = 1;	    
-	    
+			$this->population = 1;
+
 		}
-		
+
 		public function __toString()
 		{
 			return $this->name;
 		}
-		
+
 		public function __set($key, $val)
 		{
 			try
@@ -80,7 +80,7 @@
 				echo $e;
 			}
 		}
-		
+
 		public function __get($key)
 		{
 			try
@@ -88,7 +88,7 @@
 				if (!property_exists($this,$key))
 					throw new EException("Property $key existiert nicht in ".__CLASS__);
 
-					
+
 				return $this->$key;
 			}
 			catch (EException $e)
@@ -96,10 +96,10 @@
 				echo $e;
 				return null;
 			}
-		}		
-		
-		
-		
+		}
+
+
+
 	}
 
 ?>

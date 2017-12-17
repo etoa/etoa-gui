@@ -4,8 +4,8 @@
 		private $name;
 		private $count;
 		private $current;
-		
-		function TabControl($name,$elements,$default=0,$width="670px",$tabWidth="140px")
+
+        public function __construct($name,$elements,$default=0,$width="670px",$tabWidth="140px")
 		{
 			echo "<div class=\"tabOuter\" style=\"width:".$width."\">";
 			$cnt=0;
@@ -20,9 +20,9 @@
 			{
 				if ($cnt==$default)
 					$class = "tabTabActive";
-				else         
+				else
 					$class = "tabTab";
-				if (is_array($e))	
+				if (is_array($e))
 				{
 					echo "<div $tWidthStyle onclick=\"tabActivate('".$name."',".$cnt.");".$e['js']."\" id=\"".$name."Nav".$cnt."\" class=\"".$class."\">".$e['name']."</div>";
 				}
@@ -31,12 +31,12 @@
 				$cnt++;
 			}
 			echo "<br style=\"clear:both;\" /></div>";
-			
+
 			$this->name = $name;
 			$this->count = count($elements);
 			$this->current = 0;
 		}
-		
+
 		function open()
 		{
 			echo "<div id =\"".$this->name."Content".$this->current."\" class=\"tabContent\"";
@@ -45,17 +45,17 @@
 			echo ">";
 			$this->current++;
 		}
-		
+
 		function close()
 		{
 			echo "</div>";
 		}
-		
+
 		function end()
 		{
-			echo "</div>";			
+			echo "</div>";
 		}
-		
+
 	}
 
 ?>

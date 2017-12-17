@@ -3,7 +3,7 @@
 	class FleetActionGasAttack extends FleetAction
 	{
 
-		function FleetActionGasAttack()
+        public function __construct()
 		{
 			$this->code = "gasattack";
 			$this->name = "Gasangriff";
@@ -11,9 +11,9 @@
 			$this->longDesc = "Diese F&auml;higkeit erm&ouml;glicht dem Angreifer bei Gelingen der Aktion Nahrung eines Planeten zu vernichten. Die Schadensh&ouml;he wird zuf&auml;llig entschieden. Einsetzbar, wenn man dem Gegner nach gewonnenem Kampf noch die restliche Nahrung vernichten will.
 Die Chance einen erfolgreichen Gasangriff durchzuf&uuml;hren erh&ouml;ht sich, indem man die Giftgas-Technologie weiter erforscht. (Pro Stufe +5%)";
 			$this->visible = true;
-			$this->exclusive = false;					
+			$this->exclusive = false;
 			$this->attitude = 3;
-			
+
 			$this->allowPlayerEntities = true;
 			$this->allowActivePlayerEntities = true;
 			$this->allowOwnEntities = false;
@@ -23,11 +23,11 @@ Die Chance einen erfolgreichen Gasangriff durchzuf&uuml;hren erh&ouml;ht sich, i
 			$this->allianceAction = false;
 		}
 
-		function startAction() {} 
-		function cancelAction() {}		
-		function targetAction() {} 
-		function returningAction() {}		
-		
+		function startAction() {}
+		function cancelAction() {}
+		function targetAction() {}
+		function returningAction() {}
+
 	}
 
 ?>

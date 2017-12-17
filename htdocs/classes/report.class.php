@@ -40,8 +40,8 @@ abstract class Report
 	protected $timestamp;
 	protected $content;
 	protected $read = false;
-	protected $deleted = false;	
-	protected $archived = false;	
+	protected $deleted = false;
+	protected $archived = false;
 	protected $userId=0;
 	protected $allianceId=0;
 	protected $entity1Id=0;
@@ -53,7 +53,7 @@ abstract class Report
 	 *
 	 * @param mixed $id Accepts a record id or an array of already fetched record data
 	 */
-	function __construct($id)
+    public function __construct($id)
 	{
 		if (is_integer($id))
 		{
@@ -89,7 +89,7 @@ abstract class Report
 			$this->entity1Id = $arr['entity1_id'];
 			$this->entity2Id = $arr['entity2_id'];
 			$this->opponent1Id = $arr['opponent1_id'];
-			
+
 			$this->valid = true;
 		}
 	}
@@ -146,8 +146,8 @@ abstract class Report
 		}
 		return false;
 	}
-	
-	
+
+
 	public abstract function createSubject();
 
 	/**
@@ -227,10 +227,10 @@ abstract class Report
 	{
 		if ($order==null)
 		$order = " timestamp DESC ";
-		
+
 		$wheres	= $admin ? "WHERE 1 " : " WHERE deleted=0 ";
 		$archived = false;
-		
+
 		if (is_array($where))
 		{
 			foreach ($where as $k=>$v)
@@ -254,7 +254,7 @@ abstract class Report
 		}
 
 		$sql = "SELECT * FROM reports $join $wheres ORDER BY $order";
-		
+
 		if ($limit != "" || $limit>0)
 			$sql.=" LIMIT $limit";
 		$res = dbquery($sql);
@@ -322,7 +322,7 @@ abstract class Report
 
 		/**
 		 * Check new messages of the given user
-		 * 
+		 *
 		 * @param int $userId
 		 * @return int Number of new messages
 		 */
@@ -337,7 +337,7 @@ abstract class Report
 		{
 			return self::$types[$this->type];
 		}
-		
+
 		/**
 		* Alte Nachrichten löschen
 		*/
@@ -455,7 +455,7 @@ abstract class Report
 							DELETE FROM
 								reports_other
 							WHERE
-								id IN (".implode(",", $other).");");			
+								id IN (".implode(",", $other).");");
 				}
 				dbquery("
 					DELETE FROM
@@ -464,7 +464,7 @@ abstract class Report
 						`archived`='0'
 						AND `read`='1'
 						AND `timestamp`<'".$tstamp."';
-				");		
+				");
 				$nr = mysql_affected_rows();
 				add_log("4","Unarchivierte Berichte die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!",time());
 			}
@@ -474,7 +474,7 @@ abstract class Report
 				$tstamp = time() - $threshold;
 			else
 				$tstamp=time()-(24*3600*$cfg->p1('reports_threshold_days'));
-			
+
 			$res = dbquery("
 				SELECT
 					id,
@@ -492,7 +492,7 @@ abstract class Report
 				$market = array();
 				$other = array();
 				$counter = 0;
-				
+
 				while ($arr=mysql_fetch_row($res))
 				{
 					switch ($arr[1]) {
@@ -509,7 +509,7 @@ abstract class Report
 							array_push($other,$arr[0]);
 							break;
 					}
-					
+
 					if ($counter > 10000) {
 						if (count($battle)>0)
 							dbquery("
@@ -538,7 +538,7 @@ abstract class Report
 									reports_other
 								WHERE
 									id IN (".implode(",", $other).");");
-						
+
 						$battle = array();
 						$spy = array();
 						$market = array();
@@ -546,30 +546,30 @@ abstract class Report
 						$counter = 0;
 					}
 					else $counter++;
-									
+
 				}
-				
+
 				if (count($battle)>0)
 					dbquery("
 						DELETE FROM
 							reports_battle
 						WHERE
 							id IN (".implode(",", $battle).");");
-				
+
 				if (count($market)>0)
 					dbquery("
 						DELETE FROM
 							reports_market
 						WHERE
 							id IN (".implode(",", $market).");");
-				
+
 				if (count($spy)>0)
 					dbquery("
 						DELETE FROM
 							reports_spy
 						WHERE
 							id IN (".implode(",", $spy).");");
-				
+
 				if (count($other)>0)
 					dbquery("
 						DELETE FROM
@@ -583,8 +583,8 @@ abstract class Report
 				WHERE
 					deleted='1'
 					AND timestamp<'".$tstamp."';
-			");		
-			add_log("4","Unarchivierte Berichte die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!",time());		
+			");
+			add_log("4","Unarchivierte Berichte die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!",time());
 			$nr += mysql_affected_rows();
 			return $nr;
 		}

@@ -6,21 +6,21 @@
 		private $name = "";
 		private $typeId = 0;
 		private $fields = 0, $maxLevel = 0;
-		
+
 		private $costs = array();
 		private $costsFactor, $prodFactor, $demolishCostsFactor, $storeFactor;
 		private $bunkerRes, $bunkerFleetCount, $bunkerFleetSpace;
 		private $shortDesc, $longDesc;
-		
+
 		private $bRequirements = null;
 		private $tRequirements = null;
-		
+
 		private $isValid = false;
-		
-		public function Building($id, $small=false)
+
+        public function __construct($id, $small=false)
 		{
-			try	
-			{				
+			try
+			{
 				if (is_array($id))
 				{
 					$arr = $id;
@@ -31,7 +31,7 @@
 						$select = " building_id, building_type, building_name ";
 					else
 						$select = " * ";
-					
+
 					$res = dbquery("
 					SELECT 
 						".$select."
@@ -47,11 +47,11 @@
 						throw new EException("Gebäude $id existiert nicht!");
 					}
 				}
-				
+
 				$this->id = $arr['building_id'];
 				$this->typeId = $arr['building_type_id'];
 				$this->name = $arr['building_name'];
-				
+
 				if (!$small)
 				{
 					$this->shortDesc = $arr['building_shortcomment'];
@@ -72,11 +72,11 @@
 
 					$this->bunkerRes = $arr['building_bunker_res'];
 					$this->bunkerFleetCount = $arr['building_bunker_fleet_count'];
-					$this->bunkerFleetSpace = $arr['building_bunker_fleet_space'];	
+					$this->bunkerFleetSpace = $arr['building_bunker_fleet_space'];
 				}
-				
+
 				$this->isValid = true;
-			
+
 			}
 			catch (Exception $e)
 			{
@@ -84,14 +84,14 @@
 				return;
 			}
 		}
-		
-		function isValid() {return $this->isValid;}			
-		
+
+		function isValid() {return $this->isValid;}
+
 		function __toString()
 		{
 			return $this->name;
 		}
-		
+
 		public function __set($key, $val)
 		{
 			try
@@ -107,7 +107,7 @@
 				echo $e;
 			}
 		}
-		
+
 		public function __get($key)
 		{
 			try
@@ -115,7 +115,7 @@
 				if (!property_exists($this,$key))
 					throw new EException("Property $key existiert nicht in ".__CLASS__);
 
-					
+
 				return $this->$key;
 			}
 			catch (EException $e)
@@ -125,35 +125,35 @@
 			}
 		}
 
-		function imgPathSmall() 
+		function imgPathSmall()
 		{
-			return IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$this->id."_small.".IMAGE_EXT;			
+			return IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$this->id."_small.".IMAGE_EXT;
 		}
-		
-		function imgPathMiddle() 
+
+		function imgPathMiddle()
 		{
-			return IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$this->id."_middle.".IMAGE_EXT;			
-		}		
-				
-		function imgPathBig() 
+			return IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$this->id."_middle.".IMAGE_EXT;
+		}
+
+		function imgPathBig()
 		{
-			return IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$this->id.".".IMAGE_EXT;			
-		}				
-		
+			return IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$this->id.".".IMAGE_EXT;
+		}
+
 		function imgSmall()
 		{
 			return "<img src=\"".$this->imgPathSmall()."\" style=\"width:40px;height:40px;\"/>";
 		}
-		
+
 		function imgMiddle()
 		{
 			return "<img src=\"".$this->imgPathMiddle()."\" style=\"width:120px;height:120px;\"/>";
-		}		
+		}
 
 		function imgBig()
 		{
 			return "<img src=\"".$this->imgPathBig()."\" style=\"width:220px;height:220px;\"/>";
-		}	
+		}
 
 		function getCosts($level=1)
 		{
@@ -162,8 +162,8 @@
 			for ($i=1;$i<=6;$i++)
       	$bc[$i] = $this->costs[$i] * pow($this->costsFactor,$level);
       return $bc;
-		}	
-		
+		}
+
 		private function loadRequirements()
 		{
 			$this->bRequirements = array();
@@ -184,29 +184,29 @@
 					$this->tRequirements[$arr[1]] = $arr[2];
 				if ($arr[0]>0)
 					$this->bRequirements[$arr[0]] = $arr[2];
-			}			
+			}
 		}
-		
+
 		function getBuildingRequirements()
 		{
 			if ($this->bRequirements != null)
 				return $this->bRequirements;
 			$this->loadRequirements();
 			return $this->bRequirements;
-		}	
-		
+		}
+
 		function getTechRequirements()
 		{
 			if ($this->tRequirements != null)
 				return $this->tRequirements;
 			$this->loadRequirements();
 			return $this->tRequirements;
-		}			
-		
+		}
+
 		//
 		// Statics
 		//
-		
+
 		static function getItems($type=0,$show=1)
 		{
 			$res = dbquery("
@@ -220,7 +220,7 @@
 				".($type>0 ? " AND building_type_id=".$type."" : "")."
 			ORDER BY
 				building_order
-			;");			
+			;");
 			$rtn=array();
 			while($arr = mysql_fetch_assoc($res))
 			{
@@ -239,7 +239,7 @@
 				building_types
 			ORDER BY
 				type_order
-			;");			
+			;");
 			$rtn=array();
 			while($arr = mysql_fetch_assoc($res))
 			{
@@ -247,7 +247,7 @@
 			}
 			return $rtn;
 		}
-		
+
 		static function getBuildTypes()
 		{
 			return [

@@ -8,15 +8,15 @@
 		private $count;
 		private $aggressivCount;
 		private $fleet;
-		
-		function FleetManager($userId,$allianceId=0)
+
+        public function __construct($userId,$allianceId=0)
 		{
 			$this->userId = $userId;
 			$this->allianceId = $allianceId;
 			$this->count = 0;
 			$this->fleet = array();
 		}
-	
+
 		function countControlledByEntity($entId)
 		{
 			$res = dbquery("
@@ -37,14 +37,14 @@
 					AND status>0  
 				));");
 			$arr = mysql_fetch_row($res);
-			return $arr[0];		
+			return $arr[0];
 		}
-	
+
 		function loadOwn()
 		{
 			$this->count = 0;
 			$this->fleet = array();
-			
+
 			//Lädt Flottendaten
 			$fres = dbquery("
 			SELECT
@@ -56,33 +56,33 @@
 			ORDER BY
 				landtime DESC;");
 			if (mysql_num_rows($fres)>0)
-			{	
+			{
 				while ($farr = mysql_fetch_row($fres))
 				{
 					$this->fleet[$farr[0]] = new Fleet($farr[0]);
 					$this->count++;
-				}		
+				}
 			}
 		}
-		
+
 		function loadForeign()
 		{
 			$this->count = 0;
 			$this->aggressivCount = 0;
 			$this->fleet = array();
-			
+
 			//User Spytech
 			$tl = new TechList($this->userId);
 			$this->userSpyTechLevel = $tl->getLevel(SPY_TECH_ID);
-			
+
 			$specialist = new Specialist(0,0,$this->userId);
 			$this->userSpyTechLevel += $specialist->spyLevel;
-			
+
 			if (SPY_TECH_SHOW_ATTITUDE<=$this->userSpyTechLevel)
             {
 				//Lädt Flottendaten
 				// TODO: This is not good query because it needs to know the planet table structure
-				
+
 				// Lade Flotten-id und leader-id (für Allianzangriffe)
 				// von Flotten, die auf einen Planet des aktuellen Users fliegen
 				// und nicht vom aktuellen User stammen
@@ -102,23 +102,23 @@
 					ORDER BY
 						landtime DESC;");
 				if (mysql_num_rows($fres)>0)
-				{	
+				{
 					while ($farr = mysql_fetch_row($fres))
 					{
 						// cFleet contains all attached fleets if it
 						// is an alliance fleet.
 						$cFleet = new Fleet($farr[0],-1,$farr[1]);
-					
+
 						if ($cFleet->getAction()->visible()) {
 							if ($cFleet->getAction()->attitude()==3) {
 								$otl = new TechList($cFleet->ownerId());
 								$opTarnTech = $otl->getLevel(TARN_TECH_ID);
 								$specialist = new Specialist(0,0,$cFleet->ownerId());
 								$opTarnTech += $specialist->tarnLevel;
-							
+
 								$diffTimeFactor = max($opTarnTech-$this->userSpyTechLevel,0);
 								$specialShipBonusTarn = 0;
-								
+
 								// Minbari fleet hide ability does not work with alliance attacks
 								// TODO: Improvement would be differentiation between single fleets
                 if($cFleet->getAction()->code() != 'alliance')
@@ -143,22 +143,22 @@
                                     }
                                 }
 								$diffTimeFactor = 0.1 * min(9,$diffTimeFactor + 10 * $specialShipBonusTarn);
-							
+
 								if ($cFleet->remainingTime() <  ($cFleet->landTime() - $cFleet->launchTime())*(1 - $diffTimeFactor)) {
 									$this->fleet[$farr[0]] = $cFleet;
 									$this->count++;
 									$this->aggressivCount++;
 								}
-							} else {						
+							} else {
 								$this->fleet[$farr[0]] = $cFleet;
 								$this->count++;
 							}
 						}
 					}
-				}		
+				}
 			}
-		}	
-		
+		}
+
 		function loadAllianceSupport()
 		{
 			$this->count = 0;
@@ -178,15 +178,15 @@
 			ORDER BY
 				landtime DESC;");
 			if (mysql_num_rows($fres)>0)
-			{	
+			{
 				while ($farr = mysql_fetch_row($fres))
 				{
 					$this->fleet[$farr[0]] = new Fleet($farr[0]);
 					$this->count++;
-				}		
+				}
 			}
 		}
-		
+
 		function loadAllianceAttacks()
 		{
 			$this->count = 0;
@@ -205,48 +205,48 @@
 			ORDER BY
 				landtime DESC;");
 			if (mysql_num_rows($fres)>0)
-			{	
+			{
 				while ($farr = mysql_fetch_row($fres))
 				{
 					$this->fleet[$farr[0]] = new Fleet($farr[0]);
 					$this->count++;
-				}		
+				}
 			}
 		}
-		
-		
 
 
-			
-		
+
+
+
+
 		function count()
 		{
 			return $this->count;
 		}
-	
+
 		function getAll()
 		{
 			return $this->fleet;
 		}
-		
+
 		function spyTech()
 		{
 			return $this->userSpyTechLevel;
 		}
-		
+
 		function attitude()
 		{
 			if ($this->aggressivCount==$this->count) return "color:#f00";
 			elseif ($this->aggressivCount==0) return "color:#0f0";
 			else return "color:orange";
 		}
-		
+
 		function loadAggressiv()
 		{
 			$this->loadForeign();
 			return $this->aggressivCount;
 		}
-	
+
 	}
 
 ?>

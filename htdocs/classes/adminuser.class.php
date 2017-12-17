@@ -8,14 +8,14 @@
 //////////////////////////////////////////////////////
 
 class AdminUser {
-	
+
 	const tableName = "admin_users";
-	
+
 	private $id = null;
 	private $valid = false;
 	private $passwordString;
 	private $forcePasswordChange = false;
-	
+
 	public $nick = "";
 	public $name = "";
 	public $email = "";
@@ -27,8 +27,8 @@ class AdminUser {
 	public $locked = false;
 	public $isContact = true;
 	public $roles = array();
-	
-	function __construct($id=null) {
+
+    public function __construct($id=null) {
 		if ($id != null) {
 			$res = DBManager::getInstance()->safeQuery("
 			SELECT
@@ -43,7 +43,7 @@ class AdminUser {
 				$this->id = $id;
 				$this->passwordString = $arr['user_password'];
 				$this->valid = true;
-				
+
 				$this->nick = $arr['user_nick'];
 				$this->forcePasswordChange = ($arr['user_force_pwchange'] > 0);
 
@@ -75,13 +75,13 @@ class AdminUser {
 		if ($field == "nick")
 			return $this->nick;
 		if ($field == "forcePasswordChange")
-			return $this->forcePasswordChange;			
+			return $this->forcePasswordChange;
 	}
-	
+
 	function checkEqualPassword($newPassword) {
 		return validatePasswort($newPassword, $this->passwordString);
 	}
-	
+
 	function setPassword($password, $forceChange=false)	{
 		$pws = saltPasswort($password);
 		DBManager::getInstance()->safeQuery("
@@ -106,7 +106,7 @@ class AdminUser {
 	* if the id is null
 	*/
 	function save()	{
-		if ($this->id != null) 
+		if ($this->id != null)
 		{
 			DBManager::getInstance()->safeQuery("
 			UPDATE 
@@ -124,7 +124,7 @@ class AdminUser {
 				is_contact=?,
 				roles=?
 			WHERE 
-				user_id='".$this->id."';", 
+				user_id='".$this->id."';",
 				array(
 					$this->nick,
 					$this->name,
@@ -157,7 +157,7 @@ class AdminUser {
 				user_password
 			) VALUES (
 				?,?,?,?,?,?,?,?,?,?,?,?
-			);", 
+			);",
 			array(
 				$this->nick,
 				$this->name,
@@ -176,7 +176,7 @@ class AdminUser {
 			$this->valid = true;
 		}
 	}
-	
+
 	/**
 	* Get formatted string of admin's roles
 	*/
@@ -184,12 +184,12 @@ class AdminUser {
 		$rm = new AdminRoleManager();
 		return $rm->getRolesStr($this->roles);
 	}
-	
+
 	/**
-	* Deletes current record 
+	* Deletes current record
 	*/
 	function delete()	{
-		if ($this->id != null) 
+		if ($this->id != null)
 		{
 			DBManager::getInstance()->safeQuery("
 			DELETE FROM 
@@ -198,13 +198,13 @@ class AdminUser {
 		}
 		return false;
 	}
-	
+
 	function hasRole($roles) {
 		$rm = new AdminRoleManager();
 		return ($rm->checkAllowed($roles, $this->roles));
 	}
 
-	/** 
+	/**
 	* Finds a user by it's nickname
 	*/
 	static function findByNick($nick) {
@@ -223,7 +223,7 @@ class AdminUser {
 		}
 		return null;
 	}
-	
+
 	/**
 	* Get an array of all user id's and nicknames
 	*/
@@ -241,7 +241,7 @@ class AdminUser {
 		}
 		return $rtn;
 	}
-	
+
 	/**
 	* Get an array of all users
 	*/
@@ -260,8 +260,8 @@ class AdminUser {
 		}
 		return $rtn;
 	}
-	
-	/** 
+
+	/**
 	* Count all users
 	*/
 	static function countAll() {

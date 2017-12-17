@@ -6,7 +6,7 @@
 		private $techs;
 
 
-		function TechList($userId)
+        public function __construct($userId)
 		{
 			$this->userId = $userId;
 			$this->techs = array();

@@ -90,7 +90,7 @@ class User implements \EtoA\User\UserInterface
 	* The constructor initializes and loads
 	* all importand data about this user
 	*/
-	function User($id)
+    public function __construct($id)
 	{
 		$this->isValid = false;
 		$this->id = $id;

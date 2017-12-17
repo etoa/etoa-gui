@@ -18,7 +18,7 @@ class UserSession extends Session
 	 *
 	 * @return AdminSession Instance of this class
 	 */
-	public static function getInstance()
+	public static function getInstance($className = null)
 	{
 		return parent::getInstance(__CLASS__);
 	}

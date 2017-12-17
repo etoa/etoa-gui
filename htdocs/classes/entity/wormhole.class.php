@@ -1,5 +1,5 @@
 <?PHP
-	
+
 	/**
 	* Class for nebula entity
 	*/
@@ -8,22 +8,22 @@
 		protected $id;
 		protected $coordsLoaded;
 		public $pos;
-		protected $isValid;		
+		protected $isValid;
 		public $sx;
 		public $sy;
 		public $cx;
 		public $cy;
 		protected $cellId;
-		private $name;		
+		private $name;
 		private $targetId;
 		private $persistent;
 		private $changed;
 		private $dataLoaded;
-		
+
 		/**
 		* The constructor
 		*/
-		function Wormhole($id=0)
+        public function __construct($id=0)
 		{
 			$this->isValid = true;
 			$this->id = intval($id);
@@ -43,33 +43,33 @@
 
 		/**
 		* Returns id
-		*/                        
-		function id() { return $this->id; }      
+		*/
+		function id() { return $this->id; }
 
 		/**
 		* Returns id
-		*/                        
-		function name() { return $this->name; }      
+		*/
+		function name() { return $this->name; }
 
 
 		/**
 		* Returns owner
-		*/                        
-		function owner() { return "Niemand"; }      
+		*/
+		function owner() { return "Niemand"; }
 
 		/**
 		* Returns owner
-		*/                        
-		function ownerId() { return 0; }      
-	
+		*/
+		function ownerId() { return 0; }
+
 		function ownerMain() { return false; }
-	
-	
+
+
 		/**
 		* Returns type string
-		*/                        
-		function entityCodeString() { return "Wurmloch"; }      
-	
+		*/
+		function entityCodeString() { return "Wurmloch"; }
+
 		/**
 		* Returns type
 		*/
@@ -80,7 +80,7 @@
 				$this->loadData();
 			}
 			return $this->persistent ? "stabil" : "veränderlich";
-		}							
+		}
 
 		function imagePath($opt="")
 		{
@@ -96,12 +96,12 @@
 		/**
 		* Returns type
 		*/
-		function entityCode() { return "w"; }	      
-		
+		function entityCode() { return "w"; }
+
 		/**
 		* To-String function
 		*/
-		function __toString() 
+		function __toString()
 		{
 			if (!$this->coordsLoaded)
 			{
@@ -109,7 +109,7 @@
 			}
 			return $this->formatedCoords();
 		}
-		
+
 		/**
 		* Returns the cell id
 		*/
@@ -121,7 +121,7 @@
 			}
 			return $this->cellId;
 		}
-		
+
 		function loadData()
 		{
 			if ($this->dataLoaded==false)
@@ -146,7 +146,7 @@
 				}
 			}
 		}
-		
+
 		function targetId()
 		{
 			if (!$this->dataLoaded)
@@ -155,7 +155,7 @@
 			}
 			return $this->targetId;
 		}
-		
+
 		function isPersistent()
 		{
 			if (!$this->dataLoaded)
@@ -172,8 +172,8 @@
 				$this->loadData();
 			}
 			return $this->changed;
-		}		
-		
+		}
+
 		/**
 		* Vertauscht zuf?llig mehrere Wurml?cher miteinander
 		*
@@ -198,7 +198,7 @@
 					RAND()
 				LIMIT ".WH_UPDATE_AFFECT_CNT.";
 			");
-			
+
 			while ($arr=mysql_fetch_row($res))
 			{
 				if (!in_array($arr[0], $del))
@@ -206,9 +206,9 @@
 					array_push($del, $arr[0], $arr[1]);
 				}
 			}
-			
+
 			$delcnt = count($del);
-			
+
 			if ($delcnt > 0)
 			{
 				foreach($del AS $id)
@@ -235,10 +235,10 @@
 						)
 						VALUES
 						('".$id."')
-					;");			
+					;");
 				}
 			}
-			
+
 			// Neue erstellen
 			$res=dbquery("
 				SELECT
@@ -253,9 +253,9 @@
 				LIMIT ".($delcnt).";
 			");
 			while ($arr1=mysql_fetch_row($res))
-			{	
+			{
 				$arr2=mysql_fetch_row($res);
-				
+
 				dbquery("
 				UPDATE
 					entities
@@ -270,19 +270,19 @@
 					code='w'
 				WHERE
 					id='".$arr2[0]."';");
-				
+
 				dbquery("
 				DELETE FROM
 					space
 				WHERE
 					id='".$arr1[0]."';");
-					
+
 				dbquery("
 				DELETE FROM
 					space
 				WHERE
 					id='".$arr2[0]."';");
-				
+
 				dbquery("
 				INSERT INTO
 					wormholes
@@ -304,12 +304,12 @@
 				);");
 			}
 		}
-			
+
 		public function getFleetTargetForwarder()
 		{
 			// Forward in 0 secs to the other end of the wormhole and allow selection of new target
 			return array($this->targetId,0,true);
-		}		
-			
+		}
+
 	}
 ?>
