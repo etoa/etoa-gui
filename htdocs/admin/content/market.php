@@ -34,7 +34,7 @@
 	if($sub=="ress")
 	{
 		echo "<h2>Rohstoffe</h2>";
-		if($_GET['ressource_delete']>0)
+		if(isset($_GET['ressource_delete']) && $_GET['ressource_delete']>0)
 		{
 			dbquery("DELETE FROM market_ressource WHERE id=".$_GET['ressource_delete']."");
 			echo MessageBox::ok("", "Angebot gel&ouml;scht!");
@@ -93,7 +93,7 @@
 	elseif ($sub=="ships")
 	{
 		echo "<h2>Schiffe</h2>";
-		if ($_GET['ship_delete']!="")
+		if (isset($_GET['ship_delete']) && $_GET['ship_delete']!="")
 		{
 				dbquery("DELETE FROM market_ship WHERE id=".$_GET['ship_delete']."");
 				echo MessageBox::ok("", "Angebot gel&ouml;scht");
@@ -153,9 +153,9 @@
 					echo "<td width=\"100\">
 							".nf($arr['costs_'.$k.''])."
 						</td>";
-					
+
 				}
-				
+
 				echo "</tr>
 					</table><br/>";
 			}
@@ -166,7 +166,7 @@
 	elseif ($sub=="auction")
 	{
 		echo "<h2>Auktionen</h2>";
-		if ($_GET['auction_delete']!="")
+		if (isset($_GET['auction_delete']) && $_GET['auction_delete']!="")
 		{
 				dbquery("DELETE FROM market_auction WHERE id=".$_GET['auction_delete']."");
 				echo MessageBox::ok("", "Auktion gel&ouml;scht");
@@ -260,7 +260,7 @@
 										Auktion beendet
 									</td>";
 						}
-						
+
 						echo "		<td>
 										<b>".RES_CRYSTAL."</b>:
 									</td>
@@ -369,7 +369,7 @@
 	{
 		echo '<div style="float:left;">';
 		echo "Willkommen bei der Marktplatzverwaltung. <br/><br/>";
-		
+
 		echo '<input type="button" value="Schiffe" onclick="document.location=\'?page='.$page.'&amp;sub=ships\'" /><br/><br/>';
 		echo '<input type="button" value="Rohstoffe" onclick="document.location=\'?page='.$page.'&amp;sub=ress\'" /><br/><br/>';
 		echo '<input type="button" value="Auktionen" onclick="document.location=\'?page='.$page.'&amp;sub=auction\'" /><br/><br/>';
@@ -390,7 +390,7 @@
 
 		echo '<p>Die Marktkurse werden periodisch neu berechnet.</p>';
 		echo '<input type="button" value="Kurse manuell aktualisieren" onclick="document.location=\'?page='.$page.'&amp;action=updaterates\'" /><br/><br/>';
-			
+
 		echo '</div>';
 
 		echo '<img src="../misc/market.image.php" alt="Kursverlauf" style="float:right;" />';

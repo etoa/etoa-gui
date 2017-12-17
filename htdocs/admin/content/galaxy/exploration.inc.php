@@ -25,11 +25,12 @@
 		$tpl->assign("errmsg", "Keine Benutzer vorhanden!");
 	}
 
+    $tpl->assign("uid", 0);
 	if (isset($_GET['user_id']) && $_GET['user_id']>0)
 	{
 		$uid = $_GET['user_id'];
 		$tpl->assign("uid", $uid);
-		
+
 		$user = new User($uid);
 		$tpl->assign("user", $user);
 
@@ -38,16 +39,16 @@
 		$cx = 1;
 		$cy = 1;
 		$radius = 1;
-		
+
 		// Discover selected cell
-		if (isset($_POST['discover_selected'])) 
+		if (isset($_POST['discover_selected']))
 		{
 			$sx = intval($_POST['sx']);
 			$sy = intval($_POST['sy']);
 			$cx = intval($_POST['cx']);
 			$cy = intval($_POST['cy']);
 			$radius = abs(intval($_POST['radius']));
-		
+
 			$res = dbQuerySave("
 			SELECT
 				id
@@ -57,14 +58,14 @@
 			 	sx=? 
 				AND sy=? 
 				AND cx=? 
-				AND cy=?;", 
+				AND cy=?;",
 			array(
-				$sx,	
-				$sy,	
-				$cx,	
-				$cy	
+				$sx,
+				$sy,
+				$cx,
+				$cy
 			));
-			if (mysql_num_rows($res))	
+			if (mysql_num_rows($res))
 			{
 				$arr = mysql_fetch_row($res);
 				$cell = new Cell($arr[0]);
@@ -80,24 +81,24 @@
 			}
 		}
 		// Reset discovered coordinates
-		else if (isset($_POST['discover_reset'])) 
+		else if (isset($_POST['discover_reset']))
 		{
 			$user->setDiscoveredAll(false);
 			$tpl->assign("msg", "Erkundung zurückgesetzt!");
 		}
 		// Discover all coordinates
-		else if (isset($_POST['discover_all'])) 
+		else if (isset($_POST['discover_all']))
 		{
 			$user->setDiscoveredAll(true);
 			$tpl->assign("msg", "Alles erkundet!");
 		}
-		
+
 		$tpl->assign("sx", $sx);
 		$tpl->assign("sy", $sy);
 		$tpl->assign("cx", $cx);
 		$tpl->assign("cy", $cy);
 		$tpl->assign("radius", $radius);
-		
+
 		$tpl->assign("discoveredPercent", $user->getDiscoveredPercent());
 	}
 ?>

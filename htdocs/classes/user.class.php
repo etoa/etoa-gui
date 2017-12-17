@@ -229,8 +229,7 @@ class User implements \EtoA\User\UserInterface
 	 */
 	function __destruct()
 	{
-		$cnt = count($this->changedFields);
-		if ($cnt > 0)
+		if ($this->changedFields && count($this->changedFields) > 0)
 		{
 			$sql = "UPDATE
 				".self::tableName."

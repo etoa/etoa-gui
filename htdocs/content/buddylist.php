@@ -7,7 +7,7 @@
 	        //                        \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \                        //
 	        //                       \ \____/\ \__\ \____/\ \_\ \_\                         //
 	        //                          \/___/  \/__/\/___/  \/_/\/_/                       //
-	        //                                                                                                                                                                              
+	        //
           //////////////////////////////////////////////////
 	        // The Andromeda-Project-Browsergame                                            //
 	        // Ein Massive-Multiplayer-Online-Spiel                                 //
@@ -17,25 +17,25 @@
 	        //////////////////////////////////////////////////
 	        //
 	        //
-	       
+
 	        /**
 	        * Manage buddys
 	        *
 	        * @author MrCage <mrcage@etoa.ch>
 	        * @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	        */     
-	
-	
+	        */
+
+
 	        echo "<h1>Buddylist</h1>";      //Titel angepasst <h1> by Lamborghini
 	        echo "F&uuml;ge Freunde zu deiner Buddylist hinzu um auf einen Blick zu sehen wer alles online ist:<br/><br/>";
-	
+
 	        //
 	        // Erlaubnis erteilen
 	        //
 	        if (isset($_GET['allow']) && intval($_GET['allow'])>0)
 	        {
 				$blid = intval($_GET['allow']);
-				
+
 	                $res=dbquery("
 	                SELECT
 	                        users.user_nick
@@ -73,14 +73,14 @@
 	                else
 	                        error_msg("Die Erlaubnis kann nicht erteilt werden weil die Anfrage gel&ouml;scht wurde!");
 	        }
-	
+
 	        //
 	        // Erlaubnis verweigern
 	        //
 	        if (isset($_GET['deny']) && intval($_GET['deny'])>0)
 	        {
 				$blid = intval($_GET['deny']);
-				
+
 	                $res=dbquery("
 	                SELECT
 	                        users.user_nick
@@ -100,13 +100,13 @@
 	                else
 	                        error_msg("Die Anfrage konnte nicht gel&ouml;scht werden weil sie nicht mehr existiert!");
 	        }
-	
+
 	        //
 	        // Freund hinzufÃŒgen
 	        //
 	        if ((isset($_POST['buddy_nick']) && $_POST['buddy_nick']!="" && $_POST['submit_buddy']!="") || (isset($_GET['add_id']) && intval($_GET['add_id'])>0))
 	        {
-				$buid = intval($_GET['add_id']);
+				$buid = isset($_GET['add_id']) ? intval($_GET['add_id']) : 0;
 	                if ($buid>0)
 	                        $res=dbquery("SELECT user_id,user_nick FROM users WHERE user_id='".$buid."';");
 	                else
@@ -131,7 +131,7 @@
 	                else
 	                        error_msg("Der Spieler [b]".$_POST['buddy_nick']."[/b] konnte nicht gefunden werden!");
 	        }
-	
+
 	        //
 	        // Entfernen
 	        //
@@ -148,7 +148,7 @@
 	                        success_msg("Der Spieler wurde von der Freundesliste entfern!");
 	                }
 	        }
-	
+
 	        //
 	        // In einer anderen Liste entfernen
 	        //
@@ -156,7 +156,7 @@
 	        {
 	                dbquery("DELETE FROM buddylist WHERE bl_user_id='".intval($_GET['removeremote'])."' AND bl_buddy_id='".$cu->id."';");
 	        }
-	
+
 	        if (isset($_GET['comment']) && intval($_GET['comment'])>0)
 	        {
 				$blid = intval($_GET['comment']);
@@ -194,13 +194,13 @@
 	                                iBoxStart("Kommentar f&uuml;r ".$nick."");
 	                                echo "<textarea name=\"bl_comment_buddy\" rows=\"5\" cols=\"60\">".stripslashes($arr['bl_comment_buddy'])."</textarea>";
 	                                iBoxEnd();
-	                        }                       
-	                       
+	                        }
+
 	                        echo "<input type=\"hidden\" name=\"bl_id\" value=\"".$arr['bl_id']."\" />";
 	                        echo "<input type=\"submit\" name=\"cmt_submit\" value=\"Speichern\" /> ";
 	                        echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Abbrechen\" />";
 	                        echo "</form>";
-	                }               
+	                }
 	                else
 	                {
 	                        echo "Daten nicht gefunden!";
@@ -217,9 +217,9 @@
 	                        else
 	                        {
 	                                dbquery("UPDATE buddylist SET bl_comment_buddy='".addslashes($_POST['bl_comment_buddy'])."' WHERE bl_id=".$_POST['bl_id'].";");
-	                        }                       
+	                        }
 	                }
-	
+
 	        $res=dbquery("
 	        SELECT
 	        users.user_id,
@@ -304,7 +304,7 @@
 	                                <a href=\"?page=userinfo&amp;id=".$arr['user_id']."\" title=\"Info\">Profil</a><br/>
 	                                <a href=\"?page=$page&comment=".$arr['bl_id']."\" title=\"Kommentar bearbeiten\">Kommentar</a> ";
 	                        echo "<a href=\"?page=$page&remove=".$arr['user_id']."\" onclick=\"return confirm('Willst du ".$arr['user_nick']." wirklich von deiner Liste entfernen?');\">Entfernen</a></td>";
-	
+
 	                        echo "</tr>";
 	                }
 	                tableEnd();
@@ -313,7 +313,7 @@
 	        {
 	                info_msg("Es sind noch keine Freunde in deiner Buddyliste eingetragen!");
 	        }
-	
+
 	$res=dbquery("
 	        SELECT
 	    users.user_id,
@@ -356,7 +356,7 @@
 	                        {
 	                                echo " <img src=\"images/infohelp.png\" alt=\"Info\" style=\"height:10px;\" ".tm("Kommentar",text2html($arr['bl_comment_buddy']))."></a>";
 	                        }
-	
+
 	                        echo "</td>";
 	                        echo "<td>".nf($arr['user_points'])."</td>";
 	                        echo "<td style=\"width:280px;\">
@@ -365,17 +365,17 @@
 	                                <a href=\"?page=$page&amp;allow=".$arr['user_id']."\" style=\"color:#0f0\">Annehmen</a>
 	                                <a href=\"?page=$page&amp;deny=".$arr['user_id']."\" style=\"color:#f90\">Zurückweisen</a>
 	                        </td>";
-	
+
 	                        echo "</tr>";
 	                }
 	                tableEnd();
 	        }
-	
+
 	        echo "
 	        <h2>F&uuml;ge einen Freund hinzu</h2>
 	        <form action=\"?page=$page\" method=\"post\"><b>Nick:</b> <input type=\"text\" name=\"buddy_nick\" id=\"user_nick\"  maxlength=\"20\" size=\"20\" autocomplete=\"off\" value=\"\" onkeyup=\"xajax_searchUser(this.value)\"><br/><div class=\"citybox\" id=\"citybox\">&nbsp;</div><br>
 	  <input type=\"submit\" name=\"submit_buddy\" value=\"Freund hinzuf&uuml;gen\" />
 	        </form><br/><br/>";
-	
+
 	        }
 	?>
