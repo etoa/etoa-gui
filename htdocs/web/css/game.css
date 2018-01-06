@@ -138,6 +138,10 @@
 	color:#aaffff;
 }
 
+.alien, .tb .alien		{
+	color:#000;
+}
+
 /*
 * Image filters
 */

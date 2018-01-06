@@ -21,6 +21,7 @@
                 // Speichert Usertdaten in der Tabelle "users"
 				$sql = "UPDATE users SET
 				user_name='".$_POST['user_name']."',
+				npc='".$_POST['npc']."',
 				user_nick='".$_POST['user_nick']."',
 				user_email='".$_POST['user_email']."',
 				user_password_temp='".$_POST['user_password_temp']."',
@@ -727,6 +728,20 @@
 									echo "/><label for=\"admin2\">Entwickler ohne Adminrechte</label>
 								</td>
 								<td>Admin: Der Spieler wird in der Raumkarte als Game-Admin markiert.<br/>Entwickler: Der Spieler bekommt einen nutzlosen roten Stern im Chat, keine Markierung</td>
+							</tr>
+							<tr>
+								<td class=\"tbltitle\">NPC:</td>
+								<td class=\"tbldata\">
+									<input type=\"radio\" name=\"npc\" id=\"npc1\" value=\"1\"";
+									if ($arr['npc']==1)
+										echo " checked=\"checked\" ";
+									echo " /><label for=\"npc1\">Ja</label> 
+									<input type=\"radio\" name=\"npc\" id=\"npc0\" value=\"0\" ";
+									if ($arr['npc']==0)
+										echo " checked=\"checked\" ";
+									echo "/><label for=\"npc0\">Nein</label> 
+								</td>
+								<td>Spieler wird als NPC markiert</td>
 							</tr>
 							<tr>
 								<td class=\"tbltitle\" valign=\"top\">Sperren</td>

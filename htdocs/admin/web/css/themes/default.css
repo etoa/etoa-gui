@@ -1361,3 +1361,7 @@ p.notice {
 .noobColor, .tb .noobColor		{
 	color:#aaffff;
 }
+
+.alien, .tb .alien		{
+	color:#000;
+}

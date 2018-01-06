@@ -204,13 +204,19 @@
 						  $class .= "userAllianceMemberColor";
 						  $tm_info = "Allianzmitglied";
 					  }
+					  // Alien/NPC
+					  elseif ($ent->owner->isNPC()>0)
+					  {	
+					  	  $class .= "alien";
+						  $tm_info = "Alien";
+					  }
 					  // Noob
 					  elseif (!$cu->canAttackPlanet($ent))
 					  {
 						  $class .= "noobColor";
 						  $tm_info = "Anf&auml;ngerschutz";
 					  }
-					  else
+					   else
 					  {
 						  $class .= "";
 						  $tm_info="";

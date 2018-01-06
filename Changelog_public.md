@@ -6,7 +6,7 @@ Version 3.5.18
 
 ### Features ###
 
- * Boost berechnet sich nach Gesammtpunkten 
+ * Boost berechnet sich nach Gesamtpunkten 
 
 Version 3.5.17
 --------------
