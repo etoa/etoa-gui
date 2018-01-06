@@ -3,8 +3,8 @@
 	class Technology
 	{
 		public $name;
-		
-		function Technology($id)
+
+        public function __construct($id)
 		{
 			$res = dbquery("
 			SELECT 
@@ -20,7 +20,7 @@
 				$this->name = $arr['tech_name'];
 			}
 		}
-		
+
 		function __toString()
 		{
 			return $this->name;
@@ -48,7 +48,7 @@
 			return $rtn;
 		}
 
-		
+
 	}
 
 ?>

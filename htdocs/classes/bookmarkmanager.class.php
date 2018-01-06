@@ -4,12 +4,12 @@
 	{
 		private $items;
 		private $loaded;
-		
-		function BookmarkManager($userid)
+
+        public function __construct($userid)
 		{
 			$this->items = array();
 			$this->loaded = false;
-			
+
 			$res = dbquery("SELECT
 				id,
 				entity_id,
@@ -23,45 +23,45 @@
 				$this->loaded = true;
 				while ($arr = mysql_fetch_row($res))
 				{
-					$b = new Bookmark($arr[0],$userid,$arr[1],$arr[2]);				
+					$b = new Bookmark($arr[0],$userid,$arr[1],$arr[2]);
 					$b->loadTarget();
 					$this->items[] = $b;
 				}
 			}
 		}
-		
+
 		function drawSelector($id,$js="")
 		{
 			global $pm;
 			ob_start();
 			echo "<select id=\"".$id."\" onchange=\"".$js."\">";
 			echo "<option value=\"\">W&auml;hlen...</option>";
-			
+
 			foreach ($pm->itemObjects() as $i)
 			{
 				echo "<option value=\"".$i->id()."\">".$i."</option>";
 			}
-			unset($i);			
-			
+			unset($i);
+
 			if ($this->loaded)
 			{
-				echo "<option value=\"\">-----------------------------</option>";						
+				echo "<option value=\"\">-----------------------------</option>";
 				foreach ($this->items as &$i)
 				{
 					echo "<option value=\"".$i->entityId."\">".$i->target->entityCodeString()." ".$i->target." (".$i->comment.")</option>";
 				}
-				unset($i);			
+				unset($i);
 			}
-			echo "</select>";					
+			echo "</select>";
 			$rtn = ob_get_contents();
 			ob_end_clean();
 			return $rtn;
 		}
-	
+
 		function drawSelectorJavaScript($id,$js)
 		{
-			global $pm;			
-			ob_start();		
+			global $pm;
+			ob_start();
 			echo "<script type=\"text/javascript\">
 			function ".$js."()
 			{
@@ -83,9 +83,9 @@
 							echo "document.getElementById('cy').value='".$c[3]."';\n";
 							echo "document.getElementById('p').value='".$c[4]."';\n";
 							echo "break;\n";
-							
-						}			
-						unset($i);			
+
+						}
+						unset($i);
 						foreach ($this->items as &$i)
 						{
 							$c = $i->target->coordsArray();
@@ -97,19 +97,19 @@
 							echo "document.getElementById('p').value='".$c[4]."';\n";
 							echo "break;\n";
 						}
-						unset($i);			
+						unset($i);
 						echo "
 					}
 
 				}
 			}
-			</script>";				
+			</script>";
 			$rtn = ob_get_contents();
 			ob_end_clean();
 			return $rtn;
-		}	
-		
+		}
+
 	}
-	
+
 
 ?>

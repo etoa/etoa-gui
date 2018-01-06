@@ -45,7 +45,7 @@ class OtherReport extends Report
 	protected $status;
 	protected $actionCode;
 
-	function __construct($args)
+    public function __construct($args)
 	{
 		global $resNames;
 		parent::__construct($args);

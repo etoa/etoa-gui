@@ -11,8 +11,8 @@
 		private $battlesLost = 0;
 		private $tradesSell = 0;
 		private $tradesBuy = 0;
-		
-		public function UserRating($id)
+
+        public function __construct($id)
 		{
 			$this->id = $id;
 			$res = dbquery("
@@ -44,9 +44,9 @@
 				VALUES
 				(".$this->id.")
 				");
-			}	    
+			}
 		}
-		
+
 		public function __set($key, $val)
 		{
 			try
@@ -54,7 +54,7 @@
 				if (!property_exists($this,$key)) {
 					throw new EException("Property $key existiert nicht in der Klasse ".__CLASS__);
 				}
-				
+
 				throw new EException("Property $key der Klasse ".__CLASS__." ist nicht änderbar!");
 				return false;
 			}
@@ -63,14 +63,14 @@
 				echo $e;
 			}
 		}
-		
+
 		public function __get($key)
 		{
 			try
 			{
 				if (!property_exists($this,$key))
 					throw new EException("Property $key existiert nicht in ".__CLASS__);
-					
+
 				return $this->$key;
 			}
 			catch (EException $e)
@@ -78,8 +78,8 @@
 				echo $e;
 				return null;
 			}
-		}		
-		
+		}
+
 		/**
 		* Add battle rating
 		*/
@@ -98,7 +98,7 @@
 					add_log(17,"KP: Der Spieler ".$this->id." erhält ".$rating." Kampfpunkte. Grund: ".$reason);
 			}
 		}
-		
+
 		/**
 		* Add trade rating
 		*/
@@ -112,11 +112,11 @@
 				trade_rating=trade_rating+".$rating."
 				".$sell."
 			WHERE
-				id=".$this->id.";");			
+				id=".$this->id.";");
 			if ($reason!="")
 				add_log(17,"HP: Der Spieler ".$this->id." erhält ".$rating." Handelspunkte. Grund: ".$reason);
 		}
-		
+
 		/**
 		* Add diplomacy rating
 		*/
@@ -128,13 +128,13 @@
 			SET
 				  	diplomacy_rating=diplomacy_rating+".intval($rating)."
 			WHERE
-				id=".$this->id.";");			
+				id=".$this->id.";");
 			if ($reason!="")
 				add_log(17,"DP: Der Spieler ".$this->id." erhält ".$rating." Diplomatiepunke. Grund: ".$reason);
-		}	
+		}
 
-		
-		
+
+
 	}
 
 ?>

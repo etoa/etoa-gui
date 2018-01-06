@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -16,12 +16,12 @@ class ExploreReport extends Report
 
 	protected $subType = 'other';
 
-	function __construct($args)
+    public function __construct($args)
 	{
 		parent::__construct($args);
 		if ($this->valid)
 		{
-			
+
 		}
 	}
 
@@ -29,7 +29,7 @@ class ExploreReport extends Report
 	{
 		return null;
 	}
-	
+
 	function createSubject()
 	{
 		return 'Erkundung';
@@ -40,7 +40,7 @@ class ExploreReport extends Report
 		ob_start();
 		$start = Entity::createFactoryById($this->entity2Id);
 		$target = Entity::createFactoryById($this->entity1Id);
-		
+
 		switch ($this->subType)
 		{
 			case 'other':

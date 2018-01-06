@@ -163,7 +163,7 @@
                 // Frei = total auf Planet - gesperrt auf Planet
                 $free_people=floor($cp->people)-$check_arr[0];
 
-                if(gettype($_POST['people_work']) == 'array') {
+                if(isset($_POST['people_work']) && gettype($_POST['people_work']) == 'array') {
 
                     foreach ($_POST['people_work'] as $id => $num) {
                         if (!$w[$id]) {
@@ -348,8 +348,8 @@
             }
             $people_free = floor($cp->people)-$people_working;
             $people_div = $cp->people * (($cfg->get('people_multiply')  + $cp->typePopulation + $cu->race->population + $cp->starPopulation + $cu->specialist->population -4)* (1-($cp->people/($capacity+1)))/24);
-                            
-          
+
+
             tableStart("Daten",500);
             echo '<tr><th style="width:300px">Bev&ouml;lkerung total</th><td>'.nf(floor($cp->people)).'</td></tr>';
             echo '<tr><th>Arbeiter</th><td>'.nf($people_working).'</td></tr>';

@@ -34,7 +34,7 @@
 		*
 		* @access public
 		 */
-		function BuildList($entityId,$ownerId,$load=0)
+        public function __construct($entityId,$ownerId,$load=0)
 		{
 			$this->entityId = $entityId;
 			$this->ownerId = $ownerId;

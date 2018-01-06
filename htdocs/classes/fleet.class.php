@@ -28,7 +28,7 @@
 		* Creates a new fleet object and loads
 		* it's data from the table
 		*/
-		function Fleet($fid,$uid=-1,$leadid=-1)
+        public function __construct($fid,$uid=-1,$leadid=-1)
 		{
 			if ($uid>=0) {
 				$uidStr = " AND user_id=".$uid."";
@@ -373,7 +373,7 @@
 
 		/**
 		* Only used for fake attacks
-		* Parses the id from original ship to id from fakeship 
+		* Parses the id from original ship to id from fakeship
 		*/
 		function parseFake($id) {
 			$res = dbquery("
@@ -387,9 +387,9 @@
 					AND fs_ship_id = '".$id."'
 					AND fs_ship_faked > 0;"
 			);
-			if (mysql_num_rows($res)) 
+			if (mysql_num_rows($res))
 				return mysql_result($res,0);
-			
+
 			return $id;
 		}
 

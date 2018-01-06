@@ -3,7 +3,7 @@
 	class FleetActionBombard extends FleetAction
 	{
 
-		function FleetActionBombard()
+        public function __construct()
 		{
 			$this->code = "bombard";
 			$this->name = "Bombardierung";
@@ -14,7 +14,7 @@
 			$this->visible = true;
 			$this->exclusive = false;
 			$this->attitude = 3;
-			
+
 			$this->allowPlayerEntities = true;
 			$this->allowActivePlayerEntities = true;
 			$this->allowOwnEntities = false;
@@ -24,11 +24,11 @@
 			$this->allianceAction = false;
 		}
 
-		function startAction() {} 
-		function cancelAction() {}		
-		function targetAction() {} 
-		function returningAction() {}		
-		
+		function startAction() {}
+		function cancelAction() {}
+		function targetAction() {}
+		function returningAction() {}
+
 	}
 
 ?>

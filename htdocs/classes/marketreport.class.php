@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -39,7 +39,7 @@ class MarketReport extends Report
 	protected $shipCount;
 	protected $timestamp2;
 
-	function __construct($args)
+    public function __construct($args)
 	{
 		global $resNames;
 		parent::__construct($args);
@@ -143,7 +143,7 @@ class MarketReport extends Report
 		}
 		return null;
 	}
-	
+
 	function createSubject()
 	{
 		return self::$subTypes[$this->subType];

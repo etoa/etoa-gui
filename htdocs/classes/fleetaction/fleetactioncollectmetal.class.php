@@ -3,7 +3,7 @@
 	class FleetActionCollectMetal extends FleetAction
 	{
 
-		function FleetActionCollectMetal()
+        public function __construct()
 		{
 			$this->code = "collectmetal";
 			$this->name = "Asteroiden sammeln";
@@ -12,9 +12,9 @@
 Diese moderne Form von Ressourcengewinnung birgt aber noch ein grosses Risiko. In den Asteroidenfelder kann es vorkommen, dass die Schiffe von den Gesteinsbrocken getroffen und zerst&ouml;rt werden. In diesem Fall sind die Schiffe kaputt und werden nie wieder gesehen!
 Asteroidenfelder sind aber nicht unbegrenzt verfügbar. Wenn man sie aufgebraucht hat verschwinden sie, aber keine Angst, es werden immer wieder neue erscheinen.";
 			$this->visible = false;
-			$this->exclusive = false;					
+			$this->exclusive = false;
 			$this->attitude = 0;
-			
+
 			$this->allowPlayerEntities = false;
 			$this->allowActivePlayerEntities = false;
 			$this->allowOwnEntities = false;
@@ -24,11 +24,11 @@ Asteroidenfelder sind aber nicht unbegrenzt verfügbar. Wenn man sie aufgebrauch
 			$this->allianceAction = false;
 		}
 
-		function startAction() {} 
-		function cancelAction() {}		
-		function targetAction() {} 
-		function returningAction() {}		
-		
+		function startAction() {}
+		function cancelAction() {}
+		function targetAction() {}
+		function returningAction() {}
+
 	}
 
 ?>

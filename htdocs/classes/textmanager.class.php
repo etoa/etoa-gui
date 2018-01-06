@@ -3,7 +3,7 @@ class TextManager {
 
 	private $textDef;
 
-	function __construct() {
+    public function __construct() {
 		$this->textDef = fetchJsonConfig("texts.conf");
 	}
 
@@ -45,13 +45,13 @@ class TextManager {
 		$t->description = $this->textDef[$id]['description'];
 		return $t;
 	}
-	
+
 	function updateText($text) {
 		dbQuerySave('
 			REPLACE INTO
 				texts
 			(text_id, text_content, text_updated, text_enabled)
-			VALUES (?, ?, UNIX_TIMESTAMP(), ?);', 
+			VALUES (?, ?, UNIX_TIMESTAMP(), ?);',
 			array($text->id, $text->content, $text->enabled ? 1 : 0));
 	}
 

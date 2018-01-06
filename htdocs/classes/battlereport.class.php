@@ -45,7 +45,7 @@ class BattleReport extends Report
 	protected $wf;
 	protected $fleetId;
 
-	function __construct($args)
+    public function __construct($args)
 	{
 		global $resNames;
 		parent::__construct($args);

@@ -3,7 +3,7 @@ class FleetLog extends BaseLog
 {
 	protected static $table = "logs_fleet";
 	protected static $queueTable = "logs_fleet_queue";
-	
+
 	/**
 	 * Others
 	 */
@@ -24,8 +24,8 @@ class FleetLog extends BaseLog
 	 * Return
 	 */
 	const F_RETURN = 4;
-	
-	
+
+
 	private $fleetId;
 	private $userId;
 	private $launchtime;
@@ -48,7 +48,7 @@ class FleetLog extends BaseLog
 	private $food;
 	private $pilots;
 	private $text;
-	
+
 	private $severity;
 	private $facility;
 	static public $facilities = array(
@@ -58,8 +58,8 @@ class FleetLog extends BaseLog
 	"Aktion",
 	"Rückkehr"
 	);
-	
-	public function FleetLog($userId=0,$sourceId, &$sourceEnt=null)
+
+    public function __construct($userId=0,$sourceId, &$sourceEnt=null)
 	{
 		$this->userId=$userId;
 		if ($sourceEnt)
@@ -81,7 +81,7 @@ class FleetLog extends BaseLog
 		$this->launched=false;
 		$this->fleetResStart = "0:0:0:0:0:0:0,f,0:0:0:0:0:0:0";
 		$this->fleetShipStart = "0";
-		
+
 		$this->fleetId=0;
 		$this->launchtime=0;
 		$this->landtime=0;
@@ -95,8 +95,8 @@ class FleetLog extends BaseLog
 		$this->food=0;
 		$this->pilots=0;
 	}
-	
-	
+
+
 	function __destruct()
 	{
 		if ($this->launched)
@@ -149,9 +149,9 @@ class FleetLog extends BaseLog
 				'".$this->entityShipEnd."'
 			);");
 		}
-	}		
-	
-	
+	}
+
+
 	public function __set($key, $val)
 	{
 		try
@@ -160,21 +160,21 @@ class FleetLog extends BaseLog
 				throw new EException("Property $key existiert nicht in der Klasse ".__CLASS__);
 			else
 				$this->$key = $val;
-				
+
 		}
 		catch (EException $e)
 		{
 			echo $e;
 		}
 	}
-	
+
 	public function __get($key)
 	{
 		try
 		{
 			if (!property_exists($this,$key))
 				throw new EException("Property $key existiert nicht in ".__CLASS__);
-				
+
 			return $this->$key;
 		}
 		catch (EException $e)
@@ -183,16 +183,16 @@ class FleetLog extends BaseLog
 			return null;
 		}
 	}
-	
+
 	public function addFleetRes($res,$people,$fetch=null,$end=true)
 	{
 		$string = "";
-		
+
 		foreach ($res as $rid=>$rcnt)
 			if ($rid)
 				$string .= $rcnt.":";
 		$string .= $people.":0,f,";
-		
+
 		if ($fetch)
 			foreach ($fetch as $fid=>$fcnt)
 				if ($fid)
@@ -201,16 +201,16 @@ class FleetLog extends BaseLog
 			$this->fleetResEnd = $string;
 		else
 			$this->fleetResStart = $string;
-	
+
 	}
-	
+
 	public function launch()
 	{
 		$this->entityResEnd = $this->sourceEntity->getResourceLog();
 		$this->facility = self::F_LAUNCH;
 		$this->launched = true;
 	}
-	
+
 	public function cancel($fleetId,$launchtime,$landtime,$targetId,$action,$status,$pilots)
 	{
 		$this->fleetId=0;
@@ -223,9 +223,9 @@ class FleetLog extends BaseLog
 		$this->pilots = $pilots;
 		$this->launched = true;
 	}
-	
+
 	/**
-	* Processes the log queue and stores 
+	* Processes the log queue and stores
 	* all items in the persistend log table
 	*/
 	static function processQueue()	{
@@ -303,6 +303,6 @@ class FleetLog extends BaseLog
 				timestamp<'".$threshold."'
 		");
 		return mysql_affected_rows();
-	}	
+	}
 }
 ?>

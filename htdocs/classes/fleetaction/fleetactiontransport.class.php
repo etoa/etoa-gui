@@ -3,7 +3,7 @@
 	class FleetActionTransport extends FleetAction
 	{
 
-		function FleetActionTransport()
+        public function __construct()
 		{
 			$this->code = "transport";
 			$this->name = "Waren transportieren";
@@ -12,9 +12,9 @@
 So gut wie jedes Schiff kann Waren transportieren, die Frage ist nur immer wie viel.
 Baue spezielle Transporter, um kostengünstig zu transportieren.";
 			$this->visible = true;
-			$this->exclusive = false;					
+			$this->exclusive = false;
 			$this->attitude = 1;
-			
+
 			$this->allowPlayerEntities = false;
 			$this->allowActivePlayerEntities = false;
 			$this->allowOwnEntities = true;
@@ -24,11 +24,11 @@ Baue spezielle Transporter, um kostengünstig zu transportieren.";
 			$this->allianceAction = false;
 		}
 
-		function startAction() {} 
-		function cancelAction() {}		
-		function targetAction() {} 
-		function returningAction() {}		
-		
+		function startAction() {}
+		function cancelAction() {}
+		function targetAction() {}
+		function returningAction() {}
+
 	}
 
 ?>

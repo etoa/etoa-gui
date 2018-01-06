@@ -5,15 +5,15 @@
 	class PlanetEvent extends RandomEvent
 	{
 		private $planetId;
-		
-		function PlanetEvent($id,$pid)
+
+        public function __construct($id,$pid)
 		{
 			parent::RandomEvent($id,"random_planet");
 			$this->planetId = $pid;
 		}
-				
+
 		function run()
-		{	
+		{
 			$res = dbquery("
 			SELECT
 				user_points,
@@ -38,9 +38,9 @@
 					$factor = log($points,intval($this->xml->logbase));
 					$factor = max($factor,1);
 				}
-				
+
 				$messageParsed = $this->message;
-			
+
 				$rewards = array();
 				$rewards['metal'] = 0;
 				$rewards['crystal'] = 0;
@@ -56,12 +56,12 @@
 				$costs['fuel'] = 0;
 				$costs['food'] = 0;
 				$costs['people'] = 0;
-								
+
 				$deactivate = array();
-								
+
 				if ($this->xml->rewards)
 				{
-					$rw = $this->xml->rewards;					
+					$rw = $this->xml->rewards;
 					if($rw->metal)
 					{
 						$rewards['metal'] = mt_rand($rw->metal['min']*$factor, $rw->metal['max']*$factor);
@@ -69,28 +69,28 @@
 					if($rw->crystal)
 					{
 						$rewards['crystal'] = mt_rand($rw->crystal['min']*$factor, $rw->crystal['max']*$factor);
-					}					
+					}
 					if($rw->plastic)
 					{
 						$rewards['plastic'] = mt_rand($rw->plastic['min']*$factor, $rw->plastic['max']*$factor);
-					}					
+					}
 					if($rw->fuel)
 					{
 						$rewards['fuel'] = mt_rand($rw->fuel['min']*$factor, $rw->fuel['max']*$factor);
-					}					
+					}
 					if($rw->food)
 					{
 						$rewards['food'] = mt_rand($rw->food['min']*$factor, $rw->food['max']*$factor);
-					}					
+					}
 					if($rw->people)
 					{
 						$rewards['people'] = mt_rand($rw->people['min']*$factor, $rw->people['max']*$factor);
-					}					
+					}
 				}
-				
+
 				if ($this->xml->costs)
 				{
-					$cs = $this->xml->costs;					
+					$cs = $this->xml->costs;
 					if($cs->metal)
 					{
 						$costs['metal'] = mt_rand($cs->metal['min']*$factor, $cs->metal['max']*$factor);
@@ -98,27 +98,27 @@
 					if($cs->crystal)
 					{
 						$costs['crystal'] = mt_rand($cs->crystal['min']*$factor, $cs->crystal['max']*$factor);
-					}					
+					}
 					if($cs->plastic)
 					{
 						$costs['plastic'] = mt_rand($cs->plastic['min']*$factor, $cs->plastic['max']*$factor);
-					}					
+					}
 					if($cs->fuel)
 					{
 						$costs['fuel'] = mt_rand($cs->fuel['min']*$factor, $cs->fuel['max']*$factor);
-					}					
+					}
 					if($cs->food)
 					{
 						$costs['food'] = mt_rand($cs->food['min']*$factor, $cs->food['max']*$factor);
-					}					
+					}
 					if($cs->people)
 					{
 						$costs['people'] = mt_rand($cs->people['min']*$factor, $cs->people['max']*$factor);
-					}					
-				}				
-				
+					}
+				}
+
 				if ($this->xml->deactivate)
-				{				
+				{
 					foreach ($this->xml->deactivate as $d)
 					{
 						$deactivate[$d['id']] = mt_rand($d['min'],$d['max']);
@@ -132,10 +132,10 @@
 							buildlist_building_id=".$d['id']."
 							AND buildlist_entity_id=".$this->planetId."
 						");
-						
-					}				
+
+					}
 				}
-				
+
 
 				$messageParsed = str_replace('{planet}',$arr['planet_name'],$messageParsed);
 
@@ -152,7 +152,7 @@
 				$messageParsed = str_replace('{costs:fuel}',$costs['fuel'],$messageParsed);
 				$messageParsed = str_replace('{costs:food}',$costs['food'],$messageParsed);
 				$messageParsed = str_replace('{costs:people}',$costs['people'],$messageParsed);
-				
+
 				dbquery("
 				UPDATE
 					planets
@@ -174,10 +174,10 @@
 			{
 				echo "Event-Fehler: Planet nicht gefunden!";
 			}
-		
-					
-		}		
-	}	
+
+
+		}
+	}
 
 
 

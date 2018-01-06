@@ -10,8 +10,8 @@ class Tooltip
 {
 	private $text;
 	private $title;
-	
-	function Tooltip($bgimage="")
+
+    public function __construct($bgimage="")
 	{
 		$this->title="";
 		if ($bgimage!="")
@@ -23,56 +23,56 @@ class Tooltip
 			$this->text="";
 		}
 	}
-	
+
 	private function add($obj)
 	{
 		$this->text = $this->text.$obj;
 	}
-	  	
+
 	function __toString()
 	{
 		return mTT($this->title,$this->text);
-	}	
+	}
 
 	function addIcon($path)
 	{
 		$this->text = '<div style="float:right;"><img src="'.$path.'" alt="Icon" /></div>';
 	}
-	  
+
 	function addText($text)
 	{
 		$this->add(text2html($text)."<br/>");
-	}	
+	}
 
 	function addHtml($text)
 	{
 		$this->add($text."<br/>");
-	}	
+	}
 
 	function addTitle($text)
 	{
 		$this->title .= "<div style=\"color:".TOOLTIP_TITLE_COLOR."\"><b>".$text."</b></div>";
-	}	
+	}
 
 	function addGoodCond($text)
 	{
 		$this->add("<div style=\"color:".TOOLTIP_COND_GOD_COLOR."\">".$text."</div>");
-	}	
+	}
 	function addBadCond($text)
 	{
 		$this->add("<div style=\"color:".TOOLTIP_COND_BAD_COLOR."\">".$text."</div>");
-	}	
-		
+	}
+
 	function addComment($text)
 	{
 		$this->add("<div style=\"color:".TOOLTIP_COMMENT_COLOR."\">".$text."</div>");
-	}	
-		
+	}
+
 	function addImage($path)
 	{
 		$this->add("<img src=\"".$path."\" alt=\"TTImage\" style=\"background:#000;\" /><br/>");
 	}
-	
+
 }
 
 

@@ -1,7 +1,7 @@
 <?PHP
-	
+
 	/**
-	* Provides methods for accessing 
+	* Provides methods for accessing
 	* the current logged in user
 	*
 	* @author Nicolas Perrenoud<mrcage@etoa.ch>
@@ -9,19 +9,19 @@
 	class CurrentUser extends User
 	{
 		protected $property;
-		
+
 		/**
 		* Constructor which calls the default parent constructor
 		* and loads settings
 		*/
-		public function CurrentUser($userId)
+        public function __construct($userId)
 		{
-			parent::User($userId);
+			parent::__construct($userId);
 		}
 
 		//
 		// Methods
-		//		
+		//
 
 		/**
 		* Set setup status to false
@@ -30,7 +30,7 @@
 		{
 			$this->setup = false;
 		}
-		
+
 		function setSetupFinished()
 		{
 	    $sql = "
@@ -41,9 +41,9 @@
 	    WHERE
 	    	user_id='".$this->id."';";
 	    dbquery($sql);
-	    $this->setup=true;					
+	    $this->setup=true;
 		}
-		
+
 		function setPassword($oldPassword, $newPassword1, $newPassword2, &$returnMsg)
 		{
 			$res = dbquery("
@@ -66,7 +66,7 @@
 					password='".md5($_POST['user_password1'])."' 
 					AND user_id=".$this->id."
 				LIMIT 1;");
-				$arr = mysql_fetch_row($res);				
+				$arr = mysql_fetch_row($res);
 				if ($arr[0]==0)
 				{
 					if ($newPassword1==$newPassword2)
@@ -110,9 +110,9 @@
 			}
 			return false;
 		}
-	
-	}  
-	
-	
+
+	}
+
+
 
 ?>

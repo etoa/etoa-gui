@@ -84,14 +84,14 @@
 					foreach ($actions as $ac)
 					{
 						echo "<input name=\"".$a['name']."[]\" type=\"checkbox\" value=\"".$ac->code()."\"";
-						echo " /> ".$ac."<br/>";				
+						echo " /> ".$ac."<br/>";
 					}
 					echo "</td></tr>";
-					break;		
+					break;
 				default:
 					echo "<tr><th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>";
 					echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".$a['def_val']."\" /></td></tr>";
-				break;									
+				break;
 			}
 		}
 	}
@@ -112,7 +112,7 @@
 			if ($a['type']!="readonly")
 			{
 				$fsql .= "`".$a['name']."`";
-				if ($cnt < sizeof($db_fields)) 
+				if ($cnt < sizeof($db_fields))
 					$fsql .= ",";
 			}
 			$cnt++;
@@ -123,7 +123,7 @@
 			switch ($a['type'])
 			{
 				case "readonly":
-				break;				
+				break;
 				case "text":
 					$vsql .= "'".addslashes($_POST[$a['name']])."'";
 				break;
@@ -192,12 +192,12 @@
 					else
 						$str = "";
 					$vsql .= "'".$str."'";
-				break;		
+				break;
 				default:
 					$vsql .= "'".addslashes($_POST[$a['name']])."'";
-				break;						
+				break;
 			}
-			if ($cnt < sizeof($db_fields) && $a['type']!="readonly") 
+			if ($cnt < sizeof($db_fields) && $a['type']!="readonly")
 				$vsql .= ",";
 			$cnt++;
 		}
@@ -214,14 +214,14 @@
 	function admin_edit_dataset($db_fields,$arr)
 	{
 		$hidden_rows = array();
-		
+
 		echo "<tr><td style=\"vertical-align:top;\"><table style=\"width:100%;\">";
 		foreach ($db_fields as $k=>$a)
 		{
 			echo "<tr id=\"row_".$a['name']."\"";
 			if (in_array($a['name'],$hidden_rows))
 				echo " style=\"display:none;\"";
-			
+
 			echo ">\n<th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>\n";
 			echo "<td class=\"tbldata\" width=\"200\">\n";
 			$stl = (isset($a['def_val']) && $arr[$a['name']]!=$a['def_val'] ? ' class="changed"' : '');
@@ -258,7 +258,7 @@
 					foreach ($a['rcb_elem'] as $rk=>$rv)
 					{
 						echo $rk.": <input name=\"".$a['name']."\" type=\"radio\" value=\"$rv\"";
-						if ($arr[$a['name']]==$rv) 
+						if ($arr[$a['name']]==$rv)
 							echo " checked=\"checked\"";
 
 						if (isset($a['show_hide']) && $rv==1)
@@ -270,7 +270,7 @@
 							}
 							echo "\"";
 						}
-						
+
 						if (isset($a['show_hide']) && $rv==0)
 						{
 							echo " onclick=\"";
@@ -279,20 +279,20 @@
 								echo "document.getElementById('row_".$sh."').style.display='none';";
 							}
 							echo "\"";
-						}						
+						}
 						echo " /> ";
 					}
-					if (isset($a['show_hide']) && $arr[$a['name']]==$rv)					
+					if (isset($a['show_hide']) && $arr[$a['name']]==$rv)
 					{
 						$hidden_rows = $a['show_hide'];
-					}					
+					}
 				break;
 				case "checkbox":
 					foreach ($a['rcb_elem'] as $rk=>$rv)
 					{
 						echo $rk.": <input name=\"".$a['name']."\" type=\"checkbox\" value=\"$rv\"";
-						if (in_array($rv,explode(";",$arr[$a['name']]))) 
-							echo " checked=\"checked\"";						
+						if (in_array($rv,explode(";",$arr[$a['name']])))
+							echo " checked=\"checked\"";
 						echo " /> ";
 					}
 					echo "";
@@ -317,14 +317,14 @@
 						echo "<input name=\"".$a['name']."[]\" type=\"checkbox\" value=\"".$ac->code()."\"";
 						if (in_array($ac->code(),$keys))
 							echo " checked=\"checked\"";
-						echo " /> ".$ac."<br/>";				
+						echo " /> ".$ac."<br/>";
 					}
 					echo "";
-					break;			
+					break;
 				default:
 					echo "<input type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".stripslashes($arr[$a['name']])."\" />";
-			}		
-			echo "</td>\n</tr>\n";	
+			}
+			echo "</td>\n</tr>\n";
 			if (isset($a['line']) && $a['line']==1)
 			{
 				echo "<tr><td style=\"height:4px;background:#000\" colspan=\"2\"></td></tr>";
@@ -332,8 +332,8 @@
 			if (isset($a['columnend']) && $a['columnend']==1)
 			{
 				echo "</table></td><td style=\"vertical-align:top;\"><table style=\"width:100%;\">";
-			}		
-		}		
+			}
+		}
 		echo "</table></td></tr>";
 	}
 
@@ -470,7 +470,7 @@
 				default:
 					echo "<tr><th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>";
 					echo "<td class=\"tbldata\" width=\"200\">".$arr[$a['name']]."</td></tr>";
-				break;				
+				break;
 			}
 		}
 	}
@@ -488,12 +488,12 @@
 				{
 					echo "<a href=\"?".URL_SEARCH_STRING."&amp;action=edit&amp;id=".$arr[DB_TABLE_ID]."\">";
 				}
-				
+
 				switch ($a['type'])
 				{
 					case "readonly":
 	 					echo "".$arr[$a['name']]."";
-					break;					
+					break;
 					case "text":
 	 					echo "".$arr[$a['name']]."";
 					break;
@@ -553,7 +553,7 @@
 					break;
 					default:
 	 					echo "".$arr[$a['name']]."";
-					break;					
+					break;
 				}
 				echo "</td>";
 			}
@@ -563,7 +563,7 @@
 	function admin_get_select_elements($table, $value_field, $text_field, $order,$additional_values=Null)
 	{
 		$r_array = array();
-		if (count($additional_values)>0)
+		if ($additional_values && count($additional_values)>0)
 		{
 			foreach ($additional_values as $val=>$key)
 			{

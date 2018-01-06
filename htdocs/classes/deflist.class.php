@@ -7,15 +7,15 @@
 		private $items = null;
 		private $countArr = null;
 		private $count = null;
-		
-		function DefList($entityId,$userId,$load=0)
+
+        public function __construct($entityId,$userId,$load=0)
 		{
 			$this->userId = $userId;
 			$this->entityId = $entityId;
 			if ($load==1)
-				$this->load();			
+				$this->load();
 		}
-		
+
 		private function load()
 		{
 			$this->items = array();
@@ -42,15 +42,15 @@
 				$this->countArr[$arr['lid']] = $arr['lcnt'];
 				$this->count += $arr['lcnt'];
 			}
-		}		
-		
-  	public function getIterator() 
+		}
+
+  	public function getIterator()
   	{
   		if ($this->items == null)
   			$this->load();
     	return new ArrayIterator($this->items);
   	}
-  	
+
 		function count($item=null)
 		{
 			if ($this->countArr != null)
@@ -73,11 +73,11 @@
 			$this->count = $arr[0];
 			return $this->count;
 		}
-		
+
 		function getTotalStrucure()
 		{
   		if ($this->items == null)
-  			$this->load();			
+  			$this->load();
 			$i = 0;
 			foreach ($this->items as $k=>&$v)
 			{
@@ -85,48 +85,48 @@
 			}
 			return $i;
 		}
-		
+
 		function getTotalShield()
 		{
   		if ($this->items == null)
-  			$this->load();			
+  			$this->load();
 			$i = 0;
 			foreach ($this->items as $k=>&$v)
 			{
 				$i+= $this->countArr[$k] * $v->shield;
 			}
 			return $i;
-		}		
-		
+		}
+
 		function getTotalWeapon()
 		{
   		if ($this->items == null)
-  			$this->load();			
+  			$this->load();
 			$i = 0;
 			foreach ($this->items as $k=>&$v)
 			{
 				$i+= $this->countArr[$k] * $v->weapon;
 			}
 			return $i;
-		}				
-		
+		}
+
 		function getTotalHeal()
 		{
   		if ($this->items == null)
-  			$this->load();			
+  			$this->load();
 			$i = 0;
 			foreach ($this->items as $k=>&$v)
 			{
 				$i+= $this->countArr[$k] * $v->heal;
 			}
 			return $i;
-		}	  			
-		
+		}
+
 		function add($defId,$cnt)
 		{
 			$cnt = intval($cnt);
 			$defId = intval($defId);
-			
+
 			dbquery("
 				UPDATE
 					deflist
@@ -136,7 +136,7 @@
 					deflist_user_id='".$this->userId."'
 					AND deflist_entity_id='".$this->entityId."'
 					AND deflist_def_id='".$defId."';
-			");			
+			");
 			if(mysql_affected_rows()==0)
 			{
 				dbquery("
@@ -158,11 +158,11 @@
 				");
 			}
 		}
-		
+
 		function remove($defId,$cnt)
 		{
 			$defId = intval($defId);
-			
+
 			$res = dbquery("SELECT 
 								deflist_id, 
 								deflist_count 
@@ -175,7 +175,7 @@
 			$arr = mysql_fetch_row($res);
 
 			$delable = intval(min($cnt,$arr[1]));
-			
+
 			dbquery("UPDATE
 				deflist
 			SET
@@ -186,7 +186,7 @@
 
 			return $delable;
 		}
-		
+
 		/**
 		* Remove empty data
 		*/
@@ -201,7 +201,7 @@
 			add_log("4","$nr leere Verteidigungsdatensätze wurden gelöscht!");
 			return $nr;
 		}
-	
+
 	}
 
 

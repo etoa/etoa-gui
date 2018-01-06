@@ -3,7 +3,7 @@
 	class FleetActionCreateDebris extends FleetAction
 	{
 
-		function FleetActionCreateDebris()
+        public function __construct()
 		{
 			$this->code = "createdebris";
 			$this->name = "Trümmerfeld erstellen";
@@ -11,9 +11,9 @@
 			$this->longDesc = "Mit dieser Aktion wird beim Gegner ein Tr&uuml;mmerfeld erstellt, damit den Navigationscomputern der Tr&uuml;mmerfeld-Sammler ein gültiges Ziel zugewiesen werden kann. 
 			Die Flotte ist für den Gegner nicht sichtbar, wird beim Tr&uuml;mmerfeld-Erstellen aber vollst&auml;ndig zerst&ouml;rt!";
 			$this->visible = false;
-			$this->exclusive = true;					
+			$this->exclusive = true;
 			$this->attitude = 0;
-			
+
 			$this->allowPlayerEntities = true;
 			$this->allowActivePlayerEntities = true;
 			$this->allowOwnEntities = true;
@@ -23,11 +23,11 @@
 			$this->allianceAction = false;
 		}
 
-		function startAction() {} 
-		function cancelAction() {}		
-		function targetAction() {} 
-		function returningAction() {}		
-		
+		function startAction() {}
+		function cancelAction() {}
+		function targetAction() {}
+		function returningAction() {}
+
 	}
 
 ?>

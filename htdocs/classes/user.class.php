@@ -91,7 +91,7 @@ class User implements \EtoA\User\UserInterface
 	* The constructor initializes and loads
 	* all importand data about this user
 	*/
-	function User($id)
+    public function __construct($id)
 	{
 		$this->isValid = false;
 		$this->id = $id;
@@ -230,8 +230,7 @@ class User implements \EtoA\User\UserInterface
 	 */
 	function __destruct()
 	{
-		$cnt = count($this->changedFields);
-		if ($cnt > 0)
+		if ($this->changedFields && count($this->changedFields) > 0)
 		{
 			$sql = "UPDATE
 				".self::tableName."

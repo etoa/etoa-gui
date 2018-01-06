@@ -24,7 +24,7 @@
 	//
     // Daten werden gespeichert
     //
-    
+
     if (isset($_POST['data_submit_design']) && $_POST['data_submit_design']!="")
     {
 		// Design
@@ -34,16 +34,16 @@
 		} else {
 			$cu->properties->cssStyle = null;
 		}
-		    	
+
     	if ($cu->properties->smallResBox != $_POST['small_res_box'])
     	{
     		$cu->properties->smallResBox = $_POST['small_res_box'];
     	}
-    	
+
       $cu->properties->planetCircleWidth=$_POST['planet_circle_width'];
       $cu->properties->itemShow=$_POST['item_show'];
       $cu->properties->imageFilter=$_POST['image_filter'];
-      $cu->properties->helpBox=$_POST['helpbox'];                          
+      $cu->properties->helpBox=$_POST['helpbox'];
       $cu->properties->noteBox=$_POST['notebox'];
       $cu->properties->showAdds=$_POST['show_adds'];
 
@@ -70,14 +70,14 @@
 			$cu->properties->imageUrl = null;
 			$cu->properties->imageExt = null;
 		}
-      
+
       success_msg("Design-Daten wurden geändert!");
 
 			if ($designChange)
 			{
 				echo "<script type=\"text/javascript\">document.location='?page=userconfig&mode=design'</script>";
 			}
-			
+
     }
 		if (isset($_GET['changes']) && $_GET['changes']==1)
 		{
@@ -92,7 +92,7 @@
     echo "<form action=\"?page=$page&mode=design\" method=\"post\">";
     $cstr = checker_init();
     tableStart("Designoptionen");
-    
+
     //Design wählen
     echo "<tr>
         <th>Design w&auml;hlen:</th>
@@ -104,7 +104,7 @@
 					if (!$v['restricted'] || $cu->admin || $cu->developer)
 					{
 						echo "<option value=\"$k\"";
-						if ($cu->properties->cssStyle == $k) 
+						if ($cu->properties->cssStyle == $k)
 							echo " selected=\"selected\"";
 						echo ">".$v['name']."</option>";
 					}
@@ -179,7 +179,7 @@
       				echo "/> Aus
       			</td>";
    	echo "</tr>";
-        	
+
 			//Hilfefenster (Aktiviert/Deaktiviert)
       echo "<tr>
         			<th>Separates Hilfefenster:</th>
@@ -193,8 +193,8 @@
                   if ($cu->properties->helpBox==0) echo " checked=\"checked\"";
         					echo "/> Deaktiviert
         		</td>
-      		</tr>";            
-        
+      		</tr>";
+
 			//Notizbox (Aktiviert/Deaktiviert)
       echo "<tr>
         			<th>Separate Notizbox:</th>
@@ -208,9 +208,9 @@
                   if ($cu->properties->noteBox==0) echo " checked=\"checked\"";
         					echo "/> Deaktiviert
         		</td>
-      		</tr>";   
-      		
-      		
+      		</tr>";
+
+
 			// Werbebanner
       echo "<tr>
         			<th>Werbung anzeigen:</th>
@@ -224,8 +224,8 @@
                   if ($cu->properties->showAdds==0) echo " checked=\"checked\"";
         					echo "/> Deaktiviert
         		</td>
-      		</tr>";   
-      		
+      		</tr>";
+
       echo "<tr>
         			<th>Schlanke Ressourcenanzeige:</th>
         			<td>
@@ -238,8 +238,8 @@
                   if ($cu->properties->smallResBox==0) echo " checked=\"checked\"";
         					echo "/> Deaktiviert
         		</td>
-      		</tr>";          		
-      		        		         
+      		</tr>";
+
         tableEnd();
 
         echo "<input type=\"submit\" name=\"data_submit_design\" value=\"&Uuml;bernehmen\"></form><br/><br/>";
@@ -255,7 +255,7 @@
         <th class="tbltitle">Letzte Änderung</th></tr>';
         foreach ($imagepacks as $k => $v)
         {
-        	if (count($v['files'])>0)
+        	if (isset($v['files']) && count($v['files'])>0)
         	{
           	foreach ($v['files'] as $file)
           	{

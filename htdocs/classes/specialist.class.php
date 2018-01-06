@@ -34,8 +34,8 @@
 		private $tarnLevel = 0;
 		private $tradeTime = 1;
 		private $tradeBonus = 1;
-		
-		public function Specialist($id=0,$endTime=0,$userId=-1)
+
+        public function __construct($id=0,$endTime=0,$userId=-1)
 		{
 			if ($userId>0)
 			{
@@ -55,7 +55,7 @@
 					$endTime = $uarr[1];
 				}
 			}
-			
+
 			if ($id > 0)
 			{
 				$sres = dbquery("
@@ -69,7 +69,7 @@
 				if (mysql_num_rows($sres)>0)
 				{
 					$sarr = mysql_fetch_assoc($sres);
-					
+
 					if (time() < $endTime)
 					{
 						$this->id = $id;
@@ -115,17 +115,17 @@
 					}
 				}
 			}
-			
+
 			$this->id = 0;
 			$this->name = "Kein Spezialist";
 			$this->desc = "-";
 		}
-		
+
 		public function __toString()
 		{
 			return $this->name;
 		}
-		
+
 		public function __set($key, $val)
 		{
 			try
@@ -141,7 +141,7 @@
 				echo $e;
 			}
 		}
-		
+
 		public function __get($key)
 		{
 			try
@@ -149,7 +149,7 @@
 				if (!property_exists($this,$key))
 					throw new EException("Property $key existiert nicht in ".__CLASS__);
 
-					
+
 				return $this->$key;
 			}
 			catch (EException $e)
@@ -157,10 +157,10 @@
 				echo $e;
 				return null;
 			}
-		}		
-		
-		
-		
+		}
+
+
+
 	}
 
 ?>

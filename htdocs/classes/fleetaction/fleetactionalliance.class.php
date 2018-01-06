@@ -3,7 +3,7 @@
 	class FleetActionAlliance extends FleetAction
 	{
 
-		function FleetActionAlliance()
+        public function __construct()
 		{
 			$this->code = "alliance";
 			$this->name = "Allianzangriff";
@@ -12,7 +12,7 @@
 			$this->visible = true;
 			$this->exclusive = false;
 			$this->attitude = 3;
-			
+
 			$this->allowPlayerEntities = true;
 			$this->allowActivePlayerEntities = true;
 			$this->allowOwnEntities = false;
@@ -22,11 +22,11 @@
 			$this->allianceAction = true;
 		}
 
-		function startAction() {} 
-		function cancelAction() {}		
-		function targetAction() {} 
-		function returningAction() {}		
-		
+		function startAction() {}
+		function cancelAction() {}
+		function targetAction() {}
+		function returningAction() {}
+
 	}
 
 ?>

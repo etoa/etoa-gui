@@ -5,13 +5,13 @@
 		private $note;
 		private $userId;
 		private $num;
-		
-		function Notepad($userId,$loadAll=0)
+
+        public function __construct($userId,$loadAll=0)
 		{
 			$this->userId = $userId;
 			$this->note = array();
 			$this->num=-1;
-			
+
 			if ($loadAll==1)
 			{
 				$res=dbQuerySave("
@@ -37,14 +37,14 @@
 					}
 				}
 			}
-			
+
 		}
-		
+
 		function getArray()
 		{
 			return $this->note;
 		}
-		
+
 		function get($noteId)
 		{
 			if (isset($this->note[$noteId]))
@@ -72,11 +72,11 @@
 					$arr=mysql_fetch_array($res);
 					$this->note[$arr['id']] = new Note($arr['id'],stripslashes($arr['subject']),stripslashes($arr['text']),$arr['timestamp']);
 					return $this->note[$arr['id']];
-				}				
+				}
 				return false;
 			}
 		}
-		
+
 		function add($subject,$text)
 		{
 			$time = time();
@@ -108,9 +108,9 @@
 			$this->num++;
 			$this->note[$mid] = new Note($mid,$subject,$text,$time);
 		}
-		
 
-		
+
+
 		function set($noteId,$subject,$text)
 		{
 			$time = time();
@@ -135,8 +135,8 @@
 					id=?;", array($subject, $text, $noteId));
 				$this->note[$noteId] = new Note($noteId,$subject,$text,$time);
 			}
-		}	
-		
+		}
+
 		function numNotes()
 		{
 			if ($this->num==-1)
@@ -147,7 +147,7 @@
 			}
 			return $this->num;
 		}
-		
+
 		function delete($nid)
 		{
 			dbQuerySave("DELETE FROM notepad WHERE id=? AND user_id=?;", array($nid, $this->userId));
@@ -159,8 +159,8 @@
 				return true;
 			}
 			return false;
-		}		
-		
+		}
+
 		function deleteAll()
 		{
 			$res=dbQuerySave("SELECT id FROM notepad WHERE user_id=?;", array($this->userId));
@@ -170,10 +170,10 @@
 				{
 					dbQuerySave("DELETE FROM notepad_data WHERE id=?;", array($arr[0]));
 				}
-			}	
+			}
 			$res=dbQuerySave("DELETE FROM notepad WHERE user_id=?;", array($this->userId));
 		}
-		
+
 	}
 
 ?>
