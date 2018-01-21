@@ -1,6 +1,18 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.19
+--------------
+
+### Administration ###
+
+ * added aliens/NPC option to tool
+
+### Features ###
+
+ * color for aliens/npc 
+
+
 Version 3.5.18
 --------------
 

@@ -1,25 +1,25 @@
 <?PHP
-	
+
 	/**
 	* Class for unknown space entities
 	*/
 	class UnknownEntity extends Entity
 	{
-		private $name;		
+		private $name;
 		protected $id;
 		protected $coordsLoaded;
-		protected $isValid;		
+		protected $isValid;
 		public $pos;
 		public $sx;
 		public $sy;
 		public $cx;
 		public $cy;
 		protected $cellId;
-		
+
 		/**
 		* The constructor
 		*/
-		function UnknownEntity($id=0)
+        public function __construct($id=0)
 		{
 			$this->isValid = true;
 			$this->id = intval($id);
@@ -36,40 +36,40 @@
 
 		/**
 		* Returns id
-		*/                        
-		function id() { return $this->id; }      
+		*/
+		function id() { return $this->id; }
 
 		/**
 		* Returns id
-		*/                        
-		function name() { return $this->name; }      
+		*/
+		function name() { return $this->name; }
 
 
 		/**
 		* Returns owner
-		*/                        
-		function owner() { return "Niemand"; }      
+		*/
+		function owner() { return "Niemand"; }
 
 		/**
 		* Returns owner
-		*/                        
-		function ownerId() { return 0; }      
-		
+		*/
+		function ownerId() { return 0; }
+
 		/**
 		* Returns type string
-		*/                        
-		function entityCodeString() { return "Unbekannter Raum"; }      
+		*/
+		function entityCodeString() { return "Unbekannter Raum"; }
 
 		function ownerMain() { return false; }
 
-	
+
 		/**
 		* Returns type
 		*/
 		function type()
 		{
 			return "Unbekannt";
-		}							
+		}
 
 		function imagePath($opt="")
 		{
@@ -81,15 +81,15 @@
 		/**
 		* Returns type
 		*/
-		function entityCode() 
-		{ 
-			return "u"; 
-		}	      
-		
+		function entityCode()
+		{
+			return "u";
+		}
+
 		/**
 		* To-String function
 		*/
-		function __toString() 
+		function __toString()
 		{
 			if (!$this->coordsLoaded)
 			{
@@ -97,7 +97,7 @@
 			}
 			return $this->formatedCoords();
 		}
-		
+
 		/**
 		* Returns the cell id
 		*/
@@ -109,10 +109,10 @@
 			}
 			return $this->cellId;
 		}
-		
+
 		public function getFleetTargetForwarder()
 		{
 			return null;
-		}		
+		}
 	}
 ?>

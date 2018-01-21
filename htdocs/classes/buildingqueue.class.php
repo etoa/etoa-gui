@@ -1,18 +1,18 @@
 <?PHP
-	
+
 	class BuildingQueue
 	{
 		private $jobs = null;
 		private $entityId;
 		private $ownerId;
-		
-		function BuildingQueue($entityId,$ownerId)
+
+        public function __construct($entityId,$ownerId)
 		{
 			$this->entityId = $entityId;
 			$this->ownerId = $ownerId;
 		}
-		
-		
+
+
 		private function load()
 		{
 			$this->jobs = array();
@@ -40,12 +40,12 @@
 					{
 						if ($v[0]==$arr[1])
 							$lvlp++;
-					}					
+					}
 					$this->jobs[$arr[0]] = array($arr[1],$arr[2],$arr[3],$lvlp);
 				}
 			}
 		}
-		
+
 		function & getJobs($itemId=0)
 		{
 			if ($this->jobs==null)
@@ -62,7 +62,7 @@
 			}
 			return $this->jobs;
 		}
-		
+
 		function activeJob($itemId = 0)
 		{
 			$jb = $this->getJobs($itemId);
@@ -71,7 +71,7 @@
 				foreach ($jb as $jv)
 				{
 					if ($jv[1] < time() && $jv[2] > time())
-					{			
+					{
 						return $jv;
 					}
 				}
@@ -82,9 +82,9 @@
 		function cancelActiveJob()
 		{
 			if ($this->jobs==null)
-				$this->load();			
+				$this->load();
 			foreach ($this->jobs as $jk => $jv)
-			{			
+			{
 				if ($jv[1] < time() && $jv[2] > time())
 				{
 					unset($this->jobs[$jk]);
@@ -99,8 +99,8 @@
 			}
 			return false;
 		}
-		
-		
+
+
 	}
 
 ?>

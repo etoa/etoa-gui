@@ -39,7 +39,7 @@
 		* for this project based on this file's directory name
 		* and registers the semaphore with a value of 1
 		*/
-		function Mutex()
+        public function __construct()
 		{
 			if (self::isSupported())
 			{

@@ -1,11 +1,11 @@
 <?PHP
-	
+
 	class Ship
 	{
-		function Ship($sid)
+        public function __construct($sid)
 		{
 			$this->isValid = false;
-			
+
 			if (is_array($sid))
 			{
 				$arr = $sid;
@@ -19,14 +19,14 @@
 					ships
 				WHERE
 					ship_id=".$sid."			
-				");			
+				");
 				if (!$arr = mysql_fetch_assoc($res))
 				{
 					throw new EException("Ung&uuml;ltige Schiff-ID: $sid");
 					return false;
 				}
-			}			
-			
+			}
+
 			$this->id = $arr['ship_id'];
 			$this->name = $arr['ship_name'];
 			$this->shortComment = $arr['ship_shortcomment'];
@@ -39,35 +39,35 @@
 			$this->speed = $arr['ship_speed'];
 			$this->time2start = $arr['ship_time2start'];
 			$this->time2land = $arr['ship_time2land'];
-			
+
 			$this->bStructure = $arr['special_ship_bonus_structure'];
 			$this->bShield = $arr['special_ship_bonus_shield'];
 			$this->bWeapon = $arr['special_ship_bonus_weapon'];
       		$this->bHeal = $arr['special_ship_bonus_heal'];
 			$this->bCapa = $arr['special_ship_bonus_capacity'];
-      
+
 
 			$this->actionString = $arr['ship_actions'];
 
 			$this->isValid = true;
 		}
-		
-		
+
+
 		function isValid() { return $this->isValid; }
 		function name() { return $this->name; }
 		function shortComment() { return $this->shortComment; }
 		function capacity() { return $this->capacity; }
 		function peopleCapacity() { return $this->peopleCapacity; }
-		
+
 		function __toString()
 		{
 			return $this->name;
 		}
-		
+
 		/*
-		function imgPathSmall() 
+		function imgPathSmall()
 		{
-			return IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$this->id."_small.".IMAGE_EXT;			
+			return IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$this->id."_small.".IMAGE_EXT;
 		}*/
 
 		function imgPath($type="s")
@@ -154,7 +154,7 @@
 		{
 			return $base_xp * intpow($factor,$level-1);
 		}
-		
+
 		static function levelByXp($base_xp,$factor,$xp)
 		{
 			return max(0,floor(1 + ((log($xp)-log($base_xp))/log($factor))));

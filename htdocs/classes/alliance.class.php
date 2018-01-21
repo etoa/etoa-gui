@@ -75,7 +75,7 @@
 		/**
 		* Constructor
 		*/
-	  function Alliance($id)
+        public function __construct($id)
 	  {
 	  	$this->id = $id;
 	  	$this->valid = false;

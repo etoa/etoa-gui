@@ -13,7 +13,7 @@ function registerCheckName($val)
 	$objResponse = new xajaxResponse();
 	if (checkValidName($val))
 	{
-		if (ereg("^.+ .+( .*)*$", $val))
+		if (preg_match("^/.+ .+( .*)*$/", $val))
 		{
   		$objResponse->assign('nameStatus', 'innerHTML', "Ok");
   		$objResponse->assign('nameStatus', 'style.color', "#0f0");
@@ -29,7 +29,7 @@ function registerCheckName($val)
 		$objResponse->assign('nameStatus', 'innerHTML', "Der Name darf keine ungültigen Zeichen enthalten!");
 		$objResponse->assign('nameStatus', 'style.color', "#f90");
 	}
-	
+
 	$objResponse->assign('nameStatus', 'style.fontWeight', "bold");
 	return $objResponse;
 }
@@ -66,7 +66,7 @@ function registerCheckNick($val)
     	$objResponse->assign('nickStatus', 'innerHTML', "Der Benutzername ist nicht korrekt!");
     	$objResponse->assign('nickStatus', 'style.color', "#f90");
     }
-    
+
 	return $objResponse;
 }
 
@@ -96,7 +96,7 @@ function registerCheckEmail($val)
         $objResponse->assign('emailStatus', 'style.color', "#f90");
         $objResponse->assign('emailStatus', 'style.fontWeight', "bold");
     }
-    
+
 	return $objResponse;
 }
 
@@ -116,7 +116,7 @@ function registerCheckPassword($val)
 		$objResponse->assign('passwordStatus', 'innerHTML', "Das Passwort ist noch zu kurz (mind. ".PASSWORD_MINLENGHT." Zeichen sind nötig)!");
 		$objResponse->assign('passwordStatus', 'style.color', "#f90");
 	}
-    
+
 	return $objResponse;
 }
 

@@ -1,25 +1,25 @@
 <?PHP
-	
+
 	/**
 	* Class for Allianz space entities
 	*/
 	class Allianz extends Entity
 	{
-		private $name;		
+		private $name;
 		protected $id;
 		protected $coordsLoaded;
-		protected $isValid;		
+		protected $isValid;
 		public $pos;
 		public $sx;
 		public $sy;
 		public $cx;
 		public $cy;
 		protected $cellId;
-		
+
 		/**
 		* The constructor
 		*/
-		function Allianz($id=0)
+		public function __construct($id=0)
 		{
 			$this->isValid = true;
 			$this->id = intval($id);
@@ -36,40 +36,40 @@
 
 		/**
 		* Returns id
-		*/                        
-		function id() { return $this->id; }      
+		*/
+		function id() { return $this->id; }
 
 		/**
 		* Returns id
-		*/                        
-		function name() { return $this->name; }      
+		*/
+		function name() { return $this->name; }
 
 
 		/**
 		* Returns owner
-		*/                        
-		function owner() { return "Niemand"; }      
+		*/
+		function owner() { return "Niemand"; }
 
 		/**
 		* Returns owner
-		*/                        
-		function ownerId() { return 0; }      
-	
+		*/
+		function ownerId() { return 0; }
+
 			function ownerMain() { return false; }
 
-	
+
 		/**
 		* Returns type string
-		*/                        
-		function entityCodeString() { return "Allianz"; }      
-	
+		*/
+		function entityCodeString() { return "Allianz"; }
+
 		/**
 		* Returns type
 		*/
 		function type()
 		{
 			return "";
-		}							
+		}
 
 		function imagePath($opt="")
 		{
@@ -81,15 +81,15 @@
 		/**
 		* Returns type
 		*/
-		function entityCode() 
-		{ 
-			return "m"; 
-		}	      
-		
+		function entityCode()
+		{
+			return "m";
+		}
+
 		/**
 		* To-String function
 		*/
-		function __toString() 
+		function __toString()
 		{
 			/*if (!$this->coordsLoaded)
 			{
@@ -98,7 +98,7 @@
 			return $this->formatedCoords();*/
 			return "";
 		}
-		
+
 		/**
 		* Returns the cell id
 		*/
@@ -113,7 +113,7 @@
 		public function getFleetTargetForwarder()
 		{
 			return null;
-		}		
-		
+		}
+
 	}
 ?>

@@ -8,7 +8,5 @@ class TutorialText {
 	public $step = 0;
 	public $prev;
 	public $next;
-	
-	function __construct() { }
 }
 ?>

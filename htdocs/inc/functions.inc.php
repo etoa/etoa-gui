@@ -602,6 +602,12 @@
 		  $class = "noobColor";
 		  $tm_info = "Anf&auml;ngerschutz";
 		}
+		// Alien/NPC
+	    elseif ($ent->owner->isNPC()>0)
+	    {	
+		    $class .= "alien";
+		    $tm_info = "Alien";
+		}
 		else
 		{
 		  $class = "";

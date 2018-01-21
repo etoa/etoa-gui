@@ -3,7 +3,7 @@
 	class FleetActionColonize extends FleetAction
 	{
 
-		function FleetActionColonize()
+        public function __construct()
 		{
 			$this->code = "colonize";
 			$this->name = "Kolonialisieren";
@@ -12,9 +12,9 @@
 Ein solches Schiff kann meist nicht grosse Mengen an Ressourcen mitnehmen, aber für diesen Zweck hat man die M&ouml;glichkeit andere Schiffe mitzuschicken.
 Es ist zu beachten, dass man maximal 15 Planeten kontrollieren kann! Bei einer erfolgreichen Kolonialisierung wird das Besiedlungsschiff verbraucht.";
 			$this->visible = true;
-			$this->exclusive = false;					
+			$this->exclusive = false;
 			$this->attitude = 1;
-			
+
 			$this->allowPlayerEntities = false;
 			$this->allowActivePlayerEntities = false;
 			$this->allowOwnEntities = false;
@@ -24,11 +24,11 @@ Es ist zu beachten, dass man maximal 15 Planeten kontrollieren kann! Bei einer e
 			$this->allianceAction = false;
 		}
 
-		function startAction() {} 
-		function cancelAction() {}		
-		function targetAction() {} 
-		function returningAction() {}		
-		
+		function startAction() {}
+		function cancelAction() {}
+		function targetAction() {}
+		function returningAction() {}
+
 	}
 
 ?>

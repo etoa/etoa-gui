@@ -1,13 +1,7 @@
 <?php
 
-class Townhall {
-
-    function townhall() 
-    {
-    	
-    	
-    }
-    
+class Townhall
+{
     /**
      * Generate an rss file
      * containing the latest
@@ -17,21 +11,21 @@ class Townhall {
     {
 			$rssValue = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
 			$rssValue .= "<rss version=\"2.0\">\r\n";
-			
+
 			// Build the channel tag
 			$rssValue .= "	<channel>\r\n";
 			$rssValue .= "		<title>EtoA Rathaus ".Config::getInstance()->roundname->v."</title>\r\n";
 			$rssValue .= "		<link>http://www.etoa.ch</link>\r\n";
 			$rssValue .= "		<description>Rathaus der EtoA ".Config::getInstance()->roundname->v."</description>\r\n";
 			$rssValue .= "		<language>de</language>\r\n";
-			
+
 			// Build the image tag
 			$rssValue .= "		<image>\r\n";
 			$rssValue .= "			<title>EtoA Rathaus</title>\r\n";
 			$rssValue .= "			<url>http://www.etoa.ch/images/game_logo.gif</url>\r\n";
 			$rssValue .= "			<link>http://www.etoa.ch</link>\r\n";
 			$rssValue .= "		</image>\r\n";
-			
+
 			$res=dbquery("
 			SELECT 
 				alliance_news_title,
@@ -43,8 +37,8 @@ class Townhall {
 			ORDER BY
 				alliance_news_date DESC
 			
-			;");	
-			
+			;");
+
 			// The records were retrieved OK, let's start building the item tags
 			while($arr = mysql_fetch_array($res))
 			{
@@ -54,13 +48,13 @@ class Townhall {
 				$rssValue .= "			<link>http://www.etoa.ch</link>\r\n";
 				$rssValue .= "		</item>\r\n";
 			}
-		
+
 			$rssValue .= "	</channel>\r\n";
 			$rssValue .= "</rss>";
-		
+
 			$d = fopen(RSS_TOWNHALL_FILE,"w");
 			fwrite($d,$rssValue);
-			fclose($d);    	
+			fclose($d);
     }
 }
 ?>

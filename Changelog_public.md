@@ -1,12 +1,19 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.19
+--------------
+
+### Features ###
+
+ * Es wurden unbekannte Lebensformen gesichtet
+
 Version 3.5.18
 --------------
 
 ### Features ###
 
- * Boost berechnet sich nach Gesammtpunkten 
+ * Boost berechnet sich nach Gesamtpunkten 
 
 Version 3.5.17
 --------------

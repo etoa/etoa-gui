@@ -7,11 +7,11 @@
 		private $requests = array();
 		private $buddyCount = 0;
 		private $requestCount = 0;
-		
+
 		private $lastError = '';
 		private $loaded = false;
 
-		public function Buddylist($userId=0, $load=0)
+        public function __construct($userId=0, $load=0)
 		{
 			$this->ownerId = $userId;
 
@@ -21,7 +21,7 @@
 			}
 
 		}
-		
+
 		public function __toString()
 		{
 			return $this->name;
@@ -62,7 +62,7 @@
 				if (!property_exists($this,$key))
 					throw new EException("Property $key existiert nicht in ".__CLASS__);
 
-					
+
 				return $this->$key;
 			}
 			catch (EException $e)
@@ -302,7 +302,7 @@
 			return -1;
 
 		}
-		
+
 				/**
 				 * loads data of one buddy
 				 * @param <type> $userId
@@ -314,7 +314,7 @@
 					if (mysql_num_rows($res))
 					{
 						$arr = mysql_fetch_assoc($res);
-						
+
 						if ($this->ownerId == $arr['bl_user_id'])
 						{
 							$this->buddys[$arr['bl_buddy_id'] ] = array("id" => $arr['bl_id'],
@@ -438,7 +438,7 @@
 					</td>';
 					}
 				}
-		
+
 	}
 
 		/*

@@ -1,11 +1,7 @@
 <?php
 
-class Rss {
-
-    function Rss() 
-    {
-    }
-    
+class Rss
+{
     static function showOverview()
     {
 			$d = opendir(RSS_DIR);
@@ -19,8 +15,8 @@ class Rss {
 							"<td class=\"tbldata\"><a href\"\" onclick=\"window.open('".RSS_DIR."/".$f."','','status=no')\">Anzeigen</a></td></tr>";
 				}
 			}
-			closedir($d);  
-		}    
-    
+			closedir($d);
+		}
+
 }
 ?>

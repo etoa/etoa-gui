@@ -7,13 +7,13 @@
 		private $alliance;
 
 		private $items = null;
-		private $itemStatus = null;	
+		private $itemStatus = null;
 		private $count = null;
-		
+
 		private $tmpItems = array();
-		
+
 		private $jobs = null;
-		
+
 		private $errorMsg;
 
 		/**
@@ -22,29 +22,29 @@
 		 * @param <type> $load
 		 * @param <type> $alliance
 		 */
-		function AllianceTechlist($allianceId,$load=0,&$alliance=null)
+        public function __construct($allianceId,$load=0,&$alliance=null)
 		{
 			$this->allianceId = $allianceId;
-			
+
 			if ($alliance != null)
 				$this->alliance = $alliance;
 			if ($load == 1)
 				$this->load();
 		}
-		
-		public function getIterator() 
+
+		public function getIterator()
 		{
 			if ($this->items == null)
 				$this->load();
 			return new ArrayIterator($this->items);
 		}
-	
+
 		private function load()
 		{
 			$this->items = array();
 			$this->itemStatus = array();
 			$this->count = 0;
-			
+
 			$res = dbquery("
 			SELECT	
 				l.alliance_techlist_id,
@@ -62,7 +62,7 @@
 				AND l.alliance_techlist_alliance_id='".$this->allianceId."'
 				;");
 			if (mysql_num_rows($res)>0)
-			{		
+			{
 				while ($arr = mysql_fetch_assoc($res))
 				{
 					$this->items[$arr['alliance_tech_id']] = new AllianceTechnology($arr);
@@ -75,9 +75,9 @@
 					);
 					$this->count++;
 				}
-			}			
-		}			
-		
+			}
+		}
+
 		function count()
 		{
 			if ($this->count != null)
@@ -98,8 +98,8 @@
 			$arr = mysql_fetch_row($res);
 			$this->count = $arr[0];
 			return $this->count;
-		}							
-			
+		}
+
 		function & item($bid)
 		{
 			if ($this->items==null)
@@ -108,9 +108,9 @@
 				return $this->items[$bid];
 			if (isset($this->tmpItems[$bid]))
 				return $this->tmpItems[$bid];
-			return false;			
+			return false;
 		}
-		
+
 		function getMemberFor($bid)
 		{
 			if ($this->items==null)
@@ -119,7 +119,7 @@
 				return $this->itemStatus[$bid]['member_for'];
 			return 0;
 		}
-			
+
 		function getLevel($bid)
 		{
 			if ($this->items==null)
@@ -127,12 +127,12 @@
 			if (isset($this->itemStatus[$bid]))
 				return $this->itemStatus[$bid]['level'];
 			return 0;
-		}				
-		
+		}
+
 		function getBuildTime($itemId,$targetLevel)
-		{	
+		{
 			$targetLevel = max(1,$targetLevel);
-			
+
 			if (isset($this->items[$itemId]))
 			{
 				$itm = &$this->items[$itemId];
@@ -141,13 +141,13 @@
 			{
 				$itm = new AllianceTechnology($itemId);
 			}
-			
+
 			$btime = $itm->buildTime*($this->itemStatus[$itemId]['level']+1);;
-			
+
 			unset($itm);
 			return $btime;
 		}
-		
+
 		/**
 		* Check wether an item is buildable. Conditions are
 		* enough resources, not maxed out level, enough fields,
@@ -163,7 +163,7 @@
 				else
 					$this->alliance = &$cu->alliance;
 			}
-			
+
 			if (isset($this->items[$itemId]))
 			{
 				$itm = &$this->items[$itemId];
@@ -177,9 +177,9 @@
 					return false;
 				$cst = $itm->getCosts(1,$this->alliance->memberCount);
 				$lvl = 0;
-			}			
+			}
 
-			
+
 			if ($this->show($itemId))
 			{
 				// Check level
@@ -194,18 +194,18 @@
 						&& $cst[4] <= $this->alliance->resFuel
 						&& $cst[5] <= $this->alliance->resFood)
 						{
-							return true;					
+							return true;
 						}
 						else
 							$this->errorMsg = "Zuwenig Rohstoffe vorhanden!";
 					}
 					else
 						$this->errorMsg = "Es wird bereits gebaut!";
-				}				
+				}
 				else
 					$this->errorMsg = "Maximalstufe erreicht!";
 			}
-			return false;				
+			return false;
 		}
 
 		/**
@@ -215,7 +215,7 @@
 		{
 			return $this->errorMsg;
 		}
-		
+
 		/**
 		* Starts the constructions
 		*
@@ -230,10 +230,10 @@
 					$this->alliance = new Alliance($this->allianceId);
 				else
 					$this->alliance = &$cu->alliance;
-			}			
-			
+			}
+
 			if ($this->checkBuildable($itemId))
-			{				
+			{
 				if (isset($this->items[$itemId]))
 				{
 					$itm = &$this->items[$itemId];
@@ -250,13 +250,13 @@
 				$cst = $itm->getCosts($this->itemStatus[$itemId]['level']+1,$this->alliance->memberCount);
 
 				$this->alliance->changeRes(-$cst[1],-$cst[2],-$cst[3],-$cst[4],-$cst[5]);
-				
+
 				$t = time();
 				$startTime = $t;
 				$endTime = $startTime + $this->getBuildTime($itemId,$lvl);
 				$this->itemStatus[$itemId]['start_time'] = $startTime;
 				$this->itemStatus[$itemId]['end_time'] = $endTime;
-				
+
 				if ($this->itemStatus[$itemId]['level'] == 0)
 				{
 					dbquery("
@@ -297,13 +297,13 @@
 				}
 				add_alliance_history($cu->allianceId,"[b]".$cu->nick."[/b] hat die Forschung [b]".$this->items[$itemId]->name." (".$lvl.")[/b] in Auftrag gegeben.");
 				return true;
-			}			
+			}
 			return false;
 		}
-		
+
 		function isUnderConstruction($itemId=0)
 		{
-			try	
+			try
 			{
 				if ($itemId>0)
 				{
@@ -316,7 +316,7 @@
 				{
 					foreach ($this->itemStatus as $buildItem)
 						if ($buildItem['end_time']>time()) return TRUE;
-					
+
 					return FALSE;
 				}
 			}
@@ -326,7 +326,7 @@
 				return;
 			}
 		}
-		
+
 		function isMaxLevel($itemId=0)
 		{
 			try
@@ -342,7 +342,7 @@
 				return;
 			}
 		}
-		
+
 		function show($itemId=0)
 		{
 			try

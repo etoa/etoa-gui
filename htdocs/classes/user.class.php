@@ -25,6 +25,7 @@ class User implements \EtoA\User\UserInterface
 	protected $maskMatrix; // Matrix for the "fog of war" effect in the space map
 	protected $realName;
 	protected $pw;
+	protected $npc;
 	protected $email;
 	protected $emailFix;
     protected $d_email;   //Dual E-mail
@@ -90,7 +91,7 @@ class User implements \EtoA\User\UserInterface
 	* The constructor initializes and loads
 	* all importand data about this user
 	*/
-	function User($id)
+    public function __construct($id)
 	{
 		$this->isValid = false;
 		$this->id = $id;
@@ -107,7 +108,6 @@ class User implements \EtoA\User\UserInterface
 		if (mysql_num_rows($res)>0)
 		{
 			$arr = mysql_fetch_assoc($res);
-
 			$this->nick=$arr['user_nick'];
 			$this->pw = $arr['user_password'];
 			$this->realName=$arr['user_name'];
@@ -137,6 +137,7 @@ class User implements \EtoA\User\UserInterface
 			$this->setup = $arr['user_setup']==1 ? true : false;
 			$this->chatadmin=$arr['user_chatadmin']==1 ? true : false;
 			$this->admin=$arr['admin']==1 ? true : false;
+			$this->npc=$arr['npc']==1 ? true : false;
 			$this->developer=$arr['admin']==2 ? true : false;
 			$this->ghost=$arr['user_ghost']==1 ? true : false;
 
@@ -229,8 +230,7 @@ class User implements \EtoA\User\UserInterface
 	 */
 	function __destruct()
 	{
-		$cnt = count($this->changedFields);
-		if ($cnt > 0)
+		if ($this->changedFields && count($this->changedFields) > 0)
 		{
 			$sql = "UPDATE
 				".self::tableName."
@@ -567,6 +567,13 @@ class User implements \EtoA\User\UserInterface
 				}
 			}
 		}
+		return false;
+	}
+
+	public function isNPC()
+	{
+		if($this->npc) 
+			return true;
 		return false;
 	}
 
@@ -1404,7 +1411,7 @@ die Spielleitung";
 
     public function canAttackUser(User $u)
     {
-        // somehow $this->alliance doesn't use the getter
+    	// somehow $this->alliance doesn't use the getter
         // neither does $u->locked, wtf
 
         // att allowed if war is active
@@ -1412,17 +1419,19 @@ die Spielleitung";
         // or att allowed if target user is inactive
         // or att allowed if target user is locked
         if ($this->allianceId() > 0 && $u->allianceId() > 0)
-        {
-            return $this->__get('alliance')->checkWar($u->allianceId())
+       	{
+       		return $this->__get('alliance')->checkWar($u->allianceId())
                 || !$this->isUserNoobProtected($u)
                 || $u->isInactiv()
-                || $u->__get('locked');
+                || $u->__get('locked') 
+                || $u->isNPC();
         }
         else
         {
-            return !$this->isUserNoobProtected($u)
+        	return !$this->isUserNoobProtected($u)
                 || $u->isInactiv()
-                || $u->__get('locked');
+                || $u->__get('locked')
+                || $u->isNPC();
         }
     }
 

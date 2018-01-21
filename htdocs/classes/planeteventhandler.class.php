@@ -1,18 +1,13 @@
 <?PHP
 	class PlanetEventHandler
 	{
-		function PlanetEventHandler()
-		{
-			
-		}
-		
 		static function doEvent($cnt=1,$force=0,$forceEvent="")
 		{
 			$cfg = Config::getInstance();
-			
+
 			for ($i=0; $i < $cnt; $i++)
 			{
-				
+
 				// Force using a planet which belong to a user. This is NOT high-performance
 				if ($force==1)
 				{
@@ -26,7 +21,7 @@
 		      	planet_user_id>0
 		      ORDER BY RAND()
 		      LIMIT 1;
-		      ");				
+		      ");
 				}
 				else
 				{
@@ -50,13 +45,13 @@
 		      WHERE planets.id=randTable.randID
 		  		  LIMIT 1;");
 		  	}
-	      
+
 				if (mysql_num_rows($res)>0)
 				{
 					$arr = mysql_fetch_row($res);
 					$pid = $arr[0];
 					$uid = $arr[1];
-					
+
 					if ($uid>0)
 					{
 						if ($forceEvent!="")
@@ -70,29 +65,29 @@
 						$evt = new PlanetEvent($eventId,$pid);
 						$evt->run();
 						$result = true;
-						
+
 						$cfg->set("random_event_hits",$cfg->get("random_event_hits")+1);
 					}
 					else
-					{				
+					{
 						$result = false;
 						$cfg->set("random_event_misses",$cfg->get("random_event_misses")+1);
-					}				
-				}		
+					}
+				}
 				else
 				{
 					echo "Event-Fehler: Kein Planet gefunden!";
-				}	
-				
+				}
+
 			}
-			return $result;	
-		}	
-		
+			return $result;
+		}
+
 		static function getEventList()
 		{
 			return RandomEvent::getList("random_planet");
 		}
-			
+
 	}
 
 

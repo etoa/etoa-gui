@@ -1,5 +1,5 @@
 <?PHP
-	
+
 	/**
 	* Space cells class
 	*
@@ -10,17 +10,17 @@
 		private $id;
 		private $isValid;
 		private $entities;
-		
+
     public $sx;
     public $sy;
     public $cx;
     public $cy;
-    
-		public function Cell($id=0)
+
+        public function __construct($id=0)
 		{
 			$this->isValid=false;
 			$this->entities=null;
-			
+
 			$res=dbquery("
 			SELECT 
 	    	cells.sx,
@@ -31,7 +31,7 @@
 	    	cells
 			WHERE 
 			 	id='".intval($id)."';");
-			if (mysql_num_rows($res))	
+			if (mysql_num_rows($res))
 			{
 				$arr = mysql_fetch_row($res);
 				$this->id=$id;
@@ -42,17 +42,17 @@
 				$this->isValid=true;
 			}
 		}
-		
+
 		public function id()
 		{
 			return $this->id;
-		}	
-		
+		}
+
 		public function isValid()
 		{
 			return $this->isValid;
 		}
-		
+
 		function getEntities()
 		{
 			if ($this->entities==null)
@@ -76,30 +76,30 @@
 			}
 			return $this->entities;
 		}
-		
+
 		function __toString()
 		{
 			return $this->sx."/". $this->sy." : ". $this->cx."/". $this->cy;
 		}
-		
+
 		function absX()
 		{
 			$cfg = Config::getInstance();
 			$cx_num=$cfg->param1('num_of_cells');
 			return (($this->sx - 1) * $cx_num) + $this->cx;
 		}
-		
+
 		function absY()
 		{
 			$cfg = Config::getInstance();
 			$cy_num=$cfg->param2('num_of_cells');
 			return (($this->sy - 1) * $cy_num) + $this->cy;
 		}
-		
+
     function getSX() {
       return $this->sx;
     }
-    
+
     function getSY() {
       return $this->sy;
     }
@@ -111,7 +111,7 @@
     function getCY() {
       return $this->cy;
     }
-	
+
 	}
 
 ?>

@@ -1,13 +1,13 @@
 <?php
 
-class UserToXml 
+class UserToXml
 {
 	private $userId;
-    function UserToXml($userId) 
+    public function __construct($userId)
     {
     	$this->userId = intval($userId);
     }
-    
+
 	public static function getDataDirectory() {
 		$dir = CACHE_ROOT."/user_xml";
 		if (!is_dir($dir)) {
@@ -15,7 +15,7 @@ class UserToXml
 		}
 		return $dir;
 	}
-    
+
 	function toCacheFile()
 	{
 		$filename = $this->userId."_".date("Y-m-d_H-i").".xml";
@@ -28,13 +28,13 @@ class UserToXml
 				fclose($d);
 				return $filename;
 			}
-			error_msg("Konnte Datei $file nicht zum XML Export öffnen!");			
+			error_msg("Konnte Datei $file nicht zum XML Export öffnen!");
 			return false;
 		}
-		error_msg("XML Export fehlgeschlagen. User ".$this->userId." nicht gefunden!");			
+		error_msg("XML Export fehlgeschlagen. User ".$this->userId." nicht gefunden!");
 		return false;
 	}
-	
+
 	function __toString()
 	{
 		$res = dbquery("
@@ -52,9 +52,9 @@ class UserToXml
 		WHERE user_id=".$this->userId."
 		;");
 		if (mysql_num_rows($res)>0)
-		{		
+		{
 			$arr=mysql_fetch_array($res);
-			
+
 $xml = "<userbackup>
 	<export date=\"".date("d.m.Y, H:i")."\" timestamp=\"".time()."\" />
 	<account>
@@ -112,7 +112,7 @@ $xml = "<userbackup>
 			}
 			$xml.="
 	</planets>
-	<buildings>";	
+	<buildings>";
 			//Gebäude
 			$bres = dbquery("
 				SELECT
@@ -139,7 +139,7 @@ $xml = "<userbackup>
 			}
 			$xml.="
 	</buildings>
-	<technologies>";	
+	<technologies>";
 			//Technologien
 			$tres = dbquery("
 				SELECT
@@ -164,7 +164,7 @@ $xml = "<userbackup>
 
 			$xml.="
 	</technologies>
-	<ships>";	
+	<ships>";
 			//Schiffe
 			$sres = dbquery("
 				SELECT
@@ -225,10 +225,10 @@ $xml = "<userbackup>
 						}
 					}
 				}
-			}			
+			}
 			$xml.="
 	</ships>
-	<defenses>";	
+	<defenses>";
 			//Verteidigung
 			$dres = dbquery("
 				SELECT
@@ -256,12 +256,12 @@ $xml = "<userbackup>
 			}
 			$xml.="
 	</defenses>
-";	
+";
 			$xml.="</userbackup>";
 			return $xml;
 		}
-		return false;		
-	}    
-    
+		return false;
+	}
+
 }
 ?>

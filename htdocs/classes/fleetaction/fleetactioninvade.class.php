@@ -3,7 +3,7 @@
 	class FleetActionInvade extends FleetAction
 	{
 
-		function FleetActionInvade()
+        public function __construct()
 		{
 			$this->code = "invade";
 			$this->name = "Invasion";
@@ -13,9 +13,9 @@
 			Eine Invasion kann nur erfolgreich sein, wenn mindestens ein invasionsf&auml;higes Schiff den Kampf überlebt und auch dann liegt die Chance nur bei einem gewissen Prozentsatz. Je gr&ouml;sser der Punkteunterschied zwischen den beiden Spielern ist, desto h&ouml;her, beziehungsweise tiefer ist die Invasionschance. Mit mehreren Invasionsschiffen erhöht sich die Chance nicht.
 			Ausserdem ist zu beachten, dass die Hauptplaneten (Die Planeten, welche die Spieler bei ihrer Anmeldung als erste erhalten) nicht invadiert werden k&ouml;nnen.";
 			$this->visible = true;
-			$this->exclusive = false;						
+			$this->exclusive = false;
 			$this->attitude = 3;
-			
+
 			$this->allowPlayerEntities = true;
 			$this->allowOwnEntities = false;
 			$this->allowNpcEntities = false;
@@ -25,11 +25,11 @@
 			$this->allianceAction = false;
 		}
 
-		function startAction() {} 
-		function cancelAction() {}		
-		function targetAction() {} 
-		function returningAction() {}		
-		
+		function startAction() {}
+		function cancelAction() {}
+		function targetAction() {}
+		function returningAction() {}
+
 	}
 
 ?>
