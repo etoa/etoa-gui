@@ -13,25 +13,25 @@ include_once('cell.xajax.php');
 	function showFleetCategorie($cId)
 	{
 		$objResponse = new xajaxResponse();
-		
+
 		ob_start();
-		
+
 		$fbm = unserialize($_SESSION['bookmarks']['fbm']);
-		
+
 		echo $fbm->printBookmarks($cId);
-		
+
 		$_SESSION['bookmarks']['fbm'] = serialize($fbm);
-		
-		$objResponse->assign("bookmark$cId","innerHTML",ob_get_contents());				
+
+		$objResponse->assign("bookmark$cId","innerHTML",ob_get_contents());
 		ob_end_clean();
-		
+
 		return $objResponse;
 	}
-	
+
 	function launchBookmarkProbe($bid)
 	{
 		$cp = Entity::createFactoryById($_SESSION['cpid']);
-		
+
 		$objResponse = new xajaxResponse();
 
 		ob_start();
@@ -52,7 +52,7 @@ include_once('cell.xajax.php');
 		if (mysql_num_rows($bres))
 		{
 			$barr = mysql_fetch_assoc($bres);
-			
+
 			$fleet = new FleetLaunch($cp,$cp->owner());
 			if ($fleet->checkHaven())
 			{
@@ -71,7 +71,7 @@ include_once('cell.xajax.php');
 					if ($shipOutput!="") $shipOutput .= ", ";
 					$shipOutput .= $sdi[1]." ".$ships[$sdi[0]];
 				}
-				
+
 				if ($probeCount)
 				{
 					if ($fleet->fixShips())
@@ -104,12 +104,12 @@ include_once('cell.xajax.php');
 											$id++;
 											$fleet->fetchResource($id,$fetch);
 										}
-										
+
 										if ($fid = $fleet->launch())
 										{
 											$flObj = new Fleet($fid);
-											
-											
+
+
 											$str= "Folgende Schiffe sind unterwegs: $shipOutput. Ankunft in ".tf($flObj->remainingTime());
 											$launched = true;
 										}
@@ -133,7 +133,7 @@ include_once('cell.xajax.php');
 					else
 					{
 						$str= $fleet->error();
-					}				
+					}
 				}
 				else
 				{
@@ -148,7 +148,7 @@ include_once('cell.xajax.php');
 		else
 		{
 			$str= "Der ausgewählte Flottenfavorit ist ungültig!";
-		}				
+		}
 		if ($launched)
 		{
 			echo "<div style=\"color:#0f0\">".$str."<div>";
@@ -162,12 +162,12 @@ include_once('cell.xajax.php');
 							<a href=\"?page=bookmarks&amp;mode=new&amp;edit=".$bid."\">Bearbeiten</a> 
 							<a href=\"?page=bookmarks&amp;mode=fleet&amp;del=".$bid."\" onclick=\"return confirm('Soll dieser Favorit wirklich gel&ouml;scht werden?');\">Entfernen</a>";
 		$objResponse->assign("fleet_bm_actions_" . $bid, "innerHTML",$action_content);
-		$objResponse->assign("fleet_info_box","style.display",'block');				
-		$objResponse->append("fleet_info","innerHTML",ob_get_contents());				
+		$objResponse->assign("fleet_info_box","style.display",'block');
+		$objResponse->append("fleet_info","innerHTML",ob_get_contents());
 		ob_end_clean();
-	  return $objResponse;	
+	  return $objResponse;
 	}
-	
+
 	//Listet gefundene Schiffe auf
 	function searchShipList($val)
 	{
@@ -176,7 +176,7 @@ include_once('cell.xajax.php');
 
 	  	$sOut = "";
 	  	$nCount = 0;
-		
+
 		$res=dbquery("SELECT 
 			ship_name 
 		FROM 
@@ -203,18 +203,18 @@ include_once('cell.xajax.php');
 
 	    $objResponse = new xajaxResponse();
 
-	  	if(strlen($sOut) > 0)  
+	  	if(strlen($sOut) > 0)
 	  	{
 			$sOut = "".$sOut."";
 	    	$objResponse->script("document.getElementById('$targetId').style.display = \"block\"");
 	    }
-	  	else  
+	  	else
 	  	{
 			$objResponse->script("document.getElementById('$targetId').style.display = \"none\"");
 	  	}
 
 		//Wenn nur noch ein User in frage kommt, diesen Anzeigen
-	    if($nCount == 1)  
+	    if($nCount == 1)
 	    {
 	        $objResponse->script("document.getElementById('$targetId').style.display = \"none\"");
 	        $objResponse->script("document.getElementById('$inputId').value = \"".$sLastHit."\"");
@@ -225,23 +225,27 @@ include_once('cell.xajax.php');
 	    $objResponse->assign("$targetId", "innerHTML", $sOut);
 	    return $objResponse;
 	}
-	
+
 	function bookmarkTargetInfo($form)
 	{
 		$response = new xajaxResponse();
 		ob_start();
-		
-		if ($form['sx']!="" && $form['sy']!="" && $form['cx']!="" && $form['cy']!="" && $form['pos']!=""
-		&& $form['sx']>0 && $form['sy']>0 && $form['cx']>0 && $form['cy']>0 && $form['pos']>=0)
-		{		
-			$absX = (($form['sx'] - 1)* CELL_NUM_X) + $form['cx'];
-			$absY = (($form['sy']-1) * CELL_NUM_Y) + $form['cy'];	
-			
+
+		$pos = (int)$form['pos'];
+		$sx = (int)$form['sx'];
+		$sy = (int)$form['sy'];
+		$cx = (int)$form['cx'];
+		$cy = (int)$form['cy'];
+		if ($sx>0 && $sy>0 && $cx>0 && $cy>0 && $pos>=0)
+		{
+			$absX = (($sx - 1)* CELL_NUM_X) + $cx;
+			$absY = (($sy-1) * CELL_NUM_Y) + $cy;
+
 			$user = new CurrentUser($_SESSION['user_id']);
-			
+
 			if ($user->discovered($absX,$absY) == 0)
 				$code='u';
-			else 
+			else
 				$code = '';
 
 			$res = dbquery("
@@ -254,11 +258,11 @@ include_once('cell.xajax.php');
 					cells
 				ON
 					entities.cell_id=cells.id
-					AND cells.sx=".$form['sx']."
-					AND cells.sy=".$form['sy']."
-					AND cells.cx=".$form['cx']."
-					AND cells.cy=".$form['cy']."
-					AND entities.pos=".$form['pos']."
+					AND cells.sx=".$sx."
+					AND cells.sy=".$sy."
+					AND cells.cx=".$cx."
+					AND cells.cy=".$cy."
+					AND entities.pos=".$pos."
 				");
 			if (mysql_num_rows($res)>0 && !($code=='u' && isset($form['man_p'])))
 			{
@@ -268,7 +272,7 @@ include_once('cell.xajax.php');
 					$ent = Entity::createFactory($arr[1],$arr[0]);
 				else
 					$ent = Entity::createFactory($code,$arr[0]);
-				
+
 				echo "<img src=\"".$ent->imagePath()."\" style=\"float:left;\" >";
 
 				echo "<br/>&nbsp;&nbsp; ".$ent." (".$ent->entityCodeString().", Besitzer: ".$ent->owner().")";
@@ -289,11 +293,11 @@ include_once('cell.xajax.php');
 		}
 	  return $response;
 	}
-	
+
 	function bookmarkBookmark($form)
 	{
 		$response = new xajaxResponse();
-		
+
 		if ($form["bookmarks"])
 		{
 			$ent = Entity::createFactoryById($form["bookmarks"]);
@@ -301,28 +305,28 @@ include_once('cell.xajax.php');
 			$sy = $ent->sy();
 			$cx = $ent->cx();
 			$cy = $ent->cy();
-			$pos = $ent->pos();			
-		
+			$pos = $ent->pos();
+
 			$response->assign('sx','value',$sx);
 			$response->assign('sy','value',$sy);
 			$response->assign('cx','value',$cx);
 			$response->assign('cy','value',$cy);
 			$response->assign('pos','value',$pos);
-			
+
 			ob_start();
-					
+
 			echo "<img src=\"".$ent->imagePath()."\" style=\"float:left;\" >";
-			
+
 			echo "<br/>&nbsp;&nbsp; ".$ent." (".$ent->entityCodeString().", Besitzer: ".$ent->owner().")";
 			$response->assign('targetinfo','style.background',"#000");
-			
+
 			$response->assign('targetinfo','innerHTML',ob_get_contents());
 			$response->assign('submit',"style.display","");
 			$response->assign('resbox',"style.display","");
-			
+
 			ob_end_clean();
 		}
 		return $response;
 	}
-	
+
 ?>
