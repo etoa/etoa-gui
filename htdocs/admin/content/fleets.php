@@ -943,8 +943,8 @@
 				{
 					$sql.= " AND entity_to=".$_POST['entity_to_id']."";
 				}
-				if ($_POST['user_id']!="")
-					$sql.=" AND user_id=".$_POST['user_id'];
+				if ((int)$_POST['user_id'])
+					$sql.=" AND user_id=".(int)$_POST['user_id'];
 				if ($_POST['fleet_id']!="")
 					$sql.=" AND id=".$_POST['id'];
 				if ($_POST['user_nick']!="")
