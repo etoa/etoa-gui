@@ -11,18 +11,20 @@ sudo apt-get update && sudo apt-get upgrade
 echo "mysql-server mysql-server/root_password password " | debconf-set-selections
 echo "mysql-server mysql-server/root_password_again password " | debconf-set-selections
 
-# Install mysql, nginx, php5.6-fpm
-sudo aptitude install -q -y -f git mysql-server mysql-client nginx php5.6 php5.6-fpm php5.6-xdebug
+# Install mysql, nginx, php7.2-fpm
+sudo aptitude install -q -y -f git mysql-server mysql-client nginx php7.2 php7.2-fpm php7.2-xdebug
 
 # Install commonly used php packages
-sudo aptitude install -q -y -f php5.6-curl php5.6-mcrypt php5.6-cli php5.6-mysql php5.6-gd php5.6-dom php5.6-zip
+sudo aptitude install -q -y -f php7.2-curl php7.2-mcrypt php7.2-cli php7.2-mysqli php7.2-gd php7.2-dom php7.2-zip
+
+sudo apt-get upgrade libpcre3
 
 sudo rm /etc/nginx/sites-available/default
 sudo cp /var/www/etoa/vagrant/nginx-default /etc/nginx/sites-available/default
 cp /var/www/etoa/vagrant/db.conf /var/www/etoa/htdocs/config
 
 sudo service nginx restart
-sudo service php5.6-fpm restart
+sudo service php7.2-fpm restart
 
 MYSQL=`which mysql`
 PHP=`which php`

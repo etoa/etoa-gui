@@ -58,7 +58,7 @@ $cnt = 0;
 						if ($cp->checkRes($buyarr))
 						{
 							$cp->subRes($buyarr);
-							
+
 							$seller = new User($arr['user_id']);
 							$sellerEntity = Entity::createFactoryById($arr['entity_id']);
 
@@ -70,7 +70,7 @@ $cnt = 0;
 
 							$tradeShip = new Ship(MARKET_SHIP_ID);
 							$numSellerShip = ($tradeShip->capacity>0) ? ceil(array_sum($sellarr) / $tradeShip->capacity) : 1;
-						
+
 							$dist = $sellerEntity->distance($cp);
 							$sellerFlighttime = ceil($dist / ($seller->specialist->tradeTime*$tradeShip->speed/3600) + $tradeShip->time2start+$tradeShip->time2land );
 							$buyerFlighttime = ceil($dist / ($cu->specialist->tradeTime*$tradeShip->speed/3600) + $tradeShip->time2start+$tradeShip->time2land);
@@ -79,7 +79,7 @@ $cnt = 0;
 							$sellerLandtime = $launchtime + $sellerFlighttime;
 							$buyerLandtime = $launchtime + $buyerFlighttime;
 
-							
+
 							// Fleet Seller -> Buyer
 							dbquery("
 							INSERT INTO 
@@ -189,7 +189,7 @@ $cnt = 0;
 
 								if ($launched)
 								{
-									
+
 									// Angebot löschen
 									dbquery("
 									DELETE FROM
@@ -210,7 +210,7 @@ $cnt = 0;
 									}
 
 									// Send report to seller
-									MarketReport::add(array(
+									MarketReport::addMarketReport(array(
 										'user_id'=>$arr['user_id'],
 										'entity1_id'=>$arr['entity_id'],
 										'entity2_id'=>$cp->id,
@@ -218,20 +218,20 @@ $cnt = 0;
 										), "ressold", $arr['id'], array_merge($mr,array("fleet1_id"=>$sellerFid,"fleet2_id"=>$buyerFid)));
 
 									// Send report to buyer (the current user)
-									MarketReport::add(array(
+									MarketReport::addMarketReport(array(
 										'user_id'=>$cu->id,
 										'entity1_id'=>$cp->id,
 										'entity2_id'=>$arr['entity_id'],
 										'opponent1_id'=>$arr['user_id'],
 										), "resbought", $arr['id'], array_merge($mr,array("fleet1_id"=>$buyerFid,"fleet2_id"=>$sellerFid)));
-									
+
 									// Add market ratings
 									$cu->rating->addTradeRating(TRADE_POINTS_PER_TRADE,false,'Handel #'.$arr['id'].' mit '.$arr['user_id']);
 									if (strlen($arr['text'])>TRADE_POINTS_TRADETEXT_MIN_LENGTH)
 										$seller->rating->addTradeRating(TRADE_POINTS_PER_TRADE+TRADE_POINTS_PER_TRADETEXT,true,'Handel #'.$arr['id'].' mit '.$cu->id);
 									else
 										$seller->rating->addTradeRating(TRADE_POINTS_PER_TRADE,true,'Handel #'.$arr['id'].' mit '.$cu->id);
-									
+
 									// Log schreiben, falls dieser Handel regelwidrig ist
 									// TODO: Think of an implementation using the user class...
 									$multi_res1=dbquery("

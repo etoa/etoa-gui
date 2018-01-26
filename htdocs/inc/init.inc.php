@@ -17,7 +17,6 @@
 	//////////////////////////////////////////////////
 
 	//Fehler ausgabe definiert
-	ini_set('display_errors', 1);
 	ini_set('arg_separator.output',  '&amp;');
 
 	// Path to the relative root of the game

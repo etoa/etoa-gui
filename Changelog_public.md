@@ -1,6 +1,13 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.20
+--------------
+
+### Bugfixes ###
+
+* Anpassungen an die neue PHP Version 
+
 Version 3.5.19
 --------------
 

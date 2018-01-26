@@ -17,10 +17,10 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 	$for_user = 0;
 	$for_alliance = 0;
-	
+
 	if ($_POST['resource_offer_reservation'] == 1)
 	{
 		$for_user = User::findIdByNick(trim($_POST['resource_offer_user_nick']));
@@ -110,7 +110,7 @@
 
 					if (dbquery($sql))
 					{
-						if ($for_alliance > 0) 
+						if ($for_alliance > 0)
 						{
 							// Set cooldown
 							$cd = time()+$cooldown;
@@ -125,8 +125,8 @@
 
 							$cu->alliance->buildlist->setCooldown(ALLIANCE_MARKET_ID,$cd);
 						}
-					
-						MarketReport::add(array(
+
+						MarketReport::addMarketReport(array(
 							'user_id'=>$cu->id,
 							'entity1_id'=>$cp->id,
 							'content'=>$_POST['ressource_text']
