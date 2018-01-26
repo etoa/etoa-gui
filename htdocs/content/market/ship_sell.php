@@ -17,7 +17,7 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 			$cnt = 0;
 			$cnt_error = 0;
 
@@ -36,7 +36,7 @@
 				if (mysql_num_rows($res)!=0)
 				{
 					$arr = mysql_fetch_array($res);
-					
+
 					$buyarr = array();
 					$mr = array("ship_id"=>$arr['ship_id'],"ship_count"=>$arr['count']);
 					foreach ($resNames as $rk => $rn)
@@ -44,28 +44,28 @@
 						$buyarr[$rk] = $arr['costs_'.$rk];
 						$mr['buy_'.$rk] = $arr['costs_'.$rk];
 					}
-					
+
 					// Prüft, ob genug Rohstoffe vorhanden sind
 					if ($cp->checkRes($buyarr))
 					{
 						$seller_user_nick = get_user_nick($arr['user_id']);
 
-						// Rohstoffe vom Käuferplanet abziehen 
+						// Rohstoffe vom Käuferplanet abziehen
 						$cp->subRes($buyarr);
-						
+
 						$seller = new User($arr['user_id']);
 						$sellerEntity = Entity::createFactoryById($arr['entity_id']);
 
 						$tradeShip = new Ship(MARKET_SHIP_ID);
-					
+
 						$dist = $sellerEntity->distance($cp);
 						$sellerFlighttime = ceil($dist / ($seller->specialist->tradeTime*$tradeShip->speed/3600) + $tradeShip->time2start+$tradeShip->time2land);
 						$buyerFlighttime = ceil($dist / ($cu->specialist->tradeTime*$tradeShip->speed/3600) + $tradeShip->time2start+$tradeShip->time2land);
-						
+
 						$launchtime = time();
 						$sellerLandtime = $launchtime + $sellerFlighttime;
 						$buyerLandtime = $launchtime + $buyerFlighttime;
-						
+
 						// Fleet Seller -> Buyer
 						dbquery("
 						INSERT INTO 
@@ -169,12 +169,12 @@
 								DELETE FROM
 									market_ship
 								WHERE
-									id='".$id."'");								
+									id='".$id."'");
 								$cnt++;
-								
-								
+
+
 								// Send report to seller
-								MarketReport::add(array(
+								MarketReport::addMarketReport(array(
 									'user_id'=>$arr['user_id'],
 									'entity1_id'=>$arr['entity_id'],
 									'entity2_id'=>$cp->id,
@@ -182,13 +182,13 @@
 									), "shipsold", $arr['id'], array_merge($mr,array("fleet1_id"=>$sellerFid,"fleet2_id"=>$buyerFid)));
 
 								// Send report to buyer (the current user)
-								MarketReport::add(array(
+								MarketReport::addMarketReport(array(
 									'user_id'=>$cu->id,
 									'entity1_id'=>$cp->id,
 									'entity2_id'=>$arr['entity_id'],
 									'opponent1_id'=>$arr['user_id'],
 									), "shipbought", $arr['id'], array_merge($mr,array("fleet1_id"=>$buyerFid,"fleet2_id"=>$sellerFid)));
-								
+
 								// Add market ratings
 								$cu->rating->addTradeRating(TRADE_POINTS_PER_TRADE,false,'Handel #'.$arr['id'].' mit '.$arr['user_id']);
 								if (strlen($arr['text'])>TRADE_POINTS_TRADETEXT_MIN_LENGTH)
@@ -199,7 +199,7 @@
 						}
 
 
-						
+
 						//Log schreiben, falls dieser Handel regelwidrig ist
 						$multi_res1=dbquery("
 						SELECT
@@ -218,13 +218,13 @@
 						WHERE
 							user_id='".$arr['user_id']."'
 							AND multi_id='".$cu->id."';");
-						
+
 						if(mysql_num_rows($multi_res1)!=0 || mysql_num_rows($multi_res2)!=0)
 						{
 							$ship = new ship($arr['ship_id']);
 					    	Log::add(Log::F_MULTITRADE,Log::INFO,"[page user sub=edit user_id=".$cu->id."][B]".$cu->nick."[/B][/page] hat von [page user sub=edit user_id=".$arr['user_id']."][B]".$seller."[/B][/page] Schiffe gekauft:\n\n".$arr['count']." ".$ship."\n\nund das zu folgendem Preis:\n\n".RES_METAL.": ".nf($arr['costs_0'])."\n".RES_CRYSTAL.": ".nf($arr['costs_1'])."\n".RES_PLASTIC.": ".nf($arr['costs_2'])."\n".RES_FUEL.": ".nf($arr['costs_3'])."\n".RES_FOOD.": ".nf($arr['costs_4']),time());
 						}
-						
+
 						//Marktlog schreiben
 						//add_log(7,"Der Spieler ".$cu->nick." hat folgende Schiffe von ".$seller_user_nick." gekauft:\n\n".$arr['ship_count']." ".$arr['ship_name']."\n\nund das zu folgendem Preis:\n\n".RES_METAL.": ".nf($arr['ship_costs_metal'])."\n".RES_CRYSTAL.": ".nf($arr['ship_costs_crystal'])."\n".RES_PLASTIC.": ".nf($arr['ship_costs_plastic'])."\n".RES_FUEL.": ".nf($arr['ship_costs_fuel'])."\n".RES_FOOD.": ".nf($arr['ship_costs_food']),time());
 
@@ -251,6 +251,6 @@
 			if($cnt_error > 0)
 			{
 				error_msg("".$cnt_error." Angebot(e) sind nicht mehr vorhanden, oder die benötigten Rohstoffe sind nicht mehr verfügbar!");
-			}		
+			}
 
 ?>

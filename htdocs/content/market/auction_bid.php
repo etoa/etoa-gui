@@ -56,7 +56,7 @@
 			foreach ($resNames as $rk => $rn)
 			{
 				$rate = RuntimeDataStore::get('market_rate_'.$rk, 1);
-			
+
 				// Errechnet Rohstoffwert vom Angebot
 				$sell_price += $arr['sell_'.$rk] * $rate;
 				// Errechnet Rohstoffwert vom Höchstbietenden
@@ -72,7 +72,7 @@
 			// Prüft, ob Gebot höher ist als das vom Höchstbietenden
 			if($current_price*(1+AUCTION_OVERBID) < $new_price)
 			{
-						
+
 
 				// wenn der bietende das höchst mögliche (oder mehr) bietet...
 				if(AUCTION_PRICE_FACTOR_MAX <= (ceil($new_price)/floor($sell_price)))
@@ -88,7 +88,7 @@
 
 						// Nachricht dem überbotenen User schicken
 						$marr['timestamp2']='0';
-						MarketReport::add(array(
+						MarketReport::addMarketReport(array(
 							'user_id'=>$arr['current_buyer_id'],
 							'entity1_id'=>$cp->id,
 							'opponent1_id'=>$cu->id,
@@ -99,18 +99,18 @@
 					$cp->subRes($buyRes);
 
 					// Nachricht an Verkäufer
-					MarketReport::add(array(
+					MarketReport::addMarketReport(array(
 						'user_id'=>$arr['user_id'],
 						'entity1_id'=>$cp->id,
 						'opponent1_id'=>$cu->id,
 						), "auctionfinished", $arr['id'], $marr);
 
-					MarketReport::add(array(
+					MarketReport::addMarketReport(array(
 						'user_id'=>$cu->id,
 						'entity1_id'=>$cp->id,
 						'opponent1_id'=>$arr['user_id'],
 						), "auctionwon", $arr['id'], $marr);
-						
+
 					// Add market ratings
 					$seller = new User($arr['user_id']);
 					$cu->rating->addTradeRating(TRADE_POINTS_PER_TRADE,false,'Handel #'.$arr['id'].' mit '.$arr['user_id']);
@@ -188,7 +188,7 @@
 
 						// Nachricht dem überbotenen user schicken
 						$marr['timestamp2']=$arr['date_end'];
-						MarketReport::add(array(
+						MarketReport::addMarketReport(array(
 							'user_id'=>$arr['current_buyer_id'],
 							'entity1_id'=>$cp->id,
 							'opponent1_id'=>$cu->id,
