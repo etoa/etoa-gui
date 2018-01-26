@@ -71,7 +71,7 @@ class MarketReport extends Report
 		}
 	}
 
-	static function add($data,$subType,$recordId,$marketData)
+	static function addMarketReport($data,$subType,$recordId,$marketData)
 	{
 		global $resNames;
 

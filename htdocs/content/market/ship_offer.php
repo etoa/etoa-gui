@@ -17,10 +17,10 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 	$for_user = 0;
 	$for_alliance = 0;
-	
+
 	if ($_POST['ship_offer_reservation'] == 1)
 	{
 		$for_user = User::findIdByNick(trim($_POST['ship_offer_user_nick']));
@@ -43,7 +43,7 @@
 
 	if (empty($errMsg))
 	{
-		
+
 		$ship_id = $_POST['ship_list'];
 		$ship_count = nf_back($_POST['ship_count']);
 
@@ -60,7 +60,7 @@
 
 		// Überprüft ob die angegebene Anzahl Schiffe noch vorhanden ist (eventuelle Zerstörung durch Kampf?)
 		$sl = new ShipList($cp->id,$cu->id);
-        
+
 		// Schiffe vom Planeten abziehen
         $removed_ships_count = $sl->remove($ship_id,$ship_count);
 
@@ -93,14 +93,14 @@
 					'".mysql_real_escape_string($_POST['ship_text'])."',
 					'".time()."')");
 
-			MarketReport::add(array(
+			MarketReport::addMarketReport(array(
 				'user_id'=>$cu->id,
 				'entity1_id'=>$cp->id,
 				'content'=>$_POST['ship_text']
 				), "shipadd", mysql_insert_id(), $marr);
 
-				
-			if ($for_alliance > 0) 
+
+			if ($for_alliance > 0)
 			{
 				// Set cooldown
 				$cd = time()+$cooldown;
@@ -112,10 +112,10 @@
 						WHERE
 							alliance_buildlist_alliance_id='".$cu->allianceId."'
 							AND alliance_buildlist_building_id='".ALLIANCE_MARKET_ID."';");
-				
+
 				$cu->alliance->buildlist->setCooldown(ALLIANCE_MARKET_ID,$cd);
 			}
-				
+
 			success_msg("Angebot erfolgreich abgesendet!");
 			return_btn();
 		}

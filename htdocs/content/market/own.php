@@ -26,7 +26,7 @@
 		if (isset($_POST['ship_market_id']))
 		{
 			$smid = intval($_POST['ship_market_id']);
-			
+
 			$scres=dbquery("
 			SELECT
 				*
@@ -54,7 +54,7 @@
 				if ($returnCount>0)
 				{
 					$rsl = new ShipList($scrow['entity_id'],$scrow['user_id']);
-					$rsl->add($scrow['ship_id'], $returnCount);	
+					$rsl->add($scrow['ship_id'], $returnCount);
 				}
 
 				dbquery("
@@ -63,7 +63,7 @@
 				WHERE
 					id='".$smid."'");
 
-			MarketReport::add(array(
+			MarketReport::addMarketReport(array(
 				'user_id'=>$cu->id,
 				'entity1_id'=>$cp->id,
 				), "shipcancel", $smid, $marr);
@@ -89,7 +89,7 @@
 	elseif (isset($_POST['ressource_cancel']) && isset($_POST['ressource_market_id']))
 	{
 		$rmid = intval($_POST['ressource_market_id']);
-		
+
 		$rcres=dbquery("
 		SELECT
 			*
@@ -123,7 +123,7 @@
 			$tp->addRes($rarr);
 			unset($tp);
 
-			MarketReport::add(array(
+			MarketReport::addMarketReport(array(
 				'user_id'=>$cu->id,
 				'entity1_id'=>$rcrow['entity_id'],
 				), "rescancel", $rmid, $marr);
@@ -149,7 +149,7 @@
 	elseif(isset($_POST['auction_cancel']) && isset($_POST['auction_cancel_id']))
 	{
 		$acid = intval($_POST['auction_cancel_id']);
-		
+
 		$acres=dbquery("
 		SELECT
 			*
@@ -182,8 +182,8 @@
 
 			//Auktion löschen
 			dbquery("DELETE FROM market_auction WHERE id='".$acid."'");
-			
-			MarketReport::add(array(
+
+			MarketReport::addMarketReport(array(
 				'user_id'=>$cu->id,
 				'entity1_id'=>$acrow['entity_id'],
 				), "auctioncancel", $acid, $marr);
@@ -249,7 +249,7 @@
 				{
 					$reservation="";
 				}
-				
+
 				$i = 0;
 
 				$te = Entity::createFactoryById($row['entity_id']);
@@ -395,7 +395,7 @@
 			user_id='".$cu->id."'
 		ORDER BY
 			date_end ASC;");
-	
+
 		if (mysql_num_rows($res)>0)
 		{
 			echo "<form action=\"?page=$page&amp;mode=user_sell\" method=\"post\">\n";
