@@ -396,9 +396,6 @@
 			$user_rank_highest=array();
 			$max_points_building = 0;
 			$points_building_arr = array();
-			$max_points = 0;
-			$points_arr = array();
-
 			while ($uarr=mysql_fetch_assoc($ures))
 			{
 				$user_id = $uarr['user_id'];
@@ -629,7 +626,28 @@
 				");
 			}
 			
-			
+			// Update boost bonus
+			if ($cfg->value('boost_system_enable') == 1 && $max_points_building > 0) {
+				$max_prod = $cfg->value('boost_system_max_res_prod_bonus');
+				$max_build = $cfg->value('boost_system_max_building_speed_bonus');
+				foreach ($points_building_arr as $uid => $ubp) {
+					dbquery("
+						UPDATE 
+							users 
+						SET 
+							boost_bonus_production=".($max_prod * ($max_points_building - $ubp) / $max_points_building).",
+							boost_bonus_building=".($max_build * ($max_points_building - $ubp) / $max_points_building)."
+						WHERE
+							user_id=".$uid.";");
+				}
+			} else {
+				dbquery("
+					UPDATE 
+						users 
+					SET 
+						boost_bonus_production=0,
+						boost_bonus_building=0;");
+			}
 			
 			// Save points to user points table
 			if ($user_points_query!="")
@@ -664,7 +682,6 @@
 			unset($user_points_query);
 		
 			// Ranking (Total Points)
-
 			$res = dbquery("
 			SELECT
 				id,
@@ -705,38 +722,10 @@
 					WHERE
 						user_id=".$arr[0]."
 					");
-					
-					$max_points = max($max_points, $arr[1]);
-					$points_arr[$arr[0]] = $arr[1];
-
+						
 					$cnt++;
 				}				
 			}
-
-			// Update boost bonus
-			if ($cfg->value('boost_system_enable') == 1 && $max_points_building > 0) {
-				$max_prod = $cfg->value('boost_system_max_res_prod_bonus');
-				$max_build = $cfg->value('boost_system_max_building_speed_bonus');
-				foreach ($points_arr as $uid => $up) {
-					dbquery("
-						UPDATE 
-							users 
-						SET 
-							boost_bonus_production=".($max_prod * ($max_points - $up) / $max_points).",
-							boost_bonus_building=".($max_build * ($max_points - $up) / $max_points)."
-						WHERE
-							user_id=".$uid.";");
-				}
-			} else {
-				dbquery("
-					UPDATE 
-						users 
-					SET 
-						boost_bonus_production=0,
-						boost_bonus_building=0;");
-			}
-
-
 			unset($user_rank_highest);
 			
 			// Ranking (Ships)

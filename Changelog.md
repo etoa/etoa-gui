@@ -32,7 +32,7 @@ Version 3.5.18
 
 ### Features ###
 
- * boost working with total points
+ * boost working with total points (does not apply to round16)
 
 
 Version 3.5.17
