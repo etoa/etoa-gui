@@ -335,7 +335,7 @@
 		ob_start();
 
 		// Do some checks
-		if (count($form)>0 || $fleet->getShipCount() > 0)
+		if (($form && count($form)>0) || $fleet->getShipCount() > 0)
 		{
 
 			// Add ships
@@ -1366,6 +1366,7 @@
 		{
 			$absX = (($sx - 1) * CELL_NUM_X) + $cx;
 			$absY = (($sy - 1) * CELL_NUM_Y) + $cy;
+			/** @var FleetLaunch $fleet */
 			$fleet = unserialize($_SESSION['haven']['fleetObj']);
 
 			if ($fleet->owner->discovered($absX,$absY) == 0)
@@ -1429,7 +1430,7 @@
 					$action = "<input id=\"cooseAction\" tabindex=\"9\" type=\"submit\" value=\"Weiter zur Aktionsauswahl &gt;&gt;&gt;\"  /> &nbsp;";
 				}
 
-				if ($ent->ownerId()>0 && count($fleet->aFleets)) {
+				if ($ent->ownerId()>0 && is_array($fleet->aFleets) && count($fleet->aFleets)) {
 					$alliance .= "<table style=\"width:100%;\">";
 					$counter = 0;
 					foreach ($fleet->aFleets as $f) {
@@ -1490,6 +1491,7 @@
 	{
 		$response = new xajaxResponse();
 
+		/** @var FleetLaunch $fleet */
 		$fleet = unserialize($_SESSION['haven']['fleetObj']);
 
 		if ($form["bookmarks"])
@@ -1591,7 +1593,7 @@
 		}
 		// $action = "<input id=\"cooseAction\" tabindex=\"9\" type=\"submit\" value=\"Weiter zur Aktionsauswahl &gt;&gt;&gt;\"  /> &nbsp;";
 
-		if ($ent->ownerId()>0 && count($fleet->aFleets)) {
+		if ($ent->ownerId()>0 && is_array($fleet->aFleets) && count($fleet->aFleets)) {
 			$alliance .= "<table style=\"width:100%;\">";
 			$counter = 0;
 			foreach ($fleet->aFleets as $f) {
