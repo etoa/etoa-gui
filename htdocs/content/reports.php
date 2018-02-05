@@ -33,18 +33,18 @@
 
 	// Detect report type
 	$type = isset($_GET['type']) ? $_GET['type'] : 'all';
-	
+
 	// Selektiere archivieren
 	if (isset($_POST['submitarchivselection'])  && checker_verify())
 	{
-		
+
 		if (count($_POST['delreport'])>0)
 		{
-			
+
 			$ids = array();
 			foreach ($_POST['delreport'] as $id=>$val)
 				array_push($ids,intval($id));
-			
+
 			dbquery("
 				UPDATE
 					reports
@@ -54,7 +54,7 @@
 					id IN (".implode(",",$ids).")
 					AND user_id='".$cu->id."'
 					$sqladd;");
-			
+
 			if (count($_POST['delreport'])==1)
 			{
 				success_msg("Bericht wurde archiviert!");
@@ -65,7 +65,7 @@
 			}
 		}
 	}
-	
+
 	// Selektiere löschen
 	if (isset($_POST['submitdeleteselection'])  && checker_verify())
 	{
@@ -77,14 +77,14 @@
 		{
 			$sqladd = " AND archived=0";
 		}
-		
-		if (count($_POST['delreport'])>0)
+
+		if (isset($_POST['delreport']) && count($_POST['delreport'])>0)
 		{
-			
+
 			$ids = array();
 			foreach ($_POST['delreport'] as $id=>$val)
 				array_push($ids,intval($id));
-			
+
 			dbquery("
 				UPDATE
 					reports
@@ -94,7 +94,7 @@
 					id IN (".implode(",",$ids).")
 					AND user_id='".$cu->id."'
 					$sqladd;");
-			
+
 			if (count($_POST['delreport'])==1)
 			{
 				success_msg("Bericht wurde gel&ouml;scht!");
@@ -116,7 +116,7 @@
 			if ($type!="all")
 				$sqladd .= " AND type='".$type."' ";
 		}
-		
+
 		dbquery("
 		UPDATE
 			reports
@@ -127,7 +127,7 @@
 			$sqladd;");
 		success_msg("Alle Berichte wurden gel&ouml;scht!");
 	}
-	
+
 	// Limit for pagination
 	$limit =  (isset($_GET['limit'])) ? intval($_GET['limit']) : 0;
 	$limit-= $limit%REPORT_LIMIT;
@@ -142,7 +142,7 @@
 	elseif ($type == "archiv")
 	{
 		$reports = Report::find(array("user_id"=>$cu->id,"archived"=>true),"timestamp DESC",$limitstr);
-		$totalReports = Report::find(array("user_id"=>$cu->id,"archived"=>true),"timestamp DESC","",1);		
+		$totalReports = Report::find(array("user_id"=>$cu->id,"archived"=>true),"timestamp DESC","",1);
 	}
 	else
 	{
@@ -178,7 +178,7 @@
 			echo "<input type=\"button\" value=\"&gt;&gt;\" onclick=\"document.location='?page=$page&amp;type=$type&amp;limit=".($totalReports-($totalReports%REPORT_LIMIT))."'\" /> ";
 			echo "</div></th></tr>";
 		}
-		
+
 		$ccnt=count($reports);
 		// Table header
 		echo "<tr>
@@ -188,7 +188,7 @@
 		echo "<th style=\"width:150px\">Datum:</th>
 		<th style=\"text-align:center;\"><input type=\"button\" id=\"selectBtn\" value=\"X\" onclick=\"xajax_reportSelectAll(".$ccnt.",this.value)\"/></td>
 		</tr>";
-		
+
 		$cnt=0;
 		// Iterate through each report
 		foreach ($reports as $rid => $r)
@@ -217,7 +217,7 @@
 				$subject = base64_encode($r->subject);
 			else
 				$subject = base64_encode("Fw: ".$r->subject);
-			
+
 			echo "<input type=\"button\" value=\"Weiterleiten\" onclick=\"document.location='?page=messages&mode=new&amp;message_subject=".$subject."".$msgadd."'\" name=\"remit\" />&nbsp;*/
 			echo "<input type=\"button\" value=\"L&ouml;schen\" onclick=\"toggleBox('report".$rid."');xajax_reportSetDeleted(".$rid.");\" />&nbsp;";
 			ticket_button(8,"Regelverstoss melden");
@@ -230,7 +230,7 @@
 				<input type=\"submit\" name=\"submitdeleteall\" value=\"Alle l&ouml;schen\" onclick=\"return confirm('Wirklich alle Berichte in dieser Kategorie löschen?');\" />&nbsp;&nbsp;";
 		if ($type!="archiv")
 			echo "<input type=\"submit\" name=\"submitarchivselection\" value=\"Markierte archivieren\" />";
-				
+
 		echo "</div></form>";
 	}
 	else
