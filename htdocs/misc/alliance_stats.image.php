@@ -16,7 +16,7 @@
 	define('FONT_SIZE',1);	// Schriftgrösse
 	define('BG_FAC_W',5/6);	// Schriftgrösse
 	define('BG_FAC_H',0.41);	// Schriftgrösse
-	
+
 	define('B_H',IM_H-(2*B_B));
 
 	$im = ImageCreate(IM_W,IM_H);
@@ -36,12 +36,12 @@
 	$imh = imagecreatefromjpeg("images/logo_trans.jpg");
 	ImageCopyresized($im,$imh,(IM_W-(IM_W*BG_FAC_W))/2,(IM_H-(IM_H*BG_FAC_H))/2,0,0,IM_W*BG_FAC_W,IM_H*BG_FAC_H,imagesx($imh),imagesy($imh));
 	ImageRectangle($im, 0, 0, IM_W-1, IM_H-1, $black);
-	
+
 	if (isset($_GET['alliance']))
 	{
 		$aid = intval($_GET['alliance']);
 	}
-	
+
 	if ($aid>0 && count($_SESSION)>0)
 	{
 		$res=dbquery("
@@ -60,7 +60,7 @@
 			if (intval($_GET['start'])>0)
 				$sql1 = " AND point_timestamp > ".intval($_GET['start'])." ";
 			if (intval($_GET['end'])>0)
-				$sql2 = " AND point_timestamp < ".intval($_GET['end'])." ";			
+				$sql2 = " AND point_timestamp < ".intval($_GET['end'])." ";
 			$pres=dbquery("
 				SELECT 
 					* 
@@ -76,7 +76,7 @@
 			");
 			if (mysql_num_rows($pres)>0)
 			{
-				define(B_W, (IM_W-B_B)/floor(mysql_num_rows($pres)/STEP)/2);
+				define('B_W', (IM_W-B_B)/floor(mysql_num_rows($pres)/STEP)/2);
 				// Bar colors
 				for ($x=0;$x<B_W;$x++)
 				{
@@ -84,7 +84,7 @@
 				}
 				// Shadow colors
 				for ($i=SHADOW_L;$i>0;$i--)
-				{				
+				{
 					$s_col[$i]=ImageColorAllocate($im,5+($i*250/SHADOW_L),5+($i*250/SHADOW_L),5+($i*250/SHADOW_L));
 				}
 
@@ -103,11 +103,11 @@
 					if ($cnt==STEP) $cnt=0;
 				}
 				ksort ($points);
-	
-				imagestring($im,FONT_SIZE,B_B/3,B_B/3,"Statistiken von [".$arr['alliance_tag']."] ".$arr['alliance_name'].", Rang ".$arr['alliance_rank_current'].", letzes Update: ".date("d.m.Y H:i",$last_update)."",$black);	
-				imagestring($im,FONT_SIZE,B_B/3,B_B/3+9,"Schrittweite: ".STEP." Stunden, Zeitraum: ".(DETAIL_LIMIT*STEP/24)." Tage",$black);	
+
+				imagestring($im,FONT_SIZE,B_B/3,B_B/3,"Statistiken von [".$arr['alliance_tag']."] ".$arr['alliance_name'].", Rang ".$arr['alliance_rank_current'].", letzes Update: ".date("d.m.Y H:i",$last_update)."",$black);
+				imagestring($im,FONT_SIZE,B_B/3,B_B/3+9,"Schrittweite: ".STEP." Stunden, Zeitraum: ".(DETAIL_LIMIT*STEP/24)." Tage",$black);
 				$cnt=0;
-				
+
 				$last_x = -1;
 				$last_y = -1;
 				foreach ($points as $t=>$p)
@@ -120,24 +120,24 @@
 					if ($last_x==-1)
 					{
 						$last_x=$x0;
-					}	
+					}
 					if ($last_y==-1)
 					{
 						$last_y=$y0;
-					}	
-					
+					}
+
 
 					imageline($im, $x0+1, $y0+2,$last_x+1,$last_y+2,$grey);
 					imageline($im, $x0, $y0+2,$last_x,$last_y+2,$grey);
-										
+
 					imageline($im, $x0, $y0,$last_x,$last_y,$lblue);
 					imageline($im, $x0, $y0+1,$last_x,$last_y+1,$lblue);
-					
+
 					imageline($im, $left+(B_W/2), B_B+B_H-(B_H*$p/$pmax), $left+(B_W/2), B_B+B_H, $grey);
-					
+
 					$last_x = $x0;
 					$last_y = $y0;
-					
+
 					/*
 					// Schatten
 					for ($i=SHADOW_L;$i>0;$i--)
@@ -161,24 +161,24 @@
 						imagestring($im,FONT_SIZE,$left-8+(B_W/2)-imagefontwidth(1)*5/2,B_B+B_H+13,date("d.m.y",$t),$black);
 					}
 					// Punkte
-					
+
 						imagestringup($im,FONT_SIZE,$left+(B_W/2)-imagefontheight(1),B_H+B_B-10,nf($p),$black);
-					
+
 					$cnt++;
 				}
 			}
 			else
-				imagestring($im,3,10,10,"Keine Punktdaten (Punkte > 0) vorhanden!",$black);			
-		}		
+				imagestring($im,3,10,10,"Keine Punktdaten (Punkte > 0) vorhanden!",$black);
+		}
 		else
-			imagestring($im,3,10,10,"Fehler! Allianz nicht vorhanden!",$black);			
+			imagestring($im,3,10,10,"Fehler! Allianz nicht vorhanden!",$black);
 	}
 	else
-		imagestring($im,3,10,10,"Fehler! Keine ID angegeben oder du bist nicht eingeloggt!",$black);			
+		imagestring($im,3,10,10,"Fehler! Keine ID angegeben oder du bist nicht eingeloggt!",$black);
 	ImagePNG($im);
 
 
 
 
-	dbclose();		
+	dbclose();
 ?>
