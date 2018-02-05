@@ -5,7 +5,7 @@
 	$w = 600;
 	$h = 400;
 	$im = imagecreatetruecolor($w,$h);
-		
+
 	$colWhite = imagecolorallocate($im,255,255,255);
 	$colBlack = imagecolorallocate($im,0,0,0);
 	$colLLGrey = imagecolorallocate($im,230,230,230);
@@ -20,11 +20,11 @@
 
 	$colBg = imagecolorallocate($im,255,255,255);
 
-	$rCol[0] = imagecolorallocate($im,157,100,094);
-	$rCol[1] = imagecolorallocate($im,094,126,139);
+	$rCol[0] = imagecolorallocate($im,157,100,94);
+	$rCol[1] = imagecolorallocate($im,94,126,139);
 	$rCol[2] = imagecolorallocate($im,129,109,139);
-	$rCol[3] = imagecolorallocate($im,064,093,139);
-	$rCol[4] = imagecolorallocate($im,094,136,094);
+	$rCol[3] = imagecolorallocate($im,064,93,139);
+	$rCol[4] = imagecolorallocate($im,94,136,94);
 
 
 	$graphtx = 30;
@@ -114,7 +114,7 @@
 			}
 			$j++;
 		}
-		
+
 		for ($i=0;$i<NUM_RESOURCES;$i++)
 		{
 			imagestring($im,1,$lastx[$i]+5,$lasty[$i]-3,round($rates[$i],2),$rCol[$i]);
@@ -142,6 +142,6 @@
 
 
 	imagepng($im);
-	
+
 
 ?>
