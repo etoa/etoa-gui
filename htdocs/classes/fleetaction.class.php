@@ -4,7 +4,7 @@
 	* Abstract base class for all fleet actions
 	*
 	* @author Nicolas Perrenoud<mrcage@etoa.ch>
-	*/	
+	*/
 	abstract class FleetAction
 	{
 		//
@@ -45,19 +45,19 @@
 		// Colors for different attitudes
 		static public $attitudeColor = array("#ff0","#0f0","#f90","#f00","#999");
 		static public $attitudeString = array("Neutral","Friedlich","Aggressiv","Feindlich","Unbekannt");
-		
+
 		// Status descriptions
 		static public $statusCode = array("Hinflug","R&uuml;ckflug","Abgebrochen","Allianz");
 
 		//
 		// Class variables
 		//
-		
+
 		protected $code;	// Flight code
-		protected $name;	// Name 
+		protected $name;	// Name
 		protected $desc; 	// Short description of the action
 		protected $longDesc; 	// Long description of the action
-		
+
 		protected $attitude;	// 0: Neutral, 1: Peacefull, 2: A bit hostile 3: Very hostile
 		protected $visible;	// True: Visible to other players, False: Hidden for other players
 		protected $exclusive; // True: Only ships with this action can take part in the fleet except special ships
@@ -67,7 +67,7 @@
 		protected $allowNpcEntities;
 		protected $allowSourceEntity;
 		protected $allowActivePlayerEntities;
-		
+
 		protected $cancelable = true;
 		protected $visibleSource = true;
 		protected $sourceCode = 'u';
@@ -75,16 +75,16 @@
 		//
 		// Abstract methods
 		//
-		
+
 		abstract function startAction();
 		abstract function targetAction();
 		abstract function cancelAction();
 		abstract function returningAction();
-		
+
 		//
 		// Getters
 		//
-		
+
 		function code() { return $this->code; }
 		function name() { return $this->name; }
 		function color() { return self::$attitudeColor[$this->attitude]; }
@@ -100,8 +100,8 @@
 
 		// Overwritable functions
 		function displayName() { return $this->name; }
-		
-		// Other functions		
+
+		// Other functions
 		function allowPlayerEntities() { return $this->allowPlayerEntities; }
 		function allowActivePlayerEntities() { return $this->allowActivePlayerEntities; }
 		function allowOwnEntities() { return $this->allowOwnEntities; }
@@ -125,13 +125,13 @@
 				if (file_exists($classFile))
 				{
 					include_once($classFile);
-					return new $className();			
+					return new $className();
 				}
 				echo "Problem mit Flottenaktion $code ($classFile)!<br/>";
 			}
 			return false;
 		}
-		
+
 		static function getAll($sorted=false)
 		{
 			$arr = array();
@@ -139,18 +139,18 @@
 			{
 				if ($tmp = self::createFactory($i))
 				{
-					$arr[$i] = $tmp; 
+					$arr[$i] = $tmp;
 				}
 			}
-      if ($sorted) {
-        uasort($arr, array(self, 'fleetActionCompare'));
-      }
-			return $arr;			
+			if ($sorted) {
+				uasort($arr, array(__CLASS__, 'fleetActionCompare'));
+			}
+			return $arr;
 		}
-		
-    static function fleetActionCompare($a, $b) 
+
+    static function fleetActionCompare($a, $b)
     {
-      return strcmp($a->name(), $b->name());
-    }    
+		return strcmp($a->name(), $b->name());
 	}
-?>
+	}
+

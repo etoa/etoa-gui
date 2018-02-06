@@ -1,3 +1,3 @@
 <?PHP
-define('APP_VERSION', '3.5.20');
+define('APP_VERSION', '3.5.21');
 ?>
