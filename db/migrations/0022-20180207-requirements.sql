@@ -61,6 +61,7 @@ ALTER TABLE ship_requirements CHANGE obj_id obj_id INT UNSIGNED NOT NULL, CHANGE
 
 UPDATE ship_requirements SET req_building_id = null WHERE req_building_id = 0;
 UPDATE ship_requirements SET req_tech_id = null WHERE req_tech_id = 0;
+DELETE FROM ship_requirements WHERE obj_id NOT IN (SELECT ship_id FROM ships);
 
 ALTER TABLE ship_requirements ADD CONSTRAINT FK_4F2112CA66093344 FOREIGN KEY (obj_id) REFERENCES ships (ship_id);
 ALTER TABLE ship_requirements ADD CONSTRAINT FK_4F2112CA7E57261C FOREIGN KEY (req_building_id) REFERENCES buildings (building_id);
