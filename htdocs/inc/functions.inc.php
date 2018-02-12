@@ -604,7 +604,7 @@
 		}
 		// Alien/NPC
 	    elseif ($ent->owner->isNPC()>0)
-	    {	
+	    {
 		    $class .= "alien";
 		    $tm_info = "Alien";
 		}
@@ -2641,7 +2641,7 @@ function imagecreatefromfile($path, $user_functions = false)
 	* Returns true if script is run on command line
 	*/
 	function isCLI() {
-		return isset($_SERVER['SHELL']);
+		return php_sapi_name() === 'cli';
 	}
 
 	/**
