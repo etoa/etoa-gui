@@ -48,7 +48,7 @@
 	<colgroup>
 		<col style="width:40%;"/>
 		<col />
-	</colgroup>	
+	</colgroup>
 	<tr><th colspan="2">Abfragen</th></tr>
 	<tr><td>Insgesamt</td><td>{$questions}</td></tr>
 	<tr><td>ø pro Tag</td><td>{$avgQuestionsDay}</td></tr>
@@ -60,7 +60,7 @@
 	<colgroup>
 		<col style="width:40%;"/>
 		<col />
-	</colgroup>	
+	</colgroup>
 	<tr><th colspan="2">Sonstiges</th></tr>
 	<tr><td>Langsame Abfragen</td><td>{$slowQueries}</td></tr>
 	<tr><td>Erstellte Temorärtabellen auf der Festplatte</td><td>{$createdTmpDiskTables}</td></tr>
@@ -80,12 +80,14 @@
 			<th><a href="?page={$page}&amp;sort=name">Name</th>
 			<th><a href="?page={$page}&amp;sort=size">Grösse</th>
 			<th><a href="?page={$page}&amp;sort=rows">Einträge</th>
+			<th><a href="?page={$page}&amp;sort=engine">Engine</th>
 		</tr>
 		{foreach from=$dbStats item=r}
 			<tr>
 				<td>{$r.name}</td>
 				<td>{$r.size}</td>
 				<td>{$r.entries}</td>
+				<td>{$r.engine}</td>
 			</tr>
 		{/foreach}
 	</table>
