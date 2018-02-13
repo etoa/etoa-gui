@@ -18,7 +18,7 @@ abstract class Session implements ISingleton
 
 	/**
 	 * Returns the single instance of this class (Singleton design pattern)
-	 * 
+	 *
 	 * @return Session Instance of the session class
 	 */
 	public static function getInstance($className = null)
@@ -68,7 +68,7 @@ abstract class Session implements ISingleton
 
 	/**
 	 * Tries to login the user with the given dataand to create a session
-	 * 
+	 *
 	 * @param array $data Login data like username and password
 	 */
 	abstract function login($data);
@@ -104,13 +104,13 @@ abstract class Session implements ISingleton
 		// Set session name based on round name.
 		// MD5 is needed because spaces in roundname cause problems
 		$sname = md5($this->namePrefix.Config::getInstance()->roundname->v);
-		session_name($sname);
+		@session_name($sname);
 		@session_start();	// Start the session
 	}
 
 	/**
 	 * Getter that returns session variables or some class properties
-	 * 
+	 *
 	 * @param <type> $field
 	 * @return mixed Requested variable or null if field was not found
 	 */

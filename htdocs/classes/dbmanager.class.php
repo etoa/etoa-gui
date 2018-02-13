@@ -96,17 +96,10 @@ class DBManager implements ISingleton	{
 				$this->dbCfg = $tempCfg;
 			}
 			$dbCfg = $this->dbCfg;
-			if (!$this->handle = @mysql_connect($dbCfg['host'], $dbCfg['user'], $dbCfg['password']))
+			if (!$this->handle = @mysql_connect($dbCfg['host'], $dbCfg['user'], $dbCfg['password'], $dbCfg['dbname']))
 			{
 				if ($throwError==1)
 					throw new DBException("Zum Datenbankserver auf <b>".$dbCfg['host']."</b> kann keine Verbindung hergestellt werden!");
-				else
-					return false;
-			}
-			if (!mysql_select_db($dbCfg['dbname']))
-			{
-				if ($throwError==1)
-					throw new DBException("Auf die Datenbank <b>".$dbCfg['dbname']."</b> auf <b>".$dbCfg['host']."</b> kann nicht zugegriffen werden!");
 				else
 					return false;
 			}

@@ -5,7 +5,6 @@ namespace EtoA\Core;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\FingersCrossedHandler;
 use Monolog\Handler\SyslogHandler;
-use Monolog\Handler\SyslogUdpHandler;
 use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
 use Pimple\Container;
@@ -35,16 +34,9 @@ class MonologServiceProvider implements ServiceProviderInterface
 
         $pimple['monolog.handler'] = function (Container $pimple) {
             return new FingersCrossedHandler(
-                $pimple['debug']? $pimple['monolog.syslog.handler'] : $pimple['monolog.udp.handler'],
+                $pimple['monolog.syslog.handler'],
                 $pimple['debug'] ? Logger::DEBUG : Logger::WARNING
             );
-        };
-
-        $pimple['monolog.udp.handler'] = function (Container $pimple) {
-            $syslogHandler = new SyslogUdpHandler('logs4.papertrailapp.com', 48360, LOG_SYSLOG, Logger::DEBUG);
-            $syslogHandler->setFormatter($pimple['monolog.formatter']);
-
-            return $syslogHandler;
         };
 
         $pimple['monolog.syslog.handler'] = function (Container $pimple) {

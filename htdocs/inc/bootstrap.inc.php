@@ -56,9 +56,9 @@
 	if (!isCLI() && (!defined('SKIP_XAJAX_INIT') || !SKIP_XAJAX_INIT))
 	{
 		if (ADMIN_MODE) {
-			require_once(RELATIVE_ROOT."/admin/inc/xajax_admin.inc.php");
+			require_once dirname(__DIR__) . '/admin/inc/xajax_admin.inc.php';
 		} else {
-			require_once(RELATIVE_ROOT."inc/xajax.inc.php");
+			require_once dirname(__DIR__) . '/inc/xajax.inc.php';
 		}
 	}
 
