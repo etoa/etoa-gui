@@ -83,15 +83,17 @@ namespace spy
 					fleetReport->setDefense(this->targetEntity->getDefString());
 		
 				// and at last the resources on the planet
-                int spy=1;
+                
 				if (this->spyLevelAtt >= config.idget("SPY_ATTACK_SHOW_RESSOURCEN") && (rand() % 101) > this->tarnDefense)
-					fleetReport->setRes(floor(this->targetEntity->getResMetal(spy)),
-										floor(this->targetEntity->getResCrystal(spy)),
-										floor(this->targetEntity->getResPlastic(spy)),
-										floor(this->targetEntity->getResFuel(spy)),
-										floor(this->targetEntity->getResFood(spy)),
+                {
+                    
+					fleetReport->setRes(floor(this->targetEntity->getResMetal(1,1)),
+										floor(this->targetEntity->getResCrystal(1,1)),
+										floor(this->targetEntity->getResPlastic(1,1)),
+										floor(this->targetEntity->getResFuel(1,1)),
+										floor(this->targetEntity->getResFood(1,1)),
 										floor(this->targetEntity->getResPeople()));
-				
+                }
 				fleetReport->setSpydefense(round(this->spyDefense));
 				fleetReport->setCoverage(round(this->tarnDefense));
 				

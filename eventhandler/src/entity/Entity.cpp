@@ -87,7 +87,7 @@
 		if (percent!=1)
 			return max(0.0,min(this->resMetal-this->bunkerMetal,this->resMetal*percent));
         
-        else if (spy==1 && percent==1)
+        if (spy==1 && percent==1)
             return max(0.0,this->resMetal-this->bunkerMetal);
 		return this->resMetal;
 	}
@@ -98,7 +98,7 @@
 		
 		if (percent!=1)
 			return max(0.0,min(this->resCrystal-this->bunkerCrystal,this->resCrystal*percent));
-        else if (spy==1 && percent==1)
+        if (spy==1 && percent==1)
             return max(0.0,this->resCrystal-this->bunkerCrystal);
         
 		return this->resCrystal;
@@ -110,7 +110,7 @@
 		
 		if (percent!=1)
 			return max(0.0,min(this->resPlastic-this->bunkerPlastic,this->resPlastic*percent));
-        else if (spy==1 && percent==1)
+        if (spy==1 && percent==1)
             return max(0.0,this->resPlastic-this->bunkerPlastic);
         
 		return this->resPlastic;
@@ -122,7 +122,7 @@
 		
 		if (percent!=1)
 			return max(0.0,min(this->resFuel-this->bunkerFuel,this->resFuel*percent));
-        else if (spy==1 && percent==1)
+        if (spy==1 && percent==1)
             return max(0.0,this->resFuel-this->bunkerFuel);
         
 		return this->resFuel;
@@ -134,7 +134,8 @@
 		
 		if (percent!=1)
 			return max(0.0,min(this->resFood-this->bunkerFood,this->resFood*percent));
-        else if (spy==1 && percent==1)
+        
+        if (spy==1 && percent==1)
             return max(0.0,this->resFood-this->bunkerFood);
         
 		return this->resFood;
