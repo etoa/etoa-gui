@@ -1817,3 +1817,20 @@ function advanceQuest(questId, transition) {
         }
 	});
 }
+
+// builds URL when reselecting planet
+function setSelectUrl() {
+
+	var filter_planet_id = document.getElementById("filter_planet_id");
+	var value_planet = filter_planet_id.options[filter_planet_id.selectedIndex].value;
+
+	var filter_sol_id = document.getElementById("filter_sol_id");
+	var value_sol = filter_sol_id.options[filter_sol_id.selectedIndex].value;
+
+	var url_string = window.location.href;
+	var url = new URL(url_string);
+	var setup_sy = url.searchParams.get("setup_sy");
+	var setup_sx = url.searchParams.get("setup_sx");
+
+	document.location='?setup_sx='+setup_sx+'&setup_sy='+setup_sy+'&filter_p='+value_planet+'&filter_s='+value_sol;
+}

@@ -1,6 +1,14 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.22 (round18)
+--------------
+
+### Features ###
+
+* scans don't show bunker ress anymore
+* selection filter when choosing planet
+
 Version 3.5.21
 --------------
 
