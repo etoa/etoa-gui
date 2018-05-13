@@ -25,7 +25,7 @@ You can now reach etoa via http://192.168.33.11
 Cronjob, Eventhandler, DB, PHP, Nginx should be running.
 
 Additional steps because I haven't figured out yet how to reset the db config via cli:
-* Go to: http://192.168.33.11/admin/
+* Go to: http://192.168.33.11/admin
 * Login as admin
 * Reset the Configuration in the admin tool, then set the loginurl back to "" (empty string)
 
