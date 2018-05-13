@@ -41,7 +41,11 @@ namespace spy
 		**/
 		double spyDefense, spyDefense1, spyDefense2, tarnDefense;
 		bool support;
-		
+        
+        /**
+         * Spy ress definer for bunker Ress
+         **/
+        int spy;
 		/**
 		* Something like a go or not variable
 		**/
