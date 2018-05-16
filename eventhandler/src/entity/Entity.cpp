@@ -80,48 +80,64 @@
 		this->actionName = actionName;
 	}
 
-	double Entity::getResMetal(double percent) {
+	double Entity::getResMetal(double percent, int spy) {
 		if (!this->dataLoaded)
 			this->loadData();
 		
 		if (percent!=1)
 			return max(0.0,min(this->resMetal-this->bunkerMetal,this->resMetal*percent));
+        
+        if (spy==1 && percent==1)
+            return max(0.0,this->resMetal-this->bunkerMetal);
 		return this->resMetal;
 	}
 
-	double Entity::getResCrystal(double percent) {
+	double Entity::getResCrystal(double percent, int spy) {
 		if (!this->dataLoaded)
 			this->loadData();
 		
 		if (percent!=1)
 			return max(0.0,min(this->resCrystal-this->bunkerCrystal,this->resCrystal*percent));
+        if (spy==1 && percent==1)
+            return max(0.0,this->resCrystal-this->bunkerCrystal);
+        
 		return this->resCrystal;
 	}
 
-	double Entity::getResPlastic(double percent) {
+	double Entity::getResPlastic(double percent, int spy) {
 		if (!this->dataLoaded)
 			this->loadData();
 		
 		if (percent!=1)
 			return max(0.0,min(this->resPlastic-this->bunkerPlastic,this->resPlastic*percent));
+        if (spy==1 && percent==1)
+            return max(0.0,this->resPlastic-this->bunkerPlastic);
+        
 		return this->resPlastic;
 	}
 
-	double Entity::getResFuel(double percent) {
+	double Entity::getResFuel(double percent, int spy) {
 		if (!this->dataLoaded)
 			this->loadData();
 		
 		if (percent!=1)
 			return max(0.0,min(this->resFuel-this->bunkerFuel,this->resFuel*percent));
+        if (spy==1 && percent==1)
+            return max(0.0,this->resFuel-this->bunkerFuel);
+        
 		return this->resFuel;
 	}
 
-	double Entity::getResFood(double percent) {
+	double Entity::getResFood(double percent, int spy) {
 		if (!this->dataLoaded)
 			this->loadData();
 		
 		if (percent!=1)
 			return max(0.0,min(this->resFood-this->bunkerFood,this->resFood*percent));
+        
+        if (spy==1 && percent==1)
+            return max(0.0,this->resFood-this->bunkerFood);
+        
 		return this->resFood;
 	}
 

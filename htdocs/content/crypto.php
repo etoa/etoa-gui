@@ -237,12 +237,12 @@
 
 														if ($decryptlevel<=15)
 														{
-															$rand = mt_rand(0,30*60*2);
+															$rand = random_int(0, 30*60*2);
 															$out.="Zwischen ".date("d.m.Y H:i",$fd->landTime() - $rand)." und ".date("d.m.Y H:i",$fd->landTime()+(2*30*60)-$rand)." Uhr";
 														}
 														elseif ($decryptlevel<=20)
 														{
-															$rand = mt_rand(2*7*60);
+															$rand = random_int(0, 2*7*60);
 															$out.="Zwischen ".date("d.m.Y H:i",$fd->landTime()-$rand)." und ".date("d.m.Y H:i",$fd->landTime()+(2*7*60)-$rand)." Uhr";
 														}
 														elseif ($decryptlevel<=25)

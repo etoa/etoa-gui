@@ -63,7 +63,7 @@
 	}
 	elseif (isset($_GET['setup_sx']) && isset($_GET['setup_sy']) && $_GET['setup_sx']>0 && $_GET['setup_sy']>0 && $_GET['setup_sx']<=$sx_num && $_GET['setup_sy']<=$sy_num)
 	{
-		if ($pid = PlanetManager::getFreePlanet($_GET['setup_sx'],$_GET['setup_sy']))
+		if ($pid = PlanetManager::getFreePlanet($_GET['setup_sx'],$_GET['setup_sy'],$_GET['filter_p'],$_GET['filter_s']))
 		{
 			$mode = "checkplanet";
 		}		
@@ -134,6 +134,68 @@
 		echo "<tr><th>Ansicht:</th><td style=\"background:#000;text-align:center;\"><img src=\"".$tp->imagePath("m")."\" style=\"border:none;\" alt=\"planet\" /></td></tr>
 		</table>";
 
+        tableStart("Filter",300);
+        echo "<tr>
+			<th>Sonnentyp:</th>
+			<td>
+			
+			<select name=\"filter_sol_id\" id=\"filter_sol_id\">
+			<option value=\"0\">Bitte wählen...</option>";
+		$res = dbquery("
+		SELECT
+			sol_type_id,
+			sol_type_name
+		FROM
+			sol_types
+		WHERE
+			sol_type_consider=1
+		ORDER BY
+			sol_type_name;
+		");
+		while ($sol = mysql_fetch_array($res))
+		{
+            $selected = 0;
+
+            if ($_GET['filter_s'] == $sol['sol_type_id']) {
+                $selected = 'selected';
+            }
+			echo "<option value=\"".$sol['sol_type_id']."\"";
+			echo "$selected>".$sol['sol_type_name']."</option>";
+		}
+		echo "</select>
+		
+			</td></tr>";
+        echo "<tr>
+			<th>Planettyp:</th>
+			<td><select name=\"filter_planet_id\" id=\"filter_planet_id\">
+			<option value=\"0\">Bitte wählen...</option>";
+		$res = dbquery("
+		SELECT
+			type_id,
+			type_name
+		FROM
+			planet_types
+		WHERE
+			type_consider=1
+		AND 
+		    type_habitable = 1	
+		ORDER BY
+			type_name;
+		");
+		while ($planets = mysql_fetch_array($res))
+		{
+		    $selected = 0;
+
+		    if ($_GET['filter_p'] == $planets['type_id']) {
+		        $selected = 'selected';
+            }
+
+			echo "<option value=\"".$planets['type_id']."\"";
+			echo "$selected>".$planets['type_name']."</option>";
+		}
+		echo "</select></td></tr>
+        </table>";
+
 		tableStart("Bonis dieser Zusammenstellung",600);
 		echo "<tr><th>Rohstoff</th>
 		<th>".$tp->typeName."</th>";
@@ -202,10 +264,9 @@
 		echo "<td class=\"tbldata\">".get_percent_string($cu->race->fleetSpeedFactor,1)."</td></tr>";
 		tableEnd();
 
-
-
-		echo "<input type=\"submit\" name=\"submit_chooseplanet\" value=\"Auswählen\" />
-		<input type=\"button\" onclick=\"document.location='?setup_sx=".$_GET['setup_sx']."&setup_sy=".$_GET['setup_sy']."'\" value=\"Einen neuen Planeten auswählen\" />
+        echo "<input type=\"submit\" name=\"submit_chooseplanet\" value=\"Auswählen\" />
+		<input type=\"button\" onclick=\"setSelectUrl()\"
+		value=\"Einen neuen Planeten auswählen\" />
 		<input type=\"submit\" name=\"redo\" value=\"Einen neuen Sektor auswählen\" />";
 		echo "</form>";
 	}	
@@ -319,13 +380,13 @@
 			race_active=1
 		ORDER BY
 			race_name;
-		");       
+		");
 		while ($race = mysql_fetch_array($res))
 		{
 			echo "<option value=\"".$race['race_id']."\"";
 			echo ">".$race['race_name']."</option>";
 		}
-		echo "</select>";                       
+		echo "</select>";
 	
 		echo " &nbsp; <input type=\"button\" name=\"random\" id=\"random\" value=\"Zufällige Rasse auswählen\"  onclick=\"rdm()\"/>"; 
       

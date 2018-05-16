@@ -24,7 +24,7 @@
 	$auction_time_hours = $_POST['auction_time_hours'];
 	$auction_end_time = time() + $auction_min_time + $auction_time_days * 24 * 3600 + $auction_time_hours * 3600;
 	$marr = array('factor'=>MARKET_TAX,'timestamp2'=>$auction_end_time);
-	
+
 	$ok = true;
 	$sf = "";
 	$sv = "";
@@ -56,10 +56,10 @@
 		if (isset($_POST['res_buy_'.$rk]) && $_POST['res_buy_'.$rk]>0)
 			$marr['buy_'.$rk]=intval($_POST['auction_buy_'.$rk]);
 	}
-	
+
 	$ship_update=0;
 	$ress_update=0;
-	
+
 	// Prüft ob Rohstoffe noch vorhanden sind (eventueller verlust durch Kampf?)
 	if ($ok && $cp->checkRes($subtracted))
 	{
@@ -89,7 +89,7 @@
 
 
         //Nachricht senden
-		MarketReport::add(array(
+		MarketReport::addMarketReport(array(
 			'user_id'=>$cu->id,
 			'entity1_id'=>$cp->id,
 			'content'=> $_POST['auction_text']

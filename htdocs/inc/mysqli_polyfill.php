@@ -64,9 +64,9 @@ if (!function_exists('mysql_fetch_field')) {
 }
 
 if (!function_exists('mysql_connect')) {
-    function mysql_connect($host = '', $user = '', $password = '') {
+    function mysql_connect($host = '', $user = '', $password = '', $database = '') {
         global $mysqlHandle;
-        $mysqlHandle = mysqli_connect($host, $user, $password);
+        $mysqlHandle = mysqli_connect($host, $user, $password, $database);
         return $mysqlHandle;
     }
 }

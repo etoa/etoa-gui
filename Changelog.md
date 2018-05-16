@@ -1,6 +1,28 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.22 (round18)
+--------------
+
+### Features ###
+
+* scans don't show bunker ress anymore
+* selection filter when choosing planet
+
+Version 3.5.21
+--------------
+
+### Bugfixes ###
+
+* Various fixes to stay compatible with PHP 7.2
+
+Version 3.5.20
+--------------
+
+### Bugfixes ###
+
+* Various fixes to stay compatible with PHP 7.2
+
 Version 3.5.19
 --------------
 

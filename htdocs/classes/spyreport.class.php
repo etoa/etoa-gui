@@ -62,7 +62,7 @@ class SpyReport extends Report
 		}
 	}
 
-	static function add($data,$subType,$spyData)
+	static function add($data)
 	{
 		return null;
 	}

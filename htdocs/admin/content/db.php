@@ -25,7 +25,7 @@
 	// 	Bearbeitet am: 31.03.2006
 	// 	Kommentar:
 	//
-	
+
 	$tpl->assign('title', 'Datenbank');
 
 	//
@@ -35,7 +35,7 @@
 	{
 		require("db/migrations.inc.php");
 	}
-	
+
 	//
 	// Database reset
 	//
@@ -43,7 +43,7 @@
 	{
 		require("db/reset.inc.php");
 	}
-	
+
 	//
 	// Database maintenance
 	//
@@ -74,8 +74,8 @@
 	elseif($sub=='cleanup')
 	{
 		require("db/cleanup.inc.php");
-	}	
-	
+	}
+
 	//
 	// Übersicht
 	//
@@ -95,7 +95,7 @@
 
 		$tpl->assign('serverUptime', tf($uts));
 		$tpl->assign('serverStarted', df(time()-$uts));
-		
+
 		$tpl->assign('bytesReceived', byte_format($st['bytes_received']));
 		$tpl->assign('bytesReceivedHour', byte_format($uth > 0 ? $st['bytes_received']/$uth : 0));
 		$tpl->assign('bytesSent', byte_format($st['bytes_sent']));
@@ -126,21 +126,23 @@
 		$tr = array();
 		$ts = array();
 		$tn = array();
+		$engines = [];
 		$res=dbquery("SHOW TABLE STATUS FROM ". DBManager::getInstance()->getDbName().";");
 		$rows=$datal=0;
 		while ($arr=mysql_fetch_array($res))
 		{
 			$rows+=$arr['Rows'];
 			$datal+=$arr['Data_length']+$arr['Index_length'];
-			$tr[$arr['Name']]=$arr['Rows'];
+            $tr[$arr['Name']]=$arr['Rows'];
 			$ts[$arr['Name']]=$arr['Data_length']+$arr['Index_length'];
 			$tn[$arr['Name']]=$arr['Name'];
-		} 
-		
+            $engines[$arr['Name']] = $arr['Engine'];
+		}
+
 		$tpl->assign('dbName', DBManager::getInstance()->getDbName());
 		$tpl->assign('dbRows', nf($rows));
 		$tpl->assign('dbSize', byte_format($datal));
-		
+
 		$dbStats = array();
 		if ($sort=='rows')
 		{
@@ -150,34 +152,42 @@
 				$dbStats[] = array(
 					'name' => $tn[$k],
 					'size' => byte_format($ts[$k]),
-					'entries' => nf($tr[$k])
+					'entries' => nf($tr[$k]),
+					'engine' => $engines[$k],
 				);
-			}		
-		}
-		if ($sort=='name')
-		{
+			}
+		} else if ($sort=='name') {
 			asort ($tn);
 			foreach ($tn as $k=>$v)
 			{
 				$dbStats[] = array(
 					'name' => $tn[$k],
 					'size' => byte_format($ts[$k]),
-					'entries' => nf($tr[$k])
+					'entries' => nf($tr[$k]),
+					'engine' => $engines[$k],
 				);
-			}		
-		}
-		else
-		{
+			}
+		} else if ($sort=='engine') {
+			asort($engines);
+			foreach ($engines as $k => $v) {
+				$dbStats[] = array(
+					'name' => $tn[$k],
+					'size' => byte_format($ts[$k]),
+					'entries' => nf($tr[$k]),
+					'engine' => $engines[$k],
+				);
+			}
+		} else {
 			arsort ($ts);
 			foreach ($ts as $k=>$v)
 			{
 				$dbStats[] = array(
 					'name' => $tn[$k],
 					'size' => byte_format($ts[$k]),
-					'entries' => nf($tr[$k])
+					'entries' => nf($tr[$k]),
+					'engine' => $engines[$k],
 				);
-			}		
+			}
 		}
 		$tpl->assign('dbStats', $dbStats);
 	}
-?>

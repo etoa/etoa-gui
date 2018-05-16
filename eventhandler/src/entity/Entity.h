@@ -126,11 +126,11 @@ class Entity
 		
 		void setAction(std::string actionName);
 		
-		double getResMetal(double percent=1);
-		double getResCrystal(double percent=1);
-		double getResPlastic(double percent=1);
-		double getResFuel(double percent=1);
-		double getResFood(double percent=1);
+		double getResMetal(double percent=1, int spy=0);
+		double getResCrystal(double percent=1, int spy=0);
+		double getResPlastic(double percent=1, int spy=0);
+		double getResFuel(double percent=1, int spy=0);
+		double getResFood(double percent=1, int spy=0);
 		double getResPower();
 		double getResPeople();
 		double getResSum();

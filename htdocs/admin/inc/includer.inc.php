@@ -35,7 +35,5 @@ define('USER_HMODE_DEFAULT_TIME',3600*24*$conf['user_umod_min_length']['v']);	//
 
 define('ADMIN_FILESHARING_DIR',CACHE_ROOT."/admin");
 
-ini_set('display_errors', 1);
-
 $css_theme = (!isset($themePath) || !is_file("web/css/themes/".$themePath."css")) ? "default" : $themePath;
 

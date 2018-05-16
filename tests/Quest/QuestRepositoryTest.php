@@ -5,7 +5,6 @@ namespace EtoA\Quest;
 use EtoA\AbstractDbTestCase;
 use EtoA\Quest\Entity\Quest;
 use EtoA\Quest\Entity\Task;
-use LittleCubicleGames\Quests\Storage\QuestNotFoundException;
 use LittleCubicleGames\Quests\Workflow\QuestDefinitionInterface;
 
 class QuestRepositoryTest extends AbstractDbTestCase
@@ -35,9 +34,11 @@ class QuestRepositoryTest extends AbstractDbTestCase
         }
     }
 
+    /**
+     * @expectedException \LittleCubicleGames\Quests\Storage\QuestNotFoundException
+     */
     public function testGetUserQuestEmpty()
     {
-        $this->setExpectedException(QuestNotFoundException::class);
         $this->repository->getUserQuest(1, 1);
     }
 

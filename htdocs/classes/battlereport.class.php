@@ -99,7 +99,7 @@ class BattleReport extends Report
 		}
 	}
 
-	static function add($data,$subType,$battleData)
+	static function add($data)
 	{
 		return null;
 	}

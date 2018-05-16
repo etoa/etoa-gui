@@ -27,8 +27,21 @@
 			return $this->itemObjects;
 		}
 
-		static function getFreePlanet($sx=0,$sy=0)
+		static function getFreePlanet($sx=0,$sy=0, $fp=0, $fs=0)
 		{
+			$filter = '';
+			if($fp>0) {
+				$filter = " AND planets.planet_type_id = $fp";
+			}
+
+            if($fs>0) {
+                $filter .= " AND entities.cell_id = any (
+						select cell_id FROM entities WHERE id = any (
+							select id from stars where type_id = $fs
+						)
+					)";
+            }
+
 			$cfg = Config::getInstance();
 			$sql = "
 				SELECT
@@ -48,7 +61,7 @@
 					)
 					ON planets.id=entities.id
 					AND planets.planet_fields>'".$cfg->value('user_min_fields')."'
-					AND planets.planet_user_id='0'
+					AND planets.planet_user_id='0'$filter
  				)
 				ON entities.cell_id=cells.id ";
 			if ($sx>0)

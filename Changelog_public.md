@@ -1,6 +1,28 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.22 (Runde 18)
+--------------
+
+### Features ###
+
+* Eingebunkerte Ress werden auf Scans nicht mehr angezeigt
+* Filter für Planetenauswahl hinzugefügt
+
+Version 3.5.21
+--------------
+
+### Bugfixes ###
+
+* Anpassungen an die neue PHP Version
+
+Version 3.5.20
+--------------
+
+### Bugfixes ###
+
+* Anpassungen an die neue PHP Version 
+
 Version 3.5.19
 --------------
 

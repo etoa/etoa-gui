@@ -287,7 +287,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log, bool ratingEf
         /*
          // Restore civil ships for defender.
          
-         report->setRestore(round((config.nget("ship_restore_percent",0) - 1)*100));
+         report->setRestoreShip(round((config.nget("ship_restore_percent",0) - 1)*100));
          
          
          */
