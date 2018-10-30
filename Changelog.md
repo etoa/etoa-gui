@@ -1,6 +1,16 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.23
+--------------
+### Features ###
+
+* pumpkin cruiser added
+
+### Bugfixes ###
+
+* no more annoying scrollbar in chat after long messages
+
 Version 3.5.22 (round18)
 --------------
 
