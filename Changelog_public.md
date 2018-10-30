@@ -1,6 +1,16 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.23
+--------------
+### Features ###
+
+* Ein neues Schiff wurde gesichtet. Man munkelt es wurde von einer Hexe gebaut.
+
+### Bugfixes ###
+
+* Es erscheint keine Scrollbar mehr bei langen Nachrichten im Chat (danke an Isitar)
+
 Version 3.5.22 (Runde 18)
 --------------
 
