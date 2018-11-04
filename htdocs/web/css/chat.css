@@ -19,6 +19,7 @@ input,select	{
 	left:0;
 	right:0;
 	bottom:40px;
+	word-wrap: break-word;
 }
 
 div.chatmsg, div.serverMessage {
