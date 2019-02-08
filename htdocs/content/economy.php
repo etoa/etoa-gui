@@ -255,6 +255,14 @@
 
 			// Boost system
 			if ($cfg->value('boost_system_enable') == 1) {
+				$bonusProd = [
+					'metal'   =>floor($bpb['metal'] * $cu->boostBonusProduction),
+					'crystal' =>floor($bpb['metal'] * $cu->boostBonusProduction),
+					'plastic' =>floor($bpb['metal'] * $cu->boostBonusProduction),
+					'fuel'    =>floor($bpb['metal'] * $cu->boostBonusProduction),
+					'food'    =>floor($bpb['metal'] * $cu->boostBonusProduction),
+				];
+
 				echo "<tr><th style=\"height:2px;\" colspan=\"8\"></td></tr>";
 			
 				echo "<tr><th>TOTAL Produktion</th>";
@@ -268,20 +276,20 @@
 				echo "</tr>";			
 			
 				echo "<tr><th>Boost (".$cu->boostBonusProduction.")</th>";
-				echo "<td style=\"color:#0f0\">".nf(floor($cnt['metal'] * $cu->boostBonusProduction))."</td>";
-				echo "<td style=\"color:#0f0\">".nf(floor($cnt['crystal'] * $cu->boostBonusProduction))."</td>";
-				echo "<td style=\"color:#0f0\">".nf(floor($cnt['plastic'] * $cu->boostBonusProduction))."</td>";
-				echo "<td style=\"color:#0f0\">".nf(floor($cnt['fuel'] * $cu->boostBonusProduction))."</td>";
-				echo "<td style=\"color:#0f0\">".nf(floor($cnt['food'] * $cu->boostBonusProduction))."</td>";
+				echo "<td style=\"color:#0f0\">".nf($bonusProd['metal'])."</td>";
+				echo "<td style=\"color:#0f0\">".nf($bonusProd['crystal'])."</td>";
+				echo "<td style=\"color:#0f0\">".nf($bonusProd['plastic'])."</td>";
+				echo "<td style=\"color:#0f0\">".nf($bonusProd['fuel'])."</td>";
+				echo "<td style=\"color:#0f0\">".nf($bonusProd['food'])."</td>";
 				echo "<td style=\"color:#f00\">-</td>";
 				echo "<td></td>";
 				echo "</tr>";
 			
-				$cnt['metal']   = floor($cnt['metal']   * (1 + $cu->boostBonusProduction));
-				$cnt['crystal'] = floor($cnt['crystal'] * (1 + $cu->boostBonusProduction));
-				$cnt['plastic'] = floor($cnt['plastic'] * (1 + $cu->boostBonusProduction));
-				$cnt['fuel']    = floor($cnt['fuel']    * (1 + $cu->boostBonusProduction));
-				$cnt['food']    = floor($cnt['food']    * (1 + $cu->boostBonusProduction));
+				$cnt['metal']   += $bonusProd['metal'];
+				$cnt['crystal'] += $bonusProd['crystal'];
+				$cnt['plastic'] += $bonusProd['plastic'];
+				$cnt['fuel']    += $bonusProd['fuel'];
+				$cnt['food']    += $bonusProd['food'];
 			}
 			
 			// Anzeigen der Gesamtproduktion
