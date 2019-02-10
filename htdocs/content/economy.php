@@ -191,7 +191,7 @@ if ($cp) {
                     // apply production percent
                     $prodIncludingBoni[$resourceKey] *= $barr['buildlist_prod_percent'];
                     // add to total
-                    $cnt[$resourceKey] += floor($prodIncludingBoni);
+                    $cnt[$resourceKey] += floor($prodIncludingBoni[$resourceKey]);
                 }
 
                 $building_power_use = floor($barr['building_power_use'] * pow($barr['building_production_factor'], $barr['buildlist_current_level'] - 1));
@@ -268,7 +268,7 @@ if ($cp) {
 
             echo "<tr><th>TOTAL Produktion</th>";
             foreach ($resourceKeys as $resourceKey) {
-                echo "<td style=\"color:#0f0\">" . nf($cnt[$resourceKey]) . "</td>";
+                echo "<td style=\"color:#0f0\"" . tm("Grundproduktion ohne Boni", nf(floor($baseResourceProd[$resourceKey])) . " t/h") . ">" . nf($cnt[$resourceKey]) . "</td>";
             }
             echo "<td style=\"color:#f00\">" . nf($pwrcnt) . "</td>";
             echo "<td></td>";
