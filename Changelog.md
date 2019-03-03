@@ -1,6 +1,16 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.5.24
+--------------
+### Features ###
+
+* new ship-images
+
+### Bugfixes ###
+
+* fixed wrong production display at overview
+
 Version 3.5.23
 --------------
 ### Features ###
