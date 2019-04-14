@@ -103,7 +103,24 @@
 			$this->items = array();
 			$this->count = 0;
 
-			if ($load==2)
+			if ($load==3)
+			{
+				$sql = "SELECT
+							l.*,
+							i.*
+						FROM
+							buildlist l
+						INNER JOIN
+							buildings i
+						ON
+							l.buildlist_building_id = i.building_id
+							AND l.buildlist_entity_id='".$this->entityId."'
+							AND l.buildlist_current_level>='0'
+						ORDER BY
+							i.building_order,
+							i.building_name;";
+			}
+			elseif ($load==2)
 			{
 				$sql = "SELECT
 							l.*,
@@ -120,7 +137,7 @@
 							i.building_order,
 							i.building_name;";
 			}
-			else
+			else //this is for the cases $load==0 and $load==1
 			{
 				$sql = "SELECT
 							l.*,
