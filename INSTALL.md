@@ -20,7 +20,14 @@ Vagrant Developer setup
 Install [VirtualBox](https://www.virtualbox.org/).
 Install [Vagrant](https://www.vagrantup.com/).
 
+Install [Network File System](https://en.wikipedia.org/wiki/Network_File_System) if necessary. Start/Enable NFS-Server with UDP and Version 3 support.
+
 In your etoa root run ```make install```
+* PHP 7.3 is not supported (7.2 works fine)
+* On Linux Vagrant needs sudo privileges. Instead of ```make install``` use
+
+  ```$ php72 composer.phar install && sudo vagrant up --provision```
+
 You can now reach etoa via http://192.168.33.11
 Cronjob, Eventhandler, DB, PHP, Nginx should be running.
 
@@ -28,6 +35,10 @@ Additional steps because I haven't figured out yet how to reset the db config vi
 * Go to: http://192.168.33.11/admin/
 * Login as admin
 * Reset the Configuration in the admin tool, then set the loginurl back to "" (empty string)
+
+#### Troubleshooting
+* Eventhandler offline: Check path to pid, e.g. ```/run/etoad/roundx.pid```
+* Guest Additions: ```# vagrant plugin install vagrant-vbguest```
 
 All steps below are only necessary if you dont want to use the vagrant box!!!!
 
