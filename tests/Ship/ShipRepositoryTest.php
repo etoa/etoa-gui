@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Ship;
 
@@ -9,14 +9,14 @@ class ShipRepositoryTest extends AbstractDbTestCase
     /** @var ShipRepository */
     private $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->repository = $this->app['etoa.ship.repository'];
     }
 
-    public function testAddShip()
+    public function testAddShip(): void
     {
         $userId = 3;
         $shipId = 5;

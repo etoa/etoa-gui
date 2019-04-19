@@ -1,10 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest;
 
 use EtoA\AbstractDbTestCase;
 use EtoA\Quest\Entity\Quest;
 use EtoA\Quest\Entity\Task;
+use LittleCubicleGames\Quests\Storage\QuestNotFoundException;
 use LittleCubicleGames\Quests\Workflow\QuestDefinitionInterface;
 
 class QuestRepositoryTest extends AbstractDbTestCase
@@ -12,14 +13,14 @@ class QuestRepositoryTest extends AbstractDbTestCase
     /** @var QuestRepository */
     private $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->repository = $this->app['etoa.quest.repository'];
     }
 
-    public function testSave()
+    public function testSave(): void
     {
         $quest = new Quest(null, 1, 1, 'merchant', QuestDefinitionInterface::STATE_AVAILABLE, [
             1 => new Task(null, 1, 0),
@@ -34,15 +35,14 @@ class QuestRepositoryTest extends AbstractDbTestCase
         }
     }
 
-    /**
-     * @expectedException \LittleCubicleGames\Quests\Storage\QuestNotFoundException
-     */
-    public function testGetUserQuestEmpty()
+    public function testGetUserQuestEmpty(): void
     {
+        $this->expectException(QuestNotFoundException::class);
+
         $this->repository->getUserQuest(1, 1);
     }
 
-    public function testGetUserQuest()
+    public function testGetUserQuest(): void
     {
         $userId = 1;
         $quest = new Quest(null, 99, $userId, 'merchant', QuestDefinitionInterface::STATE_AVAILABLE, [
@@ -57,12 +57,12 @@ class QuestRepositoryTest extends AbstractDbTestCase
         $this->assertCount(3, $quest->getTasks());
     }
 
-    public function testGetActiveQuestsEmpty()
+    public function testGetActiveQuestsEmpty(): void
     {
         $this->assertSame([], $this->repository->getActiveQuests(99));
     }
 
-    public function testGetActiveQuestsNoTasks()
+    public function testGetActiveQuestsNoTasks(): void
     {
         $userId = 1;
         $quest = new Quest(null, 99, $userId, 'merchant', QuestDefinitionInterface::STATE_AVAILABLE, []);
@@ -75,7 +75,7 @@ class QuestRepositoryTest extends AbstractDbTestCase
         $this->assertCount(0, $quests[0]->getTasks());
     }
 
-    public function testGetActiveQuests()
+    public function testGetActiveQuests(): void
     {
         $userId = 1;
         $quest = new Quest(null, 99, $userId, 'merchant', QuestDefinitionInterface::STATE_AVAILABLE, [

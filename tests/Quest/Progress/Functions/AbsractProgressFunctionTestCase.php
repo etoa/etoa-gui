@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Progress\Functions;
 
@@ -12,7 +12,7 @@ abstract class AbsractProgressFunctionTestCase extends TestCase
     /** @var HandlerFunctionInterface */
     protected $progressFunction;
 
-    protected function simulateHandle(Event $event, $currentProgress, $expectedProgress)
+    protected function simulateHandle(Event $event, $currentProgress, $expectedProgress): void
     {
         $task = $this->getMockBuilder(TaskInterface::class)->getMock();
         $task

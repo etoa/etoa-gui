@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Tutorial;
 
@@ -9,14 +9,14 @@ class TutorialUserProgressRepositoryTest extends AbstractDbTestCase
     /** @var TutorialUserProgressRepository */
     private $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->repository = $this->app['etoa.tutorial.userprogressrepository'];
     }
 
-    public function testHasReadTutorialNoProgress()
+    public function testHasReadTutorialNoProgress(): void
     {
         $this->assertFalse($this->repository->hasReadTutorial(1, 1));
     }
@@ -24,7 +24,7 @@ class TutorialUserProgressRepositoryTest extends AbstractDbTestCase
     /**
      * @dataProvider readTutorialDataProvider
      */
-    public function testHasReadTutorial($closed)
+    public function testHasReadTutorial(bool $closed): void
     {
         $this->connection
             ->createQueryBuilder()
@@ -38,7 +38,7 @@ class TutorialUserProgressRepositoryTest extends AbstractDbTestCase
         $this->assertSame($closed, $this->repository->hasReadTutorial(1, 1));
     }
 
-    public function readTutorialDataProvider()
+    public function readTutorialDataProvider(): array
     {
         return [
             [false],
@@ -46,7 +46,7 @@ class TutorialUserProgressRepositoryTest extends AbstractDbTestCase
         ];
     }
 
-    public function testCloseTutorial()
+    public function testCloseTutorial(): void
     {
         $userId = 1;
         $tutorialId = 1;

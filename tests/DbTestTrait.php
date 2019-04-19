@@ -1,10 +1,12 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA;
 
+use Silex\Application;
+
 trait DbTestTrait
 {
-    public function setupApplication()
+    public function setupApplication(): Application
     {
         $environment = 'testing';
         $debug = true;
@@ -13,7 +15,7 @@ trait DbTestTrait
         return require dirname(__DIR__).'/src/app.php';
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->connection->query('TRUNCATE planets');
         $this->connection->query('TRUNCATE techlist');

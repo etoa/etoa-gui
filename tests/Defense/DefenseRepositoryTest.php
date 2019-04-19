@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Defense;
 
@@ -9,14 +9,14 @@ class DefenseRepositoryTest extends AbstractDbTestCase
     /** @var DefenseRepository */
     private $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->repository = $this->app['etoa.defense.repository'];
     }
 
-    public function testAddDefense()
+    public function testAddDefense(): void
     {
         $userId = 3;
         $defenseId = 5;
@@ -35,7 +35,7 @@ class DefenseRepositoryTest extends AbstractDbTestCase
         $this->assertEquals(30, $defense['deflist_count']);
     }
 
-    public function testGetDefenseCount()
+    public function testGetDefenseCount(): void
     {
         $userId = 3;
         $defenseId = 5;
@@ -48,7 +48,7 @@ class DefenseRepositoryTest extends AbstractDbTestCase
         $this->assertSame(30, $this->repository->getDefenseCount($userId, $defenseId));
     }
 
-    public function testGetDefenseCountNoDef()
+    public function testGetDefenseCountNoDef(): void
     {
         $userId = 3;
         $defenseId = 5;

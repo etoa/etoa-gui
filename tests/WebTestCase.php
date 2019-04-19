@@ -1,17 +1,27 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA;
 
 use Doctrine\DBAL\Connection;
+use PHPUnit\Framework\TestCase;
+use Silex\Application;
+use Symfony\Component\HttpKernel\Client;
 
-abstract class WebTestCase extends \Silex\WebTestCase
+abstract class WebTestCase extends TestCase
 {
     use DbTestTrait;
 
     /** @var Connection */
     protected $connection;
+    /** @var Application */
+    protected $app;
 
-    public function createApplication()
+    protected function setUp(): void
+    {
+        $this->app = $this->createApplication();
+    }
+
+    public function createApplication(): Application
     {
         include_once dirname(__DIR__) . '/htdocs/inc/mysqli_polyfill.php';
         $app = $this->setupApplication();
@@ -24,7 +34,16 @@ abstract class WebTestCase extends \Silex\WebTestCase
         return $app;
     }
 
-    public function loginUser($userId)
+    public function createClient(array $server = []): Client
+    {
+        if (!class_exists('Symfony\Component\BrowserKit\Client')) {
+            throw new \LogicException('Component "symfony/browser-kit" is required by WebTestCase.'.PHP_EOL.'Run composer require symfony/browser-kit');
+        }
+
+        return new Client($this->app, $server);
+    }
+
+    public function loginUser(int $userId): void
     {
         $loginTime = time();
 
@@ -34,9 +53,35 @@ abstract class WebTestCase extends \Silex\WebTestCase
             ->values([
                 'user_id' => ':userId',
                 'user_setup' => ':setup',
+                'user_name' => ':name',
+                'user_nick' => ':nick',
+                'user_password' => ':password',
+                'user_password_temp' => ':password',
+                'user_session_key' => ':session',
+                'user_email' => ':email',
+                'user_email_fix' => ':email',
+                'user_ip' => ':empty',
+                'user_hostname' => ':empty',
+                'user_ban_reason' => ':empty',
+                'user_profile_text' => ':empty',
+                'user_avatar' => ':empty',
+                'user_signature' => ':empty',
+                'user_client' => ':empty',
+                'user_profile_board_url' => ':empty',
+                'user_profile_img' => ':empty',
+                'user_observe' => ':empty',
+                'discoverymask' => ':empty',
+                'dual_email' => ':empty',
+                'dual_name' => ':empty',
             ])->setParameters([
                 'userId' => $userId,
                 'setup' => 1,
+                'name' => 'User Name',
+                'nick' => 'Nickname',
+                'password' => 'password',
+                'session' => 'session',
+                'email' => 'test@etoa.net',
+                'empty' => '',
             ])->execute();
 
         $this->connection
@@ -65,11 +110,13 @@ abstract class WebTestCase extends \Silex\WebTestCase
                 'user_id' => ':userId',
                 'time_login' => ':loginTime',
                 'user_agent' => ':userAgent',
+                'ip_addr' => ':ip',
             ])->setParameters([
                 'sessionId' => session_id(),
                 'userId' => $userId,
                 'loginTime' => $loginTime,
                 'userAgent' => $userAgent,
+                'ip' => '',
             ])->execute();
     }
 }

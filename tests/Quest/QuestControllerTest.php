@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest;
 
@@ -8,7 +8,7 @@ use LittleCubicleGames\Quests\Workflow\QuestDefinitionInterface;
 
 class QuestControllerTest extends WebTestCase
 {
-    public function testAdvance()
+    public function testAdvance(): void
     {
         $userId = 1;
         $quest = new Quest(null, 99, $userId, 'merchant', QuestDefinitionInterface::STATE_AVAILABLE, []);

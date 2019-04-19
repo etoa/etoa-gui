@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Progress\InitFunctions;
 
@@ -12,7 +12,7 @@ class HaveGalaxyDiscoveredTest extends TestCase
     /**
      * @dataProvider initProgressProvider
      */
-    public function testInitProgress($discoverMask, $expectedProgress)
+    public function testInitProgress(string $discoverMask, int $expectedProgress): void
     {
         $userId = 1;
         $repository = $this->getMockBuilder(UserRepository::class)->disableOriginalConstructor()->getMock();
@@ -35,7 +35,7 @@ class HaveGalaxyDiscoveredTest extends TestCase
         $this->assertSame($expectedProgress, $function->initProgress($quest, $task));
     }
 
-    public function initProgressProvider()
+    public function initProgressProvider(): array
     {
         return [
             ['0000000000', 0],

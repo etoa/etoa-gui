@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Reward;
 
@@ -15,14 +15,14 @@ class ShipRewardCollectorTest extends TestCase
     private $shipRepository;
     private $planetRepository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->shipRepository = $this->getMockBuilder(ShipRepository::class)->disableOriginalConstructor()->getMock();
         $this->planetRepository = $this->getMockBuilder(PlanetRepository::class)->disableOriginalConstructor()->getMock();
         $this->collector = new ShipRewardCollector($this->shipRepository, $this->planetRepository);
     }
 
-    public function testCollect()
+    public function testCollect(): void
     {
         $mainPlanetId = 33;
         $userId = 1;
