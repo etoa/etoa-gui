@@ -15,9 +15,13 @@ class QuestPresenterTest extends TestCase
 {
     /** @var QuestPresenter */
     private $presenter;
+    /** @var RegistryInterface&\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
+    /** @var MissileDataRepository&\PHPUnit\Framework\MockObject\MockObject */
     private $missileDataRepository;
+    /** @var ShipDataRepository&\PHPUnit\Framework\MockObject\MockObject */
     private $shipDataRepository;
+    /** @var DefenseDataRepository&\PHPUnit\Framework\MockObject\MockObject */
     private $defenseDataRepository;
 
     protected function setUp(): void

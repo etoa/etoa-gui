@@ -12,7 +12,9 @@ class ShipRewardCollectorTest extends TestCase
 {
     /** @var ShipRewardCollector */
     private $collector;
+    /** @var ShipRepository&\PHPUnit\Framework\MockObject\MockObject */
     private $shipRepository;
+    /** @var PlanetRepository&\PHPUnit\Framework\MockObject\MockObject */
     private $planetRepository;
 
     protected function setUp(): void

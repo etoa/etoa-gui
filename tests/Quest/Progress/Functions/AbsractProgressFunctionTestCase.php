@@ -12,7 +12,7 @@ abstract class AbsractProgressFunctionTestCase extends TestCase
     /** @var HandlerFunctionInterface */
     protected $progressFunction;
 
-    protected function simulateHandle(Event $event, $currentProgress, $expectedProgress): void
+    protected function simulateHandle(Event $event, int $currentProgress, int $expectedProgress): void
     {
         $task = $this->getMockBuilder(TaskInterface::class)->getMock();
         $task

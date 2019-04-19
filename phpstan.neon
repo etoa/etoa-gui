@@ -1,0 +1,9 @@
+includes:
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-phpunit/rules.neon
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+
+parameters:
+    ignoreErrors:
+        - '#Dynamic call to static method PHPUnit\\Framework\\Assert#'
+        - '#Dynamic call to static method PHPUnit\\Framework\\TestCase#'

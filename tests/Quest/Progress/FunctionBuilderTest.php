@@ -20,7 +20,7 @@ class FunctionBuilderTest extends TestCase
     /**
      * @dataProvider functionNameProvider
      */
-    public function testBuild(string $name, string $className)
+    public function testBuild(string $name, string $className): void
     {
         $this->assertInstanceOf($className, $this->builder->build($name, []));
     }

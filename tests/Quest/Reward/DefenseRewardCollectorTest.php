@@ -12,7 +12,9 @@ class DefenseRewardCollectorTest extends TestCase
 {
     /** @var DefenseRewardCollector */
     private $collector;
+    /** @var DefenseRepository&\PHPUnit\Framework\MockObject\MockObject */
     private $defenseRepository;
+    /** @var PlanetRepository&\PHPUnit\Framework\MockObject\MockObject */
     private $planetRepository;
 
     protected function setUp(): void
