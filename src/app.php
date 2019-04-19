@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 $app = new \Silex\Application([
     'debug' => isset($debug) ? $debug : false,
