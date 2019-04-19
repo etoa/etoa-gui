@@ -19,54 +19,54 @@ class Quest implements QuestInterface
     /** @var Task[] */
     private $tasks;
 
-    public function __construct($id, $questId, $userId, $slotId, $state, array $tasks)
+    public function __construct(?int $id, int $questId, int $userId, string $slotId, string $state, array $tasks)
     {
         $this->id = $id;
-        $this->questId = (int)$questId;
-        $this->userId = (int)$userId;
+        $this->questId = $questId;
+        $this->userId = $userId;
         $this->slotId = $slotId;
         $this->state = $state;
         $this->tasks = $tasks;
     }
 
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId($id)
+    public function setId(int $id)
     {
         if (null === $this->id) {
             $this->id = $id;
         }
     }
 
-    public function setState($state)
+    public function setState($state): void
     {
         $this->state = $state;
     }
 
-    public function getState()
+    public function getState(): string
     {
         return $this->state;
     }
 
-    public function getQuestId()
+    public function getQuestId(): int
     {
         return $this->questId;
     }
 
-    public function getUser()
+    public function getUser(): int
     {
         return $this->userId;
     }
 
-    public function getSlotId()
+    public function getSlotId(): string
     {
         return $this->slotId;
     }
 
-    public function getProgressMap()
+    public function getProgressMap(): array
     {
         $map = [];
         foreach ($this->tasks as $task) {
@@ -76,12 +76,12 @@ class Quest implements QuestInterface
         return $map;
     }
 
-    public function getTask($taskId)
+    public function getTask($taskId): Task
     {
         return $this->tasks[$taskId];
     }
 
-    public function getTasks()
+    public function getTasks(): array
     {
         return $this->tasks;
     }

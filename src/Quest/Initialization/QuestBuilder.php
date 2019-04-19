@@ -10,7 +10,7 @@ use LittleCubicleGames\Quests\Workflow\QuestDefinitionInterface;
 
 class QuestBuilder implements QuestBuilderInterface
 {
-    public function buildQuest(Quest $quest, Slot $slot, $userId)
+    public function buildQuest(Quest $quest, Slot $slot, $userId): \EtoA\Quest\Entity\Quest
     {
         $tasks = [];
         foreach ($quest->getTaskIds() as $taskId) {

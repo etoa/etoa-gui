@@ -6,7 +6,7 @@ use EtoA\Core\AbstractRepository;
 
 class TechnologyRepository extends AbstractRepository
 {
-    public function getTechnologyLevel($userId, $technologyId)
+    public function getTechnologyLevel(int $userId, int $technologyId): int
     {
         return (int)$this->createQueryBuilder()
             ->select('techlist_current_level')

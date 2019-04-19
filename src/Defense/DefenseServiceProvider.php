@@ -7,10 +7,7 @@ use Pimple\ServiceProviderInterface;
 
 class DefenseServiceProvider implements ServiceProviderInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function register(Container $pimple)
+    public function register(Container $pimple): void
     {
         $pimple['etoa.defense.repository'] = function (Container $pimple) {
             return new DefenseRepository($pimple['db']);

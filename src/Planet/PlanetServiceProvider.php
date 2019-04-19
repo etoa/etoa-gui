@@ -7,10 +7,7 @@ use Pimple\ServiceProviderInterface;
 
 class PlanetServiceProvider implements ServiceProviderInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function register(Container $pimple)
+    public function register(Container $pimple): void
     {
         $pimple['etoa.planet.repository'] = function (Container $pimple) {
             return new PlanetRepository($pimple['db']);

@@ -2,11 +2,12 @@
 
 namespace EtoA\Quest\Progress;
 
+use LittleCubicleGames\Quests\Progress\Functions\EventHandlerFunctionInterface;
 use LittleCubicleGames\Quests\Progress\ProgressFunctionBuilderInterface;
 
 class FunctionBuilder implements ProgressFunctionBuilderInterface
 {
-    public function build($taskName, array $attributes)
+    public function build($taskName, array $attributes): ?EventHandlerFunctionInterface
     {
         switch ($taskName) {
             case Functions\LaunchMissile::NAME:
@@ -34,5 +35,7 @@ class FunctionBuilder implements ProgressFunctionBuilderInterface
             case Functions\CreateAlliance::NAME:
                 return new Functions\CreateAlliance();
         }
+
+        throw new \RuntimeException('Unknown task type: ' . $taskName);
     }
 }

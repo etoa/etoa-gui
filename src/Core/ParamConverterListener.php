@@ -6,7 +6,7 @@ use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 
 class ParamConverterListener
 {
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelController(FilterControllerEvent $event): void
     {
         $controller = $event->getController();
         $request = $event->getRequest();

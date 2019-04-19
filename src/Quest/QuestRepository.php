@@ -17,7 +17,7 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
      * @param int $questId
      * @return Quest|null
      */
-    public function getUserQuest($userId, $questId)
+    public function getUserQuest($userId, $questId): ?Quest
     {
         $result = $this->createQueryBuilder()
             ->select('q.id AS qid')
@@ -36,14 +36,14 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
             throw new QuestNotFoundException();
         }
 
-        return $this->buildQuest($result[0]['qid'], $result);
+        return $this->buildQuest((int)$result[0]['qid'], $result);
     }
 
     /**
      * @param int $userId
      * @return QuestInterface[]
      */
-    public function getActiveQuests($userId)
+    public function getActiveQuests($userId): array
     {
         $qb = $this->createQueryBuilder();
 
@@ -69,19 +69,19 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
         return $quests;
     }
 
-    private function buildQuest($questId, array $questData)
+    private function buildQuest(int $questId, array $questData): Quest
     {
         $tasks = [];
         if (null !== $questData[0]['task_id']) {
             foreach ($questData as $row) {
-                $tasks[$row['task_id']] = new Task($row['id'], $row['task_id'], $row['progress']);
+                $tasks[$row['task_id']] = new Task((int)$row['id'], (int)$row['task_id'], (int)$row['progress']);
             }
         }
 
-        return new Quest($questId, $questData[0]['quest_data_id'], $questData[0]['user_id'], $questData[0]['slot_id'], $questData[0]['state'], $tasks);
+        return new Quest($questId, (int)$questData[0]['quest_data_id'], (int)$questData[0]['user_id'], $questData[0]['slot_id'], $questData[0]['state'], $tasks);
     }
 
-    public function save(QuestInterface $quest)
+    public function save(QuestInterface $quest): void
     {
         if ($quest->getId()) {
             $this->createQueryBuilder()
@@ -118,7 +118,7 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
                     'questId' => $quest->getQuestId(),
                 ])->execute();
 
-            $questId = $qb->getConnection()->lastInsertId();
+            $questId = (int)$qb->getConnection()->lastInsertId();
             $quest->setId($questId);
 
             foreach ($quest->getTasks() as $task) {
@@ -135,7 +135,7 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
                         'progress' => $task->getProgress(),
                     ])->execute();
 
-                $task->setId($qb->getConnection()->lastInsertId());
+                $task->setId((int)$qb->getConnection()->lastInsertId());
             }
         }
     }

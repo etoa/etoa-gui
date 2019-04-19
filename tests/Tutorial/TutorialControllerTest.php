@@ -13,7 +13,7 @@ class TutorialControllerTest extends WebTestCase
 
         $this->loginUser($userId);
 
-        $client = self::createClient();
+        $client = $this->createClient();
         $client->request('PUT', sprintf('/api/tutorials/%s/close', $tutorialId));
 
         $this->assertSame(200, $client->getResponse()->getStatusCode());

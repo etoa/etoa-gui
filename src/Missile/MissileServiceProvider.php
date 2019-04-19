@@ -7,10 +7,7 @@ use Pimple\ServiceProviderInterface;
 
 class MissileServiceProvider implements ServiceProviderInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function register(Container $pimple)
+    public function register(Container $pimple): void
     {
         $pimple['etoa.missile.repository'] = function (Container $pimple) {
             return new MissileRepository($pimple['db']);

@@ -14,7 +14,7 @@ class TokenContext
         $this->currentUser = $currentUser;
     }
 
-    public function getCurrentUser()
+    public function getCurrentUser(): UserInterface
     {
         return $this->currentUser;
     }

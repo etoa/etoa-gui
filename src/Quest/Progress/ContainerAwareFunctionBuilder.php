@@ -11,6 +11,7 @@ use EtoA\Quest\Progress\InitFunctions\HavePoints;
 use EtoA\Quest\Progress\InitFunctions\HaveSpecialist;
 use EtoA\Quest\Progress\InitFunctions\HaveSpecialistType;
 use EtoA\Quest\Progress\InitFunctions\HaveTechnologyLevel;
+use LittleCubicleGames\Quests\Progress\Functions\InitProgressHandlerFunctionInterface;
 use LittleCubicleGames\Quests\Progress\ProgressFunctionBuilderInterface;
 use Pimple\Container;
 
@@ -24,7 +25,7 @@ class ContainerAwareFunctionBuilder implements ProgressFunctionBuilderInterface
         $this->container = $container;
     }
 
-    public function build($taskName, array $attributes)
+    public function build($taskName, array $attributes): ?InitProgressHandlerFunctionInterface
     {
         switch ($taskName) {
             case HaveBuildingLevel::NAME:
@@ -46,5 +47,7 @@ class ContainerAwareFunctionBuilder implements ProgressFunctionBuilderInterface
             case HaveSpecialistType::NAME:
                 return new HaveSpecialistType($attributes, $this->container['etoa.user.repository']);
         }
+
+        throw new \RuntimeException('Unknown task type: ' . $taskName);
     }
 }

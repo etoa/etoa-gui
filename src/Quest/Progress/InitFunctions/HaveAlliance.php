@@ -19,7 +19,7 @@ class HaveAlliance implements InitProgressHandlerFunctionInterface
         $this->userRepository = $userRepository;
     }
 
-    public function initProgress(QuestInterface $quest, TaskInterface $task)
+    public function initProgress(QuestInterface $quest, TaskInterface $task): int
     {
         return (int)($this->userRepository->getAllianceId($quest->getUser()) > 0);
     }

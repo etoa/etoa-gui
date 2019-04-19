@@ -12,11 +12,11 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class SessionServiceProvider implements ServiceProviderInterface, BootableProviderInterface
 {
-    public function register(Container $pimple)
+    public function register(Container $pimple): void
     {
     }
 
-    public function boot(Application $app)
+    public function boot(Application $app): void
     {
         $app->before(function (Request $request) {
             $session = \UserSession::getInstance();
@@ -30,7 +30,7 @@ class SessionServiceProvider implements ServiceProviderInterface, BootableProvid
         }, Application::EARLY_EVENT);
     }
 
-    private function validateChatUser(\UserSession $session)
+    private function validateChatUser(\UserSession $session): ChatUser
     {
         if (!$session->chatValidate()) {
             throw new AccessDeniedHttpException();
@@ -39,7 +39,7 @@ class SessionServiceProvider implements ServiceProviderInterface, BootableProvid
         return new ChatUser($session->user_id, $session->user_nick);
     }
 
-    private function validateUser(\UserSession $session)
+    private function validateUser(\UserSession $session): \CurrentUser
     {
         if (!$session->validate(0)) {
             throw new AccessDeniedHttpException();

@@ -12,7 +12,7 @@ use Pimple\ServiceProviderInterface;
 
 class DoctrineServiceProvider implements ServiceProviderInterface
 {
-    public function register(Container $pimple)
+    public function register(Container $pimple): void
     {
         $pimple['db.default_options'] = [
             'driver' => 'pdo_mysql',
