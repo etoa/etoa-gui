@@ -5,12 +5,13 @@ namespace EtoA\Quest\Initialization;
 use EtoA\Quest\Entity\Task;
 use LittleCubicleGames\Quests\Definition\Quest\Quest;
 use LittleCubicleGames\Quests\Definition\Slot\Slot;
+use LittleCubicleGames\Quests\Entity\QuestInterface;
 use LittleCubicleGames\Quests\Initialization\QuestBuilderInterface;
 use LittleCubicleGames\Quests\Workflow\QuestDefinitionInterface;
 
 class QuestBuilder implements QuestBuilderInterface
 {
-    public function buildQuest(Quest $quest, Slot $slot, $userId): \EtoA\Quest\Entity\Quest
+    public function buildQuest(Quest $quest, Slot $slot, int $userId): QuestInterface
     {
         $tasks = [];
         foreach ($quest->getTaskIds() as $taskId) {

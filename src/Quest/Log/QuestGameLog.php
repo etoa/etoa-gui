@@ -16,7 +16,7 @@ class QuestGameLog implements QuestLoggerInterface
         QuestDefinitionInterface::TRANSITION_REJECT => 4,
     ];
 
-    public function log(QuestInterface $quest, $previousState, $transitionName): void
+    public function log(QuestInterface $quest, string $previousState, string $transitionName): void
     {
         \GameLog::add(\GameLog::F_QUESTS, \GameLog::INFO, '', $quest->getUser(), 0, 0, $quest->getQuestId(), self::TRANSITION_MAP[$transitionName]);
     }

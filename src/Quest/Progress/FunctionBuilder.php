@@ -2,12 +2,12 @@
 
 namespace EtoA\Quest\Progress;
 
-use LittleCubicleGames\Quests\Progress\Functions\EventHandlerFunctionInterface;
+use LittleCubicleGames\Quests\Progress\Functions\HandlerFunctionInterface;
 use LittleCubicleGames\Quests\Progress\ProgressFunctionBuilderInterface;
 
 class FunctionBuilder implements ProgressFunctionBuilderInterface
 {
-    public function build($taskName, array $attributes): ?EventHandlerFunctionInterface
+    public function build(string $taskName, array $attributes): ?HandlerFunctionInterface
     {
         switch ($taskName) {
             case Functions\LaunchMissile::NAME:

@@ -3,9 +3,13 @@
 namespace EtoA\Quest\Progress\Functions;
 
 use EtoA\Fleet\Event\FleetLaunch;
+use LittleCubicleGames\Quests\Entity\TaskInterface;
 
-class LaunchFleetTest extends AbsractProgressFunctionTestCase
+class LaunchFleetTest extends AbstractProgressFunctionTestCase
 {
+    /** @var LaunchFleet */
+    private $progressFunction;
+
     protected function setUp(): void
     {
         $this->progressFunction = new LaunchFleet();
@@ -16,7 +20,9 @@ class LaunchFleetTest extends AbsractProgressFunctionTestCase
      */
     public function testHandle(int $currentProgress, int $expectedProgress): void
     {
-        $this->simulateHandle(new FleetLaunch(), $currentProgress, $expectedProgress);
+        $this->simulateHandle(function (TaskInterface $task) {
+            return $this->progressFunction->handle($task, new FleetLaunch());
+        }, $currentProgress, $expectedProgress);
     }
 
     public function providerHandle(): array

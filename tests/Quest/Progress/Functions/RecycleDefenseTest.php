@@ -3,9 +3,13 @@
 namespace EtoA\Quest\Progress\Functions;
 
 use EtoA\Defense\Event\DefenseRecycle;
+use LittleCubicleGames\Quests\Entity\TaskInterface;
 
-class RecycleDefenseTest extends AbsractProgressFunctionTestCase
+class RecycleDefenseTest extends AbstractProgressFunctionTestCase
 {
+    /** @var RecycleDefense */
+    private $progressFunction;
+
     protected function setUp(): void
     {
         $this->progressFunction = new RecycleDefense();
@@ -16,7 +20,9 @@ class RecycleDefenseTest extends AbsractProgressFunctionTestCase
      */
     public function testHandle(int $currentProgress, int $count, int $expectedProgress): void
     {
-        $this->simulateHandle(new DefenseRecycle(1, $count), $currentProgress, $expectedProgress);
+        $this->simulateHandle(function (TaskInterface $task) use ($count) {
+            return $this->progressFunction->handle($task, new DefenseRecycle(1, $count));
+        }, $currentProgress, $expectedProgress);
     }
 
     public function providerHandle(): array

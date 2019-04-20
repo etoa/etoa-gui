@@ -3,6 +3,7 @@
 namespace EtoA\Quest\Entity;
 
 use LittleCubicleGames\Quests\Entity\QuestInterface;
+use LittleCubicleGames\Quests\Entity\TaskInterface;
 
 class Quest implements QuestInterface
 {
@@ -34,14 +35,14 @@ class Quest implements QuestInterface
         return $this->id;
     }
 
-    public function setId(int $id)
+    public function setId(int $id): void
     {
         if (null === $this->id) {
             $this->id = $id;
         }
     }
 
-    public function setState($state): void
+    public function setState(string $state): void
     {
         $this->state = $state;
     }
@@ -76,11 +77,14 @@ class Quest implements QuestInterface
         return $map;
     }
 
-    public function getTask($taskId): Task
+    public function getTask(int $taskId): TaskInterface
     {
         return $this->tasks[$taskId];
     }
 
+    /**
+     * @return Task[]
+     */
     public function getTasks(): array
     {
         return $this->tasks;

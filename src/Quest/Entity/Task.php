@@ -20,7 +20,7 @@ class Task implements TaskInterface
         $this->progress = $progress;
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -32,7 +32,7 @@ class Task implements TaskInterface
         }
     }
 
-    public function updateProgress($progress): void
+    public function updateProgress(int $progress): void
     {
         $this->progress = $progress;
     }

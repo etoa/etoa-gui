@@ -3,7 +3,6 @@
 namespace EtoA\Quest;
 
 use EtoA\Quest\Entity\Quest;
-use LittleCubicleGames\Quests\Entity\QuestInterface;
 use LittleCubicleGames\Quests\Workflow\QuestDefinitionInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Event\Event;
@@ -12,7 +11,7 @@ class QuestResponseListener implements EventSubscriberInterface
 {
     /** @var QuestPresenter */
     private $presenter;
-    /** @var QuestInterface[] */
+    /** @var array[] */
     private $quests = [];
 
     public function __construct(QuestPresenter $presenter)

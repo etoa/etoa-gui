@@ -34,7 +34,7 @@ class DoctrineServiceProvider implements ServiceProviderInterface
         };
 
         $pimple['db'] = function (Container $pimple) {
-            if (!isset($pimple['db.options']) && isset($pimple['db.options.file'])) {
+            if (!isset($pimple['db.options'])) {
                 $config = json_decode(file_get_contents($pimple['app.config_dir'].$pimple['db.options.file']), true);
                 if (json_last_error() != JSON_ERROR_NONE) {
                     throw new \InvalidArgumentException(sprintf(

@@ -12,7 +12,7 @@ class QuestInitializer extends \LittleCubicleGames\Quests\Initialization\QuestIn
         $this->isQuestSystemOn = $isQuestSystemOn;
     }
 
-    public function initialize($userId): void
+    public function initialize(int $userId): void
     {
         if ($this->isQuestSystemOn) {
             parent::initialize($userId);

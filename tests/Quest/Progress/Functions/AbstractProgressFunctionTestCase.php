@@ -7,12 +7,9 @@ use LittleCubicleGames\Quests\Progress\Functions\HandlerFunctionInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\Event;
 
-abstract class AbsractProgressFunctionTestCase extends TestCase
+abstract class AbstractProgressFunctionTestCase extends TestCase
 {
-    /** @var HandlerFunctionInterface */
-    protected $progressFunction;
-
-    protected function simulateHandle(Event $event, int $currentProgress, int $expectedProgress): void
+    protected function simulateHandle(callable $handleEvent, int $currentProgress, int $expectedProgress): void
     {
         $task = $this->getMockBuilder(TaskInterface::class)->getMock();
         $task
@@ -20,7 +17,7 @@ abstract class AbsractProgressFunctionTestCase extends TestCase
             ->method('getProgress')
             ->willReturn($currentProgress);
 
-        $progress = $this->progressFunction->handle($task, $event);
+        $progress = $handleEvent($task);
 
         $this->assertSame($expectedProgress, $progress);
     }

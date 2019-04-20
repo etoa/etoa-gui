@@ -11,7 +11,7 @@ use EtoA\Quest\Progress\InitFunctions\HavePoints;
 use EtoA\Quest\Progress\InitFunctions\HaveSpecialist;
 use EtoA\Quest\Progress\InitFunctions\HaveSpecialistType;
 use EtoA\Quest\Progress\InitFunctions\HaveTechnologyLevel;
-use LittleCubicleGames\Quests\Progress\Functions\InitProgressHandlerFunctionInterface;
+use LittleCubicleGames\Quests\Progress\Functions\HandlerFunctionInterface;
 use LittleCubicleGames\Quests\Progress\ProgressFunctionBuilderInterface;
 use Pimple\Container;
 
@@ -25,7 +25,7 @@ class ContainerAwareFunctionBuilder implements ProgressFunctionBuilderInterface
         $this->container = $container;
     }
 
-    public function build($taskName, array $attributes): ?InitProgressHandlerFunctionInterface
+    public function build(string $taskName, array $attributes): ?HandlerFunctionInterface
     {
         switch ($taskName) {
             case HaveBuildingLevel::NAME:

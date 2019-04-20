@@ -3,9 +3,13 @@
 namespace EtoA\Quest\Progress\Functions;
 
 use EtoA\Specialist\Event\SpecialistDischarge;
+use LittleCubicleGames\Quests\Entity\TaskInterface;
 
-class DischargeSpecialistTest extends AbsractProgressFunctionTestCase
+class DischargeSpecialistTest extends AbstractProgressFunctionTestCase
 {
+    /** @var DischargeSpecialist */
+    private $progressFunction;
+
     protected function setUp(): void
     {
         $this->progressFunction = new DischargeSpecialist();
@@ -16,7 +20,9 @@ class DischargeSpecialistTest extends AbsractProgressFunctionTestCase
      */
     public function testHandle(int $currentProgress, int $expectedProgress): void
     {
-        $this->simulateHandle(new SpecialistDischarge(1), $currentProgress, $expectedProgress);
+        $this->simulateHandle(function (TaskInterface $task) {
+            return $this->progressFunction->handle($task, new SpecialistDischarge(1));
+        }, $currentProgress, $expectedProgress);
     }
 
     public function providerHandle(): array

@@ -122,10 +122,9 @@ class QuestServiceProvider implements ServiceProviderInterface, EventListenerPro
     public function boot(Application $app): void
     {
         $app->before(function (Request $request, Application $app) {
-            /** @var \CurrentUser $currentUser */
             $currentUser = $request->attributes->get('currentUser');
-            if ($currentUser instanceof \CurrentUser && $currentUser->isSetup() && $app['etoa.tutorial.userprogressrepository']->hasFinishedTutorial($currentUser->id)) {
-                $app['cubicle.quests.initializer']->initialize($currentUser->id);
+            if ($currentUser instanceof \CurrentUser && $currentUser->isSetup() && $app['etoa.tutorial.userprogressrepository']->hasFinishedTutorial($currentUser->getId())) {
+                $app['cubicle.quests.initializer']->initialize($currentUser->getId());
             }
         });
     }

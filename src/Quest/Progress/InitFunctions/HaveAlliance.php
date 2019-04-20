@@ -9,7 +9,7 @@ use LittleCubicleGames\Quests\Progress\Functions\InitProgressHandlerFunctionInte
 
 class HaveAlliance implements InitProgressHandlerFunctionInterface
 {
-    const NAME = 'have-alliance';
+    public const NAME = 'have-alliance';
 
     /** @var UserRepository */
     private $userRepository;

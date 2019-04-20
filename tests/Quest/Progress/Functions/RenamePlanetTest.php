@@ -3,9 +3,13 @@
 namespace EtoA\Quest\Progress\Functions;
 
 use EtoA\Planet\Event\PlanetRename;
+use LittleCubicleGames\Quests\Entity\TaskInterface;
 
-class RenamePlanetTest extends AbsractProgressFunctionTestCase
+class RenamePlanetTest extends AbstractProgressFunctionTestCase
 {
+    /** @var RenamePlanet */
+    private $progressFunction;
+
     protected function setUp(): void
     {
         $this->progressFunction = new RenamePlanet();
@@ -16,7 +20,9 @@ class RenamePlanetTest extends AbsractProgressFunctionTestCase
      */
     public function testHandle(int $currentProgress, int $expectedProgress): void
     {
-        $this->simulateHandle(new PlanetRename(), $currentProgress, $expectedProgress);
+        $this->simulateHandle(function (TaskInterface $task) {
+            return $this->progressFunction->handle($task, new PlanetRename());
+        }, $currentProgress, $expectedProgress);
     }
 
     public function providerHandle(): array

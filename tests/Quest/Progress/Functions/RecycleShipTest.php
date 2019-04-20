@@ -3,9 +3,13 @@
 namespace EtoA\Quest\Progress\Functions;
 
 use EtoA\Ship\Event\ShipRecycle;
+use LittleCubicleGames\Quests\Entity\TaskInterface;
 
-class RecycleShipTest extends AbsractProgressFunctionTestCase
+class RecycleShipTest extends AbstractProgressFunctionTestCase
 {
+    /** @var RecycleShip */
+    private $progressFunction;
+
     protected function setUp(): void
     {
         $this->progressFunction = new RecycleShip();
@@ -16,7 +20,9 @@ class RecycleShipTest extends AbsractProgressFunctionTestCase
      */
     public function testHandle(int $currentProgress, int $count, int $expectedProgress): void
     {
-        $this->simulateHandle(new ShipRecycle(1, $count), $currentProgress, $expectedProgress);
+        $this->simulateHandle(function (TaskInterface $task) use ($count) {
+            return $this->progressFunction->handle($task, new ShipRecycle(1, $count));
+        }, $currentProgress, $expectedProgress);
     }
 
     public function providerHandle(): array

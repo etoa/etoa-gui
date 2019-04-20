@@ -3,9 +3,13 @@
 namespace EtoA\Quest\Progress\Functions;
 
 use EtoA\Missile\Event\MissileLaunch;
+use LittleCubicleGames\Quests\Entity\TaskInterface;
 
-class LaunchMissileTest extends AbsractProgressFunctionTestCase
+class LaunchMissileTest extends AbstractProgressFunctionTestCase
 {
+    /** @var LaunchMissile */
+    private $progressFunction;
+
     protected function setUp(): void
     {
         $this->progressFunction = new LaunchMissile();
@@ -16,7 +20,9 @@ class LaunchMissileTest extends AbsractProgressFunctionTestCase
      */
     public function testHandle(int $currentProgress, array $missiles, int $expectedProgress): void
     {
-        $this->simulateHandle(new MissileLaunch($missiles), $currentProgress, $expectedProgress);
+        $this->simulateHandle(function (TaskInterface $task) use ($missiles) {
+            return $this->progressFunction->handle($task, new MissileLaunch($missiles));
+        }, $currentProgress, $expectedProgress);
     }
 
     public function providerHandle(): array

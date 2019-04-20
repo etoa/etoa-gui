@@ -19,12 +19,10 @@ class RaceDataRepositoryTest extends AbstractDbTestCase
     public function testGetRaceNames(): void
     {
         $names = $this->raceDataRepository->getRaceNames();
-        $this->assertIsArray($names);
         $this->assertNotEmpty($names);
 
         foreach ($names as $raceId => $raceName) {
             $this->assertIsInt($raceId);
-            $this->assertIsString('string', $raceName);
         }
     }
 }

@@ -18,7 +18,7 @@ class ParamConverterListener
 
         // automatically apply conversion for non-configured objects
         foreach ($r->getParameters() as $param) {
-            if (!$param->getClass() || $param->getClass()->isInstance($request)) {
+            if (!$param->getClass() instanceof \ReflectionClass || $param->getClass()->isInstance($request)) {
                 continue;
             }
 

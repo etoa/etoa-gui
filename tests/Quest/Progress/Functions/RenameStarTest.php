@@ -3,9 +3,13 @@
 namespace EtoA\Quest\Progress\Functions;
 
 use EtoA\Galaxy\Event\StarRename;
+use LittleCubicleGames\Quests\Entity\TaskInterface;
 
-class RenameStarTest extends AbsractProgressFunctionTestCase
+class RenameStarTest extends AbstractProgressFunctionTestCase
 {
+    /** @var RenameStar */
+    private $progressFunction;
+
     protected function setUp(): void
     {
         $this->progressFunction = new RenameStar();
@@ -16,7 +20,9 @@ class RenameStarTest extends AbsractProgressFunctionTestCase
      */
     public function testHandle(int $currentProgress, int $expectedProgress): void
     {
-        $this->simulateHandle(new StarRename(), $currentProgress, $expectedProgress);
+        $this->simulateHandle(function (TaskInterface $task) {
+            return $this->progressFunction->handle($task, new StarRename());
+        }, $currentProgress, $expectedProgress);
     }
 
     public function providerHandle(): array

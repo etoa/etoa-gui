@@ -14,7 +14,5 @@ class SmokeTest extends TestCase
         foreach ($app->keys() as $serviceId) {
             $app->offsetGet($serviceId);
         }
-
-        $this->assertTrue(true);
     }
 }

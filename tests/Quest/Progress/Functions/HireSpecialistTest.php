@@ -3,9 +3,13 @@
 namespace EtoA\Quest\Progress\Functions;
 
 use EtoA\Specialist\Event\SpecialistHire;
+use LittleCubicleGames\Quests\Entity\TaskInterface;
 
-class HireSpecialistTest extends AbsractProgressFunctionTestCase
+class HireSpecialistTest extends AbstractProgressFunctionTestCase
 {
+    /** @var HireSpecialist */
+    private $progressFunction;
+
     protected function setUp(): void
     {
         $this->progressFunction = new HireSpecialist();
@@ -16,7 +20,9 @@ class HireSpecialistTest extends AbsractProgressFunctionTestCase
      */
     public function testHandle(int $currentProgress, int $expectedProgress): void
     {
-        $this->simulateHandle(new SpecialistHire(1), $currentProgress, $expectedProgress);
+        $this->simulateHandle(function (TaskInterface $task) {
+            return $this->progressFunction->handle($task, new SpecialistHire(1));
+        }, $currentProgress, $expectedProgress);
     }
 
     public function providerHandle(): array

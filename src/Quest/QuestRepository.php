@@ -12,12 +12,7 @@ use LittleCubicleGames\Quests\Workflow\QuestDefinitionInterface;
 
 class QuestRepository extends AbstractRepository implements QuestStorageInterface
 {
-    /**
-     * @param int $userId
-     * @param int $questId
-     * @return Quest|null
-     */
-    public function getUserQuest($userId, $questId): ?Quest
+    public function getUserQuest(int $userId, int $questId): QuestInterface
     {
         $result = $this->createQueryBuilder()
             ->select('q.id AS qid')
@@ -32,7 +27,7 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
                 'questId' => $questId,
             ])->execute()->fetchAll(\PDO::FETCH_ASSOC);
 
-        if (!$result) {
+        if (count($result) === 0) {
             throw new QuestNotFoundException();
         }
 
@@ -40,10 +35,9 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
     }
 
     /**
-     * @param int $userId
      * @return QuestInterface[]
      */
-    public function getActiveQuests($userId): array
+    public function getActiveQuests(int $userId): array
     {
         $qb = $this->createQueryBuilder();
 
@@ -81,9 +75,13 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
         return new Quest($questId, (int)$questData[0]['quest_data_id'], (int)$questData[0]['user_id'], $questData[0]['slot_id'], $questData[0]['state'], $tasks);
     }
 
-    public function save(QuestInterface $quest): void
+    public function save(QuestInterface $quest): QuestInterface
     {
-        if ($quest->getId()) {
+        if (!$quest instanceof Quest) {
+            throw new \InvalidArgumentException('$quest must be a instance of Quest');
+        }
+
+        if (null !== $quest->getId()) {
             $this->createQueryBuilder()
                 ->update('quests')
                 ->set('state', ':state')
@@ -96,7 +94,7 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
             foreach ($quest->getTasks() as $task) {
                 $this->createQueryBuilder()
                     ->update('quest_tasks')
-                    ->set('progress', $task->getProgress())
+                    ->set('progress', (string)$task->getProgress())
                     ->where('id = :id')
                     ->setParameters([
                         'id' => $task->getId(),
@@ -138,5 +136,7 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
                 $task->setId((int)$qb->getConnection()->lastInsertId());
             }
         }
+
+        return $quest;
     }
 }
