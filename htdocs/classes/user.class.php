@@ -215,12 +215,12 @@ class User implements \EtoA\User\UserInterface
 		}
 	}
 
-    public function getId()
+    public function getId(): int
     {
-        return $this->id;
+        return (int)$this->id;
     }
 
-    public function getNick()
+    public function getNick(): string
     {
         return $this->nick;
     }
@@ -572,7 +572,7 @@ class User implements \EtoA\User\UserInterface
 
 	public function isNPC()
 	{
-		if($this->npc) 
+		if($this->npc)
 			return true;
 		return false;
 	}
@@ -1423,7 +1423,7 @@ die Spielleitung";
        		return $this->__get('alliance')->checkWar($u->allianceId())
                 || !$this->isUserNoobProtected($u)
                 || $u->isInactiv()
-                || $u->__get('locked') 
+                || $u->__get('locked')
                 || $u->isNPC();
         }
         else

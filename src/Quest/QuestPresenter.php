@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest;
 
@@ -23,6 +23,7 @@ class QuestPresenter
     /** @var DefenseDataRepository */
     private $defenseDataRepository;
 
+    /** @var array[] */
     private $transitions = [
         QuestDefinitionInterface::STATE_AVAILABLE => [
             'transition' => QuestDefinitionInterface::TRANSITION_START,
@@ -46,7 +47,7 @@ class QuestPresenter
         $this->defenseDataRepository = $defenseDataRepository;
     }
 
-    public function present(Quest $quest, Slot $slot)
+    public function present(Quest $quest, Slot $slot): array
     {
         /** @var \LittleCubicleGames\Quests\Definition\Quest\Quest $questDefinition */
         $questDefinition = $this->registry->getQuest($quest->getQuestId());
@@ -67,7 +68,7 @@ class QuestPresenter
         ];
     }
 
-    private function buildProgress(array $progressMap, array $taskData)
+    private function buildProgress(array $progressMap, array $taskData): array
     {
         switch ($taskData['operator']) {
             case AndTask::TASK_NAME:
@@ -98,7 +99,7 @@ class QuestPresenter
         }
     }
 
-    private function buildRewards($data)
+    private function buildRewards(array $data): array
     {
         if (!isset($data['rewards'])) {
             return [];

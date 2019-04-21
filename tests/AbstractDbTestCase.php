@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA;
 
@@ -15,7 +15,7 @@ class AbstractDbTestCase extends TestCase
     /** @var Connection */
     protected $connection;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

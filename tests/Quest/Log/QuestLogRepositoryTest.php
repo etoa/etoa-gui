@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Log;
 
@@ -12,14 +12,14 @@ class QuestLogRepositoryTest extends AbstractDbTestCase
     /** @var QuestLogRepository */
     private $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->repository = $this->app['etoa.quest.log.repository'];
     }
 
-    public function testLog()
+    public function testLog(): void
     {
         $quest = new Quest(1, 2, 3, 'merchant', QuestDefinitionInterface::STATE_IN_PROGRESS, []);
         $this->repository->log($quest, QuestDefinitionInterface::STATE_AVAILABLE, QuestDefinitionInterface::TRANSITION_START);

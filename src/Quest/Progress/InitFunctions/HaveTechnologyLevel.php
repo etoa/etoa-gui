@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Progress\InitFunctions;
 
@@ -9,7 +9,7 @@ use LittleCubicleGames\Quests\Progress\Functions\InitProgressHandlerFunctionInte
 
 class HaveTechnologyLevel implements InitProgressHandlerFunctionInterface
 {
-    const NAME = 'have-technology-level';
+    public const NAME = 'have-technology-level';
 
     /** @var TechnologyRepository */
     private $technologyRepository;
@@ -22,7 +22,7 @@ class HaveTechnologyLevel implements InitProgressHandlerFunctionInterface
         $this->buildingId = $attributes['technology_id'];
     }
 
-    public function initProgress(QuestInterface $quest, TaskInterface $task)
+    public function initProgress(QuestInterface $quest, TaskInterface $task): int
     {
         return $this->technologyRepository->getTechnologyLevel($quest->getUser(), $this->buildingId);
     }

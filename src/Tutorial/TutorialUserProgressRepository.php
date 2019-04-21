@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Tutorial;
 
@@ -6,12 +6,12 @@ use EtoA\Core\AbstractRepository;
 
 class TutorialUserProgressRepository extends AbstractRepository
 {
-    public function hasFinishedTutorial($userId)
+    public function hasFinishedTutorial(int $userId): bool
     {
         return $this->hasReadTutorial($userId, 2);
     }
 
-    public function hasReadTutorial($userId, $tutorialId)
+    public function hasReadTutorial(int $userId, int $tutorialId): bool
     {
         return (bool)$this->createQueryBuilder()
             ->select('tup_closed')
@@ -26,7 +26,7 @@ class TutorialUserProgressRepository extends AbstractRepository
             ->fetchColumn();
     }
 
-    public function closeTutorial($userId, $tutorial)
+    public function closeTutorial(int $userId, int $tutorial): void
     {
         $this->createQueryBuilder()
             ->update('tutorial_user_progress')

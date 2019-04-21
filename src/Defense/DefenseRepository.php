@@ -1,12 +1,12 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Defense;
 
 class DefenseRepository extends \EtoA\Core\AbstractRepository
 {
-    public function addDefense($defenseId, $amount, $userId, $entityId)
+    public function addDefense(int $defenseId, int $amount, int $userId, int $entityId): void
     {
-        $hasShips = $this->createQueryBuilder()
+        $hasDefense = $this->createQueryBuilder()
             ->select('deflist_id')
             ->from('deflist')
             ->where('deflist_user_id = :userId')
@@ -18,7 +18,7 @@ class DefenseRepository extends \EtoA\Core\AbstractRepository
                 'defenseId' => $defenseId,
             ])->execute()->fetchColumn();
 
-        if ($hasShips) {
+        if ($hasDefense) {
             $this->createQueryBuilder()
                 ->update('deflist')
                 ->set('deflist_count', 'deflist_count + :amount')
@@ -49,7 +49,7 @@ class DefenseRepository extends \EtoA\Core\AbstractRepository
         }
     }
 
-    public function getDefenseCount($userId, $defenseId)
+    public function getDefenseCount(int $userId, int $defenseId): int
     {
         return (int)$this->createQueryBuilder()
             ->select('SUM(deflist_count)')

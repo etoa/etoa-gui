@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Missile;
 
@@ -8,7 +8,7 @@ use EtoA\Core\AbstractRepository;
 
 class MissileDataRepository extends AbstractRepository
 {
-    const MISSILES_NAMES = 'missiles.names';
+    private const MISSILES_NAMES = 'missiles.names';
 
     /** @var CacheProvider */
     private $cache;
@@ -19,7 +19,7 @@ class MissileDataRepository extends AbstractRepository
         $this->cache = $cache;
     }
 
-    public function getMissileNames()
+    public function getMissileNames(): array
     {
         if (!$this->cache->contains(self::MISSILES_NAMES)) {
             $names = $this->createQueryBuilder()

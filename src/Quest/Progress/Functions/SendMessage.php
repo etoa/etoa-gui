@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Progress\Functions;
 
@@ -8,14 +8,14 @@ use LittleCubicleGames\Quests\Progress\Functions\EventHandlerFunctionInterface;
 
 class SendMessage implements EventHandlerFunctionInterface
 {
-    const NAME = 'send-message';
+    public const NAME = 'send-message';
 
-    public function handle(TaskInterface $task, MessageSend $event)
+    public function handle(TaskInterface $task, MessageSend $event): int
     {
         return $task->getProgress() + 1;
     }
 
-    public function getEventMap()
+    public function getEventMap(): array
     {
         return [MessageSend::SEND_SUCCESS => 'handle'];
     }

@@ -1,8 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Core;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Query\QueryBuilder;
 
 abstract class AbstractRepository
 {
@@ -14,7 +15,7 @@ abstract class AbstractRepository
         $this->connection = $connection;
     }
 
-    protected function createQueryBuilder()
+    protected function createQueryBuilder(): QueryBuilder
     {
         return $this->connection->createQueryBuilder();
     }

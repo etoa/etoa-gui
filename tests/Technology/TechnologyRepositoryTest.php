@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Technology;
 
@@ -9,19 +9,19 @@ class TechnologyRepositoryTest extends AbstractDbTestCase
     /** @var TechnologyRepository */
     private $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->repository = $this->app['etoa.technology.repository'];
     }
 
-    public function testGetUserLevelNoTechnology()
+    public function testGetUserLevelNoTechnology(): void
     {
         $this->assertSame(0, $this->repository->getTechnologyLevel(1, 1));
     }
 
-    public function testGetUserLevel()
+    public function testGetUserLevel(): void
     {
         $userId = 1;
         $technologyId = 3;

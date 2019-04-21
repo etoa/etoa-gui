@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Progress;
 
@@ -10,7 +10,7 @@ class ContainerAwareFunctionBuilderTest extends WebTestCase
     /** @var ContainerAwareFunctionBuilder */
     private $builder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -20,12 +20,12 @@ class ContainerAwareFunctionBuilderTest extends WebTestCase
     /**
      * @dataProvider initFunctionNameProvider
      */
-    public function testBuild($name, $className)
+    public function testBuild(string $name, string $className): void
     {
         $this->assertInstanceOf($className, $this->builder->build($name, []));
     }
 
-    public function initFunctionNameProvider()
+    public function initFunctionNameProvider(): array
     {
         $finder = new Finder();
         $finder->files()->in(__DIR__ . '/../../../src/Quest/Progress/InitFunctions');

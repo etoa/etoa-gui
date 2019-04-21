@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Progress\Functions;
 
@@ -8,14 +8,14 @@ use LittleCubicleGames\Quests\Progress\Functions\EventHandlerFunctionInterface;
 
 class BuyMissile implements EventHandlerFunctionInterface
 {
-    const NAME = 'buy-missile';
+    public const NAME = 'buy-missile';
 
-    public function handle(TaskInterface $task, MissileBuy $event)
+    public function handle(TaskInterface $task, MissileBuy $event): int
     {
         return $task->getProgress() + $event->getCount();
     }
 
-    public function getEventMap()
+    public function getEventMap(): array
     {
         return [MissileBuy::BUY_SUCCESS => 'handle'];
     }

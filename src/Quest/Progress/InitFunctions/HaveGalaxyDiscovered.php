@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Progress\InitFunctions;
 
@@ -9,7 +9,7 @@ use LittleCubicleGames\Quests\Progress\Functions\InitProgressHandlerFunctionInte
 
 class HaveGalaxyDiscovered implements InitProgressHandlerFunctionInterface
 {
-    const NAME = 'have-galaxy-discovered';
+    public const NAME = 'have-galaxy-discovered';
 
     /** @var UserRepository */
     private $userRepository;
@@ -19,7 +19,7 @@ class HaveGalaxyDiscovered implements InitProgressHandlerFunctionInterface
         $this->userRepository = $userRepository;
     }
 
-    public function initProgress(QuestInterface $quest, TaskInterface $task)
+    public function initProgress(QuestInterface $quest, TaskInterface $task): int
     {
         $discoverMask = $this->userRepository->getDiscoverMask($quest->getUser());
 

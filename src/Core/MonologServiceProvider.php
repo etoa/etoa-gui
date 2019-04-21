@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Core;
 
@@ -12,7 +12,7 @@ use Pimple\ServiceProviderInterface;
 
 class MonologServiceProvider implements ServiceProviderInterface
 {
-    public function register(Container $pimple)
+    public function register(Container $pimple): void
     {
         $pimple['logger'] = function (Container $pimple) {
             return $pimple['monolog'];
@@ -35,7 +35,7 @@ class MonologServiceProvider implements ServiceProviderInterface
         $pimple['monolog.handler'] = function (Container $pimple) {
             return new FingersCrossedHandler(
                 $pimple['monolog.syslog.handler'],
-                $pimple['debug'] ? Logger::DEBUG : Logger::WARNING
+                (bool)$pimple['debug'] ? Logger::DEBUG : Logger::WARNING
             );
         };
 

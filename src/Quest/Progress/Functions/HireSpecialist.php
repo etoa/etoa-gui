@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Progress\Functions;
 
@@ -8,14 +8,14 @@ use LittleCubicleGames\Quests\Progress\Functions\EventHandlerFunctionInterface;
 
 class HireSpecialist implements EventHandlerFunctionInterface
 {
-    const NAME = 'hire-specialist';
+    public const NAME = 'hire-specialist';
 
-    public function handle(TaskInterface $task, SpecialistHire $event)
+    public function handle(TaskInterface $task, SpecialistHire $event): int
     {
         return $task->getProgress() + 1;
     }
 
-    public function getEventMap()
+    public function getEventMap(): array
     {
         return [SpecialistHire::HIRE_SUCCESS => 'handle'];
     }

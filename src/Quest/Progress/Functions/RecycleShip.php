@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Progress\Functions;
 
@@ -8,14 +8,14 @@ use LittleCubicleGames\Quests\Progress\Functions\EventHandlerFunctionInterface;
 
 class RecycleShip implements EventHandlerFunctionInterface
 {
-    const NAME = 'recycle-ship';
+    public const NAME = 'recycle-ship';
 
-    public function handle(TaskInterface $task, ShipRecycle $event)
+    public function handle(TaskInterface $task, ShipRecycle $event): int
     {
         return $task->getProgress() + $event->getCount();
     }
 
-    public function getEventMap()
+    public function getEventMap(): array
     {
         return [ShipRecycle::RECYCLE_SUCCESS => 'handle'];
     }

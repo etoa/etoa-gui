@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Tutorial;
 
@@ -15,7 +15,7 @@ class TutorialController
         $this->tutorialUserProgressRepository = $tutorialUserProgressRepository;
     }
 
-    public function closeAction(TokenContext $context, $tutorialId)
+    public function closeAction(TokenContext $context, int $tutorialId): JsonResponse
     {
         $this->tutorialUserProgressRepository->closeTutorial($context->getCurrentUser()->getId(), $tutorialId);
 

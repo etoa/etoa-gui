@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Progress\Functions;
 
@@ -8,14 +8,14 @@ use LittleCubicleGames\Quests\Progress\Functions\EventHandlerFunctionInterface;
 
 class DischargeSpecialist implements EventHandlerFunctionInterface
 {
-    const NAME = 'discharge-specialist';
+    public const NAME = 'discharge-specialist';
 
-    public function handle(TaskInterface $task, SpecialistDischarge $event)
+    public function handle(TaskInterface $task, SpecialistDischarge $event): int
     {
         return $task->getProgress() + 1;
     }
 
-    public function getEventMap()
+    public function getEventMap(): array
     {
         return [SpecialistDischarge::DISCHARGE_SUCCESS => 'handle'];
     }

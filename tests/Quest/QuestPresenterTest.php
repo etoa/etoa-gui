@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest;
 
@@ -15,12 +15,16 @@ class QuestPresenterTest extends TestCase
 {
     /** @var QuestPresenter */
     private $presenter;
+    /** @var RegistryInterface&\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
+    /** @var MissileDataRepository&\PHPUnit\Framework\MockObject\MockObject */
     private $missileDataRepository;
+    /** @var ShipDataRepository&\PHPUnit\Framework\MockObject\MockObject */
     private $shipDataRepository;
+    /** @var DefenseDataRepository&\PHPUnit\Framework\MockObject\MockObject */
     private $defenseDataRepository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->getMockBuilder(RegistryInterface::class)->getMock();
         $this->missileDataRepository = $this->getMockBuilder(MissileDataRepository::class)->disableOriginalConstructor()->getMock();
@@ -34,7 +38,7 @@ class QuestPresenterTest extends TestCase
         );
     }
 
-    public function testPresent()
+    public function testPresent(): void
     {
         $quest = $this->getMockBuilder(\EtoA\Quest\Entity\Quest::class)->disableOriginalConstructor()->getMock();
         $slot = $this->getMockBuilder(Slot::class)->disableOriginalConstructor()->getMock();

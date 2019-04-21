@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\User;
 
@@ -6,27 +6,27 @@ use EtoA\Core\AbstractRepository;
 
 class UserRepository extends AbstractRepository
 {
-    public function getDiscoverMask($userId)
+    public function getDiscoverMask(int $userId): string
     {
         return $this->getUserProperty($userId, 'discoverymask');
     }
 
-    public function getPoints($userId)
+    public function getPoints(int $userId): int
     {
         return (int)$this->getUserProperty($userId, 'user_points');
     }
 
-    public function getAllianceId($userId)
+    public function getAllianceId(int $userId): int
     {
         return (int)$this->getUserProperty($userId, 'user_alliance_id');
     }
 
-    public function getSpecialistId($userid)
+    public function getSpecialistId(int $userId): int
     {
-        return (int)$this->getUserProperty($userid, 'user_specialist_id');
+        return (int)$this->getUserProperty($userId, 'user_specialist_id');
     }
 
-    private function getUserProperty($userId, $property)
+    private function getUserProperty(int $userId, string $property): string
     {
         return $this->createQueryBuilder()
             ->select($property)

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Building;
 
@@ -6,7 +6,7 @@ use EtoA\Core\AbstractRepository;
 
 class BuildingRepository extends AbstractRepository
 {
-    public function getBuildingLevel($userId, $buildingId)
+    public function getBuildingLevel(int $userId, int $buildingId): int
     {
         return (int)$this->createQueryBuilder()
             ->select('MAX(buildlist_current_level)')

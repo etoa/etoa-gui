@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Reward;
 
@@ -12,17 +12,19 @@ class MissileRewardCollectorTest extends TestCase
 {
     /** @var MissileRewardCollector */
     private $collector;
+    /** @var MissileRepository&\PHPUnit\Framework\MockObject\MockObject */
     private $missileRepository;
+    /** @var PlanetRepository&\PHPUnit\Framework\MockObject\MockObject */
     private $planetRepository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->missileRepository = $this->getMockBuilder(MissileRepository::class)->disableOriginalConstructor()->getMock();
         $this->planetRepository = $this->getMockBuilder(PlanetRepository::class)->disableOriginalConstructor()->getMock();
         $this->collector = new MissileRewardCollector($this->missileRepository, $this->planetRepository);
     }
 
-    public function testCollect()
+    public function testCollect(): void
     {
         $mainPlanetId = 33;
         $userId = 1;

@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/php:7.2.2-cli-node-browsers
+      - image: circleci/php:7.2.9-cli
       - image: circleci/mysql:5.5.54
 
     working_directory: ~/repo

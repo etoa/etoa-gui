@@ -1,12 +1,12 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Missile;
 
 class MissileRepository extends \EtoA\Core\AbstractRepository
 {
-    public function addMissile($missileId, $amount, $userId, $entityId)
+    public function addMissile(int $missileId, int $amount, int $userId, int $entityId): void
     {
-        $hasShips = $this->createQueryBuilder()
+        $hasMissiles = $this->createQueryBuilder()
             ->select('missilelist_id')
             ->from('missilelist')
             ->where('missilelist_user_id = :userId')
@@ -18,7 +18,7 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
                 'missileId' => $missileId,
             ])->execute()->fetchColumn();
 
-        if ($hasShips) {
+        if ($hasMissiles) {
             $this->createQueryBuilder()
                 ->update('missilelist')
                 ->set('missilelist_count', 'missilelist_count + :amount')

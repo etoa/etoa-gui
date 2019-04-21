@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Tutorial;
 
@@ -10,7 +10,7 @@ use Silex\ControllerCollection;
 
 class TutorialServiceProvider implements ServiceProviderInterface, ControllerProviderInterface
 {
-    public function connect(Application $app)
+    public function connect(Application $app): ControllerCollection
     {
         /** @var ControllerCollection $controllers */
         $controllers = $app['controllers_factory'];
@@ -23,7 +23,7 @@ class TutorialServiceProvider implements ServiceProviderInterface, ControllerPro
         return $controllers;
     }
 
-    public function register(Container $pimple)
+    public function register(Container $pimple): void
     {
         $pimple['etoa.tutorial.userprogressrepository'] = function (Container $pimple) {
             return new TutorialUserProgressRepository($pimple['db']);

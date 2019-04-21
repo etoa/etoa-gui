@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Progress\InitFunctions;
 
@@ -9,7 +9,7 @@ use LittleCubicleGames\Quests\Progress\Functions\InitProgressHandlerFunctionInte
 
 class HaveAlliance implements InitProgressHandlerFunctionInterface
 {
-    const NAME = 'have-alliance';
+    public const NAME = 'have-alliance';
 
     /** @var UserRepository */
     private $userRepository;
@@ -19,7 +19,7 @@ class HaveAlliance implements InitProgressHandlerFunctionInterface
         $this->userRepository = $userRepository;
     }
 
-    public function initProgress(QuestInterface $quest, TaskInterface $task)
+    public function initProgress(QuestInterface $quest, TaskInterface $task): int
     {
         return (int)($this->userRepository->getAllianceId($quest->getUser()) > 0);
     }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Progress\Functions;
 
@@ -8,14 +8,14 @@ use LittleCubicleGames\Quests\Progress\Functions\EventHandlerFunctionInterface;
 
 class RenameStar implements EventHandlerFunctionInterface
 {
-    const NAME = 'rename-star';
+    public const NAME = 'rename-star';
 
-    public function handle(TaskInterface $task, StarRename $event)
+    public function handle(TaskInterface $task, StarRename $event): int
     {
         return $task->getProgress() + 1;
     }
 
-    public function getEventMap()
+    public function getEventMap(): array
     {
         return [StarRename::RENAME_SUCCESS => 'handle'];
     }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Missile;
 
@@ -9,14 +9,14 @@ class MissileRepositoryTest extends AbstractDbTestCase
     /** @var MissileRepository */
     private $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->repository = $this->app['etoa.missile.repository'];
     }
 
-    public function testAddMissile()
+    public function testAddMissile(): void
     {
         $userId = 3;
         $missileId = 5;

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Missile\Event;
 
@@ -6,7 +6,7 @@ use Symfony\Component\EventDispatcher\Event;
 
 class MissileLaunch extends Event
 {
-    const LAUNCH_SUCCESS = 'missile.launch.success';
+    public const LAUNCH_SUCCESS = 'missile.launch.success';
 
     /** @var int[] */
     private $missiles;
@@ -16,7 +16,7 @@ class MissileLaunch extends Event
         $this->missiles = $missiles;
     }
 
-    public function getMissileCount()
+    public function getMissileCount(): int
     {
         return array_reduce($this->missiles, function ($total, $count) {
             return $total + $count;

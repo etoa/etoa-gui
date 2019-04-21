@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Specialist\Event;
 
@@ -6,12 +6,12 @@ use Symfony\Component\EventDispatcher\Event;
 
 class SpecialistHire extends Event
 {
-    const HIRE_SUCCESS = 'specialist.hire.success';
+    public const HIRE_SUCCESS = 'specialist.hire.success';
 
     /** @var int */
     private $specialistId;
 
-    public function __construct($specialistId)
+    public function __construct(int $specialistId)
     {
         $this->specialistId = $specialistId;
     }

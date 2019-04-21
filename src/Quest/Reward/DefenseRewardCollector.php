@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Reward;
 
@@ -11,7 +11,7 @@ use LittleCubicleGames\Quests\Reward\Collect\CollectorInterface;
 
 class DefenseRewardCollector implements CollectorInterface
 {
-    const TYPE = 'defense';
+    public const TYPE = 'defense';
 
     /** @var DefenseRepository */
     private $defenseRepository;
@@ -24,7 +24,7 @@ class DefenseRewardCollector implements CollectorInterface
         $this->planetRepository = $planetRepository;
     }
 
-    public function collect(RewardInterface $reward, QuestInterface $quest)
+    public function collect(RewardInterface $reward, QuestInterface $quest): void
     {
         if ($reward instanceof Reward) {
             $data = $reward->getData();
@@ -34,7 +34,7 @@ class DefenseRewardCollector implements CollectorInterface
         }
     }
 
-    public function getType()
+    public function getType(): string
     {
         return self::TYPE;
     }

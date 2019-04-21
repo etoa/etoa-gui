@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest;
 
@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class QuestServiceProvider implements ServiceProviderInterface, EventListenerProviderInterface, ControllerProviderInterface, BootableProviderInterface
 {
-    public function connect(Application $app)
+    public function connect(Application $app): ControllerCollection
     {
         /** @var ControllerCollection $controllers */
         $controllers = $app['controllers_factory'];
@@ -38,7 +38,7 @@ class QuestServiceProvider implements ServiceProviderInterface, EventListenerPro
         return $controllers;
     }
 
-    public function register(Container $pimple)
+    public function register(Container $pimple): void
     {
         $pimple['etoa.quest.controller'] = function (Container $pimple) {
             return new QuestController($pimple['cubicle.quests.advancer']);
@@ -114,18 +114,17 @@ class QuestServiceProvider implements ServiceProviderInterface, EventListenerPro
         };
     }
 
-    public function subscribe(Container $app, EventDispatcherInterface $dispatcher)
+    public function subscribe(Container $app, EventDispatcherInterface $dispatcher): void
     {
         $dispatcher->addSubscriber($app['etoa.quest.responselistener']);
     }
 
-    public function boot(Application $app)
+    public function boot(Application $app): void
     {
         $app->before(function (Request $request, Application $app) {
-            /** @var \CurrentUser $currentUser */
             $currentUser = $request->attributes->get('currentUser');
-            if ($currentUser instanceof \CurrentUser && $currentUser->isSetup() && $app['etoa.tutorial.userprogressrepository']->hasFinishedTutorial($currentUser->id)) {
-                $app['cubicle.quests.initializer']->initialize($currentUser->id);
+            if ($currentUser instanceof \CurrentUser && $currentUser->isSetup() && $app['etoa.tutorial.userprogressrepository']->hasFinishedTutorial($currentUser->getId())) {
+                $app['cubicle.quests.initializer']->initialize($currentUser->getId());
             }
         });
     }

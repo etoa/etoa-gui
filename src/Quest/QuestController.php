@@ -16,7 +16,7 @@ class QuestController
         $this->questAdvancer = $questAdvancer;
     }
 
-    public function advanceAction(TokenContext $context, $questId, $transition)
+    public function advanceAction(TokenContext $context, int $questId, string $transition): JsonResponse
     {
         try {
             $quest = $this->questAdvancer->advanceQuest($questId, $context->getCurrentUser()->getId(), $transition);

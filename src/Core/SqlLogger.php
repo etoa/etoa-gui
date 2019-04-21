@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Core;
 
@@ -17,16 +17,16 @@ class SqlLogger implements \Doctrine\DBAL\Logging\SQLLogger
         $this->logger = $logger;
     }
 
-    public function startQuery($sql, array $params = null, array $types = null)
+    public function startQuery($sql, array $params = null, array $types = null): void
     {
         $this->logger->info($sql, null === $params ? array() : $this->normalizeParams($params));
     }
 
-    public function stopQuery()
+    public function stopQuery(): void
     {
     }
 
-    private function normalizeParams(array $params)
+    private function normalizeParams(array $params): array
     {
         foreach ($params as $index => $param) {
             // normalize recursively

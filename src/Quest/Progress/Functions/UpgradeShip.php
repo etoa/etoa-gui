@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Progress\Functions;
 
@@ -8,14 +8,14 @@ use LittleCubicleGames\Quests\Progress\Functions\EventHandlerFunctionInterface;
 
 class UpgradeShip implements EventHandlerFunctionInterface
 {
-    const NAME = 'upgrade-ship';
+    public const NAME = 'upgrade-ship';
 
-    public function handle(TaskInterface $task, ShipUpgrade $event)
+    public function handle(TaskInterface $task, ShipUpgrade $event): int
     {
         return $task->getProgress() + 1;
     }
 
-    public function getEventMap()
+    public function getEventMap(): array
     {
         return [ShipUpgrade::UPGRADE_SUCCESS => 'handle'];
     }

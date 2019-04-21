@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Race;
 
@@ -10,7 +10,7 @@ class RaceServiceProvider implements ServiceProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function register(Container $pimple)
+    public function register(Container $pimple): void
     {
         $pimple['etoa.race.datarepository'] = function (Container $pimple) {
             return new RaceDataRepository($pimple['db']);

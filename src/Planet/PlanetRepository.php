@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Planet;
 
@@ -6,9 +6,9 @@ use EtoA\Core\AbstractRepository;
 
 class PlanetRepository extends AbstractRepository
 {
-    public function getUserMainId($userId)
+    public function getUserMainId(int $userId): int
     {
-        return $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder()
             ->select('p.id')
             ->from('planets', 'p')
             ->where('p.planet_user_main = 1')
@@ -18,7 +18,7 @@ class PlanetRepository extends AbstractRepository
             ])->execute()->fetchColumn();
     }
 
-    public function getPlanetCount($userId)
+    public function getPlanetCount(int $userId): int
     {
         return (int)$this->createQueryBuilder()
             ->select('COUNT(p.id)')
