@@ -8,7 +8,7 @@ use LittleCubicleGames\Quests\Workflow\QuestDefinitionInterface;
 
 class QuestGameLog implements QuestLoggerInterface
 {
-    private const TRANSITION_MAP = [
+    public const TRANSITION_MAP = [
         QuestDefinitionInterface::TRANSITION_START => 0,
         QuestDefinitionInterface::TRANSITION_COMPLETE => 1,
         QuestDefinitionInterface::TRANSITION_COLLECT_REWARD => 2,
