@@ -1601,7 +1601,7 @@
 		query << "buildlist ";
 		query << "WHERE ";
 		query << "	buildlist_entity_id='" << this->id << "' ";
-		query << "	AND buildlist_current_level > 0 ";
+		query << "	AND buildlist_current_level >= 0 ";
 		query << "	AND (";
 		query << "		buildlist_building_id='" << config.idget("FLEET_CONTROL_ID") << "' ";
 		query << "		OR buildlist_building_id='" << config.idget("FACTORY_ID") << "' ";
