@@ -56,6 +56,6 @@ Ensure we are on the correct branch:
 	
 Update code, migrate database and rebuild eventhandler code:
 	
-	git pull && bin/db.php migrate && eventhandler/bin/build.sh && php composer.phar install -o
+	git pull && bin/db.php migrate && eventhandler/bin/build.sh && php composer.phar install -o --no-dev
 	
 Restart the event handler in the web-based admin tool.
