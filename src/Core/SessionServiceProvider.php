@@ -27,7 +27,7 @@ class SessionServiceProvider implements ServiceProviderInterface, BootableProvid
             }
 
             $request->attributes->set('currentUser', $currentUser);
-        }, Application::EARLY_EVENT);
+        });
     }
 
     private function validateChatUser(\UserSession $session): ChatUser
