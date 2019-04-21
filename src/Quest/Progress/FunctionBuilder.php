@@ -36,6 +36,6 @@ class FunctionBuilder implements ProgressFunctionBuilderInterface
                 return new Functions\CreateAlliance();
         }
 
-        throw new \RuntimeException('Unknown task type: ' . $taskName);
+        return null;
     }
 }

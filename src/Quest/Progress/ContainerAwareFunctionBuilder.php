@@ -48,6 +48,6 @@ class ContainerAwareFunctionBuilder implements ProgressFunctionBuilderInterface
                 return new HaveSpecialistType($attributes, $this->container['etoa.user.repository']);
         }
 
-        throw new \RuntimeException('Unknown task type: ' . $taskName);
+        return null;
     }
 }
