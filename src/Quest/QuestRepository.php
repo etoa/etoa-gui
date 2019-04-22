@@ -8,6 +8,7 @@ use EtoA\Quest\Entity\Task;
 use LittleCubicleGames\Quests\Entity\QuestInterface;
 use LittleCubicleGames\Quests\Storage\QuestNotFoundException;
 use LittleCubicleGames\Quests\Storage\QuestStorageInterface;
+use LittleCubicleGames\Quests\Workflow\QuestDefinition;
 use LittleCubicleGames\Quests\Workflow\QuestDefinitionInterface;
 
 class QuestRepository extends AbstractRepository implements QuestStorageInterface
@@ -138,5 +139,46 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
         }
 
         return $quest;
+    }
+
+    public function searchQuests(?int $questId, ?int $userId, ?string $questState, ?string $userNick): array
+    {
+        $qb = $this->createQueryBuilder()
+            ->addSelect('q.*')
+            ->addSelect('t.*')
+            ->addSelect('u.user_nick, u.user_points')
+            ->from('quests', 'q')
+            ->leftJoin('q', 'quest_tasks', 't', 't.quest_id = q.id')
+            ->innerJoin('q', 'users', 'u', 'u.user_id=q.user_id');
+
+        $parameters = [];
+        if ($questId !== null) {
+            $qb
+                ->andWhere('q.quest_data_id = :questId');
+            $parameters['questId'] = $questId;
+        }
+
+        if ($userId !== null) {
+            $qb
+                ->andWhere('q.user_id = :userId');
+            $parameters['userId'] = $userId;
+        }
+
+        if ($userNick !== null) {
+            $qb
+                ->andWhere('u.user_nick LIKE :userNick');
+            $parameters['userNick'] = $userNick;
+        }
+
+        if ($questState !== null && in_array($questState, QuestDefinition::STATES, true)) {
+            $qb
+                ->andWhere('q.state = :state');
+            $parameters['state'] = $questState;
+        }
+
+        return $qb
+            ->setParameters($parameters)
+            ->orderBy('q.id')
+            ->execute()->fetchAll(\PDO::FETCH_ASSOC);
     }
 }

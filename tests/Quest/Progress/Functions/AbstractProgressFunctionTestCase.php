@@ -3,9 +3,7 @@
 namespace EtoA\Quest\Progress\Functions;
 
 use LittleCubicleGames\Quests\Entity\TaskInterface;
-use LittleCubicleGames\Quests\Progress\Functions\HandlerFunctionInterface;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\EventDispatcher\Event;
 
 abstract class AbstractProgressFunctionTestCase extends TestCase
 {
