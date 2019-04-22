@@ -202,6 +202,23 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
         return $result[0];
     }
 
+    public function updateQuest(int $questId, string $questState): void
+    {
+        if (!in_array($questState, QuestDefinition::STATES, true)) {
+            throw new \InvalidArgumentException('Invalid quest state: ' .$questState);
+        }
+
+        $this->createQueryBuilder()
+            ->update('quests')
+            ->set('state', ':state')
+            ->where('id = :questId')
+            ->setParameters([
+                'questId' => $questId,
+                'state' => $questState,
+            ])
+            ->execute();
+    }
+
     public function deleteQuest(int $questId): void
     {
         $this->createQueryBuilder()

@@ -43,6 +43,9 @@ if ($sub === 'list') {
     $quest = null;
     if (isset($_POST['del'])) {
         $repository->deleteQuest((int)$_GET['quest_id']);
+    } elseif (isset($_POST['save'])) {
+        $repository->updateQuest((int)$_GET['quest_id'], $_POST['quest_state']);
+        $quest = $repository->getQuest((int)$_GET['quest_id']);
     } else {
         $quest = $repository->getQuest((int)$_GET['quest_id']);
     }
