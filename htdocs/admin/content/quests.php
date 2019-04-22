@@ -1,13 +1,19 @@
-<?php
+<?php declare(strict_types=1);
 
 use LittleCubicleGames\Quests\Workflow\QuestDefinitionInterface;
+
+$tpl->assign('title', 'Quests');
+
+$questDefinitions = $app['cubicle.quests.quests'];
+$questMap = [];
+foreach ($questDefinitions as $questDefinition) {
+    $questMap[$questDefinition['id']] = $questDefinition['title'];
+}
 
 if ($sub === 'list') {
     /** @var \EtoA\Quest\QuestPresenter $questPresenter */
     $questPresenter = $app['etoa.quest.presenter'];
     echo '
-    <h2>Quests</h2>
-
     <table width="100%" cellpadding="3" cellspacing="1" align="center">
         <tbody>
             <tr>
@@ -30,9 +36,43 @@ if ($sub === 'list') {
         </tr>';
     }
     echo '</tbody></table>';
-} else {
-    $tpl->assign('title', 'Quests');
+} elseif (isset($_GET['action']) && $_GET['action'] === 'edit') {
+    /** @var \EtoA\Quest\QuestRepository $repository */
+    $repository = $app['etoa.quest.repository'];
 
+    $quest = null;
+    if (isset($_POST['del'])) {
+        $repository->deleteQuest((int)$_GET['quest_id']);
+    } else {
+        $quest = $repository->getQuest((int)$_GET['quest_id']);
+    }
+
+    if (isset($quest)) {
+        echo "
+            <form action=\"?page=$page&sub=$sub&action=edit&quest_id=" . $_GET['quest_id'] . "\" method=\"post\">";
+        echo '<table class="tbl">';
+        echo '<tr><td class="tbltitle" valign="top">ID</td><td class="tbldata">' . $quest['id'] . "</td></tr>";
+        echo '<tr><td class="tbltitle" valign="top">Spieler</td><td class="tbldata">' . $quest['user_nick'] . "</td></tr>";
+        echo '<tr><td class="tbltitle" valign="top">Quest</td><td class="tbldata">' . $questMap[$quest['quest_data_id']] . "</td></tr>";
+        echo '<tr><td class="tbltitle" valign="top">Status</td><td class="tbldata">
+                    <select name="quest_state">';
+        foreach (\LittleCubicleGames\Quests\Workflow\QuestDefinition::STATES as $state) {
+            echo '<option value="' . $state . '" ' . ($quest['state'] === $state ? ' selected="selected"' : '') . '>' . $state . '</option>';
+        }
+        echo '       </select>
+                   </td>
+               </tr>';
+
+        echo '</table>';
+        echo '<br/><input type="submit" name="save" value="&Uuml;bernehmen" />&nbsp;';
+        echo '<input type="submit" name="del" value="L&ouml;schen" />&nbsp;';
+        echo "<input type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=" . $page . "&sub=" . $sub . "&action=searchresults'\" />&nbsp;";
+        echo "<input type=\"button\" onclick=\"document.location='?page=$page&sub=$sub'\" value=\"Neue Suche\" />&nbsp;";
+        echo '</form>';
+    } else {
+        echo "Dieser Datensatz wurde gel&ouml;scht!<br/><br/><input type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&sub=$sub&action=searchresults'\" />";
+    }
+} else {
     $getParam = function ($value) {
         if (trim($value) === '') {
             return null;
@@ -88,11 +128,6 @@ if ($sub === 'list') {
     if (isset($_POST['quest_search'])) {
         /** @var \EtoA\Quest\QuestRepository $repository */
         $repository = $app['etoa.quest.repository'];
-        $questDefinitions = $app['cubicle.quests.quests'];
-        $questMap = [];
-        foreach ($questDefinitions as $questDefinition) {
-            $questMap[$questDefinition['id']] = $questDefinition['title'];
-        }
         $userNick = null;
         if ($_POST['user_nick'] !== '') {
             $userNick = '%'.$_POST['user_nick'].'%';
@@ -115,7 +150,7 @@ if ($sub === 'list') {
                 echo "<td class=\"tbldata\"$style ".mTT($data['user_nick'],nf($data['user_points'])." Punkte").">".cut_string($data['user_nick'],11)."</a></td>";
                 echo "<td class=\"tbldata\"$style>".$questMap[$data['quest_data_id']]."</a></td>";
                 echo "<td class=\"tbldata\"$style>".$data['state'] . '</td>';
-//                echo "<td class=\"tbldata\">".edit_button("?page=$page&sub=$sub&action=edit&techlist_id=".$data['id'])."</td>";
+                echo "<td class=\"tbldata\">".edit_button("?page=$page&sub=$sub&action=edit&quest_id=".$data['id'])."</td>";
                 echo '</tr>';
             }
             echo '</table>';

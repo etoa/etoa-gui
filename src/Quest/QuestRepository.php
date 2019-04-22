@@ -181,4 +181,39 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
             ->orderBy('q.id')
             ->execute()->fetchAll(\PDO::FETCH_ASSOC);
     }
+
+    public function getQuest(int $questId): ?array
+    {
+        $result = $this->createQueryBuilder()
+            ->addSelect('q.*')
+            ->addSelect('t.*')
+            ->addSelect('u.user_nick, u.user_points')
+            ->from('quests', 'q')
+            ->leftJoin('q', 'quest_tasks', 't', 't.quest_id = q.id')
+            ->innerJoin('q', 'users', 'u', 'u.user_id=q.user_id')
+            ->where('q.id = :questId')
+            ->setParameter('questId', $questId)
+            ->execute()->fetchAll(\PDO::FETCH_ASSOC);
+
+        if (!count($result)) {
+            return null;
+        }
+
+        return $result[0];
+    }
+
+    public function deleteQuest(int $questId): void
+    {
+        $this->createQueryBuilder()
+            ->delete('quest_tasks')
+            ->where('quest_id = :questId')
+            ->setParameter('questId', $questId)
+            ->execute();
+
+        $this->createQueryBuilder()
+            ->delete('quests')
+            ->where('id = :questId')
+            ->setParameter('questId', $questId)
+            ->execute();
+    }
 }
