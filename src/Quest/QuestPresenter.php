@@ -99,7 +99,7 @@ class QuestPresenter
         }
     }
 
-    private function buildRewards(array $data): array
+    public function buildRewards(array $data): array
     {
         if (!isset($data['rewards'])) {
             return [];
