@@ -545,11 +545,11 @@
                         $this->errorMsg = "Zuwenig Rohstoffe vorhanden!";
                 }
                 else
-                    $this->errorMsg = "Es wird gerade an einem Geb&auml;de gebaut!";
+                    $this->errorMsg = "Es wird gerade an einem Geb&auml;ude gebaut!";
                 return false;
 			}
 			else {
-                $this->errorMsg = "Das Geb&auml;de wurde deaktiviert!";
+                $this->errorMsg = "Das Geb&auml;ude wurde deaktiviert!";
 			}
 		}
 
