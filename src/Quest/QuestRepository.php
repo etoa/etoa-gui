@@ -195,7 +195,7 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
             ->setParameter('questId', $questId)
             ->execute()->fetchAll(\PDO::FETCH_ASSOC);
 
-        if (!count($result)) {
+        if (count($result) === 0) {
             return null;
         }
 
