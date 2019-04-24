@@ -1,6 +1,8 @@
 <?php declare(strict_types=1);
 
-use LittleCubicleGames\Quests\Workflow\QuestDefinitionInterface;
+use EtoA\Quest\QuestPresenter;
+use EtoA\Quest\QuestRepository;
+use LittleCubicleGames\Quests\Workflow\QuestDefinition;
 
 $tpl->assign('title', 'Quests');
 
@@ -11,7 +13,7 @@ foreach ($questDefinitions as $questDefinition) {
 }
 
 if ($sub === 'list') {
-    /** @var \EtoA\Quest\QuestPresenter $questPresenter */
+    /** @var QuestPresenter $questPresenter */
     $questPresenter = $app['etoa.quest.presenter'];
     echo '
     <table width="100%" cellpadding="3" cellspacing="1" align="center">
@@ -37,7 +39,7 @@ if ($sub === 'list') {
     }
     echo '</tbody></table>';
 } elseif (isset($_GET['action']) && $_GET['action'] === 'edit') {
-    /** @var \EtoA\Quest\QuestRepository $repository */
+    /** @var QuestRepository $repository */
     $repository = $app['etoa.quest.repository'];
 
     $quest = null;
@@ -59,7 +61,7 @@ if ($sub === 'list') {
         echo '<tr><td class="tbltitle" valign="top">Quest</td><td class="tbldata">' . $questMap[$quest['quest_data_id']] . "</td></tr>";
         echo '<tr><td class="tbltitle" valign="top">Status</td><td class="tbldata">
                     <select name="quest_state">';
-        foreach (\LittleCubicleGames\Quests\Workflow\QuestDefinition::STATES as $state) {
+        foreach (QuestDefinition::STATES as $state) {
             echo '<option value="' . $state . '" ' . ($quest['state'] === $state ? ' selected="selected"' : '') . '>' . $state . '</option>';
         }
         echo '       </select>
@@ -116,7 +118,7 @@ if ($sub === 'list') {
                     <td class="tbldata">
                         <select name="quest_state">
                             <option value=""><i>---</i></option>';
-    foreach (\LittleCubicleGames\Quests\Workflow\QuestDefinition::STATES  as $state) {
+    foreach (QuestDefinition::STATES as $state) {
         echo '<option value="' . $state. '">' . $state . '</option>';
     }
 
@@ -129,7 +131,7 @@ if ($sub === 'list') {
         </form>';
 
     if (isset($_POST['quest_search'])) {
-        /** @var \EtoA\Quest\QuestRepository $repository */
+        /** @var QuestRepository $repository */
         $repository = $app['etoa.quest.repository'];
         $userNick = null;
         if ($_POST['user_nick'] !== '') {
@@ -145,7 +147,7 @@ if ($sub === 'list') {
                         <td class="tbltitle" valign="top">Status</td>
                     </tr>';
             foreach ($quests as $data) {
-                $style = in_array($data['state'], [\LittleCubicleGames\Quests\Workflow\QuestDefinition::STATE_AVAILABLE, \LittleCubicleGames\Quests\Workflow\QuestDefinition::STATE_IN_PROGRESS], true) ? ' style="color:#0f0"' : '';
+                $style = in_array($data['state'], [QuestDefinition::STATE_AVAILABLE, QuestDefinition::STATE_IN_PROGRESS, QuestDefinition::STATE_COMPLETED], true) ? ' style="color:#0f0"' : '';
 
                 echo '<tr>
                         <td>'.$data['id'].'</td>';
