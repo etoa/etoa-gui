@@ -30,8 +30,12 @@ class Quest implements QuestInterface
         $this->tasks = $tasks;
     }
 
-    public function getId(): ?int
+    public function getId(): int
     {
+        if ($this->id === null) {
+            throw new \RuntimeException('Quest not stored yet');
+        }
+
         return $this->id;
     }
 

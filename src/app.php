@@ -25,6 +25,7 @@ $app->register(new \EtoA\Race\RaceServiceProvider());
 $app->register(new \EtoA\Planet\PlanetServiceProvider());
 $app->register($questProvider = new \EtoA\Quest\QuestServiceProvider(), [
     'etoa.quests.enabled' => isset($questSystemEnabled) ? (bool)$questSystemEnabled : true,
+    'cubicle.quests.autostart' => true,
     'cubicle.quests.slots' => [
         [
             'id' => 'test',

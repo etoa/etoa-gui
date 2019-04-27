@@ -22,7 +22,6 @@ class QuestControllerTest extends WebTestCase
 
         $this->assertSame(200, $client->getResponse()->getStatusCode());
         $data = json_decode($client->getResponse()->getContent(), true);
-        $this->assertSame('ok', $data['status']);
-        $this->assertSame(QuestDefinitionInterface::STATE_IN_PROGRESS, $data['state']);
+        $this->assertSame(QuestDefinitionInterface::STATE_IN_PROGRESS, $data['quest']['state']);
     }
 }

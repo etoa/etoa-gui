@@ -4,12 +4,12 @@ namespace EtoA\Quest;
 
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Missile\MissileDataRepository;
-use EtoA\Quest\Entity\Quest;
 use EtoA\Ship\ShipDataRepository;
 use LittleCubicleGames\Quests\Definition\Registry\RegistryInterface;
 use LittleCubicleGames\Quests\Definition\Slot\Slot;
 use LittleCubicleGames\Quests\Definition\Task\AndTask;
 use LittleCubicleGames\Quests\Definition\Task\OrTask;
+use LittleCubicleGames\Quests\Entity\QuestInterface;
 use LittleCubicleGames\Quests\Workflow\QuestDefinitionInterface;
 
 class QuestPresenter
@@ -47,7 +47,7 @@ class QuestPresenter
         $this->defenseDataRepository = $defenseDataRepository;
     }
 
-    public function present(Quest $quest, Slot $slot): array
+    public function present(QuestInterface $quest, Slot $slot = null): array
     {
         /** @var \LittleCubicleGames\Quests\Definition\Quest\Quest $questDefinition */
         $questDefinition = $this->registry->getQuest($quest->getQuestId());
@@ -61,7 +61,7 @@ class QuestPresenter
             'user' => $quest->getUser(),
             'title' => $questData['title'],
             'description' => $questData['description'],
-            'transition' => isset($this->transitions[$quest->getState()]) ? $this->transitions[$quest->getState()] : null,
+            'transition' => $this->transitions[$quest->getState()] ?? null,
             'taskDescription' => $questData['task']['description'],
             'taskProgress' => $this->buildProgress($quest->getProgressMap(), $questData['task']),
             'rewards' => $this->buildRewards($questData),

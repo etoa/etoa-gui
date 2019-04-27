@@ -29,7 +29,6 @@ class QuestRepositoryTest extends AbstractDbTestCase
         ]);
         $this->repository->save($quest);
 
-        $this->assertNotNull($quest->getId());
         foreach ($quest->getTasks() as $task) {
             $this->assertNotNull($task->getId());
         }

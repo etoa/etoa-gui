@@ -82,7 +82,7 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
             throw new \InvalidArgumentException('$quest must be a instance of Quest');
         }
 
-        if (null !== $quest->getId()) {
+        try {
             $this->createQueryBuilder()
                 ->update('quests')
                 ->set('state', ':state')
@@ -101,7 +101,7 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
                         'id' => $task->getId(),
                     ])->execute();
             }
-        } else {
+        } catch (\RuntimeException $e) {
             $qb = $this->createQueryBuilder();
             $qb
                 ->insert('quests')

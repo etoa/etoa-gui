@@ -41,7 +41,7 @@ class QuestServiceProvider implements ServiceProviderInterface, EventListenerPro
     public function register(Container $pimple): void
     {
         $pimple['etoa.quest.controller'] = function (Container $pimple) {
-            return new QuestController($pimple['cubicle.quests.advancer']);
+            return new QuestController($pimple['cubicle.quests.advancer'], $pimple['etoa.quest.presenter'], $pimple['cubicle.quests.storage']);
         };
 
         $pimple['etoa.quest.repository'] = function (Container $pimple) {

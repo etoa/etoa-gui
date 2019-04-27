@@ -865,16 +865,16 @@
         },
         {
             "name": "littlecubiclegames/quests",
-            "version": "1.0.1",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/littlecubiclegames/quests.git",
-                "reference": "dc5895b8635c7d53cc68ee20a0458dd09338e55a"
+                "reference": "308b9ceb7bbccdc5ba551821d32ad5c025c29dc1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/littlecubiclegames/quests/zipball/dc5895b8635c7d53cc68ee20a0458dd09338e55a",
-                "reference": "dc5895b8635c7d53cc68ee20a0458dd09338e55a",
+                "url": "https://api.github.com/repos/littlecubiclegames/quests/zipball/308b9ceb7bbccdc5ba551821d32ad5c025c29dc1",
+                "reference": "308b9ceb7bbccdc5ba551821d32ad5c025c29dc1",
                 "shasum": ""
             },
             "require": {
@@ -910,7 +910,7 @@
                 }
             ],
             "description": "Quest Component",
-            "time": "2019-04-24T19:27:02+00:00"
+            "time": "2019-04-27T12:28:25+00:00"
         },
         {
             "name": "monolog/monolog",
