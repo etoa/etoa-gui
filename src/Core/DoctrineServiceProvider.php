@@ -20,6 +20,9 @@ class DoctrineServiceProvider implements ServiceProviderInterface
             'host' => 'localhost',
             'user' => 'root',
             'password' => null,
+            'driverOptions' => [
+                1002 => 'SET NAMES utf8',
+            ],
         ];
 
         $pimple['db.config'] = function (Container $pimple) {
