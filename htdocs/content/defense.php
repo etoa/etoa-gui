@@ -1195,7 +1195,7 @@
 									if ($cp->prodFood>0)
 									{
 										$bwait['food']=ceil(($food_costs-$cp->resFood)/$cp->prodFood*3600);
-										$bwmsg['food'] = tm("Fehlender Rohstoff",nf($data['def_costs_food']-$cp->resFood)." Nahrung<br />Bereit in ".tf($bwait['food'])."");
+										$bwmsg['food'] = tm("Fehlender Rohstoff",nf($food_costs-$cp->resFood)." Nahrung<br />Bereit in ".tf($bwait['food'])."");
 									}
 									else
 									{ 
