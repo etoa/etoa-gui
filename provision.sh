@@ -12,10 +12,10 @@ echo "mysql-server mysql-server/root_password password " | debconf-set-selection
 echo "mysql-server mysql-server/root_password_again password " | debconf-set-selections
 
 # Install mysql, nginx, php7.2-fpm
-sudo aptitude install -q -y -f git mysql-server mysql-client nginx php7.2 php7.2-fpm php7.2-xdebug
+sudo apt-get install -q -y -f git mysql-server mysql-client nginx php7.2 php7.2-fpm php7.2-xdebug
 
 # Install commonly used php packages
-sudo aptitude install -q -y -f php7.2-curl php7.2-mcrypt php7.2-cli php7.2-mysqli php7.2-gd php7.2-dom php7.2-zip
+sudo apt-get install -q -y -f php7.2-curl php7.2-cli php7.2-mysqli php7.2-gd php7.2-dom php7.2-zip
 
 sudo apt-get upgrade libpcre3
 
@@ -37,14 +37,14 @@ SQL="${Q1}${Q2}${Q3}${Q4}"
 $MYSQL -uroot -e "$SQL"
 
 $PHP /var/www/etoa/bin/db.php migrate
-Q5="INSERT INTO config (config_name, config_value) VALUES ('loginurl','') ON DUPLICATE KEY UPDATE config_value='';"
+Q5="INSERT INTO config (config_name, config_value, config_param1, config_param2) VALUES ('loginurl','', '', '') ON DUPLICATE KEY UPDATE config_value='';"
 $MYSQL -uroot -D etoa -e "$Q5"
 
 # Setup cronjob
 echo "* * * * * php /var/www/etoa/bin/cronjob.php" | crontab
 
 # Install deps for eventhandler
-sudo aptitude install -q -y -f cmake libboost-all-dev libmysql++-dev g++
+sudo apt-get install -q -y -f cmake libboost-all-dev libmysql++-dev g++
 
 # Build eventhandler
 cd /var/www/etoa && make eventhandler

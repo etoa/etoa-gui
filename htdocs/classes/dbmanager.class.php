@@ -477,6 +477,7 @@ class DBManager implements ISingleton	{
 
 	private function loadFile($file) {
 		$mysql = WINDOWS ? WINDOWS_MYSQL_PATH : "mysql";
+        $mysqldump = WINDOWS ? WINDOWS_MYSQLDUMP_PATH : "mysqldump";
 		if (file_exists($file))
 		{
 			$ext = pathinfo ($file, PATHINFO_EXTENSION);
