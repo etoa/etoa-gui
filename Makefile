@@ -32,7 +32,7 @@ eventhandler: ## Build the cpp eventhandler
 	sudo chmod -R 777 /var/log/etoad
 	sudo chmod -R 777 /var/run/etoad
 	sudo cp /var/www/etoa/vagrant/roundx.conf /etc/etoad/roundx.conf
-	sudo su vagrant -c"/var/www/etoa/eventhandler/target/etoad roundx -k -d"
+	sudo su vagrant -c"/var/www/etoa/eventhandler/target/etoad roundx -k -d -c /vagrant/htdocs/config/eventhandler.conf -p /var/www/etoa/htdocs/tmp/eventhandler.pid"
 
 help: ## Helping devs since 2016
 	@cat $(MAKEFILE_LIST) | grep -e "^[a-zA-Z_\-]*: *.*## *" | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'

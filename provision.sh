@@ -22,6 +22,7 @@ sudo apt-get upgrade libpcre3
 sudo rm /etc/nginx/sites-available/default
 sudo cp /var/www/etoa/vagrant/nginx-default /etc/nginx/sites-available/default
 cp /var/www/etoa/vagrant/db.conf /var/www/etoa/htdocs/config
+cp /var/www/etoa/vagrant/roundx.conf /vagrant/htdocs/config/eventhandler.conf
 
 sudo service nginx restart
 sudo service php7.2-fpm restart
