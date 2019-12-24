@@ -47,3 +47,28 @@ ALTER TABLE alliances
     CHANGE alliance_visits alliance_visits int(10) unsigned DEFAULT 0,
     CHANGE alliance_visits_ext alliance_visits_ext int(10) unsigned DEFAULT 0,
     CHANGE alliance_application_template alliance_application_template text DEFAULT NULL;
+
+ALTER TABLE reports
+    CHANGE subject subject varchar(255) DEFAULT NULL,
+    CHANGE content content text DEFAULT NULL;
+
+ALTER TABLE alliance_ranks CHANGE rank_name rank_name varchar(30) DEFAULT NULL;
+
+ALTER TABLE allianceboard_posts CHANGE post_changed post_changed varchar(30) DEFAULT NULL;
+
+ALTER TABLE alliance_news
+    CHANGE alliance_news_changed_date alliance_news_changed_date int(10) unsigned DEFAULT NULL,
+    CHANGE alliance_news_changed_counter alliance_news_changed_counter int(3) unsigned DEFAULT NULL,
+    CHANGE alliance_news_ip alliance_news_ip char(15) DEFAULT NULL;
+
+ALTER TABLE buddylist
+    CHANGE bl_comment bl_comment text DEFAULT NULL,
+    CHANGE bl_comment_buddy bl_comment_buddy text DEFAULT NULL;
+
+ALTER TABLE chat
+    CHANGE nick nick varchar(50) DEFAULT NULL,
+    CHANGE color color varchar(15) DEFAULT NULL;
+
+ALTER TABLE chat_users CHANGE kick kick varchar(255) DEFAULT NULL;
+
+ALTER TABLE tickets CHANGE admin_comment admin_comment text DEFAULT NULL;
