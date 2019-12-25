@@ -162,7 +162,6 @@
 			// Bauliste vom allen Planeten laden und nach Schiffe zusammenfassen
 			$res = dbquery("
 			SELECT
-    		queue_id,
     		queue_ship_id,
     		SUM(queue_cnt) AS cnt
 			FROM

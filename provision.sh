@@ -22,18 +22,19 @@ sudo apt-get upgrade libpcre3
 sudo rm /etc/nginx/sites-available/default
 sudo cp /var/www/etoa/vagrant/nginx-default /etc/nginx/sites-available/default
 cp /var/www/etoa/vagrant/db.conf /var/www/etoa/htdocs/config
+cp /var/www/etoa/vagrant/roundx.conf /vagrant/htdocs/config/eventhandler.conf
 
 sudo service nginx restart
 sudo service php7.2-fpm restart
 
 MYSQL=`which mysql`
 PHP=`which php`
-
+Q0="SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
 Q1="CREATE DATABASE IF NOT EXISTS etoa;"
 Q2="GRANT USAGE ON *.* TO etoa@localhost IDENTIFIED BY 'etoa';"
 Q3="GRANT ALL PRIVILEGES ON etoa.* TO etoa@localhost;"
 Q4="FLUSH PRIVILEGES;"
-SQL="${Q1}${Q2}${Q3}${Q4}"
+SQL="${Q0}${Q1}${Q2}${Q3}${Q4}"
 $MYSQL -uroot -e "$SQL"
 
 $PHP /var/www/etoa/bin/db.php migrate
