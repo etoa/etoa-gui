@@ -8,8 +8,10 @@
         "monolog/monolog": "^1.19",
         "pimple/pimple": "^3.0",
         "robthree/twofactorauth": "^1.6",
-        "silex/silex": "^2.3-dev",
-        "symfony/stopwatch": "^4.0"
+        "silex/silex": "dev-master",
+        "symfony/stopwatch": "~4.2.12",
+        "symfony/http-kernel": "~4.2.12",
+        "symfony/http-foundation": "~4.2.12"
     },
     "require-dev": {
         "ergebnis/composer-normalize": "^2.0",
