@@ -20,7 +20,7 @@ class RenameStarTest extends AbstractProgressFunctionTestCase
      */
     public function testHandle(int $currentProgress, int $expectedProgress): void
     {
-        $this->simulateHandle(function (TaskInterface $task) {
+        $this->simulateHandle(function (TaskInterface $task): int {
             return $this->progressFunction->handle($task, new StarRename());
         }, $currentProgress, $expectedProgress);
     }

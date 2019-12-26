@@ -12,7 +12,7 @@ class ParamConverterServiceProvider implements ServiceProviderInterface, Bootabl
 {
     public function register(Container $pimple): void
     {
-        $pimple['etoa.listener.param_converter'] = function () {
+        $pimple['etoa.listener.param_converter'] = function (): ParamConverterListener {
             return new ParamConverterListener();
         };
     }

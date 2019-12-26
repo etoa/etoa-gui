@@ -105,7 +105,7 @@ class QuestPresenter
             return [];
         }
 
-        return array_map(function (array $reward) {
+        return array_map(function (array $reward): string {
             switch ($reward['type']) {
                 case 'missile':
                     return sprintf('%s %s', $reward['value'], $this->missileDataRepository->getMissileNames()[$reward['missile_id']]);
@@ -113,6 +113,8 @@ class QuestPresenter
                     return sprintf('%s %s', $reward['value'], $this->shipDataRepository->getShipNames()[$reward['ship_id']]);
                 case 'defense':
                     return sprintf('%s %s', $reward['value'], $this->defenseDataRepository->getDefenseNames()[$reward['defense_id']]);
+                default:
+                    throw new \RuntimeException('Reward type not defined: ' . $reward['type']);
             }
         }, $data['rewards']);
     }

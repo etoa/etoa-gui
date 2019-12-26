@@ -12,11 +12,11 @@ class ShipServiceProvider implements ServiceProviderInterface
      */
     public function register(Container $pimple): void
     {
-        $pimple['etoa.ship.repository'] = function (Container $pimple) {
+        $pimple['etoa.ship.repository'] = function (Container $pimple): ShipRepository {
             return new ShipRepository($pimple['db']);
         };
 
-        $pimple['etoa.ship.datarepository'] = function (Container $pimple) {
+        $pimple['etoa.ship.datarepository'] = function (Container $pimple): ShipDataRepository {
             return new ShipDataRepository($pimple['db'], $pimple['db.cache']);
         };
     }

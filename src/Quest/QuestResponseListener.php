@@ -21,7 +21,7 @@ class QuestResponseListener implements EventSubscriberInterface
 
     public function getQuests(): array
     {
-        return array_map(function (array $data) {
+        return array_map(function (array $data): array {
             return $this->presenter->present($data['quest'], $data['slot']);
         }, $this->quests);
     }

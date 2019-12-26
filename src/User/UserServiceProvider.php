@@ -9,7 +9,7 @@ class UserServiceProvider implements ServiceProviderInterface
 {
     public function register(Container $pimple): void
     {
-        $pimple['etoa.user.repository'] = function (Container $pimple) {
+        $pimple['etoa.user.repository'] = function (Container $pimple): UserRepository {
             return new UserRepository($pimple['db']);
         };
     }

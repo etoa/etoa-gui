@@ -9,7 +9,7 @@ class PlanetServiceProvider implements ServiceProviderInterface
 {
     public function register(Container $pimple): void
     {
-        $pimple['etoa.planet.repository'] = function (Container $pimple) {
+        $pimple['etoa.planet.repository'] = function (Container $pimple): PlanetRepository {
             return new PlanetRepository($pimple['db']);
         };
     }

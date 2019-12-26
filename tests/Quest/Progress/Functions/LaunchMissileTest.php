@@ -20,7 +20,7 @@ class LaunchMissileTest extends AbstractProgressFunctionTestCase
      */
     public function testHandle(int $currentProgress, array $missiles, int $expectedProgress): void
     {
-        $this->simulateHandle(function (TaskInterface $task) use ($missiles) {
+        $this->simulateHandle(function (TaskInterface $task) use ($missiles): int {
             return $this->progressFunction->handle($task, new MissileLaunch($missiles));
         }, $currentProgress, $expectedProgress);
     }

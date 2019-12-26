@@ -18,7 +18,7 @@ class SessionServiceProvider implements ServiceProviderInterface, BootableProvid
 
     public function boot(Application $app): void
     {
-        $app->before(function (Request $request) {
+        $app->before(function (Request $request): void {
             $session = \UserSession::getInstance();
             if (strpos($request->attributes->get('_route'), 'api.chat') === 0) {
                 $currentUser = $this->validateChatUser($session);
