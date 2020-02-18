@@ -47,19 +47,21 @@
 
 	// Description:
 
-	// name	 											// DB Field Name
-	// text												// Field Description
-	// type												// Field Type: text, password, textarea, timestamp, radio, select, checkbox, email, url, numeric
-	// def_val										// Default Value
-	// size 											// Field length (text, password, date, email, url)
-	// maxlen 										// Max Text length (text, password, date, email, url)
-	// rows 											// Rows (textarea)
-	// cols												// Cols (textarea)
-	// rcb_elem (Array)						// Checkbox-/Radio Elements (desc=>value)
-	// rcb_elem_chekced						// Value of default checked Checkbox-/Radio Element (Checkbox: has to be an array)
-	// select_elem (Array)				// Select Elements (desc=>value)
-	// select_elem_checked				// Value of default checked Select Element (desc=>value)
-	// show_overview							// Set 1 to show on overview page
+	// name	 				// DB Field Name
+	// text					// Field Description
+	// type					// Field Type: text, password, textarea, timestamp, radio, select, checkbox, email, url, numeric
+	// def_val				// Default Value
+	// size 				// Field length (text, password, date, email, url)
+	// maxlen 				// Max Text length (text, password, date, email, url)
+	// rows 				// Rows (textarea)
+	// cols					// Cols (textarea)
+	// rcb_elem (Array)			// Checkbox-/Radio Elements (desc=>value)
+	// rcb_elem_chekced			// Value of default checked Checkbox-/Radio Element (Checkbox: has to be an array)
+	// select_elem (Array)			// Select Elements (desc=>value)
+	// select_elem_checked			// Value of default checked Select Element (desc=>value)
+	// show_overview			// Set 1 to show on overview page
+        // show_hide                            // Array of columns to show when radio is True
+        // hide_show                            // Array of columns to show when radio is False
 
 	$db_fields = array (	array	(	"name" => "ship_id",
 																		"text" => "ID",
@@ -515,7 +517,8 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0,
-																		"show_hide" => array("special_ship_max_level","special_ship_need_exp","special_ship_exp_factor","special_ship_bonus_weapon","special_ship_bonus_structure","special_ship_bonus_shield","special_ship_bonus_heal","special_ship_bonus_capacity","special_ship_bonus_speed","special_ship_bonus_pilots","special_ship_bonus_tarn","special_ship_bonus_antrax","special_ship_bonus_forsteal","special_ship_bonus_build_destroy","special_ship_bonus_antrax_food","special_ship_bonus_deactivade","special_ship_bonus_readiness")
+																		"show_hide" => array("special_ship_max_level","special_ship_need_exp","special_ship_exp_factor","special_ship_bonus_weapon","special_ship_bonus_structure","special_ship_bonus_shield","special_ship_bonus_heal","special_ship_bonus_capacity","special_ship_bonus_speed","special_ship_bonus_pilots","special_ship_bonus_tarn","special_ship_bonus_antrax","special_ship_bonus_forsteal","special_ship_bonus_build_destroy","special_ship_bonus_antrax_food","special_ship_bonus_deactivade","special_ship_bonus_readiness"),
+                                                                                                                                                "hide_show" => array("ship_tradable")
 																	),
 
 											array	(	"name" => "special_ship_max_level",
@@ -752,6 +755,21 @@
 																		"cols" => "",
 																		"rcb_elem" => "",
 																		"rcb_elem_chekced" => "",
+																		"select_elem" => "",
+																		"select_elem_checked" => "",
+																		"show_overview" => 0
+																	),	
+
+											array	(	"name" => "ship_tradable",
+																		"text" => "Handelbar",
+																		"type" => "radio",
+																		"def_val" => "",
+																		"size" => "",
+																		"maxlen" => "",
+																		"rows" => "",
+																		"cols" => "",
+																		"rcb_elem" => array("Ja"=>1,"Nein"=>0),
+																		"rcb_elem_chekced" => "1",
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0

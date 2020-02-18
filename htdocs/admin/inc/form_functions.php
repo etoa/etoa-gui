@@ -261,31 +261,40 @@
 						if ($arr[$a['name']]==$rv)
 							echo " checked=\"checked\"";
 
-						if (isset($a['show_hide']) && $rv==1)
+                                                $onclick_actions = array();
+                                                
+                                                // Zeige andere Elemente wenn Einstellung aktiv
+						if (isset($a['show_hide']))
 						{
-							echo " onclick=\"";
 							foreach ($a['show_hide'] as $sh)
 							{
-								echo "document.getElementById('row_".$sh."').style.display='';";
+								$onclick_actions[]= "document.getElementById('row_".$sh."').style.display='".($rv==1 ? "" : "none")."';";
 							}
-							echo "\"";
 						}
 
-						if (isset($a['show_hide']) && $rv==0)
+                                                // Verstecke andere Elemente wenn Einstellung aktiv
+						if (isset($a['hide_show']))
 						{
-							echo " onclick=\"";
-							foreach ($a['show_hide'] as $sh)
+							foreach ($a['hide_show'] as $sh)
 							{
-								echo "document.getElementById('row_".$sh."').style.display='none';";
+								$onclick_actions[]= "document.getElementById('row_".$sh."').style.display='".($rv==1?"none":"")."';";
 							}
-							echo "\"";
-						}
+						}	
+                                                
+                                                if(count($onclick_actions)>0){
+                                                        echo " onclick=\"".implode("", $onclick_actions)."\"";
+                                                }
+                                                
 						echo " /> ";
 					}
 					if (isset($a['show_hide']) && $arr[$a['name']]==$rv)
 					{
 						$hidden_rows = $a['show_hide'];
 					}
+					if (isset($a['hide_show']) && $arr[$a['name']]!=$rv)					
+					{
+						$hidden_rows = $a['hide_show'];
+					}	
 				break;
 				case "checkbox":
 					foreach ($a['rcb_elem'] as $rk=>$rv)

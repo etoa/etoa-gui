@@ -209,7 +209,7 @@
 						shiplist.shiplist_entity_id='".$cp->id()."'
 					AND shiplist.shiplist_count>'0'
 					AND ships.special_ship='0'
-					AND ships.ship_alliance_costs='0'
+                                        AND ships.ship_tradable='1'
 				ORDER BY
 					ships.ship_name;");
 
