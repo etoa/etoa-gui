@@ -176,7 +176,6 @@
 			<< "	ship_fieldsprovide, "
 			<< "	ship_cat_id, "
 			<< "	ship_fakeable, "
-			<< "	ship_tradable, "
 			<< "	special_ship, "
 			<< "	ship_max_count, "
 			<< "	special_ship_max_level, "

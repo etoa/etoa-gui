@@ -46,7 +46,6 @@ public:
 		this->launchable = (bool)object["ship_launchable"];
 		this->fieldsProvide = (short)object["ship_fieldsprovide"];
 		this->fakeable = (bool)object["ship_fakeable"];
-		this->tradable = (bool)object["ship_tradable"];
 		this->special = (bool)object["special_ship"];
 		this->maxLevel = (short)object["special_ship_max_level"];
 		this->needExp = (int)object["special_ship_need_exp"];
@@ -94,7 +93,6 @@ public:
 	short getFieldsProvide();
 	short getCatId();
 	bool getFakeable();
-	bool getTradable();
 	bool getSpecial();
 	double getMaxCount();
 	short getMaxLevel();
@@ -145,7 +143,6 @@ private:
 	short fieldsProvide;
 	short catId;
 	bool fakeable;
-	bool tradable;
 	bool special;
 	double maxCount;
 	short maxLevel;
