@@ -45,9 +45,13 @@ if (!function_exists('mysql_fetch_row')) {
 }
 
 if (!function_exists('mysql_query')) {
-    function mysql_query($query) {
-        global $mysqlHandle;
-        return mysqli_query($mysqlHandle, $query);
+    function mysql_query($query, $handle = null) {
+        if (!$handle) {
+            global $mysqlHandle;
+            $handle = $mysqlHandle;
+        }
+
+        return mysqli_query($handle, $query);
     }
 }
 
@@ -66,7 +70,15 @@ if (!function_exists('mysql_fetch_field')) {
 if (!function_exists('mysql_connect')) {
     function mysql_connect($host = '', $user = '', $password = '', $database = '') {
         global $mysqlHandle;
-        $mysqlHandle = mysqli_connect($host, $user, $password, $database);
+        $hostParts = explode(':', $host, 2);
+        if (count($hostParts) === 2) {
+            $host = $hostParts[0];
+            $port = (int) $hostParts[1];
+        } else {
+            $port = null;
+        }
+
+        $mysqlHandle = mysqli_connect($host, $user, $password, $database, $port);
         return $mysqlHandle;
     }
 }

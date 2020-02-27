@@ -58,8 +58,17 @@ class DBManager implements ISingleton	{
 		if ($this->dbCfg == null) {
 			$this->loadConfig();
 		}
-		return $this->dbCfg['host'];
+
+		return explode(':', $this->dbCfg['host'])[0];
 	}
+
+    function getPort() {
+        if ($this->dbCfg == null) {
+            $this->loadConfig();
+        }
+
+        return explode(':', $this->dbCfg['host'], 2)[1] ?? 3306;
+    }
 
 	function getDbName() {
 		if ($this->dbCfg == null) {
@@ -411,11 +420,11 @@ class DBManager implements ISingleton	{
 					throw new Exception("Das Erstellen von GZIP Backups wird nur auf UNIX Systemen unterstützt!");
 				}
 				$file.=".gz";
-				$cmd = $mysqldump." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." --default-character-set=utf8 ".$this->getDbName()." | gzip > ".$file;
+				$cmd = $mysqldump." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." -P".$this->getPort()." --default-character-set=utf8 ".$this->getDbName()." | gzip > ".$file;
 			}
 			else
 			{
-				$cmd = $mysqldump." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." --default-character-set=utf8 ".$this->getDbName()." -r ".$file;
+				$cmd = $mysqldump." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." -P".$this->getPort()." --default-character-set=utf8 ".$this->getDbName()." -r ".$file;
 			}
 
 			if (WINDOWS && !file_exists($mysqldump) || UNIX && !unix_command_exists($mysqldump))
@@ -487,11 +496,11 @@ class DBManager implements ISingleton	{
 				{
 					throw new Exception("Das Laden von GZIP SQL Dateien wird nur auf UNIX Systemen unterstützt!");
 				}
-				$cmd = "gunzip < ".$file.".gz | ".$mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." --default-character-set=utf8 ".$this->getDbName();
+				$cmd = "gunzip < ".$file.".gz | ".$mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." -P".$this->getPort()." --default-character-set=utf8 ".$this->getDbName();
 			}
 			else
 			{
-				$cmd = $mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." --default-character-set=utf8 ".$this->getDbName()." < ".$file;
+				$cmd = $mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." -P".$this->getPort()." --default-character-set=utf8 ".$this->getDbName()." < ".$file;
 			}
 
 			if (WINDOWS && !file_exists($mysql) || UNIX && !unix_command_exists($mysqldump))
