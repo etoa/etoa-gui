@@ -117,7 +117,9 @@ class QuestServiceProvider implements ServiceProviderInterface, EventListenerPro
 
     public function subscribe(Container $app, EventDispatcherInterface $dispatcher): void
     {
-        $dispatcher->addSubscriber($app['etoa.quest.responselistener']);
+        if ((bool) $app['etoa.quests.enabled']) {
+            $dispatcher->addSubscriber($app['etoa.quest.responselistener']);
+        }
     }
 
     public function boot(Application $app): void

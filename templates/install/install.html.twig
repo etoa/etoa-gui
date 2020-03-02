@@ -1,0 +1,38 @@
+{% extends 'layout/empty.html.twig' %}
+
+{% block content %}
+    <div class="installContainer">
+        <h1>EtoA Installation</h1>
+        Spielversion: {{ version }}
+
+        <ul class="installMenu">
+            {% for step,title in {1: 'MySQL-Datenbank', 2: 'Allgemeine Daten', 3: 'Abschluss'} %}
+                <li>
+                    {% if step <= currentStep %}
+                        <a href="?step={{ step }}">{{ title }}</a>
+                    {% else %}
+                        {{ title }}
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+
+        <div class="messagebox">
+            {% if successMessage %}
+                <div class="success">{{ successMessage }}</div>
+            {% endif %}
+            {% if errorMessage %}
+                <div class="error">{{ errorMessage }}</div>
+            {% endif %}
+        </div>
+
+        {% block step %}{% endblock %}
+
+        <script>
+            $(function() {
+                $("form:not(.filter) :input:visible:enabled:first").focus();
+            });
+        </script>
+
+    </div>
+{% endblock %}
