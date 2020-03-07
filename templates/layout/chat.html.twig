@@ -1,0 +1,39 @@
+<!doctype html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <title>EtoA Chat</title>
+    <link rel="stylesheet" type="text/css" href="{{ chatCss }}" />
+    <script type="text/javascript" src="web/js/vendor/jquery.min.js"></script>
+    <script type="text/javascript" src="web/js/main.js" ></script>
+    <script type="text/javascript" src="web/js/chat.js" ></script>
+</head>
+<body>
+    {% if not login %}
+        <p>Du bist nicht eingeloggt.</p>
+    {% elseif errorMessage %}
+        <p>{{ errorMessage }}</p>
+    {% else %}
+        <div id="chatcontainer">
+            <input type="button" id="logoutButton" value="X" title="Chat schliessen"/>
+            <div id="chatitems"></div>
+        </div>
+        <div id="loading">
+            <span id="loadingAnimation"><img src="web/images/ajax-loader-chat.gif" alt="Loading"></span>
+            <span id="loadingMessage"></span>
+            <div id="status">
+                <span id="usercount">&nbsp;</span>
+                <span id="unread">&nbsp;</span>
+            </div>
+        </div>
+        <div id="chatinput">
+            <form action="#" method="post" autocomplete="off" id="cform">
+                <input type="text" id="ctext" name="ctext" value="" size="40" maxlength="255" style="color:#{{ chatColor }}"/>
+            </form>
+        </div>
+    {% endif %}
+</body>
+</html>
