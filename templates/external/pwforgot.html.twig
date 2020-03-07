@@ -1,0 +1,39 @@
+{% extends 'layout/external.html.twig' %}
+
+{% import 'macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Passwort vergessen?</h1>
+
+    {% if successMessage %}
+        {{ macros.successMessage(successMessage) }}
+    {% else %}
+        {% if errorMessage %}
+            {{ macros.errorMessage(errorMessage) }}
+        {% endif %}
+
+        <form action="?index=pwforgot" method="post" class="styled-form styled-form-medium">
+            {{ checker|raw }}
+            <p>Hier kannst du ein neues Passwort für deinen Account in der {{ roundName }} per E-Mail anfordern, wenn du deines vergessen hast:</p>
+            <p>Wenn du weitere Hilfe benötigst, kannst du <a href="?index=contact">hier</a> einen Game-Admin kontaktieren.</p>
+            <p>
+                <label for="user_nick">Benutzername</label>
+                <input type="text" name="user_nick" id="user_nick" size="30" maxlength="255" />
+            </p>
+            <p>
+                <label for="user_email_fix">Deine E-Mail</label>
+                <input type="text" name="user_email_fix" id="user_email_fix" size="30" maxlength="255" />
+            </p>
+            <p class="form-buttons">
+                <input type="submit" name="submit_pwforgot" value="Passwort anfordern" class="button" /> &nbsp;
+                <a href="?index=login">Zurück zum Login</a>
+            </p>
+        </form>
+
+        <script type="text/javascript">
+            $(function(){
+                $('#user_nick').focus();
+            });
+        </script>
+    {% endif %}
+{% endblock %}
