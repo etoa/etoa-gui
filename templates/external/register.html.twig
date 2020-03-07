@@ -5,7 +5,7 @@
 {% block content %}
     <h1>Account registrieren</h1>
 
-    {% if errorMessage %}
+    {% if errorMessage|default(false) %}
         {{ macros.errorMessage(errorMessage) }}
     {% endif %}
 
