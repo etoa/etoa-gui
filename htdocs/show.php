@@ -64,13 +64,11 @@ if (file_exists(CSS_STYLE . '/external.css')) {
 } else {
     $additionalCss[] = 'web/css/external.css';
 }
-$parameters = [
-    'gameTitle', getGameIdentifier().(isset($indexpage[$index]) ? ' - '.$indexpage[$index]['label'] : ''),
-    'templateDir' => CSS_STYLE,
-    'additionalCss' => $additionalCss,
-    'xajaxJS' => $xajax->getJavascript(XAJAX_DIR),
-    'bodyTopStuff' => getInitTT(),
-];
+$twig->addGlobal('gameTitle', getGameIdentifier().(isset($indexpage[$index]) ? ' - '.$indexpage[$index]['label'] : ''));
+$twig->addGlobal('templateDir', CSS_STYLE);
+$twig->addGlobal('additionalCss', $additionalCss);
+$twig->addGlobal('xajaxJS', $xajax->getJavascript(XAJAX_DIR));
+$twig->addGlobal('bodyTopStuff', getInitTT());
 
 //
 // Page content
@@ -102,24 +100,21 @@ try {
             $index = $index === 'stats' ? 'ladder' : $index;
             $sub = 'index/';
             if (!preg_match('^[a-z\_]+$^',$index) || strlen($index) > 50) {
-                echo $twig->render('external/invalid-page.html.twig', $parameters);
+                echo $twig->render('external/invalid-page.html.twig', []);
                 return;
             }
 
-            if (file_exists($sub . $index . '.php')) {
-                ob_start();
+            $fileName = __DIR__ . '/' . $sub . $index . '.php';
+            if (file_exists($fileName)) {
                 $popup = true;
-                include ($sub . $index . '.php');
-                echo $twig->render('external/content.html.twig', array_merge($parameters, [
-                    'content' => ob_get_clean(),
-                ]));
+                include $fileName;
                 logAccess($index, 'public');
                 return;
             }
 
-            echo $twig->render('external/404.html.twig', array_merge($parameters, [
+            echo $twig->render('external/404.html.twig', [
                 'page' => $index,
-            ]));
+            ]);
             return;
         }
 
@@ -127,24 +122,24 @@ try {
             ob_start();
             $popup = true;
             require('inc/content.inc.php');
-            echo $twig->render('external/content.html.twig', array_merge($parameters, [
+            echo $twig->render('external/content.html.twig', [
                 'content' => ob_get_clean(),
-            ]));
+            ]);
             return;
         }
 
-        echo $twig->render('external/index.html.twig', array_merge($parameters, [
+        echo $twig->render('external/index.html.twig', [
             'indexPages' => $indexpage,
-        ]));
+        ]);
         return;
     }
 
-    echo $twig->render('external/key-required.html.twig', array_merge($parameters, [
+    echo $twig->render('external/key-required.html.twig', [
         'page' => $_GET['index'],
-    ]));
+    ]);
     return;
 } catch (DBException $ex) {
-    echo $twig->render('external/content.html.twig', array_merge($parameters, [
+    echo $twig->render('external/content.html.twig', [
         'content' => $ex,
-    ]));
+    ]);
 }
