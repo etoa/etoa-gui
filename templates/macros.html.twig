@@ -1,0 +1,20 @@
+{% macro successMessage(message, title = 'Erfolg') %}
+    {% import _self as self %}
+    {{ self.message(title, message) }}
+{% endmacro %}
+
+{% macro errorMessage(message, title = 'Error') %}
+    {% import _self as self %}
+    {{ self.message(title, message, 'error') }}
+{% endmacro %}
+
+{% macro message(title, message, class) %}
+    <div class="boxLayout {{ class }}">
+        <div class="infoboxtitle">
+            <span>{{ title }}</span>
+        </div>
+        <div class="infoboxcontent">
+            {{ message|raw }}
+        </div>
+    </div>
+{% endmacro %}

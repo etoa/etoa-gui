@@ -1,0 +1,21 @@
+{% extends 'layout/external.html.twig' %}
+
+{% import 'macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Bestätigung der E-Mail Adresse</h1>
+
+    {% if success %}
+        {{ macros.successMessage('Deine E-Mailadresse wurde erfolgreich bestätigt!') }}
+    {% elseif errorMessage %}
+        {{ macros.errorMessage(errorMessage) }}
+    {% endif %}
+
+    <p class="center">
+        {% if success %}
+            <input type="button" value="Zum Login" onclick="document.location='{{ loginUrl }}">
+        {% else %}
+            Wenn du Hilfe benötigst, kannst du <a href="?index=contact">hier</a> einen Game-Admin kontaktieren.
+        {% endif %}
+    </p>
+{% endblock %}

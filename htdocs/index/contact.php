@@ -1,5 +1,7 @@
-<h1>Kontakt</h1>
 <?PHP
-	include('inc/contact.inc.php');
-?>
-<p class="center"><a href=".">Zurück zum Login</a></p>
+
+ob_start();
+include('inc/contact.inc.php');
+echo $twig->render('external/contact.html.twig', [
+    'contactContent' => ob_get_clean(),
+]);

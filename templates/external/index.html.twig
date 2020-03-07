@@ -1,0 +1,14 @@
+{% extends 'layout/external.html.twig' %}
+
+{% block content %}
+    <h1>Öffentliche Seiten</h1>
+    <p>Bitte wähle eine Seite aus:</p>
+    <br/>
+    <ul>
+        {% for page in indexPages %}
+            <li>
+                <a href="{{ page.url }}">{{ page.label }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

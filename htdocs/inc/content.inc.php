@@ -266,4 +266,6 @@
 		}
 	}
 
-	$tpl->assign('quests', array_values($app['etoa.quest.responselistener']->getQuests()));
+    if ($app['etoa.quests.enabled']) {
+        $tpl->assign('quests', array_values($app['etoa.quest.responselistener']->getQuests()));
+    }

@@ -43,6 +43,7 @@
 
 	// Create template engine object
 	$tpl = new TemplateEngine();
+    $twig = $app['twig'];
 
 	// Set default page / action variables
 	$page = (isset($_GET['page']) && $_GET['page']!="") ? $_GET['page'] : DEFAULT_PAGE;

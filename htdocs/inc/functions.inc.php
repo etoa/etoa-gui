@@ -1395,7 +1395,7 @@
 	/**
 	* The form checker - verify
 	*/
-	function checker_verify($debug=0,$msg=1)
+	function checker_verify($debug=0,$msg=1,$throw=false)
 	{
 		global $_POST,$_GET;
 		if ($debug==1)
@@ -1407,6 +1407,9 @@
 		}
 		else
 		{
+		    if ($throw) {
+		        throw new \RuntimeException('Seite kann nicht mehrfach aufgerufen werden!');
+            }
 			if ($msg==1)
 			{
 				error_msg("Seite kann nicht mehrfach aufgerufen werden!");
