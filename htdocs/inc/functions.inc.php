@@ -22,7 +22,7 @@
 	}
 
 	function getAppVersion() {
-		require_once(RELATIVE_ROOT.'version.php');
+		require_once __DIR__ . '/../version.php';
 		return APP_VERSION;
 	}
 
