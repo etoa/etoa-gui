@@ -1,0 +1,13 @@
+{% extends 'layout/external.html.twig' %}
+
+{% import 'macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Account registrieren</h1>
+
+    {{ macros.successMessage(successMessage,'Registration erfolgreich!') }}
+
+    <input type="button" value="Zum Login" onclick="document.location='?index=login">
+
+    <br style="clear:both;" />
+{% endblock %}

@@ -13,7 +13,7 @@ function registerCheckName($val)
 	$objResponse = new xajaxResponse();
 	if (checkValidName($val))
 	{
-		if (preg_match("^/.+ .+( .*)*$/", $val))
+		if (preg_match("/^.+ .+( .*)*$/", $val))
 		{
   		$objResponse->assign('nameStatus', 'innerHTML', "Ok");
   		$objResponse->assign('nameStatus', 'style.color', "#0f0");

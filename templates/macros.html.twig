@@ -1,6 +1,6 @@
-{% macro successMessage(message) %}
+{% macro successMessage(message, title = 'Erfolg') %}
     {% import _self as self %}
-    {{ self.message('Erfolg', message) }}
+    {{ self.message(title, message) }}
 {% endmacro %}
 
 {% macro errorMessage(message, title = 'Error') %}
@@ -14,7 +14,7 @@
             <span>{{ title }}</span>
         </div>
         <div class="infoboxcontent">
-            {{ message }}
+            {{ message|raw }}
         </div>
     </div>
 {% endmacro %}
