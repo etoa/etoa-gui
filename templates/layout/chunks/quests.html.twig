@@ -1,12 +1,11 @@
-{if $quests|default:[] }
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-{literal}
+{% if quests|default([]) %}
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <div id="quest-app">
         <div class="tutorialBox" v-if="open">
             <div class="tutorialTitle">Quests ({{quests.length}})
                 <span style="float:right;">
-                    <input type="button" value="Min" title="Minimieren" v-on:click="hide" />
-                </span><br style="clear:both;">
+                        <input type="button" value="Min" title="Minimieren" v-on:click="hide" />
+                    </span><br style="clear:both;">
             </div>
             <div v-for="quest in quests">
                 <div class="tutorialContent">
@@ -17,11 +16,11 @@
                     <p>
                         {{quest.taskDescription}}
                         <span v-if="quest.state==='available'">
-                            :
-                            <span v-for="progress in quest.taskProgress">
-                                {{progress.progress}}/{{progress.maxProgress}}
+                                :
+                                <span v-for="progress in quest.taskProgress">
+                                    {{progress.progress}}/{{progress.maxProgress}}
+                                </span>
                             </span>
-                        </span>
                     </p>
                     <h5>Belohnung</h5>
                     <div v-if="quest.rewards.length">
@@ -48,37 +47,36 @@
             el: '#quest-app',
             data: {
                 activeRequest: false,
-                quests: {/literal}{$quests|@json_encode}{literal},
-                open: $.cookie('quests_minimize') !== 'yes'
+                quests: {{ quests|json_encode|raw }},
+        open: $.cookie('quests_minimize') !== 'yes'
+        },
+        methods: {
+            show: function () {
+                this.open = true;
+                $.cookie('quests_minimize', 'no')
             },
-            methods: {
-                show: function () {
-                    this.open = true;
-                    $.cookie('quests_minimize', 'no')
-                },
-                hide: function () {
-                    this.open = false;
-                    $.cookie('quests_minimize', 'yes')
-                },
-                advanceQuest: function (questId) {
-                    this.activeRequest = true;
-                    var quest = this.quests.find(function (quest) {
-                        return quest.id = questId;
-                    });
-                    var index = this.quests.indexOf(quest);
-                    if (index === -1) {
-                        return;
-                    }
-
-                    var self = this;
-                    advanceQuest(quest.id, quest.transition.transition, function (data) {
-                        self.quests.splice(index, 1);
-                        self.quests.push(data.quest);
-                        self.activeRequest = false;
-                    });
+            hide: function () {
+                this.open = false;
+                $.cookie('quests_minimize', 'yes')
+            },
+            advanceQuest: function (questId) {
+                this.activeRequest = true;
+                var quest = this.quests.find(function (quest) {
+                    return quest.id = questId;
+                });
+                var index = this.quests.indexOf(quest);
+                if (index === -1) {
+                    return;
                 }
+
+                var self = this;
+                advanceQuest(quest.id, quest.transition.transition, function (data) {
+                    self.quests.splice(index, 1);
+                    self.quests.push(data.quest);
+                    self.activeRequest = false;
+                });
             }
+        }
         })
     </script>
-{/literal}
-{/if}
+{% endif %}

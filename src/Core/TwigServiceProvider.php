@@ -2,6 +2,7 @@
 
 namespace EtoA\Core;
 
+use EtoA\Core\Twig\TwigExtension;
 use Pimple\Container;
 use Twig\Environment;
 
@@ -11,10 +12,8 @@ class TwigServiceProvider extends \Silex\Provider\TwigServiceProvider
     {
         parent::register($app);
 
-        $app->extend('twig', function(Environment $twig, $app): Environment {
-            $twig->addGlobal('version', getAppVersion());
-            $twig->addGlobal('serverTime', date('H:i:s'));
-            $twig->addGlobal('serverTimeUnix', time());
+        $app->extend('twig', function(Environment $twig): Environment {
+            $twig->addExtension(new TwigExtension());
 
             return $twig;
         });
