@@ -15,7 +15,7 @@ echo "mysql-server mysql-server/root_password_again password " | debconf-set-sel
 sudo apt-get install -q -y -f git mysql-server mysql-client nginx php7.2 php7.2-fpm php7.2-xdebug
 
 # Install commonly used php packages
-sudo apt-get install -q -y -f php7.2-curl php7.2-cli php7.2-mysqli php7.2-gd php7.2-dom php7.2-zip
+sudo apt-get install -q -y -f php7.2-curl php7.2-cli php7.2-mysqli php7.2-gd php7.2-dom php7.2-zip php7.2-mbstring
 
 sudo apt-get upgrade libpcre3
 
@@ -51,4 +51,4 @@ echo "* * * * * php /var/www/etoa/bin/cronjob.php" | crontab
 sudo apt-get install -q -y -f cmake libboost-all-dev libmysql++-dev g++
 
 # Build eventhandler
-cd /var/www/etoa && make eventhandler
+cd /var/www/etoa && php composer.phar install && make eventhandler
