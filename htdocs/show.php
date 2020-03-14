@@ -136,6 +136,7 @@ try {
 
     echo $twig->render('external/key-required.html.twig', [
         'page' => $_GET['index'],
+        'invalidKey' => $invalidKey,
     ]);
     return;
 } catch (DBException $ex) {
