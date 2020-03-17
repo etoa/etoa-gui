@@ -27,7 +27,10 @@
 
 	// BEGIN SKRIPT //
 
-	if ($cp)
+    /** @var Planet $cp - The current Planet */
+    /** @var User $cu - The current User */
+
+if ($cp)
 	{
 		// Kolonie aufgeben
 		if (isset($_GET['action']) && $_GET['action']=="remove")
@@ -112,6 +115,73 @@
 			}
 			else
 				error_msg("Dies ist ein Hauptplanet! Hauptplaneten können nicht aufgegeben werden!");
+		}
+		// Kolonie zum Hauptplaneten machen
+		if (isset($_GET['action']) && $_GET['action']=="change_main")
+		{
+			if (!$cp->isMain)
+			{
+                if(!$cu->changedMainPlanet())
+                {
+                    echo "<h2>:: Kolonie zum Hauptplaneten machen ::</h2>";
+
+                    $t = $cp->userChanged()+COLONY_DELETE_THRESHOLD;
+                    if ($t < time())
+                    {
+                        echo "<form action=\"?page=$page\" method=\"POST\">";
+                        iBoxStart("Sicherheitsabfrage");
+                        echo "Willst du die Kolonie auf dem Planeten <b>".$cp->name()."</b> wirklich zu deinem Hauptplaneten machen?<br>"
+                                . "Du kannst deinen Hauptplaneten nur ein einziges Mal ändern.";
+                        iBoxEnd();
+                        echo "<input type=\"submit\" name=\"submit_nochange_main\" value=\"Nein, Vorgang abbrechen\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type=\"submit\" name=\"submit_change_main\" value=\"Ja, Hauptplanet wechseln\">";
+                        echo "</form>";
+                    }
+                    else
+                    {
+                        echo "Die Kolonie kann wegen eines kürzlich stattgefundenen Besitzerwechsels<br/>
+                        erst ab <b>".df($t)."</b> zu deinem Hauptplaneten gemacht werden!<br/><br/>
+                        <input type=\"button\" value=\"Zurück\" onclick=\"document.location='?page=$page'\" />";
+                    }
+                }
+                else
+                    error_msg("Du kannst deinen Hauptplaneten nur ein Mal ändern!");
+			}
+			else
+				error_msg("Dies ist bereits dein Hauptplanet!");
+		}
+
+		// Kolonie zum Hauptplaneten machen ausführen
+		elseif (isset($_POST['submit_change_main']) && $_POST['submit_change_main']!="")
+		{
+			if (!$cp->isMain)
+			{
+				$t = $cp->userChanged()+COLONY_DELETE_THRESHOLD;
+				if ($t < time())
+				{
+                    if(!$cu->changedMainPlanet())
+                    {
+                        if ($cp->setMain())
+                        {
+                            $cu->setChangedMainPlanet(true);
+                            $cu->addToUserLog("planets", "{nick} wählt [b]".$cp."[/b] als neuen Hauptplanet aus.", 0);
+                            echo "<br><b>".$cp->name()."</b> ist nun dein Hauptplanet!<br/><br/>
+                            <input type=\"button\" value=\"Zurück\" onclick=\"document.location='?page=$page'\" />";
+                        }
+                        else
+                            error_msg("Beim Aufheben der Kolonie trat ein Fehler auf! Bitte wende dich an einen Game-Admin!");
+                    }
+                    else
+                        error_msg("Du kannst deinen Hauptplaneten nur ein Mal ändern!");
+				}
+				else
+				{
+					echo "Die Kolonie kann wegen eines kürzlich stattgefundenen Besitzerwechsels<br/>
+					erst ab <b>".df($t)."</b> zu deinem Hauptplaneten gemacht werden!<br/><br/>
+					<input type=\"button\" value=\"Zurück\" onclick=\"document.location='?page=$page'\" />";
+				}
+			}
+			else
+				error_msg("Dies ist bereits ein Hauptplanet!");
 		}
 
 		//
@@ -550,6 +620,9 @@
 			if (!$cp->isMain)
 			{
 				echo "&nbsp;<input type=\"button\" value=\"Kolonie aufheben\" onclick=\"document.location='?page=$page&action=remove'\" />";
+                if(!$cu->changedMainPlanet()){
+                    echo "&nbsp;<input type=\"button\" value=\"Zum Hauptplaneten machen\" onclick=\"document.location='?page=$page&action=change_main'\" />";
+                }
 			}
 
 		}

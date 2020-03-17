@@ -37,6 +37,7 @@
 				user_chatadmin=".$_POST['user_chatadmin'].",
 				admin=".$_POST['admin'].",
 				user_ghost=".$_POST['user_ghost'].",
+				user_changed_main_planet=".$_POST['user_changed_main_planet'].",
 				user_profile_board_url='".$_POST['user_profile_board_url']."',
 				user_alliace_shippoints='".$_POST['user_alliace_shippoints']."',
 				user_alliace_shippoints_used='".$_POST['user_alliace_shippoints_used']."'";
@@ -999,8 +1000,20 @@
 							<input type=\"text\" name=\"user_sitting_days\" value=\"".$arr['user_sitting_days']."\" size=\"3\" maxlength=\"3\" />
 						</td>
 					  </tr>";
+                    
+                // Hauptplanet geändert
+                echo "</td>
+                        </tr>
+                        <tr>
+                            <td class=\"tbltitle\" valign=\"top\">Hauptplanet geändert</td>
+                            <td class=\"tbldata\">
+                                <label><input type=\"radio\" name=\"user_changed_main_planet\" value=\"1\" ".($arr['user_changed_main_planet'] ? "checked" : "")." />&nbsp;Ja</label>&nbsp;
+                                <label><input type=\"radio\" name=\"user_changed_main_planet\" value=\"0\" ".(!$arr['user_changed_main_planet'] ? "checked" : "")." />&nbsp;Nein</label>
+                            </td>
+                        </tr>";
 
-						
+				// Tabelle Ende
+                
 					echo "</table>";
 					echo "
 					<script type=\"text/javascript\">
