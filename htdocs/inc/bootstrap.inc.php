@@ -36,7 +36,7 @@ require __DIR__ . '/init.inc.php';
 	}
 
     if (!isset($app)) {
-        $questSystemEnabled = $cfg->get('quest_system_enable');
+        $questSystemEnabled = (bool) $cfg->get('quest_system_enable');
         $app = require __DIR__ .'/../../src/app.php';
         $app->boot();
     }

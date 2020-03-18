@@ -6,7 +6,7 @@ $app = new \Silex\Application([
     'app.root' => dirname(__DIR__),
     'app.config_dir' => sprintf('%s/htdocs/config/', dirname(__DIR__)),
     'db.options.file' => 'db.conf',
-    'etoa.quests.enabled' => (bool) ($questSystemEnabled ?? true),
+    'etoa.quests.enabled' => $questSystemEnabled ?? true,
 ]);
 if ((bool) $app['debug']) {
     \Symfony\Component\Debug\Debug::enable();
