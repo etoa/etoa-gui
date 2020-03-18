@@ -1,12 +1,14 @@
 {% extends 'layout/external.html.twig' %}
 
 {% block content %}
-    <p>Falscher Schlüssel!</p>
-    <br/>
-    <br/>
+    {% if invalidKey %}
+        <p>Falscher Schlüssel!</p>
+        <br/>
+        <br/>
+    {% endif %}
     <h1>Zugang erfordert Schlüssel</h1>
     <form action="?index="{{ page }}" method="post">
-        Bitte Schlüssel eingeben: <input type="text" value="" name="reg_key_auth_value" /> &nbsp;
+        Bitte Schlüssel eingeben: <input type="text" value="" name="reg_key_auth_value" required /> &nbsp;
         <input type="submit" value="Prüfen" name="reg_key_auth_submit" />
     </form>
 {% endblock %}
