@@ -257,7 +257,6 @@ try {
 
     $gameMenu = new GameMenu('game-menu.conf');
     $tm = new TextManager();
-    $infoText = $tm->getText('info');
 
     if (ADD_BANNER=="") {
         $twig->addGlobal('adds', false);
@@ -269,6 +268,8 @@ try {
 
     // Include content
     require __DIR__ . '/inc/content.inc.php';
+
+    $infoText = $tm->getText('info');
 
     echo $twig->render('layout/game.html.twig', array_merge($currentPlanetData, [
         'design' => strtolower(str_replace('designs/official/', '', CSS_STYLE)),

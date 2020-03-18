@@ -15,6 +15,7 @@ class TwigExtension extends AbstractExtension
             new TwigFunction('version', [$this, 'getVersion']),
             new TwigFunction('etoaUrl', [$this, 'getUrl']),
             new TwigFunction('onClick', [$this, 'getOnClick']),
+            new TwigFunction('text2Html', [$this, 'text2Html']),
         ];
     }
 
@@ -69,5 +70,10 @@ class TwigExtension extends AbstractExtension
             default:
                 throw new \InvalidArgumentException('Unknown in click ' . $id);
         }
+    }
+
+    public function text2Html(string $string): string
+    {
+        return text2html($string);
     }
 }
