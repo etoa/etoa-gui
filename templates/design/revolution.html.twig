@@ -100,7 +100,7 @@
     <aside id="aside">
         <!-- dieser Inhalt wird über jquery (buttongesteuert) durch ein iframe mit dem Chat ersetzt!  -->
         <div id="c_aside">
-            {{ infoText|default('') }}
+            {{ text2Html(infoText|default(''))|raw }}
         </div>
     </aside>
 </div>
