@@ -3,8 +3,8 @@
 	/**
 	*	BB-Code Wrapper
 	*
-	* @param $string Text to wrap BB-Codes into HTML
-	* @return Wrapped text
+	* @param string $string Text to wrap BB-Codes into HTML
+	* @return string
 	*
 	* @author MrCage | Nicolas Perrenoud
 	*
@@ -19,7 +19,7 @@
 		$string = str_replace("\"", "&quot;", $string);
 		$string = str_replace("<", "&lt;", $string);
 		$string = str_replace(">", "&gt;", $string);
-		
+
 		$string =  preg_replace("((\r\n))", trim('<br/>'), $string);
 		$string =  preg_replace("((\n))", trim('<br/>'), $string);
 		$string =  preg_replace("((\r)+)", trim('<br/>'), $string);
@@ -62,10 +62,10 @@
 		$string = str_replace('[center]', '<div style="text-align:center">', $string);
 		$string = str_replace('[/center]', '</div>', $string);
 		$string = str_replace('[right]', '<div style="text-align:right">', $string);
-		$string = str_replace('[/right]', '</div>', $string);		
+		$string = str_replace('[/right]', '</div>', $string);
 		$string = str_replace('[headline]', '<div style="text-align:center"><b>', $string);
 		$string = str_replace('[/headline]', '</b></div>',$string);
-		
+
 		$string = str_replace('[CENTER]', '<div style="text-align:center">', $string);
 		$string = str_replace('[/CENTER]', '</div>', $string);
 		$string = str_replace('[RIGHT]', '<div style="text-align:right">', $string);
@@ -93,7 +93,7 @@
 		$string = str_replace('[/alist]', '</ol>', $string);
 		$string = str_replace('[rlist]', '<ol style="list-style-type:upper-roman">', $string);
 		$string = str_replace('[/rlist]', '</ol>', $string);
-		
+
 		$string = str_replace('[LIST]', '<ul>', $string);
 		$string = str_replace('[/LIST]', '</ul>', $string);
 		$string = str_replace('[NLIST]', '<ol style="list-style-type:decimal">', $string);
@@ -102,12 +102,12 @@
 		$string = str_replace('[/ALIST]', '</ol>', $string);
 		$string = str_replace('[RLIST]', '<ol style="list-style-type:upper-roman">', $string);
 		$string = str_replace('[/RLIST]', '</ol>', $string);
-		
+
 		$string = str_replace('[element]', '<li>', $string);
 		$string = str_replace('[/element]', '</li>', $string);
 		$string = str_replace('[ELEMENT]', '<li>', $string);
 		$string = str_replace('[/ELEMENT]', '</li>', $string);
-		
+
 		$string = str_replace('[line]', '<hr class="line" />', $string);
 		$string = str_replace('[LINE]', '<hr class="line" />', $string);
 
@@ -144,7 +144,7 @@
 		$string = str_replace('[/th]', '</th>', $string);
 		$string = str_replace('[tr]', '<tr>', $string);
 		$string = str_replace('[/tr]', '</tr>', $string);
-		
+
 		$string = str_replace('[TABLE]', '<table>', $string);
 		$string = str_replace('[/TABLE]', '</table>', $string);
 		$string = str_replace('[TD]', '<td>', $string);
@@ -153,10 +153,10 @@
 		$string = str_replace('[/TH]', '</th>', $string);
 		$string = str_replace('[TR]', '<tr>', $string);
 		$string = str_replace('[/TR]', '</tr>', $string);
-		
+
 		if (!defined('SMILIE_DIR')) {
-			define('SMILIE_DIR', "images/smilies");	
-		}	 
+			define('SMILIE_DIR', "images/smilies");
+		}
 		$string = str_replace(' :) ', '<img src="'.SMILIE_DIR.'/smile.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
 		$string = str_replace(' :-) ', '<img src="'.SMILIE_DIR.'/smile.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
 		$string = str_replace(' ;) ', '<img src="'.SMILIE_DIR.'/wink.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
@@ -180,14 +180,14 @@
 		$string = str_replace(' :cool: ', '<img src="'.SMILIE_DIR.'/cool.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
 		$string = str_replace(' :rolleyes: ', '<img src="'.SMILIE_DIR.'/rolleyes.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
 
-		
+
 		$string = preg_replace('#\[font ([^\[]*)\]#i', '<font style=\"font-family:\1">', $string);
 		$string = preg_replace('#\[color ([^\[]*)\]#i', '<font style=\"color:\1">', $string);
 		$string = preg_replace('#\[size ([^\[]*)\]#i', '<font style=\"font-size:\1pt">', $string);
 		$string = preg_replace('#\[font=([^\[]*)\]#i', '<font style=\"font-family:\1">', $string);
 		$string = preg_replace('#\[color=([^\[]*)\]#i', '<font style=\"color:\1">', $string);
 		$string = preg_replace('#\[size=([^\[]*)\]#i', '<font style=\"font-size:\1pt">', $string);
-		
+
 		$string = str_replace('[/font]', '</font>', $string);
 		$string = str_replace('[/FONT]', '</font>', $string);
 		$string = str_replace('[/color]', '</font>', $string);
@@ -199,7 +199,7 @@
 
 		return $string;
 	}
-	
+
 	/**
 	*	Callback-Funktion für preg_replace_callback zum Unterscheiden externer URLs in bbcode
 	*
@@ -233,10 +233,10 @@
 			$url = 'http://'.$url;
 		}
 		$intern = (preg_match('#etoa.ch$|etoa.net$#i',parse_url($url, PHP_URL_HOST)) === 1);
-		
+
 		return '<a href="'.$url.'"'.($intern?'':' target="_blank"').'>'.(isset($match[2])?$match[2]:$match[1]).'</a>';
 	}
-	
+
 	function bbcode_page_to_links($match) {
 		$parts = array();
 		if (preg_match('/^([a-z\_]+)(?:\s+(.+))?$/i', $match[1], $parts)) {
@@ -253,12 +253,12 @@
 		$label = (isset($match[2])?$match[2]:$match[1]);
 		return '<a href="'.$url.'">'.$label.'</a>';
 	}
-	
+
 	function ctype_alsc($str)
 	{
 		return ctype_alpha(str_replace('_','',$str));
 	}
-	
+
 	function ctype_aldotsc($str)
 	{
 		return ctype_alpha(str_replace('_','',str_replace('.','',$str)));

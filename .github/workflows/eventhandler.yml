@@ -1,6 +1,12 @@
 name: Eventhandler CI
 
-on: [push]
+on:
+  pull_request:
+    paths:
+      - 'eventhandler/**'
+  push:
+    branches:
+      - "master"
 
 jobs:
   build:

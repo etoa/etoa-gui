@@ -1,0 +1,34 @@
+{% extends 'layout/external.html.twig' %}
+
+{% import 'macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Game-Login</h1>
+
+    {% if errorMessage %}
+        {{ macros.errorMessage(errorMessage) }}
+    {% endif %}
+
+    <form action="." method="post" class="styled-form styled-form-medium">
+        <p>Wilkommen in der {{ roundName }}. Bitte melde dich mit deinen Logindaten an:</p>
+        <p>
+            <label for="loginname">Name</label>
+            <input id="loginname" type="text" name="{{ nickField }}" value="" size="20" maxlength="250" tabindex="1" /> &nbsp; <a href="?index=register">Kein Account? Hier registrieren</a>
+        </p>
+        <p>
+            <label for="loginpw">Passwort</label>
+            <input id="loginpw" type="password" name="{{ passwordField }}" value="" size="20" maxlength="250" tabindex="2" /> &nbsp; <a href="?index=pwforgot">Passwort vergessen?</a>
+        </p>
+        <p class="form-buttons">
+            <input id="loginsubmit" type="submit" name="login" value="Login" class="button" /> &nbsp;
+            <a href="/admin">Zum Admin-Login</a>
+        </p>
+        <input type="hidden" name="token" value="{{ loginToken }}" />
+    </form>
+
+    <script type="text/javascript">
+        $(function(){
+            $('#loginname').focus();
+        });
+    </script>
+{% endblock %}

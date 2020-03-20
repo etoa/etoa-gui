@@ -1,0 +1,41 @@
+{% extends 'install/install.html.twig' %}
+
+{% block step %}
+    <form action="?" method="post" id="installform" autocomplete="off">
+        <div>
+            <table>
+                <tr>
+                    <th>Server:</th>
+                    <td>
+                        <input type="text" name="db_server" value="{{ db_server }}" autocomplete="off" />
+                    </td>
+                    <td>(z.b. localhost)</td>
+                </tr>
+                <tr>
+                    <th>Datenbank:</th>
+                    <td>
+                        <input type="text" name="db_name" value="{{ db_name }}" autocomplete="off" />
+                    </td>
+                    <td>(z.b. etoaroundx)</td>
+                </tr>
+                <tr>
+                    <th>User:</th>
+                    <td>
+                        <input type="text" name="db_user" value="{{ db_user }}" autocomplete="off" />
+                    </td>
+                    <td>(z.b. etoauser)</td>
+                </tr>
+                <tr>
+                    <th>Passwort:</th>
+                    <td>
+                        <input type="password" name="db_password" value="{{ db_password }}" autocomplete="off" />
+                    </td>
+                    <td>(mind. 10 Zeichen)</td>
+                </tr>
+            </table>
+        </div>
+        <p>
+            <input type="submit" name="install_check" value="Eingaben prüfen" />
+        </p>
+    </form>
+{% endblock %}

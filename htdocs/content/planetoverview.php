@@ -27,7 +27,10 @@
 
 	// BEGIN SKRIPT //
 
-	if ($cp)
+	/** @var Planet $cp - The current Planet */
+	/** @var User $cu - The current User */
+
+if ($cp)
 	{
 		// Kolonie aufgeben
 		if (isset($_GET['action']) && $_GET['action']=="remove")
@@ -78,10 +81,10 @@
 									SELECT
 										id
 									FROM
-		                                planets
+										planets
 									WHERE
-		                                planet_user_id='".$cu->id."'
-		                                AND planet_user_main=1;");
+										planet_user_id='".$cu->id."'
+										AND planet_user_main=1;");
 									$main_arr=mysql_fetch_array($main_res);
 
 									echo "<br>Die Kolonie wurde aufgehoben!<br>";
@@ -98,7 +101,7 @@
 								error_msg("Der Planet ist aktuell nicht ausgew&auml;hlt, er geh&ouml;rt nicht dir oder er ist ein Hauptplanet!");
 						}
 						else
-					 		error_msg("Kolonie kann nicht gel&ouml;scht werden da Schiffe von/zu diesem Planeten unterwegs sind!");
+							error_msg("Kolonie kann nicht gel&ouml;scht werden da Schiffe von/zu diesem Planeten unterwegs sind!");
 					}
 					else
 						error_msg("Kolonie kann nicht gel&ouml;scht werden da noch Schiffe auf dem Planeten stationiert sind oder Schiffe noch im Bau sind!");
@@ -112,6 +115,73 @@
 			}
 			else
 				error_msg("Dies ist ein Hauptplanet! Hauptplaneten können nicht aufgegeben werden!");
+		}
+		// Kolonie zum Hauptplaneten machen
+		if (isset($_GET['action']) && $_GET['action']=="change_main")
+		{
+			if (!$cp->isMain)
+			{
+				if(!$cu->changedMainPlanet())
+				{
+					echo "<h2>:: Kolonie zum Hauptplaneten machen ::</h2>";
+
+					$t = $cp->userChanged()+COLONY_DELETE_THRESHOLD;
+					if ($t < time())
+					{
+						echo "<form action=\"?page=$page\" method=\"POST\">";
+						iBoxStart("Sicherheitsabfrage");
+						echo "Willst du die Kolonie auf dem Planeten <b>".$cp->name()."</b> wirklich zu deinem Hauptplaneten machen?<br>"
+							. "Du kannst deinen Hauptplaneten nur ein einziges Mal ändern.";
+						iBoxEnd();
+						echo "<input type=\"submit\" name=\"submit_nochange_main\" value=\"Nein, Vorgang abbrechen\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type=\"submit\" name=\"submit_change_main\" value=\"Ja, Hauptplanet wechseln\">";
+						echo "</form>";
+					}
+					else
+					{
+						echo "Die Kolonie kann wegen eines kürzlich stattgefundenen Besitzerwechsels<br/>
+						erst ab <b>".df($t)."</b> zu deinem Hauptplaneten gemacht werden!<br/><br/>
+						<input type=\"button\" value=\"Zurück\" onclick=\"document.location='?page=$page'\" />";
+					}
+				}
+				else
+					error_msg("Du kannst deinen Hauptplaneten nur ein Mal ändern!");
+			}
+			else
+				error_msg("Dies ist bereits dein Hauptplanet!");
+		}
+
+		// Kolonie zum Hauptplaneten machen ausführen
+		elseif (isset($_POST['submit_change_main']) && $_POST['submit_change_main']!="")
+		{
+			if (!$cp->isMain)
+			{
+				$t = $cp->userChanged()+COLONY_DELETE_THRESHOLD;
+				if ($t < time())
+				{
+					if(!$cu->changedMainPlanet())
+					{
+						if ($cp->setMain())
+						{
+							$cu->setChangedMainPlanet(true);
+							$cu->addToUserLog("planets", "{nick} wählt [b]".$cp."[/b] als neuen Hauptplanet aus.", 0);
+							echo "<br><b>".$cp->name()."</b> ist nun dein Hauptplanet!<br/><br/>
+							<input type=\"button\" value=\"Zurück\" onclick=\"document.location='?page=$page'\" />";
+						}
+						else
+							error_msg("Beim Aufheben der Kolonie trat ein Fehler auf! Bitte wende dich an einen Game-Admin!");
+					}
+					else
+						error_msg("Du kannst deinen Hauptplaneten nur ein Mal ändern!");
+				}
+				else
+				{
+					echo "Die Kolonie kann wegen eines kürzlich stattgefundenen Besitzerwechsels<br/>
+					erst ab <b>".df($t)."</b> zu deinem Hauptplaneten gemacht werden!<br/><br/>
+					<input type=\"button\" value=\"Zurück\" onclick=\"document.location='?page=$page'\" />";
+				}
+			}
+			else
+				error_msg("Dies ist bereits ein Hauptplanet!");
 		}
 
 		//
@@ -135,7 +205,7 @@
 			$sl = new ShipList($cp->id,$cu->id,1);
 			$dl = new DefList($cp->id,$cu->id,1);
 
-		 	echo "<h1>&Uuml;bersicht &uuml;ber den Planeten ".$cp->name()."</h1>";
+			echo "<h1>&Uuml;bersicht &uuml;ber den Planeten ".$cp->name()."</h1>";
 			echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
 
 			if (isset($_GET['sub']) && $_GET['sub']=="ships")
@@ -282,119 +352,119 @@
 
 			echo "<div id=\"tabShips\" style=\"".($sub=="ships" ? '' : 'display:none;')."\">";
 			tableStart("Kampfstärke");
-		  if ($sl->count() > 0)
-		  {
-				// Forschung laden und bonus dazu rechnen
-		    // Liest Level der Waffen-,Schild-,Panzerungs-,Regena Tech aus Datenbank (att)
-				$weapon_tech_a=1;
-				$structure_tech_a=1;
-		    $shield_tech_a=1;
-		    $heal_tech_a=1;
+			if ($sl->count() > 0)
+			{
+				  // Forschung laden und bonus dazu rechnen
+			  // Liest Level der Waffen-,Schild-,Panzerungs-,Regena Tech aus Datenbank (att)
+				  $weapon_tech_a=1;
+				  $structure_tech_a=1;
+			  $shield_tech_a=1;
+			  $heal_tech_a=1;
 
-		    $techres_a = dbquery("
-				SELECT
-					techlist_tech_id,
-					techlist_current_level,
-					tech_name
-				FROM
-					techlist
-				INNER JOIN
-					technologies
-				ON 
-					techlist_tech_id=tech_id
-				AND
-					techlist_user_id='".$cu->id."'
-					AND
-					(
-						techlist_tech_id='".STRUCTURE_TECH_ID."'
-						OR techlist_tech_id='".SHIELD_TECH_ID."'
-						OR techlist_tech_id='".WEAPON_TECH_ID."'
-						OR techlist_tech_id='".REGENA_TECH_ID."'
-					)
-		  		;");
+			  $techres_a = dbquery("
+				  SELECT
+					  techlist_tech_id,
+					  techlist_current_level,
+					  tech_name
+				  FROM
+					  techlist
+				  INNER JOIN
+					  technologies
+				  ON 
+					  techlist_tech_id=tech_id
+				  AND
+					  techlist_user_id='".$cu->id."'
+					  AND
+					  (
+						  techlist_tech_id='".STRUCTURE_TECH_ID."'
+						  OR techlist_tech_id='".SHIELD_TECH_ID."'
+						  OR techlist_tech_id='".WEAPON_TECH_ID."'
+						  OR techlist_tech_id='".REGENA_TECH_ID."'
+					  )
+				  ;");
 
-		      while ($techarr_a = mysql_fetch_array($techres_a))
-		      {
-		          if ($techarr_a['techlist_tech_id']==SHIELD_TECH_ID)
-							{
-		              $shield_tech_a+=($techarr_a['techlist_current_level']/10);
-									$shield_tech_name = $techarr_a["tech_name"];
-									$shield_tech_level = $techarr_a["techlist_current_level"];
-							}
-		          if ($techarr_a['techlist_tech_id']==STRUCTURE_TECH_ID)
-							{
-		              $structure_tech_a+=($techarr_a['techlist_current_level']/10);
-									$structure_tech_name = $techarr_a["tech_name"];
-									$structure_tech_level = $techarr_a["techlist_current_level"];
-							}
-		          if ($techarr_a['techlist_tech_id']==WEAPON_TECH_ID)
-							{
-		              $weapon_tech_a+=($techarr_a['techlist_current_level']/10);
-									$weapon_tech_name = $techarr_a["tech_name"];
-									$weapon_tech_level = $techarr_a["techlist_current_level"];
-							}
-		          if ($techarr_a['techlist_tech_id']==REGENA_TECH_ID)
-							{
-		              $heal_tech_a+=($techarr_a['techlist_current_level']/10);
-									$heal_tech_name = $techarr_a["tech_name"];
-									$heal_tech_level = $techarr_a["techlist_current_level"];
-							}
-		      }
+			  while ($techarr_a = mysql_fetch_array($techres_a))
+			  {
+				  if ($techarr_a['techlist_tech_id']==SHIELD_TECH_ID)
+						  {
+					  $shield_tech_a+=($techarr_a['techlist_current_level']/10);
+								  $shield_tech_name = $techarr_a["tech_name"];
+								  $shield_tech_level = $techarr_a["techlist_current_level"];
+						  }
+				  if ($techarr_a['techlist_tech_id']==STRUCTURE_TECH_ID)
+						  {
+					  $structure_tech_a+=($techarr_a['techlist_current_level']/10);
+								  $structure_tech_name = $techarr_a["tech_name"];
+								  $structure_tech_level = $techarr_a["techlist_current_level"];
+						  }
+				  if ($techarr_a['techlist_tech_id']==WEAPON_TECH_ID)
+						  {
+					  $weapon_tech_a+=($techarr_a['techlist_current_level']/10);
+								  $weapon_tech_name = $techarr_a["tech_name"];
+								  $weapon_tech_level = $techarr_a["techlist_current_level"];
+						  }
+				  if ($techarr_a['techlist_tech_id']==REGENA_TECH_ID)
+						  {
+					  $heal_tech_a+=($techarr_a['techlist_current_level']/10);
+								  $heal_tech_name = $techarr_a["tech_name"];
+								  $heal_tech_level = $techarr_a["techlist_current_level"];
+						  }
+				}
 
 				echo "<tr><th><b>Einheit</b></th><th>Grundwerte</th><th>Aktuelle Werte</th></tr>";
-		  	echo "<tr>
-					<td><b>Struktur:</b></td>
-					<td>".nf($sl->getTotalStrucure())."</td>
-					<td>".nf($sl->getTotalStrucure()*($structure_tech_a+$sl->getBStructure()));
-					if ($structure_tech_a>1)
-					{
-						echo " (".get_percent_string($structure_tech_a,1)." durch ".$structure_tech_name." ".$structure_tech_level;
-						if ($sl->getBStructure()>0)
-							echo ", ".get_percent_string((1+$sl->getBStructure()),1)." durch Spezialschiffe";
-						echo ")";
-					}
-					echo "</td></tr>";
-		  	echo "<tr><td><b>Schilder:</b></td>
-					<td>".nf($sl->getTotalShield())."</td>
-					<td>".nf($sl->getTotalShield()*($shield_tech_a+$sl->getBShield()));
-					if ($shield_tech_a>1)
-					{
-						echo " (".get_percent_string($shield_tech_a,1)." durch ".$shield_tech_name." ".$shield_tech_level;
-						if ($sl->getBShield()>0)
-							echo ", ".get_percent_string((1+$sl->getBShield()),1)." durch Spezialschiffe";
-						echo ")";
-					}
-					echo "</td></tr>";
-		  	echo "<tr><td><b>Waffen:</b></td>
-					<td>".nf($sl->getTotalWeapon())."</td>
-					<td>".nf($sl->getTotalWeapon()*($weapon_tech_a+$sl->getBWeapon()));
-					if ($weapon_tech_a>1)
-					{
-						echo " (".get_percent_string($weapon_tech_a,1)." durch ".$weapon_tech_name." ".$weapon_tech_level;
-						if ($sl->getBWeapon()>0)
-							echo ", ".get_percent_string((1+$sl->getBWeapon()),1)." durch Spezialschiffe";
-						echo ")";
-					}
-					echo "</td></tr>";
-		  	echo "<tr><td><b>Reparatur:</b></td>
-					<td>".nf($sl->getTotalHeal())."</td>
-					<td>".nf($sl->getTotalHeal()*($heal_tech_a+$sl->getBHeal()));
-					if ($heal_tech_a>1)
-					{
-						echo " (".get_percent_string($heal_tech_a,1)." durch ".$heal_tech_name." ".$heal_tech_level;
-            if ($sl->getBHeal()>0)
-							echo ", ".get_percent_string((1+$sl->getBHeal()),1)." durch Spezialschiffe";
-						echo ")";
-					}
-					echo "</td></tr>";
-		  	echo "<tr><td><b>Anzahl Schiffe:</b></td>
-		  	<td colspan=\"2\">".nf($sl->count())."</td></tr>";
-		  }
-		  else
-		  {
-		  	echo "<tr><td><i>Keine Schiffe vorhanden!</i></td></tr>";
-		  }
-		  tableEnd();
+				echo "<tr>
+						<td><b>Struktur:</b></td>
+						<td>".nf($sl->getTotalStrucure())."</td>
+						<td>".nf($sl->getTotalStrucure()*($structure_tech_a+$sl->getBStructure()));
+						if ($structure_tech_a>1)
+						{
+							echo " (".get_percent_string($structure_tech_a,1)." durch ".$structure_tech_name." ".$structure_tech_level;
+							if ($sl->getBStructure()>0)
+								echo ", ".get_percent_string((1+$sl->getBStructure()),1)." durch Spezialschiffe";
+							echo ")";
+						}
+						echo "</td></tr>";
+				echo "<tr><td><b>Schilder:</b></td>
+						<td>".nf($sl->getTotalShield())."</td>
+						<td>".nf($sl->getTotalShield()*($shield_tech_a+$sl->getBShield()));
+						if ($shield_tech_a>1)
+						{
+							echo " (".get_percent_string($shield_tech_a,1)." durch ".$shield_tech_name." ".$shield_tech_level;
+							if ($sl->getBShield()>0)
+								echo ", ".get_percent_string((1+$sl->getBShield()),1)." durch Spezialschiffe";
+							echo ")";
+						}
+						echo "</td></tr>";
+				echo "<tr><td><b>Waffen:</b></td>
+						<td>".nf($sl->getTotalWeapon())."</td>
+						<td>".nf($sl->getTotalWeapon()*($weapon_tech_a+$sl->getBWeapon()));
+						if ($weapon_tech_a>1)
+						{
+							echo " (".get_percent_string($weapon_tech_a,1)." durch ".$weapon_tech_name." ".$weapon_tech_level;
+							if ($sl->getBWeapon()>0)
+								echo ", ".get_percent_string((1+$sl->getBWeapon()),1)." durch Spezialschiffe";
+							echo ")";
+						}
+						echo "</td></tr>";
+				echo "<tr><td><b>Reparatur:</b></td>
+						<td>".nf($sl->getTotalHeal())."</td>
+						<td>".nf($sl->getTotalHeal()*($heal_tech_a+$sl->getBHeal()));
+						if ($heal_tech_a>1)
+						{
+							echo " (".get_percent_string($heal_tech_a,1)." durch ".$heal_tech_name." ".$heal_tech_level;
+				if ($sl->getBHeal()>0)
+								echo ", ".get_percent_string((1+$sl->getBHeal()),1)." durch Spezialschiffe";
+							echo ")";
+						}
+						echo "</td></tr>";
+				echo "<tr><td><b>Anzahl Schiffe:</b></td>
+				<td colspan=\"2\">".nf($sl->count())."</td></tr>";
+			}
+			else
+			{
+			  echo "<tr><td><i>Keine Schiffe vorhanden!</i></td></tr>";
+			}
+			tableEnd();
 
 			tableStart("Details");
 			echo "<tr><th>Typ</th><th>Anzahl</th><th>Eingebunkert</th></tr>";
@@ -416,119 +486,119 @@
 
 			echo "<div id=\"tabDefense\" style=\"".($sub=="defense" ? '' : 'display:none;')."\">";
 			tableStart("Kampfstärke");
-		  if (mysql_num_rows($res)>0)
-		  {
-				// Forschung laden und bonus dazu rechnen
-		    // Liest Level der Waffen-,Schild-,Panzerungs-,Regena Tech aus Datenbank (att)
-				$weapon_tech_a=1;
-				$structure_tech_a=1;
-		    $shield_tech_a=1;
-		    $heal_tech_a=1;
+			if (mysql_num_rows($res)>0)
+			{
+				  // Forschung laden und bonus dazu rechnen
+			  // Liest Level der Waffen-,Schild-,Panzerungs-,Regena Tech aus Datenbank (att)
+				  $weapon_tech_a=1;
+				  $structure_tech_a=1;
+			  $shield_tech_a=1;
+			  $heal_tech_a=1;
 
-		    $techres_a = dbquery("
-				SELECT
-					techlist_tech_id,
-					techlist_current_level,
-					tech_name
-				FROM
-					techlist
-				INNER JOIN
-					technologies
-				ON 
-					techlist_tech_id=tech_id
-				AND
-					techlist_user_id='".$cu->id."'
-					AND
-					(
-						techlist_tech_id='".STRUCTURE_TECH_ID."'
-						OR techlist_tech_id='".SHIELD_TECH_ID."'
-						OR techlist_tech_id='".WEAPON_TECH_ID."'
-						OR techlist_tech_id='".REGENA_TECH_ID."'
-					)
-		  		;");
+			  $techres_a = dbquery("
+				  SELECT
+					  techlist_tech_id,
+					  techlist_current_level,
+					  tech_name
+				  FROM
+					  techlist
+				  INNER JOIN
+					  technologies
+				  ON 
+					  techlist_tech_id=tech_id
+				  AND
+					  techlist_user_id='".$cu->id."'
+					  AND
+					  (
+						  techlist_tech_id='".STRUCTURE_TECH_ID."'
+						  OR techlist_tech_id='".SHIELD_TECH_ID."'
+						  OR techlist_tech_id='".WEAPON_TECH_ID."'
+						  OR techlist_tech_id='".REGENA_TECH_ID."'
+					  )
+				  ;");
 
-		      while ($techarr_a = mysql_fetch_array($techres_a))
-		      {
-		          if ($techarr_a['techlist_tech_id']==SHIELD_TECH_ID)
-							{
-		              $shield_tech_a+=($techarr_a['techlist_current_level']/10);
-									$shield_tech_name = $techarr_a["tech_name"];
-									$shield_tech_level = $techarr_a["techlist_current_level"];
-							}
-		          if ($techarr_a['techlist_tech_id']==STRUCTURE_TECH_ID)
-							{
-		              $structure_tech_a+=($techarr_a['techlist_current_level']/10);
-									$structure_tech_name = $techarr_a["tech_name"];
-									$structure_tech_level = $techarr_a["techlist_current_level"];
-							}
-		          if ($techarr_a['techlist_tech_id']==WEAPON_TECH_ID)
-							{
-		              $weapon_tech_a+=($techarr_a['techlist_current_level']/10);
-									$weapon_tech_name = $techarr_a["tech_name"];
-									$weapon_tech_level = $techarr_a["techlist_current_level"];
-							}
-		          if ($techarr_a['techlist_tech_id']==REGENA_TECH_ID)
-							{
-		              $heal_tech_a+=($techarr_a['techlist_current_level']/10);
-									$heal_tech_name = $techarr_a["tech_name"];
-									$heal_tech_level = $techarr_a["techlist_current_level"];
-							}
-		      }
+				while ($techarr_a = mysql_fetch_array($techres_a))
+				{
+					if ($techarr_a['techlist_tech_id']==SHIELD_TECH_ID)
+							  {
+						$shield_tech_a+=($techarr_a['techlist_current_level']/10);
+									  $shield_tech_name = $techarr_a["tech_name"];
+									  $shield_tech_level = $techarr_a["techlist_current_level"];
+							  }
+					if ($techarr_a['techlist_tech_id']==STRUCTURE_TECH_ID)
+							  {
+						$structure_tech_a+=($techarr_a['techlist_current_level']/10);
+									  $structure_tech_name = $techarr_a["tech_name"];
+									  $structure_tech_level = $techarr_a["techlist_current_level"];
+							  }
+					if ($techarr_a['techlist_tech_id']==WEAPON_TECH_ID)
+							  {
+						$weapon_tech_a+=($techarr_a['techlist_current_level']/10);
+									  $weapon_tech_name = $techarr_a["tech_name"];
+									  $weapon_tech_level = $techarr_a["techlist_current_level"];
+							  }
+					if ($techarr_a['techlist_tech_id']==REGENA_TECH_ID)
+							  {
+						$heal_tech_a+=($techarr_a['techlist_current_level']/10);
+									  $heal_tech_name = $techarr_a["tech_name"];
+									  $heal_tech_level = $techarr_a["techlist_current_level"];
+							  }
+				}
 
-				echo "<tr><th><b>Einheit</b></th><th>Grundwerte</th><th>Aktuelle Werte</th></tr>";
-		  	echo "<tr>
-					<td><b>Struktur:</b></td>
-					<td>".nf($dl->getTotalStrucure())."</td>
-					<td>".nf($dl->getTotalStrucure()*($structure_tech_a+$sl->getBStructure()));
-					if ($structure_tech_a>1)
-					{
-						echo " (".get_percent_string($structure_tech_a,1)." durch ".$structure_tech_name." ".$structure_tech_level;
-            if ($sl->getBStructure()>0)
-							echo ", ".get_percent_string((1+$sl->getBStructure()),1)." durch Spezialschiffe";
-						echo ")";
-					}
-					echo "</td></tr>";
-		  	echo "<tr><td><b>Schilder:</b></td>
-					<td>".nf($dl->getTotalShield())."</td>
-					<td>".nf($dl->getTotalShield()*($shield_tech_a+$sl->getBShield()));
-					if ($shield_tech_a>1)
-					{
-						echo " (".get_percent_string($shield_tech_a,1)." durch ".$shield_tech_name." ".$shield_tech_level;
-            if ($sl->getBShield()>0)
-							echo ", ".get_percent_string((1+$sl->getBShield()),1)." durch Spezialschiffe";
-						echo ")";
-					}
-					echo "</td></tr>";
-		  	echo "<tr><td><b>Waffen:</b></td>
-					<td>".nf($dl->getTotalWeapon())."</td>
-					<td>".nf($dl->getTotalWeapon()*($weapon_tech_a+$sl->getBWeapon()));
-					if ($weapon_tech_a>1)
-					{
-						echo " (".get_percent_string($weapon_tech_a,1)." durch ".$weapon_tech_name." ".$weapon_tech_level;
-            if ($sl->getBWeapon()>0)
-							echo ", ".get_percent_string((1+$sl->getBWeapon()),1)." durch Spezialschiffe";
-						echo ")";
-					}
-					echo "</td></tr>";
-		  	echo "<tr><td><b>Reparatur:</b></td>
-					<td>".nf($dl->getTotalHeal())."</td>
-					<td>".nf($dl->getTotalHeal()*($heal_tech_a+$sl->getBHeal()));
-					if ($heal_tech_a>1)
-					{
-						echo " (".get_percent_string($heal_tech_a,1)." durch ".$heal_tech_name." ".$heal_tech_level;
-					  if ($sl->getBHeal()>0)
-							echo ", ".get_percent_string((1+$sl->getBHeal()),1)." durch Spezialschiffe";
-						echo ")";
-          }
-					echo "</td></tr>";
-		  	echo "<tr><td><b>Anzahl Anlagen:</b></td>
-		  	<td colspan=\"2\">".nf($dl->count())."</td></tr>";
-		  }
-		  else
-		  {
-		  	echo "<tr><td><i>Keine Verteidigung vorhanden!</i></td></tr>";
-		  }
-		  tableEnd();
+				  echo "<tr><th><b>Einheit</b></th><th>Grundwerte</th><th>Aktuelle Werte</th></tr>";
+			  echo "<tr>
+					  <td><b>Struktur:</b></td>
+					  <td>".nf($dl->getTotalStrucure())."</td>
+					  <td>".nf($dl->getTotalStrucure()*($structure_tech_a+$sl->getBStructure()));
+					  if ($structure_tech_a>1)
+					  {
+						  echo " (".get_percent_string($structure_tech_a,1)." durch ".$structure_tech_name." ".$structure_tech_level;
+			  if ($sl->getBStructure()>0)
+							  echo ", ".get_percent_string((1+$sl->getBStructure()),1)." durch Spezialschiffe";
+						  echo ")";
+					  }
+					  echo "</td></tr>";
+			  echo "<tr><td><b>Schilder:</b></td>
+					  <td>".nf($dl->getTotalShield())."</td>
+					  <td>".nf($dl->getTotalShield()*($shield_tech_a+$sl->getBShield()));
+					  if ($shield_tech_a>1)
+					  {
+						  echo " (".get_percent_string($shield_tech_a,1)." durch ".$shield_tech_name." ".$shield_tech_level;
+			  if ($sl->getBShield()>0)
+							  echo ", ".get_percent_string((1+$sl->getBShield()),1)." durch Spezialschiffe";
+						  echo ")";
+					  }
+					  echo "</td></tr>";
+			  echo "<tr><td><b>Waffen:</b></td>
+					  <td>".nf($dl->getTotalWeapon())."</td>
+					  <td>".nf($dl->getTotalWeapon()*($weapon_tech_a+$sl->getBWeapon()));
+					  if ($weapon_tech_a>1)
+					  {
+						  echo " (".get_percent_string($weapon_tech_a,1)." durch ".$weapon_tech_name." ".$weapon_tech_level;
+			  if ($sl->getBWeapon()>0)
+							  echo ", ".get_percent_string((1+$sl->getBWeapon()),1)." durch Spezialschiffe";
+						  echo ")";
+					  }
+					  echo "</td></tr>";
+			  echo "<tr><td><b>Reparatur:</b></td>
+					  <td>".nf($dl->getTotalHeal())."</td>
+					  <td>".nf($dl->getTotalHeal()*($heal_tech_a+$sl->getBHeal()));
+					  if ($heal_tech_a>1)
+					  {
+						  echo " (".get_percent_string($heal_tech_a,1)." durch ".$heal_tech_name." ".$heal_tech_level;
+						if ($sl->getBHeal()>0)
+							  echo ", ".get_percent_string((1+$sl->getBHeal()),1)." durch Spezialschiffe";
+						  echo ")";
+			}
+					  echo "</td></tr>";
+			  echo "<tr><td><b>Anzahl Anlagen:</b></td>
+			  <td colspan=\"2\">".nf($dl->count())."</td></tr>";
+			}
+			else
+			{
+			  echo "<tr><td><i>Keine Verteidigung vorhanden!</i></td></tr>";
+			}
+			tableEnd();
 
 			tableStart("Details");
 			echo "<tr><th>Typ</th><th>Anzahl</th><th>Felder</th></tr>";
@@ -550,6 +620,9 @@
 			if (!$cp->isMain)
 			{
 				echo "&nbsp;<input type=\"button\" value=\"Kolonie aufheben\" onclick=\"document.location='?page=$page&action=remove'\" />";
+				if(!$cu->changedMainPlanet()){
+					echo "&nbsp;<input type=\"button\" value=\"Zum Hauptplaneten machen\" onclick=\"document.location='?page=$page&action=change_main'\" />";
+				}
 			}
 
 		}

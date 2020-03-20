@@ -1,0 +1,72 @@
+<div class="header">
+    <a href="?page=overview" class="brand">Escape to Andromeda</a>
+    <ul class="header-nav pull-right">
+        <li>{{ userNick }} ({{ userPoints }} Punkte)</li>
+        {% for item in topNav %}
+            <li>
+                {% if item.onclick|default(false) %}
+                    <a href="javascript:;" onclick="{{ item.onclick }}">{{ item.name }}</a>
+                {% else %}
+                    <a href="{{ item.url }}" target="_blank">{{ item.name }}</a>
+                {% endif %}
+            </li>
+        {% endfor %}
+        {% if isAdmin %}
+            <li><a href="admin" target="_blank">Administration</a></li>
+        {% endif %}
+        <li><a href="?logout=1">Logout</a></li>
+    </ul>
+    <br class="clear"/>
+</div>
+<div class="mainContainer">
+    <div class="sidebar">
+        <div class="planetimage">
+            <span id="servertime" class="servertime">{{ serverTime() }}</span>
+            {% if currentPlanetImage|default(false) %} }}
+                <a href="?page=planetoverview">
+                    <img src="{{ currentPlanetImage }}" alt="Planet" style="width:100px;height:100px;" />
+                </a>
+            {% endif %}
+            <a class="planetIterator prevPlanet" href="?page={{ page }}&mode={{ mode }}&change_entity={{ prevPlanetId }}">&laquo;</a>
+            <a class="planetIterator nextPlanet" href="?page={{ page }}&mode={{ mode }}&change_entity={{ nextPlanetId }}">&raquo;</a>
+        </div>
+        <div class="planetname">
+            {% if selectField|default(false) %}
+                {{ selectField|raw }}
+            {% endif %}
+        </div>
+        {% for category,items in mainNav %}
+            <p class="nav-header">{{ category }}</p>
+            <ul class="nav">
+                {% for item in items %}
+                    <li>
+                        <a href="{{ item.url }}">{{ item.name }}
+                        {# Show number of own and enemy fleets #}
+                            {% if item.name same 'Flotten' and (ownFleetCount > 0 or fleetAttack > 0) %}
+                                <span style="float:right;">
+                                    {% if ownFleeCount > 0 %}
+                                        <span style="color:#0f0;">{{ ownFleetCount }}</span>
+                                    {% endif %}
+                                    {% if fleetAttack > 0 %}
+                                        <span style="color:#f00;">{{ fleeAttack }}</span>
+                                    {% endif %}
+                                </span>
+                            {% endif %}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+        <br/>
+        <div class="footer">
+            <b>Online:</b> {{ userOnline }} / {{ userTotal }}<br/>
+            <b>Renderzeit:</b> {{ renderTime }} sec<br/><br/>
+            &copy; 2014 EtoA Gaming
+        </div>
+    </div>
+    <div class="content">
+        {% include 'layout/chunks/tutorial.html.twig' %}
+        {% include 'layout/chunks/quests.html.twig' %}
+        {{ content|raw }}
+    </div>
+</div>

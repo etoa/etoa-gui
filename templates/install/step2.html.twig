@@ -1,0 +1,43 @@
+{% extends 'install/install.html.twig' %}
+
+{% block step %}
+    <form action="?" method="post">
+        <div>
+            <table>
+                <tr>
+                    <th>Name der Runde:</th>
+                    <td>
+                        <input type="text" name="round_name" value="{{ round_name }}" />
+                    </td>
+                    <td>(z.b. Runde 1)</td>
+                </tr>
+                <tr>
+                    <th>Basis-URL der Runde:</th>
+                    <td>
+                        <input type="text" name="round_url" value="{{ round_url }}" />
+                    </td>
+                    <td>(z.b. {{ default_round_url }})</td>
+                </tr>
+                <tr>
+                    <th>Loginserver-URL:</th>
+                    <td>
+                        <input type="text" name="loginserver_url" value="{{ loginserver_url }}" />
+                    </td>
+                    <td>(z.b. {{ default_loginserver_url }}, leerlassen für lokales Login)</td>
+                </tr>
+                <tr>
+                    <th>Referrers:</th>
+                    <td>
+                        <textarea name="referers" rows="6" cols="50">{{ referers }}</textarea>
+                        <br/>
+                        (alle Seiten, welche als Absender gelten sollen. Also der Loginserver, sowie der aktuelle Server. Mache für jeden Eintrag eine neue Linie!)
+                    </td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+        <p>
+            <input type="submit" name="step2_submit" value="Weiter" />
+        </p>
+    </form>
+{% endblock %}
