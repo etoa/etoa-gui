@@ -111,7 +111,11 @@ void daemonize()
 
 bool validateRoundName(const std::string& s)
 {
-    return find_if(s.begin(), s.end(), [](char c) { return !(isalnum(c)); }) == s.end();
+    for (std::string::size_type i = 0; i < s.size(); i++) {
+        if (!isalnum(s[i])) return false;
+    }
+
+    return true;
 }
 
 /**
