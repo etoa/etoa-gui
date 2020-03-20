@@ -69,7 +69,7 @@ class User implements \EtoA\User\UserInterface
 	protected $ghost;
 	protected $lastInvasion;
 	protected $allianceShippoints;
-    protected $changedMainPlanet;
+	protected $changedMainPlanet;
 
 	protected $sittingDays;
 
@@ -212,7 +212,7 @@ class User implements \EtoA\User\UserInterface
 
 			$this->lastInvasion = 0;
             
-            $this->changedMainPlanet = 0;
+			$this->changedMainPlanet = 0;
 
 			$this->raceId = 0;
 
@@ -597,9 +597,13 @@ class User implements \EtoA\User\UserInterface
 		return false;
 	}
     
-    public function changedMainPlanet(){
-        return $this->changedMainPlanet;
-    }
+	/**
+	 * Returns whether this user has changed their main planet
+	 * @return boolean
+	 */
+	public function changedMainPlanet(){
+		return $this->changedMainPlanet;
+	}
 
 	//
 	// Methods
