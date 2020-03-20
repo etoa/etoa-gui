@@ -261,9 +261,9 @@
 						if ($arr[$a['name']]==$rv)
 							echo " checked=\"checked\"";
 
-                                                $onclick_actions = array();
-                                                
-                                                // Zeige andere Elemente wenn Einstellung aktiv
+							$onclick_actions = array();
+
+						// Zeige andere Elemente wenn Einstellung aktiv
 						if (isset($a['show_hide']))
 						{
 							foreach ($a['show_hide'] as $sh)
@@ -272,7 +272,7 @@
 							}
 						}
 
-                                                // Verstecke andere Elemente wenn Einstellung aktiv
+						// Verstecke andere Elemente wenn Einstellung aktiv
 						if (isset($a['hide_show']))
 						{
 							foreach ($a['hide_show'] as $sh)
@@ -281,9 +281,9 @@
 							}
 						}	
                                                 
-                                                if(count($onclick_actions)>0){
-                                                        echo " onclick=\"".implode("", $onclick_actions)."\"";
-                                                }
+						if(count($onclick_actions)>0){
+								echo " onclick=\"".implode("", $onclick_actions)."\"";
+						}
                                                 
 						echo " /> ";
 					}
@@ -357,8 +357,8 @@
 			{
 				case "readonly":
 					//Case readonly: do *nothing* with the field!
-                    //but instead do *not* add a comma
-                    $cntadd = 0;
+					//but instead do *not* add a comma
+					$cntadd = 0;
 				break;
 				case "text":
 					$sql .= "`".$a['name']."` = '".addslashes($_POST[$a['name']])."'";
@@ -501,33 +501,33 @@
 				switch ($a['type'])
 				{
 					case "readonly":
-	 					echo "".$arr[$a['name']]."";
+						echo "".$arr[$a['name']]."";
 					break;
 					case "text":
-	 					echo "".$arr[$a['name']]."";
+						echo "".$arr[$a['name']]."";
 					break;
 					case "email":
-	 					echo "".$arr[$a['name']]."";
+						echo "".$arr[$a['name']]."";
 					break;
 					case "url":
-	 					echo "".$arr[$a['name']]."";
+						echo "".$arr[$a['name']]."";
 					break;
 					case "numeric":
-	 					echo "".$arr[$a['name']]."";
+						echo "".$arr[$a['name']]."";
 					break;
 					case "password":
-	 					echo "".$arr[$a['name']]."";
+						echo "".$arr[$a['name']]."";
 					break;
 					case "timestamp":
-	 					echo "".date(DATE_FORMAT,$arr[$a['name']])."";
+						echo "".date(DATE_FORMAT,$arr[$a['name']])."";
 					break;
 					case "textarea":
-	 					echo "";
-	 					//if (strlen($arr[$a['name']])>$a['overview_length'])
+						echo "";
+						//if (strlen($arr[$a['name']])>$a['overview_length'])
 						//	echo stripslashes(substr($arr[$a['name']],0,$a['overview_length']-2)."...");
 						//else
 							echo stripslashes($arr[$a['name']]);
-	 					echo "";
+						echo "";
 					break;
 					case "radio":
 						echo "";
@@ -552,16 +552,16 @@
 						echo "";
 					break;
 					case "select":
-	 					echo "";
-	 					foreach ($a['select_elem'] as $sd=>$sv)
-	 					{
-	 						if ($sv==$arr[$a['name']])
-	 						echo $sd;
-	 					}
-	 					echo "";
+						echo "";
+						foreach ($a['select_elem'] as $sd=>$sv)
+						{
+							if ($sv==$arr[$a['name']])
+							echo $sd;
+						}
+						echo "";
 					break;
 					default:
-	 					echo "".$arr[$a['name']]."";
+						echo "".$arr[$a['name']]."";
 					break;
 				}
 				echo "</td>";
