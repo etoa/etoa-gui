@@ -1,0 +1,15 @@
+{% extends 'admin/layout/login.html.twig' %}
+
+{% block content %}
+    <h2>Admin-User erstellen</h2>
+
+    <form action="?" method="post">
+        <table class="tb" style="width:400px;margin:10px auto;">
+            <tr><th>E-Mail:</th><td><input type="text" name="user_email" required /></td></tr>
+            <tr><th>Loginname:</th><td><input type="text" name="user_nick" required /></td></tr>
+            <tr><th>Passwort:</th><td><input type="password" name="user_password" required /></td></tr>
+        </table>
+        <p><input type="submit" name="newuser_submit" value="Admin-User erstellen" /></p>
+    </form>
+    <script type="text/javascript">document.forms[0].elements[0].focus()</script>
+{% endblock %}

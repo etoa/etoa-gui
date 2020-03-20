@@ -271,7 +271,7 @@ class AdminUser {
 		FROM 
 			".self::tableName.";");
 		$arr = mysql_fetch_row($res);
-		return $arr[0];
+		return (int) $arr[0];
 	}
 }
 ?>

@@ -1,0 +1,7 @@
+{% extends 'admin/layout/login.html.twig' %}
+
+{% block content %}
+    <h2>{{ title }}</h2>
+    <div class="loginmsg {{ msgStyle }}">{{ statusMsg }}</div>
+    <p><input type="button" value="{{ buttonMsg }}" onclick="document.location='{{ buttonTarget }}'" /></p>
+{% endblock %}
