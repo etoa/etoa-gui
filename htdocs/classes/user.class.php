@@ -69,6 +69,7 @@ class User implements \EtoA\User\UserInterface
 	protected $ghost;
 	protected $lastInvasion;
 	protected $allianceShippoints;
+	protected $changedMainPlanet;
 
 	protected $sittingDays;
 
@@ -172,6 +173,8 @@ class User implements \EtoA\User\UserInterface
 			$this->boostBonusBuilding = $arr['boost_bonus_building'];
 
 			$this->lastInvasion = $arr['lastinvasion'];
+            
+            $this->changedMainPlanet = $arr['user_changed_main_planet'];
 
 			$this->raceId = $arr['user_race_id'];
 
@@ -208,6 +211,8 @@ class User implements \EtoA\User\UserInterface
 			$this->specialistTime = 0;
 
 			$this->lastInvasion = 0;
+            
+			$this->changedMainPlanet = 0;
 
 			$this->raceId = 0;
 
@@ -590,6 +595,14 @@ class User implements \EtoA\User\UserInterface
 			}
 		}
 		return false;
+	}
+    
+	/**
+	 * Returns whether this user has changed their main planet
+	 * @return boolean
+	 */
+	public function changedMainPlanet(){
+		return $this->changedMainPlanet;
 	}
 
 	//
@@ -1440,6 +1453,23 @@ die Spielleitung";
         // Planet is attackable if user is attackable
         // or if last owner == this owner (invade time threshold)
         return $this->canAttackUser($p->owner()) || $this->id == $p->lastUserCheck();
+    }
+    
+    /**
+     * Setzt, ob dieser Spieler seinen Hauptplaneten bereits gewechselt hat.
+     * @param boolean $changed
+     */
+    public function setChangedMainPlanet($changed){
+        $changed_value = ($changed ? 1 : 0);
+        $this->changedMainPlanet = $changed_value;
+        dbquery("
+        UPDATE
+            users 
+        SET
+            user_changed_main_planet=$changed_value 
+        WHERE
+            user_id=".$this->id."
+        ");
     }
 
 	private function loadDiscoveryMask()
