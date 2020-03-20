@@ -16,6 +16,7 @@ class TwigExtension extends AbstractExtension
             new TwigFunction('etoaUrl', [$this, 'getUrl']),
             new TwigFunction('onClick', [$this, 'getOnClick']),
             new TwigFunction('text2Html', [$this, 'text2Html']),
+            new TwigFunction('configValue', [$this, 'getConfigValue']),
         ];
     }
 
@@ -49,6 +50,8 @@ class TwigExtension extends AbstractExtension
                 return DEVCENTER_PATH;
             case 'chat':
                 return CHAT_URL;
+            case 'login':
+                return '/show.php?index=login';
             default:
                 throw new \InvalidArgumentException('Unknown url ' . $id);
         }
@@ -75,5 +78,10 @@ class TwigExtension extends AbstractExtension
     public function text2Html(string $string): string
     {
         return text2html($string);
+    }
+
+    public function getConfigValue(string $config)
+    {
+        return \Config::getInstance()->value($config);
     }
 }

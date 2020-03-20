@@ -34,6 +34,11 @@ $tpl->assign("bodyTopStuff", getInitTT());
 
 $tpl->assign('game_login_url', '../show.php?index=login');
 
+$twig->addGlobal('ajaxJs', $xajax->getJavascript(XAJAX_DIR));
+$twig->addGlobal('cssTheme', $css_theme);
+$twig->addGlobal('pageTitle', getGameIdentifier() . ' Administration');
+$twig->addGlobal('bodyTopStuff', getInitTT());
+
 try {
 
 // Login if requested
@@ -42,6 +47,7 @@ if (isset($_POST['login_submit']))
 	if (! $s->login($_POST))
 	{
 		include __DIR__ .'/inc/admin_login.inc.php';
+		return;
 	}
 	if (!empty($_SERVER['QUERY_STRING'])) {
 		forward("?".$_SERVER['QUERY_STRING']);

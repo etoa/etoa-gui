@@ -1,0 +1,29 @@
+{% extends 'admin/layout/login.html.twig' %}
+
+{% block content %}
+    {% if msg|default(false) %}
+        <div class="loginmsg {{ msgStyle }}">{{ msg }}</div>
+    {% endif %}
+
+    <p>
+        Gib dein Benutzername und dein Passwort ein um dich anzumelden.<br/>
+        Klicke auf das Logo um zur Startseite zurückzukehren.
+    </p>
+
+    <form action="?" method="post" class="login_form">
+        <p>
+            <label for="login_nick">Benutzername</label>
+            <input type="text" name="login_nick" id="login_nick" maxlength="255" size="25" required/>
+        </p>
+        <p>
+            <label for="login_pw">Passwort</label>
+            <input type="password" name="login_pw" id="login_pw" maxlength="255" size="25" required/>
+        </p>
+        <p class="buttons">
+            <input type="submit" name="login_submit" value="Login" /> &nbsp;
+            <input type="button" value="Passwort vergessen" onclick="document.location='?sendpass=1'" /> &nbsp;
+            <input type="button" value="Zum Spiel-Login" onclick="document.location='{{ etoaUrl('login') }}'" />
+        </p>
+    </form>
+    <script type="text/javascript">document.forms[0].elements[0].focus()</script>
+{% endblock %}
