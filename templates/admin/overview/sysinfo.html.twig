@@ -1,0 +1,20 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>System-Informationen</h1>
+
+    <h2>System</h2>
+    <table>
+        <tr><th>OS Kernel / Architektur</th><td>{{ unixName }}</td></tr>
+        <tr><th>Webserver</th><td>{{ webserverVersion}}</td></tr>
+        <tr><th>PHP</th><td>{{ phpVersion }}</td></tr>
+        <tr><th>Datenbank</th><td>{{ dbVersion }}</td></tr>
+    </table>
+
+    {% if isUnix %}
+        <h2>Status</h2>
+        <table>
+            <tr><th>Systemlast</th><td>{{ sysLoad }} %</td></tr>
+        </table>
+    {% endif %}
+{% endblock %}
