@@ -1,5 +1,10 @@
-{% macro messagebox(message, status) %}
+{% macro messagebox(message, status, title = null) %}
     <div class="messagebox">
-        <div class="{{ status }}">{{ message}}</div>
+        <div class="{{ status }}">
+            {% if title %}
+                <p class="messagetitle">{{ title }}</p>
+            {% endif %}
+            {{ message|raw }}
+        </div>
     </div>
 {% endmacro %}
