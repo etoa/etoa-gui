@@ -1,8 +1,0 @@
-{if $title|default:'' ne ""}<h1>{$title}</h1>{/if}
-{if $subtitle|default:'' ne ""}<h2>{$subtitle}</h2>{/if}
-
-{if $msg|default:'' ne ""}{msg type="ok" text=$msg}{/if}
-{if $infomsg|default:'' ne ""}{msg type="info" text=$infomsg}{/if}
-{if $errmsg|default:'' ne ""}{msg type="err" text=$errmsg}{/if}
-
-{$content|default:''}

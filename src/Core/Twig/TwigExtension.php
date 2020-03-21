@@ -132,7 +132,7 @@ class TwigExtension extends AbstractExtension
         $tm = new TextManager();
         $text = $tm->getText($key);
         if ($text !== null) {
-            if ($text->enabled && !empty($text->content)) {
+            if ($text->enabled && $text->content) {
                 return $text->content;
             }
 
