@@ -1,0 +1,89 @@
+{% extends 'admin/layout/base.html.twig' %}
+
+{% block layoutContent %}
+    <div id="layoutbox">
+        <div id="header">
+            <a href="."><img id="logo" src="web/images/logo.png" alt="Logo" /></a>
+            <div id="slogan">Administration {{ configValue('roundname')}}</div>
+            <div id="headerbar">
+                <b>Zeit:</b>
+                <span id="servertime">{{ serverTime() }}</span> &nbsp;
+                Eingeloggt als&nbsp;
+                <ul id="headernav">
+                    <li><a href="?myprofile=1">{{ currentUserNick }}</a></li>
+                    <li><a href="?adminlist=1">Adminliste</a></li>
+                    {% if isAdminAllowed(userRoles, ['master', 'super-admin', 'game-admin', 'trial-game-admin']) %}
+                        <li>{{ popupLink('tickets', numTickets > 0 ? 'Tickets (' ~ numTickets ~ ')' : 'Tickets', numTickets ? 'highlight' : null)|raw }}</li>
+                    {% endif %}
+                    <li>{{ popupLink('notepad', numNotes > 0 ? 'Notizblock (' ~ numNotes ~ ')' : 'Notizblock', numNotes ? 'highlight' : null)|raw }}</li>
+                    {% if not isCb|default(false) %}
+                        <li><a href="frameset.php?page={{ page }}{% if sub|default(false) %}&sub={{ sub }}{% endif %}" target="_top">Zwischenablage</a></li>
+                    {% endif %}
+                    <li><a href="{{ etoaUrl('login') }}" target="_blank">Spiel-Login</a></li>
+                    <li><a href="?logout=1">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+        <div id="main">
+            <div id="sidebar">
+                <div id="quicksearch">
+                    <form action="?page=search" method="post">
+                        <input class="search" type="text" name="search_query" value="{{ searchQuery }}" autocomplete="off" placeholder="Suche" />
+                    </form>
+                </div>
+                <ul class="navmenu">
+                    {% for key,item in navMenu %}
+                        {% if isAdminAllowed(userRoles, item.roles) %}
+                            <li>
+                                <a
+                                    href="?page={{ item.page }}{% if item.sub|default(false) %}&amp;sub={{ item.sub }}{% endif %}"
+                                    {% if page == item.page %}class="active"{% endif %}
+                                >
+                                    {{ key }}
+                                </a>
+                                {% if item.page == page and item.children|default(false) and item.children|length %}
+                                    <ul class="navsubmenu">
+                                        {% for childKey,childItem in item.children %}
+                                            {% if isAdminAllowed(userRoles, childItem.roles) %}
+                                                <li {% if childItem.bar|default(false) %}class="bar"{% endif %}>
+                                                    <a href="?page={{ item.page }}&amp;sub={{ childItem.sub }}"{% if page ==  item.page and sub|default('') == childItem.sub and sub|default(false) %} class="active"{% endif %}>{{ childKey}}</a>
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+
+                <table class="side_widget_table">
+                    <caption>Status</caption>
+                    {% if isUnix %}
+                        <tr>
+                            <th><a href="?page=eventhandler">Eventhandler</a></th>
+                            {% if eventHandlerPid|default(false) %}
+                                <td class="color_ok">PID {{ eventHandlerPid }}</td>
+                            {% else %}
+                                <td class="color_error">offline</td>
+                            {% endif %}
+                        </tr>
+                        <tr><th><a href="?page=db">Datenbank</a></th><td>{{ dbSize }} MB</td></tr>
+                        <tr><th><a href="?page=overview&amp;sub=sysinfo">Systemlast</a></th><td>{{ sysLoad}} %</td></tr>
+                    {% endif %}
+                    <tr><th><a href="?page=overview&amp;sub=stats">User registriert</a></th><td>{{ usersCount}} / {{ usersAllowed }}</td></tr>
+                    <tr><th><a href="?page=user&amp;sub=sessions">User online</a></th><td>{{ usersOnline }} / {{ usersCount}}</td></tr>
+                    <tr><th><a href="?page=overview&amp;sub=adminlog">Admins online</a></th><td>{{ adminsOnline}} / {{ adminsCount}}</td></tr>
+                </table>
+
+            </div>
+            <div id="content">
+                {% block content %}{% endblock %}
+            </div>
+            <br class="clear" />
+        </div>
+        <div id="footer">
+            &copy; {{ serverDate().format('Y') }} by etoa.ch | generiert in {{ renderTime() }} sec
+        </div>
+    </div>
+{% endblock %}

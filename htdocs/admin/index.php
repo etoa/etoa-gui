@@ -81,7 +81,8 @@ else
 	$cb = isset ($s->clipboard) && $s->clipboard==1 ? true : false;
 
 
-	$tpl->assign("search_query",(isset($_POST['search_query']) ? $_POST['search_query'] : '' ));
+	$searchQuery = $_POST['search_query'] ?? '';
+	$tpl->assign("search_query", $searchQuery);
 
 	$navmenu = fetchJsonConfig("admin-menu.conf");
 	$tpl->assign("navmenu",$navmenu);
@@ -92,19 +93,36 @@ else
 
 	$nres = dbquery("select COUNT(*) from admin_notes where admin_id='".$s->user_id."'");
 	$narr = mysql_fetch_row($nres);
+	$numTickets = Ticket::countAssigned($s->user_id) + Ticket::countNew();
 	$tpl->assign("num_notes", $narr[0]);
-	$tpl->assign("num_tickets", Ticket::countAssigned($s->user_id) + Ticket::countNew());
+	$tpl->assign("num_tickets", $numTickets);
 
 	$tpl->assign("current_user_nick", $cu->nick);
 	$tpl->assign("user_roles", $cu->roles);
 
 	// Status widget
 	$tpl->assign("is_unix", UNIX);
+
+    $twig->addGlobal('searchQuery', $searchQuery);
+    $twig->addGlobal('navMenu', $navmenu);
+    $twig->addGlobal('page', $page);
+    $twig->addGlobal('sub', $sub);
+    $twig->addGlobal('numTickets', $numTickets);
+    $twig->addGlobal('numTickets', $numTickets);
+    $twig->addGlobal('numNotes', $narr[0]);
+    $twig->addGlobal('currentUserNick', $cu->nick);
+    $twig->addGlobal('userRoles', $cu->roles);
+	$twig->addGlobal('isUnix', UNIX);
 	if (UNIX) {
-		$tpl->assign("eventhandler_pid", EventHandlerManager::checkDaemonRunning(getAbsPath($cfg->daemon_pidfile)));
+	    $eventHandlerPid = EventHandlerManager::checkDaemonRunning(getAbsPath($cfg->daemon_pidfile));
+		$tpl->assign("eventhandler_pid", $eventHandlerPid);
 		intval(exec("cat /proc/cpuinfo | grep processor | wc -l", $out));
 		$load = sys_getloadavg();
-		$tpl->assign("sys_load", round($load[2]/intval($out[0])*100, 2) );
+		$systemLoad = round($load[2]/intval($out[0])*100, 2);
+		$tpl->assign("sys_load", $systemLoad);
+
+        $twig->addGlobal('sysLoad', $systemLoad);
+        $twig->addGlobal('eventHandlerPid', $eventHandlerPid);
 	}
 
 	$ures=dbquery("SELECT count(*) FROM users;");
@@ -116,12 +134,21 @@ else
 	$a1res=dbquery("SELECT COUNT(*)  FROM admin_user_sessions WHERE time_action>".(time() - $cfg->admin_timeout->v).";");
 	$a1arr=mysql_fetch_row($a1res);
 
+	$adminsCount = AdminUser::countAll();
+	$dbSize = DBManager::getInstance()->getDbSize();
 	$tpl->assign("users_online", $garr[0]);
 	$tpl->assign("users_count", $uarr[0]);
 	$tpl->assign("users_allowed", $cfg->enable_register->p2);
 	$tpl->assign("admins_online", $a1arr[0]);
-	$tpl->assign("admins_count", AdminUser::countAll());
-	$tpl->assign("db_size", DBManager::getInstance()->getDbSize());
+	$tpl->assign("admins_count", $adminsCount);
+	$tpl->assign("db_size", $dbSize);
+
+    $twig->addGlobal('usersOnline', $garr[0]);
+    $twig->addGlobal('usersCount', $uarr[0]);
+    $twig->addGlobal('usersAllowed', $cfg->enable_register->p2);
+    $twig->addGlobal('adminsOnline', $a1arr[0]);
+    $twig->addGlobal('adminsCount', $adminsCount);
+    $twig->addGlobal('dbSize', $dbSize);
 
 	$tpl->assign("side_nav_widgets", $tpl->getChunk("status_widget"));
 
