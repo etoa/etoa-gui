@@ -28,7 +28,7 @@ if (isset($_POST['tfa_disable'])) {
 }
 
 if ($cu->tfaSecret) {
-    echo $twig->render('admin/tfa/disable.html.twig', [
+    echo $twig->render('admin/profile/tfa-disable.html.twig', [
         'errMsg' => $errorMessage,
     ]);
     exit();
@@ -39,7 +39,7 @@ if (!isset($secret)) {
     $_SESSION['tfa_activate_secret'] = $secret;
 }
 $label = Config::getInstance()->roundname->v . ' : ' . $cu->name;
-echo $twig->render('admin/tfa/activate.html.twig', [
+echo $twig->render('admin/profile/tfa-activate.html.twig', [
     'tfaQrCode' => $tfa->getQRCodeImageAsDataUri($label, $secret),
     'errMsg' => $errorMessage,
 ]);

@@ -6,7 +6,7 @@
     <h1>Mein Profil</h1>
 
     {% if errMsg|default(false) %}
-        {{ macros.errorMessage(errMsg) }}
+        {{ macros.messagebox(errMsg, 'error') }}
     {% endif %}
 
     <form action="?tfa" method="post" class="blocklables label_width_200">

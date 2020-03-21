@@ -5,8 +5,8 @@
 {% block content %}
     <h1>Mein Profil</h1>
 
-    {% if errmsg|default(false) %}
-        {{ macros.errorMessage(errmsg) }}
+    {% if errMsg|default(false) %}
+        {{ macros.messagebox(errMsg, 'error') }}
     {% endif %}
 
     <form action="?tfa" method="post" id="tfa_form" class="blocklables label_width_200">

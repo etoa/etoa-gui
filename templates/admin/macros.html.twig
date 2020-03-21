@@ -1,5 +1,5 @@
-{% macro errorMessage(message) %}
+{% macro messagebox(message, status) %}
     <div class="messagebox">
-        <div class="error">{{ message}}</div>
+        <div class="{{ status }}">{{ message}}</div>
     </div>
 {% endmacro %}
