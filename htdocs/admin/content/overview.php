@@ -78,20 +78,13 @@
 	//
 	// Statistiken
 	//
-	elseif ($sub=="gamestats")
-	{
-		$tpl->setView("overview/gamestats");
-		$tpl->assign("title", "Spielstatistiken");
-
-		if (file_exists(USERSTATS_OUTFILE)) {
-			$tpl->assign("userstats", USERSTATS_OUTFILE);
-		}
-		if (is_file(GAMESTATS_FILE)) {
-			$tpl->assign("gamestats", file_get_contents(GAMESTATS_FILE));
-		}
-		if (file_exists(XML_INFO_FILE)) {
-			$tpl->assign("xmlinfo", XML_INFO_FILE);
-		}
+	elseif ($sub === "gamestats") {
+        echo $twig->render('admin/overview/gamestats.html.twig', [
+            'userStats' => file_exists(USERSTATS_OUTFILE) ? USERSTATS_OUTFILE : null,
+            'xmlInfo' => file_exists(XML_INFO_FILE) ? XML_INFO_FILE : null,
+            'gameStats' => is_file(GAMESTATS_FILE) ? file_get_contents(GAMESTATS_FILE) : null,
+        ]);
+        exit();
 	}
 
 	//
