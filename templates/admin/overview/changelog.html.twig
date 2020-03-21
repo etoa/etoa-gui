@@ -1,0 +1,32 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Changelog</h1>
+
+    <div id="tabs">
+        <ul>
+            <li><a href="#internal">Internes Changelog</a></li>
+            <li><a href="#public">Öffentliches Changelog</a></li>
+        </ul>
+        <div id="internal">
+            {% if changelog|default(false) %}
+                {{ changelog|raw }}
+            {% else %}
+                <p>Changelog nicht verfügbar!</p>
+            {% endif %}
+        </div>
+        <div id="public">
+            {% if changelogPublic|default(false) %}
+                {{ changelogPublic|raw }}
+            {% else %}
+                <p>Changelog nicht verfügbar!</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        $(function() {
+            $("#tabs").tabs();
+        });
+    </script>
+{% endblock %}

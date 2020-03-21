@@ -97,22 +97,15 @@
 	//
 	// Changelog
 	//
-	elseif ($sub=="changelog")
-	{
-		$tpl->setView("overview/changelog");
-		$tpl->assign("title", "Changelog");
-
+	elseif ($sub === "changelog") {
 		$Parsedown = new Parsedown();
-
 		$changelogFile = "../../Changelog.md";
-		if (is_file($changelogFile)) {
-			$tpl->assign("changelog", $Parsedown->text(file_get_contents($changelogFile)));
-		}
-
-		$changelogFile = "../../Changelog_public.md";
-		if (is_file($changelogFile)) {
-			$tpl->assign("changelog_public", $Parsedown->text(file_get_contents($changelogFile)));
-		}
+		$changelogPublicFile = "../../Changelog_public.md";
+        echo $twig->render('admin/overview/changelog.html.twig', [
+            'changelog' => is_file($changelogFile) ? $Parsedown->text(file_get_contents($changelogFile)) : null,
+            'changelogPublic' => is_file($changelogPublicFile) ? $Parsedown->text(file_get_contents($changelogPublicFile)) : null,
+        ]);
+        exit();
 	}
 
 	//
