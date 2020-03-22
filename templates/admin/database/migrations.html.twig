@@ -3,6 +3,9 @@
 {% import 'admin/macros.html.twig' as macros %}
 
 {% block content %}
+    <h1>Datenbank</h1>
+    <h2>Schema-Migrationen</h2>
+
     {% if successMessage %}
         {{ macros.messagebox(successMessage, 'success') }}
     {% endif %}
@@ -11,8 +14,6 @@
         {{ macros.messagebox(errorMessage, 'error') }}
     {% endif %}
 
-    <h1>Datenbank</h1>
-    <h2>Schema-Migrationen</h2>
     <h3>Durchgeführte Schema-Migrationen</h3>
 
     <table class="tbl" style="width:100%">
