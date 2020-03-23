@@ -24,7 +24,8 @@
 }
 
 body {
-	background: url(./images/bg.jpg);
+	background: black url(./images/bg.jpg) no-repeat;
+	background-size: contain;
 	text-align: center;
 	color: #dae9ff;
 	font-family:verdana, sans-serif, arial;
