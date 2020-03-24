@@ -9,6 +9,8 @@ body {
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 	background-position: left top;
+	background-size: contain;
+	background-color: black;
 	color: white;
 	margin:0px;
 	font-family:verdana, sans-serif, arial;
