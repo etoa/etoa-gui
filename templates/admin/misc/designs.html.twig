@@ -1,0 +1,131 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Designs</h1>
+
+    {% if successMessage %}
+        {{ macros.messagebox(successMessage, 'success') }}
+    {% endif %}
+
+    {% if errorMessage %}
+        {{ macros.messagebox(errorMessage, 'error') }}
+    {% endif %}
+
+    <h2>Verfügbare Designs</h2>
+
+    <table class="tbl" style="width:100%">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Beschreibung</th>
+            <th>Geändert</th>
+            <th>Version</th>
+            <th>Autor</th>
+            <th>E-Mail</th>
+            <th>Eingeschränkte Nutzung</th>
+            <th>Users</th>
+            <th>Offizielles Design</th>
+            <th>Standard</th>
+            <th>Aktionen</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for key, design in designs %}
+            <tr>
+                <td>{{ design.name }}</td>
+                <td>{{ design.description }}</td>
+                <td>{{ design.changed }}</td>
+                <td>{{ design.version }}</td>
+                <td>{{ design.author }}</td>
+                <td>{{ design.email }}</td>
+                <td>{% if design.restricted %}ja{% else %}nein{% endif %}</td>
+                <td>{{ design.users }}</td>
+                <td>{% if design.custom %}nein{% else %}ja{% endif %}</td>
+                <td>{% if design.default %}ja{% else %}nein{% endif %}</td>
+                <td style="width:130px">
+                    <a href="?page={{ page }}&sub={{ sub }}&download={{ key }}">Download</a>
+                    {% if design.custom %}
+                        <a href="?page={{ page }}&sub={{ sub }}&remove={{ key }}" onclick="return confirm('Soll das Design \'{{ design.name }}\' wirklich entfernt werden?')">Entfernen</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {{ macros.messagebox("Design hochladen zur Zeit nicht möglich", 'error') }}
+{#    <form action="?page={$page}&sub={$sub}" method="post" enctype="multipart/form-data">#}
+{#        <fieldset>#}
+{#            <legend>Design hochladen</legend>#}
+{#            Design-Datei (ZIP): <input type="file" name="design"/>#}
+{#            <input type="submit" name="submit" value="Design hochladen">#}
+{#        </fieldset>#}
+{#    </form>#}
+
+    <h2>Dokumentation</h2>
+    <h3>Aufbau eines Designs</h3>
+    <p>Verzeichnisstruktur:</p>
+    <pre class="code">
+Ordner/                 Ordnername ist gleich dem Namen des Designs
+ |- images/             Bilder
+ |- chat.css            (Optional) Stylesheet für den Chat
+ |- design.xml          Informationen zum Design im XML Format
+ |- external.css        (Optional) Zusätzliches Stylesheet für externe Seiten (Registrierung, Passwort-Recovery, ...)
+ |- scripts.js          JavaScript Code
+ |- style.css           Stylesheet
+ '- template.html       Haupt-Template
+</pre>
+    <p>Im Template kann die Syntax der <a href="http://www.smarty.net" target="_blank">Smarty-Templatesprache</a> verwendet werden.</p>
+    <p>Der Quellcode der optionalen Stilesheets kann von den Originalen kopiert werden: <a href="../web/css/chat.css" target="_blank">chat.css</a> und <a href="../web/css/external.css" target="_blank">external.css</a>.</p>
+
+    <h3>Design-Info Datei</h3>
+    <p>Beispiel einer <code>design.xml</code> Datei:</p>
+    <pre class="code">{{ sampleInfoFile }}</pre>
+    <p>Die Tags haben folgende Bedeuting:</p>
+    <ul>
+        {% for key, value in designInfoParams %}
+            <li><b>{{ key }}:</b> {{ value }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Smarty-Variabeln</h3>
+    <table class="tbl" style="width:100%">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Beschreibung</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for key, value in knownTemplateVars %}
+            <tr>
+                <td><code>{{ key }}</code></td>
+                <td>{{ value }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <h3>Allgemeine zusätzliche CSS Dateien</h3>
+    <p>Folgende CSS Dateien könne im style.css importiert werden (der Inhalt dieser Dateien kann alternativ auch in das Design reinkopiert und verändert werden):</p>
+    <table class="tbl" style="width:100%">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Beschreibung</th>
+            <th>Verwendung</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for file in additionalCommonCssFiles %}
+            <tr>
+                <td><a href="{{ file.linkUrl }}" target="_blank">{{ file.name }}</a></td>
+                <td>{{ file.description }}</td>
+                <td><code>@import url('{{ file.url }}');</code></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
