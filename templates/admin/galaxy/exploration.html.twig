@@ -1,0 +1,45 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Erkundung</h1>
+
+    {% if successMessage %}
+        {{ macros.messagebox(successMessage, 'success') }}
+    {% endif %}
+
+    {% if errorMessage %}
+        {{ macros.messagebox(errorMessage, 'error') }}
+    {% endif %}
+
+    <p>
+        <b>Erkundung anzeigen für:</b>
+        <select onchange="document.location='?page={{ page }}&amp;sub={{ sub }}&amp;user_id='+this.options[this.selectedIndex].value">
+            <option value="0" style="font-style:italic;">(Benutzer wählen...)</option>
+            {% for id,nick in users %}
+                <option value="{{ id }}"{% if uid == id %} selected="selected"{% endif %}>{{ nick }}</option>
+            {% endfor %}
+        </select>
+    </p>
+
+    {% if uid %}
+        <h3>Spieler '{{ user.nick }}'</h3>
+        <p>Erkundet: {{ discoveredPercent|round(2) }}%</p>
+        <form action="?page={{ page }}&amp;sub={{ sub }}&amp;user_id={{ uid }}" method="post">
+            <p>
+                <input type="text" name="sx" value="{{ sx }}" size="2" />:<input type="text" name="sy" value="{{ sy }}" size="2" /> /
+                <input type="text" name="cx" value="{{ cx }}" size="2" />:<input type="text" name="cy" value="{{ cy }}" size="2" />
+                Radius: <input type="text" name="radius" value="{{ radius }}" size="1" />
+                <input type="submit" name="discover_selected" value="Gewählte Koordinate erkunden" />
+            </p>
+            <p>
+                <input type="submit" name="discover_reset" value="Erkundung zurücksetzen" onclick="return confirm('Wirklich zurücksetzen?')" />
+                <input type="submit" name="discover_all" value="Alles erkunden" />
+            </p>
+            <img src="../misc/map.image.php?legend&amp;req_admin&amp;user={{ uid }}" alt="Galaxiekarte" />
+        </form>
+    {% else %}
+        <p>Bitte Spieler wählen!</p>
+    {% endif %}
+{% endblock %}
