@@ -1,0 +1,25 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Konfiguration</h1>
+    <h2>Grundkonfiguration</h2>
+
+    {% if successMessage %}
+        {{ macros.messagebox(successMessage, 'success') }}
+    {% endif %}
+
+    <form action="?page=config" method="post">
+        <table class="tb" style="width:auto;">
+            {% for item in items %}
+            <tr>
+                <th>{{ item.label }}</th>
+                <td class="tbldata">{{ item.field|raw }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <p><input type="submit" name="submit" value="&Uuml;bernehmen" /></p>
+    </form>
+{% endblock %}

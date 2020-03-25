@@ -1,0 +1,53 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Konfiguration</h1>
+    <h2>Erweiterte Konfiguration</h2>
+
+    {% if successMessage %}
+        {{ macros.messagebox(successMessage, 'success') }}
+    {% endif %}
+
+    <form action="?page={{ page }}&amp;sub={{ sub }}&category={{ currentCategory }}" method="post">
+        <div class="configEditorWrap">
+            <div class="configEditorNav">
+                <ul>
+                    {% for key,value in configData %}
+                        <li>
+                            <a href="?page={{ page }}&amp;sub={{ sub }}&category={{ key }}"{% if currentCategory == key %} class="active"{% endif %}>{{ value }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="configEditorContent">
+                <h3>{{ configData[currentCategory] }}</h3>
+                {% if configItems|default(false) %}
+                    <table class="tb">
+                        <colgroup>
+                            <col style="width: 400px;">
+                            <col style="width: 370px";>
+                            <col>
+                            <col>
+                        </colgroup>
+                        <tr>
+                            <th>Name</th>
+                            <th>Wert</th>
+                            <th>Standard</th>
+                        </tr>
+                        {% for item in configItems %}
+                            <tr{% if item.changed %} class="configValueChanged"{% endif %}>
+                                <td title="{{ item.name }}, {{ item.type }}">{{ item.label }}</th>
+                                <td>{{ item.field|raw }}</td>
+                                <td><code>{{ item.default }}</code></td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                    <br/><input type="submit" name="submit" value="Übernehmen" />
+                {% endif %}
+            </div>
+        </div>
+    </form>
+{% endblock %}
