@@ -1,0 +1,129 @@
+{% extends 'layout/external.html.twig' %}
+
+{% import 'macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Account registrieren</h1>
+
+    {% if errorMessage|default(false) %}
+        {{ macros.errorMessage(errorMessage) }}
+    {% endif %}
+
+    {% if registrationNotEnabled %}
+        <p>Die Registration ist momentan ausgeschaltet! Schau bitte ein anderes Mal vorbei!</p>
+    {% elseif registrationLater %}
+        <p>Du kannst dich erst am {{ registerLater|format('d.m.Y') }} ab {{ registerLater|format('H:i') }} registrieren.</p>
+        <p>Schau doch dann nochmal vorbei oder registriere dich in einer anderen Runde!</p>
+    {% elseif registrationFull %}
+        <p>Das Spiel ist mit {{ maxPlayerCount }} registrierten Mitspielern momentan ausgelastet.</p>
+        <p>Schau bitte ein anderes Mal vorbei oder registriere dich in einer anderen Runde!</p>
+    {% else %}
+        <p>Melde dich hier für die {{ roundName }} von {{ appName }} an. Wenn du Hilfe benötigst, kannst du <a href="?index=contact">hier</a> einen Game-Admin kontaktieren.</p>
+
+        <form action="?index=register" method="post">
+            <table class="tb">
+                <tr>
+                    <th style="width:150px;">Vollst&auml;ndiger Name:</th>
+                    <td style="width:170px;">
+                        <input type="text" id="register_user_name" name="register_user_name" maxlength="{{ nameMaxLength }}" size="{{ nameMaxLength }}" value="{{ userName }}"  autocomplete="off" />
+                    </td>
+                    <td>
+                        Hier musst du deinen realen Namen angeben; dies dient zur Kontrolle gegen Multis. Dieser Name ist nur f&uuml;r Administratoren sichtbar!
+                        <br/>
+                        <span id="nameStatus"></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>E-Mail:</th>
+                    <td>
+                        <input type="text" id="register_user_email" name="register_user_email" maxlength="50" size="30" value="{{ userEmail }}"  autocomplete="off" />
+                    </td>
+                    <td>
+                        Du musst eine g&uuml;ltige E-Mail-Adresse eingeben. Falls du dein Passwort vergisst, kannst du ein neues an diese Adresse senden lassen.
+                        <br/>
+                        <span id="emailStatus"></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Benutzername:</th>
+                    <td>
+                        <input type="text" id="register_user_nick" name="register_user_nick" maxlength="{{ nickMaxLength }}" size="{{ nickMaxLength }}" value="{{ userNick }}" autocomplete="off" />
+                    </td>
+                    <td>
+                        Mit diesem Name tritts du im Spiel als der Herrscher deines Volkes auf. <b>Der Nickname ist endgültig und kann nicht geändert werden!</b>
+                        <br/>
+                        <span id="nickStatus"></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Passwort:</th>
+                    <td>
+                        <input type="password" id="register_user_password" name="register_user_password" size="20" value="{{ userPassword }}" autocomplete="off" />
+                    </td>
+                    <td>
+                        Wähle ein sicheres Passwort, damit sich niemand unbefugt in deinen Account einloggen kann.
+                        <br/>
+                        <span id="passwordStatus"></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="3">
+                        <br/>
+                        <input type="checkbox" name="agbread" id="agbread" value="1" />
+                        <label for="agbread">
+                            Ich akzeptiere die <a href="javascript:;" onclick="window.open('{{ rulesUrl }}');" >Regeln</a>
+                            sowie die <a href="javascript:;" onclick="window.open('{{ privacyUrl }}');" >Datenschutzerklärung</a>
+                        </label>
+                    <br/>
+                    <ul style="text-align:left;margin-left:30px">
+                        <li>Pro Person darf nur 1 Account verwendet werden. Multis werden rigoros gesperrt!</li>
+                        <li>Der Name und die E-Mail-Adresse können nur von den Game-Administratoren eingesehen werden und werden nicht weitergegeben.</li>
+                    </ul>
+                </td></tr>
+            </table>
+            <input type="submit" id="register_submit" disabled="disabled" name="register_submit" value="Anmelden!" /> &nbsp;
+            <a href="?index=login">Zurück zum Login</a>
+        </form>
+
+        <script type="text/javascript">
+            $(function(){
+                $('#register_user_name').focus();
+
+                $('#register_user_name').keyup(function(){
+                    if (this.value) {
+                        xajax_registerCheckName(this.value);
+                    }
+                });
+
+                $('#register_user_email').keyup(function(){
+                    if (this.value) {
+                        xajax_registerCheckEmail(this.value);
+                    }
+                });
+
+                $('#register_user_nick').keyup(function(){
+                    if (this.value) {
+                        xajax_registerCheckNick(this.value);
+                    }
+                });
+
+                $('#register_user_password').keyup(function(){
+                    if (this.value) {
+                        xajax_registerCheckPassword(this.value);
+                    }
+                });
+
+                $('#agbread').click(function(){
+                    if (this.checked)
+                        $('#register_submit').prop('disabled', false);
+                    else
+                        $('#register_submit').prop('disabled', true);
+                });
+            });
+        </script>
+    {% endif %}
+{% endblock %}

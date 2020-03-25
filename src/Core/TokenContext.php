@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Core;
 
@@ -14,7 +14,7 @@ class TokenContext
         $this->currentUser = $currentUser;
     }
 
-    public function getCurrentUser()
+    public function getCurrentUser(): UserInterface
     {
         return $this->currentUser;
     }

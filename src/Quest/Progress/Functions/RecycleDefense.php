@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Progress\Functions;
 
@@ -8,14 +8,14 @@ use LittleCubicleGames\Quests\Progress\Functions\EventHandlerFunctionInterface;
 
 class RecycleDefense implements EventHandlerFunctionInterface
 {
-    const NAME = 'recycle-defense';
+    public const NAME = 'recycle-defense';
 
-    public function handle(TaskInterface $task, DefenseRecycle $event)
+    public function handle(TaskInterface $task, DefenseRecycle $event): int
     {
         return $task->getProgress() + $event->getCount();
     }
 
-    public function getEventMap()
+    public function getEventMap(): array
     {
         return [DefenseRecycle::RECYCLE_SUCCESS => 'handle'];
     }

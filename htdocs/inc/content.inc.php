@@ -5,11 +5,11 @@
 	// Get tutorial
 	$ttm = new TutorialManager();
 	if (!$ttm->hasReadTutorial($cu->id, 1)) {
-		$tpl->assign('tutorial_id', 1);
+		$twig->addGlobal('tutorial_id', 1);
 	}
 	else if ($cu->isSetup() && !$ttm->hasReadTutorial($cu->id, 2)) {
-		$tpl->assign('tutorial_id', 2);
-	} elseif ($cu->isSetup() && $ttm->hasReadTutorial($cu->id, 2)) {
+        $twig->addGlobal('tutorial_id', 2);
+	} elseif ($cu->isSetup() && $ttm->hasReadTutorial($cu->id, 2) && $app['etoa.quests.enabled']) {
         $app['cubicle.quests.initializer']->initialize($cu->id);
 	}
 
@@ -266,4 +266,6 @@
 		}
 	}
 
-	$tpl->assign('quests', $app['etoa.quest.responselistener']->getQuests());
+    if ($app['etoa.quests.enabled']) {
+        $twig->addGlobal('quests', array_values($app['etoa.quest.responselistener']->getQuests()));
+    }

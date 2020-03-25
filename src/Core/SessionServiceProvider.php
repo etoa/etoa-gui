@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Core;
 
@@ -12,13 +12,13 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class SessionServiceProvider implements ServiceProviderInterface, BootableProviderInterface
 {
-    public function register(Container $pimple)
+    public function register(Container $pimple): void
     {
     }
 
-    public function boot(Application $app)
+    public function boot(Application $app): void
     {
-        $app->before(function (Request $request) {
+        $app->before(function (Request $request): void {
             $session = \UserSession::getInstance();
             if (strpos($request->attributes->get('_route'), 'api.chat') === 0) {
                 $currentUser = $this->validateChatUser($session);
@@ -27,10 +27,10 @@ class SessionServiceProvider implements ServiceProviderInterface, BootableProvid
             }
 
             $request->attributes->set('currentUser', $currentUser);
-        }, Application::EARLY_EVENT);
+        });
     }
 
-    private function validateChatUser(\UserSession $session)
+    private function validateChatUser(\UserSession $session): ChatUser
     {
         if (!$session->chatValidate()) {
             throw new AccessDeniedHttpException();
@@ -39,7 +39,7 @@ class SessionServiceProvider implements ServiceProviderInterface, BootableProvid
         return new ChatUser($session->user_id, $session->user_nick);
     }
 
-    private function validateUser(\UserSession $session)
+    private function validateUser(\UserSession $session): \CurrentUser
     {
         if (!$session->validate(0)) {
             throw new AccessDeniedHttpException();

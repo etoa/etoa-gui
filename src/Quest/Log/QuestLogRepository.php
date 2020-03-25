@@ -1,15 +1,20 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Log;
 
 use EtoA\Core\AbstractRepository;
+use EtoA\Quest\Entity\Quest;
 use LittleCubicleGames\Quests\Entity\QuestInterface;
 use LittleCubicleGames\Quests\Log\QuestLoggerInterface;
 
 class QuestLogRepository extends AbstractRepository implements QuestLoggerInterface
 {
-    public function log(QuestInterface $quest, $previousState, $transitionName)
+    public function log(QuestInterface $quest, string $previousState, string $transitionName): void
     {
+        if (!$quest instanceof Quest) {
+            throw new \InvalidArgumentException('$quest must be a instance of Quest');
+        }
+
         $this->createQueryBuilder()
             ->insert('quest_log')
             ->values([

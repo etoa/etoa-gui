@@ -1,5 +1,5 @@
-/* 
-   ETOA Design Revolution by HeaX	
+/*
+   ETOA Design Revolution by HeaX
 	umgesetzt durch :	ETOA-Team - Lukulus
 						  	ETOA-Team - MrCage (übernommene Codeanteile aus den Design Graphite)
 						  	ETOA-Team - HeaX (Grafiken)
@@ -12,7 +12,7 @@
 @import url('aside.css') screen and (max-height: 670px);
 @import url('aside_midi.css') screen and (min-height: 670px) and (max-height: 780px);
 @import url('aside_maxi.css') screen and (min-height: 780px);
- 	
+
 @font-face{
 	font-family: 'Goodtime';
 	src: url('GOODTIME.TTF');
@@ -24,7 +24,8 @@
 }
 
 body {
-	background: url(./images/bg.jpg);
+	background: black url(./images/bg.jpg) no-repeat;
+	background-size: contain;
 	text-align: center;
 	color: #dae9ff;
 	font-family:verdana, sans-serif, arial;
@@ -72,8 +73,8 @@ input[type="button"].warn:hover,input[type="submit"].warn:hover	{
 	background:url('images/button_hover.gif') repeat-x;
 }
 
-input[type="button"].disabled, input[type="submit"].disabled, 
-input[type="button"]:disabled, input[type="submit"]:disabled, 
+input[type="button"].disabled, input[type="submit"].disabled,
+input[type="button"]:disabled, input[type="submit"]:disabled,
 input[type="button"].disabled:hover, input[type="submit"].disabled:hover {
 	background:url('images/button_disabled.gif') repeat-x;
 	color:#ccc;
@@ -131,7 +132,7 @@ a:hover {
 
 #wc {
 /*	min-width: 1280px; */
-	
+
 	display: -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
   	display: -moz-box;         /* OLD - Firefox 19- (buggy but mostly works) */
   	display: -ms-flexbox;      /* TWEENER - IE 10 */
@@ -143,7 +144,7 @@ a:hover {
 	-ms-flexbox: space-between;
 	-webkit-flex: space-between;
 	box-pack: space-between;
-	
+
 	-webkit-align-items: strech;
 	-moz--align-items: strech;
 
@@ -195,7 +196,7 @@ a:hover {
   	-ms-flex-order: 2;              /* TWEENER - IE 10 */
   	-webkit-order: 2;               /* NEW - Chrome */
   	order: 2;                       /* NEW, Spec - Opera 12.1, Firefox 20+ */
-  	
+
 
 	width: 800px;
 	min-width: 800px;
@@ -214,17 +215,17 @@ a:hover {
 #content::-webkit-scrollbar {
     width: 6px;
 }
- 
+
 #content::-webkit-scrollbar-track {
-	-webkit-border-radius: 30px; 
+	-webkit-border-radius: 30px;
 	border-radius: 30px;
    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
 }
- 
+
 #content::-webkit-scrollbar-thumb {
   background-color: rgba(59, 86, 145, 0.5);
   outline: 1px solid darkgray;
-  -webkit-border-radius: 30px; 
+  -webkit-border-radius: 30px;
   border-radius: 30px;
 }
 
@@ -233,7 +234,7 @@ a:hover {
 	bottom: 0px;
 	height: 70px;
 	width: 100%;
-	background-image: url(./images/footer_main.gif); 
+	background-image: url(./images/footer_main.gif);
 	background-position: 50% 100%;
 	background-repeat:no-repeat;
    text-align: center;
@@ -1121,7 +1122,7 @@ a:hover {
 #f_eigene {
 	position: absolute;
 	display: inline;
-	font-family: Goodtime;	
+	font-family: Goodtime;
 	font-size: 16px;
 	text-align: center;
 	font-weight: 400;
@@ -1171,7 +1172,7 @@ a:hover {
 #f_angriffe {
 	position: absolute;
 	display: inline;
-	font-family: Goodtime;	
+	font-family: Goodtime;
 	font-size: 16px;
 	text-align: center;
 	font-weight: 400;
@@ -1386,7 +1387,7 @@ table.tb td	{
 
 #galaxy_map_nav {
   text-align:center;
-  vertical-align:middle;  
+  vertical-align:middle;
 }
 
 #galaxy_map_container {
@@ -1397,7 +1398,7 @@ table.tb td	{
 
 #sector_map_nav {
   text-align:center;
-  vertical-align:middle;  
+  vertical-align:middle;
 }
 
 #sector_map_container {
@@ -1558,7 +1559,7 @@ table.tb td	{
 	font-weight:normal;
 	position:absolute;
 	background:rgba(24, 35, 59, 0.9);
-	border-bottom-right-radius: 12px; 
+	border-bottom-right-radius: 12px;
    margin:0px;
 	padding:3px 15px 3px 3px;
 	font-size:8pt;
@@ -1585,7 +1586,7 @@ table.tb td	{
 	font-size:20pt;
 	font-weight:bold;
 	background:rgba(24, 35, 59, 0.9);
-	border-top-left-radius: 30px; 
+	border-top-left-radius: 30px;
 	position:absolute;
 	right:0px;
 	bottom:0px;
@@ -1899,7 +1900,7 @@ visibility:visible;
 /*
 * Tutorial
 */
-#tutorialContainer {
+#tutorialContainer, #quest-app {
 	position: absolute;
 	right: 8px;
 	top: 60px;

@@ -1,0 +1,24 @@
+{% extends 'install/install.html.twig' %}
+
+{% block step %}
+    {% if dbConfigFileMissing %}
+        <p>
+            Du musst nun den folgenden Inhalt in eine neue Textdatei namens <b>{{ dbConfigFile }}</b> speichern:
+        </p>
+        <pre class="code">{{ dbConfigString }}</pre>
+        <br />
+        <br />
+    {% endif %}
+
+    {% if eventHandlerConfigFileMissing %}
+        <p>
+            Für den Eventhandler musst du noch den folgenden Inhalt in eine Konfigurationsdatei <b>{{ eventHandlerConfigFile }}</b> speichern:
+        </p>
+        <pre class="code">{{ eventHandlerConfigString }}</pre>
+    {% endif %}
+
+    <p>
+        <input type="button" onclick="document.location='admin'" value="Zum Admin-Login" /> &nbsp;
+        <input type="button" onclick="document.location='{{ etoaUrl('login') }}'" value="Zum Loginserver"/>
+    </p>
+{% endblock %}

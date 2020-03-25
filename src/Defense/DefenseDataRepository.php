@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Defense;
 
@@ -8,7 +8,7 @@ use EtoA\Core\AbstractRepository;
 
 class DefenseDataRepository extends AbstractRepository
 {
-    const DEFENSE_NAMES = 'defense.names';
+    private const DEFENSE_NAMES = 'defense.names';
 
     /** @var CacheProvider */
     private $cache;
@@ -19,7 +19,7 @@ class DefenseDataRepository extends AbstractRepository
         $this->cache = $cache;
     }
 
-    public function getDefenseNames()
+    public function getDefenseNames(): array
     {
         if (!$this->cache->contains(self::DEFENSE_NAMES)) {
             $names = $this->createQueryBuilder()

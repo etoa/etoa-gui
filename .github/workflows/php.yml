@@ -1,0 +1,86 @@
+name: GUI CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - "master"
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Create DB
+        run: |
+          mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports[3306] }} -uroot -proot -e "CREATE DATABASE etoa_test"
+          mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports[3306] }} -uroot -proot -D etoa_test -e "SHOW TABLES;"
+      - name: Composer Cache Directory
+        id: composer-cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.composer
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+      - name: Validate composer.json and composer.lock
+        run: composer validate
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest
+
+      - name: Set up DB config
+        run: echo '{"host":"127.0.0.1:${{ job.services.mysql.ports[3306] }}","dbname":"etoa_test","user":"root","password":"root"}' > htdocs/config/db.conf
+
+      - name: Set up DB
+        run: bin/db.php migrate
+
+      - name: Set up DB config
+        run: echo '{"host":"127.0.0.1:${{ job.services.mysql.ports[3306] }}","dbname":"etoa","user":"root","password":"root"}' > htdocs/config/db.conf
+
+      - name: PHPUnit
+        run: ./vendor/bin/phpunit tests
+
+  php-cs-fixer-src:
+    name: PHP-CS-Fixer src
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: PHP-CS-Fixer
+        uses: docker://oskarstark/php-cs-fixer-ga
+        with:
+          args: src --rules=@PSR2,binary_operator_spaces,blank_line_before_return,function_typehint_space,no_empty_comment,no_empty_phpdoc,no_empty_statement,no_extra_consecutive_blank_lines,no_leading_import_slash,no_leading_namespace_whitespace,trailing_comma_in_multiline_array,space_after_semicolon,single_quote,return_type_declaration,no_unused_imports,declare_strict_types --allow-risky=yes
+
+  php-cs-fixer-tests:
+    name: PHP-CS-Fixer test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: PHP-CS-Fixer
+        uses: docker://oskarstark/php-cs-fixer-ga
+        with:
+          args: tests --rules=@PSR2,binary_operator_spaces,blank_line_before_return,function_typehint_space,no_empty_comment,no_empty_phpdoc,no_empty_statement,no_extra_consecutive_blank_lines,no_leading_import_slash,no_leading_namespace_whitespace,trailing_comma_in_multiline_array,space_after_semicolon,single_quote,return_type_declaration,no_unused_imports,declare_strict_types --allow-risky=yes
+
+  phpstan:
+    name: PHPStan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: PHPStan
+        uses: docker://oskarstark/phpstan-ga
+        env:
+          REQUIRE_DEV: true
+        with:
+          args: analyse src tests --level=5 --no-progress

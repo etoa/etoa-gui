@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Progress\InitFunctions;
 
@@ -9,7 +9,7 @@ use LittleCubicleGames\Quests\Progress\Functions\InitProgressHandlerFunctionInte
 
 class HaveBuildingLevel implements InitProgressHandlerFunctionInterface
 {
-    const NAME = 'have-building-level';
+    public const NAME = 'have-building-level';
 
     /** @var BuildingRepository */
     private $buildingRepository;
@@ -22,7 +22,7 @@ class HaveBuildingLevel implements InitProgressHandlerFunctionInterface
         $this->buildingId = $attributes['building_id'];
     }
 
-    public function initProgress(QuestInterface $quest, TaskInterface $task)
+    public function initProgress(QuestInterface $quest, TaskInterface $task): int
     {
         return $this->buildingRepository->getBuildingLevel($quest->getUser(), $this->buildingId);
     }

@@ -13,8 +13,9 @@ update: ## Update EtoA via vagrant
 
 ci: ## Run continuous integration tasks (tests and code style fixes)
 	./vendor/bin/phpunit tests
-	./vendor/bin/php-cs-fixer fix src --rules=@PSR2,binary_operator_spaces,blank_line_before_return,function_typehint_space,no_empty_comment,no_empty_phpdoc,no_empty_statement,no_extra_consecutive_blank_lines,no_leading_import_slash,no_leading_namespace_whitespace,trailing_comma_in_multiline_array,space_after_semicolon,single_quote,return_type_declaration,no_unused_imports
-	./vendor/bin/php-cs-fixer fix tests --rules=@PSR2,binary_operator_spaces,blank_line_before_return,function_typehint_space,no_empty_comment,no_empty_phpdoc,no_empty_statement,no_extra_consecutive_blank_lines,no_leading_import_slash,no_leading_namespace_whitespace,trailing_comma_in_multiline_array,space_after_semicolon,single_quote,return_type_declaration,no_unused_imports
+	./vendor/bin/php-cs-fixer fix src --rules=@PSR2,binary_operator_spaces,blank_line_before_return,function_typehint_space,no_empty_comment,no_empty_phpdoc,no_empty_statement,no_extra_consecutive_blank_lines,no_leading_import_slash,no_leading_namespace_whitespace,trailing_comma_in_multiline_array,space_after_semicolon,single_quote,return_type_declaration,no_unused_imports,declare_strict_types --allow-risky=yes
+	./vendor/bin/php-cs-fixer fix tests --rules=@PSR2,binary_operator_spaces,blank_line_before_return,function_typehint_space,no_empty_comment,no_empty_phpdoc,no_empty_statement,no_extra_consecutive_blank_lines,no_leading_import_slash,no_leading_namespace_whitespace,trailing_comma_in_multiline_array,space_after_semicolon,single_quote,return_type_declaration,no_unused_imports,declare_strict_types --allow-risky=yes
+	./vendor/bin/phpstan analyse src tests --level=5 --no-progress
 
 deploy-update: ## Everything which needs to be run during deploy
 	./composer.phar install -o
@@ -31,7 +32,7 @@ eventhandler: ## Build the cpp eventhandler
 	sudo chmod -R 777 /var/log/etoad
 	sudo chmod -R 777 /var/run/etoad
 	sudo cp /var/www/etoa/vagrant/roundx.conf /etc/etoad/roundx.conf
-	sudo su vagrant -c"/var/www/etoa/eventhandler/target/etoad roundx -k -d"
+	sudo su vagrant -c"/var/www/etoa/eventhandler/target/etoad roundx -k -d -c /vagrant/htdocs/config/eventhandler.conf -p /var/www/etoa/htdocs/tmp/eventhandler.pid"
 
 help: ## Helping devs since 2016
 	@cat $(MAKEFILE_LIST) | grep -e "^[a-zA-Z_\-]*: *.*## *" | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'

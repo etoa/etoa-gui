@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Progress\Functions;
 
@@ -8,14 +8,14 @@ use LittleCubicleGames\Quests\Progress\Functions\EventHandlerFunctionInterface;
 
 class LaunchFleet implements EventHandlerFunctionInterface
 {
-    const NAME = 'launch-fleet';
+    public const NAME = 'launch-fleet';
 
-    public function handle(TaskInterface $task, FleetLaunch $event)
+    public function handle(TaskInterface $task, FleetLaunch $event): int
     {
         return $task->getProgress() + 1;
     }
 
-    public function getEventMap()
+    public function getEventMap(): array
     {
         return [FleetLaunch::LAUNCH_SUCCESS => 'handle'];
     }

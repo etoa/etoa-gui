@@ -1,12 +1,16 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Progress\Functions;
 
 use EtoA\Missile\Event\MissileBuy;
+use LittleCubicleGames\Quests\Entity\TaskInterface;
 
-class BuyMissileTest extends AbsractProgressFunctionTestCase
+class BuyMissileTest extends AbstractProgressFunctionTestCase
 {
-    protected function setUp()
+    /** @var BuyMissile */
+    private $progressFunction;
+
+    protected function setUp(): void
     {
         $this->progressFunction = new BuyMissile();
     }
@@ -14,12 +18,14 @@ class BuyMissileTest extends AbsractProgressFunctionTestCase
     /**
      * @dataProvider providerHandle
      */
-    public function testHandle($currentProgress, $count, $expectedProgress)
+    public function testHandle(int $currentProgress, int $count, int $expectedProgress): void
     {
-        $this->simulateHandle(new MissileBuy(1, $count), $currentProgress, $expectedProgress);
+        $this->simulateHandle(function (TaskInterface $task) use ($count): int {
+            return $this->progressFunction->handle($task, new MissileBuy(1, $count));
+        }, $currentProgress, $expectedProgress);
     }
 
-    public function providerHandle()
+    public function providerHandle(): array
     {
         return [
             [0, 1, 1],

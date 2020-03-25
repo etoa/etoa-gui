@@ -162,7 +162,6 @@
 			// Bauliste vom allen Planeten laden und nach Schiffe zusammenfassen
 			$res = dbquery("
 			SELECT
-    		queue_id,
     		queue_ship_id,
     		SUM(queue_cnt) AS cnt
 			FROM
@@ -353,7 +352,7 @@
                                 <div id="changeWorkingPeopleError" style="display:none;">&nbsp;</div>
                                 <input type="submit" value="Speichern" name="submit_people_form" id="submit_people_form" />&nbsp;';
         echo '<div id="changePeople" style="display:none;">';
-    	tableStart("Arbeiter im Bauhof zuteilen");
+    	tableStart("Arbeiter der Raumschiffswerft zuteilen");
         echo '<form id="changeWorkingPeople" method="post" action="?page='.$page.'">
             '.$box.'</form>';
         tableEnd();

@@ -22,7 +22,7 @@
 	}
 
 	function getAppVersion() {
-		require_once(RELATIVE_ROOT.'version.php');
+		require_once __DIR__ . '/../version.php';
 		return APP_VERSION;
 	}
 
@@ -444,15 +444,13 @@
 	*/
 	function format_link($string)
 	{
-		$string = eregi_replace("([ \n])http://([^ ,\n]*)", "\\1[url]http://\\2[/url]", $string);
-		$string = eregi_replace("([ \n])ftp://([^ ,\n]*)", "\\1[url]ftp://\\2[/url]", $string);
-		$string = eregi_replace("([ \n])www\\.([^ ,\n]*)", "\\1[url]http://www.\\2[/url]", $string);
-		$string = eregi_replace("^http://([^ ,\n]*)", "[url]http://\\1[/url]", $string);
-		$string = eregi_replace("^ftp://([^ ,\n]*)", "[url]ftp://\\1[/url]", $string);
-		$string = eregi_replace("^www\\.([^ ,\n]*)", "[url]http://www.\\1[/url]", $string);
-	 	$string = eregi_replace('\[url\]www.([^\[]*)\[/url\]', '<a href="http://www.\1">\1</a>', $string);
-		$string = eregi_replace('\[url\]([^\[]*)\[/url\]', '<a href="\1">\1</a>', $string);
-		$string = eregi_replace('\[mailurl\]([^\[]*)\[/mailurl\]', '<a href="\1">Link</a>', $string);
+		$string = preg_replace("#([ \n])(http|https|ftp)://([^ ,\n]*)#i", "\\1[url]\\2://\\3[/url]", $string);
+		$string = preg_replace("#([ \n])www\\.([^ ,\n]*)#i", "\\1[url]https://www.\\2[/url]", $string);
+		$string = preg_replace("#^(http|https|ftp)://([^ ,\n]*)#i", "[url]\\1://\\2[/url]", $string);
+		$string = preg_replace("#^www\\.([^ ,\n]*)#i", "[url]https://www.\\1[/url]", $string);
+	 	$string = preg_replace('#\[url\]www.([^\[]*)\[/url\]#i', '<a href="https://www.\1">\1</a>', $string);
+		$string = preg_replace('#\[url\]([^\[]*)\[/url\]#i', '<a href="\1">\1</a>', $string);
+		$string = preg_replace('#\[mailurl\]([^\[]*)\[/mailurl\]#i', '<a href="\1">Link</a>', $string);
 		return $string;
 	}
 
@@ -1397,7 +1395,7 @@
 	/**
 	* The form checker - verify
 	*/
-	function checker_verify($debug=0,$msg=1)
+	function checker_verify($debug=0,$msg=1,$throw=false)
 	{
 		global $_POST,$_GET;
 		if ($debug==1)
@@ -1409,6 +1407,9 @@
 		}
 		else
 		{
+		    if ($throw) {
+		        throw new \RuntimeException('Seite kann nicht mehrfach aufgerufen werden!');
+            }
 			if ($msg==1)
 			{
 				error_msg("Seite kann nicht mehrfach aufgerufen werden!");

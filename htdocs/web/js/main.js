@@ -1804,18 +1804,12 @@ function getRaceInfo(id) {
   }, alert);
 }
 
-function advanceQuest(questId, transition) {
+function advanceQuest(questId, transition, cb) {
     $.ajax({
         type: 'PUT',
         url: '/api/quests/'+questId+'/advance/'+transition,
         contentType: 'application/json'
-    }).done(function (data) {
-        if (data.state === 'finished') {
-            window.location.reload(true);
-        } else {
-            $('[data-id="quest-advance"]').hide();
-        }
-	});
+    }).done(cb);
 }
 
 // builds URL when reselecting planet

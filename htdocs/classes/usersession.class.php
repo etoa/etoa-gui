@@ -4,6 +4,9 @@
  * for player area.
  *
  * @author Nicolas Perrenoud <mrcage@etoa.ch>
+ *
+ * @property int $user_id
+ * @property string $user_nick
  */
 class UserSession extends Session
 {
@@ -16,7 +19,7 @@ class UserSession extends Session
     /**
 	 * Returns the single instance of this class
 	 *
-	 * @return AdminSession Instance of this class
+	 * @return UserSession Instance of this class
 	 */
 	public static function getInstance($className = null)
 	{
@@ -242,7 +245,7 @@ class UserSession extends Session
 	/**
 	 * Checks if the current session is valid
 	 *
-	 * @return True if session is valid
+	 * @return bool, True if session is valid
 	 */
 	function validate($destroy=1)
 	{

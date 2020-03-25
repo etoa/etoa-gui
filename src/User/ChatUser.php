@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\User;
 
@@ -9,18 +9,18 @@ class ChatUser implements UserInterface
     /** @var string */
     private $nick;
 
-    public function __construct($id, $nick)
+    public function __construct(int $id, string $nick)
     {
         $this->id = $id;
         $this->nick = $nick;
     }
 
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getNick()
+    public function getNick(): string
     {
         return $this->nick;
     }

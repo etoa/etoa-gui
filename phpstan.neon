@@ -1,0 +1,11 @@
+includes:
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-phpunit/rules.neon
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+
+parameters:
+    ignoreErrors:
+        - '#Function (getAppVersion|text2html) not found#'
+        - '#Constant (FORUM_URL|HELPCENTER_URL|RULES_URL|TEAMSPEAK_URL|DEVCENTER_PATH|CHAT_URL|HELPCENTER_ONCLICK|RULES_ONCLICK|TEAMSPEAK_ONCLICK|DEVCENTER_ONCLICK|CHAT_ONCLICK) not found#'
+        - '#Dynamic call to static method PHPUnit\\Framework\\Assert#'
+        - '#Dynamic call to static method PHPUnit\\Framework\\TestCase#'

@@ -1,0 +1,22 @@
+name: Eventhandler CI
+
+on:
+  pull_request:
+    paths:
+      - 'eventhandler/**'
+  push:
+    branches:
+      - "master"
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install dependencies
+        run: sudo apt-get install libboost-all-dev libmysql++-dev
+      - name: Build eventhandler
+        working-directory: ./eventhandler
+        run: cmake . && make

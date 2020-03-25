@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Core;
 
@@ -6,7 +6,7 @@ use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 
 class ParamConverterListener
 {
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelController(FilterControllerEvent $event): void
     {
         $controller = $event->getController();
         $request = $event->getRequest();
@@ -18,7 +18,7 @@ class ParamConverterListener
 
         // automatically apply conversion for non-configured objects
         foreach ($r->getParameters() as $param) {
-            if (!$param->getClass() || $param->getClass()->isInstance($request)) {
+            if (!$param->getClass() instanceof \ReflectionClass || $param->getClass()->isInstance($request)) {
                 continue;
             }
 

@@ -1,12 +1,13 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Progress;
 
+use LittleCubicleGames\Quests\Progress\Functions\HandlerFunctionInterface;
 use LittleCubicleGames\Quests\Progress\ProgressFunctionBuilderInterface;
 
 class FunctionBuilder implements ProgressFunctionBuilderInterface
 {
-    public function build($taskName, array $attributes)
+    public function build(string $taskName, array $attributes): ?HandlerFunctionInterface
     {
         switch ($taskName) {
             case Functions\LaunchMissile::NAME:
@@ -34,5 +35,7 @@ class FunctionBuilder implements ProgressFunctionBuilderInterface
             case Functions\CreateAlliance::NAME:
                 return new Functions\CreateAlliance();
         }
+
+        return null;
     }
 }

@@ -1,12 +1,16 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Progress\Functions;
 
 use EtoA\Message\Event\MessageSend;
+use LittleCubicleGames\Quests\Entity\TaskInterface;
 
-class SendMessageTest extends AbsractProgressFunctionTestCase
+class SendMessageTest extends AbstractProgressFunctionTestCase
 {
-    protected function setUp()
+    /** @var SendMessage */
+    private $progressFunction;
+
+    protected function setUp(): void
     {
         $this->progressFunction = new SendMessage();
     }
@@ -14,12 +18,14 @@ class SendMessageTest extends AbsractProgressFunctionTestCase
     /**
      * @dataProvider providerHandle
      */
-    public function testHandle($currentProgress, $expectedProgress)
+    public function testHandle(int $currentProgress, int $expectedProgress): void
     {
-        $this->simulateHandle(new MessageSend(), $currentProgress, $expectedProgress);
+        $this->simulateHandle(function (TaskInterface $task): int {
+            return $this->progressFunction->handle($task, new MessageSend());
+        }, $currentProgress, $expectedProgress);
     }
 
-    public function providerHandle()
+    public function providerHandle(): array
     {
         return [
             [0, 1],

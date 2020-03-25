@@ -16,11 +16,11 @@
 //////////////////////////////////////////////////
 
 /**
-* Startup function, bootstraps the daemon and 
+* Startup function, bootstraps the daemon and
 * initializes threads, logging and pidfile.
 *
 * @author Nicolas Perrenoud<mrcage@etoa.ch>
-* 
+*
 * Copyright (c) 2004 by EtoA Gaming, www.etoa.net
 *
 * $Rev$
@@ -50,21 +50,21 @@ void sighandler(int sig)
 {
 	// Clean up pidfile
 	delete pf;
-	
+
 	if (sig == SIGTERM)
 	{
-		LOG(LOG_NOTICE,"Received ordinary termination signal (SIGTERM), shutting down");		
+		LOG(LOG_NOTICE,"Received ordinary termination signal (SIGTERM), shutting down");
 		exit(EXIT_SUCCESS);
 	}
 	if (sig == SIGINT)
 	{
-		LOG(LOG_WARNING,"Received interrupt from keyboard (SIGINT), shutting down");		
+		LOG(LOG_WARNING,"Received interrupt from keyboard (SIGINT), shutting down");
 		exit(EXIT_SUCCESS);
 	}
 
-	LOG(LOG_ERR,"Caught signal "<<sig<<", shutting down due to error");		
+	LOG(LOG_ERR,"Caught signal "<<sig<<", shutting down due to error");
 	exit(EXIT_FAILURE);
-	
+
 }
 
 // Create a daemon
@@ -106,14 +106,16 @@ void daemonize()
 
 	int myPid = (int) getpid();
 	LOG(LOG_NOTICE, "Daemon initialized with PID " << myPid << " and owned by " << getuid());
-		
+
 }
 
 bool validateRoundName(const std::string& s)
 {
-   static const boost::regex e("^[a-z0-9]+$");
-   return boost::regex_match(s, e);
-   
+    for (std::string::size_type i = 0; i < s.size(); i++) {
+        if (!isalnum(s[i])) return false;
+    }
+
+    return true;
 }
 
 /**
@@ -172,7 +174,7 @@ int main(int argc, char* argv[])
 	opt->processCommandArgs( argc, argv );
 
 	appPath = std::string(argv[0]);
-  
+
 	// Show help
 	if(argc <= 1 || opt->getFlag( "help" ) || opt->getFlag( 'h' ))
 	{
@@ -180,19 +182,19 @@ int main(int argc, char* argv[])
 		opt->printUsage();
  		return EXIT_SUCCESS;
 	}
-	
+
 	// Show version info
 	if( opt->getFlag( "version" ))
 	{
 		std::cout << getVersion()<<endl;
  		return EXIT_SUCCESS;
 	}
-  
+
 	// Set game round
 	gameRound = argv[1];
 	if (!validateRoundName(gameRound))
 	{
-		LOG(LOG_ERR,"Invalid game round name!");  	
+		LOG(LOG_ERR,"Invalid game round name!");
 		return EXIT_FAILURE;
 	}
 
@@ -222,7 +224,7 @@ int main(int argc, char* argv[])
 		std::cout << "(C) 2007 EtoA Gaming Switzerland, www.etoa.ch" << std::endl;
 		std::cout << "Version " __ETOAD_VERSION_STRING__ "" << std::endl<< std::endl;
 	}
-	
+
 	// Log verbosity
 	if (opt->getValue('l') != NULL)
 	{
@@ -241,8 +243,8 @@ int main(int argc, char* argv[])
 			std::cout << "Setting log verbosity to " << lvl << std::endl;
 			logPrio(lvl);
 		}
-	}			
-	
+	}
+
 	// Determine config directory
 	if (opt->getValue('c') != NULL)
 	{
@@ -264,7 +266,7 @@ int main(int argc, char* argv[])
 
 	// Sets the round name the logger uses to create the etoad.roundname.log files
 	logProgam(gameRound);
-	
+
 	// Set pidfile
 	if( opt->getValue('p') != NULL)
 	{
@@ -278,7 +280,7 @@ int main(int argc, char* argv[])
 	{
 		pidFile = "/var/run/etoad/"+gameRound+".pid";
 	}
-		
+
 	// Set user
 	if( opt->getValue('u') != NULL)
 	{
@@ -313,7 +315,7 @@ int main(int argc, char* argv[])
 	if (pf->fileExists())
 	{
 		int existingPid = pf->readPid();
-   	
+
 		if (stop)
 		{
 			kill(existingPid, SIGTERM);
@@ -350,8 +352,8 @@ int main(int argc, char* argv[])
  	else if (stop)
  	{
  		std::cerr << "No running process found, exiting..."<<std::endl;
- 		return EXIT_FAILURE;		
- 	}	
+ 		return EXIT_FAILURE;
+ 	}
 
 	LOG(LOG_NOTICE,"Starting EtoA event-handler " __ETOAD_VERSION_STRING__ " for universe " << gameRound);
 
@@ -370,12 +372,12 @@ int main(int argc, char* argv[])
 	{
 		config.setSleep(atoi(opt->getValue('t')));
 	}
-		
+
 	delete opt;
 
 	// Enter main loop
 	etoamain();
-	
+
 	// This point should never be reached
 	cerr << "Unexpectedly reached end of main()";
 	return EXIT_FAILURE;

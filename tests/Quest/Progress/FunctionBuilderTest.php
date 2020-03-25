@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Progress;
 
@@ -10,7 +10,7 @@ class FunctionBuilderTest extends TestCase
     /** @var FunctionBuilder */
     private $builder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -20,12 +20,12 @@ class FunctionBuilderTest extends TestCase
     /**
      * @dataProvider functionNameProvider
      */
-    public function testBuild($name, $className)
+    public function testBuild(string $name, string $className): void
     {
         $this->assertInstanceOf($className, $this->builder->build($name, []));
     }
 
-    public function functionNameProvider()
+    public function functionNameProvider(): array
     {
         $finder = new Finder();
         $finder->files()->in(__DIR__ . '/../../../src/Quest/Progress/Functions');

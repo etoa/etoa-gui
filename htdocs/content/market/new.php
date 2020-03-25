@@ -210,6 +210,7 @@
 					AND shiplist.shiplist_count>'0'
 					AND ships.special_ship='0'
 					AND ships.ship_alliance_costs='0'
+					AND ships.ship_tradable='1'
 				ORDER BY
 					ships.ship_name;");
 
@@ -256,8 +257,8 @@
 					</td>
 					<td height=\"30\" colspan=\"2\" style=\"vertical-align:middle;\">
 						<input type=\"text\" value=\"0\" name=\"ship_count\" id=\"ship_count\" size=\"5\" maxlength=\"7\" onkeyup=\"calcMarketShipPrice(1, 0);\" /> St&uuml;ck
-					    &nbsp;
-					    <input type=\"text\" value=\"100\" name=\"ship_percent\" id=\"ship_percent\" size=\"5\" maxlength=\"7\" onkeyup=\"calcMarketShipPrice(1, 0);\" /> Verkaufspreis in %
+						&nbsp;
+						<input type=\"text\" value=\"100\" name=\"ship_percent\" id=\"ship_percent\" size=\"5\" maxlength=\"7\" onkeyup=\"calcMarketShipPrice(1, 0);\" /> Verkaufspreis in %
 					</td>
 					
 					  

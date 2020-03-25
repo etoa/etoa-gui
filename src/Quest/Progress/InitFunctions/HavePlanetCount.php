@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Progress\InitFunctions;
 
@@ -9,7 +9,7 @@ use LittleCubicleGames\Quests\Progress\Functions\InitProgressHandlerFunctionInte
 
 class HavePlanetCount implements InitProgressHandlerFunctionInterface
 {
-    const NAME = 'have-planet-count';
+    public const NAME = 'have-planet-count';
 
     /** @var PlanetRepository */
     private $planetRepository;
@@ -19,7 +19,7 @@ class HavePlanetCount implements InitProgressHandlerFunctionInterface
         $this->planetRepository = $planetRepository;
     }
 
-    public function initProgress(QuestInterface $quest, TaskInterface $task)
+    public function initProgress(QuestInterface $quest, TaskInterface $task): int
     {
         return $this->planetRepository->getPlanetCount($quest->getUser());
     }

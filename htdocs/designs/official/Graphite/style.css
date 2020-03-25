@@ -1,5 +1,5 @@
-/* 
-* EtoA Graphite Design by MrCage 
+/*
+* EtoA Graphite Design by MrCage
 */
 
 @import url('../../../web/css/game.css');
@@ -11,7 +11,7 @@ body,html	{
 }
 
 body {
-	background:#000 url('images/mainbg.jpg') repeat;
+	background: #000 url('images/mainbg.jpg') round;
 	color: white;
 	font-family:verdana, sans-serif, arial;
 	font-size: 10pt;
@@ -564,7 +564,7 @@ table.tb td {
 
 #galaxy_map_nav {
   text-align:center;
-  vertical-align:middle;  
+  vertical-align:middle;
 }
 
 #galaxy_map_container {
@@ -575,7 +575,7 @@ table.tb td {
 
 #sector_map_nav {
   text-align:center;
-  vertical-align:middle;  
+  vertical-align:middle;
 }
 
 #sector_map_container {
@@ -1054,7 +1054,7 @@ visibility:visible;
 /*
 * Tutorial
 */
-#tutorialContainer {
+#tutorialContainer, #quest-app {
 	position: absolute;
 	right: 8px;
 	top: 60px;

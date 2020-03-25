@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Progress\InitFunctions;
 
@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class HaveDefenseTest extends TestCase
 {
-    public function testInitProgress()
+    public function testInitProgress(): void
     {
         $userId = 1;
         $defenseId = 12;

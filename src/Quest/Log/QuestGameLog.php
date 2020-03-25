@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Log;
 
@@ -8,7 +8,7 @@ use LittleCubicleGames\Quests\Workflow\QuestDefinitionInterface;
 
 class QuestGameLog implements QuestLoggerInterface
 {
-    const TRANSITION_MAP = [
+    public const TRANSITION_MAP = [
         QuestDefinitionInterface::TRANSITION_START => 0,
         QuestDefinitionInterface::TRANSITION_COMPLETE => 1,
         QuestDefinitionInterface::TRANSITION_COLLECT_REWARD => 2,
@@ -16,7 +16,7 @@ class QuestGameLog implements QuestLoggerInterface
         QuestDefinitionInterface::TRANSITION_REJECT => 4,
     ];
 
-    public function log(QuestInterface $quest, $previousState, $transitionName)
+    public function log(QuestInterface $quest, string $previousState, string $transitionName): void
     {
         \GameLog::add(\GameLog::F_QUESTS, \GameLog::INFO, '', $quest->getUser(), 0, 0, $quest->getQuestId(), self::TRANSITION_MAP[$transitionName]);
     }

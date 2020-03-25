@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Progress\InitFunctions;
 
@@ -9,7 +9,7 @@ use LittleCubicleGames\Quests\Progress\Functions\InitProgressHandlerFunctionInte
 
 class HavePoints implements InitProgressHandlerFunctionInterface
 {
-    const NAME = 'have-points';
+    public const NAME = 'have-points';
 
     /** @var UserRepository */
     private $userRepository;
@@ -19,7 +19,7 @@ class HavePoints implements InitProgressHandlerFunctionInterface
         $this->userRepository = $userRepository;
     }
 
-    public function initProgress(QuestInterface $quest, TaskInterface $task)
+    public function initProgress(QuestInterface $quest, TaskInterface $task): int
     {
         return $this->userRepository->getPoints($quest->getUser());
     }

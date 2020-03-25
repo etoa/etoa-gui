@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Progress\InitFunctions;
 
@@ -12,7 +12,7 @@ class HaveAllianceTest extends TestCase
     /**
      * @dataProvider allianceProvider
      */
-    public function testInitProgress($allianceId, $expected)
+    public function testInitProgress(int $allianceId, int $expected): void
     {
         $userId = 1;
         $repository = $this->getMockBuilder(UserRepository::class)->disableOriginalConstructor()->getMock();
@@ -35,7 +35,7 @@ class HaveAllianceTest extends TestCase
         $this->assertSame($expected, $function->initProgress($quest, $task));
     }
 
-    public function allianceProvider()
+    public function allianceProvider(): array
     {
         return [
             [100, 1],

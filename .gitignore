@@ -27,6 +27,10 @@ CMakeCache.txt
 /.idea
 
 .vagrant
+ubuntu-*-console.log
 
+/var/
 /vendor/
 .php_cs.cache
+.phpunit.result.cache
+nbproject/*

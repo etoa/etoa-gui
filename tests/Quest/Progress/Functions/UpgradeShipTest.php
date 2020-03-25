@@ -1,12 +1,16 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Progress\Functions;
 
 use EtoA\Ship\Event\ShipUpgrade;
+use LittleCubicleGames\Quests\Entity\TaskInterface;
 
-class UpgradeShipTest extends AbsractProgressFunctionTestCase
+class UpgradeShipTest extends AbstractProgressFunctionTestCase
 {
-    protected function setUp()
+    /** @var UpgradeShip */
+    private $progressFunction;
+
+    protected function setUp(): void
     {
         $this->progressFunction = new UpgradeShip();
     }
@@ -14,12 +18,14 @@ class UpgradeShipTest extends AbsractProgressFunctionTestCase
     /**
      * @dataProvider providerHandle
      */
-    public function testHandle($currentProgress, $expectedProgress)
+    public function testHandle(int $currentProgress, int $expectedProgress): void
     {
-        $this->simulateHandle(new ShipUpgrade(), $currentProgress, $expectedProgress);
+        $this->simulateHandle(function (TaskInterface $task): int {
+            return $this->progressFunction->handle($task, new ShipUpgrade());
+        }, $currentProgress, $expectedProgress);
     }
 
-    public function providerHandle()
+    public function providerHandle(): array
     {
         return [
             [0, 1],

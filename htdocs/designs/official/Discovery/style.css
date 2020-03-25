@@ -1,4 +1,4 @@
-/* 
+/*
 * EtoA Discovery Design by Greaser
 */
 
@@ -9,6 +9,8 @@ body {
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 	background-position: left top;
+	background-size: contain;
+	background-color: black;
 	color: white;
 	margin:0px;
 	font-family:verdana, sans-serif, arial;
@@ -406,7 +408,7 @@ td.statsNav	{
 
 #galaxy_map_nav {
   text-align:center;
-  vertical-align:middle;  
+  vertical-align:middle;
 }
 
 #galaxy_map_container {
@@ -417,7 +419,7 @@ td.statsNav	{
 
 #sector_map_nav {
   text-align:center;
-  vertical-align:middle;  
+  vertical-align:middle;
 }
 
 #sector_map_container {
@@ -464,7 +466,7 @@ td.statsNav	{
   margin-top:5px;
   margin-bottom:5px;
   width:40px;
-  height:25px;  
+  height:25px;
   border-left:1px dashed #555;
 }
 
@@ -1566,7 +1568,7 @@ td.havenTab:hover	{
 .planetOverviewName a {
 	text-decoration: none;
 }
-	
+
 .planetOverviewList	{
 	position:absolute;
 	left:20px;
@@ -1862,7 +1864,7 @@ visibility:visible;
 /*
 * Tutorial
 */
-#tutorialContainer {
+#tutorialContainer, #quest-app {
 	position: absolute;
 	right: 10px;
 	top: 60px;

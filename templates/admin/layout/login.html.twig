@@ -1,0 +1,17 @@
+{% extends 'admin/layout/base.html.twig' %}
+
+{% set bodyClass = 'login' %}
+
+{% block layoutContent %}
+    <div id="layoutbox">
+        <div id="header">
+            <a href=".."><img id="logo" src="web/images/logo.png" alt="Logo" /></a>
+            <div id="slogan">Administration {{ configValue('roundname')}}</div>
+        </div>
+        <div id="main">
+            <div id="content">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

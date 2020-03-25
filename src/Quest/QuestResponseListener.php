@@ -1,9 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest;
 
 use EtoA\Quest\Entity\Quest;
-use LittleCubicleGames\Quests\Entity\QuestInterface;
 use LittleCubicleGames\Quests\Workflow\QuestDefinitionInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Event\Event;
@@ -12,7 +11,7 @@ class QuestResponseListener implements EventSubscriberInterface
 {
     /** @var QuestPresenter */
     private $presenter;
-    /** @var QuestInterface[] */
+    /** @var array[] */
     private $quests = [];
 
     public function __construct(QuestPresenter $presenter)
@@ -20,14 +19,14 @@ class QuestResponseListener implements EventSubscriberInterface
         $this->presenter = $presenter;
     }
 
-    public function getQuests()
+    public function getQuests(): array
     {
-        return array_map(function (array $data) {
+        return array_map(function (array $data): array {
             return $this->presenter->present($data['quest'], $data['slot']);
         }, $this->quests);
     }
 
-    public function addQuest(\LittleCubicleGames\Quests\Initialization\Event\Event $event)
+    public function addQuest(\LittleCubicleGames\Quests\Initialization\Event\Event $event): void
     {
         /** @var Quest $quest */
         $quest = $event->getQuest();
@@ -37,14 +36,14 @@ class QuestResponseListener implements EventSubscriberInterface
         ];
     }
 
-    public function removeQuest(Event $event)
+    public function removeQuest(Event $event): void
     {
         /** @var Quest $quest */
         $quest = $event->getSubject();
         unset($this->quests[$quest->getId()]);
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             \LittleCubicleGames\Quests\Initialization\Event\Event::QUEST_ACTIVE => 'addQuest',

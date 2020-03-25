@@ -554,6 +554,9 @@ https://etoa.ch</v>
       <p1 comment="Spioklau: Minimale Chance" type="text">1</p1>
       <p2 comment="Spioklau: Maximale Chance" type="text">10</p2>
     </item>
+    <item name="emp_action" cat="12">
+        <v comment="EMP Bugfix" type="onoff">1</v>
+    </item>
 
     <item name="userrank_total" cat="13">
       <v comment="Spielerrang: Total" type="text">Imperator von Andromeda</v>

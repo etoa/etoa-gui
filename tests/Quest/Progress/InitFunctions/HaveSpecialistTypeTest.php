@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Progress\InitFunctions;
 
@@ -12,7 +12,7 @@ class HaveSpecialistTypeTest extends TestCase
     /**
      * @dataProvider specialistProvider
      */
-    public function testInitProgress($specialistId, $questSpecialistId, $expected)
+    public function testInitProgress(int $specialistId, int $questSpecialistId, int $expected): void
     {
         $userId = 1;
         $repository = $this->getMockBuilder(UserRepository::class)->disableOriginalConstructor()->getMock();
@@ -35,7 +35,7 @@ class HaveSpecialistTypeTest extends TestCase
         $this->assertSame($expected, $function->initProgress($quest, $task));
     }
 
-    public function specialistProvider()
+    public function specialistProvider(): array
     {
         return [
             [3, 3, 1],

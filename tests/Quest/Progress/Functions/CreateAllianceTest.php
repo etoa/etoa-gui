@@ -1,12 +1,16 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Progress\Functions;
 
 use EtoA\Alliance\Event\AllianceCreate;
+use LittleCubicleGames\Quests\Entity\TaskInterface;
 
-class CreateAllianceTest extends AbsractProgressFunctionTestCase
+class CreateAllianceTest extends AbstractProgressFunctionTestCase
 {
-    protected function setUp()
+    /** @var CreateAlliance */
+    private $progressFunction;
+
+    protected function setUp(): void
     {
         $this->progressFunction = new CreateAlliance();
     }
@@ -14,12 +18,14 @@ class CreateAllianceTest extends AbsractProgressFunctionTestCase
     /**
      * @dataProvider providerHandle
      */
-    public function testHandle($currentProgress, $expectedProgress)
+    public function testHandle(int $currentProgress, int $expectedProgress): void
     {
-        $this->simulateHandle(new AllianceCreate(), $currentProgress, $expectedProgress);
+        $this->simulateHandle(function (TaskInterface $task): int {
+            return $this->progressFunction->handle($task, new AllianceCreate());
+        }, $currentProgress, $expectedProgress);
     }
 
-    public function providerHandle()
+    public function providerHandle(): array
     {
         return [
             [0, 1],

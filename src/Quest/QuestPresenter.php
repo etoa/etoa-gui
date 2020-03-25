@@ -1,15 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest;
 
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Missile\MissileDataRepository;
-use EtoA\Quest\Entity\Quest;
 use EtoA\Ship\ShipDataRepository;
 use LittleCubicleGames\Quests\Definition\Registry\RegistryInterface;
 use LittleCubicleGames\Quests\Definition\Slot\Slot;
 use LittleCubicleGames\Quests\Definition\Task\AndTask;
 use LittleCubicleGames\Quests\Definition\Task\OrTask;
+use LittleCubicleGames\Quests\Entity\QuestInterface;
 use LittleCubicleGames\Quests\Workflow\QuestDefinitionInterface;
 
 class QuestPresenter
@@ -23,6 +23,7 @@ class QuestPresenter
     /** @var DefenseDataRepository */
     private $defenseDataRepository;
 
+    /** @var array[] */
     private $transitions = [
         QuestDefinitionInterface::STATE_AVAILABLE => [
             'transition' => QuestDefinitionInterface::TRANSITION_START,
@@ -46,7 +47,7 @@ class QuestPresenter
         $this->defenseDataRepository = $defenseDataRepository;
     }
 
-    public function present(Quest $quest, Slot $slot)
+    public function present(QuestInterface $quest, Slot $slot = null): array
     {
         /** @var \LittleCubicleGames\Quests\Definition\Quest\Quest $questDefinition */
         $questDefinition = $this->registry->getQuest($quest->getQuestId());
@@ -60,14 +61,14 @@ class QuestPresenter
             'user' => $quest->getUser(),
             'title' => $questData['title'],
             'description' => $questData['description'],
-            'transition' => isset($this->transitions[$quest->getState()]) ? $this->transitions[$quest->getState()] : null,
+            'transition' => $this->transitions[$quest->getState()] ?? null,
             'taskDescription' => $questData['task']['description'],
             'taskProgress' => $this->buildProgress($quest->getProgressMap(), $questData['task']),
             'rewards' => $this->buildRewards($questData),
         ];
     }
 
-    private function buildProgress(array $progressMap, array $taskData)
+    private function buildProgress(array $progressMap, array $taskData): array
     {
         switch ($taskData['operator']) {
             case AndTask::TASK_NAME:
@@ -98,13 +99,13 @@ class QuestPresenter
         }
     }
 
-    private function buildRewards($data)
+    public function buildRewards(array $data): array
     {
         if (!isset($data['rewards'])) {
             return [];
         }
 
-        return array_map(function (array $reward) {
+        return array_map(function (array $reward): string {
             switch ($reward['type']) {
                 case 'missile':
                     return sprintf('%s %s', $reward['value'], $this->missileDataRepository->getMissileNames()[$reward['missile_id']]);
@@ -112,6 +113,8 @@ class QuestPresenter
                     return sprintf('%s %s', $reward['value'], $this->shipDataRepository->getShipNames()[$reward['ship_id']]);
                 case 'defense':
                     return sprintf('%s %s', $reward['value'], $this->defenseDataRepository->getDefenseNames()[$reward['defense_id']]);
+                default:
+                    throw new \RuntimeException('Reward type not defined: ' . $reward['type']);
             }
         }, $data['rewards']);
     }

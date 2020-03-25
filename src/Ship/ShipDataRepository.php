@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Ship;
 
@@ -8,7 +8,7 @@ use EtoA\Core\AbstractRepository;
 
 class ShipDataRepository extends AbstractRepository
 {
-    const SHIPS_NAMES = 'ships.names';
+    private const SHIPS_NAMES = 'ships.names';
 
     /** @var CacheProvider */
     private $cache;
@@ -19,7 +19,7 @@ class ShipDataRepository extends AbstractRepository
         $this->cache = $cache;
     }
 
-    public function getShipNames()
+    public function getShipNames(): array
     {
         if (!$this->cache->contains(self::SHIPS_NAMES)) {
             $names = $this->createQueryBuilder()

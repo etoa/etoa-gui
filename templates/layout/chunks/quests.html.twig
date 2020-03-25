@@ -1,0 +1,82 @@
+{% if quests|default([]) %}
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <div id="quest-app">
+        <div class="tutorialBox" v-if="open">
+            <div class="tutorialTitle">Quests ({{quests.length}})
+                <span style="float:right;">
+                        <input type="button" value="Min" title="Minimieren" v-on:click="hide" />
+                    </span><br style="clear:both;">
+            </div>
+            <div v-for="quest in quests">
+                <div class="tutorialContent">
+                    <h3>{{quest.title}}</h3>
+                    <div>{{quest.description}}</div>
+
+                    <h5>Aufgaben</h5>
+                    <p>
+                        {{quest.taskDescription}}
+                        <span v-if="quest.state==='available'">
+                                :
+                                <span v-for="progress in quest.taskProgress">
+                                    {{progress.progress}}/{{progress.maxProgress}}
+                                </span>
+                            </span>
+                    </p>
+                    <h5>Belohnung</h5>
+                    <div v-if="quest.rewards.length">
+                        <div  v-for="reward in quest.rewards">
+                            <p>{{reward}}</p>
+                        </div>
+                    </div>
+                    <div v-else>
+                        <p><i>Keine Belohnung!</i></p>
+                    </div>
+                    <div v-if="quest.transition">
+                        <input v-bind:disabled="activeRequest ? 'disabled' : false" v-on:click="advanceQuest(quest.id)" data-id="quest-advance" type="button" v-bind:value="quest.transition.name" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tutorialBoxReduced" v-else>
+            <input type="button" value="Quests" v-on:click="show" />
+        </div>
+    </div>
+
+    <script>
+        var questApp = new Vue({
+            el: '#quest-app',
+            data: {
+                activeRequest: false,
+                quests: {{ quests|json_encode|raw }},
+        open: $.cookie('quests_minimize') !== 'yes'
+        },
+        methods: {
+            show: function () {
+                this.open = true;
+                $.cookie('quests_minimize', 'no')
+            },
+            hide: function () {
+                this.open = false;
+                $.cookie('quests_minimize', 'yes')
+            },
+            advanceQuest: function (questId) {
+                this.activeRequest = true;
+                var quest = this.quests.find(function (quest) {
+                    return quest.id = questId;
+                });
+                var index = this.quests.indexOf(quest);
+                if (index === -1) {
+                    return;
+                }
+
+                var self = this;
+                advanceQuest(quest.id, quest.transition.transition, function (data) {
+                    self.quests.splice(index, 1);
+                    self.quests.push(data.quest);
+                    self.activeRequest = false;
+                });
+            }
+        }
+        })
+    </script>
+{% endif %}

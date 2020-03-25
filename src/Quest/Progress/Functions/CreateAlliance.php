@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Progress\Functions;
 
@@ -8,14 +8,14 @@ use LittleCubicleGames\Quests\Progress\Functions\EventHandlerFunctionInterface;
 
 class CreateAlliance implements EventHandlerFunctionInterface
 {
-    const NAME = 'create-alliance';
+    public const NAME = 'create-alliance';
 
-    public function handle(TaskInterface $task, AllianceCreate $event)
+    public function handle(TaskInterface $task, AllianceCreate $event): int
     {
         return $task->getProgress() + 1;
     }
 
-    public function getEventMap()
+    public function getEventMap(): array
     {
         return [AllianceCreate::CREATE_SUCCESS => 'handle'];
     }

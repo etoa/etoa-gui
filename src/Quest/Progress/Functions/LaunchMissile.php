@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest\Progress\Functions;
 
@@ -8,14 +8,14 @@ use LittleCubicleGames\Quests\Progress\Functions\EventHandlerFunctionInterface;
 
 class LaunchMissile implements EventHandlerFunctionInterface
 {
-    const NAME = 'launch-missile';
+    public const NAME = 'launch-missile';
 
-    public function handle(TaskInterface $task, MissileLaunch $event)
+    public function handle(TaskInterface $task, MissileLaunch $event): int
     {
         return $task->getProgress() + $event->getMissileCount();
     }
 
-    public function getEventMap()
+    public function getEventMap(): array
     {
         return [MissileLaunch::LAUNCH_SUCCESS => 'handle'];
     }

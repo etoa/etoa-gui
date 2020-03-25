@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Building;
 
@@ -9,19 +9,19 @@ class BuildingRepositoryTest extends AbstractDbTestCase
     /** @var BuildingRepository */
     private $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->repository = $this->app['etoa.building.repository'];
     }
 
-    public function testGetUserLevelNoBuilding()
+    public function testGetUserLevelNoBuilding(): void
     {
         $this->assertSame(0, $this->repository->getBuildingLevel(1, 1));
     }
 
-    public function testGetUserLevel()
+    public function testGetUserLevel(): void
     {
         $userId = 1;
         $buildingId = 3;

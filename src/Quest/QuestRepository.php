@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace EtoA\Quest;
 
@@ -8,16 +8,12 @@ use EtoA\Quest\Entity\Task;
 use LittleCubicleGames\Quests\Entity\QuestInterface;
 use LittleCubicleGames\Quests\Storage\QuestNotFoundException;
 use LittleCubicleGames\Quests\Storage\QuestStorageInterface;
+use LittleCubicleGames\Quests\Workflow\QuestDefinition;
 use LittleCubicleGames\Quests\Workflow\QuestDefinitionInterface;
 
 class QuestRepository extends AbstractRepository implements QuestStorageInterface
 {
-    /**
-     * @param int $userId
-     * @param int $questId
-     * @return Quest|null
-     */
-    public function getUserQuest($userId, $questId)
+    public function getUserQuest(int $userId, int $questId): QuestInterface
     {
         $result = $this->createQueryBuilder()
             ->select('q.id AS qid')
@@ -32,18 +28,17 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
                 'questId' => $questId,
             ])->execute()->fetchAll(\PDO::FETCH_ASSOC);
 
-        if (!$result) {
+        if (count($result) === 0) {
             throw new QuestNotFoundException();
         }
 
-        return $this->buildQuest($result[0]['qid'], $result);
+        return $this->buildQuest((int)$result[0]['qid'], $result);
     }
 
     /**
-     * @param int $userId
      * @return QuestInterface[]
      */
-    public function getActiveQuests($userId)
+    public function getActiveQuests(int $userId): array
     {
         $qb = $this->createQueryBuilder();
 
@@ -69,21 +64,25 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
         return $quests;
     }
 
-    private function buildQuest($questId, array $questData)
+    private function buildQuest(int $questId, array $questData): Quest
     {
         $tasks = [];
         if (null !== $questData[0]['task_id']) {
             foreach ($questData as $row) {
-                $tasks[$row['task_id']] = new Task($row['id'], $row['task_id'], $row['progress']);
+                $tasks[$row['task_id']] = new Task((int)$row['id'], (int)$row['task_id'], (int)$row['progress']);
             }
         }
 
-        return new Quest($questId, $questData[0]['quest_data_id'], $questData[0]['user_id'], $questData[0]['slot_id'], $questData[0]['state'], $tasks);
+        return new Quest($questId, (int)$questData[0]['quest_data_id'], (int)$questData[0]['user_id'], $questData[0]['slot_id'], $questData[0]['state'], $tasks);
     }
 
-    public function save(QuestInterface $quest)
+    public function save(QuestInterface $quest): QuestInterface
     {
-        if ($quest->getId()) {
+        if (!$quest instanceof Quest) {
+            throw new \InvalidArgumentException('$quest must be a instance of Quest');
+        }
+
+        try {
             $this->createQueryBuilder()
                 ->update('quests')
                 ->set('state', ':state')
@@ -96,13 +95,13 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
             foreach ($quest->getTasks() as $task) {
                 $this->createQueryBuilder()
                     ->update('quest_tasks')
-                    ->set('progress', $task->getProgress())
+                    ->set('progress', (string)$task->getProgress())
                     ->where('id = :id')
                     ->setParameters([
                         'id' => $task->getId(),
                     ])->execute();
             }
-        } else {
+        } catch (\RuntimeException $e) {
             $qb = $this->createQueryBuilder();
             $qb
                 ->insert('quests')
@@ -118,7 +117,7 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
                     'questId' => $quest->getQuestId(),
                 ])->execute();
 
-            $questId = $qb->getConnection()->lastInsertId();
+            $questId = (int)$qb->getConnection()->lastInsertId();
             $quest->setId($questId);
 
             foreach ($quest->getTasks() as $task) {
@@ -135,8 +134,103 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
                         'progress' => $task->getProgress(),
                     ])->execute();
 
-                $task->setId($qb->getConnection()->lastInsertId());
+                $task->setId((int)$qb->getConnection()->lastInsertId());
             }
         }
+
+        return $quest;
+    }
+
+    public function searchQuests(?int $questId, ?int $userId, ?string $questState, ?string $userNick): array
+    {
+        $qb = $this->createQueryBuilder()
+            ->addSelect('q.*')
+            ->addSelect('t.*')
+            ->addSelect('u.user_nick, u.user_points')
+            ->from('quests', 'q')
+            ->leftJoin('q', 'quest_tasks', 't', 't.quest_id = q.id')
+            ->innerJoin('q', 'users', 'u', 'u.user_id=q.user_id');
+
+        $parameters = [];
+        if ($questId !== null) {
+            $qb
+                ->andWhere('q.quest_data_id = :questId');
+            $parameters['questId'] = $questId;
+        }
+
+        if ($userId !== null) {
+            $qb
+                ->andWhere('q.user_id = :userId');
+            $parameters['userId'] = $userId;
+        }
+
+        if ($userNick !== null) {
+            $qb
+                ->andWhere('u.user_nick LIKE :userNick');
+            $parameters['userNick'] = $userNick;
+        }
+
+        if ($questState !== null && in_array($questState, QuestDefinition::STATES, true)) {
+            $qb
+                ->andWhere('q.state = :state');
+            $parameters['state'] = $questState;
+        }
+
+        return $qb
+            ->setParameters($parameters)
+            ->orderBy('q.id')
+            ->execute()->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function getQuest(int $questId): ?array
+    {
+        $result = $this->createQueryBuilder()
+            ->addSelect('q.*')
+            ->addSelect('t.*')
+            ->addSelect('u.user_nick, u.user_points')
+            ->from('quests', 'q')
+            ->leftJoin('q', 'quest_tasks', 't', 't.quest_id = q.id')
+            ->innerJoin('q', 'users', 'u', 'u.user_id=q.user_id')
+            ->where('q.id = :questId')
+            ->setParameter('questId', $questId)
+            ->execute()->fetchAll(\PDO::FETCH_ASSOC);
+
+        if (count($result) === 0) {
+            return null;
+        }
+
+        return $result[0];
+    }
+
+    public function updateQuest(int $questId, string $questState): void
+    {
+        if (!in_array($questState, QuestDefinition::STATES, true)) {
+            throw new \InvalidArgumentException('Invalid quest state: ' .$questState);
+        }
+
+        $this->createQueryBuilder()
+            ->update('quests')
+            ->set('state', ':state')
+            ->where('id = :questId')
+            ->setParameters([
+                'questId' => $questId,
+                'state' => $questState,
+            ])
+            ->execute();
+    }
+
+    public function deleteQuest(int $questId): void
+    {
+        $this->createQueryBuilder()
+            ->delete('quest_tasks')
+            ->where('quest_id = :questId')
+            ->setParameter('questId', $questId)
+            ->execute();
+
+        $this->createQueryBuilder()
+            ->delete('quests')
+            ->where('id = :questId')
+            ->setParameter('questId', $questId)
+            ->execute();
     }
 }
