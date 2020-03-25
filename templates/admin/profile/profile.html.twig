@@ -1,0 +1,72 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Mein Profil</h1>
+
+    {% if successMessage|default(false) %}
+        {{ macros.messagebox(successMessage, 'success') }}
+    {% endif %}
+
+    {% if errMsg|default(false) %}
+        {{ macros.messagebox(errMsg, 'error') }}
+    {% endif %}
+
+    <p>&Auml;ndere hier deine Daten und klicke auf '&Uuml;bernehmen', um die Daten zu speichern:</p>
+
+    <form action="?myprofile=1" method="post" class="blocklables label_width_120">
+        <fieldset>
+            <legend>Daten</legend>
+            <label for="user_name">Realer Name</label>
+            <input type="text" name="user_name" id="user_name" size="40" value="{{ user.name}}" />
+            <br/>
+            <label for="user_email">E-Mail</label>
+            <input type="text" name="user_email" id="user_email" size="40" value="{{ user.email }}" />
+            <br/>
+            <label for="user_board_url">Forum-Profil</label>
+            <input type="text" name="user_board_url" id="user_board_url" size="60" value="{{ user.boardUrl }}" />
+            <br/>
+            <label>Mail bei Ticket</label>
+            <input type="radio" name="ticketmail" id="ticketmail_1" value="1" {% if user.ticketEmail %}checked="checked"{% endif %} />
+            <label for="ticketmail_1">Ja</label>
+            <input type="radio" name="ticketmail" id="ticketmail_0" value="0" {% if not user.ticketEmail %}checked="checked"{% endif %} />
+            <label for="ticketmail_0">Nein</label>
+            <br/>
+            <label for="player_id">Spieler-Account</label>
+            <select name="player_id" id="player_id">
+                <option value="0">(Keiner)</option>
+                {% for key,value in users %}
+                    <option value="{{ key}}" {% if key == user.playerId %}selected="selected"{% endif %}>{{ value }}</option>
+                {% endfor %}
+            </select><br/>
+            <p class="buttons"><input type="submit" name="submitdata" value="&Uuml;bernehmen" /></p>
+        </fieldset>
+    </form>
+
+    <form action="?myprofile=1" method="post" class="blocklables label_width_200">
+        <fieldset>
+            <legend>Passwort</legend>
+            <label for="user_password_old">Altes Passwort</label>
+            <input type="password" id="user_password_old" name="user_password_old" size="40" autocomplete="off" />
+            <br/>
+            <label for="user_password">Neues Passwort</label>
+            <input type="password" id="user_password"  name="user_password" size="40"  autocomplete="off" />
+            <br/>
+            <label for="user_password2">Neues Passwort (wiederholen)</label>
+            <input type="password" id="user_password2" name="user_password2" size="40"  autocomplete="off" />
+            <br/>
+            <p class="buttons"><input type="submit" name="submitpw" value="&Uuml;bernehmen" /></p>
+        </fieldset>
+    </form>
+
+    <form action="?myprofile=1" method="post" class="blocklables label_width_200">
+        <fieldset><legend>Zwei-Faktor-Authentifizierung</legend>
+            {% if user.tfaSecret %}
+                <p>Zwei-Faktor-Authentifizierung ist aktiv. <a href="?tfa" class="">Deaktivieren</a></p>
+            {% else %}
+                <p>Zwei-Faktor-Authentifizierung ist NICHT aktiv. <a href="?tfa" class="">Aktivieren</a></p>
+            {% endif %}
+        </fieldset>
+    </form>
+{% endblock %}

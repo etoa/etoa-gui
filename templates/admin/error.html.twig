@@ -1,0 +1,7 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    {{ macros.messagebox(errorMessage, 'error') }}
+{% endif %}

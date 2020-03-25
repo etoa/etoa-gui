@@ -1,0 +1,35 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Datenbank</h1>
+    <h2>{{ subTitle}}</h2>
+
+    {% if successMessage %}
+        {{ macros.messagebox(successMessage, 'success') }}
+    {% endif %}
+
+    <p><input type="button" value="Zur Übersicht" onclick="document.location='?page={{ page }}'"/></p>
+
+    <table class="tb">
+        <thead>
+        <tr>
+            {% for field in fields %}
+                <th>{{ field }}</th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for row in rows %}
+            <tr>
+                {% for item in row %}
+                    <td>{{ item }}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <p><input type="button" value="Zur Übersicht" onclick="document.location='?page={{ page }}'"/></p>
+{% endblock %}

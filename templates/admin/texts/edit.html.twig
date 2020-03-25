@@ -1,0 +1,33 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Texte</h1>
+    <h2>{{ subtitle }}</h2>
+
+    {% if text|default(false) %}
+        <form action="?page={{ page }}&id={{ text.id }}" method="post">
+            <p>{{ text.description }}</p>
+            <textarea name="content" id="texteditor_area" rows="28" cols="100" style="width:99%">{{ text.content }}</textarea>
+            <p>
+                <button type="submit" name="save" class="positive">&Uuml;bernehmen</button>&nbsp;
+                <button type="button" onclick="document.location='?page={{ page }}&preview={{ text.id }}'">Vorschau</button>&nbsp;
+                <button type="button" onclick="document.location='?page={{ page }}'">Schliessen</button>
+                {% if not text.isOriginal %}
+                    <button type="submit" name="reset" class="negative" onclick="return confirm('Text wirklich zurücksetzen? Alle Anpassungen gehen verloren!')" style="float:right;">Auf Originaltext zurücksetzen</button>&nbsp;
+                {% endif %}
+            </p>
+            <br style="clear:both"/>
+        </form>
+        <script>
+            $(function(){
+                $('#texteditor_area').focus();
+            });
+        </script>
+    {% else %}
+        {{ macros.messagebox('Ungültige Text ID', 'error') }}
+        <p><button type="button" onclick="document.location='?page={{ page }}'">Schliessen</button></p>
+    {% endif %}
+
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Bildpakete verwalten</h1>
+
+    {if $msg|default:'' ne ""}{msg type="ok" text=$msg}{/if}
+    {if $infomsg|default:'' ne ""}{msg type="info" text=$infomsg}{/if}
+    {if $errmsg|default:'' ne ""}{msg type="err" text=$errmsg}{/if}
+
+    {% if imagepackName %}<h2>Bilder überprüfen: {{ imagepackName }}</h2>{% endif %}
+
+    {% if results %}
+    <ul>
+        {% for result in results %}
+            <li>{{ result }}</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+        {{ macros.messagebox('Alles in Ordnung!', 'success') }}
+    {% endif %}
+
+    <p><input value="Zurück" onclick="document.location='?page={{ page }}&amp;sub={{ sub }}'" type="button"></p>
+{% endblock %}

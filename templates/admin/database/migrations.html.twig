@@ -1,0 +1,60 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Datenbank</h1>
+    <h2>Schema-Migrationen</h2>
+
+    {% if successMessage %}
+        {{ macros.messagebox(successMessage, 'success') }}
+    {% endif %}
+
+    {% if errorMessage %}
+        {{ macros.messagebox(errorMessage, 'error') }}
+    {% endif %}
+
+    <h3>Durchgeführte Schema-Migrationen</h3>
+
+    <table class="tbl" style="width:100%">
+        <thead>
+        <tr>
+            <th>Version</th>
+            <th>Datum</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for migration in data %}
+            <tr>
+                <td>{{ migration.0}}</td>
+                <td>{{ migration.1 }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% if pending|length %}
+        <h3>Ausstehende Migrationen</h3>
+
+        <table class="tbl" style="width:100%">
+            <thead>
+            <tr>
+                <th>Version</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for migration in pending %}
+                <tr>
+                    <td>{{ migration }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <form action="?page={{ page }}&amp;sub={{ sub }}" method="post">
+            <p>
+                <input type="submit" name="migrate" value="Schema-Migration durchführen" onclick="return confirm('Schema-Migration wirklich starten?')" />
+            </p>
+        </form>
+    {% endif %}
+{% endblock %}

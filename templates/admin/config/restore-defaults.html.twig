@@ -1,0 +1,42 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Konfiguration</h1>
+    <h2>Konfiguration auf Standardwerte zurücksetzen</h2>
+
+    {% if successMessage %}
+        {{ macros.messagebox(successMessage, 'success') }}
+    {% endif %}
+
+    {% if changedValues|length > 0 %}
+        <h3>Veränderte Werte</h3>
+        <table class="tb">
+            <tr>
+                <th>Kategorie</th>
+                <th>Beschreibung</th>
+                <th>Variable</th>
+                <th>Typ</th>
+                <th>Wert</th>
+                <th>Standard</th>
+            </tr>
+            {% for item in changedValues %}
+                <tr{% if item.changed|default(false) %} class="configValueChanged"{% endif %}>
+                    <td>{{ item.category }}</td>
+                    <td>{{ item.label }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.type }}</td>
+                    <td><code>{{ item.value }}</code></td>
+                    <td><code>{{ item.default }}</code></td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+    <h3>Zurücksetzen</h3>
+    <form action="?page={{ page }}&amp;sub={{ sub }}" method="post">
+        <p>Soll die Konfigurationstabelle wirklich auf ihre Standardwerte zurückgesetzt werden?</p>
+        <p><input type="submit" name="restoresubmit" value="Ja, Einstellungen zurücksetzen" /></p>
+    </form>
+{% endblock %}

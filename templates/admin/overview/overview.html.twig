@@ -1,0 +1,93 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Übersicht</h1>
+
+    {% if welcomeMessage %}
+        <p>{{ welcomeMessage|raw }}</p>
+    {% endif %}
+
+    {% if forcePasswordChange %}
+        {{ macros.messagebox('Dein Passwort wurde seit der letzten automatischen Generierung noch nicht geändert. Bitte mache das jetzt <a href=\"?myprofile=1\">hier</a>!', 'warning', 'Passwortwiederherstellung')}}
+    {% endif %}
+
+    {% if not hasTfa %}
+        {{ macros.messagebox('Aktiviere <a href=\"?tfa\">Zwei-Faktor-Authentifizierung</a> um Sicherheit deines Account zu verbessern!"', 'info', 'Zwei-Faktor-Authentifizierung')}}
+    {% endif %}
+
+    {% set adminInfo = adminText('admininfo') %}
+    {% if adminInfo %}
+        {{ macros.messagebox(text2Html(adminInfo), 'info', 'Admin-News')}}
+    {% endif %}
+
+    {% set systemMessage = adminText('system_message') %}
+    {% if systemMessage %}
+        {{ macros.messagebox(text2Html(systemMessage) ~ '<br/><a href=\"?page=texts&amp;id=system_message\">Bearbeiten/Deaktivieren</a>', 'info', 'Systemnachricht aktiv!')}}
+    {% endif %}
+
+    {% if configValue('offline') == 1 %}
+        {{ macros.messagebox(configValue('offline_message') ~ '<br/><a href=\"?page=$page&amp;sub=offline\">&Auml;ndern</a>', 'warning', 'Spiel offline')}}
+    {% endif %}
+
+    {% if configValue('register_key') %}
+        {{ macros.messagebox('Die öffentlichen Seiten (Anmeldung, Statistiken etc) sind durch den Schlüssel "' ~ configValue("register_key") ~ '" geschützt!', 'info')}}
+    {% endif %}
+
+    {% if not configValue('update_enabled') == 1 %}
+        {{ macros.messagebox('Periodische Updates sind momentan deaktiviert! <a href=\"?page=cronjob&activateupdate=1\">Aktivieren</a>', 'info', 'Updates deaktiviert')}}
+    {% endif %}
+
+    {% if isAdminAllowed(userRoles, 'master,super-admin,game-admin,trial-game-admin') %}
+        <fieldset class="overview_widget">
+            <legend>Schnellsuche</legend>
+            <form action="?page=user&amp;action=search" method="post" class="blocklables label_width_120">
+                <label for="user_nick">Nick</label>
+                <input type="text" name="user_nick" id="user_nick" size="40" autofocus="autofocus" />
+                <input type="hidden" name="qmode[user_nick]" value="LIKE '%" />
+                <input type="submit" name="user_search" value="Suchen" />
+            </form>
+
+            <form action="?page=galaxy&amp;action=searchresults" method="post" class="blocklables label_width_120">
+                <label for="user_nick">Planet</label>
+                <input type="text" name="planet_name" id="planet_name" size="40" />
+                <input type="hidden" name="qmode[planet_name]" value="%" />
+                <input type="submit" name="search_submit" value="Suchen" />
+            </form>
+
+            <form action="?page=galaxy&amp;action=searchresults" method="post" class="blocklables label_width_120">
+                <label for="user_nick_planet">Planet-Besitzer</label>
+                <input type="text" id="user_nick_planet" name="user_nick" size="40" />
+                <input type="hidden" name="qmode[user_nick]" value="%" />
+                <input type="submit" name="search_submit" value="Suchen" />
+            </form>
+
+            <form action="?page=alliances&amp;action=search" method="post"  class="blocklables label_width_120">
+                <label for="alliance_tag">Allianz-Tag</label>
+                <input type="text" id="alliance_tag" name="alliance_tag" size="40" />
+                <input type="hidden" name="qmode[alliance_tag]" value="LIKE '%" />
+                <input type="submit" name="alliance_search" value="Suchen" />
+            </form>
+        </fieldset>
+    {% endif %}
+
+    {% if isAdminAllowed(userRoles, 'master,super-admin,game-admin,trial-game-admin') %}
+        <fieldset class="overview_widget"><legend>Ticket-System</legend>
+            {{ popupLink('tickets', numTickets ~ ' neue Tickets')|raw }} vorhanden
+            <br/>
+            {{ popupLink('tickets', numOpenTickets ~ ' offene Tickets')|raw }} vorhanden
+        </fieldset>
+    {% endif %}
+
+    {% if fleetBanTitle %}
+        {{ macros.messagebox(fleetBanText, 'info', fleetBanTitle)}}
+    {% endif %}
+
+    {% if not didBigBangHappen %}
+        {{ macros.messagebox('Das Universum wurde noch nicht erschaffen!', 'warning', 'Universum existiert noch nicht!')}}
+        <p>
+            <input type="button" value="Weiter zum Urknall" onclick="document.location='?page=galaxy&sub=uni'" />
+        </p>
+    {% endif %}
+{% endblock %}

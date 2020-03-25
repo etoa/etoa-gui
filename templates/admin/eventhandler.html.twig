@@ -1,0 +1,64 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Eventhandler</h1>
+
+    {% if successMessage %}
+        {{ macros.messagebox(successMessage, 'success') }}
+    {% endif %}
+
+    {% if errorMessage %}
+        {{ macros.messagebox(errorMessage, 'error') }}
+    {% endif %}
+
+    {% if isUnix %}
+        <h2>Daemon-Infos</h2>
+        <table class="tbl">
+            <tr>
+                <th>System</th>
+                <td>{{ sysId }}</td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <td class="{% if eventHandlerPid %}color_ok">PID {{ eventHandlerPid}}{% else %}">L&Auml;UFT NICHT{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Message Queue</th>
+                <td>{{ messageQueueSize}} Requests</td>
+            </tr>
+        </table>
+
+        <p>Die Einstellungen zum Eventhandler können in der <a href="?page=config&sub=editor&category=20">Konfiguration</a> angepasst werden.</p>
+
+        <h2>Management</h2>
+        <p>
+            {% if eventHandlerPid %}
+                <input type="button" value="Stop" onclick="if (confirm('Dienst wirklich stoppen?')) { document.location='?page={{ page }}&amp;action=stop'; }" />
+            {% else %}
+                <input type="button" value="Start" onclick="document.location='?page={{ page }}&amp;action=start';" />
+            {% endif %}
+        </p>
+        {% if actionOutput %}
+            <pre>
+                {{ actionOutput|raw }}
+            </pre>
+        {% endif %}
+
+        <h2>Log</h2>
+        <div class="eventhandler_log">
+            {% for line in log %}
+                <span {% if 'err' in line %}class="color_err"{% elseif 'warning' in line %}class="color_warn"{% endif %}>{{ line }}</span>
+                <br/>
+            {% endfor %}
+        </div>
+
+        <script type="text/javascript">
+            textareaelem = document.getElementById('logtext');
+            textareaelem.scrollTop = textareaelem.scrollHeight;
+        </script>
+    {% else %}
+        {{ macros.messagebox('Der Backend-Daemon wird nur auf UNIX-Systemen unterstüzt!', 'warning') }}
+    {% endif %}
+{% endblock %}

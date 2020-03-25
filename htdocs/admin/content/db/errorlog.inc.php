@@ -1,13 +1,11 @@
 <?PHP
-	$tpl->setView('errorlog');
-	$tpl->assign('subtitle', 'Datenbankfehler');
 
-	if (isset($_POST['purgelog_submit'])) {
-		file_put_contents(DBERROR_LOGFILE, '');
-		forward('?page='.$page.'&sub='.$sub);
-	}
-	
-	if (is_file(DBERROR_LOGFILE)) {
-		$tpl->assign('logfile', file_get_contents(DBERROR_LOGFILE));
-	}
-?>
+if (isset($_POST['purgelog_submit'])) {
+    file_put_contents(DBERROR_LOGFILE, '');
+    forward('?page='.$page.'&sub='.$sub);
+}
+
+echo $twig->render('admin/database/errorlog.html.twig', [
+    'logFile' => is_file(DBERROR_LOGFILE) ? file_get_contents(DBERROR_LOGFILE) : null,
+]);
+exit();

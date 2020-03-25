@@ -15,15 +15,15 @@
 	// Programmiert von Nicolas Perrenoud				 		//
 	// www.nicu.ch | mail@nicu.ch								 		//
 	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	//////////////////////////////////////////////////	
+	//////////////////////////////////////////////////
 	//
-	// 	Dateiname: home.php	
-	// 	Topic: Willkommensseite der Administration 
-	// 	Autor: Nicolas Perrenoud alias MrCage							
+	// 	Dateiname: home.php
+	// 	Topic: Willkommensseite der Administration
+	// 	Autor: Nicolas Perrenoud alias MrCage
 	// 	Erstellt: 01.12.2004
 	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage
 	// 	Bearbeitet am: 31.03.2006
-	// 	Kommentar: 	
+	// 	Kommentar:
 	//
 
 	//
@@ -32,7 +32,7 @@
 	if ($sub=="offline")
 	{
 		echo "<h1>Spiel offline nehmen</h1>";
-		
+
 		if (isset($_GET['off']) && $_GET['off']==1)
 		{
 			$cfg->set('offline',1);
@@ -41,7 +41,7 @@
 		{
 			$cfg->set('offline',0);
 		}
-		
+
 		if (isset($_POST['save']))
 		{
 			$cfg->set('offline_ips_allow', $_POST['offline_ips_allow']);
@@ -56,17 +56,17 @@
 			Nachricht: <br/><textarea name=\"offline_message\" rows=\"6\" cols=\"60\">".$cfg->offline_message->v."</textarea><br/><br/>
 			<input type=\"submit\" value=\"&Auml;nderungen speichern\" name=\"save\" /> &nbsp; 
 			<input type=\"button\" value=\"Spiel online stellen\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;on=1'\" />";
-			
+
 		}
 		else
 		{
 			echo "<span style=\"color:#0f0;\">Das Spiel ist online!</span><br/><br/>
 			<input type=\"button\" value=\"Spiel offline nehmen\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;off=1'\" />";
-		}	
+		}
 		echo "</form>";
-	}	
-	
-	
+	}
+
+
 	//
 	// Rangliste
 	//
@@ -78,41 +78,27 @@
 	//
 	// Statistiken
 	//
-	elseif ($sub=="gamestats")
-	{
-		$tpl->setView("overview/gamestats");
-		$tpl->assign("title", "Spielstatistiken");
-
-		if (file_exists(USERSTATS_OUTFILE)) {
-			$tpl->assign("userstats", USERSTATS_OUTFILE);
-		}
-		if (is_file(GAMESTATS_FILE)) {
-			$tpl->assign("gamestats", file_get_contents(GAMESTATS_FILE));
-		}
-		if (file_exists(XML_INFO_FILE)) {
-			$tpl->assign("xmlinfo", XML_INFO_FILE);
-		}
+	elseif ($sub === "gamestats") {
+        echo $twig->render('admin/overview/gamestats.html.twig', [
+            'userStats' => file_exists(USERSTATS_OUTFILE) ? USERSTATS_OUTFILE : null,
+            'xmlInfo' => file_exists(XML_INFO_FILE) ? XML_INFO_FILE : null,
+            'gameStats' => is_file(GAMESTATS_FILE) ? file_get_contents(GAMESTATS_FILE) : null,
+        ]);
+        exit();
 	}
 
 	//
 	// Changelog
 	//
-	elseif ($sub=="changelog")
-	{
-		$tpl->setView("overview/changelog");
-		$tpl->assign("title", "Changelog");
-
+	elseif ($sub === "changelog") {
 		$Parsedown = new Parsedown();
-		
 		$changelogFile = "../../Changelog.md";
-		if (is_file($changelogFile)) {
-			$tpl->assign("changelog", $Parsedown->text(file_get_contents($changelogFile))); 
-		}
-		
-		$changelogFile = "../../Changelog_public.md";
-		if (is_file($changelogFile)) {
-			$tpl->assign("changelog_public", $Parsedown->text(file_get_contents($changelogFile))); 
-		}
+		$changelogPublicFile = "../../Changelog_public.md";
+        echo $twig->render('admin/overview/changelog.html.twig', [
+            'changelog' => is_file($changelogFile) ? $Parsedown->text(file_get_contents($changelogFile)) : null,
+            'changelogPublic' => is_file($changelogPublicFile) ? $Parsedown->text(file_get_contents($changelogPublicFile)) : null,
+        ]);
+        exit();
 	}
 
 	//
@@ -121,7 +107,7 @@
 	elseif ($sub=="adminlog")
 	{
 		echo "<h1>Admin-Log</h1>";
-		
+
 		if (isset($_POST['logshow']) && $_POST['logshow']!="")
 		{
 			$ures=dbquery("SELECT
@@ -190,12 +176,12 @@
 					echo "</table>";
 				}
 				else
-					echo "<i>Keine Eintr&auml;ge vorhanden</i>";				
+					echo "<i>Keine Eintr&auml;ge vorhanden</i>";
 
 			}
 			else
 			{
-				echo "<h2>Fehler</h2><i>User nicht vorhanden</i>";			
+				echo "<h2>Fehler</h2><i>User nicht vorhanden</i>";
 			}
 			echo "<br/><br/><input type=\"button\" value=\"Zur &Uuml;bersicht\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" />";
 		}
@@ -218,7 +204,7 @@
 				else
 					echo error_msg("Du kannst nicht dich selbst kicken!");
 			}
-			
+
 			if (isset($_POST['delentrys']) && $_POST['delentrys']!="")
 			{
 				if (isset($logDelTimespan[$_POST['log_timestamp']]))
@@ -227,8 +213,8 @@
 					$nr = AdminSession::cleanupLogs($td);
 					echo "<p>".$nr." Eintr&auml;ge wurden gel&ouml;scht!</p>";
 				}
-			}			
-			
+			}
+
 			echo "<h2>Aktive Sessions</h2>";
 			echo "Das Timeout betr&auml;gt ".tf($cfg->admin_timeout->v)."<br/><br/>";
 
@@ -280,12 +266,12 @@
 						<td title=\"".$arr['user_agent']."\">".$browser."</td>
 						<td><a href=\"?page=$page&amp;sub=$sub&amp;kick=".$arr['user_id']."\">Kick</a></td>
 					</tr>";
-				}			
+				}
 				echo "</table>";
 			}
 			else
 				echo "<i>Keine Eintr&auml;ge vorhanden!</i>";
-			
+
 			echo "<h2>Session-Log</h2>";
 			$res=dbquery("SELECT 
 				user_nick,
@@ -321,8 +307,8 @@
 			else
 				echo "<i>Keine Eintr&auml;ge vorhanden</i>";
 		}
-	}	
-	
+	}
+
 	//
 	// User bearbeiten
 	//
@@ -330,231 +316,84 @@
 	{
 		require("home/adminusers.inc.php");
 	}
-	
+
 	//
 	// User beobachten
 	//
 	elseif ($sub=="observed")
 	{
 		require("home/observed.inc.php");
-	}	
-
-	elseif ($sub=="sysinfo") {
-	
-		$tpl->setView("sysinfo");
-		$tpl->assign("title", "System-Informationen");
-
-		if (UNIX)
-		{
-			$un=posix_uname();
-			$tpl->assign("unix_name", $un['sysname']." ".$un['release']." ".$un['version']);
-		}
-		$tpl->assign("php_version", phpversion());
-		$tpl->assign("db_version", mysql_get_client_info());
-		$tpl->assign("webserver_version", $_SERVER['SERVER_SOFTWARE']);
 	}
-	
+
+	elseif ($sub === "sysinfo") {
+		$unix = UNIX ? posix_uname() : null;
+		echo $twig->render('admin/overview/sysinfo.html.twig', [
+			'phpVersion' => phpversion(),
+			'dbVersion' => mysql_get_client_info(),
+			'webserverVersion' => $_SERVER['SERVER_SOFTWARE'],
+			'unixName' => UNIX ? $unix['sysname'] . ' ' . $unix['release'] . ' ' . $unix['version'] : null,
+		]);
+		exit();
+	}
+
 	//
 	// Übersicht
 	//
-	else
-	{
-		$tpl->setView("overview");
-		$tpl->assign("title", "&Uuml;bersicht");
-
-		$tpl->assign("welcome_msg", "Hallo <b>".$cu->nick."</b>, willkommen im Administrationsmodus! Deine Rolle(n): <b>".$cu->getRolesStr().".</b>");
-		$tpl->assign('has_tfa', !empty($cu->tfaSecret));
-		
+	else {
 		//
 		// Universum generieren
 		//
 		$res = dbquery("SELECT COUNT(id) FROM cells;");
 		$arr = mysql_fetch_row($res);
-		if ($arr[0]==0)
-		{
-			echo MessageBox::warning("Universum existiert noch nicht!", "Das Universum wurde noch nicht erschaffen!");
-			echo "<p><input type=\"button\" value=\"Weiter zum Urknall\" onclick=\"document.location='?page=galaxy&sub=uni'\" /></p>";
-		}
-		else
-		{			
-			$tpl->assign("force_password_change", $cu->forcePasswordChange);
-		
-			// Flottensperre aktiv
-			if ($conf['flightban']['v']==1)
-			{
-				// Prüft, ob die Sperre schon abgelaufen ist
-				if($conf['flightban_time']['p1']<=time() && $conf['flightban_time']['p2']>=time())
-				{
-					$flightban_time_status = "<span style=\"color:#0f0\">Aktiv</span> Es können keine Flüge gestartet werden!";
-				}
-				elseif($conf['flightban_time']['p1']>time() && $conf['flightban_time']['p2']>time())
-				{
-					$flightban_time_status = "Ausstehend";
-				}
-				else
-				{
-					$flightban_time_status = "<span style=\"color:#f90\">Abgelaufen</span>";
-				}
-				
-				$tpl->assign("fleet_ban_title", "Flottensperre aktiviert");
-				$tpl->assign("fleet_ban_text", "Die Flottensperre wurde aktiviert.<br><br><b>Status:</b> ".$flightban_time_status."<br><b>Zeit:</b> ".date("d.m.Y H:i",$conf['flightban_time']['p1'])." - ".date("d.m.Y H:i",$conf['flightban_time']['p2'])."<br><b>Grund:</b> ".$conf['flightban']['p1']."<br><br>Zum deaktivieren: <a href=\"?page=fleets&amp;sub=fleetoptions\">Flottenoptionen</a>");
-			}
-		
-			// Kampfsperre aktiv
-			if ($conf['battleban']['v']==1)
-			{
-				// Prüft, ob die Sperre schon abgelaufen ist
-				if($conf['battleban_time']['p1']<=time() && $conf['battleban_time']['p2']>=time())
-				{
-					$battleban_time_status = "<span style=\"color:#0f0\">Aktiv</span> Es können keine Angriffe geflogen werden!";
-				}
-				elseif($conf['battleban_time']['p1']>time() && $conf['battleban_time']['p2']>time())
-				{
-					$battleban_time_status = "Ausstehend";
-				}
-				else
-				{
-					$battleban_time_status = "<span style=\"color:#f90\">Abgelaufen</span>";
-				}
 
-				$tpl->assign("fleet_ban_title", "Kampfsperre aktiviert");
-				$tpl->assign("fleet_ban_text", "Die Kampfsperre wurde aktiviert.<br><br><b>Status:</b> ".$battleban_time_status."<br><b>Zeit:</b> ".date("d.m.Y H:i",$conf['battleban_time']['p1'])." - ".date("d.m.Y H:i",$conf['battleban_time']['p2'])."<br><b>Grund:</b> ".$conf['battleban']['p1']."<br><br>Zum deaktivieren: <a href=\"?page=fleets&amp;sub=fleetoptions\">Flottenoptionen</a>");
+		// Flottensperre aktiv
+		$fleetBanTitle = null;
+		$fleetBanText = null;
+		if ($conf['flightban']['v']==1) {
+			// Prüft, ob die Sperre schon abgelaufen ist
+			if($conf['flightban_time']['p1'] <= time() && $conf['flightban_time']['p2'] >= time()) {
+				$flightban_time_status = "<span style=\"color:#0f0\">Aktiv</span> Es können keine Flüge gestartet werden!";
+			} elseif($conf['flightban_time']['p1'] > time() && $conf['flightban_time']['p2'] > time()) {
+				$flightban_time_status = "Ausstehend";
+			} else {
+				$flightban_time_status = "<span style=\"color:#f90\">Abgelaufen</span>";
 			}
-	
+
+			$fleetBanTitle = "Flottensperre aktiviert";
+			$fleetBanText = "Die Flottensperre wurde aktiviert.<br><br><b>Status:</b> ".$flightban_time_status."<br><b>Zeit:</b> ".date("d.m.Y H:i",$conf['flightban_time']['p1'])." - ".date("d.m.Y H:i",$conf['flightban_time']['p2'])."<br><b>Grund:</b> ".$conf['flightban']['p1']."<br><br>Zum deaktivieren: <a href=\"?page=fleets&amp;sub=fleetoptions\">Flottenoptionen</a>";
+		}
+
+		// Kampfsperre aktiv
+		if ($conf['battleban']['v']==1) {
+			// Prüft, ob die Sperre schon abgelaufen ist
+			if ($conf['battleban_time']['p1'] <= time() && $conf['battleban_time']['p2'] >= time()) {
+				$battleban_time_status = "<span style=\"color:#0f0\">Aktiv</span> Es können keine Angriffe geflogen werden!";
+			} elseif ($conf['battleban_time']['p1'] > time() && $conf['battleban_time']['p2'] > time()) {
+				$battleban_time_status = "Ausstehend";
+			} else {
+				$battleban_time_status = "<span style=\"color:#f90\">Abgelaufen</span>";
+			}
+
+			$fleetBanTitle = "Kampfsperre aktiviert";
+			$fleetBanText = "Die Kampfsperre wurde aktiviert.<br><br><b>Status:</b> " . $battleban_time_status . "<br><b>Zeit:</b> " . date("d.m.Y H:i", $conf['battleban_time']['p1']) . " - " . date("d.m.Y H:i", $conf['battleban_time']['p2']) . "<br><b>Grund:</b> " . $conf['battleban']['p1'] . "<br><br>Zum deaktivieren: <a href=\"?page=fleets&amp;sub=fleetoptions\">Flottenoptionen</a>";
+		}
+
 		//
 		// Schnellsuche
 		//
 		$_SESSION['planets']['query']=Null;
 		$_SESSION['admin']['user_query']="";
 		$_SESSION['admin']['queries']['alliances']="";
-	
-		// Tickets
-		$tpl->assign("num_new_tickets", Ticket::countNew());
-		$tpl->assign("num_open_tickets", Ticket::countAssigned($cu->id));
 
-
-		/*
-		// Beobachter
-		$res = dbquery("
-		SELECT
-			COUNT(user_id)
-		FROM 
-			users
-		WHERE 
-			user_observe!=''
-		");
-		$arr = mysql_fetch_row($res);
-		echo "<tr><th class=\"tbltitle\">Beobachter:</th>";
-		echo "<td class=\"tbldata\"";
-		echo "><a href=\"?page=user&amp;sub=observed\"";
-		if ($arr[0]>0) echo " style=\"font-weight:bold;color:#f90;\"";
-		echo ">".$arr[0]." User</a> stehen unter Beobachtung</td></tr>";
-
-			
-		$res = dbquery("SELECT
-			COUNT(user_id)
-		FROM
-			users
-		WHERE
-			user_profile_img_check=1;");
-		$arr=mysql_fetch_row($res);
-		if ($arr[0]>0)
-		{
-			echo "<tr><th class=\"tbltitle\">Profil-Bilder:</th>";
-			echo "<td class=\"tbldata\">";
-			echo "<a href=\"?page=user&amp;sub=imagecheck\" style=\"font-weight:bold;color:#f90;\">".$arr[0]." Spieler-Profilbilder</a> wurden noch nicht verifiziert. Gewisse Bilder könnten gegen die Regeln verstossen. <a href=\"?page=user&amp;sub=imagecheck\">Jetzt prüfen</a>";
-			echo "</td></tr>";
-		}
-
-		$res = dbquery("SELECT
-			COUNT(alliance_id)
-		FROM
-			alliances
-		WHERE
-			alliance_img_check=1;");
-		$arr=mysql_fetch_row($res);
-		if ($arr[0]>0)
-		{
-			echo "<tr><th class=\"tbltitle\">Profil-Bilder:</th>";
-			echo "<td class=\"tbldata\">";
-			echo "<a href=\"?page=alliances&amp;sub=imagecheck\" style=\"font-weight:bold;color:#f90;\">".$arr[0]." Allianz-Profilbilder</a> wurden noch nicht verifiziert. Gewisse Bilder könnten gegen die Regeln verstossen. <a href=\"?page=alliances&amp;sub=imagecheck\">Jetzt prüfen</a>";
-			echo "</td></tr>";
-		}
-
-		tableEnd();		
-		*/
-		
-		/*
-		// Online
-
-		$ures=dbquery("SELECT count(*) FROM users;");
-		$uarr=mysql_fetch_row($ures);
-		$up=$uarr[0]/$conf['enable_register']['p2'];
-		$p1res=dbquery("SELECT count(*) FROM planets WHERE planet_user_id>0;");
-		$p1arr=mysql_fetch_row($p1res);
-		$p2res=dbquery("SELECT count(*) FROM planets;");
-		$p2arr=mysql_fetch_row($p2res);
-		if ($p2arr[0]>0)
-			$pp=$p1arr[0]/$p2arr[0];
-		else
-			$pp=0;
-		$s1res=dbquery("SELECT count(entities.cell_id) FROM entities,planets WHERE planets.id=entities.id AND planet_user_id>0 GROUP BY entities.cell_id;");
-		$s1arr=mysql_num_rows($s1res);
-		$s2res=dbquery("SELECT count(*) FROM entities WHERE code='s';");
-		$s2arr=mysql_fetch_row($s2res);
-		if ($s2arr[0]>0)
-			$sp=$s1arr/$s2arr[0];
-		else
-			$sp=0;
-
-		$gres=dbquery("SELECT COUNT(*) FROM user_sessions WHERE time_action>".(time() - $cfg->user_timeout->v).";");
-		$garr=mysql_fetch_row($gres);
-		if ($uarr[0]>0)
-			$gp=$garr[0]/$uarr[0]*100;
-		else
-			$gp=0;
-		$a1res=dbquery("SELECT COUNT(*)  FROM admin_user_sessions WHERE time_action>".(time() - $cfg->admin_timeout->v).";");
-		$a1arr=mysql_fetch_row($a1res);
-		$a2res=dbquery("SELECT COUNT(*)  FROM admin_users;");
-		$a2arr=mysql_fetch_row($a2res);
-		if ($a2arr[0]>0)
-			$ap=$a1arr[0]/$a2arr[0]*100;
-		else
-			$ap=0;
-
-		/*
-
-		//
-		// Auslastung
-		//
-		$g_style=" style=\"color:#0f0\"";
-		$y_style=" style=\"color:#ff0\"";
-		$o_style=" style=\"color:#fa0\"";
-		$r_style=" style=\"color:#f55\"";
-
-		echo "<div>";
-		
-		echo "<table class=\"tb\" style=\"width:auto;float:left;margin-right:20px;\">";
-		echo "<tr><th colspan=\"3\">User-Statisik</th></tr>";
-		echo "<tr><th>User:</th>";
-		if ($up<0.5) $tbs=$g_style;
-		elseif ($up<0.8) $tbs=$y_style;
-		elseif ($up<0.9) $tbs=$o_style;
-		else $tbs=$r_style;
-		echo "<td $tbs>".$uarr[0]." / ".$conf['enable_register']['p2']."</td><td $tbs>".round($up*100,1)."%</td></tr>";
-		echo "<tr><th>Planeten:</th>";
-		if ($pp<0.5) $tbs=$g_style;
-		elseif ($pp<0.8) $tbs=$y_style;
-		elseif ($pp<0.9) $tbs=$o_style;
-		else $tbs=$r_style;
-		echo "<td $tbs>".$p1arr[0]." / ".$p2arr[0]."</td><td $tbs>".round($pp*100,1)."%</td></tr>";
-		echo "<tr><th>Systeme:</th> ";
-		if ($sp<0.5) $tbs=$g_style;
-		elseif ($sp<0.8) $tbs=$y_style;
-		elseif ($sp<0.9) $tbs=$o_style;
-		else $tbs=$r_style;
-		echo "<td $tbs>".$s1arr." / ".$s2arr[0]."</td><td $tbs>".round($sp*100,1)."%</td></tr>";
-		echo "</table>";*/
+		echo $twig->render('admin/overview/overview.html.twig', [
+			'welcomeMessage' => 'Hallo <b>' .$cu->nick. '</b>, willkommen im Administrationsmodus! Deine Rolle(n): <b>' . $cu->getRolesStr() . '.</b>',
+			'hasTfa' => !empty($cu->tfaSecret),
+			'didBigBangHappen' => $arr[0]!=0,
+			'forcePasswordChange' => $cu->forcePasswordChange,
+			'numNewTickets' => Ticket::countNew(),
+			'numOpenTickets' => Ticket::countAssigned($cu->id),
+			'fleetBanText' => $fleetBanText,
+			'fleetBanTitle' => $fleetBanTitle,
+		]);
+		exit();
 	}
-}
-?>

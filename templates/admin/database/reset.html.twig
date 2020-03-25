@@ -1,0 +1,29 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Datenbank</h1>
+    <h2>Reset</h2>
+
+    {% if successMessage %}
+        {{ macros.messagebox(successMessage, 'success') }}
+    {% endif %}
+
+    {% if infoMessage %}
+        {{ macros.messagebox(infoMessage, 'info') }}
+    {% endif %}
+
+    {% if errorMessage %}
+        {{ macros.messagebox(errorMessage, 'error') }}
+    {% endif %}
+
+    <form action="?page={{ page }}&sub={{ sub }}" method="post">
+        <p><input type="radio" name="action" value="truncate" id="action_truncate" checked="checked"> <label for="action_truncate">Tabellen leeren (alle ausser Tabellen mit Definitionen)</label></p>
+        <p><input type="radio" name="action" value="drop" id="action_drop"> <label for="action_drop">Tabellen löschen und Datenbank neu vom Schema aufbauen</label></p>
+        <p>
+            <input type="submit" value="Ausführen" name="submit" onclick="return confirm('Soll diese Aktion wirklich ausgeführt werden?')"  />&nbsp;
+            <input type="button" value="Zur Übersicht" onclick="document.location='?page={{ page }}'"/>
+        </p>
+    </form>
+{% endblock %}

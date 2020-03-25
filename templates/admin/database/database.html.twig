@@ -1,0 +1,93 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Datenbank</h1>
+
+    <div style="display:table;width:100%;">
+        <div style="display:table-cell;width:50%;vertical-align:top;padding-right:20px;">
+            <h2>Datenbank-Pflege</h2>
+
+            <p><input type="button" value="Optimieren" onclick="document.location='?page={{ page }}&amp;sub=maintenance&action=optimize';" /> &nbsp; Sortiert Indizes und defragmentiert Daten.</p>
+            <p><input type="button" value="Analysieren" onclick="document.location='?page={{ page }}&amp;sub=maintenance&action=analyze';" /> &nbsp; Analysiert die Schlüsselverteilung der Tabellen.</p>
+            <p><input type="button" value="Überprüfen" onclick="document.location='?page={{ page }}&amp;sub=maintenance&action=check';" /> &nbsp; Prüft Tabellen auf Fehler.</p>
+            <p><input type="button" value="Reparieren" onclick="document.location='?page={{ page }}&amp;sub=maintenance&action=repair';" /> &nbsp; Repariert möglicherweise defekte Tabellen.</p>
+
+            <p><b>Achtung:</b> Einige Operationen können die Datenbank stark belasten und es dauert eine Weile bis die geforderte Seite geladen ist.</p>
+
+
+            <h2>Serverstatistiken</h2>
+            <p>Der Server läuft seit <b>{{ serverUptime }}</b> und wurde am <b>{{ serverStarted }}</b> Uhr gestartet.</p>
+            <table style="width:100%;" class="tb">
+                <colgroup>
+                    <col style="width:40%;"/>
+                    <col style="width:30%;"/>
+                    <col style="width:30%;"/>
+                </colgroup>
+                <tr><th>Traffic</th><th>Anzahl</th><th>ø pro Stunde</th></tr>
+                <tr><td>Empfangen</td><td>{{ bytesReceived }}</td><td>{{ bytesReceivedHour }}</td></tr>
+                <tr><td>Gesendet</td><td>{ bytesSent }</td><td>{{ bytesSentHour }}</td></tr>
+                <tr><td>Total</td><td>{{ bytesTotal }}</td><td>{{ bytesTotalHour }}</td></tr>
+            </table><br/>
+            <table style="width:100%;" class="tb">
+                <colgroup>
+                    <col style="width:40%;"/>
+                    <col style="width:30%;"/>
+                    <col style="width:30%;"/>
+                </colgroup>
+                <tr><th>Verbindungen</th><th>Anzahl</th><th>ø pro Stunde</th></tr>
+                <tr><td>max. gleichz. Verbindungen</td><td>{{ maxUsedConnections }}</td><td>-</td></tr>
+                <tr><td>Fehlgeschlagen</td><td>{{ abortedConnections }}</td><td>{{ abortedConnectsHour }}</td></tr>
+                <tr><td>Abgebrochen</td><td>{{ abortedClients }}</td><td>{{ abortedClientsHour }}</td></tr>
+                <tr><td>Insgesamt</td><td>{{ connections }}</td><td>{{ connectionsHour }}</td></tr>
+            </table><br/>
+            <table style="width:100%;" class="tb">
+                <colgroup>
+                    <col style="width:40%;"/>
+                    <col />
+                </colgroup>
+                <tr><th colspan="2">Abfragen</th></tr>
+                <tr><td>Insgesamt</td><td>{{ questions }}</td></tr>
+                <tr><td>ø pro Tag</td><td>{{ avgQuestionsDay }}</td></tr>
+                <tr><td>ø pro Stunde</td><td>{{ avgQuestionsHour }}</td></tr>
+                <tr><td>ø pro Minute</td><td>{{ avgQuestionsMinute }}</td></tr>
+                <tr><td>ø pro Sekunde</td><td>{{ avgQuestionsSecond }}</td></tr>
+            </table><br/>
+            <table style="width:100%;" class="tb">
+                <colgroup>
+                    <col style="width:40%;"/>
+                    <col />
+                </colgroup>
+                <tr><th colspan="2">Sonstiges</th></tr>
+                <tr><td>Langsame Abfragen</td><td>{{ slowQueries }}</td></tr>
+                <tr><td>Erstellte Temorärtabellen auf der Festplatte</td><td>{{ createdTmpDiskTables }}</td></tr>
+                <tr><td>Offene Tabellen</td><td>{{ openTables }}</td></tr>
+                <tr><td>Geöffnete Tabellen</td><td>{{ openedTables }}</td></tr>
+            </table><br/>
+
+        </div>
+
+        <div style="display:table-cell;vertical-align:top;">
+            <h2>Datenbankstatistiken</h2>
+            <p>Die Datenbank <b>{{ dbName }}</b> hat <b>{{ dbRows }}</b> Zeilen<br/>
+                und eine Gesamtgrösse von <b>{{ dbSize }}</b></p>
+            <h3>Datenbanktabellen</h3>
+            <table style="width:100%" class="tb">
+                <tr>
+                    <th><a href="?page={{ page }}&amp;sort=name">Name</a></th>
+                    <th><a href="?page={{ page }}&amp;sort=size">Grösse</a></th>
+                    <th><a href="?page={{ page }}&amp;sort=rows">Einträge</a></th>
+                    <th><a href="?page={{ page }}&amp;sort=engine">Engine</a></th>
+                </tr>
+                {% for table in dbStats %}
+                    <tr>
+                        <td>{{ table.name}}</td>
+                        <td>{{ table.size }}</td>
+                        <td>{{ table.entries }}</td>
+                        <td>{{ table.engine }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+    </div>
+{% endblock %}

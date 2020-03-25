@@ -1,0 +1,27 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Mein Profil</h1>
+
+    {% if errMsg|default(false) %}
+        {{ macros.messagebox(errMsg, 'error') }}
+    {% endif %}
+
+    <form action="?tfa" method="post" class="blocklables label_width_200">
+        <fieldset><legend>Zwei-Faktor-Authentifizierung</legend>
+            {% if tfaQrCode|default(false) %}
+                <p>Zwei-Faktor-Authentifizierung ist NICHT aktiv. Aktiviere dieses Sicherheitsfeature, um deinen Account besser zu schützen. Beim Login muss zusätzlich zum Passwort jedesmal ein zeitlich wechselnder Code eingegeben werden.</p>
+                <p>Scanne den folgenden QR Code mit der <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank">Google Authenticator App</a>
+                    und gib danach den sechsstelligen Code in das untenstehende 'Challenge' Feld ein, um die Zwei-Faktor-Authentifizierung zu aktivieren.
+                </p>
+                <p class="buttons"><img src="{{ tfaQrCode|raw }}"></p>
+                <label for="tfa_challenge">Challenge</label> <input type="text" id="tfa_challenge" name="tfa_challenge" size="6" autocomplete="off" /><br/>
+                <p class="buttons"><input type="submit" name="tfa_activate" value="Aktivieren" /> &nbsp; <a href="?myprofile">Abbrechen</a></p>
+            {% else %}
+                <p>Aktivierung momentan nicht möglich!</p>
+            {% endif %}
+        </fieldset>
+    </form>
+{% endblock %}

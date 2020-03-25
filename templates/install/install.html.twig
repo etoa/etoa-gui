@@ -3,7 +3,7 @@
 {% block content %}
     <div class="installContainer">
         <h1>EtoA Installation</h1>
-        Spielversion: {{ version }}
+        Spielversion: {{ version() }}
 
         <ul class="installMenu">
             {% for step,title in {1: 'MySQL-Datenbank', 2: 'Allgemeine Daten', 3: 'Abschluss'} %}

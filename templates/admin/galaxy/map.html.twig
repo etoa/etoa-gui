@@ -1,0 +1,72 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Galaxiekarte</h1>
+
+    <div id="tabs">
+        <ul>
+            <li><a href="#image">Kartenbild</a></li>
+            <li><a href="#interactive">Interaktive Karte</a></li>
+        </ul>
+
+        <div id="image">
+            Anzeigen:
+            <select onchange="$('#img').attr('src', this.options[this.selectedIndex].value);">
+                <option value="../misc/map.image.php?legend&amp;req_admin&amp;t={$smarty.now}">Normale Galaxieansicht</option>
+                <option value="../misc/map.image.php?legend&amp;req_admin&amp;type=populated&t={$smarty.now}">Bev&ouml;lkerte Systeme</option>
+            </select><br/><br/>
+            <img src="../misc/map.image.php?legend&amp;req_admin" alt="Galaxiekarte" id="img" usemap="#Galaxy" style="border:none\"/>
+        </div>
+
+        <div id="interactive">
+            <div id="map_viewport">
+                <div id="sector_map_table">
+                    {% for sy,row in mapSectors %}
+                        {% for sx,data in row %}
+                            <div class="sector_map_cell" style="display:inline-block;width:auto">{{ data|raw }}</div>
+                        {% endfor %}
+                        <br/>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var mapIsBeingDragged=false
+
+        $(function() {
+
+            $("#tabs").tabs();
+
+            $('#sector_map_table .sector_map_cell a img')
+                .mouseover(function(event){
+                    if (!mapIsBeingDragged) {
+                        $(event.currentTarget).addClass('hovered');
+                    }
+                })
+                .mouseout(function(event){
+                    $(event.currentTarget).removeClass('hovered');
+                })
+                .dblclick(function(event){
+                    document.location='?page=galaxy&cell_id='+$(event.currentTarget).attr('data-id');
+                });
+
+            initMap = function() {
+                $("#map_viewport").mapbox({
+                    mousewheel: true,
+                    beforeDragging: function() {
+                        mapIsBeingDragged=true;
+                    },
+                    afterDragging: function() {
+                        mapIsBeingDragged=false;
+                    }
+                });
+            }
+            initMap();
+
+        });
+    </script>
+{% endblock %}
