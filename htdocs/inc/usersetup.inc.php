@@ -133,7 +133,13 @@
 		echo "</td></tr>";		
 		echo "<tr><th>Ansicht:</th><td style=\"background:#000;text-align:center;\"><img src=\"".$tp->imagePath("m")."\" style=\"border:none;\" alt=\"planet\" /></td></tr>
 		</table>";
-
+		echo "<table class='tb'>
+		<tr>
+		<td>
+		Du kannst einmal während des Spiels eine andere Kolonie zum Hauptplaneten bestimmen.
+		</td>
+		</tr>
+		</table>";
         tableStart("Filter",300);
         echo "<tr>
 			<th>Sonnentyp:</th>

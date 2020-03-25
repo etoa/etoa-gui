@@ -1,6 +1,12 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.6 (round 20)
+--------------
+### Features ###
+
+* added info line 
+
 Version 3.5.24
 --------------
 ### Features ###
