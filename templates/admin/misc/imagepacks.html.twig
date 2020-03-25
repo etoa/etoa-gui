@@ -1,0 +1,88 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Bildpakete verwalten</h1>
+    <h2>Bildpakete verwalten</h2>
+
+    {% if errorMessage %}
+        {{ macros.messagebox(errorMessage, 'error') }}
+    {% endif %}
+
+    <table class="tbl" style="width:100%">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Beschreibung</th>
+            <th>Geändert</th>
+            <th>Version</th>
+            <th>Autor</th>
+            <th>E-Mail</th>
+            <th>Dateitypen</th>
+            <th>Aktionen</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for key,pack in imagepacks %}
+            <tr>
+                <td>{{ pack.name }}</td>
+                <td>{{ pack.description }}</td>
+                <td>{{ pack.changed }}</td>
+                <td>{{ pack.version }}</td>
+                <td>{{ pack.author }}</td>
+                <td>{{ pack.email }}</td>
+                <td>{{ pack.extensions|join(', ') }}
+                </td>
+                <td style="width:150px">
+                    <a href="?page={{ page }}&sub={{ sub }}&manage={{ key }}">Überprüfen</a>
+                    <a href="?page={{ page }}&sub={{ sub }}&download={{ key }}">Download</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Dokumentation</h2>
+
+    <h3>Bildpaket-Info Datei</h3>
+    <p>Beispiel einer <code>imagepacks.xml</code> Datei:</p>
+    <pre class="code">{{ sampleInfoFile }}</pre>
+    <p>Die Tags haben folgende Bedeuting:</p>
+    <ul>
+        {% for key,value in infoParams %}
+            <li><b>{{ key }}:</b> {{ value }}</li>
+        {% endfor %}
+    </ul>
+
+
+    <h3>Benötigte Bilddateien</h3>
+    {% for dir,data in requiredImages %}
+        <h4>Verzeichnis: {{ dir }}</h4>
+        <table class="tbl" style="width:100%">
+            <colgroup>
+                <col style="width:150px"/>
+                <col/>
+            </colgroup>
+            <thead>
+            <tr>
+                <th>Dateiname</th>
+                <th>Name</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for i in data.1 %}
+                <tr>
+                    {% if i is iterable %}
+                        <td><code>{{ data.0 }}{{ i.0 }}.{{ baseType }}</code></td>
+                        <td>{{ i.1}}</td>
+                    {% else %}
+                        <td><code>{{ data.0 }}{{ i }}.{{ baseType }}</code></td>
+                        <td>-</td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endfor %}
+{% endblock %}
