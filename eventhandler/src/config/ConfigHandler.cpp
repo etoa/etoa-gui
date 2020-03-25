@@ -9,35 +9,35 @@
 		temp = cConfig.at(sConfig[name]);
 		return(temp[value]);
 	}
-	
+
 	double Config::nget(std::string name, int value)
 	{
 		std::string temp = get(name, value);
 		double var = atof(temp.data());
 		return(var);
 	}
-	
+
 	double Config::idget(std::string name)
 	{
 		return(idConfig[name]);
 	}
-	
+
 	short Config::getAction(std::string action)
 	{
 		return(actions[action]);
 	}
-	
+
 	std::string Config::getActionName(std::string action)
 	{
 		return(actionName[action]);
 	}
-	
+
 	void Config::setConfigFile(std::string file)
 	{
 		this->configFile = file;
 		loadConfig();
 	}
-	
+
 	std::string Config::getConfigFile()
 	{
 		return this->configFile;
@@ -47,7 +47,7 @@
 	{
 		return this->configFileInstance->Value(section, entry);
 	}
-	
+
 	std::string Config::getAppConfigValue(std::string const& section, std::string const& entry, double value)
 	{
 		return this->configFileInstance->Value(section, entry, value);
@@ -62,12 +62,12 @@
 	{
 		this->sleep = sleep;
 	}
-	
+
 	int Config::getSleep()
 	{
 		return this->sleep;
 	}
-	
+
 	void Config::reloadConfig()
 	{
 		this->sConfig.clear();
@@ -75,21 +75,21 @@
 		this->cConfig.clear();
 		this->actions.clear();
 		this->actionName.clear();
-		
+
 		loadConfig();
 	}
-	
+
 	void Config::loadConfig ()
 	{
 	  	configFileInstance = new ConfigFile(this->configFile);
 
 		My &my = My::instance();
 		mysqlpp::Connection *con = my.get();
-		
+
 		int counter = 0;
-		
+
 		this->sleep = 1;
-		
+
 		mysqlpp::Query query = con->query();
 		query << "SELECT "
 			<< "	config_name, "
@@ -117,9 +117,9 @@
 				}
 			}
 		}
-		
+
 		this->calcCollectFuelValues();
-		
+
 		query << "SELECT "
 			<< " id "
 			<< "FROM "
@@ -129,10 +129,10 @@
 			<< "LIMIT 1;";
 		RESULT_TYPE mRes = query.store();
 		query.reset();
-		
+
 		if (mRes) {
 			int mSize = mRes.size();
-			
+
 			if (mSize > 0) {
 				counter++;
 				mysqlpp::Row mRow = mRes.at(0);
@@ -144,17 +144,17 @@
 				cConfig.push_back(temp);
 			}
 		}
-		
-		// ID Werte (müssen manuel hier reingeschrieben werden) 
+
+		// ID Werte (müssen manuel hier reingeschrieben werden)
 		//->Nachrichten
 		idConfig["SHIP_WAR_MSG_CAT_ID"] = 3;
 		idConfig["SHIP_MONITOR_MSG_CAT_ID"] = 4;
 		idConfig["SHIP_MISC_MSG_CAT_ID"] = 5;
 		idConfig["SHIP_SPY_MSG_CAT_ID"] = 2;
-		
+
 		//->Schiffe
 		idConfig["MARKET_SHIP_ID"] = 16;
-		
+
 		//->Technologien
 		idConfig["ENERGY_TECH_ID"] = 3;
 		idConfig["SPY_TECH_ID"] = 7;
@@ -167,7 +167,7 @@
 		idConfig["POISON_TECH_ID"] = 18;
 		idConfig["REGENA_TECH_ID"] = 19;
 		idConfig["GEN_TECH_ID"] = 23;
-		
+
 		//->Gebäude
 		idConfig["FLEET_CONTROL_ID"] = 11;
 		idConfig["FACTORY_ID"] = 10;
@@ -175,20 +175,20 @@
 		idConfig["BUILD_MISSILE_ID"] = 25;
 		idConfig["BUILD_CRYPTO_ID"] = 24;
 		idConfig["MARKET_ID"] = 21;
-		
+
 		//->Spionage
 		idConfig["SPY_DEFENSE_FACTOR_TECH"] = 20;
 		idConfig["SPY_DEFENSE_FACTOR_SHIPS"] = 0.5;
 		idConfig["SPY_DEFENSE_MAX"] = 90;
 		idConfig["SPY_DEFENSE_FACTOR_TARN"] = 10;
-			
+
 		idConfig["SPY_ATTACK_SHOW_BUILDINGS"] = 1;
 		idConfig["SPY_ATTACK_SHOW_RESEARCH"] = 3;
 		idConfig["SPY_ATTACK_SHOW_DEFENSE"] = 5;
 		idConfig["SPY_ATTACK_SHOW_SHIPS"] = 7;
 		idConfig["SPY_ATTACK_SHOW_RESSOURCEN"] = 9;
 		idConfig["SPY_ATTACK_SHOW_SUPPORT"] = 9;
-		
+
 		//->Flottenaktionen
 		actions["analyze"] = 1;
 		actions["antrax"] = 2;
@@ -200,7 +200,7 @@
 		actions["collectfuel"] = 8;
 		actions["colonize"] = 9;
 		actions["createdebris"] = 10;
-		actions["delivery"] = 11;		
+		actions["delivery"] = 11;
 		actions["emp"] = 12;
 		actions["explore"] = 13;
 		actions["fetch"] = 14;
@@ -215,7 +215,7 @@
 		actions["transport"] = 23;
 		actions["alliance"] = 24;
 		actions ["fakeattack"] = 25;
-		
+
 		actionName["analyze"] = "Analysieren";
 		actionName["antrax"] = "Antraxangriff";
 		actionName["attack"] = "Angriff";
@@ -248,12 +248,12 @@
 	{
 		My &my = My::instance();
 		mysqlpp::Connection *con = my.get();
-		
+
 		std::map<int,double> capaContainer;
-		
+
 		mysqlpp::Query query = con->query();
 		query << "SELECT "
-			<< "	(shiplist_count*ship_capacity) AS sl_capa, "
+			<< "	SUM(shiplist_count*ship_capacity) AS sl_capa, "
 			<< "	shiplist_user_id "
 			<< "FROM "
 			<< "	shiplist "
@@ -266,22 +266,22 @@
 			<< "	shiplist_user_id";
 		RESULT_TYPE res = query.store();
 		query.reset();
-		
+
 		if (res) {
 			unsigned int resSize = res.size();
-			
+
 			if (resSize>0) {
 	    		mysqlpp::Row row;
 	    		for (mysqlpp::Row::size_type i = 0; i<resSize; i++) {
 	    			row = res.at(i);
-					
+
 					capaContainer[(int)row["shiplist_user_id"] ] = (double)row["sl_capa"];
 				}
 			}
 		}
-		
+
 		query << "SELECT "
-			<< "	(fs_ship_cnt*ship_capacity) AS fs_capa, "
+			<< "	SUM(fs_ship_cnt*ship_capacity) AS fs_capa, "
 			<< "	user_id "
 			<< "FROM "
 			<< "	fleet "
@@ -298,24 +298,24 @@
 			<< "	user_id ";
 		res = query.store();
 		query.reset();
-		
+
 		if (res) {
 			unsigned int resSize = res.size();
-			
+
 			if (resSize>0) {
 	    		mysqlpp::Row row;
 	    		for (mysqlpp::Row::size_type i = 0; i<resSize; i++) {
 	    			row = res.at(i);
-					
+
 					capaContainer[(int)row["user_id"] ] += (double)row["fs_capa"];
 				}
 			}
 		}
-		
+
 		double maxCapa = this->nget("gasplanet",2) * this->nget("planet_fields",2);
 		double hoursToRefill = maxCapa / this->nget("gasplanet",1);
 		std::map<int,double>::iterator it;
-		
+
 		for ( it=capaContainer.begin() ; it != capaContainer.end(); it++ )
 			maxCapa = std::max((*it).second,maxCapa);
 
