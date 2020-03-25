@@ -33,6 +33,7 @@ class TwigExtension extends AbstractExtension
             new TwigFunction('isAdminAllowed', [$this, 'isAdminAllowed']),
             new TwigFunction('renderTime', [$this, 'renderTime']),
             new TwigFunction('adminText', [$this, 'getAdminText']),
+            new TwigFunction('formatTimestamp', [$this, 'formatTimestamp']),
         ];
     }
 
@@ -140,5 +141,10 @@ class TwigExtension extends AbstractExtension
         }
 
         throw new \RuntimeException('Admin text for key not found: ' . $key);
+    }
+
+    public function formatTimestamp($timestamp): string
+    {
+        return (new \DateTime('@' . $timestamp))->format('d.m.Y, H:i:s');
     }
 }

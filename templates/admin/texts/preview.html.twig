@@ -1,0 +1,20 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Texte</h1>
+    <h2>{{ subtitle }}</h2>
+
+    {% if text|default(false) %}
+        <div style="border:1px solid #ccc; background:#eee;padding:5px;border-radius:5px;">{{ text2html(text.content)|raw }}</div>
+    {% else %}
+        {{ macros.messagebox('Ungültige Text ID', 'error') }}
+    {% endif %}
+    <p>
+        {% if text|default(false) %}
+            <button type="button" onclick="document.location='?page={{ page }}&id={{ text.id }}'">Bearbeiten</button>&nbsp;
+        {% endif %}
+        <button type="button" onclick="document.location='?page={{ page }}'">Schliessen</button>
+    </p>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Texte</h1>
+    <h2>Übersicht</h2>
+
+    <table class="tb" style="width:auto;">
+        <tr>
+            <th>Titel</th>
+            <th>Beschreibung</th>
+            <th>Inhalt</th>
+            <th>Aktualisiert</th>
+            <th>Aktiv</th>
+        </tr>
+        {% for text in texts %}
+            <tr>
+                <td><a href="?page={{ page }}&id={{ text.id}}">{{ text.label }}</a></th>
+                <td>{{ text.description }}</td>
+                <td>{{ text.content|slice(0, 100) }}</td>
+                <td>{% if text.updated > 0 %}{{ formatTimestamp(text.updated) }}{% endif %}</td>
+                <td style="text-align:center;">
+                    {% if text.enabled %}
+                        <a href="?page={{ page }}&disable={{ text.id }}"><img src="../images/true.gif" alt="true" title="Deaktivieren"/></a>
+                    {% else %}
+                        <a href="?page={{ page }}&enable={{ text.id }}"><img src="../images/false.gif" alt="false" title="Aktivieren"/></a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}
