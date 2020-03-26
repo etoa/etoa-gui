@@ -519,7 +519,7 @@
 			// check all the buildings
             $this->load(3);
 
-            if($this->getDeactivated($this->items[$bid])) {
+            if(!$this->getDeactivated($this->items[$bid])) {
                 if (!$this->isUnderConstruction())
                 {
                     global $cu,$cp;
