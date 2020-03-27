@@ -41,11 +41,6 @@ require __DIR__ . '/init.inc.php';
         $app->boot();
     }
 
-    // Create template engine object
-    if (ADMIN_MODE) {
-        $tpl = new TemplateEngine();
-    }
-
     $twig = $app['twig'];
 
 	// Set default page / action variables
