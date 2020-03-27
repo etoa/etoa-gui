@@ -1,0 +1,9 @@
+{% extends 'admin/layout/base.html.twig' %}
+
+{% set bodyClass = 'adminpopup' %}
+
+{% block layoutContent %}
+    <div id="popupcontainer">
+        {{ content|raw }}
+    </div>
+{% endblock %}
