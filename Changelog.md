@@ -1,6 +1,12 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.6.1 (unreleased)
+--------------
+
+### Bugfixes ###
+* replace remaining smarty templates with twig
+
 Version 3.6 (round 20)
 --------------
 ### Features ###

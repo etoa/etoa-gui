@@ -51,8 +51,8 @@
             <div id="planetname">noch nicht ausgewählt</div>
         {% endif %}
 
-        <a id="prevplanet" href="?page={$page}&amp;mode={$mode}&amp;change_entity={$prevPlanetId}"></a>
-        <a id="nextplanet" href="?page={$page}&amp;mode={$mode}&amp;change_entity={$nextPlanetId}"></a>
+        <a id="prevplanet" href="?page={{ page }}&amp;mode={{ mode }}&amp;change_entity={{ prevPlanetId }"></a>
+        <a id="nextplanet" href="?page={{ page }}&amp;mode={{ mode }}&amp;change_entity={{ nextPlanetId }}"></a>
         <a id="navplanetlist" href="#" onclick="js_planetlist(true); return true"></a>
         <div id="planetlist" onmouseover="js_planetlist(true); return true;" onmouseout="js_planetlist(false); return true;">
             {% for planet in planetList %}
