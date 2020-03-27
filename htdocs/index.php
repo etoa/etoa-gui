@@ -174,9 +174,9 @@ try {
                     planet_user_main DESC,
                     planet_name ASC
             ");
+            $planets = [];
+            $mainplanet = 0;
             if (mysql_num_rows($res)>0) {
-                $planets = [];
-                $mainplanet = 0;
                 while ($arr=mysql_fetch_row($res)) {
                     $planets[] = $arr[0];
                     if ($arr[1]==1) {
