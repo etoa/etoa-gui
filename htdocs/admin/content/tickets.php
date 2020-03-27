@@ -1,6 +1,6 @@
 <?php
 
-$tpl->assign("title", "Support-Tickets");
+$twig->addGlobal("title", "Support-Tickets");
 
 if ($cu->hasRole("master,super-admin,game-admin,trial-game-admin")) {
 
@@ -60,7 +60,7 @@ elseif (isset($_GET['id']) && $_GET['id']>0)
 		$ti->catId = $_POST['cat_id'];
 		$ti->adminId = $_POST['admin_id'];
 		$ti->adminComment = $_POST['admin_comment'];
-		
+
 		if ($ti->changed)
 			success_msg("Ticket aktualisiert!");
 	}
@@ -333,7 +333,7 @@ else
 	}
 }
 } else {
-	$tpl->assign("errmsg", "Nicht erlaubt!");
+	$twig->addGlobal("errorMessage", "Nicht erlaubt!");
 }
 
 

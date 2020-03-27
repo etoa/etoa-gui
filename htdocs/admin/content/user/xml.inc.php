@@ -1,8 +1,8 @@
 <?PHP
-	$tpl->assign("title", "XML-Import/Export");
-	
+$twig->addGlobal("title", "XML-Import/Export");
+
 	$path = UserToXml::getDataDirectory();
-	
+
 	//
 	// Details
 	//
@@ -12,8 +12,8 @@
 		if (is_file($file))
 		{
 			$xml = simplexml_load_file($file);
-		
-			$tpl->assign("subtitle", "Details ".base64_decode($_GET['file'])."");
+
+            $twig->addGlobal("subtitle", "Details ".base64_decode($_GET['file'])."");
 
 			echo "<fieldset><legend>Allgemeines</legend>";
 			tableStart();
@@ -70,12 +70,12 @@
 					<th class=\"tbltitle\">Rasse:</th>
 					<td class=\"tbldata\">".$xml->account->race." (Id: ".$xml->account->race['id'].")</td>
 				</tr>";
-				
-				
+
+
 			}
 			tableEnd();
 			echo "</fieldset>";
-	
+
 			echo "<fieldset><legend>Planeten</legend>";
 			tableStart();
 			if (isset($xml->planets))
@@ -115,13 +115,13 @@
 							<td class=\"tbldata\">Bewohner:</td>
 							<td class=\"tbldata\"> ".nf(intval($p->people))."</td>
 						</tr>";
-					
+
 					}
 				}
 			}
-			tableEnd();	
+			tableEnd();
 			echo "</fieldset>";
-	
+
 			echo "<fieldset><legend>Gebäude</legend>";
 			tableStart();
 			if (isset($xml->buildings))
@@ -139,9 +139,9 @@
 					}
 				}
 			}
-			tableEnd();	
+			tableEnd();
 			echo "</fieldset>";
-	
+
 			echo "<fieldset><legend>Technologien</legend>";
 			tableStart("Technologien");
 			if (isset($xml->technologies))
@@ -158,9 +158,9 @@
 					}
 				}
 			}
-			tableEnd();	
+			tableEnd();
 			echo "</fieldset>";
-			
+
 			echo "<fieldset><legend>Schiffe</legend>";
 			tableStart("Schiffe");
 			if (isset($xml->ships))
@@ -178,9 +178,9 @@
 					}
 				}
 			}
-			tableEnd();	
-			echo "</fieldset>";			
-			
+			tableEnd();
+			echo "</fieldset>";
+
 			echo "<fieldset><legend>Verteidigung</legend>";
 			tableStart();
 			if (isset($xml->defenses))
@@ -198,24 +198,24 @@
 					}
 				}
 			}
-			tableEnd();		
-			echo "</fieldset>";			
-			
+			tableEnd();
+			echo "</fieldset>";
+
 		}
 		else
 		{
 			error_msg("Datei $file nicht gefunden!");
-		}		
+		}
 		echo "<input type=\"button\" onclick=\"document.location='?page=$page&sub=$sub'\" value=\"Übersicht\" />";
 	}
-	
+
 	//
 	// Overview
 	//
 	else
-	{	
-		$tpl->assign("subtitle", "Export");
-		
+	{
+        $twig->addGlobal("subtitle", "Export");
+
 		if (isset($_POST['exportcache']))
 		{
 			$uti = new UserToXml($_POST['export_user_id']);
@@ -229,7 +229,7 @@
 		{
 			echo "<script type=\"text/javascript\">window.open('misc/user_xml.php?id=". $_POST['export_user_id']."');</script>";
 		}
-	
+
 		echo "<p>Bei jeder Löschung eines Spielers werden automatisch seine Daten
 		in ein XML-File geschrieben und dieses in einem Ordner abgelegt. Wenn du manuell von
 		einem User ein Backup erstellen willst, kannst du das hier tun:</p>";
@@ -249,13 +249,13 @@
 			while($arr=mysql_fetch_array($res))
 			{
 				echo "<option value=\"".$arr['user_id']."\">".$arr['user_nick']."</option>";
-			}		
+			}
 		}
 		echo "</select> 
 		<input type=\"submit\" name=\"exportcache\" value=\"Exportieren\" /> 
 		<input type=\"submit\" name=\"exportdl\" value=\"Herunterladen\" /></p>";
 		echo "</form>";
-		
+
 		$d = opendir($path);
 		$files = array();
 		while ($f = readdir($d))

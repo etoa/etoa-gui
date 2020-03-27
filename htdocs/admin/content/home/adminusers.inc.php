@@ -1,5 +1,5 @@
 <?PHP
-	$tpl->assign("title", "Admin-Management");
+$twig->addGlobal("title", "Admin-Management");
 
 	if (isset($_GET['new']))
 	{
@@ -29,7 +29,7 @@
 			$rm = new AdminRoleManager();
 			foreach ($rm->getRoles() as $k => $v) {
 				echo '<input type="checkbox" name="roles[]" value="'.$k.'" id="role_'.$k.'"> <label for="role_'.$k.'">'.$v.'</label><br/>';
-			}			
+			}
 			echo "</td>
 		</tr>";
 		echo "<tr>
@@ -41,12 +41,12 @@
 				<input type=\"radio\" name=\"is_contact\" value=\"0\" ";
 				echo "/> Nein
 			</td>
-		</tr>";	
+		</tr>";
 		echo "</table><br/>
 		<input type=\"submit\" name=\"new_submit\" value=\"Speichern\" /> &nbsp; 
 		<input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" value=\"Abbrechen\" />";
 		echo "</form>";
-	}	
+	}
 	elseif (isset($_GET['edit']) && $_GET['edit']>0)
 	{
 		echo "<h2>Bearbeiten</h2>";
@@ -88,7 +88,7 @@
 						echo ' checked="checked"';
 					}
 					echo '> <label for="role_'.$k.'">'.$v.'</label><br/>';
-				}			
+				}
 				echo "</td>
 			</tr>";
 			echo "<tr>
@@ -105,7 +105,7 @@
 					}
 					echo "/> Nein
 				</td>
-			</tr>";		
+			</tr>";
 			echo "<tr>
 				<th>Kontakt anzeigen:</th>
 				<td>
@@ -120,7 +120,7 @@
 					}
 					echo "/> Nein
 				</td>
-			</tr>";	
+			</tr>";
 			echo "</table><br/>
 			<input type=\"submit\" name=\"edit_submit\" value=\"Speichern\" /> &nbsp; 
 			<input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" value=\"Abbrechen\" />";
@@ -132,9 +132,9 @@
 		}
 	}
 	else
-	{	
+	{
 		echo "<h2>&Uuml;bersicht</h2>";
-	
+
 		if (isset($_POST['new_submit']))
 		{
 			if ($_POST['user_nick']!="")
@@ -145,8 +145,8 @@
 				$au->email = $_POST['user_email'];
 				$au->roles = isset($_POST['roles']) ? $_POST['roles'] : array();
 				$au->isContact = ($_POST['is_contact'] > 0);
-				$au->save();				
-				$tpl->assign("msg", "Gespeichert!");
+				$au->save();
+                $twig->addGlobal('successMessage', "Gespeichert!");
 				add_log(8,"Der Administrator ".$cu->nick." erstellt einen neuen Administrator: ".$_POST['user_nick']."(".$au->id.").");
 
 				if ($_POST['user_password']!="") {
@@ -155,14 +155,14 @@
 					$pw = generatePasswort();
 					echo "Das Passwort ist: $pw<br/><br/>";
 				}
-				$au->setPassword($pw);				
+				$au->setPassword($pw);
 			}
 			else
 			{
 				echo "Nick nicht angegeben!<br/><br/>";
-			}			
+			}
 		}
-		
+
 		if (isset($_POST['edit_submit']))
 		{
 			if ($_POST['user_nick']!="")
@@ -173,7 +173,7 @@
 				{
 					$au->setPassword($_POST['user_password']);
 					add_log(8,"Der Administrator ".$cu->nick." ändert das Passwort des Administrators ".$_POST['user_nick']."(".$_POST['user_id'].").");
-				}	
+				}
 				$au->nick = $_POST['user_nick'];
 				$au->name = $_POST['user_name'];
 				$au->email = $_POST['user_email'];
@@ -185,15 +185,15 @@
 				$au->isContact = ($_POST['is_contact'] > 0);
 				$au->roles = isset($_POST['roles']) ? $_POST['roles'] : array();
 				$au->save();
-				$tpl->assign("msg", "Gespeichert!");
+                $twig->addGlobal('successMessage', "Gespeichert!");
 				add_log(8,"Der Administrator ".$cu->nick." ändert die Daten des Administrators ".$_POST['user_nick']." (ID: ".$_POST['user_id'].").");
 			}
 			else
 			{
 				echo "Nick nicht angegeben!<br/><br/>";
-			}			
+			}
 		}
-		
+
 		if (isset($_GET['del']) && $_GET['del']>0 && $_GET['del']!=$cu->id) {
 			$au = new AdminUser($_GET['del']);
 			if ($au->isValid() && $au->delete()) {
@@ -201,7 +201,7 @@
 				echo "Benutzer gel&ouml;scht!<br/><br/>";
 			}
 		}
-				
+
 		echo "<table class=\"tb\" style=\"width:auto;\">
 		<tr>
 			<th>Nick</th>
@@ -226,7 +226,7 @@
 				}
 				echo "</td>
 			</tr>";
-		}		
+		}
 		echo "</table><br/> ";
 		echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;new=1'\" value=\"Neuer Benutzer\" />";
 	}

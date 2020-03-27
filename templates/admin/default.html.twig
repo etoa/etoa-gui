@@ -1,0 +1,26 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    {% if title|default(false) %}
+        <h1>{{ title }}</h1>
+    {% endif %}
+    {% if subtitle|default(false) %}
+        <h2>{{ subtitle }}</h2>
+    {% endif %}
+
+    {% if successMessage|default(false) %}
+        {{ macros.messagebox(successMessage, 'success') }}
+    {% endif %}
+
+    {% if infoMessage|default(false) %}
+        {{ macros.messagebox(infoMessage, 'info') }}
+    {% endif %}
+
+    {% if errorMessage|default(false) %}
+        {{ macros.messagebox(errorMessage, 'error') }}
+    {% endif %}
+
+    {{ content|raw }}
+{% endblock %}

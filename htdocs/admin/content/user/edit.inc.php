@@ -119,7 +119,7 @@
 	          			$sql.=",user_profile_img=''";
 	        		}
         		}
-        		
+
         		// Handle avatar
         		if (isset($_POST['avatar_img_del']) && $_POST['avatar_img_del']==1)
         		{
@@ -133,7 +133,7 @@
 	          			}
 	          			$sql.=",user_avatar=''";
 	        		}
-        		}        
+        		}
 
 				// Handle password
 				if (isset($_POST['user_password']) && $_POST['user_password']!="")
@@ -143,8 +143,8 @@
 					$sql.= ",user_password='".saltPasswort($_POST['user_password'])."'";
 					echo "Das Passwort wurde ge&auml;ndert!<br>";
 					add_log(8,$cu->nick." ändert das Passwort von ".$_POST['user_nick']."",time());
-				}				
-				
+				}
+
 				// Handle ban
 				if ($_POST['ban_enable']==1)
 				{
@@ -154,7 +154,7 @@
 					$sql.= ",user_blocked_to='".$ban_to."'";
 					$sql.= ",user_ban_admin_id='".$_POST['user_ban_admin_id']."'";
 					$sql.= ",user_ban_reason='".addslashes($_POST['user_ban_reason'])."'";
-					
+
 					$usr = new User($id);
 
 					$usr->addToUserLog("account","{nick} wird von [b]".date("d.m.Y H:i",$ban_from)."[/b] bis [b]".date("d.m.Y H:i",$ban_to)."[/b] gesperrt.\n[b]Grund:[/b] ".addslashes($_POST['user_ban_reason'])."\n[b]Verantwortlich: [/b] ".mysql_fetch_array(dbquery("SELECT user_nick FROM admin_users WHERE user_id = ".$_POST['user_ban_admin_id'] ))['user_nick'],1);
@@ -166,7 +166,7 @@
 					$sql.= ",user_ban_admin_id='0'";
 					$sql.= ",user_ban_reason=''";
 				}
-				
+
 				// Handle holiday mode
 				if ($_POST['umod_enable']==1)
 				{
@@ -184,13 +184,13 @@
 				// Perform query
 				$sql .= " WHERE user_id='".$id."';";
 				dbquery($sql);
-				
-				
-				
+
+
+
 				//
 				// Speichert Usereinstellungen in der Tabelle "user_properties"
 				//
-				
+
 				$sql = "UPDATE user_properties SET
 				image_url='".$_POST['image_url']."',
 				image_ext='".$_POST['image_ext']."',
@@ -212,7 +212,7 @@
 				havenships_buttons=".$_POST['havenships_buttons'].",
 				show_adds=".$_POST['show_adds'].",
 				fleet_rtn_msg=".$_POST['fleet_rtn_msg']."";
-				
+
 				// Perform query
 				$sql .= " WHERE id='".$id."';";
 				dbquery($sql);
@@ -298,7 +298,7 @@
 						}
 						else {
 							error_msg("Enddatum muss größer als Startdatum sein!");
-						}	
+						}
 					}
 				}
 				echo MessageBox::ok("", "&Auml;nderungen wurden &uuml;bernommen!","submitresult");
@@ -311,7 +311,7 @@
 				if ($user->delete(false,$cu->nick))
 					success_msg("L&ouml;schung erfolgreich!");
 			}
-			
+
 			// Löschantrag speichern
 			if (isset($_POST['requestdelete']))
 			{
@@ -323,10 +323,10 @@
 					user_deleted=".$t."
 				WHERE
 					user_id=".$id."
-				;");	
-				success_msg("Löschantrag gespeichert!");		
+				;");
+				success_msg("Löschantrag gespeichert!");
 			}
-			
+
 			// Löschantrag aufheben
 			if (isset($_POST['canceldelete']))
 			{
@@ -341,7 +341,7 @@
 				success_msg("Löschantrag aufgehoben!");
 			}
 
-			if (isset($_GET['setverified'])) 
+			if (isset($_GET['setverified']))
 			{
 				dbquery("
 				UPDATE
@@ -392,16 +392,16 @@
 				;");
 			if (mysql_num_rows($res)>0)
 			{
-				// Load data				
+				// Load data
 				$arr = mysql_fetch_array($res);
-				
+
 				// Some preparations
 				$st = $arr['user_specialist_time']>0 ? $arr['user_specialist_time'] : time();
-				
+
 				$ip = $arr['ip_addr']!=null ? $arr['ip_addr'] : $arr['ip_log'];
 				$agent = $arr['user_agent']!=null ? $arr['user_agent'] : $arr['agent_log'];
-				
-				// Javascript				
+
+				// Javascript
 				echo "<script type=\"text/javascript\">
 
 				function loadSpecialist(st)
@@ -432,8 +432,8 @@
 				}
 				
 				</script>";
-				
-				$tpl->assign('subtitle', "User bearbeiten: ".$arr['user_nick']);
+
+                $twig->addGlobal('subtitle', "User bearbeiten: ".$arr['user_nick']);
 
 				echo "<form action=\"?page=$page&amp;sub=edit&amp;id=".$id."\" method=\"post\">
 				<input type=\"hidden\" id=\"tabactive\" name=\"tabactive\" value=\"\" />";
@@ -454,13 +454,13 @@
 			<li><a href="#tabs-12">Log</a></li>
 			<li><a href="#tabs-13">Wirtschaft</a></li>
 		</ul>
-		<div id="tabs-1">';			
-				
-				
+		<div id="tabs-1">';
+
+
 				/**
 				* Allgemeines
-				*/				
-				
+				*/
+
 				echo "<table class=\"tbl\">";
 				echo "<tr>
 								<td class=\"tbltitle\" style=\"width:180px;\">ID:</td>
@@ -517,15 +517,15 @@
 									if ($arr['user_observe']!="")
 									{
 										echo "<div>Benutzer steht unter <b>Beobachtung</b>: ".$arr['user_observe']." &nbsp; [<a href=\"?page=user&sub=observed&text=".$id."\">Ändern</a>]</div>";
-									}						
+									}
 									if ($arr['user_deleted']!=0)
 									{
 										echo "<div class=\"userDeletedColor\">Dieser Account ist zur Löschung am ".df($arr['user_deleted'])." vorgemerkt</div>";
-									}						
+									}
 									if ($arr['user_hmode_from']>0)
 									{
 										echo "<div class=\"userHolidayColor\">Dieser Account ist im Urlaubsmodus seit ".df($arr['user_hmode_from'])." bis mindestens ".df($arr['user_hmode_to'])."</div>";
-									}						
+									}
 									if ($arr['user_blocked_from']>0 && $arr['user_blocked_to']>time())
 									{
 										echo "<div class=\"userLockedColor\">Dieser Account ist im gesperrt von ".df($arr['user_blocked_from'])." bis ".df($arr['user_blocked_to']);
@@ -538,20 +538,20 @@
 									if ($arr['admin']!=0)
 									{
 										echo "<div class=\"adminColor\">Dies ist ein Admin-Account!</div>";
-									}										
+									}
 									if ($arr['user_ghost']!=0)
 									{
 										echo "<div class=\"userGhostColor\">Dies ist ein Geist-Account. Er wird nicht in der Statistik angezeigt!</div>";
-									}										
+									}
 									if ($arr['user_chatadmin']!=0)
 									{
 										echo "<div>Dieser User ist ein Chat-Admin.</div>";
-									}	
+									}
 									if ($arr['verification_key']!='')
 									{
 										echo "<div>Die E-Mail Adresse ist nocht nicht bestätigt [<a href=\"?page=$page&sub=$sub&id=$id&setverified\">Freischalten</a>].</div>";
-									}									
-									
+									}
+
 									// Kommentare
 									$cres=dbquery("
 									SELECT 
@@ -561,15 +561,15 @@
 										user_comments
 									WHERE
 										comment_user_id=".$arr['user_id']."
-									;");	
+									;");
 									$carr = mysql_fetch_row($cres);
 									if ($carr[0] > 0)
 									{
 										echo "<div><b>".$carr[0]." Kommentare</b> vorhanden, neuster Kommentar von ".df($carr[1])."
 										[<a href=\"javascript:;\" onclick=\"$('.tabs').tabs('select', 10);\">Zeigen</a>]
 										</div>";
-									}	
-									
+									}
+
 									// Tickets
 									$nTickets = Ticket::find(array("user_id"=>$arr['user_id'],"status"=>"new"));
 									$nt = count($nTickets);
@@ -581,8 +581,8 @@
 										echo "<div><b>".$nt." neue Tickets</b> und <b>".$at." zugewiesene Tickets</b> vorhanden
 										[<a href=\"javascript:;\" onclick=\"$('.tabs').tabs('select', 9);\">Zeigen</a>]
 										</div>";
-									}										
-									
+									}
+
 									// Verwarnungen
 									$cres=dbquery("
 									SELECT 
@@ -592,23 +592,23 @@
 										user_warnings
 									WHERE
 										warning_user_id=".$arr['user_id']."
-									;");	
+									;");
 									$carr = mysql_fetch_row($cres);
 									if ($carr[0] > 0)
 									{
 										echo "<div><b>".$carr[0]." Verwarnungen</b> vorhanden, neuste  von ".df($carr[1])."
 										[<a href=\"?page=user&amp;sub=warnings&amp;user=".$id."\">Zeigen</a>]
 										</div>";
-									}										
-									
-				
+									}
+
+
 					echo "</td>
-							</tr>";					
-				
+							</tr>";
+
 				echo "</table>";
-				
+
 				echo '</div><div id="tabs-2">';
-				
+
 				/**
 				* Account
 				*/
@@ -762,7 +762,7 @@
 									if ($arr['user_blocked_from']>0 && $arr['user_blocked_to']<time())
 									{
 										echo " <i><b>Diese Sperre ist abgelaufen!</b></i>";
-									}	
+									}
 									echo "<table id=\"ban_options\">
 										<tr>
 								<td class=\"tbltitle\" valign=\"top\">Von </td>
@@ -798,7 +798,7 @@
 								</td>
 							</tr>
 							</table>";
-									
+
 							echo "</td>
 								<td>Der Benutzer kann sich nicht einloggen und erscheint auf dem Pranger</td>
 							</tr>
@@ -833,13 +833,13 @@
 								</td>
 								<td>Der Benutzer kann nichts mehr bauen, wird aber auch nicht angegriffen</td>
 							</tr>";
-											
-							
+
+
 				echo "</table>";
-				
+
 				echo '</div><div id="tabs-3">';
 
-				
+
 				/**
 				* Game-Daten
 				*/
@@ -877,7 +877,7 @@
 									while ($sarr=mysql_fetch_row($sres))
 									{
 										echo '<option value="'.$sarr[1].'"';
-										if ($arr['user_specialist_id']==$sarr[1]) 
+										if ($arr['user_specialist_id']==$sarr[1])
 										{
 											echo ' selected="selected"';
 										}
@@ -986,7 +986,7 @@
 									<input type=\"text\" name=\"user_alliace_shippoints_used\" value=\"".$arr['user_alliace_shippoints_used']."\" size=\"10\" maxlength=\"10\" />
 								</td>
 							</tr>";
-							
+
 				// Multis & Sitting
 				echo "<tr>
 						<td class=\"tbltitle\" valign=\"top\">Gel&ouml;schte Multis</td>
@@ -1000,7 +1000,7 @@
 							<input type=\"text\" name=\"user_sitting_days\" value=\"".$arr['user_sitting_days']."\" size=\"3\" maxlength=\"3\" />
 						</td>
 					  </tr>";
-                    
+
                 // Hauptplanet geändert
                 echo "</td>
                         </tr>
@@ -1013,19 +1013,19 @@
                         </tr>";
 
 				// Tabelle Ende
-                
+
 					echo "</table>";
 					echo "
 					<script type=\"text/javascript\">
 					loadSpecialist(".$st.");loadAllianceRanks(".$arr['user_alliance_rank_id'].");
 					</script>";
-				
+
 				echo '</div><div id="tabs-4">';
-				
+
 				/**
 				* Sitting & Multi
 				*/
-				
+
 				$multi_res = dbquery("SELECT * FROM user_multi WHERE user_id=".$arr['user_id']." AND activ=1;");
 				$del_multi_res = dbquery("SELECT * FROM user_multi WHERE user_id=".$arr['user_id']." AND activ=0;");
 				echo '<table class="tb">
@@ -1035,7 +1035,7 @@
 							<th>Begründung</th>
 							<th>Eingetragen</th>
 							<th>Löschen</th>
-						</tr>';							
+						</tr>';
 				while ($multi_arr = mysql_fetch_array($multi_res))
 				{
 					echo '<tr>
@@ -1060,7 +1060,7 @@
 							<th>Begründung</th>
 							<th>Gelöscht</th>
 							<th></th>
-						</tr>';	
+						</tr>';
 				while ($del_multi_arr = mysql_fetch_array($del_multi_res))
 				{
 					echo '<tr>
@@ -1076,7 +1076,7 @@
 						</tr>';
 				}
 				echo '</table>';
-				
+
 				$sitting_res = dbquery("SELECT * FROM user_sitting WHERE user_id='".$arr['user_id']."' ORDER BY id DESC;");
 				$sitted_res = dbquery("SELECT * FROM user_sitting WHERE sitter_id='".$arr['user_id']."' ORDER BY id DESC;");
 				echo '<table class="tb">
@@ -1088,7 +1088,7 @@
 							<th>Abbrechen</th>
 						</tr>';
 				while ($sitting_arr = mysql_fetch_array($sitting_res))
-				{	
+				{
 					$used_days += (($sitting_arr['date_to']-$sitting_arr['date_from'])/86400);
 
 					$time = time();
@@ -1198,7 +1198,7 @@
 				/**
 				* Profil
 				*/
-				
+
 				echo "<table class=\"tb\">";
 				echo "<tr>
 								<th>Profil-Text:</th>
@@ -1215,7 +1215,7 @@
 					       	 	echo "<input type=\"checkbox\" value=\"0\" name=\"user_profile_img_check\"> Bild-Verifikation bestätigen<br/>";
 					        echo '<img src="'.PROFILE_IMG_DIR.'/'.$arr['user_profile_img'].'" alt="Profil" /><br/>';
 					        echo "<input type=\"checkbox\" value=\"1\" name=\"profile_img_del\"> Bild l&ouml;schen<br/>";
-					      }				
+					      }
 					      else
 					      {
 					      	echo "<i>Keines</i>";
@@ -1235,11 +1235,11 @@
 						      {
 						        echo '<img src="'.BOARD_AVATAR_DIR.'/'.$arr['user_avatar'].'" alt="Profil" /><br/>';
 						        echo "<input type=\"checkbox\" value=\"1\" name=\"avatar_img_del\"> Bild l&ouml;schen<br/>";
-						      }		
+						      }
 					      else
 					      {
 					      	echo "<i>Keines</i>";
-					      }						      					
+					      }
 					echo "</td>
 							</tr>
 							<tr>
@@ -1248,7 +1248,7 @@
 				      		<input type=\"text\" name=\"user_profile_board_url\" maxlength=\"200\" size=\"50\" value=\"".$arr['user_profile_board_url']."\">
 				      	</td>
 				      </tr>";
-				      
+
 						echo '<tr><th>Banner:</th><td>';
 						$name = Ranking::getUserBannerPath($id);
 						if (file_exists($name))
@@ -1257,20 +1257,20 @@
 							<img src="'.$name.'" alt="Banner"><br>
 							Generiert: '.df(filemtime($name)).'<br/>
 							<textarea readonly="readonly" rows="2" cols="65">&lt;a href="'.USERBANNER_LINK_URL.'"&gt;&lt;img src="'.$cfg->roundurl.'/'.$name.'" width="468" height="60" alt="EtoA Online-Game" border="0" /&gt;&lt;/a&gt;</textarea>
-							<textarea readonly="readonly" rows="2" cols="65">[url='.USERBANNER_LINK_URL.'][img]'.$cfg->roundurl.'/'.$name.'[/img][/url]</textarea>';				
-						}				
-						echo '</td></tr>';					      
+							<textarea readonly="readonly" rows="2" cols="65">[url='.USERBANNER_LINK_URL.'][img]'.$cfg->roundurl.'/'.$name.'[/img][/url]</textarea>';
+						}
+						echo '</td></tr>';
 				echo "</table>";
-				
+
 				echo '</div><div id="tabs-6">';
-								
+
 				/**
 				* Design
-				*/								
-								
+				*/
+
 				$imagepacks = get_imagepacks();
 				$designs = get_designs();
-				
+
 				echo "<table class=\"tbl\" style=\"width:1000px\">";
  				echo "<tr>
 			 					<td class=\"tbltitle\">Design:</td>
@@ -1396,16 +1396,16 @@
                     if ($arr['show_adds']==0) echo " checked=\"checked\"";
           					echo "/> Deaktiviert
             		</td>
-          		</tr>";				
+          		</tr>";
 				echo "</table>";
-				
+
 				echo '</div><div id="tabs-7">';
-				
+
 				/**
 				* Messages
-				*/		
-								
-				echo "<table class=\"tbl\">";		
+				*/
+
+				echo "<table class=\"tbl\">";
 				echo "<tr>
 								<td class=\"tbltitle\">Nachrichten-Signatur:</td>
 								<td class=\"tbldata\">
@@ -1487,18 +1487,18 @@
 			          </td>
        				</tr>";
        	echo "</table><br/>";
-       	
+
        	echo "<h2>Letzte 5 Nachrichten</h2>";
        	echo "<input type=\"button\" onclick=\"showLoader('lastmsgbox');xajax_showLast5Messages(".$arr['user_id'].",'lastmsgbox');\" value=\"Neu laden\" /><br><br>";
        	echo "<div id=\"lastmsgbox\">Lade...</div>";
-				
+
 		echo '</div><div id="tabs-8">';
-				
+
 				/**
 				* Loginfailures
-				*/		
-				
-				echo "<table class=\"tbl\">";			
+				*/
+
+				echo "<table class=\"tbl\">";
 				$lres=dbquery("
 				SELECT 
 					* 
@@ -1538,16 +1538,16 @@
 								</tr>";
 				}
 				echo "</table>";
-				
+
 				echo '</div><div id="tabs-9">';
-	
+
 				/**
 				* Points
 				*/
-				
+
 				$cUser = new User($id);
-				
-				tableStart("Bewertung");							
+
+				tableStart("Bewertung");
 				echo "<tr>
 								<td>Kampfpunkte</td>
 								<td>".$cUser->rating->battle."</td>
@@ -1569,22 +1569,22 @@
 								<td>".$cUser->rating->diplomacy."</td>
 							</tr>";
 				tableEnd();
-						
+
 				// DON'T BUILD IN A FEATURE THAT'S NOT YET AVILABLE
 				/*
 				echo "<div id=\"pointsBox\">
 					<div style=\"text-align:center;\"><img src=\"web/images/ajax-loader-circle.gif\" /><br/>Wird geladen...</div>
 				</div>
 				";	*/
-				
+
 				echo '</div><div id="tabs-10">';
-				
+
 				/**
 				* Tickets
-				*/				
-		
+				*/
+
 				echo "<div id=\"ticketsBox\">";
-				
+
 				$tlist = Ticket::find(array('user_id'=> $id));
 				if (count($tlist)>0)
 				{
@@ -1607,22 +1607,22 @@
 				{
 					echo '<p>Dieser User hat keine Tickets</p>';
 				}
-				
+
 					//<div style=\"text-align:center;\"><img src=\"web/images/ajax-loader-circle.gif\" /><br/>Wird geladen...</div>
-				echo "</div>";	
-				
+				echo "</div>";
+
 				echo '</div><div id="tabs-11">';
-				
+
 				/**
 				* Kommentare
-				*/			
-			
+				*/
+
 				echo "<div id=\"commentsBox\">
 					<div style=\"text-align:center;\"><img src=\"web/images/ajax-loader-circle.gif\" /><br/>Wird geladen...</div>
 				</div>";
-				
+
 				echo '</div><div id="tabs-12">';
-				
+
 				/**
 				* Log
 				*/
@@ -1633,11 +1633,11 @@
 
 
 				echo '</div><div id="tabs-13">';
-				
+
 				/**
 				* Wirtschaft
 				*/
-				
+
 				echo "
 				<div id=\"tabEconomy\">
 				Das Laden aller Wirtschaftsdaten kann einige Sekunden dauern!<br/><br/>
@@ -1647,21 +1647,21 @@
 			echo '
 				</div>
 			</div>';
-			
-				
+
+
 				// Buttons
-				echo "<p>";	
+				echo "<p>";
 				echo "<input type=\"submit\" name=\"save\" value=\"&Auml;nderungen &uuml;bernehmen\" class=\"positive\" /> &nbsp;";
 				if ($arr['user_deleted']!=0)
 				{
-					echo "<input type=\"submit\" name=\"canceldelete\" value=\"Löschantrag aufheben\" class=\"userDeletedColor\" /> &nbsp;";					
+					echo "<input type=\"submit\" name=\"canceldelete\" value=\"Löschantrag aufheben\" class=\"userDeletedColor\" /> &nbsp;";
 				}
 				else
 				{
-					echo "<input type=\"submit\" name=\"requestdelete\" value=\"Löschantrag erteilen\" class=\"userDeletedColor\" /> &nbsp;";					
-				}				
+					echo "<input type=\"submit\" name=\"requestdelete\" value=\"Löschantrag erteilen\" class=\"userDeletedColor\" /> &nbsp;";
+				}
 				echo "<input type=\"submit\" name=\"delete_user\" value=\"User l&ouml;schen\" class=\"remove\" onclick=\"return confirm('Soll dieser User entg&uuml;ltig gel&ouml;scht werden?');\"></p>";
-				
+
 				echo "<hr/><p>";
 				echo button("Planeten","?page=galaxy&sq=".searchQueryUrl("user_id:=:".$arr['user_id']))." &nbsp;";
 				echo button("Gebäude","?page=buildings&sq=".searchQueryUrl("user_nick:=:".$arr['user_nick']))." &nbsp;";
@@ -1672,15 +1672,15 @@
 				echo "<input type=\"button\" value=\"IP-Adressen &amp; Hosts\" onclick=\"document.location='?page=user&amp;sub=ipsearch&amp;user=".$arr['user_id']."'\" /></p>";
 
 
-				
+
 				echo "<hr/>";
 				echo "<p><input type=\"button\" value=\"Spielerdaten neu laden\" onclick=\"document.location='?page=$page&sub=edit&amp;user_id=".$arr['user_id']."'\" /> &nbsp;";
 				echo "<input type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=search'\" /> &nbsp;";
 				echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /></p>";
 
-								
+
 				echo "</form>";
-				
+
 				if ($arr['user_blocked_from']==0)
 					echo "<script>$(function() { $('#ban_options').hide(); });</script>";
 				if ($arr['user_hmode_from']==0)

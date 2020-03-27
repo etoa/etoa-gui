@@ -33,7 +33,7 @@
 	{
  		require("galaxy/map.inc.php");
 	}
-	
+
 	//
 	// Exploration
 	//
@@ -49,34 +49,34 @@
 	{
     require("galaxy/universe.php");
 	}
-  
+
 	//
 	// Integrity check
 	//
 	elseif ($sub=="galaxycheck")
-	{	
+	{
     require("galaxy/galaxycheck.php");
 	}
-	
+
 	elseif ($sub=="planet_types")
 	{
-		advanced_form("planet_types", $tpl);
+		advanced_form("planet_types", $twig);
 	}
 	elseif ($sub=="sol_types")
 	{
-		advanced_form("sol_types", $tpl);
+		advanced_form("sol_types", $twig);
 	}
-	
+
 	else
 	{
-		$order_array=array();		
+		$order_array=array();
 		$order_array['id']="Objekt-ID";
 		$order_array['planet_name']="Objekt-Name";
 		$order_array['type_name']="Objekt-Subtyp";
 		$order_array['user_nick']="Besitzer-Name";
 
 		echo "<h1>Raumobjekte (Entitäten)</h1>";
-		
+
 		$sa = array();
 		$so = array();
 
@@ -84,7 +84,7 @@
     if (isset($_GET['cell_id'])) {
       $_GET['sq'] = base64_encode("cell_id:=:".intval($_GET['cell_id']));
     }
-    
+
 		//
 		// Details bearbeiten
 		//
@@ -92,7 +92,7 @@
 		{
 			require("galaxy/edit.php");
 		}
-		
+
 		//
 		// Search query and result
 		//
@@ -100,7 +100,7 @@
 		{
 			$table = "entities e";
 			$joins = " INNER JOIN cells c ON c.id=e.cell_id ";
-			$selects = "";			
+			$selects = "";
 			$sql = "";
 
 			if (isset($sa['id']))
@@ -113,7 +113,7 @@
 				$i=0;
 				foreach ($sa['code'][1] as $code)
 				{
-					if ($i>0)			
+					if ($i>0)
 						$sql.=" OR";
 					$sql .= " 
 					e.code='".$code."'";
@@ -124,7 +124,7 @@
 			if (isset($sa['cell_id']))
 			{
 				$sql.= " AND c.id ".searchFieldSql($sa['cell_id']);
-			}      
+			}
 			if (isset($sa['cell_cx']))
 			{
 				$sql.= " AND c.cx ".searchFieldSql($sa['cell_cx']);
@@ -138,7 +138,7 @@
 				$val = explode("_",$sa['cell_c'][1]);
 				$sql.= " AND c.cx=".$val[0];
 				$sql.= " AND c.cy=".$val[1];
-			}			
+			}
 			if (isset($sa['cell_sx']))
 			{
 				$sql.= " AND c.sx ".searchFieldSql($sa['cell_sx']);
@@ -152,7 +152,7 @@
 				$val = explode("_",$sa['cell_s'][1]);
 				$sql.= " AND c.sx=".$val[0];
 				$sql.= " AND c.sy=".$val[1];
-			}			
+			}
 			if (isset($sa['cell_pos']))
 			{
 				$sql.= " AND e.pos ".searchFieldSql($sa['cell_pos']);
@@ -162,32 +162,32 @@
 			{
 				$joins.= " INNER JOIN planets p ON p.id=e.id ";
 				$selects = ",p.planet_user_id,p.planet_type_id,p.planet_name";
-				
+
 				$sql.= " AND p.planet_name ".searchFieldSql($sa['name']);
 			}
 			if (isset($sa['user_id']))
 			{
 				if (!stristr($joins,"planets p"))
 				{
-					$joins.= " INNER JOIN planets p ON p.id=e.id ";	
+					$joins.= " INNER JOIN planets p ON p.id=e.id ";
 					$selects = ",p.planet_user_id,p.planet_type_id,p.planet_name";
 				}
 				$sql.= " AND p.planet_user_id ".searchFieldSql($sa['user_id']);
-			}				
+			}
 			if (isset($sa['user_main']) && $sa['user_main'][1]<2 )
 			{
 				if (!stristr($joins,"planets p"))
 				{
-					$joins.= " INNER JOIN planets p ON p.id=e.id ";	
+					$joins.= " INNER JOIN planets p ON p.id=e.id ";
 					$selects = ",p.planet_user_id,p.planet_type_id,p.planet_name";
 				}
 				$sql.= " AND p.planet_user_main='".intval($sa['user_main'][1])."'";
-			}			
+			}
 			if (isset($sa['debris']) && $sa['debris'][1]<2)
 			{
 				if (!stristr($joins,"planets p"))
 				{
-					$joins.= " INNER JOIN planets p ON p.id=e.id ";	
+					$joins.= " INNER JOIN planets p ON p.id=e.id ";
 					$selects = ",p.planet_user_id,p.planet_type_id,p.planet_name";
 				}
 				if ($sa['debris'][1]==1)
@@ -199,18 +199,18 @@
 			{
 				if (!stristr($joins,"planets p"))
 				{
-					$joins.= " INNER JOIN planets p ON p.id=e.id ";	
+					$joins.= " INNER JOIN planets p ON p.id=e.id ";
 					$selects = ",p.planet_user_id,p.planet_type_id,p.planet_name";
 				}
 
 				$sql.= " AND users.user_nick ".searchFieldSql($sa['user_nick']);
 				$joins.= " INNER JOIN users ON p.planet_user_id=user_id ";
-			}	
+			}
 			if (isset($sa['desc']) && $sa['desc'][1]<2)
 			{
 				if (!stristr($joins,"planets p"))
 				{
-					$joins.= " INNER JOIN planets p ON p.id=e.id ";	
+					$joins.= " INNER JOIN planets p ON p.id=e.id ";
 					$selects = ",p.planet_user_id,p.planet_type_id,p.planet_name";
 				}
 
@@ -222,8 +222,8 @@
 				{
 					$sql.= " AND p.planet_desc='' ";
 				}
-			}								
-						
+			}
+
 			// Build ordering
 			if (count($so)>1)
 			{
@@ -252,7 +252,7 @@
 			FROM ".$table." 
 			".$joins." 
 			WHERE 1 ".$sql;
-			
+
 			// Execute query
 			$res = dbquery($sql);
 			$nr = mysql_num_rows($res);
@@ -261,10 +261,10 @@
 			searchQuerySave($sa,$so);
 
 			// Select total found rows
-			$ares = dbquery("SELECT FOUND_ROWS()");			
+			$ares = dbquery("SELECT FOUND_ROWS()");
 			$aarr = mysql_fetch_row($ares);
 			$enr =$aarr[0];
-			
+
 			echo "<h2>Suchresultate</h2>";
 			echo "<form acton=\"?page=".$page."\" method=\"post\">";
 
@@ -311,14 +311,14 @@
 				echo ">".$v."</option>";
 			}
 			echo "</select> <input type=\"submit\" value=\"Anzeigen\" name=\"search_resubmit\" /></form><br/>";
-			
+
 			if ($nr > 0)
-			{  
+			{
 				if ($nr > 20)
 				{
 					echo button("Neue Suche","?page=$page&amp;newsearch")."<br/><br/>";
 				}
-				
+
 				echo "<table class=\"tb\">";
 				echo "<tr>";
 				echo "<th style=\"width:40px;\">ID</th>";
@@ -332,7 +332,7 @@
 				while ($arr = mysql_fetch_array($res))
 				{
 					$ent = Entity::createFactory($arr['code'],$arr['id']);
-					
+
 					echo "<tr>";
 					echo "<td>
 						<a href=\"?page=$page&sub=edit&id=".$arr['id']."\">
@@ -353,7 +353,7 @@
 					{
 						echo "<a href=\"?page=user&amp;sub=edit&amp;user_id=".$ent->ownerId()."\" title=\"Spieler bearbeiten\">
 							".$ent->owner()."</a>";
-					}					
+					}
 					echo "
 					</td>";
   				echo "<td>".edit_button("?page=$page&sub=edit&id=".$arr['id'])."</td>";
@@ -369,7 +369,7 @@
 				".button("Neue Suche","?page=$page&amp;newsearch");
 			}
 		}
-	
+
 		//
 		// Suchmaske
 		//
@@ -395,7 +395,7 @@
 				{
 					echo "<option value=\"".$x."_".$y."\">$x / $y</option>";
 				}
-			}				
+			}
 			echo "</select> : <select name=\"search_cell_c\">";
 			echo "<option value=\"\">(egal)</option>";
 			for ($x=1;$x<=$conf['num_of_cells']['p1'];$x++)
@@ -461,7 +461,7 @@
 			</select> <input type=\"submit\" name=\"search_submit\" value=\"Suchen\" /></form>";
 			$tblcnt = mysql_fetch_row(dbquery("SELECT count(id) FROM planets;"));
 			echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.";
-			
+
 			echo "<script type=\"text/javascript\">document.forms['dbsearch'].elements[2].focus();</script>";
 		}
 	}

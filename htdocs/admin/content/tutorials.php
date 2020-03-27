@@ -1,3 +1,3 @@
 <?PHP
-	advanced_form("tutorials", $tpl);
+	advanced_form("tutorials", $twig);
 ?>

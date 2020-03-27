@@ -10,7 +10,7 @@
 	//
 	// Anforderungen
 	//
-	$tpl->assign("title", TITLE);
+$twig->addGlobal("title", TITLE);
 
 	// Lade Gebäude- & Technologienamen
 	$bures = dbquery("SELECT building_id,building_name FROM buildings;");
@@ -50,16 +50,16 @@
 				if (is_file($path))
 				{
 					$imsize = getimagesize($path);
-					echo "<td style=\"background:#000;width:".$imsize[0]."px;\"><img src=\"".$path."\"/></td>";						
+					echo "<td style=\"background:#000;width:".$imsize[0]."px;\"><img src=\"".$path."\"/></td>";
 				}
 				else
 				{
-					echo "<td style=\"background:#000;width:40px;\"><img src=\"../images/blank.gif\" style=\"width:40px;height:40px;\" /></td>";						
+					echo "<td style=\"background:#000;width:40px;\"><img src=\"../images/blank.gif\" style=\"width:40px;height:40px;\" /></td>";
 				}
-			}			
+			}
 			echo "<td>".$arr['name']."</td><td>";
-			
-			echo "<div id=\"item_container_".$id."\">";			
+
+			echo "<div id=\"item_container_".$id."\">";
 			drawTechTreeForSingleItem(REQ_TBL,$id);
 			echo "</div>";
 			echo "<br/><select id=\"reqid_".$id."\">
@@ -74,9 +74,9 @@
 				echo "<option value=\"t:$k\">$v</option>";
 			}
 			echo "</select><input type=\"text\" id=\"reqlvl_".$id."\" size=\"2\" maxlength=\"2\" value=\"1\" />
-			<input type=\"button\" onclick=\"xajax_addToTechTree('".REQ_TBL."',".$id.",document.getElementById('reqid_".$id."').value,document.getElementById('reqlvl_".$id."').value);\" value=\"Hinzufügen\" />";		
-			
-			
+			<input type=\"button\" onclick=\"xajax_addToTechTree('".REQ_TBL."',".$id.",document.getElementById('reqid_".$id."').value,document.getElementById('reqlvl_".$id."').value);\" value=\"Hinzufügen\" />";
+
+
 			echo "</td></tr>";
 		}
 		tableEnd();

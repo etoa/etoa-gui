@@ -1,5 +1,5 @@
 <?PHP
-$tpl->assign('title', 'Bildpakete verwalten');
+$twig->addGlobal('title', 'Bildpakete verwalten');
 
 $imPackDir = IMAGEPACK_DIRECTORY;
 $baseType = "png";

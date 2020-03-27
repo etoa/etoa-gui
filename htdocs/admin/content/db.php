@@ -26,7 +26,7 @@
 // 	Kommentar:
 //
 
-$tpl->assign('title', 'Datenbank');
+$twig->addGlobal('title', 'Datenbank');
 
 //
 // Database schema migrations

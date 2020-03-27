@@ -45,8 +45,8 @@
 		{
 			xajax_totalBuildingPrices(xajax.getFormValues('totalCosts'));
 		}		
-		</script>";		
-		
+		</script>";
+
 		$res = dbquery("
 		SELECT
 			building_id,
@@ -60,8 +60,8 @@
 		while ($arr=mysql_Fetch_row($res))
 		{
 			$bs[$arr[0]]=$arr[1];
-		}		
-				
+		}
+
 		echo "<h2>(Aus)baukosten (von Stufe x-1 auf Stufe x)</h2>";
 		echo "<table class=\"tb\">
 			<tr>
@@ -97,7 +97,7 @@
 		<td id=\"c1_power\">-</td>
 		";
 		echo "</tr></table>";
-		
+
 		echo "<h2>Totale Kosten</h2>
 		<form action=\"?page=$page&amp;sub=$sub\" method=\"post\" id=\"totalCosts\">";
 		ecHo "<table class=\"tb\">
@@ -118,15 +118,15 @@
 			for ($x=0;$x<=40;$x++)
 			{
 				echo "<option value=\"".$x."\">".$x."</option>";
-			}		
+			}
 			echo "</select></td>
 			<td id=\"b_metal_".$k."\">-</td>
 			<td id=\"b_crystal_".$k."\">-</td>
 			<td id=\"b_plastic_".$k."\">-</td>
 			<td id=\"b_fuel_".$k."\">-</td>
 			<td id=\"b_food_".$k."\">-</td>
-			</tr>";	
-		}		
+			</tr>";
+		}
 		echo "<tr><td style=\"height:2px;\" colspan=\"7\"></tr>";
 		echo "<tr>
 			<td colspan=\"2\">Total</td>
@@ -217,7 +217,7 @@
 	//
 	elseif ($sub=="type")
 	{
-		simple_form("building_types", $tpl);
+		simple_form("building_types", $twig);
 	}
 
 	//
@@ -225,7 +225,7 @@
 	//
 	elseif ($sub=="data")
 	{
-		advanced_form("buildings", $tpl);
+		advanced_form("buildings", $twig);
 	}
 
 	//
@@ -233,17 +233,17 @@
 	//
 	elseif ($sub=="reqmap")
 	{
-		
+
 		echo "<h1>Gebäude Techtree</h1>";
 		$starItem = 6;
-		
+
 		// Lade Gebäude
 		$bures = dbquery("SELECT building_id,building_name FROM buildings;");
 		while ($buarr = mysql_fetch_array($bures))
 		{
 			$bu_name[$buarr['building_id']]=$buarr['building_name'];
-		}		
-		
+		}
+
 		function reqTree($cItemId,$cItemLevel,$level=0,$endnode=false,$empty=null)
 		{
 			global $bu_name;
@@ -271,7 +271,7 @@
 					$divtext = "";
 				}
 				echo "<div style=\"margin:0px;padding:0px;background:#fff url('../images/".$img."') repeat-y;width:20px;height:20px;float:left;text-align:left;color:#666;\" >".$divtext."</div>";
-			}			
+			}
 			echo "<img src=\"".IMAGE_PATH."/buildings/building".$cItemId."_small.".IMAGE_EXT."\" align=\"top\" style=\"border:none;height:20px;width:20px;margin:0px;padding:0px;\">
 				<a href=\"javascript:;\" style=\"color:#00f\" onclick=\"xajax_reqInfo(".$cItemId.")\">".$bu_name[$cItemId]."</a> 
 			<br style=\"clear:both;\"/>
@@ -279,7 +279,7 @@
 
 			if ($endnode)
 				$empty[$level-1]=true;
-				
+
 			if ($nr>0)
 			{
 				$cnt=0;
@@ -288,12 +288,12 @@
 					$cnt++;
 					reqTree($arr['obj_id'],$arr['req_level'],$level+1, $cnt==$nr ? true : false,$empty);
 				}
-			}			
+			}
 			return $nr;
-		}		
-		
+		}
+
 		echo "<table style=\"border-collapse:collapse;border:3px solid #fff;background:#fff;float:left;\">";
-		$num = reqTree($starItem,1); 
+		$num = reqTree($starItem,1);
 		echo "</table>";
 		echo "<div id=\"reqInfo\" style=\"width:500px;text-align:center;;margin-left:10px;padding:10px;background:#fff;color:#000;float:left;\">
 		Gebäude auswählen...
@@ -325,8 +325,8 @@
 	//
 	else
 	{
-		$tpl->assign('title', 'Geb&auml;udeliste');
-		
+		$twig->addGlobal('title', 'Gebäudeliste');
+
 		$buildTypes = Building::getBuildTypes();
 
 		$build_colors[0]="inherit";
@@ -562,7 +562,7 @@
 				echo "<th></th>";
 				echo "</tr>";
 				for ($x=0;$x<mysql_num_rows($res);$x++)
-				{	
+				{
 					if (sizeof($narr)>1)
 						$arr=$narr;
 					else
@@ -608,10 +608,10 @@
 			{
 				$bdata[$barr['building_id']]=$barr;
 			}
-			
+
 			// Hinzufügen
 			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\" id=\"selector\" name=\"selector\">";
-			
+
 			//Sonnensystem
 			echo '<table class="tb">';
 			echo "<tr><th class=\"tbltitle\">Sonnensystem</th><td class=\"tbldata\">
@@ -632,17 +632,17 @@
 			for ($x=1;$x<=$conf['num_of_cells']['p2'];$x++)
 				echo "<option value=\"$x\">$x</option>";
 			echo "</select></td></tr>";
-		
-			
+
+
 			//User
 			echo "<tr><th class=\"tbltitle\"><i>oder</i> User</th><td class=\"tbldata\">";
 			echo "<input type=\"text\" name=\"userlist_nick\" id=\"userlist_nick\" value=\"\" autocomplete=\"off\" size=\"30\" maxlength=\"30\" onchange=\"xajax_searchUserList(this.value,'showBuildingsOnPlanet');\" onkeyup=\"xajax_searchUserList(this.value,'showBuildingsOnPlanet');\"><br>
 			<div id=\"userlist\">&nbsp;</div>";
 			echo "</td></tr>";
-			
+
 			//Planeten
 			echo "<tr><th class=\"tbltitle\">Planeten</th><td class=\"tbldata\" id=\"planetSelector\">Sonnensystem oder User w&auml;hlen...</td></tr>";
-			
+
 			//Gebäude Hinzufügen
 			echo "<tr><th class=\"tbltitle\">Hinzuf&uuml;gen:</th><td class=\"tbldata\">
 			<input type=\"text\" name=\"buildlist_current_level\" value=\"1\" size=\"7\" maxlength=\"10\" />
@@ -654,7 +654,7 @@
 			echo "</select> &nbsp; 
 			<input type=\"button\" onclick=\"showLoaderPrepend('shipsOnPlanet');xajax_addBuildingToPlanet(xajax.getFormValues('selector'));\" value=\"Hinzuf&uuml;gen\" />
 			<input type=\"button\" onclick=\"showLoaderPrepend('shipsOnPlanet');xajax_addAllBuildingToPlanet(xajax.getFormValues('selector'),".count($bdata).");\" value=\"Alle hinzuf&uuml;gen\" /></td></tr>";
-						
+
 			//Gebäude wählen
 			echo "<tr><td class=\"tbldata\" id=\"shipsOnPlanet\" colspan=\"2\">Planet w&auml;hlen...</td></tr>";
 			tableEnd();
@@ -662,7 +662,7 @@
 
 			//Focus
 			echo "<script type=\"text/javascript\">document.getElementById('userlist_nick').focus();</script>";
-			
+
 			//Add User
 			if (searchQueryArray($sa,$so))
 			{
@@ -671,9 +671,9 @@
 					echo "<script type=\"text/javascript\">document.getElementById('userlist_nick').value=\"".$sa['user_nick'][1]."\";xajax_searchUserList('".$sa['user_nick'][1]."','showBuildingsOnPlanet');</script>";
 				}
 			}
-			
+
 			echo '</div><div id="tabs-2">';
-			
+
 			$_SESSION['search']['buildings']['query']=null;
 			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\">";
 			echo '<table class="tb">';
@@ -694,16 +694,16 @@
 			tableEnd();
 			echo "<br/><input type=\"submit\" name=\"buildlist_search\" value=\"Suche starten\" />";
 			echo "</form>";
-			
+
 			echo '
 				</div>
 			</div>';
-			
+
 			$tblcnt = mysql_fetch_row(dbquery("SELECT count(buildlist_id) FROM buildlist;"));
 			echo "<p>Es sind <b>".nf($tblcnt[0])."</b> Eintr&auml;ge in der Datenbank vorhanden.</p>";
 
 		}
-		
+
 	}
 
 

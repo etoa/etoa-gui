@@ -15,15 +15,15 @@
 	// Programmiert von Nicolas Perrenoud				 		//
 	// www.nicu.ch | mail@nicu.ch								 		//
 	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	//////////////////////////////////////////////////	
+	//////////////////////////////////////////////////
 	//
-	// 	Dateiname: alliances.php	
-	// 	Topic: Allianz-Verwaltung 
-	// 	Autor: Nicolas Perrenoud alias MrCage							
+	// 	Dateiname: alliances.php
+	// 	Topic: Allianz-Verwaltung
+	// 	Autor: Nicolas Perrenoud alias MrCage
 	// 	Erstellt: 01.12.2004
 	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage
 	// 	Bearbeitet am: 31.03.2006
-	// 	Kommentar: 	
+	// 	Kommentar:
 	//
 
 	//
@@ -33,10 +33,10 @@
 	{
 		$dir = ALLIANCE_IMG_DIR."/";
 		echo "<h1>Allianz-Bilder pr&uuml;fen</h1>";
-	
+
 		//
 		// Check submit
-		// 
+		//
 		if (isset($_POST['validate_submit']))
 		{
 			foreach ($_POST['validate'] as $id=>$v)
@@ -61,10 +61,10 @@
 				else
 				{
 					dbquery("UPDATE alliances SET alliance_img_check=0 WHERE alliance_id=".$id.";");
-				}	
+				}
 			}
 		}
-			
+
 		//
 		// Check new images
 		//
@@ -86,7 +86,7 @@
 			echo "<form action=\"\" method=\"post\">
 			<table class=\"tb\"><tr><th>User</th><th>Fehler</th><th>Aktionen</th></tr>";
 			while($arr = mysql_fetch_assoc($res))
-			{				
+			{
 				echo "<tr><td>[".$arr['alliance_tag']."] ".$arr['alliance_name']."</td><td>";
 				if (file_exists($dir.$arr['alliance_img']))
 				{
@@ -106,9 +106,9 @@
 		}
 		else
 		{
-			echo "<br/><i>Keine Bilder vorhanden!</i>";				
+			echo "<br/><i>Keine Bilder vorhanden!</i>";
 		}
-	
+
 		//
 		// Orphans
 		//
@@ -128,7 +128,7 @@
 		if ($nr>0)
 		{
 			while ($arr=mysql_fetch_array($res))
-			{          
+			{
 				$paths[$arr['alliance_id']] = $arr['alliance_img'];
 				$nicks[$arr['alliance_id']] = $arr['alliance_name'];
 			}
@@ -145,15 +145,15 @@
 			}
 			closedir($d);
 		}
-	
+
 		$overhead = array();
 		while(count($files)>0)
 		{
 			$k = array_pop($files);
-			if (!in_array($k,$paths))	
+			if (!in_array($k,$paths))
 				array_push($overhead,$k);
-		}		
-	
+		}
+
 		if (isset($_GET['action']) && $_GET['action']=="clearoverhead")
 		{
 			while(count($overhead)>0)
@@ -162,8 +162,8 @@
 			}
 			echo "Verwaiste Bilder gelöscht!<br/><bt/>";
 		}
-		$co = count($overhead);		
-			
+		$co = count($overhead);
+
 		echo "<h2>Verwaiste Bilder</h2>";
 		if ($co>0)
 		{
@@ -172,7 +172,7 @@
 				echo "<table class=\"tb\">
 				<tr><th>Datei</th><th>Bild</th></tr>";
 				foreach($overhead as $v)
-				{				
+				{
 					echo "<tr><td>".$v."</td>";
 					echo '<td><img src="'.$dir.$v.'" alt="Profil" /></td></tr>';
 				}
@@ -190,16 +190,16 @@
 	//
 	elseif ($sub=="buildingsdata")
 	{
-		advanced_form("alliancebuildings", $tpl);
+		advanced_form("alliancebuildings", $twig);
 	}
-	
+
 	//
 	// Tech bearbeiten
 	//
 	elseif ($sub=="techdata")
 	{
-		advanced_form("alliancetechnologies", $tpl);
-	}	
+		advanced_form("alliancetechnologies", $twig);
+	}
 
 	//
 	// Erstellen
@@ -224,7 +224,7 @@
 				error_msg("Allianz konnte nicht erstellt werden!\n\n".$errorCode."");
 			}
 		}
-		
+
 		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
 		echo '<table class="tbl">';
 		echo "<tr><th>Tag:</th><td>
@@ -253,7 +253,7 @@
 	elseif ($sub=="news")
 	{
 		echo '<h1>Allianz-News</h1>';
-		
+
 		echo 'News entfernen die älter als <select id="timespan">
 		<option value="604800">1 Woche</option>
 		<option value="1209600">2 Wochen</option>
@@ -285,22 +285,22 @@
 		}
 		echo '</select> mit folgendem Text: <input type="text" id="ban_text" value="'.$ban_text.'" size="35" /> ';
 		echo '<input type="button" onclick="xajax_allianceNewsSetBanTime(document.getElementById(\'ban_timespan\').options[document.getElementById(\'ban_timespan\').selectedIndex].value,document.getElementById(\'ban_text\').value)" value="Speichern" /><br/><br/>';
-		
+
 		echo '<form id="newsForm" action="?page='.$page.'&amp;sub='.$sub.'" method="post">';
 		echo '<div id="newsBox">Lade...</div></form>';
 		echo '<script type="text/javascript">xajax_allianceNewsLoad()</script>';
 	}
-	
+
 	elseif ($sub=="crap")
 	{
 		echo "<h1>&Uuml;berfl&uuml;ssige Daten</h1>";
-		
+
 		// Daten laden
 		$alliances=get_alliance_names();
-		
-		$ally_ids=array_keys($alliances);			
-		$users = get_user_names(); 	
-		$user_ids=array_keys($users);			
+
+		$ally_ids=array_keys($alliances);
+		$users = get_user_names();
+		$user_ids=array_keys($users);
 
 		if (isset($_GET['action']) && $_GET['action']=="cleanranks")
 		{
@@ -310,7 +310,7 @@
 				while($arr=mysql_fetch_array($res))
 					if (!in_array($arr['rank_alliance_id'],$ally_ids))
 						dbquery("DELETE FROM alliance_ranks WHERE rank_id=".$arr['rank_id'].";");
-			}			
+			}
 			echo "Fehlerhafte Daten gel&ouml;scht<br/>";
 		}
 		elseif (isset($_GET['action']) && $_GET['action']=="clearbnd")
@@ -321,7 +321,7 @@
 				while($arr=mysql_fetch_array($res))
 					if (!in_array($arr['alliance_bnd_alliance_id1'],$ally_ids) || !in_array($arr['alliance_bnd_alliance_id2'],$ally_ids))
 						dbquery("DELETE FROM alliance_bnd WHERE alliance_bnd_id=".$arr['alliance_bnd_id'].";");
-			}		
+			}
 			echo "Fehlerhafte Daten gel&ouml;scht<br/>";
 		}
 		elseif (isset($_GET['action']) && $_GET['action']=="dropinactive")
@@ -348,7 +348,7 @@
 
 		if (count($alliances)>0)
 		{
-			// Ränge ohne Allianz    	
+			// Ränge ohne Allianz
 			echo "<h2>R&auml;nge ohne Allianz:</h2>";
 			$res=dbquery("SELECT rank_alliance_id FROM alliance_ranks;");
 			if (mysql_num_rows($res)>0)
@@ -362,7 +362,7 @@
 				else
 					echo "Keine fehlerhaften Daten gefunden";
 			}
-			
+
 			// Bündnisse/Kriege ohne Allianz
 			echo "<h2>B&uuml;ndnisse/Kriege ohne Allianz:</h2>";
 			$res=dbquery("SELECT alliance_bnd_alliance_id1,alliance_bnd_alliance_id2 FROM alliance_bnd;");
@@ -374,10 +374,10 @@
 						$cnt++;
 				if ($cnt>0)
 					echo "$cnt von ".mysql_num_rows($res)." B&uuml;ndnisse/Kriege ohne Allianz! <a href=\"?page=$page&amp;sub=$sub&amp;action=clearbnd\">L&ouml;schen?</a>";
-				else 
+				else
 					echo "Keine fehlerhaften Daten gefunden!";
 			}
-			
+
 			// Allianzen ohne Gründer
 			echo "<h2>Allianzen ohne Gr&uuml;nder:</h2>";
 			echo "<table class=\"tbl\">";
@@ -385,7 +385,7 @@
 			$cnt=0;
 			foreach($alliances as $k=>$v)
 			{
-				if (!in_array($v['founder_id'],$user_ids))	
+				if (!in_array($v['founder_id'],$user_ids))
 				{
 					echo "<tr><td class=\"tbldata\">".$v['name']."</td><td class=\"tbldata\">".$v['tag']."</td><td class=\"tbldata\"><a href=\"?page=$page&amp;sub=edit&amp;alliance_id=$k\">detail</a></td></tr>";
 					$cnt++;
@@ -396,7 +396,7 @@
 			echo "</table><br/>";
 			if ($cnt>0)
 				echo "$cnt Allianzen von ".count($alliances)." ohne Gr&uuml;nder!";
-			
+
 			// User mit fehlerhafter Allianz-Verknüpfung
 			echo "<h2>User mit fehlerhafter Allianz-Verkn&uuml;pfung:</h2>";
 			echo "<table class=\"tbl\">";
@@ -406,7 +406,7 @@
 			{
 				if ($v['alliance_id']!=0)
 				{
-					if (!in_array($v['alliance_id'],$ally_ids))	
+					if (!in_array($v['alliance_id'],$ally_ids))
 					{
 						echo "<tr><td class=\"tbldata\">".$v['nick']."</td><td class=\"tbldata\">".$v['email']."</td><td class=\"tbldata\"><a href=\"?page=user&amp;sub=edit&amp;user_id=$k\">detail</a></td></tr>";
 						$cnt++;
@@ -418,7 +418,7 @@
 			echo "</table><br/>";
 			if ($cnt>0)
 				echo "$cnt User von ".count($users)." mit fehlerhafter Verkn&uuml;pfung!";
-			
+
 			// Leere Allianzen
 			echo "<h2>Leere Allianzen (Allianzen ohne User)</h2>";
 			echo "<table class=\"tbl\">";
@@ -432,7 +432,7 @@
 					if ($uv['alliance_id']==$k)
 						$ucnt++;
 				}
-				if ($ucnt==0)	
+				if ($ucnt==0)
 				{
 					echo "<tr><td class=\"tbldata\">".$v['name']."</td><td class=\"tbldata\">".$v['tag']."</td><td class=\"tbldata\"><a href=\"?page=$page&amp;sub=edit&amp;alliance_id=$k\">detail</a></td><td class=\"tbldata\"><a href=\"?page=$page&amp;sub=drop&amp;alliance_id=$k\">l&ouml;schen</a></td></tr>";
 					$cnt++;
@@ -442,23 +442,23 @@
 				echo "<tr><td class=\"tbldata\" colspan=\"2\">Keine fehlerhaften Daten gefunden!</td></tr>";
 			echo "</table><br/>";
 			if ($cnt>0)
-				echo "$cnt Allianzen von ".count($alliances)." sind leer! <a href=\"?page=$page&amp;sub=$sub&amp;action=dropinactive\">L&ouml;schen?</a>";			
+				echo "$cnt Allianzen von ".count($alliances)." sind leer! <a href=\"?page=$page&amp;sub=$sub&amp;action=dropinactive\">L&ouml;schen?</a>";
 		}
 		else
 			echo "Keine Allianzen vorhanden!";
 	}
 	else
 	{
-		$tpl->assign("title", 'Allianzen');
-			
+		$twig->addGlobal('title', 'Allianzen');
+
 		//
 		// Suchergebnisse
 		//
-		
+
 		if ((isset($_POST['alliance_search']) && $_POST['alliance_search']!="" || $_SESSION['admin']['queries']['alliances']!="") && isset($_GET['action']) && $_GET['action']=="search")
 		{
-			$tpl->assign("subtitle", 'Suchergebnisse');
-  	
+			$twig->addGlobal('subtitle', 'Suchergebnisse');
+
   		if ($_SESSION['admin']['queries']['alliances']=="")
   		{
 			$sql = '';
@@ -468,23 +468,23 @@
 				}
 				if ($_POST['alliance_tag']!="")
 				{
-					if (stristr($_POST['qmode']['alliance_tag'],"%")) 
+					if (stristr($_POST['qmode']['alliance_tag'],"%"))
 						$addchars = "%";else $addchars = "";
 					$sql.= " AND alliance_tag ".stripslashes($_POST['qmode']['alliance_tag']).$_POST['alliance_tag']."$addchars'";
 				}
 				if ($_POST['alliance_name']!="")
 				{
-					if (stristr($_POST['qmode']['alliance_name'],"%")) 
+					if (stristr($_POST['qmode']['alliance_name'],"%"))
 						$addchars = "%";else $addchars = "";
 					$sql.= " AND alliance_name ".stripslashes($_POST['qmode']['alliance_name']).$_POST['alliance_name']."$addchars'";
-				}		
+				}
 				if ($_POST['alliance_text']!="")
 				{
-					if (stristr($_POST['qmode']['alliance_text'],"%")) 
+					if (stristr($_POST['qmode']['alliance_text'],"%"))
 						$addchars = "%";else $addchars = "";
 					$sql.= " AND alliance_text ".stripslashes($_POST['qmode']['alliance_text']).$_POST['alliance_text']."$addchars'";
-				}		
-							
+				}
+
 				$sqlstart =	"SELECT 
 					alliance_id,
 					alliance_name,
@@ -505,14 +505,14 @@
 			}
 			else
 				$sql = $_SESSION['admin']['queries']['alliances'];
-			
+
 			$res = dbquery($sql);
 			$nr = mysql_num_rows($res);
 			if ($nr==1)
 			{
 				$arr = mysql_fetch_array($res);
 				echo "<script>document.location='?page=$page&sub=edit&id=".$arr['alliance_id']."';</script>
-				Klicke <a href=\"?page=$page&sub=edit&id=".$arr['alliance_id']."\">hier</a> falls du nicht automatisch weitergeleitet wirst...";				
+				Klicke <a href=\"?page=$page&sub=edit&id=".$arr['alliance_id']."\">hier</a> falls du nicht automatisch weitergeleitet wirst...";
 			}
 			elseif ($nr>0)
 			{
@@ -521,8 +521,8 @@
 				{
 					echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /><br/><br/>";
 				}
- 
- 				$users = get_user_names(); 	
+
+ 				$users = get_user_names();
 				echo "<table class=\"tb\">";
 				echo "<tr>";
 				echo "<th>ID</th>";
@@ -552,21 +552,21 @@
 			else
 			{
 				echo "Die Suche lieferte keine Resultate!<br/><br/><input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Zur&uuml;ck\" />";
-			}		
+			}
 		}
-		
+
 		//
 		// Leere Allianzen löschen
 		//
-		
+
 		elseif (isset($_GET['sub']) && $_GET['sub']=="dropinactive")
 		{
 			echo "Sollen folgende leeren Allianzen gel&ouml;scht werden?<br/><br/>";
 			$res = dbquery("SELECT * FROM alliances ORDER BY alliance_tag;");
-			
+
 			if (mysql_num_rows($res)>0)
 			{
- 				$users = get_user_names(); 	
+ 				$users = get_user_names();
 				echo "<table class=\"tbl\">";
 				echo "<tr>";
 				echo "<td class=\"tbltitle\" valign=\"top\">ID</td>";
@@ -602,22 +602,22 @@
 			else
 			{
 				echo "Die Suche lieferte keine Resultate!<br/><br/><input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Zur&uuml;ck\" />";
-			}	
-		}		
-		
+			}
+		}
+
 		//
 		// Daten bearbeiten
 		//
-		
+
 		elseif (isset($_GET['sub']) && $_GET['sub']=="edit")
 		{
 			include("alliance/edit.inc.php");
 		}
-		
+
 		//
 		// Daten löschen
 		//
-		
+
 		elseif (isset($_GET['sub']) && $_GET['sub']=="drop")
 		{
 			$res = dbquery("SELECT * FROM alliances WHERE alliance_id=".$_GET['alliance_id'].";");
@@ -631,7 +631,7 @@
 				echo "<tr><td class=\"tbltitle\" valign=\"top\">Name</td><td class=\"tbldata\">".$arr['alliance_name']."</td></tr>";
 				echo "<tr><td class=\"tbltitle\" valign=\"top\">Tag</td><td class=\"tbldata\">".$arr['alliance_tag']."</td></tr>";
 				$users = get_user_names();
-				echo "<tr><td class=\"tbltitle\" valign=\"top\">Gr&uuml;nder</td><td class=\"tbldata\">".$users[$arr['alliance_founder_id']]['nick']."</td></tr>";				
+				echo "<tr><td class=\"tbltitle\" valign=\"top\">Gr&uuml;nder</td><td class=\"tbldata\">".$users[$arr['alliance_founder_id']]['nick']."</td></tr>";
 				echo "<tr><td class=\"tbltitle\" valign=\"top\">Text</td><td class=\"tbldata\">".text2html($arr['alliance_text'])."</td></tr>";
 				echo "<tr><td class=\"tbltitle\" valign=\"top\">Gr&uuml;ndung</td><td class=\"tbldata\">".date("Y-m-d H:i:s",$arr['alliance_foundation_date'])."</td></tr>";
 				echo "<tr><td class=\"tbltitle\" valign=\"top\">Website</td><td class=\"tbldata\">".$arr['alliance_url']."</td></tr>";
@@ -660,13 +660,13 @@
 			else
 				echo "<b>Fehler:</b>Datensatz nicht gefunden!<br/><br/><a href=\"javascript:history.back();\">Zur&uuml;ck</a>";
 		}
-		
+
 		//
 		// Suchmaske
-		//		
-			
+		//
+
 		else
-		{		
+		{
 			$_SESSION['admin']['queries']['alliances']="";
 
 			// Allianz löschen
@@ -703,8 +703,8 @@
 			}
 
 			// Suchmaske
-			$tpl->assign("subtitle", 'Suchmaske');
-			
+			$twig->addGlobal("subtitle", 'Suchmaske');
+
 			echo "<form action=\"?page=$page&amp;action=search\" method=\"post\">";
 			echo "<table class=\"tbl\">";
 			echo "<tr><td class=\"tbltitle\">ID</td><td class=\"tbldata\"><input type=\"text\" name=\"alliance_id\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('alliance_id');echo"</td></tr>";
@@ -714,8 +714,8 @@
 			echo "</table>";
 			echo "<br/><input type=\"submit\" name=\"alliance_search\" value=\"Suche starten\" /> (wenn nichts eingegeben wird werden alle Datens&auml;tze angezeigt)</form>";
 			$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM alliances;"));
-			echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.";	
-			
+			echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.";
+
 		}
 	}
 ?>
