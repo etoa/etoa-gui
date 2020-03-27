@@ -348,7 +348,7 @@
 	//
 	else
 	{
-		$tpl->assign('title', "Flotten");
+		$twig->addGlobal('title', "Flotten");
 
 		//
 		// Flotte bearbeiten
@@ -1084,7 +1084,7 @@
 			}
 			else
 			{
-				$tpl->assign("infomsg", "Die Suche lieferte keine Resultate!");
+				$twig->addGlobal("infoMessage", "Die Suche lieferte keine Resultate!");
 				echo "<p><input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" /></p>";
 				$_SESSION['fleetedit']['query']=Null;
 			}
@@ -1244,16 +1244,16 @@
 							".intval($_POST['fs_ship_id_new']).",
 							".intval($_POST['fs_ship_cnt_new'])."
 						);");
-						$tpl->assign('msg', "Neue Flotte erstellt! <a href=\"?page=$page&amp;sub=$sub&fleetedit=".$fid."\">Details</a>");
+						$twig->addGlobal('successMessage', "Neue Flotte erstellt! <a href=\"?page=$page&amp;sub=$sub&fleetedit=".$fid."\">Details</a>");
 					}
 					else
 					{
-						$tpl->assign('errmsg', "Zielentität nicht vorhanden");
+						$twig->addGlobal('errorMessage', "Zielentität nicht vorhanden");
 					}
 				}
 				else
 				{
-					$tpl->assign('errmsg', "Startentität nicht vorhanden");
+					$twig->addGlobal('errorMessage', "Startentität nicht vorhanden");
 				}
 			}
 
@@ -1438,16 +1438,16 @@
 							);");
 							$fi++;
 						}
-						$tpl->assign('msg', "$fi Flotten erstellt!");
+						$twig->addGlobal('successMessage', "$fi Flotten erstellt!");
 					}
 					else
 					{
-						$tpl->assign('errmsg', "Startentität nicht vorhanden");
+						$twig->addGlobal('errorMessage', "Startentität nicht vorhanden");
 					}
 				}
 				else
 				{
-					$tpl->assign('errmsg', "Schiffstyp nicht ausgewählt!");
+					$twig->addGlobal('errorMessage', "Schiffstyp nicht ausgewählt!");
 				}
 			}
 

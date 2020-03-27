@@ -12,7 +12,7 @@
 	//
 	if ($sub=="battlepoints")
 	{
-		$tpl->assign("title", "Schiff-Punkte");
+		$twig->addGlobal("title", "Schiff-Punkte");
 
 		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
 		if (isset($_POST['recalc']))
@@ -50,7 +50,7 @@
 	//
 	elseif ($sub=="xpcalc")
 	{
-		$tpl->assign("title", "XP-Rechner");
+		$twig->addGlobal("title", "XP-Rechner");
 
 		echo "Schiff wählen: <select onchange=\"document.location='?page=".$page."&sub=".$sub."&id='+this.options[this.selectedIndex].value\">";
 		$res = dbquery("
@@ -83,15 +83,15 @@
 		}
 		echo "</select><br/><br/>";
 
-		echo "<table class=\"tb\"><tr><th>Level</th><th>Experience</th></tr>";	
+		echo "<table class=\"tb\"><tr><th>Level</th><th>Experience</th></tr>";
 		for ($level=1;$level<=30;$level++)
 		{
 			echo "<tr><td>$level</td><td>".nf(Ship::xpByLevel($ship_xp,$ship_xp_multiplier,$level))."</td></tr>";
-			
+
 		}
 		echo "</table>";
 
-		
+
 	}
 
 
@@ -100,7 +100,7 @@
 	//
 	elseif ($sub=="cat")
 	{
-		simple_form("ship_cat", $tpl);
+		simple_form("ship_cat", $twig);
 	}
 
 	//
@@ -108,9 +108,9 @@
 	//
 	elseif ($sub=="data")
 	{
-		advanced_form("ships", $tpl);
+		advanced_form("ships", $twig);
 	}
-	
+
 	//
 	// Schiffsanforderungen
 	//
@@ -136,8 +136,8 @@
 	//
 	elseif ($sub=="queue")
 	{
-		$tpl->assign("title", "Schiff-Bauliste");
-		
+		$twig->addGlobal("title", "Schiff-Bauliste");
+
 		if (isset($_POST['shipqueue_search']) || isset($_GET['action']) && $_GET['action']=="searchresults")
 		{
 			$sqlstart = "
@@ -464,7 +464,7 @@
 			}
 
 			// Suchmaske
-			$tpl->assign("subtitle", "Suchmaske");
+			$twig->addGlobal("subtitle", "Suchmaske");
 			echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
 			echo "<table class=\"tbl\">";
 			echo "<tr><td class=\"tbltitle\">Planet ID</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td>";
@@ -489,7 +489,7 @@
 	**************/
 	else
 	{
-		$tpl->assign("title", "Schiffliste");
+		$twig->addGlobal("title", "Schiffliste");
 
 			// Schiffe laden
 			$bres = dbquery("
@@ -505,11 +505,11 @@
 				$slist[$barr['ship_id']]=$barr['ship_name'];
 
 			$tblcnt = mysql_fetch_row(dbquery("SELECT count(shiplist_id) FROM shiplist;"));
-			
+
 			// Hinzufügen
 			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\" id=\"selector\" name=\"selector\">";
 			echo "<table>";
-			
+
 			//Sonnensystem
 
 			echo "<tr><th class=\"tbltitle\">Sonnensystem</th><td class=\"tbldata\">
@@ -530,17 +530,17 @@
 			for ($x=1;$x<=$conf['num_of_cells']['p2'];$x++)
 				echo "<option value=\"$x\">$x</option>";
 			echo "</select></td></tr>";
-		
-			
+
+
 			//User
 			echo "<tr><th class=\"tbltitle\">User:</th><td class=\"tbldata\">";
 			echo "<input type=\"text\" name=\"userlist_nick\" id=\"userlist_nick\" value=\"\" autocomplete=\"off\" size=\"30\" maxlength=\"30\" onkeyup=\"xajax_searchUserList(this.value,'showShipsOnPlanet');\"><br>
 			<div id=\"userlist\">&nbsp;</div>";
 			echo "</td></tr>";
-			
+
 			//Planeten
 			echo "<tr><th class=\"tbltitle\">Kolonien:</th><td class=\"tbldata\" id=\"planetSelector\">Sonnensystem oder User w&auml;hlen...</td></tr>";
-			
+
 			//Schiffe Hinzufügen
 			echo "<tr name=\"addObject\" id=\"addObject\" style=\"display:none;\"><th class=\"tbltitle\">Hinzuf&uuml;gen:</th><td class=\"tbldata\">
 			<input type=\"text\" name=\"shiplist_count\" value=\"1\" size=\"7\" maxlength=\"10\" />
@@ -551,20 +551,20 @@
 			}
 			echo "</select> &nbsp; 
 			<input type=\"button\" onclick=\"showLoaderPrepend('shipsOnPlanet');xajax_addShipToPlanet(xajax.getFormValues('selector'));\" value=\"Hinzuf&uuml;gen\" /></td></tr>";
-			
+
 			//Vorhandene Schiffe
 			tableEnd();
 			echo "<br/>";
-			
+
 			echo "<div id=\"shipsOnPlanet\" style=\"width:700px\"></div>";
-			
+
 			echo "</form>";
 
 
 
 			//Focus
 			echo "<script type=\"text/javascript\">document.getElementById('userlist_nick').focus();</script>";
-			
+
 			//Add User
 			if (searchQueryArray($sa,$so))
 			{
@@ -573,7 +573,7 @@
 					echo "<script type=\"text/javascript\">document.getElementById('userlist_nick').value=\"".$sa['user_nick'][1]."\";xajax_searchUserList('".$sa['user_nick'][1]."','showShipsOnPlanet');</script>";
 				}
 			}
-			
+
 			echo "<br/>Es sind <b>".nf($tblcnt[0])."</b> Eintr&auml;ge in der Datenbank vorhanden.";
 
 	}

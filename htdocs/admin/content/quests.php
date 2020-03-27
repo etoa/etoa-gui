@@ -4,7 +4,7 @@ use EtoA\Quest\QuestPresenter;
 use EtoA\Quest\QuestRepository;
 use LittleCubicleGames\Quests\Workflow\QuestDefinition;
 
-$tpl->assign('title', 'Quests');
+$twig->addGlobal('title', 'Quests');
 
 $questDefinitions = $app['cubicle.quests.quests'];
 $questMap = [];

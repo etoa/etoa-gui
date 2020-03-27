@@ -49,11 +49,6 @@
 		define('IMAGE_DIR', RELATIVE_ROOT."images");
 	}
 
-	// Smarty Path
-	define('SMARTY_DIR', __DIR__ . '/../libs/smarty/');
-	define('SMARTY_TEMPLATE_DIR', CACHE_ROOT."/smarty_templates");
-	define('SMARTY_COMPILE_DIR', CACHE_ROOT."/smarty_compile");
-
 	// xAjax
 	define('XAJAX_DIR', RELATIVE_ROOT."libs/xajax");
 	define('XAJAX_DEBUG', false);

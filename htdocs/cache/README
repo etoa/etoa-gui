@@ -5,7 +5,7 @@
 This directory holds all file data that is created or changed during the game.
 It must be writable by the wbeserver user.
 Execute the following command:
-	
+
 	chmod 777 -R cache
 
 to allow the webserver to write to the cache directory.
@@ -18,7 +18,6 @@ The cache directory holds the following subdirectories:
 - imagepacks: generated downloadable imagepacks
 - out: some generated graphics
 - rss: rss feeds
-- smarty_*: smarty cache directories
 - user_xml: xml files of deleted users
 - userprofiles: Images of users
 - xml: other xml stuff

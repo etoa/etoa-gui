@@ -44,8 +44,8 @@
     <script type="text/javascript" src="web/js/main.js"></script>
     {% if page|default(false) %}
         <script type="text/javascript">
-            window.prevEntityUrl="?page={{ page }}&mode={$mode}&change_entity={$prevPlanetId}";
-            window.nextEntityUrl="?page={{ page }}&mode={$mode}&change_entity={$nextPlanetId}";
+            window.prevEntityUrl="?page={{ page }}&mode={{ mode }}&change_entity={{ prevPlanetId }}";
+            window.nextEntityUrl="?page={{ page }}&mode={{ mode }}&change_entity={{ nextPlanetId }}";
         </script>
 
     {% if enableKeybinds %}

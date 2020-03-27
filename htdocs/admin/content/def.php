@@ -15,17 +15,17 @@
 	// Programmiert von Nicolas Perrenoud				 		//
 	// www.nicu.ch | mail@nicu.ch								 		//
 	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	//////////////////////////////////////////////////	
+	//////////////////////////////////////////////////
 	//
-	// 	Dateiname: def.php	
-	// 	Topic: Verwaltung der Verteidigungsanlagen 
-	// 	Autor: Nicolas Perrenoud alias MrCage							
+	// 	Dateiname: def.php
+	// 	Topic: Verwaltung der Verteidigungsanlagen
+	// 	Autor: Nicolas Perrenoud alias MrCage
 	// 	Erstellt: 01.12.2004
 	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage
 	// 	Bearbeitet am: 31.03.2006
-	// 	Kommentar: 	
+	// 	Kommentar:
 	//
-	
+
 
 	//
 	// Battlepoints
@@ -37,9 +37,9 @@
 		if (isset($_POST['recalc']) && $_POST['recalc']!="")
 		{
 			echo MessageBox::ok("", Ranking::calcDefensePoints());
-		}		
+		}
 		echo "Nach jeder direkter &Auml;nderung an den Verteidigungsanlagen via Datenbank m&uuml;ssen die Punkte neu berechnet werden: ";
-		echo "<br/><br/><input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";		
+		echo "<br/><br/><input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";
 		echo "<h2>Battlepoints</h2>";
 		$res=dbquery("SELECT
 			def_id,
@@ -53,19 +53,19 @@
 			while ($arr=mysql_fetch_array($res))
 			{
 				echo "<tr><th>".$arr['def_name']."</th><td style=\"width:70%\">".$arr['def_points']."</td></tr>";
-			}			
+			}
 			echo "</table>";
-		}	
+		}
 	}
-	
+
 	//
-	// 
+	//
 	//
 	elseif ($sub=="transforms")
 	{
-		advanced_form("obj_transforms", $tpl);		
+		advanced_form("obj_transforms", $twig);
 	}
-	
+
 	//
 	// Bauliste
 	//
@@ -416,26 +416,26 @@
 			$tblcnt = mysql_fetch_row(dbquery("SELECT COUNT(queue_id) FROM def_queue;"));
 			echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.<br/>";
 		}
-	}	
-	
-	
+	}
+
+
 	//
 	// Bearbeiten
-	//	
+	//
 	elseif ($sub=="data")
 	{
-		advanced_form("defense", $tpl);
+		advanced_form("defense", $twig);
 	}
 
 	//
 	// Kategorien
-	//	
+	//
 	elseif ($sub=="cat")
 	{
-		advanced_form("def_cat", $tpl);
+		advanced_form("def_cat", $twig);
 	}
 
-	
+
 	//
 	// Voraussetzungen
 	//
@@ -464,10 +464,10 @@
 	else
 	{
 		echo "<h1>Verteidigungsliste</h1>";
-	
+
 		if (isset($_POST['deflist_search']) || (isset($_GET['action']) && $_GET['action']=="searchresults") || isset($_POST['new']))
 		{
-	
+
 			$sqlstart = "SELECT 
 				planets.id,
 				planet_name,
@@ -501,14 +501,14 @@
 					deflist_entity_id,
 					def_order,def_name;";
       $sql = "";
-      
+
 			// Verteidigung hinzufügen
 			if (isset($_POST['new']))
 			{
 				$updata=explode(":",$_POST['planet_id']);
 				if (mysql_num_rows(dbquery("SELECT deflist_id FROM deflist WHERE deflist_entity_id=".$updata[0]." AND deflist_def_id=".$_POST['def_id'].";"))==0)
 				{
-					dbquery("INSERT INTO deflist (deflist_entity_id,deflist_user_id,deflist_def_id,deflist_count) VALUES (".$updata[0].",".$updata[1].",".$_POST['def_id'].",".$_POST['deflist_count'].");");					
+					dbquery("INSERT INTO deflist (deflist_entity_id,deflist_user_id,deflist_def_id,deflist_count) VALUES (".$updata[0].",".$updata[1].",".$_POST['def_id'].",".$_POST['deflist_count'].");");
 					echo "Verteidigung wurde hinzugef&uuml;gt!<br/>";
 				}
 				else
@@ -518,12 +518,12 @@
 				}
 				$sql= " AND planets.id=".$updata[0];
 				$_SESSION['defedit']['query']="";
-				
+
 				// Verteidigung laden
 				$bres = dbquery("SELECT def_id,def_name FROM defense ORDER BY def_name;");
 				$slist=array();
 				while ($barr=mysql_fetch_array($bres))
-					$slist[$barr['def_id']]=$barr['def_name'];					
+					$slist[$barr['def_id']]=$barr['def_name'];
 
 				// Hinzufügen
 				echo "<h2>Neue Verteidigungsanlagen hinzuf&uuml;gen</h2>";
@@ -537,9 +537,9 @@
 					echo ">".$v."</option>";
 				}
 				echo "</select></td></tr>";
-				if ($_POST['deflist_count']) 
+				if ($_POST['deflist_count'])
 					$v=$_POST['deflist_count'];
-				else	
+				else
 					$v=1;
 				echo "<tr><th class=\"tbltitle\">Anzahl</th><td class=\"tbldata\"><input type=\"text\" name=\"deflist_count\" value=\"$v\" size=\"1\" maxlength=\"3\" /></td></tr>";
 				echo "<tr><th class=\"tbltitle\">auf dem Planeten</th><td class=\"tbldata\"> <select name=\"planet_id\"><";
@@ -574,11 +574,11 @@
 				}
 				echo "</select></td></tr>";
 				tableEnd();
-				echo "<input type=\"submit\" name=\"new\" value=\"Hinzuf&uuml;gen\" /></form><br/>";				
+				echo "<input type=\"submit\" name=\"new\" value=\"Hinzuf&uuml;gen\" /></form><br/>";
 				$sql = $sqlstart.$sql.$sqlend;
 				$_SESSION['defedit']['query']=$sql;
-			}			
-			
+			}
+
 			// Suchquery generieren
 			elseif ($_SESSION['defedit']['query']=="")
 			{
@@ -586,7 +586,7 @@
 					$sql.= " AND id='".$_POST['planet_id']."'";
 				if ($_POST['planet_name']!="")
 				{
-					if (stristr($_POST['qmode']['planet_name'],"%")) 
+					if (stristr($_POST['qmode']['planet_name'],"%"))
 						$addchars = "%";else $addchars = "";
 					$sql.= " AND planet_name ".stripslashes($_POST['qmode']['planet_name']).$_POST['planet_name']."$addchars'";
 				}
@@ -594,20 +594,20 @@
 					$sql.=" AND user_id='".$_POST['user_id']."'";
 				if ($_POST['user_nick']!="")
 				{
-					if (stristr($_POST['qmode']['user_nick'],"%")) 
+					if (stristr($_POST['qmode']['user_nick'],"%"))
 						$addchars = "%";else $addchars = "";
 					$sql.= " AND user_nick ".stripslashes($_POST['qmode']['user_nick']).$_POST['user_nick']."$addchars'";
 				}
 				if ($_POST['def_id']!="")
 					$sql.= " AND def_id='".$_POST['def_id']."'";
-			
+
 
 				$sql = $sqlstart.$sql.$sqlend;
 				$_SESSION['defedit']['query']=$sql;
 			}
 			else
-				$sql = $_SESSION['defedit']['query'];								
-  	
+				$sql = $_SESSION['defedit']['query'];
+
 
 			if (isset($_POST['save']))
 			{
@@ -629,7 +629,7 @@
 				dbquery("DELETE FROM deflist WHERE deflist_count=0;");
 				success_msg("Aufgeräumt");
 			}
-  	
+
 			$res = dbquery($sql);
 			if (mysql_num_rows($res)>0)
 			{
@@ -637,8 +637,8 @@
 				if (mysql_num_rows($res)>20)
 				{
 					echo "<input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page&sub=$sub'\" /> ";
-  				echo "<input type=\"button\" value=\"Aktualisieren\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=searchresults'\" /> ";					
-  				echo "<input type=\"button\" value=\"Clean-Up\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=searchresults&amp;cleanup=1'\" /><br/><br/>";					
+  				echo "<input type=\"button\" value=\"Aktualisieren\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=searchresults'\" /> ";
+  				echo "<input type=\"button\" value=\"Clean-Up\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=searchresults&amp;cleanup=1'\" /><br/><br/>";
   			}
 				echo "<table class=\"tbl\">";
 				echo "<tr>";
@@ -653,8 +653,8 @@
 					if ($arr['deflist_count']==0)
 						$style=" style=\"color:#999\"";
 					else
-						$style="";					
-					
+						$style="";
+
 					echo "<tr>";
 					echo "<td class=\"tbldata\" $style>".$arr['deflist_id']."</a></td>";
 					echo "<td class=\"tbldata\" $style".mTT($arr['planet_name'],"<b>Planet-ID:</b> ".$arr['id']."<br/><b>Koordinaten:</b> ".$arr['sx']."/".$arr['sy']." : ".$arr['cx']."/".$arr['cy']." : ".$arr['pos']).">".cut_string($arr['planet_name'],11)."</a></td>";
@@ -666,17 +666,17 @@
 				}
 				echo "</table>";
 				echo "<br/><input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page&sub=$sub'\" /> ";
-				echo "<input type=\"button\" value=\"Aktualisieren\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=searchresults'\" />";				
+				echo "<input type=\"button\" value=\"Aktualisieren\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=searchresults'\" />";
 			}
 			else
 			{
 				echo "Die Suche lieferte keine Resultate!<br/><br/><input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=$page&sub=$sub'\" />";
-			}		
+			}
 		}
-		
+
 		//
 		// Bearbeiten
-		// 
+		//
 		elseif (isset($_GET['action']) && $_GET['action']=="edit")
 		{
 			$res = dbquery("SELECT 
@@ -721,28 +721,28 @@
 			else
 				echo "Dieser Datensatz wurde gel&ouml;scht!<br/><br/><input type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&sub=$sub&action=searchresults'\" />&nbsp;";
 		}
-		
+
 		//
 		// Suchformular
 		//
 		else
-		{		
-	
-			
+		{
+
+
 			$_SESSION['defedit']['query']="";
 
 			// Verteidigung laden
 			$bres = dbquery("SELECT def_id,def_name FROM defense ORDER BY def_name;");
 			$dlist=array();
 			while ($barr=mysql_fetch_array($bres))
-				$dlist[$barr['def_id']]=$barr['def_name'];	
-	
-	
+				$dlist[$barr['def_id']]=$barr['def_name'];
+
+
 			echo "<h2>Schnellsuche</h2>";
 			// Hinzufügen
 			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\" id=\"selector\">";
 			tableStart();
-			
+
 			//Sonnensystem
 			echo "<tr><th class=\"tbltitle\">Sonnensystem</th><td class=\"tbldata\">
 			<select name=\"cell_sx\" onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showDefenseOnPlanet');\">";
@@ -762,16 +762,16 @@
 			for ($x=1;$x<=$conf['num_of_cells']['p2'];$x++)
 				echo "<option value=\"$x\">$x</option>";
 			echo "</select></td></tr>";
-			
+
 			//User
 			echo "<tr><th class=\"tbltitle\"><i>oder</i> User</th><td class=\"tbldata\">";
 			echo "<input type=\"text\" name=\"userlist_nick\" id=\"userlist_nick\" value=\"\" autocomplete=\"off\" size=\"30\" maxlength=\"30\" onkeyup=\"xajax_searchUserList(this.value,'showDefenseOnPlanet');\"><br>
 			<div id=\"userlist\">&nbsp;</div>";
 			echo "</td></tr>";
-			
+
 			//Planeten
 			echo "<tr><th class=\"tbltitle\">Planeten</th><td class=\"tbldata\" id=\"planetSelector\">Sonnensystem oder User w&auml;hlen...</td></tr>";
-			
+
 			//Def Hinzufügen
 			echo "<tr><th class=\"tbltitle\">Hinzuf&uuml;gen:</th><td class=\"tbldata\">
 			<input type=\"text\" name=\"deflist_count\" value=\"1\" size=\"1\" maxlength=\"3\" />
@@ -781,13 +781,13 @@
 				echo "<option value=\"".$k."\">".$v."</option>";
 			}
 			echo "</select> &nbsp; <input type=\"button\" onclick=\"xajax_addDefenseToPlanet(xajax.getFormValues('selector'));\" value=\"Hinzuf&uuml;gen\" /></td></tr>";
-			
+
 			//Vorhandene Def
 			echo "<tr><th class=\"tbltitle\">Vorhandene Verteidigung:</th><td class=\"tbldata\" id=\"shipsOnPlanet\">Planet w&auml;hlen...</td></tr>";
 			tableEnd();
 			echo "</form>";
 			echo '<script type="text/javascript">document.forms[0].user_nick.focus();</script>';
-			
+
 			//Add User
 			if (searchQueryArray($sa,$so))
 			{
@@ -796,11 +796,11 @@
 					echo "<script type=\"text/javascript\">document.getElementById('userlist_nick').value=\"".$sa['user_nick'][1]."\";xajax_searchUserList('".$sa['user_nick'][1]."','showDefenseOnPlanet');</script>";
 				}
 			}
-			
+
 			$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM deflist;"));
-			echo "Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.<br/><br />";	
-			
-			
+			echo "Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.<br/><br />";
+
+
 			// Suchmaske
 			echo "<h2>Suchmaske</h2>";
 
@@ -816,9 +816,9 @@
 			echo "</select></td></tr>";
 			tableEnd();
 			echo "<br/><input type=\"submit\" class=\"button\" name=\"deflist_search\" value=\"Suche starten\" /></form>";
-	
-			
-		}		
+
+
+		}
 	}
 
 

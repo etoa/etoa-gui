@@ -57,10 +57,10 @@
 	elseif ($sub=="create")
 	{
 		echo "<h1>Spieler erstellen</h1>";
-		
+
 		if (isset($_POST['create']))
 		{
-			try 
+			try
 			{
 				$newUser = User::register(
 					$_POST['user_name'],
@@ -71,7 +71,7 @@
 					$_POST['user_ghost']==1
 				);
 				$newUser->setVerified(true);
-				add_log(3,"Der Benutzer ".$newUser->nick." (".$newUser->realName.", ".$newUser->email.") wurde registriert!");					
+				add_log(3,"Der Benutzer ".$newUser->nick." (".$newUser->realName.", ".$newUser->email.") wurde registriert!");
 				success_msg("Benutzer wurde erstellt! [[page user sub=edit id=".$newUser->id."]Details[/page]]");
 			}
 			catch (Exception $e)
@@ -79,7 +79,7 @@
 				error_msg("Benutzer konnte nicht erstellt werden!\n\n".$e->getMessage());
 			}
 		}
-		
+
 		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
 		tableStart("","400");
 		echo "<tr><th>Name:</th><td>
@@ -120,9 +120,9 @@
 	//
 	elseif ($sub=="specialists")
 	{
-			advanced_form("specialists", $tpl);
+			advanced_form("specialists", $twig);
 	}
-	
+
 	//
 	// Fehlerhafte Logins
 	//
@@ -136,7 +136,7 @@
 	//
 	elseif ($sub=="observed")
 	{
-		require("user/observed.inc.php");		
+		require("user/observed.inc.php");
 	}
 
 	//
@@ -144,34 +144,34 @@
 	//
 	elseif ($sub=="tickets")
 	{
-		require("user/tickets.inc.php");		
+		require("user/tickets.inc.php");
 	}
 
-	
+
 	//
 	// Verwarnungen
 	//
 	elseif ($sub=="warnings")
 	{
-		require("user/warnings.inc.php");		
-	}	
+		require("user/warnings.inc.php");
+	}
 
 	//
 	// Bilder prüfen
 	//
 	elseif ($sub=="imagecheck")
 	{
-		require("user/imagecheck.inc.php");		
+		require("user/imagecheck.inc.php");
 	}
-	
+
 	//
 	// User banner
 	//
 	elseif ($sub=="userbanner")
 	{
-		require("user/userbanner.inc.php");		
+		require("user/userbanner.inc.php");
 	}
-	
+
 	//
 	// Session-Log
 	//
@@ -185,7 +185,7 @@
 	//
 	elseif ($sub=="race")
 	{
-		advanced_form("races", $tpl);
+		advanced_form("races", $twig);
 	}
 
 	//
@@ -235,12 +235,12 @@
 
 	else
 	{
-		$tpl->assign("title", 'Spieler');
+		$twig->addGlobal("title", 'Spieler');
 
 		if ((isset($_GET['special']) || isset($_POST['user_search']) || isset($_SESSION['admin']['user_query'])) && isset($_GET['action']) && $_GET['action']=="search")
 		{
-			$tpl->assign("subtitle", 'Suchergebnisse');
-		
+			$twig->addGlobal("subtitle", 'Suchergebnisse');
+
 			$tables = 'users';
 
 			if (isset($_GET['special']))
@@ -249,20 +249,20 @@
 				{
 					case "ip":
 						$sql= " user_ip='".base64_decode($_GET['val'])."'";
-						break;					
+						break;
 					case "host":
 						$sql= " user_hostname='".base64_decode($_GET['val'])."'";
-						break;	
+						break;
 					case "blocked":
 						$sql= " (user_blocked_from<".time()." AND user_blocked_to>".time().")";
-						break;								
+						break;
 					default:
 						$sql= " user_nick='%".base64_decode($_GET['val'])."%'";
 				}
 				$sqlstart="SELECT * FROM $tables WHERE ";
 				$sqlend=" ORDER BY user_nick;";
 				$sql = $sqlstart.$sql.$sqlend;
-				$_SESSION['admin']['user_query']=$sql;				
+				$_SESSION['admin']['user_query']=$sql;
 			}
 			elseif ($_SESSION['admin']['user_query']=="")
 			{
@@ -332,14 +332,14 @@
 						$sql.= " AND user_chatadmin=1 ";
 					else
 						$sql.= " AND user_chatadmin=0 ";
-				}			
+				}
 				if (isset($_POST['user_ghost']) && $_POST['user_ghost']<2)
 				{
 					if ($_POST['user_ghost']==1)
 						$sql.= " AND user_ghost=1 ";
 					else
 						$sql.= " AND user_ghost=0 ";
-				}							
+				}
 
 				$sqlstart="SELECT * FROM $tables WHERE 1 ";
 				$sqlend=" ORDER BY user_nick;";
@@ -355,7 +355,7 @@
 			{
 				$arr = mysql_fetch_array($res);
 				echo "<script>document.location='?page=$page&sub=edit&id=".$arr['user_id']."';</script>
-				Klicke <a href=\"?page=$page&sub=edit&id=".$arr['user_id']."\">hier</a> falls du nicht automatisch weitergeleitet wirst...";				
+				Klicke <a href=\"?page=$page&sub=edit&id=".$arr['user_id']."\">hier</a> falls du nicht automatisch weitergeleitet wirst...";
 			}
 			elseif ($nr>0)
 			{
@@ -364,11 +364,11 @@
 				{
 					echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /><br/><br/>";
 				}
-				
+
 				$race = get_races_array();
 				$allys=get_alliance_names();
 				$time = time();
-				
+
  				tableStart();
 				echo "<tr>";
 				echo "<th>ID</th>";
@@ -427,7 +427,7 @@
 			}
 			else
 			{
-				$tpl->assign('infomsg', "Die Suche lieferte keine Resultate!");
+				$twig->addGlobal('infoMessage', "Die Suche lieferte keine Resultate!");
 				echo "<p><input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=$page'\" /></p>";
 			}
 		}
@@ -447,7 +447,7 @@
 
 		else
 		{
-			$tpl->assign("subtitle", 'Suchmaske');
+			$twig->addGlobal("subtitle", 'Suchmaske');
 
 			$_SESSION['admin']['user_query']="";
 			echo "<form action=\"?page=$page&amp;action=search\" method=\"post\">";

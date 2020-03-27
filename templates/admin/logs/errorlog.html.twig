@@ -1,0 +1,19 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Logs</h1>
+    <h2>Fehler-Log</h2>
+
+    {% if logFile %}
+        <pre class="changelog">{{ logFile }}</pre>
+        <form action="" method="POST">
+            <input type="submit" value="Log löschen" name="purgelog_submit" onclick="return confirm('Logdatei wirklich löschen?')" />
+        </form>
+    {% else %}
+        {{ macros.messagebox('Logdatei nicht vorhanden oder leer!', 'info') }}
+    {% endif %}
+
+
+{% endblock %}

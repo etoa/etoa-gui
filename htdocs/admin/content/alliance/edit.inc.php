@@ -1,11 +1,11 @@
 <?PHP
-	
+
 		if (isset($_GET['alliance_id']))
 			$id = $_GET['alliance_id'];
 		if (isset($_GET['id']))
 			$id = $_GET['id'];
-		
-		
+
+
 		if (isset($_POST['info_save']) && $_POST['info_save']!="")
 		{
 			//  Bild löschen wenn nötig
@@ -23,7 +23,7 @@
 					$img_sql=",alliance_img=''";
 				}
 			}
-			
+
 			// Daten speichern
 			dbquery("
 			UPDATE 
@@ -39,8 +39,8 @@
 			WHERE 
 				alliance_id='".$id."'
 			;");
-			
-			$tpl->assign('msg', 'Allianzdaten aktualisiert!');
+
+			$twig->addGlobal('successMessage', 'Allianzdaten aktualisiert!');
 		}
 		elseif (isset($_POST['member_save']) && $_POST['member_save']!="")
 		{
@@ -61,7 +61,7 @@
 					SET 
 						user_alliance_rank_id=$v 
 					WHERE 
-						user_id='$k';");				
+						user_id='$k';");
 			// Ränge speichern
 			if (isset($_POST['rank_del']) && count($_POST['rank_del'])>0)
 				foreach($_POST['rank_del'] as $k=>$v)
@@ -78,7 +78,7 @@
 						rank_level='".$_POST['rank_level'][$k]."' 
 					WHERE 
 						rank_id='$k';");
-			$tpl->assign('msg', 'Mitglieder aktualisiert!');
+			$twig->addGlobal('successMessage', 'Mitglieder aktualisiert!');
 		}
 		elseif (isset($_POST['bnd_save']) && $_POST['bnd_save']!="")
 		{
@@ -99,7 +99,7 @@
 						alliance_bnd_id='$k';");
 				}
 			}
-			$tpl->assign('msg', 'Diplomatie aktualisiert!');
+			$twig->addGlobal('successMessage', 'Diplomatie aktualisiert!');
 		}
 		elseif (isset($_POST['res_save']) && $_POST['res_save']!="")
 		{
@@ -120,51 +120,51 @@
 					WHERE
 						alliance_id='".$id."'
 					LIMIT 1;");
-			$tpl->assign('msg', 'Ressourcen aktualisiert!');
+			$twig->addGlobal('successMessage', 'Ressourcen aktualisiert!');
 		}
 		elseif (isset($_POST['buildings']) && $_POST['buildings']!="")
 		{
-			
+
 			$test= dbquery("SELECT alliance_buildlist_id FROM alliance_buildlist WHERE alliance_buildlist_alliance_id =".$id." 
 							AND alliance_buildlist_building_id =(select alliance_building_id from alliance_buildings where alliance_building_name='".$_POST['selected']."')");
-			
+
 			if (mysql_num_rows($test)>0)
-			{	
+			{
 			dbquery("UPDATE alliance_buildlist SET alliance_buildlist_current_level =".$_POST['level'].", alliance_buildlist_member_for =".$_POST['amount']." WHERE alliance_buildlist_alliance_id =".$id." 
 					 AND alliance_buildlist_building_id =(select alliance_building_id from alliance_buildings where alliance_building_name='".$_POST['selected']."')");
-			$tpl->assign('msg','Datensatz erfolgreich bearbeitet!');
+				$twig->addGlobal('successMessage','Datensatz erfolgreich bearbeitet!');
 			}
 			else
-			{	
+			{
 				dbquery("INSERT into alliance_buildlist(alliance_buildlist_alliance_id,alliance_buildlist_building_id,alliance_buildlist_current_level,alliance_buildlist_build_start_time,alliance_buildlist_build_end_time,alliance_buildlist_cooldown,alliance_buildlist_member_for)
 				VALUES(".$id.",(select alliance_building_id from alliance_buildings where alliance_building_name='".$_POST['selected']."'),".$_POST['level'].",0,1,0,".$_POST['amount'].")");
-				$tpl->assign('msg', 'Datensatz erfolgreich eingefügt!');
-			}		
+				$twig->addGlobal('successMessage', 'Datensatz erfolgreich eingefügt!');
+			}
 		}
 		elseif (isset($_POST['techs']) && $_POST['techs']!="")
 		{
 			$test= dbquery("SELECT alliance_techlist_id FROM alliance_techlist WHERE alliance_techlist_alliance_id =".$id." 
 							AND alliance_techlist_tech_id =(select alliance_tech_id from alliance_technologies where alliance_tech_name='".$_POST['selected_tech']."')");
-			
+
 			if (mysql_num_rows($test)>0)
-			{	
+			{
 			dbquery("UPDATE alliance_techlist SET alliance_techlist_current_level =".$_POST['tech_level'].", alliance_techlist_member_for =".$_POST['tech_amount']." WHERE alliance_techlist_alliance_id =".$id."
 					 AND alliance_techlist_tech_id =(select alliance_tech_id from alliance_technologies where alliance_tech_name='".$_POST['selected_tech']."')");
-			$tpl->assign('msg','Datensatz erfolgreich bearbeitet!');
+				$twig->addGlobal('successMessage','Datensatz erfolgreich bearbeitet!');
 			}
 			else
-			{	
+			{
 				dbquery("INSERT into alliance_techlist(alliance_techlist_alliance_id,alliance_techlist_tech_id,alliance_techlist_current_level,alliance_techlist_build_start_time,alliance_techlist_build_end_time,alliance_techlist_member_for)
 				VALUES(".$id.",(select alliance_tech_id from alliance_technologies where alliance_tech_name='".$_POST['selected_tech']."'),".$_POST['tech_level'].",0,1,".$_POST['tech_amount'].")");
-				$tpl->assign('msg', 'Datensatz erfolgreich eingefügt!');
-			}		
+				$twig->addGlobal('successMessage', 'Datensatz erfolgreich eingefügt!');
+			}
 		}
-		
+
 		$res = dbquery("SELECT * FROM alliances WHERE alliance_id='".$id."';");
 		$arr = mysql_fetch_assoc($res);
-		
-		$tpl->assign('subtitle', "Allianz bearbeiten: [".$arr['alliance_tag']."] ".$arr['alliance_name']);
-				
+
+		$twig->addGlobal('subtitle', "Allianz bearbeiten: [".$arr['alliance_tag']."] ".$arr['alliance_name']);
+
 		$ures = dbquery("SELECT 
 							user_id,
 							user_nick,
@@ -204,7 +204,7 @@
 				$ranks[$rarr['rank_id']] = $rarr;
 			}
 		}
-		
+
 		echo "<form action=\"?page=$page&amp;sub=edit&amp;id=".$id."\" method=\"post\">";
 
 		echo '<div class="tabs">
@@ -228,17 +228,17 @@
 			echo "<tr><th>[Tag] Name</th><td>
 					[<input type=\"text\" name=\"alliance_tag\" value=\"".$arr['alliance_tag']."\" size=\"6\" maxlength=\"6\" />]
 					<input type=\"text\" name=\"alliance_name\" value=\"".$arr['alliance_name']."\" size=\"30\" maxlength=\"25\" />
-				</td></tr>";					
+				</td></tr>";
 			echo "<tr><th>Gr&uuml;nder</th><td><select name=\"alliance_founder_id\">";
 			echo "<option value=\"0\">(niemand)</option>";
 			foreach ($members as $uid=>$uarr)
 			{
 				echo "<option value=\"$uid\"";
-				if ($arr['alliance_founder_id']==$uarr['user_id']) 
+				if ($arr['alliance_founder_id']==$uarr['user_id'])
 					echo " selected=\"selected\"";
 				echo ">".$uarr['user_nick']."</option>";
-			}			
-			echo "</select></td></tr>";				
+			}
+			echo "</select></td></tr>";
 			echo "<tr><th>Text</th><td><textarea cols=\"45\" rows=\"10\" name=\"alliance_text\">".stripslashes($arr['alliance_text'])."</textarea></td></tr>";
 			echo "<tr><th>Gr&uuml;ndung</th><td>".date("Y-m-d H:i:s",$arr['alliance_foundation_date'])."</td></tr>";
 			echo "<tr><th>Website</th><td><input type=\"text\" name=\"alliance_url\" value=\"".$arr['alliance_url']."\" size=\"40\" maxlength=\"250\" /></td></tr>";
@@ -256,9 +256,9 @@
 			echo "</td></tr>";
 			echo "</table>";
 			echo "<p><input type=\"submit\" name=\"info_save\" value=\"&Uuml;bernehmen\" /></p>";
-			
+
 			echo '</div><div id="tabs-2">';
-			
+
 			/*
 			* Mitglieder
 			**/
@@ -288,7 +288,7 @@
 							if ($uarr['user_alliance_rank_id']==$k)
 								echo " selected=\"selected\"";
 							echo ">".$v['rank_name']."</option>";
-						}						
+						}
 						echo "</select></td>";
 						echo "<td><input type=\"checkbox\" name=\"member_kick[".$uid."]\" value=\"1\" /></td></tr>";
 					}
@@ -298,7 +298,7 @@
 					echo "<b>KEINE MITGLIEDER!</b>";
 				echo "</td></tr>";
 				echo "<tr><th>R&auml;nge</th><td>";
-				
+
 				if (count($ranks)>0)
 				{
 					echo "<table class=\"tb\">";
@@ -321,16 +321,16 @@
 				else
 					echo "<b>Keine R&auml;nge vorhanden!</b>";
 				echo "</td></tr>";
-				tableEnd();	
+				tableEnd();
 				echo "<p><input type=\"submit\" name=\"member_save\" value=\"&Uuml;bernehmen\" /></p>";
-				
+
 				echo '</div><div id="tabs-3">';
 
 
 				/*
 				* Krieg/Bündnisse
 				*/
-				
+
 				$bres = dbquery("
 				SELECT 
 					alliance_bnd_id,
@@ -390,12 +390,12 @@
 				else {
 					echo "<p><b>Keine B&uuml;ndnisse/Kriege vorhanden!</b></p>";
 				}
-				
+
 				echo '</div><div id="tabs-4">';
-					
+
 			/**
 			* Geschichte
-			*/								
+			*/
 			tableStart();
 			echo "<tr>
 					<th style=\"width:120px;\">Datum / Zeit</th>
@@ -415,19 +415,19 @@
 				while ($harr=mysql_fetch_array($hres))
 				{
 					echo "<tr><td>".date("d.m.Y H:i",$harr['history_timestamp'])."</td><td class=\"tbldata\">".text2html($harr['history_text'])."</td></tr>";
-				}				
+				}
 			}
 			else
 			{
 				echo "<tr><td colspan=\"3\" class=\"tbldata\"><i>Keine Daten vorhanden!</i></td></tr>";
 			}
 			tableEnd();
-			
+
 			echo '</div><div id="tabs-5">';
-				
+
 			/**
 			* Rohstoffe
-			*/								
+			*/
 			echo '<table class="tb">';
 			echo "<tr>
 					<th class=\"resmetalcolor\">Titan</th>
@@ -450,11 +450,11 @@
 			echo "<p><input type=\"submit\" name=\"res_save\" value=\"Übernehmen\" /></p>";
 
 			echo '</div><div id="tabs-6">';
-					
+
 			/**
 			* Einzahlungen
-			*/								
-  			
+			*/
+
 			echo "<form id=\"filterForm\">";
 			tableStart("Filter");
 			echo "<tr>
@@ -488,14 +488,14 @@
 			 tableEnd();
 			 echo "<p><input type=\"button\" onclick=\"xajax_showSpend(".$arr['alliance_id'].",xajax.getFormValues('filterForm'))\" value=\"Anzeigen\"\"/></p>";
 			 echo "</form>";
-			 
+
 			 echo "<div id=\"spends\">&nbsp;</div>";
 
 			echo '</div><div id="tabs-7">';
-					
+
 			/**
 			* Gebäude
-			*/								
+			*/
 			$res = dbquery("
 						SELECT
 							alliance_buildlist.*,
@@ -529,25 +529,25 @@
 					else echo "Untätig";
 					echo "</td>";
 					echo "</tr>";
-					
+
 				}
 			}
 			else
 				echo "<tr><td colspan=\"4\">Keine Gebäude vorhanden!</td></tr>";
-			
+
 			tableEnd();
-		    
+
 		    echo '<br><h2>Gebäude hinzufügen</h2>';
-            
+
 			tableStart();
 
             echo "<tr>
 					<th>Gebäude</th><th>Stufe</th><th>Useranzahl</th>
-				</tr>"; 
+				</tr>";
 			echo'<tr><td>';
 
             if (mysql_num_rows($buildings)>0)
-			{   
+			{
 				echo'<select name="selected">';
 				while ($arr = mysql_fetch_assoc($buildings))
 				{
@@ -558,15 +558,15 @@
 
 			echo '</td><td><input type=number value=1 name="level"></td><td><input type=number value=1 name="amount"></td></tr>';
 
-			tableEnd();	
+			tableEnd();
 
 			echo'<br><input type="submit" name="buildings">';
 
 			echo '</div><div id="tabs-8">';
-			
+
 			/**
 			* Technologien
-			*/								
+			*/
 			$res = dbquery("
 						SELECT
 							alliance_techlist.*,
@@ -604,18 +604,18 @@
 			else
 				echo "<tr><td colspan=\"4\">Keine Technologien vorhanden!</td></tr>";
 			tableEnd();
-			
+
 			echo '<br><h2>Technologien hinzufügen</h2>';
-            
+
 			tableStart();
 
             echo "<tr>
 					<th>Technologie</th><th>Stufe</th><th>Useranzahl</th>
-				</tr>"; 
+				</tr>";
 			echo'<tr><td>';
 
             if (mysql_num_rows($techs)>0)
-			{   
+			{
 				echo'<select name="selected_tech">';
 				while ($arr = mysql_fetch_assoc($techs))
 				{
@@ -626,13 +626,13 @@
 
 			echo '</td><td><input type=number value=1 name="tech_level"></td><td><input type=number value=1 name="tech_amount"></td></tr>';
 
-			tableEnd();	
+			tableEnd();
 
 			echo'<br><input type="submit" name="techs">';
 
 			echo '
 				</div>
 			</div>';
-			
+
 
 ?>

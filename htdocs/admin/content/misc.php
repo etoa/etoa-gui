@@ -7,13 +7,13 @@
 	{
 		include("config/defaultitems.inc.php");
 	}
-  
+
 	//
 	// Tipps
 	//
 	elseif ($sub=="tipps")
 	{
-		advanced_form("tipps", $tpl);
+		advanced_form("tipps", $twig);
 	}
 
 	//
@@ -21,9 +21,9 @@
 	//
 	elseif ($sub=="ticketcat")
 	{
-		advanced_form("ticketcat", $tpl);
+		advanced_form("ticketcat", $twig);
 	}
-  
+
 	//
 	// Designs
 	//
@@ -31,7 +31,7 @@
 	{
 		include("misc/designs.inc.php");
 	}
-	
+
 	//
 	// Bildpakete
 	//

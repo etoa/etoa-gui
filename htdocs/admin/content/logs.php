@@ -26,7 +26,7 @@
 	// 	Kommentar:
 	//
 
-	$tpl->assign('title', 'Logs');
+    $twig->addGlobal('title', 'Logs');
 
 	echo "<div id=\"logsinfo\"></div>"; //nur zu entwicklungszwecken!
 
@@ -35,17 +35,20 @@
 	//
 	if ($sub=="errorlog")
 	{
-		$tpl->setView('errorlog');
-		$tpl->assign('subtitle', 'Fehler-Log');
-
 		if (isset($_POST['purgelog_submit'])) {
 			file_put_contents(ERROR_LOGFILE, '');
 			forward('?page='.$page.'&sub='.$sub);
 		}
 
+		$logFile = null;
 		if (is_file(ERROR_LOGFILE)) {
-			$tpl->assign('logfile', file_get_contents(ERROR_LOGFILE));
+            $logFile = file_get_contents(ERROR_LOGFILE);
 		}
+
+		echo $twig->render('admin/logs/errorlog.html.twig', [
+		        'logFile' => $logFile,
+        ]);
+		exit();
 	}
 
 	//

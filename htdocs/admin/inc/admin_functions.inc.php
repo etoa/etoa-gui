@@ -67,7 +67,7 @@ function db_show_result($res)
 *
 * @param string Module-key
 */
-function advanced_form($module, $tpl)
+function advanced_form($module, $twig)
 {
   require_once("inc/form_functions.php");
 	require_once("forms/$module.php");
@@ -80,7 +80,7 @@ function advanced_form($module, $tpl)
 *
 * @param string Module-key
 */
-function simple_form($module, $tpl)
+function simple_form($module, $twig)
 {
 	require_once("inc/form_functions.php");
 	require_once("forms/$module.php");
