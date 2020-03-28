@@ -76,7 +76,11 @@
 			");
 			if (mysql_num_rows($pres)>0)
 			{
-				define('B_W', (IM_W-B_B)/floor(mysql_num_rows($pres)/STEP)/2);
+				if (floor(mysql_num_rows($pres)/STEP) > 0) {
+					define('B_W', (IM_W-B_B)/floor(mysql_num_rows($pres)/STEP)/2);
+				} else {
+					define('B_W', 0);
+				}
 				// Bar colors
 				for ($x=0;$x<B_W;$x++)
 				{
