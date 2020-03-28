@@ -3,9 +3,13 @@ Escape to Andromeda Changelog
 
 Version 3.6.1 (unreleased)
 --------------
+### Features ###
+* Option to increase the number of star system/planets in an existing universe
 
 ### Bugfixes ###
 * replace remaining smarty templates with twig
+* fix several fatal errors on sectors, building and admin stats page
+* adjust the teamspeak link to point to discord by default
 
 Version 3.6 (round 20)
 --------------
