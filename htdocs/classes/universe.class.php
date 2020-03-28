@@ -740,30 +740,27 @@
 		 */
 		static function addStarSystems($n=0)
 		{
-			for ($i = 0; $i<n; $i++)
+			$res = dbquery("SELECT id, cell_id, code FROM entities WHERE code in ('e', 'a', 'n') AND pos=0 ORDER BY RAND() LIMIT n;");
+			while ($row = mysql_fetch_array($res)) 
 			{
-				$res = dbquery("SELECT id, cell_id, code FROM entities WHERE code in ('e', 'a', 'n') AND pos=0 ORDER BY RAND() LIMIT n;");
-				while ($row = mysql_fetch_array($res)) 
+				$sql = '';
+				if ($row['code'] === 'e')
 				{
-					$sql = '';
-					if ($row['code'] === 'e')
-					{
-						$sql = "DELETE FROM space where id='" .$row['id']. "';";
-					}
-					elseif ($$row['code'] === 'a')
-					{
-						$sql = "DELETE FROM asteroids where id='" .$row['id']. "';";
-					}
-					elseif ($row['code'] === 'n')
-					{
-						$sql = "DELETE FROM nebula where id='" .$row['id']. "';";
-					}
-					else
-					if ('' !== $sql)
-					{
-						dbquery($sql);
-						createStarSystem($row['cell_id'], $row['id']);
-					}
+					$sql = "DELETE FROM space where id='" .$row['id']. "';";
+				}
+				elseif ($$row['code'] === 'a')
+				{
+					$sql = "DELETE FROM asteroids where id='" .$row['id']. "';";
+				}
+				elseif ($row['code'] === 'n')
+				{
+					$sql = "DELETE FROM nebulas where id='" .$row['id']. "';";
+				}
+				else
+				if ('' !== $sql)
+				{
+					dbquery($sql);
+					createStarSystem($row['cell_id'], $row['id']);
 				}
 			}
 		}
