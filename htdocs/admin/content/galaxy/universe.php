@@ -107,6 +107,17 @@
     echo "Die Runde wurde zurückgesetzt!<br/><br/>".button("Weiter","?page=$page&amp;sub=$sub");
   }
 
+  elseif (isset($_POST['submit_addstars']))
+  {
+    $n = (int)$_POST['number_of_stars'];
+    if ($n < 0)
+    {
+      $n = 0;
+    }
+    echo Universe::addStarSystems($n);
+    echo " Sternensysteme wurden hinzugefügt!<br/><br/>".button("Weiter","?page=$page&amp;sub=$sub");
+  }
+
   // Uni-Optionen
   else
   {
@@ -274,6 +285,10 @@
         tableEnd();
         
         echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
+
+        echo "<h3>Sternensysteme hinzufügen</h3>";
+        echo "Hiermit können <input style=\"width:3em\" type=\"number\" name=\"number_of_stars\" value=\"0\" > Sternensysteme hinzugfügt werden.<br/><br/>";
+        echo "<input type=\"submit\" name=\"submit_addstars\" value=\"Ja, Sternensysteme hinzufügen\" ><br><br>";
 
         $res = dbquery("SELECT COUNT(id) FROM planets WHERE planet_user_id>0;");
         $arr = mysql_fetch_row($res);					

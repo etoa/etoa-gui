@@ -9,6 +9,35 @@
 		private static $sol_types;
 		private static $planet_types;
 
+		private static function init()
+		{
+			self::$sol_types = array();
+			$res = dbquery("
+			SELECT
+		      	sol_type_id
+			FROM
+				sol_types
+			WHERE
+				sol_type_consider=1;");
+			while ($arr = mysql_fetch_array($res))
+			{
+				self::$sol_types[] = $arr['sol_type_id'];
+			}
+			
+			self::$planet_types = array();
+			$res = dbquery("
+			SELECT
+		    type_id
+			FROM
+				planet_types
+			WHERE
+				type_consider=1;");
+			while ($arr = mysql_fetch_array($res))
+			{
+				self::$planet_types[] = $arr['type_id'];
+			}
+		}
+
 		/**
 		* Create the universe.
 		* And there was light!
@@ -42,31 +71,7 @@
 			$num_planets_max = $cfg->param2('num_planets');
 			$num_planet_images = $cfg->value('num_planet_images');
 			
-			self::$sol_types = array();
-			$res = dbquery("
-			SELECT
-		      	sol_type_id
-			FROM
-				sol_types
-			WHERE
-				sol_type_consider=1;");
-			while ($arr = mysql_fetch_array($res))
-			{
-				self::$sol_types[] = $arr['sol_type_id'];
-			}
-			
-			self::$planet_types = array();
-			$res = dbquery("
-			SELECT
-		    type_id
-			FROM
-				planet_types
-			WHERE
-				type_consider=1;");
-			while ($arr = mysql_fetch_array($res))
-			{
-				self::$planet_types[] = $arr['type_id'];
-			}
+			self::init();
 
 			$planet_count = 0;
 			$sol_count = 0;
@@ -449,30 +454,38 @@
 			echo "Universum erstellt!<br> $sol_count Sonnensysteme, $asteroids_count Asteroidenfelder, $nebula_count Nebel und $wormhole_count Wurmlöcher!";
 		}	
 		
-		private static function createStarSystem($cell_id)
+		private static function createStarSystem($cell_id, $id=-1)
 		{
 			$cfg = Config::getInstance();
 
 			// The Star
 			$st = self::$sol_types[array_rand(self::$sol_types)];
-			$sql = "
-				INSERT INTO
-					entities
-				(
-					cell_id,
-					code,
-					pos
-				)
-				VALUES
-				(
-					".$cell_id.",
-					's',
-					0
-				);
-			";
-			dbquery($sql);
-			$eid = mysql_insert_id();
-	
+
+			if (-1 === $id)
+			{
+				$sql = "
+					INSERT INTO
+						entities
+					(
+						cell_id,
+						code,
+						pos
+					)
+					VALUES
+					(
+						".$cell_id.",
+						's',
+						0
+					);
+				";
+				dbquery($sql);
+				$eid = mysql_insert_id();
+			}
+			else
+			{
+				dbquery("UPDATE entities SET code = 's' WHERE id = " .$id. ";");
+				$eid = $id;
+			}
 			$sql = "
 				INSERT INTO
 					stars
@@ -487,7 +500,7 @@
 				);
 			";
 			dbquery($sql);
-	
+
 			// The planets
 			$np = mt_rand(Config::getInstance()->num_planets->p1,Config::getInstance()->num_planets->p2);
 			for ($cnp=1;$cnp<=$np;$cnp++)
@@ -724,6 +737,40 @@
 				);
 			";
 			dbquery($sql);
+		}
+
+		/**
+		 * Replaces n nebula/asteroid/emptyspace cells
+		 * with new star systems
+		 */
+		static function addStarSystems($n=0)
+		{
+			self::init();
+			$res = dbquery("SELECT id, cell_id, code FROM entities WHERE code in ('e', 'a', 'n') AND pos=0 ORDER BY RAND() LIMIT " .$n. ";");
+			$added = 0;
+			while ($row = mysql_fetch_array($res)) 
+			{
+				$sql = '';
+				if ($row['code'] === 'e')
+				{
+					$sql = "DELETE FROM space where id='" .$row['id']. "';";
+				}
+				elseif ($row['code'] === 'a')
+				{
+					$sql = "DELETE FROM asteroids where id='" .$row['id']. "';";
+				}
+				elseif ($row['code'] === 'n')
+				{
+					$sql = "DELETE FROM nebulas where id='" .$row['id']. "';";
+				}
+				if ('' !== $sql)
+				{
+					dbquery($sql);
+					self::createStarSystem($row['cell_id'], $row['id']);
+					$added++;
+				}
+			}
+			return $added;
 		}
 		
 		/**
