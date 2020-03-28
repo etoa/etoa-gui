@@ -145,7 +145,7 @@
 	define('CHAT_ONCLICK', "parent.top.location='chatframe.php';");
 
 	// Teamspeak
-	define('TEAMSPEAK_URL', "http://ts.etoa.ch");
+	define('TEAMSPEAK_URL', "https://discord.gg/7d2ndEU");
 	define('TEAMSPEAK_ONCLICK', "window.open('".TEAMSPEAK_URL."','ts','width=800,height=600,scrollbars=yes');");
 
 	// Game-Rules
