@@ -110,7 +110,10 @@
   elseif (isset($_POST['submit_addstars']))
   {
     $n = (int)$_POST['number_of_stars'];
-    if ($n < 0) $n = 0;
+    if ($n < 0)
+    {
+      $n = 0;
+    }
     echo Universe::addStarSystems($n);
     echo " Sternensysteme wurden hinzugefügt!<br/><br/>".button("Weiter","?page=$page&amp;sub=$sub");
   }
