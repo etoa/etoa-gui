@@ -747,6 +747,7 @@
 		{
 			self::init();
 			$res = dbquery("SELECT id, cell_id, code FROM entities WHERE code in ('e', 'a', 'n') AND pos=0 ORDER BY RAND() LIMIT " .$n. ";");
+			$added = 0;
 			while ($row = mysql_fetch_array($res)) 
 			{
 				$sql = '';
@@ -766,8 +767,10 @@
 				{
 					dbquery($sql);
 					self::createStarSystem($row['cell_id'], $row['id']);
+					$added++;
 				}
 			}
+			return $added;
 		}
 		
 		/**
