@@ -740,13 +740,13 @@
 		}
 
 		/**
-		 * Replaces n nebula/asteroid/emptyspace cells
+		 * Replaces n asteroid/emptyspace cells
 		 * with new star systems
 		 */
 		static function addStarSystems($n=0)
 		{
 			self::init();
-			$res = dbquery("SELECT id, cell_id, code FROM entities WHERE code in ('e', 'a', 'n') AND pos=0 ORDER BY RAND() LIMIT " .$n. ";");
+			$res = dbquery("SELECT id, cell_id, code FROM entities WHERE code in ('e', 'a') AND pos=0 ORDER BY RAND() LIMIT " .$n. ";");
 			$added = 0;
 			while ($row = mysql_fetch_array($res)) 
 			{
@@ -758,10 +758,6 @@
 				elseif ($row['code'] === 'a')
 				{
 					$sql = "DELETE FROM asteroids where id='" .$row['id']. "';";
-				}
-				elseif ($row['code'] === 'n')
-				{
-					$sql = "DELETE FROM nebulas where id='" .$row['id']. "';";
 				}
 				if ('' !== $sql)
 				{
