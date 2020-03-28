@@ -748,7 +748,7 @@
 				{
 					$sql = "DELETE FROM space where id='" .$row['id']. "';";
 				}
-				elseif ($$row['code'] === 'a')
+				elseif ($row['code'] === 'a')
 				{
 					$sql = "DELETE FROM asteroids where id='" .$row['id']. "';";
 				}
@@ -756,7 +756,6 @@
 				{
 					$sql = "DELETE FROM nebulas where id='" .$row['id']. "';";
 				}
-				else
 				if ('' !== $sql)
 				{
 					dbquery($sql);
