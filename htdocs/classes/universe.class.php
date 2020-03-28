@@ -880,7 +880,8 @@
 				UPDATE
 					users
 				SET
-					discoverymask=''
+					discoverymask='',
+					user_setup = 0
 				");
 			}
 			
