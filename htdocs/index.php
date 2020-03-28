@@ -269,6 +269,7 @@ try {
     // Include content
     require __DIR__ . '/inc/content.inc.php';
 
+    $tm = new TextManager();
     $infoText = $tm->getText('info');
 
     echo $twig->render('layout/game.html.twig', array_merge($currentPlanetData, [
