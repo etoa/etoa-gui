@@ -1310,7 +1310,9 @@
 						ob_end_clean();
 						$_SESSION['haven']['fleetObj'] = serialize($fleet);
 
-						$app['cubicle.quests.initializer']->initialize($fleet->ownerId());
+						if ($app['etoa.quests.enabled']) {
+							$app['cubicle.quests.initializer']->initialize($fleet->ownerId());
+						}
 						$app['dispatcher']->dispatch(\EtoA\Fleet\Event\FleetLaunch::LAUNCH_SUCCESS, new \EtoA\Fleet\Event\FleetLaunch());
 					} else {
 						$response->alert("Fehler! Kann Flotte nicht starten! ".$fleet->error());
