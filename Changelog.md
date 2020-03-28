@@ -1,7 +1,13 @@
 Escape to Andromeda Changelog
 =============================
 
-Version 3.6.1 (unreleased)
+Version 3.6.2 (unreleased)
+
+### Bugfixes ###
+* On reset universe also reset the player setup
+* Ignore players in hmode for game stats
+
+Version 3.6.1
 --------------
 ### Features ###
 * Option to increase the number of star system/planets in an existing universe

@@ -1,11 +1,11 @@
 <?PHP
-	
+
 	class GameStats
 	{
 	/*********************
 	* Statistik-Funktion *
 	*********************/
-	
+
 	static function generate()
 	{
 		// Renderzeit-Start festlegen
@@ -41,6 +41,8 @@
                 ON
                     planet_user_id=user_id
                     AND user_ghost=0
+                    AND user_hmode_from=0
+                    AND user_hmode_to=0
                 )
             ON
                 planet_type_id=type_id
@@ -114,6 +116,8 @@
             ON 
                 users.user_race_id=races.race_id
                 AND users.user_ghost=0
+                AND users.user_hmode_from=0
+                AND users.user_hmode_to=0
             GROUP BY
                 races.race_id
             ORDER BY
@@ -128,12 +132,12 @@
             }
             $out.="<tr><td  colspan=\"2\"><b>Total</b></td><td ><b>".$total."</b></td></tr>";
             $out.="</table></td>";
-            
+
 	$out.="</tr>";
 	$out.="</table>";
-	
-	
-	
+
+
+
 
 //
 //Rohstoffe
@@ -141,8 +145,8 @@
 	$out.="<h2>Rohstoffe</h2>";
 	$out.="<table width=\"95%\">";
 	$out.="<tr>";
-	
-        
+
+
         /****************************************/
         /* Max Ressourcen auf einem Planeten    */
         /*                                      */
@@ -150,7 +154,7 @@
 
             $out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
             $out.="<tr><th  colspan=\"3\">Max Ressourcen auf einem Planeten</th></tr>";
-            
+
             //Anzahl Titan
             $res=dbquery("
             SELECT
@@ -166,20 +170,22 @@
                 ON
                     planet_user_id=user_id
                     AND user_ghost=0
+                    AND user_hmode_from=0
+                    AND user_hmode_to=0
                 )
             ON
                 planet_type_id=type_id
             ORDER BY
                 res DESC
             LIMIT 1;
-                "); 
+                ");
             $arr=mysql_fetch_array($res);
             $out.="<tr>
                 <td >".RES_METAL."</td>
                 <td >".nf($arr['res'])."</td>
                 <td >".$arr['type']."</td>
             </tr>";
-            
+
             //Anzahl Silizium
             $res=dbquery("
             SELECT
@@ -195,6 +201,8 @@
                 ON
                     planet_user_id=user_id
                     AND user_ghost=0
+                    AND user_hmode_from=0
+                    AND user_hmode_to=0
                 )
             ON
                 planet_type_id=type_id
@@ -208,7 +216,7 @@
                 <td >".nf($arr['res'])."</td>
                 <td >".$arr['type']."</td>
             </tr>";
-            
+
             //Anzahl PVC
             $res=dbquery("
             SELECT
@@ -224,6 +232,8 @@
                 ON
                     planet_user_id=user_id
                     AND user_ghost=0
+                    AND user_hmode_from=0
+                    AND user_hmode_to=0
                 )
             ON
                 planet_type_id=type_id
@@ -237,7 +247,7 @@
                 <td >".nf($arr['res'])."</td>
                 <td >".$arr['type']."</td>
             </tr>";
-            
+
             //Anzahl Tritium
             $res=dbquery("
             SELECT
@@ -253,6 +263,8 @@
                 ON
                     planet_user_id=user_id
                     AND user_ghost=0
+                    AND user_hmode_from=0
+                    AND user_hmode_to=0
                 )
             ON
                 planet_type_id=type_id
@@ -266,7 +278,7 @@
                 <td >".nf($arr['res'])."</td>
                 <td >".$arr['type']."</td>
             </tr>";
-            
+
             //Anzahl Nahrung
             $res=dbquery("
             SELECT
@@ -282,6 +294,8 @@
                 ON
                     planet_user_id=user_id
                     AND user_ghost=0
+                    AND user_hmode_from=0
+                    AND user_hmode_to=0
                 )
             ON
                 planet_type_id=type_id
@@ -307,7 +321,7 @@
             $out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
             $out.="<tr><th  colspan=\"4\">Total Ressourcen im Universum</th></tr>";
             $out.="<tr><th >Ressource</th><th >Total</th><th >Durchschnitt</th><th >Planeten</th></tr>";
-            
+
             //Anzahl Titan
             $res=dbquery("
             SELECT
@@ -321,6 +335,8 @@
             ON
                 planet_user_id=user_id
                 AND user_ghost=0   
+                AND user_hmode_from=0
+                AND user_hmode_to=0
                 AND planet_res_metal>0");
             $arr=mysql_fetch_array($res);
             $out.="<tr>
@@ -329,7 +345,7 @@
                 <td >".nf($arr['avg'])."</td>
                 <td >".nf($arr['cnt'])."</td>
             </tr>";
-            
+
             //Anzahl Silizium
             $res=dbquery("
             SELECT
@@ -343,6 +359,8 @@
             ON
                 planet_user_id=user_id
                 AND user_ghost=0   
+                AND user_hmode_from=0
+                AND user_hmode_to=0
                 AND planet_res_crystal>0");
             $arr=mysql_fetch_array($res);
             $out.="<tr>
@@ -351,7 +369,7 @@
                 <td >".nf($arr['avg'])."</td>
                 <td >".nf($arr['cnt'])."</td>
             </tr>";
-            
+
             //Anzahl PVC
             $res=dbquery("
             SELECT
@@ -365,6 +383,8 @@
             ON
                 planet_user_id=user_id
                 AND user_ghost=0   
+                AND user_hmode_from=0
+                AND user_hmode_to=0
                 AND planet_res_plastic>0");
             $arr=mysql_fetch_array($res);
             $out.="<tr>
@@ -373,7 +393,7 @@
                 <td >".nf($arr['avg'])."</td>
                 <td >".nf($arr['cnt'])."</td>
             </tr>";
-            
+
             //Anzahl Tritium
             $res=dbquery("
             SELECT
@@ -387,6 +407,8 @@
             ON
                 planet_user_id=user_id
                 AND user_ghost=0   
+                AND user_hmode_from=0
+                AND user_hmode_to=0
                 AND planet_res_fuel>0");
             $arr=mysql_fetch_array($res);
             $out.="<tr>
@@ -395,7 +417,7 @@
                 <td >".nf($arr['avg'])."</td>
                 <td >".nf($arr['cnt'])."</td>
             </tr>";
-            
+
             //Anzahl Nahrung
             $res=dbquery("
             SELECT
@@ -409,6 +431,8 @@
             ON
                 planet_user_id=user_id
                 AND user_ghost=0   
+                AND user_hmode_from=0
+                AND user_hmode_to=0
                 AND planet_res_food>0");
             $arr=mysql_fetch_array($res);
             $out.="<tr>
@@ -428,7 +452,7 @@
 
             $out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
             $out.="<tr><th  colspan=\"3\">Max Ressourcen eines Spielers</th></tr>";
-            
+
             //Anzahl Titan
             $res=dbquery("
             SELECT
@@ -440,6 +464,8 @@
             ON
                 user_id=planet_user_id
                 AND user_ghost=0
+                AND user_hmode_from=0
+                AND user_hmode_to=0
             GROUP BY
                 planet_user_id
             ORDER BY
@@ -451,7 +477,7 @@
                 <td >".RES_METAL."</td>
                 <td >".nf($arr['sum'])."</td>
             </tr>";
-            
+
             //Anzahl Silizium
             $res=dbquery("
             SELECT
@@ -463,6 +489,8 @@
             ON
                 user_id=planet_user_id
                 AND user_ghost=0
+                AND user_hmode_from=0
+                AND user_hmode_to=0
             GROUP BY
                 planet_user_id
             ORDER BY
@@ -474,7 +502,7 @@
                 <td >".RES_CRYSTAL."</td>
                 <td >".nf($arr['sum'])."</td>
             </tr>";
-            
+
             //Anzahl PVC
             $res=dbquery("
             SELECT
@@ -486,6 +514,8 @@
             ON
                 user_id=planet_user_id
                 AND user_ghost=0
+                AND user_hmode_from=0
+                AND user_hmode_to=0
             GROUP BY
                 planet_user_id
             ORDER BY
@@ -497,7 +527,7 @@
                 <td >".RES_PLASTIC."</td>
                 <td >".nf($arr['sum'])."</td>
             </tr>";
-            
+
             //Anzahl Tritium
             $res=dbquery("
             SELECT
@@ -509,6 +539,8 @@
             ON
                 user_id=planet_user_id
                 AND user_ghost=0
+                AND user_hmode_from=0
+                AND user_hmode_to=0
             GROUP BY
                 planet_user_id
             ORDER BY
@@ -520,7 +552,7 @@
                 <td >".RES_FUEL."</td>
                 <td >".nf($arr['sum'])."</td>
             </tr>";
-            
+
             //Anzahl Nahrung
             $res=dbquery("
             SELECT
@@ -532,6 +564,8 @@
             ON
                 user_id=planet_user_id
                 AND user_ghost=0
+                AND user_hmode_from=0
+                AND user_hmode_to=0
             GROUP BY
                 planet_user_id
             ORDER BY
@@ -545,7 +579,7 @@
             </tr>";
 
             $out.="</table></td>";
-            
+
         $out.="</tr>";
         $out.="</table>";
 
@@ -567,7 +601,7 @@
         /* Schiffe						        		   */
         /* Gesamt Anzahl im Universum + Beste Leistung     */
         /***************************************************/
-        
+
         $out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
         $out.="<tr><th  colspan=\"4\">Schiffe ohne Flotten (Beste Leistung, Gesamt)</th></tr>";
         $res=dbquery("
@@ -585,6 +619,8 @@
             ON
                 shiplist_user_id=user_id
                 AND user_ghost=0
+                AND user_hmode_from=0
+                AND user_hmode_to=0
             )
         ON
             shiplist_ship_id=ship_id
@@ -610,7 +646,7 @@
         /* Verteidigung					        		   */
         /* Gesamt Anzahl im Universum + Beste Leistung     */
         /***************************************************/
-        
+
         $out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
         $out.="<tr><th  colspan=\"4\">Verteidigung</th></tr>";
         $res=dbquery("
@@ -628,6 +664,8 @@
             ON
                 deflist_user_id=user_id
                 AND user_ghost=0
+                AND user_hmode_from=0
+                AND user_hmode_to=0
             )
         ON
             deflist_def_id=def_id            
@@ -652,7 +690,7 @@
         /* Geb?ude						       	*/
         /* Gesamt Anzahl Level im Universum     */
         /****************************************/
-        
+
         $out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
         $out.="<tr><th  colspan=\"3\">Geb&auml;ude</th></tr>";
         $res=dbquery("
@@ -669,6 +707,8 @@
             ON
                 buildlist_user_id=user_id
                 AND user_ghost=0
+                AND user_hmode_from=0
+                AND user_hmode_to=0
             )
         ON
             building_id=buildlist_building_id          
@@ -721,6 +761,8 @@
 	    ON
 	        techlist_user_id=user_id
 	        AND user_ghost=0
+            AND user_hmode_from=0
+            AND user_hmode_to=0
 	    )
 	ON
 	    tech_id=techlist_tech_id              
@@ -736,14 +778,14 @@
 	    $rank++;
 	}
 	$out.="</table></td>";
-	
-	
-	
+
+
+
 	/************************/
 	/* Geb?ude			    */
 	/*					    */
 	/************************/
-	
+
 	$out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
 	$out.="<tr><th  colspan=\"3\">Geb&auml;ude</th></tr>";
 	$res=dbquery("
@@ -760,6 +802,8 @@
 	    ON
 	        buildlist_user_id=user_id
 	        AND user_ghost=0
+	        AND user_hmode_from=0
+	        AND user_hmode_to=0
 	    )
 	ON
 	    building_id=buildlist_building_id          
@@ -775,14 +819,14 @@
 	    $rank++;
 	}
 	$out.="</table></td>";
-	
-	
-	
+
+
+
 	/************************/
 	/* Spezialschiffe		*/
 	/* Level + EXP			*/
-	/************************/  
-	
+	/************************/
+
 	$out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
 	$out.="<tr><th  colspan=\"4\">Spezialschiffe (Level, EXP)</th></tr>";
 	$res=dbquery("
@@ -800,6 +844,8 @@
 	    ON
 	        shiplist_user_id=user_id
 	        AND user_ghost=0
+            AND user_hmode_from=0
+            AND user_hmode_to=0
 	    )
 	ON
 	    shiplist_ship_id=ship_id
@@ -816,7 +862,7 @@
 	    $rank++;
 	}
 	$out.="</table></td>";
-        
+
 		$out.="</tr>";
 		$out.="</table>";
 
@@ -834,7 +880,7 @@
 		/****************/
 		/* Design				*/
 		/****************/
-		
+
 		$rplc=array("css_style/"=>"");
 		$out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
 		$out.="<tr><th  colspan=\"4\">Design</th></tr>";
@@ -870,13 +916,13 @@
 		    $rank++;
 		}
 		$out.="</table></td>";
-		
-		
-		
+
+
+
 		/******************/
 		/* Bildpaket			*/
 		/******************/
-		
+
 		$rplc=array("images/themes/"=>"");
 		$out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
 		$out.="<tr><th  colspan=\"4\">Bildpaket</th></tr>";
@@ -952,28 +998,28 @@
 		}
 
 		$out.="</table></td>";
-        
+
 		$out.="</tr>";
 
 		$out.="</table>";
-		
+
 		$out.= "<br/>Erstellt am ".date("d.m.Y")." um ".date("H:i")." Uhr ";
 
 		// Renderzeit
 		$render_time = explode(' ',microtime());
 		$rtime = $render_time[1]+$render_time[0]-$render_starttime;
-		$out.= " in ".round($rtime,3)." Sekunden";	
-		
+		$out.= " in ".round($rtime,3)." Sekunden";
+
 		return $out;
 	}
-	
+
 	static function generateAndSave($file)
 	{
 		$dir = dirname($file);
 		if (!is_dir($dir)) {
 			mkdir($dir, 0777, true);
 		}
-		
+
 		if ($f=fopen($file,"w+"))
 		{
 			$str = self::generate();
