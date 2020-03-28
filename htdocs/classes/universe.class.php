@@ -9,6 +9,35 @@
 		private static $sol_types;
 		private static $planet_types;
 
+		private static function init()
+		{
+			self::$sol_types = array();
+			$res = dbquery("
+			SELECT
+		      	sol_type_id
+			FROM
+				sol_types
+			WHERE
+				sol_type_consider=1;");
+			while ($arr = mysql_fetch_array($res))
+			{
+				self::$sol_types[] = $arr['sol_type_id'];
+			}
+			
+			self::$planet_types = array();
+			$res = dbquery("
+			SELECT
+		    type_id
+			FROM
+				planet_types
+			WHERE
+				type_consider=1;");
+			while ($arr = mysql_fetch_array($res))
+			{
+				self::$planet_types[] = $arr['type_id'];
+			}
+		}
+
 		/**
 		* Create the universe.
 		* And there was light!
@@ -42,31 +71,7 @@
 			$num_planets_max = $cfg->param2('num_planets');
 			$num_planet_images = $cfg->value('num_planet_images');
 			
-			self::$sol_types = array();
-			$res = dbquery("
-			SELECT
-		      	sol_type_id
-			FROM
-				sol_types
-			WHERE
-				sol_type_consider=1;");
-			while ($arr = mysql_fetch_array($res))
-			{
-				self::$sol_types[] = $arr['sol_type_id'];
-			}
-			
-			self::$planet_types = array();
-			$res = dbquery("
-			SELECT
-		    type_id
-			FROM
-				planet_types
-			WHERE
-				type_consider=1;");
-			while ($arr = mysql_fetch_array($res))
-			{
-				self::$planet_types[] = $arr['type_id'];
-			}
+			self::init();
 
 			$planet_count = 0;
 			$sol_count = 0;
@@ -495,7 +500,7 @@
 				);
 			";
 			dbquery($sql);
-	
+
 			// The planets
 			$np = mt_rand(Config::getInstance()->num_planets->p1,Config::getInstance()->num_planets->p2);
 			for ($cnp=1;$cnp<=$np;$cnp++)
@@ -740,6 +745,7 @@
 		 */
 		static function addStarSystems($n=0)
 		{
+			self::init();
 			$res = dbquery("SELECT id, cell_id, code FROM entities WHERE code in ('e', 'a', 'n') AND pos=0 ORDER BY RAND() LIMIT " .$n. ";");
 			while ($row = mysql_fetch_array($res)) 
 			{
@@ -759,7 +765,7 @@
 				if ('' !== $sql)
 				{
 					dbquery($sql);
-					createStarSystem($row['cell_id'], $row['id']);
+					self::createStarSystem($row['cell_id'], $row['id']);
 				}
 			}
 		}
