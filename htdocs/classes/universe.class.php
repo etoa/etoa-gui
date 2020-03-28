@@ -449,30 +449,38 @@
 			echo "Universum erstellt!<br> $sol_count Sonnensysteme, $asteroids_count Asteroidenfelder, $nebula_count Nebel und $wormhole_count Wurmlöcher!";
 		}	
 		
-		private static function createStarSystem($cell_id)
+		private static function createStarSystem($cell_id, $id=-1)
 		{
 			$cfg = Config::getInstance();
 
 			// The Star
 			$st = self::$sol_types[array_rand(self::$sol_types)];
-			$sql = "
-				INSERT INTO
-					entities
-				(
-					cell_id,
-					code,
-					pos
-				)
-				VALUES
-				(
-					".$cell_id.",
-					's',
-					0
-				);
-			";
-			dbquery($sql);
-			$eid = mysql_insert_id();
-	
+
+			if (-1 === $id)
+			{
+				$sql = "
+					INSERT INTO
+						entities
+					(
+						cell_id,
+						code,
+						pos
+					)
+					VALUES
+					(
+						".$cell_id.",
+						's',
+						0
+					);
+				";
+				dbquery($sql);
+				$eid = mysql_insert_id();
+			}
+			else
+			{
+				dbquery("UPDATE entities SET code = 's' WHERE id = " .$id. ";");
+				$eid = $id;
+			}
 			$sql = "
 				INSERT INTO
 					stars
@@ -754,7 +762,7 @@
 					if ('' !== $sql)
 					{
 						dbquery($sql);
-						createStarSystem($row['cell_id']);
+						createStarSystem($row['cell_id'], $row['id']);
 					}
 				}
 			}
