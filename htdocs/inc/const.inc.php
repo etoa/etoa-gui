@@ -146,7 +146,7 @@
 
 	// Teamspeak
 	define('TEAMSPEAK_URL', "https://discord.gg/7d2ndEU");
-	define('TEAMSPEAK_ONCLICK', "window.open('".TEAMSPEAK_URL."','ts','width=800,height=600,scrollbars=yes');");
+	define('TEAMSPEAK_ONCLICK', "window.open('".TEAMSPEAK_URL."','_blank');");
 
 	// Game-Rules
 	define('RULES_URL', 'http://www.etoa.ch/regeln');
