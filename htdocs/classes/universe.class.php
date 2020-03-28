@@ -740,7 +740,7 @@
 		 */
 		static function addStarSystems($n=0)
 		{
-			$res = dbquery("SELECT id, cell_id, code FROM entities WHERE code in ('e', 'a', 'n') AND pos=0 ORDER BY RAND() LIMIT n;");
+			$res = dbquery("SELECT id, cell_id, code FROM entities WHERE code in ('e', 'a', 'n') AND pos=0 ORDER BY RAND() LIMIT " .$n. ";");
 			while ($row = mysql_fetch_array($res)) 
 			{
 				$sql = '';
