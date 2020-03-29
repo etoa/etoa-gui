@@ -8,6 +8,7 @@
 		this->entityId = (int)oRow["shiplist_entity_id"];
 		this->count = (int)oRow["shiplist_count"];
 		this->initCount = this->count;
+		this->rebuildCount = 0;
 		
 		this->special = (bool)oRow["shiplist_special_ship"];
 		this->sLevel = (short)oRow["shiplist_special_ship_level"];
@@ -38,7 +39,7 @@
 			query << "UPDATE "
 				<< "	shiplist "
 				<< "SET "
-				<< "	shiplist_count='" << this->getCount() << "', "
+				<< "	shiplist_count='" << this->getCount() + this->rebuildCount << "', "
 				<< "	shiplist_special_ship_exp = '" << this->getSExp() << "' "
 				<< "WHERE "
 				<< "	shiplist_id='" << this->getId() << "' "
@@ -54,11 +55,18 @@
 		
 		DataHandler &DataHandler = DataHandler::instance();
 		ShipData *data = DataHandler.getShipById(this->getTypeId());
-		int shipCnt = (int)ceil((this->initCount - this->count)*config.nget("ship_wf_percent",0));
+    
+		if((data)->getCatId() != 2) {
+			if((data)->getCatId() != 7) {
+				int shipCnt = (int)ceil((this->initCount - this->count)*config.nget("ship_wf_percent",0));
 		
-		this->rebuildIsCalced = true;
+				this->rebuildIsCalced = true;
 		
-		return (shipCnt * data->getCostsMetal());
+				return (shipCnt * data->getCostsMetal());
+			}
+		}
+		this->rebuildCount = this->initCount - this->count;
+		return 0;
 	}
 	
 	double ListShip::getWfCrystal() {
@@ -66,11 +74,17 @@
 		
 		DataHandler &DataHandler = DataHandler::instance();
 		ShipData *data = DataHandler.getShipById(this->getTypeId());
-		int shipCnt = (int)ceil((this->initCount - this->count)*config.nget("ship_wf_percent",0));
+		if((data)->getCatId() != 2) {
+			if((data)->getCatId() != 7) {
+				int shipCnt = (int)ceil((this->initCount - this->count)*config.nget("ship_wf_percent",0));
 		
-		this->rebuildIsCalced = true;
+				this->rebuildIsCalced = true;
 		
-		return (shipCnt * data->getCostsCrystal());
+				return (shipCnt * data->getCostsCrystal());
+			}
+		}
+		this->rebuildCount = this->initCount - this->count;
+		return 0;
 	}
 	
 	double ListShip::getWfPlastic() {
@@ -78,9 +92,15 @@
 		
 		DataHandler &DataHandler = DataHandler::instance();
 		ShipData *data = DataHandler.getShipById(this->getTypeId());
-		int shipCnt = (int)ceil((this->initCount - this->count)*config.nget("ship_wf_percent",0));
+		if((data)->getCatId() != 2) {
+			if((data)->getCatId() != 7) {
+				int shipCnt = (int)ceil((this->initCount - this->count)*config.nget("ship_wf_percent",0));
 		
-		this->rebuildIsCalced = true;
+				this->rebuildIsCalced = true;
 		
-		return (shipCnt * data->getCostsPlastic());
+				return (shipCnt * data->getCostsPlastic());
+			}
+		}
+		this->rebuildCount = this->initCount - this->count;
+		return 0;
 	}

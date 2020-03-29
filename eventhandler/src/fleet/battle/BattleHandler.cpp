@@ -281,7 +281,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log, bool ratingEf
         //Auswertung
         //
         report->setShipsEnd(fleet->getShipString());
-        report->setEntityShipsEnd(entity->getShipString());
+        report->setEntityShipsEnd(entity->getShipString(true));
         report->setEntityDefEnd(entity->getDefString(true));
         report->setRestore(round((config.nget("def_restore_percent",0) + entity->getUser()->getSpecialist()->getSpecialistDefRepair() - 1)*100));
         /*

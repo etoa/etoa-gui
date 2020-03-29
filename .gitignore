@@ -25,6 +25,7 @@ eventhandler/**/Makefile
 *CMakeFiles*
 CMakeCache.txt
 /.idea
+*.kdev4
 
 .vagrant
 ubuntu-*-console.log

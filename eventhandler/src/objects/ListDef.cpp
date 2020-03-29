@@ -8,7 +8,7 @@
 		this->userId = (int)oRow["deflist_user_id"];
 		this->count = (int)oRow["deflist_count"];
 		this->initCount = this->count;
-		this->rebuildCount = -1;
+		this->rebuildCount = -1; //this should better be zero?
 		
 		Config &config = Config::instance();
 		this->rebuild = rebuild + config.nget("def_restore_percent",0) - 1;
