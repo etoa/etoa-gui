@@ -17,14 +17,14 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 	/**
 	* Internal messageboard for alliances
 	*
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/
-					
+
 	echo "<h1>Allianzforum</h1>";
 
 	// Prüfen ob User in Allianz ist
@@ -36,16 +36,16 @@
 		{
 			$arr=mysql_fetch_array($res);
 			define('BOARD_ALLIANCE_ID',$arr['alliance_id']);
-			
+
 			//Get Variablen überprüfen und IDs zuordnen
 			$legal=TRUE;
 			if (isset($_GET['bnd']) && intval($_GET['bnd'])>0)
 			{
 				$bid = intval($_GET['bnd']);
-				
+
 				$bres=dbquery("SELECT * FROM alliance_bnd WHERE (alliance_bnd_alliance_id1=".BOARD_ALLIANCE_ID." || alliance_bnd_alliance_id2=".BOARD_ALLIANCE_ID.") AND alliance_bnd_id=".$bid." AND alliance_bnd_level=2;");
 				if (mysql_num_rows($bres)>0)
-				{		
+				{
 					$barr=mysql_fetch_array($bres);
 					$bnd_id = $barr['alliance_bnd_id'];
 					if ($barr['alliance_bnd_alliance_id2']==BOARD_ALLIANCE_ID)
@@ -56,7 +56,7 @@
 					{
 						$alliance_bnd_id=$barr['alliance_bnd_alliance_id2'];
 					}
-					
+
 					$alliance=get_alliance_names2($alliance_bnd_id);
 					$_GET['cat']=0;
 				}
@@ -86,7 +86,7 @@
   		}
   		else
   			$myRankId=0;
-			
+
 			// Rechte laden
 			$rightres=dbquery("SELECT * FROM alliance_rights ORDER BY right_desc;");
 			$rights=array();
@@ -96,40 +96,40 @@
 				{
 					$rights[$rightarr['right_id']]['key']=$rightarr['right_key'];
 					$rights[$rightarr['right_id']]['desc']=$rightarr['right_desc'];
-					if (mysql_num_rows(dbquery("SELECT rr_id FROM alliance_rankrights,alliance_ranks WHERE rank_id=rr_rank_id AND rank_alliance_id=".BOARD_ALLIANCE_ID." AND rr_right_id=".$rightarr['right_id']." AND rr_rank_id=".$myRankId.";"))>0)								
+					if (mysql_num_rows(dbquery("SELECT rr_id FROM alliance_rankrights,alliance_ranks WHERE rank_id=rr_rank_id AND rank_alliance_id=".BOARD_ALLIANCE_ID." AND rr_right_id=".$rightarr['right_id']." AND rr_rank_id=".$myRankId.";"))>0)
 						$myRight[$rightarr['right_key']]=true;
 					else
 						$myRight[$rightarr['right_key']]=false;
 				}
-			}	
-			
+			}
+
 			// Ränge laden
 			$rres = dbquery("SELECT rank_name,rank_id FROM alliance_ranks WHERE rank_alliance_id=".BOARD_ALLIANCE_ID.";");
 			$rank=array();
 			while ($rarr=mysql_fetch_array($rres))
 			{
 				$rank[$rarr['rank_id']]=$rarr['rank_name'];
-			}					
-			
+			}
+
 			// Kategorien laden
 			$catres=dbquery("SELECT cat_id FROM ".BOARD_CAT_TABLE." WHERE cat_alliance_id=".BOARD_ALLIANCE_ID.";");
 			if (mysql_num_rows($catres)>0)
 			{
 				while ($catarr=mysql_fetch_array($catres))
 				{
-					if (mysql_num_rows(dbquery("SELECT cr_id FROM allianceboard_catranks,alliance_ranks WHERE rank_id=cr_rank_id AND rank_alliance_id=".BOARD_ALLIANCE_ID." AND cr_cat_id=".$catarr['cat_id']." AND cr_rank_id=".$myRankId.";"))>0)								
+					if (mysql_num_rows(dbquery("SELECT cr_id FROM allianceboard_catranks,alliance_ranks WHERE rank_id=cr_rank_id AND rank_alliance_id=".BOARD_ALLIANCE_ID." AND cr_cat_id=".$catarr['cat_id']." AND cr_rank_id=".$myRankId.";"))>0)
 						$myCat[$catarr['cat_id']]=true;
 					else
 						$myCat[$catarr['cat_id']]=false;
 				}
-			}							
-			
+			}
+
 			// Gründer prüfen
 			if ($arr['alliance_founder_id']==$cu->id)
 				$isFounder=true;
 			else
-				$isFounder=false;						
-			
+				$isFounder=false;
+
 			// Allianz-User in Array laden
 			$ures=dbquery("SELECT * FROM users WHERE user_alliance_id='".BOARD_ALLIANCE_ID."' ORDER BY user_nick ASC;");
 			$user=array();
@@ -142,30 +142,30 @@
 					$user[$uarr['user_id']]['avatar']=$uarr['user_avatar'];
 					$user[$uarr['user_id']]['signature']=$uarr['user_signature'];
 				}
-			}			
-	
+			}
+
 			// Change avatar function
 			echo "<script type=\"text/javascript\">";
 			echo "function changeAvatar(elem) { document.getElementById('avatar').src='".BOARD_AVATAR_DIR."/'+elem.options[elem.selectedIndex].value;}";
 			echo "function changeBullet(elem) { document.getElementById('bullet').src='".BOARD_BULLET_DIR."/'+elem.options[elem.selectedIndex].value;}";
-			echo "</script>";		
-		
-		
+			echo "</script>";
+
+
 			// Board-Admin prüfen
 			if (Alliance::checkActionRights('allianceboard',FALSE) || $isFounder)
 				$isAdmin=true;
 			else
 				$isAdmin=false;
-				
-				
-			
+
+
+
 			//
 			// Create new post in topic
 			//
-			if (isset($_GET['newpost']) && intval($_GET['newpost']) > 0 && $cu->id > 0 && legal==TRUE)
+			if (isset($_GET['newpost']) && intval($_GET['newpost']) > 0 && $cu->id > 0 && $legal==TRUE)
 			{
 				$npid = intval($_GET['newpost']);
-				
+
 				if (isset($alliance_bnd_id))
 				{
 					$tres=dbquery("SELECT * FROM ".BOARD_TOPIC_TABLE.",".BOARD_CAT_TABLE." WHERE topic_id=".$npid." AND topic_cat_id=0;");
@@ -175,7 +175,7 @@
 					$tres=dbquery("SELECT * FROM ".BOARD_TOPIC_TABLE.",".BOARD_CAT_TABLE." WHERE topic_id=".$npid." AND topic_cat_id=cat_id AND cat_alliance_id=".BOARD_ALLIANCE_ID.";");
 				}
 				if (mysql_num_rows($tres)>0)
-				{		
+				{
 					$tarr=mysql_fetch_array($tres);
 					if ($tarr['topic_closed']==0)
 					{
@@ -200,16 +200,16 @@
 					error_msg("Dieses Thema existiert nicht!");
 				echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"if (confirm('Soll die Erstellung des Beitrags abgebrochen werden?')) document.location='?page=$page&bnd=".$bid."&topic=".$tarr['topic_id']."'\" /></form>";
 			}
-			
+
 			//
 			// Edit Post
 			//
 			elseif(isset($_GET['editpost']) && intval($_GET['editpost'])>0 && $s)
 			{
 				$epid = intval($_GET['editpost']);
-				
+
 				echo "<h2>Beitrag bearbeiten</h2>";
-				$res=dbquery("SELECT * FROM ".BOARD_POSTS_TABLE." WHERE post_id=".$epid.";");		
+				$res=dbquery("SELECT * FROM ".BOARD_POSTS_TABLE." WHERE post_id=".$epid.";");
 				if (mysql_num_rows($res)>0)
 				{
 					$arr=mysql_fetch_array($res);
@@ -229,16 +229,16 @@
 					error_msg("Datensatz nicht gefunden!");
 				echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page&bnd=".$bid."&topic=".$arr['post_topic_id']."#".$arr['post_id']."'\" /></form>";
 			}
-				
+
 			//
 			// Delete Post
 			//
 			elseif(isset($_GET['delpost']) && intval($_GET['delpost'])>0 && $s)
 			{
 				$dpid = intval($_GET['delpost']);
-				
+
 				echo "<h2>Beitrag löschen</h2>";
-				$res=dbquery("SELECT * FROM ".BOARD_POSTS_TABLE." WHERE post_id=".$dpid.";");		
+				$res=dbquery("SELECT * FROM ".BOARD_POSTS_TABLE." WHERE post_id=".$dpid.";");
 				if (mysql_num_rows($res)>0)
 				{
 					$arr=mysql_fetch_array($res);
@@ -257,48 +257,48 @@
 				else
 					error_msg("Datensatz nicht gefunden!");
 				echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page&bnd=".$bid."&topic=".$arr['post_topic_id']."#".$arr['post_id']."' \" /></form>";
-			}		
-			
+			}
+
 			//
 			// Show topic with its posts
-			//	
+			//
 			elseif (isset($_GET['topic']) && intval($_GET['topic'])>0 && $legal=TRUE)
 			{
 				$tpid = intval($_GET['topic']);
-				
+
 				$sql = "SELECT * FROM ".BOARD_TOPIC_TABLE." LEFT JOIN ".BOARD_CAT_TABLE." ON topic_cat_id=cat_id WHERE topic_id=".$tpid." LIMIT 1";
 				$tres=dbquery($sql);
-				
+
 				if (mysql_num_rows($tres)>0)
 				{
 					$tarr=mysql_fetch_array($tres);
 					if (($bnd_id === $tarr['topic_bnd_id'] && $isAdmin) || (isset($myCat[$tarr['cat_id']]) && ($isAdmin ||$myCat[$tarr['cat_id']])))
-					{				
+					{
 						if ($tarr['topic_bnd_id']>0)
 						{
 							echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; <a href=\"?page=$page&amp;bnd=".$tarr['topic_bnd_id']."\">".$alliance[$alliance_bnd_id]['name']."</a> &gt; ".$tarr['topic_subject']."</h2>";
 						}
 						else
-						{	
+						{
 							echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; <a href=\"?page=$page&amp;cat=".$tarr['cat_id']."\">".$tarr['cat_name']."</a> &gt; ".$tarr['topic_subject']."</h2>";
 						}
 						if ($tarr['topic_closed']==1)
 						{
 							echo "<img src=\"images/closed.gif\" alt=\"closed\" style=\"width:15px;height:16px;\" /> <i>Dieses Thema ist geschlossen und es können keine weiteren Beiträge erstellt werden!</i><br/><br/>";
 						}
-			
+
 						// Save new post
 						if (isset($_POST['submit']) && isset($_POST['post_text']) && $cu->id>0 && $tarr['topic_closed']==0)
 						{
 							dbquery("INSERT INTO ".BOARD_POSTS_TABLE." (post_topic_id,post_user_id,post_user_nick,post_text,post_timestamp) VALUES (".$tpid.",".$cu->id.",'".$cu->nick."','".mysql_real_escape_string($_POST['post_text'])."',".time().");");
 							$mid=mysql_insert_id();
-							dbquery("UPDATE ".BOARD_TOPIC_TABLE." SET topic_timestamp=".time()." WHERE topic_id=".$tpid.";");			
+							dbquery("UPDATE ".BOARD_TOPIC_TABLE." SET topic_timestamp=".time()." WHERE topic_id=".$tpid.";");
 							success_msg("Beitrag gespeichert!");
 							echo "<script type=\"text/javascript\">document.location='?page=$page&bnd=".$bid."&topic=".$tpid."#".$mid."';</script>";
 						}
 						else
-							dbquery("UPDATE ".BOARD_TOPIC_TABLE." SET topic_count=topic_count+1  WHERE topic_id=".$tpid.";");			
-			
+							dbquery("UPDATE ".BOARD_TOPIC_TABLE." SET topic_count=topic_count+1  WHERE topic_id=".$tpid.";");
+
 						// Edit post
 						if (isset($_POST['post_edit']) && isset($_POST['post_text']) && isset($_POST['post_id']) && ($cu->id>0 || $isAdmin))
 						{
@@ -309,7 +309,7 @@
 							success_msg("&Auml;nderungen gespeichert!");
 							echo "<script type=\"text/javascript\">document.location='?page=$page&bnd=".$bid."&topic=".$tpid."#".$_POST['post_id']."';</script>";
 						}
-						
+
 						// Delete post
 						if (isset($_POST['post_delete']) && isset($_POST['post_id']) && ($cu->id>0 || $isAdmin))
 						{
@@ -317,13 +317,13 @@
 								dbquery("DELETE FROM ".BOARD_POSTS_TABLE." WHERE post_id=".intval($_POST['post_id']).";");
 							else
 								dbquery("DELETE FROM ".BOARD_POSTS_TABLE." WHERE post_id=".intval($_POST['post_id'])." AND post_user_id=".$cu->id.";");
-							
+
 							success_msg("Beitrag gelöscht");
-						}			
-				
+						}
+
 						$res=dbquery("SELECT * FROM ".BOARD_POSTS_TABLE." WHERE post_topic_id=".$tpid." ORDER BY post_timestamp ASC;");
 						if (mysql_num_rows($res)>0)
-						{			
+						{
 							tableStart($tarr['topic_subject']);
 							while ($arr=mysql_fetch_array($res))
 							{
@@ -337,7 +337,7 @@
 									echo "<br/><a href=\"?page=$page&amp;bnd=".$bid."&editpost=".$arr['post_id']."\"><img src=\"images/edit.gif\" alt=\"edit\" style=\"border:none\" /></a> <a href=\"?page=$page&amp;bnd=".$bid."&delpost=".$arr['post_id']."\"><img src=\"images/delete.gif\" alt=\"del\" style=\"border:none;\" /></a>";
 								echo "</th>";
 								echo "<td";
-								if (isset($urank) && $user[$arr['post_user_id']]['rank']==count($urank)-1) 
+								if (isset($urank) && $user[$arr['post_user_id']]['rank']==count($urank)-1)
 									echo " style=\"color:".ADMIN_COLOR."\"";
 
 								echo ">".text2html($arr['post_text']);
@@ -382,14 +382,14 @@
 					echo "<input type=\"button\" value=\"Zur &Uuml;bersicht\" onclick=\"document.location='?page=$page&amp;cat=".$tarr['cat_id']."'\" />";
 				}
 			}
-			
+
 			//
 			// Create new topic in category
 			//
 			elseif (isset($_GET['newtopic']) && intval($_GET['newtopic'])>0 && $cu->id>0 && $legal=TRUE)
 			{
 				$ntid = intval($_GET['newtopic']);
-				
+
 				if ($bid>0)
 				{
 					echo "<form action=\"?page=$page&amp;bnd=".$bid."\" method=\"post\">";
@@ -399,7 +399,7 @@
 				{
 					$tres=dbquery("SELECT * FROM ".BOARD_CAT_TABLE." WHERE cat_id=".$ntid.";");
 					if (mysql_num_rows($tres)>0)
-					{		
+					{
 						$tarr=mysql_fetch_array($tres);
 						echo "<form action=\"?page=$page&amp;cat=".$ntid."\" method=\"post\">";
 						echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; <a href=\"?page=$page&amp;cat=".$tarr['cat_id']."\">".$tarr['cat_name']."</a> &gt; Neues Thema</h2>";
@@ -409,7 +409,7 @@
 						$legal=FALSE;
 				}
 				if ($legal==TRUE)
-				{					
+				{
 					tableStart();
 					echo "<tr><th>Titel:</th><td><input name=\"topic_subject\" type=\"text\" size=\"40\" /></td></tr>";
 					echo "<tr><th>Text:</th><td><textarea name=\"post_text\" rows=\"6\" cols=\"80\"></textarea></td></tr>";
@@ -419,7 +419,7 @@
 				else
 					error_msg("Diese Kategorie existiert nicht!");
 				if ($bid == 0)
-				{				
+				{
 					echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"if (confirm('Soll die Erstellung des Themas abgebrochen werden?')) document.location='?page=$page&amp;cat=".$tarr['cat_id']."'\" /></form>";
 				}
 				else
@@ -427,17 +427,17 @@
 					echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"if (confirm('Soll die Erstellung des Themas abgebrochen werden?')) document.location='?page=$page&amp;bnd=".$bid."'\" /></form>";
 				}
 			}
-			
-	
+
+
 			//
 			// Edit a topic
 			//
 			elseif(isset($_GET['edittopic']) && intval($_GET['edittopic'])>0 && $s  && $legal==TRUE)
 			{
 				$etid = intval($_GET['edittopic']);
-				
+
 				echo "<h2>Thema bearbeiten</h2>";
-				$res=dbquery("SELECT * FROM ".BOARD_TOPIC_TABLE." WHERE topic_id=".$etid." AND topic_bnd_id=".$bid.";");		
+				$res=dbquery("SELECT * FROM ".BOARD_TOPIC_TABLE." WHERE topic_id=".$etid." AND topic_bnd_id=".$bid.";");
 				if (mysql_num_rows($res)>0)
 				{
 					$arr=mysql_fetch_array($res);
@@ -474,9 +474,9 @@
 									if ($arr['topic_cat_id']==$carr['cat_id']) echo " selected=\"selected\"";
 										echo ">".$carr['cat_name']."</option>";
 								}
-								echo "</select></td></tr>";						
+								echo "</select></td></tr>";
 							}
-						
+
 						}
 						tableEnd();
 						echo "<input type=\"submit\" name=\"topic_edit\" value=\"Speichern\" /> ";
@@ -488,16 +488,16 @@
 					error_msg("Datensatz nicht gefunden!");
 				echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page&amp;bnd=".$arr['topic_bnd_id']."'\" /></form>";
 			}
-			
+
 			//
 			// Delete a topic and all it's posts
 			//
 			elseif(isset($_GET['deltopic']) && intval($_GET['deltopic'])>0 && $isAdmin)
 			{
 				$dtid = intval($_GET['deltopic']);
-				
+
 				echo "<h2>Thema löschen</h2>";
-				$res=dbquery("SELECT * FROM ".BOARD_TOPIC_TABLE." WHERE topic_id=".$dtid.";");		
+				$res=dbquery("SELECT * FROM ".BOARD_TOPIC_TABLE." WHERE topic_id=".$dtid.";");
 				if (mysql_num_rows($res)>0)
 				{
 					$arr=mysql_fetch_array($res);
@@ -509,23 +509,23 @@
 				else
 					error_msg("Datensatz nicht gefunden!");
 				echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page&amp;bnd=".$arr['topic_bnd_id']."'\" /></form>";
-			}	
-			
+			}
+
 			//
 			// Show topics in category
 			//
 			elseif (isset($_GET['cat']) && intval($_GET['cat'])>0)
 			{
 				$cat = intval($_GET['cat']);
-				
+
 				if ($isAdmin || isset($myCat[$cat]))
 				{
-					$cres=dbquery("SELECT * FROM ".BOARD_CAT_TABLE." WHERE cat_alliance_id=".BOARD_ALLIANCE_ID." AND cat_id=".$cat.";");		
+					$cres=dbquery("SELECT * FROM ".BOARD_CAT_TABLE." WHERE cat_alliance_id=".BOARD_ALLIANCE_ID." AND cat_id=".$cat.";");
 					if (mysql_num_rows($cres)>0)
 					{
 						$carr=mysql_fetch_array($cres);
 						echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; ".($carr['cat_name']!="" ? stripslashes($carr['cat_name']) : "Unbenannt")."</h2>";
-						
+
 						// Save new topic
 						if (isset($_POST['submit']) && isset($_POST['topic_subject']) && isset($_POST['post_text']) && $cu->id>0)
 						{
@@ -534,7 +534,7 @@
 							dbquery("INSERT INTO ".BOARD_POSTS_TABLE." (post_topic_id,post_user_id,post_user_nick,post_text,post_timestamp) VALUES (".$mid.",".$cu->id.",'".$cu->nick."','".addslashes($_POST['post_text'])."',".time().");");
 							$pmid=mysql_insert_id();
 							echo "<script type=\"text/javascript\">document.location='?page=$page&topic=".$mid."#".$pmid."';</script>";
-						}			
+						}
 						// Save edited topic
 						elseif (isset($_POST['topic_edit']) && isset($_POST['topic_subject']) && isset($_POST['topic_id']) && $_POST['topic_id']>0)
 						{
@@ -549,15 +549,15 @@
 							dbquery("DELETE FROM ".BOARD_POSTS_TABLE." WHERE post_topic_id=".$_POST['topic_id'].";");
 							dbquery("DELETE FROM ".BOARD_TOPIC_TABLE." WHERE topic_id=".$_POST['topic_id'].";");
 							success_msg("Thema gelöscht!");
-						}			
-						
-						$res=dbquery("SELECT * FROM ".BOARD_TOPIC_TABLE." WHERE topic_cat_id=".$cat." ORDER BY topic_top DESC,topic_timestamp DESC, topic_subject ASC;");					
+						}
+
+						$res=dbquery("SELECT * FROM ".BOARD_TOPIC_TABLE." WHERE topic_cat_id=".$cat." ORDER BY topic_top DESC,topic_timestamp DESC, topic_subject ASC;");
 						if (mysql_num_rows($res)>0)
-						{			
+						{
 							tableStart();
 							echo "<tr><th colspan=\"2\">Thema</th><th>Posts</th><th>Aufrufe</th><th>Autor</th><th>Letzer Beitrag</th>";
 							if ($isAdmin)
-							{					
+							{
 								echo "<th>Aktionen</th>";
 							}
 							echo "</tr>";
@@ -575,7 +575,7 @@
 								echo "<td>".$arr['topic_count']."</td>";
 								echo "<td>".$user[$arr['topic_user_id']]['nick']."</td>";
 								$parr=mysql_fetch_array(dbquery("SELECT post_id,post_timestamp,post_user_id,post_user_nick FROM ".BOARD_POSTS_TABLE." WHERE post_topic_id=".$arr['topic_id']." ORDER BY post_timestamp DESC LIMIT 1;"));
-								echo "<td><a href=\"?page=$page&amp;topic=".$arr['topic_id']."#".$parr['post_id']."\">".df($parr['post_timestamp'])."</a><br/>".$parr['post_user_nick']."</td>";				
+								echo "<td><a href=\"?page=$page&amp;topic=".$arr['topic_id']."#".$parr['post_id']."\">".df($parr['post_timestamp'])."</a><br/>".$parr['post_user_nick']."</td>";
 								if ($isAdmin || $cu->id==$arr['topic_user_id'])
 								{
 									echo "<td style=\"vertical-align:middle;text-align:center;\">
@@ -595,27 +595,27 @@
 					}
 					else
 						error_msg("Kategorie existiert nicht!");
-						
-					
+
+
 				}
 				else
 					error_msg("Kein Zugriff!3");
 				echo "<input type=\"button\" value=\"Zur &Uuml;bersicht\" onclick=\"document.location='?page=$page'\" />";
 			}
-		
+
 			//
 			// Show bnd topics in category
 			//
 			elseif ($bid > 0)
 			{
 				$cat = intval($_GET['cat']);
-				
+
 				if ($isAdmin || isset($myCat[$cat]))
 				{
 					if ($legal=TRUE)
-					{								
+					{
 						echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; ".$alliance[$alliance_bnd_id]['name']."</h2>";
-						
+
 						// Save new topic
 						if (isset($_POST['submit']) && isset($_POST['topic_subject']) && isset($_POST['post_text']) && $cu->id>0)
 						{
@@ -624,7 +624,7 @@
 							dbquery("INSERT INTO ".BOARD_POSTS_TABLE." (post_topic_id,post_user_id,post_user_nick,post_text,post_timestamp) VALUES (".$mid.",".$cu->id.",'".$cu->nick."','".addslashes($_POST['post_text'])."',".time().");");
 							$pmid=mysql_insert_id();
 							echo "<script type=\"text/javascript\">document.location='?page=$page&bnd=".$bid."&topic=".$mid."#".$pmid."';</script>";
-						}			
+						}
 						// Save edited topic
 						elseif (isset($_POST['topic_edit']) && isset($_POST['topic_subject']) && isset($_POST['topic_id']) && $_POST['topic_id']>0)
 						{
@@ -640,15 +640,15 @@
 							dbquery("DELETE FROM ".BOARD_TOPIC_TABLE." WHERE topic_id=".$_POST['topic_id'].";");
 							success_msg("Thema gelöscht!");
 						}
-			
-						
-						$res=dbquery("SELECT * FROM ".BOARD_TOPIC_TABLE." WHERE topic_bnd_id=".$bid." ORDER BY topic_top DESC,topic_timestamp DESC, topic_subject ASC;");					
+
+
+						$res=dbquery("SELECT * FROM ".BOARD_TOPIC_TABLE." WHERE topic_bnd_id=".$bid." ORDER BY topic_top DESC,topic_timestamp DESC, topic_subject ASC;");
 						if (mysql_num_rows($res)>0)
-						{			
+						{
 							tableStart();
 							echo "<tr><th colspan=\"2\">Thema</th><th>Posts</th><th>Aufrufe</th><th>Autor</th><th>Letzer Beitrag</th>";
 							if ($isAdmin)
-							{					
+							{
 								echo "<th>Aktionen</th>";
 							}
 							echo "</tr>";
@@ -665,7 +665,7 @@
 								echo "<td>".$arr['topic_count']."</td>";
 								echo "<td>".$user[$arr['topic_user_id']]['nick']."</td>";
 								$parr=mysql_fetch_array(dbquery("SELECT post_id,post_timestamp,post_user_id,post_user_nick FROM ".BOARD_POSTS_TABLE." WHERE post_topic_id=".$arr['topic_id']." ORDER BY post_timestamp DESC LIMIT 1;"));
-								echo "<td><a href=\"?page=$page&amp;topic=".$arr['topic_id']."#".$parr['post_id']."\">".df($parr['post_timestamp'])."</a><br/>".$parr['post_user_nick']."</td>";				
+								echo "<td><a href=\"?page=$page&amp;topic=".$arr['topic_id']."#".$parr['post_id']."\">".df($parr['post_timestamp'])."</a><br/>".$parr['post_user_nick']."</td>";
 								if ($isAdmin || $cu->id==$arr['topic_user_id'])
 								{
 									echo "<td style=\"width:90px;\"><input type=\"button\" value=\"Bearbeiten\" onclick=\"document.location='?page=$page&bnd=".$bid."&edittopic=".$arr['topic_id']."'\" />";
@@ -684,15 +684,15 @@
 					}
 					else
 						error_msg("Kategorie existiert nicht!");
-						
-					
+
+
 				}
 				else
 					error_msg("Kein Zugriff!");
 				echo "<input type=\"button\" value=\"Zur &Uuml;bersicht\" onclick=\"document.location='?page=$page'\" />";
 			}
-		
-		
+
+
 			//
 			// New category
 			//
@@ -707,7 +707,7 @@
 						array_push($bullets,$f);
 					}
 				}
-				sort($bullets);		
+				sort($bullets);
 
 				echo "<h2>Neue Kategorie</h2>";
 				echo "<form action=\"?page=$page\" method=\"post\">";
@@ -720,9 +720,9 @@
 				{
 					echo "<input type=\"checkbox\" name=\"cr[".$k."]\" value=\"1\" ";
 					echo" /> ".$v."</span><br/>";
-				}						
+				}
 				echo "</td></tr>";
-				echo "<tr><th style=\"width:110px;\">Symbol:</th><td>";	
+				echo "<tr><th style=\"width:110px;\">Symbol:</th><td>";
 				echo "<img src=\"".BOARD_BULLET_DIR."/".BOARD_DEFAULT_IMAGE."\" style=\"width:38px;height:35px;\" id=\"bullet\" />";
 				echo "<br/>Symbol wählen: <select name=\"cat_bullet\" changeBullet=\"changeAvatar(this);\" onmousemove=\"changeBullet(this);\" onkeyup=\"changeBullet(this);\">";
 				echo "<option value=\"".BOARD_DEFAULT_IMAGE."\">Standard-Symbol</option>";
@@ -737,16 +737,16 @@
 				echo "<input type=\"submit\"name=\"cat_new\" value=\"Kategorie speichern\" /> ";
 				echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page'\" /></form>";
 			}
-			
+
 			//
 			// Edit a category
 			//
 			elseif(isset($_GET['editcat']) && intval($_GET['editcat'])>0 && $isAdmin)
 			{
 				$ecid = intval($_GET['editcat']);
-				
+
 				echo "<h2>Kategorie bearbeiten</h2>";
-				$res=dbquery("SELECT * FROM ".BOARD_CAT_TABLE." WHERE cat_alliance_id=".BOARD_ALLIANCE_ID." AND cat_id=".$ecid.";");		
+				$res=dbquery("SELECT * FROM ".BOARD_CAT_TABLE." WHERE cat_alliance_id=".BOARD_ALLIANCE_ID." AND cat_id=".$ecid.";");
 				if (mysql_num_rows($res)>0)
 				{
 					$arr=mysql_fetch_array($res);
@@ -759,8 +759,8 @@
 							array_push($bullets,$f);
 						}
 					}
-					sort($bullets);			
-					
+					sort($bullets);
+
 					echo "<form action=\"?page=$page\" method=\"post\">";
 					echo "<input type=\"hidden\" name=\"cat_id\" value=\"".$arr['cat_id']."\" />";
 					tableStart();
@@ -771,14 +771,14 @@
 					foreach ($rank as $k=>$v)
 					{
 						echo "<input type=\"checkbox\" name=\"cr[".$k."]\" value=\"1\" ";
-						$crres=dbquery("SELECT cr_id FROM allianceboard_catranks WHERE cr_rank_id=".$k." AND cr_cat_id=".$arr['cat_id'].";");								
+						$crres=dbquery("SELECT cr_id FROM allianceboard_catranks WHERE cr_rank_id=".$k." AND cr_cat_id=".$arr['cat_id'].";");
 						if (mysql_num_rows($crres)>0)
 							echo " checked=\"checked\" /><span style=\"color:#0f0;\">".$v."</span><br/>";
 						else
 							echo" /> <span style=\"color:#f50;\">".$v."</span><br/>";
-					}						
+					}
 					echo "</td></tr>";
-					echo "<tr><th style=\"width:110px;\">Symbol:</th><td>";	
+					echo "<tr><th style=\"width:110px;\">Symbol:</th><td>";
 					if ($arr['cat_bullet']=="" || !is_file(BOARD_BULLET_DIR."/".$arr['cat_bullet'])) $arr['cat_bullet']=BOARD_DEFAULT_IMAGE;
 					echo "<img src=\"".BOARD_BULLET_DIR."/".$arr['cat_bullet']."\" style=\"width:38px;height:35px;\" id=\"bullet\" />";
 					echo "<br/>Symbol ändern: <select name=\"cat_bullet\" onmousemove=\"changeBullet(this);\" onkeyup=\"changeBullet(this);\">";
@@ -790,7 +790,7 @@
 							echo ">$a</option>";
 					}
 					echo "</select></td></tr>";
-					
+
 					tableEnd();
 					echo "<input type=\"submit\" name=\"cat_edit\" value=\"Speichern\" /> ";
 				}
@@ -798,15 +798,15 @@
 					error_msg("Datensatz nicht gefunden!");
 				echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page'\" /></form>";
 			}
-			
+
 		//
 		//edit a bnd category
 		elseif(isset($_GET['editbnd']) && intval($_GET['editbnd'])>0 && $isAdmin)
 			{
 				$ebid = intval($_GET['editbnd']);
-				
+
 				echo "<h2>Kategorie bearbeiten</h2>";
-				$res=dbquery("SELECT * FROM alliance_bnd WHERE (alliance_bnd_alliance_id1=".BOARD_ALLIANCE_ID." || alliance_bnd_alliance_id2=".BOARD_ALLIANCE_ID.") AND alliance_bnd_id=".$ebid.";");		
+				$res=dbquery("SELECT * FROM alliance_bnd WHERE (alliance_bnd_alliance_id1=".BOARD_ALLIANCE_ID." || alliance_bnd_alliance_id2=".BOARD_ALLIANCE_ID.") AND alliance_bnd_id=".$ebid.";");
 				if (mysql_num_rows($res)>0)
 				{
 					$arr=mysql_fetch_array($res);
@@ -819,7 +819,7 @@
 							array_push($bullets,$f);
 						}
 					}
-					sort($bullets);			
+					sort($bullets);
 					$alliance_bnd_id = 0;
 					if ($arr['alliance_bnd_alliance_id2']==BOARD_ALLIANCE_ID) {
 						$alliance_bnd_id = $arr['alliance_bnd_alliance_id1'];
@@ -836,14 +836,14 @@
 					foreach ($rank as $k=>$v)
 					{
 						echo "<input type=\"checkbox\" name=\"cr[".$k."]\" value=\"1\" ";
-						$crres=dbquery("SELECT cr_id FROM allianceboard_catranks WHERE cr_rank_id=".$k." AND cr_bnd_id=".$arr['alliance_bnd_id'].";");								
+						$crres=dbquery("SELECT cr_id FROM allianceboard_catranks WHERE cr_rank_id=".$k." AND cr_bnd_id=".$arr['alliance_bnd_id'].";");
 						if (mysql_num_rows($crres)>0)
 							echo " checked=\"checked\" /><span style=\"color:#0f0;\">".$v."</span><br/>";
 						else
 							echo" /> <span style=\"color:#f50;\">".$v."</span><br/>";
-					}						
+					}
 					echo "</td></tr>";
-					/*echo "<tr><th style=\"width:110px;\">Symbol:</th><td>";	
+					/*echo "<tr><th style=\"width:110px;\">Symbol:</th><td>";
 					if ($arr['cat_bullet']=="" || !is_file(BOARD_BULLET_DIR."/".$arr['cat_bullet'])) $arr['cat_bullet']=BOARD_DEFAULT_IMAGE;
 					echo "<img src=\"".BOARD_BULLET_DIR."/".$arr['cat_bullet']."\" style=\"width:38px;height:35px;\" id=\"bullet\" />";
 					echo "<br/>Symbol ändern: <select name=\"cat_bullet\" changeBullet=\"changeAvatar(this);\" onmousemove=\"changeBullet(this);\" onkeyup=\"changeBullet(this);\">";
@@ -855,7 +855,7 @@
 							echo ">$a</option>";
 					}
 					echo "</select></td></tr>";*/
-					
+
 					tableEnd();
 					echo "<input type=\"submit\" name=\"cat_edit\" value=\"Speichern\" /> ";
 				}
@@ -863,17 +863,17 @@
 					error_msg("Datensatz nicht gefunden!");
 				echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page'\" /></form>";
 			}
-			
-						
+
+
 			//
 			// Delete a forum category and all it's content
 			//
 			elseif(isset($_GET['delcat']) && intval($_GET['delcat'])>0 && $isAdmin)
 			{
 				$dcid = intval($_GET['delcat']);
-				
+
 				echo "<h2>Kategorie löschen</h2>";
-				$res=dbquery("SELECT * FROM ".BOARD_CAT_TABLE." WHERE cat_alliance_id=".BOARD_ALLIANCE_ID." AND cat_id=".$dcid.";");		
+				$res=dbquery("SELECT * FROM ".BOARD_CAT_TABLE." WHERE cat_alliance_id=".BOARD_ALLIANCE_ID." AND cat_id=".$dcid.";");
 				if (mysql_num_rows($res)>0)
 				{
 					$arr=mysql_fetch_array($res);
@@ -886,17 +886,17 @@
 					error_msg("Datensatz nicht gefunden!");
 				echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page'\" /></form>";
 			}
-			
+
 			//
 			// Show forum categories; this ist the default view
-			//	
+			//
 			else
 			{
 				echo "<h2>Übersicht</h2>";
-				
+
 				if (isset($rank) && count($rank)>0)
 				{
-				
+
 					if (isset($_POST['cat_new']) && isset($_POST['cat_name']))
 					{
 						dbquery("INSERT INTO ".BOARD_CAT_TABLE." (
@@ -968,14 +968,14 @@
 						dbquery("DELETE FROM ".BOARD_CAT_TABLE." WHERE cat_id=".$catid." AND cat_alliance_id=".BOARD_ALLIANCE_ID.";");
 						success_msg("Kategorie gelöscht!");
 					}
-					
-					$res=dbquery("SELECT * FROM ".BOARD_CAT_TABLE." WHERE cat_alliance_id=".BOARD_ALLIANCE_ID." ORDER BY cat_order, cat_name");		
+
+					$res=dbquery("SELECT * FROM ".BOARD_CAT_TABLE." WHERE cat_alliance_id=".BOARD_ALLIANCE_ID." ORDER BY cat_order, cat_name");
 					if (mysql_num_rows($res)>0)
 					{
 						tableStart();
 						echo "<tr><th colspan=\"2\">Kategorie</th><th>Posts</th><th>Topics</th><th>Letzer Beitrag</th>";
 						if ($isAdmin)
-						{					
+						{
 							echo "<th style=\"width:50px;\">Aktionen</th>";
 						}
 						echo "</tr>";
@@ -1009,7 +1009,7 @@
 										$crres=dbquery("SELECT cr_id FROM allianceboard_catranks WHERE cr_rank_id=".$k." AND cr_cat_id=".$arr['cat_id'].";");
 										if (mysql_num_rows($crres)>0)
 											$rstr.= $v.", ";
-									}									
+									}
 									if ($rstr!="") $rstr=substr($rstr,0,strlen($rstr)-2);
 									echo " ".tm("Admin-Info: ".$arr['cat_name'],"<b>Position:</b> ".$arr['cat_order']."<br/><b>Zugriff:</b> ".$rstr)."";
 								}
@@ -1030,30 +1030,30 @@
 										<a href=\"?page=$page&delcat=".intval($arr['cat_id'])."\">".icon('delete')."</a>
 									</td>";
 								}
-								echo "</tr>";			
+								echo "</tr>";
 							}
 						}
 						if ($accessCnt==0)
 							echo "<tr><td colspan=\"5\"><i>Du hast zu keiner Kategorie Zugriff!</i></td></tr>";
 						tableEnd();
-						
-						
+
+
 					}
 					else
 						error_msg("Keine Kategorien vorhanden!");
 					if ($isAdmin)
 						echo "<br/><input type=\"button\" value=\"Neue Kategorie erstellen\" onclick=\"document.location='?page=$page&action=newcat'\" /> &nbsp; ";
 					echo "<input type=\"button\" value=\"Zur Allianzseite\" onclick=\"document.location='?page=alliance'\" /><br/><br/>";
-					
-					
+
+
 					//shows Bnd forums
-					$res=dbquery("SELECT * FROM alliance_bnd WHERE (alliance_bnd_alliance_id1=".BOARD_ALLIANCE_ID." || alliance_bnd_alliance_id2=".BOARD_ALLIANCE_ID.") AND alliance_bnd_level=2 ORDER BY alliance_bnd_id");		
+					$res=dbquery("SELECT * FROM alliance_bnd WHERE (alliance_bnd_alliance_id1=".BOARD_ALLIANCE_ID." || alliance_bnd_alliance_id2=".BOARD_ALLIANCE_ID.") AND alliance_bnd_level=2 ORDER BY alliance_bnd_id");
 					if (mysql_num_rows($res)>0)
 					{
 						tableStart();
 						echo "<tr><th colspan=\"2\">Bündnisforen</th><th>Posts</th><th>Topics</th><th>Letzer Beitrag</th>";
 						if ($isAdmin)
-						{					
+						{
 							echo "<th>Aktionen</th>";
 						}
 						echo "</tr>";
@@ -1070,7 +1070,7 @@
 								$alliance_bnd_id=$arr['alliance_bnd_alliance_id2'];
 							}
 							$alliance=get_alliance_names();
-							
+
 							if ($isAdmin || isset($myCat[$arr['alliance_bnd_id']]))
 							{
 								$accessCnt++;
@@ -1093,10 +1093,10 @@
 									$rstr="";
 									foreach ($rank as $k=>$v)
 									{
-										$crres=dbquery("SELECT cr_id FROM allianceboard_catranks WHERE cr_rank_id=".$k." AND cr_bnd_id=".intval($arr['alliance_bnd_id']).";");								
+										$crres=dbquery("SELECT cr_id FROM allianceboard_catranks WHERE cr_rank_id=".$k." AND cr_bnd_id=".intval($arr['alliance_bnd_id']).";");
 										if (mysql_num_rows($crres)>0)
 											$rstr.= $v.", ";
-									}									
+									}
 									if ($rstr!="") $rstr=substr($rstr,0,strlen($rstr)-2);
 									echo " ".tm("Admin-Info: ".stripslashes($alliance[$alliance_bnd_id]['name']),/*"<b>Position:</b> ".$arr['cat_order']."<br/>*/"<b>Zugriff:</b> ".$rstr)."";
 								}
@@ -1114,7 +1114,7 @@
 									echo "<td style=\"width:90px;\"><input type=\"button\" value=\"Bearbeiten\" onclick=\"document.location='?page=$page&editbnd=".$arr['alliance_bnd_id']."'\" /><br/> 
 									</td>";
 								}
-								echo "</tr>";			
+								echo "</tr>";
 							}
 						}
 						if ($accessCnt==0)
@@ -1122,12 +1122,12 @@
 						tableEnd();
 					}
 
-		
+
 				}
 				else
 				{
 					error_msg("Bevor das Forum benutzt werden kann müssen [page alliance action=ranks]Ränge[/page] erstellt werden!");
-				}				
+				}
 			}
 		}
 		else
