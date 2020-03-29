@@ -16,7 +16,7 @@ try {
     $app = require __DIR__ . '/../../src/app.php';
 } catch (DBException $ex) {
 	ob_clean();
-    require_once __DIR__ . '/../src/minimalapp.php';
+    require_once __DIR__ . '/../../src/minimalapp.php';
     echo $app['twig']->render('layout/empty.html.twig', [
         'content' => $ex,
     ]);
