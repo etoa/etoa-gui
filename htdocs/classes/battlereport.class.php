@@ -511,10 +511,11 @@ class BattleReport extends Report
 											$data = explode(':',$ship);
 											echo '<tr>
 													<td>'.$ships[$data[0] ].' </td>
-													<td style="text-align:right;"> '.nf($data[1]).'</td>
+													<td style="text-align:right;"> '.nf($data[1]).' (+'.nf($data[2]).')</td>
 												</tr>';
 										}
 									}
+									echo '<tr><td colspan="3">100% der zivilen Schiffe werden wiederhergestellt!</td></tr>';
 									echo '</table>';
 								}
 								else
