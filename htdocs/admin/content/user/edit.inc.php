@@ -1087,6 +1087,7 @@
 							<th>Ende</th>
 							<th>Abbrechen</th>
 						</tr>';
+				$used_days = 0;	
 				while ($sitting_arr = mysql_fetch_array($sitting_res))
 				{
 					$used_days += (($sitting_arr['date_to']-$sitting_arr['date_from'])/86400);
