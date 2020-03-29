@@ -510,9 +510,17 @@ class BattleReport extends Report
 										{
 											$data = explode(':',$ship);
 											echo '<tr>
-													<td>'.$ships[$data[0] ].' </td>
-													<td style="text-align:right;"> '.nf($data[1]).' (+'.nf($data[2]).')</td>
-												</tr>';
+													<td>'.$ships[$data[0] ].' </td>';
+													if ($data[2]>0)
+													{
+														echo '<td style="text-align:right;"> '.nf($data[1]).'</td>';
+														echo '<td>(+'.nf($data[2]).')</td>';
+													}
+													else
+													{
+														echo '<td style="text-align:right;"> '.nf($data[1]).'</td>';
+													}
+											echo	'</tr>';
 										}
 									}
 									echo '<tr><td colspan="3">100% der zivilen Schiffe werden wiederhergestellt!</td></tr>';
@@ -550,9 +558,17 @@ class BattleReport extends Report
 										{
 											$data = explode(':',$defense);
 											echo '<tr>
-													<td>'.$def[$data[0] ].' </td>
-													<td style="text-align:right;"> '.nf($data[1]).' (+'.nf($data[2]).')</td>
-												</tr>';
+													<td>'.$def[$data[0] ].' </td>';
+													if ($data[2]>0)
+													{
+														echo '<td style="text-align:right;"> '.nf($data[1]).'</td>';
+														echo '<td>(+'.nf($data[2]).')</td>';
+													}
+													else
+													{
+														echo '<td style="text-align:right;"> '.nf($data[1]).'</td>';
+													}
+											echo	'</tr>';
 										}
 									}
 									echo '<tr><td colspan="3">'.$this->restore.'% der Verteidigungsanlagen werden repariert!</td></tr>';
