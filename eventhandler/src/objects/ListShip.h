@@ -30,6 +30,7 @@ public:
   
 private:
 	int getShipCnt(ShipData* data);
+	bool isCivilShip(ShipData* data);
 };
 
 #endif

@@ -15,8 +15,6 @@
 * 
 * @author Stephan Vock <glaubinix@etoa.ch>
 */
-
-	class My;
 	
 	class Config
 	{
@@ -119,7 +117,7 @@
 		static Config* _instance;
 		
 		/**
-		* Konsturktor der Configklasse
+		* Konstruktor der Configklasse
 		*
 		**/
 		Config () {	};
