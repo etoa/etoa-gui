@@ -1,8 +1,6 @@
 
 #include "ListShip.h"
 
-#include <boost/algorithm/string.hpp>
-
 	ListShip::ListShip(mysqlpp::Row &oRow) : Object(oRow) {
 		this->id = (int)oRow["shiplist_id"];
 		this->typeId = (short)oRow["shiplist_ship_id"];
@@ -54,31 +52,10 @@
 	
 	int ListShip::getShipCnt(ShipData* data) {
 		Config &config = Config::instance();
-		if (isCivilShip(data)) {
+		if (data->isCivilShip()) {
 			this->rebuildCount = (int)(this->initCount - this->count)*config.nget("civil_ship_restore_percent",0);
 		}
 		return (int)ceil((this->initCount - (this->count + this->rebuildCount))*config.nget("ship_wf_percent",0));    
-	}
-	
-	bool ListShip::isCivilShip(ShipData* data)
-	{
-		bool isCivil = false;
-		std::string civil_categories = Config::instance().get("civil_ship_categories",0);
-		std::vector<std::string> tokens;
-		boost::split(tokens,civil_categories,boost::is_any_of(","));
-		for (size_t i = 0; i < tokens.size(); i++)
-		{
-			try {
-				if (std::stoi(tokens[i]) == data->getCatId()){
-					isCivil = true;
-				}
-      }
-			catch (const std::exception& e) {
-				std::cout << "Can't parse civil ship categories: " << e.what() << std::endl;
-				//TODO: handle warning the etoa way?
-			}
-		}
-		return isCivil;
 	}
 	
 	double ListShip::getWfMetal() {
