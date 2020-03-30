@@ -136,6 +136,10 @@ void BattleReport::setRestore(short restore) {
 	this->restore = restore;
 }
 
+void BattleReport::setRestoreCivilShips(short restoreCivilShips) {
+	this->restoreCivilShips = restoreCivilShips;
+}
+
 void BattleReport::saveBattleReport() {
 	My &my = My::instance();
 	mysqlpp::Connection *con_ = my.get();
@@ -194,6 +198,7 @@ void BattleReport::saveBattleReport() {
 			<< "	`entity_ships_end`, "
 			<< "	`entity_def_end`, "
 			<< "	`restore`, "
+			<< "	`restore_civil_ships`, "
 			<< "	`result` "
 			<< ") "
 			<< "VALUES "
@@ -243,6 +248,7 @@ void BattleReport::saveBattleReport() {
 			<< "	'" << this->entityShipsEnd << "', "
 			<< "	'" << this->entityDefEnd << "', "
 			<< "	'" << this->restore << "', "
+			<< "	'" << this->restoreCivilShips << "', "
 			<< "	'" << this->result << "' "
 			<< ");";
 		query.store();

@@ -250,6 +250,9 @@ https://etoa.ch</v>
     <item name="def_wf_percent" cat="4">
       <v comment="Def ins Tf %" type="text">0.4</v>
     </item>
+    <item name="civil_ship_restore_percent" cat="4">
+      <v comment="Wiederherstellung zivile Schiffe Verteidiger %" type="text">1</v>
+    </item>
     <item name="ship_wf_percent" cat="4">
       <v comment="Schiffe ins Tf %" type="text">0.5</v>
     </item>

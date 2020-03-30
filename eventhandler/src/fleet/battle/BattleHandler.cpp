@@ -284,13 +284,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log, bool ratingEf
         report->setEntityShipsEnd(entity->getShipString(true,true));
         report->setEntityDefEnd(entity->getDefString(true));
         report->setRestore(round((config.nget("def_restore_percent",0) + entity->getUser()->getSpecialist()->getSpecialistDefRepair() - 1)*100));
-        /*
-         // Restore civil ships for defender.
-         
-         report->setRestoreShip(round((config.nget("ship_restore_percent",0) - 1)*100));
-         
-         
-         */
+        report->setRestoreCivilShips(round(config.nget("civil_ship_restore_percent",0)*100));
 
         //Log schreiben
         query << "INSERT DELAYED INTO "

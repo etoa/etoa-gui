@@ -14,6 +14,8 @@
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
+class ShipData;
+
 class FleetShip : public Object 
 {
 public: 
@@ -23,6 +25,9 @@ public:
 	double getWfMetal();
 	double getWfCrystal();
 	double getWfPlastic();
+	
+private:
+	int getShipCnt(ShipData *data);
 };
 
 #endif
