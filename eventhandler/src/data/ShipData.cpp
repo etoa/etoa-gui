@@ -2,6 +2,7 @@
 #include "ShipData.h"
 
 #include "../config/ConfigHandler.h"
+#include "../util/Log.h"
 
 #include <boost/algorithm/string.hpp>
 	
@@ -210,8 +211,7 @@
 				}
       }
 			catch (const std::exception& e) {
-				std::cout << "Can't parse civil ship categories: " << e.what() << std::endl;
-				//TODO: handle warning the etoa way?
+				LOG(LOG_WARNING, "Can't parse civil ship categories correctly: " << e.what());
 			}
 		}
 		return isCivil;
