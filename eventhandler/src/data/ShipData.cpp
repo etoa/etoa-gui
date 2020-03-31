@@ -1,5 +1,10 @@
 
 #include "ShipData.h"
+
+#include "../config/ConfigHandler.h"
+#include "../util/Log.h"
+
+#include <boost/algorithm/string.hpp>
 	
 	short ShipData::getTypeId() {
 		return this->typeId;
@@ -191,4 +196,23 @@
 	
 	short ShipData::getAllianceCosts() {
 		return this->allianceCosts;
+	}
+	
+	bool ShipData::isCivilShip() {
+		bool isCivil = false;
+		std::string civil_categories = Config::instance().get("civil_ship_categories",0);
+		std::vector<std::string> tokens;
+		boost::split(tokens,civil_categories,boost::is_any_of(","));
+		for (size_t i = 0; i < tokens.size(); i++)
+		{
+			try {
+				if (std::stoi(tokens[i]) == getCatId()){
+					isCivil = true;
+				}
+      }
+			catch (const std::exception& e) {
+				LOG(LOG_WARNING, "Can't parse civil ship categories correctly: " << e.what());
+			}
+		}
+		return isCivil;
 	}

@@ -59,45 +59,24 @@
 			}
 		}
 	}
-
-	double FleetShip::getWfMetal() {
-		Config &config = Config::instance();
-		
-		DataHandler &DataHandler = DataHandler::instance();
-		ShipData *data = DataHandler.getShipById(this->getTypeId());
+	
+	int FleetShip::getShipCnt(ShipData *data) {
 		double structure = data->getStructure() + data->getShield();
 		if (!structure && this->count!=this->initCount) this->count = 0;
-		int shipCnt = (int)ceil((this->initCount - this->count) * config.nget("ship_wf_percent",0));
-		
-		this->rebuildIsCalced = true;
-		
-		return (shipCnt * data->getCostsMetal());
+		return (int)ceil((this->initCount - this->count) * Config::instance().nget("ship_wf_percent",0));
+	}
+
+	double FleetShip::getWfMetal() {
+		ShipData *data = DataHandler::instance().getShipById(this->getTypeId());
+		return (getShipCnt(data) * data->getCostsMetal());
 	}
 	
 	double FleetShip::getWfCrystal() {
-		Config &config = Config::instance();
-		
-		DataHandler &DataHandler = DataHandler::instance();
-		ShipData *data = DataHandler.getShipById(this->getTypeId());
-		double structure = data->getStructure() + data->getShield();
-		if (!structure && this->count!=this->initCount) this->count = 0;
-		int shipCnt = (int)ceil((this->initCount - this->count)*config.nget("ship_wf_percent",0));
-		
-		this->rebuildIsCalced = true;
-		
-		return (shipCnt * data->getCostsCrystal());
+		ShipData *data = DataHandler::instance().getShipById(this->getTypeId());
+		return (getShipCnt(data) * data->getCostsCrystal());
 	}
 	
 	double FleetShip::getWfPlastic() {
-		Config &config = Config::instance();
-		
-		DataHandler &DataHandler = DataHandler::instance();
-		ShipData *data = DataHandler.getShipById(this->getTypeId());
-		double structure = data->getStructure() + data->getShield();
-		if (!structure && this->count!=this->initCount) this->count = 0;
-		int shipCnt = (int)ceil((this->initCount - this->count)*config.nget("ship_wf_percent",0));
-		
-		this->rebuildIsCalced = true;
-		
-		return (shipCnt * data->getCostsPlastic());
+		ShipData *data = DataHandler::instance().getShipById(this->getTypeId());
+		return (getShipCnt(data) * data->getCostsPlastic());
 	}

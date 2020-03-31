@@ -28,7 +28,6 @@ class Object
 			
 			this->isFaked = false;
 			this->isChanged = false;
-			this->rebuildIsCalced = false;
 		}
 		
 		virtual ~Object() {}
@@ -87,7 +86,6 @@ class Object
 		short sBonusWeapon, sBonusStructure, sBonusShield, sBonusHeal, sBonusCapacity,  sBonusSpeed, sBonusPilots, sBonusTarn, sBonusAntrax, sBonusForsteal, sBonusBuildDestroy, sBonusAntraxFood, sBonusDeactivade, sBonusReadiness;
 		
 		bool isChanged;
-		bool rebuildIsCalced;
 };
 
 #endif

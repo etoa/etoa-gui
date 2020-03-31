@@ -1026,19 +1026,23 @@
 		return weaponTech;
 	}
 
-	std::string Entity::getShipString(bool total)
+	std::string Entity::getShipString(bool total, bool rebuild)
 	{
 		if (!this->shipsLoaded)
 			this->loadShips();
-		std::map<int,int> ships;
-		std::map<int,int> specialShips;
+		std::map<int,std::pair<int,int>> ships;
+		std::map<int,std::pair<int,int>> specialShips;
 
 		std::vector<Object*>::iterator ot;
 		for (ot = this->objects.begin() ; ot < this->objects.end(); ot++) {
-			if ((*ot)->getSpecial())
-				specialShips[(*ot)->getTypeId()] += (*ot)->getCount();
-			else
-				ships[(*ot)->getTypeId()] += (*ot)->getCount();
+			if ((*ot)->getSpecial()){
+				specialShips[(*ot)->getTypeId()].first += (*ot)->getCount();
+				specialShips[(*ot)->getTypeId()].second += (*ot)->getRebuildCount();
+			}
+			else {
+				ships[(*ot)->getTypeId()].first += (*ot)->getCount();
+				ships[(*ot)->getTypeId()].second += (*ot)->getRebuildCount();
+			}
 		}
 
 		if (fleets.size() && total) {
@@ -1046,27 +1050,39 @@
 
 			for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
 				for (ot = (*it)->objects.begin() ; ot < (*it)->objects.end(); ot++) {
-					if ((*ot)->getSpecial())
-						specialShips[(*ot)->getTypeId()] += (*ot)->getCount();
-					else
-						ships[(*ot)->getTypeId()] += (*ot)->getCount();
+					if ((*ot)->getSpecial()) {
+						specialShips[(*ot)->getTypeId()].first += (*ot)->getCount();
+						specialShips[(*ot)->getTypeId()].second += (*ot)->getRebuildCount();
+					}
+					else {
+						ships[(*ot)->getTypeId()].first += (*ot)->getCount();
+						ships[(*ot)->getTypeId()].second += (*ot)->getRebuildCount();
+				}
 				}
 			}
 		}
 		std::string shipString = "";
 		
-		std::map<int,int>::iterator st;
+		std::map<int,std::pair<int,int>>::iterator st;
 		for ( st=specialShips.begin() ; st != specialShips.end(); st++ ) {
 			shipString += etoa::d2s((*st).first)
 						+ ":"
-						+ etoa::d2s((*st).second)
-						+ ",";
+						+ etoa::d2s((*st).second.first);
+			if (rebuild)
+				shipString += ":"
+						+ etoa::d2s((*st).second.second);
+
+			shipString += ",";
 		}
 		for ( st=ships.begin() ; st != ships.end(); st++ ) {
 			shipString += etoa::d2s((*st).first)
 						+ ":"
-						+ etoa::d2s((*st).second)
-						+ ",";
+						+ etoa::d2s((*st).second.first);
+			if (rebuild)
+				shipString += ":"
+						+ etoa::d2s((*st).second.second);
+
+			shipString += ",";
 		}
 		if (shipString.length()<1)
 			shipString = "0";

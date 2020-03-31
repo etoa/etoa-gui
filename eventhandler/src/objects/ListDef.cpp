@@ -8,7 +8,7 @@
 		this->userId = (int)oRow["deflist_user_id"];
 		this->count = (int)oRow["deflist_count"];
 		this->initCount = this->count;
-		this->rebuildCount = -1;
+		this->rebuildCount = 0;
 		
 		Config &config = Config::instance();
 		this->rebuild = rebuild + config.nget("def_restore_percent",0) - 1;
@@ -34,35 +34,20 @@
 		}
 	}
 	
-	double ListDef::getWfMetal() {
-		Config &config = Config::instance();
-		
-		DataHandler &DataHandler = DataHandler::instance();
-		Data *data = DataHandler.getDefById(this->getTypeId());
-		
+	int ListDef::getDefCnt()
+	{
 		this->rebuildCount = (int)round((this->initCount - this->count)*this->rebuild);
-		int defCount = (int)ceil((this->initCount - (this->count+this->rebuildCount))*config.nget("def_wf_percent",0));
-		return (defCount * data->getCostsMetal());
+		return (int)ceil((this->initCount - (this->count+this->rebuildCount))*Config::instance().nget("def_wf_percent",0));
+	}
+	
+	double ListDef::getWfMetal() {
+		return (getDefCnt() * DataHandler::instance().getDefById(this->getTypeId())->getCostsMetal());
 	}
 	
 	double ListDef::getWfCrystal() {
-		Config &config = Config::instance();
-		
-		DataHandler &DataHandler = DataHandler::instance();
-		Data *data = DataHandler.getDefById(this->getTypeId());
-		
-		this->rebuildCount = (int)round((this->initCount - this->count)*this->rebuild);
-		int defCount = (int)ceil((this->initCount - (this->count+this->rebuildCount))*config.nget("def_wf_percent",0));
-		return (defCount * data->getCostsCrystal());
+		return (getDefCnt() * DataHandler::instance().getDefById(this->getTypeId())->getCostsCrystal());
 	}
 	
 	double ListDef::getWfPlastic() {
-		Config &config = Config::instance();
-		
-		DataHandler &DataHandler = DataHandler::instance();
-		Data *data = DataHandler.getDefById(this->getTypeId());
-		
-		this->rebuildCount = (int)round((this->initCount - this->count)*this->rebuild);
-		int defCount = (int)ceil((this->initCount - (this->count+this->rebuildCount))*config.nget("def_wf_percent",0));
-		return (defCount * data->getCostsPlastic());
+		return (getDefCnt() * DataHandler::instance().getDefById(this->getTypeId())->getCostsPlastic());
 	}

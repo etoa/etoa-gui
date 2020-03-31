@@ -44,6 +44,7 @@ public:
 		this->result = 0;
 		this->rounds = 0;
 		this->restore = 0;
+		this->restoreCivilShips = 0;
 		
 		this->fleetId = fleetId;
 		this->timestamp = timestamp;
@@ -109,6 +110,7 @@ public:
 	void setResult(short result);
 	void setRounds(short rounds);
 	void setRestore(short restore);
+	void setRestoreCivilShips(short restoreCivilShips);
 	
 	void saveBattleReport();
 	
@@ -126,7 +128,7 @@ private:
 	double wf0, wf1, wf2;
 	
 	unsigned int fleetId;
-	unsigned short result, rounds, restore;
+	unsigned short result, rounds, restore, restoreCivilShips;
 };
 
 #endif

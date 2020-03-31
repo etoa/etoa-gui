@@ -8,6 +8,7 @@
 		this->entityId = (int)oRow["shiplist_entity_id"];
 		this->count = (int)oRow["shiplist_count"];
 		this->initCount = this->count;
+		this->rebuildCount = 0;
 		
 		this->special = (bool)oRow["shiplist_special_ship"];
 		this->sLevel = (short)oRow["shiplist_special_ship_level"];
@@ -38,7 +39,7 @@
 			query << "UPDATE "
 				<< "	shiplist "
 				<< "SET "
-				<< "	shiplist_count='" << this->getCount() << "', "
+				<< "	shiplist_count='" << this->getCount() + this->rebuildCount << "', "
 				<< "	shiplist_special_ship_exp = '" << this->getSExp() << "' "
 				<< "WHERE "
 				<< "	shiplist_id='" << this->getId() << "' "
@@ -49,38 +50,25 @@
 		}
 	}
 	
-	double ListShip::getWfMetal() {
+	int ListShip::getShipCnt(ShipData* data) {
 		Config &config = Config::instance();
-		
-		DataHandler &DataHandler = DataHandler::instance();
-		ShipData *data = DataHandler.getShipById(this->getTypeId());
-		int shipCnt = (int)ceil((this->initCount - this->count)*config.nget("ship_wf_percent",0));
-		
-		this->rebuildIsCalced = true;
-		
-		return (shipCnt * data->getCostsMetal());
+		if (data->isCivilShip()) {
+			this->rebuildCount = (int)(this->initCount - this->count)*config.nget("civil_ship_restore_percent",0);
+		}
+		return (int)ceil((this->initCount - (this->count + this->rebuildCount))*config.nget("ship_wf_percent",0));    
+	}
+	
+	double ListShip::getWfMetal() {
+		ShipData *data = DataHandler::instance().getShipById(this->getTypeId());
+		return (getShipCnt(data) * data->getCostsMetal());
 	}
 	
 	double ListShip::getWfCrystal() {
-		Config &config = Config::instance();
-		
-		DataHandler &DataHandler = DataHandler::instance();
-		ShipData *data = DataHandler.getShipById(this->getTypeId());
-		int shipCnt = (int)ceil((this->initCount - this->count)*config.nget("ship_wf_percent",0));
-		
-		this->rebuildIsCalced = true;
-		
-		return (shipCnt * data->getCostsCrystal());
+		ShipData *data = DataHandler::instance().getShipById(this->getTypeId());
+		return (getShipCnt(data) * data->getCostsCrystal());
 	}
 	
 	double ListShip::getWfPlastic() {
-		Config &config = Config::instance();
-		
-		DataHandler &DataHandler = DataHandler::instance();
-		ShipData *data = DataHandler.getShipById(this->getTypeId());
-		int shipCnt = (int)ceil((this->initCount - this->count)*config.nget("ship_wf_percent",0));
-		
-		this->rebuildIsCalced = true;
-		
-		return (shipCnt * data->getCostsPlastic());
+		ShipData *data = DataHandler::instance().getShipById(this->getTypeId());
+		return (getShipCnt(data) * data->getCostsPlastic());
 	}

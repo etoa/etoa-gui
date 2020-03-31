@@ -16,8 +16,6 @@
 
 class ListDef : public Object 
 {
-private:
-	double rebuild;
 public: 
 	ListDef(mysqlpp::Row &oRow,double rebuild=1.0);
 	~ListDef();
@@ -26,6 +24,9 @@ public:
 	double getWfCrystal();
 	double getWfPlastic();
 	
+private:
+	int getDefCnt();
+	double rebuild;	
 };
 
 #endif

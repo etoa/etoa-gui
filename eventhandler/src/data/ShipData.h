@@ -114,6 +114,7 @@ public:
 	double getPoints();
 	short getAllianceBuildingLevel();
 	short getAllianceCosts();
+	bool isCivilShip();
 	
 private:
 

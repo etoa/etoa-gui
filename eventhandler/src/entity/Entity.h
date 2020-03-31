@@ -208,7 +208,7 @@ class Entity
 		short getShieldTech();
 		short getStructureTech();
 		short getWeaponTech();
-		std::string getShipString(bool total=true);
+		std::string getShipString(bool total=true, bool rebuild=false);
 		std::string getDefString(bool rebuild=false);
 		
 		std::string getBuildingString();

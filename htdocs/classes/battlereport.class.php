@@ -40,7 +40,7 @@ class BattleReport extends Report
 	protected $entityWeaponTech, $entityShieldTech, $entityStructureTech;
 	protected $entityWeapon, $entityShield, $entityStructure, $entityHeal, $entityCount, $entityExp;
 	protected $shipsEnd, $entityShipsEnd, $entityDefEnd;
-	protected $restore, $result;
+	protected $restore, $restoreCivilShips, $result;
 	protected $res;
 	protected $wf;
 	protected $fleetId;
@@ -83,6 +83,7 @@ class BattleReport extends Report
 				$this->entityShipsEnd = $arr['entity_ships_end'];
 				$this->entityDefEnd = $arr['entity_def_end'];
 				$this->restore = $arr['restore'];
+				$this->restoreCivilShips = $arr['restore_civil_ships'];
 				$this->result = $arr['result'];
 				$this->res = array();
 				foreach ($resNames as $rk => $rn)
@@ -510,11 +511,20 @@ class BattleReport extends Report
 										{
 											$data = explode(':',$ship);
 											echo '<tr>
-													<td>'.$ships[$data[0] ].' </td>
-													<td style="text-align:right;"> '.nf($data[1]).'</td>
-												</tr>';
+													<td>'.$ships[$data[0] ].' </td>';
+													if ($data[2]>0)
+													{
+														echo '<td style="text-align:right;"> '.nf($data[1]).'</td>';
+														echo '<td>(+'.nf($data[2]).')</td>';
+													}
+													else
+													{
+														echo '<td style="text-align:right;"> '.nf($data[1]).'</td>';
+													}
+											echo	'</tr>';
 										}
 									}
+									echo '<tr><td colspan="3">'.$this->restoreCivilShips.'% der zivilen Schiffe werden wiederhergestellt!</td></tr>';
 									echo '</table>';
 								}
 								else
@@ -549,9 +559,17 @@ class BattleReport extends Report
 										{
 											$data = explode(':',$defense);
 											echo '<tr>
-													<td>'.$def[$data[0] ].' </td>
-													<td style="text-align:right;"> '.nf($data[1]).' (+'.nf($data[2]).')</td>
-												</tr>';
+													<td>'.$def[$data[0] ].' </td>';
+													if ($data[2]>0)
+													{
+														echo '<td style="text-align:right;"> '.nf($data[1]).'</td>';
+														echo '<td>(+'.nf($data[2]).')</td>';
+													}
+													else
+													{
+														echo '<td style="text-align:right;"> '.nf($data[1]).'</td>';
+													}
+											echo	'</tr>';
 										}
 									}
 									echo '<tr><td colspan="3">'.$this->restore.'% der Verteidigungsanlagen werden repariert!</td></tr>';
