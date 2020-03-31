@@ -287,7 +287,7 @@
 
     <div id="planetDropDown" onmouseover="PlanetDropDown(true);return true;"  onmouseout="PlanetDropDown(false);return true;">
         {% for planet in planetList %}
-            <a href="{{ planet.url }}" {% if planet.current %}class="active"{% endif %}>{{ planet.label }}</a>
+            <a href="{{ planet.url|raw }}" {% if planet.current %}class="active"{% endif %}>{{ planet.label }}</a>
         {% endfor %}
     </div>
 
