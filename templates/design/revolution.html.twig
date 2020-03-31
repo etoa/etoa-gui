@@ -56,7 +56,7 @@
         <a id="navplanetlist" href="#" onclick="js_planetlist(true); return true"></a>
         <div id="planetlist" onmouseover="js_planetlist(true); return true;" onmouseout="js_planetlist(false); return true;">
             {% for planet in planetList %}
-                <a href="{{ planet.url }}" {% if planet.current %}class="active"{% endif %}>{{ planet.label }}</a>
+                <a href="{{ planet.url|raw }}" {% if planet.current %}class="active"{% endif %}>{{ planet.label }}</a>
             {% endfor %}
         </div>
 
