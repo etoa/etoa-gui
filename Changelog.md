@@ -1,11 +1,16 @@
 Escape to Andromeda Changelog
 =============================
 
-Version 3.6.2 (unreleased)
+Version 3.6.2
+
+### Features ###
+* Restore civil ships of the defender
 
 ### Bugfixes ###
 * On reset universe also reset the player setup
 * Ignore players in hmode for game stats
+* Fix planet links in revolution/discovery design
+* Fix several php errors
 
 Version 3.6.1
 --------------
