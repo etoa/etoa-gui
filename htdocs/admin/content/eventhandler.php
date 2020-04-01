@@ -8,6 +8,9 @@ $messageQueueSize = null;
 $sysId = null;
 $log = null;
 if (UNIX) {
+    $pidfile = getAbsPath($cfg->daemon_pidfile->v);
+    $eventHandlerPid = EventHandlerManager::checkDaemonRunning($pidfile);
+
     if (isset($_GET['action'])) {
         $executable = $cfg->daemon_exe->v;
         if (empty($executable)) {
