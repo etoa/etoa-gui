@@ -75,7 +75,7 @@
 								`users` 
 							ON 
 								`user_surveillance`.user_id=`users`.user_id 
-								AND `users`.user_observe='' 
+								AND `users`.user_observe IS NULL
 							GROUP BY 
 								`user_surveillance`.user_id;");
 			while ($oarr = mysql_fetch_row($ores))
@@ -562,7 +562,7 @@
 						`users` 
 					ON 
 						`user_surveillance`.user_id=`users`.user_id 
-						AND `users`.user_observe='' 
+						AND `users`.user_observe IS NULL
 					GROUP BY 
 						`user_surveillance`.user_id;");
 	$tblcnt = mysql_fetch_row($ores);
