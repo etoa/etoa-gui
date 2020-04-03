@@ -1,6 +1,6 @@
 <?PHP
 	echo "<h1>Beobachtungsliste</h1>";
-	
+
 	if (isset($_GET['text']))
 	{
 		$res = dbquery("
@@ -12,7 +12,7 @@
 			users
 		WHERE 
 			user_id='".$_GET['text']."'
-		");	
+		");
 		$arr = mysql_Fetch_array($res);
 		echo "<h2>Beobachtungsgrund für <a href=\"?page=$page&amp;sub=edit&amp;id=".$arr['user_id']."\">".$arr['user_nick']."</a></h2>";
 		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">
@@ -23,7 +23,7 @@
 		<input type=\"submit\" name=\"del_text\" value=\"Löschen\" /> &nbsp; 
 		<input type=\"submit\" name=\"cancel\" value=\"Abbrechen\" />";
 	}
-	
+
 	//
 	// Extended observation
 	//
@@ -32,11 +32,11 @@
 		$tu = new User($_GET['surveillance']);
 
 		echo "<h2>Erweiterte Beobachtung von ".$tu."</h2>";
-		
+
 		if (!empty($_GET['session']))
 		{
 			$sid = $_GET['session'];
-			
+
 			$res = dbquery("
 			SELECT 
 				*
@@ -64,7 +64,7 @@
 					$arr=mysql_fetch_array($res);
 				}
 			}
-			
+
 			echo "<h3>Session";
 			if (isset($arr['time_login']) && $arr['time_login'] > 0) {
 				echo " von ".date("d.m.Y H:i",$arr['time_login']);
@@ -75,11 +75,11 @@
 				echo " $sid";
 			}
 			echo "</h3>";
-			
+
 			echo "<p><b>IP:</b> ".$arr['ip_addr']."<br/>
 			<b>Host:</b> ".Net::getHost($arr['ip_addr'])."<br/>
 			<b>Client:</b> ".$arr['user_agent']."</p>";
-			
+
 			echo "<p>".button("Neu laden","?page=$page&amp;sub=$sub&amp;surveillance=".$_GET['surveillance']."&amp;session=".$_GET['session'])." &nbsp; ".
 			button("Zurück","?page=$page&amp;sub=$sub&amp;surveillance=".$_GET['surveillance'])."</p>";
 
@@ -103,10 +103,10 @@
 				}
 				tableEnd();
 			}
-		} 
-		else 
+		}
+		else
 		{
-		
+
 			$sessions = array();
 			$sres = dbquery("
 			SELECT 
@@ -125,8 +125,8 @@
 			{
 				while ($sarr=mysql_fetch_row($sres))
 				{
-					$sessions[] = array($sarr[0],$sarr[1]);		
-				}			
+					$sessions[] = array($sarr[0],$sarr[1]);
+				}
 			}
 
 			echo "<p>Die erweiterte Beobachtung ist automatisch für User unter Beobachtung aktiv!</p>";
@@ -224,16 +224,16 @@
 			echo "<p>Keine Einträge vorhanden!</p>";
 		}*/
 		echo "<p>".button("Zurück","?page=$page&amp;sub=$sub")."</p>";
-		
+
 		}
-		
+
 	}
-	
+
 	//
 	// List observed users
 	//
 	else
-	{	
+	{
 		if (isset($_POST['observe_add']))
 		{
 			dbquery("
@@ -251,7 +251,7 @@
 			UPDATE
 				users
 			SET
-				user_observe=''
+				user_observe = NULL
 			WHERE
 				user_id=".$_GET['del']."
 			");
@@ -262,11 +262,11 @@
 			UPDATE
 				users
 			SET
-				user_observe=''
+				user_observe = NULL
 			WHERE
 				user_id=".$_POST['user_id']."
 			");
-		}		
+		}
 		if (isset($_POST['save_text']))
 		{
 			dbquery("
@@ -277,8 +277,8 @@
 			WHERE
 				user_id=".$_POST['user_id']."
 			");
-		}	
-		
+		}
+
 		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">
 		<fieldset>
 		<legend>Hinzufügen</legend>
@@ -292,12 +292,12 @@
 			FROM 
 				users
 			WHERE 
-				user_observe=''
+				user_observe IS NULL
 			ORDER BY
 				user_nick	
 			");
 			if (mysql_num_rows($res)>0)
-			{		
+			{
 				while($arr=mysql_fetch_array($res))
 				{
 					echo "<option value=\"".$arr['user_id']."\">".$arr['user_nick']."</option>";
@@ -309,7 +309,7 @@
 		 <input type=\"submit\" name=\"observe_add\" value=\"Zur Beobachtungsliste hinzufügen\" />
 		 </fieldset>
 		</form><br/>";
-		
+
 		echo "Folgende User stehen unter Beobachtung:<br/><br/>";
 		$res = dbquery("
 		SELECT
@@ -330,7 +330,7 @@
 		ON
 			users.user_id = user_sessions.user_id
 		WHERE
-			users.user_observe!=''
+			users.user_observe IS NOT NULL
 		GROUP BY
 			users.user_id
 		ORDER BY
