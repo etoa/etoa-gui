@@ -1,13 +1,1 @@
-{% extends 'layout/base.html.twig' %}
-
-{% block layoutContent %}
-    {% if design == 'discovery' %}
-        {% include 'design/discovery.html.twig' %}
-    {% elseif design == 'graphite' %}
-        {% include 'design/graphite.html.twig' %}
-    {% elseif design == 'revolution' %}
-        {% include 'design/revolution.html.twig' %}
-    {% elseif design == 'stardust' %}
-        {% include 'design/stardust.html.twig' %}
-    {% endif %}
-{% endblock %}
+{% extends 'design/' ~ design ~ '.html.twig' %}

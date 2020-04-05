@@ -22,6 +22,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 // Render time measurement
 $watch = new \Symfony\Component\Stopwatch\Stopwatch();
 $watch->start('render');
+$request = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
 
 // Funktionen und Config einlesen
 try {
@@ -266,13 +267,9 @@ try {
         $twig->addGlobal('adds', false);
     }
 
-    // Include content
-    require __DIR__ . '/inc/content.inc.php';
-
     $tm = new TextManager();
     $infoText = $tm->getText('info');
-
-    echo $twig->render('layout/game.html.twig', array_merge($currentPlanetData, [
+    $globals = array_merge($currentPlanetData, [
         'design' => strtolower(str_replace('designs/official/', '', CSS_STYLE)),
         'addBanner' => ADD_BANNER,
         'gameTitle' => getGameIdentifier(),
@@ -298,11 +295,20 @@ try {
         'topNav' => $gameMenu->getTopNav(),
         'mainNav' => $gameMenu->getMainNav(),
         'renderTime' => $watch->stop('render')->getDuration() / 1000,
-        'content' => ob_get_clean(),
         'infoText' => $infoText->enabled && !empty($infoText->content) ? $infoText->content : null,
         'helpBox' => $cu->properties->helpBox == 1,
         'noteBox' => $cu->properties->noteBox==1,
-    ]));
+    ]);
+    foreach ($globals as $key => $value) {
+        $twig->addGlobal($key, $value);
+    }
+
+    // Include content
+    require __DIR__ . '/inc/content.inc.php';
+
+    echo $twig->render('layout/game.html.twig', [
+        'content' => ob_get_clean(),
+    ]);
 } catch (DBException $e) {
     ob_clean();
     echo $twig->render('layout/empty.html.twig', [
