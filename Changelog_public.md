@@ -1,6 +1,39 @@
 Escape to Andromeda Changelog
 =============================
 
+Version 3.6.3 (unreleased)
+--------------------------
+
+### Bugfixes ###
+* Es können mehr als 999 Raketen auf einmal gestartet werden
+
+Version 3.6.2
+-------------
+### Features ###
+* Zivile Schiffe des Verteidigers werden wiederhergestellt
+
+### Bugfixes ###
+* Spieler im Urlaubsmodus werden in den Spielstatistiken ignoriert
+* Planeten Links im Revolution und Discovery Design funktionieren wieder
+
+Version 3.6.1
+-------------
+### Bugfixes ###
+* Behebung einiger Fehler auf der Sektor, Gebäude und Allianzstatistik Seiten
+
+Version 3.6 (round 20)
+--------------
+### Features ###
+
+* Der Hauptplanet kann einmal geändert werden
+* Die Bewohneranzahl für Verteidigungsanlagen kann optimiert werden analog zu Gebäude und Schiffe
+
+### Bugfixes ###
+* Die Hintergrundbilder wurden für hohe Bildschirmauflösung angepasst
+* Der Mouseover für die Nahrungskosten für Verteidigung wurde behoben 
+* Deaktivierte Gebäude können nicht mehr abgerissen werden
+* Der EMP Angriff deaktiviert nur Gebäude Level 1 oder höher
+
 Version 3.5.24
 --------------
 ### Features ###
