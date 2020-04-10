@@ -1,8 +1,14 @@
 Escape to Andromeda Changelog
 =============================
 
-Version 3.6.2
+Version 3.6.3 (unreleased)
+--------------------------
 
+### Bugfixes ###
+* It is now possible to send more than 999 missiles
+
+Version 3.6.2
+-------------
 ### Features ###
 * Restore civil ships of the defender
 
@@ -13,7 +19,7 @@ Version 3.6.2
 * Fix several php errors
 
 Version 3.6.1
---------------
+-------------
 ### Features ###
 * Option to increase the number of star system/planets in an existing universe
 
