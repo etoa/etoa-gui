@@ -206,7 +206,7 @@
 					$lcnt = 0;
 					foreach ($_POST['count'] as $k => $v)
 					{
-					  $v = intval($v);
+					  $v = intval(nf_back($v));
 					  $k = intval($k);
 
 						if ($v > 0)
@@ -1027,7 +1027,7 @@
 									{
 										echo '<input type="hidden" value="'.$missiles[$k]['missile_speed'].'" name="speed['.$k.']" />';
 										echo '<input type="hidden" value="'.$missiles[$k]['missile_range'].'" name="range['.$k.']" />';
-										echo '<input type="text" value="0" id="missle_'.$k.'" name="count['.$k.']" size="2" onkeyup="FormatNumber(this.id,this.value, \''.$v.'\', \'\', \'\');'.$keyup_command.'"/>
+										echo '<input type="text" value="0" id="missle_'.$k.'" name="count['.$k.']" size="4" onkeyup="FormatNumber(this.id,this.value, \''.$v.'\', \'\', \'\');'.$keyup_command.'"/>
 										'.$missiles[$k]['missile_name'].' ('.$v.' vorhanden)<br/>';
 										$lblcnt++;
 									}
