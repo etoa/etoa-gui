@@ -91,12 +91,11 @@
 	// Changelog
 	//
 	elseif ($sub === "changelog") {
-		$Parsedown = new Parsedown();
 		$changelogFile = "../../Changelog.md";
 		$changelogPublicFile = "../../Changelog_public.md";
         echo $twig->render('admin/overview/changelog.html.twig', [
-            'changelog' => is_file($changelogFile) ? $Parsedown->text(file_get_contents($changelogFile)) : null,
-            'changelogPublic' => is_file($changelogPublicFile) ? $Parsedown->text(file_get_contents($changelogPublicFile)) : null,
+            'changelog' => is_file($changelogFile) ? $app['etoa.util.markdown']->convertToHtml(file_get_contents($changelogFile)) : null,
+            'changelogPublic' => is_file($changelogPublicFile) ? $app['etoa.util.markdown']->convertToHtml(file_get_contents($changelogPublicFile)) : null,
         ]);
         exit();
 	}
