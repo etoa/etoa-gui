@@ -32,6 +32,7 @@ if ((bool) $app['etoa.quests.enabled']) {
 $app->register(new \EtoA\Building\BuidingServiceProvider());
 $app->register(new \EtoA\Core\DoctrineServiceProvider());
 $app->register(new \EtoA\Core\ParamConverterServiceProvider());
+$app->register(new \EtoA\Core\UtilServiceProvider());
 $app->register(new \EtoA\Core\SessionServiceProvider());
 $app->register(new \EtoA\Defense\DefenseServiceProvider());
 $app->register(new \EtoA\Missile\MissileServiceProvider());
