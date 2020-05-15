@@ -84,104 +84,104 @@
 		//Titan
 		if($p->prodMetal>0)
 		{
-      if ($p->storeMetal - $p->resMetal > 0)
-      {
-      	$val_time[$p->id][0]=ceil(($p->storeMetal-$p->resMetal)/$p->prodMetal*3600);
-      }
-      else
-      {
-        $val_time[$p->id][0]=0;
-      }
-    }
-    else
-    {
-    	$val_time[$p->id][0]=0;
-    }
-    
+			if ($p->storeMetal - $p->resMetal > 0)
+			{
+				$val_time[$p->id][0]=ceil(($p->storeMetal-$p->resMetal)/$p->prodMetal*3600);
+			}
+			else
+			{
+				$val_time[$p->id][0]=0;
+			}
+		}
+		else
+		{
+			$val_time[$p->id][0]=0;
+		}
+
 		//Silizium
 		if($p->prodCrystal>0)
 		{
-      if ($p->storeCrystal - $p->resCrystal > 0)
-      {
-      	$val_time[$p->id][1]=ceil(($p->storeCrystal-$p->resCrystal)/$p->prodCrystal*3600);
-      }
-      else
-      {
-      	$val_time[$p->id][1]=0;
-      }
-    }
-    else
-    {
-    	$val_time[$p->id][1]=0;
-    }
-    
+			if ($p->storeCrystal - $p->resCrystal > 0)
+			{
+				$val_time[$p->id][1]=ceil(($p->storeCrystal-$p->resCrystal)/$p->prodCrystal*3600);
+			}
+			else
+			{
+				$val_time[$p->id][1]=0;
+			}
+		}
+		else
+		{
+			$val_time[$p->id][1]=0;
+		}
+
 		//PVC
 		if($p->prodPlastic>0)
 		{
-      if ($p->storePlastic - $p->resPlastic > 0)
-      {
-        $val_time[$p->id][2]=ceil(($p->storePlastic-$p->resPlastic)/$p->prodPlastic*3600);
-      }
-      else
-      {
-      	$val_time[$p->id][2]=0;
-      }
-    }
-    else
-    {
-    	$val_time[$p->id][2]=0;
-    }
-    
+			if ($p->storePlastic - $p->resPlastic > 0)
+			{
+				$val_time[$p->id][2]=ceil(($p->storePlastic-$p->resPlastic)/$p->prodPlastic*3600);
+			}
+			else
+			{
+				$val_time[$p->id][2]=0;
+			}
+		}
+		else
+		{
+			$val_time[$p->id][2]=0;
+		}
+
 		//Tritium
 		if($p->prodFuel>0)
 		{
-      if ($p->storeFuel - $p->resFuel > 0)
-      {
-       	$val_time[$p->id][3]=ceil(($p->storeFuel-$p->resFuel)/$p->prodFuel*3600);
-      }
-      else
-      {
-      	$val_time[$p->id][3]=0;
-      }
-    }
-    else
-    {
-    	$val_time[$p->id][3]=0;
-    }
-    
+			if ($p->storeFuel - $p->resFuel > 0)
+			{
+				$val_time[$p->id][3]=ceil(($p->storeFuel-$p->resFuel)/$p->prodFuel*3600);
+			}
+			else
+			{
+				$val_time[$p->id][3]=0;
+			}
+		}
+		else
+		{
+			$val_time[$p->id][3]=0;
+		}
+
 		//Nahrung
 		if($p->prodFood>0)
 		{
-	    if ($p->storeFood - $p->resFood > 0)
-	    {
-	      $val_time[$p->id][4]=ceil(($p->storeFood-$p->resFood)/$p->prodFood*3600);
-	    }
-	    else
-	   	{
-	    	$val_time[$p->id][4]=0;
-	    }
-    }
-    else
-    {
-    	$val_time[$p->id][4]=0;
-    }
+			if ($p->storeFood - $p->resFood > 0)
+			{
+				$val_time[$p->id][4]=ceil(($p->storeFood-$p->resFood)/$p->prodFood*3600);
+			}
+			else
+			{
+				$val_time[$p->id][4]=0;
+			}
+		}
+		else
+		{
+			$val_time[$p->id][4]=0;
+		}
 
 		//Bewohner
 		if($p->prodPeople>0)
 		{
-      if ($p->people_place - $p->people > 0)
-      {
-        $val_time[$p->id][5]=ceil(($p->people_place-$p->people)/$p->prodPeople*3600);
-      }
-      else
-      {
-      	$val_time[$p->id][5]=0;
-      }
-    }
-    else
-    {
-    	$val_time[$p->id][5]=0;
-    }
+			if ($p->people_place - $p->people > 0)
+			{
+				$val_time[$p->id][5]=ceil(($p->people_place-$p->people)/$p->prodPeople*3600);
+			}
+			else
+			{
+				$val_time[$p->id][5]=0;
+			}
+		}
+		else
+		{
+			$val_time[$p->id][5]=0;
+		}
 	}
 
 
@@ -218,21 +218,21 @@
 
 
 			//Der Speicher ist noch nicht gefüllt
-			if($val_res[$p->id][$x]<$val_store[$p->id][$x] && $val_time[$p->id][$x]!=0)
+			if (($val_res[$p->id][$x]<$val_store[$p->id][$x]) && ($val_time[$p->id][$x]!=0))
 			{
-                $capacity = $cp->people_place;
-                if ($capacity < 200)
-                {
-                    $capacity=200;
-                }
-
-                $people_div = $cp->people * (($cfg->get('people_multiply')  + $cp->typePopulation + $cu->race->population + $cp->starPopulation + $cu->specialist->population -4)* (1-($cp->people/($capacity+1)))/24);
-
-                if ($x < 5) {
-                    echo ' ' . tm("Speicher", "Speicher voll in " . tf($val_time[$p->id][$x]) . "") . '> ';
-                }
-                else {
-                    echo ' ' . tm("Wachstum", "Wachstum pro Stunde: " . round($people_div) . "") . '> ';
+				if ($x < 5) 
+				{
+					echo ' ' . tm("Speicher", "Speicher voll in " . tf($val_time[$p->id][$x]) . "") . '> ';
+				}
+				else 
+				{
+					$capacity = $cp->people_place;
+					if ($capacity < 200)
+					{
+						$capacity=200;
+					}
+					$people_div = $cp->people * (($cfg->get('people_multiply')  + $cp->typePopulation + $cu->race->population + $cp->starPopulation + $cu->specialist->population -4)* (1-($cp->people/($capacity+1)))/24);
+					echo ' ' . tm("Wachstum", "Wachstum pro Stunde: " . round($people_div) . "") . '> ';
 				}
 
 				if ($val_time[$p->id][$x]<43200)
@@ -345,4 +345,3 @@
 	echo '<div><br/>
 	<input type="button" onclick="document.location=\'?page=economy\'" value="Wirtschaft des aktuellen Planeten anzeigen" />
 	</div>';
-?>

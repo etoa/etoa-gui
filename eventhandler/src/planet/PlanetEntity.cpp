@@ -3,21 +3,17 @@
 
 namespace planet
 {
-	PlanetEntity::PlanetEntity(int entityId) {
-					
-		this->entityId = entityId;
-			
-		this->store.resize(6);
-		this->cnt.resize(8);
-		this->ressource.resize(7);
-		this->bunker.resize(5);
-
-    this->loadData();
+	PlanetEntity::PlanetEntity(int entityId) 
+	:entityId(entityId),
+	store(6),
+	cnt(8),
+	ressource(6),
+	bunker(5)
+	{
+		this->loadData();
 	}
 
-	PlanetEntity::~PlanetEntity() {
-
-	}
+	PlanetEntity::~PlanetEntity() {}
 
 	void PlanetEntity::loadData() {
 		My &my = My::instance();
@@ -29,7 +25,7 @@ namespace planet
 			<< "	users.user_race_id, "
 			<< "	users.user_specialist_id, "
 			<< "	users.user_specialist_time, "
-            << "    users.boost_bonus_production, "
+			<< "    users.boost_bonus_production, "
 			<< "	users.user_hmode_to, "
 			<< "	stars.type_id "
 			<< "FROM  "
@@ -68,16 +64,15 @@ namespace planet
 				this->solType = (int)pRow["type_id"];
 				this->planetType = (int)pRow["planet_type_id"];
 				this->speicalistId = (int)pRow["user_specialist_time"] < time(0) ? 0 : (int)pRow["user_specialist_id"];
-                this->boostBonusProduction = (float)pRow["boost_bonus_production"];
+				this->boostBonusProduction = (float)pRow["boost_bonus_production"];
 				
 				this->solarPowerBonus = etoa::getSolarPowerBonus((int)pRow["planet_temp_from"], (int)pRow["planet_temp_to"]);
 				this->solarFuelBonus = 1 - (etoa::getSolarFuelBonus((int)pRow["planet_temp_from"], (int)pRow["planet_temp_to"]));
-				
-                if ((int)pRow["planet_last_updated"]==0)
-                    this->t=5;
-                else
-                    this->t = time(0) - (int)pRow["planet_last_updated"];
-                
+
+				if ((int)pRow["planet_last_updated"]==0)
+					this->t=5;
+				else
+					this->t = time(0) - (int)pRow["planet_last_updated"];
 				
 				this->isMain = (bool)pRow["planet_user_main"];
 				
@@ -87,7 +82,6 @@ namespace planet
 				this->ressource[3] = (double)pRow["planet_res_fuel"];
 				this->ressource[4] = (double)pRow["planet_res_food"];
 				this->ressource[5] = (double)pRow["planet_people"];
-				this->ressource[6] = 0;
 				
 				this->store[0] = (double)pRow["planet_store_metal"];
 				this->store[1] = (double)pRow["planet_store_crystal"];
@@ -124,53 +118,69 @@ namespace planet
 
 	}
 	
-	void PlanetEntity::updateResources() {
-        
-        Config &config = Config::instance();
+	void PlanetEntity::updateResources() 
+	{
+		Config &config = Config::instance();
 
-		if (this->isUmod) {
-			for (int i = 0; i < 6; i++) {
+		if (this->isUmod) 
+		{
+			for (size_t i = 0; i < ressource.size(); i++) 
+			{
 				this->ressource[i] = 0;
 			}
 			return;
 		}
 
-		for (int i = 0; i < 5; i++) {
-			if (this->store[i] > (this->ressource[i]+(this->cnt[i]/3600)*this->t))
-				this->ressource[i] = (this->cnt[i]/3600)*this->t;
+		for (int i = 0; i < 5; i++) 
+		{
+			if (this->store[i] > (this->ressource[i] + (this->cnt[i] / 3600)*this->t))
+			{
+				this->ressource[i] = (this->cnt[i] / 3600)*this->t;
+			}
 			else if (this->store[i] > this->ressource[i])
+			{
 				this->ressource[i] = this->store[i] - this->ressource[i];
+			}
 			else
+			{
 				this->ressource[i] = 0;
+			}
 		}
-        
 
-        
-// logistic population growth
-        
-        if (this->store[5] < config.nget("user_start_people", 1))
-            this->store[5] = config.nget("user_start_people", 1);
-        
-        
-		this->birthRate = ((double)config.nget("people_multiply", 0)  + this->planet_->getTypePopulation() + this->race_->getRacePopulation() + this->sol_->getTypePopulation() + this->specialist_->getSpecialistPopulation() - 4)* (1-(this->ressource[5] / (this->store[5]+1)))/24;
-        
-		this->ressource[6] = ((this->ressource[5] * this->birthRate)  / 3600);
-        
+		// logistic population growth
+		if (this->store[5] < config.nget("user_start_people", 1))
+		{
+			this->store[5] = config.nget("user_start_people", 1);
+		}
 
-		
+		this->birthRate = ((double)config.nget("people_multiply", 0)
+						+ this->planet_->getTypePopulation()
+						+ this->race_->getRacePopulation()
+						+ this->sol_->getTypePopulation()
+						+ this->specialist_->getSpecialistPopulation() - 4)
+						* (1 - (this->ressource[5] / (this->store[5] + 1))) / 24;
+
+		this->cnt[5] = this->ressource[5] * this->birthRate;
+
 		if (!this->ressource[5])
+		{
 			this->ressource[5] = 1;
-        
-        if      (this->store[5] >= (this->ressource[5] + this->ressource[6]*this->t) && this->birthRate < 0)
-                              this->ressource[5]=(this->store[5]-this->ressource[5]);
-    
-                              
-        else if (this->store[5] < (this->ressource[5] + this->ressource[6]*this->t) && this->birthRate > 0)
-                              this->ressource[5]=(this->store[5]-this->ressource[5]);
-                              
-        else
-                              this->ressource[5] = (this->ressource[6]*this->t);
-		
+		}
+
+		if ((this->store[5] >= (this->ressource[5] + (this->cnt[5] / 3600) * this->t))
+			&& (this->birthRate < 0))
+		{
+			this->ressource[5] = (this->store[5] - this->ressource[5]);
+		}
+		else if ((this->store[5] < (this->ressource[5] + (this->cnt[5] / 3600) * this->t))
+			&& (this->birthRate > 0))
+		{
+			this->ressource[5] = (this->store[5] - this->ressource[5]);
+		}
+		else
+		{
+			this->ressource[5] = (this->cnt[5] / 3600) * this->t;
+		}
 	}
   
 	void PlanetEntity::updateProduction() {
@@ -194,7 +204,6 @@ namespace planet
 		this->cnt[2] = 0;
 		this->cnt[3] = 0;
 		this->cnt[4] = 0;
-		this->cnt[5] = 0;
 		this->cnt[6] = 0;
 		this->cnt[7] = 0;
 			
@@ -335,10 +344,11 @@ namespace planet
 	
 	void PlanetEntity::addBoni() {
 		Config &config = Config::instance();
-        float boost = 0;
-        if (config.nget("boost_system_enable", 0) == 1) {
-            boost += this->boostBonusProduction;
-        }
+		float boost = 0;
+		if (config.nget("boost_system_enable", 0) == 1) 
+		{
+			boost += this->boostBonusProduction;
+		}
 		
 		double energyTechPowerBonus = this->getEnergyTechnologyBonus(
 			(int)config.idget("ENERGY_TECH_ID"), 
@@ -444,7 +454,7 @@ namespace planet
 			<< "	planet_prod_fuel=" << this->cnt[3] << ", "
 			<< "	planet_prod_food=" << this->cnt[4] << ", "
 			<< "	planet_prod_power=" << this->cnt[6] << ", "
-			<< "	planet_prod_people=" << this->ressource[6] << ", "
+			<< "	planet_prod_people=" << this->cnt[5] << ", "
 			<< "	planet_store_metal=" << this->store[0] << ", "
 			<< "	planet_store_crystal=" << this->store [1] << ", "
 			<< "	planet_store_plastic=" << this->store[2] << ", "
@@ -473,7 +483,7 @@ namespace planet
 			<< "	planet_res_fuel=planet_res_fuel+'" << this->ressource[3] << "', "
 			<< "	planet_res_food=planet_res_food+'" << this->ressource[4] << "', "
 			<< "	planet_last_updated='" << time(0) << "', "
-			<< "	planet_prod_people=" << this->ressource[6] << ", "
+			<< "	planet_prod_people=" << this->cnt[5] << ", "
 			<< "	planet_people=planet_people+'" << this->ressource[5] <<"' "
 			<< "WHERE "
 			<< "	id='" << this->entityId << "' "
