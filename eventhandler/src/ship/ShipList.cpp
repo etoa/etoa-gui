@@ -45,7 +45,8 @@ namespace ship
 				<< "		shiplist.`shiplist_special_ship_bonus_forsteal` = '0' , "
 				<< "		shiplist.`shiplist_special_ship_bonus_build_destroy` = '0' , "
 				<< "		shiplist.`shiplist_special_ship_bonus_antrax_food` = '0' , "
-				<< "		shiplist.`shiplist_special_ship_bonus_deactivade` = '0';";
+				<< "		shiplist.`shiplist_special_ship_bonus_deactivade` = '0' ,"
+				<< "		shiplist.`shiplist_special_ship_bonus_readiness` = '0';";
 		}
 		else
 		{
