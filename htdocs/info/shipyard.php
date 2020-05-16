@@ -279,9 +279,20 @@
 	{
 		HelpUtil::breadCrumbs(array("Schiffe","shipyard"));
 	
-		if (isset($_GET['order']) && ctype_alpha($_GET['order']))
+		if (isset($_GET['order']))
 		{
-			$order="ship_".$_GET['order'];
+			if (ctype_alpha($_GET['order']))
+			{
+				$order="ship_".$_GET['order'];
+			}
+			else if ($_GET['order']==="race_id")
+			{
+				$order="race_name";
+			}
+			else
+			{
+				$order="ship_order";
+			}
 			if ($_SESSION['help']['orderfield']==$_GET['order'])
 			{
 				if ($_SESSION['help']['ordersort']=="DESC")
@@ -291,7 +302,7 @@
 			}
 			else
 			{
-				if ($_GET['order']=="name")
+				if (($_GET['order']==="name") || ($_GET['order']==="race_id"))
 					$sort="ASC";
 				else
 					$sort="DESC";
@@ -320,7 +331,11 @@
 				SELECT 
 					* 
 				FROM 
-					ships 
+					ships
+				LEFT JOIN
+					races
+				ON
+					ship_race_id=race_id
 				WHERE
 					ship_cat_id=".$carr['cat_id']."
 					AND ship_show=1 
