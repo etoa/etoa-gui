@@ -383,7 +383,7 @@ define('HELP_URL',"?page=help&site=buildings");
 									<td style="color:red;">Bauen</td>
 									<td>'.tf($costs['time']).'</td>'
 									.$waitArr['string'].'
-									<td>'.nf($costs['costs5']).'</td>
+									<td>'.nf_up($costs['costs5']).'</td>
 								</tr>';
 						}
 
@@ -416,9 +416,9 @@ define('HELP_URL',"?page=help&site=buildings");
 							}
 							foreach ($resNames as $rk=>$rn)
 							{
-								echo '<td>'.nf($costs['costs'.$rk]).'</td>';
+								echo '<td>'.nf_up($costs['costs'.$rk]).'</td>';
 							}
-							echo '<td>'.nf($costs['costs5']).'</td>';
+							echo '<td>'.nf_up($costs['costs5']).'</td>';
 							echo '</tr>';
 						}
 					}
@@ -435,7 +435,7 @@ define('HELP_URL',"?page=help&site=buildings");
 									<td style="color:red;">Abreissen</td>
 									<td>'.tf($demolishCosts['time']).'</td>'
 									.$waitArr['string'].'
-									<td>'.nf($costs['costs5']).'</td>
+									<td>'.nf_up($costs['costs5']).'</td>
 								</tr>
 								<tr class="demolishActionContainer">
 									<td colspan="8">
@@ -453,9 +453,9 @@ define('HELP_URL',"?page=help&site=buildings");
 									<td>'.tf($demolishCosts['time']).'</td>';
 							foreach ($resNames as $rk=>$rn)
 							{
-								echo '<td>'.nf($demolishCosts['costs'.$rk]).'</td>';
+								echo '<td>'.nf_up($demolishCosts['costs'.$rk]).'</td>';
 							}
-							echo '<td>'.nf($demolishCosts['costs5']).'</td>';
+							echo '<td>'.nf_up($demolishCosts['costs5']).'</td>';
 							echo '</tr>';
 						}
 					}
@@ -479,9 +479,9 @@ define('HELP_URL',"?page=help&site=buildings");
 		         					<td>'.tf($costs['time']).'</td>';
 							foreach ($resNames as $rk=>$rn)
 							{
-								echo '<td>'.nf($costs['costs'.$rk]).'</td>';
+								echo '<td>'.nf_up($costs['costs'.$rk]).'</td>';
 							}
-							echo '<td>'.nf($costs['costs5']).'</td>';
+							echo '<td>'.nf_up($costs['costs5']).'</td>';
 							echo '</tr>';
 		         		}
 					}
