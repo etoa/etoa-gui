@@ -40,7 +40,7 @@
 			{
 				$scrow=mysql_fetch_array($scres);
 				$bl = new BuildList($scrow['entity_id'], $cu->id);
-				$return_factor = 1 - (1/($bl->getLevel(MARKTPLATZ_ID)+1));
+				$return_factor = floor((1 - 1/($bl->getLevel(MARKTPLATZ_ID)+1))*100)/100;
 				$marr = array('factor'=>$return_factor,"ship_id"=>$scrow['ship_id'],"ship_count"=>$scrow['count']);
 				foreach ($resNames as $rk => $rn)
 				{
@@ -68,7 +68,7 @@
 				'entity1_id'=>$cp->id,
 				), "shipcancel", $smid, $marr);
 
-				success_msg("Angebot wurde gel&ouml;scht und du hast $returnCount (".(round($return_factor,2)*100)."%) der angebotenen Schiffe zur&uuml;ck erhalten (es wird abgerundet)");
+				success_msg("Angebot wurde gel&ouml;scht und du hast $returnCount (".($return_factor*100)."%) der angebotenen Schiffe zur&uuml;ck erhalten (es wird abgerundet)");
 			}
 			else
 			{
@@ -105,7 +105,7 @@
 
 			$rarr = array();
 			$bl = new BuildList($rcrow['entity_id'], $cu->id);
-			$return_factor = 1 - (1/($bl->getLevel(MARKTPLATZ_ID)+1));
+			$return_factor = floor((1 - 1/($bl->getLevel(MARKTPLATZ_ID)+1))*100)/100;
 			$marr = array('factor'=>$return_factor);
 			foreach ($resNames as $rk => $rn)
 			{
@@ -134,7 +134,7 @@
 			WHERE
 				id='".$rmid."'");
 
-			success_msg("Angebot wurde gel&ouml;scht und du hast ".(round($return_factor,2)*100)."% der angebotenen Rohstoffe zur&uuml;ck erhalten!");
+			success_msg("Angebot wurde gel&ouml;scht und du hast ".($return_factor*100)."% der angebotenen Rohstoffe zur&uuml;ck erhalten!");
 		}
 		else
 		{
@@ -165,7 +165,7 @@
 
 			$rarr = array();
 			$bl = new BuildList($acrow['entity_id'], $cu->id);
-			$return_factor = 1 - (1/($bl->getLevel(MARKTPLATZ_ID)+1));
+			$return_factor = floor((1 - 1/($bl->getLevel(MARKTPLATZ_ID)+1))*100)/100;
 			$marr = array('factor'=>$return_factor);
 			foreach ($resNames as $rk => $rn)
 			{
@@ -189,7 +189,7 @@
 				), "auctioncancel", $acid, $marr);
 			//add_log(7,"Der Spieler ".$cu->nick." zieht folgende Auktion zur&uuml;ck:\nRohstoffe:\n".RES_METAL.": ".$acrow['sell_metal']."\n".RES_CRYSTAL.": ".$acrow['sell_crystal']."\n".RES_PLASTIC.": ".$acrow['sell_plastic']."\n".RES_FUEL.": ".$acrow['sell_fuel']."\n".RES_FOOD.": ".$acrow['sell_food']."\n\nEr erh&auml;lt ".(round($return_factor,2)*100)."% der Waren erstattet!",time());
 
-			success_msg("Auktion wurde gel&ouml;scht und du hast ".(round($return_factor,2)*100)."% der angebotenen Waren zur&uuml;ck erhalten (es wird abgerundet)!");
+			success_msg("Auktion wurde gel&ouml;scht und du hast ".($return_factor*100)."% der angebotenen Waren zur&uuml;ck erhalten (es wird abgerundet)!");
 		}
 		else
 		{
@@ -254,8 +254,8 @@
 
 				$te = Entity::createFactoryById($row['entity_id']);
 				$bl = new BuildList($row['entity_id'], $cu->id);
-				$return_factor = 1 - (1/($bl->getLevel(MARKTPLATZ_ID)+1));
-				$info_string = "Wenn du das Angebot zur&uuml;ckziehst erh&auml;lst du ".(round($return_factor,2)*100)."% des Angebotes zur&uuml;ck (abgerundet).";
+				$return_factor = floor((1 - 1/($bl->getLevel(MARKTPLATZ_ID)+1))*100)/100;
+				$info_string = "Wenn du das Angebot zur&uuml;ckziehst erh&auml;lst du ".($return_factor*100)."% des Angebotes zur&uuml;ck (abgerundet).";
 				if ($te!=null)
 				{
 
@@ -344,8 +344,8 @@
 				$i=0;
 				$resCnt = count($resNames);
 				$bl = new BuildList($arr['entity_id'], $cu->id);
-				$return_factor = 1 - (1/($bl->getLevel(MARKTPLATZ_ID)+1));
-				$info_string = "Wenn du das Angebot zur&uuml;ckziehst erh&auml;lst du ".(round($return_factor,2)*100)."% des Angebotes zur&uuml;ck (abgerundet).";
+				$return_factor = floor((1 - 1/($bl->getLevel(MARKTPLATZ_ID)+1))*100)/100;
+				$info_string = "Wenn du das Angebot zur&uuml;ckziehst erh&auml;lst du ".($return_factor*100)."% des Angebotes zur&uuml;ck (abgerundet).";
 				foreach ($resNames as $rk => $rn)
 				{
 					echo "<tr>";
@@ -455,8 +455,8 @@
 				}
 				echo "</td>";
 				$bl = new BuildList($arr['entity_id'], $cu->id);
-				$return_factor = 1 - (1/($bl->getLevel(MARKTPLATZ_ID)+1));
-				$info_string = "Wenn du das Angebot zur&uuml;ckziehst erh&auml;lst du ".(round($return_factor,2)*100)."% des Angebotes zur&uuml;ck (abgerundet).";
+				$return_factor = floor((1 - 1/($bl->getLevel(MARKTPLATZ_ID)+1))*100)/100;
+				$info_string = "Wenn du das Angebot zur&uuml;ckziehst erh&auml;lst du ".($return_factor*100)."% des Angebotes zur&uuml;ck (abgerundet).";
 				echo "<td ".tt($info_string)." style=\"width:100px;\">";
 				if ($arr['date_end']-time()>0 && $arr['bidcount']==0 && $arr['buyable']==1)
 					echo "<input type=\"radio\" name=\"auction_cancel_id\"  value=\"".$arr['id']."\" />";
