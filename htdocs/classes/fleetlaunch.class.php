@@ -181,7 +181,7 @@
 					if ($this->possibleFleetStarts > 0)
 					{
 						// Piloten
-						$this->pilotsAvailable = floor($this->sourceEntity->people() - $bl->totalPeopleWorking());
+						$this->pilotsAvailable = max(0,floor($this->sourceEntity->people() - $bl->totalPeopleWorking()));
 
 						$this->havenOk = true;
 					}
