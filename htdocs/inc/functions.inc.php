@@ -2664,3 +2664,13 @@ function imagecreatefromfile($path, $user_functions = false)
 	* Textfunktionen einbinden
 	*/
 	include_once __DIR__ . '/text.inc.php';
+
+	/**
+	 * Remove BBCode
+	 */
+	function stripBBCode($text_to_search) 
+	{
+		$pattern = '|[[\\/\\!]*?[^\\[\\]]*?]|si';
+		$replace = '';
+		return preg_replace($pattern, $replace, $text_to_search);
+	}

@@ -184,6 +184,7 @@
 		*/
 		public function setNewName($name,$strict=1)
 		{
+			$name = stripBBCode($name);
 			if ($strict == 0 || !$this->named)
 			{
 				dbquery("
