@@ -686,7 +686,7 @@
         $building_name =  $arr_building['building_name'];
 
         // Zeigt Ausbaulevel bei Abriss
-        if($arr_building['buildlist_build_type'] == 2)
+        if($arr_building['buildlist_build_type'] == 4)
         {
         	$building_level =  $arr_building['buildlist_current_level']-1;
         }
