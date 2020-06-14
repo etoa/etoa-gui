@@ -153,6 +153,8 @@ class ResourceBoxDrawer
 		$storeFullMessage = '';
 		if ($production > 0 && $remainingStore > 0 && $title != 'Bevölkerung') {
 			$storeFullMessage = sprintf('<br><b>Voll in:</b> %s', tf(($remainingStore / $production) * 3600));
+		} else if ($title === 'Bevölkerung') {
+			$storeFullMessage = sprintf('<br><b>Wachstum:</b> %s', nf($production));
 		}
 
 		return mTT(

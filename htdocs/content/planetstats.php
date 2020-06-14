@@ -167,7 +167,7 @@
 		}
 
 		//Bewohner
-		if($p->prodPeople>0)
+		if($p->prodPeople!=0)
 		{
 			if ($p->people_place - $p->people > 0)
 			{
@@ -175,7 +175,7 @@
 			}
 			else
 			{
-				$val_time[$p->id][5]=0;
+				$val_time[$p->id][5]=ceil(($p->people-$p->people_place)/$p->prodPeople*3600);;
 			}
 		}
 		else
@@ -218,7 +218,7 @@
 
 
 			//Der Speicher ist noch nicht gefüllt
-			if (($val_res[$p->id][$x]<$val_store[$p->id][$x]) && ($val_time[$p->id][$x]!=0))
+			if ((($val_res[$p->id][$x]<$val_store[$p->id][$x]) || $x==5) && ($val_time[$p->id][$x]!=0))
 			{
 				if ($x < 5) 
 				{
