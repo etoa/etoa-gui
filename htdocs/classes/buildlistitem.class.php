@@ -591,9 +591,9 @@
 				$wTime['string'] .= '<td ';
 				if ($costs['costs'.$rk] > $cp->getRes1($rk))
 				{
-					$wTime['string'] .= $notAvStyle.' '.tm('Fehlender Rohstoff','<strong>'.nf($costs['costs'.$rk]-$cp->getRes1($rk)).'</strong> '.$rn.'<br />Bereit in <strong>'.tf($wTime[$rk]).'</strong>');
+					$wTime['string'] .= $notAvStyle.' '.tm('Fehlender Rohstoff','<strong>'.nf_up($costs['costs'.$rk]-$cp->getRes1($rk)).'</strong> '.$rn.'<br />Bereit in <strong>'.tf($wTime[$rk]).'</strong>');
 				}
-				$wTime['string'] .= '>'.nf($costs['costs'.$rk]).'</td>';
+				$wTime['string'] .= '>'.nf_up($costs['costs'.$rk]).'</td>';
 			}
 			return $wTime;
 		}

@@ -375,17 +375,9 @@
 	/**
 	* Format number (round up)
 	*/
-	function nf_up($number,$colorize=0)	// Number format
+	function nf_up($number,$colorize=0,$ex=0)	// Number format
 	{
-		$n = number_format(ceil($number),0,",","`");
-		if ($colorize==1)
-		{
-			if ($number>0)
-				return "<span style=\"color:#0f0\">".$n."</span>";
-			if ($number<0)
-				return "<span style=\"color:#f00\">".$n."</span>";
-		}
-		return $n;
+		return nf(ceil($number),$colorize,$ex);
 	}
 
 	/**
