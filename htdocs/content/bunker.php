@@ -103,9 +103,17 @@
 				$res = dbquery("
 					SELECT
 						shiplist_ship_id,
-						shiplist_bunkered
+						shiplist_bunkered,
+						ship_actions,
+						ship_name,
+						ship_id,
+						ship_shortcomment
 					FROM
 						shiplist
+						INNER JOIN
+						ships
+					ON
+						ship_id=shiplist_ship_id
 					WHERE
 						shiplist_user_id=".$cu->id."
 						AND shiplist_entity_id=".$cp->id."
@@ -133,7 +141,28 @@
 								</a>
 							</td>";
 						}
-						echo "<td ".tm($ships[$arr['shiplist_ship_id']]['ship_name'],"<img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['shiplist_ship_id']."_middle.".IMAGE_EXT."\" style=\"float:left;margin-right:5px;\">".text2html($ships[$arr['shiplist_ship_id']]['ship_shortcomment']."<br/><br style=\"clear:both;\"/>")).">".$ships[$arr['shiplist_ship_id']]['ship_name']."</td>";
+
+						$actions = explode(",",$arr['ship_actions']);
+						$accnt=count($actions);
+						$acstr = '';
+						if ($accnt>0)
+						{
+							$acstr = "<br/><b>Fähigkeiten:</b> ";
+							$x=0;
+							foreach ($actions as $i)
+							{
+								if ($ac = FleetAction::createFactory($i))
+								{
+									$acstr.=$ac;
+									if ($x<$accnt-1)
+										$acstr.=", ";
+								}
+								$x++;
+							}
+							$acstr.="";
+						}
+
+						echo "<td ".tm($arr['ship_name'],"<img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id']."_middle.".IMAGE_EXT."\" style=\"float:left;margin-right:5px;\">".text2html($arr['ship_shortcomment'])."<br/>".$acstr."<br style=\"clear:both;\"/>").">".$arr['ship_name']."</td>";
 						echo "<td width=\"150\">".nf($ships[$arr['shiplist_ship_id']]['ship_structure'])."</td>";
 						echo "<td width=\"110\">".nf($arr['shiplist_bunkered'])."<br/>";
 				  
@@ -246,14 +275,23 @@
 				$res = dbquery("
 					SELECT
 						shiplist_ship_id,
-						shiplist_count
+						shiplist_count,
+						ship_actions,
+						ship_name,
+						ship_id,
+						ship_shortcomment
 					FROM
 						shiplist
+					INNER JOIN
+						ships
+					ON
+						ship_id=shiplist_ship_id
 					WHERE
 						shiplist_user_id=".$cu->id."
 						AND shiplist_entity_id=".$cp->id."
 						AND shiplist_count>0
 					;");
+
 					$val = 0;
 					$jsAllShips = array();	// Array for selectable ships
 					while ($arr = mysql_fetch_assoc($res))
@@ -276,7 +314,28 @@
 								</a>
 							</td>";
 						}
-						echo "<td ".tm($ships[$arr['shiplist_ship_id']]['ship_name'],"<img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['shiplist_ship_id']."_middle.".IMAGE_EXT."\" style=\"float:left;margin-right:5px;\">".text2html($ships[$arr['shiplist_ship_id']]['ship_shortcomment']."<br/><br style=\"clear:both;\"/>")).">".$ships[$arr['shiplist_ship_id']]['ship_name']."</td>";
+
+						$actions = explode(",",$arr['ship_actions']);
+						$accnt=count($actions);
+						$acstr = '';
+						if ($accnt>0)
+						{
+							$acstr = "<br/><b>Fähigkeiten:</b> ";
+							$x=0;
+							foreach ($actions as $i)
+							{
+								if ($ac = FleetAction::createFactory($i))
+								{
+									$acstr.=$ac;
+									if ($x<$accnt-1)
+										$acstr.=", ";
+								}
+								$x++;
+							}
+							$acstr.="";
+						}
+
+						echo "<td ".tm($arr['ship_name'],"<img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id']."_middle.".IMAGE_EXT."\" style=\"float:left;margin-right:5px;\">".text2html($arr['ship_shortcomment'])."<br/>".$acstr."<br style=\"clear:both;\"/>").">".$arr['ship_name']."</td>";
 						echo "<td width=\"150\">".nf($ships[$arr['shiplist_ship_id']]['ship_structure'])."</td>";
 						echo "<td width=\"110\">".nf($arr['shiplist_count'])."<br/>";
 				  
