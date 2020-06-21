@@ -373,6 +373,14 @@
 	}
 
 	/**
+	* Format number (round up)
+	*/
+	function nf_up($number,$colorize=0,$ex=0)	// Number format
+	{
+		return nf(ceil($number),$colorize,$ex);
+	}
+
+	/**
 	* Convert formated number back to integer
 	*/
 	function nf_back($number,$colorize=0)
