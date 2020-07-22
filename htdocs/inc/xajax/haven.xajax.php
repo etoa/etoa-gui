@@ -1258,8 +1258,10 @@
 				$maxTime = $fleet->aFleets[0]['landtime'] - time() - $fleet->getTimeLaunchLand() - $fleet->duration1;
 
 				//check for alliance+time to join
-				if (($duration < $maxTime)|| $form['fleet_action']!="alliance" || $maxTime<0) {
-					if ($fid = $fleet->launch()) {
+				if (($duration < $maxTime)|| $form['fleet_action']!="alliance" || $maxTime<0)
+				{
+					if ($fid = $fleet->launch())
+					{
 						ob_start();
 						$ac = FleetAction::createFactory($form['fleet_action']);
 
@@ -1314,19 +1316,22 @@
 							$app['cubicle.quests.initializer']->initialize($fleet->ownerId());
 						}
 						$app['dispatcher']->dispatch(\EtoA\Fleet\Event\FleetLaunch::LAUNCH_SUCCESS, new \EtoA\Fleet\Event\FleetLaunch());
-					} else {
-						$response->alert("Fehler! Kann Flotte nicht starten! ".$fleet->error());
+					}
+					else
+					{
+						$response->assign("submitbutton", "innerHTML","<input type=\"button\" onclick=\"xajax_havenReset()\" value=\"Zurück zur Flottenübersicht\" />");
+						$response->alert("Fehler! Start nicht möglich! \n".$fleet->error());
 					}
 				}
 				else
 				{
 					$response->assign("submitbutton", "innerHTML","<input type=\"button\" onclick=\"xajax_havenReset()\" value=\"Zurück zur Flottenübersicht\" />");
-					$response->alert("Fehler! Angriff kann nicht mehr erreicht werden!".$fleet->error());
+					$response->alert("Fehler! Angriff kann nicht mehr erreicht werden! \n".$fleet->error());
 				}
 			}
 			else
 			{
-				$response->alert("Fehler! Ungültige Aktion! ".$fleet->error());
+				$response->alert("Fehler! Ungültige Aktion! \n".$fleet->error());
 			}
 		}
 		else
