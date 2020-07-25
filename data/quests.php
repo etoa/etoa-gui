@@ -39,7 +39,7 @@ return [
     1 => [
         'id' => 1,
         'title' => 'Verräter im Haus!',
-        'description' => 'Eure Exzellenz, wir mussten feststellen, dass es sich bei dem Spezialisten leider um einen feindlichen Spion handelt. Wir sollten ihn unbedingt entlassen und, wenn es ok ist, werd ich persönlich zusehen, dass er nie wieder Tageslicht sehen wird.',
+        'description' => 'Eure Exzellenz, wir mussten feststellen, dass es sich bei dem Spezialisten leider um einen feindlichen Spion handelt. Wir sollten ihn unbedingt entlassen und, wenn es ok ist, werde ich persönlich zusehen, dass er nie wieder Tageslicht sehen wird.',
         'task' => [
             'id' => 0,
             'type' => 'discharge-specialist',
@@ -103,7 +103,7 @@ return [
     3 => [
         'id' => 3,
         'title' => 'Schrott entsorgen',
-        'description' => 'Eure Exzellenz, anonyme Quellen haben wir mitgeteilt, dass einige unserer Schiffe schon etwas älter sind und die Crews sich gar weigern mit einigen Schiffen zu fliegen. Wir sollten ein paar Schiffe recyclen, damit wir später aus den Rohstoffen zuverlässigere Schiffe bauen können. ',
+        'description' => 'Eure Exzellenz, anonyme Quellen haben mir mitgeteilt, dass einige unserer Schiffe schon etwas älter sind und die Crews sich gar weigern mit einigen Schiffen zu fliegen. Wir sollten ein paar Schiffe recyclen, damit wir später aus den Rohstoffen zuverlässigere Schiffe bauen können.',
         'task' => [
             'id' => 0,
             'type' => 'recycle-ship',
@@ -122,7 +122,7 @@ return [
     4 => [
         'id' => 4,
         'title' => '"Friendly Fire"',
-        'description' => 'Eure Exzellenz, einige Piloten haben sich in letzter Zeit immer wieder beklagt, dass unsere eigenen Verteidigungsanlagen auch auf eigene Schiffe schiessen. Es ist an der Zeit die defekten Anlagen zu abzubauen und statt dessen Anlagen der neusten Generation aufzubauen.',
+        'description' => 'Eure Exzellenz, einige Piloten haben sich in letzter Zeit immer wieder beklagt, dass unsere eigenen Verteidigungsanlagen auch auf eigene Schiffe schiessen. Es ist an der Zeit die defekten Anlagen abzubauen und statt dessen Anlagen der neusten Generation aufzubauen.',
         'task' => [
             'id' => 0,
             'type' => 'recycle-defense',
@@ -160,7 +160,7 @@ return [
     6 => [
         'id' => 6,
         'title' => 'Kontakte Knüpfen',
-        'description' => 'Eure Exzellenz, wir haben so viele Nachbarn, aber zu keinem wirklich Kontakt. Wenn ihr einen unseren Nachbarn kontaktieren und auf unsere Seite bringen können, dann wird es einfacher für uns sein unsere Ziele zu erreichen. Selbstverständlich können wir diesen Nachbarn am Ende immer noch hintergehen.',
+        'description' => 'Eure Exzellenz, wir haben so viele Nachbarn, aber zu keinem wirklich Kontakt. Wenn wir einen unserer Nachbarn kontaktieren und auf unsere Seite bringen können, dann wird es einfacher für uns sein unsere Ziele zu erreichen. Selbstverständlich können wir diesen Nachbarn am Ende immer noch hintergehen.',
         'task' => [
             'id' => 0,
             'type' => 'send-message',
@@ -197,13 +197,13 @@ return [
     ],
     8 => [
         'id' => 8,
-        'title' => 'Fortschritt duch Technik',
-        'description' => 'Eure Exzellenz, Investment in die Forschung wird uns technische Überlegenheit garantieren und die Bevölkerung wird sogar noch mehr bewundern.',
+        'title' => 'Fortschritt durch Technik',
+        'description' => 'Eure Exzellenz, Investment in die Forschung wird uns technische Überlegenheit garantieren und die Bevölkerung wird sogar noch mehr bewundert.',
         'task' => [
             'id' => 0,
             'type' => 'have-building-level',
             'operator' => 'equal-to-or-more',
-            'description' => 'Bau das Forschungslabor',
+            'description' => 'Baue das Forschungslabor',
             'value' => 1,
             'attributes' => [
                 'building_id' => 8,
@@ -220,7 +220,7 @@ return [
     9 => [
         'id' => 9,
         'title' => 'Fortschritt duch Technik (2)',
-        'description' => 'Eure Exzellenz, Investment in die Forschung wird uns technische Überlegenheit garantieren und die Bevölkerung wird sogar noch mehr bewundern.',
+        'description' => 'Eure Exzellenz, Investment in die Forschung wird uns technische Überlegenheit garantieren und die Bevölkerung wird sogar noch mehr bewundert.',
         'task' => [
             'id' => 0,
             'type' => 'have-technology-level',
@@ -251,7 +251,7 @@ return [
     10 => [
         'id' => 10,
         'title' => '',
-        'description' => 'Eure Exzellenz, unsere Nachbarn haben unseren Reichtum entdeckt und gesehen, dass wir nicht wirklich Verteidigungsanlagen haben, um diesen zu beschützen',
+        'description' => 'Eure Exzellenz, unsere Nachbarn haben unseren Reichtum entdeckt und gesehen, dass wir nicht wirklich Verteidigungsanlagen haben, um diesen zu beschützen.',
         'task' => [
             'id' => 0,
             'type' => 'have-defense',
@@ -287,7 +287,7 @@ return [
             'id' => 0,
             'type' => 'upgrade-ship',
             'operator' => 'equal-to-or-more',
-            'description' => 'Führe ein Mysticum upgrade aus',
+            'description' => 'Führe ein Mysticum-Upgrade aus',
             'value' => 1,
             'attributes' => [
                 'defense_id' => 7,
@@ -304,12 +304,12 @@ return [
     12 => [
         'id' => 12,
         'title' => '',
-        'description' => 'Eure Exzellenz, die Galaxy ist gross und bietet  viele Überraschungen. Wir sollten alles erkunden!',
+        'description' => 'Eure Exzellenz, die Galaxie ist gross und bietet viele Überraschungen. Wir sollten alles erkunden!',
         'task' => [
             'id' => 0,
             'type' => 'have-galaxy-discovered',
             'operator' => 'equal-to-or-more',
-            'description' => 'Erkunde die ganze Galaxy.',
+            'description' => 'Erkunde die ganze Galaxie.',
             'value' => 1,
         ],
         'rewards' => [
