@@ -17,7 +17,7 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 	/**
 	* Online-Help and info tables
 	*
@@ -26,32 +26,28 @@
 	*/
 
 	echo '<h1>Hilfe</h1>';
-	
+
 	$link = "page=".$page;
-	
+
 	// Help page
 	if (isset($_GET['site']) && ctype_alsc($_GET['site']) && $_GET['site']!="")
 	{
 		$site = $_GET['site'];
-		if ($site!="")
+		if ($site !== '' && file_exists(RELATIVE_ROOT . "info/$site.php")) {
+			include(RELATIVE_ROOT . "info/$site.php");
+		}
+		else
 		{
-			if (file_exists(RELATIVE_ROOT."info/$site.php"))
-			{
-				include (RELATIVE_ROOT."info/$site.php");
-			}
-			else
-			{
-				error_msg("Hilfedatei nicht gefunden!");
-			}
+			error_msg("Hilfedatei nicht gefunden!");
 		}
 		return_btn();
 	}
-	
+
 	// Overview
 	else
 	{
 		echo '<h2>&Uuml;bersicht</h2>';
-		
+
 		echo 'Hier findest du Informationen zu verschiedenen Objekten des Spiels:<br/><br/>';
 
 		if (!ADMIN_MODE)
@@ -85,7 +81,7 @@
 			}
 			echo '</tr>';
 			tableEnd();
-			
+
 			// External resources
 			$links = [
 				[
@@ -120,7 +116,7 @@
 			echo '</tr>';
 			tableEnd();
 		}
-		
+
 		$helpNav = [
 			"Datenbank" => [
 				"Rassen" => array('races','Liste aller Rassen'),
@@ -153,7 +149,7 @@
 				"Urlaubsmodus" => array('u_mod','Was das ist und wie es funktioniert?'),
 				"Wärme- und Kältebonus" => array('tempbonus','Welche Auswirkungen hat die Planetentemperatur?')
 			]
-		];  
+		];
 		foreach ($helpNav as $cat => $data)
 		{
 			tableStart($cat);

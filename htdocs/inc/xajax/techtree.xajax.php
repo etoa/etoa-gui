@@ -96,7 +96,7 @@ function reqInfo($id,$cat='b')
 		$res = dbquery("SELECT ship_alliance_shipyard_level FROM ships WHERE ship_id=".$id." AND ship_alliance_shipyard_level>0;");
 		if (mysql_num_rows($res)==1 && $ship = mysql_fetch_assoc($res))
 		{
-			$allianceBuildingId_shipyard = 3;
+			$allianceBuildingId_shipyard = ALLIANCE_SHIPYARD_ID;
 			$res = dbquery("SELECT alliance_building_name FROM alliance_buildings WHERE alliance_building_id=".$allianceBuildingId_shipyard.";");
 			if (mysql_num_rows($res)==1 && $allianceBuilding = mysql_fetch_assoc($res))
 			{
@@ -135,7 +135,7 @@ function reqInfo($id,$cat='b')
 		$img = IMAGE_PATH."/technologies/technology".$id."_middle.".IMAGE_EXT;
 		$name = $te_name[$id];
 	}
-	elseif($cat=='s')
+	elseif($cat=='s' || $cat=='sa')
 	{
 		$img = IMAGE_PATH."/ships/ship".$id."_middle.".IMAGE_EXT;
 		$name = $sh_name[$id];

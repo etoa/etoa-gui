@@ -255,10 +255,8 @@
 			echo "<div id=\"reqInfo\" style=\"width:100%;\">
 			<br/><div class=\"loadingMsg\">Bitte warten...</div>
 			</div>";
-			$shipCatId = $arr['ship_cat_id'];
-			$shipCatIdAlliance = 6;
-			$shipCatAbbr = $shipCatId == $shipCatIdAlliance ? "sa" : "s";
-			echo '<script type="text/javascript">xajax_reqInfo('.$arr['ship_id'].',"'. $shipCatAbbr.'")</script>';
+			$shipCategoryAbbr = $arr['ship_alliance_shipyard_level'] > 0 ? "sa" : "s";
+			echo '<script type="text/javascript">xajax_reqInfo('.$arr['ship_id'].',"'. $shipCategoryAbbr.'")</script>';
 			echo "</td></tr>";
 
 	    tableEnd();
