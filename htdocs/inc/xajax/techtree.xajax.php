@@ -54,7 +54,7 @@ function reqInfo($id,$cat='b')
 		$req_tbl = "tech_requirements";
 		$req_field = "obj_id";
 	}
-	elseif($cat=='s')
+	elseif($cat=='s' || $cat=='sa')
 	{
 		$req_tbl = "ship_requirements";
 		$req_field = "obj_id";
@@ -90,6 +90,29 @@ function reqInfo($id,$cat='b')
 		}
 	}
 	
+	// Alliance ships are not in requirements tables. The required level of the Alliance shipyard is given directly in the ship details.
+	if ($cat == "sa")
+	{
+		$res = dbquery("SELECT ship_alliance_shipyard_level FROM ships WHERE ship_id = " . $id . " AND ship_alliance_shipyard_level > 0;");
+		$nr3 = mysql_num_rows($res);
+		if ($nr3 > 0)
+		{
+			while ($arr = mysql_fetch_assoc($res))
+			{
+				$allyShipyardId = 3;
+				$res2 = dbquery("SELECT alliance_building_name FROM alliance_buildings WHERE alliance_building_id = " . $allyShipyardId . ";");
+				$nr4 = mysql_num_rows($res2);
+				if ($nr4 > 0)
+				{
+					while ($arr2 = mysql_fetch_assoc($res2))
+					{
+						$items[] = array($allyShipyardId, $arr2['alliance_building_name'], $arr['ship_alliance_shipyard_level'], IMAGE_PATH . "/abuildings/building" . $allyShipyardId . "_middle." . IMAGE_EXT, "");
+					}
+				}
+			}
+		}
+	}
+	
 	if (count($items)>0)
 	{
 		echo "<div class=\"techtreeItemContainer\">";
@@ -121,7 +144,7 @@ function reqInfo($id,$cat='b')
 		$img = IMAGE_PATH."/technologies/technology".$id."_middle.".IMAGE_EXT;
 		$name = $te_name[$id];
 	}
-	elseif($cat=='s')
+	elseif($cat=='s' || $cat=='sa')
 	{
 		$img = IMAGE_PATH."/ships/ship".$id."_middle.".IMAGE_EXT;
 		$name = $sh_name[$id];

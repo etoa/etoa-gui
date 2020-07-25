@@ -254,8 +254,11 @@
 			echo "<tr><td class=\"tbldata\" colspan=\"4\" style=\"text-align:center\">";
 			echo "<div id=\"reqInfo\" style=\"width:100%;\">
 			<br/><div class=\"loadingMsg\">Bitte warten...</div>
-			</div>";	
-			echo '<script type="text/javascript">xajax_reqInfo('.$arr['ship_id'].',"s")</script>';
+			</div>";
+			$shipCatId = $arr['ship_cat_id'];
+			$shipCatIdAlliance = 6;
+			$shipCategoryAbbr = $shipCatId == $shipCatIdAlliance ? "sa" : "s";
+			echo '<script type="text/javascript">xajax_reqInfo('.$arr['ship_id'].',"'. $shipCategoryAbbr.'")</script>';
 			echo "</td></tr>";	
 		
 	    tableEnd();
