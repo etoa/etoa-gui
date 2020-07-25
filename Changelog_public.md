@@ -6,6 +6,14 @@ Version 3.6.3 (unreleased)
 
 ### Bugfixes ###
 * Es können mehr als 999 Raketen auf einmal gestartet werden
+* Flotten können nicht mehr gestarted werden wenn der Raumschiffhafen deaktiviert ist
+* Das Bauen von Gebäuden wird nicht mehr blockiert, wenn 0 Rohstoffe fehlen
+* Der ReturnFactor des Marktes wird überall gleich berechnet
+* Die Mouseover-Box für Schiffe im Bunker wurde behoben
+* BBCode kann nicht mehr für Namen von Sternen und Planeten verwendet werden
+* Abriss eines Gebäudes zeigt nun das korrekte Level an
+* Die Sortierung der Schiffe nach Rassen funktioniert nun wie erwartet
+* Schiffe mit 0 Piloten können nun gestartet werden, wenn 0 Bewohner auf dem Planet vorhanden sind
 
 Version 3.6.2
 -------------

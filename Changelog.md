@@ -6,6 +6,16 @@ Version 3.6.3 (unreleased)
 
 ### Bugfixes ###
 * It is now possible to send more than 999 missiles
+* Prevent fleet from starting if haven is deactivated
+* Do not prevent building if 0 resources are missing
+* Adjusted the market return factor to be more consistent
+* Fix mouseover for ships in bunker
+* Disable BBCode in planet and star names
+* Demolition now shows the correct building level
+* Fix the sorting by race of ships in the help section
+* Allow ships requiring 0 pilots to start even if there are 0 people available
+* Quest text updates
+* Fix template rendering of quests
 
 Version 3.6.2
 -------------
