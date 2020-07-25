@@ -146,6 +146,7 @@
 		*/
 		function checkHaven()
 		{
+			$this->havenOk = false;
 			$cfg = Config::getInstance();
 
 			// Check if flights are possible
@@ -487,15 +488,7 @@
 		{
 			if ($this->actionOk)
 			{
-				// recheck because of browser-tabbing
-				$fm = new FleetManager($this->ownerId);
-				$this->fleetSlotsUsed = $fm->countControlledByEntity($this->sourceEntity->id());
-				unset($fm);
-
-				$totalSlots = FLEET_NOCONTROL_NUM + $this->fleetControlLevel + $this->specialist->fleetMax;
-				$this->possibleFleetStarts = $totalSlots - $this->fleetSlotsUsed;
-
-				if ($this->possibleFleetStarts > 0)
+				if ($this->checkHaven())
 				{
 					$time = time();
 					$this->landTime = ($time+$this->getDuration());
@@ -708,7 +701,8 @@
 						$this->fleetLog->launch();
 
 
-						if ($this->action=="alliance" && $this->leaderId==0) {
+						if ($this->action=="alliance" && $this->leaderId==0)
+						{
 							dbquery("
 									UPDATE
 										fleet
@@ -721,10 +715,10 @@
 						return $fid;
 					}
 					else
+					{
 						$this->error = "Konnte keine Schiffe zur Flotte hinzufügen da keine vorhanden sind!";
+					}
 				}
-				else
-					$this->error = "Von hier können keine weiteren Flotten starten, alle Slots (".$totalSlots.") sind belegt!";
 			}
 			else
 			{
