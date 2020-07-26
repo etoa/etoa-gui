@@ -15,37 +15,37 @@ function reqInfo($id,$cat='b')
 	while ($buarr = mysql_fetch_array($bures))
 	{
 		$bu_name[$buarr['building_id']]=$buarr['building_name'];
-	}		
+	}
 	$teres = dbquery("SELECT tech_id,tech_name FROM technologies WHERE tech_show=1;");
 	while ($tearr = mysql_fetch_array($teres))
 	{
 		$te_name[$tearr['tech_id']]=$tearr['tech_name'];
-	}	
+	}
 
 	$teres = dbquery("SELECT ship_id,ship_name FROM ships WHERE ship_show=1 AND special_ship=0;");
 	while ($tearr = mysql_fetch_array($teres))
 	{
 		$sh_name[$tearr['ship_id']]=$tearr['ship_name'];
-	}	
-	
+	}
+
 	$teres = dbquery("SELECT def_id,def_name FROM defense WHERE def_show=1;");
 	while ($tearr = mysql_fetch_array($teres))
 	{
 		$de_name[$tearr['def_id']]=$tearr['def_name'];
-	}		
-	
+	}
+
 	$teres = dbquery("SELECT missile_id,missile_name FROM missiles WHERE missile_show=1;");
 	while ($tearr = mysql_fetch_array($teres))
 	{
 		$m_name[$tearr['missile_id']]=$tearr['missile_name'];
-	}		
-	
+	}
+
 	//
 	// Required objects
 	//
-	
+
 	if ($cat=='b')
-	{	
+	{
 		$req_tbl = "building_requirements";
 		$req_field = "obj_id";
 	}
@@ -54,7 +54,7 @@ function reqInfo($id,$cat='b')
 		$req_tbl = "tech_requirements";
 		$req_field = "obj_id";
 	}
-	elseif($cat=='s')
+	elseif($cat=='s' || $cat=='sa')
 	{
 		$req_tbl = "ship_requirements";
 		$req_field = "obj_id";
@@ -63,13 +63,13 @@ function reqInfo($id,$cat='b')
 	{
 		$req_tbl = "def_requirements";
 		$req_field = "obj_id";
-	}		
+	}
 	elseif($cat=='m')
 	{
 		$req_tbl = "missile_requirements";
 		$req_field = "obj_id";
-	}		
-	
+	}
+
 	$items = array();
 	$res = dbquery("SELECT * FROM $req_tbl WHERE obj_id=".$id." AND req_building_id>0 AND req_level>0 ORDER BY req_level;");
 	$nr = mysql_num_rows($res);
@@ -89,7 +89,22 @@ function reqInfo($id,$cat='b')
 			$items[] = array($arr['req_tech_id'],$te_name[$arr['req_tech_id']],$arr['req_level'],IMAGE_PATH."/technologies/technology".$arr['req_tech_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['req_tech_id'].",'t')");
 		}
 	}
-	
+
+	// Alliance ships are not in requirements tables. The required level of the alliance shipyard is given directly in the ship details.
+	if ($cat=="sa")
+	{
+		$res = dbquery("SELECT ship_alliance_shipyard_level FROM ships WHERE ship_id=".$id." AND ship_alliance_shipyard_level>0;");
+		if (mysql_num_rows($res)==1 && $ship = mysql_fetch_assoc($res))
+		{
+			$allianceBuildingId_shipyard = 3;
+			$res = dbquery("SELECT alliance_building_name FROM alliance_buildings WHERE alliance_building_id=".$allianceBuildingId_shipyard.";");
+			if (mysql_num_rows($res)==1 && $allianceBuilding = mysql_fetch_assoc($res))
+			{
+				$items[] = array($allianceBuildingId_shipyard, $allianceBuilding['alliance_building_name'], $ship['ship_alliance_shipyard_level'], IMAGE_PATH."/abuildings/building".$allianceBuildingId_shipyard."_middle.".IMAGE_EXT, "");
+			}
+		}
+	}
+
 	if (count($items)>0)
 	{
 		echo "<div class=\"techtreeItemContainer techtreeParentBranches\">";
@@ -101,17 +116,17 @@ function reqInfo($id,$cat='b')
 			<div class=\"techtreeItemName\">".$i[1]."</div>				
 			</div>";
 		}
-		echo "</div>";		
-		
+		echo "</div>";
+
 		echo "<div class='relationLabel childBranchesLabel'>wird benötigt für</div>";
 	}
-	
+
 	//
 	// Current object
 	//
-		
+
 	if ($cat=='b')
-	{	
+	{
 		$img = IMAGE_PATH."/buildings/building".$id."_middle.".IMAGE_EXT;
 		$name = $bu_name[$id];
 	}
@@ -129,20 +144,20 @@ function reqInfo($id,$cat='b')
 	{
 		$img = IMAGE_PATH."/defense/def".$id."_middle.".IMAGE_EXT;
 		$name = $de_name[$id];
-	}	
+	}
 	elseif($cat=='m')
 	{
 		$img = IMAGE_PATH."/missiles/missile".$id."_middle.".IMAGE_EXT;
 		$name = $m_name[$id];
-	}		
+	}
 	echo "<div class=\"techtreeMainItem\" style=\"background:url('".$img."');\">";
 	echo "<div class=\"techtreeItemName\">".$name."</div>";
-	echo "</div>";	
-	
+	echo "</div>";
+
 	//
 	// Allowed objects
-	// 
-	
+	//
+
 	if ($cat == 'b' || $cat == 't')
 	{
 		if ($cat=='b')
@@ -205,7 +220,7 @@ function reqInfo($id,$cat='b')
 					$items[] = array($arr['obj_id'],$de_name[$arr['obj_id']],$arr[$req_level_field],IMAGE_PATH."/defense/def".$arr['obj_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['obj_id'].",'d')");
 				}
 			}
-		}	
+		}
 		$res = dbquery("SELECT * FROM missile_requirements WHERE ".$req_field."=".$id." ORDER BY ".$req_level_field.";");
 		$nr = mysql_num_rows($res);
 		if ($nr>0)
@@ -217,10 +232,10 @@ function reqInfo($id,$cat='b')
 					$items[] = array($arr['obj_id'],$m_name[$arr['obj_id']],$arr[$req_level_field],IMAGE_PATH."/missiles/missile".$arr['obj_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['obj_id'].",'m')");
 				}
 			}
-		}			
-		
+		}
+
 		if (count($items)>0)
-		{	
+		{
 			echo "<div class='relationLabel childBranchesLabel'>ermöglicht</div>";
 
 			echo "<div class=\"techtreeItemContainer techtreeChildBranches\">";
@@ -233,7 +248,7 @@ function reqInfo($id,$cat='b')
 				<div class=\"techtreeItemName\">".$i[1]."</div>				
 				</div>";
 				$cnt++;
-				
+
 			}
 			echo "<br style=\"clear:both;\"";
 			echo "</div>";
@@ -242,8 +257,8 @@ function reqInfo($id,$cat='b')
 
 
 	$out=ob_get_clean();
-	$or->assign('reqInfo','innerHTML',$out);	
-	return $or;	
+	$or->assign('reqInfo','innerHTML',$out);
+	return $or;
 }
 
 ?>

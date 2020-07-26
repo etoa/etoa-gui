@@ -11,7 +11,7 @@
 	{
 		$max = $max2;
 		$img = "star_r";
-		
+
 		$t = $max / 5;
 		$s="";
 		for ($x=0;$x<5;$x++)
@@ -36,8 +36,8 @@
 		echo "<tr><th>Schilder:</th><td>".rankingStars($arr['ship_shield'],RANKING_SHIP_SHIELD)."</td></tr>";
 		echo "<tr><th>Waffen:</th><td>".rankingStars($arr['ship_weapon'],RANKING_SHIP_WEAPON)."</td></tr>";
 		echo "<tr><th>Speed:</th><td>".rankingStars($arr['ship_speed'],RANKING_SHIP_SPEED)."</td></tr>";
-		echo "<tr><th>Kapazität:</th><td>".rankingStars($arr['ship_capacity'],RANKING_SHIP_CAPACITY)."</td></tr>";		
-		echo "<tr><th>Reisekosten:</th><td>".rankingStars($arr['ship_fuel_use'],RANKING_SHIP_FUEL)."</td></tr>";		
+		echo "<tr><th>Kapazität:</th><td>".rankingStars($arr['ship_capacity'],RANKING_SHIP_CAPACITY)."</td></tr>";
+		echo "<tr><th>Reisekosten:</th><td>".rankingStars($arr['ship_fuel_use'],RANKING_SHIP_FUEL)."</td></tr>";
 		echo "</table>";
 		$s = ob_get_contents();
 		ob_end_clean();
@@ -54,7 +54,7 @@
 	if (isset($_GET['id']))
 	{
 		$sid = intval($_GET['id']);
-		
+
 		$res = dbquery("
 		SELECT 
 			* 
@@ -81,14 +81,14 @@
 				AND special_ship=0
 			ORDER BY 
 				ship_name;");
-			while ($barr=mysql_fetch_array($bres))		
+			while ($barr=mysql_fetch_array($bres))
 			{
 				echo "<option value=\"".$barr['ship_id']."\"";
 				if ($barr['ship_id']==$sid) echo " selected=\"selected\"";
 				echo ">".$barr['ship_name']."</option>";
 			}
-			echo "</select><br/><br/>";		
-			
+			echo "</select><br/><br/>";
+
 			// Load propulsion data
 			$vres=dbquery("
 			Select 
@@ -120,7 +120,7 @@
     	{
     		echo "<tr><th class=\"tbltitle\">Rasse:</th><td colspan=\"3\" class=\"tbldata\">Dieses Schiff kann exklusiv nur durch das Volk der <b>".$race[$arr['ship_race_id']]['race_name']."</b> gebaut werden!</td></tr>";
     	}
-    	
+
     	echo "<tr>
     		<th class=\"tbltitle\">Bewertung:
     		</th><td class=\"tbldata\" colspan=\"3\">
@@ -130,7 +130,7 @@
 
     	echo "<tr><th class=\"tbltitle\">Kategorie:</th><td class=\"tbldata\" colspan=\"3\">".$arr['cat_name']."</td></tr>";
     	echo "<tr><th class=\"tbltitle\">Anzahl Piloten:</th><td class=\"tbldata\" colspan=\"3\">".nf($arr['ship_pilots'])."</td></tr>";
-    	
+
     	echo "<tr><td colspan=\"4\" style=\"height:30px;\"></td></tr>";
 
 	    echo "<tr><th class=\"tbltitle\" colspan=\"2\" style=\"text-align:center\">Kosten</th>
@@ -171,7 +171,7 @@
 						<td style=\"font-weight:bold;\" class=\"resfuel\">Landung</td>
 						<td style=\"width:350px\">".nf($arr['ship_fuel_use_landing'])." t</td>
 				</tr>";
-	    	
+
 	    	echo "</table>
 	    	</td>
 	    	<td  colspan=\"3\" style=\"padding:0px;\">
@@ -217,13 +217,13 @@
 				echo "</table>	    	
 	    	</td></tr>";
 
-			
 
-			
+
+
 			echo "<tr><td colspan=\"4\" style=\"height:30px;\"></td></tr>";
-			
-			echo "<tr><th class=\"tbltitle\" colspan=\"4\" style=\"text-align:center\">Fähigkeiten</th></tr>";			
-			
+
+			echo "<tr><th class=\"tbltitle\" colspan=\"4\" style=\"text-align:center\">Fähigkeiten</th></tr>";
+
 			$actions = explode(",",$arr['ship_actions']);
 			$accnt=0;
 			if (count($actions)>0)
@@ -248,16 +248,19 @@
 				echo "<tr><td class=\"tbldata\" colspan=\"4\" style=\"text-align:center\">Keine Spezialfähigkeit vorhanden!</td></tr>";
 
 			echo "<tr><td colspan=\"4\" style=\"height:30px;\"></td></tr>";
-		
-		
-			echo "<tr><th class=\"tbltitle\" colspan=\"4\" style=\"text-align:center\">Voraussetzungen</th></tr>";			
+
+
+			echo "<tr><th class=\"tbltitle\" colspan=\"4\" style=\"text-align:center\">Voraussetzungen</th></tr>";
 			echo "<tr><td class=\"tbldata\" colspan=\"4\" style=\"text-align:center\">";
 			echo "<div id=\"reqInfo\" style=\"width:100%;\">
 			<br/><div class=\"loadingMsg\">Bitte warten...</div>
-			</div>";	
-			echo '<script type="text/javascript">xajax_reqInfo('.$arr['ship_id'].',"s")</script>';
-			echo "</td></tr>";	
-		
+			</div>";
+			$shipCatId = $arr['ship_cat_id'];
+			$shipCatIdAlliance = 6;
+			$shipCatAbbr = $shipCatId == $shipCatIdAlliance ? "sa" : "s";
+			echo '<script type="text/javascript">xajax_reqInfo('.$arr['ship_id'].',"'. $shipCatAbbr.'")</script>';
+			echo "</td></tr>";
+
 	    tableEnd();
 		}
 		else
@@ -278,7 +281,7 @@
 	else
 	{
 		HelpUtil::breadCrumbs(array("Schiffe","shipyard"));
-	
+
 		if (isset($_GET['order']) && ctype_alpha($_GET['order']))
 		{
 			$order="ship_".$_GET['order'];
@@ -313,7 +316,7 @@
 		ORDER BY 
 			cat_order;");
 		if (mysql_num_rows($cres)>0)
-		{ 
+		{
 			while ($carr = mysql_fetch_assoc($cres))
 			{
 				$res = dbquery("
