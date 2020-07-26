@@ -257,8 +257,8 @@
 			</div>";
 			$shipCatId = $arr['ship_cat_id'];
 			$shipCatIdAlliance = 6;
-			$shipCategoryAbbr = $shipCatId == $shipCatIdAlliance ? "sa" : "s";
-			echo '<script type="text/javascript">xajax_reqInfo('.$arr['ship_id'].',"'. $shipCategoryAbbr.'")</script>';
+			$shipCatAbbr = $shipCatId == $shipCatIdAlliance ? "sa" : "s";
+			echo '<script type="text/javascript">xajax_reqInfo('.$arr['ship_id'].',"'. $shipCatAbbr.'")</script>';
 			echo "</td></tr>";	
 		
 	    tableEnd();
