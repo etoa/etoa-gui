@@ -792,13 +792,17 @@
 			&& $data['name']!=""
 			&& $data['tag']!="")
 			{
-				$tagRegExPattern = '/^[^\'\"\?\<\>\$\!\=\;\&\\\\[\]]{1,6}$/i';
-				if (preg_match($tagRegExPattern,$data['tag'])>0)
+				$tag = trim($data['tag']);
+				$tag = preg_replace('/\s+/', ' ', $tag);
+				$name = trim($data['name']);
+				$name = preg_replace('/\s+/', ' ', $name);
+				$tagRegExPattern = '/^[^\'\"\?\<\>\$\!\=\;\&\\\\[\]]{3,6}$/i';
+				if (preg_match($tagRegExPattern, $tag))
 				//if (eregi("^[^\'\"\?\<\>\$\!\=\;\&]{1,6}$",$data['tag']))
 				{
-					if (preg_match('/([^\'\"\?\<\>\$\!\=\;\&\\\\[\]]{4,25})$/',$data['name']))
+					if (preg_match('/([^\'\"\?\<\>\$\!\=\;\&\\\\[\]]{4,25})$/', $name))
 					{
-					if (isset($data['founder']))
+						if (isset($data['founder']))
 						{
 							$res = dbquerySave("
 							SELECT
@@ -809,8 +813,8 @@
 								alliance_tag=?
 								OR alliance_name=?
 							LIMIT 1;",
-                array($data['tag'], $data['name'])
-              );
+							array($tag, $name)
+							);
 							if (mysql_result($res,0)==0)
 							{
 								dbquerySave("
@@ -825,14 +829,14 @@
 								)
 								VALUES
 								(?,?,?,?,?);",
-                  array(
-                    $data['tag'],
-                    $data['name'],
-                    $data['founder']->id,
-                    time(),
-					1)
+								array(
+									$tag,
+									$name,
+									$data['founder']->id,
+									time(),
+									1)
 
-                );
+								);
 								$returnMsg = new Alliance(mysql_insert_id());
 								$data['founder']->alliance = $returnMsg;
 								$data['founder']->addToUserLog("alliance","{nick} hat die Allianz [b]".$returnMsg."[/b] gegründet.");
