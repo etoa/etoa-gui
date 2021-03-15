@@ -444,7 +444,7 @@ namespace planet
 			<< "	planet_prod_fuel=" << this->cnt[3] << ", "
 			<< "	planet_prod_food=" << this->cnt[4] << ", "
 			<< "	planet_prod_power=" << this->cnt[6] << ", "
-			<< "	planet_prod_people=" << this->ressource[6] << ", "
+			<< "	planet_prod_people=" << std::max(this->ressource[6], 0.0) << ", "
 			<< "	planet_store_metal=" << this->store[0] << ", "
 			<< "	planet_store_crystal=" << this->store [1] << ", "
 			<< "	planet_store_plastic=" << this->store[2] << ", "
