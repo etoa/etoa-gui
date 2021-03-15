@@ -251,7 +251,7 @@
 			UPDATE
 				users
 			SET
-				user_observe=''
+				user_observe=NULL
 			WHERE
 				user_id=".$_GET['del']."
 			");
@@ -292,7 +292,7 @@
 			FROM 
 				users
 			WHERE 
-				user_observe=''
+				user_observe IS NULL
 			ORDER BY
 				user_nick	
 			");
@@ -330,7 +330,7 @@
 		ON
 			users.user_id = user_sessions.user_id
 		WHERE
-			users.user_observe!=''
+			users.user_observe IS NOT NULL
 		GROUP BY
 			users.user_id
 		ORDER BY
