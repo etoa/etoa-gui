@@ -8,9 +8,9 @@
 			user_nick,
 			user_id,
 			user_observe
-		FROM 
+		FROM
 			users
-		WHERE 
+		WHERE
 			user_id='".$_GET['text']."'
 		");
 		$arr = mysql_Fetch_array($res);
@@ -19,8 +19,8 @@
 		<textarea name=\"user_observe\" cols=\"80\" rows=\"10\">".stripslashes($arr['user_observe'])."</textarea>
 		<input type=\"hidden\" name=\"user_id\" value=\"".$arr['user_id']."\" />
 		<br/><br/>
-		<input type=\"submit\" name=\"save_text\" value=\"Speichern\" /> &nbsp; 
-		<input type=\"submit\" name=\"del_text\" value=\"Löschen\" /> &nbsp; 
+		<input type=\"submit\" name=\"save_text\" value=\"Speichern\" /> &nbsp;
+		<input type=\"submit\" name=\"del_text\" value=\"Löschen\" /> &nbsp;
 		<input type=\"submit\" name=\"cancel\" value=\"Abbrechen\" />";
 	}
 
@@ -38,9 +38,9 @@
 			$sid = $_GET['session'];
 
 			$res = dbquery("
-			SELECT 
+			SELECT
 				*
-			FROM 
+			FROM
 				user_sessionlog
 			WHERE
 				session_id='".$sid."'
@@ -109,13 +109,13 @@
 
 			$sessions = array();
 			$sres = dbquery("
-			SELECT 
-				session,COUNT(id) 
-			FROM 
-				user_surveillance 
-			WHERE 
-				user_id=".$_GET['surveillance']." 
-			GROUP BY 
+			SELECT
+				session,COUNT(id)
+			FROM
+				user_surveillance
+			WHERE
+				user_id=".$_GET['surveillance']."
+			GROUP BY
 				session
 			ORDER BY
 				timestamp DESC
@@ -146,9 +146,9 @@
 				{
 					$sid = $si[0];
 					$res = dbquery("
-					SELECT 
+					SELECT
 						*
-					FROM 
+					FROM
 						user_sessionlog
 					WHERE
 						session_id='".$sid."'
@@ -289,12 +289,12 @@
 			SELECT
 				user_nick,
 				user_id
-			FROM 
+			FROM
 				users
-			WHERE 
+			WHERE
 				user_observe IS NULL
 			ORDER BY
-				user_nick	
+				user_nick
 			");
 			if (mysql_num_rows($res)>0)
 			{
@@ -319,7 +319,7 @@
 			users.user_observe,
 			MAX(user_sessionlog.time_action) AS time_log,
 			user_sessions.time_action
-		FROM 
+		FROM
 			users
 		LEFT JOIN
 			user_sessionlog
@@ -334,7 +334,7 @@
 		GROUP BY
 			users.user_id
 		ORDER BY
-			users.user_nick	
+			users.user_nick
 		");
 		if (mysql_num_rows($res)>0)
 		{

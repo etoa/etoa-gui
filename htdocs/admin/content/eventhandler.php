@@ -42,6 +42,7 @@ if (UNIX) {
     }
 
     $messageQueueSize = BackendMessage::getMessageQueueSize();
+    $eventHandlerPid = EventHandlerManager::checkDaemonRunning($pidfile);
 
     if (function_exists('posix_uname')) {
         $un = posix_uname();
