@@ -8,6 +8,9 @@ $messageQueueSize = null;
 $sysId = null;
 $log = null;
 if (UNIX) {
+    $pidfile = getAbsPath($cfg->daemon_pidfile->v);
+    $eventHandlerPid = EventHandlerManager::checkDaemonRunning($pidfile);
+
     if (isset($_GET['action'])) {
         $executable = $cfg->daemon_exe->v;
         if (empty($executable)) {
@@ -39,6 +42,7 @@ if (UNIX) {
     }
 
     $messageQueueSize = BackendMessage::getMessageQueueSize();
+    $eventHandlerPid = EventHandlerManager::checkDaemonRunning($pidfile);
 
     if (function_exists('posix_uname')) {
         $un = posix_uname();
