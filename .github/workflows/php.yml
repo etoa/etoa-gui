@@ -36,10 +36,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-composer-
       - name: Validate composer.json and composer.lock
-        run: composer validate
+        run: ./composer.phar validate
 
       - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest
+        run: ./composer.phar install --prefer-dist --no-progress --no-suggest
 
       - name: Set up DB config
         run: echo '{"host":"127.0.0.1:${{ job.services.mysql.ports[3306] }}","dbname":"etoa_test","user":"root","password":"root"}' > htdocs/config/db.conf
