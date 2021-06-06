@@ -8,7 +8,7 @@ class ShipRepository extends AbstractRepository
 {
     public function addShip(int $shipId, int $amount, int $userId, int $entityId): void
     {
-        $hasShips = $this->createQueryBuilder()
+        $hasShips = (bool) $this->createQueryBuilder()
             ->select('shiplist_id')
             ->from('shiplist')
             ->where('shiplist_user_id = :userId')

@@ -6,7 +6,7 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
 {
     public function addMissile(int $missileId, int $amount, int $userId, int $entityId): void
     {
-        $hasMissiles = $this->createQueryBuilder()
+        $hasMissiles = (bool) $this->createQueryBuilder()
             ->select('missilelist_id')
             ->from('missilelist')
             ->where('missilelist_user_id = :userId')
