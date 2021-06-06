@@ -12,11 +12,10 @@ class TwigServiceProvider extends \Silex\Provider\TwigServiceProvider
     {
         parent::register($app);
 
-        $app->extend('twig', function(Environment $twig): Environment {
+        $app->extend('twig', function (Environment $twig): Environment {
             $twig->addExtension(new TwigExtension());
 
             return $twig;
         });
     }
-
 }

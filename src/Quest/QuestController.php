@@ -40,6 +40,7 @@ class QuestController
             foreach ($quests as $activeQuest) {
                 if ($activeQuest->getSlotId() === $quest->getSlotId()) {
                     $quest = $activeQuest;
+
                     break;
                 }
             }

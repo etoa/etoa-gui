@@ -3,6 +3,7 @@
     "description": "Escape to Andromeda",
     "license": "proprietary",
     "require": {
+        "php": "^7.2",
         "doctrine/dbal": "^2.5",
         "littlecubiclegames/quests": "^1.0",
         "monolog/monolog": "^1.19",
