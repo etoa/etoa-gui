@@ -11,6 +11,11 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        php-version:
+          - "7.2"
+
     services:
       mysql:
         image: mysql:5.7
@@ -21,7 +26,14 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          coverage: "none"
+          ini-values: "memory_limit=-1, phar.readonly=0"
+          php-version: "${{ matrix.php-version }}"
 
       - name: Create DB
         run: |
@@ -35,6 +47,7 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-
+
       - name: Validate composer.json and composer.lock
         run: ./composer.phar validate
 
@@ -61,7 +74,7 @@ jobs:
       - name: PHP-CS-Fixer
         uses: docker://oskarstark/php-cs-fixer-ga
         with:
-          args: src --rules=@PSR2,binary_operator_spaces,blank_line_before_return,function_typehint_space,no_empty_comment,no_empty_phpdoc,no_empty_statement,no_extra_consecutive_blank_lines,no_leading_import_slash,no_leading_namespace_whitespace,trailing_comma_in_multiline_array,space_after_semicolon,single_quote,return_type_declaration,no_unused_imports,declare_strict_types --allow-risky=yes
+          args: src --rules=@PSR2,binary_operator_spaces,blank_line_before_statement,function_typehint_space,no_empty_comment,no_empty_phpdoc,no_empty_statement,no_leading_import_slash,no_leading_namespace_whitespace,trailing_comma_in_multiline,space_after_semicolon,single_quote,return_type_declaration,no_unused_imports,declare_strict_types --allow-risky=yes
 
   php-cs-fixer-tests:
     name: PHP-CS-Fixer test
@@ -71,16 +84,40 @@ jobs:
       - name: PHP-CS-Fixer
         uses: docker://oskarstark/php-cs-fixer-ga
         with:
-          args: tests --rules=@PSR2,binary_operator_spaces,blank_line_before_return,function_typehint_space,no_empty_comment,no_empty_phpdoc,no_empty_statement,no_extra_consecutive_blank_lines,no_leading_import_slash,no_leading_namespace_whitespace,trailing_comma_in_multiline_array,space_after_semicolon,single_quote,return_type_declaration,no_unused_imports,declare_strict_types --allow-risky=yes
+          args: tests --rules=@PSR2,binary_operator_spaces,blank_line_before_statement,function_typehint_space,no_empty_comment,no_empty_phpdoc,no_empty_statement,no_leading_import_slash,no_leading_namespace_whitespace,trailing_comma_in_multiline,space_after_semicolon,single_quote,return_type_declaration,no_unused_imports,declare_strict_types --allow-risky=yes
 
   phpstan:
+    strategy:
+      matrix:
+        php-version:
+          - "7.2"
+
     name: PHPStan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - name: PHPStan
-        uses: docker://oskarstark/phpstan-ga
-        env:
-          REQUIRE_DEV: true
+      - uses: actions/checkout@v2
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
         with:
-          args: analyse src tests --level=5 --no-progress
+          coverage: "none"
+          ini-values: "memory_limit=-1, phar.readonly=0"
+          php-version: "${{ matrix.php-version }}"
+
+      - name: "Determine composer cache directory"
+        id: "determine-composer-cache-directory"
+        run: "echo \"::set-output name=directory::$(composer config cache-dir)\""
+
+      - name: "Cache dependencies installed with composer"
+        uses: "actions/cache@v2"
+        with:
+          path: "${{ steps.determine-composer-cache-directory.outputs.directory }}"
+          key: "php-${{ matrix.php-version }}-phpstan-${{ hashFiles('**/composer.lock') }}"
+          restore-keys: "php-${{ matrix.php-version }}-phpstan"
+
+
+      - name: Install dependencies
+        run: ./composer.phar install --prefer-dist --no-progress --no-suggest
+
+      - name: Run PHPStan
+        run: vendor/bin/phpstan analyse --no-progress
