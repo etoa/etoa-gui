@@ -703,7 +703,7 @@ class BattleReport extends Report
 					' durchführen. Da das Allianzkampfsystem momentan nicht aktiv ist,'.
 					' mussten deine Piloten leider umkehren.';
 			default:
-				dump($this);
+				etoa_dump($this);
 		}
 
 		return ob_get_clean();

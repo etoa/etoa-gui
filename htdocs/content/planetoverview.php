@@ -197,7 +197,7 @@ if ($cp)
 					$initialName = $cp->name;
 					$cp->setNameAndComment($_POST['planet_name'],$_POST['planet_desc']);
 					if ($initialName !== $cp->name) {
-						$app['dispatcher']->dispatch(\EtoA\Planet\Event\PlanetRename::RENAME_SUCCESS, new \EtoA\Planet\Event\PlanetRename());
+						$app['dispatcher']->dispatch(new \EtoA\Planet\Event\PlanetRename(), \EtoA\Planet\Event\PlanetRename::RENAME_SUCCESS);
 					}
 				}
 			}

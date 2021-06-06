@@ -27,7 +27,7 @@ class ShipDataRepository extends AbstractRepository
                 ->addSelect()
                 ->from('ships')
                 ->execute()
-                ->fetchAll(\PDO::FETCH_KEY_PAIR);
+                ->fetchAllKeyValue();
 
             $this->cache->save(self::SHIPS_NAMES, $names);
         }

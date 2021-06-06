@@ -2,7 +2,7 @@
 
 namespace EtoA\Galaxy\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class StarRename extends Event
 {

@@ -27,7 +27,7 @@ class DefenseDataRepository extends AbstractRepository
                 ->addSelect()
                 ->from('defense')
                 ->execute()
-                ->fetchAll(\PDO::FETCH_KEY_PAIR);
+                ->fetchAllKeyValue();
 
             $this->cache->save(self::DEFENSE_NAMES, $names);
         }

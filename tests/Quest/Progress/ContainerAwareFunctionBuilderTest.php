@@ -22,7 +22,12 @@ class ContainerAwareFunctionBuilderTest extends WebTestCase
      */
     public function testBuild(string $name, string $className): void
     {
-        $this->assertInstanceOf($className, $this->builder->build($name, []));
+        $this->assertInstanceOf($className, $this->builder->build($name, [
+            'building_id' => 1,
+            'defense_id' => 1,
+            'technology_id' => 1,
+            'specialist_id' => 1,
+        ]));
     }
 
     public function initFunctionNameProvider(): array

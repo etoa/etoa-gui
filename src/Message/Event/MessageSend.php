@@ -2,7 +2,7 @@
 
 namespace EtoA\Message\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class MessageSend extends Event
 {

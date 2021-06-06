@@ -459,7 +459,7 @@ class MarketReport extends Report
 				echo 'Die Auktion wird nach '.AUCTION_DELAY_TIME.' Stunden gel&ouml;scht und die Waren werden in wenigen Minuten versendet.<br /><br />';
 				break;
 			default:
-				dump($this);
+				etoa_dump($this);
 		}
 
 		return ob_get_clean();

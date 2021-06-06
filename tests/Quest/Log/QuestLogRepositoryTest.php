@@ -28,7 +28,7 @@ class QuestLogRepositoryTest extends AbstractDbTestCase
             ->select('l.*')
             ->from('quest_log', 'l')
             ->execute()
-            ->fetchAll();
+            ->fetchAllAssociative();
 
         $this->assertCount(1, $result);
         $this->assertSame(1, (int)$result[0]['quest_id']);

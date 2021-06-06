@@ -18,6 +18,6 @@ class RaceDataRepository extends AbstractRepository
             ->from('races', 'r')
             ->orderBy('r.race_name')
             ->execute()
-            ->fetchAll(\PDO::FETCH_KEY_PAIR);
+            ->fetchAllKeyValue();
     }
 }

@@ -25,7 +25,7 @@ class ShipRepositoryTest extends AbstractDbTestCase
         $this->repository->addShip($shipId, 1, $userId, $entityId);
         $this->repository->addShip($shipId, 29, $userId, $entityId);
 
-        $ships = $this->connection->createQueryBuilder()->select('s.*')->from('shiplist', 's')->execute()->fetchAll();
+        $ships = $this->connection->createQueryBuilder()->select('s.*')->from('shiplist', 's')->execute()->fetchAllAssociative();
 
         $this->assertCount(1, $ships);
         $ship = $ships[0];

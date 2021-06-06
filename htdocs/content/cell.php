@@ -48,7 +48,7 @@
 			{
 				success_msg("Der Stern wurde benannt!");
 
-				$app['dispatcher']->dispatch(\EtoA\Galaxy\Event\StarRename::RENAME_SUCCESS, new \EtoA\Galaxy\Event\StarRename());
+				$app['dispatcher']->dispatch(new \EtoA\Galaxy\Event\StarRename(), \EtoA\Galaxy\Event\StarRename::RENAME_SUCCESS);
 			}
 			else
 			{
@@ -206,7 +206,7 @@
 					  }
 					  // Alien/NPC
 					  elseif ($ent->owner->isNPC()>0)
-					  {	
+					  {
 					  	  $class .= "alien";
 						  $tm_info = "Alien";
 					  }

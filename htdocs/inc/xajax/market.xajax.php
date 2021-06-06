@@ -74,7 +74,7 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 			AND (for_user='".$_SESSION['user_id']."' OR for_user='0')
 			AND (for_alliance='".$_SESSION['alliance_id']."' OR for_alliance='0')
 			;";
-		
+
 		$res = dbquery($sql);
 
 		$nr = mysql_num_rows($res);
@@ -172,13 +172,13 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 				$i=0;
 
 				// Reservation
-				$reservation = ""; 
-        $class = "";  
+				$reservation = "";
+        $class = "";
 				if($arr['for_user']!=0)
 				{
           $class = "top";
-					$reservation="<span class=\"userAllianceMemberColor\">F&uuml;r dich reserviert</span>";  
-				}				
+					$reservation="<span class=\"userAllianceMemberColor\">F&uuml;r dich reserviert</span>";
+				}
 				elseif($arr['for_alliance']!=0)
 				{
           $class = "top";
@@ -186,7 +186,7 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 				}
 
 				$cres = $arr['used_res'];
-				
+
 				echo '<tbody class="offer">';
 				foreach ($resNames as $rk=>$rn)
 				{
@@ -259,12 +259,12 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 	// <editor-fold>
 	elseif ($form['search_cat']=="ships")
 	{
-			
+
 			echo "<form action=\"?page=market&amp;mode=ships\" method=\"post\" id=\"ship_buy_selector\">\n";
 			checker_init();
-			
+
 			// Load current entity if payable check active
-			
+
 			if (isset($form['market_ship_search_filter_payable']) && $form['market_ship_search_filter_payable']==1)
 			{
 				$te = Entity::createFactoryById($_SESSION['cpid']);
@@ -313,14 +313,14 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 										<th width=\"10%\">Kaufen:</th>
 									</tr></thead>";
 						}
-						
+
 						$reservation="";
 						$class = "";
 						if($arr['for_user']!=0)
 						{
 							$class = "top";
 							$reservation="<span class=\"userAllianceMemberColor\">F&uuml;r dich reserviert</span>";
-						}							
+						}
 						elseif($arr['for_alliance']!=0)
 						{
 							$class = "top";
@@ -329,7 +329,7 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 
 						$i=0;
 						$resCnt = count($resNames);
-						
+
 						echo '<tbody class="offer">';
 						foreach ($resNames as $rk => $rn)
 						{
@@ -486,7 +486,7 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 
 	$ajax->assign("market_search_results","innerHTML",ob_get_clean());
 	$ajax->assign("market_search_loading","style.display","none");
-	
+
 	//jquery start
 	$ajax->script('uname="'.$_SESSION['user_nick'].'";jqinit();');
 
@@ -536,7 +536,7 @@ function showAuctionDetail($id)
 		$bidder = new User($arr['current_buyer_id']);
 		$sellerEntity = Entity::createFactoryById($arr['entity_id']);
 		$own = Entity::createFactoryById($_SESSION['cpid']);
-		
+
 		echo "<form action=\"?page=market&amp;mode=auction\" method=\"post\" name=\"auctionShowFormular\" id=\"auction_show_selector\">";
 		checker_init();
 		echo "<input type=\"hidden\" value=\"".$arr['id']."\" name=\"auction_market_id\" id=\"auction_market_id\"/>";
@@ -593,7 +593,7 @@ function showAuctionDetail($id)
 				<th style=\"width:15%;vertical-align:middle;\">Bieten</th>
 				<th style=\"width:35%;vertical-align:middle;\">Min./Max.</th>
 			</tr>";
-			
+
 			$factor = array(MARKET_METAL_FACTOR,MARKET_CRYSTAL_FACTOR,MARKET_PLASTIC_FACTOR,MARKET_FUEL_FACTOR,MARKET_FOOD_FACTOR);
 			foreach ($resNames as $rk => $rn)
 			{
@@ -644,7 +644,7 @@ function showAuctionDetail($id)
 	$ajax->assign("market_search_results","innerHTML",ob_get_clean());
 	$ajax->assign("market_search_loading","style.display","none");
 	return $ajax;
-	
+
 }
 
 
@@ -652,10 +652,10 @@ function calcMarketRessPrice($val, $last_update=0)
 {
 		ob_start();
   	$objResponse = new xajaxResponse();
-  	
+
   	// Eingaben wurden noch nicht geprüft
-  	$objResponse->assign("ress_check_submit","value",0); 
-  	
+  	$objResponse->assign("ress_check_submit","value",0);
+
   	// Stellt "Value-Variable" auf 0 wenn diese noch nicht vorhanden ist
 		if($val['ress_buy_metal']=="")
 		{
@@ -664,7 +664,7 @@ function calcMarketRessPrice($val, $last_update=0)
 		if($val['ress_buy_crystal']=="")
 		{
 			$val['ress_buy_crystal']=0;
-		}	
+		}
 		if($val['ress_buy_plastic']=="")
 		{
 			$val['ress_buy_plastic']=0;
@@ -677,24 +677,24 @@ function calcMarketRessPrice($val, $last_update=0)
 		{
 			$val['ress_buy_food']=0;
 		}
-  
+
   	$val['ress_sell_metal'] = min(nf_back($val['ress_sell_metal']),floor($val['res_metal']/MARKET_SELL_TAX));
   	$val['ress_sell_crystal'] = min(nf_back($val['ress_sell_crystal']),floor($val['res_crystal']/MARKET_SELL_TAX));
   	$val['ress_sell_plastic'] = min(nf_back($val['ress_sell_plastic']),floor($val['res_plastic']/MARKET_SELL_TAX));
   	$val['ress_sell_fuel'] = min(nf_back($val['ress_sell_fuel']),floor($val['res_fuel']/MARKET_SELL_TAX));
   	$val['ress_sell_food'] = min(nf_back($val['ress_sell_food']),floor($val['res_food']/MARKET_SELL_TAX));
-  
+
   	$val['ress_buy_metal'] = nf_back($val['ress_buy_metal']);
   	$val['ress_buy_crystal'] = nf_back($val['ress_buy_crystal']);
   	$val['ress_buy_plastic'] = nf_back($val['ress_buy_plastic']);
   	$val['ress_buy_fuel'] = nf_back($val['ress_buy_fuel']);
   	$val['ress_buy_food'] = nf_back($val['ress_buy_food']);
-  	  
-  	
+
+
   	//
   	// Errechnet und formatiert Preise
   	//
-  
+
   	//
   	// Titan
   	//
@@ -715,8 +715,8 @@ function calcMarketRessPrice($val, $last_update=0)
 		  										- $val['ress_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_METAL_FACTOR
 		  										- $val['ress_buy_food'] * MARKET_FOOD_FACTOR / MARKET_METAL_FACTOR;
 		  $log_ress_buy_metal_max = ceil($ress_buy_metal_max);		//Der Effektivwert, dieser wird nicht angepasst
-		  $ress_buy_metal_max = floor($ress_buy_metal_max);	//Rundet Betrag auf die nächst kleinere Ganzzahl	
-		  					
+		  $ress_buy_metal_max = floor($ress_buy_metal_max);	//Rundet Betrag auf die nächst kleinere Ganzzahl
+
   		// MinBetrag
   		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
   		$ress_buy_metal_min =	$val['ress_sell_metal'] / MARKET_METAL_FACTOR * MARKET_METAL_FACTOR * RESS_PRICE_FACTOR_MIN
@@ -730,27 +730,27 @@ function calcMarketRessPrice($val, $last_update=0)
 		  										- $val['ress_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_METAL_FACTOR
 		  										- $val['ress_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_METAL_FACTOR
 		  										- $val['ress_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_METAL_FACTOR
-		  										- $val['ress_buy_food'] * MARKET_FOOD_FACTOR / MARKET_METAL_FACTOR;	
+		  										- $val['ress_buy_food'] * MARKET_FOOD_FACTOR / MARKET_METAL_FACTOR;
 		  $ress_buy_metal_min = ceil($ress_buy_metal_min);	//Rundet Betrag auf die nächste höhere Ganzzahl
-		  $log_ress_buy_metal_min = $ress_buy_metal_min;		//Der Effektivwert, dieser wird nicht angepasst	
-		  
+		  $log_ress_buy_metal_min = $ress_buy_metal_min;		//Der Effektivwert, dieser wird nicht angepasst
+
 		  if($ress_buy_metal_max<=0)
 		  {
 		  	$ress_buy_metal_max=0;
-		  }  									
+		  }
 
 		  if($ress_buy_metal_min<=0)
 		  {
 		  	$ress_buy_metal_min=0;
-		  } 
-		  
+		  }
+
 		  // Generiert Link mit dem Min./Max. Betrag. Bei draufklcikt wird der Wert sofort ins Feld geschrieben und dannach Formatiert
-		  $out_ress_min_max_metal="<a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_metal').value=".($val['ress_buy_metal']+$ress_buy_metal_min).";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_metal','".($val['ress_buy_metal']+$ress_buy_metal_min)."',1,'');\">+".nf($ress_buy_metal_min)."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_metal').value=".($val['ress_buy_metal']+$ress_buy_metal_max).";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_metal','".($val['ress_buy_metal']+$ress_buy_metal_max)."',1,'');\">+".nf($ress_buy_metal_max)."</a>";  
-		  
-		  // Gibt das Preisfeld frei	  
-		  $objResponse->assign("ress_buy_metal","disabled",false);	
-  		
-  									
+		  $out_ress_min_max_metal="<a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_metal').value=".($val['ress_buy_metal']+$ress_buy_metal_min).";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_metal','".($val['ress_buy_metal']+$ress_buy_metal_min)."',1,'');\">+".nf($ress_buy_metal_min)."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_metal').value=".($val['ress_buy_metal']+$ress_buy_metal_max).";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_metal','".($val['ress_buy_metal']+$ress_buy_metal_max)."',1,'');\">+".nf($ress_buy_metal_max)."</a>";
+
+		  // Gibt das Preisfeld frei
+		  $objResponse->assign("ress_buy_metal","disabled",false);
+
+
   	}
   	else
   	{
@@ -758,13 +758,13 @@ function calcMarketRessPrice($val, $last_update=0)
   		$objResponse->assign("ress_buy_metal","disabled",true);
   		$objResponse->assign("ress_buy_metal","value",0);
   	}
-  	
+
 
 		//
   	// Silizium
   	//
   	if($val['ress_sell_crystal']==0)
-  	{		
+  	{
   		// MaxBetrag
   		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
   		$ress_buy_crystal_max =	$val['ress_sell_metal'] / MARKET_CRYSTAL_FACTOR * MARKET_METAL_FACTOR * RESS_PRICE_FACTOR_MAX
@@ -781,7 +781,7 @@ function calcMarketRessPrice($val, $last_update=0)
 		  										- $val['ress_buy_food'] * MARKET_FOOD_FACTOR / MARKET_CRYSTAL_FACTOR;
 		  $log_ress_buy_crystal_max = ceil($ress_buy_crystal_max);		//Der Effektivwert, dieser wird nicht angepasst
 		  $ress_buy_crystal_max = floor($ress_buy_crystal_max);	//Rundet Betrag auf die nächst kleiner Ganzzahl
-		  					
+
   		// MinBetrag
   		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
   		$ress_buy_crystal_min =	$val['ress_sell_metal'] / MARKET_CRYSTAL_FACTOR * MARKET_METAL_FACTOR * RESS_PRICE_FACTOR_MIN
@@ -795,23 +795,23 @@ function calcMarketRessPrice($val, $last_update=0)
 		  										- $val['ress_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_CRYSTAL_FACTOR
 		  										- $val['ress_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_CRYSTAL_FACTOR
 		  										- $val['ress_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_CRYSTAL_FACTOR
-		  										- $val['ress_buy_food'] * MARKET_FOOD_FACTOR / MARKET_CRYSTAL_FACTOR;		
+		  										- $val['ress_buy_food'] * MARKET_FOOD_FACTOR / MARKET_CRYSTAL_FACTOR;
 		  $ress_buy_crystal_min = ceil($ress_buy_crystal_min);  //Rundet Betrag auf die nächste höhere Ganzzahl
-		  $log_ress_buy_crystal_min = $ress_buy_crystal_min;		//Der Effektivwert, dieser wird nicht angepasst							
+		  $log_ress_buy_crystal_min = $ress_buy_crystal_min;		//Der Effektivwert, dieser wird nicht angepasst
 
 		  if($ress_buy_crystal_max<=0)
 		  {
 		  	$ress_buy_crystal_max=0;
-		  }  									
+		  }
 
 		  if($ress_buy_crystal_min<=0)
 		  {
 		  	$ress_buy_crystal_min=0;
-		  } 
-		  
+		  }
+
 		  // Generiert Link mit dem Min./Max. Betrag. Bei draufklcikt wird der Wert sofort ins Feld geschrieben und dannach Formatiert
-		  $out_ress_min_max_crystal="<a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_crystal').value=".($val['ress_buy_crystal']+$ress_buy_crystal_min).";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_crystal','".($val['ress_buy_crystal']+$ress_buy_crystal_min)."',1,'');\">+".nf($ress_buy_crystal_min)."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_crystal').value=".($val['ress_buy_crystal']+$ress_buy_crystal_max).";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_crystal','".($val['ress_buy_crystal']+$ress_buy_crystal_max)."',1,'');\">+".nf($ress_buy_crystal_max)."</a>";  		
-  		
+		  $out_ress_min_max_crystal="<a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_crystal').value=".($val['ress_buy_crystal']+$ress_buy_crystal_min).";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_crystal','".($val['ress_buy_crystal']+$ress_buy_crystal_min)."',1,'');\">+".nf($ress_buy_crystal_min)."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_crystal').value=".($val['ress_buy_crystal']+$ress_buy_crystal_max).";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_crystal','".($val['ress_buy_crystal']+$ress_buy_crystal_max)."',1,'');\">+".nf($ress_buy_crystal_max)."</a>";
+
   		// Gibt das Preisfeld frei
   		$objResponse->assign("ress_buy_crystal","disabled",false);
   	}
@@ -819,9 +819,9 @@ function calcMarketRessPrice($val, $last_update=0)
   	{
   		// Sperrt das Preisfeld
   		$objResponse->assign("ress_buy_crystal","disabled",true);
-  		$objResponse->assign("ress_buy_crystal","value",0); 										  	
+  		$objResponse->assign("ress_buy_crystal","value",0);
   	}
-  	
+
 
 
 		//
@@ -845,7 +845,7 @@ function calcMarketRessPrice($val, $last_update=0)
 		  										- $val['ress_buy_food'] * MARKET_FOOD_FACTOR / MARKET_PLASTIC_FACTOR;
 		  $log_ress_buy_plastic_max = ceil($ress_buy_plastic_max);		//Der Effektivwert, dieser wird nicht angepasst
 		  $ress_buy_plastic_max = floor($ress_buy_plastic_max);	//Rundet Betrag auf die nächst kleiner Ganzzahl
-		  					
+
   		// MinBetrag
   		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
   		$ress_buy_plastic_min =	$val['ress_sell_metal'] / MARKET_PLASTIC_FACTOR * MARKET_METAL_FACTOR * RESS_PRICE_FACTOR_MIN
@@ -859,23 +859,23 @@ function calcMarketRessPrice($val, $last_update=0)
 		  										- $val['ress_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_PLASTIC_FACTOR
 		  										- $val['ress_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_PLASTIC_FACTOR
 		  										- $val['ress_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_PLASTIC_FACTOR
-		  										- $val['ress_buy_food'] * MARKET_FOOD_FACTOR / MARKET_PLASTIC_FACTOR;		
+		  										- $val['ress_buy_food'] * MARKET_FOOD_FACTOR / MARKET_PLASTIC_FACTOR;
 		  $ress_buy_plastic_min = ceil($ress_buy_plastic_min);  //Rundet Betrag auf die nächste höhere Ganzzahl
-		  $log_ress_buy_plastic_min = $ress_buy_plastic_min;		//Der Effektivwert, dieser wird nicht angepasst							
+		  $log_ress_buy_plastic_min = $ress_buy_plastic_min;		//Der Effektivwert, dieser wird nicht angepasst
 
 		  if($ress_buy_plastic_max<=0)
 		  {
 		  	$ress_buy_plastic_max=0;
-		  }  									
+		  }
 
 		  if($ress_buy_plastic_min<=0)
 		  {
 		  	$ress_buy_plastic_min=0;
-		  } 
-		  
+		  }
+
 		  // Generiert Link mit dem Min./Max. Betrag. Bei draufklcikt wird der Wert sofort ins Feld geschrieben und dannach Formatiert
-		  $out_ress_min_max_plastic="<a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_plastic').value=".($val['ress_buy_plastic']+$ress_buy_plastic_min).";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_plastic','".($val['ress_buy_plastic']+$ress_buy_plastic_min)."',1,'');\">+".nf($ress_buy_plastic_min)."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_plastic').value=".($val['ress_buy_plastic']+$ress_buy_plastic_max).";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_plastic','".($val['ress_buy_plastic']+$ress_buy_plastic_max)."',1,'');\">+".nf($ress_buy_plastic_max)."</a>";  		
-  		
+		  $out_ress_min_max_plastic="<a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_plastic').value=".($val['ress_buy_plastic']+$ress_buy_plastic_min).";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_plastic','".($val['ress_buy_plastic']+$ress_buy_plastic_min)."',1,'');\">+".nf($ress_buy_plastic_min)."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_plastic').value=".($val['ress_buy_plastic']+$ress_buy_plastic_max).";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_plastic','".($val['ress_buy_plastic']+$ress_buy_plastic_max)."',1,'');\">+".nf($ress_buy_plastic_max)."</a>";
+
   		// Gibt das Preisfeld frei
   		$objResponse->assign("ress_buy_plastic","disabled",false);
   	}
@@ -883,16 +883,16 @@ function calcMarketRessPrice($val, $last_update=0)
   	{
   		// Sperrt das Preisfeld
   		$objResponse->assign("ress_buy_plastic","disabled",true);
-  		$objResponse->assign("ress_buy_plastic","value",0); 										  	
+  		$objResponse->assign("ress_buy_plastic","value",0);
   	}
 
-  	
+
 
 		//
   	// Tritium
   	//
   	if($val['ress_sell_fuel']==0)
-  	{ 		
+  	{
   		// MaxBetrag
   		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
   		$ress_buy_fuel_max =	$val['ress_sell_metal'] / MARKET_FUEL_FACTOR * MARKET_METAL_FACTOR * RESS_PRICE_FACTOR_MAX
@@ -909,7 +909,7 @@ function calcMarketRessPrice($val, $last_update=0)
 		  										- $val['ress_buy_food'] * MARKET_FOOD_FACTOR / MARKET_FUEL_FACTOR;
 		  $log_ress_buy_fuel_max = ceil($ress_buy_fuel_max);		//Der Effektivwert, dieser wird nicht angepasst
 		  $ress_buy_fuel_max = floor($ress_buy_fuel_max);	//Rundet Betrag auf die nächst kleiner Ganzzahl
-		  					
+
   		// MinBetrag
   		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
   		$ress_buy_fuel_min =	$val['ress_sell_metal'] / MARKET_FUEL_FACTOR * MARKET_METAL_FACTOR * RESS_PRICE_FACTOR_MIN
@@ -923,23 +923,23 @@ function calcMarketRessPrice($val, $last_update=0)
 		  										- $val['ress_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_FUEL_FACTOR
 		  										- $val['ress_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_FUEL_FACTOR
 		  										- $val['ress_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_FUEL_FACTOR
-		  										- $val['ress_buy_food'] * MARKET_FOOD_FACTOR / MARKET_FUEL_FACTOR;		
+		  										- $val['ress_buy_food'] * MARKET_FOOD_FACTOR / MARKET_FUEL_FACTOR;
 		  $ress_buy_fuel_min = ceil($ress_buy_fuel_min);  //Rundet Betrag auf die nächste höhere Ganzzahl
-		  $log_ress_buy_fuel_min = $ress_buy_fuel_min;		//Der Effektivwert, dieser wird nicht angepasst							
+		  $log_ress_buy_fuel_min = $ress_buy_fuel_min;		//Der Effektivwert, dieser wird nicht angepasst
 
 		  if($ress_buy_fuel_max<=0)
 		  {
 		  	$ress_buy_fuel_max=0;
-		  }  									
+		  }
 
 		  if($ress_buy_fuel_min<=0)
 		  {
 		  	$ress_buy_fuel_min=0;
-		  } 
-		  
+		  }
+
 		  // Generiert Link mit dem Min./Max. Betrag. Bei draufklcikt wird der Wert sofort ins Feld geschrieben und dannach Formatiert
-		  $out_ress_min_max_fuel="<a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_fuel').value=".($val['ress_buy_fuel']+$ress_buy_fuel_min).";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_fuel','".($val['ress_buy_fuel']+$ress_buy_fuel_min)."',1,'');\">+".nf($ress_buy_fuel_min)."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_fuel').value=".($val['ress_buy_fuel']+$ress_buy_fuel_max).";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_fuel','".($val['ress_buy_fuel']+$ress_buy_fuel_max)."',1,'');\">+".nf($ress_buy_fuel_max)."</a>";  		
-  		
+		  $out_ress_min_max_fuel="<a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_fuel').value=".($val['ress_buy_fuel']+$ress_buy_fuel_min).";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_fuel','".($val['ress_buy_fuel']+$ress_buy_fuel_min)."',1,'');\">+".nf($ress_buy_fuel_min)."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_fuel').value=".($val['ress_buy_fuel']+$ress_buy_fuel_max).";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_fuel','".($val['ress_buy_fuel']+$ress_buy_fuel_max)."',1,'');\">+".nf($ress_buy_fuel_max)."</a>";
+
   		// Gibt das Preisfeld frei
   		$objResponse->assign("ress_buy_fuel","disabled",false);
   	}
@@ -947,11 +947,11 @@ function calcMarketRessPrice($val, $last_update=0)
   	{
   		// Sperrt das Preisfeld
   		$objResponse->assign("ress_buy_fuel","disabled",true);
-  		$objResponse->assign("ress_buy_fuel","value",0); 										  	
+  		$objResponse->assign("ress_buy_fuel","value",0);
   	}
-  	
-  	
-  	
+
+
+
 		//
   	// Nahrung
   	//
@@ -973,8 +973,8 @@ function calcMarketRessPrice($val, $last_update=0)
 		  										- $val['ress_buy_food'] * MARKET_FOOD_FACTOR / MARKET_FOOD_FACTOR;
 		  $log_ress_buy_food_max = ceil($ress_buy_food_max);		//Der Effektivwert, dieser wird nicht angepasst
 		  $ress_buy_food_max = floor($ress_buy_food_max);	//Rundet Betrag auf die nächst kleiner Ganzzahl
-		  
-		  					
+
+
   		// MinBetrag
   		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
   		$ress_buy_food_min =	$val['ress_sell_metal'] / MARKET_FOOD_FACTOR * MARKET_METAL_FACTOR * RESS_PRICE_FACTOR_MIN
@@ -988,23 +988,23 @@ function calcMarketRessPrice($val, $last_update=0)
 		  										- $val['ress_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_FOOD_FACTOR
 		  										- $val['ress_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_FOOD_FACTOR
 		  										- $val['ress_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_FOOD_FACTOR
-		  										- $val['ress_buy_food'] * MARKET_FOOD_FACTOR / MARKET_FOOD_FACTOR;		
+		  										- $val['ress_buy_food'] * MARKET_FOOD_FACTOR / MARKET_FOOD_FACTOR;
 		  $ress_buy_food_min = ceil($ress_buy_food_min);  //Rundet Betrag auf die nächste höhere Ganzzahl
-		  $log_ress_buy_food_min = $ress_buy_food_min;		//Der Effektivwert, dieser wird nicht angepasst							
+		  $log_ress_buy_food_min = $ress_buy_food_min;		//Der Effektivwert, dieser wird nicht angepasst
 
 		  if($ress_buy_food_max<=0)
 		  {
 		  	$ress_buy_food_max=0;
-		  }  									
+		  }
 
 		  if($ress_buy_food_min<=0)
 		  {
 		  	$ress_buy_food_min=0;
-		  } 
-		  
+		  }
+
 		  // Generiert Link mit dem Min./Max. Betrag. Bei draufklcikt wird der Wert sofort ins Feld geschrieben und dannach Formatiert
 		  $out_ress_min_max_food="<a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_food').value=".($val['ress_buy_food']+$ress_buy_food_min).";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_food','".($val['ress_buy_food']+$ress_buy_food_min)."',1,'');\">+".nf($ress_buy_food_min)."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_food').value=".($val['ress_buy_food']+$ress_buy_food_max).";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_food','".($val['ress_buy_food']+$ress_buy_food_max)."',1,'');\">+".nf($ress_buy_food_max)."</a>";
-		  
+
 		  // Gibt das Preisfeld frei
   		$objResponse->assign("ress_buy_food","disabled",false);
   	}
@@ -1012,124 +1012,124 @@ function calcMarketRessPrice($val, $last_update=0)
   	{
   		// Sperrt das Preisfeld
   		$objResponse->assign("ress_buy_food","disabled",true);
-  		$objResponse->assign("ress_buy_food","value",0); 										  	
-  	} 	 	  	  	
-  	 	
-  	
+  		$objResponse->assign("ress_buy_food","value",0);
+  	}
+
+
   	//
   	// End Prüfung ob Angebot OK ist
   	//
-  	
+
   	// 0 Rohstoffe angegeben
-  	if($val['ress_sell_metal']<=0 
-  		&& $val['ress_sell_crystal']<=0  
-  		&& $val['ress_sell_plastic']<=0  
-  		&& $val['ress_sell_fuel']<=0  
+  	if($val['ress_sell_metal']<=0
+  		&& $val['ress_sell_crystal']<=0
+  		&& $val['ress_sell_plastic']<=0
+  		&& $val['ress_sell_fuel']<=0
   		&& $val['ress_sell_food']<=0 )
   	{
   		$out_check_message = "<div style=\"color:red;font-weight:bold;\">Gib ein Angebot ein!</div>";
-  		
+
   		$objResponse->assign("ressource_sell_submit","disabled",true);
   		$objResponse->assign("ressource_sell_submit","style.color",'#f00');
-  	}  	
+  	}
   	// Alle Rohstoffe angegeben (und somit kein Preis festgelegt)
-  	elseif($val['ress_sell_metal']>0 
-  		&& $val['ress_sell_crystal']>0  
-  		&& $val['ress_sell_plastic']>0  
-  		&& $val['ress_sell_fuel']>0  
+  	elseif($val['ress_sell_metal']>0
+  		&& $val['ress_sell_crystal']>0
+  		&& $val['ress_sell_plastic']>0
+  		&& $val['ress_sell_fuel']>0
   		&& $val['ress_sell_food']>0 )
   	{
   		$out_check_message = "<div style=\"color:red;font-weight:bold;\">Das Angebot muss einen Preis haben!</div>";
-  		
+
   		$objResponse->assign("ressource_sell_submit","disabled",true);
-  		$objResponse->assign("ressource_sell_submit","style.color",'#f00');  	
+  		$objResponse->assign("ressource_sell_submit","style.color",'#f00');
   	}
   	// Zu hohe Preise
-  	elseif($log_ress_buy_metal_max<0 
-  		|| $log_ress_buy_crystal_max<0 
-  		|| $log_ress_buy_plastic_max<0 
-  		|| $log_ress_buy_fuel_max<0 
+  	elseif($log_ress_buy_metal_max<0
+  		|| $log_ress_buy_crystal_max<0
+  		|| $log_ress_buy_plastic_max<0
+  		|| $log_ress_buy_fuel_max<0
   		|| $log_ress_buy_food_max<0)
   	{
   		$out_check_message = "<div style=\"color:red;font-weight:bold;\">Die Preise sind zu hoch!</div>";
-  		
+
   		$objResponse->assign("ressource_sell_submit","disabled",true);
   		$objResponse->assign("ressource_sell_submit","style.color",'#f00');
   	}
   	// Zu niedrige Preise
-  	elseif($log_ress_buy_metal_min>0 
-  		|| $log_ress_buy_crystal_min>0 
-  		|| $log_ress_buy_plastic_min>0 
-  		|| $log_ress_buy_fuel_min>0 
+  	elseif($log_ress_buy_metal_min>0
+  		|| $log_ress_buy_crystal_min>0
+  		|| $log_ress_buy_plastic_min>0
+  		|| $log_ress_buy_fuel_min>0
   		|| $log_ress_buy_food_min>0)
   	{
   		$out_check_message = "<div style=\"color:red;font-weight:bold;\">Die Preise sind zu niedrig!</div>";
-  		
+
   		$objResponse->assign("ressource_sell_submit","disabled",true);
   		$objResponse->assign("ressource_sell_submit","style.color",'#f00');
   	}
   	// Zu wenig Rohstoffe auf dem Planeten
   	elseif($val['ress_sell_metal'] * MARKET_SELL_TAX > $val['res_metal']
-  		|| $val['ress_sell_crystal'] * MARKET_SELL_TAX > $val['res_crystal'] 
-  		|| $val['ress_sell_plastic'] * MARKET_SELL_TAX > $val['res_plastic'] 
+  		|| $val['ress_sell_crystal'] * MARKET_SELL_TAX > $val['res_crystal']
+  		|| $val['ress_sell_plastic'] * MARKET_SELL_TAX > $val['res_plastic']
   		|| $val['ress_sell_fuel'] * MARKET_SELL_TAX > $val['res_fuel']
   		|| $val['ress_sell_food'] * MARKET_SELL_TAX > $val['res_food'])
   	{
   		$out_check_message = "<div style=\"color:red;font-weight:bold;\">Es sind zu wenig Rohstoffe vorhanden! (Beachte Verkaufsgebühr)</div>";
-  		
+
   		$objResponse->assign("ressource_sell_submit","disabled",true);
   		$objResponse->assign("ressource_sell_submit","style.color",'#f00');
-  	}  
+  	}
   	// Unerlaubte Zeichen im Werbetext
   	elseif(check_illegal_signs($val['ressource_text'])!="")
   	{
   		$out_check_message = "<div style=\"color:red;font-weight:bold;\">Unerlaubte Zeichen im Werbetext (".check_illegal_signs("><$").")!</div>";
-  		
+
   		$objResponse->assign("ressource_sell_submit","disabled",true);
-  		$objResponse->assign("ressource_sell_submit","style.color",'#f00'); 		
-  	}	
+  		$objResponse->assign("ressource_sell_submit","style.color",'#f00');
+  	}
   	// Angebot ist OK
   	else
-  	{		
+  	{
   		// Rechnet gesamt Verkaufsgebühren
   		$sell_tax = $val['ress_sell_metal'] * (MARKET_SELL_TAX - 1)
   							+ $val['ress_sell_crystal'] * (MARKET_SELL_TAX - 1)
   							+ $val['ress_sell_plastic'] * (MARKET_SELL_TAX - 1)
   							+ $val['ress_sell_fuel'] * (MARKET_SELL_TAX - 1)
-  							+ $val['ress_sell_food'] * (MARKET_SELL_TAX - 1);  		
-  		
+  							+ $val['ress_sell_food'] * (MARKET_SELL_TAX - 1);
+
   		$out_check_message = "<div style=\"color:#0f0;font-weight:bold;\">OK!<br>Verkaufsgebühren: ".nf($sell_tax)." t</div>";
   		$objResponse->assign("ressource_sell_submit","disabled",false);
   		$objResponse->assign("ressource_sell_submit","style.color",'#0f0');
-  		
+
   		// XAJAX bestätigt die Korrektheit/Legalität der Eingaben
   		$objResponse->assign("ress_check_submit","value",1);
   	}
-  	
+
   	// Bestätigt, dass XAJAX das Formular vor dem Absenden nochmal kontrolliert hat
   	$objResponse->assign("ress_last_update","value", $last_update);
- 	
-  	
+
+
   	// XAJAX ändert Daten
 		$objResponse->assign("ress_min_max_metal","innerHTML", $out_ress_min_max_metal);
 		$objResponse->assign("ress_min_max_crystal","innerHTML", $out_ress_min_max_crystal);
 		$objResponse->assign("ress_min_max_plastic","innerHTML", $out_ress_min_max_plastic);
 		$objResponse->assign("ress_min_max_fuel","innerHTML", $out_ress_min_max_fuel);
 		$objResponse->assign("ress_min_max_food","innerHTML", $out_ress_min_max_food);
-		
+
 		$objResponse->assign("ress_sell_metal","value", nf($val['ress_sell_metal']));
 		$objResponse->assign("ress_sell_crystal","value", nf($val['ress_sell_crystal']));
 		$objResponse->assign("ress_sell_plastic","value", nf($val['ress_sell_plastic']));
 		$objResponse->assign("ress_sell_fuel","value", nf($val['ress_sell_fuel']));
 		$objResponse->assign("ress_sell_food","value", nf($val['ress_sell_food']));
-		
+
 		$objResponse->assign("ress_buy_metal","value", nf($val['ress_buy_metal']));
 		$objResponse->assign("ress_buy_crystal","value", nf($val['ress_buy_crystal']));
 		$objResponse->assign("ress_buy_plastic","value", nf($val['ress_buy_plastic']));
 		$objResponse->assign("ress_buy_fuel","value", nf($val['ress_buy_fuel']));
 		$objResponse->assign("ress_buy_food","value", nf($val['ress_buy_food']));
-		
-		
+
+
 		$objResponse->assign("check_message","innerHTML", $out_check_message);
 
 
@@ -1165,7 +1165,7 @@ function calcMarketRessBuy($val)
 			foreach ($val['ressource_market_id'] as $num => $id)
 			{
 				$cnt++;
-				
+
 				// Summiert Rohstoffe
 				$ress_metal_total_costs += $val['ress_buy_metal'][$id];
 				$ress_crystal_total_costs += $val['ress_buy_crystal'][$id];
@@ -1174,8 +1174,8 @@ function calcMarketRessBuy($val)
 				$ress_food_total_costs += $val['ress_buy_food'][$id];
 			}
 		}
-		
-			
+
+
 		//
 		// Endprüfung ob alles OK ist
 		//
@@ -1184,9 +1184,9 @@ function calcMarketRessBuy($val)
 		if($cnt <= 0)
 		{
   		$out_ress_buy_check_message = "<div style=\"color:red;font-weight:bold;\">Es ist kein Angebot ausgewählt!</div>";
-  		
+
   		$objResponse->assign("ressource_submit","disabled",true);
-  		$objResponse->assign("ressource_submit","style.color",'#f00');			
+  		$objResponse->assign("ressource_submit","style.color",'#f00');
 		}
 		// Prüft, ob genug Rohstoffe vorhanden sind
 		elseif($val['res_metal'] < $ress_metal_total_costs
@@ -1196,13 +1196,13 @@ function calcMarketRessBuy($val)
 			|| $val['res_food'] < $ress_food_total_costs)
 		{
   		$out_ress_buy_check_message = "<div style=\"color:red;font-weight:bold;\">Es sind zu wenig Rohstoffe vorhanden!</div>";
-  		
+
   		$objResponse->assign("ressource_submit","disabled",true);
-  		$objResponse->assign("ressource_submit","style.color",'#f00');		
+  		$objResponse->assign("ressource_submit","style.color",'#f00');
 		}
   	// Angebot ist OK
   	else
-  	{		
+  	{
   		$out_ress_buy_check_message = "<div style=\"color:#0f0;font-weight:bold;\">OK!<br>";
   		if($cnt==1)
   		{
@@ -1225,7 +1225,7 @@ function calcMarketRessBuy($val)
 
   	$objResponse->assign("marketinfo","innerHTML",ob_get_contents());
 		ob_end_clean();
-  	
+
   	return $objResponse;
 }
 
@@ -1240,11 +1240,11 @@ function calcMarketShipPrice($val,$new_ship=0,$last_update=0)
 {
 		ob_start();
   	$objResponse = new xajaxResponse();
-  	
+
   	// Eingaben wurden noch nicht geprüft
   	$objResponse->assign("ship_check_submit","value",0);
-  	
-  	$ship = $val['ship_list']; 
+
+  	$ship = $val['ship_list'];
     $ship_count = min(nf_back($val['ship_count']),$_SESSION['market']['ship_data'][$ship]['shiplist_count']);
    	$ship_max_count = $_SESSION['market']['ship_data'][$ship]['shiplist_count'];
    	$ship_costs_metal = $_SESSION['market']['ship_data'][$ship]['ship_costs_metal'];
@@ -1252,21 +1252,21 @@ function calcMarketShipPrice($val,$new_ship=0,$last_update=0)
    	$ship_costs_plastic = $_SESSION['market']['ship_data'][$ship]['ship_costs_plastic'];
    	$ship_costs_fuel = $_SESSION['market']['ship_data'][$ship]['ship_costs_fuel'];
    	$ship_costs_food = $_SESSION['market']['ship_data'][$ship]['ship_costs_food'];
-   	
+
    	$val['ship_buy_metal'] = nf_back($val['ship_buy_metal']);
   	$val['ship_buy_crystal'] = nf_back($val['ship_buy_crystal']);
   	$val['ship_buy_plastic'] = nf_back($val['ship_buy_plastic']);
   	$val['ship_buy_fuel'] = nf_back($val['ship_buy_fuel']);
   	$val['ship_buy_food'] = nf_back($val['ship_buy_food']);
-   	
-    
+
+
     // Rechnet gesamt Kosten pro Rohstoff (Kosten * Anzahl) (Dient als Basis für Min/Max rechnung)
     $ship_costs_metal_total = $ship_costs_metal * $ship_count;
     $ship_costs_crystal_total = $ship_costs_crystal * $ship_count;
     $ship_costs_plastic_total = $ship_costs_plastic * $ship_count;
     $ship_costs_fuel_total = $ship_costs_fuel * $ship_count;
-    $ship_costs_food_total = $ship_costs_food * $ship_count; 	
-  	
+    $ship_costs_food_total = $ship_costs_food * $ship_count;
+
   	// Schreibt Originalpreise in "Preis-Felder" und berechnet Min/Max wenn eine neue Eingabe gemacht wurde
   	if($new_ship==1)
   	{
@@ -1275,13 +1275,13 @@ function calcMarketShipPrice($val,$new_ship=0,$last_update=0)
   		$val['ship_buy_plastic']=$ship_costs_plastic_total;
   		$val['ship_buy_fuel']=$ship_costs_fuel_total;
   		$val['ship_buy_food']=$ship_costs_food_total;
-	  	
+
 	  	//Ändert Daten beim "Angebot Feld" welches gesperrt ist für Änderungen
 	  	$objResponse->assign("ship_sell_metal","value", nf($ship_costs_metal_total));
 	  	$objResponse->assign("ship_sell_crystal","value", nf($ship_costs_crystal_total));
 	  	$objResponse->assign("ship_sell_plastic","value", nf($ship_costs_plastic_total));
 	  	$objResponse->assign("ship_sell_fuel","value", nf($ship_costs_fuel_total));
-	  	$objResponse->assign("ship_sell_food","value", nf($ship_costs_food_total)); 	  		
+	  	$objResponse->assign("ship_sell_food","value", nf($ship_costs_food_total));
   	}
 
 
@@ -1289,11 +1289,11 @@ function calcMarketShipPrice($val,$new_ship=0,$last_update=0)
   	//
   	// Errechnet und formatiert Preise
   	//
-  
+
   	//
   	// Titan
   	//
-		
+
 		// MaxBetrag
 		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
 		$ship_buy_metal_max =	$ship_costs_metal_total / MARKET_METAL_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MAX
@@ -1308,10 +1308,10 @@ function calcMarketShipPrice($val,$new_ship=0,$last_update=0)
 	  										- $val['ship_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_METAL_FACTOR
 	  										- $val['ship_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_METAL_FACTOR
 	  										- $val['ship_buy_food'] * MARKET_FOOD_FACTOR / MARKET_METAL_FACTOR;
-	  $log_ship_buy_metal_max = ceil($ship_buy_metal_max);		//Der Effektivwert, dieser wird nicht angepasst		
+	  $log_ship_buy_metal_max = ceil($ship_buy_metal_max);		//Der Effektivwert, dieser wird nicht angepasst
 	  $ship_buy_metal_max = floor($ship_buy_metal_max);	//Rundet Betrag auf die nächst kleinere Ganzzahl
-	  
-	  					
+
+
 		// MinBetrag
 		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
 		$ship_buy_metal_ship_min =	$ship_costs_metal_total / MARKET_METAL_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MIN
@@ -1325,31 +1325,31 @@ function calcMarketShipPrice($val,$new_ship=0,$last_update=0)
 	  										- $val['ship_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_METAL_FACTOR
 	  										- $val['ship_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_METAL_FACTOR
 	  										- $val['ship_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_METAL_FACTOR
-	  										- $val['ship_buy_food'] * MARKET_FOOD_FACTOR / MARKET_METAL_FACTOR;		  										
+	  										- $val['ship_buy_food'] * MARKET_FOOD_FACTOR / MARKET_METAL_FACTOR;
 	  $ship_buy_metal_ship_min = ceil($ship_buy_metal_ship_min);	//Rundet Betrag auf die nächste höhere Ganzzahl
-	  $log_ship_buy_metal_ship_min = $ship_buy_metal_ship_min;		//Der Effektivwert, dieser wird nicht angepasst	
-	  
+	  $log_ship_buy_metal_ship_min = $ship_buy_metal_ship_min;		//Der Effektivwert, dieser wird nicht angepasst
+
 	  if($ship_buy_metal_max<=0)
 	  {
 	  	$ship_buy_metal_max=0;
-	  }  									
+	  }
 
 	  if($ship_buy_metal_ship_min<=0)
 	  {
 	  	$ship_buy_metal_ship_min=0;
-	  } 
-	  
-	  // Generiert Link mit dem Min./Max. Betrag. Bei draufklick wird der Wert sofort ins Feld geschrieben
-	  $out_ship_min_max_metal="<a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_metal').value=".($val['ship_buy_metal']+$ship_buy_metal_ship_min).";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_metal','".($val['ship_buy_metal']+$ship_buy_metal_ship_min)."',1,'');\">+".nf($ship_buy_metal_ship_min)."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_metal').value=".($val['ship_buy_metal']+$ship_buy_metal_max).";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_metal','".($val['ship_buy_metal']+$ship_buy_metal_max)."',1,'');\">+".nf($ship_buy_metal_max)."</a>";  		
+	  }
 
-  
-  
-  
-  
+	  // Generiert Link mit dem Min./Max. Betrag. Bei draufklick wird der Wert sofort ins Feld geschrieben
+	  $out_ship_min_max_metal="<a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_metal').value=".($val['ship_buy_metal']+$ship_buy_metal_ship_min).";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_metal','".($val['ship_buy_metal']+$ship_buy_metal_ship_min)."',1,'');\">+".nf($ship_buy_metal_ship_min)."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_metal').value=".($val['ship_buy_metal']+$ship_buy_metal_max).";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_metal','".($val['ship_buy_metal']+$ship_buy_metal_max)."',1,'');\">+".nf($ship_buy_metal_max)."</a>";
+
+
+
+
+
    	//
   	// Silizium
   	//
-		
+
 		// MaxBetrag
 		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
 		$ship_buy_crystal_max =	$ship_costs_metal_total / MARKET_CRYSTAL_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MAX
@@ -1363,11 +1363,11 @@ function calcMarketShipPrice($val,$new_ship=0,$last_update=0)
 	  										- $val['ship_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_CRYSTAL_FACTOR
 	  										- $val['ship_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_CRYSTAL_FACTOR
 	  										- $val['ship_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_CRYSTAL_FACTOR
-	  										- $val['ship_buy_food'] * MARKET_FOOD_FACTOR / MARKET_CRYSTAL_FACTOR;	  										
+	  										- $val['ship_buy_food'] * MARKET_FOOD_FACTOR / MARKET_CRYSTAL_FACTOR;
 	  $log_ship_buy_crystal_max = ceil($ship_buy_crystal_max);		//Der Effektivwert, dieser wird nicht angepasst
 	  $ship_buy_crystal_max = floor($ship_buy_crystal_max);	//Rundet Betrag auf die nächst kleinere Ganzzahl
-	  
-	  					
+
+
 		// MinBetrag
 		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
 		$ship_buy_crystal_min =	$ship_costs_metal_total / MARKET_CRYSTAL_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MIN
@@ -1381,29 +1381,29 @@ function calcMarketShipPrice($val,$new_ship=0,$last_update=0)
 	  										- $val['ship_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_CRYSTAL_FACTOR
 	  										- $val['ship_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_CRYSTAL_FACTOR
 	  										- $val['ship_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_CRYSTAL_FACTOR
-	  										- $val['ship_buy_food'] * MARKET_FOOD_FACTOR / MARKET_CRYSTAL_FACTOR;		  										
+	  										- $val['ship_buy_food'] * MARKET_FOOD_FACTOR / MARKET_CRYSTAL_FACTOR;
 	  $ship_buy_crystal_min = ceil($ship_buy_crystal_min);	//Rundet Betrag auf die nächste höhere Ganzzahl
-	  $log_ship_buy_crystal_min = $ship_buy_crystal_min;		//Der Effektivwert, dieser wird nicht angepasst	
-	  
+	  $log_ship_buy_crystal_min = $ship_buy_crystal_min;		//Der Effektivwert, dieser wird nicht angepasst
+
 	  if($ship_buy_crystal_max<=0)
 	  {
 	  	$ship_buy_crystal_max=0;
-	  }  									
+	  }
 
 	  if($ship_buy_crystal_min<=0)
 	  {
 	  	$ship_buy_crystal_min=0;
-	  } 
-	  
+	  }
+
 	  // Generiert Link mit dem Min./Max. Betrag. Bei draufklick wird der Wert sofort ins Feld geschrieben
-	  $out_ship_min_max_crystal="<a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_crystal').value=".($val['ship_buy_crystal']+$ship_buy_crystal_min).";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_crystal','".($val['ship_buy_crystal']+$ship_buy_crystal_min)."',1,'');\">+".nf($ship_buy_crystal_min)."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_crystal').value=".($val['ship_buy_crystal']+$ship_buy_crystal_max).";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_crystal','".($val['ship_buy_crystal']+$ship_buy_crystal_max)."',1,'');\">+".nf($ship_buy_crystal_max)."</a>";  
- 
- 
- 
+	  $out_ship_min_max_crystal="<a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_crystal').value=".($val['ship_buy_crystal']+$ship_buy_crystal_min).";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_crystal','".($val['ship_buy_crystal']+$ship_buy_crystal_min)."',1,'');\">+".nf($ship_buy_crystal_min)."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_crystal').value=".($val['ship_buy_crystal']+$ship_buy_crystal_max).";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_crystal','".($val['ship_buy_crystal']+$ship_buy_crystal_max)."',1,'');\">+".nf($ship_buy_crystal_max)."</a>";
+
+
+
    	//
   	// PVC
   	//
-		
+
 		// MaxBetrag
 		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
 		$ship_buy_plastic_max =	$ship_costs_metal_total / MARKET_PLASTIC_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MAX
@@ -1417,11 +1417,11 @@ function calcMarketShipPrice($val,$new_ship=0,$last_update=0)
 	  										- $val['ship_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_PLASTIC_FACTOR
 	  										- $val['ship_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_PLASTIC_FACTOR
 	  										- $val['ship_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_PLASTIC_FACTOR
-	  										- $val['ship_buy_food'] * MARKET_FOOD_FACTOR / MARKET_PLASTIC_FACTOR;	  										
+	  										- $val['ship_buy_food'] * MARKET_FOOD_FACTOR / MARKET_PLASTIC_FACTOR;
 	  $log_ship_buy_plastic_max = ceil($ship_buy_plastic_max);		//Der Effektivwert, dieser wird nicht angepasst
 	  $ship_buy_plastic_max = floor($ship_buy_plastic_max);	//Rundet Betrag auf die nächst kleinere Ganzzahl
-	  
-	  					
+
+
 		// MinBetrag
 		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
 		$ship_buy_plastic_min =	$ship_costs_metal_total / MARKET_PLASTIC_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MIN
@@ -1435,31 +1435,31 @@ function calcMarketShipPrice($val,$new_ship=0,$last_update=0)
 	  										- $val['ship_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_PLASTIC_FACTOR
 	  										- $val['ship_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_PLASTIC_FACTOR
 	  										- $val['ship_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_PLASTIC_FACTOR
-	  										- $val['ship_buy_food'] * MARKET_FOOD_FACTOR / MARKET_PLASTIC_FACTOR;		  										
+	  										- $val['ship_buy_food'] * MARKET_FOOD_FACTOR / MARKET_PLASTIC_FACTOR;
 	  $ship_buy_plastic_min = ceil($ship_buy_plastic_min);	//Rundet Betrag auf die nächste höhere Ganzzahl
-	  $log_ship_buy_plastic_min = $ship_buy_plastic_min;		//Der Effektivwert, dieser wird nicht angepasst	
-	  
+	  $log_ship_buy_plastic_min = $ship_buy_plastic_min;		//Der Effektivwert, dieser wird nicht angepasst
+
 	  if($ship_buy_plastic_max<=0)
 	  {
 	  	$ship_buy_plastic_max=0;
-	  }  									
+	  }
 
 	  if($ship_buy_plastic_min<=0)
 	  {
 	  	$ship_buy_plastic_min=0;
-	  } 
-	  
+	  }
+
 	  // Generiert Link mit dem Min./Max. Betrag. Bei draufklick wird der Wert sofort ins Feld geschrieben
-	  $out_ship_min_max_plastic="<a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_plastic').value=".($val['ship_buy_plastic']+$ship_buy_plastic_min).";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_plastic','".($val['ship_buy_plastic']+$ship_buy_plastic_min)."',1,'');\">+".nf($ship_buy_plastic_min)."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_plastic').value=".($val['ship_buy_plastic']+$ship_buy_plastic_max).";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_plastic','".($val['ship_buy_plastic']+$ship_buy_plastic_max)."',1,'');\">+".nf($ship_buy_plastic_max)."</a>"; 
- 
- 
- 
- 
- 
+	  $out_ship_min_max_plastic="<a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_plastic').value=".($val['ship_buy_plastic']+$ship_buy_plastic_min).";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_plastic','".($val['ship_buy_plastic']+$ship_buy_plastic_min)."',1,'');\">+".nf($ship_buy_plastic_min)."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_plastic').value=".($val['ship_buy_plastic']+$ship_buy_plastic_max).";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_plastic','".($val['ship_buy_plastic']+$ship_buy_plastic_max)."',1,'');\">+".nf($ship_buy_plastic_max)."</a>";
+
+
+
+
+
    	//
   	// Tritium
   	//
-		
+
 		// MaxBetrag
 		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
 		$ship_buy_fuel_max =	$ship_costs_metal_total / MARKET_FUEL_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MAX
@@ -1473,11 +1473,11 @@ function calcMarketShipPrice($val,$new_ship=0,$last_update=0)
 	  										- $val['ship_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_FUEL_FACTOR
 	  										- $val['ship_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_FUEL_FACTOR
 	  										- $val['ship_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_FUEL_FACTOR
-	  										- $val['ship_buy_food'] * MARKET_FOOD_FACTOR / MARKET_FUEL_FACTOR;	  										
+	  										- $val['ship_buy_food'] * MARKET_FOOD_FACTOR / MARKET_FUEL_FACTOR;
 	  $log_ship_buy_fuel_max = ceil($ship_buy_fuel_max);		//Der Effektivwert, dieser wird nicht angepasst
-	  $ship_buy_fuel_max = floor($ship_buy_fuel_max);	//Rundet Betrag auf die nächst kleinere Ganzzahl	
-	  
-	  					
+	  $ship_buy_fuel_max = floor($ship_buy_fuel_max);	//Rundet Betrag auf die nächst kleinere Ganzzahl
+
+
 		// MinBetrag
 		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
 		$ship_buy_fuel_min =	$ship_costs_metal_total / MARKET_FUEL_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MIN
@@ -1491,29 +1491,29 @@ function calcMarketShipPrice($val,$new_ship=0,$last_update=0)
 	  										- $val['ship_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_FUEL_FACTOR
 	  										- $val['ship_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_FUEL_FACTOR
 	  										- $val['ship_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_FUEL_FACTOR
-	  										- $val['ship_buy_food'] * MARKET_FOOD_FACTOR / MARKET_FUEL_FACTOR;		  										
+	  										- $val['ship_buy_food'] * MARKET_FOOD_FACTOR / MARKET_FUEL_FACTOR;
 	  $ship_buy_fuel_min = ceil($ship_buy_fuel_min);	//Rundet Betrag auf die nächste höhere Ganzzahl
-	  $log_ship_buy_fuel_min = $ship_buy_fuel_min;		//Der Effektivwert, dieser wird nicht angepasst	
-	  
+	  $log_ship_buy_fuel_min = $ship_buy_fuel_min;		//Der Effektivwert, dieser wird nicht angepasst
+
 	  if($ship_buy_fuel_max<=0)
 	  {
 	  	$ship_buy_fuel_max=0;
-	  }  									
+	  }
 
 	  if($ship_buy_fuel_min<=0)
 	  {
 	  	$ship_buy_fuel_min=0;
-	  } 
-	  
+	  }
+
 	  // Generiert Link mit dem Min./Max. Betrag. Bei draufklick wird der Wert sofort ins Feld geschrieben
-	  $out_ship_min_max_fuel="<a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_fuel').value=".($val['ship_buy_fuel']+$ship_buy_fuel_min).";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_fuel','".($val['ship_buy_fuel']+$ship_buy_fuel_min)."',1,'');\">+".nf($ship_buy_fuel_min)."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_fuel').value=".($val['ship_buy_fuel']+$ship_buy_fuel_max).";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_fuel','".($val['ship_buy_fuel']+$ship_buy_fuel_max)."',1,'');\">+".nf($ship_buy_fuel_max)."</a>"; 
-	  
-	    	
- 
+	  $out_ship_min_max_fuel="<a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_fuel').value=".($val['ship_buy_fuel']+$ship_buy_fuel_min).";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_fuel','".($val['ship_buy_fuel']+$ship_buy_fuel_min)."',1,'');\">+".nf($ship_buy_fuel_min)."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_fuel').value=".($val['ship_buy_fuel']+$ship_buy_fuel_max).";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_fuel','".($val['ship_buy_fuel']+$ship_buy_fuel_max)."',1,'');\">+".nf($ship_buy_fuel_max)."</a>";
+
+
+
 		//
   	// Nahrung
   	//
-		
+
 		// MaxBetrag
 		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
 		$ship_buy_food_max =	$ship_costs_metal_total / MARKET_FOOD_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MAX
@@ -1527,11 +1527,11 @@ function calcMarketShipPrice($val,$new_ship=0,$last_update=0)
 	  										- $val['ship_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_FOOD_FACTOR
 	  										- $val['ship_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_FOOD_FACTOR
 	  										- $val['ship_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_FOOD_FACTOR
-	  										- $val['ship_buy_food'] * MARKET_FOOD_FACTOR / MARKET_FOOD_FACTOR;	  										
+	  										- $val['ship_buy_food'] * MARKET_FOOD_FACTOR / MARKET_FOOD_FACTOR;
 	  $log_ship_buy_food_max = ceil($ship_buy_food_max);		//Der Effektivwert, dieser wird nicht angepasst
-	  $ship_buy_food_max = floor($ship_buy_food_max);	//Rundet Betrag auf die nächst kleinere Ganzzahl	
-	  
-	  					
+	  $ship_buy_food_max = floor($ship_buy_food_max);	//Rundet Betrag auf die nächst kleinere Ganzzahl
+
+
 		// MinBetrag
 		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
 		$ship_buy_food_min =	$ship_costs_metal_total / MARKET_FOOD_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MIN
@@ -1545,105 +1545,105 @@ function calcMarketShipPrice($val,$new_ship=0,$last_update=0)
 	  										- $val['ship_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_FOOD_FACTOR
 	  										- $val['ship_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_FOOD_FACTOR
 	  										- $val['ship_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_FOOD_FACTOR
-	  										- $val['ship_buy_food'] * MARKET_FOOD_FACTOR / MARKET_FOOD_FACTOR;		  										
+	  										- $val['ship_buy_food'] * MARKET_FOOD_FACTOR / MARKET_FOOD_FACTOR;
 	  $ship_buy_food_min = ceil($ship_buy_food_min);	//Rundet Betrag auf die nächste höhere Ganzzahl
-	  $log_ship_buy_food_min = $ship_buy_food_min;		//Der Effektivwert, dieser wird nicht angepasst	
-	  
+	  $log_ship_buy_food_min = $ship_buy_food_min;		//Der Effektivwert, dieser wird nicht angepasst
+
 	  if($ship_buy_food_max<=0)
 	  {
 	  	$ship_buy_food_max=0;
-	  }  									
+	  }
 
 	  if($ship_buy_food_min<=0)
 	  {
 	  	$ship_buy_food_min=0;
-	  } 
-	  
+	  }
+
 	  // Generiert Link mit dem Min./Max. Betrag. Bei draufklick wird der Wert sofort ins Feld geschrieben
-	  $out_ship_min_max_food="<a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_food').value=".($val['ship_buy_food']+$ship_buy_food_min).";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_food','".($val['ship_buy_food']+$ship_buy_food_min)."',1,'');\">+".nf($ship_buy_food_min)."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_food').value=".($val['ship_buy_food']+$ship_buy_food_max).";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_food','".($val['ship_buy_food']+$ship_buy_food_max)."',1,'');\">+".nf($ship_buy_food_max)."</a>";  
-  	   	
- 	
+	  $out_ship_min_max_food="<a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_food').value=".($val['ship_buy_food']+$ship_buy_food_min).";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_food','".($val['ship_buy_food']+$ship_buy_food_min)."',1,'');\">+".nf($ship_buy_food_min)."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_food').value=".($val['ship_buy_food']+$ship_buy_food_max).";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_food','".($val['ship_buy_food']+$ship_buy_food_max)."',1,'');\">+".nf($ship_buy_food_max)."</a>";
+
+
   	//
   	// End Prüfung ob Angebot OK ist
   	//
-  	
+
   	// 0 Schiffe angegeben
   	if($ship_count<=0)
   	{
   		$out_ship_check_message = "<div style=\"color:red;font-weight:bold;\">Gib ein Angebot ein!</div>";
-  		
+
   		$objResponse->assign("ship_sell_submit","disabled",true);
   		$objResponse->assign("ship_sell_submit","style.color",'#f00');
-  	}  	
+  	}
   	// Zu hohe Preise
-  	elseif($log_ship_buy_metal_max<0 
-  		|| $log_ship_buy_crystal_max<0 
-  		|| $log_ship_buy_plastic_max<0 
-  		|| $log_ship_buy_fuel_max<0 
+  	elseif($log_ship_buy_metal_max<0
+  		|| $log_ship_buy_crystal_max<0
+  		|| $log_ship_buy_plastic_max<0
+  		|| $log_ship_buy_fuel_max<0
   		|| $log_ship_buy_food_max<0)
   	{
   		$out_ship_check_message = "<div style=\"color:red;font-weight:bold;\">Die Preise sind zu hoch!</div>";
-  		
+
   		$objResponse->assign("ship_sell_submit","disabled",true);
   		$objResponse->assign("ship_sell_submit","style.color",'#f00');
   	}
   	// Zu niedrige Preise
-  	elseif($log_ship_buy_metal_ship_min>0 
-  		|| $log_ship_buy_crystal_ship_min>0 
-  		|| $log_ship_buy_plastic_ship_min>0 
-  		|| $log_ship_buy_fuel_ship_min>0 
+  	elseif($log_ship_buy_metal_ship_min>0
+  		|| $log_ship_buy_crystal_ship_min>0
+  		|| $log_ship_buy_plastic_ship_min>0
+  		|| $log_ship_buy_fuel_ship_min>0
   		|| $log_ship_buy_food_ship_min>0)
   	{
   		$out_ship_check_message = "<div style=\"color:red;font-weight:bold;\">Die Preise sind zu niedrig!</div>";
-  		
+
   		$objResponse->assign("ship_sell_submit","disabled",true);
   		$objResponse->assign("ship_sell_submit","style.color",'#f00');
-  	}  
+  	}
   	// Unerlaubte Zeichen im Werbetext
   	elseif(check_illegal_signs($val['ship_text'])!="")
   	{
   		$out_ship_check_message = "<div style=\"color:red;font-weight:bold;\">Unerlaubte Zeichen im Werbetext (".check_illegal_signs("><$").")!</div>";
-  		
+
   		$objResponse->assign("ship_sell_submit","disabled",true);
-  		$objResponse->assign("ship_sell_submit","style.color",'#f00');  		
-  	}	  		
+  		$objResponse->assign("ship_sell_submit","style.color",'#f00');
+  	}
   	// Angebot ist OK
   	else
-  	{		
+  	{
   		$out_ship_check_message = "<div style=\"color:#0f0;font-weight:bold;\">OK!</div>";
   		$objResponse->assign("ship_sell_submit","disabled",false);
   		$objResponse->assign("ship_sell_submit","style.color",'#0f0');
-  		
+
   		// XAJAX bestätigt die Korrektheit/Legalität der Eingaben
   		$objResponse->assign("ship_check_submit","value",1);
-  	}  	
-  	
+  	}
+
   	// Bestätigt, dass XAJAX das Formular vor dem Absenden nochmal kontrolliert hat
   	$objResponse->assign("ship_last_update","value", $last_update);
-  	
-  	
-  	
+
+
+
   	// XAJAX ändert Daten
 		$objResponse->assign("ship_min_max_metal","innerHTML", $out_ship_min_max_metal);
 		$objResponse->assign("ship_min_max_crystal","innerHTML", $out_ship_min_max_crystal);
 		$objResponse->assign("ship_min_max_plastic","innerHTML", $out_ship_min_max_plastic);
 		$objResponse->assign("ship_min_max_fuel","innerHTML", $out_ship_min_max_fuel);
-		$objResponse->assign("ship_min_max_food","innerHTML", $out_ship_min_max_food);  	
-  	
+		$objResponse->assign("ship_min_max_food","innerHTML", $out_ship_min_max_food);
+
 		$objResponse->assign("ship_buy_metal","value", nf($val['ship_buy_metal']));
 		$objResponse->assign("ship_buy_crystal","value", nf($val['ship_buy_crystal']));
 		$objResponse->assign("ship_buy_plastic","value", nf($val['ship_buy_plastic']));
 		$objResponse->assign("ship_buy_fuel","value", nf($val['ship_buy_fuel']));
-		$objResponse->assign("ship_buy_food","value", nf($val['ship_buy_food']));	
-  	
-  	$objResponse->assign("ship_count","value", nf($ship_count));	
-  	
+		$objResponse->assign("ship_buy_food","value", nf($val['ship_buy_food']));
+
+  	$objResponse->assign("ship_count","value", nf($ship_count));
+
   	$objResponse->assign("ship_check_message","innerHTML", $out_ship_check_message);
-  	
-  	
+
+
   	$objResponse->assign("marketinfo","innerHTML",ob_get_contents());
 		ob_end_clean();
-  	
+
   	return $objResponse;
 }
 
@@ -1665,13 +1665,13 @@ function calcMarketShipBuy($val)
 		$ship_fuel_total_costs = 0;
 		$ship_food_total_costs = 0;
 		$cnt = 0;
-		
+
 		if(isset($val['ship_market_id']))
 		{
 			foreach ($val['ship_market_id'] as $num => $id)
 			{
 				$cnt++;
-				
+
 				// Summiert Rohstoffe
 				$ship_metal_total_costs += $val['ship_buy_metal'][$id];
 				$ship_crystal_total_costs += $val['ship_buy_crystal'][$id];
@@ -1680,9 +1680,9 @@ function calcMarketShipBuy($val)
 				$ship_food_total_costs += $val['ship_buy_food'][$id];
 			}
 		}
-		
-		
-		
+
+
+
 		//
 		// Endprüfung ob alles OK ist
 		//
@@ -1691,9 +1691,9 @@ function calcMarketShipBuy($val)
 		if($cnt <= 0)
 		{
   		$out_ship_buy_check_message = "<div style=\"color:red;font-weight:bold;\">Es ist kein Angebot ausgewählt!</div>";
-  		
+
   		$objResponse->assign("ship_submit","disabled",true);
-  		$objResponse->assign("ship_submit","style.color",'#f00');			
+  		$objResponse->assign("ship_submit","style.color",'#f00');
 		}
 		// Prüft, ob genug Rohstoffe vorhanden sind
 		elseif($val['res_metal'] < $ship_metal_total_costs
@@ -1703,13 +1703,13 @@ function calcMarketShipBuy($val)
 			|| $val['res_food'] < $ship_food_total_costs)
 		{
   		$out_ship_buy_check_message = "<div style=\"color:red;font-weight:bold;\">Es sind zu wenig Rohstoffe vorhanden!</div>";
-  		
+
   		$objResponse->assign("ship_submit","disabled",true);
-  		$objResponse->assign("ship_submit","style.color",'#f00');		
+  		$objResponse->assign("ship_submit","style.color",'#f00');
 		}
   	// Angebot ist OK
   	else
-  	{		
+  	{
   		$out_ship_buy_check_message = "<div style=\"color:#0f0;font-weight:bold;\">OK!<br>";
   		if($cnt==1)
   		{
@@ -1731,7 +1731,7 @@ function calcMarketShipBuy($val)
 
   	$objResponse->assign("marketinfo","innerHTML",ob_get_contents());
 		ob_end_clean();
-  	
+
   	return $objResponse;
 }
 
@@ -1756,7 +1756,7 @@ function calcMarketAuctionTime($val)
 
   	$objResponse->assign("marketinfo","innerHTML",ob_get_contents());
 		ob_end_clean();
-  	
+
   	return $objResponse;
 }
 
@@ -1784,7 +1784,7 @@ function checkMarketAuctionFormular($val, $last_update=0)
 		$objResponse->assign("auction_buy_fuel","value",1);
 		$objResponse->assign("auction_buy_food","value",1);
 
-	  
+
   	$val['auction_sell_metal'] = min(nf_back($val['auction_sell_metal']),floor($val['res_metal']/MARKET_SELL_TAX));
   	$val['auction_sell_crystal'] = min(nf_back($val['auction_sell_crystal']),floor($val['res_crystal']/MARKET_SELL_TAX));
   	$val['auction_sell_plastic'] = min(nf_back($val['auction_sell_plastic']),floor($val['res_plastic']/MARKET_SELL_TAX));
@@ -1829,79 +1829,79 @@ function checkMarketAuctionFormular($val, $last_update=0)
 			$val['auction_buy_food'] = 0;
 		}
 
-	
+
   	//
   	// End Prüfung ob Angebot OK ist
   	//
-  	
+
   	// Keine Rohstoffe angegeben
-  	if($val['auction_sell_metal']<=0 
-  		&& $val['auction_sell_crystal']<=0  
-  		&& $val['auction_sell_plastic']<=0  
-  		&& $val['auction_sell_fuel']<=0  
+  	if($val['auction_sell_metal']<=0
+  		&& $val['auction_sell_crystal']<=0
+  		&& $val['auction_sell_plastic']<=0
+  		&& $val['auction_sell_fuel']<=0
   		&& $val['auction_sell_food']<=0 )
   	{
   		$out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Gib ein Angebot ein!</div>";
-  		
+
   		$objResponse->assign("auction_sell_submit","disabled",true);
   		$objResponse->assign("auction_sell_submit","style.color",'#f00');
-  	}  	
+  	}
   	// Keinen Preis angegeben
-  	elseif($val['auction_buy_metal']==0 
-  		&& $val['auction_buy_crystal']==0  
-  		&& $val['auction_buy_plastic']==0  
-  		&& $val['auction_buy_fuel']==0  
+  	elseif($val['auction_buy_metal']==0
+  		&& $val['auction_buy_crystal']==0
+  		&& $val['auction_buy_plastic']==0
+  		&& $val['auction_buy_fuel']==0
   		&& $val['auction_buy_food']==0)
   	{
   		$out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Das Angebot muss eine Zahlungsmöglichkeit aufweisen!</div>";
-  		
+
   		$objResponse->assign("auction_sell_submit","disabled",true);
   		$objResponse->assign("auction_sell_submit","style.color",'#f00');
   	}
   	// Zu wenig Rohstoffe auf dem Planeten
   	elseif(floor($val['auction_sell_metal'] * MARKET_SELL_TAX) > $val['res_metal']
-  		|| floor($val['auction_sell_crystal'] * MARKET_SELL_TAX) > $val['res_crystal'] 
-  		|| floor($val['auction_sell_plastic'] * MARKET_SELL_TAX) > $val['res_plastic'] 
+  		|| floor($val['auction_sell_crystal'] * MARKET_SELL_TAX) > $val['res_crystal']
+  		|| floor($val['auction_sell_plastic'] * MARKET_SELL_TAX) > $val['res_plastic']
   		|| floor($val['auction_sell_fuel'] * MARKET_SELL_TAX) > $val['res_fuel']
   		|| floor($val['auction_sell_food'] * MARKET_SELL_TAX) > $val['res_food'])
   	{
   		$out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Es sind zu wenig Rohstoffe vorhanden! (Beachte Verkaufsgebühr)</div>";
-  		
+
   		$objResponse->assign("auction_sell_submit","disabled",true);
   		$objResponse->assign("auction_sell_submit","style.color",'#f00');
-  	} 
+  	}
   	// Unerlaubte Zeichen im Werbetext
   	elseif(check_illegal_signs($val['auction_text'])!="")
   	{
   		$out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Unerlaubte Zeichen im Werbetext (".check_illegal_signs("><$").")!</div>";
-  		
+
   		$objResponse->assign("auction_sell_submit","disabled",true);
-  		$objResponse->assign("auction_sell_submit","style.color",'#f00');  		
-  	}	  	 	
+  		$objResponse->assign("auction_sell_submit","style.color",'#f00');
+  	}
   	// Angebot ist OK
   	else
-  	{		
+  	{
   		// Rechnet gesamt Verkaufsgebühren
   		$sell_tax = $val['auction_sell_metal'] * (MARKET_SELL_TAX - 1)
   							+ $val['auction_sell_crystal'] * (MARKET_SELL_TAX - 1)
   							+ $val['auction_sell_plastic'] * (MARKET_SELL_TAX - 1)
   							+ $val['auction_sell_fuel'] * (MARKET_SELL_TAX - 1)
   							+ $val['auction_sell_food'] * (MARKET_SELL_TAX - 1);
-  		
+
   		$out_auction_check_message = "<div style=\"color:#0f0;font-weight:bold;\">OK!<br>Verkaufsgebühren: ".nf($sell_tax)." t</div>";
   		$objResponse->assign("auction_sell_submit","disabled",false);
   		$objResponse->assign("auction_sell_submit","style.color",'#0f0');
-  		
+
   		$objResponse->assign("auction_check_submit","value",1);
-  	} 	
-	
+  	}
+
 	  // Bestätigt, dass XAJAX das Formular vor dem Absenden nochmal kontrolliert hat
   	$objResponse->assign("auction_last_update","value", $last_update);
-	
-	
+
+
 		// XAJAX ändert Daten
 		$objResponse->assign("auction_check_message","innerHTML", $out_auction_check_message);
-		
+
 		$objResponse->assign("auction_sell_metal","value", nf($val['auction_sell_metal']));
 		$objResponse->assign("auction_sell_crystal","value", nf($val['auction_sell_crystal']));
 		$objResponse->assign("auction_sell_plastic","value", nf($val['auction_sell_plastic']));
@@ -1911,7 +1911,7 @@ function checkMarketAuctionFormular($val, $last_update=0)
 
   	$objResponse->assign("marketinfo","innerHTML",ob_get_contents());
 		ob_end_clean();
-  	
+
   	return $objResponse;
 }
 
@@ -1927,17 +1927,17 @@ function calcMarketAuctionPrice($val, $last_update=0)
 {
 	ob_start();
   	$objResponse = new xajaxResponse();
-		
+
 	// Eingaben wurden noch nicht geprüft
   	$objResponse->assign("auction_show_check_submit","value",0);
-		
+
 	$val['new_buy_0'] = min(nf_back($val['new_buy_0']),floor($val['res_0']));
   	$val['new_buy_1'] = min(nf_back($val['new_buy_1']),floor($val['res_1']));
   	$val['new_buy_2'] = min(nf_back($val['new_buy_2']),floor($val['res_2']));
   	$val['new_buy_3'] = min(nf_back($val['new_buy_3']),floor($val['res_3']));
-  	$val['new_buy_4'] = min(nf_back($val['new_buy_4']),floor($val['res_4']));	
-	
-	dump($val);
+  	$val['new_buy_4'] = min(nf_back($val['new_buy_4']),floor($val['res_4']));
+
+	etoa_dump($val);
 	// Errechnet Rohstoffwert vom Höchstbietenden
 	$buy_price = 	$val['buy_0'] * MARKET_METAL_FACTOR
 					+ $val['buy_1'] * MARKET_CRYSTAL_FACTOR
@@ -1950,7 +1950,7 @@ function calcMarketAuctionPrice($val, $last_update=0)
 						+ $val['new_buy_2'] * MARKET_PLASTIC_FACTOR
 						+ $val['new_buy_3'] * MARKET_FUEL_FACTOR
 						+ $val['new_buy_4'] * MARKET_FOOD_FACTOR;
-						
+
   	//
   	// Errechnet und formatiert Preise
   	//
@@ -1964,7 +1964,7 @@ function calcMarketAuctionPrice($val, $last_update=0)
 					MARKET_PLASTIC_FACTOR,
 					MARKET_FUEL_FACTOR,
 					MARKET_FOOD_FACTOR);
-	
+
 	global $resNames;
 	foreach ($resNames as $rid=>$r)
 	{
@@ -1983,12 +1983,12 @@ function calcMarketAuctionPrice($val, $last_update=0)
 			  			- $val['new_buy_3'] * $factor[3] / $factor[$rid]
 			  			- $val['new_buy_4'] * $factor[4] / $factor[$rid];
 		$logBuyMax[$rid] = ceil($buyMax[$rid]);		//Der Effektivwert, dieser wird nicht angepasst
-		$buyMax[$rid] = floor($buyMax[$rid]);			//Rundet Betrag auf die nächst kleinere Ganzzahl	
+		$buyMax[$rid] = floor($buyMax[$rid]);			//Rundet Betrag auf die nächst kleinere Ganzzahl
 
 
 		// MinBetrag
 		// Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-		$buyMin[$rid] =	
+		$buyMin[$rid] =
 						$val['sell_0'] / $factor[$rid] * $factor[0] * AUCTION_PRICE_FACTOR_MIN
 		  				+ $val['sell_1'] / $factor[$rid] * $factor[1] * AUCTION_PRICE_FACTOR_MIN
 		  				+ $val['sell_2'] / $factor[$rid] * $factor[2] * AUCTION_PRICE_FACTOR_MIN
@@ -2000,14 +2000,14 @@ function calcMarketAuctionPrice($val, $last_update=0)
 		  				- $val['new_buy_1'] * $factor[1] / $factor[$rid]
 		  				- $val['new_buy_2'] * $factor[2] / $factor[$rid]
 		  				- $val['new_buy_3'] * $factor[3] / $factor[$rid]
-		  				- $val['new_buy_4'] * $factor[4] / $factor[$rid];		  										
+		  				- $val['new_buy_4'] * $factor[4] / $factor[$rid];
 		$buyMin[$rid] = ceil($buyMin[$rid]);	//Rundet Betrag auf die nächste höhere Ganzzahl
-		$logBuyMin[$rid] = $buyMin[$rid];		//Der Effektivwert, dieser wird nicht angepasst	
+		$logBuyMin[$rid] = $buyMin[$rid];		//Der Effektivwert, dieser wird nicht angepasst
 
 		if($buyMax[$rid]<=0)
 		{
 			$buyMax[$rid]=0;
-		}  									
+		}
 
 		if($buyMin[$rid]<=0)
 		{
@@ -2017,66 +2017,66 @@ function calcMarketAuctionPrice($val, $last_update=0)
 		// Generiert Link mit dem Min./Max. Betrag. Bei draufklick wird der Wert sofort ins Feld geschrieben
 		if($val['currency_'.$rid]==1)
 		{
-			$outMinMax[$rid]="<a href=\"javascript:;\" onclick=\"document.getElementById('new_buy_".$rid."').value=".($val['new_buy_'.$rid]+$buyMin[$rid]).";xajax_calcMarketAuctionPrice(xajax.getFormValues('auction_show_selector'));\">+".$buyMin[$rid]."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('new_buy_".$rid."').value=".($val['new_buy_'.$rid]+$buyMax[$rid]).";xajax_calcMarketAuctionPrice(xajax.getFormValues('auction_show_selector'));\">+".$buyMax[$rid]."</a>"; 
+			$outMinMax[$rid]="<a href=\"javascript:;\" onclick=\"document.getElementById('new_buy_".$rid."').value=".($val['new_buy_'.$rid]+$buyMin[$rid]).";xajax_calcMarketAuctionPrice(xajax.getFormValues('auction_show_selector'));\">+".$buyMin[$rid]."</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('new_buy_".$rid."').value=".($val['new_buy_'.$rid]+$buyMax[$rid]).";xajax_calcMarketAuctionPrice(xajax.getFormValues('auction_show_selector'));\">+".$buyMax[$rid]."</a>";
 		}
 		else
 		{
 			$outMinMax[$rid] = "-";
 		}
 	}
-	dump($buyMin);
-	dump($buyMax);
-	
-	
+	etoa_dump($buyMin);
+	etoa_dump($buyMax);
+
+
   	//
   	// End Prüfung ob Angebot OK ist
   	//
-  	
+
   	// Keine Rohstoffe angegeben
-  	if($val['new_buy_0'] <= 0 
-  		&& $val['new_buy_1'] <= 0  
-  		&& $val['new_buy_2'] <= 0  
-  		&& $val['new_buy_3'] <= 0  
+  	if($val['new_buy_0'] <= 0
+  		&& $val['new_buy_1'] <= 0
+  		&& $val['new_buy_2'] <= 0
+  		&& $val['new_buy_3'] <= 0
   		&& $val['new_buy_4'] <= 0)
   	{
   		$out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Gib ein Gebot ein!</div>";
-  		
+
   		$objResponse->assign("submit_auction_bid","disabled",true);
   		$objResponse->assign("submit_auction_bid","style.color",'#f00');
-  	} 
+  	}
   	// Zu hohe Preise
-  	elseif($logBuyMax[0]<0 
-  		|| $logBuyMax[1]<0 
-  		|| $logBuyMax[2]<0 
-  		|| $logBuyMax[3]<0 
+  	elseif($logBuyMax[0]<0
+  		|| $logBuyMax[1]<0
+  		|| $logBuyMax[2]<0
+  		|| $logBuyMax[3]<0
   		|| $logBuyMax[4]<0)
   	{
   		$out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Das Gebot ist zu hoch!</div>";
-  		
+
   		$objResponse->assign("submit_auction_bid","disabled",true);
   		$objResponse->assign("submit_auction_bid","style.color",'#f00');
   	}
   	// Zu niedrige Preise
-  	elseif($logBuyMin[0]>0 
-  		|| $logBuyMin[1]>0 
-  		|| $logBuyMin[2]>0 
-  		|| $logBuyMin[3]>0 
+  	elseif($logBuyMin[0]>0
+  		|| $logBuyMin[1]>0
+  		|| $logBuyMin[2]>0
+  		|| $logBuyMin[3]>0
   		|| $logBuyMin[4]>0)
   	{
   		$out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Das Gebot ist zu niedrig!</div>";
-  		
+
   		$objResponse->assign("submit_auction_bid","disabled",true);
   		$objResponse->assign("submit_auction_bid","style.color",'#f00');
-  	} 
+  	}
   	// Zu wenig Rohstoffe auf dem Planeten
   	elseif($val['new_buy_0'] > $val['res_0']
-  		|| $val['new_buy_1'] > $val['res_1'] 
-  		|| $val['new_buy_2'] > $val['res_2'] 
+  		|| $val['new_buy_1'] > $val['res_1']
+  		|| $val['new_buy_2'] > $val['res_2']
   		|| $val['new_buy_3'] > $val['res_3']
   		|| $val['new_buy_4'] > $val['res_4'])
   	{
   		$out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Es sind zu wenig Rohstoffe vorhanden!</div>";
-  		
+
   		$objResponse->assign("submit_auction_bid","disabled",true);
   		$objResponse->assign("submit_auction_bid","style.color",'#f00');
   	}
@@ -2084,45 +2084,45 @@ function calcMarketAuctionPrice($val, $last_update=0)
   	elseif($buy_price*(1+AUCTION_OVERBID) >= $new_buy_price)
   	{
   		$out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Das Gebot muss mindestens ".AUCTION_OVERBID."% höher sein als das Gebot des Höchstbietenden!</div>";
-  		
+
   		$objResponse->assign("submit_auction_bid","disabled",true);
-  		$objResponse->assign("submit_auction_bid","style.color",'#f00');  		
-  	}	
-  	// Zeit ist abgelaufen 
+  		$objResponse->assign("submit_auction_bid","style.color",'#f00');
+  	}
+  	// Zeit ist abgelaufen
   	elseif($val['auction_rest_time'] <= 0)
   	{
   		$out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Auktion ist beendet!</div>";
-  		
+
   		$objResponse->assign("submit_auction_bid","disabled",true);
-  		$objResponse->assign("submit_auction_bid","style.color",'#f00');  		
-  	}   	
+  		$objResponse->assign("submit_auction_bid","style.color",'#f00');
+  	}
   	// Angebot ist OK
   	else
-  	{		
+  	{
   		$out_auction_check_message = "<div style=\"color:#0f0;font-weight:bold;\">OK!</div>";
   		$objResponse->assign("submit_auction_bid","disabled",false);
   		$objResponse->assign("submit_auction_bid","style.color",'#0f0');
-  		
+
   		$objResponse->assign("auction_show_check_submit","value",1);
-  	}  	 
-  	  	
-  	
+  	}
+
+
   	// Bestätigt, dass XAJAX das Formular vor dem Absenden nochmal kontrolliert hat
-  	$objResponse->assign("auction_show_last_update","value", $last_update);  	
-  	 
-	// XAJAX ändert Daten 	
+  	$objResponse->assign("auction_show_last_update","value", $last_update);
+
+	// XAJAX ändert Daten
 	foreach($resNames as $rid=>$r)
 	{
 		$objResponse->assign("auction_min_max_".$rid,"innerHTML", $outMinMax[$rid]);
 		$objResponse->assign("new_buy_".$rid,"value", nf($val['new_buy_'.$rid]));
-	}	
-	
-	
+	}
+
+
 	$objResponse->assign("auction_check_message","innerHTML", $out_auction_check_message);
 
   	$objResponse->assign("marketinfo","innerHTML",ob_get_contents());
 	ob_end_clean();
-  	
+
   	return $objResponse;
 }
 
@@ -2142,12 +2142,12 @@ function MarketSearchFormularShow($val)
 		//
 		// Zeigt die verschiedenen Suchmasken an
 		//
-		
-		
+
+
 		//
 		// Rohstoffhandel
-		// 
-		
+		//
+
 		if($val['search_cat']=="ressource")
 		{
 			$out_search_content = "
@@ -2229,15 +2229,15 @@ function MarketSearchFormularShow($val)
 					</td>
 				</tr>					
 			</table>";
-			
+
 			$out_search_check_message = "<div style=\"color:red;font-weight:bold;\">Spezifiziere deine Suche</div>";
 		}
-		
-		
+
+
 		//
 		// Schiffshandel
 		//
-		
+
 		elseif($val['search_cat']=="ship")
 		{
 			$out_search_content = "
@@ -2302,15 +2302,15 @@ function MarketSearchFormularShow($val)
 					</td>
 				</tr>					
 			</table>";
-			
+
 			$out_search_check_message = "<div style=\"color:red;font-weight:bold;\">Spezifiziere deine Suche</div>";
 		}
-		
-		
+
+
 		//
 		// Auktionen
-		//		
-		
+		//
+
 		elseif($val['search_cat']=="auction")
 		{
 			$out_search_content = "
@@ -2392,33 +2392,33 @@ function MarketSearchFormularShow($val)
 					</td>
 				</tr>					
 			</table>";
-			
-			
+
+
 			$out_search_check_message = "<div style=\"color:red;font-weight:bold;\">Spezifiziere deine Suche</div>";
 		}
-		
-		
+
+
 		//
 		// Keine Kategorie gewählt
 		//
-		
+
 		else
 		{
 			$out_search_content = "&nbsp;";
-			$out_search_check_message = "<div style=\"color:red;font-weight:bold;\">Wähle eine Kategorie!</div>";					 			
+			$out_search_check_message = "<div style=\"color:red;font-weight:bold;\">Wähle eine Kategorie!</div>";
 		}
-			
-			
+
+
 		// XAJAX ändert Daten
 		$objResponse->assign("search_check_message","innerHTML", $out_search_check_message);
 		$objResponse->assign("search_submit","disabled",true);
-  	$objResponse->assign("search_submit","style.color",'#f00');				
+  	$objResponse->assign("search_submit","style.color",'#f00');
 		$objResponse->assign("search_content","innerHTML",$out_search_content);
 
 
   	$objResponse->assign("marketinfo","innerHTML",ob_get_contents());
 		ob_end_clean();
-  	
+
   	return $objResponse;
 }
 
@@ -2433,9 +2433,9 @@ function MarketSearchFormularShow($val)
 function checkMarketSearchFormular($val)
 {
 		global $conf, $s, $cu;
-		
-		
-		
+
+
+
 		ob_start();
   	$objResponse = new xajaxResponse();
 
@@ -2449,8 +2449,8 @@ function checkMarketSearchFormular($val)
 			$out_add_nick = "";
 			$out_add_alliance = "";
 			$user_id = 0;
-			
-			
+
+
 			// Prüft Nick Eingaben
 			if($val['user_nick']!="")
 			{
@@ -2472,14 +2472,14 @@ function checkMarketSearchFormular($val)
 					$objResponse->assign("check_user_nick","innerHTML", "<div style=\"color:red;font-weight:bold;\">User nicht gefunden!</div>");
 				}
 			}
-			
+
 			// Angebote von einem bestimmten User
 			if($user_id != 0)
 			{
 				$sql_add .= " AND user_id='".$user_id."'";
 				$out_add_nick = " von ".$val['user_nick']."";
 			}
-			
+
 			// Kaufbare Angebote suchen
 			if(isset($val['search_ress_buyable']) && $val['search_ress_buyable']==1)
 			{
@@ -2489,7 +2489,7 @@ function checkMarketSearchFormular($val)
 										AND buy_fuel<='".$val['res_fuel']."'
 										AND buy_food<='".$val['res_food']."'";
 			}
-	
+
 			// Für Allianzmitglieder
 			if(isset($val['search_ress_for_alliance']) && $val['search_ress_for_alliance']==1)
 			{
@@ -2501,7 +2501,7 @@ function checkMarketSearchFormular($val)
 				$sql_add .= " AND (ressource_for_alliance='0' OR ressource_for_alliance='".$cu->allianceId."')";
 			}
 
-			
+
 			// Preisklasse
 			if($val['search_ress_price_class']>0)
 			{
@@ -2514,18 +2514,18 @@ function checkMarketSearchFormular($val)
 				{
 					$sql_add .= " AND (buy_metal+buy_crystal+buy_plastic+buy_fuel+buy_food)>=100000
 												AND (buy_metal+buy_crystal+buy_plastic+buy_fuel+buy_food)<=1000000";
-				}	
+				}
 				elseif($val['search_ress_price_class']==3)
 				{
 					$sql_add .= " AND (buy_metal+buy_crystal+buy_plastic+buy_fuel+buy_food)>=1000000
 												AND (buy_metal+buy_crystal+buy_plastic+buy_fuel+buy_food)<=10000000";
-				}	
+				}
 				elseif($val['search_ress_price_class']==4)
 				{
 					$sql_add .= " AND (buy_metal+buy_crystal+buy_plastic+buy_fuel+buy_food)>=10000000";
-				}												
+				}
 			}
-			
+
 			// Rohtoffe im Angebot
 			if(isset($val['search_ress_sell_metal']) && $val['search_ress_sell_metal']==1)
 			{
@@ -2534,20 +2534,20 @@ function checkMarketSearchFormular($val)
 			if(isset($val['search_ress_sell_crystal']) && $val['search_ress_sell_crystal']==1)
 			{
 				$sql_add .= " AND sell_crystal>0";
-			}	
+			}
 			if(isset($val['search_ress_sell_plastic']) && $val['search_ress_sell_plastic']==1)
 			{
 				$sql_add .= " AND sell_plastic>0";
-			}	
+			}
 			if(isset($val['search_ress_sell_fuel']) && $val['search_ress_sell_fuel']==1)
 			{
 				$sql_add .= " AND sell_fuel>0";
-			}	
+			}
 			if(isset($val['search_ress_sell_food']) && $val['search_ress_sell_food']==1)
 			{
 				$sql_add .= " AND sell_food>0";
-			}			
-			
+			}
+
 			// Rohstoffe im Preis
 			if(isset($val['search_ress_buy_metal']) && $val['search_ress_buy_metal']==1)
 			{
@@ -2556,25 +2556,25 @@ function checkMarketSearchFormular($val)
 			if(isset($val['search_ress_buy_crystal']) && $val['search_ress_buy_crystal']==1)
 			{
 				$sql_add .= " AND buy_crystal>0";
-			}	
+			}
 			if(isset($val['search_ress_buy_plastic']) && $val['search_ress_buy_plastic']==1)
 			{
 				$sql_add .= " AND buy_plastic>0";
-			}	
+			}
 			if(isset($val['search_ress_buy_fuel']) && $val['search_ress_buy_fuel']==1)
 			{
 				$sql_add .= " AND buy_fuel>0";
-			}	
+			}
 			if(isset($val['search_ress_buy_food']) && $val['search_ress_buy_food']==1)
 			{
 				$sql_add .= " AND buy_food>0";
-			}				
-			
-			
+			}
+
+
 			//
 			// SQL-Abfrage
 			//
-			
+
 			$res = dbquery("
 			SELECT
 				ressource_market_id
@@ -2585,38 +2585,38 @@ function checkMarketSearchFormular($val)
         AND user_id!='".$s['user_id']."'
         ".$sql_add.";");
 			$cnt = mysql_num_rows($res);
-      
-      
+
+
       //
       // End Prüfung
       //
-      
+
 			// Keine Angebote gefunden
 			if($cnt <= 0)
 			{
 				$out_search_check_message = "<div style=\"color:red;font-weight:bold;\">Keine Angebote gefunden</div>";
-				
+
 	  		$objResponse->assign("search_submit","disabled",true);
-	  		$objResponse->assign("search_submit","style.color",'#f00'); 			
-			}  	
+	  		$objResponse->assign("search_submit","style.color",'#f00');
+			}
 	  	// Angebot ist OK
 	  	else
-	  	{		
+	  	{
 	  		$out_search_check_message = "<div style=\"color:#0f0;font-weight:bold;\">OK!<br>".$cnt."".$out_add_alliance." Angebot(e)".$out_add_nick." gefunden!</div>";
-	  		
+
 	  		$objResponse->assign("search_submit","disabled",false);
-	  		$objResponse->assign("search_submit","style.color",'#0f0');			
+	  		$objResponse->assign("search_submit","style.color",'#0f0');
 			}
-	
+
 			// XAJAX ändert Daten
 			$objResponse->assign("search_check_message","innerHTML", $out_search_check_message);
-			$objResponse->assign("ressource_sql_add","value", $sql_add);      
-      
+			$objResponse->assign("ressource_sql_add","value", $sql_add);
+
 		}
-		
-		
-		
-		
+
+
+
+
 		//
 		// Schiffe
 		//
@@ -2627,8 +2627,8 @@ function checkMarketSearchFormular($val)
 			$out_add_nick = "";
 			$out_add_alliance = "";
 			$user_id = 0;
-			
-			
+
+
 			// Prüft Nick Eingaben
 			if(isset($val['user_nick']) && $val['user_nick']!="")
 			{
@@ -2650,14 +2650,14 @@ function checkMarketSearchFormular($val)
 					$objResponse->assign("check_user_nick","innerHTML", "<div style=\"color:red;font-weight:bold;\">User nicht gefunden!</div>");
 				}
 			}
-			
+
 			// Angebote von einem bestimmten User
 			if($user_id != 0)
 			{
 				$sql_add .= " AND user_id='".$user_id."'";
 				$out_add_nick = " von ".$val['user_nick']."";
 			}
-			
+
 			// Kaufbare Angebote suchen
 			if(isset($val['search_ship_buyable']) && $val['search_ship_buyable']==1)
 			{
@@ -2667,7 +2667,7 @@ function checkMarketSearchFormular($val)
 										AND ship_costs_fuel<='".$val['res_fuel']."'
 										AND ship_costs_food<='".$val['res_food']."'";
 			}
-	
+
 			// Für Allianzmitglieder
 			if(isset($val['search_ship_for_alliance']) && $val['search_ship_for_alliance']==1)
 			{
@@ -2679,13 +2679,13 @@ function checkMarketSearchFormular($val)
 				$sql_add .= " AND (ship_for_alliance='0' OR ship_for_alliance='".$cu->allianceId."')";
 			}
 
-			
+
 			// Schiff
 			if($val['search_ship_ship_list']!=0)
 			{
 				$sql_add .= " AND ship_id='".$val['search_ship_ship_list']."'";
 			}
-			
+
 			// Rohstoffe im Preis
 			if(isset($val['search_ship_buy_metal']) && $val['search_ship_buy_metal']==1)
 			{
@@ -2694,25 +2694,25 @@ function checkMarketSearchFormular($val)
 			if(isset($val['search_ship_buy_crystal']) && $val['search_ship_buy_crystal']==1)
 			{
 				$sql_add .= " AND ship_costs_crystal>0";
-			}	
+			}
 			if(isset($val['search_ship_buy_plastic']) && $val['search_ship_buy_plastic']==1)
 			{
 				$sql_add .= " AND ship_costs_plastic>0";
-			}	
+			}
 			if(isset($val['search_ship_buy_fuel']) && $val['search_ship_buy_fuel']==1)
 			{
 				$sql_add .= " AND ship_costs_fuel>0";
-			}	
+			}
 			if(isset($val['search_ship_buy_food']) && $val['search_ship_buy_food']==1)
 			{
 				$sql_add .= " AND ship_costs_food>0";
-			}				
-			
-			
+			}
+
+
 			//
 			// SQL-Abfrage
 			//
-			
+
 			$res = dbquery("
 			SELECT
 				ship_market_id
@@ -2723,34 +2723,34 @@ function checkMarketSearchFormular($val)
         AND user_id!='".$s['user_id']."'
         ".$sql_add.";");
 			$cnt = mysql_num_rows($res);
-      
-      
+
+
       //
       // End Prüfung
       //
-      
+
 			// Keine Angebote gefunden
 			if($cnt <= 0)
 			{
 				$out_search_check_message = "<div style=\"color:red;font-weight:bold;\">Keine Angebote gefunden</div>";
-				
+
 	  		$objResponse->assign("search_submit","disabled",true);
-	  		$objResponse->assign("search_submit","style.color",'#f00'); 			
-			}  	
+	  		$objResponse->assign("search_submit","style.color",'#f00');
+			}
 	  	// Angebot ist OK
 	  	else
-	  	{		
+	  	{
 	  		$out_search_check_message = "<div style=\"color:#0f0;font-weight:bold;\">OK!<br>".$cnt."".$out_add_alliance." Angebot(e)".$out_add_nick." gefunden!</div>";
-	  		
+
 	  		$objResponse->assign("search_submit","disabled",false);
-	  		$objResponse->assign("search_submit","style.color",'#0f0');			
+	  		$objResponse->assign("search_submit","style.color",'#0f0');
 			}
-	
+
 			// XAJAX ändert Daten
 			$objResponse->assign("search_check_message","innerHTML", $out_search_check_message);
-			$objResponse->assign("ship_sql_add","value", $sql_add);      
-      
-		}	
+			$objResponse->assign("ship_sql_add","value", $sql_add);
+
+		}
 
 
 
@@ -2764,8 +2764,8 @@ function checkMarketSearchFormular($val)
 			$out_add_nick = "";
 			$user_id = 0;
 			$out_add_alliance = "";
-			
-			
+
+
 			// Prüft Nick Eingaben
 			if(isset($val['user_nick']) && $val['user_nick']!="")
 			{
@@ -2787,14 +2787,14 @@ function checkMarketSearchFormular($val)
 					$objResponse->assign("check_user_nick","innerHTML", "<div style=\"color:red;font-weight:bold;\">User nicht gefunden!</div>");
 				}
 			}
-			
+
 			// Angebote von einem bestimmten User
 			if($user_id != 0)
 			{
 				$sql_add .= " AND auction_user_id='".$user_id."'";
 				$out_add_nick = " von ".$val['user_nick']."";
 			}
-			
+
 			// Kaufbare Angebote suchen
 			if(isset($val['search_auction_auction_buyable']) && $val['search_auction_auction_buyable']==1)
 			{
@@ -2804,14 +2804,14 @@ function checkMarketSearchFormular($val)
 										AND auction_buy_fuel<='".$val['res_fuel']."'
 										AND auction_buy_food<='".$val['res_food']."'";
 			}
-			
+
 			// Abgelaufene Angebote
 			if(isset($val['search_auction_end']) && $val['search_auction_end']==1)
 			{
 				$sql_add .= " AND auction_buyable='1'";
 			}
 
-			
+
 			// Preisklasse
 			if($val['search_auction_price_class']>0)
 			{
@@ -2824,18 +2824,18 @@ function checkMarketSearchFormular($val)
 				{
 					$sql_add .= " AND (auction_buy_metal+auction_buy_crystal+auction_buy_plastic+auction_buy_fuel+auction_buy_food)>=100000
 												AND (auction_buy_metal+auction_buy_crystal+auction_buy_plastic+auction_buy_fuel+auction_buy_food)<=1000000";
-				}	
+				}
 				elseif($val['search_auction_price_class']==3)
 				{
 					$sql_add .= " AND (auction_buy_metal+auction_buy_crystal+auction_buy_plastic+auction_buy_fuel+auction_buy_food)>=1000000
 												AND (auction_buy_metal+auction_buy_crystal+auction_buy_plastic+auction_buy_fuel+auction_buy_food)<=10000000";
-				}	
+				}
 				elseif($val['search_auction_price_class']==4)
 				{
 					$sql_add .= " AND (auction_buy_metal+auction_buy_crystal+auction_buy_plastic+auction_buy_fuel+auction_buy_food)>=10000000";
-				}												
+				}
 			}
-			
+
 			// Rohtoffe im Angebot
 			if(isset($val['search_auction_sell_metal']) && $val['search_auction_sell_metal']==1)
 			{
@@ -2844,20 +2844,20 @@ function checkMarketSearchFormular($val)
 			if(isset($val['search_auction_sell_crystal']) && $val['search_auction_sell_crystal']==1)
 			{
 				$sql_add .= " AND auction_sell_crystal>0";
-			}	
+			}
 			if(isset($val['search_auction_sell_plastic']) && $val['search_auction_sell_plastic']==1)
 			{
 				$sql_add .= " AND auction_sell_plastic>0";
-			}	
+			}
 			if(isset($val['search_auction_sell_fuel']) && $val['search_auction_sell_fuel']==1)
 			{
 				$sql_add .= " AND auction_sell_fuel>0";
-			}	
+			}
 			if(isset($val['search_auction_sell_food']) && $val['search_auction_sell_food']==1)
 			{
 				$sql_add .= " AND auction_sell_food>0";
-			}			
-			
+			}
+
 			// Rohstoffe im Preis
 			if(isset($val['search_auction_buy_metal']) && $val['search_auction_buy_metal']==1)
 			{
@@ -2866,25 +2866,25 @@ function checkMarketSearchFormular($val)
 			if(isset($val['search_auction_buy_crystal']) && $val['search_auction_buy_crystal']==1)
 			{
 				$sql_add .= " AND auction_buy_crystal>0";
-			}	
+			}
 			if(isset($val['search_auction_buy_plastic']) && $val['search_auction_buy_plastic']==1)
 			{
 				$sql_add .= " AND auction_buy_plastic>0";
-			}	
+			}
 			if(isset($val['search_auction_buy_fuel']) && $val['search_auction_buy_fuel']==1)
 			{
 				$sql_add .= " AND auction_buy_fuel>0";
-			}	
+			}
 			if(isset($val['search_auction_buy_food']) && $val['search_auction_buy_food']==1)
 			{
 				$sql_add .= " AND auction_buy_food>0";
-			}				
-			
-			
+			}
+
+
 			//
 			// SQL-Abfrage
 			//
-			
+
 			$res = dbquery("
 			SELECT
 				auction_market_id
@@ -2894,40 +2894,40 @@ function checkMarketSearchFormular($val)
 				auction_user_id!='".$s['user_id']."'
         ".$sql_add.";");
 			$cnt = mysql_num_rows($res);
-      
-      
+
+
       //
       // End Prüfung
       //
-      
+
 			// Keine Angebote gefunden
 			if($cnt <= 0)
 			{
 				$out_search_check_message = "<div style=\"color:red;font-weight:bold;\">Keine Angebote gefunden</div>";
-				
+
 	  		$objResponse->assign("search_submit","disabled",true);
-	  		$objResponse->assign("search_submit","style.color",'#f00'); 			
-			}  	
+	  		$objResponse->assign("search_submit","style.color",'#f00');
+			}
 	  	// Angebot ist OK
 	  	else
-	  	{		
+	  	{
 	  		$out_search_check_message = "<div style=\"color:#0f0;font-weight:bold;\">OK!<br>".$cnt."".$out_add_alliance." Angebot(e)".$out_add_nick." gefunden!</div>";
-	  		
+
 	  		$objResponse->assign("search_submit","disabled",false);
-	  		$objResponse->assign("search_submit","style.color",'#0f0');			
+	  		$objResponse->assign("search_submit","style.color",'#0f0');
 			}
-	
+
 			// XAJAX ändert Daten
 			$objResponse->assign("search_check_message","innerHTML", $out_search_check_message);
-			$objResponse->assign("auction_sql_add","value", $sql_add);      
-      
+			$objResponse->assign("auction_sql_add","value", $sql_add);
+
 		}
 
 
 
   	$objResponse->assign("marketinfo","innerHTML",ob_get_contents());
 		ob_end_clean();
-  	
+
   	return $objResponse;
 }
 

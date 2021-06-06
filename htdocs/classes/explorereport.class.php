@@ -47,7 +47,7 @@ class ExploreReport extends Report
 				echo "Eine Flotte vom Planeten <b>".$start->detailLink()."</b> hat das Ziel <b>".$target->detailLink()."</b> um <b>".df($this->timestamp)."</b> erkundet.";
 				break;
 			default:
-				dump($this);
+				etoa_dump($this);
 		}
 
 		return ob_get_clean();

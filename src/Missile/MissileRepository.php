@@ -16,7 +16,7 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
                 'userId' => $userId,
                 'entityId' => $entityId,
                 'missileId' => $missileId,
-            ])->execute()->fetchColumn();
+            ])->execute()->fetchOne();
 
         if ($hasMissiles) {
             $this->createQueryBuilder()

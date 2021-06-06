@@ -17,7 +17,7 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 	if (Config::getInstance()->get("alliance_allow")) {
 		if ($cu->allianceId == 0)
 		{
@@ -111,7 +111,7 @@
 						echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Weiter\" />";
 						$finish = true;
 
-						$app['dispatcher']->dispatch(\EtoA\Alliance\Event\AllianceCreate::CREATE_SUCCESS, new \EtoA\Alliance\Event\AllianceCreate());
+						$app['dispatcher']->dispatch(new \EtoA\Alliance\Event\AllianceCreate(), \EtoA\Alliance\Event\AllianceCreate::CREATE_SUCCESS);
 					}
 					else
 					{
@@ -293,7 +293,7 @@
 
 		}
 	}
-	else 
-		echo "Allianzen sind zur Zeit deaktiviert.";	
+	else
+		echo "Allianzen sind zur Zeit deaktiviert.";
 
 ?>

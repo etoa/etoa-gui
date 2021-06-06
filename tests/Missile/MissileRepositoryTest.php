@@ -25,7 +25,7 @@ class MissileRepositoryTest extends AbstractDbTestCase
         $this->repository->addMissile($missileId, 1, $userId, $entityId);
         $this->repository->addMissile($missileId, 29, $userId, $entityId);
 
-        $missiles = $this->connection->createQueryBuilder()->select('d.*')->from('missilelist', 'd')->execute()->fetchAll();
+        $missiles = $this->connection->createQueryBuilder()->select('d.*')->from('missilelist', 'd')->execute()->fetchAllAssociative();
 
         $this->assertCount(1, $missiles);
         $missile = $missiles[0];

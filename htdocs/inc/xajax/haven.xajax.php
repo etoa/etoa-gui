@@ -1315,7 +1315,7 @@
 						if ($app['etoa.quests.enabled']) {
 							$app['cubicle.quests.initializer']->initialize($fleet->ownerId());
 						}
-						$app['dispatcher']->dispatch(\EtoA\Fleet\Event\FleetLaunch::LAUNCH_SUCCESS, new \EtoA\Fleet\Event\FleetLaunch());
+						$app['dispatcher']->dispatch(new \EtoA\Fleet\Event\FleetLaunch(), \EtoA\Fleet\Event\FleetLaunch::LAUNCH_SUCCESS);
 					}
 					else
 					{

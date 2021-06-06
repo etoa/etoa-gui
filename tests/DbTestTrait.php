@@ -17,17 +17,17 @@ trait DbTestTrait
 
     protected function tearDown(): void
     {
-        $this->connection->query('TRUNCATE planets');
-        $this->connection->query('TRUNCATE techlist');
-        $this->connection->query('TRUNCATE buildlist');
-        $this->connection->query('TRUNCATE shiplist');
-        $this->connection->query('TRUNCATE deflist');
-        $this->connection->query('TRUNCATE missilelist');
-        $this->connection->query('TRUNCATE quest_tasks');
-        $this->connection->query('TRUNCATE quest_log');
-        $this->connection->query('TRUNCATE tutorial_user_progress');
-        $this->connection->query('TRUNCATE user_sessions');
-        $this->connection->query('TRUNCATE users');
-        $this->connection->query('DELETE FROM quests');
+        $this->connection->executeQuery('TRUNCATE planets');
+        $this->connection->executeQuery('TRUNCATE techlist');
+        $this->connection->executeQuery('TRUNCATE buildlist');
+        $this->connection->executeQuery('TRUNCATE shiplist');
+        $this->connection->executeQuery('TRUNCATE deflist');
+        $this->connection->executeQuery('TRUNCATE missilelist');
+        $this->connection->executeQuery('TRUNCATE quest_tasks');
+        $this->connection->executeQuery('TRUNCATE quest_log');
+        $this->connection->executeQuery('TRUNCATE tutorial_user_progress');
+        $this->connection->executeQuery('TRUNCATE user_sessions');
+        $this->connection->executeQuery('TRUNCATE users');
+        $this->connection->executeQuery('DELETE FROM quests');
     }
 }

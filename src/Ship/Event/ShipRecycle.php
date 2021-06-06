@@ -2,7 +2,7 @@
 
 namespace EtoA\Ship\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class ShipRecycle extends Event
 {

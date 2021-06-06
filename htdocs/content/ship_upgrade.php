@@ -51,7 +51,7 @@
 
         success_msg("Upgrade erfolgreich duchgeführt!");
 
-        $app['dispatcher']->dispatch(\EtoA\Ship\Event\ShipUpgrade::UPGRADE_SUCCESS, new \EtoA\Ship\Event\ShipUpgrade());
+        $app['dispatcher']->dispatch(new \EtoA\Ship\Event\ShipUpgrade(), \EtoA\Ship\Event\ShipUpgrade::UPGRADE_SUCCESS);
     }
 
 

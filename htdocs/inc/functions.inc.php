@@ -2350,7 +2350,7 @@ function imagecreatefromfile($path, $user_functions = false)
 	* Prints an array
 	* For debug purposes only
 	*/
-	function dump($val,$return=0)
+	function etoa_dump($val, $return=0)
 	{
 		ob_start();
 		print_r($val);
@@ -2676,7 +2676,7 @@ function imagecreatefromfile($path, $user_functions = false)
 	/**
 	 * Remove BBCode
 	 */
-	function stripBBCode($text_to_search) 
+	function stripBBCode($text_to_search)
 	{
 		$pattern = '|[[\\/\\!]*?[^\\[\\]]*?]|si';
 		$replace = '';

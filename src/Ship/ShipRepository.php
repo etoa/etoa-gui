@@ -18,7 +18,7 @@ class ShipRepository extends AbstractRepository
                 'shipId' => $shipId,
                 'userId' => $userId,
                 'entityId' => $entityId,
-            ])->execute()->fetchColumn();
+            ])->execute()->fetchOne();
 
         if ($hasShips) {
             $this->createQueryBuilder()

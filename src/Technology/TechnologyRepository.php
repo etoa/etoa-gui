@@ -8,7 +8,7 @@ class TechnologyRepository extends AbstractRepository
 {
     public function getTechnologyLevel(int $userId, int $technologyId): int
     {
-        return (int)$this->createQueryBuilder()
+        return (int) $this->createQueryBuilder()
             ->select('techlist_current_level')
             ->from('techlist')
             ->where('techlist_tech_id = :technologyId')
@@ -17,6 +17,6 @@ class TechnologyRepository extends AbstractRepository
                 'technologyId' => $technologyId,
                 'userId' => $userId,
             ])->execute()
-            ->fetchColumn();
+            ->fetchOne();
     }
 }

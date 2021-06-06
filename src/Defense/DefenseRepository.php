@@ -16,7 +16,7 @@ class DefenseRepository extends \EtoA\Core\AbstractRepository
                 'userId' => $userId,
                 'entityId' => $entityId,
                 'defenseId' => $defenseId,
-            ])->execute()->fetchColumn();
+            ])->execute()->fetchOne();
 
         if ($hasDefense) {
             $this->createQueryBuilder()
@@ -51,7 +51,7 @@ class DefenseRepository extends \EtoA\Core\AbstractRepository
 
     public function getDefenseCount(int $userId, int $defenseId): int
     {
-        return (int)$this->createQueryBuilder()
+        return (int) $this->createQueryBuilder()
             ->select('SUM(deflist_count)')
             ->from('deflist')
             ->where('deflist_user_id = :userId')
@@ -60,6 +60,6 @@ class DefenseRepository extends \EtoA\Core\AbstractRepository
                 'userId' => $userId,
                 'defenseId' => $defenseId,
             ])->execute()
-            ->fetchColumn();
+            ->fetchOne();
     }
 }
