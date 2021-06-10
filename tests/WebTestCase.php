@@ -40,6 +40,8 @@ abstract class WebTestCase extends TestCase
             throw new \LogicException('Component "symfony/browser-kit" is required by WebTestCase.'.PHP_EOL.'Run composer require symfony/browser-kit');
         }
 
+        $_SERVER['REMOTE_ADDR'] = $server['REMOTE_ADDR'] = '127.0.0.1';
+
         return new Client($this->app, $server);
     }
 

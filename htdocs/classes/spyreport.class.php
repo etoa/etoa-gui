@@ -244,7 +244,7 @@ class SpyReport extends Report
 				break;
 
 			default:
-				dump($this);
+				etoa_dump($this);
 		}
 
 		return ob_get_clean();

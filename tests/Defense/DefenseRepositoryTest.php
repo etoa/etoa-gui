@@ -25,7 +25,7 @@ class DefenseRepositoryTest extends AbstractDbTestCase
         $this->repository->addDefense($defenseId, 1, $userId, $entityId);
         $this->repository->addDefense($defenseId, 29, $userId, $entityId);
 
-        $defenses = $this->connection->createQueryBuilder()->select('d.*')->from('deflist', 'd')->execute()->fetchAll();
+        $defenses = $this->connection->createQueryBuilder()->select('d.*')->from('deflist', 'd')->execute()->fetchAllAssociative();
 
         $this->assertCount(1, $defenses);
         $defense = $defenses[0];

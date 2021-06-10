@@ -13,7 +13,7 @@ class TutorialUserProgressRepository extends AbstractRepository
 
     public function hasReadTutorial(int $userId, int $tutorialId): bool
     {
-        return (bool)$this->createQueryBuilder()
+        return (bool) $this->createQueryBuilder()
             ->select('tup_closed')
             ->from('tutorial_user_progress')
             ->where('tup_user_id = :userId')
@@ -23,7 +23,7 @@ class TutorialUserProgressRepository extends AbstractRepository
                 'tutorialId' => $tutorialId,
             ])
             ->execute()
-            ->fetchColumn();
+            ->fetchOne();
     }
 
     public function closeTutorial(int $userId, int $tutorial): void

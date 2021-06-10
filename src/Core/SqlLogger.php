@@ -32,6 +32,7 @@ class SqlLogger implements \Doctrine\DBAL\Logging\SQLLogger
             // normalize recursively
             if (is_array($param)) {
                 $params[$index] = $this->normalizeParams($param);
+
                 continue;
             }
             if (!is_string($params[$index])) {
@@ -40,11 +41,13 @@ class SqlLogger implements \Doctrine\DBAL\Logging\SQLLogger
             // non utf-8 strings break json encoding
             if (!preg_match('//u', $params[$index])) {
                 $params[$index] = self::BINARY_DATA_VALUE;
+
                 continue;
             }
             // detect if the too long string must be shorten
             if (self::MAX_STRING_LENGTH < mb_strlen($params[$index], 'UTF-8')) {
                 $params[$index] = mb_substr($params[$index], 0, self::MAX_STRING_LENGTH - 6, 'UTF-8').' [...]';
+
                 continue;
             }
         }

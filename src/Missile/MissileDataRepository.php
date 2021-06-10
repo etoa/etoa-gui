@@ -27,7 +27,7 @@ class MissileDataRepository extends AbstractRepository
                 ->addSelect()
                 ->from('missiles')
                 ->execute()
-                ->fetchAll(\PDO::FETCH_KEY_PAIR);
+                ->fetchAllKeyValue();
 
             $this->cache->save(self::MISSILES_NAMES, $names);
         }

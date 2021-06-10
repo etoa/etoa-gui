@@ -211,7 +211,7 @@ abstract class Report
 			return mysql_insert_id();
 		}
 		error_msg("Kein Report-Besitzer angegeben!");
-		dump($data);
+		etoa_dump($data);
 		return null;
 	}
 

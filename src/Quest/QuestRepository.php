@@ -26,7 +26,7 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
             ->setParameters([
                 'userId' => $userId,
                 'questId' => $questId,
-            ])->execute()->fetchAll(\PDO::FETCH_ASSOC);
+            ])->execute()->fetchAllAssociative();
 
         if (count($result) === 0) {
             throw new QuestNotFoundException();
@@ -43,8 +43,8 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
         $qb = $this->createQueryBuilder();
 
         $quests = [];
-        $result = $qb
-            ->select('q.id')
+        $rows = $qb
+            ->select('q.id as rowId')
             ->addSelect('q.*')
             ->addSelect('t.*')
             ->from('quests', 'q')
@@ -55,7 +55,12 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
                 'userId' => $userId,
             ])
             ->orderBy('q.id')
-            ->execute()->fetchAll(\PDO::FETCH_ASSOC | \PDO::FETCH_GROUP);
+            ->execute()->fetchAllAssociative();
+
+        $result = [];
+        foreach ($rows as $row) {
+            $result[$row['rowId']][] = $row;
+        }
 
         foreach ($result as $questId => $questData) {
             $quests[] = $this->buildQuest($questId, $questData);
@@ -179,7 +184,7 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
         return $qb
             ->setParameters($parameters)
             ->orderBy('q.id')
-            ->execute()->fetchAll(\PDO::FETCH_ASSOC);
+            ->execute()->fetchAllAssociative();
     }
 
     public function getQuest(int $questId): ?array
@@ -193,7 +198,7 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
             ->innerJoin('q', 'users', 'u', 'u.user_id=q.user_id')
             ->where('q.id = :questId')
             ->setParameter('questId', $questId)
-            ->execute()->fetchAll(\PDO::FETCH_ASSOC);
+            ->execute()->fetchAllAssociative();
 
         if (count($result) === 0) {
             return null;

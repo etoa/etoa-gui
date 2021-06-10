@@ -106,7 +106,7 @@
 							BackendMessage::updatePlanet($pid);
 						}
 						success_msg('Der gewählte Spezialist wurde eingestellt!');
-                        $app['dispatcher']->dispatch(\EtoA\Specialist\Event\SpecialistHire::HIRE_SUCCESS, new \EtoA\Specialist\Event\SpecialistHire($cu->specialistId));
+                        $app['dispatcher']->dispatch(new \EtoA\Specialist\Event\SpecialistHire($cu->specialistId), \EtoA\Specialist\Event\SpecialistHire::HIRE_SUCCESS);
 					}
 					else
 					{
@@ -256,7 +256,7 @@
 				$cu->specialistTime = 0;
 
 				success_msg('Der Spezialist wurde entlassen!');
-				$app['dispatcher']->dispatch(\EtoA\Specialist\Event\SpecialistDischarge::DISCHARGE_SUCCESS, new \EtoA\Specialist\Event\SpecialistDischarge($specialistId));
+				$app['dispatcher']->dispatch(new \EtoA\Specialist\Event\SpecialistDischarge($specialistId), \EtoA\Specialist\Event\SpecialistDischarge::DISCHARGE_SUCCESS);
 			}
 		}
 		else

@@ -70,7 +70,7 @@
 
 	         					    echo "Nachricht wurde an <b>".$rcpt."</b> gesendet! ";
 	         		    			$_POST['message_user_to']=null;
-	         		    			$app['dispatcher']->dispatch(\EtoA\Message\Event\MessageSend::SEND_SUCCESS, new \EtoA\Message\Event\MessageSend());
+	         		    			$app['dispatcher']->dispatch(new \EtoA\Message\Event\MessageSend(), \EtoA\Message\Event\MessageSend::SEND_SUCCESS);
 	         				}
 	         				else
 	         				{

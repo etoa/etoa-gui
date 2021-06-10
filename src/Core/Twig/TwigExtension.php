@@ -125,7 +125,7 @@ class TwigExtension extends AbstractExtension
 
     public function renderTime(): float
     {
-        return round(microtime(true) - $this->startTime,3);
+        return round(microtime(true) - $this->startTime, 3);
     }
 
     public function getAdminText(string $key): string

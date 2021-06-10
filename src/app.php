@@ -9,7 +9,7 @@ $app = new \Silex\Application([
     'etoa.quests.enabled' => $questSystemEnabled ?? true,
 ]);
 if ((bool) $app['debug']) {
-    \Symfony\Component\Debug\Debug::enable();
+    \Symfony\Component\ErrorHandler\Debug::enable();
 }
 $app->register(new \EtoA\Core\MonologServiceProvider());
 $app->register(new Silex\Provider\ServiceControllerServiceProvider());

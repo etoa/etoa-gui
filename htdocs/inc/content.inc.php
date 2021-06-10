@@ -188,7 +188,7 @@
 				{
 					if (is_array($v))
 					{
-						$post.="[b]".$k.":[/b] ".dump($v,1);
+						$post.="[b]".$k.":[/b] ".etoa_dump($v,1);
 					}
 					else
 					{

@@ -2,7 +2,7 @@
 
 namespace EtoA\Alliance\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class AllianceCreate extends Event
 {

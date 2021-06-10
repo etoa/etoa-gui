@@ -167,7 +167,7 @@
 			}
 			success_msg(nf($cnt)." Schiffe erfolgreich recycelt!");
             foreach ($recycled as $id => $num) {
-                $app['dispatcher']->dispatch(\EtoA\Ship\Event\ShipRecycle::RECYCLE_SUCCESS, new \EtoA\Ship\Event\ShipRecycle($id, $num));
+                $app['dispatcher']->dispatch(new \EtoA\Ship\Event\ShipRecycle($id, $num), \EtoA\Ship\Event\ShipRecycle::RECYCLE_SUCCESS);
             }
 		}
 
@@ -268,7 +268,7 @@
 			}
 			success_msg("".nf($cnt)." Verteidigungsanlagen erfolgreich recycelt!");
             foreach ($recycled as $id => $num) {
-                $app['dispatcher']->dispatch(\EtoA\Defense\Event\DefenseRecycle::RECYCLE_SUCCESS, new \EtoA\Defense\Event\DefenseRecycle($id, $num));
+                $app['dispatcher']->dispatch(new \EtoA\Defense\Event\DefenseRecycle($id, $num), \EtoA\Defense\Event\DefenseRecycle::RECYCLE_SUCCESS);
             }
 		}
 

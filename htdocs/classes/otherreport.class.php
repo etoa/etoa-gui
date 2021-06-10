@@ -512,7 +512,7 @@ class OtherReport extends Report
 				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' versuchte beim Ziel '.$ent1->detailLink().' die Aktion '.$action->name().' durchzuführen. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!<br />';
 				break;
 			default:
-				dump($this);
+				etoa_dump($this);
 		}
 
 		return ob_get_clean();
