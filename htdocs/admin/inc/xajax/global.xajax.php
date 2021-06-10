@@ -1465,7 +1465,7 @@ function reqInfo($id,$cat='b')
 		$req_tbl = "tech_requirements";
 		$req_field = "obj_id";
 	}
-	elseif($cat=='s')
+	elseif($cat=='s' || $cat == 'sa')
 	{
 		$req_tbl = "ship_requirements";
 		$req_field = "obj_id";
@@ -1532,7 +1532,7 @@ function reqInfo($id,$cat='b')
 		$img = IMAGE_PATH."/technologies/technology".$id."_middle.".IMAGE_EXT;
 		$name = $te_name[$id];
 	}
-	elseif($cat=='s')
+	elseif($cat=='s' || $cat == 'sa')
 	{
 		$img = IMAGE_PATH."/ships/ship".$id."_middle.".IMAGE_EXT;
 		$name = $sh_name[$id];

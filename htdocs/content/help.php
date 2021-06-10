@@ -33,16 +33,12 @@
 	if (isset($_GET['site']) && ctype_alsc($_GET['site']) && $_GET['site']!="")
 	{
 		$site = $_GET['site'];
-		if ($site!="")
+		if (file_exists(RELATIVE_ROOT . "info/$site.php")) {
+			include(RELATIVE_ROOT . "info/$site.php");
+		}
+		else
 		{
-			if (file_exists(RELATIVE_ROOT."info/$site.php"))
-			{
-				include (RELATIVE_ROOT."info/$site.php");
-			}
-			else
-			{
-				error_msg("Hilfedatei nicht gefunden!");
-			}
+			error_msg("Hilfedatei nicht gefunden!");
 		}
 		return_btn();
 	}

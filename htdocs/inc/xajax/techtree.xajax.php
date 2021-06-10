@@ -11,33 +11,33 @@ function reqInfo($id,$cat='b')
 
 
 	// Load items
-	$bures = dbquery("SELECT building_id,building_name FROM buildings WHERE building_show=1;");
-	while ($buarr = mysql_fetch_array($bures))
+	$res = dbquery("SELECT building_id,building_name FROM buildings WHERE building_show=1;");
+	while ($arr = mysql_fetch_array($res))
 	{
-		$bu_name[$buarr['building_id']]=$buarr['building_name'];
+		$bu_name[$arr['building_id']]=$arr['building_name'];
 	}		
-	$teres = dbquery("SELECT tech_id,tech_name FROM technologies WHERE tech_show=1;");
-	while ($tearr = mysql_fetch_array($teres))
+	$res = dbquery("SELECT tech_id,tech_name FROM technologies WHERE tech_show=1;");
+	while ($arr = mysql_fetch_array($res))
 	{
-		$te_name[$tearr['tech_id']]=$tearr['tech_name'];
+		$te_name[$arr['tech_id']]=$arr['tech_name'];
 	}	
 
-	$teres = dbquery("SELECT ship_id,ship_name FROM ships WHERE ship_show=1 AND special_ship=0;");
-	while ($tearr = mysql_fetch_array($teres))
+	$res = dbquery("SELECT ship_id,ship_name FROM ships WHERE ship_show=1 AND special_ship=0;");
+	while ($arr = mysql_fetch_array($res))
 	{
-		$sh_name[$tearr['ship_id']]=$tearr['ship_name'];
+		$sh_name[$arr['ship_id']]=$arr['ship_name'];
 	}	
 	
-	$teres = dbquery("SELECT def_id,def_name FROM defense WHERE def_show=1;");
-	while ($tearr = mysql_fetch_array($teres))
+	$res = dbquery("SELECT def_id,def_name FROM defense WHERE def_show=1;");
+	while ($arr = mysql_fetch_array($res))
 	{
-		$de_name[$tearr['def_id']]=$tearr['def_name'];
+		$de_name[$arr['def_id']]=$arr['def_name'];
 	}		
 	
-	$teres = dbquery("SELECT missile_id,missile_name FROM missiles WHERE missile_show=1;");
-	while ($tearr = mysql_fetch_array($teres))
+	$res = dbquery("SELECT missile_id,missile_name FROM missiles WHERE missile_show=1;");
+	while ($arr = mysql_fetch_array($res))
 	{
-		$m_name[$tearr['missile_id']]=$tearr['missile_name'];
+		$m_name[$arr['missile_id']]=$arr['missile_name'];
 	}		
 	
 	//
@@ -54,7 +54,7 @@ function reqInfo($id,$cat='b')
 		$req_tbl = "tech_requirements";
 		$req_field = "obj_id";
 	}
-	elseif($cat=='s')
+	elseif($cat=='s' || $cat=='sa')
 	{
 		$req_tbl = "ship_requirements";
 		$req_field = "obj_id";
@@ -72,8 +72,7 @@ function reqInfo($id,$cat='b')
 	
 	$items = array();
 	$res = dbquery("SELECT * FROM $req_tbl WHERE obj_id=".$id." AND req_building_id>0 AND req_level>0 ORDER BY req_level;");
-	$nr = mysql_num_rows($res);
-	if ($nr>0)
+	if (mysql_num_rows($res)>0)
 	{
 		while($arr=mysql_fetch_assoc($res))
 		{
@@ -81,12 +80,26 @@ function reqInfo($id,$cat='b')
 		}
 	}
 	$res = dbquery("SELECT * FROM $req_tbl WHERE $req_field=".$id." AND req_tech_id>0 AND req_level>0 ORDER BY req_level;");
-	$nr2 = mysql_num_rows($res);
-	if ($nr2>0)
+	if (mysql_num_rows($res)>0)
 	{
 		while($arr=mysql_fetch_assoc($res))
 		{
 			$items[] = array($arr['req_tech_id'],$te_name[$arr['req_tech_id']],$arr['req_level'],IMAGE_PATH."/technologies/technology".$arr['req_tech_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['req_tech_id'].",'t')");
+		}
+	}
+	
+	// Alliance ships are not in requirements tables. The required level of the alliance shipyard is given directly in the ship details.
+	if ($cat=="sa")
+	{
+		$res = dbquery("SELECT ship_alliance_shipyard_level FROM ships WHERE ship_id=".$id." AND ship_alliance_shipyard_level>0;");
+		if (mysql_num_rows($res)==1 && $ship = mysql_fetch_assoc($res))
+		{
+			$allianceBuildingId_shipyard = 3;
+			$res = dbquery("SELECT alliance_building_name FROM alliance_buildings WHERE alliance_building_id=".$allianceBuildingId_shipyard.";");
+			if (mysql_num_rows($res)==1 && $allianceBuilding = mysql_fetch_assoc($res))
+			{
+				$items[] = array($allianceBuildingId_shipyard, $allianceBuilding['alliance_building_name'], $ship['ship_alliance_shipyard_level'], IMAGE_PATH."/abuildings/building".$allianceBuildingId_shipyard."_middle.".IMAGE_EXT, "");
+			}
 		}
 	}
 	
@@ -121,7 +134,7 @@ function reqInfo($id,$cat='b')
 		$img = IMAGE_PATH."/technologies/technology".$id."_middle.".IMAGE_EXT;
 		$name = $te_name[$id];
 	}
-	elseif($cat=='s')
+	elseif($cat=='s' || $cat=='sa')
 	{
 		$img = IMAGE_PATH."/ships/ship".$id."_middle.".IMAGE_EXT;
 		$name = $sh_name[$id];
