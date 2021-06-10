@@ -42,12 +42,12 @@
 /* User ist NICHT in einer Allianz                */
 /**************************************************/
 	elseif ($cu->allianceId == 0)
-	{	
+	{
 		if (time()>$cu->allianceLeave+$cfg->get("alliance_leave_cooldown"))
 		{
 			require("alliance/foreign.inc.php");
 	    }
-	    else 
+	    else
 	    	echo '<p><b>Du musst '.(floor((($cu->allianceLeave+$cfg->get("alliance_leave_cooldown"))-time())/60)).' Minuten warten bis du dich bei einer neuen Allianz bewerben kannst!</b></p>';
 	}
 	else
@@ -77,6 +77,7 @@
 				// Rechte laden
 				$rightres=dbquery("SELECT * FROM alliance_rights;");
 				$rights=array();
+				$myRight = [];
 				if (mysql_num_rows($rightres)>0)
 				{
 					while ($rightarr=mysql_fetch_array($rightres))
@@ -633,7 +634,7 @@
 							$adminBox["Allianz aufl&ouml;sen"] = "?page=$page&action=liquidate";
 						}
 						if (!$isFounder && !$cu->alliance->isAtWar()) {
-							$adminBox["Allianz verlassen"] = "?page=$page&action=leave"; 
+							$adminBox["Allianz verlassen"] = "?page=$page&action=leave";
 							//array_push($adminBox,"<a href=\"\" onclick=\"return confirm('Allianz wirklich verlassen?');\"></a>");
 						}
 

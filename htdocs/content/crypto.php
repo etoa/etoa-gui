@@ -494,6 +494,7 @@
 
 			if (!$cd_enabled)
 			{
+				$coords = [];
 				if (isset($_GET['target']) && intval($_GET['target'])>0)
 				{
 					$ent = Entity::createFactoryById($_GET['target']);

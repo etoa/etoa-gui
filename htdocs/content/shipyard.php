@@ -122,6 +122,8 @@
 			$gen_tech_level = $tl->getLevel(GEN_TECH_ID);
 
 			// Gebaute Schiffe laden
+			$shiplist = [];
+			$bunkered = [];
 			$res = dbquery("
 			SELECT
 				shiplist_ship_id,
@@ -139,6 +141,7 @@
 			}
 
 			// Bauliste vom aktuellen Planeten laden (wird nach "Abbrechen" nochmals geladen)
+			$queue = [];
 			$res = dbquery("
 			SELECT
     		queue_id,
@@ -160,6 +163,7 @@
 			}
 
 			// Bauliste vom allen Planeten laden und nach Schiffe zusammenfassen
+			$queue_total = [];
 			$res = dbquery("
 			SELECT
     		queue_ship_id,
@@ -177,6 +181,7 @@
 			}
 
 			// Flotten laden
+			$fleet = [];
 			$res = dbquery("
       SELECT
       	fs_ship_id,
@@ -198,6 +203,8 @@
 
 			// Alle Schiffe laden
 			//Schiffsordnung des Users beachten
+			$cat = [];
+			$ships = [];
 			$order="ship_".$cu->properties->itemOrderShip." ".$cu->properties->itemOrderWay."";
 			$res = dbquery("
 			SELECT
@@ -511,6 +518,8 @@
 
     				// TODO: Überprüfen
 						//Wenn der User nicht genug Ress hat, die Anzahl Schiffe drosseln
+						$bf = [];
+						$bc = [];
 						//Titan
 						if ($ships[$ship_id]['ship_costs_metal']>0)
 						{
@@ -735,6 +744,7 @@
 					$obj_cnt = min(ceil(($queue[$id]['queue_endtime']-max($time,$queue[$id]['queue_starttime']))/$queue[$id]['queue_objtime']),$queue[$id]['queue_cnt']);
 					echo "Breche den Bau von ".$obj_cnt." ".$ships[$queue[$id]['queue_ship_id']]['ship_name']." ab...<br/>";
 
+					$ret = [];
 					$ret['metal']=$ships[$queue[$id]['queue_ship_id']]['ship_costs_metal']*$obj_cnt*$cancel_res_factor;
 					$ret['crystal']=$ships[$queue[$id]['queue_ship_id']]['ship_costs_crystal']*$obj_cnt*$cancel_res_factor;
 					$ret['plastic']=$ships[$queue[$id]['queue_ship_id']]['ship_costs_plastic']*$obj_cnt*$cancel_res_factor;
@@ -1102,6 +1112,8 @@
 								//Zuwenig Rohstoffe. Wartezeit errechnen
 								elseif($ship_max_build == 0)
 								{
+									$bwait = [];
+									$bwmsg = [];
 									//Wartezeit Titan
 									if ($cp->prodMetal > 0)
 									{

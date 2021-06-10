@@ -58,7 +58,10 @@
 				$pres=dbquery("SELECT * FROM user_points WHERE point_user_id='".$_GET['user_id']."' ORDER BY point_timestamp DESC;");
 				if (mysql_num_rows($pres)>0)
 				{
-					$points=array();
+					$points = [];
+                    $fleet = [];
+                    $tech = [];
+                    $buildings = [];
 					while ($parr=mysql_fetch_array($pres))
 					{
 						$points[$parr['point_timestamp']]=$parr['point_points'];

@@ -26,6 +26,7 @@
 // 	Kommentar:
 //
 
+$conf_type = [];
 $conf_type['text']="Textfeld";
 $conf_type['textarea']="Textblock";
 $conf_type['timedate']="Zeit/Datum-Feld";

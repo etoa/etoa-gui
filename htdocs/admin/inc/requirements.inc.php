@@ -13,11 +13,13 @@
 $twig->addGlobal("title", TITLE);
 
 	// Lade Gebäude- & Technologienamen
+	$bu = [];
 	$bures = dbquery("SELECT building_id,building_name FROM buildings;");
 	while ($buarr = mysql_fetch_array($bures))
 	{
 		$bu[$buarr['building_id']]=$buarr['building_name'];
 	}
+	$te = [];
 	$teres = dbquery("SELECT tech_id,tech_name FROM technologies;");
 	while ($tearr = mysql_fetch_array($teres))
 	{

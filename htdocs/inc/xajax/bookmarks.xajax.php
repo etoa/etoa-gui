@@ -59,6 +59,7 @@ include_once('cell.xajax.php');
 				$shipOutput = "";
 				$probeCount = true;
 				$sidarr = explode(",",$barr['ships']);
+				$ships = [];
 				$sres = dbquery("SELECT ship_id,ship_name FROM ships WHERE ship_show=1 ORDER BY ship_type_id,ship_order;");
 				while ($sarr = mysql_fetch_row($sres))
 				{

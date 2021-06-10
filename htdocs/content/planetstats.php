@@ -17,13 +17,13 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 	/**
 	* Shows economy information about all planets
 	*
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/	
+	*/
 
 	echo '<h1>Wirtschaftsübersicht</h1>';
 
@@ -39,6 +39,10 @@
 	$max_prod=array(0,0,0,0,0,0);
 	$min_prod=array(9999999999,9999999999,9999999999,9999999999,9999999999,9999999999);
 	$tot_prod=array(0,0,0,0,0,0);
+	$val_res = [];
+	$val_prod = [];
+	$val_store = [];
+	$val_time = [];
 	foreach ($planets as $p)
 	{
 		//Speichert die aktuellen Rohstoffe in ein Array
@@ -97,7 +101,7 @@
     {
     	$val_time[$p->id][0]=0;
     }
-    
+
 		//Silizium
 		if($p->prodCrystal>0)
 		{
@@ -114,7 +118,7 @@
     {
     	$val_time[$p->id][1]=0;
     }
-    
+
 		//PVC
 		if($p->prodPlastic>0)
 		{
@@ -131,7 +135,7 @@
     {
     	$val_time[$p->id][2]=0;
     }
-    
+
 		//Tritium
 		if($p->prodFuel>0)
 		{
@@ -148,7 +152,7 @@
     {
     	$val_time[$p->id][3]=0;
     }
-    
+
 		//Nahrung
 		if($p->prodFood>0)
 		{
@@ -282,11 +286,11 @@
 	{
 		//Speichert die aktuellen Energieproduktionen in ein Array (Bewohnerproduktion [5] wird überschrieben)
 		$val_prod[$p->id][5]=floor($p->prodPower - $p->usePower);
-		
+
 		// Gibt Min. / Max. aus
 		$max_prod[5]=max($max_prod[5],$val_prod[$p->id][5]);
 		$min_prod[5]=min($min_prod[5],$val_prod[$p->id][5]);
-		$tot_prod[5]+=$val_prod[$p->id][5];	
+		$tot_prod[5]+=$val_prod[$p->id][5];
 	}
 
 
@@ -332,7 +336,7 @@
 		echo '<th>'.nf($tot_prod[$x]/$cnt_prod).'</th>';
 	echo '</tr>';
 	tableEnd();
-	
+
 	tableStart("Legende");
 	echo '<tr>
 	<td style="color:#f00">Minimum</td>

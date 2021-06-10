@@ -82,11 +82,13 @@
 					define('B_W', 0);
 				}
 				// Bar colors
+				$b_col = [];
 				for ($x=0;$x<B_W;$x++)
 				{
 					$b_col[$x]=imagecolorallocate($im,34/B_W*$x,34/B_W*$x,85/B_W*$x);
 				}
 				// Shadow colors
+				$s_col = [];
 				for ($i=SHADOW_L;$i>0;$i--)
 				{
 					$s_col[$i]=imagecolorallocate($im,5+($i*250/SHADOW_L),5+($i*250/SHADOW_L),5+($i*250/SHADOW_L));
@@ -95,6 +97,7 @@
 				$pmax=0;
 				$last_update=0;
 				$cnt=0;
+				$points = [];
 				while ($parr=mysql_fetch_array($pres))
 				{
 					if ($last_update==0) $last_update=$parr['point_timestamp'];

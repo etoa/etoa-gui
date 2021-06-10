@@ -17,20 +17,20 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 	// Zeigt eigene Rohstoffe an
 	echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
-	
+
 	echo "<h2><a href=\"?page=".$page."&amp;action=".$_GET['action']."\">Allianzbasis</a></h2>";
-	
+
 	// Schiffswerft gebaut?
 	$shipyard = ($cu->alliance->buildlist->getLevel(ALLIANCE_SHIPYARD_ID)>=1) ? TRUE : FALSE;
 	$research = ($cu->alliance->buildlist->getLevel(ALLIANCE_RESEARCH_ID)>=1) ? TRUE : FALSE;
-	
+
 	//
 	// Navigation
 	//
-	
+
 	// Speichert Tab
 	if(isset($_GET['action2']))
 	{
@@ -40,14 +40,14 @@
 	{
 		$action2 = "buildings";
 	}
-	
+
 	// Stellt standart Links dar
 	/*
-	echo "<a href=\"javascript:;\" onclick=\"showTab('tabBuildings')\">Gebäude</a> | 
-	<a href=\"javascript:;\" onclick=\"showTab('tabResearch')\">Technologien</a> | 
+	echo "<a href=\"javascript:;\" onclick=\"showTab('tabBuildings')\">Gebäude</a> |
+	<a href=\"javascript:;\" onclick=\"showTab('tabResearch')\">Technologien</a> |
 	<a href=\"javascript:;\" onclick=\"showTab('tabStorage')\">Speicher</a>";
 	*/
-	
+
 	$ddm = new DropdownMenu(1);
 	$ddm->add('b','Gebäude',"showTab('tabBuildings');");
 	if ($research) {
@@ -57,15 +57,15 @@
 	if($shipyard) {
 		$ddm->add('sw','Schiffswerft',"showTab('tabShipyard');");
 	}
-	echo $ddm; 
-	
+	echo $ddm;
+
 	echo "<br>";
-		
-		
+
+
 	//
-	// Funktionen				
+	// Funktionen
 	//
-	
+
 	echo "<script type=\"text/javascript\">
 	
 	// Wechselt zwischen den Verschiedenen Tabs
@@ -112,24 +112,24 @@
 		document.getElementById('resBoxFood').innerHTML=FormatNumber('return',food,'','','');
 	}
 	
-	</script>";	
- 	
-	
+	</script>";
+
+
  	//
  	// Einzahlen
  	//
- 	
+
  	if(isset($_POST['storage_submit']) && checker_verify())
  	{
- 		// Formatiert Eingaben 
+ 		// Formatiert Eingaben
  		$metal = nf_back($_POST['spend_metal']);
 		$crystal = nf_back($_POST['spend_crystal']);
 		$plastic = nf_back($_POST['spend_plastic']);
 		$fuel = nf_back($_POST['spend_fuel']);
 		$food = nf_back($_POST['spend_food']);
-		
+
 		// Prüft, ob Rohstoffe angegeben wurden
-		if($metal>0 
+		if($metal>0
 		   || $crystal>0
 		   || $plastic>0
 		   || $fuel>0
@@ -140,15 +140,15 @@
 				&& $cp->getRes(2) >= $crystal
 				&& $cp->getRes(3) >= $plastic
 				&& $cp->getRes(4) >= $fuel
-				&& $cp->getRes(5) >= $food) 	
+				&& $cp->getRes(5) >= $food)
 			{
 				// Rohstoffe vom Planet abziehen
 				$res = array($metal,$crystal,$plastic,$fuel,$food);
 				$cp->subRes($res);
-				  
+
 				// Rohstoffe der Allianz gutschreiben
 				$cu->alliance->changeRes($metal,$crystal,$plastic,$fuel,$food);
-				
+
 				// Spende speichern
 				dbquery("
 						INSERT INTO
@@ -183,7 +183,7 @@
 		else
 			error_msg("Du hast keine Rohstoffe angegeben!");
 	}
- 	
+
  	// Einzahlungs Filter aktivieren
 
 	// Default Werte setzen
@@ -197,28 +197,28 @@
 	  {
 	  	$sum = true;
 	  }
-		
+
 		// Limit
 		if(isset($_POST['limit']) && $_POST['limit']>0)
 		{
 			$limit = $_POST['limit'];
 		}
-		
+
 		// User
 		if(isset($_POST['user_spends']) && $_POST['user_spends']>0)
 	  {
 	  	$user = $_POST['user_spends'];
 	  }
 	}
-	
+
 	//
 	// Läd Daten
-	//	
-	
+	//
+
 	// Allianzschiffe (wenn Schiffswerft gebaut)
 	if($shipyard)
 	{
-		
+        $ships = [];
 		$res = dbquery("
 		SELECT
 			ship_id,
@@ -240,14 +240,15 @@
 			AND ship_alliance_shipyard_level>0
 		ORDER BY
 			ship_alliance_shipyard_level;");
-		while($arr=mysql_fetch_assoc($res))		
+		while($arr=mysql_fetch_assoc($res))
 		{
 			$ships[$arr['ship_id']] = $arr;
 		}
 	}
-	
+
 	// Userschiffe laden (wenn Schiffswerft gebaut=
 	// Gebaute Schiffe laden
+    $shiplist = [];
 	$res = dbquery("
 	SELECT
 		shiplist_ship_id,
@@ -261,8 +262,9 @@
 	{
 		$shiplist[$arr['shiplist_ship_id']][$arr['shiplist_entity_id']]=$arr['shiplist_count'];
 	}
-	
+
 	// Bauliste von allen Planeten laden und nach Schiffe zusammenfassen
+    $queue_total = [];
 	$res = dbquery("
 	SELECT
 		queue_id,
@@ -279,8 +281,9 @@
 	{
 		$queue_total[$arr['queue_ship_id']] = $arr['cnt'];
 	}
-	
+
 	// Flotten laden und nach Schiffe zusammenfassen
+    $fleet = [];
 	$res = dbquery("
 		SELECT
 			fs_ship_id,
@@ -298,12 +301,12 @@
 	{
 		$fleet[$arr['fs_ship_id']] = $arr['cnt'];
 	}
-	
-		
+
+
 	//
 	// Schiffe kaufen
 	//
-		
+
 	if(isset($_POST['ship_submit']) && checker_verify())
 	{
 		if ($cu->alliance->checkActionRightsNA("buildminister") || $cu->id==$_POST['user_buy_ship'])
@@ -312,6 +315,7 @@
 			if($_POST['user_buy_ship']>0)
 			{
 				// Gebaute Schiffe laden
+                $shiplist = [];
 				$res = dbquery("
 				SELECT
 					shiplist_ship_id,
@@ -326,8 +330,9 @@
 				{
 					$shiplist[$arr['shiplist_ship_id']][$arr['shiplist_entity_id']]=$arr['shiplist_count']+$arr['shiplist_bunkered'];
 				}
-				
+
 				// Bauliste von allen Planeten laden und nach Schiffe zusammenfassen
+                $queue_total = [];
 				$res = dbquery("
 				SELECT
     				queue_id,
@@ -344,8 +349,9 @@
 				{
 					$queue_total[$arr['queue_ship_id']] = $arr['cnt'];
 				}
-				
+
 				// Flotten laden und nach Schiffe zusammenfassen
+                $fleet = [];
 				$res = dbquery("
     			  	SELECT
       					fs_ship_id,
@@ -363,7 +369,7 @@
 				{
 					$fleet[$arr['fs_ship_id']] = $arr['cnt'];
 				}
-				
+
 				$ship_costs = 0;
 				$total_build_cnt = 0;
 				$to_much = false;
@@ -371,7 +377,7 @@
 				{
 					// Formatiert die eingegebene Zahl (entfernt z.B. die Trennzeichen)
 					$build_cnt = nf_back($build_cnt);
-					
+
 					if($build_cnt>0)
 					{
 						// Zählt die Anzahl Schiffe dieses Typs im ganzen Account...
@@ -391,10 +397,10 @@
 		      			{
 		      				$ship_count += $fleet[$ship_id];
 		      			}
-						
+
 		      			// Total Schiffe mit den zu bauenden
 						$total_count = $build_cnt + $ship_count;
-						
+
 						// Prüft ob Anzahl grösser ist als Schiffsmaximum
 						if($ships[$ship_id]['ship_max_count'] >= $total_count || $ships[$ship_id]['ship_max_count'] == 0)
 						{
@@ -403,7 +409,7 @@
 								//Kostenfaktor Schiffe
 								$cost_factor = pow($cfg->get("alliance_shipcosts_factor"),$ship_count+$i);
 								// Berechnet die Kosten
-								$ship_costs += $cost_factor * $ships[$ship_id]['ship_alliance_costs'];								
+								$ship_costs += $cost_factor * $ships[$ship_id]['ship_alliance_costs'];
 							}
 
 						}
@@ -415,12 +421,12 @@
 						$total_build_cnt += $build_cnt;
 					}
 				}
-				
+
 				// Prüft, ob die Maximalanzahl nicht überschritten wird
 				if(!$to_much)
 				{
 
-					
+
 					if ($total_build_cnt>0)
 					{
 							// Prüft ob Schiffspunkte noch ausreichend sind
@@ -437,7 +443,7 @@
 										user_id='".$_POST['user_buy_ship']."'
 								");
 								$ship_costed = $ship_costs;
-								
+
 								// Lädt das Allianzentity
 								$res = dbquery("
 								SELECT
@@ -445,10 +451,10 @@
 								FROM
 									entities
 								WHERE
-									code='x';");		
+									code='x';");
 								$row = mysql_fetch_row($res);
-								
-								
+
+
 								// Speichert Flotte
 								$launchtime = time(); // Startzeit
 								$duration = 3600; // Dauer 1h
@@ -472,7 +478,7 @@
 											'".$landtime."',
 											'delivery'
 										);");
-										
+
 								// Speichert Schiffe in der Flotte
 								$sql = "";
 								$log = "";
@@ -481,7 +487,7 @@
 								{
 									// Formatiert die eingegebene Zahl (entfernt z.B. die Trennzeichen)
 									$build_cnt = nf_back($build_cnt);
-									
+
 									if($build_cnt>0)
 									{
 										// Stellt SQL-String her
@@ -496,10 +502,10 @@
 										{
 											$sql .= ", ('".mysql_insert_id()."', '".$ship_id."', '".$build_cnt."')";
 										}
-										
+
 										// Listet gewählte Schiffe für Log auf
 										$log .= "[b]".$_POST['ship_name_'.$ship_id.''].":[/b] ".nf($build_cnt)."\n";
-										
+
 										$cnt++;
 									}
 								}
@@ -515,7 +521,7 @@
 										VALUES
 											".$sql."
 										;");
-						
+
 								// Zur Allianzgeschichte hinzufügen
 								add_alliance_history($cu->allianceId,"Folgende Schiffe wurden für [b]".get_user_nick($_POST['user_buy_ship'])."[/b] hergestellt:\n".$log."\n".nf($ship_costs)." Teile wurden dafür benötigt.");
 							}
@@ -543,13 +549,13 @@
 		{
 			$error_msg("Keine Berechtigung!");
 		}
-	}	
-		
-	
+	}
+
+
 	//
 	// ResBox
-	//	
-	
+	//
+
 	$style0 = "";
 	$style1 = "";
 	$style2 = "";
@@ -577,8 +583,8 @@
 	{
 		$style4 = "style=\"color:red;\"";
 	}
-	
-	
+
+
 	tableStart("Allianz Ressourcen");
 	echo "<tr>
 					<th style=\"width:20%;vertical-align:middle;\">".RES_ICON_METAL." ".RES_METAL."</th>
@@ -595,23 +601,23 @@
 					<td ".$style4."id=\"resBoxFood\">".nf($cu->alliance->resFood)." t</td>
 				</tr>";
  	tableEnd();
- 	
- 	
- 	
- 	
 
- 	
- 	
+
+
+
+
+
+
  	//
  	// Content Laden
  	//
-	
-	
+
+
  	//
  	// Datenverarbeitung 2: Muss nach dem Laden der Daten geschehen
  	// -> Gebäude und Techs speichern
  	//
-	
+
 	// Gebäude in Auftrag geben
 	if(isset($_POST['building_submit']) && checker_verify())
 	{
@@ -626,15 +632,15 @@
 			}
 		}
 	}
-	
-	
+
+
 	// Technologie in Auftrag geben
 	if(isset($_POST['research_submit']) && checker_verify())
 	{
 		if (Alliance::checkActionRights("buildminister"))
 		{
 			if(isset($_POST['research_id']) && $_POST['research_id']!=0)
-			{			
+			{
 				if ($cu->alliance->techlist->build($_POST['research_id']))
 					success_msg("Forschung wurde erfolgreich in Auftrag gegeben!");
 				else
@@ -642,7 +648,7 @@
 			}
 		}
 	}
-	
+
 	$allianceRes = array(1=>$cu->alliance->resMetal,
 						 2=>$cu->alliance->resCrystal,
 						 3=>$cu->alliance->resPlastic,
@@ -653,12 +659,12 @@
 					 3=>RES_PLASTIC,
 					 4=>RES_FUEL,
 					 5=>RES_FOOD);
-	
-	
+
+
 	//
 	// Gebäude
 	//
-	
+
 	if($action2=="buildings")
 	{
 		$display = "";
@@ -670,13 +676,13 @@
 	echo "<div id=\"tabBuildings\" style=\"display:".$display.";\">";
 	echo "<form action=\"?page=".$page."&amp;action=".$_GET['action']."&amp;action2=buildings\" method=\"post\" id=\"alliance_buildings\">\n";
 	$cstr=checker_init();
-		
+
 	// Mit diesem Feld wird die Gebäude ID vor dem Absenden übergeben
-	echo "<input type=\"hidden\" value=\"0\" name=\"building_id\" id=\"building_id\" />";	
-		
+	echo "<input type=\"hidden\" value=\"0\" name=\"building_id\" id=\"building_id\" />";
+
 	// Es sind Gebäude vorhanden
 	if($cu->alliance->buildlist->count())
-	{	
+	{
 		$buildingIterator = $cu->alliance->buildlist->getIterator();
 		while($buildingIterator->valid())
 		{
@@ -699,7 +705,7 @@
 				//
 				// Baumenü
 				//
-				
+
 				echo "<tr>";
 				if ($cu->alliance->buildlist->isMaxLevel($buildingIterator->key()))
 					echo "<td colspan=\"7\" style=\"text-align:center;\">Maximallevel erreicht!</td>";
@@ -707,6 +713,8 @@
 				{
 					$costs = $buildingIterator->current()->getCosts($level+1,$cu->alliance->memberCount);
 					$need_something = false;
+                    $need = [];
+                    $style = [];
 					foreach ($allianceRes as $id=>$res)
 					{
 						if ($res>=$costs[$id])
@@ -717,20 +725,20 @@
 						else
 						{
 							$need_something = true;
-							
+
 							// Erstellt absolut Wert der Zahl
 							$need[$id] = abs($costs[$id]-$res);
 							$style[$id] =  "style=\"color:red;\" ".tm("Fehlender Rohstoff","".nf($need[$id])." ".$resName[$id]."")."";
 						}
 					}
-					
+
 					if ($cu->alliance->buildlist->checkBuildable($buildingIterator->key()))
 					{
 						if($level==0)
 							$build_button = "Bauen";
 						else
 							$build_button = "Ausbauen";
-							
+
 						// Generiert Baubutton, mit welchem vor dem Absenden noch die Objekt ID übergeben wird
 						$message = "<input type=\"submit\" class=\"button\" name=\"building_submit\" id=\"building_submit\" value=\"".$build_button."\" onclick=\"document.getElementById('building_id').value=".$buildingIterator->key().";\"/>";
 					}
@@ -778,7 +786,7 @@
 				echo "</tr>";
 				tableEnd();
 			}
-			
+
 			$buildingIterator->next();
 		}
 	}
@@ -787,17 +795,17 @@
 	{
 		error_msg("Es sind noch keine Gebäude definiert!");
 	}
-	
+
 	echo "</form>";
 	echo "</div>";
-	
-	
-	
+
+
+
 	//
 	// Forschungen
 	//
-	
-	
+
+
 	if($action2=="research")
 	{
 		$display = "";
@@ -809,14 +817,14 @@
 	echo "<div id=\"tabResearch\" style=\"display:".$display.";\">";
 	echo "<form action=\"?page=".$page."&amp;action=".$_GET['action']."&amp;action2=research\" method=\"post\" id=\"alliance_research\">\n";
 	echo $cstr;
-		
+
 	// Mit diesem Feld wird die Tech ID vor dem Absenden übergeben
-	echo "<input type=\"hidden\" value=\"0\" name=\"research_id\" id=\"research_id\" />";	
-		
+	echo "<input type=\"hidden\" value=\"0\" name=\"research_id\" id=\"research_id\" />";
+
 	// Es sind Technologien vorhanden
 	// Es sind Gebäude vorhanden
 	if($research && $cu->alliance->techlist->count())
-	{	
+	{
 		$techIterator = $cu->alliance->techlist->getIterator();
 		while($techIterator->valid())
 		{
@@ -839,7 +847,7 @@
 				//
 				// Baumenü
 				//
-				
+
 				echo "<tr>";
 				if ($cu->alliance->techlist->isMaxLevel($techIterator->key()))
 					echo "<td colspan=\"7\" style=\"text-align:center;\">Maximallevel erreicht!</td>";
@@ -847,6 +855,8 @@
 				{
 					$costs = $techIterator->current()->getCosts($level+1,$cu->alliance->memberCount);
 					$need_something = false;
+					$style = [];
+					$need = [];
 					foreach ($allianceRes as $id=>$res)
 					{
 						if ($res>$costs[$id])
@@ -857,16 +867,16 @@
 						else
 						{
 							$need_something = true;
-							
+
 							// Erstellt absolut Wert der Zahl
 							$need[$id] = abs($costs[$id]-$res);
 							$style[$id] =  "style=\"color:red;\" ".tm("Fehlender Rohstoff","".nf($need[$id])." ".$resName[$id]."")."";
 						}
 					}
-					
-					
+
+
 					if ($cu->alliance->techlist->checkBuildable($techIterator->key()))
-					{		
+					{
 						// Generiert Baubutton, mit welchem vor dem Absenden noch die Objekt ID übergeben wird
 						$message = "<input type=\"submit\" class=\"button\" name=\"research_submit\" id=\"research_submit\" value=\"Erforschen\" onclick=\"document.getElementById('research_id').value=".$techIterator->key().";\"/>";
 					}
@@ -920,16 +930,16 @@
 	{
 		error_msg("Es sind noch keine Technologien definiert!");
 	}
-	
+
 	echo "</form>";
 	echo "</div>";
-	
-	
-	
+
+
+
 	//
 	// Speicher + Einzahlungen
 	//
-	
+
 	if($action2=="storage")
 	{
 		$display = "";
@@ -943,8 +953,8 @@
  	echo "<form action=\"?page=".$page."&amp;action=".$_GET['action']."&amp;action2=storage\" method=\"post\" id=\"alliance_storage\">\n";
 	echo $cstr;
 
-	tableStart("Rohstoffe einzahlen");	
-	
+	tableStart("Rohstoffe einzahlen");
+
 	// Titan
 	echo "<tr>
 					<th style=\"width:100px;\">".RES_METAL."</th>
@@ -958,30 +968,30 @@
 					<td>
 						<input type=\"text\" value=\"0\" name=\"spend_crystal\" id=\"spend_crystal\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resCrystal.",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_crystal').value='".nf($cp->resCrystal)."';\">alles</a>
 					</td>
-				</tr>";		
+				</tr>";
 	// PVC
 	echo "<tr>
 					<th>".RES_PLASTIC."</th>
 					<td>
 						<input type=\"text\" value=\"0\" name=\"spend_plastic\" id=\"spend_plastic\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resPlastic.",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_plastic').value='".nf($cp->resPlastic)."';\">alles</a>
 					</td>
-				</tr>";	
+				</tr>";
 	// Tritium
 	echo "<tr>
 					<th>".RES_FUEL."</th>
 					<td>
 						<input type=\"text\" value=\"0\" name=\"spend_fuel\" id=\"spend_fuel\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resFuel.",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_fuel').value='".nf($cp->resFuel)."';\">alles</a>
 					</td>
-				</tr>";	
+				</tr>";
 	// Nahrung
 	echo "<tr>
 					<th>".RES_FOOD."</th>
 					<td>
 						<input type=\"text\" value=\"0\" name=\"spend_food\" id=\"spend_food\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value,".$cp->resFood.",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_food').value='".nf($cp->resFood)."';\">alles</a>
 					</td>
-				</tr>";			
+				</tr>";
 	tableEnd();
-	
+
 	echo "<input type=\"submit\" class=\"button\" name=\"storage_submit\" id=\"storage_submit\" value=\"Einzahlen\"/>";
 	echo "</form><br><br><br><br>";
 
@@ -991,17 +1001,17 @@
 	//
 
  	echo "<form action=\"?page=".$page."&amp;action=".$_GET['action']."&amp;action2=storage\" method=\"post\" id=\"alliance_spends\">\n";
-	echo $cstr;  
-  
+	echo $cstr;
+
   echo "<h1>Einzahlungen / Statistik</h1>";
-  
-  
+
+
   //
   // Filter
   //
-  
+
   tableStart("Filter");
-  
+
   // Ausgabe
   echo "<tr>
   				<th>Ausgabe:</th>
@@ -1009,7 +1019,7 @@
   					<input type=\"radio\" name=\"output\" id=\"output\" value=\"0\" checked=\"checked\"/> Einzeln / <input type=\"radio\" name=\"output\" id=\"output\" value=\"1\"/> Summiert
   				</td>
   			</tr>";
-  
+
   // Limit
 	echo "<tr>
   				<th>Einzahlungen:</th>
@@ -1022,7 +1032,7 @@
 						</select>
 					</td>
 				</tr>";
-	
+
 	// Von User
 	echo "<tr>
   				<th>Von User:</th>
@@ -1044,12 +1054,12 @@
   			</tr>";
   tableEnd();
   echo "</form>";
-  
-  
+
+
   //
   // Ausgabe
   //
-  
+
   // Einzahlungen werden summiert und ausgegeben
   if($sum)
   {
@@ -1063,9 +1073,9 @@
 	  	$user_sql = "";
 	  	$user_message = "";
 	  }
-  	
+
   	echo "Es werden die bisher eingezahlten Rohstoffe ".$user_message." angezeigt.<br><br>";
-		
+
 		// Läd Einzahlungen
 		$res = dbquery("
 		SELECT
@@ -1078,11 +1088,11 @@
 			alliance_spends
 		WHERE
 			alliance_spend_alliance_id='".$cu->allianceId."'
-			".$user_sql.";");		
+			".$user_sql.";");
 		if(mysql_num_rows($res)>0)
-		{						
+		{
 			$arr=mysql_fetch_assoc($res);
-			
+
 			tableStart("Total eingezahlte Rohstoffe ".$user_message."");
 			echo "<tr>
 							<th style=\"width:20%\">".RES_METAL."</th>
@@ -1121,10 +1131,10 @@
 	  	$user_sql = "";
 	  	$user_message = "";
 	  }
-  	
-  	
+
+
 	  if($limit>0)
-	  { 	
+	  {
 	  	if($limit==1)
 	  	{
 	  		echo "Es wird die letzte Einzahlung ".$user_message."gezeigt.<br><br>";
@@ -1133,7 +1143,7 @@
 	  	{
 	  		echo "Es werden die letzten ".$limit." Einzahlungen ".$user_message."gezeigt.<br><br>";
 	  	}
-	  	
+
 	  	$limit_sql = "LIMIT ".$limit."";
 	  }
 	  else
@@ -1141,8 +1151,8 @@
 	  	echo "Es werden alle bisherigen Einzahlungen ".$user_message."gezeigt.<br><br>";
 	  	$limit_sql = "";
 	  }
-	  
-		
+
+
 		// Läd Einzahlungen
 		$res = dbquery("
 		SELECT
@@ -1154,9 +1164,9 @@
 			".$user_sql."
 		ORDER BY
 			alliance_spend_time DESC
-		".$limit_sql.";");		
+		".$limit_sql.";");
 		if(mysql_num_rows($res)>0)
-		{						
+		{
 			while($arr=mysql_fetch_assoc($res))
 			{
 				tableStart("".$cu->alliance->members[$arr['alliance_spend_user_id']]." - ".df($arr['alliance_spend_time'])."");
@@ -1176,7 +1186,7 @@
 							</tr>";
 				tableEnd();
 			}
-			
+
 		}
 		else
 		{
@@ -1187,13 +1197,13 @@
 	}
 
 	echo "</div>";
-	
-	
-	
+
+
+
 	//
 	// Schiffswerft
 	//
-	
+
 	if($action2=="shipyard")
 	{
 		$display = "";
@@ -1207,12 +1217,12 @@
 	if($shipyard)
 	{
 		echo "<h1>Schiffswerft</h1>";
-		
+
  		echo "<form action=\"?page=".$page."&amp;action=".$_GET['action']."&amp;action2=shipyard\" method=\"post\" id=\"alliance_shipyard\">\n";
 		echo $cstr;
-		
+
 		tableStart("Guthaben Übersicht");
-		
+
 		echo "<tr>";
 		if ($cu->alliance->resMetal<0 || $cu->alliance->resCrystal<0 || $cu->alliance->resPlastic<0 || $cu->alliance->resFuel<0 || $cu->alliance->resFood<0)
 		{
@@ -1227,10 +1237,10 @@
 		<tr>
 			<td style=\"text-align:center;\">Vorhandene Teile: ".($cu->allianceShippoints-$ship_costed)."</td>
 		</tr>";
-		
+
 		tableEnd();
-		
-		
+
+
 		// Listet Schiffe auf
 		if(isset($ships))
 		{
@@ -1253,11 +1263,11 @@
 		      	{
 		      		$ship_count += $fleet[$data['ship_id']];
 		      	}
-				
-				
+
+
 				//Kostenfaktor Schiffe
 				$cost_factor = pow($cfg->get("alliance_shipcosts_factor"),$ship_count);
-				
+
 				$path = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$data['ship_id']."_middle.".IMAGE_EXT;
 				tableStart($data['ship_name']);
 				echo "<tr>
@@ -1296,8 +1306,8 @@
 									echo "<input type=\"hidden\" value=\"".$data['ship_max_count']."\" id=\"ship_max_count_".$data['ship_id']."\" name=\"ship_max_count_".$data['ship_id']."\" />
 									</td>
 							</tr>";
-				
-				
+
+
 				tableEnd();
 			}
 		}
@@ -1307,11 +1317,11 @@
 			echo "Es sind keine Allianzschiffe vorhanden!";
 			iBoxEnd();
 		}
-		
-		
-		
+
+
+
 		tableStart("Fertigung");
-		
+
 		echo "<tr>
 						<td style=\"text-align:center;\">
 							<select id=\"user_buy_ship\" name=\"user_buy_ship\">
@@ -1320,12 +1330,12 @@
   						<input type=\"submit\" class=\"button\" name=\"ship_submit\" id=\"ship_submit\" value=\"Schiffe herstellen\" ".tm("Schiffe herstellen","Stellt aus den vorhandenen Teilen die gewünschten Schiffe für den ausgewählten User her.").">
 						</td>
 					</tr>";
-		
+
 		tableEnd();
-  		
+
 		echo "</form>";
 	}
-	
+
 	echo "</div>";
 
 ?>

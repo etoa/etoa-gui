@@ -259,7 +259,7 @@ class Ticket
 	{
 		$this->__set("adminId",$adminId);
 		$this->__set("status","assigned");
-		$mdata['message'] = "Das Ticket wurde dem Administrator ".$this->__get("adminNick")." zugewiesen.";
+		$mdata = ['message' => "Das Ticket wurde dem Administrator ".$this->__get("adminNick")." zugewiesen."];
 		$this->addMessage($mdata);
 	}
 
@@ -273,7 +273,7 @@ class Ticket
 		{
 			$this->__set("status","closed");
 			$this->__set("solution","$solution");
-			$mdata['message'] = "Das Ticket wurde geschlossen und als ".self::$solutionItems[$this->solution]." gekennzeichnet.";
+			$mdata = ['message' => "Das Ticket wurde geschlossen und als ".self::$solutionItems[$this->solution]." gekennzeichnet."];
 			$this->addMessage($mdata);
 		}
 	}
@@ -287,14 +287,14 @@ class Ticket
 		{
 			$this->__set("adminId",0);
 			$this->__set("status","new");
-			$mdata['message'] = "Das Ticket wurde wieder eröffnet.";
+			$mdata = ['message' => "Das Ticket wurde wieder eröffnet."];
 			$this->addMessage($mdata);
 		}
 		elseif ($this->status == "assigned")
 		{
 			$this->__set("adminId",0);
 			$this->__set("status","new");
-			$mdata['message'] = "Der Ticketadministrator hat das Ticket wieder als Neu markiert.";
+			$mdata = ['message' => "Der Ticketadministrator hat das Ticket wieder als Neu markiert."];
 			$this->addMessage($mdata);
 		}
 	}

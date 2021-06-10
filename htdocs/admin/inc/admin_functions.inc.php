@@ -1121,6 +1121,7 @@ function showFleetLogs($args=null,$limit=0)
 			<th>Landezeit</th>
 			<th>Flotte</th>
 		</tr>";
+		$ships = [];
 		$sres = dbquery("SELECT ship_id,ship_name FROM ships WHERE ship_show=1 ORDER BY ship_type_id,ship_order;");
 		while ($sarr = mysql_fetch_row($sres))
 		{

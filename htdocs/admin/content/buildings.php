@@ -238,6 +238,7 @@
 		$starItem = 6;
 
 		// Lade Gebäude
+		$bu_name = [];
 		$bures = dbquery("SELECT building_id,building_name FROM buildings;");
 		while ($buarr = mysql_fetch_array($bures))
 		{
@@ -329,6 +330,7 @@
 
 		$buildTypes = Building::getBuildTypes();
 
+		$build_colors = [];
 		$build_colors[0]="inherit";
 		$build_colors[1]="red";
 		$build_colors[2]="orange";
@@ -603,6 +605,7 @@
 			</ul>
 			<div id="tabs-1">';
 
+			$bdata = [];
 			$bres = dbquery("SELECT building_id,building_name FROM buildings ORDER BY building_type_id,building_order,building_name;");
 			while ($barr=mysql_fetch_array($bres))
 			{

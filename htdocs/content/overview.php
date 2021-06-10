@@ -645,6 +645,14 @@
 		$res_planet = dbquery($psql);
 
 
+        $shipyard_rest_time = [];
+        $shipyard_name = [];
+        $shipyard_zeit = [];
+        $shipyard_time = [];
+        $defense_rest_time = [];
+        $defense_name = [];
+        $defense_zeit = [];
+        $defense_time = [];
 		while ($arr_planet = mysql_fetch_array($res_planet))
 		{
 			if ($arr_planet['planet_name']!="")

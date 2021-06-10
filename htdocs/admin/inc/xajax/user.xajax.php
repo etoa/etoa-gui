@@ -480,7 +480,7 @@ function loadEconomy($uid,$target)
 				//
 
 				echo "<fieldset><legend>Rohstoff- und Produktionsübersicht</legend>";
-				
+
 				// Sucht alle Planet IDs des Users
 				$pres = dbquery("
 					SELECT
@@ -491,7 +491,7 @@ function loadEconomy($uid,$target)
 						planet_user_id='".$uid."'");
 				if(mysql_num_rows($pres)>0)
 				{
-					
+
 					// Läd alle "Planetclass" Daten in ein Array
 					$planets = array();
 					while($parr=mysql_fetch_row($pres))
@@ -508,6 +508,10 @@ function loadEconomy($uid,$target)
 					$max_prod=array(0,0,0,0,0,0);
 					$min_prod=array(9999999999,9999999999,9999999999,9999999999,9999999999,9999999999);
 					$tot_prod=array(0,0,0,0,0,0);
+                    $val_res = [];
+                    $val_prod = [];
+                    $val_store = [];
+                    $val_time = [];
 					foreach ($planets as $p)
 					{
 						//Speichert die aktuellen Rohstoffe in ein Array
@@ -841,7 +845,7 @@ function loadEconomy($uid,$target)
 						echo "<td class=\"tbltitle\">".nf($tot_prod[$x]/$cnt_prod)."</td>";
 					echo "</tr>";
 					echo "</table>";
-					
+
 				}
 				else
 				{
@@ -849,16 +853,16 @@ function loadEconomy($uid,$target)
 				}
 				echo "</fieldset>";
 
-				
+
 				echo "<fieldset><legend>Die fünf letzten Aufträge</legend>";
-				
-				
+
+
 				//
 				// 5 letzte Bauaufträge
 				//
 
 				echo "<h2>Bauaufträge</h2>";
-				
+
 				$lbres = dbquery("
 				SELECT
 					log.id,
@@ -930,7 +934,7 @@ function loadEconomy($uid,$target)
 				//
 
 				echo "<h2>Forschungsaufträge</h2>";
-				
+
 				$lres = dbquery("
 				SELECT
 					log.id,
@@ -999,7 +1003,7 @@ function loadEconomy($uid,$target)
 				//
 
 				echo "<h2>Schiffsaufträge</h2>";
-				
+
 				$lres = dbquery("
 				SELECT
 					log.id,
@@ -1070,7 +1074,7 @@ function loadEconomy($uid,$target)
 				//
 
 				echo "<h2>Verteidigungsaufträge</h2>";
-				
+
 				$lres = dbquery("
 				SELECT
 					log.id,
@@ -1133,9 +1137,9 @@ function loadEconomy($uid,$target)
 					echo "Es sind keine Logs vorhanden!";
 				}
 				echo "</fieldset>";
-				
+
 				echo "<p>Wirtschaftsseite geladen in ".timerStop($tmr)." sec <input type=\"button\" value=\"Wirtschaftsdaten neu laden\" onclick=\"showLoader('tabEconomy');xajax_loadEconomy(".$uid.",'tabEconomy');\" /></p>";
-				
+
 	$out = ob_get_contents();
 	ob_end_clean();
 	$or->assign($target,"innerHTML",$out);

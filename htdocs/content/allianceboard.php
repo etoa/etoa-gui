@@ -90,6 +90,7 @@
 			// Rechte laden
 			$rightres=dbquery("SELECT * FROM alliance_rights ORDER BY right_desc;");
 			$rights=array();
+			$myRight = [];
 			if (mysql_num_rows($rightres)>0)
 			{
 				while ($rightarr=mysql_fetch_array($rightres))
@@ -112,6 +113,7 @@
 			}
 
 			// Kategorien laden
+			$myCat = [];
 			$catres=dbquery("SELECT cat_id FROM ".BOARD_CAT_TABLE." WHERE cat_alliance_id=".BOARD_ALLIANCE_ID.";");
 			if (mysql_num_rows($catres)>0)
 			{

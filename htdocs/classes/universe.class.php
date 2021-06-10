@@ -23,7 +23,7 @@
 			{
 				self::$sol_types[] = $arr['sol_type_id'];
 			}
-			
+
 			self::$planet_types = array();
 			$res = dbquery("
 			SELECT
@@ -41,17 +41,17 @@
 		/**
 		* Create the universe.
 		* And there was light!
-		*/	
+		*/
 		static function create($mapImage="",$mapPrecision=95)
 		{
 			$mtx = new Mutex();
 			$mtx->acquire();
-			
+
 			$mapPrecision = max(0,$mapPrecision);
 			$mapPrecision = min($mapPrecision,100);
-			
+
 			$cfg = Config::getInstance();
-			
+
 			echo "Lade Schöpfungs-Einstellungen...!<br>";
 			$sx_num = $cfg->param1('num_of_sectors');
 			$sy_num = $cfg->param2('num_of_sectors');
@@ -70,7 +70,7 @@
 			$num_planets_min = $cfg->param1('num_planets');
 			$num_planets_max = $cfg->param2('num_planets');
 			$num_planet_images = $cfg->value('num_planet_images');
-			
+
 			self::init();
 
 			$planet_count = 0;
@@ -86,10 +86,10 @@
 			//
 			// Set cell types
 			//
-			
+
 			// by image
 			$imgpath = "../images/galaxylayouts/".$mapImage;
-			if ($mapImage!="" && is_file($imgpath))	
+			if ($mapImage!="" && is_file($imgpath))
 			{
 				$im = imagecreatefrompng($imgpath);
 				$w = imagesx($im);
@@ -107,9 +107,9 @@
 						if (($o>0 && $pr <= $mapPrecision) || ($o==0 && $pr >= $mapPrecision))
 						{
 							$ct = mt_rand(1,100);
-							
+
 							if ($ct <= $perc_solsys)
-								$type[$x][$y]='s';							
+								$type[$x][$y]='s';
 							elseif ($ct <= $perc_solsys + $perc_asteroids)
 								$type[$x][$y]='a';
 							elseif ($ct<= $perc_solsys + $perc_asteroids + $perc_nebulas)
@@ -117,12 +117,12 @@
 							elseif ($ct<= $perc_solsys + $perc_asteroids + $perc_nebulas + $perc_wormholes)
 								$type[$x][$y]='w';
 							else
-								$type[$x][$y]='e';							
+								$type[$x][$y]='e';
 						}
 						else
 						{
 							$type[$x][$y]='e';
-						}						
+						}
 					}
 				}
 			}
@@ -145,11 +145,11 @@
 						else
 							$type[$x][$y]='e';
 					}
-				}				
+				}
 			}
-		
+
 			// Save cell info
-			$sql = "";	
+			$sql = "";
 			for ($sx=1;$sx<=$sx_num;$sx++)
 			{
 				for ($sy=1;$sy<=$sy_num;$sy++)
@@ -192,7 +192,7 @@
 					cy
 				)
 				VALUES ".$sql);
-		
+
 			echo "Zellen gespeichert, fülle Objekte rein...<br/>";
 			$res = dbquery("
 			SELECT
@@ -205,42 +205,42 @@
 				cells;");
 			while ($arr=mysql_fetch_row($res))
 			{
-				$cell_id = $arr[0];					
+				$cell_id = $arr[0];
 				$x = (($arr[1]-1)*10)+$arr[3];
 				$y = (($arr[2]-1)*10)+$arr[4];
-							
+
 				// Star system
 				if ($type[$x][$y]=='s')
 				{
 					self::createStarSystem($cell_id);
 					$sol_count++;
 				}
-				
+
 				// Asteroid Fields
 				elseif ($type[$x][$y]=='a')
 				{
 					self::createAsteroids($cell_id);
 					$asteroids_count++;
 				}
-				
+
 				// Nebulas
 				elseif ($type[$x][$y]=='n')
 				{
-					self::createNebula($cell_id);				
+					self::createNebula($cell_id);
 					$nebula_count++;
 				}
-				
+
 				// Wormholes
 				elseif ($type[$x][$y]=='w')
 				{
-					self::createWormhole($cell_id);	
+					self::createWormhole($cell_id);
 					$wormhole_count++;
 				}
-							
+
 				// Empty space
 				else
 				{
-					self::createEmptySpace($cell_id);	
+					self::createEmptySpace($cell_id);
 				}
 			}
 			echo "Universum erstellt, prüfe Wurmlöcher...<br/>";
@@ -254,7 +254,7 @@
 				wormholes
 			");
 			$nwarr = mysql_fetch_row($nwres);
-			if (fmod($nwarr[0],2)!=0) 
+			if (fmod($nwarr[0],2)!=0)
 			{
 				echo "<br>Ein Wurmloch ist zuviel, lösche es!<br>";
 				$res = dbquery("
@@ -262,7 +262,7 @@
 					id
 				FROM
 					wormholes
-				");				
+				");
 				$arr=mysql_fetch_array($res);
 				dbquery("
 					UPDATE
@@ -290,13 +290,13 @@
 						".$arr['id'].",
 						0
 					);
-				");	
+				");
 			}
-			
+
 			//
 			// Wormhole-Linking
 			//
-			
+
 			// Get all wormholes
 			$wh = array();
 			$wh_persistent = array();
@@ -320,13 +320,13 @@
 					array_push($wh, $arr['id']);
 				}
 			}
-			
+
 			// Shuffle wormholes
 			shuffle($wh);
 			shuffle($wh_persistent);
-			
+
 			// Reduce list of persistent wormholes if uneven
-			if (fmod(count($wh_persistent),2)!=0) 
+			if (fmod(count($wh_persistent),2)!=0)
 			{
 				$lastWormHole = array_pop($wh_persistent);
 				dbquery("
@@ -339,7 +339,7 @@
 				");
 				array_push($wh, $lastWormHole);
 			}
-			
+
 			$wh_new = array();
 			while (sizeof($wh)>0)
 			{
@@ -388,8 +388,8 @@
 	            WHERE
 	            	id='".$k."';
 				");
-			}			
-			
+			}
+
 			echo "Platziere Marktplatz...<br />";
 			dbquery("
 				UPDATE
@@ -409,8 +409,8 @@
 					id='".mysql_insert_id()."'
 				LIMIT
 					1;");
-					
-					
+
+
 			echo "Erstelle Markt und Allianz entity...<br />";
 			dbquery("
 					UPDATE
@@ -422,7 +422,7 @@
 					ORDER BY
 						RAND()
 					LIMIT 1;");
-			
+
 			dbquery("
 				DELETE FROM
 					space
@@ -430,7 +430,7 @@
 					id='".mysql_insert_id()."'
 				LIMIT
 					1;");
-					
+
 			dbquery("
 					UPDATE
 						entities
@@ -441,7 +441,7 @@
 					ORDER BY
 						RAND()
 					LIMIT 1;");
-			
+
 			dbquery("
 				DELETE FROM
 					space
@@ -449,11 +449,11 @@
 					id='".mysql_insert_id()."'
 				LIMIT
 					1;");
-			
-			$mtx->release();					
+
+			$mtx->release();
 			echo "Universum erstellt!<br> $sol_count Sonnensysteme, $asteroids_count Asteroidenfelder, $nebula_count Nebel und $wormhole_count Wurmlöcher!";
-		}	
-		
+		}
+
 		private static function createStarSystem($cell_id, $id=-1)
 		{
 			$cfg = Config::getInstance();
@@ -517,21 +517,21 @@
 				else
 				{
 					self::createEmptySpace($cell_id,$cnp);
-				}				
+				}
 			}
 		}
-		
+
 		private static function createPlanet($cell_id,$pos,$np)
 		{
 			$cfg = Config::getInstance();
-			
+
 			$planet_fields_min = $cfg->param1('planet_fields');
 			$planet_fields_max = $cfg->param2('planet_fields');
 			$planet_temp_min = $cfg->param1('planet_temp');
 			$planet_temp_max = $cfg->param2('planet_temp');
 			$planet_temp_diff = $cfg->value('planet_temp');
 			$planet_temp_totaldiff = abs($planet_temp_min) + abs($planet_temp_max);
-			
+
 			$sql = "
 				INSERT INTO
 					entities
@@ -577,9 +577,9 @@
 					'".$tmin."',
 					'".$tmax."'
 				)";
-			dbquery($sql);	// Planet speichern			
+			dbquery($sql);	// Planet speichern
 		}
-		
+
 		private static function createAsteroids($cell_id,$pos=0)
 		{
 			$cfg = Config::getInstance();
@@ -621,10 +621,10 @@
 					".$asteroid_plastic."
 				);
 			";
-			dbquery($sql);					
-			
+			dbquery($sql);
+
 		}
-		
+
 		private static function createNebula($cell_id,$pos=0)
 		{
 			$cfg = Config::getInstance();
@@ -660,9 +660,9 @@
 					".$nebula_ress."
 				);
 			";
-			dbquery($sql);				
+			dbquery($sql);
 		}
-		
+
 		private static function createWormhole($cell_id,$pos=0)
 		{
 			$cfg = Config::getInstance();
@@ -683,7 +683,7 @@
 				);
 			";
 			dbquery($sql);
-			$eid = mysql_insert_id();								
+			$eid = mysql_insert_id();
 
 			$persistent = (mt_rand(0,100) <= $persistent_wormholes_ratio) ? 1 : 0;
 			$sql = "
@@ -701,12 +701,12 @@
 					".$persistent."
 				);
 			";
-			dbquery($sql);					
+			dbquery($sql);
 		}
-	
+
 		private static function createEmptySpace($cell_id,$pos=0)
 		{
-			$cfg = Config::getInstance();		
+			$cfg = Config::getInstance();
 			$sql = "
 				INSERT INTO
 					entities
@@ -724,7 +724,7 @@
 			";
 			dbquery($sql);
 			$eid = mysql_insert_id();
-	
+
 			$sql = "
 				INSERT INTO
 					space
@@ -748,7 +748,7 @@
 			self::init();
 			$res = dbquery("SELECT id, cell_id, code FROM entities WHERE code in ('e', 'a') AND pos=0 ORDER BY RAND() LIMIT " .$n. ";");
 			$added = 0;
-			while ($row = mysql_fetch_array($res)) 
+			while ($row = mysql_fetch_array($res))
 			{
 				$sql = '';
 				if ($row['code'] === 'e')
@@ -768,7 +768,7 @@
 			}
 			return $added;
 		}
-		
+
 		/**
 		* Resets the universe and all user data
 		* The Anti-Big-Bang
@@ -777,7 +777,8 @@
 		{
 			$mtx = new Mutex();
 			$mtx->acquire();
-			
+
+			$tbl = [];
 			$tbl[]="cells";
 			$tbl[]="entities";
 			$tbl[]="stars";
@@ -786,11 +787,11 @@
 			$tbl[]="nebulas";
 			$tbl[]="wormholes";
 			$tbl[]="space";
-			
+
 			$res = dbquery("SELECT COUNT(id) FROM planets WHERE planet_user_id>0;");
-			$arr = mysql_fetch_row($res);					
+			$arr = mysql_fetch_row($res);
 			if ($arr[0]>0)
-			{			
+			{
 				$tbl[]="buildlist";
 				$tbl[]="deflist";
 				$tbl[]="def_queue";
@@ -804,11 +805,11 @@
 				$tbl[]="missile_flights_obj";
 				$tbl[]="shiplist";
 				$tbl[]="ship_queue";
-				$tbl[]="techlist";				
+				$tbl[]="techlist";
 			}
-			
+
 			if ($all)
-			{	
+			{
 				$tbl[]="alliances";
 				$tbl[]="alliance_bnd";
 				$tbl[]="alliance_applications";
@@ -827,7 +828,7 @@
 				$tbl[]="alliance_buildlist";
 				$tbl[]="alliance_spends";
 				$tbl[]="alliance_techlist";
-	
+
 				$tbl[]="users";
 				$tbl[]="user_multi";
 				$tbl[]="user_log";
@@ -842,7 +843,7 @@
 				$tbl[]="user_properties";
 				$tbl[]="user_sessions";
 				$tbl[]="user_surveillance";
-				
+
 				$tbl[]="buddylist";
 				$tbl[]="messages";
 				$tbl[]="message_data";
@@ -857,13 +858,13 @@
 				$tbl[]="reports_battle";
 				$tbl[]="reports_spy";
 				$tbl[]="reports_market";
-	
+
 				$tbl[]="logs";
 				$tbl[]="logs_alliance";
 				$tbl[]="logs_battle";
 				$tbl[]="logs_fleet";
 				$tbl[]="logs_game";
-				
+
 				$tbl[]="login_failures";
 				$tbl[]="admin_user_log";
 				$tbl[]="admin_user_sessionlog";
@@ -884,7 +885,7 @@
 					user_setup = 0
 				");
 			}
-			
+
 			dbquery("SET FOREIGN_KEY_CHECKS=0;");
 			foreach ($tbl as $t)
 			{
@@ -892,7 +893,7 @@
 				echo "Leere Tabelle <b>$t</b><br/>";
 			}
 			dbquery("SET FOREIGN_KEY_CHECKS=1;");
-			
+
 			dbquery("
 					UPDATE
 						config
@@ -917,10 +918,10 @@
 				}
 			}
 
-			$mtx->release();		
+			$mtx->release();
 			return true;
 		}
-		
+
 
 	}
 

@@ -131,6 +131,7 @@
 	{
         $twig->addGlobal('title', 'Forschungsliste');
 
+		$build_type = [];
 		$build_type[0]="Unt&auml;tig";
 		$build_type[3]="Forschen";
 

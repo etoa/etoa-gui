@@ -17,19 +17,19 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 	/**
 	* Target-Bookmarks-Manager
 	*
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2010 by EtoA Gaming, www.etoa.net
-	*/	
+	*/
 
 	$mode = (isset($_GET['mode']) && $_GET['mode']!="" && ctype_alpha($_GET['mode'])) ? $_GET['mode'] : 'target';
-	
+
 	// save current planet for use in xajax functions
 	$_SESSION['currentEntity']=serialize($cp);
-	
+
 	// Header & Menu
 	echo "<h1>Favoriten</h1>";
  	show_tab_menu("mode",
@@ -37,7 +37,7 @@
 			"fleet"=>"Flottenfavoriten",
 			"new"=>"Neuer Flottenfavorit"));
  	echo '<br/>';
-	
+
 	// Save edited or new fleet bookmarks
 	// max length (in database) of action is 15 chars
 	if ((isset($_POST['submitEdit']) || isset($_POST['submitNew'])) && (isset($_POST['action']) && ctype_alpha($_POST['action']) && strlen($_POST['action']) <= 15))
@@ -47,7 +47,7 @@
 		$sy = intval($_POST['sy']);
 		$cy = intval($_POST['cy']);
 		$pos = intval($_POST['pos']);
-		
+
 		// Check entity
 		$res=dbquery("
 			SELECT
@@ -80,9 +80,9 @@
 					else
 						$addships.= ",".intval($sid).":".nf_back($count);
 				}
-				
+
 				$speed = max(1,min(100,intval(nf_back($_POST['value']))));
-				
+
 				// Create restring
 				$freight = intval(nf_back_sign($_POST['res0'])).",".
 					intval(nf_back_sign($_POST['res1'])).",".
@@ -90,7 +90,7 @@
 					intval(nf_back_sign($_POST['res3'])).",".
 					intval(nf_back_sign($_POST['res4'])).",".
 					intval(nf_back_sign($_POST['res5']))."";
-					
+
 				/*$fetch = intval(nf_back_sign($_POST['fetch0'])).",".
 					intval(nf_back_sign($_POST['fetch1'])).",".
 					intval(nf_back_sign($_POST['fetch2'])).",".
@@ -104,14 +104,14 @@
 					max(0,intval(nf_back($_POST['res3']))).",".
 					max(0,intval(nf_back($_POST['res4']))).",".
 					max(0,intval(nf_back($_POST['res5']))).""; */
-					
+
 				$fetch = max(0,intval(nf_back($_POST['fetch0']))).",".
 					max(0,intval(nf_back($_POST['fetch1']))).",".
 					max(0,intval(nf_back($_POST['fetch2']))).",".
 					max(0,intval(nf_back($_POST['fetch3']))).",".
 					max(0,intval(nf_back($_POST['fetch4']))).",".
-					max(0,intval(nf_back($_POST['fetch5']))).""; 
-					
+					max(0,intval(nf_back($_POST['fetch5'])))."";
+
 				// Save new bookmark
 				if (isset($_POST['submitNew']))
 				{
@@ -139,7 +139,7 @@
 							'".$_POST['action']."',
 							'".$speed."'
 						);");
-								
+
 					success_msg("Der Favorit wurde hinzugef&uuml;gt!");
 				}
 				elseif (isset($_POST['submitEdit']))
@@ -160,7 +160,7 @@
 							user_id='".$cu->id."'
 							AND id='".intval($_POST['id'])."'
 						LIMIT 1;");
-					
+
 					success_msg("Der Favorit wurde gespeichert!");
 				}
 			}
@@ -174,12 +174,12 @@
 			error_msg("Es existiert kein Objekt an den angegebenen Koordinaten!");
 		}
 	}
-	
+
 	// Delete fleet bookmark
 	if (isset($_GET['del']) && intval($_GET['del'])>0)
 	{
 		$bmid = intval($_GET['del']);
-		
+
 		dbquery("
 		DELETE FROM 
 			fleet_bookmarks
@@ -189,7 +189,7 @@
 		if (mysql_affected_rows()>0)
 			success_msg("Gelöscht");
 	}
-	
+
 	if ($mode=="fleet")
 	{
 		// Load fleet bookmarks
@@ -205,6 +205,7 @@
 		if (mysql_num_rows($res)>0)
 		{
 			// Load Shipdata
+            $ships = [];
 			$sres = dbquery("
 						SELECT
 							ship_id,
@@ -215,7 +216,7 @@
 			{
 				$ships[$sarr[0]] = $sarr[1];
 			}
-			
+
 			tableStart("Gespeicherte Favoriten");
 			echo "<tr>
 						<th>Name</th>
@@ -228,16 +229,16 @@
 			{
 				$ent = Entity::createFactoryById($arr['target_id']);
 				$ac = FleetAction::createFactory($arr['action']);
-				
+
 				$sidarr = explode(",",$arr['ships']);
-				
+
 				echo "<tr>
 						<td>".text2html($arr['name'])."</td>
 						<td style=\"width:40px;background:#000\"><img src=\"".$ent->imagePath()."\" /></td>
 						<td>".$ent."<br/>(".$ent->entityCodeString().")</td>
 						<td>".$ac."</td>
 						<td>";
-				
+
 				// Creating ship-print-string
 				foreach ($sidarr as $sd)
 				{
@@ -253,7 +254,7 @@
 					</tr>";
 			}
 			tableEnd();
-			
+
 			// Create box for future events
 			echo '<div id="fleet_info_box" style="display:none;">';
 			iBoxStart("Flotten");
@@ -264,22 +265,22 @@
 		else
 		{
 			info_msg("Noch keine Favoriten vorhanden!");
-		}			
-			
+		}
+
 	}
 	elseif ($mode=="new")
 	{
 		// Creat array for data
 		$data = array();
 		$new = false;
-		
+
 		$_SESSION['bookmarks'] = array('added');
 		$_SESSION['bookmarks']['added'] = array();
-		
+
 		if (isset($_GET['edit']) && intval($_GET['edit'])>0)
 		{
 			$bmid = intval($_GET['edit']);
-			
+
 			// Load bookmark data
 			$bres = dbquery("
 						SELECT
@@ -310,7 +311,7 @@
 				if (mysql_num_rows($eres))
 				{
 					$earr=mysql_fetch_assoc($eres);
-					
+
 					$res = explode(",",$barr['res']);
 					$fetch = explode(",",$barr['resfetch']);
 					$ships = array();
@@ -320,7 +321,7 @@
 						$s = explode(":", $shipdata);
 						$ships[$s[0] ] = $s[1];
 					}
-					
+
 					// Fill data array
 					$data = array_merge($data,$earr);
 					$data['res'] = $res;
@@ -341,7 +342,7 @@
 				error_msg("Flottenfavorit konnte nicht gefunden werden!");
 			}
 		}
-		
+
 		// If data array is without data create a new one
 		if (count($data) === 0)
 		{
@@ -359,11 +360,11 @@
 			$data['speed'] = "100";
 			$data['action'] = "flight";
 		}
-		
+
 		echo '<form id="bookmarkForm" action="?page='.$page.'&amp;mode=fleet" method="post">';
 		checker_init();
 		echo '<input type="hidden" name="id" value="'.$data['id'].'" />';
-		
+
 		tableStart('Allgemeines');
 		echo '<tr>
 				<th>Name</th>
@@ -387,7 +388,7 @@
 				<td colspan="2">Wichtig: Die Flotte wird nur starten, falls die Schiffe und das Ziel die gewählte Aktion unterstützen. Es muss pro Schiffstyp mindestens ein Schiff vorhanden sein, damit die Flotte startet. Bei den Rohstoffen wird Rohstoff für Rohstoff jeweils das Maximum eingeladen.</td>
 			</tr>';
 		tableEnd();
-		
+
 		// Ship databox
 		$cnt = 0;
 		tableStart('Schiffe',0,"",'bookmarkShiplistInputTable');
@@ -402,7 +403,7 @@
 			<?PHP
 		}
     echo "});</script>";
-		
+
 		// Ship addbox
 		tableStart('Schiffe hinzufügen',0,'','shipadder');
 		echo '<tr>
@@ -418,10 +419,10 @@
 					<input type="button" value="Keine weiteren Schiffe hinzufügen" onclick="toggleBox(\'shipadder\');toggleBox(\'targetBox\');xajax_bookmarkTargetInfo(xajax.getFormValues(\'bookmarkForm\'));" />
 			</tr>';
 		tableEnd();
-		
+
 		// Show target selector
 		tableStart('Zielwahl',0,'nondisplay','targetBox');
-		
+
 		// Manuel selector
 		echo '<tr id="manuelselect">
 				<th width="25%">Manuelle Eingabe:</th>
@@ -496,7 +497,7 @@
 						onkeyup="if (detectChangeTest(this,\'t5\')) { showLoader(\'targetinfo\');xajax_bookmarkTargetInfo(xajax.getFormValues(\'bookmarkForm\')); }"
 						onkeypress="return nurZahlen(event)"
 				/></td></tr>';
-				
+
 		// Bookmark selector
 		echo '<tr id="bookmarkselect">
 				<th width="25%">Zielfavoriten:</th>
@@ -506,7 +507,7 @@
 							onchange="xajax_bookmarkBookmark(xajax.getFormValues(\'bookmarkForm\'));"
 					>\n
 						<option value="0">Wählen...</option>';
-		
+
 		$pRes=dbquery("
 				SELECT
 					planets.id
@@ -517,16 +518,16 @@
 				ORDER BY
 					planet_user_main DESC,
 					planet_name ASC;");
-		
+
 		if (mysql_num_rows($pRes)>0)
-		{	
+		{
 			while ($pArr=mysql_fetch_assoc($pRes))
 			{
 				$ent = Entity::createFactory('p',$pArr['id']);
 				echo '<option value="'.$ent->id().'">Eigener Planet: '.$ent.'</option>\n';
 			}
 		}
-		
+
 		$bRes=dbquery("
 				SELECT
 					bookmarks.entity_id,
@@ -539,17 +540,17 @@
 				ON
 					bookmarks.entity_id=entities.id
 					AND bookmarks.user_id=".$cu->id.";");
-		
+
 		if (mysql_num_rows($bRes)>0)
 		{
 			echo '<option value="0">-------------------------------</option>\n';
-			
+
 			while ($bArr=mysql_fetch_assoc($bRes))
 			{
 				$ent = Entity::createFactory($bArr['code'],$bArr['entity_id']);
 				echo '<option value="'.$ent->id().'">'.$ent->entityCodeString().' - '.$ent.' ('.$bArr['comment'].')</option>\n';
 			}
-		}	
+		}
 		echo '		</select>
 				</td>
 			</tr>
@@ -569,7 +570,7 @@
 				</td>
 			</tr>';
 		tableEnd();
-		
+
 		tableStart('Ladung',0,'nondisplay','resbox');
 		echo '<tr>
 				<th>&nbsp;</th>
@@ -631,9 +632,9 @@
 				</td>
 			</tr>';
 		tableEnd();
-		
+
 		jsSlider("slider", $data['speed']);
-		
+
 		echo '<div id="submit" style="display:none;">';
 		if ($new)
 			echo '<input type="submit" value="Speichern" name="submitNew" id="submitNew" />';
@@ -641,7 +642,7 @@
 			echo '<input type="submit" value="Speichern" name="submitEdit" id="submitEdit" />';
 		echo '</div>';
 		echo "</form>";
-		
+
 	}
 	else
 	{
@@ -653,12 +654,12 @@
 			$cu->properties->itemOrderBookmark = $_POST['sort_value'];
     		$cu->properties->itemOrderWay = $_POST['sort_way'];
 		}
-		
+
 		// Bearbeiten
 		if (isset($_GET['edit']) && intval($_GET['edit'])>0)
 		{
 			$bmid = intval($_GET['edit']);
-			
+
 			echo "<form action=\"?page=$page\" method=\"post\">";
 			checker_init();
 			$res=dbquery("
@@ -677,7 +678,7 @@
 			{
 				$arr=mysql_fetch_assoc($res);
 				$ent = Entity::createFactory($arr['code'],$arr['entity_id']);
-				
+
 				tableStart("Favorit bearbeiten");
 				echo "<tr>
 								<th>Koordinaten</th>
@@ -690,7 +691,7 @@
 								</td>
 							</tr>";
 				tableEnd();
-				
+
 				echo "<input type=\"hidden\" name=\"bookmark_id\" value=\"".$bmid."\" />";
 				echo "<input type=\"submit\" value=\"Speichern\" name=\"submit_edit_target\" /> &nbsp; ";
 			}
@@ -707,7 +708,7 @@
 			if (isset($_POST['submit_edit_target']) && isset($_POST['bookmark_comment']) && isset($_POST['bookmark_id']) && intval($_POST['bookmark_id'])>0 && checker_verify())
 			{
 				$bmid = intval($_POST['bookmark_id']);
-				
+
 				dbquery("
 				UPDATE 
 					bookmarks
@@ -719,12 +720,12 @@
 				if (mysql_affected_rows()>0)
 					success_msg("Gespeichert");
 			}
-	
+
 			// Favorit löschen
 			if (isset($_GET['del']) && intval($_GET['del'])>0)
 			{
 				$bmid = intval($_GET['del']);
-				
+
 				dbquery("
 				DELETE FROM 
 					bookmarks
@@ -734,7 +735,7 @@
 				if (mysql_affected_rows()>0)
 					success_msg("Gelöscht");
 			}
-	
+
 			// Neuen Favorit speichern
 			if (isset($_POST['submit_target']) && $_POST['submit_target']!="" && checker_verify())
 			{
@@ -743,7 +744,7 @@
 				$sy = intval($_POST['sy']);
 				$cy = intval($_POST['cy']);
 				$pos = intval($_POST['pos']);
-				
+
 				$absX = (($sx-1) * CELL_NUM_X) + $cx;
 				$absY = (($sy-1) * CELL_NUM_Y) + $cy;
 				if ($cu->discovered($absX,$absY))
@@ -785,7 +786,7 @@
 									('".$cu->id."',
 									'".$arr[0]."',
 									'".mysql_real_escape_string($_POST['bookmark_comment'])."');");
-								
+
 							success_msg("Der Favorit wurde hinzugef&uuml;gt!");
 						}
 						else
@@ -803,12 +804,12 @@
 					error_msg("Das Gebiet ist noch nicht erkundet!");
 				}
 			}
-	
+
 			// Neuer Favorit speichern (id gegeben
 			if (isset($_GET['add']) && intval($_GET['add'])>0)
 			{
 				$bmid = intval($_GET['add']);
-				
+
 				$res=dbquery("
 				SELECT
 					entities.id
@@ -840,7 +841,7 @@
 							('".$cu->id."',
 							'".$arr[0]."',
 							'-');");
-								
+
 						success_msg("Der Favorit wurde hinzugef&uuml;gt!");
 					}
 					else
@@ -853,7 +854,7 @@
 					error_msg("Es existiert kein Objekt an den angegebenen Koordinaten!!");
 				}
 			}
-			
+
 			// Add-Bookmakr-Box
 			iBoxStart("Favorit hinzuf&uuml;gen");
 			echo "<form action=\"?page=$page\" method=\"post\">";
@@ -886,9 +887,9 @@
 			echo "</select> &nbsp; ";
 			echo "<input type=\"text\" name=\"bookmark_comment\" size=\"20\" maxlen=\"200\" value=\"Kommentar\" onfocus=\"if (this.value=='Kommentar') this.value=''\" /> &nbsp;";
 			echo "<input type=\"submit\" value=\"Speichern\" name=\"submit_target\" />";
-			
+
 			iBoxEnd();
-			
+
 			$order = "";
 			if ($cu->properties->itemOrderBookmark=="users.user_nick")
 				$order=" LEFT JOIN
@@ -900,7 +901,7 @@
 						ON
 							planets.planet_user_id=users.user_id ";
 			$order.=" ORDER BY ".$cu->properties->itemOrderBookmark." ".$cu->properties->itemOrderWay."";
-	
+
 			// List bookmarks
 			$res = dbquery("
 			SELECT
@@ -929,7 +930,7 @@
 								"entities.code"=>"Typ",
 								"users.user_nick"=>"Besitzer"
 								);
-											
+
 				echo "<tr>
 						<td colspan=\"6\" style=\"text-align:center;\">
 							<select name=\"sort_value\">";
@@ -940,22 +941,22 @@
 					{
 						echo " selected=\"selected\"";
 					}
-					echo ">".$name."</option>";							
-				}																																																							
+					echo ">".$name."</option>";
+				}
 				echo "</select>
 				
 					<select name=\"sort_way\">";
-					
+
 				//Aufsteigend
 				echo "<option value=\"ASC\"";
 				if($cu->properties->itemOrderWay=='ASC') echo " selected=\"selected\"";
 					echo ">Aufsteigend</option>";
-					
+
 				//Absteigend
 				echo "<option value=\"DESC\"";
 				if($cu->properties->itemOrderWay=='DESC') echo " selected=\"selected\"";
-					echo ">Absteigend</option>";	
-				
+					echo ">Absteigend</option>";
+
 				echo "</select>						
 				
 							<input type=\"submit\" class=\"button\" name=\"sort_submit\" value=\"Sortieren\"/>
@@ -971,7 +972,7 @@
 				while ($arr=mysql_fetch_assoc($res))
 				{
 					$ent = Entity::createFactory($arr['code'],$arr['entity_id']);
-				
+
 					echo "<tr>
 										<td style=\"width:40px;background:#000\"><img src=\"".$ent->imagePath()."\" /></td>
 										<td>".$ent->entityCodeString()."</td>
@@ -988,14 +989,14 @@
 						echo "<a href=\"?page=haven&amp;target=".$ent->id()."\" title=\"Flotte hinschicken\">".icon('fleet')."</a> ";
 					}
 
-					if ($ent->entityCode()=='p')					
-					{						
+					if ($ent->entityCode()=='p')
+					{
 						// Nachrichten-Link
 						if ($ent->ownerId()>0 && $cu->id!=$ent->ownerId())
 						{
 							echo "<a href=\"?page=messages&amp;mode=new&amp;message_user_to=".$ent->ownerId()."\" title=\"Nachricht senden\">".icon("mail")."</a> ";
 						}
-							
+
 						// Ausspionieren, Raketen, Krypto
 						if ($cu->id!=$ent->ownerId())
 						{
@@ -1004,11 +1005,11 @@
 							{
 								echo "<a href=\"javascript:;\" onclick=\"xajax_launchSypProbe(".$ent->id().");\" title=\"Ausspionieren\">".icon("spy")."</a>";
 								echo "<a href=\"?page=missiles&amp;target=".$ent->id()."\" title=\"Raketenangriff starten\">".icon("missile")."</a> ";
-								echo "<a href=\"?page=crypto&amp;target=".$ent->id()."\" title=\"Flottenbewegungen analysieren\">".icon("crypto")."</a> ";					
+								echo "<a href=\"?page=crypto&amp;target=".$ent->id()."\" title=\"Flottenbewegungen analysieren\">".icon("crypto")."</a> ";
 							}
 						}
 					}
-					
+
 					// Analysieren, letzten Analysebericht als Popup anzeigen
 					if (in_array("analyze",$ent->allowedFleetActions()))
 					{
@@ -1017,7 +1018,7 @@
 							$reports = Report::find(array("type"=>"spy","user_id"=>$cu->id, "entity1_id"=>$ent->id()),"timestamp DESC",1,0,true);
 							if (count($reports)) {
 								$r = array_pop($reports);
-								echo "<span ".tm($r->subject,$r."<br style=\"clear:both\" />")."><a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(".$ent->id().");\" title=\"Analysieren\">".icon("spy")."</a></span>";	
+								echo "<span ".tm($r->subject,$r."<br style=\"clear:both\" />")."><a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(".$ent->id().");\" title=\"Analysieren\">".icon("spy")."</a></span>";
 							}
 							else
 								echo "<a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(".$ent->id().");\" title=\"Analysieren\">".icon("spy")."</a> ";
@@ -1032,13 +1033,13 @@
 									</td>
 							</tr>";
 				}
-				
+
 				// Feedback-box für Ausspionieren und Analysieren von river
 				echo '
 						<tr><td colspan="6"><div id="spy_info_box" style="display:none"><span id="spy_info"></span></div></td></tr>';
-				
+
 				tableEnd();
-				
+
 			}
 			else
 			{
