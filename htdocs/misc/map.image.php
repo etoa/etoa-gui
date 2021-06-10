@@ -123,6 +123,7 @@
 							GROUP BY
 								cells.id;
 				");
+				$col = [];
 				for ($x=1;$x<=$p_num_max;$x++)
 				{
 					$col[$x] = imagecolorallocate($im,105+(150/$p_num_max*$x),105+(150/$p_num_max*$x),0);
@@ -164,6 +165,7 @@
 							GROUP BY
 								cells.id;
 				");
+				$col = [];
 				for ($x=1;$x<=$p_num_max;$x++)
 				{
 					$col[$x] = imagecolorallocate($im,105+(150/$p_num_max*$x),105+(150/$p_num_max*$x),0);
@@ -201,6 +203,7 @@
 				GROUP BY 
 					e.cell_id
 				");
+				$col = [];
 				for ($x=1;$x<=$p_num_max;$x++)
 				{
 					$col[$x] = imagecolorallocate($im,(255/$p_num_max*$x),(255/$p_num_max*$x),0);

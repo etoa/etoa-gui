@@ -56,6 +56,7 @@
 		$payback_max = RECYC_MAX_PAYBACK;
 		$payback = ($payback_max)-($payback_max/$tech_level);
 		$pb_percent = round($payback*100,2);
+        $pb = [];
 		$pb[0]=0;
 		$pb[1]=0;
 		$pb[2]=0;

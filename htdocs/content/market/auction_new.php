@@ -28,6 +28,7 @@
 	$ok = true;
 	$sf = "";
 	$sv = "";
+	$subtracted = [];
 	foreach ($resNames as $rk => $rn)
 	{
 		// Convert formatted number back to integer

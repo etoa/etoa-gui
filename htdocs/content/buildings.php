@@ -666,6 +666,7 @@ define('HELP_URL',"?page=help&site=buildings");
 							{
 								$tmtext = "";
 								$color = '#fff';
+                                $style = [];
 								$style['metal'] = $style['crystal'] = $style['plastic'] = $style['food'] = "";
 							}
 

@@ -23,10 +23,10 @@
 	*
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/	
+	*/
 
 	// BEGIN SKRIPT //
-	
+
 	echo "<h1>Statistiken</h1>";
 
 	//
@@ -69,7 +69,10 @@
 			LIMIT 48; ");
 			if (mysql_num_rows($pres)>0)
 			{
-				$points=array();
+				$points = [];
+				$fleet = [];
+				$tech = [];
+				$buildings = [];
 				while ($parr=mysql_fetch_array($pres))
 				{
 					$points[$parr['point_timestamp']]=$parr['point_points'];
@@ -88,9 +91,9 @@
 			{
 				echo "<tr><td colspan=\"6\"><i>Keine Punktedaten vorhanden!</td></tr>";
 			}
-		
+
 			tableEnd();
-	
+
 			if (!$popup)
 				echo "<input type=\"button\" value=\"Profil anzeigen\" onclick=\"document.location='?page=userinfo&id=".$arr['user_id']."'\" /> &nbsp; ";
 
@@ -98,11 +101,11 @@
 		else
 			error_msg("Datensatz wurde nicht gefunden!");
 	}
-	
+
 	elseif (isset($_GET['alliancedetail']) && intval($_GET['alliancedetail'])>0)
 	{
 		$adid = intval($_GET['alliancedetail']);
-		
+
 		$res=dbquery("
 		SELECT 
             alliance_tag,
@@ -132,7 +135,9 @@
 			LIMIT 48; ");
 			if (mysql_num_rows($pres)>0)
 			{
-				$points=array();
+				$points = [];
+				$avg = [];
+				$user = [];
 				while ($parr=mysql_fetch_array($pres))
 				{
 					$points[$parr['point_timestamp']]=$parr['point_points'];
@@ -154,7 +159,7 @@
 		}
 		else
 			error_msg("Datensatz wurde nicht gefunden!");
-		
+
 		$limit = 0;
 		if (isset($_GET['limit']))
 		{
@@ -170,7 +175,7 @@
 	else
 	{
 		$_SESSION['alliance_tag'] = $cu->allianceTag();
-		
+
 		$ddm = new DropdownMenu(1);
 		$ddm->add('total','Gesamtstatistik','xajax_statsShowBox(\'user\');');
 
@@ -182,19 +187,19 @@
 		$ddm->add('battle','Kampf','xajax_statsShowBox(\'battle\');','special');
 		$ddm->add('trade','Handel','xajax_statsShowBox(\'trade\');','special');
 		$ddm->add('diplomacy','Diplomatie','xajax_statsShowBox(\'diplomacy\');','special');
-		echo $ddm; 
-		
+		echo $ddm;
+
 		$ddm = new DropdownMenu(1);
 		$ddm->add('alliances','Allianzen','xajax_statsShowBox(\'alliances\');');
 		$ddm->add('base','Allianzbasis','xajax_statsShowBox(\'base\');','alliances');
 		$ddm->add('titles','Titel','xajax_statsShowBox(\'titles\');');
-	
+
 		$ddm->add('pillory','Pranger','xajax_statsShowBox(\'pillory\');','other');
 		$ddm->add('gamestats','Spielstatistik','xajax_statsShowBox(\'gamestats\');','other');
 
-		echo $ddm; 
-		
-		
+		echo $ddm;
+
+
 
 		echo "<br/>";
 
@@ -202,7 +207,7 @@
     <div class=\"loadingMsg\">Lade Daten... <br/>(JavaScript muss aktiviert sein!)</div>";
 		// >> AJAX generated content inserted here
 		echo "</div>";
-		
+
 		if (isset($_GET['mode']) && ctype_alpha($_GET['mode']))
 		{
 			$mode = $_GET['mode'];
@@ -210,10 +215,10 @@
 		elseif(isset($_SESSION['statsmode']))
 		{
 			$mode=$_SESSION['statsmode'];
-		}				
+		}
 		else
 		{
-			$mode="user";			
+			$mode="user";
 		}
 
 		echo "<script type=\"text/javascript\">

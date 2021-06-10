@@ -76,6 +76,14 @@ if ($cp) {
     // Produktion pro Stunde und Energieverbrauch
     //
 
+    $cnt = array(
+        "metal" => 0,
+        "crystal" => 0,
+        "plastic" => 0,
+        "fuel" => 0,
+        "food" => 0
+    );
+    $prodIncludingBoni = [];
     echo "<form action=\"?page=$page\" method=\"post\">";
     $bres = dbquery("
 		SELECT 
@@ -120,13 +128,6 @@ if ($cp) {
         echo "<th class=\"respowercolor\" colspan=\"2\">" . RES_POWER . "</th>";
         echo "</tr>";
 
-        $cnt = array(
-            "metal" => 0,
-            "crystal" => 0,
-            "plastic" => 0,
-            "fuel" => 0,
-            "food" => 0
-        );
         $pwrcnt = 0;
 
         // array representing bare building production without boni
@@ -153,6 +154,7 @@ if ($cp) {
                 }
                 echo "</td>";
 
+                $bareBuildingProduction = [];
                 $bareBuildingProduction['metal'] = $prodIncludingBoni['metal'] = $barr['building_prod_metal'] * pow($barr['building_production_factor'], $barr['buildlist_current_level'] - 1);
                 $bareBuildingProduction['crystal'] = $prodIncludingBoni['crystal'] = $barr['building_prod_crystal'] * pow($barr['building_production_factor'], $barr['buildlist_current_level'] - 1);
                 $bareBuildingProduction['plastic'] = $prodIncludingBoni['plastic'] = $barr['building_prod_plastic'] * pow($barr['building_production_factor'], $barr['buildlist_current_level'] - 1);
@@ -529,6 +531,7 @@ if ($cp) {
         echo "</tr>";
 
         echo "<tr><th>Grundkapazit&auml;t</th>";
+        $storetotal = [];
         for ($x = 0; $x < 5; $x++) {
             echo "<td>" . nf($conf['def_store_capacity']['v']) . "</td>";
             $storetotal[$x] = $conf['def_store_capacity']['v'];
@@ -537,6 +540,7 @@ if ($cp) {
         while ($barr = mysql_fetch_array($bres)) {
             echo "<tr><th>" . $barr['building_name'] . " (" . $barr['buildlist_current_level'] . ")</th>";
             $level = $barr['buildlist_current_level'] - 1;
+            $store = [];
             $store[0] = round($barr['building_store_metal'] * pow($barr['building_store_factor'], $level));
             $store[1] = round($barr['building_store_crystal'] * pow($barr['building_store_factor'], $level));
             $store[2] = round($barr['building_store_plastic'] * pow($barr['building_store_factor'], $level));

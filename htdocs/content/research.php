@@ -64,6 +64,7 @@ if (isset($cp)) {
 			techlist_user_id='".$cu->id."';");
 		$building_something=false;
 		$building_gen = false;
+		$techlist = [];
 		while ($tarr = mysql_fetch_array($tres)) {
 			$techlist[$tarr['techlist_tech_id']]=$tarr;
             // Check, ob schon eine Technik geforscht wird
@@ -140,6 +141,7 @@ if (isset($cp)) {
 		//
 
 		// Load built buildings
+		$buildlist = [];
 		$blres = dbquery("
 			SELECT 
 				* 
@@ -153,6 +155,7 @@ if (isset($cp)) {
 		}
 
 		// Load requirements
+		$b_req = [];
 		$rres = dbquery("
 			SELECT 
 				* 
@@ -404,6 +407,7 @@ if (isset($cp)) {
 
 					$bc = calcTechCosts($arr,$b_level,$cu->specialist->costsResearch);
 
+					$bcn = [];
 					$bcn['metal'] = $cu->specialist->costsResearch * $arr['tech_costs_metal'] * pow($arr['tech_build_costs_factor'],$b_level+1);
 					$bcn['crystal'] = $cu->specialist->costsResearch * $arr['tech_costs_crystal'] * pow($arr['tech_build_costs_factor'],$b_level+1);
 					$bcn['plastic'] = $cu->specialist->costsResearch * $arr['tech_costs_plastic'] * pow($arr['tech_build_costs_factor'],$b_level+1);
@@ -715,6 +719,7 @@ if (isset($cp)) {
 					$notAvStyle=" style=\"color:red;\"";
 
 					// Bauen
+					$bwait = [];
 					if ($b_status==0)
 					{
 						// Wartezeiten auf Ressourcen berechnen
@@ -1071,6 +1076,7 @@ if (isset($cp)) {
 									else
 									{
 	              	  // Baukostenberechnung          Baukosten = Grundkosten * (Kostenfaktor ^ Ausbaustufe)
+					  $bc = [];
 	              	  $bc['metal'] = $bv['tech_costs_metal'] * $cu->specialist->costsResearch * pow($bv['tech_build_costs_factor'],$b_level);
 	              	  $bc['crystal'] = $bv['tech_costs_crystal'] * $cu->specialist->costsResearch * pow($bv['tech_build_costs_factor'],$b_level);
 	              	  $bc['plastic'] = $bv['tech_costs_plastic'] * $cu->specialist->costsResearch * pow($bv['tech_build_costs_factor'],$b_level);

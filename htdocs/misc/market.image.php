@@ -20,6 +20,7 @@
 
 	$colBg = imagecolorallocate($im,255,255,255);
 
+	$rCol = [];
 	$rCol[0] = imagecolorallocate($im,157,100,94);
 	$rCol[1] = imagecolorallocate($im,94,126,139);
 	$rCol[2] = imagecolorallocate($im,129,109,139);

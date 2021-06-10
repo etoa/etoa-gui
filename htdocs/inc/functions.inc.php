@@ -1110,6 +1110,7 @@
 
 					if (is_file($file))
 					{
+                        $pack = [];
 						$pack['dir'] = $dir;
 						$pack['path'] = substr($dir, strlen(RELATIVE_ROOT));
 						$xml = new XMLReader();
@@ -1208,6 +1209,7 @@
 	{
 		if (is_file($file))
 		{
+            $design = [];
 			$xml = new XMLReader();
 			$xml->open($file);
 			while ($xml->read())
@@ -1797,6 +1799,8 @@
 	*/
    function cut_word($txt, $where, $br=0) {
        if (empty($txt)) return false;
+
+       $d = [];
        for ($c = 0, $a = 0, $g = 0; $c<strlen($txt); $c++) {
            $d[$c+$g]=$txt[$c];
            if ($txt[$c]!=" ") $a++;

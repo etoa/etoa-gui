@@ -23,6 +23,7 @@ if (Alliance::checkActionRights('editmembers'))
 
 		echo "<h2>Allianzmitglieder</h2>";
 		// Ränge laden
+        $rank = [];
 		$rres = dbquery("
 		SELECT
 			rank_name,
@@ -58,7 +59,7 @@ if (Alliance::checkActionRights('editmembers'))
 			}
 
 			// Handle user move from wing to wing or main
-			
+
 			if($conf['allow_wings']['v'])
 			{
 				$checked_arr = array();
@@ -85,7 +86,7 @@ if (Alliance::checkActionRights('editmembers'))
 										{
 											$ally->wings[$wf]->kickMember($uk);
 										}
-	
+
 										$checked_arr[$uk] = $wt;
 									}
 								}
@@ -95,7 +96,7 @@ if (Alliance::checkActionRights('editmembers'))
 				}
 				// Bug-Workaround by river: First kick all, then reassign them to alliances
 				// to prevent ressources penalty for temporary +1 user
-				// TODO: A cool user-swap-function for alliances would be a better solution. 
+				// TODO: A cool user-swap-function for alliances would be a better solution.
 				if (count($checked_arr)>0)
 				{
 					foreach ($checked_arr as $moving_user_id => $target_alliance)
@@ -116,7 +117,7 @@ if (Alliance::checkActionRights('editmembers'))
 								error_msg("Verschiebung nicht möglich, User ist bereits Mitglied oder die maximale Anzahl an Mitgliedern wurde erreicht!");
 							}
 						}
-		
+
 					}
 				}
 			}
@@ -145,8 +146,8 @@ if (Alliance::checkActionRights('editmembers'))
 			if (isset($ally->members[$kid]))
 			{
 				$tmpUser = $ally->members[$kid];
-				if ($ally->kickMember($kid)) 
-				{	
+				if ($ally->kickMember($kid))
+				{
 					add_log(5,"Der Spieler [b]".$tmpUser."[/b] wurde von [b]".$cu."[/b] aus der Allianz [b]".$ally."[/b] ausgeschlossen!",time());
 					success_msg("Der Spieler [b]".$tmpUser."[/b] wurde aus der Allianz ausgeschlossen!");
 					unset($tmpUser);
@@ -154,7 +155,7 @@ if (Alliance::checkActionRights('editmembers'))
 				else
 				{
 					error_msg("Der Spieler konnte nicht aus der Allianz ausgeschlossen werden, da er in einem Allianzangriff unterwegs ist!");
-				}	
+				}
 			}
 			else
 			{

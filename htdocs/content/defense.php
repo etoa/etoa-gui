@@ -133,6 +133,7 @@
 
 			//Technologien laden und Gentechlevel definieren
 			$gen_tech_level = 0;
+			$techlist = [];
 			$res = dbquery("
 						SELECT 
 							techlist_tech_id,
@@ -153,6 +154,7 @@
 			}
 
 			//Gebäude laden
+			$buildlist = [];
 			$res = dbquery("
 						SELECT 
 							buildlist_building_id,
@@ -168,6 +170,7 @@
 			}
 
 			// Gebaute Verteidigung laden
+			$deflist = [];
 			$res = dbquery("
 						SELECT
 							deflist_def_id,
@@ -248,6 +251,8 @@
 						ORDER BY
 							cat_order,
 							".$order.";");
+			$cat = [];
+			$defs = [];
 			while ($arr = mysql_fetch_assoc($res))
 			{
 				$cat[$arr['cat_id']] = $arr['cat_name'];
@@ -540,6 +545,8 @@
 						// TODO: Überprüfen
 						//Wenn der User nicht genug Ress hat, die Anzahl Schiffe drosseln
 						//Titan
+						$bf = [];
+						$bc = [];
 						if ($defs[$def_id]['def_costs_metal']>0)
 						{
 							$bf['metal']=$cp->resMetal/$defs[$def_id]['def_costs_metal'];
@@ -774,6 +781,7 @@
 					$obj_cnt = min(ceil(($queue[$id]['queue_endtime']-max($time,$queue[$id]['queue_starttime']))/$queue[$id]['queue_objtime']),$queue[$id]['queue_cnt']);
 					echo "Breche den Bau von ".$obj_cnt." ".$defs[$queue[$id]['queue_def_id']]['def_name']." ab...<br/>";
 
+					$ret = [];
 					$ret['metal']=$defs[$queue[$id]['queue_def_id']]['def_costs_metal']*$obj_cnt*$cancel_res_factor;
 					$ret['crystal']=$defs[$queue[$id]['queue_def_id']]['def_costs_crystal']*$obj_cnt*$cancel_res_factor;
 					$ret['plastic']=$defs[$queue[$id]['queue_def_id']]['def_costs_plastic']*$obj_cnt*$cancel_res_factor;
@@ -1145,6 +1153,8 @@
 								//Zuwenig Rohstoffe. Wartezeit errechnen
 								elseif($def_max_build==0)
 								{
+									$bwait = [];
+									$bwmsg = [];
 										//Wartezeit Titan
 									if ($cp->prodMetal>0)
 									{

@@ -21,6 +21,7 @@
 if (Alliance::checkActionRights('viewmembers'))
 {
 		echo "<h2>Allianzmitglieder</h2>";
+        $rank = [];
 		$rres = dbquery("
 		SELECT
       rank_name,
@@ -115,12 +116,12 @@ if (Alliance::checkActionRights('viewmembers'))
 			echo"<td class=\"tbldata\">";
 			if ($cu->id!=$uarr['user_id'])
 				echo "<a href=\"?page=messages&amp;mode=new&amp;message_user_to=".$uarr['user_id']."\">Nachricht</a> ";
-				
-			echo "<a href=\"?page=userinfo&amp;id=".$uarr['user_id']."\">Profil</a>";	
+
+			echo "<a href=\"?page=userinfo&amp;id=".$uarr['user_id']."\">Profil</a>";
 			echo "</td></tr>";
 		}
 		tableEnd();
 		echo "<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" />";
-						
+
 	}
 ?>

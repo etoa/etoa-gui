@@ -79,6 +79,7 @@
 			{
 
 				// Requirements
+				$b_req = [];
 				$rres = dbquery("
 				SELECT 
 					* 
@@ -373,6 +374,7 @@
 							{
 								$bc+=$v;
 
+								$mcosts = [];
 								$mcosts[0]=$missiles[$k]['missile_costs_metal']*$v;
 								$mcosts[1]=$missiles[$k]['missile_costs_crystal']*$v;
 								$mcosts[2]=$missiles[$k]['missile_costs_plastic']*$v;
@@ -649,6 +651,7 @@
 							elseif($missile_max_build==0 && $store!=0)
 							{
 								//Wartezeit Titan
+						$bwait = [];
   			    		if ($cp->prodMetal>0)
   			    		{
   			    			$bwait['metal']=ceil(($arr['missile_costs_metal']-$cp->resMetal)/$cp->prodMetal*3600);
@@ -981,6 +984,7 @@
 									}
 								}
 
+								$coords = [];
 								if (isset($_GET['target']))
 								{
 									$tres = dbquery("SELECT

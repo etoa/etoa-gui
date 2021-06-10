@@ -82,6 +82,7 @@
             AND queue_endtime>'0';";
             $tres = dbquery($sql);
             $tarr=mysql_fetch_row($tres);
+            $w = [];
             $w[SHIP_BUILDING_ID]=$tarr[0];
 
             //überprüft tätigkeit der waffenfabrik

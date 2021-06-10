@@ -17,13 +17,13 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 	/**
 	* Shows information about the planetar population
 	*
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2009 by EtoA Gaming, www.etoa.net
-	*/	
+	*/
 
 	// BEGIN SKRIPT //
 
@@ -32,7 +32,7 @@
 
 		echo "<h1>Bunker des Planeten ".$cp->name."</h1>";
 		echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
-		
+
 		// Navigation
 		$tabitems = array(
 			"res"=>"Rohstoffbunker",
@@ -40,14 +40,15 @@
 	 		"fleet"=>"Schiffe einbunkern",
 		);
 	 	show_tab_menu("mode",$tabitems);
-		
+
 		$mode = (isset($_GET['mode']) && ctype_alsc($_GET['mode'])) ? $_GET['mode'] : "res";
-		
+
 		$bl = new BuildList($cp->id,$cp->id);
 		$sl = new ShipList($cp->id,$cu->id);
-		
+
 		if ($mode=="fleet" || $mode=="bunker")
 		{
+            $ships = [];
 			$res = dbquery("
 			SELECT
 				ship_id,
@@ -62,8 +63,8 @@
 				$ships[$arr['ship_id']] = $arr;
 			}
 		}
-		
-		
+
+
 		if ($mode=="bunker")
 		{
 			if ($bl->getLevel(FLEET_BUNKER_ID)>0)
@@ -86,7 +87,7 @@
 						success_msg("Schiffe wurden ausgebunkert!");
 					}
 				}
-					
+
 				echo "<form action=\"?page=$page&amp;mode=bunker\" method=\"post\">";
 				checker_init();
 				tableStart("Flottenbunker");
@@ -99,7 +100,7 @@
 						<th width=\"110\">Eingebunkert</th>
 						<th width=\"110\">Ausbunkern</th>
 					</tr>";
-				
+
 				$res = dbquery("
 					SELECT
 						shiplist_ship_id,
@@ -165,7 +166,7 @@
 						echo "<td ".tm($arr['ship_name'],"<img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id']."_middle.".IMAGE_EXT."\" style=\"float:left;margin-right:5px;\">".text2html($arr['ship_shortcomment'])."<br/>".$acstr."<br style=\"clear:both;\"/>").">".$arr['ship_name']."</td>";
 						echo "<td width=\"150\">".nf($ships[$arr['shiplist_ship_id']]['ship_structure'])."</td>";
 						echo "<td width=\"110\">".nf($arr['shiplist_bunkered'])."<br/>";
-				  
+
 				  echo "</td>";
 				  echo "<td width=\"110\"><input type=\"text\" 
 						id=\"ship_bunker_count_".$arr['shiplist_ship_id']."\" 
@@ -182,14 +183,14 @@
 					$jsAllShips["ship_bunker_count_".$arr['shiplist_ship_id']]=$arr['shiplist_bunkered'];
 					}
 				echo "<tr><th colspan=\"2\">Benutzt:</th><td>".nf($structure)."/".nf($bl->getBunkerFleetSpace())."</td><td>".nf($count)."/".nf($bl->getBunkerFleetCount())."</td><td >";
-			
-			// Select all ships button			
+
+			// Select all ships button
 			echo "<a href=\"javascript:;\" onclick=\"";
 			foreach ($jsAllShips as $k => $v)
 			{
 				echo "document.getElementById('".$k."').value=".$v.";";
 			}
-			echo "\">Alle wählen</a>";			
+			echo "\">Alle wählen</a>";
 			echo "</td></tr>
 				<tr><th colspan=\"2\">Verfügbar:</th><td><img src=\"misc/progress.image.php?r=1&w=100&p=".round($structure/$bl->getBunkerFleetSpace()*100)."\" alt=\"progress\" /></td>
 				<td><img src=\"misc/progress.image.php?r=1&w=100&p=".round($count/$bl->getBunkerFleetCount()*100)."\" alt=\"progress\" /></td><td></td></tr>";
@@ -209,7 +210,7 @@
 			{
 				if (isset($_POST['submit_bunker_fleet']) && checker_verify())
 				{
-					
+
 					$count = $bl->getBunkerFleetCount();
 					$structure = $bl->getBunkerFleetSpace();
 					$countBunker = 0;
@@ -231,7 +232,7 @@
 						$count -= $arr['shiplist_bunkered'];
 						$structure -= $arr['shiplist_bunkered']*$ships[$arr['shiplist_ship_id']]['ship_structure'];
 					}
-					
+
 					foreach($_POST['ship_bunker_count'] as $shipId=>$cnt)
 					{
 						$cnt = nf_back($cnt);
@@ -256,9 +257,9 @@
 						echo "<br />";
 						error_msg("Schiffe konnten nicht eingebunkert werden, da kein Platz mehr vorhanden war!");
 					}
-						
+
 				}
-				
+
 				echo "<form action=\"?page=$page&amp;mode=fleet\" method=\"post\">";
 				checker_init();
 				tableStart("Vorhandene Raumschiffe");
@@ -271,7 +272,7 @@
 						<th width=\"110\">Anzahl</th>
 						<th width=\"110\">Einbunkern</th>
 					</tr>";
-				
+
 				$res = dbquery("
 					SELECT
 						shiplist_ship_id,
@@ -338,7 +339,7 @@
 						echo "<td ".tm($arr['ship_name'],"<img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id']."_middle.".IMAGE_EXT."\" style=\"float:left;margin-right:5px;\">".text2html($arr['ship_shortcomment'])."<br/>".$acstr."<br style=\"clear:both;\"/>").">".$arr['ship_name']."</td>";
 						echo "<td width=\"150\">".nf($ships[$arr['shiplist_ship_id']]['ship_structure'])."</td>";
 						echo "<td width=\"110\">".nf($arr['shiplist_count'])."<br/>";
-				  
+
 				  echo "</td>";
 				  echo "<td width=\"110\"><input type=\"text\" 
 						id=\"ship_bunker_count_".$arr['shiplist_ship_id']."\" 
@@ -353,14 +354,14 @@
 					$jsAllShips["ship_bunker_count_".$arr['shiplist_ship_id']]=$arr['shiplist_count'];
 				}
 				echo "<tr><td colspan=\"3\"><td><td >";
-			
-			// Select all ships button			
+
+			// Select all ships button
 			echo "<a href=\"javascript:;\" onclick=\"";
 			foreach ($jsAllShips as $k => $v)
 			{
 				echo "document.getElementById('".$k."').value=".$v.";";
 			}
-			echo "\">Alle wählen</a>";			
+			echo "\">Alle wählen</a>";
 			echo "</td></tr>";
 				tableEnd();
 				echo "<input type=\"submit\" name=\"submit_bunker_fleet\" value=\"Einbunkern\" />";
@@ -386,11 +387,11 @@
 					$cp->chgBunker(3,nf_back($_POST['bunker_plastic'])/$percent);
 					$cp->chgBunker(4,nf_back($_POST['bunker_fuel'])/$percent);
 					$cp->chgBunker(5,nf_back($_POST['bunker_food'])/$percent);
-					
+
 					echo "<br />";
 					success_msg("Änderungen wurden übernommen!");
 				}
-		
+
 				//
 				// Rohstoffbunker
 				//

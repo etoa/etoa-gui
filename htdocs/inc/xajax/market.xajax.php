@@ -125,6 +125,7 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 			if ($offerCount)
 			{
 				$sortOrder = $orderDirection>0 ? SORT_DESC : SORT_ASC;
+				$sort = [];
 				foreach ($data as $key => $row)
 				{
 					if ($order=="sell")
