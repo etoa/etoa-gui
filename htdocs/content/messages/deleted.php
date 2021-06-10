@@ -83,7 +83,7 @@
       				echo "Nachricht wurde wiederhergestellt!<br/><br/>";
       			}
 			}
-			
+
 			tableStart();
 			echo "<tr><th colspan=\"5\">Papierkorb</th></tr>";
 			$mres = dbquery("
@@ -117,14 +117,14 @@
 				while ($marr = mysql_fetch_array($mres))
 				{
 					$subj = $marr['subject']!="" ? htmlentities($marr['subject'],ENT_QUOTES,'UTF-8') : "<i>Kein Titel</i>";
-					
+
 					echo "<tr><td style=\"width:16px;\">
 					<a href=\"?page=$page&msg_id=".$marr['message_id']."&mode=".$mode."\">
 					<img src=\"images/pm_normal.gif\" style=\"border:none;width:16px;height:18px;\"></a></td>";
 					echo "<td><a href=\"?page=$page&msg_id=".$marr['message_id']."&mode=".$mode."\">".$subj;
 					echo "</a></td>";
 					echo "<td style=\"width:120px;\">".$marr['cat_name']."</td>";
-					echo "<td style=\"width:120px;\">".userPopUP($marr['message_user_from'],$marr['user_nick'],0)."</td>";
+					echo "<td style=\"width:120px;\">".userPopUp($marr['message_user_from'],$marr['user_nick'],0)."</td>";
 					echo "<td style=\"width:120px;\">".date("d.m.Y H:i",$marr['message_timestamp'])."</td>";
 				}
 			}

@@ -17,7 +17,7 @@ function changeItem($id,$value,$setid)
 		item_count='".$value."'
 	WHERE 
 		item_id=".$id."
-	");		
+	");
 	$or->script("xajax_loadItemSet(".$setid.");");
 	return $or;
 }
@@ -31,7 +31,7 @@ function removeFromItemSet($id,$setid)
 		default_items
 	WHERE 
 		item_id=".$id."
-	");		
+	");
 	$or->script("xajax_loadItemSet(".$setid.");");
 	return $or;
 }
@@ -47,8 +47,8 @@ function showObjCountChanger($id,$setid)
 		default_items
 	WHERE 
 		item_id=".$id."
-	");		
-	$arr=mysql_fetch_array($res);			
+	");
+	$arr=mysql_fetch_array($res);
 	echo "<input type=\"text\" id=\"countchanger_".$id."\" value=\"".$arr['item_count']."\" size=\"3\" /> 
 	<input type=\"button\" onclick=\"xajax_changeItem(".$id.",document.getElementById('countchanger_".$id."').value,".$setid.")\" value=\"Speichern\"/> 
 	<input type=\"button\" onclick=\"xajax_loadItemSet(".$setid.")\" value=\"Abbrechen\"/> 
@@ -63,7 +63,7 @@ function showObjCountChanger($id,$setid)
 function loadItemSet($setid)
 {
 	$or = new xajaxResponse();
-	ob_start();	
+	ob_start();
 
 	$ires = dbquery("SELECT 
 		item_id as id,
@@ -84,7 +84,7 @@ function loadItemSet($setid)
 		{
 			echo "<span onmouseover=\"this.style.color='#0f0'\" onmouseout=\"this.style.color=''\" onclick=\"xajax_showObjCountChanger(".$iarr['id'].",".$setid.")\">".$iarr['name']."</span> 
 			<span id=\"details_".$iarr['id']."\">(".$iarr['count'].")</span><br/>";
-		}		
+		}
 		$cnt++;
 	}
 	$ires = dbquery("SELECT 
@@ -106,7 +106,7 @@ function loadItemSet($setid)
 		{
 			echo "<span onmouseover=\"this.style.color='#0f0'\" onmouseout=\"this.style.color=''\" onclick=\"xajax_showObjCountChanger(".$iarr['id'].",".$setid.")\">".$iarr['name']."</span> 
 			<span id=\"details_".$iarr['id']."\">(".$iarr['count'].")</span><br/>";
-		}		
+		}
 		$cnt++;
 	}
 	$ires = dbquery("SELECT 
@@ -128,7 +128,7 @@ function loadItemSet($setid)
 		{
 			echo "<span onmouseover=\"this.style.color='#0f0'\" onmouseout=\"this.style.color=''\" onclick=\"xajax_showObjCountChanger(".$iarr['id'].",".$setid.")\">".$iarr['name']."</span> 
 			<span id=\"details_".$iarr['id']."\">(".$iarr['count'].")</span><br/>";
-		}		
+		}
 		$cnt++;
 	}
 	$ires = dbquery("SELECT 
@@ -150,14 +150,14 @@ function loadItemSet($setid)
 		{
 			echo "<span onmouseover=\"this.style.color='#0f0'\" onmouseout=\"this.style.color=''\" onclick=\"xajax_showObjCountChanger(".$iarr['id'].",".$setid.")\">".$iarr['name']."</span> 
 			<span id=\"details_".$iarr['id']."\">(".$iarr['count'].")</span><br/>";
-		}		
+		}
 		$cnt++;
-	}			
+	}
 	if ($cnt==0)
 	{
 		echo "Keine Objekte definiert!<br/>";
 	}
-	
+
 	$out = ob_get_contents();
 	ob_end_clean();
 	$or->assign("setcontent_".$setid,"innerHTML",$out);
@@ -170,7 +170,7 @@ function loadItemSet($setid)
 function addItemToSet($setid,$form)
 {
 	$or = new xajaxResponse();
-	ob_start();	
+	ob_start();
 	$cnt = intval($form['new_item_count']);
 	if ($cnt>0)
 	{
@@ -183,9 +183,9 @@ function addItemToSet($setid,$form)
 			item_set_id=".$setid."
 			AND item_cat='".$form['new_item_cat']."'
 			AND item_object_id=".$form['new_item_object_id']."
-		");	
+		");
 		if (mysql_num_rows($res)==0)
-		{		
+		{
 			dbquery("
 			INSERT INTO
 				default_items
@@ -202,7 +202,7 @@ function addItemToSet($setid,$form)
 				".$form['new_item_object_id'].",
 				".$form['new_item_count']."			
 			);		
-			");		
+			");
 			$or->script("xajax_loadItemSet(".$setid.");");
 		}
 		else
@@ -210,15 +210,15 @@ function addItemToSet($setid,$form)
 			$or->alert("Bereits vorhanden!");
 			ob_end_clean();
 			return $or;
-		}		
+		}
 	}
 	else
 	{
 		$or->alert("Ungültige Anzahl/Stufe!");
 		ob_end_clean();
 		return $or;
-	}		
-	
+	}
+
 	$out = ob_get_contents();
 	ob_end_clean();
 	return $or;
@@ -242,7 +242,7 @@ function loadItemSelector($cat,$setid)
 			building_name;
 		");
 		echo "<select name=\"new_item_object_id\">";
-		while ($arr=mysql_Fetch_array($res))
+		while ($arr=mysql_fetch_array($res))
 		{
 			echo "<option value=\"".$arr['id']."\">".$arr['name']."</option>";
 		}
@@ -263,13 +263,13 @@ function loadItemSelector($cat,$setid)
 			tech_name;
 		");
 		echo "<select name=\"new_item_object_id\">";
-		while ($arr=mysql_Fetch_array($res))
+		while ($arr=mysql_fetch_array($res))
 		{
 			echo "<option value=\"".$arr['id']."\">".$arr['name']."</option>";
 		}
 		echo "</select> Stufe <input type=\"text\" name=\"new_item_count\" value=\"1\" size=\"3\" />
 		&nbsp; <input type=\"button\" onclick=\"xajax_addItemToSet(".$setid.",xajax.getFormValues('set_".$setid."'))\" value=\"Hinzufügen\" />";
-	}	
+	}
 	elseif ($cat=="s")
 	{
 		$res = dbquery("
@@ -282,13 +282,13 @@ function loadItemSelector($cat,$setid)
 			ship_name;
 		");
 		echo "<select name=\"new_item_object_id\">";
-		while ($arr=mysql_Fetch_array($res))
+		while ($arr=mysql_fetch_array($res))
 		{
 			echo "<option value=\"".$arr['id']."\">".$arr['name']."</option>";
 		}
 		echo "</select> Anzahl <input type=\"text\" name=\"new_item_count\" value=\"1\" size=\"3\" />
 		&nbsp; <input type=\"button\" onclick=\"xajax_addItemToSet(".$setid.",xajax.getFormValues('set_".$setid."'))\" value=\"Hinzufügen\" />";
-	}	
+	}
 	elseif ($cat=="d")
 	{
 		$res = dbquery("
@@ -301,18 +301,18 @@ function loadItemSelector($cat,$setid)
 			def_name;
 		");
 		echo "<select name=\"new_item_object_id\">";
-		while ($arr=mysql_Fetch_array($res))
+		while ($arr=mysql_fetch_array($res))
 		{
 			echo "<option value=\"".$arr['id']."\">".$arr['name']."</option>";
 		}
 		echo "</select> Anzahl <input type=\"text\" name=\"new_item_count\" value=\"1\" size=\"3\" />
 		&nbsp; <input type=\"button\" onclick=\"xajax_addItemToSet(".$setid.",xajax.getFormValues('set_".$setid."'))\" value=\"Hinzufügen\" />";
-	}	
+	}
 	else
 	{
 		echo "Bitte Kategorie wählen!";
 	}
-	
+
 	$out=ob_get_contents();
 	ob_end_clean();
 	$or->assign("itemlist_".$setid,"innerHTML",$out);

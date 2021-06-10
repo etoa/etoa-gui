@@ -1,9 +1,9 @@
 <?php
 
 	chdir(realpath(dirname(__FILE__)."/../"));
-	
+
 	define('SKIP_XAJAX_INIT', true);
-	
+
   if (isset($_GET['req_admin'])) {
     define('ADMIN_MODE',true);
   }
@@ -15,12 +15,12 @@
 	{
 		header("Content-type: image/png");
 	}
-	
+
 	function MDashedLine($image, $x0, $y0, $x1, $y1, $fg, $bg)
 	{
 		$st = array($fg, $fg, $fg, $fg, $bg, $bg, $bg, $bg);
-		ImageSetStyle($image, $st);
-		ImageLine($image, $x0, $y0, $x1, $y1, IMG_COLOR_STYLED);
+		imagesetstyle($image, $st);
+		imageline($image, $x0, $y0, $x1, $y1, IMG_COLOR_STYLED);
 	}
 
 	function imagearrow($im,$x1,$y1,$x2,$y2, $color)
@@ -42,7 +42,7 @@
 		else
 			$poly = array($x2,$y2, $x2-10,$y2-5, $x2-10,$y2+5);
 
-		ImageFilledPolygon($im, $poly, 3, $color);
+		imagefilledpolygon($im, $poly, 3, $color);
 	}
 
 

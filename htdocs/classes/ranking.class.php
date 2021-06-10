@@ -1,20 +1,20 @@
 <?PHP
 	/**
-	* Provides static functions for 
+	* Provides static functions for
 	* calculating and displaying
 	* player ranking
-	*/	
+	*/
 	class Ranking {
-	
+
 		/**
 		* Shows player tytles
 		*/
 		private static function getTitles($admin=0,$extern=0) {
 			$cfg = Config::getInstance();
 			ob_start();
-			
+
 			$img_dir = ($admin==1) ? "../images" : "images";
-			
+
 			$titles=array(
 				"total"=>"",
 				"fleet"=>"_ships",
@@ -23,7 +23,7 @@
 				"exp"=>"_exp");
 
 			$titles2 = array('battle','trade','diplomacy');
-			
+
 			tableStart("Allgemeine Titel");
 			$cnt = 0;
 			foreach ($titles as $k=> $v)
@@ -104,7 +104,7 @@
 					</tr>";
 				}
 				$cnt++;
-			}			
+			}
 			if ($cnt==0)
 			{
 				echo "<tr><td class=\"tbldata\">Keine Titel vorhanden (kein Spieler hat die minimale Punktzahl zum Erwerb eines Titels erreicht)!</td></tr>";
@@ -143,7 +143,7 @@
 					$cres = dbquery("SELECT COUNT(user_race_id) FROM users WHERE user_race_id=".$rarr['race_id']."");
 					$carr = mysql_fetch_row($cres);
 					$profile = ($admin==1) ? "?page=user&amp;sub=edit&amp;user_id=".$arr[2]."" : "?page=userinfo&amp;id=".$arr[2];
-					
+
 					echo "<tr>
 						<th class=\"tbltitle\" style=\"width:70px;height:70px;\">
 							<img src='".$img_dir."/medals/medal_race.png' style=\"height:70px;\" />
@@ -164,12 +164,12 @@
 				}
 			}
 			tableEnd();
-		
+
 			$rtn = ob_get_contents();
 			ob_end_clean();
-			return $rtn;		
-		}		
-		
+			return $rtn;
+		}
+
 		/**
 		* Writes generated titles to cache files
 		*/
@@ -177,8 +177,8 @@
 			$dir = CACHE_ROOT."/out";
 			if (!is_dir($dir)) {
 				mkdir($dir);
-			}		
-		
+			}
+
 			$file_u = $dir."/usertitles.gen";
 			$file_a = $dir."/usertitles_a.gen";
 			$file_ex = $dir."/usertitles_ex.gen";
@@ -201,19 +201,19 @@
 				fclose($d);
 			}
 		}
-		
+
 		/**
 		* Punkteberechnung
 		*/
 		static function calc($manual=false) {
-			
+
 			$cfg = Config::getInstance();
-			
+
 			$time = time();
 			$inactivetime = 86400 * USER_INACTIVE_SHOW;
 			$allpoints = 0;
 			$res_amount_per_point = $cfg->param1('points_update');
-	
+
 			// Schiffe laden
 			$res = dbquery("
 				SELECT
@@ -227,7 +227,7 @@
 			{
 				$ship[$arr[0]]=$arr[1];
 			}
-	
+
 			// Verteidigung laden
 			$res = dbquery("
 				SELECT
@@ -241,7 +241,7 @@
 			{
 				$def[$arr[0]]=$arr[1];
 			}
-	
+
 			// Gebäudepunkte berechnen falls nocht nicht vorhanden
 			$arr = mysql_fetch_row(dbquery("
 				SELECT 
@@ -252,7 +252,7 @@
 			if ($arr[0] == 0) {
 				self::calcBuildingPoints();
 			}
-			
+
 			// Gebäude laden
 			$res = dbquery("
 				SELECT
@@ -270,7 +270,7 @@
 					$building[$arr[0]][$arr[1]]=$arr[2];
 				}
 			}
-	
+
 			// Technologiepunkte berechnen falls nocht nicht vorhanden
 			$arr = mysql_fetch_row(dbquery("
 				SELECT 
@@ -280,8 +280,8 @@
 			"));
 			if ($arr[0] == 0) {
 				self::calcTechPoints();
-			}      
-			
+			}
+
 			// Technologien laden
 			$res = dbquery("
 				SELECT
@@ -293,13 +293,13 @@
 			");
 			$tech=array();
 			if (mysql_num_rows($res)>0)
-			{	    
+			{
 				while ($arr = mysql_fetch_row($res))
 				{
 					$tech[$arr[0]][$arr[1]]=$arr[2];
 				}
 			}
-			
+
 			// Cells laden
 			$res = dbquery("
 				SELECT
@@ -329,7 +329,7 @@
 			{
 				$race[$rarr['race_id']]=$rarr['race_name'];
 			}
-			
+
 			// Allianzen laden
 			$rres = dbquery("
 				SELECT
@@ -342,8 +342,8 @@
 			while($rarr=mysql_fetch_assoc($rres))
 			{
 				$alliance[$rarr['alliance_id']]=$rarr['alliance_tag'];
-			}			
-	
+			}
+
 			// Load 'old' ranks
 			$res = dbquery("
 				SELECT
@@ -356,7 +356,7 @@
 				FROM
 					user_stats;
 			");
-			$oldranks = array();		
+			$oldranks = array();
 			if (mysql_num_rows($res)>0)
 			{
 				while ($arr=mysql_fetch_row($res))
@@ -368,10 +368,10 @@
 					$oldranks[$arr[0]][4]=$arr[5];
 				}
 			}
-			
+
 			// Statistiktabelle leeren
-			dbquery("TRUNCATE TABLE user_stats;");		
-	
+			dbquery("TRUNCATE TABLE user_stats;");
+
 			// User-ID's laden
 			$ures =	dbquery("
 				SELECT
@@ -390,7 +390,7 @@
 					// same check as below to set `user_stats`.`hmod` field
 					($cfg->value('show_hmod_users_stats') == 1 ? '' : ' AND (user_hmode_from = 0)').
 			';');
-			
+
 			$user_stats_query = "";
 			$user_points_query = "";
 			$user_rank_highest=array();
@@ -416,7 +416,7 @@
 				$points_building = 0;
 				$sx = 0;
 				$sy = 0;
-				
+
 				// Zelle des Hauptplaneten
 				$res = dbquery("
 					SELECT
@@ -436,7 +436,7 @@
 					$sx = $cells[$arr[0]][0];
 					$sy = $cells[$arr[0]][1];
 				}
-				
+
 				// Punkte für Schiffe (aus Planeten)
 				$res = dbquery("
 					SELECT
@@ -454,7 +454,7 @@
 					$points+=$p;
 					$points_ships+=$p;
 				}
-	
+
 				//
 				// Punkte für Schiffe (in Flotten)
 				$res = dbquery("
@@ -475,7 +475,7 @@
 					$points+=$p;
 					$points_ships+=$p;
 				}
-	
+
 				// Punkte für Verteidigung
 				$res = dbquery("
 					SELECT
@@ -492,7 +492,7 @@
 					$points+=$p;
 					$points_building+=$p;
 				}
-	
+
 				// Punkte für Gebäude
 				$res = dbquery("
 					SELECT
@@ -515,7 +515,7 @@
 						}
 					}
 				}
-	
+
 				// Punkte für Forschung
 				$res = dbquery("
 					SELECT
@@ -527,7 +527,7 @@
 						techlist_user_id='".$user_id."';
 				");
 				if (mysql_num_rows($res)>0)
-				{				
+				{
 					while ($arr = mysql_fetch_assoc($res))
 					{
 						$p = round($tech[$arr['techlist_tech_id']][$arr['techlist_current_level']]);
@@ -535,7 +535,7 @@
 						$points_tech+=$p;
 					}
 				}
-				
+
 				// Punkte für XP
 				$res = dbquery("
 					SELECT
@@ -548,7 +548,7 @@
 				");
 				$arr = mysql_fetch_row($res);
 				$points_exp = max(0,$arr[0]);
-				
+
 				$res = dbquery("
 					SELECT
 						SUM(fs_special_ship_exp)
@@ -591,15 +591,15 @@
 						'".$points_ships."',
 						'".$points_tech."',
 						'".$points_building."'
-					)";				
-				
+					)";
+
 				$allpoints+=$points;
-				
+
 				$max_points_building = max($max_points_building, $points_building);
 				$points_building_arr[$user_id] = $points_building;
 			}
 			unset($user_id);
-	
+
 			// Save points in memory cached table
 			if ($user_stats_query!="")
 			{
@@ -628,9 +628,9 @@
 					;
 				");
 			}
-			
-			
-			
+
+
+
 			// Save points to user points table
 			if ($user_points_query!="")
 			{
@@ -649,7 +649,7 @@
 						".substr($user_points_query,1)."
 				");
 			}
-	
+
 			// Array Löschen (Speicher freigeben)
 			unset($ship);
 			unset($def);
@@ -662,7 +662,7 @@
 			unset($points_building);
 			unset($user_stats_query);
 			unset($user_points_query);
-		
+
 			// Ranking (Total Points)
 
 			$res = dbquery("
@@ -705,12 +705,12 @@
 					WHERE
 						user_id=".$arr[0]."
 					");
-					
+
 					$max_points = max($max_points, $arr[1]);
 					$points_arr[$arr[0]] = $arr[1];
 
 					$cnt++;
-				}				
+				}
 			}
 
 			// Update boost bonus
@@ -738,7 +738,7 @@
 
 
 			unset($user_rank_highest);
-			
+
 			// Ranking (Ships)
 			$res = dbquery("
 			SELECT
@@ -770,8 +770,8 @@
 					WHERE
 						id=".$arr[0].";");
 					$cnt++;
-				}				
-			}							
+				}
+			}
 
 			// Ranking (Tech)
 			$res = dbquery("
@@ -804,8 +804,8 @@
 					WHERE
 						id=".$arr[0].";");
 					$cnt++;
-				}				
-			}				
+				}
+			}
 
 			// Ranking (Buildings)
 			$res = dbquery("
@@ -838,9 +838,9 @@
 					WHERE
 						id=".$arr[0].";");
 					$cnt++;
-				}				
-			}										
-	
+				}
+			}
+
 			// Ranking (Exp)
 			$res = dbquery("
 			SELECT
@@ -872,13 +872,13 @@
 					WHERE
 						id=".$arr[0].";");
 					$cnt++;
-				}				
-			}				
+				}
+			}
 			unset($oldranks);
-			
+
 			// Allianz Statistik generieren
 			dbquery("TRUNCATE TABLE alliance_stats;");
-			
+
 			// Technologien laden
 			$res = dbquery("
 				SELECT
@@ -901,7 +901,7 @@
 					$level++;
 				}
 			}
-			
+
 			// Gebäude laden
 			$res = dbquery("
 				SELECT
@@ -923,7 +923,7 @@
 					$level++;
 				}
 			}
-			
+
 			$res=dbquery("SELECT 
 				a.alliance_tag,
 				a.alliance_name,
@@ -955,7 +955,7 @@
 					{
 						$upoints = floor($arr['upoints'] / $cfg->param2('points_update'));
 					}
-					
+
 					$bres=dbquery("SELECT
 								 	alliance_buildlist_building_id,
 									alliance_buildlist_current_level
@@ -971,7 +971,7 @@
 							$bpoints += $buildings[$barr[0]][$barr[1]];
 						}
 					}
-					
+
 					$tres=dbquery("SELECT
 								 	alliance_techlist_tech_id,
 									alliance_techlist_current_level
@@ -987,7 +987,7 @@
 							$tpoints += $techs[$tarr[0]][$tarr[1]];
 						}
 					}
-					
+
 					$sres=dbquery("SELECT
 								  	SUM(`user_alliace_shippoints_used`)
 								FROM
@@ -998,10 +998,10 @@
 									user_alliance_id
 								LIMIT 1;");
 					$sarr=mysql_fetch_row($sres);
-					
+
 					$apoints = $tpoints + $bpoints + $sarr[0];
 					$points = $apoints + $upoints;
-					
+
 					dbQuerySave("
 					INSERT INTO
 						alliance_stats
@@ -1047,7 +1047,7 @@
 						$arr['cnt'],
 						$arr['alliance_rank_current']
 					]);
-					
+
 					dbquery("
 					INSERT INTO
 						alliance_points
@@ -1100,10 +1100,10 @@
 					$rank++;
 				}
 			}
-			
+
 			unset($buildings);
 			unset($techs);
-			
+
 			// Zeit in Config speichern
 			RuntimeDataStore::set('statsupdate', time());
 
@@ -1112,7 +1112,7 @@
 			// Arrays löschen (Speicher freigeben)
 			mysql_free_result($res);
 			unset($arr);
-	
+
 			return array($num, $allpoints);
 		}
 
@@ -1121,9 +1121,9 @@
 			if (!is_dir($dir)) {
 				mkdir($dir);
 			}
-			
+
 			$createdFiles = array();
-			
+
 			$res=dbquery("
 			SELECT
 				u.user_nick,
@@ -1154,10 +1154,10 @@
 					$pt = "  -  ".nf($arr['user_points'])." Punkte, Platz ".$arr['user_rank']."";
 				}
 				$text = Config::getInstance()->roundname->v.$pt;
-			
-				$im = self::createUserBannerImage(USERBANNER_WIDTH, USERBANNER_HEIGTH, USERBANNER_BACKGROUND_IMAGE, USERBANNER_FONT, 
+
+				$im = self::createUserBannerImage(USERBANNER_WIDTH, USERBANNER_HEIGTH, USERBANNER_BACKGROUND_IMAGE, USERBANNER_FONT,
 					$arr['user_nick'], $arr['alliance_tag'], $arr['alliance_name'], $arr['race_name'], $text);
-				
+
 				$file = self::getUserBannerPath($arr['user_id']);
 				if (file_exists($file))
 				{
@@ -1166,9 +1166,9 @@
 				imagepng($im,$file);
 				chmod($file,0777);
 				imagedestroy($im);
-				$createdFiles[] = $file;	
+				$createdFiles[] = $file;
 			}
-			
+
 			// Remove old banner images
 			$dh = opendir($dir);
 			while ($f = readdir($dh)) {
@@ -1179,14 +1179,14 @@
 			}
 			closedir($dh);
 		}
-	
+
 		static function getUserBannerPath($userId) {
 			return USERBANNER_DIR.'/'.md5('user'.$userId).'.png';
 		}
 
 		static function createUserBannerImage($w, $h, $backgroundImage, $font, $nick, $allianceTag, $allianceName, $race, $text) {
 			$im = imagecreatefrompng($backgroundImage);
-			
+
 			$colBlack = imagecolorallocate($im,0,0,0);
 			$colGrey = imagecolorallocate($im,120,120,120);
 			$colYellow = imagecolorallocate($im,255,255,0);
@@ -1196,34 +1196,34 @@
 			$colBlue = imagecolorallocate($im,150,150,240);
 			$colViolett = imagecolorallocate($im,200,0,200);
 			$colRe = imagecolorallocate($im,200,0,200);
-			
+
 			$nsize = imagettfbbox(16,0,$font, $nick);
-			
+
 			// Nick
-			ImageTTFText ($im, 16, 0, 6, 21, $colBlack, $font, $nick);
-			ImageTTFText ($im, 16, 0, 5, 20, $colWhite, $font, $nick);
-			
+            imagettftext ($im, 16, 0, 6, 21, $colBlack, $font, $nick);
+            imagettftext ($im, 16, 0, 5, 20, $colWhite, $font, $nick);
+
 			// Race
-			ImageTTFText ($im, 11, 0, $nsize[2]-$nsize[0] + 16, 21, $colBlack, $font, $race);
-			ImageTTFText ($im, 11, 0, $nsize[2]-$nsize[0] + 15, 20, $colWhite, $font, $race);
-			
+            imagettftext ($im, 11, 0, $nsize[2]-$nsize[0] + 16, 21, $colBlack, $font, $race);
+            imagettftext ($im, 11, 0, $nsize[2]-$nsize[0] + 15, 20, $colWhite, $font, $race);
+
 			// Alliance
 			if (!empty($allianceTag))
 			{
-				ImageTTFText ($im, 9, 0, 9, 39, $colBlack, $font,"<".$allianceTag."> ".$allianceName);
-				ImageTTFText ($im, 9, 0, 8, 38, $colWhite, $font,"<".$allianceTag."> ".$allianceName);
+                imagettftext ($im, 9, 0, 9, 39, $colBlack, $font,"<".$allianceTag."> ".$allianceName);
+                imagettftext ($im, 9, 0, 8, 38, $colWhite, $font,"<".$allianceTag."> ".$allianceName);
 			}
-			
+
 			// Text
 			if (!empty($text))
 			{
-				ImageTTFText ($im, 9, 0, 9, 54, $colBlack, $font, $text);
-				ImageTTFText ($im, 9, 0, 8, 53, $colWhite, $font, $text);
+                imagettftext ($im, 9, 0, 9, 54, $colBlack, $font, $text);
+                imagettftext ($im, 9, 0, 8, 53, $colWhite, $font, $text);
 			}
-			
+
 			return $im;
 		}
-		
+
 		static function calcBuildingPoints($id=0) {
 		  $cfg = Config::getInstance();
 		  if ($id>0)
@@ -1241,7 +1241,7 @@
 			  buildings
 			WHERE
 			  building_id=".$id.";";
-		  else	
+		  else
 			$sql = "
 			SELECT
 			  building_id,
@@ -1269,9 +1269,9 @@
 				+$arr['building_costs_plastic']
 				+$arr['building_costs_food'];
 				$p = ($r*(1-pow($arr['building_build_costs_factor'],$level))
-				/(1-$arr['building_build_costs_factor'])) 
+				/(1-$arr['building_build_costs_factor']))
 				/ $cfg->p1('points_update');
-				
+
 				dbquery("
 				INSERT INTO 
 				  building_points
@@ -1336,9 +1336,9 @@
 				+$arr['tech_costs_plastic']
 				+$arr['tech_costs_food'];
 				$p = ($r*(1-pow($arr['tech_build_costs_factor'],$level))
-				/(1-$arr['tech_build_costs_factor'])) 
+				/(1-$arr['tech_build_costs_factor']))
 				/ $cfg->p1('points_update');
-				
+
 				dbquery("
 				INSERT INTO 
 				  tech_points
@@ -1389,11 +1389,11 @@
 				ship_id=".$arr['ship_id'].";");
 			}
 		  }
-		  return "Die Punkte von $mnr Schiffen wurden aktualisiert!";		
+		  return "Die Punkte von $mnr Schiffen wurden aktualisiert!";
 		}
 
 		static function calcDefensePoints() {
-		  $cfg = Config::getInstance();		
+		  $cfg = Config::getInstance();
 		  $res = dbquery("
 		  SELECT
 			def_id,
@@ -1423,7 +1423,7 @@
 				def_id=".$arr['def_id'].";");
 			}
 		  }
-		  return "Die Battlepoints von $mnr Verteidigungsanlagen wurden aktualisiert!";			
+		  return "Die Battlepoints von $mnr Verteidigungsanlagen wurden aktualisiert!";
 		}
 	}
 ?>

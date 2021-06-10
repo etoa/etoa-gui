@@ -38,7 +38,7 @@
 	$imh = imagecreatefromjpeg("images/logo_trans.jpg");
 	$bgfh = 0.5;
 	$bgfw = 0.8;
-	ImageCopyresized($im,$imh,($w-($w*$bgfw))/2,($h-($h*$bgfh))/2,0,0,$w*$bgfw,$h*$bgfh,imagesx($imh),imagesy($imh));
+	imagecopyresized($im,$imh,($w-($w*$bgfw))/2,($h-($h*$bgfh))/2,0,0,$w*$bgfw,$h*$bgfh,imagesx($imh),imagesy($imh));
 
 
 

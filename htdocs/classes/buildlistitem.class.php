@@ -348,7 +348,7 @@
 			[b]Baudauer:[/b] ".tf($costs['time'])."
 			[b]Ende:[/b] ".date("d.m.Y H:i:s",$this->endTime)."
 			[b]Eingesetzte Bewohner:[/b] ".nf($bl->getPeopleWorking(BUILD_BUILDING_ID))."
-			[b]Gen-Tech Level:[/b] ".Buildlist::$GENTECH."
+			[b]Gen-Tech Level:[/b] ".BuildList::$GENTECH."
 			[b]Eingesetzter Spezialist:[/b] ".$cu->specialist->name."
 
 			[b]Kosten[/b]

@@ -17,28 +17,28 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 	/**
 	* Configure personal settings
 	*
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/	
+	*/
 
-	echo "<h1>Einstellungen</h1>"; 
-		
+	echo "<h1>Einstellungen</h1>";
+
 /****************/
 /* Menu			*/
 /****************/
 
 	$mode = (isset($_GET['mode']) && $_GET['mode']!="") ? $_GET['mode'] : 'general';
-	
+
 	$tabitems = array("general"=>"Profil",
  														"game"=>"Spiel",
  														"messages"=>"Nachrichten",
  														"design"=>"Design",
- 														"sitting"=>"Sitting", 
-                            "dual"=>"Dual",                            
+ 														"sitting"=>"Sitting",
+                            "dual"=>"Dual",
  														"password"=>"Passwort",
  														"logins"=>"Logins",
  														"banner"=>"Banner",
@@ -55,7 +55,7 @@
 	$uarr = mysql_fetch_row($ures);
 	if ($uarr[0]>0)
 		$tabitems['warnings'] = "Verwarnungen";
-	
+
  	show_tab_menu("mode",$tabitems);
  	echo '<br/>';
 
@@ -67,7 +67,7 @@
 		{
  			require("content/userconfig/game.php");
 		}
-		
+
     /****************/
     /* Nachrichten    */
     /****************/
@@ -83,7 +83,7 @@
         echo "Im Sittermodus ist dieser Bereich gesperrt!";
       }
 		}
-		
+
     /****************/
     /* Verwarnungen    */
     /****************/
@@ -116,7 +116,7 @@
 						ORDER BY
 							warning_date DESC
 						");
-						while ($uarr = mysql_Fetch_array($ures))	
+						while ($uarr = mysql_fetch_array($ures))
 						{
 							echo "<tr>
 								<td>".stripslashes(nl2br($uarr['warning_text']))."</td>
@@ -124,18 +124,18 @@
 								<td><a href=\"?page=contact&rcpt=".$uarr['aid']."\">".$uarr['anick']."</a>
 								</td>
 							</tr>";
-						}			
-				
+						}
+
 				tableEnd();
-      	
-      	
+
+
       }
       else
       {
         echo "Im Sittermodus ist dieser Bereich gesperrt!";
       }
-		}		
-		
+		}
+
 
     /****************/
     /* Design     	*/
@@ -144,7 +144,7 @@
 		{
 			require("content/userconfig/design.php");
     }
-     
+
 		/****************/
 		/* Sitting			*/
 		/****************/
@@ -157,11 +157,11 @@
       else
       {
         echo "Im Sittermodus ist dieser Bereich gesperrt!<br><br>";
-        
+
 
       }
     }
-    
+
     /****************/
 		/* Dual			*/
 		/****************/
@@ -176,7 +176,7 @@
       	echo "Im Sittermodus ist dieser Bereich gesperrt!";
       }
     }
-    
+
 		/****************/
 		/* Passwort			*/
 		/****************/
@@ -206,25 +206,25 @@
         	echo "Im Sittermodus ist dieser Bereich gesperrt!";
         }
 		}
-		
+
 		/****************/
 		/* Logins		*/
 		/****************/
-		
+
 		elseif ($mode=="logins")
 		{
     	require("content/userconfig/logins.php");
 		}
-		
+
 		/****************/
 		/* Banner		*/
 		/****************/
-		
+
 		elseif ($mode=="banner")
 		{
     	require("content/userconfig/banner.php");
 		}
-		
+
     /****************/
     /* Userdaten    */
     /****************/
@@ -239,7 +239,7 @@
           echo "Im Sittermodus ist dieser Bereich gesperrt!";
         }
 		}
-		
-	
+
+
 
 ?>

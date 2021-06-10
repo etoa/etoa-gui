@@ -188,7 +188,7 @@
 						{
 							echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; <a href=\"?page=$page&amp;cat=".$tarr['cat_id']."\">".$tarr['cat_name']."</a> &gt; <a href=\"?page=$page&amp;topic=".$npid."\">".$tarr['topic_subject']."</a> &gt; Neuer Beitrag</h2>";
 						}
-						tablestart();
+						tableStart();
 						echo "<tr><th>Text:</th><td><textarea name=\"post_text\" rows=\"10\" cols=\"90\"></textarea></td></tr>";
 						tableEnd();
 						echo "<input type=\"submit\" name=\"submit\" value=\"Speichern\" /> &nbsp; ";

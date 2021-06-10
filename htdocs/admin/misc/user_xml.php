@@ -11,7 +11,7 @@
 			header('Content-Type: application/octet-stream');
 			//header('Content-Length: ' . filesize($file));
 			header('Content-Disposition: attachment; filename="user'.$_GET['id'].'.xml"');
-			$utx = new userToXml($_GET['id']);
+			$utx = new UserToXml($_GET['id']);
 			echo $utx;
 			dbclose();
 		}

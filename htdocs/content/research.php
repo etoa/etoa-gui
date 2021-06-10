@@ -936,7 +936,7 @@ if (isset($cp)) {
 					$tech = array();
 					if (mysql_num_rows($bres)>0)
 					{
-						while ($barr = mysql_fetch_Array($bres))
+						while ($barr = mysql_fetch_array($bres))
 						{
 							$tid = $barr['tech_type_id'];
 							$bid = $barr['tech_id'];

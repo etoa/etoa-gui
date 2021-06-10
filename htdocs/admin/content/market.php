@@ -206,7 +206,7 @@
 						// Sind Schiffe angeboten
 						if($arr['ship_id']>0)
 						{
-							$ship = new ship($arr['ship_id']);
+							$ship = new Ship($arr['ship_id']);
 							echo "<td rowspan=\"5\">
 									".$arr['ship_count']." <a href=\"?page=help&site=shipyard&id=".$arr['ship_id']."\">".$ship."</a>
 								</td>";

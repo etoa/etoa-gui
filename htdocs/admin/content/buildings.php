@@ -57,7 +57,7 @@
 			building_name
 		");
 		$bs = array();
-		while ($arr=mysql_Fetch_row($res))
+		while ($arr=mysql_fetch_row($res))
 		{
 			$bs[$arr[0]]=$arr[1];
 		}

@@ -1,6 +1,6 @@
 <?PHP
 	echo "<h1>Verwarnungen</h1>";
-	
+
 	if (isset($_GET['edit']))
 	{
 		$res = dbquery("
@@ -17,7 +17,7 @@
 		ON
 			warning_user_id=user_id
 			AND warning_id=".intval($_GET['edit'])."
-		;");		
+		;");
 		echo "<h2>Verwarnung bearbeiten</h2>";
 		if (mysql_num_rows($res)>0)
 		{
@@ -43,7 +43,7 @@
 									user_nick	
 								");
 								if (mysql_num_rows($ares)>0)
-								{		
+								{
 									while($aarr=mysql_fetch_array($ares))
 									{
 										echo "<option value=\"".$aarr['user_id']."\"";
@@ -63,7 +63,7 @@
 				<input type=\"submit\" name=\"edit\" value=\"Speichern\" />
 			</form><br/>";
 		}
-		
+
 	}
 	else
 	{
@@ -86,12 +86,12 @@
 				'".addslashes($_POST['warning_text'])."',
 				".$cu->id."
 			);");
-			
+
 			send_msg($_POST['warning_user_id'],7,"Verwarnung","Du hast vom Administrator ".$cu->nick." eine Verwarnung erhalten!\n\n".$_POST['warning_text']);
-			
-			success_msg("Verwarnung gespeichert!");		
+
+			success_msg("Verwarnung gespeichert!");
 		}
-		
+
 		if (isset($_POST['edit']))
 		{
 			dbquery("
@@ -103,10 +103,10 @@
 			WHERE
 				warning_id=".$_POST['warning_id']."
 			;");
-			success_msg("Verwarnung gespeichert!");		
+			success_msg("Verwarnung gespeichert!");
 		}
-				
-		
+
+
 		if (isset($_GET['del']))
 		{
 			dbquery("
@@ -115,10 +115,10 @@
 			WHERE
 				warning_id=".intval($_GET['del'])."
 			");
-			success_msg("Verwarnung gelöscht!");		
-		}		
-		
-		
+			success_msg("Verwarnung gelöscht!");
+		}
+
+
 		echo "<h2>Neue Verwarnung</h2>";
 		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">
 			<table class=\"tb\">
@@ -136,7 +136,7 @@
 								user_nick	
 							");
 							if (mysql_num_rows($res)>0)
-							{		
+							{
 								while($arr=mysql_fetch_array($res))
 								{
 									echo "<option value=\"".$arr['user_id']."\">".$arr['user_nick']."</option>";
@@ -151,7 +151,7 @@
 				</tr>
 			</table><br/><input type=\"submit\" name=\"add\" value=\"Neue Verwarnung erteilen\" />
 		</form>";
-		
+
 		echo "<h2>Bestehende Verwarnungen</h2>";
 		$res = dbquery("
 		SELECT
@@ -201,7 +201,7 @@
 						ORDER BY
 							warning_date DESC
 						");
-						while ($uarr = mysql_Fetch_array($ures))	
+						while ($uarr = mysql_fetch_array($ures))
 						{
 							echo "<tr>
 								<td>".stripslashes(nl2br($uarr['warning_text']))."</td>
@@ -212,13 +212,13 @@
 									<a href=\"?page=$page&amp;sub=$sub&amp;del=".$uarr['warning_id']."\" onclick=\"return confirm('Verwarnung löschen?')\">Löschen</a>
 								</td>
 							</tr>";
-						}			
-				
+						}
+
 				echo "</table></div>";
-				
-	
-			}		
-	
+
+
+			}
+
 		}
 		else
 		{

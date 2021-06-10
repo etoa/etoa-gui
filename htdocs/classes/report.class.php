@@ -108,9 +108,9 @@ abstract class Report
 				return $this->createSubject();
 			if (isset($this->$field))
 				return $this->$field;
-			throw new Eexception("Property $field does not exists!");
+			throw new EException("Property $field does not exists!");
 		}
-		catch (Eexception $e)
+		catch (EException $e)
 		{
 			echo $e;
 		}
@@ -135,11 +135,11 @@ abstract class Report
 					dbquery("UPDATE reports SET `".$field."`=".($value ? 1:0)." WHERE id=$this->id;");
 					return true;
 				}
-				throw new Eexception("Property $field is write protected!");
+				throw new EException("Property $field is write protected!");
 			}
-			throw new Eexception("Property $field does not exists!");
+			throw new EException("Property $field does not exists!");
 		}
-		catch (Eexception $e)
+		catch (EException $e)
 		{
 			echo $e;
 			return false;
@@ -310,9 +310,9 @@ abstract class Report
 						return new OtherReport($args);
 					}
 				}
-				throw new Eexception("Keine passende Reportklasse für $type gefunden!");
+				throw new EException("Keine passende Reportklasse für $type gefunden!");
 			}
-			catch (Eexception $e)
+			catch (EException $e)
 			{
 				echo $e;
 			}
