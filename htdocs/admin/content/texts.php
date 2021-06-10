@@ -73,7 +73,7 @@ if (!empty($_GET['disable'])) {
 // Overview
 $texts = [];
 foreach ($tm->getAllTextIDs() as $id) {
-    $texts[] = $tm->getText($id, '');
+    $texts[] = $tm->getText($id);
 }
 echo $twig->render('admin/texts/overview.html.twig', [
     'texts' => $texts,

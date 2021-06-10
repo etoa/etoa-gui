@@ -145,7 +145,7 @@
                   if ($cu->properties->planetCircleWidth==$x) echo " selected=\"selected\"";
                   echo ">".$x."</option>";
               }
-            echo "</select> <span ".tm("Info","Mit dieser Option l&auml;sst sich die gr&ouml;sse des Planetkreises in der &Uuml;bersicht einstellen.<br>Je nach Aufl&ouml;sung die du verwendest ist es beispielsweise nicht m&ouml;glich eine Gr&ouml;sse von 700 Pixeln zu haben. Finde selber heraus welche Gr&ouml;sse am besten Aussieht.",1)."><u>Info</u></span>
+            echo "</select> <span ".tm("Info","Mit dieser Option l&auml;sst sich die gr&ouml;sse des Planetkreises in der &Uuml;bersicht einstellen.<br>Je nach Aufl&ouml;sung die du verwendest ist es beispielsweise nicht m&ouml;glich eine Gr&ouml;sse von 700 Pixeln zu haben. Finde selber heraus welche Gr&ouml;sse am besten Aussieht.")."><u>Info</u></span>
             </td>
         </tr>";
 

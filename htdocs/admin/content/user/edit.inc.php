@@ -142,7 +142,7 @@
 					$parr = mysql_fetch_row($pres);
 					$sql.= ",user_password='".saltPasswort($_POST['user_password'])."'";
 					echo "Das Passwort wurde ge&auml;ndert!<br>";
-					add_log(8,$cu->nick." ändert das Passwort von ".$_POST['user_nick']."",time());
+					add_log(8,$cu->nick." ändert das Passwort von ".$_POST['user_nick']."");
 				}
 
 				// Handle ban
@@ -1087,7 +1087,7 @@
 							<th>Ende</th>
 							<th>Abbrechen</th>
 						</tr>';
-				$used_days = 0;	
+				$used_days = 0;
 				while ($sitting_arr = mysql_fetch_array($sitting_res))
 				{
 					$used_days += (($sitting_arr['date_to']-$sitting_arr['date_from'])/86400);

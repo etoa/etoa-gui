@@ -23,7 +23,7 @@
 	*
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/	
+	*/
 
 	// BEGIN SKRIPT //
 
@@ -54,7 +54,7 @@
 				ON l.deflist_def_id=d.def_id
 				AND l.deflist_user_id=".$cu->id."
 				AND l.deflist_entity_id=".$cp->id."
-				AND l.deflist_count > 0"));		
+				AND l.deflist_count > 0"));
 			$nsarr = mysql_fetch_row(dbquery("
 			SELECT
 				COUNT(d.ship_id)
@@ -69,9 +69,9 @@
 				AND l.shiplist_user_id=".$cu->id."
 				AND l.shiplist_entity_id=".$cp->id."
 				AND l.shiplist_count > 0"));
-				
+
 			$numMobile = $ndarr[0] + $nsarr[0];
-		
+
 			$mode = isset($_GET['mode']) && ($_GET['mode']!="") && ctype_alpha($_GET['mode']) ? $_GET['mode'] : 'launch';
 			if ($numMobile > 0)
 			{
@@ -87,7 +87,7 @@
 			//
 			if ($mode == "launch")
 			{
-		
+
 				//
 				// Kampfsperre prüfen
 				//
@@ -97,7 +97,7 @@
 					echo 'Es ist momentan nicht m&ouml;glich andere Spieler anzugreifen. Grund: '.text2html($cfg->param1("battleban")).'<br />Die Sperre dauert vom '.date("d.m.Y",$cfg->param1("battleban_time")).' um '.date("H:i",$cfg->param1("battleban_time")).' Uhr bis am '.date("d.m.Y",$cfg->param2("battleban_time"))." um ".date("H:i",$cfg->param2("battleban_time")).' Uhr!';
 					iBoxEnd();
 				}
-			
+
 				if (isset($_GET['target']) && intval($_GET['target'])>0)
 				{
 					$_SESSION['haven']['targetId']=intval($_GET['target']);
@@ -115,7 +115,7 @@
 				// Set vars for xajax
 				$_SESSION['haven'] = Null;
 				$_SESSION['haven']['fleetObj']=serialize($fleet);
-				
+
 				echo '<div id="havenContent">
 				<div id="havenContentShips" style="">
 				<div style="padding:20px"><img src="images/loading.gif" alt="Loading" /> Lade Daten...</div>
@@ -129,11 +129,11 @@
 
 			//
 			// Mobile defenses
-			// 
+			//
 			else if ($mode == "transship")
 			{
 				if ($numMobile > 0)
-				{		
+				{
 					if (isset($_POST['dtransform_submit'])) {
 						$sl = new ShipList($cp->id,$cu->id);
 						$dl = new DefList($cp->id,$cu->id);
@@ -169,7 +169,7 @@
 
 						if ($transformed_counter > 0) {
 							success_msg("$transformed_counter Verteidigungsanlagen wurden verladen!");
-						}			
+						}
 					}
 
 					if (isset($_POST['stransform_submit'])) {
@@ -207,7 +207,7 @@
 
 						if ($transformed_counter > 0) {
 							success_msg("$transformed_counter Verteidigungsanlagen wurden installiert!");
-						}			
+						}
 					}
 
 					$has_mobile_objects = false;
@@ -271,7 +271,7 @@
 				}
 				else
 				{
-					info_msg("Keine mobilen Anlagen vorhanden!", 1);
+					info_msg("Keine mobilen Anlagen vorhanden!");
 				}
 			}
 		}

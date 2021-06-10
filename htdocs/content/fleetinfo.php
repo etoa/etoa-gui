@@ -17,13 +17,13 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 	/**
 	* Shows information about a given fleet
 	*
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2008 by EtoA Gaming, www.etoa.net
-	*/	
+	*/
 
 
 	// DEFINITIONEN //
@@ -40,11 +40,11 @@
 	// Flottendaten laden und �berpr�fen ob die Flotte existiert
 	//
 	$valid = 0;
-	
+
 	$fd = new Fleet($fleet_id,-1,$lead_id);
 	if ($fd->valid())
 	{
-		if ($fd->ownerId()==$cu->id) 
+		if ($fd->ownerId()==$cu->id)
 		{
 			$valid = 10;
 		}
@@ -73,7 +73,7 @@
 			}
 		}
 	}
-	
+
 	if ($valid>0)
 	{
 		// Flugabbruch ausl�sen
@@ -95,7 +95,7 @@
 				error_msg("Flug konnte nicht abgebrochen werden, da die Rechte nicht vorhanden sind!");
 			}
 		}
-		
+
 		if (isset($_POST['cancel_alliance'])!="" && checker_verify())
 		{
 			if ($valid>=ALLIANCE_FLEET_SEND_HOME)
@@ -103,7 +103,7 @@
 				if ($fd->cancelFlight(true))
 				{
 					success_msg("Flug erfolgreich abgebrochen!");
-					add_log(13,"Der Spieler [b]".$cu->nick."[/b] bricht den ganzen Allianzflug seiner Flotte [b]".$fleet_id."[/b] ab",time());
+					add_log(13,"Der Spieler [b]".$cu->nick."[/b] bricht den ganzen Allianzflug seiner Flotte [b]".$fleet_id."[/b] ab");
 				}
 				else
 				{
@@ -115,11 +115,11 @@
 				error_msg("Flug konnte nicht abgebrochen werden, da die Rechte nicht vorhanden sind!");
 			}
 		}
-	
-	
+
+
 		echo "<table style=\"width:98%\">
-		<tr><td colspan=\"3\">";			
-				
+		<tr><td colspan=\"3\">";
+
 		iBoxStart("Flugdaten", "fleetInfoContainer");
 		echo "<div class=\"fleetInfoWrap\">";
 			echo "<div class=\"fleetInfoProgress\" id=\"fleetProgress\"></div>";
@@ -147,7 +147,7 @@
 			echo "<div class=\"fleetInfoAction\">
 				<div style=\"color:".FleetAction::$attitudeColor[$fd->getAction()->attitude()]."\">".$fd->getAction()->name()." [".FleetAction::$statusCode[$fd->status()]."]</div>
 				<div><span id=\"flighttime\"></span> (<span id=\"flightPercent\"></span>)</div>
-			</div>";					
+			</div>";
 			echo "<div id=\"target\" class=\"fleetInfoTarget\">";
 			if ($cu->discovered($fd->getTarget()->getCell()->absX(),$fd->getTarget()->getCell()->absY()))
 			{
@@ -161,15 +161,15 @@
 				<a href=\"?page=cell&amp;id=".$ent->cellId()."&amp;hl=".$ent->id()."\">".$ent."</a><br/>";
 			}
 			echo "<b><span id=\"targetLabel\">Landung</span>:</b> ".date("d.m.Y H:i:s",$fd->landTime())."
-			</div>";	
+			</div>";
 		echo "</div>";
 		iBoxEnd();
-		
+
 		echo "</td></tr><tr><td style=\"50%\">";
-		
+
 		//Allianzbox
 		echo "<div id=\"allianceBox\" style=\"display:none;\"></div>";
-		
+
 		// Flugdaten
 		tableStart("Piloten &amp; Verbrauch","50%");
 		echo "<tr>
@@ -205,11 +205,11 @@
 		echo "<tr><th style=\"width:150px;\">Freier Frachtraum:</th><td class=\"tbldata\">".nf($fd->getFreeCapacity())." t</td></tr>";
 		echo "<tr><th style=\"width:150px;\">Totaler Frachtraum:</th><td class=\"tbldata\">".nf($fd->getCapacity())." t</td></tr>";
 		tableEnd();
-		
+
 
 
 		echo "</td></tr><tr><td colspan=\"3\">";
-	
+
 
 		// Schiffe laden
 		if ($fd->countShips() > 0)
@@ -234,7 +234,7 @@
 		}
 
 		echo "</td></tr></table>";
-		
+
 		echo "<form action=\"?page=$page&amp;id=$fleet_id&amp;lead_id=$lead_id\" method=\"post\">";
 		echo "<input type=\"button\" onClick=\"document.location='?page=fleets'\" value=\"Zur&uuml;ck zur Flotten&uuml;bersicht\"> &nbsp;";
 
@@ -251,9 +251,9 @@
 			checker_init();
 			echo "<input type=\"submit\" name=\"cancel\" value=\"Flug abbrechen und zum Heimatplanet zur&uuml;ckkehren\"  onclick=\"return confirm('Willst du diesen Flug wirklich abbrechen?');\">";
 		}
-		
+
 		echo "</form>";
-		
+
 		countDown('flighttime', $fd->landTime());
 
 		$totalFlightTime = $fd->landTime() - $fd->launchTime();
@@ -277,7 +277,7 @@
 				});
 			</script>
 		<?PHP
-		
+
 		//Some adjustements for special actions
 		if ($fd->getAction()->code() == "support" && $fd->status() == 3)
 		{
@@ -306,11 +306,11 @@
 				tableEnd();
 				echo "';
 				</script>";
-			
+
 		}
 		elseif ($fd->getAction()->code() == "alliance" && ($fd->status() == 3 || $fd->status() == 0))
 		{
-			
+
 		}
 	}
 	else {

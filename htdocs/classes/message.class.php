@@ -73,10 +73,10 @@ class Message
 			commitTransaction();
 		} catch (Exception $e) {
 			rollbackTransaction();
-		}	
+		}
 	}
 
-	
+
 	/**
 	* Delete message with given id
 	*/
@@ -128,7 +128,7 @@ class Message
 						message_data
 					WHERE
 						id IN (".implode(",",$ids),");
-				");			
+				");
 			}
 			dbquery("
 				DELETE FROM
@@ -137,11 +137,11 @@ class Message
 					message_archived=0
 					AND message_read=1
 					AND message_timestamp<'".$tstamp."';
-			");		
+			");
 			$nr = mysql_affected_rows();
-			add_log("4","Unarchivierte Nachrichten die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!",time());
+			add_log("4","Unarchivierte Nachrichten die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!");
 		}
-		
+
 		// Deleted
 		if ($threshold>0)
 			$tstamp = time() - $threshold;
@@ -163,7 +163,7 @@ class Message
 			{
 				array_push($ids,$arr[0]);
 			}
-			
+
 			dbquery("
 				DELETE FROM
 					message_data
@@ -177,13 +177,13 @@ class Message
 			WHERE
 				message_deleted='1'
 				AND message_timestamp<'".$tstamp."';
-		");		
-		add_log("4","Unarchivierte Nachrichten die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!",time());		
+		");
+		add_log("4","Unarchivierte Nachrichten die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!"htdocs/classes/report.class.php);
 		$nr += mysql_affected_rows();
 		return $nr;
 	}
-	
-	
+
+
 
 }
 

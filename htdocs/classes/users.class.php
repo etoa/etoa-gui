@@ -9,11 +9,11 @@
 		{
 			$cfg = Config::getInstance();
             $now = time();
-	
+
 			$register_time = $now-(24*3600*$cfg->p2('user_inactive_days'));		// Zeit nach der ein User gelöscht wird wenn er noch 0 Punkte hat
 			$online_time = $now-(24*3600*$cfg->p1('user_inactive_days'));	// Zeit nach der ein User normalerweise gelöscht wird
 			$inactive_time = $now-(24*3600*USER_INACTIVE_TIME_LONG);
-	
+
 			$res =	dbquery("
 				SELECT
 					user_id
@@ -36,10 +36,10 @@
 				}
 			}
 			if ($manual)
-				add_log("4",mysql_num_rows($res)." inaktive User die seit ".date("d.m.Y H:i",$online_time)." nicht mehr online waren oder seit ".date("d.m.Y H:i",$register_time)." keine Punkte haben wurden manuell gelöscht!",time());
+				add_log("4",mysql_num_rows($res)." inaktive User die seit ".date("d.m.Y H:i",$online_time)." nicht mehr online waren oder seit ".date("d.m.Y H:i",$register_time)." keine Punkte haben wurden manuell gelöscht!");
 			else
-				add_log("4",mysql_num_rows($res)." inaktive User die seit ".date("d.m.Y H:i",$online_time)." nicht mehr online waren oder seit ".date("d.m.Y H:i",$register_time)." keine Punkte haben wurden gelöscht!",time());
-				
+				add_log("4",mysql_num_rows($res)." inaktive User die seit ".date("d.m.Y H:i",$online_time)." nicht mehr online waren oder seit ".date("d.m.Y H:i",$register_time)." keine Punkte haben wurden gelöscht!");
+
 			// Nachricht an lange inaktive
 			$res =	dbquery("
 				SELECT
@@ -70,10 +70,10 @@
 	die Spielleitung";
 					$mail = new Mail('Inaktivität',$text);
 					$mail->send($arr['user_email']);
-					
+
 				}
-			}					
-				
+			}
+
 			return $nr;
 		}
 
@@ -127,12 +127,12 @@
 				}
 			}
 			if ($manual)
-				add_log("4",mysql_num_rows($res)." als gelöscht markierte User wurden manuell gelöscht!",time());
+				add_log("4",mysql_num_rows($res)." als gelöscht markierte User wurden manuell gelöscht!");
 			else
-				add_log("4",mysql_num_rows($res)." als gelöscht markierte User wurden gelöscht!",time());
+				add_log("4",mysql_num_rows($res)." als gelöscht markierte User wurden gelöscht!");
 			return mysql_num_rows($res);
 		}
-		
+
 		/**
 		* Remove old point logs
 		*/
@@ -142,7 +142,7 @@
 			if ($threshold>0)
 				$tstamp = time() - $threshold;
 			else
-				$tstamp = time() - (24*3600*$cfg->get('log_threshold_days'));			
+				$tstamp = time() - (24*3600*$cfg->get('log_threshold_days'));
 			dbquery("DELETE FROM user_points WHERE point_timestamp<".$tstamp.";");
 			$nr = mysql_affected_rows();
 			add_log("4","$nr Userpunkte-Logs die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!");
@@ -167,7 +167,7 @@
 					user_blocked_to<'".time()."';
 			");
 		}
-		
+
 		/**
 		* Spionageangriffscounter auf 0 setzen
 		* @deprecated altes Balancing
@@ -192,7 +192,7 @@
 			}
 			return $rtn;
 		}
-		
+
 		static function addSittingDays($days=0)
 		{
 			if ($days==0)
@@ -200,18 +200,18 @@
 				$cfg = Config::getInstance();
 				$days = $cfg->p1("user_sitting_days");
 			}
-			
+
 			dbquery("UPDATE `users` SET `user_sitting_days`=`user_sitting_days`+'".$days."';");
 		}
-		
+
 		// check for $conf['hmode_days']['p2'] BEFORE calling this function
 		static function setUmodToInactive()
 		{
 			$cfg = Config::getInstance();
             $now = time();
 
-			// set all users who are inactive 
-            
+			// set all users who are inactive
+
 		    $res = dbquery("SELECT 
 		                        user_id,
 		                        user_hmode_from 
@@ -222,13 +222,13 @@
 		        		    AND
 		        			    admin=0
 		                    AND
-		                        user_blocked_to <".$now 
+		                        user_blocked_to <".$now
 		                    ." AND 
 		                        user_hmode_from > 0
 		        		    AND
 		        			    user_hmode_from<".(time()-MAX_UMOD_TIME*86400));
-		      
-		    while ($arr=mysql_fetch_row($res)) 
+
+		    while ($arr=mysql_fetch_row($res))
 		    {  	$hmodTime = time() - $arr[1];
 		        dbquery("UPDATE
 				         	users
@@ -238,7 +238,7 @@
 					        user_logouttime=".(time()-USER_INACTIVE_LONG*86400)." 
 				        WHERE
 						    user_id=".$arr[0]);
-		       
+
 
 				$bres = dbquery("
 								SELECT
@@ -262,9 +262,9 @@
 								buildlist_build_start_time=buildlist_build_start_time+".$hmodTime
 								.",buildlist_build_end_time=buildlist_build_end_time+".$hmodTime
 							." WHERE
-								buildlist_id=".$barr[0]);       
+								buildlist_id=".$barr[0]);
 		   		}
-		        
+
 			    $tres = dbquery("
 								SELECT
 									techlist_id,
@@ -277,7 +277,7 @@
 									techlist_build_start_time>0
 									AND techlist_build_type>0
 									AND techlist_user_id=".$arr[0]);
-			 						
+
 				while ($tarr=mysql_fetch_row($tres))
 				{
 					dbquery("UPDATE
@@ -289,7 +289,7 @@
 							." WHERE
 								techlist_id=".$tarr[0]);
 				}
-				
+
 				$sres = dbquery("SELECT 
 									queue_id,
 									queue_endtime,
@@ -300,7 +300,7 @@
 									queue_user_id='".$tarr[0]."'
 								ORDER BY 
 									queue_starttime ASC;");
-				
+
 				while ($sarr=mysql_fetch_row($sres))
 				{
 					dbquery("UPDATE 
@@ -312,7 +312,7 @@
 							." WHERE
 								queue_id=".$sarr[0].";");
 				}
-				
+
 				$dres = dbquery("SELECT 
 										queue_id,
 										queue_endtime,
@@ -323,7 +323,7 @@
 										queue_user_id='".$tarr[0]."'
 									ORDER BY 
 										queue_starttime ASC;");
-				
+
 				while ($darr=mysql_fetch_row($dres))
 				{
 					dbquery("UPDATE 
@@ -344,25 +344,25 @@
         			." WHERE
           				user_specialist_id > 0
           			AND user_id=".$arr[0]);
-        		 
+
         		dbquery ("UPDATE planets SET planet_last_updated=".time()." WHERE planet_user_id=".$arr[0]);
-				        		
+
         		$pres = dbquery("SELECT 
 										id
 									 FROM 
 									 	planets
 									WHERE 
 										planet_user_id=".$arr[0]);
-									
+
 				while ($darr=mysql_fetch_row($pres))
 				{
 					BackendMessage::updatePlanet($pid);
 				}
        		};
-		      			
+
 			return mysql_affected_rows();
 		}
-		
+
 	}
 
 ?>

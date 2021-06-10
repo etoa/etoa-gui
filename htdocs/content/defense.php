@@ -949,7 +949,7 @@
 								<td>".$defs[$data['queue_def_id']]['def_name']."</td>
 								<td>".df($absolute_starttime,1)."</td>
 								<td>".df($absolute_starttime+$data['queue_endtime']-$data['queue_starttime'],1)."</td>
-								<td>".tf($data['queue_endtime']-time(),1)."</td>
+								<td>".tf($data['queue_endtime']-time())."</td>
 								<td id=\"cancel\">";
 								if ($cancelable)
 								{

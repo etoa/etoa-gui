@@ -24,26 +24,26 @@
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2008 by EtoA Gaming, www.etoa.net
 	*/
-	
+
 	if (intval($_GET['lead_id'])>0)
 		$lead_id=intval($_GET['lead_id']);
-	
+
 	$rights = true;
-	
+
 	if ($lead_id)
 		$fd = new Fleet($fleet_id,-1,$lead_id);
 	else
 		if ($cu->alliance->getBuildingLevel("Flottenkontrolle")<ALLIANCE_FLEET_SHOW_PART && $cu->id!=$fd->ownerId())
 			$rights = false;
-	
+
 	if ($cu->alliance->getBuildingLevel("Flottenkontrolle")>=ALLIANCE_FLEET_SHOW_DETAIL && $rights)
 	{
 		if ($cu->alliance->checkActionRightsNA('fleetminister') || $cu->id==$fd->ownerId())
-		{	
+		{
 			//
 			// Flottendaten laden und überprüfen ob die Flotte existiert
 			//
-			
+
 			if ($fd->valid())
 			{
 				// Flugabbruch auslösen
@@ -52,34 +52,34 @@
 					if ($fd->cancelFlight())
 					{
 						success_msg("Flug erfolgreich abgebrochen!");
-						add_log(13,"Der Spieler [b]".$cu->nick."[/b] bricht den Flug seiner Flotte [b]".$fleet_id."[/b] ab",time());
+						add_log(13,"Der Spieler [b]".$cu->nick."[/b] bricht den Flug seiner Flotte [b]".$fleet_id."[/b] ab");
 					}
 					else
 					{
 						error_msg("Flug konnte nicht abgebrochen werden. ".$fd->getError());
 					}
 				}
-				
+
 				//ToDo
 				if (isset($_POST['cancel_alliance'])!="" && checker_verify())
 				{
 					if ($fd->cancelFlight(true))
 					{
 						success_msg("Flug erfolgreich abgebrochen!");
-						add_log(13,"Der Spieler [b]".$cu->nick."[/b] bricht den ganzen Allianzflug seiner Flotte [b]".$fleet_id."[/b] ab",time());
+						add_log(13,"Der Spieler [b]".$cu->nick."[/b] bricht den ganzen Allianzflug seiner Flotte [b]".$fleet_id."[/b] ab");
 					}
 					else
 					{
 						error_msg("Flug konnte nicht abgebrochen werden. ".$fd->getError());
 					}
 				}
-				
-				
+
+
 				tableStart("","","double");
-				
+
 				// Flugdaten
 				tableStart("Flugdaten","50%");
-				
+
 				echo "<tr>
 						<th>Auftrag:</th>
 						<td ".tm($fd->getAction()->name(),$fd->getAction()->desc())." style=\"color:".FleetAction::$attitudeColor[$fd->getAction()->attitude()]."\">
@@ -89,7 +89,7 @@
 					<tr>
 						<th>Leaderflotte:</th>
 						<td>";
-				
+
 				if ($fd->id() == $fd->leaderId() && $lead_id)
 					echo "Das ist der Gesammte Angriff!</td></tr>";
 				elseif ($fd->id() == $fd->leaderId())
@@ -137,7 +137,7 @@
 					echo "</td></tr>";
 				}
 				tableEnd();
-				
+
 				tableStart("Piloten &amp; Verbrauch","50%");
 				echo "<tr>
 						<th style=\"width:150px;\">".RES_ICON_PEOPLE."Piloten:</th>
@@ -156,9 +156,9 @@
 						<td>".nf($fd->usagePower())."</td>
 					</tr>";
 				tableEnd();
-				
+
 				echo "</td><td style=\"width:5%;vertical-align:top;\"></td><td style=\"width:45%;vertical-align:top;\">";
-				
+
 				// Frachtraum
 				tableStart("Frachtraum","50%");
 				echo "<tr>
@@ -194,7 +194,7 @@
 						<td>".nf($fd->getCapacity())." t</td>
 					</tr>";
 				tableEnd();
-				
+
 				tableStart("Passagierraum","50%");
 				echo "<tr>
 						<th>".RES_ICON_PEOPLE."Passagiere</th>
@@ -209,10 +209,10 @@
 						<td>".nf($fd->getPeopleCapacity())."</td>
 					</tr>";
 				tableEnd();
-				
+
 				echo "</td></tr>";
 				tableEnd();
-				
+
 				// Schiffe laden
 				if ($fd->countShips() > 0)
 				{
@@ -238,10 +238,10 @@
 					}
 					tableEnd();
 				}
-				
+
 				echo "<form action=\"?page=$page&amp;id=$fleet_id\" method=\"post\">";
 				echo "<input type=\"button\" onClick=\"document.location='?page=fleets'\" value=\"Zur&uuml;ck zur Flotten&uuml;bersicht\"> &nbsp;";
-				
+
 				// Abbrechen-Button anzeigen
 				if (($fd->status() == 0 || $fd->status() == 3) && $fd->landTime() > time())
 				{
@@ -252,7 +252,7 @@
 					echo "<input type=\"submit\" name=\"cancel\" value=\"Flug abbrechen und zum Heimatplanet zur&uuml;ckkehren\"  onclick=\"return confirm('Willst du diesen Flug wirklich abbrechen? Alle weiteren Teilflotten des Angriffes werden immer noch weiterfliegen!');\">";
 				}
 				echo "</form>";
-				
+
 				countDown('flighttime',$fd->landTime());
 			}
 			else

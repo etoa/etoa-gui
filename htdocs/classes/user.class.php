@@ -173,7 +173,7 @@ class User implements \EtoA\User\UserInterface
 			$this->boostBonusBuilding = $arr['boost_bonus_building'];
 
 			$this->lastInvasion = $arr['lastinvasion'];
-            
+
             $this->changedMainPlanet = $arr['user_changed_main_planet'];
 
 			$this->raceId = $arr['user_race_id'];
@@ -211,7 +211,7 @@ class User implements \EtoA\User\UserInterface
 			$this->specialistTime = 0;
 
 			$this->lastInvasion = 0;
-            
+
 			$this->changedMainPlanet = 0;
 
 			$this->raceId = 0;
@@ -596,7 +596,7 @@ class User implements \EtoA\User\UserInterface
 		}
 		return false;
 	}
-    
+
 	/**
 	 * Returns whether this user has changed their main planet
 	 * @return boolean
@@ -995,11 +995,11 @@ class User implements \EtoA\User\UserInterface
 
 			//Log schreiben
 			if($self)
-				add_log("3","Der Benutzer ".$this->nick." hat sich selbst gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.",time());
+				add_log("3","Der Benutzer ".$this->nick." hat sich selbst gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.");
 			elseif(!$self && $from!="")
-				add_log("3","Der Benutzer ".$this->nick." wurde von ".$from." gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.",time());
+				add_log("3","Der Benutzer ".$this->nick." wurde von ".$from." gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.");
 			else
-				add_log("3","Der Benutzer ".$this->nick." wurde gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.",time());
+				add_log("3","Der Benutzer ".$this->nick." wurde gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.");
 
 			$text ="Hallo ".$this->nick."
 
@@ -1454,7 +1454,7 @@ die Spielleitung";
         // or if last owner == this owner (invade time threshold)
         return $this->canAttackUser($p->owner()) || $this->id == $p->lastUserCheck();
     }
-    
+
     /**
      * Setzt, ob dieser Spieler seinen Hauptplaneten bereits gewechselt hat.
      * @param boolean $changed

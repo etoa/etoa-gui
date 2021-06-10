@@ -8,7 +8,7 @@ if (isset($_POST['submitpw'])) {
             if (strlen($_POST['user_password']) >= PASSWORD_MINLENGHT) {
                 $cu->setPassword($_POST['user_password']);
                 $successMessage = 'Das Passwort wurde geändert!';
-                add_log(8, $cu->id . " ändert sein Passwort", time());
+                add_log(8, $cu->id . " ändert sein Passwort");
             } else {
                 $errorMessage = 'Das Passwort ist zu kurz! Es muss mindestens ' . PASSWORD_MINLENGHT . ' Zeichen lang sein!';
             }

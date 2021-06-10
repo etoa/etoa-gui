@@ -179,23 +179,23 @@
 		$ddm = new DropdownMenu(1);
 		$ddm->add('total','Gesamtstatistik','xajax_statsShowBox(\'user\');');
 
-		$ddm->add('buildings','Gebäude','xajax_statsShowBox(\'buildings\');','detail');
-		$ddm->add('tech','Forschung','xajax_statsShowBox(\'tech\');','detail');
-		$ddm->add('ships','Schiffe','xajax_statsShowBox(\'ships\');','detail');
-		$ddm->add('exp','Erfahrung','xajax_statsShowBox(\'exp\');','detail');
+		$ddm->add('buildings','Gebäude','xajax_statsShowBox(\'buildings\');');
+		$ddm->add('tech','Forschung','xajax_statsShowBox(\'tech\');');
+		$ddm->add('ships','Schiffe','xajax_statsShowBox(\'ships\');');
+		$ddm->add('exp','Erfahrung','xajax_statsShowBox(\'exp\');');
 
-		$ddm->add('battle','Kampf','xajax_statsShowBox(\'battle\');','special');
-		$ddm->add('trade','Handel','xajax_statsShowBox(\'trade\');','special');
-		$ddm->add('diplomacy','Diplomatie','xajax_statsShowBox(\'diplomacy\');','special');
+		$ddm->add('battle','Kampf','xajax_statsShowBox(\'battle\');');
+		$ddm->add('trade','Handel','xajax_statsShowBox(\'trade\');');
+		$ddm->add('diplomacy','Diplomatie','xajax_statsShowBox(\'diplomacy\');');
 		echo $ddm;
 
 		$ddm = new DropdownMenu(1);
 		$ddm->add('alliances','Allianzen','xajax_statsShowBox(\'alliances\');');
-		$ddm->add('base','Allianzbasis','xajax_statsShowBox(\'base\');','alliances');
+		$ddm->add('base','Allianzbasis','xajax_statsShowBox(\'base\');');
 		$ddm->add('titles','Titel','xajax_statsShowBox(\'titles\');');
 
-		$ddm->add('pillory','Pranger','xajax_statsShowBox(\'pillory\');','other');
-		$ddm->add('gamestats','Spielstatistik','xajax_statsShowBox(\'gamestats\');','other');
+		$ddm->add('pillory','Pranger','xajax_statsShowBox(\'pillory\');');
+		$ddm->add('gamestats','Spielstatistik','xajax_statsShowBox(\'gamestats\');');
 
 		echo $ddm;
 

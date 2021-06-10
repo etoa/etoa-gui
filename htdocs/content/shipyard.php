@@ -907,7 +907,7 @@
 						echo "<td>".$ships[$data['queue_ship_id']]['ship_name']."</td>";
 						echo "<td>".df($absolute_starttime,1)."</td>";
 						echo "<td>".df($absolute_starttime+$data['queue_endtime']-$data['queue_starttime'],1)."</td>";
-						echo "<td>".tf($data['queue_endtime']-time(),1)."</td>";
+						echo "<td>".tf($data['queue_endtime']-time())."</td>";
 						echo "<td id=\"cancel\">";
 						if ($cancelable)
 						{

@@ -198,7 +198,7 @@
 				if ($_GET['kick']!=$cu->id)
 				{
 					AdminSession::kick($_GET['kick']);
-					add_log(8,$cu->nick." l&ouml;scht die Session des Administrators mit der ID ".$_GET['kick'],time());
+					add_log(8,$cu->nick." l&ouml;scht die Session des Administrators mit der ID ".$_GET['kick']);
 				}
 				else
 					echo error_msg("Du kannst nicht dich selbst kicken!");

@@ -320,12 +320,12 @@ class DBManager implements ISingleton	{
 		$ores = $this->query("OPTIMIZE TABLE ".$tbls.";");
 		if ($manual)
 		{
-			add_log("4",$n." Tabellen wurden manuell optimiert!",time());
+			add_log("4",$n." Tabellen wurden manuell optimiert!");
 			return $ores;
 		}
 		else
 		{
-			add_log("4",$n." Tabellen wurden optimiert!",time());
+			add_log("4",$n." Tabellen wurden optimiert!");
 			return $n;
 		}
 	}
@@ -351,12 +351,12 @@ class DBManager implements ISingleton	{
 		$ores = $this->query("REPAIR TABLE ".$tbls.";");
 		if ($manual)
 		{
-			add_log("4",$n." Tabellen wurden manuell repariert!",time());
+			add_log("4",$n." Tabellen wurden manuell repariert!");
 			return $ores;
 		}
 		else
 		{
-			add_log("4",$n." Tabellen wurden repariert!",time());
+			add_log("4",$n." Tabellen wurden repariert!");
 			return $n;
 		}
 	}

@@ -548,7 +548,7 @@
 		{
 			global $cp, $resNames;
 
-			$costs = $this->getBuildCosts(0,0);
+			$costs = $this->getBuildCosts(0);
 			$wTime = array();
 			// Wartezeiten auf Ressourcen berechnen
 			foreach ($resNames as $rk => $rn)
@@ -568,9 +568,9 @@
 			global $cp, $resNames;
 			$notAvStyle=" style=\"color:red;\"";
 			if ($type == 'build')
-				$costs = $this->getBuildCosts(0,0);
+				$costs = $this->getBuildCosts(0);
 			else
-				$costs = $this->getDemolishCosts(0,0);
+				$costs = $this->getDemolishCosts(0);
 
 			$wTime = array();
 			// Wartezeiten auf Ressourcen berechnen

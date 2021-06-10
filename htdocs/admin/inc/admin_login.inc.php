@@ -27,7 +27,7 @@ if (isset($_GET['sendpass'])) {
             $buttonMsg = 'Zum Login';
             $buttonTarget = '?';
 
-            add_log(8, "Der Administrator " . $user->nick . " (ID: " . $user->id . ") fordert per E-Mail (" . $user->email . ") von " . $_SERVER['REMOTE_ADDR'] . " aus ein neues Passwort an.", time());
+            add_log(8, "Der Administrator " . $user->nick . " (ID: " . $user->id . ") fordert per E-Mail (" . $user->email . ") von " . $_SERVER['REMOTE_ADDR'] . " aus ein neues Passwort an.");
         } else {
             $msgStyle = 'color_warn';
             $statusMsg = 'Dieser Benutzer existiert nicht!';

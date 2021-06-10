@@ -63,7 +63,7 @@ try {
             ;");
 
                 // Log hinzufügen
-                add_log(3, 'Der Benutzer ' . $_POST['user_nick'] . ' hat ein neues Passwort per E-Mail angefordert!', time());
+                add_log(3, 'Der Benutzer ' . $_POST['user_nick'] . ' hat ein neues Passwort per E-Mail angefordert!');
 
                 $_SESSION['pwforgot_success_msg'] = 'Deine Passwort-Anfrage war erfolgreich. Du solltest in einigen Minuten eine E-Mail mit dem neuen Passwort erhalten!';
                 forward('?index='.$index);

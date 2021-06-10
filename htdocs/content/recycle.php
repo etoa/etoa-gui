@@ -163,7 +163,7 @@
 				//Log schreiben
 				$log="Der User [page user sub=edit user_id=".$cu->id."] [B]".$cu."[/B] [/page] hat auf dem Planeten [page galaxy sub=edit id=".$cp->id()."][B]".$cp->name."[/B][/page] folgende Schiffe mit dem r&uuml;ckgabewert von ".($payback*100)."% recycelt:\n\n".$log_ships."\nDies hat ihm folgende Rohstoffe gegeben:\n".RES_METAL.": ".nf($pb[0])."\n".RES_CRYSTAL.": ".nf($pb[1])."\n".RES_PLASTIC.": ".nf($pb[2])."\n".RES_FUEL.": ".nf($pb[3])."\n".RES_FOOD.": ".nf($pb[4])."\n";
 
-				add_log(12,$log,time());
+				add_log(12,$log);
 
 			}
 			success_msg(nf($cnt)." Schiffe erfolgreich recycelt!");
@@ -265,7 +265,7 @@
 				//Log schreiben
 				$log="Der User [page user sub=edit user_id=".$cu->id."] [B]".$cu."[/B] [/page] hat auf dem Planeten [page galaxy sub=edit id=".$cp->id()."][B]".$cp->name."[/B][/page] folgende Verteidigungsanlagen mit dem r&uuml;ckgabewert von ".($payback*100)."% recycelt:\n\n".$log_def."\nDies hat ihm folgende Rohstoffe gegeben:\n".RES_METAL.": ".nf($pb[0])."\n".RES_CRYSTAL.": ".nf($pb[1])."\n".RES_PLASTIC.": ".nf($pb[2])."\n".RES_FUEL.": ".nf($pb[3])."\n".RES_FOOD.": ".nf($pb[4])."\n";
 
-				add_log(12,$log,time());
+				add_log(12,$log);
 			}
 			success_msg("".nf($cnt)." Verteidigungsanlagen erfolgreich recycelt!");
             foreach ($recycled as $id => $num) {
@@ -374,11 +374,11 @@
 			echo "<input type=\"submit\" class=\"button\" name=\"submit_recycle_def\" value=\"Ausgew&auml;hlte Anlagen recyceln\"></form>";
 		}
 		else
-			info_msg("Es sind keine Verteidigungsanlagen auf diesem Planeten vorhanden!", 1);
+			info_msg("Es sind keine Verteidigungsanlagen auf diesem Planeten vorhanden!");
 	}
 	else
 	{
-		info_msg("Es können keine Schiffe oder Verteidigungsanlagen recycelt werden, da die Recyclingtechnologie noch nicht erforscht wurde!", 1);
+		info_msg("Es können keine Schiffe oder Verteidigungsanlagen recycelt werden, da die Recyclingtechnologie noch nicht erforscht wurde!");
 	}
 
 
