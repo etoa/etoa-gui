@@ -800,7 +800,7 @@
 					{
 					if (isset($data['founder']))
 						{
-							$res = dbquerySave("
+							$res = dbQuerySave("
 							SELECT
 								COUNT(alliance_id)
 							FROM
@@ -813,7 +813,7 @@
               );
 							if (mysql_result($res,0)==0)
 							{
-								dbquerySave("
+								dbQuerySave("
 								INSERT INTO
 									alliances
 								(

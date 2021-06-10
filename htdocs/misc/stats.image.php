@@ -17,28 +17,28 @@
 	define('BG_FAC_W',5/6);	// Schriftgrösse
 	define('BG_FAC_H',0.41);	// Schriftgrösse
 	define('B_H',IM_H-(2*B_B));
-	
+
 	header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
 	header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Datum in der Vergangenheit
 	header("Content-type: image/png");
 
-	$im = ImageCreate(IM_W,IM_H);
+	$im = imagecreate(IM_W,IM_H);
 
-	$bg = ImageColorAllocate($im,34,34,51);
-	$white = ImageColorAllocate($im,255,255,255);
-	$grey = ImageColorAllocate($im,187,187,187);
-	$black = ImageColorAllocate($im,0,0,0);
-	$grey = ImageColorAllocate($im,150,150,150);
-	$green = ImageColorAllocate($im,0,200,0);
-	$blue = ImageColorAllocate($im,34,34,85);
-	$red = ImageColorAllocate($im,255,0,0);
-	$yellow = ImageColorAllocate($im,255,255,0);
-	$lblue = ImageColorAllocate($im,34,34,200);
+	$bg = imagecolorallocate($im,34,34,51);
+	$white = imagecolorallocate($im,255,255,255);
+	$grey = imagecolorallocate($im,187,187,187);
+	$black = imagecolorallocate($im,0,0,0);
+	$grey = imagecolorallocate($im,150,150,150);
+	$green = imagecolorallocate($im,0,200,0);
+	$blue = imagecolorallocate($im,34,34,85);
+	$red = imagecolorallocate($im,255,0,0);
+	$yellow = imagecolorallocate($im,255,255,0);
+	$lblue = imagecolorallocate($im,34,34,200);
 
-	ImageFill($im,0,0, $white);
+	imagefill($im,0,0, $white);
 	$imh = imagecreatefromjpeg("images/logo_trans.jpg");
-	ImageCopyresized($im,$imh,(IM_W-(IM_W*BG_FAC_W))/2,(IM_H-(IM_H*BG_FAC_H))/2,0,0,IM_W*BG_FAC_W,IM_H*BG_FAC_H,imagesx($imh),imagesy($imh));
-	ImageRectangle($im, 0, 0, IM_W-1, IM_H-1, $black);
+	imagecopyresized($im,$imh,(IM_W-(IM_W*BG_FAC_W))/2,(IM_H-(IM_H*BG_FAC_H))/2,0,0,IM_W*BG_FAC_W,IM_H*BG_FAC_H,imagesx($imh),imagesy($imh));
+	imagerectangle($im, 0, 0, IM_W-1, IM_H-1, $black);
 
 	if (isset($_GET['user']))
 	{
@@ -83,17 +83,17 @@
 			if (mysql_num_rows($pres)>0)
 			{
         $records_per_step = floor(mysql_num_rows($pres)/STEP);
-        
+
 				define('B_W', (IM_W-B_B)/max($records_per_step,1)/2);
 				// Bar colors
 				for ($x=0;$x<B_W;$x++)
 				{
-					$b_col[$x]=ImageColorAllocate($im,34/B_W*$x,34/B_W*$x,85/B_W*$x);
+					$b_col[$x]=imagecolorallocate($im,34/B_W*$x,34/B_W*$x,85/B_W*$x);
 				}
 				// Shadow colors
 				for ($i=SHADOW_L;$i>0;$i--)
-				{				
-					$s_col[$i]=ImageColorAllocate($im,5+($i*250/SHADOW_L),5+($i*250/SHADOW_L),5+($i*250/SHADOW_L));
+				{
+					$s_col[$i]=imagecolorallocate($im,5+($i*250/SHADOW_L),5+($i*250/SHADOW_L),5+($i*250/SHADOW_L));
 				}
 
 				$pmax=0;
@@ -111,11 +111,11 @@
 					if ($cnt==STEP) $cnt=0;
 				}
 				ksort ($points);
-	
-				imagestring($im,FONT_SIZE,B_B/3,B_B/3,"Statistiken von ".$arr['user_nick'].", Rang ".$arr['user_rank'].", letzes Update: ".date("d.m.Y H:i",$last_update)."",$black);	
-				imagestring($im,FONT_SIZE,B_B/3,B_B/3+9,"Schrittweite: ".STEP." Stunden, Zeitraum: ".(DETAIL_LIMIT*STEP/24)." Tage",$black);	
+
+				imagestring($im,FONT_SIZE,B_B/3,B_B/3,"Statistiken von ".$arr['user_nick'].", Rang ".$arr['user_rank'].", letzes Update: ".date("d.m.Y H:i",$last_update)."",$black);
+				imagestring($im,FONT_SIZE,B_B/3,B_B/3+9,"Schrittweite: ".STEP." Stunden, Zeitraum: ".(DETAIL_LIMIT*STEP/24)." Tage",$black);
 				$cnt=0;
-				
+
 				$last_x = -1;
 				$last_y = -1;
 				foreach ($points as $t=>$p)
@@ -128,24 +128,24 @@
 					if ($last_x==-1)
 					{
 						$last_x=$x0;
-					}	
+					}
 					if ($last_y==-1)
 					{
 						$last_y=$y0;
-					}	
-					
+					}
+
 
 					imageline($im, $x0+1, $y0+2,$last_x+1,$last_y+2,$grey);
 					imageline($im, $x0, $y0+2,$last_x,$last_y+2,$grey);
-										
+
 					imageline($im, $x0, $y0,$last_x,$last_y,$lblue);
 					imageline($im, $x0, $y0+1,$last_x,$last_y+1,$lblue);
-					
+
 					imageline($im, $left+(B_W/2), B_B+B_H-(B_H*$p/$pmax), $left+(B_W/2), B_B+B_H, $grey);
-					
+
 					$last_x = $x0;
 					$last_y = $y0;
-					
+
 					/*
 					// Schatten
 					for ($i=SHADOW_L;$i>0;$i--)
@@ -169,25 +169,25 @@
 						imagestring($im,FONT_SIZE,$left-8+(B_W/2)-imagefontwidth(1)*5/2,B_B+B_H+13,date("d.m.y",$t),$black);
 					}
 					// Punkte
-					
+
 						imagestringup($im,FONT_SIZE,$left+(B_W/2)-imagefontheight(1),B_H+B_B-10,nf($p),$black);
-					
+
 					$cnt++;
 				}
 			}
 			else
-				imagestring($im,3,10,10,"Keine Punktdaten vorhanden!",$black);			
-		}		
+				imagestring($im,3,10,10,"Keine Punktdaten vorhanden!",$black);
+		}
 		else
-			imagestring($im,3,10,10,"Fehler! Benutzer nicht vorhanden!",$black);			
+			imagestring($im,3,10,10,"Fehler! Benutzer nicht vorhanden!",$black);
 	}
 	else
-		imagestring($im,3,10,10,"Fehler! Keine ID angegeben oder du bist nicht eingeloggt!",$black);			
-	ImagePNG($im);
+		imagestring($im,3,10,10,"Fehler! Keine ID angegeben oder du bist nicht eingeloggt!",$black);
+	imagepng($im);
 
 
 
 
 
-	dbclose();		
+	dbclose();
 ?>

@@ -13,7 +13,7 @@
 		WHERE
 			user_id='".$_GET['text']."'
 		");
-		$arr = mysql_Fetch_array($res);
+		$arr = mysql_fetch_array($res);
 		echo "<h2>Beobachtungsgrund für <a href=\"?page=$page&amp;sub=edit&amp;id=".$arr['user_id']."\">".$arr['user_nick']."</a></h2>";
 		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">
 		<textarea name=\"user_observe\" cols=\"80\" rows=\"10\">".stripslashes($arr['user_observe'])."</textarea>

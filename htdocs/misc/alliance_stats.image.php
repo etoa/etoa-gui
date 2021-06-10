@@ -19,23 +19,23 @@
 
 	define('B_H',IM_H-(2*B_B));
 
-	$im = ImageCreate(IM_W,IM_H);
+	$im = imagecreate(IM_W,IM_H);
 
-	$bg = ImageColorAllocate($im,34,34,51);
-	$white = ImageColorAllocate($im,255,255,255);
-	$grey = ImageColorAllocate($im,187,187,187);
-	$black = ImageColorAllocate($im,0,0,0);
-	$grey = ImageColorAllocate($im,150,150,150);
-	$green = ImageColorAllocate($im,0,200,0);
-	$blue = ImageColorAllocate($im,34,34,85);
-	$red = ImageColorAllocate($im,255,0,0);
-	$yellow = ImageColorAllocate($im,255,255,0);
-	$lblue = ImageColorAllocate($im,34,34,200);
+	$bg = imagecolorallocate($im,34,34,51);
+	$white = imagecolorallocate($im,255,255,255);
+	$grey = imagecolorallocate($im,187,187,187);
+	$black = imagecolorallocate($im,0,0,0);
+	$grey = imagecolorallocate($im,150,150,150);
+	$green = imagecolorallocate($im,0,200,0);
+	$blue = imagecolorallocate($im,34,34,85);
+	$red = imagecolorallocate($im,255,0,0);
+	$yellow = imagecolorallocate($im,255,255,0);
+	$lblue = imagecolorallocate($im,34,34,200);
 
-	ImageFill($im,0,0, $white);
+	imagefill($im,0,0, $white);
 	$imh = imagecreatefromjpeg("images/logo_trans.jpg");
-	ImageCopyresized($im,$imh,(IM_W-(IM_W*BG_FAC_W))/2,(IM_H-(IM_H*BG_FAC_H))/2,0,0,IM_W*BG_FAC_W,IM_H*BG_FAC_H,imagesx($imh),imagesy($imh));
-	ImageRectangle($im, 0, 0, IM_W-1, IM_H-1, $black);
+	imagecopyresized($im,$imh,(IM_W-(IM_W*BG_FAC_W))/2,(IM_H-(IM_H*BG_FAC_H))/2,0,0,IM_W*BG_FAC_W,IM_H*BG_FAC_H,imagesx($imh),imagesy($imh));
+	imagerectangle($im, 0, 0, IM_W-1, IM_H-1, $black);
 
 	if (isset($_GET['alliance']))
 	{
@@ -84,12 +84,12 @@
 				// Bar colors
 				for ($x=0;$x<B_W;$x++)
 				{
-					$b_col[$x]=ImageColorAllocate($im,34/B_W*$x,34/B_W*$x,85/B_W*$x);
+					$b_col[$x]=imagecolorallocate($im,34/B_W*$x,34/B_W*$x,85/B_W*$x);
 				}
 				// Shadow colors
 				for ($i=SHADOW_L;$i>0;$i--)
 				{
-					$s_col[$i]=ImageColorAllocate($im,5+($i*250/SHADOW_L),5+($i*250/SHADOW_L),5+($i*250/SHADOW_L));
+					$s_col[$i]=imagecolorallocate($im,5+($i*250/SHADOW_L),5+($i*250/SHADOW_L),5+($i*250/SHADOW_L));
 				}
 
 				$pmax=0;
@@ -179,7 +179,7 @@
 	}
 	else
 		imagestring($im,3,10,10,"Fehler! Keine ID angegeben oder du bist nicht eingeloggt!",$black);
-	ImagePNG($im);
+	imagepng($im);
 
 
 

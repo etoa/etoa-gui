@@ -1,7 +1,7 @@
 <?PHP
 	class UserStats
 	{
-		
+
 		static function generateImage($file)
 		{
 		$w = 700;
@@ -11,31 +11,31 @@
 		$borderBottom=80;
 		$yLegend = 20;
 		$bottomLegend = 65;
-			
+
 		$totalSteps = 288;
-		
+
 		$im = imagecreate($w,$h);
 		$imh = imagecreatefromjpeg(RELATIVE_ROOT."images/logo_trans.jpg");
-		ImageCopyresized($im,$imh,($w-imagesx($imh))/2,($h-imagesy($imh))/2,0,0,imagesx($imh),imagesy($imh),imagesx($imh),imagesy($imh));
-		
+		imagecopyresized($im,$imh,($w-imagesx($imh))/2,($h-imagesy($imh))/2,0,0,imagesx($imh),imagesy($imh),imagesx($imh),imagesy($imh));
+
 		$colWhite = imagecolorallocate($im,255,255,255);
 		$colBlack = imagecolorallocate($im,0,0,0);
 		$colGrey = imagecolorallocate($im,180,180,180);
 		$colBlue = imagecolorallocate($im,0,0,255);
 		$colGreen = imagecolorallocate($im,0,200,0);
 		$colRed = imagecolorallocate($im,255,0,0);
-		
+
 		imagerectangle($im,0,0,$w-1,$h-1,$colBlack);
 		imagerectangle($im,$borderLeftRight,$borderTop,$w-$borderLeftRight,$h-$borderBottom,$colBlack);
-		
+
 		$data=array();
 		$max=0;
 		$time = time()-date("s");
-	
+
 		// Renderzeit-Start festlegen
 		$render_time = explode(" ",microtime());
 		$render_starttime=$render_time[1]+$render_time[0];
-	
+
 		$data=array();
 		$max=0;
 		$maxo=0;
@@ -73,17 +73,17 @@
 			}
 			$avgo = round($sumo / $mnr,2);
 			$avgr = round($sumr / $mnr,2);
-		
+
 			$maxr = $max;
 			$max = ceil($max/100)*100;
-		
+
 		ksort($data);
 
 		$graphHeight=$h-$borderTop-$borderBottom;
 		$starti = $time-($totalSteps*5*60);
-	
+
 		// Horizontale Linien und Gr?ssen
-		if ($max > 0) 
+		if ($max > 0)
 		{
 			for ($i=0;$i<=ceil($max/100);$i++)
 			{
@@ -99,21 +99,21 @@
 		if ($c>0)
 		{
 			$step = ($w-$borderLeftRight-$borderLeftRight)*5*60/($time-$starti);
-			
+
 			$x=$borderLeftRight;
 			$y=$h-$borderBottom;
 			$lastx=$borderLeftRight;
 			$lastyo=$h-$borderBottom;// - ($graphHeight/$max*$data[$index0]['o']);
 			$lastyr=$h-$borderBottom;// - ($graphHeight/$max*$data[$index0]['r']);;
-	
+
 			$ic=0;
 			foreach ($data as $i => $d)
 			{
 				$x=$borderLeftRight + ($ic*$step);
 				// Vertikale Stundenlinien
-				if (date("i",$i)=="00")			
+				if (date("i",$i)=="00")
 				{
-					if (date("H",$i)=="00")			
+					if (date("H",$i)=="00")
 						imageline($im,$x,$borderTop+1,$x,$h-$borderBottom-1,$colRed);
 					else
 						imageline($im,$x,$borderTop+1,$x,$h-$borderBottom-1,$colGrey);
@@ -144,28 +144,28 @@
 				$ic++;
 			}
 		}
-	
-		
+
+
 		// Renderzeit
 		$cfg = Config::getInstance();
-		$render_time = explode(" ",microtime()); 
-		$rtime = $render_time[1]+$render_time[0]-$render_starttime; 
+		$render_time = explode(" ",microtime());
+		$rtime = $render_time[1]+$render_time[0]-$render_starttime;
 		imagestring($im, 6, 10, 5, getGameIdentifier(), $colBlack);
-		imagestring($im, 6, 10, 20, "Userstatistik der letzten 24 Stunden", $colBlack);	
-		imagestring($im, 2, 10, 40, "Erstellt: ".date("d.m.Y, H:i").", Renderzeit: ".round($rtime,3)." sec", $colBlack);	
-	
-		imagestring($im, 3, 110, $h-40, "Max    Durchschnitt   Aktuell", $colBlack);	
-		imagestring($im, 3, 50, $h-25, "Online", $colGreen);	
-		imagestring($im, 2, 110, $h-25, $maxo, $colBlack);	
-		imagestring($im, 2, 160, $h-25, $avgo, $colBlack);	
-		imagestring($im, 2, 265, $h-25, $acto, $colBlack);	
-	
-		imagestring($im, 3, 450, $h-40, "Max    Durchschnitt   Aktuell", $colBlack);	
-		imagestring($im, 3, 350, $h-25, "Registriert", $colBlue);	
-		imagestring($im, 2, 450, $h-25, $maxr, $colBlack);	
-		imagestring($im, 2, 500, $h-25, $avgr, $colBlack);	
-		imagestring($im, 2, 605, $h-25, $actr, $colBlack);	
-	
+		imagestring($im, 6, 10, 20, "Userstatistik der letzten 24 Stunden", $colBlack);
+		imagestring($im, 2, 10, 40, "Erstellt: ".date("d.m.Y, H:i").", Renderzeit: ".round($rtime,3)." sec", $colBlack);
+
+		imagestring($im, 3, 110, $h-40, "Max    Durchschnitt   Aktuell", $colBlack);
+		imagestring($im, 3, 50, $h-25, "Online", $colGreen);
+		imagestring($im, 2, 110, $h-25, $maxo, $colBlack);
+		imagestring($im, 2, 160, $h-25, $avgo, $colBlack);
+		imagestring($im, 2, 265, $h-25, $acto, $colBlack);
+
+		imagestring($im, 3, 450, $h-40, "Max    Durchschnitt   Aktuell", $colBlack);
+		imagestring($im, 3, 350, $h-25, "Registriert", $colBlue);
+		imagestring($im, 2, 450, $h-25, $maxr, $colBlack);
+		imagestring($im, 2, 500, $h-25, $avgr, $colBlack);
+		imagestring($im, 2, 605, $h-25, $actr, $colBlack);
+
 		$dir = dirname($file);
 		if (!is_dir($dir)) {
 			mkdir($dir, 0777, true);
@@ -178,7 +178,7 @@
 
 		}
 	}
-	
+
 	static function generateXml($file)
 	{
 
@@ -189,7 +189,7 @@
 
 			/**
 			* Gameinfo XML
-			*/ 
+			*/
 			$pres = dbquery("SELECT COUNT(id) FROM planets;");
 			$presh = dbquery("SELECT COUNT(id) FROM planets WHERE planet_user_id>0;");
 			$parr = mysql_fetch_row($pres);

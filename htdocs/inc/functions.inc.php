@@ -1900,8 +1900,8 @@ function imagecreatefromfile($path, $user_functions = false)
 
 		if ($img = imagecreatefromfile($fileFrom))
 		{
-			$width = ImageSX($img);
-			$height = ImageSY($img);
+			$width = imagesx($img);
+			$height = imagesy($img);
 			$resize = FALSE;
 
 			if ($width > $newMaxWidth) {
@@ -1923,30 +1923,30 @@ function imagecreatefromfile($path, $user_functions = false)
 				// resize using appropriate function
 				if (GD_VERSION == 2)
 				{
-					$imageId =  ImageCreateTrueColor ( $newWidth , $newHeight );
+					$imageId =  imagecreatetruecolor( $newWidth , $newHeight );
 
 					imagealphablending($imageId, false);
 					imagesavealpha($imageId,true);
 					$transparent = imagecolorallocatealpha($imageId, 255, 255, 255, 127);
 					imagefilledrectangle($imageId, 0, 0, $newWidth, $newHeight, $transparent);
 
-					ImageCopyResampled($imageId, $img, 0,0,0,0, $newWidth, $newHeight, $width, $height);
+                    imagecopyresampled($imageId, $img, 0,0,0,0, $newWidth, $newHeight, $width, $height);
 				}
 				else
 				{
-					$imageId = ImageCreate($newWidth , $newHeight);
-					ImageCopyResized($imageId, $img, 0,0,0,0, $newWidth, $newHeight, $width, $height);
+					$imageId = imagecreate($newWidth , $newHeight);
+                    imagecopyresized($imageId, $img, 0,0,0,0, $newWidth, $newHeight, $width, $height);
 				}
 				$handle = $imageId;
 				// free original image
-				ImageDestroy($img);
+                imagedestroy($img);
 			}
 			else
 			{
 				$handle = $img;
 			}
    		$imgsave($handle, $fileTo, $quality);
-			ImageDestroy($handle);
+            imagedestroy($handle);
 			return true;
 		}
 		return false;
