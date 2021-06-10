@@ -5,7 +5,7 @@
     "require": {
         "php": "^7.2",
         "doctrine/dbal": "^2.5",
-        "littlecubiclegames/quests": "dev-master",
+        "littlecubiclegames/quests": "^1.2",
         "monolog/monolog": "^1.19",
         "pimple/pimple": "^3.0",
         "robthree/twofactorauth": "^1.6",

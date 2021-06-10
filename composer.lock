@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cebd935a619c5bb3626adf5a1d10dec1",
+    "content-hash": "b9d51d4c91c5b68dbaaec9c267284b4d",
     "packages": [
         {
             "name": "composer/package-versions-deprecated",
@@ -1179,7 +1179,7 @@
         },
         {
             "name": "littlecubiclegames/quests",
-            "version": "dev-master",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/littlecubiclegames/quests.git",
@@ -1208,7 +1208,6 @@
                 "phpunit/phpunit": "^8.0",
                 "silex/silex": "^2.0"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1228,7 +1227,7 @@
             "description": "Quest Component",
             "support": {
                 "issues": "https://github.com/littlecubiclegames/quests/issues",
-                "source": "https://github.com/littlecubiclegames/quests/tree/master"
+                "source": "https://github.com/littlecubiclegames/quests/tree/1.2.0"
             },
             "time": "2021-06-06T18:21:45+00:00"
         },
@@ -7049,7 +7048,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "littlecubiclegames/quests": 20,
         "silex/silex": 20
     },
     "prefer-stable": true,
