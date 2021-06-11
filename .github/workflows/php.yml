@@ -90,7 +90,7 @@ jobs:
     strategy:
       matrix:
         php-version:
-          - "7.2"
+          - "7.4"
 
     name: PHPStan
     runs-on: ubuntu-latest
