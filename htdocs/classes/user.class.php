@@ -1526,7 +1526,7 @@ die Spielleitung";
 		}
 
 		$pos = $absX + ($cy_num*$sy_num)*($absY-1)-1;
-		return (($pos < strlen($this->dmask)) ? $this->dmask{$pos} > 0 : false);
+		return ($pos < strlen($this->dmask) && $this->dmask[$pos] > 0);
 	}
 
 	function getDiscoveredPercent()
@@ -1563,7 +1563,7 @@ die Spielleitung";
 					$pos = $x + ($cy_num*$sy_num)*($y-1)-1;
 					if ($pos>= 0 && $pos <= $sx_num*$sy_num*$cx_num*$cy_num)
 					{
-						$this->dmask{$pos} = '1';
+						$this->dmask[$pos] = '1';
 					}
 				}
 			}
@@ -1588,7 +1588,7 @@ die Spielleitung";
 			for ($y=1; $y <= $sy_num * $cy_num; $y++)
 			{
 				$pos = $x + ($cy_num*$sy_num)*($y-1)-1;
-				$this->dmask{$pos} = $discovered ? '1' : '0';
+				$this->dmask[$pos] = $discovered ? '1' : '0';
 			}
 		}
 		$this->saveDiscoveryMask();
