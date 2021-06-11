@@ -55,18 +55,18 @@
 			$e=$p['semi_major_axis']*$p['ecccentricity']*$im_size/SOLSYS_SIZE;
 			// Calculate semi minor axis
 			$b=sqrt(($a*$a)-($e*$e));
-  	
+
 			$a3 = $p['semi_major_axis']*$p['semi_major_axis']*$p['semi_major_axis']*METER_PER_AU*METER_PER_AU*METER_PER_AU;
 		  $period = sqrt(($a3*4*PI*PI)/(G*(M+$p['mass'])));
-  	
+
 			// Draw orbit
 			for ($t=0;$t<2*PI;$t+="0.01")
 			{
 				$x = $x0-$e+($a*cos($t));
 				$y = $y0+($b*sin($t));
 				imagesetpixel($im,$x,$y,$col_grey);
-				
-				
+
+
 				if (isset($p['moon']))
 				{
 					foreach ($p['moon'] as $m)
@@ -77,9 +77,9 @@
 					}
 				}
 			}	
-			
+
 			$tc = time()*GAME_SECOND * 2 * PI / $period;
-			
+
 			// Draw planet
 			$x = $x0-$e+($a*cos($tc));
 			$y = $y0-($b*sin($tc));
@@ -96,7 +96,7 @@
 			{
 				imagefilledellipse($im,$x,$y,PLANET_RADIUS,PLANET_RADIUS,$col_green);
 			}
-			
+
 			if (isset($p['moon']))
 			{
 				foreach ($p['moon'] as $m)
@@ -106,7 +106,7 @@
 					imagefilledellipse($im,$xm,$ym,MOON_RADIUS,MOON_RADIUS,$col_white);
 				}
 			}
-			
+
 			// Name
 			imagestring($im,3,$x+3,$y+5,$i,$col_orange);
 			//imagestring($im,3,$x+3,$y+5,$p['name'],$col_orange);

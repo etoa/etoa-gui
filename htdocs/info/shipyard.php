@@ -1,4 +1,4 @@
- 	<?PHP
+<?PHP
 
 	define("RANKING_SHIP_STRUCTURE",20000);
 	define("RANKING_SHIP_SHIELD",25000);
