@@ -38,15 +38,15 @@ class Message
 				$cat = USER_MSG_CAT_ID;
 			}
 			startTransaction();
-			dbquery("INSERT INTO 
+			dbquery("INSERT INTO
 				messages
 			(
 				message_user_from,
 				message_user_to,
 				message_timestamp,
 				message_cat_id
-			) 
-			VALUES 
+			)
+			VALUES
 			(
 				'".intval($senderId)."',
 				'".intval($receiverId)."',
@@ -83,9 +83,9 @@ class Message
 	static function delete($id)
 	{
 		dbquery("
-			DELETE FROM 
-				messages 
-			WHERE 
+			DELETE FROM
+				messages
+			WHERE
 				message_id=".$id.";");
 	}
 
@@ -113,7 +113,7 @@ class Message
 				WHERE
 					message_archived=0
 					AND message_read=1
-					AND message_timestamp<'".$tstamp."';		
+					AND message_timestamp<'".$tstamp."';
 			");
 			if (mysql_num_rows($res)>0)
 			{
@@ -154,7 +154,7 @@ class Message
 				messages
 			WHERE
 				message_deleted='1'
-				AND message_timestamp<'".$tstamp."';		
+				AND message_timestamp<'".$tstamp."';
 		");
 		if (mysql_num_rows($res)>0)
 		{
@@ -178,7 +178,7 @@ class Message
 				message_deleted='1'
 				AND message_timestamp<'".$tstamp."';
 		");
-		add_log("4","Unarchivierte Nachrichten die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!"htdocs/classes/report.class.php);
+		add_log("4","Unarchivierte Nachrichten die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!");
 		$nr += mysql_affected_rows();
 		return $nr;
 	}
