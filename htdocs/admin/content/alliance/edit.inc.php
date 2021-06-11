@@ -1,192 +1,350 @@
 <?PHP
 
-		if (isset($_GET['alliance_id']))
+		if (isset($_GET['alliance_id'])) {
 			$id = $_GET['alliance_id'];
-		if (isset($_GET['id']))
+		}
+		if (isset($_GET['id'])) {
 			$id = $_GET['id'];
-
+		}
 
 		if (isset($_POST['info_save']) && $_POST['info_save']!="")
 		{
 			//  Bild löschen wenn nötig
-			$img_sql="";
+			$img_sql = "";
 			if (isset($_POST['alliance_img_del']))
 			{
-				$res = dbquery("SELECT alliance_img FROM alliances WHERE alliance_id=".$id.";");
-				if (mysql_num_rows($res)>0)
+				$arr = $app['db']
+					->executeQuery("SELECT alliance_img
+						FROM alliances
+						WHERE alliance_id = ?;",
+						[$id])
+					->fetchAssociative();
+				if ($arr != null)
 				{
-					$arr=mysql_fetch_array($res);
 					if (file_exists('../'.ALLIANCE_IMG_DIR."/".$arr['alliance_img']))
 					{
 						unlink('../'.ALLIANCE_IMG_DIR."/".$arr['alliance_img']);
 					}
-					$img_sql=",alliance_img=''";
+					$img_sql = ",alliance_img=''";
 				}
 			}
 
 			// Daten speichern
-			dbquery("
-			UPDATE
-				alliances
-			SET
-				alliance_name='".$_POST['alliance_name']."',
-				alliance_tag='".$_POST['alliance_tag']."',
-				alliance_text='".addslashes($_POST['alliance_text'])."',
-				alliance_application_template='".addslashes($_POST['alliance_application_template'])."',
-				alliance_url='".$_POST['alliance_url']."',
-				alliance_founder_id='".$_POST['alliance_founder_id']."'
-				".$img_sql."
-			WHERE
-				alliance_id='".$id."'
-			;");
+			$app['db']
+				->executeStatement("UPDATE
+					alliances
+				SET
+					alliance_name = :name,
+					alliance_tag = :tag,
+					alliance_text = :text,
+					alliance_application_template = :template,
+					alliance_url = :url,
+					alliance_founder_id = :founder
+					".$img_sql."
+				WHERE
+					alliance_id = :id
+			;", [
+				'name' => $_POST['alliance_name'],
+				'tag' => $_POST['alliance_tag'],
+				'text' => $_POST['alliance_text'],
+				'template' => $_POST['alliance_application_template'],
+				'url' => $_POST['alliance_url'],
+				'founder' => $_POST['alliance_founder_id'],
+				'id' => $id
+			]);
 
 			$twig->addGlobal('successMessage', 'Allianzdaten aktualisiert!');
 		}
 		elseif (isset($_POST['member_save']) && $_POST['member_save']!="")
 		{
 			// Mitgliederänderungen
-			if (isset($_POST['member_kick']) && count($_POST['member_kick'])>0)
-				foreach($_POST['member_kick'] as $k=>$v)
-					dbquery("UPDATE
-						users
-					SET
-						user_alliance_id=0,
-						user_alliance_rank_id=0
-					WHERE
-						user_id='$k';");
-			if (count($_POST['member_rank'])>0)
-				foreach($_POST['member_rank'] as $k=>$v)
-					dbquery("UPDATE
-						users
-					SET
-						user_alliance_rank_id=$v
-					WHERE
-						user_id='$k';");
-			// Ränge speichern
-			if (isset($_POST['rank_del']) && count($_POST['rank_del'])>0)
-				foreach($_POST['rank_del'] as $k=>$v)
-				{
-					dbquery("DELETE FROM alliance_ranks WHERE rank_id='$k';");
-					dbquery("DELETE FROM alliance_rankrights WHERE rr_rank_id='$k';");
+			if (isset($_POST['member_kick']) && count($_POST['member_kick']) > 0) {
+				foreach ($_POST['member_kick'] as $k => $v) {
+					$app['db']
+						->executeStatement("UPDATE
+								users
+							SET
+								user_alliance_id = 0,
+								user_alliance_rank_id = 0
+							WHERE
+								user_id = ?;",
+							[$k]);
 				}
-			if (count($_POST['rank_name'])>0)
-				foreach($_POST['rank_name'] as $k=>$v)
-					dbquery("UPDATE
-						alliance_ranks
-					SET
-						rank_name='".addslashes($v)."',
-						rank_level='".$_POST['rank_level'][$k]."'
-					WHERE
-						rank_id='$k';");
+			}
+			if (count($_POST['member_rank']) > 0) {
+				foreach ($_POST['member_rank'] as $k => $v) {
+					$app['db']
+						->executeStatement("UPDATE
+								users
+							SET
+								user_alliance_rank_id = ?
+							WHERE
+								user_id = ?;",
+							[$v, $k]);
+				}
+			}
+			// Ränge speichern
+			if (isset($_POST['rank_del']) && count($_POST['rank_del']) > 0) {
+				foreach ($_POST['rank_del'] as $k => $v)
+				{
+					$app['db']
+						->executeStatement("DELETE FROM alliance_ranks
+							WHERE rank_id = ?;",
+							[$k]);
+					$app['db']
+						->executeStatement("DELETE FROM alliance_rankrights
+							WHERE rr_rank_id = ?;",
+							[$k]);
+				}
+			}
+			if (isset($_POST['rank_name']) && count($_POST['rank_name']) > 0) {
+				foreach ($_POST['rank_name'] as $k => $v) {
+					$app['db']
+						->executeStatement("UPDATE
+								alliance_ranks
+							SET
+								rank_name = ?,
+								rank_level = ?
+							WHERE
+								rank_id = ?;",
+								[$v, $_POST['rank_level'][$k], $k]);
+				}
+			}
 			$twig->addGlobal('successMessage', 'Mitglieder aktualisiert!');
 		}
 		elseif (isset($_POST['bnd_save']) && $_POST['bnd_save']!="")
 		{
 			// Bündnisse / Kriege speichern
-			if (isset($_POST['alliance_bnd_del']) && count($_POST['alliance_bnd_del'])>0)
-				foreach($_POST['alliance_bnd_del'] as $k=>$v)
-					dbquery("DELETE FROM alliance_bnd WHERE alliance_bnd_id='$k';");
-			if (count($_POST['alliance_bnd_level'])>0)
+			if (isset($_POST['alliance_bnd_del']) && count($_POST['alliance_bnd_del']) > 0) {
+				foreach ($_POST['alliance_bnd_del'] as $k => $v) {
+					$app['db']
+						->executeStatement("DELETE FROM alliance_bnd
+							WHERE alliance_bnd_id = ?;",
+							[$k]);
+				}
+			}
+			if (count($_POST['alliance_bnd_level']) > 0)
 			{
-				foreach($_POST['alliance_bnd_level'] as $k=>$v)
+				foreach ($_POST['alliance_bnd_level'] as $k => $v)
 				{
-					dbquery("UPDATE
-						alliance_bnd
-					SET
-						alliance_bnd_level='".$_POST['alliance_bnd_level'][$k]."',
-						alliance_bnd_name='".$_POST['alliance_bnd_name'][$k]."'
-					WHERE
-						alliance_bnd_id='$k';");
+					$app['db']
+						->executeStatement("UPDATE
+								alliance_bnd
+							SET
+								alliance_bnd_level = ?,
+								alliance_bnd_name = ?
+							WHERE
+								alliance_bnd_id = ?;",
+							[
+								$_POST['alliance_bnd_level'][$k],
+								$_POST['alliance_bnd_name'][$k],
+								$k
+							]);
 				}
 			}
 			$twig->addGlobal('successMessage', 'Diplomatie aktualisiert!');
 		}
 		elseif (isset($_POST['res_save']) && $_POST['res_save']!="")
 		{
-			dbquery("
-					UPDATE
+			$app['db']
+				->executeStatement("UPDATE
 						alliances
 					SET
-						alliance_res_metal='".nf_back($_POST['res_metal'])."',
-						alliance_res_crystal='".nf_back($_POST['res_crystal'])."',
-						alliance_res_plastic='".nf_back($_POST['res_plastic'])."',
-						alliance_res_fuel='".nf_back($_POST['res_fuel'])."',
-						alliance_res_food='".nf_back($_POST['res_food'])."',
-						alliance_res_metal=alliance_res_metal+'".nf_back($_POST['res_metal_add'])."',
-						alliance_res_crystal=alliance_res_crystal+'".nf_back($_POST['res_crystal_add'])."',
-						alliance_res_plastic=alliance_res_plastic+'".nf_back($_POST['res_plastic_add'])."',
-						alliance_res_fuel=alliance_res_fuel+'".nf_back($_POST['res_fuel_add'])."',
-						alliance_res_food=alliance_res_food+'".nf_back($_POST['res_food_add'])."'
+						alliance_res_metal = :metal,
+						alliance_res_crystal = :crystal,
+						alliance_res_plastic = :plastic,
+						alliance_res_fuel = :fuel,
+						alliance_res_food = :food,
+						alliance_res_metal = alliance_res_metal + :addmetal,
+						alliance_res_crystal = alliance_res_crystal + :addcrystal,
+						alliance_res_plastic = alliance_res_plastic + :addplastic,
+						alliance_res_fuel = alliance_res_fuel + :addfuel,
+						alliance_res_food = alliance_res_food + :addfood
 					WHERE
-						alliance_id='".$id."'
-					LIMIT 1;");
+						alliance_id = :id
+					LIMIT 1;", [
+						'metal' => nf_back($_POST['res_metal']),
+						'crystal' => nf_back($_POST['res_crystal']),
+						'plastic' => nf_back($_POST['res_plastic']),
+						'fuel' => nf_back($_POST['res_fuel']),
+						'food' => nf_back($_POST['res_food']),
+						'addmetal' => nf_back($_POST['res_metal_add']),
+						'addcrystal' => nf_back($_POST['res_crystal_add']),
+						'addplastic' => nf_back($_POST['res_plastic_add']),
+						'addfuel' => nf_back($_POST['res_fuel_add']),
+						'addfood' => nf_back($_POST['res_food_add']),
+						'id' => $id,
+					]);
 			$twig->addGlobal('successMessage', 'Ressourcen aktualisiert!');
 		}
 		elseif (isset($_POST['buildings']) && $_POST['buildings']!="")
 		{
-
-			$test= dbquery("SELECT alliance_buildlist_id FROM alliance_buildlist WHERE alliance_buildlist_alliance_id =".$id."
-							AND alliance_buildlist_building_id =(select alliance_building_id from alliance_buildings where alliance_building_name='".$_POST['selected']."')");
-
-			if (mysql_num_rows($test)>0)
+			$test = $app['db']
+				->executeQuery("SELECT alliance_buildlist_id
+				FROM alliance_buildlist
+				WHERE alliance_buildlist_alliance_id = ?
+					AND alliance_buildlist_building_id = (
+						SELECT alliance_building_id
+						FROM alliance_buildings
+						WHERE alliance_building_name = ?
+					)",
+					[$id, $_POST['selected']])
+				->fetchAllAssociative();
+			if (count($test) > 0)
 			{
-			dbquery("UPDATE alliance_buildlist SET alliance_buildlist_current_level =".$_POST['level'].", alliance_buildlist_member_for =".$_POST['amount']." WHERE alliance_buildlist_alliance_id =".$id."
-					 AND alliance_buildlist_building_id =(select alliance_building_id from alliance_buildings where alliance_building_name='".$_POST['selected']."')");
+				$app['db']
+					->executeStatement("UPDATE alliance_buildlist
+						SET alliance_buildlist_current_level = :level,
+							alliance_buildlist_member_for = :amount
+						WHERE alliance_buildlist_alliance_id = :id
+							AND alliance_buildlist_building_id = (
+								SELECT alliance_building_id
+								FROM alliance_buildings
+								WHERE alliance_building_name = :selected
+							);",
+							[
+								'level' => $_POST['level'],
+								'amount' => $_POST['amount'],
+								'id' => $id,
+								'selected' => $_POST['selected'],
+							]);
 				$twig->addGlobal('successMessage','Datensatz erfolgreich bearbeitet!');
 			}
 			else
 			{
-				dbquery("INSERT into alliance_buildlist(alliance_buildlist_alliance_id,alliance_buildlist_building_id,alliance_buildlist_current_level,alliance_buildlist_build_start_time,alliance_buildlist_build_end_time,alliance_buildlist_cooldown,alliance_buildlist_member_for)
-				VALUES(".$id.",(select alliance_building_id from alliance_buildings where alliance_building_name='".$_POST['selected']."'),".$_POST['level'].",0,1,0,".$_POST['amount'].")");
+				$app['db']
+					->executeStatement("INSERT into alliance_buildlist
+						(
+							alliance_buildlist_alliance_id,
+							alliance_buildlist_building_id,
+							alliance_buildlist_current_level,
+							alliance_buildlist_build_start_time,
+							alliance_buildlist_build_end_time,
+							alliance_buildlist_cooldown,
+							alliance_buildlist_member_for
+						) VALUES (
+							:id,
+							(
+								SELECT alliance_building_id
+								FROM alliance_buildings
+								WHERE alliance_building_name = :selected
+							),
+							:level,
+							0,
+							1,
+							0,
+							:amount
+						)",
+						[
+							'id' => $id,
+							'selected' => $_POST['selected'],
+							'level' => $_POST['level'],
+							'amount' => $_POST['amount'],
+						]);
 				$twig->addGlobal('successMessage', 'Datensatz erfolgreich eingefügt!');
 			}
 		}
 		elseif (isset($_POST['techs']) && $_POST['techs']!="")
 		{
-			$test= dbquery("SELECT alliance_techlist_id FROM alliance_techlist WHERE alliance_techlist_alliance_id =".$id."
-							AND alliance_techlist_tech_id =(select alliance_tech_id from alliance_technologies where alliance_tech_name='".$_POST['selected_tech']."')");
-
-			if (mysql_num_rows($test)>0)
+			$test = $app['db']
+				->executeQuery("SELECT alliance_techlist_id
+				FROM alliance_techlist
+				WHERE alliance_techlist_alliance_id = ?
+					AND alliance_techlist_tech_id = (
+						SELECT alliance_tech_id
+						FROM alliance_technologies
+						WHERE alliance_tech_name = ?
+					);",
+					[$id, $_POST['selected_tech']])
+				->fetchAllAssociative();
+			if (count($test) > 0)
 			{
-			dbquery("UPDATE alliance_techlist SET alliance_techlist_current_level =".$_POST['tech_level'].", alliance_techlist_member_for =".$_POST['tech_amount']." WHERE alliance_techlist_alliance_id =".$id."
-					 AND alliance_techlist_tech_id =(select alliance_tech_id from alliance_technologies where alliance_tech_name='".$_POST['selected_tech']."')");
+				$app['db']
+					->executeStatement("UPDATE alliance_techlist
+						SET alliance_techlist_current_level = :level,
+							alliance_techlist_member_for = :amount
+						WHERE alliance_techlist_alliance_id = :id
+							AND alliance_techlist_tech_id = (
+								select alliance_tech_id
+								from alliance_technologies
+								where alliance_tech_name = :selected
+						);",
+					[
+						'level' => $_POST['tech_level'],
+						'amount' => $_POST['tech_amount'],
+						'id' => $id,
+						'selected' => $_POST['selected_tech'],
+					]);
 				$twig->addGlobal('successMessage','Datensatz erfolgreich bearbeitet!');
 			}
 			else
 			{
-				dbquery("INSERT into alliance_techlist(alliance_techlist_alliance_id,alliance_techlist_tech_id,alliance_techlist_current_level,alliance_techlist_build_start_time,alliance_techlist_build_end_time,alliance_techlist_member_for)
-				VALUES(".$id.",(select alliance_tech_id from alliance_technologies where alliance_tech_name='".$_POST['selected_tech']."'),".$_POST['tech_level'].",0,1,".$_POST['tech_amount'].")");
+				$app['db']
+					->executeStatement("INSERT INTO alliance_techlist
+						(
+							alliance_techlist_alliance_id,
+							alliance_techlist_tech_id,
+							alliance_techlist_current_level,
+							alliance_techlist_build_start_time,
+							alliance_techlist_build_end_time,
+							alliance_techlist_member_for
+						) VALUES (
+							:id,
+							(
+								SELECT alliance_tech_id
+								FROM alliance_technologies
+								WHERE alliance_tech_name = :selected),
+							:level,
+							0,
+							1,
+							:amount
+						);",
+						[
+							'id' => $id,
+							'selected' => $_POST['selected_tech'],
+							'level' => $_POST['tech_level'],
+							'amount' => $_POST['tech_amount'],
+						]);
 				$twig->addGlobal('successMessage', 'Datensatz erfolgreich eingefügt!');
 			}
 		}
 
-		$res = dbquery("SELECT * FROM alliances WHERE alliance_id='".$id."';");
-		$arr = mysql_fetch_assoc($res);
+		$arr = $app['db']
+			->executeQuery("SELECT *
+				FROM alliances
+				WHERE alliance_id = ?;",
+				[$id])
+			->fetchAssociative();
 
 		$twig->addGlobal('subtitle', "Allianz bearbeiten: [".$arr['alliance_tag']."] ".$arr['alliance_name']);
 
-		$ures = dbquery("SELECT
-							user_id,
-							user_nick,
-							user_points,
-							user_alliance_rank_id
-						FROM
-							users
-						WHERE
-							user_alliance_id=".$id."
-						ORDER BY
-							user_points DESC,
-							user_nick;");
+		$udata = $app['db']
+			->executeQuery("SELECT
+					user_id,
+					user_nick,
+					user_points,
+					user_alliance_rank_id
+				FROM
+					users
+				WHERE
+					user_alliance_id = ?
+				ORDER BY
+					user_points DESC,
+					user_nick;",
+				[$id])
+			->fetchAllAssociative();
+
 		$members = array();
-		if (mysql_num_rows($ures)>0)
+		if (count($udata) > 0)
 		{
-			while($uarr=mysql_fetch_array($ures))
+			foreach ($udata as $uarr)
 			{
 				$members[$uarr['user_id']] = $uarr;
 			}
 		}
-		$rres = dbquery("
-				SELECT
+
+		$rdata = $app['db']
+			->executeQuery("SELECT
 					rank_id,
 					rank_level,
 					rank_name
@@ -195,11 +353,12 @@
 				WHERE
 					rank_alliance_id=".$id."
 				ORDER BY
-					rank_level DESC;");
+					rank_level DESC;", [])
+			->fetchAllAssociative();
 		$ranks = array();
-		if (mysql_num_rows($rres)>0)
+		if (count($rdata) > 0)
 		{
-			while($rarr=mysql_fetch_array($rres))
+			foreach ($rdata as $rarr)
 			{
 				$ranks[$rarr['rank_id']] = $rarr;
 			}
@@ -231,7 +390,7 @@
 				</td></tr>";
 			echo "<tr><th>Gr&uuml;nder</th><td><select name=\"alliance_founder_id\">";
 			echo "<option value=\"0\">(niemand)</option>";
-			foreach ($members as $uid=>$uarr)
+			foreach ($members as $uid => $uarr)
 			{
 				echo "<option value=\"$uid\"";
 				if ($arr['alliance_founder_id']==$uarr['user_id'])
@@ -331,29 +490,33 @@
 				* Krieg/Bündnisse
 				*/
 
-				$bres = dbquery("
-				SELECT
-					alliance_bnd_id,
-					alliance_bnd_alliance_id1 as a1id,
-					alliance_bnd_alliance_id2 as a2id,
-					a1.alliance_name as a1name,
-					a2.alliance_name as a2name,
-					alliance_bnd_level as lvl,
-					alliance_bnd_name as name,
-					alliance_bnd_date as date
-				FROM
-					alliance_bnd
-				LEFT JOIN
-					alliances a1 on alliance_bnd_alliance_id1 = a1.alliance_id
-				LEFT JOIN
-					alliances a2 on alliance_bnd_alliance_id2 = a2.alliance_id
-				WHERE
-					alliance_bnd_alliance_id1=".$arr['alliance_id']."
-					OR alliance_bnd_alliance_id2=".$arr['alliance_id']."
-				ORDER BY
-					alliance_bnd_level DESC,
-					alliance_bnd_date DESC;");
-				if (mysql_num_rows($bres)>0)
+				$bdata = $app['db']
+					->executeQuery("SELECT
+							alliance_bnd_id,
+							alliance_bnd_alliance_id1 as a1id,
+							alliance_bnd_alliance_id2 as a2id,
+							a1.alliance_name as a1name,
+							a2.alliance_name as a2name,
+							alliance_bnd_level as lvl,
+							alliance_bnd_name as name,
+							alliance_bnd_date as date
+						FROM
+							alliance_bnd
+						LEFT JOIN
+							alliances a1 on alliance_bnd_alliance_id1 = a1.alliance_id
+						LEFT JOIN
+							alliances a2 on alliance_bnd_alliance_id2 = a2.alliance_id
+						WHERE
+							alliance_bnd_alliance_id1 = :id
+							OR alliance_bnd_alliance_id2 = :id
+						ORDER BY
+							alliance_bnd_level DESC,
+							alliance_bnd_date DESC;",
+						[
+							'id' => $arr['alliance_id'],
+						])
+					->fetchAllAssociative();
+				if (count($bdata) > 0)
 				{
 					echo "<table class=\"tb\">";
 					echo "<tr>
@@ -361,10 +524,10 @@
 					<th>Bezeichnung</th>
 					<th>Status / Datum</th>
 					<th>L&ouml;schen</th></tr>";
-					while($barr=mysql_fetch_array($bres))
+					foreach ($bdata as $barr)
 					{
-						$opId = ($id==$barr['a2id']) ? $barr['a1id'] : $barr['a2id'];
-						$opName = ($id==$barr['a2id']) ? $barr['a1name'] : $barr['a2name'];
+						$opId = ($id == $barr['a2id']) ? $barr['a1id'] : $barr['a2id'];
+						$opName = ($id == $barr['a2id']) ? $barr['a1name'] : $barr['a2name'];
 						echo "<tr>
 							<td><a href=\"?page=alliances&amp;action=edit&amp;id=".$opId."\">".$opName."</a></td>
 							<td><input type=\"text\" value=\"".$barr['name']."\" name=\"alliance_bnd_name[".$barr['alliance_bnd_id']."]\" /></td>";
@@ -400,19 +563,21 @@
 			echo "<tr>
 					<th style=\"width:120px;\">Datum / Zeit</th>
 					<th>Ereignis</th></tr>";
-			$hres=dbquery("
-						SELECT
-							*
-						FROM
-							alliance_history
-						WHERE
-							history_alliance_id=".$arr['alliance_id']."
-						ORDER BY
-							history_timestamp
-						DESC;");
-			if (mysql_num_rows($hres)>0)
+			$hdata = $app['db']
+				->executeQuery("SELECT
+						*
+					FROM
+						alliance_history
+					WHERE
+						history_alliance_id = ?
+					ORDER BY
+						history_timestamp
+					DESC;",
+					[$arr['alliance_id']])
+				->fetchAllAssociative();
+			if (count($hdata) > 0)
 			{
-				while ($harr=mysql_fetch_array($hres))
+				foreach ($hdata as $harr)
 				{
 					echo "<tr><td>".date("d.m.Y H:i",$harr['history_timestamp'])."</td><td class=\"tbldata\">".text2html($harr['history_text'])."</td></tr>";
 				}
@@ -496,32 +661,35 @@
 			/**
 			* Gebäude
 			*/
-			$res = dbquery("
-						SELECT
-							alliance_buildlist.*,
-							alliance_buildings.alliance_building_name
-						FROM
-							alliance_buildlist
-						INNER JOIN
-							alliance_buildings
-						ON
-							alliance_buildings.alliance_building_id=alliance_buildlist.alliance_buildlist_building_id
-							AND	alliance_buildlist_alliance_id='".$id."';");
+			$buildListData = $app['db']
+				->executeQuery("SELECT
+						alliance_buildlist.*,
+						alliance_buildings.alliance_building_name
+					FROM
+						alliance_buildlist
+					INNER JOIN
+						alliance_buildings
+					ON
+						alliance_buildings.alliance_building_id = alliance_buildlist.alliance_buildlist_building_id
+						AND	alliance_buildlist_alliance_id = ?;",
+					[$id])
+				->fetchAllAssociative();
 
-			$buildings = dbquery("
-						SELECT
-							alliance_building_id,
-							alliance_building_name
-						FROM
-							alliance_buildings;");
+			$buildings = $app['db']
+				->executeQuery("SELECT
+						alliance_building_id,
+						alliance_building_name
+					FROM
+						alliance_buildings;")
+				->fetchAllAssociative();
 
 			tableStart();
 			echo "<tr>
 					<th>Gebäude</th><th>Stufe</th><th>Useranzahl</th><th>Status</th>
 				</tr>";
-			if (mysql_num_rows($res)>0)
+			if (count($buildListData) > 0)
 			{
-				while ($arr = mysql_fetch_assoc($res))
+				foreach ($buildListData as $arr)
 				{
 					echo "<tr><td>".$arr['alliance_building_name']."</td><td>".$arr['alliance_buildlist_current_level']."</td><td>".$arr['alliance_buildlist_member_for']."</td><td>";
 					if ($arr['alliance_buildlist_build_end_time']>time()) echo "Bauen";
@@ -529,11 +697,11 @@
 					else echo "Untätig";
 					echo "</td>";
 					echo "</tr>";
-
 				}
 			}
-			else
+			else {
 				echo "<tr><td colspan=\"4\">Keine Gebäude vorhanden!</td></tr>";
+			}
 
 			tableEnd();
 
@@ -546,10 +714,10 @@
 				</tr>";
 			echo'<tr><td>';
 
-            if (mysql_num_rows($buildings)>0)
+            if (count($buildings) > 0)
 			{
 				echo'<select name="selected">';
-				while ($arr = mysql_fetch_assoc($buildings))
+				foreach ($buildings as $arr)
 				{
 					echo "<option>".$arr['alliance_building_name']."</option>";
 				}
@@ -567,31 +735,35 @@
 			/**
 			* Technologien
 			*/
-			$res = dbquery("
-						SELECT
-							alliance_techlist.*,
-							alliance_technologies.alliance_tech_name
-						FROM
-							alliance_techlist
-						INNER JOIN
-							alliance_technologies
-						ON
-							alliance_technologies.alliance_tech_id=alliance_techlist.alliance_techlist_tech_id
-							AND	alliance_techlist_alliance_id='".$id."';");
-			$techs = dbquery("
-						SELECT
-							alliance_tech_id,
-							alliance_tech_name
-						FROM
-							alliance_technologies;");
+			$techlistData = $app['db']
+				->executeQuery("SELECT
+						alliance_techlist.*,
+						alliance_technologies.alliance_tech_name
+					FROM
+						alliance_techlist
+					INNER JOIN
+						alliance_technologies
+					ON
+						alliance_technologies.alliance_tech_id = alliance_techlist.alliance_techlist_tech_id
+						AND	alliance_techlist_alliance_id = ?;",
+					[$id])
+				->fetchAllAssociative();
+
+			$techs = $app['db']
+				->executeQuery("SELECT
+						alliance_tech_id,
+						alliance_tech_name
+					FROM
+						alliance_technologies;")
+				->fetchAllAssociative();
 
 			tableStart();
 			echo "<tr>
 					<th>Technologie</th><th>Stufe</th><th>Useranzahl</th><th>Status</th>
 				</tr>";
-			if (mysql_num_rows($res)>0)
+			if (count($techlistData) > 0)
 			{
-				while ($arr = mysql_fetch_assoc($res))
+				foreach ($techlistData as $arr)
 				{
 					echo "<tr><td>".$arr['alliance_tech_name']."</td><td>".$arr['alliance_techlist_current_level']."</td><td>".$arr['alliance_techlist_member_for']."</td><td>";
 					if ($arr['alliance_techlist_build_end_time']>time()) echo "Forschen";
@@ -601,8 +773,9 @@
 					echo "</tr>";
 				}
 			}
-			else
+			else {
 				echo "<tr><td colspan=\"4\">Keine Technologien vorhanden!</td></tr>";
+			}
 			tableEnd();
 
 			echo '<br><h2>Technologien hinzufügen</h2>';
@@ -614,10 +787,10 @@
 				</tr>";
 			echo'<tr><td>';
 
-            if (mysql_num_rows($techs)>0)
+            if (count($techs) > 0)
 			{
 				echo'<select name="selected_tech">';
-				while ($arr = mysql_fetch_assoc($techs))
+				foreach ($techs as $arr)
 				{
 					echo "<option>".$arr['alliance_tech_name']."</option>";
 				}

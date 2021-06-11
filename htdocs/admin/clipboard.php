@@ -31,18 +31,21 @@ if ($s->user_id) {
         echo "<ul style=\"list-style-type:none;margin-left:-20px;\">";
         foreach ($_SESSION['cp_users'] as $uid) {
             if ($uid>0) {
-                $res = dbquery("SELECT user_nick FROM users WHERE user_id=".$uid.";");
-                if (mysql_num_rows($res)>0) {
-                    $arr = mysql_fetch_row($res);
-
+                $userNick = $app['db']
+                    ->executeQuery("SELECT user_nick
+                        FROM users
+                        WHERE user_id = ?;",
+                        [$uid])
+                    ->fetchOne();
+                if ($userNick != null) {
                     echo "<div id=\"ttuser".$uid."\" style=\"display:none;\">
                     <a href=\"index.php?page=user&amp;sub=edit&amp;id=".$uid."\" target=\"main\">Daten anzeigen</a><br/>
                     ".popupLink("sendmessage","Nachricht senden","","id=".$uid)."<br/>
                     <a href=\"?rem_user=".$uid."\" target=\"_self\">Entfernen</a>
                     </div>";
 
-                    echo "<li><a href=\"index.php?page=user&amp;sub=edit&amp;user_id=".$uid."\" target=\"main\" ".cTT($arr[0],"ttuser".$uid).">
-                    ".$arr[0]."</a></li>";
+                    echo "<li><a href=\"index.php?page=user&amp;sub=edit&amp;user_id=".$uid."\" target=\"main\" ".cTT($userNick,"ttuser".$uid).">
+                    ".$userNick."</a></li>";
                 }
             }
         }

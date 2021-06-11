@@ -66,8 +66,13 @@ try {
         $searchQuery = $_POST['search_query'] ?? '';
         $navmenu = fetchJsonConfig("admin-menu.conf");
 
-        $nres = dbquery("select COUNT(*) from admin_notes where admin_id='".$s->user_id."'");
-        $narr = mysql_fetch_row($nres);
+        $numNotes = $app['db']
+            ->executeQuery("SELECT COUNT(*)
+                FROM admin_notes
+                WHERE admin_id = ?;",
+                [$s->user_id])
+            ->fetchOne();
+
         $numTickets = Ticket::countAssigned($s->user_id) + Ticket::countNew();
 
         $twig->addGlobal('searchQuery', $searchQuery);
@@ -76,7 +81,7 @@ try {
         $twig->addGlobal('sub', $sub);
         $twig->addGlobal('numTickets', $numTickets);
         $twig->addGlobal('numTickets', $numTickets);
-        $twig->addGlobal('numNotes', $narr[0]);
+        $twig->addGlobal('numNotes', $numNotes);
         $twig->addGlobal('currentUserNick', $cu->nick);
         $twig->addGlobal('userRoles', $cu->roles);
         $twig->addGlobal('isUnix', UNIX);
@@ -91,22 +96,32 @@ try {
             $twig->addGlobal('eventHandlerPid', $eventHandlerPid);
         }
 
-        $ures=dbquery("SELECT count(*) FROM users;");
-        $uarr=mysql_fetch_row($ures);
+        $usersCount = $app['db']
+            ->executeQuery("SELECT COUNT(*)
+                FROM users;")
+            ->fetchOne();
 
-        $gres=dbquery("SELECT COUNT(*) FROM user_sessions WHERE time_action>".(time() - $cfg->user_timeout->v).";");
-        $garr=mysql_fetch_row($gres);
+        $usersOnline = $app['db']
+            ->executeQuery("SELECT COUNT(*)
+                FROM user_sessions
+                WHERE time_action > ?;",
+                [(time() - $cfg->user_timeout->v)])
+            ->fetchOne();
 
-        $a1res=dbquery("SELECT COUNT(*)  FROM admin_user_sessions WHERE time_action>".(time() - $cfg->admin_timeout->v).";");
-        $a1arr=mysql_fetch_row($a1res);
+        $adminsOnline = $app['db']
+            ->executeQuery("SELECT COUNT(*)
+                FROM admin_user_sessions
+                WHERE time_action > ?;",
+                [(time() - $cfg->admin_timeout->v)])
+            ->fetchOne();
 
         $adminsCount = AdminUser::countAll();
         $dbSize = DBManager::getInstance()->getDbSize();
 
-        $twig->addGlobal('usersOnline', $garr[0]);
-        $twig->addGlobal('usersCount', $uarr[0]);
+        $twig->addGlobal('usersOnline', $usersOnline);
+        $twig->addGlobal('usersCount', $usersCount);
         $twig->addGlobal('usersAllowed', $cfg->enable_register->p2);
-        $twig->addGlobal('adminsOnline', $a1arr[0]);
+        $twig->addGlobal('adminsOnline', $adminsOnline);
         $twig->addGlobal('adminsCount', $adminsCount);
         $twig->addGlobal('dbSize', $dbSize);
 
