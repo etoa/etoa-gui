@@ -17,7 +17,7 @@ server {
     }
 
     location ~ ^/(index|show|popup|chat|chatframe|api|responder|version|admin\/index|admin\/dl|admin\/clipboard|admin\/frameset|admin\/popup|misc\/(alliance_stats|map|market|powerproduction|progress|solsys|stats).image)\.php(/|$) {
-        fastcgi_pass unix:/run/php/php7.2-fpm.sock;
+        fastcgi_pass unix:/run/php/php7.4-fpm.sock;
         fastcgi_split_path_info ^(.+\.php)(/.*)$;
         fastcgi_buffers 16 16k;
         fastcgi_buffer_size 32k;
