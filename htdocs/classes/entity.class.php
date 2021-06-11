@@ -13,7 +13,7 @@
 		* Private constructor
 		* Prevents usage as object
 		*/
-		private function Entity() {}
+		private function __construct() {}
 
 		//
 		// Abstract methods

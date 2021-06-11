@@ -11,11 +11,11 @@ sudo apt-get update && sudo apt-get upgrade
 echo "mysql-server mysql-server/root_password password " | debconf-set-selections
 echo "mysql-server mysql-server/root_password_again password " | debconf-set-selections
 
-# Install mysql, nginx, php7.2-fpm
-sudo apt-get install -q -y -f git mysql-server mysql-client nginx php7.2 php7.2-fpm php7.2-xdebug
+# Install mysql, nginx, php7.4-fpm
+sudo apt-get install -q -y -f git mysql-server mysql-client nginx php7.4 php7.4-fpm php7.4-xdebug
 
 # Install commonly used php packages
-sudo apt-get install -q -y -f php7.2-curl php7.2-cli php7.2-mysqli php7.2-gd php7.2-dom php7.2-zip php7.2-mbstring
+sudo apt-get install -q -y -f php7.4-curl php7.4-cli php7.4-mysqli php7.4-gd php7.4-dom php7.4-zip php7.4-mbstring
 
 sudo apt-get upgrade libpcre3
 
@@ -25,7 +25,7 @@ cp /var/www/etoa/vagrant/db.conf /var/www/etoa/htdocs/config
 cp /var/www/etoa/vagrant/roundx.conf /vagrant/htdocs/config/eventhandler.conf
 
 sudo service nginx restart
-sudo service php7.2-fpm restart
+sudo service php7.4-fpm restart
 
 MYSQL=`which mysql`
 PHP=`which php`

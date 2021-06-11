@@ -189,7 +189,7 @@
 			{
 				echo "<td ".tm($anarr['aftag'],text2html($anarr['afname'])).">
 					<a href=\"?page=alliance&amp;info_id=".$anarr['alliance_news_alliance_id']."\">".$anarr['aftag']."</a>
-					
+
 				</td>";
 			}
 			else

@@ -51,7 +51,7 @@
 		{
 			echo "<tr><td style=\"width:40px;background:#000;vertical-align:middle;\">
 				<img src=\"".IMAGE_PATH."/stars/star".$arr['sol_type_id']."_small.".IMAGE_EXT."\" width=\"40\" height=\"40\" alt=\"Stern\"/></a></td>";
-				
+
 			/*$tt = new ToolTip();
 			$tt->addIcon(IMAGE_PATH."/stars/star".$arr['sol_type_id']."_small.".IMAGE_EXT."");
 			$tt->addTitle($arr['sol_type_name']);
