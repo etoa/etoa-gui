@@ -511,11 +511,11 @@
 					ship_buy_plastic = document.getElementById('ship_buy_plastic').value.replace(/`/g, "");
 					ship_buy_fuel = document.getElementById('ship_buy_fuel').value.replace(/`/g, "");
 					ship_buy_food = document.getElementById('ship_buy_food').value.replace(/`/g, "");
-    
-          
+
+
 					// Die Anzahl Schiffe formatieren (Trennzeichen entfernen) und in Variable speichern
 					var ship_count = document.getElementById('ship_count').value.replace(/`/g, "");
-          
+
           			//Die %-Zahl ermitteln und in Variable speichern
           			var ship_percent = document.getElementById('ship_percent').value;
 
@@ -550,7 +550,7 @@
 						document.getElementById('ship_percent').value=ship_percent;
 					}
 					ship_percent /= 100;
-					
+
 					// Die verlangten Rohstoffe (Preis)
 					// Titan
 					if(istZahl(ship_buy_metal)==false || ship_buy_metal=='')
@@ -592,7 +592,7 @@
 					}
 					ship_buy_food = Math.abs(ship_buy_food);
 
-          
+
 					//
 					// Verrechnung der Daten
 					//
@@ -630,7 +630,7 @@
 					    document.getElementById('ship_sell_food').value=FormatNumber('return',ship_costs_food_total,'','','');
     			   }
 
-				  
+
 				    //
 			  	    // Errechnet und formatiert Preise
 			  	    //
@@ -727,7 +727,7 @@
 						// Definiert die "Min./Max." Ausgabe
 					    out_ship_min_max[res]="<a href=\"javascript:;\" onclick=\"document.getElementById('"+buy_field+"').value="+sum_min+";calcMarketShipPrice(0, 0);FormatNumber('"+buy_field+"','"+sum_min+"','','','');\">"+ship_min+"</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('"+buy_field+"').value="+sum_max+";calcMarketShipPrice(0, 0);FormatNumber('"+buy_field+"','"+sum_max+"','','','');\">"+ship_max+"</a>";
 					}
-       
+
 					//
 			  	// End Prüfung ob Angebot OK ist
 			  	//
@@ -800,7 +800,7 @@
 			  	document.getElementById('ship_min_max_plastic').innerHTML=out_ship_min_max['2'];
 			  	document.getElementById('ship_min_max_fuel').innerHTML=out_ship_min_max['3'];
 			  	document.getElementById('ship_min_max_food').innerHTML=out_ship_min_max['4'];
-          
+
                 // Gibt die eingegebenen Zahlen formatiert aus
 
 					document.getElementById('ship_count').value=FormatNumber('return',ship_count,'','','');
@@ -817,8 +817,8 @@
 					document.getElementById('ship_name').value=ship_name;
 
 				}
-      
-        
+
+
 				/**************************************************************************/
 				/* Markt: Auktions Check		            															    */
 				/* Berechnet und überprüft die Korrektheit der Eingaben     							*/

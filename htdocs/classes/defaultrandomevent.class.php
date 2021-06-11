@@ -5,21 +5,17 @@
 	*/
 	class DefaultRandomEvent extends RandomEvent
 	{
-		
-		function DefaultRandomEvent($id,$dir)
+
+		function __construct($id,$dir)
 		{
 			parent::RandomEvent($id,$dir);
-			
+
 		}
-		
+
 		function run()
-		{			
-					
-		}		
-	}	
+		{
 
-
-
-
+		}
+	}
 
 ?>

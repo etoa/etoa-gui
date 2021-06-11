@@ -684,7 +684,7 @@ elseif(isset($_GET['type_id']) && intval($_GET['type_id'])>0)
 else
 {
 	HelpUtil::breadCrumbs(array("Geb&auml;ude","buildings"));
-	
+
 	$tres=dbquery("
 	SELECT 
         type_id,

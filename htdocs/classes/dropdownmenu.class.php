@@ -1,11 +1,11 @@
 <?PHP
 
   class DropdownMenuItem {
-    
+
     public $name;
     public $link;
     public $childs = array();
-    
+
     public function __construct($name, $link) {
       $this->name = $name;
       $this->link = $link;
@@ -16,22 +16,22 @@
 	{
 		private $tree;
 		private $js;
-		function DropdownMenu($js=0)
+		function __construct($js=0)
 		{
 			$this->tree = array();
 			$this->js=$js;
 		}
-		
+
 		function add($key,$name,$link)
 		{
 			$this->tree[$key] = new DropdownMenuItem($name, $link);
 		}
-	
+
 		function addChild($key,$name,$link,$parent)
 		{
       $this->tree[$parent]->childs[$key] = new DropdownMenuItem($name, $link);
-		}		
-		
+		}
+
 		function __toString()
 		{
 			ob_start();
@@ -52,7 +52,7 @@
 					foreach ($i->childs as $j)
 					{
 						if ($cnt==0)
-							echo '<li class="enclose">'; 
+							echo '<li class="enclose">';
 						else
 							echo '<li>';
 						if ($this->js==1)
@@ -71,17 +71,17 @@
 					echo '<li class="tc">';
 					if ($this->js==1)
 						echo '<a href="javascript:;" onclick="'.$i->link.'">';
-					else					
+					else
 						echo '<a href="'.$i->link.'">';
 					echo $i->name.'</a></li>';
-				}				
+				}
 			}
 			echo '</ul></div>';
-						
+
 			$rtn = ob_get_contents();
 			ob_end_clean();
 			return $rtn;
-			
+
 		}
 	}
 ?>
