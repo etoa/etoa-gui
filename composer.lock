@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "268ec47a752920acfbc97ef96db3fe0b",
+    "content-hash": "ac23b79d178c5455afc32ffd93898e35",
     "packages": [
         {
             "name": "composer/package-versions-deprecated",
@@ -5662,6 +5662,66 @@
                 }
             ],
             "time": "2021-06-05T04:46:20+00:00"
+        },
+        {
+            "name": "rector/rector",
+            "version": "0.11.16",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rectorphp/rector.git",
+                "reference": "5c030ad7cefa59075e0fe14604cd4982ceaa2bd0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/5c030ad7cefa59075e0fe14604cd4982ceaa2bd0",
+                "reference": "5c030ad7cefa59075e0fe14604cd4982ceaa2bd0",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1|^8.0",
+                "phpstan/phpstan": ">=0.12.86 <=0.12.88"
+            },
+            "conflict": {
+                "phpstan/phpdoc-parser": "<=0.5.3",
+                "phpstan/phpstan": "<=0.12.82",
+                "rector/rector-cakephp": "*",
+                "rector/rector-doctrine": "*",
+                "rector/rector-nette": "*",
+                "rector/rector-nette-to-symfony": "*",
+                "rector/rector-phpunit": "*",
+                "rector/rector-prefixed": "*",
+                "rector/rector-symfony": "*"
+            },
+            "bin": [
+                "bin/rector"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "0.10-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Prefixed and PHP 7.1 downgraded version of rector/rector",
+            "support": {
+                "issues": "https://github.com/rectorphp/rector/issues",
+                "source": "https://github.com/rectorphp/rector/tree/0.11.16"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/tomasvotruba",
+                    "type": "github"
+                }
+            ],
+            "time": "2021-06-08T08:41:04+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
