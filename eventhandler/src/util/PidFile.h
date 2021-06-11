@@ -32,13 +32,13 @@
 #include <cstdlib>
 #include <string.h>
 
-/** 
-* Manages a pidfile containing the pid (posix-style process id) 
+/**
+* Manages a pidfile containing the pid (posix-style process id)
 * of this program.
 *
 * @author Nicolas Perrenou <mrcage@etoa.ch>
 */
-class PIDFile 
+class PIDFile
 {
   public:
     PIDFile(const std::string &filename);
@@ -47,8 +47,8 @@ class PIDFile
 		* Checks if the pidfile already exists
 		*/
 		bool fileExists();
-    /** 
-    * Open and lock pidfile, write current process PID to it. 
+    /**
+    * Open and lock pidfile, write current process PID to it.
     */
     void write();
 		/**
@@ -56,12 +56,12 @@ class PIDFile
 		*/
 		int readPid();
   private:
-    /** 
-    * Pathname to the pidfile. 
+    /**
+    * Pathname to the pidfile.
     */
     std::string pidfile_path;
-    /** 
-    * File descriptor for locking the pidfile. 
+    /**
+    * File descriptor for locking the pidfile.
     */
     int pidfile_fd;
 };

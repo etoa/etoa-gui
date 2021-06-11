@@ -1,10 +1,10 @@
 <?PHP
-class ChatPushJsonResponder extends JsonResponder 
+class ChatPushJsonResponder extends JsonResponder
 {
   function getRequiredParams() {
     return array('ctext');
   }
-  
+
   function validateSession()
   {
     global $s;
@@ -14,7 +14,7 @@ class ChatPushJsonResponder extends JsonResponder
   function getResponse($params) {
 
     $data = array();
-  
+
     if (isset($_SESSION['user_id']))
     {
       $admin = 0;
@@ -54,22 +54,22 @@ class ChatPushJsonResponder extends JsonResponder
       }
 
       $ct = $params['ctext'];
-      
+
       // Detect command
       $m = array();
       $words = StringUtils::splitBySpaces($ct);
       $commandMatch = array();
-      
+
 
       // Handle command
-      if (count($words) > 0 && preg_match('#^/([a-z]+)$#i', array_shift($words), $commandMatch)) 
+      if (count($words) > 0 && preg_match('#^/([a-z]+)$#i', array_shift($words), $commandMatch))
       {
         $command = strtolower($commandMatch[1]);
-        
+
         // Kick user
         if ($command == "kick" && $admin > 0 && $admin != 3)
         {
-          if (isset($words[0])) 
+          if (isset($words[0]))
           {
             $uid = User::findIdByNick($words[0]);
             if ($uid>0)
@@ -101,13 +101,13 @@ class ChatPushJsonResponder extends JsonResponder
               'cmd' => 'aa',
               'msg' => 'No user specified!'
             );
-          }          
+          }
         }
-        
+
         // Ban user
         elseif ($command == "ban" && $admin > 0 && $admin != 3)
         {
-          if (isset($words[0])) 
+          if (isset($words[0]))
           {
             $uid = User::findIdByNick($words[0]);
             if ($uid>0)
@@ -128,7 +128,7 @@ class ChatPushJsonResponder extends JsonResponder
               return array(
                 'cmd' => 'aa',
                 'msg' => 'A user with this nick does not exist!'
-              );              
+              );
             }
           }
           else
@@ -136,13 +136,13 @@ class ChatPushJsonResponder extends JsonResponder
             return array(
               'cmd' => 'aa',
               'msg' => 'No user specified!'
-            );            
-          }          
+            );
+          }
         }
-    
+
         elseif ($command == "unban" && $admin > 0 && $admin != 3)
         {
-          if (isset($words[0])) 
+          if (isset($words[0]))
           {
             $uid = User::findIdByNick($words[0]);
             if ($uid>0)
@@ -156,7 +156,7 @@ class ChatPushJsonResponder extends JsonResponder
                 return array(
                   'cmd' => 'aa',
                   'msg' => 'Unbanned '.$words[0].'!'
-                );            
+                );
               }
               else
               {
@@ -171,7 +171,7 @@ class ChatPushJsonResponder extends JsonResponder
               return array(
                 'cmd' => 'aa',
                 'msg' => 'A user with this nick does not exist!'
-              );            
+              );
             }
           }
           else
@@ -179,10 +179,10 @@ class ChatPushJsonResponder extends JsonResponder
             return array(
               'cmd' => 'aa',
               'msg' => 'No user specified!'
-            );            
+            );
           }
         }
-    
+
         elseif ($command == "banlist" && $admin > 0 && $admin != 3)
         {
           $res = dbquery('SELECT
@@ -208,27 +208,27 @@ class ChatPushJsonResponder extends JsonResponder
             return array(
               'cmd' => 'bl',
               'list' => $list
-            ); 
+            );
           }
           else
           {
             return array(
               'cmd' => 'aa',
               'msg' => 'Bannliste leer!'
-            );             
+            );
           }
-        }        
-        
+        }
+
         // Unknown command
         else
         {
           return array(
             'cmd' => 'aa',
             'msg' => 'Unknown command \''.$command.'\'!'
-          );            
-        }        
+          );
+        }
       }
-     
+
       // Handle normal message
       else
       {
@@ -273,23 +273,23 @@ class ChatPushJsonResponder extends JsonResponder
             '".(isset($_SESSION['ccolor'])?('#'.$_SESSION['ccolor']):'')."',
             '".$_SESSION['user_id']."',
             '".$admin."'
-          );");			
+          );");
           $_SESSION['lastchatmsg']=$hash;
         }
         else
         {
           // zweimal gleiche Nachricht nacheinander
-          return array('cmd' => 'de'); 
+          return array('cmd' => 'de');
         }
       }
     }
     else
     {
       // !isset $s[userid] => not logged in
-      return array('cmd' => 'nl'); 
+      return array('cmd' => 'nl');
     }
-  
+
     return $data;
   }
-}  
+}
 ?>

@@ -13,7 +13,7 @@
 
 /**
 * OtherReport class
-* 
+*
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
@@ -25,16 +25,16 @@ public:
 		this->type = "other";
 		this->status = 0;
 		this->ships = "";
-		
+
 		this->res0 = 0;
 		this->res1 = 0;
 		this->res2 = 0;
 		this->res3 = 0;
 		this->res4 = 0;
 		this->res5 = 0;
-		
+
 		this->endtime=0;
-		
+
 		this->action = action;
 		this->fleetId = fleetId;
 		this->timestamp = timestamp;
@@ -44,16 +44,16 @@ public:
 	}
 
 	OtherReport(OtherReport* report) {	}
-		
+
 	~OtherReport() {
 		while (!this->users.empty()) {
 			this->id = this->save(this->users.back());
 			this->saveOtherReport();
 			this->users.pop_back();
 		}
-		
+
 	}
-	
+
 	void setStatus(unsigned short status);
 	void setAction(std::string action);
 	void setShips(std::string ships);
@@ -65,15 +65,15 @@ public:
 				double res5=0);
 	void setFleetId(unsigned int fleetId);
 	void setEndtime(unsigned int endtime);
-	
+
 	void saveOtherReport();
-	
+
 private:
 	std::string action;
 	unsigned short status;
-	
+
 	std::string ships;
-	
+
 	double res0, res1, res2, res3, res4, res5;
 	unsigned int fleetId;
 	unsigned int endtime;

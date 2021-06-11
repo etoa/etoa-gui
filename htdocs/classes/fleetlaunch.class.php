@@ -548,7 +548,7 @@
 							usage_food,
 							usage_power,
 							support_usage_food,
-							support_usage_fuel,				
+							support_usage_fuel,
 							res_metal,
 							res_crystal,
 							res_plastic,

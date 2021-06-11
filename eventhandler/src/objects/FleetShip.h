@@ -10,22 +10,22 @@
 
 /**
 * FleetShip class
-* 
+*
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
 class ShipData;
 
-class FleetShip : public Object 
+class FleetShip : public Object
 {
-public: 
+public:
 	FleetShip(mysqlpp::Row &oRow);
 	~FleetShip();
-	
+
 	double getWfMetal();
 	double getWfCrystal();
 	double getWfPlastic();
-	
+
 private:
 	int getShipCnt(ShipData *data);
 };

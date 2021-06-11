@@ -124,7 +124,7 @@
 										$tres = dbquery("
 														SELECT
 															techlist_current_level
-														FROM 
+														FROM
 															techlist
 														WHERE
 															techlist_tech_id=".TARN_TECH_ID."
@@ -144,7 +144,7 @@
 										$tres = dbquery("
 														SELECT
 															techlist_current_level
-														FROM 
+														FROM
 															techlist
 														WHERE
 															techlist_tech_id=".COMPUTER_TECH_ID."
@@ -160,7 +160,7 @@
 										$tres = dbquery("
 														SELECT
 															techlist_current_level
-														FROM 
+														FROM
 															techlist
 														WHERE
 															techlist_tech_id=".SPY_TECH_ID."
@@ -175,7 +175,7 @@
 										$tres = dbquery("
 														SELECT
 															techlist_current_level
-														FROM 
+														FROM
 															techlist
 														WHERE
 															techlist_tech_id=".COMPUTER_TECH_ID."
@@ -529,8 +529,8 @@
 						//
 
 						$bm = new BookmarkManager($cu->id);
-						echo 'Koordinaten eingeben: 
-								<input type="text" onkeyup="'.$keyup_command.'" name="sx" id="sx" value="'.$coords[0].'" size="2" maxlength="2" /> / 
+						echo 'Koordinaten eingeben:
+								<input type="text" onkeyup="'.$keyup_command.'" name="sx" id="sx" value="'.$coords[0].'" size="2" maxlength="2" /> /
 								<input type="text" onkeyup="'.$keyup_command.'" name="sy" id="sy" value="'.$coords[1].'" size="2" maxlength="2" /> :
 								<input type="text" onkeyup="'.$keyup_command.'" name="cx" id="cx" value="'.$coords[2].'" size="2" maxlength="2" /> /
 								<input type="text" onkeyup="'.$keyup_command.'" name="cy" id="cy" value="'.$coords[3].'" size="2" maxlength="2" /> :
@@ -575,7 +575,7 @@
     echo "<h1>Kryptocenter des Planeten ".$cp->name."</h1>";
     echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
 
-    info_msg("Aufgrund eines intergalaktischen Moratoriums der Völkerföderation der Galaxie Andromeda 
+    info_msg("Aufgrund eines intergalaktischen Moratoriums der Völkerföderation der Galaxie Andromeda
     sind sämtliche elektronischen Spionagetätigkeiten zurzeit nicht erlaubt!");
   }
 

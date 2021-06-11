@@ -1,11 +1,11 @@
 /*
 	File: xajax_verbose.js
-	
+
 	The xajax verbose debugging module.  This is an optional module, include in
 	your project with care. :)
-	
+
 	Title: xajax verbose debugging module
-	
+
 	Please see <copyright.inc.php> for a detailed description, copyright
 	and license information.
 */
@@ -23,10 +23,10 @@ try {
 		throw { name: 'SequenceError', message: 'Error: xajax core was not detected, verbose module disabled.' }
 	if ('undefined' == typeof xajax.debug)
 		throw { name: 'SequenceError', message: 'Error: xajax debugger was not detected, verbose module disabled.' }
-	
+
 	/*
 		Class: xajax.debug.verbose
-		
+
 		Provide a high level of detail which can be used to debug hard to find
 		problems.
 	*/
@@ -34,20 +34,20 @@ try {
 
 	/*
 		Function: xajax.debug.verbose.expandObject
-		
+
 		Generate a debug message expanding all the first level
 		members found therein.
-		
-		
+
+
 		Parameters:
-		
+
 		obj - (object):  The object to be enumerated.
-		
+
 		Returns:
-		
+
 		string - The textual representation of all the first
 			level members.
-	*/	
+	*/
 	xajax.debug.verbose.expandObject = function(obj) {
 		var rec = true;
 		if (1 < arguments.length)
@@ -74,22 +74,22 @@ try {
 			} else return '[Object]';
 		} else return '"' + obj + '"';
 	}
-	
+
 	/*
 		Function: xajax.debug.verbose.makeFunction
-		
+
 		Generate a wrapper function around the specified function.
-		
+
 		Parameters:
-		
+
 		obj - (object):  The object that contains the function to be
 			wrapped.
 		name - (string):  The name of the function to be wrapped.
-		
+
 		Returns:
-		
+
 		function - The wrapper function.
-	*/		
+	*/
 	xajax.debug.verbose.makeFunction = function(obj, name) {
 		return function() {
 			var fun = name;
@@ -102,9 +102,9 @@ try {
 				fun += xajax.debug.verbose.expandObject(arguments[p]);
 				separator = ',';
 			}
-			
+
 			fun += ');';
-			
+
 			var msg = '--> ';
 			msg += fun;
 
@@ -121,26 +121,26 @@ try {
 			code += ');';
 
 			eval(code);
-			
+
 			msg = '<-- ';
 			msg += fun;
 			msg += ' returns ';
 			msg += xajax.debug.verbose.expandObject(returnValue);
-			
+
 			xajax.debug.writeMessage(msg);
-			
+
 			return returnValue;
 		}
 	}
-	
+
 	/*
 		Function: xajax.debug.verbose.hook
-		
+
 		Generate a wrapper function around each of the functions
 		contained within the specified object.
-		
-		Parameters: 
-		
+
+		Parameters:
+
 		x - (object):  The object to be scanned.
 		base - (string):  The base reference to be prepended to the
 			generated wrapper functions.
@@ -152,7 +152,7 @@ try {
 			}
 		}
 	}
-	
+
 	xajax.debug.verbose.hook(xajax, 'xajax.');
 	xajax.debug.verbose.hook(xajax.callback, 'xajax.callback.');
 	xajax.debug.verbose.hook(xajax.css, 'xajax.css.');
@@ -164,10 +164,10 @@ try {
 	xajax.debug.verbose.hook(xajax.tools.queue, 'xajax.tools.queue.');
 	xajax.debug.verbose.hook(xajax.command, 'xajax.command.');
 	xajax.debug.verbose.hook(xajax.command.handler, 'xajax.command.handler.');
-	
+
 	/*
 		Boolean: isLoaded
-		
+
 		true - indicates that the verbose debugging module is loaded.
 	*/
 	xajax.debug.verbose.isLoaded = true;

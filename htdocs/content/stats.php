@@ -37,14 +37,14 @@
 	{
 		$udid = intval($_GET['userdetail']);
 		$res=dbquery("
-		SELECT 
+		SELECT
             user_nick,
             user_points,
             user_rank,
-            user_id 
-		FROM 
-			users 
-		WHERE 
+            user_id
+		FROM
+			users
+		WHERE
 			user_id='".$udid."';");
 		if (mysql_num_rows($res)>0)
 		{
@@ -58,14 +58,14 @@
 				<img src=\"misc/stats.image.php?user=".$arr['user_id']."\" alt=\"Diagramm\" />
 			</td></tr>";
 			$pres=dbquery("
-			SELECT 
-				* 
-			FROM 
-				user_points 
-			WHERE 
-				point_user_id='".$udid."' 
-			ORDER BY 
-				point_timestamp DESC 
+			SELECT
+				*
+			FROM
+				user_points
+			WHERE
+				point_user_id='".$udid."'
+			ORDER BY
+				point_timestamp DESC
 			LIMIT 48; ");
 			if (mysql_num_rows($pres)>0)
 			{
@@ -107,15 +107,15 @@
 		$adid = intval($_GET['alliancedetail']);
 
 		$res=dbquery("
-		SELECT 
+		SELECT
             alliance_tag,
 			alliance_name,
             alliance_points,
             alliance_rank_current,
-            alliance_id 
-		FROM 
-			alliances 
-		WHERE 
+            alliance_id
+		FROM
+			alliances
+		WHERE
 			alliance_id='".$adid."';");
 		if (mysql_num_rows($res)>0)
 		{
@@ -124,14 +124,14 @@
 			echo "<b>Punkte aktuell:</b> ".nf($arr['alliance_points']).", <b>Rang aktuell:</b> ".$arr['alliance_rank_current']."<br/><br/>";
 			echo "<img src=\"misc/alliance_stats.image.php?alliance=".$arr['alliance_id']."\" alt=\"Diagramm\" /><br/><br/>";
 			$pres=dbquery("
-			SELECT 
-				* 
-			FROM 
-				alliance_points 
-			WHERE 
-				point_alliance_id='".$adid."' 
-			ORDER BY 
-				point_timestamp DESC 
+			SELECT
+				*
+			FROM
+				alliance_points
+			WHERE
+				point_alliance_id='".$adid."'
+			ORDER BY
+				point_timestamp DESC
 			LIMIT 48; ");
 			if (mysql_num_rows($pres)>0)
 			{
@@ -228,11 +228,11 @@
 
 		// Legende
 		iBoxStart("Legende zur Statistik");
-		echo "<b>Farben:</b> 
-		<span class=\"userSelfColor\">Eigener Account</span>, 
-		<span class=\"userLockedColor\">Gesperrt</span>, 
-		<span class=\"userHolidayColor\">Urlaubsmodus</span>, 
-		<span class=\"userInactiveColor\">Inaktiv (".USER_INACTIVE_SHOW." Tage)</span>, 
+		echo "<b>Farben:</b>
+		<span class=\"userSelfColor\">Eigener Account</span>,
+		<span class=\"userLockedColor\">Gesperrt</span>,
+		<span class=\"userHolidayColor\">Urlaubsmodus</span>,
+		<span class=\"userInactiveColor\">Inaktiv (".USER_INACTIVE_SHOW." Tage)</span>,
 		<span class=\"userAllianceMemberColor\">Allianz(-mitglied)</span>
 		<br/>";
 		$statsUpdate = RuntimeDataStore::get('statsupdate');

@@ -8,16 +8,16 @@
 
 /**
 * ObjectType class
-* 
+*
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
-class Data	
+class Data
 {
 public:
 	/**
 	* Object Class
-	* 
+	*
 	*/
 	Data(mysqlpp::Row object, bool init=true) {
 		if (init) {
@@ -33,7 +33,7 @@ public:
 			this->costsPower  = (double)object["costs_power"];
 		}
 	};
-		
+
 	int getId();
 	std::string getName();
 	std::string getShortComment();
@@ -46,9 +46,9 @@ public:
 	double getCostsFood();
 	double getCostsPower();
 
-	
+
 private:
-	
+
 	int id;
 	std::string name;
 	std::string shortComment;

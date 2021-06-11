@@ -1,5 +1,5 @@
 <?PHP
-	interface IPeriodicTask 
+	interface IPeriodicTask
 	{
 		function run();
 		function getDescription();

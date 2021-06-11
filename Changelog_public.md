@@ -38,7 +38,7 @@ Version 3.6 (round 20)
 
 ### Bugfixes ###
 * Die Hintergrundbilder wurden für hohe Bildschirmauflösung angepasst
-* Der Mouseover für die Nahrungskosten für Verteidigung wurde behoben 
+* Der Mouseover für die Nahrungskosten für Verteidigung wurde behoben
 * Deaktivierte Gebäude können nicht mehr abgerissen werden
 * Der EMP Angriff deaktiviert nur Gebäude Level 1 oder höher
 
@@ -82,7 +82,7 @@ Version 3.5.20
 
 ### Bugfixes ###
 
-* Anpassungen an die neue PHP Version 
+* Anpassungen an die neue PHP Version
 
 Version 3.5.19
 --------------
@@ -96,7 +96,7 @@ Version 3.5.18
 
 ### Features ###
 
- * Boost berechnet sich nach Gesamtpunkten 
+ * Boost berechnet sich nach Gesamtpunkten
 
 Version 3.5.17
 --------------
@@ -116,7 +116,7 @@ Version 3.5.16
 
 ### Bugfixes ###
 
- * Fehler gefixt, der während dem Handeln auftrat 
+ * Fehler gefixt, der während dem Handeln auftrat
  * Hilfeseite für Verteidigung zeigt nun den Text an
  * Abgelaufene Session mit geöffneten Chat zeigt nun keine weissse Seite mehr an
  * Kapazität von Schiffen gefixt
@@ -155,7 +155,7 @@ Version 3.5.14.1
 
 ### Bugfixes ###
 
- * Https Log-In Probleme gefixt 
+ * Https Log-In Probleme gefixt
  * Problem mit lvl 1 Gebäuden gefixt
 
 Version 3.5.14
@@ -200,14 +200,14 @@ Version 3.5.11
  * Einen Bug in Waffenfabrik gefixt wo man trotz freier Felder nichts mehr bauen konnte
  * Bug gefixt wo man forschende Techs klauen konnte
  * Verschiedene Rechtschreibfehler korrigiert
- 
+
 ### Features ###
 
- * Hover über Ressourcen zeigt an, wie lang es dauert, bis Speicher voll sind 
+ * Hover über Ressourcen zeigt an, wie lang es dauert, bis Speicher voll sind
  * Man bekommt eine Nachricht nach Erstellen eines Tickets
 
 ### Anderes ###
- 
+
  * Popupfenster von Regeln vergrößert
 
 Version 3.5.10
@@ -248,8 +248,8 @@ Version 3.5.8
  * Asteroidenfelder wachsen nun im Laufe der Runde
  * Tutorial kann nun in den Einstellungen wieder geöffnet werden
 
-### Hotfix ### 
- 
+### Hotfix ###
+
  * Gasplanten können wieder analysiert und leergesaugt werden
 
 Version 3.5.7 (Runde 15)
@@ -261,7 +261,7 @@ Version 3.5.7 (Runde 15)
  * Exp bei Allianzangriffen wird nun aufgeteilt
  * Infra-Schiffe geben nun 0 Exp
  * Gentech zählt nun als Spezialtech und kann zeitgleich mit anderen Techs geforscht werden
- * Kryptocenter(nicht der Bericht) zeigt nun mehr Infos über das Ziel (Distanz, Name, Planet) 
+ * Kryptocenter(nicht der Bericht) zeigt nun mehr Infos über das Ziel (Distanz, Name, Planet)
  * Optimieren-Button für jedes Schiff
  * Marktreservierungen für eine Person erscheinen nun ganz oben
  * Nach dem Verlassen einer Allianz ist es nicht mehr möglich, für eine bestimmte Zeit einer anderen beizutreten (2h aktuell)
@@ -279,15 +279,15 @@ Version 3.5.7 (Runde 15)
  * Das Vorgonen Mysticum resetet nicht mehr beim Umstationieren
  * Gebäude frieren nicht mehr ein wenn die Maximaldauer des U-Modes abgelaufen ist
  * Es wird nun die richtige Nachricht angezeigt, wenn man ein Allianzmitglied kicken will während ein Allianzangriff läuft
- * Entfernen von HTML-Code, der in seltenen Fällen im Krypto-Bericht angezeigt wurde 
+ * Entfernen von HTML-Code, der in seltenen Fällen im Krypto-Bericht angezeigt wurde
 
 ### Balancing ###
- 
+
 ## Rassen ##
 
 # Minbari #
  * PVC Bonus von -5% auf 0%
- 
+
 # Orioner #
  * Tritiumbonus von -5% auf 10%
 
@@ -295,19 +295,19 @@ Version 3.5.7 (Runde 15)
 
 # Roter Stern #
  * Tritiumbonus von 0% auf -15%
-  
+
 # Schwarzer Stern #
  * Tritiumbonus von 0% auf -10%
 
-## Planeten ## 
+## Planeten ##
 
 # Gebirgsplanet #
  * Tritiumbonus von 0% auf -10%
 
-# Wüstenplanet # 
+# Wüstenplanet #
  * Tritiumbonus von 0% auf -10%
 
-# Wasserplanet # 
+# Wasserplanet #
  * Tritiumbonus von 20% auf -15%
  * Nahrungsbonus von 0% auf 10%
 
@@ -315,14 +315,14 @@ Version 3.5.7 (Runde 15)
  * Flugkosten aller Schiffe halbiert
  * Start- und Landekosten aller Schiffe halbiert
 
-# WEZEA Fighter # 
+# WEZEA Fighter #
  * Komplett überarbeitet
- 
+
  * Ionenantrieb 3
  * Wasserstoffantrieb 3
  * Schiffswerft 3
  * Rassentechnik 1
-  
+
  * Panzerung: 725
  * Schutzschild: 350
  * Waffen: 572
@@ -332,7 +332,7 @@ Version 3.5.7 (Runde 15)
  * Flugkosten: 0
  * Start- und Landekosten: 2
  * Piloten: 1
-  
+
  * Titan: 1400
  * Silizium: 700
  * PVC: 800
@@ -341,7 +341,7 @@ Version 3.5.7 (Runde 15)
 # MINBARI Jäger #
  * Panzerung von 13000 auf 12000
  * Waffen von 4500 auf 5500
- 
+
 # GOMEISA Gassauger #
  * Kapazität von 40000 auf 35000
 
@@ -353,7 +353,7 @@ Version 3.5.7 (Runde 15)
 
 # FORNAX Asteroidensammler #
  * Kapazität von 45000 auf 17500
-  
+
 ## Allianzkampfsystem ##
  * Maximale Anzahl Angreifer/Verteidiger auf 2 beschränken.
 
@@ -372,18 +372,18 @@ Version 3.5.7 (Runde 15)
 ## Mysticums ##
  * Start- und Landezeit auf 0
  * Fluggeschwindigkeit von 5000 auf 30000
- * Kapazität auf 0 
- 
- 
+ * Kapazität auf 0
+
+
 
 Version 3.5.6
 -------------
 
 ### Bugfixes ###
 
- * Verschiedene Rechtschreibfehler behoben 
+ * Verschiedene Rechtschreibfehler behoben
  * Bewohneroptimierung stellt nun den richtigen Wert ein
-   
+
 Version 3.5.5
 -------------
 
@@ -398,21 +398,21 @@ Version 3.5.4
 ### Bugfixes ###
 
  * Architekt kann nicht mehr entlassen werden, nachdem ein Gebäude gestartet wurde
- * Admiral kann nicht mehr entlassen werden, nachdem eine Flotte gestartet wurde  
- * EMP deaktiviert nun wirklich den Markt 
+ * Admiral kann nicht mehr entlassen werden, nachdem eine Flotte gestartet wurde
+ * EMP deaktiviert nun wirklich den Markt
 
 Version 3.5.3
 -------------
 
 ### Features ###
 
- * Energietechnik gibt jetz 5% mehr Energie für jede Stufe über 10 
+ * Energietechnik gibt jetz 5% mehr Energie für jede Stufe über 10
  * Im Spielerprofil können nun gesammelte Ressourcen eingesehen werden
 
 ### Bugfixes ###
 
  * In der Planetenübersicht werden jetzt Mysticum-Boni zu den Verteidigungswerten dazugerechnet
- * In der Planetenübersicht werden jetzt Heilungs-Boni vom Mysticum korrekt angezeigt  
+ * In der Planetenübersicht werden jetzt Heilungs-Boni vom Mysticum korrekt angezeigt
  * Verbesserungen in der Anzeige des Chats im Revolution Design
 
 Version 3.5.2
@@ -452,7 +452,7 @@ Version 3.5.0
  * Es wurde ein Zufalls-Button zur Rassenauswahl hinzugefügt
  * Marktangeboten können für einen bestimmten Spieler reserviert werden
  * Stabile Wurmlöcher, welche ihre Position nicht verändern, wurden an verschiedenen Orten der Galaxie beobachtet
- 
+
 ### Bugfixes ###
 
  * Fehler beim Aufrufen der Detailseite eines Gebäudes behoben
@@ -474,7 +474,7 @@ Version 3.5.0
  * Durch den Ausbau der Flottenkontrolle wird bei jeder zweiten Stufe der Raum um den Planeten weiter aufgedeckt
  * Die minimale Bauzeit für Schiffe und Verteidigungsanlagen beträgt nun 1 Sekunde
 
- 
+
 Version 3.4.0
 -------------
 

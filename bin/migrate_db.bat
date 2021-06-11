@@ -3,7 +3,7 @@
 if exist c:\xampp\php\php.exe (
 	set php=c:\xampp\php\php.exe
 	goto exec
-) 
+)
 if exist d:\xampp\php\php.exe (
 	set php=d:\xampp\php\php.exe
 	goto exec

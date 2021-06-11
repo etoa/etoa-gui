@@ -20,17 +20,17 @@
 * LOG_INFO    informational
 * LOG_DEBUG   debug-level messages
 *
-* example 
+* example
 *
 *		logPrio(LOG_NOTICE);
 * 	LOG(LOG_NOTICE,"This is a log message for " << 2 << " errors!");
-* 
+*
 */
 void log(int priority, std::string message);
 void logPrio(int priority);
 static void inline log(int priority, const std::ostringstream& oss) { log(priority,oss.str()); }
-std::string logProgam(std::string roundName);	
-	
+std::string logProgam(std::string roundName);
+
 #define LOG(priority,text) \
 {std::ostringstream oss; log(priority,(std::ostringstream&)(oss<<text));}
 

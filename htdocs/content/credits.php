@@ -9,7 +9,7 @@
 		echo text2html($credits->content);
 		iBoxEnd();
 	}
-	
+
 	echo '<p>Wir danken den folgenden Open-Source Projekten für ihre tolle und wertvolle Arbeit:</p>';
 	$thirdparty = fetchJsonConfig("thirdparty.conf");
 	tableStart();

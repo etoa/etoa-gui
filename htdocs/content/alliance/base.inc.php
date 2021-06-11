@@ -67,7 +67,7 @@
 	//
 
 	echo "<script type=\"text/javascript\">
-	
+
 	// Wechselt zwischen den Verschiedenen Tabs
 	function showTab(idx)
 	{
@@ -75,10 +75,10 @@
 		document.getElementById('tabResearch').style.display='none';
 		document.getElementById('tabStorage').style.display='none';
 		document.getElementById('tabShipyard').style.display='none';
-		
+
 		document.getElementById(idx).style.display='';
 	}
-	
+
 	// Schreibt definierte Zahlen in die Einzahlen-Felder und wechselt auf diese Seite
 	function setSpends(metal, crystal, plastic, fuel, food)
 	{
@@ -87,10 +87,10 @@
 		document.getElementById('spend_plastic').value=plastic;
 		document.getElementById('spend_fuel').value=fuel;
 		document.getElementById('spend_food').value=food;
-		
+
 		// Wechselt Tab
 		showTab('tabStorage');
-		
+
 		// Wenn zu wenig Rohstoffe auf dem aktuellen Planeten sind, wird eine Nachricht ausgegeben
 		if(".$cp->resMetal."<metal
 				|| ".$cp->resCrystal."<crystal
@@ -101,7 +101,7 @@
 			alert('Du hast nicht genügend Rohstoffe auf dem aktuellen Planeten!');
 		}
 	}
-	
+
 	// Ändert Rohstoff Box Zahlen
 	function changeResBox(metal, crystal, plastic, fuel, food)
 	{
@@ -111,7 +111,7 @@
 		document.getElementById('resBoxFuel').innerHTML=FormatNumber('return',fuel,'','','');
 		document.getElementById('resBoxFood').innerHTML=FormatNumber('return',food,'','','');
 	}
-	
+
 	</script>";
 
 
@@ -1023,7 +1023,7 @@
   // Limit
 	echo "<tr>
   				<th>Einzahlungen:</th>
-  				<td> 
+  				<td>
 		  			<select id=\"limit\" name=\"limit\">
 							<option value=\"0\" checked=\"checked\">alle</option>
 							<option value=\"1\">die letzte</option>

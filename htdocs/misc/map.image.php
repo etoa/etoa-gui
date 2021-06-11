@@ -94,7 +94,7 @@
 			{
 				$uid=$_SESSION['user_id'];
 				$res=dbquery("
-							SELECT 
+							SELECT
 								cells.sx,
 								cells.cx,
 								cells.sy,
@@ -145,17 +145,17 @@
 			{
 				$uid=$_SESSION['user_id'];
 				$res=dbquery("
-							SELECT 
-								cells.sx, 
-								cells.cx, 
-								cells.sy, 
+							SELECT
+								cells.sx,
+								cells.cx,
+								cells.sy,
 								cells.cy,
 								COUNT(planets.id) AS cnt
-							FROM 
+							FROM
 								planets
 							INNER JOIN
 								entities
-							ON 
+							ON
 								entities.id=planets.id
 								AND planets.planet_user_id='$uid'
 							INNER JOIN
@@ -185,14 +185,14 @@
 			}
 			elseif (isset($_GET['type']) && $_GET['type']=="populated")
 			{
-				$res=dbquery("		
-				SELECT 
-					c.sx, 
-					c.cx, 
+				$res=dbquery("
+				SELECT
+					c.sx,
+					c.cx,
 					c.sy,
 					c.cy,
 					COUNT(p.id) AS cnt
-				FROM 
+				FROM
 					cells c,
 					planets p,
 					entities e
@@ -200,7 +200,7 @@
 					p.id=e.id
 					AND e.cell_id=c.id
 					AND p.planet_user_id>0
-				GROUP BY 
+				GROUP BY
 					e.cell_id
 				");
 				$col = [];
@@ -224,17 +224,17 @@
 			else
 			{
 				$res=dbquery("
-				SELECT 
-					cells.sx, 
-					cells.cx, 
+				SELECT
+					cells.sx,
+					cells.cx,
 					cells.sy,
 					cells.cy,
 					entities.id,
 					entities.code
-				FROM 
+				FROM
 					cells
 				INNER JOIN
-					entities 
+					entities
 					ON entities.cell_id = cells.id
 					AND entities.pos=0
 				");
@@ -259,7 +259,7 @@
                 $sres = dbquery("
                 SELECT
                   type_id
-                FROM 
+                FROM
                   stars
                 WHERE
                   id=".$arr['id']."

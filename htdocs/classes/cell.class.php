@@ -22,14 +22,14 @@
 			$this->entities=null;
 
 			$res=dbquery("
-			SELECT 
+			SELECT
 	    	cells.sx,
 	    	cells.sy,
 	    	cells.cx,
 	    	cells.cy
-			FROM 
+			FROM
 	    	cells
-			WHERE 
+			WHERE
 			 	id='".intval($id)."';");
 			if (mysql_num_rows($res))
 			{

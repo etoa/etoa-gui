@@ -31,14 +31,14 @@
      		$this->isVisible = true;
 
 			$res=dbquery("
-			SELECT 
+			SELECT
 	    	stars.name,
 	    	stars.type_id,
 	    	entities.pos,
 	    	sol_types.sol_type_name
-			FROM 
+			FROM
 	    	stars
-	    INNER JOIN	
+	    INNER JOIN
 	    	entities
 	    ON entities.id=stars.id
 				AND	stars.id='".intval($id)."'
@@ -72,10 +72,10 @@
 				$res = dbquery("
 				SELECT
 					*
-				FROM 
+				FROM
 					sol_types
 				WHERE
-					sol_type_id=".$this->typeId."	
+					sol_type_id=".$this->typeId."
 				;");
 				$arr = mysql_fetch_assoc($res);
 				$rtn = array(

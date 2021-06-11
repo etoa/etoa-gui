@@ -178,11 +178,11 @@
 		  		cy,
 		  		pos,
 		  		cells.id
-		  	FROM	
+		  	FROM
 		  		cells
 		  	INNER JOIN
-		  		entities 
-		  		ON entities.cell_id=cells.id	  	
+		  		entities
+		  		ON entities.cell_id=cells.id
 		  		AND entities.id='".$this->id."'
 		  	LIMIT 1;
 		  	");
@@ -368,7 +368,7 @@
 				code
 			FROM
 				entities
-			INNER JOIN	
+			INNER JOIN
 				cells on entities.cell_id=cells.id
 			AND sx=".intval($c1)."
 			AND sy=".intval($c2)."
@@ -422,7 +422,7 @@
 				entities.id
 			FROM
 				entities
-			WHERE 	
+			WHERE
 				entities.cell_id='".intval($cell)."'
 				AND entities.pos='0'
 			LIMIT 1;");

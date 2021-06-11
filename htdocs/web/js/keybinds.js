@@ -61,7 +61,7 @@ if ($)
     keys[leftArrowKeyAlternative] = window.prevEntityUrl || "#";
     //keys[enterKey]          = "chatframe.php"; // this results in a bug (multiple chats open)
     keys[spaceBarKey]        = "?page=overview";
-    
+
     keys[104] /* 'h' */      = "?page=haven";
     keys[103] /* 'g' */      = "?page=buildings";
     keys[102] /* 'f' */      = "?page=research";

@@ -1,6 +1,6 @@
 <?PHP
   echo "<h1>Universum</h1>";
-  
+
   //
   // Universum erstellen
   //
@@ -23,7 +23,7 @@
     tableStart("Systfemanordnung",400);
     $xdim = ($cfg->num_of_sectors->p1*$cfg->num_of_cells->p1);
     $ydim = ($cfg->num_of_sectors->p2*$cfg->num_of_cells->p2);
-    
+
     echo "<tr>
       <th>Dimension:</th>
       <td>".$xdim."x".$ydim." Zellen</td>
@@ -40,10 +40,10 @@
         {
           if ($ims[0]==$xdim && $ims[1]==$ydim)
           {
-            echo "<div><input type=\"radio\" name=\"map_image\" value=\"$f\" /> <img src=\"".$dir."/".$f."\" alt=\"".$dir."/".$f."\" /> ".basename($f,".png")."	</div>";							
+            echo "<div><input type=\"radio\" name=\"map_image\" value=\"$f\" /> <img src=\"".$dir."/".$f."\" alt=\"".$dir."/".$f."\" /> ".basename($f,".png")."	</div>";
           }
         }
-      }			
+      }
       echo "</td>
     </tr>";
     echo "<tr>
@@ -51,11 +51,11 @@
       <td><input type=\"text\" name=\"map_precision\" value=\"95\" size=\"2\" maxlength=\"3\"/>%</td>
     </tr>";
     tableEnd();
-    
+
     echo button("Zurück","?page=$page&amp;sub=$sub")." &nbsp; <input onclick=\"return confirm('Universum wirklich erstellen?')\" type=\"submit\" name=\"submit_create_universe2\" value=\"Weiter\" >";
     echo "</form>";
   }
-  
+
   // Erweitern
   elseif(isset($_POST['submit_expansion_universe']))
   {
@@ -84,7 +84,7 @@
     echo "<input onclick=\"return confirm('Universum wirklich erweitern?')\" type=\"submit\" name=\"submit_expansion_universe2\" value=\"Erweitern\" >";
     echo "</form>";
   }
-  
+
   // Reset
   elseif (isset($_POST['submit_reset']))
   {
@@ -94,13 +94,13 @@
     echo "<input onclick=\"return confirm('Reset wirklich durchf&uuml;hren?')\" type=\"submit\" name=\"submit_reset2\" value=\"Ja, die gesamte Runde zur&uuml;cksetzen\" >";
     echo "</form>";
   }
-  
+
   elseif (isset($_POST['submit_galaxy_reset']))
   {
     Universe::reset(false);
     echo "Das Universum wurde zurückgesetzt!<br/><br/>".button("Weiter","?page=$page&amp;sub=$sub");
   }
-  
+
   elseif(isset($_POST['submit_reset2']))
   {
     Universe::reset();
@@ -165,14 +165,14 @@
               document.getElementById('solsys_percent_empty').style.color = "red";
             else
               document.getElementById('solsys_percent_empty').style.color = "";
-          }				
-        </script>						
+          }
+        </script>
         <?PHP
-        
+
         echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
         echo "Alle Einstellungen werden von der <a href=\"?page=config&sub=editor&category=3\">Konfiguration</a> &uuml;bernommen!<br/><br/>";
-        
-        tableStart("Galaxie",420);			
+
+        tableStart("Galaxie",420);
         echo "<tr>
           <th>Sektoren:</th>
           <td>
@@ -186,8 +186,8 @@
             <input type=\"text\" name=\"num_of_cells_p2\" value=\"".$cfg->num_of_cells->p2."\" size=\"2\" maxlength=\"2\" />
           </td></tr>";
         echo "</table>";
-        
-        tableStart("Verteilung der Systeme",420);				
+
+        tableStart("Verteilung der Systeme",420);
         echo "<tr>
           <th>Sternensysteme:</th>
           <td><input type=\"text\" name=\"space_percent_solsys\" id=\"space_percent_solsys\" value=\"".$cfg->space_percent_solsys."\" size=\"2\" maxlength=\"2\" onkeyup=\"alignSystemPercentage()\" />%</td>
@@ -210,12 +210,12 @@
           <th>Leerer Raum:</th>
           <td><input type=\"text\" id=\"space_percent_empty\" value=\"\" size=\"2\" maxlength=\"2\" readonly=\"readonly\"/>%</td>
         </tr>";
-        echo "</table>";			
-        
-        tableStart("Sternensystem",420);				
+        echo "</table>";
+
+        tableStart("Sternensystem",420);
         echo "<tr>
           <th>Objekte pro Sternensystem:</th>
-          <td><input type=\"text\" name=\"num_planets_p1\" value=\"".$cfg->num_planets->p1."\" size=\"2\" maxlength=\"2\" /> min, 
+          <td><input type=\"text\" name=\"num_planets_p1\" value=\"".$cfg->num_planets->p1."\" size=\"2\" maxlength=\"2\" /> min,
               <input type=\"text\" name=\"num_planets_p2\" value=\"".$cfg->num_planets->p2."\" size=\"2\" maxlength=\"2\" /> max
           </td></tr>";
         echo "<tr>
@@ -229,25 +229,25 @@
         echo "<tr>
           <th>Leerer Raum:</th>
           <td><input type=\"text\" id=\"solsys_percent_empty\" value=\"\" size=\"2\" maxlength=\"2\" readonly=\"readonly\" />%</td>
-        </tr>";				
-          
+        </tr>";
+
         echo "</table>";
-  
-        tableStart("Planeten",420);				
+
+        tableStart("Planeten",420);
         echo "<tr>
           <th>Felder pro Planet:</th>
           <td>
-            <input type=\"text\" name=\"planet_fields_p1\" value=\"".$cfg->planet_fields->p1."\" size=\"2\" maxlength=\"2\" /> min, 
+            <input type=\"text\" name=\"planet_fields_p1\" value=\"".$cfg->planet_fields->p1."\" size=\"2\" maxlength=\"2\" /> min,
             <input type=\"text\" name=\"planet_fields_p2\" value=\"".$cfg->planet_fields->p2."\" size=\"2\" maxlength=\"2\" /> max
           </td>
         </tr>";
         echo "</table>";
-  
+
         echo "<script type=\"text/javascript\">
           alignSystemPercentage();
           alignObjectsInSystemPercentage();
-        </script>";	        
-        
+        </script>";
+
         echo "<br/><input type=\"submit\" name=\"submit_create_universe\" value=\"Weiter\" >";
         echo "</form><br/>";
       }
@@ -281,9 +281,9 @@
         $res = dbquery("SELECT COUNT(*) FROM space;");
         $arr = mysql_fetch_row($res);
         echo "<tr><th>Leerer Raum</th><td>".nf($arr[0])."</td></tr>";
-        
+
         tableEnd();
-        
+
         echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
 
         echo "<h3>Sternensysteme hinzufügen</h3>";
@@ -291,7 +291,7 @@
         echo "<input type=\"submit\" name=\"submit_addstars\" value=\"Ja, Sternensysteme hinzufügen\" ><br><br>";
 
         $res = dbquery("SELECT COUNT(id) FROM planets WHERE planet_user_id>0;");
-        $arr = mysql_fetch_row($res);					
+        $arr = mysql_fetch_row($res);
         if ($arr[0]==0)
         {
           echo "<h3>Universum löschen</h3>";
@@ -301,7 +301,7 @@
         else
         {
           echo "<h3>Universum löschen</h3>";
-          echo "Es sind bereits Planeten im Besitz von Spielern. Du kannst das Universum zurücksetzen, jedoch werden 
+          echo "Es sind bereits Planeten im Besitz von Spielern. Du kannst das Universum zurücksetzen, jedoch werden
           sämtliche Gebäude, Schiffe, Forschungen etc von den Spielern gelöscht.<br/><br/>
           <input type=\"submit\" name=\"submit_galaxy_reset\" value=\"Universum zurücksetzen\" onclick=\"return confirm('Universum wirklich zurücksetzen? ALLE Einheiten der Spieler werden gelöscht, jedoch keine Spieleraccounts!')\"><br/>";
         }

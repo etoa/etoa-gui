@@ -15,31 +15,31 @@
 	// Programmiert von Nicolas Perrenoud				 		//
 	// www.nicu.ch | mail@nicu.ch								 		//
 	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	//////////////////////////////////////////////////	
+	//////////////////////////////////////////////////
 	//
-	// 	Dateiname: sol_types.php	
-	// 	Topic: Formular-Definitionen für Sonnentypen 
-	// 	Autor: Nicolas Perrenoud alias MrCage							
+	// 	Dateiname: sol_types.php
+	// 	Topic: Formular-Definitionen für Sonnentypen
+	// 	Autor: Nicolas Perrenoud alias MrCage
 	// 	Erstellt: 01.12.2004
 	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage
 	// 	Bearbeitet am: 31.03.2006
-	// 	Kommentar: 	
+	// 	Kommentar:
 	//
-	
+
 	// VARIABLES
-	
-	define("MODUL_NAME","Sonnentypen");				
+
+	define("MODUL_NAME","Sonnentypen");
 	define("DB_TABLE", 'sol_types');
 	define("DB_TABLE_ID", "sol_type_id");
 	define("DB_OVERVIEW_ORDER_FIELD","sol_type_name");
-	
+
 	$form_switches = array("Standardtyp"=>'sol_type_consider');
-	
-	
+
+
 	// FIELDS
-	
+
 	// Description:
-	
+
 	// name	 											// DB Field Name
 	// text												// Field Description
 	// type												// Field Type: text, password, textarea, timestamp, radio, select, checkbox, email, url, numeric
@@ -53,7 +53,7 @@
 	// select_elem (Array)				// Select Elements (desc=>value)
 	// select_elem_checked				// Value of default checked Select Element (desc=>value)
 	// show_overview							// Set 1 to show on overview page
-  
+
 	$db_fields = array ( 0	=> 	array	(	"name" => "sol_type_name",
 																		"text" => "Kategoriename",
 																		"type" => "text",
@@ -82,7 +82,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
-																	),																	
+																	),
 												3	=> 	array	(	"name" => "sol_type_f_metal",
 																		"text" => "Metallfaktor",
 																		"type" => "text",
@@ -194,7 +194,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
-																	),																	
+																	),
 												11	=> 	array	(	"name" => "sol_type_f_buildtime",
 																		"text" => "Bauzeitfaktor",
 																		"type" => "text",
@@ -208,7 +208,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
-																	)																														
+																	)
 											);
-        
+
 ?>

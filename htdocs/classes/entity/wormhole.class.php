@@ -222,7 +222,7 @@
 							id='".$id."';
 					");
 					dbquery("
-						DELETE FROM	
+						DELETE FROM
 							wormholes
 						WHERE
 							id='".$id."'
@@ -291,7 +291,7 @@
 					target_id,
 					changed
 				)
-				VALUES 
+				VALUES
 				(
 					'".$arr1[0]."',
 					'".$arr2[0]."',

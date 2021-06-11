@@ -28,7 +28,7 @@
 					<tr>
 						<th>User:</th>
 						<td>".$arr['user_nick']."</td>
-					</tr>				
+					</tr>
 					<tr>
 						<th>Admin:</th>
 						<td>
@@ -37,10 +37,10 @@
 								SELECT
 									user_nick,
 									user_id
-								FROM 
+								FROM
 									admin_users
 								ORDER BY
-									user_nick	
+									user_nick
 								");
 								if (mysql_num_rows($ares)>0)
 								{
@@ -130,10 +130,10 @@
 							SELECT
 								user_nick,
 								user_id
-							FROM 
+							FROM
 								users
 							ORDER BY
-								user_nick	
+								user_nick
 							");
 							if (mysql_num_rows($res)>0)
 							{
@@ -174,9 +174,9 @@
 			while ($arr=mysql_fetch_array($res))
 			{
 				echo "<div style=\"padding:5px;border-bottom:1px solid #fff\">
-				<b>".$arr['user_nick']."</b> &nbsp; 
-				[<a href=\"#\" onclick=\"toggleBox('w".$arr['user_id']."')\">".nf($arr['cnt'])." Verwarnungen</a>] &nbsp; 
-				[<a href=\"?page=user&amp;sub=edit&amp;id=".$arr['user_id']."\">Daten</a>] &nbsp; 
+				<b>".$arr['user_nick']."</b> &nbsp;
+				[<a href=\"#\" onclick=\"toggleBox('w".$arr['user_id']."')\">".nf($arr['cnt'])." Verwarnungen</a>] &nbsp;
+				[<a href=\"?page=user&amp;sub=edit&amp;id=".$arr['user_id']."\">Daten</a>] &nbsp;
 				<table id=\"w".$arr['user_id']."\" style=\"margin-top:10px;".((isset($_GET['user']) && $_GET['user']==$arr['user_id']) ? "" : "display:none;") ."\" class=\"tb\">
 					<tr>
 						<th style=\"\">Text</th>
@@ -205,8 +205,8 @@
 						{
 							echo "<tr>
 								<td>".stripslashes(nl2br($uarr['warning_text']))."</td>
-								<td>".df($uarr['warning_date'])."</td>	
-								<td><b>".$uarr['user_nick']."</b></td>	
+								<td>".df($uarr['warning_date'])."</td>
+								<td><b>".$uarr['user_nick']."</b></td>
 								<td>
 									<a href=\"?page=$page&amp;sub=$sub&amp;edit=".$uarr['warning_id']."\">Bearbeiten</a>
 									<a href=\"?page=$page&amp;sub=$sub&amp;del=".$uarr['warning_id']."\" onclick=\"return confirm('Verwarnung löschen?')\">Löschen</a>

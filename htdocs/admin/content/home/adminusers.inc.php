@@ -37,13 +37,13 @@ $twig->addGlobal("title", "Admin-Management");
 			<td>
 				<input type=\"radio\" name=\"is_contact\" value=\"1\" ";
 				echo " checked=\"checked\"";
-				echo "/> Ja 
+				echo "/> Ja
 				<input type=\"radio\" name=\"is_contact\" value=\"0\" ";
 				echo "/> Nein
 			</td>
 		</tr>";
 		echo "</table><br/>
-		<input type=\"submit\" name=\"new_submit\" value=\"Speichern\" /> &nbsp; 
+		<input type=\"submit\" name=\"new_submit\" value=\"Speichern\" /> &nbsp;
 		<input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" value=\"Abbrechen\" />";
 		echo "</form>";
 	}
@@ -98,7 +98,7 @@ $twig->addGlobal("title", "Admin-Management");
 					if ($au->locked) {
 						echo " checked=\"checked\"";
 					}
-					echo "/> Ja 
+					echo "/> Ja
 					<input type=\"radio\" name=\"user_locked\" value=\"0\" ";
 					if (!$au->locked) {
 						echo " checked=\"checked\"";
@@ -113,7 +113,7 @@ $twig->addGlobal("title", "Admin-Management");
 					if ($au->isContact) {
 						echo " checked=\"checked\"";
 					}
-					echo "/> Ja 
+					echo "/> Ja
 					<input type=\"radio\" name=\"is_contact\" value=\"0\" ";
 					if (!$au->isContact) {
 						echo " checked=\"checked\"";
@@ -122,7 +122,7 @@ $twig->addGlobal("title", "Admin-Management");
 				</td>
 			</tr>";
 			echo "</table><br/>
-			<input type=\"submit\" name=\"edit_submit\" value=\"Speichern\" /> &nbsp; 
+			<input type=\"submit\" name=\"edit_submit\" value=\"Speichern\" /> &nbsp;
 			<input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" value=\"Abbrechen\" />";
 			echo "</form>";
 		}

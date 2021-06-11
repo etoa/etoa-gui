@@ -71,12 +71,12 @@
 								`user_surveillance`.user_id
 							FROM
 								`user_surveillance`
-							INNER JOIN 
-								`users` 
-							ON 
-								`user_surveillance`.user_id=`users`.user_id 
+							INNER JOIN
+								`users`
+							ON
+								`user_surveillance`.user_id=`users`.user_id
 								AND `users`.user_observe IS NULL
-							GROUP BY 
+							GROUP BY
 								`user_surveillance`.user_id;");
 			while ($oarr = mysql_fetch_row($ores))
 			{
@@ -110,7 +110,7 @@
 
 			if ($_POST['del_user_log']==1)
 			{
-				$lres = dbquery("DELETE	FROM 
+				$lres = dbquery("DELETE	FROM
 									`user_log`
 								WHERE
 									!(`user_log`.user_id IN (".$ustring."))");
@@ -118,7 +118,7 @@
 			}
 			if ($_POST['del_user_ratings']==1)
 			{
-				$rres = dbquery("DELETE	FROM 
+				$rres = dbquery("DELETE	FROM
 									`user_ratings`
 								WHERE
 									!(`user_ratings`.id IN (".$ustring."))");
@@ -126,7 +126,7 @@
 			}
 			if ($_POST['del_user_properties']==1)
 			{
-				$pres = dbquery("DELETE FROM 
+				$pres = dbquery("DELETE FROM
 									`user_properties`
 								WHERE
 									!(`user_properties`.id IN (".$ustring."))");
@@ -134,7 +134,7 @@
 			}
 			if ($_POST['del_user_multi']==1)
 			{
-				$mres = dbquery("DELETE FROM 
+				$mres = dbquery("DELETE FROM
 									`user_multi`
 								WHERE
 									!(`user_multi`.user_id IN (".$ustring."))
@@ -143,7 +143,7 @@
 			}
 			if ($_POST['del_user_comments']==1)
 			{
-				$cres = dbquery("DELETE FROM 
+				$cres = dbquery("DELETE FROM
 									`user_comments`
 								WHERE
 									!(`user_comments`.comment_user_id IN (".$ustring."))");
@@ -171,7 +171,7 @@
 						WHERE
 							`ticket_id` IN (".$tstring.")");
 
-				$tres = dbquery("DELETE FROM 
+				$tres = dbquery("DELETE FROM
 									`tickets`
 								WHERE
 									!(`tickets`.user_id IN (".$ustring."))");
@@ -279,7 +279,7 @@
 							WHERE
 								id IN (".implode(",", $other).");");
 				}
-				$tres = dbquery("DELETE FROM 
+				$tres = dbquery("DELETE FROM
 									`reports`
 								WHERE
 									!(`reports`.user_id IN (".$ustring."))");
@@ -287,7 +287,7 @@
 			}
 			if ($_POST['del_notepad']==1)
 			{
-				$nres = dbquery("DELETE FROM 
+				$nres = dbquery("DELETE FROM
 									`notepad`
 								WHERE
 									!(`notepad`.user_id IN (".$ustring."))");
@@ -295,7 +295,7 @@
 			}
 			if ($_POST['del_shiplist']==1)
 			{
-				$slres = dbquery("DELETE FROM 
+				$slres = dbquery("DELETE FROM
 									`shiplist`
 								WHERE
 									!(`shiplist`.shiplist_user_id IN (".$ustring."))");
@@ -303,7 +303,7 @@
 			}
 			if ($_POST['del_deflist']==1)
 			{
-				$dlres = dbquery("DELETE FROM 
+				$dlres = dbquery("DELETE FROM
 									`deflist`
 								WHERE
 									!(`deflist`.deflist_user_id IN (".$ustring."))");
@@ -311,7 +311,7 @@
 			}
 			if ($_POST['del_missilelist']==1)
 			{
-				$dlres = dbquery("DELETE FROM 
+				$dlres = dbquery("DELETE FROM
 									`missilelist`
 								WHERE
 									!(`missilelist`.missilelist_user_id IN (".$ustring."))");
@@ -319,7 +319,7 @@
 			}
 			if ($_POST['del_buildlist']==1)
 			{
-				$blres = dbquery("DELETE FROM 
+				$blres = dbquery("DELETE FROM
 									`buildlist`
 								WHERE
 									!(`buildlist`.buildlist_user_id IN (".$ustring."))");
@@ -327,7 +327,7 @@
 			}
 			if ($_POST['del_techlist']==1)
 			{
-				$tlres = dbquery("DELETE FROM 
+				$tlres = dbquery("DELETE FROM
 									`techlist`
 								WHERE
 									!(`techlist`.techlist_user_id IN (".$ustring."))");
@@ -335,7 +335,7 @@
 			}
 			if ($_POST['del_def_queue']==1)
 			{
-				$dqres = dbquery("DELETE FROM 
+				$dqres = dbquery("DELETE FROM
 									`def_queue`
 								WHERE
 									!(`def_queue`.queue_user_id IN (".$ustring."))");
@@ -343,7 +343,7 @@
 			}
 			if ($_POST['del_ship_queue']==1)
 			{
-				$sqres = dbquery("DELETE FROM 
+				$sqres = dbquery("DELETE FROM
 									`ship_queue`
 								WHERE
 									!(`ship_queue`.queue_user_id IN (".$ustring."))");
@@ -359,18 +359,18 @@
 			$nr = DefList::cleanUp();
 			echo $nr." leere Verteidigungsdaten wurden gelöscht!<br/>";
 			dbquery("
-			DELETE FROM 
+			DELETE FROM
 				buildlist
-			WHERE 
+			WHERE
 				buildlist_current_level=0
 				AND buildlist_build_start_time=0
 				AND buildlist_build_end_time=0
 			;");
 			echo mysql_affected_rows()." leere Gebäudedaten wurden gelöscht!<br/>";
 			dbquery("
-			DELETE FROM 
+			DELETE FROM
 				techlist
-			WHERE 
+			WHERE
 				techlist_current_level=0
 				AND techlist_build_start_time=0
 				AND techlist_build_end_time=0
@@ -386,9 +386,9 @@
 	/* Messages */
 	echo '<fieldset><legend><input type="checkbox" value="1" name="cl_msg" /> Nachrichten</legend>';
 	$tblcnt = mysql_fetch_row(dbquery("
-	SELECT 
-		COUNT(message_id) 
-	FROM 
+	SELECT
+		COUNT(message_id)
+	FROM
 		messages
 	WHERE
 		message_archived=0
@@ -405,11 +405,11 @@
 	}
 	echo "</select> (".nf($tblcnt[0])." total).<br/>";
 	$tblcnt = mysql_fetch_row(dbquery("
-	SELECT 
-		COUNT(message_id) 
-	FROM 
+	SELECT
+		COUNT(message_id)
+	FROM
 		messages
-	WHERE 
+	WHERE
 		message_deleted=1
 	;"));
 	echo '<input type="radio" name="only_deleted" value="1" checked="checked" /> <b>Nur \'gelöschte\' Nachrichten löschen:</b> ';
@@ -428,9 +428,9 @@
 	/* Reports */
 	echo '<fieldset><legend><input type="checkbox" value="1" name="cl_report" /> Berichte</legend>';
 	$tblcnt = mysql_fetch_row(dbquery("
-	SELECT 
-		COUNT(id) 
-	FROM 
+	SELECT
+		COUNT(id)
+	FROM
 		reports
 	WHERE
 		archived=0
@@ -447,11 +447,11 @@
 	}
 	echo "</select> (".nf($tblcnt[0])." total).<br/>";
 	$tblcnt = mysql_fetch_row(dbquery("
-	SELECT 
-		COUNT(id) 
-	FROM 
+	SELECT
+		COUNT(id)
+	FROM
 		reports
-	WHERE 
+	WHERE
 		deleted=1
 	;"));
 	echo '<input type="radio" name="only_deletedr" value="1" checked="checked" /> <b>Nur \'gelöschte\' Berichte löschen:</b> ';
@@ -470,9 +470,9 @@
 	// Logs
 	echo '<fieldset><legend><input type="checkbox" value="1" name="cl_log" /> Logs</legend>';
 	$tblcnt = mysql_fetch_row(dbquery("
-	SELECT 
-		count(id) 
-	FROM 
+	SELECT
+		count(id)
+	FROM
 		logs
 	;"));
 	echo "<b>Logs löschen:</b> Einträge löschen welche &auml;lter als <select name=\"log_timestamp\">";
@@ -490,9 +490,9 @@
 	// User-Sessions
 	echo '<fieldset><legend><input type="checkbox" value="1" name="cl_sesslog" /> Session-Logs</legend>';
 	$tblcnt = mysql_fetch_row(dbquery("
-	SELECT 
-		COUNT(*) 
-	FROM 
+	SELECT
+		COUNT(*)
+	FROM
 		user_sessionlog
 	;"));
 	echo "<b>Session-Logs löschen:</b> ";
@@ -511,9 +511,9 @@
 	// User-Points
 	echo '<fieldset><legend><input type="checkbox" value="1" name="cl_points" /> Punkteverlauf</legend>';
 	$tblcnt = mysql_fetch_row(dbquery("
-	SELECT 
-		COUNT(*) 
-	FROM 
+	SELECT
+		COUNT(*)
+	FROM
 		user_points
 	;"));
 	echo "<b>Punkteverläufe löschen:</b> Eintr&auml;ge löschen die &auml;lter als <select name=\"del_user_points\">";
@@ -527,9 +527,9 @@
 	}
 	echo "</select> sind (Total: ".nf($tblcnt[0])." User,";
 	$tblcnt = mysql_fetch_row(dbquery("
-	SELECT 
-		COUNT(*) 
-	FROM 
+	SELECT
+		COUNT(*)
+	FROM
 		alliance_points
 	;"));
 	echo " ".nf($tblcnt[0])." Allianz).";
@@ -544,8 +544,8 @@
 		FROM
 			users
 		WHERE
-			user_deleted>0 
-			AND user_deleted<".time()."				
+			user_deleted>0
+			AND user_deleted<".time()."
 	;");
 	$tblcnt = mysql_fetch_row($res);
 	echo nf($tblcnt[0])." als gelöscht markierte Benutzer endgültig löschen";
@@ -558,12 +558,12 @@
 						count(`user_surveillance`.user_id)
 					FROM
 						`user_surveillance`
-					INNER JOIN 
-						`users` 
-					ON 
-						`user_surveillance`.user_id=`users`.user_id 
+					INNER JOIN
+						`users`
+					ON
+						`user_surveillance`.user_id=`users`.user_id
 						AND `users`.user_observe IS NULL
-					GROUP BY 
+					GROUP BY
 						`user_surveillance`.user_id;");
 	$tblcnt = mysql_fetch_row($ores);
 	echo nf($tblcnt[0])." verwaiste Beobachtereinträge gefunden";
@@ -589,92 +589,92 @@
 
 	$lres = dbquery("SELECT
 						count(`user_log`.id)
-					FROM 
+					FROM
 						`user_log`
 					WHERE
 						!(`user_log`.user_id IN (".$ustring."))");
 	$rres = dbquery("SELECT
 						count(`user_ratings`.id)
-					FROM 
+					FROM
 						`user_ratings`
 					WHERE
 						!(`user_ratings`.id IN (".$ustring."))");
 	$pres = dbquery("SELECT
 						count(`user_properties`.id)
-					FROM 
+					FROM
 						`user_properties`
 					WHERE
 						!(`user_properties`.id IN (".$ustring."))");
 	$mres = dbquery("SELECT
 						count(`user_multi`.id)
-					FROM 
+					FROM
 						`user_multi`
 					WHERE
 						!(`user_multi`.user_id IN (".$ustring."))
 						OR !(`user_multi`.multi_id IN (".$ustring."))");
 	$cres = dbquery("SELECT
 						count(`user_comments`.comment_id)
-					FROM 
+					FROM
 						`user_comments`
 					WHERE
 						!(`user_comments`.comment_user_id IN (".$ustring."))");
 	$tres = dbquery("SELECT
 						count(`tickets`.id)
-					FROM 
+					FROM
 						`tickets`
 					WHERE
 						!(`tickets`.user_id IN (".$ustring."))");
 	$reres = dbquery("SELECT
 						count(`reports`.id)
-					FROM 
+					FROM
 						`reports`
 					WHERE
 						!(`reports`.user_id IN (".$ustring."))");
 	$nres = dbquery("SELECT
 						count(`notepad`.id)
-					FROM 
+					FROM
 						`notepad`
 					WHERE
 						!(`notepad`.user_id IN (".$ustring."))");
 	$slres = dbquery("SELECT
 						count(`shiplist`.shiplist_id)
-					FROM 
+					FROM
 						`shiplist`
 					WHERE
 						!(`shiplist`.shiplist_user_id IN (".$ustring."))");
 	$dlres = dbquery("SELECT
 						count(`deflist`.deflist_id)
-					FROM 
+					FROM
 						`deflist`
 					WHERE
 						!(`deflist`.deflist_user_id IN (".$ustring."))");
 	$blres = dbquery("SELECT
 						count(`buildlist`.buildlist_id)
-					FROM 
+					FROM
 						`buildlist`
 					WHERE
 						!(`buildlist`.buildlist_user_id IN (".$ustring."))");
 	$tlres = dbquery("SELECT
 						count(`techlist`.techlist_id)
-					FROM 
+					FROM
 						`techlist`
 					WHERE
 						!(`techlist`.techlist_user_id IN (".$ustring."))");
 	$mlres = dbquery("SELECT
 						count(`missilelist`.missilelist_id)
-					FROM 
+					FROM
 						`missilelist`
 					WHERE
 						!(`missilelist`.missilelist_user_id IN (".$ustring."))");
 	$dqres = dbquery("SELECT
 						count(`def_queue`.queue_id)
-					FROM 
+					FROM
 						`def_queue`
 					WHERE
 						!(`def_queue`.queue_user_id IN (".$ustring."))");
 	$sqres = dbquery("SELECT
 						count(`ship_queue`.queue_id)
-					FROM 
+					FROM
 						`ship_queue`
 					WHERE
 						!(`ship_queue`.queue_user_id IN (".$ustring."))");
@@ -716,9 +716,9 @@
 	$res =	dbquery("
 	SELECT
 		 COUNT( shiplist_id )
-	FROM 
+	FROM
 		shiplist
-	WHERE 
+	WHERE
 		shiplist_count =0
 		AND shiplist_bunkered =0
 		AND shiplist_special_ship=0
@@ -727,7 +727,7 @@
 	$res =	dbquery("
 	SELECT
 		 COUNT( shiplist_id )
-	FROM 
+	FROM
 		shiplist
 	;");
 	$stcnt = mysql_fetch_row($res);
@@ -735,16 +735,16 @@
 	$res =	dbquery("
 	SELECT
 		 COUNT( deflist_id )
-	FROM 
+	FROM
 		deflist
-	WHERE 
+	WHERE
 		deflist_count =0
 	;");
 	$dcnt = mysql_fetch_row($res);
 	$res =	dbquery("
 	SELECT
 		 COUNT( deflist_id )
-	FROM 
+	FROM
 		deflist
 	;");
 	$dtcnt = mysql_fetch_row($res);
@@ -752,16 +752,16 @@
 	$res =	dbquery("
 	SELECT
 		 COUNT( missilelist_id )
-	FROM 
+	FROM
 		missilelist
-	WHERE 
+	WHERE
 		missilelist_count =0
 	;");
 	$mcnt = mysql_fetch_row($res);
 	$res =	dbquery("
 	SELECT
 		 COUNT( missilelist_id )
-	FROM 
+	FROM
 		missilelist
 	;");
 	$mtcnt = mysql_fetch_row($res);
@@ -769,9 +769,9 @@
 	$res =	dbquery("
 	SELECT
 		 COUNT( buildlist_id )
-	FROM 
+	FROM
 		buildlist
-	WHERE 
+	WHERE
 		buildlist_current_level=0
 		AND buildlist_build_start_time=0
 		AND buildlist_build_end_time=0
@@ -780,7 +780,7 @@
 	$res =	dbquery("
 	SELECT
 		 COUNT( buildlist_id )
-	FROM 
+	FROM
 		buildlist
 	;");
 	$btcnt = mysql_fetch_row($res);
@@ -788,9 +788,9 @@
 	$res =	dbquery("
 	SELECT
 		 COUNT( techlist_id )
-	FROM 
+	FROM
 		techlist
-	WHERE 
+	WHERE
 		techlist_current_level=0
 		AND techlist_build_start_time=0
 		AND techlist_build_end_time=0
@@ -799,7 +799,7 @@
 	$res =	dbquery("
 	SELECT
 		 COUNT( techlist_id )
-	FROM 
+	FROM
 		techlist
 	;");
 	$ttcnt = mysql_fetch_row($res);

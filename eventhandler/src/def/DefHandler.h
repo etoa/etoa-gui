@@ -16,7 +16,7 @@
 
 /**
 * Handles defense updates
-* 
+*
 * \author Nicolas Perrenoud <mrcage@etoa.ch>
 */
 namespace def
@@ -32,7 +32,7 @@ namespace def
 	private:
 		bool changes_;
 		bool updatePlanet;
-		std::vector<int> changedPlanets_;		
+		std::vector<int> changedPlanets_;
 	};
 }
 #endif

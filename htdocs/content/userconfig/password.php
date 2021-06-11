@@ -19,10 +19,10 @@
 	//
 
 	iBoxStart("Logins");
-	echo "Solltest du Probleme mit dem Passwort haben schreibe 
+	echo "Solltest du Probleme mit dem Passwort haben schreibe
 	ein ".ticketLink("Ticket",17)." oder ".popUp("kontaktiere","page=contact")." einen Admin.";
 	iBoxEnd();
-			
+
 	// Änderungen speichern
 	if (isset($_POST['password_submit']) && checker_verify())
 	{

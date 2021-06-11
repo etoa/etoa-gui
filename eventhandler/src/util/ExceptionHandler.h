@@ -41,7 +41,7 @@ class ExceptionHandler: public std::exception
 	  ExceptionHandler(std::string msg) {this->s = msg;}
 	  /**
 	  * Exception handler destructor
-	  */	  
+	  */
 		virtual ~ExceptionHandler() throw() {}
 		/**
 		* Returns error message

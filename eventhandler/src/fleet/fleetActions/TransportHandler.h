@@ -8,7 +8,7 @@
 /**
 * Handles Transport....
 * Well the word transport explains itself
-* 
+*
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 namespace transport

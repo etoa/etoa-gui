@@ -20,7 +20,7 @@
 * connection and runs the main loop
 *
 * @author Nicolas Perrenoud<mrcage@etoa.ch>
-* 
+*
 * Copyright (c) 2004 by EtoA Gaming, www.etoa.net
 *
 * $Rev$
@@ -36,21 +36,21 @@
 void etoamain()
 {
 	int minLoopDuration = Config::instance().getSleep();	// Minimal loop duration
-	
-	LOG(LOG_DEBUG,"Entering main event-handler loop");				
-	
+
+	LOG(LOG_DEBUG,"Entering main event-handler loop");
+
 	// TODO: Error handling
 	std::time_t mtime=0;
 	srand(time(0));
-	
+
 	//Load Data
 	DataHandler &DataHandler = DataHandler::instance();
 
 	// Main loop
 	while (true)
 	{
-		try 
-		{ 
+		try
+		{
 			// Graphical bling-bling
 			if (debugEnable(0))
 			{
@@ -99,7 +99,7 @@ void etoamain()
 
 			// Reload config
 			if (reloadConfig) {
-				LOG(LOG_INFO, "Reloading configuration"); 
+				LOG(LOG_INFO, "Reloading configuration");
 				DataHandler.reloadData();
 				Config::instance().reloadConfig();
 			}
@@ -107,7 +107,7 @@ void etoamain()
 			/**
 			* Start with event handling
 			*/
-      
+
       // Market update
 			if ((mtime+300) < std::time(0))
 			{
@@ -116,7 +116,7 @@ void etoamain()
 				mtime = std::time(0);
 				delete mh;
 			}
-			
+
       // Alliance points update
 			if ((std::time(0) + 60) % 3600 == 0)
 			{
@@ -124,26 +124,26 @@ void etoamain()
 				aph->update();
 				delete aph;
 			}
-			
+
       // Update alliance buildings
 			abuilding::aBuildingHandler* abh = new abuilding::aBuildingHandler();
 			abh->update();
 			delete abh;
-			
+
       // Update alliance technologies
 			atech::aTechHandler* ath = new atech::aTechHandler();
 			ath->update();
 			delete ath;
-			
+
       // Update technologies
 			tech::TechHandler* th = new tech::TechHandler();
-			th->update(); 
+			th->update();
 			if (th->changes()) {
 				std::vector<int> v = th->getChangedUsers();
 				pm.markUsersForUpdate(&v);
 			}
 			delete th;
-			
+
       // Update buildings
 			building::BuildingHandler* bh = new building::BuildingHandler();
 			bh->update();
@@ -152,19 +152,19 @@ void etoamain()
         pm.markForUpdate(&v);
       }
       delete bh;
-      
+
       // Update ships
 			ship::ShipHandler* sh = new ship::ShipHandler();
-			sh->update();  
+			sh->update();
       if (sh->changes()) {
         std::vector<int> v = sh->getChangedPlanets();
         pm.markForUpdate(&v);
       }
       delete sh;
-      
+
       // Update defenses
 			def::DefHandler* dh = new def::DefHandler();
-			dh->update();  
+			dh->update();
       if (dh->changes()) {
         std::vector<int> v = dh->getChangedPlanets();
         pm.markForUpdate(&v);
@@ -176,7 +176,7 @@ void etoamain()
 
       // Process fleet events
 			fleet::FleetHandler* fh = new fleet::FleetHandler();
-			fh->update(); 
+			fh->update();
       delete fh;
 
     }
@@ -186,16 +186,16 @@ void etoamain()
 			LOG(LOG_ERR,"MySQL: Unexpected query error: " << e.what());
 			sleep(10);
 		}
-		catch (mysqlpp::Exception e) 
-		{ 
-			LOG(LOG_ERR,"MySQL: General error: " << e.what()); 
+		catch (mysqlpp::Exception e)
+		{
+			LOG(LOG_ERR,"MySQL: General error: " << e.what());
 			sleep(10);
 		}
-		
+
 		sleep(minLoopDuration);
 	}
-	
+
 	LOG(LOG_ERR,"Unexpectedly reached end of main thread!");
 	exit(EXIT_FAILURE);
-			
+
 }

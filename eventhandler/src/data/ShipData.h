@@ -10,11 +10,11 @@
 
 /**
 * ShipData class
-* 
+*
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
-class ShipData : public Data	
+class ShipData : public Data
 {
 public:
 	ShipData(mysqlpp::Row object) : Data(object){
@@ -66,7 +66,7 @@ public:
 		this->allianceBuildingLevel = (short)object["ship_alliance_shipyard_level"];
 		this->allianceCosts = (short)object["ship_alliance_costs"];
 	}
-	
+
 	short getTypeId();
 	int getPowerUse();
 	int getFuelUse();
@@ -115,7 +115,7 @@ public:
 	short getAllianceBuildingLevel();
 	short getAllianceCosts();
 	bool isCivilShip();
-	
+
 private:
 
 	short typeId;

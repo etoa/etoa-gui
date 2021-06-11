@@ -271,9 +271,9 @@ else
 			}
 
 			echo "<td valign=\"top\" class=\"tbldata\" style=\"width:50px\">
-			".edit_button("?".URL_SEARCH_STRING."&amp;action=edit&amp;id=".$arr[DB_TABLE_ID])." 
-			".copy_button("?".URL_SEARCH_STRING."&amp;action=copy&amp;id=".$arr[DB_TABLE_ID])." 
-			".del_button("?".URL_SEARCH_STRING."&amp;action=del&amp;id=".$arr[DB_TABLE_ID])." 
+			".edit_button("?".URL_SEARCH_STRING."&amp;action=edit&amp;id=".$arr[DB_TABLE_ID])."
+			".copy_button("?".URL_SEARCH_STRING."&amp;action=copy&amp;id=".$arr[DB_TABLE_ID])."
+			".del_button("?".URL_SEARCH_STRING."&amp;action=del&amp;id=".$arr[DB_TABLE_ID])."
 			</td>";
 			echo "</tr>\n";
 			$cnt++;

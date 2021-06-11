@@ -4,7 +4,7 @@
  *
  * @author MrCage mrcage@etoa.ch
  * @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
- */		
+ */
 
 	require_once(XAJAX_DIR."/xajax_core/xajax.inc.php");
 	$xajax = new xajax();
@@ -12,7 +12,7 @@
 	$xajax->configure('debug', (defined('XAJAX_DEBUG') && XAJAX_DEBUG));
 
 	require_once(RELATIVE_ROOT."inc/xajax/global.xajax.php");
-	
+
 	if (isset($page))
 	{
 		if ($page=="haven")
@@ -55,15 +55,15 @@
 		{
 			require_once(RELATIVE_ROOT."inc/xajax/bookmarks.xajax.php");
 		}
-	}	
-		
+	}
+
 	if (isset($index))
 	{
 		if ($index=="register")
 		{
 			require_once(RELATIVE_ROOT."inc/xajax/register.xajax.php");
 		}
-	}	
-	
+	}
+
 	$xajax->processRequest();
 ?>

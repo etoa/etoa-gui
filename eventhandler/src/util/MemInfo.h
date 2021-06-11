@@ -14,21 +14,21 @@
 class MemInfo
 {
   public:
-    
+
 	MemInfo();
 	~MemInfo();
-    
+
 	long long getTotalVirtualMem() const;
 	long long getVirtualMemUsed() const;
 	int getVirtualMemUsedByCurrentProcess(); //Note: this value is in KB!
 	long long getTotalPyhsMem() const;
 	long long getPhysMemUsed() const;
 	int getPhysMemUsedByCurrentProcess(); //Note: this value is in KB!
-  
+
   private:
 
 	struct sysinfo memInfo;
-	
+
 	int parseLine(char* line);
 
 };

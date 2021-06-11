@@ -3,7 +3,7 @@
 	$UID = $cu->id;
 	if ($UID >0)
 	{
-			
+
 		if (isset($_GET['chk']) && $_GET['chk'] == 'new')
 		{
 			echo "<h1>Notizen</h1><br>";
@@ -25,7 +25,7 @@
 			echo "<textarea name=\"Text\" cols=\"80\" rows=\"20\">".$row['text']."</textarea><br><br>";
 			echo "<input type=\"Submit\" name=\"&#196ndern\" value=\"&#196ndern\"></input>";
 			echo "</form>";
-		}							
+		}
 		else
 		{
 			echo "<h1>Notizen</h1>";
@@ -37,40 +37,40 @@
 				$Titel = $_POST['Titel'];
 				$Text = $_POST['Text'];
 				dbquery("
-				insert into 
-					admin_notes 
+				insert into
+					admin_notes
 				(
 					admin_id, titel, text, date
 				)
-				 values 
+				 values
 				(
 					'$UID', '$Titel', '$Text', '$time'
 				);
 				");
-			}				
-			
-			// Edit action								
+			}
+
+			// Edit action
 			if (isset($_GET['func']) && $_GET['func'] == 'editieren')
 			{
 				$Titel = $_POST['Titel'];
 				$Text = $_POST['Text'];
 				$PID = $_POST['pid'];
 				dbquery("update admin_notes set text = '".$Text."', titel = '".$Titel."' where notes_id = ".$PID."");
-			}								
-			
+			}
+
 			// Delete action
 			if (isset($_GET['chk']) && $_GET['chk'] == 'del')
 			{
 				$PID = $_GET['pid'];
 				dbquery("delete from admin_notes where notes_id = ".$PID."");
-			}												
+			}
 
 			// Overview
 			$res = dbquery("select * from admin_notes where admin_id ='".$UID."'");
 			if (mysql_num_rows($res) == 0)
 			{
 				echo "Keine Notiz vorhanden";
-			
+
 				echo "<form action=\"?page=notepad&amp;chk=new\" method=\"post\">";
 				echo "<br><input type=\"Submit\" name=\"Neue Notiz\" value=\"Neue Notiz\"></input>";
 				echo "</form>";
@@ -101,7 +101,7 @@
 				echo "</form>";
 			}
 		}
-						
+
 	}
 	else
 	{

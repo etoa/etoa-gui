@@ -23,7 +23,7 @@ while ($f=readdir($d))
 				echo "<img src=\"../htdocs/misc/imagefilter.php?file=".$dir."/".$f."&amp;filter=".$filter."\" alt=\"Filter ".$filter."\" title=\"Filter ".$filter."\"/> \n";
 			}
 			echo "<br><br>";
-			
+
 		}
 	}
 }

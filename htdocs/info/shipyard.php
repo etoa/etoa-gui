@@ -11,7 +11,7 @@
 	{
 		$max = $max2;
 		$img = "star_r";
-		
+
 		$t = $max / 5;
 		$s="";
 		for ($x=0;$x<5;$x++)
@@ -36,8 +36,8 @@
 		echo "<tr><th>Schilder:</th><td>".rankingStars($arr['ship_shield'],RANKING_SHIP_SHIELD)."</td></tr>";
 		echo "<tr><th>Waffen:</th><td>".rankingStars($arr['ship_weapon'],RANKING_SHIP_WEAPON)."</td></tr>";
 		echo "<tr><th>Speed:</th><td>".rankingStars($arr['ship_speed'],RANKING_SHIP_SPEED)."</td></tr>";
-		echo "<tr><th>Kapazität:</th><td>".rankingStars($arr['ship_capacity'],RANKING_SHIP_CAPACITY)."</td></tr>";		
-		echo "<tr><th>Reisekosten:</th><td>".rankingStars($arr['ship_fuel_use'],RANKING_SHIP_FUEL)."</td></tr>";		
+		echo "<tr><th>Kapazität:</th><td>".rankingStars($arr['ship_capacity'],RANKING_SHIP_CAPACITY)."</td></tr>";
+		echo "<tr><th>Reisekosten:</th><td>".rankingStars($arr['ship_fuel_use'],RANKING_SHIP_FUEL)."</td></tr>";
 		echo "</table>";
 		$s = ob_get_contents();
 		ob_end_clean();
@@ -54,50 +54,50 @@
 	if (isset($_GET['id']))
 	{
 		$sid = intval($_GET['id']);
-		
+
 		$res = dbquery("
-		SELECT 
-			* 
-		FROM 
-			ships 
+		SELECT
+			*
+		FROM
+			ships
 		LEFT JOIN
 			ship_cat
 			ON ship_cat_id=cat_id
-		WHERE 
-			ship_id='".$sid."' 
+		WHERE
+			ship_id='".$sid."'
 			AND ship_show=1
 		;");
 		if ($arr = @mysql_fetch_array($res))
 		{
 			HelpUtil::breadCrumbs(array("Schiffe","shipyard"),array(text2html($arr['ship_name']),$arr['ship_id']),1);
 			echo "<select onchange=\"document.location='?page=help&site=shipyard&id='+this.options[this.selectedIndex].value\">";
-			$bres=dbquery("SELECT 
+			$bres=dbquery("SELECT
 				ship_id,
 				ship_name
-			FROM 
+			FROM
 				ships
 			WHERE
-				ship_show=1 
+				ship_show=1
 				AND special_ship=0
-			ORDER BY 
+			ORDER BY
 				ship_name;");
-			while ($barr=mysql_fetch_array($bres))		
+			while ($barr=mysql_fetch_array($bres))
 			{
 				echo "<option value=\"".$barr['ship_id']."\"";
 				if ($barr['ship_id']==$sid) echo " selected=\"selected\"";
 				echo ">".$barr['ship_name']."</option>";
 			}
-			echo "</select><br/><br/>";		
-			
+			echo "</select><br/><br/>";
+
 			// Load propulsion data
 			$vres=dbquery("
-			Select 
+			Select
 				tech_id,
 				tech_name,
-				req_level 
-			FROM 
+				req_level
+			FROM
 				ship_requirements,
-				technologies 
+				technologies
 			WHERE
 				obj_id=".$arr['ship_id']."
 				AND tech_type_id='".TECH_SPEED_CAT."'
@@ -120,7 +120,7 @@
     	{
     		echo "<tr><th class=\"tbltitle\">Rasse:</th><td colspan=\"3\" class=\"tbldata\">Dieses Schiff kann exklusiv nur durch das Volk der <b>".$race[$arr['ship_race_id']]['race_name']."</b> gebaut werden!</td></tr>";
     	}
-    	
+
     	echo "<tr>
     		<th class=\"tbltitle\">Bewertung:
     		</th><td class=\"tbldata\" colspan=\"3\">
@@ -130,7 +130,7 @@
 
     	echo "<tr><th class=\"tbltitle\">Kategorie:</th><td class=\"tbldata\" colspan=\"3\">".$arr['cat_name']."</td></tr>";
     	echo "<tr><th class=\"tbltitle\">Anzahl Piloten:</th><td class=\"tbldata\" colspan=\"3\">".nf($arr['ship_pilots'])."</td></tr>";
-    	
+
     	echo "<tr><td colspan=\"4\" style=\"height:30px;\"></td></tr>";
 
 	    echo "<tr><th class=\"tbltitle\" colspan=\"2\" style=\"text-align:center\">Kosten</th>
@@ -141,7 +141,7 @@
 	    	<table class=\"tb\">";
 			echo "<tr>
 						<td style=\"width:170px;font-weight:bold;\" class=\"resmetal\">".RES_METAL."</td>
-						<td style=\"width:350px\">".nf($arr['ship_costs_metal'])." t</td>    	
+						<td style=\"width:350px\">".nf($arr['ship_costs_metal'])." t</td>
 				</tr>";
 			echo "<tr>
 						<td style=\"font-weight:bold;\" class=\"rescrystal\">".RES_CRYSTAL."</td>
@@ -171,7 +171,7 @@
 						<td style=\"font-weight:bold;\" class=\"resfuel\">Landung</td>
 						<td style=\"width:350px\">".nf($arr['ship_fuel_use_landing'])." t</td>
 				</tr>";
-	    	
+
 	    	echo "</table>
 	    	</td>
 	    	<td  colspan=\"3\" style=\"padding:0px;\">
@@ -214,16 +214,16 @@
 				echo "<tr>
 						<td style=\"font-weight:bold;\">Landedauer</td>
 						<td>".tf($arr['ship_time2land']/FLEET_FACTOR_L)."</td></tr>";
-				echo "</table>	    	
+				echo "</table>
 	    	</td></tr>";
 
-			
 
-			
+
+
 			echo "<tr><td colspan=\"4\" style=\"height:30px;\"></td></tr>";
-			
-			echo "<tr><th class=\"tbltitle\" colspan=\"4\" style=\"text-align:center\">Fähigkeiten</th></tr>";			
-			
+
+			echo "<tr><th class=\"tbltitle\" colspan=\"4\" style=\"text-align:center\">Fähigkeiten</th></tr>";
+
 			$actions = explode(",",$arr['ship_actions']);
 			$accnt=0;
 			if (count($actions)>0)
@@ -248,16 +248,16 @@
 				echo "<tr><td class=\"tbldata\" colspan=\"4\" style=\"text-align:center\">Keine Spezialfähigkeit vorhanden!</td></tr>";
 
 			echo "<tr><td colspan=\"4\" style=\"height:30px;\"></td></tr>";
-		
-		
-			echo "<tr><th class=\"tbltitle\" colspan=\"4\" style=\"text-align:center\">Voraussetzungen</th></tr>";			
+
+
+			echo "<tr><th class=\"tbltitle\" colspan=\"4\" style=\"text-align:center\">Voraussetzungen</th></tr>";
 			echo "<tr><td class=\"tbldata\" colspan=\"4\" style=\"text-align:center\">";
 			echo "<div id=\"reqInfo\" style=\"width:100%;\">
 			<br/><div class=\"loadingMsg\">Bitte warten...</div>
-			</div>";	
+			</div>";
 			echo '<script type="text/javascript">xajax_reqInfo('.$arr['ship_id'].',"s")</script>';
-			echo "</td></tr>";	
-		
+			echo "</td></tr>";
+
 	    tableEnd();
 		}
 		else
@@ -278,7 +278,7 @@
 	else
 	{
 		HelpUtil::breadCrumbs(array("Schiffe","shipyard"));
-	
+
 		if (isset($_GET['order']))
 		{
 			if (ctype_alpha($_GET['order']))
@@ -317,20 +317,20 @@
 		}
 
 		$cres = dbquery("
-		SELECT 
-			* 
-		FROM 
+		SELECT
+			*
+		FROM
 			ship_cat
-		ORDER BY 
+		ORDER BY
 			cat_order;");
 		if (mysql_num_rows($cres)>0)
-		{ 
+		{
 			while ($carr = mysql_fetch_assoc($cres))
 			{
 				$res = dbquery("
-				SELECT 
-					* 
-				FROM 
+				SELECT
+					*
+				FROM
 					ships
 				LEFT JOIN
 					races
@@ -338,8 +338,8 @@
 					ship_race_id=race_id
 				WHERE
 					ship_cat_id=".$carr['cat_id']."
-					AND ship_show=1 
-				ORDER BY 
+					AND ship_show=1
+				ORDER BY
 					$order $sort;");
 				if (mysql_num_rows($res)>0)
 				{

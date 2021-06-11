@@ -10,23 +10,23 @@
 
 /**
 * Asteroid class
-* 
+*
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
 class Asteroid : public Entity {
-public: 
+public:
 	Asteroid(char code, mysqlpp::Row &eRow) : Entity(code, eRow) {
 		this->codeName = "Asteroidenfeld";
 		this->showCoords = true;
 	}
-	
+
 	~Asteroid() {
 		this->saveData();
 	}
-	
+
 	void saveData();
-	
+
 protected:
 	void loadData();
 

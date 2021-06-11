@@ -615,7 +615,7 @@
 
 				  	// Schreibt Originalpreise in "Preis-Felder" und berechnet Min/Max wenn eine neue Eingabe gemacht wurde
 				  	if(new_ship==1)
-			  	    {   
+			  	    {
 				  	    ship_buy_metal = Math.round(ship_costs_metal_total*ship_percent);
 				  	    ship_buy_crystal = Math.round(ship_costs_crystal_total*ship_percent);
 				    	ship_buy_plastic = Math.round(ship_costs_plastic_total*ship_percent);
@@ -1477,9 +1477,9 @@
 <script type="text/javascript">
 	var uname = '';
 	function jqinit()
-	{            
+	{
 		$(".offer").each(function()
-		{ 
+		{
 			var $th = $(this);
 			var $pa = $th.parent();
 			var $sp;
@@ -1570,7 +1570,7 @@
 							$(this).prev().detach();
 						}
 						$(this).detach();
-					}	
+					}
 				}
 			});
 			if($('.offer').size() == 0)
@@ -1618,7 +1618,7 @@
 							$(this).prev().detach();
 						}
 						$(this).detach();
-					}	
+					}
 				}
 			});
 			if($('.offer').size() == 0)

@@ -11,7 +11,7 @@
 /**
 * Handles Gas....
 * Collect gas from a gas planet
-* 
+*
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 namespace gas
@@ -22,13 +22,13 @@ namespace gas
 		GasHandler(mysqlpp::Row fleet)  : FleetAction(fleet) { }
 		void update();
 
-	private:		
+	private:
 		/**
 		*Calculated/collected resources
 		**/
 		double fuel;
 		double sum;
-		
+
 		/**
 		* Possibilitys, if the action succed
 		**/

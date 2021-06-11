@@ -46,5 +46,5 @@
             	echo "<i>Keine Datensätze vorhanden!</i>";
             }
 
-		
+
 ?>

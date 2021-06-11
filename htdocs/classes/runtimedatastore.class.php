@@ -19,7 +19,7 @@ class RuntimeDataStore
 		}
 		return $default;
 	}
-	
+
 	public static function set($key, $value)
 	{
 		dbQuerySave('

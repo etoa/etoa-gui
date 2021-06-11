@@ -15,19 +15,19 @@
 	// Programmiert von Nicolas Perrenoud				 		//
 	// www.nicu.ch | mail@nicu.ch								 		//
 	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	//////////////////////////////////////////////////	
+	//////////////////////////////////////////////////
 	//
-	// 	Dateiname: races.php	
-	// 	Topic: Formular-Definitionen f�r Rassen 
-	// 	Autor: Nicolas Perrenoud alias MrCage							
+	// 	Dateiname: races.php
+	// 	Topic: Formular-Definitionen f�r Rassen
+	// 	Autor: Nicolas Perrenoud alias MrCage
 	// 	Erstellt: 01.12.2004
 	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage
 	// 	Bearbeitet am: 31.03.2006
-	// 	Kommentar: 	
+	// 	Kommentar:
 	//
-	
+
 	// VARIABLES
-	
+
 	define("MODUL_NAME","Ticket-Kategorien");
 	define("DB_TABLE", "ticket_cat");
 	define("DB_TABLE_ID", "id");
@@ -36,13 +36,13 @@
 	define("DB_OVERVIEW_ORDER","ASC");
 
 
-	
 
-	
+
+
 	// FIELDS
-	
+
 	// Description:
-	
+
 	// name	 											// DB Field Name
 	// text												// Field Description
 	// type												// Field Type: text, password, textarea, timestamp, radio, select, checkbox, email, url, numeric
@@ -56,8 +56,8 @@
 	// select_elem (Array)				// Select Elements (desc=>value)
 	// select_elem_checked				// Value of default checked Select Element (desc=>value)
 	// show_overview							// Set 1 to show on overview page
-  
-	$db_fields = array ( 
+
+	$db_fields = array (
 											array	(	"name" => "name",
 																		"text" => "Name",
 																		"type" => "text",
@@ -88,5 +88,5 @@
 																	)	,
 
 											);
-        
+
 ?>

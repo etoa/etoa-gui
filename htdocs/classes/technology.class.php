@@ -7,7 +7,7 @@
         public function __construct($id)
 		{
 			$res = dbquery("
-			SELECT 
+			SELECT
 				*
 			FROM
 				technologies

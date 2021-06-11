@@ -64,7 +64,7 @@
 				FROM
 					specialists
 				WHERE
-					specialist_id=".$id."			
+					specialist_id=".$id."
 				");
 				if (mysql_num_rows($sres)>0)
 				{

@@ -370,7 +370,7 @@
 					users
 				INNER JOIN
 					user_properties
-				ON 
+				ON
 					user_id = id
 				LEFT JOIN
 					races
@@ -415,22 +415,22 @@
 					var elem = document.getElementById('user_alliance_id');
 					xajax_allianceRankSelector('ars','user_alliance_rank_id',val,elem.options[elem.selectedIndex].value);
 				}
-				
-				
+
+
 				function toggleText(elemId,switchId)
 				{
 					if (document.getElementById(switchId).innerHTML=='Anzeigen')
 					{
-						document.getElementById(elemId).style.display='';	
+						document.getElementById(elemId).style.display='';
 						document.getElementById(switchId).innerHTML='Verbergen';
 					}
 					else
 					{
-						document.getElementById(elemId).style.display='none';					
+						document.getElementById(elemId).style.display='none';
 						document.getElementById(switchId).innerHTML='Anzeigen';
-					}		
+					}
 				}
-				
+
 				</script>";
 
                 $twig->addGlobal('subtitle', "User bearbeiten: ".$arr['user_nick']);
@@ -491,7 +491,7 @@
 							<tr>
 								<td class=\"tbltitle\">Punkte:</td>
 								<td class=\"tbldata\">
-									".nf($arr['user_points'])." 
+									".nf($arr['user_points'])."
 									[<a href=\"javascript:;\" onclick=\"toggleBox('pointGraph')\">Verlauf anzeigen</a>]
 									<div id=\"pointGraph\" style=\"display:none;\"><img src=\"../misc/stats.image.php?user=".$arr['user_id']."\" alt=\"Diagramm\" /></div>
 								</td>
@@ -503,7 +503,7 @@
 							<tr>
 								<td class=\"tbltitle\">Rohstoffe von...</td>
 								<td class=\"tbldata\">
-									Raids: ".nf($arr['user_res_from_raid'])." t<br/> 
+									Raids: ".nf($arr['user_res_from_raid'])." t<br/>
 									Asteroiden: ".nf($arr['user_res_from_asteroid'])." t<br/>
 									Nebelfelder: ".nf($arr['user_res_from_nebula'])." t<br/>
                   Trümmerfelder: ".nf($arr['user_res_from_tf'])." t
@@ -554,10 +554,10 @@
 
 									// Kommentare
 									$cres=dbquery("
-									SELECT 
+									SELECT
 										COUNT(comment_id),
-										MAX(comment_timestamp) 
-									FROM 
+										MAX(comment_timestamp)
+									FROM
 										user_comments
 									WHERE
 										comment_user_id=".$arr['user_id']."
@@ -585,10 +585,10 @@
 
 									// Verwarnungen
 									$cres=dbquery("
-									SELECT 
+									SELECT
 										COUNT(warning_id),
 										MAX(warning_date)
-									FROM 
+									FROM
 										user_warnings
 									WHERE
 										warning_user_id=".$arr['user_id']."
@@ -666,7 +666,7 @@
 							<tr>
 								<td class=\"tbltitle\">Temporäres Passwort:</td>
 								<td class=\"tbldata\">
-									<input type=\"text\" name=\"user_password_temp\" value=\"".$arr['user_password_temp']."\" size=\"30\" maxlength=\"30\" /> 
+									<input type=\"text\" name=\"user_password_temp\" value=\"".$arr['user_password_temp']."\" size=\"30\" maxlength=\"30\" />
 								</td>
 								<td>Nur dieses wird verwendet, falls ausgefüllt</td>
 							</tr>
@@ -678,7 +678,7 @@
 									{
 										echo " checked=\"checked\" ";
 									}
-									echo " /><label for=\"user_ghost1\">Ja</label> 
+									echo " /><label for=\"user_ghost1\">Ja</label>
 									<input type=\"radio\" name=\"user_ghost\" id=\"user_ghost0\" value=\"0\" ";
 									if ($arr['user_ghost']==0)
 									{
@@ -694,7 +694,7 @@
 									<input type=\"radio\" name=\"user_chatadmin\" id=\"user_chatadmin1\" value=\"1\"";
 									if ($arr['user_chatadmin']==1)
 										echo " checked=\"checked\" ";
-									echo " /><label for=\"user_chatadmin1\">Ja</label> 
+									echo " /><label for=\"user_chatadmin1\">Ja</label>
 									<input type=\"radio\" name=\"user_chatadmin\" id=\"user_chatadmin0\"value=\"0\" ";
 									if ($arr['user_chatadmin']==0)
 										echo " checked=\"checked\" ";
@@ -718,11 +718,11 @@
 									<input type=\"radio\" name=\"admin\" id=\"admin1\" value=\"1\"";
 									if ($arr['admin']==1)
 										echo " checked=\"checked\" ";
-									echo " /><label for=\"admin1\">Ja</label> 
+									echo " /><label for=\"admin1\">Ja</label>
 									<input type=\"radio\" name=\"admin\" id=\"admin0\" value=\"0\" ";
 									if ($arr['admin']==0)
 										echo " checked=\"checked\" ";
-									echo "/><label for=\"admin0\">Nein</label> 
+									echo "/><label for=\"admin0\">Nein</label>
 									<input type=\"radio\" name=\"admin\" id=\"admin2\" value=\"2\" ";
 									if ($arr['admin']==2)
 										echo " checked=\"checked\" ";
@@ -736,11 +736,11 @@
 									<input type=\"radio\" name=\"npc\" id=\"npc1\" value=\"1\"";
 									if ($arr['npc']==1)
 										echo " checked=\"checked\" ";
-									echo " /><label for=\"npc1\">Ja</label> 
+									echo " /><label for=\"npc1\">Ja</label>
 									<input type=\"radio\" name=\"npc\" id=\"npc0\" value=\"0\" ";
 									if ($arr['npc']==0)
 										echo " checked=\"checked\" ";
-									echo "/><label for=\"npc0\">Nein</label> 
+									echo "/><label for=\"npc0\">Nein</label>
 								</td>
 								<td>Spieler wird als NPC markiert</td>
 							</tr>
@@ -752,7 +752,7 @@
 									{
 										echo " checked=\"checked\"";
 									}
-									echo " /><label for=\"ban_enable0\">Nein</label> 
+									echo " /><label for=\"ban_enable0\">Nein</label>
 									<input type=\"radio\" name=\"ban_enable\" id=\"ban_enable1\" value=\"1\" onclick=\"$('#ban_options').show();\" ";
 									if ($arr['user_blocked_from']>0)
 									{
@@ -805,7 +805,7 @@
 							<tr>
 								<td class=\"tbltitle\" valign=\"top\">U-Mod</td>
 								<td class=\"tbldata\">
-									<input type=\"radio\" name=\"umod_enable\" id=\"umod_enable0\" value=\"0\" onclick=\"$('#umod_options').hide();\" checked=\"checked\" /><label for=\"umod_enable0\">Nein</label> 
+									<input type=\"radio\" name=\"umod_enable\" id=\"umod_enable0\" value=\"0\" onclick=\"$('#umod_options').hide();\" checked=\"checked\" /><label for=\"umod_enable0\">Nein</label>
 									<input type=\"radio\" name=\"umod_enable\" id=\"umod_enable1\" value=\"1\" onclick=\"$('#umod_options').show();\" ";
 									if ($arr['user_hmode_from']>0)
 									{
@@ -857,7 +857,7 @@
 										if ($arr['user_race_id']==$tarr['race_id']) echo " selected=\"selected\"";
 										echo ">".$tarr['race_name']."</option>\n";
 									}
-									echo "</select>				
+									echo "</select>
 								</td>
 							</tr>
 							<tr>
@@ -872,7 +872,7 @@
 									FROM
 										specialists
 									ORDER BY
-										specialist_name				
+										specialist_name
 									;");
 									while ($sarr=mysql_fetch_row($sres))
 									{
@@ -905,12 +905,12 @@
 			          <td class=\"tbldata\">
 			          	<input type=\"text\" name=\"spyship_count\" maxlength=\"5\" size=\"5\" value=\"".$arr['spyship_count']."\"> &nbsp; ";
 						$sres = dbquery("
-						SELECT 
-			        ship_id, 
+						SELECT
+			        ship_id,
 			        ship_name
-						FROM 
-							ships 
-						WHERE 
+						FROM
+							ships
+						WHERE
 							ship_buildable='1'
 							AND (
 							ship_actions LIKE '%,spy'
@@ -918,7 +918,7 @@
 							OR ship_actions LIKE '%,spy,%'
 							OR ship_actions LIKE 'spy'
 							)
-						ORDER BY 
+						ORDER BY
 							ship_name ASC");
 					        if (mysql_num_rows($sres)>0)
 					        {
@@ -942,12 +942,12 @@
 			          <td class=\"tbldata\">
 			          	<input type=\"text\" name=\"analyzeship_count\" maxlength=\"5\" size=\"5\" value=\"".$arr['analyzeship_count']."\"> &nbsp; ";
 						$sres = dbquery("
-						SELECT 
-			        ship_id, 
+						SELECT
+			        ship_id,
 			        ship_name
-						FROM 
-							ships 
-						WHERE 
+						FROM
+							ships
+						WHERE
 							ship_buildable='1'
 							AND (
 							ship_actions LIKE '%,analyze'
@@ -955,7 +955,7 @@
 							OR ship_actions LIKE '%,analyze,%'
 							OR ship_actions LIKE 'analyze'
 							)
-						ORDER BY 
+						ORDER BY
 							ship_name ASC");
 					        if (mysql_num_rows($sres)>0)
 					        {
@@ -1051,7 +1051,7 @@
 							</td>
 							<td>
 								<input type="checkbox" name="del_multi['.$multi_arr["multi_id"].']" value="1">
-							</td>							
+							</td>
 						</tr>';
 				}
 				echo '<tr>
@@ -1072,7 +1072,7 @@
 							</td>
 							<td>
 								'.($del_multi_arr['timestamp'] > 0 ? df($del_multi_arr['timestamp']) : '-').'
-							</td>								
+							</td>
 						</tr>';
 				}
 				echo '</table>';
@@ -1151,7 +1151,7 @@
 							<input type="text" name="multi_reason" maxlength="20" size="20"">
 						</td>
 					</tr>
-				</table>	
+				</table>
 
 				<h2>Sitting einrichten</h2>
 
@@ -1193,7 +1193,7 @@
 				   echo'</td>
 						</tr>
 				</table>
-				
+
 				</div><div id="tabs-5">';
 
 				/**
@@ -1276,7 +1276,7 @@
  				echo "<tr>
 			 					<td class=\"tbltitle\">Design:</td>
 			 					<td class=\"tbldata\">
-			 						<input type=\"text\" name=\"css_style\" id=\"css_style\" size=\"45\" maxlength=\"250\" value=\"".$arr['css_style']."\"> 
+			 						<input type=\"text\" name=\"css_style\" id=\"css_style\" size=\"45\" maxlength=\"250\" value=\"".$arr['css_style']."\">
 			 						&nbsp; <input type=\"button\" onclick=\"document.getElementById('css_style').value = document.getElementById('designSelector').options[document.getElementById('designSelector').selectedIndex].value\" value=\"&lt;&lt;\" /> &nbsp; ";
 					        echo "<select id=\"designSelector\">
 					        <option value=\"\">(Bitte wählen)</option>";
@@ -1292,7 +1292,7 @@
  							<tr>
 								<td class=\"tbltitle\">Bildpaket / Dateiendung:</td>
 								<td class=\"tbldata\">
-									<input type=\"text\" name=\"image_url\" id=\"image_url\" size=\"45\" maxlength=\"250\" value=\"".$arr['image_url']."\"> 
+									<input type=\"text\" name=\"image_url\" id=\"image_url\" size=\"45\" maxlength=\"250\" value=\"".$arr['image_url']."\">
 									<input type=\"text\" name=\"image_ext\" id=\"image_ext\" value=\"".$arr['image_ext']."\" size=\"3\" maxlength=\"6\" />
 			 						&nbsp; <input type=\"button\" onclick=\"
 									var imageSetVal = document.getElementById('imageSelector').options[document.getElementById('imageSelector').selectedIndex].value;
@@ -1337,10 +1337,10 @@
             		<td class=\"tbldata\">
           				<input type=\"radio\" name=\"item_show\" value=\"full\"";
           				if($arr['item_show']=='full' || $arr['item_show']=='') echo " checked=\"checked\"";
-          				echo " /> Volle Ansicht  &nbsp; 
+          				echo " /> Volle Ansicht  &nbsp;
            				<input type=\"radio\" name=\"item_show\" value=\"small\"";
           				if($arr['item_show']=='small') echo " checked=\"checked\"";
-          				echo " /> Einfache Ansicht 
+          				echo " /> Einfache Ansicht
            			</td>
            		</tr>
            		<tr>
@@ -1348,7 +1348,7 @@
             		<td class=\"tbldata\">
           				<input type=\"radio\" name=\"image_filter\" value=\"1\"";
           				if($arr['image_filter']==1) echo " checked=\"checked\"";
-          				echo "/> An   &nbsp; 
+          				echo "/> An   &nbsp;
           				<input type=\"radio\" name=\"image_filter\" value=\"0\"";
           				if($arr['image_filter']==0) echo " checked=\"checked\"";
           				echo "/> Aus
@@ -1359,7 +1359,7 @@
           			<td class=\"tbldata\">
                     <input type=\"radio\" name=\"helpbox\" value=\"1\" ";
                     if ($arr['helpbox']==1) echo " checked=\"checked\"";
-                    echo "/> Aktiviert &nbsp; 
+                    echo "/> Aktiviert &nbsp;
                     <input type=\"radio\" name=\"helpbox\" value=\"0\" ";
                     if ($arr['helpbox']==0) echo " checked=\"checked\"";
           					echo "/> Deaktiviert
@@ -1370,7 +1370,7 @@
           			<td class=\"tbldata\">
                     <input type=\"radio\" name=\"notebox\" value=\"1\" ";
                     if ($arr['notebox']==1) echo " checked=\"checked\"";
-                    echo "/> Aktiviert &nbsp; 
+                    echo "/> Aktiviert &nbsp;
                     <input type=\"radio\" name=\"notebox\" value=\"0\" ";
                     if ($arr['notebox']==0) echo " checked=\"checked\"";
           					echo "/> Deaktiviert
@@ -1381,7 +1381,7 @@
           			<td class=\"tbldata\">
                     <input type=\"radio\" name=\"havenships_buttons\" value=\"1\" ";
                     if ($arr['havenships_buttons']==1) echo " checked=\"checked\"";
-                    echo "/> Aktiviert &nbsp; 
+                    echo "/> Aktiviert &nbsp;
                     <input type=\"radio\" name=\"havenships_buttons\" value=\"0\" ";
                     if ($arr['havenships_buttons']==0) echo " checked=\"checked\"";
           					echo "/> Deaktiviert
@@ -1392,7 +1392,7 @@
           			<td class=\"tbldata\">
                     <input type=\"radio\" name=\"show_adds\" value=\"1\" ";
                     if ($arr['show_adds']==1) echo " checked=\"checked\"";
-                    echo "/> Aktiviert &nbsp; 
+                    echo "/> Aktiviert &nbsp;
                     <input type=\"radio\" name=\"show_adds\" value=\"0\" ";
                     if ($arr['show_adds']==0) echo " checked=\"checked\"";
           					echo "/> Deaktiviert
@@ -1467,7 +1467,7 @@
 	                  	echo " checked=\"checked\"";
 	                  }
 	                  echo "/> Aktiviert &nbsp;
-	              
+
 	                  <input type=\"radio\" name=\"fleet_rtn_msg\" value=\"0\" ";
 	                  if ($arr['fleet_rtn_msg']==0)
 	                  {
@@ -1475,7 +1475,7 @@
 	                  }
 	        					echo "/> Deaktiviert
 	        			</td>
-      				</tr>           		
+      				</tr>
            		<tr>
            			<td colspan=\"2\" class=\"tabSeparator\"></td>
            		</tr>
@@ -1501,13 +1501,13 @@
 
 				echo "<table class=\"tbl\">";
 				$lres=dbquery("
-				SELECT 
-					* 
-				FROM 
-					login_failures 
+				SELECT
+					*
+				FROM
+					login_failures
 				WHERE
 					failure_user_id=".$arr['user_id']."
-				ORDER BY 
+				ORDER BY
 					failure_time DESC
 				;");
 				if (mysql_num_rows($lres)>0)
@@ -1642,7 +1642,7 @@
 				echo "
 				<div id=\"tabEconomy\">
 				Das Laden aller Wirtschaftsdaten kann einige Sekunden dauern!<br/><br/>
-				<input type=\"button\" value=\"Wirtschaftsdaten laden\" onclick=\"showLoader('tabEconomy');xajax_loadEconomy(".$arr['user_id'].",'tabEconomy');\" /> 
+				<input type=\"button\" value=\"Wirtschaftsdaten laden\" onclick=\"showLoader('tabEconomy');xajax_loadEconomy(".$arr['user_id'].",'tabEconomy');\" />
 				</div>";
 
 			echo '
@@ -1701,7 +1701,7 @@
 							} else if (ui.index == 11) {
 								xajax_userLogs('.$id.',"logsBox");
 							}
-						});						
+						});
 					});
 				</script>';
 

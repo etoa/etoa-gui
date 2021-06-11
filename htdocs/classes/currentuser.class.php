@@ -58,12 +58,12 @@
 			if (validatePasswort($oldPassword, $arr[0]))
 			{
 				$res = dbquery("
-				SELECT 
+				SELECT
 					COUNT(*)
-				FROM 
+				FROM
 					user_sitting
-				WHERE 
-					password='".md5($_POST['user_password1'])."' 
+				WHERE
+					password='".md5($_POST['user_password1'])."'
 					AND user_id=".$this->id."
 				LIMIT 1;");
 				$arr = mysql_fetch_row($res);

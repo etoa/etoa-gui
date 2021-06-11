@@ -8,7 +8,7 @@
 /**
 * Handles Market....
 * For market deliverys, ships and resources
-* 
+*
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 namespace marketdelivery
@@ -18,7 +18,7 @@ namespace marketdelivery
 	public:
 		MarketDeliveryHandler(mysqlpp::Row fleet)  : FleetAction(fleet) { }
 		void update();
-	
+
 	};
 }
 #endif

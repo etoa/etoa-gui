@@ -10,16 +10,16 @@ if (isset($_GET['kick']))
     success_msg("Session ".$_GET['kick']." gelöscht!");
 }
 if (isset($_POST['kick_all']))
-{	
-    $res=dbquery("SELECT 
+{
+    $res=dbquery("SELECT
         id
     FROM
         user_sessions s
     ;");
-    if (mysql_num_rows($res)>0) 
+    if (mysql_num_rows($res)>0)
     {
-        while ($arr=mysql_fetch_array($res)) 
-        {        
+        while ($arr=mysql_fetch_array($res))
+        {
             UserSession::kick($arr['id']);
         }
         success_msg("Alle Sessions gelöscht!");
@@ -27,7 +27,7 @@ if (isset($_POST['kick_all']))
 }
 
 
-$res=dbquery("SELECT 
+$res=dbquery("SELECT
     s.*,
     u.user_nick
     FROM

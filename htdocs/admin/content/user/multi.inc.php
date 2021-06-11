@@ -3,11 +3,11 @@
 		{
 			$ip = $_GET['ip'];
 			echo "<h1>Multi-Erkennung - Details</h1>";
-			
+
 			echo "<b>IP:</b> <a href=\"?page=$page&amp;sub=ipsearch&amp;ip=".$ip."\">$ip</a><br/>
 			<b>Host:</b> <a href=\"?page=$page&amp;sub=ipsearch&amp;host=".Net::getHost($ip)."\">".Net::getHost($ip)."</a><br/><br/>";
 			$ipres = dbquery("
-			SELECT 
+			SELECT
 				users.user_blocked_from,
 				users.user_blocked_to,
 				users.user_hmode_from,
@@ -23,8 +23,8 @@
 				users.user_name,
 				users.user_email,
 				users.user_email_fix,
-				users.user_multi_delets 
-			FROM 
+				users.user_multi_delets
+			FROM
 				users
 				LEFT JOIN
 					user_sessions
@@ -75,7 +75,7 @@
 					$uCol=' class="userDeletedColor"';
 				else
 					$uCol=' class="tbldata"';
-				
+
 				echo "<tr>";
 				echo "<td $uCol>
 				<a href=\"?page=$page&amp;sub=ipsearch&amp;user=".$iparr['user_id']."\">".$iparr['user_nick']."</a>
@@ -194,7 +194,7 @@
 						user_sessions.time_action,
 						users.user_name,
 						users.user_email
-					FROM 
+					FROM
 						users
 						LEFT JOIN
 							user_sessions
@@ -219,7 +219,7 @@
 							AND (user_sessions.ip_addr='$ip' OR user_sessionlog.ip_addr='$ip')
 					ORDER BY
 						time_log DESC;");
-					
+
 					if ($iparr['admin'])
 						$uCol = ' class="adminColor"';
 					elseif ($iparr['user_ghost'])
@@ -254,7 +254,7 @@
                             AND multi_id!='0';");
 
 						if ($cnt!=0) echo "<tr>"; else $cnt=1;
-						
+
 						echo "<td $uCol><a href=\"?page=user&sub=edit&id=".$iparr['user_id']."\">".$iparr['user_nick']."</a></td>";
 						echo "<td $uCol title=\"".$iparr['user_email']."\">".$iparr['user_name']."</td>";
 						echo "<td $uCol";
@@ -265,7 +265,7 @@
 						else
 							echo ">Noch nicht eingeloggt!";
 						echo "</td>";
-            
+
 						if(mysql_num_rows($multi_res)>0)
 						{
 							$multi = 1;
@@ -288,27 +288,27 @@
 						{
 							echo "<td $uCol>-</td>";
 						}
-            
+
             $sitting = mysql_fetch_array(dbquery("
                         SELECT
                           user_nick
                         FROM
                           user_sitting,users
                         WHERE
-                          users.user_id = sitter_id 
+                          users.user_id = sitter_id
                         AND
-                          user_sitting.user_id= '".$iparr['user_id']."' 
+                          user_sitting.user_id= '".$iparr['user_id']."'
                         AND
                           ".time()." BETWEEN date_from AND date_to"));
-            if ($sitting)                  
+            if ($sitting)
               echo "<td>".$sitting['user_nick']."</td></tr>";
             else
               echo "<td>-</td></tr>";
-                    
+
 						$multi_total_cnt++;
-          }           
-          $multi_ip_cnt++;  
-				}  
+          }
+          $multi_ip_cnt++;
+				}
         echo "</table>";
 				echo "<p>Total $multi_ip_cnt IP-Adressen mit $multi_total_cnt Spielern entdeckt.</p>";
 			}

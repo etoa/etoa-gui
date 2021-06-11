@@ -149,7 +149,7 @@
 			$sql = "";
 			$query = "";
 			$sqlstart = "
-			SELECT 
+			SELECT
 					planet_name,
 					planets.id as id,
 		      entities.pos,
@@ -161,13 +161,13 @@
 		      techlist_id,
 		      techlist_build_type,
 		      techlist_current_level
-			FROM 
+			FROM
 				techlist
 			INNER JOIN
 				technologies
 			ON
 				techlist.techlist_tech_id=technologies.tech_id
-			INNER JOIN 
+			INNER JOIN
 				planets
 			ON
 				techlist_entity_id=planets.id
@@ -182,12 +182,12 @@
 			INNER JOIN
 				users
 			ON
-				techlist.techlist_user_id=users.user_id			
+				techlist.techlist_user_id=users.user_id
 			";
 			$sqlend = "
-			GROUP BY 
-				techlist_id 
-			ORDER BY 
+			GROUP BY
+				techlist_id
+			ORDER BY
 				techlist_entity_id,
 				tech_type_id,
 				tech_order,
@@ -214,7 +214,7 @@
 							}
 							else
 							{
-								dbquery("UPDATE techlist 
+								dbquery("UPDATE techlist
 										 SET techlist_current_level = ".$_POST['techlist_current_level']."
 										 WHERE techlist_user_id = ".$updata[1]."
 										 AND techlist_tech_id = ".$arr['tech_id']);
@@ -232,7 +232,7 @@
 					}
 					else
 					{
-						dbquery("UPDATE techlist 
+						dbquery("UPDATE techlist
 								 SET techlist_current_level = ".$_POST['techlist_current_level']."
 								 WHERE techlist_user_id = ".$updata[1]."
 								 AND techlist_tech_id = ".$_POST['tech_id']);
@@ -362,9 +362,9 @@
 				dbquery("DELETE FROM techlist WHERE techlist_id='".$_GET['techlist_id']."';");
 			}
 
-			$res = dbquery("SELECT 
-								* 
-							FROM 
+			$res = dbquery("SELECT
+								*
+							FROM
 								techlist
 							INNER JOIN
 								technologies
@@ -461,18 +461,18 @@
 			echo "</select><br>Alle Techs <input type='checkbox' name='all_techs'></td></tr>";
 			echo "<tr><th class=\"tbltitle\">Stufe</th><td class=\"tbldata\"><input type=\"text\" name=\"techlist_current_level\" value=\"1\" size=\"1\" maxlength=\"3\" /></td></tr>";
 			echo "<tr><th class=\"tbltitle\">f&uuml;r den Spieler</th><td class=\"tbldata\"> <select name=\"planet_id\"><";
-			$pres=dbquery("SELECT 
+			$pres=dbquery("SELECT
 								user_id,
 								user_nick,
-								planets.id 
-							FROM 
+								planets.id
+							FROM
 								planets
 							INNER JOIN
 								users
 							ON
 								users.user_id=planets.planet_user_id
-								AND planets.planet_user_main=1 
-							ORDER BY 
+								AND planets.planet_user_main=1
+							ORDER BY
 								user_nick;");
 			while ($parr=mysql_fetch_array($pres))
 			{
@@ -486,9 +486,9 @@
 				</div>
 			</div>';
 
-			$tblcnt = mysql_fetch_row(dbquery("SELECT 
-													count(*) 
-												FROM 
+			$tblcnt = mysql_fetch_row(dbquery("SELECT
+													count(*)
+												FROM
 													techlist;"));
 			echo "<p>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.</p>";
 

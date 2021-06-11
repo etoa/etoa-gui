@@ -9,7 +9,7 @@
 
 /**
 * PlanetData class
-* 
+*
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
@@ -29,7 +29,7 @@ public:
 		this->typeBuildtime = (double)object["type_f_buildtime"];
 		this->typeCollectGas = (bool)object["type_collect_gas"];
 	}
-	
+
 	short getTypeId();
 	bool getTypeHabitable();
 	double getTypeMetal();
@@ -42,7 +42,7 @@ public:
 	double getTypeResearchtime();
 	double getTypeBuildtime();
 	bool getTypeCollectGas();
-		
+
 private:
 	short typeId;
 	bool typeHabitable;

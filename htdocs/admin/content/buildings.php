@@ -39,12 +39,12 @@
 			document.getElementById('c1_id').options[document.getElementById('c1_id').selectedIndex].value,
 			document.getElementById('c1_level').options[document.getElementById('c1_level').selectedIndex].value
 			)
-		}           
-		
+		}
+
 		function showTotalPrices()
 		{
 			xajax_totalBuildingPrices(xajax.getFormValues('totalCosts'));
-		}		
+		}
 		</script>";
 
 		$res = dbquery("
@@ -159,9 +159,9 @@
 		SELECT
 			building_id,
 			building_name
-		FROM 
+		FROM
 			buildings
-		ORDER BY 
+		ORDER BY
 			building_order,
 			building_name;");
 		if (mysql_num_rows($res)>0)
@@ -174,11 +174,11 @@
 				SELECT
 					bp_level,
 					bp_points
-				FROM 
+				FROM
 					building_points
 				WHERE
 					bp_building_id=".$arr['building_id']."
-				ORDER BY 
+				ORDER BY
 					bp_level ASC;");
 				if (mysql_num_rows($pres)>0)
 				{
@@ -274,7 +274,7 @@
 				echo "<div style=\"margin:0px;padding:0px;background:#fff url('../images/".$img."') repeat-y;width:20px;height:20px;float:left;text-align:left;color:#666;\" >".$divtext."</div>";
 			}
 			echo "<img src=\"".IMAGE_PATH."/buildings/building".$cItemId."_small.".IMAGE_EXT."\" align=\"top\" style=\"border:none;height:20px;width:20px;margin:0px;padding:0px;\">
-				<a href=\"javascript:;\" style=\"color:#00f\" onclick=\"xajax_reqInfo(".$cItemId.")\">".$bu_name[$cItemId]."</a> 
+				<a href=\"javascript:;\" style=\"color:#00f\" onclick=\"xajax_reqInfo(".$cItemId.")\">".$bu_name[$cItemId]."</a>
 			<br style=\"clear:both;\"/>
 			</td></tr>";
 
@@ -340,14 +340,14 @@
 		if (isset($_POST['save']))
 		{
 			dbquery("
-			UPDATE 
-				buildlist 
-			SET 
+			UPDATE
+				buildlist
+			SET
                 buildlist_current_level='".$_POST['buildlist_current_level']."',
                 buildlist_build_type='".$_POST['buildlist_build_type']."',
                 buildlist_build_start_time=UNIX_TIMESTAMP('".$_POST['buildlist_build_start_time']."'),
-                buildlist_build_end_time=UNIX_TIMESTAMP('".$_POST['buildlist_build_end_time']."') 
-			WHERE 
+                buildlist_build_end_time=UNIX_TIMESTAMP('".$_POST['buildlist_build_end_time']."')
+			WHERE
 				buildlist_id='".$_POST['buildlist_id']."';");
 		}
 		elseif (isset($_POST['del']))
@@ -363,7 +363,7 @@
 		{
 			echo "<h2>Datensatz bearbeiten</h2>";
 			$res = dbquery("
-			SELECT 
+			SELECT
 				buildlist.buildlist_id,
 				buildlist.buildlist_current_level,
 				buildlist.buildlist_build_start_time,
@@ -372,15 +372,15 @@
 				planets.planet_name,
 				users.user_nick,
 				buildings.building_name
-			FROM 
+			FROM
                 buildlist
 			INNER JOIN
                 planets
-			ON 
+			ON
 				buildlist.buildlist_entity_id=planets.id
 			INNER JOIN
                 users
-			ON 
+			ON
 				buildlist.buildlist_user_id=users.user_id
 			INNER JOIN
                 buildings
@@ -443,13 +443,13 @@
 				if (mysql_num_rows(dbquery("SELECT buildlist_id FROM buildlist WHERE buildlist_entity_id=".$updata[0]." AND buildlist_building_id=".$_POST['building_id'].";"))==0)
 				{
 					dbquery("
-					INSERT INTO 
-					buildlist 
+					INSERT INTO
+					buildlist
                         (buildlist_entity_id,
                         buildlist_user_id,
                         buildlist_building_id,
-                        buildlist_current_level) 
-					VALUES 
+                        buildlist_current_level)
+					VALUES
                         (".$updata[0].",
                         ".$updata[1].",
                         ".$_POST['building_id'].",
@@ -474,7 +474,7 @@
 				echo "</select></td></tr>";
 				echo "<tr><th class=\"tbltitle\">mit Stufe</th><td class=\"tbldata\"><input type=\"text\" name=\"building_level\" value=\"1\" size=\"1\" maxlength=\"3\" /></td></tr>";
 				echo "<tr><th class=\"tbltitle\">auf dem Planeten</th><td class=\"tbldata\"> <select name=\"entity_id\"><";
-				$pres=dbquery("SELECT 
+				$pres=dbquery("SELECT
 								users.user_id,
 								planets.id,
 								planets.planet_name,
@@ -483,22 +483,22 @@
 								cells.sx,
 								cells.sy,
 								cells.cx,
-								cells.cy 
-							FROM 
+								cells.cy
+							FROM
 								planets
 							INNER JOIN
 								entities
-							ON 
+							ON
 								planets.id=entities.id
 							INNER JOIN
 								cells
-							ON 
+							ON
 								entities.cell_id=cells.id
-							INNER JOIN 
+							INNER JOIN
 								users
 							ON
 								planets.planet_user_id=users.user_id
-							ORDER BY 
+							ORDER BY
 								planets.id;");
 				while ($parr=mysql_fetch_array($pres))
 				{
@@ -654,7 +654,7 @@
 			{
 				echo "<option value=\"".$barr['building_id']."\">".$barr['building_name']."</option>";
 			}
-			echo "</select> &nbsp; 
+			echo "</select> &nbsp;
 			<input type=\"button\" onclick=\"showLoaderPrepend('shipsOnPlanet');xajax_addBuildingToPlanet(xajax.getFormValues('selector'));\" value=\"Hinzuf&uuml;gen\" />
 			<input type=\"button\" onclick=\"showLoaderPrepend('shipsOnPlanet');xajax_addAllBuildingToPlanet(xajax.getFormValues('selector'),".count($bdata).");\" value=\"Alle hinzuf&uuml;gen\" /></td></tr>";
 

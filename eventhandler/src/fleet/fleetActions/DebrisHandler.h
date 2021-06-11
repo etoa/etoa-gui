@@ -8,7 +8,7 @@
 /**
 * Handles Debris....
 * Creates a debris field or add the resources to an existing field. The whole fleet will be destroyed
-* 
+*
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 namespace debris

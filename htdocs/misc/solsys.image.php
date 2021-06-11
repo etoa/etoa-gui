@@ -27,7 +27,7 @@
 	if (isset($_SESSION['planets']))
 	{
 		$planet = $_SESSION['planets'];
-		
+
 		// Sol
 		$x0 = $im_size/1.8;
 		$y0 = $im_size/2;
@@ -37,7 +37,7 @@
 			$sims = getimagesize("../".$sol['image']);
 			$simr = imagecreatefromgif("../".$sol['image']);
 			$simw = $sims[0];
-			$simh = $sims[1];			
+			$simh = $sims[1];
 			imagecopy($im,$simr,$x0-($simw/2),$y0-($simh/2),0,0,$simw,$simh);
 		}
 		else
@@ -72,11 +72,11 @@
 					foreach ($p['moon'] as $m)
 					{
 						$xm = $x+($m['dist']*cos($t*$m['period']));
-						$ym = $y+($m['dist']*sin($t*$m['period']));			
+						$ym = $y+($m['dist']*sin($t*$m['period']));
 						imagesetpixel($im,$xm,$ym,$col_grey);
 					}
 				}
-			}	
+			}
 
 			$tc = time()*GAME_SECOND * 2 * PI / $period;
 
@@ -89,7 +89,7 @@
 				$pims = getimagesize("../".$p['image']);
 				$pimr = imagecreatefromgif("../".$p['image']);
 				$pimw = $pims[0];
-				$pimh = $pims[1];			
+				$pimh = $pims[1];
 				imagecopyresized($im,$pimr,$x-8,$y-8,0,0,16,16,$pimw,$pimh);
 			}
 			else
@@ -100,7 +100,7 @@
 			if (isset($p['moon']))
 			{
 				foreach ($p['moon'] as $m)
-				{			
+				{
 					$xm = $x+($m['dist']*cos($tc*$m['period']));
 					$ym = $y-($m['dist']*sin($tc*$m['period']));
 					imagefilledellipse($im,$xm,$ym,MOON_RADIUS,MOON_RADIUS,$col_white);
@@ -110,14 +110,14 @@
 			// Name
 			imagestring($im,3,$x+3,$y+5,$i,$col_orange);
 			//imagestring($im,3,$x+3,$y+5,$p['name'],$col_orange);
-			
+
 		}
 	}
 	else
 	{
 		imagestring($im,8,5,5,"Keine Planetendaten vorhanden!",$col_white);
 	}
-		
+
 	imagepng($im);
 	imagedestroy($im);
 ?>

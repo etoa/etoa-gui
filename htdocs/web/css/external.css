@@ -18,7 +18,7 @@ p.center {
 
 #outGameContent	{
 	margin: 80px auto 10px;
-	width: 800px;	
+	width: 800px;
 }
 
 /*
@@ -58,7 +58,7 @@ table.tb td , table.tb th{
 	width: 120px;
 }
 
-.styled-form-medium .form-buttons, 
+.styled-form-medium .form-buttons,
 .styled-form-medium .form-text {
 	padding-left: 125px;
 }

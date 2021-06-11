@@ -27,11 +27,11 @@
 
 /**
 * Fleethandler base class
-* 
+*
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
-class FleetAction	
+class FleetAction
 {
 public:
 	/**
@@ -40,18 +40,18 @@ public:
 	*/
 	FleetAction(mysqlpp::Row fleet) {
 		this->fleet_=fleet;
-		
+
 		My &my = My::instance();
 		this->con_ = my.get();
-		
+
 		this->f = new Fleet(fleet);
-		
+
 		this->startEntity = EntityFactory::createEntityById(this->f->getEntityFrom());
 		if (this->f->getStatus()==3 && this->f->getNextactiontime() > 0)
 			this->targetEntity = EntityFactory::createEntityById(this->f->getNextId());
 		else
 			this->targetEntity = EntityFactory::createEntityById(this->f->getEntityTo());
-		
+
 		this->actionLog = new Log();
 		this->actionLog->addFleetId(this->f->getId());
 		this->actionLog->addFleetUserId(this->f->getUserId());
@@ -62,7 +62,7 @@ public:
 		this->actionLog->addAction(this->f->getAction());
 		this->actionLog->addStatus(this->f->getStatus());
 	}
-	
+
 	virtual ~FleetAction() {
 		this->actionLog->addEntityUserId(this->targetEntity->getUserId());
 		this->actionLog->addFleetResStart(this->f->getLogResStart());
@@ -74,20 +74,20 @@ public:
 		this->actionLog->addEntityShipsStart(this->targetEntity->getLogShipsStart());
 		this->actionLog->addEntityShipsEnd(this->targetEntity->getLogShipsEnd());
 		delete this->actionLog;
-		
-		delete this->targetEntity;		
-		
+
+		delete this->targetEntity;
+
 		delete this->startEntity;
-		
+
 		delete this->f;
 	}
-		
+
 	/**
 	* Abstract class for handling the events
 	* Each derived class has to implement this method
 	*/
 	virtual void update() = 0;
-	
+
 	/**
 	* Standartflottenaktionen
 	*/
@@ -104,12 +104,12 @@ protected:
 	Entity* targetEntity;
 	Message *actionMessage;
 	Log *actionLog;
-	
+
 	//Fight
 	int returnV;
 	std::string bstat,bstat2,msgFight;
 	bool returnFleet;
-	
+
 	int shipSteal;
 };
 

@@ -6,8 +6,8 @@
 	if (isset($_GET['id']) && intval($_GET['id']) > 0)
 	{
 		$did = intval($_GET['id']);
-		
-		$res = dbquery("SELECT 
+
+		$res = dbquery("SELECT
 						`def_name`,
 						`def_id`,
 						`def_costs_metal`,
@@ -27,23 +27,23 @@
 		{
 			HelpUtil::breadCrumbs(array("Verteidigung","defense"),array(text2html($arr['def_name']),$arr['def_id']),1);
 			echo "<select onchange=\"document.location='?$link&amp;site=defense&id='+this.options[this.selectedIndex].value\">";
-			$bres=dbquery("SELECT 
+			$bres=dbquery("SELECT
 				def_id,
-				def_name 
-			FROM 
-				defense 
-			WHERE 
+				def_name
+			FROM
+				defense
+			WHERE
 				def_show=1
-			ORDER BY 
+			ORDER BY
 				def_name;");
-			while ($barr=mysql_fetch_array($bres))		
+			while ($barr=mysql_fetch_array($bres))
 			{
 				echo "<option value=\"".$barr['def_id']."\"";
 				if ($barr['def_id']==$did) echo " selected=\"selected\"";
 				echo ">".$barr['def_name']."</option>";
 			}
-			echo "</select><br/><br/>";		
-			
+			echo "</select><br/><br/>";
+
 		 	tableStart($arr['def_name']);
 	   	echo "<tr><td width=\"220\" class=\"tbltitle\"><img src=\"".IMAGE_PATH."/".IMAGE_DEF_DIR."/def".$arr['def_id'].".".IMAGE_EXT."\" width=\"220\" height=\"220\" alt=\"Verteidigung\" /></td>";
 	   	echo "<td class=\"tbldata\">".text2html($arr['def_longcomment'])."</td></tr>";
@@ -64,7 +64,7 @@
 	    echo "<tr><td class=\"tbltitle\">Platzverbrauch</td><td class=\"tbldata\">".nf($arr['def_fields'])." Felder</td></tr>";
 	    echo "<tr><td class=\"tbltitle\">Max. Anzahl</td><td class=\"tbldata\">".nf($arr['def_max_count'])."</td></tr>";
 	    tableEnd();
-	    
+
 			$otres = dbquery("
 			SELECT
 				d.ship_id as id,
@@ -77,19 +77,19 @@
 				AND t.def_id=".$arr['def_id']."
 			");
 			if (mysql_num_rows($otres) > 0)
-			{	    
+			{
 	    	$otarr = mysql_fetch_assoc($otres);
 		    iBoxStart("Transformation");
 	    	echo "Diese Verteidigungsanlage lässt sich auf ein Schiff verladen:<br/><br/>";
 	    	echo "<a href=\"?$link&amp;site=shipyard&amp;id=".$otarr['id']."\">".$otarr['name']."</a>";
 				iBoxEnd();
-	    	
+
 	  	}
-	    
+
 	    iBoxStart("Technikbaum");
     	showTechTree("d",$arr['def_id']);
 			iBoxEnd();
-	    
+
 		}
 		else
 		  echo "Verteidigungsdaten nicht gefunden!";
@@ -100,8 +100,8 @@
 	}
 	else
 	{
-		HelpUtil::breadCrumbs(array("Verteidigung","defense"));		
-		
+		HelpUtil::breadCrumbs(array("Verteidigung","defense"));
+
 		if (isset($_GET['order']) && ctype_alpha($_GET['order']))
 		{
 			$order="def_".$_GET['order'];
@@ -129,30 +129,30 @@
 		}
 
 		$cres = dbquery("
-		SELECT 
-			* 
-		FROM 
+		SELECT
+			*
+		FROM
 			def_cat
-		ORDER BY 
+		ORDER BY
 			cat_order;");
 		if (mysql_num_rows($cres)>0)
-		{ 
+		{
 			while ($carr = mysql_fetch_assoc($cres))
 			{
 				$res = dbquery("
-				SELECT 
-					* 
-				FROM 
-					defense 
-				WHERE 
+				SELECT
+					*
+				FROM
+					defense
+				WHERE
 					def_cat_id=".$carr['cat_id']."
-					AND def_show=1 
-				ORDER BY 
+					AND def_show=1
+				ORDER BY
 					$order $sort;");
 				if (mysql_num_rows($res)>0)
 				{
 					tableStart($carr['cat_name']);
-		
+
 					echo "<tr>
 						<th colspan=\"2\"><a href=\"?$link&amp;site=$site&amp;order=name\">Name</a></th>
 						<th><a href=\"?$link&amp;site=$site&amp;order=race_id\">Rasse</a></th>
@@ -188,7 +188,7 @@
 		}
 		else
 			echo "<i>Keine Daten vorhanden!</i>";
-			
+
 }
 
 ?>

@@ -15,31 +15,31 @@
 	// Programmiert von Nicolas Perrenoud				 		//
 	// www.nicu.ch | mail@nicu.ch								 		//
 	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	//////////////////////////////////////////////////	
+	//////////////////////////////////////////////////
 	//
-	// 	Dateiname: races.php	
-	// 	Topic: Formular-Definitionen für Rassen 
-	// 	Autor: Nicolas Perrenoud alias MrCage							
+	// 	Dateiname: races.php
+	// 	Topic: Formular-Definitionen für Rassen
+	// 	Autor: Nicolas Perrenoud alias MrCage
 	// 	Erstellt: 01.12.2004
 	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage
 	// 	Bearbeitet am: 31.03.2006
-	// 	Kommentar: 	
+	// 	Kommentar:
 	//
-	
+
 	// VARIABLES
-	
-	define("MODUL_NAME","Tipps");				
+
+	define("MODUL_NAME","Tipps");
 	define("DB_TABLE", "tips");
 	define("DB_TABLE_ID", "tip_id");
 	define("DB_OVERVIEW_ORDER_FIELD","tip_text");
-	
+
 	$form_switches = array("Anzeigen"=>'tip_active');
 
-	
+
 	// FIELDS
-	
+
 	// Description:
-	
+
 	// name	 											// DB Field Name
 	// text												// Field Description
 	// type												// Field Type: text, password, textarea, timestamp, radio, select, checkbox, email, url, numeric
@@ -53,8 +53,8 @@
 	// select_elem (Array)				// Select Elements (desc=>value)
 	// select_elem_checked				// Value of default checked Select Element (desc=>value)
 	// show_overview							// Set 1 to show on overview page
-  
-	$db_fields = array ( 
+
+	$db_fields = array (
 											1	=> 	array	(	"name" => "tip_text",
 																		"text" => "Tipp",
 																		"type" => "textarea",
@@ -68,8 +68,8 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
-																	)																											
+																	)
 
 											);
-        
+
 ?>

@@ -12,7 +12,7 @@
 
 /**
 * Handles AllianzShippoints updates
-* 
+*
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 namespace aPoints

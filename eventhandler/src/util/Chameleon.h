@@ -1,4 +1,4 @@
-/* 
+/*
    Chameleon.h
 
    Copyright (C) 2002-2004 René Nyffenegger

@@ -8,7 +8,7 @@
 /**
 * Handles Return....
 * After every action the fleet returns to the startplanet, that's it
-* 
+*
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 namespace retour
@@ -18,7 +18,7 @@ namespace retour
 	public:
 		ReturnHandler(mysqlpp::Row fleet)  : FleetAction(fleet) { }
 		void update();
-	
+
 	};
 }
 #endif

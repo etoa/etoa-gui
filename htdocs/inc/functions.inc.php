@@ -1372,7 +1372,7 @@
 	{
 		$res=dbquery("
 			SELECT
-		    COUNT(bl_id) 
+		    COUNT(bl_id)
 			FROM
 		    buddylist
 		  WHERE
@@ -2539,9 +2539,9 @@ function imagecreatefromfile($path, $user_functions = false)
 			if (!isset($_SESSION['accesslog_sid']))
 				$_SESSION['accesslog_sid'] = uniqid(mt_rand(), true);
 			dbquery("
-			INSERT INTO 
-			accesslog 
-			(target,timestamp,sid,sub,domain) 
+			INSERT INTO
+			accesslog
+			(target,timestamp,sid,sub,domain)
 			VALUES ('$target',UNIX_TIMESTAMP(),'". $_SESSION['accesslog_sid']."','$sub','$domain');");
 		}
 	}

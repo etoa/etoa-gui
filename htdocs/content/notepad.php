@@ -17,16 +17,16 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 	/**
 	* Personal notes management
 	*
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/	
+	*/
 
 	echo "<h1>Notizen</h1>"; //Titel angepasst <h1> by Lamborghini
-	$np = new Notepad($cu->id,1);		
+	$np = new Notepad($cu->id,1);
 
 	//
 	// Neue Notiz
@@ -40,7 +40,7 @@
 		echo '<tr><th>Text:</th><td><textarea name="note_text" cols="50" rows="10"></textarea><br/>'.helpLink('textformat', 'Hilfe zur Formatierung').'</td></tr>';
 		tableEnd();
 		echo "<input type=\"submit\" value=\"Speichern\" name=\"submit_new\" > &nbsp; ";
-		echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page'\" /> &nbsp; ";			
+		echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page'\" /> &nbsp; ";
 		echo "</form><br/>";
 	}
 
@@ -59,7 +59,7 @@
 			echo '<tr><th>Text:</th><td><textarea name="note_text" cols="50" rows="10">'.stripslashes($n->text()).'</textarea><br/>'.helpLink('textformat', 'Hilfe zur Formatierung').'</td></tr>';
 			tableEnd();
 			echo "<input type=\"submit\" value=\"Speichern\" name=\"submit_edit\" > &nbsp; ";
-			echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page'\" /> &nbsp; ";			
+			echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page'\" /> &nbsp; ";
 			echo "</form><br/>";
 		}
 		else
@@ -73,7 +73,7 @@
 	//
 	else
 	{
-		
+
 		// Änderungen speichern
 		if (isset($_POST['submit_new']) && $_POST['note_subject']!="")
 		{
@@ -85,7 +85,7 @@
 		{
 			// Notepad::set() uses safe query
 			$np->set($_POST['note_id'],$_POST['note_subject'],$_POST['note_text']);
-		}		
+		}
 		// Notiz löschen
 		elseif (isset($_GET['action']) && $_GET['action']=="delete" && intval($_GET['id'])>0)
 		{
@@ -95,7 +95,7 @@
 
 		if ($np->numNotes()>0)
 		{
-			tableStart("Meine Notizen");			
+			tableStart("Meine Notizen");
 			foreach ($np->getArray() as $id=>$n)
 			{
 				echo "<tr><td width=\"120px\"><b>".$n->subject()."</b>
@@ -110,9 +110,9 @@
 		{
 			info_msg("Keine Notizen vorhanden!");
 		}
-		
-		
-		
+
+
+
 		echo "<input type=\"button\" value=\"Neue Notiz\" onclick=\"document.location='?page=$page&amp;action=new'\" /> &nbsp; ";
 	}
 

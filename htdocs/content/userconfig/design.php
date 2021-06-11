@@ -155,7 +155,7 @@
       echo "<td>
       				<input type=\"radio\" name=\"item_show\" value=\"full\"";
       				if($cu->properties->itemShow=='full') echo " checked=\"checked\"";
-      				echo " /> Volle Ansicht 
+      				echo " /> Volle Ansicht
       			</td>
       			<td width=\"48%\" colspan=\"3\">
        				<input type=\"radio\" name=\"item_show\" value=\"small\"";
@@ -171,7 +171,7 @@
       echo "<td>
       				<input type=\"radio\" name=\"image_filter\" value=\"1\"";
       				if($cu->properties->imageFilter==1) echo " checked=\"checked\"";
-      				echo "/> An  
+      				echo "/> An
       			</td>
       			<td width=\"48%\" colspan=\"3\">
       				<input type=\"radio\" name=\"image_filter\" value=\"0\"";

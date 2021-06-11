@@ -5,7 +5,7 @@
 
 /**
 * EntityFactoryClass
-* 
+*
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
@@ -27,9 +27,9 @@
 
 class EntityFactory {
 
-public:	
+public:
 	static Entity* createEntityById(int id) {
-		
+
 		My &my = My::instance();
 		mysqlpp::Connection *con = my.get();
 		mysqlpp::Query query = con->query();
@@ -42,16 +42,16 @@ public:
 		query << "LIMIT 1;";
 		RESULT_TYPE eRes = query.store();
 		query.reset();
-			
-		if (eRes) 
+
+		if (eRes)
 		{
 			int eSize = eRes.size();
-			
+
 			if (eSize>0) {
 				mysqlpp::Row eRow = eRes.at(0);
 				std::string scode = std::string(eRow["code"]);
 				char code = scode[0];
-				
+
 				switch (code)
 				{
 					case 'a':

@@ -4,12 +4,12 @@ $errorMessage = null;
 $successMessage = null;
 $users = [];
 $res=dbquery("
-SELECT 
+SELECT
     user_id,
-    user_nick 
-FROM 
-    users 
-ORDER BY 
+    user_nick
+FROM
+    users
+ORDER BY
     user_nick
 ;");
 if (mysql_num_rows($res)>0) {
@@ -44,12 +44,12 @@ if (isset($_GET['user_id']) && $_GET['user_id']>0) {
         $res = dbQuerySave("
             SELECT
                 id
-            FROM 
+            FROM
                 cells
-            WHERE 
-                sx=? 
-                AND sy=? 
-                AND cx=? 
+            WHERE
+                sx=?
+                AND sy=?
+                AND cx=?
                 AND cy=?;",
             array(
                 $sx,

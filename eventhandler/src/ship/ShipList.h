@@ -8,7 +8,7 @@
 #include "../data/DataHandler.h"
 /**
 * Provides shiplist functions
-* 
+*
 * \author Nicolas Perrenoud <mrcage@etoa.ch>
 */
 namespace ship

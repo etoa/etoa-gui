@@ -5,12 +5,12 @@ namespace colonialize
 {
 	void ColonializeHandler::update()
 	{
-	
+
 		/**
 		* Fleet-Action: Colonialize
 		*/
 		Config &config = Config::instance();
-		
+
 		// Precheck action==possible?
 		if (this->f->actionIsAllowed()) {
 			OtherReport *report = new OtherReport(this->f->getUserId(),
@@ -20,7 +20,7 @@ namespace colonialize
 												  this->f->getId(),
 												  this->f->getAction());
 			if (this->targetEntity->getUserId()) {
-			
+
 				if(this->targetEntity->getUserId() == this->f->getUserId()) {
 					report->setSubtype("return");
 					report->setRes(floor(this->f->getResMetal()),
@@ -41,7 +41,7 @@ namespace colonialize
 			}
 			// if the planet has not yet a user
 			else {
-				// if the user has already enough planets 
+				// if the user has already enough planets
 				if (this->f->fleetUser->getPlanetsCount() >= (int)config.nget("user_max_planets",0)) {
 					report->setSubtype("colonizefailed");
 					report->setContent("2");
@@ -51,13 +51,13 @@ namespace colonialize
 					// reset the planet
 					this->targetEntity->resetEntity(this->f->getUserId());
 					report->setSubtype("colonize");
-					
+
 					report->setRes(floor(this->f->getResMetal()),
 								   floor(this->f->getResCrystal()),
 								   floor(this->f->getResPlastic()),
 								   floor(this->f->getResFuel()),floor(this->f->getResFood()),
 								   floor(this->f->getResPeople()));
-					
+
 					// Land the fleet and delete one ship (action colonialize)
 					this->f->deleteActionShip(1);
 					report->setShips(this->f->getShipString());
@@ -66,7 +66,7 @@ namespace colonialize
 			}
 			delete report;
 		}
-		// If no ship with the action was in the fleet 
+		// If no ship with the action was in the fleet
 		else {
 			OtherReport *report = new OtherReport(this->f->getUserId(),
 												this->f->getEntityTo(),
@@ -77,7 +77,7 @@ namespace colonialize
 			report->setSubtype("actionfailed");
 
 			delete report;
-			
+
 			this->actionLog->addText("Action failed: Ship error");
 		}
 		this->f->setReturn();

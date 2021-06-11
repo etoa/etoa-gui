@@ -15,28 +15,28 @@
 	// Programmiert von Nicolas Perrenoud				 		//
 	// www.nicu.ch | mail@nicu.ch								 		//
 	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	//////////////////////////////////////////////////	
+	//////////////////////////////////////////////////
 	//
-	// 	Dateiname: config.php	
-	// 	Topic: Formular-Definitionen für Konfiguration 
-	// 	Autor: Nicolas Perrenoud alias MrCage							
+	// 	Dateiname: config.php
+	// 	Topic: Formular-Definitionen für Konfiguration
+	// 	Autor: Nicolas Perrenoud alias MrCage
 	// 	Erstellt: 01.12.2004
 	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage
 	// 	Bearbeitet am: 31.03.2006
-	// 	Kommentar: 	
+	// 	Kommentar:
 	//
-	
+
 	// VARIABLES
-	
-	define("MODUL_NAME","Config");				
+
+	define("MODUL_NAME","Config");
 	define("DB_TABLE", 'config');
 	define("DB_TABLE_ID", "config_id");
 	define("DB_OVERVIEW_ORDER_FIELD","config_name");
-	
+
 	// FIELDS
-	
+
 	// Description:
-	
+
 	// name	 											// DB Field Name
 	// text												// Field Description
 	// type												// Field Type: text, password, textarea, timestamp, radio, select, checkbox, email, url, numeric
@@ -50,7 +50,7 @@
 	// select_elem (Array)				// Select Elements (desc=>value)
 	// select_elem_checked				// Value of default checked Select Element (text=>value)
 	// show_overview							// Set 1 to show on overview page
-  
+
 	$db_fields = array ( 0	=> 	array	(	"name" => "config_name",
 																		"text" => "Name",
 																		"type" => "text",
@@ -108,5 +108,5 @@
 																		"show_overview" => 1
 																	)
 											);
-        
+
 ?>

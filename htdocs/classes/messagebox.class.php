@@ -6,38 +6,38 @@ class MessageBox
 		$class = "info";
 		switch ($type)
 		{
-			case "success":		
-				$class = "success";
-				break;			
-			case "ok":		
+			case "success":
 				$class = "success";
 				break;
-			case "info":		
+			case "ok":
+				$class = "success";
+				break;
+			case "info":
 				$class = "info";
 				break;
-			case "error":		
+			case "error":
 				$class = "error";
 				break;
-			case "err":		
+			case "err":
 				$class = "error";
-				break;			
-			case "warn":		
+				break;
+			case "warn":
 				$class = "warning";
 				break;
-			case "warning":		
+			case "warning":
 				$class = "warning";
-				break;			
-			case "validation":		
+				break;
+			case "validation":
 				$class = "validation";
-				break;				
-		}				
+				break;
+		}
 		$str = "<div class=\"messagebox\" id=\"messagebox".($messageId++)."\"><div class=\"".$class."\">";
 		if ($title!="" && $title!=null) {
 			$str.="<p class=\"messagetitle\">".$title."</p>";
 		}
 		$str.= $message."</div></div>";
 		if ($save || $save == 1)
-			$_SESSION['savedmessage'] = $str;		
+			$_SESSION['savedmessage'] = $str;
 		return $str;
 	}
 
@@ -50,12 +50,12 @@ class MessageBox
 	{
 		return self::get("info", $title, $message, $save);
 	}
-	
+
 	static function warning($title, $message, $save=false)
 	{
 		return self::get("warning", $title, $message, $save);
 	}
-	
+
 	static function validation($title, $message, $save=false)
 	{
 		return self::get("validation", $title, $message, $save);

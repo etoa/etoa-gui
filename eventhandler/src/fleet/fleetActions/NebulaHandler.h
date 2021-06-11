@@ -10,7 +10,7 @@
 
 /**
 * Handles Nebula....
-* 
+*
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 namespace nebula
@@ -20,14 +20,14 @@ namespace nebula
 	public:
 		NebulaHandler(mysqlpp::Row fleet)  : FleetAction(fleet) { }
 		void update();
-		
+
 	private:
 		/**
 		*Calculated/collected resources
 		**/
 		double nebula;
 		double sum;
-		
+
 		/**
 		* Possibilitys, if the action succed
 		**/

@@ -8,10 +8,10 @@
 
 /**
 * EventHandler base class / interface
-* 
+*
 * \author Nicolas Perrenoud <mrcage@etoa.ch>
 */
-class EventHandler	
+class EventHandler
 {
 public:
 	/**
@@ -21,11 +21,11 @@ public:
 	EventHandler():my(My::instance()) {
 //		My &my = My::instance();
 		con_ = my.get();
-		
+
 	}
-	
+
 	virtual ~EventHandler() {};
-		
+
 	/**
 	* Abstract class for handling the events
 	* Each derived class has to implement this method

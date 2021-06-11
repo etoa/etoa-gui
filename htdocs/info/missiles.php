@@ -10,44 +10,44 @@
 	if (isset($_GET['id']))
 	{
 		$mid = intval($_GET['id']);
-		
+
 		$res = dbquery("SELECT * FROM missiles WHERE missile_id='".$mid."';");
 		if ($arr = mysql_fetch_array($res))
 		{
 			HelpUtil::breadCrumbs(array("Raketen","missiles"),array(text2html($arr['missile_name']),$arr['missile_id']),1);
 			echo "<select onchange=\"document.location='?$link&amp;site=missiles&id='+this.options[this.selectedIndex].value\">";
-			$bres=dbquery("SELECT 
+			$bres=dbquery("SELECT
 				missile_id,
-				missile_name 
-			FROM 
-				missiles 
-			WHERE 
+				missile_name
+			FROM
+				missiles
+			WHERE
 				missile_show=1
-			ORDER BY 
+			ORDER BY
 				missile_name;");
-			while ($barr=mysql_fetch_array($bres))		
+			while ($barr=mysql_fetch_array($bres))
 			{
 				echo "<option value=\"".$barr['missile_id']."\"";
 				if ($barr['missile_id']==$mid) echo " selected=\"selected\"";
 				echo ">".$barr['missile_name']."</option>";
 			}
-			echo "</select><br/><br/>";		
-			
+			echo "</select><br/><br/>";
+
 		 	tableStart($arr['missile_name']);
-		 	
+
 	   	echo "<tr><td width=\"220\" class=\"tbltitle\"><img src=\"".IMAGE_PATH."/missiles/missile".$arr['missile_id'].".".IMAGE_EXT."\" width=\"220\" height=\"220\" alt=\"Raketen\" /></td>";
 	   	echo "<td class=\"tbldata\">".text2html($arr['missile_ldesc'])."</td></tr>";
-	   	
+
 	   	echo "<tr><td colspan=\"2\" style=\"height:30px;\"></td></tr>";
-	   	
+
 	   	echo "<tr><th class=\"tbltitle\" colspan=\"2\" style=\"text-align:center\">Kosten und technische Daten</th></tr>";
-	    
+
 	    echo "<tr><td class=\"tbltitle\">".RES_ICON_METAL."".RES_METAL."</td><td class=\"tbldata\">".nf($arr['missile_costs_metal'])."</td></tr>";
 	    echo "<tr><td class=\"tbltitle\">".RES_ICON_CRYSTAL."".RES_CRYSTAL."</td><td class=\"tbldata\">".nf($arr['missile_costs_crystal'])."</td></tr>";
 	    echo "<tr><td class=\"tbltitle\">".RES_ICON_PLASTIC."".RES_PLASTIC."</td><td class=\"tbldata\">".nf($arr['missile_costs_plastic'])."</td></tr>";
 	    echo "<tr><td class=\"tbltitle\">".RES_ICON_FUEL."".RES_FUEL."</td><td class=\"tbldata\">".nf($arr['missile_costs_fuel'])."</td></tr>";
 	    echo "<tr><td class=\"tbltitle\">".RES_ICON_FOOD."".RES_FOOD."</td><td class=\"tbldata\">".nf($arr['missile_costs_food'])."</td></tr>";
-	    
+
 	    echo "<tr><td class=\"tbltitle\">Geschwindigkeit</td><td class=\"tbldata\">".nf($arr['missile_speed'])." AE/h</td></tr>";
 	    echo "<tr><td class=\"tbltitle\">Reichweite</td><td class=\"tbldata\">".nf($arr['missile_range'])." AE</td></tr>";
 	    echo "<tr><td class=\"tbltitle\">Schaden</td>";
@@ -94,15 +94,15 @@
 		if ($_SESSION['lastpage']=="missiles")
 			echo "<input type=\"button\" value=\"Zur&uuml;ck zum Silo\" onclick=\"document.location='?page=missiles'\" /> &nbsp; ";
 	}
-	
+
 //
 //Übersicht
 //
-	
+
 	else
 	{
-		HelpUtil::breadCrumbs(array("Raketen","missiles"));		
-		
+		HelpUtil::breadCrumbs(array("Raketen","missiles"));
+
 		if (isset($_GET['order']) && ctype_alpha($_GET['order']))
 		{
 			$order="missile_".$_GET['order'];
@@ -154,7 +154,7 @@
 					{
 						echo "".nf($arr['missile_def'])."</td>";
 					}
-					else 
+					else
 					{
 						echo "Kein</td>";
 					}
@@ -164,6 +164,6 @@
 		}
 		else
 			echo "<i>Keine Daten vorhanden!</i>";
-			
+
 	}
 ?>

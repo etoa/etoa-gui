@@ -10,23 +10,23 @@
 
 /**
 * Entity class
-* 
+*
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
 class Empty : public Entity {
-public: 
+public:
 	Empty(char code, mysqlpp::Row &eRow) : Entity(code, eRow) {
 		this->codeName = "Leerer Raum";
 		this->showCoords = true;
 	}
-	
+
 	~Empty() {
 		this->saveData();
 	}
-	
+
 	void saveData();
-	
+
 protected:
 	void loadData();
 };

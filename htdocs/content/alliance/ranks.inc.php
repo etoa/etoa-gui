@@ -23,7 +23,7 @@ if (Alliance::checkActionRights('ranks'))
 
 
 						echo "<h2>R&auml;nge</h2>";
-	
+
 						// Ränge speichern
 						if (isset($_POST) && count($_POST)>0 && checker_verify())
 						{
@@ -46,11 +46,11 @@ if (Alliance::checkActionRights('ranks'))
 										}
 										else
 										{
-											dbquery("UPDATE 
-												alliance_ranks 
-											SET 
+											dbquery("UPDATE
+												alliance_ranks
+											SET
 												rank_name='".mysql_real_escape_string($name)."',
-												rank_level='".$_POST['rank_level'][$id]."' 
+												rank_level='".$_POST['rank_level'][$id]."'
 											WHERE rank_id=$id;");
 											if (isset($_POST['rankright']) && isset($_POST['rankright'][$id]))
 											{
@@ -70,13 +70,13 @@ if (Alliance::checkActionRights('ranks'))
 						checker_init();
 
 						$rankres=dbquery("
-						SELECT 
+						SELECT
 							rank_name,
 							rank_id,
-							rank_level 
-						FROM 
-							alliance_ranks 
-						WHERE 
+							rank_level
+						FROM
+							alliance_ranks
+						WHERE
 							rank_alliance_id=".$arr['alliance_id']."
 						ORDER BY rank_level;");
 						if (mysql_num_rows($rankres)>0)
@@ -117,6 +117,6 @@ if (Alliance::checkActionRights('ranks'))
 						}
 						echo "<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" />&nbsp;&nbsp;&nbsp;
 						<input type=\"submit\" name=\"ranknew\" value=\"Neuer Rang\" /></form>";
-						
+
 	}
 ?>

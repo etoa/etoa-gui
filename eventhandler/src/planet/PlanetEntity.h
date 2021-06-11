@@ -6,7 +6,7 @@
 #include <mysql++/mysql++.h>
 
 #include <ctime>
-#include <cmath> 
+#include <cmath>
 #include <vector>
 
 #include "../data/DataHandler.h"
@@ -15,7 +15,7 @@
 
 namespace planet
 {
-	
+
 	class PlanetEntity
 	{
 	public:
@@ -25,7 +25,7 @@ namespace planet
     void updateProduction();
     void save();
 		void saveRes();
-	
+
 	private:
 		int entityId;
 		int fieldsUsed, fieldsExtra, solarPowerBonus;
@@ -36,12 +36,12 @@ namespace planet
         float boostBonusProduction;
 		double birthRate;
 		bool isMain, isUmod;
-		
+
 		std::vector<double> store;
 		std::vector<double> cnt;
 		std::vector<double> ressource;
 		std::vector<double> bunker;
-		
+
 		RaceData* race_;
 		SolData* sol_;
 		PlanetData* planet_;
@@ -49,7 +49,7 @@ namespace planet
 		BuildingData* building_;
 		ShipData* ship_;
 		DefData* def_;
-		
+
 		void loadData();
 		void loadBuildlist();
 		void loadShiplist();
@@ -57,8 +57,8 @@ namespace planet
 		void addBoni();
 		double getEnergyTechnologyBonus(int energyTechID, int requiredLevel, int percentPerLevel);
 
-		
-	};	
+
+	};
 }
 
 #endif

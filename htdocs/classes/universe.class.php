@@ -183,8 +183,8 @@
 			}
 			echo "Zellen geneiert, speichere sie...<br/>";
 			dbquery("
-				INSERT INTO 
-					cells 
+				INSERT INTO
+					cells
 				(
 					sx,
 					sy,

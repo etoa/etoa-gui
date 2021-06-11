@@ -11,7 +11,7 @@
     * Splits a string of words into an array and treats words in quotes as a single word
     *
     * Test:
-    *   StringUtils::splitBySpaces('Lorem ipsum "dolor sit amet" consectetur "adipiscing \\"elit" dolor') 
+    *   StringUtils::splitBySpaces('Lorem ipsum "dolor sit amet" consectetur "adipiscing \\"elit" dolor')
     *   == array ('Lorem','ipsum','dolor sit amet','consectetur','adipiscing "elit','dolor'))
     *
     * @see http://stackoverflow.com/questions/2202435/php-explode-the-string-but-treat-words-in-quotes-as-a-single-word
@@ -30,7 +30,7 @@
         return array();
       }
     }
-    
+
     public static function encodeJavascriptString($str)
     {
       $controlChars = array(
@@ -44,13 +44,13 @@
       );
       return strtr($str, $controlChars);
     }
-	
+
 	public static function encodeDBStringToJS($str)
     {
         // Pass the string to a JS variable inline (so no " and no ' occurence possible)
         return str_replace("'","\\'",str_replace("\\","\\\\",htmlspecialchars($str, ENT_COMPAT,'UTF-8')));
     }
-    
+
     /* Encode a string from the DB (stored via mysql_real_escape_string)
      * to be displayed as plaintext in the HTML document, so changing
      * all the tags to entities etc. AND replacing newlines with <br> tags
@@ -59,14 +59,14 @@
     {
         return StringUtils::replaceBR(htmlspecialchars($str, ENT_COMPAT, 'UTF-8'));
     }
-    
+
     /* Wrapper function, like encodeDBStringToPlaintext() but for inside a textarea.
      */
     public static function encodeDBStringForTextarea($str)
     {
         return htmlspecialchars($str, ENT_QUOTES, 'UTF-8', true);
     }
-    
+
     public static function replaceAsciiControlCharsUnicode($str)
     {
       $controlChars = array(
@@ -105,7 +105,7 @@
         chr(127)=> chr(0x2421));
       return strtr($str, $controlChars);
     }
-    
+
     public static function replaceAsciiControlChars($str)
     {
       $controlChars = array(
@@ -143,8 +143,8 @@
         chr(31) => '&#x241F;',
         chr(127)=> '&#x2421;');
       return strtr($str, $controlChars);
-    }    
-    
+    }
+
     public static function replaceBR($str)
     {
       $controlChars = array(

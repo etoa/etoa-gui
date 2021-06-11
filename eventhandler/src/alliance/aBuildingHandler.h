@@ -12,7 +12,7 @@
 
 /**
 * Handles building updates
-* 
+*
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 namespace abuilding

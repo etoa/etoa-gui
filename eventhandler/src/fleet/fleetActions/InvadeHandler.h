@@ -13,7 +13,7 @@
 
 /**
 * Handles Invade....
-* 
+*
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 namespace invade
@@ -23,13 +23,13 @@ namespace invade
 	public:
 		InvadeHandler(mysqlpp::Row fleet)  : FleetAction(fleet) { }
 		void update();
-		
+
 	private:
 		/**
 		* Ship they are able to invade a planet
 		**/
 		int shipCnt;
-		
+
 		/**
 		* defender and agressor points
 		**/
@@ -39,22 +39,22 @@ namespace invade
 		* variables to calculate the possibility
 		**/
 		double chance, one, two;
-		
+
 		/**
 		* Variables to send planet user fleets to main
 		**/
 		int duration, launchtime, landtime;
-		
+
 		/**
 		* TimeHandler
 		**/
 		std::time_t time;
-		
+
 		/**
 		* Entity user id
 		**/
 		int userToId;
-		
+
 	};
 }
 #endif

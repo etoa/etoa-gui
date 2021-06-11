@@ -8,7 +8,7 @@ namespace def
 		My &my = My::instance();
 		mysqlpp::Connection *con_ = my.get();
 		count = count < 0 ? 0 : count;
-		
+
 		mysqlpp::Query query = con_->query();
 		query << "INSERT INTO "
 			<< "	deflist ("

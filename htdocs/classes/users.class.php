@@ -22,7 +22,7 @@
 				WHERE
 					user_ghost='0'
 					AND admin=0
-                    AND `user_blocked_to`<'".$now."' 
+                    AND `user_blocked_to`<'".$now."'
 					AND ((user_registered<'".$register_time."' AND user_points='0')
 					OR (user_logouttime<'".$online_time."' AND user_logouttime>0 AND user_hmode_from='0'));
 			");
@@ -51,9 +51,9 @@
 				WHERE
 					user_ghost='0'
 					AND admin=0
-                    AND `user_blocked_to`<'".$now."' 
-					AND user_logouttime<'".$inactive_time."' 
-					AND user_logouttime>'".($inactive_time-3600*24)."' 
+                    AND `user_blocked_to`<'".$now."'
+					AND user_logouttime<'".$inactive_time."'
+					AND user_logouttime>'".($inactive_time-3600*24)."'
 					AND user_hmode_from='0';
 			");
 			if (mysql_num_rows($res)>0)
@@ -61,11 +61,11 @@
 				while ($arr=mysql_fetch_assoc($res))
 				{
 				$text ="Hallo ".$arr['user_nick']."
-				
+
 	Du hast dich seit mehr als ".USER_INACTIVE_LONG." Tage nicht mehr bei Escape to Andromeda (".Config::getInstance()->roundname->v.") eingeloggt und
 	dein Account wurde deshalb als inaktiv markiert. Solltest du dich innerhalb von ".USER_INACTIVE_SHOW." Tage
 	nicht mehr einloggen wird der Account gelöscht.
-	
+
 	Mit freundlichen Grüssen,
 	die Spielleitung";
 					$mail = new Mail('Inaktivität',$text);
@@ -97,7 +97,7 @@
 				WHERE
 					user_ghost='0'
 					AND admin=0
-                    AND `user_blocked_to`<'".$now."' 
+                    AND `user_blocked_to`<'".$now."'
 					AND ((user_registered<'".$register_time."' AND user_points='0')
 					OR (user_logouttime<'".$online_time."' AND user_logouttime>0 AND user_hmode_from='0'));
 			");
@@ -212,18 +212,18 @@
 
 			// set all users who are inactive
 
-		    $res = dbquery("SELECT 
+		    $res = dbquery("SELECT
 		                        user_id,
-		                        user_hmode_from 
-		                    FROM 
-		                        users 
+		                        user_hmode_from
+		                    FROM
+		                        users
 		                    WHERE
 		         			    user_ghost=0
 		        		    AND
 		        			    admin=0
 		                    AND
 		                        user_blocked_to <".$now
-		                    ." AND 
+		                    ." AND
 		                        user_hmode_from > 0
 		        		    AND
 		        			    user_hmode_from<".(time()-MAX_UMOD_TIME*86400));
@@ -235,7 +235,7 @@
 			            SET
 					        user_hmode_from=0,
 					        user_hmode_to=0,
-					        user_logouttime=".(time()-USER_INACTIVE_LONG*86400)." 
+					        user_logouttime=".(time()-USER_INACTIVE_LONG*86400)."
 				        WHERE
 						    user_id=".$arr[0]);
 
@@ -290,20 +290,20 @@
 								techlist_id=".$tarr[0]);
 				}
 
-				$sres = dbquery("SELECT 
+				$sres = dbquery("SELECT
 									queue_id,
 									queue_endtime,
 									queue_starttime
-								 FROM 
-								 	ship_queue 
-								WHERE 
+								 FROM
+								 	ship_queue
+								WHERE
 									queue_user_id='".$tarr[0]."'
-								ORDER BY 
+								ORDER BY
 									queue_starttime ASC;");
 
 				while ($sarr=mysql_fetch_row($sres))
 				{
-					dbquery("UPDATE 
+					dbquery("UPDATE
 								ship_queue
 							SET
 								queue_build_type=0,
@@ -313,20 +313,20 @@
 								queue_id=".$sarr[0].";");
 				}
 
-				$dres = dbquery("SELECT 
+				$dres = dbquery("SELECT
 										queue_id,
 										queue_endtime,
 										queue_starttime
-									 FROM 
-									 	def_queue 
-									WHERE 
+									 FROM
+									 	def_queue
+									WHERE
 										queue_user_id='".$tarr[0]."'
-									ORDER BY 
+									ORDER BY
 										queue_starttime ASC;");
 
 				while ($darr=mysql_fetch_row($dres))
 				{
-					dbquery("UPDATE 
+					dbquery("UPDATE
 								def_queue
 							SET
 								queue_build_type=0,
@@ -347,11 +347,11 @@
 
         		dbquery ("UPDATE planets SET planet_last_updated=".time()." WHERE planet_user_id=".$arr[0]);
 
-        		$pres = dbquery("SELECT 
+        		$pres = dbquery("SELECT
 										id
-									 FROM 
+									 FROM
 									 	planets
-									WHERE 
+									WHERE
 										planet_user_id=".$arr[0]);
 
 				while ($darr=mysql_fetch_row($pres))

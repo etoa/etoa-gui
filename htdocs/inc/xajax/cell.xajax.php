@@ -7,13 +7,13 @@ $xajax->register(XAJAX_FUNCTION,'launchExplorerProbe');
 	function launchSypProbe($tid)
 	{
 		$cp = Entity::createFactoryById($_SESSION['cpid']);
-		
+
 		$objResponse = new xajaxResponse();
 		ob_start();
 		$launched = false;
-		
+
 		if ($cp->owner()->properties->spyShipId > 0)
-		{			
+		{
 			$fleet = new FleetLaunch($cp,$cp->owner());
 			if ($fleet->checkHaven())
 			{
@@ -32,8 +32,8 @@ $xajax->register(XAJAX_FUNCTION,'launchExplorerProbe');
 										if ($fid = $fleet->launch())
 										{
 											$flObj = new Fleet($fid);
-											
-											
+
+
 											$str= "$probeCount Spionagesonden unterwegs. Ankunft in ".tf($flObj->remainingTime());
 											$launched = true;
 										}
@@ -57,7 +57,7 @@ $xajax->register(XAJAX_FUNCTION,'launchExplorerProbe');
 					else
 					{
 						$str= $fleet->error();
-					}				
+					}
 				}
 				else
 				{
@@ -72,7 +72,7 @@ $xajax->register(XAJAX_FUNCTION,'launchExplorerProbe');
 		else
 		{
 			$str= "Du hast noch keine Standard-Spionagesonde gewählt, überprüfe bitte deine <a href=\"?page=userconfig&mode=game\">Spieleinstellungen</a>!";
-		}				
+		}
 		if ($launched)
 		{
 			echo "<div style=\"color:#0f0\">".$str."<div>";
@@ -81,10 +81,10 @@ $xajax->register(XAJAX_FUNCTION,'launchExplorerProbe');
 		{
 			echo "<div style=\"color:#f90\">".$str."<div>";
 		}
-		$objResponse->assign("spy_info_box","style.display",'block');				
-		$objResponse->append("spy_info","innerHTML",ob_get_contents());				
+		$objResponse->assign("spy_info_box","style.display",'block');
+		$objResponse->append("spy_info","innerHTML",ob_get_contents());
 		ob_end_clean();
-	  return $objResponse;	
+	  return $objResponse;
 	}
 
 	// add the following line to the php of the calling site:
@@ -92,13 +92,13 @@ $xajax->register(XAJAX_FUNCTION,'launchExplorerProbe');
 	function launchAnalyzeProbe($tid)
 	{
 		$cp = unserialize($_SESSION['currentEntity']);
-		
+
 		$objResponse = new xajaxResponse();
 		ob_start();
 		$launched = false;
-		
+
 		if ($cp->owner()->properties->analyzeShipId > 0)
-		{			
+		{
 			$fleet = new FleetLaunch($cp,$cp->owner());
 			if ($fleet->checkHaven())
 			{
@@ -117,8 +117,8 @@ $xajax->register(XAJAX_FUNCTION,'launchExplorerProbe');
 										if ($fid = $fleet->launch())
 										{
 											$flObj = new Fleet($fid);
-											
-											
+
+
 											$str= "$probeCount Analysatoren unterwegs. Ankunft in ".tf($flObj->remainingTime());
 											$launched = true;
 										}
@@ -157,7 +157,7 @@ $xajax->register(XAJAX_FUNCTION,'launchExplorerProbe');
 		else
 		{
 			$str= "Du hast noch keinen Standard-Analysator gewählt, überprüfe bitte deine <a href=\"?page=userconfig&mode=game\">Spieleinstellungen</a>!";
-		}				
+		}
 		if ($launched)
 		{
 			echo "<div style=\"color:#0f0\">".$str."<div>";
@@ -166,24 +166,24 @@ $xajax->register(XAJAX_FUNCTION,'launchExplorerProbe');
 		{
 			echo "<div style=\"color:#f90\">".$str."<div>";
 		}
-		$objResponse->assign("spy_info_box","style.display",'block');				
-		$objResponse->append("spy_info","innerHTML",ob_get_contents());				
+		$objResponse->assign("spy_info_box","style.display",'block');
+		$objResponse->append("spy_info","innerHTML",ob_get_contents());
 		ob_end_clean();
-	  return $objResponse;	
+	  return $objResponse;
 	}
-	
+
 	// add the following line to the php of the calling site:
 	// $_SESSION['currentEntity']=serialize($cp);
 	function launchExplorerProbe($tcid)
 	{
 		$cp = unserialize($_SESSION['currentEntity']);
-		
+
 		$objResponse = new xajaxResponse();
 		ob_start();
 		$launched = false;
-		
+
 		if ($cp->owner()->properties->exploreShipId > 0)
-		{			
+		{
 			$fleet = new FleetLaunch($cp,$cp->owner());
 			if ($fleet->checkHaven())
 			{
@@ -207,8 +207,8 @@ $xajax->register(XAJAX_FUNCTION,'launchExplorerProbe');
 											if ($fid = $fleet->launch())
 											{
 												$flObj = new Fleet($fid);
-												
-												
+
+
 												$str= "$probeCount Explorer unterwegs. Ankunft in ".tf($flObj->remainingTime());
 												$launched = true;
 											}
@@ -252,7 +252,7 @@ $xajax->register(XAJAX_FUNCTION,'launchExplorerProbe');
 		else
 		{
 			$str= "Du hast noch keinen Standard-Explorer gewählt, überprüfe bitte deine <a href=\"?page=userconfig&mode=game\">Spieleinstellungen</a>!";
-		}				
+		}
 		if ($launched)
 		{
 			echo "<div style=\"color:#0f0\">".$str."<div>";
@@ -261,10 +261,10 @@ $xajax->register(XAJAX_FUNCTION,'launchExplorerProbe');
 		{
 			echo "<div style=\"color:#f90\">".$str."<div>";
 		}
-		$objResponse->assign("spy_info_box","style.display",'block');				
-		$objResponse->append("spy_info","innerHTML",ob_get_contents());				
+		$objResponse->assign("spy_info_box","style.display",'block');
+		$objResponse->append("spy_info","innerHTML",ob_get_contents());
 		ob_end_clean();
-	  return $objResponse;	
+	  return $objResponse;
 	}
 
 ?>

@@ -400,9 +400,9 @@
 				{
 	 		    echo "<form action=\"?page=$page&amp;id=".intval($cellId)."\" method=\"post\">";
 	 		    checker_init();
-	 		    echo "Du darfst diesen Stern benennen: 
-	 		    <input type=\"text\" name=\"starname\" value=\"\" maxlength=\"30\"/> 
-	 		    <input type=\"hidden\" name=\"starname_id\" value=\"". $starToBeNamed."\" /> 
+	 		    echo "Du darfst diesen Stern benennen:
+	 		    <input type=\"text\" name=\"starname\" value=\"\" maxlength=\"30\"/>
+	 		    <input type=\"hidden\" name=\"starname_id\" value=\"". $starToBeNamed."\" />
 	 		    <input type=\"submit\" name=\"starname_submit\" value=\"Speichern\" /><br/><br/></form>";
 	      }
 
@@ -416,14 +416,14 @@
 
 				iBoxStart("Legende");
 				echo "
-				<span class=\"userSelfColor\">Eigener Planet</span>, 
-				<span class=\"userLockedColor\">Gesperrt</span>, 
-				<span class=\"userHolidayColor\">Urlaubsmodus</span>, 
-				<span class=\"userInactiveColor\">Inaktiv (".USER_INACTIVE_SHOW." Tage)</span>, 
+				<span class=\"userSelfColor\">Eigener Planet</span>,
+				<span class=\"userLockedColor\">Gesperrt</span>,
+				<span class=\"userHolidayColor\">Urlaubsmodus</span>,
+				<span class=\"userInactiveColor\">Inaktiv (".USER_INACTIVE_SHOW." Tage)</span>,
 				<span class=\"userLongInactiveColor\">Inaktiv (".USER_INACTIVE_LONG." Tage)</span><br/>
 				<span class=\"noobColor\">Anf&auml;ngerschutz</span>,
-				<span class=\"friendColor\">B&uuml;ndnis</span>, 
-				<span class=\"enemyColor\">Krieg</span>, 
+				<span class=\"friendColor\">B&uuml;ndnis</span>,
+				<span class=\"enemyColor\">Krieg</span>,
 				<span class=\"userAllianceMemberColor\">Allianzmitglied</span>,
 				<span class=\"adminColor\" ".tm("Admin/Entwickler","Gemäss §14.2 ist es strengstens untersagt einen Adminaccount anzugreifen oder auszuspionieren. Wer dies tut ist selber schuld und kann mit einer Sperre von 24h bestraft werden!<br style=\"clear:both\" />").">Admin/Entwickler</span>";
 				iBoxEnd();

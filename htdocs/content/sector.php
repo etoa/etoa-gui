@@ -196,15 +196,15 @@
 
 	// Load user's systems
   $res = dbquery("
-  SELECT 
+  SELECT
   	cells.id as id
-  FROM 
+  FROM
   	planets
   INNER JOIN
   (
   	entities
   	INNER JOIN
-  		cells 
+  		cells
   		ON cells.id=entities.cell_id
   )
  	ON entities.id=planets.id

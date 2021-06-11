@@ -17,21 +17,21 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 	/**
 	* Displays objects dependencies
 	*
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/	
+	*/
 
 	// Definitionen
 
-	if(isset($_GET['mode']) && $_GET['mode']!="") 
-		$mode=$_GET['mode']; 
-	else 
+	if(isset($_GET['mode']) && $_GET['mode']!="")
+		$mode=$_GET['mode'];
+	else
 		$mode="";
-	
+
 
 	if ($mode=="tech")
 	{
@@ -95,7 +95,7 @@
 		define('ITEM_ORDER_FLD',"missile_name");
 		define('NO_ITEMS_MSG',"In dieser Kategorie gibt es keine Raketen!");
 		define('HELP_URL',"missiles");
-	}	
+	}
 	elseif ($mode=="buildings")
 	{
 		define('ITEMS_TBL',"buildings");
@@ -117,7 +117,7 @@
 
 	if (isset($cp))
 	{
-		
+
 		// Daten anzeigen
 		echo "<h1>Technikbaum des Planeten ".$cp->name()."</h1>";
 
@@ -130,11 +130,11 @@
 		"defense"=>"Verteidigung",
 		"missiles"=>"Raketen"
 		));
-		echo "<br>";	
-		
+		echo "<br>";
+
 		if ($mode!="")
-		{	
-		
+		{
+
 		//
 		// Läd alle benötigten Daten
 		//
@@ -142,10 +142,10 @@
 		// Lade Rassennamen
 		$race=array();
 		$rres = dbquery("
-		SELECT 
+		SELECT
 			race_id,
 			race_name
-		FROM 
+		FROM
 			races ;");
 		while ($rarr = mysql_fetch_array($rres))
 		{
@@ -155,28 +155,28 @@
 		// Lade Gebäudelistenlevel
 		$buildlist=array();
 		$bres = dbquery("
-		SELECT 
+		SELECT
 			buildlist_current_level,
 			buildlist_building_id
-		FROM 
-			buildlist 
-		WHERE 
+		FROM
+			buildlist
+		WHERE
 			buildlist_entity_id='".$cp->id()."'
 		;");
 		while ($barr = mysql_fetch_array($bres))
 		{
 			$buildlist[$barr['buildlist_building_id']] = $barr['buildlist_current_level'];
 		}
-		
+
 		// Lade Techlistenlevel
 		$techlist=array();
 		$tres = dbquery("
-		SELECT 
+		SELECT
 			techlist_current_level,
 			techlist_tech_id
-		FROM 
-			techlist 
-		WHERE 
+		FROM
+			techlist
+		WHERE
 			techlist_user_id='".$cu->id."'
 		;");
 		while ($tarr = mysql_fetch_array($tres))
@@ -187,25 +187,25 @@
 		// Lade Gebäudenamen
 		$bu_name=array();
 		$bures = dbquery("
-		SELECT 	
+		SELECT
 			building_id,
-			building_name 
-		FROM 
-			buildings 
+			building_name
+		FROM
+			buildings
 		;");
 		while ($buarr = mysql_fetch_array($bures))
 		{
 			$bu_name[$buarr['building_id']]=$buarr['building_name'];
 		}
-		
+
 		// Lade Technologienamen
 		$te_name=array();
 		$teres = dbquery("
-		SELECT 
+		SELECT
 			tech_id,
-			tech_name 
-		FROM 
-			technologies 
+			tech_name
+		FROM
+			technologies
 		");
 		while ($tearr = mysql_fetch_array($teres))
 		{
@@ -215,9 +215,9 @@
 		// Lade Anforderungen
 		$b_req=array();
 		$rres = dbquery("
-		SELECT 
-			* 
-		FROM 
+		SELECT
+			*
+		FROM
 			".REQ_TBL.";
 		");
 		while ($rarr = mysql_fetch_array($rres))
@@ -233,11 +233,11 @@
 		if (defined("TYPES_TBL") && defined("ITEM_TYPE_FLD") && defined("TYPE_ORDER_FLD"))
 		{
 			$tres = dbquery("
-			SELECT 
-				* 
-			FROM 
-				".TYPES_TBL." 
-			ORDER BY 
+			SELECT
+				*
+			FROM
+				".TYPES_TBL."
+			ORDER BY
 				".TYPE_ORDER_FLD." ASC;");
 			while ($tarr=mysql_fetch_array($tres))
 			{
@@ -246,37 +246,37 @@
 				if (ITEM_RACE_FLD!="")
 				{
 					$res = dbquery("
-					SELECT 
-						* 
-					FROM 
-						".ITEMS_TBL." 
-					WHERE 
-						".ITEM_SHOW_FLD."=1 
-						AND 
+					SELECT
+						*
+					FROM
+						".ITEMS_TBL."
+					WHERE
+						".ITEM_SHOW_FLD."=1
+						AND
 						(
-							".ITEM_RACE_FLD."=0 
+							".ITEM_RACE_FLD."=0
 							OR ".ITEM_RACE_FLD."=".$cu->raceId."
-						) 
-						AND ".ITEM_TYPE_FLD."=".$tarr[TYPE_ID_FLD]." 
-					ORDER BY 
+						)
+						AND ".ITEM_TYPE_FLD."=".$tarr[TYPE_ID_FLD]."
+					ORDER BY
 						".ITEM_ORDER_FLD.";
 					");
 				}
 				else
 				{
 					$res = dbquery("
-					SELECT 
-						* 
-					FROM 
-						".ITEMS_TBL." 
-					WHERE 
-						".ITEM_SHOW_FLD."=1 
-						AND ".ITEM_TYPE_FLD."=".$tarr[TYPE_ID_FLD]." 
-					ORDER BY 
+					SELECT
+						*
+					FROM
+						".ITEMS_TBL."
+					WHERE
+						".ITEM_SHOW_FLD."=1
+						AND ".ITEM_TYPE_FLD."=".$tarr[TYPE_ID_FLD]."
+					ORDER BY
 						".ITEM_ORDER_FLD."
 					;");
 				}
-				
+
 				$cntr=0;
 				if (mysql_num_rows($res)>0)
 				{
@@ -289,7 +289,7 @@
 							if ($sl->count($arr[ITEM_ID_FLD])==0)
 								$show = false;
 						}
-						
+
 						if ($show)
 						{
 							if(isset($b_req[$arr[ITEM_ID_FLD]]['b']))
@@ -300,7 +300,7 @@
 							{
 								$b_cnt = 0;
 							}
-							
+
 							if(isset($b_req[$arr[ITEM_ID_FLD]]['t']))
 							{
 								$t_cnt = count($b_req[$arr[ITEM_ID_FLD]]['t']);
@@ -309,7 +309,7 @@
 							{
 								$t_cnt = 0;
 							}
-							
+
 							if ($b_cnt + $t_cnt>0)
 							{
 								echo "<tr><td width=\"200\" rowspan=\"".($b_cnt + $t_cnt)."\"><b>".$arr[ITEM_NAME_FLD]."</b> ".helpLink(HELP_URL."&amp;id=".$arr[ITEM_ID_FLD])."";
@@ -318,7 +318,7 @@
 							{
 								echo "<tr><td width=\"200\"><b>".$arr[ITEM_NAME_FLD]."</b> ".helpLink(HELP_URL."&amp;id=".$arr[ITEM_ID_FLD])."";
 							}
-							
+
 							if (ITEM_RACE_FLD!="" && $arr[ITEM_RACE_FLD]>0)
 							{
 								echo "<br/>".$race[$arr[ITEM_RACE_FLD]]."</td>";
@@ -327,22 +327,22 @@
 							{
 								echo "</td>";
 							}
-	
+
 							$using_something=0;
 							if (isset($b_req[$arr[ITEM_ID_FLD]]['b']) && count($b_req[$arr[ITEM_ID_FLD]]['b'])>0)
 							{
 								$cnt=0;
 								foreach ($b_req[$arr[ITEM_ID_FLD]]['b'] as $b=>$l)
 								{
-									if ($cnt==0 && count($b_req[$arr[ITEM_ID_FLD]]['b'])>1) 
+									if ($cnt==0 && count($b_req[$arr[ITEM_ID_FLD]]['b'])>1)
 									{
 										$bstyle="border-bottom:none;";
 									}
 									elseif (
-										($cnt>0 
-										&& $cnt < count($b_req[$arr[ITEM_ID_FLD]]['b'])-1) 
-									|| 
-										(isset($b_req[$arr[ITEM_ID_FLD]]['t']) 
+										($cnt>0
+										&& $cnt < count($b_req[$arr[ITEM_ID_FLD]]['b'])-1)
+									||
+										(isset($b_req[$arr[ITEM_ID_FLD]]['t'])
 										&& count($b_req[$arr[ITEM_ID_FLD]]['t'])>0))
 									{
 										$bstyle="border-top:none;border-bottom:none;";
@@ -355,7 +355,7 @@
 									{
 										$bstyle="";
 									}
-	
+
 									if (!isset($buildlist[$b]) || $buildlist[$b]<$l)
 									{
 										echo "<td style=\"color:#f00;border-right:none;".$bstyle."\" width=\"130\">".$bu_name[$b]."</td><td style=\"color:#f00;border-left:none;".$bstyle."\" width=\"70\">Stufe ".$l."</td></tr>";
@@ -368,7 +368,7 @@
 								}
 								$using_something=1;
 							}
-							
+
 							if (isset($b_req[$arr[ITEM_ID_FLD]]['t']) && count($b_req[$arr[ITEM_ID_FLD]]['t'])>0)
 							{
 								$cnt=0;
@@ -398,8 +398,8 @@
 									{
 										$bstyle="";
 									}
-	
-	
+
+
 									if (!isset($techlist[$b]) || $techlist[$b]<$l)
 									{
 										echo "<td style=\"color:#f00;border-right:none;".$bstyle."\" width=\"130\">".$te_name[$b]."</td><td style=\"color:#f00;border-left:none;".$bstyle."\" width=\"70\">Stufe ".$l."</td></tr>";
@@ -412,7 +412,7 @@
 								}
 								$using_something=1;
 							}
-							
+
 							if ($using_something==0)
 							{
 								echo "<td colspan=\"2\"><i>Keine Voraussetzungen n&ouml;tig</i></td></tr>";
@@ -427,7 +427,7 @@
 				}
 				else
 					echo "<tr><td align=\"center\" colspan=\"3\">".NO_ITEMS_MSG."</td></tr>";
-				
+
 				tableEnd();
 			}
 		}
@@ -438,31 +438,31 @@
 			if (ITEM_RACE_FLD!="")
 			{
 				$res = dbquery("
-				SELECT 
-					* 
-				FROM 
-					".ITEMS_TBL." 
-				WHERE 
-					".ITEM_SHOW_FLD."=1 
-					AND 
+				SELECT
+					*
+				FROM
+					".ITEMS_TBL."
+				WHERE
+					".ITEM_SHOW_FLD."=1
+					AND
 					(
-						".ITEM_RACE_FLD."=0 
+						".ITEM_RACE_FLD."=0
 						OR ".ITEM_RACE_FLD."=".$cu->raceId."
-					) 
-					ORDER BY 
+					)
+					ORDER BY
 						".ITEM_ORDER_FLD.";
 				");
 			}
 			else
 			{
 				$res = dbquery("
-				SELECT 
-					* 
-				FROM 
-					".ITEMS_TBL." 
-				WHERE 
-					".ITEM_SHOW_FLD."=1 
-				ORDER BY 
+				SELECT
+					*
+				FROM
+					".ITEMS_TBL."
+				WHERE
+					".ITEM_SHOW_FLD."=1
+				ORDER BY
 					".ITEM_ORDER_FLD.";");
 			}
 			if (mysql_num_rows($res)>0)
@@ -478,7 +478,7 @@
 						echo "<tr><td width=\"200\"><b>".$arr[ITEM_NAME_FLD]."</b> ".helpLink(HELP_URL."&amp;id=".$arr[ITEM_ID_FLD])."</td>";
 					}
 					$using_something=0;
-					
+
 					if (isset($b_req[$arr[ITEM_ID_FLD]]['b']) && count($b_req[$arr[ITEM_ID_FLD]]['b'])>0)
 					{
 						$cnt=0;
@@ -513,7 +513,7 @@
 						}
 						$using_something=1;
 					}
-					
+
 					if (isset($b_req[$arr[ITEM_ID_FLD]]['t']) && count($b_req[$arr[ITEM_ID_FLD]]['t'])>0)
 					{
 						$cnt=0;
@@ -565,12 +565,12 @@
 				echo "<tr><td align=\"center\" colspan=\"3\">".NO_ITEMS_MSG."</td></tr>";
 			tableEnd();
 	}
-	
+
 	}
 	else
 	{
 		$startItem = 6;
-		
+
 		echo "<select onchange=\"xajax_reqInfo(this.value,'b')\">
 		<option value=\"0\">Gebäude wählen...</option>";
 		$bures = dbquery("SELECT building_id,building_name FROM buildings WHERE building_show=1 ORDER BY building_name;");
@@ -579,39 +579,39 @@
 			echo "<option value=\"".$buarr['building_id']."\">".$buarr['building_name']."</option>";
 		}
 		echo "</select> ";
-		
-				
+
+
 		echo "<select onchange=\"xajax_reqInfo(this.value,'t')\">
 		<option value=\"0\">Technologie wählen...</option>";
 		$teres = dbquery("SELECT tech_id,tech_name FROM technologies WHERE tech_show=1 ORDER BY tech_name;");
 		while ($tearr = mysql_fetch_array($teres))
 		{
 			echo "<option value=\"".$tearr['tech_id']."\">".$tearr['tech_name']."</option>";
-		}	
+		}
 		echo "</select> ";
-	
+
 		echo "<select onchange=\"xajax_reqInfo(this.value,'s')\">
 		<option value=\"0\">Schiff wählen...</option>";
 		$teres = dbquery("SELECT ship_id,ship_name FROM ships WHERE ship_show=1 AND special_ship=0 ORDER BY ship_name;");
 		while ($tearr = mysql_fetch_array($teres))
 		{
 			echo "<option value=\"".$tearr['ship_id']."\">".$tearr['ship_name']."</option>";
-		}	
+		}
 		echo "</select> ";
-		
+
 		echo "<select onchange=\"xajax_reqInfo(this.value,'d')\">
 		<option value=\"0\">Verteidigung wählen...</option>";
 		$teres = dbquery("SELECT def_id,def_name FROM defense WHERE def_show=1 ORDER BY def_name;");
 		while ($tearr = mysql_fetch_array($teres))
 		{
 			echo "<option value=\"".$tearr['def_id']."\">".$tearr['def_name']."</option>";
-		}			
+		}
 		echo "</select><br/><br/>";
-		
+
 		iBoxStart("Grafische Darstellung");
 		showTechTree("b",$startItem);
 		iBoxEnd();
-		
+
 	}
 }
 ?>

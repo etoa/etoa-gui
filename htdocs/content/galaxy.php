@@ -17,19 +17,19 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 	/**
 	* Shows information about the planetar population
 	*
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/	
+	*/
 
 	$sx_num = $cfg->param1('num_of_sectors');
 	$sy_num = $cfg->param2('num_of_sectors');
 	$cx_num = $cfg->param1('num_of_cells');
 	$cy_num = $cfg->param2('num_of_cells');
-	
+
 	echo '<h1>Galaxie</h1>';
 	tableStart("Galaxiekarte");
 	echo '<tr><td id="galaxy_map_nav">Anzeigen: <select onchange="document.getElementById(\'img\').src=\'misc/map.image.php\'+this.options[this.selectedIndex].value;">
@@ -40,7 +40,7 @@
 	</select></td></tr>';
 	echo '<tr><td id="galaxy_map_container"><img src="misc/map.image.php?legend" alt="Galaxiekarte" id="img" alt="galaxymap" usemap="#Galaxy" style="border:none;"/></td></tr>';
 	tableEnd();
-	
+
 	echo '<map name="Galaxy"><br />';
 	$sec_x_size=GALAXY_MAP_WIDTH/$sx_num;
 	$sec_y_size=GALAXY_MAP_WIDTH/$sy_num;
@@ -57,5 +57,5 @@
 	  $xcnt++;
 	}
 	echo '</map>';
-	
+
 ?>

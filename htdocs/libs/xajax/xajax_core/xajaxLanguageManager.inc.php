@@ -22,8 +22,8 @@
 
 /*
 	Class: xajaxLanguageManager
-	
-	This class contains the default language (english) and the code used to supply 
+
+	This class contains the default language (english) and the code used to supply
 	debug and error messages upon request; as well as the code used to load alternate
 	language text as requested via the <xajax::configure> function.
 */
@@ -31,27 +31,27 @@ final class xajaxLanguageManager
 {
 	/*
 		Array: aMessages
-		
+
 		An array of the currently registered languages.
 	*/
 	private $aMessages;
-	
+
 	/*
 		String: sLanguage
-		
+
 		The currently configured language.
 	*/
 	private $sLanguage;
-	
+
 	/*
 		Function: xajaxLanguageManager
-		
+
 		Construct and initialize the one and only xajax language manager object.
 	*/
 	private function __construct()
 	{
 		$this->aMessages = array();
-		
+
 		$this->aMessages['en'] = array(
 			'LOGHDR:01' => '** xajax Error Log - ',
 			'LOGHDR:02' => " **\n",
@@ -111,14 +111,14 @@ final class xajaxLanguageManager
 			'XJXRM:IRERR' => 'An invalid response was returned while processing this request.',
 			'XJXRM:MXRTERR' => 'Error:  You cannot mix response types while processing a single request: '
 			);
-			
+
 		$this->sLanguage = 'en';
 	}
-	
+
 	/*
 		Function: getInstance
-		
-		Implements the singleton pattern: provides a single instance of the xajax 
+
+		Implements the singleton pattern: provides a single instance of the xajax
 		language manager object to all object which request it.
 	*/
 	public static function &getInstance()
@@ -129,15 +129,15 @@ final class xajaxLanguageManager
 		}
 		return $obj;
 	}
-	
+
 	/*
 		Function: configure
-		
+
 		Called by the main xajax object as configuration options are set.  See also:
 		<xajax::configure>.  The <xajaxLanguageManager> tracks the following configuration
 		options.
 		Parameters:
-		
+
 		- language (string, default 'en'): The currently selected language.
 	*/
 	public function configure($sName, $mValue)
@@ -151,27 +151,27 @@ final class xajaxLanguageManager
 			}
 		}
 	}
-	
+
 	/*
 		Function: register
-		
+
 		Called to register an array of alternate language messages.
-		
+
 		Parameters:
-		
+
 		sLanguage - (string): the character code which represents the language being registered.
 		aMessages - (array): the array of translated debug and error messages
 	*/
 	public function register($sLanguage, $aMessages) {
 		$this->aMessages[$sLanguage] = $aMessages;
 	}
-	
+
 	/*
 		Function: getText
-		
+
 		Called by the main xajax object and other objects during the initial page generation
 		or request processing phase to obtain language specific debug and error messages.
-		
+
 		sMessage - (string):  A code indicating the message text being requested.
 	*/
 	public function getText($sMessage)
@@ -179,7 +179,7 @@ final class xajaxLanguageManager
 		if (isset($this->aMessages[$this->sLanguage]))
 			 if (isset($this->aMessages[$this->sLanguage][$sMessage]))
 				return $this->aMessages[$this->sLanguage][$sMessage];
-				
+
 		return '(Unknown language or message identifier)'
 			. $this->sLanguage
 			. '::'

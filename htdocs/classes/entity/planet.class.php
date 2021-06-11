@@ -39,26 +39,26 @@ class Planet extends Entity implements OwnableEntity
 			pentity.pos,
 			planet_types.*,
 			sol_types.*
-		FROM 
+		FROM
 		(
 			planets
-			INNER JOIN 
-				planet_types 
+			INNER JOIN
+				planet_types
 				ON planets.planet_type_id = planet_types.type_id
 				AND planets.id='".intval($id)."'
 		)
-		INNER JOIN 
-		(	
+		INNER JOIN
+		(
 			entities AS pentity
-			INNER JOIN cells 
+			INNER JOIN cells
 				ON cells.id = pentity.cell_id
-			INNER JOIN 
+			INNER JOIN
 				entities AS sentity
 				ON cells.id = sentity.cell_id
 				AND sentity.pos =0
-			INNER JOIN stars 
+			INNER JOIN stars
 				ON stars.id = sentity.id
-			INNER JOIN sol_types 
+			INNER JOIN sol_types
 				ON sol_types.sol_type_id = stars.type_id
 		)
 		ON planets.id = pentity.id
@@ -416,12 +416,12 @@ class Planet extends Entity implements OwnableEntity
 			$comment = str_replace("'", '', $comment);
 
 			dbquery("
-			UPDATE 
-				planets 
-			SET 
+			UPDATE
+				planets
+			SET
 				planet_name='".mysql_real_escape_string($name)."',
-				planet_desc='".mysql_real_escape_string($comment)."' 
-			WHERE 
+				planet_desc='".mysql_real_escape_string($comment)."'
+			WHERE
 				id='".$this->id."';");
 			$this->name=$name;
 			$this->desc=$comment;
@@ -602,7 +602,7 @@ class Planet extends Entity implements OwnableEntity
 	    UPDATE
 	    	planets
 	    SET
-        ".$str."      
+        ".$str."
 	    WHERE
 	    	id='".$this->id."';";
 	   	dbquery($sql);
@@ -775,7 +775,7 @@ class Planet extends Entity implements OwnableEntity
 	   			UPDATE
 	    			planets
 	    		SET
-		        	".$str."      
+		        	".$str."
 	    		WHERE
 	    			id='".$this->id."';";
 	   		dbquery($sql);

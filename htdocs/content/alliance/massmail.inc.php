@@ -21,24 +21,24 @@
 if (Alliance::checkActionRights('massmail'))
 {
 	echo "<h2>Rundmail</h2>";
-	
+
 	// Nachricht senden
 	if (isset($_POST['submit']) && checker_verify())
 	{
-		$ures = dbquery("SELECT 
-			user_id 
-		FROM 
-			users 
-		WHERE 
-			user_alliance_id=".$arr['alliance_id']." 
-			AND user_id!=".$cu->id." 
+		$ures = dbquery("SELECT
+			user_id
+		FROM
+			users
+		WHERE
+			user_alliance_id=".$arr['alliance_id']."
+			AND user_id!=".$cu->id."
 		;");
 		if (mysql_num_rows($ures)>0)
 		{
 			while ($uarr=mysql_fetch_array($ures))
 			{
 				$subject=addslashes($_POST['message_subject'])."";
-				
+
 				Message::sendFromUserToUser($cu->id,$uarr['user_id'],$_POST['message_subject'],$_POST['message_text'],MSG_ALLYMAIL_CAT);
 			}
 			success_msg("Nachricht wurde gesendet!");

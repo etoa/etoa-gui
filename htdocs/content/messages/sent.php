@@ -34,18 +34,18 @@
 					messages AS m
 				INNER JOIN
 					message_data as md
-					ON md.id=message_id				
+					ON md.id=message_id
         			AND m.message_id='".intval($_GET['msg_id'])."'
         			AND m.message_user_from='".$cu->id."'");
 				if (mysql_num_rows($mres)>0)
 				{
 					$marr = mysql_fetch_array($mres);
 					$subj = $marr['subject']!="" ? htmlentities($marr['subject'],ENT_QUOTES,'UTF-8') : "<i>Kein Titel</i>";
-				
+
 					tableStart();
 					echo "<tr><th colspan=\"2\">".$subj."</th></tr>";
 					echo "<tr><th style=\"width:100px;\">Datum:</td><td>".date("d.m.Y H:i",$marr['message_timestamp'])."</td></tr>";
-				
+
 					echo "<tr><th>Sender:</th><td>".userPopUp($cu->id, $cu->nick,0)."</td></tr>";
 					echo "<tr><th>Text:</td><td>".text2html(addslashes($marr['text']))."</td></tr>";
 					tableEnd();
@@ -75,10 +75,10 @@
 				messages
 			INNER JOIN
 				message_data as md
-				ON md.id=message_id							
+				ON md.id=message_id
 			LEFT JOIN
 				users
-				ON message_user_to=user_id				
+				ON message_user_to=user_id
 			WHERE
         		message_user_from='".$cu->id."'
 			ORDER BY

@@ -10,16 +10,16 @@
 		$planetid = intval($planetid);
 		$userid = intval($userid);
 		$setid = intval($setid);
-		
+
 		// Add buildings
 		$ires = dbquery("
-		SELECT 
+		SELECT
 			item_object_id as id,
 			item_count as count
-		FROM 
+		FROM
 			default_items
 		WHERE
-			item_set_id=".$setid." 
+			item_set_id=".$setid."
 			AND item_cat='b';");
 		if (mysql_num_rows($ires)>0)
 		{
@@ -31,7 +31,7 @@
 						buildlist_building_id,
 						buildlist_user_id,
 						buildlist_entity_id,
-						buildlist_current_level						
+						buildlist_current_level
 					)
 					VALUES
 					(
@@ -39,19 +39,19 @@
 						".$userid.",
 						".$planetid.",
 						".$iarr['count']."
-					);");						
+					);");
 			}
-		}		
-		
+		}
+
 		// Add technologies
 		$ires = dbquery("
-		SELECT 
+		SELECT
 			item_object_id as id,
 			item_count as count
-		FROM 
+		FROM
 			default_items
 		WHERE
-			item_set_id=".$setid." 
+			item_set_id=".$setid."
 			AND item_cat='t';");
 		if (mysql_num_rows($ires)>0)
 		{
@@ -63,7 +63,7 @@
 						techlist_tech_id,
 						techlist_user_id,
 						techlist_entity_id,
-						techlist_current_level						
+						techlist_current_level
 					)
 					VALUES
 					(
@@ -71,19 +71,19 @@
 						".$userid.",
 						".$planetid.",
 						".$iarr['count']."
-					);");						
-			}		
+					);");
+			}
 		}
 
 		// Add ships
 		$ires = dbquery("
-		SELECT 
+		SELECT
 			item_object_id as id,
 			item_count as count
-		FROM 
+		FROM
 			default_items
 		WHERE
-			item_set_id=".$setid." 
+			item_set_id=".$setid."
 			AND item_cat='s';");
 		if (mysql_num_rows($ires)>0)
 		{
@@ -95,7 +95,7 @@
 						shiplist_ship_id,
 						shiplist_user_id,
 						shiplist_entity_id,
-						shiplist_count						
+						shiplist_count
 					)
 					VALUES
 					(
@@ -103,19 +103,19 @@
 						".$userid.",
 						".$planetid.",
 						".$iarr['count']."
-					);");						
-			}		
+					);");
+			}
 		}
-			
+
 		// Add defense
 		$ires = dbquery("
-		SELECT 
+		SELECT
 			item_object_id as id,
 			item_count as count
-		FROM 
+		FROM
 			default_items
 		WHERE
-			item_set_id=".$setid." 
+			item_set_id=".$setid."
 			AND item_cat='d';");
 		if (mysql_num_rows($ires)>0)
 		{
@@ -127,7 +127,7 @@
 						deflist_def_id,
 						deflist_user_id,
 						deflist_entity_id,
-						deflist_count						
+						deflist_count
 					)
 					VALUES
 					(
@@ -135,12 +135,12 @@
 						".$userid.",
 						".$planetid.",
 						".$iarr['count']."
-					);");						
-			}		
-		}		
+					);");
+			}
+		}
 	}
-			
-		
+
+
 	}
 
 

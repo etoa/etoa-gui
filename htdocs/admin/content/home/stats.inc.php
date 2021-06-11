@@ -62,7 +62,7 @@
 	{
 		include(CACHE_ROOT."/out/usertitles_a.gen");
 	}
-	
+
 	//
 	// Allianzen
 	//
@@ -106,11 +106,11 @@
 		}
 		echo "<a href=\"?page=$page&amp;sub=$sub&amp;mode=".$mode."&amp;order_field=cnt&amp;order=DESC\" title=\"Absteigend sortieren\"><img src=\"../images/s_desc.png\" alt=\"Absteigend sortieren\" border=\"0\" /></a>";
 		echo "<a href=\"?page=$page&amp;sub=$sub&amp;mode=".$mode."&amp;order_field=cnt&amp;order=ASC\" title=\"Absteigend sortieren\"><img src=\"../images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a>";
-		
+
 		echo "<th style=\"width:60px;\">Details</th>";
-		
+
 		echo "</tr>";
-		
+
 		if (isset($_GET['order_field']) && $_GET['order_field']=="uavg")
 		{
 			$order="uavg";
@@ -123,23 +123,23 @@
 		{
 			$order="points";
 		}
-		
+
 		if (isset($_GET['order']) && $_GET['order']=="ASC")
 		{
 			$sort="ASC";
 		}
 		else
 		{
-			$sort="DESC";   
+			$sort="DESC";
 		}
-		
+
 		$res=dbquery("
-		SELECT 
+		SELECT
 				*
-		FROM 
+		FROM
 			alliance_stats
-		ORDER BY 
-			$order $sort;");		
+		ORDER BY
+			$order $sort;");
 		if (mysql_num_rows($res)>0)
 		{
 			$cnt = 1;
@@ -163,7 +163,7 @@
 		}
 		echo "</table>";
 	}
-	
+
 	//
 	// Allianzbasis
 	//
@@ -212,16 +212,16 @@
 		else
 		{
 			$sql="
-			SELECT 
+			SELECT
 				*
-			FROM 
+			FROM
 				alliance_stats
-			ORDER BY 
+			ORDER BY
 				apoints DESC,
 				alliance_name ASC
 			;";
 		}
-		
+
 		$res=dbquery($sql);
 		if (mysql_num_rows($res)>0)
 		{
@@ -252,10 +252,10 @@
 			echo "<tr><td colspan=\"8\" align=\"center\"><i>Keine Allianzen in der Statistik</i></tr>";
 		}
 		echo "</table>";
-		
+
 	}
 
-	
+
 	//
 	// Special Points
 	//
@@ -265,21 +265,21 @@
 			if ($mode=="diplomacy")
 			{
 				$res=dbquery("
-				SELECT 
+				SELECT
 					r.diplomacy_rating,
 					user_id,
 					user_nick,
 					race_name,
-					alliance_tag		
-				FROM 
+					alliance_tag
+				FROM
 					users
 				INNER JOIN
 					races ON user_race_id=race_id
 				INNER JOIN
 					user_ratings as r ON user_id=r.id
-				LEFT JOIN 
+				LEFT JOIN
 					alliances ON user_alliance_id=alliance_id
-				ORDER BY 
+				ORDER BY
 					battle_rating DESC
 				;");
 				echo "<table class=\"tb\">";
@@ -307,7 +307,7 @@
 							echo "<td>".nf($arr['diplomacy_rating'])."</td>";
 							echo "<td>
 							".edit_button("?page=user&amp;sub=edit&amp;id=".$arr['user_id']."")."
-							".cb_button("add_user=".$arr['user_id']."")."				
+							".cb_button("add_user=".$arr['user_id']."")."
 							</td>";
 							echo "</tr>";
 							$cnt++;
@@ -318,12 +318,12 @@
 				{
 					echo "<tr><td align=\"center\" colspan=\"8\"><i>Es wurde keine User gefunden!</i></tr>";
 				}
-				echo "</table><br/>";											
+				echo "</table><br/>";
 			}
 			elseif ($mode=="battle")
 			{
 				$res=dbquery("
-				SELECT 
+				SELECT
 					r.battles_fought,
 					r.battles_won,
 					r.battles_lost,
@@ -331,16 +331,16 @@
 					user_id,
 					user_nick,
 					race_name,
-					alliance_tag		
-				FROM 
+					alliance_tag
+				FROM
 					users
 				INNER JOIN
 					races ON user_race_id=race_id
 				INNER JOIN
 					user_ratings as r ON user_id=r.id
-				LEFT JOIN 
+				LEFT JOIN
 					alliances ON user_alliance_id=alliance_id
-				ORDER BY 
+				ORDER BY
 					battle_rating DESC
 				;");
 				echo "<table class=\"tb\">";
@@ -374,7 +374,7 @@
 							echo "<td>".nf($arr['battle_rating'])."</td>";
 							echo "<td>
 							".edit_button("?page=user&amp;sub=edit&amp;id=".$arr['user_id']."")."
-							".cb_button("add_user=".$arr['user_id']."")."				
+							".cb_button("add_user=".$arr['user_id']."")."
 							</td>";
 							echo "</tr>";
 							$cnt++;
@@ -385,28 +385,28 @@
 				{
 					echo "<tr><td align=\"center\"  colspan=\"9\"><i>Es wurde keine User gefunden!</i></tr>";
 				}
-				echo "</table><br/>";											
+				echo "</table><br/>";
 			}
 			elseif ($mode=="trade")
 			{
 				$res=dbquery("
-				SELECT 
+				SELECT
 					r.trades_sell,
 					r.trades_buy,
 					r.trade_rating,
 					user_id,
 					user_nick,
 					race_name,
-					alliance_tag		
-				FROM 
+					alliance_tag
+				FROM
 					users
 				INNER JOIN
 					races ON user_race_id=race_id
 				INNER JOIN
 					user_ratings as r ON user_id=r.id
-				LEFT JOIN 
+				LEFT JOIN
 					alliances ON user_alliance_id=alliance_id
-				ORDER BY 
+				ORDER BY
 					battle_rating DESC
 				;");
 				echo "<table class=\"tb\">";
@@ -438,7 +438,7 @@
 							echo "<td>".nf($arr['trade_rating'])."</td>";
 							echo "<td>
 							".edit_button("?page=user&amp;sub=edit&amp;id=".$arr['user_id']."")."
-							".cb_button("add_user=".$arr['user_id']."")."				
+							".cb_button("add_user=".$arr['user_id']."")."
 							</td>";
 							echo "</tr>";
 							$cnt++;
@@ -449,9 +449,9 @@
 				{
 					echo "<tr><td align=\"center\" colspan=\"8\"><i>Es wurde keine User gefunden!</i></tr>";
 				}
-				echo "</table><br/>";											
+				echo "</table><br/>";
 			}
-	}		
+	}
 
 	//
 	// Calculated points
@@ -461,9 +461,9 @@
 		echo "<form action=\"?page=$page&amp;sub=$sub&amp;mode=$mode\" method=\"post\">";
 		echo "<table class=\"tbl\">";
 		echo "<tr><td class=\"tbldata\" colspan=\"5\">";
-		echo "Suche nach Spieler: <input type=\"text\" class=\"search\" name=\"user_nick\" value=\"".(isset($_POST['user_nick']) ? $_POST['user_nick'] : '')."\" size=\"20\" /> 
+		echo "Suche nach Spieler: <input type=\"text\" class=\"search\" name=\"user_nick\" value=\"".(isset($_POST['user_nick']) ? $_POST['user_nick'] : '')."\" size=\"20\" />
 		<input type=\"submit\" name=\"search\" value=\"Suchen\" />";
-		if (isset($_POST['user_nick']))			
+		if (isset($_POST['user_nick']))
 		{
 			echo " &nbsp; <input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;mode=$mode'\" value=\"Reset\" />";
 		}
@@ -509,30 +509,7 @@
 		}
 		if (isset($_POST['search']) && $_POST['search']!="" && $_POST['user_nick']!="")
 		{
-			$res=dbquery("SELECT 
-				id,
-				nick,
-				blocked,
-				hmod,
-				inactive,	
-				".$order." AS rank,
-				".$field." AS points,
-				".$shift." AS shift,
-				race_name,
-				alliance_tag,
-				sx,
-				sy
-			FROM 
-				user_stats
-			WHERE 
-				nick LIKE '".$_POST['user_nick']."%' 
-			ORDER BY 
-				$order ASC,
-				nick ASC;");
-		}
-		else
-		{
-			$res=dbquery("SELECT 
+			$res=dbquery("SELECT
 				id,
 				nick,
 				blocked,
@@ -545,12 +522,35 @@
 				alliance_tag,
 				sx,
 				sy
-			FROM 
+			FROM
 				user_stats
-			ORDER BY 
+			WHERE
+				nick LIKE '".$_POST['user_nick']."%'
+			ORDER BY
 				$order ASC,
-				nick ASC 
-			;");			
+				nick ASC;");
+		}
+		else
+		{
+			$res=dbquery("SELECT
+				id,
+				nick,
+				blocked,
+				hmod,
+				inactive,
+				".$order." AS rank,
+				".$field." AS points,
+				".$shift." AS shift,
+				race_name,
+				alliance_tag,
+				sx,
+				sy
+			FROM
+				user_stats
+			ORDER BY
+				$order ASC,
+				nick ASC
+			;");
 		}
 
 		echo "<table class=\"tb\">";
@@ -601,7 +601,7 @@
 				echo "<td $addstyle >".nf($arr['points'])."</td>";
 				echo "<td $addstyle >
 				".edit_button("?page=user&amp;sub=edit&amp;id=".$arr['id']."")."
-				".cb_button("add_user=".$arr['id']."")."				
+				".cb_button("add_user=".$arr['id']."")."
 				</td>";
 				echo "</tr>";
 			}
@@ -613,7 +613,7 @@
 		echo "<script type=\"text/javascript\">document.forms[1].elements[0].select();</script>";
 
 	}
-	
+
 	//
 	// Legende
 	//
@@ -633,10 +633,10 @@
 	{
 		echo "Letzte Aktualisierung: <b>".df($statsUpdate)." Uhr</b><br/>";
 	}
-	echo "<b>Legende:</b> 
-	<span class=\"userLockedColor\">Gesperrt</span>, 
-	<span class=\"userHolidayColor\">Urlaubsmodus</span>, 
-	<span class=\"userInactiveColor\">Inaktiv (".USER_INACTIVE_SHOW." Tage)</span>, 
+	echo "<b>Legende:</b>
+	<span class=\"userLockedColor\">Gesperrt</span>,
+	<span class=\"userHolidayColor\">Urlaubsmodus</span>,
+	<span class=\"userInactiveColor\">Inaktiv (".USER_INACTIVE_SHOW." Tage)</span>,
 	</div>";
 
 

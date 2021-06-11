@@ -1,12 +1,12 @@
 <?PHP
 		echo "<h1>Punktespeicherung</h1>";
 		$res=dbquery("
-		SELECT 
+		SELECT
 			user_id,
-			user_nick 
-		FROM 
-			users 
-		ORDER BY 
+			user_nick
+		FROM
+			users
+		ORDER BY
 			user_nick
 		;");
 		if (mysql_num_rows($res)>0)
@@ -24,9 +24,9 @@
 			}
 			echo "</select><br/><br/>";
 			$tblcnt = mysql_fetch_row(dbquery("
-			SELECT 
-				COUNT(point_id) 
-			FROM 
+			SELECT
+				COUNT(point_id)
+			FROM
 				user_points
 			;"));
 			echo "Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.<br/><br/>";
@@ -39,14 +39,14 @@
 		if (isset($_GET['user_id']) && $_GET['user_id']>0)
 		{
 			$res=dbquery("
-			SELECT 
+			SELECT
 				user_nick,
 				user_points,
 				user_rank,
-				user_id 
-			FROM 
+				user_id
+			FROM
 				users
-			WHERE 
+			WHERE
 				user_id='".$_GET['user_id']."'
 			;");
 			if (mysql_num_rows($res)>0)

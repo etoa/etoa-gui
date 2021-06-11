@@ -6,7 +6,7 @@
  */
 class MarketHandler
 {
-	
+
 
 
 
@@ -71,7 +71,7 @@ class MarketHandler
 		{
 			$rates[$i] = round($rates[$i]/$normalizer,2);
 		}
-		
+
 		//Adding planet/fleet res in universe
 		$pres = dbquery("
 					   SELECT
@@ -100,7 +100,7 @@ class MarketHandler
 						");
 		$parr = mysql_fetch_array($pres);
 		$farr = mysql_fetch_array($fres);
-		
+
 		if ($parr!=null && $farr!=null && isset($parr[0]) && isset($farr[0]))
 		{
 
@@ -108,18 +108,18 @@ class MarketHandler
 			{
 				$res_rates[$i] = 1/($parr[$i]+$farr[$i]);
 			}
-		
+
 			$normalizer = array_sum($res_rates) / NUM_RESOURCES;
 			for ($i=0;$i<NUM_RESOURCES;$i++)
 			{
 				$res_rates[$i] = round($res_rates[$i]/$normalizer,2);
 			}
-		
+
 			for ($i=0;$i<NUM_RESOURCES;$i++)
 			{
 				$rates[$i] = $res_rates[$i]+$rates[$i];
 			}
-		
+
 			$normalizer = array_sum($rates) / NUM_RESOURCES;
 			for ($i=0;$i<NUM_RESOURCES;$i++)
 			{
@@ -141,7 +141,7 @@ class MarketHandler
 	 * Update market resource rates basen on previous demand and supply
 	 */
 	static function updateRates()
-	{		
+	{
 		// Load config
 		$cfg = Config::getInstance();
 

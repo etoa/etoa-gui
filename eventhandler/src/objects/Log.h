@@ -12,11 +12,11 @@
 
 /**
 * Log class
-* 
+*
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
-class Log	
+class Log
 {
 	public:
 		Log() {
@@ -30,12 +30,12 @@ class Log
 			this->entityShipsStart = "untouched";
 			this->entityShipsEnd = "untouched";
 		}
-		
+
 		~Log() {
 			this->save();
 		}
-		
-		void addFleetId(int fleetId);		
+
+		void addFleetId(int fleetId);
 		void addFleetUserId(int userId);
 		void addEntityUserId(int userId);
 		void addEntityToId(int entityId);
@@ -53,7 +53,7 @@ class Log
 		void addEntityResEnd(std::string res);
 		void addEntityShipsStart(std::string ships);
 		void addEntityShipsEnd(std::string ships);
-		
+
 	private:
 		int fleetId;
 		int fleetUserId;
@@ -67,7 +67,7 @@ class Log
 		std::string fleetShipsStart, fleetShipsEnd;
 		std::string entityResStart, entityResEnd;
 		std::string entityShipsStart, entityShipsEnd;
-		
+
 		void save();
 };
 

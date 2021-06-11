@@ -10,7 +10,7 @@ namespace building
 	{
 		std::time_t time = std::time(0);
 		Config &config = Config::instance();
-		
+
 		// Load fleetcontrolls to update discoverymask
 		mysqlpp::Query query = con_->query();
 		query << "SELECT "
@@ -40,18 +40,18 @@ namespace building
 		if (res) {
 			unsigned int resSize = res.size();
 			if (resSize>0) {
-				
+
 				double factor = (double)config.nget("discoverymask",0);
 
 				mysqlpp::Row row;
-				
+
 				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) {
 	    			row = res.at(i);
-					
+
 					int uid = (int)row["buildlist_user_id"];
 					int eid = (int)row["buildlist_entity_id"];
 					int radius = (int)((int)row["buildlist_current_level"] * factor);
-				
+
                     Entity* e = EntityFactory::createEntityById(eid);
 
 				    User u(uid);
@@ -61,7 +61,7 @@ namespace building
 				}
 			}
 		}
-				
+
 		// Load planets who needs updating
 		query << "SELECT "
 			<< "	buildlist_entity_id "
@@ -70,9 +70,9 @@ namespace building
 			<< "WHERE "
 			<< "	buildlist_build_type>2 "
 			<< "	AND buildlist_build_end_time<" << time << " ORDER BY buildlist_entity_id;";
-		res = query.store();		
-		
-		
+		res = query.store();
+
+
 		// Add changed planets to vector
 		if (res) {
 			unsigned int resSize = res.size();
@@ -80,7 +80,7 @@ namespace building
 				this->changes_ = true;
 				mysqlpp::Row row;
 				int lastId = 0;
-				
+
 				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) {
 					row = res.at(i);
 					int pid = (int)row["buildlist_entity_id"];
@@ -91,8 +91,8 @@ namespace building
 					lastId = pid;
 				}
 			}
-		}		
-		
+		}
+
 		// Perform level update
 		query << "UPDATE "
 			<< "	buildlist "
@@ -106,7 +106,7 @@ namespace building
 			<< "	AND buildlist_build_end_time<" << time << ";";
 		query.store();
     int up = my.affected_rows(query);
-		
+
 		query << "UPDATE "
 			<< "	buildlist "
 			<< "SET "
@@ -119,8 +119,8 @@ namespace building
 			<< "	AND buildlist_build_end_time<" << time << ";";
 		query.store();
     int down = my.affected_rows(query);
-    
+
 		DEBUG("Buildings: " << up << " upgraded, " << down << " downgraded");
 
-	}	
+	}
 }

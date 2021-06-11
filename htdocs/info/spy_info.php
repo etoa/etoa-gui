@@ -1,11 +1,11 @@
 <?PHP
 	echo "<h2>Spionagesystem</h2>";
 	HelpUtil::breadCrumbs(array("Spionagesystem","spy_info"));
-	
+
 	iBoxStart("Spionage");
 	echo "Du hast die Möglichkeit Planeten anderer Spieler mit Hilfe von Spionagesonden auszuspionieren.<br>
 	Je höher die \"Spionagetechik\" ist, desto mehr Informationen kannst du &uuml;ber den gegnerischen Planeten rausfinden.<br>
-	Ebenfalls kannst du mit Hilfe dieser Technik Informationen zu fremden Flotten, die zu einem deiner Planeten fliegen, herausfinden. 
+	Ebenfalls kannst du mit Hilfe dieser Technik Informationen zu fremden Flotten, die zu einem deiner Planeten fliegen, herausfinden.
 	Die Spionage klappt aber nicht immer, sie kann auch abgewehrt werden. Der Abwehrwert setzt sich aus verschiedenen Faktoren, unter anderem
 	der Tarntechnik, der Spionagetechnik, der Anzahl Sonden sowohl des spionierenden als auch des auszuspionierenden Spielers zusammen. Ebenfalls wird
 	überall ein Zufallswert mitberechnet.

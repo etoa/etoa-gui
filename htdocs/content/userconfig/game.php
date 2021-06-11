@@ -30,7 +30,7 @@
   	$cu->properties->startUpChat = $_POST['startup_chat'];
 	$cu->properties->showCellreports = $_POST['show_cellreports'];
 	$cu->properties->enableKeybinds = $_POST['keybinds_enable'];
-	
+
 	if ( (	strlen($_POST['chat_color'])==3 &&
 			preg_match('/^[a-fA-F0-9]{3}$/', $_POST['chat_color']) ) ||
 		(	strlen($_POST['chat_color'])==6 &&
@@ -58,7 +58,7 @@
     $ttm->reopenAllTutorials($cu->id);
     echo '<script type="text/javascript">showTutorialText(1,0)</script>';
   }
-			
+
 
   echo "<form action=\"?page=$page&mode=game\" method=\"post\" enctype=\"multipart/form-data\">";
   $cstr = checker_init();
@@ -69,12 +69,12 @@
   	<th><b>Spionagesonden für Direktscan:</b></th>
     <td><input type=\"text\" name=\"spyship_count\" maxlength=\"5\" size=\"5\" value=\"".$cu->properties->spyShipCount."\"> ";
 	$sres = dbquery("
-	SELECT 
-    ship_id, 
+	SELECT
+    ship_id,
     ship_name
-	FROM 
-		ships 
-	WHERE 
+	FROM
+		ships
+	WHERE
 		ship_buildable='1'
 		AND (
 		ship_actions LIKE '%,spy'
@@ -82,7 +82,7 @@
 		OR ship_actions LIKE '%,spy,%'
 		OR ship_actions LIKE 'spy'
 		)
-	ORDER BY 
+	ORDER BY
 		ship_name ASC");
   if (mysql_num_rows($sres)>0)
   {
@@ -100,18 +100,18 @@
   	echo "Momentan steht kein Schiff zur Auswahl!";
   }
   echo "</td></tr>";
-  
+
   // Analyzator ships for quick analysis
   echo "<tr>
   	<th><b>Analysatoren für Quickanalyse:</b></th>
     <td><input type=\"text\" name=\"analyzeship_count\" maxlength=\"5\" size=\"5\" value=\"".$cu->properties->analyzeShipCount."\"> ";
 	$sres = dbquery("
-	SELECT 
-    ship_id, 
+	SELECT
+    ship_id,
     ship_name
-	FROM 
-		ships 
-	WHERE 
+	FROM
+		ships
+	WHERE
 		ship_buildable='1'
 		AND (
 		ship_actions LIKE '%,analyze'
@@ -119,7 +119,7 @@
 		OR ship_actions LIKE '%,analyze,%'
 		OR ship_actions LIKE 'analyze'
 		)
-	ORDER BY 
+	ORDER BY
 		ship_name ASC");
   if (mysql_num_rows($sres)>0)
   {
@@ -137,19 +137,19 @@
   	echo "Momentan steht kein Schiff zur Auswahl!";
   }
   echo "</td></tr>";
-  
+
   // Default explore ship
   echo "<tr>
   	<th><b>Erkundungsschiffe für Direkterkundung:</b></th>
     <td>
     	<input type=\"text\" name=\"exploreship_count\" maxlength=\"5\" size=\"5\" value=\"".$cu->properties->exploreShipCount."\"> ";
 	$sres = dbquery("
-	SELECT 
-    ship_id, 
+	SELECT
+    ship_id,
     ship_name
-	FROM 
-		ships 
-	WHERE 
+	FROM
+		ships
+	WHERE
 		ship_buildable='1'
 		AND (
 		ship_actions LIKE '%,explore'
@@ -157,7 +157,7 @@
 		OR ship_actions LIKE '%,explore,%'
 		OR ship_actions LIKE 'explore'
 		)
-	ORDER BY 
+	ORDER BY
 		ship_name ASC");
   if (mysql_num_rows($sres)>0)
   {
@@ -174,7 +174,7 @@
   {
   	echo "Momentan steht kein Schiff zur Auswahl!";
   }
-  echo "</td></tr>";  
+  echo "</td></tr>";
 
   //Berichte im Sonnensystem (Aktiviert/Deaktiviert)
   echo "<tr>
@@ -182,8 +182,8 @@
     			<td>
               <input type=\"radio\" name=\"show_cellreports\" value=\"1\" ";
               if ($cu->properties->showCellreports==1) echo " checked=\"checked\"";
-              echo "/> Aktiviert &nbsp; 
-          
+              echo "/> Aktiviert &nbsp;
+
               <input type=\"radio\" name=\"show_cellreports\" value=\"0\" ";
               if ($cu->properties->showCellreports==0) echo " checked=\"checked\"";
     					echo "/> Deaktiviert
@@ -195,20 +195,20 @@
     			<td>
               <input type=\"radio\" name=\"startup_chat\" value=\"1\" ";
               if ($cu->properties->startUpChat==1) echo " checked=\"checked\"";
-              echo "/> Aktiviert &nbsp; 
-          
+              echo "/> Aktiviert &nbsp;
+
               <input type=\"radio\" name=\"startup_chat\" value=\"0\" ";
               if ($cu->properties->startUpChat==0) echo " checked=\"checked\"";
     					echo "/> Deaktiviert
     		</td>
-  		</tr>";  
+  		</tr>";
 
    echo "<tr>
             <th>Tutorial:</th>
             <td>
                 <input type=\"submit\" name=\"show_tut\" value=\"Anzeigen\"/>
             </td>
-        </tr>";  
+        </tr>";
 
 // Chat font color
 echo '<script type="text/javascript" src="web/js/vendor/jscolor.min.js"></script>';
@@ -232,12 +232,12 @@ echo "<tr>
     		<td>
               <input type=\"radio\" name=\"keybinds_enable\" value=\"1\" ";
               if ($cu->properties->enableKeybinds==1) echo " checked=\"checked\"";
-              echo "/> Aktiviert &nbsp; 
+              echo "/> Aktiviert &nbsp;
               <input type=\"radio\" name=\"keybinds_enable\" value=\"0\" ";
               if ($cu->properties->enableKeybinds==0) echo " checked=\"checked\"";
 			  echo "/> Deaktiviert
     	</td>
-  		</tr>";  
+  		</tr>";
 
 
   tableEnd();

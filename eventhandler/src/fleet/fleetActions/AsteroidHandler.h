@@ -11,7 +11,7 @@
 /**
 * Handles Asteroid....
 * Collecting resources from an asteroidfield
-* 
+*
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 namespace asteroid
@@ -21,14 +21,14 @@ namespace asteroid
 	public:
 		AsteroidHandler(mysqlpp::Row fleet)  : FleetAction(fleet) { }
 		void update();
-		
+
 	private:
 		/**
 		*Calculated/collected resources
 		**/
 		double metal, crystal, plastic;
 		double sum;
-		
+
 		/**
 		* Possibilitys, if the action succed
 		**/

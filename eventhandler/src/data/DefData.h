@@ -10,18 +10,18 @@
 
 /**
 * DefData class
-* 
+*
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
-class DefData : public Data	
+class DefData : public Data
 {
 public:
 	/**
 	* DefData Class
-	* 
+	*
 	*/
-	 	 	 	 	 	 	 	 	 	 	 	 	 	 	
+
 	DefData(mysqlpp::Row object) : Data(object) {
 		this->powerUse = (int)object["def_power_use"];
 		this->fuelUse = (int)object["def_fuel_use"];
@@ -39,7 +39,7 @@ public:
 		this->maxCount = (int)object["def_max_count"];
 		this->points = (double)object["def_points"];
 	}
-	
+
 	int getPowerUse();
 	int getFuelUse();
 	short getFields();
@@ -55,7 +55,7 @@ public:
 	short getCatId();
 	int getMaxCount();
 	double getPoints();
-	
+
 private:
 
 	int powerUse;

@@ -34,7 +34,7 @@
             FROM
                 planet_types
             INNER JOIN
-                (   
+                (
                     planets
                 INNER JOIN
                     users
@@ -113,7 +113,7 @@
                 users
             INNER JOIN
                 races
-            ON 
+            ON
                 users.user_race_id=races.race_id
                 AND users.user_ghost=0
                 AND users.user_hmode_from=0
@@ -163,7 +163,7 @@
             FROM
                 planet_types
             INNER JOIN
-                (   
+                (
                     planets
                 INNER JOIN
                     users
@@ -194,7 +194,7 @@
             FROM
                 planet_types
             INNER JOIN
-                (   
+                (
                     planets
                 INNER JOIN
                     users
@@ -225,7 +225,7 @@
             FROM
                 planet_types
             INNER JOIN
-                (   
+                (
                     planets
                 INNER JOIN
                     users
@@ -256,7 +256,7 @@
             FROM
                 planet_types
             INNER JOIN
-                (   
+                (
                     planets
                 INNER JOIN
                     users
@@ -287,7 +287,7 @@
             FROM
                 planet_types
             INNER JOIN
-                (   
+                (
                     planets
                 INNER JOIN
                     users
@@ -334,7 +334,7 @@
                 users
             ON
                 planet_user_id=user_id
-                AND user_ghost=0   
+                AND user_ghost=0
                 AND user_hmode_from=0
                 AND user_hmode_to=0
                 AND planet_res_metal>0");
@@ -358,7 +358,7 @@
                 users
             ON
                 planet_user_id=user_id
-                AND user_ghost=0   
+                AND user_ghost=0
                 AND user_hmode_from=0
                 AND user_hmode_to=0
                 AND planet_res_crystal>0");
@@ -382,7 +382,7 @@
                 users
             ON
                 planet_user_id=user_id
-                AND user_ghost=0   
+                AND user_ghost=0
                 AND user_hmode_from=0
                 AND user_hmode_to=0
                 AND planet_res_plastic>0");
@@ -406,7 +406,7 @@
                 users
             ON
                 planet_user_id=user_id
-                AND user_ghost=0   
+                AND user_ghost=0
                 AND user_hmode_from=0
                 AND user_hmode_to=0
                 AND planet_res_fuel>0");
@@ -430,7 +430,7 @@
                 users
             ON
                 planet_user_id=user_id
-                AND user_ghost=0   
+                AND user_ghost=0
                 AND user_hmode_from=0
                 AND user_hmode_to=0
                 AND planet_res_food>0");
@@ -612,7 +612,7 @@
         FROM
             ships
         INNER JOIN
-            (   
+            (
                 shiplist
             INNER JOIN
                 users
@@ -624,7 +624,7 @@
             )
         ON
             shiplist_ship_id=ship_id
-            AND ships.special_ship=0            
+            AND ships.special_ship=0
         GROUP BY
             ships.ship_id
         ORDER BY
@@ -653,11 +653,11 @@
         SELECT
             defense.def_name,
             SUM(deflist.deflist_count) as cnt,
-            MAX(deflist.deflist_count) as max       
+            MAX(deflist.deflist_count) as max
         FROM
             defense
         INNER JOIN
-            (   
+            (
                 deflist
             INNER JOIN
                 users
@@ -668,7 +668,7 @@
                 AND user_hmode_to=0
             )
         ON
-            deflist_def_id=def_id            
+            deflist_def_id=def_id
         GROUP BY
             defense.def_id
         ORDER BY
@@ -700,7 +700,7 @@
         FROM
             buildings
         INNER JOIN
-            (   
+            (
                 buildlist
             INNER JOIN
                 users
@@ -711,7 +711,7 @@
                 AND user_hmode_to=0
             )
         ON
-            building_id=buildlist_building_id          
+            building_id=buildlist_building_id
         GROUP BY
             buildings.building_id
         ORDER BY
@@ -754,7 +754,7 @@
 	FROM
 	    technologies
 	INNER JOIN
-	    (   
+	    (
 	        techlist
 	    INNER JOIN
 	        users
@@ -765,7 +765,7 @@
             AND user_hmode_to=0
 	    )
 	ON
-	    tech_id=techlist_tech_id              
+	    tech_id=techlist_tech_id
 	GROUP BY
 	    technologies.tech_id
 	ORDER BY
@@ -795,7 +795,7 @@
 	FROM
 	    buildings
 	INNER JOIN
-	    (   
+	    (
 	        buildlist
 	    INNER JOIN
 	        users
@@ -806,7 +806,7 @@
 	        AND user_hmode_to=0
 	    )
 	ON
-	    building_id=buildlist_building_id          
+	    building_id=buildlist_building_id
 	GROUP BY
 	    buildings.building_id
 	ORDER BY
@@ -837,7 +837,7 @@
 	FROM
 	    ships
 	INNER JOIN
-	    (   
+	    (
 	        shiplist
 	    INNER JOIN
 	        users
@@ -885,15 +885,15 @@
 		$out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
 		$out.="<tr><th  colspan=\"4\">Design</th></tr>";
 		$res=dbquery("
-		SELECT 
+		SELECT
 		    css_style,
-		    COUNT(id) as cnt 
-		FROM 
+		    COUNT(id) as cnt
+		FROM
 		    user_properties
-		GROUP BY 
-		    css_style 
-		ORDER BY 
-		    cnt DESC 
+		GROUP BY
+		    css_style
+		ORDER BY
+		    cnt DESC
 		LIMIT $limit;");
 		$rank=1;
 		$total=0;
@@ -927,15 +927,15 @@
 		$out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
 		$out.="<tr><th  colspan=\"4\">Bildpaket</th></tr>";
 		$res=dbquery("
-		SELECT 
+		SELECT
 		    image_url,
-		    COUNT(id) as cnt 
-		FROM 
-		    user_properties 
-		GROUP BY 
-		    image_url 
-		ORDER BY 
-		    cnt DESC 
+		    COUNT(id) as cnt
+		FROM
+		    user_properties
+		GROUP BY
+		    image_url
+		ORDER BY
+		    cnt DESC
 		LIMIT $limit;");
 		$rank=1;
 		$total=0;
@@ -966,15 +966,15 @@
 		$out.="<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
 		$out.="<tr><th  colspan=\"4\">Bild-Erweiterung</th></tr>";
 		$res=dbquery("
-		SELECT 
+		SELECT
 			image_ext,
-			COUNT(id) as cnt 
-		FROM 
+			COUNT(id) as cnt
+		FROM
 			user_properties
-		GROUP BY 
-			image_ext 
-		ORDER BY 
-			cnt DESC 
+		GROUP BY
+			image_ext
+		ORDER BY
+			cnt DESC
 		LIMIT $limit;");
 		$rank=1;
 		$total=0;

@@ -17,16 +17,16 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 if (Alliance::checkActionRights('editdata'))
 {
 
 
 	echo "<h2>Allianzdaten &auml;ndern</h2>";
-	
+
 	echo "<form action=\"?page=$page\" method=\"post\" enctype=\"multipart/form-data\">";
 	checker_init();
-	
+
 	tableStart("Daten der Info-Seite");
 	echo "<tr>
 		<th>Allianz-Tag:</th>
@@ -66,34 +66,34 @@ if (Alliance::checkActionRights('editdata'))
 	<tr>
 		<th>Bewerbungen zulassen:</th>
 		<td>
-			<input type=\"radio\" name=\"alliance_accept_applications\" value=\"1\" ".($ally->acceptApplications ? " checked=\"checked\"" : "")."/> 
-			<span ".tm("Bewerbungen zulassen","Jeder User kann sich bei dieser Allianz bewerben.").">Ja</span> 
-			<input type=\"radio\" name=\"alliance_accept_applications\" value=\"0\" ".(!$ally->acceptApplications ? " checked=\"checked\"" : "")."/> 
+			<input type=\"radio\" name=\"alliance_accept_applications\" value=\"1\" ".($ally->acceptApplications ? " checked=\"checked\"" : "")."/>
+			<span ".tm("Bewerbungen zulassen","Jeder User kann sich bei dieser Allianz bewerben.").">Ja</span>
+			<input type=\"radio\" name=\"alliance_accept_applications\" value=\"0\" ".(!$ally->acceptApplications ? " checked=\"checked\"" : "")."/>
 			<span ".tm("Bewerbungen zulassen","Es können keine Bewerbungen an diese Allianz geschrieben werden.").">Nein</span>
 		</td>
 	</tr>
 	<tr>
 		<th>Bündnisanfragen zulassen:</th>
 		<td>
-			<input type=\"radio\" name=\"alliance_accept_bnd\" value=\"1\" ".($ally->acceptPact ? " checked=\"checked\"" : "")."/> 
-			<span ".tm("Bündnisanfragen zulassen","Bündnisanfragen von jeder Allianz sind zugelassen.").">Ja</span> 
-			<input type=\"radio\" name=\"alliance_accept_bnd\" value=\"0\" ".(!$ally->acceptPact ? " checked=\"checked\"" : "")."/> 
+			<input type=\"radio\" name=\"alliance_accept_bnd\" value=\"1\" ".($ally->acceptPact ? " checked=\"checked\"" : "")."/>
+			<span ".tm("Bündnisanfragen zulassen","Bündnisanfragen von jeder Allianz sind zugelassen.").">Ja</span>
+			<input type=\"radio\" name=\"alliance_accept_bnd\" value=\"0\" ".(!$ally->acceptPact ? " checked=\"checked\"" : "")."/>
 			<span ".tm("Bewerbungen zulassen","Es werden keine Bündnisanfragen angenommen.").">Nein</span>
 		</td>
-	</tr> 
+	</tr>
 	<tr>
 		<th>Öffentliche Mitgliederliste:</th>
 		<td>
 			<input type=\"radio\" name=\"alliance_public_memberlist\" value=\"1\" ".($ally->publicMemberList ? " checked=\"checked\"" : "")." /> Ja
-			<input type=\"radio\" name=\"alliance_public_memberlist\" value=\"0\" ".(!$ally->publicMemberList ? " checked=\"checked\"" : "")." /> Nein 
+			<input type=\"radio\" name=\"alliance_public_memberlist\" value=\"0\" ".(!$ally->publicMemberList ? " checked=\"checked\"" : "")." /> Nein
 			(In der Statistik und auf der Raumkarte ist der Allianzname immer sichtbar)
 		</td>
-	</tr>"; 				
-				
-				
+	</tr>";
+
+
 	tableEnd();
-	
+
 	echo "<input type=\"submit\" name=\"editsubmit\" value=\"Speichern\" /> &nbsp; <input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" /></form>";
-	
+
 }
 ?>

@@ -47,12 +47,12 @@
 	if ($uid > 0 && count($_SESSION) > 0)
 	{
 		$res=dbquery("
-			SELECT 
+			SELECT
 				user_nick,
 				user_rank
-			FROM 
+			FROM
 				users
-			WHERE 
+			WHERE
 				user_id='".$uid."';
 		");
 		if (mysql_num_rows($res)>0)
@@ -68,16 +68,16 @@
 				$sql2 = "";
 
 			$pres=dbquery("
-				SELECT 
-					* 
-				FROM 
+				SELECT
+					*
+				FROM
 					user_points
-				WHERE 
-					point_user_id='".$uid."' 
+				WHERE
+					point_user_id='".$uid."'
 					AND point_points>0
 					$sql1
 					$sql2
-				ORDER BY 
+				ORDER BY
 					point_timestamp DESC LIMIT ".(DETAIL_LIMIT*6).";
 			");
 			if (mysql_num_rows($pres)>0)

@@ -1,8 +1,8 @@
 <?PHP
 	echo "<h1>Spieler-Banner</h1>";
-	
+
 	echo "<p>Banner werden jeweils beim Aktualisieren der Punkte neu generiert.</p>";
-	
+
 	$res=dbquery("
 	SELECT
 		user_nick,

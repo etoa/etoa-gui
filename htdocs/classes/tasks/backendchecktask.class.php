@@ -2,12 +2,12 @@
 	/**
 	* Check Backend
 	*/
-	class BackendCheckTask implements IPeriodicTask 
-	{		
+	class BackendCheckTask implements IPeriodicTask
+	{
 		function run()
 		{
 			$cfg = Config::getInstance();
-		
+
 			$currentStatus = EventHandlerManager::checkDaemonRunning(getAbsPath($cfg->daemon_pidfile))>0 ? true : false;
 			$lastStatus = RuntimeDataStore::get('backend_status') == 1;
 			$change = $currentStatus != $lastStatus;
@@ -25,7 +25,7 @@
 			RuntimeDataStore::set('backend_status', $currentStatus ? 1 : 0);
 			return "Backend Check: ".($currentStatus ? 'gestartet' : 'gestoppt')." (".($change ? 'geändert' : 'keine Änderung').")";
 		}
-		
+
 		function getDescription() {
 			return "Backend-Check";
 		}

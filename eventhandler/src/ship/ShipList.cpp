@@ -8,12 +8,12 @@ namespace ship
 		My &my = My::instance();
 		mysqlpp::Connection *con_ = my.get();
 		count = count < 0 ? 0 : count;
-		
+
 		mysqlpp::Query query = con_->query();
-		
+
 		DataHandler &DataHandler = DataHandler::instance();
 		ShipData *data = DataHandler.getShipById(shipId);
-		
+
 		if (data->getSpecial()) {
 			query << "INSERT INTO "
 				<< "	shiplist ("

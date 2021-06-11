@@ -51,7 +51,7 @@
 			WHERE
 				 ".$leadStr."
 				".$uidStr."
-			ORDER BY 
+			ORDER BY
 				launchtime ASC
 			;");
 			if (mysql_num_rows($res) > 0)
@@ -330,18 +330,18 @@
 			if (count($this->fleets) && $fleet<0)
 			{
 				$sres = dbquery("
-					SELECT 
-						fs_ship_id, 
+					SELECT
+						fs_ship_id,
 						SUM( fs_ship_cnt )
-					FROM 
+					FROM
 						fleet_ships
-					INNER JOIN 
-						fleet 
-					ON 
+					INNER JOIN
+						fleet
+					ON
 						fleet.id = fs_fleet_id
 						AND fleet.leader_id = '".$this->id."'
 						AND (fs_ship_cnt > '0')
-					GROUP BY 
+					GROUP BY
 						fs_ship_id
 				;");
 
@@ -670,9 +670,9 @@
 		private function update()
 		{
 			dbquery("
-			UPDATE 
+			UPDATE
 				fleet
-			SET 
+			SET
 				launchtime='".$this->launchTime."',
 				landtime='".$this->landTime."',
 				entity_from=".$this->sourceId.",
@@ -689,7 +689,7 @@
 				res_food='".$this->resFood."',
 				res_power='".$this->resPower."',
 				res_people='".$this->resPeople."'
-			WHERE 
+			WHERE
 				id='".$this->id."';");
 			if (mysql_affected_rows()>0)
 				return true;
@@ -703,24 +703,24 @@
 		function addShips($shipId,$count)
 		{
 			dbquery("
-			UPDATE 
-				fleet_ships 
-			SET 
-				fs_ship_cnt=fs_ship_cnt+".$count." 
-			WHERE 
-				fs_fleet_id=".$this->id." 
+			UPDATE
+				fleet_ships
+			SET
+				fs_ship_cnt=fs_ship_cnt+".$count."
+			WHERE
+				fs_fleet_id=".$this->id."
 				AND fs_ship_id=".$shipId.";");
 			if (mysql_affected_rows()==0)
 			{
 				dbquery("
-				INSERT INTO 
-					fleet_ships 
+				INSERT INTO
+					fleet_ships
 				(
 					fs_fleet_id,
 					fs_ship_id,
 					fs_ship_cnt
-				) 
-				VALUES 
+				)
+				VALUES
 				(
 					".$this->id.",
 					".$shipId.",
@@ -801,12 +801,12 @@
         function removeSupportRes()
         {
 			dbquery("
-			UPDATE 
-				fleet 
-			SET 
-                support_usage_fuel='0', 
-                support_usage_food='0' 
-			WHERE 
+			UPDATE
+				fleet
+			SET
+                support_usage_fuel='0',
+                support_usage_food='0'
+			WHERE
 				id='".$this->id."';");
         }
 

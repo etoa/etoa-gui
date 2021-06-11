@@ -101,9 +101,9 @@ function reqInfo($id,$cat='b')
 		foreach ($items as $i)
 		{
 			echo "<div class=\"techtreeItem\" style=\"background:url('".$i[3]."');\">
-			<div class=\"techtreeItemLevel\">Lvl <b>".$i[2]."</b></div>	
-			<a href=\"javascript:;\" onclick=\"".$i[4]."\" style=\"height:100%;display:block;\"></a>			
-			<div class=\"techtreeItemName\">".$i[1]."</div>				
+			<div class=\"techtreeItemLevel\">Lvl <b>".$i[2]."</b></div>
+			<a href=\"javascript:;\" onclick=\"".$i[4]."\" style=\"height:100%;display:block;\"></a>
+			<div class=\"techtreeItemName\">".$i[1]."</div>
 			</div>";
 		}
 		echo "<br style=\"clear:both;\"";
@@ -234,9 +234,9 @@ function reqInfo($id,$cat='b')
 			foreach ($items as $i)
 			{
 				echo "<div class=\"techtreeItem\" style=\"background:url('".$i[3]."');\">
-				<div class=\"techtreeItemLevel\">Ab Lvl <b>".$i[2]."</b></div>	
-				<a href=\"javascript:;\" onclick=\"".$i[4]."\" style=\"height:100%;display:block;\"></a>			
-				<div class=\"techtreeItemName\">".$i[1]."</div>				
+				<div class=\"techtreeItemLevel\">Ab Lvl <b>".$i[2]."</b></div>
+				<a href=\"javascript:;\" onclick=\"".$i[4]."\" style=\"height:100%;display:block;\"></a>
+				<div class=\"techtreeItemName\">".$i[1]."</div>
 				</div>";
 				$cnt++;
 

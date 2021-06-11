@@ -7,5 +7,5 @@
 	<frameset cols="*,350" frameborder="0">
 		<frame name="main" src="index.php">
     <frame name="chat" src="chat.php">
-	</frameset>	
+	</frameset>
 </html>

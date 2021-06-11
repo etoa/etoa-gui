@@ -1031,9 +1031,9 @@ die Spielleitung";
         $cres = dbquery("SELECT id FROM fleet WHERE user_id='" . $this->id . "';");
         $carr = mysql_fetch_row($cres);
         if ($carr[0] == 0 || $force) {
-            $pres = dbquery("SELECT 
-                                    f.id 
-                                FROM 
+            $pres = dbquery("SELECT
+                                    f.id
+                                FROM
                                     fleet as f
                                 INNER JOIN
                                     planets as p
@@ -1042,68 +1042,68 @@ die Spielleitung";
                                 AND (f.user_id='" . $this->id . "' OR (status=0 AND action NOT IN ('collectdebris','explore','flight','createdebris')));");
             $parr = mysql_fetch_row($pres);
             if ($parr[0] == 0 || $force) {
-                $sres = dbquery("SELECT 
+                $sres = dbquery("SELECT
                                         queue_id,
-                                        queue_starttime 
-                                    FROM 
-                                        ship_queue 
-                                    WHERE 
+                                        queue_starttime
+                                    FROM
+                                        ship_queue
+                                    WHERE
                                         queue_user_id='" . $this->id . "';");
                 while ($sarr = mysql_fetch_row($sres)) {
                     if ($sarr[1] > time()) {
-                        dbquery("UPDATE 
-                                        ship_queue 
-                                    SET 
+                        dbquery("UPDATE
+                                        ship_queue
+                                    SET
                                         queue_build_type=1
-                                    WHERE 
+                                    WHERE
                                         queue_user_id='" . $this->id . "';");
                     } else {
-                        dbquery("UPDATE 
-                                        ship_queue 
-                                    SET 
+                        dbquery("UPDATE
+                                        ship_queue
+                                    SET
                                         queue_build_type=1
-                                    WHERE 
+                                    WHERE
                                         queue_user_id='" . $this->id . "';");
                     }
                 }
-                $sres = dbquery("SELECT 
+                $sres = dbquery("SELECT
                                         queue_id,
-                                        queue_starttime 
-                                    FROM 
-                                        def_queue 
-                                    WHERE 
+                                        queue_starttime
+                                    FROM
+                                        def_queue
+                                    WHERE
                                         queue_user_id='" . $this->id . "';");
                 while ($sarr = mysql_fetch_row($sres)) {
                     if ($sarr[1] > time()) {
-                        dbquery("UPDATE 
-                                        def_queue 
-                                    SET 
+                        dbquery("UPDATE
+                                        def_queue
+                                    SET
                                         queue_build_type=1
-                                    WHERE 
+                                    WHERE
                                         queue_user_id='" . $this->id . "';");
                     } else {
-                        dbquery("UPDATE 
-                                        def_queue 
-                                    SET 
+                        dbquery("UPDATE
+                                        def_queue
+                                    SET
                                         queue_build_type=1
-                                    WHERE 
+                                    WHERE
                                         queue_user_id='" . $this->id . "';");
                     }
                 }
 
-                dbquery("UPDATE 
-                                buildlist 
-                            SET 
+                dbquery("UPDATE
+                                buildlist
+                            SET
                                 buildlist_build_type = 1
-                            WHERE 
-                                buildlist_user_id='" . $this->id . "' 
+                            WHERE
+                                buildlist_user_id='" . $this->id . "'
                                 AND buildlist_build_start_time>0;");
-                dbquery("UPDATE 
-                                techlist 
-                            SET 
+                dbquery("UPDATE
+                                techlist
+                            SET
                                 techlist_build_type=1
-                            WHERE 
-                                techlist_user_id='" . $this->id . "' 
+                            WHERE
+                                techlist_user_id='" . $this->id . "'
                                 AND techlist_build_start_time>0;");
 
                 $hfrom = time();
@@ -1198,21 +1198,21 @@ die Spielleitung";
 								techlist_id=" . $tarr[0] . ";");
             }
 
-            $sres = dbquery("SELECT 
+            $sres = dbquery("SELECT
 									queue_id,
 									queue_endtime,
 									queue_starttime
-								 FROM 
-								 	ship_queue 
-								WHERE 
+								 FROM
+								 	ship_queue
+								WHERE
 									queue_user_id='" . $this->id . "'
-								ORDER BY 
+								ORDER BY
 									queue_starttime ASC;");
             $time = time();
             while ($sarr = mysql_fetch_row($sres)) {
                 $start = $sarr[2] + $hmodTime;
                 $end = $sarr[1] + $hmodTime;
-                dbquery("UPDATE 
+                dbquery("UPDATE
 								ship_queue
 							SET
 								queue_build_type=0,
@@ -1222,21 +1222,21 @@ die Spielleitung";
 								queue_id=" . $sarr[0] . ";");
             }
 
-            $dres = dbquery("SELECT 
+            $dres = dbquery("SELECT
 									queue_id,
 									queue_endtime,
 									queue_starttime
-								 FROM 
-								 	def_queue 
-								WHERE 
+								 FROM
+								 	def_queue
+								WHERE
 									queue_user_id='" . $this->id . "'
-								ORDER BY 
+								ORDER BY
 									queue_starttime ASC;");
             $time = time();
             while ($darr = mysql_fetch_row($dres)) {
                 $start = $darr[2] + $hmodTime;
                 $end = $darr[1] + $hmodTime;
-                dbquery("UPDATE 
+                dbquery("UPDATE
 								def_queue
 							SET
 								queue_build_type=0,
@@ -1334,7 +1334,7 @@ die Spielleitung";
 		// Add new record
 		if (dbQuerySave("
 			INSERT INTO
-				".self::tableName." 
+				".self::tableName."
 			(
 				user_name,
 				user_nick,
@@ -1464,9 +1464,9 @@ die Spielleitung";
         $this->changedMainPlanet = $changed_value;
         dbquery("
         UPDATE
-            users 
+            users
         SET
-            user_changed_main_planet=$changed_value 
+            user_changed_main_planet=$changed_value
         WHERE
             user_id=".$this->id."
         ");
@@ -1483,7 +1483,7 @@ die Spielleitung";
 		$res = dbquery("
 		SELECT
 			discoverymask
-		FROM				
+		FROM
 			users
 		WHERE
 			user_id=".$this->id."

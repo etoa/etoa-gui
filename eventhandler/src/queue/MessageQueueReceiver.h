@@ -18,14 +18,14 @@ struct MessageQueueCommand {
 /**
 * Receives command messages from a queue
 */
-class MessageQueueReceiver	
+class MessageQueueReceiver
 {
 	public:
 		MessageQueueReceiver() {}
 		~MessageQueueReceiver() {}
 		std::vector<MessageQueueCommand> receive();
 	private:
-	
+
 };
 
 #endif

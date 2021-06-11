@@ -6,9 +6,9 @@ namespace tech
 	void TechHandler::update()
 	{
 		std::time_t time = std::time(0);
-		
+
 		mysqlpp::Query query = con_->query();
-		
+
 		// Load users who needs updating
 		query << "SELECT "
 			<< "	techlist_user_id "
@@ -20,7 +20,7 @@ namespace tech
 			<< "ORDER BY "
 			<< "	techlist_user_id;";
 		RESULT_TYPE res = query.store();
-		
+
 		// Add changed users to vector
 		if (res) {
 			unsigned int resSize = res.size();
@@ -28,7 +28,7 @@ namespace tech
 				this->changes_ = true;
 				mysqlpp::Row row;
 				int lastId = 0;
-				
+
 				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) {
 					row = res.at(i);
 					int uid = (int)row["techlist_user_id"];
@@ -40,7 +40,7 @@ namespace tech
 				}
 			}
 		}
-		
+
 		// Perform level update
 		query << "UPDATE "
 			<< "	techlist "
@@ -58,5 +58,5 @@ namespace tech
 		if( my.affected_rows(query) > 0 ) {
 			this->changes_ = true;
 		}
-	}	
+	}
 }

@@ -2,8 +2,8 @@
 	/**
 	* Set users in holyday mode to inactive after threshold has been passed
 	*/
-	class SetHolydayModeUsersInactiveTask implements IPeriodicTask 
-	{		
+	class SetHolydayModeUsersInactiveTask implements IPeriodicTask
+	{
 		function run()
 		{
 			if (Config::getInstance()->p2('hmode_days'))
@@ -13,7 +13,7 @@
 			}
 			return null;
 		}
-		
+
 		function getDescription() {
 			return "Benutzer aus Urlaub inaktiv setzen";
 		}

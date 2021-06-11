@@ -36,7 +36,7 @@
 			FROM
 				shiplist l
 			INNER JOIN
-				ships s 
+				ships s
 			ON
 				s.ship_id = l.shiplist_ship_id
 				AND l.shiplist_user_id=".$this->userId ."
@@ -184,14 +184,14 @@
 
 		function remove($shipId,$cnt)
 		{
-			$res = dbquery("SELECT 
-								shiplist_id, 
-								shiplist_count 
-							FROM 
-								shiplist 
-							WHERE 
-								shiplist_ship_id=".$shipId." 
-								AND shiplist_user_id='".$this->userId."' 
+			$res = dbquery("SELECT
+								shiplist_id,
+								shiplist_count
+							FROM
+								shiplist
+							WHERE
+								shiplist_ship_id=".$shipId."
+								AND shiplist_user_id='".$this->userId."'
 								AND shiplist_entity_id='".$this->entityId."';");
 			$arr = mysql_fetch_row($res);
 
@@ -201,7 +201,7 @@
 						shiplist
 					SET
 						shiplist_count = shiplist_count - ".$delable."
-					WHERE 
+					WHERE
 						shiplist_ship_id=".$shipId."
 						AND shiplist_id='".$arr[0]."'
 				LIMIT 1;");
@@ -211,14 +211,14 @@
 
 		function bunker($shipId,$cnt)
 		{
-			$res = dbquery("SELECT 
-								shiplist_id, 
-								shiplist_count 
-							FROM 
-								shiplist 
-							WHERE 
-								shiplist_ship_id=".$shipId." 
-								AND shiplist_user_id='".$this->userId."' 
+			$res = dbquery("SELECT
+								shiplist_id,
+								shiplist_count
+							FROM
+								shiplist
+							WHERE
+								shiplist_ship_id=".$shipId."
+								AND shiplist_user_id='".$this->userId."'
 								AND shiplist_entity_id='".$this->entityId."';");
 			$arr = mysql_fetch_row($res);
 
@@ -229,7 +229,7 @@
 					SET
 						shiplist_bunkered = shiplist_bunkered + ".$delable.",
 						shiplist_count = shiplist_count - ".$delable."
-					WHERE 
+					WHERE
 						shiplist_ship_id=".$shipId."
 						AND shiplist_id='".$arr[0]."'
 					LIMIT 1;");
@@ -239,14 +239,14 @@
 
 		function leaveShelter($shipId,$cnt)
 		{
-			$res = dbquery("SELECT 
-								shiplist_id, 
-								shiplist_bunkered 
-							FROM 
-								shiplist 
-							WHERE 
-								shiplist_ship_id=".$shipId." 
-								AND shiplist_user_id='".$this->userId."' 
+			$res = dbquery("SELECT
+								shiplist_id,
+								shiplist_bunkered
+							FROM
+								shiplist
+							WHERE
+								shiplist_ship_id=".$shipId."
+								AND shiplist_user_id='".$this->userId."'
 								AND shiplist_entity_id='".$this->entityId."';");
 			$arr = mysql_fetch_row($res);
 
@@ -257,7 +257,7 @@
 					SET
 						shiplist_bunkered = shiplist_bunkered - ".$delable.",
 						shiplist_count = shiplist_count + ".$delable."
-					WHERE 
+					WHERE
 						shiplist_ship_id=".$shipId."
 						AND shiplist_id='".$arr[0]."'
 					LIMIT 1;");
@@ -316,9 +316,9 @@
 		*/
 		static function cleanUp()
 		{
-			dbquery("DELETE FROM 
+			dbquery("DELETE FROM
 						`shiplist`
-					WHERE 
+					WHERE
 						`shiplist_count`='0'
 						AND `shiplist_bunkered`='0'
 						AND `shiplist_special_ship`='0'

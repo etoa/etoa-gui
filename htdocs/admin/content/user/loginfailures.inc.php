@@ -1,7 +1,7 @@
 <?PHP
 		echo "<h1>Fehlerhafte Logins</h1>";
 		echo "Es werden maximal 300 Einträge angezeigt!<br/><br/>";
-		
+
 		switch (isset($_GET['order']) ? $_GET['order'] : 0)
 		{
 			case 1:
@@ -15,19 +15,19 @@
 			case 3:
 				$order = "failure_host ASC";
 				$orderstring = "Host";
-				break;			
+				break;
 			case 3:
 				$order = "failure_clien ASC";
 				$orderstring = "Client";
-				break;						
+				break;
 			default:
 				$order = "failure_time DESC";
 				$orderstring = "Datum";
 		}
-		
-		
+
+
 			$res=dbquery("
-			SELECT 
+			SELECT
 				failure_id,
 				failure_time,
 				failure_pw,
@@ -35,15 +35,15 @@
 				user_id,
 				failure_ip,
 				failure_host,
-				failure_client 
-			FROM 
-				login_failures 
+				failure_client
+			FROM
+				login_failures
 			INNER JOIN
 				users ON
 				failure_user_id=user_id
-			ORDER BY 
+			ORDER BY
 				".$order."
-			LIMIT 
+			LIMIT
 				300;");
 			if (mysql_num_rows($res)>0)
 			{
@@ -64,7 +64,7 @@
 					echo "<td class=\"tbldata\"><a href=\"?page=user&amp;sub=ipsearch&amp;host=".$arr['failure_host']."\">".$arr['failure_host']."</a></td>
 					<td class=\"tbldata\">".$arr['failure_client']."</td>
 					<td class=\"tbldata\">
-						".cb_button("add_user=".$arr['user_id']."")."				
+						".cb_button("add_user=".$arr['user_id']."")."
 					</td>
 					</tr>";
 				}
@@ -73,5 +73,5 @@
 			else
 			{
 				echo "<i>Keine fehlgeschlagenen Logins</i>";
-			}		
+			}
 ?>

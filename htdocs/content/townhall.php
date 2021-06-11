@@ -48,9 +48,9 @@
 	<?PHP
 
 	echo "<h1>Rathaus</h1>";
-	echo "Im Rathaus k&ouml;nnen Allianzen Nachrichten an ihre Mitglieder oder an 
-	andere Allianzen ver&ouml;ffentlichen; diese Nachrichten k&ouml;nnen &ouml;ffentlich 
-	gemacht oder nur f&uuml;r die Empf&auml;nger lesbar publiziert werden. 
+	echo "Im Rathaus k&ouml;nnen Allianzen Nachrichten an ihre Mitglieder oder an
+	andere Allianzen ver&ouml;ffentlichen; diese Nachrichten k&ouml;nnen &ouml;ffentlich
+	gemacht oder nur f&uuml;r die Empf&auml;nger lesbar publiziert werden.
 	Zum Verfassen einer Nachricht benutze die entsprechende Option auf der Allianzseite.<br><br><br>";
 
 
@@ -58,7 +58,7 @@
 	// Neuste Nachrichten
 	//
 	$anres=dbquery("
-	SELECT 
+	SELECT
 		alliance_news_title,
 		alliance_news_date,
 		alliance_news_id,
@@ -70,20 +70,20 @@
 		af.alliance_tag as aftag,
 		user_id,
 		user_nick
-	FROM 
-		alliance_news 
+	FROM
+		alliance_news
 	LEFT JOIN
 		alliances as af
-	ON 
+	ON
 		alliance_news_alliance_id=af.alliance_id
 	LEFT JOIN
 		users
 	ON
 		user_id = alliance_news_user_id
-	WHERE 
+	WHERE
 		alliance_news_alliance_to_id=0
-	ORDER BY 
-		alliance_news_date DESC 
+	ORDER BY
+		alliance_news_date DESC
 	LIMIT 10;");
 	if (mysql_num_rows($anres))
 	{
@@ -142,7 +142,7 @@
 	// Internal messages
 	//
 	$anres=dbquery("
-	SELECT 
+	SELECT
 		alliance_news_title,
 		alliance_news_date,
 		alliance_news_id,
@@ -154,20 +154,20 @@
 		af.alliance_tag as aftag,
 		user_id,
 		user_nick
-	FROM 
+	FROM
 		alliance_news
 	LEFT JOIN
 		alliances as af
-	ON 
+	ON
 		alliance_news_alliance_id=af.alliance_id
 	LEFT JOIN
 		users
 	ON
 		user_id = alliance_news_user_id
-	WHERE 
-		alliance_news_alliance_to_id=".$cu->allianceId()." 
-	ORDER BY 
-		alliance_news_date DESC 
+	WHERE
+		alliance_news_alliance_to_id=".$cu->allianceId()."
+	ORDER BY
+		alliance_news_date DESC
 	;");
 	if (mysql_num_rows($anres))
 	{
@@ -227,13 +227,13 @@
 	// Bündnisse
 	//
 	$res = dbquery("
-	SELECT	
+	SELECT
 		alliance_bnd_id,
 		alliance_bnd_name,
 		a1.alliance_name as an1,
-		a2.alliance_name as an2,  
+		a2.alliance_name as an2,
 		a1.alliance_tag as at1,
-		a2.alliance_tag as at2,  
+		a2.alliance_tag as at2,
 		alliance_bnd_alliance_id1 as aid1,
 		alliance_bnd_alliance_id2 as aid2,
 		alliance_bnd_date,
@@ -270,7 +270,7 @@
 			echo "<tr>
 				<td><a href=\"?page=alliance&amp;info_id=".$arr['aid1']."\" ".tm($arr['at1'],text2html($arr['an1'])).">".text2html($arr['an1'])."</td>
 				<td><a href=\"?page=alliance&amp;info_id=".$arr['aid2']."\" ".tm($arr['at2'],text2html($arr['an2'])).">".text2html($arr['an2'])."</td>
-				<td>".stripslashes($arr['alliance_bnd_name'])."</td>				
+				<td>".stripslashes($arr['alliance_bnd_name'])."</td>
 				<td>".df($arr['alliance_bnd_date'])."</td>
 				<td>";
 				if ($arr['alliance_bnd_text_pub']!="")
@@ -301,12 +301,12 @@
 	// Kriege
 	//
 	$res = dbquery("
-	SELECT	
+	SELECT
 		alliance_bnd_id,
 		a1.alliance_name as an1,
-		a2.alliance_name as an2,  
+		a2.alliance_name as an2,
 		a1.alliance_tag as at1,
-		a2.alliance_tag as at2,  
+		a2.alliance_tag as at2,
 		alliance_bnd_alliance_id1 as aid1,
 		alliance_bnd_alliance_id2 as aid2,
 		alliance_bnd_date,
@@ -372,11 +372,11 @@
 	// Friedensabkommen
 	//
 	$res = dbquery("
-	SELECT	
+	SELECT
 		a1.alliance_name as an1,
-		a2.alliance_name as an2,  
+		a2.alliance_name as an2,
 		a1.alliance_tag as at1,
-		a2.alliance_tag as at2,  
+		a2.alliance_tag as at2,
 		alliance_bnd_alliance_id1 as aid1,
 		alliance_bnd_alliance_id2 as aid2,
 		alliance_bnd_date

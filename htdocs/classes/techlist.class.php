@@ -17,12 +17,12 @@
 			if (!isset($this->techs[$bid]))
 			{
 				$res = dbquery("
-				SELECT				
+				SELECT
 					techlist_current_level
-				FROM 
-					techlist 
-				WHERE 
-					techlist_tech_id=".$bid." 
+				FROM
+					techlist
+				WHERE
+					techlist_tech_id=".$bid."
 					AND techlist_user_id='".$this->userId."';");
 				if (mysql_num_rows($res)>0)
 				{
@@ -57,11 +57,11 @@
 				global $cp;
 			}
 			$tres = dbquery("
-			SELECT 
+			SELECT
 				COUNT(techlist_id)
-			FROM 
-				techlist 
-			WHERE 
+			FROM
+				techlist
+			WHERE
 				techlist_user_id='".$cu->id."'".
 				(($onCurrentPlanet)?" AND techlist_entity_id='".$cp->id."'":'').
 				" AND techlist_build_type > '2'
@@ -78,11 +78,11 @@
     {
     	global $cu;
       $tres = dbquery("
-			SELECT 
+			SELECT
 				COUNT(techlist_id)
-			FROM 
-				techlist 
-			WHERE 
+			FROM
+				techlist
+			WHERE
 				techlist_user_id='".$cu->id."' AND techlist_tech_id= ".$bid." AND techlist_build_type > '2'
 			;");
 			$tarr=mysql_fetch_row($tres);

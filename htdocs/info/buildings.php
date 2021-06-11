@@ -11,7 +11,7 @@ echo "<h2>Geb&auml;ude</h2>";
 if (isset($_GET['id']) && intval($_GET['id']) > 0)
 {
 	$bid = intval($_GET['id']);
-	
+
 	$b_level = 1;
 
 	$res = dbquery("SELECT * FROM buildings WHERE building_show=1 AND building_id='".$bid."';");
@@ -19,41 +19,41 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
 	{
 		HelpUtil::breadCrumbs(array("Geb&auml;ude","buildings"),array(text2html($arr['building_name']),$arr['building_id']),1);
 		echo "<select onchange=\"document.location='?$link&amp;site=buildings&id='+this.options[this.selectedIndex].value\">";
-		$bres=dbquery("SELECT 
+		$bres=dbquery("SELECT
 			building_id,
-			building_name 
-		FROM 
-			buildings 
+			building_name
+		FROM
+			buildings
 		INNER JOIN
-			building_types 
+			building_types
 		ON
-			building_type_id=type_id		
-		WHERE 
+			building_type_id=type_id
+		WHERE
 			building_show=1
-		ORDER BY 
+		ORDER BY
 			type_order,
 			building_order,
 			building_name;");
-		while ($barr=mysql_fetch_array($bres))		
+		while ($barr=mysql_fetch_array($bres))
 		{
 			echo "<option value=\"".$barr['building_id']."\"";
 			if ($barr['building_id']==$bid)
 				echo " selected=\"selected\"";
 			echo ">".$barr['building_name']."</option>";
 		}
-		echo "</select><br/><br/>";		
+		echo "</select><br/><br/>";
 
 		$currentLevel = 0;
 		if (isset($cu) && isset($cp))
 		{
 			$res_level = dbquery("
-			SELECT 
-				buildlist_current_level 
-			FROM 
-				buildlist 
-			WHERE 
-				buildlist_building_id ='".$bid."' 
-				AND buildlist_user_id='".$cu->id."' 
+			SELECT
+				buildlist_current_level
+			FROM
+				buildlist
+			WHERE
+				buildlist_building_id ='".$bid."'
+				AND buildlist_user_id='".$cu->id."'
 				AND buildlist_entity_id='".$cp->id."';");
 			if(mysql_num_rows($res_level)>0)
 			{
@@ -76,14 +76,14 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
 			<td style=\"height:20px;\">".$arr['building_last_level']."</td>
 		</tr>";
 		tableEnd();
-	
+
 		$useTabs = false;
 		if ($useTabs)
 		{
 			$tc = new TabControl("help",array("Spezielles","Kosten","Technikbaum"));
 			$tc->open();
 		}
-		
+
 		// Metallmine
     if ($arr['building_id']==1)
     {
@@ -100,7 +100,7 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
 	    }
 			tableEnd();
     }
-    
+
     // Siliziummine
     elseif ($arr['building_id']==2)
     {
@@ -117,7 +117,7 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
 	    }
 	    tableEnd();
     }
-    
+
     // Chemiefabrik
     elseif ($arr['building_id']==3)
     {
@@ -134,7 +134,7 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
   	  }
     	tableEnd();
     }
-    
+
   	// Tritiumsynthetizer
  		elseif ($arr['building_id']==4)
     {
@@ -151,7 +151,7 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
 	    }
 	    tableEnd();
    	}
-   	
+
     // Gew&auml&auml;chshaus
     elseif ($arr['building_id']==5)
     {
@@ -168,7 +168,7 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
 	    }
 	    tableEnd();
     }
-    
+
     // Planetenbasis
     elseif ($arr['building_id']==6)
     {
@@ -280,7 +280,7 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
 	    }
 	    tableEnd();
     }
-    
+
     // Titanspeicher
     elseif ($arr['building_id']==16)
     {
@@ -297,7 +297,7 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
 	    }
 	    tableEnd();
     }
-    
+
     // Siliziumspeicher
     elseif ($arr['building_id']==17)
     {
@@ -314,7 +314,7 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
 	    }
       tableEnd();
     }
-    
+
     // Lagerhalle
     elseif ($arr['building_id']==18)
     {
@@ -331,7 +331,7 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
 	    }
       tableEnd();
     }
-    
+
     // Nahrungssilos
     elseif ($arr['building_id']==19)
     {
@@ -348,7 +348,7 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
 	    }
     	tableEnd();
     }
-    
+
     // Tritiumsilo
     elseif ($arr['building_id']==20)
     {
@@ -375,24 +375,24 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
 	    {
 	      $prod_item = round($arr['building_fieldsprovide'] * pow($arr['building_production_factor'],$level-1));
 	      $power_use = round($arr['building_power_use'] * pow($arr['building_production_factor'],$level-1));
-	
+
 	      if($level==$currentLevel)
 	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td><td class=\"tbldata2\">".nf($power_use)."</td>";
 	      else
 	        echo "<tr><td>$level</td><td>".nf($prod_item)."</td><td>".nf($power_use)."</td>";
-	
+
 	      $prod_item = round($arr['building_store_metal'] * pow($arr['building_store_factor'],$level-1));
 	      if($level==$currentLevel)
 	        echo "<td class=\"tbldata2\">".nf($prod_item)."</td>";
 	      else
 	        echo "<td>".nf($prod_item)."</td>";
-	
+
 	      $prod_item = round($arr['building_store_crystal'] * pow($arr['building_store_factor'],$level-1));
 	      if($level==$currentLevel)
 	        echo "<td class=\"tbldata2\">".nf($prod_item)."</td>";
 	      else
 	        echo "<td>".nf($prod_item)."</td>";
-	
+
 	      $prod_item = round($arr['building_store_plastic'] * pow($arr['building_store_factor'],$level-1));
 	      if($level==$currentLevel)
 	        echo "<td class=\"tbldata2\">".nf($prod_item)."</td>";
@@ -451,19 +451,19 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
 	    }
 	    tableEnd();
     }
-    
+
 		if ($useTabs)
 		{
     	$tc->close();
     	$tc->open();
-		}    
+		}
     tableStart ("Kostenentwicklung (Faktor: ".$arr['building_build_costs_factor'].")");
     echo "<tr><th style=\"text-align:center;\">Level</th>
     			<th>".RES_ICON_METAL."".RES_METAL."</th>
     			<th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
     			<th>".RES_ICON_PLASTIC."".RES_PLASTIC."</th>
     			<th>".RES_ICON_FUEL."".RES_FUEL."</th>
-        	<th>".RES_ICON_FOOD."".RES_FOOD."</th>      
+        	<th>".RES_ICON_FOOD."".RES_FOOD."</th>
    <!-- 	<th>".RES_ICON_POWER."Energie</th>     -->
     			<th>Felder</th></tr>";
     for ($x=0;$x<min(30,$arr['building_last_level']);$x++)
@@ -479,17 +479,17 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
     				<td style="text-align:right;">'.nf($arr['building_fields']*($x+1)).'</td></tr>';
     }
     tableEnd();
-    
+
 		if ($useTabs)
 		{
 	    $tc->close();
-  	  $tc->open();    
+  	  $tc->open();
     }
-        
+
 		iBoxStart("Technikbaum");
     showTechTree("b",$arr['building_id']);
 		iBoxEnd();
-		
+
 		if ($useTabs)
 		{
 			$tc->close();
@@ -525,34 +525,34 @@ elseif (isset($_GET['aid']))
 	{
 		HelpUtil::breadCrumbs(array("Allianzgeb&auml;ude","buildings"),array(text2html($arr['alliance_building_name']),$arr['alliance_building_id']),1);
 		echo "<select onchange=\"document.location='?page=help&site=buildings&aid='+this.options[this.selectedIndex].value\">";
-		$bres=dbquery("SELECT 
+		$bres=dbquery("SELECT
 			alliance_building_id,
-			alliance_building_name 
-		FROM 
-			alliance_buildings 		
-		WHERE 
+			alliance_building_name
+		FROM
+			alliance_buildings
+		WHERE
 			alliance_building_show=1
-		ORDER BY 
+		ORDER BY
 			alliance_building_name;");
-		while ($barr=mysql_fetch_array($bres))		
+		while ($barr=mysql_fetch_array($bres))
 		{
 			echo "<option value=\"".$barr['alliance_building_id']."\"";
-			if ($barr['alliance_building_id']==$_GET['aid']) 
+			if ($barr['alliance_building_id']==$_GET['aid'])
 				echo " selected=\"selected\"";
 			echo ">".$barr['alliance_building_name']."</option>";
 		}
-		echo "</select><br/><br/>";		
+		echo "</select><br/><br/>";
 
 		$currentLevel = 0;
 		if (isset($cu) && $cu->allianceId()>0)
 		{
 			$res_level = dbquery("
-			SELECT 
-				alliance_buildlist_current_level 
-			FROM 
-				alliance_buildlist 
-			WHERE 
-				alliance_buildlist_building_id ='".$_GET['aid']."' 
+			SELECT
+				alliance_buildlist_current_level
+			FROM
+				alliance_buildlist
+			WHERE
+				alliance_buildlist_building_id ='".$_GET['aid']."'
 				AND alliance_buildlist_alliance_id='".$cu->allianceId()."'
 			LIMIT 1;");
 			if(mysql_num_rows($res_level)>0)
@@ -576,19 +576,19 @@ elseif (isset($_GET['aid']))
 			<td style=\"height:20px;\">".$arr['alliance_building_last_level']."</td>
 		</tr>";
 		tableEnd();
-	
+
 		$useTabs = false;
 		if ($useTabs)
 		{
 			$tc = new TabControl("help",array("Spezielles","Kosten","Technikbaum"));
 			$tc->open();
 		}
-	
+
 	if ($useTabs)
 		{
     	$tc->close();
     	$tc->open();
-		}    
+		}
     tableStart ("Kostenentwicklung (Faktor: ".$arr['alliance_building_costs_factor'].")");
     echo "<tr><th style=\"text-align:center;\">Level</th>
     			<th>".RES_ICON_METAL."".RES_METAL."</th>
@@ -607,17 +607,17 @@ elseif (isset($_GET['aid']))
     				<td style="text-align:right;">'.nf($bc['food']).'</td></tr>';
     }
     tableEnd();
-    
+
 		if ($useTabs)
 		{
 	    $tc->close();
-  	  $tc->open();    
+  	  $tc->open();
     }
-        
+
 		/*iBoxStart("Technikbaum");
 			showTechTree("b",$arr['building_id']);
 		iBoxEnd();
-		
+
 		if ($useTabs)
 		{
 			$tc->close();
@@ -673,7 +673,7 @@ elseif(isset($_GET['type_id']) && intval($_GET['type_id'])>0)
 	{
 		echo "<i>Zu dieser Kategorie sind keine Informationen vorhanden!</i>";
 	}
-	
+
 	echo "<br/><br/><input type=\"button\" value=\"Geb&auml;ude&uuml;bersicht\" onclick=\"document.location='?$link&amp;site=$site'\" /> &nbsp; ";
 	echo "<input type=\"button\" value=\"Technikbaum\" onclick=\"document.location='?page=techtree&mode=buildings'\" /> &nbsp; ";
 }
@@ -686,12 +686,12 @@ else
 	HelpUtil::breadCrumbs(array("Geb&auml;ude","buildings"));
 
 	$tres=dbquery("
-	SELECT 
+	SELECT
         type_id,
-        type_name 
-	FROM 
-		building_types 
-	ORDER BY 
+        type_name
+	FROM
+		building_types
+	ORDER BY
 		type_order,
 		type_name;");
 	if (mysql_num_rows($tres)>0)
@@ -699,22 +699,22 @@ else
 		while ($tarr=mysql_fetch_array($tres))
 		{
 			$res = dbquery("
-			SELECT 
+			SELECT
                 building_name,
                 building_shortcomment,
                 building_longcomment,
                 building_id,
                 type_name,
-                building_fields 
-			FROM 
+                building_fields
+			FROM
 				buildings,
-				building_types 
-			WHERE 
-				building_type_id=".$tarr['type_id']." 
-				AND building_show=1 
-			GROUP BY 
-				building_id 
-			ORDER BY 
+				building_types
+			WHERE
+				building_type_id=".$tarr['type_id']."
+				AND building_show=1
+			GROUP BY
+				building_id
+			ORDER BY
                 building_order,
                 building_name;");
 			if (mysql_num_rows($res)>0)
@@ -744,16 +744,16 @@ else
 		}
 	}
 	/*$res = dbquery("
-		SELECT 
+		SELECT
 			alliance_building_name,
 			alliance_building_shortcomment,
 			alliance_building_longcomment,
 			alliance_building_id
-		FROM 
+		FROM
 			alliance_buildings
-		WHERE 
-			alliance_building_show=1  
-		ORDER BY 
+		WHERE
+			alliance_building_show=1
+		ORDER BY
 			alliance_building_name;");
 	if (mysql_num_rows($res)>0)
 	{

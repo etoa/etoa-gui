@@ -1,13 +1,13 @@
 <?PHP
 	echo "<h2>Energie</h2>";
-	
+
 	tableStart("Energieproduktion");
 	echo "<tr><td colspan=\"6\">
 	<img src=\"misc/powerproduction.image.php\" alt=\"Graph\" />
 	</td></tr>";
-	
+
 	$res = dbquery("
-	SELECT 
+	SELECT
 		*
 	FROM
 		buildings
@@ -33,8 +33,8 @@
 			buildlist
 		WHERE
 			buildlist_building_id=".$arr['building_id']."");
-		$sum = mysql_result($sres,0);		
-		
+		$sum = mysql_result($sres,0);
+
 		echo "<tr>
 		<td>".$arr['building_name']."</td>
 		<td>".$arr['building_prod_power']."</td>
@@ -43,9 +43,9 @@
 		<td>".$arr['building_fields']."</td>
 		<td>".nf($sum)."</td>
 		</tr>";
-	}	
+	}
 	$res = dbquery("
-	SELECT 
+	SELECT
 		*
 	FROM
 		ships
@@ -53,7 +53,7 @@
 		ship_prod_power>0
 	ORDER BY
 		ship_order
-	");	
+	");
 	while ($arr = mysql_fetch_array($res))
 	{
 		$sres = dbquery("
@@ -63,11 +63,11 @@
 			shiplist
 		WHERE
 			shiplist_ship_id=".$arr['ship_id']."");
-		$sum = mysql_result($sres,0);		
-		
+		$sum = mysql_result($sres,0);
+
 		$tpb1 = Planet::getSolarPowerBonus($cfg->param1('planet_temp'),$cfg->param1('planet_temp')+$cfg->value('planet_temp'));
 		$tpb2 = Planet::getSolarPowerBonus($cfg->param2('planet_temp')-$cfg->value('planet_temp'),$cfg->param2('planet_temp'));
-		
+
 		echo "<tr>
 		<td>".$arr['ship_name']."</td>
 		<td>".$arr['ship_prod_power']." (".$tpb1." bis +".$tpb2.")</td>
@@ -76,8 +76,8 @@
 		<td></td>
 		<td>".nf($sum)."</td>
 		</tr>";
-	}		
+	}
 	tableEnd();
-	
+
 
 ?>

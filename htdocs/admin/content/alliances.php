@@ -74,7 +74,7 @@
 			alliance_id,
 			alliance_tag,
 			alliance_name,
-			alliance_img 
+			alliance_img
 		FROM
 			alliances
 		WHERE
@@ -113,14 +113,14 @@
 		// Orphans
 		//
 		$res=dbquery("
-		SELECT 
+		SELECT
 			alliance_id,
 			alliance_name,
-			alliance_img 
-		FROM 
-			alliances 
-		WHERE 
-			alliance_img!='' 
+			alliance_img
+		FROM
+			alliances
+		WHERE
+			alliance_img!=''
 		");
 		$nr = mysql_num_rows($res);
 		$paths = array();
@@ -261,7 +261,7 @@
 		<option value="5184000">2 Monate</option>
 		<option value="7776000">3 Monate</option>
 		<option value="15552000">6 Monate</option>
-		</select> sind: 
+		</select> sind:
 		<input type="button" onclick="xajax_allianceNewsRemoveOld(document.getElementById(\'timespan\').options[document.getElementById(\'timespan\').selectedIndex].value)" value="Ausführen" /><br/><br/>';
 
 		$ban_timespan = array(
@@ -485,15 +485,15 @@
 					$sql.= " AND alliance_text ".stripslashes($_POST['qmode']['alliance_text']).$_POST['alliance_text']."$addchars'";
 				}
 
-				$sqlstart =	"SELECT 
+				$sqlstart =	"SELECT
 					alliance_id,
 					alliance_name,
 					alliance_tag,
 					alliance_foundation_date,
 					alliance_founder_id,
-					COUNT(user_id) AS cnt			
-				FROM 
-					alliances 
+					COUNT(user_id) AS cnt
+				FROM
+					alliances
 				LEFT JOIN
 					users ON user_alliance_id=alliance_id
 				WHERE 1 ";

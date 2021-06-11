@@ -24,7 +24,7 @@
 				FROM
 					races
 				WHERE
-					race_id=".intval($id)."			
+					race_id=".intval($id)."
 				");
 				if (mysql_num_rows($rres)>0)
 				{

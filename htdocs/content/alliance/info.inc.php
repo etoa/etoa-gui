@@ -22,14 +22,14 @@
 			$id = intval($_GET['id']);
 		else
 			$id = intval($_GET['info_id']);
-		
+
 		$infoAlly = new Alliance($id);
 		if ($infoAlly->valid)
 		{
 			if ($cu->allianceId != $infoAlly->id)
 				$infoAlly->visitsExt++;
-			
-			tableStart($infoAlly);	
+
+			tableStart($infoAlly);
 			if ($infoAlly->image != "" && is_file($infoAlly->imageUrl))
 			{
 				$ims = getimagesize($infoAlly->imageUrl);
@@ -45,7 +45,7 @@
 								<th colspan=\"2\" style=\"text-align:center;\">
 									Diese Allianz ist ein Wing von <b><a href=\"?page=$page&amp;action=info&amp;id=".$infoAlly->motherId."\">".$infoAlly->mother."</a></b>
 								</th>
-							</tr>";				
+							</tr>";
 			}
 			if ($infoAlly->text != "")
 			{
@@ -58,21 +58,21 @@
 
 			// Kriege
 			$wars=dbquery("
-			SELECT 
+			SELECT
 				alliance_bnd_alliance_id1 as a1id,
 				alliance_bnd_alliance_id2 as a2id,
 				alliance_bnd_date as date
-			FROM 
+			FROM
 				alliance_bnd
-		 	WHERE 
+		 	WHERE
 		 		alliance_bnd_level=3
 		 		AND
-		 		(alliance_bnd_alliance_id1='".$infoAlly->id."' 
-		 		OR alliance_bnd_alliance_id2='".$infoAlly->id."') 
+		 		(alliance_bnd_alliance_id1='".$infoAlly->id."'
+		 		OR alliance_bnd_alliance_id2='".$infoAlly->id."')
 		 	;");
 			if (mysql_num_rows($wars)>0)
 			{
-				
+
 				echo "<tr>
 								<th>Kriege:</th>
 								<td>
@@ -84,7 +84,7 @@
 										</tr>";
 						while ($war=mysql_fetch_array($wars))
 						{
-							if ($war['a1id']==$infoAlly->id) 
+							if ($war['a1id']==$infoAlly->id)
 								$opAlly = new Alliance($war['a2id']);
 							else
 								$opAlly = new Alliance($war['a1id']);
@@ -104,21 +104,21 @@
 
 			// Friedensabkommen
 			$wars=dbquery("
-			SELECT 
+			SELECT
 				alliance_bnd_alliance_id1 as a1id,
 				alliance_bnd_alliance_id2 as a2id,
 				alliance_bnd_date as date
-			FROM 
+			FROM
 				alliance_bnd
-		 	WHERE 
+		 	WHERE
 		 		alliance_bnd_level=4
-		 		AND 
-		 		(alliance_bnd_alliance_id1='".$infoAlly->id."' 
-		 		OR alliance_bnd_alliance_id2='".$infoAlly->id."') 
-		 		
+		 		AND
+		 		(alliance_bnd_alliance_id1='".$infoAlly->id."'
+		 		OR alliance_bnd_alliance_id2='".$infoAlly->id."')
+
 		 	;");
 			if (mysql_num_rows($wars)>0)
-			{			
+			{
 				echo "<tr>
 								<th>Friedensabkommen:</th>
 								<td>
@@ -127,10 +127,10 @@
 											<th>Allianz</th>
 											<th>Punkte</th>
 											<th>Zeitraum</th>
-										</tr>";					
+										</tr>";
 						while ($war=mysql_fetch_array($wars))
 						{
-							if ($war['a1id']==$infoAlly->id) 
+							if ($war['a1id']==$infoAlly->id)
 								$opAlly = new Alliance($war['a2id']);
 							else
 								$opAlly = new Alliance($war['a1id']);
@@ -140,30 +140,30 @@
 											</td>
 											<td>".nf($opAlly->points)." / ".nf($opAlly->avgPoints)."</td>
 											<td>".df($war['date'],0)." bis ".df($war['date']+PEACE_DURATION,0)."</td>
-										</tr>";				
+										</tr>";
 						}
 						echo "</table>
 								</td>
 							</tr>";
-			}						
+			}
 
 			// Bündnisse
 			$wars=dbquery("
-			SELECT 
+			SELECT
 				alliance_bnd_alliance_id1 as a1id,
 				alliance_bnd_alliance_id2 as a2id,
 				alliance_bnd_date as date,
 				alliance_bnd_name as name
-			FROM 
+			FROM
 				alliance_bnd
-		 	WHERE 
+		 	WHERE
 		 		alliance_bnd_level=2
-		 		AND 
-		 		(alliance_bnd_alliance_id1='".$infoAlly->id."' 
-		 		OR alliance_bnd_alliance_id2='".$infoAlly->id."') 
+		 		AND
+		 		(alliance_bnd_alliance_id1='".$infoAlly->id."'
+		 		OR alliance_bnd_alliance_id2='".$infoAlly->id."')
 		 	;");
 			if (mysql_num_rows($wars)>0)
-			{				
+			{
 				echo "<tr>
 								<th>Bündnisse:</th>
 								<td>
@@ -173,26 +173,26 @@
 											<th>Allianz</th>
 											<th>Punkte</th>
 											<th>Seit</th>
-										</tr>";		
+										</tr>";
 
 						while ($war=mysql_fetch_array($wars))
 						{
-							if ($war['a1id']==$infoAlly->id) 
+							if ($war['a1id']==$infoAlly->id)
 								$opAlly = new Alliance($war['a2id']);
 							else
 								$opAlly = new Alliance($war['a1id']);
 							echo "<tr>
 											<td>".stripslashes($war['name'])."</td>
 											<td><a href=\"?page=$page&amp;id=".$opAlly->id."\">".$opAlly."</a></td>
-											<td>".nf($opAlly->points)." / ".nf($opAlly->avgPoints)."</td>											
+											<td>".nf($opAlly->points)." / ".nf($opAlly->avgPoints)."</td>
 											<td>".df($war['date'])."</td>
-										</tr>";							
-													
+										</tr>";
+
 						}
 						echo "</table>
 								</td>
 							</tr>";
-			}						
+			}
 
 			// Mitglieder
 			echo "<tr>
@@ -226,8 +226,8 @@
 							<td>
 								".df($infoAlly->foundationDate)." (vor ".tf(time() - $infoAlly->foundationDate).")
 							</td>
-						</tr>";						
-						
+						</tr>";
+
 			// Url
 			if ($infoAlly->url != "")
 			{
@@ -236,7 +236,7 @@
 								<td><b>".format_link($infoAlly->url)."</b></td>
 							</tr>";
 			}
-			
+
 			// Diverses
 			echo "<tr>
 							<th>Akzeptiert Bewerbungen:</th>
@@ -249,7 +249,7 @@
 							<td>
 								".($infoAlly->acceptPact ? "Ja" : "Nein")."
 							</td>
-						</tr>";		
+						</tr>";
 
 			echo "</table>";
 		}
@@ -257,7 +257,7 @@
 		{
 			error_msg("Diese Allianz existiert nicht!");
 		}
-		
+
 		echo "<br/><br/><input type=\"button\" onclick=\"history.back();;\" value=\"Zur&uuml;ck\" />";
 
 

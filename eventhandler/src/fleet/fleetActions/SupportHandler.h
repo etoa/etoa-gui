@@ -8,7 +8,7 @@
 
 /**
 * Handles Support....
-* 
+*
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 namespace support
@@ -18,13 +18,13 @@ namespace support
 	public:
 		SupportHandler(mysqlpp::Row fleet)  : FleetAction(fleet) { }
 		void update();
-		
+
 	private:
 		int flyingHomeTime;
 		int landtime;
 		int entity;
 		std::string msg;
-		
+
 	};
 }
 #endif

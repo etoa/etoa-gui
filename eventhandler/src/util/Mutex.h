@@ -21,7 +21,7 @@
 
 #include <semaphore.h>
 
-class Mutex	
+class Mutex
 {
 	public:
 		Mutex();

@@ -8,7 +8,7 @@
 
 	Please see <copyright.inc.php> for a detailed description, copyright
 	and license information.
-	
+
 	Translations provided by: (Thank you!)
 	- mic <info@joomx.com>
 	- q_no

@@ -12,7 +12,7 @@
 
 /**
 * Handles Stealth....
-* 
+*
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 namespace stealth
@@ -22,13 +22,13 @@ namespace stealth
 	public:
 		StealthHandler(mysqlpp::Row fleet)  : FleetAction(fleet) { }
 		void update();
-	
+
 	private:
 		/**
 		* Ship they are able to antrax a planet
 		**/
 		int shipCnt;
-		
+
 		/**
 		* Spy tech level
 		**/

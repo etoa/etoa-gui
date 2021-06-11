@@ -10,19 +10,19 @@ void AllianceHandler::update()
     */
 
     Config &config = Config::instance();
-    
+
     // no delete necessary, this is done by ~targetEntity()
     User * opponent = this->targetEntity->getUser();
-    
+
     bool isAbsEnabled = (config.nget("abs_enabled",0) != 0);
     bool isAbsRestrictedOnWar = (config.nget("abs_enabled",1) != 0);
     bool isAllianceAtWarWithOpponent = false;
-    
+
     if(opponent != NULL)
     {
         isAllianceAtWarWithOpponent = this->f->fleetUser->isAtWarWith(opponent->getAllianceId());
     }
-    
+
     if(isAbsEnabled && (!isAbsRestrictedOnWar || isAllianceAtWarWithOpponent))
     {
 	if (config.nget("alliance_fleets_max_players",0))
@@ -67,11 +67,11 @@ void AllianceHandler::update()
             // This occurs e.g. when a war ends while an alliance fleet is still on its way
             bReport->setSubtype("alliancenowar");
         }
-        
+
         // BUG: all fleet users should receive the report
         // with this implementation, only the fleet leader gets the report
         // (TODO: check whether this is done correctly in battle handler or not)
-        
+
         // This sends the report to the users
         delete bReport;
     }

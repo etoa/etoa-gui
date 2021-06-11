@@ -17,13 +17,13 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 	$umod = false;
 
 		//
 		// Urlaubsmodus einschalten
 		//
-		
+
 		if (isset($_POST['hmod_on']) && checker_verify())
 		{
 			if ($cu->activateUmode())
@@ -37,11 +37,11 @@
                 error_msg("Es sind noch Flotten unterwegs!");
 			}
 		}
-	
+
 		//
 		// Urlaubsmodus aufheben
 		//
-	
+
 		if (isset($_POST['hmod_off']) && checker_verify())
 		{
             if($cu->deleted == 0 && $cu->removeUmode()) {
@@ -51,7 +51,7 @@
 
 				success_msg("Urlaubsmodus aufgehoben! Denke daran, auf allen deinen Planeten die Produktion zu überprüfen!");
 				$cu->addToUserLog("settings","{nick} ist nun aus dem Urlaub zurück.",1);
-				
+
 				echo '<input type="button" value="Zur Übersicht" onclick="document.location=\'?page=overview\'" />';
 			}
 			else
@@ -59,7 +59,7 @@
 				error_msg("Urlaubsmodus kann nicht aufgehoben werden!");
 			}
 		}
-	
+
 		//
 		// Löschbestätigung
 		//
@@ -70,14 +70,14 @@
 				echo "Soll dein Account wirklich zur Löschung vorgeschlagen werden?<br/><br/>";
 				echo "<b>Passwort eingeben:</b> <input type=\"password\" name=\"remove_password\" value=\"\" />";
 				iBoxEnd();
-				echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page&mode=misc'\" /> 
+				echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page&mode=misc'\" />
 				<input type=\"submit\" name=\"remove_submit\" value=\"Account l&ouml;schen\" />";
 				echo "</form>";
 		}
 
 		//
 		// User löschen
-		//	
+		//
 		elseif (isset($_POST['remove_submit']))
 		{
 			if ($cu->deleteRequest($_POST['remove_password']))
@@ -112,10 +112,10 @@
 		//
 		else
 		{
-			echo "<form action=\"?page=$page&amp;mode=misc\" method=\"post\">";		
+			echo "<form action=\"?page=$page&amp;mode=misc\" method=\"post\">";
 	    	checker_init();
 	    	tableStart("Sonstige Accountoptionen");
-			
+
 	    	// Urlaubsmodus
             if ($cu->deleted == 0) {
                 echo "<tr><th style=\"width:150px;\">Urlaubsmodus</th>
@@ -142,7 +142,7 @@
                 <td>";
                 echo "</td></tr>";
             }
-	
+
 			// Account löschen
 	    	echo "<tr><th>Account l&ouml;schen</th>
 	    	<td>Hier kannst du deinen Account mitsamt aller Daten löschen. Dafür wird der Account automatisch in den Urlaubsmodus gesetzt und nach ".$conf['user_delete_days']['v']." Tagen gelöscht.</td>
@@ -156,9 +156,9 @@
 	    		echo "<input type=\"submit\" name=\"remove\" value=\"Account l&ouml;schen\" />";
 	    	}
 	    	echo "</td></tr>";
-	    	
+
 			tableEnd();
 			echo "</form>";
 		}
-	
+
 ?>

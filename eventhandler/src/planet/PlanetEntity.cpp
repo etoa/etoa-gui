@@ -4,9 +4,9 @@
 namespace planet
 {
 	PlanetEntity::PlanetEntity(int entityId) {
-					
+
 		this->entityId = entityId;
-			
+
 		this->store.resize(6);
 		this->cnt.resize(8);
 		this->ressource.resize(7);
@@ -56,31 +56,31 @@ namespace planet
 			<< "LIMIT 1;";
 		RESULT_TYPE pRes = query.store();
 		query.reset();
-		
+
 		if (pRes) {
 			int pSize = pRes.size();
-			
+
 			if (pSize) {
 				mysqlpp::Row pRow = pRes.at(0);
-				
+
 				this->raceId = (int)pRow["user_race_id"];
 				this->userId = (int)pRow["user_id"];
 				this->solType = (int)pRow["type_id"];
 				this->planetType = (int)pRow["planet_type_id"];
 				this->speicalistId = (int)pRow["user_specialist_time"] < time(0) ? 0 : (int)pRow["user_specialist_id"];
                 this->boostBonusProduction = (float)pRow["boost_bonus_production"];
-				
+
 				this->solarPowerBonus = etoa::getSolarPowerBonus((int)pRow["planet_temp_from"], (int)pRow["planet_temp_to"]);
 				this->solarFuelBonus = 1 - (etoa::getSolarFuelBonus((int)pRow["planet_temp_from"], (int)pRow["planet_temp_to"]));
-				
+
                 if ((int)pRow["planet_last_updated"]==0)
                     this->t=5;
                 else
                     this->t = time(0) - (int)pRow["planet_last_updated"];
-                
-				
+
+
 				this->isMain = (bool)pRow["planet_user_main"];
-				
+
 				this->ressource[0] = (double)pRow["planet_res_metal"];
 				this->ressource[1] = (double)pRow["planet_res_crystal"];
 				this->ressource[2] = (double)pRow["planet_res_plastic"];
@@ -88,14 +88,14 @@ namespace planet
 				this->ressource[4] = (double)pRow["planet_res_food"];
 				this->ressource[5] = (double)pRow["planet_people"];
 				this->ressource[6] = 0;
-				
+
 				this->store[0] = (double)pRow["planet_store_metal"];
 				this->store[1] = (double)pRow["planet_store_crystal"];
 				this->store[2] = (double)pRow["planet_store_plastic"];
 				this->store[3] = (double)pRow["planet_store_fuel"];
 				this->store[4] = (double)pRow["planet_store_food"];
 				this->store[5] = (double)pRow["planet_people_place"];
-				
+
 				this->cnt[0] = (double)pRow["planet_prod_metal"];
 				this->cnt[1] = (double)pRow["planet_prod_crystal"];
 				this->cnt[2] = (double)pRow["planet_prod_plastic"];
@@ -104,7 +104,7 @@ namespace planet
 				this->cnt[5] = 0;
 				this->cnt[6] = 0;
 				this->cnt[7] = 0;
-				
+
 				this->bunker[0] = (double)pRow["planet_bunker_metal"];
 				this->bunker[1] = (double)pRow["planet_bunker_crystal"];
 				this->bunker[2] = (double)pRow["planet_bunker_plastic"];
@@ -114,18 +114,18 @@ namespace planet
 				this->isUmod = (int)pRow["user_hmode_to"] > 0 ? true : false;
 			}
 		}
-    
+
 		DataHandler &DataHandler = DataHandler::instance();
-			
+
 		this->race_ = DataHandler.getRaceById(this->raceId);
 		this->sol_ = DataHandler.getSolById(this->solType);
 		this->planet_ = DataHandler.getPlanetById(this->planetType);
 		this->specialist_ = DataHandler.getSpecialistById(this->speicalistId);
 
 	}
-	
+
 	void PlanetEntity::updateResources() {
-        
+
         Config &config = Config::instance();
 
 		if (this->isUmod) {
@@ -143,52 +143,52 @@ namespace planet
 			else
 				this->ressource[i] = 0;
 		}
-        
 
-        
+
+
 // logistic population growth
-        
+
         if (this->store[5] < config.nget("user_start_people", 1))
             this->store[5] = config.nget("user_start_people", 1);
-        
-        
-		this->birthRate = ((double)config.nget("people_multiply", 0)  + this->planet_->getTypePopulation() + this->race_->getRacePopulation() + this->sol_->getTypePopulation() + this->specialist_->getSpecialistPopulation() - 4)* (1-(this->ressource[5] / (this->store[5]+1)))/24;
-        
-		this->ressource[6] = ((this->ressource[5] * this->birthRate)  / 3600);
-        
 
-		
+
+		this->birthRate = ((double)config.nget("people_multiply", 0)  + this->planet_->getTypePopulation() + this->race_->getRacePopulation() + this->sol_->getTypePopulation() + this->specialist_->getSpecialistPopulation() - 4)* (1-(this->ressource[5] / (this->store[5]+1)))/24;
+
+		this->ressource[6] = ((this->ressource[5] * this->birthRate)  / 3600);
+
+
+
 		if (!this->ressource[5])
 			this->ressource[5] = 1;
-        
+
         if      (this->store[5] >= (this->ressource[5] + this->ressource[6]*this->t) && this->birthRate < 0)
                               this->ressource[5]=(this->store[5]-this->ressource[5]);
-    
-                              
+
+
         else if (this->store[5] < (this->ressource[5] + this->ressource[6]*this->t) && this->birthRate > 0)
                               this->ressource[5]=(this->store[5]-this->ressource[5]);
-                              
+
         else
                               this->ressource[5] = (this->ressource[6]*this->t);
-		
+
 	}
-  
+
 	void PlanetEntity::updateProduction() {
-    
+
     this->fieldsUsed = 0;
 		this->fieldsExtra = 0;
-			
+
 		this->bunkerRes = 0;
-		
+
 		Config &config = Config::instance();
-    
+
 		this->store[0] = config.nget("def_store_capacity", 0);
 		this->store[1] = config.nget("def_store_capacity", 0);
 		this->store[2] = config.nget("def_store_capacity", 0);
 		this->store[3] = config.nget("def_store_capacity", 0);
 		this->store[4] = config.nget("def_store_capacity", 0);
 		this->store[5] = config.nget("user_start_people", 1);
-			
+
 		this->cnt[0] = 0;
 		this->cnt[1] = 0;
 		this->cnt[2] = 0;
@@ -197,13 +197,13 @@ namespace planet
 		this->cnt[5] = 0;
 		this->cnt[6] = 0;
 		this->cnt[7] = 0;
-			
+
 		this->loadBuildlist();
 		this->loadShiplist();
 		this->loadDeflist();
 		this->addBoni();
   }
-	
+
 	void PlanetEntity::loadBuildlist() {
 		My &my = My::instance();
 		mysqlpp::Connection* con_ = my.get();
@@ -220,36 +220,36 @@ namespace planet
 			<< "	AND buildlist_current_level>0;";
 		RESULT_TYPE bRes = query.store();
 		query.reset();
-		
+
 		if (bRes) {
 			unsigned int bSize = bRes.size();
-			
+
 			if (bSize) {
 				mysqlpp::Row bRow;
 				int level;
 				double prodPercent;
-				
+
 				DataHandler &DataHandler = DataHandler::instance();
-				
-				for (mysqlpp::Row::size_type i = 0; i<bSize; i++) { 
+
+				for (mysqlpp::Row::size_type i = 0; i<bSize; i++) {
 					bRow = bRes.at(i);
-					
+
 					this->building_ = DataHandler.getBuildingById((int)bRow["buildlist_building_id"]);
 					level = (int)bRow["buildlist_current_level"];
 					prodPercent = (double)bRow["buildlist_prod_percent"];
 					this->fieldsUsed += level * this->building_->getFields();
 					level--;
 					this->fieldsExtra += (int)((int)this->building_->getFieldsprovide() * pow(this->building_->getProductionFactor() , level));
-					
+
 					this->bunkerRes += (int)((int)this->building_->getBunkerRes() * pow(this->building_->getStoreFactor() , level));
-					
+
 					this->store[0] += round(this->building_->getStoreMetal() * pow(this->building_->getStoreFactor() , level));
 					this->store[1] += round(this->building_->getStoreCrystal() * pow(this->building_->getStoreFactor() , level));
 					this->store[2] += round(this->building_->getStorePlastic() * pow(this->building_->getStoreFactor() , level));
 					this->store[3] += round(this->building_->getStoreFuel() * pow(this->building_->getStoreFactor() , level));
 					this->store[4] += round(this->building_->getStoreFood() * pow(this->building_->getStoreFactor() , level));
 					this->store[5] += round(this->building_->getPeoplePlace() * pow(this->building_->getStoreFactor() , level));
-					
+
 					this->cnt[0] += (this->building_->getProdMetal() * prodPercent * pow(this->building_->getProductionFactor() , level));
 					this->cnt[1] += (this->building_->getProdCrystal() * prodPercent * pow(this->building_->getProductionFactor() , level));
 					this->cnt[2] += (this->building_->getProdPlastic() * prodPercent * pow(this->building_->getProductionFactor() , level));
@@ -261,7 +261,7 @@ namespace planet
 			}
 		}
 	}
-	
+
 	void PlanetEntity::loadShiplist() {
 		My &my = My::instance();
 		mysqlpp::Connection* con_ = my.get();
@@ -277,27 +277,27 @@ namespace planet
 			<< "	AND shiplist_count>0;";
 		RESULT_TYPE sRes = query.store();
 		query.reset();
-		
+
 		if (sRes) {
 			unsigned int sSize = sRes.size();
-			
+
 			if (sSize) {
 				mysqlpp::Row sRow;
-				
+
 				DataHandler &DataHandler = DataHandler::instance();
-				
-				for (mysqlpp::Row::size_type i = 0; i<sSize; i++) { 
+
+				for (mysqlpp::Row::size_type i = 0; i<sSize; i++) {
 					sRow = sRes.at(i);
-					
+
 					this->ship_ = DataHandler.getShipById((int)sRow["shiplist_ship_id"]);
-					
-					if (this->ship_->getProdPower()) 
+
+					if (this->ship_->getProdPower())
 						this->cnt[6] += (this->ship_->getProdPower() + this->solarPowerBonus) * (double)(sRow["shiplist_count"]);
 				}
 			}
 		}
 	}
-	
+
 	void PlanetEntity::loadDeflist() {
 		My &my = My::instance();
 		mysqlpp::Connection* con_ = my.get();
@@ -313,47 +313,47 @@ namespace planet
 			<< "	AND deflist_count>0;";
 		RESULT_TYPE dRes = query.store();
 		query.reset();
-		
+
 		if (dRes) {
 			unsigned int dSize = dRes.size();
-			
+
 			if (dSize) {
 				mysqlpp::Row dRow;
-				
+
 				DataHandler &DataHandler = DataHandler::instance();
-				
-				for (mysqlpp::Row::size_type i = 0; i<dSize; i++) { 
+
+				for (mysqlpp::Row::size_type i = 0; i<dSize; i++) {
 					dRow = dRes.at(i);
-					
+
 					this->def_ = DataHandler.getDefById((int)dRow["deflist_def_id"]);
-					
+
 					this->fieldsUsed += (int)dRow["deflist_count"] * this->def_->getFields();
 				}
 			}
 		}
 	}
-	
+
 	void PlanetEntity::addBoni() {
 		Config &config = Config::instance();
         float boost = 0;
         if (config.nget("boost_system_enable", 0) == 1) {
             boost += this->boostBonusProduction;
         }
-		
+
 		double energyTechPowerBonus = this->getEnergyTechnologyBonus(
-			(int)config.idget("ENERGY_TECH_ID"), 
-			(int)config.nget("energy_tech_power_bonus_required_level", 0), 
+			(int)config.idget("ENERGY_TECH_ID"),
+			(int)config.nget("energy_tech_power_bonus_required_level", 0),
 			(int)config.nget("energy_tech_power_bonus_percent_per_level", 0)
 		);
-		
+
 		this->cnt[0] += (this->cnt[0] * (this->planet_->getTypeMetal() + this->race_->getRaceMetal() + this->sol_->getTypeMetal() + this->specialist_->getSpecialistProdMetal() - 4 + boost));
 		this->cnt[1] += (this->cnt[1] * (this->planet_->getTypeCrystal() + this->race_->getRaceCrystal() + this->sol_->getTypeCrystal() + this->specialist_->getSpecialistProdCrystal() - 4 + boost));
 		this->cnt[2] += (this->cnt[2] * (this->planet_->getTypePlastic() + this->race_->getRacePlastic() + this->sol_->getTypePlastic() + this->specialist_->getSpecialistProdPlastic() - 4 + boost));
 		this->cnt[3] += (this->cnt[3] * (this->planet_->getTypeFuel() + this->race_->getRaceFuel() + this->sol_->getTypeFuel() + this->specialist_->getSpecialistProdFuel() + this->solarFuelBonus - 5 + boost));
 		this->cnt[4] += (this->cnt[4] * (this->planet_->getTypeFood() + this->race_->getRaceFood() + this->sol_->getTypeFood() + this->specialist_->getSpecialistProdFood() - 4 + boost));
 		this->cnt[6] += (this->cnt[6] * (this->planet_->getTypePower() + this->race_->getRacePower() + this->sol_->getTypePower() + this->specialist_->getSpecialistPower() + energyTechPowerBonus - 5));
-		
-		
+
+
 		// Bei ungenügend Energie Anpassung vornehmen
 		if (this->cnt[7]>this->cnt[6]) {
 			this->cnt[0] = floor(this->cnt[0] * this->cnt[6] / this->cnt[7]);
@@ -370,27 +370,27 @@ namespace planet
 			this->cnt[4] = floor(this->cnt[4]);
 			this->cnt[6] = floor(this->cnt[6]);
 		}
-		
+
 		//Bunkerberechnung mit einigen Extraüberprüfungen
 		this->bunker[0] = std::max(0.0, this->bunker[0]);
 		this->bunker[1] = std::max(0.0, this->bunker[1]);
 		this->bunker[2] = std::max(0.0, this->bunker[2]);
 		this->bunker[3] = std::max(0.0, this->bunker[3]);
 		this->bunker[4] = std::max(0.0, this->bunker[4]);
-		
+
 		this->bunkered = this->bunker[0] + this->bunker[1] + this->bunker[2] + this->bunker[3] + this->bunker[4];
 		double bunkerAdd = (this->bunkerRes - this->bunkered);
-		
+
 		if (bunkerAdd>0) {
 			this->bunker[0] += floor(bunkerAdd/5);
 			this->bunker[1] += floor(bunkerAdd/5);
 			this->bunker[2] += floor(bunkerAdd/5);
 			this->bunker[3] += floor(bunkerAdd/5);
-			this->bunker[4] += floor(bunkerAdd/5);	
+			this->bunker[4] += floor(bunkerAdd/5);
 		}
 
 	}
-	
+
 	double PlanetEntity::getEnergyTechnologyBonus(int energyTechID, int requiredLevel, int percentPerLevel) {
 		My &my = My::instance();
 		mysqlpp::Connection* con_ = my.get();
@@ -415,7 +415,7 @@ namespace planet
 		}
 		return 1.0;
 	}
-	
+
 	void PlanetEntity::save() {
 		My &my = My::instance();
 		mysqlpp::Connection* con_ = my.get();
@@ -458,7 +458,7 @@ namespace planet
 		query.store();
 		query.reset();
 	}
-	
+
 	void PlanetEntity::saveRes() {
 		My &my = My::instance();
 		mysqlpp::Connection* con_ = my.get();

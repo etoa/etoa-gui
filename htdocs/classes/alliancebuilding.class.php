@@ -23,7 +23,7 @@
 				else
 				{
 					$res = dbquery("
-					SELECT 
+					SELECT
 						*
 					FROM
 						alliance_buildings

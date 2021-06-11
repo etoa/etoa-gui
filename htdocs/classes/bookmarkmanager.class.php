@@ -14,7 +14,7 @@
 				id,
 				entity_id,
 				comment
-			FROM 
+			FROM
 				bookmarks
 			WHERE
 				user_id=".$userid."");

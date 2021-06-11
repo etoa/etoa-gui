@@ -7,8 +7,8 @@
     Es ist ausserdem zu beachten, dass nicht unendlich schnell gebaut oder geforscht werden kann. Die minimale Bau- und Forschzeit betr&auml;gt 10% der normalen Zeit, was eine Zeiteinsparung von 90% bedeutet!";
     echo "</div>";
     iBoxEnd();
-    
-    iBoxStart("Wohnraum");    
+
+    iBoxStart("Wohnraum");
 		echo "Auf einem Planeten ist die Grösse der Bevölkerung begrenzt. Es gibt einen Grundwohnraum für
 		<b>".nf($conf['user_start_people']['p1'])."</b> Menschen auf jedem Planeten. Dieser Wert kann durch folgende Gebäude gesteigert werden:<br/>
 		<ul>";
@@ -31,7 +31,7 @@
 		echo "</ul>";
     iBoxEnd();
 
-    
-    
-    
+
+
+
 ?>

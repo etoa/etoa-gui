@@ -16,51 +16,51 @@
 	ShipData* DataHandler::getShipById(int id) {
 		return &this->shipData[idShipConverter[id] ];
 	}
-	
+
 	DefData* DataHandler::getDefById(int id) {
 		return &this->defData[idDefConverter[id] ];
 	}
-	
+
 	TechData* DataHandler::getTechById(int id) {
 		return &this->techData[idTechConverter[id] ];
 	}
-	
+
 	BuildingData* DataHandler::getBuildingById(int id) {
 		return &this->buildingData[idBuildingConverter[id] ];
 	}
-	
+
 	RaceData* DataHandler::getRaceById(int id) {
 		return &this->raceData[idRaceConverter[id] ];
 	}
-	
+
 	SolData* DataHandler::getSolById(int id) {
 		return &this->solData[idSolConverter[id] ];
 	}
-	
+
 	PlanetData* DataHandler::getPlanetById(int id) {
 		return &this->planetData[idPlanetConverter[id] ];
 	}
-	
+
 	SpecialistData* DataHandler::getSpecialistById(int id) {
 		return &this->specialistData[idSpecialistConverter[id] ];
 	}
-		
+
 	ShipData* DataHandler::getShipByName(std::string name) {
 		return &this->shipData[nameConverter[name] ];
 	}
-	
+
 	DefData* DataHandler::getDefByName(std::string name) {
 		return &this->defData[nameConverter[name] ];
 	}
-			
+
 	TechData* DataHandler::getTechByName(std::string name) {
 		return &this->techData[nameConverter[name] ];
 	}
-			
+
 	BuildingData* DataHandler::getBuildingByName(std::string name) {
 		return &this->buildingData[nameConverter[name] ];
 	}
-	
+
 	// Clear the Data and reload it
 	void DataHandler::reloadData()
 	{
@@ -71,7 +71,7 @@
 		this->raceData.clear();
 		this->solData.clear();
 		this->planetData.clear();
-		this->specialistData.clear();		
+		this->specialistData.clear();
 		this->idDefConverter.clear();
 		this->idShipConverter.clear();
 		this->idTechConverter.clear();
@@ -80,11 +80,11 @@
 		this->idSolConverter.clear();
 		this->idPlanetConverter.clear();
 		this->idSpecialistConverter.clear();
-		
+
 		loadData();
 	}
-	
-	
+
+
 	//	Initialisiert die Datenwerte
 	void DataHandler::loadData ()
 	{
@@ -137,7 +137,7 @@
 				}
 			}
 		}
-		
+
 		this->counter = 0;
 		query << "SELECT "
 			<< "	ship_id AS Id, "
@@ -213,12 +213,12 @@
 					this->shipData.push_back(obj);
 					this->counter++;
 					/** Save the id in the action container **/
-					
-					
+
+
 				}
 			}
 		}
-		
+
 		this->counter = 0;
 		query << "SELECT "
 			<< "	tech_id AS Id, "
@@ -244,7 +244,7 @@
 		if (tRes) {
 			unsigned int tSize = tRes.size();
 			if (tSize>0) {
-				mysqlpp::Row tRow;				
+				mysqlpp::Row tRow;
 				for (mysqlpp::Row::size_type i = 0; i<tSize; i++) {
 					tRow = tRes.at(i);
 					this->idTechConverter[(int)(tRow["id"]) ] =  this->counter;
@@ -255,8 +255,8 @@
 				}
 			}
 		}
-		
-		this->counter = 0;	 	 	 	 	 	 	 	 	 	 	 	 	 	
+
+		this->counter = 0;
 		query << "SELECT "
 			<< "	building_id AS Id, "
 			<< "	building_name AS Name, "
@@ -315,8 +315,8 @@
 				}
 			}
 		}
-		
-		this->counter = 0;	 	 	 	 	 	 	 	 	 	 	
+
+		this->counter = 0;
 		query << "SELECT "
 			<< "	* "
 			<< "FROM "
@@ -336,8 +336,8 @@
 				}
 			}
 		}
-		
-		this->counter = 0;	 	 	 	 	 	 	 	 	 	 	 	 	 	
+
+		this->counter = 0;
 		query << "SELECT "
 			<< "	* "
 			<< "FROM "
@@ -357,8 +357,8 @@
 				}
 			}
 		}
-		
-		this->counter = 0;	 	 	 	 	 	 	 	 	 	 	 	 	 	
+
+		this->counter = 0;
 		query << "SELECT "
 			<< "	* "
 			<< "FROM "
@@ -378,8 +378,8 @@
 				}
 			}
 		}
-		
-		this->counter = 0;	 	 	 	 	 	 	 	 	 	 	 	 	 	
+
+		this->counter = 0;
 		query << "SELECT "
 			<< "	* "
 			<< "FROM "
@@ -390,7 +390,7 @@
 			unsigned int spSize = spRes.size();
 			if (spSize>0) {
 				mysqlpp::Row spRow;
-				for (mysqlpp::Row::size_type i = 0; i<spSize; i++) 
+				for (mysqlpp::Row::size_type i = 0; i<spSize; i++)
 				{
 					spRow = spRes.at(i);
 					this->idSpecialistConverter[(int)(spRow["specialist_id"]) ] =  this->counter;

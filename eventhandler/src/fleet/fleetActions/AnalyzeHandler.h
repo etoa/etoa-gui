@@ -10,7 +10,7 @@
 /**
 * Handles Analyze....
 * You can analyze an entity to find out the resources
-* 
+*
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 namespace analyze

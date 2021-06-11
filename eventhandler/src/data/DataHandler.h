@@ -21,7 +21,7 @@
 
 /**
 * Data Singleton, very usefull!!!!! So use it .D
-* 
+*
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 
@@ -34,7 +34,7 @@
 			return _instance;
 		}
 		~DataHandler () {};
-		
+
 		/**
 		* Liefert ein Data Object zurück
 		*
@@ -47,39 +47,39 @@
 		BuildingData* getBuildingById(int id);
 		RaceData* getRaceById(int id);
 		SolData* getSolById(int id);
-		PlanetData* getPlanetById(int id);		
-		SpecialistData* getSpecialistById(int id);		
+		PlanetData* getPlanetById(int id);
+		SpecialistData* getSpecialistById(int id);
 		ShipData* getShipByName(std::string name);
 		DefData* getDefByName(std::string name);
 		TechData* getTechByName(std::string name);
 		BuildingData* getBuildingByName(std::string name);
-				
+
 		/**
 		* Initialisiert die Werte
 		*
 		* @author Glaubinix
 		**/
 		void reloadData();
-		
+
 	private:
-	
+
 		/**
 		* Initialisiert die Werte
 		*
 		* @author Glaubinix
 		**/
 		void loadData();
-		
+
 		/**
 		* name <-> object_id Relationcontainer
 		**/
 		std::map<std::string, int> nameConverter;
-		
+
 		/**
 		* id <-> object_id Relationcontainer
 		**/
 		std::map<int, int> idDefConverter, idShipConverter, idTechConverter, idBuildingConverter, idRaceConverter, idSolConverter, idPlanetConverter, idSpecialistConverter;
-		
+
 		/**
 		* Container mit den gespeicherten Daten
 		**/
@@ -91,14 +91,14 @@
 		std::vector<SolData> solData;
 		std::vector<PlanetData> planetData;
 		std::vector<SpecialistData> specialistData;
-		
+
 		/**
 		* counter
 		**/
 		int counter;
-		
+
 		static DataHandler* _instance;
-		
+
 		/**
 		* Konsturktor der Configklasse
 		*

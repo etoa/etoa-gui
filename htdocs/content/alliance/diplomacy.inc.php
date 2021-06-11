@@ -13,10 +13,10 @@
 			alert("Du musst eine öffentliche Kriegserklärung hinzufügen!");
 			f.alliance_bnd_text_pub.focus();
 			return false;
-		}		
+		}
 		return true;
 	}
-	
+
 	function checkPactOffer()
 	{
 		f = document.forms['pactoffer'];
@@ -32,10 +32,10 @@
 			f.alliance_bnd_text.focus();
 			return false;
 		}
-		
-		return true;		
-	}	
-	
+
+		return true;
+	}
+
 	function checkEndPact()
 	{
 		f = document.forms['endpact'];
@@ -45,7 +45,7 @@
 			f.pact_end_text.focus();
 			return false;
 		}
-		return true;		
+		return true;
 	}
 </script>
 
@@ -68,12 +68,12 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 	if (Alliance::checkActionRights('relations'))
 	{
 		echo "<h2>Diplomatie</h2>";
 
-		
+
 
 			$alliances = get_alliance_names();
 
@@ -83,25 +83,25 @@
 			if (isset($_GET['begin_war']) && intval($_GET['begin_war'])>0)
 			{
 				$aid = intval($_GET['begin_war']);
-				
+
 				$check = false;
 				if(!isset($_GET['begin_bnd']) || $_GET['begin_bnd']!=$cu->allianceId)
 				{
 					$check = true;
 				}
-				
+
 				$ares=dbquery("SELECT * FROM alliances WHERE alliance_id='".$aid."';");
 				if (mysql_num_rows($ares)>0 && $check)
 				{
 					$aarr=mysql_fetch_array($ares);
 					echo "<form action=\"?page=$page&amp;action=relations\" method=\"post\" name=\"wardeclaration\">";
 					checker_init();
-					
+
 					tableStart("Kriegserkl&auml;rung an die Allianz [".$aarr['alliance_tag']."] ".$aarr['alliance_name']);
 					echo "<tr><th>Nachricht:</th><td><textarea rows=\"10\" cols=\"50\" name=\"alliance_bnd_text\"></textarea></td></tr>";
 					echo "<tr><th>Öffentlicher Text:</th><td><textarea rows=\"10\" cols=\"50\" name=\"alliance_bnd_text_pub\"></textarea></td></tr>";
 					tableEnd();
-					
+
 					echo "<input type=\"hidden\" name=\"alliance_bnd_alliance_id\" value=\"".$aarr['alliance_id']."\" />";
 					echo "<input type=\"submit\" name=\"sbmit_new_war\" value=\"Senden\" onclick=\"return checkWarDeclaration()\" onsubmit=\"return checkWarDeclaration()\" />&nbsp;
 					<input type=\"button\" onclick=\"document.location='?page=alliance&action=relations'\" value=\"Zur&uuml;ck\" />";
@@ -119,7 +119,7 @@
 			elseif (isset($_GET['begin_bnd']) && intval($_GET['begin_bnd'])>0)
 			{
 				$aid = intval($_GET['begin_bnd']);
-				
+
 				$ares=dbquery("
 				SELECT
 					alliance_id,
@@ -133,12 +133,12 @@
 				if (mysql_num_rows($ares)>0 && $_GET['begin_bnd'] != $cu->allianceId)
 				{
 					$aarr=mysql_fetch_array($ares);
-					
+
 					if($aarr['alliance_accept_bnd']==1)
 					{
 						echo "<form action=\"?page=$page&amp;action=relations\" method=\"post\" name=\"pactoffer\">";
 						checker_init();
-						
+
 						tableStart("B&uuml;ndnisanfrage an die Allianz [".$aarr['alliance_tag']."] ".$aarr['alliance_name']);
 						echo "<tr>
 							<th>Name des Bündnisses:</th>
@@ -153,7 +153,7 @@
 							</td>
 						</tr>";
 						tableEnd();
-						
+
 						echo "<input type=\"hidden\" name=\"alliance_bnd_alliance_id\" value=\"".$aarr['alliance_id']."\" />";
 						echo "<input type=\"submit\" name=\"sbmit_new_bnd\" value=\"Senden\" onclick=\"return checkPactOffer()\" onsubmit=\"return checkPactOffer()\" />&nbsp;
 						<input type=\"button\" onclick=\"document.location='?page=alliance&action=relations'\" value=\"Zur&uuml;ck\" />";
@@ -176,9 +176,9 @@
 			elseif (isset($_GET['view']) && intval($_GET['view'])>0)
 			{
 				$id = intval($_GET['view']);
-				
+
 				$res = dbquery("
-				SELECT 
+				SELECT
 					alliance_bnd_text,
 					alliance_bnd_text_pub,
 					a1.alliance_id as a1id,
@@ -187,17 +187,17 @@
 					a2.alliance_name as a2name,
 					alliance_bnd_name,
 					alliance_bnd_level
-				FROM 
-					alliance_bnd 
+				FROM
+					alliance_bnd
 				INNER JOIN
 					alliances as a1
 					ON a1.alliance_id=alliance_bnd_alliance_id1
 				INNER JOIN
 					alliances as a2
-					ON a2.alliance_id=alliance_bnd_alliance_id2					
-				WHERE 
-					(alliance_bnd_alliance_id1='".$cu->allianceId."' 
-					OR alliance_bnd_alliance_id2='".$cu->allianceId."') 
+					ON a2.alliance_id=alliance_bnd_alliance_id2
+				WHERE
+					(alliance_bnd_alliance_id1='".$cu->allianceId."'
+					OR alliance_bnd_alliance_id2='".$cu->allianceId."')
 					AND alliance_bnd_id='".$id."'
 				;");
 				if (mysql_num_rows($res)>0)
@@ -213,9 +213,9 @@
 						$opId = $arr['a1id'];
 						$opName = $arr['a1name'];
 					}
-					
+
 					echo "<form action=\"?page=$page&amp;action=relations\" method=\"post\">";
-					
+
 					switch ($arr['alliance_bnd_level'])
 					{
 						case 0:
@@ -233,7 +233,7 @@
 								<td>".text2html($arr['alliance_bnd_text'])."</td>
 							</tr>";
 							if ($arr['a1id']==$cu->allianceId)
-							{					
+							{
 								echo "<tr>
 									<th style=\"width:200px;\">Status</th>
 									<td>Die Anfrage wurde noch nicht angenommen.</td>
@@ -246,17 +246,17 @@
 									<td><textarea name=\"pact_answer\" rows=\"6\" cols=\"70\"></textarea></td>
 								</tr>";
 							}
-							tableEnd();				
-							echo "<input type=\"hidden\" name=\"id\" value=\"".$id."\" />";					
+							tableEnd();
+							echo "<input type=\"hidden\" name=\"id\" value=\"".$id."\" />";
 							if ($arr['a1id']==$cu->allianceId)
-							{							
+							{
 								echo "<input type=\"submit\" name=\"submit_withdraw_pact\" value=\"Bündnisangebot zurückziehen\" onclick=\"return confirm('Angebot wirklich zurückziehen?')\" /> &nbsp; ";
 							}
 							else
 							{
-								echo "<input type=\"submit\" name=\"pact_accept\" value=\"Bündnisangebot annehmen\" /> &nbsp; ";								
-								echo "<input type=\"submit\" name=\"pact_reject\" value=\"Bündnisangebot ablehnen\" /> &nbsp; ";								
-							}								
+								echo "<input type=\"submit\" name=\"pact_accept\" value=\"Bündnisangebot annehmen\" /> &nbsp; ";
+								echo "<input type=\"submit\" name=\"pact_reject\" value=\"Bündnisangebot ablehnen\" /> &nbsp; ";
+							}
 							break;
 						case 2:
 							tableStart("Bündnis \"".$arr['alliance_bnd_name']."\"");
@@ -272,10 +272,10 @@
 								<th style=\"width:200px;\">Öffentlicher Text</th>
 								<td><textarea name=\"alliance_bnd_text_pub\" rows=\"6\" cols=\"70\">".StringUtils::encodeDBStringForTextarea($arr['alliance_bnd_text_pub'])."</textarea></td>
 							</tr>";
-							tableEnd();				
-							echo "<input type=\"hidden\" name=\"id\" value=\"".$id."\" />";					
+							tableEnd();
+							echo "<input type=\"hidden\" name=\"id\" value=\"".$id."\" />";
 							echo "<input type=\"submit\" name=\"submit_pact_public_text\" value=\"Speichern\" /> &nbsp; ";
-							break;		
+							break;
 						case 3:
 							tableStart("Krieg");
 							echo "<tr>
@@ -300,15 +300,15 @@
 									<td>".text2html($arr['alliance_bnd_text_pub'])."</td>
 								</tr>";
 							}
-							tableEnd();				
+							tableEnd();
 							if ($arr['a1id']==$cu->allianceId)
 							{
-								echo "<input type=\"hidden\" name=\"id\" value=\"".$id."\" />";					
+								echo "<input type=\"hidden\" name=\"id\" value=\"".$id."\" />";
 								echo "<input type=\"submit\" name=\"submit_war_public_text\" value=\"Speichern\" /> &nbsp; ";
 							}
-							break;												
+							break;
 						default:
-							echo "Test";					
+							echo "Test";
 					}
 					echo "<input type=\"button\" onclick=\"document.location='?page=alliance&amp;action=relations';\" value=\"Zur&uuml;ck\" />";
 					echo "</form>";
@@ -325,9 +325,9 @@
 			elseif (isset($_GET['end_pact']) && intval($_GET['end_pact'])>0)
 			{
 				$id = intval($_GET['end_pact']);
-				
+
 				$res = dbquery("
-				SELECT 
+				SELECT
 					alliance_bnd_text,
 					alliance_bnd_text_pub,
 					a1.alliance_id as a1id,
@@ -336,17 +336,17 @@
 					a2.alliance_name as a2name,
 					alliance_bnd_name,
 					alliance_bnd_level
-				FROM 
-					alliance_bnd 
+				FROM
+					alliance_bnd
 				INNER JOIN
 					alliances as a1
 					ON a1.alliance_id=alliance_bnd_alliance_id1
 				INNER JOIN
 					alliances as a2
-					ON a2.alliance_id=alliance_bnd_alliance_id2					
-				WHERE 
-					(alliance_bnd_alliance_id1='".$cu->allianceId."' 
-					OR alliance_bnd_alliance_id2='".$cu->allianceId."') 
+					ON a2.alliance_id=alliance_bnd_alliance_id2
+				WHERE
+					(alliance_bnd_alliance_id1='".$cu->allianceId."'
+					OR alliance_bnd_alliance_id2='".$cu->allianceId."')
 					AND alliance_bnd_id='".$id."'
 					AND alliance_bnd_level=2
 				;");
@@ -363,7 +363,7 @@
 						$opId = $arr['a1id'];
 						$opName = $arr['a1name'];
 					}
-					
+
 					echo "<form action=\"?page=$page&amp;action=relations\" method=\"post\" name=\"endpact\">";
 
 					tableStart("Bündnis \"".stripslashes($arr['alliance_bnd_name'])."\" beenden");
@@ -375,8 +375,8 @@
 						<th style=\"width:200px;\">Begründung</th>
 						<td><textarea name=\"pact_end_text\" rows=\"6\" cols=\"70\"></textarea></td>
 					</tr>";
-					tableEnd();				
-					echo "<input type=\"hidden\" name=\"id\" value=\"".$id."\" />";					
+					tableEnd();
+					echo "<input type=\"hidden\" name=\"id\" value=\"".$id."\" />";
 					echo "<input type=\"submit\" name=\"submit_pact_end\" value=\"Auflösen\"  onclick=\"return checkEndPact()\" onsubmit=\"return checkEndPact()\" /> &nbsp; ";
 					echo "<input type=\"button\" onclick=\"document.location='?page=alliance&amp;action=relations';\" value=\"Zur&uuml;ck\" />";
 					echo "</form>";
@@ -392,23 +392,23 @@
 				if (isset($_POST['sbmit_new_bnd']) && isset($_POST['alliance_bnd_alliance_id']) && checker_verify())
 				{
 					$id = intval($_POST['alliance_bnd_alliance_id']);
-					
+
 					$bnd_res = dbquery("
-					SELECT 
-						alliance_bnd_id 
-					FROM 
-						alliance_bnd 
-					WHERE 
+					SELECT
+						alliance_bnd_id
+					FROM
+						alliance_bnd
+					WHERE
 						(
-							(alliance_bnd_alliance_id1='".$cu->allianceId."' 
-							AND alliance_bnd_alliance_id2='".$id."') 
-						OR 
-							(alliance_bnd_alliance_id2='".$cu->allianceId."' 
+							(alliance_bnd_alliance_id1='".$cu->allianceId."'
+							AND alliance_bnd_alliance_id2='".$id."')
+						OR
+							(alliance_bnd_alliance_id2='".$cu->allianceId."'
 							AND alliance_bnd_alliance_id1='".$id."')
-						) 
+						)
 						AND alliance_bnd_level>0");
-					
-					
+
+
 					if (mysql_num_rows($bnd_res)>0)
 					{
 						error_msg("Deine Allianz steht schon in einer Beziehung (B&uuml;ndnis/Krieg) mit der ausgew&auml;hlten Allianz oder es ist bereits eine Bewerbung um ein B&uuml;ndnis vorhanden!");
@@ -416,8 +416,8 @@
 					else
 					{
 						dbquery("
-						INSERT INTO 
-							alliance_bnd 
+						INSERT INTO
+							alliance_bnd
 						(
 							alliance_bnd_alliance_id1,
 							alliance_bnd_alliance_id2,
@@ -426,8 +426,8 @@
 							alliance_bnd_name,
 							alliance_bnd_date,
 							alliance_bnd_diplomat_id
-						) 
-						VALUES 
+						)
+						VALUES
 						(
 							'".$cu->allianceId."',
 							'".$id."',
@@ -444,32 +444,32 @@
 						$arr=mysql_fetch_array($res);
 
 						send_msg($arr['alliance_founder_id'],MSG_ALLYMAIL_CAT,"Bündnisanfrage","Die Allianz [b][".$alliances[$cu->allianceId]['tag']."] ".$alliances[$cu->allianceId]['name']."[/b] fragt euch für ein Bündnis an.\n
-						[b]Text:[/b] ".addslashes($_POST['alliance_bnd_text'])."\n 
+						[b]Text:[/b] ".addslashes($_POST['alliance_bnd_text'])."\n
 						Geschrieben von [b]".$cu->nick."[/b].\n Gehe auf die [page=alliance]Allianzseite[/page] um die Anfrage zu bearbeiten!");
 					}
 				}
-				
+
 				// Save war
 				if (isset($_POST['sbmit_new_war']) && intval($_POST['alliance_bnd_alliance_id']) > 0 && checker_verify())
 				{
 					$id = intval($_POST['alliance_bnd_alliance_id']);
 					$alliances = get_alliance_names();
-					
+
 					$war_res = dbquery("
-					SELECT 
-						alliance_bnd_id 
-					FROM 
-						alliance_bnd 
-					WHERE 
+					SELECT
+						alliance_bnd_id
+					FROM
+						alliance_bnd
+					WHERE
 						(
-							(alliance_bnd_alliance_id1='".$cu->allianceId."' 
-							AND alliance_bnd_alliance_id2='".$id."') 
-							OR 
-							(alliance_bnd_alliance_id2='".$cu->allianceId."' 
+							(alliance_bnd_alliance_id1='".$cu->allianceId."'
+							AND alliance_bnd_alliance_id2='".$id."')
+							OR
+							(alliance_bnd_alliance_id2='".$cu->allianceId."'
 							AND alliance_bnd_alliance_id1='".$id."')
-						) 
+						)
 						AND alliance_bnd_level>0");
-					
+
 					if (mysql_num_rows($war_res)>0)
 					{
 						error_msg("Deine Allianz steht schon in einer Beziehung (B&uuml;ndnis/Krieg) mit der ausgew&auml;hlten Allianz oder es ist bereits eine Bewerbung um ein B&uuml;ndnis vorhanden!");
@@ -477,7 +477,7 @@
 					else
 					{
 						dbquery("
-						INSERT INTO 
+						INSERT INTO
 						alliance_bnd
 						(
 							alliance_bnd_alliance_id1,
@@ -488,8 +488,8 @@
 							alliance_bnd_date,
 							alliance_bnd_points,
 							alliance_bnd_diplomat_id
-						) 
-						VALUES 
+						)
+						VALUES
 						(
 							'".$cu->allianceId."',
 							'".$id."',
@@ -500,9 +500,9 @@
 							".DIPLOMACY_POINTS_PER_WAR.",
 							'".$cu->id."'
 						)");
-						
+
 						success_msg("Du hast einer Allianz den Krieg erkl&auml;rt!");
-						
+
 						add_alliance_history($cu->allianceId,"Der Allianz [b][".$alliances[$id]['tag']."] ".$alliances[$id]['name']."[/b] wird der Krieg erkl&auml;rt!");
 						add_alliance_history($id,"Die Allianz [b][".$alliances[$cu->allianceId]['tag']."] ".$alliances[$cu->allianceId]['name']."[/b] erkl&auml;rt den Krieg!");
 
@@ -519,7 +519,7 @@
 				if (isset($_POST['submit_pact_end']) && isset($_POST['id']) && intval($_POST['id']) > 0)
 				{
 					$id = intval($_POST['id']);
-					
+
 					$res=dbquery("
 					SELECT
 						a1.alliance_id as a1id,
@@ -530,22 +530,22 @@
 						a2.alliance_tag as a2tag,
 						alliance_bnd_name,
 						alliance_bnd_level
-					FROM 
-						alliance_bnd 
+					FROM
+						alliance_bnd
 					INNER JOIN
 						alliances as a1
 						ON a1.alliance_id=alliance_bnd_alliance_id1
 					INNER JOIN
 						alliances as a2
-						ON a2.alliance_id=alliance_bnd_alliance_id2			
-					WHERE 
+						ON a2.alliance_id=alliance_bnd_alliance_id2
+					WHERE
 					(
-						alliance_bnd_alliance_id1=".$cu->allianceId." 
-						OR alliance_bnd_alliance_id2=".$cu->allianceId." 
-					) 
+						alliance_bnd_alliance_id1=".$cu->allianceId."
+						OR alliance_bnd_alliance_id2=".$cu->allianceId."
+					)
 					AND alliance_bnd_id=".$id."
 					AND alliance_bnd_level='2';");
-					
+
 					if (mysql_num_rows($res)==1)
 					{
 						$arr = mysql_fetch_array($res);
@@ -555,8 +555,8 @@
 							$opName = $arr['a2name'];
 							$opTag = $arr['a2tag'];
 							$selfId = $arr['a1id'];
-							$selfName = $arr['a1name'];							
-							$selfTag = $arr['a1tag'];							
+							$selfName = $arr['a1name'];
+							$selfTag = $arr['a1tag'];
 						}
 						else
 						{
@@ -564,10 +564,10 @@
 							$opName = $arr['a1name'];
 							$opTag = $arr['a1tag'];
 							$selfId = $arr['a2id'];
-							$selfName = $arr['a2name'];							
-							$selfTag = $arr['a2tag'];							
+							$selfName = $arr['a2name'];
+							$selfTag = $arr['a2tag'];
 						}
-						
+
 						//Delete Bnd Forum
 						$bres=dbquery("SELECT * FROM allianceboard_topics WHERE topic_bnd_id=".$id.";");
 						while ($barr=mysql_fetch_array($bres))
@@ -575,32 +575,32 @@
 							dbquery("DELETE FROM allianceboard_posts WHERE post_topic_id=".$barr['topic_id'].";");
 						}
 						dbquery("DELETE FROM allianceboard_topics WHERE topic_bnd_id=".$id.";");
-						
+
 						// Delete entity
 						dbquery("
-						DELETE FROM 
-							alliance_bnd 
-						WHERE 
+						DELETE FROM
+							alliance_bnd
+						WHERE
 							alliance_bnd_id=".$id."
 						;");
 
-						// Add log							
+						// Add log
 						add_alliance_history($selfId,"Das Bündnis [b]".$arr['alliance_bnd_name']."[/b] mit der Allianz [b][".$opTag."] ".$opName."[/b] wird aufgelöst!");
 						add_alliance_history($opId,"Die Allianz [b][".$selfTag."] ".$selfName."[/b] löst das Bündnis [b]".$arr['alliance_bnd_name']."[/b] auf!");
 
 						// Send message to leader
 						$fres=dbquery("
-						SELECT 
-							alliance_founder_id 
-						FROM 
-							alliances 
-						WHERE 
+						SELECT
+							alliance_founder_id
+						FROM
+							alliances
+						WHERE
 							alliance_id='".$opId."'
 						;");
 						$farr=mysql_fetch_array($fres);
 						send_msg($farr['alliance_founder_id'],MSG_ALLYMAIL_CAT,"Bündnis ".$arr['alliance_bnd_name']." beendet","Die Allianz [b][".$selfTag."] ".$selfName."[/b] beendet ihr Bündnis [b]".$arr['alliance_bnd_name']."[/b] mit eurer Allianz!\n
 						Ausgelöst von [b]".$cu->nick."[/b].\nBegründung: ".$_POST['pact_end_text']);
-							
+
 						echo "Das B&uuml;ndnis <b>".$arr['alliance_bnd_name']."</b> mit der Allianz <b>".$opName."</b> wurde aufgel&ouml;st!<br/><br/>";
 					}
 				}
@@ -609,25 +609,25 @@
 				if(isset($_POST['submit_withdraw_pact']) && isset($_POST['id']) && intval($_POST['id']) > 0)
 				{
 					$id = intval($_POST['id']);
-					
+
 					$res=dbquery("
-						SELECT 
+						SELECT
 							alliance_bnd_id,
 							alliance_bnd_alliance_id2
-						FROM 
+						FROM
 							alliance_bnd
 						WHERE
 							alliance_bnd_alliance_id1=".$cu->allianceId."
-							AND alliance_bnd_id='".$id."' 
+							AND alliance_bnd_id='".$id."'
 						;");
 					$arr = mysql_fetch_array($res);
 					if(mysql_num_rows($res)>0)
 					{
 						// Remove request
 						dbquery("
-						DELETE FROM 
-							alliance_bnd 
-						WHERE 
+						DELETE FROM
+							alliance_bnd
+						WHERE
 							alliance_bnd_id='".$arr['alliance_bnd_id']."'
 						;");
 
@@ -638,26 +638,26 @@
 
 						// Display message
 						echo "Anfrage gel&ouml;scht! Die Allianzleitung der Allianz <b>".$arr['alliance_name']."</b> wurde per Nachricht dar&uuml;ber informiert.<br/><br/>";
-					}			
+					}
 				}
 
 				// Accept pact offer
 				if (isset($_POST['pact_accept']) && isset($_POST['id']) && intval($_POST['id']) > 0)
 				{
 					$id = intval($_POST['id']);
-					
+
 					$res=dbquery("
-						SELECT 
+						SELECT
 							alliance_bnd_id,
 							alliance_bnd_name,
 							a1.alliance_id as a1id,
 							a2.alliance_id as a2id,
 							a1.alliance_name as a1name,
-							a2.alliance_name as a2name,	
+							a2.alliance_name as a2name,
 							a1.alliance_tag as a1tag,
-							a2.alliance_tag as a2tag,	
-							a1.alliance_founder_id as a1founder							
-						FROM 
+							a2.alliance_tag as a2tag,
+							a1.alliance_founder_id as a1founder
+						FROM
 							alliance_bnd
 						INNER JOIN
 							alliances as a1
@@ -667,7 +667,7 @@
 							ON alliance_bnd_alliance_id2=a2.alliance_id
 						WHERE
 							alliance_bnd_alliance_id2=".$cu->allianceId."
-							AND alliance_bnd_id='".$id."' 
+							AND alliance_bnd_id='".$id."'
 							AND alliance_bnd_level=0
 						;");
 					if(mysql_num_rows($res)>0)
@@ -682,16 +682,16 @@
 						$text = "Die Allianzen [b][".$arr['a1tag']."] ".$arr['a1name']."[/b] und [b][".$arr['a2tag']."] ".$arr['a2name']."[/b] schliessen ein Bündnis!";
 						add_alliance_history($cu->allianceId,$text);
 						add_alliance_history($arr['a1id'], $text);
-						
+
 						// Save pact
 						dbquery("
-						UPDATE 
-							alliance_bnd 
-						SET 
+						UPDATE
+							alliance_bnd
+						SET
 							alliance_bnd_level='2',
-							alliance_bnd_points=".DIPLOMACY_POINTS_PER_PACT." 
-						WHERE 
-							alliance_bnd_id=".$id." 
+							alliance_bnd_points=".DIPLOMACY_POINTS_PER_PACT."
+						WHERE
+							alliance_bnd_id=".$id."
 						;");
 						success_msg("Bündniss angenommen! Bitte denke daran, einen öffentlichen Text zum Bündnis hinzuzufügen!");
 					}
@@ -703,17 +703,17 @@
 					$id = intval($_POST['id']);
 
 					$res=dbquery("
-						SELECT 
+						SELECT
 							alliance_bnd_id,
 							alliance_bnd_name,
 							a1.alliance_id as a1id,
 							a2.alliance_id as a2id,
 							a1.alliance_name as a1name,
-							a2.alliance_name as a2name,	
+							a2.alliance_name as a2name,
 							a1.alliance_tag as a1tag,
-							a2.alliance_tag as a2tag,	
-							a1.alliance_founder_id as a1founder							
-						FROM 
+							a2.alliance_tag as a2tag,
+							a1.alliance_founder_id as a1founder
+						FROM
 							alliance_bnd
 						INNER JOIN
 							alliances as a1
@@ -723,7 +723,7 @@
 							ON alliance_bnd_alliance_id2=a2.alliance_id
 						WHERE
 							alliance_bnd_alliance_id2=".$cu->allianceId."
-							AND alliance_bnd_id='".$id."' 
+							AND alliance_bnd_id='".$id."'
 							AND alliance_bnd_level=0
 						;");
 					if(mysql_num_rows($res)>0)
@@ -734,15 +734,15 @@
 						// Nachricht an den Leader der anfragenden Allianz
 						$text = "Die Bündnisanfrage [b]".$arr['alliance_bnd_name']."[/b] wurde von der Allianz [b][".$arr['a1tag']."] ".$arr['a1name']."[/b] abgelehnt!\n\n[b]Nachricht:[/b] ".$_POST['pact_answer'];
 						send_msg($arr['a1founder'],MSG_ALLYMAIL_CAT,"Bündnisantrag abgelehnt",$text);
-						
+
 						// Löscht BND
 						dbquery("
-						DELETE FROM 
-							alliance_bnd 
-						WHERE 
-							alliance_bnd_id=".$id." 
+						DELETE FROM
+							alliance_bnd
+						WHERE
+							alliance_bnd_id=".$id."
 						");
-																						
+
 						// Logt die Absage
 						add_alliance_history($cu->allianceId,"Die Bündnisanfrage [b]".$arr['alliance_bnd_name']."[/b] der Allianz [b][".$arr['a2tag']."] ".$arr['a2name']."[/b] wird abgelehnt!");
 						add_alliance_history($arr['a2id'],"Die Bündnisanfrage [b]".$arr['alliance_bnd_name']."[/b] wird von der Allianz [b][".$arr['a1tag']."] ".$arr['a1name']."[/b] abgelehnt!");
@@ -766,7 +766,7 @@
 							alliance_bnd_alliance_id1=".$cu->allianceId."
 							OR alliance_bnd_alliance_id2=".$cu->allianceId."
 						)
-						AND alliance_bnd_id='".$id."' 
+						AND alliance_bnd_id='".$id."'
 						AND alliance_bnd_level=2
 					");
 					success_msg("Text gespeichert!");
@@ -787,7 +787,7 @@
 							alliance_bnd_alliance_id1=".$cu->allianceId."
 							OR alliance_bnd_alliance_id2=".$cu->allianceId."
 						)
-						AND alliance_bnd_id='".$id."' 
+						AND alliance_bnd_id='".$id."'
 						AND alliance_bnd_level=3
 					");
 					success_msg("Text gespeichert!");
@@ -796,12 +796,12 @@
 
 				// Beziehungen laden
 				$bres=dbquery("
-				SELECT 
-					* 
-				FROM 
-					alliance_bnd 
-				WHERE 
-					alliance_bnd_alliance_id1='".$cu->allianceId."' 
+				SELECT
+					*
+				FROM
+					alliance_bnd
+				WHERE
+					alliance_bnd_alliance_id1='".$cu->allianceId."'
 					OR alliance_bnd_alliance_id2='".$cu->allianceId."'
 				;");
 				$relations=array();
@@ -861,9 +861,9 @@
 							<td>
 							 ".text2html($aarr['alliance_name'])."
 							</td>";
-							
+
 						if(isset($relations[$aarr['alliance_id']]))
-						{	
+						{
 							if ($relations[$aarr['alliance_id']]['level']==2)
 							{
 								echo "<td style=\"color:#0f0;\">B&uuml;ndnis</td>";
@@ -881,7 +881,7 @@
 								echo "<td style=\"color:#3f9;\">Frieden</td>";
 								echo "<td>".df($relations[$aarr['alliance_id']]['date'])."</td>";
 								echo "<td>".df($relations[$aarr['alliance_id']]['date']+PEACE_DURATION)."</td>";
-							}									
+							}
 							elseif ($relations[$aarr['alliance_id']]['level']==0 && count($relations[$aarr['alliance_id']])>0)
 							{
 								if (isset($relations[$aarr['alliance_id']]['master']) && $relations[$aarr['alliance_id']]['master'])
@@ -908,9 +908,9 @@
 							echo "<td>-</td>";
 							echo "<td>-</td>";
 						}
-												
+
 						echo "<td>";
-						
+
 						if(isset($relations[$aarr['alliance_id']]))
 						{
 							if ($relations[$aarr['alliance_id']]['level']==2)
@@ -925,7 +925,7 @@
 							elseif ($relations[$aarr['alliance_id']]['level']==4)
 							{
 								echo "-";
-							}									
+							}
 							elseif ($relations[$aarr['alliance_id']]['level']==0 && count($relations[$aarr['alliance_id']])>0)
 							{
 								if (isset($relations[$aarr['alliance_id']]['master']) && $relations[$aarr['alliance_id']]['master'])

@@ -256,7 +256,7 @@ if ($cp)
 			<div class=\"planetOverviewItem\">Felder</div> <a href=\"javascript:;\" onclick=\"showTab('tabFields')\">".nf($cp->fieldsUsed)." von ".(nf($cp->fields))." benutzt</a> (".round($cp->fieldsUsed/$cp->fields*100)."%)<br style=\"clear:left;\"/>";
 			if ($cp->debrisField)
 			{
-				echo "<div class=\"planetOverviewItem\">Trümmerfeld</div> 
+				echo "<div class=\"planetOverviewItem\">Trümmerfeld</div>
 				<span class=\"resmetal\">".nf($cp->debrisMetal,0,1)."</span>
 				<span class=\"rescrystal\">".nf($cp->debrisCrystal,0,1)."</span>
 				<span class=\"resplastic\">".nf($cp->debrisPlastic,0,1)."</span>
@@ -298,7 +298,7 @@ if ($cp)
 			echo "<div id=\"tabFields\" style=\"".($sub=="fields" ? '' : 'display:none;')."\">";
 			tableStart("Felderbelegung");
 			echo "<tr>
-			<tr><td colspan=\"2\">			
+			<tr><td colspan=\"2\">
 			<img src=\"misc/progress.image.php?r=1&w=650&p=".round($cp->fieldsUsed/$cp->fields*100)."\" alt=\"progress\" style=\"width:100%;\"/>
 			<br/>Benutzt: ".$cp->fieldsUsed.", Total: ".nf($cp->fields)." = ".nf($cp->fieldsBase)." Basisfelder + ".nf($cp->fieldsExtra)." zusätzliche Felder<br/></td></tr>
 			<tr><td style=\"width:50%;vertical-align:top;padding:5px;\">";
@@ -370,7 +370,7 @@ if ($cp)
 					  techlist
 				  INNER JOIN
 					  technologies
-				  ON 
+				  ON
 					  techlist_tech_id=tech_id
 				  AND
 					  techlist_user_id='".$cu->id."'
@@ -504,7 +504,7 @@ if ($cp)
 					  techlist
 				  INNER JOIN
 					  technologies
-				  ON 
+				  ON
 					  techlist_tech_id=tech_id
 				  AND
 					  techlist_user_id='".$cu->id."'

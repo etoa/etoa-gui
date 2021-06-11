@@ -46,7 +46,7 @@
 				specialist_points_req
 			FROM
 				specialists
-			WHERE		
+			WHERE
 				specialist_id='".intval($_POST['engage'])."'
 				AND specialist_enabled = 1
 			");
@@ -55,12 +55,12 @@
 				$arr = mysql_fetch_array($res);
 
 				$tres = dbquery("
-				SELECT 
-					COUNT(user_id) 
-				FROM 
-					users 
-				WHERE 
-					user_specialist_time>".time()." 
+				SELECT
+					COUNT(user_id)
+				FROM
+					users
+				WHERE
+					user_specialist_time>".time()."
 					AND user_specialist_id=".$arr['specialist_id'].";");
 				$tarr = mysql_fetch_row($tres);
 				$used = min($tarr[0],$totAvail);
@@ -145,7 +145,7 @@
 				specialist_days
 			FROM
 				specialists
-			WHERE		
+			WHERE
 				specialist_id='".$cu->specialistId."'
 				AND specialist_enabled = 1
 			");
@@ -279,7 +279,7 @@
 		FROM
 			specialists
 		WHERE
-			specialist_id=".$cu->specialistId."		
+			specialist_id=".$cu->specialistId."
 			AND specialist_enabled = 1
 		");
 		$arr = mysql_fetch_assoc($res);
@@ -302,7 +302,7 @@
 		echo '</td>
 		<td id="dischargeElem">';
 		if ($cu->specialistTime - $t > 0)
-			echo '<input type="submit" value="Entlassen" name="discharge" 
+			echo '<input type="submit" value="Entlassen" name="discharge"
 		onclick="return confirm(\'Willst du den Spezialisten wirklich entlassen? Es werden keine Ressourcen zurückerstattet, da der Spezialist diese als Abgangsentschädigung behält!\')" />';
 		echo '</td>
 		</tr>';
@@ -322,7 +322,7 @@
 	FROM
 		specialists
 	WHERE
-		specialist_enabled = 1		
+		specialist_enabled = 1
 	ORDER BY
 		specialist_name
 	");
@@ -347,12 +347,12 @@
 	while ($arr=mysql_fetch_array($res))
 	{
 		$tres = dbquery("
-		SELECT 
-			COUNT(user_id) 
-		FROM 
-			users 
-		WHERE 
-			user_specialist_time>".time()." 
+		SELECT
+			COUNT(user_id)
+		FROM
+			users
+		WHERE
+			user_specialist_time>".time()."
 			AND user_specialist_id=".$arr['specialist_id'].";");
 		$tarr = mysql_fetch_row($tres);
 		$used = min($tarr[0],$totAvail);

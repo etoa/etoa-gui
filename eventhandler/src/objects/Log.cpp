@@ -1,92 +1,92 @@
 
 #include "Log.h"
-	
+
 	void Log::addFleetId(int fleetId) {
 		this->fleetId = fleetId;
 	}
-	
+
 	void Log::addFleetUserId(int userId) {
 		this->fleetUserId = userId;
 	}
-	
+
 	void Log::addEntityUserId(int userId) {
 		this->entityUserId = userId;
 	}
-	
+
 	void Log::addEntityToId(int entityId) {
 		this->entityToId = entityId;
 	}
-	
+
 	void Log::addEntityFromId(int entityId) {
 		this->entityFromId = entityId;
 	}
-	
+
 	void Log::addLaunchtime(int launchtime) {
 		this->launchtime = launchtime;
 	}
-	
+
 	void Log::addLandtime(int landtime) {
 		this->landtime = landtime;
 	}
-	
+
 	void Log::addAction(std::string action) {
 		this->action = action;
 	}
-	
+
 	void Log::addStatus(short status) {
 		this->status = status;
 	}
-	
+
 	void Log::addText(std::string text) {
 		this->text += text + "\n";
 	}
-	
+
 	void Log::addFleetResStart(std::string res) {
 		if (res.length() > 1)
 			this->fleetResStart = res;
 	}
-	
+
 	void Log::addFleetResEnd(std::string res) {
 		if (res.length() > 1)
 			this->fleetResEnd = res;
 	}
-	
+
 	void Log::addFleetShipsStart(std::string ships) {
 		if (ships.length() > 1)
 			this->fleetShipsStart = ships;
 	}
-	
+
 	void Log::addFleetShipsEnd(std::string ships) {
 		if (ships.length() > 1)
 			this->fleetShipsEnd = ships;
 	}
-	
+
 	void Log::addEntityResStart(std::string res) {
 		if (res.length() > 1)
 			this->entityResStart = res;
 	}
-	
+
 	void Log::addEntityResEnd(std::string res) {
 		if (res.length() > 1)
 			this->entityResEnd = res;
 	}
-	
+
 	void Log::addEntityShipsStart(std::string ships) {
 		if (ships.length() > 1)
 			this->entityShipsStart = ships;
 	}
-	
+
 	void Log::addEntityShipsEnd(std::string ships) {
 		if (ships.length() > 1)
 			this->entityShipsEnd = ships;
 	}
-	
+
 	void Log::save() {
 		My &my = My::instance();
 		mysqlpp::Connection *con_ = my.get();
-		
+
 		mysqlpp::Query query = con_->query();
-		
+
 		query << "INSERT DELAYED INTO "
 			<< "	logs_fleet_queue "
 			<< "("
@@ -131,7 +131,7 @@
 			<< mysqlpp::quote << this->entityShipsStart << ", "
 			<< mysqlpp::quote << this->entityShipsEnd << " "
 			<< ");";
-		
+
 		query.store();
 		query.reset();
 	}

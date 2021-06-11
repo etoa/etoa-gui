@@ -16,7 +16,7 @@
 
 /**
 * Handles ship building updates
-* 
+*
 * \author Nicolas Perrenoud <mrcage@etoa.ch>
 */
 namespace ship
@@ -32,7 +32,7 @@ namespace ship
 	private:
 		bool changes_;
 		bool updatePlanet;
-		std::vector<int> changedPlanets_;		
+		std::vector<int> changedPlanets_;
 	};
 }
 #endif

@@ -51,7 +51,7 @@
 					<th style=\"width:10%;vertical-align:middle;\">Preis</th>
 					<th style=\"width:40%;vertical-align:middle;\">Min./Max.</th>
 				</tr>";
-				
+
 			// Titan
 			echo "<tr>
 					<th style=\"vertical-align:middle;\">".RES_METAL.":</th>
@@ -77,7 +77,7 @@
 					</td>
 					<th id=\"ress_min_max_crystal\" style=\"vertical-align:middle;\"> - </th>
 				</tr>";
-			
+
 			// PVC
 			echo "<tr>
 					<th style=\"vertical-align:middle;\">".RES_PLASTIC.":</th>
@@ -90,7 +90,7 @@
 					</td>
 					<th id=\"ress_min_max_plastic\" style=\"vertical-align:middle;\"> - </th>
 				</tr>";
-			
+
 			// Tritium
 			echo "<tr>
 					<th style=\"vertical-align:middle;\">".RES_FUEL.":</th>
@@ -103,7 +103,7 @@
 					</td>
 					<th id=\"ress_min_max_fuel\" style=\"vertical-align:middle;\"> - </th>
 				</tr>";
-			
+
 			// Nahrung
 			echo "<tr>
 					<th style=\"vertical-align:middle;\">".RES_FOOD.":</th>
@@ -124,7 +124,7 @@
 					<input type=\"text\" value=\"\" name=\"ressource_text\" id=\"ressource_text\" size=\"55\" maxlength=\"60\" style=\"width:98%\" ".tm("Text","Schreib einen kleinen Werbetext f&uuml;r deine Waren.")." onkeyup=\"calcMarketRessPrice('0');\"/>
 				</td>
 			</tr>";
-		  
+
 			// Reservation
 			echo "<tr>
 			<th>Reservation</th>
@@ -137,12 +137,12 @@
 			//Für Allianzmitglied reservieren wenn in einer Allianz und diese den Allianzmarktplatz auf Stufe 1 oder höher hat
 			if($cu->allianceId!=0 && $alliance_market_level>=1 && !$cd_enabled)
 			{
-				echo "<input type=\"radio\" name=\"resource_offer_reservation\" id=\"resource_offer_reservation_2\" value=\"2\" /> 
+				echo "<input type=\"radio\" name=\"resource_offer_reservation\" id=\"resource_offer_reservation_2\" value=\"2\" />
 				<label for=\"resource_offer_reservation_2\" ".tm("Reservation","Fall dieses Angebot nur Spieler aus deiner Allianz kaufen sollen, mach hier ein H&auml;kchen").">F&uuml;r Allianzmitglieder</label>";
 			}
 			echo "</td>";
 			echo "<td style=\"vertical-align:middle\"><input type=\"text\" name=\"resource_offer_user_nick\" id=\"resource_offer_user_nick\"  maxlength=\"".NICK_MAXLENGHT."\" size=\"25\" autocomplete=\"off\" value=\"\" onkeyup=\"xajax_searchUser(this.value,'resource_offer_user_nick')\"><br/><div class=\"citybox\" id=\"citybox\">&nbsp;</div></td>";
-			echo "</tr>";			
+			echo "</tr>";
 
 			// Status Nachricht (Ajax Überprüfungstext)
 			echo "<tr>
@@ -150,14 +150,14 @@
 				</tr>";
 
 			tableEnd();
-			
+
 			?>
 			<script>
 				$(function(){
 					$('#resource_offer_user_nick').hide();
 					$('input[name=resource_offer_reservation]').click(function(){
 						if ($(this).val() == 1) {
-							$('#resource_offer_user_nick').show();	
+							$('#resource_offer_user_nick').show();
 						} else {
 							$('#resource_offer_user_nick').hide();
 						}
@@ -186,7 +186,7 @@
 			// Zuerst wird überprüft ob auf dem Planeten Schiffe sind
 			if (mysql_result($check_res,0)>0)
 			{
-				// Folgender Javascript Abschnitt, welcher von PHP-Teilen erzeugt wird, lädt die Daten von den Schiffen, welche sich auf dem aktuellen Planeten befinden, 
+				// Folgender Javascript Abschnitt, welcher von PHP-Teilen erzeugt wird, lädt die Daten von den Schiffen, welche sich auf dem aktuellen Planeten befinden,
 				// in ein JS-Array. Dies wird für die Preisberechnung benötigt. Das erzeugte PHP Array wird für die Schiffsauswahl (SELECT) verwendet.
 
 				// Lädt Daten von den vorhandenen Schiffen auf dem aktuellen Planeten
@@ -247,7 +247,7 @@
 				echo "<tr>
 						<td height=\"30\" colspan=\"3\" style=\"vertical-align:middle;\">
 							<select name=\"ship_list\" id=\"ship_list\" onchange=\"calcMarketShipPrice(1, 0);\">";
-				
+
 				// Listet alle vorhandenen Schiffe auf
 				foreach ($ships as $sarr)
 				{
@@ -260,11 +260,11 @@
 						&nbsp;
 						<input type=\"text\" value=\"100\" name=\"ship_percent\" id=\"ship_percent\" size=\"5\" maxlength=\"7\" onkeyup=\"calcMarketShipPrice(1, 0);\" /> Verkaufspreis in %
 					</td>
-					
-					  
-					
+
+
+
 				</tr>";
-				
+
 				//Header Preis
 				echo "<tr>
 						<th style=\"width:15%;vertical-align:middle;\">Rohstoff</th>
@@ -354,7 +354,7 @@
 				//Für Allianzmitglied reservieren wenn in einer Allianz und diese den Allianzmarktplatz auf Stufe 2 oder höher hat
 				if($cu->allianceId!=0 && $alliance_market_level>=2 && !$cd_enabled)
 				{
-					echo "<input type=\"radio\" name=\"ship_offer_reservation\" id=\"ship_offer_reservation_2\" value=\"2\" /> 
+					echo "<input type=\"radio\" name=\"ship_offer_reservation\" id=\"ship_offer_reservation_2\" value=\"2\" />
 					<label for=\"ship_offer_reservation_2\" ".tm("Reservation","Fall dieses Angebot nur Spieler aus deiner Allianz kaufen sollen, mach hier ein H&auml;kchen").">F&uuml;r Allianzmitglieder</label>";
 				}
 				echo "</td>";
@@ -367,14 +367,14 @@
 				</tr>";
 
 				tableEnd();
-				
+
 				?>
 				<script>
 					$(function(){
 						$('#ship_offer_user_nick').hide();
 						$('input[name=ship_offer_reservation]').click(function(){
 							if ($(this).val() == 1) {
-								$('#ship_offer_user_nick').show();	
+								$('#ship_offer_user_nick').show();
 							} else {
 								$('#ship_offer_user_nick').hide();
 							}
@@ -423,7 +423,7 @@
 					<th style=\"width:5%;vertical-align:middle;\">Preis</th>
 					<th colspan=\"2\" style=\"width:45%;text-align:center;vertical-align:middle;\">Zeit</th>
 				</tr>";
-			
+
 			// Titan
 			echo "<tr>
 					<th style=\"vertical-align:middle;\">".RES_METAL.":</th>
@@ -436,7 +436,7 @@
 					</td>
 					<th colspan=\"2\" style=\"vertical-align:middle;\">&nbsp;</th>
 				</tr>";
-			
+
 			// Silizium und "Dauer" Feld
 			echo "<tr>
 					<th style=\"vertical-align:middle;\">".RES_CRYSTAL.":</th>
@@ -469,7 +469,7 @@
 					  echo "</select> Stunden";
 				echo "</td>
 						</tr>";
-			
+
 			// PVC
 			echo "<tr>
 					<th style=\"vertical-align:middle;\">".RES_PLASTIC.":</th>
@@ -482,7 +482,7 @@
 					</td>
 					<th colspan=\"2\" style=\"vertical-align:middle;\">&nbsp;</th>
 				</tr>";
-			
+
 			// Tritium und "Ende" Feld
 			echo "<tr>
 					<th style=\"vertical-align:middle;\">".RES_FUEL.":</th>
@@ -496,7 +496,7 @@
 					<th style=\"vertical-align:middle;\">Ende:</th>
 					<td id=\"auction_end_time\" style=\"vertical-align:middle;\">".date("d.m.Y H:i",$auction_time)."</td>
 				</tr>";
-			
+
 			// Nahrung
 			echo "<tr>
 					<th style=\"vertical-align:middle;\">".RES_FOOD.":</th>
@@ -509,7 +509,7 @@
 					</td>
 					<th colspan=\"2\" style=\"vertical-align:middle;\">&nbsp;</th>
 				</tr>";
-		  
+
 			// Verkaufstext
 			echo "<tr>
 				<th>Beschreibung</th>

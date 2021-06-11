@@ -15,18 +15,18 @@
 			if ($loadAll==1)
 			{
 				$res=dbQuerySave("
-				SELECT 
+				SELECT
 					n.id,
 					n.timestamp,
 					nd.subject,
-					nd.text 
-				FROM 
+					nd.text
+				FROM
 					notepad as n
-				INNER JOIN	
+				INNER JOIN
 					notepad_data as nd
 					ON nd.id=n.id
 					AND user_id=?
-				ORDER BY 
+				ORDER BY
 					timestamp DESC;", array($this->userId));
 				$this->num=mysql_num_rows($res);
 				if ($this->num>0)
@@ -54,14 +54,14 @@
 			else
 			{
 				$res=dbQuerySave("
-				SELECT 
+				SELECT
 					n.id,
 					n.timestamp,
 					nd.subject,
-					nd.text 
-				FROM 
+					nd.text
+				FROM
 					notepad as n
-				INNER JOIN	
+				INNER JOIN
 					notepad_data as nd
 					ON nd.id=n.id
 					AND n.user_id=?
@@ -81,27 +81,27 @@
 		{
 			$time = time();
 			dbQuerySave("
-			INSERT INTO 
-				notepad 
+			INSERT INTO
+				notepad
 			(
 				user_id,
-				timestamp				
-			) 
-			VALUES 
+				timestamp
+			)
+			VALUES
 			(
 				?,
 				?
 			);", array($this->userId, $time));
 			$mid = mysql_insert_id();
 			dbQuerySave("
-			INSERT INTO 
+			INSERT INTO
 				notepad_data
 			(
 				id,
 				subject,
-				text				
-			) 
-			VALUES 
+				text
+			)
+			VALUES
 			(
 				?, ?, ?
 			);", array($mid, $subject, $text));
@@ -115,23 +115,23 @@
 		{
 			$time = time();
 			dbQuerySave("
-			UPDATE 
+			UPDATE
 				notepad
-			SET 
-				timestamp='".$time."' 
-			WHERE 
+			SET
+				timestamp='".$time."'
+			WHERE
 				user_id=?
 				AND id=?
 			;", array($this->userId, $noteId));
 			if (mysql_affected_rows()>0)
 			{
 				dbQuerySave("
-				UPDATE 
+				UPDATE
 					notepad_data
-				SET 
+				SET
 					subject=?,
 					text=?
-				WHERE 
+				WHERE
 					id=?;", array($subject, $text, $noteId));
 				$this->note[$noteId] = new Note($noteId,$subject,$text,$time);
 			}

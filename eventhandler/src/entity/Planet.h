@@ -12,27 +12,27 @@
 
 /**
 * Planet class
-* 
+*
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
 class Planet : public Entity {
-public: 
+public:
 	Planet(char code, mysqlpp::Row &eRow) : Entity(code, eRow) {
 		this->codeName = "Planet";
 		this->showCoords = true;
 	}
-	
+
 	~Planet() {
 		this->saveData();
 	}
-	
+
 	void saveData();
-	
+
 protected:
 	void loadData();
 	void updateGasPlanet();
-	
+
 	int fields;
 	int lastUpdated;
 

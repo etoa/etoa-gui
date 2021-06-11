@@ -3,9 +3,9 @@
 	File: xajaxPluginManager.inc.php
 
 	Contains the xajax plugin manager.
-	
+
 	Title: xajax plugin manager
-	
+
 	Please see <copyright.inc.php> for a detailed description, copyright
 	and license information.
 */
@@ -31,56 +31,56 @@ final class xajaxPluginManager
 		Array: aRequestPlugins
 	*/
 	private $aRequestPlugins;
-	
+
 	/*
 		Array: aResponsePlugins
 	*/
 	private $aResponsePlugins;
-	
+
 	/*
 		Array: aConfigurable
 	*/
 	private $aConfigurable;
-	
+
 	/*
 		Array: aRegistrars
 	*/
 	private $aRegistrars;
-	
+
 	/*
 		Array: aProcessors
 	*/
 	private $aProcessors;
-	
+
 	/*
 		Array: aClientScriptGenerators
 	*/
 	private $aClientScriptGenerators;
-	
+
 	/*
 		Function: xajaxPluginManager
-		
+
 		Construct and initialize the one and only xajax plugin manager.
 	*/
 	private function __construct()
 	{
 		$this->aRequestPlugins = array();
 		$this->aResponsePlugins = array();
-		
+
 		$this->aConfigurable = array();
 		$this->aRegistrars = array();
 		$this->aProcessors = array();
 		$this->aClientScriptGenerators = array();
 	}
-	
+
 	/*
 		Function: getInstance
-		
-		Implementation of the singleton pattern: returns the one and only instance of the 
+
+		Implementation of the singleton pattern: returns the one and only instance of the
 		xajax plugin manager.
-		
+
 		Returns:
-		
+
 		object : a reference to the one and only instance of the
 			plugin manager.
 	*/
@@ -88,16 +88,16 @@ final class xajaxPluginManager
 	{
 		static $obj;
 		if (!$obj) {
-			$obj = new xajaxPluginManager();    
+			$obj = new xajaxPluginManager();
 		}
 		return $obj;
 	}
-	
+
 	/*
 		Function: loadPlugins
-		
+
 		Loads plugins from the folders specified.
-		
+
 		Parameters:
 			$aFolders - (array): Array of folders to check for plugins
 	*/
@@ -116,45 +116,45 @@ final class xajaxPluginManager
 						}
 					}
 				}
-				
+
 				closedir($handle);
 			}
 		}
 	}
-	
+
 	/*
 		Function: _insertIntoArray
-		
-		Inserts an entry into an array given the specified priority number. 
+
+		Inserts an entry into an array given the specified priority number.
 		If a plugin already exists with the given priority, the priority is
 		automatically incremented until a free spot is found.  The plugin
 		is then inserted into the empty spot in the array.
-		
+
 		Parameters:
-		
+
 		$aPlugins - (array): Plugins array
 		$objPlugin - (object): A reference to an instance of a plugin.
 		$nPriority - (number): The desired priority, used to order
 			the plugins.
-		
+
 	*/
 	private function _insertIntoArray(&$aPlugins, $objPlugin, $nPriority)
 	{
 		while (isset($aPlugins[$nPriority]))
 			$nPriority++;
-		
+
 		$aPlugins[$nPriority] = $objPlugin;
 	}
-	
+
 	/*
 		Function: registerPlugin
-		
+
 		Registers a plugin.
-		
+
 		Parameters:
-		
+
 		objPlugin - (object):  A reference to an instance of a plugin.
-		
+
 		Note:
 		Below is a table for priorities and their description:
 		0 thru 999: Plugins that are part of or extensions to the xajax core
@@ -166,10 +166,10 @@ final class xajaxPluginManager
 		if ($objPlugin instanceof xajaxRequestPlugin)
 		{
 			$this->_insertIntoArray($this->aRequestPlugins, $objPlugin, $nPriority);
-			
+
 			if (method_exists($objPlugin, 'register'))
 				$this->_insertIntoArray($this->aRegistrars, $objPlugin, $nPriority);
-			
+
 			if (method_exists($objPlugin, 'canProcessRequest'))
 				if (method_exists($objPlugin, 'processRequest'))
 					$this->_insertIntoArray($this->aProcessors, $objPlugin, $nPriority);
@@ -183,14 +183,14 @@ final class xajaxPluginManager
 //SkipDebug
 			$objLanguageManager = xajaxLanguageManager::getInstance();
 			trigger_error(
-				$objLanguageManager->getText('XJXPM:IPLGERR:01') 
-				. get_class($objPlugin) 
+				$objLanguageManager->getText('XJXPM:IPLGERR:01')
+				. get_class($objPlugin)
 				. $objLanguageManager->getText('XJXPM:IPLGERR:02')
 				, E_USER_ERROR
 				);
 //EndSkipDebug
 		}
-		
+
 		if (method_exists($objPlugin, 'configure'))
 			$this->_insertIntoArray($this->aConfigurable, $objPlugin, $nPriority);
 
@@ -200,17 +200,17 @@ final class xajaxPluginManager
 
 	/*
 		Function: canProcessRequest
-		
+
 		Calls each of the request plugins and determines if the
 		current request can be processed by one of them.  If no processor identifies
 		the current request, then the request must be for the initial page load.
-		
+
 		See <xajax->canProcessRequest> for more information.
 	*/
 	public function canProcessRequest()
 	{
 		$bHandled = false;
-		
+
 		$aKeys = array_keys($this->aProcessors);
 		sort($aKeys);
 		foreach ($aKeys as $sKey) {
@@ -226,7 +226,7 @@ final class xajaxPluginManager
 
 	/*
 		Function: processRequest
-		
+
 		Calls each of the request plugins to request that they process the
 		current request.  If the plugin processes the request, it will
 		return true.
@@ -234,7 +234,7 @@ final class xajaxPluginManager
 	public function processRequest()
 	{
 		$bHandled = false;
-		
+
 		$aKeys = array_keys($this->aProcessors);
 		sort($aKeys);
 		foreach ($aKeys as $sKey) {
@@ -247,15 +247,15 @@ final class xajaxPluginManager
 
 		return $bHandled;
 	}
-	
+
 	/*
 		Function: configure
-		
+
 		Call each of the request plugins passing along the configuration
 		setting specified.
-		
+
 		Parameters:
-		
+
 		sName - (string):  The name of the configuration setting to set.
 		mValue - (mixed):  The value to be set.
 	*/
@@ -266,13 +266,13 @@ final class xajaxPluginManager
 		foreach ($aKeys as $sKey)
 			$this->aConfigurable[$sKey]->configure($sName, $mValue);
 	}
-	
+
 	/*
 		Function: register
-		
-		Call each of the request plugins and give them the opportunity to 
+
+		Call each of the request plugins and give them the opportunity to
 		handle the registration of the specified function, event or callable object.
-		
+
 		Parameters:
 		 $aArgs - (array) :
 	*/
@@ -295,19 +295,19 @@ final class xajaxPluginManager
 //SkipDebug
 		$objLanguageManager = xajaxLanguageManager::getInstance();
 		trigger_error(
-			$objLanguageManager->getText('XJXPM:MRMERR:01') 
+			$objLanguageManager->getText('XJXPM:MRMERR:01')
 			. print_r($aArgs, true)
 			, E_USER_ERROR
 			);
 //EndSkipDebug
 	}
-	
+
 	/*
 		Function: generateClientScript
-		
+
 		Call each of the request and response plugins giving them the
 		opportunity to output some javascript to the page being generated.  This
-		is called only when the page is being loaded initially.  This is not 
+		is called only when the page is being loaded initially.  This is not
 		called when processing a request.
 	*/
 	public function generateClientScript()
@@ -317,16 +317,16 @@ final class xajaxPluginManager
 		foreach ($aKeys as $sKey)
 			$this->aClientScriptGenerators[$sKey]->generateClientScript();
 	}
-	
+
 	/*
 		Function: getResponsePlugin
-		
+
 		Locate the specified response plugin by name and return
 		a reference to it if one exists.
-		
+
 		Parameters:
 			$sName - (string): Name of the plugin.
-			
+
 		Returns:
 			mixed : Returns plugin or false if not found.
 	*/
@@ -343,13 +343,13 @@ final class xajaxPluginManager
 
 	/*
 		Function: getRequestPlugin
-		
+
 		Locate the specified response plugin by name and return
 		a reference to it if one exists.
-		
+
 		Parameters:
 			$sName - (string): Name of the plugin.
-			
+
 		Returns:
 			mixed : Returns plugin or false if not found.
 	*/
@@ -360,8 +360,8 @@ final class xajaxPluginManager
 		foreach ($aKeys as $sKey) {
 			if ( get_class($this->aRequestPlugins[$sKey]) ==  $sName ) {
 				return $this->aRequestPlugins[$sKey];
-			} 
-		}	
+			}
+		}
 
 
 		$bFailure = false;

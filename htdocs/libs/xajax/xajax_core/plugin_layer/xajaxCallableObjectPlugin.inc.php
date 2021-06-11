@@ -43,19 +43,19 @@ final class xajaxCallableObjectPlugin extends xajaxRequestPlugin
 		String: sXajaxPrefix
 	*/
 	private $sXajaxPrefix;
-	
+
 	/*
 		String: sDefer
 	*/
 	private $sDefer;
-	
+
 	private $bDeferScriptGeneration;
 
 	/*
 		String: sRequestedClass
 	*/
 	private $sRequestedClass;
-	
+
 	/*
 		String: sRequestedMethod
 	*/
@@ -148,7 +148,7 @@ final class xajaxCallableObjectPlugin extends xajaxRequestPlugin
 			if (0 < count($this->aCallableObjects))
 			{
 				$sCrLf = "\n";
-				
+
 				echo $sCrLf;
 				echo '<';
 				echo 'script type="text/javascript" ';

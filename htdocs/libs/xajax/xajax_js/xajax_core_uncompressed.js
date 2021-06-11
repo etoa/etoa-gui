@@ -1,14 +1,14 @@
 /*
 	File: xajax_core.js
-	
+
 	This file contains the definition of the main xajax javascript core.
-	
-	This is the client side code which runs on the web browser or similar 
+
+	This is the client side code which runs on the web browser or similar
 	web enabled application.  Include this in the HEAD of each page for
 	which you wish to use xajax.
-	
+
 	Title: xajax core javascript library
-	
+
 	Please see <copyright.inc.php> for a detailed description, copyright
 	and license information.
 */
@@ -23,7 +23,7 @@
 
 /*
 	Class: xajax.config
-	
+
 	This class contains all the default configuration settings.  These
 	are application level settings; however, they can be overridden
 	by including a xajax.config definition prior to including the
@@ -38,14 +38,14 @@ if ('undefined' == typeof xajax.config)
 
 /*
 	Function: xajax.config.setDefault
-	
-	This function will set a default configuration option if it is 
+
+	This function will set a default configuration option if it is
 	not already set.
-	
+
 	Parameters:
 	option - (string):
 		The name of the option that will be set.
-		
+
 	defaultValue - (unknown):
 		The value to use if a value was not already set.
 */
@@ -56,11 +56,11 @@ xajax.config.setDefault = function(option, defaultValue) {
 
 /*
 	Object: commonHeaders
-	
+
 	An array of header entries where the array key is the header
 	option name and the associated value is the value that will
 	set when the request object is initialized.
-	
+
 	These headers will be set for both POST and GET requests.
 */
 xajax.config.setDefault('commonHeaders', {
@@ -69,7 +69,7 @@ xajax.config.setDefault('commonHeaders', {
 
 /*
 	Object: postHeaders
-	
+
 	An array of header entries where the array key is the header
 	option name and the associated value is the value that will
 	set when the request object is initialized.
@@ -78,7 +78,7 @@ xajax.config.setDefault('postHeaders', {});
 
 /*
 	Object: getHeaders
-	
+
 	An array of header entries where the array key is the header
 	option name and the associated value is the value that will
 	set when the request object is initialized.
@@ -87,7 +87,7 @@ xajax.config.setDefault('getHeaders', {});
 
 /*
 	Boolean: waitCursor
-	
+
 	true - xajax should display a wait cursor when making a request
 	false - xajax should not show a wait cursor during a request
 */
@@ -95,7 +95,7 @@ xajax.config.setDefault('waitCursor', false);
 
 /*
 	Boolean: statusMessages
-	
+
 	true - xajax should update the status bar during a request
 	false - xajax should not display the status of the request
 */
@@ -103,7 +103,7 @@ xajax.config.setDefault('statusMessages', false);
 
 /*
 	Object: baseDocument
-	
+
 	The base document that will be used throughout the code for
 	locating elements by ID.
 */
@@ -111,19 +111,19 @@ xajax.config.setDefault('baseDocument', document);
 
 /*
 	String: requestURI
-	
+
 	The URI that requests will be sent to.
 */
 xajax.config.setDefault('requestURI', xajax.config.baseDocument.URL);
 
 /*
 	String: defaultMode
-	
+
 	The request mode.
-	
+
 	'asynchronous' - The request will immediately return, the
 		response will be processed when (and if) it is received.
-		
+
 	'synchronous' - The request will block, waiting for the
 		response.  This option allows the server to return
 		a value directly to the caller.
@@ -132,30 +132,30 @@ xajax.config.setDefault('defaultMode', 'asynchronous');
 
 /*
 	String: defaultHttpVersion
-	
-	The Hyper Text Transport Protocol version designated in the 
+
+	The Hyper Text Transport Protocol version designated in the
 	header of the request.
 */
 xajax.config.setDefault('defaultHttpVersion', 'HTTP/1.1');
 
 /*
 	String: defaultContentType
-	
+
 	The content type designated in the header of the request.
 */
 xajax.config.setDefault('defaultContentType', 'application/x-www-form-urlencoded');
 
 /*
 	Integer: defaultResponseDelayTime
-	
-	The delay time, in milliseconds, associated with the 
+
+	The delay time, in milliseconds, associated with the
 	<xajax.callback.global.onRequestDelay> event.
 */
 xajax.config.setDefault('defaultResponseDelayTime', 1000);
 
 /*
 	Integer: defaultExpirationTime
-	
+
 	The amount of time to wait, in milliseconds, before a request
 	is considered expired.  This is used to trigger the
 	<xajax.callback.global.onExpiration event.
@@ -164,9 +164,9 @@ xajax.config.setDefault('defaultExpirationTime', 10000);
 
 /*
 	String: defaultMethod
-	
+
 	The method used to send requests to the server.
-	
+
 	'POST' - Generate a form POST request
 	'GET' - Generate a GET request; parameters are appended
 		to the <xajax.config.requestURI> to form a URL.
@@ -175,7 +175,7 @@ xajax.config.setDefault('defaultMethod', 'POST');	// W3C: Method is case sensiti
 
 /*
 	Integer: defaultRetry
-	
+
 	The number of times a request should be retried
 	if it expires.
 */
@@ -183,7 +183,7 @@ xajax.config.setDefault('defaultRetry', 5);
 
 /*
 	Object: defaultReturnValue
-	
+
 	The value returned by <xajax.request> when in asynchronous
 	mode, or when a syncrhonous call does not specify the
 	return value.
@@ -192,7 +192,7 @@ xajax.config.setDefault('defaultReturnValue', false);
 
 /*
 	Integer: maxObjectDepth
-	
+
 	The maximum depth of recursion allowed when serializing
 	objects to be sent to the server in a request.
 */
@@ -200,7 +200,7 @@ xajax.config.setDefault('maxObjectDepth', 20);
 
 /*
 	Integer: maxObjectSize
-	
+
 	The maximum number of members allowed when serializing
 	objects to be sent to the server in a request.
 */
@@ -210,7 +210,7 @@ xajax.config.setDefault('responseQueueSize', 1000);
 
 /*
 	Class: xajax.config.status
-	
+
 	Provides support for updating the browser's status bar during
 	the request process.  By splitting the status bar functionality
 	into an object, the xajax developer has the opportunity to
@@ -219,7 +219,7 @@ xajax.config.setDefault('responseQueueSize', 1000);
 xajax.config.status = {
 	/*
 		Function: update
-		
+
 		Constructs and returns a set of event handlers that will be
 		called by the xajax framework to set the status bar messages.
 	*/
@@ -241,7 +241,7 @@ xajax.config.status = {
 	},
 	/*
 		Function: dontUpdate
-		
+
 		Constructs and returns a set of event handlers that will be
 		called by the xajax framework where status bar updates
 		would normally occur.
@@ -258,18 +258,18 @@ xajax.config.status = {
 
 /*
 	Class: xajax.config.cursor
-	
+
 	Provides the base functionality for updating the browser's cursor
 	during requests.  By splitting this functionalityh into an object
-	of it's own, xajax developers can now customize the functionality 
+	of it's own, xajax developers can now customize the functionality
 	prior to submitting requests.
 */
 xajax.config.cursor = {
 	/*
 		Function: update
-		
+
 		Constructs and returns a set of event handlers that will be
-		called by the xajax framework to effect the status of the 
+		called by the xajax framework to effect the status of the
 		cursor during requests.
 	*/
 	update: function() {
@@ -285,7 +285,7 @@ xajax.config.cursor = {
 	},
 	/*
 		Function: dontUpdate
-		
+
 		Constructs and returns a set of event handlers that will
 		be called by the xajax framework where cursor status changes
 		would typically be made during the handling of requests.
@@ -300,7 +300,7 @@ xajax.config.cursor = {
 
 /*
 	Class: xajax.tools
-	
+
 	This contains utility functions which are used throughout
 	the xajax core.
 */
@@ -309,38 +309,38 @@ xajax.tools = {}
 /*
 	Function: xajax.tools.$
 
-	Shorthand for finding a uniquely named element within 
+	Shorthand for finding a uniquely named element within
 	the document.
 
 	Parameters:
 	sId - (string):
-		The unique name of the element (specified by the 
+		The unique name of the element (specified by the
 		ID attribute), not to be confused with the name
 		attribute on form elements.
-		
+
 	Returns:
-	
+
 	object - The element found or null.
-	
+
 	Note:
 		This function uses the <xajax.config.baseDocument>
 		which allows <xajax> to operate on the main window
 		document as well as documents from contained
 		iframes and child windows.
-	
+
 	See also:
 		<xajax.$> and <xjx.$>
 */
 xajax.tools.$ = function(sId) {
 	if (!sId)
 		return null;
-	
+
 	var oDoc = xajax.config.baseDocument;
 
 	var obj = oDoc.getElementById(sId);
 	if (obj)
 		return obj;
-		
+
 	if (oDoc.all)
 		return oDoc.all[sId];
 
@@ -349,22 +349,22 @@ xajax.tools.$ = function(sId) {
 
 /*
 	Function xajax.tools.in_array
-	
-	Looks for a value within the specified array and, if found, 
+
+	Looks for a value within the specified array and, if found,
 	returns true; otherwise it returns false.
-	
+
 	Parameters:
 	array - (object):
 		The array to be searched.
-		
+
 	valueToCheck - (object):
 		The value to search for.
-		
+
 	Returns:
-	
-	true : The value is one of the values contained in the 
+
+	true : The value is one of the values contained in the
 		array.
-		
+
 	false : The value was not found in the specified array.
 */
 xajax.tools.in_array = function(array, valueToCheck) {
@@ -380,16 +380,16 @@ xajax.tools.in_array = function(array, valueToCheck) {
 
 /*
 	Function: xajax.tools.doubleQuotes
-	
+
 	Replace all occurances of the single quote character with a double
 	quote character.
-	
+
 	Parameters:
-	
+
 	haystack - The source string to be scanned.
-	
+
 	Returns:
-	
+
 	string - A new string with the modifications applied.
 */
 xajax.tools.doubleQuotes = function(haystack) {
@@ -398,14 +398,14 @@ xajax.tools.doubleQuotes = function(haystack) {
 
 /*
 	Function: xajax.tools.singleQuotes
-	
+
 	Replace all occurances of the double quote character with a single
 	quote character.
-	
+
 	haystack - The source string to be scanned.
-	
+
 	Returns:
-	
+
 	string - A new string with the modification applied.
 */
 /*
@@ -416,21 +416,21 @@ xajax.tools.singleQuotes = function(haystack) {
 
 /*
 	Function: xajax.tools._escape
-	
+
 	Determine if the specified value contains special characters and
 	create a CDATA section so the value can be safely transmitted.
-	
+
 	Parameters:
-	
+
 	data - (string or other):
 		The source string value to be evaluated or an object of unknown
 		type.
-		
+
 	Returns:
-	
+
 	string - The string value, escaped if necessary or the object provided
 		if it is not a string.
-		
+
 	Note:
 		When the specified object is NOT a string, the value is returned
 		as is.
@@ -439,18 +439,18 @@ xajax.tools.singleQuotes = function(haystack) {
 xajax.tools._escape = function(data) {
 	if ('undefined' == typeof data)
 		return data;
-	// 'object' is handled elsewhere, 
-	// 'string' handled below, 
+	// 'object' is handled elsewhere,
+	// 'string' handled below,
 	// 'number' will be returned here
 	// 'boolean' will be returned here
 	if ('string' != typeof data)
 		return data;
-	
+
 	var needCDATA = false;
-	
+
 	if (encodeURIComponent(data) != data) {
 		needCDATA = true;
-		
+
 		var segments = data.split('<![CDATA[');
 		var segLen = segments.length;
 		data = [];
@@ -470,36 +470,36 @@ xajax.tools._escape = function(data) {
 		}
 		data = data.join('');
 	}
-	
+
 	if (needCDATA)
 		data = '<![CDATA[' + data + ']]>';
-	
+
 	return data;
 }
 */
 
 /*
 	Function: xajax.tools._objectToXML
-	
+
 	Convert a javascript object or array into XML suitable for
 	transmission to the server.
-	
-	Parameters: 
-	
+
+	Parameters:
+
 	obj - The object or array to convert.
-	
+
 	guard - An object used to track the level of recursion
 		when encoding javascript objects.  When an object
 		contains a reference to it's parent and the parent
 		contains a reference to the child, an infinite
 		recursion will cause some browsers to crash.
-		
+
 	Returns:
-	
+
 	string - the xml representation of the object or array.
-	
+
 	See also:
-	
+
 	<xajax.config.maxObjectDepth> and <xajax.config.maxObjectSize>
 */
 
@@ -546,26 +546,26 @@ xajax.tools._objectToXML = function(obj, guard) {
 					aXml.push(val);
 				}
 			}
-				
+
 			aXml.push('</v></e>');
 		}
 	}
 	aXml.push('</xjxobj>');
-	
+
 	return aXml.join('');
 }
 */
 
 /*
-	Function: xajax.tools._enforceDataType 
-	
+	Function: xajax.tools._enforceDataType
+
 	Ensure that the javascript variable created is of the correct data type.
-	
+
 	Parameters:
 		value (string)
 
 	Returns:
-		
+
 		(unknown) - The value provided converted to the correct data type.
 */
 xajax.tools._enforceDataType = function(value) {
@@ -587,21 +587,21 @@ xajax.tools._enforceDataType = function(value) {
 
 /*
 	Function: xajax.tools._nodeToObject
-	
+
 	Deserialize a javascript object from an XML node.
-	
+
 	Parameters:
-	
+
 	node - A node, likely from the xml returned by the server.
-	
+
 	Returns:
-	
+
 		object - The object extracted from the xml node.
 */
 xajax.tools._nodeToObject = function(node) {
 	if (null == node)
 		return '';
-		
+
 	if ('undefined' != typeof node.nodeName) {
 		if ('#cdata-section' == node.nodeName || '#text' == node.nodeName) {
 			var data = '';
@@ -635,18 +635,18 @@ xajax.tools._nodeToObject = function(node) {
 			return data;
 		}
 	}
-	
+
 	throw { code: 10001, data: node.nodeName };
 }
 
 /*
 	Function: xajax.tools.getRequestObject
-	
+
 	Construct an XMLHttpRequest object dependent on the capabilities
 	of the browser.
-	
+
 	Returns:
-	
+
 	object - Javascript XHR object.
 */
 xajax.tools.getRequestObject = function() {
@@ -681,7 +681,7 @@ xajax.tools.getRequestObject = function() {
 			throw { code: 10002 };
 		}
 	}
-	
+
 	// this would seem to cause an infinite loop, however, the function should
 	// be reassigned by now and therefore, it will not loop.
 	return xajax.tools.getRequestObject();
@@ -689,26 +689,26 @@ xajax.tools.getRequestObject = function() {
 
 /*
 	Function: xajax.tools.getBrowserHTML
-	
-	Insert the specified string of HTML into the document, then 
+
+	Insert the specified string of HTML into the document, then
 	extract it.  This gives the browser the ability to validate
 	the code and to apply any transformations it deems appropriate.
-	
+
 	Parameters:
-	
+
 	sValue - (string):
 		A block of html code or text to be inserted into the
 		browser's document.
-		
+
 	Returns:
-	
+
 	The (potentially modified) html code or text.
 */
 xajax.tools.getBrowserHTML = function(sValue) {
 	var oDoc = xajax.config.baseDocument;
 	if (!oDoc.body)
 		return '';
-		
+
 	var elWorkspace = xajax.$('xajax_temp_workspace');
 	if (!elWorkspace)
 	{
@@ -720,30 +720,30 @@ xajax.tools.getBrowserHTML = function(sValue) {
 	}
 	elWorkspace.innerHTML = sValue;
 	var browserHTML = elWorkspace.innerHTML;
-	elWorkspace.innerHTML = '';	
-	
+	elWorkspace.innerHTML = '';
+
 	return browserHTML;
 }
 
 /*
 	Function: xajax.tools.willChange
-	
+
 	Tests to see if the specified data is the same as the current
 	value of the element's attribute.
-	
-	Parameters: 
+
+	Parameters:
 	element - (string or object):
 		The element or it's unique name (specified by the ID attribute)
-		
+
 	attribute - (string):
 		The name of the attribute.
-		
+
 	newData - (string):
 		The value to be compared with the current value of the specified
 		element.
-		
+
 	Returns:
-	
+
 	true - The specified value differs from the current attribute value.
 	false - The specified value is the same as the current value.
 */
@@ -751,7 +751,7 @@ xajax.tools.willChange = function(element, attribute, newData) {
 	if ('string' == typeof element)
 		element = xajax.$(element);
 	if (element) {
-		var oldData;		
+		var oldData;
 		eval('oldData=element.'+attribute);
 		return (newData != oldData);
 	}
@@ -761,34 +761,34 @@ xajax.tools.willChange = function(element, attribute, newData) {
 
 /*
 	Function: xajax.tools.getFormValues
-	
+
 	Build an associative array of form elements and their values from
 	the specified form.
-	
-	Parameters: 
-	
+
+	Parameters:
+
 	element - (string): The unique name (id) of the form to be processed.
 	disabled - (boolean, optional): Include form elements which are currently disabled.
 	prefix - (string, optional): A prefix used for selecting form elements.
 
 	Returns:
-	
+
 	An associative array of form element id and value.
 */
 xajax.tools.getFormValues = function(parent) {
 	var submitDisabledElements = false;
 	if (arguments.length > 1 && arguments[1] == true)
 		submitDisabledElements = true;
-	
+
 	var prefix = '';
 	if(arguments.length > 2)
 		prefix = arguments[2];
-	
+
 	if ('string' == typeof parent)
 		parent = xajax.$(parent);
-	
+
 	var aFormValues = {};
-	
+
 //		JW: Removing these tests so that form values can be retrieved from a specified
 //		container element like a DIV, regardless of whether they exist in a form or not.
 //
@@ -797,15 +797,15 @@ xajax.tools.getFormValues = function(parent) {
 	if (parent)
 		if (parent.childNodes)
 			xajax.tools._getFormValues(aFormValues, parent.childNodes, submitDisabledElements, prefix);
-	
+
 	return aFormValues;
 }
 
 /*
 	Function: xajax.tools._getFormValues
-	
+
 	Used internally by <xajax.tools.getFormValues> to recursively get the value
-	of form elements.  This function will extract all form element values 
+	of form elements.  This function will extract all form element values
 	regardless of the depth of the element within the form.
 */
 xajax.tools._getFormValues = function(aFormValues, children, submitDisabledElements, prefix)
@@ -821,26 +821,26 @@ xajax.tools._getFormValues = function(aFormValues, children, submitDisabledEleme
 
 /*
 	Function: xajax.tools._getFormValue
-	
+
 	Used internally by <xajax.tools._getFormValues> to extract a single form value.
-	This will detect the type of element (radio, checkbox, multi-select) and 
+	This will detect the type of element (radio, checkbox, multi-select) and
 	add it's value(s) to the form values array.
 */
 xajax.tools._getFormValue = function(aFormValues, child, submitDisabledElements, prefix)
 {
 	if (!child.name)
 		return;
-		
+
 	if ('PARAM' == child.tagName) return;
-		
+
 	if (child.disabled)
 		if (true == child.disabled)
 			if (false == submitDisabledElements)
 				return;
-				
+
 	if (prefix != child.name.substring(0, prefix.length))
 		return;
-		
+
 	if (child.type)
 		if (child.type == 'radio' || child.type == 'checkbox')
 			if (false == child.checked)
@@ -871,10 +871,10 @@ xajax.tools._getFormValue = function(aFormValues, child, submitDisabledElements,
 		var p = aFormValues; // pointer reset
 		while (a.length != 0) {
 			var sa = a.substr(0, a.indexOf(']')+1);
-			
+
 			var lk = k; //save last key
 			var lp = p; //save last pointer
-			
+
 			a = a.substr(a.indexOf(']')+1);
 			p = p[k];
 			k = sa.substr(1, sa.length-2);
@@ -887,7 +887,7 @@ xajax.tools._getFormValue = function(aFormValues, child, submitDisabledElements,
 				}
 			}
 			if (typeof p[k] == 'undefined')
-				p[k] = []; 
+				p[k] = [];
 		}
 		p[k] = values;
 	} else {
@@ -897,45 +897,45 @@ xajax.tools._getFormValue = function(aFormValues, child, submitDisabledElements,
 
 /*
 	Function: xajax.tools.stripOnPrefix
-	
-	Detect, and if found, remove the prefix 'on' from the specified 
+
+	Detect, and if found, remove the prefix 'on' from the specified
 	string.  This is used while working with event handlers.
-	
-	Parameters: 
-	
+
+	Parameters:
+
 	sEventName - (string): The string to be modified.
-	
+
 	Returns:
-	
+
 	string - The modified string.
 */
 xajax.tools.stripOnPrefix = function(sEventName) {
 	sEventName = sEventName.toLowerCase();
 	if (0 == sEventName.indexOf('on'))
 		sEventName = sEventName.replace(/on/,'');
-	
+
 	return sEventName;
 }
 
 /*
 	Function: xajax.tools.addOnPrefix
-	
-	Detect, and add if not found, the prefix 'on' from the specified 
+
+	Detect, and add if not found, the prefix 'on' from the specified
 	string.  This is used while working with event handlers.
-	
-	Parameters: 
-	
+
+	Parameters:
+
 	sEventName - (string): The string to be modified.
-	
+
 	Returns:
-	
+
 	string - The modified string.
 */
 xajax.tools.addOnPrefix = function(sEventName) {
 	sEventName = sEventName.toLowerCase();
 	if (0 != sEventName.indexOf('on'))
 		sEventName = 'on' + sEventName;
-	
+
 	return sEventName;
 }
 
@@ -943,25 +943,25 @@ xajax.tools.addOnPrefix = function(sEventName) {
 
 /*
 	Class: xajax.tools.xml
-	
+
 	An object that contains utility function for processing
 	xml response packets.
 */
 xajax.tools.xml = {};
 
 /*
-	Function: xajax.tools.xml.parseAttributes 
-	
+	Function: xajax.tools.xml.parseAttributes
+
 	Take the parameters passed in the command of the XML response
-	and convert them to parameters of the args object.  This will 
-	serve as the command object which will be stored in the 
+	and convert them to parameters of the args object.  This will
+	serve as the command object which will be stored in the
 	response command queue.
-	
-	Parameters: 
-	
-	child - (object):  The xml child node which contains the 
+
+	Parameters:
+
+	child - (object):  The xml child node which contains the
 		attributes for the current response command.
-		
+
 	obj - (object):  The current response command that will have the
 		attributes applied.
 */
@@ -975,16 +975,16 @@ xajax.tools.xml.parseAttributes = function(child, obj) {
 
 /*
 	Function: xajax.tools.xml.parseChildren
-	
+
 	Parses the child nodes of the command of the response XML.  Generally,
 	the child nodes contain the data element of the command; this member
 	may be an object, which will be deserialized by <xajax._nodeToObject>
-	
-	Parameters: 
-	
+
+	Parameters:
+
 	child - (object):   The xml node that contains the child (data) for
 		the current response command object.
-		
+
 	obj - (object):  The response command object.
 */
 xajax.tools.xml.parseChildren = function(child, obj) {
@@ -1009,15 +1009,15 @@ xajax.tools.xml.parseChildren = function(child, obj) {
 	} else if ('undefined' != typeof child.data) {
 		obj.data = child.data;
 	}
-	
+
 	obj.data = xajax.tools._enforceDataType(obj.data);
 }
 
 /*
 	Function: xajax.tools.xml.processFragment
-	
-	Parameters: 
-	
+
+	Parameters:
+
 	xmlNode - (object):  The first xml node in the xml fragment.
 	seq - (number):  A counter used to keep track of the sequence
 		of this command in the response.
@@ -1034,18 +1034,18 @@ xajax.tools.xml.processFragment = function(xmlNode, seq, oRet, oRequest) {
 			obj.sequence = seq;
 			obj.request = oRequest;
 			obj.context = oRequest.context;
-			
+
 			xt.xml.parseAttributes(xmlNode, obj);
 			xt.xml.parseChildren(xmlNode, obj);
-			
+
 			xt.queue.push(xx.response, obj);
 		} else if ('xjxrv' == xmlNode.nodeName) {
 			oRet = xt._nodeToObject(xmlNode.firstChild);
 		} else if ('debugmsg' == xmlNode.nodeName) {
 			// txt = xt._nodeToObject(xmlNode.firstChild);
-		} else 
+		} else
 			throw { code: 10004, data: xmlNode.nodeName }
-			
+
 		++seq;
 		xmlNode = xmlNode.nextSibling;
 	}
@@ -1054,7 +1054,7 @@ xajax.tools.xml.processFragment = function(xmlNode, seq, oRet, oRequest) {
 
 /*
 	Class: xajax.tools.queue
-	
+
 	This contains the code and variables for building, populating
 	and processing First In Last Out (FILO) buffers.
 */
@@ -1062,11 +1062,11 @@ xajax.tools.queue = {}
 
 /*
 	Function: create
-	
+
 	Construct and return a new queue object.
-	
-	Parameters: 
-	
+
+	Parameters:
+
 	size - (integer):
 		The number of entries the queue will be able to hold.
 */
@@ -1082,20 +1082,20 @@ xajax.tools.queue.create = function(size) {
 
 /*
 	Function: xajax.tools.queue.retry
-	
+
 	Maintains a retry counter for the given object.
-	
-	Parameters: 
-	
+
+	Parameters:
+
 	obj - (object):
 		The object to track the retry count for.
-		
+
 	count - (integer):
 		The number of times the operation should be attempted
 		before a failure is indicated.
-		
+
 	Returns:
-	
+
 	true - The object has not exhausted all the retries.
 	false - The object has exhausted the retry count specified.
 */
@@ -1112,12 +1112,12 @@ xajax.tools.queue.retry = function(obj, count) {
 
 /*
 	Function: xajax.tools.queue.rewind
-	
-	Rewind the buffer head pointer, effectively reinserting the 
+
+	Rewind the buffer head pointer, effectively reinserting the
 	last retrieved object into the buffer.
-	
-	Parameters: 
-	
+
+	Parameters:
+
 	theQ - (object):
 		The queue to be rewound.
 */
@@ -1130,17 +1130,17 @@ xajax.tools.queue.rewind = function(theQ) {
 
 /*
 	Function: xajax.tools.queue.setWakeup
-	
+
 	Set or reset a timeout that is used to restart processing
 	of the queue.  This allows the queue to asynchronously wait
 	for an event to occur (giving the browser time to process
 	pending events, like loading files)
-	
-	Parameters: 
-	
+
+	Parameters:
+
 	theQ - (object):
 		The queue to process upon timeout.
-		
+
 	when - (integer):
 		The number of milliseconds to wait before starting/
 		restarting the processing of the queue.
@@ -1155,31 +1155,31 @@ xajax.tools.queue.setWakeup = function(theQ, when) {
 
 /*
 	Function: xajax.tools.queue.process
-	
+
 	While entries exist in the queue, pull and entry out and
 	process it's command.  When a command returns false, the
 	processing is halted.
-	
-	Parameters: 
-	
+
+	Parameters:
+
 	theQ - (object): The queue object to process.  This should
 		have been crated by calling <xajax.tools.queue.create>.
-	
+
 	Returns:
 
 	true - The queue was fully processed and is now empty.
-	false - The queue processing was halted before the 
+	false - The queue processing was halted before the
 		queue was fully processed.
-		
+
 	Note:
-	
-	- Use <xajax.tools.queue.setWakeup> or call this function to 
+
+	- Use <xajax.tools.queue.setWakeup> or call this function to
 	cause the queue processing to continue.
 
-	- This will clear the associated timeout, this function is not 
+	- This will clear the associated timeout, this function is not
 	designed to be reentrant.
-	
-	- When an exception is caught, do nothing; if the debug module 
+
+	- When an exception is caught, do nothing; if the debug module
 	is installed, it will catch the exception and handle it.
 */
 xajax.tools.queue.process = function(theQ) {
@@ -1190,12 +1190,12 @@ xajax.tools.queue.process = function(theQ) {
 	var obj = xajax.tools.queue.pop(theQ);
 	while (null != obj) {
 		try {
-			if (false == xajax.executeCommand(obj)) 
+			if (false == xajax.executeCommand(obj))
 				return false;
 		} catch (e) {
 		}
 		delete obj;
-		
+
 		obj = xajax.tools.queue.pop(theQ);
 	}
 	return true;
@@ -1203,15 +1203,15 @@ xajax.tools.queue.process = function(theQ) {
 
 /*
 	Function: xajax.tools.queue.push
-	
+
 	Push a new object into the tail of the buffer maintained by the
 	specified queue object.
-	
-	Parameters: 
-	
+
+	Parameters:
+
 	theQ - (object):
 		The queue in which you would like the object stored.
-		
+
 	obj - (object):
 		The object you would like stored in the queue.
 */
@@ -1219,7 +1219,7 @@ xajax.tools.queue.push = function(theQ, obj) {
 	var next = theQ.end + 1;
 	if (next > theQ.size)
 		next = 0;
-	if (next != theQ.start) {				
+	if (next != theQ.start) {
 		theQ.commands[theQ.end] = obj;
 		theQ.end = next;
 	} else
@@ -1228,16 +1228,16 @@ xajax.tools.queue.push = function(theQ, obj) {
 
 /*
 	Function: xajax.tools.queue.pushFront
-	
-	Push a new object into the head of the buffer maintained by 
+
+	Push a new object into the head of the buffer maintained by
 	the specified queue object.  This effectively pushes an object
 	to the front of the queue... it will be processed first.
-	
-	Parameters: 
-	
+
+	Parameters:
+
 	theQ - (object):
 		The queue in which you would like the object stored.
-		
+
 	obj - (object):
 		The object you would like stored in the queue.
 */
@@ -1248,16 +1248,16 @@ xajax.tools.queue.pushFront = function(theQ, obj) {
 
 /*
 	Function: xajax.tools.queue.pop
-	
+
 	Attempt to pop an object off the head of the queue.
-	
-	Parameters: 
-	
+
+	Parameters:
+
 	theQ - (object):
 		The queue object you would like to modify.
-		
+
 	Returns:
-	
+
 	object - The object that was at the head of the queue or
 		null if the queue was empty.
 */
@@ -1281,13 +1281,13 @@ xajax.responseProcessor = {};
 
 /*
 	Function: xajax.responseProcessor.json
-	
+
 	Parse the JSON response into a series of commands.  The commands
-	are constructed by calling <xajax.tools.xml.parseAttributes> and 
+	are constructed by calling <xajax.tools.xml.parseAttributes> and
 	<xajax.tools.xml.parseChildren>.
-	
-	Parameters: 
-	
+
+	Parameters:
+
 	oRequest - (object):  The request context object.
 */
 
@@ -1299,9 +1299,9 @@ xajax.tools.json.processFragment = function(nodes, seq, oRet, oRequest) {
 	var xt = xx.tools;
 	for (nodeName in nodes) {
 		if ('xjxobj' == nodeName) {
-			for (a in nodes[nodeName]) 
+			for (a in nodes[nodeName])
 			{
-				
+
 				var obj = nodes[nodeName][a];
 				obj.fullName = '*unknown*';
 				obj.sequence = seq;
@@ -1309,28 +1309,28 @@ xajax.tools.json.processFragment = function(nodes, seq, oRet, oRequest) {
 				obj.context = oRequest.context;
 				xt.queue.push(xx.response, obj);
 				++seq;
-	
+
 			}
 		} else if ('xjxrv' == nodeName) {
 			oRet = nodes[nodeName];
 		} else if ('debugmsg' == nodeName) {
 			 txt = nodes[nodeName];
-		} else 
+		} else
 			throw { code: 10004, data: obj.fullName}
 	}
 	return oRet;
 }
 
 xajax.responseProcessor.json = function (oRequest) {
-	
+
 	var xx = xajax;
 	var xt = xx.tools;
 	var xcb = xx.callback;
 	var gcb = xcb.global;
 	var lcb = oRequest.callback;
-	
+
 	var oRet = oRequest.returnValue;
-	
+
 	if (xt.in_array(xx.responseSuccessCodes, oRequest.request.status)) {
 		xcb.execute([gcb, lcb], 'onSuccess', oRequest);
 		var seq = 0;
@@ -1345,7 +1345,7 @@ xajax.responseProcessor.json = function (oRequest) {
 				oRet = xt.json.processFragment(responseJSON, seq, oRet, oRequest);
 			} else {
 			}
-		} 
+		}
 		var obj = {};
 		obj.fullName = 'Response Complete';
 		obj.sequence = seq;
@@ -1353,7 +1353,7 @@ xajax.responseProcessor.json = function (oRequest) {
 		obj.context = oRequest.context;
 		obj.cmd = 'rcmplt';
 		xt.queue.push(xx.response, obj);
-		
+
 		// do not re-start the queue if a timeout is set
 		if (null == xx.response.timeout)
 			xt.queue.process(xx.response);
@@ -1365,21 +1365,21 @@ xajax.responseProcessor.json = function (oRequest) {
 		xcb.execute([gcb, lcb], 'onFailure', oRequest);
 		xx.completeResponse(oRequest);
 	}
-	
+
 	return oRet;
 
-	
+
 }
 
 /*
 	Function: xajax.responseProcessor.xml
-	
+
 	Parse the response XML into a series of commands.  The commands
-	are constructed by calling <xajax.tools.xml.parseAttributes> and 
+	are constructed by calling <xajax.tools.xml.parseAttributes> and
 	<xajax.tools.xml.parseChildren>.
-	
-	Parameters: 
-	
+
+	Parameters:
+
 	oRequest - (object):  The request context object.
 */
 xajax.responseProcessor.xml = function(oRequest) {
@@ -1388,9 +1388,9 @@ xajax.responseProcessor.xml = function(oRequest) {
 	var xcb = xx.callback;
 	var gcb = xcb.global;
 	var lcb = oRequest.callback;
-	
+
 	var oRet = oRequest.returnValue;
-	
+
 	if (xt.in_array(xx.responseSuccessCodes, oRequest.request.status)) {
 		xcb.execute([gcb, lcb], 'onSuccess', oRequest);
 		var seq = 0;
@@ -1398,11 +1398,11 @@ xajax.responseProcessor.xml = function(oRequest) {
 			var responseXML = oRequest.request.responseXML;
 			if (responseXML.documentElement) {
 				oRequest.status.onProcessing();
-				
+
 				var child = responseXML.documentElement.firstChild;
 				oRet = xt.xml.processFragment(child, seq, oRet, oRequest);
 			}
-		} 
+		}
 		var obj = {};
 		obj.fullName = 'Response Complete';
 		obj.sequence = seq;
@@ -1410,7 +1410,7 @@ xajax.responseProcessor.xml = function(oRequest) {
 		obj.context = oRequest.context;
 		obj.cmd = 'rcmplt';
 		xt.queue.push(xx.response, obj);
-		
+
 		// do not re-start the queue if a timeout is set
 		if (null == xx.response.timeout)
 			xt.queue.process(xx.response);
@@ -1422,13 +1422,13 @@ xajax.responseProcessor.xml = function(oRequest) {
 		xcb.execute([gcb, lcb], 'onFailure', oRequest);
 		xx.completeResponse(oRequest);
 	}
-	
+
 	return oRet;
 }
 
 /*
 	Class: xajax.js
-	
+
 	Contains the functions for javascript file and function
 	manipulation.
 */
@@ -1436,19 +1436,19 @@ xajax.js = {}
 
 /*
 	Function: xajax.js.includeScriptOnce
-	
+
 	Add a reference to the specified script file if one does not
 	already exist in the HEAD of the current document.
-	
+
 	This will effecitvely cause the script file to be loaded in
 	the browser.
 
-	Parameters: 
-	
+	Parameters:
+
 	fileName - (string):  The URI of the file.
-	
+
 	Returns:
-	
+
 	true - The reference exists or was added.
 */
 xajax.js.includeScriptOnce = function(command) {
@@ -1470,16 +1470,16 @@ xajax.js.includeScriptOnce = function(command) {
 
 /*
 	Function: xajax.js.includeScript
-	
+
 	Adds a SCRIPT tag referencing the specified file.  This
 	effectively causes the script to be loaded in the browser.
-	
-	Parameters: 
-	
+
+	Parameters:
+
 	command (object) - Xajax response object
-	
+
 	Returns:
-	
+
 	true - The reference was added.
 */
 xajax.js.includeScript = function(command) {
@@ -1497,16 +1497,16 @@ xajax.js.includeScript = function(command) {
 
 /*
 	Function: xajax.js.removeScript
-	
+
 	Locates a SCRIPT tag in the HEAD of the document which references
 	the specified file and removes it.
-	
-	Parameters: 
-	
+
+	Parameters:
+
 	command (object) - Xajax response object
-			
+
 	Returns:
-	
+
 	true - The script was not found or was removed.
 */
 xajax.js.removeScript = function(command) {
@@ -1536,20 +1536,20 @@ xajax.js.removeScript = function(command) {
 
 /*
 	Function: xajax.js.sleep
-	
+
 	Causes the processing of items in the queue to be delayed
 	for the specified amount of time.  This is an asynchronous
 	operation, therefore, other operations will be given an
 	opportunity to execute during this delay.
-	
+
 	Parameters:
-	
+
 	args - (object):  The response command containing the following
 		parameters.
 		- args.prop: The number of 10ths of a second to sleep.
-	
+
 	Returns:
-	
+
 	true - The sleep operation completed.
 	false - The sleep time has not yet expired, continue sleeping.
 */
@@ -1567,18 +1567,18 @@ xajax.js.sleep = function(command) {
 
 /*
 	Function: xajax.js.confirmCommands
-	
+
 	Prompt the user with the specified text, if the user responds by clicking
 	cancel, then skip the specified number of commands in the response command
 	queue.  If the user clicks Ok, the command processing resumes normal
 	operation.
-	
+
 	Parameters:
-	
+
  	command (object) - xajax response object
- 		
+
 	Returns:
-	
+
 	true - The operation completed successfully.
 */
 xajax.js.confirmCommands = function(command) {
@@ -1596,19 +1596,19 @@ xajax.js.confirmCommands = function(command) {
 
 /*
 	Function: xajax.js.execute
-	
+
 	Execute the specified string of javascript code, using the current
 	script context.
-	
+
 	Parameters:
-	
+
 	args - The response command object containing the following:
 		- args.data: (string):  The javascript to be evaluated.
 		- args.context: (object):  The javascript object that to be
 			referenced as 'this' in the script.
-			
+
 	Returns:
-	
+
 	unknown - A value set by the script using 'returnValue = '
 	true - If the script does not set a returnValue.
 */
@@ -1625,24 +1625,24 @@ xajax.js.execute = function(args) {
 
 /*
 	Function: xajax.js.waitFor
-	
+
 	Test for the specified condition, using the current script
 	context; if the result is false, sleep for 1/10th of a
 	second and try again.
-	
+
 	Parameters:
-	
+
 	args - The response command object containing the following:
-	
+
 		- args.data: (string):  The javascript to evaluate.
 		- args.prop: (integer):  The number of 1/10ths of a
 			second to wait before giving up.
 		- args.context: (object):  The current script context object
 			which is accessable in the javascript being evaulated
 			via the 'this' keyword.
-	
+
 	Returns:
-	
+
 	false - The condition evaulates to false and the sleep time
 		has not expired.
 	true - The condition evaluates to true or the sleep time has
@@ -1676,28 +1676,28 @@ xajax.js.waitFor = function(args) {
 
 /*
 	Function: xajax.js.call
-	
-	Call a javascript function with a series of parameters using 
+
+	Call a javascript function with a series of parameters using
 	the current script context.
-	
+
 	Parameters:
-	
+
 	args - The response command object containing the following:
 		- args.data: (array):  The parameters to pass to the function.
 		- args.func: (string):  The name of the function to call.
 		- args.context: (object):  The current script context object
 			which is accessable in the function name via the 'this'
 			keyword.
-			
+
 	Returns:
-	
+
 	true - The call completed successfully.
 */
 xajax.js.call = function(args) {
 	args.fullName = 'call js function';
-	
+
 	var parameters = args.data;
-	
+
 	var scr = new Array();
 	scr.push(args.func);
 	scr.push('(');
@@ -1724,18 +1724,18 @@ xajax.js.call = function(args) {
 
 	Constructs the specified function using the specified javascript
 	as the body of the function.
-	
+
 	Parameters:
-	
+
 	args - The response command object which contains the following:
-	
+
 		- args.func: (string):  The name of the function to construct.
 		- args.data: (string):  The script that will be the function body.
 		- args.context: (object):  The current script context object
 			which is accessable in the script name via the 'this' keyword.
-			
+
 	Returns:
-	
+
 	true - The function was constructed successfully.
 */
 xajax.js.setFunction = function(args) {
@@ -1764,25 +1764,25 @@ xajax.js.setFunction = function(args) {
 
 /*
 	Function: xajax.js.wrapFunction
-	
-	Construct a javascript function which will call the original function with 
+
+	Construct a javascript function which will call the original function with
 	the same name, potentially executing code before and after the call to the
 	original function.
-	
+
 	Parameters:
-	
-	args - (object):  The response command object which will contain 
+
+	args - (object):  The response command object which will contain
 		the following:
-		
+
 		- args.func: (string):  The name of the function to be wrapped.
 		- args.prop: (string):  List of parameters used when calling the function.
 		- args.data: (array):  The portions of code to be called before, after
 			or even between calls to the original function.
-		- args.context: (object):  The current script context object which is 
+		- args.context: (object):  The current script context object which is
 			accessable in the function name and body via the 'this' keyword.
-			
+
 	Returns:
-	
+
 	true - The wrapper function was constructed successfully.
 */
 xajax.js.wrapFunction = function(args) {
@@ -1802,12 +1802,12 @@ xajax.js.wrapFunction = function(args) {
 
 /*
 	Function: xajax.js.makeWrapper
-	
+
 
 	Helper function used in the wrapping of an existing javascript function.
 
-	Parameters:	
-	
+	Parameters:
+
 	origFun - (string):  The name of the original function.
 	args - (string):  The list of parameters used when calling the function.
 	codeBlocks - (array):  Array of strings of javascript code to be executed
@@ -1816,9 +1816,9 @@ xajax.js.wrapFunction = function(args) {
 		return value from the call to the original function.
 	context - (object):  The current script context object which is accessable
 		in the function name and body via the 'this' keyword.
-		
+
 	Returns:
-	
+
 	object - The complete wrapper function.
 */
 xajax.js.makeWrapper = function(origFun, args, codeBlocks, returnVariable, context) {
@@ -1830,11 +1830,11 @@ xajax.js.makeWrapper = function(origFun, args, codeBlocks, returnVariable, conte
 	var originalCall = 	'origFun(';
 	originalCall += args;
 	originalCall += '); ';
-	
+
 	var code = 'wrapper = function(';
 	code += args;
 	code += ') { ';
-	
+
 	if (0 < returnVariable.length) {
 		code += ' var ';
 		code += returnVariable;
@@ -1853,7 +1853,7 @@ xajax.js.makeWrapper = function(origFun, args, codeBlocks, returnVariable, conte
 		code += ';';
 	}
 	code += ' } ';
-	
+
 	var wrapper = null;
 	context.xajaxDelegateCall = function() {
 		eval(code);
@@ -1869,23 +1869,23 @@ xajax.dom = {}
 
 /*
 	Function: xajax.dom.assign
-	
+
 	Assign an element's attribute to the specified value.
-	
+
 	Parameters:
-	
+
 	element - (object):  The HTML element to effect.
 	property - (string):  The name of the attribute to set.
 	data - (string):  The new value to be applied.
-	
+
 	Returns:
-	
+
 	true - The operation completed successfully.
 */
 xajax.dom.assign = function(element, property, data) {
 	if ('string' == typeof element)
 		element = xajax.$(element);
-	
+
 	switch (property) {
 	case 'innerHTML':
 			element.innerHTML = data;
@@ -1908,84 +1908,84 @@ xajax.dom.assign = function(element, property, data) {
 
 /*
 	Function: xajax.dom.append
-	
+
 	Append the specified value to an element's attribute.
-	
+
 	Parameters:
-	
+
 	element - (object):  The HTML element to effect.
 	property - (string):  The name of the attribute to append to.
 	data - (string):  The new value to be appended.
-	
+
 	Returns:
-	
+
 	true - The operation completed successfully.
 */
 xajax.dom.append = function(element, property, data) {
 	if ('string' == typeof element)
 		element = xajax.$(element);
-	
+
 	eval('element.' + property + ' += data;');
 	return true;
 }
 
 /*
 	Function: xajax.dom.prepend
-	
+
 	Prepend the specified value to an element's attribute.
-	
+
 	Parameters:
-	
+
 	element - (object):  The HTML element to effect.
 	property - (string):  The name of the attribute.
 	data - (string):  The new value to be prepended.
-	
+
 	Returns:
-	
+
 	true - The operation completed successfully.
 */
 xajax.dom.prepend = function(element, property, data) {
 	if ('string' == typeof element)
 		element = xajax.$(element);
-	
+
 	eval('element.' + property + ' = data + element.' + property);
 	return true;
 }
 
 /*
 	Function: xajax.dom.replace
-	
+
 	Search and replace the specified text.
-	
+
 	Parameters:
-	
+
 	element - (string or object):  The name of, or the element itself which is
 		to be modified.
 	sAttribute - (string):  The name of the attribute to be set.
 	aData - (array):  The search text and replacement text.
-	
+
 	Returns:
-	
+
 	true - The operation completed successfully.
 */
 xajax.dom.replace = function(element, sAttribute, aData) {
 	var sSearch = aData['s'];
 	var sReplace = aData['r'];
-	
+
 	if (sAttribute == 'innerHTML')
 		sSearch = xajax.tools.getBrowserHTML(sSearch);
-	
+
 	if ('string' == typeof element)
 		element = xajax.$(element);
-	
+
 	eval('var txt = element.' + sAttribute);
-	
+
 	var bFunction = false;
 	if ('function' == typeof txt) {
         txt = txt.join('');
         bFunction = true;
     }
-	
+
 	var start = txt.indexOf(sSearch);
 	if (start > -1) {
 		var newTxt = [];
@@ -1998,7 +1998,7 @@ xajax.dom.replace = function(element, sAttribute, aData) {
 		}
 		newTxt.push(txt);
 		newTxt = newTxt.join('');
-		
+
 		if (bFunction) {
 			eval('element.' + sAttribute + '=newTxt;');
 		} else if (xajax.tools.willChange(element, sAttribute, newTxt)) {
@@ -2010,22 +2010,22 @@ xajax.dom.replace = function(element, sAttribute, aData) {
 
 /*
 	Function: xajax.dom.remove
-	
+
 	Delete an element.
-	
+
 	Parameters:
-	
+
 	element - (string or object):  The name of, or the element itself which
 		will be deleted.
-		
+
 	Returns:
-	
+
 	true - The operation completed successfully.
 */
 xajax.dom.remove = function(element) {
 	if ('string' == typeof element)
 		element = xajax.$(element);
-	
+
 	if (element && element.parentNode && element.parentNode.removeChild)
 		element.parentNode.removeChild(element);
 
@@ -2034,19 +2034,19 @@ xajax.dom.remove = function(element) {
 
 /*
 	Function: xajax.dom.create
-	
+
 	Create a new element and append it to the specified parent element.
-	
+
 	Parameters:
-	
+
 	objParent - (string or object):  The name of, or the element itself
 		which will contain the new element.
 	sTag - (string):  The tag name for the new element.
 	sId - (string):  The value to be assigned to the id attribute of
 		the new element.
-		
+
 	Returns:
-	
+
 	true - The operation completed successfully.
 */
 xajax.dom.create = function(objParent, sTag, sId) {
@@ -2061,19 +2061,19 @@ xajax.dom.create = function(objParent, sTag, sId) {
 
 /*
 	Function: xajax.dom.insert
-	
+
 	Insert a new element before the specified element.
 
 	Parameters:
-	
+
 	objSibling - (string or object):  The name of, or the element itself
 		that will be used as the reference point for insertion.
 	sTag - (string):  The tag name for the new element.
 	sId - (string):  The value that will be assigned to the new element's
 		id attribute.
-	
+
 	Returns:
-	
+
 	true - The operation completed successfully.
 */
 xajax.dom.insert = function(objSibling, sTag, sId) {
@@ -2087,19 +2087,19 @@ xajax.dom.insert = function(objSibling, sTag, sId) {
 
 /*
 	Function: xajax.dom.insertAfter
-	
+
 	Insert a new element after the specified element.
 
 	Parameters:
-	
+
 	objSibling - (string or object):  The name of, or the element itself
 		that will be used as the reference point for insertion.
 	sTag - (string):  The tag name for the new element.
 	sId - (string):  The value that will be assigned to the new element's
 		id attribute.
-	
+
 	Returns:
-	
+
 	true - The operation completed successfully.
 */
 xajax.dom.insertAfter = function(objSibling, sTag, sId) {
@@ -2113,21 +2113,21 @@ xajax.dom.insertAfter = function(objSibling, sTag, sId) {
 
 /*
 	Function: xajax.dom.contextAssign
-	
+
 	Assign a value to a named member of the current script context object.
-	
+
 	Parameters:
-	
+
 	args - (object):  The response command object which will contain the
 		following:
-		
+
 		- args.prop: (string):  The name of the member to assign.
 		- args.data: (string or object):  The value to assign to the member.
 		- args.context: (object):  The current script context object which
 			is accessable via the 'this' keyword.
-	
+
 	Returns:
-	
+
 	true - The operation completed successfully.
 */
 xajax.dom.contextAssign = function(args) {
@@ -2147,21 +2147,21 @@ xajax.dom.contextAssign = function(args) {
 
 /*
 	Function: xajax.dom.contextAppend
-	
+
 	Appends a value to a named member of the current script context object.
-	
+
 	Parameters:
-	
+
 	args - (object):  The response command object which will contain the
 		following:
-		
+
 		- args.prop: (string):  The name of the member to append to.
 		- args.data: (string or object):  The value to append to the member.
 		- args.context: (object):  The current script context object which
 			is accessable via the 'this' keyword.
-	
+
 	Returns:
-	
+
 	true - The operation completed successfully.
 */
 xajax.dom.contextAppend = function(args) {
@@ -2181,21 +2181,21 @@ xajax.dom.contextAppend = function(args) {
 
 /*
 	Function: xajax.dom.contextPrepend
-	
+
 	Prepend a value to a named member of the current script context object.
-	
+
 	Parameters:
-	
+
 	args - (object):  The response command object which will contain the
 		following:
-		
+
 		- args.prop: (string):  The name of the member to prepend to.
 		- args.data: (string or object):  The value to prepend to the member.
 		- args.context: (object):  The current script context object which
 			is accessable via the 'this' keyword.
-	
+
 	Returns:
-	
+
 	true - The operation completed successfully.
 */
 xajax.dom.contextPrepend = function(args) {
@@ -2315,18 +2315,18 @@ xajax.css = {}
 
 /*
 	Function: xajax.css.add
-	
+
 	Add a LINK reference to the specified .css file if it does not
 	already exist in the HEAD of the current document.
-	
+
 	Parameters:
-	
+
 	filename - (string):  The URI of the .css file to reference.
 
 	media - (string):  The media type of the css file (print/screen/handheld,..)
-	
+
 	Returns:
-	
+
 	true - The operation completed successfully.
 */
 xajax.css.add = function(fileName, media) {
@@ -2334,13 +2334,13 @@ xajax.css.add = function(fileName, media) {
 	var oHeads = oDoc.getElementsByTagName('head');
 	var oHead = oHeads[0];
 	var oLinks = oHead.getElementsByTagName('link');
-	
+
 	var found = false;
 	var iLen = oLinks.length;
 	for (var i = 0; i < iLen && false == found; ++i)
 		if (0 <= oLinks[i].href.indexOf(fileName) && oLinks[i].media == media)
 			found = true;
-	
+
 	if (false == found) {
 		var oCSS = oDoc.createElement('link');
 		oCSS.rel = 'stylesheet';
@@ -2349,22 +2349,22 @@ xajax.css.add = function(fileName, media) {
 		oCSS.media = media;
 		oHead.appendChild(oCSS);
 	}
-	
+
 	return true;
 }
 
 /*
 	Function: xajax.css.remove
-	
+
 	Locate and remove a LINK reference from the current document's
 	HEAD.
-	
+
 	Parameters:
-	
+
 	filename - (string):  The URI of the .css file.
-	
+
 	Returns:
-	
+
 	true - The operation completed successfully.
 */
 xajax.css.remove = function(fileName, media) {
@@ -2372,33 +2372,33 @@ xajax.css.remove = function(fileName, media) {
 	var oHeads = oDoc.getElementsByTagName('head');
 	var oHead = oHeads[0];
 	var oLinks = oHead.getElementsByTagName('link');
-	
+
 	var i = 0;
 	while (i < oLinks.length)
 		if (0 <= oLinks[i].href.indexOf(fileName) && oLinks[i].media == media)
 			oHead.removeChild(oLinks[i]);
 		else ++i;
-	
+
 	return true;
 }
 
 /*
 	Function: xajax.css.waitForCSS
-	
+
 	Attempt to detect when all .css files have been loaded once
 	they are referenced by a LINK tag in the HEAD of the current
 	document.
-	
+
 	Parameters:
-	
+
 	args - (object):  The response command object which will contain
 		the following:
-		
+
 		- args.prop - (integer):  The number of 1/10ths of a second
 			to wait before giving up.
-	
+
 	Returns:
-	
+
 	true - The .css files appear to be loaded.
 	false - The .css files do not appear to be loaded and the timeout
 		has not expired.
@@ -2418,13 +2418,13 @@ xajax.css.waitForCSS = function(args) {
 			}
 		}
 	}
-	
+
 	var ssLoaded = true;
 	var iLen = ssEnabled.length;
 	for (var i = 0; i < iLen; ++i)
 		if (0 == ssEnabled[i])
 			ssLoaded = false;
-	
+
 	if (false == ssLoaded) {
 		// inject a delay in the queue processing
 		// handle retry counter
@@ -2445,17 +2445,17 @@ xajax.forms = {}
 
 /*
 	Function: xajax.forms.getInput
-	
+
 	Create and return a form input element with the specified parameters.
-	
+
 	Parameters:
-	
+
 	type - (string):  The type of input element desired.
 	name - (string):  The value to be assigned to the name attribute.
 	id - (string):  The value to be assigned to the id attribute.
-	
+
 	Returns:
-	
+
 	object - The new input element.
 */
 xajax.forms.getInput = function(type, name, id) {
@@ -2478,19 +2478,19 @@ xajax.forms.getInput = function(type, name, id) {
 
 /*
 	Function: xajax.forms.createInput
-	
+
 	Create a new input element under the specified parent.
-	
+
 	Parameters:
-	
+
 	objParent - (string or object):  The name of, or the element itself
 		that will be used as the reference for the insertion.
 	sType - (string):  The value to be assigned to the type attribute.
 	sName - (string):  The value to be assigned to the name attribute.
 	sId - (string):  The value to be assigned to the id attribute.
-	
+
 	Returns:
-	
+
 	true - The operation completed successfully.
 */
 xajax.forms.createInput = function(command) {
@@ -2512,19 +2512,19 @@ xajax.forms.createInput = function(command) {
 
 /*
 	Function: xajax.forms.insertInput
-	
+
 	Insert a new input element before the specified element.
-	
+
 	Parameters:
-	
+
 	objSibling - (string or object):  The name of, or the element itself
 		that will be used as the reference for the insertion.
 	sType - (string):  The value to be assigned to the type attribute.
 	sName - (string):  The value to be assigned to the name attribute.
 	sId - (string):  The value to be assigned to the id attribute.
-	
+
 	Returns:
-	
+
 	true - The operation completed successfully.
 */
 xajax.forms.insertInput = function(command) {
@@ -2545,17 +2545,17 @@ xajax.forms.insertInput = function(command) {
 	Function: xajax.forms.insertInputAfter
 
 	Insert a new input element after the specified element.
-	
+
 	Parameters:
-	
+
 	objSibling - (string or object):  The name of, or the element itself
 		that will be used as the reference for the insertion.
 	sType - (string):  The value to be assigned to the type attribute.
 	sName - (string):  The value to be assigned to the name attribute.
 	sId - (string):  The value to be assigned to the id attribute.
-	
+
 	Returns:
-	
+
 	true - The operation completed successfully.
 */
 xajax.forms.insertInputAfter = function(command) {
@@ -2579,18 +2579,18 @@ xajax.events = {}
 
 /*
 	Function: xajax.events.setEvent
-	
+
 	Set an event handler.
-	
+
 	Parameters:
-	
+
 	command - (object): Response command object.
 	- id: Element ID
 	- prop: Event
-	- data: Code	
+	- data: Code
 
 	Returns:
-	
+
 	true - The operation completed successfully.
 */
 xajax.events.setEvent = function(command) {
@@ -2608,18 +2608,18 @@ xajax.events.setEvent = function(command) {
 
 /*
 	Function: xajax.events.addHandler
-	
+
 	Add an event handler to the specified element.
-	
+
 	Parameters:
-	
+
 	element - (string or object):  The name of, or the element itself
 		which will have the event handler assigned.
 	sEvent - (string):  The name of the event.
 	fun - (string):  The function to be called.
-	
+
 	Returns:
-	
+
 	true - The operation completed successfully.
 */
 xajax.events.addHandler = function(element, sEvent, fun) {
@@ -2653,19 +2653,19 @@ xajax.events.addHandler = function(element, sEvent, fun) {
 
 /*
 	Function: xajax.events.removeHandler
-	
+
 	Remove an event handler from an element.
-	
+
 	Parameters:
-	
+
 	element - (string or object):  The name of, or the element itself which
 		will have the event handler removed.
-	event - (string):  The name of the event for which this handler is 
+	event - (string):  The name of the event for which this handler is
 		associated.
 	fun - The function to be removed.
-	
+
 	Returns:
-	
+
 	true - The operation completed successfully.
 */
 xajax.events.removeHandler = function(element, sEvent, fun) {
@@ -2704,30 +2704,30 @@ xajax.callback = {}
 
 /*
 	Function: xajax.callback.create
-	
-	Create a blank callback object.  Two optional arguments let you 
+
+	Create a blank callback object.  Two optional arguments let you
 	set the delay time for the onResponseDelay and onExpiration events.
-	
+
 	Returns:
-	
+
 	object - The callback object.
 */
 xajax.callback.create = function() {
 	var xx = xajax;
 	var xc = xx.config;
 	var xcb = xx.callback;
-	
+
 	var oCB = {}
 	oCB.timers = {};
-	
+
 	oCB.timers.onResponseDelay = xcb.setupTimer(
-		(arguments.length > 0) 
-			? arguments[0] 
+		(arguments.length > 0)
+			? arguments[0]
 			: xc.defaultResponseDelayTime);
-	
+
 	oCB.timers.onExpiration = xcb.setupTimer(
-		(arguments.length > 1) 
-			? arguments[1] 
+		(arguments.length > 1)
+			? arguments[1]
 			: xc.defaultExpirationTime);
 
 	oCB.onRequest = null;
@@ -2738,22 +2738,22 @@ xajax.callback.create = function() {
 	oCB.onRedirect = null;
 	oCB.onSuccess = null;
 	oCB.onComplete = null;
-	
+
 	return oCB;
 }
 
 /*
 	Function: xajax.callback.setupTimer
-	
+
 	Create a timer to fire an event in the future.  This will
 	be used fire the onRequestDelay and onExpiration events.
-	
+
 	Parameters:
-	
+
 	iDelay - (integer):  The amount of time in milliseconds to delay.
-	
+
 	Returns:
-	
+
 	object - A callback timer object.
 */
 xajax.callback.setupTimer = function(iDelay)
@@ -2763,11 +2763,11 @@ xajax.callback.setupTimer = function(iDelay)
 
 /*
 	Function: xajax.callback.clearTimer
-	
+
 	Clear a callback timer for the specified function.
-	
+
 	Parameters:
-	
+
 	oCallback - (object):  The callback object (or objects) that
 		contain the specified function timer to be cleared.
 	sFunction - (string):  The name of the function associated
@@ -2788,12 +2788,12 @@ xajax.callback.clearTimer = function(oCallback, sFunction)
 
 /*
 	Function: xajax.callback.execute
-	
+
 	Execute a callback event.
-	
+
 	Parameters:
-	
-	oCallback - (object):  The callback object (or objects) which 
+
+	oCallback - (object):  The callback object (or objects) which
 		contain the event handlers to be executed.
 	sFunction - (string):  The name of the event to be triggered.
 	args - (object):  The request object for this request.
@@ -2803,7 +2803,7 @@ xajax.callback.execute = function(oCallback, sFunction, args) {
 		var func = oCallback[sFunction];
 		if ('function' == typeof func) {
 			if ('undefined' != typeof oCallback.timers[sFunction]) {
-				oCallback.timers[sFunction].timer = setTimeout(function() { 
+				oCallback.timers[sFunction].timer = setTimeout(function() {
 					func(args);
 				}, oCallback.timers[sFunction].delay);
 			}
@@ -2820,7 +2820,7 @@ xajax.callback.execute = function(oCallback, sFunction, args) {
 
 /*
 	Class: xajax.callback.global
-	
+
 	The global callback object which is active for every request.
 */
 xajax.callback.global = xajax.callback.create();
@@ -2831,19 +2831,19 @@ xajax.callback.global = xajax.callback.create();
 
 /*
 	Object: xajax.response
-	
+
 	The response queue that holds response commands, once received
 	from the server, until they are processed.
-*/	
+*/
 xajax.response = xajax.tools.queue.create(xajax.config.responseQueueSize);
 
 /*
 	Object: responseSuccessCodes
-	
-	This array contains a list of codes which will be returned from the 
-	server upon successful completion of the server portion of the 
+
+	This array contains a list of codes which will be returned from the
+	server upon successful completion of the server portion of the
 	request.
-	
+
 	These values should match those specified in the HTTP standard.
 */
 xajax.responseSuccessCodes = ['0', '200'];
@@ -2876,7 +2876,7 @@ xajax.responseSuccessCodes = ['0', '200'];
 
 /*
 	Object: responseErrorsForAlert
-	
+
 	This array contains a list of status codes returned by
 	the server to indicate that the request failed for some
 	reason.
@@ -2894,10 +2894,10 @@ xajax.responseErrorsForAlert = ['400','401','402','403','404','500','501','502',
 
 /*
 	Object: responseRedirectCodes
-	
+
 	An array of status codes returned from the server to
 	indicate a request for redirect to another URL.
-	
+
 	Typically, this is used by the server to send the browser
 	to another URL.  This does not typically indicate that
 	the xajax request should be sent to another URL.
@@ -2906,15 +2906,15 @@ xajax.responseRedirectCodes = ['301','302','307'];
 
 /*
 	Class: xajax.command
-	
+
 	The object that manages commands and command handlers.
 */
 if ('undefined' == typeof xajax.command)
 	xajax.command = {};
 
 /*
-	Function: xajax.command.create 
-	
+	Function: xajax.command.create
+
 	Creates a new command (object) that will be populated with
 	command parameters and eventually passed to the command handler.
 */
@@ -2930,7 +2930,7 @@ xajax.command.create = function(sequence, request, context) {
 
 /*
 	Class: xajax.command.handler
-	
+
 	The object that manages command handlers.
 */
 if ('undefined' == typeof xajax.command.handler)
@@ -2938,7 +2938,7 @@ if ('undefined' == typeof xajax.command.handler)
 
 /*
 	Object: handlers
-	
+
 	An array that is used internally in the xajax.command.handler object
 	to keep track of command handlers that have been registered.
 */
@@ -2947,7 +2947,7 @@ if ('undefined' == typeof xajax.command.handler.handlers)
 
 /*
 	Function: xajax.command.handler.register
-	
+
 	Registers a new command handler.
 */
 xajax.command.handler.register = function(shortName, func) {
@@ -2956,12 +2956,12 @@ xajax.command.handler.register = function(shortName, func) {
 
 /*
 	Function: xajax.command.handler.unregister
-	
+
 	Unregisters and returns a command handler.
-	
+
 	Parameters:
 		shortName - (string): The name of the command handler.
-		
+
 	Returns:
 		func - (function): The unregistered function.
 */
@@ -2973,17 +2973,17 @@ xajax.command.handler.unregister = function(shortName) {
 
 /*
 	Function: xajax.command.handler.isRegistered
-	
-	
+
+
 	Parameters:
 		command - (object):
 			- cmd: The Name of the function.
 
 	Returns:
 
-	boolean - (true or false): depending on whether a command handler has 
+	boolean - (true or false): depending on whether a command handler has
 	been created for the specified command (object).
-		
+
 */
 xajax.command.handler.isRegistered = function(command) {
 	var shortName = command.cmd;
@@ -2994,7 +2994,7 @@ xajax.command.handler.isRegistered = function(command) {
 
 /*
 	Function: xajax.command.handler.call
-	
+
 	Calls the registered command handler for the specified command
 	(you should always check isRegistered before calling this function)
 
@@ -3117,12 +3117,12 @@ xajax.command.handler.register('dbg', function(args) {
 
 /*
 	Function: xajax.initializeRequest
-	
+
 	Initialize a request object, populating default settings, where
 	call specific settings are not already provided.
-	
+
 	Parameters:
-	
+
 	oRequest - (object):  An object that specifies call specific settings
 		that will, in addition, be used to store all request related
 		values.  This includes temporary values used internally by xajax.
@@ -3130,7 +3130,7 @@ xajax.command.handler.register('dbg', function(args) {
 xajax.initializeRequest = function(oRequest) {
 	var xx = xajax;
 	var xc = xx.config;
-	
+
 	oRequest.append = function(opt, def) {
 		if ('undefined' != typeof this[opt]) {
 			for (var itmName in def)
@@ -3138,7 +3138,7 @@ xajax.initializeRequest = function(oRequest) {
 					this[opt][itmName] = def[itmName];
 		} else this[opt] = def;
 	}
-	
+
 	oRequest.append('commonHeaders', xc.commonHeaders);
 	oRequest.append('postHeaders', xc.postHeaders);
 	oRequest.append('getHeaders', xc.getHeaders);
@@ -3147,7 +3147,7 @@ xajax.initializeRequest = function(oRequest) {
 		if ('undefined' == typeof this[option])
 			this[option] = defaultValue;
 	}
-	
+
 	oRequest.set('statusMessages', xc.statusMessages);
 	oRequest.set('waitCursor', xc.waitCursor);
 	oRequest.set('mode', xc.defaultMode);
@@ -3160,11 +3160,11 @@ xajax.initializeRequest = function(oRequest) {
 	oRequest.set('maxObjectDepth', xc.maxObjectDepth);
 	oRequest.set('maxObjectSize', xc.maxObjectSize);
 	oRequest.set('context', window);
-	
+
 	var xcb = xx.callback;
 	var gcb = xcb.global;
 	var lcb = xcb.create();
-	
+
 	lcb.take = function(frm, opt) {
 		if ('undefined' != typeof frm[opt]) {
 			lcb[opt] = frm[opt];
@@ -3172,7 +3172,7 @@ xajax.initializeRequest = function(oRequest) {
 		}
 		delete frm[opt];
 	}
-	
+
 	lcb.take(oRequest, 'onRequest');
 	lcb.take(oRequest, 'onResponseDelay');
 	lcb.take(oRequest, 'onExpiration');
@@ -3181,31 +3181,31 @@ xajax.initializeRequest = function(oRequest) {
 	lcb.take(oRequest, 'onRedirect');
 	lcb.take(oRequest, 'onSuccess');
 	lcb.take(oRequest, 'onComplete');
-	
+
 	if ('undefined' != typeof oRequest.callback) {
 		if (lcb.hasEvents)
 			oRequest.callback = [oRequest.callback, lcb];
 	} else
 		oRequest.callback = lcb;
-	
-	oRequest.status = (oRequest.statusMessages) 
-		? xc.status.update() 
+
+	oRequest.status = (oRequest.statusMessages)
+		? xc.status.update()
 		: xc.status.dontUpdate();
-	
-	oRequest.cursor = (oRequest.waitCursor) 
-		? xc.cursor.update() 
+
+	oRequest.cursor = (oRequest.waitCursor)
+		? xc.cursor.update()
 		: xc.cursor.dontUpdate();
-	
+
 	oRequest.method = oRequest.method.toUpperCase();
 	if ('GET' != oRequest.method)
 		oRequest.method = 'POST';	// W3C: Method is case sensitive
-	
+
 	oRequest.requestRetry = oRequest.retry;
-	
+
 	oRequest.append('postHeaders', {
 		'content-type': oRequest.contentType
 		});
-		
+
 	delete oRequest['append'];
 	delete oRequest['set'];
 	delete oRequest['take'];
@@ -3216,25 +3216,25 @@ xajax.initializeRequest = function(oRequest) {
 
 /*
 	Function: xajax.processParameters
-	
-	Processes request specific parameters and generates the temporary 
+
+	Processes request specific parameters and generates the temporary
 	variables needed by xajax to initiate and process the request.
-	
+
 	Parameters:
-	
+
 	oRequest - A request object, created initially by a call to
 		<xajax.initializeRequest>
-	
+
 	Note:
-	This is called once per request; upon a request failure, this 
+	This is called once per request; upon a request failure, this
 	will not be called for additional retries.
 */
 xajax.processParameters = function(oRequest) {
 	var xx = xajax;
 	var xt = xx.tools;
-	
+
 	var rd = [];
-	
+
 	var separator = '';
 	for (var sCommand in oRequest.functionName) {
 		if ('constructor' != sCommand) {
@@ -3293,40 +3293,40 @@ xajax.processParameters = function(oRequest) {
 			}
 		}
 	}
-	
+
 	oRequest.requestURI = oRequest.URI;
-	
+
 	if ('GET' == oRequest.method) {
 		oRequest.requestURI += oRequest.requestURI.indexOf('?')== -1 ? '?' : '&';
 		oRequest.requestURI += rd.join('');
 		rd = [];
 	}
-	
+
 	oRequest.requestData = rd.join('');
 }
 
 /*
 	Function: xajax.prepareRequest
-	
+
 	Prepares the XMLHttpRequest object for this xajax request.
-	
+
 	Parameters:
-	
+
 	oRequest - (object):  An object created by a call to <xajax.initializeRequest>
 		which already contains the necessary parameters and temporary variables
 		needed to initiate and process a xajax request.
-	
-	Note: 
-	This is called each time a request object is being prepared for a 
+
+	Note:
+	This is called each time a request object is being prepared for a
 	call to the server.  If the request is retried, the request must be
 	prepared again.
 */
 xajax.prepareRequest = function(oRequest) {
 	var xx = xajax;
 	var xt = xx.tools;
-	
+
 	oRequest.request = xt.getRequestObject();
-	
+
 	oRequest.setRequestHeaders = function(headers) {
 	 	if ('object' == typeof headers) {
 			for (var optionName in headers)
@@ -3344,7 +3344,7 @@ xajax.prepareRequest = function(oRequest) {
 	oRequest.setGetRequestHeaders = function() {
 		this.setRequestHeaders(this.getHeaders);
 	}
-	
+
 	if ('asynchronous' == oRequest.mode) {
 		// references inside this function should be expanded
 		// IOW, don't use shorthand references like xx for xajax
@@ -3361,25 +3361,25 @@ xajax.prepareRequest = function(oRequest) {
 			return xajax.responseReceived(oRequest);
 		}
 	}
-	
+
 	if ('undefined' != typeof oRequest.userName && 'undefined' != typeof oRequest.password) {
 		oRequest.open = function() {
 			this.request.open(
-				this.method, 
-				this.requestURI, 
-				'asynchronous' == this.mode, 
-				oRequest.userName, 
+				this.method,
+				this.requestURI,
+				'asynchronous' == this.mode,
+				oRequest.userName,
 				oRequest.password);
 		}
 	} else {
 		oRequest.open = function() {
 			this.request.open(
-				this.method, 
-				this.requestURI, 
+				this.method,
+				this.requestURI,
 				'asynchronous' == this.mode);
 		}
 	}
-	
+
 	if ('POST' == oRequest.method) {	// W3C: Method is case sensitive
 		oRequest.applyRequestHeaders = function() {
 			this.setCommonRequestHeaders();
@@ -3404,34 +3404,34 @@ xajax.prepareRequest = function(oRequest) {
 
 /*
 	Function: xajax.request
-	
+
 	Initiates a request to the server.
 
 	Parameters:
-	
+
 	functionName - (object):  An object containing the name of the function to execute
 	on the server. The standard request is: {xjxfun:'function_name'}
-		
-	oRequest - (object, optional):  A request object which 
+
+	oRequest - (object, optional):  A request object which
 		may contain call specific parameters.  This object will be
 		used by xajax to store all the request parameters as well
 		as temporary variables needed during the processing of the
 		request.
-	
+
 */
 xajax.request = function() {
 	var numArgs = arguments.length;
 	if (0 == numArgs)
 		return false;
-	
+
 	var oRequest = {}
 	if (1 < numArgs)
 		oRequest = arguments[1];
-	
+
 	oRequest.functionName = arguments[0];
-	
+
 	var xx = xajax;
-	
+
 	xx.initializeRequest(oRequest);
 	xx.processParameters(oRequest);
 	while (0 < oRequest.requestRetry) {
@@ -3453,47 +3453,47 @@ xajax.request = function() {
 
 /*
 	Function: xajax.submitRequest
-	
+
 	Create a request object and submit the request using the specified
-	request type; all request parameters should be finalized by this 
-	point.  Upon failure of a POST, this function will fall back to a 
+	request type; all request parameters should be finalized by this
+	point.  Upon failure of a POST, this function will fall back to a
 	GET request.
-	
+
 	Parameters:
-	
+
 	oRequest - (object):  The request context object.
 */
 xajax.submitRequest = function(oRequest) {
 	oRequest.status.onRequest();
-	
+
 	var xcb = xajax.callback;
 	var gcb = xcb.global;
 	var lcb = oRequest.callback;
-	
+
 	xcb.execute([gcb, lcb], 'onResponseDelay', oRequest);
 	xcb.execute([gcb, lcb], 'onExpiration', oRequest);
 	xcb.execute([gcb, lcb], 'onRequest', oRequest);
-	
+
 	oRequest.open();
 	oRequest.applyRequestHeaders();
 
 	oRequest.cursor.onWaiting();
 	oRequest.status.onWaiting();
-	
+
 	xajax._internalSend(oRequest);
-	
+
 	// synchronous mode causes response to be processed immediately here
 	return oRequest.finishRequest();
 }
 
 /*
 	Function: xajax._internalSend
-	
+
 	This function is used internally by xajax to initiate a request to the
 	server.
-	
+
 	Parameters:
-	
+
 	oRequest - (object):  The request context object.
 */
 xajax._internalSend = function(oRequest) {
@@ -3503,11 +3503,11 @@ xajax._internalSend = function(oRequest) {
 
 /*
 	Function: xajax.abortRequest
-	
+
 	Abort the request.
-	
+
 	Parameters:
-	
+
 	oRequest - (object):  The request context object.
 */
 xajax.abortRequest = function(oRequest)
@@ -3519,11 +3519,11 @@ xajax.abortRequest = function(oRequest)
 
 /*
 	Function: xajax.responseReceived
-	
+
 	Process the response.
-	
+
 	Parameters:
-	
+
 	oRequest - (object):  The request context object.
 */
 xajax.responseReceived = function(oRequest) {
@@ -3535,10 +3535,10 @@ xajax.responseReceived = function(oRequest) {
 	// request is aborted
 	if (oRequest.aborted)
 		return;
-	
+
 	xcb.clearTimer([gcb, lcb], 'onExpiration');
 	xcb.clearTimer([gcb, lcb], 'onResponseDelay');
-	
+
 	xcb.execute([gcb, lcb], 'beforeResponseProcessing', oRequest);
 
 	var challenge = oRequest.request.getResponseHeader('challenge');
@@ -3547,35 +3547,35 @@ xajax.responseReceived = function(oRequest) {
 		xx.prepareRequest(oRequest);
 		return xx.submitRequest(oRequest);
 	}
-	
+
 	var fProc = xx.getResponseProcessor(oRequest);
 	if ('undefined' == typeof fProc) {
 		xcb.execute([gcb, lcb], 'onFailure', oRequest);
 		xx.completeResponse(oRequest);
 		return;
 	}
-	
+
 	return fProc(oRequest);
 }
 
 /*
 	Function: xajax.getResponseProcessor
-	
+
 	This function attempts to determine, based on the content type of the
 	reponse, what processor should be used for handling the response data.
-	
+
 	The default xajax response will be text/xml which will invoke the
 	xajax xml response processor.  Other response processors may be added
 	in the future.  The user can specify their own response processor on
 	a call by call basis.
-	
+
 	Parameters:
-	
+
 	oRequest - (object):  The request context object.
 */
 xajax.getResponseProcessor = function(oRequest) {
 	var fProc;
-	
+
 	if ('undefined' == typeof oRequest.responseProcessor) {
 		var cTyp = oRequest.request.getResponseHeader('content-type');
 		if (cTyp) {
@@ -3586,31 +3586,31 @@ xajax.getResponseProcessor = function(oRequest) {
 			}
 		}
 	} else fProc = oRequest.responseProcessor;
-	
+
 	return fProc;
 }
 
 /*
-	Function: xajax.executeCommand 
-	
+	Function: xajax.executeCommand
+
 	Perform a lookup on the command specified by the response command
 	object passed in the first parameter.  If the command exists, the
 	function checks to see if the command references a DOM object by
-	ID; if so, the object is located within the DOM and added to the 
+	ID; if so, the object is located within the DOM and added to the
 	command data.  The command handler is then called.
-	
-	If the command handler returns true, it is assumed that the command 
+
+	If the command handler returns true, it is assumed that the command
 	completed successfully.  If the command handler returns false, then the
 	command is considered pending; xajax enters a wait state.  It is up
 	to the command handler to set an interval, timeout or event handler
 	which will restart the xajax response processing.
-	
+
 	Parameters:
-	
+
 	obj - (object):  The response command to be executed.
-	
+
 	Returns:
-	
+
 	true - The command completed successfully.
 	false - The command signalled that it needs to pause processing.
 */
@@ -3631,12 +3631,12 @@ xajax.executeCommand = function(command) {
 
 /*
 	Function: xajax.completeResponse
-	
-	Called by the response command queue processor when all commands have 
+
+	Called by the response command queue processor when all commands have
 	been processed.
-	
+
 	Parameters:
-	
+
 	oRequest - (object):  The request context object.
 */
 xajax.completeResponse = function(oRequest) {
@@ -3668,21 +3668,21 @@ xajax.completeResponse = function(oRequest) {
 
 /*
 	Function: xajax.$
-	
+
 	Shortcut to <xajax.tools.$>.
 */
 xajax.$ = xajax.tools.$;
 
 /*
 	Function: xajax.getFormValues
-	
+
 	Shortcut to <xajax.tools.getFormValues>.
 */
 xajax.getFormValues = xajax.tools.getFormValues;
 
 /*
 	Boolean: xajax.isLoaded
-	
+
 	true - xajax module is loaded.
 */
 xajax.isLoaded = true;
@@ -3690,21 +3690,21 @@ xajax.isLoaded = true;
 
 /*
 	Class: xjx
-	
+
 	Contains shortcut's to frequently used functions.
 */
 xjx = {}
 
 /*
 	Function: xjx.$
-	
+
 	Shortcut to <xajax.tools.$>.
 */
 xjx.$ = xajax.tools.$;
 
 /*
 	Function: xjx.getFormValues
-	
+
 	Shortcut to <xajax.tools.getFormValues>.
 */
 xjx.getFormValues = xajax.tools.getFormValues;

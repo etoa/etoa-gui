@@ -17,7 +17,7 @@
 		      	planet_user_id
 		      FROM
 		      	planets
-		      WHERE 
+		      WHERE
 		      	planet_user_id>0
 		      ORDER BY RAND()
 		      LIMIT 1;
@@ -26,12 +26,12 @@
 				else
 				{
 					$res = dbquery("
-					SELECT 
+					SELECT
 						planets.id,
 						planet_user_id
 		      FROM
 		      	planets
-		      JOIN 
+		      JOIN
 		      (
 		        SELECT (
 		        	CEIL(

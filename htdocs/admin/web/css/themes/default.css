@@ -58,7 +58,7 @@
     }
 }
 
-/* 
+/*
 * Description: Reset css value to meaningfull default values, so all browsers have the same starting conditions
 */
 
@@ -192,9 +192,9 @@ body	{
 	left:310px;
 	font-size:24pt;
 	font-family:'Droid Sans', Verdana, sans-serif;
-	text-shadow:#2565B0 2px 2px 3px, 
-				#2565B0 -2px 2px 3px, 
-				#2565B0 -2px -2px 3px, 
+	text-shadow:#2565B0 2px 2px 3px,
+				#2565B0 -2px 2px 3px,
+				#2565B0 -2px -2px 3px,
 				#2565B0 2px -2px 3px;
 }
 
@@ -404,7 +404,7 @@ input[type="submit"]:hover, input[type="button"]:hover, button:hover, .button:ho
 		background-position: 6px 5px, 0px 0px;
 		padding-left:25px;
 	}
-	
+
 	input[type="submit"].positive:hover, input[type="button"].positive:hover, button.positive:hover {
 		background-image: url('../../images/icons/tick.png'), -moz-linear-gradient(top, #ffffff 0%, #eeeeee 100%);
 	}
@@ -420,7 +420,7 @@ input[type="submit"]:hover, input[type="button"]:hover, button:hover, .button:ho
 	input[type="submit"].negative:hover, input[type="button"].negative:hover, button.negative:hover {
 		background-image: url('../../images/icons/cross.png'), -moz-linear-gradient(top, #ffffff 0%, #eeeeee 100%);
 	}
-	
+
 	input[type="submit"].add, input[type="button"].add, button.add {
 		color:#529214;
 		background-image:url('../../images/icons/add.png'), -moz-linear-gradient(top, #ffffff 0%, #cccccc 100%);
@@ -428,10 +428,10 @@ input[type="submit"]:hover, input[type="button"]:hover, button:hover, .button:ho
 		background-position: 6px 5px, 0px 0px;
 		padding-left:25px;
 	}
-	
+
 	input[type="submit"].add:hover, input[type="button"].add:hover, button.add:hover {
 		background-image: url('../../images/icons/add.png'), -moz-linear-gradient(top, #ffffff 0%, #eeeeee 100%);
-	}	
+	}
 
 	input[type="submit"].remove, input[type="button"].remove, button.remove {
 		color:#d12f19;
@@ -440,10 +440,10 @@ input[type="submit"]:hover, input[type="button"]:hover, button:hover, .button:ho
 		background-position: 6px 5px, 0px 0px;
 		padding-left:25px;
 	}
-	
+
 	input[type="submit"].remove:hover, input[type="button"].remove:hover, button.remove:hover {
 		background-image: url('../../images/icons/delete.png'), -moz-linear-gradient(top, #ffffff 0%, #eeeeee 100%);
-	}	
+	}
 }
 
 td input[type="radio"]  {
@@ -916,13 +916,13 @@ body.adminpopup {
   margin-top:5px;
   margin-bottom:5px;
   width:40px;
-  height:25px;  
+  height:25px;
   border-left:1px dashed #555;
 }
 
 #sector_map_table .sector_map_cell a {
   display:inline-block;
-  text-decoration:none;  
+  text-decoration:none;
   border:none;
   border-left:1px dashed #555;
   border-bottom:1px dashed #555;
@@ -968,12 +968,12 @@ body.adminpopup {
   background:url('../../../../images/map/owncell.png');
 }
 
-#map_viewport { 
-    width: 100%; 
-    height: 700px; 
-    cursor: move; 
-    margin: 20px auto; 
-    overflow: hidden; /*keep map contents from spilling over if JS is disabled*/ 
+#map_viewport {
+    width: 100%;
+    height: 700px;
+    cursor: move;
+    margin: 20px auto;
+    overflow: hidden; /*keep map contents from spilling over if JS is disabled*/
     background: black;
 }
 
@@ -1090,9 +1090,9 @@ body.adminpopup {
 .configEditorContent table {
 	width: 100%;
 }
-.configEditorContent table tr.configValueChanged input, 
-.configEditorContent table tr.configValueChanged select, 
-.configEditorContent table tr.configValueChanged textarea, 
+.configEditorContent table tr.configValueChanged input,
+.configEditorContent table tr.configValueChanged select,
+.configEditorContent table tr.configValueChanged textarea,
 .configEditorContent table tr.configValueChanged code {
 	color: #0073EA;
 	border-color: #0073EA;
@@ -1226,12 +1226,12 @@ p.notice {
 	text-decoration:none;;
 }
 
-/* 
+/*
 * Resources
 */
 
 .resmetalcolor, .tb .resmetalcolor, .rescolor0, .tb .rescolor0	{
-	color:#CFC8C2;	
+	color:#CFC8C2;
 }
 .rescrystalcolor, .tb .rescrystalcolor, .rescolor1, .tb .rescolor1	{
 	color:#C2E2EF;
@@ -1307,10 +1307,10 @@ p.notice {
 }
 
 .resfullcolor, .tb .resfullcolor	{
-	color:#f20;	
+	color:#f20;
 }
 
-/* 
+/*
 * Colors
 */
 

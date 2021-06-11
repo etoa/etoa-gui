@@ -2,10 +2,10 @@
 	/**
 	* Runs periodic tasks
 	*/
-	class PeriodicTaskRunner 
+	class PeriodicTaskRunner
 	{
 		private $totalDuration = 0;
-	
+
 		function runTask($taskIdentifier) {
 			$klass = $taskIdentifier;
 			$reflect = new ReflectionClass($klass);
@@ -16,19 +16,19 @@
 				$mtx = new Mutex();
 				$mtx->acquire();
 				$acquireDuration = timerStop($tmr);
-				
+
 				// Run task and measure time
 				$tmr = timerStart();
 				$task = new $klass();
 				$output = $task->run();
 				$duration = timerStop($tmr);
-				
+
 				// Release mutex
 				$mtx->release();
 
 				// Add to total duration
 				$this->totalDuration += $duration;
-				
+
 				// Return output
 				if (!empty($output)) {
 					$output.=" (".$duration." sec)";
@@ -42,17 +42,17 @@
 				throw new Exception("Invalid periodic task identifier");
 			}
 		}
-		
+
 		function getTotalDuration() {
 			return $this->totalDuration;
 		}
-		
+
 		/**
-		* Tests if a given task schedule matches the supplied timestamp, 
+		* Tests if a given task schedule matches the supplied timestamp,
 		* meaning that the task can be run at this time
 		*/
 		static function shouldRun($schedule, $timestamp) {
-			
+
 			// Split date into components
 			$splittedDate = array(
 				'minute' => intval(date("i", $timestamp)),
@@ -61,14 +61,14 @@
 				'month' => intval(date("n", $timestamp)),
 				'dayofweek' => intval(date("w", $timestamp))
 			);
-			
+
 			// Aliases
 			$aliases = array(
 				'@hourly' => '0 * * * *',
 				'@daily' => '0 0 * * *',
 				'@weekly' => '0 0 * * 0',
 				'@monthly' => '0 0 1 * *',
-				'@yearly' => '0 0 1 1 *',				
+				'@yearly' => '0 0 1 1 *',
 			);
 			if (isset($aliases[$schedule])) {
 				$schedule = $aliases[$schedule];
@@ -89,13 +89,13 @@
 
 			// Iterate over each element
 			foreach ($sched as $k => $v) {
-				
+
 				// Match all
 				if ($v == "*") {
 					continue;
 				}
 				$dateVal = $splittedDate[$k];
-				
+
 				// Match single number
 				if (preg_match('/^[0-9]+$/', $v)) {
 					if ($k == 'dayofweek' && $v ==7) {
@@ -106,7 +106,7 @@
 					}
 					return false;
 				}
-				
+
 				// Match multiple numbers
 				if (preg_match('/^[0-9][0-9,]+[0-9]$/', $v)) {
 					$hasMatch = false;
@@ -123,7 +123,7 @@
 					}
 					return false;
 				}
-				
+
 				// Match period
 				$m = array();
 				if (preg_match('/^\*\/([0-9]+)$/', $v, $m)) {
@@ -133,7 +133,7 @@
 					}
 					return false;
 				}
-				
+
 				// Match interval
 				$m = array();
 				if (preg_match('/^([0-9]+)-([0-9]+)$/', $v, $m)) {
@@ -144,13 +144,13 @@
 					}
 					return false;
 				}
-				
+
 				// No method matches
 				return false;
 			}
 			return true;
 		}
-		
+
 		/**
 		* Load periodic tasks from configuration
 		*/

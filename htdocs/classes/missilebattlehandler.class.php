@@ -32,7 +32,7 @@ class MissileBattleHandler
 				// Transferiert Raketen zum Startplanet
 				$mres = dbquery("
 				SELECT
-					obj_missile_id, 
+					obj_missile_id,
 					obj_cnt
 				FROM
 					missile_flights_obj
@@ -46,14 +46,14 @@ class MissileBattleHandler
 					SET
 						missilelist_count=missilelist_count+".$marr['obj_cnt']."
 					WHERE
-						missilelist_entity_id=".$arr['flight_entity_from']."							
-						AND missilelist_missile_id=".$marr['obj_missile_id']."								
+						missilelist_entity_id=".$arr['flight_entity_from']."
+						AND missilelist_missile_id=".$marr['obj_missile_id']."
 					;");
 				}
 
 				// Löscht Flug
 				dbquery("
-				DELETE FROM 
+				DELETE FROM
 					missile_flights
 				WHERE
 					flight_id=".$fid."
@@ -61,7 +61,7 @@ class MissileBattleHandler
 
 				// Löscht Raketen
 				dbquery("
-				DELETE FROM 
+				DELETE FROM
 					missile_flights_obj
 				WHERE
 					obj_flight_id=".$fid."
@@ -100,13 +100,13 @@ class MissileBattleHandler
 			$fuid = $arr['fuid'];
 			$tname = $arr['planet_name'];
 			dbquery("
-			DELETE FROM 
+			DELETE FROM
 				missile_flights
 			WHERE
 				flight_id=".$fid."
 			;");
 			$mres = dbquery("
-			SELECT 
+			SELECT
 				obj_cnt AS cnt,
 				missile_damage as dmg,
 				missile_deactivate as emp
@@ -134,7 +134,7 @@ class MissileBattleHandler
 				shuffle($m);
 				// Remove from db
 				dbquery("
-				DELETE FROM 
+				DELETE FROM
 					missile_flights_obj
 				WHERE
 					obj_flight_id=".$fid."
@@ -150,7 +150,7 @@ class MissileBattleHandler
 					missile_name
 				FROM
 					missilelist
-				INNER JOIN	
+				INNER JOIN
 					missiles
 					ON missilelist_missile_id=missile_id
 					AND missilelist_entity_id=".$tid."
@@ -242,7 +242,7 @@ class MissileBattleHandler
 					INNER JOIN
 						defense
 						ON deflist_def_id=def_id
-						AND deflist_entity_id=".$tid."	
+						AND deflist_entity_id=".$tid."
 						AND deflist_count>0
 					");
 					if (mysql_num_rows($dres)>0)
@@ -313,10 +313,10 @@ class MissileBattleHandler
 							{
 								$msg_d .= 'Sämtliche Verteidigungsanlagen wurden zerstört!'."\n";
 								dbquery("
-								UPDATE 
-									deflist 
-								SET 
-									deflist_count=0 
+								UPDATE
+									deflist
+								SET
+									deflist_count=0
 								WHERE
 									deflist_entity_id=".$tid.";");
 							}
@@ -348,16 +348,16 @@ class MissileBattleHandler
 								AND buildlist_entity_id=".$tid."
 								AND buildlist_current_level > 0
 								AND (
-								buildlist_building_id='".FLEET_CONTROL_ID."' 
-								OR buildlist_building_id='".FACTORY_ID."' 
+								buildlist_building_id='".FLEET_CONTROL_ID."'
+								OR buildlist_building_id='".FACTORY_ID."'
 								OR buildlist_building_id='".SHIPYARD_ID."'
 								OR buildlist_building_id='".MARKTPLATZ_ID."'
 								OR buildlist_building_id='".BUILD_CRYPTO_ID."'
 								)
 								AND buildlist_deactivated<".$time."
-							ORDER BY 
-								RAND() 
-							LIMIT 
+							ORDER BY
+								RAND()
+							LIMIT
 								1;");
 							if (mysql_num_rows($res)>0)
 							{

@@ -248,15 +248,15 @@
 	      echo "<td width=\"110\">";
 	      if ($arr['ship_launchable']==1 && $fleet->pilotsAvailable() >= $arr['ship_pilots'])
 	      {
-	      	echo "<input type=\"text\" 
-	      		id=\"ship_count_".$arr['ship_id']."\" 
-	      		name=\"ship_count[".$arr['ship_id']."]\" 
-	      		size=\"10\" value=\"$val\"  
-	      		title=\"Anzahl Schiffe eingeben, die mitfliegen sollen\" 
-	      		onclick=\"this.select();\" tabindex=\"".$tabulator."\" 
+	      	echo "<input type=\"text\"
+	      		id=\"ship_count_".$arr['ship_id']."\"
+	      		name=\"ship_count[".$arr['ship_id']."]\"
+	      		size=\"10\" value=\"$val\"
+	      		title=\"Anzahl Schiffe eingeben, die mitfliegen sollen\"
+	      		onclick=\"this.select();\" tabindex=\"".$tabulator."\"
 	      		onkeyup=\"FormatNumber(this.id,this.value,".$arr['shiplist_count'].",'','');\"/>
 	      	<br/>
-	      	<a href=\"javascript:;\" onclick=\"document.getElementById('ship_count_".$arr['ship_id']."').value=".$arr['shiplist_count'].";document.getElementById('ship_count_".$arr['ship_id']."').select()\">Alle</a> &nbsp; 
+	      	<a href=\"javascript:;\" onclick=\"document.getElementById('ship_count_".$arr['ship_id']."').value=".$arr['shiplist_count'].";document.getElementById('ship_count_".$arr['ship_id']."').select()\">Alle</a> &nbsp;
 	      	<a href=\"javascript:;\" onclick=\"document.getElementById('ship_count_".$arr['ship_id']."').value=0;document.getElementById('ship_count_".$arr['ship_id']."').select()\">Keine</a>";
 		      $jsAllShips["ship_count_".$arr['ship_id']]=$arr['shiplist_count'];
 		      $launchable++;
@@ -434,84 +434,84 @@
 						</td></tr>";
 					// Manuelle Auswahl
 					echo "<tr id=\"manuelselect\"><th width=\"25%\">Manuelle Eingabe:</th><td width=\"75%\">";
-					echo "<input type=\"text\" 
+					echo "<input type=\"text\"
 												id=\"man_sx\"
-												name=\"man_sx\" 
-												size=\"1\" 
-												maxlength=\"1\" 
-												value=\"$csx\" 
-												title=\"Sektor X-Koordinate\" 
+												name=\"man_sx\"
+												size=\"1\"
+												maxlength=\"1\"
+												value=\"$csx\"
+												title=\"Sektor X-Koordinate\"
 												tabindex=\"1\"
-												autocomplete=\"off\" 
-												onfocus=\"this.select()\" 
-												onclick=\"this.select()\" 
+												autocomplete=\"off\"
+												onfocus=\"this.select()\"
+												onclick=\"this.select()\"
 												onkeydown=\"detectChangeRegister(this,'t1');\"
 												onkeyup=\"if (detectChangeTest(this,'t1')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
 												onkeypress=\"return nurZahlen(event)\"
 					/>&nbsp;/&nbsp;";
-					echo "<input type=\"text\" 
-												id=\"man_sy\" 
-												name=\"man_sy\" 
-												size=\"1\" 
-												maxlength=\"1\" 
-												value=\"$csy\" 
-												title=\"Sektor Y-Koordinate\" 
+					echo "<input type=\"text\"
+												id=\"man_sy\"
+												name=\"man_sy\"
+												size=\"1\"
+												maxlength=\"1\"
+												value=\"$csy\"
+												title=\"Sektor Y-Koordinate\"
 												tabindex=\"2\"
-												autocomplete=\"off\" 
-												onfocus=\"this.select()\" 
-												onclick=\"this.select()\" 
+												autocomplete=\"off\"
+												onfocus=\"this.select()\"
+												onclick=\"this.select()\"
 												onkeydown=\"detectChangeRegister(this,'t2');\"
 												onkeyup=\"if (detectChangeTest(this,'t2')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
 												onkeypress=\"return nurZahlen(event)\"
 					/>&nbsp;&nbsp;:&nbsp;&nbsp;";
-					echo "<input type=\"text\" 
-												id=\"man_cx\" 
-												name=\"man_cx\" 
-												size=\"2\" 
-												maxlength=\"2\" 
-												value=\"$ccx\" 
-												title=\"Zelle X-Koordinate\" 
+					echo "<input type=\"text\"
+												id=\"man_cx\"
+												name=\"man_cx\"
+												size=\"2\"
+												maxlength=\"2\"
+												value=\"$ccx\"
+												title=\"Zelle X-Koordinate\"
 												tabindex=\"3\"
-												autocomplete=\"off\" 
-												onfocus=\"this.select()\" 
-												onclick=\"this.select()\" 
+												autocomplete=\"off\"
+												onfocus=\"this.select()\"
+												onclick=\"this.select()\"
 												onkeydown=\"detectChangeRegister(this,'t3');\"
 												onkeyup=\"if (detectChangeTest(this,'t3')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
 												onkeypress=\"return nurZahlen(event)\"
 					/>&nbsp;/&nbsp;";
-					echo "<input type=\"text\" 
-												id=\"man_cy\" 
-												name=\"man_cy\" 
-												size=\"2\" 
-												maxlength=\"2\" 
-												value=\"$ccy\" 
+					echo "<input type=\"text\"
+												id=\"man_cy\"
+												name=\"man_cy\"
+												size=\"2\"
+												maxlength=\"2\"
+												value=\"$ccy\"
 												tabindex=\"4\"
-												autocomplete=\"off\" 
-												onfocus=\"this.select()\" 
-												onclick=\"this.select()\" 
+												autocomplete=\"off\"
+												onfocus=\"this.select()\"
+												onclick=\"this.select()\"
 												onkeydown=\"detectChangeRegister(this,'t4');\"
 												onkeyup=\"if (detectChangeTest(this,'t4')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
 												onkeypress=\"return nurZahlen(event)\"
 					/>&nbsp;&nbsp;:&nbsp;&nbsp;";
-					echo "<input type=\"text\" 
-												id=\"man_p\" 
-												name=\"man_p\" 
-												size=\"2\" 
-												maxlength=\"2\" 
-												value=\"$psp\" 
-												title=\"Position des Planeten im Sonnensystem\" 
+					echo "<input type=\"text\"
+												id=\"man_p\"
+												name=\"man_p\"
+												size=\"2\"
+												maxlength=\"2\"
+												value=\"$psp\"
+												title=\"Position des Planeten im Sonnensystem\"
 												tabindex=\"5\"
-												autocomplete=\"off\" 
-												onfocus=\"this.select()\" 
-												onclick=\"this.select()\" 
+												autocomplete=\"off\"
+												onfocus=\"this.select()\"
+												onclick=\"this.select()\"
 												onkeydown=\"detectChangeRegister(this,'t5');\"
 												onkeyup=\"if (detectChangeTest(this,'t5')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
 												onkeypress=\"return nurZahlen(event)\"
 					/></td></tr>";
 
 					echo "<tr id=\"bookmarkselect\"><th width=\"25%\">Zielfavoriten:</th><td width=\"75%\" align=\"left\">";
-							echo "<select name=\"bookmarks\" 
-											id=\"bookmarks\" 
+							echo "<select name=\"bookmarks\"
+											id=\"bookmarks\"
 											onchange=\"showLoader('submitbutton');xajax_havenBookmark(xajax.getFormValues('targetForm'));\"
 											tabindex=\"6\"
 							>\n";
@@ -543,11 +543,11 @@
 								SELECT
 									bookmarks.entity_id,
 									bookmarks.comment,
-									entities.code      
+									entities.code
 								FROM
 									bookmarks
 								INNER JOIN
-									entities	
+									entities
 								ON bookmarks.entity_id=entities.id
 									AND bookmarks.user_id=".$fleet->ownerid().";");
 
@@ -571,8 +571,8 @@
 					echo "<tr id=\"speedselect\">
 						<th width=\"25%\">Speedfaktor:</th>
 						<td width=\"75%\" align=\"left\">";
-							echo "<select name=\"speed_percent\" 
-											id=\"duration_percent\" 
+							echo "<select name=\"speed_percent\"
+											id=\"duration_percent\"
 											onchange=\"showLoader('submitbutton');showLoader('duration');xajax_havenTargetInfo(xajax.getFormValues('targetForm'))\"
 											tabindex=\"6\"
 							>\n";
@@ -677,7 +677,7 @@
 					entities.code
 				FROM
 					entities
-				INNER JOIN	
+				INNER JOIN
 					cells
 				ON
 					entities.cell_id=cells.id
@@ -749,84 +749,84 @@
 								</td></tr>";
 						// Manuelle Auswahl
 						echo "<tr><th width=\"25%\">Manuelle Eingabe:</th><td width=\"75%\">";
-						echo "<input type=\"text\" 
+						echo "<input type=\"text\"
 													id=\"man_sx\"
-													name=\"man_sx\" 
-													size=\"1\" 
-													maxlength=\"1\" 
-													value=\"$csx\" 
-													title=\"Sektor X-Koordinate\" 
+													name=\"man_sx\"
+													size=\"1\"
+													maxlength=\"1\"
+													value=\"$csx\"
+													title=\"Sektor X-Koordinate\"
 													tabindex=\"1\"
-													autocomplete=\"off\" 
-													onfocus=\"this.select()\" 
-													onclick=\"this.select()\" 
+													autocomplete=\"off\"
+													onfocus=\"this.select()\"
+													onclick=\"this.select()\"
 													onkeydown=\"detectChangeRegister(this,'t1');\"
 													onkeyup=\"if (detectChangeTest(this,'t1')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
 													onkeypress=\"return nurZahlen(event)\"
 						/>&nbsp;/&nbsp;";
-						echo "<input type=\"text\" 
-													id=\"man_sy\" 
-													name=\"man_sy\" 
-													size=\"1\" 
-													maxlength=\"1\" 
-													value=\"$csy\" 
-													title=\"Sektor Y-Koordinate\" 
+						echo "<input type=\"text\"
+													id=\"man_sy\"
+													name=\"man_sy\"
+													size=\"1\"
+													maxlength=\"1\"
+													value=\"$csy\"
+													title=\"Sektor Y-Koordinate\"
 													tabindex=\"2\"
-													autocomplete=\"off\" 
-													onfocus=\"this.select()\" 
-													onclick=\"this.select()\" 
+													autocomplete=\"off\"
+													onfocus=\"this.select()\"
+													onclick=\"this.select()\"
 													onkeydown=\"detectChangeRegister(this,'t2');\"
 													onkeyup=\"if (detectChangeTest(this,'t2')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
 													onkeypress=\"return nurZahlen(event)\"
 						/>&nbsp;&nbsp;:&nbsp;&nbsp;";
-						echo "<input type=\"text\" 
-													id=\"man_cx\" 
-													name=\"man_cx\" 
-													size=\"2\" 
-													maxlength=\"2\" 
-													value=\"$ccx\" 
-													title=\"Zelle X-Koordinate\" 
+						echo "<input type=\"text\"
+													id=\"man_cx\"
+													name=\"man_cx\"
+													size=\"2\"
+													maxlength=\"2\"
+													value=\"$ccx\"
+													title=\"Zelle X-Koordinate\"
 													tabindex=\"3\"
-													autocomplete=\"off\" 
-													onfocus=\"this.select()\" 
-													onclick=\"this.select()\" 
+													autocomplete=\"off\"
+													onfocus=\"this.select()\"
+													onclick=\"this.select()\"
 													onkeydown=\"detectChangeRegister(this,'t3');\"
 													onkeyup=\"if (detectChangeTest(this,'t3')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
 													onkeypress=\"return nurZahlen(event)\"
 						/>&nbsp;/&nbsp;";
-						echo "<input type=\"text\" 
-													id=\"man_cy\" 
-													name=\"man_cy\" 
-													size=\"2\" 
-													maxlength=\"2\" 
-													value=\"$ccy\" 
+						echo "<input type=\"text\"
+													id=\"man_cy\"
+													name=\"man_cy\"
+													size=\"2\"
+													maxlength=\"2\"
+													value=\"$ccy\"
 													tabindex=\"4\"
-													autocomplete=\"off\" 
-													onfocus=\"this.select()\" 
-													onclick=\"this.select()\" 
+													autocomplete=\"off\"
+													onfocus=\"this.select()\"
+													onclick=\"this.select()\"
 													onkeydown=\"detectChangeRegister(this,'t4');\"
 													onkeyup=\"if (detectChangeTest(this,'t4')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
 													onkeypress=\"return nurZahlen(event)\"
 						/>&nbsp;&nbsp;:&nbsp;&nbsp;";
-						echo "<input type=\"text\" 
-													id=\"man_p\" 
-													name=\"man_p\" 
-													size=\"2\" 
-													maxlength=\"2\" 
-													value=\"$psp\" 
-													title=\"Position des Planeten im Sonnensystem\" 
+						echo "<input type=\"text\"
+													id=\"man_p\"
+													name=\"man_p\"
+													size=\"2\"
+													maxlength=\"2\"
+													value=\"$psp\"
+													title=\"Position des Planeten im Sonnensystem\"
 													tabindex=\"5\"
-													autocomplete=\"off\" 
-													onfocus=\"this.select()\" 
-													onclick=\"this.select()\" 
+													autocomplete=\"off\"
+													onfocus=\"this.select()\"
+													onclick=\"this.select()\"
 													onkeydown=\"detectChangeRegister(this,'t5');\"
 													onkeyup=\"if (detectChangeTest(this,'t5')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
 													onkeypress=\"return nurZahlen(event)\"
 						/></td></tr>";
 
 						echo "<tr id=\"bookmarkselect\"><th width=\"25%\">Zielfavoriten:</th><td width=\"75%\" align=\"left\">";
-								echo "<select name=\"bookmarks\" 
-												id=\"bookmarks\" 
+								echo "<select name=\"bookmarks\"
+												id=\"bookmarks\"
 												onchange=\"showLoader('submitbutton');xajax_havenBookmark(xajax.getFormValues('targetForm'));\"
 												tabindex=\"6\"
 								>\n";
@@ -858,11 +858,11 @@
 									SELECT
 										bookmarks.entity_id,
 										bookmarks.comment,
-										entities.code      
+										entities.code
 									FROM
 										bookmarks
 									INNER JOIN
-										entities	
+										entities
 									ON bookmarks.entity_id=entities.id
 										AND bookmarks.user_id=".$fleet->ownerid().";");
 
@@ -886,8 +886,8 @@
 						echo "<tr id=\"speedselect\">
 							<th width=\"25%\">Speedfaktor:</th>
 							<td width=\"75%\" align=\"left\">";
-								echo "<select name=\"speed_percent\" 
-												id=\"duration_percent\" 
+								echo "<select name=\"speed_percent\"
+												id=\"duration_percent\"
 												onchange=\"showLoader('submitbutton');showLoader('duration');xajax_havenTargetInfo(xajax.getFormValues('targetForm'))\"
 												tabindex=\"6\"
 								>\n";
@@ -1001,7 +1001,7 @@
 				entities.code
 			FROM
 				entities
-			INNER JOIN	
+			INNER JOIN
 				cells
 			ON
 				entities.cell_id=cells.id
@@ -1118,49 +1118,49 @@
 						<td style=\"width:150px;\" id=\"peoplefree\">".nf($fleet->getPeopleCapacity())."</td>
 						</td></tr>
 						<tr id=\"resbox1\" style=\"display:;\"><th>".RES_ICON_METAL."".RES_METAL."</th>
-						<td><input type=\"text\" name=\"res1\" id=\"res1\" value=\"".$fleet->getLoadedRes(1)."\" size=\"12\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(1,this.value)\" /> 
+						<td><input type=\"text\" name=\"res1\" id=\"res1\" value=\"".$fleet->getLoadedRes(1)."\" size=\"12\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(1,this.value)\" />
 						<a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(1,".floor($fleet->sourceEntity->getRes(1)).");\">max</a></td></tr>
 						<tr id=\"resbox2\" style=\"display:;\"><th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
-						<td><input type=\"text\" name=\"res2\" id=\"res2\" value=\"".$fleet->getLoadedRes(2)."\" size=\"12\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(2,this.value)\" /> 
+						<td><input type=\"text\" name=\"res2\" id=\"res2\" value=\"".$fleet->getLoadedRes(2)."\" size=\"12\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(2,this.value)\" />
 						<a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(2,".floor($fleet->sourceEntity->getRes(2)).");\">max</a></td></tr>
 						<tr id=\"resbox3\" style=\"display:;\"><th>".RES_ICON_PLASTIC."".RES_PLASTIC."</th>
-						<td><input type=\"text\" name=\"res3\" id=\"res3\" value=\"".$fleet->getLoadedRes(3)."\" size=\"12\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(3,this.value)\" /> 
+						<td><input type=\"text\" name=\"res3\" id=\"res3\" value=\"".$fleet->getLoadedRes(3)."\" size=\"12\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(3,this.value)\" />
 						<a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(3,".floor($fleet->sourceEntity->getRes(3)).");\">max</a></td></tr>
 						<tr id=\"resbox4\" style=\"display:;\"><th>".RES_ICON_FUEL."".RES_FUEL."</th>
-						<td><input type=\"text\" name=\"res4\" id=\"res4\" value=\"".$fleet->getLoadedRes(4)."\" size=\"12\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(4,this.value)\" /> 
+						<td><input type=\"text\" name=\"res4\" id=\"res4\" value=\"".$fleet->getLoadedRes(4)."\" size=\"12\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(4,this.value)\" />
 						<a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(4,".floor($fleet->sourceEntity->getRes(4)).");\">max</a></td></tr>
 						<tr id=\"resbox5\" style=\"display:;\"><th>".RES_ICON_FOOD."".RES_FOOD."</th>
-						<td><input type=\"text\" name=\"res5\" id=\"res5\" value=\"".$fleet->getLoadedRes(5)."\" size=\"12\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(5,this.value)\" /> 
+						<td><input type=\"text\" name=\"res5\" id=\"res5\" value=\"".$fleet->getLoadedRes(5)."\" size=\"12\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckRes(5,this.value)\" />
 						<a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(5,".floor($fleet->sourceEntity->getRes(5)).");\">max</a></td></tr>
 						<tr id=\"resbox6\" style=\"display:;\"><th>".RES_ICON_PEOPLE."Passagiere</th>
-						<td><input type=\"text\" name=\"resp\" id=\"resp\" value=\"".$fleet->capacityPeopleLoaded."\" size=\"12\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckPeople(this.value)\" /> 
+						<td><input type=\"text\" name=\"resp\" id=\"resp\" value=\"".$fleet->capacityPeopleLoaded."\" size=\"12\" tabindex=\"".($tabindex++)."\" onblur=\"xajax_havenCheckPeople(this.value)\" />
 						<a href=\"javascript:;\" onclick=\"xajax_havenCheckPeople(".floor($fleet->sourceEntity->people()).");\">max</a></td></tr>
 						<tr id=\"resbox7\" style=\"display:;\"><th id=\"respercent\">&nbsp;</th>
 						<td>&nbsp;
 						<a href=\"javascript:;\" onclick=\"xajax_havenSetResAll();\">Alles einladen</a></td></tr>
-						
+
 						<tr id=\"fetchbox1\" style=\"display:none;\"><th>".RES_ICON_METAL."".RES_METAL."</th>
-						<td><input type=\"text\" name=\"fetch1\" id=\"fres1\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalCapacity()."', '', '');\"/> 
+						<td><input type=\"text\" name=\"fetch1\" id=\"fres1\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalCapacity()."', '', '');\"/>
 						<a href=\"javascript:;\" onclick=\"document.getElementById('fres1').value=".$fleet->getTotalCapacity()."\">max</a></td></tr>
 						<tr id=\"fetchbox2\" style=\"display:none;\"><th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
-						<td><input type=\"text\" name=\"fetch2\" id=\"fres2\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalCapacity()."', '', '');\"/> 
+						<td><input type=\"text\" name=\"fetch2\" id=\"fres2\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalCapacity()."', '', '');\"/>
 						<a href=\"javascript:;\" onclick=\"document.getElementById('fres2').value=".$fleet->getTotalCapacity()."\">max</a></td></tr>
 						<tr id=\"fetchbox3\" style=\"display:none;\"><th>".RES_ICON_PLASTIC."".RES_PLASTIC."</th>
-						<td><input type=\"text\" name=\"fetch3\" id=\"fres3\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalCapacity()."', '', '');\"/> 
+						<td><input type=\"text\" name=\"fetch3\" id=\"fres3\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalCapacity()."', '', '');\"/>
 						<a href=\"javascript:;\" onclick=\"document.getElementById('fres3').value=".$fleet->getTotalCapacity()."\">max</a></td></tr>
 						<tr id=\"fetchbox4\" style=\"display:none;\"><th>".RES_ICON_FUEL."".RES_FUEL."</th>
-						<td><input type=\"text\" name=\"fetch4\" id=\"fres4\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalCapacity()."', '', '');\"/> 
+						<td><input type=\"text\" name=\"fetch4\" id=\"fres4\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalCapacity()."', '', '');\"/>
 						<a href=\"javascript:;\" onclick=\"document.getElementById('fres4').value=".$fleet->getTotalCapacity()."\">max</a></td></tr>
 						<tr id=\"fetchbox5\" style=\"display:none;\"><th>".RES_ICON_FOOD."".RES_FOOD."</th>
-						<td><input type=\"text\" name=\"fetch5\" id=\"fres5\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalCapacity()."', '', '');\"/> 
+						<td><input type=\"text\" name=\"fetch5\" id=\"fres5\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalCapacity()."', '', '');\"/>
 						<a href=\"javascript:;\" onclick=\"document.getElementById('fres5').value=".$fleet->getTotalCapacity()."\">max</a></td></tr>
 						<tr id=\"fetchbox6\" style=\"display:none;\"><th>".RES_ICON_PEOPLE."Passagiere</th>
-						<td><input type=\"text\" name=\"fetchp\" id=\"fresp\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalPeopleCapacity()."', '', '');\"/> 
+						<td><input type=\"text\" name=\"fetchp\" id=\"fresp\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '".$fleet->getTotalPeopleCapacity()."', '', '');\"/>
 						<a href=\"javascript:;\" onclick=\"document.getElementById('fresp').value=".$fleet->getTotalPeopleCapacity()."\">max</a></td></tr>
 						<tr id=\"fetchbox7\" style=\"display:none;\"><th>&nbsp;</th>
 						<td>&nbsp;
 						<a href=\"javascript:;\" onclick=\"xajax_havenSetFetchAll();\">Alles einladen</a></td></tr>
-						
+
 						<tr id=\"msgHeader\" style=\"display:none;\"><th colspan=\"2\">Nachricht</th><th>Empfänger</th></tr>
 						<tr id=\"msg\" style=\"display:none;\"></tr>
 						<tr id=\"fakeheader\" style=\"display:none;\"><th colspan=\"3\">Die Schiffe sollen als welche Schiffe getarnt werden?</th></tr>
@@ -1387,7 +1387,7 @@
 					entities.code
 				FROM
 					entities
-				INNER JOIN	
+				INNER JOIN
 					cells
 				ON
 					entities.cell_id=cells.id
@@ -1554,7 +1554,7 @@
 				entities.code
 			FROM
 				entities
-			INNER JOIN	
+			INNER JOIN
 				cells
 			ON
 				entities.cell_id=cells.id
@@ -1765,47 +1765,47 @@
 
 		if ($code == "support") {
 			echo "<form id=\"supportForm\">";
-			echo "<input type=\"text\" 
+			echo "<input type=\"text\"
 								id=\"hour\"
-								name=\"hour\" 
-								size=\"1\" 
-								maxlength=\"2\" 
-								value=\"0\" 
-								title=\"Stunden\" 
+								name=\"hour\"
+								size=\"1\"
+								maxlength=\"2\"
+								value=\"0\"
+								title=\"Stunden\"
 								tabindex=\"7\"
-								autocomplete=\"off\" 
-								onfocus=\"this.select()\" 
-								onclick=\"this.select()\" 
+								autocomplete=\"off\"
+								onfocus=\"this.select()\"
+								onclick=\"this.select()\"
 								onkeydown=\"detectChangeRegister(this,'t1');\"
 								onkeyup=\"if (detectChangeTest(this,'t1')) { xajax_havenCheckSupport(xajax.getFormValues('supportForm')); }\"
 								onkeypress=\"return nurZahlen(event)\"
 	/> h&nbsp;";
-	echo "<input type=\"text\" 
-								id=\"min\" 
-								name=\"min\" 
-								size=\"1\" 
-								maxlength=\"2\" 
-								value=\"0\" 
-								title=\"Minuten\" 
+	echo "<input type=\"text\"
+								id=\"min\"
+								name=\"min\"
+								size=\"1\"
+								maxlength=\"2\"
+								value=\"0\"
+								title=\"Minuten\"
 								tabindex=\"8\"
-								autocomplete=\"off\" 
-								onfocus=\"this.select()\" 
-								onclick=\"this.select()\" 
+								autocomplete=\"off\"
+								onfocus=\"this.select()\"
+								onclick=\"this.select()\"
 								onkeydown=\"detectChangeRegister(this,'t2');\"
 								onkeyup=\"if (detectChangeTest(this,'t2')) { xajax_havenCheckSupport(xajax.getFormValues('supportForm')); }\"
 								onkeypress=\"return nurZahlen(event)\"
 	/> min&nbsp;&nbsp;";
-	echo "<input type=\"text\" 
-								id=\"second\" 
-								name=\"second\" 
-								size=\"1\" 
-								maxlength=\"2\" 
-								value=\"0\" 
-								title=\"Sekunden\" 
+	echo "<input type=\"text\"
+								id=\"second\"
+								name=\"second\"
+								size=\"1\"
+								maxlength=\"2\"
+								value=\"0\"
+								title=\"Sekunden\"
 								tabindex=\"9\"
-								autocomplete=\"off\" 
-								onfocus=\"this.select()\" 
-								onclick=\"this.select()\" 
+								autocomplete=\"off\"
+								onfocus=\"this.select()\"
+								onclick=\"this.select()\"
 								onkeydown=\"detectChangeRegister(this,'t3');\"
 								onkeyup=\"if (detectChangeTest(this,'t3')) { xajax_havenCheckSupport(xajax.getFormValues('supportForm')); }\"
 								onkeypress=\"return nurZahlen(event)\"

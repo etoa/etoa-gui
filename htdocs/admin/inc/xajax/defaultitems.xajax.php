@@ -15,7 +15,7 @@ function changeItem($id,$value,$setid)
 		default_items
 	SET
 		item_count='".$value."'
-	WHERE 
+	WHERE
 		item_id=".$id."
 	");
 	$or->script("xajax_loadItemSet(".$setid.");");
@@ -29,7 +29,7 @@ function removeFromItemSet($id,$setid)
 	dbquery("
 	DELETE FROM
 		default_items
-	WHERE 
+	WHERE
 		item_id=".$id."
 	");
 	$or->script("xajax_loadItemSet(".$setid.");");
@@ -45,13 +45,13 @@ function showObjCountChanger($id,$setid)
 		item_count
 	FROM
 		default_items
-	WHERE 
+	WHERE
 		item_id=".$id."
 	");
 	$arr=mysql_fetch_array($res);
-	echo "<input type=\"text\" id=\"countchanger_".$id."\" value=\"".$arr['item_count']."\" size=\"3\" /> 
-	<input type=\"button\" onclick=\"xajax_changeItem(".$id.",document.getElementById('countchanger_".$id."').value,".$setid.")\" value=\"Speichern\"/> 
-	<input type=\"button\" onclick=\"xajax_loadItemSet(".$setid.")\" value=\"Abbrechen\"/> 
+	echo "<input type=\"text\" id=\"countchanger_".$id."\" value=\"".$arr['item_count']."\" size=\"3\" />
+	<input type=\"button\" onclick=\"xajax_changeItem(".$id.",document.getElementById('countchanger_".$id."').value,".$setid.")\" value=\"Speichern\"/>
+	<input type=\"button\" onclick=\"xajax_loadItemSet(".$setid.")\" value=\"Abbrechen\"/>
 	<input type=\"button\"onclick=\"xajax_removeFromItemSet(".$id.",".$setid.")\" value=\"Entfernen\" />";
 	$out = ob_get_contents();
 	ob_end_clean();
@@ -65,16 +65,16 @@ function loadItemSet($setid)
 	$or = new xajaxResponse();
 	ob_start();
 
-	$ires = dbquery("SELECT 
+	$ires = dbquery("SELECT
 		item_id as id,
 		building_name as name,
 		item_count as count
-	FROM 
-		default_items 
+	FROM
+		default_items
 	INNER JOIN
-		buildings 
+		buildings
 		ON building_id=item_object_id
-		AND item_set_id=".$setid." 
+		AND item_set_id=".$setid."
 		AND item_cat='b'
 	 ORDER BY building_type_id,building_order,building_name;");
 	if (mysql_num_rows($ires)>0)
@@ -82,21 +82,21 @@ function loadItemSet($setid)
 		echo "<br/><b>Gebäude:</b><br/>";
 		while($iarr = mysql_fetch_array($ires))
 		{
-			echo "<span onmouseover=\"this.style.color='#0f0'\" onmouseout=\"this.style.color=''\" onclick=\"xajax_showObjCountChanger(".$iarr['id'].",".$setid.")\">".$iarr['name']."</span> 
+			echo "<span onmouseover=\"this.style.color='#0f0'\" onmouseout=\"this.style.color=''\" onclick=\"xajax_showObjCountChanger(".$iarr['id'].",".$setid.")\">".$iarr['name']."</span>
 			<span id=\"details_".$iarr['id']."\">(".$iarr['count'].")</span><br/>";
 		}
 		$cnt++;
 	}
-	$ires = dbquery("SELECT 
+	$ires = dbquery("SELECT
 		item_id as id,
 		tech_name as name,
 		item_count as count
-	FROM 
-		default_items 
+	FROM
+		default_items
 	INNER JOIN
-		technologies 
+		technologies
 		ON tech_id=item_object_id
-		AND item_set_id=".$setid." 
+		AND item_set_id=".$setid."
 		AND item_cat='t'
 	 ORDER BY tech_type_id,tech_order,tech_name;");
 	if (mysql_num_rows($ires)>0)
@@ -104,21 +104,21 @@ function loadItemSet($setid)
 		echo "<br/><b>Technologien:</b><br/>";
 		while($iarr = mysql_fetch_array($ires))
 		{
-			echo "<span onmouseover=\"this.style.color='#0f0'\" onmouseout=\"this.style.color=''\" onclick=\"xajax_showObjCountChanger(".$iarr['id'].",".$setid.")\">".$iarr['name']."</span> 
+			echo "<span onmouseover=\"this.style.color='#0f0'\" onmouseout=\"this.style.color=''\" onclick=\"xajax_showObjCountChanger(".$iarr['id'].",".$setid.")\">".$iarr['name']."</span>
 			<span id=\"details_".$iarr['id']."\">(".$iarr['count'].")</span><br/>";
 		}
 		$cnt++;
 	}
-	$ires = dbquery("SELECT 
+	$ires = dbquery("SELECT
 		item_id as id,
 		ship_name as name,
 		item_count as count
-	FROM 
-		default_items 
+	FROM
+		default_items
 	INNER JOIN
-		ships 
+		ships
 		ON ship_id=item_object_id
-		AND item_set_id=".$setid." 
+		AND item_set_id=".$setid."
 		AND item_cat='s'
 	 ORDER BY ship_name;");
 	if (mysql_num_rows($ires)>0)
@@ -126,21 +126,21 @@ function loadItemSet($setid)
 		echo "<br/><b>Schiffe:</b><br/>";
 		while($iarr = mysql_fetch_array($ires))
 		{
-			echo "<span onmouseover=\"this.style.color='#0f0'\" onmouseout=\"this.style.color=''\" onclick=\"xajax_showObjCountChanger(".$iarr['id'].",".$setid.")\">".$iarr['name']."</span> 
+			echo "<span onmouseover=\"this.style.color='#0f0'\" onmouseout=\"this.style.color=''\" onclick=\"xajax_showObjCountChanger(".$iarr['id'].",".$setid.")\">".$iarr['name']."</span>
 			<span id=\"details_".$iarr['id']."\">(".$iarr['count'].")</span><br/>";
 		}
 		$cnt++;
 	}
-	$ires = dbquery("SELECT 
+	$ires = dbquery("SELECT
 		item_id as id,
 		def_name as name,
 		item_count as count
-	FROM 
-		default_items 
+	FROM
+		default_items
 	INNER JOIN
-		defense 
+		defense
 		ON def_id=item_object_id
-		AND item_set_id=".$setid." 
+		AND item_set_id=".$setid."
 		AND item_cat='d'
 	 ORDER BY def_name;");
 	if (mysql_num_rows($ires)>0)
@@ -148,7 +148,7 @@ function loadItemSet($setid)
 		echo "<br/><b>Verteidigung:</b><br/>";
 		while($iarr = mysql_fetch_array($ires))
 		{
-			echo "<span onmouseover=\"this.style.color='#0f0'\" onmouseout=\"this.style.color=''\" onclick=\"xajax_showObjCountChanger(".$iarr['id'].",".$setid.")\">".$iarr['name']."</span> 
+			echo "<span onmouseover=\"this.style.color='#0f0'\" onmouseout=\"this.style.color=''\" onclick=\"xajax_showObjCountChanger(".$iarr['id'].",".$setid.")\">".$iarr['name']."</span>
 			<span id=\"details_".$iarr['id']."\">(".$iarr['count'].")</span><br/>";
 		}
 		$cnt++;
@@ -200,8 +200,8 @@ function addItemToSet($setid,$form)
 				".$setid.",
 				'".$form['new_item_cat']."',
 				".$form['new_item_object_id'].",
-				".$form['new_item_count']."			
-			);		
+				".$form['new_item_count']."
+			);
 			");
 			$or->script("xajax_loadItemSet(".$setid.");");
 		}

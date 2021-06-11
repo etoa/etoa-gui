@@ -143,12 +143,12 @@ void BattleReport::setRestoreCivilShips(short restoreCivilShips) {
 void BattleReport::saveBattleReport() {
 	My &my = My::instance();
 	mysqlpp::Connection *con_ = my.get();
-	
+
 	mysqlpp::Query query = con_->query();
-	
+
 	try	{
 		if (!this->id) throw 0;
-		
+
 		query << std::setprecision(18)
 			<< "INSERT INTO "
 			<< "	`reports_battle` "

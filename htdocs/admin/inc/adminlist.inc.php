@@ -1,6 +1,6 @@
 <?PHP
 	echo "<h1>Admin-Liste</h1>";
-		
+
 	echo "<table class=\"tb\">
 	<tr>
 		<th>Nick</th>
@@ -19,6 +19,6 @@
 			<td>".$arr->getRolesStr()."</td>
 			<td>".($arr->boardUrl ? "<a href=\"".$arr->boardUrl."\" target=\"_blank\">Profil</a>" : "")."</td>
 		</tr>";
-	}		
+	}
 	echo "</table><br/> ";
 ?>

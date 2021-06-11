@@ -6,7 +6,7 @@ $xajax->register(XAJAX_FUNCTION,'reportSelectAll');
 
 function reportSetRead($id)
 {
-	$or = new xajaxResponse();	
+	$or = new xajaxResponse();
 	$r = Report::createFactory($id);
 	$r->read = true;
 	$or->assign("repimg".$id,"src","images/pm_normal.gif");
@@ -15,7 +15,7 @@ function reportSetRead($id)
 
 function reportSetDeleted($id)
 {
-	$or = new xajaxResponse();	
+	$or = new xajaxResponse();
 	$r = Report::createFactory($id);
 	$r->deleted = true;
 	$or->assign("header".$id,'innerHTML',"<i>".$r->subject." (gel&ouml;scht)</i>");

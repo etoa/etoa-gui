@@ -7,7 +7,7 @@
 
 /**
 * Handles Attack....
-* 
+*
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 namespace attack

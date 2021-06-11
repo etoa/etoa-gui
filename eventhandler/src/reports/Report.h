@@ -13,7 +13,7 @@
 
 /**
 * Report class
-* 
+*
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
@@ -21,12 +21,12 @@
 class Report
 {
 public:
-	Report() {	
+	Report() {
 		this->content = "";
 		this->subject = "";
 		this->type = "other";
 		this->subtype = "other";
-		
+
 		this->timestamp=0;
 		this->allianceId=0;
 		this->entity1Id=0;
@@ -36,16 +36,16 @@ public:
 
 	Report(Report* report) {
 	}
-		
+
 	virtual ~Report() {
 		while (!this->users.empty()) {
 			this->save(this->users.back());
 			this->users.pop_back();
 		}
 	}
-	
+
 	int getId();
-	
+
 	void setType(std::string type);
 	void setSubtype(std::string subtype);
 	void setTimestamp(unsigned int timestamp=0);
@@ -56,10 +56,10 @@ public:
 	void setEntity1Id(unsigned int entity1Id);
 	void setEntity2Id(unsigned int entity2Id);
 	void setOpponent1Id(unsigned int opponent1Id);
-	
+
 protected:
 	int save(int userId);
-	
+
 	std::string type;
 	std::string subtype;
 	unsigned int id;

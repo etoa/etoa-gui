@@ -65,7 +65,7 @@
 																		"text" => "ID",
 																		"type" => "readonly",
 																		"show_overview" => 1
-																	),  
+																	),
 												array	(	"name" => "def_name",
 																		"text" => "Name",
 																		"type" => "text",
@@ -186,7 +186,7 @@
 																		"type" => "readonly",
 																		"show_overview" => 0,
 																		"columnend" => 1
-																	), 																	
+																	),
 
 											array	(	"name" => "def_structure",
 																		"text" => "Struktur",
@@ -244,7 +244,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0,
 																		"line" => 1
-																	),																	
+																	),
 											array	(	"name" => "def_fields",
 																		"text" => "Felder",
 																		"type" => "text",
@@ -286,7 +286,7 @@
 																		"select_elem" => admin_get_select_elements('def_cat',"cat_id","cat_name","cat_name",array("0"=>"(Keine)")),
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
-																	),																	
+																	),
 											array	(	"name" => "def_race_id",
 																		"text" => "Rasse",
 																		"type" => "select",

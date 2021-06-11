@@ -42,7 +42,7 @@ if ('undefined' != typeof xajax.debug) {
   xajax.debug.text[125] = 'HECHO [';
   xajax.debug.text[126] = 'ms]';
   xajax.debug.text[127] = 'INICIALIZANDO PETICION OBJETO';
-   
+
   xajax.debug.exceptions = [];
   xajax.debug.exceptions[10001] = 'Invalid response XML: La respuesta contiene una etiqueta desconocida: {data}.';
   xajax.debug.exceptions[10002] = 'GetRequestObject: XMLHttpRequest no disponible, xajax esta deshabilitado.';

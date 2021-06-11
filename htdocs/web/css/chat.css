@@ -26,10 +26,10 @@ div.chatmsg, div.serverMessage {
 	font-size: 1em;
 }
 
-#chatitems	{ 
+#chatitems	{
 	border-radius:2px;
-	padding:5px;	
-	margin-top:2px;	
+	padding:5px;
+	margin-top:2px;
 	background:rgba(0,0,0, 0.3);
 	overflow:auto;
 	vertical-align:middle;
@@ -66,7 +66,7 @@ div.chatmsg, div.serverMessage {
 	color:#fff;
 }
 
-#loading	{ 
+#loading	{
 	position:fixed;
 	left:0px;
 	right:0px;
@@ -78,16 +78,16 @@ div.chatmsg, div.serverMessage {
 	vertical-align:middle;
 }
 
-#loadingAnimation { 
+#loadingAnimation {
 	  display:inline-block;
 	  width:20px;
 }
 
-#loadingAnimation img { 
+#loadingAnimation img {
 	vertical-align:middle;
 }
 
-#loading span { 
+#loading span {
 	vertical-align:middle;
 }
 

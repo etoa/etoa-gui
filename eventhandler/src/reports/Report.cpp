@@ -37,7 +37,7 @@ void Report::addUser(int userId) {
 		std::vector<int>::iterator it;
 		for (it = this->users.begin(); it < this->users.end(); it++ )
 			if (*it == userId) return;
-		this->users.push_back(userId);	
+		this->users.push_back(userId);
 	}
 }
 
@@ -60,12 +60,12 @@ void Report::setOpponent1Id(unsigned int opponent1Id) {
 int Report::save(int userId) {
 	My &my = My::instance();
 	mysqlpp::Connection *con_ = my.get();
-	
+
 	mysqlpp::Query query = con_->query();
-	
+
 	try	{
 		if (!this->timestamp) this->timestamp = std::time(NULL);
-		
+
 		query << "INSERT INTO "
 			<< "	`reports` "
 			<< "( "

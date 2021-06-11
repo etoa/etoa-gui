@@ -38,7 +38,7 @@ function messagesSelectAllInCategory($cid,$cnt,$bv)
 
 function messagesSetRead($mid)
 {
-  $or = new xajaxResponse();	
+  $or = new xajaxResponse();
   dbquery("UPDATE
   	messages
   SET

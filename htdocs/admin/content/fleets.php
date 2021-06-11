@@ -16,12 +16,12 @@
 		if (isset($_POST['flightban_deactivate']))
 		{
 			dbquery("
-			UPDATE 
-				config 
-			SET 
+			UPDATE
+				config
+			SET
 				config_value=0,
-				config_param1='' 
-			WHERE 
+				config_param1=''
+			WHERE
 				config_name='flightban';");
 
 			$conf['flightban']['v']=0;
@@ -37,21 +37,21 @@
 			if($flightban_from < $flightban_to)
 			{
 				dbquery("
-				UPDATE 
-					config 
-				SET 
+				UPDATE
+					config
+				SET
 					config_param1='".$flightban_from."',
-					config_param2='".$flightban_to."' 
-				WHERE 
+					config_param2='".$flightban_to."'
+				WHERE
 					config_name='flightban_time';");
 
 				dbquery("
-				UPDATE 
-					config 
-				SET 
+				UPDATE
+					config
+				SET
 					config_value=1,
-					config_param1='".mysql_real_escape_string($_POST['flightban_reason'])."' 
-				WHERE 
+					config_param1='".mysql_real_escape_string($_POST['flightban_reason'])."'
+				WHERE
 					config_name='flightban';");
 
 				$conf['flightban']['v']=1;
@@ -69,12 +69,12 @@
 		if (isset($_POST['battleban_deactivate']))
 		{
 			dbquery("
-			UPDATE 
-				config 
-			SET 
+			UPDATE
+				config
+			SET
 				config_value=0,
-				config_param1='' 
-			WHERE 
+				config_param1=''
+			WHERE
 				config_name='battleban';");
 
 			$conf['battleban']['v']=0;
@@ -90,30 +90,30 @@
 			{
 
 				dbquery("
-				UPDATE 
-					config 
-				SET 
+				UPDATE
+					config
+				SET
 					config_value=1,
 					config_param1='".mysql_real_escape_string($_POST['battleban_reason'])."'
-				WHERE 
+				WHERE
 					config_name='battleban';");
 
 				dbquery("
-				UPDATE 
-					config 
-				SET 
+				UPDATE
+					config
+				SET
 					config_param1='".mysql_real_escape_string($_POST['battleban_arrival_text_fleet'])."',
 					config_param2='".mysql_real_escape_string($_POST['battleban_arrival_text_missiles'])."'
-				WHERE 
+				WHERE
 					config_name='battleban_arrival_text';");
 
 				dbquery("
-				UPDATE 
-					config 
-				SET 
+				UPDATE
+					config
+				SET
 					config_param1='".$battleban_from."',
-					config_param2='".$battleban_to."' 
-				WHERE 
+					config_param2='".$battleban_to."'
+				WHERE
 					config_name='battleban_time';");
 
 				$conf['battleban']['v']=1;
@@ -380,9 +380,9 @@
 				}
 
 				dbquery("
-				UPDATE 
+				UPDATE
 					fleet
-				SET 
+				SET
 					user_id='".intval($_POST['user_id'])."',
 					launchtime='$launchtime',
 					landtime='$landtime',
@@ -408,7 +408,7 @@
 					fetch_food='".intval($_POST['fetch_food'])."',
 					fetch_power='".intval($_POST['fetch_power'])."',
 					fetch_people='".intval($_POST['fetch_people'])."'
-				WHERE 
+				WHERE
 					id='".intval($_GET['fleetedit'])."';");
 				success_msg("Flottendaten geändert!");
 			}
@@ -420,9 +420,9 @@
 				$users[$uarr['user_id']]=$uarr['user_nick'];
 			}
 			$res=dbquery("
-			SELECT 
+			SELECT
 				*
-			FROM 
+			FROM
 				fleet
 			WHERE
 				id='".intval($_GET['fleetedit'])."'
@@ -437,20 +437,20 @@
 					$difftime = time() - $arr['launchtime'];
 					$landtime = time() + $difftime ;
 					dbquery("
-					UPDATE 
+					UPDATE
 						fleet
-					SET 
+					SET
 						launchtime='".time()."',
 						landtime='".$landtime."',
 						entity_from=".$arr['entity_to'].",
 						entity_to=".$arr['entity_from'].",
 						status='2'
-					WHERE 
+					WHERE
 						id='".intval($_GET['fleetedit'])."';");
 					$res=dbquery("
-					SELECT 
+					SELECT
 						*
-					FROM 
+					FROM
 						fleet
 					WHERE
 						id='".intval($_GET['fleetedit'])."'
@@ -464,20 +464,20 @@
 					$difftime = time() - $arr['launchtime'];
 					$landtime = time() + $difftime ;
 					dbquery("
-					UPDATE 
+					UPDATE
 						fleet
-					SET 
+					SET
 						launchtime='".time()."',
 						landtime='".$landtime."',
 						entity_from=".$arr['entity_to'].",
 						entity_to=".$arr['entity_from'].",
 						status='1'
-					WHERE 
+					WHERE
 						id='".intval($_GET['fleetedit'])."';");
 					$res=dbquery("
-					SELECT 
+					SELECT
 						*
-					FROM 
+					FROM
 						fleet
 					WHERE
 						id='".intval($_GET['fleetedit'])."'
@@ -754,14 +754,14 @@
 						<input type=\"submit\" value=\"&Uuml;bernehmen\" name=\"submit_edit\" /> ";
 					if ($arr['status']==0)
 					{
-						echo "	<input type=\"submit\" value=\"Flug abbrechen\" name=\"submit_cancel\" /> 
-						<input type=\"submit\" value=\"Flug zurückschicken\" name=\"submit_return\" /> 
-						<input type=\"submit\" value=\"Flotte auf dem Ziel landen\" name=\"submit_land\" /> 
+						echo "	<input type=\"submit\" value=\"Flug abbrechen\" name=\"submit_cancel\" />
+						<input type=\"submit\" value=\"Flug zurückschicken\" name=\"submit_return\" />
+						<input type=\"submit\" value=\"Flotte auf dem Ziel landen\" name=\"submit_land\" />
 						";
 					}
 					else
 					{
-						echo "	<input type=\"submit\" value=\"Flotte auf dem Ziel landen\" name=\"submit_land\" /> 
+						echo "	<input type=\"submit\" value=\"Flotte auf dem Ziel landen\" name=\"submit_land\" />
 						";
 					}
 					echo "</form><br/>";
@@ -859,14 +859,14 @@
 					echo "<input type=\"submit\" name=\"editship_submit\" value=\"&Auml;nderungen &uuml;bernehmen\" />
 					<br/><br/>";
 
-					echo "<input type=\"text\" name=\"fs_ship_cnt_new\" value=\"1\" size=\"5\" /> Schiffe des Typs 
+					echo "<input type=\"text\" name=\"fs_ship_cnt_new\" value=\"1\" size=\"5\" /> Schiffe des Typs
 					<select name=\"fs_ship_id_new\">";
 					$ssres=dbquery("SELECT ship_id,ship_name FROM ships ORDER BY ship_name;");
 					while ($ssarr=mysql_fetch_array($ssres))
 					{
 						echo "<option value=\"".$ssarr['ship_id']."\">".$ssarr['ship_name']."</option>";
 					}
-					echo "</select> hinzuf&uuml;gen: 
+					echo "</select> hinzuf&uuml;gen:
 					<input type=\"submit\" name=\"newship_submit\" value=\"Ausf&uuml;hren\" /></form><br/>";
 				}
 				else
@@ -969,7 +969,7 @@
         LEFT JOIN
         	users u
         	ON f.user_id=u.user_id
-        WHERE 
+        WHERE
         	1
 				";
 
@@ -1150,7 +1150,7 @@
 			echo "<option value=\"\">(egal)</option>";
 			for ($x=0;$x<=$conf['num_planets']['p2'];$x++)
 				echo "<option value=\"$x\">$x</option>";
-			echo "</select>		
+			echo "</select>
 			</td></tr>";
 			echo "<tr><td class=\"tbltitle\">Startentität-ID</td><td class=\"tbldata\"><input type=\"text\" name=\"entity_from_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
 			echo "<tr><td class=\"tbltitle\">Zielentität-ID</td><td class=\"tbldata\"><input type=\"text\" name=\"entity_to_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
@@ -1208,7 +1208,7 @@
 						$landtime = parseDatePicker('landtime', $_POST);
 
 						dbquery("
-						INSERT INTO 
+						INSERT INTO
 							fleet
 						(
 						user_id,
@@ -1220,7 +1220,7 @@
 						status
 						)
 						VALUES
-						( 
+						(
 							'".intval($_POST['user_id'])."',
 							".$launchtime.",
 							".$landtime.",
@@ -1231,14 +1231,14 @@
 						);");
 						$fid = mysql_insert_id();
 						dbquery("
-						INSERT INTO 
-							fleet_ships 
+						INSERT INTO
+							fleet_ships
 						(
 							fs_fleet_id,
 							fs_ship_id,
 							fs_ship_cnt
-						) 
-						VALUES 
+						)
+						VALUES
 						(
 							".$fid.",
 							".intval($_POST['fs_ship_id_new']).",
@@ -1367,7 +1367,7 @@
 			echo "<tr>
 			<td class=\"tbltitle\">Schiffe:</td>
 				<td class=\"tbldata\">
-					<input type=\"text\" name=\"fs_ship_cnt_new\" value=\"1\" size=\"5\" /> 
+					<input type=\"text\" name=\"fs_ship_cnt_new\" value=\"1\" size=\"5\" />
 					<select name=\"fs_ship_id_new\">";
 					$ssres=dbquery("SELECT ship_id,ship_name FROM ships ORDER BY ship_name;");
 					while ($ssarr=mysql_fetch_array($ssres))

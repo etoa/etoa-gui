@@ -42,19 +42,19 @@ Version 3.6 (round 20)
 --------------
 ### Features ###
 
-* added info line 
+* added info line
 * added the option to switch the main planet once
 * added option to mark ships as tradeable
 * added work optimize functionality for building defense
 
 ### Bugfixes ###
 * fixed background images for large screen sizes
-* fixed the mouse over for the food cost on the defense page 
+* fixed the mouse over for the food cost on the defense page
 * deactivated buildings can no longer be demolished
 * emp attack now only targets buildings level 1 or higher
 * fixed several compatibility issues with Mysql5.7
 * replaced all game and most of the admin smarty templates with twig
- 
+
 
 Version 3.5.24
 --------------
@@ -107,7 +107,7 @@ Version 3.5.19
 
 ### Features ###
 
- * color for aliens/npc 
+ * color for aliens/npc
 
 
 Version 3.5.18
@@ -130,7 +130,7 @@ Version 3.5.17
  * fix for selecting unhabitable planets as startplanet
  * fix for mp filter
  * fix for fake attacks
-    
+
 ### Administration ###
 
  * fix for market->ships
@@ -141,11 +141,11 @@ Version 3.5.16
 
 ### Bugfixes ###
 
- * fixed mp bug 
+ * fixed mp bug
  * fixed deff text at help page
  * fixed white page when session expired
  * fixed capacity from ships
- 
+
 ### Administration ###
 
  * added createable userlogs
@@ -186,11 +186,11 @@ Version 3.5.15(round 16)
  * colorpicker for chatcolor
  * added log for nickchange
  * deleting request will trigger umode now
- 
+
 ### Administration ###
- 
- * fixed editing for already building ships 
- 
+
+ * fixed editing for already building ships
+
 Version 3.5.14.1
 ---------------
 
@@ -198,7 +198,7 @@ Version 3.5.14.1
 
  * fixed log-in problems caused by https
  * fixed problem with lvl 1 buildings
- 
+
 Version 3.5.14
 ---------------
 
@@ -212,13 +212,13 @@ Version 3.5.14
  * fixed spy attack has no effect on stats/elo anymore
 
 ### Administration ###
- 
+
  * adding from alli techs
  * added function to restore messages (reports will follow later)
  * Backend eventhandler PID file can now be stored locally
  * Cronjob can be set up automatically
- * Fixed JavaSCript error on start-objects screen 
- 
+ * Fixed JavaSCript error on start-objects screen
+
 Version 3.5.13
 --------------
 
@@ -231,7 +231,7 @@ Version 3.5.13
  * Replace image filter script on building and research screens with CSS3 filter effects
 
 ### Administration ###
- 
+
  * Fixed error related to mysql string escaping on admin overview page
 
 Version 3.5.12
@@ -256,13 +256,13 @@ Version 3.5.11
 
  * fixed ressource symbols for revolution design
  * admins wont be shown in diplomacy rating anymore
- * fixed defense bug 
+ * fixed defense bug
  * fixed steal bug while gen was researching
  * fixed some typos
 
 ### Administration ###
- 
- * even if all ships are bunkered they will be still shown in tool	
+
+ * even if all ships are bunkered they will be still shown in tool
  * sitting+multi edit
  * search for dual in tool
  * button to add all techs at once for 1 person
@@ -289,7 +289,7 @@ Version 3.5.9
 
 ### Bugfixes ###
 
- * fixed support from ships with 0 fuelcost 
+ * fixed support from ships with 0 fuelcost
  * fixed marketreservation
  * fixed titles
 
@@ -312,7 +312,7 @@ Version 3.5.8
  * added growing to asterio fields
  * tutorial can now be reopend at configurations
 
-### Hotfix ### 
+### Hotfix ###
 
  * Fixed analyzing and collecting fuel
 
@@ -323,7 +323,7 @@ Version 3.5.7
 
  * Fixed birthrate
  * Fixed typos
- * Fixed bug where u couldnt destroy more than 999 missles at once	 
+ * Fixed bug where u couldnt destroy more than 999 missles at once
  * Infra ships now dont give any exp at all anymore
  * Exp gained from alliatk will now be divided by the amount of attackers
  * Removed ' from planetnames to avoid sql problems
@@ -338,11 +338,11 @@ Version 3.5.7
  * Added field for %-calculation at market
  * Gentech counts as special tech now(allows researching of Gentech+other tech at same time)
  * Crytocenter now shows more infos about target(e.g. distance, name, planet)
- * Reworked 404-page  
+ * Reworked 404-page
  * Added optimizing button for each ship
  * Market reservations for a person will now be displayed at top
  * Players wont be able to join another alliance for x hours after leaving old one
- * Bombing buildings is now only allowed at war 
+ * Bombing buildings is now only allowed at war
  * New pictures for supra ships
 
  ### Administration ###
@@ -357,21 +357,21 @@ Version 3.5.6
 ### Game ###
 
 #### Bugfixes ####
-  
+
  * Fixed several spelling mistakes
- * Optimizing function now uses the correct amount of workers 
+ * Optimizing function now uses the correct amount of workers
 
 ### Administration ###
 
 #### Bugfixes ####
 
- * Fixed shipcreation 
+ * Fixed shipcreation
 
 Version 3.5.5
 -------------
 
 #### Bugfixes ####
-  
+
  * Missiles can't be bought anymore when the required tech is 0
  * Cardassia Mysticum now displays the correct healvalue
 
@@ -379,10 +379,10 @@ Version 3.5.4
 -------------
 
 #### Bugfixes ####
-  
+
  * Architekt can't be discharged anymore after starting a building
  * Admiral can't be discharged anymore after starting a fleet
- * EMP now correctly disables market 
+ * EMP now correctly disables market
 
 
 Version 3.5.3
@@ -393,35 +393,35 @@ Version 3.5.3
 #### Features ####
 
  * Added energy technology bonus (5% more per level starting from level 10)
- * Collected resources will now be shown in userinfo 
+ * Collected resources will now be shown in userinfo
 
 #### Bugfixes ####
-  
+
  * Planetoverview displaying now right values in defense tab, including mysticum bonus
  * Healing bonus from mysticums will now be included in planet overview
  * Improvements of the chat frame representation in Revolution design
- 
+
 ### Administration ###
 
 #### Features ####
 
  * Added the name and email address from dualplayers to the player overview page
- * Active sitters will now be shown in multi detection 
+ * Active sitters will now be shown in multi detection
  * Added collected resources from debris fields to user information
- * Public and internal changelog can now be viewed (Overview -> Changelog) 
+ * Public and internal changelog can now be viewed (Overview -> Changelog)
 
 #### Bugfixes ####
-  
+
  * Fixed bugs in user research entry editor (status, time format)
- 
-### Framework ### 
+
+### Framework ###
 
 #### Features ####
 
  * Added helper script for DB migration when using Microsoft Windows as development environment
 
 #### Changes ####
- 
+
  * The Revolution design is now being used in the installation wizard
 
 
@@ -438,15 +438,15 @@ Version 3.5.2
 #### Bugfixes ####
 
  * Fixed planet circle position in overview screen
- 
+
 ### Administration ###
 
 #### Bugfixes ####
 
- * Fixed invalid entity / planet ID in link to planets in user economy tab 
+ * Fixed invalid entity / planet ID in link to planets in user economy tab
  * Fixed session APM calculation in user surveillance screen
- 
-### Framework ### 
+
+### Framework ###
 
 #### Bugfixes ####
 
@@ -517,7 +517,7 @@ Version 3.5.0
  * Radius discovered by fleet control expands at every second level of the fleet control
  * Minimal build time for ships and defenses is now 1 second
  * Removed the ugly progessbars in building and research screen until a better solution has been found
- 
+
 ### Administration ###
 
 #### Features ####
@@ -534,7 +534,7 @@ Version 3.5.0
  * Missile silo parameters can be configured in the settings
  * Added possibility to manage backend daemon (start / stop)
  * Allow to select radius when changing user map discovery
- 
+
 #### Changes ####
 
  * Manual updates page moved to "Eventhandler" -> "Periodic tasks" menu item
@@ -544,7 +544,7 @@ Version 3.5.0
  * If no backup directory is defined, a default path will be used
  * Backend status, current market rates and last statistics update timestamp are stored in new runtime_data storage table
  * Updated layout of imagepacks page and fixed several small bugs
- 
+
 #### Bugfixes ####
 
  * Limited number of entries in user observation log (#57)
@@ -585,7 +585,7 @@ Version 3.4.0
  * Fixed possible SQL injection vulnerabilities in notepad class
  * Fixed race detail page in help
  * User and allinace profile image directories are now being created created if they not exist
- 
+
 ### Administration ###
 
 #### Features ####
@@ -633,11 +633,11 @@ Version 3.3.0
 ### Administration ###
 
 #### Features ####
- 
+
  * Wings können ausgeschaltet werden
- 
+
 #### Bugfixes ####
- 
+
  * Galaxiekarte im tool aufdecken
  * Chatadmin-Funktionen gehen nicht, wenn der User ein Leerzeichen im Namen hat
  * Inaktive User werden nicht automatisch gelöscht, gleiches bei Löschantrag

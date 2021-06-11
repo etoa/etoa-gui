@@ -36,7 +36,7 @@ if (Alliance::checkActionRights('alliancenews'))
 			$_SESSION['alliance']=array();
 
 			dbquery("
-			INSERT INTO 
+			INSERT INTO
 			alliance_news
 			(alliance_news_alliance_id,
 			alliance_news_user_id,

@@ -3,37 +3,37 @@ echo'Under Construction';
 /*
   $exo_id = mysql_query("select type_id from planet_types where type_name='Exoplanet'");
   $planets = mysql_num_rows(mysql_query("SELECT * FROM planets WHERE planet_type_id=".$exo_id));
-   
+
   echo "<h1>Alienconfig</h1>";
   $sql = dbquery('select * from alien_class');
-  
+
   if (isset($_POST['save']))
-  {  
-    mysql_query("insert into alien_class (alien_class_name) values('".$_POST['name']."')"); 
+  {
+    mysql_query("insert into alien_class (alien_class_name) values('".$_POST['name']."')");
   };
-  
+
   if (isset($_POST['save_planets']))
-  {  
+  {
     if($_POST['planets']>$planets)
     {
       for($x=1;$x <($_POST['planets']-$planets);$x++)
       {
-         mysql_query("update planets set type_id =".$exo_id." WHERE id = (SELECT id FROM planets where planet_user_id=0 limit 1); "); 
+         mysql_query("update planets set type_id =".$exo_id." WHERE id = (SELECT id FROM planets where planet_user_id=0 limit 1); ");
       }
     }
     else
     {
-      
-    }  
+
+    }
   }
-  
+
   echo'<form method="post">';
   tableStart('Vorhandene Alienklassen');
   echo'<tr><td>Klassenname</td><td>Flottenpunkte von</td><td>Flottenpunkte bis</td></tr>';
-   
+
   while($arr = mysql_fetch_assoc($sql))
-  {  
-    echo "<tr><td>".$arr['alien_class_name']."</td><td>".$arr['alien_class_name']."</td><td>".$arr['alien_class_name']."</td></tr>"; 
+  {
+    echo "<tr><td>".$arr['alien_class_name']."</td><td>".$arr['alien_class_name']."</td><td>".$arr['alien_class_name']."</td></tr>";
   }
   tableEnd();
   tableStart('Neue Alienklasse anlegen');
@@ -49,7 +49,7 @@ echo'Under Construction';
   echo'Neue Anzahl: <input type="number" name="planets"><br>';
   echo'<input type="submit" value="Planeten speichern" name="save_planets">';
   echo'</p>';
-  
+
   echo'</form>'
-    
+
 ?>

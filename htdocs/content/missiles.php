@@ -81,9 +81,9 @@
 				// Requirements
 				$b_req = [];
 				$rres = dbquery("
-				SELECT 
-					* 
-				FROM 
+				SELECT
+					*
+				FROM
 					missile_requirements
 				;");
 				while ($rarr = mysql_fetch_array($rres))
@@ -100,13 +100,13 @@
 				}
 				// Gebäudeliste laden
 				$sql ="
-				SELECT 
+				SELECT
 					buildlist_current_level,
 					buildlist_building_id
-				FROM 
+				FROM
 					buildlist
-				WHERE 
-					buildlist_user_id='".$cu->id."' 
+				WHERE
+					buildlist_user_id='".$cu->id."'
 					AND buildlist_entity_id='".$cp->id()."';";
 
 				$blres = dbquery($sql);
@@ -119,12 +119,12 @@
 				}
 				// Technologieliste laden
 				$tres = dbquery("
-				SELECT 
+				SELECT
 					techlist_tech_id,
-					techlist_current_level 
-				FROM 
-					techlist 
-				WHERE 
+					techlist_current_level
+				FROM
+					techlist
+				WHERE
 					techlist_user_id='".$cu->id."'
 				;");
 				while ($tarr = mysql_fetch_array($tres))
@@ -163,7 +163,7 @@
 					*
 				FROM
 					missiles
-				WHERE 
+				WHERE
 					missile_show=1
 				ORDER BY
 					missile_name
@@ -185,7 +185,7 @@
 					missilelist_count as cnt
 				FROM
 					missilelist
-				WHERE 
+				WHERE
 					missilelist_user_id=".$cu->id."
 					AND missilelist_entity_id=".$cp->id()."
 				;");
@@ -266,8 +266,8 @@
 								missilelist_count=missilelist_count-".$v."
 							WHERE
 								missilelist_user_id=".$cu->id."
-								AND missilelist_entity_id=".$cp->id()."							
-								AND missilelist_missile_id=".$k."								
+								AND missilelist_entity_id=".$cp->id()."
+								AND missilelist_missile_id=".$k."
 							;");
 							$missilelist[$k]-=$v;
 							$lcnt+=$v;
@@ -396,7 +396,7 @@
 											missilelist_count=missilelist_count+".$v."
 										WHERE
 											missilelist_user_id=".$cu->id."
-											AND missilelist_entity_id=".$cp->id()."							
+											AND missilelist_entity_id=".$cp->id()."
 											AND missilelist_missile_id=".$k."
 										");
 										$missilelist[$k]+=$v;
@@ -470,7 +470,7 @@
 									missilelist_count=missilelist_count-".$bc."
 								WHERE
 									missilelist_user_id=".$cu->id."
-									AND missilelist_entity_id=".$cp->id()."							
+									AND missilelist_entity_id=".$cp->id()."
 									AND missilelist_missile_id=".$k."
 								");
 								$missilelist[$k]-=$bc;
@@ -951,16 +951,16 @@
 									bookmarks
 								INNER JOIN
 				       				entities
-				        ON 
+				        ON
 				        	bookmarks.user_id=".$cu->id."
 				         	AND bookmarks.entity_id=entities.id
 								INNER JOIN
 									planets
 								ON
 									entities.id=planets.id
-								INNER JOIN       		
+								INNER JOIN
 									cells
-								ON 
+								ON
 									entities.cell_id=cells.id
 								ORDER BY
 				                    bookmarks.comment,
@@ -1042,7 +1042,7 @@
 								}
 								echo '</td><th>:</th>
 								<td>
-									<input type="text"  onkeyup="'.$keyup_command.'" name="sx" id="sx" value="'.$coords[0].'" size="2" autocomplete="off" maxlength="2" /> / 
+									<input type="text"  onkeyup="'.$keyup_command.'" name="sx" id="sx" value="'.$coords[0].'" size="2" autocomplete="off" maxlength="2" /> /
 									<input type="text"  onkeyup="'.$keyup_command.'" name="sy" id="sy" value="'.$coords[1].'" size="2" autocomplete="off" maxlength="2" /> :
 									<input type="text"  onkeyup="'.$keyup_command.'" name="cx" id="cx" value="'.$coords[2].'" size="2" autocomplete="off" maxlength="2" /> /
 									<input type="text"  onkeyup="'.$keyup_command.'" name="cy" id="cy" value="'.$coords[3].'" size="2" autocomplete="off" maxlength="2" /> :
@@ -1070,13 +1070,13 @@
 
 								echo '<tr><th>Zielinfo:</th><td id="targetinfo">
 								Wähle bitte ein Ziel...
-								</td></tr>				
+								</td></tr>
 								<tr><th>Entfernung:</th><td id="distance">
 								-
-								</td></tr>				
+								</td></tr>
 								<tr><th>Geschwindigkeit:</th><td id="speed">
 								-
-								</td></tr>				
+								</td></tr>
 								<tr><th>Zeit:</th><td id="time">
 								-
 								</td></tr>';
@@ -1109,7 +1109,7 @@
 											}
 											echo "
 										}
-				
+
 									}
 									".$keyup_command."
 								}

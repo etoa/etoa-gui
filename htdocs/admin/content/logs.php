@@ -170,16 +170,16 @@
 	elseif (isset($_GET['sub']) && $_GET['sub']=="logs_game")
 	{
 		$lres=dbquery("
-		SELECT 
+		SELECT
 			logs_game_cat_id,
 			logs_game_cat_name,
-			COUNT(logs_game_id) as cnt 
-		FROM 
+			COUNT(logs_game_id) as cnt
+		FROM
 			logs_game_cat
 			INNER JOIN
-			logs_game 
-			ON logs_game_cat=logs_game_cat_id	
-		GROUP BY 
+			logs_game
+			ON logs_game_cat=logs_game_cat_id
+		GROUP BY
 			logs_game_cat_id;");
 		$logs_game_type=array();
 		while ($larr=mysql_fetch_array($lres))
@@ -435,7 +435,7 @@
 				if($arr['logs_game_building_id']!=0)
 				{
 					$bres=dbquery("
-					SELECT 
+					SELECT
 						building_name
 					FROM
 						buildings
@@ -456,7 +456,7 @@
 				elseif($arr['logs_game_tech_id']!=0)
 				{
 					$tres=dbquery("
-					SELECT 
+					SELECT
 						tech_name
 					FROM
 						technologies

@@ -15,28 +15,28 @@
 	// Programmiert von Nicolas Perrenoud				 		//
 	// www.nicu.ch | mail@nicu.ch								 		//
 	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	//////////////////////////////////////////////////	
+	//////////////////////////////////////////////////
 	//
-	// 	Dateiname: buildings.php	
-	// 	Topic: Formular-Definitionen für Gebäude 
-	// 	Autor: Nicolas Perrenoud alias MrCage							
+	// 	Dateiname: buildings.php
+	// 	Topic: Formular-Definitionen für Gebäude
+	// 	Autor: Nicolas Perrenoud alias MrCage
 	// 	Erstellt: 01.12.2004
 	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage
 	// 	Bearbeitet am: 31.03.2006
-	// 	Kommentar: 	
+	// 	Kommentar:
 	//
-	
+
 	// VARIABLES
-	
-	define("MODUL_NAME","Objekt-Transformationen");				
+
+	define("MODUL_NAME","Objekt-Transformationen");
 	define("DB_TABLE", 'obj_transforms');
 	define("DB_TABLE_ID", "id");
 	define("DB_OVERVIEW_ORDER_FIELD","id");
 
 	// FIELDS
-	
+
 	// Description:
-	
+
 	// name	 											// DB Field Name
 	// text												// Field Description
 	// type												// Field Type: text, password, textarea, timestamp, radio, select, checkbox, email, url, numeric
@@ -50,7 +50,7 @@
 	// select_elem (Array)				// Select Elements (desc=>value)
 	// select_elem_checked				// Value of default checked Select Element (desc=>value)
 	// show_overview							// Set 1 to show on overview page
-  
+
 	$db_fields = array (
 											array	(	"name" => "def_id",
 																		"text" => "Verteidigung",
@@ -65,7 +65,7 @@
 																		"select_elem" => admin_get_select_elements('defense',"def_id","def_name","def_order"),
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
-																	),			
+																	),
 											array	(	"name" => "ship_id",
 																		"text" => "Schiff",
 																		"type" => "select",
@@ -79,7 +79,7 @@
 																		"select_elem" => admin_get_select_elements('ships',"ship_id","ship_name","ship_order"),
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
-																	),																																		
+																	),
 												array	(	"name" => "costs_metal",
 																		"text" => "Kosten Metall",
 																		"type" => "text",
@@ -163,7 +163,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
-																	),																	
+																	),
 											array	(	"name" => "costs_factor_ds",
 																		"text" => "Kostenfaktor V -> S",
 																		"type" => "text",
@@ -177,7 +177,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
-																	),												
+																	),
 											array	(	"name" => "num_def",
 																		"text" => "Anzahl V pro S",
 																		"type" => "text",
@@ -191,7 +191,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
-																	),																			
+																	),
 											);
-        
+
 ?>

@@ -168,15 +168,15 @@
 						echo "<td width=\"110\">".nf($arr['shiplist_bunkered'])."<br/>";
 
 				  echo "</td>";
-				  echo "<td width=\"110\"><input type=\"text\" 
-						id=\"ship_bunker_count_".$arr['shiplist_ship_id']."\" 
-						name=\"ship_bunker_count[".$arr['shiplist_ship_id']."]\" 
-						size=\"10\" value=\"$val\"  
-						title=\"Anzahl Schiffe eingeben, die mitfliegen sollen\" 
+				  echo "<td width=\"110\"><input type=\"text\"
+						id=\"ship_bunker_count_".$arr['shiplist_ship_id']."\"
+						name=\"ship_bunker_count[".$arr['shiplist_ship_id']."]\"
+						size=\"10\" value=\"$val\"
+						title=\"Anzahl Schiffe eingeben, die mitfliegen sollen\"
 						onclick=\"this.select();\"
 						onkeyup=\"FormatNumber(this.id,this.value,".$arr['shiplist_bunkered'].",'','');\"/>
 					<br/>
-					<a href=\"javascript:;\" onclick=\"document.getElementById('ship_bunker_count_".$arr['shiplist_ship_id']."').value=".$arr['shiplist_bunkered'].";document.getElementById('ship_bunker_count_".$arr['shiplist_ship_id']."').select()\">Alle</a> &nbsp; 
+					<a href=\"javascript:;\" onclick=\"document.getElementById('ship_bunker_count_".$arr['shiplist_ship_id']."').value=".$arr['shiplist_bunkered'].";document.getElementById('ship_bunker_count_".$arr['shiplist_ship_id']."').select()\">Alle</a> &nbsp;
 					<a href=\"javascript:;\" onclick=\"document.getElementById('ship_bunker_count_".$arr['shiplist_ship_id']."').value=0;document.getElementById('ship_count_".$arr['shiplist_ship_id']."').select()\">Keine</a></td></tr>";
 					$structure += $arr['shiplist_bunkered']*$ships[$arr['shiplist_ship_id']]['ship_structure'];
 					$count += $arr['shiplist_bunkered'];
@@ -341,15 +341,15 @@
 						echo "<td width=\"110\">".nf($arr['shiplist_count'])."<br/>";
 
 				  echo "</td>";
-				  echo "<td width=\"110\"><input type=\"text\" 
-						id=\"ship_bunker_count_".$arr['shiplist_ship_id']."\" 
-						name=\"ship_bunker_count[".$arr['shiplist_ship_id']."]\" 
-						size=\"10\" value=\"$val\"  
-						title=\"Anzahl Schiffe eingeben, die mitfliegen sollen\" 
-						onclick=\"this.select();\" 
+				  echo "<td width=\"110\"><input type=\"text\"
+						id=\"ship_bunker_count_".$arr['shiplist_ship_id']."\"
+						name=\"ship_bunker_count[".$arr['shiplist_ship_id']."]\"
+						size=\"10\" value=\"$val\"
+						title=\"Anzahl Schiffe eingeben, die mitfliegen sollen\"
+						onclick=\"this.select();\"
 						onkeyup=\"FormatNumber(this.id,this.value,".$arr['shiplist_count'].",'','');\"/>
 					<br/>
-					<a href=\"javascript:;\" onclick=\"document.getElementById('ship_bunker_count_".$arr['shiplist_ship_id']."').value=".$arr['shiplist_count'].";document.getElementById('ship_bunker_count_".$arr['shiplist_ship_id']."').select()\">Alle</a> &nbsp; 
+					<a href=\"javascript:;\" onclick=\"document.getElementById('ship_bunker_count_".$arr['shiplist_ship_id']."').value=".$arr['shiplist_count'].";document.getElementById('ship_bunker_count_".$arr['shiplist_ship_id']."').select()\">Alle</a> &nbsp;
 					<a href=\"javascript:;\" onclick=\"document.getElementById('ship_bunker_count_".$arr['shiplist_ship_id']."').value=0;document.getElementById('ship_bunker_count_".$arr['shiplist_ship_id']."').select()\">Keine</a></td></tr>";
 					$jsAllShips["ship_bunker_count_".$arr['shiplist_ship_id']]=$arr['shiplist_count'];
 				}

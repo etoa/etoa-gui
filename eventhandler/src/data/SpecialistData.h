@@ -9,13 +9,13 @@
 
 /**
 * SpecialistData class
-* 
+*
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
 class SpecialistData : public Data {
 public:
-	SpecialistData(mysqlpp::Row object) : Data(object, false) 
+	SpecialistData(mysqlpp::Row object) : Data(object, false)
 	{
 		this->specialistId = (short)object["specialist_id"];
 		this->specialistName = std::string(object["specialist_name"]);
@@ -51,7 +51,7 @@ public:
 		this->specialistTradeTime = (double)object["specialist_trade_time"];
 		this->specialistTradeBonus = (double)object["specialist_trade_bonus"];
 	}
-	
+
 	short getSpecialistId();
 	std::string getSpecialistName();
 	std::string getSpecialistDesc();
@@ -85,7 +85,7 @@ public:
 	double getSpecialistTarnLevel();
 	double getSpecialistTradeTime();
 	double getSpecialistTradeBonus();
-	
+
 private:
 	short specialistId;
 	std::string specialistName, specialistDesc;

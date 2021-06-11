@@ -1,8 +1,8 @@
-/* 
+/*
     Document   : reset.css
     Created on : 20.05.2011, 13:46:02
     Author     : Nicolas Perrenoud
-    Description: Reset css value to meaningfull default values, 
+    Description: Reset css value to meaningfull default values,
 		so all browsers have the same starting conditions
 */
 
@@ -90,4 +90,4 @@ BDO[DIR="rtl"]  { direction: rtl; unicode-bidi: bidi-override }
   h1, h2, h3,
   h4, h5, h6    { page-break-after: avoid }
   ul, ol, dl    { page-break-before: avoid }
-} 
+}

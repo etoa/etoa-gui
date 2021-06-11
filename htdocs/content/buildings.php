@@ -230,10 +230,10 @@ define('HELP_URL',"?page=help&site=buildings");
 		$box .= '	<tr>
 							<th>Eingestellte Arbeiter</th>
 							<td>
-								<input 	type="text" 
-										name="peopleWorking" 
-										id="peopleWorking" 
-										value="'.nf($bl->getPeopleWorking(BUILD_BUILDING_ID)).'" 
+								<input 	type="text"
+										name="peopleWorking"
+										id="peopleWorking"
+										value="'.nf($bl->getPeopleWorking(BUILD_BUILDING_ID)).'"
 										onkeyup="updatePeopleWorkingBox(this.value,\'-1\',\'-1\');"/>
 						</td>
 						</tr>

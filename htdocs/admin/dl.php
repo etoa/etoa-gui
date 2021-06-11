@@ -3,7 +3,7 @@ require("inc/includer.inc.php");
 
 if ($s->user_id) {
 	if ($file = parseDownloadLink($_GET)) {
-	
+
 		// Check path
 		$file = realpath($file);
 		$allowedDirs = array(
@@ -19,7 +19,7 @@ if ($s->user_id) {
 			if (substr($file, 0, strlen($ad)) == $ad) {
 				$allow = true;
 				break;
-			}			
+			}
 		}
 		if ($allow) {
 			if (is_file($file)) {
@@ -31,7 +31,7 @@ if ($s->user_id) {
 				exit;
 			} else {
 				echo "Datei nicht vorhanden!";
-			}		
+			}
 		} else {
 			echo "Ungültiger Pfad!";
 		}

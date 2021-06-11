@@ -6,7 +6,7 @@
 
 	//
 	// Check submit
-	// 
+	//
 	if (isset($_POST['validate_submit']))
 	{
 		foreach ($_POST['validate'] as $id=>$v)
@@ -31,10 +31,10 @@
 			else
 			{
 				dbquery("UPDATE users SET user_profile_img_check=0 WHERE user_id=".$id.";");
-			}	
+			}
 		}
 	}
-		
+
 	//
 	// Check new images
 	//
@@ -43,7 +43,7 @@
 	$res = dbquery("SELECT
 		user_id,
 		user_nick,
-		user_profile_img 
+		user_profile_img
 	FROM
 		users
 	WHERE
@@ -55,7 +55,7 @@
 		echo "<form action=\"\" method=\"post\">
 		<table class=\"tb\"><tr><th>User</th><th>Fehler</th><th>Aktionen</th></tr>";
 		while($arr = mysql_fetch_assoc($res))
-		{				
+		{
 			echo "<tr><td>".$arr['user_nick']."</td><td>";
 			if (file_exists($dir.$arr['user_profile_img']))
 			{
@@ -75,21 +75,21 @@
 	}
 	else
 	{
-		echo "<br/><i>Keine Bilder vorhanden!</i>";				
+		echo "<br/><i>Keine Bilder vorhanden!</i>";
 	}
 
 	//
 	// Orphans
 	//
 	$res=dbquery("
-	SELECT 
+	SELECT
 		user_id,
 		user_nick,
-		user_profile_img 
-	FROM 
-		users 
-	WHERE 
-		user_profile_img!='' 
+		user_profile_img
+	FROM
+		users
+	WHERE
+		user_profile_img!=''
 	");
 	$nr = mysql_num_rows($res);
 	$paths = array();
@@ -119,9 +119,9 @@
 	while(count($files)>0)
 	{
 		$k = array_pop($files);
-		if (!in_array($k,$paths))	
+		if (!in_array($k,$paths))
 			array_push($overhead,$k);
-	}		
+	}
 
 	if (isset($_GET['action']) && $_GET['action']=="clearoverhead")
 	{
@@ -131,8 +131,8 @@
 		}
 		echo "Verwaiste Bilder gelöscht!<br/><bt/>";
 	}
-	$co = count($overhead);		
-		
+	$co = count($overhead);
+
 	echo "<h2>Verwaiste Bilder</h2>";
 	if ($co>0)
 	{
@@ -141,7 +141,7 @@
 			echo "<table class=\"tb\">
 			<tr><th>Datei</th><th>Bild</th></tr>";
 			foreach($overhead as $v)
-			{				
+			{
 				echo "<tr><td>".$v."</td>";
 				echo '<td><img src="'.$dir.$v.'" alt="Profil" /></td></tr>';
 			}

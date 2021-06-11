@@ -9,7 +9,7 @@
 
 /**
 * SolData class
-* 
+*
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
@@ -27,7 +27,7 @@ public:
 		this->typeResearchtime = (double)object["sol_type_f_researchtime"];
 		this->typeBuildtime = (double)object["sol_type_f_buildtime"];
 	}
-	
+
 	short getTypeId();
 	double getTypeMetal();
 	double getTypeCrystal();
@@ -38,7 +38,7 @@ public:
 	double getTypePopulation();
 	double getTypeResearchtime();
 	double getTypeBuildtime();
-		
+
 private:
 	short typeId;
 	double typeMetal, typeCrystal, typePlastic, typeFuel, typeFood, typePower;

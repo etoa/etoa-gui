@@ -15,30 +15,30 @@
 	// Programmiert von Nicolas Perrenoud				 		//
 	// www.nicu.ch | mail@nicu.ch								 		//
 	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	//////////////////////////////////////////////////	
+	//////////////////////////////////////////////////
 	//
-	// 	Dateiname: races.php	
-	// 	Topic: Formular-Definitionen für Rassen 
-	// 	Autor: Nicolas Perrenoud alias MrCage							
+	// 	Dateiname: races.php
+	// 	Topic: Formular-Definitionen für Rassen
+	// 	Autor: Nicolas Perrenoud alias MrCage
 	// 	Erstellt: 01.12.2004
 	// 	Bearbeitet von: Selina Tanner aka Demora
 	// 	Bearbeitet am: 20.01.2009
-	// 	Kommentar: 	
+	// 	Kommentar:
 	//
-	
+
 	// VARIABLES
-	
-	define("MODUL_NAME","Rassen");				
+
+	define("MODUL_NAME","Rassen");
 	define("DB_TABLE", 'races');
 	define("DB_TABLE_ID", "race_id");
 	define("DB_OVERVIEW_ORDER_FIELD","race_name");
-	
 
-	
+
+
 	// FIELDS
-	
+
 	// Description:
-	
+
 	// name	 											// DB Field Name
 	// text												// Field Description
 	// type												// Field Type: text, password, textarea, timestamp, radio, select, checkbox, email, url, numeric
@@ -52,13 +52,13 @@
 	// select_elem (Array)				// Select Elements (desc=>value)
 	// select_elem_checked				// Value of default checked Select Element (desc=>value)
 	// show_overview							// Set 1 to show on overview page
-  
-	$db_fields = array (		
+
+	$db_fields = array (
 														array ( "name" => "race_id",
 																		"text" => "ID",
 																		"type" => "readonly",
 																		"show_overview" => 1
-																	),		
+																	),
 														array	(	"name" => "race_name",
 																		"text" => "Rasse",
 																		"type" => "text",
@@ -88,8 +88,8 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 1,
 																		"overview_length" => 400
-																		
-																	),		
+
+																	),
 														array	(	"name" => "race_comment",
 																		"text" => "Kommentar",
 																		"type" => "textarea",
@@ -111,7 +111,7 @@
 																		"size" => "30",
 																		"maxlen" => "50",
 																		"show_overview" => 0
-																	),																	
+																	),
 														array	(	"name" => "race_adj3",
 																		"text" => "Adjektiv weiblich",
 																		"type" => "text",
@@ -119,7 +119,7 @@
 																		"size" => "30",
 																		"maxlen" => "50",
 																		"show_overview" => 0
-																	),																	
+																	),
 														array	(	"name" => "race_adj3",
 																		"text" => "Adjektiv plural",
 																		"type" => "text",
@@ -127,8 +127,8 @@
 																		"size" => "30",
 																		"maxlen" => "50",
 																		"show_overview" => 0
-																	),																	
-																	
+																	),
+
 														array	(	"name" => "race_leadertitle",
 																		"text" => "Leader-Titel",
 																		"type" => "text",
@@ -144,7 +144,7 @@
 																		"show_overview" => 1,
 																		"overview_length" => 200
 																	),
-														
+
 														array	(	"name" => "race_f_metal",
 																		"text" => "Metallfaktor",
 																		"type" => "text",
@@ -256,7 +256,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
-																	),																	
+																	),
 														array	(	"name" => "race_f_buildtime",
 																		"text" => "Bauzeitfaktor",
 																		"type" => "text",
@@ -270,7 +270,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
-																	),																														
+																	),
 														array	(	"name" => "race_f_fleettime",
 																		"text" => "Bonus Fluggeschwindigkeit (grösser ist besser)",
 																		"type" => "text",
@@ -284,8 +284,8 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
-																	)																														
+																	)
 
 											);
-        
+
 ?>

@@ -15,28 +15,28 @@
 	// Programmiert von Nicolas Perrenoud				 		//
 	// www.nicu.ch | mail@nicu.ch								 		//
 	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	//////////////////////////////////////////////////	
+	//////////////////////////////////////////////////
 	//
-	// 	Dateiname: building_types.php	
-	// 	Topic: Formular-Definitionen für Gebäude-Typen 
-	// 	Autor: Nicolas Perrenoud alias MrCage							
+	// 	Dateiname: building_types.php
+	// 	Topic: Formular-Definitionen für Gebäude-Typen
+	// 	Autor: Nicolas Perrenoud alias MrCage
 	// 	Erstellt: 01.12.2004
 	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage
 	// 	Bearbeitet am: 31.03.2006
-	// 	Kommentar: 	
+	// 	Kommentar:
 	//
-	
+
 	// VARIABLES
-	
-	define("MODUL_NAME","Gebäudekategorien");				
+
+	define("MODUL_NAME","Gebäudekategorien");
 	define("DB_TABLE", 'building_types');
 	define("DB_TABLE_ID", "type_id");
 	define("DB_OVERVIEW_ORDER_FIELD","type_order");
-	
+
 	// FIELDS
-	
+
 	// Description:
-	
+
 	// name	 											// DB Field Name
 	// text												// Field Description
 	// type												// Field Type: text, password, textarea, timestamp, radio, select, checkbox, email, url, numeric
@@ -50,7 +50,7 @@
 	// select_elem (Array)				// Select Elements (desc=>value)
 	// select_elem_checked				// Value of default checked Select Element (desc=>value)
 	// show_overview							// Set 1 to show on overview page
-  
+
 	$db_fields = array ( 0	=> 	array	(	"name" => "type_name",
 																		"text" => "Kategoriename",
 																		"type" => "text",
@@ -78,7 +78,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
-																	)																	
+																	)
 											);
-        
+
 ?>

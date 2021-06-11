@@ -42,7 +42,7 @@ if ('undefined' != typeof xajax.debug) {
 	xajax.debug.text[125] = 'ГОТОВО [';
 	xajax.debug.text[126] = 'мсек]';
 	xajax.debug.text[127] = 'ИНИЦИАЛИЗИРАНЕ НА ОБЕКТА НА ЗАЯВКАТА';
-	 
+
 	xajax.debug.exceptions = [];
 	xajax.debug.exceptions[10001] = 'Невалиден XML отговор: Отговора съдържа непознат таг: {data}.';
 	xajax.debug.exceptions[10002] = 'GetRequestObject: Няма XMLHttpRequest, xajax е изключен.';
@@ -55,7 +55,7 @@ if ('undefined' != typeof xajax.debug) {
 	xajax.debug.exceptions[10009] = 'Невалидна заявка: Параметъра с името на функцията липсва.';
 	xajax.debug.exceptions[10010] = 'Невалидна заявка: Липсва обекта на функцията.';
 }
-       
+
 if ('undefined' != typeof xajax.config) {
   if ('undefined' != typeof xajax.config.status) {
     /*

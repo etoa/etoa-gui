@@ -2,7 +2,7 @@
 abstract class BaseLog
 {
 	protected static $table;
-	protected static $queueTable;	
+	protected static $queueTable;
 
 	// Severities
 
@@ -28,7 +28,7 @@ abstract class BaseLog
 	const CRIT = 4;
 
 	static public $severities = array("Debug", "Information", "Warnung", "Fehler", "Kritisch");
-	
+
 	/**
 	* Alle alten Logs löschen
 	*/

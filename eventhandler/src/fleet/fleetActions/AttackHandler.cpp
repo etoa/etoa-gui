@@ -10,7 +10,7 @@ namespace attack
 		*/
 		BattleHandler *bh = new BattleHandler();
 		bh->battle(this->f,this->targetEntity,this->actionLog);
-		
+
 		// if fleet user has won the fight, send fleet home
 		if (bh->returnFleet)
 		{

@@ -99,7 +99,7 @@
 		{
 			echo '<h1>Dein Account ist zut Löschung vorgeschlagen!</h1>';
 			echo 'Die Löschung erfolgt frühestens um <b>'.df($cu->deleted).'</b>!<br/><br/>
-			<input type="button" onclick="document.location=\'?page=userconfig&mode=misc\'" value="Löschung aufheben" /> 
+			<input type="button" onclick="document.location=\'?page=userconfig&mode=misc\'" value="Löschung aufheben" />
 			<input type="button" onclick="document.location=\'?page=contact\'" value="Admin kontaktieren" /> ';
 		}
 
@@ -112,7 +112,7 @@
 		{
 			echo '<h1>Dein Account ist gesperrt!</h1>
 			<b>Grund:</b> '.$cu->ban_reason.'.<br/>
-			<b>Zeitraum:</b> <span style="color:#f90">'.date("d.m.Y, H:i",$cu->blocked_from).'</span> 
+			<b>Zeitraum:</b> <span style="color:#f90">'.date("d.m.Y, H:i",$cu->blocked_from).'</span>
 			bis <span style="color:#0f0">'.date("d.m.Y, H:i",$cu->blocked_to).'</span><br/>
 			<b>Gesamtdauer der Sperre:</b> '.tf($cu->blocked_to-$cu->blocked_from).'<br/>
 			<b>Dauer:</b> '.tf($cu->blocked_to-max(time(),$cu->blocked_from)).'<br/>';

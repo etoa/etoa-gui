@@ -1,7 +1,7 @@
-/* 
-   ETOA Design Revolution by HeaX	
+/*
+   ETOA Design Revolution by HeaX
 	umgesetzt durch :	ETOA-Team - Lukulus
-	
+
 	Stand: 02. Dezember 14
 	Version: 0.9 Beta
 */
@@ -12,8 +12,8 @@ $(document).ready(function() {
 	if (sessionStorage.chat) {
 			$("#c_aside").replaceWith("<iframe id='c_aside' src='chat.php'></iframe>");
 			document.getElementById("f_chat").style.display = "none";
-			document.getElementById("f_chat_on").style.display = "inline";	
-	}	
+			document.getElementById("f_chat_on").style.display = "inline";
+	}
 });
 
 

@@ -18,9 +18,9 @@
 			$res = dbquery("
 			SELECT
 				*
-			FROM 
-				user_ratings 
-			WHERE 
+			FROM
+				user_ratings
+			WHERE
 				id=".$this->id."
 			LIMIT 1;");
 			if (mysql_num_rows($res)>0)
@@ -38,7 +38,7 @@
 			else
 			{
 				dbquery("
-				INSERT INTO 
+				INSERT INTO
 					user_ratings
 				(id)
 				VALUES

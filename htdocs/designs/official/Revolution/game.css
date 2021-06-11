@@ -2,12 +2,12 @@
 * Common CSS classes used ingame *
 **********************************/
 
-/* 
+/*
 * Resources
 */
 
 .resmetalcolor, .tb .resmetalcolor, .rescolor0, .tb .rescolor0	{
-	color:#CFC8C2;	
+	color:#CFC8C2;
 }
 .rescrystalcolor, .tb .rescrystalcolor, .rescolor1, .tb .rescolor1	{
 	color:#C2E2EF;
@@ -83,10 +83,10 @@
 }
 
 .resfullcolor, .tb .resfullcolor	{
-	color:#f20;	
+	color:#f20;
 }
 
-/* 
+/*
 * Colors
 */
 
@@ -167,7 +167,7 @@
 }
 
 /*
-* Search-Box 
+* Search-Box
 */
 
 input[type="text"].search, input[type="text"].search:focus {
@@ -176,17 +176,17 @@ input[type="text"].search, input[type="text"].search:focus {
 	background-repeat: no-repeat;
 	padding-left:25px;
 }
-      
-/* 
+
+/*
 * BB-Code Items
 */
 
 .bbtable td, .bbtable th {
 	padding:2px;
 }
-     
-/* 
-* Resource display 
+
+/*
+* Resource display
 */
 
 img.resIcon	{

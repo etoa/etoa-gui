@@ -26,17 +26,17 @@
 
 			// Daten speichern
 			dbquery("
-			UPDATE 
-				alliances 
-			SET 
+			UPDATE
+				alliances
+			SET
 				alliance_name='".$_POST['alliance_name']."',
 				alliance_tag='".$_POST['alliance_tag']."',
 				alliance_text='".addslashes($_POST['alliance_text'])."',
 				alliance_application_template='".addslashes($_POST['alliance_application_template'])."',
 				alliance_url='".$_POST['alliance_url']."',
-				alliance_founder_id='".$_POST['alliance_founder_id']."' 
+				alliance_founder_id='".$_POST['alliance_founder_id']."'
 				".$img_sql."
-			WHERE 
+			WHERE
 				alliance_id='".$id."'
 			;");
 
@@ -47,20 +47,20 @@
 			// Mitgliederänderungen
 			if (isset($_POST['member_kick']) && count($_POST['member_kick'])>0)
 				foreach($_POST['member_kick'] as $k=>$v)
-					dbquery("UPDATE 
+					dbquery("UPDATE
 						users
 					SET
 						user_alliance_id=0,
 						user_alliance_rank_id=0
-					WHERE 
+					WHERE
 						user_id='$k';");
 			if (count($_POST['member_rank'])>0)
 				foreach($_POST['member_rank'] as $k=>$v)
-					dbquery("UPDATE 
-						users 
-					SET 
-						user_alliance_rank_id=$v 
-					WHERE 
+					dbquery("UPDATE
+						users
+					SET
+						user_alliance_rank_id=$v
+					WHERE
 						user_id='$k';");
 			// Ränge speichern
 			if (isset($_POST['rank_del']) && count($_POST['rank_del'])>0)
@@ -71,12 +71,12 @@
 				}
 			if (count($_POST['rank_name'])>0)
 				foreach($_POST['rank_name'] as $k=>$v)
-					dbquery("UPDATE 
-						alliance_ranks 
-					SET 
+					dbquery("UPDATE
+						alliance_ranks
+					SET
 						rank_name='".addslashes($v)."',
-						rank_level='".$_POST['rank_level'][$k]."' 
-					WHERE 
+						rank_level='".$_POST['rank_level'][$k]."'
+					WHERE
 						rank_id='$k';");
 			$twig->addGlobal('successMessage', 'Mitglieder aktualisiert!');
 		}
@@ -90,12 +90,12 @@
 			{
 				foreach($_POST['alliance_bnd_level'] as $k=>$v)
 				{
-					dbquery("UPDATE 
-						alliance_bnd 
-					SET 						
+					dbquery("UPDATE
+						alliance_bnd
+					SET
 						alliance_bnd_level='".$_POST['alliance_bnd_level'][$k]."',
-						alliance_bnd_name='".$_POST['alliance_bnd_name'][$k]."' 
-					WHERE 
+						alliance_bnd_name='".$_POST['alliance_bnd_name'][$k]."'
+					WHERE
 						alliance_bnd_id='$k';");
 				}
 			}
@@ -125,12 +125,12 @@
 		elseif (isset($_POST['buildings']) && $_POST['buildings']!="")
 		{
 
-			$test= dbquery("SELECT alliance_buildlist_id FROM alliance_buildlist WHERE alliance_buildlist_alliance_id =".$id." 
+			$test= dbquery("SELECT alliance_buildlist_id FROM alliance_buildlist WHERE alliance_buildlist_alliance_id =".$id."
 							AND alliance_buildlist_building_id =(select alliance_building_id from alliance_buildings where alliance_building_name='".$_POST['selected']."')");
 
 			if (mysql_num_rows($test)>0)
 			{
-			dbquery("UPDATE alliance_buildlist SET alliance_buildlist_current_level =".$_POST['level'].", alliance_buildlist_member_for =".$_POST['amount']." WHERE alliance_buildlist_alliance_id =".$id." 
+			dbquery("UPDATE alliance_buildlist SET alliance_buildlist_current_level =".$_POST['level'].", alliance_buildlist_member_for =".$_POST['amount']." WHERE alliance_buildlist_alliance_id =".$id."
 					 AND alliance_buildlist_building_id =(select alliance_building_id from alliance_buildings where alliance_building_name='".$_POST['selected']."')");
 				$twig->addGlobal('successMessage','Datensatz erfolgreich bearbeitet!');
 			}
@@ -143,7 +143,7 @@
 		}
 		elseif (isset($_POST['techs']) && $_POST['techs']!="")
 		{
-			$test= dbquery("SELECT alliance_techlist_id FROM alliance_techlist WHERE alliance_techlist_alliance_id =".$id." 
+			$test= dbquery("SELECT alliance_techlist_id FROM alliance_techlist WHERE alliance_techlist_alliance_id =".$id."
 							AND alliance_techlist_tech_id =(select alliance_tech_id from alliance_technologies where alliance_tech_name='".$_POST['selected_tech']."')");
 
 			if (mysql_num_rows($test)>0)
@@ -165,16 +165,16 @@
 
 		$twig->addGlobal('subtitle', "Allianz bearbeiten: [".$arr['alliance_tag']."] ".$arr['alliance_name']);
 
-		$ures = dbquery("SELECT 
+		$ures = dbquery("SELECT
 							user_id,
 							user_nick,
 							user_points,
 							user_alliance_rank_id
-						FROM 
-							users 
-						WHERE 
-							user_alliance_id=".$id." 
-						ORDER BY 
+						FROM
+							users
+						WHERE
+							user_alliance_id=".$id."
+						ORDER BY
 							user_points DESC,
 							user_nick;");
 		$members = array();
@@ -186,15 +186,15 @@
 			}
 		}
 		$rres = dbquery("
-				SELECT 
+				SELECT
 					rank_id,
 					rank_level,
 					rank_name
-				FROM 
-					alliance_ranks 
-				WHERE 
-					rank_alliance_id=".$id." 
-				ORDER BY 
+				FROM
+					alliance_ranks
+				WHERE
+					rank_alliance_id=".$id."
+				ORDER BY
 					rank_level DESC;");
 		$ranks = array();
 		if (mysql_num_rows($rres)>0)
@@ -332,7 +332,7 @@
 				*/
 
 				$bres = dbquery("
-				SELECT 
+				SELECT
 					alliance_bnd_id,
 					alliance_bnd_alliance_id1 as a1id,
 					alliance_bnd_alliance_id2 as a2id,
@@ -341,16 +341,16 @@
 					alliance_bnd_level as lvl,
 					alliance_bnd_name as name,
 					alliance_bnd_date as date
-				FROM 
-					alliance_bnd 
+				FROM
+					alliance_bnd
 				LEFT JOIN
 					alliances a1 on alliance_bnd_alliance_id1 = a1.alliance_id
 				LEFT JOIN
 					alliances a2 on alliance_bnd_alliance_id2 = a2.alliance_id
-				WHERE 
+				WHERE
 					alliance_bnd_alliance_id1=".$arr['alliance_id']."
 					OR alliance_bnd_alliance_id2=".$arr['alliance_id']."
-				ORDER BY 
+				ORDER BY
 					alliance_bnd_level DESC,
 					alliance_bnd_date DESC;");
 				if (mysql_num_rows($bres)>0)
@@ -401,13 +401,13 @@
 					<th style=\"width:120px;\">Datum / Zeit</th>
 					<th>Ereignis</th></tr>";
 			$hres=dbquery("
-						SELECT 
-							* 
-						FROM 
-							alliance_history 
-						WHERE 
-							history_alliance_id=".$arr['alliance_id']." 
-						ORDER BY 
+						SELECT
+							*
+						FROM
+							alliance_history
+						WHERE
+							history_alliance_id=".$arr['alliance_id']."
+						ORDER BY
 							history_timestamp
 						DESC;");
 			if (mysql_num_rows($hres)>0)
@@ -464,7 +464,7 @@
   					</td>
   				</tr><tr>
   					<th>Einzahlungen:</th>
-  					<td> 
+  					<td>
 		  				<select id=\"limit\" name=\"limit\">
 							<option value=\"0\" checked=\"checked\">alle</option>
 							<option value=\"1\">die letzte</option>

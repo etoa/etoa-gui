@@ -10,14 +10,14 @@
 
 /**
 * BuildingData class
-* 
+*
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
 class BuildingData : public Data {
 public:
 	BuildingData(mysqlpp::Row object) : Data(object) {
-		this->typeId = (short)object["building_type_id"];	
+		this->typeId = (short)object["building_type_id"];
 		this->buildCostsFactor = (double)object["building_build_costs_factor"];
 		this->demolishCostsFactor = (double)object["building_demolish_costs_factor"];
 		this->powerUse = (int)object["building_power_use"];
@@ -47,7 +47,7 @@ public:
 		this->bunkerFleetCount = (unsigned int)object["building_bunker_fleet_count"];
 		this->bunkerFleetSpace = (unsigned int)object["building_bunker_fleet_space"];
 	}
-	
+
 	short getTypeId();
 	double getBuildCostsFactor();
 	double getDemolishCostsFactor();
@@ -77,7 +77,7 @@ public:
 	unsigned int getBunkerRes();
 	unsigned int getBunkerFleetCount();
 	unsigned int getBunkerFleetSpace();
-			
+
 private:
 	short typeId;
 	double buildCostsFactor;

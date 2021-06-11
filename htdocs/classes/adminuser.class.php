@@ -85,11 +85,11 @@ class AdminUser {
 	function setPassword($password, $forceChange=false)	{
 		$pws = saltPasswort($password);
 		DBManager::getInstance()->safeQuery("
-		UPDATE 
+		UPDATE
 			".self::tableName."
 		SET
 			user_password=?,
-			user_force_pwchange=?					
+			user_force_pwchange=?
 		WHERE
 			user_id=?;", array(
 			$pws,
@@ -109,9 +109,9 @@ class AdminUser {
 		if ($this->id != null)
 		{
 			DBManager::getInstance()->safeQuery("
-			UPDATE 
+			UPDATE
 				".self::tableName."
-			SET 
+			SET
 				user_nick=?,
 				user_name=?,
 				user_email=?,
@@ -123,7 +123,7 @@ class AdminUser {
 				user_locked=?,
 				is_contact=?,
 				roles=?
-			WHERE 
+			WHERE
 				user_id='".$this->id."';",
 				array(
 					$this->nick,
@@ -140,7 +140,7 @@ class AdminUser {
 				));
 		} else {
 			DBManager::getInstance()->safeQuery("
-			INSERT INTO 
+			INSERT INTO
 				".self::tableName."
 			(
 				user_nick,
@@ -192,7 +192,7 @@ class AdminUser {
 		if ($this->id != null)
 		{
 			DBManager::getInstance()->safeQuery("
-			DELETE FROM 
+			DELETE FROM
 				".self::tableName."
 			WHERE user_id=?;", array($this->id));
 		}
@@ -229,10 +229,10 @@ class AdminUser {
 	*/
 	static function getArray() {
 		$res = DBManager::getInstance()->query("
-		SELECT 
+		SELECT
 			user_id,
-			user_nick 
-		FROM 
+			user_nick
+		FROM
 			".self::tableName.";");
 		$rtn = array();
 		while ($arr=mysql_fetch_row($res))
@@ -247,9 +247,9 @@ class AdminUser {
 	*/
 	static function getAll() {
 		$res = DBManager::getInstance()->query("
-		SELECT 
+		SELECT
 			user_id
-		FROM 
+		FROM
 			".self::tableName."
 		ORDER BY
 			user_nick;");
@@ -267,8 +267,8 @@ class AdminUser {
 	static function countAll() {
 		$res = DBManager::getInstance()->query("
 		SELECT
-			COUNT(user_id) 
-		FROM 
+			COUNT(user_id)
+		FROM
 			".self::tableName.";");
 		$arr = mysql_fetch_row($res);
 		return (int) $arr[0];

@@ -102,14 +102,14 @@
 				echo "<tr>
 						<th>Startkoordinaten:</th>
 						<td>
-							<a href=\"?page=cell&amp;id=".$fd->getSource()->cellId()."&amp;hl=".$fd->getSource()->id()."\">".$fd->getSource()."</a> 
+							<a href=\"?page=cell&amp;id=".$fd->getSource()->cellId()."&amp;hl=".$fd->getSource()->id()."\">".$fd->getSource()."</a>
 							(".$fd->getSource()->entityCodeString().")
 						</td>
 					</tr>
 					<tr>
 						<th>Zielkoordinaten:</th>
 						<td>
-							<a href=\"?page=cell&amp;id=".$fd->getTarget()->cellId()."&amp;hl=".$fd->getTarget()->id()."\">".$fd->getTarget()."</a> 
+							<a href=\"?page=cell&amp;id=".$fd->getTarget()->cellId()."&amp;hl=".$fd->getTarget()->id()."\">".$fd->getTarget()."</a>
 							(".$fd->getTarget()->entityCodeString().")
 						</td>
 					</tr>

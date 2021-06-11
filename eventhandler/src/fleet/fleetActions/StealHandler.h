@@ -9,7 +9,7 @@
 
 /**
 * Handles Steal....
-* 
+*
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 namespace steal
@@ -19,13 +19,13 @@ namespace steal
 	public:
 		StealHandler(mysqlpp::Row fleet)  :  FleetAction(fleet) { }
 		void update();
-		
+
 	private:
 		/**
 		* Ship they are able to antrax a planet
 		**/
 		int shipCnt;
-		
+
 		/**
 		* Spytechs tech level
 		**/
@@ -35,12 +35,12 @@ namespace steal
 		* 2 variables to calculate the possibility
 		**/
 		double one, two;
-		
+
 		/**
 		* 2 variables to calculate the damage in percent * 100
 		**/
 		int temp, fak;
-		
+
 	};
 }
 #endif

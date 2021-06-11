@@ -9,7 +9,7 @@
 	echo "<h2>Rohstoffkurse</h2>";
 
 	HelpUtil::breadCrumbs(array("Rohstoffkurse","rates"));
-	
+
 	echo "Die Rohstoffkurse sind dynamisch und ändern sich automatisch je nach dem<br/>
 	 wie gross das Angebot und die Nachfrage
 	nach einem Rohstoff im Markt ist.<br/><br/>";
@@ -50,8 +50,8 @@
 		<span style=\"background:#f40;width;50px;\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 		grosser Bedarf/kleines Angebot
 		<br/><br/>";
-	
-	
+
+
 	echo "<div style=\"text-align:center;\"><table class=\"tb\" style=\"width:200px;\">";
 	echo "<tr>
 		<th>Rohstoff</th>

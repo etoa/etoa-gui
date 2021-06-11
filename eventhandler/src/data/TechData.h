@@ -10,11 +10,11 @@
 
 /**
 * TechData class
-* 
+*
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
-class TechData : public Data	
+class TechData : public Data
 {
 public:
 	TechData(mysqlpp::Row object) : Data(object) {
@@ -25,14 +25,14 @@ public:
 		this->order = (short)object["tech_order"];
 		this->stealable = (bool)object["tech_stealable"];
 	}
-	
+
 	short getTypeId();
 	double getBuildCostFactor();
 	short getLastLevel();
 	bool getShow();
 	short getOrder();
 	bool getStealable();
-	
+
 private:
 
 	short typeId;

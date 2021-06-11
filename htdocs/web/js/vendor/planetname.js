@@ -4,10 +4,10 @@
 *
 * Thanks for this great piece of code!
 *
-* Seventh Sanctum™ and its contents are copyright (c) 2006 by Steven Savage except 
+* Seventh Sanctum™ and its contents are copyright (c) 2006 by Steven Savage except
 * where otherwise noted. No infringement or claim on any copyrighted material is intended.
 * Code provided in these pages is free for all to use as long as the author and this website are credited.
-* No guarantees whatsoever are made regarding these generators or their contents. 
+* No guarantees whatsoever are made regarding these generators or their contents.
 */
 
 var aVocab = new Array();
@@ -234,12 +234,12 @@ aLettersType[26]=1
 		iCharCount = 0;
 		iConsCount = 0;
 		iVowelCount = 0;
-		sReturn ="";            
+		sReturn ="";
 
 		while (iCharCount<iMaxCount)
 		{
 			//Check to see if there are too many consonants
-			
+
 			if ((iConsCount >= iMaxCons))
 			{
 				iCurChar = GetChar(iLastChar, sLeaveOut);
@@ -255,7 +255,7 @@ aLettersType[26]=1
 				{
 					iCurChar = GetChar(iLastChar, sLeaveOut);
 				}
-			}                       
+			}
 			else
 			{
 				//See if starting rules must be addressed
@@ -298,7 +298,7 @@ aLettersType[26]=1
 					}
 				}
 				else
-				{       
+				{
 					if (GenNumber(100) <= iVowelChance)
 					{
 						iCurChar = GetChar(iLastChar, sLeaveOut);
@@ -389,12 +389,12 @@ aLettersType[26]=1
 				if (bEndCons || bEndVowel)
 				{
 					iConsCount = 0;
-					iVowelCount = 0;        
+					iVowelCount = 0;
 				}
 			}
 		}
 
-	
+
 		//Capitalize sLine
 		sReturn = (sReturn.charAt(0).toUpperCase()) + sReturn.slice(1, sReturn.length);
 		return sReturn;
@@ -426,7 +426,7 @@ aLettersType[26]=1
 			while (iCharIterate<1)
 			{
 				iCharIterate = GenNumber(26);
-			}		
+			}
 			//alert (aLetters[iCharIterate] + " picked to follow " + aLetters[iLastChar]);
 			var bContinue = false;
 			while (bContinue == false)
@@ -564,9 +564,9 @@ aLettersType[26]=1
 		{
 			iTagStart = sLine.indexOf("<");
 			iTagEnd = sLine.indexOf(">");
-			
+
 			sKey = sLine.substr(iTagStart+1, iTagEnd-(iTagStart+1));
-			
+
 			if (sKey=="NAME")
 			{
 				sKey= GetPlanetName();
@@ -578,7 +578,7 @@ aLettersType[26]=1
 			sLine = sLine.substr(0, iTagStart) + sKey + sLine.substr(iTagEnd+1, (sLine.length - iTagEnd))
 
 		}
-		
+
 
 		if (sLine.indexOf("<") > - 1)
 		{

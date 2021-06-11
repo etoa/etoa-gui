@@ -10,23 +10,23 @@
 
 /**
 * DefList class
-* 
+*
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
-class ListDef : public Object 
+class ListDef : public Object
 {
-public: 
+public:
 	ListDef(mysqlpp::Row &oRow,double rebuild=1.0);
 	~ListDef();
-	
+
 	double getWfMetal();
 	double getWfCrystal();
 	double getWfPlastic();
-	
+
 private:
 	int getDefCnt();
-	double rebuild;	
+	double rebuild;
 };
 
 #endif

@@ -40,7 +40,7 @@
 		echo "<a href=\"?page=$page&amp;sub=$sub&amp;mode=".$mode."&amp;order_field=nick&amp;order=ASC\" title=\"Absteigend sortieren\"><img src=\"../images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a>";
 		echo "<th>Nachricht</th>";
 		echo "</tr>";
-		
+
 		if (isset($_GET['order_field']) && $_GET['order_field']=="nick")
 		{
 			$order="nick,timestamp";
@@ -49,24 +49,24 @@
 		{
 			$order="timestamp";
 		}
-		
+
 		if (isset($_GET['order']) && $_GET['order']=="ASC")
 		{
 			$sort="ASC";
 		}
 		else
 		{
-			$sort="DESC";   
+			$sort="DESC";
 		}
-		
+
 		$res=dbquery("
-		SELECT 
+		SELECT
 				*
-		FROM 
+		FROM
 			chat_log
-		ORDER BY 
+		ORDER BY
 			$order $sort
-		LIMIT 10000;");		
+		LIMIT 10000;");
 		if (mysql_num_rows($res)>0)
 		{
 			$cnt = 1;
@@ -87,9 +87,9 @@
 		}
 		echo "</table>";
 	}
-	
+
 	//
-	// Live Chat 
+	// Live Chat
 	//
 	else
 	{
@@ -101,7 +101,7 @@
 			(user_id,reason,timestamp)
 			VALUES (".$uid.",'Banned by Admin',".time().")
 			ON DUPLICATE KEY UPDATE timestamp=".time()."");
-			
+
 			dbquery("
 			UPDATE
 				chat_users
@@ -162,7 +162,7 @@
 		</div>
 			<script type="text/javascript">
 				xajax_showChatUsers();
-				
+
 			</script>
 	</fieldset>
 

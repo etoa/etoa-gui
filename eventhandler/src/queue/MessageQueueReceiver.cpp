@@ -7,7 +7,7 @@ std::vector<MessageQueueCommand> MessageQueueReceiver::receive()
 
 	My &my = My::instance();
 	mysqlpp::Connection* con_ = my.get();
-	
+
 	mysqlpp::Query query = con_->query();
 	query << "SELECT id,cmd,arg FROM backend_message_queue;";
 	RESULT_TYPE res = query.store();
@@ -18,7 +18,7 @@ std::vector<MessageQueueCommand> MessageQueueReceiver::receive()
 			std::vector<int> ids;
 
 			// Iterate over entries and add them to list
-			for (mysqlpp::Row::size_type i = 0; i<resSize; i++) { 
+			for (mysqlpp::Row::size_type i = 0; i<resSize; i++) {
 				mysqlpp::Row row = res.at(i);
 				struct MessageQueueCommand mqc;
 				mqc.cmd = std::string(row["cmd"]);
@@ -37,6 +37,6 @@ std::vector<MessageQueueCommand> MessageQueueReceiver::receive()
 			}
 		}
 	}
-	
+
 	return results;
 }

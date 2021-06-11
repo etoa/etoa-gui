@@ -30,12 +30,12 @@ function showDetail($type)
 						<option value=\"\">(egal)</option>";
 			// Schiffe laden
 			$res = dbquery("
-							SELECT 
+							SELECT
 								ship_id,
-								ship_name 
-							FROM 
-								ships 
-							ORDER BY 
+								ship_name
+							FROM
+								ships
+							ORDER BY
 								ship_name;");
 			while ($arr=mysql_fetch_row($res))
 		echo "			<option value=\"".$arr[0]."\">".$arr[1]."</option>";
@@ -100,7 +100,7 @@ function showDetail($type)
 				$fas = FleetAction::getAll();
 				foreach ($fas as $fa)
 					echo "<option value=\"".$fa->code()."\" style=\"color:".FleetAction::$attitudeColor[$fa->attitude()]."\">".$fa->name()."</option>";
-				
+
 				echo "</select> &nbsp; <select name=\"status\">";
 				echo "<option value=\"\">(egal)</option>";
 				foreach (FleetAction::$statusCode as $k => $v)
@@ -117,16 +117,16 @@ function showDetail($type)
 							<option value=\"\">(egal)</option>";
 					// Schiffe laden
 					$res = dbquery("
-								SELECT 
+								SELECT
 									ship_id,
-									ship_name 
-								FROM 
-									ships 
-								ORDER BY 
+									ship_name
+								FROM
+									ships
+								ORDER BY
 									ship_name;");
 					while ($arr=mysql_fetch_row($res))
 			echo "			<option value=\"".$arr[0]."\">".$arr[1]."</option>";
-	
+
 			echo "		</select>
 					</td>
 				</tr>
@@ -154,14 +154,14 @@ function showDetail($type)
 				</tr>";
 			tableEnd();
 		break;
-		
+
 		default:
 	}
-	
+
 	$or->assign('detail','innerHTML',ob_get_contents());
 	$or->assign('detail',"style.display",'');
-	ob_end_clean();	
-	return $or;	
+	ob_end_clean();
+	return $or;
 }
 
 function restoreReport($id)
@@ -170,9 +170,9 @@ function restoreReport($id)
 	$r = Report::createFactory($id);
 	$r->deleted = false;
 	$or->assign('deleted','innerHTML','Nein');
-	return $or;	
+	return $or;
 }
-	
-	
+
+
 
 ?>

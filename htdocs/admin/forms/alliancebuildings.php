@@ -15,20 +15,20 @@
 	// Programmiert von Nicolas Perrenoud				 		//
 	// www.nicu.ch | mail@nicu.ch								 		//
 	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	//////////////////////////////////////////////////	
+	//////////////////////////////////////////////////
 	//
-	// 	Dateiname: buildings.php	
-	// 	Topic: Formular-Definitionen für Gebäude 
-	// 	Autor: Nicolas Perrenoud alias MrCage							
+	// 	Dateiname: buildings.php
+	// 	Topic: Formular-Definitionen für Gebäude
+	// 	Autor: Nicolas Perrenoud alias MrCage
 	// 	Erstellt: 01.12.2004
 	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage
 	// 	Bearbeitet am: 31.03.2006
-	// 	Kommentar: 	
+	// 	Kommentar:
 	//
-	
+
 	// VARIABLES
-	
-	define("MODUL_NAME","Allianzgebäude");				
+
+	define("MODUL_NAME","Allianzgebäude");
 	define("DB_TABLE", 'alliance_buildings');
 	define("DB_TABLE_ID", "alliance_building_id");
 	define("DB_OVERVIEW_ORDER_FIELD","alliance_building_id");
@@ -37,11 +37,11 @@
 
 	$form_switches = array("Anzeigen"=>'alliance_building_show');
 
-	
+
 	// FIELDS
-	
+
 	// Description:
-	
+
 	// name	 											// DB Field Name
 	// text												// Field Description
 	// type												// Field Type: text, password, textarea, timestamp, radio, select, checkbox, email, url, numeric
@@ -55,12 +55,12 @@
 	// select_elem (Array)				// Select Elements (desc=>value)
 	// select_elem_checked				// Value of default checked Select Element (desc=>value)
 	// show_overview							// Set 1 to show on overview page
-  
+
 	$db_fields = array ( array	(	"name" => "alliance_building_id",
 																		"text" => "ID",
 																		"type" => "readonly",
 																		"show_overview" => 1
-																	),  
+																	),
 											array	(	"name" => "alliance_building_name",
 																		"text" => "Name",
 																		"type" => "text",
@@ -189,7 +189,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
-																	),																	
+																	),
 											array	(	"name" => "alliance_building_costs_factor",
 																		"text" => "Kostenfaktor",
 																		"type" => "text",
@@ -206,8 +206,8 @@
 																		"line"=>1
 																	),
 
-																	
-																																																																																																
+
+
 												array	(	"name" => "alliance_building_last_level",
 																		"text" => "Max Level",
 																		"type" => "text",
@@ -221,8 +221,8 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
-																	),	
-																	
+																	),
+
 											array	(	"name" => "alliance_building_needed_id",
 																		"text" => "Voraussetzung",
 																		"type" => "select",
@@ -236,8 +236,8 @@
 																		"select_elem" => admin_get_select_elements('alliance_buildings',"alliance_building_id","alliance_building_name","alliance_building_id"),
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
-																	),																				
-																	
+																	),
+
 												array	(	"name" => "alliance_building_needed_level",
 																		"text" => "Voraussetzung Stufe",
 																		"type" => "text",
@@ -251,9 +251,9 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
-																	),																		
-																	
+																	),
+
 											);
 
-        
+
 ?>

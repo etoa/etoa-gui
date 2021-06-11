@@ -80,7 +80,7 @@ function create() {
     stateText.anchor.setTo(0.5, 0.5);
     stateText.visible = false;
 
-    for (var i = 0; i < 3; i++) 
+    for (var i = 0; i < 3; i++)
     {
         var ship = lives.create(game.world.width - 100 + (40 * i), 60, 'ship');
         ship.anchor.setTo(0.5, 0.5);
@@ -96,7 +96,7 @@ function create() {
     //  And some controls to play the game with
     cursors = game.input.keyboard.createCursorKeys();
     fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-    
+
 }
 
 function createAliens () {
@@ -214,7 +214,7 @@ function collisionHandler (bullet, alien) {
 }
 
 function enemyHitsPlayer (player,bullet) {
-    
+
     bullet.kill();
 
     live = lives.getFirstAlive();
@@ -260,7 +260,7 @@ function enemyFires () {
 
     if (enemyBullet && livingEnemies.length > 0)
     {
-        
+
         var random=game.rnd.integerInRange(0,livingEnemies.length-1);
 
         // randomly select one of them
@@ -303,7 +303,7 @@ function resetBullet (bullet) {
 function restart () {
 
     //  A new level starts
-    
+
     //resets the life count
     lives.callAll('revive');
     //  And brings the aliens back from the dead :)

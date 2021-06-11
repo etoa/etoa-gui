@@ -5,16 +5,16 @@
 
 	iBoxStart("Markt");
 	echo "<div align=\"justify\">";
-	
+
 	echo "Der Marktplatz, das Handelszentrum von Andromeda.<br>
 		Baue den Marktplatz aus, um Zugang zum \"<a href=\"?page=market\">Markt</a>\" zu erhalten und somit in das Reich der H&auml;ndler einzutauchen.
 		Erwerbe Waren von anderen Spielern oder stelle deine eigenen Angebote ein. Je h&ouml;her du den Markt ausgebaut hast, desto mehr Angebote kannst du einstellen und desto mehr Handelsm&ouml;glichkeiten hast du: <br>Stufe ".MIN_MARKET_LEVEL_RESS." -> Rohstoffhandel<br>Stufe ".MIN_MARKET_LEVEL_SHIP." -> Schiffshandel<br>Stufe ".MIN_MARKET_LEVEL_AUCTION." -> Auktionen<br>
 		Wird ein Handel erfolgreich abgeschlossen, so werden die Waren in den nächsten paar Minuten an die betroffenen Spieler versendet.";
-	
+
 	echo "</div>";
 	iBoxEnd();
 
-	
+
 	iBoxStart("Die verschiedenen Funktionen");
 	echo "<div align=\"justify\">";
 
@@ -97,17 +97,17 @@
 	      </ul>";
 	echo "</div>";
 	iBoxEnd();
-	
+
 	iBoxStart("Rohstoffkurse");
 	echo "<div align=\"justify\">";
-	
+
 	echo "Wie einigemale erwähnt, rechnet der Markt der Wert eines Angebots mit speziellen Rohstoffkursen.<br>
 	Diese werden durch das Prinzip von \"Angebot und Nachfrage\" erstellt und sind folglich variable Werte die immer auf dem aktuellen Stand sind!<br>
 	Am Anfang haben alle Rohstoffarten den selben Kurs (1). Wird jetzt vermehrt von einer Art angeboten (grosses Angebot), so sink der Wert dieses Rohstoffes und die Folge daraus ist eine Verteuerung vom Rest. Wird ein Rohstoff viel verlangt (grosse Nachfrage) so steigt der Kurs von diesem und die anderen Rohstoffe sinken im Preis.<br>
 	Eine Tabelle zu den aktuellen Kursen findest du <a href=\"?$link&amp;site=rates\">hier</a>.";
-	
+
 	echo "</div>";
-	iBoxEnd();	
-	
-	
+	iBoxEnd();
+
+
 ?>

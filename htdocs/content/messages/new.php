@@ -50,7 +50,7 @@
 					{
 						// Prüfe Ignore
 						$res = dbquery("
-						SELECT 
+						SELECT
 							COUNT(ignore_id)
 						FROM
 							message_ignore

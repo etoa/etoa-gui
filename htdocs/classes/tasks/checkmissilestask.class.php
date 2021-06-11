@@ -2,8 +2,8 @@
 	/**
 	* Checks and handles missile actions
 	*/
-	class CheckMissilesTask implements IPeriodicTask 
-	{		
+	class CheckMissilesTask implements IPeriodicTask
+	{
 		function run()
 		{
 			$res = dbquery("
@@ -24,7 +24,7 @@
 			}
 			return "$cnt Raketen-Aktionen berechnet";
 		}
-		
+
 		function getDescription() {
 			return "Raketen-Aktionen berechnen";
 		}

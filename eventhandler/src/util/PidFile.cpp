@@ -53,7 +53,7 @@ int PIDFile::readPid()
 		std::cerr << "Strange, the PIDfile exists but I am not allowed to read it!"<<std::endl;
  		exit(EXIT_FAILURE);
   }
- 	return atoi(line.c_str());	
+ 	return atoi(line.c_str());
 }
 
 void PIDFile::write()
@@ -95,7 +95,7 @@ void PIDFile::write()
     std::ofstream pidf(pidfile_path.c_str());
     pidf << getpid();
   }
-  catch(std::exception x) 
+  catch(std::exception x)
   {
     std::ostringstream msg;
     msg << "Cannot write pidfile '" << pidfile_path << "': " << x.what();

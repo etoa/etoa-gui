@@ -17,7 +17,7 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 	if (!$s->sittingActive || $s->falseSitter)
 	{
 			//
@@ -94,12 +94,12 @@
 							}
 							else
 							{
-								dbquery("UPDATE 
-									user_multi 
-								SET 
+								dbquery("UPDATE
+									user_multi
+								SET
 									activ='0',
 									timestamp=UNIX_TIMESTAMP()
-								WHERE 
+								WHERE
 									id=$id;");
 								// Speichert jeden gelöschten multi (soll vor missbrauch schützen -> mutli erstellen -> löschen -> erstellen -> löschen etc.)
 	                            dbquery("
@@ -118,13 +118,13 @@
 
 
 
-       
+
 
 
 
 	//
 	// Plan new sitting session
-	// 
+	//
 	if (isset($_GET['action']) && $_GET['action']=="new_sitting")
 	{
 		echo "<form action=\"?page=$page&amp;mode=$mode&amp;action=new_sitting\" method=\"post\">";

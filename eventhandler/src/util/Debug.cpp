@@ -8,7 +8,7 @@ bool debugEnable(int enable)
 			std::cout << std::endl << "*** DEBUG MODE ENABLED ***" << std::endl << std::endl;
 			enabled = 1;
 	}
-	
+
 	if (enabled==1)
 		return true;
 	return false;

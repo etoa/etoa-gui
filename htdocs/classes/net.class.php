@@ -60,7 +60,7 @@ class Net {
 	}
 
 	/**
-	* 
+	*
 	*/
 	static function getAddr($host)
 	{
@@ -107,7 +107,7 @@ class Net {
 		");
 		return $ip;
 	}
-    
+
 	static function clearCache()
 	{
 		$res = dbquery("

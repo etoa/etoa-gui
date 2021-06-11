@@ -5,11 +5,11 @@ namespace marketdelivery
 {
 	void MarketDeliveryHandler::update()
 	{
-	
+
 		/**
 		* Fleet-Action: Market-delivery
 		*/
-		
+
 		//create a message for the entity user
 		OtherReport *report = new OtherReport(this->targetEntity->getUserId(),
 											  this->f->getEntityTo(),
@@ -25,11 +25,11 @@ namespace marketdelivery
 					   floor(this->f->getResFuel()),floor(this->f->getResFood()),
 					   floor(this->f->getResPeople()));
 		report->setShips(this->f->getShipString());
-		
+
 		delete report;
-		
+
 		fleetLand(1);
-		
+
 		//Delete fleet
 		this->f->setPercentSurvive(0);
 	}

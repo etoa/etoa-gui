@@ -18,10 +18,10 @@
 
 #include "Mutex.h"
 
-Mutex::Mutex() 
+Mutex::Mutex()
 {
 	sem_init(&sem, 0, 1);
-} 
+}
 
 Mutex::~Mutex()
 {
@@ -35,5 +35,5 @@ void Mutex::guard()
 
 void Mutex::release()
 {
-	sem_post(&sem);	
+	sem_post(&sem);
 }

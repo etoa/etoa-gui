@@ -13,7 +13,7 @@
 
 /**
 * Handles Spy....
-* 
+*
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 namespace spy
@@ -30,7 +30,7 @@ namespace spy
 		**/
 		double spyLevelAtt, tarnLevelAtt;
 		double spyLevelDef, tarnLevelDef;
-		
+
 		/**
 		* Spy ships
 		**/
@@ -41,7 +41,7 @@ namespace spy
 		**/
 		double spyDefense, spyDefense1, spyDefense2, tarnDefense;
 		bool support;
-        
+
         /**
          * Spy ress definer for bunker Ress
          **/
@@ -51,7 +51,7 @@ namespace spy
 		**/
 		double roll;
 
-		
+
 	};
 }
 #endif

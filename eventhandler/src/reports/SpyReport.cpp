@@ -46,9 +46,9 @@ void SpyReport::setCoverage(unsigned short coverage) {
 void SpyReport::saveSpyReport() {
 	My &my = My::instance();
 	mysqlpp::Connection *con_ = my.get();
-	
+
 	mysqlpp::Query query = con_->query();
-	
+
 	try	{
 		if (!this->id) throw 0;
 		query << std::setprecision(18);

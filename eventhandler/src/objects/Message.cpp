@@ -6,19 +6,19 @@
 	std::string Message::getText() {
 		return this->text;
 	}
-	
+
 	std::string Message::getSubject() {
 		return this->subject;
 	}
-	
+
 	int Message::getType() {
 		return this->type;
 	}
-	
+
 	int Message::getEntityId() {
 		return this->entityId;
 	}
-	
+
 	int Message::getFleetId() {
 		return this->fleetId;
 	}
@@ -26,23 +26,23 @@
 	void Message::addUserId(int userId) {
 		this->users.push_back(userId);
 	}
-	
+
 	void Message::addType(int type) {
 		this->type = type;
 	}
-	
+
 	void Message::addFleetId(int fleetId) {
 		this->fleetId = fleetId;
 	}
-	
+
 	void Message::addEntityId(int entityId) {
 		this->entityId = entityId;
 	}
-	
+
 	void Message::addSubject(std::string subject) {
 		this->subject = subject;
 	}
-	
+
 	void Message::addText(std::string text, short linebreaks) {
 		this->text += text;
 		while (linebreaks > 0) {
@@ -50,24 +50,24 @@
 			linebreaks--;
 		}
 	}
-	
+
 	void Message::addSignature(std::string signature) {
 		this->signature = signature;
 	}
-	
+
 	void Message::dontSend() {
 		this->toSend = false;
 	}
-	
-	
-	
+
+
+
 	void Message::send() {
 		if (this->toSend) {
 			My &my = My::instance();
 			mysqlpp::Connection *con_ = my.get();
-			
+
 			mysqlpp::Query query = con_->query();
-			
+
 			std::vector<int>::iterator it;
 			for ( it=this->users.begin() ; it < this->users.end(); it++ ) {
 				if ((*it)) {
@@ -89,7 +89,7 @@
 						std::cout << query.str() << std::endl;
 						query.store();
 						query.reset();
-						
+
 						query << "INSERT INTO "
 							<< "	message_data "
 							<< "("
@@ -102,7 +102,7 @@
 							<< "VALUES "
 							<< "(" << mysqlpp::quote << my.insert_id(query) << ", "
 							<< mysqlpp::quote << this->subject << ", ";
-						
+
 //						std::string buff = this->text;
 						// TODO: Dirty!! Hack. fix it
 //						if (buff.find("'") && !buff.find("\\'"))

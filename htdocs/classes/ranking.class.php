@@ -29,17 +29,17 @@
 			foreach ($titles as $k=> $v)
 			{
 				$res = dbquery("
-				SELECT 
+				SELECT
 					nick,
 					points".$v.",
 					id
-				FROM 
+				FROM
 					user_stats
 				WHERE
 					rank".$v.">0
 					AND points".$v.">0
-				ORDER BY 
-					rank".$v." ASC 
+				ORDER BY
+					rank".$v." ASC
 				LIMIT 1;");
 				if (mysql_num_rows($res)>0)
 				{
@@ -67,20 +67,20 @@
 			foreach ($titles2 as $v)
 			{
 				$res = dbquery("
-				SELECT 
+				SELECT
 					user_nick,
 					".$v."_rating,
 					user_id
-				FROM 
+				FROM
 					users
-				INNER JOIN	
+				INNER JOIN
 					user_ratings
 				ON user_id=id
 				AND
 					".$v."_rating>0
-				AND user_ghost=0	
-				ORDER BY 
-					".$v."_rating DESC 
+				AND user_ghost=0
+				ORDER BY
+					".$v."_rating DESC
 				LIMIT 1;");
 				if (mysql_num_rows($res)>0)
 				{
@@ -127,7 +127,7 @@
 				SELECT
 					user_nick,
 					user_points,
-					user_id				
+					user_id
 				FROM
 					users
 				WHERE
@@ -151,7 +151,7 @@
 						<td class=\"tbldata\" style=\"vertical-align:middle;padding:2px 10px 2px 10px;width:360px;\">
 							<div style=\"font-size:16pt;\">".$rarr['race_leadertitle']."</div>
 							".$carr[0]." V&ouml;lker
-						</td>	
+						</td>
 						<td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">
 							<span style=\"font-size:13pt;color:#ff0;\">".$arr[0]."</span><br/><br/>
 							".nf($arr[1])." Punkte &nbsp;&nbsp;&nbsp;";
@@ -159,7 +159,7 @@
 							{
 								echo "[<a href=\"".$profile."\">Profil</a>]";
 							}
-						echo "</td>							
+						echo "</td>
 					</tr>";
 				}
 			}
@@ -244,7 +244,7 @@
 
 			// Gebäudepunkte berechnen falls nocht nicht vorhanden
 			$arr = mysql_fetch_row(dbquery("
-				SELECT 
+				SELECT
 					COUNT(bp_points)
 				FROM
 					building_points;
@@ -257,7 +257,7 @@
 			$res = dbquery("
 				SELECT
 					bp_building_id,
-					bp_level,					
+					bp_level,
 					bp_points
 				FROM
 					building_points;
@@ -273,7 +273,7 @@
 
 			// Technologiepunkte berechnen falls nocht nicht vorhanden
 			$arr = mysql_fetch_row(dbquery("
-				SELECT 
+				SELECT
 					COUNT(bp_points)
 				FROM
 					tech_points;
@@ -463,7 +463,7 @@
 						fs.fs_ship_cnt
 					FROM
 						fleet AS f
-					INNER JOIN 
+					INNER JOIN
 						fleet_ships AS fs
 						ON f.id = fs.fs_fleet_id
 						AND fs.fs_ship_faked='0'
@@ -558,7 +558,7 @@
 						fleet
 					ON
 						fleet.id=fleet_ships.fs_fleet_id
-					AND 
+					AND
 						fleet.user_id='".$user_id."'
 					AND
 						fleet_ships.fs_ship_cnt='1'
@@ -672,7 +672,7 @@
 			FROM
 				user_stats
 			ORDER BY
-				points DESC;			
+				points DESC;
 			");
 			$cnt=1;
 			if (mysql_num_rows($res)>0)
@@ -698,7 +698,7 @@
 					dbquery("
 					UPDATE
 						users
-					SET	
+					SET
 						user_rank=".$cnt.",
 						user_points=".$arr[1].",
 						user_rank_highest=".min($cnt,$user_rank_highest[$arr[0]])."
@@ -719,9 +719,9 @@
 				$max_build = $cfg->value('boost_system_max_building_speed_bonus');
 				foreach ($points_arr as $uid => $up) {
 					dbquery("
-						UPDATE 
-							users 
-						SET 
+						UPDATE
+							users
+						SET
 							boost_bonus_production=".($max_prod * ($max_points - $up) / $max_points).",
 							boost_bonus_building=".($max_build * ($max_points - $up) / $max_points)."
 						WHERE
@@ -729,9 +729,9 @@
 				}
 			} else {
 				dbquery("
-					UPDATE 
-						users 
-					SET 
+					UPDATE
+						users
+					SET
 						boost_bonus_production=0,
 						boost_bonus_building=0;");
 			}
@@ -746,7 +746,7 @@
 			FROM
 				user_stats
 			ORDER BY
-				points_ships DESC;			
+				points_ships DESC;
 			");
 			$cnt=1;
 			if (mysql_num_rows($res)>0)
@@ -780,7 +780,7 @@
 			FROM
 				user_stats
 			ORDER BY
-				points_tech DESC;			
+				points_tech DESC;
 			");
 			$cnt=1;
 			if (mysql_num_rows($res)>0)
@@ -814,7 +814,7 @@
 			FROM
 				user_stats
 			ORDER BY
-				points_buildings DESC;			
+				points_buildings DESC;
 			");
 			$cnt=1;
 			if (mysql_num_rows($res)>0)
@@ -848,7 +848,7 @@
 			FROM
 				user_stats
 			ORDER BY
-				points_exp DESC;			
+				points_exp DESC;
 			");
 			$cnt=1;
 			if (mysql_num_rows($res)>0)
@@ -924,21 +924,21 @@
 				}
 			}
 
-			$res=dbquery("SELECT 
+			$res=dbquery("SELECT
 				a.alliance_tag,
 				a.alliance_name,
 				a.alliance_id,
 				a.alliance_rank_current,
-				COUNT(*) AS cnt, 
+				COUNT(*) AS cnt,
 				SUM(u.points) AS upoints,
-				AVG(u.points) AS uavg 
-			FROM 
+				AVG(u.points) AS uavg
+			FROM
 				alliances as a
 			INNER JOIN
 				user_stats as u
 			ON
 				u.alliance_id=a.alliance_id
-			GROUP BY 
+			GROUP BY
 				a.alliance_id
 			ORDER BY
 				SUM(u.points) DESC
@@ -1018,8 +1018,8 @@
 						uavg,
 						cnt,
 						alliance_rank_last
-					) 
-					VALUES 
+					)
+					VALUES
 					(
 						?,
 						?,
@@ -1069,11 +1069,11 @@
 
 				}
 			}
-			$res=dbquery("SELECT 
+			$res=dbquery("SELECT
 				alliance_id,
 				points,
 				alliance_rank_last
-			FROM 
+			FROM
 				alliance_stats
 			ORDER BY
 				points DESC
@@ -1089,7 +1089,7 @@
 								alliance_rank_current='".$rank."'
 							WHERE
 								alliance_id='".$arr['alliance_id']."';");
-					dbquery("UPDATE 
+					dbquery("UPDATE
 								alliances
 							SET
 								alliance_points='".$arr['points']."',
@@ -1273,14 +1273,14 @@
 				/ $cfg->p1('points_update');
 
 				dbquery("
-				INSERT INTO 
+				INSERT INTO
 				  building_points
 				(
 				  bp_building_id,
 				  bp_level,
 				  bp_points
-				) 
-				VALUES 
+				)
+				VALUES
 			(".$arr['building_id'].",
 			'".$level."',
 			'".$p."');");
@@ -1340,14 +1340,14 @@
 				/ $cfg->p1('points_update');
 
 				dbquery("
-				INSERT INTO 
+				INSERT INTO
 				  tech_points
 				(
 				  bp_tech_id,
 				  bp_level,
 				  bp_points
-				) 
-				VALUES 
+				)
+				VALUES
 				(".$arr['tech_id'].",
 				'".$level."',
 				'".$p."');");
@@ -1415,11 +1415,11 @@
 			  +$arr['def_costs_plastic']
 			  +$arr['def_costs_food'])
 			  /$cfg->p1('points_update');
-			  dbquery("UPDATE 
+			  dbquery("UPDATE
 			  defense
-			   SET 
+			   SET
 				def_points=$p
-			  WHERE 
+			  WHERE
 				def_id=".$arr['def_id'].";");
 			}
 		  }

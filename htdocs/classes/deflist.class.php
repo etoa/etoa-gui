@@ -29,7 +29,7 @@
 			FROM
 				deflist l
 			INNER JOIN
-				defense d 
+				defense d
 			ON
 				d.def_id = l.deflist_def_id
 				AND l.deflist_user_id=".$this->userId ."
@@ -163,14 +163,14 @@
 		{
 			$defId = intval($defId);
 
-			$res = dbquery("SELECT 
-								deflist_id, 
-								deflist_count 
-							FROM 
-								deflist 
-							WHERE 
-								deflist_def_id=".$defId." 
-								AND deflist_user_id='".$this->userId."' 
+			$res = dbquery("SELECT
+								deflist_id,
+								deflist_count
+							FROM
+								deflist
+							WHERE
+								deflist_def_id=".$defId."
+								AND deflist_user_id='".$this->userId."'
 								AND deflist_entity_id='".$this->entityId."';");
 			$arr = mysql_fetch_row($res);
 
@@ -180,7 +180,7 @@
 				deflist
 			SET
 				deflist_count = deflist_count - ".$delable."
-			WHERE 
+			WHERE
 				deflist_def_id=".$defId."
 				AND deflist_id='".$arr[0]."';");
 
@@ -192,9 +192,9 @@
 		*/
 		static function cleanUp()
 		{
-			dbquery("DELETE FROM 
+			dbquery("DELETE FROM
 						`deflist`
-					WHERE 
+					WHERE
 						`deflist_count`='0'
 						;");
 			$nr = mysql_affected_rows();

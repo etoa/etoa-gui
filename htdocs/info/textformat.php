@@ -26,11 +26,11 @@
 	// 	Kommentar:
 	//
 
-	echo "<h2>Texformatierung</h2>";		
+	echo "<h2>Texformatierung</h2>";
 	HelpUtil::breadCrumbs(array("Texformatierung","textformat"));
-	
+
 	// Array BBCode
-	
+
 	$bb = [
 		[
 			'm' => "Text <b>fett</b> schreiben",
@@ -141,7 +141,7 @@
 			'b' => "[flag ch-be] liegt in der [flag ch]",
 		]
 	];
-	
+
 	$kt = [
 		[
 			'n' => "Argau",
@@ -232,9 +232,9 @@
 			'f' => "[flag ch-ge]"
 		]
 	];
-	
+
 	$fl = [
-		[	
+		[
 			'n' => "Schweiz",
 			'f' => "[flag ch]"
 		],
@@ -390,8 +390,8 @@
 		echo "<td class=\"tbldata\" style=\"text-align:left\">".$code['b']."</td>";
 		echo "<td class=\"tbldata\" style=\"text-align:left\">".text2html($code['b'])."</td></tr>";
 	}
-	tableEnd();	
-	
+	tableEnd();
+
 	// Potential errors
 	iBoxStart("Fehlerquellen");
 	echo "Es kann vorkommen, dass du mehrere BB-Codes kombinieren möchtest (zum Beispiel eine grössere Schrift und andere Farbe).<br/>
@@ -400,14 +400,14 @@
 		[color=red][size=15]EtoA[/size][/color] ist richtig und ergibt ".text2html('[color=red][size=15]EtoA[/size][/color]').", aber [color=red][size=15]EtoA[/color][/size] ist falsch und gibt kein gültiges Resultat!<br/><br/>
 		Theoretisch kannst du so viele verschiedene Tags hinterinander hängen. Wichtig ist einfach, dass die Reihenfole immer beachtet wird. Um nicht unschöne Fehler in einer Nachricht oder in einem Forenpost zu haben, ist es immer gut, wenn ingame die Nachrichtenvorschau eingeschaltet ist und wenn man vor dem absenden des Posts noch schnell auf Vorschau klickt im Forum. So sparrt man Zeit und verhindert unschöne Fehler.";
 	iBoxEnd();
-	
+
 	//Table colour
 	echo '<a id="colors"></a>';
 	iBoxStart("Schriftfarben");
 	echo "Im BBCode kannst du entweder den Farbnamen eingeben oder den Hexadecimalcode.<br/><br/>";
 	include("colorlist.php");
 	iBoxEnd();
-	
+
 	//Table flags
 	echo '<a id="flags"></a>';
 	iBoxStart("Flaggen");
@@ -416,7 +416,7 @@
 		<br/>Bemerkung: Beide Listen sind nicht vollständig, d.h. es kann sein, dass dein Kanton oder dein Lieblingsland gerade fehlt!<br/>";
 	echo '<table style="width:100%;"><tr><td style="width:50%;vertical-align:top;">';
 	tableStart();
-	echo "<tr><th class=\"tbltitle\">Kanton</th><th class=\"tbltitle\">BBCode</th><th class=\"tbltitle\">Flagge</th></tr>";  	
+	echo "<tr><th class=\"tbltitle\">Kanton</th><th class=\"tbltitle\">BBCode</th><th class=\"tbltitle\">Flagge</th></tr>";
   	foreach($kt as $city)
 	{
 		echo "<tr><td class=\"tbldata\" style=\"text-align:left\">".$city['n']."</td>";
@@ -432,7 +432,7 @@
 		echo "<tr><td class=\"tbldata\" style=\"text-align:left\">".$land['n']."</td>";
 		echo "<td class=\"tbldata\" style=\"text-align:left\">".$land['f']."</td>";
 		echo "<td class=\"tbldata\" style=\"text-align:left\">".text2html($land['f'])."</td></tr>";
-	}		
+	}
 	tableEnd();
 	echo '</td></tr></table>';
 	iBoxEnd();

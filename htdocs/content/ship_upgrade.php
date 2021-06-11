@@ -100,7 +100,7 @@
         ON ships.ship_id=shiplist.shiplist_ship_id
         AND ships.special_ship='1'
         AND shiplist.shiplist_user_id='".$cu->id."'
-        AND shiplist.shiplist_ship_id='".intval($_GET['id'])."'  
+        AND shiplist.shiplist_ship_id='".intval($_GET['id'])."'
         AND shiplist.shiplist_count>'0'
     ;");
 

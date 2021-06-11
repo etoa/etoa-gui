@@ -11,7 +11,7 @@
 
 /**
 * Handles technology research updates
-* 
+*
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 namespace atech

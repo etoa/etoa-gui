@@ -1,5 +1,5 @@
 <?php
-	if (!interface_exists('ISingleton')) 
+	if (!interface_exists('ISingleton'))
 	{
 	  /**
 	   * Singleton interface
@@ -19,5 +19,5 @@
 	    */
 	    public function __clone();
 	  }
-	} 
+	}
 ?>

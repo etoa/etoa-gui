@@ -363,7 +363,7 @@ abstract class Report
 					WHERE
 						`archived`='0'
 						AND `read`='1'
-						AND `timestamp`<'".$tstamp."';		
+						AND `timestamp`<'".$tstamp."';
 				");
 				if (mysql_num_rows($res)>0)
 				{
@@ -483,7 +483,7 @@ abstract class Report
 					reports
 				WHERE
 					deleted='1'
-					AND timestamp<'".$tstamp."';		
+					AND timestamp<'".$tstamp."';
 			");
 			if (mysql_num_rows($res)>0)
 			{

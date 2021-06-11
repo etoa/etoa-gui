@@ -14,7 +14,7 @@ case "$1" in
             adduser --system --ingroup etoa etoa --gecos "etoa eventhandler management daemon"
         fi
     ;;
-esac 
+esac
 
 mkdir -p /var/run/etoad
 chown etoa:etoa /var/run/etoad

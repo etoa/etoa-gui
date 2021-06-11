@@ -926,11 +926,11 @@
 					elseif (isset($_POST['cat_edit']) && isset($_POST['cat_name']) && isset($_POST['cat_id']) && intval($_POST['cat_id'])>0)
 					{
 						$catid = intval($_POST['cat_id']);
-						dbquery("UPDATE ".BOARD_CAT_TABLE." SET 
+						dbquery("UPDATE ".BOARD_CAT_TABLE." SET
 						cat_name='".mysql_real_escape_string($_POST['cat_name'])."',
 						cat_desc='".mysql_real_escape_string($_POST['cat_desc'])."',
 						cat_order='".intval($_POST['cat_order'])."',
-						cat_bullet='".mysql_real_escape_string($_POST['cat_bullet'])."' 
+						cat_bullet='".mysql_real_escape_string($_POST['cat_bullet'])."'
 						WHERE cat_id=".$catid." AND cat_alliance_id=".BOARD_ALLIANCE_ID.";");
 						dbquery("DELETE FROM allianceboard_catranks WHERE cr_cat_id=".$catid.";");
 						if (isset($_POST['cr']))
@@ -1028,7 +1028,7 @@
 								if ($isAdmin)
 								{
 									echo "<td style=\"vertical-align:middle;text-align:center;\">
-										<a href=\"?page=$page&editcat=".intval($arr['cat_id'])."\">".icon('edit')."</a> 
+										<a href=\"?page=$page&editcat=".intval($arr['cat_id'])."\">".icon('edit')."</a>
 										<a href=\"?page=$page&delcat=".intval($arr['cat_id'])."\">".icon('delete')."</a>
 									</td>";
 								}
@@ -1113,7 +1113,7 @@
 								echo "<td>$ps</td>";
 								if ($isAdmin)
 								{
-									echo "<td style=\"width:90px;\"><input type=\"button\" value=\"Bearbeiten\" onclick=\"document.location='?page=$page&editbnd=".$arr['alliance_bnd_id']."'\" /><br/> 
+									echo "<td style=\"width:90px;\"><input type=\"button\" value=\"Bearbeiten\" onclick=\"document.location='?page=$page&editbnd=".$arr['alliance_bnd_id']."'\" /><br/>
 									</td>";
 								}
 								echo "</tr>";

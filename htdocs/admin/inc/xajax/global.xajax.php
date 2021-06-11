@@ -234,7 +234,7 @@ function showShipsOnPlanet($form)
 			shiplist_count,
 			shiplist_bunkered,
 			shiplist_id,
-			special_ship_need_exp as ship_xp_base, 
+			special_ship_need_exp as ship_xp_base,
 			special_ship_exp_factor as ship_xp_factor,
 			shiplist_special_ship_exp as shiplist_xp
 		FROM
@@ -296,7 +296,7 @@ function showShipsOnPlanet($form)
 			SUM(shiplist_count) AS cnt,
 			SUM(shiplist_bunkered) AS bunkered,
 			ship_id,
-			special_ship_need_exp as ship_xp_base, 
+			special_ship_need_exp as ship_xp_base,
 			special_ship_exp_factor as ship_xp_factor,
 			shiplist_special_ship_exp as shiplist_xp
 		FROM
@@ -405,7 +405,7 @@ function editShipByListId($form,$listId)
 			shiplist_count,
 			shiplist_bunkered,
 			shiplist_id,
-			special_ship_need_exp as ship_xp_base, 
+			special_ship_need_exp as ship_xp_base,
 			special_ship_exp_factor as ship_xp_factor,
 			shiplist_special_ship_exp as shiplist_xp,
 			shiplist_special_ship_bonus_weapon,
@@ -421,12 +421,12 @@ function editShipByListId($form,$listId)
 			shiplist_special_ship_bonus_forsteal,
 			shiplist_special_ship_bonus_build_destroy,
 			shiplist_special_ship_bonus_antrax_food,
-			shiplist_special_ship_bonus_deactivade		
+			shiplist_special_ship_bonus_deactivade
 		FROM
 			shiplist
 		INNER JOIN
 			ships
-			ON shiplist_ship_id=ship_id		
+			ON shiplist_ship_id=ship_id
 		AND
 			shiplist_entity_id=".$updata[0]."
 		;");
@@ -443,9 +443,9 @@ function editShipByListId($form,$listId)
 		 		$objResponse->assign("bunkered_".$listId,"innerHTML", $out);
 				if ($arr['ship_xp_base']>0)
 				{
-					$out= "<input type=\"hidden\" name=\"ship_special_".$listId."\" value=\"1\"><input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editxp_".$listId."\" value=\"".$arr['shiplist_xp']."\" onkeyup=\"xajax_calcShipLevel(".$listId.",".$arr['ship_xp_base'].",".$arr['ship_xp_factor'].",this.value);\" /> XP, 
+					$out= "<input type=\"hidden\" name=\"ship_special_".$listId."\" value=\"1\"><input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editxp_".$listId."\" value=\"".$arr['shiplist_xp']."\" onkeyup=\"xajax_calcShipLevel(".$listId.",".$arr['ship_xp_base'].",".$arr['ship_xp_factor'].",this.value);\" /> XP,
 					Level <b><span id=\"editlevel_".$listId."\">".Ship::levelByXp($arr['ship_xp_base'], $arr['ship_xp_factor'],$arr['shiplist_xp'])."</span></b><br/>
-					
+
 					<b>Waffenlevel:</b> <input type=\"text\" name=\"edit_bonus_weapon_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_weapon']."\" size=\"5\" maxlength=\"20\" /><br/>
 					<b>Strukturlevel:</b> <input type=\"text\" name=\"edit_bonus_structure_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_structure']."\" size=\"5\" maxlength=\"20\" /><br/>
 					<b>Schildlevel:</b> <input type=\"text\" name=\"edit_bonus_shield_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_shield']."\" size=\"5\" maxlength=\"20\" /><br/>
@@ -495,7 +495,7 @@ function editShipByShipId($form,$shipId)
 			ship_name,
 			ship_points,
 			shiplist_entity_id,
-			special_ship_need_exp as ship_xp_base, 
+			special_ship_need_exp as ship_xp_base,
 			special_ship_exp_factor as ship_xp_factor,
 			shiplist_special_ship_exp as shiplist_xp,
 			shiplist_special_ship_bonus_weapon,
@@ -511,12 +511,12 @@ function editShipByShipId($form,$shipId)
 			shiplist_special_ship_bonus_forsteal,
 			shiplist_special_ship_bonus_build_destroy,
 			shiplist_special_ship_bonus_antrax_food,
-			shiplist_special_ship_bonus_deactivade		
+			shiplist_special_ship_bonus_deactivade
 		FROM
 			shiplist
 		INNER JOIN
 			ships
-			ON shiplist_ship_id=ship_id		
+			ON shiplist_ship_id=ship_id
 		AND
 			shiplist_user_id=".$updata[1]."
 		AND
@@ -544,9 +544,9 @@ function editShipByShipId($form,$shipId)
 				<td id=\"special_".$listId."\">";
 				if ($arr['ship_xp_base']>0)
 				{
-					echo "<input type=\"hidden\" name=\"ship_special_".$listId."\" value=\"1\"><input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editxp_".$listId."\" value=\"".$arr['shiplist_xp']."\" onkeyup=\"xajax_calcShipLevel(".$listId.",".$arr['ship_xp_base'].",".$arr['ship_xp_factor'].",this.value);\" /> XP, 
+					echo "<input type=\"hidden\" name=\"ship_special_".$listId."\" value=\"1\"><input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editxp_".$listId."\" value=\"".$arr['shiplist_xp']."\" onkeyup=\"xajax_calcShipLevel(".$listId.",".$arr['ship_xp_base'].",".$arr['ship_xp_factor'].",this.value);\" /> XP,
 					Level <b><span id=\"editlevel_".$listId."\">".Ship::levelByXp($arr['ship_xp_base'], $arr['ship_xp_factor'],$arr['shiplist_xp'])."</span></b><br/>
-					
+
 					<b>Waffenlevel:</b> <input type=\"text\" name=\"edit_bonus_weapon_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_weapon']."\" size=\"5\" maxlength=\"20\" /><br/>
 					<b>Strukturlevel:</b> <input type=\"text\" name=\"edit_bonus_structure_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_structure']."\" size=\"5\" maxlength=\"20\" /><br/>
 					<b>Schildlevel:</b> <input type=\"text\" name=\"edit_bonus_shield_".$listId."\" value=\"".$arr['shiplist_special_ship_bonus_shield']."\" size=\"5\" maxlength=\"20\" /><br/>
@@ -614,7 +614,7 @@ function submitEditShip($form,$listId)
 			shiplist_special_ship_bonus_forsteal='".intval($form['edit_bonus_forsteal_'.$listId])."',
 			shiplist_special_ship_bonus_build_destroy='".intval($form['edit_bonus_build_destroy_'.$listId])."',
 			shiplist_special_ship_bonus_antrax_food='".intval($form['edit_bonus_antrax_food_'.$listId])."',
-			shiplist_special_ship_bonus_deactivade='".intval($form['edit_bonus_deactivade_'.$listId])."'		
+			shiplist_special_ship_bonus_deactivade='".intval($form['edit_bonus_deactivade_'.$listId])."'
 		WHERE
 			shiplist_id=".intval($listId)."
 		;");
@@ -667,7 +667,7 @@ function showMissilesOnPlanet($pid)
 			{
 				$out.="<tr><td style=\"width:80px\" id=\"cnt_".$arr['missilelist_id']."\">".$arr['missilelist_count']."</td>
 				<th>".$arr['missile_name']."</th>
-				<td style=\"width:150px\" id=\"actions_".$arr['missilelist_id']."\"><a href=\"javascript:;\" onclick=\"xajax_editMissile(xajax.getFormValues('selector'),".$arr['missilelist_id'].")\">Bearbeiten</a> 
+				<td style=\"width:150px\" id=\"actions_".$arr['missilelist_id']."\"><a href=\"javascript:;\" onclick=\"xajax_editMissile(xajax.getFormValues('selector'),".$arr['missilelist_id'].")\">Bearbeiten</a>
 				<a href=\"javascript:;\" onclick=\"if (confirm('Sollen ".$arr['missilelist_count']." ".$arr['missile_name']." von diesem Planeten gel&ouml;scht werden?')) {xajax_removeMissileFromPlanet(xajax.getFormValues('selector'),".$arr['missilelist_id'].")}\">L&ouml;schen</td>
 				</tr>";
 			}
@@ -806,7 +806,7 @@ function showDefenseOnPlanet($form)
 			{
 				$out.="<tr><td style=\"width:80px\" id=\"cnt_".$arr['deflist_id']."\">".$arr['deflist_count']."</td>
 				<th>".$arr['def_name']."</th>
-				<td style=\"width:150px\" id=\"actions_".$arr['deflist_id']."\"><a href=\"javascript:;\" onclick=\"xajax_editDefense(xajax.getFormValues('selector'),".$arr['deflist_id'].")\">Bearbeiten</a> 
+				<td style=\"width:150px\" id=\"actions_".$arr['deflist_id']."\"><a href=\"javascript:;\" onclick=\"xajax_editDefense(xajax.getFormValues('selector'),".$arr['deflist_id'].")\">Bearbeiten</a>
 				<a href=\"javascript:;\" onclick=\"if (confirm('Sollen ".$arr['deflist_count']." ".$arr['def_name']." von diesem Planeten gel&ouml;scht werden?')) {xajax_removeDefenseFromPlanet(xajax.getFormValues('selector'),".$arr['deflist_id'].")}\">L&ouml;schen</td>
 				</tr>";
 			}
@@ -1165,12 +1165,12 @@ function searchUserList($val,$function)
   	$sOut = "";
   	$nCount = 0;
 
-	$res=dbquery("SELECT 
-		user_nick 
-	FROM 
-		users 
-	WHERE 
-		user_nick LIKE '".$val."%' 
+	$res=dbquery("SELECT
+		user_nick
+	FROM
+		users
+	WHERE
+		user_nick LIKE '".$val."%'
 	LIMIT 20;");
 	if (mysql_num_rows($res)>0)
   {
@@ -1323,7 +1323,7 @@ function lockUser($uid,$time,$reason)
 		user_ban_reason='".addslashes($reason)."',
 		user_ban_admin_id='".$_SESSION[SESSION_NAME]['user_id']."'
 	WHERE
-		user_id='".$uid."'	
+		user_id='".$uid."'
 	;");
 	$objResponse = new xajaxResponse();
   $objResponse->alert("Der Benutzer wurde gesperrt!");
@@ -1512,9 +1512,9 @@ function reqInfo($id,$cat='b')
 		foreach ($items as $i)
 		{
 			echo "<div class=\"techtreeItem\" style=\"background:url('".$i[3]."');\">
-			<div class=\"techtreeItemLevel\">Lvl <b>".$i[2]."</b></div>	
-			<a href=\"javascript:;\" onclick=\"".$i[4]."\" style=\"height:100%;display:block;\"></a>			
-			<div class=\"techtreeItemName\">".$i[1]."</div>				
+			<div class=\"techtreeItemLevel\">Lvl <b>".$i[2]."</b></div>
+			<a href=\"javascript:;\" onclick=\"".$i[4]."\" style=\"height:100%;display:block;\"></a>
+			<div class=\"techtreeItemName\">".$i[1]."</div>
 			</div>";
 		}
 		echo "<br style=\"clear:both;\"";
@@ -1645,9 +1645,9 @@ function reqInfo($id,$cat='b')
 			foreach ($items as $i)
 			{
 				echo "<div class=\"techtreeItem\" style=\"background:url('".$i[3]."');\">
-				<div class=\"techtreeItemLevel\">Ab Lvl <b>".$i[2]."</b></div>	
-				<a href=\"javascript:;\" onclick=\"".$i[4]."\" style=\"height:100%;display:block;\"></a>			
-				<div class=\"techtreeItemName\">".$i[1]."</div>				
+				<div class=\"techtreeItemLevel\">Ab Lvl <b>".$i[2]."</b></div>
+				<a href=\"javascript:;\" onclick=\"".$i[4]."\" style=\"height:100%;display:block;\"></a>
+				<div class=\"techtreeItemName\">".$i[1]."</div>
 				</div>";
 				$cnt++;
 

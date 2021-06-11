@@ -101,19 +101,19 @@ class SectorMapRenderer {
     ob_start();
 
     $res = dbquery("
-    SELECT 
+    SELECT
       cx,
       cy,
       cells.id as cid,
       entities.id as eid,
       code
-    FROM 
-      cells 
+    FROM
+      cells
     INNER JOIN
       entities
       ON entities.cell_id=cells.id
       AND entities.pos=0
-      AND sx='$sx' 
+      AND sx='$sx'
       AND sy='$sy';");
     $cells = array();
     while ($arr = mysql_fetch_assoc($res))

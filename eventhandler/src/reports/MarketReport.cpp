@@ -44,9 +44,9 @@ void MarketReport::setFleet2Id(unsigned int fleet2Id) {
 void MarketReport::saveMarketReport() {
 	My &my = My::instance();
 	mysqlpp::Connection *con_ = my.get();
-	
+
 	mysqlpp::Query query = con_->query();
-	
+
 	try	{
 		if (!this->id) throw 0;
 		query << std::setprecision(18);

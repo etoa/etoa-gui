@@ -12,26 +12,26 @@
 
 /**
 * Object class
-* 
+*
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
-class Object	
+class Object
 {
 	public:
 		Object(mysqlpp::Row &oRow) {
-		
+
 			this->entityId = 0;
 			this->fleetId = 0;
-			
+
 			this->rebuildCount = 0;
-			
+
 			this->isFaked = false;
 			this->isChanged = false;
 		}
-		
+
 		virtual ~Object() {}
-		
+
 		int getId();
 		int getUserId();
 		short getTypeId();
@@ -40,9 +40,9 @@ class Object
 		double getRebuildCount();
 		int getEntityId();
 		int getFleetId();
-		
+
 		bool getIsFaked();
-		
+
 		bool getSpecial();
 		short getSLevel();
 		double getSExp();
@@ -60,31 +60,31 @@ class Object
 		short getSBonusAntraxFood();
 		short getSBonusDeactivade();
 		short getSBonusReadiness();
-		
+
 		void setPercentSurvive(double percentage, int count=-1);
-		
+
 		int removeObjects(int count);
-		
+
 		void addExp(double exp);
-		
+
 		virtual double getWfMetal() = 0;
 		virtual double getWfCrystal() = 0;
 		virtual double getWfPlastic() = 0;
-		
+
 	protected:
 		int id;
 		short typeId;
 		int userId;
 		double count, initCount, rebuildCount;
 		int entityId, fleetId;
-		
+
 		bool isFaked;
-		
+
 		bool special;
 		short sLevel;
 		double sExp;
 		short sBonusWeapon, sBonusStructure, sBonusShield, sBonusHeal, sBonusCapacity,  sBonusSpeed, sBonusPilots, sBonusTarn, sBonusAntrax, sBonusForsteal, sBonusBuildDestroy, sBonusAntraxFood, sBonusDeactivade, sBonusReadiness;
-		
+
 		bool isChanged;
 };
 

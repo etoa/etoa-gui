@@ -35,7 +35,7 @@
 	if ($sub=="sendmsg")
 	{
 		echo "<h1>Nachrichten</h1>";
-	
+
 		echo "Nachricht an einen Spieler senden:<br/><br/>";
 
 		$subj = isset($_GET['message_subject']) ? $_POST['message_subject'] : "";
@@ -76,7 +76,7 @@
 					else
 					{
 						$reply = "";
-					}					
+					}
 				}
 
 				$mailCnt = 0;
@@ -122,10 +122,10 @@
 				user_name
 			FROM
 				users
-			WHERE 
+			WHERE
 				user_id=".intval($cu->playerId)."
 			");
-	
+
 			if (mysql_num_rows($fres)>0)
 			{
 				$farr = mysql_fetch_assoc($fres);
@@ -148,8 +148,8 @@
 					echo "<option value=\"".$arr['user_id']."\"";
 					echo ">".$arr['user_nick']."</option>";
 				}
-			echo "</select> &nbsp; 
-			
+			echo "</select> &nbsp;
+
 			<br/>
 			<b>Typ:</b>
 			<input type=\"radio\" name=\"msg_type\" value=\"0\" id=\"msg_type_0\"  checked=\"checked\" /> <label for=\"msg_type_0\">InGame-Nachricht</label>
@@ -165,10 +165,10 @@
 			echo "</table>";
 			echo "<p align=\"center\"><input type=\"submit\" class=\"button\" name=\"submit\" value=\"Senden\"></p>";
 			echo "</form>";
-		
+
 	}
-	
-	
+
+
 	/**
 	*
 	* Berichte
@@ -202,7 +202,7 @@
 					if (stristr($_POST['qmode']['subject'],"%")) $addchars = "%";else $addchars = "";
 					$sql.= " AND subject ".stripslashes($_POST['qmode']['subject']).$_POST['subject']."$addchars'";
 			}
-			
+
 			if ($_POST['read']<2)
 			{
 				if ($_POST['read']==1)
@@ -219,36 +219,36 @@
 			}
 			if ($_POST['type']!="")
 				$sql.= " AND type='".$_POST['type']."' ";
-			
+
 			if ($_POST['date_from']!="")
 			{
 				if ($ts = strtotime($_POST['date_from']))
 					$sql.= " AND (timestamp>".$ts.")";
 				else
-					echo "Ungültiges Datum";					
-			}			
-			
+					echo "Ungültiges Datum";
+			}
+
 			if ($_POST['date_to']!="")
 			{
-				if ($ts = strtotime($_POST['date_to']))			
+				if ($ts = strtotime($_POST['date_to']))
 					$sql.= " AND (timestamp<".$ts.")";
 				else
 					echo "Ungültiges Datum";
 			}
-			
+
 			if ($_POST['entity1_id']!="")
 				$sql.= " AND (entity1_id=".$_POST['entity1_id']. " OR entity2_id=".$_POST['entity1_id'].") ";
 			if ($_POST['entity2_id']!="")
 				$sql.= " AND (entity2_id=".$_POST['entity2_id']. " OR entity1_id=".$_POST['entity2_id'].") ";
-			
-			
+
+
 			//data tables
 			if (isset($_POST['table']) && $_POST['table'])
 				$join = " INNER JOIN `reports_".$_POST['type']."` AS rd ON reports.id=rd.id ";
-			
+
 			if (isset($_POST['subtype']) && $_POST['subtype'] != "")
 				$sql.= " AND rd.subtype='".$_POST['subtype']."'";
-				
+
 			//market
 			if (isset($_POST['type']) && $_POST['type']=='market')
 			{
@@ -256,12 +256,12 @@
 					$sql.= " AND (rd.fleet1_id=".$_POST['fleet1_id']. " OR rd.fleet2_id=".$_POST['fleet1_id'].") ";
 				if ($_POST['fleet2_id']!="")
 					$sql.= " AND (rd.fleet2_id=".$_POST['fleet2_id']. " OR rd.fleet1_id=".$_POST['fleet2_id'].") ";
-				
+
 				if ($_POST['ship_id']!="")
 					$sql.= " AND rd.ship_id=".$_POST['ship_id'];
 				if ($_POST['ship_count']!="")
 					$sql.= " AND rd.ship_count=".$_POST['ship_count'];
-				
+
 				if (isset($_POST['sell_0']) && $_POST['sell_0']==1)
 					$sql.= " AND rd.sell_0>'0'";
 				if (isset($_POST['sell_1']) && $_POST['sell_1']==1)
@@ -272,7 +272,7 @@
 					$sql.= " AND rd.sell_3>'0'";
 				if (isset($_POST['sell_4']) && $_POST['sell_4']==1)
 					$sql.= " AND rd.sell_4>'0'";
-				
+
 				if (isset($_POST['buy_0']) && $_POST['buy_0']==1)
 					$sql.= " AND rd.buy_0>'0'";
 				if (isset($_POST['buy_1']) && $_POST['buy_1']==1)
@@ -284,21 +284,21 @@
 				if (isset($_POST['buy_4']) && $_POST['buy_4']==1)
 					$sql.= " AND rd.buy_4>'0'";
 			}
-			
+
 			//battle
 			if (isset($_POST['type']) && $_POST['type']=='battle')
 			{
 
-					
-				
-			}			
-			
+
+
+			}
+
 			//other
 			if (isset($_POST['type']) && $_POST['type']=='other')
 			{
 				if ($_POST['fleet1_id']!="")
 					$sql.= " AND (rd.fleet1_id=".$_POST['fleet1_id']. " OR rd.fleet2_id=".$_POST['fleet1_id'].") ";
-				
+
 				if ($_POST['ship_id']!="")
 				{
 					if ($_POST['ship_count']!="")
@@ -308,7 +308,7 @@
 				}
 				elseif ($_POST["ship_count"]!="")
 					$sql.= " AND rd.ships LIKE '%:".$_POST['ship_count'].",%'";
-				
+
 				if (isset($_POST['res_0']) && $_POST['res_0']==1)
 					$sql.= " AND rd.res_0>'0'";
 				if (isset($_POST['res_1']) && $_POST['res_1']==1)
@@ -319,25 +319,25 @@
 					$sql.= " AND rd.res_3>'0'";
 				if (isset($_POST['res_4']) && $_POST['res_4']==1)
 					$sql.= " AND rd.res_4>'0'";
-					
+
 				if ($_POST['status']!="")
 					$sql.= " AND rd.status='".$_POST['status']."'";
-				
+
 				if ($_POST['action']!="")
 					$sql.= " AND rd.action='".$_POST['action']."'";
-					
-				
+
+
 			}
-			
-			
+
+
 			//LIMIT
 			if ($_POST['report_limit']!="")
 				$limit=$_POST['report_limit'];
 			else
 				$limit="1";
-			
+
 			$reports = Report::find($sql,null,$limit,0,true,$join);
-			
+
 			$cnt = count($reports);
 			echo $cnt." Datens&auml;tze vorhanden<br/><br/>";
 			if ($cnt>0)
@@ -362,12 +362,12 @@
 						if ($r->entityShips =="" || $r->entityShips == 0)
 							continue;
 					}
-					
-					
+
+
 					if (isset($sql)) {
 						$sql.= ($_POST['entity_ships']==1) ? " AND rd.entity_ships != '' ": " AND rd.entity_ships='' ";
 					}
-					
+
 					if ($r->userId>0)
 						$uidf = get_user_nick($r->userId);
 					else
@@ -402,12 +402,12 @@
 		elseif (isset($_GET['reportedit']) && $_GET['reportedit']=="edit")
 		{
 			$r = Report::createFactory($_GET['report_id']);
-			
+
 			if ($r->userId>0)
 				$uidf = get_user_nick($r->userId);
 			else
 				$uidf = "<i>System</i>";
-			
+
 			echo "<table class=\"tbl\">";
 			echo "<tr><td class=\"tbltitle\" valign=\"top\">ID</td><td class=\"tbldata\">".$r->id."</td></tr>";
 			echo "<tr><td class=\"tbltitle\" valign=\"top\">Empf&auml;nger</td><td class=\"tbldata\">$uidf</td></tr>";
@@ -475,7 +475,7 @@
 										<option value=\"\">(egal)</option>";
 			foreach (Report::$types as $k=>$v)
 				echo "					<option value=\"".$k."\">".$v."</option>";
-			
+
 			echo "					</select>
 								</td>
 							</tr>
@@ -510,19 +510,19 @@
 									<input type=\"radio\" name=\"entity_ships\" value=\"0\" /> Nein
 									<input type=\"radio\" name=\"entity_ships\" value=\"1\" /> Ja
 								</td>
-							</tr>							
+							</tr>
 							<tr>
 								<th>Datum von</th>
 								<td>
 									<input type=\"text\" name=\"date_from\" id=\"date_from\" value=\"\" size=\"20\" maxlength=\"250\" />
 								</td>
-							</tr>							
+							</tr>
 							<tr>
 								<th>Datum bis</th>
 								<td>
 									<input type=\"text\" name=\"date_to\" id=\"date_to\" value=\"\" size=\"20\" maxlength=\"250\" />
 								</td>
-							</tr>							
+							</tr>
 							<tr>
 								<th>Anzahl Datens&auml;tze</th>
 								<td class=\"tbldata\">
@@ -616,7 +616,7 @@
 				else
 					$limit=";";
 
-				$sqlstart = "SELECT 
+				$sqlstart = "SELECT
 					message_id,
 					message_user_from,
 					message_user_to,
@@ -626,15 +626,15 @@
 					message_deleted,
 					message_read,
 					message_archived,
-					cat_name 
-					FROM 
-						messages 
+					cat_name
+					FROM
+						messages
 					INNER JOIN
-						 message_data as md 
+						 message_data as md
 						 ON message_id=md.id
 					INNER JOIN
 						message_cat
-						ON message_cat_id=cat_id 
+						ON message_cat_id=cat_id
 					WHERE 1 ";
 				$sqlend = " ORDER BY message_timestamp DESC";
 				$sql = $sqlstart.$sql.$sqlend.$limit;
@@ -701,22 +701,22 @@
 		}
 
 		elseif (isset($_GET['sub']) && $_GET['sub']=="edit")
-		{	
+		{
 			if (isset($_POST['msg_edit'])) {
-				 
+
 				isset($_POST['check'])?$check =1:$check =0;
-				dbquery("UPDATE 
+				dbquery("UPDATE
 				 		   messages
-				         SET 
+				         SET
 				 		   message_deleted=".$check."
-				 		 WHERE 
+				 		 WHERE
 				 		   message_id=".$_GET['message_id']);
 			}
 
 			$res = dbquery("
-			SELECT 
-				* 
-			FROM 
+			SELECT
+				*
+			FROM
 				messages
 			INNER JOIN
 				message_data as md ON md.id=message_id AND  message_id=".$_GET['message_id'].";");
@@ -751,7 +751,7 @@
 				case 1: $checked='checked'; break;case 0: $checked='';break;
 			}
 			echo '<input type="checkbox" name="check" '.$checked.'>';
-			echo " <input type=\"submit\" name=\"msg_edit\" value=\"Speichern\" />"; 
+			echo " <input type=\"submit\" name=\"msg_edit\" value=\"Speichern\" />";
 			echo "</td></tr>";
 			echo "<tr><td class=\"tbltitle\" valign=\"top\">Rundmail?</td><td class=\"tbldata\">";
 			switch ($arr['message_massmail'])

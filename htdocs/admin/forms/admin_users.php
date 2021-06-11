@@ -15,28 +15,28 @@
 	// Programmiert von Nicolas Perrenoud				 		//
 	// www.nicu.ch | mail@nicu.ch								 		//
 	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	//////////////////////////////////////////////////	
+	//////////////////////////////////////////////////
 	//
-	// 	Dateiname: admin_users.php	
-	// 	Topic: Formular-Definitionen für Admin-User 
-	// 	Autor: Nicolas Perrenoud alias MrCage							
+	// 	Dateiname: admin_users.php
+	// 	Topic: Formular-Definitionen für Admin-User
+	// 	Autor: Nicolas Perrenoud alias MrCage
 	// 	Erstellt: 01.12.2004
 	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage
 	// 	Bearbeitet am: 31.03.2006
-	// 	Kommentar: 	
+	// 	Kommentar:
 	//
-	
+
 	// VARIABLES
-	
-	define("MODUL_NAME","Admin Benutzer");				
+
+	define("MODUL_NAME","Admin Benutzer");
 	define("DB_TABLE", 'admin_users');
 	define("DB_TABLE_ID", "user_id");
 	define("DB_OVERVIEW_ORDER_FIELD","user_nick");
-	
+
 	// FIELDS
-	
+
 	// Description:
-	
+
 	// name	 											// DB Field Name
 	// text												// Field Description
 	// type												// Field Type: text, password, textarea, timestamp, radio, select, checkbox, email, url, numeric
@@ -50,7 +50,7 @@
 	// select_elem (Array)				// Select Elements (desc=>value)
 	// select_elem_checked				// Value of default checked Select Element (desc=>value)
 	// show_overview							// Set 1 to show on overview page
-  
+
 	$db_fields = array ( 0	=> 	array	(	"name" => "user_name",
 																		"text" => "Name",
 																		"type" => "text",
@@ -78,7 +78,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
-																	),																		
+																	),
 											2	=> 	array	(	"name" => "user_email",
 																		"text" => "E-Mail",
 																		"type" => "email",
@@ -92,8 +92,8 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
-																	),																
-																
+																	),
+
 											3	=> 	array	(	"name" => "user_password",
 																		"text" => "Passwort",
 																		"type" => "password",
@@ -107,7 +107,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
-																	),																	
+																	),
 											5	=> 	array	(	"name" => "user_locked",
 																		"text" => "Gesperrt",
 																		"type" => "radio",
@@ -135,7 +135,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
-																	)																																													
+																	)
 											);
-        
+
 ?>

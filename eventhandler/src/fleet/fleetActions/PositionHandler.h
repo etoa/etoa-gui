@@ -7,7 +7,7 @@
 
 /**
 * Handles Position....
-* 
+*
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 namespace position

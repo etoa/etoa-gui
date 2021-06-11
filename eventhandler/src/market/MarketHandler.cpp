@@ -35,7 +35,7 @@ namespace market
 		else query << " trades_buy=trades_buy+VALUES(trades_buy);";
 		query.store();
 		query.reset();
-			
+
 		std::string text = "Der Spieler ";
 		text += userId;
 		text += " erhält ";
@@ -44,8 +44,8 @@ namespace market
 		text += reason;
 		std::time_t time = std::time(0);
 		etoa::add_log(17,text,time);
-	}	
-		
+	}
+
 	//Configwerte des Marktes werden aktualisiert
 	void MarketHandler::update_config(std::vector<int> buy_res, std::vector<int> sell_res)
 	{
@@ -57,7 +57,7 @@ namespace market
 		ressource[2] = "plastic";
 		ressource[3] = "fuel";
 		ressource[4] = "food";
-		
+
 		mysqlpp::Query query = con_->query();
 
                 // TODO: This doest not work correctly, user market_rating instead
@@ -78,13 +78,13 @@ namespace market
 		}
                  */
 	}
-	
+
 	//Markt: Abgelaufene Auktionen löschen
 	void MarketHandler::MarketAuctionUpdate()
 	{
 		Config &config = Config::instance();
 		std::time_t time = std::time(0);
-	
+
 		mysqlpp::Query query = con_->query();
 		query << "SELECT "
 			<< "	* "
@@ -100,15 +100,15 @@ namespace market
 			unsigned int resSize = res.size();
 			//std::cout << "Updating "<< resSize << " passed market auctions\n";
 			if (resSize>0) {
-			
+
 				std::vector<int> buy_res (5);
 				std::vector<int> sell_res (5);
-			
+
 				mysqlpp::Row arr;
 				//int lastId = 0;
 				for (mysqlpp::Row::size_type i = 0; i<resSize; i++)  {
 					arr = res.at(i);
-					    	
+
 					//Markt Level vom Verkäufer laden
 					query << "SELECT "
 						<< "	buildlist_current_level "
@@ -122,11 +122,11 @@ namespace market
 						<< "LIMIT 1;";
 					RESULT_TYPE mres = query.store();
 					query.reset();
-					
+
 					if (mres) {
 						unsigned int mresSize = mres.size();
 						mysqlpp::Row marr;
-						
+
 						if (mresSize>0) {
 							marr = mres.at(0);
 
@@ -152,9 +152,9 @@ namespace market
 									<< "	id='" << arr["entity_id"] << "' "
 									<< "	AND planet_user_id='" << arr["user_id"] << "' "
 									<< "LIMIT 1;";
-								query.store();		
+								query.store();
 								query.reset();
-								
+
 								MarketReport *report = new MarketReport((int)arr["user_id"],
 																		 (int)arr["entity_id"],
 																		 (int)arr["id"],
@@ -167,9 +167,9 @@ namespace market
 												0);
 								report->setFactor(etoa::s_round(returnFactor,2));
 								report->setSubtype("auctioncancel");
-								
+
 								delete report;
-            
+
 
 								//Auktion löschen
 								query << "DELETE FROM "
@@ -177,10 +177,10 @@ namespace market
 									<< "WHERE "
 									<< "	id='" << arr["id"] << "' "
 									<< "LIMIT 1;";
-								query.store();		
+								query.store();
 								query.reset();
 							}
-					
+
 							//Jemand hat geboten: Waren zum Versenden freigeben und Nachricht schreiben
 							else if((int)arr["current_buyer_id"]!=0 and (int)arr["buyable"]==1) {
 								// Report an Verkäufer
@@ -189,20 +189,20 @@ namespace market
 																		 (int)arr["id"],
 																		 (int)arr["date_end"],
 																		 (int)arr["current_buyer_id"]);
-								report->setSell((int)arr["sell_0"], 
+								report->setSell((int)arr["sell_0"],
 												(int)arr["sell_1"],
 												(int)arr["sell_2"],
 												(int)arr["sell_3"],
 												(int)arr["sell_4"],
 												0);
-								report->setBuy((int)arr["buy_0"], 
+								report->setBuy((int)arr["buy_0"],
 												(int)arr["buy_1"],
 												(int)arr["buy_2"],
 												(int)arr["buy_3"],
 												(int)arr["buy_4"],
 												0);
 								report->setSubtype("auctionfinished");
-								
+
 								delete report;
 
 								//Report an Käufer
@@ -211,23 +211,23 @@ namespace market
 														  (int)arr["id"],
 														  (int)arr["date_end"],
 														  (int)arr["user_id"]);
-								
-								report->setSell((int)arr["sell_0"], 
+
+								report->setSell((int)arr["sell_0"],
 												(int)arr["sell_1"],
 												(int)arr["sell_2"],
 												(int)arr["sell_3"],
 												(int)arr["sell_4"],
 												0);
-								report->setBuy((int)arr["buy_0"], 
+								report->setBuy((int)arr["buy_0"],
 												(int)arr["buy_1"],
 												(int)arr["buy_2"],
 												(int)arr["buy_3"],
 												(int)arr["buy_4"],
 												0);
 								report->setSubtype("auctionwon");
-								
+
 								delete report;
-            
+
 
 								//Log schreiben, falls dieser Handel regelwidrig ist
 								query <<"SELECT "
@@ -240,7 +240,7 @@ namespace market
 									<< "LIMIT 1;";
 								RESULT_TYPE multi_res = query.store();
 								query.reset();
-				
+
 								query <<"SELECT "
 									<< "	multi_id "
 									<< "FROM "
@@ -251,11 +251,11 @@ namespace market
 									<< "LIMIT 1;";
 								RESULT_TYPE multi_res2 = query.store();
 								query.reset();
-							
+
 								if (multi_res and multi_res2) {
 									unsigned int multi_resSize = multi_res.size();
 									unsigned int multi_res2Size = multi_res2.size();
-    	
+
 									if (multi_resSize>0 or multi_res2Size>0) {
 										std::string log = "[URL=?page=user&sub=edit&user_id=";
 										log += std::string(arr["current_buyer_id"]);
@@ -333,7 +333,7 @@ namespace market
 									<< "WHERE "
 									<< "	id='" << arr["id"] << "' "
 									<< "LIMIT 1;";
-								query.store();		
+								query.store();
 								query.reset();
 
 								// Verkauftse Roshtoffe summieren für Config
@@ -342,18 +342,18 @@ namespace market
 								sell_res[2] += int(arr["sell_2"]);
 								sell_res[3] += int(arr["sell_3"]);
 								sell_res[4] += int(arr["sell_4"]);
-						
+
 								// Faktor = Kaufzeit - Verkaufzeit (in ganzen Tagen, mit einem Max. von 7)
 								// Total = Mengen / Faktor
 								int	factor = std::min((int)ceil( (time - arr["date_start"]) / 3600 / 24 ) ,7);
-						
+
 								// Summiert gekaufte Rohstoffe für Config
 								buy_res[0] += arr["buy_0"] / factor;
 								buy_res[1] += arr["buy_1"] / factor;
 								buy_res[2] += arr["buy_2"] / factor;
 								buy_res[3] += arr["buy_3"] /	factor;
 								buy_res[4] += arr["buy_4"] / factor;
-						
+
 								// Summiert verkaufte Rohstoffe für Config
 								sell_res[0] += arr["sell_0"] / factor;
 								sell_res[1] += arr["sell_1"] / factor;
@@ -365,10 +365,10 @@ namespace market
 						}
 					}
 				}
-				
+
 				// Gekaufte/Verkaufte Rohstoffe in Config-DB speichern für Kursberechnung
-				update_config(buy_res, sell_res);				
-			
+				update_config(buy_res, sell_res);
+
 			}
 		}
 		//Auktionen löschen, welche bereits abgelaufen sind und die Anzeigedauer auch hinter sich haben
@@ -377,11 +377,11 @@ namespace market
 			<< "WHERE "
 			<< "	date_delete<='" << time << "' "
 			<< "	AND sent='1';";
-		query.store();		
+		query.store();
 		query.reset();
 	}
-	
-	
+
+
 	//
 	// Markt Update (Verschicken von allen gekauften/ersteigerten Waren) und berechnen der Roshtoffkurse. Löschen alter Angebote
 	//
@@ -390,13 +390,13 @@ namespace market
 		Config &config = Config::instance();
 		//Auktionen Updaten (beenden)
 		MarketHandler::MarketAuctionUpdate();
-		
+
 		std::time_t time = std::time(0);
-		
+
 		// Handelsschiff
 		DataHandler &DataHandler = DataHandler::instance();
 		ShipData *marketShip = DataHandler.getShipById(config.idget("MARKET_SHIP_ID"));
-		
+
 		//
 		// Auktionen
 		//
@@ -410,31 +410,31 @@ namespace market
 			<< "	AND sent='0' "
 			<< "	AND date_delete>'" << time << "';";
 		RESULT_TYPE res = query.store();
-		query.reset();	
-		
+		query.reset();
+
 		if (res) {
 			unsigned int resSize = res.size();
 			//std::cout << "updating " << resSize << " market_auction...\n";
 			if (resSize>0) {
 				mysqlpp::Row arr;
-				
+
 				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) {
 					arr = res.at(i);
-						
+
 					User buyer((int)arr["current_buyer_id"]);
 					User seller((int)arr["user_id"]);
-						
+
 					// Add trade points
 					int tradepointsBuyer = 1;
 					int tradepointsSeller = 1;
 					tradepointsSeller = ((int)strlen(arr["text"]) > 15) ? 2 : 1;
-					
+
 					std::string textBuyer = "Auktion von ";
 					textBuyer += std::string(arr["user_id"]);
-					
+
 					std::string textSeller = "Rohstoffverkauf an ";
 					textSeller += std::string(arr["current_buyer_id"]);
-					
+
 					addTradePoints(std::string(arr["current_buyer_id"]),tradepointsBuyer,0,textBuyer);
 					addTradePoints(std::string(arr["user_id"]),tradepointsSeller,1,textSeller);
 
@@ -472,7 +472,7 @@ namespace market
 						<<		arr["buy_3"] << ", "
 						<<		arr["buy_4"] << ");";
 					query.store();
-				
+
 					query << "INSERT INTO fleet_ships "
 						<< "(	fs_fleet_id, "
 						<< "	fs_ship_id, "
@@ -482,7 +482,7 @@ namespace market
 						<< "	'" << config.idget("MARKET_SHIP_ID") << "', "
 						<< "	'1');";
 					query.store();
-					
+
 
 					//Flotte zum hochstbietenden schicken (Käufer)
 					query << "INSERT INTO fleet "
@@ -513,7 +513,7 @@ namespace market
 						<<		arr["sell_4"] << ");";
 					query.store();
 					query.reset();
-					
+
 
 					// Schickt gekaufte Rohstoffe mit Handelsschiff
 					// 29.10.09 Fixed a bug where the mysqlpp::quote was used in the query below which caused a crash
@@ -538,8 +538,8 @@ namespace market
 						<< "LIMIT 1;";
 					query.store();
 					query.reset();
-				}	
+				}
 			}
 		}
-	}	
+	}
 }

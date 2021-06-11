@@ -10,7 +10,7 @@
 /**
 * Handles explorer....
 * Important to discover the universe and to get some quest's
-* 
+*
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 namespace explore

@@ -6,7 +6,7 @@
 
 #
 # Config
-# 
+#
 
 TOP=$(dirname $0)/..
 DEB_NAME=etoa-eventhandler
@@ -16,7 +16,7 @@ ARCH=$(uname -m)
 
 #
 # Subs
-# 
+#
 
 cleanup() {
   [ -n "${tdir}" ] && [ -d "${tdir}" ] && rm -rf "${tdir}"
@@ -56,7 +56,7 @@ sed "s/^Version: .*/Version: ${VER}/" -i $tdir/DEBIAN/control
 
 if [ "$ARCH" == "x86_64" ]; then
     deb_arch=amd64
-else 
+else
     deb_arch=$ARCH
 fi
 sed "s/^Architecture: .*/Architecture: ${deb_arch}/" -i $tdir/DEBIAN/control

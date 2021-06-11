@@ -13,13 +13,13 @@
     }
   }
   $res=dbquery("
-  SELECT 
+  SELECT
     id,
     planet_user_id,
-    planet_user_main 
-  FROM 
-    planets 
-  WHERE 
+    planet_user_main
+  FROM
+    planets
+  WHERE
     planet_user_id>0
   ;");
   $cnt=0;
@@ -82,25 +82,25 @@
 
   echo "<h2>Prüfe auf User ohne Hauptplanet / mit zuviel Hauptplaneten...</h2>";
   $res = dbquery("
-  select 
+  select
     p.*,
-    u.user_nick 
-  from 
+    u.user_nick
+  from
   (
-    select 
+    select
       sum(planet_user_main) as s,
-      planet_user_id as uid 
-    from 
-      planets 
-    group by 
+      planet_user_id as uid
+    from
+      planets
+    group by
       planet_user_id
-  ) as p 
-  inner join 
-    users u 
-  on 
-    u.user_id=p.uid 
+  ) as p
+  inner join
+    users u
+  on
+    u.user_id=p.uid
     and uid>0
-    and (s=0 
+    and (s=0
     or s>1)
     ");
   if (mysql_num_rows($res)>0)
@@ -228,7 +228,7 @@
 
 
   $res=dbquery("
-  SELECT 
+  SELECT
     id
   FROM
     stars;");
@@ -239,9 +239,9 @@
     while ($arr=mysql_fetch_assoc($res))
     {
       $eres=dbquery("
-      SELECT 
-        code 
-      FROM 
+      SELECT
+        code
+      FROM
         entities
       WHERE
         id=".$arr['id'].";");
@@ -275,7 +275,7 @@
   }
 
   $res=dbquery("
-  SELECT 
+  SELECT
     id
   FROM
     wormholes;");
@@ -286,9 +286,9 @@
     while ($arr=mysql_fetch_assoc($res))
     {
       $eres=dbquery("
-      SELECT 
-        code 
-      FROM 
+      SELECT
+        code
+      FROM
         entities
       WHERE
         id=".$arr['id'].";");
@@ -322,7 +322,7 @@
   }
 
   $res=dbquery("
-  SELECT 
+  SELECT
     id
   FROM
     space;");
@@ -333,9 +333,9 @@
     while ($arr=mysql_fetch_assoc($res))
     {
       $eres=dbquery("
-      SELECT 
-        code 
-      FROM 
+      SELECT
+        code
+      FROM
         entities
       WHERE
         id=".$arr['id'].";");

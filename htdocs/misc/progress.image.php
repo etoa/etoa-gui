@@ -9,22 +9,22 @@
 	else
 		$p = 0;
 	$p = max(0,$p);
-	$p = min(100,$p);	
-	
+	$p = min(100,$p);
+
 	if (isset($_GET['w']))
 		$width = intval($_GET['w']);
-	else	
+	else
 		$width = 400;
 	if (isset($_GET['h']))
 		$height = intval($_GET['h']);
-	else	
+	else
 		$height = 20;
 
 	if (isset($_GET['r']))
 		$reverse = true;
-	else	
+	else
 		$reverse = false;
-	
+
 	$im = imagecreatetruecolor($width,20);
 	$colBlack = imagecolorallocate($im,0,0,0);
 	$colWhite = imagecolorallocate($im,255,255,255);
@@ -32,8 +32,8 @@
 	$colRed = imagecolorallocate($im,255,0,0);
 	$colGreen = imagecolorallocate($im,0,255,0);
 
-	
-	
+
+
 	$r=$g=$b=0;
 	if ($reverse)
 		$cp = 100-$p;
@@ -48,12 +48,12 @@
 			$g = floor(255/50*$cp);
 		else
 			$g = 255 - floor(100/50*($cp-50));
-	
+
 	$col = imagecolorallocate($im,$r,$g,$b);
 	imagefilledrectangle($im,0,0,round($width/100*$p),$height,$col);
-	
-	
-	
+
+
+
 	$fcol = imagecolorallocate($im,0,0,0);
 	$w = ($width/2)-round(imagefontwidth(2)*strlen($p."%")/2);
 	imagestring($im,2,$w,2,$p."%",$fcol);
@@ -66,6 +66,6 @@
 	imagerectangle($im,0,0,$width-1,$height-1,imagecolorallocate($im,200,200,200));
 	imagerectangle($im,1,1,$width-2,$height-2,imagecolorallocate($im,100,100,100));
 
-	
+
 	imagepng($im);
 ?>

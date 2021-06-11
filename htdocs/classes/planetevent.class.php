@@ -24,7 +24,7 @@
 			INNER JOIN
 				users
 				ON planet_user_id=user_id
-				AND id=".$this->planetId.";			
+				AND id=".$this->planetId.";
 			");
 			if (mysql_num_rows($res)>0)
 			{

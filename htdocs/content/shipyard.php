@@ -99,9 +99,9 @@
 			// Vorausetzungen laden
 			$req = array();
 			$res = dbquery("
-			SELECT 
-				* 
-			FROM 
+			SELECT
+				*
+			FROM
 				ship_requirements;");
 			while ($arr = mysql_fetch_assoc($res))
 			{
@@ -332,9 +332,9 @@
         $box .= '   <tr>
                             <th>Eingestellte Arbeiter</th>
                             <td>
-                                <input  type="text" 
-                                        name="peopleWorking" 
-                                        id="peopleWorking" 
+                                <input  type="text"
+                                        name="peopleWorking"
+                                        id="peopleWorking"
                                         value="'.nf($bl->getPeopleWorking(SHIP_BUILDING_ID)).'"
                                         onkeyup="updatePeopleWorkingBox(this.value,\'-1\',\'-1\');"/>
                         </td>
@@ -421,7 +421,7 @@
 									echo ">".$name."</option>";
 								}
 					echo "</select>
-							
+
 								<select name=\"sort_way\">";
 
 									//Aufsteigend
@@ -435,7 +435,7 @@
 									echo ">Absteigend</option>";
 
 					echo "</select>
-							
+
 								<input type=\"submit\" class=\"button\" name=\"sort_submit\" value=\"Sortieren\"/>
 							</div>";
 			iBoxEnd();

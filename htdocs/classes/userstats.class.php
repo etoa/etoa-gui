@@ -42,15 +42,15 @@
 		$acto=false;
 		$actr=false;
 		$index0 = 0;
-		$res=dbquery("SELECT 
+		$res=dbquery("SELECT
 			stats_count,
 			stats_regcount,
-			stats_timestamp 
-		FROM 
-			user_onlinestats 
-		ORDER BY 
-			stats_timestamp DESC 
-		LIMIT 
+			stats_timestamp
+		FROM
+			user_onlinestats
+		ORDER BY
+			stats_timestamp DESC
+		LIMIT
 			".($totalSteps+1).";");
 		$mnr = mysql_num_rows($res);
 		$sumo = $sumr = 0;

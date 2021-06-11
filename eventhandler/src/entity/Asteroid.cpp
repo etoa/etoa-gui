@@ -8,7 +8,7 @@
 #include "../config/ConfigHandler.h"
 
 	void Asteroid::loadData() {
-		
+
 		My &my = My::instance();
 		mysqlpp::Connection *con = my.get();
 		mysqlpp::Query query = con->query();
@@ -21,13 +21,13 @@
 		query << "LIMIT 1;";
 		RESULT_TYPE nRes = query.store();
 		query.reset();
-		
+
 		if (nRes) {
 			int nSize = nRes.size();
-			
+
 			if (nSize>0) {
 				mysqlpp::Row nRow = nRes.at(0);
-				
+
 				this->resMetal = (double)nRow["res_metal"];
 				this->resCrystal = (double)nRow["res_crystal"];
 				this->resPlastic = (double)nRow["res_plastic"];
@@ -36,31 +36,31 @@
 				this->resPower = (double)nRow["res_power"];
 			}
 		}
-		
+
 		this->initResMetal = this->resMetal;
 		this->initResCrystal = this->resCrystal;
 		this->initResPlastic = this->resPlastic;
 		this->initResFuel = this->resFuel;
 		this->initResFood = this->resFood;
 		this->initResPower = this->resPower;
-		
+
 		this->initWfMetal = this->resMetal;
 		this->initWfCrystal = this->wfCrystal;
 		this->initWfPlastic = this->wfPlastic;
-		
+
 		this->entityUser = new User(this->userId);
-		
+
 		this->dataLoaded = true;
 	}
-	
+
 	void Asteroid::saveData() {
-		
+
 		Config &config = Config::instance();
-		
+
 		My &my = My::instance();
 		mysqlpp::Connection *con = my.get();
 		mysqlpp::Query query = con->query();
-		
+
 		// Check if there are still enough resources in the field, if not delete it and create a new one
 		if (this->getResSum() < config.nget("asteroid_ress",1)) {
 			// Delete the old one and replace it with an empty field
@@ -74,7 +74,7 @@
 			query << "LIMIT 1;";
 			query.store();
 			query.reset();
-			
+
 			query << "DELETE FROM";
 			query << "	asteroids ";
 			query << "WHERE ";
@@ -82,7 +82,7 @@
 			query << "LIMIT 1;";
 			query.store();
 			query.reset();
-			
+
 			query << "INSERT INTO ";
 			query << " space ";
 			query << "(";
@@ -93,7 +93,7 @@
 			query << "" << this->getId() << ");";
 			query.store();
 			query.reset();
-			
+
             double shipCount =0;
 
 			query << "SELECT "
@@ -107,20 +107,20 @@
             << "    AND ship_actions LIKE '%collectmetal%' ";
             RESULT_TYPE res = query.store();
             query.reset();
-            
+
             if (res) {
                 unsigned int resSize = res.size();
-                
+
                 if (resSize>0) {
                     mysqlpp::Row row;
                     for (mysqlpp::Row::size_type i = 0; i<resSize; i++) {
                         row = res.at(i);
-                        
+
                         shipCount = (double)row["sl_count"];
                     }
                 }
             }
-            
+
             query << "SELECT "
                 << "	sum(fs_ship_cnt) AS fs_count "
 				<< "FROM "
@@ -136,15 +136,15 @@
                 << "    AND ship_actions LIKE '%collectmetal%' ";
             res = query.store();
             query.reset();
-            
+
             if (res) {
                 unsigned int resSize = res.size();
-                
+
                 if (resSize>0) {
                     mysqlpp::Row row;
                     for (mysqlpp::Row::size_type i = 0; i<resSize; i++) {
                         row = res.at(i);
-                        
+
                         shipCount += (double)row["fs_count"];
                     }
                 }
@@ -152,11 +152,11 @@
 
         	// Create a new one
             double x = config.nget("asteroid_ress",1) + (400000*pow(2.0,log10(shipCount)));
-			double newMetal = rand() % (int)(0.45*x) + (int)(0.21*x); 
+			double newMetal = rand() % (int)(0.45*x) + (int)(0.21*x);
 			double newCrystal = rand() % (int)(0.45*x) + (int)(0.21*x);
 			double newPlastic = x-(newCrystal+newMetal);
 
-			
+
 			// Check if there is an empty field left
 			query << "SELECT ";
 			query << "	id ";
@@ -169,14 +169,14 @@
 			query << "LIMIT 1;";
 			RESULT_TYPE searchRes = query.store();
 			query.reset();
-			
+
 			if (searchRes) {
 				int searchSize = searchRes.size();
-				
+
 				// if there is, create it
 				if (searchSize > 0) {
 					mysqlpp::Row searchRow = searchRes.at(0);
-					
+
 					query << "UPDATE ";
 					query << "	entities ";
 					query << "SET ";
@@ -186,7 +186,7 @@
 					query << "LIMIT 1;";
 					query.store();
 					query.reset();
-					
+
 					query << "INSERT INTO ";
 					query << "	asteroids ";
 					query << "(";
@@ -203,7 +203,7 @@
 					query << "" << newPlastic << ");";
 					query.store();
 					query.reset();
-					
+
 					query << "DELETE FROM ";
 					query << "	space ";
 					query << "WHERE ";
@@ -231,6 +231,6 @@
 			query.store();
 			query.reset();
 		}
-		
+
 		this->changedData = false;
 	}

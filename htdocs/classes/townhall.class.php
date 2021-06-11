@@ -27,7 +27,7 @@ class Townhall
 			$rssValue .= "		</image>\r\n";
 
 			$res=dbquery("
-			SELECT 
+			SELECT
 				alliance_news_title,
 				alliance_news_text
 			FROM
@@ -36,7 +36,7 @@ class Townhall
 				alliance_news_alliance_to_id = 0
 			ORDER BY
 				alliance_news_date DESC
-			
+
 			;");
 
 			// The records were retrieved OK, let's start building the item tags

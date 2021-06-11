@@ -20,22 +20,22 @@
 
 			iBoxStart("Logins");
 			echo "Hier findest du deine aktiven Sessions, eine Liste der letzten 10 Logins in deinen Account, ebenfalls kannst du weiter unten
-			sehen wann dass fehlerhafte Loginversuche stattgefunden haben. Solltest du feststellen, dass jemand unbefugten 
+			sehen wann dass fehlerhafte Loginversuche stattgefunden haben. Solltest du feststellen, dass jemand unbefugten
 			Zugriff auf deinen Account hatte, solltest du umgehend dein Passwort &auml;ndern und ein ".ticketLink("Ticket",16)." schreiben.";
 			iBoxEnd();
 
 		tableStart("Aktive Sessions");
 			$res=dbquery("
-			SELECT 
+			SELECT
 				time_login,
 				time_action,
 				ip_addr,
-				user_agent  
-			FROM 
+				user_agent
+			FROM
 				user_sessions
 			WHERE
 				user_id=".$cu->id."
-			ORDER BY 
+			ORDER BY
 				time_action DESC;");
 			echo "<tr>
 			<th>Login</th>
@@ -52,20 +52,20 @@
 				echo "<td>".$arr['user_agent']."</td></tr>";
 			}
     	tableEnd();
-			
+
 		tableStart("Letzte 10 Logins");
 			$res=dbquery("
-			SELECT 
+			SELECT
 				time_login,
 				ip_addr ,
-				user_agent  
-			FROM 
-				user_sessionlog 
+				user_agent
+			FROM
+				user_sessionlog
 			WHERE
 				user_id=".$cu->id."
-			ORDER BY 
+			ORDER BY
 				time_login DESC
-			LIMIT 
+			LIMIT
 				10;");
 			echo "<tr><th>Zeit</th>
 			<th>IP-Adresse</th>
@@ -79,18 +79,18 @@
 				echo "<td>".$arr['user_agent']."</td></tr>";
 			}
     	tableEnd();
-		
+
     	tableStart("Letzte 10 fehlgeschlagene Logins");
 			$res=dbquery("
-			SELECT 
-				* 
-			FROM 
-				login_failures 
+			SELECT
+				*
+			FROM
+				login_failures
 			WHERE
 				failure_user_id=".$cu->id."
-			ORDER BY 
+			ORDER BY
 				failure_time DESC
-			LIMIT 
+			LIMIT
 				10;");
 			if (mysql_num_rows($res)>0)
 			{

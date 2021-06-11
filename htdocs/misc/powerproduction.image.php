@@ -64,7 +64,7 @@
 	$strx = P_LEFT;
 	$i = 0;
 	$res = dbquery("
-	SELECT 
+	SELECT
 		*
 	FROM
 		buildings
@@ -97,7 +97,7 @@
 		$i++;
 	}
 	$res = dbquery("
-	SELECT 
+	SELECT
 		*
 	FROM
 		ships

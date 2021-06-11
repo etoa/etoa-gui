@@ -1,35 +1,35 @@
 <?PHP
-class GetRaceInfosJsonResponder extends JsonResponder 
+class GetRaceInfosJsonResponder extends JsonResponder
 {
   function getRequiredParams() {
     return array('id');
   }
 
   function getResponse($params) {
-    
+
     $data = array();
-        
+
 	$ttm = new TutorialManager();
 
 	defineImagePaths();
-	
+
 	$val = $params['id'];
-	
+
 	if ($val > 0)
 	{
 		$res=dbQuerySave("
-			SELECT 
-				* 
-			FROM 
-				races 
-			WHERE 
+			SELECT
+				*
+			FROM
+				races
+			WHERE
 				race_id=?
 		;", array($val));
-		
+
 		if ($arr=mysql_fetch_array($res)) {
-		
+
 			ob_start();
-			
+
 			echo text2html($arr['race_comment'])."<br/><br/>";
 			tableStart('',300);
 			echo "<tr><th colspan=\"2\">St&auml;rken / Schw&auml;chen:</th></tr>";
@@ -75,16 +75,16 @@ class GetRaceInfosJsonResponder extends JsonResponder
 			}
 			tableEnd();
 			tableStart('',500);
-			
+
 			echo  "<tr><th colspan=\"3\">Spezielle Schiffe:</th></tr>";
 			$res=dbquery("
-			SELECT 
+			SELECT
 				ship_id
-			FROM 
-				ships 
-			WHERE 
-			ship_race_id='".$val."' 
-			AND ship_buildable=1 
+			FROM
+				ships
+			WHERE
+			ship_race_id='".$val."'
+			AND ship_buildable=1
 			AND special_ship=0;");
 			if (mysql_num_rows($res)>0)
 			{
@@ -98,19 +98,19 @@ class GetRaceInfosJsonResponder extends JsonResponder
 			}
 			else
 				echo "<tr><td colspan=\"3\">Keine Rassenschiffe vorhanden</td></tr>";
-			
+
 			tableEnd();
 			tableStart('',500);
 			echo  "<tr><th colspan=\"3\">Spezielle Verteidigung:</th></tr>";
 			$res=dbquery("
-			SELECT 
+			SELECT
 				def_id,
 				def_name,
-				def_shortcomment 
-			FROM 
-				defense 
-			WHERE 
-			def_race_id='".$val."' 
+				def_shortcomment
+			FROM
+				defense
+			WHERE
+			def_race_id='".$val."'
 			AND def_buildable=1;");
 			if (mysql_num_rows($res)>0)
 			{
@@ -124,10 +124,10 @@ class GetRaceInfosJsonResponder extends JsonResponder
 			}
 			else
 				echo "<tr><td colspan=\"3\">Keine Rassenverteidigung vorhanden</td></tr>";
-			
-				
+
+
 			tableEnd();
-			
+
 			$data['content'] = ob_get_clean();
 		}
 	}

@@ -38,13 +38,13 @@ if ($cp) {
                 if ($val > 1) $val = 1;
                 if ($val < 0) $val = 0;
                 dbquery("
-					UPDATE 
-						buildlist 
-					SET 
-						buildlist_prod_percent=$val 
-					WHERE 
-						buildlist_user_id=" . $cu->id . " 
-						AND buildlist_entity_id=" . $cp->id . " 
+					UPDATE
+						buildlist
+					SET
+						buildlist_prod_percent=$val
+					WHERE
+						buildlist_user_id=" . $cu->id . "
+						AND buildlist_entity_id=" . $cp->id . "
 						AND buildlist_building_id='" . intval($id) . "'
 					;");
             }
@@ -86,7 +86,7 @@ if ($cp) {
     $prodIncludingBoni = [];
     echo "<form action=\"?page=$page\" method=\"post\">";
     $bres = dbquery("
-		SELECT 
+		SELECT
 			b.building_id,
 			b.building_name,
 			b.building_type_id,
@@ -99,7 +99,7 @@ if ($cp) {
 			b.building_production_factor,
 			l.buildlist_current_level,
 			l.buildlist_prod_percent
-		FROM 
+		FROM
 		buildings AS b
 		INNER JOIN
     	buildlist AS l
@@ -113,7 +113,7 @@ if ($cp) {
 	        OR b.building_prod_fuel>0
 	        OR b.building_prod_food>0
 	        OR b.building_power_use>0)
-		ORDER BY 
+		ORDER BY
 			b.building_type_id,
 			b.building_order;");
     if (mysql_num_rows($bres) > 0) {
@@ -349,7 +349,7 @@ if ($cp) {
 
     echo "<div>
 		<input type=\"button\" onclick=\"document.location='?page=specialists'\" value=\"Spezialisten\" /> &nbsp; ";
-    echo "<input type=\"button\" onclick=\"document.location='?page=planetstats'\" value=\"Ressourcen aller Planeten anzeigen\" /> &nbsp; 
+    echo "<input type=\"button\" onclick=\"document.location='?page=planetstats'\" value=\"Ressourcen aller Planeten anzeigen\" /> &nbsp;
 		<input type=\"button\" onclick=\"document.location='?page=economy&action=update'\" value=\"Neu Berechnen\" />
 		</div>";
 
@@ -359,7 +359,7 @@ if ($cp) {
     $blvl = $bl->getLevel(RES_BUNKER_ID);
     if ($blvl > 0) {
         iBoxStart("Rohstoffbunker");
-        echo "In deinem <b>" . $bl->item(RES_BUNKER_ID) . "</b> der Stufe <b>$blvl</b> werden bei einem 
+        echo "In deinem <b>" . $bl->item(RES_BUNKER_ID) . "</b> der Stufe <b>$blvl</b> werden bei einem
 			Angriff <b>" . nf($bl->getBunkerRes()) . "</b> Resourcen gesichert!";
         iBoxEnd();
     }
@@ -390,7 +390,7 @@ if ($cp) {
 
     // Power produced by buildings
     $pres = dbquery("
-		SELECT 
+		SELECT
 			b.building_id,
 			b.building_name,
 			b.building_type_id,
@@ -399,7 +399,7 @@ if ($cp) {
 			b.building_production_factor,
 			l.buildlist_current_level,
 			l.buildlist_prod_percent
-		FROM 
+		FROM
       buildings AS b
       INNER JOIN
       buildlist AS l
@@ -408,7 +408,7 @@ if ($cp) {
       AND l.buildlist_entity_id='" . $cp->id . "'
       AND l.buildlist_current_level>'0'
       AND b.building_prod_power>'0'
-		ORDER BY 
+		ORDER BY
 			b.building_order,
 			b.building_name;");
     if (mysql_num_rows($pres) > 0) {
@@ -454,7 +454,7 @@ if ($cp) {
             $pwr *= $bonusFactor;
             $pwrt = $pwr * $sarr['shiplist_count'];
             echo "<tr><th>" . $sarr['ship_name'] . " (" . nf($sarr['shiplist_count']) . ")</th>";
-            echo "<td colspan=\"3\">" . nf($pwrt) . " 
+            echo "<td colspan=\"3\">" . nf($pwrt) . "
 				(Energie pro Satellit: " . (($pwr)) . " = " . $sarr['ship_prod_power'] . " Basis, " . $dtempstr . " bedingt durch Entfernung zur Sonne, " . get_percent_string($bonusFactor, 1) . " durch Energiebonus)</td>";
             echo "</tr>";
             $cnt['power'] += $pwrt;
@@ -471,7 +471,7 @@ if ($cp) {
         echo ">" . nf($powerUsed) . "</td><td>" . round($powerUsed / $powerProduced * 100, 2) . "%</th>
 			<td>
 			<img src=\"misc/progress.image.php?r=1&w=100&p=" . round($powerUsed / $powerProduced * 100, 2) . "\" alt=\"progress\" />
-			</td>			
+			</td>
 			</tr>";
         if ($powerFree < 0)
             $style = " style=\"color:#f00\"";
@@ -514,11 +514,11 @@ if ($cp) {
             b.building_id = l.buildlist_building_id
             AND l.buildlist_entity_id=" . $cp->id . "
             AND l.buildlist_current_level>0
-            AND 
-                (b.building_store_metal>0 
-                OR b.building_store_crystal>0 
-                OR b.building_store_plastic>0 
-                OR b.building_store_fuel>0 
+            AND
+                (b.building_store_metal>0
+                OR b.building_store_crystal>0
+                OR b.building_store_plastic>0
+                OR b.building_store_fuel>0
                 OR b.building_store_food>0);");
     if (mysql_num_rows($bres) > 0) {
         tableStart("Lagerkapazit&auml;t");

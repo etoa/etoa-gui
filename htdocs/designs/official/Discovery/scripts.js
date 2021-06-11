@@ -1,5 +1,5 @@
 // Tippmessage-Stil
-//The Style array parameters come in the following order 
+//The Style array parameters come in the following order
 //stl=[titleColor,TitleBgColor,TitleBgImag,TitleTextAlign,TitleFontFace,TitleFontSize,TextColor,TextBgColor,TextBgImag,TextTextAlign,TextFontFace,TextFontSize,Width,Height,BorderSize,BorderColor,Textpadding,transition number,Transition duration,Transparency level,shadow type,shadow color,Appearance behavior,TipPositionType,Xpos,Ypos]
 stl=["white","##222255","","","",,"white","#606578","","","",,,,2,"#222255",2,,,,,"",,,,]
 tooltipstyle=["#000","#BBBBBB","","","",,"white","#111111","","","",,,,2,"#BBBBBB",2,,,,,"",,,,]
@@ -51,9 +51,9 @@ function changeImages() {
 
 // Set this to true (temporarily fix)
 var preloadFlag = true;
-function preloadImages() 
+function preloadImages()
 {
-	if (document.images) 
+	if (document.images)
 	{
 		TopPanel_02_imap_forum_over = newImage("designs/Discovery/images/TopPanel_02-imap_forum_over.gif");
 		TopPanel_02_imap_forum_down = newImage("designs/Discovery/images/TopPanel_02-imap_forum_down.gif");

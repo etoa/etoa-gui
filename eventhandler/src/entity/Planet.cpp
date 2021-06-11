@@ -1,9 +1,9 @@
 
 #include "Planet.h"
-	
+
 	void Planet::loadData() {
 		Config &config = Config::instance();
-		
+
 		My &my = My::instance();
 		mysqlpp::Connection *con = my.get();
 		mysqlpp::Query query = con->query();
@@ -37,10 +37,10 @@
 			<< "LIMIT 1;";
 		RESULT_TYPE pRes = query.store();
 		query.reset();
-		
+
 		if (pRes) {
 			int pSize = pRes.size();
-			
+
 			if (pSize>0) {
 				mysqlpp::Row pRow = pRes.at(0);
 				this->userId = (int)pRow["planet_user_id"];
@@ -62,14 +62,14 @@
 				this->wfCrystal = (double)pRow["planet_wf_crystal"];
 				this->wfPlastic = (double)pRow["planet_wf_plastic"];
 				this->resPeople = (double)pRow["planet_people"];
-				
+
 				this->fields = (int)pRow["planet_fields"];
 				this->lastUpdated = (int)pRow["planet_last_updated"];
 				this->userChanged = (int)pRow["planet_user_changed"];
 				this->lastUserId = (int)pRow["planet_last_user_id"];
 			}
 		}
-		
+
 		this->initResMetal = this->resMetal;
 		this->initResCrystal = this->resCrystal;
 		this->initResPlastic = this->resPlastic;
@@ -77,38 +77,38 @@
 		this->initResFood = this->resFood;
 		this->initResPeople = this->resPeople;
 		this->initResPower = this->resPower;
-		
+
 		this->initWfMetal = this->wfMetal;
 		this->initWfCrystal = this->wfCrystal;
 		this->initWfPlastic = this->wfPlastic;
-		
+
 		this->entityUser = new User(this->userId);
-		
+
 		if (this->typeId == config.nget("gasplanet", 0)) {
 			this->codeName = "Gasplanet";
 			this->updateGasPlanet();
 		}
-		
+
 		this->dataLoaded = true;
 	}
-	
+
 	void Planet::updateGasPlanet() {
 		Config &config = Config::instance();
 		std::time_t time = std::time(0);
-		
+
 		int ptime = time;
 		//if the planet was not updated yet, set the actual time minus an hour
 		if (this->lastUpdated == 0) this->lastUpdated = ptime - 3600;
 		double tlast = ptime - this->lastUpdated;
 		tlast = this->resFuel + tlast*(double)config.nget("gasplanet", 1)/3600.0;
-					
+
 		double pSize = (double)config.nget("gasplanet", 2)*this->fields;
 		this->resFuel = std::min(tlast,pSize);
-		
+
 		this->lastUpdated = time;
 		this->changedData = true;
 	}
-	
+
 	void Planet::saveData() {
 		if (this->getCount()!=this->getInitCount() || this->shipsSave) {
 			while (!objects.empty()) {
@@ -116,7 +116,7 @@
 				delete object;
 				objects.pop_back();
 			}
-			
+
 			while (!def.empty()) {
 				Object* object = def.back();
 				delete object;
@@ -128,16 +128,16 @@
 				fleets.pop_back();
 			}
 		}
-		
+
 		if (this->changedData) {
 			Config &config = Config::instance();
 			My &my = My::instance();
 			mysqlpp::Connection *con = my.get();
 			mysqlpp::Query query = con->query();
-			
+
 			if (this->typeId == config.nget("gasplanet", 0))
 				this->codeName = "";
-			
+
 			query << "UPDATE ";
 			query << "	planets ";
 			query << "SET ";
@@ -163,6 +163,6 @@
 			query.store();
 			query.reset();
 		}
-		
+
 		this->changedData = false;
 	}

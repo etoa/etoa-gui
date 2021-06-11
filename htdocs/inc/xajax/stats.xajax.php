@@ -2,7 +2,7 @@
 
 $xajax->register(XAJAX_FUNCTION,'statsShowBox');
 $xajax->register(XAJAX_FUNCTION,'statsShowTable');
- 
+
 
 function statsShowBox($mode, $sort="", $sortOrder="")
 {
@@ -12,7 +12,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 	$_SESSION['statsmode']=$mode;
 
 	$out="";
-	
+
 	//
 	// Allianzdaten
 	//
@@ -56,16 +56,16 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 		else
 		{
 			$sql="
-			SELECT 
+			SELECT
 				*
-			FROM 
+			FROM
 				alliance_stats
-			ORDER BY 
+			ORDER BY
 				points DESC,
 				alliance_name ASC
 			;";
 		}
-		
+
 		$res=dbquery($sql);
 		if (mysql_num_rows($res)>0)
 		{
@@ -104,9 +104,9 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 		}
 		tableEnd();
 	 	$objResponse->assign('statsBox', 'innerHTML', ob_get_clean());
-		
+
 	}
-	
+
 	//
 	// Allianzbasis
 	//
@@ -154,16 +154,16 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 		else
 		{
 			$sql="
-			SELECT 
+			SELECT
 				*
-			FROM 
+			FROM
 				alliance_stats
-			ORDER BY 
+			ORDER BY
 				apoints DESC,
 				alliance_name ASC
 			;";
 		}
-		
+
 		$res=dbquery($sql);
 		if (mysql_num_rows($res)>0)
 		{
@@ -197,9 +197,9 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 		}
 		tableEnd();
 	 	$objResponse->assign('statsBox', 'innerHTML', ob_get_clean());
-		
+
 	}
-	
+
 	//
 	// Gamestats
 	//
@@ -216,29 +216,29 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 		}
 	 	$objResponse->assign('statsBox', 'innerHTML', ob_get_clean());
 	}
-	
+
 	//
 	// Pranger
 	//
 	elseif ($mode=="pillory")
 	{
-		$res = dbquery("SELECT 
+		$res = dbquery("SELECT
 			u.user_nick,
 			u.user_blocked_from,
 			u.user_blocked_to,
-			u.user_ban_reason, 
+			u.user_ban_reason,
 			a.user_nick AS admin_nick,
 			a.user_email AS admin_email
-		FROM 
+		FROM
 			users AS u
 		LEFT JOIN
 			admin_users AS a
 		ON
 			u.user_ban_admin_id = a.user_id
-		WHERE 
-			u.user_blocked_from<".time()." 
-			AND u.user_blocked_to>".time()." 
-		ORDER BY 
+		WHERE
+			u.user_blocked_from<".time()."
+			AND u.user_blocked_to>".time()."
+		ORDER BY
 			u.user_blocked_from DESC;");
 		ob_start();
 		tableStart("Pranger");
@@ -268,7 +268,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 		tableEnd();
 	 	$objResponse->assign('statsBox', 'innerHTML', ob_get_clean());
 	}
-	
+
 	//
 	// Titles
 	//
@@ -277,15 +277,15 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 		ob_start();
 		if (!@include(CACHE_ROOT."/out/usertitles.gen"))
 		{
-			echo "<b>Fehler! Die Liste wurde noch nicht erstellt! Bitte das nächste Statistikupdate abwarten.<br/><br/>"; 	
+			echo "<b>Fehler! Die Liste wurde noch nicht erstellt! Bitte das nächste Statistikupdate abwarten.<br/><br/>";
 		}
 		$out.= ob_get_contents();
 		ob_end_clean();
 	 	$objResponse->assign('statsBox', 'innerHTML', $out);
 	}
 
-	
-	// 
+
+	//
 	// Normal Stats
 	//
 	else
@@ -294,7 +294,7 @@ function statsShowBox($mode, $sort="", $sortOrder="")
 		iBoxStart("Statistik");
 		echo "<div id=\"statsHeaderContainer\">
 		<div id=\"statsSearchContainer\">
-			<b>&nbsp;&nbsp;Suche:</b> 
+			<b>&nbsp;&nbsp;Suche:</b>
 			<input type=\"text\" class=\"search\" name=\"user_nick\" autocomplete=\"off\" value=\"\" size=\"\" onclick=\"this.select()\" onkeyup=\"
 			if(window.mytimeout) window.clearTimeout(window.mytimeout);
  			window.mytimeout = window.setTimeout('loadingMsg(\'statsTable\',\'Suche Spieler...\');xajax_statsShowTable(\'$mode\',0,document.getElementById(\'searchString\').value);', 500);
@@ -327,7 +327,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 {
 	global $page;
 	$objResponse = new xajaxResponse();
-  
+
 	// Datensatznavigation
 	if($mode=="diplomacy" || $mode=="battle" || $mode=="trade")
 	{
@@ -345,14 +345,14 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 	else
 	{
 		$res = dbquery("
-		SELECT 
-			COUNT(id) 
-		FROM 
+		SELECT
+			COUNT(id)
+		FROM
 			user_stats;");
 	}
 	$usrcnt = mysql_fetch_row($res);
 	$num = $usrcnt[0];
-	
+
 	if ($limit>0)
 	{
 		$limit = $limit.",".STATS_NUM_OF_ROWS;
@@ -368,7 +368,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 	$lastlimit = (ceil($num/STATS_NUM_OF_ROWS)*STATS_NUM_OF_ROWS)-STATS_NUM_OF_ROWS;
 
 	// Punktetabelle
-	
+
 	if ($num > 0)
 	{
 		if($mode=="diplomacy")
@@ -436,7 +436,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 			$shift="rankshift";
 		}
 		$orderDir = "ASC";
-		
+
 		if ($orderBy=='nickUp')
 		{
 			$order = "nick";
@@ -467,7 +467,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 			$order = "alliance_tag";
 			$orderDir = "ASC";
 		}
-		
+
 		$queryParams = array();
 		if ($userstring!="")
 		{
@@ -477,33 +477,33 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 				if($mode=="diplomacy" || $mode=="battle" || $mode=="trade")
 				{
 					$sql="
-					SELECT 
+					SELECT
 						user_id AS id,
 						user_nick,
 						race_name,
 						alliance_tag,
-						".$field." 
-					FROM 
+						".$field."
+					FROM
 						users
 						INNER JOIN
 							races ON user_race_id=race_id
 						INNER JOIN
 							user_ratings as r ON user_id=r.id
-						LEFT JOIN 
+						LEFT JOIN
 							alliances ON user_alliance_id=alliance_id
 					WHERE
 						LCASE(user_nick) LIKE ?
 						AND user_ghost=0
-					ORDER BY 
+					ORDER BY
 						$order DESC
-					LIMIT 
+					LIMIT
 						$limit;";
 					$queryParams = array(strtolower($userstring));
 				}
 				else
 				{
 					$sql="
-					SELECT 
+					SELECT
 						id,
 						nick,
 						blocked,
@@ -516,13 +516,13 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 						alliance_tag,
 						sx,
 						sy
-					FROM 
+					FROM
 						user_stats
-					WHERE 
+					WHERE
 						LCASE(nick) LIKE ?
-					ORDER BY 
+					ORDER BY
 						$order $orderDir
-					LIMIT 
+					LIMIT
 						$limit;";
 					$queryParams = array(strtolower($userstring));
 				}
@@ -532,33 +532,33 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 				if($mode=="diplomacy" || $mode=="battle" || $mode=="trade")
 				{
 					$sql="
-					SELECT 
+					SELECT
 						user_id AS id,
 						user_nick,
 						race_name,
 						alliance_tag,
-						".$field." 
-					FROM 
+						".$field."
+					FROM
 						users
 						INNER JOIN
 							races ON user_race_id=race_id
 						INNER JOIN
 							user_ratings as r ON user_id=r.id
-						LEFT JOIN 
+						LEFT JOIN
 							alliances ON user_alliance_id=alliance_id
 					WHERE
 					LCASE(user_nick) LIKE ?
 						AND user_ghost=0
-					ORDER BY 
+					ORDER BY
 						$order DESC
-					LIMIT 
+					LIMIT
 						$limit;";
 					$queryParams = array(strtolower('%'.$userstring.'%'));
 				}
 				else
 				{
 					$sql="
-					SELECT 
+					SELECT
 						id,
 						nick,
 						blocked,
@@ -571,13 +571,13 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 						alliance_tag,
 						sx,
 						sy
-					FROM 
+					FROM
 						user_stats
-					WHERE 
+					WHERE
 					LCASE(nick) LIKE ?
-					ORDER BY 
+					ORDER BY
 						$order $orderDir
-					LIMIT 
+					LIMIT
 						$limit;";
 					$queryParams = array(strtolower('%'.$userstring.'%'));
 				}
@@ -588,31 +588,31 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 			if($mode=="diplomacy" || $mode=="battle" || $mode=="trade")
 			{
 				$sql="
-				SELECT 
+				SELECT
 					user_id AS id,
 					user_nick,
 					race_name,
 					alliance_tag,
-					".$field." 
-				FROM 
+					".$field."
+				FROM
 					users
 					INNER JOIN
 						races ON user_race_id=race_id
 					INNER JOIN
 						user_ratings as r ON user_id=r.id
-					LEFT JOIN 
+					LEFT JOIN
 						alliances ON user_alliance_id=alliance_id
 				WHERE
 					user_ghost=0
-				ORDER BY 
+				ORDER BY
 					$order DESC
-				LIMIT 
+				LIMIT
 					$limit;";
 			}
 			else
 			{
 				$sql="
-				SELECT 
+				SELECT
 					id,
 					nick,
 					blocked,
@@ -625,20 +625,20 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 					alliance_tag,
 					sx,
 					sy
-				FROM 
+				FROM
 					user_stats
-				ORDER BY 
+				ORDER BY
 					$order $orderDir
-				LIMIT 
+				LIMIT
 					$limit;";
 			}
 		}
 		$res=dbQuerySave($sql, $queryParams);
-		
+
 		$nr = mysql_num_rows($res);
 		if ($nr>0)
 		{
-			// Navigationsfeld		
+			// Navigationsfeld
 			ob_start();
 			if ($userstring=='')
 			{
@@ -657,17 +657,17 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 					if ($dif>$num) $dif=$num;
 					$oval=$x-1;
 					echo "<option value=\"$oval\"";
-					if ($limit==$oval) 
+					if ($limit==$oval)
 						echo " selected=\"selected\"";
 					echo ">$x - $dif</option>";
 				}
 				echo "</select>";
-			}				
+			}
 			$out = ob_get_clean();
 			$objResponse->assign('statsNav1', 'innerHTML', $out);
-			$objResponse->assign('statsNav2', 'innerHTML', $out);				
-					
-			// Tabelle	
+			$objResponse->assign('statsNav2', 'innerHTML', $out);
+
+			// Tabelle
 			$out="<table class=\"tb\" style=\"width:100%\">";
 			$colspan = ($mode=="diplomacy" || $mode=="battle" || $mode=="trade") ? count($titleContainer) : 7;
 			$out.= "<tr><th colspan=\"$colspan\" style=\"text-align:center;\">".$title."</th></tr>";
@@ -688,7 +688,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 					<a href=\"javascript:;\" onclick=\"loadingMsgPrepend('statsTable','Lade...');xajax_statsShowTable('$mode',0,'',0,'rankDown')\"><img src=\"images/s_asc.png\"/></a>
 					<a href=\"javascript:;\" onclick=\"loadingMsgPrepend('statsTable','Lade...');xajax_statsShowTable('$mode',0,'',0,'rankUp')\"><img src=\"images/s_desc.png\"/></a></th>
 				</th>
-				<th>Nick 
+				<th>Nick
 					<a href=\"javascript:;\" onclick=\"loadingMsgPrepend('statsTable','Lade...');xajax_statsShowTable('$mode',0,'',0,'nickDown')\"><img src=\"images/s_asc.png\"/></a>
 					<a href=\"javascript:;\" onclick=\"loadingMsgPrepend('statsTable','Lade...');xajax_statsShowTable('$mode',0,'',0,'nickUp')\"><img src=\"images/s_desc.png\"/></a></th>
 				<th>Rasse</th>
@@ -716,7 +716,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 					{
 						$addstyle="";
 					}
-					
+
 					$out.="<tr>";
 					foreach($contentContainer as $content)
 					{
@@ -742,7 +742,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 					}
 				}
 				else
-				{					
+				{
 					if ($arr['id']==$_SESSION['user_id'])
 					{
 						$addstyle=" class=\"userSelfColor\"";
@@ -768,7 +768,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 						$addstyle="";
 					}
 					$out.= "<tr>";
-	
+
 					$out.= "<td $addstyle  align=\"right\" ";
 					if ($mode=="user")
 						$out.= tm("Punkteverlauf","<div><img src=\"misc/stats.image.php?user=".$arr['id']."\" alt=\"Diagramm\" style=\"width:600px;height:400px;background:#335 url(images/loading335.gif) no-repeat 300px 200px;\" /></div>");
@@ -804,12 +804,12 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 		{
 			$out= "<div><i>Es wurden keine Spieler gefunden!</i></div>";
 			$objResponse->assign('statsNav1', 'innerHTML', '');
-			$objResponse->assign('statsNav2', 'innerHTML', '');	
+			$objResponse->assign('statsNav2', 'innerHTML', '');
 		}
 	}
 	else
 	{
-		$out= "<div><i>Momentan sind keine Statistiken vorhanden, sie werden 
+		$out= "<div><i>Momentan sind keine Statistiken vorhanden, sie werden
 				zur nächsten vollen Stunde erstellt!
 		</i></div>";
 	}

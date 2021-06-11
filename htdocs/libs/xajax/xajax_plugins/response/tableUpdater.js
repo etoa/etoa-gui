@@ -1,6 +1,6 @@
 // if xajax has not yet been initialized, wait a second and try again
 // once xajax has been initialized, then install the table command
-// handlers.			
+// handlers.
 installTableUpdater = function() {
 	var xjxReady = false;
 	try {
@@ -83,7 +83,7 @@ installTableUpdater = function() {
 			params.table = source.parentNode;
 		} else
 			params.source = source;
-		
+
 		var bodies = params.table.getElementsByTagName('TBODY');
 		if (0 < bodies.length)
 			params.body = bodies[0];
@@ -99,10 +99,10 @@ installTableUpdater = function() {
 			params.cells = params.row.getElementsByTagName('TD');
 		if ('undefined' != typeof params.header)
 			params.columns = params.header.getElementsByTagName('TD');
-		
+
 		if ('undefined' == typeof required)
 			return true;
-		
+
 		for (var index = 0; index < required.length; ++index) {
 			var require = required[index];
 			var is_defined = false;
@@ -110,7 +110,7 @@ installTableUpdater = function() {
 			if (false == is_defined)
 				throw { name: 'TableError', message: 'Unable to locate required object [' + require + '].' };
 		}
-		
+
 		return true;
 	}
 	// table

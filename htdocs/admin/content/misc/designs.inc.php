@@ -124,11 +124,11 @@ else if (!empty($_GET['remove'])) {
 // Show all designs
 foreach ($designs as $k => $v) {
     $res = dbQuerySave("
-    SELECT 
-        COUNT(id) as cnt 
-    FROM 
+    SELECT
+        COUNT(id) as cnt
+    FROM
         user_properties
-    WHERE 
+    WHERE
         css_style=?;",
     array(
         $k

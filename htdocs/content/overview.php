@@ -102,7 +102,7 @@
 		WHERE
 			(
 	      alliance_news_alliance_to_id='".$cu->allianceId."'
-		    OR alliance_news_alliance_to_id = 0 
+		    OR alliance_news_alliance_to_id = 0
 			)
 	    AND alliance_news_date>'".$cu->lastOnline."'
 		ORDER BY
@@ -815,7 +815,7 @@
 			$planet_image_path = "".IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$arr_planet['planet_image']."_middle.gif";
 
 			// Planet bild mit link zum bauhof und der informationen übergabe beim mouseover
-	    $planet_link = "<a href=\"?page=buildings&change_entity=".$arr_planet['id']."\"><img id=\"Planet\" src=\"".$planet_image_path."\" width=\"".$pic_width."\" height=\"".$pic_height."\" border=\"0\" 
+	    $planet_link = "<a href=\"?page=buildings&change_entity=".$arr_planet['id']."\"><img id=\"Planet\" src=\"".$planet_image_path."\" width=\"".$pic_width."\" height=\"".$pic_height."\" border=\"0\"
 	    onMouseOver=\"show_info(
 			'".$arr_planet['id']."',
 			'".StringUtils::encodeDBStringToJS($planet_name)."',
@@ -992,7 +992,7 @@
 				<td width=\"2%\">&nbsp;</td>
 				<td width=\"60%\" class=\"PlaniTextCenter\" id=\"planet_info_res_fuel\">&nbsp;</td>
 			</tr>
-			<tr> 
+			<tr>
 				<td width=\"38%\" id=\"planet_info_text_res_food\" >&nbsp;</td>
 				<td width=\"2%\">&nbsp;</td>
 				<td width=\"60%\" class=\"PlaniTextCenter\" id=\"planet_info_res_food\">&nbsp;</td>

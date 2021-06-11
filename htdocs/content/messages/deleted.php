@@ -36,7 +36,7 @@
 					messages AS m
 				INNER JOIN
 					message_data as md
-					ON md.id=message_id						
+					ON md.id=message_id
 				LEFT JOIN
 					users
 					ON user_id=message_user_from
@@ -99,8 +99,8 @@
 				messages
 			INNER JOIN
 				message_data as md
-				ON md.id=message_id						
-			LEFT JOIN	
+				ON md.id=message_id
+			LEFT JOIN
 				message_cat
 				ON message_cat_id=cat_id
 			LEFT JOIN

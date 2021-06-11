@@ -119,12 +119,12 @@ class UserSession extends Session
 										$salt = "yheaP;BXf;UokIAJ4dhaOL"; // Round 9
 										if ($uarr['user_password'] == md5($pw.$seed.$salt).md5($salt.$seed.$pw)) {
 											$newPw = saltPasswort($pw);
-											dbquery("UPDATE 
-												users 
-											SET 
-												user_password='".$newPw."' 
-											WHERE 
-												user_id='".$uarr['user_id']."' 
+											dbquery("UPDATE
+												users
+											SET
+												user_password='".$newPw."'
+											WHERE
+												user_id='".$uarr['user_id']."'
 											;");
 											$uarr['user_password'] = $newPw;
 										}

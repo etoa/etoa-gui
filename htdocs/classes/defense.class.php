@@ -15,10 +15,10 @@
 				$res = dbquery("
 				SELECT
 					*
-				FROM	
+				FROM
 					defense
 				WHERE
-					def_id=".$sid."			
+					def_id=".$sid."
 				");
 				if (!$arr = mysql_fetch_assoc($res))
 				{

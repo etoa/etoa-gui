@@ -4,7 +4,7 @@
 
 #include <fstream>
 
-std::string trim(std::string const& source, char const* delims = " \t\r\n") 
+std::string trim(std::string const& source, char const* delims = " \t\r\n")
 {
   std::string result(source);
   std::string::size_type index = result.find_last_not_of(delims);
@@ -19,7 +19,7 @@ std::string trim(std::string const& source, char const* delims = " \t\r\n")
   return result;
 }
 
-ConfigFile::ConfigFile(std::string const& configFile) 
+ConfigFile::ConfigFile(std::string const& configFile)
 {
   std::ifstream file(configFile.c_str());
   if (!file) {
@@ -32,7 +32,7 @@ ConfigFile::ConfigFile(std::string const& configFile)
   std::string value;
   std::string inSection;
   int posEqual;
-  while (std::getline(file,line)) 
+  while (std::getline(file,line))
   {
 
     if (! line.length()) continue;
@@ -53,7 +53,7 @@ ConfigFile::ConfigFile(std::string const& configFile)
   }
 }
 
-Chameleon const& ConfigFile::Value(std::string const& section, std::string const& entry) const 
+Chameleon const& ConfigFile::Value(std::string const& section, std::string const& entry) const
 {
 
   std::map<std::string,Chameleon>::const_iterator ci = content_.find(section + '/' + entry);
@@ -66,8 +66,8 @@ Chameleon const& ConfigFile::Value(std::string const& section, std::string const
 Chameleon const& ConfigFile::Value(std::string const& section, std::string const& entry, double value) {
 try {
     return Value(section, entry);
-  } 
-  catch(const char *) 
+  }
+  catch(const char *)
   {
     return content_.insert(std::make_pair(section+'/'+entry, Chameleon(value))).first->second;
   }
@@ -76,8 +76,8 @@ try {
 Chameleon const& ConfigFile::Value(std::string const& section, std::string const& entry, std::string const& value) {
   try {
     return Value(section, entry);
-  } 
-  catch(const char *) 
+  }
+  catch(const char *)
   {
     return content_.insert(std::make_pair(section+'/'+entry, Chameleon(value))).first->second;
   }

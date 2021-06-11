@@ -54,7 +54,7 @@
 			echo "<span style=\"color:#f90;\">Das Spiel ist offline!</span><br/><br/>
 			Erlaubte IP's (deine ist ".$_SERVER['REMOTE_ADDR']."):<br/> <textarea name=\"offline_ips_allow\" rows=\"6\" cols=\"60\">".$cfg->offline_ips_allow->v."</textarea><br/>
 			Nachricht: <br/><textarea name=\"offline_message\" rows=\"6\" cols=\"60\">".$cfg->offline_message->v."</textarea><br/><br/>
-			<input type=\"submit\" value=\"&Auml;nderungen speichern\" name=\"save\" /> &nbsp; 
+			<input type=\"submit\" value=\"&Auml;nderungen speichern\" name=\"save\" /> &nbsp;
 			<input type=\"button\" value=\"Spiel online stellen\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;on=1'\" />";
 
 		}
@@ -218,7 +218,7 @@
 			echo "Das Timeout betr&auml;gt ".tf($cfg->admin_timeout->v)."<br/><br/>";
 
 			$res=dbquery("
-				SELECT 
+				SELECT
 					s.user_id,
 					s.ip_addr,
 					s.user_agent,
@@ -227,7 +227,7 @@
 					u.user_nick
 				FROM
 					admin_user_sessions s
-				INNER JOIN 
+				INNER JOIN
 					admin_users u
 					ON s.user_id=u.user_id
 				ORDER BY
@@ -272,7 +272,7 @@
 				echo "<i>Keine Eintr&auml;ge vorhanden!</i>";
 
 			echo "<h2>Session-Log</h2>";
-			$res=dbquery("SELECT 
+			$res=dbquery("SELECT
 				user_nick,
 				u.user_id,
 				COUNT(*) as cnt

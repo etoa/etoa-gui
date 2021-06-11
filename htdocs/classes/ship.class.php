@@ -15,10 +15,10 @@
 				$res = dbquery("
 				SELECT
 					*
-				FROM	
+				FROM
 					ships
 				WHERE
-					ship_id=".$sid."			
+					ship_id=".$sid."
 				");
 				if (!$arr = mysql_fetch_assoc($res))
 				{

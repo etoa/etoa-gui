@@ -56,11 +56,11 @@ if (isset($cp)) {
 
 		// Forschungsliste laden && Gentech level definieren
 		$tres = dbquery("
-		SELECT 
-			* 
-		FROM 
-			techlist 
-		WHERE 
+		SELECT
+			*
+		FROM
+			techlist
+		WHERE
 			techlist_user_id='".$cu->id."';");
 		$building_something=false;
 		$building_gen = false;
@@ -143,11 +143,11 @@ if (isset($cp)) {
 		// Load built buildings
 		$buildlist = [];
 		$blres = dbquery("
-			SELECT 
-				* 
-			FROM 
-				buildlist 
-			WHERE  
+			SELECT
+				*
+			FROM
+				buildlist
+			WHERE
 				buildlist_entity_id='".$cp->id()."'
 			;");
 		while ($blarr = mysql_fetch_array($blres)) {
@@ -157,9 +157,9 @@ if (isset($cp)) {
 		// Load requirements
 		$b_req = [];
 		$rres = dbquery("
-			SELECT 
-				* 
-			FROM 
+			SELECT
+				*
+			FROM
 				tech_requirements;");
 		while ($rarr = mysql_fetch_array($rres)) {
 			if ($rarr['req_building_id']>0)
@@ -205,11 +205,11 @@ if (isset($cp)) {
 
 			// Forschungsdaten laden
 			$res = dbquery("
-			SELECT 
-				* 
-			FROM 
-				technologies 
-			WHERE  
+			SELECT
+				*
+			FROM
+				technologies
+			WHERE
 				tech_id='".$bid."'
 				AND tech_show='1';");
 			if (mysql_num_rows($res)>0) {
@@ -271,10 +271,10 @@ if (isset($cp)) {
 			$box .= '	<tr>
 								<th>Eingestellte Arbeiter</th>
 								<td>
-									<input 	type="text" 
-											name="peopleWorking" 
-											id="peopleWorking" 
-											value="'.nf($people).'" 
+									<input 	type="text"
+											name="peopleWorking"
+											id="peopleWorking"
+											value="'.nf($people).'"
 											onkeyup="updatePeopleWorkingBox(this.value,\'-1\',\'-1\');"/>
 							</td>
 						</tr>';
@@ -458,8 +458,8 @@ if (isset($cp)) {
 								// if (sizeof($techlist[$arr['tech_id']])>0)
 								if (isset($techlist[$arr['tech_id']])) {
 									dbquery("
-									UPDATE 
-										techlist 
+									UPDATE
+										techlist
 									SET
                     					techlist_build_type='3',
                     					techlist_build_start_time='" . time() . "',
@@ -470,8 +470,8 @@ if (isset($cp)) {
 										AND techlist_user_id='" . $cu->id . "';");
 								} else {
 									dbquery("
-									INSERT INTO 
-									techlist 
+									INSERT INTO
+									techlist
 									(
 										techlist_entity_id,
 										techlist_build_type,
@@ -567,13 +567,13 @@ if (isset($cp)) {
 						{
 							$fac = ($end_time-time())/($end_time-$start_time);
 							dbquery("
-							UPDATE 
-								techlist 
+							UPDATE
+								techlist
 							SET
 								techlist_build_type='0',
 								techlist_build_start_time='0',
 								techlist_build_end_time='0'
-							WHERE 
+							WHERE
 								techlist_tech_id='".$arr['tech_id']."'
 								AND techlist_user_id='".$cu->id."';");
 
@@ -932,7 +932,7 @@ if (isset($cp)) {
 						tech_show
 					FROM
 						technologies
-					WHERE 
+					WHERE
 						tech_show='1'
 					ORDER BY
 						tech_order,

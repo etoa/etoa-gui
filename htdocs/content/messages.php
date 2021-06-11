@@ -17,14 +17,14 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 	/**
 	* Ingame-Messaging centre
 	*
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/	
-	
+	*/
+
 	// DEFINITIONEN //
 
 
@@ -33,7 +33,7 @@
 
 
 	// BEGIN SKRIPT //
-	
+
 	// Modus setzen
 	$mode = isset($_GET['mode']) && ($_GET['mode']!="") && ctype_alpha($_GET['mode']) ? $_GET['mode'] : 'inbox';
 
@@ -43,30 +43,30 @@
 	function selectNewMessages()
 	{
 		//max = var document.getElementById("msg_cnt").value;
-		
+
 		if (document.getElementById("select_new_messages").innerHTML=="Nur neue Nachrichten anzeigen")
-		{			
+		{
 			document.getElementById("select_new_messages").innerHTML="Alle Nachrichten anzeigen";
-			
+
 			// Geht jede einzelne Nachricht durch
 			for (x=0;x<=document.getElementById("msg_cnt").value;x++)
 			{
 					document.getElementById('msg_id_'+x).style.display='none';
 			}
-			
+
 		}
 		else
 		{
 						document.getElementById("select_new_messages").innerHTML="Nur neue Nachrichten anzeigen";
-						
+
 			// Geht jede einzelne Nachricht durch
 			for (x=0;x<=document.getElementById("msg_cnt").value;x++)
 			{
 					document.getElementById('msg_id_'+x).style.display='';
 			}
-		}		
+		}
 	}
-	
+
 	</script>
 	<?PHP
 
@@ -91,7 +91,7 @@
 	//
 	if ($mode=="new")
 	{
-		require('content/messages/new.php');		
+		require('content/messages/new.php');
 	}
 
 	//
@@ -99,23 +99,23 @@
 	//
 	elseif ($mode=="ignore")
 	{
-		require('content/messages/ignore.php');		
+		require('content/messages/ignore.php');
 	}
-			
+
 	//
 	// Gelöschte Nachrichten
 	//
 	elseif ($mode=="deleted")
 	{
-		require('content/messages/deleted.php');		
+		require('content/messages/deleted.php');
 	}
-	
+
 	//
 	// Gesendete Nachrichten
 	//
 	elseif ($mode=="sent")
 	{
-		require('content/messages/sent.php');		
+		require('content/messages/sent.php');
 	}
 
 /***********************
@@ -148,7 +148,7 @@
         LEFT JOIN
         	users
         	ON message_user_from=user_id
-				WHERE                    
+				WHERE
        		message_id='".intval($_GET['msg_id'])."'
        		AND m.message_user_to='".$cu->id."'
        		AND m.message_deleted='0'
@@ -161,7 +161,7 @@
 					$sender = $marr['message_user_from']>0 ? ($marr['user_nick']!='' ? $marr['user_nick'] : '<i>Unbekannt</i>') : '<i>'.$marr['cat_sender'].'</i>';
 					// Title
 					$subj = $marr['subject']!="" ? htmlentities($marr['subject'],ENT_QUOTES,'UTF-8') : "<i>Kein Titel</i>";
-					
+
 					tableStart();
 					echo "<tr><th colspan=\"2\">".$subj."</th></tr>";
 					echo "<tr><th width=\"50\" valign=\"top\">Datum:</th>
@@ -183,7 +183,7 @@
 						if (isset($_GET['src']))
 						{
 							echo '<textarea rows="30" cols="60" readonly="readonly">'.htmlentities($marr['text'],ENT_QUOTES,'UTF-8').'</textarea>';
-						}	
+						}
 						else
 						{
 							echo text2html(addslashes($marr['text']));
@@ -195,17 +195,17 @@
 					}
 					echo "</td></tr>";
 					tableEnd();
-					
+
 					if ($marr['message_read']==0)
 					{
 						dbquery("UPDATE messages SET message_read=1 WHERE message_id='".intval($_GET['msg_id'])."';");
 					}
 
-					
+
 					echo "<form action=\"?page=$page&mode=new\" method=\"post\">";
 					checker_init();
-					
-					echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=messages&mode=".$mode."'\"/>&nbsp;";					
+
+					echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=messages&mode=".$mode."'\"/>&nbsp;";
 					echo "<input type=\"hidden\" name=\"message_id\" value=\"".intval($_GET['msg_id'])."\" />";
 					echo "<input type=\"hidden\" name=\"message_subject\" value=\"".$marr['subject']."\" />";
 					echo "<input type=\"hidden\" name=\"message_sender\" value=\"".$sender."\" />";
@@ -217,11 +217,11 @@
 					}
 					echo "<input type=\"submit\" value=\"Weiterleiten\" name=\"remit\" />&nbsp;";
 					if ($marr['message_user_from']>0)
-					{				
+					{
 						echo "<input type=\"hidden\" name=\"message_user_to\" value=\"".$marr['message_user_from']."\" />";
 						echo "<input type=\"submit\" value=\"Antworten\" name=\"answer\" />&nbsp;";
 						echo "<input type=\"button\" value=\"Absender ignorieren\" onclick=\"document.location='?page=".$page."&amp;mode=ignore&amp;add=".$marr['message_user_from']."'\" />&nbsp;";
-					}						
+					}
 					echo "<input type=\"button\" value=\"L&ouml;schen\" onclick=\"document.location='?page=$page&mode=mode&del=".intval($_GET['msg_id'])."';\" />&nbsp;";
 					if ($marr['message_user_from']>0)
 					{
@@ -250,12 +250,12 @@
 				if (isset($_POST['submitdelete']) && checker_verify())
 				{
 					dbquery("
-					UPDATE 
-						messages 
-					SET 
-						message_deleted=1 
-					WHERE 
-						message_id='".intval($_POST['message_id'])."' 
+					UPDATE
+						messages
+					SET
+						message_deleted=1
+					WHERE
+						message_id='".intval($_POST['message_id'])."'
 						AND message_user_to='".$cu->id."'
 					LIMIT 1;");
 					success_msg("Nachricht wurde gel&ouml;scht!");
@@ -263,12 +263,12 @@
 				if (isset($_GET['del']) && $_GET['del']>0)
 				{
 					dbquery("
-					UPDATE 
-						messages 
-					SET 
-						message_deleted=1 
-					WHERE 
-						message_id='".intval($_GET['del'])."' 
+					UPDATE
+						messages
+					SET
+						message_deleted=1
+					WHERE
+						message_id='".intval($_GET['del'])."'
 						AND message_user_to='".$cu->id."'
 					LIMIT 1;");
 					if (mysql_affected_rows()>0)
@@ -280,8 +280,8 @@
 						error_msg("Nachricht konnte nicht gelöscht werden!");
 					}
 				}
-				
-				
+
+
 				// Selektiere löschen
 				if (isset($_POST['submitdeleteselection'])  && checker_verify())
 				{
@@ -293,7 +293,7 @@
 					{
 						$sqladd = " AND message_archived=0";
 					}
-					
+
 					if (count($_POST['delmsg'])>0)
 					{
 						foreach ($_POST['delmsg'] as $id=>$val)
@@ -318,7 +318,7 @@
 						}
 					}
 				}
-				
+
 				// Alle Nachrichten löschen
 				elseif (isset($_POST['submitdeleteall']) && checker_verify())
 				{
@@ -336,7 +336,7 @@
 						$sqladd;");
 					success_msg("Alle Nachrichten wurden gel&ouml;scht!");
 				}
-				
+
 				// Systemnachrichten löschen
 				elseif (isset($_POST['submitdeletesys']) && checker_verify())
 				{
@@ -419,11 +419,11 @@
 				// Rechnet %-Werte für tabelle (1/2)
 				$readed_table=min(ceil($readed_msg_cnt/$conf['msg_max_store']['v']*100),100);
 				$archived_table=min(ceil($archived_msg_cnt/$conf['msg_max_store']['p1']*100),100);
-					
+
 				$r_color = ($readed_table>=90) ? 'color:red;' : '';
 				$a_color = ($archived_table>=90) ? 'color:red;' : '';
 
-					
+
 				// Archiv-Grafik
 				tableStart("Nachrichten");
 				echo "<tr>
@@ -436,16 +436,16 @@
         </tr>";
 				echo '<tr>
   	     	<td style="padding:0px;height:10px;"><img src="images/poll3.jpg" style="height:10px;width:'.$readed_table.'%;" alt="poll" /></td>
-	        <td style="padding:0px;height:10px;"><img src="images/poll2.jpg" style="height:10px;width:'.$archived_table.'%;" alt="poll" /></td>                  
-        </tr>';    
-        
+	        <td style="padding:0px;height:10px;"><img src="images/poll2.jpg" style="height:10px;width:'.$archived_table.'%;" alt="poll" /></td>
+        </tr>';
+
         // Wenn es neue Nachrichten hat, Button zum Selektieren anzeigen
         if(NEW_MESSAGES>0)
         {
         	echo '<tr>
   	     					<td style="text-align:center;" colspan="2">
   	     					<a href="javascript:;" onclick="selectNewMessages();" id="select_new_messages" name="select_new_messages">Nur neue Nachrichten anzeigen</a>
-  	     					</td>                 
+  	     					</td>
         	</tr>';
         }
         tableEnd();
@@ -453,7 +453,7 @@
 				echo "<form action=\"?page=$page&amp;mode=".$mode."\" method=\"post\"><div>";
 				$cstr = checker_init();
 				echo "<input type=\"hidden\" name=\"archived_msg_cnt\" value=\"".$archived_msg_cnt."\" />";
-				
+
 				// Nachrichten
 				tableStart("Kategorien");
 				$res = dbquery("
@@ -472,9 +472,9 @@
 				while ($arr = mysql_fetch_array($res))
 				{
 					$msgcats[] = $arr;
-				}				
+				}
 				$msgcats[] = array('cat_id'=>0,'cat_name'=>"Ohne Kategorie",'cat_desc'=>"",'cat_sender'=>"System");
-				
+
 				foreach ($msgcats as $arr)
 				{
 					if($mode=="archiv")
@@ -489,16 +489,16 @@
 							message_read,
 							message_massmail,
 							message_replied,
-							message_forwarded,							
-							user_nick							
+							message_forwarded,
+							user_nick
 						FROM
 							messages
 		       	INNER JOIN
 		       		message_data as md
-		       		ON message_id=md.id							
+		       		ON message_id=md.id
 						LEFT JOIN
 							users
-							ON message_user_from=user_id									
+							ON message_user_from=user_id
 						WHERE
 							message_user_to='".$cu->id."'
 							AND message_cat_id='".$arr['cat_id']."'
@@ -521,15 +521,15 @@
 							message_read,
 							message_replied,
 							message_forwarded,
-							user_nick							
+							user_nick
 						FROM
 							messages
 		       	INNER JOIN
 		       		message_data as md
-		       		ON message_id=md.id							
+		       		ON message_id=md.id
 						LEFT JOIN
 							users
-							ON message_user_from=user_id														
+							ON message_user_from=user_id
 						WHERE
 							message_user_to='".$cu->id."'
 							AND message_cat_id='".$arr['cat_id']."'
@@ -540,7 +540,7 @@
 							message_timestamp DESC;");
 					}
 					$ccnt=mysql_num_rows($mres);
-					
+
 					// Kategorie-Titel
 					if ($ccnt>0)
 					{
@@ -559,13 +559,13 @@
 					{
 						$dcnt=0;
 						while ($marr = mysql_fetch_array($mres))
-						{							
+						{
 							// Sender
 							$sender = $marr['message_user_from']>0 ? ($marr['user_nick']!='' ? $marr['user_nick'] : '<i>Unbekannt</i>') : '<i>'.$arr['cat_sender'].'</i>';
-							
+
 							// Title
 							$subj = $marr['subject']!="" ? htmlentities($marr['subject'],ENT_QUOTES,'UTF-8') : "<i>Kein Titel</i>";
-							
+
 							// Read or not read
 							if ($marr['message_read']==0)
 							{
@@ -602,7 +602,7 @@
 							if ($marr['message_massmail']==1)
 							{
 								echo "<b>[Rundmail]</b> ";
-							}								
+							}
 							//Wenn Speicher voll ist Nachrichten Markieren
 							if($mode!="archiv" && $readed_msg_cnt>=$conf['msg_max_store']['v'])
 							{
@@ -641,7 +641,7 @@
 								}
 								echo "<input type=\"button\" value=\"Weiterleiten\" onclick=\"document.location='?page=$page&mode=new&amp;message_subject=".$subject."".$msgadd."'\" name=\"remit\" />&nbsp;";
 								if ($marr['message_user_from']>0)
-								{				
+								{
 									if(substr($marr['subject'],0,3) == "Re:")
 									{
 										$subject = base64_encode($marr['subject']);
@@ -650,17 +650,17 @@
 									{
 										$subject = base64_encode("Re: ".$marr['subject']);
 									}
-								
+
 									if ($cu->properties->msgCopy)
 									{
 										echo "<input type=\"button\" value=\"Antworten\" name=\"answer\" onclick=\"document.location='?page=$page&mode=new&message_user_to=".$marr['message_user_from']."&amp;message_subject=".$subject."".$msgadd."'\" />&nbsp;";
 									}
 									else
-									{								
+									{
 										echo "<input type=\"button\" value=\"Antworten\" name=\"answer\" onclick=\"document.location='?page=$page&mode=new&message_user_to=".$marr['message_user_from']."&amp;message_subject=".$subject."'\" />&nbsp;";
 									}
 									echo "<input type=\"button\" value=\"Absender ignorieren\" onclick=\"document.location='?page=".$page."&amp;mode=ignore&amp;add=".$marr['message_user_from']."'\" />&nbsp;";
-								}						
+								}
 								echo "<input type=\"button\" value=\"L&ouml;schen\" onclick=\"document.location='?page=$page&mode=mode&del=".$marr['message_id']."';\" />&nbsp;";
 								if ($marr['message_user_from']>0)
 								{
@@ -689,7 +689,7 @@
 				{
 					// Übergibt alle Nachrichten-ID's an die javascript funktion
 					echo "<input type=\"hidden\" id=\"msg_cnt\" value=\"".$msgcnt."\" />";
-					
+
 					echo "<input type=\"submit\" name=\"submitdeleteselection\" value=\"Markierte l&ouml;schen\" />&nbsp;
 					<input type=\"submit\" name=\"submitdeleteall\" value=\"Alle l&ouml;schen\" onclick=\"return confirm('Wirklich alle Nachrichten löschen?');\" />&nbsp;
 					<input type=\"submit\" name=\"submitdeletesys\" value=\"Systemnachrichten l&ouml;schen\" />";

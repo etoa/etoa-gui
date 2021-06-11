@@ -1,17 +1,17 @@
 <?PHP
 	echo "<h2>Spezialisten</h2>";
 	HelpUtil::breadCrumbs(array("Spezialisten","specialists"));
-	
+
 	iBoxStart("Info");
 	echo "Spezialisten können für eine fixe Zeitdauer angestellt werden und verstärken während dieser Zeit
 	dein Imperium in eine bestimmte Richtung. Sie können erst ab einer bestimmten Punktzahl eingestellt werden. Von jedem Typ
 	ist nur eine gewisse Anzahl verfügbar. Ebenfalls steigt der Preis mit steigender Nachfrage, nach einem bestimmten Spezialisten. Die
-	Einstellung geschieht per sofort, und nach Ablauf der Anstellung verlässt der Spezialist dein Imperium wieder. 
+	Einstellung geschieht per sofort, und nach Ablauf der Anstellung verlässt der Spezialist dein Imperium wieder.
 	Es kann immer nur ein Spezialist gleichzeitig angestellt werden. Man kann aber einen Spezialisten vorzeitig entlassen,
-	um Platz für einen neuen zu schaffen; man erhält in diesem Fall aber keine Ressourcen zurück.";	
+	um Platz für einen neuen zu schaffen; man erhält in diesem Fall aber keine Ressourcen zurück.";
 	iBoxEnd();
-	
-	
+
+
 		$res = dbquery("
 	SELECT
 		*
@@ -29,7 +29,7 @@
 	<th>Effekt</th>
 	<th>Grundpreis</th>";
 	echo "</tr>";
-	
+
 	while ($arr=mysql_fetch_array($res))
 	{
 		echo '<tr>';
@@ -83,7 +83,7 @@
 			$bonus.= get_percent_string($arr['specialist_trade_time'],1).' Handelsflottengeschwindigkeit<br/>';
 		if ($arr['specialist_trade_bonus']!=1)
 			$bonus.= get_percent_string($arr['specialist_trade_bonus'],1,1).' Handelskosten<br/>';
-		
+
 		echo $bonus;
 		echo '</td>';
 		echo '<td style="width:120px;">';
@@ -95,5 +95,5 @@
 		echo '</td>';
 		echo '</tr>';
 	}
-	tableEnd();		
+	tableEnd();
 ?>

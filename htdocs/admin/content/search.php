@@ -4,24 +4,24 @@
 		$search = $_POST['search_query'];
 		echo "<h1>Suche nach <i>".$search."</i></h1>";
 
-		// Users		
+		// Users
 		$res=dbquery("
 		SELECT
 			user_id,
 			user_nick
-		FROM 
+		FROM
 			users
 		WHERE
-			user_nick LIKE '%".$search."%'		
-			OR user_name LIKE '%".$search."%'		
-			OR user_email LIKE '%".$search."%'		
+			user_nick LIKE '%".$search."%'
+			OR user_name LIKE '%".$search."%'
+			OR user_email LIKE '%".$search."%'
 			OR user_email_fix LIKE '%".$search."%'
-			OR dual_email LIKE '%".$search."%'	
-			OR dual_name LIKE '%".$search."%'	
+			OR dual_email LIKE '%".$search."%'
+			OR dual_name LIKE '%".$search."%'
 		ORDER BY
 			user_nick
-		LIMIT 30;			
-			
+		LIMIT 30;
+
 		");
 		if (mysql_num_rows($res)>0)
 		{
@@ -33,17 +33,17 @@
 			echo "</ul>";
 		}
 
-		// Alliances		
+		// Alliances
 		$res=dbquery("
 		SELECT
 			alliance_id,
 			alliance_name,
 			alliance_tag
-		FROM 
+		FROM
 			alliances
 		WHERE
-			alliance_name LIKE '%".$search."%'		
-			OR alliance_tag LIKE '%".$search."%'		
+			alliance_name LIKE '%".$search."%'
+			OR alliance_tag LIKE '%".$search."%'
 		ORDER BY
 			alliance_tag
 		");
@@ -56,16 +56,16 @@
 			}
 			echo "</ul>";
 		}
-		
-		// Planets		
+
+		// Planets
 		$res=dbquery("
 		SELECT
 			id
-		FROM 
+		FROM
 			planets
 		WHERE
-			planet_name LIKE '%".$search."%'	
-		ORDER BY planet_name	
+			planet_name LIKE '%".$search."%'
+		ORDER BY planet_name
 		LIMIT 30;
 		");
 		if (mysql_num_rows($res)>0)
@@ -78,7 +78,7 @@
 			}
 			echo "</ul>";
 		}
-		
+
 	}
 	else
 	{
@@ -86,7 +86,7 @@
 		echo error_msg("Kein Suchbegriff eingegeben!");
 	}
 
-	
-	
+
+
 
 ?>

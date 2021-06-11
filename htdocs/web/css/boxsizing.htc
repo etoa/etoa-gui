@@ -99,7 +99,7 @@ function updateBorderBoxWidth() {
 }
 
 function updateBorderBoxHeight() {
-	element.runtimeStyle.height = "";	
+	element.runtimeStyle.height = "";
 	if (getDocumentBoxSizing() == getBoxSizing())
 		return;
 	var csh = element.currentStyle.height;
@@ -117,7 +117,7 @@ function checkPropertyChange() {
 
 	if (pn == "style.boxSizing" && element.style.boxSizing == "") {
 		element.style.removeAttribute("boxSizing");
-		element.runtimeStyle.boxSizing = undef;		
+		element.runtimeStyle.boxSizing = undef;
 	}
 
 
@@ -131,7 +131,7 @@ function checkPropertyChange() {
 		case "style.paddingRight":
 			updateBorderBoxWidth();
 			break;
-		
+
 		case "style.height":
 		case "style.borderTopWidth":
 		case "style.borderTopStyle":
@@ -141,7 +141,7 @@ function checkPropertyChange() {
 		case "style.paddingBottom":
 			updateBorderBoxHeight();
 			break;
-		
+
 		case "className":
 		case "style.boxSizing":
 			updateBorderBoxWidth();

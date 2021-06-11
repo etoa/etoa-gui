@@ -1,21 +1,21 @@
 <?PHP
-class GetShipListJsonResponder extends JsonResponder 
+class GetShipListJsonResponder extends JsonResponder
 {
   function getRequiredParams() {
     return array('q');
   }
 
   function getResponse($params) {
-    
+
     $data = array();
-        
+
 		$res=dbquery("
-    SELECT 
-			ship_id, 
-			ship_name 
-		FROM 
-			ships 
-		WHERE 
+    SELECT
+			ship_id,
+			ship_name
+		FROM
+			ships
+		WHERE
 			(ship_show=1 || ship_buildable=1)
 			AND ship_name LIKE '".$params['q']."%'
     ORDER BY
@@ -34,7 +34,7 @@ class GetShipListJsonResponder extends JsonResponder
         );
 	    }
 		}
-        
+
     return $data;
   }
 }

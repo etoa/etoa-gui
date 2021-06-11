@@ -141,12 +141,12 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 
 			$cres = dbquery("
 			SELECT
-				COUNT(id) 
-			FROM 
-				market_ressource 
-			WHERE 
+				COUNT(id)
+			FROM
+				market_ressource
+			WHERE
 				buyable=1
-				AND user_id!='".$_SESSION['user_id']."' 
+				AND user_id!='".$_SESSION['user_id']."'
 				AND (for_user='".$_SESSION['user_id']."' OR for_user='0')
 				AND (for_alliance='".$_SESSION['alliance_id']."' OR for_alliance='0')
 			;");
@@ -2162,11 +2162,11 @@ function MarketSearchFormularShow($val)
 					<td colspan=\"3\" id=\"check_user_nick\" style=\"vertical-align:middle;\">
 						&nbsp;
 					</td>
-				</tr>	
+				</tr>
 				<tr>
 					<th width=\"25%\">Bezahlbar</th>
 					<td ".tm("Bezahlbar","Es werden nur Angebote angezeigt, für diese genug Rohstoffe auf dem aktuellen Planeten sind.").">
-						<input type=\"radio\" name=\"search_ress_buyable\" id=\"search_ress_buyable\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja 
+						<input type=\"radio\" name=\"search_ress_buyable\" id=\"search_ress_buyable\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja
 					</td>
 					<td colspan=\"4\" ".tm("Bezahlbar","Es werden alle Angebote angezeigt").">
 						<input type=\"radio\" name=\"search_ress_buyable\" id=\"search_ress_buyable\" value=\"0\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Nein alles anzeigen
@@ -2175,7 +2175,7 @@ function MarketSearchFormularShow($val)
 				<tr>
 					<th width=\"25%\">Reservierte</th>
 					<td ".tm("Reservierte","Es werden nur Angebote angezeigt, welche für Allianzmitlgieder reserveriert sind.").">
-						<input type=\"radio\" name=\"search_ress_for_alliance\" id=\"search_ress_for_alliance\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja 
+						<input type=\"radio\" name=\"search_ress_for_alliance\" id=\"search_ress_for_alliance\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja
 					</td>
 					<td colspan=\"4\" ".tm("Reservierte","Es werden alle Angebote angezeigt").">
 						<input type=\"radio\" name=\"search_ress_for_alliance\" id=\"search_ress_for_alliance\" value=\"0\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Nein alles anzeigen
@@ -2192,7 +2192,7 @@ function MarketSearchFormularShow($val)
 							<option value=\"4\"> > 10'000'000</option>
 						</select>
 					</td>
-				</tr>																
+				</tr>
 				<tr>
 					<th>Angebot</th>
 					<td width=\"15%\" ".tm("Angebot","".RES_METAL." soll im Angebot enthalten sein.").">
@@ -2228,7 +2228,7 @@ function MarketSearchFormularShow($val)
 					<td ".tm("Preis","".RES_FOOD." soll im Preis enthalten sein.").">
 						<input type=\"checkbox\" name=\"search_ress_buy_food\" id=\"search_ress_buy_food\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_FOOD."
 					</td>
-				</tr>					
+				</tr>
 			</table>";
 
 			$out_search_check_message = "<div style=\"color:red;font-weight:bold;\">Spezifiziere deine Suche</div>";
@@ -2252,11 +2252,11 @@ function MarketSearchFormularShow($val)
 					<td colspan=\"3\" id=\"check_user_nick\" style=\"vertical-align:middle;\">
 						&nbsp;
 					</td>
-				</tr>	
+				</tr>
 				<tr>
 					<th width=\"25%\">Bezahlbar</th>
 					<td ".tm("Bezahlbar","Es werden nur Angebote angezeigt, für diese genug Rohstoffe auf dem aktuellen Planeten sind.").">
-						<input type=\"radio\" name=\"search_ship_buyable\" id=\"search_ship_buyable\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja 
+						<input type=\"radio\" name=\"search_ship_buyable\" id=\"search_ship_buyable\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja
 					</td>
 					<td colspan=\"4\" ".tm("Bezahlbar","Es werden alle Angebote angezeigt").">
 						<input type=\"radio\" name=\"search_ship_buyable\" id=\"search_ship_buyable\" value=\"0\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Nein alles anzeigen
@@ -2265,12 +2265,12 @@ function MarketSearchFormularShow($val)
 				<tr>
 					<th width=\"25%\">Reservierte</th>
 					<td ".tm("Reservierte","Es werden nur Angebote angezeigt, welche für Allianzmitlgieder reserveriert sind.").">
-						<input type=\"radio\" name=\"search_ship_for_alliance\" id=\"search_ship_for_alliance\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja 
+						<input type=\"radio\" name=\"search_ship_for_alliance\" id=\"search_ship_for_alliance\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja
 					</td>
 					<td colspan=\"4\" ".tm("Reservierte","Es werden alle Angebote angezeigt").">
 						<input type=\"radio\" name=\"search_ship_for_alliance\" id=\"search_ship_for_alliance\" value=\"0\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Nein alles anzeigen
 					</td>
-				</tr>																
+				</tr>
 				<tr>
 					<th>Schiff</th>
 					<td colspan=\"5\" ".tm("Schiff","Es werden nur Angebote angezeigt, welche den gewählten Schiffstyp enthalten.").">
@@ -2301,7 +2301,7 @@ function MarketSearchFormularShow($val)
 					<td width=\"15%\" ".tm("Preis","".RES_FOOD." soll im Preis enthalten sein.").">
 						<input type=\"checkbox\" name=\"search_ship_buy_food\" id=\"search_ship_buy_food\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_FOOD."
 					</td>
-				</tr>					
+				</tr>
 			</table>";
 
 			$out_search_check_message = "<div style=\"color:red;font-weight:bold;\">Spezifiziere deine Suche</div>";
@@ -2325,11 +2325,11 @@ function MarketSearchFormularShow($val)
 					<td colspan=\"3\" id=\"check_user_nick\" style=\"vertical-align:middle;\">
 						&nbsp;
 					</td>
-				</tr>	
+				</tr>
 				<tr>
 					<th width=\"25%\">Bezahlbar</th>
 					<td ".tm("Bezahlbar","Es werden nur Angebote angezeigt, für diese genug Rohstoffe auf dem aktuellen Planeten sind.").">
-						<input type=\"radio\" name=\"search_auction_buyable\" id=\"search_auction_buyable\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja 
+						<input type=\"radio\" name=\"search_auction_buyable\" id=\"search_auction_buyable\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja
 					</td>
 					<td colspan=\"4\" ".tm("Bezahlbar","Es werden alle Angebote angezeigt").">
 						<input type=\"radio\" name=\"search_auction_buyable\" id=\"search_auction_buyable\" value=\"0\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Nein alles anzeigen
@@ -2338,12 +2338,12 @@ function MarketSearchFormularShow($val)
 				<tr>
 					<th width=\"25%\">Abgelaufene ausblenden</th>
 					<td ".tm("Abgelaufene ausblenden","Es werden nur Angebote angezeigt, welche noch nicht abgelaufen sind.").">
-						<input type=\"radio\" name=\"search_auction_end\" id=\"search_auction_end\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja 
+						<input type=\"radio\" name=\"search_auction_end\" id=\"search_auction_end\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja
 					</td>
 					<td colspan=\"4\" ".tm("Abgelaufene ausblenden","Es werden alle Angebote angezeigt").">
 						<input type=\"radio\" name=\"search_auction_end\" id=\"search_auction_end\" value=\"0\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Nein alles anzeigen
 					</td>
-				</tr>				
+				</tr>
 				<tr>
 					<th width=\"25%\">Preisklasse</th>
 					<td colspan=\"5\" ".tm("Preisklasse","Es werden nur Angebote angezeigt die sich in dieser Preisklasse befinden.").">
@@ -2355,7 +2355,7 @@ function MarketSearchFormularShow($val)
 							<option value=\"4\"> > 10'000'000</option>
 						</select>
 					</td>
-				</tr>																
+				</tr>
 				<tr>
 					<th>Angebot</th>
 					<td width=\"15%\" ".tm("Angebot","".RES_METAL." soll im Angebot enthalten sein.").">
@@ -2391,7 +2391,7 @@ function MarketSearchFormularShow($val)
 					<td ".tm("Preis","".RES_FOOD." soll im Preis enthalten sein.").">
 						<input type=\"checkbox\" name=\"search_auction_buy_food\" id=\"search_auction_buy_food\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> ".RES_FOOD."
 					</td>
-				</tr>					
+				</tr>
 			</table>";
 
 

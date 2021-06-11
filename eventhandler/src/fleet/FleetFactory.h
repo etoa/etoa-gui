@@ -5,7 +5,7 @@
 
 /**
 * FleetFactoryClass
-* 
+*
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
@@ -40,10 +40,10 @@
 #include "fleetActions/DeliveryHandler.h"
 #include "fleetActions/AllianceHandler.h"
 
-class FleetFactory 
+class FleetFactory
 {
 	public:
-	static FleetAction* createFleet(short status, std::string action, mysqlpp::Row fRow) 
+	static FleetAction* createFleet(short status, std::string action, mysqlpp::Row fRow)
 	{
 		Config &config = Config::instance();
 		switch (status)
@@ -121,7 +121,7 @@ class FleetFactory
 						return new transport::TransportHandler(fRow);
 						break;
 					case 24:
-						return new alliance::AllianceHandler(fRow);				
+						return new alliance::AllianceHandler(fRow);
 						break;
 					case 25:
 						return new attack::AttackHandler(fRow);
@@ -142,7 +142,7 @@ class FleetFactory
 				break;
 			default:
 				return new defaul::DefaultHandler(fRow);
-		}	
+		}
 		std::cerr << "Problem mit Flottenaktion! Keine passende Aktion gefunden!" <<std::endl;
 		return new defaul::DefaultHandler(fRow);
 	}

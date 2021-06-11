@@ -14,11 +14,11 @@ namespace fleet
 	class FleetHandler : EventHandler
 	{
 	public:
-		FleetHandler() : EventHandler() { }		
+		FleetHandler() : EventHandler() { }
 		~FleetHandler() {};
 		void update();
-		
-		
+
+
 	};
 }
 #endif

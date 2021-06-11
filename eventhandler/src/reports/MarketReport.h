@@ -13,7 +13,7 @@
 
 /**
 * MarketReport class
-* 
+*
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
@@ -31,23 +31,23 @@ public:
 				 int fleet2Id=0) : Report() {
 		this->type = "market";
 		this->subtype = "other";
-		
+
 		this->buy0 = 0;
 		this->buy1 = 0;
 		this->buy2 = 0;
 		this->buy3 = 0;
 		this->buy4 = 0;
 		this->buy5 = 0;
-		
+
 		this->sell0 = 0;
 		this->sell1 = 0;
 		this->sell2 = 0;
 		this->sell3 = 0;
 		this->sell4 = 0;
 		this->sell5 = 0;
-		
+
 		this->factor = 0;
-		
+
 		this->recordId = recordId;
 		this->timestamp = timestamp;
 		this->fleet1Id = fleet1Id;
@@ -59,36 +59,36 @@ public:
 	}
 
 	MarketReport(MarketReport* report) {	}
-		
+
 	~MarketReport() {
 		while (!this->users.empty()) {
 			this->id = this->save(this->users.back());
 			this->saveMarketReport();
 			this->users.pop_back();
 		}
-		
+
 	}
-	
+
 	void setBuy(unsigned int res0,
 				unsigned int res1,
 				unsigned int res2,
 				unsigned int res3,
 				unsigned int res4,
 				unsigned int res5);
-	
+
 	void setSell(unsigned int res0,
 				unsigned int res1,
 				unsigned int res2,
 				unsigned int res3,
 				unsigned int res4,
 				unsigned int res5);
-	
+
 	void setFleet1Id(unsigned int fleet1Id);
 	void setFleet2Id(unsigned int fleet2Id);
 	void setFactor(double factor);
-	
+
 	void saveMarketReport();
-	
+
 private:
 	unsigned int buy0, buy1, buy2, buy3, buy4, buy5;
 	unsigned int sell0, sell1, sell2, sell3, sell4, sell5;

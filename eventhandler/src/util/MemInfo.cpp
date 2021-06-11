@@ -23,7 +23,7 @@ long long MemInfo::getVirtualMemUsed() const {
 	return virtualMemUsed;
 }
 
-int MemInfo::getVirtualMemUsedByCurrentProcess() { 
+int MemInfo::getVirtualMemUsedByCurrentProcess() {
         FILE* file = fopen("/proc/self/status", "r");
         int result = -1;
         char line[128];

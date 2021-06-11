@@ -9,7 +9,7 @@
 /**
 * Handles Emp....
 * Deactivades a building for several hours
-* 
+*
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 namespace emp
@@ -25,7 +25,7 @@ namespace emp
 		* Ship they are able to antrax a planet
 		**/
 		int shipCnt;
-		
+
 		/**
 		* Antrax tech level
 		**/
@@ -35,7 +35,7 @@ namespace emp
 		* 2 variables to calculate the possibility
 		**/
 		double one, two;
-		
+
 		/**
 		* Variables to calculate the damage
 		**/

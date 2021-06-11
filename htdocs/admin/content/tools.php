@@ -16,18 +16,18 @@ if ($sub=="accesslog")
 	{
 		dbquery("DELETE FROM accesslog;");
 		success_msg("Aufzeichnungen gelöscht");
-	}					
-	
-	
-	echo $frm->begin();	
+	}
+
+
+	echo $frm->begin();
 	if ($cfg->accesslog->v ==1)
 	{
-		echo "<p>Seitenzugriffe werden aufgezeichnet. 
-		<input type=\"submit\" value=\"Deaktivieren\" name=\"submit_toggle\"  />";			
+		echo "<p>Seitenzugriffe werden aufgezeichnet.
+		<input type=\"submit\" value=\"Deaktivieren\" name=\"submit_toggle\"  />";
 	}
 	else
 	{
-		echo "<p>Seitenzugriffe werden momentan NICHT aufgezeichnet. 
+		echo "<p>Seitenzugriffe werden momentan NICHT aufgezeichnet.
 		<input type=\"submit\" value=\"Aktivieren\" name=\"submit_toggle\"  />";
 	}
 	echo " <input type=\"submit\" value=\"Aufzeichnungen löschen\" name=\"submit_truncate\"  /></p>";
@@ -40,10 +40,10 @@ if ($sub=="accesslog")
 	foreach ($domains as $d)
 	{
 		$res = dbquery("
-		SELECT target,COUNT(target) cnt 
-		FROM accesslog 
-		WHERE domain='$d' 
-		GROUP BY target 
+		SELECT target,COUNT(target) cnt
+		FROM accesslog
+		WHERE domain='$d'
+		GROUP BY target
 		ORDER BY cnt DESC");
 		echo "<h3>".ucfirst($d)."</h3>";
 		echo "<table class=\"tb\" style=\"width:500px\"><tr>
@@ -79,7 +79,7 @@ if ($sub=="accesslog")
 //
 elseif ($sub=="filesharing")
 {
-	$root = ADMIN_FILESHARING_DIR; 
+	$root = ADMIN_FILESHARING_DIR;
 
 	echo "<h2>Filesharing</h2>";
 
@@ -90,20 +90,20 @@ elseif ($sub=="filesharing")
 		{
 			echo "<h2>Umbenennen</h2>
 			<form action=\"?page=$page&sub=$sub\" method=\"post\">";
-			echo "Dateiname: 
-			<input type=\"text\" name=\"rename\" value=\"".$f."\" /> 
-			<input type=\"hidden\" name=\"rename_old\" value=\"".$f."\" /> 
-			&nbsp; <input type=\"submit\" name=\"rename_submit\" value=\"Umbenennen\" /> &nbsp; 
+			echo "Dateiname:
+			<input type=\"text\" name=\"rename\" value=\"".$f."\" />
+			<input type=\"hidden\" name=\"rename_old\" value=\"".$f."\" />
+			&nbsp; <input type=\"submit\" name=\"rename_submit\" value=\"Umbenennen\" /> &nbsp;
 			</form>";
 		}
 		else
 		{
 			echo "Fehler im Dateinamen!";
-		}		
+		}
 	}
 	else
 	{
-		if (isset($_FILES["datei"])) 
+		if (isset($_FILES["datei"]))
 		{
 			if(move_uploaded_file($_FILES["datei"]['tmp_name'],$root."/".$_FILES["datei"]['name']))
 			{
@@ -114,13 +114,13 @@ elseif ($sub=="filesharing")
 				echo "Fehler beim Upload!<br/><br/>";
 			}
 		}
-	  
+
 		if (isset($_POST['rename_submit']) && $_POST['rename']!="")
 		{
 			rename($root."/".$_POST['rename_old'],$root."/".$_POST['rename']);
 			echo "Datei wurde umbenannt!<br/><br/>";
-		}	  
-		
+		}
+
 		if (isset($_GET['action']) && $_GET['action']=="delete")
 		{
 			$f = base64_decode($_GET['file']);
@@ -132,9 +132,9 @@ elseif ($sub=="filesharing")
 			else
 			{
 				echo "Fehler im Dateinamen!";
-			}				
+			}
 		}
-		
+
 		if ($d = opendir($root))
 		{
 			$cnt = 0;
@@ -159,9 +159,9 @@ elseif ($sub=="filesharing")
 							<a href=\"?page=$page&amp;sub=$sub&amp;action=rename&".$link."\">Umbenennen</a>
 							<a href=\"?page=$page&amp;sub=$sub&amp;action=delete&".$link."\" onclick=\"return confirm('Soll diese Datei wirklich gelöscht werden?')\">Löschen</a>
 						</td>
-					</tr>";				
+					</tr>";
 					$cnt++;
-				}			
+				}
 			}
 			if ($cnt==0)
 			{
@@ -169,14 +169,14 @@ elseif ($sub=="filesharing")
 			}
 			echo "</table>";
 			closedir($d);
-			
+
 			echo "<h2>Upload</h2>
 			<form method=\"post\" action=\"?page=$page&sub=$sub\" enctype=\"multipart/form-data\">
 			<input type=\"hidden\" name=\"MAX_FILE_SIZE\" value=\"10000000\" />
 			<input type=\"file\" name=\"datei\" size=\"40\" maxlength=\"10000000\" />
 			<input type=\"submit\" name=\"submit\" value=\"Datei heraufladen\" />
-			</form>		
-			";		
+			</form>
+			";
 		}
 		else
 		{
@@ -192,7 +192,7 @@ elseif ($sub=="ipresolver")
 {
 	$ip = "";
 	$host = "";
-	
+
 	if (isset($_POST['resolve']))
 	{
 		if ($_POST['address']!="")
@@ -200,14 +200,14 @@ elseif ($sub=="ipresolver")
 			$ip = $_POST['address'];
 			$host = Net::getHost($_POST['address']);
 			echo "Die IP <b>".$ip."</b> hat den Hostnamen <b>".$host."</b><br/>";
-			
+
 		}
 		elseif ($_POST['hostname']!="")
 		{
 			$ip = gethostbyname($_POST['hostname']);
 			$host = $_POST['hostname'];
 			echo "Die Host <b>".$host."</b> hat die IP <b>".$ip."</b><br/>";
-		}			
+		}
 	}
 	if (isset($_POST['whois']))
 	{
@@ -220,16 +220,16 @@ elseif ($sub=="ipresolver")
 			echo "$o <br/>";
 		}
 		echo "</div>";
-	}		
+	}
 	echo "<h2>IP-Resolver</h2>";
 	echo '<form action="?page='.$page.'&amp;sub='.$sub.'" method="post">';
 	echo "IP-Adresse: <input type=\"text\" name=\"address\" value=\"$ip\" /><br/>";
 	echo "oder Hostname: <input type=\"text\" name=\"hostname\" value=\"$host\" /><br/><br/>";
 	echo "<input type=\"submit\" name=\"resolve\" value=\"Auflösen\" /> &nbsp; ";
-	echo "<input type=\"submit\" name=\"whois\" value=\"WHOIS\" /><br/>";		
+	echo "<input type=\"submit\" name=\"whois\" value=\"WHOIS\" /><br/>";
 	echo "</form>";
 }
-	
+
 else
 {
 	echo "Wähle ein Tool aus dem Menü!";

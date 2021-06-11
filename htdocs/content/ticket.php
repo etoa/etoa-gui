@@ -109,7 +109,7 @@ else
 	{
 		Ticket::create(array_merge($_POST,array("user_id"=>$cu->id)));
 		echo "<br/>Vielen Dank, dein Text wurde gespeichert.<br/>Ein Game-Administrator wird sich dem Problem annehmen.<br/><br/>";
-		
+
 		if ($ext)
 			echo "<input type=\"button\" onclick=\"document.location='?page=ticket'\" value=\"Weiter\" />";
 	}
@@ -131,13 +131,13 @@ else
 			FROM
 				ticket_cat
 			ORDER By
-				sort			
-			");			
+				sort
+			");
 			while ($carr = mysql_fetch_row($cres))
 			{
 				echo "<option value=\"".$carr[0]."\"";
 				if (isset($_GET['cat']) && $_GET['cat']==$carr[0]) echo " selected=\"selected\"";
-				echo ">".$carr[1]."</option>";			
+				echo ">".$carr[1]."</option>";
 			}
 			echo "</select></td>
 		</tr>
@@ -151,7 +151,7 @@ else
 			<td><select name=\"abuse_c_user_id\">
 			<option value=\"0\">-</option>";
 			$res = dbquery("
-			SELECT 
+			SELECT
 				user_nick,
 				user_id
 			FROM
@@ -162,7 +162,7 @@ else
 			{
 				echo "<option value=\"".$arr[1]."\"";
 				if (isset($_GET['uid']) && $_GET['uid']==$arr[1]) echo " selected=\"selected\"";
-				echo ">".$arr[0]."</option>";			
+				echo ">".$arr[0]."</option>";
 			}
 			echo "</select></td>
 		</tr>
@@ -171,7 +171,7 @@ else
 			<td><select name=\"abuse_c_alliance_id\">
 			<option value=\"0\">-</option>";
 			$res = dbquery("
-			SELECT 
+			SELECT
 				alliance_name,
 				alliance_tag,
 				alliance_id
@@ -183,28 +183,28 @@ else
 			{
 				echo "<option value=\"".$arr[2]."\"";
 				if (isset($_GET['aid']) && $_GET['aid']==$arr[2]) echo " selected=\"selected\"";
-				echo ">[".$arr[1]."] ".$arr[0]."</option>";			
+				echo ">[".$arr[1]."] ".$arr[0]."</option>";
 			}
 			echo "</select> (* z.B. bei Regelverstössen angeben)</td>
 		</tr>*/
 		tableEnd();
-		
+
 		echo "<input type=\"submit\" name=\"abuse_submit\" value=\"Einsenden\" /><br/><br/>";
 		echo "</form>";
 		echo "<script type=\"text/javascript\">document.getElementById('abuse_text').focus()</script>";
-		
+
 		if ($ext)
 		{
-		
+
 		$tickets = Ticket::find(array('user_id'=>$cu->id));
-		
+
 		if (count($tickets)>0)
 		{
 			tableStart("Vorhandene Tickets");
 			echo "<tr>
 				<th>ID</th>
 				<th>Kategorie</th>
-				<th>Status</th>				
+				<th>Status</th>
 				<th>Admin</th>
 				<th>Aktualisiert</th>
 				<th>Optionen</th>
@@ -224,9 +224,9 @@ else
 			}
 			tableEnd();
 		}
-		}		
+		}
 	}
-	
+
 }
-	
+
 ?>

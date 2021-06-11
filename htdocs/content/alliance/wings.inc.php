@@ -17,11 +17,11 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 if ($conf['allow_wings']['v'] && Alliance::checkActionRights('wings'))
 {
 	echo "<h2>Wings verwalten</h2>";
-	
+
 	if (isset($_GET['remove']) && intval($_GET['remove'])>0)
 	{
 		if ($ally->removeWing(intval($_GET['remove'])))
@@ -29,7 +29,7 @@ if ($conf['allow_wings']['v'] && Alliance::checkActionRights('wings'))
 		else
 			error_msg("Wing konnte nicht entfernt werden!");
 	}
-	
+
 	if (isset($_GET['cancelreq']) && intval($_GET['cancelreq'])>0)
 	{
 		if ($ally->cancelWingRequest(intval($_GET['cancelreq'])))
@@ -37,30 +37,30 @@ if ($conf['allow_wings']['v'] && Alliance::checkActionRights('wings'))
 		else
 			error_msg("Anfrage konnte nicht zurückgezogen werden!");
 	}
-		
+
 	if (isset($_POST['add_wing_id']) && intval($_POST['add_wing_id'])>0)
 	{
 		if ($ally->addWingRequest(intval($_POST['add_wing_id'])))
-			success_msg("Winganfrage hinzugefügt. Der Gründer der angefragten Allianz wurde informiert!");		
+			success_msg("Winganfrage hinzugefügt. Der Gründer der angefragten Allianz wurde informiert!");
 		else
 			error_msg("Es ist bereits eine Anfrage vorhanden oder die Allianz ist schon ein Wing einer anderen Allianz!");
-	}	
+	}
 
 	if (isset($_POST['grant_req']) && $ally->motherRequestId > 0)
 	{
 		if ($ally->grantWingRequest())
-			success_msg("Winganfrage bestätigt!");		
+			success_msg("Winganfrage bestätigt!");
 		else
 			error_msg("Es ist ein Problem aufgetreten!");
-	}	
+	}
 
 	if (isset($_POST['revoke_req']) && $ally->motherRequestId > 0)
 	{
 		if ($ally->revokeWingRequest())
-			success_msg("Winganfrage zurückgewiesen!");		
+			success_msg("Winganfrage zurückgewiesen!");
 		else
 			error_msg("Es ist ein Problem aufgetreten!");
-	}	
+	}
 
 	if ($ally->motherRequestId > 0)
 	{
@@ -70,18 +70,18 @@ if ($conf['allow_wings']['v'] && Alliance::checkActionRights('wings'))
 		echo "<input type=\"submit\" name=\"grant_req\" value=\"Bestätigen\" /> ";
 		echo "<input type=\"submit\" name=\"revoke_req\" value=\"Zurückweisen\" /> ";
 		iBoxEnd();
-		echo "</form>";		
+		echo "</form>";
 	}
-	
+
 	if ($ally->motherId > 0)
 	{
 		echo "<form action=\"?page=$page&amp;action=wings\" method=\"post\">";
 		iBoxStart("Wing");
 		echo "Diese Allianz ist ein Wing von ".$ally->mother.".<br/><br/>";
 		iBoxEnd();
-		echo "</form>";		
-	}	
-	
+		echo "</form>";
+	}
+
 	if (count($ally->wings) > 0)
 	{
 		tableStart("Wings");
@@ -100,14 +100,14 @@ if ($conf['allow_wings']['v'] && Alliance::checkActionRights('wings'))
 			<td>".$wdata->memberCount."</td>
 			<td>".nf($wdata->avgPoints)."</td>
 			<td>
-				<a href=\"?page=alliance&amp;id=".$wid."\">Allianzseite</a> &nbsp; 
-				<a href=\"?page=alliance&amp;action=wings&amp;remove=".$wid."\" onclick=\"return confirm('Wingzuordnung wirklich aufheben?')\">Entfernen</a> 
+				<a href=\"?page=alliance&amp;id=".$wid."\">Allianzseite</a> &nbsp;
+				<a href=\"?page=alliance&amp;action=wings&amp;remove=".$wid."\" onclick=\"return confirm('Wingzuordnung wirklich aufheben?')\">Entfernen</a>
 			</td>
 			</tr>";
 		}
 		echo "</td></tr>";
 		tableEnd();
-	}			
+	}
 
 	if (count($ally->wingRequests) > 0)
 	{
@@ -127,15 +127,15 @@ if ($conf['allow_wings']['v'] && Alliance::checkActionRights('wings'))
 			<td>".$wdata->memberCount."</td>
 			<td>".nf($wdata->avgPoints)."</td>
 			<td>
-				<a href=\"?page=alliance&amp;id=".$wid."\">Allianzseite</a> &nbsp; 
-				<a href=\"?page=alliance&amp;action=wings&amp;cancelreq=".$wid."\" onclick=\"return confirm('Anftage wirklich zurückziehen?')\">Zurückziehen</a> 
+				<a href=\"?page=alliance&amp;id=".$wid."\">Allianzseite</a> &nbsp;
+				<a href=\"?page=alliance&amp;action=wings&amp;cancelreq=".$wid."\" onclick=\"return confirm('Anftage wirklich zurückziehen?')\">Zurückziehen</a>
 			</td>
 			</tr>";
 		}
 		echo "</td></tr>";
 		tableEnd();
-	}	
-	
+	}
+
 	echo "<form action=\"?page=$page&amp;action=wings\" method=\"post\">";
 	iBoxStart("Allianz als Wing hinzufügen");
 	echo "Allianz wählen: <select name=\"add_wing_id\">";
@@ -144,7 +144,7 @@ if ($conf['allow_wings']['v'] && Alliance::checkActionRights('wings'))
 		if ($k != $ally->id && !isset($ally->wings[$k]))
 			echo "<option value=\"$k\">$v</option>";
 	}
-	echo "</select> &nbsp; 
+	echo "</select> &nbsp;
 	<input type=\"submit\" name=\"add_wing\" value=\"Hinzufügen\" /> ";
 	iBoxEnd();
 	echo "</form>

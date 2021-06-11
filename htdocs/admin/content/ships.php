@@ -64,7 +64,7 @@
 		WHERE
 			special_ship=1
 		ORDER BY
-			ship_name		
+			ship_name
 		");
 		while ($arr=mysql_fetch_array($res))
 		{
@@ -493,12 +493,12 @@
 
 			// Schiffe laden
 			$bres = dbquery("
-			SELECT 
+			SELECT
 				ship_id,
-				ship_name 
-			FROM 
-				ships 
-			ORDER BY 
+				ship_name
+			FROM
+				ships
+			ORDER BY
 				ship_name;");
 			$slist=array();
 			while ($barr=mysql_fetch_array($bres))
@@ -549,7 +549,7 @@
 			{
 				echo "<option value=\"".$k."\">".$v."</option>";
 			}
-			echo "</select> &nbsp; 
+			echo "</select> &nbsp;
 			<input type=\"button\" onclick=\"showLoaderPrepend('shipsOnPlanet');xajax_addShipToPlanet(xajax.getFormValues('selector'));\" value=\"Hinzuf&uuml;gen\" /></td></tr>";
 
 			//Vorhandene Schiffe

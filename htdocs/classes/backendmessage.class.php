@@ -14,11 +14,11 @@ class BackendMessage {
 	public static function reloadConfig() {
 		self::addMessage('configupdate');
 	}
-	
+
 	private static function addMessage($cmd, $arg='') {
 		dbQuerySave("INSERT IGNORE INTO backend_message_queue (cmd, arg) VALUES(?, ?);", array($cmd, $arg));
 	}
-	
+
 	public static function getMessageQueueSize() {
 		$arr = mysql_fetch_row(dbquery("SELECT COUNT(id) FROM backend_message_queue;"));
 		return $arr[0];

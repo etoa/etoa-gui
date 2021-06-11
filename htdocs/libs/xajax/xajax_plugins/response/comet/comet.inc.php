@@ -28,38 +28,38 @@ class clsCometStreaming extends xajaxResponsePlugin
 {
 	/*
 		String: sDefer
-		
+
 		Used to store the state of the scriptDeferral configuration setting.  When
 		script deferral is desired, this member contains 'defer' which will request
-		that the browser defer loading of the javascript until the rest of the page 
+		that the browser defer loading of the javascript until the rest of the page
 		has been loaded.
 	*/
 	var $sDefer;
-	
+
 	/*
 		String: sJavascriptURI
-		
+
 		Used to store the base URI for where the javascript files are located.  This
 		enables the plugin to generate a script reference to it's javascript file
 		if the javascript code is NOT inlined.
 	*/
 	var $sJavascriptURI;
-	
+
 	/*
 		Boolean: bInlineScript
-		
+
 		Used to store the value of the inlineScript configuration option.  When true,
 		the plugin will return it's javascript code as part of the javascript header
 		for the page, else, it will generate a script tag referencing the file by
 		using the <clsTableUpdater->sJavascriptURI>.
 	*/
 	var $bInlineScript;
-	
-	
+
+
 	var  $fTimeOut;
 	/*
 		Function: clsTableUpdater
-		
+
 		Constructs and initializes an instance of the table updater class.
 	*/
 	function clsCometStreaming()
@@ -70,10 +70,10 @@ class clsCometStreaming extends xajaxResponsePlugin
 	}
 	/*
 		Function: configure
-		
-		Receives configuration settings set by <xajax> or user script calls to 
+
+		Receives configuration settings set by <xajax> or user script calls to
 		<xajax->configure>.
-		
+
 		sName - (string):  The name of the configuration option being set.
 		mValue - (mixed):  The value being associated with the configuration option.
 	*/
@@ -94,12 +94,12 @@ class clsCometStreaming extends xajaxResponsePlugin
 				$this->fTimeOut = $mValue;
 		}
 	}
-	
+
 	/*
 		Function: generateClientScript
-		
+
 		Called by the <xajaxPluginManager> during the script generation phase.
-		
+
 	*/
 	function generateClientScript()
 	{
@@ -116,11 +116,11 @@ class clsCometStreaming extends xajaxResponsePlugin
 			echo "\n<script type='text/javascript' src='" . $this->sJavascriptURI . "xajax_plugins/response/comet/comet.js' " . $this->sDefer . "charset='UTF-8'></script>\n";
 		}
 	}
-	
-	
+
+
 }
 
-class xajaxCometResponse extends xajaxResponse 
+class xajaxCometResponse extends xajaxResponse
 {
 	var $bHeaderSent = false;
 	var $fTimeOut=1;
@@ -128,23 +128,23 @@ class xajaxCometResponse extends xajaxResponse
 
 	/*
 		Function: xajaxCometResponse
-		
+
 		calls  parent function xajaxResponse();
 	*/
-	
+
 	function xajaxCometResponse($fTimeOut=false)
 	{
 
 		if ( false != $fTimeOut ) $this->fTimeOut=$fTimeOut;
 
-		parent::__construct();		
-		
-		
+		parent::__construct();
+
+
 	}
 
 	/*
 		Function: printOutput
-		
+
 		override the original printOutput function. It's no longer needed since the output is already sent.
 	*/
 
@@ -158,25 +158,25 @@ class xajaxCometResponse extends xajaxResponse
 	    $response .=  "data: done\n";
 	    $response .= "\n";
 			print $response;
-			
+
 		}
 	}
 
 	/*
 		Function: flush_XHR
-		
+
 		Flushes the command queue for comet browsers.
 	*/
 
-	function flush_XHR() 
+	function flush_XHR()
 	{
-		
-		if (!$this->bHeaderSent) 
+
+		if (!$this->bHeaderSent)
 		{
 			$this->_sendHeaders();
 			$this->bHeaderSent=true;
 		}
-		
+
 		ob_start();
 		$this->_printResponse_XML();
 		$c = ob_get_contents();
@@ -191,21 +191,21 @@ class xajaxCometResponse extends xajaxResponse
 		flush();
 		$this->sleep( $this->fTimeOut );
 	}
-	
+
 
 	/*
 		Function: flush_activeX
-		
+
 		Flushes the command queue for ActiveX browsers.
 	*/
 
-	function flush_activeX() 
+	function flush_activeX()
 	{
 		ob_start();
 		$this->_printResponse_XML();
 		$c = ob_get_contents();
 		ob_end_clean();
-		
+
 		$c = '<?xml version="1.0" ?>'.$c;
 		$c = str_replace('"','\"',$c);
 		$c = str_replace("\n",'\n',$c);
@@ -215,8 +215,8 @@ class xajaxCometResponse extends xajaxResponse
 		$response .= "<script>top.document.callback(\"";
 		$response .= $c;
 		$response .= "\");</script>";
-		
-		
+
+
 		print $response;
 		ob_flush();
 		flush();
@@ -225,20 +225,20 @@ class xajaxCometResponse extends xajaxResponse
 
 	/*
 		Function: flush_HTML5DRAFT
-		
+
 		Flushes the command queue for HTML5DRAFT browsers.
 	*/
 
-	function flush_HTML5DRAFT() 
+	function flush_HTML5DRAFT()
 	{
 
 
-		if (!$this->bHeaderSent) 
+		if (!$this->bHeaderSent)
 		{
 			header("Content-Type: application/x-dom-event-stream");
 			$this->bHeaderSent=1;
 		}
-		
+
 		ob_start();
 		$this->_printResponse_XML();
 		$c = ob_get_contents();
@@ -253,22 +253,22 @@ class xajaxCometResponse extends xajaxResponse
 		ob_flush();
 		flush();
 		$this->sleep( $this->fTimeOut );
-		
+
 	}
 
 
 	/*
 		Function: flush
-		
+
 		Determines which browser is wating for a response and calls the according flush function.
 	*/
-	function flush() 
+	function flush()
 	{
 		if (0 == count($this->aCommands)) return false;
-		if ("xhr" == $_SERVER['HTTP_STREAMING']) 
+		if ("xhr" == $_SERVER['HTTP_STREAMING'])
 		{
 			$this->flush_XHR();
-		} 
+		}
 		elseif ( "HTML5DRAFT" == $_REQUEST['xjxstreaming'])
 		{
 			$this->flush_HTML5DRAFT();
@@ -279,17 +279,17 @@ class xajaxCometResponse extends xajaxResponse
 		}
 		$this->aCommands=array();
 	}
- 
+
 	/*
 		Function: sleep
-		
+
 		Very accurate sleep function.
 	*/
-	function sleep($seconds) 
+	function sleep($seconds)
 	{
 	   usleep(floor($seconds*1000000));
 	}
-	
+
 }
 
 $objPluginManager =& xajaxPluginManager::getInstance();

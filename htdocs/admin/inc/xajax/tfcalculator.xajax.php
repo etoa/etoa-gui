@@ -19,9 +19,9 @@ function showNumberField() {
                         </tr>
                         <tr>
                             <td>
-                                <input 
-                                    type="text" 
-                                    name="number_fields" 
+                                <input
+                                    type="text"
+                                    name="number_fields"
                                     id="number_fields"
                                     oninput="showElement(\'createPlayers\',this.value>1)">
                             </td>
@@ -227,7 +227,7 @@ function splitDebris($formValues,$formPlayers) {
                         'Trümmerfeld',
                         " . time() . "
                     );";
-                $logs = "    
+                $logs = "
                     INSERT INTO
                     logs_debris
                             (

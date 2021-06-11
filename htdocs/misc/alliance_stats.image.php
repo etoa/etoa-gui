@@ -45,13 +45,13 @@
 	if ($aid>0 && count($_SESSION)>0)
 	{
 		$res=dbquery("
-			SELECT 
+			SELECT
 				alliance_tag,
 				alliance_name,
-				alliance_rank_current 
-			FROM 
+				alliance_rank_current
+			FROM
 				alliances
-			WHERE 
+			WHERE
 				alliance_id='".$aid."';
 		");
 		if (mysql_num_rows($res)>0)
@@ -62,16 +62,16 @@
 			if (intval($_GET['end'])>0)
 				$sql2 = " AND point_timestamp < ".intval($_GET['end'])." ";
 			$pres=dbquery("
-				SELECT 
-					* 
-				FROM 
+				SELECT
+					*
+				FROM
 					alliance_points
-				WHERE 
-					point_alliance_id='".$aid."' 
+				WHERE
+					point_alliance_id='".$aid."'
 					AND point_points>0
 					$sql1
 					$sql2
-				ORDER BY 
+				ORDER BY
 					point_timestamp DESC LIMIT ".(DETAIL_LIMIT*6).";
 			");
 			if (mysql_num_rows($pres)>0)

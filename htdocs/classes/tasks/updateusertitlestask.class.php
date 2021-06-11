@@ -2,8 +2,8 @@
 	/**
 	* Update user titles
 	*/
-	class UpdateUserTitlesTask implements IPeriodicTask 
-	{		
+	class UpdateUserTitlesTask implements IPeriodicTask
+	{
 		function run()
 		{
 			if (ENABLE_USERTITLES==1) {
@@ -12,7 +12,7 @@
 			}
 			return "User Titel nicht aktualisiert (deaktiviert)";
 		}
-		
+
 		function getDescription() {
 			return "Titel aktualisieren";
 		}

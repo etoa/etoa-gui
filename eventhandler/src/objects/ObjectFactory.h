@@ -5,7 +5,7 @@
 
 /**
 * ObjectFactory Class
-* 
+*
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
@@ -17,10 +17,10 @@
 #include "FleetShip.h"
 #include "ListDef.h"
 
-class ObjectFactory 
+class ObjectFactory
 {
-public:	
-	static Object* createObject(mysqlpp::Row oRow, char type, double rebuild=1.0) 
+public:
+	static Object* createObject(mysqlpp::Row oRow, char type, double rebuild=1.0)
 	{
 		switch (type)
 		{

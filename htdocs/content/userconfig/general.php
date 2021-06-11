@@ -23,7 +23,7 @@
       {
         if (checkEmail($_POST['user_email']))
         {
-              
+
           // Avatar
           if (isset($_POST['avatar_del']) && $_POST['avatar_del']==1)
           {
@@ -35,14 +35,14 @@
           	$imup->setMaxSize(BOARD_AVATAR_MAX_SIZE);
           	$imup->setMaxDim(BOARD_AVATAR_MAX_WIDTH,BOARD_AVATAR_MAX_HEIGHT);
           	$imup->enableResizing(BOARD_AVATAR_WIDTH,BOARD_AVATAR_HEIGHT);
-          	
+
 						if ($imup->process())
 						{
 							$cu->avatar = $imup->getResultName();
 							success_msg("Avatar hochgeladen!");
-						}           	
+						}
 					}
-          
+
           // Profil-Bild
           if (isset($_POST['profile_img_del']) && $_POST['profile_img_del']==1)
           {
@@ -54,19 +54,19 @@
           	$imup->setMaxSize(PROFILE_IMG_MAX_SIZE);
           	$imup->setMaxDim(PROFILE_MAX_IMG_WIDTH,PROFILE_MAX_IMG_HEIGHT);
           	$imup->enableResizing(PROFILE_IMG_WIDTH,PROFILE_IMG_HEIGHT);
-          	
+
 						if ($imup->process())
 						{
 							$cu->profileImage = $imup->getResultName();
 							success_msg("Profilbild hochgeladen!");
-						}          	
+						}
           }
 
           $cu->email = $_POST['user_email'];
           $cu->profileText = addslashes($_POST['user_profile_text']);
           $cu->signature = addslashes($_POST['user_signature']);
           $cu->profileBoardUrl = $_POST['user_profile_board_url'];
-          
+
           success_msg("Benutzer-Daten wurden ge&auml;ndert!");
         }
         else
@@ -114,10 +114,10 @@
         	}
         }
       	echo "Profilbild heraufladen/&auml;ndern: <input type=\"file\" name=\"user_profile_img_file\" /><br/>
-      	<b>Regeln:</b> Max ".PROFILE_MAX_IMG_WIDTH."*".PROFILE_MAX_IMG_HEIGHT." Pixel, Bilder grösser als 
+      	<b>Regeln:</b> Max ".PROFILE_MAX_IMG_WIDTH."*".PROFILE_MAX_IMG_HEIGHT." Pixel, Bilder grösser als
       	".PROFILE_IMG_WIDTH."*".PROFILE_IMG_HEIGHT." werden automatisch verkleinert.<br/>
       	Format: GIF, JPG oder PNG. Grösse: Max ".byte_format(PROFILE_IMG_MAX_SIZE)." </td>
-      </tr>";   
+      </tr>";
       echo "<tr>
       	<th width=\"35%\">Allianzforum-Signatur:</th>
       	<td><textarea name=\"user_signature\" cols=\"50\" rows=\"2\" width=\"65%\">".stripslashes($cu->signature)."</textarea></td>
@@ -134,7 +134,7 @@
   	      }
         }
       	echo "Avatar heraufladen/&auml;ndern: <input type=\"file\" name=\"user_avatar_file\" /><br/>
-      	<b>Regeln:</b> Max ".BOARD_AVATAR_MAX_WIDTH."*".BOARD_AVATAR_MAX_HEIGHT." Pixel, Bilder grösser als 
+      	<b>Regeln:</b> Max ".BOARD_AVATAR_MAX_WIDTH."*".BOARD_AVATAR_MAX_HEIGHT." Pixel, Bilder grösser als
       	".BOARD_AVATAR_WIDTH."*".BOARD_AVATAR_HEIGHT." werden automatisch verkleinert.<br/>
       	Format: GIF, JPG oder PNG. Grösse: Max ".byte_format(BOARD_AVATAR_MAX_SIZE)." </td>
       </tr>";

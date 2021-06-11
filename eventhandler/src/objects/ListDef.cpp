@@ -9,11 +9,11 @@
 		this->count = (int)oRow["deflist_count"];
 		this->initCount = this->count;
 		this->rebuildCount = 0;
-		
+
 		Config &config = Config::instance();
 		this->rebuild = rebuild + config.nget("def_restore_percent",0) - 1;
 	}
-	
+
 	ListDef::~ListDef() {
 		if (this->isChanged) {
 
@@ -33,21 +33,21 @@
 			query.reset();
 		}
 	}
-	
+
 	int ListDef::getDefCnt()
 	{
 		this->rebuildCount = (int)round((this->initCount - this->count)*this->rebuild);
 		return (int)ceil((this->initCount - (this->count+this->rebuildCount))*Config::instance().nget("def_wf_percent",0));
 	}
-	
+
 	double ListDef::getWfMetal() {
 		return (getDefCnt() * DataHandler::instance().getDefById(this->getTypeId())->getCostsMetal());
 	}
-	
+
 	double ListDef::getWfCrystal() {
 		return (getDefCnt() * DataHandler::instance().getDefById(this->getTypeId())->getCostsCrystal());
 	}
-	
+
 	double ListDef::getWfPlastic() {
 		return (getDefCnt() * DataHandler::instance().getDefById(this->getTypeId())->getCostsPlastic());
 	}

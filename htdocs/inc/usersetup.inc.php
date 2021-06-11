@@ -18,7 +18,7 @@
 		$s->itemset_key=null;
 		$s->itemset_planet=null;
 		$cu->setSetupFinished();
-		$mode = "finished";		
+		$mode = "finished";
 	}
 	elseif (isset($_POST['submit_chooseplanet']) && intval($_POST['choosenplanetid'])>0 && checker_verify() && !isset($cp))
 	{
@@ -66,30 +66,30 @@
 		if ($pid = PlanetManager::getFreePlanet($_GET['setup_sx'],$_GET['setup_sy'],array_key_exists('filter_p',$_GET) ? $_GET['filter_p'] : null,array_key_exists('filter_s',$_GET) ? $_GET['filter_s'] : null))
 		{
 			$mode = "checkplanet";
-		}		
+		}
 		else
 		{
 			echo "Leider konnte kein geeigneter Planet in diesem Sektor gefunden werden.<br/>
 			Bitte wähle einen anderen Sektor!<br/><br/>";
-			$mode = "choosesector";	
-		}		
+			$mode = "choosesector";
+		}
 	}
-	
+
 	elseif ($cu->raceId >0 && !isset($cp))
 	{
-		$mode = "choosesector";	
+		$mode = "choosesector";
 	}
 	elseif (isset($_POST['submit_setup1']) && intval($_POST['register_user_race_id'])>0 && checker_verify())
 	{
 		$cu->race = new Race($_POST['register_user_race_id']);
-		$mode = "choosesector";	
+		$mode = "choosesector";
 	}
 	elseif ($cu->raceId==0)
 	{
 		$mode = "race";
 	}
 
-	if ($mode=="itemsets")	
+	if ($mode=="itemsets")
 	{
 		$k = mt_rand(10000,99999);
 		$s->temset_key=$k;
@@ -104,8 +104,8 @@
 			echo "<option value=\"".$arr['set_id']."\">".$arr['set_name']."</option>";
 		}
 		echo "</select> <input type=\"submit\" value=\"Weiter\" name=\"".md5($k)."\" /></form>";
-		iBoxEnd();		
-	}	
+		iBoxEnd();
+	}
 	elseif ($mode=="checkplanet")
 	{
 		echo "<form action=\"?\" method=\"post\">";
@@ -130,7 +130,7 @@
 		echo "<tr>
 			<th>Temperatur:</td>
 			<td>".$tp->temp_from."&deg;C bis ".$tp->temp_to."&deg;C";
-		echo "</td></tr>";		
+		echo "</td></tr>";
 		echo "<tr><th>Ansicht:</th><td style=\"background:#000;text-align:center;\"><img src=\"".$tp->imagePath("m")."\" style=\"border:none;\" alt=\"planet\" /></td></tr>
 		</table>";
 		echo "<table class='tb'>
@@ -144,7 +144,7 @@
         echo "<tr>
 			<th>Sonnentyp:</th>
 			<td>
-			
+
 			<select name=\"filter_sol_id\" id=\"filter_sol_id\">
 			<option value=\"0\">Bitte wählen...</option>";
 		$res = dbquery("
@@ -169,7 +169,7 @@
 			echo "$selected>".$sol['sol_type_name']."</option>";
 		}
 		echo "</select>
-		
+
 			</td></tr>";
         echo "<tr>
 			<th>Planettyp:</th>
@@ -183,8 +183,8 @@
 			planet_types
 		WHERE
 			type_consider=1
-		AND 
-		    type_habitable = 1	
+		AND
+		    type_habitable = 1
 		ORDER BY
 			type_name;
 		");
@@ -207,8 +207,8 @@
 		<th>".$tp->typeName."</th>";
 		echo "<th>".$cu->race->name."</th>";
 		echo "<th>".$tp->starTypeName."</th>";
-		echo "<th>TOTAL</th></tr>";		
-		
+		echo "<th>TOTAL</th></tr>";
+
 		echo "<tr><td class=\"tbldata\">".RES_ICON_METAL."Produktion ".RES_METAL."</td>";
 		echo "<td class=\"tbldata\">".get_percent_string($tp->typeMetal,1)."</td>";
 		echo "<td class=\"tbldata\">".get_percent_string($cu->race->metal,1)."</td>";
@@ -275,7 +275,7 @@
 		value=\"Einen neuen Planeten auswählen\" />
 		<input type=\"submit\" name=\"redo\" value=\"Einen neuen Sektor auswählen\" />";
 		echo "</form>";
-	}	
+	}
 	elseif ($mode=="choosesector")
 	{
 		echo "<form action=\"?\" method=\"post\">";
@@ -286,10 +286,10 @@
 		echo "Anzeigen: <select onchange=\"document.getElementById('img').src='misc/map.image.php'+this.options[this.selectedIndex].value;\">
 		<option value=\"?t=".time()."\">Normale Galaxieansicht</option>
 		<option value=\"?type=populated&t=".time()."\">Bev&ouml;lkerte Systeme</option>
-		
+
 		</select><br/><br/>";
 		echo "<img src=\"misc/map.image.php\" alt=\"Galaxiekarte\" id=\"img\" usemap=\"#Galaxy\" style=\"border:none;\"/>";
-		
+
 		echo "<map name=\"Galaxy\">\n";
 		$sec_x_size=GALAXY_MAP_WIDTH/$sx_num;
 		$sec_y_size=GALAXY_MAP_WIDTH/$sy_num;
@@ -302,7 +302,7 @@
 			{
 				$res = dbquery("
 				SELECT
-					COUNT(entities.id)										
+					COUNT(entities.id)
 				FROM
 					cells
 				INNER JOIN
@@ -313,11 +313,11 @@
 					AND sy=".$ycnt."
 				;
 				");
-				$arr = mysql_fetch_row($res);				
-				
+				$arr = mysql_fetch_row($res);
+
 				$res = dbquery("
 				SELECT
-					COUNT(entities.id)										
+					COUNT(entities.id)
 				FROM
 					cells
 				INNER JOIN
@@ -332,14 +332,14 @@
 
 				$res = dbquery("
 				SELECT
-					COUNT(entities.id) 
+					COUNT(entities.id)
 				FROM
 					cells
 				INNER JOIN
 				(
 					entities
 					INNER JOIN
-						planets 
+						planets
 						ON planets.id=entities.id
 						AND planet_user_id>0
 					)
@@ -348,7 +348,7 @@
 					AND cells.sy=".$ycnt."
 				;");
 				$arr3 = mysql_fetch_row($res);
-				
+
 				$tt = new Tooltip();
 				$tt->addTitle("Sektor $xcnt/$ycnt");
 				$tt->addText("Sternensysteme: ".$arr[0]);
@@ -360,9 +360,9 @@
 		  }
 		  $xcnt++;
 		}
-		echo "</map>\n";		
-		
-		
+		echo "</map>\n";
+
+
 		echo "</form>";
 	}
 	elseif ($mode=="race")
@@ -373,7 +373,7 @@
 		echo "<h2>Rasse auswählen</h2>
 		Bitte wählt die Rasse eures Volkes aus.<br/>
 		Jede Rasse hat Vor- und Nachteile sowie einige Spezialeinheiten:<br/><br/>";
-	
+
 		echo "<select name=\"register_user_race_id\" id=\"register_user_race_id\">
 		<option value=\"0\">Bitte wählen...</option>";
 		$res = dbquery("
@@ -393,9 +393,9 @@
 			echo ">".$race['race_name']."</option>";
 		}
 		echo "</select>";
-	
-		echo " &nbsp; <input type=\"button\" name=\"random\" id=\"random\" value=\"Zufällige Rasse auswählen\"  onclick=\"rdm()\"/>"; 
-      
+
+		echo " &nbsp; <input type=\"button\" name=\"random\" id=\"random\" value=\"Zufällige Rasse auswählen\"  onclick=\"rdm()\"/>";
+
 		// xajax content will be placed in the following cell
 		echo "<br/><br/><div id=\"raceInfo\"></div>";
 		echo "<br/><br/><input type=\"submit\" name=\"submit_setup1\" id=\"submit_setup1\" value=\"Weiter\" />";

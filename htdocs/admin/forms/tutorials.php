@@ -59,7 +59,7 @@
 																		"text" => "ID",
 																		"type" => "readonly",
 																		"show_overview" => 1
-																	),   	
+																	),
 												array	(	"name" => "text_tutorial_id",
 																		"text" => "Tutorial",
 																		"type" => "select",
@@ -73,7 +73,7 @@
 																		"select_elem" => admin_get_select_elements('tutorial',"tutorial_id","tutorial_title","tutorial_title",array("0"=>"-")),
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
-																	),	
+																	),
 	 											array	(	"name" => "text_title",
 																		"text" => "Titel",
 																		"type" => "text",
@@ -88,7 +88,7 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 1,
 																		"link_in_overview" => 1
-																	),	
+																	),
 												array	(	"name" => "text_content",
 																		"text" => "Inhalt",
 																		"type" => "textarea",

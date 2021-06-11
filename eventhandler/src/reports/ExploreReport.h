@@ -13,7 +13,7 @@
 
 /**
 * ExploreReport class
-* 
+*
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
@@ -24,7 +24,7 @@ public:
 	ExploreReport(int userId=0, int entity1Id=0, int entity2Id=0, int timestamp=0 ) : Report() {
 		this->subject = "Erkundung";
 		this->type = "explore";
-		
+
 		this->timestamp=timestamp;
 		this->entity1Id=entity1Id;
 		this->entity2Id=entity2Id;
@@ -32,15 +32,15 @@ public:
 	}
 
 	ExploreReport(ExploreReport* report) {	}
-		
+
 	~ExploreReport() {
-		std::cout << "one\n";		
+		std::cout << "one\n";
 		while (!this->users.empty()) {
 			std::cout << "one\n";
 			this->save(this->users.back());
 			this->users.pop_back();
 		}
-		
+
 	}
 };
 

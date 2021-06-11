@@ -9,7 +9,7 @@
 		this->count = (double)oRow["fs_ship_cnt"];
 		this->initCount = this->count;
 		this->isFaked = (bool)oRow["fs_ship_faked"];
-		
+
 		this->special = (bool)oRow["fs_special_ship"];
 		this->sLevel = (short)oRow["fs_special_ship_level"];
 		this->sExp = (double)oRow["fs_special_ship_exp"];
@@ -28,7 +28,7 @@
 		this->sBonusDeactivade = (short)oRow["fs_special_ship_bonus_deactivade"];
 		this->sBonusReadiness = (short)oRow["fs_special_ship_bonus_readiness"];
 	}
-	
+
 	FleetShip::~FleetShip() {
 		if (this->isChanged || this->getCount()!=this->initCount) {
 
@@ -59,7 +59,7 @@
 			}
 		}
 	}
-	
+
 	int FleetShip::getShipCnt(ShipData *data) {
 		double structure = data->getStructure() + data->getShield();
 		if (!structure && this->count!=this->initCount) this->count = 0;
@@ -70,12 +70,12 @@
 		ShipData *data = DataHandler::instance().getShipById(this->getTypeId());
 		return (getShipCnt(data) * data->getCostsMetal());
 	}
-	
+
 	double FleetShip::getWfCrystal() {
 		ShipData *data = DataHandler::instance().getShipById(this->getTypeId());
 		return (getShipCnt(data) * data->getCostsCrystal());
 	}
-	
+
 	double FleetShip::getWfPlastic() {
 		ShipData *data = DataHandler::instance().getShipById(this->getTypeId());
 		return (getShipCnt(data) * data->getCostsPlastic());

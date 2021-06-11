@@ -9,7 +9,7 @@
 
 /**
 * Handles Fetch....
-* 
+*
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 namespace fetch

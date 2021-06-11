@@ -5,7 +5,7 @@
 	} else {
 		$baseUrl = "?page=".$page;
 	}
-	
+
 	// Text
 	$tm = new TextManager();
 	$contactText = $tm->getText('contact_message');
@@ -15,19 +15,19 @@
 		echo text2html($contactText->content);
 		iBoxEnd();
 	}
-	
+
 	// List of admins
 	$admins = AdminUser::getAll();
 	if (count($admins) > 0)
 	{
-		if (isset($_GET['rcpt']) && intval($_GET['rcpt'])>0)	
+		if (isset($_GET['rcpt']) && intval($_GET['rcpt'])>0)
 		{
 			$rcpt = intval($_GET['rcpt']);
-			echo '<form action="'.$baseUrl.'&amp;rcpt='.$rcpt.'" method="post"><div>';	
+			echo '<form action="'.$baseUrl.'&amp;rcpt='.$rcpt.'" method="post"><div>';
 			if (isset($admins[$rcpt]) && $admins[$rcpt]->isContact)
 			{
 				$admin = $admins[$rcpt];
-				
+
 				$showForm = true;
 				$mail_subject = '';
 				$mail_text = '';
@@ -35,12 +35,12 @@
 				{
 					$mail_subject = $_POST['mail_subject'];
 					$mail_text = $_POST['mail_text'];
-				
+
 					if (!empty($mail_subject) && !empty($mail_text))
-					{				
+					{
 						// Subject
 						$subject = "Kontakt-Anfrage: ".$mail_subject;
-						
+
 						// Sender, receiver
 						$recipient = $admin->nick.'<'.$admin->email.'>';
 						if (isset($cu)) {
@@ -56,7 +56,7 @@
 							$text.= "ID: ".$cu->id."\n";
 						} else {
 							$text.= "E-Mail: ".$_POST['mail_sender']."\n";
-						}				
+						}
 						$text.= "IP/Host: ".$_SERVER['REMOTE_ADDR']." (".Net::getHost($_SERVER['REMOTE_ADDR']).")\n\n";
 						$text.= $mail_text;
 
@@ -73,7 +73,7 @@
 						error_msg("Titel oder Text fehlt!");
 					}
 				}
-			
+
 				if ($showForm)
 				{
 					tableStart('Nachricht an '.$admin->nick.' senden');
@@ -95,7 +95,7 @@
 				error_msg("Kontakt nicht vorhanden!");
 			}
 			echo '<input type="button" onclick="document.location=\''.$baseUrl.'\'" value="Zurück" /></div></form>';
-		}		
+		}
 		else
 		{
 			tableStart('Kontaktpersonen für die '.Config::getInstance()->roundname->v);
@@ -110,7 +110,7 @@
 				if ($arr->isContact) {
 					$suffix = CONTACT_REQUIRED_MAIL_SUFFIX;
 					$showMailAddress = empty($suffix) || preg_match('/'.$suffix.'/i', $arr->email);
-				
+
 					echo '<tr><td>'.$arr->nick.'</td>';
 					if ($showMailAddress) {
 						echo '<td><a href="mailto:'.$arr->email.'">'.$arr->email.'</a></td>';
@@ -126,8 +126,8 @@
 					echo '</tr>';
 				}
 			}
-			tableEnd();		
-		}		
+			tableEnd();
+		}
 	} else {
 		echo "<i>Keine Kontaktpersonen vorhanden!</i>";
 	}

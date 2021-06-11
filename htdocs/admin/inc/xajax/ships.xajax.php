@@ -14,8 +14,8 @@ function calcShipLevelFromXP($base_xp,$base_xp_factor,$current_xp,$target)
 		if ($xp > $current_xp || $level>100)
 			break;
 		$level++;
-	}		
-	
+	}
+
   $objResponse->assign($target,"innerHTML", $level);
 	return $objResponse;
 }

@@ -21,7 +21,7 @@ function toggleBox(boxId)
 		b.style.display='none';
 	}
 }
-		
+
 function showLoader(elem)
 {
 	document.getElementById(elem).innerHTML='<div style=\"text-align:center;padding:10px;\"><img src="web/images/ajax-loader-circle.gif" /></div>';
@@ -38,10 +38,9 @@ function showLoaderInline(elem)
 }
 
 function createFields()
-{	
+{
 	for(var x = 0; x < $('#number_fields').val(); x++)
 	{
 		console.log('blub');
 	}
 }
-	

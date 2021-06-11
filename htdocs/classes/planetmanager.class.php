@@ -53,9 +53,9 @@
 					entities
 					INNER JOIN
 					(
-						planets 
+						planets
 						INNER JOIN
-							planet_types 
+							planet_types
 							ON planet_type_id=type_id
 							AND type_habitable=1
 					)

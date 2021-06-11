@@ -21,7 +21,7 @@
 if (Alliance::checkActionRights('liquidate'))
 {
 		echo "<h2>Allianz aufl&ouml;sen</h2>";
-		
+
 		// Prüft, ob noch Mitglieder vorhanden sind (keine Bewerbungen!)
 		if (count($ally->members) > 1)
 		{

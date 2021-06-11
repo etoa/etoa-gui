@@ -45,9 +45,9 @@
 			$res = dbQuerySave("
 			SELECT
 				*
-			FROM 
-				user_properties 
-			WHERE 
+			FROM
+				user_properties
+			WHERE
 				id=?
 			LIMIT 1;", [$this->id]);
 			if (mysql_num_rows($res)>0)
@@ -90,7 +90,7 @@
 			else
 			{
 				dbquery("
-				INSERT INTO 
+				INSERT INTO
 					user_properties
 				(id)
 				VALUES
@@ -106,7 +106,7 @@
 			if ($cnt > 0)
 			{
 				$i=0;
-				$sql = "UPDATE 
+				$sql = "UPDATE
 					`user_properties`
 				SET ";
 				foreach ($this->changedFields as $cf => $df)

@@ -39,7 +39,7 @@ class Constants implements ISingleton
 	{
 		$this->_items = fetchJsonConfig(self::configFile);
 	}
-	
+
 	public function __isset($name)
 	{
 		return isset($this->_items[$name]);
@@ -53,6 +53,6 @@ class Constants implements ISingleton
 		}
 		throw new EException("Konstante $name existiert nicht!");
 		return null;
-	}		
+	}
 }
 ?>

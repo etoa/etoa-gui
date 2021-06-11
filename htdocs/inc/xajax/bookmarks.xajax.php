@@ -159,8 +159,8 @@ include_once('cell.xajax.php');
 			echo "<div style=\"color:#f90\">".$str."<div>";
 		}
 
-		$action_content = "<a href=\"javascript:;\" onclick=\"$('#fleet_bm_actions_" . $bid . "').html('Flotte wird gestartet...');xajax_launchBookmarkProbe(".$bid.");\"  onclick=\"\">Starten</a> 
-							<a href=\"?page=bookmarks&amp;mode=new&amp;edit=".$bid."\">Bearbeiten</a> 
+		$action_content = "<a href=\"javascript:;\" onclick=\"$('#fleet_bm_actions_" . $bid . "').html('Flotte wird gestartet...');xajax_launchBookmarkProbe(".$bid.");\"  onclick=\"\">Starten</a>
+							<a href=\"?page=bookmarks&amp;mode=new&amp;edit=".$bid."\">Bearbeiten</a>
 							<a href=\"?page=bookmarks&amp;mode=fleet&amp;del=".$bid."\" onclick=\"return confirm('Soll dieser Favorit wirklich gel&ouml;scht werden?');\">Entfernen</a>";
 		$objResponse->assign("fleet_bm_actions_" . $bid, "innerHTML",$action_content);
 		$objResponse->assign("fleet_info_box","style.display",'block');
@@ -178,14 +178,14 @@ include_once('cell.xajax.php');
 	  	$sOut = "";
 	  	$nCount = 0;
 
-		$res=dbquery("SELECT 
-			ship_name 
-		FROM 
-			ships 
-		WHERE 
+		$res=dbquery("SELECT
+			ship_name
+		FROM
+			ships
+		WHERE
 			(ship_show=1
 				|| ship_buildable=1)
-			AND ship_name LIKE '".$val."%' 
+			AND ship_name LIKE '".$val."%'
 		LIMIT 20;");
 		if (mysql_num_rows($res)>0)
 	  {
@@ -255,7 +255,7 @@ include_once('cell.xajax.php');
 					entities.code
 				FROM
 					entities
-				INNER JOIN	
+				INNER JOIN
 					cells
 				ON
 					entities.cell_id=cells.id

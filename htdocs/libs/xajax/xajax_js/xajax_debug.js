@@ -1,13 +1,13 @@
 /*
 	File: xajax_debug.js
-	
+
 	This optional file contains the debugging module for use with xajax.  If
 	you include this module after the standard <xajax_core.js> module, you
 	will receive debugging messages, including errors, that occur during
 	the processing of your xajax requests.
-	
+
 	Title: xajax debugging module
-	
+
 	Please see <copyright.inc.php> for a detailed description, copyright
 	and license information.
 */
@@ -31,13 +31,13 @@ try
 	*/
 	if ('undefined' == typeof xajax)
 		throw { name: 'SequenceError', message: 'Error: xajax core was not detected, debug module disabled.' }
-		
+
 	if ('undefined' == typeof xajax.debug)
 		xajax.debug = {}
 
 	/*
 		String: xajax.debug.workId
-		
+
 		Stores a 'unique' identifier for this session so that an existing debugging
 		window can be detected, else one will be created.
 	*/
@@ -45,14 +45,14 @@ try
 
 	/*
 		String: xajax.debug.windowSource
-		
+
 		The default URL that is given to the debugging window upon creation.
 	*/
 	xajax.debug.windowSource = 'about:blank';
 
 	/*
 		String: xajax.debug.windowID
-		
+
 		A 'unique' name used to identify the debugging window that is attached
 		to this xajax session.
 	*/
@@ -60,25 +60,25 @@ try
 
 	/*
 		String: windowStyle
-		
+
 		The parameters that will be used to create the debugging window.
 	*/
 	if ('undefined' == typeof xajax.debug.windowStyle)
-		xajax.debug.windowStyle = 
+		xajax.debug.windowStyle =
 			'width=800,' +
 			'height=600,' +
 			'scrollbars=yes,' +
 			'resizable=yes,' +
 			'status=yes';
-			
+
 	/*
 		String: windowTemplate
-		
+
 		The HTML template and CSS style information used to populate the
 		debugging window upon creation.
 	*/
 	if ('undefined' == typeof xajax.debug.windowTemplate)
-		xajax.debug.windowTemplate = 
+		xajax.debug.windowTemplate =
 			'<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">' +
 			'<html><head>' +
 			'<title>xajax debug output</title>' +
@@ -98,7 +98,7 @@ try
 
 	/*
 		Object: window
-		
+
 		A reference to the debugging window, once constructed, where messages will
 		be displayed throughout the request process.  This is constructed internally
 		as needed.
@@ -154,7 +154,7 @@ try
 
 	/*
 		Function: xajax.debug.getExceptionText
-		
+
 		Parameters:
 		e - (object): Exception
 	*/
@@ -180,20 +180,20 @@ try
 
 	/*
 		Function: xajax.debug.writeMessage
-		
+
 		Output a debug message to the debug window if available or send to an
-		alert box.  If the debug window has not been created, attempt to 
+		alert box.  If the debug window has not been created, attempt to
 		create it.
-		
+
 		Parameters:
-		
+
 		text - (string):  The text to output.
-		
-		prefix - (string):  The prefix to use; this is prepended onto the 
+
+		prefix - (string):  The prefix to use; this is prepended onto the
 			message; it should indicate the type of message (warning, error)
-			
+
 		cls - (stirng):  The className that will be applied to the message;
-			invoking a style from the CSS provided in 
+			invoking a style from the CSS provided in
 			<xajax.debug.windowTemplate>.  Should be one of the following:
 			- warningText
 			- errorText
@@ -212,17 +212,17 @@ try
 				prefix = '';
 			if ('undefined' == typeof cls)
 				cls = 'debugText';
-			
+
 			text = xajax.debug.prepareDebugText(text);
-			
+
 			var debugTag = xdwd.getElementById('debugTag');
 			var debugEntry = xdwd.createElement('div');
 			var debugDate = xdwd.createElement('span');
 			var debugText = xdwd.createElement('pre');
-			
+
 			debugDate.innerHTML = new Date().toString();
 			debugText.innerHTML = prefix + text;
-			
+
 			debugEntry.appendChild(debugDate);
 			debugEntry.appendChild(debugText);
 			debugTag.insertBefore(debugEntry, debugTag.firstChild);
@@ -241,10 +241,10 @@ try
 
 	/*
 		Function: xajax.debug.prepareDebugText
-		
+
 		Convert special characters to their HTML equivellents so they
 		will show up in the <xajax.debug.window>.
-		
+
 		Parameters:
 			text - (string): Debug text
 	*/
@@ -279,11 +279,11 @@ try
 
 	/*
 		Function: xajax.debug.executeCommand
-		
+
 		Catch any exceptions that are thrown by a response command handler
 		and display a message in the debugger.
-		
-		This is a wrapper function which surrounds the standard 
+
+		This is a wrapper function which surrounds the standard
 		<xajax.executeCommand> function.
 	*/
 	xajax.debug.executeCommand = xajax.executeCommand;
@@ -316,17 +316,17 @@ try
 
 	/*
 		Function: xajax.parseAttributes
-		
+
 		Catch any exception thrown during the parsing of response
 		command attributes and display an appropriate debug message.
-		
+
 		This is a wrapper around the standard <xajax.parseAttributes>
 		function.
-		
+
 		Parameters:
 			child - (object): Childnode
 			obj - (object): Object
-			
+
 	*/
 	xajax.debug.parseAttributes = xajax.parseAttributes;
 	xajax.parseAttributes = function(child, obj) {
@@ -350,15 +350,15 @@ try
 
 	/*
 		Function: xajax.tools.$
-		
+
 		Catch any exceptions thrown while attempting to locate an
 		HTML element by it's unique name.
-		
+
 		This is a wrapper around the standard <xajax.tools.$> function.
-		
+
 		Parameters:
 		sId - (string): Element ID or name
-		
+
 	*/
 	xajax.debug.$ = xajax.tools.$;
 	xajax.tools.$ = function(sId) {
@@ -378,19 +378,19 @@ try
 
 	/*
 		Function: xajax.tools._objectToXML
-		
+
 		Generate a message indicating that a javascript object is
 		being converted to xml.  Indicate the max depth and size.  Then
-		display the size of the object upon completion.  Catch any 
+		display the size of the object upon completion.  Catch any
 		exceptions thrown during the conversion process.
-		
+
 		This is a wrapper around the standard <xajax.tools._objectToXML>
 		function.
-		
+
 		Parameters:
-			obj - (object): 
-			guard - (object): 
-			
+			obj - (object):
+			guard - (object):
+
 	*/
 	xajax.debug._objectToXML = xajax.tools._objectToXML;
 	xajax.tools._objectToXML = function(obj, guard) {
@@ -420,11 +420,11 @@ try
 
 	/*
 		Function: xajax._internalSend
-		
+
 		Generate a message indicating that the xajax request is
 		about the be sent to the server.
-		
-		This is a wrapper around the standard <xajax._internalSend> 
+
+		This is a wrapper around the standard <xajax._internalSend>
 		function.
 	*/
 	xajax.debug._internalSend = xajax._internalSend;
@@ -432,8 +432,8 @@ try
 		try {
 			xajax.debug.writeMessage(xajax.debug.text[104]);
 			xajax.debug.writeMessage(
-				xajax.debug.text[105] + 
-				oRequest.requestData.length + 
+				xajax.debug.text[105] +
+				oRequest.requestData.length +
 				xajax.debug.text[106]
 				);
 			oRequest.beginDate = new Date();
@@ -449,12 +449,12 @@ try
 
 	/*
 		Function: xajax.submitRequest
-		
-		Generate a message indicating that a request is ready to be 
+
+		Generate a message indicating that a request is ready to be
 		submitted; providing the URL and the function being invoked.
-		
+
 		Catch any exceptions thrown and display a message.
-		
+
 		This is a wrapper around the standard <xajax.submitRequest>
 		function.
 	*/
@@ -483,7 +483,7 @@ try
 		msg += separator;
 		msg += oRequest.URI;
 		xajax.debug.writeMessage(msg);
-		
+
 		try {
 			return xajax.debug.submitRequest(oRequest);
 		} catch (e) {
@@ -495,10 +495,10 @@ try
 
 	/*
 		Function: xajax.initializeRequest
-		
+
 		Generate a message indicating that the request object is
 		being initialized.
-		
+
 		This is a wrapper around the standard <xajax.initializeRequest>
 		function.
 	*/
@@ -519,10 +519,10 @@ try
 
 	/*
 		Function: xajax.processParameters
-		
+
 		Generate a message indicating that the request object is
 		being populated with the parameters provided.
-		
+
 		This is a wrapper around the standard <xajax.processParameters>
 		function.
 	*/
@@ -550,11 +550,11 @@ try
 
 	/*
 		Function: xajax.prepareRequest
-		
+
 		Generate a message indicating that the request is being
 		prepared.  This may occur more than once for a request
 		if it errors and a retry is attempted.
-		
+
 		This is a wrapper around the standard <xajax.prepareRequest>
 	*/
 	xajax.debug.prepareRequest = xajax.prepareRequest;
@@ -574,30 +574,30 @@ try
 
 	/*
 		Function: xajax.call
-		
-		Validates that a function name was provided, generates a message 
+
+		Validates that a function name was provided, generates a message
 		indicating that a xajax call is starting and sets a flag in the
 		request object indicating that debugging is enabled for this call.
-		
+
 		This is a wrapper around the standard <xajax.call> function.
 	*/
 	xajax.debug.call = xajax.call;
 	xajax.call = function() {
 		try {
 			xajax.debug.writeMessage(xajax.debug.text[114]);
-			
+
 			var numArgs = arguments.length;
-			
+
 			if (0 == numArgs)
 				throw { code: 10009 };
-			
+
 			var functionName = arguments[0];
 			var oOptions = {}
 			if (1 < numArgs)
 				oOptions = arguments[1];
-			
+
 			oOptions.debugging = true;
-			
+
 			return xajax.debug.call(functionName, oOptions);
 		} catch (e) {
 			var msg = 'Call: ';
@@ -610,30 +610,30 @@ try
 
 	/*
 		Function: xajax.request
-		
-		Validates that a function name was provided, generates a message 
+
+		Validates that a function name was provided, generates a message
 		indicating that a xajax request is starting and sets a flag in the
 		request object indicating that debugging is enabled for this request.
-		
+
 		This is a wrapper around the standard <xajax.request> function.
 	*/
 	xajax.debug.request = xajax.request;
 	xajax.request = function() {
 		try {
 			xajax.debug.writeMessage(xajax.debug.text[115]);
-			
+
 			var numArgs = arguments.length;
-			
+
 			if (0 == numArgs)
 				throw { code: 10010 };
-			
+
 			var oFunction = arguments[0];
 			var oOptions = {}
 			if (1 < numArgs)
 				oOptions = arguments[1];
-			
+
 			oOptions.debugging = true;
-			
+
 			return xajax.debug.request(oFunction, oOptions);
 		} catch (e) {
 			var msg = 'Request: ';
@@ -646,10 +646,10 @@ try
 
 	/*
 		Function: xajax.getResponseProcessor
-		
+
 		Generate an error message when no reponse processor is available
 		to process the type of response returned from the server.
-		
+
 		This is a wrapper around the standard <xajax.getResponseProcessor>
 		function.
 	*/
@@ -657,8 +657,8 @@ try
 	xajax.getResponseProcessor = function(oRequest) {
 		try {
 			var fProc = xajax.debug.getResponseProcessor(oRequest);
-			
-			if ('undefined' == typeof fProc) { 
+
+			if ('undefined' == typeof fProc) {
 				var msg = xajax.debug.text[116];
 				try {
 					var contentType = oRequest.request.getResponseHeader('content-type');
@@ -671,7 +671,7 @@ try
 				}
 				xajax.debug.writeMessage(msg, xajax.debug.text[101], 'errorText');
 			}
-			
+
 			return fProc;
 		} catch (e) {
 			var msg = 'GetResponseProcessor: ';
@@ -684,14 +684,14 @@ try
 
 	/*
 		Function: xajax.responseReceived
-		
+
 		Generate a message indicating that a response has been received
 		from the server; provide some statistical data regarding the
 		response and the response time.
-		
+
 		Catch any exceptions that are thrown during the processing of
 		the response and generate a message.
-		
+
 		This is a wrapper around the standard <xajax.responseReceived>
 		function.
 	*/
@@ -700,9 +700,9 @@ try
 		var xx = xajax;
 		var xt = xx.tools;
 		var xd = xx.debug;
-		
+
 		var oRet;
-		
+
 		try {
 			var status = oRequest.request.status;
 			if (xt.in_array(xx.responseSuccessCodes, status)) {
@@ -741,16 +741,16 @@ try
 			msg += '\n';
 			xd.writeMessage(msg, xajax.debug.text[101], 'errorText');
 		}
-		
+
 		return oRet;
 	}
 
 	/*
 		Function: xajax.completeResponse
-		
+
 		Generate a message indicating that the request has completed
 		and provide some statistics regarding the request and response.
-		
+
 		This is a wrapper around the standard <xajax.completeResponse>
 		function.
 	*/
@@ -775,13 +775,13 @@ try
 
 	/*
 		Function: xajax.tools.getRequestObject
-		
-		Generate a message indicating that the request object is 
+
+		Generate a message indicating that the request object is
 		being initialized.
-		
+
 		Catch any exceptions that are thrown during the process or
 		initializing a new request object.
-		
+
 		This is a wrapper around the standard <xajax.getRequestObject>
 		function.
 	*/
@@ -801,10 +801,10 @@ try
 
 	/*
 		Function: xajax.dom.assign
-		
-		Catch any exceptions thrown during the assignment and 
+
+		Catch any exceptions thrown during the assignment and
 		display an error message.
-		
+
 		This is a wrapper around the standard <xajax.dom.assign>
 		function.
 	*/
@@ -852,14 +852,14 @@ try
 
 	/*
 		Boolean: xajax.debug.isLoaded
-		
+
 		true - indicates that the debugging module is loaded
 	*/
 	xajax.debug.isLoaded = true;
 
 	/*
 		Section: Redefine shortcuts.
-		
+
 		Must redefine these shortcuts so they point to the new debug (wrapper) versions:
 		- <xjx.$>
 		- <xjx.getFormValues>

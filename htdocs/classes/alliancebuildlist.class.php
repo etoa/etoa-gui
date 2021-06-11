@@ -48,7 +48,7 @@
 			$this->count = 0;
 
 			$res = dbquery("
-			SELECT	
+			SELECT
 				l.alliance_buildlist_id,
 				l.alliance_buildlist_current_level,
 				l.alliance_buildlist_build_start_time,
@@ -56,7 +56,7 @@
 				l.alliance_buildlist_cooldown,
 				l.alliance_buildlist_member_for,
 				i.*
-			FROM 
+			FROM
 				alliance_buildings i
 			LEFT JOIN
 				alliance_buildlist l
@@ -322,7 +322,7 @@
 				if ($this->itemStatus[$itemId]['level'] == 0)
 				{
 					dbquery("
-							INSERT INTO 
+							INSERT INTO
 								`alliance_buildlist`
 							(
 							 	`alliance_buildlist_alliance_id`,
@@ -331,7 +331,7 @@
 								`alliance_buildlist_build_start_time`,
 								`alliance_buildlist_build_end_time`,
 								`alliance_buildlist_member_for`
-							) 
+							)
 							VALUES
 							(
 							 	'".$this->allianceId."',

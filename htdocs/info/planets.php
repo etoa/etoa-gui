@@ -49,7 +49,7 @@
 		while ($arr = mysql_fetch_array($res))
 		{
 			$x=mt_rand(1,5);
-		
+
 			echo "<tr><td class=\"tbldata\" style=\"width:40px;background:#000;\">";
 
 			$tt = new Tooltip();
@@ -59,7 +59,7 @@
 			$tt = new Tooltip();
 			$tt->addIcon(IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$arr['type_id']."_".$x."_small.gif");
 			$tt->addTitle($arr['type_name']);
-			if ($arr['type_habitable']==1) 
+			if ($arr['type_habitable']==1)
 				$tt->addGoodCond("Bewohnbar");
 			else
 				$tt->addBadCond("Unbewohnbar");

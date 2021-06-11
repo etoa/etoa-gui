@@ -59,16 +59,16 @@ if (Alliance::checkActionRights('applications'))
 
 						// Speichern
 						dbquery("
-						UPDATE 
+						UPDATE
 							users
-						SET 
+						SET
 							user_alliance_id=".$cu->allianceId."
-						WHERE 
+						WHERE
 							user_id='".$id."';");
 
 						dbquery("
 						DELETE FROM
-							alliance_applications 
+							alliance_applications
 						WHERE
 							user_id=".$id."
 							AND alliance_id=".$cu->allianceId.";");
@@ -88,7 +88,7 @@ if (Alliance::checkActionRights('applications'))
 						// Anfrage löschen
 						dbquery("
 						DELETE FROM
-							alliance_applications 
+							alliance_applications
 						WHERE
 							user_id=".$id."
 							AND alliance_id=".$cu->allianceId.";");

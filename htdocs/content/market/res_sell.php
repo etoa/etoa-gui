@@ -82,7 +82,7 @@ $cnt = 0;
 
 							// Fleet Seller -> Buyer
 							dbquery("
-							INSERT INTO 
+							INSERT INTO
 								fleet
 							(
 								user_id,
@@ -137,7 +137,7 @@ $cnt = 0;
 
 							// Fleet Buyer->Seller
 								dbquery("
-								INSERT INTO 
+								INSERT INTO
 									fleet
 								(
 									user_id,
@@ -165,7 +165,7 @@ $cnt = 0;
 								".$buyarr[1].",
 								".$buyarr[2].",
 								".$buyarr[3].",
-								".$buyarr[4].",									
+								".$buyarr[4].",
 									0
 								);");
 								$buyerFid = mysql_insert_id();

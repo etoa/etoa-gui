@@ -7,7 +7,7 @@
 
 /**
 * Handles AlliancaAttack....
-* 
+*
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 namespace alliance

@@ -19,7 +19,7 @@
 * Main header file
 *
 * @author Nicolas Perrenoud<mrcage@etoa.ch>
-* 
+*
 * Copyright (c) 2004 by EtoA Gaming, www.etoa.net
 *
 * $Rev$
@@ -78,4 +78,4 @@
 void etoamain();
 void msgQueueThread();
 
-#endif       
+#endif

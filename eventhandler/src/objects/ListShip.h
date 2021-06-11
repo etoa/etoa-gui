@@ -10,24 +10,24 @@
 
 /**
 * ListShip class
-* 
+*
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
 class ShipData;
 
-class ListShip : public Object 
+class ListShip : public Object
 {
-public: 
-	ListShip(mysqlpp::Row &oRow);	
+public:
+	ListShip(mysqlpp::Row &oRow);
 	~ListShip();
-	
+
 	double getWfMetal();
 	double getWfCrystal();
 	double getWfPlastic();
-	
+
 	void save();
-  
+
 private:
 	int getShipCnt(ShipData* data);
 };

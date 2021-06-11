@@ -40,9 +40,9 @@
 	define("DB_TABLE_SORT_PARENT",'ship_cat_id');
 
 	define('POST_INSERT_UPDATE_METHOD','Ranking::calcShipPoints');
-	
+
 	$form_switches = array("Anzeigen"=>'ship_show','Baubar'=>'ship_buildable','Startbar'=>'ship_launchable');
-	
+
 	// FIELDS
 
 	// Description:

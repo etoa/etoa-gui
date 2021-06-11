@@ -34,7 +34,7 @@
 	$item['user_attack_min_points']['v']="Noobschutz: Minimale Punkte";
 	$item['user_attack_percentage']['v']="Noobschutz: Verhältnis %";
 	$item['alliance_war_time']['v']="Dauer eines Krieges (in Stunden)";
-		
+
 	$item['people_food_require']['v']="Nahrungsverbrauch pro Arbeiter";
 	$item['people_multiply']['v']="Bevölkerungswachstum";
 
@@ -47,7 +47,7 @@
 			echo "<td>";
 			passthru("svnversion");
 			echo "</td></tr>";
-			
+
 		}
 		echo "<tr><td>Spielversion</td>";
 		echo "<td>".getAppVersion()."</td></tr>";

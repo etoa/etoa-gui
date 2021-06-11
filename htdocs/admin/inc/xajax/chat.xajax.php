@@ -28,7 +28,7 @@ function loadChat($minId)
 			$out='';
 			if (mysql_num_rows($res)>0)
 			{
-      
+
 				while ($arr=mysql_fetch_assoc($res))
 				{
 					if ($arr['admin']==1)

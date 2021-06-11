@@ -115,7 +115,7 @@
 				{
 					if ($i>0)
 						$sql.=" OR";
-					$sql .= " 
+					$sql .= "
 					e.code='".$code."'";
 					$i++;
 				}
@@ -241,16 +241,16 @@
 			$sql.=" LIMIT ".$so['limit'];
 
 			// Build query
-			$sql = "SELECT   
+			$sql = "SELECT
 				SQL_CALC_FOUND_ROWS
 				e.id,
-				e.code, 
+				e.code,
 				e.pos,
 				c.sx,c.sy,c.cx,c.cy ".
 				$selects
 				."
-			FROM ".$table." 
-			".$joins." 
+			FROM ".$table."
+			".$joins."
 			WHERE 1 ".$sql;
 
 			// Execute query

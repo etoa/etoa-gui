@@ -240,6 +240,6 @@ if (Alliance::checkActionRights('polls'))
 			echo "<input type=\"button\" onclick=\"document.location='?page=$page&action=".$_GET['action']."&pollaction=create'\" value=\"Neue Umfrage erstellen\" /> &nbsp;
 			<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" />";
 						}
-						
+
 }
 ?>

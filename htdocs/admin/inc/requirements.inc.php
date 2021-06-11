@@ -27,14 +27,14 @@ $twig->addGlobal("title", TITLE);
 	}
 
 	$res = dbquery("
-	SELECT 
+	SELECT
 		`".ITEM_ID_FLD."` as id,
 		`".ITEM_NAME_FLD."` as name
-	FROM 
+	FROM
 		`".ITEMS_TBL."`
 	WHERE
 		".ITEM_ENABLE_FLD."=1
-	ORDER BY 
+	ORDER BY
 		".ITEM_ORDER_FLD.";");
 	if (mysql_num_rows($res)>0)
 	{

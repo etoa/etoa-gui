@@ -13,7 +13,7 @@
 
 /**
 * Handles Gas Attack....
-* 
+*
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 namespace gattack
@@ -29,7 +29,7 @@ namespace gattack
 		* Ship they are able to antrax a planet
 		**/
 		int shipCnt;
-		
+
 		/**
 		* Antrax tech level
 		**/
@@ -39,12 +39,12 @@ namespace gattack
 		* 2 variables to calculate the possibility
 		**/
 		double one, two;
-		
+
 		/**
 		* 2 variables to calculate the damage in percent * 100
 		**/
 		int temp, fak;
-		
+
 		/**
 		* Variable to calculate the people lost in the storm, fire or whatever
 		**/

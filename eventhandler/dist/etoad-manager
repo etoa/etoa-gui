@@ -181,35 +181,35 @@ case "$1" in
 		exit 0
 	;;
 	enable)
-		if [ $# -ne 2 ]; then 
-			echo "Usage: $(basename $0) enable <instance>"; exit 3; 
+		if [ $# -ne 2 ]; then
+			echo "Usage: $(basename $0) enable <instance>"; exit 3;
 		fi
 		instance=$2
 		if ! contains_element $instance "${iavailable[@]}"; then
 			echo "Config file $AVAILALE_CONFIG_DIR/$instance${CONFIG_EXT} missing!"
-			exit 1;	
+			exit 1;
 		fi
 		if contains_element $instance "${ienabled[@]}"; then
 			echo "'$instance' already enabled!"
-			exit 0;	
+			exit 0;
 		fi
 		ln -s $AVAILALE_CONFIG_DIR/${instance}${CONFIG_EXT} $ENABLED_CONFIG_DIR/${instance}${CONFIG_EXT}
 		echo "Instance '$instance' has been enabled. Do not forget to execute"
 		echo "  $(basename $0) restart"
-		exit 0	
+		exit 0
 	;;
 	disable)
-		if [ $# -ne 2 ]; then 
-			echo "Usage: $(basename $0) disable <instance>"; exit 3; 
+		if [ $# -ne 2 ]; then
+			echo "Usage: $(basename $0) disable <instance>"; exit 3;
 		fi
 		instance=$2
 		if ! contains_element $instance "${ienabled[@]}"; then
 			echo "'$instance' not enabled!"
-			exit 0;	
+			exit 0;
 		fi
 		rm -f $ENABLED_CONFIG_DIR/${instance}${CONFIG_EXT}
 		echo "Instance '$instance' has been disabled."
-		exit 0	
+		exit 0
 	;;
 	*)
 		echo "Usage: $(basename $0) {start|stop|status|restart|reload|list|enable|disable}" >&2

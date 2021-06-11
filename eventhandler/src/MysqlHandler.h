@@ -15,13 +15,13 @@
 
 /**
 * Mysql Singleton for the Connection Objects
-* 
+*
 *
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 
 	class Config;
-	
+
 	class My
 	{
 	public:
@@ -31,7 +31,7 @@
 		}
 
 		~My ();
-		
+
 		mysqlpp::Connection* get();
 
 #if MYSQLPP_HEADER_VERSION <= MYSQLPP_VERSION(2,3,2)

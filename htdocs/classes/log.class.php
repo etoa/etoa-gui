@@ -5,7 +5,7 @@ class Log extends BaseLog
 	protected static $queueTable = "logs_queue";
 
 	// Facilities
-	
+
 	/**
 	 * Others
 	 */
@@ -109,11 +109,11 @@ class Log extends BaseLog
 
 	/**
 	* Adds a log message to the log queue
-	* 
+	*
 	* @param $facility string Event facility
 	* @param $severity string Event severity
 	* @param $msg string Log Message
-	*/	
+	*/
 	static function add($facility, $severity, $msg)
 	{
 		if (!is_numeric($facility) || $facility < 0 || $facility > 18)
@@ -148,7 +148,7 @@ class Log extends BaseLog
 	}
 
 	/**
-	* Processes the log queue and stores 
+	* Processes the log queue and stores
 	* all items in the persistend log table
 	*/
 	static function processQueue()	{
@@ -162,12 +162,12 @@ class Log extends BaseLog
 			ip,
 			message
 		)
-		SELECT 
+		SELECT
 			facility,
 			severity,
-			timestamp,	
+			timestamp,
 			ip,
-			message 
+			message
 		FROM
 			".self::$queueTable."
 		;");
@@ -175,13 +175,13 @@ class Log extends BaseLog
 		if ($numRecords > 0)	{
 			dbquery("
 			DELETE FROM
-				".self::$queueTable."				
+				".self::$queueTable."
 			LIMIT
 				".$numRecords.";");
 		}
 		return $numRecords;
 	}
-	
+
 	/**
 	* Removes up old logs from the persistend log table
 	*
@@ -196,6 +196,6 @@ class Log extends BaseLog
 				timestamp<'".$threshold."'
 		");
 		return mysql_affected_rows();
-	}	
+	}
 }
 ?>

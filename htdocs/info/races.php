@@ -18,24 +18,24 @@ if (isset($_GET['id'])) {
 	$arr=mysql_fetch_array($res);
 
 	echo "<h2>Rassen</h2>";
-	
+
 	HelpUtil::breadCrumbs(array("Rassen","races"),array(text2html($arr['race_name']),$arr['race_id']),1);
 	echo "<select onchange=\"document.location='?$link&amp;site=races&id='+this.options[this.selectedIndex].value\">";
-	$bres=dbquery("SELECT 
+	$bres=dbquery("SELECT
 		race_id,
-		race_name 
-	FROM 
-		races 
-	ORDER BY 
+		race_name
+	FROM
+		races
+	ORDER BY
 		race_name;");
-	while ($barr=mysql_fetch_array($bres))		
+	while ($barr=mysql_fetch_array($bres))
 	{
 		echo "<option value=\"".$barr['race_id']."\"";
 		if ($barr['race_id']==$raceId)
 			echo " selected=\"selected\"";
 		echo ">".$barr['race_name']."</option>";
 	}
-	echo "</select><br/><br/>";		
+	echo "</select><br/><br/>";
 
 	// Info text
 	echo text2html($arr['race_comment'])."<br/><br/>";
@@ -108,7 +108,7 @@ if (isset($_GET['id'])) {
 		}
 		tableEnd();
 	}
-	
+
 	// Defenses
 	$res=dbQuerySave("
 	SELECT
@@ -134,13 +134,13 @@ if (isset($_GET['id'])) {
 		tableEnd();
 	}
 	echo button("Rassenübersicht",$url)."&nbsp;&nbsp; ";
-	
+
 } else {
 
 	echo "<h2>Rassen</h2>";
 
 	HelpUtil::breadCrumbs(array("Rassen","races"));
-	
+
 	//
 	//Order
 	//
@@ -190,18 +190,18 @@ if (isset($_GET['id'])) {
 		}
 		tableEnd();
 	}
-	
+
 	//
 	//Bonus-Malus table to compare all the races
 	//
 	$res = dbquery("
-	SELECT 
-		race_id 
-	FROM 
-		races 
-	WHERE 
-		race_active=1 
-	ORDER BY 
+	SELECT
+		race_id
+	FROM
+		races
+	WHERE
+		race_active=1
+	ORDER BY
 		$order $sort;");
 	if (mysql_num_rows($res)>0)
 	{
@@ -222,7 +222,7 @@ if (isset($_GET['id'])) {
 		{
 			// Make use of our new race class
 			$race = new Race($arr[0]);
-			
+
 			echo "<tr><td class=\"tbltitle\">".$race."</td>";	// Using the magic __toString() method
 			echo "<td>".get_percent_string($race->metal,1)."</td>";
 			echo "<td>".get_percent_string($race->crystal,1)."</td>";

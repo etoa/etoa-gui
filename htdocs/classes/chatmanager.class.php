@@ -26,14 +26,14 @@ class ChatManager {
         UNIX_TIMESTAMP(),?
       );",
       array($msg)
-    );	
-	}	
-	
+    );
+	}
+
   /**
-  * Remove a user from the chat user list by 
+  * Remove a user from the chat user list by
   * insterting a kick reason into the chat user table
   */
-	static function kickUser($uid, $msg = '') 
+	static function kickUser($uid, $msg = '')
 	{
 		if($msg == '')
 		{
@@ -45,7 +45,7 @@ class ChatManager {
       SET
         kick="'.mysql_real_escape_string($msg).'"
       WHERE
-        user_id=?', 
+        user_id=?',
       array($uid)
     );
 		if (mysql_affected_rows()>0)
@@ -54,7 +54,7 @@ class ChatManager {
 		}
 		return false;
 	}
-  
+
   /**
   * Inserts or updates a user in the chat user table
   */
@@ -72,9 +72,9 @@ class ChatManager {
         UNIX_TIMESTAMP(),?,?
       )',
       array($id, $nick)
-    );  
+    );
   }
-  
+
   /**
   * Performs an ordinary logout of an user
   */
@@ -83,7 +83,7 @@ class ChatManager {
       DELETE FROM
         chat_users
       WHERE
-        user_id=?;', 
+        user_id=?;',
       array($userId)
     );
   }
@@ -104,7 +104,7 @@ class ChatManager {
 	}
 	return '';
   }
-  
+
   /**
   * Returns true if the specified user is online in the chat
   */
@@ -120,7 +120,7 @@ class ChatManager {
     );
     return mysql_num_rows($res) > 0;
   }
-  
+
   /**
    * Gets the number of online users in the chat
    */
@@ -142,7 +142,7 @@ class ChatManager {
 		return 0;
 	}
   }
-  
+
   /**
   * Gets a list of users currently being online in the chat
   */
@@ -169,47 +169,47 @@ class ChatManager {
     }
     return $data;
   }
-  
+
 	/**
   * Cleans users from the chat user table if timeout exceeded
   */
 	static function cleanUpUsers()
 	{
 		$res = dbquery('
-			SELECT user_id,nick 
-			FROM chat_users 
+			SELECT user_id,nick
+			FROM chat_users
 			WHERE timestamp < UNIX_TIMESTAMP() - '.intval(Config::getInstance()->chat_user_timeout->v).';'
 		);
 		if (mysql_num_rows($res)>0)
 		{
 			$arr = mysql_fetch_assoc($res);
 			self::sendSystemMessage($arr['nick'].' verlässt den Chat (Timeout).');
-			dbquery('DELETE FROM chat_users WHERE user_id = '.$arr['user_id'].';');		
+			dbquery('DELETE FROM chat_users WHERE user_id = '.$arr['user_id'].';');
 			return mysql_affected_rows();
 		}
 		return 0;
 	}
-  
+
   /**
   * Removes old messages from the chat table
   * Keeps only the last X messages
   */
-  static function cleanUpMessages() 
+  static function cleanUpMessages()
   {
 		$res = dbquery("
-			SELECT id 
-			FROM chat 
-			ORDER BY id DESC 
+			SELECT id
+			FROM chat
+			ORDER BY id DESC
 			LIMIT ".intval(Config::getInstance()->chat_recent_messages->v).",1;"
 		);
 		if (mysql_num_rows($res)>0)
 		{
 			$arr=mysql_fetch_row($res);
-			dbquery("DELETE FROM chat WHERE id < ".$arr[0]);		
+			dbquery("DELETE FROM chat WHERE id < ".$arr[0]);
 			return mysql_affected_rows();
 		}
 		return 0;
   }
-  
+
 }
 ?>

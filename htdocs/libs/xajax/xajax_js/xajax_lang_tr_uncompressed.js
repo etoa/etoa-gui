@@ -10,7 +10,7 @@
  */
 
 if ('undefined' != typeof xajax.debug) {
-	
+
 	xajax.debug.text = [];
 	xajax.debug.text[100] = 'IKAZ: ';
 	xajax.debug.text[101] = 'HATA: ';
@@ -40,7 +40,7 @@ if ('undefined' != typeof xajax.debug) {
 	xajax.debug.text[125] = 'TAMAMLANDI [';
 	xajax.debug.text[126] = 'ms]';
 	xajax.debug.text[127] = 'ISTEK NESNESI BASLATILIYOR';
-	
+
 	/*
 		Array: exceptions
 	*/

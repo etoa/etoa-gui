@@ -254,7 +254,7 @@ class FleetLog extends BaseLog
 			`entity_ships_start`,
 			`entity_ships_end`
 		)
-		SELECT 
+		SELECT
 			`fleet_id`,
 			`facility`,
 			`timestamp`,
@@ -282,7 +282,7 @@ class FleetLog extends BaseLog
 		if ($numRecords > 0)	{
 			dbquery("
 			DELETE FROM
-				".self::$queueTable."				
+				".self::$queueTable."
 			LIMIT
 				".$numRecords.";");
 		}

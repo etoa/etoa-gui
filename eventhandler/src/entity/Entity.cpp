@@ -83,10 +83,10 @@
 	double Entity::getResMetal(double percent, int spy) {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		if (percent!=1)
 			return max(0.0,min(this->resMetal-this->bunkerMetal,this->resMetal*percent));
-        
+
         if (spy==1 && percent==1)
             return max(0.0,this->resMetal-this->bunkerMetal);
 		return this->resMetal;
@@ -95,49 +95,49 @@
 	double Entity::getResCrystal(double percent, int spy) {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		if (percent!=1)
 			return max(0.0,min(this->resCrystal-this->bunkerCrystal,this->resCrystal*percent));
         if (spy==1 && percent==1)
             return max(0.0,this->resCrystal-this->bunkerCrystal);
-        
+
 		return this->resCrystal;
 	}
 
 	double Entity::getResPlastic(double percent, int spy) {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		if (percent!=1)
 			return max(0.0,min(this->resPlastic-this->bunkerPlastic,this->resPlastic*percent));
         if (spy==1 && percent==1)
             return max(0.0,this->resPlastic-this->bunkerPlastic);
-        
+
 		return this->resPlastic;
 	}
 
 	double Entity::getResFuel(double percent, int spy) {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		if (percent!=1)
 			return max(0.0,min(this->resFuel-this->bunkerFuel,this->resFuel*percent));
         if (spy==1 && percent==1)
             return max(0.0,this->resFuel-this->bunkerFuel);
-        
+
 		return this->resFuel;
 	}
 
 	double Entity::getResFood(double percent, int spy) {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		if (percent!=1)
 			return max(0.0,min(this->resFood-this->bunkerFood,this->resFood*percent));
-        
+
         if (spy==1 && percent==1)
             return max(0.0,this->resFood-this->bunkerFood);
-        
+
 		return this->resFood;
 	}
 
@@ -158,7 +158,7 @@
 	double Entity::getResSum() {
 		if (!this->dataLoaded)
 			this->loadData();
-		
+
 		return this->getResMetal() + this->getResCrystal() + this->getResPlastic() + this->getResFuel() + this->getResFood();
 	}
 
@@ -509,7 +509,7 @@
 		My &my = My::instance();
 		mysqlpp::Connection *con_ = my.get();
 		mysqlpp::Query query = con_->query();
-		
+
 		//Log
 		std::string log = "[URL=?page=user&sub=edit&user_id=";
 		log += etoa::toString(userId);
@@ -529,7 +529,7 @@
 		this->userId = userId;
 		this->codeName = "Unbenannt";
 		this->userChanged = time;
-		
+
         // Gebäude übernehmen
         query << "UPDATE ";
 		query << "	buildlist ";
@@ -708,7 +708,7 @@
 		if (!this->techsAdded)
 			this->addTechs();
         double heal = this->heal;
-        
+
 		if (total && fleets.size()) {
 			std::vector<Fleet*>::iterator it;
             for ( it=fleets.begin() ; it < fleets.end(); it++ )
@@ -797,40 +797,40 @@
 
 		// if the changes affect more then one fleet
 		if (total && fleets.size()) {
-			
+
 			// initialize the object conter for every fleet and a counter for the entire fleet
 			std::map<unsigned int, unsigned int> fleetObjCounter;
 			std::map<unsigned int, unsigned int>::iterator oct;
 			std::vector<Object*>::iterator ot;
 			std::vector<Fleet*>::iterator it;
 			std::pair<std::map<unsigned int,unsigned int>::iterator,bool> ret;
-			
+
 			// clean the counter
 			this->objCounter.clear();
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
 				(*it)->objCounter.clear();
-			
+
 			// calculations for the main fleet
 			for ( ot = this->objects.begin() ; ot != this->objects.end(); ot++ ) {
 				this->objCounter.insert ( std::pair<unsigned int, unsigned int>((*ot)->getTypeId(),(*ot)->getInitCount()) );
-				fleetObjCounter.insert ( std::pair<unsigned int, unsigned int>((*ot)->getTypeId(),(*ot)->getInitCount()) );				
+				fleetObjCounter.insert ( std::pair<unsigned int, unsigned int>((*ot)->getTypeId(),(*ot)->getInitCount()) );
 			}
-			
+
 			// calculations for all the support fleets
 			for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
 				for ( ot = (*it)->objects.begin() ; ot != (*it)->objects.end(); ot++ ) {
 					(*it)->objCounter.insert ( std::pair<unsigned int, unsigned int>((*ot)->getTypeId(),(*ot)->getInitCount()) );
 					ret = fleetObjCounter.insert ( std::pair<unsigned int, unsigned int>((*ot)->getTypeId(),(*ot)->getInitCount()) );
 					if (ret.second==false)
-						fleetObjCounter[(*ot)->getTypeId()] += (*ot)->getInitCount();			
+						fleetObjCounter[(*ot)->getTypeId()] += (*ot)->getInitCount();
 				}
 			}
-			
+
 			// calc the losts in the entire fleet
 			for ( oct = fleetObjCounter.begin() ; oct != fleetObjCounter.end(); oct++ ) {
 				(*oct).second = (*oct).second - ceil(percentage*(*oct).second);
 			}
-			
+
 			// calc the new count of each fleet
 			for ( oct = this->objCounter.begin() ; oct != this->objCounter.end(); oct++ ) {
 				if (fleetObjCounter[(*oct).first]>0) {
@@ -840,7 +840,7 @@
 					fleetObjCounter[(*oct).first] -= losts;
 				}
 			}
-			
+
 			for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
 				for ( oct = (*it)->objCounter.begin() ; oct != (*it)->objCounter.end(); oct++ ) {
 					if (fleetObjCounter[(*oct).first]>0) {
@@ -851,7 +851,7 @@
 					}
 				}
 			}
-			
+
 			// apply the changes to the objects
 			for (ot = this->objects.begin() ; ot < this->objects.end(); ot++)
 				(*ot)->setPercentSurvive(percentage, this->objCounter[(*ot)->getTypeId()]);
@@ -860,7 +860,7 @@
 				for ( it=fleets.begin() ; it < fleets.end(); it++ ) {
 					(*it)->setShipsChanged();
 					for (ot = (*it)->objects.begin() ; ot < (*it)->objects.end(); ot++)
-						(*ot)->setPercentSurvive(percentage, (*it)->objCounter[(*ot)->getTypeId()]);	
+						(*ot)->setPercentSurvive(percentage, (*it)->objCounter[(*ot)->getTypeId()]);
 				}
 			}
 			for (ot = this->def.begin() ; ot < this->def.end(); ot++)
@@ -874,7 +874,7 @@
 			for (ot = this->def.begin() ; ot < this->def.end(); ot++)
 				(*ot)->setPercentSurvive(percentage);
 		}
-		
+
 		// set flag to update the values
 		this->shipsChanged = true;
 	}
@@ -894,7 +894,7 @@
 			for ( it=fleets.begin() ; it < fleets.end(); it++ )
 				counter += (int)(*it)->addExp(exp);
 		}
-		
+
 		if (counter)
 			this->exp = exp;
 		else
@@ -913,8 +913,8 @@
 			if((data)->getCatId() != 2) {
 				if((data)->getCatId() != 7) {
 					exp += ((*ot)->getInitCount() - (*ot)->getCount()) * data->getCosts();
-				}	
-			}	
+				}
+			}
 		}
 		for (ot = this->def.begin() ; ot < this->def.end(); ot++) {
 			DefData *data = DataHandler.getDefById((*ot)->getTypeId());
@@ -935,7 +935,7 @@
 	std::string Entity::getUserNicks() {
 		if (!this->shipsLoaded)
 			this->loadShips();
-		
+
 		std::string nicks = this->entityUser->getUserNick();
 		if (fleets.size()) {
 			std::vector<Fleet*>::iterator it;
@@ -954,7 +954,7 @@
 	std::string Entity::getUserIds() {
 		if (!this->shipsLoaded)
 			this->loadShips();
-			
+
 		std::string ids = "," + etoa::d2s(this->getUserId()) + ",";
 		if (this->fleets.size()) {
 			std::vector<Fleet*>::iterator it;
@@ -972,7 +972,7 @@
 	short Entity::getShieldTech() {
 		if (!this->allianceTechsLoaded)
 			this->loadAllianceTechs();
-		
+
 		int counter = 1;
 		double shieldTech = this->getShieldBonus();
 		if (fleets.size()) {
@@ -982,16 +982,16 @@
 				shieldTech += (*it)->getShieldBonus();
 			}
 		}
-		
+
 		shieldTech = round(shieldTech*100/counter);
-		
+
 		return shieldTech;
 	}
 
 	short Entity::getStructureTech() {
 		if (!this->allianceTechsLoaded)
 			this->loadAllianceTechs();
-		
+
 		int counter = 1;
 		double structureTech = this->getStructureBonus();
 		if (fleets.size()) {
@@ -1001,7 +1001,7 @@
 				structureTech += (*it)->getStructureBonus();
 			}
 		}
-		
+
 		structureTech = round(structureTech*100/counter);
 
 		return structureTech;
@@ -1010,7 +1010,7 @@
 	short Entity::getWeaponTech() {
 		if (!this->allianceTechsLoaded)
 			this->loadAllianceTechs();
-		
+
 		int counter = 1;
 		double weaponTech = this->getWeaponBonus();
 		if (fleets.size()) {
@@ -1020,9 +1020,9 @@
 				weaponTech += (*it)->getWeaponBonus();
 			}
 		}
-		
+
 		weaponTech = round(weaponTech*100/counter);
-		
+
 		return weaponTech;
 	}
 
@@ -1062,7 +1062,7 @@
 			}
 		}
 		std::string shipString = "";
-		
+
 		std::map<int,std::pair<int,int>>::iterator st;
 		for ( st=specialShips.begin() ; st != specialShips.end(); st++ ) {
 			shipString += etoa::d2s((*st).first)
@@ -1086,14 +1086,14 @@
 		}
 		if (shipString.length()<1)
 			shipString = "0";
-		
+
 		return shipString;
 	}
 
 	std::string Entity::getDefString(bool rebuild) {
 		this->loadDef();
 		std::string defString = "";
-		
+
 		std::vector<Object*>::iterator ot;
 		for (ot = this->def.begin() ; ot < this->def.end(); ot++) {
 			defString += etoa::d2s((*ot)->getTypeId())
@@ -1107,7 +1107,7 @@
 		}
 		if (defString.length()<1)
 			defString = "0";
-		
+
 		return defString;
 	}
 
@@ -1234,7 +1234,7 @@
 							this->spyCount += object->getCount();
 
 						this->objects.push_back(object);
-						
+
 						if (data->getSpecial())
 							this->specialObjects.push_back(object);
 					}
@@ -1399,11 +1399,11 @@
 				<< "	alliance_techlist_alliance_id='" << this->entityUser->getAllianceId() << "';";
 			RESULT_TYPE aRes = query.store();
 			query.reset();
-			
+
 			if (aRes) {
 				Config &config = Config::instance();
 				int aSize = aRes.size();
-				
+
 				std::string users = this->getUserNicks();
 				size_t found;
 				int userCount = 0;
@@ -1413,7 +1413,7 @@
 					userCount++;
 					found=users.find_first_of(",",found+1);
 				}
-				
+
 				if (aSize>0) {
 					mysqlpp::Row aRow;
 					for (int i=0; i<aSize; i++) {
@@ -1533,9 +1533,9 @@
 			}
 		}
 	}
-	
+
 	double Entity::loadPeopleAtWork() {
-				
+
 		My &my = My::instance();
 		mysqlpp::Connection *con = my.get();
 		mysqlpp::Query query = con->query();
@@ -1545,22 +1545,22 @@
         	<< "	buildlist "
         	<< "WHERE "
         	<< "	buildlist_entity_id='" << this->id << "'";
-        
+
 		RESULT_TYPE pRes = query.store();
 		query.reset();
-		
+
 		if (pRes) {
 			int pSize = pRes.size();
-			
+
 			if (pSize > 0) {
 				mysqlpp::Row pRow = pRes.at(0);
-				
+
 				//TODO: Nur temporÃ¤rer Fix, da wenn buildlist_people_working_status=0 NULL als Resultat geliefert wird
 				if (pRow["atWork"]!="NULL")
 				return (double)pRow["atWork"];
 			}
 		}
-		
+
 		return 0;
 	}
 
@@ -1652,7 +1652,7 @@
 				query << "LIMIT 1";
 				query.store();
 				query.reset();
-				
+
 				return (etoa::d2s((int)bRow["buildlist_building_id"]) + ":" + etoa::d2s(h));
 			}
 		}
@@ -1662,9 +1662,9 @@
 	std::string Entity::getBuildingString() {
 		if (!this->buildingsLoaded)
 			this->loadBuildings();
-		
+
 		std::string buildingString = "";
-		
+
 		if (buildings.size()) {
 			std::map<int,int>::iterator it;
 				for ( it=buildings.begin() ; it != buildings.end(); it++ )

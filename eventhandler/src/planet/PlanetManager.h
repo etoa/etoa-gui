@@ -21,7 +21,7 @@ namespace planet
 	public:
 		PlanetManager();
 		~PlanetManager();
-		
+
     void markForUpdate(int planetId);
     void markForUpdate(std::vector<int>* planetIds);
 	void markUserUpdate(int userId);

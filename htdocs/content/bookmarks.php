@@ -116,7 +116,7 @@
 				if (isset($_POST['submitNew']))
 				{
 					dbquery("
-						INSERT INTO 
+						INSERT INTO
 							fleet_bookmarks
 						(
 							user_id,
@@ -127,8 +127,8 @@
 							resfetch,
 							action,
 							speed
-						) 
-						VALUES 
+						)
+						VALUES
 						(
 							'".$cu->id."',
 							'".mysql_real_escape_string($_POST['name'])."',
@@ -181,10 +181,10 @@
 		$bmid = intval($_GET['del']);
 
 		dbquery("
-		DELETE FROM 
+		DELETE FROM
 			fleet_bookmarks
-		WHERE 
-			id='".$bmid."' 
+		WHERE
+			id='".$bmid."'
 			AND user_id='".$cu->id."';");
 		if (mysql_affected_rows()>0)
 			success_msg("Gelöscht");
@@ -247,8 +247,8 @@
 				}
 				echo "</td>
 						<td id=\"fleet_bm_actions_" . $arr['id'] . "\" class=\"tbldata\">
-							<a href=\"javascript:;\" onclick=\"$('#fleet_bm_actions_" . $arr['id'] . "').html('Flotte wird gestartet...');xajax_launchBookmarkProbe(".$arr['id'].");\">Starten</a> 
-							<a href=\"?page=$page&amp;mode=new&amp;edit=".$arr['id']."\">Bearbeiten</a> 
+							<a href=\"javascript:;\" onclick=\"$('#fleet_bm_actions_" . $arr['id'] . "').html('Flotte wird gestartet...');xajax_launchBookmarkProbe(".$arr['id'].");\">Starten</a>
+							<a href=\"?page=$page&amp;mode=new&amp;edit=".$arr['id']."\">Bearbeiten</a>
 							<a href=\"?page=$page&amp;mode=$mode&amp;del=".$arr['id']."\" onclick=\"return confirm('Soll dieser Favorit wirklich gel&ouml;scht werden?');\">Entfernen</a>
 						</td>
 					</tr>";
@@ -288,7 +288,7 @@
 						FROM
 							fleet_bookmarks
 						WHERE
-							id='".$bmid."' 
+							id='".$bmid."'
 							AND user_id='".$cu->id."';");
 			if (mysql_num_rows($bres)>0)
 			{
@@ -427,72 +427,72 @@
 		echo '<tr id="manuelselect">
 				<th width="25%">Manuelle Eingabe:</th>
 				<td colspan="2" width="75%">
-					<input type="text" 
+					<input type="text"
 						id="sx"
-						name="sx" 
-						size="1" 
-						maxlength="1" 
-						value="'.$data['sx'].'" 
-						title="Sektor X-Koordinate" 
-						autocomplete="off" 
-						onfocus="this.select()" 
-						onclick="this.select()" 
+						name="sx"
+						size="1"
+						maxlength="1"
+						value="'.$data['sx'].'"
+						title="Sektor X-Koordinate"
+						autocomplete="off"
+						onfocus="this.select()"
+						onclick="this.select()"
 						onkeydown="detectChangeRegister(this,\'t1\');"
 						onkeyup="if (detectChangeTest(this,\'t1\')) { showLoader(\'targetinfo\');xajax_bookmarkTargetInfo(xajax.getFormValues(\'bookmarkForm\')); }"
 						onkeypress="return nurZahlen(event)"
 					/>&nbsp;/&nbsp;
-					<input type="text" 
-						id="sy" 
-						name="sy" 
-						size="1" 
-						maxlength="1" 
-						value="'.$data['sy'].'" 
-						title="Sektor Y-Koordinate" 
-						autocomplete="off" 
-						onfocus="this.select()" 
-						onclick="this.select()" 
+					<input type="text"
+						id="sy"
+						name="sy"
+						size="1"
+						maxlength="1"
+						value="'.$data['sy'].'"
+						title="Sektor Y-Koordinate"
+						autocomplete="off"
+						onfocus="this.select()"
+						onclick="this.select()"
 						onkeydown="detectChangeRegister(this,\'t2\');"
 						onkeyup="if (detectChangeTest(this,\'t2\')) { showLoader(\'targetinfo\');xajax_bookmarkTargetInfo(xajax.getFormValues(\'bookmarkForm\')); }"
 						onkeypress="return nurZahlen(event)"
 					/>&nbsp;&nbsp;:&nbsp;&nbsp;
-					<input type="text" 
-						id="cx" 
-						name="cx" 
-						size="2" 
-						maxlength="2" 
-						value="'.$data['cx'].'" 
-						title="Zelle X-Koordinate" 
-						autocomplete="off" 
-						onfocus="this.select()" 
-						onclick="this.select()" 
+					<input type="text"
+						id="cx"
+						name="cx"
+						size="2"
+						maxlength="2"
+						value="'.$data['cx'].'"
+						title="Zelle X-Koordinate"
+						autocomplete="off"
+						onfocus="this.select()"
+						onclick="this.select()"
 						onkeydown="detectChangeRegister(this,\'t3\');"
 						onkeyup="if (detectChangeTest(this,\'t3\')) { showLoader(\'targetinfo\');xajax_bookmarkTargetInfo(xajax.getFormValues(\'bookmarkForm\')); }"
 						onkeypress="return nurZahlen(event)"
 				/>&nbsp;/&nbsp;
-				<input type="text" 
-						id="cy" 
-						name="cy" 
+				<input type="text"
+						id="cy"
+						name="cy"
 						size="2"
-						maxlength="2" 
-						value="'.$data['cy'].'" 
-						title="Zelle Y-Koordinate" 
-						autocomplete="off" 
-						onfocus="this.select()" 
-						onclick="this.select()" 
+						maxlength="2"
+						value="'.$data['cy'].'"
+						title="Zelle Y-Koordinate"
+						autocomplete="off"
+						onfocus="this.select()"
+						onclick="this.select()"
 						onkeydown="detectChangeRegister(this,\'t4\');"
 						onkeyup="if (detectChangeTest(this,\'t4\')) { showLoader(\'targetinfo\');xajax_bookmarkTargetInfo(xajax.getFormValues(\'bookmarkForm\')); }"
 						onkeypress="return nurZahlen(event)"
 				/>&nbsp;&nbsp;:&nbsp;&nbsp;
-				<input type="text" 
-						id="pos" 
-						name="pos" 
-						size="2" 
-						maxlength="2" 
-						value="'.$data['pos'].'" 
-						title="Position des Planeten im Sonnensystem" 
-						autocomplete="off" 
-						onfocus="this.select()" 
-						onclick="this.select()" 
+				<input type="text"
+						id="pos"
+						name="pos"
+						size="2"
+						maxlength="2"
+						value="'.$data['pos'].'"
+						title="Position des Planeten im Sonnensystem"
+						autocomplete="off"
+						onfocus="this.select()"
+						onclick="this.select()"
 						onkeydown="detectChangeRegister(this,\'t5\');"
 						onkeyup="if (detectChangeTest(this,\'t5\')) { showLoader(\'targetinfo\');xajax_bookmarkTargetInfo(xajax.getFormValues(\'bookmarkForm\')); }"
 						onkeypress="return nurZahlen(event)"
@@ -502,8 +502,8 @@
 		echo '<tr id="bookmarkselect">
 				<th width="25%">Zielfavoriten:</th>
 				<td colspan="2" width="75%" align="left">
-					<select name="bookmarks" 
-							id="bookmarks" 
+					<select name="bookmarks"
+							id="bookmarks"
 							onchange="xajax_bookmarkBookmark(xajax.getFormValues(\'bookmarkForm\'));"
 					>\n
 						<option value="0">Wählen...</option>';
@@ -532,11 +532,11 @@
 				SELECT
 					bookmarks.entity_id,
 					bookmarks.comment,
-					entities.code      
+					entities.code
 				FROM
 					bookmarks
 				INNER JOIN
-					entities	
+					entities
 				ON
 					bookmarks.entity_id=entities.id
 					AND bookmarks.user_id=".$cu->id.";");
@@ -666,11 +666,11 @@
 			SELECT
 	      bookmarks.comment,
 	      bookmarks.entity_id,
-	      entities.code      
+	      entities.code
 			FROM
 	      bookmarks
 			INNER JOIN
-				entities	
+				entities
 				ON bookmarks.entity_id=entities.id
 				AND bookmarks.id='".$bmid."'
 				AND bookmarks.user_id=".$cu->id.";");
@@ -710,12 +710,12 @@
 				$bmid = intval($_POST['bookmark_id']);
 
 				dbquery("
-				UPDATE 
+				UPDATE
 					bookmarks
-				SET 
-					comment='".mysql_real_escape_string($_POST['bookmark_comment'])."' 
-				WHERE 
-					id='".$bmid."' 
+				SET
+					comment='".mysql_real_escape_string($_POST['bookmark_comment'])."'
+				WHERE
+					id='".$bmid."'
 					AND user_id='".$cu->id."';");
 				if (mysql_affected_rows()>0)
 					success_msg("Gespeichert");
@@ -727,10 +727,10 @@
 				$bmid = intval($_GET['del']);
 
 				dbquery("
-				DELETE FROM 
+				DELETE FROM
 					bookmarks
-				WHERE 
-					id='".$bmid."' 
+				WHERE
+					id='".$bmid."'
 					AND user_id='".$cu->id."';");
 				if (mysql_affected_rows()>0)
 					success_msg("Gelöscht");
@@ -766,23 +766,23 @@
 					{
 						$arr=mysql_fetch_row($res);
 						$check_res = dbquery("
-							SELECT 
-								id 
-							FROM 
+							SELECT
+								id
+							FROM
 								bookmarks
-							WHERE 
-								entity_id='".$arr[0]."' 
+							WHERE
+								entity_id='".$arr[0]."'
 								AND user_id='".$cu->id."';");
 						if (mysql_num_rows($check_res)==0)
 						{
 							dbquery("
-								INSERT INTO 
+								INSERT INTO
 									bookmarks
 								(
 									user_id,
 									entity_id,
-									comment) 
-								VALUES 
+									comment)
+								VALUES
 									('".$cu->id."',
 									'".$arr[0]."',
 									'".mysql_real_escape_string($_POST['bookmark_comment'])."');");
@@ -821,23 +821,23 @@
 				{
 					$arr=mysql_fetch_row($res);
 					$check_res = dbquery("
-					SELECT 
-						id 
-					FROM 
+					SELECT
+						id
+					FROM
 						bookmarks
-					WHERE 
-						entity_id='".$arr[0]."' 
+					WHERE
+						entity_id='".$arr[0]."'
 						AND user_id='".$cu->id."';");
 					if (mysql_num_rows($check_res)==0)
 					{
 						dbquery("
-						INSERT INTO 
+						INSERT INTO
 							bookmarks
 						(
 							user_id,
 							entity_id,
-							comment) 
-						VALUES 
+							comment)
+						VALUES
 							('".$cu->id."',
 							'".$arr[0]."',
 							'-');");
@@ -912,7 +912,7 @@
 			FROM
 				bookmarks
 			INNER JOIN
-				entities	
+				entities
 				ON bookmarks.user_id=".$cu->id."
 				AND bookmarks.entity_id=entities.id
 			".$order.";");
@@ -944,7 +944,7 @@
 					echo ">".$name."</option>";
 				}
 				echo "</select>
-				
+
 					<select name=\"sort_way\">";
 
 				//Aufsteigend
@@ -957,8 +957,8 @@
 				if($cu->properties->itemOrderWay=='DESC') echo " selected=\"selected\"";
 					echo ">Absteigend</option>";
 
-				echo "</select>						
-				
+				echo "</select>
+
 							<input type=\"submit\" class=\"button\" name=\"sort_submit\" value=\"Sortieren\"/>
 						</td>
 					</tr>";
@@ -1027,8 +1027,8 @@
 							echo "<a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(".$ent->id().");\" title=\"Analysieren\">".icon("spy")."</a> ";
 					}
 									echo "
-											<a href=\"?page=entity&amp;id=".$ent->id()."&amp;hl=".$ent->id()."\">".icon('info')."</a> 
-											<a href=\"?page=$page&amp;edit=".$arr['id']."\">".icon('edit')."</a> 
+											<a href=\"?page=entity&amp;id=".$ent->id()."&amp;hl=".$ent->id()."\">".icon('info')."</a>
+											<a href=\"?page=$page&amp;edit=".$arr['id']."\">".icon('edit')."</a>
 											<a href=\"?page=$page&amp;del=".$arr['id']."\" onclick=\"return confirm('Soll dieser Favorit wirklich gel&ouml;scht werden?');\">".icon('delete')."</a>
 									</td>
 							</tr>";

@@ -115,9 +115,9 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log, bool ratingEf
 
         double cAttStructureShield = initAttStructureShield;
         double cDefStructureShield = initDefStructureShield;
-        
-        
-        
+
+
+
 
         //
         //Der Kampf!
@@ -131,7 +131,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log, bool ratingEf
 
             double FleetAtt = fleet->getWeapon(true);
             double EntityAtt = entity ->getWeapon(true);
-            
+
             cAttStructureShield -= entity->getWeapon(true);
             cDefStructureShield -= fleet->getWeapon(true);
 
@@ -161,22 +161,22 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log, bool ratingEf
             fleet->setPercentSurvive(attPercent,true);
             entity->setPercentSurvive(defPercent,true);
 
-            
+
             // Heal
             double fleetheal = fleet->getHeal(true);
             double entityheal = entity->getHeal(true);
-            
-            
+
+
             // Restrict healing to maximal 90% of the damage received
-            
+
              if (fleetheal > (double)config.nget("max_heal",0)*EntityAtt) {
                  fleetheal=(double)config.nget("max_heal",0)*EntityAtt;
              }
-             
+
              if (entityheal > (double)config.nget("max_heal",0)*FleetAtt) {
                  entityheal=(double)config.nget("max_heal",0)*FleetAtt;
              }
-            
+
 
             report->setHeal(fleetheal);
             report->setEntityHeal(entityheal);

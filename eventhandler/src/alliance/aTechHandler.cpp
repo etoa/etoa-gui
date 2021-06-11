@@ -6,9 +6,9 @@ namespace atech
 	void aTechHandler::update()
 	{
 		std::time_t time = std::time(0);
-		
+
 		mysqlpp::Query query = con_->query();
-   
+
 		// Perform level update
 		query << "UPDATE "
 			<< "	alliance_techlist "
@@ -21,7 +21,7 @@ namespace atech
 			<< " alliance_techlist_build_end_time<" << time << ";";
 		query.store();
 		//std::cout << "Upgraded "<<con_->affected_rows()<<" Alliance Technologies\n";
-		query.reset();    
-    
-	}	
+		query.reset();
+
+	}
 }

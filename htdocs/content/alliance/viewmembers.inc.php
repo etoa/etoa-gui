@@ -47,7 +47,7 @@ if (Alliance::checkActionRights('viewmembers'))
 		<th>Aktionen</th>
 		</tr>";
 		$ures = dbquery("
-		SELECT 
+		SELECT
 			Max(user_sessionlog.time_action) as last_log,
 			user_sessions.time_action,
 			u.user_id,
@@ -55,15 +55,15 @@ if (Alliance::checkActionRights('viewmembers'))
 			u.user_nick,
 			p.id as pid,
 			u.user_alliance_rank_id,
-			race_name 
-		FROM 
+			race_name
+		FROM
 			users AS u
 		INNER JOIN
 			planets AS p
-			ON p.planet_user_id=u.user_id 
-			AND p.planet_user_main=1 
+			ON p.planet_user_id=u.user_id
+			AND p.planet_user_main=1
 		INNER JOIN
-			races 
+			races
 			ON user_race_id=race_id
 		LEFT JOIN
 			user_sessionlog
@@ -77,7 +77,7 @@ if (Alliance::checkActionRights('viewmembers'))
 			u.user_alliance_id='".$arr['alliance_id']."'
 		GROUP BY
 			u.user_id
-		ORDER BY 
+		ORDER BY
 			u.user_points DESC, u.user_nick;");
 		$time = time();
 		while ($uarr = mysql_fetch_assoc($ures))

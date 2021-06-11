@@ -279,22 +279,22 @@
 							{
 								$onclick_actions[]= "document.getElementById('row_".$sh."').style.display='".($rv==1?"none":"")."';";
 							}
-						}	
-                                                
+						}
+
 						if(count($onclick_actions)>0){
 								echo " onclick=\"".implode("", $onclick_actions)."\"";
 						}
-                                                
+
 						echo " /> ";
 					}
 					if (isset($a['show_hide']) && $arr[$a['name']]==$rv)
 					{
 						$hidden_rows = $a['show_hide'];
 					}
-					if (isset($a['hide_show']) && $arr[$a['name']]!=$rv)					
+					if (isset($a['hide_show']) && $arr[$a['name']]!=$rv)
 					{
 						$hidden_rows = $a['hide_show'];
-					}	
+					}
 				break;
 				case "checkbox":
 					foreach ($a['rcb_elem'] as $rk=>$rv)

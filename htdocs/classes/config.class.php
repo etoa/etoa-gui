@@ -81,13 +81,13 @@ class Config implements ISingleton
 			config_name,
 			config_value,
 			config_param1,
-			config_param2    	
+			config_param2
 		)
 		VALUES
 		(
 			?,?,?,?
 		)
-		ON DUPLICATE KEY UPDATE 
+		ON DUPLICATE KEY UPDATE
 			config_value=?,
 			config_param1=?,
 			config_param2=?

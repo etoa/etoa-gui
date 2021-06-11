@@ -8,18 +8,18 @@
 	//  Variables																				//
 	//							 											    					//
 	//////////////////////////////////////////////////////
-	
+
 	// VARIABLES
-	
-	define("MODUL_NAME","Schiff-Kategorien");				
+
+	define("MODUL_NAME","Schiff-Kategorien");
 	define("DB_TABLE", 'ship_cat');
 	define("DB_TABLE_ID", "cat_id");
 	define("DB_OVERVIEW_ORDER_FIELD","cat_order");
-	
+
 	// FIELDS
-	
+
 	// Description:
-	
+
 	// name	 											// DB Field Name
 	// text												// Field Description
 	// type												// Field Type: text, password, textarea, timestamp, radio, select, checkbox, email, url, numeric
@@ -33,7 +33,7 @@
 	// select_elem (Array)				// Select Elements (desc=>value)
 	// select_elem_checked				// Value of default checked Select Element (desc=>value)
 	// show_overview							// Set 1 to show on overview page
-  
+
 	$db_fields = array ( 0	=> 	array	(	"name" => "cat_id",
 																		"text" => "ID",
 																		"type" => "text",
@@ -89,7 +89,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
-																	)																																			
+																	)
 											);
-        
+
 ?>

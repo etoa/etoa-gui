@@ -12,7 +12,7 @@
 
 /**
 * Handles technology research updates
-* 
+*
 * \author Nicolas Perrenoud <mrcage@etoa.ch>
 */
 namespace tech
@@ -27,7 +27,7 @@ namespace tech
 		inline std::vector<int> getChangedUsers() { return this->changedUsers_; }
 	private:
 		bool changes_;
-		std::vector<int> changedUsers_;	
+		std::vector<int> changedUsers_;
 	};
 }
 #endif

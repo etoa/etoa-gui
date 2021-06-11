@@ -31,7 +31,7 @@
 			WHERE
 				ignore_owner_id=".$cu->id."
 				AND ignore_target_id=".intval($_POST['target_id'])."
-			;");				
+			;");
 			dbquery("
 			INSERT INTO
 				message_ignore
@@ -44,11 +44,11 @@
 			  ".$cu->id.",
 			  ".intval($_POST['target_id'])."
 			)
-			");		
+			");
 			success_msg("Spieler wurde ignoriert!");
 		}
-		
-		
+
+
 		// Ignorierung löschen
 		if (isset($_GET['remove']) && intval($_GET['remove'])>0)
 		{
@@ -58,10 +58,10 @@
 			WHERE
 				ignore_owner_id=".$cu->id."
 				AND ignore_target_id=".intval($_GET['remove'])."
-			;");		
+			;");
 			success_msg("Spieler wurde von der Liste entfernt!");
-		}		
-		
+		}
+
 		tableStart('Ignorierliste');
 		echo '<tr><th style="text-align:center;">Falls du von einem Benutzer belästigt wirst kannst du ihn hier ignorieren:</th></tr>';
 		$res=dbquery("SELECT
@@ -85,19 +85,19 @@
 		}
 		echo '</tr>';
 		tableEnd();
-		
+
 		// Spieler die man ignoriert
 		$res=dbquery("SELECT
 			user_id,
 			user_nick
 		FROM
-			message_ignore			
+			message_ignore
 		INNER JOIN
 			users
 			ON ignore_target_id=user_id
 			AND ignore_owner_id=".$cu->id."
 		ORDER BY
-			user_nick");		
+			user_nick");
 		if (mysql_num_rows($res)>0)
 		{
 			tableStart();
@@ -111,24 +111,24 @@
 				</td></tr>';
 			}
 			tableEnd();
-		}				
+		}
 		else
 		{
 			error_msg('Keine ignorierten Spieler vorhanden!',1);
 		}
-		
+
 		// Spieler bei denen man ignoriert ist
 		$res=dbquery("SELECT
 			user_id,
 			user_nick
 		FROM
-			message_ignore			
+			message_ignore
 		INNER JOIN
 			users
 			ON ignore_owner_id=user_id
 			AND ignore_target_id=".$cu->id."
 		ORDER BY
-			user_nick");			
+			user_nick");
 		if (mysql_num_rows($res)>0)
 		{
 			echo '<br/><br/>Du wirst von folgenden Spielern ignoriert:<br/><br/>';
@@ -142,5 +142,5 @@
 				</td></tr>';
 			}
 			tableEnd();
-		}	
+		}
 ?>

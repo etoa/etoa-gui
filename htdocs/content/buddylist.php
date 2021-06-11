@@ -163,7 +163,7 @@
 	                $res = dbquery("
 	                SELECT
 	                        bl_user_id,
-	                        bl_buddy_id,           
+	                        bl_buddy_id,
 	                  bl_comment,
 	                  bl_comment_buddy,
 	                  bl_id
@@ -249,7 +249,7 @@
 	                users.user_id=user_sessions.user_id
 	        INNER JOIN
 	                        planets
-	                ON   
+	                ON
 	        users.user_id=planets.planet_user_id
 	        AND planets.planet_user_main=1
 	  )
@@ -300,7 +300,7 @@
 	                        }
 	                        echo "</td>";
 	                        echo "<td>
-	                                <a href=\"?page=messages&mode=new&message_user_to=".$arr['user_id']."\" title=\"Nachricht\">Nachricht</a> 
+	                                <a href=\"?page=messages&mode=new&message_user_to=".$arr['user_id']."\" title=\"Nachricht\">Nachricht</a>
 	                                <a href=\"?page=userinfo&amp;id=".$arr['user_id']."\" title=\"Info\">Profil</a><br/>
 	                                <a href=\"?page=$page&comment=".$arr['bl_id']."\" title=\"Kommentar bearbeiten\">Kommentar</a> ";
 	                        echo "<a href=\"?page=$page&remove=".$arr['user_id']."\" onclick=\"return confirm('Willst du ".$arr['user_nick']." wirklich von deiner Liste entfernen?');\">Entfernen</a></td>";
@@ -360,7 +360,7 @@
 	                        echo "</td>";
 	                        echo "<td>".nf($arr['user_points'])."</td>";
 	                        echo "<td style=\"width:280px;\">
-	                                <a href=\"?page=messages&mode=new&message_user_to=".$arr['user_id']."\" title=\"Nachricht\">Nachricht</a> 
+	                                <a href=\"?page=messages&mode=new&message_user_to=".$arr['user_id']."\" title=\"Nachricht\">Nachricht</a>
 	                                <a href=\"?page=userinfo&amp;id=".$arr['user_id']."\" title=\"Info\">Profil</a>
 	                                <a href=\"?page=$page&amp;allow=".$arr['user_id']."\" style=\"color:#0f0\">Annehmen</a>
 	                                <a href=\"?page=$page&amp;deny=".$arr['user_id']."\" style=\"color:#f90\">Zurückweisen</a>

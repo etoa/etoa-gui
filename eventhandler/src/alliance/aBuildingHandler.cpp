@@ -6,7 +6,7 @@ namespace abuilding
 	void aBuildingHandler::update()
 	{
 		std::time_t time = std::time(0);
-		
+
 		mysqlpp::Query query = con_->query();;
 		// Perform level update
 		query << "UPDATE "
@@ -20,6 +20,6 @@ namespace abuilding
 			<< " alliance_buildlist_build_end_time<" << time << ";";
 		query.store();
 		//std::cout << "Upgraded "<<con_->affected_rows()<<" Alliance Buildings\n";
-		query.reset();    
-	}	
+		query.reset();
+	}
 }

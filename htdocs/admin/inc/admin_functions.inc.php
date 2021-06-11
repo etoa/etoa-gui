@@ -631,11 +631,11 @@ function DuplicateMySQLRecord ($table, $id_field, $id) {
 function drawTechTreeForSingleItem($type,$id)
 {
 	$rres = dbquery("
-	SELECT 
+	SELECT
 		r.*,
 		b.building_name as bname,
-		t.tech_name as tname 
-	FROM 
+		t.tech_name as tname
+	FROM
 		".$type." r
 	LEFT JOIN
 		buildings b
@@ -643,7 +643,7 @@ function drawTechTreeForSingleItem($type,$id)
 	LEFT JOIN
 		technologies t
 		ON r.req_tech_id = t.tech_id
-	WHERE 
+	WHERE
 		obj_id=".$id."
 	ORDER BY
 		tname,

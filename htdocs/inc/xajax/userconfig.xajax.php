@@ -20,7 +20,7 @@ function designInfo($did)
 		$out = '';
 	}
 	$ajax->assign("designInfo","innerHTML",$out);
-  return $ajax;	
+  return $ajax;
 }
 
 function imagePackInfo($pid,$ext="",$path="")
@@ -30,7 +30,7 @@ function imagePackInfo($pid,$ext="",$path="")
 	{
 		$packs = get_imagepacks();
 		$cd = $packs[$pid];
-		
+
 		$out = "<b>Geändert:</b> ".$cd['changed']."<br/>
 		<b>Autor:</b> <a href=\"mailto:".$cd['email']."\">".$cd['author']."</a><br/>";
 		$ajax->assign("imagePackInfo","innerHTML",$out);
@@ -41,7 +41,7 @@ function imagePackInfo($pid,$ext="",$path="")
 			if ($ext==$e) $out.=" selected=\"selected\"";
 			$out.= ">".$e."</option>";
 		}
-		$out.="</select>";	
+		$out.="</select>";
 		$ajax->assign("imagePackExtension","innerHTML",$out);
 	}
 	else
@@ -55,12 +55,12 @@ function imagePackInfo($pid,$ext="",$path="")
 			if ($ext==$e) $out.=" selected=\"selected\"";
 			$out.= ">".$e."</option>";
 		}
-		$out.="</select>";	
+		$out.="</select>";
 		$ajax->assign("imagePackExtension","innerHTML",$out);
 		$out = "Pfad: <input type=\"text\" name=\"image_url\" id=\"user_image_url\" maxlength=\"255\" size=\"45\" value=\"".$path."\">";
 		$ajax->assign("imagePackInfo","innerHTML",$out);
 	}
-  return $ajax;	
+  return $ajax;
 }
 
 

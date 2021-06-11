@@ -33,7 +33,7 @@
 						$select = " * ";
 
 					$res = dbquery("
-					SELECT 
+					SELECT
 						".$select."
 					FROM
 						buildings
@@ -170,7 +170,7 @@
 			$this->tRequirements = array();
 			$res = dbquery("
 			SELECT
-				req_building_id,  
+				req_building_id,
 				req_tech_id,
 				req_level
 			FROM
@@ -210,7 +210,7 @@
 		static function getItems($type=0,$show=1)
 		{
 			$res = dbquery("
-			SELECT 
+			SELECT
 				*
 			FROM
 				buildings
@@ -232,7 +232,7 @@
 		static function getTypes()
 		{
 			$res = dbquery("
-			SELECT 
+			SELECT
 				type_id as id,
 				type_name as name
 			FROM

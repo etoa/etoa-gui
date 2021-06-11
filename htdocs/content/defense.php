@@ -110,9 +110,9 @@
 			// Vorausetzungen laden
 			$req = array();
 			$res = dbquery("
-						SELECT 
-							* 
-						FROM 
+						SELECT
+							*
+						FROM
 							def_requirements;");
 
 			while ($arr = mysql_fetch_assoc($res))
@@ -135,12 +135,12 @@
 			$gen_tech_level = 0;
 			$techlist = [];
 			$res = dbquery("
-						SELECT 
+						SELECT
 							techlist_tech_id,
 							techlist_current_level
-						FROM 
-							techlist 
-						WHERE 
+						FROM
+							techlist
+						WHERE
 							techlist_user_id='".$cu->id."';");
 
 			while ($arr = mysql_fetch_assoc($res))
@@ -156,10 +156,10 @@
 			//Gebäude laden
 			$buildlist = [];
 			$res = dbquery("
-						SELECT 
+						SELECT
 							buildlist_building_id,
 							buildlist_current_level
-						FROM 
+						FROM
 							buildlist
 						WHERE
 							buildlist_entity_id='".$cp->id."';");
@@ -367,9 +367,9 @@
 			$box .= '   <tr>
 								<th>Eingestellte Arbeiter</th>
 								<td>
-									<input  type="text" 
-											name="peopleWorking" 
-											id="peopleWorking" 
+									<input  type="text"
+											name="peopleWorking"
+											id="peopleWorking"
 											value="'.nf($bl->getPeopleWorking(DEF_BUILDING_ID)).'"
 											onkeyup="updatePeopleWorkingBox(this.value,\'-1\',\'-1\');"/>
 							</td>
@@ -453,7 +453,7 @@
 							echo ">".$name."</option>";
 						}
 						echo "</select>
-						
+
 						<select name=\"sort_way\">";
 
 							//Aufsteigend
@@ -466,8 +466,8 @@
 							if($cu->properties->itemOrderWay=='DESC') echo " selected=\"selected\"";
 							echo ">Absteigend</option>";
 
-						echo "</select>						
-						
+						echo "</select>
+
 						<input type=\"submit\" class=\"button\" name=\"sort_submit\" value=\"Sortieren\"/>
 					</div>";
 			iBoxEnd();

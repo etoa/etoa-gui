@@ -27,8 +27,8 @@ function allianceNewsLoad()
 			e.alliance_tag as e_alliance_tag,
 			e.alliance_id as e_alliance_id,
 			user_nick,
-			user_id			
-		FROM 
+			user_id
+		FROM
 			alliance_news
 		LEFT JOIN
 			alliances as a
@@ -37,7 +37,7 @@ function allianceNewsLoad()
 			alliances as e
 			ON e.alliance_id=alliance_news_alliance_to_id
 		LEFT JOIN
-			users 
+			users
 			ON user_id=alliance_news_user_id
 		ORDER BY
 			alliance_news_date DESC
@@ -63,7 +63,7 @@ function allianceNewsLoad()
 				else
 				{
 					echo '<span style="color:#999;">Allianz existiert nicht!</span>';
-				}				
+				}
 				echo '</b></td>';
 				echo '<td id="news_'.$arr['alliance_news_id'].'_alliance_to" style="border-bottom:none;"><b>';
 				if ($arr['e_alliance_tag']!='')
@@ -73,14 +73,14 @@ function allianceNewsLoad()
 				else
 				{
 					echo '<span style="color:#999;">Allianz existiert nicht!</span>';
-				}				
-				echo '</b></td>';				
+				}
+				echo '</b></td>';
 				echo '<td id="news_'.$arr['alliance_news_id'].'_title" style="border-bottom:1px dotted #999;';
 				echo '"><b>'.stripslashes($arr['alliance_news_title']).'</b></td>';
 				echo '<td rowspan="2" id="news_'.$arr['alliance_news_id'].'_actions">
 				<a href="javascript:;" onclick="xajax_allianceNewsEdit('.$arr['alliance_news_id'].');"><img src="../images/edit.gif" alt="Edit" style="border:none;" /></a>
 				<a href="javascript:;" onclick="if (confirm(\'Beitrag löschen?\')) xajax_allianceNewsDel('.$arr['alliance_news_id'].');"><img src="../images/delete.gif" alt="Delete" style="border:none;" /></a>';
-				if ($arr['user_id']>0) 
+				if ($arr['user_id']>0)
 				{
 					echo '<a href="javascript:;" onclick="if (confirm(\'Benutzer sperren?\')) xajax_lockUser('.$arr['user_id'].',document.getElementById(\'ban_timespan\').options[document.getElementById(\'ban_timespan\').selectedIndex].value,document.getElementById(\'ban_text\').value);"><img src="../images/lock.png" alt="Lock" style="border:none;" /></a>';
 				}
@@ -94,7 +94,7 @@ function allianceNewsLoad()
 				else
 				{
 					echo '<span style="color:#999;">Spieler existiert nicht!</span>';
-				}					
+				}
 				echo '</td>';
 				echo '<td style="border-top:none;" id="news_'.$arr['alliance_news_id'].'_public"></td>';
 				echo '<td style="border-top:none;" id="news_'.$arr['alliance_news_id'].'_text">'.stripslashes($arr['alliance_news_text']).'</td>';
@@ -106,11 +106,11 @@ function allianceNewsLoad()
 		{
 			echo '<i>Keine News vorhanden!</i>';
 		}
-	
+
 	$objResponse = new xajaxResponse();
   $objResponse->assign("newsBox","innerHTML", ob_get_contents());
 	ob_end_clean();
-	return $objResponse;		
+	return $objResponse;
 }
 
 function allianceNewsDel($id)
@@ -120,10 +120,10 @@ function allianceNewsDel($id)
 		alliance_news
 	WHERE
 		alliance_news_id='".$id."'
-	;");	
+	;");
 	$objResponse = new xajaxResponse();
   $objResponse->script("xajax_allianceNewsLoad()");
-  return $objResponse;		
+  return $objResponse;
 }
 
 function allianceNewsRemoveOld($ts)
@@ -134,11 +134,11 @@ function allianceNewsRemoveOld($ts)
 		alliance_news
 	WHERE
 		alliance_news_date<'".$t."'
-	;");	
+	;");
 	$objResponse = new xajaxResponse();
   $objResponse->alert(mysql_affected_rows()." Beiträge wurden gelöscht!");
   $objResponse->script("xajax_allianceNewsLoad()");
-  return $objResponse;			
+  return $objResponse;
 }
 
 function allianceNewsEdit($id)
@@ -146,7 +146,7 @@ function allianceNewsEdit($id)
 	$objResponse = new xajaxResponse();
 
 	$res = dbquery("
-	SELECT 
+	SELECT
 		alliance_news_id
 	FROM
 		alliance_news
@@ -163,15 +163,15 @@ function allianceNewsEdit($id)
 	mysql_free_result($res);
 
 	$res = dbquery("
-	SELECT 
+	SELECT
 		*
 	FROM
 		alliance_news
 	WHERE
 		alliance_news_id='".$id."'
-	;");			
+	;");
 	if (mysql_num_rows($res)>0)
-	{	
+	{
 		$arr=mysql_fetch_array($res);
 		$ares = dbquery("
 		SELECT
@@ -180,7 +180,7 @@ function allianceNewsEdit($id)
 			alliance_tag
 		FROM
 			alliances
-		ORDER BY 
+		ORDER BY
 			alliance_tag
 		;");
 		$alliances = array();
@@ -191,7 +191,7 @@ function allianceNewsEdit($id)
 				$alliances[$aarr['alliance_id']]='['.$aarr['alliance_tag'].'] '.$aarr['alliance_name'];
 			}
 		}
-		
+
 		$out = '<select name="alliance_id" onchange="xajax_allianceNewsLoadUserList('.$id.',this.options[this.selectedIndex].value,0);"><option value="0">(keine)</option>';
 		$ca = 0;
 		foreach ($alliances as $k => $v)
@@ -206,7 +206,7 @@ function allianceNewsEdit($id)
 		}
 		$out.= '</select>';
   	$objResponse->assign("news_".$id."_alliance","innerHTML",$out);
-		
+
 		$out = '<select name="alliance_to_id"><option value="0">(keine)</option>';
 		foreach ($alliances as $k => $v)
 		{
@@ -217,7 +217,7 @@ function allianceNewsEdit($id)
 			}
 			$out.= '>'.$v.'</option>';
 		}
-		$out.= '</select>';	
+		$out.= '</select>';
   	$objResponse->assign("news_".$id."_alliance_to","innerHTML",$out);
 
   	$objResponse->assign("news_".$id."_public","innerHTML",$out);
@@ -227,15 +227,15 @@ function allianceNewsEdit($id)
 
 		$out = '<textarea name="text" rows="6" cols="45" >'.stripslashes($arr['alliance_news_text']).'</textarea>';
   	$objResponse->assign("news_".$id."_text","innerHTML",$out);
-		
+
 		$out = '<input type="text" name="title" size="45" value="'.stripslashes($arr['alliance_news_title']).'" />';
   	$objResponse->assign("news_".$id."_title","innerHTML",$out);
-		
+
 		$out = '<input type="button" onclick="xajax_allianceNewsSave('.$id.',xajax.getFormValues(\'newsForm\'))" value="Speichern" /><br/>
 		<input type="button" onclick="xajax_allianceNewsLoad()" value="Abbrechen" />';
   	$objResponse->assign("news_".$id."_actions","innerHTML",$out);
  	}
-  return $objResponse;		
+  return $objResponse;
 }
 
 
@@ -269,7 +269,7 @@ function allianceNewsLoadUserList($nid,$aid,$uid)
 			}
 		}
 		$out.= '</select>';
-  	
+
   }
   else
   {
@@ -277,9 +277,9 @@ function allianceNewsLoadUserList($nid,$aid,$uid)
   }
 	$out.='</select>';
 
- 	$objResponse->assign("news_".$nid."_user","innerHTML",$out);	
+ 	$objResponse->assign("news_".$nid."_user","innerHTML",$out);
 
-  return $objResponse;		
+  return $objResponse;
 }
 
 function allianceNewsSave($id,$form)
@@ -295,10 +295,10 @@ function allianceNewsSave($id,$form)
 		alliance_news_text='".addslashes($form['text'])."'
 	WHERE
 		alliance_news_id='".$id."'
-	");                	
+	");
 	$objResponse = new xajaxResponse();
  	$objResponse->script("xajax_allianceNewsLoad()");
-  return $objResponse;		
+  return $objResponse;
 }
 
 function allianceNewsSetBanTime($time,$text)
@@ -311,26 +311,26 @@ function allianceNewsSetBanTime($time,$text)
 		config_param1='".addslashes($text)."'
 	WHERE
 		config_name='townhall_ban'
-	");                	
+	");
 	$objResponse = new xajaxResponse();
  	$objResponse->alert("Einstellungen gespeichert!");
-  return $objResponse;		
+  return $objResponse;
 }
 
 function showSpend($allianceId,$form)
 {
 	ob_start();
-	
-	$ures = dbquery("SELECT 
+
+	$ures = dbquery("SELECT
 					user_id,
 					user_nick,
 					user_points,
 					user_alliance_rank_id
-				FROM 
-					users 
-				WHERE 
-					user_alliance_id=".$allianceId." 
-				ORDER BY 
+				FROM
+					users
+				WHERE
+					user_alliance_id=".$allianceId."
+				ORDER BY
 					user_points DESC,
 					user_nick;");
 	$members = array();
@@ -341,29 +341,29 @@ function showSpend($allianceId,$form)
 			$members[$uarr['user_id']] = $uarr;
 		}
 	}
-	
+
 	$sum = false;
 	$user = 0;
 	$LIMIT = 0;
-	
+
 	// Summierung der Einzahlungen
 	if($form['output']==1)
   	{
   		$sum = true;
 	}
-	
+
 	// Limit
 	if($form['limit']>0)
 	{
 		$limit = $form['limit'];
 	}
-	
+
 	// User
 	if($form['user_spends']>0)
 	{
 		$user = $form['user_spends'];
 	}
-	
+
 	if($sum)
 	{
   		if($user>0)
@@ -376,9 +376,9 @@ function showSpend($allianceId,$form)
 			$user_sql = "";
 			$user_message = "";
 		}
-  		
+
 		echo "Es werden die bisher eingezahlten Rohstoffe ".$user_message." angezeigt.<br><br>";
-		
+
 		// Läd Einzahlungen
 		$res = dbquery("
 		SELECT
@@ -392,11 +392,11 @@ function showSpend($allianceId,$form)
 		WHERE
 			alliance_spend_alliance_id='".$allianceId."'
 			".$user_sql.";");
-		
+
 		if(mysql_num_rows($res)>0)
-		{						
+		{
 			$arr=mysql_fetch_assoc($res);
-			
+
 			tableStart("Total eingezahlte Rohstoffe ".$user_message."");
 			echo "<tr>
 							<th class=\"resmetalcolor\" style=\"width:20%\">".RES_METAL."</th>
@@ -434,9 +434,9 @@ function showSpend($allianceId,$form)
 			$user_sql = "";
 			$user_message = "";
 		}
-		
+
 		if($limit>0)
-		{ 	
+		{
 			if($limit==1)
 			{
 				echo "Es wird die letzte Einzahlung ".$user_message."gezeigt.<br><br>";
@@ -445,7 +445,7 @@ function showSpend($allianceId,$form)
 			{
 				echo "Es werden die letzten ".$limit." Einzahlungen ".$user_message."gezeigt.<br><br>";
 			}
-	  	
+
 			$limit_sql = "LIMIT ".$limit."";
 		}
 		else
@@ -453,7 +453,7 @@ function showSpend($allianceId,$form)
 			echo "Es werden alle bisherigen Einzahlungen ".$user_message."gezeigt.<br><br>";
 			$limit_sql = "";
 		}
-		
+
 		// Läd Einzahlungen
 		$res = dbquery("
 		SELECT
@@ -465,9 +465,9 @@ function showSpend($allianceId,$form)
 			".$user_sql."
 		ORDER BY
 			alliance_spend_time DESC
-		".$limit_sql.";");		
+		".$limit_sql.";");
 		if(mysql_num_rows($res)>0)
-		{						
+		{
 			while($arr=mysql_fetch_assoc($res))
 			{
 				tableStart("".$members[$arr['alliance_spend_user_id']]['user_nick']." - ".df($arr['alliance_spend_time'])."");
@@ -487,7 +487,7 @@ function showSpend($allianceId,$form)
 							</tr>";
 				tableEnd();
 			}
-			
+
 		}
 		else
 		{
@@ -496,7 +496,7 @@ function showSpend($allianceId,$form)
 			iBoxEnd();
 		}
 	}
-	
+
 	$objResponse = new xajaxResponse();
 	$objResponse->assign("spends","innerHTML",ob_get_contents());
 	ob_end_clean();

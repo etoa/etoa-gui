@@ -5,7 +5,7 @@ class BattleLog extends BaseLog
 	protected static $queueTable = "logs_battle_queue";
 
 	/**
-	* Processes the log queue and stores 
+	* Processes the log queue and stores
 	* all items in the persistend log table
 	*/
 	static function processQueue()	{
@@ -52,7 +52,7 @@ class BattleLog extends BaseLog
 		  `tf_pvc`,
 		  `timestamp`
 		)
-		SELECT 
+		SELECT
 		  `facility`,
 		  `severity`,
 		  `fleet_id`,
@@ -98,13 +98,13 @@ class BattleLog extends BaseLog
 		if ($numRecords > 0)	{
 			dbquery("
 			DELETE FROM
-				".self::$queueTable."				
+				".self::$queueTable."
 			LIMIT
 				".$numRecords.";");
 		}
 		return $numRecords;
 	}
-	
+
 	/**
 	* Removes up old logs from the persistend log table
 	*
@@ -119,6 +119,6 @@ class BattleLog extends BaseLog
 				timestamp<'".$threshold."'
 		");
 		return mysql_affected_rows();
-	}	
+	}
 }
 ?>

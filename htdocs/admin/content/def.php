@@ -468,7 +468,7 @@
 		if (isset($_POST['deflist_search']) || (isset($_GET['action']) && $_GET['action']=="searchresults") || isset($_POST['new']))
 		{
 
-			$sqlstart = "SELECT 
+			$sqlstart = "SELECT
 				planets.id,
 				planet_name,
 		  		entities.pos,
@@ -481,23 +481,23 @@
 		  	def_name,
 		  	deflist_id,
 		  	deflist_count
-			FROM 
+			FROM
 				deflist,
 				entities,
 				planets,
 				cells,
 				users,
-				defense 
-			WHERE 
+				defense
+			WHERE
 				planets.id=entities.id
-		    AND	entities.cell_id=cells.id 
-					AND deflist_def_id=def_id 
-					AND user_id=deflist_user_id 
+		    AND	entities.cell_id=cells.id
+					AND deflist_def_id=def_id
+					AND user_id=deflist_user_id
 					AND planets.id=deflist_entity_id ";
-			$sqlend = " 
-			GROUP BY 
-					deflist_id 
-			ORDER BY 
+			$sqlend = "
+			GROUP BY
+					deflist_id
+			ORDER BY
 					deflist_entity_id,
 					def_order,def_name;";
       $sql = "";
@@ -543,7 +543,7 @@
 					$v=1;
 				echo "<tr><th class=\"tbltitle\">Anzahl</th><td class=\"tbldata\"><input type=\"text\" name=\"deflist_count\" value=\"$v\" size=\"1\" maxlength=\"3\" /></td></tr>";
 				echo "<tr><th class=\"tbltitle\">auf dem Planeten</th><td class=\"tbldata\"> <select name=\"planet_id\"><";
-				$pres=dbquery("SELECT 
+				$pres=dbquery("SELECT
 								users.user_id,
 								planets.id,
 								planet_name,
@@ -552,8 +552,8 @@
 								cells.sx,
 								cells.sy,
 								cells.cx,
-								cells.cy 
-							FROM 
+								cells.cy
+							FROM
 								users
 							INNER JOIN
 								planets
@@ -564,7 +564,7 @@
 							INNER JOIN
 								cells
 								ON cells.id=entities.cell_id
-							ORDER BY 
+							ORDER BY
 								planets.id;");
 				while ($parr=mysql_fetch_array($pres))
 				{
@@ -611,11 +611,11 @@
 
 			if (isset($_POST['save']))
 			{
-				dbquery("UPDATE 
-					deflist 
-				SET 
+				dbquery("UPDATE
+					deflist
+				SET
 					deflist_count='".$_POST['deflist_count']."'
-				WHERE 
+				WHERE
 					deflist_id='".$_POST['deflist_id']."';");
 				success_msg("Gespeichert");
 			}
@@ -679,13 +679,13 @@
 		//
 		elseif (isset($_GET['action']) && $_GET['action']=="edit")
 		{
-			$res = dbquery("SELECT 
+			$res = dbquery("SELECT
 								deflist.deflist_id,
 								deflist.deflist_count,
 								defense.def_name,
 								users.user_nick,
 								planets.planet_name
-							FROM 
+							FROM
 								deflist
 							INNER JOIN
 								defense

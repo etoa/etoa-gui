@@ -4,7 +4,7 @@
 * This class defines static ulitilty
 * functions for the help system
 */
-class HelpUtil 
+class HelpUtil
 {
   /**
   * This function sucks ;) A reimplementation is needed
@@ -19,18 +19,18 @@ class HelpUtil
 				$page = "page";
 			else
 				$page = "index";
-			
+
 			echo "<a href=\"?$page=help\">Hilfe</a> &raquo; ";
-			
+
 			if ($item2!=null)
 			{
-				echo "<a href=\"?$page=help&amp;site=".$item1[1]."\">".$item1[0]."</a> &raquo; ";		
+				echo "<a href=\"?$page=help&amp;site=".$item1[1]."\">".$item1[0]."</a> &raquo; ";
 				if ($disable2==0)
-					echo $item2[0]."<br/><br/>";		
+					echo $item2[0]."<br/><br/>";
 			}
 			else
 			{
-				echo $item1[0]."<br/><br/>";		
+				echo $item1[0]."<br/><br/>";
 			}
 		}
 		else
@@ -38,25 +38,25 @@ class HelpUtil
 			echo "Hilfe<br/><br/>";
 		}
 	}
-	
-	
+
+
 	static function colorizeMarketRate($r)
 	{
 		$b = " style=\"color:#000;background:";
-		
+
 		$e = "\"";
 		if ($r<0.5)
-			return $b."#0f0".$e;		           
+			return $b."#0f0".$e;
 	  if ($r<1)
-			return $b."#ff0".$e;		           
+			return $b."#ff0".$e;
 	  if ($r>5)
-			return $b."#f40".$e;		           
+			return $b."#f40".$e;
 	  if ($r>2.5)
-			return $b."#f70".$e;		           
+			return $b."#f70".$e;
 	  if ($r>1)
-			return $b."#fa0".$e;		           
+			return $b."#fa0".$e;
 	}
-		
-		
+
+
 }
 ?>

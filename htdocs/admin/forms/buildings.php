@@ -15,20 +15,20 @@
 	// Programmiert von Nicolas Perrenoud				 		//
 	// www.nicu.ch | mail@nicu.ch								 		//
 	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	//////////////////////////////////////////////////	
+	//////////////////////////////////////////////////
 	//
-	// 	Dateiname: buildings.php	
-	// 	Topic: Formular-Definitionen für Gebäude 
-	// 	Autor: Nicolas Perrenoud alias MrCage							
+	// 	Dateiname: buildings.php
+	// 	Topic: Formular-Definitionen für Gebäude
+	// 	Autor: Nicolas Perrenoud alias MrCage
 	// 	Erstellt: 01.12.2004
 	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage
 	// 	Bearbeitet am: 31.03.2006
-	// 	Kommentar: 	
+	// 	Kommentar:
 	//
-	
+
 	// VARIABLES
-	
-	define("MODUL_NAME","Gebäude");				
+
+	define("MODUL_NAME","Gebäude");
 	define("DB_TABLE", 'buildings');
 	define("DB_TABLE_ID", "building_id");
 	define("DB_OVERVIEW_ORDER_FIELD","building_type_id, building_order, building_name");
@@ -41,11 +41,11 @@
 	$form_switches = array("Anzeigen"=>'building_show');
 
   define('POST_INSERT_UPDATE_METHOD','Ranking::calcBuildingPoints');
-	
+
 	// FIELDS
-	
+
 	// Description:
-	
+
 	// name	 											// DB Field Name
 	// text												// Field Description
 	// type												// Field Type: text, password, textarea, timestamp, radio, select, checkbox, email, url, numeric
@@ -59,12 +59,12 @@
 	// select_elem (Array)				// Select Elements (desc=>value)
 	// select_elem_checked				// Value of default checked Select Element (desc=>value)
 	// show_overview							// Set 1 to show on overview page
-  
+
 	$db_fields = array ( array	(	"name" => "building_id",
 																		"text" => "ID",
 																		"type" => "readonly",
 																		"show_overview" => 1
-																	),  
+																	),
 											array	(	"name" => "building_name",
 																		"text" => "Name",
 																		"type" => "text",
@@ -93,7 +93,7 @@
 																		"select_elem" => admin_get_select_elements('building_types',"type_id","type_name","type_name"),
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
-																	),																	
+																	),
 											array	(	"name" => "building_shortcomment",
 																		"text" => "Kurzbeschrieb",
 																		"type" => "textarea",
@@ -206,7 +206,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
-																	),																	
+																	),
 											array	(	"name" => "building_build_costs_factor",
 																		"text" => "Kostenfaktor Bau",
 																		"type" => "text",
@@ -236,7 +236,7 @@
 																		"show_overview" => 0,
 																		"columnend" => 1
 																	),
-																	
+
 												array	(	"name" => "building_power_use",
 																		"text" => "Stromverbrauch",
 																		"type" => "text",
@@ -279,8 +279,8 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0,
 																		"line" => 1
-																	),						
-																												
+																	),
+
 											array	(	"name" => "building_prod_metal",
 																		"text" => "Produktion Metall",
 																		"type" => "text",
@@ -350,7 +350,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
-																	),																																																																																					
+																	),
 												array	(	"name" => "building_prod_power",
 																		"text" => "Produktion Strom",
 																		"type" => "text",
@@ -364,7 +364,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
-																	),																																																																																					
+																	),
 											array	(	"name" => "building_production_factor",
 																		"text" => "Produktionsfaktor",
 																		"type" => "text",
@@ -379,8 +379,8 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0,
 																		"line" => 1
-																	),						
-																																																																																																
+																	),
+
 												array	(	"name" => "building_store_metal",
 																		"text" => "Speicher Metall",
 																		"type" => "text",
@@ -394,7 +394,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
-																	),																																																																																					
+																	),
 												array	(	"name" => "building_store_crystal",
 																		"text" => "Speicher Kristall",
 																		"type" => "text",
@@ -408,7 +408,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
-																	),																																																																																					
+																	),
 												array	(	"name" => "building_store_plastic",
 																		"text" => "Speicher Plastik",
 																		"type" => "text",
@@ -422,7 +422,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
-																	),																																																																																					
+																	),
 												array	(	"name" => "building_store_fuel",
 																		"text" => "Speicher Treibstoff",
 																		"type" => "text",
@@ -436,7 +436,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
-																	),																																																																																					
+																	),
 											array	(	"name" => "building_store_food",
 																		"text" => "Speicher Nahrung",
 																		"type" => "text",
@@ -450,7 +450,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
-																	),																																																																																					
+																	),
 											 	array	(	"name" => "building_store_factor",
 																		"text" => "Speicherfaktor",
 																		"type" => "text",
@@ -465,8 +465,8 @@
 																		"select_elem_checked" => "",
 																		"show_overview" => 0,
 																		"line" => 1
-																	),						
-																																																																																																
+																	),
+
 												array	(	"name" => "building_last_level",
 																		"text" => "Max Level",
 																		"type" => "text",
@@ -480,7 +480,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
-																	),	
+																	),
 											array	(	"name" => "building_fields",
 																		"text" => "Felderverbrauch",
 																		"type" => "text",
@@ -494,7 +494,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
-																	),			
+																	),
 											array	(	"name" => "building_people_place",
 																		"text" => "Bewohnbare Fläche",
 																		"type" => "text",
@@ -522,7 +522,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
-																	),																			
+																	),
 											array	(	"name" => "building_bunker_res",
 																		"text" => "Ressourcen-Grundkapazität Bunker",
 																		"type" => "text",
@@ -566,5 +566,5 @@
 																		"show_overview" => 0
 																	)
 											);
-        
+
 ?>

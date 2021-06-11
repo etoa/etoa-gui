@@ -234,7 +234,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
-																	),					
+																	),
 											13	=> 	array	(	"name" => "missile_launchable",
 																		"text" => "Startbar",
 																		"type" => "radio",
@@ -248,7 +248,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
-																	),																																																																										
+																	),
 											14	=> 	array	(	"name" => "missile_show",
 																		"text" => "Anzeigen",
 																		"type" => "radio",

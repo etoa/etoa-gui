@@ -8,7 +8,7 @@
 /**
 * Handles Delivery....
 * For alliance deliverys, only ships
-* 
+*
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 namespace delivery

@@ -12,7 +12,7 @@
 /**
 * Handles Bombard....
 * Levels down a building by random
-* 
+*
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 namespace bombard
@@ -22,13 +22,13 @@ namespace bombard
 	public:
 		BombardHandler(mysqlpp::Row fleet)  : FleetAction(fleet) { }
 		void update();
-		
+
 	private:
 		/**
 		* Ship they are able to bomb a planet
 		**/
 		int shipCnt;
-		
+
 		/**
 		* Bomb tech level
 		**/
@@ -38,7 +38,7 @@ namespace bombard
 		* 2 variables to calculate the possibility
 		**/
 		double one, two;
-		
+
 		/**
 		* Variable to calculate the new level of the building
 		**/

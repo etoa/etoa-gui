@@ -10,7 +10,7 @@ SET(ENTITY_SRC_FILES
 	Star.cpp
 	Unknown.cpp
 	Wormhole.cpp
-	
+
 )
 
 ADD_LIBRARY(entity ${ENTITY_SRC_FILES})

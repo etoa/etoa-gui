@@ -26,9 +26,9 @@
 				building_queue
 			WHERE
 				entity_id=".$this->entityId."
-				AND user_id=".$this->ownerId."	
+				AND user_id=".$this->ownerId."
 			ORDER BY
-				time_start	
+				time_start
 			");
 			if (mysql_num_rows($res)>0)
 			{
@@ -89,10 +89,10 @@
 				{
 					unset($this->jobs[$jk]);
 					dbquery("
-					DELETE FROM	
+					DELETE FROM
 						building_queue
 					WHERE
-						id=".$jk.";					
+						id=".$jk.";
 					");
 					return true;
 				}

@@ -8,15 +8,15 @@ function showAllianceMembers($alliance_id=0,$field_id)
 {
 	ob_start();
   $objResponse = new xajaxResponse();
-  
+
 	if($alliance_id!=0)
 	{
 		$members = "";
 		$cnt = 0;
 		$out = "Allianz-ID nicht angegeben!";
-		
+
 		$res = dbquery("
-		SELECT 
+		SELECT
 			user_id,
 			user_nick,
 			rank,
@@ -26,21 +26,21 @@ function showAllianceMembers($alliance_id=0,$field_id)
 			points_tech,
 			points_buildings,
 			points_exp
-		FROM 
+		FROM
 			users
 		LEFT JOIN
 			user_stats
 			ON id=user_id
 		WHERE
-			user_alliance_id='".$alliance_id."' 
-		ORDER BY 
+			user_alliance_id='".$alliance_id."'
+		ORDER BY
 			user_rank;");
 		if (mysql_num_rows($res)>0)
 		{
 			while ($arr = mysql_fetch_array($res))
 			{
 				$cnt++;
-				
+
 				if ($arr['rankshift']==2)
 				{
 					$rank =  "<img src=\"images/stats/stat_up.gif\" alt=\"up\" width=\"9\" height=\"12\" />";
@@ -53,7 +53,7 @@ function showAllianceMembers($alliance_id=0,$field_id)
 				{
 					$rank =  "<img src=\"images/stats/stat_same.gif\" alt=\"same\" width=\"21\" height=\"9\" />";
 				}
-				
+
 				$members .= "
 				<tr>
 					<td>
@@ -96,14 +96,14 @@ function showAllianceMembers($alliance_id=0,$field_id)
 							</table>";
 		}
 	}
-	
-	
+
+
 	$objResponse->assign($field_id, "innerHTML", $out);
-	
-	
+
+
 	$objResponse->assign("allianceinfo","innerHTML",ob_get_contents());
 	ob_end_clean();
-	
+
 	return $objResponse;
 }
 
@@ -112,7 +112,7 @@ function showAllianceMemberAddCosts($allianceId=0,$form)
 	ob_start();
 	$objResponse = new xajaxResponse();
 	$cnt = 0;
-	
+
 	foreach ($form['application_answer'] as $answear)
 	{
 		if ($answear==2) $cnt++;
@@ -120,10 +120,10 @@ function showAllianceMemberAddCosts($allianceId=0,$form)
 	if($allianceId!=0)
 	{
 		$alliance = new Alliance($allianceId);
-		
+
 		echo $alliance->calcMemberCosts(false,$cnt);
 	}
-	
+
 	$objResponse->assign("memberCostsTD","innerHTML",ob_get_contents());
 	if ($cnt>0)
 	{
@@ -134,9 +134,9 @@ function showAllianceMemberAddCosts($allianceId=0,$form)
 		$objResponse->assign("memberCosts","style.display",'none');
 	}
 	ob_end_clean();
-	
+
 	return $objResponse;
-	
+
 }
 
 

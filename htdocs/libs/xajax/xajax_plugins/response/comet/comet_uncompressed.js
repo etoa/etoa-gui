@@ -1,22 +1,22 @@
 /*
 	File: comet.js
-	
+
 	Title: Comet plugin for xajax
-	
+
 */
 
 /*
 	@package comet plugin
-	@version $Id: 
+	@version $Id:
 	@copyright Copyright (c) 2007 by Steffen Konerow (IE)
 	@license http://www.xajaxproject.org/bsd_license.txt BSD License
 */
 
 /*
 	Class: xajax.ext.comet
-	
+
 	This class contains all functions for using comet streaming with xajax.
-	
+
 */
 
 try
@@ -130,9 +130,9 @@ xjxEc.detectSupport = function()
 
 /*
 	Function: prepareRequestXHR
-	
+
 	Prepares the XMLHttpRequest object for this xajax request in FF/Safari browsers.
-	
+
 */
 
 xjxEc.prepareRequestXHR = function (oRequest)
@@ -186,8 +186,8 @@ xjxEc.prepareRequestXHR = function (oRequest)
 		oRequest.comet.inProgress = false;
 		var pollLatestResponse = function()
 		{
-			
-			console.log('pollLatestResponse'); 
+
+			console.log('pollLatestResponse');
 			xjxEc.responseProcessor.XHR(oRequest);
 		}
 		oRequest.pollTimer = setInterval(pollLatestResponse, 300);
@@ -195,7 +195,7 @@ xjxEc.prepareRequestXHR = function (oRequest)
 		{
 			if (oRequest.request.readyState < 3)
 			{
-				console.log('readyState < 3'); 
+				console.log('readyState < 3');
 				return;
 			}
 			if (oRequest.request.readyState == 4)
@@ -298,9 +298,9 @@ xjxEc.connect_htmlfile = function (url, callback, oRequest)
 
 /*
 	Function: prepareRequestActiveX
-	
+
 	Prepares the Iframe for streaming with active X
-	
+
 */
 
 xjxEc.prepareRequestActiveX = function(oRequest)
@@ -332,9 +332,9 @@ xjxEc.prepareRequestActiveX = function(oRequest)
 
 /*
 	Function: prepareRequestHTMLDRAFT
-	
+
 	Prepares streaming with HTML 5 Draft
-	
+
 */
 
 xjxEc.prepareRequestHTMLDRAFT = function(oRequest)
@@ -466,7 +466,7 @@ xjxEc.responseProcessor.XHR = function(oRequest)
 			oRequest.comet.LastPosition += endOfFirstMessageIndex;
 		}
 	} while (messageXMLEndIndex != -1);
-	
+
 	oRequest.comet.inProgress = false;
 	return oRet;
 }
@@ -538,7 +538,7 @@ xjxEc.responseProcessor.HTMLDRAFT = function(response, oRequest)
 /*
 
 	Function: submitRequestActiveX
-	
+
 	Supresses the xajax.submitRequest() function call for IE in streaming calls.
 
 */
@@ -589,7 +589,7 @@ switch (xjxEc.stream_support)
 /*
 
 	Function: DOMParser
-	
+
 	Prototype DomParser for IE/Opera
 
 */

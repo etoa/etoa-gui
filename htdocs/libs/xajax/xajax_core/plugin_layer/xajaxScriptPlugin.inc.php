@@ -20,7 +20,7 @@
 
 /*
 	Class: xajaxScriptPlugin
-	
+
 	Contains the code that can produce script and style data during deferred script
 	generation.  This allows the xajax generated javascript and style sheet information
 	to be loaded via an external file reference instead of inlined into the page
@@ -32,35 +32,35 @@ class xajaxScriptPlugin extends xajaxRequestPlugin
 		String: sRequest
 	*/
 	var $sRequest;
-	
+
 	/*
 		String: sHash
 	*/
 	var $sHash;
-	
+
 	/*
 		String: sRequestURI
 	*/
 	var $sRequestURI;
-	
+
 	/*
 		Boolean: bDeferScriptGeneration
 	*/
 	var $bDeferScriptGeneration;
-	
+
 	/*
 		Boolean: bValidateHash
 	*/
 	var $bValidateHash;
-	
+
 	/*
 		Boolean: bWorking
 	*/
 	var $bWorking;
-	
+
 	/*
 		Function: xajaxScriptPlugin
-		
+
 		Construct and initialize the xajax script plugin object.  During
 		initialization, this plugin will look for hash codes in the
 		GET data (parameters passed on the request URI) and store them
@@ -71,17 +71,17 @@ class xajaxScriptPlugin extends xajaxRequestPlugin
 		$this->sRequestURI = '';
 		$this->bDeferScriptGeneration = false;
 		$this->bValidateHash = true;
-		
+
 		$this->bWorking = false;
 
 		$this->sRequest = '';
 		$this->sHash = null;
-		
+
 		if (isset($_GET['xjxGenerateJavascript'])) {
 			$this->sRequest = 'script';
 			$this->sHash = $_GET['xjxGenerateJavascript'];
 		}
-		
+
 		if (isset($_GET['xjxGenerateStyle'])) {
 			$this->sRequest = 'style';
 			$this->sHash = $_GET['xjxGenerateStyle'];
@@ -90,11 +90,11 @@ class xajaxScriptPlugin extends xajaxRequestPlugin
 
 	/*
 		Function: configure
-		
+
 		Sets/stores configuration options used by this plugin.  See also:
 		<xajax::configure>.  This plugin will watch for and store the current
 		setting for the following configuration options:
-		
+
 		- <requestURI> (string): The requestURI of the current script file.
 		- <deferScriptGeneration> (boolean): A flag that indicates whether
 			script deferral is in effect or not.
@@ -113,59 +113,59 @@ class xajaxScriptPlugin extends xajaxRequestPlugin
 				$this->bValidateHash = $mValue;
 		}
 	}
-	
+
 	/*
 		Function: generateClientScript
-		
+
 		Called by the <xajaxPluginManager> when the text of the client script
 		(or style) declarations are needed.
-		
-		This function will only output script or style information if the 
-		request URI contained an appropriate hash code and script deferral 
+
+		This function will only output script or style information if the
+		request URI contained an appropriate hash code and script deferral
 		is in effect.
 	*/
 	function generateClientScript()
 	{
 		if ($this->bWorking)
 			return;
-		
+
 		if (true === $this->bDeferScriptGeneration)
 		{
 			$this->bWorking = true;
-			
+
 			$sQueryBase = '?';
 			if (0 < strpos($this->sRequestURI, '?'))
 				$sQueryBase = '&';
-			
+
 			$aScripts = $this->_getSections('script');
 			if (0 < count($aScripts))
 			{
 //				echo "<!--" . print_r($aScripts, true) . "-->";
-			
+
 				$sHash = md5(implode($aScripts));
 				$sQuery = $sQueryBase . "xjxGenerateJavascript=" . $sHash;
-				
+
 				echo "\n<script type='text/javascript' src='" . $this->sRequestURI . $sQuery . "' charset='UTF-8'></script>\n";
 			}
-			
+
 			$aStyles = $this->_getSections('style');
 			if (0 < count($aStyles))
 			{
 //				echo "<!--" . print_r($aStyles, true) . "-->";
-			
+
 				$sHash = md5(implode($aStyles));
 				$sQuery = $sQueryBase . "xjxGenerateStyle=" . $sHash;
-				
+
 				echo "\n<link href='" . $this->sRequestURI . $sQuery . "' rel='Stylesheet' />\n";
 			}
-			
+
 			$this->bWorking = false;
 		}
 	}
-	
+
 	/*
 		Function: canProcessRequest
-		
+
 		Called by the <xajaxPluginManager> to determine if this plugin can
 		process the current request.  This will return true when the
 		requestURI contains an appropriate hash code.
@@ -174,23 +174,23 @@ class xajaxScriptPlugin extends xajaxRequestPlugin
 	{
 		return ('' != $this->sRequest);
 	}
-	
+
 	function _getSections($sType)
 	{
 		$objPluginManager = xajaxPluginManager::getInstance();
-		
+
 		$objPluginManager->configure('deferScriptGeneration', 'deferred');
-		
+
 		$aSections = array();
-		
+
 		// buffer output
-		
+
 		ob_start();
 		$objPluginManager->generateClientScript();
 		$sScript = ob_get_clean();
-		
+
 		// parse out blocks
-		
+
 		$aParts = explode('</' . $sType . '>', $sScript);
 		foreach ($aParts as $sPart)
 		{
@@ -198,12 +198,12 @@ class xajaxScriptPlugin extends xajaxRequestPlugin
 			if (2 == count($aValues))
 			{
 				list($sJunk, $sPart) = $aValues;
-				
+
 				$aValues = explode('>', $sPart, 2);
 				if (2 == count($aValues))
 				{
 					list($sJunk, $sPart) = $aValues;
-			
+
 					if (0 < strlen($sPart))
 						$aSections[] = $sPart;
 				}
@@ -211,17 +211,17 @@ class xajaxScriptPlugin extends xajaxRequestPlugin
 		}
 
 		$objPluginManager->configure('deferScriptGeneration', $this->bDeferScriptGeneration);
-		
+
 		return $aSections;
 	}
-	
+
 	/*
 		Function: processRequest
-		
-		Called by the <xajaxPluginManager> when the current request should be 
+
+		Called by the <xajaxPluginManager> when the current request should be
 		processed.  This plugin will generate the javascript or style sheet information
-		that would normally be output by the other xajax plugin objects, when script 
-		deferral is in effect.  If script deferral is disabled, this function returns 
+		that would normally be output by the other xajax plugin objects, when script
+		deferral is in effect.  If script deferral is disabled, this function returns
 		without performing any functions.
 	*/
 	function processRequest()
@@ -229,9 +229,9 @@ class xajaxScriptPlugin extends xajaxRequestPlugin
 		if ($this->canProcessRequest())
 		{
 			$aSections = $this->_getSections($this->sRequest);
-			
+
 //			echo "<!--" . print_r($aSections, true) . "-->";
-			
+
 			// validate the hash
 			$sHash = md5(implode($aSections));
 			if (false == $this->bValidateHash || $sHash == $this->sHash)
@@ -239,20 +239,20 @@ class xajaxScriptPlugin extends xajaxRequestPlugin
 				$sType = 'text/javascript';
 				if ('style' == $this->sRequest)
 					$sType = 'text/css';
-					
+
 				$objResponse = new xajaxCustomResponse($sType);
-				
+
 				foreach ($aSections as $sSection)
 					$objResponse->append($sSection . "\n");
-				
+
 				$objResponseManager = xajaxResponseManager::getInstance();
 				$objResponseManager->append($objResponse);
-				
+
 				header ('Expires: ' . gmdate('D, d M Y H:i:s', time() + (60*60*24)) . ' GMT');
 
 				return true;
 			}
-			
+
 			return 'Invalid script or style request.';
 			trigger_error('Hash mismatch: ' . $this->sRequest . ': ' . $sHash . ' <==> ' . $this->sHash, E_USER_ERROR);
 		}

@@ -120,7 +120,7 @@
 						{
 							echo "<tr>
 								<td>".stripslashes(nl2br($uarr['warning_text']))."</td>
-								<td>".df($uarr['warning_date'])."</td>	
+								<td>".df($uarr['warning_date'])."</td>
 								<td><a href=\"?page=contact&rcpt=".$uarr['aid']."\">".$uarr['anick']."</a>
 								</td>
 							</tr>";

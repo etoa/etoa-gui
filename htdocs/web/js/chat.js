@@ -26,25 +26,25 @@ $(function() {
 		sendChat();
 		return false;
 	});
-	
+
 	$('#logoutButton').click(function(){
 		logoutFromChat();
 	});
-	
+
 	$('#ctext').keyup(function(event) {
 		handleCTextKey(event);
 	});
-  
+
 	// add/remove unread messages indicator on scrolling
 	$('#chatitems').scroll(function(){
 		updateViewed();
 	});
-	
+
 	$('#usercount').click(fetchUserList);
-	
+
 	// gives focus to the input field.
 	$('#ctext').focus();
-	
+
 	// Start polling
 	if($('#chatitems').size() != 0)
 	{
@@ -76,13 +76,13 @@ $(function() {
 
 function poll(doLoop)
 {
-  ajaxRequest('chat_poll', { 
+  ajaxRequest('chat_poll', {
     "minId":minId,
-    "chanId":chanId 
-  }, function(data) {    
+    "chanId":chanId
+  }, function(data) {
     // selects the action according to the returned text
     // and executes the corresponding function
-    if (data.cmd) {    
+    if (data.cmd) {
       if (data.cmd == 'lo')
         logOut();
       else if (data.cmd == 'ki')
@@ -98,14 +98,14 @@ function poll(doLoop)
         (new UpdateThread()).syncUpdate(data.out,data.lastId);
       else
         msgFail('Serverfehler: notProtocol');
-    }   
-    
+    }
+
     if (doLoop) {
       chatPollTimeout = setTimeout(function(){poll(true);},chatPollDelayMilliseconds);
     }
-        
+
     hideLoading();
-   
+
   }, function(err){ localMsg(
     'Verbindung zum Server fehlgeschlagen ('+err+'). Möglicherweise' +
     ' ist der Server überlastet. Versuche den Chat neu zu laden.'
@@ -176,7 +176,7 @@ function banned(rtext)
 
 function updateUserList()
 {
-  ajaxRequest('chat_userlist', null, 
+  ajaxRequest('chat_userlist', null,
     function(data) {
       if(data.length == 0)
       {
@@ -189,13 +189,13 @@ function updateUserList()
     }, function(err) {
       msgFail('Serverfehler: '+err)
     });
-    
+
   setTimeout(function() { updateUserList(); }, 5000);
 }
 
 function fetchUserList()
 {
-  ajaxRequest('chat_userlist', null, 
+  ajaxRequest('chat_userlist', null,
     function(data) {
 		if(data.length == 0)
 		{
@@ -289,14 +289,14 @@ function logoutFromChat()
 function sendChat()
 {
   showLoading();
-  
+
   var input = $('#ctext');
   if(input.size() == 0)
   {
     msgFail('Fehler: wrongID');
     return;
   }
-  
+
   var ctext = input.val();
   if(ctext)
   {
@@ -305,10 +305,10 @@ function sendChat()
     }
     msgHistoryIdx = -1;
 
-    ajaxRequest('chat_push', {"ctext":ctext}, 
-      function(data) {  
-  
-        if (data.cmd) {    
+    ajaxRequest('chat_push', {"ctext":ctext},
+      function(data) {
+
+        if (data.cmd) {
 
           if (data.cmd == 'nu' || data.cmd == 'nl')
             logOut();
@@ -332,7 +332,7 @@ function sendChat()
   else
   {
     msgFail('Kein Text');
-  }  
+  }
   hideLoading();
 }
 
@@ -361,11 +361,11 @@ function banlist(data)
 
 function closeChat()
 {
-  try { 
+  try {
     parent.top.location = parent.main.location;
   }
-  catch(e) { 
-    window.close(); 
+  catch(e) {
+    window.close();
   }
 }
 
@@ -386,7 +386,7 @@ function handleCTextKey(event) {
       msgHistoryIdx++;
       $('#ctext').val(msgHistory[msgHistoryIdx]);
     }
-  }  
+  }
 }
 
 
@@ -406,7 +406,7 @@ function updateViewed(ev)
   else
   {
     $('#unread').hide();
-  } 
+  }
 }
 
 // checks whether the element is below the visible part of the chat
@@ -434,10 +434,10 @@ function UpdateThread()
   }
   // instance variable to store the thread id
   this.id = ++UpdateThread.ThreadCounter;
-  
+
   // unsynchronized update() function
   // only call via mutex
-  
+
   // displays new chat messages
   this.update = function(out, lastId)
   {
@@ -456,7 +456,7 @@ function UpdateThread()
               $('#chatitems').prop('clientHeight') -
               $('#chatitems').prop('scrollTop') ) < 1;
         var added = 0;
-        
+
         // appends the messages to the chat window
         $.each(out, function(key, val) {
           if($('#chatmsg_'+val.id).size() == 0)
@@ -468,7 +468,7 @@ function UpdateThread()
               elem.addClass('systemMessage');
               elem.text('<' + val.time + '> ' + val.text);
             } else {
-              
+
               if (val.admin) {
                 switch(val.admin)
                 {
@@ -507,25 +507,25 @@ function UpdateThread()
                       .attr('alt', 'Entwickler')
                       .attr('title', 'Entwickler')
                     );
-                    break;                  
+                    break;
                 }
               }
-              
+
               var link = $('<a>')
                 .attr('href','index.php?page=userinfo&id=' + val.userId)
                 .attr('target','main')
                 .text(val.nick);
-                
+
               if (val.color != "")  {
                 elem.css('color', val.color);
                 link.css('color', val.color);
               }
-              
+
               elem.append('&lt;');
               elem.append(link);
               elem.append(' | ' + val.time + '&gt; ' + val.text);
             }
-            // Insert only if id differs from last insterted element 
+            // Insert only if id differs from last insterted element
             // (mitigates possible race condition when ordinary polling is executed the same time as the chat send polling)
             if (lastInsertedId < val.id) {
               $('#chatitems').append(elem);
@@ -542,14 +542,14 @@ function UpdateThread()
             lastInsertedId = val.id;
           }
         });
-        
+
         if (msgStack.length > 0) {
           localMsg(msgStack.pop());
         }
-        
+
         // reset error message
         msgFail('');
-        
+
         if (doScroll && minId != lastId) {
           scrollDown();
         }
@@ -562,7 +562,7 @@ function UpdateThread()
       msgFail('Serverfehler: noParam');
     }
   }
-  
+
   // synchronized update() function with mutual exclusion
   this.syncUpdate = function(out, lastId)
   {
@@ -579,13 +579,13 @@ function UpdateMutex(threadObj, o, lid)
   {
     UpdateMutex.Wait = new Object();
   }
-  
+
   // static method for acquiring cpu time
   UpdateMutex.Run = function(commandId, startId)
   {
     UpdateMutex.Wait[commandId].attempt( UpdateMutex.Wait[startId] );
   }
-  
+
   // instance method for attempting to run command
   this.attempt = function( startMutexObject )
   {
@@ -615,9 +615,9 @@ function UpdateMutex(threadObj, o, lid)
     // there is no next element in the Wait queue
     return null;
   }
-  
+
   // static wait queue manipulation functions
-  
+
   // remove an element from the Wait queue
   // => destroy the mutex instance
   UpdateMutex.remove = function(tid)
@@ -653,19 +653,19 @@ function UpdateMutex(threadObj, o, lid)
     // if there is no next element, return null
     return null;
   }
-  
+
   // constructor code
   this.threadObject = threadObj;
   this.out = o;
   this.lastId = lid;
-  
+
   UpdateMutex.Wait[this.threadObject.id] = this;
-    
+
   // set number to current timestamp
   this.enter = true;
   this.number = (new Date()).getTime();
   this.enter = false;
-  
+
   // auto-start attempt to acquire mutex
   this.attempt(UpdateMutex.next(0));
 }

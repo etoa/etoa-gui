@@ -95,7 +95,7 @@ class GameLog extends BaseLog
 			status,
 			level
 		)
-		SELECT 
+		SELECT
 			facility,
 			severity,
 			timestamp,
@@ -114,7 +114,7 @@ class GameLog extends BaseLog
 		if ($numRecords > 0)	{
 			dbquery("
 			DELETE FROM
-				".self::$queueTable."				
+				".self::$queueTable."
 			LIMIT
 				".$numRecords.";");
 		}

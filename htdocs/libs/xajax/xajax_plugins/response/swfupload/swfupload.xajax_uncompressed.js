@@ -1,13 +1,13 @@
 
 	//xjxSWFup = xajax.ext.SWFupload;
-	
+
 	xajax.ext.SWFupload.swf = null;
-	
+
 	xajax.ext.SWFupload.forms = {};
 	xajax.ext.SWFupload.fields = {};
 	xajax.ext.SWFupload.queues = {};
 	xajax.ext.SWFupload.tools = {};
- 	
+
  	/* default upload settings */
 	xajax.ext.SWFupload.settings = {
 											flash_url : xajax.ext.SWFupload.config.javascript_URI+"swfupload.swf",
@@ -31,70 +31,70 @@
 											post_params : {}
 											}
 
-	if ('undefined' == typeof xajax.ext.SWFupload.lang) 
+	if ('undefined' == typeof xajax.ext.SWFupload.lang)
 	{
 		xajax.ext.SWFupload.lang = {};
 		xajax.ext.SWFupload.lang.browseFiles = 'Browse Files';
 		xajax.ext.SWFupload.lang.browseFile = 'Browse File';
 	}
-	
-	
-	
+
+
+
 	/* ------------------------------------------------------------------------------------------------------------------------ */
 	/*
 		function: xajax.ext.SWFupload.init
 		arguments: config [object]
-		
-		Creates the SWFupload instance	
+
+		Creates the SWFupload instance
   */
-  	
-	xajax.ext.SWFupload.configure = function (config) 
+
+	xajax.ext.SWFupload.configure = function (config)
 	{
 		if ("object" == typeof config) return xajax.ext.SWFupload.tools.mergeObj(this.settings,config);
 
-		return this.settings;		
+		return this.settings;
 	}
 
 	/* ------------------------------------------------------------------------------------------------------------------------ */
 	/*
 		function: xajax.ext.SWFupload.addQueue
 		arguments: child [object], parent [object], config [objeect ,multiple [bool]
-		
+
 		Creates a new a new file queue and stores the reference in this.queues
   */
 	xajax.ext.SWFupload.addQueue = function (child,parent,config,multiple)
 	{
 		var id = xajax.ext.SWFupload.tools.getId();
 		this.queues[id] = new xajax.ext.SWFupload.tools.fileQueue(id,child,parent,config,multiple);
-		
-		return id;		
+
+		return id;
 	}
 
 	/* ------------------------------------------------------------------------------------------------------------------------ */
 	/*
 		function: xajax.ext.SWFupload.applyConfig
 		arguments: oQueue [object]
-		
+
 		Applies the queue's config on the SWFupload instance
   */
-	xajax.ext.SWFupload.applyConfig = function(oQueue) 
+	xajax.ext.SWFupload.applyConfig = function(oQueue)
 	{
-		
+
 		var conf = oQueue.getConfig();
 		var swf = xajax.ext.SWFupload.getInstance();
-		
-		if ( 'undefined' != typeof conf.file_types ) 
+
+		if ( 'undefined' != typeof conf.file_types )
 			swf.setFileTypes(conf.file_types, conf.file_types_description);
-		
-		if ( 'undefined' != typeof conf.file_size_limit ) 
+
+		if ( 'undefined' != typeof conf.file_size_limit )
 			swf.setFileSizeLimit(conf.file_size_limit);
-		
-		if ( 'object' == typeof conf.post_params) 
+
+		if ( 'object' == typeof conf.post_params)
 		{
 			for (a in conf.post_params)
 			swf.addPostParam(a,conf.post_params[a]);
 		}
-		
+
 		swf.settings.file_queued_handler = function(oFile) {oQueue.addFile(oFile)};;
 		swf.settings.file_queue_error_handler = oQueue.fileQueueError;
 	}
@@ -102,16 +102,16 @@
 	/*
 		function: xajax.ext.SWFupload.selectFile
 		arguments: oQueue [object]
-		
+
 		Onclick handler for selecting file
   */
 
-	xajax.ext.SWFupload.selectFile = function(oQueue) 
+	xajax.ext.SWFupload.selectFile = function(oQueue)
 	{
 		this.applyConfig(oQueue);
-		
+
 		if (oQueue.getConfig().file_queue_limit > 0 && oQueue.getConfig().file_queue_limit <= oQueue.queued) return;
-		
+
 		xajax.ext.SWFupload.getInstance().selectFile();
 	}
 
@@ -119,11 +119,11 @@
 	/*
 		function: xajax.ext.SWFupload.selectFiles
 		arguments: oQueue [object]
-		
+
 		Onclick handler for selecting files
   */
 
-	xajax.ext.SWFupload.selectFiles = function(oQueue) 
+	xajax.ext.SWFupload.selectFiles = function(oQueue)
 	{
 		this.applyConfig(oQueue);
 		if (oQueue.getConfig().file_queue_limit > 0 && oQueue.getConfig().file_queue_limit <= oQueue.queued) return;
@@ -133,15 +133,15 @@
 	/* ------------------------------------------------------------------------------------------------------------------------ */
 	/*
 		function: xajax.ext.SWFupload.getInstance
-		arguments: 
-		
+		arguments:
+
 		Return the SWFupload instance. If there's no instance available it creates a new one with default settings.
   */
 
-	xajax.ext.SWFupload.getInstance = function() 
+	xajax.ext.SWFupload.getInstance = function()
 	{
-		if (null == this.swf) this.swf = new SWFUpload(this.settings); 
-		
+		if (null == this.swf) this.swf = new SWFUpload(this.settings);
+
 		return this.swf;
 	}
 
@@ -149,13 +149,13 @@
 	/*
 		function: xajax.ext.SWFupload.removeFile
 		arguments: QueueId [integer] , FileId [integer]
-		
+
 		Removes the file (FileID) from queue (QueueId)
   */
 
-	xajax.ext.SWFupload.removeFile = function(QueueId,FileId,finished) 
+	xajax.ext.SWFupload.removeFile = function(QueueId,FileId,finished)
 	{
-		this.queues[QueueId].removeFile(FileId,finished);		
+		this.queues[QueueId].removeFile(FileId,finished);
 	}
 
 
@@ -167,7 +167,7 @@
 	/*
 		function: xajax.ext.SWFupload.request.getFileFromQueue
 		arguments: oRequest [object]
-		
+
 		Returns the first file from first available queue.
 		Returns false if no files were selected
   */
@@ -178,24 +178,24 @@
 
 		var instances = {};
 		var queued = 0;
-		if ("string" == typeof oRequest.SWFform) 
+		if ("string" == typeof oRequest.SWFform)
 		{
-		
-		
+
+
 			if ('object' != typeof xajax.ext.SWFupload.forms[oRequest.SWFform])
 			{
 				return false;
 			}
-			for (a in xajax.ext.SWFupload.forms[oRequest.SWFform]) 
+			for (a in xajax.ext.SWFupload.forms[oRequest.SWFform])
 			{
 				var field = xajax.ext.SWFupload.forms[oRequest.SWFform][a];
-				if (0 < xajax.ext.SWFupload.queues[field].queued) { 
+				if (0 < xajax.ext.SWFupload.queues[field].queued) {
 					oRequest.currentFile = xajax.ext.SWFupload.queues[field].getFile();
 					oRequest.swf = xajax.ext.SWFupload.queues[field].getSWF();
 					return true ;
 				};
 			}
-		} else if ("string" == typeof oRequest.SWFfield) 
+		} else if ("string" == typeof oRequest.SWFfield)
 		{
 			if ('string' != typeof xajax.ext.SWFupload.fields[oRequest.SWFfield])
 			{
@@ -203,39 +203,39 @@
 			}
 
 			var qId = xajax.ext.SWFupload.fields[oRequest.SWFfield];
-				if (0 < xajax.ext.SWFupload.queues[qId].queued) { 
+				if (0 < xajax.ext.SWFupload.queues[qId].queued) {
 					oRequest.currentFile = xajax.ext.SWFupload.queues[qId].getFile();
 					oRequest.swf = xajax.ext.SWFupload.queues[qId].getSWF();
 					return true ;
 				};
-		} else 
+		} else
 		{
 
-			for (var a in xajax.ext.SWFupload.queues) 
+			for (var a in xajax.ext.SWFupload.queues)
 			{
-				if (0 < xajax.ext.SWFupload.queues[a].queued) { 
+				if (0 < xajax.ext.SWFupload.queues[a].queued) {
 					oRequest.currentFile = xajax.ext.SWFupload.queues[a].getFile();
 					oRequest.swf = xajax.ext.SWFupload.queues[a].getSWF();
 					return true;
 				};
-			}					
+			}
 		}
-		
+
 		return false;
 	}
 
 	/* ------------------------------------------------------------------------------------------------------------------------ */
 	/*
-		function: xajax.ext.SWFupload.request.	xajax.ext.SWFupload.request.processParameters = function(oRequest) 
+		function: xajax.ext.SWFupload.request.	xajax.ext.SWFupload.request.processParameters = function(oRequest)
 
 		arguments: oRequest [object]
-		
+
 		Processes the parameters
   */
 
-	xajax.ext.SWFupload.request.processParameters = function(oRequest) 
+	xajax.ext.SWFupload.request.processParameters = function(oRequest)
 	{
-		if ("SWFupload" == oRequest.mode) 
+		if ("SWFupload" == oRequest.mode)
 		{
 			oRequest.currentFile = false;
 			xajax.ext.SWFupload.request.getFileFromQueue(oRequest);
@@ -246,14 +246,14 @@
 
 	/* ------------------------------------------------------------------------------------------------------------------------ */
 	/*
-		function: xajax.ext.SWFupload.request.	xajax.ext.SWFupload.request.prepareRequest = function(oRequest) 
+		function: xajax.ext.SWFupload.request.	xajax.ext.SWFupload.request.prepareRequest = function(oRequest)
 
 		arguments: oRequest [object]
-		
+
 		doesn't to anything at all when there's a file selected for upload
   */
-  
-	xajax.ext.SWFupload.request.prepareRequest = function (oRequest) 
+
+	xajax.ext.SWFupload.request.prepareRequest = function (oRequest)
 	{
 		if ("SWFupload" == oRequest.mode && false != oRequest.currentFile) return;
 		return xajax.ext.SWFupload.bak.prepareRequest(oRequest);
@@ -261,16 +261,16 @@
 
 	/* ------------------------------------------------------------------------------------------------------------------------ */
 	/*
-		function: xajax.ext.SWFupload.request.	xajax.ext.SWFupload.request.submitRequest = function(oRequest) 
+		function: xajax.ext.SWFupload.request.	xajax.ext.SWFupload.request.submitRequest = function(oRequest)
 
 		arguments: oRequest [object]
-		
+
 		Submits the request either via SWFupload or XHR
   */
-  
-	xajax.ext.SWFupload.request.submitRequest = function(oRequest) 
+
+	xajax.ext.SWFupload.request.submitRequest = function(oRequest)
 	{
-		if ( "SWFupload" == oRequest.mode && false != oRequest.currentFile ) 
+		if ( "SWFupload" == oRequest.mode && false != oRequest.currentFile )
 		{
 
 			if (oRequest.requestURI) {
@@ -279,9 +279,9 @@
 			} else if (oRequest.bak_requestURI) {
 				oRequest.requestURI = oRequest.bak_requestURI;
 			}
-			
+
 			var swf = oRequest.swf;
-	
+
 			var fileQueue = xajax.ext.SWFupload.queues[oRequest.currentFile.QueueId];
 
 			swf.customSettings.currentFile = oRequest.currentFile;
@@ -289,18 +289,18 @@
 
 			swf.customSettings.oRequest = oRequest;
 			swf.setUploadURL(oRequest.requestURI);
-			
-			swf.settings.upload_success_handler =  function ( oFile, response ) 
+
+			swf.settings.upload_success_handler =  function ( oFile, response )
 			{
 				var xx = xajax;
 				var xt = xx.tools;
 				var xcb = xx.callback;
 				var gcb = xcb.global;
 				var lcb = oRequest.callback;
-				
+
 				var oRet = oRequest.returnValue;
 
-				var FileId = swf.customSettings.currentFile;				
+				var FileId = swf.customSettings.currentFile;
 				if ( 'function' == typeof this.old_upload_success_handler ) this.old_upload_success_handler( oFile );
 				xcb.execute([gcb, lcb], 'onSuccess', oRequest);
 				var seq = 0;
@@ -308,11 +308,11 @@
 					var responseXML = (new DOMParser()).parseFromString(response, "text/xml");
 					if (responseXML.documentElement) {
 						oRequest.status.onProcessing();
-						
+
 						var child = responseXML.documentElement.firstChild;
 						oRet = xt.xml.processFragment(child, seq, oRet, oRequest);
 					}
-				} 
+				}
 				var obj = {};
 				obj.fullName = 'Response Complete';
 				obj.sequence = seq;
@@ -320,19 +320,19 @@
 				obj.context = oRequest.context;
 				obj.cmd = 'rcmplt';
 				xt.queue.push(xx.response, obj);
-				
+
 				// do not re-start the queue if a timeout is set
 				if (null == xx.response.timeout)
 					xt.queue.process(xx.response);
 			}
 
-			swf.settings.upload_complete_handler = function(oFile) 
+			swf.settings.upload_complete_handler = function(oFile)
 			{
 
 				var qFile = this.customSettings.currentFile;
 				xajax.ext.SWFupload.removeFile(qFile.QueueId,qFile.id,true);
-	
-				if ( !xajax.ext.SWFupload.request.getFileFromQueue(oRequest) ) 
+
+				if ( !xajax.ext.SWFupload.request.getFileFromQueue(oRequest) )
 				{
 					if ('function' == typeof oRequest.onUploadComplete) oRequest.onUploadComplete();
 					return;
@@ -340,15 +340,15 @@
 
 				xajax.ext.SWFupload.request.submitRequest(oRequest);
 			}
-			
 
-			swf.settings.upload_start_handler = function(oFile) 
+
+			swf.settings.upload_start_handler = function(oFile)
 			{
 				if ('function' == typeof this.old_upload_start_handler) this.old_upload_start_handler(oFile);
 				oRequest.startTime = new Date();
 
 			}
-			swf.settings.upload_progress_handler = function (oFile, bytesLoaded, bytesTotal) 
+			swf.settings.upload_progress_handler = function (oFile, bytesLoaded, bytesTotal)
 			{
 
 				upload = {};
@@ -356,33 +356,33 @@
 				upload.total=bytesTotal;
 				upload.state="uploading";
 				var reqTime = new Date();
-	
+
 				upload.lastbytes = oRequest.lastbytes;
 				upload.now = reqTime.getTime() / 1000;
 				upload.start = oRequest.startTime.getTime()/ 1000;
-				
+
 				var step = upload.received / (upload.total / 100);
 				var progressbar = xajax.$('SWFup_progress_'+oFile.id);
 				var w = Math.round(220 *  step / 100);
 				progressbar.style.width=w+'px';
-				
+
 				var progress = xajax.$("swf_queued_filesize_"+oFile.id);
 				var elapsed = upload.now-upload.start;
 				var rate = xajax.ext.SWFupload.tools.formatBytes(upload.received/ elapsed).toString() + '/s';
 				progress.innerHTML = "<i>"+rate + "</i> "+xajax.ext.SWFupload.tools.formatBytes(upload.received)+"/"+xajax.ext.SWFupload.tools.formatBytes(upload.total);
-		    oRequest.lastbytes = upload.received;					
-				
+		    oRequest.lastbytes = upload.received;
+
 			}
 
-			swf.settings.upload_error_handler = function(file, errorCode, message) 
+			swf.settings.upload_error_handler = function(file, errorCode, message)
 			{
 				// Skipe error when a file is removed from queue (abort)
 				if (-280 == errorCode) return;
 				 if (file == null) {fileName = '';} else {
 				 	fileName = file.name;
 				 }
-				 
-				 alert("Error Code: "+errorCode+", File name: " + fileName + ", Message: " + message);		
+
+				 alert("Error Code: "+errorCode+", File name: " + fileName + ", Message: " + message);
 			};
  			swf.startUpload(swf.customSettings.currentFile.id);
 			return;
@@ -395,31 +395,31 @@
 	/*
 		function: xajax.ext.SWFupload.tools.queueFile
 		arguments: oFile,QueueId,QueueContainer
-		
+
   */
 		xajax.ext.SWFupload.tools.queueFile = function(oFile,name,QueueId,QueueContainer) {
-			
+
 			this.id = oFile.id;
 			this.name = name;
 			this.QueueId = QueueId;
-			
+
 			var container = document.createElement('div');
 			container.id = "SWFup_"+this.id;
 			container.className="swf_queued_file";
-			
-			this.elm = container; 
-			
+
+			this.elm = container;
+
 			var remove = document.createElement('div');
 			remove.className="swf_queued_file_remove";
 			remove.innerHTML="&nbsp;";
-			
-			var id = this.id;			
-			var QueueId = this.QueueId;			
+
+			var id = this.id;
+			var QueueId = this.QueueId;
 			remove.onclick= function () {
 				xajax.ext.SWFupload.removeFile(QueueId,id);
 			}
 			container.appendChild(remove);
-			
+
 			var label = document.createElement('div');
 			label.className="swf_queued_filename";
 			label.innerHTML = oFile.name;
@@ -427,47 +427,47 @@
 
 			var progress_container = document.createElement('div');
 			progress_container.className="swf_queued_file_progress_container";
-			container.appendChild(progress_container);		
+			container.appendChild(progress_container);
 
-					
+
 			var progress = document.createElement('div');
 			progress.className="swf_queued_file_progress_bar";
 			progress.style.width='1px';
 			progress.id='SWFup_progress_'+oFile.id;
-			progress_container.appendChild(progress);		
+			progress_container.appendChild(progress);
 
-		
+
 			var fSize = document.createElement('div');
 			fSize.className="swf_queued_filesize";
 			fSize.id="swf_queued_filesize_"+this.id;
 			fSize.innerHTML = xajax.ext.SWFupload.tools.formatBytes(oFile.size);
 			container.appendChild(fSize);
-			
+
 			var fClear= document.createElement('div');
 			fClear.style.clear='both';
 			container.appendChild(fClear);
-			QueueContainer.appendChild(container);			
-	
+			QueueContainer.appendChild(container);
+
 			this.container = container;
 			this.oFile = oFile;
-			
-			this.destroy = function() 
+
+			this.destroy = function()
 			{
 				QueueContainer.removeChild(container);
 			}
-			
-			return;			
+
+			return;
 	}
 
 	/* ------------------------------------------------------------------------------------------------------------------------ */
 	/*
 		function: xajax.ext.SWFupload.tools.fileQueue
 		arguments: id [integer],child [object], parent [object], multiple [bool]
-		
-		parses the form for fields
-  */	
 
-	xajax.ext.SWFupload.tools.fileQueue = function (id,child,parent,config,multiple)  
+		parses the form for fields
+  */
+
+	xajax.ext.SWFupload.tools.fileQueue = function (id,child,parent,config,multiple)
 	{
 
 
@@ -476,52 +476,52 @@
 		this.queued = 0;
 		this.files = {};
 		this.queue = null;
-	
+
 		this.getConfig = function() {return config;}
-		
+
 		var tmpName = child.name;
 		var container = document.createElement('div');
 		container.id = 'SWFbuttonContainer_'+tmpName;
-		container.className='swf_browse_button';		
+		container.className='swf_browse_button';
 		parent.appendChild(container);
 
-		
+
 		var container2 = document.createElement('div');
 		container2.id = 'SWFbutton_'+tmpName;
 		container.appendChild(container2);
-		
+
 		parent.removeChild(child);
-		
+
 		var oQueue = this;
-		if (true === multiple) 
+		if (true === multiple)
 		{
 				config.button_action = SWFUpload.BUTTON_ACTION.SELECT_FILES;
 		} else {
 				config.button_action = SWFUpload.BUTTON_ACTION.SELECT_FILE;
-			
+
 		}
 
 		var QueueContainer = document.createElement('div');
 		QueueContainer.id = 'SWFqueue_'+ this.id;
 		QueueContainer.className = 'swf_queue_container';
 		parent.appendChild(QueueContainer);
-		
+
 		config.button_placeholder_id=container2.id;
 
 		var foo = this;
-		
+
 		var fieldname = child.name;
-		this.addFile = function (oFile) 
+		this.addFile = function (oFile)
 		{
 			foo.files[oFile.id] = new xajax.ext.SWFupload.tools.queueFile(oFile,fieldname,foo.id,QueueContainer);
 			foo.queued++;
 			if (foo.queued == config.file_queue_limit) foo.swf.setButtonDisabled(true);
 		}
-		
-		this.getFile = function (FileId) 
+
+		this.getFile = function (FileId)
 		{
-			if ("undefined" != typeof FileId) return foo.files[FileId];			
-			for (a in foo.files) return foo.files[a];				
+			if ("undefined" != typeof FileId) return foo.files[FileId];
+			for (a in foo.files) return foo.files[a];
 			return false;
 		}
 
@@ -544,8 +544,8 @@
 		        }
 		    }
 		}
-		
-		this.removeFile = function(FileId,finished) 
+
+		this.removeFile = function(FileId,finished)
 		{
 
 			foo.swf.cancelUpload(FileId);
@@ -554,7 +554,7 @@
 			if (foo.queued <= config.file_queue_limit) foo.swf.setButtonDisabled(false);
 				var filediv = xajax.$("SWFup_"+foo.files[FileId].id);
 				filediv.className = true === finished ? 'swf_queued_file_finished' : 'swf_queued_file_removed';
-				setTimeout(function () 
+				setTimeout(function ()
 				{
 					xajax.ext.SWFupload.tools.FadeOut(filediv,100);
 				}, xajax.ext.SWFupload.config.FadeTimeOut);
@@ -563,7 +563,7 @@
 			delete foo.files[FileId];
 		}
 		this.destroy = function() {
-			
+
 			this.swf.destroy();
 			delete(this.swf);
 			for (a in foo.files) {
@@ -577,42 +577,42 @@
 			if (-110 == code) {
 				msg = "Die gew&auml;hlte Datei ist zu gro&szlig;!";
 				alert(msg);
-			} 
+			}
 		}
-		
+
 		this.getSWF = function() {
 			return this.swf;
-			
+
 		}
 
 		config.file_queued_handler=this.addFile;
 		config.file_queue_error_handler=this.fileQueueError;
 
-		this.swf = new SWFUpload(config); 
-		
+		this.swf = new SWFUpload(config);
+
 	}
 	/* ------------------------------------------------------------------------------------------------------------------------ */
 	/*
 		function: xajax.ext.SWFupload.tools._parseFields
 		arguments: children [array],parent [object], config [object], multiple [bool]
-		
+
 		parses the form for fields
-  */	
+  */
 
 
-	xajax.ext.SWFupload.tools._parseFields = function(children,parent,config,multiple) 
+	xajax.ext.SWFupload.tools._parseFields = function(children,parent,config,multiple)
   {
     var result={};
 		var iLen = children.length;
-		for (var i = 0; i < iLen; ++i) 
+		for (var i = 0; i < iLen; ++i)
 		{
 			var child = children[i];
 			if ('undefined' != typeof child.childNodes)
 				var res2 = xajax.ext.SWFupload.tools._parseFields(child.childNodes,child,config,multiple);
 				result = xajax.ext.SWFupload.tools.mergeObj(result,res2);
-			if (child.name) 
+			if (child.name)
 			{
-				if ('file' == child.type) 
+				if ('file' == child.type)
 				{
  					result[child.name] = xajax.ext.SWFupload.addQueue(child,parent,config,multiple);
 				}
@@ -625,37 +625,37 @@
 	/*
 		function: xajax.ext.SWFupload.tools.transForm
 		arguments: form_id [integer] ,config [object] ,multiple [bool]
-		
+
 		transforms the all fields of the given form into fileQueue instances
   */
-	
-	xajax.ext.SWFupload.tools.transForm = function(form_id,config,multiple) 
+
+	xajax.ext.SWFupload.tools.transForm = function(form_id,config,multiple)
 	{
-		var oForm = xajax.$(form_id);		
+		var oForm = xajax.$(form_id);
 		if (oForm)
 			if (oForm.childNodes) {
-				var fields = xajax.ext.SWFupload.tools._parseFields(oForm.childNodes,oForm,config,multiple);		
+				var fields = xajax.ext.SWFupload.tools._parseFields(oForm.childNodes,oForm,config,multiple);
 				xajax.ext.SWFupload.forms[form_id] = fields;
 			}
 		return;
 	}
-	
+
 	/* ------------------------------------------------------------------------------------------------------------------------ */
 
 	/*
 		function: xajax.ext.SWFupload.tools.transField
 		arguments: field_id [integer] ,config [object] ,multiple [bool]
-		
+
 		transforms the given field into a fileQueue instance
   */
-	
-	xajax.ext.SWFupload.tools.transField = function(field_id,config,multiple) 
+
+	xajax.ext.SWFupload.tools.transField = function(field_id,config,multiple)
 	{
 		try {
-			var oField = xajax.$(field_id);		
-			if ('undefined' != typeof oField) return xajax.ext.SWFupload.fields[field_id] = xajax.ext.SWFupload.addQueue(oField,oField.parentNode,config,multiple);			
+			var oField = xajax.$(field_id);
+			if ('undefined' != typeof oField) return xajax.ext.SWFupload.fields[field_id] = xajax.ext.SWFupload.addQueue(oField,oField.parentNode,config,multiple);
 
-		}catch(ex) {}		
+		}catch(ex) {}
 		return;
 	}
 
@@ -665,14 +665,14 @@
 	/*
 		function: xajax.ext.SWFupload.tools.destroyForm
 		arguments: form_id [integer]
-		
+
 		destroys the given form
   */
 
-	xajax.ext.SWFupload.tools.destroyForm = function(form_id) 
+	xajax.ext.SWFupload.tools.destroyForm = function(form_id)
 	{
 		if ("undefined" == typeof xajax.ext.SWFupload.forms[form_id]) return;
-		for (a in xajax.ext.SWFupload.forms[form_id]) 
+		for (a in xajax.ext.SWFupload.forms[form_id])
 		{
 			var key = xajax.ext.SWFupload.forms[form_id][a];
 			xajax.ext.SWFupload.queues[key].destroy();
@@ -686,11 +686,11 @@
 	/*
 		function: xajax.ext.SWFupload.tools.destroyField
 		arguments: field_id [integer]
-		
+
 		destroys the given field
   */
-  
-	xajax.ext.SWFupload.tools.destroyField = function(field_id) 
+
+	xajax.ext.SWFupload.tools.destroyField = function(field_id)
 	{
 			if ("undefined" == typeof xajax.ext.SWFupload.fields[field_id]) return;
 			var key = xajax.ext.SWFupload.fields[field_id];
@@ -706,25 +706,25 @@
 	/*
 		function: xajax.ext.SWFupload.tools.FadeOut
 		arguments: elm [object], opacity [integer]
-		
-		fades a div	
+
+		fades a div
   */
 
-	xajax.ext.SWFupload.tools.FadeOut = function(elm,opacity) 
+	xajax.ext.SWFupload.tools.FadeOut = function(elm,opacity)
 	{
 		var reduceOpacityBy = 15;
-		var rate = 40;	
-		if (opacity > 0) 
+		var rate = 40;
+		if (opacity > 0)
 		{
 			opacity -= reduceOpacityBy;
-			if (opacity < 0) 
+			if (opacity < 0)
 			{
 				opacity = 0;
 			}
-	
-			if (elm.filters) 
+
+			if (elm.filters)
 			{
-				try 
+				try
 				{
 					elm.filters.item("DXImageTransform.Microsoft.Alpha").opacity = opacity;
 				} catch (e) {
@@ -735,11 +735,11 @@
 				elm.style.opacity = opacity / 100;
 			}
 		}
-	
-		if ( opacity > 0) 
+
+		if ( opacity > 0)
 		{
 			var oSelf = this;
-			setTimeout(function () 
+			setTimeout(function ()
 			{
 				xajax.ext.SWFupload.tools.FadeOut(elm,opacity);
 			}, rate);
@@ -755,44 +755,44 @@
 	/*
 		function: xajax.ext.SWFupload.tools.formatBytes
 		arguments: bytes [integer]
-		
-		returns string with formatted size (kB / MB)	
+
+		returns string with formatted size (kB / MB)
   */
 
-	xajax.ext.SWFupload.tools.formatBytes = function(bytes) 
+	xajax.ext.SWFupload.tools.formatBytes = function(bytes)
 	{
 
 		var ret = {};
-		if (bytes / 1204  < 1024) 
+		if (bytes / 1204  < 1024)
 		{
 		    return (Math.round(bytes / 1024 * 100)/100).toString()+ " kB";
 		} else {
 		    return (Math.round(bytes / 1024 / 1024 * 100)/100).toString()+ " MB";
 		}
-		return ret;		
+		return ret;
 	}
 
 	/* ------------------------------------------------------------------------------------------------------------------------ */
-	
+
 	/*
 		function: xajax.ext.SWFupload.tools.mergeObj
 		arguments: n objects
-		
+
 		Merges all objects and returns a single object.
 		Newrt keys override existing keys.
-	
+
   */
-  
-	xajax.ext.SWFupload.tools.mergeObj = function() 
+
+	xajax.ext.SWFupload.tools.mergeObj = function()
 	{
 		if ('object' != typeof arguments) return;
-		
+
 		var res = {};
 		var len = arguments.length;
-		for (var i=0;i<len;i++) 
+		for (var i=0;i<len;i++)
 		{
 			var obj = arguments[i];
-			for (a in obj) 
+			for (a in obj)
 			{
 				res[a] = obj[a];
 			}
@@ -803,35 +803,35 @@
 	/* ------------------------------------------------------------------------------------------------------------------------ */
 	/*
 		function: xajax.ext.SWFupload.tools.getId
-		arguments: 
-		
-		returns a 'unique' (rand) id	
+		arguments:
+
+		returns a 'unique' (rand) id
   */
-  
-	xajax.ext.SWFupload.tools.getId = function() 
+
+	xajax.ext.SWFupload.tools.getId = function()
 	{
 		var pid_str = "";
 		for (i=0;i<=3;i++) {
 			var pid = 0;
 			pid = Math.random();
-			while( Math.ceil(pid).toString().length<8) 
+			while( Math.ceil(pid).toString().length<8)
 			{
 				pid *= 10;
 			}
-			pid = Math.ceil(pid).toString();		
+			pid = Math.ceil(pid).toString();
 			pid_str = pid_str+pid.toString();
 		}
 		return pid_str;
 	}
-	
+
 	/* ------------------------------------------------------------------------------------------------------------------------ */
 	/*
 		function: xajax.command.handler.register('SWFup_dfi')
 		arguments: object
-		
+
 		xajax response command for ext.SWFupload.tools.destroyField
-  */	
-	xajax.command.handler.register('SWFup_dfi', function(args) 
+  */
+	xajax.command.handler.register('SWFup_dfi', function(args)
 	{
 		args.cmdFullName = 'ext.SWFupload.tools.destroyField';
 		xajax.ext.SWFupload.tools.destroyField(args.id);
@@ -842,11 +842,11 @@
 	/*
 		function: xajax.command.handler.register('SWFup_dfo')
 		arguments: object
-		
-		xajax response command for ext.SWFupload.tools.destroyForm
-  */	
 
-	xajax.command.handler.register('SWFup_dfo', function(args) 
+		xajax response command for ext.SWFupload.tools.destroyForm
+  */
+
+	xajax.command.handler.register('SWFup_dfo', function(args)
 	{
 		args.cmdFullName = 'ext.SWFupload.tools.destroyForm';
 		xajax.ext.SWFupload.tools.destroyForm(args.id);
@@ -857,28 +857,28 @@
 	/*
 		function: xajax.command.handler.register('SWFup_tfi'I
 		arguments: object
-		
+
 		xajax response command for ext.SWFupload.tools.transField
-  */	
-	
-	xajax.command.handler.register('SWFup_tfi', function(args) 
+  */
+
+	xajax.command.handler.register('SWFup_tfi', function(args)
 	{
 			args.cmdFullName = 'ext.SWFupload.tools.transField';
-			
+
 //			if ("string" == typeof args.data.config.upload_complete_handler) {
 //				try {
 //					eval("var foo = "+args.data.config.upload_complete_handler);
 //					args.data.config.upload_complete_handler = foo;
 //				} catch(ex) {delete(args.data.config.upload_complete_handler);}
 //			}
-	
+
 			if ("string" == typeof args.data.config.upload_success_handler) {
 				try {
 					eval("var foo = "+args.data.config.upload_success_handler);
 					args.data.config.upload_success_handler = foo;
 				} catch(ex) {delete(args.data.config.upload_success_handler);}
 			}
-	
+
 			xajax.ext.SWFupload.tools.transField(args.id, args.data.config,args.data.multi);
 		return true;
 	});
@@ -887,14 +887,14 @@
 	/*
 		function: xajax.command.handler.register('SWFup_tfo']
 		arguments: object
-		
+
 		xajax response command for ext.SWFupload.tools.transForm
-  */		
-	xajax.command.handler.register('SWFup_tfo',function(args) 
+  */
+	xajax.command.handler.register('SWFup_tfo',function(args)
 	{
 try {
 		args.cmdFullName = 'ext.SWFupload.tools.transForm';
-//		if ("string" == typeof args.data.config.upload_complete_handler) 
+//		if ("string" == typeof args.data.config.upload_complete_handler)
 //		{
 //			try {
 //				eval("var foo = "+args.data.config.upload_complete_handler);
@@ -902,22 +902,22 @@ try {
 //			} catch(ex) {delete(args.data.config.upload_complete_handler);}
 //		}
 
-		if ("string" == typeof args.data.config.upload_success_handler) 
+		if ("string" == typeof args.data.config.upload_success_handler)
 		{
-			try 
+			try
 			{
 				eval("var foo = "+args.data.config.upload_success_handler);
 				args.data.config.upload_success_handler = foo;
-			} catch(ex) 
+			} catch(ex)
 			{
 				delete(args.data.config.upload_success_handler);
 			}
 		}
 		xajax.ext.SWFupload.tools.transForm(args.id, args.data.config,args.data.multi);
 
-	} catch(ex) 
+	} catch(ex)
 	{
-		
+
 	}
 
 
@@ -946,7 +946,7 @@ try {
 /*
 
 	Function: DOMParser
-	
+
 	Prototype DomParser for IE/Opera
 
 */

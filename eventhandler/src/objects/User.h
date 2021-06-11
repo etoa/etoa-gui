@@ -16,67 +16,67 @@
 
 /**
 * User class
-* 
+*
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
-class User	
+class User
 {
 	public:
 		User(int userId) {
 			this->userId = userId;
-			
+
 			this->dataLoaded = false;
 			this->techsLoaded = false;
-			
+
 			this->specialist= NULL;
-			
+
 			this->techAtWork = 0;
 		}
-		
+
 		~User() { }
-		
+
 		int getAllianceId();
 		std::string getUserNick();
 		double getUserPoints();
 		int getElorating();
 		void addElorating(int newRating);
-		
+
 		SpecialistData* getSpecialist();
-		
+
 		void setDiscovered(short absX, short absY);
 		void setDiscovered(short absX, short absY, short radius);
 		void setLastInvasion();
-		
+
 		void addCollectedWf(double res);
 		void addCollectedAsteroid(double res);
 		void addCollectedNebula(double res);
 		void addRaidedRes(double res);
-		
+
 		void addSpyattackCount();
 		int getSpyattackCount();
-		
+
 		bool getPropertiesReturnMsg();
-		
+
 		double getTechBonus(unsigned int tech);
 		unsigned int getTechLevel(unsigned int tech);
 		unsigned int getTechLevel(std::string tech);
-		
+
 		std::string stealTech(User* victim);
-		
+
 		int getUserMain();
 		int getPlanetsCount();
 		bool isInactiv();
-		
+
 		std::string getTechString();
-		
+
 		inline int getUserId() const
 		{
 		    return this->userId;
 		}
-		
+
 		bool isAtWarWith(int opponentAllianceId);
-		
+
 	private:
 		int userId;
 		int allianceId;
@@ -85,9 +85,9 @@ class User
 		int elorating;
 		unsigned int spyattackCount;
 		bool inactiv;
-		
+
 		SpecialistData* specialist;
-		
+
 		std::map<int, int> techs;
 		unsigned int techAtWork;
 		bool dataLoaded, techsLoaded;

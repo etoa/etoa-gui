@@ -13,7 +13,7 @@
 
 /**
 * Handles building updates
-* 
+*
 * \author Nicolas Perrenoud <mrcage@etoa.ch>
 */
 namespace building
@@ -28,7 +28,7 @@ namespace building
 		inline std::vector<int> getChangedPlanets() { return this->changedPlanets_; }
 	private:
 		bool changes_;
-		std::vector<int> changedPlanets_;		
+		std::vector<int> changedPlanets_;
 	};
 }
 #endif

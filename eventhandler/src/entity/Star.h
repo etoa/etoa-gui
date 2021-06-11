@@ -10,23 +10,23 @@
 
 /**
 * Star class
-* 
+*
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
 class Star : public Entity {
-public: 
+public:
 	Star(char code, mysqlpp::Row &eRow) : Entity(code, eRow) {
 		this->codeName = "Stern";
 		this->showCoords = true;
 	}
-	
+
 	~Star() {
 		this->saveData();
 	}
-	
+
 	void saveData();
-	
+
 protected:
 	void loadData();
 

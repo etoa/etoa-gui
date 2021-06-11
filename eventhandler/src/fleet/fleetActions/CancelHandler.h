@@ -7,7 +7,7 @@
 /**
 * Handles Cancel....
 * For every action, that failed, was stopped or canceled
-* 
+*
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 namespace cancel

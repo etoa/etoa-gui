@@ -9,7 +9,7 @@
 
 /**
 * RaceData class
-* 
+*
 * @author Stephan Vock<glaubinx@etoa.ch>
 */
 
@@ -28,7 +28,7 @@ public:
 		this->racePower = (double)object["race_f_power"];
 		this->racePopulation = (double)object["race_f_population"];
 	}
-	
+
 	short getRaceId();
 	double getRaceResearchtime();
 	double getRaceBuildtime();
@@ -40,7 +40,7 @@ public:
 	double getRaceFood();
 	double getRacePower();
 	double getRacePopulation();
-	
+
 private:
 	short raceId;
 	double raceResearchtime, raceBuildtime, raceFleettime;

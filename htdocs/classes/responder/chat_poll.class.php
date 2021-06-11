@@ -1,5 +1,5 @@
 <?PHP
-class ChatPollJsonResponder extends JsonResponder 
+class ChatPollJsonResponder extends JsonResponder
 {
   function getRequiredParams() {
     return array('minId', 'chanId');
@@ -12,9 +12,9 @@ class ChatPollJsonResponder extends JsonResponder
   }
 
   function getResponse($params) {
-    
+
     $data = array();
-    
+
     // Check user is logged in
     if (isset($_SESSION['user_id']))
     {
@@ -62,7 +62,7 @@ class ChatPollJsonResponder extends JsonResponder
           return array(
             'cmd' => 'ki',
             'msg' => StringUtils::replaceAsciiControlCharsUnicode($arr['kick'])
-          );            
+          );
         }
 
       }
@@ -73,7 +73,7 @@ class ChatPollJsonResponder extends JsonResponder
         $data['cmd'] = 'li';
         $data['msg'] = ChatManager::getWelcomeMessage($_SESSION['user_nick']);
       }
-      
+
       // User exists, not kicked, not banned.
       ChatManager::updateUserEntry($_SESSION['user_id'], $_SESSION['user_nick']);
 
@@ -129,7 +129,7 @@ class ChatPollJsonResponder extends JsonResponder
         'cmd' => 'lo'
       );
     }
-    
+
     return $data;
   }
 }

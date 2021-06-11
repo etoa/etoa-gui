@@ -470,12 +470,12 @@
 			echo "</select></td></tr>";
 			echo "<tr><th>Profil-Text</th><td class=\"tbldata\"><input type=\"text\" name=\"user_profile_text\" value=\"\" size=\"20\" maxlength=\"250\" /> </td></tr>";
 			echo "<tr><th>Urlaubsmodus</th><td class=\"tbldata\">
-				<input type=\"radio\" name=\"user_hmode\" value=\"2\" checked=\"checked\" /> Egal &nbsp; 
-				<input type=\"radio\" name=\"user_hmode\" value=\"0\" /> Nein &nbsp; 
+				<input type=\"radio\" name=\"user_hmode\" value=\"2\" checked=\"checked\" /> Egal &nbsp;
+				<input type=\"radio\" name=\"user_hmode\" value=\"0\" /> Nein &nbsp;
 				<input type=\"radio\" name=\"user_hmode\" value=\"1\" /> Ja</td></tr>";
 			echo "<tr><th>Gesperrt</th><td class=\"tbldata\">
-				<input type=\"radio\" name=\"user_blocked\" value=\"2\" checked=\"checked\" /> Egal &nbsp; 
-				<input type=\"radio\" name=\"user_blocked\" value=\"0\" /> Nein &nbsp; 
+				<input type=\"radio\" name=\"user_blocked\" value=\"2\" checked=\"checked\" /> Egal &nbsp;
+				<input type=\"radio\" name=\"user_blocked\" value=\"0\" /> Nein &nbsp;
 				<input type=\"radio\" name=\"user_blocked\" value=\"1\"  /> Ja</td></tr>";
 			echo "<tr><th>Geist</th><td class=\"tbldata\"><input type=\"radio\" name=\"user_ghost\" value=\"2\" checked=\"checked\" /> Egal &nbsp; <input type=\"radio\" name=\"user_ghost\" value=\"0\" /> Nein &nbsp; <input type=\"radio\" name=\"user_ghost\" value=\"1\"  /> Ja</td></tr>";
 			echo "<tr><th>Chat-Admin</th><td class=\"tbldata\"><input type=\"radio\" name=\"user_chatadmin\" value=\"2\" checked=\"checked\" /> Egal &nbsp; <input type=\"radio\" name=\"user_chatadmin\" value=\"0\" /> Nein &nbsp; <input type=\"radio\" name=\"user_chatadmin\" value=\"1\"  /> Ja</td></tr>";

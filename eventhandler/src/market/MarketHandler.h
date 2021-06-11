@@ -20,7 +20,7 @@
 
 /**
 * Handles market updates
-* 
+*
 * \author Stephan Vock <glaubinix@etoa.ch>
 */
 namespace market
@@ -36,7 +36,7 @@ namespace market
 		static void addTradePoints(std::string userId,int points,bool sell,std::string reason);
 	private:
 		bool changes_;
-		std::vector<int> changedPlanets_;		
+		std::vector<int> changedPlanets_;
 	};
 }
 #endif

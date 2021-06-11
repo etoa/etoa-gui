@@ -74,7 +74,7 @@ function planetSelectorByCell($form,$show_user_id=0)
 			{
 				$out="Dies ist kein Sonnensystem!";
 			}
-		}   
+		}
 		else
 		{
 			$out="Zelle nicht gefunden!";
@@ -113,7 +113,7 @@ function planetSelectorByUser($userNick,$show_user_id=1)
 			space_cells
 			ON planet_solsys_id=cell_id
 		WHERE
-			user_nick='$userNick'				
+			user_nick='$userNick'
 			;
 		");
 		$nr=mysql_num_rows($pres);
@@ -136,7 +136,7 @@ function planetSelectorByUser($userNick,$show_user_id=1)
 		}
 		else
 		{
-			$out="Keine Planeten gefunden!";					
+			$out="Keine Planeten gefunden!";
 		}
   }
 	else
@@ -144,13 +144,13 @@ function planetSelectorByUser($userNick,$show_user_id=1)
 		$out="Korrekten Usernamen w&auml;hlen...";
 	}
   $objResponse->addAssign("planetSelector","innerHTML", $out);
-	return $objResponse;	
+	return $objResponse;
 }
 
 function showShipsOnPlanet($pid)
 {
-	$objResponse = new xajaxResponse();	
-	
+	$objResponse = new xajaxResponse();
+
 	if ($pid!=0)
 	{
 		$updata=explode(":",$pid);
@@ -176,7 +176,7 @@ function showShipsOnPlanet($pid)
 			{
 				$out.="<tr><td style=\"width:80px\" id=\"cnt_".$arr['shiplist_id']."\">".$arr['shiplist_count']."</td>
 				<th>".$arr['ship_name']."</th>
-				<td style=\"width:150px\" id=\"actions_".$arr['shiplist_id']."\"><a href=\"javascript:;\" onclick=\"xajax_editShip(xajax.getFormValues('selector'),".$arr['shiplist_id'].")\">Bearbeiten</a> 
+				<td style=\"width:150px\" id=\"actions_".$arr['shiplist_id']."\"><a href=\"javascript:;\" onclick=\"xajax_editShip(xajax.getFormValues('selector'),".$arr['shiplist_id'].")\">Bearbeiten</a>
 				<a href=\"javascript:;\" onclick=\"if (confirm('Sollen ".$arr['shiplist_count']." ".$arr['ship_name']." von diesem Planeten gel&ouml;scht werden?')) {xajax_removeShipFromPlanet(xajax.getFormValues('selector'),".$arr['shiplist_id'].")}\">L&ouml;schen</td>
 				</tr>";
 			}
@@ -190,33 +190,33 @@ function showShipsOnPlanet($pid)
 	else
 	{
 		$out="Planet w&auml;hlen...";
-	}	
+	}
   $objResponse->addAssign("shipsOnPlanet","innerHTML", $out);
-	return $objResponse;		
+	return $objResponse;
 }
 
 function addShipToPlanet($form)
 {
-	$objResponse = new xajaxResponse();	
-	
+	$objResponse = new xajaxResponse();
+
 	$updata=explode(":",$form['planet_id']);
 	if ($updata[1]>0)
 	{
-		shiplistAdd($updata[0],$updata[1],$form['ship_id'],intval($form['shiplist_count']));	
+		shiplistAdd($updata[0],$updata[1],$form['ship_id'],intval($form['shiplist_count']));
   	$objResponse->addScript("xajax_showShipsOnPlanet(".$updata[0].")");
   }
   else
   {
   	$out="Planet unbewohnt. Kann keine Schiffe hier bauen!";
-   	$objResponse->addAssign("shipsOnPlanet","innerHTML", $out); 	
+   	$objResponse->addAssign("shipsOnPlanet","innerHTML", $out);
   }
-	return $objResponse;			
+	return $objResponse;
 }
 
 function removeShipFromPlanet($form,$listId)
 {
-	$objResponse = new xajaxResponse();	
-	
+	$objResponse = new xajaxResponse();
+
 	$updata=explode(":",$form['planet_id']);
 	dbquery("
 	DELETE FROM
@@ -225,13 +225,13 @@ function removeShipFromPlanet($form,$listId)
 		shiplist_id=".intval($listId)."
 	;");
   $objResponse->addScript("xajax_showShipsOnPlanet(".$updata[0].");");
-	return $objResponse;		
+	return $objResponse;
 }
 
 function editShip($form,$listId)
 {
-	$objResponse = new xajaxResponse();	
-	
+	$objResponse = new xajaxResponse();
+
 	$updata=explode(":",$form['planet_id']);
 	$res=dbquery("
 	SELECT
@@ -249,25 +249,25 @@ function editShip($form,$listId)
 			if ($arr['shiplist_id']==$listId)
 			{
 				$out="<input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editcnt_".$listId."\" value=\"".$arr['shiplist_count']."\" />";
-		 		$objResponse->addAssign("cnt_".$listId,"innerHTML", $out); 	
+		 		$objResponse->addAssign("cnt_".$listId,"innerHTML", $out);
 		 		$out="<a href=\"javaScript:;\" onclick=\"xajax_submitEditShip(xajax.getFormValues('selector'),".$listId.");\">Speichern</a> ";
 		 		$out.="<a href=\"javaScript:;\" onclick=\"xajax_showShipsOnPlanet(".$updata[0].");\">Abbrechen</a>";
-		 		$objResponse->addAssign("actions_".$listId,"innerHTML", $out); 	
+		 		$objResponse->addAssign("actions_".$listId,"innerHTML", $out);
 			}
 			else
 			{
-		 		$objResponse->addAssign("actions_".$arr['shiplist_id'],"innerHTML", ""); 					
+		 		$objResponse->addAssign("actions_".$arr['shiplist_id'],"innerHTML", "");
 			}
 		}
 	}
-  
-	return $objResponse;		
+
+	return $objResponse;
 }
 
 function submitEditShip($form,$listId)
 {
-	$objResponse = new xajaxResponse();	
-	
+	$objResponse = new xajaxResponse();
+
 	$updata=explode(":",$form['planet_id']);
 	dbquery("
 	UPDATE
@@ -278,7 +278,7 @@ function submitEditShip($form,$listId)
 		shiplist_id=".intval($listId)."
 	;");
   $objResponse->addScript("xajax_showShipsOnPlanet(".$updata[0].");");
-	return $objResponse;		
+	return $objResponse;
 }
 
 //Listet gefundene User auf
@@ -290,12 +290,12 @@ function searchUser($val)
   	$sOut = "";
   	$nCount = 0;
 
-	$res=dbquery("SELECT 
-		user_nick 
-	FROM 
-		users 
-	WHERE 
-		user_nick LIKE '".$val."%' 
+	$res=dbquery("SELECT
+		user_nick
+	FROM
+		users
+	WHERE
+		user_nick LIKE '".$val."%'
 	LIMIT 20;");
 	if (mysql_num_rows($res)>0)
   {
@@ -315,18 +315,18 @@ function searchUser($val)
     $objResponse = new xajaxResponse();
    	$objResponse->addScript("xajax_showShipsOnPlanet(0)");
 
-  	if(strlen($sOut) > 0)  
+  	if(strlen($sOut) > 0)
   	{
 		$sOut = "".$sOut."";
     	$objResponse->addScript("document.getElementById('$targetId').style.display = \"block\"");
     }
-  	else  
+  	else
   	{
 		$objResponse->addScript("document.getElementById('$targetId').style.display = \"none\"");
   	}
 
 	//Wenn nur noch ein User in frage kommt, diesen Anzeigen
-    if($nCount == 1)  
+    if($nCount == 1)
     {
         $objResponse->addScript("document.getElementById('$targetId').style.display = \"none\"");
         $objResponse->addScript("document.getElementById('$inputId').value = \"".$sLastHit."\"");

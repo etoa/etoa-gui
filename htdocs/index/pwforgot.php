@@ -32,13 +32,13 @@ try {
     if (isset($_POST['submit_pwforgot']) && checker_verify(0, 1, true)) {
         if ($_POST['user_nick'] && !stristr($_POST['user_nick'],"'") && $_POST['user_email_fix'] && !stristr($_POST['user_email_fix'],"'")) {
             $res = dbquery("
-        SELECT 
+        SELECT
             user_id,
-            user_registered 
-        FROM 
-            users 
-        WHERE 
-            LCASE(user_nick)='".strtolower($_POST['user_nick'])."' 
+            user_registered
+        FROM
+            users
+        WHERE
+            LCASE(user_nick)='".strtolower($_POST['user_nick'])."'
             AND user_email_fix='".$_POST['user_email_fix']."'
         ;");
             if (mysql_num_rows($res)>0) {
@@ -53,12 +53,12 @@ try {
                 $mail->send($_POST['user_email_fix']);
 
                 // Passwort updaten
-                dbquery("UPDATE 
-                users 
-            SET 
-                user_password='".saltPasswort($pw)."' 
-            WHERE 
-                user_nick='".$_POST['user_nick']."' 
+                dbquery("UPDATE
+                users
+            SET
+                user_password='".saltPasswort($pw)."'
+            WHERE
+                user_nick='".$_POST['user_nick']."'
                 AND user_email_fix='".$_POST['user_email_fix']."'
             ;");
 

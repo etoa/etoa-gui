@@ -1,5 +1,5 @@
 <?PHP
-class ChatUserlistJsonResponder extends JsonResponder 
+class ChatUserlistJsonResponder extends JsonResponder
 {
   function getRequiredParams() {
     return array();
@@ -12,7 +12,7 @@ class ChatUserlistJsonResponder extends JsonResponder
   }
 
   function getResponse($params) {
-    
+
     $data = array();
 
     if (ChatManager::isUserOnline($_SESSION['user_id'])) {
@@ -21,5 +21,5 @@ class ChatUserlistJsonResponder extends JsonResponder
     return array();
 
   }
-}  
+}
 ?>

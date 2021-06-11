@@ -111,6 +111,6 @@
 	else
 		error_msg("Keine Umfragen vorhanden");
 	echo "<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" />";
-	
+
 
 ?>

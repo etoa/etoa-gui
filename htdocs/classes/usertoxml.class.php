@@ -58,15 +58,15 @@ class UserToXml
 $xml = "<userbackup>
 	<export date=\"".date("d.m.Y, H:i")."\" timestamp=\"".time()."\" />
 	<account>
-		<id>".$arr['user_id']."</id>	
+		<id>".$arr['user_id']."</id>
 		<nick>".$arr['user_nick']."</nick>
 		<name>".$arr['user_name']."</name>
 		<email>".$arr['user_email']."</email>
 		<points>".$arr['user_points']."</points>
 		<rank>".$arr['user_rank']."</rank>
-		<online>".date("d.m.Y, H:i",$arr['user_logouttime'])."</online>		
-		<ip>".$arr['user_ip']."</ip>		
-		<host>".$arr['user_hostname']."</host>		
+		<online>".date("d.m.Y, H:i",$arr['user_logouttime'])."</online>
+		<ip>".$arr['user_ip']."</ip>
+		<host>".$arr['user_hostname']."</host>
 		<alliance id=\"".$arr['user_alliance_id']."\" tag=\"".$arr['alliance_tag']."\">".$arr['alliance_name']."</alliance>
 		<race id=\"".$arr['user_race_id']."\">".$arr['race_name']."</race>
 	</account>
@@ -100,7 +100,7 @@ $xml = "<userbackup>
 					}
 					$xml.= "
 		<planet id=\"".$parr['id']."\" name=\"".$parr['planet_name']."\" main=\"".$parr['planet_user_main']."\">
-			<type id=\"".$parr['planet_type_id']."\">".$parr['type_name']."</type>					
+			<type id=\"".$parr['planet_type_id']."\">".$parr['type_name']."</type>
 			<metal>".intval($parr['planet_res_metal'])."</metal>
 			<crystal>".intval($parr['planet_res_crystal'])."</crystal>
 			<plastic>".intval($parr['planet_res_plastic'])."</plastic>

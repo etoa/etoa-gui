@@ -17,13 +17,13 @@
 	//////////////////////////////////////////////////
 	//
 	//
-	
+
 	/**
 	* User information
 	*
 	* @author MrCage <mrcage@etoa.ch>
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/	
+	*/
 
 
 	echo "<h1>Benutzerprofil</h1>";
@@ -34,17 +34,17 @@
 		$uid = intval($_GET['id']);
 	else
 		$uid = 0;
-	
+
 	if ($uid > 0)
 	{
 		$user = new User($uid);
-		
+
 		// Besuchercounter
 		if ($user->id != $cu->id)
 			$user->visits++;
 
 		if ($user->isValid)
-		{			
+		{
  			tableStart("Profil von ".$user->nick);
 			if ($user->profileImage != "")
 			{
@@ -81,7 +81,7 @@
 			if ($user->rank > 0)
 			{
 				echo "<tr><th style=\"width:120px;\">Aktueller Rang:</th><td>".nf($user->rank)."</td></tr>";
-			}					
+			}
 			if ($user->rankHighest>0)
 			{
 				echo "<tr><th style=\"width:120px;\">Bester Rang:</th><td>".nf($user->rankHighest)."</td></tr>";
@@ -89,11 +89,11 @@
 			if ($user->rating->battle > 0)
 			{
 				echo "<tr><th style=\"width:120px;\">Kampfpunkte:</th><td>".nf($user->rating->battle)." (Gewonnen/Verloren/Total: ".nf($user->rating->battlesWon)."/".nf($user->rating->battlesLost)."/".nf($user->rating->battlesFought).")</td></tr>";
-			}			
+			}
 			if ($user->rating->trade > 0)
 			{
 				echo "<tr><th style=\"width:120px;\">Handelspunkte:</th><td>".nf($user->rating->trade)." (Einkäufe/Verkäufe: ".nf($user->rating->tradesBuy)."/".nf($user->rating->tradesSell).")</td></tr>";
-			}			
+			}
 			if ($user->rating->diplomacy > 0)
 			{
 				echo "<tr><th style=\"width:120px;\">Diplomatiepunkte:</th><td>".nf($user->rating->diplomacy)."</td></tr>";
@@ -105,15 +105,15 @@
 			if ($user->registered > 0)
 			{
 				echo "<tr><th style=\"width:120px;\">Registriert:</th><td>".df($user->registered)." (dabei seit ".tf(time()-$user->registered).")</td></tr>";
-			}			
+			}
 			if ($user->admin)
 			{
 				echo "<tr><th style=\"width:120px;\">Game-Admin:</th><td class=\"adminColor\">Dies ist ein Account eines Game-Admins. Er darf gemäss Regeln nicht angegriffen werden.</td></tr>";
-			}			
+			}
 			if ($user->chatadmin)
 			{
 				echo "<tr><th style=\"width:120px;\">Chat-Admin:</th><td>Dies ist ein Account eines Chat-Admins. Er hat das Recht, Spieler im Chat zu kicken oder zu bannen.</td></tr>";
-			}			
+			}
 			if ($user->ghost)
 			{
 				echo "<tr><th style=\"width:120px;\">Geist:</th><td>Dies ist ein Geist-Account. Er wird nicht in der Statistik angezeigt.</td></tr>";
@@ -124,7 +124,7 @@
 			//
 			// User-Log
 			//
-			
+
 			iBoxStart("&Ouml;ffentliches Benutzer-Log");
 			$lres = dbquery("
 			SELECT
@@ -132,7 +132,7 @@
 			FROM
 				user_log
 			WHERE
-				user_id=".$user->id." 
+				user_id=".$user->id."
 				AND public=1
 			ORDER BY timestamp DESC
 			LIMIT 10;");
@@ -140,7 +140,7 @@
 			{
 				while ($larr = mysql_fetch_array($lres))
 				{
-					echo "<div class=\"infoLog\">".text2html($larr['message']);			
+					echo "<div class=\"infoLog\">".text2html($larr['message']);
 					echo "<span>".df($larr['timestamp'],0)."";
 					echo "</span>
 					</div>";
@@ -163,7 +163,7 @@
 				FROM
 					user_log
 				WHERE
-					user_id=".$user->id." 
+					user_id=".$user->id."
 					AND public=0
 				ORDER BY timestamp DESC
 				LIMIT 30;");
@@ -171,7 +171,7 @@
 				{
 					while ($larr = mysql_fetch_array($lres))
 					{
-						echo "<div class=\"infoLog\">".text2html($larr['message']);			
+						echo "<div class=\"infoLog\">".text2html($larr['message']);
 						echo "<span>".df($larr['timestamp'])."";
 						echo "</span>
 						</div>";
@@ -183,8 +183,8 @@
 					echo "Keine Nachrichten!";
 				}
 				iBoxEnd();
-        
-        
+
+
 			  $res = dbquery("
 				SELECT
 					user_res_from_raid,
@@ -204,7 +204,7 @@
 				echo"Trümmerfelder: ".nf($arr['user_res_from_tf'])." t";
 				iBoxEnd();
 			}
-      }           
+      }
 			if (!$popup)
 			{
 				echo "<input type=\"button\" value=\"Nachricht senden\" onclick=\"document.location='?page=messages&amp;mode=new&amp;message_user_to=".intval($user->id)."'\" /> &nbsp; ";

@@ -15,20 +15,20 @@
 	// Programmiert von Nicolas Perrenoud				 		//
 	// www.nicu.ch | mail@nicu.ch								 		//
 	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	//////////////////////////////////////////////////	
+	//////////////////////////////////////////////////
 	//
-	// 	Dateiname: technologies.php	
-	// 	Topic: Formular-Definitionen für Technologien 
-	// 	Autor: Nicolas Perrenoud alias MrCage							
+	// 	Dateiname: technologies.php
+	// 	Topic: Formular-Definitionen für Technologien
+	// 	Autor: Nicolas Perrenoud alias MrCage
 	// 	Erstellt: 01.12.2004
 	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage
 	// 	Bearbeitet am: 31.03.2006
-	// 	Kommentar: 	
+	// 	Kommentar:
 	//
-	
+
 	// VARIABLES
-	
-	define("MODUL_NAME","Forschung");				
+
+	define("MODUL_NAME","Forschung");
 	define("DB_TABLE", 'technologies');
 	define("DB_TABLE_ID", "tech_id");
 	define("DB_OVERVIEW_ORDER_FIELD","tech_type_id, tech_order,tech_name");
@@ -39,13 +39,13 @@
 	define("DB_IMAGE_PATH",IMAGE_PATH."/technologies/technology<DB_TABLE_ID>_small.".IMAGE_EXT);
 
 	$form_switches = array("Anzeigen"=>'tech_show');
-  
+
   define('POST_INSERT_UPDATE_METHOD','Ranking::calcTechPoints');
-	
+
 	// FIELDS
-	
+
 	// Description:
-	
+
 	// name	 											// DB Field Name
 	// text												// Field Description
 	// type												// Field Type: text, password, textarea, timestamp, radio, select, checkbox, email, url, numeric
@@ -59,12 +59,12 @@
 	// select_elem (Array)				// Select Elements (desc=>value)
 	// select_elem_checked				// Value of default checked Select Element (desc=>value)
 	// show_overview							// Set 1 to show on overview page
-  
+
 	$db_fields = array (  array	(	"name" => "tech_id",
 																		"text" => "ID",
 																		"type" => "readonly",
 																		"show_overview" => 1
-																	), 	
+																	),
 												array	(	"name" => "tech_name",
 																		"text" => "Name",
 																		"type" => "text",
@@ -93,7 +93,7 @@
 																		"select_elem" => admin_get_select_elements('tech_types',"type_id","type_name","type_name"),
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
-																	),																	
+																	),
 											array	(	"name" => "tech_shortcomment",
 																		"text" => "Titel",
 																		"type" => "textarea",
@@ -208,7 +208,7 @@
 																		"show_overview" => 0,
 																		"line" => 1
 																	),
-											
+
 												array	(	"name" => "tech_last_level",
 																		"text" => "Max Level",
 																		"type" => "text",
@@ -222,7 +222,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 1
-																	),	
+																	),
 												array	(	"name" => "tech_stealable",
 																		"text" => "Stehlbar",
 																		"type" => "radio",
@@ -236,7 +236,7 @@
 																		"select_elem" => "",
 																		"select_elem_checked" => "",
 																		"show_overview" => 0
-																	)																	
+																	)
 											);
-        
+
 ?>

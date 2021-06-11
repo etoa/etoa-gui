@@ -242,7 +242,7 @@ $twig->addGlobal("title", "XML-Import/Export");
 		FROM
 			users
 		ORDER BY
-			user_nick;		
+			user_nick;
 		");
 		if (mysql_num_rows($res)>0)
 		{
@@ -251,8 +251,8 @@ $twig->addGlobal("title", "XML-Import/Export");
 				echo "<option value=\"".$arr['user_id']."\">".$arr['user_nick']."</option>";
 			}
 		}
-		echo "</select> 
-		<input type=\"submit\" name=\"exportcache\" value=\"Exportieren\" /> 
+		echo "</select>
+		<input type=\"submit\" name=\"exportcache\" value=\"Exportieren\" />
 		<input type=\"submit\" name=\"exportdl\" value=\"Herunterladen\" /></p>";
 		echo "</form>";
 
