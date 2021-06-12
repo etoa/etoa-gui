@@ -519,7 +519,6 @@ if ($sub=="prices")
 
 	function buildingNames(Container $app): array
 	{
-		$data = [];
 		$res = $app['db']
 			->executeQuery("SELECT
 					building_id,
@@ -530,6 +529,7 @@ if ($sub=="prices")
 					building_type_id,
 					building_order,
 					building_name;");
+		$data = [];
 		while ($arr = $res->fetchAssociative())
 		{
 			$data[$arr['building_id']] = $arr['building_name'];

@@ -7,6 +7,8 @@
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////
 
+use Pimple\Container;
+
 ob_start();
 
 require("inc/includer.inc.php");
@@ -31,12 +33,7 @@ if ($s->user_id) {
         echo "<ul style=\"list-style-type:none;margin-left:-20px;\">";
         foreach ($_SESSION['cp_users'] as $uid) {
             if ($uid>0) {
-                $userNick = $app['db']
-                    ->executeQuery("SELECT user_nick
-                        FROM users
-                        WHERE user_id = ?;",
-                        [$uid])
-                    ->fetchOne();
+                $userNick = fetchUserNicknameById($app, $uid);
                 if ($userNick != null) {
                     echo "<div id=\"ttuser".$uid."\" style=\"display:none;\">
                     <a href=\"index.php?page=user&amp;sub=edit&amp;id=".$uid."\" target=\"main\">Daten anzeigen</a><br/>
@@ -63,3 +60,13 @@ if ($s->user_id) {
 echo $twig->render('admin/layout/popup.html.twig', [
     'content' => ob_get_clean(),
 ]);
+
+function fetchUserNicknameById(Container $app, int $id)
+{
+    return $app['db']
+        ->executeQuery("SELECT user_nick
+            FROM users
+            WHERE user_id = ?;",
+            [$id])
+        ->fetchOne();
+}

@@ -7,6 +7,8 @@
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////
 
+use Pimple\Container;
+
 ob_start();
 
 require_once __DIR__ . '/../../vendor/autoload.php';
@@ -66,12 +68,7 @@ try {
         $searchQuery = $_POST['search_query'] ?? '';
         $navmenu = fetchJsonConfig("admin-menu.conf");
 
-        $numNotes = $app['db']
-            ->executeQuery("SELECT COUNT(*)
-                FROM admin_notes
-                WHERE admin_id = ?;",
-                [$s->user_id])
-            ->fetchOne();
+        $numNotes = numberOfNotesForAdmin($app, $s->user_id);
 
         $numTickets = Ticket::countAssigned($s->user_id) + Ticket::countNew();
 
@@ -96,32 +93,13 @@ try {
             $twig->addGlobal('eventHandlerPid', $eventHandlerPid);
         }
 
-        $usersCount = $app['db']
-            ->executeQuery("SELECT COUNT(*)
-                FROM users;")
-            ->fetchOne();
-
-        $usersOnline = $app['db']
-            ->executeQuery("SELECT COUNT(*)
-                FROM user_sessions
-                WHERE time_action > ?;",
-                [(time() - $cfg->user_timeout->v)])
-            ->fetchOne();
-
-        $adminsOnline = $app['db']
-            ->executeQuery("SELECT COUNT(*)
-                FROM admin_user_sessions
-                WHERE time_action > ?;",
-                [(time() - $cfg->admin_timeout->v)])
-            ->fetchOne();
-
         $adminsCount = AdminUser::countAll();
         $dbSize = DBManager::getInstance()->getDbSize();
 
-        $twig->addGlobal('usersOnline', $usersOnline);
-        $twig->addGlobal('usersCount', $usersCount);
+        $twig->addGlobal('usersOnline', usersOnline($app, $cfg->user_timeout->v));
+        $twig->addGlobal('usersCount', usersCount($app));
         $twig->addGlobal('usersAllowed', $cfg->enable_register->p2);
-        $twig->addGlobal('adminsOnline', $adminsOnline);
+        $twig->addGlobal('adminsOnline', adminsOnline($app, $cfg->admin_timeout->v));
         $twig->addGlobal('adminsCount', $adminsCount);
         $twig->addGlobal('dbSize', $dbSize);
 
@@ -190,4 +168,42 @@ try {
         'content' => $ex,
     ]);
     exit;
+}
+
+function numberOfNotesForAdmin(Container $app, int $id)
+{
+    return $app['db']
+        ->executeQuery("SELECT COUNT(*)
+            FROM admin_notes
+            WHERE admin_id = ?;",
+            [$id])
+        ->fetchOne();
+}
+
+function usersCount(Container $app)
+{
+    return $app['db']
+        ->executeQuery("SELECT COUNT(*)
+            FROM users;")
+        ->fetchOne();
+}
+
+function usersOnline(Container $app, int $timeout)
+{
+    return $app['db']
+        ->executeQuery("SELECT COUNT(*)
+            FROM user_sessions
+            WHERE time_action > ?;",
+            [(time() - $timeout)])
+        ->fetchOne();
+}
+
+function adminsOnline(Container $app, int $timeout)
+{
+    return $app['db']
+        ->executeQuery("SELECT COUNT(*)
+            FROM admin_user_sessions
+            WHERE time_action > ?;",
+            [(time() - $timeout)])
+        ->fetchOne();
 }

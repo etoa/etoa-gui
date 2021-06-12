@@ -29,51 +29,26 @@
 	//
 	// Bilder prüfen test by lambo test by nicu
 	//
+
+use Pimple\Container;
+
 	if ($sub=="imagecheck")
 	{
 		$dir = ALLIANCE_IMG_DIR."/";
-		echo "<h1>Allianz-Bilder pr&uuml;fen</h1>";
+		echo "<h1>Allianz-Bilder prüfen</h1>";
 
 		//
 		// Check submit
 		//
 		if (isset($_POST['validate_submit']))
 		{
-			foreach ($_POST['validate'] as $id=>$v)
-			{
-				if ($v==0)
-				{
-					$arr = $app['db']
-						->executeQuery("SELECT alliance_img
-							FROM alliances
-							WHERE alliance_id = ?;",
-							[$id])
-						->fetchAssociative();
-					if ($arr != null)
-					{
-						if (file_exists(ALLIANCE_IMG_DIR."/".$arr['alliance_img']))
-						{
-							unlink(ALLIANCE_IMG_DIR."/".$arr['alliance_img']);
-						}
-						$affected = $app['db']
-							->executeStatement("UPDATE alliances
-								SET alliance_img = '',
-									alliance_img_check = 0
-								WHERE alliance_id = ?;",
-								[$id]);
-						if ($affected > 0)
-						{
-							echo "Bild entfernt!<br/><br/>";
-						}
+			foreach ($_POST['validate'] as $id=>$v) {
+				if ($v == 0) {
+					if (removeAlliancePicture($app, $id)) {
+						echo "Bild entfernt!<br/><br/>";
 					}
-				}
-				else
-				{
-					$app['db']
-						->executeStatement("UPDATE alliances
-							SET alliance_img_check = 0
-							WHERE alliance_id = ?;",
-							[$id]);
+				} else {
+					markAlliancePictureChecked($app, $id);
 				}
 			}
 		}
@@ -83,18 +58,7 @@
 		//
 		echo "<h2>Noch nicht verifizierte Bilder</h2>";
 		echo "Diese Bilder gehören zu aktiven Allianzen. Bitte prüfe regelmässig, ob sie nicht gegen unsere Regeln verstossen!<br/>";
-		$data = $app['db']
-			->executeQuery("SELECT
-					alliance_id,
-					alliance_tag,
-					alliance_name,
-					alliance_img
-				FROM
-					alliances
-				WHERE
-					alliance_img_check = 1
-					AND alliance_img != '';")
-			->fetchAllAssociative();
+		$data = fetchAlliancesWithUncheckedPictures($app);
 		if (count($data) > 0)
 		{
 			echo "Es sind ".count($data)." Bilder gespeichert!<br/><br/>";
@@ -127,16 +91,7 @@
 		//
 		// Orphans
 		//
-		$data = $app['db']
-			->executeQuery("SELECT
-					alliance_id,
-					alliance_name,
-					alliance_img
-				FROM
-					alliances
-				WHERE
-					alliance_img!=''")
-			->fetchAllAssociative();
+		$data = fetchAlliancesWithPictures($app);
 		$nr = count($data);
 		$paths = array();
 		$nicks = array();
@@ -183,7 +138,7 @@
 		if ($co>0)
 		{
 				echo "Diese Bilder gehören zu Allianzen, die nicht mehr in unserer Datenbank vorhanden sind.<br/>
-				Es sind $co Bilder vorhanden. <a href=\"?page=$page&amp;sub=$sub&amp;action=clearoverhead\">L&ouml;sche alle verwaisten Bilder</a><br/><br/>";
+				Es sind $co Bilder vorhanden. <a href=\"?page=$page&amp;sub=$sub&amp;action=clearoverhead\">Lösche alle verwaisten Bilder</a><br/><br/>";
 				echo "<table class=\"tb\">
 				<tr><th>Datei</th><th>Bild</th></tr>";
 				foreach($overhead as $v)
@@ -243,21 +198,16 @@
 		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
 		echo '<table class="tbl">';
 		echo "<tr><th>Tag:</th><td>
-		<input type=\"text\" name=\"alliance_tag\" value=\"\" />
+		<input type=\"text\" name=\"alliance_tag\" value=\"\" required />
 		</td></td>";
 		echo "<tr><th>Name:</th><td>
-		<input type=\"text\" name=\"alliance_name\" value=\"\" />
+		<input type=\"text\" name=\"alliance_name\" value=\"\" required />
 		</td></td>";
 		echo "<tr><th>Gründer:</th><td>
 		<select name=\"alliance_founder_id\" />";
-		$res = $app['db']
-			->executeQuery("SELECT user_id, user_nick
-				FROM users
-				WHERE user_alliance_id = 0
-				ORDER BY user_nick;");
-		while ($arr = $res->fetchAssociative())
+		foreach (usersWithoutAllianceList($app) as $key => $value)
 		{
-			echo "<option value=\"".$arr['user_id']."\">".$arr['user_nick']."</option>";
+			echo "<option value=\"".$key."\">".$value."</option>";
 		}
 		echo "</select>
 		</td></td>";
@@ -312,55 +262,21 @@
 
 	elseif ($sub=="crap")
 	{
-		echo "<h1>&Uuml;berfl&uuml;ssige Daten</h1>";
+		echo "<h1>Überflüssige Daten</h1>";
 
-		// Daten laden
-		$alliances = get_alliance_names();
-
-		$ally_ids = array_keys($alliances);
-		$users = get_user_names();
-		$user_ids=array_keys($users);
-
-		if (isset($_GET['action']) && $_GET['action']=="cleanranks")
+		if (isset($_GET['action']) && $_GET['action']=="cleanupRanks")
 		{
-			$data = $app['db']
-				->executeQuery("SELECT rank_alliance_id,rank_id
-					FROM alliance_ranks;")
-				->fetchAllAssociative();
-			if (count($data) > 0) {
-				foreach ($data as $arr) {
-					if (!in_array($arr['rank_alliance_id'],$ally_ids)) {
-						$app['db']
-							->executeStatement("DELETE FROM alliance_ranks
-								WHERE rank_id = ?;",
-								[$arr['rank_id']]);
-					}
-				}
+			if (deleteRanksWithoutAlliance($app) > 0) {
+				echo "Fehlerhafte Daten gelöscht.";
 			}
-			echo "Fehlerhafte Daten gel&ouml;scht<br/>";
 		}
-		elseif (isset($_GET['action']) && $_GET['action']=="clearbnd")
+		elseif (isset($_GET['action']) && $_GET['action']=="cleanupDiplomacy")
 		{
-			$data = $app['db']
-				->executeQuery("SELECT
-						alliance_bnd_alliance_id1,
-						alliance_bnd_alliance_id2,
-						alliance_bnd_id
-					FROM alliance_bnd;")
-				->fetchAllAssociative();
-			if (count($data) > 0) {
-				foreach ($data as $arr) {
-					if (!in_array($arr['alliance_bnd_alliance_id1'],$ally_ids) || !in_array($arr['alliance_bnd_alliance_id2'],$ally_ids)) {
-						$app['db']
-							->executeStatement("DELETE FROM alliance_bnd
-								WHERE alliance_bnd_id = ?;",
-								[$arr['alliance_bnd_id']]);
-					}
-				}
+			if (deleteDiplomacyWithoutAlliance($app) > 0) {
+				echo "Fehlerhafte Daten gelöscht.";
 			}
-			echo "Fehlerhafte Daten gel&ouml;scht<br/>";
 		}
-		elseif (isset($_GET['action']) && $_GET['action']=="dropinactive")
+		elseif (isset($_GET['action']) && $_GET['action']=="cleanupEmptyAlliances")
 		{
 			$drop = $app['db']
 				->executeQuery("SELECT * FROM alliances ORDER BY alliance_tag;")
@@ -370,13 +286,7 @@
 				$cnt=0;
 				foreach ($data as $arr)
 				{
-					$usersInAlliance = $app['db']
-						->executeQuery("SELECT COUNT(*)
-							FROM users
-							WHERE user_alliance_id = ?;",
-						[$arr['alliance_id']])
-						->fetchOne();
-					if ($usersInAlliance == 0)
+					if (numberOfUsersInAlliance($app, $arr['alliance_id']) == 0)
 					{
 						$app['db']
 							->executeStatement("DELETE FROM alliances
@@ -398,123 +308,125 @@
 					}
 				}
 			}
-			echo "$cnt leere Allianzen wurden gel&ouml;scht!<br/>";
+			echo "$cnt leere Allianzen wurden gelöscht.<br/>";
 		}
 
-		if (count($alliances)>0)
-		{
-			// Ränge ohne Allianz
-			echo "<h2>R&auml;nge ohne Allianz:</h2>";
-			$data = $app['db']
-				->executeQuery("SELECT rank_alliance_id
-					FROM alliance_ranks;")
-				->fetchAllAssociative();
-			if (count($data) > 0)
-			{
-				$cnt = 0;
-				foreach ($data as $arr) {
-					if (!in_array($arr['rank_alliance_id'], $ally_ids)) {
-						$cnt++;
-					}
-				}
-				if ($cnt > 0) {
-					echo "$cnt von ".count($data)." R&auml;nge ohne Allianz! <a href=\"?page=$page&amp;sub=$sub&amp;action=cleanranks\">L&ouml;schen?</a>";
-				} else {
-					echo "Keine fehlerhaften Daten gefunden";
-				}
-			}
-
-			// Bündnisse/Kriege ohne Allianz
-			echo "<h2>B&uuml;ndnisse/Kriege ohne Allianz:</h2>";
-			$data = $app['db']
-				->executeQuery("SELECT
-						alliance_bnd_alliance_id1,
-						alliance_bnd_alliance_id2
-					FROM alliance_bnd;")
-				->fetchAllAssociative();
-			if (count($data) > 0)
-			{
-				$cnt = 0;
-				foreach ($data as $arr) {
-					if (!in_array($arr['alliance_bnd_alliance_id1'], $ally_ids) || !in_array($arr['alliance_bnd_alliance_id2'], $ally_ids)) {
-						$cnt++;
-					}
-				}
-				if ($cnt > 0) {
-					echo "$cnt von ".count($data)." B&uuml;ndnisse/Kriege ohne Allianz! <a href=\"?page=$page&amp;sub=$sub&amp;action=clearbnd\">L&ouml;schen?</a>";
-				} else {
-					echo "Keine fehlerhaften Daten gefunden!";
-				}
-			}
-
-			// Allianzen ohne Gründer
-			echo "<h2>Allianzen ohne Gr&uuml;nder:</h2>";
-			echo "<table class=\"tbl\">";
-			echo "<tr><th class=\"tbltitle\">Tag</th><th class=\"tbltitle\">Name</th><th>&nbsp;</th></tr>";
-			$cnt=0;
-			foreach($alliances as $k=>$v)
-			{
-				if (!in_array($v['founder_id'],$user_ids))
-				{
-					echo "<tr><td class=\"tbldata\">".$v['name']."</td><td class=\"tbldata\">".$v['tag']."</td><td class=\"tbldata\"><a href=\"?page=$page&amp;sub=edit&amp;alliance_id=$k\">detail</a></td></tr>";
-					$cnt++;
-				}
-			}
-			if ($cnt==0)
-				echo "<tr><td class=\"tbldata\" colspan=\"2\">Keine fehlerhaften Daten gefunden!</td></tr>";
-			echo "</table><br/>";
-			if ($cnt>0)
-				echo "$cnt Allianzen von ".count($alliances)." ohne Gr&uuml;nder!";
-
-			// User mit fehlerhafter Allianz-Verknüpfung
-			echo "<h2>User mit fehlerhafter Allianz-Verkn&uuml;pfung:</h2>";
-			echo "<table class=\"tbl\">";
-			echo "<tr><th class=\"tbltitle\">Nick</th><th class=\"tbltitle\">E-Mail</th><th>&nbsp;</th></tr>";
-			$cnt=0;
-			foreach($users as $k=>$v)
-			{
-				if ($v['alliance_id']!=0)
-				{
-					if (!in_array($v['alliance_id'],$ally_ids))
-					{
-						echo "<tr><td class=\"tbldata\">".$v['nick']."</td><td class=\"tbldata\">".$v['email']."</td><td class=\"tbldata\"><a href=\"?page=user&amp;sub=edit&amp;user_id=$k\">detail</a></td></tr>";
-						$cnt++;
-					}
-				}
-			}
-			if ($cnt==0)
-				echo "<tr><td class=\"tbldata\" colspan=\"2\">Keine fehlerhaften Daten gefunden!</td></tr>";
-			echo "</table><br/>";
-			if ($cnt>0)
-				echo "$cnt User von ".count($users)." mit fehlerhafter Verkn&uuml;pfung!";
-
-			// Leere Allianzen
-			echo "<h2>Leere Allianzen (Allianzen ohne User)</h2>";
-			echo "<table class=\"tbl\">";
-			echo "<tr><th class=\"tbltitle\">Name</th><th class=\"tbltitle\">Tag</th><th>&nbsp;</th><th>&nbsp;</th></tr>";
-			$cnt=0;
-			foreach($alliances as $k=>$v)
-			{
-				$ucnt=0;
-				foreach($users as $uk=>$uv)
-				{
-					if ($uv['alliance_id']==$k)
-						$ucnt++;
-				}
-				if ($ucnt==0)
-				{
-					echo "<tr><td class=\"tbldata\">".$v['name']."</td><td class=\"tbldata\">".$v['tag']."</td><td class=\"tbldata\"><a href=\"?page=$page&amp;sub=edit&amp;alliance_id=$k\">detail</a></td><td class=\"tbldata\"><a href=\"?page=$page&amp;sub=drop&amp;alliance_id=$k\">l&ouml;schen</a></td></tr>";
-					$cnt++;
-				}
-			}
-			if ($cnt==0)
-				echo "<tr><td class=\"tbldata\" colspan=\"2\">Keine fehlerhaften Daten gefunden!</td></tr>";
-			echo "</table><br/>";
-			if ($cnt>0)
-				echo "$cnt Allianzen von ".count($alliances)." sind leer! <a href=\"?page=$page&amp;sub=$sub&amp;action=dropinactive\">L&ouml;schen?</a>";
+		// Ränge ohne Allianz
+		echo "<h2>Ränge ohne Allianz</h2>";
+		$ranksWithoutAlliance = numberOfRanksWithoutAlliance($app);
+		if ($ranksWithoutAlliance > 0) {
+			echo "$ranksWithoutAlliance Ränge ohne Allianz.
+			<a href=\"?page=$page&amp;sub=$sub&amp;action=cleanupRanks\">Löschen?</a>";
+		} else {
+			echo "Keine fehlerhaften Daten gefunden.";
 		}
-		else
-			echo "Keine Allianzen vorhanden!";
+
+		// Bündnisse/Kriege ohne Allianz
+		echo "<h2>Bündnisse/Kriege ohne Allianz</h2>";
+		$bndWithoutAlliance = numberOfDiplomaciesWithoutAlliance($app);
+		if ($bndWithoutAlliance > 0) {
+			echo "$bndWithoutAlliance Bündnisse/Kriege ohne Allianz.
+			<a href=\"?page=$page&amp;sub=$sub&amp;action=cleanupDiplomacy\">Löschen?</a>";
+		} else {
+			echo "Keine fehlerhaften Daten gefunden.";
+		}
+
+		// Allianzen ohne Gründer
+		echo "<h2>Allianzen ohne Gründer</h2>";
+		$alliancesWithoutFounder = $app['db']
+			->executeQuery("SELECT
+					alliance_id,
+					alliance_name,
+					alliance_tag
+				FROM alliances a
+				WHERE NOT EXISTS (
+					SELECT 1
+					FROM users u
+					WHERE a.alliance_founder_id = u.user_id
+				);")
+			->fetchAllAssociative();
+		if (count($alliancesWithoutFounder) > 0) {
+			echo "<table class=\"tbl\">";
+			echo "<tr><th class=\"tbltitle\">Tag</th>
+			<th class=\"tbltitle\">Name</th>
+			<th>&nbsp;</th></tr>";
+			foreach($alliancesWithoutFounder as $arr)
+			{
+				echo "<tr><td class=\"tbldata\">".$arr['alliance_name']."</td>
+				<td class=\"tbldata\">".$arr['alliance_tag']."</td>
+				<td class=\"tbldata\"><a href=\"?page=$page&amp;sub=edit&amp;alliance_id=".$arr['alliance_id']."\">detail</a></td></tr>";
+			}
+			echo "</table><br/>";
+			echo count($alliancesWithoutFounder)." Allianzen ohne Gründer.";
+		} else {
+			echo "Keine fehlerhaften Daten gefunden.";
+		}
+
+		// User mit fehlerhafter Allianz-Verknüpfung
+		echo "<h2>User mit fehlerhafter Allianz-Verknüpfung</h2>";
+		$usersWithInvalidAlliances = $app['db']
+			->executeQuery("SELECT
+					user_id,
+					user_nick,
+					user_email
+				FROM users u
+				WHERE
+					user_alliance_id != 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM alliances a
+						WHERE a.alliance_id = u.user_alliance_id
+					);")
+			->fetchAllAssociative();
+		if (count($usersWithInvalidAlliances) > 0) {
+			echo "<table class=\"tbl\">";
+			echo "<tr><th class=\"tbltitle\">Nick</th>
+			<th class=\"tbltitle\">E-Mail</th>
+			<th>&nbsp;</th></tr>";
+			foreach($usersWithInvalidAlliances as $arr)
+			{
+				echo "<tr><td class=\"tbldata\">".$arr['user_nick']."</td>
+				<td class=\"tbldata\">".$arr['user_email']."</td>
+				<td class=\"tbldata\"><a href=\"?page=user&amp;sub=edit&amp;user_id=".$arr['user_id']."\">detail</a></td></tr>";
+			}
+			echo "</table><br/>";
+			echo count($usersWithInvalidAlliances) ." User mit fehlerhafter Verknüpfung.";
+		} else {
+			echo "Keine fehlerhaften Daten gefunden.";
+		}
+
+		// Leere Allianzen
+		echo "<h2>Leere Allianzen (Allianzen ohne User)</h2>";
+		$alliancesWithoutUsers = $app['db']
+			->executeQuery("SELECT
+					alliance_id,
+					alliance_name,
+					alliance_tag
+				FROM alliances a
+				WHERE NOT EXISTS (
+					SELECT 1
+					FROM users u
+					WHERE a.alliance_id = u.user_alliance_id
+				);")
+			->fetchAllAssociative();
+		if (count($alliancesWithoutUsers) > 0) {
+			echo "<table class=\"tbl\">";
+			echo "<tr><th class=\"tbltitle\">Name</th>
+			<th class=\"tbltitle\">Tag</th><th>&nbsp;</th>
+			<th>&nbsp;</th></tr>";
+			foreach($alliancesWithoutUsers as $arr)
+			{
+				echo "<tr><td class=\"tbldata\">".$arr['alliance_name']."</td>
+				<td class=\"tbldata\">".$arr['alliance_tag']."</td>
+				<td class=\"tbldata\"><a href=\"?page=$page&amp;sub=edit&amp;alliance_id=".$arr['alliance_id']."\">detail</a></td>
+				<td class=\"tbldata\"><a href=\"?page=$page&amp;sub=drop&amp;alliance_id=".$arr['alliance_id']."\">löschen</a></td></tr>";
+			}
+			echo "</table><br/>";
+			echo count($alliancesWithoutUsers)." Allianzen sind leer.
+			<a href=\"?page=$page&amp;sub=$sub&amp;action=cleanupEmptyAlliances\">Löschen?</a>";
+		} else {
+			echo "Keine fehlerhaften Daten gefunden.";
+		}
 	}
 	else
 	{
@@ -599,8 +511,8 @@
 				echo "<tr>";
 				echo "<th>ID</th>";
 				echo "<th>Name</th>";
-				echo "<th>Gr&uuml;nder</th>";
-				echo "<th>Gr&uuml;ndung</th>";
+				echo "<th>Gründer</th>";
+				echo "<th>Gründung</th>";
 				echo "<th>User</th>";
 				echo "<th>&nbsp;</th>";
 				echo "</tr>";
@@ -619,11 +531,11 @@
 				echo "</table>";
 				echo "<br/><input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /> ";
 				echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;action=search'\" value=\"Aktualisieren\" /> ";
-				echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=dropinactive'\" value=\"Leere Allianzen l&ouml;schen\" />";
+				echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=dropinactive'\" value=\"Leere Allianzen löschen\" />";
 			}
 			else
 			{
-				echo "Die Suche lieferte keine Resultate!<br/><br/><input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Zur&uuml;ck\" />";
+				echo "Die Suche lieferte keine Resultate!<br/><br/><input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Zurück\" />";
 			}
 		}
 
@@ -633,7 +545,7 @@
 
 		elseif (isset($_GET['sub']) && $_GET['sub']=="dropinactive")
 		{
-			echo "Sollen folgende leeren Allianzen gel&ouml;scht werden?<br/><br/>";
+			echo "Sollen folgende leeren Allianzen gelöscht werden?<br/><br/>";
 			$data = $app['db']
 				->executeQuery("SELECT *
 					FROM alliances
@@ -648,20 +560,14 @@
 				echo "<td class=\"tbltitle\" valign=\"top\">ID</td>";
 				echo "<td class=\"tbltitle\" valign=\"top\">Name</td>";
 				echo "<td class=\"tbltitle\" valign=\"top\">Tag</td>";
-				echo "<td class=\"tbltitle\" valign=\"top\">Gr&uuml;nder</td>";
-				echo "<th>Gr&uuml;ndung</th>";
+				echo "<td class=\"tbltitle\" valign=\"top\">Gründer</td>";
+				echo "<th>Gründung</th>";
 				echo "<td valign=\"top\">&nbsp;</td>";
 				echo "</tr>";
 				$cnt = 0;
 				foreach ($data as $arr)
 				{
-					$usersInAlliance = $app['db']
-            			->executeQuery("SELECT COUNT(*)
-							FROM users
-							WHERE user_alliance_id = ?;",
-							[$arr['alliance_id']])
-            			->fetchOne();
-					if ($usersInAlliance == 0)
+					if (numberOfUsersInAlliance($app, $arr['alliance_id']) == 0)
 					{
 						echo "<tr>";
 						echo "<td class=\"tbldata\">".$arr['alliance_id']."</td>";
@@ -675,15 +581,15 @@
 					}
 				}
 				echo "</table>";
-				echo "<br/>$cnt von ".mysql_num_rows($res)." Allianzen sind zur L&ouml;schung vorgesehen!<br/>";
-				echo "<br/><input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Nein, zur&uuml;ck zur &Uuml;bersicht\" /> ";
+				echo "<br/>$cnt von ".mysql_num_rows($res)." Allianzen sind zur Löschung vorgesehen!<br/>";
+				echo "<br/><input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Nein, zurück zur Übersicht\" /> ";
 				if ($cnt > 0) {
-					echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;action=dropinactive'\" value=\"Ja, l&ouml;schen!\" />";
+					echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;action=dropinactive'\" value=\"Ja, löschen!\" />";
 				}
 			}
 			else
 			{
-				echo "Die Suche lieferte keine Resultate!<br/><br/><input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Zur&uuml;ck\" />";
+				echo "Die Suche lieferte keine Resultate!<br/><br/><input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Zurück\" />";
 			}
 		}
 
@@ -702,37 +608,25 @@
 
 		elseif (isset($_GET['sub']) && $_GET['sub']=="drop")
 		{
-			$arr = $app['db']
-				->executeQuery("SELECT *
-					FROM alliances
-					WHERE alliance_id = ?;",
-					[$_GET['alliance_id']])
-				->fetchAssociative();
+			$arr = fetchAlliance($app, $_GET['alliance_id']);
 			if ($arr != null)
 			{
-				echo "Soll folgende Allianz gel&ouml;scht werden?<br/><br/>";
+				echo "Soll folgende Allianz gelöscht werden?<br/><br/>";
 				echo "<form action=\"?page=$page\" method=\"post\">";
 				echo "<table class=\"tbl\">";
 				echo "<tr><td class=\"tbltitle\" valign=\"top\">ID</td><td class=\"tbldata\">".$arr['alliance_id']."</td></tr>";
 				echo "<tr><td class=\"tbltitle\" valign=\"top\">Name</td><td class=\"tbldata\">".$arr['alliance_name']."</td></tr>";
 				echo "<tr><td class=\"tbltitle\" valign=\"top\">Tag</td><td class=\"tbldata\">".$arr['alliance_tag']."</td></tr>";
 				$users = get_user_names();
-				echo "<tr><td class=\"tbltitle\" valign=\"top\">Gr&uuml;nder</td><td class=\"tbldata\">".$users[$arr['alliance_founder_id']]['nick']."</td></tr>";
+				echo "<tr><td class=\"tbltitle\" valign=\"top\">Gründer</td><td class=\"tbldata\">".$users[$arr['alliance_founder_id']]['nick']."</td></tr>";
 				echo "<tr><td class=\"tbltitle\" valign=\"top\">Text</td><td class=\"tbldata\">".text2html($arr['alliance_text'])."</td></tr>";
-				echo "<tr><td class=\"tbltitle\" valign=\"top\">Gr&uuml;ndung</td><td class=\"tbldata\">".date("Y-m-d H:i:s",$arr['alliance_foundation_date'])."</td></tr>";
+				echo "<tr><td class=\"tbltitle\" valign=\"top\">Gründung</td><td class=\"tbldata\">".date("Y-m-d H:i:s",$arr['alliance_foundation_date'])."</td></tr>";
 				echo "<tr><td class=\"tbltitle\" valign=\"top\">Website</td><td class=\"tbldata\">".$arr['alliance_url']."</td></tr>";
-				echo "<tr><td class=\"tbltitle\" valign=\"top\">Bild</td><td class=\"tbldata\">".$arr['alliance_img']."<br/><img src=\"".$arr['alliance_img']."\" width=\"100%\" /></td></tr>";
+				if (isset($arr['alliance_img'])) {
+					echo "<tr><td class=\"tbltitle\" valign=\"top\">Bild</td><td class=\"tbldata\"><img src=\"".ALLIANCE_IMG_DIR.'/'.$arr['alliance_img']."\" width=\"100%\" alt=\"".$arr['alliance_img']."\" /></td></tr>";
+				}
 				echo "<tr><td class=\"tbltitle\" valign=\"top\">Mitglieder</td><td class=\"tbldata\">";
-				$usersInAlliance = $app['db']
-					->executeQuery("SELECT
-							user_id,
-							user_nick,
-							user_points
-						FROM users
-						WHERE user_alliance_id = ?
-						ORDER BY user_nick;",
-						[$arr['alliance_id']])
-					->fetchAllAssociative();
+				$usersInAlliance = fetchUsersInAlliance($app, $arr['alliance_id']);
 				if (count($usersInAlliance) > 0)
 				{
 					echo "<table style=\"width:100%\">";
@@ -748,13 +642,13 @@
 				echo "</td></tr>";
 				echo "</table>";
 				echo "<input type=\"hidden\" name=\"alliance_id\" value=\"".$arr['alliance_id']."\" />";
-				echo "<br/><input type=\"submit\" name=\"drop\" value=\"L&ouml;schen\" />&nbsp;";
-				echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"history.back();\" /> ";
+				echo "<br/><input type=\"submit\" name=\"drop\" value=\"Löschen\" />&nbsp;";
+				echo "<input type=\"button\" value=\"Zurück\" onclick=\"history.back();\" /> ";
 				echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" />";
 				echo "</form>";
 			}
 			else {
-				echo "<b>Fehler:</b>Datensatz nicht gefunden!<br/><br/><a href=\"javascript:history.back();\">Zur&uuml;ck</a>";
+				echo "<b>Fehler:</b> Datensatz nicht gefunden!<br/><br/><a href=\"javascript:history.back();\">Zurück</a>";
 			}
 		}
 
@@ -771,7 +665,7 @@
 			{
 				$ally = new Alliance($_POST['alliance_id']);
 				if ($ally->delete()) {
-					echo "Die Allianz wurde gel&ouml;scht!<br/><br/>";
+					echo "Die Allianz wurde gelöscht!<br/><br/>";
 				} else {
 					echo MessageBox::error("", "Allianz konnte nicht gelöscht werden (ist sie in einem aktiven Krieg?)");
 				}
@@ -790,13 +684,7 @@
 					$cnt=0;
 					foreach ($data as $arr)
 					{
-						$usersInAlliance = $app['db']
-							->executeQuery("SELECT count(*)
-								FROM users
-								WHERE user_alliance_id = ?;",
-								[$arr['alliance_id']])
-							->fetchOne();
-						if ($usersInAlliance == 0)
+						if (numberOfUsersInAlliance($app, $arr['alliance_id']) == 0)
 						{
 							$app['db']
 								->executeStatement("DELETE FROM alliances
@@ -815,7 +703,7 @@
 						}
 					}
 				}
-				echo "$cnt leere Allianzen wurden gel&ouml;scht!<br/><br/>";
+				echo "$cnt leere Allianzen wurden gelöscht!<br/><br/>";
 			}
 
 			// Suchmaske
@@ -829,14 +717,185 @@
 			echo "<tr><td class=\"tbltitle\">Text</td><td class=\"tbldata\"><input type=\"text\" name=\"alliance_text\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('alliance_text');echo "</td></tr>";
 			echo "</table>";
 			echo "<br/><input type=\"submit\" name=\"alliance_search\" value=\"Suche starten\" /> (wenn nichts eingegeben wird werden alle Datens&auml;tze angezeigt)</form>";
-
-			$numAlliances = $app['db']
-            	->executeQuery("SELECT count(*)
-					FROM alliances;")
-            	->fetchOne();
-			echo "<br/>Es sind ".nf($numAlliances)." Eintr&auml;ge in der Datenbank vorhanden.";
-
+			echo "<br/>Es sind ".nf(numberOfAlliances($app))." Einträge in der Datenbank vorhanden.";
 		}
 	}
-?>
 
+	function numberOfAlliances(Container $app): int
+	{
+		return $app['db']
+			->executeQuery("SELECT count(*)
+				FROM alliances;")
+			->fetchOne();
+	}
+
+	function numberOfUsersInAlliance(Container $app, int $allianceId): int
+	{
+		return $app['db']
+			->executeQuery("SELECT COUNT(*)
+				FROM users
+				WHERE user_alliance_id = ?;",
+				[$allianceId])
+			->fetchOne();
+	}
+
+	function fetchUsersInAlliance(Container $app, int $allianceId): array
+	{
+		return $app['db']
+			->executeQuery("SELECT
+					user_id,
+					user_nick,
+					user_points
+				FROM users
+				WHERE user_alliance_id = ?
+				ORDER BY user_nick;",
+				[$allianceId])
+			->fetchAllAssociative();
+	}
+
+	function fetchAlliance(Container $app, ?int $id)
+	{
+		return $app['db']
+			->executeQuery("SELECT *
+				FROM alliances
+				WHERE alliance_id = ?;",
+				[$id])
+			->fetchAssociative();
+	}
+
+	function usersWithoutAllianceList(Container $app): array
+	{
+		$res = $app['db']
+			->executeQuery("SELECT user_id, user_nick
+				FROM users
+				WHERE user_alliance_id = 0
+				ORDER BY user_nick;");
+		$data = [];
+		while ($arr = $res->fetchAssociative())
+		{
+			$data[$arr['user_id']] = $arr['user_nick'];
+		}
+		return $data;
+	}
+
+	function removeAlliancePicture(Container $app, int $allianceId): bool
+	{
+		$arr = $app['db']
+			->executeQuery("SELECT alliance_img
+				FROM alliances
+				WHERE alliance_id = ?;",
+				[$allianceId])
+			->fetchAssociative();
+		if ($arr != null) {
+			if (file_exists(ALLIANCE_IMG_DIR."/".$arr['alliance_img'])) {
+				unlink(ALLIANCE_IMG_DIR."/".$arr['alliance_img']);
+			}
+			$affected = $app['db']
+				->executeStatement("UPDATE alliances
+					SET alliance_img = '',
+						alliance_img_check = 0
+					WHERE alliance_id = ?;",
+					[$allianceId]);
+			return $affected > 0;
+		}
+		return false;
+	}
+
+	function markAlliancePictureChecked(Container $app, int $allianceId): void
+	{
+		$app['db']
+			->executeStatement("UPDATE alliances
+				SET alliance_img_check = 0
+				WHERE alliance_id = ?;",
+				[$allianceId]);
+	}
+
+	function fetchAlliancesWithUncheckedPictures(Container $app): array
+	{
+		return $app['db']
+			->executeQuery("SELECT
+					alliance_id,
+					alliance_tag,
+					alliance_name,
+					alliance_img
+				FROM
+					alliances
+				WHERE
+					alliance_img_check = 1
+					AND alliance_img != '';")
+			->fetchAllAssociative();
+	}
+
+	function fetchAlliancesWithPictures(Container $app): array
+	{
+		return $app['db']
+			->executeQuery("SELECT
+					alliance_id,
+					alliance_name,
+					alliance_img
+				FROM
+					alliances
+				WHERE
+					alliance_img!=''")
+			->fetchAllAssociative();
+	}
+
+	function numberOfRanksWithoutAlliance(Container $app): int
+	{
+		return $app['db']
+			->executeQuery("SELECT
+					COUNT(r.rank_id)
+				FROM alliance_ranks r
+				WHERE NOT EXISTS (
+					SELECT 1
+					FROM alliances a
+					WHERE r.rank_alliance_id = a.alliance_id
+				);")
+			->fetchOne();
+	}
+
+	function deleteRanksWithoutAlliance(Container $app): int
+	{
+		return $app['db']
+			->executeStatement("DELETE FROM alliance_ranks
+				WHERE NOT EXISTS (
+					SELECT 1
+					FROM alliances a
+					WHERE rank_alliance_id = a.alliance_id
+				);");
+	}
+
+	function numberOfDiplomaciesWithoutAlliance(Container $app): int
+	{
+		return $app['db']
+			->executeQuery("SELECT
+					COUNT(b.alliance_bnd_id)
+				FROM alliance_bnd b
+				WHERE NOT EXISTS (
+					SELECT 1
+					FROM alliances a
+					WHERE b.alliance_bnd_alliance_id1 = a.alliance_id
+				)
+				OR NOT EXISTS (
+					SELECT 1
+					FROM alliances a
+					WHERE b.alliance_bnd_alliance_id2 = a.alliance_id
+				);")
+			->fetchOne();
+	}
+
+	function deleteDiplomacyWithoutAlliance(Container $app): int
+	{
+		return $app['db']
+			->executeStatement("DELETE FROM alliance_bnd
+				WHERE NOT EXISTS (
+					SELECT 1
+					FROM alliances a
+					WHERE alliance_bnd_alliance_id1 = a.alliance_id
+				)
+				OR NOT EXISTS (
+					SELECT 1
+					FROM alliances a
+					WHERE alliance_bnd_alliance_id2 = a.alliance_id
+				)");
+	}
