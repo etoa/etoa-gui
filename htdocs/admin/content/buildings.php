@@ -216,25 +216,6 @@ if ($sub=="prices")
 	//
 	// Voraussetzungen
 	//
-	elseif ($sub=="reqmap")
-	{
-		echo "<h1>Gebäude Techtree</h1>";
-		$starItem = 6;
-
-		// Lade Gebäude
-		$buildingNames = buildingNames($app);
-
-		echo "<table style=\"border-collapse:collapse;border:3px solid #fff;background:#fff;float:left;\">";
-		$num = reqTree($app, $buildingNames, $starItem, 1);
-		echo "</table>";
-		echo "<div id=\"reqInfo\" style=\"width:500px;text-align:center;;margin-left:10px;padding:10px;background:#fff;color:#000;float:left;\">
-		Gebäude auswählen...
-		</div>";
-	}
-
-	//
-	// Voraussetzungen
-	//
 	elseif ($sub=="req")
 	{
 		define('TITLE',"Gebäudeanforderungen");
@@ -715,58 +696,4 @@ if ($sub=="prices")
 			->executeStatement("DELETE FROM buildlist
 				WHERE buildlist_id = ?;",
 				[$id]);
-	}
-
-	function reqTree($app, $buildingNames, $cItemId, $cItemLevel, $level=0, $endnode=false, $empty=null)
-	{
-		$data = $app['db']
-			->executeQuery("SELECT *
-				FROM building_requirements
-				WHERE req_building_id = ?;",
-				[$cItemId])
-			->fetchAllAssociative();
-
-		$nr = count($data);
-
-		echo "<tr><td style=\"padding:0px;margin:0px;color:#000;background:#fff;\">";
-		for ($x=0; $x < $level; $x++)
-		{
-			if ($x==$level-1)
-			{
-				$divtext = $cItemLevel;
-				if ($endnode) {
-					$img = "treelastnode.gif";
-				} else {
-					$img = "treenode.gif";
-				}
-			}
-			else
-			{
-				if ($empty[$x])
-					$img = "blank.gif";
-				else
-					$img = "treeline.gif";
-				$divtext = "";
-			}
-			echo "<div style=\"margin:0px;padding:0px;background:#fff url('../images/".$img."') repeat-y;width:20px;height:20px;float:left;text-align:left;color:#666;\" >".$divtext."</div>";
-		}
-		echo "<img src=\"".IMAGE_PATH."/buildings/building".$cItemId."_small.".IMAGE_EXT."\" align=\"top\" style=\"border:none;height:20px;width:20px;margin:0px;padding:0px;\">
-			<a href=\"javascript:;\" style=\"color:#00f\" onclick=\"xajax_reqInfo(".$cItemId.")\">".$buildingNames[$cItemId]."</a>
-		<br style=\"clear:both;\"/>
-		</td></tr>";
-
-		if ($endnode) {
-			$empty[$level-1]=true;
-		}
-
-		if ($nr > 0)
-		{
-			$cnt=0;
-			foreach ($data as $arr)
-			{
-				$cnt++;
-				reqTree($app, $buildingNames, $arr['obj_id'],$arr['req_level'],$level+1, $cnt==$nr ? true : false,$empty);
-			}
-		}
-		return $nr;
 	}
