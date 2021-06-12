@@ -798,41 +798,40 @@
 				{
 					if (preg_match('/([^\'\"\?\<\>\$\!\=\;\&\\\\[\]]{4,25})$/',$data['name']))
 					{
-					if (isset($data['founder']))
+						if (isset($data['founder']) && $data['founder']->id != null)
 						{
 							$res = dbQuerySave("
-							SELECT
-								COUNT(alliance_id)
-							FROM
-								alliances
-							WHERE
-								alliance_tag=?
-								OR alliance_name=?
-							LIMIT 1;",
-                array($data['tag'], $data['name'])
-              );
+								SELECT
+									COUNT(alliance_id)
+								FROM
+									alliances
+								WHERE
+									alliance_tag=?
+									OR alliance_name=?
+								LIMIT 1;",
+                				array($data['tag'], $data['name'])
+             				);
 							if (mysql_result($res,0)==0)
 							{
 								dbQuerySave("
-								INSERT INTO
-									alliances
-								(
-									alliance_tag,
-									alliance_name,
-									alliance_founder_id,
-									alliance_foundation_date,
-									alliance_public_memberlist
-								)
-								VALUES
-								(?,?,?,?,?);",
-                  array(
-                    $data['tag'],
-                    $data['name'],
-                    $data['founder']->id,
-                    time(),
-					1)
-
-                );
+									INSERT INTO
+										alliances
+									(
+										alliance_tag,
+										alliance_name,
+										alliance_founder_id,
+										alliance_foundation_date,
+										alliance_public_memberlist
+									)
+									VALUES
+									(?,?,?,?,?);",
+									array(
+										$data['tag'],
+										$data['name'],
+										$data['founder']->id,
+										time(),
+									1)
+				                );
 								$returnMsg = new Alliance(mysql_insert_id());
 								$data['founder']->alliance = $returnMsg;
 								$data['founder']->addToUserLog("alliance","{nick} hat die Allianz [b]".$returnMsg."[/b] gegründet.");
