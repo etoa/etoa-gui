@@ -7,6 +7,8 @@
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////
 
+use Doctrine\DBAL\Query\QueryBuilder;
+
 function popupLink($type,$title,$class="",$params="")
 {
 	$res = "<a href=\"#\" class=\"popuplink".($class!="" ? " $class" : "")."\" ";
@@ -316,6 +318,56 @@ function fieldqueryselbox($name)
 	echo "<option value=\"< '\">ist kleiner</option>";
 	echo "<option value=\"> '\">ist gr&ouml;sser</option>";
 	echo "</select>";
+}
+
+function fieldComparisonSelectBox(string $name): string
+{
+	$options = [
+		'like_wildcard' => 'enthält',
+		'like' => 'ist gleich',
+		'not_like_wildcard' => 'enthält nicht',
+		'not_like' => 'ist ungleich',
+		'lt' => 'ist kleiner',
+		'gt' => 'ist grösser',
+	];
+	$str = "<select name=\"comparisonMode[$name]\">";
+	foreach ($options as $key => $value) {
+		$str .= '<option value="'.$key.'">'.$value.'</option>';
+	}
+	$str .= "</select>";
+	return $str;
+}
+
+function fieldComparisonQuery(QueryBuilder $qry, string $column, string $formKey): QueryBuilder
+{
+	$value = $_POST[$formKey];
+	switch ($_POST['comparisonMode'][$formKey]) {
+		case 'like_wildcard':
+			$comparator = 'LIKE';
+			$value = "%$value%";
+			break;
+		case 'like':
+			$comparator = 'LIKE';
+			break;
+		case 'not_like_wildcard':
+			$comparator = 'NOT LIKE';
+			$value = "%$value%";
+			break;
+		case 'not_like':
+			$comparator = 'NOT LIKE';
+			break;
+		case 'lt':
+			$comparator = '<';
+			break;
+		case 'gt':
+			$comparator = '>';
+			break;
+		default:
+			$comparator = '=';
+	}
+	$qry->andWhere("$column $comparator :$column")
+		->setParameter($column, $value);
+	return $qry;
 }
 
 //DEPRECATED

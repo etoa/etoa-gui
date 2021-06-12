@@ -329,10 +329,7 @@ if ($sub=="prices")
 			}
 			if ($_POST['planet_name'] != "")
 			{
-				$addchars = stristr($_POST['qmode']['planet_name'], "%") ? "%" : "";
-				// TODO
-				$qry->andWhere('planet_name = :planetname')
-					->setParameter('planetname', stripslashes($_POST['qmode']['planet_name']).$_POST['planet_name']."$addchars");
+				$qry = fieldComparisonQuery($qry, 'planet_name', 'planet_name');
 			}
 			if ($_POST['user_id'] != "")
 			{
@@ -341,10 +338,7 @@ if ($sub=="prices")
 			}
 			if ($_POST['user_nick'] != "")
 			{
-				$addchars = stristr($_POST['qmode']['user_nick'], "%") ? "%" : "";
-				// TODO
-				$qry->andWhere('user_nick = :usernick')
-					->setParameter('usernick', stripslashes($_POST['qmode']['user_nick']).$_POST['user_nick']."$addchars");
+				$qry = fieldComparisonQuery($qry, 'user_nick', 'user_nick');
 			}
 			if ($_POST['building_id']!="")
 			{
@@ -491,11 +485,11 @@ if ($sub=="prices")
 			echo '<table class="tb">';
 			echo "<tr><th class=\"tbltitle\">Planet ID</th><td class=\"tbldata\"><input type=\"text\" name=\"entity_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
 			echo "<tr><th class=\"tbltitle\">Planetname</th><td class=\"tbldata\"><input type=\"text\" name=\"planet_name\" value=\"\" size=\"20\" maxlength=\"250\" />&nbsp;";
-			fieldqueryselbox('planet_name');
+			echo fieldComparisonSelectBox('planet_name');
 			echo "</td></tr>";
 			echo "<tr><th class=\"tbltitle\">Spieler ID</th><td class=\"tbldata\"><input type=\"text\" name=\"user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
 			echo "<tr><th class=\"tbltitle\">Spieler Nick</th><td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchUser(this.value,'user_nick','citybox1');\" />&nbsp;";
-			fieldqueryselbox('user_nick');
+			echo fieldComparisonSelectBox('user_nick');
 			echo "<br><div class=\"citybox\" id=\"citybox1\">&nbsp;</div></td></tr>";
 			echo "<tr><th class=\"tbltitle\">Geb&auml;ude</th><td class=\"tbldata\"><select name=\"building_id\"><option value=\"\"><i>---</i></option>";
 			foreach ($buildingNames as $key => $value)
