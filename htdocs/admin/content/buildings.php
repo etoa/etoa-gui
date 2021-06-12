@@ -47,19 +47,18 @@
 		}
 		</script>";
 
-		$res = dbquery("
-		SELECT
-			building_id,
-			building_name
-		FROM
-			buildings
-		ORDER BY
-			building_name
-		");
+		$res = $app['db']
+			->executeQuery("SELECT
+					building_id,
+					building_name
+				FROM
+					buildings
+				ORDER BY
+					building_name");
 		$bs = array();
-		while ($arr=mysql_fetch_row($res))
+		while ($arr = $res->fetchAssociative())
 		{
-			$bs[$arr[0]]=$arr[1];
+			$bs[$arr['building_id']] = $arr['building_name'];
 		}
 
 		echo "<h2>(Aus)baukosten (von Stufe x-1 auf Stufe x)</h2>";
@@ -155,46 +154,51 @@
 		echo "<input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";
 
 		echo "<h2>Geb&auml;udepunkte</h2>";
-		$res=dbquery("
-		SELECT
-			building_id,
-			building_name
-		FROM
-			buildings
-		ORDER BY
-			building_order,
-			building_name;");
-		if (mysql_num_rows($res)>0)
+		$data = $app['db']
+			->executeQuery("SELECT
+					building_id,
+					building_name
+				FROM
+					buildings
+				ORDER BY
+					building_order,
+					building_name;")
+			->fetchAllAssociative();
+		if (count($data) > 0)
 		{
 			echo "<table class=\"tb\">";
-			while ($arr=mysql_fetch_array($res))
+			foreach ($data as $arr)
 			{
 				echo "<tr><th>".$arr['building_name']."</th><td style=\"width:70%\"><table class=\"tb\">";
-				$pres=dbquery("
-				SELECT
-					bp_level,
-					bp_points
-				FROM
-					building_points
-				WHERE
-					bp_building_id=".$arr['building_id']."
-				ORDER BY
-					bp_level ASC;");
-				if (mysql_num_rows($pres)>0)
+				$pointsData = $app['db']
+					->executeQuery("SELECT
+							bp_level,
+							bp_points
+						FROM
+							building_points
+						WHERE
+							bp_building_id = ?
+						ORDER BY
+							bp_level ASC;",
+							[$arr['building_id']])
+					->fetchAllAssociative();
+				if (count($pointsData) > 0)
 				{
 					$cnt=0;
-					while ($parr=mysql_fetch_array($pres))
+					foreach ($pointsData as $parr)
 					{
-						if ($cnt==0)
+						if ($cnt==0) {
 							echo "<tr>";
+						}
 						echo "<th>".$parr['bp_level']."</th><td>".$parr['bp_points']."</td>";
 						if ($cnt=="3")
 						{
 							echo "</tr>";
 							$cnt=0;
 						}
-						else
+						else {
 							$cnt++;
+						}
 					}
 					if ($cnt!=0)
 					{
@@ -209,7 +213,6 @@
 			}
 			echo "</table>";
 		}
-
 	}
 
 	//
@@ -233,27 +236,36 @@
 	//
 	elseif ($sub=="reqmap")
 	{
-
 		echo "<h1>Gebäude Techtree</h1>";
 		$starItem = 6;
 
 		// Lade Gebäude
 		$bu_name = [];
-		$bures = dbquery("SELECT building_id,building_name FROM buildings;");
-		while ($buarr = mysql_fetch_array($bures))
+		$bures = $app['db']
+			->executeQuery("SELECT
+					building_id,
+					building_name
+				FROM buildings;");
+		while ($bures->fetchAssociative())
 		{
-			$bu_name[$buarr['building_id']]=$buarr['building_name'];
+			$bu_name[$buarr['building_id']] = $buarr['building_name'];
 		}
 
-		function reqTree($cItemId,$cItemLevel,$level=0,$endnode=false,$empty=null)
+		function reqTree($app, $cItemId, $cItemLevel, $level=0, $endnode=false, $empty=null)
 		{
 			global $bu_name;
 
-			$res = dbquery("SELECT * FROM building_requirements WHERE req_building_id=".$cItemId.";");
-			$nr = mysql_num_rows($res);
+			$data = $app['db']
+				->executeQuery("SELECT *
+					FROM building_requirements
+					WHERE req_building_id = ?;",
+					[$cItemId])
+				->fetchAllAssociative();
+
+			$nr = count($data);
 
 			echo "<tr><td style=\"padding:0px;margin:0px;color:#000;background:#fff;\">";
-			for ($x=0;$x<$level;$x++)
+			for ($x=0; $x < $level; $x++)
 			{
 				if ($x==$level-1)
 				{
@@ -278,23 +290,24 @@
 			<br style=\"clear:both;\"/>
 			</td></tr>";
 
-			if ($endnode)
+			if ($endnode) {
 				$empty[$level-1]=true;
+			}
 
-			if ($nr>0)
+			if ($nr > 0)
 			{
 				$cnt=0;
-				while($arr=mysql_fetch_assoc($res))
+				foreach ($data as $arr)
 				{
 					$cnt++;
-					reqTree($arr['obj_id'],$arr['req_level'],$level+1, $cnt==$nr ? true : false,$empty);
+					reqTree($app, $arr['obj_id'],$arr['req_level'],$level+1, $cnt==$nr ? true : false,$empty);
 				}
 			}
 			return $nr;
 		}
 
 		echo "<table style=\"border-collapse:collapse;border:3px solid #fff;background:#fff;float:left;\">";
-		$num = reqTree($starItem,1);
+		$num = reqTree($app, $starItem,1);
 		echo "</table>";
 		echo "<div id=\"reqInfo\" style=\"width:500px;text-align:center;;margin-left:10px;padding:10px;background:#fff;color:#000;float:left;\">
 		Gebäude auswählen...
@@ -307,7 +320,7 @@
 	//
 	elseif ($sub=="req")
 	{
-		define('TITLE',"Geb&auml;udeanforderungen");
+		define('TITLE',"Gebäudeanforderungen");
 		define('ITEMS_TBL',"buildings");
 		define('TYPES_TBL',"building_types");
 		define('REQ_TBL',"building_requirements");
@@ -339,20 +352,30 @@
 
 		if (isset($_POST['save']))
 		{
-			dbquery("
-			UPDATE
-				buildlist
-			SET
-                buildlist_current_level='".$_POST['buildlist_current_level']."',
-                buildlist_build_type='".$_POST['buildlist_build_type']."',
-                buildlist_build_start_time=UNIX_TIMESTAMP('".$_POST['buildlist_build_start_time']."'),
-                buildlist_build_end_time=UNIX_TIMESTAMP('".$_POST['buildlist_build_end_time']."')
-			WHERE
-				buildlist_id='".$_POST['buildlist_id']."';");
+			$app['db']
+				->executeStatement("UPDATE
+						buildlist
+					SET
+						buildlist_current_level = :level,
+						buildlist_build_type = :type,
+						buildlist_build_start_time = UNIX_TIMESTAMP(:start),
+						buildlist_build_end_time = UNIX_TIMESTAMP(:end)
+					WHERE
+						buildlist_id = :id;",
+					[
+						'level' => $_POST['buildlist_current_level'],
+						'type' => $_POST['buildlist_build_type'],
+						'start' => $_POST['buildlist_build_start_time'],
+						'end' => $_POST['buildlist_build_end_time'],
+						'id' => $_POST['buildlist_id'],
+					]);
 		}
 		elseif (isset($_POST['del']))
 		{
-			dbquery("DELETE FROM buildlist WHERE buildlist_id='".$_POST['buildlist_id']."';");
+			$app['db']
+				->executeStatement("DELETE FROM buildlist
+					WHERE buildlist_id = ?;",
+					[$_POST['buildlist_id']]);
 		}
 
 
@@ -362,34 +385,35 @@
 		if (isset($_GET['action']) && $_GET['action']=="edit")
 		{
 			echo "<h2>Datensatz bearbeiten</h2>";
-			$res = dbquery("
-			SELECT
-				buildlist.buildlist_id,
-				buildlist.buildlist_current_level,
-				buildlist.buildlist_build_start_time,
-				buildlist.buildlist_build_end_time,
-				buildlist.buildlist_build_type,
-				planets.planet_name,
-				users.user_nick,
-				buildings.building_name
-			FROM
-                buildlist
-			INNER JOIN
-                planets
-			ON
-				buildlist.buildlist_entity_id=planets.id
-			INNER JOIN
-                users
-			ON
-				buildlist.buildlist_user_id=users.user_id
-			INNER JOIN
-                buildings
-			ON
-				buildlist.buildlist_building_id=buildings.building_id
-				AND buildlist.buildlist_id=".$_GET['buildlist_id'].";");
-			if (mysql_num_rows($res)>0)
+			$arr = $app['db']
+				->executeQuery("SELECT
+						buildlist.buildlist_id,
+						buildlist.buildlist_current_level,
+						buildlist.buildlist_build_start_time,
+						buildlist.buildlist_build_end_time,
+						buildlist.buildlist_build_type,
+						planets.planet_name,
+						users.user_nick,
+						buildings.building_name
+					FROM
+						buildlist
+					INNER JOIN
+						planets
+					ON
+						buildlist.buildlist_entity_id = planets.id
+					INNER JOIN
+						users
+					ON
+						buildlist.buildlist_user_id = users.user_id
+					INNER JOIN
+						buildings
+					ON
+						buildlist.buildlist_building_id = buildings.building_id
+						AND buildlist.buildlist_id = ?;",
+					[$_GET['buildlist_id']])
+				->fetchAssociative();
+			if ($arr != null)
 			{
-				$arr = mysql_fetch_array($res);
 				echo "<form action=\"?page=$page&sub=$sub&amp;action=search\" method=\"post\">";
 				echo "<input type=\"hidden\" name=\"buildlist_id\" value=\"".$arr['buildlist_id']."\" />";
 				echo "<table class=\"tb\">";
@@ -417,8 +441,9 @@
 				echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" value=\"Neue Suche\" />";
 				echo "</form>";
 			}
-			else
+			else {
 				echo "Dieser Datensatz wurde gel&ouml;scht!<br/><br/><a href=\"?page=$page&amp;sub=$sub\">Neue Suche</a>";
+			}
 		}
 
 		//
@@ -433,74 +458,108 @@
 				{
 					$_POST[$k]=$v;
 				}
-				$_SESSION['search']['buildings']['query']=null;
+				$_SESSION['search']['buildings']['query'] = null;
+				$_SESSION['search']['buildings']['parameters'] = null;
 			}
-			$tables = "buildlist,planets,users,buildings";
-			$sql = "";
+
+			$qry = $app['db']
+				->createQueryBuilder()
+				->select('*')
+				->from('buildlist, planets, users, buildings')
+				->where('buildlist_building_id = building_id')
+				->andWhere('user_id = buildlist_user_id')
+				->andWhere('planets.id = buildlist_entity_id')
+				->groupBy('buildlist_id')
+				->orderBy('buildlist_user_id')
+				->addOrderBy('buildlist_entity_id')
+				->addOrderBy('building_type_id')
+				->addOrderBy('building_order')
+				->addOrderBy('building_name');
+
 			if (isset($_POST['new']))
 			{
-				$updata=explode(":",$_POST['entity_id']);
-				if (mysql_num_rows(dbquery("SELECT buildlist_id FROM buildlist WHERE buildlist_entity_id=".$updata[0]." AND buildlist_building_id=".$_POST['building_id'].";"))==0)
+				$updata = explode(":", $_POST['entity_id']);
+				$buildlistId = $app['db']
+					->executeQuery("SELECT buildlist_id
+						FROM buildlist
+						WHERE buildlist_entity_id = ?
+							AND buildlist_building_id = ?",
+						[$updata[0], $_POST['building_id']])
+					->fetchAssociative();
+				if ($buildlistId == null)
 				{
-					dbquery("
-					INSERT INTO
-					buildlist
-                        (buildlist_entity_id,
-                        buildlist_user_id,
-                        buildlist_building_id,
-                        buildlist_current_level)
-					VALUES
-                        (".$updata[0].",
-                        ".$updata[1].",
-                        ".$_POST['building_id'].",
-                        ".$_POST['building_level'].");");
+					$app['db']
+						->executeStatement("INSERT INTO buildlist
+								(
+									buildlist_entity_id,
+									buildlist_user_id,
+									buildlist_building_id,
+									buildlist_current_level
+								)
+								VALUES
+								(
+									:entity,
+									:user,
+									:building,
+									:level
+								);",
+							[
+								'entity' => $updata[0],
+								'user' => $updata[1],
+								'building' => $_POST['building_id'],
+								'level' => $_POST['building_level'],
+							]);
 					echo "Geb&auml;ude wurde hinzugef&uuml;gt!<br/>";
 				}
-				else
+				else {
 					echo "Geb&auml;ude kann nicht hinzugef&uuml;gt werden, es ist bereits vorhanden!<br/>";
-				$sql= "planets.id=".$updata[0]." AND ";
-				$_SESSION['search']['buildings']['query']=null;
+				}
 
+				$qry->andWhere('planets.id = :planet')
+					->setParameter('planet', $updata[0]);
+
+				$_SESSION['search']['buildings']['query'] = null;
+				$_SESSION['search']['buildings']['parameters'] = null;
 
 				echo "<h2>Neues Geb&auml;ude hinzuf&uuml;gen</h2>";
 				echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\">";
 				tableStart();
 				echo "<tr><th class=\"tbltitle\">Geb&auml;ude</th><td class=\"tbldata\"><select name=\"building_id\">";
-				$bres = dbquery("SELECT building_id,building_name FROM buildings ORDER BY building_type_id,building_order,building_name;");
-				while ($barr=mysql_fetch_array($bres))
+				foreach (buildingNames($app) as $key => $value)
 				{
-					echo "<option value=\"".$barr['building_id']."\">".$barr['building_name']."</option>";
+					echo "<option value=\"".$key."\">".$value."</option>";
 				}
 				echo "</select></td></tr>";
 				echo "<tr><th class=\"tbltitle\">mit Stufe</th><td class=\"tbldata\"><input type=\"text\" name=\"building_level\" value=\"1\" size=\"1\" maxlength=\"3\" /></td></tr>";
 				echo "<tr><th class=\"tbltitle\">auf dem Planeten</th><td class=\"tbldata\"> <select name=\"entity_id\"><";
-				$pres=dbquery("SELECT
-								users.user_id,
-								planets.id,
-								planets.planet_name,
-								users.user_nick,
-								entities.pos,
-								cells.sx,
-								cells.sy,
-								cells.cx,
-								cells.cy
-							FROM
-								planets
-							INNER JOIN
-								entities
-							ON
-								planets.id=entities.id
-							INNER JOIN
-								cells
-							ON
-								entities.cell_id=cells.id
-							INNER JOIN
-								users
-							ON
-								planets.planet_user_id=users.user_id
-							ORDER BY
-								planets.id;");
-				while ($parr=mysql_fetch_array($pres))
+				$pres = $app['db']
+					->executeQuery("SELECT
+							users.user_id,
+							planets.id,
+							planets.planet_name,
+							users.user_nick,
+							entities.pos,
+							cells.sx,
+							cells.sy,
+							cells.cx,
+							cells.cy
+						FROM
+							planets
+						INNER JOIN
+							entities
+						ON
+							planets.id=entities.id
+						INNER JOIN
+							cells
+						ON
+							entities.cell_id=cells.id
+						INNER JOIN
+							users
+						ON
+							planets.planet_user_id=users.user_id
+						ORDER BY
+							planets.id;");
+				while ($parr = $pres->fetchAssociative())
 				{
 					echo "<option value=\"".$parr['id'].":".$parr['user_id']."\"";
 					if ($updata[0]==$parr['id']) echo " selected=\"selected\"";
@@ -509,50 +568,57 @@
 				echo "</select></td></tr>";
 				tableEnd();
 				echo "<input type=\"submit\" name=\"new\" value=\"Hinzuf&uuml;gen\" /></form><br/>";
-
-
 			}
 			else
 			{
-				if ($_POST['entity_id']!="")
+				if ($_POST['entity_id'] != "")
 				{
-					$sql.= "id=".$_POST['entity_id']." AND ";
+					$qry->andWhere('id = :id')
+						->setParameter('id', $_POST['entity_id']);
 				}
-				if ($_POST['planet_name']!="")
+				if ($_POST['planet_name'] != "")
 				{
-					if (stristr($_POST['qmode']['planet_name'],"%")) $addchars = "%";else $addchars = "";
-					$sql.= "planet_name ".stripslashes($_POST['qmode']['planet_name']).$_POST['planet_name']."$addchars' AND ";
+					$addchars = stristr($_POST['qmode']['planet_name'], "%") ? "%" : "";
+					// TODO
+					$qry->andWhere('planet_name = :planetname')
+						->setParameter('planetname', stripslashes($_POST['qmode']['planet_name']).$_POST['planet_name']."$addchars");
 				}
-				if ($_POST['user_id']!="")
+				if ($_POST['user_id'] != "")
 				{
-					$sql.= "user_id=".$_POST['user_id']." AND ";
+					$qry->andWhere('user_id = :userid')
+						->setParameter('userid', $_POST['user_id']);
 				}
-				if ($_POST['user_nick']!="")
+				if ($_POST['user_nick'] != "")
 				{
-					if (stristr($_POST['qmode']['user_nick'],"%")) $addchars = "%";else $addchars = "";
-					$sql.= "user_nick ".stripslashes($_POST['qmode']['user_nick']).$_POST['user_nick']."$addchars' AND ";
+					$addchars = stristr($_POST['qmode']['user_nick'], "%") ? "%" : "";
+					// TODO
+					$qry->andWhere('user_nick = :usernick')
+						->setParameter('usernick', stripslashes($_POST['qmode']['user_nick']).$_POST['user_nick']."$addchars");
 				}
 				if ($_POST['building_id']!="")
 				{
-					$sql.= "building_id=".$_POST['building_id']." AND ";
+					$qry->andWhere('building_id = :building')
+						->setParameter('building', $_POST['building_id']);
 				}
 			}
 
 			echo "<h2>Suchergebnisse</h2>";
-			$sqlstart = "SELECT * FROM $tables WHERE ";
-			$sqlend = "buildlist_building_id=building_id AND user_id=buildlist_user_id AND planets.id=buildlist_entity_id
-			GROUP BY buildlist_id
-			ORDER BY buildlist_user_id,buildlist_entity_id,building_type_id,building_order,building_name;";
 
-  		if ($_SESSION['search']['buildings']['query']==null)
-  			$_SESSION['search']['buildings']['query']=$sqlstart.$sql.$sqlend;
-
-			$res = dbquery($_SESSION['search']['buildings']['query']);
-			if (mysql_num_rows($res)>0)
+			if (isset($_SESSION['search']['buildings']['query']) && isset($_SESSION['search']['buildings']['parameters'])) {
+				$res = $app['db']->executeQuery($_SESSION['search']['buildings']['query'], $_SESSION['search']['buildings']['parameters']);
+			} else {
+				$res = $qry->execute();
+			}
+			$data = $res->fetchAllAssociative();
+			if (count($data) > 0)
 			{
-				echo mysql_num_rows($res)." Datens&auml;tze vorhanden<br/><br/>";
-				if (mysql_num_rows($res)>20)
+				$_SESSION['search']['buildings']['query'] = $qry->getSQL();
+				$_SESSION['search']['buildings']['parameters'] = $qry->getParameters();
+
+				echo count($data)." Datens&auml;tze vorhanden<br/><br/>";
+				if (count($data) > 20) {
 					echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" value=\"Neue Suche\" /><br/><br/>";
+				}
 
 				echo "<table class=\"tbl\">";
 				echo "<tr>";
@@ -563,14 +629,8 @@
 				echo "<th class=\"tbltitle\">Status</th>";
 				echo "<th></th>";
 				echo "</tr>";
-				for ($x=0;$x<mysql_num_rows($res);$x++)
+				foreach ($data as $arr)
 				{
-					if (sizeof($narr)>1)
-						$arr=$narr;
-					else
-						$arr = mysql_fetch_array($res);
-					$narr=mysql_fetch_array($res);
-
 					echo "<tr>";
 					echo "<td class=\"tbldata\"><a href=\"?page=galaxy&amp;sub=edit&amp;id=".$arr['buildlist_entity_id']."\" title=\"".$arr['planet_name']."\">".cut_string($arr['planet_name'] != '' ? $arr['planet_name'] : 'Unbenannt',11)."</a> [".$arr['id']."]</td>";
 
@@ -582,7 +642,6 @@
 					echo "<td class=\"tbldata\" style=\"background:".$build_colors[$arr['buildlist_build_type']]."\">".$buildTypes[$arr['buildlist_build_type']]."</td>";
 					echo "<td class=\"tbldata\">".edit_button("?page=$page&amp;sub=$sub&amp;action=edit&amp;buildlist_id=".$arr['buildlist_id'])."</td>";
 					echo "</tr>";
-
 				}
 				echo "</table>";
 				echo "<br/><input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" value=\"Neue Suche\" />";
@@ -598,19 +657,14 @@
 		//
 		else
 		{
+			$buildingNames = buildingNames($app);
+
 			echo '<div class="tabs">
 			<ul>
 				<li><a href="#tabs-1">Schnellsuche</a></li>
 				<li><a href="#tabs-2">Erweiterte Suche</a></li>
 			</ul>
 			<div id="tabs-1">';
-
-			$bdata = [];
-			$bres = dbquery("SELECT building_id,building_name FROM buildings ORDER BY building_type_id,building_order,building_name;");
-			while ($barr=mysql_fetch_array($bres))
-			{
-				$bdata[$barr['building_id']]=$barr;
-			}
 
 			// Hinzufügen
 			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\" id=\"selector\" name=\"selector\">";
@@ -636,7 +690,6 @@
 				echo "<option value=\"$x\">$x</option>";
 			echo "</select></td></tr>";
 
-
 			//User
 			echo "<tr><th class=\"tbltitle\"><i>oder</i> User</th><td class=\"tbldata\">";
 			echo "<input type=\"text\" name=\"userlist_nick\" id=\"userlist_nick\" value=\"\" autocomplete=\"off\" size=\"30\" maxlength=\"30\" onchange=\"xajax_searchUserList(this.value,'showBuildingsOnPlanet');\" onkeyup=\"xajax_searchUserList(this.value,'showBuildingsOnPlanet');\"><br>
@@ -650,9 +703,9 @@
 			echo "<tr><th class=\"tbltitle\">Hinzuf&uuml;gen:</th><td class=\"tbldata\">
 			<input type=\"text\" name=\"buildlist_current_level\" value=\"1\" size=\"7\" maxlength=\"10\" />
 			<select name=\"building_id\">";
-			foreach ($bdata as $barr)
+			foreach ($buildingNames as $key => $value)
 			{
-				echo "<option value=\"".$barr['building_id']."\">".$barr['building_name']."</option>";
+				echo "<option value=\"".$key."\">".$value."</option>";
 			}
 			echo "</select> &nbsp;
 			<input type=\"button\" onclick=\"showLoaderPrepend('shipsOnPlanet');xajax_addBuildingToPlanet(xajax.getFormValues('selector'));\" value=\"Hinzuf&uuml;gen\" />
@@ -677,7 +730,9 @@
 
 			echo '</div><div id="tabs-2">';
 
-			$_SESSION['search']['buildings']['query']=null;
+			$_SESSION['search']['buildings']['query'] = null;
+			$_SESSION['search']['buildings']['parameters'] = null;
+
 			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\">";
 			echo '<table class="tb">';
 			echo "<tr><th class=\"tbltitle\">Planet ID</th><td class=\"tbldata\"><input type=\"text\" name=\"entity_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
@@ -689,9 +744,9 @@
 			fieldqueryselbox('user_nick');
 			echo "<br><div class=\"citybox\" id=\"citybox1\">&nbsp;</div></td></tr>";
 			echo "<tr><th class=\"tbltitle\">Geb&auml;ude</th><td class=\"tbldata\"><select name=\"building_id\"><option value=\"\"><i>---</i></option>";
-			foreach ($bdata as $barr)
+			foreach ($buildingNames as $key => $value)
 			{
-				echo "<option value=\"".$barr['building_id']."\">".$barr['building_name']."</option>";
+				echo "<option value=\"".$key."\">".$value."</option>";
 			}
 			echo "</select></td></tr>";
 			tableEnd();
@@ -702,12 +757,35 @@
 				</div>
 			</div>';
 
-			$tblcnt = mysql_fetch_row(dbquery("SELECT count(buildlist_id) FROM buildlist;"));
-			echo "<p>Es sind <b>".nf($tblcnt[0])."</b> Eintr&auml;ge in der Datenbank vorhanden.</p>";
-
+			echo "<p>Es sind <b>".nf(numBuildingListEntries($app))."</b> Eintr&auml;ge in der Datenbank vorhanden.</p>";
 		}
-
 	}
 
+	function numBuildingListEntries($app)
+	{
+		return $app['db']
+			->executeQuery("SELECT COUNT(buildlist_id)
+				FROM buildlist;")
+			->fetchOne();
+	}
+
+	function buildingNames($app)
+	{
+		$data = [];
+		$res = $app['db']
+			->executeQuery("SELECT
+					building_id,
+					building_name
+				FROM buildings
+				ORDER BY
+					building_type_id,
+					building_order,
+					building_name;");
+		while ($arr = $res->fetchAssociative())
+		{
+			$data[$arr['building_id']] = $arr['building_name'];
+		}
+		return $data;
+	}
 
 ?>
