@@ -152,18 +152,7 @@ if ($sub=="prices")
 			foreach ($buildingNames as $key => $value)
 			{
 				echo "<tr><th>".$value."</th><td style=\"width:70%\"><table class=\"tb\">";
-				$pointsData = $app['db']
-					->executeQuery("SELECT
-							bp_level,
-							bp_points
-						FROM
-							building_points
-						WHERE
-							bp_building_id = ?
-						ORDER BY
-							bp_level ASC;",
-							[$key])
-					->fetchAllAssociative();
+				$pointsData = fetchPointsForBuilding($app, $key);
 				if (count($pointsData) > 0)
 				{
 					$cnt=0;
@@ -268,33 +257,7 @@ if ($sub=="prices")
 		if (isset($_GET['action']) && $_GET['action']=="edit")
 		{
 			echo "<h2>Datensatz bearbeiten</h2>";
-			$arr = $app['db']
-				->executeQuery("SELECT
-						buildlist.buildlist_id,
-						buildlist.buildlist_current_level,
-						buildlist.buildlist_build_start_time,
-						buildlist.buildlist_build_end_time,
-						buildlist.buildlist_build_type,
-						planets.planet_name,
-						users.user_nick,
-						buildings.building_name
-					FROM
-						buildlist
-					INNER JOIN
-						planets
-					ON
-						buildlist.buildlist_entity_id = planets.id
-					INNER JOIN
-						users
-					ON
-						buildlist.buildlist_user_id = users.user_id
-					INNER JOIN
-						buildings
-					ON
-						buildlist.buildlist_building_id = buildings.building_id
-						AND buildlist.buildlist_id = ?;",
-					[$_GET['buildlist_id']])
-				->fetchAssociative();
+			$arr = fetchBuildingListEntry($app, $_GET['buildlist_id']);
 			if ($arr != null)
 			{
 				echo "<form action=\"?page=$page&sub=$sub&amp;action=search\" method=\"post\">";
@@ -359,133 +322,44 @@ if ($sub=="prices")
 				->addOrderBy('building_order')
 				->addOrderBy('building_name');
 
-			if (isset($_POST['new']))
+			if ($_POST['entity_id'] != "")
 			{
-				$updata = explode(":", $_POST['entity_id']);
-				$buildlistId = $app['db']
-					->executeQuery("SELECT buildlist_id
-						FROM buildlist
-						WHERE buildlist_entity_id = ?
-							AND buildlist_building_id = ?",
-						[$updata[0], $_POST['building_id']])
-					->fetchAssociative();
-				if ($buildlistId == null)
-				{
-					$app['db']
-						->executeStatement("INSERT INTO buildlist
-								(
-									buildlist_entity_id,
-									buildlist_user_id,
-									buildlist_building_id,
-									buildlist_current_level
-								)
-								VALUES
-								(
-									:entity,
-									:user,
-									:building,
-									:level
-								);",
-							[
-								'entity' => $updata[0],
-								'user' => $updata[1],
-								'building' => $_POST['building_id'],
-								'level' => $_POST['building_level'],
-							]);
-					echo "Geb&auml;ude wurde hinzugef&uuml;gt!<br/>";
-				}
-				else {
-					echo "Geb&auml;ude kann nicht hinzugef&uuml;gt werden, es ist bereits vorhanden!<br/>";
-				}
-
-				$qry->andWhere('planets.id = :planet')
-					->setParameter('planet', $updata[0]);
-
-				$_SESSION['search']['buildings']['query'] = null;
-				$_SESSION['search']['buildings']['parameters'] = null;
-
-				echo "<h2>Neues Geb&auml;ude hinzuf&uuml;gen</h2>";
-				echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\">";
-				tableStart();
-				echo "<tr><th class=\"tbltitle\">Geb&auml;ude</th><td class=\"tbldata\"><select name=\"building_id\">";
-				foreach (buildingNames($app) as $key => $value)
-				{
-					echo "<option value=\"".$key."\">".$value."</option>";
-				}
-				echo "</select></td></tr>";
-				echo "<tr><th class=\"tbltitle\">mit Stufe</th><td class=\"tbldata\"><input type=\"text\" name=\"building_level\" value=\"1\" size=\"1\" maxlength=\"3\" /></td></tr>";
-				echo "<tr><th class=\"tbltitle\">auf dem Planeten</th><td class=\"tbldata\"> <select name=\"entity_id\"><";
-				$pres = $app['db']
-					->executeQuery("SELECT
-							users.user_id,
-							planets.id,
-							planets.planet_name,
-							users.user_nick,
-							entities.pos,
-							cells.sx,
-							cells.sy,
-							cells.cx,
-							cells.cy
-						FROM
-							planets
-						INNER JOIN
-							entities
-							ON planets.id = entities.id
-						INNER JOIN
-							cells
-							ON entities.cell_id = cells.id
-						INNER JOIN
-							users
-							ON planets.planet_user_id = users.user_id
-						ORDER BY
-							planets.id;");
-				while ($parr = $pres->fetchAssociative())
-				{
-					echo "<option value=\"".$parr['id'].":".$parr['user_id']."\"";
-					if ($updata[0]==$parr['id']) echo " selected=\"selected\"";
-					echo ">".$parr['sx']."/".$parr['sy']." : ".$parr['cx']."/".$parr['cy']." : ".$parr['pos']." &nbsp; ".$parr['planet_name']." (".$parr['user_nick'].")</option>";
-				}
-				echo "</select></td></tr>";
-				tableEnd();
-				echo "<input type=\"submit\" name=\"new\" value=\"Hinzuf&uuml;gen\" /></form><br/>";
+				$qry->andWhere('id = :id')
+					->setParameter('id', $_POST['entity_id']);
 			}
-			else
+			if ($_POST['planet_name'] != "")
 			{
-				if ($_POST['entity_id'] != "")
-				{
-					$qry->andWhere('id = :id')
-						->setParameter('id', $_POST['entity_id']);
-				}
-				if ($_POST['planet_name'] != "")
-				{
-					$addchars = stristr($_POST['qmode']['planet_name'], "%") ? "%" : "";
-					// TODO
-					$qry->andWhere('planet_name = :planetname')
-						->setParameter('planetname', stripslashes($_POST['qmode']['planet_name']).$_POST['planet_name']."$addchars");
-				}
-				if ($_POST['user_id'] != "")
-				{
-					$qry->andWhere('user_id = :userid')
-						->setParameter('userid', $_POST['user_id']);
-				}
-				if ($_POST['user_nick'] != "")
-				{
-					$addchars = stristr($_POST['qmode']['user_nick'], "%") ? "%" : "";
-					// TODO
-					$qry->andWhere('user_nick = :usernick')
-						->setParameter('usernick', stripslashes($_POST['qmode']['user_nick']).$_POST['user_nick']."$addchars");
-				}
-				if ($_POST['building_id']!="")
-				{
-					$qry->andWhere('building_id = :building')
-						->setParameter('building', $_POST['building_id']);
-				}
+				$addchars = stristr($_POST['qmode']['planet_name'], "%") ? "%" : "";
+				// TODO
+				$qry->andWhere('planet_name = :planetname')
+					->setParameter('planetname', stripslashes($_POST['qmode']['planet_name']).$_POST['planet_name']."$addchars");
+			}
+			if ($_POST['user_id'] != "")
+			{
+				$qry->andWhere('user_id = :userid')
+					->setParameter('userid', $_POST['user_id']);
+			}
+			if ($_POST['user_nick'] != "")
+			{
+				$addchars = stristr($_POST['qmode']['user_nick'], "%") ? "%" : "";
+				// TODO
+				$qry->andWhere('user_nick = :usernick')
+					->setParameter('usernick', stripslashes($_POST['qmode']['user_nick']).$_POST['user_nick']."$addchars");
+			}
+			if ($_POST['building_id']!="")
+			{
+				$qry->andWhere('building_id = :building')
+					->setParameter('building', $_POST['building_id']);
 			}
 
 			echo "<h2>Suchergebnisse</h2>";
 
 			if (isset($_SESSION['search']['buildings']['query']) && isset($_SESSION['search']['buildings']['parameters'])) {
-				$res = $app['db']->executeQuery($_SESSION['search']['buildings']['query'], $_SESSION['search']['buildings']['parameters']);
+				$res = $app['db']
+					->executeQuery(
+						$_SESSION['search']['buildings']['query'],
+						$_SESSION['search']['buildings']['parameters']
+					);
 			} else {
 				$res = $qry->execute();
 			}
@@ -641,7 +515,7 @@ if ($sub=="prices")
 		}
 	}
 
-	function numBuildingListEntries(Container $app)
+	function numBuildingListEntries(Container $app): int
 	{
 		return $app['db']
 			->executeQuery("SELECT COUNT(buildlist_id)
@@ -649,7 +523,7 @@ if ($sub=="prices")
 			->fetchOne();
 	}
 
-	function buildingNames(Container $app)
+	function buildingNames(Container $app): array
 	{
 		$data = [];
 		$res = $app['db']
@@ -669,7 +543,37 @@ if ($sub=="prices")
 		return $data;
 	}
 
-	function updateBuildingListEntry(Container $app, int $id, int $level, string $type, string $start, string $end)
+	function fetchBuildingListEntry(Container $app, int $id) {
+		return $app['db']
+				->executeQuery("SELECT
+						buildlist.buildlist_id,
+						buildlist.buildlist_current_level,
+						buildlist.buildlist_build_start_time,
+						buildlist.buildlist_build_end_time,
+						buildlist.buildlist_build_type,
+						planets.planet_name,
+						users.user_nick,
+						buildings.building_name
+					FROM
+						buildlist
+					INNER JOIN
+						planets
+					ON
+						buildlist.buildlist_entity_id = planets.id
+					INNER JOIN
+						users
+					ON
+						buildlist.buildlist_user_id = users.user_id
+					INNER JOIN
+						buildings
+					ON
+						buildlist.buildlist_building_id = buildings.building_id
+						AND buildlist.buildlist_id = ?;",
+					[$id])
+				->fetchAssociative();
+	}
+
+	function updateBuildingListEntry(Container $app, int $id, int $level, string $type, string $start, string $end): void
 	{
 		$app['db']
 			->executeStatement("UPDATE
@@ -690,10 +594,26 @@ if ($sub=="prices")
 				]);
 	}
 
-	function deleteBuildingListEntry(Container $app, int $id)
+	function deleteBuildingListEntry(Container $app, int $id): void
 	{
 		$app['db']
 			->executeStatement("DELETE FROM buildlist
 				WHERE buildlist_id = ?;",
 				[$id]);
+	}
+
+	function fetchPointsForBuilding(Container $app, int $buildingId): array
+	{
+		return $app['db']
+			->executeQuery("SELECT
+					bp_level,
+					bp_points
+				FROM
+					building_points
+				WHERE
+					bp_building_id = ?
+				ORDER BY
+					bp_level ASC;",
+					[$buildingId])
+			->fetchAllAssociative();
 	}
