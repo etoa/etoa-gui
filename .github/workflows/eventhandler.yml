@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Install dependencies
-        run: sudo apt-get install -yq libboost-all-dev libmysql++-dev
+        run: sudo apt-get update && sudo apt-get install -yq libboost-all-dev libmysql++-dev
       - name: Build eventhandler
         working-directory: ./eventhandler
         run: cmake . && make
