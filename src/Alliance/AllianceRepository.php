@@ -8,7 +8,7 @@ use EtoA\Core\AbstractRepository;
 
 class AllianceRepository extends AbstractRepository
 {
-    function numberOfAlliances(): int
+    function count(): int
     {
         return (int) $this->createQueryBuilder()
             ->select("COUNT(*)")
@@ -17,34 +17,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    function numberOfUsersInAlliance(int $allianceId): int
-    {
-        return (int) $this->createQueryBuilder()
-            ->select("COUNT(*)")
-            ->from('users')
-            ->where('user_alliance_id = :id')
-            ->setParameter('id', $allianceId)
-            ->execute()
-            ->fetchOne();
-    }
-
-    function fetchUsersInAlliance(int $allianceId): array
-    {
-        return $this->getConnection()
-            ->executeQuery(
-                "SELECT
-					user_id,
-					user_nick,
-					user_points
-				FROM users
-				WHERE user_alliance_id = ?
-				ORDER BY user_nick;",
-                [$allianceId]
-            )
-            ->fetchAllAssociative();
-    }
-
-    function fetchAlliances(): array
+    function findAll(): array
     {
         return $this->getConnection()
             ->executeQuery("SELECT *
@@ -53,7 +26,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    function fetchAlliance(?int $id): ?array
+    function find(int $id): ?array
     {
         return $this->getConnection()
             ->executeQuery(
@@ -65,7 +38,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchAssociative();
     }
 
-    function findAlliances(array $formData): array
+    function findByFormData(array $formData): array
     {
         $qry = $this->createQueryBuilder()
             ->select(
@@ -99,21 +72,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    function usersWithoutAllianceList(): array
-    {
-        $res = $this->getConnection()
-            ->executeQuery("SELECT user_id, user_nick
-				FROM users
-				WHERE user_alliance_id = 0
-				ORDER BY user_nick;");
-        $data = [];
-        while ($arr = $res->fetchAssociative()) {
-            $data[$arr['user_id']] = $arr['user_nick'];
-        }
-        return $data;
-    }
-
-    function getAlliancePicture(int $allianceId): ?string
+    function getPicture(int $allianceId): ?string
     {
         return $this->getConnection()
             ->executeQuery(
@@ -125,7 +84,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    function clearAlliancePicture(int $allianceId): bool
+    function clearPicture(int $allianceId): bool
     {
         $affected = $this->getConnection()
             ->executeStatement(
@@ -138,7 +97,7 @@ class AllianceRepository extends AbstractRepository
         return $affected > 0;
     }
 
-    function markAlliancePictureChecked(int $allianceId): void
+    function markPictureChecked(int $allianceId): void
     {
         $this->getConnection()
             ->executeStatement(
@@ -149,7 +108,7 @@ class AllianceRepository extends AbstractRepository
             );
     }
 
-    function fetchAlliancesWithUncheckedPictures(): array
+    function findAllWithUncheckedPictures(): array
     {
         return $this->getConnection()
             ->executeQuery("SELECT
@@ -165,7 +124,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    function fetchAlliancesWithPictures(): array
+    function findAllWithPictures(): array
     {
         return $this->getConnection()
             ->executeQuery("SELECT
@@ -175,11 +134,11 @@ class AllianceRepository extends AbstractRepository
 				FROM
 					alliances
 				WHERE
-					alliance_img!=''")
+					alliance_img != ''")
             ->fetchAllAssociative();
     }
 
-    function numberOfRanksWithoutAlliance(): int
+    function countOrphanedRanks(): int
     {
         return (int) $this->getConnection()
             ->executeQuery("SELECT
@@ -193,7 +152,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    function deleteRanksWithoutAlliance(): int
+    function deleteOrphanedRanks(): int
     {
         return $this->getConnection()
             ->executeStatement("DELETE FROM alliance_ranks
@@ -204,7 +163,7 @@ class AllianceRepository extends AbstractRepository
 				);");
     }
 
-    function numberOfDiplomaciesWithoutAlliance(): int
+    function countOrphanedDiplomacies(): int
     {
         return (int) $this->getConnection()
             ->executeQuery("SELECT
@@ -223,7 +182,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    function deleteDiplomacyWithoutAlliance(): int
+    function deleteOrphanedDiplomacies(): int
     {
         return $this->getConnection()
             ->executeStatement("DELETE FROM alliance_bnd
@@ -239,7 +198,7 @@ class AllianceRepository extends AbstractRepository
 				)");
     }
 
-    function fetchAlliancesWithoutFounder(): array
+    function findAllWithoutFounder(): array
     {
         return $this->getConnection()
             ->executeQuery("SELECT
@@ -255,25 +214,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    function fetchUsersWithoutAlliance(): array
-    {
-        return $this->getConnection()
-            ->executeQuery("SELECT
-					user_id,
-					user_nick,
-					user_email
-				FROM users u
-				WHERE
-					user_alliance_id != 0
-					AND NOT EXISTS (
-						SELECT 1
-						FROM alliances a
-						WHERE a.alliance_id = u.user_alliance_id
-					);")
-            ->fetchAllAssociative();
-    }
-
-    function fetchAlliancesWithoutUsers(): array
+    function findAllWithoutUsers(): array
     {
         return $this->getConnection()
             ->executeQuery("SELECT
@@ -289,7 +230,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    function deleteAlliance(int $id): bool
+    function remove(int $id): bool
     {
         $affected = $this->getConnection()
             ->delete("alliances", [
@@ -319,5 +260,64 @@ class AllianceRepository extends AbstractRepository
 					OR alliance_bnd_alliance_id2 = :id;",
                 ['id' => $allianceId]
             );
+    }
+
+    function countUsers(int $allianceId): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select("COUNT(*)")
+            ->from('users')
+            ->where('user_alliance_id = :id')
+            ->setParameter('id', $allianceId)
+            ->execute()
+            ->fetchOne();
+    }
+
+    function findUsers(int $allianceId): array
+    {
+        return $this->getConnection()
+            ->executeQuery(
+                "SELECT
+					user_id,
+					user_nick,
+					user_points
+				FROM users
+				WHERE user_alliance_id = ?
+				ORDER BY user_nick;",
+                [$allianceId]
+            )
+            ->fetchAllAssociative();
+    }
+
+    function listSoloUsers(): array
+    {
+        $res = $this->getConnection()
+            ->executeQuery("SELECT user_id, user_nick
+				FROM users
+				WHERE user_alliance_id = 0
+				ORDER BY user_nick;");
+        $data = [];
+        while ($arr = $res->fetchAssociative()) {
+            $data[$arr['user_id']] = $arr['user_nick'];
+        }
+        return $data;
+    }
+
+    function findAllSoloUsers(): array
+    {
+        return $this->getConnection()
+            ->executeQuery("SELECT
+					user_id,
+					user_nick,
+					user_email
+				FROM users u
+				WHERE
+					user_alliance_id != 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM alliances a
+						WHERE a.alliance_id = u.user_alliance_id
+					);")
+            ->fetchAllAssociative();
     }
 }

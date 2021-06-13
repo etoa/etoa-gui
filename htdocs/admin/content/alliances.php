@@ -27,7 +27,7 @@ if ($sub == "imagecheck") {
 		searchResults($repository);
 	} else if (isset($_GET['sub']) && $_GET['sub'] == "edit") {
 		include("alliance/edit.inc.php");
-	} elseif (isset($_GET['sub']) && $_GET['sub'] == "drop") {
+	} elseif (isset($_GET['sub']) && $_GET['sub'] == "drop" && isset($_GET['alliance_id'])) {
 		drop($repository);
 	} else {
 		index($repository);
@@ -52,7 +52,7 @@ function imagecheck(AllianceRepository $repository)
 					echo "Bild entfernt!<br/><br/>";
 				}
 			} else {
-				$repository->markAlliancePictureChecked($id);
+				$repository->markPictureChecked($id);
 			}
 		}
 	}
@@ -62,7 +62,7 @@ function imagecheck(AllianceRepository $repository)
 	//
 	echo "<h2>Noch nicht verifizierte Bilder</h2>";
 	echo "Diese Bilder gehören zu aktiven Allianzen. Bitte prüfe regelmässig, ob sie nicht gegen unsere Regeln verstossen!<br/>";
-	$data = $repository->fetchAlliancesWithUncheckedPictures();
+	$data = $repository->findAllWithUncheckedPictures();
 	if (count($data) > 0) {
 		echo "Es sind " . count($data) . " Bilder gespeichert!<br/><br/>";
 		echo "<form action=\"\" method=\"post\">
@@ -88,7 +88,7 @@ function imagecheck(AllianceRepository $repository)
 	//
 	// Orphans
 	//
-	$data = $repository->fetchAlliancesWithPictures();
+	$data = $repository->findAllWithPictures();
 	$nr = count($data);
 	$paths = array();
 	$nicks = array();
@@ -170,7 +170,7 @@ function create(AllianceRepository $repository)
 		</td></td>";
 	echo "<tr><th>Gründer:</th><td>
 		<select name=\"alliance_founder_id\" />";
-	foreach ($repository->usersWithoutAllianceList() as $key => $value) {
+	foreach ($repository->listSoloUsers() as $key => $value) {
 		echo "<option value=\"" . $key . "\">" . $value . "</option>";
 	}
 	echo "</select>
@@ -232,20 +232,20 @@ function crap(AllianceRepository $repository)
 	echo "<h1>Überflüssige Daten</h1>";
 
 	if (isset($_GET['action']) && $_GET['action'] == "cleanupRanks") {
-		if ($repository->deleteRanksWithoutAlliance() > 0) {
+		if ($repository->deleteOrphanedRanks() > 0) {
 			echo "Fehlerhafte Daten gelöscht.";
 		}
 	} elseif (isset($_GET['action']) && $_GET['action'] == "cleanupDiplomacy") {
-		if ($repository->deleteDiplomacyWithoutAlliance() > 0) {
+		if ($repository->deleteOrphanedDiplomacies() > 0) {
 			echo "Fehlerhafte Daten gelöscht.";
 		}
 	} elseif (isset($_GET['action']) && $_GET['action'] == "cleanupEmptyAlliances") {
-		$data = $repository->fetchAlliances();
+		$data = $repository->findAll();
 		if (count($data) > 0) {
 			$cnt = 0;
 			foreach ($data as $arr) {
-				if ($repository->numberOfUsersInAlliance($arr['alliance_id']) == 0) {
-					if ($repository->deleteAlliance($arr['alliance_id'])) {
+				if ($repository->countUsers($arr['alliance_id']) == 0) {
+					if ($repository->remove($arr['alliance_id'])) {
 						$cnt++;
 					}
 				}
@@ -256,7 +256,7 @@ function crap(AllianceRepository $repository)
 
 	// Ränge ohne Allianz
 	echo "<h2>Ränge ohne Allianz</h2>";
-	$ranksWithoutAlliance = $repository->numberOfRanksWithoutAlliance();
+	$ranksWithoutAlliance = $repository->countOrphanedRanks();
 	if ($ranksWithoutAlliance > 0) {
 		echo "$ranksWithoutAlliance Ränge ohne Allianz.
 			<a href=\"?page=$page&amp;sub=$sub&amp;action=cleanupRanks\">Löschen?</a>";
@@ -266,7 +266,7 @@ function crap(AllianceRepository $repository)
 
 	// Bündnisse/Kriege ohne Allianz
 	echo "<h2>Bündnisse/Kriege ohne Allianz</h2>";
-	$bndWithoutAlliance = $repository->numberOfDiplomaciesWithoutAlliance();
+	$bndWithoutAlliance = $repository->countOrphanedDiplomacies();
 	if ($bndWithoutAlliance > 0) {
 		echo "$bndWithoutAlliance Bündnisse/Kriege ohne Allianz.
 			<a href=\"?page=$page&amp;sub=$sub&amp;action=cleanupDiplomacy\">Löschen?</a>";
@@ -276,7 +276,7 @@ function crap(AllianceRepository $repository)
 
 	// Allianzen ohne Gründer
 	echo "<h2>Allianzen ohne Gründer</h2>";
-	$alliancesWithoutFounder = $repository->fetchAlliancesWithoutFounder();
+	$alliancesWithoutFounder = $repository->findAllWithoutFounder();
 	if (count($alliancesWithoutFounder) > 0) {
 		echo "<table class=\"tbl\">";
 		echo "<tr><th class=\"tbltitle\">Tag</th>
@@ -295,7 +295,7 @@ function crap(AllianceRepository $repository)
 
 	// User mit fehlerhafter Allianz-Verknüpfung
 	echo "<h2>User mit fehlerhafter Allianz-Verknüpfung</h2>";
-	$usersWithInvalidAlliances = $repository->fetchUsersWithoutAlliance();
+	$usersWithInvalidAlliances = $repository->findAllSoloUsers();
 	if (count($usersWithInvalidAlliances) > 0) {
 		echo "<table class=\"tbl\">";
 		echo "<tr><th class=\"tbltitle\">Nick</th>
@@ -314,7 +314,7 @@ function crap(AllianceRepository $repository)
 
 	// Leere Allianzen
 	echo "<h2>Leere Allianzen (Allianzen ohne User)</h2>";
-	$alliancesWithoutUsers = $repository->fetchAlliancesWithoutUsers();
+	$alliancesWithoutUsers = $repository->findAllWithoutUsers();
 	if (count($alliancesWithoutUsers) > 0) {
 		echo "<table class=\"tbl\">";
 		echo "<tr><th class=\"tbltitle\">Name</th>
@@ -341,7 +341,7 @@ function searchResults(AllianceRepository $repository)
 
 	$twig->addGlobal('subtitle', 'Suchergebnisse');
 
-	$data = $repository->findAlliances($_POST);
+	$data = $repository->findByFormData($_POST);
 
 	$nr = count($data);
 	if ($nr == 1) {
@@ -388,7 +388,7 @@ function drop(AllianceRepository $repository)
 {
 	global $page;
 
-	$arr = $repository->fetchAlliance($_GET['alliance_id']);
+	$arr = $repository->find($_GET['alliance_id']);
 	if ($arr != null) {
 		echo "Soll folgende Allianz gelöscht werden?<br/><br/>";
 		echo "<form action=\"?page=$page\" method=\"post\">";
@@ -405,7 +405,7 @@ function drop(AllianceRepository $repository)
 			echo "<tr><td class=\"tbltitle\" valign=\"top\">Bild</td><td class=\"tbldata\"><img src=\"" . ALLIANCE_IMG_DIR . '/' . $arr['alliance_img'] . "\" width=\"100%\" alt=\"" . $arr['alliance_img'] . "\" /></td></tr>";
 		}
 		echo "<tr><td class=\"tbltitle\" valign=\"top\">Mitglieder</td><td class=\"tbldata\">";
-		$usersInAlliance = $repository->fetchUsersInAlliance($arr['alliance_id']);
+		$usersInAlliance = $repository->findUsers($arr['alliance_id']);
 		if (count($usersInAlliance) > 0) {
 			echo "<table style=\"width:100%\">";
 			foreach ($usersInAlliance as $uarr)
@@ -469,17 +469,17 @@ function index(AllianceRepository $repository)
 	echo "</td></tr>";
 	echo "</table>";
 	echo "<br/><input type=\"submit\" name=\"alliance_search\" value=\"Suche starten\" /> (wenn nichts eingegeben wird werden alle Datensätze angezeigt)</form>";
-	echo "<br/>Es sind " . nf($repository->numberOfAlliances()) . " Einträge in der Datenbank vorhanden.";
+	echo "<br/>Es sind " . nf($repository->count()) . " Einträge in der Datenbank vorhanden.";
 }
 
 function removeAlliancePicture(AllianceRepository $repository, int $allianceId): bool
 {
-	$picture = $repository->getAlliancePicture($allianceId);
+	$picture = $repository->getPicture($allianceId);
 	if ($picture != null) {
 		if (file_exists(ALLIANCE_IMG_DIR . "/" . $picture)) {
 			unlink(ALLIANCE_IMG_DIR . "/" . $picture);
 		}
-		return $repository->clearAlliancePicture($allianceId);
+		return $repository->clearPicture($allianceId);
 	}
 	return false;
 }
