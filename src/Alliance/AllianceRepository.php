@@ -72,6 +72,57 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
+    function create(string $tag, string $name, ?int $founderId): int
+    {
+        if ($name == "" || $tag == "") {
+            throw new InvalidAllianceParametersException("Name/Tag fehlt!");
+        }
+
+        if (!preg_match('/^[^\'\"\?\<\>\$\!\=\;\&\\\\[\]]{1,6}$/i', $tag) > 0) {
+            throw new InvalidAllianceParametersException("Ungültiger Tag! Die Länge muss zwischen 3 und 6 Zeichen liegen und darf folgende Zeichen nicht enthalten: ^'\"?<>$!=;&[]\\\\");
+        }
+
+        if (!preg_match('/([^\'\"\?\<\>\$\!\=\;\&\\\\[\]]{4,25})$/', $name) > 0) {
+            throw new InvalidAllianceParametersException("Ungültiger Name! Die Länge muss zwischen 4 und 25 Zeichen liegen und darf folgende Zeichen nicht enthalten: ^'\"?<>$!=;&[]\\\\");
+        }
+
+        if ($founderId == null || $founderId <= 0) {
+            throw new InvalidAllianceParametersException("Allianzgründer-ID fehlt!");
+        }
+
+        $exists = $this->createQueryBuilder()
+            ->select('*')
+            ->from('alliances')
+            ->where('alliance_tag = :tag')
+            ->orWhere('alliance_name = :name')
+            ->setParameters([
+                'name' => $name,
+                'tag' => $tag,
+            ])
+            ->execute()
+            ->fetchAssociative();
+        if ($exists) {
+            throw new InvalidAllianceParametersException("Eine Allianz mit diesem Tag oder Namen existiert bereits!");
+        }
+
+        $this->createQueryBuilder()
+            ->insert('alliances')
+            ->values([
+                'alliance_tag' => ':tag',
+                'alliance_name' => ':name',
+                'alliance_founder_id' => ':founder',
+                'alliance_foundation_date' => time(),
+                'alliance_public_memberlist' => 1,
+            ])
+            ->setParameters([
+                'name' => $name,
+                'tag' => $tag,
+                'founder' => $founderId,
+            ])->execute();
+
+        return (int) $this->getConnection()->lastInsertId();
+    }
+
     function getPicture(int $allianceId): ?string
     {
         return $this->getConnection()

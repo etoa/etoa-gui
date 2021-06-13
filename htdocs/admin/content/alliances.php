@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Alliance\AllianceRepository;
+use Etoa\Alliance\InvalidAllianceParametersException;
 
 $repository = $app['etoa.alliance.repository'];
 
@@ -148,15 +149,21 @@ function create(AllianceRepository $repository)
 	echo "<h1>Allianz erstellen</h1>";
 
 	if (isset($_POST['create'])) {
-		$errorCode = null;
-		if (Alliance::create(array(
-			"name" => $_POST['alliance_name'],
-			"tag" => $_POST['alliance_tag'],
-			"founder" => new User($_POST['alliance_founder_id'])
-		), $errorCode)) {
-			success_msg("Allianz wurde erstellt! [[page alliances sub=edit id=" . $errorCode->id . "]Details[/page]]");
-		} else {
-			error_msg("Allianz konnte nicht erstellt werden!\n\n" . $errorCode . "");
+		// TODO refactor wild mix between active-record classes and repository pattern
+		$founder = new User($_POST['alliance_founder_id']);
+		try {
+			$id = $repository->create(
+				$_POST['alliance_tag'],
+				$_POST['alliance_name'],
+				$founder->id,
+			);
+			$alliance = new Alliance($id);
+			$founder->alliance = $alliance;
+			$founder->addToUserLog("alliance", "{nick} hat die Allianz [b]" . $alliance . "[/b] gegründet.");
+			$alliance->addHistory("Die Allianz [b]" . $alliance . "[/b] wurde von [b]" . $founder . "[/b] gegründet!");
+			success_msg("Allianz wurde erstellt! [[page alliances sub=edit id=" . $alliance->id . "]Details[/page]]");
+		} catch (InvalidAllianceParametersException $ex) {
+			error_msg("Allianz konnte nicht erstellt werden!\n\n" . $ex->getMessage() . "");
 		}
 	}
 
