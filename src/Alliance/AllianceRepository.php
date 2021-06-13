@@ -19,13 +19,12 @@ class AllianceRepository extends AbstractRepository
 
     function numberOfUsersInAlliance(int $allianceId): int
     {
-        return (int) $this->getConnection()
-            ->executeQuery(
-                "SELECT COUNT(*)
-				FROM users
-				WHERE user_alliance_id = ?;",
-                [$allianceId]
-            )
+        return (int) $this->createQueryBuilder()
+            ->select("COUNT(*)")
+            ->from('users')
+            ->where('user_alliance_id = :id')
+            ->setParameter('id', $allianceId)
+            ->execute()
             ->fetchOne();
     }
 
@@ -54,7 +53,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    function fetchAlliance(?int $id)
+    function fetchAlliance(?int $id): ?array
     {
         return $this->getConnection()
             ->executeQuery(
@@ -64,6 +63,40 @@ class AllianceRepository extends AbstractRepository
                 [$id]
             )
             ->fetchAssociative();
+    }
+
+    function findAlliances(array $formData): array
+    {
+        $qry = $this->createQueryBuilder()
+            ->select(
+                'alliance_id',
+                'alliance_name',
+                'alliance_tag',
+                'alliance_foundation_date',
+                'alliance_founder_id',
+                'COUNT(u.user_id) AS cnt'
+            )
+            ->from('alliances', 'a')
+            ->leftJoin('a', 'users', 'u', 'u.user_alliance_id = a.alliance_id')
+            ->groupBy('alliance_id')
+            ->orderBy('alliance_tag');
+
+        if ($formData['alliance_id'] != "") {
+            $qry->andWhere('alliance_id = :alliance_id')
+                ->setParameter('alliance_id', $formData['alliance_id']);
+        }
+        if ($formData['alliance_tag'] != "") {
+            $qry = fieldComparisonQuery($qry, $formData, 'alliance_tag', 'alliance_tag');
+        }
+        if ($formData['alliance_name'] != "") {
+            $qry = fieldComparisonQuery($qry, $formData, 'alliance_name', 'alliance_name');
+        }
+        if ($formData['alliance_text'] != "") {
+            $qry = fieldComparisonQuery($qry, $formData, 'alliance_text', 'alliance_text');
+        }
+
+        return $qry->execute()
+            ->fetchAllAssociative();
     }
 
     function usersWithoutAllianceList(): array
@@ -80,31 +113,29 @@ class AllianceRepository extends AbstractRepository
         return $data;
     }
 
-    function removeAlliancePicture(int $allianceId): bool
+    function getAlliancePicture(int $allianceId): ?string
     {
-        $arr = $this->getConnection()
+        return $this->getConnection()
             ->executeQuery(
                 "SELECT alliance_img
-				FROM alliances
-				WHERE alliance_id = ?;",
+                FROM alliances
+                WHERE alliance_id = ?;",
                 [$allianceId]
             )
-            ->fetchAssociative();
-        if ($arr != null) {
-            if (file_exists(ALLIANCE_IMG_DIR . "/" . $arr['alliance_img'])) {
-                unlink(ALLIANCE_IMG_DIR . "/" . $arr['alliance_img']);
-            }
-            $affected = $this->getConnection()
-                ->executeStatement(
-                    "UPDATE alliances
-					SET alliance_img = '',
-						alliance_img_check = 0
-					WHERE alliance_id = ?;",
-                    [$allianceId]
-                );
-            return $affected > 0;
-        }
-        return false;
+            ->fetchOne();
+    }
+
+    function clearAlliancePicture(int $allianceId): bool
+    {
+        $affected = $this->getConnection()
+            ->executeStatement(
+                "UPDATE alliances
+                SET alliance_img = '',
+                    alliance_img_check = 0
+                WHERE alliance_id = ?;",
+                [$allianceId]
+            );
+        return $affected > 0;
     }
 
     function markAlliancePictureChecked(int $allianceId): void
@@ -265,20 +296,28 @@ class AllianceRepository extends AbstractRepository
                 'alliance_id' => $id,
             ]);
 
+        $this->deleteRanks($id);
+        $this->deleteDiplomacy($id);
 
+        return $affected > 0;
+    }
+
+    function deleteRanks(int $allianceId): void
+    {
         $this->getConnection()
             ->delete("alliance_ranks", [
-                'rank_alliance_id' => $id,
+                'rank_alliance_id' => $allianceId,
             ]);
+    }
 
+    function deleteDiplomacy(int $allianceId): void
+    {
         $this->getConnection()
             ->executeStatement(
                 "DELETE FROM alliance_bnd
 				WHERE alliance_bnd_alliance_id1 = :id
 					OR alliance_bnd_alliance_id2 = :id;",
-                ['id' => $id]
+                ['id' => $allianceId]
             );
-
-        return $affected > 0;
     }
 }

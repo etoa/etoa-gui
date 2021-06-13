@@ -338,10 +338,10 @@ function fieldComparisonSelectBox(string $name): string
 	return $str;
 }
 
-function fieldComparisonQuery(QueryBuilder $qry, string $column, string $formKey): QueryBuilder
+function fieldComparisonQuery(QueryBuilder $qry, array $formData, string $column, string $formKey): QueryBuilder
 {
-	$value = $_POST[$formKey];
-	switch ($_POST['comparisonMode'][$formKey]) {
+	$value = $formData[$formKey];
+	switch ($formData['comparisonMode'][$formKey]) {
 		case 'like_wildcard':
 			$comparator = 'LIKE';
 			$value = "%$value%";

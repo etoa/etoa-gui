@@ -336,14 +336,14 @@ if ($sub=="prices")
 						->setParameter('id', $_POST['entity_id']);
 				}
 				if ($_POST['planet_name'] != "") {
-					$qry = fieldComparisonQuery($qry, 'planet_name', 'planet_name');
+					$qry = fieldComparisonQuery($qry, $_POST, 'planet_name', 'planet_name');
 				}
 				if ($_POST['user_id'] != "") {
 					$qry->andWhere('user_id = :userid')
 						->setParameter('userid', $_POST['user_id']);
 				}
 				if ($_POST['user_nick'] != "") {
-					$qry = fieldComparisonQuery($qry, 'user_nick', 'user_nick');
+					$qry = fieldComparisonQuery($qry, $_POST, 'user_nick', 'user_nick');
 				}
 				if ($_POST['building_id']!="") {
 					$qry->andWhere('building_id = :building')
