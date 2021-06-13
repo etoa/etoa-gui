@@ -124,7 +124,7 @@ use Pimple\Container;
 				array_push($overhead,$k);
 		}
 
-		if (isset($_GET['action']) && $_GET['action']=="clearoverhead")
+		if (isset($_GET['action']) && $_GET['action']=="clearOverhead")
 		{
 			while(count($overhead)>0)
 			{
@@ -138,7 +138,7 @@ use Pimple\Container;
 		if ($co>0)
 		{
 				echo "Diese Bilder gehören zu Allianzen, die nicht mehr in unserer Datenbank vorhanden sind.<br/>
-				Es sind $co Bilder vorhanden. <a href=\"?page=$page&amp;sub=$sub&amp;action=clearoverhead\">Lösche alle verwaisten Bilder</a><br/><br/>";
+				Es sind $co Bilder vorhanden. <a href=\"?page=$page&amp;sub=$sub&amp;action=clearOverhead\">Lösche alle verwaisten Bilder</a><br/><br/>";
 				echo "<table class=\"tb\">
 				<tr><th>Datei</th><th>Bild</th></tr>";
 				foreach($overhead as $v)
@@ -153,7 +153,6 @@ use Pimple\Container;
 			echo "<i>Keine vorhanden!</i>";
 		}
 	}
-
 
 	//
 	// Gebäude bearbeiten
@@ -278,9 +277,7 @@ use Pimple\Container;
 		}
 		elseif (isset($_GET['action']) && $_GET['action']=="cleanupEmptyAlliances")
 		{
-			$drop = $app['db']
-				->executeQuery("SELECT * FROM alliances ORDER BY alliance_tag;")
-				->fetchAllAssociative();
+			$drop = fetchAlliances($app);
 			if (count($data) > 0)
 			{
 				$cnt=0;
@@ -288,23 +285,9 @@ use Pimple\Container;
 				{
 					if (numberOfUsersInAlliance($app, $arr['alliance_id']) == 0)
 					{
-						$app['db']
-							->executeStatement("DELETE FROM alliances
-								WHERE alliance_id = ?;",
-							[$arr['alliance_id']]);
-
-						$app['db']
-							->executeStatement("DELETE FROM alliance_ranks
-								WHERE rank_alliance_id = ?;",
-							[$arr['alliance_id']]);
-
-						$app['db']
-							->executeStatement("DELETE FROM alliance_bnd
-								WHERE alliance_bnd_alliance_id1 = ?
-									OR alliance_bnd_alliance_id2 = ;",
-							[$arr['alliance_id'], $arr['alliance_id']]);
-
-						$cnt++;
+						if (deleteAlliance($app, $arr['alliance_id'])) {
+							$cnt++;
+						}
 					}
 				}
 			}
@@ -333,18 +316,7 @@ use Pimple\Container;
 
 		// Allianzen ohne Gründer
 		echo "<h2>Allianzen ohne Gründer</h2>";
-		$alliancesWithoutFounder = $app['db']
-			->executeQuery("SELECT
-					alliance_id,
-					alliance_name,
-					alliance_tag
-				FROM alliances a
-				WHERE NOT EXISTS (
-					SELECT 1
-					FROM users u
-					WHERE a.alliance_founder_id = u.user_id
-				);")
-			->fetchAllAssociative();
+		$alliancesWithoutFounder = fetchAlliancesWithoutFounder($app);
 		if (count($alliancesWithoutFounder) > 0) {
 			echo "<table class=\"tbl\">";
 			echo "<tr><th class=\"tbltitle\">Tag</th>
@@ -364,20 +336,7 @@ use Pimple\Container;
 
 		// User mit fehlerhafter Allianz-Verknüpfung
 		echo "<h2>User mit fehlerhafter Allianz-Verknüpfung</h2>";
-		$usersWithInvalidAlliances = $app['db']
-			->executeQuery("SELECT
-					user_id,
-					user_nick,
-					user_email
-				FROM users u
-				WHERE
-					user_alliance_id != 0
-					AND NOT EXISTS (
-						SELECT 1
-						FROM alliances a
-						WHERE a.alliance_id = u.user_alliance_id
-					);")
-			->fetchAllAssociative();
+		$usersWithInvalidAlliances = fetchUsersWithoutAlliance($app);
 		if (count($usersWithInvalidAlliances) > 0) {
 			echo "<table class=\"tbl\">";
 			echo "<tr><th class=\"tbltitle\">Nick</th>
@@ -397,18 +356,7 @@ use Pimple\Container;
 
 		// Leere Allianzen
 		echo "<h2>Leere Allianzen (Allianzen ohne User)</h2>";
-		$alliancesWithoutUsers = $app['db']
-			->executeQuery("SELECT
-					alliance_id,
-					alliance_name,
-					alliance_tag
-				FROM alliances a
-				WHERE NOT EXISTS (
-					SELECT 1
-					FROM users u
-					WHERE a.alliance_id = u.user_alliance_id
-				);")
-			->fetchAllAssociative();
+		$alliancesWithoutUsers = fetchAlliancesWithoutUsers($app);
 		if (count($alliancesWithoutUsers) > 0) {
 			echo "<table class=\"tbl\">";
 			echo "<tr><th class=\"tbltitle\">Name</th>
@@ -436,61 +384,53 @@ use Pimple\Container;
 		// Suchergebnisse
 		//
 
-		if ((isset($_POST['alliance_search']) && $_POST['alliance_search']!="" || $_SESSION['admin']['queries']['alliances']!="") && isset($_GET['action']) && $_GET['action']=="search")
+		if ((isset($_POST['alliance_search'])
+				&& $_POST['alliance_search']!=""
+				|| isset($_SESSION['admin']['alliances']['query'])
+			)
+			&& isset($_GET['action'])
+			&& $_GET['action']=="search")
 		{
 			$twig->addGlobal('subtitle', 'Suchergebnisse');
 
-  			if ($_SESSION['admin']['queries']['alliances']=="")
-  			{
-				$sql = '';
-				if ($_POST['alliance_id']!="")
-				{
-					$sql.= " AND alliance_id ".stripslashes($_POST['qmode']['alliance_id']).$_POST['alliance_id']."$addchars'";
+			if (isset($_SESSION['admin']['alliances']['query']) && isset($_SESSION['admin']['alliances']['parameters'])) {
+				$res = $app['db']
+					->executeQuery(
+						$_SESSION['admin']['alliances']['query'],
+						$_SESSION['admin']['alliances']['parameters']
+					);
+			} else {
+				$qry = $app['db']
+					->createQueryBuilder()
+					->select('alliance_id',
+						'alliance_name',
+						'alliance_tag',
+						'alliance_foundation_date',
+						'alliance_founder_id',
+						'COUNT(u.user_id) AS cnt')
+					->from('alliances', 'a')
+					->leftJoin('a', 'users', 'u', 'u.user_alliance_id = a.alliance_id')
+					->groupBy('alliance_id')
+					->orderBy('alliance_tag');
+
+				if ($_POST['alliance_id']!="") {
+					$qry->andWhere('alliance_id = :alliance_id')
+						->setParameter('alliance_id', $_POST['alliance_id']);
 				}
-				if ($_POST['alliance_tag']!="")
-				{
-					if (stristr($_POST['qmode']['alliance_tag'],"%"))
-						$addchars = "%";else $addchars = "";
-					$sql.= " AND alliance_tag ".stripslashes($_POST['qmode']['alliance_tag']).$_POST['alliance_tag']."$addchars'";
+				if ($_POST['alliance_tag']!="") {
+					$qry = fieldComparisonQuery($qry, 'alliance_tag', 'alliance_tag');
 				}
-				if ($_POST['alliance_name']!="")
-				{
-					if (stristr($_POST['qmode']['alliance_name'],"%"))
-						$addchars = "%";else $addchars = "";
-					$sql.= " AND alliance_name ".stripslashes($_POST['qmode']['alliance_name']).$_POST['alliance_name']."$addchars'";
+				if ($_POST['alliance_name']!="") {
+					$qry = fieldComparisonQuery($qry, 'alliance_name', 'alliance_name');
 				}
-				if ($_POST['alliance_text']!="")
-				{
-					if (stristr($_POST['qmode']['alliance_text'],"%"))
-						$addchars = "%";else $addchars = "";
-					$sql.= " AND alliance_text ".stripslashes($_POST['qmode']['alliance_text']).$_POST['alliance_text']."$addchars'";
+				if ($_POST['alliance_text']!="") {
+					$qry = fieldComparisonQuery($qry, 'alliance_text', 'alliance_text');
 				}
 
-				$sqlstart =	"SELECT
-					alliance_id,
-					alliance_name,
-					alliance_tag,
-					alliance_foundation_date,
-					alliance_founder_id,
-					COUNT(user_id) AS cnt
-				FROM
-					alliances
-				LEFT JOIN
-					users ON user_alliance_id=alliance_id
-				WHERE 1 ";
-				$sqlend = "
-				GROUP BY alliance_id
-				ORDER BY alliance_tag;";
-				$sql = $sqlstart.$sql.$sqlend;
-				$_SESSION['admin']['queries']['alliances'] = $sql;
+				$res = $qry->execute();
 			}
-			else {
-				$sql = $_SESSION['admin']['queries']['alliances'];
-			}
+			$data = $res->fetchAllAssociative();
 
-			$data = $app['db']
-				->executeQuery($sql)
-				->fetchAllAssociative();
 			$nr = count($data);
 			if ($nr==1)
 			{
@@ -500,7 +440,12 @@ use Pimple\Container;
 			}
 			elseif ($nr > 0)
 			{
-				echo $nr." Datens&auml;tze vorhanden<br/><br/>";
+				if (isset($qry)) {
+					$_SESSION['admin']['alliances']['query'] = $qry->getSQL();
+					$_SESSION['admin']['alliances']['parameters'] = $qry->getParameters();
+				}
+
+				echo $nr." Datensätze vorhanden<br/><br/>";
 				if ($nr > 20)
 				{
 					echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /><br/><br/>";
@@ -531,61 +476,6 @@ use Pimple\Container;
 				echo "</table>";
 				echo "<br/><input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /> ";
 				echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;action=search'\" value=\"Aktualisieren\" /> ";
-				echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=dropinactive'\" value=\"Leere Allianzen löschen\" />";
-			}
-			else
-			{
-				echo "Die Suche lieferte keine Resultate!<br/><br/><input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Zurück\" />";
-			}
-		}
-
-		//
-		// Leere Allianzen löschen
-		//
-
-		elseif (isset($_GET['sub']) && $_GET['sub']=="dropinactive")
-		{
-			echo "Sollen folgende leeren Allianzen gelöscht werden?<br/><br/>";
-			$data = $app['db']
-				->executeQuery("SELECT *
-					FROM alliances
-					ORDER BY alliance_tag;", [])
-				->fetchAllAssociative();
-
-			if (count($data) > 0)
-			{
- 				$users = get_user_names();
-				echo "<table class=\"tbl\">";
-				echo "<tr>";
-				echo "<td class=\"tbltitle\" valign=\"top\">ID</td>";
-				echo "<td class=\"tbltitle\" valign=\"top\">Name</td>";
-				echo "<td class=\"tbltitle\" valign=\"top\">Tag</td>";
-				echo "<td class=\"tbltitle\" valign=\"top\">Gründer</td>";
-				echo "<th>Gründung</th>";
-				echo "<td valign=\"top\">&nbsp;</td>";
-				echo "</tr>";
-				$cnt = 0;
-				foreach ($data as $arr)
-				{
-					if (numberOfUsersInAlliance($app, $arr['alliance_id']) == 0)
-					{
-						echo "<tr>";
-						echo "<td class=\"tbldata\">".$arr['alliance_id']."</td>";
-						echo "<td class=\"tbldata\">".$arr['alliance_name']."</td>";
-						echo "<td class=\"tbldata\">".$arr['alliance_tag']."</td>";
-						echo "<td class=\"tbldata\">".$users[$arr['alliance_founder_id']]['nick']."</td>";
-						echo "<td class=\"tbldata\">".date("Y-m-d",$arr['alliance_foundation_date'])."</td>";
-						echo "<td class=\"tbldata\"><a href=\"?page=$page&sub=edit&alliance_id=".$arr['alliance_id']."\">details</a></td>";
-						echo "</tr>";
-						$cnt++;
-					}
-				}
-				echo "</table>";
-				echo "<br/>$cnt von ".mysql_num_rows($res)." Allianzen sind zur Löschung vorgesehen!<br/>";
-				echo "<br/><input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Nein, zurück zur Übersicht\" /> ";
-				if ($cnt > 0) {
-					echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;action=dropinactive'\" value=\"Ja, löschen!\" />";
-				}
 			}
 			else
 			{
@@ -658,7 +548,8 @@ use Pimple\Container;
 
 		else
 		{
-			$_SESSION['admin']['queries']['alliances']="";
+			$_SESSION['admin']['alliances']['query'] = null;
+			$_SESSION['admin']['alliances']['parameters'] = null;
 
 			// Allianz löschen
 			if (isset($_POST['drop']))
@@ -671,52 +562,32 @@ use Pimple\Container;
 				}
 			}
 
-			// Leere Allianzen löschen
-			if (isset($_GET['action']) && $_GET['action']=="dropinactive")
-			{
-				$data = $app['db']
-					->executeQuery("SELECT *
-						FROM alliances
-						ORDER BY alliance_tag;")
-					->fetchAllAssociative();
-				if (count($data) > 0)
-				{
-					$cnt=0;
-					foreach ($data as $arr)
-					{
-						if (numberOfUsersInAlliance($app, $arr['alliance_id']) == 0)
-						{
-							$app['db']
-								->executeStatement("DELETE FROM alliances
-									WHERE alliance_id = ?;",
-									[$arr['alliance_id']]);
-							$app['db']
-								->executeStatement("DELETE FROM alliance_ranks
-									WHERE rank_alliance_id = ?;",
-									[$arr['alliance_id']]);
-							$app['db']
-								->executeStatement("DELETE FROM alliance_bnd
-									WHERE alliance_bnd_alliance_id1 = ?
-										OR alliance_bnd_alliance_id2 = ?;",
-									[$arr['alliance_id'], $arr['alliance_id']]);
-							$cnt++;
-						}
-					}
-				}
-				echo "$cnt leere Allianzen wurden gelöscht!<br/><br/>";
-			}
-
 			// Suchmaske
 			$twig->addGlobal("subtitle", 'Suchmaske');
 
 			echo "<form action=\"?page=$page&amp;action=search\" method=\"post\">";
 			echo "<table class=\"tbl\">";
-			echo "<tr><td class=\"tbltitle\">ID</td><td class=\"tbldata\"><input type=\"text\" name=\"alliance_id\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('alliance_id');echo"</td></tr>";
-			echo "<tr><td class=\"tbltitle\">Tag</td><td class=\"tbldata\"><input type=\"text\" name=\"alliance_tag\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('alliance_tag');echo "</td></tr>";
-			echo "<tr><td class=\"tbltitle\">Name</td><td class=\"tbldata\"><input type=\"text\" name=\"alliance_name\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchAlliance(this.value,'alliance_name','citybox2');\"/> ";fieldqueryselbox('alliance_name');echo "<br><div class=\"citybox\" id=\"citybox2\">&nbsp;</div></td></tr>";
-			echo "<tr><td class=\"tbltitle\">Text</td><td class=\"tbldata\"><input type=\"text\" name=\"alliance_text\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('alliance_text');echo "</td></tr>";
+			echo "<tr><td class=\"tbltitle\">ID</td>
+				<td class=\"tbldata\">
+					<input type=\"text\" name=\"alliance_id\" value=\"\" size=\"20\" maxlength=\"250\" /> ";
+			echo"</td></tr>";
+			echo "<tr><td class=\"tbltitle\">Tag</td>
+				<td class=\"tbldata\">
+					<input type=\"text\" name=\"alliance_tag\" value=\"\" size=\"20\" maxlength=\"250\" /> ";
+			echo fieldComparisonSelectBox('alliance_tag');
+			echo "</td></tr>";
+			echo "<tr><td class=\"tbltitle\">Name</td>
+				<td class=\"tbldata\">
+					<input type=\"text\" name=\"alliance_name\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchAlliance(this.value,'alliance_name','citybox2');\"/> ";
+			echo fieldComparisonSelectBox('alliance_name');
+			echo "<br><div class=\"citybox\" id=\"citybox2\">&nbsp;</div></td></tr>";
+			echo "<tr><td class=\"tbltitle\">Text</td>
+				<td class=\"tbldata\">
+					<input type=\"text\" name=\"alliance_text\" value=\"\" size=\"20\" maxlength=\"250\" /> ";
+			echo fieldComparisonSelectBox('alliance_text');
+			echo "</td></tr>";
 			echo "</table>";
-			echo "<br/><input type=\"submit\" name=\"alliance_search\" value=\"Suche starten\" /> (wenn nichts eingegeben wird werden alle Datens&auml;tze angezeigt)</form>";
+			echo "<br/><input type=\"submit\" name=\"alliance_search\" value=\"Suche starten\" /> (wenn nichts eingegeben wird werden alle Datensätze angezeigt)</form>";
 			echo "<br/>Es sind ".nf(numberOfAlliances($app))." Einträge in der Datenbank vorhanden.";
 		}
 	}
@@ -750,6 +621,15 @@ use Pimple\Container;
 				WHERE user_alliance_id = ?
 				ORDER BY user_nick;",
 				[$allianceId])
+			->fetchAllAssociative();
+	}
+
+	function fetchAlliances(Container $app): array
+	{
+		return $app['db']
+			->executeQuery("SELECT *
+				FROM alliances
+				ORDER BY alliance_tag;")
 			->fetchAllAssociative();
 	}
 
@@ -898,4 +778,76 @@ use Pimple\Container;
 					FROM alliances a
 					WHERE alliance_bnd_alliance_id2 = a.alliance_id
 				)");
+	}
+
+	function fetchAlliancesWithoutFounder(Container $app): array
+	{
+		return $app['db']
+			->executeQuery("SELECT
+					alliance_id,
+					alliance_name,
+					alliance_tag
+				FROM alliances a
+				WHERE NOT EXISTS (
+					SELECT 1
+					FROM users u
+					WHERE a.alliance_founder_id = u.user_id
+				);")
+			->fetchAllAssociative();
+	}
+
+	function fetchUsersWithoutAlliance(Container $app): array
+	{
+		return $app['db']
+			->executeQuery("SELECT
+					user_id,
+					user_nick,
+					user_email
+				FROM users u
+				WHERE
+					user_alliance_id != 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM alliances a
+						WHERE a.alliance_id = u.user_alliance_id
+					);")
+			->fetchAllAssociative();
+	}
+
+	function fetchAlliancesWithoutUsers($app): array
+	{
+		return $app['db']
+			->executeQuery("SELECT
+					alliance_id,
+					alliance_name,
+					alliance_tag
+				FROM alliances a
+				WHERE NOT EXISTS (
+					SELECT 1
+					FROM users u
+					WHERE a.alliance_id = u.user_alliance_id
+				);")
+			->fetchAllAssociative();
+	}
+
+	function deleteAlliance(Container $app, $id): bool
+	{
+		$affected = $app['db']
+			->delete("alliances", [
+				'alliance_id' => $id,
+			]);
+
+
+		$app['db']
+			->delete("alliance_ranks", [
+				'rank_alliance_id' => $id,
+			]);
+
+		$app['db']
+			->executeStatement("DELETE FROM alliance_bnd
+				WHERE alliance_bnd_alliance_id1 = :id
+					OR alliance_bnd_alliance_id2 = :id;",
+				['id' => $id]);
+
+		return $affected > 0;
 	}

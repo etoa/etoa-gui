@@ -308,44 +308,6 @@ if ($sub=="prices")
 				$_SESSION['search']['buildings']['parameters'] = null;
 			}
 
-			$qry = $app['db']
-				->createQueryBuilder()
-				->select('*')
-				->from('buildlist', 'l')
-				->innerJoin('l', 'planets', 'p', 'p.id = l.buildlist_entity_id')
-				->innerJoin('l', 'users', 'u', 'u.user_id = l.buildlist_user_id')
-				->innerJoin('l', 'buildings', 'b', 'b.building_id = l.buildlist_building_id')
-				->groupBy('buildlist_id')
-				->orderBy('buildlist_user_id')
-				->addOrderBy('buildlist_entity_id')
-				->addOrderBy('building_type_id')
-				->addOrderBy('building_order')
-				->addOrderBy('building_name');
-
-			if ($_POST['entity_id'] != "")
-			{
-				$qry->andWhere('id = :id')
-					->setParameter('id', $_POST['entity_id']);
-			}
-			if ($_POST['planet_name'] != "")
-			{
-				$qry = fieldComparisonQuery($qry, 'planet_name', 'planet_name');
-			}
-			if ($_POST['user_id'] != "")
-			{
-				$qry->andWhere('user_id = :userid')
-					->setParameter('userid', $_POST['user_id']);
-			}
-			if ($_POST['user_nick'] != "")
-			{
-				$qry = fieldComparisonQuery($qry, 'user_nick', 'user_nick');
-			}
-			if ($_POST['building_id']!="")
-			{
-				$qry->andWhere('building_id = :building')
-					->setParameter('building', $_POST['building_id']);
-			}
-
 			echo "<h2>Suchergebnisse</h2>";
 
 			if (isset($_SESSION['search']['buildings']['query']) && isset($_SESSION['search']['buildings']['parameters'])) {
@@ -355,13 +317,48 @@ if ($sub=="prices")
 						$_SESSION['search']['buildings']['parameters']
 					);
 			} else {
+				$qry = $app['db']
+					->createQueryBuilder()
+					->select('*')
+					->from('buildlist', 'l')
+					->innerJoin('l', 'planets', 'p', 'p.id = l.buildlist_entity_id')
+					->innerJoin('l', 'users', 'u', 'u.user_id = l.buildlist_user_id')
+					->innerJoin('l', 'buildings', 'b', 'b.building_id = l.buildlist_building_id')
+					->groupBy('buildlist_id')
+					->orderBy('buildlist_user_id')
+					->addOrderBy('buildlist_entity_id')
+					->addOrderBy('building_type_id')
+					->addOrderBy('building_order')
+					->addOrderBy('building_name');
+
+				if ($_POST['entity_id'] != "") {
+					$qry->andWhere('id = :id')
+						->setParameter('id', $_POST['entity_id']);
+				}
+				if ($_POST['planet_name'] != "") {
+					$qry = fieldComparisonQuery($qry, 'planet_name', 'planet_name');
+				}
+				if ($_POST['user_id'] != "") {
+					$qry->andWhere('user_id = :userid')
+						->setParameter('userid', $_POST['user_id']);
+				}
+				if ($_POST['user_nick'] != "") {
+					$qry = fieldComparisonQuery($qry, 'user_nick', 'user_nick');
+				}
+				if ($_POST['building_id']!="") {
+					$qry->andWhere('building_id = :building')
+						->setParameter('building', $_POST['building_id']);
+				}
+
 				$res = $qry->execute();
 			}
 			$data = $res->fetchAllAssociative();
 			if (count($data) > 0)
 			{
-				$_SESSION['search']['buildings']['query'] = $qry->getSQL();
-				$_SESSION['search']['buildings']['parameters'] = $qry->getParameters();
+				if (isset($qry)) {
+					$_SESSION['search']['buildings']['query'] = $qry->getSQL();
+					$_SESSION['search']['buildings']['parameters'] = $qry->getParameters();
+				}
 
 				echo count($data)." Datens&auml;tze vorhanden<br/><br/>";
 				if (count($data) > 20) {
@@ -567,9 +564,9 @@ if ($sub=="prices")
 				->fetchAssociative();
 	}
 
-	function updateBuildingListEntry(Container $app, int $id, int $level, string $type, string $start, string $end): void
+	function updateBuildingListEntry(Container $app, int $id, int $level, string $type, string $start, string $end): bool
 	{
-		$app['db']
+		$affected = $app['db']
 			->executeStatement("UPDATE
 					buildlist
 				SET
@@ -586,14 +583,16 @@ if ($sub=="prices")
 					'end' => $end,
 					'id' => $id,
 				]);
+		return $affected > 0;
 	}
 
-	function deleteBuildingListEntry(Container $app, int $id): void
+	function deleteBuildingListEntry(Container $app, int $id): bool
 	{
-		$app['db']
+		$affected = $app['db']
 			->executeStatement("DELETE FROM buildlist
 				WHERE buildlist_id = ?;",
 				[$id]);
+		return $affected > 0;
 	}
 
 	function fetchPointsForBuilding(Container $app, int $buildingId): array
