@@ -28,18 +28,18 @@ require __DIR__ . '/init.inc.php';
 	// Load default values
 	require_once __DIR__ . '/def.inc.php';
 
+    if (!isset($app)) {
+        $questSystemEnabled = (bool) $cfg->get('quest_system_enable');
+        $app = require __DIR__ .'/../../src/app.php';
+        $app->boot();
+    }
+
 	// Init session
 	if (ADMIN_MODE) {
 		$s = AdminSession::getInstance();
 	} else {
 		$s = UserSession::getInstance();
 	}
-
-    if (!isset($app)) {
-        $questSystemEnabled = (bool) $cfg->get('quest_system_enable');
-        $app = require __DIR__ .'/../../src/app.php';
-        $app->boot();
-    }
 
     $twig = $app['twig'];
 
