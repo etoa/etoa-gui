@@ -7,14 +7,16 @@ includes:
 parameters:
     level: 5
     paths:
+        - bin
         - src
         - tests
+
+    bootstrapFiles:
+        - htdocs/inc/init.inc.php
 
     scanFiles:
         - htdocs/inc/mysqli_polyfill.php
     ignoreErrors:
-        - '#Function (getAppVersion|text2html) not found#'
-        - '#Constant (FORUM_URL|HELPCENTER_URL|RULES_URL|TEAMSPEAK_URL|DEVCENTER_PATH|CHAT_URL|HELPCENTER_ONCLICK|RULES_ONCLICK|TEAMSPEAK_ONCLICK|DEVCENTER_ONCLICK|CHAT_ONCLICK) not found#'
         - '#Dynamic call to static method PHPUnit\\Framework\\Assert#'
         - '#Dynamic call to static method PHPUnit\\Framework\\TestCase#'
         - '#Doctrine\\Common\\Cache\\ArrayCache#'

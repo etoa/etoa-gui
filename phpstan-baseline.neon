@@ -1,0 +1,7 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^If condition is always false\\.$#"
+			count: 1
+			path: bin/cronjob.php
+
