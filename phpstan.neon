@@ -12,6 +12,7 @@ parameters:
         - src
         - tests
         - htdocs/inc
+        - htdocs/index
 
     excludePaths:
         - htdocs/inc/xajax
