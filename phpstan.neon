@@ -1,4 +1,5 @@
 includes:
+    - phpstan-baseline.neon
     - vendor/phpstan/phpstan-phpunit/extension.neon
     - vendor/phpstan/phpstan-phpunit/rules.neon
     - vendor/phpstan/phpstan-strict-rules/rules.neon
@@ -7,14 +8,24 @@ includes:
 parameters:
     level: 5
     paths:
+        - bin
         - src
         - tests
+        - htdocs/inc
+
+    excludePaths:
+        - htdocs/inc/xajax
+
+    bootstrapFiles:
+        - htdocs/inc/init.inc.php
 
     scanFiles:
         - htdocs/inc/mysqli_polyfill.php
     ignoreErrors:
-        - '#Function (getAppVersion|text2html) not found#'
-        - '#Constant (FORUM_URL|HELPCENTER_URL|RULES_URL|TEAMSPEAK_URL|DEVCENTER_PATH|CHAT_URL|HELPCENTER_ONCLICK|RULES_ONCLICK|TEAMSPEAK_ONCLICK|DEVCENTER_ONCLICK|CHAT_ONCLICK) not found#'
         - '#Dynamic call to static method PHPUnit\\Framework\\Assert#'
         - '#Dynamic call to static method PHPUnit\\Framework\\TestCase#'
         - '#Doctrine\\Common\\Cache\\ArrayCache#'
+
+        - '#Variable \$(twig|cfg|xajax|s|page|resNames|index|link|site|app|cu|conf) might not be define#'
+        - '#Access to (protected|private) property [a-z]+::\$[a-z]+#i'
+        - '#Access to an undefined property UserSession#'

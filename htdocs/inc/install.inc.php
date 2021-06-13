@@ -148,7 +148,7 @@ if ($step === 2) {
 
     $cfg = Config::getInstance();
 
-    if (isset($_SERVER['HTTP_HOST']) && !empty($_SERVER['HTTP_HOST'])) {
+    if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST']) {
         $default_round_url = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'];
         $default_referers = $default_round_url."\n".INSTALLER_DEFAULT_LOGINSERVER_URL;
     } else {

@@ -292,7 +292,7 @@
 	/**
 	* User-Id via Nick auslesen
 	*
-	* @param char $nick User-nick
+	* @param string $nick User-nick
 	*/
 	function get_user_id($nick)
 	{
@@ -406,7 +406,7 @@
 	function nf_back_sign($number,$colorize=0)
 	{
 		$number = str_replace('`', '', $number);
-		$number = str_replace('%', '', $number);
+		$number = (float) str_replace('%', '', $number);
 		if ($colorize==1)
 		{
 			if ($number>0)
@@ -414,10 +414,8 @@
 			if ($number<0)
 				return "<span style=\"color:#f00\">".number_format($number,0,",",".")."</span>";
 		}
-		// $number = abs(intval($number));
-		$number = intval($number);
-		return $number;
 
+		return (int) $number;
 	}
 
 	/**
@@ -484,7 +482,7 @@
 
 		$admins = getAdmins();
 		// admin
-		if ( in_array($user->id, $admins) )
+		if ( in_array((int) $user->id, $admins, true) )
 		{
 			$class = "adminColor";
 		}
@@ -531,106 +529,18 @@
 		return $class;
 	}
 
-	/*
-	 * Format the data in a row by comparing two user
-	 *
-	 * @param <Entity> $ent Entityobject you will compare the entity owner with the $cu
-	 *
-	 * @return $class
-	 */
-	function getFormatingColorByEntity(&$ent)
-	{
-		if ( !isset($cu) )
-		{
-			if ( !$_SESSION['user_id']) return;
-			$cu = new User($_SESSION['user_id']);
-		}
-
-		// admin
-		if ( in_array($ent->ownerId(), $admins) )
-		{
-		  $class = "adminColor";
-		  $tm_info = "Admin/Entwickler";
-		}
-		// war
-		elseif ($ent->owner->allianceId>0 && $cu->allianceId>0 && $cu->alliance->checkWar($ent->owner->allianceId))
-		{
-		  $class = "enemyColor";
-		  $tm_info = "Krieg";
-		}
-		// pact
-		elseif ($ent->owner->allianceId>0 && $cu->allianceId>0 && $cu->alliance->checkBnd($ent->owner->allianceId))
-		{
-		  $class = "friendColor";
-		  $tm_info = "B&uuml;ndnis";
-		}
-		// banned/locked
-		elseif ($ent->ownerLocked())
-		{
-		  $class = "userLockedColor";
-		  $tm_info = "Gesperrt";
-		}
-		// on holiday
-		elseif ($ent->ownerHoliday())
-		{
-		  $class = "userHolidayColor";
-		  $tm_info = "Urlaubsmodus";
-		}
-		// long time inactive
-		elseif ($ent->owner->lastOnline < time() - USER_INACTIVE_LONG * 86400)
-		{
-		  $class = "userLongInactiveColor";
-		  $tm_info = "Inaktiv";
-		}
-		// inactive
-		elseif ($ent->owner->lastOnline < time() - USER_INACTIVE_SHOW * 86400)
-		{
-		  $class = "userInactiveColor";
-		  $tm_info = "Inaktiv";
-		}
-		// own planet
-		elseif($cu->id == $ent->ownerId())
-		{
-		  $class .= "userSelfColor";
-		  $tm_info = "";
-		}
-		// own planet
-		elseif($cu->allianceId() == $ent->owner->allianceId() && $cu->allianceId())
-		{
-		  $class = "userAllianceMemberColor";
-		  $tm_info = "Allianzmitglied";
-		}
-		// noob
-		elseif ( ($cu->points * USER_ATTACK_PERCENTAGE > $ent->ownerPoints()
-				|| $cu->points / USER_ATTACK_PERCENTAGE < $ent->ownerPoints() )
-				&& $ent->ownerId() != $cu->id)
-		{
-		  $class = "noobColor";
-		  $tm_info = "Anf&auml;ngerschutz";
-		}
-		// Alien/NPC
-	    elseif ($ent->owner->isNPC()>0)
-	    {
-		    $class .= "alien";
-		    $tm_info = "Alien";
-		}
-		else
-		{
-		  $class = "";
-		  $tm_info="";
-		}
-	}
-
-	function getAdmins()
+    /**
+     * @return int[]
+     */
+	function getAdmins(): array
 	{
 		global $admins;
 		if ( !isset($admins))
 		{
 			$ares = dbquery("SELECT player_id FROM admin_users WHERE player_id<>0;");
-			$admins = array();
-			while ($arow = mysql_fetch_row($ares))
-			{
-				array_push($admins,$arow[0]);
+			$admins = [];
+			while ($arow = mysql_fetch_row($ares)) {
+			    $admins[] = (int) $arow[0];
 			}
 		}
 		return $admins;
@@ -711,10 +621,9 @@
 	/**
 	* Speichert Daten in die Log-Tabelle
 	*
-	 * TDOD: deprecated, please replace
+	 * @deprecated, please replace
 	* @param int $log_cat Log Kategorie
 	* @param string $log_text Log text
-	* @param int $log_timestamp Zeit
 	* @author MrCage
 	*/
 	function add_log($log_cat, $log_text)
@@ -914,7 +823,7 @@
 				WHERE
 					deflist_entity_id='".$planet_id."';
 			");
-			add_log("6","Der Planet mit der ID ".$planet_id." wurde zurückgesetzt!");
+            Log::add(6, Log::INFO, "Der Planet mit der ID ".$planet_id." wurde zurückgesetzt!");
 			return true;
 		}
 		else
@@ -1086,7 +995,7 @@
 		$cnt=0;
 		foreach ($data as $val => $text)
 		{
-			echo "<a href=\"#\" id=\"tabMenu$x\" onclick=\"$val\" ".($cnt==count($data)?' class="tabLast"':'').">$text</a>";
+			echo "<a href=\"#\" id=\"tabMenu\" onclick=\"$val\" ".($cnt==count($data)?' class="tabLast"':'').">$text</a>";
 		}
 		echo "<br style=\"clear:both;\"/>";
 		echo "</div>";
@@ -1470,8 +1379,8 @@
 	*/
 	function pseudo_randomize($faktor,$qx,$qy,$px,$py)
 	{
-		$str=floor((abs(sin($qx)) + abs(sin($qy)) + abs(sin($px)) + abs(sin($py)))*10000);
-		return round ($faktor*((substr($str,strlen($str)-1,1)+1)/10),0);
+		$str = (string) floor((abs(sin($qx)) + abs(sin($qy)) + abs(sin($px)) + abs(sin($py)))*10000);
+		return round ($faktor*(((int) substr($str,strlen($str)-1,1)+1)/10),0);
 	}
 
 	/**
@@ -1516,7 +1425,8 @@
 
 			// Liefert Jahr +-1 vom jetzigen Jahr
 			echo "<select name=\"".$element_name."_y\" id=\"".$element_name."_y\">";
-			for ($x=date("Y")-1;$x<date("Y")+2;$x++)
+			$year = (int) date("Y");
+			for ($x = $year - 1; $x < $year + 2; $x++)
 			{
 				echo "<option value=\"$x\"";
 				if (date("Y",$def_val)==$x) echo " selected=\"selected\"";
@@ -1630,7 +1540,7 @@
 	/**
 	* Schiffe zur Schiffsliste hinzufügen
 	*
-	* @param int $planet Planet-ID
+	* @param int $entity Entity-ID
 	* @param int $user User-ID
 	* @param int $ship Schiff-ID
 	* @param int $cnt Anzahl
@@ -1664,9 +1574,9 @@
 	/**
 	* Verteidigungsanlagen zur Anlagenliste hinzufügen
 	*
-	* @param int $planet Planet-ID
+	* @param int $entity Entity-ID
 	* @param int $user User-ID
-	* @param int $def Schiff-ID
+	* @param int $def Def-ID
 	* @param int $cnt Anzahl
 	* @author MrCage
 	*/
@@ -1697,10 +1607,10 @@
 	/**
 	* Gebäude zur gebäudeliste hinzufügen
 	*
-	* @param int $planet Planet-ID
+	* @param int $entity entity-ID
 	* @param int $user User-ID
-	* @param int $ship Schiff-ID
-	* @param int $cnt Anzahl
+	* @param int $building Building-ID
+	* @param int $level Anzahl
 	* @author MrCage
 	*/
 	function buildlistAdd($entity,$user,$building,$level)
@@ -1798,7 +1708,7 @@
 	* Cuts words
 	*/
    function cut_word($txt, $where, $br=0) {
-       if (empty($txt)) return false;
+       if (!$txt) return false;
 
        $d = [];
        for ($c = 0, $a = 0, $g = 0; $c<strlen($txt); $c++) {
@@ -1825,7 +1735,7 @@
 	{
 		// Renderzeit-Start festlegen
 		$render_time = explode(" ",microtime());
-		return $render_time[1]+$render_time[0];
+		return (float) $render_time[1] + (float)$render_time[0];
 	}
 
 	/**
@@ -1835,7 +1745,7 @@
 	{
 		// Renderzeit
 		$render_time = explode(" ",microtime());
-		$rtime = $render_time[1]+$render_time[0]-$starttime;
+		$rtime = (float) $render_time[1] + (float) $render_time[0] - $starttime;
 		return round($rtime,3);
 	}
 
@@ -1861,7 +1771,7 @@ function imagecreatefromfile($path, $user_functions = false)
         $functions[IMAGETYPE_BMP] = 'imagecreatefrombmp';
     }
 
-    if(!$functions[$info[2]])
+    if(!isset($functions[$info[2]]))
     {
         return false;
     }
@@ -1881,45 +1791,30 @@ function imagecreatefromfile($path, $user_functions = false)
 	*/
 	function resizeImage($fileFrom, $fileTo, $newMaxWidth = 0, $newMaxHeight = 0, $type="jpeg" )
 	{
-		if ($type=='png')
-		{
-			$imgfrom = "ImageCreateFromPNG";
-			$imgsave = "ImagePNG";
-			$quality=null;
-		}
-		elseif ($type=='gif')
-		{
-			$imgfrom = "ImageCreateFromGIF";
-			$imgsave = "ImageGIF";
-			$quality=0;
-		}
-		elseif ($type=="jpeg" || $type=="jpg")
-		{
-			$imgfrom = "ImageCreateFromJPEG";
-			$imgsave = "ImageJPEG";
-			$quality=100;
-		}
-		else
-			return false;
+	    if (!in_array($type, ['png', 'gif', 'jpeg', 'jpg'], true)) {
+	        return false;
+        }
 
 		if ($img = imagecreatefromfile($fileFrom))
 		{
 			$width = imagesx($img);
 			$height = imagesy($img);
-			$resize = FALSE;
+			$resize = false;
 
+            $newWidth = $newMaxWidth;;
+            $newHeight = $newMaxHeight;
 			if ($width > $newMaxWidth) {
 				$newWidth = $newMaxWidth;
-				$newHeight = intval($height * ($newWidth / $width));
+				$newHeight = (int) ($height * ($newWidth / $width));
 				if ($newHeight > $newMaxHeight) {
 					$newHeight = $newMaxHeight;
-					$newWidth = intval($width * ($newHeight / $height));
+					$newWidth = (int) ($width * ($newHeight / $height));
 				}
-				$resize = TRUE;
+				$resize = true;
 			} else if($height > $newMaxHeight) {
 				$newHeight = $newMaxHeight;
-				$newWidth = intval($width * ($newHeight / $height));
-				$resize = TRUE;
+				$newWidth = (int) ($width * ($newHeight / $height));
+				$resize = true;
 			}
 
 			if ($resize)
@@ -1949,7 +1844,22 @@ function imagecreatefromfile($path, $user_functions = false)
 			{
 				$handle = $img;
 			}
-   		$imgsave($handle, $fileTo, $quality);
+
+			switch ($type) {
+                case 'png':
+                    imagepng($handle, $fileTo);
+                    break;
+                case 'gif':
+                    imagegif($handle, $fileTo);
+                    break;
+                case 'jpg':
+                case 'jpeg':
+                    imagejpeg($handle, $fileTo, 100);
+                    break;
+                default:
+                    throw new \InvalidArgumentException('Unknown image type: ' . $type);
+            }
+
             imagedestroy($handle);
 			return true;
 		}
@@ -1959,10 +1869,10 @@ function imagecreatefromfile($path, $user_functions = false)
 	/**
 	* Calculates costs per level for a given building costs array
 	*
-	* @param array Array of db cost values
-	* @param int Level
-	* @param float costFactor (like specialist)
-	* @return array Array of calculated costs
+	* @param array<string, float> $buildingArray Array of db cost values
+	* @param int $level Level
+	* @param float $fac costFactor (like specialist)
+	* @return array<string, float> Array of calculated costs
 	*
 	*/
 	function calcBuildingCosts($buildingArray, $level, $fac=1)
@@ -2005,10 +1915,10 @@ function imagecreatefromfile($path, $user_functions = false)
 	/**
 	* Calculates costs per level for a given technology costs array
 	*
-	* @param array Array of db cost values
-	* @param int Level
-	* @param float costFactor (like specialist)
-	* @return array Array of calculated costs
+	* @param array<string, float> $arr Array of db cost values
+	* @param int $l Level
+	* @param float $fac costFactor (like specialist)
+	* @return array<string, float> Array of calculated costs
 	*
 	*/
 	function calcTechCosts($arr,$l,$fac=1)
@@ -2028,7 +1938,7 @@ function imagecreatefromfile($path, $user_functions = false)
 	* Formates a given number of bytes to a humand readable string of Bytes, Kilobytes,
 	* Megabytes, Gigabytes or Terabytes and rounds it to three digits
 	*
-	* @param int Number of bytes
+	* @param int $s Number of bytes
 	* @return string Well-formated byte number
 	* @author Nicolas Perrenoud
 	*/
@@ -2059,9 +1969,9 @@ function imagecreatefromfile($path, $user_functions = false)
 	/**
 	 * Generates a password using the password string, and possibly a user selected seed
 	 *
-	 * @param string Password from user
-	 * @param string User's salt (must be random)
-	 * @param string Returns a salted password concatenated with the salt itself to be saved in a user database
+	 * @param string $pw Password from user
+	 * @param string $salt User's salt (must be random)
+	 * @return string Returns a salted password concatenated with the salt itself to be saved in a user database
 	 */
 	function saltPasswort($pw, $salt=null)
 	{
@@ -2075,7 +1985,7 @@ function imagecreatefromfile($path, $user_functions = false)
 	/**
 	 * Returns the salt which is part of a salted password string
 	 *
-	 * @param string Salted password
+	 * @param string $passwordAndSalt Salted password
 	 */
 	function getSaltFromPassword($passwordAndSalt)
 	{
@@ -2099,7 +2009,7 @@ function imagecreatefromfile($path, $user_functions = false)
 	 */
 	function generateSalt()
 	{
-		return sha1(uniqid(mt_rand(), true));
+		return sha1(uniqid((string) mt_rand(), true));
 	}
 
 	/**
@@ -2107,7 +2017,7 @@ function imagecreatefromfile($path, $user_functions = false)
 	 */
 	function generatePasswort()
 	{
-		return substr(sha1(mt_rand()), 0, 8);
+		return substr(sha1((string) mt_rand()), 0, 8);
 	}
 
 	/**
@@ -2116,7 +2026,7 @@ function imagecreatefromfile($path, $user_functions = false)
 	 */
 	function passwordStrength($password, $username = null)
 	{
-	    if (!empty($username))
+	    if ($username)
 	    {
 	        $password = str_replace($username, '', $password);
 	    }
@@ -2143,7 +2053,7 @@ function imagecreatefromfile($path, $user_functions = false)
 
 	    preg_match_all('/[0-9]/', $password, $numbers);
 
-	    if (!empty($numbers))
+	    if (count($numbers) > 0)
 	    {
 	        $numbers = count($numbers[0]);
 
@@ -2160,7 +2070,7 @@ function imagecreatefromfile($path, $user_functions = false)
 
 	    preg_match_all('/[|!@#$%&*\/=?,;.:\-_+~^¨\\\]/', $password, $symbols);
 
-	    if (!empty($symbols))
+	    if (count($symbols) > 0)
 	    {
 	        $symbols = count($symbols[0]);
 
@@ -2178,7 +2088,7 @@ function imagecreatefromfile($path, $user_functions = false)
 	    preg_match_all('/[a-z]/', $password, $lowercase_characters);
 	    preg_match_all('/[A-Z]/', $password, $uppercase_characters);
 
-	    if (!empty($lowercase_characters))
+	    if (count($lowercase_characters) > 0)
 	    {
 	        $lowercase_characters = count($lowercase_characters[0]);
 	    }
@@ -2188,7 +2098,7 @@ function imagecreatefromfile($path, $user_functions = false)
 	        $lowercase_characters = 0;
 	    }
 
-	    if (!empty($uppercase_characters))
+	    if (count($uppercase_characters) > 0)
 	    {
 	        $uppercase_characters = count($uppercase_characters[0]);
 	    }
@@ -2245,7 +2155,7 @@ function imagecreatefromfile($path, $user_functions = false)
 	/**
 	* Generates a random string
 	*
-	* @param int Length of the string
+	* @param int $length Length of the string
 	*/
 	function generateRandomString($length = 10) {
 		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -2260,10 +2170,10 @@ function imagecreatefromfile($path, $user_functions = false)
 	/**
 	* Displays a button which opens an abuse report dialog when clicked
 	*
-	* @param string Preselected category
-	* @param string Title of the button
-	* @param int Concerning user id
-	* @param int Concerning alliance id
+	* @param string $cat Preselected category
+	* @param string $title Title of the button
+	* @param int $uid Concerning user id
+	* @param int $aid Concerning alliance id
 	*/
 	function ticket_button($cat,$title="Missbrauch",$uid=0,$aid=0)
 	{
@@ -2340,10 +2250,10 @@ function imagecreatefromfile($path, $user_functions = false)
 	/**
 	* Startet den Javascript Counter bzw. die Uhr
 	*
-	* @param $time int Gibt die Restzeit oder den Timestamp an
-	* @param $target string Gibt die Ziel-ID an
-	* @param $format int 0=Counter, 1=Uhr
-	* @param $text string Ein optionaler Text kann eingebunden werden -> "Es geht noch TIME bis zum Ende"
+	* @param int $time Gibt die Restzeit oder den Timestamp an
+	* @param string $target Gibt die Ziel-ID an
+	* @param int $format 0=Counter, 1=Uhr
+	* @param string $text Ein optionaler Text kann eingebunden werden -> "Es geht noch TIME bis zum Ende"
 	*/
 	function startTime($time, $target, $format=0, $text="")
 	{
@@ -2537,7 +2447,7 @@ function imagecreatefromfile($path, $user_functions = false)
 		if ($cfg->accesslog->v == 1)
 		{
 			if (!isset($_SESSION['accesslog_sid']))
-				$_SESSION['accesslog_sid'] = uniqid(mt_rand(), true);
+				$_SESSION['accesslog_sid'] = uniqid((string) mt_rand(), true);
 			dbquery("
 			INSERT INTO
 			accesslog
@@ -2578,13 +2488,13 @@ function imagecreatefromfile($path, $user_functions = false)
 
 	function getLoginUrl($args=array()) {
 		$url = Config::getInstance()->loginurl->v;
-		if (empty($url)) {
+		if (!$url) {
 			$url = "show.php?index=login";
 			if (sizeof($args) > 0 && isset($args['page'])) {
 				unset($args['page']);
 			}
 		}
-		if (sizeof($args) > 0) {
+		if (count($args) > 0) {
 			foreach ($args as $k => $v) {
 				if (!stristr($url, '?')) {
 					$url.="?";
@@ -2662,8 +2572,7 @@ function imagecreatefromfile($path, $user_functions = false)
 	*/
 	function unix_command_exists($cmd) {
 		if (UNIX) {
-			$returnVal = shell_exec("which $cmd 2>/dev/null");
-			return (empty($returnVal) ? false : true);
+		    return (bool) shell_exec("which $cmd 2>/dev/null");
 		}
 		return false;
 	}

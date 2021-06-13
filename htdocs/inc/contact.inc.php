@@ -9,7 +9,7 @@
 	// Text
 	$tm = new TextManager();
 	$contactText = $tm->getText('contact_message');
-	if ($contactText->enabled && !empty($contactText->content))
+	if ($contactText->enabled && $contactText->content)
 	{
 		iBoxStart();
 		echo text2html($contactText->content);
@@ -36,7 +36,7 @@
 					$mail_subject = $_POST['mail_subject'];
 					$mail_text = $_POST['mail_text'];
 
-					if (!empty($mail_subject) && !empty($mail_text))
+					if ($mail_subject && $mail_text)
 					{
 						// Subject
 						$subject = "Kontakt-Anfrage: ".$mail_subject;
@@ -109,7 +109,7 @@
 			{
 				if ($arr->isContact) {
 					$suffix = CONTACT_REQUIRED_MAIL_SUFFIX;
-					$showMailAddress = empty($suffix) || preg_match('/'.$suffix.'/i', $arr->email);
+					$showMailAddress = preg_match('/'.$suffix.'/i', $arr->email);
 
 					echo '<tr><td>'.$arr->nick.'</td>';
 					if ($showMailAddress) {

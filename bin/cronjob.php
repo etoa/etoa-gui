@@ -29,7 +29,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 	//
 
 	// Gamepfad feststellen
-	$grd = chdir(realpath(dirname(__FILE__)."/../htdocs/"));
+	$grd = chdir(realpath(__DIR__ ."/../htdocs/"));
 
 	// Check for command line
 	if (!isset($_SERVER['argv']))
@@ -59,7 +59,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 	$args = array_splice($_SERVER['argv'], 1);
 
-	$verbose = in_array("-v", $args);
+	$verbose = in_array("-v", $args, true);
 
 	try {
 
