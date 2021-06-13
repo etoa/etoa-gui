@@ -19,22 +19,22 @@ class AllianceRepository extends AbstractRepository
 
     function findAll(): array
     {
-        return $this->getConnection()
-            ->executeQuery("SELECT *
-				FROM alliances
-				ORDER BY alliance_tag;")
+        return $this->createQueryBuilder()
+            ->select("*")
+            ->from('alliances')
+            ->orderBy('alliance_tag')
+            ->execute()
             ->fetchAllAssociative();
     }
 
     function find(int $id): ?array
     {
-        return $this->getConnection()
-            ->executeQuery(
-                "SELECT *
-				FROM alliances
-				WHERE alliance_id = ?;",
-                [$id]
-            )
+        return $this->createQueryBuilder()
+            ->select("*")
+            ->from('alliances')
+            ->where('alliance_id = ?')
+            ->setParameter(0, $id)
+            ->execute()
             ->fetchAssociative();
     }
 
@@ -123,6 +123,35 @@ class AllianceRepository extends AbstractRepository
         return (int) $this->getConnection()->lastInsertId();
     }
 
+    function update(int $id, array $data): bool
+    {
+        $affected = $this->getConnection()
+            ->executeStatement(
+                "UPDATE
+                    alliances
+                SET
+                    alliance_name = :name,
+                    alliance_tag = :tag,
+                    alliance_text = :text,
+                    alliance_application_template = :template,
+                    alliance_url = :url,
+                    alliance_founder_id = :founder
+                WHERE
+                    alliance_id = :id;",
+                [
+                    'id' => $id,
+                    'name' => $data['name'],
+                    'tag' => $data['tag'],
+                    'text' => $data['text'],
+                    'template' => $data['template'],
+                    'url' => $data['url'],
+                    'founder' => $data['founder'],
+                ]
+            );
+
+        return $affected > 0;
+    }
+
     function getPicture(int $allianceId): ?string
     {
         return $this->getConnection()
@@ -189,6 +218,44 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
+    function findRanks(int $allianceId): array
+    {
+        return $this->getConnection()
+            ->executeQuery(
+                "SELECT
+                    rank_id,
+                    rank_level,
+                    rank_name
+                FROM
+                    alliance_ranks
+                WHERE
+                    rank_alliance_id = ?
+                ORDER BY
+                    rank_level DESC;",
+                [$allianceId]
+            )
+            ->fetchAllAssociative();
+    }
+
+    function updateRank(int $id, string $name, int $level): void
+    {
+        $this->getConnection()
+            ->executeStatement(
+                "UPDATE
+                    alliance_ranks
+                SET
+                    rank_name = :name,
+                    rank_level = :level
+                WHERE
+                    rank_id = :id;",
+                [
+                    'id' => $id,
+                    'name' => $name,
+                    'level' => $level,
+                ]
+            );
+    }
+
     function countOrphanedRanks(): int
     {
         return (int) $this->getConnection()
@@ -201,6 +268,38 @@ class AllianceRepository extends AbstractRepository
 					WHERE r.rank_alliance_id = a.alliance_id
 				);")
             ->fetchOne();
+    }
+
+    function findDiplomacies(int $allianceId): array
+    {
+        return $this->getConnection()
+            ->executeQuery(
+                "SELECT
+                        alliance_bnd_id,
+                        alliance_bnd_alliance_id1 as a1id,
+                        alliance_bnd_alliance_id2 as a2id,
+                        a1.alliance_name as a1name,
+                        a2.alliance_name as a2name,
+                        alliance_bnd_level as lvl,
+                        alliance_bnd_name as name,
+                        alliance_bnd_date as date
+                    FROM
+                        alliance_bnd
+                    LEFT JOIN
+                        alliances a1 on alliance_bnd_alliance_id1 = a1.alliance_id
+                    LEFT JOIN
+                        alliances a2 on alliance_bnd_alliance_id2 = a2.alliance_id
+                    WHERE
+                        alliance_bnd_alliance_id1 = :id
+                        OR alliance_bnd_alliance_id2 = :id
+                    ORDER BY
+                        alliance_bnd_level DESC,
+                        alliance_bnd_date DESC;",
+                [
+                    'id' => $allianceId,
+                ]
+            )
+            ->fetchAllAssociative();
     }
 
     function deleteOrphanedRanks(): int
@@ -289,7 +388,7 @@ class AllianceRepository extends AbstractRepository
             ]);
 
         $this->deleteRanks($id);
-        $this->deleteDiplomacy($id);
+        $this->deleteDiplomacies($id);
 
         return $affected > 0;
     }
@@ -302,7 +401,36 @@ class AllianceRepository extends AbstractRepository
             ]);
     }
 
-    function deleteDiplomacy(int $allianceId): void
+    function updateDiplomacy(int $id, int $level, string $name): void
+    {
+        $this->getConnection()
+            ->executeStatement(
+                "UPDATE
+                    alliance_bnd
+                SET
+                    alliance_bnd_level = ?,
+                    alliance_bnd_name = ?
+                WHERE
+                    alliance_bnd_id = ?;",
+                [
+                    'id' => $id,
+                    'level' => $level,
+                    'name' => $name,
+                ]
+            );
+    }
+
+    function deleteDiplomacy(int $id): void
+    {
+        $this->getConnection()
+            ->executeStatement(
+                "DELETE FROM alliance_bnd
+                WHERE alliance_bnd_id = ?;",
+                [$id]
+            );
+    }
+
+    function deleteDiplomacies(int $allianceId): void
     {
         $this->getConnection()
             ->executeStatement(
@@ -331,13 +459,64 @@ class AllianceRepository extends AbstractRepository
                 "SELECT
 					user_id,
 					user_nick,
-					user_points
+					user_points,
+                    user_alliance_rank_id
 				FROM users
 				WHERE user_alliance_id = ?
-				ORDER BY user_nick;",
+				ORDER BY
+                    user_points DESC,
+                    user_nick;",
                 [$allianceId]
             )
             ->fetchAllAssociative();
+    }
+
+    function assignRankToUser($rankId, $userId): void
+    {
+        $this->getConnection()
+            ->executeStatement(
+                "UPDATE
+                    users
+                SET
+                    user_alliance_rank_id = :rank
+                WHERE
+                    user_id = :user;",
+                [
+                    'rank' => $rankId,
+                    'user' => $userId,
+                ]
+            );
+    }
+
+    function removeRank(int $rankId): void
+    {
+        $this->getConnection()
+            ->executeStatement(
+                "DELETE FROM alliance_ranks
+                WHERE rank_id = ?;",
+                [$rankId]
+            );
+        $this->getConnection()
+            ->executeStatement(
+                "DELETE FROM alliance_rankrights
+                WHERE rr_rank_id = ?;",
+                [$rankId]
+            );
+    }
+
+    function removeUser(int $userId): void
+    {
+        $this->getConnection()
+            ->executeStatement(
+                "UPDATE
+                    users
+                SET
+                    user_alliance_id = 0,
+                    user_alliance_rank_id = 0
+                WHERE
+                    user_id = ?;",
+                [$userId]
+            );
     }
 
     function listSoloUsers(): array
@@ -370,5 +549,97 @@ class AllianceRepository extends AbstractRepository
 						WHERE a.alliance_id = u.user_alliance_id
 					);")
             ->fetchAllAssociative();
+    }
+
+    function findHistoryEntries(int $allianceId): array
+    {
+        return $this->getConnection()
+            ->executeQuery(
+                "SELECT
+                    *
+                FROM
+                    alliance_history
+                WHERE
+                    history_alliance_id = ?
+                ORDER BY
+                    history_timestamp
+                DESC;",
+                [$allianceId]
+            )
+            ->fetchAllAssociative();
+    }
+
+    function findBuildings(int $allianceId): array
+    {
+        return $this->getConnection()
+            ->executeQuery(
+                "SELECT
+                    alliance_buildlist.*,
+                    alliance_buildings.alliance_building_name
+                FROM
+                    alliance_buildlist
+                INNER JOIN
+                    alliance_buildings
+                ON
+                    alliance_buildings.alliance_building_id = alliance_buildlist.alliance_buildlist_building_id
+                    AND	alliance_buildlist_alliance_id = ?;",
+                [$allianceId]
+            )
+            ->fetchAllAssociative();
+    }
+
+    function findTechnologies(int $allianceId): array
+    {
+        return $this->getConnection()
+            ->executeQuery(
+                "SELECT
+                    alliance_techlist.*,
+                    alliance_technologies.alliance_tech_name
+                FROM
+                    alliance_techlist
+                INNER JOIN
+                    alliance_technologies
+                ON
+                    alliance_technologies.alliance_tech_id = alliance_techlist.alliance_techlist_tech_id
+                    AND	alliance_techlist_alliance_id = ?;",
+                [$allianceId]
+            )
+            ->fetchAllAssociative();
+    }
+
+    function updateResources(int $allianceId, array $data): void
+    {
+        $this->getConnection()
+            ->executeStatement(
+                "UPDATE
+                    alliances
+                SET
+                    alliance_res_metal = :metal,
+                    alliance_res_crystal = :crystal,
+                    alliance_res_plastic = :plastic,
+                    alliance_res_fuel = :fuel,
+                    alliance_res_food = :food,
+                    alliance_res_metal = alliance_res_metal + :addmetal,
+                    alliance_res_crystal = alliance_res_crystal + :addcrystal,
+                    alliance_res_plastic = alliance_res_plastic + :addplastic,
+                    alliance_res_fuel = alliance_res_fuel + :addfuel,
+                    alliance_res_food = alliance_res_food + :addfood
+                WHERE
+                    alliance_id = :id
+                LIMIT 1;",
+                [
+                    'id' => $allianceId,
+                    'metal' => $data['metal'],
+                    'crystal' => $data['crystal'],
+                    'plastic' => $data['plastic'],
+                    'fuel' => $data['fuel'],
+                    'food' => $data['food'],
+                    'addmetal' => $data['addmetal'],
+                    'addcrystal' => $data['addcrystal'],
+                    'addplastic' => $data['addplastic'],
+                    'addfuel' => $data['addfuel'],
+                    'addfood' => $data['addfood'],
+                ]
+            );
     }
 }
