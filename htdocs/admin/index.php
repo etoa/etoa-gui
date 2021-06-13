@@ -2,7 +2,9 @@
 
 use EtoA\Admin\AdminNotesRepository;
 use EtoA\Admin\AdminRoleManager;
+use EtoA\Admin\AdminSessionRepository;
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Support\DatabaseManagerRepository;
 use EtoA\User\UserRepository;
 
 ob_start();
@@ -55,7 +57,9 @@ try {
         $userRepo = $app['etoa.user.repository'];
         $notesRepo = $app['etoa.admin.notes.manager'];
         $roleManager = $app['etoa.admin.role.manager'];
-        adminView($s, $adminUserRepo, $userRepo, $notesRepo, $roleManager);
+        $sessionRepository = $app['etoa.admin.session.repository'];
+        $databaseManager = $app['etoa.db.manager.repository'];
+        adminView($s, $adminUserRepo, $userRepo, $notesRepo, $roleManager, $sessionRepository, $databaseManager);
     }
 } catch (DBException $ex) {
     ob_clean();
@@ -71,13 +75,16 @@ function adminView(
     AdminUserRepository $adminUserRepo,
     UserRepository $userRepo,
     AdminNotesRepository $notesRepo,
-    AdminRoleManager $roleManager
+    AdminRoleManager $roleManager,
+    AdminSessionRepository $sessionRepository,
+    DatabaseManagerRepository $databaseManager
 ) {
     global $twig;
     global $page;
     global $sub;
     global $cfg;
     global $conf;
+    global $app;
 
     // Load admin user data
     $cu = $adminUserRepo->find($s->user_id);
@@ -117,18 +124,12 @@ function adminView(
         $twig->addGlobal('eventHandlerPid', $eventHandlerPid);
     }
 
-    $adminsCount = $adminUserRepo->count();
-
-    global $app;
-    $databaseManager = $app['etoa.db.manager.repository'];
-    $dbSize = $databaseManager->getDatabaseSize();
-
     $twig->addGlobal('usersOnline', $userRepo->countActiveSessions($cfg->user_timeout->v));
     $twig->addGlobal('usersCount', $userRepo->count());
     $twig->addGlobal('usersAllowed', $cfg->enable_register->p2);
-    $twig->addGlobal('adminsOnline', $adminUserRepo->countActiveSessions($cfg->admin_timeout->v));
-    $twig->addGlobal('adminsCount', $adminsCount);
-    $twig->addGlobal('dbSize', $dbSize);
+    $twig->addGlobal('adminsOnline', $sessionRepository->countActiveSessions($cfg->admin_timeout->v));
+    $twig->addGlobal('adminsCount', $adminUserRepo->count());
+    $twig->addGlobal('dbSizeInMB', $databaseManager->getDatabaseSize());
 
     // Inhalt einbinden
     if (isset($_GET['adminlist'])) {

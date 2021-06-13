@@ -11,8 +11,6 @@ use EtoA\Admin\AdminUserRepository;
  */
 class AdminSession extends Session
 {
-	const tableUser = "admin_users";
-
 	protected $namePrefix = "admin";
 
 	protected AdminSessionRepository $repository;

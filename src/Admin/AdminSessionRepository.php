@@ -8,6 +8,18 @@ use EtoA\Core\AbstractRepository;
 
 class AdminSessionRepository extends AbstractRepository
 {
+    function countActiveSessions(int $timeout): int
+    {
+        return (int) $this->getConnection()
+            ->executeQuery(
+                "SELECT COUNT(*)
+                FROM admin_user_sessions
+                WHERE time_action > ?;",
+                [(time() - $timeout)]
+            )
+            ->fetchOne();
+    }
+
     public function find($id): ?array
     {
         $data = $this->createQueryBuilder()
@@ -27,6 +39,24 @@ class AdminSessionRepository extends AbstractRepository
             ->from('admin_user_sessions')
             ->where('time_action + :timeout = ' . time())
             ->setParameter('timeout', $timeout)
+            ->execute()
+            ->fetchAllAssociative();
+    }
+
+    public function findAll(): array
+    {
+        return $this->createQueryBuilder()
+            ->select(
+                's.user_id',
+                's.ip_addr',
+                's.user_agent',
+                's.time_login',
+                's.time_action',
+                'u.user_nick'
+            )
+            ->from('admin_user_sessions', 's')
+            ->innerJoin('s', 'admin_users', 'u', 's.user_id=u.user_id')
+            ->orderBy('time_action', 'DESC')
             ->execute()
             ->fetchAllAssociative();
     }

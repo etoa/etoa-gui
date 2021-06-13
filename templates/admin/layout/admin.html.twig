@@ -70,7 +70,7 @@
                         </tr>
                         <tr><th><a href="?page=overview&amp;sub=sysinfo">Systemlast</a></th><td>{{ sysLoad}} %</td></tr>
                     {% endif %}
-                    <tr><th><a href="?page=db">Datenbank</a></th><td>{{ dbSize }}</td></tr>
+                    <tr><th><a href="?page=db">Datenbank</a></th><td>{{ dbSizeInMB }} MB</td></tr>
                     <tr><th><a href="?page=overview&amp;sub=stats">User registriert</a></th><td>{{ usersCount}} / {{ usersAllowed }}</td></tr>
                     <tr><th><a href="?page=user&amp;sub=sessions">User online</a></th><td>{{ usersOnline }} / {{ usersCount}}</td></tr>
                     <tr><th><a href="?page=overview&amp;sub=adminlog">Admins online</a></th><td>{{ adminsOnline}} / {{ adminsCount}}</td></tr>

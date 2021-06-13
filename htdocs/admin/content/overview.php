@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Admin\AdminSessionRepository;
 use EtoA\Admin\AdminUser;
 use League\CommonMark\CommonMarkConverter;
 
@@ -13,7 +14,8 @@ if ($sub == "offline") {
 	$markdown = $app['etoa.util.markdown'];
 	changelogView($markdown);
 } elseif ($sub == "adminlog") {
-	adminLogView($cu, $s);
+	$sessionRepository = $app['etoa.admin.session.repository'];
+	adminLogView($cu, $s, $sessionRepository);
 } elseif ($sub == "adminusers") {
 	require("home/adminusers.inc.php");
 } elseif ($sub == "observed") {
@@ -83,7 +85,7 @@ function changelogView(CommonMarkConverter $markdown)
 	exit();
 }
 
-function adminLogView(AdminUser $cu, AdminSession $s)
+function adminLogView(AdminUser $cu, AdminSession $s, AdminSessionRepository $sessionRepository)
 {
 	global $cfg;
 	global $page;
@@ -186,22 +188,8 @@ function adminLogView(AdminUser $cu, AdminSession $s)
 		echo "<h2>Aktive Sessions</h2>";
 		echo "Das Timeout betr&auml;gt " . tf($cfg->admin_timeout->v) . "<br/><br/>";
 
-		$res = dbquery("
-				SELECT
-					s.user_id,
-					s.ip_addr,
-					s.user_agent,
-					s.time_login,
-					s.time_action,
-					u.user_nick
-				FROM
-					admin_user_sessions s
-				INNER JOIN
-					admin_users u
-					ON s.user_id=u.user_id
-				ORDER BY
-					time_action DESC;");
-		if (mysql_num_rows($res) > 0) {
+		$sessions = $sessionRepository->findAll();
+		if (count($sessions) > 0) {
 			echo "<table class=\"tb\">
 				<tr>
 					<th>Status</th>
@@ -214,7 +202,7 @@ function adminLogView(AdminUser $cu, AdminSession $s)
 					<th>Kicken</th>
 				</tr>";
 			$t = time();
-			while ($arr = mysql_fetch_array($res)) {
+			foreach ($sessions as $arr) {
 				if (ini_get("browscap") != null) {
 					$bc = get_browser($arr['user_agent'], true);
 					$browser = isset($bc['parent']) ? $bc['parent'] . ' [' . $bc['platform'] . ']' : $arr['user_agent'];

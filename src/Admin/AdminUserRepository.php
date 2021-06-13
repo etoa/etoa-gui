@@ -188,16 +188,4 @@ class AdminUserRepository extends AbstractRepository
         $adminUser->id = null;
         return $affected > 0;
     }
-
-    function countActiveSessions(int $timeout): int
-    {
-        return (int) $this->getConnection()
-            ->executeQuery(
-                "SELECT COUNT(*)
-                FROM admin_user_sessions
-                WHERE time_action > ?;",
-                [(time() - $timeout)]
-            )
-            ->fetchOne();
-    }
 }
