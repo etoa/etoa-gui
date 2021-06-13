@@ -19,4 +19,9 @@ abstract class AbstractRepository
     {
         return $this->connection->createQueryBuilder();
     }
+
+    protected function getConnection(): Connection
+    {
+        return $this->connection;
+    }
 }
