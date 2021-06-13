@@ -16,7 +16,8 @@
         "twig/twig": "^2.12",
         "league/commonmark": "^1.3",
         "symfony/error-handler": "^5.3",
-        "illuminate/collections": "^8.46"
+        "illuminate/collections": "^8.46",
+        "filp/whoops": "^2.13"
     },
     "require-dev": {
         "ergebnis/composer-normalize": "^2.0",

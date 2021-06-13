@@ -12,6 +12,12 @@ define('ADMIN_MODE',true);
 require_once __DIR__ . '/../../../vendor/autoload.php';
 require_once __DIR__ . '/../../inc/bootstrap.inc.php';
 
+if (isDebugEnabled()) {
+    $whoops = new \Whoops\Run;
+    $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
+    $whoops->register();
+}
+
 // Renderzeit-Start festlegen
 $render_time = explode(" ",microtime());
 $render_starttime=$render_time[1]+$render_time[0];
