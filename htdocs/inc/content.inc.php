@@ -48,7 +48,7 @@
 
 		// SYSTEMNACHRICHT //
 		$systemMessage = $tm->getText('system_message');
-		if ($systemMessage->enabled && !empty($systemMessage->content))
+		if ($systemMessage->enabled && $systemMessage->content)
 		{
 			echo "<br />";
 			iBoxStart("<span style=\"color:red;\">WICHTIGE SYSTEMNACHRICHT</span>");
@@ -61,7 +61,7 @@
 		if ($backendStatus != null && $backendStatus == 0)
 		{
 			$infoText = $tm->getText('backend_offline_message');
-			if ($infoText->enabled && !empty($infoText->content))
+			if ($infoText->enabled && $infoText->content)
 			{
 				echo "<br />";
 				iBoxStart("<span style=\"color:red;\">UPDATEDIENST</span>");
@@ -228,41 +228,38 @@
 				forward("?page=$page");
 			}
 
-			if (true)
-			{
-				if (preg_match('/^[a-z\_]+$/',$page)  && strlen($page)<=50)
-				{
-					// DEBUG
-					$query_counter=0;
-					$queries=array();
+            if (preg_match('/^[a-z\_]+$/',$page)  && strlen($page)<=50)
+            {
+                // DEBUG
+                $query_counter=0;
+                $queries=array();
 
-					// Content includen
-					$contentFile = "content/".$page.".php";
-					if (!file_exists($contentFile) || !include($contentFile))
-					{
-						echo '<h1>Fehler</h1>
-						Die Seite <b>'.$page.'</b> existiert nicht!<br/><br/>
-						<input type="button" onclick="history.back();" value="Zurück" />';
-					}
+                // Content includen
+                $contentFile = "content/".$page.".php";
+                if (!file_exists($contentFile) || !include($contentFile))
+                {
+                    echo '<h1>Fehler</h1>
+                    Die Seite <b>'.$page.'</b> existiert nicht!<br/><br/>
+                    <input type="button" onclick="history.back();" value="Zurück" />';
+                }
 
-					if (isset($_GET['sub']))
-						$lasub = $_GET['sub'];
-                                        elseif (isset($_GET['action']))
-	                                        $lasub = $_GET['action'];
-                                        elseif (isset($_GET['site']))
-	                                        $lasub = $_GET['site'];
-					else
-						$lasub="";
+                if (isset($_GET['sub']))
+                    $lasub = $_GET['sub'];
+                                    elseif (isset($_GET['action']))
+                                        $lasub = $_GET['action'];
+                                    elseif (isset($_GET['site']))
+                                        $lasub = $_GET['site'];
+                else
+                    $lasub="";
 
-					logAccess($page,"ingame",$lasub);
-				}
-				else
-				{
-					echo '<h1>Fehler</h1>
-					Der Seitenname enth&auml;lt unerlaubte Zeichen!<br/><br/>
-					<input type="button" onclick="history.back();" value="Zurück" />';
-				}
-			}
+                logAccess($page,"ingame",$lasub);
+            }
+            else
+            {
+                echo '<h1>Fehler</h1>
+                Der Seitenname enth&auml;lt unerlaubte Zeichen!<br/><br/>
+                <input type="button" onclick="history.back();" value="Zurück" />';
+            }
 		}
 	}
 

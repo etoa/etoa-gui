@@ -65,7 +65,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 	$args = array_splice($_SERVER['argv'], 1);
 	$action = array_shift($args);
 
-	if ($action)
+	if (!$action)
 	{
 		show_usage();
 	}

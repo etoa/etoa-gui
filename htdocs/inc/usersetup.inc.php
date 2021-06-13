@@ -11,7 +11,10 @@
 
 	echo "<div class=\"userSetupContainer\">";
 
-		// Apply choosen itemset
+	$mode = null;
+
+	// Apply choosen itemset
+	/** @var UserSession $s */
 	if (isset($s->itemset_key) && isset($_POST[md5($s->itemset_key)]) && isset($_POST['itemset_id']))
 	{
 		Usersetup::addItemSetListToPlanet($s->itemset_planet,$cu->id,$_POST['itemset_id']);
@@ -103,7 +106,7 @@
 		{
 			echo "<option value=\"".$arr['set_id']."\">".$arr['set_name']."</option>";
 		}
-		echo "</select> <input type=\"submit\" value=\"Weiter\" name=\"".md5($k)."\" /></form>";
+		echo "</select> <input type=\"submit\" value=\"Weiter\" name=\"".md5((string) $k)."\" /></form>";
 		iBoxEnd();
 	}
 	elseif ($mode=="checkplanet")
@@ -406,7 +409,7 @@
 		echo "<h2>Einrichtung abgeschlossen</h2>";
 
 		$welcomeText = $tm->getText('welcome_message');
-		if ($welcomeText->enabled && !empty($welcomeText->content))
+		if ($welcomeText->enabled && $welcomeText->content)
 		{
 			iBoxStart("Willkommen");
 			echo text2html($welcomeText->content);

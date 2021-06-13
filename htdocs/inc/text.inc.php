@@ -203,8 +203,8 @@
 	/**
 	*	Callback-Funktion für preg_replace_callback zum Unterscheiden externer URLs in bbcode
 	*
-	* @param $match Array mit [0]=> ganzer String, [1]..[n]=> subpatterns in ()
-	* @return String mit html-links
+	* @param string[] $match Array mit [0]=> ganzer String, [1]..[n]=> subpatterns in ()
+	* @return string mit html-links
 	*
 	* @author river
 	*

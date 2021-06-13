@@ -110,7 +110,7 @@ class Log extends BaseLog
 	/**
 	* Adds a log message to the log queue
 	*
-	* @param $facility string Event facility
+	* @param $facility int|string Event facility
 	* @param $severity string Event severity
 	* @param $msg string Log Message
 	*/

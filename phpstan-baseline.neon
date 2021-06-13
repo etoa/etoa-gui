@@ -5,3 +5,83 @@ parameters:
 			count: 1
 			path: bin/cronjob.php
 
+		-
+			message: "#^If condition is always false\\.$#"
+			count: 2
+			path: htdocs/inc/bootstrap.inc.php
+
+		-
+			message: "#^Constant APP_VERSION not found\\.$#"
+			count: 1
+			path: htdocs/inc/functions.inc.php
+
+		-
+			message: "#^Constant BUILD_BUILD_TIME not found\\.$#"
+			count: 1
+			path: htdocs/inc/functions.inc.php
+
+		-
+			message: "#^Constant GLOBAL_TIME not found\\.$#"
+			count: 1
+			path: htdocs/inc/functions.inc.php
+
+		-
+			message: "#^Constant USER_INACTIVE_LONG not found\\.$#"
+			count: 1
+			path: htdocs/inc/functions.inc.php
+
+		-
+			message: "#^Constant USER_INACTIVE_SHOW not found\\.$#"
+			count: 1
+			path: htdocs/inc/functions.inc.php
+
+		-
+			message: "#^Dynamic call to static method XMLReader\\:\\:open\\(\\)\\.$#"
+			count: 2
+			path: htdocs/inc/functions.inc.php
+
+		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: htdocs/inc/functions.inc.php
+
+		-
+			message: "#^Ternary operator condition is always false\\.$#"
+			count: 1
+			path: htdocs/inc/functions.inc.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: htdocs/inc/functions.inc.php
+
+		-
+			message: "#^Variable \\$cu in isset\\(\\) is never defined\\.$#"
+			count: 1
+			path: htdocs/inc/functions.inc.php
+
+		-
+			message: "#^Variable variables are not allowed\\.$#"
+			count: 2
+			path: htdocs/inc/functions.inc.php
+
+		-
+			message: "#^If condition is always false\\.$#"
+			count: 2
+			path: htdocs/inc/init.inc.php
+
+		-
+			message: "#^Variable \\$pid might not be defined\\.$#"
+			count: 2
+			path: htdocs/inc/usersetup.inc.php
+
+		-
+			message: "#^Variable \\$res might not be defined\\.$#"
+			count: 1
+			path: htdocs/inc/usersetup.inc.php
+
+		-
+			message: "#^Variable \\$tp might not be defined\\.$#"
+			count: 1
+			path: htdocs/inc/usersetup.inc.php
+
