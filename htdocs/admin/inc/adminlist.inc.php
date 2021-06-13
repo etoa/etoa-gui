@@ -1,4 +1,13 @@
 <?PHP
+
+use EtoA\Admin\AdminUserRepository;
+
+$adminUserRepo = $app['etoa.admin.user.repository'];
+
+index($adminUserRepo);
+
+function index(AdminUserRepository $adminUserRepo): void
+{
 	echo "<h1>Admin-Liste</h1>";
 
 	echo "<table class=\"tb\">
@@ -10,15 +19,15 @@
 		<th>Gruppe</th>
 		<th>Foren-Profil</th>
 	</tr>";
-	foreach (AdminUser::getAll() as $arr) {
+	foreach ($adminUserRepo->findAll() as $admin) {
 		echo "<tr>
-			<td>".$arr->nick."</td>
-			<td>".$arr->name."</td>
-			<td><a href=\"mailto:".$arr->email."\">".$arr->email."</a></td>
-			<td>".($arr->tfaSecret ? "Aktiv" : "Nicht aktiviert")."</td>
-			<td>".$arr->getRolesStr()."</td>
-			<td>".($arr->boardUrl ? "<a href=\"".$arr->boardUrl."\" target=\"_blank\">Profil</a>" : "")."</td>
+			<td>" . $admin->nick . "</td>
+			<td>" . $admin->name . "</td>
+			<td><a href=\"mailto:" . $admin->email . "\">" . $admin->email . "</a></td>
+			<td>" . ($admin->tfaSecret ? "Aktiv" : "Nicht aktiviert") . "</td>
+			<td>" . $admin->getRolesStr() . "</td>
+			<td>" . ($admin->boardUrl ? "<a href=\"" . $admin->boardUrl . "\" target=\"_blank\">Profil</a>" : "") . "</td>
 		</tr>";
 	}
 	echo "</table><br/> ";
-?>
+}

@@ -1,5 +1,7 @@
 <?php
 
+$adminUserRepo = $app['etoa.admin.user.repository'];
+
 $twig->addGlobal("title", "Support-Tickets");
 
 if ($cu->hasRole("master,super-admin,game-admin,trial-game-admin")) {
@@ -7,8 +9,6 @@ if ($cu->hasRole("master,super-admin,game-admin,trial-game-admin")) {
 echo '<div>[ <a href="?page='.$page.'">Aktive Tickets</a> |
 <a href="?page='.$page.'&amp;action=new">Neues Ticket erstellen</a> |
 <a href="?page='.$page.'&amp;action=closed">Bearbeitete Tickets</a> ]</div>' ;
-
-
 
 if (isset($_GET['edit']) && $_GET['edit']>0)
 {
@@ -24,7 +24,7 @@ if (isset($_GET['edit']) && $_GET['edit']>0)
 	echo '<a href=\"javascript:;\" '.cTT($ti->userNick,"ttuser").'>'.$ti->userNick.'</a>';
 	echo '</td>';
 	echo '<th>Zugeteilter Admin:</th><td>';
-	$sdata = AdminUser::getArray();
+	$sdata = $adminUserRepo->findAllAsList();
 	$sdata[0] = "(Niemand)";
 	htmlSelect("admin_id",$sdata,$ti->adminId);
 	echo '</td></tr>';
@@ -202,12 +202,6 @@ elseif (isset($_GET['action']) && $_GET['action']=="new")
 	echo '<tr><th>User:</th><td>';
 	htmlSelect("user_id",Users::getArray());
 	echo '</td></tr>';
-	/*
-	echo '<tr><th>Zugeteilter Admin:</th><td>';
-	$sdata = AdminUser::getArray();
-	$sdata[0] = "(Niemand)";
-	htmlSelect("admin_id",$sdata);
-	echo '</td></tr>'; */
 	echo '<tr><th>Kategorie:</th><td>';
 	htmlSelect("cat_id",Ticket::getCategories());
 	echo '</td></tr>';

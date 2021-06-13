@@ -1,15 +1,10 @@
 <?PHP
-//////////////////////////////////////////////////////
-// The Andromeda-Project-Browsergame                //
-// Ein Massive-Multiplayer-Online-Spiel             //
-// Programmiert von Nicolas Perrenoud<mail@nicu.ch> //
-// als Maturaarbeit '04 am Gymnasium Oberaargau	    //
-//////////////////////////////////////////////////////
-//////////////////////////////////////////////////////
 
 ob_start();
 
 require("inc/includer.inc.php");
+
+$adminUserRepo = $app['etoa.admin.user.repository'];
 
 try {
     $twig->addGlobal('cssTheme', $css_theme);
@@ -18,7 +13,7 @@ try {
     $twig->addGlobal('bodyTopStuff', getInitTT());
 
     if ($s->user_id) {
-        $cu = new AdminUser($s->user_id);
+        $cu = $adminUserRepo->find($s->user_id);
 
         if (preg_match('/^[a-z\_]+$/',$page)  && strlen($page) <= 50) {
             if (!include("content/".$page.".php"))

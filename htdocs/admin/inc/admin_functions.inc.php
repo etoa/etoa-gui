@@ -1289,7 +1289,9 @@ function showFleetLogs($args=null,$limit=0)
 }
 
 function showDebrisLogs($args=null,$limit=0) {
-    global $resNames;
+	global $app;
+
+	$adminUserRepo = $app['etoa.admin.user.repository'];
 
     $maxtime = is_array($args) ? mktime($args['searchtime_h'],$args['searchtime_i'],$args['searchtime_s'],$args['searchtime_m'],$args['searchtime_d'],$args['searchtime_y']) : time();
 
@@ -1298,16 +1300,15 @@ function showDebrisLogs($args=null,$limit=0) {
     $sql = "SELECT * from logs_debris";
 	$sql2 =" WHERE time<".$maxtime;
 
-
     if (isset($args['searchuser']) && trim($args['searchuser']) != '')
     {
         $sql2 .=" AND user_id = ".User::findIdByNick($args['searchuser'])." ";
     };
     if (isset($args['searchadmin']) && trim($args['searchadmin']) != '')
     {
-        $sql2 .=" AND admin_id=".(AdminUser::findByNick($args['searchadmin'] ? (AdminUser::findByNick($args['searchadmin'])) : 0));
+		$admin = $adminUserRepo->findOneByNick($args['searchadmin']);
+        $sql2 .=" AND admin_id=". ($admin != null ? $admin->id : 0);
     };
-
 
     $res = dbquery(" SELECT COUNT(id) as cnt from logs_debris".$sql2);
     $arr = mysql_fetch_row($res);
@@ -1362,10 +1363,10 @@ function showDebrisLogs($args=null,$limit=0) {
 		</tr>";
         while ($arr = mysql_fetch_assoc($res))
         {
-        	$admin = new AdminUser($arr['admin_id']);
+			$admin = $adminUserRepo->find($arr['admin_id']);
             echo "<tr>
 			<td>".date('d M Y H:i:s',$arr['time'])."</td>
-			<td>".$admin->nick."</td>
+			<td>".($admin != null ? $admin->nick : '?')."</td>
 			<td>".new User($arr['user_id'])."</td>
 			<td>".$arr['metal']."</td>
 			<td>".$arr['crystal']."</td>
@@ -1629,4 +1630,19 @@ function showGameLogs($args=null,$limit=0)
 		}
 		return false;
 	}
-?>
+
+    function getAdminText(string $key): string
+    {
+        global $app;
+
+        $textRepo = $app['etoa.text.repository'];
+        $text = $textRepo->find($key);
+        if ($text !== null) {
+            if ($text->enabled && $text->content) {
+                return $text->content;
+            }
+            return '';
+        }
+
+        throw new \RuntimeException('Admin text for key not found: ' . $key);
+    }

@@ -17,17 +17,18 @@
 	}
 
 	// List of admins
-	$admins = AdminUser::getAll();
-	if (count($admins) > 0)
+	$adminUserRepo = $app['etoa.admin.user.repository'];
+	$admins = collect($adminUserRepo->findAll())
+		->filter(fn($admin) => $admin->isContact);
+	if ($admins->isNotEmpty())
 	{
 		if (isset($_GET['rcpt']) && intval($_GET['rcpt'])>0)
 		{
 			$rcpt = intval($_GET['rcpt']);
+			$admin = $admins->firstWhere('id', $rcpt);
 			echo '<form action="'.$baseUrl.'&amp;rcpt='.$rcpt.'" method="post"><div>';
-			if (isset($admins[$rcpt]) && $admins[$rcpt]->isContact)
+			if ($admin != null)
 			{
-				$admin = $admins[$rcpt];
-
 				$showForm = true;
 				$mail_subject = '';
 				$mail_text = '';
@@ -105,26 +106,24 @@
 				<th>Kontaktformular</th>
 				<th>Foren-Profil</th>
 			</tr>';
-			foreach ($admins as $arr)
+			foreach ($admins as $admin)
 			{
-				if ($arr->isContact) {
-					$suffix = CONTACT_REQUIRED_MAIL_SUFFIX;
-					$showMailAddress = empty($suffix) || preg_match('/'.$suffix.'/i', $arr->email);
+				$suffix = CONTACT_REQUIRED_MAIL_SUFFIX;
+				$showMailAddress = empty($suffix) || preg_match('/'.$suffix.'/i', $admin->email);
 
-					echo '<tr><td>'.$arr->nick.'</td>';
-					if ($showMailAddress) {
-						echo '<td><a href="mailto:'.$arr->email.'">'.$arr->email.'</a></td>';
-					} else {
-						echo '<td>(nicht öffentlich)</td>';
-					}
-					echo '<td><a href="'.$baseUrl.'&amp;rcpt='.$arr->id.'">Mail senden</a></td>';
-					if ($arr->boardUrl !='') {
-						echo '<td><a href="'.$arr->boardUrl.'" onclick="window.open(\''.$arr->boardUrl.'\');return false;">Profil</a></td>';
-					} else {
-						echo '<td>-</td>';
-					}
-					echo '</tr>';
+				echo '<tr><td>'.$admin->nick.'</td>';
+				if ($showMailAddress) {
+					echo '<td><a href="mailto:'.$admin->email.'">'.$admin->email.'</a></td>';
+				} else {
+					echo '<td>(nicht öffentlich)</td>';
 				}
+				echo '<td><a href="'.$baseUrl.'&amp;rcpt='.$admin->id.'">Mail senden</a></td>';
+				if ($admin->boardUrl !='') {
+					echo '<td><a href="'.$admin->boardUrl.'" onclick="window.open(\''.$admin->boardUrl.'\');return false;">Profil</a></td>';
+				} else {
+					echo '<td>-</td>';
+				}
+				echo '</tr>';
 			}
 			tableEnd();
 		}

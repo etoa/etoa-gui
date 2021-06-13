@@ -1,6 +1,11 @@
-<?PHP
-class Text {
+<?php
 
+declare(strict_types=1);
+
+namespace EtoA\Text;
+
+class Text
+{
 	public $id;
 	public $label;
 	public $description;
@@ -9,9 +14,9 @@ class Text {
 	public $enabled = true;
 	public $isOriginal = true;
 
-    public function __construct($id, $content) {
+	public function __construct($id, $content)
+	{
 		$this->id = $id;
 		$this->content = $content;
 	}
 }
-?>

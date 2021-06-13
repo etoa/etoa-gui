@@ -2,14 +2,13 @@
 
 namespace EtoA\Core\Twig;
 
-use AdminRoleManager;
+use EtoA\Admin\AdminRoleManager;
 use TextManager;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
 class TwigExtension extends AbstractExtension
 {
-
     /** @var float */
     private $startTime;
 
@@ -32,7 +31,6 @@ class TwigExtension extends AbstractExtension
             new TwigFunction('popupLink', [$this, 'getPopupLink']),
             new TwigFunction('isAdminAllowed', [$this, 'isAdminAllowed']),
             new TwigFunction('renderTime', [$this, 'renderTime']),
-            new TwigFunction('adminText', [$this, 'getAdminText']),
             new TwigFunction('formatTimestamp', [$this, 'formatTimestamp']),
         ];
     }
@@ -126,21 +124,6 @@ class TwigExtension extends AbstractExtension
     public function renderTime(): float
     {
         return round(microtime(true) - $this->startTime, 3);
-    }
-
-    public function getAdminText(string $key): string
-    {
-        $tm = new TextManager();
-        $text = $tm->getText($key);
-        if ($text !== null) {
-            if ($text->enabled && $text->content) {
-                return $text->content;
-            }
-
-            return '';
-        }
-
-        throw new \RuntimeException('Admin text for key not found: ' . $key);
     }
 
     public function formatTimestamp($timestamp): string

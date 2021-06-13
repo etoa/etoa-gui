@@ -1,4 +1,19 @@
 <?PHP
+
+use EtoA\Admin\AdminRoleManager;
+use EtoA\Admin\AdminUser;
+use EtoA\Admin\AdminUserRepository;
+
+/**
+ * @var AdminUserRepository
+ */
+$adminUserRepo = $app['etoa.admin.user.repository'];
+
+/**
+ * @var AdminRoleManager
+ */
+$rm = $app['etoa.admin.role.manager'];
+
 $twig->addGlobal("title", "Admin-Management");
 
 	if (isset($_GET['new']))
@@ -26,7 +41,6 @@ $twig->addGlobal("title", "Admin-Management");
 		echo "<tr>
 			<th>Rollen:</th>
 			<td>";
-			$rm = new AdminRoleManager();
 			foreach ($rm->getRoles() as $k => $v) {
 				echo '<input type="checkbox" name="roles[]" value="'.$k.'" id="role_'.$k.'"> <label for="role_'.$k.'">'.$v.'</label><br/>';
 			}
@@ -50,8 +64,8 @@ $twig->addGlobal("title", "Admin-Management");
 	elseif (isset($_GET['edit']) && $_GET['edit']>0)
 	{
 		echo "<h2>Bearbeiten</h2>";
-		$au = new AdminUser($_GET['edit']);
-		if ($au->isValid())
+		$au = $adminUserRepo->find($_GET['edit']);
+		if ($au != null)
 		{
 			echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">
 			<input type=\"hidden\" name=\"user_id\" value=\"".$au->id."\" />";
@@ -133,7 +147,7 @@ $twig->addGlobal("title", "Admin-Management");
 	}
 	else
 	{
-		echo "<h2>&Uuml;bersicht</h2>";
+		echo "<h2>Übersicht</h2>";
 
 		if (isset($_POST['new_submit']))
 		{
@@ -145,7 +159,9 @@ $twig->addGlobal("title", "Admin-Management");
 				$au->email = $_POST['user_email'];
 				$au->roles = isset($_POST['roles']) ? $_POST['roles'] : array();
 				$au->isContact = ($_POST['is_contact'] > 0);
-				$au->save();
+
+				$adminUserRepo->save($au);
+
                 $twig->addGlobal('successMessage', "Gespeichert!");
 				add_log(8,"Der Administrator ".$cu->nick." erstellt einen neuen Administrator: ".$_POST['user_nick']."(".$au->id.").");
 
@@ -155,7 +171,7 @@ $twig->addGlobal("title", "Admin-Management");
 					$pw = generatePasswort();
 					echo "Das Passwort ist: $pw<br/><br/>";
 				}
-				$au->setPassword($pw);
+				$adminUserRepo->setPassword($au, $pw);
 			}
 			else
 			{
@@ -167,13 +183,14 @@ $twig->addGlobal("title", "Admin-Management");
 		{
 			if ($_POST['user_nick']!="")
 			{
-				$au = new AdminUser($_POST['user_id']);
+				$au = $adminUserRepo->find($_POST['user_id']);
 				$pw='';
 				if ($_POST['user_password']!="")
 				{
-					$au->setPassword($_POST['user_password']);
+					$adminUserRepo->setPassword($au, $_POST['user_password']);
 					add_log(8,"Der Administrator ".$cu->nick." ändert das Passwort des Administrators ".$_POST['user_nick']."(".$_POST['user_id'].").");
 				}
+
 				$au->nick = $_POST['user_nick'];
 				$au->name = $_POST['user_name'];
 				$au->email = $_POST['user_email'];
@@ -184,8 +201,10 @@ $twig->addGlobal("title", "Admin-Management");
 				$au->locked = ($_POST['user_locked'] > 0);
 				$au->isContact = ($_POST['is_contact'] > 0);
 				$au->roles = isset($_POST['roles']) ? $_POST['roles'] : array();
-				$au->save();
-                $twig->addGlobal('successMessage', "Gespeichert!");
+
+				$adminUserRepo->save($au);
+
+				$twig->addGlobal('successMessage', "Gespeichert!");
 				add_log(8,"Der Administrator ".$cu->nick." ändert die Daten des Administrators ".$_POST['user_nick']." (ID: ".$_POST['user_id'].").");
 			}
 			else
@@ -195,10 +214,10 @@ $twig->addGlobal("title", "Admin-Management");
 		}
 
 		if (isset($_GET['del']) && $_GET['del']>0 && $_GET['del']!=$cu->id) {
-			$au = new AdminUser($_GET['del']);
-			if ($au->isValid() && $au->delete()) {
+			$au = $adminUserRepo->find($_GET['del']);
+			if ($au != null && $adminUserRepo->remove($au)) {
 				add_log(8, "Der Administrator ".$cu->nick." löscht den Administrator ".$au->nick." (ID: ".$au->id.").");
-				echo "Benutzer gel&ouml;scht!<br/><br/>";
+				echo "Benutzer gelöscht!<br/><br/>";
 			}
 		}
 
@@ -212,7 +231,7 @@ $twig->addGlobal("title", "Admin-Management");
 			<th>Gesperrt</th>
 			<th></th>
 		</tr>";
-		foreach (AdminUser::getAll() as $arr) {
+		foreach ($adminUserRepo->findAll() as $arr) {
 			echo "<tr>
 				<td>".$arr->nick."</td>
 				<td>".$arr->name."</td>
