@@ -136,6 +136,15 @@ class AdminSessionRepository extends AbstractRepository
             ->execute();
     }
 
+    function countSessionLog(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select("COUNT(*)")
+            ->from("admin_user_sessionlog")
+            ->execute()
+            ->fetchOne();
+    }
+
     public function addSessionLog(array $data, bool $logoutPressed): void
     {
         $this->createQueryBuilder()
@@ -167,5 +176,29 @@ class AdminSessionRepository extends AbstractRepository
             ->where('time_action < :timestamp')
             ->setParameter('timestamp', $timestamp)
             ->execute();
+    }
+
+    public function findSessionLogsByUser(int $userId): array
+    {
+        return $this->createQueryBuilder()
+            ->select("l.*", 'u.user_nick')
+            ->from("admin_user_sessionlog", 'l')
+            ->innerJoin('l', 'admin_users', 'u', 'l.user_id=u.user_id AND l.user_id = :user_id')
+            ->orderBy('time_action', 'DESC')
+            ->setParameter('user_id', $userId)
+            ->execute()
+            ->fetchAllAssociative();
+    }
+
+    public function findUsersWithSessionLogs(): array
+    {
+        return $this->createQueryBuilder()
+            ->select("user_nick", 'u.user_id', 'COUNT(*) as cnt')
+            ->from("admin_users", 'u')
+            ->innerJoin('u', 'admin_user_sessionlog', 'l', 'l.user_id=u.user_id')
+            ->groupBy('u.user_id')
+            ->orderBy('u.user_nick')
+            ->execute()
+            ->fetchAllAssociative();
     }
 }

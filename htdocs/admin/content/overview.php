@@ -2,6 +2,7 @@
 
 use EtoA\Admin\AdminSessionRepository;
 use EtoA\Admin\AdminUser;
+use EtoA\Admin\AdminUserRepository;
 use League\CommonMark\CommonMarkConverter;
 
 if ($sub == "offline") {
@@ -15,7 +16,12 @@ if ($sub == "offline") {
 	changelogView($markdown);
 } elseif ($sub == "adminlog") {
 	$sessionRepository = $app['etoa.admin.session.repository'];
-	adminLogView($cu, $s, $sessionRepository);
+	$adminUserRepo = $app['etoa.admin.user.repository'];
+	if (isset($_POST['logshow']) && $_POST['logshow'] != "") {
+		adminSessionLogForUserView($s, $sessionRepository, $adminUserRepo);
+	} else {
+		adminSessionLogView($cu, $sessionRepository);
+	}
 } elseif ($sub == "adminusers") {
 	require("home/adminusers.inc.php");
 } elseif ($sub == "observed") {
@@ -51,7 +57,7 @@ function takeOffline()
 		echo "<span style=\"color:#f90;\">Das Spiel ist offline!</span><br/><br/>
 		Erlaubte IP's (deine ist " . $_SERVER['REMOTE_ADDR'] . "):<br/> <textarea name=\"offline_ips_allow\" rows=\"6\" cols=\"60\">" . $cfg->offline_ips_allow->v . "</textarea><br/>
 		Nachricht: <br/><textarea name=\"offline_message\" rows=\"6\" cols=\"60\">" . $cfg->offline_message->v . "</textarea><br/><br/>
-		<input type=\"submit\" value=\"&Auml;nderungen speichern\" name=\"save\" /> &nbsp;
+		<input type=\"submit\" value=\"Änderungen speichern\" name=\"save\" /> &nbsp;
 		<input type=\"button\" value=\"Spiel online stellen\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;on=1'\" />";
 	} else {
 		echo "<span style=\"color:#0f0;\">Das Spiel ist online!</span><br/><br/>
@@ -85,176 +91,162 @@ function changelogView(CommonMarkConverter $markdown)
 	exit();
 }
 
-function adminLogView(AdminUser $cu, AdminSession $s, AdminSessionRepository $sessionRepository)
-{
+function adminSessionLogForUserView(
+	AdminSession $s,
+	AdminSessionRepository $sessionRepository,
+	AdminUserRepository $adminUserRepo
+) {
+	global $page;
+	global $sub;
+
+	$adminUser = $adminUserRepo->find($_POST['user_id']);
+	if ($adminUser != null) {
+		echo "<h2>Session-Log für " . $adminUser->nick . "</h2>";
+
+		$sessions = $sessionRepository->findSessionLogsByUser($_POST['user_id']);
+		if (count($sessions) > 0) {
+			echo "<table class=\"tb\">
+				<tr>
+					<th>Login</th>
+					<th>Aktivität</th>
+					<th>Logout</th>
+					<th>Dauer</th>
+					<th>IP</th>
+					<th>Browser</th>
+					<th>OS</th>
+				</tr>";
+			foreach ($sessions as $arr) {
+				echo "<tr>
+						<td>" . date("d.m.Y, H:i", $arr['time_login']) . "</td>";
+				echo "<td>";
+				if ($arr['time_action'] > 0)
+					echo date("d.m.Y H:i", $arr['time_action']);
+				else
+					echo "-";
+				echo "</td>";
+				echo "<td>";
+				if ($arr['time_logout'] > 0)
+					echo date("d.m.Y, H:i", $arr['time_logout']);
+				else
+					echo "-";
+				echo "</td>";
+				echo "<td>";
+				if (max($arr['time_logout'], $arr['time_action']) - $arr['time_login'] > 0) {
+					echo tf(max($arr['time_logout'], $arr['time_action']) - $arr['time_login']);
+				} else {
+					echo "-";
+				}
+				if ($arr['session_id'] == $s->id) {
+					echo " <span style=\"color:#0f0\">aktiv</span>";
+				}
+				echo "</td>";
+				echo "<td title=\"" . Net::getHost($arr['ip_addr']) . "\">" . $arr['ip_addr'] . "</td>";
+				$browser = get_browser($arr['user_agent'], true);
+				echo "<td title=\"" . $arr['user_agent'] . "\">" . (isset($browser['parent']) ? $browser['parent'] : '-') . "</td>";
+				echo "<td title=\"" . $arr['user_agent'] . "\">" . $browser['platform'] . "</td>";
+				echo "</tr>";
+			}
+			echo "</table>";
+		} else
+			echo "<i>Keine Einträge vorhanden</i>";
+	} else {
+		echo "<h2>Fehler</h2><i>User nicht vorhanden</i>";
+	}
+	echo "<br/><br/><input type=\"button\" value=\"Zur Übersicht\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" />";
+}
+
+function adminSessionLogView(
+	AdminUser $cu,
+	AdminSessionRepository $sessionRepository
+) {
 	global $cfg;
 	global $page;
 	global $sub;
 
 	echo "<h1>Admin-Log</h1>";
 
-	if (isset($_POST['logshow']) && $_POST['logshow'] != "") {
-		$ures = dbquery("SELECT
-				user_nick
-				FROM admin_users
-				WHERE user_id=" . $_POST['user_id'] . ";");
-		if (mysql_num_rows($ures) > 0) {
-			$uarr = mysql_fetch_array($ures);
-			echo "<h2>Session-Log f&uuml;r " . $uarr['user_nick'] . "</h2>";
+	$logDelTimespan = [
+		[1296000, "15 Tage"],
+		[2592000, "30 Tage"],
+		[3888000, "45 Tage"],
+		[5184000, "60 Tage"],
+	];
 
-			$sql = "SELECT
-					l.*,
-					u.user_nick
-				FROM
-					admin_user_sessionlog l
-				INNER JOIN
-					admin_users u
-					ON l.user_id=u.user_id
-					AND l.user_id=" . $_POST['user_id'] . "
-				ORDER BY
-					time_action DESC;";
-			$res = dbquery($sql);
-			if (mysql_num_rows($res) > 0) {
-				echo "<table class=\"tb\">
-					<tr>
-						<th>Login</th>
-						<th>Aktivität</th>
-						<th>Logout</th>
-						<th>Dauer</th>
-						<th>IP</th>
-						<th>Browser</th>
-						<th>OS</th>
-					</tr>";
-				while ($arr = mysql_fetch_array($res)) {
-					echo "<tr>
-							<td>" . date("d.m.Y, H:i", $arr['time_login']) . "</td>";
-					echo "<td>";
-					if ($arr['time_action'] > 0)
-						echo date("d.m.Y H:i", $arr['time_action']);
-					else
-						echo "-";
-					echo "</td>";
-					echo "<td>";
-					if ($arr['time_logout'] > 0)
-						echo date("d.m.Y, H:i", $arr['time_logout']);
-					else
-						echo "-";
-					echo "</td>";
-					echo "<td>";
-					if (max($arr['time_logout'], $arr['time_action']) - $arr['time_login'] > 0)
-						echo tf(max($arr['time_logout'], $arr['time_action']) - $arr['time_login']);
-					else
-						echo "-";
-					if ($arr['log_session_key'] == $s->id)
-						echo " <span style=\"color:#0f0\">aktiv</span>";
-					echo "</td>";
-					echo "<td title=\"" . Net::getHost($arr['ip_addr']) . "\">" . $arr['ip_addr'] . "</td>";
-					$browser = get_browser($arr['user_agent'], true);
-					echo "<td title=\"" . $arr['user_agent'] . "\">" . $browser['parent'] . "</td>";
-					echo "<td title=\"" . $arr['user_agent'] . "\">" . $browser['platform'] . "</td>";
-					echo "</tr>";
-				}
-				echo "</table>";
-			} else
-				echo "<i>Keine Eintr&auml;ge vorhanden</i>";
-		} else {
-			echo "<h2>Fehler</h2><i>User nicht vorhanden</i>";
-		}
-		echo "<br/><br/><input type=\"button\" value=\"Zur &Uuml;bersicht\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" />";
-	} else {
-		$logDelTimespan = array(
-			array(1296000, "15 Tage"),
-			array(2592000, "30 Tage"),
-			array(3888000, "45 Tage"),
-			array(5184000, "60 Tage"),
-		);
-
-		if (isset($_GET['kick']) && $_GET['kick'] > 0) {
-			if ($_GET['kick'] != $cu->id) {
-				AdminSession::kick($_GET['kick']);
-				add_log(8, $cu->nick . " l&ouml;scht die Session des Administrators mit der ID " . $_GET['kick']);
-			} else
-				echo error_msg("Du kannst nicht dich selbst kicken!");
-		}
-
-		if (isset($_POST['delentrys']) && $_POST['delentrys'] != "") {
-			if (isset($logDelTimespan[$_POST['log_timestamp']])) {
-				$td = $logDelTimespan[$_POST['log_timestamp']][0];
-				$nr = AdminSession::cleanupLogs($td);
-				echo "<p>" . $nr . " Eintr&auml;ge wurden gel&ouml;scht!</p>";
-			}
-		}
-
-		echo "<h2>Aktive Sessions</h2>";
-		echo "Das Timeout betr&auml;gt " . tf($cfg->admin_timeout->v) . "<br/><br/>";
-
-		$sessions = $sessionRepository->findAll();
-		if (count($sessions) > 0) {
-			echo "<table class=\"tb\">
-				<tr>
-					<th>Status</th>
-					<th>Nick</th>
-					<th>Login</th>
-					<th>Aktivität</th>
-					<th>Dauer</th>
-					<th>IP</th>
-					<th>User Agent</th>
-					<th>Kicken</th>
-				</tr>";
-			$t = time();
-			foreach ($sessions as $arr) {
-				if (ini_get("browscap") != null) {
-					$bc = get_browser($arr['user_agent'], true);
-					$browser = isset($bc['parent']) ? $bc['parent'] . ' [' . $bc['platform'] . ']' : $arr['user_agent'];
-				} else {
-					$browser = $arr['user_agent'];
-				}
-				echo "<tr>
-						<td " . ($t - $cfg->admin_timeout->v < $arr['time_action'] ? 'style="color:#0f0;">Online' : 'style="color:red;">Timeout') . "</td>
-						<td>" . $arr['user_nick'] . "</td>
-						<td>" . date("d.m.Y H:i", $arr['time_login']) . "</td>
-						<td>" . date("d.m.Y H:i", $arr['time_action']) . "</td>
-						<td>" . tf($arr['time_action'] - $arr['time_login']) . "</td>
-						<td title=\"" . Net::getHost($arr['ip_addr']) . "\">" . $arr['ip_addr'] . "</td>
-						<td title=\"" . $arr['user_agent'] . "\">" . $browser . "</td>
-						<td><a href=\"?page=$page&amp;sub=$sub&amp;kick=" . $arr['user_id'] . "\">Kick</a></td>
-					</tr>";
-			}
-			echo "</table>";
+	if (isset($_GET['kick']) && $_GET['kick'] > 0) {
+		if ($_GET['kick'] != $cu->id) {
+			AdminSession::kick($_GET['kick']);
+			add_log(8, $cu->nick . " löscht die Session des Administrators mit der ID " . $_GET['kick']);
 		} else
-			echo "<i>Keine Eintr&auml;ge vorhanden!</i>";
+			echo error_msg("Du kannst nicht dich selbst kicken!");
+	}
 
-		echo "<h2>Session-Log</h2>";
-		$res = dbquery("SELECT
-				user_nick,
-				u.user_id,
-				COUNT(*) as cnt
-			FROM admin_users u
-			INNER JOIN
-				admin_user_sessionlog l
-				ON l.user_id=u.user_id
-			GROUP BY u.user_id ORDER BY u.user_nick;");
-		if (mysql_num_rows($res) > 0) {
-			echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-			echo "Benutzer w&auml;hlen: <select name=\"user_id\">";
-			while ($arr = mysql_fetch_array($res)) {
-				echo "<option value=\"" . $arr['user_id'] . "\">" . $arr['user_nick'] . " (" . $arr['cnt'] . " Sessions)</option>";
-			}
-			echo "</select> &nbsp; <input type=\"submit\" name=\"logshow\" value=\"Anzeigen\" /></form>";
-
-			$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM admin_user_sessionlog;"));
-
-			echo "<h2>Logs löschen</h2>";
-			echo "<form action=\"?page=$page&sub=$sub\" method=\"post\">";
-			echo "Es sind " . nf($tblcnt[0]) . " Eintr&auml;ge in der Datenbank vorhanden.<br/><br/>
-					Eintr&auml;ge l&ouml;schen die &auml;lter als <select name=\"log_timestamp\">";
-			foreach ($logDelTimespan as $k => $lts) {
-				echo "<option value=\"" . $k . "\">" . $lts[1] . "</option>";
-			}
-			echo "</select> sind: <input type=\"submit\" name=\"delentrys\" value=\"Ausf&uuml;hren\" /></form>";
-		} else {
-			echo "<i>Keine Eintr&auml;ge vorhanden</i>";
+	if (isset($_POST['delentrys']) && $_POST['delentrys'] != "") {
+		if (isset($logDelTimespan[$_POST['log_timestamp']])) {
+			$td = $logDelTimespan[$_POST['log_timestamp']][0];
+			$nr = AdminSession::cleanupLogs($td);
+			echo "<p>" . $nr . " Einträge wurden gelöscht!</p>";
 		}
+	}
+
+	echo "<h2>Aktive Sessions</h2>";
+	echo "Das Timeout beträgt " . tf($cfg->admin_timeout->v) . "<br/><br/>";
+
+	$sessions = $sessionRepository->findAll();
+	if (count($sessions) > 0) {
+		echo "<table class=\"tb\">
+			<tr>
+				<th>Status</th>
+				<th>Nick</th>
+				<th>Login</th>
+				<th>Aktivität</th>
+				<th>Dauer</th>
+				<th>IP</th>
+				<th>User Agent</th>
+				<th>Kicken</th>
+			</tr>";
+		$t = time();
+		foreach ($sessions as $arr) {
+			if (ini_get("browscap") != null) {
+				$bc = get_browser($arr['user_agent'], true);
+				$browser = isset($bc['parent']) ? $bc['parent'] . ' [' . $bc['platform'] . ']' : $arr['user_agent'];
+			} else {
+				$browser = $arr['user_agent'];
+			}
+			echo "<tr>
+					<td " . ($t - $cfg->admin_timeout->v < $arr['time_action'] ? 'style="color:#0f0;">Online' : 'style="color:red;">Timeout') . "</td>
+					<td>" . $arr['user_nick'] . "</td>
+					<td>" . date("d.m.Y H:i", $arr['time_login']) . "</td>
+					<td>" . date("d.m.Y H:i", $arr['time_action']) . "</td>
+					<td>" . tf($arr['time_action'] - $arr['time_login']) . "</td>
+					<td title=\"" . Net::getHost($arr['ip_addr']) . "\">" . $arr['ip_addr'] . "</td>
+					<td title=\"" . $arr['user_agent'] . "\">" . $browser . "</td>
+					<td><a href=\"?page=$page&amp;sub=$sub&amp;kick=" . $arr['user_id'] . "\">Kick</a></td>
+				</tr>";
+		}
+		echo "</table>";
+	} else
+		echo "<i>Keine Einträge vorhanden!</i>";
+
+	echo "<h2>Session-Log</h2>";
+	$usersWithSessionLogs = $sessionRepository->findUsersWithSessionLogs();
+	if (count($usersWithSessionLogs) > 0) {
+		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
+		echo "Benutzer wählen: <select name=\"user_id\">";
+		foreach ($usersWithSessionLogs as $arr) {
+			echo "<option value=\"" . $arr['user_id'] . "\">" . $arr['user_nick'] . " (" . $arr['cnt'] . " Sessions)</option>";
+		}
+		echo "</select> &nbsp; <input type=\"submit\" name=\"logshow\" value=\"Anzeigen\" /></form>";
+
+		echo "<h2>Logs löschen</h2>";
+		echo "<form action=\"?page=$page&sub=$sub\" method=\"post\">";
+		echo "Es sind " . nf($sessionRepository->countSessionLog()) . " Einträge in der Datenbank vorhanden.<br/><br/>
+				Einträge löschen die älter als <select name=\"log_timestamp\">";
+		foreach ($logDelTimespan as $k => $lts) {
+			echo "<option value=\"" . $k . "\">" . $lts[1] . "</option>";
+		}
+		echo "</select> sind: <input type=\"submit\" name=\"delentrys\" value=\"Ausführen\" /></form>";
+	} else {
+		echo "<i>Keine Einträge vorhanden</i>";
 	}
 }
 
