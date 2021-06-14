@@ -85,3 +85,13 @@ parameters:
 			count: 1
 			path: htdocs/inc/usersetup.inc.php
 
+		-
+			message: "#^Constant NAME_MAXLENGTH not found\\.$#"
+			count: 1
+			path: htdocs/index/register.php
+
+		-
+			message: "#^Constant NICK_MAXLENGHT not found\\.$#"
+			count: 1
+			path: htdocs/index/register.php
+
