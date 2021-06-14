@@ -141,9 +141,9 @@ function adminSessionLogForUserView(
 				}
 				echo "</td>";
 				echo "<td title=\"" . Net::getHost($arr['ip_addr']) . "\">" . $arr['ip_addr'] . "</td>";
-				$browser = get_browser($arr['user_agent'], true);
-				echo "<td title=\"" . $arr['user_agent'] . "\">" . (isset($browser['parent']) ? $browser['parent'] : '-') . "</td>";
-				echo "<td title=\"" . $arr['user_agent'] . "\">" . $browser['platform'] . "</td>";
+				$browserParser = new \WhichBrowser\Parser($arr['user_agent']);
+				echo "<td title=\"" . $arr['user_agent'] . "\">" . $browserParser->browser->toString() . "</td>";
+				echo "<td title=\"" . $arr['user_agent'] . "\">" . $browserParser->os->toString() . "</td>";
 				echo "</tr>";
 			}
 			echo "</table>";
@@ -192,6 +192,7 @@ function adminSessionLogView(
 	echo "Das Timeout beträgt " . tf($cfg->admin_timeout->v) . "<br/><br/>";
 
 	$sessions = $sessionRepository->findAll();
+
 	if (count($sessions) > 0) {
 		echo "<table class=\"tb\">
 			<tr>
@@ -206,12 +207,7 @@ function adminSessionLogView(
 			</tr>";
 		$t = time();
 		foreach ($sessions as $arr) {
-			if (ini_get("browscap") != null) {
-				$bc = get_browser($arr['user_agent'], true);
-				$browser = isset($bc['parent']) ? $bc['parent'] . ' [' . $bc['platform'] . ']' : $arr['user_agent'];
-			} else {
-				$browser = $arr['user_agent'];
-			}
+			$browserParser = new \WhichBrowser\Parser($arr['user_agent']);
 			echo "<tr>
 					<td " . ($t - $cfg->admin_timeout->v < $arr['time_action'] ? 'style="color:#0f0;">Online' : 'style="color:red;">Timeout') . "</td>
 					<td>" . $arr['user_nick'] . "</td>
@@ -219,7 +215,7 @@ function adminSessionLogView(
 					<td>" . date("d.m.Y H:i", $arr['time_action']) . "</td>
 					<td>" . tf($arr['time_action'] - $arr['time_login']) . "</td>
 					<td title=\"" . Net::getHost($arr['ip_addr']) . "\">" . $arr['ip_addr'] . "</td>
-					<td title=\"" . $arr['user_agent'] . "\">" . $browser . "</td>
+					<td title=\"" . $arr['user_agent'] . "\">" . $browserParser->browser->toString() . ' on ' . $browserParser->os->toString() ."</td>
 					<td><a href=\"?page=$page&amp;sub=$sub&amp;kick=" . $arr['user_id'] . "\">Kick</a></td>
 				</tr>";
 		}
