@@ -6,8 +6,10 @@
 	{
 		function run()
 		{
+			AdminSessionManager $sessionManager = $app['etoa.admin.session.manager'];
+
 			$unr = UserSession::cleanupLogs();
-			$anr = AdminSession::cleanupLogs();
+			$anr = $sessionManager->cleanupLogs();
 			return "$unr alte Spieler Session-Logs gelöscht, $anr alte Admin Session-Logs gelöscht";
 		}
 

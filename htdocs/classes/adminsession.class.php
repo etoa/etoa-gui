@@ -1,5 +1,6 @@
 <?php
 
+use EtoA\Admin\AdminSessionManager;
 use EtoA\Admin\AdminSessionRepository;
 use EtoA\Admin\AdminUserRepository;
 
@@ -15,6 +16,7 @@ class AdminSession extends Session
 
 	protected AdminSessionRepository $repository;
 	protected AdminUserRepository $userRepository;
+	protected AdminSessionManager $sessionManager;
 
 	protected function __construct()
 	{
@@ -23,6 +25,7 @@ class AdminSession extends Session
 		global $app;
 		$this->repository = $app['etoa.admin.session.repository'];
 		$this->userRepository = $app['etoa.admin.user.repository'];
+		$this->sessionManager = $app['etoa.admin.session.manager'];
 	}
 
 	/**
@@ -37,7 +40,7 @@ class AdminSession extends Session
 
 	function login($data)
 	{
-		self::cleanup();
+		$this->sessionManager->cleanup();
 
 		// If user login data has been temporary stored (two factor authentication challenge), restore it
 		if (empty($data['login_nick']) && !empty($this->tfa_login_nick)) {
@@ -139,7 +142,7 @@ class AdminSession extends Session
 			$this->lastError = "Keine Session!";
 			$this->lastErrorCode = "nologin";
 		}
-		self::unregisterSession();
+		$this->sessionManager->unregisterSession(session_id());
 		return false;
 	}
 
@@ -157,68 +160,6 @@ class AdminSession extends Session
 
 	function logout()
 	{
-		self::unregisterSession();
-	}
-
-	/**
-	 * Unregisters a session and save session to session-log
-	 *
-	 * @param string $sid Session-ID. If null, the current user's session id will be taken
-	 * @param bool $logoutPressed True if it was manual logout
-	 */
-	static function unregisterSession($sid = null, $logoutPressed = 1)
-	{
-		if ($sid == null) {
-			$sid = self::getInstance()->id;
-		}
-
-		$adminSession = self::getInstance()->repository->find($sid);
-		if ($adminSession != null) {
-			self::getInstance()->repository->addSessionLog($adminSession, $logoutPressed == 1 ? time() : 0);
-			self::getInstance()->repository->remove($sid);
-		}
-		if ($logoutPressed == 1) {
-			session_regenerate_id(true);
-			session_destroy();
-		}
-	}
-
-	/**
-	 * Cleans up sessions with have a timeout. Should be called at login or by cronjob regularly
-	 */
-	static function cleanup()
-	{
-		$cfg = Config::getInstance();
-
-		$sessions = self::getInstance()->repository->findByTimeout($cfg->admin_timeout->v);
-		foreach ($sessions as $sessions) {
-			self::unregisterSession($sessions['id'], 0);
-		}
-	}
-
-	/**
-	 * Removes old session logs from the database
-	 * @param int $threshold Time difference in seconds
-	 */
-	static function cleanupLogs($threshold = 0)
-	{
-		$cfg = Config::getInstance();
-
-		$timestamp = $threshold > 0
-			? time() - $threshold
-			: time() - (24 * 3600 * $cfg->sessionlog_store_days->p2);
-
-		$count = self::getInstance()->repository->removeSessionLogs($timestamp);
-		Log::add(Log::F_SYSTEM, Log::INFO, "$count Admin-Session-Logs die älter als " . date("d.m.Y, H:i", $timestamp) . " sind wurden gelöscht.");
-		return $count;
-	}
-
-	/**
-	 * Kicks the user with the given session id
-	 * @param string $sid Session id
-	 */
-	static function kick($sid)
-	{
-		self::unregisterSession($sid, 0);
+		$this->sessionManager->unregisterSession(session_id());
 	}
 }

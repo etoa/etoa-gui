@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Admin\AdminSessionManager;
 use EtoA\Admin\AdminSessionRepository;
 use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
@@ -19,10 +20,11 @@ if ($sub == "offline") {
 } elseif ($sub == "adminlog") {
 	$sessionRepository = $app['etoa.admin.session.repository'];
 	$adminUserRepo = $app['etoa.admin.user.repository'];
+	$sessionManager = $app['etoa.admin.session.manager'];
 	if (isset($_POST['logshow']) && $_POST['logshow'] != "") {
 		adminSessionLogForUserView($s, $sessionRepository, $adminUserRepo);
 	} else {
-		adminSessionLogView($cu, $sessionRepository);
+		adminSessionLogView($cu, $sessionRepository, $sessionManager);
 	}
 } elseif ($sub == "adminusers") {
 	require("home/adminusers.inc.php");
@@ -161,7 +163,8 @@ function adminSessionLogForUserView(
 
 function adminSessionLogView(
 	AdminUser $cu,
-	AdminSessionRepository $sessionRepository
+	AdminSessionRepository $sessionRepository,
+	AdminSessionManager $sessionManager
 ) {
 	global $cfg;
 	global $page;
@@ -178,7 +181,7 @@ function adminSessionLogView(
 
 	if (isset($_GET['kick']) && $_GET['kick'] > 0) {
 		if ($_GET['kick'] != $cu->id) {
-			AdminSession::kick($_GET['kick']);
+			$sessionManager->kick($_GET['kick']);
 			add_log(8, $cu->nick . " löscht die Session des Administrators mit der ID " . $_GET['kick']);
 		} else
 			echo error_msg("Du kannst nicht dich selbst kicken!");
@@ -187,7 +190,7 @@ function adminSessionLogView(
 	if (isset($_POST['delentrys']) && $_POST['delentrys'] != "") {
 		if (isset($logDelTimespan[$_POST['log_timestamp']])) {
 			$td = $logDelTimespan[$_POST['log_timestamp']][0];
-			$nr = AdminSession::cleanupLogs($td);
+			$nr = $sessionManager->cleanupLogs($td);
 			echo "<p>" . $nr . " Einträge wurden gelöscht!</p>";
 		}
 	}

@@ -6,8 +6,10 @@
 	{
 		function run()
 		{
+			AdminSessionManager $sessionManager = $app['etoa.admin.session.manager'];
+
 			UserSession::cleanup();
-			AdminSession::cleanup();
+			$sessionManager->cleanup();
 			return "Session cleanup";
 		}
 

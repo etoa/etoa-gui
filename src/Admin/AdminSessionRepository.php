@@ -145,7 +145,7 @@ class AdminSessionRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function addSessionLog(array $data, bool $logoutPressed): void
+    public function addSessionLog(array $data, ?int $logoutTime): void
     {
         $this->createQueryBuilder()
             ->insert('admin_user_sessionlog')
@@ -156,7 +156,7 @@ class AdminSessionRepository extends AbstractRepository
                 'user_agent' => ':user_agent',
                 'time_login' => ':time_login',
                 'time_action' => ':time_action',
-                'time_logout' => $logoutPressed ? time() : 0,
+                'time_logout' => $logoutTime ?? time(),
             ])
             ->setParameters([
                 'id' => $data['id'],
