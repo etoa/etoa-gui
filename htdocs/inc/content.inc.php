@@ -1,6 +1,8 @@
 <?PHP
 
-	$time = time();
+use EtoA\Text\TextRepository;
+
+$time = time();
 
 	// Get tutorial
 	$ttm = new TutorialManager();
@@ -44,10 +46,13 @@
 			}
 		}
 
-		$tm = new TextManager();
+		/**
+		 * @var TextRepository
+		 */
+		$textRepo = $app['etoa.text.repository'];
 
 		// SYSTEMNACHRICHT //
-		$systemMessage = $tm->getText('system_message');
+		$systemMessage = $textRepo->find('system_message');
 		if ($systemMessage->enabled && !empty($systemMessage->content))
 		{
 			echo "<br />";

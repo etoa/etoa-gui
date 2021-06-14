@@ -1,6 +1,11 @@
 <?PHP
 
-	$tm = new TextManager();
+use EtoA\Text\TextRepository;
+
+	/**
+	 * @var TextRepository
+	 */
+	$textRepo = $app['etoa.text.repository'];
 
 	$sx_num=$conf['num_of_sectors']['p1'];
 	$sy_num=$conf['num_of_sectors']['p2'];
@@ -11,7 +16,7 @@
 
 	echo "<div class=\"userSetupContainer\">";
 
-		// Apply choosen itemset
+	// Apply chosen itemset
 	if (isset($s->itemset_key) && isset($_POST[md5($s->itemset_key)]) && isset($_POST['itemset_id']))
 	{
 		Usersetup::addItemSetListToPlanet($s->itemset_planet,$cu->id,$_POST['itemset_id']);
@@ -22,7 +27,6 @@
 	}
 	elseif (isset($_POST['submit_chooseplanet']) && intval($_POST['choosenplanetid'])>0 && checker_verify() && !isset($cp))
 	{
-
 		$tp = Planet::getById($_POST['choosenplanetid']);
         $cfg = Config::getInstance();
 
@@ -405,7 +409,7 @@
 	{
 		echo "<h2>Einrichtung abgeschlossen</h2>";
 
-		$welcomeText = $tm->getText('welcome_message');
+		$welcomeText = $textRepo->find('welcome_message');
 		if ($welcomeText->enabled && !empty($welcomeText->content))
 		{
 			iBoxStart("Willkommen");

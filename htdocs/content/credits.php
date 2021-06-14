@@ -1,8 +1,15 @@
 <?PHP
-	echo '<h1>Credits</h1>';
 
-	$tm = new TextManager();
-	$credits = $tm->getText('credits');
+use EtoA\Text\TextRepository;
+
+echo '<h1>Credits</h1>';
+
+	/**
+     * @var TextRepository
+     */
+    $textRepo = $app['etoa.text.repository'];
+
+	$credits = $textRepo->find('credits');
 	if ($credits->enabled && !empty($credits->content))
 	{
 		iBoxStart();

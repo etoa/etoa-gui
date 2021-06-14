@@ -1,14 +1,19 @@
 <?PHP
 
-	if ($index!="") {
+use EtoA\Text\TextRepository;
+
+if ($index!="") {
 		$baseUrl = "?index=".$index;
 	} else {
 		$baseUrl = "?page=".$page;
 	}
 
-	// Text
-	$tm = new TextManager();
-	$contactText = $tm->getText('contact_message');
+	/**
+     * @var TextRepository
+     */
+    $textRepo = $app['etoa.text.repository'];
+
+	$contactText = $textRepo->find('contact_message');
 	if ($contactText->enabled && !empty($contactText->content))
 	{
 		iBoxStart();
