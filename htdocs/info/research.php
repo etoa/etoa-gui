@@ -1,6 +1,6 @@
 <?PHP
 
-	define(TECH_SPEED_CAT,1);
+	$techSpeedCategory = 1;
 	echo "<h2>Technologien</h2>";
 
 	//Detail
@@ -66,7 +66,7 @@
 			</tr>";
 			tableEnd();
 
-			if ($arr['tech_type_id']==TECH_SPEED_CAT)
+			if ((int) $arr['tech_type_id'] === $techSpeedCategory)
 			{
 				$vres=dbquery("
 				SELECT

@@ -81,10 +81,10 @@
 
 		ksort($attitudes);
 
-		foreach ($attitudes as $a => $actions)
+		foreach ($attitudes as $a => $attitudeActions)
 		{
 			tableStart("<span style=\"color:".FleetAction::$attitudeColor[$a]."\">".FleetAction::$attitudeString[$a]."</span>");
-			foreach($actions as $data)
+			foreach($attitudeActions as $data)
 			{
 				echo "<tr><td class=\"tbltitle\" width=\"25%\">".$data->name()."</td>
 				<td class=\"tbldata\">".$data->desc()."</td>

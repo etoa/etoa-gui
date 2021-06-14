@@ -2,7 +2,11 @@
 
 	class Ship
 	{
-        public function __construct($sid)
+		public int $id;
+		public string $name;
+		public ?string $shortComment;
+
+		public function __construct($sid)
 		{
 			$this->isValid = false;
 
@@ -23,11 +27,10 @@
 				if (!$arr = mysql_fetch_assoc($res))
 				{
 					throw new EException("Ung&uuml;ltige Schiff-ID: $sid");
-					return false;
 				}
 			}
 
-			$this->id = $arr['ship_id'];
+			$this->id = (int) $arr['ship_id'];
 			$this->name = $arr['ship_name'];
 			$this->shortComment = $arr['ship_shortcomment'];
 			$this->structure = $arr['ship_structure'];

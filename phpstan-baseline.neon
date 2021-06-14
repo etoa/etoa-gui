@@ -64,3 +64,9 @@ parameters:
 			message: "#^Constant NAME_MAXLENGTH not found\\.$#"
 			count: 1
 			path: htdocs/index/register.php
+
+		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: htdocs/info/settings.php
+
