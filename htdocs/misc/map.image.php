@@ -43,7 +43,7 @@
 		if ($admin || (isset($s['user_id']) && $s['user_id'] > 0))
 		{
 
-			if ($admin && !empty($_GET['user']))
+			if ($admin && $_GET['user'] ?? false)
 			{
 				$user = new User($_GET['user']);
 			}
@@ -294,7 +294,7 @@
               else
                 continue;
             }
-            else
+            elseif (isset($user))
             {
               $fogCode = 0;
               // Bottom

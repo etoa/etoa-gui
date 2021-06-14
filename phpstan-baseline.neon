@@ -70,3 +70,33 @@ parameters:
 			count: 1
 			path: htdocs/info/settings.php
 
+		-
+			message: "#^Variable \\$x might not be defined\\.$#"
+			count: 1
+			path: htdocs/misc/alliance_stats.image.php
+
+		-
+			message: "#^Result of \\|\\| is always true\\.$#"
+			count: 1
+			path: htdocs/misc/map.image.php
+
+		-
+			message: "#^Variable \\$s in isset\\(\\) always exists and is not nullable\\.$#"
+			count: 1
+			path: htdocs/misc/map.image.php
+
+		-
+			message: "#^Variable \\$user might not be defined\\.$#"
+			count: 1
+			path: htdocs/misc/map.image.php
+
+		-
+			message: "#^Variable \\$rates might not be defined\\.$#"
+			count: 1
+			path: htdocs/misc/market.image.php
+
+		-
+			message: "#^Variable \\$x might not be defined\\.$#"
+			count: 1
+			path: htdocs/misc/stats.image.php
+

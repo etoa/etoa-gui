@@ -49,19 +49,19 @@
 		else
 			$g = 255 - floor(100/50*($cp-50));
 
-	$col = imagecolorallocate($im,$r,$g,$b);
-	imagefilledrectangle($im,0,0,round($width/100*$p),$height,$col);
+	$col = imagecolorallocate($im, (int) $r, (int) $g,$b);
+	imagefilledrectangle($im,0,0, (int) round($width/100*$p),$height,$col);
 
 
 
 	$fcol = imagecolorallocate($im,0,0,0);
-	$w = ($width/2)-round(imagefontwidth(2)*strlen($p."%")/2);
-	imagestring($im,2,$w,2,$p."%",$fcol);
-	imagestring($im,2,$w,4,$p."%",$fcol);
+	$w = (int) (($width/2)-round(imagefontwidth(2)*strlen($p."%")/2));
+	imagestring($im,2, $w,2,$p."%",$fcol);
+	imagestring($im,2, $w,4,$p."%",$fcol);
 	imagestring($im,2,$w-1,3,$p."%",$fcol);
 	imagestring($im,2,$w+1,3,$p."%",$fcol);
 	$fcol = imagecolorallocate($im,255,255,255);
-	imagestring($im,2,$w,3,$p."%",$fcol);
+	imagestring($im,2, $w,3,$p."%",$fcol);
 
 	imagerectangle($im,0,0,$width-1,$height-1,imagecolorallocate($im,200,200,200));
 	imagerectangle($im,1,1,$width-2,$height-2,imagecolorallocate($im,100,100,100));
