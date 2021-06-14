@@ -3,7 +3,6 @@
 namespace EtoA\Core\Twig;
 
 use EtoA\Admin\AdminRoleManager;
-use TextManager;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
