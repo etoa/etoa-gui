@@ -3,6 +3,7 @@
 use EtoA\Admin\AdminSessionRepository;
 use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Support\DatabaseManagerRepository;
 use League\CommonMark\CommonMarkConverter;
 
 if ($sub == "offline") {
@@ -27,7 +28,8 @@ if ($sub == "offline") {
 } elseif ($sub == "observed") {
 	require("home/observed.inc.php");
 } elseif ($sub === "sysinfo") {
-	systemInfoView();
+	$databaseManager = $app['etoa.db.manager.repository'];
+	systemInfoView($databaseManager);
 } else {
 	indexView($cu);
 }
@@ -246,14 +248,14 @@ function adminSessionLogView(
 	}
 }
 
-function systemInfoView()
+function systemInfoView(DatabaseManagerRepository $databaseManager)
 {
 	global $twig;
 
 	$unix = UNIX ? posix_uname() : null;
 	echo $twig->render('admin/overview/sysinfo.html.twig', [
 		'phpVersion' => phpversion(),
-		'dbVersion' => mysql_get_client_info(),
+		'dbVersion' => $databaseManager->getDatabasePlatform(),
 		'webserverVersion' => $_SERVER['SERVER_SOFTWARE'],
 		'unixName' => UNIX ? $unix['sysname'] . ' ' . $unix['release'] . ' ' . $unix['version'] : null,
 	]);

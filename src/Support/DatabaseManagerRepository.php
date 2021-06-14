@@ -9,7 +9,7 @@ use EtoA\Core\AbstractRepository;
 class DatabaseManagerRepository extends AbstractRepository
 {
 	public function getDatabaseSize(): int {
-        $database = $this->getConnection()->getParams()['dbname'];
+        $database = $this->getConnection()->getDatabase();
         return (int) $this->getConnection()
             ->executeQuery(
                 "SELECT round(sum( data_length + index_length ) / 1024 / 1024,2)
@@ -20,4 +20,9 @@ class DatabaseManagerRepository extends AbstractRepository
             )
             ->fetchOne();
 	}
+
+    public function getDatabasePlatform(): string
+    {
+        return $this->getConnection()->getDatabasePlatform()->getName();
+    }
 }
