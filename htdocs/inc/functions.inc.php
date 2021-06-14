@@ -14,7 +14,9 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/
 
-	/**
+use EtoA\Support\Collections\ExtendedArrayCollection;
+
+/**
 	* Returns a string containing the game name, version and round
 	*/
 	function getGameIdentifier()	{
@@ -2685,4 +2687,15 @@ function imagecreatefromfile($path, $user_functions = false)
 		$pattern = '|[[\\/\\!]*?[^\\[\\]]*?]|si';
 		$replace = '';
 		return preg_replace($pattern, $replace, $text_to_search);
+	}
+
+	/**
+	 * Creates a new collection from the given array of data
+	 *
+	 * @param array $data
+	 * @return ExtendedArrayCollection
+	 */
+	function collect(array $data): ExtendedArrayCollection
+	{
+		return new ExtendedArrayCollection($data);
 	}

@@ -56,15 +56,12 @@ class AdminUserRepository extends AbstractRepository
 
     public function findAllAsList(): array
     {
-        $data = $this->createQueryBuilder()
+        return $this->createQueryBuilder()
             ->select("user_id", 'user_nick')
             ->from('admin_users')
             ->orderBy('user_nick')
             ->execute()
-            ->fetchAllAssociative();
-        return collect($data)
-            ->mapWithKeys(fn ($arr) => [$arr['user_id'] => $arr['user_nick']])
-            ->toArray();
+            ->fetchAllKeyValue();
     }
 
     private function createObject(array $data): AdminUser

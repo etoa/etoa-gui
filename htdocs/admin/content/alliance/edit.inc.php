@@ -169,11 +169,11 @@ function edit(
 	$twig->addGlobal('subtitle', "Allianz bearbeiten: [" . $arr['alliance_tag'] . "] " . $arr['alliance_name']);
 
 	$members = collect($repository->findUsers($id))
-		->mapWithKeys(fn ($arr) => [$arr['user_id'] => $arr])
+		->mapToAssoc(fn ($arr) => [$arr['user_id'], $arr])
 		->toArray();
 
 	$ranks = collect($repository->findRanks($id))
-		->mapWithKeys(fn ($arr) => [$arr['rank_id'] => $arr])
+		->mapToAssoc(fn ($arr) => [$arr['rank_id'], $arr])
 		->toArray();
 
 	echo "<form action=\"?page=$page&amp;sub=edit&amp;id=" . $id . "\" method=\"post\">";
