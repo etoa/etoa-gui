@@ -4,6 +4,7 @@ use EtoA\Admin\AdminSessionRepository;
 use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Support\DatabaseManagerRepository;
+use EtoA\Universe\CellRepository;
 use League\CommonMark\CommonMarkConverter;
 
 if ($sub == "offline") {
@@ -31,7 +32,8 @@ if ($sub == "offline") {
 	$databaseManager = $app['etoa.db.manager.repository'];
 	systemInfoView($databaseManager);
 } else {
-	indexView($cu);
+	$universeCellRepo = $app['etoa.universe.cell.repository'];
+	indexView($cu, $universeCellRepo);
 }
 
 function takeOffline()
@@ -262,16 +264,10 @@ function systemInfoView(DatabaseManagerRepository $databaseManager)
 	exit();
 }
 
-function indexView(AdminUser $cu)
+function indexView(AdminUser $cu, CellRepository $universeCellRepo)
 {
 	global $conf;
 	global $twig;
-
-	//
-	// Universum generieren
-	//
-	$res = dbquery("SELECT COUNT(id) FROM cells;");
-	$arr = mysql_fetch_row($res);
 
 	// Flottensperre aktiv
 	$fleetBanTitle = null;
@@ -315,7 +311,7 @@ function indexView(AdminUser $cu)
 	echo $twig->render('admin/overview/overview.html.twig', [
 		'welcomeMessage' => 'Hallo <b>' . $cu->nick . '</b>, willkommen im Administrationsmodus! Deine Rolle(n): <b>' . $cu->getRolesStr() . '.</b>',
 		'hasTfa' => !empty($cu->tfaSecret),
-		'didBigBangHappen' => $arr[0] != 0,
+		'didBigBangHappen' => $universeCellRepo->count() != 0,
 		'forcePasswordChange' => $cu->forcePasswordChange,
 		'numNewTickets' => Ticket::countNew(),
 		'numOpenTickets' => Ticket::countAssigned($cu->id),

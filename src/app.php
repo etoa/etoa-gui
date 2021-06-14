@@ -55,7 +55,8 @@ $app->register(new \EtoA\User\UserServiceProvider());
 $app->register(new \EtoA\Admin\AdminUserServiceProvider());
 $app->register(new \EtoA\Text\TextServiceProvider());
 $app->register(new \EtoA\Alliance\AllianceServiceProvider());
-$app->register(new \EtoA\support\DatabaseManagerServiceProvider());
+$app->register(new \EtoA\Support\DatabaseManagerServiceProvider());
+$app->register(new \EtoA\Universe\UniverseServiceProvider());
 
 $app->mount('/', $questProvider);
 $app->mount('/', $tutorialProvider);
