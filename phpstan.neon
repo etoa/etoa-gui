@@ -11,10 +11,15 @@ parameters:
         - bin
         - src
         - tests
-        - htdocs/inc
-        - htdocs/index
+        - htdocs
 
     excludePaths:
+        - htdocs/admin
+        - htdocs/classes
+        - htdocs/content
+        - htdocs/info
+        - htdocs/misc
+        - htdocs/libs
         - htdocs/inc/xajax
 
     bootstrapFiles:
@@ -27,6 +32,7 @@ parameters:
         - '#Dynamic call to static method PHPUnit\\Framework\\TestCase#'
         - '#Doctrine\\Common\\Cache\\ArrayCache#'
 
-        - '#Variable \$(twig|cfg|xajax|s|page|resNames|index|link|site|app|cu|conf) might not be define#'
+        - '#Variable \$(twig|cfg|xajax|s|page|resNames|index|link|site|app|cu|conf|mode) might not be define#'
         - '#Access to (protected|private) property [a-z]+::\$[a-z]+#i'
         - '#Access to an undefined property UserSession#'
+        - '#Constant (CSS_STYLE|APP_VERSION|GLOBAL_TIME|BUILD_BUILD_TIME|USER_INACTIVE_LONG|USER_INACTIVE_SHOW|NICK_MAXLENGHT) not found#'

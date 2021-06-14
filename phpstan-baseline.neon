@@ -11,31 +11,6 @@ parameters:
 			path: htdocs/inc/bootstrap.inc.php
 
 		-
-			message: "#^Constant APP_VERSION not found\\.$#"
-			count: 1
-			path: htdocs/inc/functions.inc.php
-
-		-
-			message: "#^Constant BUILD_BUILD_TIME not found\\.$#"
-			count: 1
-			path: htdocs/inc/functions.inc.php
-
-		-
-			message: "#^Constant GLOBAL_TIME not found\\.$#"
-			count: 1
-			path: htdocs/inc/functions.inc.php
-
-		-
-			message: "#^Constant USER_INACTIVE_LONG not found\\.$#"
-			count: 1
-			path: htdocs/inc/functions.inc.php
-
-		-
-			message: "#^Constant USER_INACTIVE_SHOW not found\\.$#"
-			count: 1
-			path: htdocs/inc/functions.inc.php
-
-		-
 			message: "#^Dynamic call to static method XMLReader\\:\\:open\\(\\)\\.$#"
 			count: 2
 			path: htdocs/inc/functions.inc.php
@@ -89,9 +64,3 @@ parameters:
 			message: "#^Constant NAME_MAXLENGTH not found\\.$#"
 			count: 1
 			path: htdocs/index/register.php
-
-		-
-			message: "#^Constant NICK_MAXLENGHT not found\\.$#"
-			count: 1
-			path: htdocs/index/register.php
-
