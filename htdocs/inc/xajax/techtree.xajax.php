@@ -73,6 +73,8 @@ function reqInfo($id,$cat='b')
 	{
 		$req_tbl = "missile_requirements";
 		$req_field = "obj_id";
+	} else {
+		throw new \InvalidArgumentException('Unknown category:' . $cat);
 	}
 
 	$items = array();
@@ -140,6 +142,8 @@ function reqInfo($id,$cat='b')
 	{
 		$img = IMAGE_PATH."/missiles/missile".$id."_middle.".IMAGE_EXT;
 		$name = $m_name[$id];
+	} else {
+		throw new \InvalidArgumentException('Unknown category:' . $cat);
 	}
 	echo "<div class=\"techtreeMainItem\" style=\"background:url('".$img."');\">";
 	echo "<div class=\"techtreeItemName\">".$name."</div>";
@@ -160,6 +164,8 @@ function reqInfo($id,$cat='b')
 		{
 			$req_field = "req_tech_id";
 			$req_level_field = "req_level";
+		} else {
+			throw new \InvalidArgumentException('Unknown category:' . $cat);
 		}
 
 

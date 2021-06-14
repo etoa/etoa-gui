@@ -61,6 +61,16 @@ parameters:
 			path: htdocs/inc/usersetup.inc.php
 
 		-
+			message: "#^Right side of && is always false\\.$#"
+			count: 1
+			path: htdocs/inc/xajax.inc.php
+
+		-
+			message: "#^If condition is always false\\.$#"
+			count: 1
+			path: htdocs/inc/xajax/global.xajax.php
+
+		-
 			message: "#^Constant NAME_MAXLENGTH not found\\.$#"
 			count: 1
 			path: htdocs/index/register.php

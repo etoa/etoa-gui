@@ -22,6 +22,7 @@ function searchUser($val,$field_id='user_nick',$box_id='citybox',$separator=";")
 	}
 	$sOut = "";
 	$nCount = 0;
+	$sLastHit = null;
 
 	$res=dbquery("SELECT user_nick FROM users WHERE user_nick LIKE '".$val."%' LIMIT 20;");
 	if (mysql_num_rows($res)>0)
@@ -130,6 +131,8 @@ function getFlightTargetInfo($f,$sx1,$sy1,$cx1,$cy1,$p1)
 
 	// Total selected missiles
 	$total=0;
+	$speed = 0;
+	$range = 0;
 
 	// Calc speed
 	if (isset($f['count']))
@@ -344,7 +347,7 @@ function getCryptoDistance($f,$sx1,$sy1,$cx1,$cy1,$p1)
 	$objResponse->assign("targetcell","value", $target->cellId());
 	$objResponse->assign("targetplanet","value", $target->id());
 
-	$launch=false;
+	$launch=false; // TODO this looks broken. I think this should be true
 	$distance = $target->distanceByCoords($sx1, $sy1, $cx1, $cy1, $p1);
 
 	$objResponse->assign("distance","innerHTML",nf($distance)." AE");
@@ -384,23 +387,13 @@ function formatNumbers($field_id,$val,$format=0,$max)
 		$val = min($val,$max);
 	}
 
-	$val = abs(intval($val));
+	$val = abs((int) $val);
+	if($format==1) {
+		$out = nf($val);
+	} else {
+		$out = $val;
+	}
 
-	if(is_integer($val))
-	{
-		if($format==1)
-		{
-			$out = nf($val);
-		}
-		else
-		{
-			$out = $val;
-		}
-	}
-	else
-	{
-		$out = 0;
-	}
 
 	$objResponse->assign($field_id,"value",$out);
 
@@ -415,6 +408,7 @@ function sendMsg($userString, $subject, $message)
 
 	 $userArr = explode(";", $userString);
 	 $senderId = $_SESSION['user_id'];
+	 $out = '';
 	 foreach ($userArr as $userToNick)
 	 {
 		  $uid = get_user_id($userToNick);

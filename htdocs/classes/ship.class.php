@@ -5,6 +5,9 @@
 		public int $id;
 		public string $name;
 		public ?string $shortComment;
+		public $speed;
+		public $time2start;
+		public $time2land;
 
 		public function __construct($sid)
 		{

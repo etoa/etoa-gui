@@ -177,6 +177,7 @@ include_once('cell.xajax.php');
 
 	  	$sOut = "";
 	  	$nCount = 0;
+		$sLastHit = null;
 
 		$res=dbquery("SELECT
 			ship_name
