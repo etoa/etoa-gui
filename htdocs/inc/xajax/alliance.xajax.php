@@ -9,6 +9,7 @@ function showAllianceMembers($alliance_id=0,$field_id)
 	ob_start();
   $objResponse = new xajaxResponse();
 
+	$out = '';
 	if($alliance_id!=0)
 	{
 		$members = "";

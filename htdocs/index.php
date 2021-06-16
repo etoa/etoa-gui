@@ -65,7 +65,7 @@ if ($_GET['logout'] ?? false) {
 
 // Validate session
 if (!$s->validate()) {
-    if (empty(Config::getInstance()->loginurl->v)) {
+    if (!Config::getInstance()->loginurl->v) {
         forward(getLoginUrl());
     } else {
         forward(getLoginUrl(['page'=>'err', 'err'=>'nosession']), 'Ungültige Session', $s->lastError);
@@ -128,7 +128,7 @@ try {
     }
 
     // Login ist gesperrt
-    elseif ($cfg->value('enable_login')==0 && !in_array($_SERVER['REMOTE_ADDR'],$allowed_ips)) {
+    elseif ($cfg->value('enable_login')==0 && !in_array($_SERVER['REMOTE_ADDR'], $allowed_ips, true)) {
         iBoxStart("Login geschlossen",750);
         echo "<img src=\"images/keychain.png\" alt=\"maintenance\" /><br/><br/>";
         echo "Der Login momentan geschlossen!<br/><br/>";
@@ -137,7 +137,7 @@ try {
     }
 
     // Login ist erlaubt aber noch zeitlich zu frŸh
-    elseif ($cfg->value('enable_login')==1 && $cfg->value('enable_login')!="" && $cfg->param1('enable_login') > time() && !in_array($_SERVER['REMOTE_ADDR'],$allowed_ips)) {
+    elseif ($cfg->value('enable_login')==1 && $cfg->value('enable_login')!="" && $cfg->param1('enable_login') > time() && !in_array($_SERVER['REMOTE_ADDR'], $allowed_ips, true)) {
         iBoxStart("Login noch geschlossen",750);
         echo "<img src=\"images/keychain.png\" alt=\"maintenance\" /><br/><br/>";
         echo "Das Spiel startet am ".date("d.m.Y",$cfg->param1('enable_login'))." ab ".date("H:i",$cfg->param1('enable_login'))."!<br/><br/>";
@@ -179,9 +179,9 @@ try {
             $mainplanet = 0;
             if (mysql_num_rows($res)>0) {
                 while ($arr=mysql_fetch_row($res)) {
-                    $planets[] = $arr[0];
+                    $planets[] = (int) $arr[0];
                     if ($arr[1]==1) {
-                        $mainplanet = $arr[0];
+                        $mainplanet = (int) $arr[0];
                     }
                 }
             }
@@ -191,14 +191,11 @@ try {
             //if (!isset($s->echng_key))
             //	$s->echng_key = mt_rand(100,9999999);
 
-            $eid=0;
-            if (isset($_GET['change_entity'])) {
-                $eid = intval($_GET['change_entity']);
-            }
-            if ($eid > 0 && in_array($eid, $planets)) {
+            $eid = isset($_GET['change_entity']) ? (int) $_GET['change_entity'] : 0;
+            if ($eid > 0 && in_array($eid, $planets, true)) {
                 $cpid = $eid;
                 $s->cpid = $cpid;
-            } elseif (isset($s->cpid) && in_array($s->cpid,$planets)) {
+            } elseif (isset($s->cpid) && in_array((int) $s->cpid, $planets, true)) {
                 $cpid = $s->cpid;
             } else {
                 $cpid = $mainplanet;
@@ -237,7 +234,7 @@ try {
     $ownFleetCount = $fm->count();
     unset($fm);
 
-    if (isset($cp)) {
+    if (isset($cp, $pm)) {
         $currentPlanetData = [
             'currentPlanetName' => $cp,
             'currentPlanetImage' => $cp->imagePath('m'),
@@ -295,7 +292,7 @@ try {
         'topNav' => $gameMenu->getTopNav(),
         'mainNav' => $gameMenu->getMainNav(),
         'renderTime' => $watch->stop('render')->getDuration() / 1000,
-        'infoText' => $infoText->enabled && !empty($infoText->content) ? $infoText->content : null,
+        'infoText' => $infoText->enabled && $infoText->content ? $infoText->content : null,
         'helpBox' => $cu->properties->helpBox == 1,
         'noteBox' => $cu->properties->noteBox==1,
     ]);

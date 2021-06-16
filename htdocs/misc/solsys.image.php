@@ -38,11 +38,11 @@
 			$simr = imagecreatefromgif("../".$sol['image']);
 			$simw = $sims[0];
 			$simh = $sims[1];
-			imagecopy($im,$simr,$x0-($simw/2),$y0-($simh/2),0,0,$simw,$simh);
+			imagecopy($im,$simr,(int) ($x0-($simw/2)),$y0-($simh/2),0,0,$simw,$simh);
 		}
 		else
 		{
-			imagefilledellipse($im,$x0,$y0,SOL_RADIUS,SOL_RADIUS,$col_yellow);
+			imagefilledellipse($im, (int) $x0, $y0,SOL_RADIUS,SOL_RADIUS,$col_yellow);
 		}
 
 		$i=0;
@@ -64,7 +64,7 @@
 			{
 				$x = $x0-$e+($a*cos($t));
 				$y = $y0+($b*sin($t));
-				imagesetpixel($im,$x,$y,$col_grey);
+				imagesetpixel($im, (int) $x, (int) $y,$col_grey);
 
 
 				if (isset($p['moon']))
@@ -73,7 +73,7 @@
 					{
 						$xm = $x+($m['dist']*cos($t*$m['period']));
 						$ym = $y+($m['dist']*sin($t*$m['period']));
-						imagesetpixel($im,$xm,$ym,$col_grey);
+						imagesetpixel($im, (int) $xm, (int) $ym,$col_grey);
 					}
 				}
 			}
@@ -90,11 +90,11 @@
 				$pimr = imagecreatefromgif("../".$p['image']);
 				$pimw = $pims[0];
 				$pimh = $pims[1];
-				imagecopyresized($im,$pimr,$x-8,$y-8,0,0,16,16,$pimw,$pimh);
+				imagecopyresized($im,$pimr,(int) ($x-8),(int) ($y-8),0,0,16,16,$pimw,$pimh);
 			}
 			else
 			{
-				imagefilledellipse($im,$x,$y,PLANET_RADIUS,PLANET_RADIUS,$col_green);
+				imagefilledellipse($im, (int) $x, (int) $y,PLANET_RADIUS,PLANET_RADIUS,$col_green);
 			}
 
 			if (isset($p['moon']))
@@ -103,12 +103,12 @@
 				{
 					$xm = $x+($m['dist']*cos($tc*$m['period']));
 					$ym = $y-($m['dist']*sin($tc*$m['period']));
-					imagefilledellipse($im,$xm,$ym,MOON_RADIUS,MOON_RADIUS,$col_white);
+					imagefilledellipse($im, (int) $xm, (int) $ym,MOON_RADIUS,MOON_RADIUS,$col_white);
 				}
 			}
 
 			// Name
-			imagestring($im,3,$x+3,$y+5,$i,$col_orange);
+			imagestring($im,3,(int) $x+3,(int) $y+5, (string) $i, $col_orange);
 			//imagestring($im,3,$x+3,$y+5,$p['name'],$col_orange);
 
 		}

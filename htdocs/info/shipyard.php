@@ -224,7 +224,7 @@
 
 			echo "<tr><th class=\"tbltitle\" colspan=\"4\" style=\"text-align:center\">Fähigkeiten</th></tr>";
 
-			$actions = explode(",",$arr['ship_actions']);
+			$actions = array_filter(explode(",",$arr['ship_actions']));
 			$accnt=0;
 			if (count($actions)>0)
 			{

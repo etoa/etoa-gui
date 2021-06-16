@@ -11,31 +11,6 @@ parameters:
 			path: htdocs/inc/bootstrap.inc.php
 
 		-
-			message: "#^Constant APP_VERSION not found\\.$#"
-			count: 1
-			path: htdocs/inc/functions.inc.php
-
-		-
-			message: "#^Constant BUILD_BUILD_TIME not found\\.$#"
-			count: 1
-			path: htdocs/inc/functions.inc.php
-
-		-
-			message: "#^Constant GLOBAL_TIME not found\\.$#"
-			count: 1
-			path: htdocs/inc/functions.inc.php
-
-		-
-			message: "#^Constant USER_INACTIVE_LONG not found\\.$#"
-			count: 1
-			path: htdocs/inc/functions.inc.php
-
-		-
-			message: "#^Constant USER_INACTIVE_SHOW not found\\.$#"
-			count: 1
-			path: htdocs/inc/functions.inc.php
-
-		-
 			message: "#^Dynamic call to static method XMLReader\\:\\:open\\(\\)\\.$#"
 			count: 2
 			path: htdocs/inc/functions.inc.php
@@ -86,12 +61,52 @@ parameters:
 			path: htdocs/inc/usersetup.inc.php
 
 		-
+			message: "#^Right side of && is always false\\.$#"
+			count: 1
+			path: htdocs/inc/xajax.inc.php
+
+		-
+			message: "#^If condition is always false\\.$#"
+			count: 1
+			path: htdocs/inc/xajax/global.xajax.php
+
+		-
 			message: "#^Constant NAME_MAXLENGTH not found\\.$#"
 			count: 1
 			path: htdocs/index/register.php
 
 		-
-			message: "#^Constant NICK_MAXLENGHT not found\\.$#"
+			message: "#^If condition is always true\\.$#"
 			count: 1
-			path: htdocs/index/register.php
+			path: htdocs/info/settings.php
+
+		-
+			message: "#^Variable \\$x might not be defined\\.$#"
+			count: 1
+			path: htdocs/misc/alliance_stats.image.php
+
+		-
+			message: "#^Result of \\|\\| is always true\\.$#"
+			count: 1
+			path: htdocs/misc/map.image.php
+
+		-
+			message: "#^Variable \\$s in isset\\(\\) always exists and is not nullable\\.$#"
+			count: 1
+			path: htdocs/misc/map.image.php
+
+		-
+			message: "#^Variable \\$user might not be defined\\.$#"
+			count: 1
+			path: htdocs/misc/map.image.php
+
+		-
+			message: "#^Variable \\$rates might not be defined\\.$#"
+			count: 1
+			path: htdocs/misc/market.image.php
+
+		-
+			message: "#^Variable \\$x might not be defined\\.$#"
+			count: 1
+			path: htdocs/misc/stats.image.php
 

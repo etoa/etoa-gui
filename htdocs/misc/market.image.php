@@ -39,7 +39,7 @@
 	$imh = imagecreatefromjpeg("images/logo_trans.jpg");
 	$bgfh = 0.5;
 	$bgfw = 0.8;
-	imagecopyresized($im,$imh,($w-($w*$bgfw))/2,($h-($h*$bgfh))/2,0,0,$w*$bgfw,$h*$bgfh,imagesx($imh),imagesy($imh));
+	imagecopyresized($im, $imh, (int) (($w-($w*$bgfw))/2),(int) (($h-($h*$bgfh))/2),0,0,(int) ($w*$bgfw),(int) ($h*$bgfh), imagesx($imh),imagesy($imh));
 
 
 
@@ -59,9 +59,9 @@
 		$grates = array();
 		$drate = 0;
 
-		$rates = array();
 		while ($arr = mysql_fetch_assoc($res))
 		{
+			$rates = [];
 			for ($i=0;$i<NUM_RESOURCES;$i++)
 			{
 				$rates[$i] = $arr['rate_'.$i];
@@ -84,7 +84,7 @@
 		// Y-Axis
 		for($i=0;$i<=$drate;$i++)
 		{
-			imagestring($im,1,$graphtx-15,$graphby-($graphh/$drate*$i)-3,$i,$colBlack);
+			imagestring($im,1,$graphtx-15,(int) ($graphby-($graphh/$drate*$i)-3), (string) $i, $colBlack);
 			//imageline($im,$graphtx,$graphby-($graphh/$drate*$i),$graphbx,$graphby-($graphh/$drate*$i),$colLLGrey);
 		}
 
@@ -105,10 +105,10 @@
 				}
 				else
 				{
-					imageline($im,$lastx[$i]+1,$lasty[$i]+1,$x+1,$y+1,$rCol[$i]);
-					imageline($im,$lastx[$i]+1,$lasty[$i],$x+1,$y,$rCol[$i]);
-					imageline($im,$lastx[$i],$lasty[$i]+1,$x,$y+1,$rCol[$i]);
-					imageline($im,$lastx[$i],$lasty[$i],$x,$y,$rCol[$i]);
+					imageline($im,$lastx[$i]+1,$lasty[$i]+1,$x+1,(int) $y+1,$rCol[$i]);
+					imageline($im,$lastx[$i]+1,$lasty[$i],$x+1, (int) $y,$rCol[$i]);
+					imageline($im,$lastx[$i],$lasty[$i]+1,$x,(int) $y+1,$rCol[$i]);
+					imageline($im,$lastx[$i],$lasty[$i],$x, (int) $y,$rCol[$i]);
 					$lastx[$i] = $x;
 					$lasty[$i] = $y;
 				}
@@ -118,7 +118,7 @@
 
 		for ($i=0;$i<NUM_RESOURCES;$i++)
 		{
-			imagestring($im,1,$lastx[$i]+5,$lasty[$i]-3,round($rates[$i],2),$rCol[$i]);
+			imagestring($im,1,$lastx[$i]+5,$lasty[$i]-3, (string) round($rates[$i],2),$rCol[$i]);
 
 			imagestring($im,5,$graphtx+20+($graphw/NUM_RESOURCES*$i),$graphby+25,$resNames[$i],$rCol[$i]);
 		}

@@ -77,13 +77,6 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
 		</tr>";
 		tableEnd();
 
-		$useTabs = false;
-		if ($useTabs)
-		{
-			$tc = new TabControl("help",array("Spezielles","Kosten","Technikbaum"));
-			$tc->open();
-		}
-
 		// Metallmine
     if ($arr['building_id']==1)
     {
@@ -452,11 +445,6 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
 	    tableEnd();
     }
 
-		if ($useTabs)
-		{
-    	$tc->close();
-    	$tc->open();
-		}
     tableStart ("Kostenentwicklung (Faktor: ".$arr['building_build_costs_factor'].")");
     echo "<tr><th style=\"text-align:center;\">Level</th>
     			<th>".RES_ICON_METAL."".RES_METAL."</th>
@@ -480,21 +468,10 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
     }
     tableEnd();
 
-		if ($useTabs)
-		{
-	    $tc->close();
-  	  $tc->open();
-    }
-
 		iBoxStart("Technikbaum");
     showTechTree("b",$arr['building_id']);
 		iBoxEnd();
 
-		if ($useTabs)
-		{
-			$tc->close();
-	    $tc->end();
-	  }
 	}
   else
   {

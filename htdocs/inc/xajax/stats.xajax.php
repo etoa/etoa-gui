@@ -329,6 +329,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 	$objResponse = new xajaxResponse();
 
 	// Datensatznavigation
+	$counter = 0;
 	if($mode=="diplomacy" || $mode=="battle" || $mode=="trade")
 	{
 		$res = dbquery("
@@ -371,6 +372,8 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 
 	if ($num > 0)
 	{
+		$rank = $shift = null;
+		$titleContainer = $contentContainer = [];
 		if($mode=="diplomacy")
 		{
 			$field="diplomacy_rating";
