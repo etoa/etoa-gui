@@ -17,7 +17,6 @@ parameters:
         - htdocs/admin
         - htdocs/classes
         - htdocs/content/alliance
-        - htdocs/content/fleetinfo
         - htdocs/libs
 
     bootstrapFiles:
