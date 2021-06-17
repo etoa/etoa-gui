@@ -119,7 +119,7 @@
 		// Betreff zuweisen
 		if (isset($_GET['message_subject']))
 		{
-			$subj = base64_decode($_GET['message_subject']);
+			$subj = base64_decode($_GET['message_subject'], true);
 		}
 		elseif (isset($_POST['message_subject']))
 		{
@@ -148,6 +148,7 @@
 		{
 			$text = stripslashes(base64_decode($_GET['body']));
 		}	*/
+        $text = '';
 		if (isset($_POST['message_text']))
 		{
 			if (isset($_POST['message_sender']))
@@ -161,7 +162,7 @@
 		}
 		elseif (isset($_GET['message_text']))
 		{
-			$sql = "SELECT text FROM message_data INNER JOIN messages ON id=message_id AND message_user_to='".$cu->id."' AND id='".intval(base64_decode(stripslashes($_GET['message_text'])))."'  LIMIT 1;";
+			$sql = "SELECT text FROM message_data INNER JOIN messages ON id=message_id AND message_user_to='".$cu->id."' AND id='".intval(base64_decode(stripslashes($_GET['message_text']), true))."'  LIMIT 1;";
 			$mres = dbquery($sql);
 
 			if (isset($_GET['message_sender']))
@@ -169,7 +170,7 @@
 				if (mysql_num_rows($mres))
 				{
 					$marr = mysql_fetch_array($mres);
-					$text = "\n\n[b]Nachricht von ".base64_decode($_GET['message_sender']).":[/b]\n\n".htmlentities($marr['text'],ENT_QUOTES,'UTF-8');
+					$text = "\n\n[b]Nachricht von ".base64_decode($_GET['message_sender'], true).":[/b]\n\n".htmlentities($marr['text'],ENT_QUOTES,'UTF-8');
 				}
 			}
 			else

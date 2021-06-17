@@ -71,6 +71,16 @@ parameters:
 			path: htdocs/content/help.php
 
 		-
+			message: "#^Variable \\$marr might not be defined\\.$#"
+			count: 1
+			path: htdocs/content/messages/new.php
+
+		-
+			message: "#^Variable \\$msgcreatpreview might not be defined\\.$#"
+			count: 1
+			path: htdocs/content/messages/new.php
+
+		-
 			message: "#^Variable \\$heal_tech_level might not be defined\\.$#"
 			count: 2
 			path: htdocs/content/planetoverview.php

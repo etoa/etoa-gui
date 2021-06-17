@@ -19,7 +19,6 @@ parameters:
         - htdocs/content/alliance
         - htdocs/content/fleetinfo
         - htdocs/content/market
-        - htdocs/content/messages
         - htdocs/libs
 
     bootstrapFiles:
