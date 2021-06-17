@@ -1011,12 +1011,12 @@
 					}
 
 					// Analysieren, letzten Analysebericht als Popup anzeigen
-					if (in_array("analyze",$ent->allowedFleetActions()))
+					if (in_array("analyze", $ent->allowedFleetActions(), true))
 					{
 						if ($cu->properties->showCellreports)
 						{
 							$reports = Report::find(array("type"=>"spy","user_id"=>$cu->id, "entity1_id"=>$ent->id()),"timestamp DESC",1,0,true);
-							if (count($reports)) {
+							if (count($reports) > 0) {
 								$r = array_pop($reports);
 								echo "<span ".tm($r->subject,$r."<br style=\"clear:both\" />")."><a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(".$ent->id().");\" title=\"Analysieren\">".icon("spy")."</a></span>";
 							}

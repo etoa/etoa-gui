@@ -18,8 +18,6 @@
 	//
 	//
 
-	$ext = true;
-
 	echo "<h1>Ticketsystem</h1>";
 
 if (isset($_GET['id']) && intval($_GET['id'])>0)
@@ -110,8 +108,7 @@ else
 		Ticket::create(array_merge($_POST,array("user_id"=>$cu->id)));
 		echo "<br/>Vielen Dank, dein Text wurde gespeichert.<br/>Ein Game-Administrator wird sich dem Problem annehmen.<br/><br/>";
 
-		if ($ext)
-			echo "<input type=\"button\" onclick=\"document.location='?page=ticket'\" value=\"Weiter\" />";
+		echo "<input type=\"button\" onclick=\"document.location='?page=ticket'\" value=\"Weiter\" />";
 	}
 	else
 	{
@@ -193,9 +190,6 @@ else
 		echo "</form>";
 		echo "<script type=\"text/javascript\">document.getElementById('abuse_text').focus()</script>";
 
-		if ($ext)
-		{
-
 		$tickets = Ticket::find(array('user_id'=>$cu->id));
 
 		if (count($tickets)>0)
@@ -223,7 +217,6 @@ else
 				</tr>";
 			}
 			tableEnd();
-		}
 		}
 	}
 

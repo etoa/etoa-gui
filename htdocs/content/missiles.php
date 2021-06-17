@@ -907,7 +907,7 @@
 			      						<td width=\"10%\" ".$ress_style_fuel.">".nf($arr['missile_costs_fuel'])."</td>
 			      						<td width=\"10%\" ".$ress_style_food.">".nf($arr['missile_costs_food'])."</td>
 			      						<td>
-			      							<input type=\"text\" value=\"0\" id=\"missile_count_".$mid."\" name=\"missile_count[".$mid."]\" size=\"5\" maxlength=\"9\" ".tm("",$tm_cnt)." tabindex=\"".$tabulator."\" onkeyup=\"FormatNumber(this.id,this.value, ".$missile_max_number.", '', '');\"/><br><a href=\"javascript:;\" onclick=\"document.getElementById('missile_count_".$mid."').value=".$missile_max_build.";\">max</a>
+			      							<input type=\"text\" value=\"0\" id=\"missile_count_".$mid."\" name=\"missile_count[".$mid."]\" size=\"5\" maxlength=\"9\" ".tm("",$tm_cnt)." tabindex=\"0\" onkeyup=\"FormatNumber(this.id,this.value, ".$missile_max_number.", '', '');\"/><br><a href=\"javascript:;\" onclick=\"document.getElementById('missile_count_".$mid."').value=".$missile_max_build.";\">max</a>
 			      						</td>
 			      					</tr>";
 			      	}

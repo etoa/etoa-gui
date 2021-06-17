@@ -67,13 +67,13 @@ define('HELP_URL',"?page=help&site=buildings");
 		// create posted id for small view
 		if (isset($_POST['command_build']) && is_array($_POST['command_build']))
 		{
-			foreach($_POST['command_build'] as $bid=>$bmsg)
+			foreach($_POST['command_build'] as $cbid=>$bmsg)
 			{
 				foreach ($_POST['id'] as $id=>$msg)
 				{
-					if ($id==$bid)
+					if ($id==$cbid)
 					{
-						$_POST['id'] = $bid;
+						$_POST['id'] = $cbid;
 						break;
 					}
 				}
@@ -81,13 +81,13 @@ define('HELP_URL',"?page=help&site=buildings");
 		}
 		if (isset($_POST['command_cbuild']) && is_array($_POST['command_cbuild']))
 		{
-			foreach($_POST['command_cbuild'] as $bid=>$bmsg)
+			foreach($_POST['command_cbuild'] as $cbid=>$bmsg)
 			{
 				foreach ($_POST['id'] as $id=>$msg)
 				{
-					if ($id==$bid)
+					if ($id==$cbid)
 					{
-						$_POST['id'] = $bid;
+						$_POST['id'] = $cbid;
 						break;
 					}
 				}
@@ -219,7 +219,7 @@ define('HELP_URL',"?page=help&site=buildings");
 					<input type="hidden" name="foodRequired" id="foodRequired" value="'.$cfg->value('people_food_require').'" />
 					<input type="hidden" name="peopleFree" id="peopleFree" value="'.$peopleFree.'" />
 					<input type="hidden" name="foodAvaiable" id="foodAvaiable" value="'.$cp->getRes1(4).'" />';
-		if ($cu->properties->itemShow=='full' && isset($bid) && $bid>0 && $bl->item($bid) !== false)
+		if ($cu->properties->itemShow=='full' && $bid>0 && $bl->item($bid) !== false)
 		{
 			$box .= '<input type="hidden" name="peopleOptimized" id="peopleOptimized" value="'.$bl->item($bid)->getPeopleOptimized().'" />';
 		}
@@ -257,7 +257,7 @@ define('HELP_URL',"?page=help&site=buildings");
 								<div id="changeWorkingPeopleError" style="display:none;">&nbsp;</div>
 								<input type="submit" value="Speichern" name="submit_people_form" id="submit_people_form" />&nbsp;';
 
-		if ($cu->properties->itemShow=='full' && isset($bid) && $bid>0 && $bl->item($bid) !== false)
+		if ($cu->properties->itemShow=='full' && $bid>0 && $bl->item($bid) !== false)
 		{
 			$peopleOptimized = $bl->item($bid)->getPeopleOptimized();
 			$box .= '<input type="button" value="Optimieren" onclick="updatePeopleWorkingBox(\''.$peopleOptimized.'\',\'-1\',\'^-1\');">';
@@ -315,7 +315,7 @@ define('HELP_URL',"?page=help&site=buildings");
 		echo '</div>';
 
 		// if full view and detail view selected, show it
-		if (isset($bid) && $bid>0 && $bl->item($bid) !== false && $cu->properties->itemShow=='full')
+		if ($bid>0 && $bl->item($bid) !== false && $cu->properties->itemShow=='full')
 		{
 
 			//
@@ -323,7 +323,7 @@ define('HELP_URL',"?page=help&site=buildings");
 			//
 			$item = $bl->item($bid);
 			$caption = (string)$item;
-			if (!empty($status_text)) {
+			if (isset($status_text) && $status_text) {
 				$caption.= ' <span style="'.$color.'">'.$status_text.'</span>';
 			}
 			tableStart($caption);
@@ -749,7 +749,7 @@ define('HELP_URL',"?page=help&site=buildings");
 									echo "<div style=\"position:relative;height:".CELL_WIDTH."px;overflow:hidden;\">";
 									echo "<div class=\"buildOverviewObjectTitle\">".$it->current()->building."</div>";
 									echo "<a href=\"?page=$page&amp;id=".$it->key()."\" ".tm($it->current()->building,"<b>".$subtitle."</b><br/>".$tmtext.$it->current()->building->shortDesc)." style=\"display:block;height:180px;\"><img class=\"".$filterStyleClass."\" src=\"".$img."\"/></a>";
-									if ($it->current()->level || ($it->current()->level==0 && isset($it->current()->buildType) && $buildlist[$bid]['buildlist_build_type']==3))
+									if ($it->current()->level || ($it->current()->level==0 && isset($it->current()->buildType) && $it->current()->buildType==3))
 									{
 										echo "<div class=\"buildOverviewObjectLevel\" style=\"color:".$color."\">".$it->current()->level."</div>";
 									}

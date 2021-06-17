@@ -6,13 +6,26 @@
 */
 class Planet extends Entity implements OwnableEntity
 {
+	protected $id;
+	protected bool $isMain;
 	protected $isValid;
 	protected $coordsLoaded;
 	private $desc;
 	private $name;
-
 	// TODO: Make protected and ad getter
 	public $resources;
+	protected $temp_from;
+	protected $temp_to;
+	protected $pos;
+	protected $starTypeName;
+	protected $fields;
+	protected $fieldsUsed;
+	protected $fieldsBase;
+	protected $fieldsExtra;
+	protected $debrisField;
+	protected $debrisMetal;
+	protected $debrisCrystal;
+	protected $debrisPlastic;
 
 	/**
 	* Constructor

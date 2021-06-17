@@ -149,7 +149,7 @@
 				specialist_id='".$cu->specialistId."'
 				AND specialist_enabled = 1
 			");
-			if (mysql_num_rows($res)>0)
+			if (mysql_num_rows($specQuery)>0)
 			{
 				$specArr = mysql_fetch_assoc($specQuery);
 				$inittime = $cu->specialistTime - (86400 *$specArr['specialist_days']);

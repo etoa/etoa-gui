@@ -83,7 +83,7 @@
 								player_id<>0;");
 			$admins = array();
 			while ($arow = mysql_fetch_row($ares)) {
-				array_push($admins,$arow[0]);
+				$admins[] = (int)$arow[0];
 			}
 
 			//
@@ -152,7 +152,7 @@
 					if ($ent->ownerId()>0)
 					{
 					  //Admin
-					  if (in_array($ent->ownerId(),$admins)) {
+					  if (in_array((int) $ent->ownerId(),$admins, true)) {
 						  $class .= "adminColor";
 						  $tm_info = "Admin/Entwickler";
 					  }
@@ -229,7 +229,7 @@
 					}
 					$class .="\" ";
 
-					if ($ent->entityCode()=='p')
+					if ($ent->entityCode()==='p')
 					{
 						$tm="";
 						$tm.= "<b>Felder</b>: ".nf($ent->fields);
@@ -285,7 +285,7 @@
 						</td>
 						<td $class style=\"text-align:center;vertical-align:middle;background:#000\"><b>".$ent->pos()."</b></td>
 						<td $class $addstyle >";
-						if ($ent->entityCode()=='p')
+						if ($ent->entityCode()==='p')
 							echo "<span ".tm($ent->type(),$tm).">".$ent->type()."</span>";
 						else
 							echo $ent->entityCodeString();
@@ -371,12 +371,12 @@
 							}
 						}
 
-						if (in_array("analyze",$ent->allowedFleetActions()))
+						if (in_array("analyze",$ent->allowedFleetActions(), true))
 						{
 							if ($cu->properties->showCellreports)
 							{
 								$reports = Report::find(array("type"=>"spy","user_id"=>$cu->id, "entity1_id"=>$ent->id()),"timestamp DESC",1,0,true);
-								if (count($reports)) {
+								if (count($reports) > 0) {
 									$r = array_pop($reports);
 									echo "<span ".tm($r->subject,$r."<br style=\"clear:both\" />")."><a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(".$ent->id().");\" title=\"Analysieren\">".icon("spy")."</a></span>";
 								}

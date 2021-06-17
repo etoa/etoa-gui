@@ -104,7 +104,7 @@ if (isset($cp)) {
 		if (isset($_POST['submit_people_form']))
 		{
 			$set_people = nf_back($_POST['peopleWorking']);
-			if (!$builing_something && $bl->setPeopleWorking(TECH_BUILDING_ID, $set_people,true))
+			if (!$building_something && $bl->setPeopleWorking(TECH_BUILDING_ID, $set_people,true))
 			{
 				success_msg("Arbeiter zugeteilt!");
 				$new_people_set = true;
@@ -201,8 +201,8 @@ if (isset($cp)) {
 			$peopleFree = floor($cp->people) - $bl->totalPeopleWorking() + ($peopleWorking);
 
 		$peopleOptimized = 0;
-		if ($bid) {
-
+		$currentTechData = null;
+		if ($bid > 0) {
 			// Forschungsdaten laden
 			$res = dbquery("
 			SELECT
@@ -251,7 +251,7 @@ if (isset($cp)) {
 						<input type="hidden" name="foodRequired" id="foodRequired" value="'.$cfg->value('people_food_require').'" />
 						<input type="hidden" name="peopleFree" id="peopleFree" value="'.$peopleFree.'" />
 						<input type="hidden" name="foodAvaiable" id="foodAvaiable" value="'.$cp->getRes1(4).'" />';
-			if ($cu->properties->itemShow=='full' && isset($bid) && $bid>0) {
+			if ($cu->properties->itemShow=='full' && $bid>0) {
 				$box .= '<input type="hidden" name="peopleOptimized" id="peopleOptimized" value="' . $peopleOptimized . '" />';
 			} else {
 				$box .= '<input type="hidden" name="peopleOptimized" id="peopleOptimized" value="0" />';
@@ -298,7 +298,7 @@ if (isset($cp)) {
 									<div id="changeWorkingPeopleError" style="display:none;">&nbsp;</div>
 									<input type="submit" value="Speichern" name="'.$form_button.'" id="'.$form_button.'" />&nbsp;';
 
-			if (isset($bid) && $bid>0)
+			if ($bid>0)
 			{
 				$box .= '<input type="button" value="Optimieren" onclick="updatePeopleWorkingBox(\''.$peopleOptimized.'\',\'-1\',\'^-1\');">';
 			}
@@ -357,7 +357,7 @@ if (isset($cp)) {
                 echo '&nbsp;<a id ="link" href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
             }
 
-            '</td></tr>';
+            echo '</td></tr>';
 			if (($peopleWorking > 0) || ($peopleWorkingGen > 0))
 			{
 				echo "<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td>".tf($peopleTimeReduction*$peopleWorking)."</td><td>".tf($peopleTimeReduction*$peopleWorkingGen)."</td></tr>";
@@ -449,7 +449,7 @@ if (isset($cp)) {
 
 					if (isset($_POST['command_build']) && $b_status==0)
 					{
-						if (!$builing_something)
+						if (!$building_something)
 						{
 
 							if ($cp->resMetal >= $bc['metal'] && $cp->resCrystal >= $bc['crystal'] && $cp->resPlastic >= $bc['plastic']  && $cp->resFuel >= $bc['fuel']  && $cp->resFood >= $bc['food']) {
@@ -524,7 +524,7 @@ if (isset($cp)) {
 								$log_text = "[b]Forschung Ausbau[/b]
 
 								[b]Erforschungsdauer:[/b] ".tf($btime)."
-								[b]Ende:[/b] ".date("d.m.Y H:i:s",$end_time)."
+								[b]Ende:[/b] ".date("d.m.Y H:i:s", (int) $end_time)."
 								[b]Forschungslabor Level:[/b] ".CURRENT_LAB_LEVEL."
 								[b]Eingesetzte Bewohner:[/b] ".nf($peopleWorking)."
 								[b]Gen-Tech Level:[/b] ".GEN_TECH_LEVEL."
@@ -968,8 +968,9 @@ if (isset($cp)) {
 						$scnt = 0; // Counter for shown techs
 
 						// Check if techs are avalaiable in this category
+						/** @var array[] $bdata */
 						$bdata = $tech[$tarr['type_id']];
-						if (isset($bdata) && count($bdata)>0)
+						if (count($bdata) > 0)
 						{
 							// Run through all techs in this cat
 							foreach ($bdata as $bid => $bv)
@@ -1005,19 +1006,16 @@ if (isset($cp)) {
 											$t_req_info[] = array($b,$l,true);
 									}
 								}
-	              if (isset($b_req[$bid]['b']) && count($b_req[$bid]['b'])>0)
-	              {
-	              	foreach ($b_req[$bid]['b'] as $id=>$level)
-	              	{
-	              		if (!isset($buildlist[$id]) || $buildlist[$id]<$level)
-	              		{
-	              		  $requirements_passed = false;
+								if (isset($b_req[$bid]['b']) && count($b_req[$bid]['b'])>0) {
+									foreach ($b_req[$bid]['b'] as $id=>$level) {
+										if (!isset($buildlist[$id]) || $buildlist[$id]<$level) {
+									 		$requirements_passed = false;
 											$b_req_info[] = array($id,$level,false);
-										}
-										else
+										} else {
 											$b_req_info[] = array($id,$level,true);
-	              	}
-	              }
+										}
+									}
+								  }
 
 								$filterStyleClass = "";
 								if ($bv['show']==0 && $b_level>0)

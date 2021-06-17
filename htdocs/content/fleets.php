@@ -281,6 +281,7 @@
 		$fm->loadForeign();
 		if ($fm->count() > 0)
 		{
+			$show_num = 0;
 			tableStart("Fremde Flotten");
 			foreach ($fm->getAll() as $fid=>$fd)
 			{
@@ -326,6 +327,7 @@
 
 				//Opfer sieht die einzelnen Schiffstypen in der Flotte
 				$shipStr = array();
+				$showShips = false;
 				if(SPY_TECH_SHOW_SHIPS<=$fm->spyTech())
 				{
 					$showShips = true;
