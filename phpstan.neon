@@ -20,7 +20,6 @@ parameters:
         - htdocs/content/fleetinfo
         - htdocs/content/market
         - htdocs/content/messages
-        - htdocs/content/userconfig
         - htdocs/libs
 
     bootstrapFiles:
