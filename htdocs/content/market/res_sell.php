@@ -128,11 +128,7 @@ $cnt = 0;
 								".MARKET_SHIP_ID.",
 								".$numSellerShip."
 							);");
-							$launched = true;
 
-
-							if ($launched)
-							{
 								$numBuyerShip = ($tradeShip->capacity>0) ? ceil(array_sum($buyarr) / $tradeShip->capacity) : 1;
 
 							// Fleet Buyer->Seller
@@ -184,11 +180,6 @@ $cnt = 0;
 									".$numBuyerShip."
 								);");
 
-
-								$launched = true;
-
-								if ($launched)
-								{
 
 									// Angebot löschen
 									dbquery("
@@ -259,16 +250,7 @@ $cnt = 0;
 
 									// Zählt die erfolgreich abgewickelten Angebote
 									$cnt++;
-								}
-								else
-								{
-									error_msg($str);
-								}
-							}
-							else
-							{
-								error_msg($str);
-							}
+
 						}
 						else
 						{

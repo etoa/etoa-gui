@@ -71,6 +71,11 @@ parameters:
 			path: htdocs/content/help.php
 
 		-
+			message: "#^Variable \\$cstr might not be defined\\.$#"
+			count: 2
+			path: htdocs/content/market/new.php
+
+		-
 			message: "#^Variable \\$marr might not be defined\\.$#"
 			count: 1
 			path: htdocs/content/messages/new.php
