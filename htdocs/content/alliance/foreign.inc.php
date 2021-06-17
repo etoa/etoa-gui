@@ -23,6 +23,7 @@
 		{
 			// Check application
 			$application_alliance=0;
+			$application_timestamp = 0;
 			$res = dbquery("
 			SELECT
 				alliance_id,
@@ -184,10 +185,9 @@
 				{
 					echo "<h2>Bewerbung abschicken</h2>";
 
+					$aid = (int) $_POST['user_alliance_id'];
 					if ($_POST['user_alliance_application']!='')
 					{
-						$aid = intval($_POST['user_alliance_id']);
-
 						$alliances = get_alliance_names();
 						send_msg($alliances[$aid]['founder_id'],MSG_ALLYMAIL_CAT,"Bewerbung","Der Spieler ".$cu->nick." hat sich bei deiner Allianz beworben. Gehe auf die [page=alliance&action=applications]Allianzseite[/page] für Details!");
 						add_alliance_history($aid,"Der Spieler [b]".$cu->nick."[/b] bewirbt sich sich bei der Allianz.");

@@ -216,9 +216,9 @@
 	//
 
 	// Allianzschiffe (wenn Schiffswerft gebaut)
+	$ships = [];
 	if($shipyard)
 	{
-        $ships = [];
 		$res = dbquery("
 		SELECT
 			ship_id,
@@ -307,6 +307,7 @@
 	// Schiffe kaufen
 	//
 
+	$ship_costed = 0;
 	if(isset($_POST['ship_submit']) && checker_verify())
 	{
 		if ($cu->alliance->checkActionRightsNA("buildminister") || $cu->id==$_POST['user_buy_ship'])
@@ -547,7 +548,7 @@
 		}
 		else
 		{
-			$error_msg("Keine Berechtigung!");
+			error_msg("Keine Berechtigung!");
 		}
 	}
 
@@ -715,9 +716,9 @@
 					$need_something = false;
                     $need = [];
                     $style = [];
-					foreach ($allianceRes as $id=>$res)
+					foreach ($allianceRes as $id=>$resAmount)
 					{
-						if ($res>=$costs[$id])
+						if ($resAmount>=$costs[$id])
 						{
 							$need[$id] = 0;
 							$style[$id] = "";
@@ -727,7 +728,7 @@
 							$need_something = true;
 
 							// Erstellt absolut Wert der Zahl
-							$need[$id] = abs($costs[$id]-$res);
+							$need[$id] = abs($costs[$id]-$resAmount);
 							$style[$id] =  "style=\"color:red;\" ".tm("Fehlender Rohstoff","".nf($need[$id])." ".$resName[$id]."")."";
 						}
 					}
@@ -857,9 +858,9 @@
 					$need_something = false;
 					$style = [];
 					$need = [];
-					foreach ($allianceRes as $id=>$res)
+					foreach ($allianceRes as $id=>$resAmount)
 					{
-						if ($res>$costs[$id])
+						if ($resAmount>$costs[$id])
 						{
 							$need[$id] = 0;
 							$style[$id] = "";
@@ -869,12 +870,13 @@
 							$need_something = true;
 
 							// Erstellt absolut Wert der Zahl
-							$need[$id] = abs($costs[$id]-$res);
+							$need[$id] = abs($costs[$id]-$resAmount);
 							$style[$id] =  "style=\"color:red;\" ".tm("Fehlender Rohstoff","".nf($need[$id])." ".$resName[$id]."")."";
 						}
 					}
 
 
+					$message = '';
 					if ($cu->alliance->techlist->checkBuildable($techIterator->key()))
 					{
 						// Generiert Baubutton, mit welchem vor dem Absenden noch die Objekt ID übergeben wird
@@ -1242,7 +1244,7 @@
 
 
 		// Listet Schiffe auf
-		if(isset($ships))
+		if(count($ships) > 0)
 		{
 			foreach($ships as $id => $data)
 			{

@@ -17,6 +17,7 @@
 	//////////////////////////////////////////////////
 	//
 	//
+/** @var Alliance $ally */
 
 if (Alliance::checkActionRights('liquidate'))
 {

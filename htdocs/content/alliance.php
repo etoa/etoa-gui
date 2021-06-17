@@ -43,7 +43,7 @@
 /**************************************************/
 	elseif ($cu->allianceId == 0)
 	{
-		if (time()>$cu->allianceLeave+$cfg->get("alliance_leave_cooldown"))
+		if (time() > (int) $cu->allianceLeave + (int) $cfg->get("alliance_leave_cooldown"))
 		{
 			require("alliance/foreign.inc.php");
 	    }
@@ -638,19 +638,15 @@
 							//array_push($adminBox,"<a href=\"\" onclick=\"return confirm('Allianz wirklich verlassen?');\"></a>");
 						}
 
-						$cnt=count($adminBox);
-						if ($cnt>0)
+						echo"<tr><th width=\"120\" >Verwaltung:</th>";
+						echo "<td colspan=\"2\">";
+						echo "<div class=\"threeColumnList allianceManagementLinks\">";
+						foreach ($adminBox as $k => $v)
 						{
-							echo"<tr><th width=\"120\" >Verwaltung:</th>";
-							echo "<td colspan=\"2\">";
-							echo "<div class=\"threeColumnList allianceManagementLinks\">";
-							foreach ($adminBox as $k => $v)
-							{
-								echo "<a href=\"$v\">$k</a><br/>";
-							}
-							echo "</div>";
-							echo "</td></tr>";
+							echo "<a href=\"$v\">$k</a><br/>";
 						}
+						echo "</div>";
+						echo "</td></tr>";
 
 
 						// Letzte Ereignisse anzeigen

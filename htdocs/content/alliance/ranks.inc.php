@@ -18,6 +18,9 @@
 	//
 	//
 
+/** @var mixed[] $arr alliance data */
+/** @var array[] $rights */
+
 if (Alliance::checkActionRights('ranks'))
 {
 
@@ -25,7 +28,7 @@ if (Alliance::checkActionRights('ranks'))
 						echo "<h2>R&auml;nge</h2>";
 
 						// Ränge speichern
-						if (isset($_POST) && count($_POST)>0 && checker_verify())
+						if (count($_POST)>0 && checker_verify())
 						{
 							if(isset($_POST['ranknew']))
 							{
