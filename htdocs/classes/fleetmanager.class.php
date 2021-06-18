@@ -4,6 +4,7 @@
 	{
 		private $userId;
 		private $allianceId;
+		/** @var int */
 		private $userSpyTechLevel;
 		private $count;
 		private $aggressivCount;
@@ -78,7 +79,7 @@
 			$specialist = new Specialist(0,0,$this->userId);
 			$this->userSpyTechLevel += $specialist->spyLevel;
 
-			if (SPY_TECH_SHOW_ATTITUDE<=$this->userSpyTechLevel)
+			if (SPY_TECH_SHOW_ATTITUDE<= (int) $this->userSpyTechLevel)
             {
 				//Lädt Flottendaten
 				// TODO: This is not good query because it needs to know the planet table structure

@@ -187,7 +187,7 @@ class DBManager implements ISingleton	{
 	* Executes an sql query savely and protects agains SQL injections
 	*
 	* @param string $query SQL-Query
-	* @param array $params Array of arguments
+	* @param ?array $params Array of arguments
 	*/
 	function safeQuery($query, $params=array())
 	{
@@ -257,7 +257,7 @@ class DBManager implements ISingleton	{
 	function getArrayFromTable($table,$field,$sort=null)
 	{
 		$r = array();
-		$order = !empty($sort) ? ' ORDER BY `'.$sort.'` ASC' : '';
+		$order = $sort ? ' ORDER BY `'.$sort.'` ASC' : '';
 		if (is_array($field)) {
 			$res = $this->query("
 			SELECT
@@ -320,12 +320,12 @@ class DBManager implements ISingleton	{
 		$ores = $this->query("OPTIMIZE TABLE ".$tbls.";");
 		if ($manual)
 		{
-			add_log("4",$n." Tabellen wurden manuell optimiert!");
+			Log::add("4", Log::INFO,$n." Tabellen wurden manuell optimiert!");
 			return $ores;
 		}
 		else
 		{
-			add_log("4",$n." Tabellen wurden optimiert!");
+            Log::add("4", Log::INFO, $n." Tabellen wurden optimiert!");
 			return $n;
 		}
 	}
@@ -351,12 +351,12 @@ class DBManager implements ISingleton	{
 		$ores = $this->query("REPAIR TABLE ".$tbls.";");
 		if ($manual)
 		{
-			add_log("4",$n." Tabellen wurden manuell repariert!");
+            Log::add("4", Log::INFO, $n." Tabellen wurden manuell repariert!");
 			return $ores;
 		}
 		else
 		{
-			add_log("4",$n." Tabellen wurden repariert!");
+            Log::add("4", Log::INFO, $n." Tabellen wurden repariert!");
 			return $n;
 		}
 	}
@@ -434,7 +434,7 @@ class DBManager implements ISingleton	{
 			else
 			{
 				$result = shell_exec($cmd);
-				if (!empty($result))
+				if ($result)
 				{
 					throw new Exception("Fehler beim Erstellen der Backup-Datei ".$file.": ".$result);
 				}
@@ -510,7 +510,7 @@ class DBManager implements ISingleton	{
 			else
 			{
 				$result = shell_exec($cmd);
-				if (!empty($result))
+				if ($result)
 				{
 					throw new Exception("Error while loading file with MySQL: ".$result);
 				}
@@ -574,6 +574,7 @@ class DBManager implements ISingleton	{
 		}
 
 		//cycle through
+        $return = '';
 		foreach($tables as $table)
 		{
 			$result = $this->query('SELECT * FROM '.$table);
@@ -636,7 +637,7 @@ class DBManager implements ISingleton	{
 	public static function getBackupDir() {
 		$cfg = Config::getInstance();
 		$backupDir = $cfg->backup_dir->v;
-		if (!empty($backupDir)) {
+		if ($backupDir) {
 			if (is_dir($backupDir)) {
 				return $backupDir;
 			}
@@ -651,7 +652,7 @@ class DBManager implements ISingleton	{
 
 	/**
 	* Removes old backup files
-	* @return The number of removed files
+	* @return int The number of removed files
 	*/
 	public static function removeOldBackups($dir, $days) {
 		$deleted = 0;

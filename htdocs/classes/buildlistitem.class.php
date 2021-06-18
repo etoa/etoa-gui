@@ -25,26 +25,25 @@
 
 		// calculations
 		private $buildableStatus = null;
+		/** @var array<string, int> */
 		private $costs = array();
 		private $demolishCosts = array();
+		/** @var array<string, int> */
 		private $nextCosts = array();
 
 		/**
-		 * Constructor
-		 * @param <type> $arr
-		 * @param <type> $load
+		 * @param int|array $id
+		 * @param bool|int $load
 		 */
         public function __construct($id,$load=0)
 		{
 			if (is_array($id))
 			{
 				$arr = $id;
-			}
-			else
-			{
+			} else {
 				if ($id>0 && $load==1)
 				{
-					$this->load();
+					$arr = $this->load($id);
 				}
 				else
 					return;
@@ -78,9 +77,6 @@
 			{
 				$this->building = new Building($arr);
 			}
-
-			if ($load==1)
-				$this->load();
 		}
 
 		public function __toString()
@@ -137,7 +133,7 @@
 					}
 					else
 					{
-						$this->load();
+						$this->load($this->id);
 					}
 				}
 				elseif ($key == "bunkerRes")
@@ -163,9 +159,9 @@
 		}
 
 
-		private function load()
+		private function load($id)
 		{
-			$sql = dbquery("SELECT
+			$res = dbquery("SELECT
 				l.*,
 				i.*
 			FROM
@@ -178,7 +174,7 @@
 			LIMIT 1;");
 
 			if (mysql_num_rows($res)>0)
-				$arr = mysql_fetch_assoc($res);
+				return mysql_fetch_assoc($res);
 			else
 			{
 				throw new EException("Buildlisteintrag $id existiert nicht!");
@@ -211,7 +207,7 @@
 
 		public function getBuildTime()
 		{
-			if (!(count($this->costs)))
+			if (count($this->costs) === 0)
 			{
 				$this->getBuildCosts();
 			}
@@ -220,7 +216,7 @@
 
 		public function getBuildCosts($levelUp=0)
 		{
-			if (!(count($this->costs)  && !$levelUp) || !(count($this->nextCosts)  && $levelUp))
+			if (!(count($this->costs) > 0 && !$levelUp) || !(count($this->nextCosts) > 0  && $levelUp))
 			{
 				$cfg = Config::getInstance();
 				global $resNames, $cp, $cu, $bl;
@@ -273,7 +269,7 @@
 
 		public function getDemolishCosts($levelUp=0)
 		{
-			if (!count($this->demolishCosts))
+			if (count($this->demolishCosts) === 0)
 			{
 				$this->demolishCosts = $this->getBuildCosts($levelUp);
 

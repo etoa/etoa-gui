@@ -307,7 +307,6 @@
 				default:
 					return new UnknownEntity($id);
 			}
-			return false;
 		}
 
 	  /**

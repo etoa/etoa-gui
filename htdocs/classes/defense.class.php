@@ -23,7 +23,6 @@
 				if (!$arr = mysql_fetch_assoc($res))
 				{
 					throw new EException("Ung�ltige Verteidigungs-ID: $sid");
-					return false;
 				}
 			}
 

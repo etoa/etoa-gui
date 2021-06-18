@@ -608,6 +608,8 @@ class Planet extends Entity implements OwnableEntity
 					break;
 				case 5:
 					$str = "planet_res_food=planet_res_food+".$diff."";
+				default:
+					$str = '';
 		    $this->resFood+=$diff;
 					break;
 			}
@@ -623,8 +625,8 @@ class Planet extends Entity implements OwnableEntity
 
 		/**
 		 *
-		 * @global <type> $resNames
-		 * @param <type> $data
+		 * @global string[] $resNames
+		 * @param array $data
 		 */
 		function addRes($data)
 		{

@@ -10,7 +10,7 @@
 	{
 		// Renderzeit-Start festlegen
 		$render_time = explode(" ",microtime());
-		$render_starttime=$render_time[1]+$render_time[0];
+		$render_starttime=(int) $render_time[1] + (int) $render_time[0];
 
 		//
 		//Universum
@@ -899,20 +899,18 @@
 		$total=0;
 		$i = array();
 		$num=mysql_num_rows($res);
-		while ($arr=mysql_fetch_array($res))
+		while ($row=mysql_fetch_array($res))
 		{
-		    array_push($i,$arr);
-		    $total+=$arr['cnt'];
-		}
-		foreach ($i as $arr)
-		{
+			$i[] = $row;
+		    $total+=$row['cnt'];
+
 		    $out.="<tr><td >".$rank."</td>";
-		    if ($arr['css_style']!="")
-		        $out.="<td >".strtr($arr['css_style'],$rplc)."</td>";
+		    if ($row['css_style']!="")
+		        $out.="<td >".strtr($row['css_style'],$rplc)."</td>";
 		    else
 		        $out.="<td ><i>Standard</i></td>";
-		    $out.="<td >".nf($arr['cnt'])."</td>";
-		    $out.="<td >".round(100/$total*$arr['cnt'],2)."%</td></tr>";
+		    $out.="<td >".nf($row['cnt'])."</td>";
+		    $out.="<td >".round(100/$total*$row['cnt'],2)."%</td></tr>";
 		    $rank++;
 		}
 		$out.="</table></td>";
@@ -945,9 +943,7 @@
 		{
 		    array_push($i,$arr);
 		    $total+=$arr['cnt'];
-		}
-		foreach ($i as $arr)
-		{
+
 		    $out.="<tr><td >".$rank."</td>";
 		    if ($arr['image_url']!="")
 		        $out.="<td >".strtr($arr['image_url'],$rplc)."</td>";
@@ -984,9 +980,7 @@
 		{
 			array_push($i,$arr);
 			$total+=$arr['cnt'];
-		}
-		foreach ($i as $arr)
-		{
+
 			$out.="<tr><td >".$rank."</td>";
 			if ($arr['image_ext']!="")
 				$out.="<td >".$arr['image_ext']."</td>";
@@ -1007,7 +1001,7 @@
 
 		// Renderzeit
 		$render_time = explode(' ',microtime());
-		$rtime = $render_time[1]+$render_time[0]-$render_starttime;
+		$rtime = (int) $render_time[1] + (int) $render_time[0] - $render_starttime;
 		$out.= " in ".round($rtime,3)." Sekunden";
 
 		return $out;

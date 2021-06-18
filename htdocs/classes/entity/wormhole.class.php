@@ -201,9 +201,9 @@
 
 			while ($arr=mysql_fetch_row($res))
 			{
-				if (!in_array($arr[0], $del))
+				if (!in_array((int) $arr[0], $del, true))
 				{
-					array_push($del, $arr[0], $arr[1]);
+					array_push($del, (int) $arr[0], (int) $arr[1]);
 				}
 			}
 

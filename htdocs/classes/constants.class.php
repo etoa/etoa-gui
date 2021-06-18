@@ -52,7 +52,6 @@ class Constants implements ISingleton
 			return $this->_items[$name];
 		}
 		throw new EException("Konstante $name existiert nicht!");
-		return null;
 	}
 }
 ?>

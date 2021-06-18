@@ -183,7 +183,6 @@ class Config implements ISingleton
 					return $elem;
 				}
 				throw new EException("Konfigurationsvariable $name existiert nicht!");
-				return null;
 			}
 		} catch (EException $e) {
 			echo $e;
@@ -286,8 +285,7 @@ class ConfigItem
 				return $this->_p2;
 			if ($name=="v")
 				return $this->_v;
-				throw new EException("Property $name der Klasse  ".__CLASS__." existiert nicht!");
-				return null;
+            throw new EException("Property $name der Klasse  ".__CLASS__." existiert nicht!");
 		} catch (EException $e) {
 			echo $e;
 			return null;

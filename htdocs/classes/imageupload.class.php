@@ -17,7 +17,7 @@
 			$this->field = $field;
 			$this->targetDir = $targetDir;
 			$this->targetName = $targetName;
-			if ($type=="png" || $type="jpg" || $type="gif")
+			if (in_array($type, ['ping', 'jpg', 'gif'], true))
 				$this->type = $type;
 			else
 				$this->type = "png";

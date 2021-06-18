@@ -14,6 +14,7 @@ class SectorMapRenderer {
   const VerticalCoordinateNumberImagePrefix = "GalaxyFrameCounterLeft";
   const VerticalCoordinateNumberHighlighImagePrefix = "GalaxyFrameCounterLeftHighlight";
 
+  /** @var int[] */
   protected $userCellsIDs = array();
 
   protected $numberOfCellsX;
@@ -39,6 +40,7 @@ class SectorMapRenderer {
 
   /**
   * Sets an array of cell IDs which will be highlighted
+   * @param int[] $ids
   */
   function setUserCellIDs($ids) {
     $this->userCellsIDs = $ids;
@@ -149,7 +151,7 @@ class SectorMapRenderer {
         $overlayClasses = array();
         if ($this->selectedCell != null && $this->selectedCell->getSX() == $sx && $this->selectedCell->getSY() == $sy && $this->selectedCell->getCX() == $xcoords && $this->selectedCell->getCY() == $ycoords) {
           $overlayClasses[] = 'selected';
-        } elseif (in_array($cells[$xcoords][$ycoords]['cid'], $this->userCellsIDs)) {
+        } elseif (in_array((int) $cells[$xcoords][$ycoords]['cid'], $this->userCellsIDs, true)) {
           $overlayClasses[] = 'owned';
         }
 

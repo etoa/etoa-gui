@@ -874,7 +874,7 @@
 						{
 							foreach($this->getShips() as $ship)
 							{
-								if (!(in_array($ai->code(),$ship['actions']) || $ship['special']))
+								if (!(in_array($ai->code(),$ship['actions'], true) || $ship['special']))
 								{
 									$exclusiceAllowed = false;
 									break;
@@ -1202,7 +1202,7 @@
 
 			$supportTimeFuel = ($this->sourceEntity->getRes(4)-$this->getLoadedRes(4)-$this->getCosts())/$this->supportCostsFuelPerSec;
 
-			if ($this->supportCostsFoodPerSec)
+			if ($this->supportCostsFoodPerSec > 0)
 				$supportTimeFood = ($this->sourceEntity->getRes(5)-$this->getLoadedRes(5)-$this->getCostsFood())/$this->supportCostsFoodPerSec;
 			else
 				$supportTimeFood = $supportTimeFuel;
@@ -1217,12 +1217,6 @@
 
 		function getSupport() {
 			return "Supportkosten";
-		}
-
-		function getSupportDesc() {
-			$this->calcSupportTime();
-
-			return "".RES_FUEL.": ".nf($this->supportCostsFuelPerSec*$this->supportTime)." (".nf($this->supportCostsFuelPerSec*3600)." pro h)<br style=\"clear:both\" />".RES_FOOD.": ".nf($this->supportCostsFoodPerSec*$this->supportTime)." (".nf($this->supportCostsFoodPerSec*3600)." pro h)";
 		}
 
 		function setLeader($id) {

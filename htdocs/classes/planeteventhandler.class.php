@@ -5,6 +5,7 @@
 		{
 			$cfg = Config::getInstance();
 
+			$result = false;
 			for ($i=0; $i < $cnt; $i++)
 			{
 
@@ -60,7 +61,8 @@
 						}
 						else
 						{
-							$eventId = RandomEvent::chooseFromDir("random_planet");
+							$eventId = 0;
+//							$eventId = RandomEvent::chooseFromDir("random_planet");
 						}
 						$evt = new PlanetEvent($eventId,$pid);
 						$evt->run();
@@ -85,7 +87,7 @@
 
 		static function getEventList()
 		{
-			return RandomEvent::getList("random_planet");
+//			return RandomEvent::getList("random_planet");
 		}
 
 	}

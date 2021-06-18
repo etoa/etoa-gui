@@ -28,13 +28,11 @@
 		imagerectangle($im,0,0,$w-1,$h-1,$colBlack);
 		imagerectangle($im,$borderLeftRight,$borderTop,$w-$borderLeftRight,$h-$borderBottom,$colBlack);
 
-		$data=array();
-		$max=0;
-		$time = time()-date("s");
+		$time = time() - (int) date("s");
 
 		// Renderzeit-Start festlegen
 		$render_time = explode(" ",microtime());
-		$render_starttime=$render_time[1]+$render_time[0];
+		$render_starttime=(int) $render_time[1] + (int) $render_time[0];
 
 		$data=array();
 		$max=0;
@@ -87,10 +85,10 @@
 		{
 			for ($i=0;$i<=ceil($max/100);$i++)
 			{
-				$y = $h-$borderBottom-($graphHeight/($max/100)*$i);
-				imagestring($im,2,$yLegend,$y-(imagefontheight(2)/2),$i*100,$colBlack);
+				$y = (int) ($h-$borderBottom-($graphHeight/($max/100)*$i));
+				imagestring($im,2,$yLegend, $y-(imagefontheight(2)/2),(string) ($i*100) ,$colBlack);
 				if ($i!=0) {
-					imageline($im,$borderLeftRight+1,$y,$w-$borderLeftRight-1,$y,$colGrey);
+					imageline($im,$borderLeftRight+1, $y,$w-$borderLeftRight-1,$y,$colGrey);
 				}
 			}
 		}
@@ -120,27 +118,21 @@
 					imagestring($im,2,$x-(imagefontheight(2)/2),$h-$bottomLegend,date("H",$i),$colBlack);
 				}
 				$t = date("dmyHi",$i);
-				// User-Diagramm
-				if (count($d)>0)
+				if ($max>0)
 				{
-					if ($max>0)
-					{
-						$yo=$h - $borderBottom - ($graphHeight/$max*$d['o']);
-						$yr=$h - $borderBottom - ($graphHeight/$max*$d['r']);
-					}
-					else
-					{
-						$yo=$h - $borderBottom;
-						$yr=$h - $borderBottom;
-					}
-					imageline($im,$lastx,$lastyo,$x,$yo,$colGreen);
-					imageline($im,$lastx,$lastyr,$x,$yr,$colBlue);
-					$lastyo=$yo;
-					$lastyr=$yr;
-					$lastx=$x;
+					$yo=$h - $borderBottom - ($graphHeight/$max*$d['o']);
+					$yr=$h - $borderBottom - ($graphHeight/$max*$d['r']);
 				}
-				elseif ($lastyo==$h-$borderBottom)
-					$lastx=$x;
+				else
+				{
+					$yo=$h - $borderBottom;
+					$yr=$h - $borderBottom;
+				}
+				imageline($im,$lastx,$lastyo,$x,$yo,$colGreen);
+				imageline($im,$lastx,$lastyr,$x,$yr,$colBlue);
+				$lastyo=$yo;
+				$lastyr=$yr;
+				$lastx=$x;
 				$ic++;
 			}
 		}
@@ -149,7 +141,7 @@
 		// Renderzeit
 		$cfg = Config::getInstance();
 		$render_time = explode(" ",microtime());
-		$rtime = $render_time[1]+$render_time[0]-$render_starttime;
+		$rtime = (int) $render_time[1] + (int) $render_time[0] - $render_starttime;
 		imagestring($im, 6, 10, 5, getGameIdentifier(), $colBlack);
 		imagestring($im, 6, 10, 20, "Userstatistik der letzten 24 Stunden", $colBlack);
 		imagestring($im, 2, 10, 40, "Erstellt: ".date("d.m.Y, H:i").", Renderzeit: ".round($rtime,3)." sec", $colBlack);
@@ -157,14 +149,14 @@
 		imagestring($im, 3, 110, $h-40, "Max    Durchschnitt   Aktuell", $colBlack);
 		imagestring($im, 3, 50, $h-25, "Online", $colGreen);
 		imagestring($im, 2, 110, $h-25, $maxo, $colBlack);
-		imagestring($im, 2, 160, $h-25, $avgo, $colBlack);
+		imagestring($im, 2, 160, $h-25, (string) $avgo, $colBlack);
 		imagestring($im, 2, 265, $h-25, $acto, $colBlack);
 
 		imagestring($im, 3, 450, $h-40, "Max    Durchschnitt   Aktuell", $colBlack);
 		imagestring($im, 3, 350, $h-25, "Registriert", $colBlue);
-		imagestring($im, 2, 450, $h-25, $maxr, $colBlack);
-		imagestring($im, 2, 500, $h-25, $avgr, $colBlack);
-		imagestring($im, 2, 605, $h-25, $actr, $colBlack);
+		imagestring($im, 2, 450, $h-25, (string) $maxr, $colBlack);
+		imagestring($im, 2, 500, $h-25, (string) $avgr, $colBlack);
+		imagestring($im, 2, 605, $h-25, (string) $actr, $colBlack);
 
 		$dir = dirname($file);
 		if (!is_dir($dir)) {
@@ -206,6 +198,8 @@
 			LIMIT
 				1;");
 			$mnr = mysql_num_rows($res);
+			$acto = 0;
+			$actr =0;
 			if ($mnr>0)
 			{
 				$arr=mysql_fetch_array($res);

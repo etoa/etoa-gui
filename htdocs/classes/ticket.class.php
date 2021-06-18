@@ -159,7 +159,7 @@ class Ticket
 		}
 		if ($field=="catName")
 		{
-			$this->getCategories();
+			self::getCategories();
 			return self::$categories[$this->catId];
 		}
 		if ($field=="statusName")
@@ -265,7 +265,7 @@ class Ticket
 
 	/**
 	 * Closes the ticket and adds a message to the ticket
-	 * @param <type> $solution
+	 * @param string $solution
 	 */
 	function close($solution)
 	{
@@ -327,7 +327,7 @@ class Ticket
 	 * Appends a message to the ticket
 	 *
 	 * @param array $data Contains the sender and message body
-	 * @param <type> $informUser Sends a pm to the owner if set to 1 (default)
+	 * @param int $informUser Sends a pm to the owner if set to 1 (default)
 	 * @return boolean Returns true if success
 	 */
 	function addMessage($data,$informUser=1)
@@ -605,8 +605,10 @@ class TicketMessage
 		}
 		if ($field=="id")
 		{
-			return $this->id;;
+			return $this->id;
 		}
+
+		return null;
 	}
 
 	/**
