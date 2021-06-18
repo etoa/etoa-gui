@@ -13,11 +13,6 @@ class AdminSession extends Session
 
 	protected $namePrefix = "admin";
 
-	private ?int $user_id = null;
-	private ?string $user_nick = null;
-	private ?int $time_login = null;
-	private ?int $time_action = null;
-
 	function login($data)
 	{
 		self::cleanup();

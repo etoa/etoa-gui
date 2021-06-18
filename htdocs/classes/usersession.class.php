@@ -16,17 +16,6 @@ class UserSession extends Session
 
 	protected $namePrefix = "user";
 
-	private ?int $user_id = null;
-	private ?string $user_nick = null;
-	private bool $sittingActive = false;
-	private ?int $sittingUntil = null;
-	private bool $falseSitter = false;
-	private ?int $time_login = null;
-	private ?string $passwordField = null;
-	private ?int $time_action = null;
-	private int $bot_count = 0;
-	private ?int $last_span = null;
-
 	function login($data)
 	{
 		self::cleanup();
