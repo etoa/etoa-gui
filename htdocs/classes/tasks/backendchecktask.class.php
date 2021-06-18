@@ -15,7 +15,7 @@
 			{
 				$tm = new TextManager();
 				$infoText = $tm->getText('backend_offline_message');
-				$mailText = $currentBackendStatus == 0 ? "Funktioniert wieder" : $infoText->content;
+				$mailText = $currentStatus == 0 ? "Funktioniert wieder" : $infoText->content;
 				$mail = new Mail("EtoA-Backend", $mailText);
 				$sendTo = explode(";",$cfg->value("backend_offline_mail"));
 				foreach ($sendTo as $sendMail)	{

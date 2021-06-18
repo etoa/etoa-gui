@@ -13,6 +13,11 @@ class AdminSession extends Session
 
 	protected $namePrefix = "admin";
 
+	private ?int $user_id = null;
+	private ?string $user_nick = null;
+	private ?int $time_login = null;
+	private ?int $time_action = null;
+
 	function login($data)
 	{
 		self::cleanup();
@@ -73,8 +78,8 @@ class AdminSession extends Session
 
 					session_regenerate_id(true);
 
-					$this->user_id = $uarr['user_id'];
-					$this->user_nick = $uarr['user_nick'];
+					$this->user_id = (int) $uarr['user_id'];
+					$this->user_nick = (string) $uarr['user_nick'];
 					$t = time();
 					$this->time_login = $t;
 					$this->time_action = $t;

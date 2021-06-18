@@ -16,6 +16,17 @@ class UserSession extends Session
 
 	protected $namePrefix = "user";
 
+	private ?int $user_id = null;
+	private ?string $user_nick = null;
+	private bool $sittingActive = false;
+	private ?int $sittingUntil = null;
+	private bool $falseSitter = false;
+	private ?int $time_login = null;
+	private ?string $passwordField = null;
+	private ?int $time_action = null;
+	private int $bot_count = 0;
+	private ?int $last_span = null;
+
 	function login($data)
 	{
 		self::cleanup();
@@ -94,7 +105,7 @@ class UserSession extends Session
 										if (validatePasswort($loginPassword, $sarr[1]))
 										{
 											$this->sittingActive = true;
-											$this->sittingUntil = $sarr[0];
+											$this->sittingUntil = (int) $sarr[0];
 										}
 										elseif (validatePasswort($loginPassword, $uarr['user_password']))
 										{

@@ -35,14 +35,15 @@ class GetShipInfoJsonResponder extends JsonResponder
     if (mysql_num_rows($res)>0)
     {
       $arr = mysql_fetch_assoc($res);
-      if (!in_array($arr['ship_id'], $_SESSION['bookmarks']['added']))
+      if (!in_array($arr['ship_id'], $_SESSION['bookmarks']['added'], true))
       {
         $data['id'] = $arr['ship_id'];
         $data['name'] = $arr['ship_name'];
         $data['image'] = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id']."_small.".IMAGE_EXT;
 
-        $actions = explode(",",$arr['ship_actions']);
+        $actions = array_filter(explode(",",$arr['ship_actions']));
         $accnt=count($actions);
+        $acstr = '';
         if ($accnt>0)
         {
           $acstr = "<br/><b>Fägkeiten:</b> ";
