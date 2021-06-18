@@ -185,4 +185,21 @@ class AdminUserRepository extends AbstractRepository
         $adminUser->id = null;
         return $affected > 0;
     }
+
+    public function getNick(int $userId): ?string
+    {
+        return $this->getUserProperty($userId, 'user_nick');
+    }
+
+    private function getUserProperty(int $userId, string $property): ?string
+    {
+        $data = $this->createQueryBuilder()
+            ->select($property)
+            ->from('admin_users')
+            ->where('user_id = :userId')
+            ->setParameter('userId', $userId)
+            ->execute()
+            ->fetchOne();
+        return $data ? $data : null;
+    }
 }
