@@ -31,6 +31,8 @@ if (UNIX) {
 
     $crontabCheck = in_array($cronjob, $crontab);
     $crontab = implode("\n", $crontab);
+} else {
+    $crontabCheck = false;
 }
 
 // Load periodic tasks from configuration
@@ -41,7 +43,7 @@ foreach (PeriodicTaskRunner::getScheduleFromConfig() as $tc) {
     $reflect = new ReflectionClass($klass);
     if ($reflect->implementsInterface('IPeriodicTask')) {
         $elements = preg_split('/\s+/', $tc['schedule']);
-        $t = new $klass();
+        $t = new $klass($app);
         $taskConfig = [
             'desc' => $t->getDescription(),
             'min' => $elements[0],
@@ -60,7 +62,7 @@ if (!empty($_GET['runtask'])) {
     if (isset($periodictasks[$_GET['runtask']])) {
         $title = "[b]Task: ".$periodictasks[$_GET['runtask']]['desc']."[/b] (".$_GET['runtask'].")\n";
         ob_start();
-        $tr = new PeriodicTaskRunner();
+        $tr = new PeriodicTaskRunner($app);
         $out = $tr->runTask($_GET['runtask']);
         $_SESSION['update_results'] = $title.$out.ob_get_clean();
         Log::add(Log::F_UPDATES, Log::INFO, "Task [b]".$_GET['runtask']."[/b] manuell ausgeführt:\n".trim($out));
@@ -71,7 +73,7 @@ if (!empty($_GET['runtask'])) {
 // Run current or all tasks if requested
 if (!empty($_GET['run'])) {
     ob_start();
-    $tr = new PeriodicTaskRunner();
+    $tr = new PeriodicTaskRunner($app);
     $log = '';
     foreach (PeriodicTaskRunner::getScheduleFromConfig() as $tc) {
         if ($_GET['run'] == "all" || PeriodicTaskRunner::shouldRun($tc['schedule'], $time)) {
@@ -98,7 +100,7 @@ echo $twig->render('admin/cronjob.html.twig', [
     'periodicTasks' => $periodictasks,
     'crontabCheck' => $crontabCheck,
     'crontabUser' => $crontabUser,
-    'crontab' => $crontab,
+    'crontab' => $crontab ?? null,
     'updateResults' => $updateResults,
 ]);
 exit();

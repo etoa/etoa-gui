@@ -377,7 +377,7 @@
 		echo "<h2>Rohstoffkurse</h2>";
 		if (isset($_GET['action']) && $_GET['action']=="updaterates")
 		{
-			$tr = new PeriodicTaskRunner();
+			$tr = new PeriodicTaskRunner($app);
 			success_msg($tr->runTask('MarketrateUpdateTask'));
 		}
 
