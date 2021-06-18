@@ -365,7 +365,10 @@
 					echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /><br/><br/>";
 				}
 
-				$race = get_races_array();
+				/** @var \EtoA\Race\RaceDataRepository $raceRepository */
+				$raceRepository = $app['etoa.race.datarepository'];
+				$raceNames = $raceRepository->getRaceNames();
+
 				$allys=get_alliance_names();
 				$time = time();
 
@@ -414,7 +417,7 @@
 					echo "<td title=\"".$arr['dual_email']."\">".cut_string($arr['dual_email'],15)."</td>";
 					echo "<td>".nf($arr['user_points'])."</td>";
 					echo "<td>".($arr['user_alliance_id']>0 ? $allys[$arr['user_alliance_id']]['tag']:'-')."</td>";
-					echo "<td>".($arr['user_race_id']>0 ? $race[$arr['user_race_id']]['race_name'] : '-')."</td>";
+					echo "<td>".($arr['user_race_id']>0 ? $raceNames[$arr['user_race_id']] : '-')."</td>";
 					echo "<td>
 					".edit_button("?page=$page&amp;sub=edit&amp;id=".$arr['user_id'])."
 					".cb_button("add_user=".$arr['user_id']."")."
@@ -460,12 +463,16 @@
 			echo "<tr><th>Passwort</th><td class=\"tbldata\"><input type=\"text\" name=\"user_password\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
 			echo "<tr><th>IP-Adresse</th><td class=\"tbldata\"><input type=\"text\" name=\"user_ip\" value=\"\" size=\"20\" maxlength=\"250\" /> </td></tr>";
 			echo "<tr><th>Allianz</th><td class=\"tbldata\"><input type=\"text\" name=\"user_alliance\" id=\"user_alliance\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchAlliance(this.value,'user_alliance','citybox2');\"/> <br><div class=\"citybox\" id=\"citybox2\">&nbsp;</div></td></tr>";
-			$race = get_races_array();
+
+			/** @var \EtoA\Race\RaceDataRepository $raceRepository */
+			$raceRepository = $app['etoa.race.datarepository'];
+			$raceNames = $raceRepository->getRaceNames();
+
 			echo "<tr><th>Rasse</th><td class=\"tbldata\"><select name=\"user_race_id\">";
 			echo "<option value=\"\">(egal)</option>";
-			foreach ($race as $id=>$racedata)
+			foreach ($raceNames as $id => $raceName)
 			{
-				echo "<option value=\"$id\">".$racedata['race_name']."</option>";
+				echo "<option value=\"$id\">".$raceName."</option>";
 			}
 			echo "</select></td></tr>";
 			echo "<tr><th>Profil-Text</th><td class=\"tbldata\"><input type=\"text\" name=\"user_profile_text\" value=\"\" size=\"20\" maxlength=\"250\" /> </td></tr>";

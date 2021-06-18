@@ -1,7 +1,6 @@
 <?PHP
 
 	echo "<h2>Raketen</h2>";
-	$race=get_races_array();
 
 //
 //Detail

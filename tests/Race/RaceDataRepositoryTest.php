@@ -6,8 +6,7 @@ use EtoA\AbstractDbTestCase;
 
 class RaceDataRepositoryTest extends AbstractDbTestCase
 {
-    /** @var RaceDataRepository */
-    private $raceDataRepository;
+    private RaceDataRepository $raceDataRepository;
 
     protected function setUp(): void
     {
@@ -20,9 +19,5 @@ class RaceDataRepositoryTest extends AbstractDbTestCase
     {
         $names = $this->raceDataRepository->getRaceNames();
         $this->assertNotEmpty($names);
-
-        foreach ($names as $raceId => $raceName) {
-            $this->assertIsInt($raceId);
-        }
     }
 }

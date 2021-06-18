@@ -9,9 +9,9 @@ class RaceDataRepository extends AbstractRepository
     /**
      * Returns an array of race names indexed by the race id.
      *
-     * @return string[]
+     * @return array<int, string>
      */
-    public function getRaceNames()
+    public function getRaceNames(): array
     {
         return $this->createQueryBuilder()
             ->select('r.race_id, r.race_name')
