@@ -28,6 +28,10 @@ trait DbTestTrait
         $this->connection->executeQuery('TRUNCATE tutorial_user_progress');
         $this->connection->executeQuery('TRUNCATE user_sessions');
         $this->connection->executeQuery('TRUNCATE users');
+        $this->connection->executeQuery('TRUNCATE tickets');
+        $this->connection->executeQuery('TRUNCATE ticket_msg');
+        $this->connection->executeQuery('TRUNCATE messages');
+        $this->connection->executeQuery('TRUNCATE message_data');
         $this->connection->executeQuery('DELETE FROM quests');
     }
 }

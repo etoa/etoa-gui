@@ -1,17 +1,28 @@
 <?PHP
 
 use EtoA\Admin\AdminSessionManager;
+use EtoA\Help\TicketSystem\TicketRepository;
+
+/**
+ * @var TicketRepository
+ */
+$ticketRepo = $app['etoa.help.ticket.repository'];
+
+/**
+ * @var AdminSessionManager
+ */
+$sessionManager = $app['etoa.admin.session.manager'];
 
 echo '<h2>Clean-Up</h2>';
 
 if (isset($_POST['submit_cleanup_selected']) || isset($_POST['submit_cleanup_all'])) {
-	$sessionManager = $app['etoa.admin.session.manager'];
-	runCleanup($sessionManager);
+	runCleanup($sessionManager, $ticketRepo);
 }
-cleanupOverView();
+cleanupOverView($ticketRepo);
 
 function runCleanup(
-	AdminSessionManager $sessionManager
+	AdminSessionManager $sessionManager,
+	TicketRepository $ticketRepo
 ) {
 	echo "Clean-Up wird durchgeführt...<br/>";
 	$all = isset($_POST['submit_cleanup_all']) ? true : false;
@@ -141,30 +152,9 @@ function runCleanup(
 			echo mysql_affected_rows() . " verwaiste Adminkommentare wurden gelöscht!<br/>";
 		}
 		if (isset($_POST['del_tickets'])) {
-			$res = dbquery("
-					SELECT
-						id
-					FROM
-						`tickets`
-					WHERE
-						!(`tickets`.user_id IN (" . $ustring . "))");
-			$tstring = "";
-			$set = false;
-			while ($uarr = mysql_fetch_row($res)) {
-				if ($set) $tstring .= ",";
-				else $set = true;
-				$tstring .= $uarr[0];
-			}
-			dbquery("DELETE FROM
-						`ticket_msg`
-					WHERE
-						`ticket_id` IN (" . $tstring . ")");
-
-			dbquery("DELETE FROM
-								`tickets`
-							WHERE
-								!(`tickets`.user_id IN (" . $ustring . "))");
-			echo mysql_affected_rows() . " verwaiste Tickets wurden gelöscht!<br/>";
+			$ticketIds = $ticketRepo->findOrphanedIds();
+			$deletedTickets = $ticketRepo->removeByIds(...$ticketIds);
+			echo $deletedTickets . " verwaiste Tickets wurden gelöscht!<br/>";
 		}
 		if (isset($_POST['del_reports'])) {
 			$res = dbquery("
@@ -356,7 +346,7 @@ function runCleanup(
 	echo "Clean-Up fertig!<br/><br/>";
 }
 
-function cleanupOverView()
+function cleanupOverView(TicketRepository $ticketRepo)
 {
 	global $conf;
 	global $cfg;
@@ -593,12 +583,6 @@ function cleanupOverView()
 						`user_comments`
 					WHERE
 						!(`user_comments`.comment_user_id IN (" . $ustring . "))");
-	$tres = dbquery("SELECT
-						count(`tickets`.id)
-					FROM
-						`tickets`
-					WHERE
-						!(`tickets`.user_id IN (" . $ustring . "))");
 	$reres = dbquery("SELECT
 						count(`reports`.id)
 					FROM
@@ -664,8 +648,8 @@ function cleanupOverView()
 	echo '<input type="checkbox" value="1" name="del_user_multi" /> ' . nf($tblcnt[0]) . " verwaiste <strong>Multieinträge</strong> gefunden<br/>";
 	$tblcnt = mysql_fetch_row($cres);
 	echo '<input type="checkbox" value="1" name="del_user_comments" /> ' . nf($tblcnt[0]) . " verwaiste <strong>Adminkommentare</strong> gefunden<br/>";
-	$tblcnt = mysql_fetch_row($tres);
-	echo '<input type="checkbox" value="1" name="del_tickets" /> ' . nf($tblcnt[0]) . " verwaiste <strong>Tickets</strong> gefunden<br/>";
+	$numOrphanedTickets = count($ticketRepo->findOrphanedIds());
+	echo '<input type="checkbox" value="1" name="del_tickets" /> ' . nf($numOrphanedTickets) . " verwaiste <strong>Tickets</strong> gefunden<br/>";
 	$tblcnt = mysql_fetch_row($reres);
 	echo '<input type="checkbox" value="1" name="del_reports" /> ' . nf($tblcnt[0]) . " verwaiste <strong>Berichte</strong> gefunden<br/>";
 	$tblcnt = mysql_fetch_row($nres);

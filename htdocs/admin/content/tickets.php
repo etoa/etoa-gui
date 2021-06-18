@@ -1,334 +1,367 @@
 <?php
 
+use EtoA\Admin\AdminUser;
+use EtoA\Admin\AdminUserRepository;
+use EtoA\Help\TicketSystem\Ticket;
+use EtoA\Help\TicketSystem\TicketMessageRepository;
+use EtoA\Help\TicketSystem\TicketRepository;
+use EtoA\User\UserRepository;
+
+/**
+ * @var TicketRepository
+ */
+$ticketRepo = $app['etoa.help.ticket.repository'];
+
+/**
+ * @var TicketMessageRepository
+ */
+$ticketMessageRepo = $app['etoa.help.ticket.message.repository'];
+
+/**
+ * @var AdminUserRepository
+ */
 $adminUserRepo = $app['etoa.admin.user.repository'];
+
+/**
+ * @var UserRepository
+ */
+$userRepo = $app['etoa.user.repository'];
 
 $twig->addGlobal("title", "Support-Tickets");
 
 if ($cu->hasRole("master,super-admin,game-admin,trial-game-admin")) {
+	ticketNavigation();
 
-echo '<div>[ <a href="?page='.$page.'">Aktive Tickets</a> |
-<a href="?page='.$page.'&amp;action=new">Neues Ticket erstellen</a> |
-<a href="?page='.$page.'&amp;action=closed">Bearbeitete Tickets</a> ]</div>' ;
-
-if (isset($_GET['edit']) && $_GET['edit']>0)
-{
-	echo "<h2>Ticket bearbeiten</h2>";
-	$ti = new Ticket($_GET['edit']);
-
-	echo '<form action="?page='.$page.'&amp;id='.$ti->id.'" method="post">';
-	tableStart("Ticket ".$ti->idString);
-	echo '<tr><th>Kategorie:</th><td colspan="3">';
-	htmlSelect("cat_id",Ticket::getCategories(),$ti->catId);
-	echo '</td></tr>';
-	echo '<tr><th>User:</th><td>';
-	echo '<a href=\"javascript:;\" '.cTT($ti->userNick,"ttuser").'>'.$ti->userNick.'</a>';
-	echo '</td>';
-	echo '<th>Zugeteilter Admin:</th><td>';
-	$sdata = $adminUserRepo->findAllAsList();
-	$sdata[0] = "(Niemand)";
-	htmlSelect("admin_id",$sdata,$ti->adminId);
-	echo '</td></tr>';
-	echo '<tr><th>Status:</th><td>';
-	htmlSelect("status",Ticket::$statusItems,$ti->status);
-	echo '</td>';
-	echo '<th>Lösung:</th><td>';
-	htmlSelect("solution",Ticket::$solutionItems,$ti->solution);
-	echo '</td></tr>';
-	echo '<tr><th>Admin-Kommentar:</th><td colspan="3">';
-	echo '<textarea name="admin_comment" rows="5" cols="60">'.$ti->adminComment.'</textarea>';
-	echo '</td></tr>';
-	tableEnd();
-	echo '<input type="submit" name="submit" value="Änderungen übernehmen" /> &nbsp;
-	'.button("Abbrechen","?page=$page&amp;id=".$ti->id."").' &nbsp;';
-	echo "</form>";
-
-
+	if (isset($_GET['edit']) && $_GET['edit'] > 0) {
+		editTicket($ticketRepo, $adminUserRepo, $userRepo);
+	} elseif (isset($_GET['id']) && $_GET['id'] > 0) {
+		ticketDetails($ticketRepo, $ticketMessageRepo, $adminUserRepo, $userRepo, $cu);
+	} elseif (isset($_GET['action']) && $_GET['action'] == "new") {
+		createNewTicketForm($ticketRepo);
+	} elseif (isset($_GET['action']) && $_GET['action'] == "closed") {
+		closedTickets($ticketRepo, $ticketMessageRepo, $adminUserRepo, $userRepo);
+	} else {
+		activeTickets($ticketRepo, $ticketMessageRepo, $adminUserRepo, $userRepo);
+	}
+} else {
+	$twig->addGlobal("errorMessage", "Nicht erlaubt!");
 }
 
-//
-// Display ticket details
-//
-elseif (isset($_GET['id']) && $_GET['id']>0)
-{
-	echo "<h2>Ticket-Details</h2>";
-	$ti = new Ticket($_GET['id']);
+function ticketNavigation() {
+	global $page;
+	echo '<div>[ <a href="?page=' . $page . '">Aktive Tickets</a> |
+	<a href="?page=' . $page . '&amp;action=new">Neues Ticket erstellen</a> |
+	<a href="?page=' . $page . '&amp;action=closed">Bearbeitete Tickets</a> ]</div>';
+}
 
-	if (isset($_POST['submit']))
-	{
-		$ti->status = $_POST['status'];
-		$ti->solution = $_POST['solution'];
-		$ti->catId = $_POST['cat_id'];
-		$ti->adminId = $_POST['admin_id'];
-		$ti->adminComment = $_POST['admin_comment'];
+function editTicket(
+	TicketRepository $ticketRepo,
+	AdminUserRepository $adminUserRepo,
+	UserRepository $userRepo
+) {
+	global $page;
 
-		if ($ti->changed)
-			success_msg("Ticket aktualisiert!");
-	}
-	if (isset($_POST['submit_assign']))
-	{
-		$ti->assign($cu->id);
-		if ($ti->changed)
-			success_msg("Ticket aktualisiert!");
-	}
-	if (isset($_POST['submit_reopen']))
-	{
-		$ti->reopen();
-		if ($ti->changed)
-			success_msg("Ticket aktualisiert!");
-	}
+	echo "<h2>Ticket bearbeiten</h2>";
 
-	if (isset($_POST['submit_new_post']))
-	{
-		// Do not inform the user with pm, because the close function does this already
-		// BUGFIX by river: But *only* if it actually *is* closed! wtf.
-		if (
-				$ti->addMessage(
-					array("admin_id"=>$cu->id,"message"=>$_POST['message']),
-					(isset($_POST['checkclose'])?0:1)
-				)
-			)
-		{
-			success_msg("Nachricht hinzugefügt!");
-			if (isset($_POST['checkclose']))
-			{
-				$ti->close($_POST['solutionclose']);
-			}
-		}
+	$ticket = $ticketRepo->find($_GET['edit']);
 
-		if (isset($_POST['admin_comment']))
-		{
-			$ti->adminComment = $_POST['admin_comment'];
-		}
-	}
-	if (isset($_POST['submit_admin_comment']))
-	{
-		$ti->adminComment = $_POST['admin_comment'];
-	}
-
-
-	echo "<div id=\"ttuser\" style=\"display:none;\">
-	".openerLink("page=user&sub=edit&id=".$ti->userId,"Daten anzeigen")."<br/>
-	".popupLink("sendmessage","Nachricht senden","","id=".$ti->userId)."<br/>
-	</div>";
-
-
-	echo '<form action="?page='.$page.'&amp;id='.$_GET['id'].'" method="post">';
-	tableStart("Ticket ".$ti->idString);
-	echo '<tr><th style="width:150px">Kategorie:</th><td>';
-	echo $ti->catName;
-	echo '</td></tr>';
-	echo '<th>Status:</th><td>';
-	echo $ti->statusName;
+	echo '<form action="?page=' . $page . '&amp;id=' . $ticket->id . '" method="post">';
+	echo '<h3>Ticket ' . $ticket->getIdString().'</h3>';
+	tableStart();
+	echo '<tr><th>Kategorie:</th><td colspan="3">';
+	htmlSelect("cat_id", $ticketRepo->findAllCategoriesAsMap(), $ticket->catId);
 	echo '</td></tr>';
 	echo '<tr><th>User:</th><td>';
-	echo '<a href="javascript:;" '.cTT($ti->userNick,"ttuser").'>'.$ti->userNick.'</a>';
+	$userNick = $userRepo->getNick($ticket->userId);
+	echo '<a href=\"javascript:;\" ' . cTT($userNick, "ttuser") . '>' . $userNick . '</a>';
+	echo '</td>';
+	echo '<th>Zugeteilter Admin:</th><td>';
+	$admins = $adminUserRepo->findAllAsList();
+	$admins[0] = "(Niemand)";
+	htmlSelect("admin_id", $admins, $ticket->adminId);
 	echo '</td></tr>';
-	if ($ti->adminId > 0)
-	{
+	echo '<tr><th>Status:</th><td>';
+	htmlSelect("status", Ticket::STATUS_ITEMS, $ticket->status);
+	echo '</td>';
+	echo '<th>Lösung:</th><td>';
+	htmlSelect("solution", Ticket::SOLUTION_ITEMS, $ticket->solution);
+	echo '</td></tr>';
+	echo '<tr><th>Admin-Kommentar:</th><td colspan="3">';
+	echo '<textarea name="admin_comment" rows="5" cols="60">' . $ticket->adminComment . '</textarea>';
+	echo '</td></tr>';
+	tableEnd();
+	echo '<p><input type="submit" name="submit" value="Änderungen übernehmen" /> &nbsp;
+		' . button("Abbrechen", "?page=$page&amp;id=" . $ticket->id . "") . ' &nbsp;</p>';
+	echo "</form>";
+}
+
+function ticketDetails(
+	TicketRepository $ticketRepo,
+	TicketMessageRepository $ticketMessageRepo,
+	AdminUserRepository $adminUserRepo,
+	UserRepository $userRepo,
+	AdminUser $cu
+) {
+	global $page;
+
+	echo "<h2>Ticket-Details</h2>";
+
+	$ticket = $ticketRepo->find($_GET['id']);
+
+	if (isset($_POST['submit'])) {
+		$ticket->status = $_POST['status'];
+		$ticket->solution = $_POST['solution'];
+		$ticket->catId = $_POST['cat_id'];
+		$ticket->adminId = $_POST['admin_id'];
+		$ticket->adminComment = $_POST['admin_comment'];
+
+		if ($ticketRepo->persist($ticket)) {
+			success_msg("Ticket aktualisiert!");
+		}
+	}
+	if (isset($_POST['submit_assign'])) {
+		if ($ticketRepo->assign($ticket, $cu->id)) {
+			success_msg("Ticket aktualisiert!");
+		}
+	}
+	if (isset($_POST['submit_reopen'])) {
+		if ($ticketRepo->reopen($ticket)) {
+			success_msg("Ticket aktualisiert!");
+		}
+	}
+
+	if (isset($_POST['submit_new_post'])) {
+		$ticketRepo->addMessage(
+			$ticket,
+			[
+				"admin_id" => $cu->id,
+				"message" => $_POST['message'],
+			],
+			! isset($_POST['should_close'])
+		);
+		success_msg("Nachricht hinzugefügt!");
+
+		if (isset($_POST['should_close'])) {
+			$ticketRepo->close($ticket, $_POST['close_solution']);
+		}
+
+		if (isset($_POST['admin_comment'])) {
+			$ticket->adminComment = $_POST['admin_comment'];
+			$ticketRepo->persist($ticket);
+		}
+	}
+	if (isset($_POST['submit_admin_comment'])) {
+		$ticket->adminComment = $_POST['admin_comment'];
+		$ticketRepo->persist($ticket);
+	}
+
+	echo "<div id=\"ttuser\" style=\"display:none;\">
+	" . openerLink("page=user&sub=edit&id=" . $ticket->userId, "Daten anzeigen") . "<br/>
+	" . popupLink("sendmessage", "Nachricht senden", "", "id=" . $ticket->userId) . "<br/>
+	</div>";
+
+	echo '<form action="?page=' . $page . '&amp;id=' . $_GET['id'] . '" method="post">';
+
+	echo "<h3>Ticket " . $ticket->getIdString()."</h3>";
+	tableStart();
+	echo '<tr><th style="width:150px">Kategorie:</th><td>';
+	echo $ticketRepo->getCategoryName($ticket->catId);
+	echo '</td></tr>';
+	echo '<th>Status:</th><td>';
+	echo $ticket->getStatusName();
+	echo '</td></tr>';
+	echo '<tr><th>User:</th><td>';
+	$userNick = $userRepo->getNick($ticket->userId);
+	echo '<a href="javascript:;" ' . cTT($userNick, "ttuser") . '>' . $userNick . '</a>';
+	echo '</td></tr>';
+	if ($ticket->adminId > 0) {
 		echo '<th>Zugeteilter Admin:</th><td>';
-		echo $ti->adminNick;
+		echo $adminUserRepo->getNick($ticket->adminId);
 		echo '</td></tr>';
 	}
 	echo '<tr><th>Letzte Änderung:</th><td>';
-	echo df($ti->time);
+	echo df($ticket->timestamp);
 	echo '</td></tr>';
 	echo '<tr><th>Admin-Kommentar:</th><td colspan="3">';
-	echo '<textarea name="admin_comment" style="color:#00008B" rows="4" cols="60">'.$ti->adminComment.'</textarea>
+	echo '<textarea name="admin_comment" style="color:#00008B" rows="4" cols="60">' . $ticket->adminComment . '</textarea>
 	<input type="submit" name="submit_admin_comment" value="Speichern" /> (wird auch beim Senden einer neuen Nachricht gespeichert)';
 	echo '</td></tr>';
 	tableEnd();
 
-
-	tableStart("Nachrichten");
+	echo "<h3>Nachrichten</h3>";
+	tableStart("");
 	echo "<tr>
 	<th style=\"width:120px\">Datum</th>
 	<th style=\"width:130px\">Autor</th>
 	<th>Nachricht</th></tr>";
-	foreach ($ti->getMessages() as $mi)
-	{
+	foreach ($ticketRepo->getMessages($ticket) as $message) {
 		echo "<tr>
-		<td>".df($mi->timestamp)."</td>
-		<td>".$mi->authorNick."</td>
-		<td>".text2html($mi->message)."</td>
+		<td>" . df($message->timestamp) . "</td>
+		<td>" . $ticketMessageRepo->getAuthorNick($message) . "</td>
+		<td>" . text2html($message->message) . "</td>
 		</tr>";
 	}
 	tableEnd();
 
-	if ($ti->status=="assigned")
-	{
-		tableStart("Neue Nachricht");
+	if ($ticket->status == "assigned") {
+		echo "<h3>Neue Nachricht</h3>";
+		tableStart("");
 		echo '<tr><th>Absender:</th><td>';
-		echo $cu->nick." (Admin)";
+		echo $cu->nick . " (Admin)";
 		echo '</td></tr>';
 		echo '<tr><th>Nachricht:</th><td>';
 		echo '<textarea name="message" rows="8" cols="60"></textarea>';
 		echo '</td></tr>';
 		tableEnd();
-		echo '<input type="submit" name="submit_new_post" value="Senden" /> &nbsp; ';
-
-		echo ' <input type="checkbox" name="checkclose" value="1" /> Ticket abschliessen als ';
-		htmlSelect("solutionclose",Ticket::$solutionItems,"solved");
-
+		echo '<p><input type="submit" name="submit_new_post" value="Senden" /> &nbsp; ';
+		echo ' <input type="checkbox" name="should_close" id="should_close" value="1" />
+			<label for="should_close">Ticket abschliessen als</label> ';
+		htmlSelect("close_solution", Ticket::SOLUTION_ITEMS, "solved");
+		echo '</p>';
 	}
 
 	echo '<p>';
-	echo button("Zur Übersicht","?page=$page").' &nbsp; ';
-	if ($ti->status=="new")
+	echo button("Zur Übersicht", "?page=$page") . ' &nbsp; ';
+	if ($ticket->status == "new") {
 		echo '<input type="submit" name="submit_assign" value="Ticket mir zuweisen" /> &nbsp; ';
-	if ($ti->status=="closed")
+	}
+	if ($ticket->status == "closed") {
 		echo '<input type="submit" name="submit_reopen" value="Ticket wieder eröffnen" /> &nbsp; ';
-	if ($ti->status=="assigned")
+	}
+	if ($ticket->status == "assigned") {
 		echo '<input type="submit" name="submit_reopen" value="Zuweisung widerrufen" /> &nbsp; ';
+	}
 
-	echo button("Ticketdetails bearbeiten","?page=$page&amp;edit=".$ti->id."").' &nbsp;
+	echo button("Ticketdetails bearbeiten", "?page=$page&amp;edit=" . $ticket->id . "") . ' &nbsp;
 	</p>';
 	echo "</form><br/>";
-
-
-
 }
 
-//
-// Create new ticket
-//
-elseif (isset($_GET['action']) && $_GET['action']=="new")
+function createNewTicketForm(TicketRepository $ticketRepo)
 {
-	//
-	// Create ticket form
-	//
+	global $page;
+
 	echo "<h2>Ticket erstellen</h2>";
-	echo '<form action="?page='.$page.'" method="post">';
+	echo '<form action="?page=' . $page . '" method="post">';
 	tableStart();
 	echo '<tr><th>User:</th><td>';
-	htmlSelect("user_id",Users::getArray());
+	htmlSelect("user_id", Users::getArray());
 	echo '</td></tr>';
 	echo '<tr><th>Kategorie:</th><td>';
-	htmlSelect("cat_id",Ticket::getCategories());
+	htmlSelect("cat_id", $ticketRepo->findAllCategoriesAsMap());
 	echo '</td></tr>';
 	echo '<tr><th>Problembeschreibung:</th><td>';
 	echo '<textarea name="message" rows="8" cols="60"></textarea>';
 	echo '</td></tr>';
 	tableEnd();
-	echo '<input type="submit" name="submit_new" value="Speichern" />
-	</form>';
+	echo '<p><input type="submit" name="submit_new" value="Speichern" /></p></form>';
 }
 
-//
-// Closed tickets
-//
-elseif (isset($_GET['action']) && $_GET['action']=="closed")
-{
+function closedTickets(
+	TicketRepository $ticketRepo,
+	TicketMessageRepository $ticketMessageRepo,
+	AdminUserRepository $adminUserRepo,
+	UserRepository $userRepo
+) {
+	global $page;
 
 	echo '<h2>Bearbeitete Tickets</h2>';
 
-	$cnt=0;
-	$tlist = Ticket::find(array('status'=>'closed'));
-	if (count($tlist)>0)
-	{
-		tableStart('Abgeschlossen','100%');
+	$tickets = $ticketRepo->findBy(['status' => 'closed']);
+	if (count($tickets) > 0) {
+		tableStart('Abgeschlossen', '100%');
 		echo "<tr><th>ID</th>
-<th>Status</th>
-<th>Kategorie</th>
-<th>User</th>
-<th>Admin</th>
-<th>Nachrichten</th>
-<th>Letzte Änderung</th></tr>";
-		foreach ($tlist as $tid => &$ti)
-		{
+			<th>Status</th>
+			<th>Kategorie</th>
+			<th>User</th>
+			<th>Admin</th>
+			<th>Nachrichten</th>
+			<th>Letzte Änderung</th></tr>";
+		foreach ($tickets as $ticket) {
 			echo "<tr>
-			<td><a href=\"?page=$page&amp;id=".$tid."\">".$ti->idString."</a></td>
-			<td>".$ti->statusName."</td>
-			<td>".$ti->catName."</td>
-			<td>".$ti->userNick."</td>
-			<td>".$ti->adminNick."</td>
-			<td>".$ti->countMessages()."</td>
-			<td>".df($ti->time)."</td>
+			<td><a href=\"?page=$page&amp;id=" . $ticket->id . "\">" . $ticket->getIdString() . "</a></td>
+			<td>" . $ticket->getStatusName() . "</td>
+			<td>" . $ticketRepo->getCategoryName($ticket->catId) . "</td>
+			<td>" . $userRepo->getNick($ticket->userId) . "</td>
+			<td>" . ($adminUserRepo->getNick($ticket->adminId) ?? '?') . "</td>
+			<td>" . $ticketMessageRepo->count($ticket->id) . "</td>
+			<td>" . df($ticket->time) . "</td>
 			</tr>";
-			$cnt++;
 		}
 		tableEnd();
-	}
-
-	if ($cnt==0)
-	{
+	} else {
 		echo '<i>Keine aktiven Tickets vorhanden!</i>';
 	}
 }
 
-//
-// Active tickets
-//
-else
-{
+function activeTickets(
+	TicketRepository $ticketRepo,
+	TicketMessageRepository $ticketMessageRepo,
+	AdminUserRepository $adminUserRepo,
+	UserRepository $userRepo
+) {
+	global $page;
+
 	echo '<h2>Aktive Tickets</h2>';
 
-	if (isset($_POST['submit_new']))
-	{
-		if (Ticket::create($_POST))
-		{
-			success_msg("Das Ticket wurde erstellt!");
-		}
+	if (isset($_POST['submit_new'])) {
+		$ticketRepo->create((int) $_POST['user_id'], (int) $_POST['cat_id'], $_POST['message']);
+		success_msg("Das Ticket wurde erstellt!");
 	}
 
+	$cnt = 0;
 
-	$cnt=0;
-
-	$tlist = Ticket::find(array('status'=>'new'));
-	if (count($tlist)>0)
-	{
-		tableStart('Neu','100%');
+	$newTickets = $ticketRepo->findBy(['status' => 'new']);
+	if (count($newTickets) > 0) {
+		echo "<h3>Neu</h3>";
+		tableStart('', '100%');
 		echo "<tr><th>ID</th><th>Status</th><th>Kategorie</th><th>User</th><th>Letzte Änderung</th></tr>";
-		foreach ($tlist as $tid => &$ti)
-		{
-			echo "<div id=\"tt".$ti->id."\" style=\"display:none;\">
-			".openerLink("page=user&sub=edit&id=".$ti->userId,"Daten anzeigen")."<br/>
-			".popupLink("sendmessage","Nachricht senden","","id=".$ti->userId)."<br/>
+		foreach ($newTickets as $ticket) {
+			echo "<div id=\"tt" . $ticket->id . "\" style=\"display:none;\">
+			" . openerLink("page=user&sub=edit&id=" . $ticket->userId, "Daten anzeigen") . "<br/>
+			" . popupLink("sendmessage", "Nachricht senden", "", "id=" . $ticket->userId) . "<br/>
 			</div>";
 
+			$userNick = $userRepo->getNick($ticket->userId);
 			echo "<tr>
-			<td><a href=\"?page=$page&amp;id=".$tid."\">".$ti->idString."</a></td>
-			<td>".$ti->statusName."</td>
-			<td>".$ti->catName."</td>
-			<td><a href=\"javascript:;\" ".cTT($ti->userNick,"tt".$ti->id).">".$ti->userNick."</a></td>
-			<td>".df($ti->time)."</td>
-			</tr>";
-			$cnt++;
-		}
-		tableEnd();
-	}
-	$tlist = Ticket::find(array('status'=>'assigned'));
-	if (count($tlist)>0)
-	{
-		tableStart('Zugeteilt','100%');
-		echo "<tr><th>ID</th>
-<th>Status</th>
-<th>Kategorie</th>
-<th>User</th>
-<th>Nachrichten</th>
-<th>Letzte Änderung</th></tr>";
-		foreach ($tlist as $tid => &$ti)
-		{
-			echo "<tr>
-			<td><a href=\"?page=$page&amp;id=".$tid."\">".$ti->idString."</a></td>
-			<td>".$ti->statusName.": <b>".$ti->adminNick."</b></td>
-			<td>".$ti->catName."</td>
-			<td>".$ti->userNick."</td>
-			<td>".$ti->countMessages()."</td>
-			<td>".df($ti->time)."</td>
+			<td><a href=\"?page=$page&amp;id=" . $ticket->id . "\">" . $ticket->getIdString() . "</a></td>
+			<td>" . $ticket->getStatusName() . "</td>
+			<td>" . $ticketRepo->getCategoryName($ticket->catId) . "</td>
+			<td><a href=\"javascript:;\" " . cTT($userNick, "tt" . $ticket->id) . ">" . $userNick . "</a></td>
+			<td>" . df($ticket->timestamp) . "</td>
 			</tr>";
 			$cnt++;
 		}
 		tableEnd();
 	}
 
-	if ($cnt==0)
-	{
+	$assignedTickets = $ticketRepo->findBy(['status' => 'assigned']);
+	if (count($assignedTickets) > 0) {
+		echo "<h3>Zugeteilt</h3>";
+		tableStart('', '100%');
+		echo "<tr><th>ID</th>
+			<th>Status</th>
+			<th>Kategorie</th>
+			<th>User</th>
+			<th>Nachrichten</th>
+			<th>Letzte Änderung</th></tr>";
+		foreach ($assignedTickets as $ticket) {
+			$userNick = $userRepo->getNick($ticket->userId);
+			$adminNick = $adminUserRepo->getNick($ticket->adminId);
+			echo "<tr>
+				<td><a href=\"?page=$page&amp;id=" . $ticket->id . "\">" . $ticket->getIdString() . "</a></td>
+				<td>" . $ticket->getStatusName() . ": <b>" . $adminNick . "</b></td>
+				<td>" . $ticketRepo->getCategoryName($ticket->catId) . "</td>
+				<td>" . $userNick . "</td>
+				<td>" . $ticketMessageRepo->count($ticket->id) . "</td>
+				<td>" . df($ticket->timestamp) . "</td>
+				</tr>";
+			$cnt++;
+		}
+		tableEnd();
+	}
+
+	if ($cnt == 0) {
 		echo '<i>Keine aktiven Tickets vorhanden!</i>';
 	}
 }
-} else {
-	$twig->addGlobal("errorMessage", "Nicht erlaubt!");
-}
-
-
-?>

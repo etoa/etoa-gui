@@ -4,6 +4,7 @@ use EtoA\Admin\AdminSessionManager;
 use EtoA\Admin\AdminSessionRepository;
 use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Support\DatabaseManagerRepository;
 use EtoA\Universe\CellRepository;
 use League\CommonMark\CommonMarkConverter;
@@ -35,7 +36,8 @@ if ($sub == "offline") {
 	systemInfoView($databaseManager);
 } else {
 	$universeCellRepo = $app['etoa.universe.cell.repository'];
-	indexView($cu, $universeCellRepo);
+	$ticketRepo = $app['etoa.help.ticket.repository'];
+	indexView($cu, $universeCellRepo, $ticketRepo);
 }
 
 function takeOffline()
@@ -222,7 +224,7 @@ function adminSessionLogView(
 					<td>" . date("d.m.Y H:i", $arr['time_action']) . "</td>
 					<td>" . tf($arr['time_action'] - $arr['time_login']) . "</td>
 					<td title=\"" . Net::getHost($arr['ip_addr']) . "\">" . $arr['ip_addr'] . "</td>
-					<td title=\"" . $arr['user_agent'] . "\">" . $browserParser->browser->toString() . ' on ' . $browserParser->os->toString() ."</td>
+					<td title=\"" . $arr['user_agent'] . "\">" . $browserParser->browser->toString() . ' on ' . $browserParser->os->toString() . "</td>
 					<td><a href=\"?page=$page&amp;sub=$sub&amp;kick=" . $arr['user_id'] . "\">Kick</a></td>
 				</tr>";
 		}
@@ -267,8 +269,11 @@ function systemInfoView(DatabaseManagerRepository $databaseManager)
 	exit();
 }
 
-function indexView(AdminUser $cu, CellRepository $universeCellRepo)
-{
+function indexView(
+	AdminUser $cu,
+	CellRepository $universeCellRepo,
+	TicketRepository $ticketRepo
+) {
 	global $conf;
 	global $twig;
 
@@ -316,8 +321,8 @@ function indexView(AdminUser $cu, CellRepository $universeCellRepo)
 		'hasTfa' => !empty($cu->tfaSecret),
 		'didBigBangHappen' => $universeCellRepo->count() != 0,
 		'forcePasswordChange' => $cu->forcePasswordChange,
-		'numNewTickets' => Ticket::countNew(),
-		'numOpenTickets' => Ticket::countAssigned($cu->id),
+		'numNewTickets' => $ticketRepo->countNew(),
+		'numOpenTickets' => $ticketRepo->countAssigned($cu->id),
 		'fleetBanText' => $fleetBanText,
 		'fleetBanTitle' => $fleetBanTitle,
 		'adminInfo' => getAdminText('admininfo'),

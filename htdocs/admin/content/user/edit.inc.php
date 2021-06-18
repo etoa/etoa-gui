@@ -1,4 +1,17 @@
-<?PHP
+<?php
+
+use EtoA\Admin\AdminUserRepository;
+use EtoA\Help\TicketSystem\TicketRepository;
+
+/**
+ * @var TicketRepository
+ */
+$ticketRepo = $app['etoa.help.ticket.repository'];
+
+/**
+ * @var AdminUserRepository
+ */
+$adminUserRepo = $app['etoa.admin.user.repository'];
 
 			if (isset($_GET['id']))
 				$id = $_GET['id'];
@@ -571,14 +584,19 @@
 									}
 
 									// Tickets
-									$nTickets = Ticket::find(array("user_id"=>$arr['user_id'],"status"=>"new"));
-									$nt = count($nTickets);
-									$aTickets = Ticket::find(array("user_id"=>$arr['user_id'],"status"=>"assigned"));
-									$at = count($aTickets);
-
-									if ($nt+$at > 0)
+									$newTickets = $ticketRepo->findBy([
+										"user_id" => $arr['user_id'],
+										"status" => "new",
+									]);
+									$numberOfNewTickets = count($newTickets);
+									$assignedTickets = $ticketRepo->findBy([
+										"user_id" => $arr['user_id'],
+										"status" => "assigned",
+									]);
+									$numberOfAssignedTickets = count($assignedTickets);
+									if ($numberOfNewTickets + $numberOfAssignedTickets > 0)
 									{
-										echo "<div><b>".$nt." neue Tickets</b> und <b>".$at." zugewiesene Tickets</b> vorhanden
+										echo "<div><b>".$numberOfNewTickets." neue Tickets</b> und <b>".$numberOfAssignedTickets." zugewiesene Tickets</b> vorhanden
 										[<a href=\"javascript:;\" onclick=\"$('.tabs').tabs('select', 9);\">Zeigen</a>]
 										</div>";
 									}
@@ -1586,20 +1604,25 @@
 
 				echo "<div id=\"ticketsBox\">";
 
-				$tlist = Ticket::find(array('user_id'=> $id));
-				if (count($tlist)>0)
+				$tickets = $ticketRepo->findBy(['user_id'=> $id]);
+				if (count($tickets)>0)
 				{
 					tableStart('Tickets','100%');
-					echo "<tr><th>ID</th><th>Status</th><th>Kategorie</th><th>User</th><th>Letzte Änderung</th></tr>";
-					foreach ($tlist as $tid => &$ti)
+					echo "<tr>
+						<th>ID</th>
+						<th>Status</th>
+						<th>Kategorie</th>
+						<th>Zugeteilter Admin</th>
+						<th>Letzte Änderung</th>
+					</tr>";
+					foreach ($tickets as $ticket)
 					{
-						echo "
-						<tr>
-							<td>".popupLink('tickets',$ti->idString,'','id='.$tid)."</td>
-							<td>".$ti->statusName."</td>
-							<td>".$ti->catName."</td>
-							<td><a href=\"javascript:;\" ".cTT($ti->userNick,"tt".$ti->id).">".$ti->userNick."</a></td>
-							<td>".df($ti->time)."</td>
+						echo "<tr>
+							<td>".popupLink('tickets',$ticket->getIdString(),'','id='.$ticket->id)."</td>
+							<td>".$ticket->getStatusName()."</td>
+							<td>".$ticketRepo->getCategoryName($ticket->catId)."</td>
+							<td>".($ticket->adminId > 0 ? $adminUserRepo->getNick($ticket->adminId) : '-')."</td>
+							<td>".df($ticket->timestamp)."</td>
 						</tr>";
 					}
 					tableEnd();

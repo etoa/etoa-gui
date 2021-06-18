@@ -65,7 +65,7 @@ $time = time();
 		$backendStatus = RuntimeDataStore::get('backend_status');
 		if ($backendStatus != null && $backendStatus == 0)
 		{
-			$infoText = $tm->getText('backend_offline_message');
+			$infoText = $textRepo->find('backend_offline_message');
 			if ($infoText->enabled && !empty($infoText->content))
 			{
 				echo "<br />";

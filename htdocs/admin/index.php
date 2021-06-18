@@ -4,6 +4,7 @@ use EtoA\Admin\AdminNotesRepository;
 use EtoA\Admin\AdminRoleManager;
 use EtoA\Admin\AdminSessionRepository;
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Support\DatabaseManagerRepository;
 use EtoA\User\UserRepository;
 
@@ -59,7 +60,16 @@ try {
         $roleManager = $app['etoa.admin.role.manager'];
         $sessionRepository = $app['etoa.admin.session.repository'];
         $databaseManager = $app['etoa.db.manager.repository'];
-        adminView($s, $adminUserRepo, $userRepo, $notesRepo, $roleManager, $sessionRepository, $databaseManager);
+        $ticketRepo = $app['etoa.help.ticket.repository'];
+        adminView($s,
+            $adminUserRepo,
+            $userRepo,
+            $notesRepo,
+            $roleManager,
+            $sessionRepository,
+            $databaseManager,
+            $ticketRepo
+        );
     }
 } catch (DBException $ex) {
     ob_clean();
@@ -77,7 +87,8 @@ function adminView(
     AdminNotesRepository $notesRepo,
     AdminRoleManager $roleManager,
     AdminSessionRepository $sessionRepository,
-    DatabaseManagerRepository $databaseManager
+    DatabaseManagerRepository $databaseManager,
+    TicketRepository $ticketRepo
 ) {
     global $twig;
     global $page;
@@ -85,6 +96,7 @@ function adminView(
     global $cfg;
     global $conf;
     global $app;
+    global $resNames;
 
     // Load admin user data
     $cu = $adminUserRepo->find($s->user_id);
@@ -101,7 +113,7 @@ function adminView(
 
     $numNotes = $notesRepo->countForAdmin($s->user_id);
 
-    $numTickets = Ticket::countAssigned($s->user_id) + Ticket::countNew();
+    $numTickets = $ticketRepo->countAssigned($s->user_id) + $ticketRepo->countNew();
 
     $twig->addGlobal('searchQuery', $searchQuery);
     $twig->addGlobal('navMenu', $navMenu);

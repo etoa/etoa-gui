@@ -1,20 +1,28 @@
 <?PHP
-	/**
-	* Cleanup sessions
-	*/
-	class SessionCleanupTask implements IPeriodicTask
+
+use EtoA\Admin\AdminSessionManager;
+
+/**
+ * Cleanup sessions
+ */
+class SessionCleanupTask implements IPeriodicTask
+{
+	private AdminSessionManager $sessionManager;
+
+	function __construct($app)
 	{
-		function run()
-		{
-			AdminSessionManager $sessionManager = $app['etoa.admin.session.manager'];
-
-			UserSession::cleanup();
-			$sessionManager->cleanup();
-			return "Session cleanup";
-		}
-
-		function getDescription() {
-			return "Session Cleanup";
-		}
+		$this->sessionManager = $app['etoa.admin.session.manager'];
 	}
-?>
+
+	function run()
+	{
+		UserSession::cleanup();
+		$this->sessionManager->cleanup();
+		return "Session cleanup";
+	}
+
+	function getDescription()
+	{
+		return "Session Cleanup";
+	}
+}
