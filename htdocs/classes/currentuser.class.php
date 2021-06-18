@@ -82,7 +82,7 @@
 									user_id='".$this->id."'
 								;"))
 							{
-								add_log(3,"Der Spieler [b]".$this->nick."[/b] &auml;ndert sein Passwort!");
+								Log::add(3, Log::INFO ,"Der Spieler [b]".$this->nick."[/b] &auml;ndert sein Passwort!");
 								$mail = new Mail("Passwortänderung","Hallo ".$this->nick."\n\nDies ist eine Bestätigung, dass du dein Passwort für deinen Account erfolgreich geändert hast!\n\nSolltest du dein Passwort nicht selbst geändet haben, so nimm bitte sobald wie möglich Kontakt mit einem Game-Administrator auf: http://www.etoa.ch/kontakt");
 								$mail->send($this->email);
 								$this->addToUserLog("settings","{nick} ändert sein Passwort.",0);

@@ -106,7 +106,7 @@
 
 		function & getActions($string=0)
 		{
-			$actions = explode(",",$this->actionString);
+			$actions = array_filter(explode(",",$this->actionString));
 			$ao = array();
 			$str = "";
 			$cnt = count($actions);

@@ -27,7 +27,7 @@ class ExploreReport extends Report
 
 	static function add($data)
 	{
-		return null;
+		return false;
 	}
 
 	function createSubject()

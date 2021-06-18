@@ -1173,7 +1173,7 @@
 			$dh = opendir($dir);
 			while ($f = readdir($dh)) {
 				$fp = $dir.'/'.$f;
-				if (is_file($fp) && !in_array($fp, $createdFiles)) {
+				if (is_file($fp) && !in_array($fp, $createdFiles, true)) {
 					unlink($fp);
 				}
 			}
@@ -1208,14 +1208,14 @@
             imagettftext ($im, 11, 0, $nsize[2]-$nsize[0] + 15, 20, $colWhite, $font, $race);
 
 			// Alliance
-			if (!empty($allianceTag))
+			if ($allianceTag)
 			{
                 imagettftext ($im, 9, 0, 9, 39, $colBlack, $font,"<".$allianceTag."> ".$allianceName);
                 imagettftext ($im, 9, 0, 8, 38, $colWhite, $font,"<".$allianceTag."> ".$allianceName);
 			}
 
 			// Text
-			if (!empty($text))
+			if ($text)
 			{
                 imagettftext ($im, 9, 0, 9, 54, $colBlack, $font, $text);
                 imagettftext ($im, 9, 0, 8, 53, $colWhite, $font, $text);

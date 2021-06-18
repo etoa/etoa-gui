@@ -6,6 +6,9 @@
  */
 class Net {
 
+	private static array $hostCache = [];
+	private static array $ipCache = [];
+
 	/**
 	* Returns the hostname of the given ip address
 	* Lookup results are cached in a static array and used
@@ -15,11 +18,8 @@ class Net {
 	*/
 	static function getHost($ip)
 	{
-		if (!isset($hostcache))
-			static $hostcache = array();
-
-		if (isset($hostcache[$ip]))
-			return $hostcache[$ip];
+		if (isset(self::$hostCache[$ip]))
+			return self::$hostCache[$ip];
 
 		$t = time();
 		$res = dbquery("
@@ -35,13 +35,13 @@ class Net {
 		{
 			$arr = mysql_fetch_row($res);
 			$host = $arr[0];
-			$hostcache[$ip] = $host;
+			self::$hostCache[$ip] = $host;
 			return $host;
 		}
 
 		$host = @gethostbyaddr($ip);
-		$hostcache[$ip] = $host;
-		$res = dbquery("
+		self::$hostCache[$ip] = $host;
+		dbquery("
 		REPLACE INTO
 			hostname_cache
 		(
@@ -64,11 +64,8 @@ class Net {
 	*/
 	static function getAddr($host)
 	{
-		if (!isset($ipcache))
-			static $ipcache = array();
-
-		if (isset($ipcache[$host]))
-			return $ipcache[$host];
+		if (isset(self::$ipCache[$host]))
+			return self::$ipCache[$host];
 
 		$t = time();
 		$res = dbquery("
@@ -84,13 +81,13 @@ class Net {
 		{
 			$arr = mysql_fetch_row($res);
 			$ip = $arr[0];
-			$ipcache[$host] = $ip;
+			self::$ipCache[$host] = $ip;
 			return $ip;
 		}
 
 		$ip = @gethostbyname($host);
-		$ipcache[$host] = $ip;
-		$res = dbquery("
+		self::$ipCache[$host] = $ip;
+		dbquery("
 		REPLACE INTO
 			hostname_cache
 		(
@@ -110,7 +107,7 @@ class Net {
 
 	static function clearCache()
 	{
-		$res = dbquery("
+		dbquery("
 		DELETE FROM
 			hostname_cache
 		WHERE

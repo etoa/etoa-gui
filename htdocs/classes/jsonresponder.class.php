@@ -3,7 +3,7 @@ abstract class JsonResponder
 {
   static public function createFactory($action) {
 
-    $className = ucfirst(preg_replace_callback('/_([a-z])/', function ($matches) {
+    $className = ucfirst(preg_replace_callback('/_([a-z])/', function ($matches): string {
             return strtoupper($matches[1]);
         }, $action)).'JsonResponder';
     $file = 'classes/responder/'.$action.".class.php";

@@ -36,7 +36,7 @@ class MessageBox
 			$str.="<p class=\"messagetitle\">".$title."</p>";
 		}
 		$str.= $message."</div></div>";
-		if ($save || $save == 1)
+		if ($save)
 			$_SESSION['savedmessage'] = $str;
 		return $str;
 	}

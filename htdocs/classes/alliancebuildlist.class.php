@@ -20,9 +20,9 @@
 
 		/**
 		 * Constructor
-		 * @param <type> $allianceId
-		 * @param <type> $load
-		 * @param <type> $alliance
+		 * @param int $allianceId
+		 * @param int|bool $load
+		 * @param ?Alliance $alliance
 		 */
         public function __construct($allianceId,$load=0,&$alliance=null)
 		{
@@ -281,7 +281,7 @@
 		/**
 		* Starts the constructions
 		*
-		* @param int Item-ID
+		* @param int $itemId Item-ID
 		*/
 		function build($itemId)
 		{

@@ -102,7 +102,7 @@ class BattleReport extends Report
 
 	static function add($data)
 	{
-		return null;
+		return false;
 	}
 
 	function createSubject()
@@ -111,23 +111,24 @@ class BattleReport extends Report
 		switch ($this->subType)
 		{
 			case 'battle':
-				$users = explode(',',$this->user);
+				$users = array_map(function (string $userId): int {
+					return (int) $userId;
+				}, explode(',',$this->user));
 				$subject = "Kampfbericht (";
 				switch ($this->result)
 				{
 					case '1':
-						if (array_search($this->userId,$users))
+						if (array_search($this->userId,$users, true))
 							$subject .= 'Gewonnen';
 						else
 							$subject .= 'Verloren';
 						break;
 					case '2':
-						if (array_search($this->userId,$users))
+						if (array_search($this->userId,$users, true))
 						$subject .= 'Verloren';
 					else
 						$subject .= 'Gewonnen';
 					break;
-						break;
 					default:
 						$subject.='Unentschieden';
 				}
@@ -395,8 +396,8 @@ class BattleReport extends Report
 						<tr>
 							<td colspan="2">';
 								$rnd = 1;
-								$shieldStructure = $initShieldStructure = $this->shield + $this->structure;
-								$entityShieldStructure = $entityInitShieldStructure = $this->entityShield + $this->entityStructure;
+								$shieldStructure = $initShieldStructure = (int) $this->shield + (int) $this->structure;
+								$entityShieldStructure = $entityInitShieldStructure = (int) $this->entityShield + (int) $this->entityStructure;
 								for ($rnd=1; $rnd<=5; $rnd++)
 								{
 									$shieldStructure = max(0,$shieldStructure-$this->entityWeapon[$rnd]);

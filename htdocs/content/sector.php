@@ -212,7 +212,7 @@
   $user_solsys_ids = array();
   while ($arr = mysql_fetch_row($res))
   {
-  	$user_solsys_ids[]=$arr[0];
+  	$user_solsys_ids[]= (int) $arr[0];
   }
 
   $sectorMap = new SectorMapRenderer($cfg->param1('num_of_cells'), $cfg->param2('num_of_cells'));

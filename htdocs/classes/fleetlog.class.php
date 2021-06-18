@@ -292,7 +292,7 @@ class FleetLog extends BaseLog
 	/**
 	* Removes up old logs from the persistend log table
 	*
-	* @param $timestamp string All items older than this time threshold will be deleted
+	* @param int|string $threshold All items older than this time threshold will be deleted
 	*/
 	static function cleanup($threshold)
 	{

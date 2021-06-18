@@ -18,20 +18,13 @@ abstract class Session implements ISingleton
 
 	/**
 	 * Returns the single instance of this class (Singleton design pattern)
-	 *
-	 * @return Session Instance of the session class
+	 * @return static(Session) Instance of the session class
 	 */
-	public static function getInstance($className = null)
+	public static function getInstance()
 	{
-		if (empty(self::$instance))
+		if (!isset(self::$instance))
 		{
-			// PHP >= 5.3
-			if (function_exists("get_called_class"))
-				$className = get_called_class();
-			// PHP < 5.3
-			elseif ($className==null)
-				$className = __CLASS__;
-			self::$instance = new $className(func_get_args());
+			self::$instance = new static();
 		}
 		return self::$instance;
 	}
@@ -96,10 +89,10 @@ abstract class Session implements ISingleton
 	 * The constructor defines the session hash function to be used
 	 * and names and initiates the session
 	 */
-	protected function __construct()
+	final private function __construct()
 	{
 		// Use SHA1 hash
-		ini_set('session.hash_function', 1);
+		ini_set('session.hash_function', '1');
 
 		// Set session name based on round name.
 		// MD5 is needed because spaces in roundname cause problems
@@ -111,7 +104,7 @@ abstract class Session implements ISingleton
 	/**
 	 * Getter that returns session variables or some class properties
 	 *
-	 * @param <type> $field
+	 * @param string $field
 	 * @return mixed Requested variable or null if field was not found
 	 */
 	function __get($field)

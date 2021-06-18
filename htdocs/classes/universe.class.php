@@ -64,7 +64,7 @@
 			$planet_temp_diff = $cfg->value('planet_temp');
 			$planet_temp_totaldiff = abs($planet_temp_min) + abs($planet_temp_max);
 			$perc_solsys = $cfg->value('space_percent_solsys');
-			$perc_asteroids = $cfg->value('space_percent_asteroids');
+			$perc_asteroids = (int) $cfg->value('space_percent_asteroids');
 			$perc_nebulas = $cfg->value('space_percent_nebulas');
 			$perc_wormholes = $cfg->value('space_percent_wormholes');
 			$num_planets_min = $cfg->param1('num_planets');
@@ -510,7 +510,7 @@
 				{
 					self::createPlanet($cell_id,$cnp,$np);
 				}
-				elseif ($r <= $cfg->solsys_percent_planet->v + $cfg->solsys_percent_asteroids->v)
+				elseif ($r <= $cfg->solsys_percent_planet->v + (int) $cfg->solsys_percent_asteroids->v)
 				{
 					self::createAsteroids($cell_id,$cnp);
 				}
@@ -553,7 +553,7 @@
 			$pt = self::$planet_types[array_rand(self::$planet_types)];
 			$img_nr = $pt."_".mt_rand(1,Config::getInstance()->num_planet_images->v);
 			$fields = mt_rand(Config::getInstance()->planet_fields->p1,Config::getInstance()->planet_fields->p2);
-			$tblock =  round($planet_temp_totaldiff / $np);
+			$tblock =  (int) round($planet_temp_totaldiff / $np);
 			$temp = mt_rand($planet_temp_max-($tblock*$pos),($planet_temp_max-($tblock*$pos)+$tblock));
 			$tmin = $temp - $planet_temp_diff;
 			$tmax = $temp + $planet_temp_diff;
