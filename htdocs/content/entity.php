@@ -27,6 +27,7 @@
 
 	// DATEN LADEN
 
+	$id = 0;
 	if(isset($_GET['id']) && intval($_GET['id'])>0)
 	{
 		$id = intval($_GET['id']);
@@ -207,7 +208,7 @@
 	echo "</tr>";
 	tableEnd();
 	echo "<input type=\"button\" value=\"Zur Raumkarte\" onclick=\"document.location='?page=sector'\" /> &nbsp; ";
-	if ($ent)
+	if (isset($ent))
 		echo "<input type=\"button\" value=\"Zur Systemkarte\" onclick=\"document.location='?page=cell&amp;id=".$ent->cellId()."&hl=".$id."'\" />";
 	echo "</form>
 	<script type=\"\">document.forms['planetsearch'].elements[0].focus();</script>";

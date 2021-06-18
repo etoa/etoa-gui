@@ -8,6 +8,7 @@
 		public $speed;
 		public $time2start;
 		public $time2land;
+		public $capacity;
 
 		public function __construct($sid)
 		{

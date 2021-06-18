@@ -18,8 +18,14 @@
 	//
 	//
 
+	/** @var int $alliance_market_level */
+	/** @var bool $cd_enabled */
+	/** @var int $cooldown */
+
+
 	$for_user = 0;
 	$for_alliance = 0;
+	$errMsg = null;
 
 	if ($_POST['ship_offer_reservation'] == 1)
 	{
@@ -41,7 +47,7 @@
 		}
 	}
 
-	if (empty($errMsg))
+	if (!isset($errMsg))
 	{
 
 		$ship_id = $_POST['ship_list'];

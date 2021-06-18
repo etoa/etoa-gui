@@ -18,6 +18,8 @@
 	//
 	//
 
+/** @var mixed[] $arr alliance data */
+
 if (Alliance::checkActionRights('viewmembers'))
 {
 		echo "<h2>Allianzmitglieder</h2>";

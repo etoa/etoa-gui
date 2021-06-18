@@ -18,6 +18,8 @@
 	//
 	//
 
+/** @var mixed[] $arr alliance data */
+
 if (Alliance::checkActionRights('polls'))
 {
 		echo "<h2>Umfragen verwalten</h2>";
@@ -126,6 +128,7 @@ if (Alliance::checkActionRights('polls'))
 				$_SESSION['alliance_poll']['poll_a7_text']=$parr['poll_a7_text'];
 				$_SESSION['alliance_poll']['poll_a8_text']=$parr['poll_a8_text'];
 
+                $updated = false;
 				if (isset($_POST['pollsubmit']) && $_POST['pollsubmit'] && checker_verify())
 				{
 					$_SESSION['alliance_poll']['poll_title']=$_POST['poll_title'];

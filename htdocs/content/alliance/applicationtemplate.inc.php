@@ -17,6 +17,9 @@
 	//////////////////////////////////////////////////
 	//
 	//
+
+/** @var mixed[] $arr */
+
 if (Alliance::checkActionRights('applicationtemplate'))
 {
 

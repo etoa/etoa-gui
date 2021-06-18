@@ -18,6 +18,8 @@
 	//
 	//
 
+	/** @var mixed[] $arr alliance data */
+
 	echo "<h2>Umfragen</h2>";
 
 	if (isset($_POST['vote_submit']) && checker_verify() && isset($_GET['vote']) && intval($_GET['vote'])>0 && isset($_POST['poll_answer']) && intval($_POST['poll_answer'])>0)

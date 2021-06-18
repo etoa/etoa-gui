@@ -27,10 +27,10 @@
 
 	// BEGIN SKRIPT //
 
-	/** @var Planet $cp - The current Planet */
+	/** @var ?Planet $cp - The current Planet */
 	/** @var User $cu - The current User */
 
-if ($cp)
+if (isset($cp))
 	{
 		// Kolonie aufgeben
 		if (isset($_GET['action']) && $_GET['action']=="remove")

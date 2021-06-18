@@ -24,10 +24,13 @@
 	//
 
 	/**
-	* The alliance object
-	*
-	* @author MrCage <mrcage@etoa.ch>
-	* @copyright Copyright (c) 2004-2009 by EtoA Gaming, www.etoa.ch
+	 * The alliance object
+	 *
+	 * @author MrCage <mrcage@etoa.ch>
+	 * @copyright Copyright (c) 2004-2009 by EtoA Gaming, www.etoa.ch
+	 *
+	 * @property-read string $imageUrl
+	 * @property-read float $avgPoints
 	*/
 	class Alliance
 	{

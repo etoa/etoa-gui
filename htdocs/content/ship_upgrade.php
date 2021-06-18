@@ -117,8 +117,10 @@
 
       //Errechnet das Level aus den momentanen erfahrungen (exp)
       //Diese Schleife nicht löschen, die hat schon ihren Sinn, auch wenn nichts in der Klammer ist :P
-      for ($level=0;$exp>=ceil($arr['special_ship_need_exp'] * pow($arr['special_ship_exp_factor'],$level));$level++)
-      {}
+	  $level = 0;
+	  while ($exp >= ceil($arr['special_ship_need_exp'] * pow($arr['special_ship_exp_factor'], $level))) {
+	  	$level++;
+	  }
 
       //Errechnet die benötigten EXP für das nächste Level
       $exp_for_next_level = ceil($arr['special_ship_need_exp'] * pow($arr['special_ship_exp_factor'],$level));
@@ -397,10 +399,12 @@
             $exp = $init_exp;
             $rest_exp = $exp;
 
-			      //Errechnet das Level aus den momentanen erfahrungen (exp)
-			      //Diese Schleife nicht löschen, die hat schon ihren Sinn, auch wenn nichts in der Klammer ist :P
-			      for ($level=0;$exp>=ceil($arr['special_ship_need_exp'] * pow($arr['special_ship_exp_factor'],$level));$level++)
-			      {}
+		    //Errechnet das Level aus den momentanen erfahrungen (exp)
+		    //Diese Schleife nicht löschen, die hat schon ihren Sinn, auch wenn nichts in der Klammer ist :P
+			$level=0;
+			while($exp >= ceil($arr['special_ship_need_exp'] * pow($arr['special_ship_exp_factor'],$level))) {
+				$level++;
+			}
 
             //Errechnet die benötigten EXP
             $exp_for_next_level = ceil($arr['special_ship_need_exp'] * pow($arr['special_ship_exp_factor'],$level));

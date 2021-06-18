@@ -225,11 +225,11 @@
 					echo "<input type=\"button\" value=\"L&ouml;schen\" onclick=\"document.location='?page=$page&mode=mode&del=".intval($_GET['msg_id'])."';\" />&nbsp;";
 					if ($marr['message_user_from']>0)
 					{
-						ticket_button(1,"Beleidigung melden",$marr['message_user_from']);
+						ticket_button('1',"Beleidigung melden",$marr['message_user_from']);
 					}
 					else
 					{
-						ticket_button(8,"Regelverstoss melden");
+						ticket_button('8',"Regelverstoss melden");
 					}
 					echo "</form>";
 				}
@@ -664,11 +664,11 @@
 								echo "<input type=\"button\" value=\"L&ouml;schen\" onclick=\"document.location='?page=$page&mode=mode&del=".$marr['message_id']."';\" />&nbsp;";
 								if ($marr['message_user_from']>0)
 								{
-									ticket_button(1,"Beleidigung melden",$marr['message_user_from']);
+									ticket_button('1',"Beleidigung melden",$marr['message_user_from']);
 								}
 								else
 								{
-									ticket_button(8,"Regelverstoss melden");
+									ticket_button('8',"Regelverstoss melden");
 								}
 								echo "<br/>";
 								echo "</td></tr>";

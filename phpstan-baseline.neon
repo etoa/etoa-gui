@@ -6,6 +6,196 @@ parameters:
 			path: bin/cronjob.php
 
 		-
+			message: "#^Comparison operation \"\\>\" between 2\\|3\\|4\\|5\\|6 and 0 is always true\\.$#"
+			count: 2
+			path: htdocs/content/alliance/diplomacy.inc.php
+
+		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: htdocs/content/allianceboard.php
+
+		-
+			message: "#^Right side of && is always true\\.$#"
+			count: 2
+			path: htdocs/content/allianceboard.php
+
+		-
+			message: "#^Variable \\$alliance might not be defined\\.$#"
+			count: 5
+			path: htdocs/content/allianceboard.php
+
+		-
+			message: "#^Variable \\$alliance_bnd_id might not be defined\\.$#"
+			count: 4
+			path: htdocs/content/allianceboard.php
+
+		-
+			message: "#^Variable \\$bnd_id might not be defined\\.$#"
+			count: 1
+			path: htdocs/content/allianceboard.php
+
+		-
+			message: "#^Variable \\$tarr might not be defined\\.$#"
+			count: 2
+			path: htdocs/content/allianceboard.php
+
+		-
+			message: "#^Comparison operation \"\\=\\=\" between 0\\|0\\.0\\|''\\|'0'\\|array\\(\\)\\|false\\|null and 0 results in an error\\.$#"
+			count: 1
+			path: htdocs/content/buildings.php
+
+		-
+			message: "#^Variable \\$color might not be defined\\.$#"
+			count: 1
+			path: htdocs/content/buildings.php
+
+		-
+			message: "#^Variable \\$waitArr might not be defined\\.$#"
+			count: 1
+			path: htdocs/content/buildings.php
+
+		-
+			message: "#^Variable \\$starToBeNamed might not be defined\\.$#"
+			count: 1
+			path: htdocs/content/cell.php
+
+		-
+			message: "#^Variable \\$tm might not be defined\\.$#"
+			count: 1
+			path: htdocs/content/cell.php
+
+		-
+			message: "#^Variable \\$cx might not be defined\\.$#"
+			count: 1
+			path: htdocs/content/crypto.php
+
+		-
+			message: "#^Variable \\$cy might not be defined\\.$#"
+			count: 1
+			path: htdocs/content/crypto.php
+
+		-
+			message: "#^Variable \\$pp might not be defined\\.$#"
+			count: 1
+			path: htdocs/content/crypto.php
+
+		-
+			message: "#^Variable \\$sx might not be defined\\.$#"
+			count: 1
+			path: htdocs/content/crypto.php
+
+		-
+			message: "#^Variable \\$sy might not be defined\\.$#"
+			count: 1
+			path: htdocs/content/crypto.php
+
+		-
+			message: "#^Variable \\$bwmsg might not be defined\\.$#"
+			count: 5
+			path: htdocs/content/defense.php
+
+		-
+			message: "#^Variable \\$pm might not be defined\\.$#"
+			count: 1
+			path: htdocs/content/fleetstats.php
+
+		-
+			message: "#^Negated boolean expression is always true\\.$#"
+			count: 1
+			path: htdocs/content/help.php
+
+		-
+			message: "#^Variable \\$cstr might not be defined\\.$#"
+			count: 2
+			path: htdocs/content/market/new.php
+
+		-
+			message: "#^Variable \\$marr might not be defined\\.$#"
+			count: 1
+			path: htdocs/content/messages/new.php
+
+		-
+			message: "#^Variable \\$msgcreatpreview might not be defined\\.$#"
+			count: 1
+			path: htdocs/content/messages/new.php
+
+		-
+			message: "#^Variable \\$heal_tech_level might not be defined\\.$#"
+			count: 2
+			path: htdocs/content/planetoverview.php
+
+		-
+			message: "#^Variable \\$heal_tech_name might not be defined\\.$#"
+			count: 2
+			path: htdocs/content/planetoverview.php
+
+		-
+			message: "#^Variable \\$res might not be defined\\.$#"
+			count: 1
+			path: htdocs/content/planetoverview.php
+
+		-
+			message: "#^Variable \\$shield_tech_level might not be defined\\.$#"
+			count: 2
+			path: htdocs/content/planetoverview.php
+
+		-
+			message: "#^Variable \\$shield_tech_name might not be defined\\.$#"
+			count: 2
+			path: htdocs/content/planetoverview.php
+
+		-
+			message: "#^Variable \\$structure_tech_level might not be defined\\.$#"
+			count: 2
+			path: htdocs/content/planetoverview.php
+
+		-
+			message: "#^Variable \\$structure_tech_name might not be defined\\.$#"
+			count: 2
+			path: htdocs/content/planetoverview.php
+
+		-
+			message: "#^Variable \\$weapon_tech_level might not be defined\\.$#"
+			count: 2
+			path: htdocs/content/planetoverview.php
+
+		-
+			message: "#^Variable \\$weapon_tech_name might not be defined\\.$#"
+			count: 2
+			path: htdocs/content/planetoverview.php
+
+		-
+			message: "#^Variable \\$pm might not be defined\\.$#"
+			count: 1
+			path: htdocs/content/planetstats.php
+
+		-
+			message: "#^Foreach overwrites \\$bid with its key variable\\.$#"
+			count: 1
+			path: htdocs/content/research.php
+
+		-
+			message: "#^Variable \\$color might not be defined\\.$#"
+			count: 1
+			path: htdocs/content/research.php
+
+		-
+			message: "#^Variable \\$subtitle might not be defined\\.$#"
+			count: 1
+			path: htdocs/content/research.php
+
+		-
+			message: "#^Variable \\$tmtext might not be defined\\.$#"
+			count: 1
+			path: htdocs/content/research.php
+
+		-
+			message: "#^Variable \\$sl might not be defined\\.$#"
+			count: 1
+			path: htdocs/content/techtree.php
+
+		-
 			message: "#^If condition is always false\\.$#"
 			count: 2
 			path: htdocs/inc/bootstrap.inc.php

@@ -73,13 +73,13 @@
 			else
 			{
 				error_msg("Es wurde kein entsprechendes Angebot ausgew&auml;hlt!");
-				return_btn(array("mode"=>"own"));
+				return_btn();
 			}
 		}
 		else
 		{
 			error_msg("Es wurde kein entsprechendes Angebot ausgew&auml;hlt!");
-			return_btn(array("mode"=>"own"));
+			return_btn();
 		}
 	}
 	// </editor-fold>
@@ -139,7 +139,7 @@
 		else
 		{
 			error_msg("Es wurde kein entsprechendes Angebot ausgew&auml;hlt!");
-			return_btn(array("mode"=>"user_sell"));
+			return_btn();
 		}
 	}
 	// </editor-fold>
@@ -194,7 +194,7 @@
 		else
 		{
 			error_msg("Es wurde kein entsprechendes Angebot ausgew&auml;hlt!");
-			return_btn(array("mode"=>"user_sell"));
+			return_btn();
 		}
 
 	}
@@ -233,6 +233,7 @@
 			$cnt=0;
 			while ($row=mysql_fetch_array($res))
 			{
+				$reservation = '';
 				if ($row['for_user']!=0)
 				{
 					$reservedUser = new User($row['for_user']);
@@ -324,6 +325,7 @@
 			$cnt=0;
 			while ($arr=mysql_fetch_array($res))
 			{
+				$reservation = '';
 				if ($arr['for_user']!=0)
 				{
 					$reservedUser = new User($arr['for_user']);

@@ -46,9 +46,9 @@
 		$bl = new BuildList($cp->id,$cp->id);
 		$sl = new ShipList($cp->id,$cu->id);
 
+		$ships = [];
 		if ($mode=="fleet" || $mode=="bunker")
 		{
-            $ships = [];
 			$res = dbquery("
 			SELECT
 				ship_id,
@@ -143,7 +143,7 @@
 							</td>";
 						}
 
-						$actions = explode(",",$arr['ship_actions']);
+						$actions = array_filter(explode(",",$arr['ship_actions']));
 						$accnt=count($actions);
 						$acstr = '';
 						if ($accnt>0)
@@ -316,7 +316,7 @@
 							</td>";
 						}
 
-						$actions = explode(",",$arr['ship_actions']);
+						$actions = array_filter(explode(",",$arr['ship_actions']));
 						$accnt=count($actions);
 						$acstr = '';
 						if ($accnt>0)

@@ -18,6 +18,9 @@
 	//
 	//
 
+/** @var Alliance $ally */
+/** @var bool $isFounder */
+
 if (Alliance::checkActionRights('editmembers'))
 {
 
@@ -131,7 +134,7 @@ if (Alliance::checkActionRights('editmembers'))
 			if (isset($ally->members[$fid]))
 			{
 				$ally->founderId = $fid;
-				add_log(5,"Der Spieler [b]".$ally->founder."[/b] wird vom Spieler [b]".$cu."[/b] zum Gründer befördert.");
+				Log::add(5,Log::INFO, "Der Spieler [b]".$ally->founder."[/b] wird vom Spieler [b]".$cu."[/b] zum Gründer befördert.");
 				success_msg("Gründer ge&auml;ndert!");
 			}
 			else
@@ -148,7 +151,7 @@ if (Alliance::checkActionRights('editmembers'))
 				$tmpUser = $ally->members[$kid];
 				if ($ally->kickMember($kid))
 				{
-					add_log(5,"Der Spieler [b]".$tmpUser."[/b] wurde von [b]".$cu."[/b] aus der Allianz [b]".$ally."[/b] ausgeschlossen!");
+					Log::add(5,Log::INFO, "Der Spieler [b]".$tmpUser."[/b] wurde von [b]".$cu."[/b] aus der Allianz [b]".$ally."[/b] ausgeschlossen!");
 					success_msg("Der Spieler [b]".$tmpUser."[/b] wurde aus der Allianz ausgeschlossen!");
 					unset($tmpUser);
 				}

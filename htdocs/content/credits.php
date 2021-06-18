@@ -3,7 +3,7 @@
 
 	$tm = new TextManager();
 	$credits = $tm->getText('credits');
-	if ($credits->enabled && !empty($credits->content))
+	if ($credits->enabled && $credits->content)
 	{
 		iBoxStart();
 		echo text2html($credits->content);

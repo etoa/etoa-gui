@@ -252,6 +252,7 @@
 							cat_order,
 							".$order.";");
 			$cat = [];
+			/** @var array[] $defs */
 			$defs = [];
 			while ($arr = mysql_fetch_assoc($res))
 			{
@@ -319,7 +320,7 @@
 				echo "<tr><td>Bauzeitverringerung durch ".$cu->specialist->name.":</td><td>".get_percent_string($cu->specialist->defenseTime)."</td></tr>";
 			}
 			echo "<tr><td>Eingestellte Arbeiter:</td><td>".nf($people_working);
-			if (!isset($queue) || empty($queue)) // && ?
+			if (count($queue) === 0)
 			{
 				echo '&nbsp;<a href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
 			}
@@ -403,7 +404,7 @@
         // people working changed
         if (isset($_POST['submit_people_form']))
         {
-            if (!isset($queue) || empty($queue)) { // && ?
+            if (count($queue) === 0) {
 				dbquery("
                         UPDATE
                             buildlist
@@ -496,7 +497,7 @@
 
 				// Endzeit bereits laufender Aufträge laden
 				$end_time=time();
-				if(isset($queue))
+				if(count($queue) > 0)
 				{
 					// Speichert die letzte Endzeit, da das Array $queue nach queue_starttime (und somit auch endtime) sortiert ist
 					foreach ($queue as $data)
@@ -699,7 +700,7 @@
 							$log_text = "[b]Verteidigungsauftrag Bauen[/b]
 
 							[b]Start:[/b] ".date("d.m.Y H:i:s",$start_time)."
-							[b]Ende:[/b] ".date("d.m.Y H:i:s",$end_time)."
+							[b]Ende:[/b] ".date("d.m.Y H:i:s",(int) $end_time)."
 							[b]Dauer:[/b] ".tf($duration)."
 							[b]Dauer pro Einheit:[/b] ".tf($obj_time)."
 							[b]Waffenfabrik Level:[/b] ".CURRENT_FACTORY_LEVEL."
@@ -899,11 +900,11 @@
 			/*********************************
 			* Liste der Bauaufträge anzeigen *
 			*********************************/
-			if(isset($queue) && !empty($queue))
+			if(count($queue) > 0)
 			{
 				tableStart("Bauliste");
 				$first=true;
-				$absolut_starttime=0;
+				$absolute_starttime=0;
 				foreach ($queue as $data)
 				{
 					// Listet nur Die Datensätze aus, die auch eine Verteidiguns ID beinhalten, da ev. der Datensatz mit NULL gleichgesetzt wurde
@@ -976,7 +977,7 @@
 			***********************/
 
 			$cnt = 0;
-			if (isset($cat))
+			if (count($cat) > 0)
 			{
 				foreach ($cat as $cat_id => $cat_name)
 				{
@@ -984,7 +985,7 @@
 					$ccnt = 0;
 
 					// Auflistung der Verteidigung (auch diese, die noch nicht gebaut wurden)
-					if (isset($defs))
+					if (count($defs) > 0)
 					{
 						//Einfache Ansicht
 						if ($cu->properties->itemShow!='full')
@@ -1321,7 +1322,7 @@
 									{
 										echo "<th height=\"30\">In Aufrag geben:</th>
 												<td><input type=\"text\" value=\"0\" name=\"build_count[".$data['def_id']."]\" id=\"build_count_".$data['def_id']."\" size=\"4\" maxlength=\"9\" ".tm("",$tm_cnt)." tabindex=\"".$tabulator."\" onkeyup=\"FormatNumber(this.id,this.value, ".$def_max_build.", '', '');\"/> St&uuml;ck<br><a href=\"javascript:;\" onclick=\"document.getElementById('build_count_".$data['def_id']."').value=".$def_max_build.";\">max</a>";
-												if (!isset($queue) || empty($queue)) // && ?
+												if (count($queue) === 0)
 												{
 													echo '&nbsp;<a href="#changePeople" onclick="javascript:if(document.getElementById(\'changePeople\').style.display==\'none\') {toggleBox(\'changePeople\')};updatePeopleWorkingBox(\''.$peopleOptimized.'\',\'-1\',\'^-1\');">optimieren</a>';
 												}

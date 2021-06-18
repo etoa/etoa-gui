@@ -364,7 +364,7 @@ class Ticket
 	 * @param array $data An array containing all data to create the ticket (user_id, cat_id, message, admin_id(optional))
 	 * @return int The id of the created ticket
 	 */
-	static function create(&$data)
+	static function create($data)
 	{
 		dbquery("
 		INSERT INTO

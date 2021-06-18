@@ -18,6 +18,10 @@
 	//
 	//
 
+    /** @var bool $possible */
+    /** @var int $alliance_market_level */
+    /** @var bool $cd_enabled */
+
 	// Angebotsmaske Darstellen falls noch Angebote aufgegeben werden können
 	if ($possible>0)
 	{

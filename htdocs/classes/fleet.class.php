@@ -21,6 +21,8 @@
 		private $landTime;
 		private $nextActionTime;
 		private $ships;
+		/** @var Fleet[] */
+		public array $fleets;
 
 		/**
 		* Constructor
@@ -85,9 +87,9 @@
 				$this->valid = true;
 
 				// TODO: Needs some improvement / redesign
+				$this->fleets = array();
 				if (mysql_num_rows($res) > 1)
 				{
-					$this->fleets = array();
 					while ($arr = mysql_fetch_assoc($res))
 					{
 						if ($arr['status']==3) {
@@ -95,8 +97,6 @@
 						}
 					}
 				}
-				else
-					$this->fleets = array(); // Hack to avoid notice error!
 			}
 		}
 
