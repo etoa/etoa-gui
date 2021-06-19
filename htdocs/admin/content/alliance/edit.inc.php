@@ -147,22 +147,22 @@ function saveBuildings(
 	int $id,
 	Environment $twig
 ) {
-	if ($buildingRepository->existsInAlliance($id, $request->request->get('selected'))) {
+	if ($buildingRepository->existsInAlliance($id, $request->request->get('alliance_building_id'))) {
 		$buildingRepository->updateForAlliance(
 			$id,
-			$request->request->get('selected'),
+			$request->request->getInt('alliance_building_id'),
 			$request->request->getInt('level'),
 			$request->request->getInt('amount')
 		);
-		$twig->addGlobal('successMessage', 'Datensatz erfolgreich bearbeitet!');
+		$twig->addGlobal('successMessage', 'Gebäudedatensatz erfolgreich bearbeitet!');
 	} else {
 		$buildingRepository->addToAlliance(
 			$id,
-			$request->request->get('selected'),
+			$request->request->getInt('alliance_building_id'),
 			$request->request->getInt('level'),
 			$request->request->getInt('amount')
 		);
-		$twig->addGlobal('successMessage', 'Datensatz erfolgreich eingefügt!');
+		$twig->addGlobal('successMessage', 'Gebäudedatensatz erfolgreich eingefügt!');
 	}
 }
 
@@ -172,22 +172,22 @@ function saveTechnologies(
 	int $id,
 	Environment $twig
 ): void {
-	if ($technologyRepository->existsInAlliance($id, $request->request->get('selected_tech'))) {
+	if ($technologyRepository->existsInAlliance($id, $request->request->getInt('alliance_tech_id'))) {
 		$technologyRepository->updateForAlliance(
 			$id,
-			$request->request->get('selected_tech'),
-			$request->request->get('tech_level'),
-			$request->request->get('tech_amount')
+			$request->request->getInt('alliance_tech_id'),
+			$request->request->getInt('tech_level'),
+			$request->request->getInt('tech_amount')
 		);
-		$twig->addGlobal('successMessage', 'Datensatz erfolgreich bearbeitet!');
+		$twig->addGlobal('successMessage', 'Technologiedatensatz erfolgreich bearbeitet!');
 	} else {
 		$technologyRepository->addToAlliance(
 			$id,
-			$request->request->get('selected_tech'),
-			$request->request->get('tech_level'),
-			$request->request->get('tech_amount')
+			$request->request->getInt('alliance_tech_id'),
+			$request->request->getInt('tech_level'),
+			$request->request->getInt('tech_amount')
 		);
-		$twig->addGlobal('successMessage', 'Datensatz erfolgreich eingefügt!');
+		$twig->addGlobal('successMessage', 'Technologiedatensatz erfolgreich eingefügt!');
 	}
 }
 
@@ -510,14 +510,16 @@ function buildingsTab(AllianceRepository $repository, AllianceBuildingRepository
 	tableStart();
 
 	echo "<tr>
-			<th>Gebäude</th><th>Stufe</th><th>Useranzahl</th>
+			<th>Gebäude</th>
+			<th>Stufe</th>
+			<th>Useranzahl</th>
 		</tr>";
 	echo '<tr><td>';
 
 	if (count($buildings) > 0) {
-		echo '<select name="selected">';
+		echo '<select name="alliance_building_id">';
 		foreach ($buildings as $building) {
-			echo "<option>" . $building['alliance_building_name'] . "</option>";
+			echo "<option value=\"" . $building['alliance_building_id'] . "\">" . $building['alliance_building_name'] . "</option>";
 		}
 		echo "</select>";
 	}
@@ -565,9 +567,9 @@ function technologiesTab(AllianceRepository $repository, AllianceTechnologyRepos
 	echo '<tr><td>';
 
 	if (count($technologies) > 0) {
-		echo '<select name="selected_tech">';
+		echo '<select name="alliance_tech_id">';
 		foreach ($technologies as $technology) {
-			echo "<option>" . $technology['alliance_tech_name'] . "</option>";
+			echo "<option value=\"" . $technology['alliance_tech_id'] . "\">" . $technology['alliance_tech_name'] . "</option>";
 		}
 		echo "</select>";
 	}

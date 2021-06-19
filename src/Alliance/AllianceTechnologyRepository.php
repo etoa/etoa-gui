@@ -17,81 +17,58 @@ class AllianceTechnologyRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    public function existsInAlliance(int $allianceId, string $name): bool
+    public function existsInAlliance(int $allianceId, int $technologyId): bool
     {
-        $test = $this->getConnection()
-            ->executeQuery(
-                "SELECT alliance_techlist_id
-                FROM alliance_techlist
-                WHERE alliance_techlist_alliance_id = :alliance
-                AND alliance_techlist_tech_id = (
-                    SELECT alliance_tech_id
-                    FROM alliance_technologies
-                    WHERE alliance_tech_name = :name
-                )",
-                [
-                    'alliance' => $allianceId,
-                    'name' => $name,
-                ]
-            )
+        $test = $this->createQueryBuilder()
+            ->select('alliance_techlist_id')
+            ->from('alliance_techlist')
+            ->where('alliance_techlist_alliance_id = :alliance')
+            ->andWhere('alliance_techlist_tech_id = :technologyId')
+            ->setParameters([
+                'alliance' => $allianceId,
+                'technologyId' => $technologyId,
+            ])
+            ->execute()
             ->fetchAllAssociative();
 
         return count($test) > 0;
     }
 
-    public function addToAlliance(int $allianceId, string $name, int $level, int $amount): void
+    public function addToAlliance(int $allianceId, int $technologyId, int $level, int $amount): void
     {
-        $this->getConnection()
-            ->executeStatement(
-                "INSERT into alliance_techlist
-                (
-                    alliance_techlist_alliance_id,
-                    alliance_techlist_tech_id,
-                    alliance_techlist_current_level,
-                    alliance_techlist_build_start_time,
-                    alliance_techlist_build_end_time,
-                    alliance_techlist_member_for
-                ) VALUES (
-                    :alliance,
-                    (
-                        SELECT alliance_tech_id
-                        FROM alliance_technologies
-                        WHERE alliance_tech_name = :name
-                    ),
-                    :level,
-                    0,
-                    1,
-                    :amount
-                )",
-                [
-                    'alliance' => $allianceId,
-                    'name' => $name,
-                    'level' => $level,
-                    'amount' => $amount,
-                ]
-            );
+        $this->createQueryBuilder()
+            ->insert('alliance_techlist')
+            ->values([
+                'alliance_techlist_alliance_id' => ':alliance',
+                'alliance_techlist_tech_id' => ':technologyId',
+                'alliance_techlist_current_level' => ':level',
+                'alliance_techlist_build_start_time' => 0,
+                'alliance_techlist_build_end_time' => 1,
+                'alliance_techlist_member_for' => ' :amount'
+            ])
+            ->setParameters([
+                'alliance' => $allianceId,
+                'technologyId' => $technologyId,
+                'level' => $level,
+                'amount' => $amount,
+            ])
+            ->execute();
     }
 
-    public function updateForAlliance(int $allianceId, string $name, int $level, int $amount): void
+    public function updateForAlliance(int $allianceId, int $technologyId, int $level, int $amount): void
     {
-        $this->getConnection()
-            ->executeStatement(
-                "UPDATE alliance_techlist
-                SET
-                    alliance_techlist_current_level = :level,
-                    alliance_techlist_member_for = :amount
-                WHERE alliance_techlist_alliance_id = :alliance
-                AND alliance_techlist_tech_id = (
-                    SELECT alliance_tech_id
-                    FROM alliance_technologies
-                    WHERE alliance_tech_name = :name
-                );",
-                [
-                    'level' => $level,
-                    'amount' => $amount,
-                    'alliance' => $allianceId,
-                    'name' => $name,
-                ]
-            );
+        $this->createQueryBuilder()
+            ->update('alliance_techlist')
+            ->set('alliance_techlist_current_level', ':level')
+            ->set('alliance_techlist_member_for', ':amount')
+            ->where('alliance_techlist_alliance_id = :alliance')
+            ->andWhere('alliance_techlist_tech_id = :technologyId')
+            ->setParameters([
+                'level' => $level,
+                'amount' => $amount,
+                'alliance' => $allianceId,
+                'technologyId' => $technologyId,
+            ])
+            ->execute();
     }
 }
