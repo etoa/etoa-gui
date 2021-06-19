@@ -1,9 +1,12 @@
 <?PHP
 
+use EtoA\Admin\AdminSessionRepository;
+
 ob_start();
 
 require("inc/includer.inc.php");
 
+/** @var AdminSessionRepository */
 $adminUserRepo = $app['etoa.admin.user.repository'];
 
 try {

@@ -1,13 +1,12 @@
 <?PHP
 
 use EtoA\Admin\AdminUser;
+use EtoA\Admin\AdminUserRepository;
 use EtoA\Text\TextRepository;
 
 $baseUrl = $index != "" ? "?index=" . $index : "?page=" . $page;
 
-/**
- * @var TextRepository
- */
+/** @var TextRepository */
 $textRepo = $app['etoa.text.repository'];
 
 $contactText = $textRepo->find('contact_message');
@@ -17,8 +16,10 @@ if ($contactText->enabled && $contactText->content) {
 	iBoxEnd();
 }
 
-// List of admins
+/** @var AdminUserRepository */
 $adminUserRepo = $app['etoa.admin.user.repository'];
+
+// List of admins
 $admins = collect($adminUserRepo->findAll())
 	->filter(fn (AdminUser $admin) => $admin->isContact);
 if (!$admins->isEmpty()) {

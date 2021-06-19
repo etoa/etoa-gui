@@ -7,24 +7,16 @@ use EtoA\Help\TicketSystem\TicketMessageRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\User\UserRepository;
 
-/**
- * @var TicketRepository
- */
+/** @var TicketRepository */
 $ticketRepo = $app['etoa.help.ticket.repository'];
 
-/**
- * @var TicketMessageRepository
- */
+/** @var TicketMessageRepository */
 $ticketMessageRepo = $app['etoa.help.ticket.message.repository'];
 
-/**
- * @var AdminUserRepository
- */
+/** @var AdminUserRepository */
 $adminUserRepo = $app['etoa.admin.user.repository'];
 
-/**
- * @var UserRepository
- */
+/** @var UserRepository */
 $userRepo = $app['etoa.user.repository'];
 
 $twig->addGlobal("title", "Support-Tickets");

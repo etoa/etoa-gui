@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Text\TextRepository;
+use Pimple\Container;
 
 /**
 	* Check Backend
@@ -9,7 +10,7 @@ use EtoA\Text\TextRepository;
 	{
 		private TextRepository $textRepo;
 
-		function __construct($app)
+		function __construct(Container $app)
 		{
 			$this->textRepo = $app['etoa.text.repository'];
 		}

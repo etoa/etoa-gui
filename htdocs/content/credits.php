@@ -4,9 +4,7 @@ use EtoA\Text\TextRepository;
 
 echo '<h1>Credits</h1>';
 
-	/**
-     * @var TextRepository
-     */
+	/** @var TextRepository */
     $textRepo = $app['etoa.text.repository'];
 
 	$credits = $textRepo->find('credits');

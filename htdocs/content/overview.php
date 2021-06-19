@@ -72,9 +72,7 @@ use EtoA\Text\TextRepository;
 	// Admin-Infos
 	//
 
-	/**
-     * @var TextRepository
-     */
+	/** @var TextRepository */
     $textRepo = $app['etoa.text.repository'];
 
 	$infoText = $textRepo->find('info');

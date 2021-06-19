@@ -265,9 +265,7 @@ try {
         $twig->addGlobal('adds', false);
     }
 
-    /**
-     * @var TextRepository
-     */
+    /** @var TextRepository */
     $textRepo = $app['etoa.text.repository'];
     $infoText = $textRepo->find('info');
 

@@ -4,14 +4,10 @@ use EtoA\Admin\AdminRoleManager;
 use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
 
-/**
- * @var AdminUserRepository
- */
+/** @var AdminUserRepository */
 $adminUserRepo = $app['etoa.admin.user.repository'];
 
-/**
- * @var AdminRoleManager
- */
+/** @var AdminRoleManager */
 $rm = $app['etoa.admin.role.manager'];
 
 $twig->addGlobal("title", "Admin-Management");

@@ -2,6 +2,7 @@
 
 use EtoA\Admin\AdminUserRepository;
 
+/** @var AdminUserRepository */
 $adminUserRepo = $app['etoa.admin.user.repository'];
 
 index($adminUserRepo);

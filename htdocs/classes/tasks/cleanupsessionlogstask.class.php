@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Admin\AdminSessionManager;
+use Pimple\Container;
 
 /**
  * Remove old session logs of users and admins
@@ -9,7 +10,7 @@ class CleanupSessionLogsTask implements IPeriodicTask
 {
 	private AdminSessionManager $sessionManager;
 
-	function __construct($app)
+	function __construct(Container $app)
 	{
 		$this->sessionManager = $app['etoa.admin.session.manager'];
 	}

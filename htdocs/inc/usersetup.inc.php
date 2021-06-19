@@ -2,9 +2,7 @@
 
 use EtoA\Text\TextRepository;
 
-	/**
-	 * @var TextRepository
-	 */
+	/** @var TextRepository */
 	$textRepo = $app['etoa.text.repository'];
 
 	$sx_num=$conf['num_of_sectors']['p1'];

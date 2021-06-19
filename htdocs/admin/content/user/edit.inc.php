@@ -3,14 +3,10 @@
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
 
-/**
- * @var TicketRepository
- */
+/** @var TicketRepository */
 $ticketRepo = $app['etoa.help.ticket.repository'];
 
-/**
- * @var AdminUserRepository
- */
+/** @var AdminUserRepository */
 $adminUserRepo = $app['etoa.admin.user.repository'];
 
 			if (isset($_GET['id']))
@@ -864,6 +860,7 @@ $adminUserRepo = $app['etoa.admin.user.repository'];
 
 				/** @var \EtoA\Race\RaceDataRepository $raceRepository */
 				$raceRepository = $app['etoa.race.datarepository'];
+
 				$raceNames = $raceRepository->getRaceNames();
 
 				echo "<table class=\"tbl\">";

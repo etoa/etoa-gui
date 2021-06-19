@@ -17,12 +17,20 @@ if ($sub == "offline") {
 } elseif ($sub === "gamestats") {
 	gameStatsView();
 } elseif ($sub === "changelog") {
+	/** @var CommonMarkConverter */
 	$markdown = $app['etoa.util.markdown'];
+
 	changelogView($markdown);
 } elseif ($sub == "adminlog") {
+	/** @var AdminSessionRepository */
 	$sessionRepository = $app['etoa.admin.session.repository'];
+
+	/** @var AdminUserRepository */
 	$adminUserRepo = $app['etoa.admin.user.repository'];
+
+	/** @var AdminSessionManager */
 	$sessionManager = $app['etoa.admin.session.manager'];
+
 	if (isset($_POST['logshow']) && $_POST['logshow'] != "") {
 		adminSessionLogForUserView($s, $sessionRepository, $adminUserRepo);
 	} else {
@@ -33,10 +41,15 @@ if ($sub == "offline") {
 } elseif ($sub == "observed") {
 	require("home/observed.inc.php");
 } elseif ($sub === "sysinfo") {
+	/** @var DatabaseManagerRepository */
 	$databaseManager = $app['etoa.db.manager.repository'];
+
 	systemInfoView($databaseManager);
 } else {
+	/** @var CellRepository */
 	$universeCellRepo = $app['etoa.universe.cell.repository'];
+
+	/** @var TicketRepository */
 	$ticketRepo = $app['etoa.help.ticket.repository'];
 
 	/** @var TextRepository */

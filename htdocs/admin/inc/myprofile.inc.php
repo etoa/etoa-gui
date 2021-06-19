@@ -3,6 +3,7 @@
 use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
 
+/** @var AdminUserRepository */
 $adminUserRepo = $app['etoa.admin.user.repository'];
 
 if (isset($_POST['submitPassword'])) {

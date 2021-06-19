@@ -184,14 +184,10 @@ function userTickets($uid,$target)
 {
 	global $app;
 
-	/**
-	 * @var AdminUserRepository
-	 */
+	/** @var AdminUserRepository */
 	$adminUserRepo = $app['etoa.admin.user.repository'];
 
-	/**
-	 * @var TicketRepository
-	 */
+	/** @var TicketRepository */
 	$ticketRepo = $app['etoa.help.ticket.repository'];
 
 	$or = new xajaxResponse();

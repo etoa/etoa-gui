@@ -2,6 +2,7 @@
 
 use EtoA\Text\TextRepository;
 
+/** @var TextRepository */
 $textRepo = $app['etoa.text.repository'];
 
 if (!empty($_GET['id'])) {

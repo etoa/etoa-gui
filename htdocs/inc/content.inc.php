@@ -46,9 +46,7 @@ $time = time();
 			}
 		}
 
-		/**
-		 * @var TextRepository
-		 */
+		/** @var TextRepository */
 		$textRepo = $app['etoa.text.repository'];
 
 		// SYSTEMNACHRICHT //
