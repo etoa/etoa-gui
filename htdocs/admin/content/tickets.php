@@ -47,7 +47,8 @@ if ($cu->hasRole("master,super-admin,game-admin,trial-game-admin")) {
 	$twig->addGlobal("errorMessage", "Nicht erlaubt!");
 }
 
-function ticketNavigation() {
+function ticketNavigation()
+{
 	global $page;
 	echo '<div>[ <a href="?page=' . $page . '">Aktive Tickets</a> |
 	<a href="?page=' . $page . '&amp;action=new">Neues Ticket erstellen</a> |
@@ -66,7 +67,7 @@ function editTicket(
 	$ticket = $ticketRepo->find($_GET['edit']);
 
 	echo '<form action="?page=' . $page . '&amp;id=' . $ticket->id . '" method="post">';
-	echo '<h3>Ticket ' . $ticket->getIdString().'</h3>';
+	echo '<h3>Ticket ' . $ticket->getIdString() . '</h3>';
 	tableStart();
 	echo '<tr><th>Kategorie:</th><td colspan="3">';
 	htmlSelect("cat_id", $ticketRepo->findAllCategoriesAsMap(), $ticket->catId);
@@ -131,14 +132,7 @@ function ticketDetails(
 	}
 
 	if (isset($_POST['submit_new_post'])) {
-		$ticketRepo->addMessage(
-			$ticket,
-			[
-				"admin_id" => $cu->id,
-				"message" => $_POST['message'],
-			],
-			! isset($_POST['should_close'])
-		);
+		$ticketRepo->addMessage($ticket, $_POST['message'], 0, $cu->id, !isset($_POST['should_close']));
 		success_msg("Nachricht hinzugefügt!");
 
 		if (isset($_POST['should_close'])) {
@@ -162,7 +156,7 @@ function ticketDetails(
 
 	echo '<form action="?page=' . $page . '&amp;id=' . $_GET['id'] . '" method="post">';
 
-	echo "<h3>Ticket " . $ticket->getIdString()."</h3>";
+	echo "<h3>Ticket " . $ticket->getIdString() . "</h3>";
 	tableStart();
 	echo '<tr><th style="width:150px">Kategorie:</th><td>';
 	echo $ticketRepo->getCategoryName($ticket->catId);

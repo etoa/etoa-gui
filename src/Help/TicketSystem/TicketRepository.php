@@ -164,11 +164,11 @@ class TicketRepository extends AbstractRepository
         $ticket->catId = $catId;
         $this->persist($ticket);
 
-        $this->messageRepo->create([
-            "ticket_id" => $ticket->id,
-            "user_id" => $ticket->userId,
-            "message" => $message,
-        ]);
+        $ticketMessage = new TicketMessage();
+        $ticketMessage->ticketId = $ticket->id;
+        $ticketMessage->userId = $ticket->userId;
+        $ticketMessage->message = $message;
+        $this->messageRepo->create($ticketMessage);
 
         $text = "Hallo!
 
@@ -187,9 +187,7 @@ Dein Admin-Team";
         $ticket->status = "assigned";
         $changed = $this->persist($ticket);
         if ($changed) {
-            $this->addMessage($ticket, [
-                'message' => "Das Ticket wurde dem Administrator " . $this->adminUserRepo->getNick($ticket->adminId) . " zugewiesen.",
-            ]);
+            $this->addMessage($ticket, "Das Ticket wurde dem Administrator " . $this->adminUserRepo->getNick($ticket->adminId) . " zugewiesen.");
         }
         return $changed;
     }
@@ -201,9 +199,7 @@ Dein Admin-Team";
             $ticket->solution = $solution;
             $changed = $this->persist($ticket);
             if ($changed) {
-                $this->addMessage($ticket, [
-                    'message' => "Das Ticket wurde geschlossen und als " . Ticket::SOLUTION_ITEMS[$ticket->solution] . " gekennzeichnet.",
-                ]);
+                $this->addMessage($ticket, "Das Ticket wurde geschlossen und als " . Ticket::SOLUTION_ITEMS[$ticket->solution] . " gekennzeichnet.");
             }
             return $changed;
         }
@@ -218,9 +214,7 @@ Dein Admin-Team";
             $ticket->solution = "open";
             $changed = $this->persist($ticket);
             if ($changed) {
-                $this->addMessage($ticket, [
-                    'message' => "Das Ticket wurde wieder eröffnet."
-                ]);
+                $this->addMessage($ticket, "Das Ticket wurde wieder eröffnet.");
             }
             return $changed;
         }
@@ -229,9 +223,7 @@ Dein Admin-Team";
             $ticket->status = "new";
             $changed = $this->persist($ticket);
             if ($changed) {
-                $this->addMessage($ticket, [
-                    'message' => "Der Ticketadministrator hat das Ticket wieder als Neu markiert."
-                ]);
+                $this->addMessage($ticket, "Der Ticketadministrator hat das Ticket wieder als Neu markiert.");
             }
             return $changed;
         }
@@ -255,9 +247,7 @@ Dein Admin-Team";
             if ($message != null) {
                 if ($message->adminId > 0 && $message->timestamp < $threshold) {
                     $ticket = $this->find($id);
-                    $this->addMessage($ticket, [
-                        "message" => "Das Ticket wurde automatisch geschlossen, da wir innerhalb der letzten 72 Stunden nichts mehr von dir gehört haben."
-                    ]);
+                    $this->addMessage($ticket, "Das Ticket wurde automatisch geschlossen, da wir innerhalb der letzten 72 Stunden nichts mehr von dir gehört haben.");
                     $this->close($ticket, "solved");
                     $i++;
                 }
@@ -266,11 +256,16 @@ Dein Admin-Team";
         return $i;
     }
 
-    public function addMessage(Ticket $ticket, array $data, bool $informUser = true): TicketMessage
+    public function addMessage(Ticket $ticket, string $message, int $userId = 0, int $adminId = 0, bool $informUser = true): TicketMessage
     {
-        $newMessage = $this->messageRepo->create(array_merge($data, ["ticket_id" => $ticket->id]));
+        $ticketMessage = new TicketMessage();
+        $ticketMessage->ticketId = $ticket->id;
+        $ticketMessage->userId = $userId;
+        $ticketMessage->adminId = $adminId;
+        $ticketMessage->message = $message;
+        $this->messageRepo->create($ticketMessage);
 
-        if ($informUser && $newMessage->userId == 0) {
+        if ($informUser && $ticketMessage->userId == 0) {
             $text = "Hallo!
 
 Dein [page ticket id=" . $ticket->id . "]Ticket " . $ticket->getIdString() . "[/page] wurde aktualisiert!
@@ -281,7 +276,7 @@ Dein Admin-Team";
             $this->userMessageRepo->createSystemMessage($ticket->userId, USER_MSG_CAT_ID, "Dein Ticket " . $ticket->getIdString() . ' wurde aktualisiert', $text);
         }
 
-        return $newMessage;
+        return $ticketMessage;
     }
 
     public function getMessages(Ticket $ticket): array

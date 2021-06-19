@@ -276,9 +276,7 @@ class TicketRepositoryTest extends AbstractDbTestCase
         $this->assertCount(1, $this->repository->getMessages($ticket));
 
         // when
-        $addedMessage = $this->repository->addMessage($ticket, [
-            'message' => $newMessage,
-        ]);
+        $addedMessage = $this->repository->addMessage($ticket, $newMessage);
 
         // then
         $this->assertEquals($newMessage, $addedMessage->message);
@@ -305,10 +303,7 @@ class TicketRepositoryTest extends AbstractDbTestCase
         $this->assertCount(1, $this->repository->getMessages($ticket));
 
         // when
-        $addedMessage = $this->repository->addMessage($ticket, [
-            'message' => $newMessage,
-            'admin_id' => $adminId,
-        ]);
+        $addedMessage = $this->repository->addMessage($ticket, $newMessage, 0, $adminId);
 
         // then
         $this->assertEquals($newMessage, $addedMessage->message);
@@ -334,10 +329,7 @@ class TicketRepositoryTest extends AbstractDbTestCase
         $this->assertCount(1, $this->repository->getMessages($ticket));
 
         // when
-        $addedMessage = $this->repository->addMessage($ticket, [
-            'message' => $newMessage,
-            'user_id' => $userId,
-        ]);
+        $addedMessage = $this->repository->addMessage($ticket, $newMessage, $userId);
 
         // then
         $this->assertEquals($newMessage, $addedMessage->message);
@@ -396,10 +388,7 @@ class TicketRepositoryTest extends AbstractDbTestCase
 
         $ticket = $this->repository->create($userId, $catId, $message);
         $this->repository->assign($ticket, $adminId);
-        $this->repository->addMessage($ticket, [
-            'message' => $newMessage,
-            'admin_id' => $adminId,
-        ]);
+        $this->repository->addMessage($ticket, $newMessage, 0, $adminId);
 
         $this->connection->createQueryBuilder()
             ->update('ticket_msg')
@@ -429,10 +418,7 @@ class TicketRepositoryTest extends AbstractDbTestCase
 
         $ticket = $this->repository->create($userId, $catId, $message);
         $this->repository->assign($ticket, $adminId);
-        $this->repository->addMessage($ticket, [
-            'message' => $newMessage,
-            'admin_id' => $adminId,
-        ]);
+        $this->repository->addMessage($ticket, $newMessage, 0, $adminId);
 
         $this->connection->createQueryBuilder()
             ->update('ticket_msg')

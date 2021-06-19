@@ -58,10 +58,7 @@ function viewTicket(
 	$ticket = array_shift($tickets);
 
 	if (isset($_POST['submit_new_post'])) {
-		$ticketRepo->addMessage($ticket, [
-			"user_id" => $cu->id,
-			"message" => $_POST['message']
-		]);
+		$ticketRepo->addMessage($ticket, $_POST['message'], $cu->id);
 		success_msg("Nachricht hinzugefügt!");
 	}
 

@@ -90,14 +90,11 @@ class TicketMessageRepository extends AbstractRepository
         return $message;
     }
 
-    public function create($data): TicketMessage
+    public function create(TicketMessage $message): void
     {
-        $message = new TicketMessage();
-        $message->ticketId = intval($data['ticket_id']);
-        $message->userId = (isset($data['user_id']) ? intval($data['user_id']) : 0);
-        $message->adminId = (isset($data['admin_id']) ? intval($data['admin_id']) : 0);
-        $message->timestamp = time();
-        $message->message = $data['message'];
+        if (!isset($message->timestamp)) {
+            $message->timestamp = time();
+        }
 
         $this->createQueryBuilder()
             ->insert('ticket_msg')
@@ -110,15 +107,14 @@ class TicketMessageRepository extends AbstractRepository
             ])
             ->setParameters([
                 'ticket_id' => $message->ticketId,
-                'user_id' => $message->userId,
-                'admin_id' => $message->adminId,
+                'user_id' => $message->userId ?? 0,
+                'admin_id' => $message->adminId ?? 0,
                 'timestamp' => $message->timestamp,
                 'message' => $message->message,
             ])
             ->execute();
-        $message->id = (int) $this->getConnection()->lastInsertId();
 
-        return $message;
+        $message->id = (int) $this->getConnection()->lastInsertId();
     }
 
     public function getAuthorNick(TicketMessage $message): string
