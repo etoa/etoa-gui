@@ -89,7 +89,7 @@ class AllianceRepository extends AbstractRepository
             throw new InvalidAllianceParametersException("Ungültiger Name! Die Länge muss zwischen 4 und 25 Zeichen liegen und darf folgende Zeichen nicht enthalten: ^'\"?<>$!=;&[]\\\\");
         }
 
-        if ($founderId == null || $founderId <= 0) {
+        if ($founderId === null || $founderId <= 0) {
             throw new InvalidAllianceParametersException("Allianzgründer-ID fehlt!");
         }
 
