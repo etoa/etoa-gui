@@ -22,8 +22,8 @@ class AdminUserRepository extends AbstractRepository
         $data = $this->createQueryBuilder()
             ->select("*")
             ->from('admin_users')
-            ->where('user_id = ?')
-            ->setParameter(0, $id)
+            ->where('user_id = :id')
+            ->setParameter('id', $id)
             ->execute()
             ->fetchAssociative();
         return $data !== false ? $this->createObject($data) : null;
@@ -34,8 +34,8 @@ class AdminUserRepository extends AbstractRepository
         $data = $this->createQueryBuilder()
             ->select("*")
             ->from('admin_users')
-            ->where('LCASE(user_nick) = LCASE(?)')
-            ->setParameter(0, $nick)
+            ->where('LCASE(user_nick) = LCASE(:nick)')
+            ->setParameter('nick', $nick)
             ->execute()
             ->fetchAssociative();
         return $data !== false ? $this->createObject($data) : null;

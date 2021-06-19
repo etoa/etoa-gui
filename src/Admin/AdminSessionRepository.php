@@ -13,8 +13,8 @@ class AdminSessionRepository extends AbstractRepository
         return (int) $this->createQueryBuilder()
             ->select('COUNT(*)')
             ->from('admin_user_sessions')
-            ->where('time_action > ?')
-            ->setParameter(0, time() - $timeout)
+            ->where('time_action > :timeout')
+            ->setParameter('timeout', time() - $timeout)
             ->execute()
             ->fetchOne();
     }

@@ -34,8 +34,8 @@ class AllianceRepository extends AbstractRepository
         return $this->createQueryBuilder()
             ->select("*")
             ->from('alliances')
-            ->where('alliance_id = ?')
-            ->setParameter(0, $id)
+            ->where('alliance_id = :id')
+            ->setParameter('id', $id)
             ->execute()
             ->fetchAssociative();
     }
@@ -155,8 +155,8 @@ class AllianceRepository extends AbstractRepository
         return $this->createQueryBuilder()
             ->select('alliance_img')
             ->from('alliances')
-            ->where('alliance_id = ?')
-            ->setParameter(0, $allianceId)
+            ->where('alliance_id = :allianceId')
+            ->setParameter('allianceId', $allianceId)
             ->execute()
             ->fetchOne();
     }
@@ -167,8 +167,8 @@ class AllianceRepository extends AbstractRepository
             ->update('alliances')
             ->set('alliance_img', '')
             ->set('alliance_img_check', (string) 0)
-            ->where('alliance_id = ?')
-            ->setParameter(0, $allianceId)
+            ->where('alliance_id = :allianceId')
+            ->setParameter('allianceId', $allianceId)
             ->execute();
 
         return (int) $affected > 0;
@@ -179,8 +179,8 @@ class AllianceRepository extends AbstractRepository
         $affected = $this->createQueryBuilder()
             ->update('alliances')
             ->set('alliance_img_check', (string) 0)
-            ->where('alliance_id = ?')
-            ->setParameter(0, $allianceId)
+            ->where('alliance_id = :allianceId')
+            ->setParameter('allianceId', $allianceId)
             ->execute();
 
         return (int) $affected > 0;
@@ -226,9 +226,9 @@ class AllianceRepository extends AbstractRepository
                 'rank_name'
             )
             ->from('alliance_ranks')
-            ->where('rank_alliance_id = ?')
+            ->where('rank_alliance_id = :allianceId')
             ->orderBy('rank_level', 'DESC')
-            ->setParameter(0, $allianceId)
+            ->setParameter('allianceId', $allianceId)
             ->execute()
             ->fetchAllAssociative();
     }
@@ -377,8 +377,8 @@ class AllianceRepository extends AbstractRepository
     {
         $affected = (int) $this->createQueryBuilder()
             ->delete('alliances')
-            ->where('alliance_id = ?')
-            ->setParameter(0, $id)
+            ->where('alliance_id = :id')
+            ->setParameter('id', $id)
             ->execute();
 
         $this->deleteRanks($id);
@@ -391,8 +391,8 @@ class AllianceRepository extends AbstractRepository
     {
         $this->createQueryBuilder()
             ->delete("alliance_ranks")
-            ->where('rank_alliance_id = ?')
-            ->setParameter(0, $allianceId)
+            ->where('rank_alliance_id = :allianceId')
+            ->setParameter('allianceId', $allianceId)
             ->execute();
     }
 
@@ -415,8 +415,8 @@ class AllianceRepository extends AbstractRepository
     {
         $this->createQueryBuilder()
             ->delete('alliance_bnd')
-            ->where('alliance_bnd_id = ?')
-            ->setParameter(0, $id)
+            ->where('alliance_bnd_id = :id')
+            ->setParameter('id', $id)
             ->execute();
     }
 
@@ -451,10 +451,10 @@ class AllianceRepository extends AbstractRepository
                 'user_alliance_rank_id'
             )
             ->from('users')
-            ->where('user_alliance_id = ?')
+            ->where('user_alliance_id = :allianceId')
             ->orderBy('user_points', 'DESC')
             ->addOrderBy('user_nick')
-            ->setParameter(0, $allianceId)
+            ->setParameter('allianceId', $allianceId)
             ->execute()
             ->fetchAllAssociative();
     }
@@ -476,14 +476,14 @@ class AllianceRepository extends AbstractRepository
     {
         $this->createQueryBuilder()
             ->delete('alliance_ranks')
-            ->where('rank_id = ?')
-            ->setParameter(0, $rankId)
+            ->where('rank_id = :rankId')
+            ->setParameter('rankId', $rankId)
             ->execute();
 
         $this->createQueryBuilder()
             ->delete('alliance_rankrights')
-            ->where('rr_rank_id = ?')
-            ->setParameter(0, $rankId)
+            ->where('rr_rank_id = :rankId')
+            ->setParameter('rankId', $rankId)
             ->execute();
     }
 
@@ -493,8 +493,8 @@ class AllianceRepository extends AbstractRepository
             ->update('users')
             ->set('user_alliance_id', (string) 0)
             ->set('user_alliance_rank_id', (string) 0)
-            ->where('user_id = ?')
-            ->setParameter(0, $userId)
+            ->where('user_id = :userId')
+            ->setParameter('userId', $userId)
             ->execute();
     }
 
@@ -533,9 +533,9 @@ class AllianceRepository extends AbstractRepository
         return $this->createQueryBuilder()
             ->select('*')
             ->from('alliance_history')
-            ->where('history_alliance_id = ?')
+            ->where('history_alliance_id = :allianceId')
             ->orderBy('history_timestamp', 'DESC')
-            ->setParameter(0, $allianceId)
+            ->setParameter('allianceId', $allianceId)
             ->execute()
             ->fetchAllAssociative();
     }
@@ -548,8 +548,8 @@ class AllianceRepository extends AbstractRepository
                 'b.alliance_building_name'
             )
             ->from('alliance_buildlist', 'bl')
-            ->innerJoin('bl', 'alliance_buildings', 'b', 'b.alliance_building_id = bl.alliance_buildlist_building_id AND alliance_buildlist_alliance_id = ?')
-            ->setParameter(0, $allianceId)
+            ->innerJoin('bl', 'alliance_buildings', 'b', 'b.alliance_building_id = bl.alliance_buildlist_building_id AND alliance_buildlist_alliance_id = :allianceId')
+            ->setParameter('allianceId', $allianceId)
             ->execute()
             ->fetchAllAssociative();
     }
@@ -562,8 +562,8 @@ class AllianceRepository extends AbstractRepository
                 't.alliance_tech_name'
             )
             ->from('alliance_techlist', 'tl')
-            ->innerJoin('tl', 'alliance_technologies', 't', 't.alliance_tech_id = tl.alliance_techlist_tech_id AND alliance_techlist_alliance_id = ?')
-            ->setParameter(0, $allianceId)
+            ->innerJoin('tl', 'alliance_technologies', 't', 't.alliance_tech_id = tl.alliance_techlist_tech_id AND alliance_techlist_alliance_id = :allianceId')
+            ->setParameter('allianceId', $allianceId)
             ->execute()
             ->fetchAllAssociative();
     }

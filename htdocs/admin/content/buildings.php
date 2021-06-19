@@ -549,8 +549,8 @@ if ($sub=="prices")
 			->from('buildlist', 'bl')
 			->innerJoin('bl', 'planets', 'p', 'bl.buildlist_entity_id = p.id')
 			->innerJoin('bl', 'users', 'u', 'bl.buildlist_user_id = u.user_id')
-			->innerJoin('bl', 'buildings', 'b', 'bl.buildlist_building_id = b.building_id AND bl.buildlist_id = ?')
-			->setParameter(0, $id)
+			->innerJoin('bl', 'buildings', 'b', 'bl.buildlist_building_id = b.building_id AND bl.buildlist_id = :id')
+			->setParameter('id', $id)
 			->execute()
 			->fetchAssociative();
 	}
@@ -582,8 +582,8 @@ if ($sub=="prices")
 		$affected = $conn
 			->createQueryBuilder()
 			->delete('buildlist')
-			->where('buildlist_id = ?')
-			->setParameter(0, $id)
+			->where('buildlist_id = :id')
+			->setParameter('id', $id)
 			->execute();
 		return (int) $affected > 0;
 	}
@@ -594,9 +594,9 @@ if ($sub=="prices")
 			->createQueryBuilder()
 			->select('bp_level', 'bp_points')
 			->from('building_points')
-			->where('bp_building_id = ?')
+			->where('bp_building_id = :buildingId')
 			->orderBy('bp_level' ,'ASC')
-			->setParameter(0, $buildingId)
+			->setParameter('buildingId', $buildingId)
 			->execute()
 			->fetchAllAssociative();
 	}

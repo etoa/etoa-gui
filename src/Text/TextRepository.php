@@ -42,8 +42,8 @@ class TextRepository extends AbstractRepository
         $data = $this->createQueryBuilder()
             ->select("*")
             ->from('texts')
-            ->where('text_id = ?')
-            ->setParameter(0, $id)
+            ->where('text_id = :id')
+            ->setParameter('id', $id)
             ->execute()
             ->fetchAssociative();
 		if ($data) {

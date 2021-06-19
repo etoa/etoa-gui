@@ -14,9 +14,9 @@ class DatabaseManagerRepository extends AbstractRepository
         return (int) $this->createQueryBuilder()
             ->select('round(sum( data_length + index_length ) / 1024 / 1024,2)')
             ->from('information_schema.TABLES')
-            ->where('table_schema = ?')
+            ->where('table_schema = :database')
             ->groupBy('table_schema')
-            ->setParameter(0, $database)
+            ->setParameter('database', $database)
             ->execute()
             ->fetchOne();
     }

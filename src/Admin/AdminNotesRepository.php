@@ -13,8 +13,8 @@ class AdminNotesRepository extends AbstractRepository
         return (int) $this->createQueryBuilder()
             ->select("COUNT(*)")
             ->from('admin_notes')
-            ->where('admin_id = ?')
-            ->setParameter(0, $adminId)
+            ->where('admin_id = :adminId')
+            ->setParameter('adminId', $adminId)
             ->execute()
             ->fetchOne();
     }
@@ -24,8 +24,8 @@ class AdminNotesRepository extends AbstractRepository
         return $this->createQueryBuilder()
             ->select("*")
             ->from('admin_notes')
-            ->where('admin_id = ?')
-            ->setParameter(0, $adminId)
+            ->where('admin_id = :adminId')
+            ->setParameter('adminId', $adminId)
             ->orderBy('date', 'DESC')
             ->execute()
             ->fetchAllAssociative();
