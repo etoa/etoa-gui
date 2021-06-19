@@ -6,6 +6,7 @@ use EtoA\Help\TicketSystem\Ticket;
 use EtoA\Help\TicketSystem\TicketMessageRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\User\UserRepository;
+use Symfony\Component\HttpFoundation\Request;
 
 /** @var TicketRepository */
 $ticketRepo = $app['etoa.help.ticket.repository'];
@@ -19,21 +20,24 @@ $adminUserRepo = $app['etoa.admin.user.repository'];
 /** @var UserRepository */
 $userRepo = $app['etoa.user.repository'];
 
+/** @var Request */
+$request = Request::createFromGlobals();
+
 $twig->addGlobal("title", "Support-Tickets");
 
 if ($cu->hasRole("master,super-admin,game-admin,trial-game-admin")) {
     ticketNavigation();
 
-    if (isset($_GET['edit']) && $_GET['edit'] > 0) {
-        editTicket($ticketRepo, $adminUserRepo, $userRepo);
-    } elseif (isset($_GET['id']) && $_GET['id'] > 0) {
-        ticketDetails($ticketRepo, $ticketMessageRepo, $adminUserRepo, $userRepo, $cu);
-    } elseif (isset($_GET['action']) && $_GET['action'] == "new") {
+    if ($request->query->has('edit') && $request->query->getInt('edit') > 0) {
+        editTicket($request, $ticketRepo, $adminUserRepo, $userRepo);
+    } elseif ($request->query->has('id') && $request->query->getInt('id') > 0) {
+        ticketDetails($request, $ticketRepo, $ticketMessageRepo, $adminUserRepo, $userRepo, $cu);
+    } elseif ($request->query->has('action') && $request->query->get('action') == "new") {
         createNewTicketForm($ticketRepo);
-    } elseif (isset($_GET['action']) && $_GET['action'] == "closed") {
+    } elseif ($request->query->has('action') && $request->query->get('action') == "closed") {
         closedTickets($ticketRepo, $ticketMessageRepo, $adminUserRepo, $userRepo);
     } else {
-        activeTickets($ticketRepo, $ticketMessageRepo, $adminUserRepo, $userRepo);
+        activeTickets($request, $ticketRepo, $ticketMessageRepo, $adminUserRepo, $userRepo);
     }
 } else {
     $twig->addGlobal("errorMessage", "Nicht erlaubt!");
@@ -48,6 +52,7 @@ function ticketNavigation()
 }
 
 function editTicket(
+    Request $request,
     TicketRepository $ticketRepo,
     AdminUserRepository $adminUserRepo,
     UserRepository $userRepo
@@ -56,7 +61,7 @@ function editTicket(
 
     echo "<h2>Ticket bearbeiten</h2>";
 
-    $ticket = $ticketRepo->find($_GET['edit']);
+    $ticket = $ticketRepo->find($request->query->getInt('edit'));
 
     echo '<form action="?page=' . $page . '&amp;id=' . $ticket->id . '" method="post">';
     echo '<h3>Ticket ' . $ticket->getIdString() . '</h3>';
@@ -89,6 +94,7 @@ function editTicket(
 }
 
 function ticketDetails(
+    Request $request,
     TicketRepository $ticketRepo,
     TicketMessageRepository $ticketMessageRepo,
     AdminUserRepository $adminUserRepo,
@@ -99,45 +105,51 @@ function ticketDetails(
 
     echo "<h2>Ticket-Details</h2>";
 
-    $ticket = $ticketRepo->find($_GET['id']);
+    $ticket = $ticketRepo->find($request->query->getInt('id'));
 
-    if (isset($_POST['submit'])) {
-        $ticket->status = $_POST['status'];
-        $ticket->solution = $_POST['solution'];
-        $ticket->catId = $_POST['cat_id'];
-        $ticket->adminId = $_POST['admin_id'];
-        $ticket->adminComment = $_POST['admin_comment'];
+    if ($request->request->has('submit')) {
+        $ticket->status = $request->request->get('status');
+        $ticket->solution = $request->request->get('solution');
+        $ticket->catId = $request->request->getInt('cat_id');
+        $ticket->adminId = $request->request->getInt('admin_id');
+        $ticket->adminComment = $request->request->get('admin_comment');
 
         if ($ticketRepo->persist($ticket)) {
             success_msg("Ticket aktualisiert!");
         }
     }
-    if (isset($_POST['submit_assign'])) {
+    if ($request->request->has('submit_assign')) {
         if ($ticketRepo->assign($ticket, $cu->id)) {
             success_msg("Ticket aktualisiert!");
         }
     }
-    if (isset($_POST['submit_reopen'])) {
+    if ($request->request->has('submit_reopen')) {
         if ($ticketRepo->reopen($ticket)) {
             success_msg("Ticket aktualisiert!");
         }
     }
 
-    if (isset($_POST['submit_new_post'])) {
-        $ticketRepo->addMessage($ticket, $_POST['message'], 0, $cu->id, !isset($_POST['should_close']));
+    if ($request->request->has('submit_new_post')) {
+        $ticketRepo->addMessage(
+            $ticket,
+            $request->request->get('message'),
+            0,
+            $cu->id,
+            !$request->request->has('should_close')
+        );
         success_msg("Nachricht hinzugefügt!");
 
-        if (isset($_POST['should_close'])) {
-            $ticketRepo->close($ticket, $_POST['close_solution']);
+        if ($request->request->has('should_close')) {
+            $ticketRepo->close($ticket, $request->request->get('close_solution'));
         }
 
-        if (isset($_POST['admin_comment'])) {
-            $ticket->adminComment = $_POST['admin_comment'];
+        if ($request->request->has('admin_comment')) {
+            $ticket->adminComment = $request->request->get('admin_comment');
             $ticketRepo->persist($ticket);
         }
     }
-    if (isset($_POST['submit_admin_comment'])) {
-        $ticket->adminComment = $_POST['admin_comment'];
+    if ($request->request->has('submit_admin_comment')) {
+        $ticket->adminComment = $request->request->get('admin_comment');
         $ticketRepo->persist($ticket);
     }
 
@@ -146,7 +158,7 @@ function ticketDetails(
     " . popupLink("sendmessage", "Nachricht senden", "", "id=" . $ticket->userId) . "<br/>
     </div>";
 
-    echo '<form action="?page=' . $page . '&amp;id=' . $_GET['id'] . '" method="post">';
+    echo '<form action="?page=' . $page . '&amp;id=' . $ticket->id . '" method="post">';
 
     echo "<h3>Ticket " . $ticket->getIdString() . "</h3>";
     tableStart();
@@ -281,6 +293,7 @@ function closedTickets(
 }
 
 function activeTickets(
+    Request $request,
     TicketRepository $ticketRepo,
     TicketMessageRepository $ticketMessageRepo,
     AdminUserRepository $adminUserRepo,
@@ -290,8 +303,12 @@ function activeTickets(
 
     echo '<h2>Aktive Tickets</h2>';
 
-    if (isset($_POST['submit_new'])) {
-        $ticketRepo->create((int) $_POST['user_id'], (int) $_POST['cat_id'], $_POST['message']);
+    if ($request->request->has('submit_new')) {
+        $ticketRepo->create(
+            $request->request->getInt('user_id'),
+            $request->request->getInt('cat_id'),
+            $request->request->get('message')
+        );
         success_msg("Das Ticket wurde erstellt!");
     }
 
