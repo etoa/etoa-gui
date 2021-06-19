@@ -71,7 +71,7 @@ function registerFirstUser(AdminUserRepository $adminUserRepo, Environment $twig
     $nu->email = $_POST['user_email'];
     $nu->nick = $_POST['user_nick'];
     $nu->name = $_POST['user_nick'];
-    $nu->roles = array('master');
+    $nu->roles = ['master'];
     $adminUserRepo->save($nu);
     $adminUserRepo->setPassword($nu, $_POST['user_password']);
 
