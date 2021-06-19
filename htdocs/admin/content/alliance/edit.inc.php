@@ -200,14 +200,14 @@ function edit(
 ): void {
 	global $page;
 
-	$arr = $repository->find($id);
+	$alliance = $repository->find($id);
 
-	if ($arr === null) {
+	if ($alliance === null) {
 		echo 'Alliance does not exist.';
 		return;
 	}
 
-	$twig->addGlobal('subtitle', "Allianz bearbeiten: [" . $arr['alliance_tag'] . "] " . $arr['alliance_name']);
+	$twig->addGlobal('subtitle', "Allianz bearbeiten: [" . $alliance['alliance_tag'] . "] " . $alliance['alliance_name']);
 
 	$members = $repository->findUsers($id);
 
@@ -228,7 +228,7 @@ function edit(
 	</ul>
 	<div id="tabs-1">';
 
-	infoTab($arr, $members);
+	infoTab($alliance, $members);
 
 	echo '</div><div id="tabs-2">';
 
@@ -244,11 +244,11 @@ function edit(
 
 	echo '</div><div id="tabs-5">';
 
-	resourcesTab($arr);
+	resourcesTab($alliance);
 
 	echo '</div><div id="tabs-6">';
 
-	depositsTab($arr, $members);
+	depositsTab($alliance, $members);
 
 	echo '</div><div id="tabs-7">';
 
@@ -265,31 +265,31 @@ function edit(
 	</div>';
 }
 
-function infoTab(array $arr, array $members): void
+function infoTab(array $alliance, array $members): void
 {
 	tableStart();
-	echo "<tr><th>ID</th><td>" . $arr['alliance_id'] . "</td></tr>";
+	echo "<tr><th>ID</th><td>" . $alliance['alliance_id'] . "</td></tr>";
 	echo "<tr><th>[Tag] Name</th><td>
-			[<input type=\"text\" name=\"alliance_tag\" value=\"" . $arr['alliance_tag'] . "\" size=\"6\" maxlength=\"6\" required />]
-			<input type=\"text\" name=\"alliance_name\" value=\"" . $arr['alliance_name'] . "\" size=\"30\" maxlength=\"25\" required />
+			[<input type=\"text\" name=\"alliance_tag\" value=\"" . $alliance['alliance_tag'] . "\" size=\"6\" maxlength=\"6\" required />]
+			<input type=\"text\" name=\"alliance_name\" value=\"" . $alliance['alliance_name'] . "\" size=\"30\" maxlength=\"25\" required />
 		</td></tr>";
 	echo "<tr><th>Gründer</th><td><select name=\"alliance_founder_id\">";
 	echo "<option value=\"0\">(niemand)</option>";
 	foreach ($members as $member) {
 		echo "<option value=\"" . $member['user_id'] . "\"";
-		if ($arr['alliance_founder_id'] == $member['user_id']) {
+		if ($alliance['alliance_founder_id'] == $member['user_id']) {
 			echo " selected=\"selected\"";
 		}
 		echo ">" . $member['user_nick'] . "</option>";
 	}
 	echo "</select></td></tr>";
-	echo "<tr><th>Text</th><td><textarea cols=\"45\" rows=\"10\" name=\"alliance_text\">" . stripslashes($arr['alliance_text']) . "</textarea></td></tr>";
-	echo "<tr><th>Gründung</th><td>" . date("Y-m-d H:i:s", $arr['alliance_foundation_date']) . "</td></tr>";
-	echo "<tr><th>Website</th><td><input type=\"text\" name=\"alliance_url\" value=\"" . $arr['alliance_url'] . "\" size=\"40\" maxlength=\"250\" /></td></tr>";
-	echo "<tr><th>Bewerbungsvorlage</th><td><textarea cols=\"45\" rows=\"10\" name=\"alliance_application_template\">" . stripslashes($arr['alliance_application_template']) . "</textarea></td></tr>";
+	echo "<tr><th>Text</th><td><textarea cols=\"45\" rows=\"10\" name=\"alliance_text\">" . stripslashes($alliance['alliance_text']) . "</textarea></td></tr>";
+	echo "<tr><th>Gründung</th><td>" . date("Y-m-d H:i:s", $alliance['alliance_foundation_date']) . "</td></tr>";
+	echo "<tr><th>Website</th><td><input type=\"text\" name=\"alliance_url\" value=\"" . $alliance['alliance_url'] . "\" size=\"40\" maxlength=\"250\" /></td></tr>";
+	echo "<tr><th>Bewerbungsvorlage</th><td><textarea cols=\"45\" rows=\"10\" name=\"alliance_application_template\">" . stripslashes($alliance['alliance_application_template']) . "</textarea></td></tr>";
 	echo "<tr><th>Bild</th><td>";
-	if ($arr['alliance_img'] != "") {
-		echo '<img src="' . ALLIANCE_IMG_DIR . '/' . $arr['alliance_img'] . '" alt="Profil" /><br/>';
+	if ($alliance['alliance_img'] != "") {
+		echo '<img src="' . ALLIANCE_IMG_DIR . '/' . $alliance['alliance_img'] . '" alt="Profil" /><br/>';
 		echo "<input type=\"checkbox\" value=\"1\" name=\"alliance_img_del\"> Bild löschen<br/>";
 	} else {
 		echo "Keines";
@@ -414,31 +414,31 @@ function historyTab(AllianceRepository $repository, int $id): void
 	tableEnd();
 }
 
-function resourcesTab(array $arr): void
+function resourcesTab(array $alliance): void
 {
 	echo '<table class="tb">';
 	echo "<tr>
 			<th class=\"resmetalcolor\">Titan</th>
 			<td>
-				<input type=\"text\" name=\"res_metal\" id=\"res_metal\" value=\"" . nf($arr['alliance_res_metal']) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
+				<input type=\"text\" name=\"res_metal\" id=\"res_metal\" value=\"" . nf($alliance['alliance_res_metal']) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
 			+/-: <input type=\"text\" name=\"res_metal_add\" id=\"res_metal_add\" value=\"0\" size=\"8\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/></td>";
 	echo "<th class=\"rescrystalcolor\">Silizium</th>
-			<td><input type=\"text\" name=\"res_crystal\" id=\"res_crystal\" value=\"" . nf($arr['alliance_res_crystal']) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
+			<td><input type=\"text\" name=\"res_crystal\" id=\"res_crystal\" value=\"" . nf($alliance['alliance_res_crystal']) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
 			+/-: <input type=\"text\" name=\"res_crystal_add\" id=\"res_crystal_add\" value=\"0\" size=\"8\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/></td></tr>";
 	echo "<tr><th class=\"resplasticcolor\">PVC</th>
-			<td><input type=\"text\" name=\"res_plastic\" id=\"res_plastic\" value=\"" . nf($arr['alliance_res_plastic']) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
+			<td><input type=\"text\" name=\"res_plastic\" id=\"res_plastic\" value=\"" . nf($alliance['alliance_res_plastic']) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
 			+/-: <input type=\"text\" name=\"res_plastic_add\" id=\"res_plastic_add\" value=\"0\" size=\"8\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/></td>";
 	echo "<th class=\"resfuelcolor\">Tritium</th>
-			<td><input type=\"text\" name=\"res_fuel\" id=\"res_fuel\" value=\"" . nf($arr['alliance_res_fuel']) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
+			<td><input type=\"text\" name=\"res_fuel\" id=\"res_fuel\" value=\"" . nf($alliance['alliance_res_fuel']) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
 			+/-: <input type=\"text\" name=\"res_fuel_add\" id=\"res_fuel_add\" value=\"0\" size=\"8\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/></td></tr>";
 	echo "<tr><th class=\"resfoodcolor\">Nahrung</th>
-			<td><input type=\"text\" name=\"res_food\" id=\"res_food\" value=\"" . nf($arr['alliance_res_food']) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
+			<td><input type=\"text\" name=\"res_food\" id=\"res_food\" value=\"" . nf($alliance['alliance_res_food']) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
 			+/-: <input type=\"text\" name=\"res_food_add\" id=\"res_food_add\" value=\"0\" size=\"8\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/></td><td colspan=\"2\">";
 	tableEnd();
 	echo "<p><input type=\"submit\" name=\"res_save\" value=\"Übernehmen\" /></p>";
 }
 
-function depositsTab(array $arr, array $members): void
+function depositsTab(array $alliance, array $members): void
 {
 	echo "<form id=\"filterForm\">";
 	tableStart("Filter");
@@ -470,7 +470,7 @@ function depositsTab(array $arr, array $members): void
 		</td>
 	</tr><tr>";
 	tableEnd();
-	echo "<p><input type=\"button\" onclick=\"xajax_showSpend(" . $arr['alliance_id'] . ",xajax.getFormValues('filterForm'))\" value=\"Anzeigen\"\"/></p>";
+	echo "<p><input type=\"button\" onclick=\"xajax_showSpend(" . $alliance['alliance_id'] . ",xajax.getFormValues('filterForm'))\" value=\"Anzeigen\"\"/></p>";
 	echo "</form>";
 
 	echo "<div id=\"spends\">&nbsp;</div>";
@@ -478,20 +478,23 @@ function depositsTab(array $arr, array $members): void
 
 function buildingsTab(AllianceRepository $repository, AllianceBuildingRepository $buildingRepository, int $id): void
 {
-	$buildListData = $repository->findBuildings($id);
+	$buildListItems = $repository->findBuildings($id);
 	$buildings = $buildingRepository->findAll();
 
 	tableStart();
 	echo "<tr>
-			<th>Gebäude</th><th>Stufe</th><th>Useranzahl</th><th>Status</th>
+			<th>Gebäude</th>
+			<th>Stufe</th>
+			<th>Useranzahl</th>
+			<th>Status</th>
 		</tr>";
-	if (count($buildListData) > 0) {
-		foreach ($buildListData as $arr) {
-			echo "<tr><td>" . $arr['alliance_building_name'] . "</td>
-			<td>" . $arr['alliance_buildlist_current_level'] . "</td>
-			<td>" . $arr['alliance_buildlist_member_for'] . "</td><td>";
-			if ($arr['alliance_buildlist_build_end_time'] > time()) echo "Bauen";
-			elseif ($arr['alliance_buildlist_build_end_time'] > 0) echo "Bau abgeschlossen";
+	if (count($buildListItems) > 0) {
+		foreach ($buildListItems as $item) {
+			echo "<tr><td>" . $item['alliance_building_name'] . "</td>
+			<td>" . $item['alliance_buildlist_current_level'] . "</td>
+			<td>" . $item['alliance_buildlist_member_for'] . "</td><td>";
+			if ($item['alliance_buildlist_build_end_time'] > time()) echo "Bauen";
+			elseif ($item['alliance_buildlist_build_end_time'] > 0) echo "Bau abgeschlossen";
 			else echo "Untätig";
 			echo "</td>";
 			echo "</tr>";
@@ -513,8 +516,8 @@ function buildingsTab(AllianceRepository $repository, AllianceBuildingRepository
 
 	if (count($buildings) > 0) {
 		echo '<select name="selected">';
-		foreach ($buildings as $arr) {
-			echo "<option>" . $arr['alliance_building_name'] . "</option>";
+		foreach ($buildings as $building) {
+			echo "<option>" . $building['alliance_building_name'] . "</option>";
 		}
 		echo "</select>";
 	}
@@ -529,20 +532,20 @@ function buildingsTab(AllianceRepository $repository, AllianceBuildingRepository
 
 function technologiesTab(AllianceRepository $repository, AllianceTechnologyRepository $technologyRepository, int $id)
 {
-	$techlistData = $repository->findTechnologies($id);
-	$techs = $technologyRepository->findAll();
+	$techListItems = $repository->findTechnologies($id);
+	$technologies = $technologyRepository->findAll();
 
 	tableStart();
 	echo "<tr>
 			<th>Technologie</th><th>Stufe</th><th>Useranzahl</th><th>Status</th>
 		</tr>";
-	if (count($techlistData) > 0) {
-		foreach ($techlistData as $arr) {
-			echo "<tr><td>" . $arr['alliance_tech_name'] . "</td>
-			<td>" . $arr['alliance_techlist_current_level'] . "</td>
-			<td>" . $arr['alliance_techlist_member_for'] . "</td><td>";
-			if ($arr['alliance_techlist_build_end_time'] > time()) echo "Forschen";
-			elseif ($arr['alliance_techlist_build_end_time'] > 0) echo "Forschen abgeschlossen";
+	if (count($techListItems) > 0) {
+		foreach ($techListItems as $item) {
+			echo "<tr><td>" . $item['alliance_tech_name'] . "</td>
+			<td>" . $item['alliance_techlist_current_level'] . "</td>
+			<td>" . $item['alliance_techlist_member_for'] . "</td><td>";
+			if ($item['alliance_techlist_build_end_time'] > time()) echo "Forschen";
+			elseif ($item['alliance_techlist_build_end_time'] > 0) echo "Forschen abgeschlossen";
 			else echo "Untätig";
 			echo "</td>";
 			echo "</tr>";
@@ -561,10 +564,10 @@ function technologiesTab(AllianceRepository $repository, AllianceTechnologyRepos
 		</tr>";
 	echo '<tr><td>';
 
-	if (count($techs) > 0) {
+	if (count($technologies) > 0) {
 		echo '<select name="selected_tech">';
-		foreach ($techs as $arr) {
-			echo "<option>" . $arr['alliance_tech_name'] . "</option>";
+		foreach ($technologies as $technology) {
+			echo "<option>" . $technology['alliance_tech_name'] . "</option>";
 		}
 		echo "</select>";
 	}
