@@ -127,141 +127,132 @@ class AllianceRepository extends AbstractRepository
 
     function update(int $id, array $data): bool
     {
-        $affected = $this->getConnection()
-            ->executeStatement(
-                "UPDATE
-                    alliances
-                SET
-                    alliance_name = :name,
-                    alliance_tag = :tag,
-                    alliance_text = :text,
-                    alliance_application_template = :template,
-                    alliance_url = :url,
-                    alliance_founder_id = :founder
-                WHERE
-                    alliance_id = :id;",
-                [
-                    'id' => $id,
-                    'name' => $data['name'],
-                    'tag' => $data['tag'],
-                    'text' => $data['text'],
-                    'template' => $data['template'],
-                    'url' => $data['url'],
-                    'founder' => $data['founder'],
-                ]
-            );
+        $affected = $this->createQueryBuilder()
+            ->update('alliances')
+            ->set('alliance_name', ':name')
+            ->set('alliance_tag', ':tag')
+            ->set('alliance_text', ':text')
+            ->set('alliance_application_template', ':template')
+            ->set('alliance_url', ':url')
+            ->set('alliance_founder_id', ':founder')
+            ->where('alliance_id = :id')
+            ->setParameters([
+                'id' => $id,
+                'name' => $data['name'],
+                'tag' => $data['tag'],
+                'text' => $data['text'],
+                'template' => $data['template'],
+                'url' => $data['url'],
+                'founder' => $data['founder'],
+            ])
+            ->execute();
 
-        return $affected > 0;
+        return (int) $affected > 0;
     }
 
     function getPicture(int $allianceId): ?string
     {
-        return $this->getConnection()
-            ->executeQuery(
-                "SELECT alliance_img
-                FROM alliances
-                WHERE alliance_id = ?;",
-                [$allianceId]
-            )
+        return $this->createQueryBuilder()
+            ->select('alliance_img')
+            ->from('alliances')
+            ->where('alliance_id = ?')
+            ->setParameter(0, $allianceId)
+            ->execute()
             ->fetchOne();
     }
 
     function clearPicture(int $allianceId): bool
     {
-        $affected = $this->getConnection()
-            ->executeStatement(
-                "UPDATE alliances
-                SET alliance_img = '',
-                    alliance_img_check = 0
-                WHERE alliance_id = ?;",
-                [$allianceId]
-            );
-        return $affected > 0;
+        $affected = $this->createQueryBuilder()
+            ->update('alliances')
+            ->set('alliance_img', '')
+            ->set('alliance_img_check', (string) 0)
+            ->where('alliance_id = ?')
+            ->setParameter(0, $allianceId)
+            ->execute();
+
+        return (int) $affected > 0;
     }
 
-    function markPictureChecked(int $allianceId): void
+    function markPictureChecked(int $allianceId): bool
     {
-        $this->getConnection()
-            ->executeStatement(
-                "UPDATE alliances
-				SET alliance_img_check = 0
-				WHERE alliance_id = ?;",
-                [$allianceId]
-            );
+        $affected = $this->createQueryBuilder()
+            ->update('alliances')
+            ->set('alliance_img_check', (string) 0)
+            ->where('alliance_id = ?')
+            ->setParameter(0, $allianceId)
+            ->execute();
+
+        return (int) $affected > 0;
     }
 
     function findAllWithUncheckedPictures(): array
     {
-        return $this->getConnection()
-            ->executeQuery("SELECT
-					alliance_id,
-					alliance_tag,
-					alliance_name,
-					alliance_img
-				FROM
-					alliances
-				WHERE
-					alliance_img_check = 1
-					AND alliance_img != '';")
+        return $this->createQueryBuilder()
+            ->select(
+                'alliance_id',
+                'alliance_tag',
+                'alliance_name',
+                'alliance_img'
+            )
+            ->from('alliances')
+            ->where('alliance_img_check = 1')
+            ->andWhere("alliance_img != ''")
+            ->execute()
             ->fetchAllAssociative();
     }
 
     function findAllWithPictures(): array
     {
-        return $this->getConnection()
-            ->executeQuery("SELECT
-					alliance_id,
-					alliance_name,
-					alliance_img
-				FROM
-					alliances
-				WHERE
-					alliance_img != ''")
+        return $this->createQueryBuilder()
+            ->select(
+                'alliance_id',
+                'alliance_tag',
+                'alliance_name',
+                'alliance_img'
+            )
+            ->from('alliances')
+            ->where("alliance_img != ''")
+            ->execute()
             ->fetchAllAssociative();
     }
 
     function findRanks(int $allianceId): array
     {
-        return $this->getConnection()
-            ->executeQuery(
-                "SELECT
-                    rank_id,
-                    rank_level,
-                    rank_name
-                FROM
-                    alliance_ranks
-                WHERE
-                    rank_alliance_id = ?
-                ORDER BY
-                    rank_level DESC;",
-                [$allianceId]
+        return $this->createQueryBuilder()
+            ->select(
+                'rank_id',
+                'rank_level',
+                'rank_name'
             )
+            ->from('alliance_ranks')
+            ->where('rank_alliance_id = ?')
+            ->orderBy('rank_level', 'DESC')
+            ->setParameter(0, $allianceId)
+            ->execute()
             ->fetchAllAssociative();
     }
 
     function updateRank(int $id, string $name, int $level): void
     {
-        $this->getConnection()
-            ->executeStatement(
-                "UPDATE
-                    alliance_ranks
-                SET
-                    rank_name = :name,
-                    rank_level = :level
-                WHERE
-                    rank_id = :id;",
-                [
-                    'id' => $id,
-                    'name' => $name,
-                    'level' => $level,
-                ]
-            );
+        $this->createQueryBuilder()
+            ->update('alliance_ranks')
+            ->set('rank_name', ':name')
+            ->set('rank_level', ':level')
+            ->where('rank_id = :id')
+            ->setParameters([
+                'id' => $id,
+                'name' => $name,
+                'level' => $level,
+            ])
+            ->execute();
     }
 
     function countOrphanedRanks(): int
     {
         return (int) $this->getConnection()
-            ->executeQuery("SELECT
+            ->executeQuery(
+                "SELECT
 					COUNT(r.rank_id)
 				FROM alliance_ranks r
 				WHERE NOT EXISTS (
@@ -274,40 +265,36 @@ class AllianceRepository extends AbstractRepository
 
     function findDiplomacies(int $allianceId): array
     {
-        return $this->getConnection()
-            ->executeQuery(
-                "SELECT
-                        alliance_bnd_id,
-                        alliance_bnd_alliance_id1 as a1id,
-                        alliance_bnd_alliance_id2 as a2id,
-                        a1.alliance_name as a1name,
-                        a2.alliance_name as a2name,
-                        alliance_bnd_level as lvl,
-                        alliance_bnd_name as name,
-                        alliance_bnd_date as date
-                    FROM
-                        alliance_bnd
-                    LEFT JOIN
-                        alliances a1 on alliance_bnd_alliance_id1 = a1.alliance_id
-                    LEFT JOIN
-                        alliances a2 on alliance_bnd_alliance_id2 = a2.alliance_id
-                    WHERE
-                        alliance_bnd_alliance_id1 = :id
-                        OR alliance_bnd_alliance_id2 = :id
-                    ORDER BY
-                        alliance_bnd_level DESC,
-                        alliance_bnd_date DESC;",
-                [
-                    'id' => $allianceId,
-                ]
+        return $this->createQueryBuilder()
+            ->select(
+                'alliance_bnd_id',
+                'alliance_bnd_alliance_id1 as a1id',
+                'alliance_bnd_alliance_id2 as a2id',
+                'a1.alliance_name as a1name',
+                'a2.alliance_name as a2name',
+                'alliance_bnd_level as lvl',
+                'alliance_bnd_name as name',
+                'alliance_bnd_date as date'
             )
+            ->from('alliance_bnd', 'b')
+            ->leftJoin('b', 'alliances', 'a1', 'alliance_bnd_alliance_id1 = a1.alliance_id')
+            ->leftJoin('b', 'alliances', 'a2', 'alliance_bnd_alliance_id2 = a2.alliance_id')
+            ->where('alliance_bnd_alliance_id1 = :id')
+            ->orWhere('alliance_bnd_alliance_id2 = :id')
+            ->orderBy('alliance_bnd_level', 'DESC')
+            ->addOrderBy('alliance_bnd_date', 'DESC')
+            ->setParameters([
+                'id' => $allianceId,
+            ])
+            ->execute()
             ->fetchAllAssociative();
     }
 
     function deleteOrphanedRanks(): int
     {
         return $this->getConnection()
-            ->executeStatement("DELETE FROM alliance_ranks
+            ->executeStatement(
+                "DELETE FROM alliance_ranks
 				WHERE NOT EXISTS (
 					SELECT 1
 					FROM alliances a
@@ -318,7 +305,8 @@ class AllianceRepository extends AbstractRepository
     function countOrphanedDiplomacies(): int
     {
         return (int) $this->getConnection()
-            ->executeQuery("SELECT
+            ->executeQuery(
+                "SELECT
 					COUNT(b.alliance_bnd_id)
 				FROM alliance_bnd b
 				WHERE NOT EXISTS (
@@ -337,7 +325,8 @@ class AllianceRepository extends AbstractRepository
     function deleteOrphanedDiplomacies(): int
     {
         return $this->getConnection()
-            ->executeStatement("DELETE FROM alliance_bnd
+            ->executeStatement(
+                "DELETE FROM alliance_bnd
 				WHERE NOT EXISTS (
 					SELECT 1
 					FROM alliances a
@@ -353,7 +342,8 @@ class AllianceRepository extends AbstractRepository
     function findAllWithoutFounder(): array
     {
         return $this->getConnection()
-            ->executeQuery("SELECT
+            ->executeQuery(
+                "SELECT
 					alliance_id,
 					alliance_name,
 					alliance_tag
@@ -369,7 +359,8 @@ class AllianceRepository extends AbstractRepository
     function findAllWithoutUsers(): array
     {
         return $this->getConnection()
-            ->executeQuery("SELECT
+            ->executeQuery(
+                "SELECT
 					alliance_id,
 					alliance_name,
 					alliance_tag
@@ -384,10 +375,11 @@ class AllianceRepository extends AbstractRepository
 
     function remove(int $id): bool
     {
-        $affected = $this->getConnection()
-            ->delete("alliances", [
-                'alliance_id' => $id,
-            ]);
+        $affected = (int) $this->createQueryBuilder()
+            ->delete('alliances')
+            ->where('alliance_id = ?')
+            ->setParameter(0, $id)
+            ->execute();
 
         $this->deleteRanks($id);
         $this->deleteDiplomacies($id);
@@ -397,50 +389,45 @@ class AllianceRepository extends AbstractRepository
 
     function deleteRanks(int $allianceId): void
     {
-        $this->getConnection()
-            ->delete("alliance_ranks", [
-                'rank_alliance_id' => $allianceId,
-            ]);
+        $this->createQueryBuilder()
+            ->delete("alliance_ranks")
+            ->where('rank_alliance_id = ?')
+            ->setParameter(0, $allianceId)
+            ->execute();
     }
 
     function updateDiplomacy(int $id, int $level, string $name): void
     {
-        $this->getConnection()
-            ->executeStatement(
-                "UPDATE
-                    alliance_bnd
-                SET
-                    alliance_bnd_level = ?,
-                    alliance_bnd_name = ?
-                WHERE
-                    alliance_bnd_id = ?;",
-                [
-                    'id' => $id,
-                    'level' => $level,
-                    'name' => $name,
-                ]
-            );
+        $this->createQueryBuilder()
+            ->update('alliance_bnd')
+            ->set('alliance_bnd_level', ':level')
+            ->set('alliance_bnd_name', ':name')
+            ->where('alliance_bnd_id = :id')
+            ->setParameters([
+                'id' => $id,
+                'level' => $level,
+                'name' => $name,
+            ])
+            ->execute();
     }
 
     function deleteDiplomacy(int $id): void
     {
-        $this->getConnection()
-            ->executeStatement(
-                "DELETE FROM alliance_bnd
-                WHERE alliance_bnd_id = ?;",
-                [$id]
-            );
+        $this->createQueryBuilder()
+            ->delete('alliance_bnd')
+            ->where('alliance_bnd_id = ?')
+            ->setParameter(0, $id)
+            ->execute();
     }
 
     function deleteDiplomacies(int $allianceId): void
     {
-        $this->getConnection()
-            ->executeStatement(
-                "DELETE FROM alliance_bnd
-				WHERE alliance_bnd_alliance_id1 = :id
-					OR alliance_bnd_alliance_id2 = :id;",
-                ['id' => $allianceId]
-            );
+        $this->createQueryBuilder()
+            ->delete('alliance_bnd')
+            ->where('alliance_bnd_alliance_id1 = :id')
+            ->orWhere('alliance_bnd_alliance_id2 = :id')
+            ->setParameter('id', $allianceId)
+            ->execute();
     }
 
     function countUsers(int $allianceId): int
@@ -456,89 +443,77 @@ class AllianceRepository extends AbstractRepository
 
     function findUsers(int $allianceId): array
     {
-        return $this->getConnection()
-            ->executeQuery(
-                "SELECT
-					user_id,
-					user_nick,
-					user_points,
-                    user_alliance_rank_id
-				FROM users
-				WHERE user_alliance_id = ?
-				ORDER BY
-                    user_points DESC,
-                    user_nick;",
-                [$allianceId]
+        return $this->createQueryBuilder()
+            ->select(
+                'user_id',
+                'user_nick',
+                'user_points',
+                'user_alliance_rank_id'
             )
+            ->from('users')
+            ->where('user_alliance_id = ?')
+            ->orderBy('user_points', 'DESC')
+            ->addOrderBy('user_nick')
+            ->setParameter(0, $allianceId)
+            ->execute()
             ->fetchAllAssociative();
     }
 
     function assignRankToUser($rankId, $userId): void
     {
-        $this->getConnection()
-            ->executeStatement(
-                "UPDATE
-                    users
-                SET
-                    user_alliance_rank_id = :rank
-                WHERE
-                    user_id = :user;",
-                [
-                    'rank' => $rankId,
-                    'user' => $userId,
-                ]
-            );
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_alliance_rank_id', ':rank')
+            ->where('user_id = :user')
+            ->setParameters([
+                'rank' => $rankId,
+                'user' => $userId,
+            ])
+            ->execute();
     }
 
     function removeRank(int $rankId): void
     {
-        $this->getConnection()
-            ->executeStatement(
-                "DELETE FROM alliance_ranks
-                WHERE rank_id = ?;",
-                [$rankId]
-            );
-        $this->getConnection()
-            ->executeStatement(
-                "DELETE FROM alliance_rankrights
-                WHERE rr_rank_id = ?;",
-                [$rankId]
-            );
+        $this->createQueryBuilder()
+            ->delete('alliance_ranks')
+            ->where('rank_id = ?')
+            ->setParameter(0, $rankId)
+            ->execute();
+
+        $this->createQueryBuilder()
+            ->delete('alliance_rankrights')
+            ->where('rr_rank_id = ?')
+            ->setParameter(0, $rankId)
+            ->execute();
     }
 
     function removeUser(int $userId): void
     {
-        $this->getConnection()
-            ->executeStatement(
-                "UPDATE
-                    users
-                SET
-                    user_alliance_id = 0,
-                    user_alliance_rank_id = 0
-                WHERE
-                    user_id = ?;",
-                [$userId]
-            );
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_alliance_id', (string) 0)
+            ->set('user_alliance_rank_id', (string) 0)
+            ->where('user_id = ?')
+            ->setParameter(0, $userId)
+            ->execute();
     }
 
     function listSoloUsers(): array
     {
-        $res = $this->getConnection()
-            ->executeQuery("SELECT user_id, user_nick
-				FROM users
-				WHERE user_alliance_id = 0
-				ORDER BY user_nick;");
-        $data = [];
-        while ($arr = $res->fetchAssociative()) {
-            $data[$arr['user_id']] = $arr['user_nick'];
-        }
-        return $data;
+        return $this->createQueryBuilder()
+            ->select("user_id", "user_nick")
+            ->from('users')
+            ->where('user_alliance_id = 0')
+            ->orderBy('user_nick')
+            ->execute()
+            ->fetchAllKeyValue();
     }
 
     function findAllSoloUsers(): array
     {
         return $this->getConnection()
-            ->executeQuery("SELECT
+            ->executeQuery(
+                "SELECT
 					user_id,
 					user_nick,
 					user_email
@@ -555,94 +530,73 @@ class AllianceRepository extends AbstractRepository
 
     function findHistoryEntries(int $allianceId): array
     {
-        return $this->getConnection()
-            ->executeQuery(
-                "SELECT
-                    *
-                FROM
-                    alliance_history
-                WHERE
-                    history_alliance_id = ?
-                ORDER BY
-                    history_timestamp
-                DESC;",
-                [$allianceId]
-            )
+        return $this->createQueryBuilder()
+            ->select('*')
+            ->from('alliance_history')
+            ->where('history_alliance_id = ?')
+            ->orderBy('history_timestamp', 'DESC')
+            ->setParameter(0, $allianceId)
+            ->execute()
             ->fetchAllAssociative();
     }
 
     function findBuildings(int $allianceId): array
     {
-        return $this->getConnection()
-            ->executeQuery(
-                "SELECT
-                    alliance_buildlist.*,
-                    alliance_buildings.alliance_building_name
-                FROM
-                    alliance_buildlist
-                INNER JOIN
-                    alliance_buildings
-                ON
-                    alliance_buildings.alliance_building_id = alliance_buildlist.alliance_buildlist_building_id
-                    AND	alliance_buildlist_alliance_id = ?;",
-                [$allianceId]
+        return $this->createQueryBuilder()
+            ->select(
+                'bl.*',
+                'b.alliance_building_name'
             )
+            ->from('alliance_buildlist', 'bl')
+            ->innerJoin('bl', 'alliance_buildings', 'b', 'b.alliance_building_id = bl.alliance_buildlist_building_id AND alliance_buildlist_alliance_id = ?')
+            ->setParameter(0, $allianceId)
+            ->execute()
             ->fetchAllAssociative();
     }
 
     function findTechnologies(int $allianceId): array
     {
-        return $this->getConnection()
-            ->executeQuery(
-                "SELECT
-                    alliance_techlist.*,
-                    alliance_technologies.alliance_tech_name
-                FROM
-                    alliance_techlist
-                INNER JOIN
-                    alliance_technologies
-                ON
-                    alliance_technologies.alliance_tech_id = alliance_techlist.alliance_techlist_tech_id
-                    AND	alliance_techlist_alliance_id = ?;",
-                [$allianceId]
+        return $this->createQueryBuilder()
+            ->select(
+                'tl.*',
+                't.alliance_tech_name'
             )
+            ->from('alliance_techlist', 'tl')
+            ->innerJoin('tl', 'alliance_technologies', 't', 't.alliance_tech_id = tl.alliance_techlist_tech_id AND alliance_techlist_alliance_id = ?')
+            ->setParameter(0, $allianceId)
+            ->execute()
             ->fetchAllAssociative();
     }
 
     function updateResources(int $allianceId, array $data): void
     {
-        $this->getConnection()
-            ->executeStatement(
-                "UPDATE
-                    alliances
-                SET
-                    alliance_res_metal = :metal,
-                    alliance_res_crystal = :crystal,
-                    alliance_res_plastic = :plastic,
-                    alliance_res_fuel = :fuel,
-                    alliance_res_food = :food,
-                    alliance_res_metal = alliance_res_metal + :addmetal,
-                    alliance_res_crystal = alliance_res_crystal + :addcrystal,
-                    alliance_res_plastic = alliance_res_plastic + :addplastic,
-                    alliance_res_fuel = alliance_res_fuel + :addfuel,
-                    alliance_res_food = alliance_res_food + :addfood
-                WHERE
-                    alliance_id = :id
-                LIMIT 1;",
-                [
-                    'id' => $allianceId,
-                    'metal' => $data['metal'],
-                    'crystal' => $data['crystal'],
-                    'plastic' => $data['plastic'],
-                    'fuel' => $data['fuel'],
-                    'food' => $data['food'],
-                    'addmetal' => $data['addmetal'],
-                    'addcrystal' => $data['addcrystal'],
-                    'addplastic' => $data['addplastic'],
-                    'addfuel' => $data['addfuel'],
-                    'addfood' => $data['addfood'],
-                ]
-            );
+        $this->createQueryBuilder()
+            ->update('alliances')
+            ->set('alliance_res_metal', ':metal')
+            ->set('alliance_res_crystal', ':crystal')
+            ->set('alliance_res_plastic', ':plastic')
+            ->set('alliance_res_fuel', ':fuel')
+            ->set('alliance_res_food', ':food')
+            ->set('alliance_res_metal', 'alliance_res_metal + :addmetal')
+            ->set('alliance_res_crystal', 'alliance_res_crystal + :addcrystal')
+            ->set('alliance_res_plastic', 'alliance_res_plastic + :addplastic')
+            ->set('alliance_res_fuel', 'alliance_res_fuel + :addfuel')
+            ->set('alliance_res_food', 'alliance_res_food + :addfood')
+            ->where('alliance_id = :id')
+            ->setParameters([
+                'id' => $allianceId,
+                'metal' => $data['metal'],
+                'crystal' => $data['crystal'],
+                'plastic' => $data['plastic'],
+                'fuel' => $data['fuel'],
+                'food' => $data['food'],
+                'addmetal' => $data['addmetal'],
+                'addcrystal' => $data['addcrystal'],
+                'addplastic' => $data['addplastic'],
+                'addfuel' => $data['addfuel'],
+                'addfood' => $data['addfood'],
+            ])
+            ->execute();
     }
 
     public function cleanUpPoints(int $threshold = 0): int
