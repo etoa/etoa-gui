@@ -22,9 +22,9 @@ class AllianceTechnologyRepository extends AbstractRepository
         $test = $this->getConnection()
             ->executeQuery(
                 "SELECT alliance_techlist_id
-		        FROM alliance_techlist
-		        WHERE alliance_techlist_alliance_id = :alliance
-			    AND alliance_techlist_tech_id = (
+                FROM alliance_techlist
+                WHERE alliance_techlist_alliance_id = :alliance
+                AND alliance_techlist_tech_id = (
                     SELECT alliance_tech_id
                     FROM alliance_technologies
                     WHERE alliance_tech_name = :name

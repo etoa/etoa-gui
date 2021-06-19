@@ -90,8 +90,8 @@ class TicketMessageRepository extends AbstractRepository
         return $message;
     }
 
-	public function create($data): TicketMessage
-	{
+    public function create($data): TicketMessage
+    {
         $message = new TicketMessage();
         $message->ticketId = intval($data['ticket_id']);
         $message->userId = (isset($data['user_id']) ? intval($data['user_id']) : 0);
@@ -119,7 +119,7 @@ class TicketMessageRepository extends AbstractRepository
         $message->id = (int) $this->getConnection()->lastInsertId();
 
         return $message;
-	}
+    }
 
     public function getAuthorNick(TicketMessage $message): string
     {

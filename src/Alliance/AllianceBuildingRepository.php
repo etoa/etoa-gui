@@ -22,9 +22,9 @@ class AllianceBuildingRepository extends AbstractRepository
         $test = $this->getConnection()
             ->executeQuery(
                 "SELECT alliance_buildlist_id
-		        FROM alliance_buildlist
-		        WHERE alliance_buildlist_alliance_id = :alliance
-			    AND alliance_buildlist_building_id = (
+                FROM alliance_buildlist
+                WHERE alliance_buildlist_alliance_id = :alliance
+                AND alliance_buildlist_building_id = (
                     SELECT alliance_building_id
                     FROM alliance_buildings
                     WHERE alliance_building_name = :name

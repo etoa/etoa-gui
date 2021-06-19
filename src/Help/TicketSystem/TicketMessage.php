@@ -9,9 +9,9 @@ namespace EtoA\Help\TicketSystem;
  */
 class TicketMessage
 {
-	public int $id;
-	public string $message;
-	public int $timestamp;
-	public ?int $userId;
-	public ?int $adminId;
+    public int $id;
+    public string $message;
+    public int $timestamp;
+    public ?int $userId;
+    public ?int $adminId;
 }

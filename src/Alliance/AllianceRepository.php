@@ -253,13 +253,13 @@ class AllianceRepository extends AbstractRepository
         return (int) $this->getConnection()
             ->executeQuery(
                 "SELECT
-					COUNT(r.rank_id)
-				FROM alliance_ranks r
-				WHERE NOT EXISTS (
-					SELECT 1
-					FROM alliances a
-					WHERE r.rank_alliance_id = a.alliance_id
-				);")
+                    COUNT(r.rank_id)
+                FROM alliance_ranks r
+                WHERE NOT EXISTS (
+                    SELECT 1
+                    FROM alliances a
+                    WHERE r.rank_alliance_id = a.alliance_id
+                );")
             ->fetchOne();
     }
 
@@ -295,11 +295,11 @@ class AllianceRepository extends AbstractRepository
         return $this->getConnection()
             ->executeStatement(
                 "DELETE FROM alliance_ranks
-				WHERE NOT EXISTS (
-					SELECT 1
-					FROM alliances a
-					WHERE rank_alliance_id = a.alliance_id
-				);");
+                WHERE NOT EXISTS (
+                    SELECT 1
+                    FROM alliances a
+                    WHERE rank_alliance_id = a.alliance_id
+                );");
     }
 
     public function countOrphanedDiplomacies(): int
@@ -307,18 +307,18 @@ class AllianceRepository extends AbstractRepository
         return (int) $this->getConnection()
             ->executeQuery(
                 "SELECT
-					COUNT(b.alliance_bnd_id)
-				FROM alliance_bnd b
-				WHERE NOT EXISTS (
-					SELECT 1
-					FROM alliances a
-					WHERE b.alliance_bnd_alliance_id1 = a.alliance_id
-				)
-				OR NOT EXISTS (
-					SELECT 1
-					FROM alliances a
-					WHERE b.alliance_bnd_alliance_id2 = a.alliance_id
-				);")
+                    COUNT(b.alliance_bnd_id)
+                FROM alliance_bnd b
+                WHERE NOT EXISTS (
+                    SELECT 1
+                    FROM alliances a
+                    WHERE b.alliance_bnd_alliance_id1 = a.alliance_id
+                )
+                OR NOT EXISTS (
+                    SELECT 1
+                    FROM alliances a
+                    WHERE b.alliance_bnd_alliance_id2 = a.alliance_id
+                );")
             ->fetchOne();
     }
 
@@ -327,16 +327,16 @@ class AllianceRepository extends AbstractRepository
         return $this->getConnection()
             ->executeStatement(
                 "DELETE FROM alliance_bnd
-				WHERE NOT EXISTS (
-					SELECT 1
-					FROM alliances a
-					WHERE alliance_bnd_alliance_id1 = a.alliance_id
-				)
-				OR NOT EXISTS (
-					SELECT 1
-					FROM alliances a
-					WHERE alliance_bnd_alliance_id2 = a.alliance_id
-				)");
+                WHERE NOT EXISTS (
+                    SELECT 1
+                    FROM alliances a
+                    WHERE alliance_bnd_alliance_id1 = a.alliance_id
+                )
+                OR NOT EXISTS (
+                    SELECT 1
+                    FROM alliances a
+                    WHERE alliance_bnd_alliance_id2 = a.alliance_id
+                )");
     }
 
     public function findAllWithoutFounder(): array
@@ -344,15 +344,15 @@ class AllianceRepository extends AbstractRepository
         return $this->getConnection()
             ->executeQuery(
                 "SELECT
-					alliance_id,
-					alliance_name,
-					alliance_tag
-				FROM alliances a
-				WHERE NOT EXISTS (
-					SELECT 1
-					FROM users u
-					WHERE a.alliance_founder_id = u.user_id
-				);")
+                    alliance_id,
+                    alliance_name,
+                    alliance_tag
+                FROM alliances a
+                WHERE NOT EXISTS (
+                    SELECT 1
+                    FROM users u
+                    WHERE a.alliance_founder_id = u.user_id
+                );")
             ->fetchAllAssociative();
     }
 
@@ -361,15 +361,15 @@ class AllianceRepository extends AbstractRepository
         return $this->getConnection()
             ->executeQuery(
                 "SELECT
-					alliance_id,
-					alliance_name,
-					alliance_tag
-				FROM alliances a
-				WHERE NOT EXISTS (
-					SELECT 1
-					FROM users u
-					WHERE a.alliance_id = u.user_alliance_id
-				);")
+                    alliance_id,
+                    alliance_name,
+                    alliance_tag
+                FROM alliances a
+                WHERE NOT EXISTS (
+                    SELECT 1
+                    FROM users u
+                    WHERE a.alliance_id = u.user_alliance_id
+                );")
             ->fetchAllAssociative();
     }
 
@@ -514,17 +514,17 @@ class AllianceRepository extends AbstractRepository
         return $this->getConnection()
             ->executeQuery(
                 "SELECT
-					user_id,
-					user_nick,
-					user_email
-				FROM users u
-				WHERE
-					user_alliance_id != 0
-					AND NOT EXISTS (
-						SELECT 1
-						FROM alliances a
-						WHERE a.alliance_id = u.user_alliance_id
-					);")
+                    user_id,
+                    user_nick,
+                    user_email
+                FROM users u
+                WHERE
+                    user_alliance_id != 0
+                    AND NOT EXISTS (
+                        SELECT 1
+                        FROM alliances a
+                        WHERE a.alliance_id = u.user_alliance_id
+                    );")
             ->fetchAllAssociative();
     }
 

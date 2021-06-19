@@ -6,40 +6,40 @@ namespace EtoA\Admin;
 
 class AdminUser
 {
-	public ?int $id = null;
-	public ?string $passwordString;
-	public bool $forcePasswordChange = false;
-	public string $nick = "";
-	public string $name = "";
-	public string $email = "";
-	public string $tfaSecret = "";
-	public int $playerId = 0;
-	public string $boardUrl = "";
-	public string $userTheme = "";
-	public bool $ticketEmail = false;
-	public bool $locked = false;
-	public bool $isContact = true;
-	public array $roles = [];
+    public ?int $id = null;
+    public ?string $passwordString;
+    public bool $forcePasswordChange = false;
+    public string $nick = "";
+    public string $name = "";
+    public string $email = "";
+    public string $tfaSecret = "";
+    public int $playerId = 0;
+    public string $boardUrl = "";
+    public string $userTheme = "";
+    public bool $ticketEmail = false;
+    public bool $locked = false;
+    public bool $isContact = true;
+    public array $roles = [];
 
-	public function __toString()
-	{
-		return "[ADMIN]" . $this->nick;
-	}
+    public function __toString()
+    {
+        return "[ADMIN]" . $this->nick;
+    }
 
-	public function checkEqualPassword($newPassword)
-	{
-		return validatePasswort($newPassword, $this->passwordString);
-	}
+    public function checkEqualPassword($newPassword)
+    {
+        return validatePasswort($newPassword, $this->passwordString);
+    }
 
-	public function getRolesStr()
-	{
-		$rm = new AdminRoleManager();
-		return $rm->getRolesStr($this->roles);
-	}
+    public function getRolesStr()
+    {
+        $rm = new AdminRoleManager();
+        return $rm->getRolesStr($this->roles);
+    }
 
-	public function hasRole($roles)
-	{
-		$rm = new AdminRoleManager();
-		return ($rm->checkAllowed($roles, $this->roles));
-	}
+    public function hasRole($roles)
+    {
+        $rm = new AdminRoleManager();
+        return ($rm->checkAllowed($roles, $this->roles));
+    }
 }
