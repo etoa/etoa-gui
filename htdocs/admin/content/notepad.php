@@ -5,7 +5,8 @@ use EtoA\Admin\AdminNotesRepository;
 $adminUserId = $cu->id;
 if ($adminUserId > 0) {
 
-	$notesRepo = $app['etoa.admin.notes.manager'];
+	/** @var AdminNotesRepository */
+	$notesRepo = $app['etoa.admin.notes.repository'];
 
 	if (isset($_GET['chk']) && $_GET['chk'] == 'new') {
 		createNote();

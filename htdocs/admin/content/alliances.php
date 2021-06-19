@@ -3,6 +3,7 @@
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\InvalidAllianceParametersException;
 
+/** @var AllianceRepository */
 $repository = $app['etoa.alliance.repository'];
 
 if ($sub == "imagecheck") {

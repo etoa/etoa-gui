@@ -1,28 +1,34 @@
 <?PHP
 
 use EtoA\Admin\AdminSessionManager;
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
+use EtoA\User\UserRepository;
 
-/**
- * @var TicketRepository
- */
+/** @var TicketRepository */
 $ticketRepo = $app['etoa.help.ticket.repository'];
 
-/**
- * @var AdminSessionManager
- */
+/** @var AdminSessionManager */
 $sessionManager = $app['etoa.admin.session.manager'];
+
+/** @var AllianceRepository */
+$allianceRepository = $app['etoa.alliance.repository'];
+
+/** @var UserRepository */
+$userRepo = $app['etoa.user.repository'];
 
 echo '<h2>Clean-Up</h2>';
 
 if (isset($_POST['submit_cleanup_selected']) || isset($_POST['submit_cleanup_all'])) {
-	runCleanup($sessionManager, $ticketRepo);
+	runCleanup($sessionManager, $ticketRepo, $allianceRepository, $userRepo);
 }
 cleanupOverView($ticketRepo);
 
 function runCleanup(
 	AdminSessionManager $sessionManager,
-	TicketRepository $ticketRepo
+	TicketRepository $ticketRepo,
+	AllianceRepository $allianceRepository,
+	UserRepository $userRepo
 ) {
 	echo "Clean-Up wird durchgeführt...<br/>";
 	$all = isset($_POST['submit_cleanup_all']) ? true : false;
@@ -60,9 +66,9 @@ function runCleanup(
 
 	// User-Point-History
 	if ((isset($_POST['cl_points']) && $_POST['cl_points'] == 1) || $all) {
-		$nr = Users::cleanUpPoints($_POST['del_user_points']);
+		$nr = $userRepo->cleanUpPoints($_POST['del_user_points']);
 		echo $nr . " Benutzerpunkte-Logs und ";
-		$nr = Alliance::cleanUpPoints($_POST['del_user_points']);
+		$nr = $allianceRepository->cleanUpPoints((int) $_POST['del_user_points']);
 		echo $nr . " Allianzpunkte-Logs wurden gelöscht!<br/>";
 	}
 
@@ -444,7 +450,7 @@ function cleanupOverView(TicketRepository $ticketRepo)
 	FROM
 		logs
 	;"));
-	echo "<b>Logs löschen:</b> Einträge löschen welche &auml;lter als <select name=\"log_timestamp\">";
+	echo "<b>Logs löschen:</b> Einträge löschen welche älter als <select name=\"log_timestamp\">";
 	$days = array(7, 14, 21, 28);
 	if (!in_array($cfg->get('log_threshold_days'), $days))
 		$days[] = $cfg->get('log_threshold_days');
@@ -464,7 +470,7 @@ function cleanupOverView(TicketRepository $ticketRepo)
 		user_sessionlog
 	;"));
 	echo "<b>Session-Logs löschen:</b> ";
-	echo "Eintr&auml;ge löschen die &auml;lter als <select name=\"sess_log_timestamp\">";
+	echo "Einträge löschen die älter als <select name=\"sess_log_timestamp\">";
 	$days = array(7, 14, 21, 28);
 	if (!in_array($cfg->get('log_threshold_days'), $days))
 		$days[] = $cfg->get('log_threshold_days');
@@ -483,7 +489,7 @@ function cleanupOverView(TicketRepository $ticketRepo)
 	FROM
 		user_points
 	;"));
-	echo "<b>Punkteverläufe löschen:</b> Eintr&auml;ge löschen die &auml;lter als <select name=\"del_user_points\">";
+	echo "<b>Punkteverläufe löschen:</b> Einträge löschen die älter als <select name=\"del_user_points\">";
 	$days = array(2, 5, 7, 14, 21, 28);
 	if (!in_array($cfg->get('log_threshold_days'), $days))
 		$days[] = $cfg->get('log_threshold_days');

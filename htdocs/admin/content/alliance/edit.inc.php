@@ -4,8 +4,13 @@ use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceTechnologyRepository;
 
+/** @var AllianceRepository */
 $repository = $app['etoa.alliance.repository'];
+
+/** @var AllianceBuildingRepository */
 $buildingRepository = $app['etoa.alliance.building.repository'];
+
+/** @var AllianceTechnologyRepository */
 $technologyRepository = $app['etoa.alliance.technology.repository'];
 
 if (isset($_GET['alliance_id'])) {

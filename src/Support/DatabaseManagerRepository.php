@@ -8,7 +8,8 @@ use EtoA\Core\AbstractRepository;
 
 class DatabaseManagerRepository extends AbstractRepository
 {
-	public function getDatabaseSize(): int {
+    public function getDatabaseSize(): int
+    {
         $database = $this->getConnection()->getDatabase();
         return (int) $this->getConnection()
             ->executeQuery(
@@ -19,7 +20,7 @@ class DatabaseManagerRepository extends AbstractRepository
                 [$database]
             )
             ->fetchOne();
-	}
+    }
 
     public function getDatabasePlatform(): string
     {

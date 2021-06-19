@@ -134,22 +134,6 @@
 		}
 
 		/**
-		* Remove old point logs
-		*/
-		static function cleanUpPoints($threshold=0)
-		{
-			$cfg = Config::getInstance();
-			if ($threshold>0)
-				$tstamp = time() - $threshold;
-			else
-				$tstamp = time() - (24*3600*$cfg->get('log_threshold_days'));
-			dbquery("DELETE FROM user_points WHERE point_timestamp<".$tstamp.";");
-			$nr = mysql_affected_rows();
-			Log::add("4", Log::INFO, "$nr Userpunkte-Logs die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!");
-			return $nr;
-		}
-
-		/**
 		* Abgelaufene Sperren löschen
 		*
 		*/

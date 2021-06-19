@@ -54,13 +54,27 @@ try {
     if (!$s->validate()) {
         include __DIR__ . '/inc/admin_login.inc.php';
     } else {
+        /** @var AdminUserRepository */
         $adminUserRepo = $app['etoa.admin.user.repository'];
+
+        /** @var UserRepository */
         $userRepo = $app['etoa.user.repository'];
-        $notesRepo = $app['etoa.admin.notes.manager'];
+
+        /** @var AdminNotesRepository */
+        $notesRepo = $app['etoa.admin.notes.repository'];
+
+        /** @var AdminRoleManager */
         $roleManager = $app['etoa.admin.role.manager'];
+
+        /** @var AdminSessionRepository */
         $sessionRepository = $app['etoa.admin.session.repository'];
+
+        /** @var DatabaseManagerRepository */
         $databaseManager = $app['etoa.db.manager.repository'];
+
+        /** @var TicketRepository */
         $ticketRepo = $app['etoa.help.ticket.repository'];
+
         adminView($s,
             $adminUserRepo,
             $userRepo,

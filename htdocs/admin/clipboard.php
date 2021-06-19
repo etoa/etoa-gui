@@ -1,12 +1,16 @@
 <?PHP
 
+use EtoA\Admin\AdminUserRepository;
 use EtoA\User\UserRepository;
 
 ob_start();
 
 require("inc/includer.inc.php");
 
+/** @var AdminUserRepository */
 $adminUserRepo = $app['etoa.admin.user.repository'];
+
+/** @var UserRepository */
 $userRepo = $app['etoa.user.repository'];
 
 $twig->addGlobal('cssTheme', $css_theme);
