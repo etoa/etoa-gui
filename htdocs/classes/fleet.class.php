@@ -21,6 +21,8 @@
 		private $landTime;
 		private $nextActionTime;
 		private $ships;
+		/** @var Fleet[] */
+		public array $fleets;
 
 		/**
 		* Constructor
@@ -85,9 +87,9 @@
 				$this->valid = true;
 
 				// TODO: Needs some improvement / redesign
+				$this->fleets = array();
 				if (mysql_num_rows($res) > 1)
 				{
-					$this->fleets = array();
 					while ($arr = mysql_fetch_assoc($res))
 					{
 						if ($arr['status']==3) {
@@ -95,8 +97,6 @@
 						}
 					}
 				}
-				else
-					$this->fleets = array(); // Hack to avoid notice error!
 			}
 		}
 
@@ -132,7 +132,7 @@
 		function pilots($fleet=-1)
 		{
 			$cnt = 0;
-			if ($fleet<0 && count($this->fleets))
+			if ($fleet<0 && count($this->fleets) > 0)
 			{
 				foreach($this->fleets as $id=>$f)
 				{
@@ -149,7 +149,7 @@
 
 		function usageFuel($fleet=-1) {
 			$cnt = 0;
-			if ($fleet<0 && count($this->fleets) )
+			if ($fleet<0 && count($this->fleets) > 0)
 			{
 				foreach($this->fleets as $id=>$f)
 				{
@@ -161,7 +161,7 @@
 
 		function usageFood($fleet=-1) {
 			$cnt = 0;
-			if ($fleet<0 && count($this->fleets))
+			if ($fleet<0 && count($this->fleets) > 0)
 			{
 				foreach($this->fleets as $id=>$f)
 				{
@@ -173,7 +173,7 @@
 
 		function usagePower($fleet=-1) {
 			$cnt = 0;
-			if ($fleet<0 && count($this->fleets))
+			if ($fleet<0 && count($this->fleets) > 0)
 			{
 				foreach($this->fleets as $id=>$f)
 				{
@@ -185,7 +185,7 @@
 
 		function resMetal($fleet=-1) {
 			$cnt = 0;
-			if ($fleet<0 && count($this->fleets))
+			if ($fleet<0 && count($this->fleets) > 0)
 			{
 				foreach($this->fleets as $id=>$f)
 				{
@@ -197,7 +197,7 @@
 
 		function resCrystal($fleet=-1) {
 			$cnt = 0;
-			if (count($this->fleets) && $fleet<0)
+			if (count($this->fleets) > 0 && $fleet<0)
 			{
 				foreach($this->fleets as $id=>$f)
 				{
@@ -209,7 +209,7 @@
 
 		function resPlastic($fleet=-1) {
 			$cnt = 0;
-			if (count($this->fleets) && $fleet<0)
+			if (count($this->fleets) > 0 && $fleet<0)
 			{
 				foreach($this->fleets as $id=>$f)
 				{
@@ -221,7 +221,7 @@
 
 		function resFuel($fleet=-1) {
 			$cnt = 0;
-			if (count($this->fleets) && $fleet<0)
+			if (count($this->fleets) > 0 && $fleet<0)
 			{
 				foreach($this->fleets as $id=>$f)
 				{
@@ -233,7 +233,7 @@
 
 		function resFood($fleet=-1) {
 			$cnt = 0;
-			if (count($this->fleets) && $fleet<0)
+			if (count($this->fleets) > 0 && $fleet<0)
 			{
 				foreach($this->fleets as $id=>$f)
 				{
@@ -245,7 +245,7 @@
 
 		function resPower($fleet=-1) {
 			$cnt = 0;
-			if (count($this->fleets) && $fleet<0)
+			if (count($this->fleets) > 0 && $fleet<0)
 			{
 				foreach($this->fleets as $id=>$f)
 				{
@@ -257,7 +257,7 @@
 
 		function resPeople($fleet=-1) {
 			$cnt = 0;
-			if (count($this->fleets) && $fleet<0)
+			if (count($this->fleets) > 0 && $fleet<0)
 			{
 				foreach($this->fleets as $id=>$f)
 				{
@@ -327,7 +327,7 @@
 		{
 			$this->shipsIds = array();
 			$this->shipCount = 0;
-			if (count($this->fleets) && $fleet<0)
+			if (count($this->fleets) > 0 && $fleet<0)
 			{
 				$sres = dbquery("
 					SELECT

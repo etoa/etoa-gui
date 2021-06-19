@@ -1,6 +1,6 @@
 <?php
 
-$mysqlHandle;
+$mysqlHandle = null;
 
 if (!function_exists('mysql_num_rows')) {
     function mysql_num_rows($res) {

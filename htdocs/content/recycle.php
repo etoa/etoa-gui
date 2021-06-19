@@ -73,10 +73,10 @@
 		//Schiffe recyceln
 		if (isset($_POST['submit_recycle_ships']) && $_POST['submit_recycle_ships']!="")
 		{
+            $recycled = [];
 			//Anzahl muss grösser als 0 sein
 			if (count($_POST['ship_count'])>0)
 			{
-			    $recycled = [];
 				foreach ($_POST['ship_count'] as $id=>$num)
 				{
 					$id = intval($id);
@@ -163,8 +163,7 @@
 				//Log schreiben
 				$log="Der User [page user sub=edit user_id=".$cu->id."] [B]".$cu."[/B] [/page] hat auf dem Planeten [page galaxy sub=edit id=".$cp->id()."][B]".$cp->name."[/B][/page] folgende Schiffe mit dem r&uuml;ckgabewert von ".($payback*100)."% recycelt:\n\n".$log_ships."\nDies hat ihm folgende Rohstoffe gegeben:\n".RES_METAL.": ".nf($pb[0])."\n".RES_CRYSTAL.": ".nf($pb[1])."\n".RES_PLASTIC.": ".nf($pb[2])."\n".RES_FUEL.": ".nf($pb[3])."\n".RES_FOOD.": ".nf($pb[4])."\n";
 
-				add_log(12,$log);
-
+				Log::add(12, Log::INFO, $log);
 			}
 			success_msg(nf($cnt)." Schiffe erfolgreich recycelt!");
             foreach ($recycled as $id => $num) {
@@ -176,11 +175,11 @@
 		//Verteidigungsanlagen recyceln
 		if (isset($_POST['submit_recycle_def']) && $_POST['submit_recycle_def']!="")
 		{
+            $recycled = [];
 			//Anzahl muss grösser als 0 sein
 			if (count($_POST['def_count'])>0)
 			{
 				$fields = 0;
-                $recycled = [];
 				foreach ($_POST['def_count'] as $id=>$num)
 				{
 					$num=abs($num);
@@ -265,7 +264,7 @@
 				//Log schreiben
 				$log="Der User [page user sub=edit user_id=".$cu->id."] [B]".$cu."[/B] [/page] hat auf dem Planeten [page galaxy sub=edit id=".$cp->id()."][B]".$cp->name."[/B][/page] folgende Verteidigungsanlagen mit dem r&uuml;ckgabewert von ".($payback*100)."% recycelt:\n\n".$log_def."\nDies hat ihm folgende Rohstoffe gegeben:\n".RES_METAL.": ".nf($pb[0])."\n".RES_CRYSTAL.": ".nf($pb[1])."\n".RES_PLASTIC.": ".nf($pb[2])."\n".RES_FUEL.": ".nf($pb[3])."\n".RES_FOOD.": ".nf($pb[4])."\n";
 
-				add_log(12,$log);
+				Log::add(12, Log::INFO, $log);
 			}
 			success_msg("".nf($cnt)." Verteidigungsanlagen erfolgreich recycelt!");
             foreach ($recycled as $id => $num) {

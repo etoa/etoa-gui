@@ -1,7 +1,10 @@
 <?PHP
 
+/** @var \EtoA\Race\RaceDataRepository $raceRepository */
+$raceRepository = $app['etoa.race.datarepository'];
+$raceNames = $raceRepository->getRaceNames();
+
 	echo "<h2>Verteidigung</h2>";
-	$race=get_races_array();
 
 	if (isset($_GET['id']) && intval($_GET['id']) > 0)
 	{
@@ -49,7 +52,7 @@
 	   	echo "<td class=\"tbldata\">".text2html($arr['def_longcomment'])."</td></tr>";
 			echo "<tr><td class=\"tbltitle\">Rasse</td><td class=\"tbldata\">";
 				if ($arr['def_race_id']>0)
-					echo $race[$arr['def_race_id']]['race_name']."</td></tr>";
+					echo $raceNames[$arr['def_race_id']]."</td></tr>";
 				else
 					echo "-</td></tr>";
 	    echo "<tr><td class=\"tbltitle\">".RES_ICON_METAL."".RES_METAL."</td><td class=\"tbldata\">".nf($arr['def_costs_metal'])."</td></tr>";
@@ -172,7 +175,7 @@
 							<a href=\"?$link&site=$site&id=".$arr['def_id']."\">".$arr['def_name']."</a></td>";
 						echo "<td>";
 						if ($arr['def_race_id']>0)
-							echo $race[$arr['def_race_id']]['race_name'];
+							echo $raceNames[$arr['def_race_id']];
 						else
 							echo "-";
 						echo "<td>".nf($arr['def_fields'])."</td>";

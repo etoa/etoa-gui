@@ -48,8 +48,8 @@
 	$cnt=1;
 	for ($i=$areaOriginX+$stepX;$i<=$areaOriginX+$areaW;$i+=$stepX)
 	{
-		imageline($im,$i,10,$i,$h-LEGEND_HEIGHT-10,$colLGrey);
-		imagestring($im,2,$i-imagefontwidth(2)*strlen($cnt)/2,$areaOriginY,$cnt++,$colBlack);
+		imageline($im, (int) $i,10, (int) $i,$h-LEGEND_HEIGHT-10,$colLGrey);
+		imagestring($im, 2, (int) ($i-imagefontwidth(2)*strlen((string) $cnt)/2), $areaOriginY, (string) $cnt++, $colBlack);
 	}
 
 
@@ -58,7 +58,7 @@
 
 	for ($i=0;$i<=$maxRatio; $i+=$maxRatio/10)
 	{
-		imagestring($im,2,P_LEFT-imagefontwidth(2)*strlen($i)-2,$areaOriginY-($i/$maxRatio*$areaH),$i,$colBlack);
+		imagestring($im,2,P_LEFT-imagefontwidth(2)*strlen((string) $i)-2,$areaOriginY-($i/$maxRatio*$areaH), (string) $i,$colBlack);
 	}
 
 	$strx = P_LEFT;
@@ -87,7 +87,7 @@
 
 			$newX = $areaOriginX+($stepX*$level);
 			$newY = $areaOriginY-(($ratio/$maxRatio)*$areaH);
-      imageline($im,$startX,$startY,$newX,$newY,$lineCol[$i%7]);
+      imageline($im,$startX,$startY, (int) $newX, (int) $newY,$lineCol[$i%7]);
       $startX=$newX;
       $startY=$newY;
     }
@@ -113,7 +113,7 @@
 		$costs1 = $arr['ship_costs_metal']+$arr['ship_costs_crystal']+$arr['ship_costs_plastic']+$arr['ship_costs_fuel']+$arr['ship_costs_food'];
 		$prod1 = $arr['ship_prod_power'];
 		$ratio = round($costs1 / $prod1,1);
-    imageline($im,$areaOriginX,$areaOriginY-(($ratio/$maxRatio)*$areaH),$areaOriginX+$areaW,$areaOriginY-(($ratio/$maxRatio)*$areaH),$lineCol[$i%7]);
+    imageline($im,$areaOriginX,(int) ($areaOriginY-(($ratio/$maxRatio)*$areaH)),$areaOriginX+$areaW,(int) ($areaOriginY-(($ratio/$maxRatio)*$areaH)), $lineCol[$i%7]);
 
 		$tpb1 = Planet::getSolarPowerBonus($cfg->param1('planet_temp'),$cfg->param1('planet_temp')+$cfg->value('planet_temp'));
 		$ratio = round($costs1 / ($prod1+$tpb1),1);

@@ -1,10 +1,10 @@
 <?PHP
 
-	/**
-	* Fleet launch class, provides the full workflow for starting a fleet
+/**
+ * Fleet launch class, provides the full workflow for starting a fleet
 	* and thus creating a fleet object and record in the database
 	*
-	* @author Nicolas Perrenoud <mrcage@etoa.ch>
+	 * @author Nicolas Perrenoud <mrcage@etoa.ch>
 	*/
 	class FleetLaunch
 	{
@@ -13,6 +13,7 @@
  		//
 		public $sourceEntity;
 		public $targetEntity;
+		public $owner;
 		public $wormholeEntryEntity;
 		public $wormholeExitEntity;
 		var $ownerId;
@@ -45,13 +46,17 @@
 		private $resources;
 		private $error;
 		private $fleetLog;
+		public $sBonusSpeed;
+		public $wormholeEnable;
+		public $aFleets;
+		public $allianceSlots;
 
 		/**
 		* The constructor
 		*
 		* >> Step 1 <<
 		*/
-        public function __construct(&$sourceEnt,&$ownerEnt)
+        public function __construct($sourceEnt, $ownerEnt)
 		{
 
 			$this->sourceEntity = $sourceEnt;
@@ -869,7 +874,7 @@
 						{
 							foreach($this->getShips() as $ship)
 							{
-								if (!(in_array($ai->code(),$ship['actions']) || $ship['special']))
+								if (!(in_array($ai->code(),$ship['actions'], true) || $ship['special']))
 								{
 									$exclusiceAllowed = false;
 									break;
@@ -1197,7 +1202,7 @@
 
 			$supportTimeFuel = ($this->sourceEntity->getRes(4)-$this->getLoadedRes(4)-$this->getCosts())/$this->supportCostsFuelPerSec;
 
-			if ($this->supportCostsFoodPerSec)
+			if ($this->supportCostsFoodPerSec > 0)
 				$supportTimeFood = ($this->sourceEntity->getRes(5)-$this->getLoadedRes(5)-$this->getCostsFood())/$this->supportCostsFoodPerSec;
 			else
 				$supportTimeFood = $supportTimeFuel;
@@ -1212,12 +1217,6 @@
 
 		function getSupport() {
 			return "Supportkosten";
-		}
-
-		function getSupportDesc() {
-			$this->calcSupportTime();
-
-			return "".RES_FUEL.": ".nf($this->supportCostsFuelPerSec*$this->supportTime)." (".nf($this->supportCostsFuelPerSec*3600)." pro h)<br style=\"clear:both\" />".RES_FOOD.": ".nf($this->supportCostsFoodPerSec*$this->supportTime)." (".nf($this->supportCostsFoodPerSec*3600)." pro h)";
 		}
 
 		function setLeader($id) {

@@ -28,9 +28,9 @@
 
 		/**
 		 * Constructor
-		 * @param <type> $entityId
-		 * @param <type> $ownerId
-		 * @param <type> $load
+		 * @param int $entityId
+		 * @param int $ownerId
+		 * @param int $load
 		*
 		* @access public
 		 */
@@ -61,7 +61,7 @@
 		*  Returns an ArrayIterator with every element in the selected category,
 		* use the $mode param to specify the returned buildings aswell as the $load param in the Constructor
 		*
-		* @param unsigned int $catId
+		* @param int $catId
 	 	* @param string $mode {all | buildable | resable}
 		*
 		* @return ArrayIterator	with key() building_id and current() buildlistitem
@@ -262,7 +262,7 @@
 
 			// BUGFIX: if first part is false, check for $tech in second part!
 
-			if ((!$tech && !$this->isUnderConstruction($bid)) || ($tech))
+			if ((!$tech && !$this->isUnderConstruction()) || ($tech))
 			{
 				if (isset($this->items[$bid]))
 				{
@@ -443,7 +443,7 @@
 		* and satisfied prerequisites.
 		*
 		*
-		*	@return <int> 1=buildable,0=not buildable but show resbox, -1= not buildable & no res box
+		*	@return int 1=buildable,0=not buildable but show resbox, -1= not buildable & no res box
 		*/
 		function checkBuildable($bid, $uncheckConstruction=false)
 		{
@@ -589,7 +589,7 @@
 		/**
 		* Adds a construction job for the given item
 		*
-		* @param int Item-ID
+		* @param int $itemId Item-ID
 		*/
 		function addJob($itemId)
 		{
@@ -609,7 +609,7 @@
 					$this->entity = &$cp;
 			}
 
-			if ($this->checkBuildable($itemId))
+			if ($this->checkBuildable($itemId) > 0)
 			{
 				if (isset($this->items[$itemId]))
 				{
@@ -733,7 +733,7 @@
 		/**
 		* Returns all jobs (of a given item)
 		*
-		* @param int Item-ID
+		* @param int $itemId Item-ID
 		*/
 		function & getJobs($itemId=0)
 		{
@@ -755,7 +755,7 @@
 		/**
 		* Returns the currently active job item
 		*
-		* @param int Item-ID (Optional)
+		* @param int $itemId Item-ID (Optional)
 		*/
 		function activeJob($itemId = 0)
 		{
@@ -777,7 +777,7 @@
 		* Cancel all pending jobs of a given
 		* item.
 		*
-		* @param int Item-ID
+		* @param int $itemId Item-ID
 		*/
 		function cancelJobsByItemId($itemId)
 		{
@@ -805,7 +805,7 @@
 		* Cancels a given job and returns
 		* a part of resources if time is not up
 		*
-		* @param int Job-ID
+		* @param int $jid Job-ID
 		*/
 		function cancelJobById($jid)
 		{

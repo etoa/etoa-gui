@@ -18,6 +18,10 @@
 	//
 	//
 
+	/** @var int $alliance_market_level */
+	/** @var bool $cd_enabled */
+	/** @var int $cooldown */
+
 	$for_user = 0;
 	$for_alliance = 0;
 
@@ -41,7 +45,7 @@
 		}
 	}
 
-	if (empty($errMsg))
+	if (!isset($errMsg))
 	{
 		$ok = true;	// Checker for valid resources
 		$subtracted = array(); // Resource to be subtracted from planet

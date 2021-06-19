@@ -6,13 +6,26 @@
 */
 class Planet extends Entity implements OwnableEntity
 {
+	protected $id;
+	protected bool $isMain;
 	protected $isValid;
 	protected $coordsLoaded;
 	private $desc;
 	private $name;
-
 	// TODO: Make protected and ad getter
 	public $resources;
+	protected $temp_from;
+	protected $temp_to;
+	protected $pos;
+	protected $starTypeName;
+	protected $fields;
+	protected $fieldsUsed;
+	protected $fieldsBase;
+	protected $fieldsExtra;
+	protected $debrisField;
+	protected $debrisMetal;
+	protected $debrisCrystal;
+	protected $debrisPlastic;
 
 	/**
 	* Constructor
@@ -595,6 +608,8 @@ class Planet extends Entity implements OwnableEntity
 					break;
 				case 5:
 					$str = "planet_res_food=planet_res_food+".$diff."";
+				default:
+					$str = '';
 		    $this->resFood+=$diff;
 					break;
 			}
@@ -610,8 +625,8 @@ class Planet extends Entity implements OwnableEntity
 
 		/**
 		 *
-		 * @global <type> $resNames
-		 * @param <type> $data
+		 * @global string[] $resNames
+		 * @param array $data
 		 */
 		function addRes($data)
 		{

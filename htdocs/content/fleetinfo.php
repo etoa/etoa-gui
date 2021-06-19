@@ -58,7 +58,7 @@
 			{
 				if ($fd->status()==0)
 				{
-					if ($lead_id && ($cu->alliance->buildlist->getLevel(ALLIANCE_FLEET_CONTROL_ID)>=ALLIANCE_FLEET_SHOW))
+					if ($lead_id > 0 && ($cu->alliance->buildlist->getLevel(ALLIANCE_FLEET_CONTROL_ID)>=ALLIANCE_FLEET_SHOW))
 					{
 						$valid = $cu->alliance->buildlist->getLevel(ALLIANCE_FLEET_CONTROL_ID);
 					}
@@ -103,7 +103,7 @@
 				if ($fd->cancelFlight(true))
 				{
 					success_msg("Flug erfolgreich abgebrochen!");
-					add_log(13,"Der Spieler [b]".$cu->nick."[/b] bricht den ganzen Allianzflug seiner Flotte [b]".$fleet_id."[/b] ab");
+					Log::add(13,Log::INFO, "Der Spieler [b]".$cu->nick."[/b] bricht den ganzen Allianzflug seiner Flotte [b]".$fleet_id."[/b] ab");
 				}
 				else
 				{
@@ -300,7 +300,7 @@
 						<td>";
 				foreach ($fd->fleets as $f)
 				{
-					echo "<a href=\"?page=fleetinfo&amp;id=".$f->Id()."\">".$cu->allianceTag()."-".$f->Id()."<br />Besitzer: ".get_user_nick($f->ownerId())."</a><br />";
+					echo "<a href=\"?page=fleetinfo&amp;id=".$f->id()."\">".$cu->allianceTag()."-".$f->id()."<br />Besitzer: ".get_user_nick($f->ownerId())."</a><br />";
 				}
 				echo "</td></tr>";
 				tableEnd();

@@ -25,12 +25,14 @@
 	* @copyright Copyright (c) 2004-2008 by EtoA Gaming, www.etoa.net
 	*/
 
-	if (intval($_GET['lead_id'])>0)
-		$lead_id=intval($_GET['lead_id']);
+	/** @var int $fleet_id */
+	/** @var Fleet $fd */
+
+	$lead_id = (int) $_GET['lead_id'] > 0 ? (int) $_GET['lead_id'] : -1;
 
 	$rights = true;
 
-	if ($lead_id)
+	if ($lead_id > 0)
 		$fd = new Fleet($fleet_id,-1,$lead_id);
 	else
 		if ($cu->alliance->getBuildingLevel("Flottenkontrolle")<ALLIANCE_FLEET_SHOW_PART && $cu->id!=$fd->ownerId())
@@ -52,7 +54,7 @@
 					if ($fd->cancelFlight())
 					{
 						success_msg("Flug erfolgreich abgebrochen!");
-						add_log(13,"Der Spieler [b]".$cu->nick."[/b] bricht den Flug seiner Flotte [b]".$fleet_id."[/b] ab");
+						Log::add(13,Log::INFO, "Der Spieler [b]".$cu->nick."[/b] bricht den Flug seiner Flotte [b]".$fleet_id."[/b] ab");
 					}
 					else
 					{
@@ -66,7 +68,7 @@
 					if ($fd->cancelFlight(true))
 					{
 						success_msg("Flug erfolgreich abgebrochen!");
-						add_log(13,"Der Spieler [b]".$cu->nick."[/b] bricht den ganzen Allianzflug seiner Flotte [b]".$fleet_id."[/b] ab");
+						Log::add(13,Log::INFO, "Der Spieler [b]".$cu->nick."[/b] bricht den ganzen Allianzflug seiner Flotte [b]".$fleet_id."[/b] ab");
 					}
 					else
 					{
@@ -90,7 +92,7 @@
 						<th>Leaderflotte:</th>
 						<td>";
 
-				if ($fd->id() == $fd->leaderId() && $lead_id)
+				if ($fd->id() == $fd->leaderId() && $lead_id > 0)
 					echo "Das ist der Gesammte Angriff!</td></tr>";
 				elseif ($fd->id() == $fd->leaderId())
 				{
@@ -125,14 +127,14 @@
 						<th>Verbleibend:</th>
 						<td id=\"flighttime\" style=\"color:#ff0\">-</td>
 					</tr>";
-				if ($fd->id() == $fd->leaderId() && $lead_id && $cu->alliance->getBuildingLevel("Flottenkontrolle")>=ALLIANCE_FLEET_SHOW_PART)
+				if ($fd->id() == $fd->leaderId() && $lead_id > 0 && $cu->alliance->getBuildingLevel("Flottenkontrolle")>=ALLIANCE_FLEET_SHOW_PART)
 				{
 					echo "<th>Teilflotten:</th>
 						<td>
-							<a href=\"?page=fleetinfo&amp;id=".$fd->Id()."\">".$cu->allianceTag()."-".$fd->Id()."<br />Besitzer: ".get_user_nick($fd->ownerId())."</a><br />";
+							<a href=\"?page=fleetinfo&amp;id=".$fd->id()."\">".$cu->allianceTag()."-".$fd->id()."<br />Besitzer: ".get_user_nick($fd->ownerId())."</a><br />";
 					foreach ($fd->fleets as $f)
 					{
-						echo "<a href=\"?page=fleetinfo&amp;id=".$f->Id()."\">".$cu->allianceTag()."-".$f->Id()."<br />Besitzer: ".get_user_nick($f->ownerId())."</a><br />";
+						echo "<a href=\"?page=fleetinfo&amp;id=".$f->id()."\">".$cu->allianceTag()."-".$f->id()."<br />Besitzer: ".get_user_nick($f->ownerId())."</a><br />";
 					}
 					echo "</td></tr>";
 				}
@@ -227,7 +229,7 @@
 						$ship = new Ship($sid);
 						echo "<tr>
 								<td style=\"width:40px;background:#000\">
-									".$ship->imgSmall()."
+									".$ship->img()."
 								</td>
 								<td>
 									<b>".$ship->name()."</b><br/>

@@ -36,9 +36,9 @@
 				}
 			}
 			if ($manual)
-				add_log("4",mysql_num_rows($res)." inaktive User die seit ".date("d.m.Y H:i",$online_time)." nicht mehr online waren oder seit ".date("d.m.Y H:i",$register_time)." keine Punkte haben wurden manuell gelöscht!");
+				Log::add("4", Log::INFO, mysql_num_rows($res)." inaktive User die seit ".date("d.m.Y H:i",$online_time)." nicht mehr online waren oder seit ".date("d.m.Y H:i",$register_time)." keine Punkte haben wurden manuell gelöscht!");
 			else
-				add_log("4",mysql_num_rows($res)." inaktive User die seit ".date("d.m.Y H:i",$online_time)." nicht mehr online waren oder seit ".date("d.m.Y H:i",$register_time)." keine Punkte haben wurden gelöscht!");
+				Log::add("4", Log::INFO, mysql_num_rows($res)." inaktive User die seit ".date("d.m.Y H:i",$online_time)." nicht mehr online waren oder seit ".date("d.m.Y H:i",$register_time)." keine Punkte haben wurden gelöscht!");
 
 			// Nachricht an lange inaktive
 			$res =	dbquery("
@@ -127,9 +127,9 @@
 				}
 			}
 			if ($manual)
-				add_log("4",mysql_num_rows($res)." als gelöscht markierte User wurden manuell gelöscht!");
+				Log::add("4", Log::INFO, mysql_num_rows($res)." als gelöscht markierte User wurden manuell gelöscht!");
 			else
-				add_log("4",mysql_num_rows($res)." als gelöscht markierte User wurden gelöscht!");
+				Log::add("4", Log::INFO, mysql_num_rows($res)." als gelöscht markierte User wurden gelöscht!");
 			return mysql_num_rows($res);
 		}
 
@@ -145,7 +145,7 @@
 				$tstamp = time() - (24*3600*$cfg->get('log_threshold_days'));
 			dbquery("DELETE FROM user_points WHERE point_timestamp<".$tstamp.";");
 			$nr = mysql_affected_rows();
-			add_log("4","$nr Userpunkte-Logs die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!");
+			Log::add("4", Log::INFO, "$nr Userpunkte-Logs die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!");
 			return $nr;
 		}
 
@@ -356,7 +356,7 @@
 
 				while ($darr=mysql_fetch_row($pres))
 				{
-					BackendMessage::updatePlanet($pid);
+					BackendMessage::updatePlanet($darr['id']);
 				}
        		};
 

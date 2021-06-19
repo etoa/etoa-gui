@@ -46,7 +46,9 @@
 
 	echo "<h2>Raumschiffe</h2>";
 
-	$race=get_races_array();
+	/** @var \EtoA\Race\RaceDataRepository $raceRepository */
+	$raceRepository = $app['etoa.race.datarepository'];
+	$raceNames = $raceRepository->getRaceNames();
 
 	//
 	// Details
@@ -118,7 +120,7 @@
 
     	if ($arr['ship_race_id']>0)
     	{
-    		echo "<tr><th class=\"tbltitle\">Rasse:</th><td colspan=\"3\" class=\"tbldata\">Dieses Schiff kann exklusiv nur durch das Volk der <b>".$race[$arr['ship_race_id']]['race_name']."</b> gebaut werden!</td></tr>";
+    		echo "<tr><th class=\"tbltitle\">Rasse:</th><td colspan=\"3\" class=\"tbldata\">Dieses Schiff kann exklusiv nur durch das Volk der <b>".$raceNames[$arr['ship_race_id']]."</b> gebaut werden!</td></tr>";
     	}
 
     	echo "<tr>
@@ -224,7 +226,7 @@
 
 			echo "<tr><th class=\"tbltitle\" colspan=\"4\" style=\"text-align:center\">Fähigkeiten</th></tr>";
 
-			$actions = explode(",",$arr['ship_actions']);
+			$actions = array_filter(explode(",",$arr['ship_actions']));
 			$accnt=0;
 			if (count($actions)>0)
 			{
@@ -366,7 +368,7 @@
 						</td>";
 						echo "<td>";
 						if ($arr['ship_race_id']>0)
-							echo $race[$arr['ship_race_id']]['race_name'];
+							echo $raceNames[$arr['ship_race_id']];
 						else
 							echo "-";
 						echo "<td>".nf($arr['ship_capacity'])."</td>";

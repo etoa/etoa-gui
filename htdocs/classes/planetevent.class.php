@@ -2,14 +2,15 @@
 	/**
 	* Does a random event on a planet
 	*/
-	class PlanetEvent extends RandomEvent
+	class PlanetEvent //extends RandomEvent
 	{
 		private $planetId;
 
         public function __construct($id,$pid)
 		{
-			parent::RandomEvent($id,"random_planet");
+//			parent::RandomEvent($id,"random_planet");
 			$this->planetId = $pid;
+			unset($id);
 		}
 
 		function run()
@@ -139,19 +140,19 @@
 
 				$messageParsed = str_replace('{planet}',$arr['planet_name'],$messageParsed);
 
-				$messageParsed = str_replace('{reward:metal}',$rewards['metal'],$messageParsed);
-				$messageParsed = str_replace('{reward:crystal}',$rewards['crystal'],$messageParsed);
-				$messageParsed = str_replace('{reward:plastic}',$rewards['plastic'],$messageParsed);
-				$messageParsed = str_replace('{reward:fuel}',$rewards['fuel'],$messageParsed);
-				$messageParsed = str_replace('{reward:food}',$rewards['food'],$messageParsed);
-				$messageParsed = str_replace('{reward:people}',$rewards['people'],$messageParsed);
+				$messageParsed = str_replace('{reward:metal}', (string) $rewards['metal'],$messageParsed);
+				$messageParsed = str_replace('{reward:crystal}',(string) $rewards['crystal'],$messageParsed);
+				$messageParsed = str_replace('{reward:plastic}',(string) $rewards['plastic'],$messageParsed);
+				$messageParsed = str_replace('{reward:fuel}',(string) $rewards['fuel'],$messageParsed);
+				$messageParsed = str_replace('{reward:food}',(string) $rewards['food'],$messageParsed);
+				$messageParsed = str_replace('{reward:people}',(string) $rewards['people'],$messageParsed);
 
-				$messageParsed = str_replace('{costs:metal}',$costs['metal'],$messageParsed);
-				$messageParsed = str_replace('{costs:crystal}',$costs['crystal'],$messageParsed);
-				$messageParsed = str_replace('{costs:plastic}',$costs['plastic'],$messageParsed);
-				$messageParsed = str_replace('{costs:fuel}',$costs['fuel'],$messageParsed);
-				$messageParsed = str_replace('{costs:food}',$costs['food'],$messageParsed);
-				$messageParsed = str_replace('{costs:people}',$costs['people'],$messageParsed);
+				$messageParsed = str_replace('{costs:metal}',(string) $costs['metal'],$messageParsed);
+				$messageParsed = str_replace('{costs:crystal}',(string) $costs['crystal'],$messageParsed);
+				$messageParsed = str_replace('{costs:plastic}',(string) $costs['plastic'],$messageParsed);
+				$messageParsed = str_replace('{costs:fuel}',(string) $costs['fuel'],$messageParsed);
+				$messageParsed = str_replace('{costs:food}',(string) $costs['food'],$messageParsed);
+				$messageParsed = str_replace('{costs:people}',(string) $costs['people'],$messageParsed);
 
 				dbquery("
 				UPDATE

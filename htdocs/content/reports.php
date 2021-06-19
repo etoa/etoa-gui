@@ -52,8 +52,7 @@
 					archived=1
 				WHERE
 					id IN (".implode(",",$ids).")
-					AND user_id='".$cu->id."'
-					$sqladd;");
+					AND user_id='".$cu->id."';");
 
 			if (count($_POST['delreport'])==1)
 			{
@@ -171,11 +170,12 @@
 			echo "<input type=\"button\" value=\"&lt;&lt;\" onclick=\"document.location='?page=$page&amp;type=$type&amp;limit=0'\" /> ";
 			echo "<input type=\"button\" value=\"&lt;\" onclick=\"document.location='?page=$page&amp;type=$type&amp;limit=".($limit-REPORT_LIMIT)."'\" /> ";
 		}
-		echo " ".$limit."-".min($limit+REPORT_LIMIT,$totalReports)." ";
-		if ($limit+REPORT_LIMIT<$totalReports)
+		$totalReportsCount = count($totalReports);
+		echo " ".$limit."-".min($limit+REPORT_LIMIT, $totalReportsCount)." ";
+		if ($limit+REPORT_LIMIT < $totalReportsCount)
 		{
 			echo "<input type=\"button\" value=\"&gt;\" onclick=\"document.location='?page=$page&amp;type=$type&amp;limit=".($limit+REPORT_LIMIT)."'\" /> ";
-			echo "<input type=\"button\" value=\"&gt;&gt;\" onclick=\"document.location='?page=$page&amp;type=$type&amp;limit=".($totalReports-($totalReports%REPORT_LIMIT))."'\" /> ";
+			echo "<input type=\"button\" value=\"&gt;&gt;\" onclick=\"document.location='?page=$page&amp;type=$type&amp;limit=".($totalReportsCount-($totalReportsCount%REPORT_LIMIT))."'\" /> ";
 			echo "</div></th></tr>";
 		}
 
@@ -220,7 +220,7 @@
 
 			echo "<input type=\"button\" value=\"Weiterleiten\" onclick=\"document.location='?page=messages&mode=new&amp;message_subject=".$subject."".$msgadd."'\" name=\"remit\" />&nbsp;*/
 			echo "<input type=\"button\" value=\"L&ouml;schen\" onclick=\"toggleBox('report".$rid."');xajax_reportSetDeleted(".$rid.");\" />&nbsp;";
-			ticket_button(8,"Regelverstoss melden");
+			ticket_button('8',"Regelverstoss melden");
 			echo "</td>";
 			echo "</tr>";
 			$cnt++;

@@ -129,7 +129,7 @@
   // Top row: Buttons to upper sectors
 	echo "<tr>";
   echo "<td class=\"sector_map_neighbour_nav\" style=\"width:45px;height:45px;\">";
-	if ($sx_tl && $sy_tl!=0 && $sx_tl!=$sx_num+1 && $sy_tl!=$sy_num+1)
+	if ($sx_tl !== 0 && $sy_tl !==0 && $sx_tl !== $sx_num + 1 && $sy_tl !== $sy_num + 1)
 	{
     $tt = new Tooltip();
     $tt->addTitle("Sektor $sx_tl/$sy_tl");
@@ -159,7 +159,7 @@
   echo "</td>";
 
   echo "<td class=\"sector_map_neighbour_nav\" style=\"width:45px;height:45px;\">";
-	if ($sx_tr && $sy_tr!=0 && $sx_tr!=$sx_num+1 && $sy_tr!=$sy_num+1)
+	if ($sx_tr !== 0 && $sy_tr !== 0 && $sx_tr !== $sx_num + 1 && $sy_tr !== $sy_num + 1)
 	{
     $tt = new Tooltip();
     $tt->addTitle("Sektor $sx_tr/$sy_tr");
@@ -177,7 +177,7 @@
   // Middle row: Map and buttons to left and right sectors
 	echo "<tr>";
   echo "<td class=\"sector_map_neighbour_nav\" style=\"width:45px;\">";
-	if ($sx_ml && $sy_ml!=0 && $sx_ml!=$sx_num+1 && $sy_ml!=$sy_num+1)
+	if ($sx_ml !== 0 && $sy_ml !== 0 && $sx_ml !== $sx_num + 1 && $sy_ml !== $sy_num + 1)
   {
     $tt = new Tooltip();
     $tt->addTitle("Sektor $sx_ml/$sy_ml");
@@ -212,7 +212,7 @@
   $user_solsys_ids = array();
   while ($arr = mysql_fetch_row($res))
   {
-  	$user_solsys_ids[]=$arr[0];
+  	$user_solsys_ids[]= (int) $arr[0];
   }
 
   $sectorMap = new SectorMapRenderer($cfg->param1('num_of_cells'), $cfg->param2('num_of_cells'));
@@ -231,7 +231,7 @@
 
 
   echo "<td class=\"sector_map_neighbour_nav\" style=\"width:45px;\">";
-	if ($sx_mr && $sy_mr!=0 && $sx_mr!=$sx_num+1 && $sy_mr!=$sy_num+1)
+	if ($sx_mr !== 0 && $sy_mr !== 0 && $sx_mr !== $sx_num + 1 && $sy_mr !== $sy_num + 1)
   {
     $tt = new Tooltip();
     $tt->addTitle("Sektor $sx_mr/$sy_mr");
@@ -250,7 +250,7 @@
   // Bottom row: Buttons to lower sectors
   echo "<tr>";
   echo "<td class=\"sector_map_neighbour_nav\" style=\"width:45px;height:45px;\">";
-  if ($sx_bl && $sy_bl!=0 && $sx_bl!=$sx_num+1 && $sy_bl!=$sy_num+1)
+  if ($sx_bl !== 0 && $sy_bl !== 0 && $sx_bl !== $sx_num + 1 && $sy_bl !== $sy_num + 1)
   {
     $tt = new Tooltip();
     $tt->addTitle("Sektor $sx_bl/$sy_bl");
@@ -265,7 +265,7 @@
   echo "</td>";
 
   echo "<td class=\"sector_map_neighbour_nav\" style=\"height:45px;\">";
-  if ($sx_bc && $sy_bc!=0 && $sx_bc!=$sx_num+1 && $sy_bc!=$sy_num+1)
+  if ($sx_bc !== 0 && $sy_bc !== 0 && $sx_bc !== $sx_num + 1 && $sy_bc !== $sy_num + 1)
   {
     $tt = new Tooltip();
     $tt->addTitle("Sektor $sx_bc/$sy_bc");
@@ -280,7 +280,7 @@
   echo "</td>";
 
   echo "<td class=\"sector_map_neighbour_nav\" style=\"width:45px;height:45px;\">";
-  if ($sx_br && $sy_br!=0 && $sx_br!=$sx_num+1 && $sy_br!=$sy_num+1)
+  if ($sx_br !== 0 && $sy_br !== 0 && $sx_br !== $sx_num + 1 && $sy_br !== $sy_num + 1)
   {
     $tt = new Tooltip();
     $tt->addTitle("Sektor $sx_br/$sy_br");

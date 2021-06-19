@@ -139,7 +139,7 @@ class Message
 					AND message_timestamp<'".$tstamp."';
 			");
 			$nr = mysql_affected_rows();
-			add_log("4","Unarchivierte Nachrichten die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!");
+			Log::add("4", Log::INFO, "Unarchivierte Nachrichten die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!");
 		}
 
 		// Deleted
@@ -178,7 +178,7 @@ class Message
 				message_deleted='1'
 				AND message_timestamp<'".$tstamp."';
 		");
-		add_log("4","Unarchivierte Nachrichten die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!");
+		Log::add("4", Log::INFO, "Unarchivierte Nachrichten die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!");
 		$nr += mysql_affected_rows();
 		return $nr;
 	}

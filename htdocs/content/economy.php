@@ -25,8 +25,6 @@
  * @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
  */
 
-$tabsEnable = false;
-
 if ($cp) {
     //
     // Poduktionsrate umstellen
@@ -61,12 +59,6 @@ if ($cp) {
 
     $bl = new BuildList($cp->id, $cp->id);
 
-
-    if ($tabsEnable) {
-        $tc = new TabControl("ecoTab", array("Produktion", "Energie", "Lager", "Bonus/Malus"));
-        $tc->open();
-    }
-
     if (isset($_GET['action']) && $_GET['action'] == "update") {
         BackendMessage::updatePlanet($cp->id);
         success_msg("Planet wird neu berechnet!");
@@ -84,6 +76,7 @@ if ($cp) {
         "food" => 0
     );
     $prodIncludingBoni = [];
+    $powerUsed = 0;
     echo "<form action=\"?page=$page\" method=\"post\">";
     $bres = dbquery("
 		SELECT
@@ -342,11 +335,6 @@ if ($cp) {
     }
     echo "</form>";
 
-    if ($tabsEnable) {
-        $tc->close();
-        $tc->open();
-    }
-
     echo "<div>
 		<input type=\"button\" onclick=\"document.location='?page=specialists'\" value=\"Spezialisten\" /> &nbsp; ";
     echo "<input type=\"button\" onclick=\"document.location='?page=planetstats'\" value=\"Ressourcen aller Planeten anzeigen\" /> &nbsp;
@@ -488,11 +476,6 @@ if ($cp) {
     }
     tableEnd();
 
-    if ($tabsEnable) {
-        $tc->close();
-        $tc->open();
-    }
-
     //
     // Lager
     //
@@ -573,11 +556,6 @@ if ($cp) {
 
 
         tableEnd();
-    }
-
-    if ($tabsEnable) {
-        $tc->close();
-        $tc->open();
     }
 
     //
@@ -691,11 +669,6 @@ if ($cp) {
     echo "<td>" . get_percent_string(array($cu->race->fleetSpeedFactor, $cu->specialist->fleetSpeedFactor), 1) . "</td></tr>";
 
     tableEnd();
-
-    if ($tabsEnable) {
-        $tc->close();
-        $tc->end();
-    }
 } else
     error_msg("Dieser Planet existiert nicht oder er geh&ouml;rt nicht dir!");
 

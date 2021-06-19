@@ -104,99 +104,90 @@
 							".$arr['ship_id'].",
 							".$arr['count']."
 						);");
-						$launched = true;
 
 
-						if ($launched)
-						{
-							$numBuyerShip = ($tradeShip->capacity>0) ? ceil(array_sum($buyarr) / $tradeShip->capacity) : 1;
+						$numBuyerShip = ($tradeShip->capacity>0) ? ceil(array_sum($buyarr) / $tradeShip->capacity) : 1;
 
-							// Fleet Buyer->Seller
-							dbquery("
-							INSERT INTO
-								fleet
-							(
-								user_id,
-								entity_from,
-								entity_to,
-								launchtime,
-								landtime,
-								action,
-								res_metal,
-								res_crystal,
-								res_plastic,
-								res_fuel,
-								res_food,
-								status
-							)
-							VALUES
-							(
-								".$seller->id.",
-								".$cp->id.",
-								".$sellerEntity->id.",
-								".$launchtime.",
-								".$sellerLandtime.",
-								'market',
-							".$buyarr[0].",
-							".$buyarr[1].",
-							".$buyarr[2].",
-							".$buyarr[3].",
-							".$buyarr[4].",
-								0
-							);");
-							$buyerFid = mysql_insert_id();
-							dbquery("
-							INSERT INTO
-								fleet_ships
-							(
-								fs_fleet_id,
-								fs_ship_id,
-								fs_ship_cnt
-							)
-							VALUES
-							(
-								".$buyerFid.",
-								".MARKET_SHIP_ID.",
-								".$numBuyerShip."
-							);");
+						// Fleet Buyer->Seller
+						dbquery("
+						INSERT INTO
+							fleet
+						(
+							user_id,
+							entity_from,
+							entity_to,
+							launchtime,
+							landtime,
+							action,
+							res_metal,
+							res_crystal,
+							res_plastic,
+							res_fuel,
+							res_food,
+							status
+						)
+						VALUES
+						(
+							".$seller->id.",
+							".$cp->id.",
+							".$sellerEntity->id.",
+							".$launchtime.",
+							".$sellerLandtime.",
+							'market',
+						".$buyarr[0].",
+						".$buyarr[1].",
+						".$buyarr[2].",
+						".$buyarr[3].",
+						".$buyarr[4].",
+							0
+						);");
+						$buyerFid = mysql_insert_id();
+						dbquery("
+						INSERT INTO
+							fleet_ships
+						(
+							fs_fleet_id,
+							fs_ship_id,
+							fs_ship_cnt
+						)
+						VALUES
+						(
+							".$buyerFid.",
+							".MARKET_SHIP_ID.",
+							".$numBuyerShip."
+						);");
 
 
-							$launched = true;
-
-							if ($launched)
-							{
-								dbquery("
-								DELETE FROM
-									market_ship
-								WHERE
-									id='".$id."'");
-								$cnt++;
+						dbquery("
+							DELETE FROM
+								market_ship
+							WHERE
+								id='".$id."'");
+							$cnt++;
 
 
-								// Send report to seller
-								MarketReport::addMarketReport(array(
-									'user_id'=>$arr['user_id'],
-									'entity1_id'=>$arr['entity_id'],
-									'entity2_id'=>$cp->id,
-									'opponent1_id'=>$cu->id,
-									), "shipsold", $arr['id'], array_merge($mr,array("fleet1_id"=>$sellerFid,"fleet2_id"=>$buyerFid)));
+						// Send report to seller
+						MarketReport::addMarketReport(array(
+							'user_id'=>$arr['user_id'],
+							'entity1_id'=>$arr['entity_id'],
+							'entity2_id'=>$cp->id,
+							'opponent1_id'=>$cu->id,
+							), "shipsold", $arr['id'], array_merge($mr,array("fleet1_id"=>$sellerFid,"fleet2_id"=>$buyerFid)));
 
-								// Send report to buyer (the current user)
-								MarketReport::addMarketReport(array(
-									'user_id'=>$cu->id,
-									'entity1_id'=>$cp->id,
-									'entity2_id'=>$arr['entity_id'],
-									'opponent1_id'=>$arr['user_id'],
-									), "shipbought", $arr['id'], array_merge($mr,array("fleet1_id"=>$buyerFid,"fleet2_id"=>$sellerFid)));
+						// Send report to buyer (the current user)
+						MarketReport::addMarketReport(array(
+							'user_id'=>$cu->id,
+							'entity1_id'=>$cp->id,
+							'entity2_id'=>$arr['entity_id'],
+							'opponent1_id'=>$arr['user_id'],
+							), "shipbought", $arr['id'], array_merge($mr,array("fleet1_id"=>$buyerFid,"fleet2_id"=>$sellerFid)));
 
-								// Add market ratings
-								$cu->rating->addTradeRating(TRADE_POINTS_PER_TRADE,false,'Handel #'.$arr['id'].' mit '.$arr['user_id']);
-								if (strlen($arr['text'])>TRADE_POINTS_TRADETEXT_MIN_LENGTH)
-									$seller->rating->addTradeRating(TRADE_POINTS_PER_TRADE+TRADE_POINTS_PER_TRADETEXT,true,'Handel #'.$arr['id'].' mit '.$cu->id);
-								else
-									$seller->rating->addTradeRating(TRADE_POINTS_PER_TRADE,true,'Handel #'.$arr['id'].' mit '.$cu->id);
-							}
-						}
+						// Add market ratings
+						$cu->rating->addTradeRating(TRADE_POINTS_PER_TRADE,false,'Handel #'.$arr['id'].' mit '.$arr['user_id']);
+						if (strlen($arr['text'])>TRADE_POINTS_TRADETEXT_MIN_LENGTH)
+							$seller->rating->addTradeRating(TRADE_POINTS_PER_TRADE+TRADE_POINTS_PER_TRADETEXT,true,'Handel #'.$arr['id'].' mit '.$cu->id);
+						else
+							$seller->rating->addTradeRating(TRADE_POINTS_PER_TRADE,true,'Handel #'.$arr['id'].' mit '.$cu->id);
 
 
 

@@ -25,8 +25,6 @@ $adminUserRepo = $app['etoa.admin.user.repository'];
  */
 $userRepo = $app['etoa.user.repository'];
 
-$ext = true;
-
 echo "<h1>Ticketsystem</h1>";
 
 if (isset($_GET['id']) && intval($_GET['id']) > 0) {
@@ -122,22 +120,17 @@ function viewTicket(
 
 function storeTicket(TicketRepository $ticketRepo): void
 {
-	global $ext;
 	global $cu;
 
 	$ticketRepo->create($cu->id, $_POST['cat_id'], $_POST['ticket_text']);
 	echo "<br/>Vielen Dank, dein Text wurde gespeichert.<br/>Ein Game-Administrator wird sich dem Problem annehmen.<br/><br/>";
-
-	if ($ext) {
-		echo "<input type=\"button\" onclick=\"document.location='?page=ticket'\" value=\"Weiter\" />";
-	}
+	echo "<input type=\"button\" onclick=\"document.location='?page=ticket'\" value=\"Weiter\" />";
 }
 
 function listTickets(
 	TicketRepository $ticketRepo,
 	AdminUserRepository $adminUserRepo
 ): void {
-	global $ext;
 	global $page;
 	global $cu;
 
@@ -169,33 +162,30 @@ function listTickets(
 	echo "</form>";
 	echo "<script type=\"text/javascript\">document.getElementById('ticket_text').focus()</script>";
 
-	if ($ext) {
+	$tickets = $ticketRepo->findBy(['user_id' => $cu->id]);
 
-		$tickets = $ticketRepo->findBy(['user_id' => $cu->id]);
-
-		if (count($tickets) > 0) {
-			tableStart("Vorhandene Tickets");
+	if (count($tickets) > 0) {
+		tableStart("Vorhandene Tickets");
+		echo "<tr>
+			<th>ID</th>
+			<th>Kategorie</th>
+			<th>Status</th>
+			<th>Admin</th>
+			<th>Aktualisiert</th>
+			<th>Optionen</th>
+		</tr>";
+		foreach ($tickets as $ticket) {
 			echo "<tr>
-				<th>ID</th>
-				<th>Kategorie</th>
-				<th>Status</th>
-				<th>Admin</th>
-				<th>Aktualisiert</th>
-				<th>Optionen</th>
+				<td>" . $ticket->getIdString() . "</td>
+				<td>" . $ticketRepo->getCategoryName($ticket->catId) . "</td>
+				<td>" . $ticket->getStatusName() . "</td>
+				<td><a href=\"?page=contact&rcpt=" . $ticket->adminId . "\">" . $adminUserRepo->getNick($ticket->adminId) . "</a></td>
+				<td>" . df($ticket->timestamp) . "</td>
+				<td>
+					<a href=\"?page=$page&amp;id=" . $ticket->id . "\">Anzeigen</a>
+				</td>
 			</tr>";
-			foreach ($tickets as $ticket) {
-				echo "<tr>
-					<td>" . $ticket->getIdString() . "</td>
-					<td>" . $ticketRepo->getCategoryName($ticket->catId) . "</td>
-					<td>" . $ticket->getStatusName() . "</td>
-					<td><a href=\"?page=contact&rcpt=" . $ticket->adminId . "\">" . $adminUserRepo->getNick($ticket->adminId) . "</a></td>
-					<td>" . df($ticket->timestamp) . "</td>
-					<td>
-						<a href=\"?page=$page&amp;id=" . $ticket->id . "\">Anzeigen</a>
-					</td>
-				</tr>";
-			}
-			tableEnd();
 		}
+		tableEnd();
 	}
 }

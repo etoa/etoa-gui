@@ -3,11 +3,7 @@
 use EtoA\Admin\AdminUser;
 use EtoA\Text\TextRepository;
 
-if ($index != "") {
-	$baseUrl = "?index=" . $index;
-} else {
-	$baseUrl = "?page=" . $page;
-}
+$baseUrl = $index != "" ? "?index=" . $index : "?page=" . $page;
 
 /**
  * @var TextRepository
@@ -15,7 +11,7 @@ if ($index != "") {
 $textRepo = $app['etoa.text.repository'];
 
 $contactText = $textRepo->find('contact_message');
-if ($contactText->enabled && !empty($contactText->content)) {
+if ($contactText->enabled && $contactText->content) {
 	iBoxStart();
 	echo text2html($contactText->content);
 	iBoxEnd();
@@ -39,7 +35,7 @@ if (!$admins->isEmpty()) {
 				$mail_subject = $_POST['mail_subject'];
 				$mail_text = $_POST['mail_text'];
 
-				if (!empty($mail_subject) && !empty($mail_text)) {
+				if ($mail_subject && $mail_text) {
 					// Subject
 					$subject = "Kontakt-Anfrage: " . $mail_subject;
 
@@ -101,7 +97,7 @@ if (!$admins->isEmpty()) {
 			</tr>';
 		foreach ($admins as $admin) {
 			$suffix = CONTACT_REQUIRED_MAIL_SUFFIX;
-			$showMailAddress = empty($suffix) || preg_match('/' . $suffix . '/i', $admin->email);
+			$showMailAddress = preg_match('/' . $suffix . '/i', $admin->email);
 
 			echo '<tr><td>' . $admin->nick . '</td>';
 			if ($showMailAddress) {

@@ -110,9 +110,9 @@ class Log extends BaseLog
 	/**
 	* Adds a log message to the log queue
 	*
-	* @param $facility string Event facility
-	* @param $severity string Event severity
-	* @param $msg string Log Message
+	* @param int|string $facility Event facility
+	* @param int|string $severity Event severity
+	* @param string $msg  Log Message
 	*/
 	static function add($facility, $severity, $msg)
 	{
@@ -185,7 +185,7 @@ class Log extends BaseLog
 	/**
 	* Removes up old logs from the persistend log table
 	*
-	* @param $timestamp string All items older than this time threshold will be deleted
+	* @param int $threshold All items older than this time threshold will be deleted
 	*/
 	static function cleanup($threshold)
 	{

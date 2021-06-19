@@ -56,7 +56,6 @@
 				}
 
 				throw new EException("Property $key der Klasse ".__CLASS__." ist nicht änderbar!");
-				return false;
 			}
 			catch (EException $e)
 			{
@@ -85,7 +84,7 @@
 		*/
 		function addBattleRating($rating,$reason="")
 		{
-			if ($points!=0)
+			if ($rating!=0)
 			{
 				dbquery("
 				UPDATE
@@ -95,7 +94,7 @@
 				WHERE
 					id=".$this->id.";");
 				if ($reason!="")
-					add_log(17,"KP: Der Spieler ".$this->id." erhält ".$rating." Kampfpunkte. Grund: ".$reason);
+					Log::add(17,Log::INFO, "KP: Der Spieler ".$this->id." erhält ".$rating." Kampfpunkte. Grund: ".$reason);
 			}
 		}
 
@@ -114,7 +113,7 @@
 			WHERE
 				id=".$this->id.";");
 			if ($reason!="")
-				add_log(17,"HP: Der Spieler ".$this->id." erhält ".$rating." Handelspunkte. Grund: ".$reason);
+				Log::add(17, Log::INFO, "HP: Der Spieler ".$this->id." erhält ".$rating." Handelspunkte. Grund: ".$reason);
 		}
 
 		/**
@@ -130,7 +129,7 @@
 			WHERE
 				id=".$this->id.";");
 			if ($reason!="")
-				add_log(17,"DP: Der Spieler ".$this->id." erhält ".$rating." Diplomatiepunke. Grund: ".$reason);
+				Log::add(17, Log::INFO, "DP: Der Spieler ".$this->id." erhält ".$rating." Diplomatiepunke. Grund: ".$reason);
 		}
 
 

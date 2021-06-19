@@ -17,7 +17,7 @@
 
 			if ($load)
 			{
-				$this->loadBuddys(true);
+				$this->loadBuddys(1);
 			}
 
 		}
@@ -30,8 +30,8 @@
 		/**
 		 * setter but there is no need to set any value so everything is private
 		 *
-		 * @param <type> $key
-		 * @param <type> $val
+		 * @param string $key
+		 * @param mixed $val
 		 */
 		public function __set($key, $val)
 		{
@@ -52,8 +52,8 @@
 		/**
 		 * getter
 		 *
-		 * @param <type> $key
-		 * @return <type>
+		 * @param string $key
+		 * @return mixed
 		 */
 		public function __get($key)
 		{
@@ -83,7 +83,7 @@
 		{
 			if (!$this->loaded)
 			{
-				$this->loadBuddys(true);
+				$this->loadBuddys(1);
 			}
 
 			if ($type == 'buddys')
@@ -100,7 +100,7 @@
 					return new ArrayIterator($this->requests);
 				}
 			}
-			return false;
+			return new ArrayIterator([]);
 		}
 
 		public function getBuddy($userId)
@@ -221,7 +221,7 @@
 		/**
 		 * declines an buddy request
 		 *
-		 * @param int $userid buddy user id who sent the request
+		 * @param int $userId buddy user id who sent the request
 		 *
 		 * @return bool succeeded or not
 		 *
@@ -249,13 +249,13 @@
 		/**
 		 * deletes an buddy entry between the owner and sent user id
 		 *
-		 * @param int $userid
+		 * @param int $userId
 		 *
 		 * @return bool succeeded or not
 		 *
 		 * @access public
 		 */
-		public function deleteBudyy($userid)
+		public function deleteBudyy($userId)
 		{
 			if ($this->isBuddy($userId) == 1)
 			{
@@ -305,7 +305,7 @@
 
 				/**
 				 * loads data of one buddy
-				 * @param <type> $userId
+				 * @param int $userId
 				 */
 				private function loadBuddy($userId)
 				{
@@ -352,7 +352,7 @@
                  */
 				private function loadBuddys($load=0)
                 {
-                    if ($load)
+                    if ($load !== 0)
                     {
                         $res = dbquery("SELECT * FROM buddylist WHERE bl_user_id='".$this->ownerId."' OR bl_buddy_id='".$this->ownerId."';");
                     }
@@ -366,7 +366,7 @@
                     {
                         while ($arr = mysql_fetch_assoc($res))
                         {
-                            if ($load)
+                            if ($load !== 0)
                             {
                                 if ($this->ownerId == $arr['bl_user_id'])
                                 {
@@ -416,29 +416,6 @@
                     $this->loaded = true;
 
                 }
-
-				public function createBuddyRow($userId)
-				{
-					$style = checkRelationship($userId);
-
-					if ($this->isBuddy($userId) == 0)
-					{
-
-					}
-					elseif ($this->isBuddy($userId) > 0)
-					{
-						$row = '<tr id="'.$buddy->id.'">
-							<td class="tbldata '.$class.'" >
-						<div id="ttuser'.$buddy->id.'" style="display:none;">
-							'.popUp('Profil anzeigen','page=userinfo&id='.$buddy->id).'<br/>
-							'.popUp('Punkteverlauf','page=$page&amp;mode=$mode&amp;userdetail='.$buddy->id).'<br/>
-							<a href="?page=messages&mode=new&message_user_to='.$buddy->id.'">Nachricht senden</a>
-						</div>
-						<a class="'.$class.'" href="#" '.cTT($buddy,"ttuser".$buddy->id).'>'.$buddy.'</a>
-					</td>';
-					}
-				}
-
 	}
 
 		/*
@@ -477,7 +454,7 @@
 						<br/>&nbsp;&nbsp; '.$tp.'
 					</td>';
 			$time = $buddy->loadLastAction();
-			if ($time + $cfg->value('user_timeout') > time() )
+			if ($time + (int) $cfg->value('user_timeout') > time() )
 				$out .= '<td style="color:#0f0;">online</td>';
 			elseif ($time)
 				$out .= '<td class="tbldata '.$class.'">'.date("d.m.Y H:i",$time).'</td>';

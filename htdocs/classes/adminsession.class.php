@@ -43,21 +43,21 @@ class AdminSession extends Session
 		$this->sessionManager->cleanup();
 
 		// If user login data has been temporary stored (two factor authentication challenge), restore it
-		if (empty($data['login_nick']) && !empty($this->tfa_login_nick)) {
+		if (!isset($data['login_nick']) && $this->tfa_login_nick) {
 			$data['login_nick'] = $this->tfa_login_nick;
 		}
-		if (empty($data['login_pw']) && !empty($this->tfa_login_pw)) {
+		if (!isset($data['login_pw']) && $this->tfa_login_pw) {
 			$data['login_pw'] = $this->tfa_login_pw;
 		}
 
-		if (!empty($data['login_nick']) && !empty($data['login_pw'])) {
+		if ($data['login_nick'] && $data['login_pw']) {
 			$user = $this->userRepository->findOneByNick($data['login_nick']);
 			if ($user != null) {
 				if (validatePasswort($data['login_pw'], $user->passwordString)) {
 					// Check if two factor authentication is enabled for this user
-					if (!empty($uarr['tfa_secret'])) {
+					if ($uarr['tfa_secret']) {
 						// Check if user supplied challenge
-						if (!empty($data['login_challenge'])) {
+						if (isset($data['login_challenge'])) {
 							$tfa = new RobThree\Auth\TwoFactorAuth(APP_NAME);
 							// Validate challenge. If false, return to challenge input
 							if (!$tfa->verifyCode($uarr['tfa_secret'], $data['login_challenge'])) {
@@ -82,8 +82,8 @@ class AdminSession extends Session
 
 					session_regenerate_id(true);
 
-					$this->user_id = $user->id;
-					$this->user_nick = $user->nick;
+					$this->user_id = (int) $user->id;
+					$this->user_nick = (string) $user->nick;
 					$t = time();
 					$this->time_login = $t;
 					$this->time_action = $t;
@@ -112,7 +112,7 @@ class AdminSession extends Session
 	/**
 	 * Checks if the current session is valid
 	 *
-	 * @return True if session is valid
+	 * @return bool true if session is valid
 	 */
 	function validate()
 	{
@@ -126,7 +126,7 @@ class AdminSession extends Session
 			if ($exists) {
 				$t = time();
 				$cfg = Config::getInstance();
-				if ($this->time_action + $cfg->admin_timeout->v > $t) {
+				if ($this->time_action + (int) $cfg->admin_timeout->v > $t) {
 					$this->repository->update(session_id(), $t, $_SERVER['REMOTE_ADDR']);
 					$this->time_action = $t;
 					return true;

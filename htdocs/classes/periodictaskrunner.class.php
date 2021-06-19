@@ -41,7 +41,7 @@ class PeriodicTaskRunner
 			$this->totalDuration += $duration;
 
 			// Return output
-			if (!empty($output)) {
+			if ($output) {
 				$output .= " (" . $duration . " sec)";
 				if ($acquireDuration > 1) {
 					$output .= " (Mutex erhalten in " . $acquireDuration . " sec)";

@@ -324,7 +324,7 @@
 						AND `shiplist_special_ship`='0'
 						;");
 			$nr = mysql_affected_rows();
-			add_log("4","$nr leere Schiffsdatensätze wurden gelöscht!");
+			Log::add("4", Log::INFO, "$nr leere Schiffsdatensätze wurden gelöscht!");
 			return $nr;
 		}
 

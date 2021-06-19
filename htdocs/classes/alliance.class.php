@@ -24,10 +24,13 @@
 	//
 
 	/**
-	* The alliance object
-	*
-	* @author MrCage <mrcage@etoa.ch>
-	* @copyright Copyright (c) 2004-2009 by EtoA Gaming, www.etoa.ch
+	 * The alliance object
+	 *
+	 * @author MrCage <mrcage@etoa.ch>
+	 * @copyright Copyright (c) 2004-2009 by EtoA Gaming, www.etoa.ch
+	 *
+	 * @property-read string $imageUrl
+	 * @property-read float $avgPoints
 	*/
 	class Alliance
 	{
@@ -217,7 +220,6 @@
 				}
 
 				throw new EException("Property $key der Klasse  ".__CLASS__." ist nicht änderbar!");
-					return false;
 			}
 			catch (EException $e)
 			{
@@ -328,7 +330,7 @@
 				$tmpUser = new User($userId);
 				if ($tmpUser->isValid)
 				{
-					if ($tmpUser->alliance = $this)
+					if ($tmpUser->alliance === $this)
 					{
 						$this->members[$userId] = $tmpUser;
 						$this->members[$userId]->sendMessage(MSG_ALLYMAIL_CAT,"Allianzaufnahme","Du wurdest in die Allianz [b]".$this."[/b] aufgenommen!");
@@ -371,7 +373,7 @@
 					}
 				}
 			}
-			unset($tmpUser);
+
 			return false;
 		}
 
@@ -602,8 +604,8 @@
 				{
 					$this->addHistory($this->wings[$wingId]." ist nun kein Wing mehr von uns");
 					$this->wings[$wingId]->addHistory("Wir sind nun kein Wing mehr von [b]".$this."[/b]");
-					$this->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Wing aufgelöst","Die Allianz [b]".$this->wings[$allianceId]."[/b] ist kein Wing mehr von [b]".$this."[/b]");
-					$this->wings[$wingId]->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Wing aufgelöst","Die Allianz [b]".$this->wings[$allianceId]."[/b] ist kein Wing mehr von [b]".$this."[/b]");
+					$this->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Wing aufgelöst","Die Allianz [b]".$this->wings[$wingId]."[/b] ist kein Wing mehr von [b]".$this."[/b]");
+					$this->wings[$wingId]->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Wing aufgelöst","Die Allianz [b]".$this->wings[$wingId]."[/b] ist kein Wing mehr von [b]".$this."[/b]");
 					unset($this->wings[$wingId]);
 				}
 				else
@@ -742,10 +744,10 @@
 				{
 					$user->alliance = null;
 					$user->addToUserLog("alliance","{nick} löst die Allianz [b]".$this."[/b] auf.");
-					add_log("5","Die Allianz [b]".$this."[/b] wurde von ".$user." aufgelöst!");
+					Log::add("5", Log::INFO, "Die Allianz [b]".$this."[/b] wurde von ".$user." aufgelöst!");
 				}
 				else
-					add_log("5","Die Allianz [b]".$this."[/b] wurde gelöscht!");
+					Log::add("5", Log::INFO, "Die Allianz [b]".$this."[/b] wurde gelöscht!");
 				return true;
 			} else {
 				return false;
@@ -1196,7 +1198,7 @@
 			$tstamp = time() - (24*3600*$cfg->get('log_threshold_days'));
 		dbquery("DELETE FROM alliance_points WHERE point_timestamp<".$tstamp.";");
 		$nr = mysql_affected_rows();
-		add_log("4","$nr Allianzpunkte-Logs die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!");
+		Log::add("4", Log::INFO, "$nr Allianzpunkte-Logs die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!");
 		return $nr;
 	}
 

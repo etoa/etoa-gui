@@ -75,7 +75,7 @@ class OtherReport extends Report
 
 	static function add($data)
 	{
-		return null;
+		return false;
 	}
 
 	function createSubject()
@@ -181,6 +181,7 @@ class OtherReport extends Report
 				echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' versuchte, Asteroiden zu sammeln, doch war kein Asteroidenfeld mehr vorhanden und so machte sich die Crew auf den Weg nach Hause.';
 				break;
 			case 'delivery':
+				$action = FleetAction::createFactory($this->actionCode);
 				echo 'Eine Flotte von der Allianzbasis hat folgendes Ziel erreicht!<br /><br />';
 				echo '<strong>Ziel: </strong>'.$ent1->detailLink().'<br />';
 				echo '<strong>Zeit: </strong>'.df($this->timestamp).'<br />';

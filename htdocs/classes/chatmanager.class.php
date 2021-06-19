@@ -94,7 +94,7 @@ class ChatManager {
   static function getWelcomeMessage($nick) {
 	$tm = new TextManager();
 	$text = $tm->getText('chat_welcome_message');
-	if ($text->enabled && !empty($text->content))
+	if ($text->enabled && $text->content)
 	{
 		return str_replace(
 		  array('%nick%'),

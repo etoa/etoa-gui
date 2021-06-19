@@ -1,9 +1,16 @@
 <?PHP
 abstract class JsonResponder
 {
-  static public function createFactory($action) {
+    protected \Pimple\Container $app;
 
-    $className = ucfirst(preg_replace_callback('/_([a-z])/', function ($matches) {
+    public function __construct(\Pimple\Container $app)
+    {
+        $this->app = $app;
+    }
+
+    static public function createFactory($action, Pimple\Container $app) {
+
+    $className = ucfirst(preg_replace_callback('/_([a-z])/', function ($matches): string {
             return strtoupper($matches[1]);
         }, $action)).'JsonResponder';
     $file = 'classes/responder/'.$action.".class.php";
@@ -11,7 +18,7 @@ abstract class JsonResponder
     {
       include_once($file);
       if (class_exists($className, false)) {
-        return new $className();
+        return new $className($app);
       }
     }
     throw new Exception('Action handler not found');

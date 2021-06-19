@@ -218,10 +218,10 @@
         $arr['ship_speed']/=FLEET_FACTOR_F;
 
 
-				$actions = explode(",",$arr['ship_actions']);
+				$actions = array_filter(explode(",",$arr['ship_actions']));
 				$accnt=count($actions);
 				$acstr = '';
-				if ($accnt>0)
+				if ($accnt > 0)
 				{
 					$acstr = "<br/><b>Fähigkeiten:</b> ";
 					$x=0;
@@ -956,7 +956,7 @@
 			else
 			{
 				include_once(getcwd().'/inc/bootstrap.inc.php');
-				add_log(18,'Der User '.$_SESSION['user_nick'].' versuchte, ein zweites Wurmloch zu &ouml;ffnen'."\n"
+				Log::add(18, Log::INFO, 'Der User '.$_SESSION['user_nick'].' versuchte, ein zweites Wurmloch zu &ouml;ffnen'."\n"
 						.'Bereits gesetztes Wurmloch: '.$fleet->wormholeEntryEntity.' mit Austrittspunkt '.$fleet->wormholeExitEntity ."\n"
 						.'Zweites Wumloch: '.$form['man_sx'].' / '.$form['man_sy'].' : '.$form['man_cx'].' / '.$form['man_cy'].' : '.$form['man_p'].'.'
 				);
@@ -1398,7 +1398,7 @@
 					AND entities.pos=?
 				;";
             $res = dbQuerySave($sql, [$sx, $sy, $cx, $cy, $pos]);
-			if (mysql_num_rows($res)>0 && !($code=='u' && $pos))
+			if (mysql_num_rows($res)>0 && !($code=='u' && $pos > 0))
 			{
 				$arr=mysql_fetch_row($res);
 
@@ -1437,7 +1437,7 @@
 					$action = "<input id=\"cooseAction\" tabindex=\"9\" type=\"submit\" value=\"Weiter zur Aktionsauswahl &gt;&gt;&gt;\"  /> &nbsp;";
 				}
 
-				if ($ent->ownerId()>0 && is_array($fleet->aFleets) && count($fleet->aFleets)) {
+				if ($ent->ownerId()>0 && is_array($fleet->aFleets) && count($fleet->aFleets) > 0) {
 					$alliance .= "<table style=\"width:100%;\">";
 					$counter = 0;
 					foreach ($fleet->aFleets as $f) {
@@ -1447,7 +1447,7 @@
 						}
 					}
 					$alliance .= "</table>";
-					if ($counter)
+					if ($counter > 0)
 						$allianceStyle = '';
 				}
 			}
@@ -1590,7 +1590,7 @@
 			$action = '<input id="setWormhole" tabindex="9" type="button" onclick="xajax_havenShowWormhole(xajax.getFormValues(\'targetForm\'))" value="Wurmloch auswählen">';
 		else
 		{
-			if ($arr[1] != 'w')
+			if (isset($arr) && $arr[1] != 'w')
 				$action = "<input id=\"cooseAction\" tabindex=\"9\" type=\"submit\" value=\"Weiter zur Aktionsauswahl &gt;&gt;&gt;\"  /> &nbsp;";
 			else
 			{
@@ -1600,7 +1600,7 @@
 		}
 		// $action = "<input id=\"cooseAction\" tabindex=\"9\" type=\"submit\" value=\"Weiter zur Aktionsauswahl &gt;&gt;&gt;\"  /> &nbsp;";
 
-		if ($ent->ownerId()>0 && is_array($fleet->aFleets) && count($fleet->aFleets)) {
+		if ($ent->ownerId()>0 && is_array($fleet->aFleets) && count($fleet->aFleets) > 0) {
 			$alliance .= "<table style=\"width:100%;\">";
 			$counter = 0;
 			foreach ($fleet->aFleets as $f) {
@@ -1610,7 +1610,7 @@
 				}
 			}
 			$alliance .= "</table>";
-			if ($counter)
+			if ($counter > 0)
 				$allianceStyle = '';
 		}
 
@@ -1924,6 +1924,7 @@
 	function havenAllianceAttack($id)
 	{
 		$response = new xajaxResponse();
+		/** @var FleetLaunch $fleet */
 		$fleet = unserialize($_SESSION['haven']['fleetObj']);
 
 		$percentageSpeed = 100;
@@ -1946,7 +1947,7 @@
 			if (mysql_num_rows($res)>0) {
 				$arr=mysql_fetch_assoc($res);
 				if ($arr['next_id']==$fleet->sourceEntity->ownerAlliance()) {
-					if($fleet->checkAttNum($id,$u))
+					if($fleet->checkAttNum($id))
 					{
 						$cres = dbQuerySave("
 										SELECT

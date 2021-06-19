@@ -31,7 +31,9 @@ class MarketReport extends Report
 	protected $subType = 'other';
 	protected $recordId=0;
 	protected $factor=1.0;
+	/** @var int[] */
 	protected $resSell;
+	/** @var int[] */
 	protected $resBuy;
 	protected $fleet1Id;
 	protected $fleet2Id;

@@ -77,7 +77,7 @@ class User implements \EtoA\User\UserInterface
 	protected $raceId;
 	protected $race = null;
 	protected $allianceId;
-	protected $alliance = null;
+	protected ?Alliance $alliance = null;
 	protected $rating = null;
 	protected $properties = null;
 	protected $buddylist = null;
@@ -375,17 +375,14 @@ class User implements \EtoA\User\UserInterface
 			elseif ($key == "rating")
 			{
 				throw new EException("Property $key der Klasse  ".__CLASS__." ist nicht änderbar!");
-				return false;
 			}
 			elseif ($key == "raceId")
 			{
 				throw new EException("Property $key der Klasse  ".__CLASS__." ist nicht änderbar!");
-				return false;
 			}
 			elseif ($key == "allianceId")
 			{
 				throw new EException("Property $key der Klasse  ".__CLASS__." ist nicht änderbar!");
-				return false;
 			}
 			elseif ($key == "email")
 			{
@@ -995,11 +992,11 @@ class User implements \EtoA\User\UserInterface
 
 			//Log schreiben
 			if($self)
-				add_log("3","Der Benutzer ".$this->nick." hat sich selbst gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.");
-			elseif(!$self && $from!="")
-				add_log("3","Der Benutzer ".$this->nick." wurde von ".$from." gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.");
+				Log::add("3", Log::INFO, "Der Benutzer ".$this->nick." hat sich selbst gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.");
+			elseif($from!="")
+                Log::add("3",Log::INFO, "Der Benutzer ".$this->nick." wurde von ".$from." gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.");
 			else
-				add_log("3","Der Benutzer ".$this->nick." wurde gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.");
+                Log::add("3", Log::INFO, "Der Benutzer ".$this->nick." wurde gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.");
 
 			$text ="Hallo ".$this->nick."
 
@@ -1274,7 +1271,7 @@ die Spielleitung";
 		$cfg = Config::getInstance();
 
 		// Validate required data is not empty
-		if (empty($name) || empty($email) || empty($nick) || empty($password))
+		if (!$name || !$email || !$nick || !$password)
 		{
 			throw new Exception("Nicht alle Felder sind ausgef&uuml;llt!");
 		}
@@ -1542,6 +1539,10 @@ die Spielleitung";
 		return 0;
 	}
 
+    /**
+     * @param int $absX
+     * @param int $absY
+     */
 	function setDiscovered($absX,$absY,$radius=1)
 	{
 		if (!isset($this->dmask))
@@ -1549,12 +1550,12 @@ die Spielleitung";
 			$this->loadDiscoveryMask();
 		}
 		$cfg = Config::getInstance();
-		$sx_num=$cfg->param1('num_of_sectors');
-		$cx_num=$cfg->param1('num_of_cells');
-		$sy_num=$cfg->param2('num_of_sectors');
-		$cy_num=$cfg->param2('num_of_cells');
+		$sx_num=(int) $cfg->param1('num_of_sectors');
+		$cx_num=(int) $cfg->param1('num_of_cells');
+		$sy_num=(int) $cfg->param2('num_of_sectors');
+		$cy_num=(int) $cfg->param2('num_of_cells');
 
-		for ($x=$absX-$radius; $x<=$absX+$radius; $x++)
+		for ($x= $absX-$radius; $x<=$absX+$radius; $x++)
 		{
 			for ($y=$absY-$radius; $y<=$absY+$radius; $y++)
 			{

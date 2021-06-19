@@ -78,7 +78,7 @@ use EtoA\Text\TextRepository;
     $textRepo = $app['etoa.text.repository'];
 
 	$infoText = $textRepo->find('info');
-	if ($infoText->enabled && !empty($infoText->content))
+	if ($infoText->enabled && $infoText->content)
 	{
 		echo '<div class="overviewInfoTextContainer">';
 		iBoxStart(": Wichtige Information :");
@@ -916,7 +916,7 @@ use EtoA\Text\TextRepository;
 			echo '<span id="planet_timer_'.$arr_planet['id'].'">';
 
 			// Stellt Zeit Counter dar, wenn ein Gebäude in bau ist
-			if(isset($building_rest_time) && $building_rest_time>0)
+			if($building_rest_time > 0)
 			{
 				echo startTime($building_rest_time, "planet_timer_".$arr_planet['id']."", 0, "<br>(TIME)")."";
 			}

@@ -63,9 +63,10 @@ if (($_POST['register_submit'] ?? false) && $cfg->get('enable_register') != 0) {
             $_POST['register_user_nick'],
             $_POST['register_user_password']
         );
-        add_log(3,"Der Benutzer ".$newUser->nick." (".$newUser->realName.", ".$newUser->email.") hat sich registriert!");
+        Log::add(3,Log::INFO,"Der Benutzer ".$newUser->nick." (".$newUser->realName.", ".$newUser->email.") hat sich registriert!");
 
         $verificationRequired = Config::getInstance()->email_verification_required->v;
+        $verificationUrl = null;
         if ($verificationRequired) {
             $newUser->setVerified(false);
             $verificationUrl = Config::getInstance()->roundurl.'/show.php?index=verifymail&key='.$newUser->verificationKey;

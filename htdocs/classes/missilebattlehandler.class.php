@@ -4,7 +4,7 @@ class MissileBattleHandler
 	/**
 	* Handles missile assault
 	*
-	* @param int Flight Id
+	* @param int $fid Flight Id
 	*/
 	static function battle($fid)
 	{

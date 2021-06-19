@@ -204,6 +204,7 @@
 			// Alle Schiffe laden
 			//Schiffsordnung des Users beachten
 			$cat = [];
+			/** @var array[] $ships */
 			$ships = [];
 			$order="ship_".$cu->properties->itemOrderShip." ".$cu->properties->itemOrderWay."";
 			$res = dbquery("
@@ -285,7 +286,7 @@
 			echo "<tr><td>Bauzeitverringerung durch ".$cu->specialist->name.":</td><td>".get_percent_string($cu->specialist->shipTime)."</td></tr>";
 		}
     	echo "<tr><td>Eingestellte Arbeiter:</td><td>".nf($bl->getPeopleWorking(SHIP_BUILDING_ID));
-    	if (!isset($queue) && empty($queue))
+    	if (count($queue) === 0)
 		{
 			echo '&nbsp;<a href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
 		}
@@ -368,7 +369,7 @@
         // people working changed
         if (isset($_POST['submit_people_form']))
         {
-            if (!isset($queue) && empty($queue)) {
+            if (count($queue) === 0) {
 				dbquery("
                         UPDATE
                             buildlist
@@ -464,7 +465,7 @@
 
 				// Endzeit bereits laufender Aufträge laden
 				$end_time=time();
-				if(isset($queue))
+				if(count($queue) > 0)
 				{
 					// Speichert die letzte Endzeit, da das Array $queue nach queue_starttime (und somit auch endtime) sortiert ist
 					foreach ($queue as $data)
@@ -857,11 +858,11 @@
         	/*********************************
         	* Liste der Bauaufträge anzeigen *
         	*********************************/
-			if(isset($queue) && !empty($queue))
+			if(count($queue) > 0)
 			{
 				tableStart("Bauliste");
 				$first=true;
-				$absolut_starttime=0;
+				$absolute_starttime=0;
 				foreach ($queue as $data)
 				{
 					// Listet nur Die Datensätze aus, die auch eine Schiffs ID beinhalten, da ev. der Datensatz mit NULL gleichgesetzt wurde
@@ -934,7 +935,7 @@
 	***********************/
 
 			$cnt = 0;
-			if (isset($cat))
+			if (count($cat) > 0)
 			{
 				foreach ($cat as $cat_id => $cat_name)
 				{
@@ -942,7 +943,7 @@
 					$ccnt = 0;
 
 					// Auflistung der Schiffe (auch diese, die noch nicht gebaut wurden)
-					if (isset($ships))
+					if (count($ships) > 0)
 					{
 						//Einfache Ansicht
 						if ($cu->properties->itemShow!='full')
@@ -1102,6 +1103,7 @@
 
 								//Effetiv max. baubare Schiffe in Betrachtung der Rohstoffe und des Baumaximums
 								$ship_max_build = min($build_cnt_metal,$build_cnt_crystal,$build_cnt_plastic,$build_cnt_fuel,$build_cnt_food,$max_cnt);
+								$bwmsg = [];
 
 								//Tippbox Nachricht generieren
 								//X Schiffe baubar
@@ -1298,7 +1300,7 @@
 
 								 		echo "<th height=\"30\">In Aufrag geben:</th>
 				    			   	      			<td><input type=\"text\" value=\"0\" name=\"build_count[".$data['ship_id']."]\" id=\"build_count_".$data['ship_id']."\" size=\"4\" maxlength=\"9\" ".tm("",$tm_cnt)." tabindex=\"".$tabulator."\" onkeyup=\"FormatNumber(this.id,this.value, ".$ship_max_build.", '', '');\"/> St&uuml;ck<br><a href=\"javascript:;\" onclick=\"document.getElementById('build_count_".$data['ship_id']."').value=".$ship_max_build.";\">max</a>";
-                                                    if (!isset($queue) && empty($queue))
+                                                    if (count($queue) === 0)
 													{
 														echo '&nbsp;<a href="#changePeople" onclick="javascript:if(document.getElementById(\'changePeople\').style.display==\'none\') {toggleBox(\'changePeople\')};updatePeopleWorkingBox(\''.$peopleOptimized.'\',\'-1\',\'^-1\');">optimieren</a>';
 													}

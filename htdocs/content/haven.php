@@ -70,7 +70,7 @@
 				AND l.shiplist_entity_id=".$cp->id."
 				AND l.shiplist_count > 0"));
 
-			$numMobile = $ndarr[0] + $nsarr[0];
+			$numMobile = (int) $ndarr[0] + (int) $nsarr[0];
 
 			$mode = isset($_GET['mode']) && ($_GET['mode']!="") && ctype_alpha($_GET['mode']) ? $_GET['mode'] : 'launch';
 			if ($numMobile > 0)

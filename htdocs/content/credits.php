@@ -10,7 +10,7 @@ echo '<h1>Credits</h1>';
     $textRepo = $app['etoa.text.repository'];
 
 	$credits = $textRepo->find('credits');
-	if ($credits->enabled && !empty($credits->content))
+	if ($credits->enabled && $credits->content)
 	{
 		iBoxStart();
 		echo text2html($credits->content);
@@ -33,4 +33,3 @@ echo '<h1>Credits</h1>';
 		</tr>';
 	}
 	tableEnd();
-?>

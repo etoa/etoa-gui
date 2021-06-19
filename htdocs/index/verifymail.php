@@ -2,7 +2,7 @@
 
 $success = false;
 $errorMessage = null;
-if (!empty($_GET['key'])) {
+if (isset($_GET['key'])) {
     $user = User::findFirstByVerificationKey($_GET['key']);
     if ($user) {
         $user->setVerified(true);

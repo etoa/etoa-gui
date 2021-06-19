@@ -375,11 +375,11 @@
 				}
 				else
 					error_msg("Dieses Thema existiert nicht!");
-				if ($tarr['topic_bnd_id']>0)
+				if (isset($tarr['topic_bnd_id']) && $tarr['topic_bnd_id'] >0)
 				{
 					echo "<input type=\"button\" value=\"Zur &Uuml;bersicht\" onclick=\"document.location='?page=$page&amp;bnd=".$tarr['topic_bnd_id']."'\" />";
 				}
-				else
+				elseif (isset($tarr))
 				{
 					echo "<input type=\"button\" value=\"Zur &Uuml;bersicht\" onclick=\"document.location='?page=$page&amp;cat=".$tarr['cat_id']."'\" />";
 				}
@@ -828,7 +828,7 @@
 					} else {
 						$alliance_bnd_id=$arr['alliance_bnd_alliance_id2'];
 					}
-					$alliance=get_alliance_names($alliance_bnd_id);
+					$alliance=get_alliance_names();
 					echo "<form action=\"?page=$page\" method=\"post\">";
 					echo "<input type=\"hidden\" name=\"bnd_id\" value=\"".$arr['alliance_bnd_id']."\" />";
 					tableStart();
@@ -896,7 +896,7 @@
 			{
 				echo "<h2>Übersicht</h2>";
 
-				if (isset($rank) && count($rank)>0)
+				if (count($rank)>0)
 				{
 
 					if (isset($_POST['cat_new']) && isset($_POST['cat_name']))

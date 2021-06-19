@@ -16,16 +16,6 @@ class UserSession extends Session
 
 	protected $namePrefix = "user";
 
-    /**
-	 * Returns the single instance of this class
-	 *
-	 * @return UserSession Instance of this class
-	 */
-	public static function getInstance($className = null)
-	{
-		return parent::getInstance(__CLASS__);
-	}
-
 	function login($data)
 	{
 		self::cleanup();
@@ -51,7 +41,7 @@ class UserSession extends Session
 				$this->passwordField = $passwordField;
 
 				// Check if token has not already been used (multi logins with browser auto-refresher)
-				if (!in_array($logintoken,$_SESSION['used_login_tokens']))
+				if (!in_array($logintoken, $_SESSION['used_login_tokens'], true))
 				{
 					$_SESSION['used_login_tokens'][] = $logintoken;
 
@@ -104,7 +94,7 @@ class UserSession extends Session
 										if (validatePasswort($loginPassword, $sarr[1]))
 										{
 											$this->sittingActive = true;
-											$this->sittingUntil = $sarr[0];
+											$this->sittingUntil = (int) $sarr[0];
 										}
 										elseif (validatePasswort($loginPassword, $uarr['user_password']))
 										{
@@ -267,7 +257,7 @@ class UserSession extends Session
 			{
 				$t = time();
 				$cfg = Config::getInstance();
-				if ($this->time_action + $cfg->user_timeout->v > $t)
+				if ($this->time_action + (int) $cfg->user_timeout->v > $t)
 				{
 					$allows = false;
 					$bot = false;
@@ -418,7 +408,7 @@ class UserSession extends Session
 	 * @param string $sid Session-ID. If null, the current user's session id will be taken
 	 * @param bool $logoutPressed True if it was manual logout
 	 */
-	static function unregisterSession($sid=null,$logoutPressed=1)
+	static function unregisterSession($sid=null,$logoutPressed = true)
 	{
 		if ($sid == null)
 			$sid = session_id();
@@ -473,7 +463,7 @@ class UserSession extends Session
 						user_id='".$arr['user_id']."'
 					LIMIT 1;");
 		}
-        if ($logoutPressed==1)
+        if ($logoutPressed)
         {
             session_regenerate_id(true);
             session_destroy();
@@ -499,7 +489,7 @@ class UserSession extends Session
 		{
 			while ($arr = mysql_fetch_row($res))
 			{
-				self::unregisterSession($arr[0],0);
+				self::unregisterSession($arr[0],false);
 			}
 		}
 	}
@@ -531,7 +521,7 @@ class UserSession extends Session
 	 */
 	static function kick($sid)
 	{
-		self::unregisterSession($sid,0);
+		self::unregisterSession($sid,false);
 	}
 }
 ?>

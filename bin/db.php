@@ -65,22 +65,23 @@ require_once __DIR__ . '/../vendor/autoload.php';
 	$args = array_splice($_SERVER['argv'], 1);
 	$action = array_shift($args);
 
-	if (empty($action))
+	if (!$action)
 	{
 		show_usage();
 	}
 
-	$verbose = in_array("-v", $args);
+	$verbose = in_array("-v", $args, true);
 
 	//
 	// Migrate schema updates
 	//
 	if ($action == "migrate" || $action == "reset")
 	{
+        $mtx = new Mutex();
+
 		try
 		{
 			// Acquire mutex
-			$mtx = new Mutex();
 			$mtx->acquire();
 
 			if ($action == "reset") {
@@ -125,11 +126,11 @@ require_once __DIR__ . '/../vendor/autoload.php';
 	{
 		$dir = DBManager::getBackupDir();
 		$gzip = Config::getInstance()->backup_use_gzip=="1";
+        $mtx = new Mutex();
 
 		try
 		{
 			// Acquire mutex
-			$mtx = new Mutex();
 			$mtx->acquire();
 
 			// Restore database
@@ -172,13 +173,14 @@ require_once __DIR__ . '/../vendor/autoload.php';
 		$dir = DBManager::getBackupDir();
 
 		// Check if restore point specified
-		if (!empty($args[0]))
+		if (isset($args[0]))
 		{
 			$restorePoint = $args[0];
+            $mtx = new Mutex();
+
 			try
 			{
 				// Acquire mutex
-				$mtx = new Mutex();
 				$mtx->acquire();
 
 				// Restore database
@@ -233,7 +235,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 		echo "\nChecking tables:\n\n";
 		try
 		{
-			$ores = DBManager::getInstance()->checkTables(true);
+			$ores = DBManager::getInstance()->checkTables();
 			while ($arr = mysql_fetch_assoc($ores))
 			{
 				echo implode("\t", $arr)."\n";

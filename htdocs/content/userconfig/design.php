@@ -29,7 +29,7 @@
     {
 		// Design
     	$designChange = ($cu->properties->cssStyle != $_POST['css_style']);
-		if (!empty($_POST['css_style'])) {
+		if (isset($_POST['css_style']) && $_POST['css_style']) {
 	    	$cu->properties->cssStyle = $_POST['css_style'];
 		} else {
 			$cu->properties->cssStyle = null;
@@ -47,16 +47,16 @@
       $cu->properties->noteBox=$_POST['notebox'];
       $cu->properties->showAdds=$_POST['show_adds'];
 
-		if (!empty($_POST['image_ext']) && !empty($_POST['image_url']))
+		if (isset($_POST['image_ext']) && $_POST['image_ext'] && isset($_POST['image_url']) && $_POST['image_url'])
 		{
 			$cu->properties->imageUrl = htmlentities($_POST['image_url']);
 			$cu->properties->imageExt = htmlentities($_POST['image_ext']);
 		}
-		else if (!empty($_POST['image_select']) && isset($imagepacks[$_POST['image_select']]))
+		else if (isset($_POST['image_select']) && isset($imagepacks[$_POST['image_select']]))
 		{
 			$imp = $imagepacks[$_POST['image_select']];
 			$cu->properties->imageUrl = $imp['path'];
-			if (isset($_POST['image_ext']) && in_array($_POST['image_ext'], $imp['extensions']))
+			if (isset($_POST['image_ext']) && in_array($_POST['image_ext'], $imp['extensions'], true))
 			{
 				$cu->properties->imageExt = $_POST['image_ext'];
 			}

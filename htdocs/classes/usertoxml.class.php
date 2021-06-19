@@ -2,13 +2,13 @@
 
 class UserToXml
 {
-	private $userId;
+	private int $userId;
     public function __construct($userId)
     {
-    	$this->userId = intval($userId);
+    	$this->userId = (int) $userId;
     }
 
-	public static function getDataDirectory() {
+	public static function getDataDirectory(): string {
 		$dir = CACHE_ROOT."/user_xml";
 		if (!is_dir($dir)) {
 			mkdir($dir, 0777, true);
@@ -16,11 +16,12 @@ class UserToXml
 		return $dir;
 	}
 
-	function toCacheFile()
+	public function toCacheFile()
 	{
 		$filename = $this->userId."_".date("Y-m-d_H-i").".xml";
 		$file = self::getDataDirectory()."/".$filename;
-		if ($xml =  $this->__toString())
+		$xml = $this->__toString();
+		if ($xml !== '')
 		{
 			if ($d=@fopen($file,"w+"))
 			{
@@ -90,6 +91,7 @@ $xml = "<userbackup>
 					planet_types ON type_id=planet_type_id
 					AND	planet_user_id='".$this->userId."';
 			");
+			$mainPlanet = 0;
 			if (mysql_num_rows($pres)>0)
 			{
 				while ($parr=mysql_fetch_array($pres))
@@ -260,7 +262,7 @@ $xml = "<userbackup>
 			$xml.="</userbackup>";
 			return $xml;
 		}
-		return false;
+		return '';
 	}
 
 }

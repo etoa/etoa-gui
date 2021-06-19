@@ -83,7 +83,7 @@ abstract class Report
 			$this->type = $arr['type'];
 			$this->read = $arr['read']==1;
 			$this->deleted = $arr['deleted']==1;
-			$this->userId = $arr['user_id'];
+			$this->userId = (int) $arr['user_id'];
 			$this->allianceId = $arr['alliance_id'];
 			$this->content = $arr['content'];
 			$this->entity1Id = $arr['entity1_id'];
@@ -144,7 +144,6 @@ abstract class Report
 			echo $e;
 			return false;
 		}
-		return false;
 	}
 
 
@@ -212,7 +211,7 @@ abstract class Report
 		}
 		error_msg("Kein Report-Besitzer angegeben!");
 		etoa_dump($data);
-		return null;
+		return false;
 	}
 
 	/**
@@ -273,10 +272,11 @@ abstract class Report
 	 * Factory design pattern for getting instances depending on funcion argument
 	 *
 	 * @param mixed $args Array containing fetched database record or a record id
-	 * @return Report New report object instance
+	 * @return ?Report New report object instance
 	 */
 	static function createFactory($args)
 	{
+		$type = null;
 		if (is_array($args) && isset($args['type']))
 		{
 			$type = $args['type'];
@@ -466,7 +466,7 @@ abstract class Report
 						AND `timestamp`<'".$tstamp."';
 				");
 				$nr = mysql_affected_rows();
-				add_log("4","Unarchivierte Berichte die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!");
+				Log::add("4", Log::INFO, "Unarchivierte Berichte die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!");
 			}
 
 			// Deleted
@@ -584,7 +584,7 @@ abstract class Report
 					deleted='1'
 					AND timestamp<'".$tstamp."';
 			");
-			add_log("4","Unarchivierte Berichte die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!");
+			Log::add("4", Log::INFO, "Unarchivierte Berichte die älter als ".date("d.m.Y H:i",$tstamp)." sind wurden gelöscht!");
 			$nr += mysql_affected_rows();
 			return $nr;
 		}

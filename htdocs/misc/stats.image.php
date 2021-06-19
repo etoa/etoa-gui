@@ -37,13 +37,10 @@
 
 	imagefill($im,0,0, $white);
 	$imh = imagecreatefromjpeg("images/logo_trans.jpg");
-	imagecopyresized($im,$imh,(IM_W-(IM_W*BG_FAC_W))/2,(IM_H-(IM_H*BG_FAC_H))/2,0,0,IM_W*BG_FAC_W,IM_H*BG_FAC_H,imagesx($imh),imagesy($imh));
+	imagecopyresized($im, $imh,(int) (IM_W-(IM_W*BG_FAC_W))/2,(int) (IM_H-(IM_H*BG_FAC_H))/2,0,0,(int) (IM_W*BG_FAC_W),(int) (IM_H*BG_FAC_H), imagesx($imh), imagesy($imh));
 	imagerectangle($im, 0, 0, IM_W-1, IM_H-1, $black);
 
-	if (isset($_GET['user']))
-	{
-		$uid = intval($_GET['user']);
-	}
+	$uid = isset($_GET['user']) ? (int) $_GET['user'] : 0;
 	if ($uid > 0 && count($_SESSION) > 0)
 	{
 		$res=dbquery("
@@ -115,8 +112,8 @@
 				}
 				ksort ($points);
 
-				imagestring($im,FONT_SIZE,B_B/3,B_B/3,"Statistiken von ".$arr['user_nick'].", Rang ".$arr['user_rank'].", letzes Update: ".date("d.m.Y H:i",$last_update)."",$black);
-				imagestring($im,FONT_SIZE,B_B/3,B_B/3+9,"Schrittweite: ".STEP." Stunden, Zeitraum: ".(DETAIL_LIMIT*STEP/24)." Tage",$black);
+				imagestring($im,FONT_SIZE,(int) (B_B/3),(int) (B_B/3),"Statistiken von ".$arr['user_nick'].", Rang ".$arr['user_rank'].", letzes Update: ".date("d.m.Y H:i",$last_update)."",$black);
+				imagestring($im,FONT_SIZE,(int) (B_B/3),(int) (B_B/3+9),"Schrittweite: ".STEP." Stunden, Zeitraum: ".(DETAIL_LIMIT*STEP/24)." Tage",$black);
 				$cnt=0;
 
 				$last_x = -1;
