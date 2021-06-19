@@ -101,7 +101,7 @@ class TicketRepository extends AbstractRepository
         return $ticket;
     }
 
-    public function persist(Ticket &$ticket): bool
+    public function persist(Ticket $ticket): bool
     {
         assert(isset(Ticket::STATUS_ITEMS[$ticket->status]), 'Invalid ticket status');
         assert(isset(Ticket::SOLUTION_ITEMS[$ticket->solution]), 'Invalid ticket solution');
