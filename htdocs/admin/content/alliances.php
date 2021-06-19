@@ -2,42 +2,46 @@
 
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\InvalidAllianceParametersException;
+use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
 /** @var AllianceRepository */
 $repository = $app['etoa.alliance.repository'];
 
+/** @var Request */
+$request = Request::createFromGlobals();
+
 if ($sub == "imagecheck") {
-	imagecheck($repository);
+	imagecheck($request, $repository);
 } elseif ($sub == "buildingsdata") {
 	advanced_form("alliancebuildings", $twig);
 } elseif ($sub == "techdata") {
 	advanced_form("alliancetechnologies", $twig);
 } elseif ($sub == "create") {
-	create($repository);
+	create($request, $repository);
 } elseif ($sub == "news") {
 	news();
 } elseif ($sub == "crap") {
-	crap($repository);
+	crap($request, $repository);
 } else {
 	$twig->addGlobal('title', 'Allianzen');
 
 	if (
-		isset($_POST['alliance_search'])
-		&& isset($_GET['action'])
-		&& $_GET['action'] == "search"
+		$request->request->has('alliance_search')
+		&& $request->query->has('action')
+		&& $request->query->get('action') == "search"
 	) {
 		searchResults($repository, $twig);
-	} else if (isset($_GET['sub']) && $_GET['sub'] == "edit") {
+	} else if ($request->query->has('sub') && $request->query->get('sub') == "edit") {
 		include("alliance/edit.inc.php");
-	} elseif (isset($_GET['sub']) && $_GET['sub'] == "drop" && isset($_GET['alliance_id'])) {
-		drop($repository);
+	} elseif ($request->query->has('sub') && $request->query->get('sub') == "drop" && $request->query->has('alliance_id')) {
+		drop($request, $repository);
 	} else {
-		index($repository, $twig);
+		index($request, $repository, $twig);
 	}
 }
 
-function imagecheck(AllianceRepository $repository)
+function imagecheck(Request $request, AllianceRepository $repository)
 {
 	global $page;
 	global $sub;
@@ -48,8 +52,8 @@ function imagecheck(AllianceRepository $repository)
 	//
 	// Check submit
 	//
-	if (isset($_POST['validate_submit'])) {
-		foreach ($_POST['validate'] as $id => $v) {
+	if ($request->request->has('validate_submit')) {
+		foreach ($request->request->get('validate') as $id => $v) {
 			if ($v == 0) {
 				if (removeAlliancePicture($repository, $id)) {
 					echo "Bild entfernt!<br/><br/>";
@@ -65,21 +69,21 @@ function imagecheck(AllianceRepository $repository)
 	//
 	echo "<h2>Noch nicht verifizierte Bilder</h2>";
 	echo "Diese Bilder gehören zu aktiven Allianzen. Bitte prüfe regelmässig, ob sie nicht gegen unsere Regeln verstossen!<br/>";
-	$data = $repository->findAllWithUncheckedPictures();
-	if (count($data) > 0) {
-		echo "Es sind " . count($data) . " Bilder gespeichert!<br/><br/>";
+	$alliances = $repository->findAllWithUncheckedPictures();
+	if (count($alliances) > 0) {
+		echo "Es sind " . count($alliances) . " Bilder gespeichert!<br/><br/>";
 		echo "<form action=\"\" method=\"post\">
 			<table class=\"tb\"><tr><th>User</th><th>Fehler</th><th>Aktionen</th></tr>";
-		foreach ($data as $arr) {
-			echo "<tr><td>[" . $arr['alliance_tag'] . "] " . $arr['alliance_name'] . "</td><td>";
-			if (file_exists($dir . $arr['alliance_img'])) {
-				echo '<img src="' . $dir . $arr['alliance_img'] . '" alt="Profil" />';
+		foreach ($alliances as $alliance) {
+			echo "<tr><td>[" . $alliance['alliance_tag'] . "] " . $alliance['alliance_name'] . "</td><td>";
+			if (file_exists($dir . $alliance['alliance_img'])) {
+				echo '<img src="' . $dir . $alliance['alliance_img'] . '" alt="Profil" />';
 			} else {
 				echo '<span style=\"color:red\">Bild existiert nicht!</span>';
 			}
 			echo "</td><td>
-				<input type=\"radio\" name=\"validate[" . $arr['alliance_id'] . "]\" value=\"1\" checked=\"checked\"> Bild ist in Ordnung<br/>
-				<input type=\"radio\" name=\"validate[" . $arr['alliance_id'] . "]\" value=\"0\" > Bild verstösst gegen die Regeln. Lösche es!<br/>
+				<input type=\"radio\" name=\"validate[" . $alliance['alliance_id'] . "]\" value=\"1\" checked=\"checked\"> Bild ist in Ordnung<br/>
+				<input type=\"radio\" name=\"validate[" . $alliance['alliance_id'] . "]\" value=\"0\" > Bild verstösst gegen die Regeln. Lösche es!<br/>
 				</td></tr>";
 		}
 		echo "</table><br/>
@@ -91,14 +95,14 @@ function imagecheck(AllianceRepository $repository)
 	//
 	// Orphans
 	//
-	$data = $repository->findAllWithPictures();
-	$nr = count($data);
+	$alliances = $repository->findAllWithPictures();
+	$nr = count($alliances);
 	$paths = array();
 	$nicks = array();
 	if ($nr > 0) {
-		foreach ($data as $arr) {
-			$paths[$arr['alliance_id']] = $arr['alliance_img'];
-			$nicks[$arr['alliance_id']] = $arr['alliance_name'];
+		foreach ($alliances as $alliance) {
+			$paths[$alliance['alliance_id']] = $alliance['alliance_img'];
+			$nicks[$alliance['alliance_id']] = $alliance['alliance_name'];
 		}
 	}
 	$files = array();
@@ -119,7 +123,7 @@ function imagecheck(AllianceRepository $repository)
 			array_push($overhead, $k);
 	}
 
-	if (isset($_GET['action']) && $_GET['action'] == "clearOverhead") {
+	if ($request->query->has('action') && $request->query->get('action') == "clearOverhead") {
 		while (count($overhead) > 0) {
 			unlink($dir . array_pop($overhead));
 		}
@@ -143,20 +147,20 @@ function imagecheck(AllianceRepository $repository)
 	}
 }
 
-function create(AllianceRepository $repository)
+function create(Request $request, AllianceRepository $repository)
 {
 	global $page;
 	global $sub;
 
 	echo "<h1>Allianz erstellen</h1>";
 
-	if (isset($_POST['create'])) {
+	if ($request->request->has('create')) {
 		// TODO refactor wild mix between active-record classes and repository pattern
-		$founder = new User($_POST['alliance_founder_id']);
+		$founder = new User($request->request->getInt('alliance_founder_id'));
 		try {
 			$id = $repository->create(
-				$_POST['alliance_tag'],
-				$_POST['alliance_name'],
+				$request->request->get('alliance_tag'),
+				$request->request->get('alliance_name'),
 				$founder->id,
 			);
 			$alliance = new Alliance($id);
@@ -233,28 +237,28 @@ function news()
 	echo '<script type="text/javascript">xajax_allianceNewsLoad()</script>';
 }
 
-function crap(AllianceRepository $repository)
+function crap(Request $request, AllianceRepository $repository)
 {
 	global $page;
 	global $sub;
 
 	echo "<h1>Überflüssige Daten</h1>";
 
-	if (isset($_GET['action']) && $_GET['action'] == "cleanupRanks") {
+	if ($request->query->has('action') && $request->query->get('action') == "cleanupRanks") {
 		if ($repository->deleteOrphanedRanks() > 0) {
 			echo "Fehlerhafte Daten gelöscht.";
 		}
-	} elseif (isset($_GET['action']) && $_GET['action'] == "cleanupDiplomacy") {
+	} elseif ($request->query->has('action') && $request->query->get('action') == "cleanupDiplomacy") {
 		if ($repository->deleteOrphanedDiplomacies() > 0) {
 			echo "Fehlerhafte Daten gelöscht.";
 		}
-	} elseif (isset($_GET['action']) && $_GET['action'] == "cleanupEmptyAlliances") {
-		$data = $repository->findAll();
-		if (count($data) > 0) {
+	} elseif ($request->query->has('action') && $request->query->get('action') == "cleanupEmptyAlliances") {
+		$alliances = $repository->findAll();
+		if (count($alliances) > 0) {
 			$cnt = 0;
-			foreach ($data as $arr) {
-				if ($repository->countUsers($arr['alliance_id']) == 0) {
-					if ($repository->remove($arr['alliance_id'])) {
+			foreach ($alliances as $alliance) {
+				if ($repository->countUsers($alliance['alliance_id']) == 0) {
+					if ($repository->remove($alliance['alliance_id'])) {
 						$cnt++;
 					}
 				}
@@ -291,10 +295,10 @@ function crap(AllianceRepository $repository)
 		echo "<tr><th class=\"tbltitle\">Tag</th>
 			<th class=\"tbltitle\">Name</th>
 			<th>&nbsp;</th></tr>";
-		foreach ($alliancesWithoutFounder as $arr) {
-			echo "<tr><td class=\"tbldata\">" . $arr['alliance_name'] . "</td>
-				<td class=\"tbldata\">" . $arr['alliance_tag'] . "</td>
-				<td class=\"tbldata\"><a href=\"?page=$page&amp;sub=edit&amp;alliance_id=" . $arr['alliance_id'] . "\">detail</a></td></tr>";
+		foreach ($alliancesWithoutFounder as $alliance) {
+			echo "<tr><td class=\"tbldata\">" . $alliance['alliance_name'] . "</td>
+				<td class=\"tbldata\">" . $alliance['alliance_tag'] . "</td>
+				<td class=\"tbldata\"><a href=\"?page=$page&amp;sub=edit&amp;alliance_id=" . $alliance['alliance_id'] . "\">detail</a></td></tr>";
 		}
 		echo "</table><br/>";
 		echo count($alliancesWithoutFounder) . " Allianzen ohne Gründer.";
@@ -310,10 +314,10 @@ function crap(AllianceRepository $repository)
 		echo "<tr><th class=\"tbltitle\">Nick</th>
 			<th class=\"tbltitle\">E-Mail</th>
 			<th>&nbsp;</th></tr>";
-		foreach ($usersWithInvalidAlliances as $arr) {
-			echo "<tr><td class=\"tbldata\">" . $arr['user_nick'] . "</td>
-				<td class=\"tbldata\">" . $arr['user_email'] . "</td>
-				<td class=\"tbldata\"><a href=\"?page=user&amp;sub=edit&amp;user_id=" . $arr['user_id'] . "\">detail</a></td></tr>";
+		foreach ($usersWithInvalidAlliances as $users) {
+			echo "<tr><td class=\"tbldata\">" . $users['user_nick'] . "</td>
+				<td class=\"tbldata\">" . $users['user_email'] . "</td>
+				<td class=\"tbldata\"><a href=\"?page=user&amp;sub=edit&amp;user_id=" . $users['user_id'] . "\">detail</a></td></tr>";
 		}
 		echo "</table><br/>";
 		echo count($usersWithInvalidAlliances) . " User mit fehlerhafter Verknüpfung.";
@@ -329,11 +333,11 @@ function crap(AllianceRepository $repository)
 		echo "<tr><th class=\"tbltitle\">Name</th>
 			<th class=\"tbltitle\">Tag</th><th>&nbsp;</th>
 			<th>&nbsp;</th></tr>";
-		foreach ($alliancesWithoutUsers as $arr) {
-			echo "<tr><td class=\"tbldata\">" . $arr['alliance_name'] . "</td>
-				<td class=\"tbldata\">" . $arr['alliance_tag'] . "</td>
-				<td class=\"tbldata\"><a href=\"?page=$page&amp;sub=edit&amp;alliance_id=" . $arr['alliance_id'] . "\">detail</a></td>
-				<td class=\"tbldata\"><a href=\"?page=$page&amp;sub=drop&amp;alliance_id=" . $arr['alliance_id'] . "\">löschen</a></td></tr>";
+		foreach ($alliancesWithoutUsers as $alliance) {
+			echo "<tr><td class=\"tbldata\">" . $alliance['alliance_name'] . "</td>
+				<td class=\"tbldata\">" . $alliance['alliance_tag'] . "</td>
+				<td class=\"tbldata\"><a href=\"?page=$page&amp;sub=edit&amp;alliance_id=" . $alliance['alliance_id'] . "\">detail</a></td>
+				<td class=\"tbldata\"><a href=\"?page=$page&amp;sub=drop&amp;alliance_id=" . $alliance['alliance_id'] . "\">löschen</a></td></tr>";
 		}
 		echo "</table><br/>";
 		echo count($alliancesWithoutUsers) . " Allianzen sind leer.
@@ -349,13 +353,13 @@ function searchResults(AllianceRepository $repository, Environment $twig)
 
 	$twig->addGlobal('subtitle', 'Suchergebnisse');
 
-	$data = $repository->findByFormData($_POST);
+	$alliances = $repository->findByFormData($_POST);
 
-	$nr = count($data);
+	$nr = count($alliances);
 	if ($nr == 1) {
-		$arr = $data[0];
-		echo "<script>document.location='?page=$page&sub=edit&id=" . $arr['alliance_id'] . "';</script>
-			Klicke <a href=\"?page=$page&sub=edit&id=" . $arr['alliance_id'] . "\">hier</a> falls du nicht automatisch weitergeleitet wirst...";
+		$alliance = $alliances[0];
+		echo "<script>document.location='?page=$page&sub=edit&id=" . $alliance['alliance_id'] . "';</script>
+			Klicke <a href=\"?page=$page&sub=edit&id=" . $alliance['alliance_id'] . "\">hier</a> falls du nicht automatisch weitergeleitet wirst...";
 	} elseif ($nr > 0) {
 
 		echo $nr . " Datensätze vorhanden<br/><br/>";
@@ -373,15 +377,15 @@ function searchResults(AllianceRepository $repository, Environment $twig)
 		echo "<th>User</th>";
 		echo "<th>&nbsp;</th>";
 		echo "</tr>";
-		foreach ($data as $arr) {
+		foreach ($alliances as $alliance) {
 			echo "<tr>";
-			echo "<td>" . $arr['alliance_id'] . "</td>";
-			echo "<td>[" . $arr['alliance_tag'] . "] <a href=\"?page=$page&sub=edit&alliance_id=" . $arr['alliance_id'] . "\">" . $arr['alliance_name'] . "</a></td>";
-			echo "<td>" . $users[$arr['alliance_founder_id']]['nick'] . "</td>";
-			echo "<td>" . df($arr['alliance_foundation_date']) . "</td>";
-			echo "<td>" . $arr['cnt'] . "</td>";
+			echo "<td>" . $alliance['alliance_id'] . "</td>";
+			echo "<td>[" . $alliance['alliance_tag'] . "] <a href=\"?page=$page&sub=edit&alliance_id=" . $alliance['alliance_id'] . "\">" . $alliance['alliance_name'] . "</a></td>";
+			echo "<td>" . $users[$alliance['alliance_founder_id']]['nick'] . "</td>";
+			echo "<td>" . df($alliance['alliance_foundation_date']) . "</td>";
+			echo "<td>" . $alliance['cnt'] . "</td>";
 			echo "<td style=\"width:50px;\">";
-			echo del_button("?page=$page&sub=drop&alliance_id=" . $arr['alliance_id']) . "</td>";
+			echo del_button("?page=$page&sub=drop&alliance_id=" . $alliance['alliance_id']) . "</td>";
 			echo "</tr>";
 		}
 		echo "</table>";
@@ -392,28 +396,35 @@ function searchResults(AllianceRepository $repository, Environment $twig)
 	}
 }
 
-function drop(AllianceRepository $repository)
+function drop(Request $request, AllianceRepository $repository)
 {
 	global $page;
 
-	$arr = $repository->find($_GET['alliance_id']);
-	if ($arr != null) {
+	$alliance = $repository->find($request->query->getInt('alliance_id'));
+	if ($alliance !== null) {
 		echo "Soll folgende Allianz gelöscht werden?<br/><br/>";
 		echo "<form action=\"?page=$page\" method=\"post\">";
 		echo "<table class=\"tbl\">";
-		echo "<tr><td class=\"tbltitle\" valign=\"top\">ID</td><td class=\"tbldata\">" . $arr['alliance_id'] . "</td></tr>";
-		echo "<tr><td class=\"tbltitle\" valign=\"top\">Name</td><td class=\"tbldata\">" . $arr['alliance_name'] . "</td></tr>";
-		echo "<tr><td class=\"tbltitle\" valign=\"top\">Tag</td><td class=\"tbldata\">" . $arr['alliance_tag'] . "</td></tr>";
+		echo "<tr><td class=\"tbltitle\" valign=\"top\">ID</td>
+			<td class=\"tbldata\">" . $alliance['alliance_id'] . "</td></tr>";
+		echo "<tr><td class=\"tbltitle\" valign=\"top\">Name</td>
+			<td class=\"tbldata\">" . $alliance['alliance_name'] . "</td></tr>";
+		echo "<tr><td class=\"tbltitle\" valign=\"top\">Tag</td>
+			<td class=\"tbldata\">" . $alliance['alliance_tag'] . "</td></tr>";
 		$users = get_user_names();
-		echo "<tr><td class=\"tbltitle\" valign=\"top\">Gründer</td><td class=\"tbldata\">" . $users[$arr['alliance_founder_id']]['nick'] . "</td></tr>";
-		echo "<tr><td class=\"tbltitle\" valign=\"top\">Text</td><td class=\"tbldata\">" . text2html($arr['alliance_text']) . "</td></tr>";
-		echo "<tr><td class=\"tbltitle\" valign=\"top\">Gründung</td><td class=\"tbldata\">" . date("Y-m-d H:i:s", $arr['alliance_foundation_date']) . "</td></tr>";
-		echo "<tr><td class=\"tbltitle\" valign=\"top\">Website</td><td class=\"tbldata\">" . $arr['alliance_url'] . "</td></tr>";
-		if (isset($arr['alliance_img'])) {
-			echo "<tr><td class=\"tbltitle\" valign=\"top\">Bild</td><td class=\"tbldata\"><img src=\"" . ALLIANCE_IMG_DIR . '/' . $arr['alliance_img'] . "\" width=\"100%\" alt=\"" . $arr['alliance_img'] . "\" /></td></tr>";
+		echo "<tr><td class=\"tbltitle\" valign=\"top\">Gründer</td>
+			<td class=\"tbldata\">" . $users[$alliance['alliance_founder_id']]['nick'] . "</td></tr>";
+		echo "<tr><td class=\"tbltitle\" valign=\"top\">Text</td>
+			<td class=\"tbldata\">" . text2html($alliance['alliance_text']) . "</td></tr>";
+		echo "<tr><td class=\"tbltitle\" valign=\"top\">Gründung</td>
+			<td class=\"tbldata\">" . date("Y-m-d H:i:s", $alliance['alliance_foundation_date']) . "</td></tr>";
+		echo "<tr><td class=\"tbltitle\" valign=\"top\">Website</td>
+			<td class=\"tbldata\">" . $alliance['alliance_url'] . "</td></tr>";
+		if (isset($alliance['alliance_img'])) {
+			echo "<tr><td class=\"tbltitle\" valign=\"top\">Bild</td><td class=\"tbldata\"><img src=\"" . ALLIANCE_IMG_DIR . '/' . $alliance['alliance_img'] . "\" width=\"100%\" alt=\"" . $alliance['alliance_img'] . "\" /></td></tr>";
 		}
 		echo "<tr><td class=\"tbltitle\" valign=\"top\">Mitglieder</td><td class=\"tbldata\">";
-		$usersInAlliance = $repository->findUsers($arr['alliance_id']);
+		$usersInAlliance = $repository->findUsers($alliance['alliance_id']);
 		if (count($usersInAlliance) > 0) {
 			echo "<table style=\"width:100%\">";
 			foreach ($usersInAlliance as $uarr)
@@ -426,23 +437,24 @@ function drop(AllianceRepository $repository)
 		}
 		echo "</td></tr>";
 		echo "</table>";
-		echo "<input type=\"hidden\" name=\"alliance_id\" value=\"" . $arr['alliance_id'] . "\" />";
+		echo "<input type=\"hidden\" name=\"alliance_id\" value=\"" . $alliance['alliance_id'] . "\" />";
 		echo "<br/><input type=\"submit\" name=\"drop\" value=\"Löschen\" />&nbsp;";
 		echo "<input type=\"button\" value=\"Zurück\" onclick=\"history.back();\" /> ";
 		echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" />";
 		echo "</form>";
 	} else {
-		echo "<b>Fehler:</b> Datensatz nicht gefunden!<br/><br/><a href=\"javascript:history.back();\">Zurück</a>";
+		echo "<b>Fehler:</b> Datensatz nicht gefunden!<br/><br/>
+		<a href=\"javascript:history.back();\">Zurück</a>";
 	}
 }
 
-function index(AllianceRepository $repository, Environment $twig)
+function index(Request $request, AllianceRepository $repository, Environment $twig)
 {
 	global $page;
 
 	// Allianz löschen
-	if (isset($_POST['drop'])) {
-		$ally = new Alliance($_POST['alliance_id']);
+	if ($request->request->has('drop')) {
+		$ally = new Alliance($request->request->getInt('alliance_id'));
 		if ($ally->delete()) {
 			echo "Die Allianz wurde gelöscht!<br/><br/>";
 		} else {
