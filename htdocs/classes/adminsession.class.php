@@ -14,16 +14,6 @@ class AdminSession extends Session
 {
 	protected $namePrefix = "admin";
 
-	/**
-	 * Returns the single instance of this class
-	 *
-	 * @return AdminSession Instance of this class
-	 */
-	public static function getInstance($className = null)
-	{
-		return parent::getInstance(__CLASS__);
-	}
-
 	function login($data)
 	{
 		// TODO
