@@ -1113,7 +1113,7 @@ use EtoA\Support\RuntimeDataStore;
 			$runtimeDataStore = $app['etoa.runtime.datastore'];
 
 			// Zeit in Config speichern
-			$runtimeDataStore->set('statsupdate', time());
+			$runtimeDataStore->set('statsupdate', (string) time());
 
 			$num = mysql_num_rows($ures);
 

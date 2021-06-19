@@ -251,19 +251,19 @@ $runtimeDataStore = $app['etoa.runtime.datastore'];
 	define("AUCTION_DELAY_TIME", $cfg->market_auction_delay_time->v);
 
 	// Titan Taxe
-	define("MARKET_METAL_FACTOR", $runtimeDataStore->get('market_rate_0', 1));
+	define("MARKET_METAL_FACTOR", $runtimeDataStore->get('market_rate_0', (string) 1));
 
 	// Silizium Taxe
-	define("MARKET_CRYSTAL_FACTOR", $runtimeDataStore->get('market_rate_1', 1));
+	define("MARKET_CRYSTAL_FACTOR", $runtimeDataStore->get('market_rate_1', (string) 1));
 
 	// PVC Taxe
-	define("MARKET_PLASTIC_FACTOR", $runtimeDataStore->get('market_rate_2', 1));
+	define("MARKET_PLASTIC_FACTOR", $runtimeDataStore->get('market_rate_2', (string) 1));
 
 	// Tritium Taxe
-	define("MARKET_FUEL_FACTOR", $runtimeDataStore->get('market_rate_3', 1));
+	define("MARKET_FUEL_FACTOR", $runtimeDataStore->get('market_rate_3', (string) 1));
 
 	// Nahrung Taxe
-	define("MARKET_FOOD_FACTOR", $runtimeDataStore->get('market_rate_4', 1));
+	define("MARKET_FOOD_FACTOR", $runtimeDataStore->get('market_rate_4', (string) 1));
 
 	// Mindestpreisgrenze der Schiffe 1=100%
 	define("SHIP_PRICE_FACTOR_MIN", $cfg->ship_price_factor_min->v);

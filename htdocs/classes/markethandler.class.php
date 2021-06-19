@@ -158,7 +158,7 @@ class MarketHandler
 		$sf = $sv = "";
 		for ($i=0;$i<NUM_RESOURCES;$i++)
 		{
-			$runtimeDataStore->set('market_rate_'.$i, $rates[$i]);
+			$runtimeDataStore->set('market_rate_'.$i, (string) $rates[$i]);
 			$sf .="rate_".$i.",";
 			$sv .=$rates[$i].",";
 		}

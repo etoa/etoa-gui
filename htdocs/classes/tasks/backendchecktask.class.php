@@ -34,7 +34,7 @@ class BackendCheckTask implements IPeriodicTask
                 $mail->send($sendMail);
             }
         }
-        $this->runtimeDataStore->set('backend_status', $currentStatus ? 1 : 0);
+        $this->runtimeDataStore->set('backend_status', (string) ($currentStatus ? 1 : 0));
         return "Backend Check: " . ($currentStatus ? 'gestartet' : 'gestoppt') . " (" . ($change ? 'geändert' : 'keine Änderung') . ")";
     }
 
