@@ -3,6 +3,7 @@
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceTechnologyRepository;
+use Symfony\Component\HttpFoundation\Request;
 
 /** @var AllianceRepository */
 $repository = $app['etoa.alliance.repository'];
@@ -13,38 +14,41 @@ $buildingRepository = $app['etoa.alliance.building.repository'];
 /** @var AllianceTechnologyRepository */
 $technologyRepository = $app['etoa.alliance.technology.repository'];
 
-if (isset($_GET['alliance_id'])) {
-	$id = $_GET['alliance_id'];
+/** @var Request */
+$request = Request::createFromGlobals();
+
+if ($request->query->has('alliance_id')) {
+	$id = $request->query->getInt('alliance_id');
 }
-if (isset($_GET['id'])) {
-	$id = $_GET['id'];
+if ($request->query->has('id')) {
+	$id = $request->query->getInt('id');
 }
-if (!isset($id) || !is_numeric($id)) {
+if (!isset($id)) {
 	echo "Invalid request.";
 	return;
 }
 
-if (isset($_POST['info_save']) && $_POST['info_save'] != "") {
-	saveInfo($repository, $id);
-} elseif (isset($_POST['member_save']) && $_POST['member_save'] != "") {
-	saveMembers($repository);
-} elseif (isset($_POST['bnd_save']) && $_POST['bnd_save'] != "") {
-	saveDiplomacy($repository);
-} elseif (isset($_POST['res_save']) && $_POST['res_save'] != "") {
-	saveResources($repository, $id);
-} elseif (isset($_POST['buildings']) && $_POST['buildings'] != "") {
-	saveBuildings($buildingRepository, $id);
-} elseif (isset($_POST['techs']) && $_POST['techs'] != "") {
-	saveTechnologies($technologyRepository, $id);
+if ($request->request->has('info_save') && $request->request->get('info_save') != "") {
+	saveInfo($request, $repository, $id);
+} elseif ($request->request->has('member_save') && $request->request->get('member_save') != "") {
+	saveMembers($request, $repository);
+} elseif ($request->request->has('bnd_save') && $request->request->get('bnd_save') != "") {
+	saveDiplomacy($request, $repository);
+} elseif ($request->request->has('res_save') && $request->request->get('res_save') != "") {
+	saveResources($request, $repository, $id);
+} elseif ($request->request->has('buildings') && $request->request->get('buildings') != "") {
+	saveBuildings($request, $buildingRepository, $id);
+} elseif ($request->request->has('techs') && $request->request->get('techs') != "") {
+	saveTechnologies($request, $technologyRepository, $id);
 }
 edit($repository, $buildingRepository, $technologyRepository, $id);
 
-function saveInfo(AllianceRepository $repository, int $id)
+function saveInfo(Request $request, AllianceRepository $repository, int $id)
 {
 	global $twig;
 
 	//  Bild löschen wenn nötig
-	if (isset($_POST['alliance_img_del'])) {
+	if ($request->request->has('alliance_img_del')) {
 		$picture = $repository->getPicture($id);
 		if ($picture !== null) {
 			if (file_exists('../' . ALLIANCE_IMG_DIR . "/" . $picture)) {
@@ -56,116 +60,136 @@ function saveInfo(AllianceRepository $repository, int $id)
 
 	$repository->update(
 		$id,
-		$_POST['alliance_tag'],
-		$_POST['alliance_name'],
-		$_POST['alliance_text'],
-		$_POST['alliance_application_template'],
-		$_POST['alliance_url'],
-		(int) $_POST['alliance_founder_id']
+		$request->request->get('alliance_tag'),
+		$request->request->get('alliance_name'),
+		$request->request->get('alliance_text'),
+		$request->request->get('alliance_application_template'),
+		$request->request->get('alliance_url'),
+		$request->request->getInt('alliance_founder_id')
 	);
 
 	$twig->addGlobal('successMessage', 'Allianzdaten aktualisiert!');
 }
 
-function saveMembers(AllianceRepository $repository)
+function saveMembers(Request $request, AllianceRepository $repository)
 {
 	global $twig;
 
 	// Mitgliederänderungen
-	if (isset($_POST['member_kick']) && count($_POST['member_kick']) > 0) {
-		foreach (array_keys($_POST['member_kick']) as $userId) {
+	if ($request->request->has('member_kick') && count($request->request->get('member_kick')) > 0) {
+		foreach (array_keys($request->request->get('member_kick')) as $userId) {
 			$repository->removeUser($userId);
 		}
 	}
-	if (count($_POST['member_rank']) > 0) {
-		foreach ($_POST['member_rank'] as $userId => $rankId) {
+	if (count($request->request->get('member_rank')) > 0) {
+		foreach ($request->request->get('member_rank') as $userId => $rankId) {
 			$repository->assignRankToUser($rankId, $userId);
 		}
 	}
 	// Ränge speichern
-	if (isset($_POST['rank_del']) && count($_POST['rank_del']) > 0) {
-		foreach (array_keys($_POST['rank_del']) as $rankId) {
+	if ($request->request->has('rank_del') && count($request->request->get('rank_del')) > 0) {
+		foreach (array_keys($request->request->get('rank_del')) as $rankId) {
 			$repository->removeRank($rankId);
 		}
 	}
-	if (isset($_POST['rank_name']) && count($_POST['rank_name']) > 0) {
-		foreach ($_POST['rank_name'] as $rankId => $name) {
-			$repository->updateRank($rankId, $name, $_POST['rank_level'][$rankId]);
+	if ($request->request->has('rank_name') && count($request->request->get('rank_name')) > 0) {
+		foreach ($request->request->get('rank_name') as $rankId => $name) {
+			$repository->updateRank($rankId, $name, $request->request->get('rank_level')[$rankId]);
 		}
 	}
 
 	$twig->addGlobal('successMessage', 'Mitglieder aktualisiert!');
 }
 
-function saveDiplomacy(AllianceRepository $repository)
+function saveDiplomacy(Request $request, AllianceRepository $repository)
 {
 	global $twig;
 
 	// Bündnisse / Kriege speichern
-	if (isset($_POST['alliance_bnd_del']) && count($_POST['alliance_bnd_del']) > 0) {
-		foreach (array_keys($_POST['alliance_bnd_del']) as $diplomacyId) {
+	if ($request->request->has('alliance_bnd_del') && count($request->request->get('alliance_bnd_del')) > 0) {
+		foreach (array_keys($request->request->get('alliance_bnd_del')) as $diplomacyId) {
 			$repository->deleteDiplomacy($diplomacyId);
 		}
 	}
-	if (count($_POST['alliance_bnd_level']) > 0) {
-		foreach (array_keys($_POST['alliance_bnd_level']) as $diplomacyId) {
+	if (count($request->request->get('alliance_bnd_level')) > 0) {
+		foreach (array_keys($request->request->get('alliance_bnd_level')) as $diplomacyId) {
 			$repository->updateDiplomacy(
 				$diplomacyId,
-				$_POST['alliance_bnd_level'][$diplomacyId],
-				$_POST['alliance_bnd_name'][$diplomacyId]
+				$request->request->getInt('alliance_bnd_level')[$diplomacyId],
+				$request->request->get('alliance_bnd_name')[$diplomacyId]
 			);
 		}
 	}
 	$twig->addGlobal('successMessage', 'Diplomatie aktualisiert!');
 }
 
-function saveResources(AllianceRepository $repository, int $id)
+function saveResources(Request $request, AllianceRepository $repository, int $id)
 {
 	global $twig;
 
 	$repository->updateResources(
 		$id,
-		nf_back($_POST['res_metal']),
-		nf_back($_POST['res_crystal']),
-		nf_back($_POST['res_plastic']),
-		nf_back($_POST['res_fuel']),
-		nf_back($_POST['res_food']),
+		nf_back($request->request->get('res_metal')),
+		nf_back($request->request->get('res_crystal')),
+		nf_back($request->request->get('res_plastic')),
+		nf_back($request->request->get('res_fuel')),
+		nf_back($request->request->get('res_food')),
 	);
 
 	$repository->addResources(
 		$id,
-		nf_back($_POST['res_metal_add']),
-		nf_back($_POST['res_crystal_add']),
-		nf_back($_POST['res_plastic_add']),
-		nf_back($_POST['res_fuel_add']),
-		nf_back($_POST['res_food_add']),
+		nf_back($request->request->get('res_metal_add')),
+		nf_back($request->request->get('res_crystal_add')),
+		nf_back($request->request->get('res_plastic_add')),
+		nf_back($request->request->get('res_fuel_add')),
+		nf_back($request->request->get('res_food_add')),
 	);
 
 	$twig->addGlobal('successMessage', 'Ressourcen aktualisiert!');
 }
 
-function saveBuildings(AllianceBuildingRepository $buildingRepository, int $id)
+function saveBuildings(Request $request, AllianceBuildingRepository $buildingRepository, int $id)
 {
 	global $twig;
 
-	if ($buildingRepository->existsInAlliance($id, $_POST['selected'])) {
-		$buildingRepository->updateForAlliance($id, $_POST['selected'], $_POST['level'], $_POST['amount']);
+	if ($buildingRepository->existsInAlliance($id, $request->request->get('selected'))) {
+		$buildingRepository->updateForAlliance(
+			$id,
+			$request->request->get('selected'),
+			$request->request->getInt('level'),
+			$request->request->getInt('amount')
+		);
 		$twig->addGlobal('successMessage', 'Datensatz erfolgreich bearbeitet!');
 	} else {
-		$buildingRepository->addToAlliance($id, $_POST['selected'], $_POST['level'], $_POST['amount']);
+		$buildingRepository->addToAlliance(
+			$id,
+			$request->request->get('selected'),
+			$request->request->getInt('level'),
+			$request->request->getInt('amount')
+		);
 		$twig->addGlobal('successMessage', 'Datensatz erfolgreich eingefügt!');
 	}
 }
 
-function saveTechnologies(AllianceTechnologyRepository $technologyRepository, int $id): void
+function saveTechnologies(Request $request, AllianceTechnologyRepository $technologyRepository, int $id): void
 {
 	global $twig;
 
-	if ($technologyRepository->existsInAlliance($id, $_POST['selected_tech'])) {
-		$technologyRepository->updateForAlliance($id, $_POST['selected_tech'], $_POST['tech_level'], $_POST['tech_amount']);
+	if ($technologyRepository->existsInAlliance($id, $request->request->get('selected_tech'))) {
+		$technologyRepository->updateForAlliance(
+			$id,
+			$request->request->get('selected_tech'),
+			$request->request->get('tech_level'),
+			$request->request->get('tech_amount')
+		);
 		$twig->addGlobal('successMessage', 'Datensatz erfolgreich bearbeitet!');
 	} else {
-		$technologyRepository->addToAlliance($id, $_POST['selected_tech'], $_POST['tech_level'], $_POST['tech_amount']);
+		$technologyRepository->addToAlliance(
+			$id,
+			$request->request->get('selected_tech'),
+			$request->request->get('tech_level'),
+			$request->request->get('tech_amount')
+		);
 		$twig->addGlobal('successMessage', 'Datensatz erfolgreich eingefügt!');
 	}
 }
