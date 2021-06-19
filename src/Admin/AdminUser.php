@@ -21,11 +21,6 @@ class AdminUser
     public bool $isContact = true;
     public array $roles = [];
 
-    public function __toString()
-    {
-        return "[ADMIN]" . $this->nick;
-    }
-
     public function checkEqualPassword($newPassword)
     {
         return validatePasswort($newPassword, $this->passwordString);
