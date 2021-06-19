@@ -11,14 +11,13 @@ class DatabaseManagerRepository extends AbstractRepository
     public function getDatabaseSize(): int
     {
         $database = $this->getConnection()->getDatabase();
-        return (int) $this->getConnection()
-            ->executeQuery(
-                "SELECT round(sum( data_length + index_length ) / 1024 / 1024,2)
-                FROM information_schema.TABLES
-                WHERE table_schema=?
-                GROUP BY table_schema",
-                [$database]
-            )
+        return (int) $this->createQueryBuilder()
+            ->select('round(sum( data_length + index_length ) / 1024 / 1024,2)')
+            ->from('information_schema.TABLES')
+            ->where('table_schema = ?')
+            ->groupBy('table_schema')
+            ->setParameter(0, $database)
+            ->execute()
             ->fetchOne();
     }
 

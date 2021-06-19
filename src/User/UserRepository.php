@@ -58,13 +58,12 @@ class UserRepository extends AbstractRepository
 
     function countActiveSessions(int $timeout): int
     {
-        return (int) $this->getConnection()
-            ->executeQuery(
-                "SELECT COUNT(*)
-                FROM user_sessions
-                WHERE time_action > ?;",
-                [(time() - $timeout)]
-            )
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(*)')
+            ->from('user_sessions')
+            ->where('time_action > ?')
+            ->setParameter(0, time() - $timeout)
+            ->execute()
             ->fetchOne();
     }
 
