@@ -25,14 +25,14 @@ require __DIR__ . '/init.inc.php';
 	$cfg = Config::getInstance();
 	$conf = $cfg->getArray();
 
-	// Load default values
-	require_once __DIR__ . '/def.inc.php';
-
     if (!isset($app)) {
         $questSystemEnabled = (bool) $cfg->get('quest_system_enable');
         $app = require __DIR__ .'/../../src/app.php';
         $app->boot();
     }
+
+	// Load default values
+	require_once __DIR__ . '/def.inc.php';
 
 	// Init session
 	if (ADMIN_MODE) {

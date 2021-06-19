@@ -1,4 +1,9 @@
 <?PHP
+use EtoA\Support\RuntimeDataStore;
+
+/** @var RuntimeDataStore */
+$runtimeDataStore = $app['etoa.runtime.datastore'];
+
 	echo "<h1>Rangliste</h1>";
 
 	$mode = isset($_GET['mode']) && $_GET['mode']!="" ? $_GET['mode'] : "user";
@@ -628,8 +633,8 @@
 		$m = $conf['points_update']['v']/60;
 		echo "alle $m Minuten!<br/>";
 	}
-	$statsUpdate = RuntimeDataStore::get('statsupdate');
-	if ($statsUpdate != null)
+	$statsUpdate = $runtimeDataStore->get('statsupdate');
+	if ($statsUpdate !== null)
 	{
 		echo "Letzte Aktualisierung: <b>".df($statsUpdate)." Uhr</b><br/>";
 	}
@@ -638,8 +643,3 @@
 	<span class=\"userHolidayColor\">Urlaubsmodus</span>,
 	<span class=\"userInactiveColor\">Inaktiv (".USER_INACTIVE_SHOW." Tage)</span>,
 	</div>";
-
-
-
-
-?>

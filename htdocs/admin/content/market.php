@@ -1,30 +1,9 @@
 <?PHP
 
-	//////////////////////////////////////////////////
-	//		 	 ____    __           ______       			//
-	//			/\  _`\ /\ \__       /\  _  \      			//
-	//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
-	//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
-	//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
-	//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
-	//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
-	//																					 		//
-	//////////////////////////////////////////////////
-	// The Andromeda-Project-Browsergame				 		//
-	// Ein Massive-Multiplayer-Online-Spiel			 		//
-	// Programmiert von Nicolas Perrenoud				 		//
-	// www.nicu.ch | mail@nicu.ch								 		//
-	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	//////////////////////////////////////////////////
-	//
-	// 	Dateiname: market.php
-	// 	Topic: Marktplatz-Verwaltung
-	// 	Autor: Nicolas Perrenoud alias MrCage
-	// 	Erstellt: 01.12.2004
-	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage
-	// 	Bearbeitet am: 31.03.2006
-	// 	Kommentar:
-	//
+use EtoA\Support\RuntimeDataStore;
+
+/** @var RuntimeDataStore */
+$runtimeDataStore = $app['etoa.runtime.datastore'];
 
 	define("USER_MESSAGE_CAT_ID",1);
 	define("SYS_MESSAGE_CAT_ID",5);
@@ -67,7 +46,7 @@
 						$first = true;
 						foreach ($resNames as $k=>$v)
 						{
-							if (!first) echo "<tr>";
+							if (!$first) echo "<tr>";
 							echo "	<td width=\"110\">".$v."</td>
 									<td width=\"100\">
 										".nf($arr['sell_'.$k.''])."
@@ -378,13 +357,13 @@
 		if (isset($_GET['action']) && $_GET['action']=="updaterates")
 		{
 			$tr = new PeriodicTaskRunner($app);
-			success_msg($tr->runTask('MarketrateUpdateTask'));
+			success_msg($tr->runTask(MarketrateUpdateTask::class));
 		}
 
 		echo "<table class=\"tb\" style=\"width:200px;\">";
 		for ($i=0;$i<NUM_RESOURCES;$i++)
 		{
-			echo "<tr><th>".$resNames[$i]."</th><td>".RuntimeDataStore::get('market_rate_'.$i, 1)."</td></tr>";
+			echo "<tr><th>".$resNames[$i]."</th><td>".$runtimeDataStore->get('market_rate_'.$i, (string) 1)."</td></tr>";
 		}
 		echo "</table>";
 

@@ -59,6 +59,7 @@ $app->register(new \EtoA\Support\DatabaseManagerServiceProvider());
 $app->register(new \EtoA\Universe\UniverseServiceProvider());
 $app->register(new \EtoA\Help\TicketSystem\TicketSystemServiceProvider());
 $app->register(new \EtoA\Message\MessageServiceProvider());
+$app->register(new \EtoA\Support\RuntimeDataStoreServiceProvider());
 
 $app->mount('/', $questProvider);
 $app->mount('/', $tutorialProvider);

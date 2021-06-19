@@ -1,9 +1,14 @@
 <?PHP
 
+use EtoA\Support\RuntimeDataStore;
+
+/** @var RuntimeDataStore */
+$runtimeDataStore = $app['etoa.runtime.datastore'];
+
 	$currentRates = [];
 	for($i=0;$i<NUM_RESOURCES;$i++)
 	{
-		$currentRates[$i] = RuntimeDataStore::get('market_rate_'.$i, 1);
+		$currentRates[$i] = $runtimeDataStore->get('market_rate_'.$i, 1);
 	}
 
 	echo "<h2>Rohstoffkurse</h2>";

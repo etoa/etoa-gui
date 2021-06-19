@@ -1,4 +1,7 @@
 <?php
+
+use EtoA\Support\RuntimeDataStore;
+
 /**
  * Description of MarketHandler
  *
@@ -142,6 +145,11 @@ class MarketHandler
 	 */
 	static function updateRates()
 	{
+		global $app;
+
+		/** @var RuntimeDataStore */
+		$runtimeDataStore = $app['etoa.runtime.datastore'];
+
 		// Load config
 		$cfg = Config::getInstance();
 
@@ -150,7 +158,7 @@ class MarketHandler
 		$sf = $sv = "";
 		for ($i=0;$i<NUM_RESOURCES;$i++)
 		{
-			RuntimeDataStore::set('market_rate_'.$i, $rates[$i]);
+			$runtimeDataStore->set('market_rate_'.$i, $rates[$i]);
 			$sf .="rate_".$i.",";
 			$sv .=$rates[$i].",";
 		}

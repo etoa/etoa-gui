@@ -1,6 +1,10 @@
 <?PHP
 
 use EtoA\Text\TextRepository;
+use EtoA\Support\RuntimeDataStore;
+
+/** @var RuntimeDataStore */
+$runtimeDataStore = $app['etoa.runtime.datastore'];
 
 $time = time();
 
@@ -60,7 +64,7 @@ $time = time();
 		}
 
 		//Eventhandler //
-		$backendStatus = RuntimeDataStore::get('backend_status');
+		$backendStatus = $runtimeDataStore->get('backend_status');
 		if ($backendStatus != null && $backendStatus == 0)
 		{
 			$infoText = $textRepo->find('backend_offline_message');

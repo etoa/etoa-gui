@@ -1,4 +1,7 @@
 <?PHP
+
+use EtoA\Support\RuntimeDataStore;
+
 	/**
 	* Provides static functions for
 	* calculating and displaying
@@ -206,6 +209,8 @@
 		* Punkteberechnung
 		*/
 		static function calc($manual=false) {
+			// TODO
+			global $app;
 
 			$cfg = Config::getInstance();
 
@@ -1104,8 +1109,11 @@
 			unset($buildings);
 			unset($techs);
 
+			/** @var RuntimeDataStore */
+			$runtimeDataStore = $app['etoa.runtime.datastore'];
+
 			// Zeit in Config speichern
-			RuntimeDataStore::set('statsupdate', time());
+			$runtimeDataStore->set('statsupdate', time());
 
 			$num = mysql_num_rows($ures);
 
