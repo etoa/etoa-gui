@@ -1,15 +1,16 @@
 <?PHP
 
 use EtoA\Text\TextRepository;
+use Twig\Environment;
 
 /** @var TextRepository */
 $textRepo = $app['etoa.text.repository'];
 
 if (!empty($_GET['id'])) {
-    editText($textRepo);
+    editText($textRepo, $twig);
 }
 if (!empty($_GET['preview'])) {
-    previewText($textRepo);
+    previewText($textRepo, $twig);
 }
 if (!empty($_GET['enable'])) {
     enableText($textRepo);
@@ -17,11 +18,10 @@ if (!empty($_GET['enable'])) {
 if (!empty($_GET['disable'])) {
     disableText($textRepo);
 }
-textOverview($textRepo);
+textOverview($textRepo, $twig);
 
-function editText(TextRepository $textRepo)
+function editText(TextRepository $textRepo, Environment $twig)
 {
-    global $twig;
     global $page;
 
     $id = $_GET['id'];
@@ -51,10 +51,8 @@ function editText(TextRepository $textRepo)
     exit();
 }
 
-function previewText(TextRepository $textRepo)
+function previewText(TextRepository $textRepo, Environment $twig)
 {
-    global $twig;
-
     $id = $_GET['preview'];
     if ($textRepo->isValidTextId($id)) {
         echo $twig->render('admin/texts/edit.html.twig', [
@@ -96,10 +94,8 @@ function disableText(TextRepository $textRepo)
     forward("?page=$page");
 }
 
-function textOverview(TextRepository $textRepo)
+function textOverview(TextRepository $textRepo, Environment $twig)
 {
-    global $twig;
-
     $texts = [];
     foreach ($textRepo->getAllTextIDs() as $id) {
         $texts[] = $textRepo->find($id);

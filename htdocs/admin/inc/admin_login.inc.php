@@ -2,30 +2,29 @@
 
 use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
+use Twig\Environment;
 
 /** @var AdminUserRepository */
 $adminUserRepo = $app['etoa.admin.user.repository'];
 
 if (isset($_GET['sendpass'])) {
     if (isset($_POST['sendpass_submit'])) {
-        sendPassword($adminUserRepo);
+        sendPassword($adminUserRepo, $twig);
     } else {
-        sendPasswordForm();
+        sendPasswordForm($twig);
     }
 } else if ($adminUserRepo->count() === 0) {
     if (isset($_POST['newuser_submit']) && $_POST['user_email'] != "" && $_POST['user_nick'] != "" && $_POST['user_password'] != '') {
-        registerFirstUser($adminUserRepo);
+        registerFirstUser($adminUserRepo, $twig);
     } else {
-        registerFirstUserForm();
+        registerFirstUserForm($twig);
     }
 } else {
-    loginForm($s);
+    loginForm($s, $twig);
 }
 
-function sendPassword(AdminUserRepository $adminUserRepo): void
+function sendPassword(AdminUserRepository $adminUserRepo, Environment $twig): void
 {
-    global $twig;
-
     $user = $adminUserRepo->findOneByNick($_POST['user_nick']);
     if ($user) {
         // TODO: Do not generate password immediately, but send confirmation token
@@ -61,17 +60,13 @@ function sendPassword(AdminUserRepository $adminUserRepo): void
     ]);
 }
 
-function sendPasswordForm(): void
+function sendPasswordForm(Environment $twig): void
 {
-    global $twig;
-
     echo $twig->render('admin/login/request-password.html.twig', []);
 }
 
-function registerFirstUser(AdminUserRepository $adminUserRepo): void
+function registerFirstUser(AdminUserRepository $adminUserRepo, Environment $twig): void
 {
-    global $twig;
-
     $nu = new AdminUser();
     $nu->email = $_POST['user_email'];
     $nu->nick = $_POST['user_nick'];
@@ -89,17 +84,13 @@ function registerFirstUser(AdminUserRepository $adminUserRepo): void
     ]);
 }
 
-function registerFirstUserForm(): void
+function registerFirstUserForm(Environment $twig): void
 {
-    global $twig;
-
     echo $twig->render('admin/login/login-newuser.html.twig', []);
 }
 
-function loginForm(AdminSession $s): void
+function loginForm(AdminSession $s, Environment $twig): void
 {
-    global $twig;
-
     $msg = null;
     $msgStyle = null;
     if ($s->lastError && $s->lastErrorCode !== 'nologin') {

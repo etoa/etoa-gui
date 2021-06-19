@@ -7,6 +7,7 @@ use EtoA\Admin\AdminUserRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Support\DatabaseManagerRepository;
 use EtoA\User\UserRepository;
+use Twig\Environment;
 
 ob_start();
 
@@ -75,14 +76,16 @@ try {
         /** @var TicketRepository */
         $ticketRepo = $app['etoa.help.ticket.repository'];
 
-        adminView($s,
+        adminView(
+            $s,
             $adminUserRepo,
             $userRepo,
             $notesRepo,
             $roleManager,
             $sessionRepository,
             $databaseManager,
-            $ticketRepo
+            $ticketRepo,
+            $twig
         );
     }
 } catch (DBException $ex) {
@@ -102,9 +105,9 @@ function adminView(
     AdminRoleManager $roleManager,
     AdminSessionRepository $sessionRepository,
     DatabaseManagerRepository $databaseManager,
-    TicketRepository $ticketRepo
+    TicketRepository $ticketRepo,
+    Environment $twig
 ) {
-    global $twig;
     global $page;
     global $sub;
     global $cfg;

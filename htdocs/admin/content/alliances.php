@@ -2,6 +2,7 @@
 
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\InvalidAllianceParametersException;
+use Twig\Environment;
 
 /** @var AllianceRepository */
 $repository = $app['etoa.alliance.repository'];
@@ -26,13 +27,13 @@ if ($sub == "imagecheck") {
 		&& isset($_GET['action'])
 		&& $_GET['action'] == "search"
 	) {
-		searchResults($repository);
+		searchResults($repository, $twig);
 	} else if (isset($_GET['sub']) && $_GET['sub'] == "edit") {
 		include("alliance/edit.inc.php");
 	} elseif (isset($_GET['sub']) && $_GET['sub'] == "drop" && isset($_GET['alliance_id'])) {
 		drop($repository);
 	} else {
-		index($repository);
+		index($repository, $twig);
 	}
 }
 
@@ -342,9 +343,8 @@ function crap(AllianceRepository $repository)
 	}
 }
 
-function searchResults(AllianceRepository $repository)
+function searchResults(AllianceRepository $repository, Environment $twig)
 {
-	global $twig;
 	global $page;
 
 	$twig->addGlobal('subtitle', 'Suchergebnisse');
@@ -436,9 +436,8 @@ function drop(AllianceRepository $repository)
 	}
 }
 
-function index(AllianceRepository $repository)
+function index(AllianceRepository $repository, Environment $twig)
 {
-	global $twig;
 	global $page;
 
 	// Allianz löschen

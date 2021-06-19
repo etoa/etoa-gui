@@ -4,6 +4,7 @@ use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceTechnologyRepository;
 use Symfony\Component\HttpFoundation\Request;
+use Twig\Environment;
 
 /** @var AllianceRepository */
 $repository = $app['etoa.alliance.repository'];
@@ -29,24 +30,22 @@ if (!isset($id)) {
 }
 
 if ($request->request->has('info_save') && $request->request->get('info_save') != "") {
-	saveInfo($request, $repository, $id);
+	saveInfo($request, $repository, $id, $twig);
 } elseif ($request->request->has('member_save') && $request->request->get('member_save') != "") {
-	saveMembers($request, $repository);
+	saveMembers($request, $repository, $twig);
 } elseif ($request->request->has('bnd_save') && $request->request->get('bnd_save') != "") {
-	saveDiplomacy($request, $repository);
+	saveDiplomacy($request, $repository, $twig);
 } elseif ($request->request->has('res_save') && $request->request->get('res_save') != "") {
-	saveResources($request, $repository, $id);
+	saveResources($request, $repository, $id, $twig);
 } elseif ($request->request->has('buildings') && $request->request->get('buildings') != "") {
-	saveBuildings($request, $buildingRepository, $id);
+	saveBuildings($request, $buildingRepository, $id, $twig);
 } elseif ($request->request->has('techs') && $request->request->get('techs') != "") {
-	saveTechnologies($request, $technologyRepository, $id);
+	saveTechnologies($request, $technologyRepository, $id, $twig);
 }
-edit($repository, $buildingRepository, $technologyRepository, $id);
+edit($repository, $buildingRepository, $technologyRepository, $id, $twig);
 
-function saveInfo(Request $request, AllianceRepository $repository, int $id)
+function saveInfo(Request $request, AllianceRepository $repository, int $id, Environment $twig)
 {
-	global $twig;
-
 	//  Bild löschen wenn nötig
 	if ($request->request->has('alliance_img_del')) {
 		$picture = $repository->getPicture($id);
@@ -71,10 +70,8 @@ function saveInfo(Request $request, AllianceRepository $repository, int $id)
 	$twig->addGlobal('successMessage', 'Allianzdaten aktualisiert!');
 }
 
-function saveMembers(Request $request, AllianceRepository $repository)
+function saveMembers(Request $request, AllianceRepository $repository, Environment $twig)
 {
-	global $twig;
-
 	// Mitgliederänderungen
 	if ($request->request->has('member_kick') && count($request->request->get('member_kick')) > 0) {
 		foreach (array_keys($request->request->get('member_kick')) as $userId) {
@@ -101,10 +98,8 @@ function saveMembers(Request $request, AllianceRepository $repository)
 	$twig->addGlobal('successMessage', 'Mitglieder aktualisiert!');
 }
 
-function saveDiplomacy(Request $request, AllianceRepository $repository)
+function saveDiplomacy(Request $request, AllianceRepository $repository, Environment $twig)
 {
-	global $twig;
-
 	// Bündnisse / Kriege speichern
 	if ($request->request->has('alliance_bnd_del') && count($request->request->get('alliance_bnd_del')) > 0) {
 		foreach (array_keys($request->request->get('alliance_bnd_del')) as $diplomacyId) {
@@ -123,10 +118,8 @@ function saveDiplomacy(Request $request, AllianceRepository $repository)
 	$twig->addGlobal('successMessage', 'Diplomatie aktualisiert!');
 }
 
-function saveResources(Request $request, AllianceRepository $repository, int $id)
+function saveResources(Request $request, AllianceRepository $repository, int $id, Environment $twig)
 {
-	global $twig;
-
 	$repository->updateResources(
 		$id,
 		nf_back($request->request->get('res_metal')),
@@ -148,10 +141,12 @@ function saveResources(Request $request, AllianceRepository $repository, int $id
 	$twig->addGlobal('successMessage', 'Ressourcen aktualisiert!');
 }
 
-function saveBuildings(Request $request, AllianceBuildingRepository $buildingRepository, int $id)
-{
-	global $twig;
-
+function saveBuildings(
+	Request $request,
+	AllianceBuildingRepository $buildingRepository,
+	int $id,
+	Environment $twig
+) {
 	if ($buildingRepository->existsInAlliance($id, $request->request->get('selected'))) {
 		$buildingRepository->updateForAlliance(
 			$id,
@@ -171,10 +166,12 @@ function saveBuildings(Request $request, AllianceBuildingRepository $buildingRep
 	}
 }
 
-function saveTechnologies(Request $request, AllianceTechnologyRepository $technologyRepository, int $id): void
-{
-	global $twig;
-
+function saveTechnologies(
+	Request $request,
+	AllianceTechnologyRepository $technologyRepository,
+	int $id,
+	Environment $twig
+): void {
 	if ($technologyRepository->existsInAlliance($id, $request->request->get('selected_tech'))) {
 		$technologyRepository->updateForAlliance(
 			$id,
@@ -198,9 +195,9 @@ function edit(
 	AllianceRepository $repository,
 	AllianceBuildingRepository $buildingRepository,
 	AllianceTechnologyRepository $technologyRepository,
-	int $id
+	int $id,
+	Environment $twig
 ): void {
-	global $twig;
 	global $page;
 
 	$arr = $repository->find($id);
@@ -279,7 +276,7 @@ function infoTab(array $arr, array $members): void
 	echo "<tr><th>Gründer</th><td><select name=\"alliance_founder_id\">";
 	echo "<option value=\"0\">(niemand)</option>";
 	foreach ($members as $member) {
-		echo "<option value=\"".$member['user_id']."\"";
+		echo "<option value=\"" . $member['user_id'] . "\"";
 		if ($arr['alliance_founder_id'] == $member['user_id']) {
 			echo " selected=\"selected\"";
 		}
@@ -320,9 +317,9 @@ function membersTab(array $members, array $ranks): void
 				" . popupLink("sendmessage", "Nachricht senden", "", "id=" . $member['user_id']) . "</td>
 				<td><a href=\"?page=user&amp;sub=edit&amp;id=" . $member['user_id'] . "\" " . cTT($member['user_nick'], "uifo" . $member['user_id'] . "") . ">" . $member['user_nick'] . "</a></td>
 				<td>" . nf($member['user_points']) . " Punkte</td>
-				<td><select name=\"member_rank[".$member['user_id']."]\"><option value=\"0\">-</option>";
+				<td><select name=\"member_rank[" . $member['user_id'] . "]\"><option value=\"0\">-</option>";
 			foreach ($ranks as $rank) {
-				echo "<option value=\"".$rank['rank_id']."\"";
+				echo "<option value=\"" . $rank['rank_id'] . "\"";
 				if ($member['user_alliance_rank_id'] == $rank['rank_id']) {
 					echo " selected=\"selected\"";
 				}

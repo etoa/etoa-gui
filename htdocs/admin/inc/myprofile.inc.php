@@ -2,23 +2,22 @@
 
 use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
+use Twig\Environment;
 
 /** @var AdminUserRepository */
 $adminUserRepo = $app['etoa.admin.user.repository'];
 
 if (isset($_POST['submitPassword'])) {
-    submitPassword($cu, $adminUserRepo);
+    submitPassword($cu, $adminUserRepo, $twig);
 }
 if (isset($_POST['submitProfile'])) {
-    submitProfile($cu, $adminUserRepo);
+    submitProfile($cu, $adminUserRepo, $twig);
 }
-profileIndex($cu);
+profileIndex($cu, $twig);
 exit();
 
-function submitPassword(AdminUser $cu, AdminUserRepository $adminUserRepo)
+function submitPassword(AdminUser $cu, AdminUserRepository $adminUserRepo, Environment $twig)
 {
-    global $twig;
-
     try {
         if (!$cu->checkEqualPassword($_POST['user_password_old'])) {
             throw new \Exception('Das alte Passwort stimmt nicht mit dem gespeicherten Wert überein!');
@@ -40,10 +39,8 @@ function submitPassword(AdminUser $cu, AdminUserRepository $adminUserRepo)
     }
 }
 
-function submitProfile(AdminUser $cu, AdminUserRepository $adminUserRepo)
+function submitProfile(AdminUser $cu, AdminUserRepository $adminUserRepo, Environment $twig)
 {
-    global $twig;
-
     $cu->name = $_POST['user_name'];
     $cu->email = $_POST['user_email'];
     $cu->boardUrl = $_POST['user_board_url'];
@@ -58,10 +55,8 @@ function submitProfile(AdminUser $cu, AdminUserRepository $adminUserRepo)
     add_log(8, $cu->nick . " ändert seine Daten");
 }
 
-function profileIndex(AdminUser $cu)
+function profileIndex(AdminUser $cu, Environment $twig)
 {
-    global $twig;
-
     echo $twig->render('admin/profile/profile.html.twig', [
         'user' => $cu,
         'users' => Users::getArray(),

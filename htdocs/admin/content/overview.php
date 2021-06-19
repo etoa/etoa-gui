@@ -9,18 +9,19 @@ use EtoA\Support\DatabaseManagerRepository;
 use EtoA\Text\TextRepository;
 use EtoA\Universe\CellRepository;
 use League\CommonMark\CommonMarkConverter;
+use Twig\Environment;
 
 if ($sub == "offline") {
 	takeOffline();
 } elseif ($sub == "stats") {
 	require("home/stats.inc.php");
 } elseif ($sub === "gamestats") {
-	gameStatsView();
+	gameStatsView($twig);
 } elseif ($sub === "changelog") {
 	/** @var CommonMarkConverter */
 	$markdown = $app['etoa.util.markdown'];
 
-	changelogView($markdown);
+	changelogView($markdown, $twig);
 } elseif ($sub == "adminlog") {
 	/** @var AdminSessionRepository */
 	$sessionRepository = $app['etoa.admin.session.repository'];
@@ -44,7 +45,7 @@ if ($sub == "offline") {
 	/** @var DatabaseManagerRepository */
 	$databaseManager = $app['etoa.db.manager.repository'];
 
-	systemInfoView($databaseManager);
+	systemInfoView($databaseManager, $twig);
 } else {
 	/** @var CellRepository */
 	$universeCellRepo = $app['etoa.universe.cell.repository'];
@@ -55,7 +56,7 @@ if ($sub == "offline") {
 	/** @var TextRepository */
 	$textRepo = $app['etoa.text.repository'];
 
-	indexView($cu, $universeCellRepo, $ticketRepo, $textRepo);
+	indexView($cu, $universeCellRepo, $ticketRepo, $textRepo, $twig);
 }
 
 function takeOffline()
@@ -92,10 +93,8 @@ function takeOffline()
 	echo "</form>";
 }
 
-function gameStatsView()
+function gameStatsView(Environment $twig)
 {
-	global $twig;
-
 	echo $twig->render('admin/overview/gamestats.html.twig', [
 		'userStats' => file_exists(USERSTATS_OUTFILE) ? USERSTATS_OUTFILE : null,
 		'xmlInfo' => file_exists(XML_INFO_FILE) ? XML_INFO_FILE : null,
@@ -104,10 +103,8 @@ function gameStatsView()
 	exit();
 }
 
-function changelogView(CommonMarkConverter $markdown)
+function changelogView(CommonMarkConverter $markdown, Environment $twig)
 {
-	global $twig;
-
 	$changelogFile = "../../Changelog.md";
 	$changelogPublicFile = "../../Changelog_public.md";
 	echo $twig->render('admin/overview/changelog.html.twig', [
@@ -273,10 +270,8 @@ function adminSessionLogView(
 	}
 }
 
-function systemInfoView(DatabaseManagerRepository $databaseManager)
+function systemInfoView(DatabaseManagerRepository $databaseManager, Environment $twig)
 {
-	global $twig;
-
 	$unix = UNIX ? posix_uname() : null;
 	echo $twig->render('admin/overview/sysinfo.html.twig', [
 		'phpVersion' => phpversion(),
@@ -291,10 +286,10 @@ function indexView(
 	AdminUser $cu,
 	CellRepository $universeCellRepo,
 	TicketRepository $ticketRepo,
-	TextRepository $textRepo
+	TextRepository $textRepo,
+	Environment $twig
 ) {
 	global $conf;
-	global $twig;
 
 	// Flottensperre aktiv
 	$fleetBanTitle = null;
