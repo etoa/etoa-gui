@@ -9,69 +9,51 @@ class GetRaceInfosJsonResponder extends JsonResponder
 
     $data = array();
 
-	$ttm = new TutorialManager();
-
 	defineImagePaths();
 
 	$val = $params['id'];
 
-	if ($val > 0)
-	{
-		$res=dbQuerySave("
-			SELECT
-				*
-			FROM
-				races
-			WHERE
-				race_id=?
-		;", array($val));
+	if ($val > 0) {
+        /** @var \EtoA\Race\RaceDataRepository $raceRepository */
+        $raceRepository = $this->app['etoa.race.datarepository'];
+        $race = $raceRepository->getRace((int) $val);
 
-		if ($arr=mysql_fetch_array($res)) {
+		if ($race !== null) {
 
 			ob_start();
 
-			echo text2html($arr['race_comment'])."<br/><br/>";
+			echo text2html($race->comment)."<br/><br/>";
 			tableStart('',300);
 			echo "<tr><th colspan=\"2\">St&auml;rken / Schw&auml;chen:</th></tr>";
-			if ($arr['race_f_metal']!=1)
-			{
-				echo "<tr><th>".RES_ICON_METAL."Produktion von ".RES_METAL.":</td><td>".get_percent_string($arr['race_f_metal'],1)."</td></tr>";
+			if ($race->metal !== 1.00) {
+				echo "<tr><th>".RES_ICON_METAL."Produktion von ".RES_METAL.":</td><td>".get_percent_string($race->metal,1)."</td></tr>";
 			}
-			if ($arr['race_f_crystal']!=1)
-			{
-				echo "<tr><th>".RES_ICON_CRYSTAL."Produktion von ".RES_CRYSTAL.":</td><td>".get_percent_string($arr['race_f_crystal'],1)."</td></tr>";
+			if ($race->crystal !== 1.0) {
+				echo "<tr><th>".RES_ICON_CRYSTAL."Produktion von ".RES_CRYSTAL.":</td><td>".get_percent_string($race->crystal,1)."</td></tr>";
 			}
-			if ($arr['race_f_plastic']!=1)
-			{
-				echo "<tr><th>".RES_ICON_PLASTIC."Produktion von ".RES_PLASTIC.":</td><td>".get_percent_string($arr['race_f_plastic'],1)."</td></tr>";
+			if ($race->plastic !== 1.0) {
+				echo "<tr><th>".RES_ICON_PLASTIC."Produktion von ".RES_PLASTIC.":</td><td>".get_percent_string($race->plastic,1)."</td></tr>";
 			}
-			if ($arr['race_f_fuel']!=1)
-			{
-				echo "<tr><th>".RES_ICON_FUEL."Produktion von ".RES_FUEL.":</td><td>".get_percent_string($arr['race_f_fuel'],1)."</td></tr>";
+			if ($race->fuel !== 1.0) {
+				echo "<tr><th>".RES_ICON_FUEL."Produktion von ".RES_FUEL.":</td><td>".get_percent_string($race->fuel,1)."</td></tr>";
 			}
-			if ($arr['race_f_food']!=1)
-			{
-				echo "<tr><th>".RES_ICON_FOOD."Produktion von ".RES_FOOD.":</td><td>".get_percent_string($arr['race_f_food'],1)."</td></tr>";
+			if ($race->food !== 1.0) {
+				echo "<tr><th>".RES_ICON_FOOD."Produktion von ".RES_FOOD.":</td><td>".get_percent_string($race->food,1)."</td></tr>";
 			}
-			if ($arr['race_f_power']!=1)
-			{
-				echo "<tr><th>".RES_ICON_POWER."Produktion von Energie:</td><td>".get_percent_string($arr['race_f_power'],1)."</td></tr>";
+			if ($race->power !== 1.0) {
+				echo "<tr><th>".RES_ICON_POWER."Produktion von Energie:</td><td>".get_percent_string($race->power,1)."</td></tr>";
 			}
-			if ($arr['race_f_population']!=1)
-			{
-				echo "<tr><th>".RES_ICON_PEOPLE."Bevölkerungswachstum:</td><td>".get_percent_string($arr['race_f_population'],1)."</td></tr>";
+			if ($race->population !== 1.0) {
+				echo "<tr><th>".RES_ICON_PEOPLE."Bevölkerungswachstum:</td><td>".get_percent_string($race->population,1)."</td></tr>";
 			}
-			if ($arr['race_f_researchtime']!=1)
-			{
-				echo "<tr><th>".RES_ICON_TIME."Forschungszeit:</td><td>".get_percent_string($arr['race_f_researchtime'],1,1)."</td></tr>";
+			if ($race->researchTime !== 1.0) {
+				echo "<tr><th>".RES_ICON_TIME."Forschungszeit:</td><td>".get_percent_string($race->researchTime,1,1)."</td></tr>";
 			}
-			if ($arr['race_f_buildtime']!=1)
-			{
-				echo "<tr><th>".RES_ICON_TIME."Bauzeit:</td><td>".get_percent_string($arr['race_f_buildtime'],1,1)."</td></tr>";
+			if ($race->buildTime !== 1.0) {
+				echo "<tr><th>".RES_ICON_TIME."Bauzeit:</td><td>".get_percent_string($race->buildTime,1,1)."</td></tr>";
 			}
-			if ($arr['race_f_fleettime']!=1)
-			{
-				echo "<tr><th>".RES_ICON_TIME."Fluggeschwindigkeit:</td><td>".get_percent_string($arr['race_f_fleettime'],1)."</td></tr>";
+			if ($race->fleetTime !== 1.0) {
+				echo "<tr><th>".RES_ICON_TIME."Fluggeschwindigkeit:</td><td>".get_percent_string($race->fleetTime,1)."</td></tr>";
 			}
 			tableEnd();
 			tableStart('',500);

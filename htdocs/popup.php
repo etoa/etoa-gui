@@ -1,5 +1,7 @@
 <?PHP
 
+$request = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
+
 require_once __DIR__ . '/inc/bootstrap.inc.php';
 $app = require __DIR__ . '/../src/app.php';
 

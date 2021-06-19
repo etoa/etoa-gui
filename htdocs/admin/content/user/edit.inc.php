@@ -844,18 +844,20 @@
 				* Game-Daten
 				*/
 
+				/** @var \EtoA\Race\RaceDataRepository $raceRepository */
+				$raceRepository = $app['etoa.race.datarepository'];
+				$raceNames = $raceRepository->getRaceNames();
+
 				echo "<table class=\"tbl\">";
 				echo "<tr>
 								<td class=\"tbltitle\">Rasse:</td>
 								<td class=\"tbldata\">
 									<select name=\"user_race_id\">
 									<option value=\"0\">(Keine)</option>";
-									$tres = dbquery("SELECT * FROM races ORDER BY race_name;");
-									while ($tarr = mysql_fetch_array($tres))
-									{
-										echo "<option value=\"".$tarr['race_id']."\"";
-										if ($arr['user_race_id']==$tarr['race_id']) echo " selected=\"selected\"";
-										echo ">".$tarr['race_name']."</option>\n";
+									foreach ($raceNames as $raceId => $raceName) {
+										echo "<option value=\"".$raceId."\"";
+										if ((int) $arr['user_race_id'] === $raceId) echo " selected=\"selected\"";
+										echo ">".$raceName."</option>\n";
 									}
 									echo "</select>
 								</td>

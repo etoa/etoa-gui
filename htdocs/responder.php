@@ -18,6 +18,7 @@ header('Content-Type: application/json');
 
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/inc/bootstrap.inc.php';
+$app = require __DIR__ . '/../src/app.php';
 
 $data = array();
 
@@ -29,7 +30,7 @@ if ($action != null && preg_match('/^[a-z\_]+$/', $action) && strlen($action) <=
   try {
     $params = $_GET;
     unset($params['action']);
-    $responder = JsonResponder::createFactory($action);
+    $responder = JsonResponder::createFactory($action, $app);
 
     if($responder->validateSession())
     {

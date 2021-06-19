@@ -377,23 +377,15 @@
 		Bitte wählt die Rasse eures Volkes aus.<br/>
 		Jede Rasse hat Vor- und Nachteile sowie einige Spezialeinheiten:<br/><br/>";
 
+		/** @var \EtoA\Race\RaceDataRepository $raceRepository */
+		$raceRepository = $app['etoa.race.datarepository'];
+		$raceNames = $raceRepository->getRaceNames();
+
 		echo "<select name=\"register_user_race_id\" id=\"register_user_race_id\">
 		<option value=\"0\">Bitte wählen...</option>";
-		$res = dbquery("
-		SELECT
-			race_id,
-			race_name
-		FROM
-			races
-		WHERE
-			race_active=1
-		ORDER BY
-			race_name;
-		");
-		while ($race = mysql_fetch_array($res))
-		{
-			echo "<option value=\"".$race['race_id']."\"";
-			echo ">".$race['race_name']."</option>";
+		foreach ($raceNames as $raceId => $raceName) {
+			echo "<option value=\"".$raceId."\"";
+			echo ">".$raceName."</option>";
 		}
 		echo "</select>";
 
