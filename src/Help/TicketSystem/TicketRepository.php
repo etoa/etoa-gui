@@ -15,7 +15,7 @@ class TicketRepository extends AbstractRepository
     private TicketMessageRepository $messageRepo;
     private MessageRepository $userMessageRepo;
 
-    private int $inactiveTime = 72 * 3600; // 72 hours
+    const INACTIVE_TIME = 72 * 3600; // 72 hours
 
     public function __construct(
         Connection $connection,
@@ -232,7 +232,7 @@ Dein Admin-Team";
 
     public function closeAssignedInactive(): int
     {
-        $threshold = time() - $this->inactiveTime;
+        $threshold = time() - self::INACTIVE_TIME;
 
         $ticketIds = collect($this->createQueryBuilder()
             ->select("id")
