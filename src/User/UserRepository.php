@@ -42,7 +42,7 @@ class UserRepository extends AbstractRepository
             ->setParameter('userId', $userId)
             ->execute()
             ->fetchOne();
-        return $data ? $data : null;
+        return ! is_bool($data) ? $data : null;
     }
 
     function count(): int

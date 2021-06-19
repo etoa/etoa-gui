@@ -79,7 +79,7 @@ class AdminNotesRepository extends AbstractRepository
                 'text' => $text,
             ])
             ->execute();
-        return $affected > 0;
+        return (int) $affected > 0;
     }
 
     function remove(int $id): bool
@@ -89,6 +89,6 @@ class AdminNotesRepository extends AbstractRepository
             ->where('notes_id = :id')
             ->setParameter('id', $id)
             ->execute();
-        return $affected > 0;
+        return (int) $affected > 0;
     }
 }

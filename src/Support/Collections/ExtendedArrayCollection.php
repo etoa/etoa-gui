@@ -2,6 +2,7 @@
 
 namespace EtoA\Support\Collections;
 
+use Closure;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
@@ -19,7 +20,7 @@ class ExtendedArrayCollection extends ArrayCollection
      * @param null $initialValue
      * @return mixed
      */
-    public function reduce(\Closure $func, $initialValue = null)
+    public function reduce(Closure $func, $initialValue = null)
     {
         return array_reduce($this->toArray(), $func, $initialValue);
     }

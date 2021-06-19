@@ -26,7 +26,7 @@ class AdminUserRepository extends AbstractRepository
             ->setParameter(0, $id)
             ->execute()
             ->fetchAssociative();
-        return $data ? $this->createObject($data) : null;
+        return !is_bool($data) ? $this->createObject($data) : null;
     }
 
     public function findOneByNick(string $nick)
@@ -38,7 +38,7 @@ class AdminUserRepository extends AbstractRepository
             ->setParameter(0, $nick)
             ->execute()
             ->fetchAssociative();
-        return $data ? $this->createObject($data) : null;
+        return !is_bool($data) ? $this->createObject($data) : null;
     }
 
     public function findAll(): array
@@ -94,11 +94,12 @@ class AdminUserRepository extends AbstractRepository
         $this->createQueryBuilder()
             ->update('admin_users')
             ->set('user_password', ':password')
-            ->set('user_force_pwchange', $forceChange ? 1 : 0)
+            ->set('user_force_pwchange', ':pwchange')
             ->where('user_id = :id')
             ->setParameters([
                 'id' => $adminUser->id,
                 'password' => $pws,
+                'pwchange' => $forceChange ? 1 : 0,
             ])
             ->execute();
 
@@ -183,7 +184,7 @@ class AdminUserRepository extends AbstractRepository
             ->setParameter('id', $adminUser->id)
             ->execute();
         $adminUser->id = null;
-        return $affected > 0;
+        return (int) $affected > 0;
     }
 
     public function getNick(int $userId): ?string
@@ -200,6 +201,6 @@ class AdminUserRepository extends AbstractRepository
             ->setParameter('userId', $userId)
             ->execute()
             ->fetchOne();
-        return $data ? $data : null;
+        return !is_bool($data) ? $data : null;
     }
 }

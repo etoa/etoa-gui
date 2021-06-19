@@ -7,7 +7,7 @@ namespace EtoA\Help\TicketSystem;
 use Doctrine\DBAL\Connection;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Core\AbstractRepository;
-use Etoa\Message\MessageRepository;
+use EtoA\Message\MessageRepository;
 
 class TicketRepository extends AbstractRepository
 {
@@ -116,7 +116,7 @@ class TicketRepository extends AbstractRepository
                 ->set('cat_id', ':cat_id')
                 ->set('admin_id', ':admin_id')
                 ->set('admin_comment', ':admin_comment')
-                ->set('timestamp', $ticket->timestamp)
+                ->set('timestamp', ':timestamp')
                 ->where('id = :ticket_id')
                 ->setParameters([
                     'ticket_id' => $ticket->id,
@@ -125,9 +125,10 @@ class TicketRepository extends AbstractRepository
                     'cat_id' => $ticket->catId,
                     'admin_id' => $ticket->adminId,
                     'admin_comment' => $ticket->adminComment,
+                    'timestamp' => $ticket->timestamp,
                 ])
                 ->execute();
-            return $affected > 0;
+            return (int) $affected > 0;
         }
         $this->createQueryBuilder()
             ->insert('tickets')
@@ -138,7 +139,7 @@ class TicketRepository extends AbstractRepository
                 'cat_id' => ':cat_id',
                 'admin_id' => ':admin_id',
                 'admin_comment' => ':admin_comment',
-                'timestamp' => $ticket->timestamp,
+                'timestamp' => ':timestamp',
             ])
             ->setParameters([
                 'status' => $ticket->status,
@@ -147,6 +148,7 @@ class TicketRepository extends AbstractRepository
                 'cat_id' => $ticket->catId,
                 'admin_id' => $ticket->adminId ?? 0,
                 'admin_comment' => $ticket->adminComment,
+                'timestamp' => $ticket->timestamp,
             ])
             ->execute();
         $ticket->id = (int) $this->getConnection()->lastInsertId();
@@ -174,7 +176,7 @@ Dein [page ticket id=" . $ticket->id . "]Ticket #" . $ticket->getIdString() . "[
 Es wird sich in Kürze ein Admin um dein Anliegen kümmern.
 
 Dein Admin-Team";
-        $this->userMessageRepo->createSystemMessage($ticket->userId, USER_MSG_CAT_ID, "Dein Ticket " . $ticket->getIdString() .' wurde erstellt', $text);
+        $this->userMessageRepo->createSystemMessage($ticket->userId, USER_MSG_CAT_ID, "Dein Ticket " . $ticket->getIdString() . ' wurde erstellt', $text);
 
         return $ticket;
     }
@@ -307,7 +309,7 @@ Dein Admin-Team";
 
         $qry = $this->createQueryBuilder()
             ->delete('tickets')
-            ->where('id IN('.implode(',', array_fill(0, count($ticketIds), '?')).')');
+            ->where('id IN(' . implode(',', array_fill(0, count($ticketIds), '?')) . ')');
         foreach ($ticketIds as $k => $id) {
             $qry->setParameter($k, $id);
         }
@@ -335,6 +337,6 @@ Dein Admin-Team";
             ->setParameter('id', $catId)
             ->execute()
             ->fetchOne();
-        return $data ? $data : null;
+        return !is_bool($data) ? $data : null;
     }
 }

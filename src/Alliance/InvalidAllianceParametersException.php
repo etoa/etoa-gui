@@ -1,6 +1,6 @@
 <?php
 
-namespace Etoa\Alliance;
+namespace EtoA\Alliance;
 
 use Exception;
 

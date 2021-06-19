@@ -1,7 +1,7 @@
 <?PHP
 
 use EtoA\Alliance\AllianceRepository;
-use Etoa\Alliance\InvalidAllianceParametersException;
+use EtoA\Alliance\InvalidAllianceParametersException;
 
 $repository = $app['etoa.alliance.repository'];
 

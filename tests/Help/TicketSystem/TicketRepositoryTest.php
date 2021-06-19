@@ -8,7 +8,9 @@ use EtoA\AbstractDbTestCase;
 use EtoA\Message\MessageRepository;
 
 // TODO define at a more suitable place, or find a way to make these definitions obsolete
-define('RELATIVE_ROOT', '');
+if (!defined('RELATIVE_ROOT')) {
+    define('RELATIVE_ROOT', '');
+}
 require_once __DIR__ . '/../../../htdocs/inc/const.inc.php';
 require_once __DIR__ . '/../../../htdocs/inc/functions.inc.php';
 
@@ -93,7 +95,6 @@ class TicketRepositoryTest extends AbstractDbTestCase
         $ticket = $this->repository->create($userId, $catId, $message);
 
         // then
-        $this->assertNotNull($ticket);
         $this->assertEquals($userId, $ticket->userId);
         $this->assertEquals($catId, $ticket->catId);
         $this->assertEquals('new', $ticket->status);
@@ -120,7 +121,7 @@ class TicketRepositoryTest extends AbstractDbTestCase
         $catId = 2;
         $message = 'Foo bar';
 
-        $this->repository->create($userId, $catId, $message, false);
+        $this->repository->create($userId, $catId, $message);
 
         // when
         $count = $this->repository->countNew();
@@ -137,7 +138,7 @@ class TicketRepositoryTest extends AbstractDbTestCase
         $adminId = 3;
         $message = 'Foo bar';
 
-        $ticket = $this->repository->create($userId, $catId, $message, false);
+        $ticket = $this->repository->create($userId, $catId, $message);
 
         // when
         $result = $this->repository->assign($ticket, $adminId);
@@ -156,7 +157,7 @@ class TicketRepositoryTest extends AbstractDbTestCase
         $adminId = 3;
         $message = 'Foo bar';
 
-        $ticket = $this->repository->create($userId, $catId, $message, false);
+        $ticket = $this->repository->create($userId, $catId, $message);
         $this->repository->assign($ticket, $adminId);
 
         // when
@@ -174,7 +175,7 @@ class TicketRepositoryTest extends AbstractDbTestCase
         $catId = 2;
         $message = 'Foo bar';
 
-        $ticket = $this->repository->create($userId, $catId, $message, false);
+        $ticket = $this->repository->create($userId, $catId, $message);
 
         // when
         $result = $this->repository->close($ticket, 'solved');
@@ -192,7 +193,7 @@ class TicketRepositoryTest extends AbstractDbTestCase
         $adminId = 3;
         $message = 'Foo bar';
 
-        $ticket = $this->repository->create($userId, $catId, $message, false);
+        $ticket = $this->repository->create($userId, $catId, $message);
         $this->repository->assign($ticket, $adminId);
 
         // when
@@ -212,7 +213,7 @@ class TicketRepositoryTest extends AbstractDbTestCase
         $adminId = 3;
         $message = 'Foo bar';
 
-        $ticket = $this->repository->create($userId, $catId, $message, false);
+        $ticket = $this->repository->create($userId, $catId, $message);
 
         // when
         $result = $this->repository->reopen($ticket);
@@ -229,7 +230,7 @@ class TicketRepositoryTest extends AbstractDbTestCase
         $adminId = 3;
         $message = 'Foo bar';
 
-        $ticket = $this->repository->create($userId, $catId, $message, false);
+        $ticket = $this->repository->create($userId, $catId, $message);
         $this->repository->assign($ticket, $adminId);
 
         // when
@@ -249,7 +250,7 @@ class TicketRepositoryTest extends AbstractDbTestCase
         $adminId = 3;
         $message = 'Foo bar';
 
-        $ticket = $this->repository->create($userId, $catId, $message, false);
+        $ticket = $this->repository->create($userId, $catId, $message);
         $this->repository->assign($ticket, $adminId);
         $this->repository->close($ticket, 'solved');
 
