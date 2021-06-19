@@ -30,7 +30,10 @@
 	// Kategorien bearbeiten
 	//
 
-use Pimple\Container;
+use Doctrine\DBAL\Connection;
+
+/** @var Connection */
+$conn = $app['db'];
 
 if ($sub=="prices")
 	{
@@ -50,7 +53,7 @@ if ($sub=="prices")
 		}
 		</script>";
 
-		$buildingNames = buildingNames($app);
+		$buildingNames = buildingNames($conn);
 
 		echo "<h2>(Aus)baukosten (von Stufe x-1 auf Stufe x)</h2>";
 		echo "<table class=\"tb\">
@@ -145,14 +148,14 @@ if ($sub=="prices")
 		echo "<input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";
 
 		echo "<h2>Geb&auml;udepunkte</h2>";
-		$buildingNames = buildingNames($app);
+		$buildingNames = buildingNames($conn);
 		if (count($buildingNames) > 0)
 		{
 			echo "<table class=\"tb\">";
 			foreach ($buildingNames as $key => $value)
 			{
 				echo "<tr><th>".$value."</th><td style=\"width:70%\"><table class=\"tb\">";
-				$pointsData = fetchPointsForBuilding($app, $key);
+				$pointsData = fetchPointsForBuilding($conn, $key);
 				if (count($pointsData) > 0)
 				{
 					$cnt=0;
@@ -239,7 +242,7 @@ if ($sub=="prices")
 
 		if (isset($_POST['save']))
 		{
-			updateBuildingListEntry($app,
+			updateBuildingListEntry($conn,
 				$_POST['buildlist_id'],
 				$_POST['buildlist_current_level'],
 				$_POST['buildlist_build_type'],
@@ -248,7 +251,7 @@ if ($sub=="prices")
 		}
 		elseif (isset($_POST['del']))
 		{
-			deleteBuildingListEntry($app, $_POST['buildlist_id']);
+			deleteBuildingListEntry($conn, $_POST['buildlist_id']);
 		}
 
 		//
@@ -257,7 +260,7 @@ if ($sub=="prices")
 		if (isset($_GET['action']) && $_GET['action']=="edit")
 		{
 			echo "<h2>Datensatz bearbeiten</h2>";
-			$arr = fetchBuildingListEntry($app, $_GET['buildlist_id']);
+			$arr = fetchBuildingListEntry($conn, $_GET['buildlist_id']);
 			if ($arr != null)
 			{
 				echo "<form action=\"?page=$page&sub=$sub&amp;action=search\" method=\"post\">";
@@ -311,13 +314,13 @@ if ($sub=="prices")
 			echo "<h2>Suchergebnisse</h2>";
 
 			if (isset($_SESSION['search']['buildings']['query']) && isset($_SESSION['search']['buildings']['parameters'])) {
-				$res = $app['db']
+				$res = $conn
 					->executeQuery(
 						$_SESSION['search']['buildings']['query'],
 						$_SESSION['search']['buildings']['parameters']
 					);
 			} else {
-				$qry = $app['db']
+				$qry = $conn
 					->createQueryBuilder()
 					->select('*')
 					->from('buildlist', 'l')
@@ -402,7 +405,7 @@ if ($sub=="prices")
 		//
 		else
 		{
-			$buildingNames = buildingNames($app);
+			$buildingNames = buildingNames($conn);
 
 			echo '<div class="tabs">
 			<ul>
@@ -454,7 +457,7 @@ if ($sub=="prices")
 			}
 			echo "</select> &nbsp;
 			<input type=\"button\" onclick=\"showLoaderPrepend('shipsOnPlanet');xajax_addBuildingToPlanet(xajax.getFormValues('selector'));\" value=\"Hinzuf&uuml;gen\" />
-			<input type=\"button\" onclick=\"showLoaderPrepend('shipsOnPlanet');xajax_addAllBuildingToPlanet(xajax.getFormValues('selector'),".count($bdata).");\" value=\"Alle hinzuf&uuml;gen\" /></td></tr>";
+			<input type=\"button\" onclick=\"showLoaderPrepend('shipsOnPlanet');xajax_addAllBuildingToPlanet(xajax.getFormValues('selector'),".count($buildingNames).");\" value=\"Alle hinzuf&uuml;gen\" /></td></tr>";
 
 			//Gebäude wählen
 			echo "<tr><td class=\"tbldata\" id=\"shipsOnPlanet\" colspan=\"2\">Planet w&auml;hlen...</td></tr>";
@@ -502,111 +505,98 @@ if ($sub=="prices")
 				</div>
 			</div>';
 
-			echo "<p>Es sind <b>".nf(numBuildingListEntries($app))."</b> Eintr&auml;ge in der Datenbank vorhanden.</p>";
+			echo "<p>Es sind <b>".nf(numBuildingListEntries($conn))."</b> Eintr&auml;ge in der Datenbank vorhanden.</p>";
 		}
 	}
 
-	function numBuildingListEntries(Container $app): int
+	function numBuildingListEntries(Connection $conn): int
 	{
-		return $app['db']
-			->executeQuery("SELECT COUNT(buildlist_id)
-				FROM buildlist;")
+		return (int) $conn
+			->createQueryBuilder()
+			->select('COUNT(buildlist_id)')
+			->from('buildlist')
+			->execute()
 			->fetchOne();
 	}
 
-	function buildingNames(Container $app): array
+	function buildingNames(Connection $conn): array
 	{
-		$res = $app['db']
-			->executeQuery("SELECT
-					building_id,
-					building_name
-				FROM
-					buildings
-				ORDER BY
-					building_type_id,
-					building_order,
-					building_name;");
-		$data = [];
-		while ($arr = $res->fetchAssociative())
-		{
-			$data[$arr['building_id']] = $arr['building_name'];
-		}
-		return $data;
+		return $conn
+			->createQueryBuilder()
+			->select('building_id', 'building_name')
+			->from('buildings')
+			->orderBy('building_type_id')
+			->addOrderBy('building_order')
+			->addOrderBy('building_name')
+			->execute()
+			->fetchAllKeyValue();
 	}
 
-	function fetchBuildingListEntry(Container $app, int $id) {
-		return $app['db']
-				->executeQuery("SELECT
-						buildlist.buildlist_id,
-						buildlist.buildlist_current_level,
-						buildlist.buildlist_build_start_time,
-						buildlist.buildlist_build_end_time,
-						buildlist.buildlist_build_type,
-						planets.planet_name,
-						users.user_nick,
-						buildings.building_name
-					FROM
-						buildlist
-					INNER JOIN
-						planets
-					ON
-						buildlist.buildlist_entity_id = planets.id
-					INNER JOIN
-						users
-					ON
-						buildlist.buildlist_user_id = users.user_id
-					INNER JOIN
-						buildings
-					ON
-						buildlist.buildlist_building_id = buildings.building_id
-						AND buildlist.buildlist_id = ?;",
-					[$id])
-				->fetchAssociative();
+	function fetchBuildingListEntry(Connection $conn, int $id)
+	{
+		return $conn
+			->createQueryBuilder()
+			->select(
+				'bl.buildlist_id',
+				'bl.buildlist_current_level',
+				'bl.buildlist_build_start_time',
+				'bl.buildlist_build_end_time',
+				'bl.buildlist_build_type',
+				'p.planet_name',
+				'u.user_nick',
+				'b.building_name'
+			)
+			->from('buildlist', 'bl')
+			->innerJoin('bl', 'planets', 'p', 'bl.buildlist_entity_id = p.id')
+			->innerJoin('bl', 'users', 'u', 'bl.buildlist_user_id = u.user_id')
+			->innerJoin('bl', 'buildings', 'b', 'bl.buildlist_building_id = b.building_id AND bl.buildlist_id = ?')
+			->setParameter(0, $id)
+			->execute()
+			->fetchAssociative();
 	}
 
-	function updateBuildingListEntry(Container $app, int $id, int $level, string $type, string $start, string $end): bool
+	function updateBuildingListEntry(Connection $conn, int $id, int $level, string $type, string $start, string $end): bool
 	{
-		$affected = $app['db']
-			->executeStatement("UPDATE
-					buildlist
-				SET
-					buildlist_current_level = :level,
-					buildlist_build_type = :type,
-					buildlist_build_start_time = UNIX_TIMESTAMP(:start),
-					buildlist_build_end_time = UNIX_TIMESTAMP(:end)
-				WHERE
-					buildlist_id = :id;",
-				[
-					'level' => $level,
-					'type' => $type,
-					'start' => $start,
-					'end' => $end,
-					'id' => $id,
-				]);
-		return $affected > 0;
+		$affected = $conn
+			->createQueryBuilder()
+			->update('buildlist')
+			->set('buildlist_current_level', ':level')
+			->set('buildlist_build_type', ':type')
+			->set('buildlist_build_start_time', 'UNIX_TIMESTAMP(:start)')
+			->set('buildlist_build_end_time', 'UNIX_TIMESTAMP(:end)')
+			->where('buildlist_id = :id')
+			->setParameters([
+				'level' => $level,
+				'type' => $type,
+				'start' => $start,
+				'end' => $end,
+				'id' => $id,
+			])
+			->execute();
+
+		return (int) $affected > 0;
 	}
 
-	function deleteBuildingListEntry(Container $app, int $id): bool
+	function deleteBuildingListEntry(Connection $conn, int $id): bool
 	{
-		$affected = $app['db']
-			->executeStatement("DELETE FROM buildlist
-				WHERE buildlist_id = ?;",
-				[$id]);
-		return $affected > 0;
+		$affected = $conn
+			->createQueryBuilder()
+			->delete('buildlist')
+			->where('buildlist_id = ?')
+			->setParameter(0, $id)
+			->execute();
+		return (int) $affected > 0;
 	}
 
-	function fetchPointsForBuilding(Container $app, int $buildingId): array
+	function fetchPointsForBuilding(Connection $conn, int $buildingId): array
 	{
-		return $app['db']
-			->executeQuery("SELECT
-					bp_level,
-					bp_points
-				FROM
-					building_points
-				WHERE
-					bp_building_id = ?
-				ORDER BY
-					bp_level ASC;",
-					[$buildingId])
+		return $conn
+			->createQueryBuilder()
+			->select('bp_level', 'bp_points')
+			->from('building_points')
+			->where('bp_building_id = ?')
+			->orderBy('bp_level' ,'ASC')
+			->setParameter(0, $buildingId)
+			->execute()
 			->fetchAllAssociative();
 	}
