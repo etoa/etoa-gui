@@ -31,7 +31,7 @@ if ($sub == "imagecheck") {
 		&& $request->query->has('action')
 		&& $request->query->get('action') == "search"
 	) {
-		searchResults($repository, $twig);
+		searchResults($request, $repository, $twig);
 	} else if ($request->query->has('sub') && $request->query->get('sub') == "edit") {
 		include("alliance/edit.inc.php");
 	} elseif ($request->query->has('sub') && $request->query->get('sub') == "drop" && $request->query->has('alliance_id')) {
@@ -347,13 +347,13 @@ function crap(Request $request, AllianceRepository $repository)
 	}
 }
 
-function searchResults(AllianceRepository $repository, Environment $twig)
+function searchResults(Request $request, AllianceRepository $repository, Environment $twig)
 {
 	global $page;
 
 	$twig->addGlobal('subtitle', 'Suchergebnisse');
 
-	$alliances = $repository->findByFormData($_POST);
+	$alliances = $repository->findByFormData($request->request->all());
 
 	$nr = count($alliances);
 	if ($nr == 1) {
