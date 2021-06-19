@@ -8,7 +8,7 @@ use EtoA\Core\AbstractRepository;
 
 class CellRepository extends AbstractRepository
 {
-    function count(): int
+    public function count(): int
     {
         return (int) $this->createQueryBuilder()
             ->select("COUNT(id)")

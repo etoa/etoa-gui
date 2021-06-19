@@ -8,7 +8,7 @@ use EtoA\Core\AbstractRepository;
 
 class AdminUserRepository extends AbstractRepository
 {
-    function count(): int
+    public function count(): int
     {
         return (int) $this->createQueryBuilder()
             ->select("COUNT(*)")
@@ -87,7 +87,7 @@ class AdminUserRepository extends AbstractRepository
         return $adminUser;
     }
 
-    function setPassword(AdminUser &$adminUser, string $password, bool $forceChange = false): void
+    public function setPassword(AdminUser &$adminUser, string $password, bool $forceChange = false): void
     {
         $pws = saltPasswort($password);
 
@@ -107,7 +107,7 @@ class AdminUserRepository extends AbstractRepository
         $adminUser->forcePasswordChange = $forceChange;
     }
 
-    function save(AdminUser &$adminUser): void
+    public function save(AdminUser &$adminUser): void
     {
         if ($adminUser->id != null) {
             $this->createQueryBuilder()
@@ -176,7 +176,7 @@ class AdminUserRepository extends AbstractRepository
         }
     }
 
-    function remove(AdminUser &$adminUser): bool
+    public function remove(AdminUser &$adminUser): bool
     {
         $affected = $this->createQueryBuilder()
             ->delete('admin_users')

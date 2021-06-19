@@ -21,23 +21,23 @@ class AdminUser
 	public bool $isContact = true;
 	public array $roles = [];
 
-	function __toString()
+	public function __toString()
 	{
 		return "[ADMIN]" . $this->nick;
 	}
 
-	function checkEqualPassword($newPassword)
+	public function checkEqualPassword($newPassword)
 	{
 		return validatePasswort($newPassword, $this->passwordString);
 	}
 
-	function getRolesStr()
+	public function getRolesStr()
 	{
 		$rm = new AdminRoleManager();
 		return $rm->getRolesStr($this->roles);
 	}
 
-	function hasRole($roles)
+	public function hasRole($roles)
 	{
 		$rm = new AdminRoleManager();
 		return ($rm->checkAllowed($roles, $this->roles));

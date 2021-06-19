@@ -10,7 +10,7 @@ use Log;
 
 class AllianceRepository extends AbstractRepository
 {
-    function count(): int
+    public function count(): int
     {
         return (int) $this->createQueryBuilder()
             ->select("COUNT(*)")
@@ -19,7 +19,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    function findAll(): array
+    public function findAll(): array
     {
         return $this->createQueryBuilder()
             ->select("*")
@@ -29,7 +29,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    function find(int $id): ?array
+    public function find(int $id): ?array
     {
         return $this->createQueryBuilder()
             ->select("*")
@@ -40,7 +40,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchAssociative();
     }
 
-    function findByFormData(array $formData): array
+    public function findByFormData(array $formData): array
     {
         $qry = $this->createQueryBuilder()
             ->select(
@@ -74,7 +74,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    function create(string $tag, string $name, ?int $founderId): int
+    public function create(string $tag, string $name, ?int $founderId): int
     {
         if ($name == "" || $tag == "") {
             throw new InvalidAllianceParametersException("Name/Tag fehlt!");
@@ -125,7 +125,7 @@ class AllianceRepository extends AbstractRepository
         return (int) $this->getConnection()->lastInsertId();
     }
 
-    function update(int $id, array $data): bool
+    public function update(int $id, array $data): bool
     {
         $affected = $this->createQueryBuilder()
             ->update('alliances')
@@ -150,7 +150,7 @@ class AllianceRepository extends AbstractRepository
         return (int) $affected > 0;
     }
 
-    function getPicture(int $allianceId): ?string
+    public function getPicture(int $allianceId): ?string
     {
         return $this->createQueryBuilder()
             ->select('alliance_img')
@@ -161,7 +161,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    function clearPicture(int $allianceId): bool
+    public function clearPicture(int $allianceId): bool
     {
         $affected = $this->createQueryBuilder()
             ->update('alliances')
@@ -174,7 +174,7 @@ class AllianceRepository extends AbstractRepository
         return (int) $affected > 0;
     }
 
-    function markPictureChecked(int $allianceId): bool
+    public function markPictureChecked(int $allianceId): bool
     {
         $affected = $this->createQueryBuilder()
             ->update('alliances')
@@ -186,7 +186,7 @@ class AllianceRepository extends AbstractRepository
         return (int) $affected > 0;
     }
 
-    function findAllWithUncheckedPictures(): array
+    public function findAllWithUncheckedPictures(): array
     {
         return $this->createQueryBuilder()
             ->select(
@@ -202,7 +202,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    function findAllWithPictures(): array
+    public function findAllWithPictures(): array
     {
         return $this->createQueryBuilder()
             ->select(
@@ -217,7 +217,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    function findRanks(int $allianceId): array
+    public function findRanks(int $allianceId): array
     {
         return $this->createQueryBuilder()
             ->select(
@@ -233,7 +233,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    function updateRank(int $id, string $name, int $level): void
+    public function updateRank(int $id, string $name, int $level): void
     {
         $this->createQueryBuilder()
             ->update('alliance_ranks')
@@ -248,7 +248,7 @@ class AllianceRepository extends AbstractRepository
             ->execute();
     }
 
-    function countOrphanedRanks(): int
+    public function countOrphanedRanks(): int
     {
         return (int) $this->getConnection()
             ->executeQuery(
@@ -263,7 +263,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    function findDiplomacies(int $allianceId): array
+    public function findDiplomacies(int $allianceId): array
     {
         return $this->createQueryBuilder()
             ->select(
@@ -290,7 +290,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    function deleteOrphanedRanks(): int
+    public function deleteOrphanedRanks(): int
     {
         return $this->getConnection()
             ->executeStatement(
@@ -302,7 +302,7 @@ class AllianceRepository extends AbstractRepository
 				);");
     }
 
-    function countOrphanedDiplomacies(): int
+    public function countOrphanedDiplomacies(): int
     {
         return (int) $this->getConnection()
             ->executeQuery(
@@ -322,7 +322,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    function deleteOrphanedDiplomacies(): int
+    public function deleteOrphanedDiplomacies(): int
     {
         return $this->getConnection()
             ->executeStatement(
@@ -339,7 +339,7 @@ class AllianceRepository extends AbstractRepository
 				)");
     }
 
-    function findAllWithoutFounder(): array
+    public function findAllWithoutFounder(): array
     {
         return $this->getConnection()
             ->executeQuery(
@@ -356,7 +356,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    function findAllWithoutUsers(): array
+    public function findAllWithoutUsers(): array
     {
         return $this->getConnection()
             ->executeQuery(
@@ -373,7 +373,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    function remove(int $id): bool
+    public function remove(int $id): bool
     {
         $affected = (int) $this->createQueryBuilder()
             ->delete('alliances')
@@ -387,7 +387,7 @@ class AllianceRepository extends AbstractRepository
         return $affected > 0;
     }
 
-    function deleteRanks(int $allianceId): void
+    public function deleteRanks(int $allianceId): void
     {
         $this->createQueryBuilder()
             ->delete("alliance_ranks")
@@ -396,7 +396,7 @@ class AllianceRepository extends AbstractRepository
             ->execute();
     }
 
-    function updateDiplomacy(int $id, int $level, string $name): void
+    public function updateDiplomacy(int $id, int $level, string $name): void
     {
         $this->createQueryBuilder()
             ->update('alliance_bnd')
@@ -411,7 +411,7 @@ class AllianceRepository extends AbstractRepository
             ->execute();
     }
 
-    function deleteDiplomacy(int $id): void
+    public function deleteDiplomacy(int $id): void
     {
         $this->createQueryBuilder()
             ->delete('alliance_bnd')
@@ -420,7 +420,7 @@ class AllianceRepository extends AbstractRepository
             ->execute();
     }
 
-    function deleteDiplomacies(int $allianceId): void
+    public function deleteDiplomacies(int $allianceId): void
     {
         $this->createQueryBuilder()
             ->delete('alliance_bnd')
@@ -430,7 +430,7 @@ class AllianceRepository extends AbstractRepository
             ->execute();
     }
 
-    function countUsers(int $allianceId): int
+    public function countUsers(int $allianceId): int
     {
         return (int) $this->createQueryBuilder()
             ->select("COUNT(*)")
@@ -441,7 +441,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    function findUsers(int $allianceId): array
+    public function findUsers(int $allianceId): array
     {
         return $this->createQueryBuilder()
             ->select(
@@ -459,7 +459,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    function assignRankToUser($rankId, $userId): void
+    public function assignRankToUser($rankId, $userId): void
     {
         $this->createQueryBuilder()
             ->update('users')
@@ -472,7 +472,7 @@ class AllianceRepository extends AbstractRepository
             ->execute();
     }
 
-    function removeRank(int $rankId): void
+    public function removeRank(int $rankId): void
     {
         $this->createQueryBuilder()
             ->delete('alliance_ranks')
@@ -487,7 +487,7 @@ class AllianceRepository extends AbstractRepository
             ->execute();
     }
 
-    function removeUser(int $userId): void
+    public function removeUser(int $userId): void
     {
         $this->createQueryBuilder()
             ->update('users')
@@ -498,7 +498,7 @@ class AllianceRepository extends AbstractRepository
             ->execute();
     }
 
-    function listSoloUsers(): array
+    public function listSoloUsers(): array
     {
         return $this->createQueryBuilder()
             ->select("user_id", "user_nick")
@@ -509,7 +509,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllKeyValue();
     }
 
-    function findAllSoloUsers(): array
+    public function findAllSoloUsers(): array
     {
         return $this->getConnection()
             ->executeQuery(
@@ -528,7 +528,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    function findHistoryEntries(int $allianceId): array
+    public function findHistoryEntries(int $allianceId): array
     {
         return $this->createQueryBuilder()
             ->select('*')
@@ -540,7 +540,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    function findBuildings(int $allianceId): array
+    public function findBuildings(int $allianceId): array
     {
         return $this->createQueryBuilder()
             ->select(
@@ -554,7 +554,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    function findTechnologies(int $allianceId): array
+    public function findTechnologies(int $allianceId): array
     {
         return $this->createQueryBuilder()
             ->select(
@@ -568,7 +568,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    function updateResources(int $allianceId, array $data): void
+    public function updateResources(int $allianceId, array $data): void
     {
         $this->createQueryBuilder()
             ->update('alliances')

@@ -8,7 +8,7 @@ class AdminSessionManager
 {
 	private AdminSessionRepository $repository;
 
-	function __construct(AdminSessionRepository $repository)
+	public function __construct(AdminSessionRepository $repository)
 	{
 		$this->repository = $repository;
 	}
@@ -18,7 +18,7 @@ class AdminSessionManager
      *
 	 * @param int $threshold Time difference in seconds
 	 */
-	function cleanupLogs(int $threshold = 0): int
+	public function cleanupLogs(int $threshold = 0): int
 	{
 		$cfg = \Config::getInstance();
 
@@ -38,7 +38,7 @@ class AdminSessionManager
      *
 	 * @param string $sid Session id
 	 */
-	function kick(string $sid): void
+	public function kick(string $sid): void
 	{
 		$this->unregisterSession($sid, false);
 	}
@@ -49,7 +49,7 @@ class AdminSessionManager
 	 * @param string $sid Session-ID.
 	 * @param bool $logoutPressed True if it was manual logout
 	 */
-	function unregisterSession(string $sid, bool $logoutPressed = true)
+	public function unregisterSession(string $sid, bool $logoutPressed = true)
 	{
 		$adminSession = $this->repository->find($sid);
 		if ($adminSession != null) {
@@ -65,7 +65,7 @@ class AdminSessionManager
     /**
 	 * Cleans up sessions with have a timeout. Should be called at login or by cronjob regularly
 	 */
-	function cleanup()
+	public function cleanup()
 	{
 		$cfg = \Config::getInstance();
 

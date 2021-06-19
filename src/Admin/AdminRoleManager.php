@@ -16,12 +16,12 @@ class AdminRoleManager
 		}
 	}
 
-	function getRoleName($name)
+	public function getRoleName($name)
 	{
 		return self::$roles[$name];
 	}
 
-	function getRolesStr($roles)
+	public function getRolesStr($roles)
 	{
 		$rs = array();
 		foreach ($roles as $r) {
@@ -30,12 +30,12 @@ class AdminRoleManager
 		return implode(', ', $rs);
 	}
 
-	function getRoles()
+	public function getRoles()
 	{
 		return self::$roles;
 	}
 
-	function checkAllowed($rolesToCheck, $allowedRoles)
+	public function checkAllowed($rolesToCheck, $allowedRoles)
 	{
 		if (!is_array($rolesToCheck)) {
 			$rolesToCheck = explode(",", $rolesToCheck);

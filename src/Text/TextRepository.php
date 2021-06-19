@@ -18,22 +18,22 @@ class TextRepository extends AbstractRepository
 		$this->textDef = fetchJsonConfig("texts.conf");
 	}
 
-	function isValidTextId(string $id): bool
+	public function isValidTextId(string $id): bool
 	{
 		return isset($this->textDef[$id]);
 	}
 
-	function getLabel(string $id): string
+	public function getLabel(string $id): string
 	{
 		return $this->textDef[$id]['label'];
 	}
 
-	function getAllTextIDs(): array
+	public function getAllTextIDs(): array
 	{
 		return array_keys($this->textDef);
 	}
 
-	function find(string $id): ?Text
+	public function find(string $id): ?Text
 	{
 		if (!$this->isValidTextId($id)) {
 			return null;
@@ -61,7 +61,7 @@ class TextRepository extends AbstractRepository
 		return $t;
 	}
 
-	function save(Text $text): void
+	public function save(Text $text): void
 	{
         $this->getConnection()
             ->executeStatement(
@@ -82,7 +82,7 @@ class TextRepository extends AbstractRepository
             );
 	}
 
-	function enableText(string $id): void
+	public function enableText(string $id): void
 	{
         $this->createQueryBuilder()
             ->update('texts')
@@ -94,7 +94,7 @@ class TextRepository extends AbstractRepository
             ->execute();
 	}
 
-	function disableText(string $id): void
+	public function disableText(string $id): void
 	{
         $this->createQueryBuilder()
             ->update('texts')
@@ -106,7 +106,7 @@ class TextRepository extends AbstractRepository
             ->execute();
 	}
 
-	function reset(string $id): void
+	public function reset(string $id): void
 	{
         $this->createQueryBuilder()
             ->delete('texts')

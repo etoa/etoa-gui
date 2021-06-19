@@ -8,7 +8,7 @@ use EtoA\Core\AbstractRepository;
 
 class AdminSessionRepository extends AbstractRepository
 {
-    function countActiveSessions(int $timeout): int
+    public function countActiveSessions(int $timeout): int
     {
         return (int) $this->createQueryBuilder()
             ->select('COUNT(*)')
@@ -135,7 +135,7 @@ class AdminSessionRepository extends AbstractRepository
             ->execute();
     }
 
-    function countSessionLog(): int
+    public function countSessionLog(): int
     {
         return (int) $this->createQueryBuilder()
             ->select("COUNT(*)")

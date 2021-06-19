@@ -8,7 +8,7 @@ use EtoA\Core\AbstractRepository;
 
 class AllianceBuildingRepository extends AbstractRepository
 {
-    function findAll(): array
+    public function findAll(): array
     {
         return $this->createQueryBuilder()
             ->select("*")
@@ -17,7 +17,7 @@ class AllianceBuildingRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    function existsInAlliance(int $allianceId, string $name): bool
+    public function existsInAlliance(int $allianceId, string $name): bool
     {
         $test = $this->getConnection()
             ->executeQuery(
@@ -39,7 +39,7 @@ class AllianceBuildingRepository extends AbstractRepository
         return count($test) > 0;
     }
 
-    function addToAlliance(int $allianceId, string $name, int $level, int $amount): void
+    public function addToAlliance(int $allianceId, string $name, int $level, int $amount): void
     {
         $this->getConnection()
             ->executeStatement(
@@ -74,7 +74,7 @@ class AllianceBuildingRepository extends AbstractRepository
             );
     }
 
-    function updateForAlliance(int $allianceId, string $name, int $level, int $amount): void
+    public function updateForAlliance(int $allianceId, string $name, int $level, int $amount): void
     {
         $this->getConnection()
             ->executeStatement(

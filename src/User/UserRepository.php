@@ -47,7 +47,7 @@ class UserRepository extends AbstractRepository
         return !is_bool($data) ? $data : null;
     }
 
-    function count(): int
+    public function count(): int
     {
         return (int) $this->createQueryBuilder()
             ->select("COUNT(*)")
@@ -56,7 +56,7 @@ class UserRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    function countActiveSessions(int $timeout): int
+    public function countActiveSessions(int $timeout): int
     {
         return (int) $this->createQueryBuilder()
             ->select('COUNT(*)')

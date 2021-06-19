@@ -8,7 +8,7 @@ use EtoA\Core\AbstractRepository;
 
 class AdminNotesRepository extends AbstractRepository
 {
-    function countForAdmin(int $adminId): int
+    public function countForAdmin(int $adminId): int
     {
         return (int) $this->createQueryBuilder()
             ->select("COUNT(*)")
@@ -47,7 +47,7 @@ class AdminNotesRepository extends AbstractRepository
         return $data ? $data : null;
     }
 
-    function create(string $titel, string $text, int $adminId): int
+    public function create(string $titel, string $text, int $adminId): int
     {
         $this->createQueryBuilder()
             ->insert('admin_notes')
@@ -66,7 +66,7 @@ class AdminNotesRepository extends AbstractRepository
         return (int) $this->getConnection()->lastInsertId();
     }
 
-    function update(int $id, string $titel, string $text): bool
+    public function update(int $id, string $titel, string $text): bool
     {
         $affected = $this->createQueryBuilder()
             ->update('admin_notes')
@@ -82,7 +82,7 @@ class AdminNotesRepository extends AbstractRepository
         return (int) $affected > 0;
     }
 
-    function remove(int $id): bool
+    public function remove(int $id): bool
     {
         $affected = $this->createQueryBuilder()
             ->delete('admin_notes')
