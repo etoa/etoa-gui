@@ -1630,19 +1630,3 @@ function showGameLogs($args=null,$limit=0)
 		}
 		return false;
 	}
-
-    function getAdminText(string $key): string
-    {
-        global $app;
-
-        $textRepo = $app['etoa.text.repository'];
-        $text = $textRepo->find($key);
-        if ($text !== null) {
-            if ($text->enabled && $text->content) {
-                return $text->content;
-            }
-            return '';
-        }
-
-        throw new \RuntimeException('Admin text for key not found: ' . $key);
-    }

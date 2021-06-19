@@ -116,4 +116,17 @@ class TextRepository extends AbstractRepository
             ])
             ->execute();
     }
+
+    public function getEnabledTextOrDefault(string $key, string $default = ''): string
+    {
+        $text = $this->find($key);
+        if ($text !== null) {
+            if ($text->enabled && $text->content) {
+                return $text->content;
+            }
+            return $default;
+        }
+
+        throw new \RuntimeException('Text not found for key: ' . $key);
+    }
 }

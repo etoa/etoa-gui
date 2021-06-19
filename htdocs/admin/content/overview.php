@@ -6,6 +6,7 @@ use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Support\DatabaseManagerRepository;
+use EtoA\Text\TextRepository;
 use EtoA\Universe\CellRepository;
 use League\CommonMark\CommonMarkConverter;
 
@@ -37,7 +38,11 @@ if ($sub == "offline") {
 } else {
 	$universeCellRepo = $app['etoa.universe.cell.repository'];
 	$ticketRepo = $app['etoa.help.ticket.repository'];
-	indexView($cu, $universeCellRepo, $ticketRepo);
+
+	/** @var TextRepository */
+	$textRepo = $app['etoa.text.repository'];
+
+	indexView($cu, $universeCellRepo, $ticketRepo, $textRepo);
 }
 
 function takeOffline()
@@ -272,7 +277,8 @@ function systemInfoView(DatabaseManagerRepository $databaseManager)
 function indexView(
 	AdminUser $cu,
 	CellRepository $universeCellRepo,
-	TicketRepository $ticketRepo
+	TicketRepository $ticketRepo,
+	TextRepository $textRepo
 ) {
 	global $conf;
 	global $twig;
@@ -325,8 +331,8 @@ function indexView(
 		'numOpenTickets' => $ticketRepo->countAssigned($cu->id),
 		'fleetBanText' => $fleetBanText,
 		'fleetBanTitle' => $fleetBanTitle,
-		'adminInfo' => getAdminText('admininfo'),
-		'systemMessage' => getAdminText('system_message'),
+		'adminInfo' => $textRepo->getEnabledTextOrDefault('admininfo'),
+		'systemMessage' => $textRepo->getEnabledTextOrDefault('system_message'),
 	]);
 	exit();
 }
