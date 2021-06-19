@@ -1,9 +1,9 @@
 <?PHP
 
-$request = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
-
 require_once __DIR__ . '/inc/bootstrap.inc.php';
 $app = require __DIR__ . '/../src/app.php';
+
+$request = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
 
 $loggedIn = false;
 if ($s->validate(0)) {
