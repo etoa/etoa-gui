@@ -149,9 +149,9 @@ function adminSessionLogForUserView(
 				}
 				echo "</td>";
 				echo "<td title=\"" . Net::getHost($arr['ip_addr']) . "\">" . $arr['ip_addr'] . "</td>";
-				$browserParser = new \WhichBrowser\Parser($arr['user_agent']);
-				echo "<td title=\"" . $arr['user_agent'] . "\">" . $browserParser->browser->toString() . "</td>";
-				echo "<td title=\"" . $arr['user_agent'] . "\">" . $browserParser->os->toString() . "</td>";
+				$browser = get_browser($arr['user_agent'], true);
+				echo "<td title=\"" . $arr['user_agent'] . "\">" . $browser['parent'] . "</td>";
+				echo "<td title=\"" . $arr['user_agent'] . "\">" . $browser['platform'] . "</td>";
 				echo "</tr>";
 			}
 			echo "</table>";
@@ -216,7 +216,7 @@ function adminSessionLogView(
 			</tr>";
 		$t = time();
 		foreach ($sessions as $arr) {
-			$browserParser = new \WhichBrowser\Parser($arr['user_agent']);
+			$browser = get_browser($arr['user_agent'], true);
 			echo "<tr>
 					<td " . ($t - $cfg->admin_timeout->v < $arr['time_action'] ? 'style="color:#0f0;">Online' : 'style="color:red;">Timeout') . "</td>
 					<td>" . $arr['user_nick'] . "</td>
@@ -224,7 +224,7 @@ function adminSessionLogView(
 					<td>" . date("d.m.Y H:i", $arr['time_action']) . "</td>
 					<td>" . tf($arr['time_action'] - $arr['time_login']) . "</td>
 					<td title=\"" . Net::getHost($arr['ip_addr']) . "\">" . $arr['ip_addr'] . "</td>
-					<td title=\"" . $arr['user_agent'] . "\">" . $browserParser->browser->toString() . ' on ' . $browserParser->os->toString() . "</td>
+					<td title=\"" . $arr['user_agent'] . "\">" . $browser['parent'] . ' on ' . $browser['platform'] . "</td>
 					<td><a href=\"?page=$page&amp;sub=$sub&amp;kick=" . $arr['user_id'] . "\">Kick</a></td>
 				</tr>";
 		}
