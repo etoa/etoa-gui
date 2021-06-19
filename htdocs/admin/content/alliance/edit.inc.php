@@ -46,7 +46,7 @@ function saveInfo(AllianceRepository $repository, int $id)
 	//  Bild löschen wenn nötig
 	if (isset($_POST['alliance_img_del'])) {
 		$picture = $repository->getPicture($id);
-		if ($picture != null) {
+		if ($picture !== null) {
 			if (file_exists('../' . ALLIANCE_IMG_DIR . "/" . $picture)) {
 				unlink('../' . ALLIANCE_IMG_DIR . "/" . $picture);
 			}
