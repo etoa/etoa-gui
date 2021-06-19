@@ -847,6 +847,9 @@
 				/** @var \EtoA\Race\RaceDataRepository $raceRepository */
 				$raceRepository = $app['etoa.race.datarepository'];
 				$raceNames = $raceRepository->getRaceNames();
+				/** @var \EtoA\Specialist\SpecialistDataRepository $specialistRepository */
+				$specialistRepository = $app['etoa.specialist.datarepository'];
+				$specialistNames = $specialistRepository->getSpecialistNames();
 
 				echo "<table class=\"tbl\">";
 				echo "<tr>
@@ -867,23 +870,12 @@
 								<td class=\"tbldata\">
 									<select name=\"user_specialist_id\" id=\"user_specialist_id\" onchange=\"loadSpecialist(".$st.");\">
 									<option value=\"0\">(Keiner)</option>";
-									$sres = dbquery("
-									SELECT
-										specialist_name,
-										specialist_id
-									FROM
-										specialists
-									ORDER BY
-										specialist_name
-									;");
-									while ($sarr=mysql_fetch_row($sres))
-									{
-										echo '<option value="'.$sarr[1].'"';
-										if ($arr['user_specialist_id']==$sarr[1])
-										{
+									foreach ($specialistNames as $specialistId => $specialistName) {
+										echo '<option value="'.$specialistId.'"';
+										if ((int) $arr['user_specialist_id'] === $specialistId) {
 											echo ' selected="selected"';
 										}
-										echo '>'.$sarr[0].'</option>';
+										echo '>'.$specialistName.'</option>';
 									}
 									echo "</select> &nbsp; Bis:&nbsp; <span id=\"spt\">-</span>
 								</td>
