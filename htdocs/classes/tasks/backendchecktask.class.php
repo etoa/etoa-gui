@@ -1,9 +1,19 @@
 <?PHP
-	/**
+
+use EtoA\Text\TextRepository;
+
+/**
 	* Check Backend
 	*/
 	class BackendCheckTask implements IPeriodicTask
 	{
+		private TextRepository $textRepo;
+
+		function __construct($app)
+		{
+			$this->textRepo = $app['etoa.text.repository'];
+		}
+
 		function run()
 		{
 			$cfg = Config::getInstance();
@@ -13,8 +23,7 @@
 			$change = $currentStatus != $lastStatus;
 			if ($change)
 			{
-				$tm = new TextManager();
-				$infoText = $tm->getText('backend_offline_message');
+				$infoText = $this->textRepo->find('backend_offline_message');
 				$mailText = $currentStatus == 0 ? "Funktioniert wieder" : $infoText->content;
 				$mail = new Mail("EtoA-Backend", $mailText);
 				$sendTo = explode(";",$cfg->value("backend_offline_mail"));
