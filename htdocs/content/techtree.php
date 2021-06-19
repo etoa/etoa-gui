@@ -140,17 +140,9 @@
 		//
 
 		// Lade Rassennamen
-		$race=array();
-		$rres = dbquery("
-		SELECT
-			race_id,
-			race_name
-		FROM
-			races ;");
-		while ($rarr = mysql_fetch_array($rres))
-		{
-			$race[$rarr['race_id']] = $rarr['race_name'];
-		}
+		/** @var \EtoA\Race\RaceDataRepository $raceRepository */
+		$raceRepository = $app['etoa.race.datarepository'];
+		$raceNames = $raceRepository->getRaceNames();
 
 		// Lade Gebäudelistenlevel
 		$buildlist=array();
@@ -321,7 +313,7 @@
 
 							if (ITEM_RACE_FLD!="" && $arr[ITEM_RACE_FLD]>0)
 							{
-								echo "<br/>".$race[$arr[ITEM_RACE_FLD]]."</td>";
+								echo "<br/>".$raceNames[$arr[ITEM_RACE_FLD]]."</td>";
 							}
 							else
 							{

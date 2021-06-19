@@ -83,26 +83,6 @@
 	}
 
 	/**
-	* Rassen-Daten in Array speichern
-	*/
-	function get_races_array()
-	{
-		$race_name = array();
-		$res = dbquery("
-		SELECT
-			*
-		FROM
-			races
-		ORDER BY
-			race_name;");
-		while ($arr = mysql_fetch_assoc($res))
-		{
-			$race_name[$arr['race_id']] = $arr;
-		}
-		return $race_name;
-	}
-
-	/**
 	* Allianz Name in Array speichern
 	*/
 	function get_alliance_names()
