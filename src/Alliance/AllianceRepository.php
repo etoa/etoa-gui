@@ -126,7 +126,7 @@ class AllianceRepository extends AbstractRepository
         return (int) $this->getConnection()->lastInsertId();
     }
 
-    public function update(int $id, array $data): bool
+    public function update(int $id, string $tag, string $name, string $text, string $template, string $url, int $founder): bool
     {
         $affected = $this->createQueryBuilder()
             ->update('alliances')
@@ -139,12 +139,12 @@ class AllianceRepository extends AbstractRepository
             ->where('alliance_id = :id')
             ->setParameters([
                 'id' => $id,
-                'name' => $data['name'],
-                'tag' => $data['tag'],
-                'text' => $data['text'],
-                'template' => $data['template'],
-                'url' => $data['url'],
-                'founder' => $data['founder'],
+                'name' => $name,
+                'tag' => $tag,
+                'text' => $text,
+                'template' => $template,
+                'url' => $url,
+                'founder' => $founder,
             ])
             ->execute();
 
@@ -260,7 +260,8 @@ class AllianceRepository extends AbstractRepository
                     SELECT 1
                     FROM alliances a
                     WHERE r.rank_alliance_id = a.alliance_id
-                );")
+                );"
+            )
             ->fetchOne();
     }
 
@@ -300,7 +301,8 @@ class AllianceRepository extends AbstractRepository
                     SELECT 1
                     FROM alliances a
                     WHERE rank_alliance_id = a.alliance_id
-                );");
+                );"
+            );
     }
 
     public function countOrphanedDiplomacies(): int
@@ -319,7 +321,8 @@ class AllianceRepository extends AbstractRepository
                     SELECT 1
                     FROM alliances a
                     WHERE b.alliance_bnd_alliance_id2 = a.alliance_id
-                );")
+                );"
+            )
             ->fetchOne();
     }
 
@@ -337,7 +340,8 @@ class AllianceRepository extends AbstractRepository
                     SELECT 1
                     FROM alliances a
                     WHERE alliance_bnd_alliance_id2 = a.alliance_id
-                )");
+                )"
+            );
     }
 
     public function findAllWithoutFounder(): array
@@ -353,7 +357,8 @@ class AllianceRepository extends AbstractRepository
                     SELECT 1
                     FROM users u
                     WHERE a.alliance_founder_id = u.user_id
-                );")
+                );"
+            )
             ->fetchAllAssociative();
     }
 
@@ -370,7 +375,8 @@ class AllianceRepository extends AbstractRepository
                     SELECT 1
                     FROM users u
                     WHERE a.alliance_id = u.user_alliance_id
-                );")
+                );"
+            )
             ->fetchAllAssociative();
     }
 
@@ -525,7 +531,8 @@ class AllianceRepository extends AbstractRepository
                         SELECT 1
                         FROM alliances a
                         WHERE a.alliance_id = u.user_alliance_id
-                    );")
+                    );"
+            )
             ->fetchAllAssociative();
     }
 
@@ -569,8 +576,14 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    public function updateResources(int $allianceId, array $data): void
-    {
+    public function updateResources(
+        int $allianceId,
+        int $metal,
+        int $crystal,
+        int $plastic,
+        int $fuel,
+        int $food
+    ): void {
         $this->createQueryBuilder()
             ->update('alliances')
             ->set('alliance_res_metal', ':metal')
@@ -578,24 +591,41 @@ class AllianceRepository extends AbstractRepository
             ->set('alliance_res_plastic', ':plastic')
             ->set('alliance_res_fuel', ':fuel')
             ->set('alliance_res_food', ':food')
-            ->set('alliance_res_metal', 'alliance_res_metal + :addmetal')
-            ->set('alliance_res_crystal', 'alliance_res_crystal + :addcrystal')
-            ->set('alliance_res_plastic', 'alliance_res_plastic + :addplastic')
-            ->set('alliance_res_fuel', 'alliance_res_fuel + :addfuel')
-            ->set('alliance_res_food', 'alliance_res_food + :addfood')
             ->where('alliance_id = :id')
             ->setParameters([
                 'id' => $allianceId,
-                'metal' => $data['metal'],
-                'crystal' => $data['crystal'],
-                'plastic' => $data['plastic'],
-                'fuel' => $data['fuel'],
-                'food' => $data['food'],
-                'addmetal' => $data['addmetal'],
-                'addcrystal' => $data['addcrystal'],
-                'addplastic' => $data['addplastic'],
-                'addfuel' => $data['addfuel'],
-                'addfood' => $data['addfood'],
+                'metal' => $metal,
+                'crystal' => $crystal,
+                'plastic' => $plastic,
+                'fuel' => $fuel,
+                'food' => $food,
+            ])
+            ->execute();
+    }
+
+    public function addResources(
+        int $allianceId,
+        int $addMetal,
+        int $addCrystal,
+        int $addPlastic,
+        int $addFuel,
+        int $addFood
+    ): void {
+        $this->createQueryBuilder()
+            ->update('alliances')
+            ->set('alliance_res_metal', 'alliance_res_metal + :addMetal')
+            ->set('alliance_res_crystal', 'alliance_res_crystal + :addCrystal')
+            ->set('alliance_res_plastic', 'alliance_res_plastic + :addPlastic')
+            ->set('alliance_res_fuel', 'alliance_res_fuel + :addFuel')
+            ->set('alliance_res_food', 'alliance_res_food + :addFood')
+            ->where('alliance_id = :id')
+            ->setParameters([
+                'id' => $allianceId,
+                'addMetal' => $addMetal,
+                'addCrystal' => $addCrystal,
+                'addPlastic' => $addPlastic,
+                'addFuel' => $addFuel,
+                'addFood' => $addFood,
             ])
             ->execute();
     }

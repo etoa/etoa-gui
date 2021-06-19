@@ -54,14 +54,15 @@ function saveInfo(AllianceRepository $repository, int $id)
 		}
 	}
 
-	$repository->update($id, [
-		'name' => $_POST['alliance_name'],
-		'tag' => $_POST['alliance_tag'],
-		'text' => $_POST['alliance_text'],
-		'template' => $_POST['alliance_application_template'],
-		'url' => $_POST['alliance_url'],
-		'founder' => $_POST['alliance_founder_id'],
-	]);
+	$repository->update(
+		$id,
+		$_POST['alliance_tag'],
+		$_POST['alliance_name'],
+		$_POST['alliance_text'],
+		$_POST['alliance_application_template'],
+		$_POST['alliance_url'],
+		(int) $_POST['alliance_founder_id']
+	);
 
 	$twig->addGlobal('successMessage', 'Allianzdaten aktualisiert!');
 }
@@ -122,18 +123,23 @@ function saveResources(AllianceRepository $repository, int $id)
 {
 	global $twig;
 
-	$repository->updateResources($id, [
-		'metal' => nf_back($_POST['res_metal']),
-		'crystal' => nf_back($_POST['res_crystal']),
-		'plastic' => nf_back($_POST['res_plastic']),
-		'fuel' => nf_back($_POST['res_fuel']),
-		'food' => nf_back($_POST['res_food']),
-		'addmetal' => nf_back($_POST['res_metal_add']),
-		'addcrystal' => nf_back($_POST['res_crystal_add']),
-		'addplastic' => nf_back($_POST['res_plastic_add']),
-		'addfuel' => nf_back($_POST['res_fuel_add']),
-		'addfood' => nf_back($_POST['res_food_add']),
-	]);
+	$repository->updateResources(
+		$id,
+		nf_back($_POST['res_metal']),
+		nf_back($_POST['res_crystal']),
+		nf_back($_POST['res_plastic']),
+		nf_back($_POST['res_fuel']),
+		nf_back($_POST['res_food']),
+	);
+
+	$repository->addResources(
+		$id,
+		nf_back($_POST['res_metal_add']),
+		nf_back($_POST['res_crystal_add']),
+		nf_back($_POST['res_plastic_add']),
+		nf_back($_POST['res_fuel_add']),
+		nf_back($_POST['res_food_add']),
+	);
 
 	$twig->addGlobal('successMessage', 'Ressourcen aktualisiert!');
 }
