@@ -103,9 +103,6 @@ class TicketRepository extends AbstractRepository
 
     public function persist(Ticket $ticket): bool
     {
-        assert(isset(Ticket::STATUS_ITEMS[$ticket->status]), 'Invalid ticket status');
-        assert(isset(Ticket::SOLUTION_ITEMS[$ticket->solution]), 'Invalid ticket solution');
-
         $ticket->timestamp = time();
 
         if ($ticket->id > 0) {
@@ -199,7 +196,7 @@ Dein Admin-Team";
             $ticket->solution = $solution;
             $changed = $this->persist($ticket);
             if ($changed) {
-                $this->addMessage($ticket, "Das Ticket wurde geschlossen und als " . Ticket::SOLUTION_ITEMS[$ticket->solution] . " gekennzeichnet.");
+                $this->addMessage($ticket, "Das Ticket wurde geschlossen und als " . TicketSolution::label($ticket->solution) . " gekennzeichnet.");
             }
             return $changed;
         }

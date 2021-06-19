@@ -15,25 +15,6 @@ class Ticket
     public int $timestamp;
     public ?string $adminComment = null;
 
-    /**
-     * Workflow status of ticket
-     */
-    const STATUS_ITEMS = [
-        "new" => "Neu",
-        "assigned" => "Zugeteilt",
-        "closed" => "Abgeschlossen",
-    ];
-
-    /**
-     * Solution type
-     */
-    const SOLUTION_ITEMS = [
-        "open" => "Offen",
-        "solved" => "Behoben",
-        "duplicate" => "Duplikat",
-        "invalid" => "Ungültig",
-    ];
-
     public function getIdString(): string
     {
         return "#" . sprintf("%'.06d", $this->id);
@@ -41,9 +22,9 @@ class Ticket
 
     public function getStatusName(): string
     {
-        if ($this->status == "closed" && isset(self::SOLUTION_ITEMS[$this->solution])) {
-            return self::STATUS_ITEMS[$this->status] . ": " . self::SOLUTION_ITEMS[$this->solution];
+        if ($this->status == TicketStatus::CLOSED && isset(TicketSolution::items()[$this->solution])) {
+            return TicketStatus::label($this->status) . ": " . TicketSolution::label($this->solution);
         }
-        return self::STATUS_ITEMS[$this->status];
+        return TicketStatus::label($this->status);
     }
 }

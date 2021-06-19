@@ -5,6 +5,8 @@ use EtoA\Admin\AdminUserRepository;
 use EtoA\Help\TicketSystem\Ticket;
 use EtoA\Help\TicketSystem\TicketMessageRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
+use EtoA\Help\TicketSystem\TicketSolution;
+use EtoA\Help\TicketSystem\TicketStatus;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -79,10 +81,10 @@ function editTicket(
     htmlSelect("admin_id", $admins, $ticket->adminId);
     echo '</td></tr>';
     echo '<tr><th>Status:</th><td>';
-    htmlSelect("status", Ticket::STATUS_ITEMS, $ticket->status);
+    htmlSelect("status", TicketStatus::items(), $ticket->status);
     echo '</td>';
     echo '<th>Lösung:</th><td>';
-    htmlSelect("solution", Ticket::SOLUTION_ITEMS, $ticket->solution);
+    htmlSelect("solution", TicketSolution::items(), $ticket->solution);
     echo '</td></tr>';
     echo '<tr><th>Admin-Kommentar:</th><td colspan="3">';
     echo '<textarea name="admin_comment" rows="5" cols="60">' . $ticket->adminComment . '</textarea>';
@@ -108,6 +110,14 @@ function ticketDetails(
     $ticket = $ticketRepo->find($request->query->getInt('id'));
 
     if ($request->request->has('submit')) {
+
+        if (!in_array($request->request->get('status'), array_keys(TicketStatus::items()))) {
+            error_msg('Ungültiger Ticketstatus!');
+        }
+        if (!in_array($request->request->get('solution'), array_keys(TicketSolution::items()))) {
+            error_msg('Ungültige Ticketlösung!');
+        }
+
         $ticket->status = $request->request->get('status');
         $ticket->solution = $request->request->get('solution');
         $ticket->catId = $request->request->getInt('cat_id');
@@ -214,7 +224,7 @@ function ticketDetails(
         echo '<p><input type="submit" name="submit_new_post" value="Senden" /> &nbsp; ';
         echo ' <input type="checkbox" name="should_close" id="should_close" value="1" />
             <label for="should_close">Ticket abschliessen als</label> ';
-        htmlSelect("close_solution", Ticket::SOLUTION_ITEMS, "solved");
+        htmlSelect("close_solution", TicketSolution::items(), "solved");
         echo '</p>';
     }
 
