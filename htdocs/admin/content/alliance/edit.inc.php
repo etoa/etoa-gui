@@ -19,6 +19,10 @@ if (isset($_GET['alliance_id'])) {
 if (isset($_GET['id'])) {
 	$id = $_GET['id'];
 }
+if (!isset($id) || !is_numeric($id)) {
+	echo "Invalid request.";
+	return;
+}
 
 if (isset($_POST['info_save']) && $_POST['info_save'] != "") {
 	saveInfo($repository, $id);
@@ -29,9 +33,9 @@ if (isset($_POST['info_save']) && $_POST['info_save'] != "") {
 } elseif (isset($_POST['res_save']) && $_POST['res_save'] != "") {
 	saveResources($repository, $id);
 } elseif (isset($_POST['buildings']) && $_POST['buildings'] != "") {
-	buildings($buildingRepository, $id);
+	saveBuildings($buildingRepository, $id);
 } elseif (isset($_POST['techs']) && $_POST['techs'] != "") {
-	technologies($technologyRepository, $id);
+	saveTechnologies($technologyRepository, $id);
 }
 edit($repository, $buildingRepository, $technologyRepository, $id);
 
@@ -134,7 +138,7 @@ function saveResources(AllianceRepository $repository, int $id)
 	$twig->addGlobal('successMessage', 'Ressourcen aktualisiert!');
 }
 
-function buildings(AllianceBuildingRepository $buildingRepository, int $id)
+function saveBuildings(AllianceBuildingRepository $buildingRepository, int $id)
 {
 	global $twig;
 
@@ -147,15 +151,15 @@ function buildings(AllianceBuildingRepository $buildingRepository, int $id)
 	}
 }
 
-function technologies(AllianceTechnologyRepository $technologyRepository, int $id): void
+function saveTechnologies(AllianceTechnologyRepository $technologyRepository, int $id): void
 {
 	global $twig;
 
-	if ($technologyRepository->existsInAlliance($id, $_POST['selected'])) {
-		$technologyRepository->updateForAlliance($id, $_POST['selected'], $_POST['level'], $_POST['amount']);
+	if ($technologyRepository->existsInAlliance($id, $_POST['selected_tech'])) {
+		$technologyRepository->updateForAlliance($id, $_POST['selected_tech'], $_POST['tech_level'], $_POST['tech_amount']);
 		$twig->addGlobal('successMessage', 'Datensatz erfolgreich bearbeitet!');
 	} else {
-		$technologyRepository->addToAlliance($id, $_POST['selected'], $_POST['level'], $_POST['amount']);
+		$technologyRepository->addToAlliance($id, $_POST['selected_tech'], $_POST['tech_level'], $_POST['tech_amount']);
 		$twig->addGlobal('successMessage', 'Datensatz erfolgreich eingefügt!');
 	}
 }
@@ -170,6 +174,11 @@ function edit(
 	global $page;
 
 	$arr = $repository->find($id);
+
+	if ($arr === null) {
+		echo 'Alliance does not exist.';
+		return;
+	}
 
 	$twig->addGlobal('subtitle', "Allianz bearbeiten: [" . $arr['alliance_tag'] . "] " . $arr['alliance_name']);
 
@@ -451,7 +460,9 @@ function buildingsTab(AllianceRepository $repository, AllianceBuildingRepository
 		</tr>";
 	if (count($buildListData) > 0) {
 		foreach ($buildListData as $arr) {
-			echo "<tr><td>" . $arr['alliance_building_name'] . "</td><td>" . $arr['alliance_buildlist_current_level'] . "</td><td>" . $arr['alliance_buildlist_member_for'] . "</td><td>";
+			echo "<tr><td>" . $arr['alliance_building_name'] . "</td>
+			<td>" . $arr['alliance_buildlist_current_level'] . "</td>
+			<td>" . $arr['alliance_buildlist_member_for'] . "</td><td>";
 			if ($arr['alliance_buildlist_build_end_time'] > time()) echo "Bauen";
 			elseif ($arr['alliance_buildlist_build_end_time'] > 0) echo "Bau abgeschlossen";
 			else echo "Untätig";
@@ -481,7 +492,8 @@ function buildingsTab(AllianceRepository $repository, AllianceBuildingRepository
 		echo "</select>";
 	}
 
-	echo '</td><td><input type=number value=1 name="level"></td><td><input type=number value=1 name="amount"></td></tr>';
+	echo '</td><td><input type="number" value=1 name="level"></td>
+	<td><input type="number" value="1" name="amount"></td></tr>';
 
 	tableEnd();
 
@@ -499,7 +511,9 @@ function technologiesTab(AllianceRepository $repository, AllianceTechnologyRepos
 		</tr>";
 	if (count($techlistData) > 0) {
 		foreach ($techlistData as $arr) {
-			echo "<tr><td>" . $arr['alliance_tech_name'] . "</td><td>" . $arr['alliance_techlist_current_level'] . "</td><td>" . $arr['alliance_techlist_member_for'] . "</td><td>";
+			echo "<tr><td>" . $arr['alliance_tech_name'] . "</td>
+			<td>" . $arr['alliance_techlist_current_level'] . "</td>
+			<td>" . $arr['alliance_techlist_member_for'] . "</td><td>";
 			if ($arr['alliance_techlist_build_end_time'] > time()) echo "Forschen";
 			elseif ($arr['alliance_techlist_build_end_time'] > 0) echo "Forschen abgeschlossen";
 			else echo "Untätig";
@@ -528,7 +542,8 @@ function technologiesTab(AllianceRepository $repository, AllianceTechnologyRepos
 		echo "</select>";
 	}
 
-	echo '</td><td><input type=number value=1 name="tech_level"></td><td><input type=number value=1 name="tech_amount"></td></tr>';
+	echo '</td><td><input type="number" value="1" name="tech_level"></td>
+	<td><input type="number" value="1" name="tech_amount"></td></tr>';
 
 	tableEnd();
 }

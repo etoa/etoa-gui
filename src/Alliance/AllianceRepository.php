@@ -31,13 +31,14 @@ class AllianceRepository extends AbstractRepository
 
     public function find(int $id): ?array
     {
-        return $this->createQueryBuilder()
+        $data = $this->createQueryBuilder()
             ->select("*")
             ->from('alliances')
             ->where('alliance_id = :id')
             ->setParameter('id', $id)
             ->execute()
             ->fetchAssociative();
+        return $data !== false ? $data : null;
     }
 
     public function findByFormData(array $formData): array
