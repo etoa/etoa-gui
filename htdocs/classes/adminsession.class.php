@@ -14,20 +14,6 @@ class AdminSession extends Session
 {
 	protected $namePrefix = "admin";
 
-	protected AdminSessionRepository $repository;
-	protected AdminUserRepository $userRepository;
-	protected AdminSessionManager $sessionManager;
-
-	protected function __construct()
-	{
-		parent::__construct();
-
-		global $app;
-		$this->repository = $app['etoa.admin.session.repository'];
-		$this->userRepository = $app['etoa.admin.user.repository'];
-		$this->sessionManager = $app['etoa.admin.session.manager'];
-	}
-
 	/**
 	 * Returns the single instance of this class
 	 *
@@ -40,7 +26,16 @@ class AdminSession extends Session
 
 	function login($data)
 	{
-		$this->sessionManager->cleanup();
+		// TODO
+		global $app;
+
+		/** @var AdminSessionManager */
+		$sessionManager = $app['etoa.admin.session.manager'];
+
+		/** @var AdminUserRepository */
+		$userRepository = $app['etoa.admin.user.repository'];
+
+		$sessionManager->cleanup();
 
 		// If user login data has been temporary stored (two factor authentication challenge), restore it
 		if (!isset($data['login_nick']) && $this->tfa_login_nick) {
@@ -51,16 +46,16 @@ class AdminSession extends Session
 		}
 
 		if ($data['login_nick'] && $data['login_pw']) {
-			$user = $this->userRepository->findOneByNick($data['login_nick']);
+			$user = $userRepository->findOneByNick($data['login_nick']);
 			if ($user != null) {
 				if (validatePasswort($data['login_pw'], $user->passwordString)) {
 					// Check if two factor authentication is enabled for this user
-					if ($uarr['tfa_secret']) {
+					if ($user->tfaSecret) {
 						// Check if user supplied challenge
 						if (isset($data['login_challenge'])) {
 							$tfa = new RobThree\Auth\TwoFactorAuth(APP_NAME);
 							// Validate challenge. If false, return to challenge input
-							if (!$tfa->verifyCode($uarr['tfa_secret'], $data['login_challenge'])) {
+							if (!$tfa->verifyCode($user->tfaSecret, $data['login_challenge'])) {
 								$this->lastError = "Ungültiger Code!";
 								$this->lastErrorCode = "tfa_challenge";
 								return false;
@@ -116,8 +111,17 @@ class AdminSession extends Session
 	 */
 	function validate()
 	{
+		// TODO
+		global $app;
+
+		/** @var AdminSessionManager */
+		$sessionManager = $app['etoa.admin.session.manager'];
+
+		/** @var AdminSessionRepository */
+		$repository = $app['etoa.admin.session.repository'];
+
 		if (isset($this->time_login)) {
-			$exists = $this->repository->exists(
+			$exists = $repository->exists(
 				session_id(),
 				intval($this->user_id),
 				$_SERVER['HTTP_USER_AGENT'],
@@ -127,7 +131,7 @@ class AdminSession extends Session
 				$t = time();
 				$cfg = Config::getInstance();
 				if ($this->time_action + (int) $cfg->admin_timeout->v > $t) {
-					$this->repository->update(session_id(), $t, $_SERVER['REMOTE_ADDR']);
+					$repository->update(session_id(), $t, $_SERVER['REMOTE_ADDR']);
 					$this->time_action = $t;
 					return true;
 				} else {
@@ -142,14 +146,20 @@ class AdminSession extends Session
 			$this->lastError = "Keine Session!";
 			$this->lastErrorCode = "nologin";
 		}
-		$this->sessionManager->unregisterSession(session_id());
+		$sessionManager->unregisterSession(session_id());
 		return false;
 	}
 
 	function registerSession()
 	{
-		$this->repository->removeByUserOrId(session_id(), intval($this->user_id));
-		$this->repository->create(
+		// TODO
+		global $app;
+
+		/** @var AdminSessionRepository */
+		$repository = $app['etoa.admin.session.repository'];
+
+		$repository->removeByUserOrId(session_id(), intval($this->user_id));
+		$repository->create(
 			session_id(),
 			intval($this->user_id),
 			$_SERVER['REMOTE_ADDR'],
@@ -160,6 +170,12 @@ class AdminSession extends Session
 
 	function logout()
 	{
-		$this->sessionManager->unregisterSession(session_id());
+		// TODO
+		global $app;
+
+		/** @var AdminSessionManager */
+		$sessionManager = $app['etoa.admin.session.manager'];
+
+		$sessionManager->unregisterSession(session_id());
 	}
 }
