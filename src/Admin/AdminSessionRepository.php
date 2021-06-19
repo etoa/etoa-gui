@@ -28,7 +28,7 @@ class AdminSessionRepository extends AbstractRepository
             ->setParameter('id', $id)
             ->execute()
             ->fetchAssociative();
-        return $data ? $data : null;
+        return $data !== false ? $data : null;
     }
 
     public function findByTimeout(int $timeout): array
@@ -144,8 +144,10 @@ class AdminSessionRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function addSessionLog(array $data, ?int $logoutTime): void
+    public function addSessionLog(array $adminSession, ?int $logoutTime): void
     {
+        // TODO: Introduce admin session class for $adminSession and set it as type
+
         $this->createQueryBuilder()
             ->insert('admin_user_sessionlog')
             ->values([
@@ -158,12 +160,12 @@ class AdminSessionRepository extends AbstractRepository
                 'time_logout' => $logoutTime ?? time(),
             ])
             ->setParameters([
-                'id' => $data['id'],
-                'user_id' => $data['user_id'],
-                'ip_addr' => $data['ip_addr'],
-                'user_agent' => $data['user_agent'],
-                'time_login' => $data['time_login'],
-                'time_action' => $data['time_action'],
+                'id' => $adminSession['id'],
+                'user_id' => $adminSession['user_id'],
+                'ip_addr' => $adminSession['ip_addr'],
+                'user_agent' => $adminSession['user_agent'],
+                'time_login' => $adminSession['time_login'],
+                'time_action' => $adminSession['time_action'],
             ])
             ->execute();
     }
