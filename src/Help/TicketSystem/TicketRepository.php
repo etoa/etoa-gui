@@ -337,6 +337,6 @@ Dein Admin-Team";
             ->setParameter('id', $catId)
             ->execute()
             ->fetchOne();
-        return !is_bool($data) ? $data : null;
+        return $data !== false ? $data : null;
     }
 }
