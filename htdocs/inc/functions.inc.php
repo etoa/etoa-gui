@@ -14,7 +14,7 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/
 
-use EtoA\Support\Collections\ExtendedArrayCollection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
 	* Returns a string containing the game name, version and round
@@ -2581,9 +2581,9 @@ function imagecreatefromfile($path, $user_functions = false)
 	 * Creates a new collection from the given array of data
 	 *
 	 * @param array $data
-	 * @return ExtendedArrayCollection
+	 * @return ArrayCollection
 	 */
-	function collect(array $data): ExtendedArrayCollection
+	function collect(array $data): ArrayCollection
 	{
-		return new ExtendedArrayCollection($data);
+		return new ArrayCollection($data);
 	}

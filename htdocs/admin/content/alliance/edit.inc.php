@@ -168,13 +168,9 @@ function edit(
 
 	$twig->addGlobal('subtitle', "Allianz bearbeiten: [" . $arr['alliance_tag'] . "] " . $arr['alliance_name']);
 
-	$members = collect($repository->findUsers($id))
-		->mapToAssoc(fn ($arr) => [$arr['user_id'], $arr])
-		->toArray();
+	$members = $repository->findUsers($id);
 
-	$ranks = collect($repository->findRanks($id))
-		->mapToAssoc(fn ($arr) => [$arr['rank_id'], $arr])
-		->toArray();
+	$ranks = $repository->findRanks($id);
 
 	echo "<form action=\"?page=$page&amp;sub=edit&amp;id=" . $id . "\" method=\"post\">";
 
@@ -238,11 +234,12 @@ function infoTab(array $arr, array $members): void
 		</td></tr>";
 	echo "<tr><th>Gründer</th><td><select name=\"alliance_founder_id\">";
 	echo "<option value=\"0\">(niemand)</option>";
-	foreach ($members as $uid => $uarr) {
-		echo "<option value=\"$uid\"";
-		if ($arr['alliance_founder_id'] == $uarr['user_id'])
+	foreach ($members as $member) {
+		echo "<option value=\"".$member['user_id']."\"";
+		if ($arr['alliance_founder_id'] == $member['user_id']) {
 			echo " selected=\"selected\"";
-		echo ">" . $uarr['user_nick'] . "</option>";
+		}
+		echo ">" . $member['user_nick'] . "</option>";
 	}
 	echo "</select></td></tr>";
 	echo "<tr><th>Text</th><td><textarea cols=\"45\" rows=\"10\" name=\"alliance_text\">" . stripslashes($arr['alliance_text']) . "</textarea></td></tr>";
@@ -274,20 +271,21 @@ function membersTab(array $members, array $ranks): void
 				<th>Punkte</th>
 				<th>Rang</th>
 				<th>Mitgliedschaft beenden</th></tr>";
-		foreach ($members as $uid => $uarr) {
-			echo "<tr><td id=\"uifo" . $uarr['user_id'] . "\" style=\"display:none;\"><a href=\"?page=user&amp;sub=edit&amp;id=" . $uarr['user_id'] . "\">Daten</a><br/>
-				" . popupLink("sendmessage", "Nachricht senden", "", "id=" . $uarr['user_id']) . "</td>
-				<td><a href=\"?page=user&amp;sub=edit&amp;id=" . $uarr['user_id'] . "\" " . cTT($uarr['user_nick'], "uifo" . $uarr['user_id'] . "") . ">" . $uarr['user_nick'] . "</a></td>
-				<td>" . nf($uarr['user_points']) . " Punkte</td>
-				<td><select name=\"member_rank[$uid]\"><option value=\"0\">-</option>";
-			foreach ($ranks as $k => $v) {
-				echo "<option value=\"$k\"";
-				if ($uarr['user_alliance_rank_id'] == $k)
+		foreach ($members as $member) {
+			echo "<tr><td id=\"uifo" . $member['user_id'] . "\" style=\"display:none;\"><a href=\"?page=user&amp;sub=edit&amp;id=" . $member['user_id'] . "\">Daten</a><br/>
+				" . popupLink("sendmessage", "Nachricht senden", "", "id=" . $member['user_id']) . "</td>
+				<td><a href=\"?page=user&amp;sub=edit&amp;id=" . $member['user_id'] . "\" " . cTT($member['user_nick'], "uifo" . $member['user_id'] . "") . ">" . $member['user_nick'] . "</a></td>
+				<td>" . nf($member['user_points']) . " Punkte</td>
+				<td><select name=\"member_rank[".$member['user_id']."]\"><option value=\"0\">-</option>";
+			foreach ($ranks as $rank) {
+				echo "<option value=\"".$rank['rank_id']."\"";
+				if ($member['user_alliance_rank_id'] == $rank['rank_id']) {
 					echo " selected=\"selected\"";
-				echo ">" . $v['rank_name'] . "</option>";
+				}
+				echo ">" . $rank['rank_name'] . "</option>";
 			}
 			echo "</select></td>";
-			echo "<td><input type=\"checkbox\" name=\"member_kick[" . $uid . "]\" value=\"1\" /></td></tr>";
+			echo "<td><input type=\"checkbox\" name=\"member_kick[" . $member['user_id'] . "]\" value=\"1\" /></td></tr>";
 		}
 		echo "</table>";
 	} else
@@ -298,16 +296,18 @@ function membersTab(array $members, array $ranks): void
 	if (count($ranks) > 0) {
 		echo "<table class=\"tb\">";
 		echo "<tr><th>Name</th><th>Level</th><th>Löschen</th></tr>";
-		foreach ($ranks as $rid => $rarr) {
-			echo "<tr><td><input type=\"text\" size=\"35\" name=\"rank_name[" . $rarr['rank_id'] . "]\" value=\"" . $rarr['rank_name'] . "\" /></td>";
-			echo "<td><select name=\"rank_level[" . $rarr['rank_id'] . "]\">";
+		foreach ($ranks as $rank) {
+			echo "<tr><td><input type=\"text\" size=\"35\" name=\"rank_name[" . $rank['rank_id'] . "]\" value=\"" . $rank['rank_name'] . "\" /></td>";
+			echo "<td><select name=\"rank_level[" . $rank['rank_id'] . "]\">";
 			for ($x = 0; $x <= 9; $x++) {
 				echo "<option value=\"$x\"";
-				if ($rarr['rank_level'] == $x) echo " selected=\"selected\"";
+				if ($rank['rank_level'] == $x) {
+					echo " selected=\"selected\"";
+				}
 				echo ">$x</option>";
 			}
 			echo "</select></td>";
-			echo "<td><input type=\"checkbox\" name=\"rank_del[" . $rarr['rank_id'] . "]\" value=\"1\" /></td></tr>";
+			echo "<td><input type=\"checkbox\" name=\"rank_del[" . $rank['rank_id'] . "]\" value=\"1\" /></td></tr>";
 		}
 		echo "</table>";
 	} else
@@ -422,8 +422,8 @@ function depositsTab(array $arr, array $members): void
 			<select id=\"user_spends\" name=\"user_spends\">
 				<option value=\"0\">alle</option>";
 	// Allianzuser
-	foreach ($members as $mid => $data) {
-		echo "<option value=\"" . $mid . "\">" . $data['user_nick'] . "</option>";
+	foreach ($members as $member) {
+		echo "<option value=\"" . $member['user_id'] . "\">" . $member['user_nick'] . "</option>";
 	}
 	echo 		"</select>
 		</td>
