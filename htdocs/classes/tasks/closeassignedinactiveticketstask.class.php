@@ -1,6 +1,6 @@
 <?php
 
-use EtoA\Help\TicketSystem\TicketRepository;
+use EtoA\Help\TicketSystem\TicketService;
 use Pimple\Container;
 
 /**
@@ -8,16 +8,16 @@ use Pimple\Container;
  */
 class CloseAssignedInactiveTicketsTask implements IPeriodicTask
 {
-	private TicketRepository $ticketRepo;
+	private TicketService $ticketService;
 
 	function __construct(Container $app)
 	{
-		$this->ticketRepo = $app['etoa.help.ticket.repository'];
+		$this->ticketService = $app['etoa.help.ticket.service'];
 	}
 
 	function run()
 	{
-		$this->ticketRepo->closeAssignedInactive();
+		$this->ticketService->closeAssignedInactive();
 		return "Inaktive Tickets geschlossen";
 	}
 

@@ -5,10 +5,14 @@ use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Help\TicketSystem\TicketMessageRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
+use EtoA\Help\TicketSystem\TicketService;
 use EtoA\Help\TicketSystem\TicketSolution;
 use EtoA\Help\TicketSystem\TicketStatus;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
+
+/** @var TicketService */
+$ticketService = $app['etoa.help.ticket.service'];
 
 /** @var TicketRepository */
 $ticketRepo = $app['etoa.help.ticket.repository'];
@@ -36,13 +40,13 @@ if ($roleManager->checkAllowed($cu, ["master", "super-admin", "game-admin", "tri
     if ($request->query->has('edit') && $request->query->getInt('edit') > 0) {
         editTicket($request, $ticketRepo, $adminUserRepo, $userRepo);
     } elseif ($request->query->has('id') && $request->query->getInt('id') > 0) {
-        ticketDetails($request, $ticketRepo, $ticketMessageRepo, $adminUserRepo, $userRepo, $cu);
+        ticketDetails($request, $ticketService, $ticketRepo, $ticketMessageRepo, $adminUserRepo, $userRepo, $cu);
     } elseif ($request->query->has('action') && $request->query->get('action') == "new") {
         createNewTicketForm($ticketRepo);
     } elseif ($request->query->has('action') && $request->query->get('action') == "closed") {
         closedTickets($ticketRepo, $ticketMessageRepo, $adminUserRepo, $userRepo);
     } else {
-        activeTickets($request, $ticketRepo, $ticketMessageRepo, $adminUserRepo, $userRepo);
+        activeTickets($request, $ticketService, $ticketRepo, $ticketMessageRepo, $adminUserRepo, $userRepo);
     }
 } else {
     $twig->addGlobal("errorMessage", "Nicht erlaubt!");
@@ -100,6 +104,7 @@ function editTicket(
 
 function ticketDetails(
     Request $request,
+    TicketService $ticketService,
     TicketRepository $ticketRepo,
     TicketMessageRepository $ticketMessageRepo,
     AdminUserRepository $adminUserRepo,
@@ -132,18 +137,18 @@ function ticketDetails(
         }
     }
     if ($request->request->has('submit_assign')) {
-        if ($ticketRepo->assign($ticket, $cu->id)) {
+        if ($ticketService->assign($ticket, $cu->id)) {
             success_msg("Ticket aktualisiert!");
         }
     }
     if ($request->request->has('submit_reopen')) {
-        if ($ticketRepo->reopen($ticket)) {
+        if ($ticketService->reopen($ticket)) {
             success_msg("Ticket aktualisiert!");
         }
     }
 
     if ($request->request->has('submit_new_post')) {
-        $ticketRepo->addMessage(
+        $ticketService->addMessage(
             $ticket,
             $request->request->get('message'),
             0,
@@ -153,7 +158,7 @@ function ticketDetails(
         success_msg("Nachricht hinzugefügt!");
 
         if ($request->request->has('should_close')) {
-            $ticketRepo->close($ticket, $request->request->get('close_solution'));
+            $ticketService->close($ticket, $request->request->get('close_solution'));
         }
 
         if ($request->request->has('admin_comment')) {
@@ -205,7 +210,7 @@ function ticketDetails(
     <th style=\"width:120px\">Datum</th>
     <th style=\"width:130px\">Autor</th>
     <th>Nachricht</th></tr>";
-    foreach ($ticketRepo->getMessages($ticket) as $message) {
+    foreach ($ticketService->getMessages($ticket) as $message) {
         echo "<tr>
         <td>" . df($message->timestamp) . "</td>
         <td>" . $ticketMessageRepo->getAuthorNick($message) . "</td>
@@ -307,6 +312,7 @@ function closedTickets(
 
 function activeTickets(
     Request $request,
+    TicketService $ticketService,
     TicketRepository $ticketRepo,
     TicketMessageRepository $ticketMessageRepo,
     AdminUserRepository $adminUserRepo,
@@ -317,7 +323,7 @@ function activeTickets(
     echo '<h2>Aktive Tickets</h2>';
 
     if ($request->request->has('submit_new')) {
-        $ticketRepo->create(
+        $ticketService->create(
             $request->request->getInt('user_id'),
             $request->request->getInt('cat_id'),
             $request->request->get('message')

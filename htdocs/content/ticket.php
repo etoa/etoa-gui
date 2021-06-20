@@ -3,7 +3,11 @@
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Help\TicketSystem\TicketMessageRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
+use EtoA\Help\TicketSystem\TicketService;
 use EtoA\User\UserRepository;
+
+/** @var TicketService */
+$ticketService = $app['etoa.help.ticket.service'];
 
 /** @var TicketRepository */
 $ticketRepo = $app['etoa.help.ticket.repository'];
@@ -20,14 +24,15 @@ $userRepo = $app['etoa.user.repository'];
 echo "<h1>Ticketsystem</h1>";
 
 if (isset($_GET['id']) && intval($_GET['id']) > 0) {
-    viewTicket($ticketRepo, $ticketMessageRepo, $adminUserRepo, $userRepo);
+    viewTicket($ticketService, $ticketRepo, $ticketMessageRepo, $adminUserRepo, $userRepo);
 } elseif (isset($_POST['ticket_submit']) && checker_verify()) {
-    storeTicket($ticketRepo);
+    storeTicket($ticketService);
 } else {
     listTickets($ticketRepo, $adminUserRepo);
 }
 
 function viewTicket(
+    TicketService $ticketService,
     TicketRepository $ticketRepo,
     TicketMessageRepository $ticketMessageRepo,
     AdminUserRepository $adminUserRepo,
@@ -50,12 +55,12 @@ function viewTicket(
     $ticket = array_shift($tickets);
 
     if (isset($_POST['submit_new_post'])) {
-        $ticketRepo->addMessage($ticket, $_POST['message'], $cu->id);
+        $ticketService->addMessage($ticket, $_POST['message'], $cu->id);
         success_msg("Nachricht hinzugefügt!");
     }
 
     if (isset($_GET['reopen'])) {
-        $ticketRepo->reopen($ticket);
+        $ticketService->reopen($ticket);
     }
 
     tableStart("Ticket " . $ticket->getIdString());
@@ -77,7 +82,7 @@ function viewTicket(
 
     tableStart("Nachrichten");
     echo "<tr><th style=\"width:120px;\">Datum</th><th style=\"width:150px;\">Autor</th><th>Nachricht</th></tr>";
-    foreach ($ticketRepo->getMessages($ticket) as $message) {
+    foreach ($ticketService->getMessages($ticket) as $message) {
         echo "<tr>
         <td>" . df($message->timestamp) . "</td>
         <td>" . $ticketMessageRepo->getAuthorNick($message) . "</td>
@@ -107,11 +112,11 @@ function viewTicket(
     echo "</form><br/>";
 }
 
-function storeTicket(TicketRepository $ticketRepo): void
+function storeTicket(TicketService $ticketService): void
 {
     global $cu;
 
-    $ticketRepo->create($cu->id, $_POST['cat_id'], $_POST['ticket_text']);
+    $ticketService->create($cu->id, $_POST['cat_id'], $_POST['ticket_text']);
     echo "<br/>Vielen Dank, dein Text wurde gespeichert.<br/>Ein Game-Administrator wird sich dem Problem annehmen.<br/><br/>";
     echo "<input type=\"button\" onclick=\"document.location='?page=ticket'\" value=\"Weiter\" />";
 }
