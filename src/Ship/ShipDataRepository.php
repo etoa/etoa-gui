@@ -33,4 +33,21 @@ class ShipDataRepository extends AbstractRepository
 
         return $this->cache->fetch(self::SHIPS_NAMES);
     }
+
+    /**
+     * @return Ship[]
+     */
+    public function getShipWithPowerProduction(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->addSelect()
+            ->from('ships')
+            ->where('ship_prod_power > 0')
+            ->orderBy('ship_order')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn($row) => new Ship($row), $data);
+    }
 }
