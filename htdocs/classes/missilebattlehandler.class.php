@@ -1,4 +1,7 @@
 <?PHP
+
+use EtoA\Core\Configuration\ConfigurationService;
+
 class MissileBattleHandler
 {
 	/**
@@ -8,13 +11,17 @@ class MissileBattleHandler
 	*/
 	static function battle($fid)
 	{
-		$cfg = Config::getInstance();
+        // TODO
+        global $app;
+
+        /** @var ConfigurationService */
+        $config = $app['etoa.config.service'];
 
 		// Faktor mit dem die Schilde der Verteidigung bei einem Kampf mit einberechnet werden.
-		define("MISSILE_BATTLE_SHIELD_FACTOR", $cfg->value('missile_battle_shield_factor'));
+		define("MISSILE_BATTLE_SHIELD_FACTOR", $config->getFloat('missile_battle_shield_factor'));
 
  		// Kampf abbrechen und Raketen zum Startplanet schicken wenn Kampfsperre aktiv ist
- 	 	if ($cfg->value('battleban') != 0 && $cfg->p1('battleban_time') <= time() && $cfg->p2('battleban_time') > time())
+ 	 	if ($config->getBoolean('battleban') && $config->param1Int('battleban_time') <= time() && $config->param2Int('battleban_time') > time())
 		{
 			// Lädt Flugdaten
 			$res = dbquery("
@@ -68,7 +75,7 @@ class MissileBattleHandler
 				;");
 
 				// Schickt Nachricht an den Angreifer
-				$msg = $cfg->p2('battleban_arrival_text');
+				$msg = $config->param2('battleban_arrival_text');
 				$uid = get_user_id_by_planet($arr['flight_entity_from']);
 				send_msg($uid,SHIP_WAR_MSG_CAT_ID,'Ergebnis des Raketenangriffs',$msg);
 			}

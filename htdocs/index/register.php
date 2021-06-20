@@ -1,31 +1,5 @@
 <?PHP
 
-//////////////////////////////////////////////////
-//		 	 ____    __           ______       			//
-//			/\  _`\ /\ \__       /\  _  \      			//
-//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
-//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
-//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
-//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
-//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
-//																					 		//
-//////////////////////////////////////////////////
-// The Andromeda-Project-Browsergame				 		//
-// Ein Massive-Multiplayer-Online-Spiel			 		//
-// Programmiert von Nicolas Perrenoud				 		//
-// www.nicu.ch | mail@nicu.ch								 		//
-// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-//////////////////////////////////////////////////
-//
-// 	Dateiname: register.php
-// 	Topic: Anmeldung
-// 	Autor: Nicolas Perrenoud alias MrCage
-// 	Erstellt: 01.12.2004
-// 	Bearbeitet von: Nicolas Perrenoud alias MrCage
-// 	Bearbeitet am: 07.03.2006
-// 	Kommentar:
-//
-
 function getRegisterParams(): array{
     $cfg = Config::getInstance();
 
