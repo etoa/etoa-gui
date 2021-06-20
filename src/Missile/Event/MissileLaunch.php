@@ -9,7 +9,7 @@ class MissileLaunch extends Event
     public const LAUNCH_SUCCESS = 'missile.launch.success';
 
     /** @var int[] */
-    private $missiles;
+    private array $missiles;
 
     public function __construct(array $missiles)
     {

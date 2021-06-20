@@ -11,8 +11,7 @@ class HavePlanetCount implements InitProgressHandlerFunctionInterface
 {
     public const NAME = 'have-planet-count';
 
-    /** @var PlanetRepository */
-    private $planetRepository;
+    private PlanetRepository $planetRepository;
 
     public function __construct(PlanetRepository $planetRepository)
     {

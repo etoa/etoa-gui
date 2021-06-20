@@ -9,8 +9,7 @@ class SqlLogger implements \Doctrine\DBAL\Logging\SQLLogger
     const MAX_STRING_LENGTH = 32;
     const BINARY_DATA_VALUE = '(binary value)';
 
-    /** @var LoggerInterface */
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(LoggerInterface $logger = null)
     {

@@ -8,10 +8,8 @@ class ShipRecycle extends Event
 {
     public const RECYCLE_SUCCESS = 'ship.recycle.success';
 
-    /** @var int */
-    private $shipId;
-    /** @var int */
-    private $count;
+    private int $shipId;
+    private int $count;
 
     public function __construct(int $shipId, int $count)
     {

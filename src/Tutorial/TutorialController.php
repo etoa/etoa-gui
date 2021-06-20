@@ -7,8 +7,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class TutorialController
 {
-    /** @var TutorialUserProgressRepository */
-    private $tutorialUserProgressRepository;
+    private TutorialUserProgressRepository $tutorialUserProgressRepository;
 
     public function __construct(TutorialUserProgressRepository $tutorialUserProgressRepository)
     {

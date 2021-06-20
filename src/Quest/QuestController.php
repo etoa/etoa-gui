@@ -10,12 +10,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class QuestController
 {
-    /** @var QuestAdvancer */
-    private $questAdvancer;
-    /** @var QuestPresenter */
-    private $presenter;
-    /** @var QuestStorageInterface */
-    private $questStorage;
+    private QuestAdvancer $questAdvancer;
+    private QuestPresenter $presenter;
+    private QuestStorageInterface $questStorage;
 
     public function __construct(QuestAdvancer $questAdvancer, QuestPresenter $presenter, QuestStorageInterface $questStorage)
     {

@@ -10,8 +10,7 @@ class ShipDataRepository extends AbstractRepository
 {
     private const SHIPS_NAMES = 'ships.names';
 
-    /** @var CacheProvider */
-    private $cache;
+    private CacheProvider $cache;
 
     public function __construct(Connection $connection, CacheProvider $cache)
     {

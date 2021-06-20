@@ -8,10 +8,8 @@ class DefenseRecycle extends Event
 {
     public const RECYCLE_SUCCESS = 'defense.recycle.success';
 
-    /** @var int */
-    private $defenseId;
-    /** @var int */
-    private $count;
+    private int $defenseId;
+    private int $count;
 
     public function __construct(int $defenseId, int $count)
     {

@@ -6,8 +6,7 @@ use EtoA\User\UserInterface;
 
 class TokenContext
 {
-    /** @var UserInterface */
-    private $currentUser;
+    private UserInterface $currentUser;
 
     public function __construct(UserInterface $currentUser)
     {
