@@ -110,7 +110,7 @@ function saveDiplomacy(Request $request, AllianceRepository $repository, Environ
 		foreach (array_keys($request->request->get('alliance_bnd_level')) as $diplomacyId) {
 			$repository->updateDiplomacy(
 				$diplomacyId,
-				$request->request->getInt('alliance_bnd_level')[$diplomacyId],
+				$request->request->get('alliance_bnd_level')[$diplomacyId],
 				$request->request->get('alliance_bnd_name')[$diplomacyId]
 			);
 		}
