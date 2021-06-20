@@ -4,12 +4,13 @@
 $successMessage = null;
 $errorMessage = null;
 if (isset($_POST['create'])) {
+    $mtx = new Mutex();
+
     try {
         $dir = DBManager::getBackupDir();
         $gzip = Config::getInstance()->backup_use_gzip=="1";
 
         // Acquire mutex
-        $mtx = new Mutex();
         $mtx->acquire();
 
         // Do the backup
@@ -43,9 +44,10 @@ elseif (isset($_GET['action']) && $_GET['action'] === "backuprestore" && $_GET['
         $restorePoint = $_GET['date'];
         $gzip = Config::getInstance()->backup_use_gzip=="1";
 
+        $mtx = new Mutex();
+
         try {
             // Acquire mutex
-            $mtx = new Mutex();
             $mtx->acquire();
 
             // Backup current database

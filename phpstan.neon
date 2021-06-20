@@ -16,7 +16,6 @@ parameters:
     excludePaths:
         - htdocs/admin/content/alliance
         - htdocs/admin/content/config
-        - htdocs/admin/content/db
         - htdocs/libs
 
     bootstrapFiles:

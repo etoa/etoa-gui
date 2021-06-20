@@ -7,13 +7,14 @@ $persistentTables = fetchJsonConfig("persistent-tables.conf");
 
 $action = $_POST['action'] ?? null;
 if (isset($_POST['submit'])) {
+    $mtx = new Mutex();
+
     try {
         // Do the backup
         $dir = DBManager::getBackupDir();
         $gzip = Config::getInstance()->backup_use_gzip=="1";
 
         // Acquire mutex
-        $mtx = new Mutex();
         $mtx->acquire();
 
         // Do the backup
@@ -34,7 +35,7 @@ if (isset($_POST['submit'])) {
             $tc = 0;
             $emptyTables = [];
             foreach ($tbls as $t) {
-                if (!in_array($t, $persistentTables['definitions']) && $t !== DBManager::SCHEMA_MIGRATIONS_TABLE) {
+                if (!in_array($t, $persistentTables['definitions'], true) && $t !== DBManager::SCHEMA_MIGRATIONS_TABLE) {
                     dbquery("TRUNCATE $t;");
                     $emptyTables[] = $t;
                     $tc++;
