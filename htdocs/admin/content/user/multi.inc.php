@@ -89,7 +89,7 @@
 				echo "<td $uCol>".$iparr['user_name']."</td>";
 				echo "<td $uCol>".$iparr['user_email_fix']."<br/>".$iparr['user_email']."</td>";
 				echo "<td $uCol ";
-				if ($iparrarr['time_action'])
+				if ($iparr['time_action'])
 					echo " style=\"color:#0f0;\">online";
 				elseif ($iparr['time_log'])
 					echo ">".date("d.m.Y H:i",$iparr['time_log'])."";

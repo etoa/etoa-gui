@@ -33,7 +33,7 @@
 
 		echo "<h2>Erweiterte Beobachtung von ".$tu."</h2>";
 
-		if (!empty($_GET['session']))
+		if (isset($_GET['session']))
 		{
 			$sid = $_GET['session'];
 
@@ -62,7 +62,9 @@
 				if (mysql_num_rows($res)>0)
 				{
 					$arr=mysql_fetch_array($res);
-				}
+				} else {
+				    throw new \RuntimeException('User session not found');
+                }
 			}
 
 			echo "<h3>Session";
@@ -170,7 +172,9 @@
 						if (mysql_num_rows($res)>0)
 						{
 							$arr=mysql_fetch_array($res);
-						}
+						} else {
+						    throw new \RuntimeException('User session not found');
+                        }
 					}
 					echo "<tr>";
 					echo "<td>".(isset($arr['time_login']) && $arr['time_login'] > 0 ? date("d.m.Y H:i",$arr['time_login']) : '-')."</td>";

@@ -119,7 +119,7 @@
 	while(count($files)>0)
 	{
 		$k = array_pop($files);
-		if (!in_array($k,$paths))
+		if (!in_array($k,$paths, true))
 			array_push($overhead,$k);
 	}
 

@@ -8,12 +8,12 @@ $twig->addGlobal("title", "XML-Import/Export");
 	//
 	if (isset($_GET['file']))
 	{
-		$file = $path."/".base64_decode($_GET['file']);
+		$file = $path."/".base64_decode($_GET['file'], true);
 		if (is_file($file))
 		{
 			$xml = simplexml_load_file($file);
 
-            $twig->addGlobal("subtitle", "Details ".base64_decode($_GET['file'])."");
+            $twig->addGlobal("subtitle", "Details ".base64_decode($_GET['file'], true)."");
 
 			echo "<fieldset><legend>Allgemeines</legend>";
 			tableStart();
@@ -219,7 +219,7 @@ $twig->addGlobal("title", "XML-Import/Export");
 		if (isset($_POST['exportcache']))
 		{
 			$uti = new UserToXml($_POST['export_user_id']);
-			$xmlfile = $uti->toCacheFile("../");
+			$xmlfile = $uti->toCacheFile();
 			if ($xmlfile)
 			{
 				success_msg("Die Userdaten wurden nach [b]".$xmlfile."[/b] exportiert.");

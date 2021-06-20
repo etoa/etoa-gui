@@ -71,7 +71,7 @@
 					$_POST['user_ghost']==1
 				);
 				$newUser->setVerified(true);
-				add_log(3,"Der Benutzer ".$newUser->nick." (".$newUser->realName.", ".$newUser->email.") wurde registriert!");
+				Log::add(3,Log::INFO, "Der Benutzer ".$newUser->nick." (".$newUser->realName.", ".$newUser->email.") wurde registriert!");
 				success_msg("Benutzer wurde erstellt! [[page user sub=edit id=".$newUser->id."]Details[/page]]");
 			}
 			catch (Exception $e)
@@ -248,16 +248,16 @@
 				switch ($_GET['special'])
 				{
 					case "ip":
-						$sql= " user_ip='".base64_decode($_GET['val'])."'";
+						$sql= " user_ip='".base64_decode($_GET['val'], true)."'";
 						break;
 					case "host":
-						$sql= " user_hostname='".base64_decode($_GET['val'])."'";
+						$sql= " user_hostname='".base64_decode($_GET['val'], true)."'";
 						break;
 					case "blocked":
 						$sql= " (user_blocked_from<".time()." AND user_blocked_to>".time().")";
 						break;
 					default:
-						$sql= " user_nick='%".base64_decode($_GET['val'])."%'";
+						$sql= " user_nick='%".base64_decode($_GET['val'], true)."%'";
 				}
 				$sqlstart="SELECT * FROM $tables WHERE ";
 				$sqlend=" ORDER BY user_nick;";

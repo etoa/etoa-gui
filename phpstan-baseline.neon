@@ -66,6 +66,11 @@ parameters:
 			path: htdocs/admin/content/overview.php
 
 		-
+			message: "#^Variable \\$iparr might not be defined\\.$#"
+			count: 6
+			path: htdocs/admin/content/user/multi.inc.php
+
+		-
 			message: "#^Empty array passed to foreach\\.$#"
 			count: 1
 			path: htdocs/admin/inc/admin_functions.inc.php
