@@ -146,32 +146,23 @@ use EtoA\Text\TextRepository;
 		</tr>
 		</table>";
         tableStart("Filter",300);
+        /** @var \EtoA\Universe\SolarTypeRepository $solarTypeRepository */
+        $solarTypeRepository = $app['etoa.universe.solar_type.repository'];
+        $solarTypeNames = $solarTypeRepository->getSolarTypeNames();
         echo "<tr>
 			<th>Sonnentyp:</th>
 			<td>
 
 			<select name=\"filter_sol_id\" id=\"filter_sol_id\">
 			<option value=\"0\">Bitte wählen...</option>";
-		$res = dbquery("
-		SELECT
-			sol_type_id,
-			sol_type_name
-		FROM
-			sol_types
-		WHERE
-			sol_type_consider=1
-		ORDER BY
-			sol_type_name;
-		");
-		while ($sol = mysql_fetch_array($res))
-		{
+		foreach ($solarTypeNames as $solarTypeId => $solarTypeName) {
             $selected = 0;
 
-            if ((array_key_exists('filter_s',$_GET) ? $_GET['filter_s'] : null) == $sol['sol_type_id']) {
+            if ((array_key_exists('filter_s',$_GET) ? $_GET['filter_s'] : null) == $solarTypeId) {
 				$selected = 'selected';
             }
-			echo "<option value=\"".$sol['sol_type_id']."\"";
-			echo "$selected>".$sol['sol_type_name']."</option>";
+			echo "<option value=\"".$solarTypeId."\"";
+			echo "$selected>".$solarTypeName."</option>";
 		}
 		echo "</select>
 

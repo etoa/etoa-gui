@@ -14,5 +14,9 @@ class UniverseServiceProvider implements ServiceProviderInterface
         $pimple['etoa.universe.cell.repository'] = function (Container $pimple): CellRepository {
             return new CellRepository($pimple['db']);
         };
+
+        $pimple['etoa.universe.solar_type.repository'] = function (Container $pimple): SolarTypeRepository {
+            return new SolarTypeRepository($pimple['db']);
+        };
     }
 }
