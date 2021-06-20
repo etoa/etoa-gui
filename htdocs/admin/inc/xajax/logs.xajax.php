@@ -82,6 +82,7 @@ function logSelectorCat($cat)
 	// Definiert die Auswahlbereiche für normale Zahlenfelder
 	$int_options = "<option value=\"\">Alle</option>";
 	$int_options .= "<option value=\"=0\">0</option>";
+    $max = 0;
 	for ($x=0;$x<=8;$x++)
 	{
 		$min = pow(10,$x);
@@ -102,10 +103,10 @@ function logSelectorCat($cat)
 
 
 	// Definiert die Zeitbox
-	function show_logs_timebox($element_name,$def_val,$seconds=0)
+    $show_logs_timebox = function($element_name,$def_val,$seconds=0): string
 	{
 		// Liefert Tag 1-31
-		$return .= "<select name=\"".$element_name."_d\" id=\"".$element_name."_d\">";
+		$return = "<select name=\"".$element_name."_d\" id=\"".$element_name."_d\">";
 		for ($x=1;$x<32;$x++)
 		{
 			$return .= "<option value=\"".$x."\"";
@@ -132,7 +133,7 @@ function logSelectorCat($cat)
 
 		// Liefert Jahr +-1 vom jetzigen Jahr
 		$return .= "<select name=\"".$element_name."_y\" id=\"".$element_name."_y\">";
-		for ($x=date("Y")-1;$x<date("Y")+2;$x++)
+		for ($x= (int) date("Y")-1;$x< (int) date("Y")+2;$x++)
 		{
 			$return .= "<option value=\"".$x."\"";
 			if (date("Y",$def_val)==$x)
@@ -171,7 +172,7 @@ function logSelectorCat($cat)
 
 		return $return;
 
-	}
+	};
 
 
 
@@ -252,14 +253,14 @@ function logSelectorCat($cat)
 	  			<tr>
 	  				<td class=\"tbltitle\">Logs nach</td>
 	  				<td class=\"tbldata\">";
-	  					$out .= show_logs_timebox("time_min",time());
+	  					$out .= $show_logs_timebox("time_min",time());
 	 					$out .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type=\"checkbox\" name=\"add_logs_game_time_min\" value=\"1\" onclick=\"xajax_logChangeButton();\"> Aktivieren
 	 				</td>
 	 			</tr>
 	 			<tr>
 	  				<td class=\"tbltitle\">Logs vor</td>
 	  				<td class=\"tbldata\">";
-	  					$out .= show_logs_timebox("time_max",time());
+	  					$out .= $show_logs_timebox("time_max",time());
 	 					$out .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type=\"checkbox\" name=\"add_logs_game_time_max\" value=\"1\" onclick=\"xajax_logChangeButton();\"> Aktivieren
 	 				</td>
 	 			</tr>
@@ -339,14 +340,14 @@ function logSelectorCat($cat)
 	  				<tr>
 	  					<td class=\"tbltitle\">Angriff nach</td>
 	  					<td class=\"tbldata\">";
-	  						$out .= show_logs_timebox("battle_time_min",time());
+	  						$out .= $show_logs_timebox("battle_time_min",time());
 	 							$out .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type=\"checkbox\" name=\"add_battle_time_min\" value=\"1\" onclick=\"xajax_logChangeButton();\"> Aktivieren
 	 						</td>
 	 					</tr>
 	 					<tr>
 	  					<td class=\"tbltitle\">Angriff vor</td>
 	  					<td class=\"tbldata\">";
-	  						$out .= show_logs_timebox("battle_time_max",time());
+	  						$out .= $show_logs_timebox("battle_time_max",time());
 	 							$out .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type=\"checkbox\" name=\"add_battle_time_max\" value=\"1\" onclick=\"xajax_logChangeButton();\"> Aktivieren
 	 						</td>
 	 					</tr>
@@ -679,14 +680,14 @@ function logSelectorCat($cat)
 	  				<tr>
 	  					<td class=\"tbltitle\">Logs nach</td>
 	  					<td class=\"tbldata\">";
-	  						$out .= show_logs_timebox("logs_game_time_min",time());
+	  						$out .= $show_logs_timebox("logs_game_time_min",time());
 	 							$out .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type=\"checkbox\" name=\"add_logs_game_time_min\" value=\"1\" onclick=\"xajax_logChangeButton();\"> Aktivieren
 	 						</td>
 	 					</tr>
 	 					<tr>
 	  					<td class=\"tbltitle\">Logs vor</td>
 	  					<td class=\"tbldata\">";
-	  						$out .= show_logs_timebox("logs_game_time_max",time());
+	  						$out .= $show_logs_timebox("logs_game_time_max",time());
 	 							$out .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type=\"checkbox\" name=\"add_logs_game_time_max\" value=\"1\" onclick=\"xajax_logChangeButton();\"> Aktivieren
 	 						</td>
 	 					</tr>
@@ -995,10 +996,9 @@ function checkLogFormular($val)
 		{
 			$sql_add .= " AND logs_game_timestamp <= '".mktime($val['logs_game_time_max_h'],$val['logs_game_time_max_i'],0,$val['logs_game_time_max_m'],$val['logs_game_time_max_d'],$val['logs_game_time_max_y'])."'";
 		}
-
-
-
-	}
+	} else {
+	    throw new \InvalidArgumentException('Unknown category: ' . $val['log_cat']);
+    }
 
 
 

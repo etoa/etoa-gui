@@ -64,6 +64,7 @@ function loadItemSet($setid)
 {
 	$or = new xajaxResponse();
 	ob_start();
+    $cnt = 0;
 
 	$ires = dbquery("SELECT
 		item_id as id,

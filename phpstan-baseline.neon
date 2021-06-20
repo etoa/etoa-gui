@@ -56,6 +56,11 @@ parameters:
 			path: htdocs/admin/inc/form_functions.php
 
 		-
+			message: "#^Right side of && is always false\\.$#"
+			count: 1
+			path: htdocs/admin/inc/xajax_admin.inc.php
+
+		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: htdocs/admin/index.php
