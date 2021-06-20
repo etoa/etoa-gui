@@ -18,7 +18,6 @@ parameters:
         - htdocs/admin/content/config
         - htdocs/admin/content/db
         - htdocs/admin/content/galaxy
-        - htdocs/admin/content/home
         - htdocs/libs
 
     bootstrapFiles:

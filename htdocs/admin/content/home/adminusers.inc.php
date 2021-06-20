@@ -101,7 +101,7 @@ function editUser(Request $request, AdminUserRepository $adminUserRepo, AdminRol
                 <th>Neues Passwort:</th>
                 <td><input type=\"password\" name=\"user_password\" autocomplete=\"off\" /></td>
             </tr>";
-        if (!empty($adminUser->tfaSecret)) {
+        if ($adminUser->tfaSecret !== '') {
             echo "<tr>
                     <th>Zwei-Faktor-Authentifizierung:</th>
                     <td><input type=\"checkbox\" name=\"tfa_remove\" id=\"tfa_remove\" value=\"1\" /> <label for=\"tfa_remove\">Zwei-Faktor-Authentifizierung deaktivieren</label></td>
@@ -112,7 +112,7 @@ function editUser(Request $request, AdminUserRepository $adminUserRepo, AdminRol
                 <td>";
         foreach ($roleManager->getRoles() as $k => $v) {
             echo '<input type="checkbox" name="roles[]" value="' . $k . '" id="role_' . $k . '"';
-            if (in_array($k, $adminUser->roles)) {
+            if (in_array($k, $adminUser->roles, true)) {
                 echo ' checked="checked"';
             }
             echo '> <label for="role_' . $k . '">' . $v . '</label><br/>';
@@ -247,7 +247,7 @@ function listUsers(
                 <td>" . $admin->nick . "</td>
                 <td>" . $admin->name . "</td>
                 <td><a href=\"mailto:" . $admin->email . "\">" . $admin->email . "</a></td>
-                <td>" . ($admin->tfaSecret ? "Aktiv" : "Nicht aktiviert") . "</td>
+                <td>" . ($admin->tfaSecret !== '' ? "Aktiv" : "Nicht aktiviert") . "</td>
                 <td>" . $roleManager->getRolesStr($admin) . "</td>
                 <td>" . ($admin->locked == 1 ? "<span style=\"color:red\">Ja</span>" : "Nein") . "</td>
                 <td style=\"width:40px;\">" . edit_button("?page=$page&amp;sub=$sub&amp;edit=" . $admin->id . "") . " ";
