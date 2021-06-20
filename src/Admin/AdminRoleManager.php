@@ -30,6 +30,9 @@ class AdminRoleManager
         return implode(', ', $rs);
     }
 
+    /**
+     * @return array<string,string>
+     */
     public function getRoles(): array
     {
         return self::$roles;

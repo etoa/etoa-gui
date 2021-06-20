@@ -26,6 +26,9 @@ class TicketStatus
         return 'Neu';
     }
 
+    /**
+     * @return array<string,string>
+     */
     public static function items(): array
     {
         return [

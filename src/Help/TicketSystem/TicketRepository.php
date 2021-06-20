@@ -66,7 +66,10 @@ class TicketRepository extends AbstractRepository
         return $data ? $this->createObject($data) : null;
     }
 
-    public function findBy(array $args = [])
+    /**
+     * @return array<Ticket>
+     */
+    public function findBy(array $args = []): array
     {
         $qry = $this->createQueryBuilder()
             ->select("*")
@@ -276,11 +279,17 @@ Dein Admin-Team";
         return $ticketMessage;
     }
 
+    /**
+     * @return array<TicketMessage>
+     */
     public function getMessages(Ticket $ticket): array
     {
         return $this->messageRepo->findByTicket($ticket->id);
     }
 
+    /**
+     * @return array<int>
+     */
     public function findOrphanedIds(): array
     {
         return $this->createQueryBuilder()

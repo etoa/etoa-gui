@@ -30,6 +30,9 @@ class TicketSolution
         return 'Offen';
     }
 
+    /**
+     * @return array<string,string>
+     */
     public static function items(): array
     {
         return [

@@ -60,6 +60,9 @@ class MessageRepository extends AbstractRepository
         }
     }
 
+    /**
+     * @return array<Message>
+     */
     public function findByRecipient(int $userId): array
     {
         $data = $this->createQueryBuilder()

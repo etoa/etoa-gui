@@ -47,6 +47,9 @@ class TicketMessageRepository extends AbstractRepository
         return $data ? $this->createObject($data) : null;
     }
 
+    /**
+     * @return array<TicketMessage>
+     */
     public function findByTicket(int $ticketId): array
     {
         $data = $this->createQueryBuilder()
