@@ -6,6 +6,66 @@ parameters:
 			path: bin/cronjob.php
 
 		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: htdocs/admin/content/cronjob.php
+
+		-
+			message: "#^Only booleans are allowed in an if condition, string\\|null given\\.$#"
+			count: 1
+			path: htdocs/admin/content/cronjob.php
+
+		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: htdocs/admin/content/eventhandler.php
+
+		-
+			message: "#^Implicit array creation is not allowed \\- variable \\$conf might not exist\\.$#"
+			count: 4
+			path: htdocs/admin/content/fleets.php
+
+		-
+			message: "#^Variable \\$trgstr might not be defined\\.$#"
+			count: 1
+			path: htdocs/admin/content/fleets.php
+
+		-
+			message: "#^Empty array passed to foreach\\.$#"
+			count: 1
+			path: htdocs/admin/content/logs.php
+
+		-
+			message: "#^Left side of && is always false\\.$#"
+			count: 1
+			path: htdocs/admin/content/logs.php
+
+		-
+			message: "#^Variable \\$res might not be defined\\.$#"
+			count: 3
+			path: htdocs/admin/content/logs.php
+
+		-
+			message: "#^Variable \\$checked might not be defined\\.$#"
+			count: 1
+			path: htdocs/admin/content/messages.php
+
+		-
+			message: "#^Variable \\$mail might not be defined\\.$#"
+			count: 1
+			path: htdocs/admin/content/messages.php
+
+		-
+			message: "#^Variable \\$reply might not be defined\\.$#"
+			count: 1
+			path: htdocs/admin/content/messages.php
+
+		-
+			message: "#^Ternary operator condition is always true\\.$#"
+			count: 2
+			path: htdocs/admin/content/overview.php
+
+		-
 			message: "#^Empty array passed to foreach\\.$#"
 			count: 1
 			path: htdocs/admin/inc/admin_functions.inc.php

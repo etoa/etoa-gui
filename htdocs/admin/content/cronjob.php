@@ -21,15 +21,15 @@ if (UNIX) {
     exec("crontab -l", $crontab);
 
     // Enable cronjob
-    if (isset($_GET['enablecronjob']) && !in_array($cronjob, $crontab)) {
+    if (isset($_GET['enablecronjob']) && !in_array($cronjob, $crontab, true)) {
         $out = shell_exec('(crontab -l 2>/dev/null; echo "'.$cronjob.'") | crontab -');
-        if (!empty($out)) {
+        if ($out) {
             $errorMessage = 'Cronjob konnte nicht aktiviert werden: ' . $out;
         }
         exec("crontab -l", $crontab);
     }
 
-    $crontabCheck = in_array($cronjob, $crontab);
+    $crontabCheck = in_array($cronjob, $crontab, true);
     $crontab = implode("\n", $crontab);
 } else {
     $crontabCheck = false;
@@ -58,7 +58,7 @@ foreach (PeriodicTaskRunner::getScheduleFromConfig() as $tc) {
 }
 
 // Run periodic task if requested
-if (!empty($_GET['runtask'])) {
+if (isset($_GET['runtask'])) {
     if (isset($periodictasks[$_GET['runtask']])) {
         $title = "[b]Task: ".$periodictasks[$_GET['runtask']]['desc']."[/b] (".$_GET['runtask'].")\n";
         ob_start();
@@ -71,7 +71,7 @@ if (!empty($_GET['runtask'])) {
 }
 
 // Run current or all tasks if requested
-if (!empty($_GET['run'])) {
+if (isset($_GET['run'])) {
     ob_start();
     $tr = new PeriodicTaskRunner($app);
     $log = '';
@@ -89,7 +89,7 @@ if (!empty($_GET['run'])) {
 
 // Handle result message
 $updateResults = null;
-if (!empty($_SESSION['update_results'])) {
+if (isset($_SESSION['update_results'])) {
     $updateResults = text2html($_SESSION['update_results']);
     unset($_SESSION['update_results']);
 }

@@ -6,16 +6,16 @@ use Twig\Environment;
 /** @var TextRepository */
 $textRepo = $app['etoa.text.repository'];
 
-if (!empty($_GET['id'])) {
+if (isset($_GET['id'])) {
     editText($textRepo, $twig);
 }
-if (!empty($_GET['preview'])) {
+if (isset($_GET['preview'])) {
     previewText($textRepo, $twig);
 }
-if (!empty($_GET['enable'])) {
+if (isset($_GET['enable'])) {
     enableText($textRepo);
 }
-if (!empty($_GET['disable'])) {
+if (isset($_GET['disable'])) {
     disableText($textRepo);
 }
 textOverview($textRepo, $twig);

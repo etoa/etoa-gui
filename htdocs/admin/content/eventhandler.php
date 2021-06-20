@@ -13,7 +13,7 @@ if (UNIX) {
 
     if (isset($_GET['action'])) {
         $executable = $cfg->daemon_exe->v;
-        if (empty($executable)) {
+        if (!$executable) {
             $executable = realpath(RELATIVE_ROOT.'../eventhandler/target/etoad');
         }
         $instance = $cfg->daemon_instance->v;

@@ -118,10 +118,10 @@ function ticketDetails(
 
     if ($request->request->has('submit')) {
 
-        if (!in_array($request->request->get('status'), array_keys(TicketStatus::items()))) {
+        if (!in_array($request->request->get('status'), array_keys(TicketStatus::items()), true)) {
             error_msg('Ungültiger Ticketstatus!');
         }
-        if (!in_array($request->request->get('solution'), array_keys(TicketSolution::items()))) {
+        if (!in_array($request->request->get('solution'), array_keys(TicketSolution::items()), true)) {
             error_msg('Ungültige Ticketlösung!');
         }
 

@@ -211,7 +211,7 @@ function adminSessionLogView(
     if ($request->query->has('kick') && $request->query->getInt('kick') > 0) {
         $idToKick = $request->query->getInt('kick');
         if ($idToKick != $cu->id) {
-            $sessionManager->kick($idToKick);
+            $sessionManager->kick((string) $idToKick);
             Log::add(8, Log::INFO, $cu->nick . " löscht die Session des Administrators mit der ID " . $idToKick);
         } else {
             echo error_msg("Du kannst nicht dich selbst kicken!");
@@ -347,7 +347,7 @@ function indexView(
 
     echo $twig->render('admin/overview/overview.html.twig', [
         'welcomeMessage' => 'Hallo <b>' . $cu->nick . '</b>, willkommen im Administrationsmodus! Deine Rolle(n): <b>' . $roleManager->getRolesStr($cu) . '.</b>',
-        'hasTfa' => !empty($cu->tfaSecret),
+        'hasTfa' => (bool) $cu->tfaSecret,
         'didBigBangHappen' => $universeCellRepo->count() != 0,
         'forcePasswordChange' => $cu->forcePasswordChange,
         'numNewTickets' => $ticketRepo->countNew(),

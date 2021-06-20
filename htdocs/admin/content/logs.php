@@ -58,6 +58,7 @@
 	{
 		if ($_SESSION['logs']['query']=="")
 		{
+            $sql = '';
 			$sqlstart = "SELECT * FROM logs,log_cat WHERE log_cat=cat_id ";
 			$sqlend = " ORDER BY log_realtime DESC, log_timestamp DESC";
 			if ($_POST['limit']>0)
@@ -365,6 +366,8 @@
 						$header_user_a = "<span style=\"color:red;\">".get_user_nick($arr['logs_battle_user1_id'])."</span>".$alliance_tag_a."";
 						$header_user_d = "<span style=\"color:red;\">".get_user_nick($arr['logs_battle_user2_id'])."</span>".$alliance_tag_d."";
 						break;
+                    default:
+                        throw new \InvalidArgumentException('Unexpected battle result: ' . $arr['logs_battle_result']);
 				}
 
 				// Krieg?
@@ -679,6 +682,9 @@
 					$banReason = "";
 					$attackCntTotal = 0;
 					$attackedEntities = count($eArr);
+                    $waveStart = 0;
+                    $waveEnd = 0;
+                    $waveCnt = 0;
 
 					foreach ($eArr as $entity=>$eDataArr)
 					{
@@ -688,8 +694,8 @@
 
 						foreach($eDataArr as $eData)
 						{
-							if ($frstTime==0) {
-								$firsTime = $eData[0];
+							if ($firstTime==0) {
+                                $firstTime = $eData[0];
 
 								// Wenn mehr als 5 Planeten angegrifen wurden
 								if ($attackedEntities>$attackedEntitiesMax[$eData[1]])

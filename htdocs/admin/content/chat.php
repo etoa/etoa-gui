@@ -149,7 +149,7 @@
 
 			</div>
 			<div id="lastid" style="display:none;visibility:hidden">
-				<?PHP echo $lastid;?>
+            <?PHP //echo $lastid;?>
 			</div>
 			<script type="text/javascript">
 				xajax_loadChat(0);

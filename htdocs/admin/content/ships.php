@@ -66,6 +66,8 @@
 		ORDER BY
 			ship_name
 		");
+        $ship_xp = 0;
+        $ship_xp_multiplier = 0;
 		while ($arr=mysql_fetch_array($res))
 		{
 			if (!isset($ship_xp))

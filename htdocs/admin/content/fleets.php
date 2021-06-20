@@ -362,6 +362,7 @@
 				$landtime = parseDatePicker('landtime', $_POST);
 				if ($landtime<=$launchtime) $landtime=$launchtime+60;
 
+                $srcstr = '';
 				if ($srcEnt = Entity::createFactoryByCoords($_POST['sx_start'],$_POST['sy_start'],$_POST['cx_start'],$_POST['cy_start'],$_POST['p_start']))
 				{
 					$srcstr = "entity_from=".$srcEnt->id().",";
@@ -517,7 +518,7 @@
 							}
 						}
 
-						if (in_array('OwnableEntity', class_implements($trgEnt)))
+						if (in_array('OwnableEntity', class_implements($trgEnt), true))
 						{
 							$trgEnt->changeRes($arr['res_metal'],$arr['res_crystal'],$arr['res_plastic'],$arr['res_fuel'],$arr['res_food'],$arr['res_power']);
 							$trgEnt->chgPeople($arr['pilots']+$arr['res_people']);
@@ -943,7 +944,7 @@
 				{
 					$sql.= " AND entity_to=".$_POST['entity_to_id']."";
 				}
-				if ((int)$_POST['user_id'])
+				if ((int)$_POST['user_id'] !== 0)
 					$sql.=" AND user_id=".(int)$_POST['user_id'];
 				if ($_POST['fleet_id']!="")
 					$sql.=" AND id=".$_POST['id'];

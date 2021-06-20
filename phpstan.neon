@@ -14,7 +14,13 @@ parameters:
         - htdocs
 
     excludePaths:
-        - htdocs/admin/content
+        - htdocs/admin/content/alliance
+        - htdocs/admin/content/config
+        - htdocs/admin/content/db
+        - htdocs/admin/content/galaxy
+        - htdocs/admin/content/home
+        - htdocs/admin/content/misc
+        - htdocs/admin/content/user
         - htdocs/libs
 
     bootstrapFiles:
