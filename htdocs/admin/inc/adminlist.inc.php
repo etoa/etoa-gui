@@ -9,9 +9,9 @@ $adminUserRepo = $app['etoa.admin.user.repository'];
 /** @var AdminRoleManager */
 $roleManager = $app['etoa.admin.role.manager'];
 
-index($adminUserRepo, $roleManager);
+adminListIndex($adminUserRepo, $roleManager);
 
-function index(AdminUserRepository $adminUserRepo, AdminRoleManager $roleManager): void
+function adminListIndex(AdminUserRepository $adminUserRepo, AdminRoleManager $roleManager): void
 {
 	echo "<h1>Admin-Liste</h1>";
 
