@@ -2,6 +2,7 @@
 
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\InvalidAllianceParametersException;
+use EtoA\Core\Configuration\ConfigurationService;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
@@ -10,6 +11,9 @@ $repository = $app['etoa.alliance.repository'];
 
 /** @var Request */
 $request = Request::createFromGlobals();
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
 
 if ($sub == "imagecheck") {
 	imagecheck($request, $repository);
@@ -20,7 +24,7 @@ if ($sub == "imagecheck") {
 } elseif ($sub == "create") {
 	create($request, $repository);
 } elseif ($sub == "news") {
-	news();
+	news($config);
 } elseif ($sub == "crap") {
 	crap($request, $repository);
 } else {
@@ -193,11 +197,10 @@ function create(Request $request, AllianceRepository $repository)
 		</form>";
 }
 
-function news()
+function news(ConfigurationService $config)
 {
 	global $page;
 	global $sub;
-	global $conf;
 
 	echo '<h1>Allianz-News</h1>';
 
@@ -221,12 +224,12 @@ function news()
 		432000 => '5 Tage',
 		604800 => '1 Woche'
 	];
-	$ban_text = $conf['townhall_ban']['p1'] != '' ? stripslashes($conf['townhall_ban']['p1']) : 'Rathaus-Missbrauch';
+	$ban_text = $config->param1('townhall_ban') != '' ? stripslashes($config->param1('townhall_ban')) : 'Rathaus-Missbrauch';
 
 	echo 'Standardeinstellung für Sperre: <select id="ban_timespan">';
 	foreach ($ban_timespan as $k => $v) {
 		echo '<option value="' . $k . '"';
-		echo  $conf['townhall_ban']['v'] == $k ? ' selected="selected"' : '';
+		echo  $config->get('townhall_ban') == $k ? ' selected="selected"' : '';
 		echo '>' . $v . '</option>';
 	}
 	echo '</select> mit folgendem Text: <input type="text" id="ban_text" value="' . $ban_text . '" size="35" /> ';

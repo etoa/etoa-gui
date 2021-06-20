@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Building\BuildingRepository;
+use EtoA\Core\Configuration\ConfigurationService;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
@@ -9,6 +10,9 @@ $repository = $app['etoa.building.repository'];
 
 /** @var Request */
 $request = Request::createFromGlobals();
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
 
 if ($sub == "prices") {
     priceCalculator($repository);
@@ -21,7 +25,7 @@ if ($sub == "prices") {
 } elseif ($sub == "req") {
     requirements($twig);
 } else {
-    buildingList($request, $repository, $twig);
+    buildingList($request, $repository, $config, $twig);
 }
 
 function priceCalculator(BuildingRepository $repository)
@@ -194,11 +198,14 @@ function requirements(Environment $twig)
     include("inc/requirements.inc.php");
 }
 
-function buildingList(Request $request, BuildingRepository $repository, Environment $twig)
+function buildingList(
+    Request $request,
+    BuildingRepository $repository,
+    ConfigurationService $config,
+    Environment $twig)
 {
     global $page;
     global $sub;
-    global $conf;
 
     $twig->addGlobal('title', 'Gebäudeliste');
 
@@ -331,20 +338,24 @@ function buildingList(Request $request, BuildingRepository $repository, Environm
         echo "<tr><th class=\"tbltitle\">Sonnensystem</th><td class=\"tbldata\">
             <select name=\"cell_sx\" onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showBuildingsOnPlanet',1);\">";
         echo "<option value=\"0\">Sektor X</option>";
-        for ($x = 1; $x <= $conf['num_of_sectors']['p1']; $x++)
+        for ($x = 1; $x <= $config->param1Int('num_of_sectors'); $x++) {
             echo "<option value=\"$x\">$x</option>";
+        }
         echo "</select>/<select name=\"cell_sy\"  onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showBuildingsOnPlanet',1);\">";
         echo "<option value=\"0\">Sektor Y</option>";
-        for ($x = 1; $x <= $conf['num_of_sectors']['p2']; $x++)
+        for ($x = 1; $x <= $config->param2Int('num_of_sectors'); $x++) {
             echo "<option value=\"$x\">$x</option>";
+        }
         echo "</select> : <select name=\"cell_cx\" onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showBuildingsOnPlanet',1);\">";
         echo "<option value=\"0\">Zelle X</option>";
-        for ($x = 1; $x <= $conf['num_of_cells']['p1']; $x++)
+        for ($x = 1; $x <= $config->param1Int('num_of_cells'); $x++) {
             echo "<option value=\"$x\">$x</option>";
+        }
         echo "</select>/<select name=\"cell_cy\" onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showBuildingsOnPlanet',1);\">";
         echo "<option value=\"0\">Zelle Y</option>";
-        for ($x = 1; $x <= $conf['num_of_cells']['p2']; $x++)
+        for ($x = 1; $x <= $config->param2Int('num_of_cells'); $x++) {
             echo "<option value=\"$x\">$x</option>";
+        }
         echo "</select></td></tr>";
 
         //User

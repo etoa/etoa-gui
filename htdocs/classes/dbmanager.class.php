@@ -1,4 +1,7 @@
 <?PHP
+
+use EtoA\Core\Configuration\ConfigurationService;
+
 /**
 * Database Manager
 *
@@ -635,8 +638,13 @@ class DBManager implements ISingleton	{
 	* Returns the backup directory path, if it exists
 	*/
 	public static function getBackupDir() {
-		$cfg = Config::getInstance();
-		$backupDir = $cfg->backup_dir->v;
+        // TODO
+        global $app;
+
+        /** @var ConfigurationService */
+        $config = $app['etoa.config.service'];
+
+		$backupDir = $config->get('backup_dir');
 		if ($backupDir) {
 			if (is_dir($backupDir)) {
 				return $backupDir;

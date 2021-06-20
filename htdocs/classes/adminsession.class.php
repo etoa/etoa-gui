@@ -3,6 +3,7 @@
 use EtoA\Admin\AdminSessionManager;
 use EtoA\Admin\AdminSessionRepository;
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Core\Configuration\ConfigurationService;
 
 /**
  * Provides session and authentication management
@@ -12,160 +13,162 @@ use EtoA\Admin\AdminUserRepository;
  */
 class AdminSession extends Session
 {
-	protected $namePrefix = "admin";
+    protected $namePrefix = "admin";
 
-	function login($data)
-	{
-		// TODO
-		global $app;
+    function login($data)
+    {
+        // TODO
+        global $app;
 
-		/** @var AdminSessionManager */
-		$sessionManager = $app['etoa.admin.session.manager'];
+        /** @var AdminSessionManager */
+        $sessionManager = $app['etoa.admin.session.manager'];
 
-		/** @var AdminUserRepository */
-		$userRepository = $app['etoa.admin.user.repository'];
+        /** @var AdminUserRepository */
+        $userRepository = $app['etoa.admin.user.repository'];
 
-		$sessionManager->cleanup();
+        $sessionManager->cleanup();
 
-		// If user login data has been temporary stored (two factor authentication challenge), restore it
-		if (!isset($data['login_nick']) && $this->tfa_login_nick) {
-			$data['login_nick'] = $this->tfa_login_nick;
-		}
-		if (!isset($data['login_pw']) && $this->tfa_login_pw) {
-			$data['login_pw'] = $this->tfa_login_pw;
-		}
+        // If user login data has been temporary stored (two factor authentication challenge), restore it
+        if (!isset($data['login_nick']) && $this->tfa_login_nick) {
+            $data['login_nick'] = $this->tfa_login_nick;
+        }
+        if (!isset($data['login_pw']) && $this->tfa_login_pw) {
+            $data['login_pw'] = $this->tfa_login_pw;
+        }
 
-		if ($data['login_nick'] && $data['login_pw']) {
-			$user = $userRepository->findOneByNick($data['login_nick']);
-			if ($user != null) {
-				if (validatePasswort($data['login_pw'], $user->passwordString)) {
-					// Check if two factor authentication is enabled for this user
-					if ($user->tfaSecret != "") {
-						// Check if user supplied challenge
-						if (isset($data['login_challenge'])) {
-							$tfa = new RobThree\Auth\TwoFactorAuth(APP_NAME);
-							// Validate challenge. If false, return to challenge input
-							if (!$tfa->verifyCode($user->tfaSecret, $data['login_challenge'])) {
-								$this->lastError = "Ungültiger Code!";
-								$this->lastErrorCode = "tfa_challenge";
-								return false;
-							}
-						}
-						// User needs to supply challenge
-						else {
-							// Temporary store users login data
-							$this->tfa_login_nick = $data['login_nick'];
-							$this->tfa_login_pw = $data['login_pw'];
-							$this->lastErrorCode = "tfa_challenge";
-							return false;
-						}
-					}
+        if ($data['login_nick'] && $data['login_pw']) {
+            $user = $userRepository->findOneByNick($data['login_nick']);
+            if ($user != null) {
+                if (validatePasswort($data['login_pw'], $user->passwordString)) {
+                    // Check if two factor authentication is enabled for this user
+                    if ($user->tfaSecret != "") {
+                        // Check if user supplied challenge
+                        if (isset($data['login_challenge'])) {
+                            $tfa = new RobThree\Auth\TwoFactorAuth(APP_NAME);
+                            // Validate challenge. If false, return to challenge input
+                            if (!$tfa->verifyCode($user->tfaSecret, $data['login_challenge'])) {
+                                $this->lastError = "Ungültiger Code!";
+                                $this->lastErrorCode = "tfa_challenge";
+                                return false;
+                            }
+                        }
+                        // User needs to supply challenge
+                        else {
+                            // Temporary store users login data
+                            $this->tfa_login_nick = $data['login_nick'];
+                            $this->tfa_login_pw = $data['login_pw'];
+                            $this->lastErrorCode = "tfa_challenge";
+                            return false;
+                        }
+                    }
 
-					// Unset temporary stored user login data
-					unset($this->tfa_login_nick);
-					unset($this->tfa_login_pw);
+                    // Unset temporary stored user login data
+                    unset($this->tfa_login_nick);
+                    unset($this->tfa_login_pw);
 
-					session_regenerate_id(true);
+                    session_regenerate_id(true);
 
-					$this->user_id = (int) $user->id;
-					$this->user_nick = $user->nick;
-					$t = time();
-					$this->time_login = $t;
-					$this->time_action = $t;
-					$this->registerSession();
+                    $this->user_id = (int) $user->id;
+                    $this->user_nick = $user->nick;
+                    $t = time();
+                    $this->time_login = $t;
+                    $this->time_action = $t;
+                    $this->registerSession();
 
-					$this->firstView = true;
-					return true;
-				} else {
-					$this->lastError = "Benutzer nicht vorhanden oder Passwort falsch!";
-					$this->lastErrorCode = "pass";
-				}
-			} else {
-				$this->lastError = "Benutzer nicht vorhanden oder Passwort falsch!";
-				$this->lastErrorCode = "pass";
-			}
-		} else {
-			$this->lastError = "Kein Benutzername oder Passwort eingegeben oder ungültige Zeichen verwendet!";
-			$this->lastErrorCode = "name";
-		}
-		// Unset temporary stored user login data
-		unset($this->tfa_login_nick);
-		unset($this->tfa_login_pw);
-		return false;
-	}
+                    $this->firstView = true;
+                    return true;
+                } else {
+                    $this->lastError = "Benutzer nicht vorhanden oder Passwort falsch!";
+                    $this->lastErrorCode = "pass";
+                }
+            } else {
+                $this->lastError = "Benutzer nicht vorhanden oder Passwort falsch!";
+                $this->lastErrorCode = "pass";
+            }
+        } else {
+            $this->lastError = "Kein Benutzername oder Passwort eingegeben oder ungültige Zeichen verwendet!";
+            $this->lastErrorCode = "name";
+        }
+        // Unset temporary stored user login data
+        unset($this->tfa_login_nick);
+        unset($this->tfa_login_pw);
+        return false;
+    }
 
-	/**
-	 * Checks if the current session is valid
-	 *
-	 * @return bool true if session is valid
-	 */
-	function validate()
-	{
-		// TODO
-		global $app;
+    /**
+     * Checks if the current session is valid
+     *
+     * @return bool true if session is valid
+     */
+    function validate()
+    {
+        // TODO
+        global $app;
 
-		/** @var AdminSessionManager */
-		$sessionManager = $app['etoa.admin.session.manager'];
+        /** @var AdminSessionManager */
+        $sessionManager = $app['etoa.admin.session.manager'];
 
-		/** @var AdminSessionRepository */
-		$repository = $app['etoa.admin.session.repository'];
+        /** @var AdminSessionRepository */
+        $repository = $app['etoa.admin.session.repository'];
 
-		if (isset($this->time_login)) {
-			$exists = $repository->exists(
-				session_id(),
-				intval($this->user_id),
-				$_SERVER['HTTP_USER_AGENT'],
-				intval($this->time_login),
-			);
-			if ($exists) {
-				$t = time();
-				$cfg = Config::getInstance();
-				if ($this->time_action + (int) $cfg->admin_timeout->v > $t) {
-					$repository->update(session_id(), $t, $_SERVER['REMOTE_ADDR']);
-					$this->time_action = $t;
-					return true;
-				} else {
-					$this->lastError = "Das Timeout von " . tf($cfg->admin_timeout->v) . " wurde überschritten!";
-					$this->lastErrorCode = "timeout";
-				}
-			} else {
-				$this->lastError = "Session nicht mehr vorhanden!";
-				$this->lastErrorCode = "nosession";
-			}
-		} else {
-			$this->lastError = "Keine Session!";
-			$this->lastErrorCode = "nologin";
-		}
-		$sessionManager->unregisterSession(session_id());
-		return false;
-	}
+        /** @var ConfigurationService */
+        $config = $app['etoa.config.service'];
 
-	function registerSession()
-	{
-		// TODO
-		global $app;
+        if (isset($this->time_login)) {
+            $exists = $repository->exists(
+                session_id(),
+                intval($this->user_id),
+                $_SERVER['HTTP_USER_AGENT'],
+                intval($this->time_login),
+            );
+            if ($exists) {
+                $t = time();
+                if ($this->time_action + $config->getInt('admin_timeout') > $t) {
+                    $repository->update(session_id(), $t, $_SERVER['REMOTE_ADDR']);
+                    $this->time_action = $t;
+                    return true;
+                } else {
+                    $this->lastError = "Das Timeout von " . tf($config->getInt('admin_timeout')) . " wurde überschritten!";
+                    $this->lastErrorCode = "timeout";
+                }
+            } else {
+                $this->lastError = "Session nicht mehr vorhanden!";
+                $this->lastErrorCode = "nosession";
+            }
+        } else {
+            $this->lastError = "Keine Session!";
+            $this->lastErrorCode = "nologin";
+        }
+        $sessionManager->unregisterSession(session_id());
+        return false;
+    }
 
-		/** @var AdminSessionRepository */
-		$repository = $app['etoa.admin.session.repository'];
+    function registerSession()
+    {
+        // TODO
+        global $app;
 
-		$repository->removeByUserOrId(session_id(), intval($this->user_id));
-		$repository->create(
-			session_id(),
-			intval($this->user_id),
-			$_SERVER['REMOTE_ADDR'],
-			$_SERVER['HTTP_USER_AGENT'],
-			intval($this->time_login),
-		);
-	}
+        /** @var AdminSessionRepository */
+        $repository = $app['etoa.admin.session.repository'];
 
-	function logout()
-	{
-		// TODO
-		global $app;
+        $repository->removeByUserOrId(session_id(), intval($this->user_id));
+        $repository->create(
+            session_id(),
+            intval($this->user_id),
+            $_SERVER['REMOTE_ADDR'],
+            $_SERVER['HTTP_USER_AGENT'],
+            intval($this->time_login),
+        );
+    }
 
-		/** @var AdminSessionManager */
-		$sessionManager = $app['etoa.admin.session.manager'];
+    function logout()
+    {
+        // TODO
+        global $app;
 
-		$sessionManager->unregisterSession(session_id());
-	}
+        /** @var AdminSessionManager */
+        $sessionManager = $app['etoa.admin.session.manager'];
+
+        $sessionManager->unregisterSession(session_id());
+    }
 }

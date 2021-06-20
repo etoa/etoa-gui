@@ -30,13 +30,13 @@ class ConfigurationService
         $this->load();
     }
 
-    /**
-     * @deprecated
-     */
-    public function add(string $name, $val, $param1 = "", $param2 = ""): void
-    {
-        $this->set($name, $val, $param1, $param2);
-    }
+    // /**
+    //  * @deprecated
+    //  */
+    // public function add(string $name, $val, $param1 = "", $param2 = ""): void
+    // {
+    //     $this->set($name, $val, $param1, $param2);
+    // }
 
     public function set(string $name, $val, $param1 = "", $param2 = ""): void
     {
@@ -50,81 +50,92 @@ class ConfigurationService
         unset($this->_items[$name]);
     }
 
-    public function get(string $key)
+    public function get(string $key): string
     {
         return $this->_items[$key]->v;
     }
 
-    /**
-     * @deprecated
-     */
-    public function value(string $key)
+    public function getInt(string $key): int
     {
-        return $this->get($key);
+        return (int) $this->get($key);
     }
 
-    public function param1(string $key)
+    public function getFloat(string $key): float
+    {
+        return (float) $this->get($key);
+    }
+
+    public function getBoolean(string $key): bool
+    {
+        return (bool) $this->get($key);
+    }
+
+    public function param1(string $key): string
     {
         return $this->_items[$key]->p1;
     }
 
-    /**
-     * @deprecated
-     */
-    public function p1(string $key)
+    public function param1Int(string $key): int
     {
-        return $this->param1($key);
+        return (int) $this->param1($key);
     }
 
-    public function param2(string $key)
+    public function param1Boolean(string $key): bool
+    {
+        return (bool) $this->param1($key);
+    }
+
+    public function param2(string $key): string
     {
         return $this->_items[$key]->p2;
     }
 
-    /**
-     * @deprecated
-     */
-    public function p2(string $key)
+    public function param2Int(string $key): int
     {
-        return $this->param2($key);
+        return (int) $this->param2($key);
     }
 
-    /**
-     * Wrapper for saving all values in an array (classic-style)
-     * @deprecated
-     */
-    public function &getArray(): array
+    public function param2Boolean(string $key): bool
     {
-        $conf = array();
-        foreach ($this->_items as $key => &$i) {
-            $conf[$key]['v'] = $i->v;
-            $conf[$key]['p1'] = $i->p1;
-            $conf[$key]['p2'] = $i->p2;
-        }
-        unset($i);
-        return $conf;
+        return (bool) $this->param2($key);
     }
+
+    // /**
+    //  * Wrapper for saving all values in an array (classic-style)
+    //  * @deprecated
+    //  */
+    // public function &getArray(): array
+    // {
+    //     $conf = array();
+    //     foreach ($this->_items as $key => &$i) {
+    //         $conf[$key]['v'] = $i->v;
+    //         $conf[$key]['p1'] = $i->p1;
+    //         $conf[$key]['p2'] = $i->p2;
+    //     }
+    //     unset($i);
+    //     return $conf;
+    // }
 
     public function has(string $name): bool
     {
         return isset($this->_items[$name]);
     }
 
-    public function __isset(string $name): bool
-    {
-        return $this->has($name);
-    }
+    // public function __isset(string $name): bool
+    // {
+    //     return $this->has($name);
+    // }
 
-    public function __get($name)
-    {
-        if (isset($this->_items[$name])) {
-            return $this->_items[$name];
-        }
-        if ($elem = $this->loadDefault($name)) {
-            return $elem;
-        }
-        throw new \Exception("Konfigurationsvariable $name existiert nicht!");
-    }
+    // public function __get($name)
+    // {
+    //     if (isset($this->_items[$name])) {
+    //         return $this->_items[$name];
+    //     }
+    //     if ($elem = $this->loadDefault($name)) {
+    //         return $elem;
+    //     }
+    //     throw new \Exception("Konfigurationsvariable $name existiert nicht!");
+    // }
 
     public function restoreDefaults(): int
     {
