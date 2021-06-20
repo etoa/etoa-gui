@@ -1,13 +1,17 @@
 <?PHP
 
+use EtoA\Admin\AdminRoleManager;
 use EtoA\Admin\AdminUserRepository;
 
 /** @var AdminUserRepository */
 $adminUserRepo = $app['etoa.admin.user.repository'];
 
-index($adminUserRepo);
+/** @var AdminRoleManager */
+$roleManager = $app['etoa.admin.role.manager'];
 
-function index(AdminUserRepository $adminUserRepo): void
+index($adminUserRepo, $roleManager);
+
+function index(AdminUserRepository $adminUserRepo, AdminRoleManager $roleManager): void
 {
 	echo "<h1>Admin-Liste</h1>";
 
@@ -26,7 +30,7 @@ function index(AdminUserRepository $adminUserRepo): void
 			<td>" . $admin->name . "</td>
 			<td><a href=\"mailto:" . $admin->email . "\">" . $admin->email . "</a></td>
 			<td>" . ($admin->tfaSecret ? "Aktiv" : "Nicht aktiviert") . "</td>
-			<td>" . $admin->getRolesStr() . "</td>
+			<td>" . $roleManager->getRolesStr($admin) . "</td>
 			<td>" . ($admin->boardUrl ? "<a href=\"" . $admin->boardUrl . "\" target=\"_blank\">Profil</a>" : "") . "</td>
 		</tr>";
 	}

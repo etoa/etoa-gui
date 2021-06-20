@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Admin\AdminRoleManager;
 use EtoA\Admin\AdminSessionManager;
 use EtoA\Admin\AdminSessionRepository;
 use EtoA\Admin\AdminUser;
@@ -60,7 +61,10 @@ if ($sub == "offline") {
     /** @var TextRepository */
     $textRepo = $app['etoa.text.repository'];
 
-    indexView($cu, $universeCellRepo, $ticketRepo, $textRepo, $twig);
+    /** @var AdminRoleManager */
+    $roleManager = $app['etoa.admin.role.manager'];
+
+    indexView($cu, $universeCellRepo, $ticketRepo, $textRepo, $roleManager, $twig);
 }
 
 function takeOffline(Request $request)
@@ -297,6 +301,7 @@ function indexView(
     CellRepository $universeCellRepo,
     TicketRepository $ticketRepo,
     TextRepository $textRepo,
+    AdminRoleManager $roleManager,
     Environment $twig
 ) {
     global $conf;
@@ -341,7 +346,7 @@ function indexView(
     $_SESSION['admin']['queries']['alliances'] = "";
 
     echo $twig->render('admin/overview/overview.html.twig', [
-        'welcomeMessage' => 'Hallo <b>' . $cu->nick . '</b>, willkommen im Administrationsmodus! Deine Rolle(n): <b>' . $cu->getRolesStr() . '.</b>',
+        'welcomeMessage' => 'Hallo <b>' . $cu->nick . '</b>, willkommen im Administrationsmodus! Deine Rolle(n): <b>' . $roleManager->getRolesStr($cu) . '.</b>',
         'hasTfa' => !empty($cu->tfaSecret),
         'didBigBangHappen' => $universeCellRepo->count() != 0,
         'forcePasswordChange' => $cu->forcePasswordChange,

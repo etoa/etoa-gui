@@ -114,9 +114,9 @@ class TwigExtension extends AbstractExtension
         );
     }
 
-    public function isAdminAllowed($userRoles, $required): bool
+    public function isAdminAllowed(array $userRoles, $required): bool
     {
-        return (new AdminRoleManager())->checkAllowed($required, $userRoles);
+        return (new AdminRoleManager())->checkAllowedRoles($userRoles, $required);
     }
 
     public function renderTime(): float

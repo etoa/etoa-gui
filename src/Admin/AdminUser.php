@@ -45,16 +45,4 @@ class AdminUser
     {
         return validatePasswort($newPassword, $this->passwordString);
     }
-
-    public function getRolesStr()
-    {
-        $rm = new AdminRoleManager();
-        return $rm->getRolesStr($this->roles);
-    }
-
-    public function hasRole($roles)
-    {
-        $rm = new AdminRoleManager();
-        return ($rm->checkAllowed($roles, $this->roles));
-    }
 }

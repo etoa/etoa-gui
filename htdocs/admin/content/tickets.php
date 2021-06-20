@@ -1,8 +1,8 @@
 <?php
 
+use EtoA\Admin\AdminRoleManager;
 use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
-use EtoA\Help\TicketSystem\Ticket;
 use EtoA\Help\TicketSystem\TicketMessageRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Help\TicketSystem\TicketSolution;
@@ -22,12 +22,15 @@ $adminUserRepo = $app['etoa.admin.user.repository'];
 /** @var UserRepository */
 $userRepo = $app['etoa.user.repository'];
 
+/** @var AdminRoleManager */
+$roleManager = $app['etoa.admin.role.manager'];
+
 /** @var Request */
 $request = Request::createFromGlobals();
 
 $twig->addGlobal("title", "Support-Tickets");
 
-if ($cu->hasRole("master,super-admin,game-admin,trial-game-admin")) {
+if ($roleManager->checkAllowed($cu, ["master", "super-admin", "game-admin", "trial-game-admin"])) {
     ticketNavigation();
 
     if ($request->query->has('edit') && $request->query->getInt('edit') > 0) {
@@ -293,7 +296,7 @@ function closedTickets(
             <td>" . $userRepo->getNick($ticket->userId) . "</td>
             <td>" . ($adminUserRepo->getNick($ticket->adminId) ?? '?') . "</td>
             <td>" . $ticketMessageRepo->count($ticket->id) . "</td>
-            <td>" . df($ticket->time) . "</td>
+            <td>" . df($ticket->timestamp) . "</td>
             </tr>";
         }
         tableEnd();

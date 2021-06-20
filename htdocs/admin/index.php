@@ -175,7 +175,7 @@ function adminView(
         foreach ($navMenu as $item) {
             if ($item['page'] == $page && $sub == "") {
                 $found = true;
-                if ($roleManager->checkAllowed($item['roles'], $cu->roles)) {
+                if ($roleManager->checkAllowed($cu, $item['roles'])) {
                     $allow_inc = true;
                     break;
                 }
@@ -183,7 +183,7 @@ function adminView(
                 foreach ($item['children'] as $data) {
                     if ($item['page'] == $page && $data['sub'] == $sub) {
                         $found = true;
-                        if ($roleManager->checkAllowed($data['roles'], $cu->roles)) {
+                        if ($roleManager->checkAllowed($cu, $data['roles'])) {
                             $allow_inc = true;
                             break;
                         }

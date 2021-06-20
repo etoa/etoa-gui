@@ -29,7 +29,7 @@ class AdminUserRepository extends AbstractRepository
         return $data !== false ? AdminUser::createFromArray($data) : null;
     }
 
-    public function findOneByNick(string $nick)
+    public function findOneByNick(string $nick): ?AdminUser
     {
         $data = $this->createQueryBuilder()
             ->select("*")
@@ -41,6 +41,9 @@ class AdminUserRepository extends AbstractRepository
         return $data !== false ? AdminUser::createFromArray($data) : null;
     }
 
+    /**
+     * @return array<AdminUser>
+     */
     public function findAll(): array
     {
         $data = $this->createQueryBuilder()
@@ -54,6 +57,9 @@ class AdminUserRepository extends AbstractRepository
             ->toArray();
     }
 
+    /**
+     * @return array<int,string>
+     */
     public function findAllAsList(): array
     {
         return $this->createQueryBuilder()
