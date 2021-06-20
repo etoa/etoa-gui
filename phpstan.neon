@@ -17,7 +17,6 @@ parameters:
         - htdocs/admin/content/alliance
         - htdocs/admin/content/config
         - htdocs/admin/content/db
-        - htdocs/admin/content/galaxy
         - htdocs/libs
 
     bootstrapFiles:
