@@ -1,17 +1,21 @@
 <?PHP
 
+use EtoA\Universe\UniverseGenerator;
 use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var UniverseGenerator */
+$universeGenerator = $app['etoa.universe.generator'];
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
 
-  echo "<h1>Universum</h1>";
+echo "<h1>Universum</h1>";
 
-  //
-  // Universum erstellen
-  //
-  if (isset($_POST['submit_create_universe']))
-  {
+//
+// Universum erstellen
+//
+if (isset($_POST['submit_create_universe']))
+{
     echo "<h2>Urknall - Schritt 2/3</h2>";
     $config->set("num_of_sectors", "", $_POST['num_of_sectors_p1'], $_POST['num_of_sectors_p2']);
     $config->set("num_of_cells", "", $_POST['num_of_cells_p1'], $_POST['num_of_cells_p2']);
@@ -60,11 +64,11 @@ $config = $app['etoa.config.service'];
 
     echo button("Zurück","?page=$page&amp;sub=$sub")." &nbsp; <input onclick=\"return confirm('Universum wirklich erstellen?')\" type=\"submit\" name=\"submit_create_universe2\" value=\"Weiter\" >";
     echo "</form>";
-  }
+}
 
-  // Erweitern
-  elseif(isset($_POST['submit_expansion_universe']))
-  {
+// Erweitern
+elseif(isset($_POST['submit_expansion_universe']))
+{
     echo "<h2>Universum erweitern</h2>";
     echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
     echo "<b>Universum (".$config->param1Int('num_of_sectors')."x".$config->param2Int('num_of_sectors').") erweitern</b><br><br>";
@@ -72,65 +76,65 @@ $config = $app['etoa.config.service'];
 
     echo "Gr&ouml;sse nach dem Ausbau: ";
     //erstellt 2 auswahllisten für die ausbaugrösse
-        echo "<select name=\"expansion_sector_x\">";
+    echo "<select name=\"expansion_sector_x\">";
         for ($x=($config->param1Int('num_of_sectors')+1);10>=$x;$x++)
-        {
-                echo "<option value=\"$x\">$x</option>";
-        }
-        echo "</select>";
-        echo " x ";
-        echo "<select name=\"expansion_sector_y\">";
+    {
+        echo "<option value=\"$x\">$x</option>";
+    }
+    echo "</select>";
+    echo " x ";
+    echo "<select name=\"expansion_sector_y\">";
         for ($x=($config->param2Int('num_of_sectors')+1);10>=$x;$x++)
-        {
-                echo "<option value=\"$x\">$x</option>";
-        }
-        echo "</select>";
-        echo "<br>";
+    {
+        echo "<option value=\"$x\">$x</option>";
+    }
+    echo "</select>";
+    echo "<br>";
 
     echo "<input onclick=\"return confirm('Universum wirklich erweitern?')\" type=\"submit\" name=\"submit_expansion_universe2\" value=\"Erweitern\" >";
     echo "</form>";
-  }
+}
 
-  // Reset
-  elseif (isset($_POST['submit_reset']))
-  {
+// Reset
+elseif (isset($_POST['submit_reset']))
+{
     echo "<h2>Runde zur&uuml;cksetzen</h2>";
     echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
     echo "Runde wirklich zur&uuml;cksetzen?<br/><br/>";
     echo "<input onclick=\"return confirm('Reset wirklich durchf&uuml;hren?')\" type=\"submit\" name=\"submit_reset2\" value=\"Ja, die gesamte Runde zur&uuml;cksetzen\" >";
     echo "</form>";
-  }
+}
 
-  elseif (isset($_POST['submit_galaxy_reset']))
-  {
-    Universe::reset(false);
+elseif (isset($_POST['submit_galaxy_reset']))
+{
+    $universeGenerator->reset(false);
     echo "Das Universum wurde zurückgesetzt!<br/><br/>".button("Weiter","?page=$page&amp;sub=$sub");
-  }
+}
 
-  elseif(isset($_POST['submit_reset2']))
-  {
-    Universe::reset();
+elseif(isset($_POST['submit_reset2']))
+{
+    $universeGenerator->reset();
     echo "Die Runde wurde zurückgesetzt!<br/><br/>".button("Weiter","?page=$page&amp;sub=$sub");
-  }
+}
 
-  elseif (isset($_POST['submit_addstars']))
-  {
+elseif (isset($_POST['submit_addstars']))
+{
     $n = (int)$_POST['number_of_stars'];
     if ($n < 0)
     {
       $n = 0;
     }
-    echo Universe::addStarSystems($n);
+    echo $universeGenerator->addStarSystems($n);
     echo " Sternensysteme wurden hinzugefügt!<br/><br/>".button("Weiter","?page=$page&amp;sub=$sub");
-  }
+}
 
-  // Uni-Optionen
-  else
-  {
+// Uni-Optionen
+else
+{
     if(isset($_POST['submit_create_universe2']))
     {
       echo "<h2>Urknall - Schritt 3/3</h2>";
-      Universe::create($_POST['map_image'],$_POST['map_precision']);
+      $universeGenerator->create($_POST['map_image'],$_POST['map_precision']);
       echo "<br/><br/>
       <img src=\"../misc/map.image.php?req_admin\" alt=\"Galaxiekarte\" id=\"img\" usemap=\"#Galaxy\" style=\"border:none;\"/><br/><br/>
       <input type=\"button\" value=\"Weiter\" onclick=\"document.location='?page=$page&sub=uni'\" />";
@@ -256,9 +260,9 @@ $config = $app['etoa.config.service'];
 
         echo "<br/><input type=\"submit\" name=\"submit_create_universe\" value=\"Weiter\" >";
         echo "</form><br/>";
-      }
-      else
-      {
+    }
+    else
+    {
         echo "<h2>&Uuml;bersicht</h2>";
 
         tableStart("Informationen", GALAXY_MAP_WIDTH);
@@ -318,7 +322,6 @@ $config = $app['etoa.config.service'];
         echo "<input type=\"submit\" name=\"submit_reset\" value=\"Ja, die gesamte Runde zur&uuml;cksetzen\" ><br><br>";
 
         echo "</form>";
-      }
+        }
     }
-  }
-?>
+}
