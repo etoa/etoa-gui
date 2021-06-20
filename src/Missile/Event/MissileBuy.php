@@ -8,10 +8,8 @@ class MissileBuy extends Event
 {
     public const BUY_SUCCESS = 'missile.buy.success';
 
-    /** @var int */
-    private $missileId;
-    /** @var int */
-    private $count;
+    private int $missileId;
+    private int $count;
 
     public function __construct(int $missileId, int $count)
     {

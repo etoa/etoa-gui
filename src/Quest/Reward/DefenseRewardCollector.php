@@ -13,10 +13,8 @@ class DefenseRewardCollector implements CollectorInterface
 {
     public const TYPE = 'defense';
 
-    /** @var DefenseRepository */
-    private $defenseRepository;
-    /** @var PlanetRepository */
-    private $planetRepository;
+    private DefenseRepository $defenseRepository;
+    private PlanetRepository $planetRepository;
 
     public function __construct(DefenseRepository $defenseRepository, PlanetRepository $planetRepository)
     {

@@ -13,10 +13,8 @@ class MissileRewardCollector implements CollectorInterface
 {
     public const TYPE = 'missile';
 
-    /** @var MissileRepository */
-    private $missileRepository;
-    /** @var PlanetRepository */
-    private $planetRepository;
+    private MissileRepository $missileRepository;
+    private PlanetRepository $planetRepository;
 
     public function __construct(MissileRepository $missileRepository, PlanetRepository $planetRepository)
     {

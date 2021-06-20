@@ -11,10 +11,8 @@ class HaveSpecialistType implements InitProgressHandlerFunctionInterface
 {
     public const NAME = 'have-specialist-type';
 
-    /** @var UserRepository */
-    private $userRepository;
-    /** @var int */
-    private $specialistId;
+    private UserRepository $userRepository;
+    private int $specialistId;
 
     public function __construct(array $attributes, UserRepository $userRepository)
     {

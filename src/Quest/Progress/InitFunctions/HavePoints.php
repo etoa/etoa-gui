@@ -11,8 +11,7 @@ class HavePoints implements InitProgressHandlerFunctionInterface
 {
     public const NAME = 'have-points';
 
-    /** @var UserRepository */
-    private $userRepository;
+    private UserRepository $userRepository;
 
     public function __construct(UserRepository $userRepository)
     {

@@ -6,12 +6,9 @@ use LittleCubicleGames\Quests\Entity\TaskInterface;
 
 class Task implements TaskInterface
 {
-    /** @var int */
-    private $id;
-    /** @var int */
-    private $taskId;
-    /** @var int */
-    private $progress;
+    private ?int $id;
+    private int $taskId;
+    private int $progress;
 
     public function __construct(?int $id, int $taskId, int $progress)
     {

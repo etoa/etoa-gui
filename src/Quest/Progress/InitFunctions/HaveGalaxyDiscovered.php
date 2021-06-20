@@ -11,8 +11,7 @@ class HaveGalaxyDiscovered implements InitProgressHandlerFunctionInterface
 {
     public const NAME = 'have-galaxy-discovered';
 
-    /** @var UserRepository */
-    private $userRepository;
+    private UserRepository $userRepository;
 
     public function __construct(UserRepository $userRepository)
     {

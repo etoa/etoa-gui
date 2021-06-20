@@ -17,8 +17,7 @@ use Pimple\Container;
 
 class ContainerAwareFunctionBuilder implements ProgressFunctionBuilderInterface
 {
-    /** @var Container */
-    private $container;
+    private Container $container;
 
     public function __construct(Container $container)
     {
