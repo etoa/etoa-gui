@@ -63,7 +63,7 @@ class TicketRepository extends AbstractRepository
             ->setParameter('id', $id)
             ->execute()
             ->fetchAssociative();
-        return $data ? $this->createObject($data) : null;
+        return $data ? Ticket::createFromArray($data) : null;
     }
 
     /**
@@ -84,24 +84,8 @@ class TicketRepository extends AbstractRepository
             ->fetchAllAssociative();
 
         return collect($data)
-            ->map(fn ($arr) => $this->createObject($arr))
+            ->map(fn ($arr) => Ticket::createFromArray($arr))
             ->toArray();
-    }
-
-    private function createObject(array $data): Ticket
-    {
-        $ticket = new Ticket();
-
-        $ticket->id = (int) $data['id'];
-        $ticket->solution = $data['solution'];
-        $ticket->status = $data['status'];
-        $ticket->timestamp = (int) $data['timestamp'];
-        $ticket->adminComment = $data['admin_comment'];
-        $ticket->catId = (int) $data['cat_id'];
-        $ticket->userId = (int) $data['user_id'];
-        $ticket->adminId = (int) $data['admin_id'];
-
-        return $ticket;
     }
 
     public function persist(Ticket $ticket): bool

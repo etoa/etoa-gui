@@ -44,7 +44,7 @@ class TicketMessageRepository extends AbstractRepository
             ->setParameter('id', $id)
             ->execute()
             ->fetchAssociative();
-        return $data ? $this->createObject($data) : null;
+        return $data ? TicketMessage::createFromArray($data) : null;
     }
 
     /**
@@ -61,7 +61,7 @@ class TicketMessageRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
         return collect($data)
-            ->map(fn ($arr) => $this->createObject($arr))
+            ->map(fn ($arr) => TicketMessage::createFromArray($arr))
             ->toArray();
     }
 
@@ -76,21 +76,7 @@ class TicketMessageRepository extends AbstractRepository
             ->setParameter('ticket_id', $ticketId)
             ->execute()
             ->fetchAssociative();
-        return $data ? $this->createObject($data) : null;
-    }
-
-    private function createObject(array $data): TicketMessage
-    {
-        $message = new TicketMessage();
-
-        $message->id = (int) $data['id'];
-        $message->ticketId = (int) $data['ticket_id'];
-        $message->userId = (int) $data['user_id'];
-        $message->adminId = (int) $data['admin_id'];
-        $message->timestamp = (int) $data['timestamp'];
-        $message->message = $data['message'];
-
-        return $message;
+        return $data ? TicketMessage::createFromArray($data) : null;
     }
 
     public function create(TicketMessage $message): void
