@@ -21,7 +21,7 @@ if (isset($_POST['apply_submit']))
 			}
 		}
 	}
-	if (!mysql_error())
+	if (mysql_error() !== '')
 		echo MessageBox::ok("", "&Auml;nderungen wurden &uuml;bernommen!");
 	else
 		echo MessageBox::error("Fehler", mysql_error());
@@ -40,7 +40,7 @@ if (isset($_POST['apply_submit']))
 	}
 	if ($deleted)
 	{
-		if (!mysql_error())
+		if (mysql_error() !== '')
 			echo MessageBox::ok("", "Bestimmte Daten wurden gel&ouml;scht!");
 		else
 			echo MessageBox::error("Fehler:", mysql_error());
@@ -73,7 +73,7 @@ if (isset($_POST['new_submit']))
 	$sql.= ");";
 
 	dbquery($sql);
-	if (!mysql_error())
+	if (mysql_error() !== '')
 		echo MessageBox::ok("", "Neuer leerer Datensatz wurde hinzugef&uuml;gt!");
 }
 

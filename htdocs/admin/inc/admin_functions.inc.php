@@ -39,7 +39,7 @@ function openerLink($target,$title,$css="")
 /**
 * Shows a table view of a given mysql result
 *
-* @param string MySQL result pointer
+* @param resource $res MySQL result pointer
 */
 function db_show_result($res)
 {
@@ -67,7 +67,7 @@ function db_show_result($res)
 * Generates a page for editing table date with
 * an advanced form
 *
-* @param string Module-key
+* @param string $module Module-key
 */
 function advanced_form($module, $twig)
 {
@@ -80,7 +80,7 @@ function advanced_form($module, $twig)
 * Generates a page for editing table date with
 * a simple form
 *
-* @param string Module-key
+* @param string $module Module-key
 */
 function simple_form($module, $twig)
 {
@@ -93,7 +93,7 @@ function simple_form($module, $twig)
 * Checks permission to access a page
 * for current user and given page rank
 *
-* @param int Required rank
+* @param int $rank Required rank
 * @return bool Permission granted or nor
 */
 function check_perm($rank)
@@ -110,8 +110,8 @@ function check_perm($rank)
 /**
 * Displays a clickable edit button
 *
-* @param string Url of the link
-* @param string Optional onclick value
+* @param string $url Url of the link
+* @param string $ocl Optional onclick value
 */
 function edit_button($url, $ocl="")
 {
@@ -124,8 +124,8 @@ function edit_button($url, $ocl="")
 /**
 * Displays a clickable copy button
 *
-* @param string Url of the link
-* @param string Optional onclick value
+* @param string $url Url of the link
+* @param string $ocl Optional onclick value
 */
 function copy_button($url, $ocl="")
 {
@@ -139,8 +139,7 @@ function copy_button($url, $ocl="")
 /**
 * Displays a clickable edit button
 *
-* @param string Url of the link
-* @param string Optional onclick value
+* @param string $url Url of the link
 */
 function cb_button($url)
 {
@@ -154,12 +153,14 @@ function cb_button($url)
 
 
 /**
-* Displays a clickable repair button
-*
-* @param string Url of the link
-* @param string Optional onclick value
+ * Displays a clickable repair button
+ *
+ * @param string $url Url of the link
+ * @param string $tmTitle
+ * @param string $tmText
+ * @param string $ocl
 */
-function repair_button($url, $tmTitle="", $tmText="")
+function repair_button($url, $tmTitle="", $tmText="", $ocl = '')
 {
 	if ($tmTitle!="" && $tmText!="")
 		return "<a href=\"$url\" onclick=\"$ocl\"><img src=\"../images/repair.gif\" alt=\"Reparieren\" style=\"width:18px;height:18px;border:none;\" ".tm($tmTitle,$tmText)."/></a>";
@@ -170,8 +171,8 @@ function repair_button($url, $tmTitle="", $tmText="")
 /**
 * Displays a clickable delete button
 *
-* @param string Url of the link
-* @param string Optional onclick value
+* @param string $url Url of the link
+* @param string $ocl Optional onclick value
 */
 function del_button($url, $ocl="")
 {
@@ -184,6 +185,7 @@ function del_button($url, $ocl="")
 function display_field($type, $confname, $field)
 {
 	ob_start();
+	/** @var Config $cfg */
 	global $cfg;
 	$id = "config_".$field."[".$confname."]";
 	switch ($type)
@@ -228,7 +230,7 @@ function display_field($type, $confname, $field)
 			}
 			echo "</select>.";
 			echo "<select name=\"config_".$field."_y[".$confname."]\" class=\"inputfield-$type\">";
-			for ($x=date("Y")-50;$x<date("Y")+50;$x++)
+			for ($x = (int) date("Y") - 50; $x < (int) date("Y") + 50; $x++)
 			{
 				echo "<option value=\"$x\"";
 				if (date("Y",$confValue)==$x) echo " selected=\"selected\"";
@@ -306,7 +308,7 @@ function encode_logtext($string)
 * for varchar/text mysql table fields ('contains', 'part of'
 * and negotiations of those two)
 *
-* @param string Field name
+* @param string $name Field name
 */
 function fieldqueryselbox($name)
 {
@@ -373,6 +375,7 @@ function fieldComparisonQuery(QueryBuilder $qry, array $formData, string $column
 //DEPRECATED
 function searchQuery($data)
 {
+    $str = null;
 	foreach ($data as $k=>$v)
 	{
 		if(!isset($str))
@@ -390,12 +393,12 @@ function searchQuery($data)
 // DEPRECATED
 function searchQueryDecode($query)
 {
-	$str = explode(";",base64_decode($query));
+	$str = explode(";",base64_decode($query, true));
 	$res = array();
 	foreach ($str as $s)
 	{
 		$t = explode(":",$s);
-		$res[base64_decode($t[0])]=base64_decode($t[1]);
+		$res[base64_decode($t[0], true)]=base64_decode($t[1], true);
 	}
 	return $res;
 }
@@ -409,8 +412,8 @@ function searchQueryUrl($str)
 * Builds a search query and sort array
 * based on GET,POST or SESSION data.
 *
-* @param array Pointer to query array
-* @param array Pointer to order/limit array
+* @param array $arr Pointer to query array
+* @param array $oarr Pointer to order/limit array
 * @author Nicolas Perrenoud <mrcage@etoa.ch>
 */
 function searchQueryArray(&$arr,&$oarr)
@@ -426,7 +429,7 @@ function searchQueryArray(&$arr,&$oarr)
 
 	if (isset($_GET['sq']))
 	{
-		$sq = base64_decode($_GET['sq']);
+		$sq = base64_decode($_GET['sq'], true);
 		$ob = explode(";",$sq);
 		foreach ($ob as $o)
 		{
@@ -448,7 +451,7 @@ function searchQueryArray(&$arr,&$oarr)
 				{
 					if (stristr($v,":"))
 					{
-						$chk = spliti(":",$v);
+						$chk = explode(":", $v);
 						if ($chk[1]=="d")
 							$oarr[$chk[0]] = "d";
 						else
@@ -496,7 +499,7 @@ function searchQueryArray(&$arr,&$oarr)
 			{
 				if (stristr($_POST['search_order'],":"))
 				{
-					$chk = spliti(":",$_POST['search_order']);
+					$chk = explode(":", $_POST['search_order']);
 					if ($chk[1]=="d")
 						$oarr[$chk[0]] = "d";
 					else
@@ -532,7 +535,7 @@ function searchQueryReset()
 * for varchar/text mysql table fields ('contains', 'part of'
 * and negotiations of those two)
 *
-* @param string Field name
+* @param string $name Field name
 */
 function searchFieldTextOptions($name)
 {
@@ -553,7 +556,7 @@ function searchFieldTextOptions($name)
 * for varchar/text mysql table fields ('contains', 'part of'
 * and negotiations of those two)
 *
-* @param string Field name
+* @param string $name Field name
 */
 function searchFieldNumberOptions($name)
 {
@@ -637,6 +640,7 @@ function tail($file, $num_to_get=10)
   {
 	  $position = filesize($file);
 	  fseek($fp, $position-1);
+      $data = '';
 	  $chunklen = 4096;
 	  while($position >= 0)
 	  {
@@ -714,8 +718,11 @@ function drawTechTreeForSingleItem($type,$id)
 				$name= $rarr['tname'];
 				$pn = "t:".$rarr['req_tech_id'];
 			}
-			else
-				$name= "INVALID";
+			else {
+                $name= "INVALID";
+                $pn = '';
+            }
+
 			echo "<a href=\"javascript:;\" onclick=\"var nlvl = prompt('Level für ".$name." ändern:','".$rarr['req_level']."'); if (nlvl != '' && nlvl != null) xajax_addToTechTree('".$type."',".$id.",'".$pn."',nlvl);\">";
 			echo $name." <b>".$rarr['req_level']."</b></a>";
 			echo " &nbsp; <a href=\"javascript:;\" onclick=\"if (confirm('Anforderung löschen?')) xajax_removeFromTechTree('".$type."',".$id.",".$rarr['id'].")\">".icon("delete")."</a>";
@@ -936,8 +943,8 @@ function showAttackAbuseLogs($args=null,$limit=-1,$load=true)
 						{
 							$ban = 0;
 							$banReason = "";
-							if ($frstTime==0) {
-								$firsTime = $eData[0];
+							if ($firstTime==0) {
+                                $firstTime = $eData[0];
 
 								// Wenn mehr als 5 Planeten angegrifen wurden
 								if ($attackedEntities>$attackedEntitiesMax[$eData[1]])
@@ -1609,7 +1616,7 @@ function showGameLogs($args=null,$limit=0)
 
 		$encodedName = base64_encode($file);
 		if (!isset($_SESSION['filedownload'][$encodedName])) {
-			$_SESSION['filedownload'][$encodedName] = uniqid(true);
+			$_SESSION['filedownload'][$encodedName] = uniqid('', true);
 		}
 		return "dl.php?path=".$encodedName."&hash=".sha1($encodedName.$_SESSION['filedownload'][$encodedName]);
 	}
@@ -1622,10 +1629,10 @@ function showGameLogs($args=null,$limit=0)
 		if (isset($arr['path']) && $arr['path']!="" && isset($arr['hash']) && $arr['hash']!="")
 		{
 			$encodedName = $arr['path'];
-			$file = base64_decode($encodedName);
+			$file = base64_decode($encodedName, true);
 			if (isset($_SESSION['filedownload'][$encodedName]) && $arr['hash'] == sha1($encodedName.$_SESSION['filedownload'][$encodedName])) {
-				return $file;
 				unset($_SESSION['filedownload'][$encodedName]);
+                return $file;
 			}
 		}
 		return false;

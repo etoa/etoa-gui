@@ -6,6 +6,56 @@ parameters:
 			path: bin/cronjob.php
 
 		-
+			message: "#^Empty array passed to foreach\\.$#"
+			count: 1
+			path: htdocs/admin/inc/admin_functions.inc.php
+
+		-
+			message: "#^Undefined variable\\: \\$total$#"
+			count: 3
+			path: htdocs/admin/inc/admin_functions.inc.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: htdocs/admin/inc/admin_functions.inc.php
+
+		-
+			message: "#^Variable \\$lastWave might not be defined\\.$#"
+			count: 1
+			path: htdocs/admin/inc/admin_functions.inc.php
+
+		-
+			message: "#^Variable \\$waveCnt might not be defined\\.$#"
+			count: 2
+			path: htdocs/admin/inc/admin_functions.inc.php
+
+		-
+			message: "#^Variable property access on Config\\.$#"
+			count: 5
+			path: htdocs/admin/inc/admin_functions.inc.php
+
+		-
+			message: "#^Variable property access on mixed\\.$#"
+			count: 5
+			path: htdocs/admin/inc/admin_functions.inc.php
+
+		-
+			message: "#^Variable static method call on string\\.$#"
+			count: 2
+			path: htdocs/admin/inc/advanced_forms.php
+
+		-
+			message: "#^Call to function in_array\\(\\) requires parameter \\#3 to be set\\.$#"
+			count: 1
+			path: htdocs/admin/inc/form_functions.php
+
+		-
+			message: "#^Only booleans are allowed in an if condition, int given\\.$#"
+			count: 2
+			path: htdocs/admin/inc/form_functions.php
+
+		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: htdocs/admin/index.php

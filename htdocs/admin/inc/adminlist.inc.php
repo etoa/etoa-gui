@@ -29,9 +29,9 @@ function index(AdminUserRepository $adminUserRepo, AdminRoleManager $roleManager
 			<td>" . $admin->nick . "</td>
 			<td>" . $admin->name . "</td>
 			<td><a href=\"mailto:" . $admin->email . "\">" . $admin->email . "</a></td>
-			<td>" . ($admin->tfaSecret ? "Aktiv" : "Nicht aktiviert") . "</td>
+			<td>" . ($admin->tfaSecret !== '' ? "Aktiv" : "Nicht aktiviert") . "</td>
 			<td>" . $roleManager->getRolesStr($admin) . "</td>
-			<td>" . ($admin->boardUrl ? "<a href=\"" . $admin->boardUrl . "\" target=\"_blank\">Profil</a>" : "") . "</td>
+			<td>" . ($admin->boardUrl !== '' ? "<a href=\"" . $admin->boardUrl . "\" target=\"_blank\">Profil</a>" : "") . "</td>
 		</tr>";
 	}
 	echo "</table><br/> ";

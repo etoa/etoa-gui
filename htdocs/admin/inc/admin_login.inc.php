@@ -26,7 +26,7 @@ if (isset($_GET['sendpass'])) {
 function sendPassword(AdminUserRepository $adminUserRepo, Environment $twig): void
 {
     $user = $adminUserRepo->findOneByNick($_POST['user_nick']);
-    if ($user) {
+    if ($user !== null) {
         // TODO: Do not generate password immediately, but send confirmation token
 
         $pw = generatePasswort();
@@ -43,7 +43,7 @@ function sendPassword(AdminUserRepository $adminUserRepo, Environment $twig): vo
         $buttonMsg = 'Zum Login';
         $buttonTarget = '?';
 
-        add_log(8, "Der Administrator " . $user->nick . " (ID: " . $user->id . ") fordert per E-Mail (" . $user->email . ") von " . $_SERVER['REMOTE_ADDR'] . " aus ein neues Passwort an.");
+        Log::add(8, Log::INFO,  "Der Administrator " . $user->nick . " (ID: " . $user->id . ") fordert per E-Mail (" . $user->email . ") von " . $_SERVER['REMOTE_ADDR'] . " aus ein neues Passwort an.");
     } else {
         $msgStyle = 'color_warn';
         $statusMsg = 'Dieser Benutzer existiert nicht!';
@@ -93,7 +93,7 @@ function loginForm(AdminSession $s, Environment $twig): void
 {
     $msg = null;
     $msgStyle = null;
-    if ($s->lastError && $s->lastErrorCode !== 'nologin') {
+    if ($s->lastError !== '' && $s->lastErrorCode !== 'nologin') {
         $msg = $s->lastError;
         $msgStyle = 'color_warn';
     }

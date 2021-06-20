@@ -132,6 +132,7 @@ else
 	{
 		$res = dbquery("SELECT ".DB_TABLE_ID." FROM ".DB_TABLE." WHERE ".DB_TABLE_SORT_PARENT."=".$_GET['parentid']." ORDER BY ".DB_TABLE_SORT."");
 		$cnt = 0;
+        $sorter = 0;
 		while ($arr = mysql_fetch_array($res))
 		{
 			dbquery("UPDATE ".DB_TABLE." SET ".DB_TABLE_SORT."=".$cnt." WHERE ".DB_TABLE_ID."=".$arr[DB_TABLE_ID]."");
@@ -149,6 +150,7 @@ else
 	{
 		$res = dbquery("SELECT ".DB_TABLE_ID." FROM ".DB_TABLE." WHERE ".DB_TABLE_SORT_PARENT."=".$_GET['parentid']." ORDER BY ".DB_TABLE_SORT.";");
 		$cnt = 0;
+        $sorter = 0;
 		while ($arr = mysql_fetch_array($res))
 		{
 			dbquery("UPDATE ".DB_TABLE." SET ".DB_TABLE_SORT."=".$cnt." WHERE ".DB_TABLE_ID."=".$arr[DB_TABLE_ID]."");
@@ -211,6 +213,7 @@ else
 
 		echo "<th valign=\"top\" width=\"70\" colspan=\"2\">&nbsp;</td></tr>";
 		$cnt=0;
+        $parId = null;
 		while ($arr=mysql_fetch_array($res))
 		{
 			echo "<tr>";

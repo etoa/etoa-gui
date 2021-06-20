@@ -15,7 +15,7 @@ parameters:
 
     excludePaths:
         - htdocs/admin/content
-        - htdocs/admin/inc
+        - htdocs/admin/inc/xajax
         - htdocs/libs
 
     bootstrapFiles:
@@ -30,8 +30,7 @@ parameters:
         - '#Doctrine\\Common\\Cache\\ArrayCache#'
 
         - '#Variable \$(twig|cfg|xajax|s|page|resNames|resIcons|index|link|site|app|cu|conf|mode|popup|cp|planets|time) might not be define#'
-        - '#Variable \$(css_theme) might not be define#'
-        - '#Function admin_get_select_elements not found#'
+        - '#Variable \$(css_theme|sub|db_fields) might not be define#'
         - '#Access to (protected|private) property [a-z]+::\$[a-z]+#i'
         - '#Access to an undefined property [a-z]+#i'
         - '#Access to an undefined property \$this\((User|Admin)Session\)#'

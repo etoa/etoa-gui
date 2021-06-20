@@ -216,66 +216,66 @@
 		$hidden_rows = array();
 
 		echo "<tr><td style=\"vertical-align:top;\"><table style=\"width:100%;\">";
-		foreach ($db_fields as $k=>$a)
+		foreach ($db_fields as $fieldDefinition)
 		{
-			echo "<tr id=\"row_".$a['name']."\"";
-			if (in_array($a['name'],$hidden_rows))
+			echo "<tr id=\"row_".$fieldDefinition['name']."\"";
+			if (in_array($fieldDefinition['name'],$hidden_rows, true))
 				echo " style=\"display:none;\"";
 
-			echo ">\n<th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>\n";
+			echo ">\n<th class=\"tbltitle\" width=\"200\">".$fieldDefinition['text'].":</th>\n";
 			echo "<td class=\"tbldata\" width=\"200\">\n";
-			$stl = (isset($a['def_val']) && $arr[$a['name']]!=$a['def_val'] ? ' class="changed"' : '');
-			switch ($a['type'])
+			$stl = (isset($fieldDefinition['def_val']) && $arr[$fieldDefinition['name']]!=$fieldDefinition['def_val'] ? ' class="changed"' : '');
+			switch ($fieldDefinition['type'])
 			{
 				case "readonly":
-					echo $arr[$a['name']];
+					echo $arr[$fieldDefinition['name']];
 				break;
 				case "text":
-					echo "<input $stl type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".stripslashes($arr[$a['name']])."\" />";
+					echo "<input $stl type=\"text\" name=\"".$fieldDefinition['name']."\" size=\"".$fieldDefinition['size']."\" maxlength=\"".$fieldDefinition['maxlen']."\" value=\"".stripslashes($arr[$fieldDefinition['name']])."\" />";
 				break;
 				case "hidden":
-					echo "<input type=\"hidden\" name=\"".$a['name']."\" value=\"".$arr[$a['name']]."\" />";
+					echo "<input type=\"hidden\" name=\"".$fieldDefinition['name']."\" value=\"".$arr[$fieldDefinition['name']]."\" />";
 				break;
 				case "email":
-					echo "<input $stl type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".$arr[$a['name']]."\" />";
+					echo "<input $stl type=\"text\" name=\"".$fieldDefinition['name']."\" size=\"".$fieldDefinition['size']."\" maxlength=\"".$fieldDefinition['maxlen']."\" value=\"".$arr[$fieldDefinition['name']]."\" />";
 				break;
 				case "url":
-					echo "<input $stl type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".$arr[$a['name']]."\" />";
+					echo "<input $stl type=\"text\" name=\"".$fieldDefinition['name']."\" size=\"".$fieldDefinition['size']."\" maxlength=\"".$fieldDefinition['maxlen']."\" value=\"".$arr[$fieldDefinition['name']]."\" />";
 				break;
 				case "numeric":
-					echo "<input $stl type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".$arr[$a['name']]."\" />";
+					echo "<input $stl type=\"text\" name=\"".$fieldDefinition['name']."\" size=\"".$fieldDefinition['size']."\" maxlength=\"".$fieldDefinition['maxlen']."\" value=\"".$arr[$fieldDefinition['name']]."\" />";
 				break;
 				case "password":
-					echo "<input $stl type=\"password\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"\" />";
+					echo "<input $stl type=\"password\" name=\"".$fieldDefinition['name']."\" size=\"".$fieldDefinition['size']."\" maxlength=\"".$fieldDefinition['maxlen']."\" value=\"\" />";
 				break;
 				case "timestamp":
-					echo "<input $stl type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".date(DATE_FORMAT,$arr[$a['name']])."\" />";
+					echo "<input $stl type=\"text\" name=\"".$fieldDefinition['name']."\" size=\"".$fieldDefinition['size']."\" maxlength=\"".$fieldDefinition['maxlen']."\" value=\"".date(DATE_FORMAT,$arr[$fieldDefinition['name']])."\" />";
 				break;
 				case "textarea":
-					echo "<textarea $stl name=\"".$a['name']."\" rows=\"".$a['rows']."\" cols=\"".$a['cols']."\">".stripslashes($arr[$a['name']])."</textarea>";
+					echo "<textarea $stl name=\"".$fieldDefinition['name']."\" rows=\"".$fieldDefinition['rows']."\" cols=\"".$fieldDefinition['cols']."\">".stripslashes($arr[$fieldDefinition['name']])."</textarea>";
 				break;
 				case "radio":
-					foreach ($a['rcb_elem'] as $rk=>$rv)
+					foreach ($fieldDefinition['rcb_elem'] as $rk=>$rv)
 					{
-						echo $rk.": <input name=\"".$a['name']."\" type=\"radio\" value=\"$rv\"";
-						if ($arr[$a['name']]==$rv)
+						echo $rk.": <input name=\"".$fieldDefinition['name']."\" type=\"radio\" value=\"$rv\"";
+						if ($arr[$fieldDefinition['name']]==$rv)
 							echo " checked=\"checked\"";
 
 							$onclick_actions = array();
 
 						// Zeige andere Elemente wenn Einstellung aktiv
-						if (isset($a['show_hide']))
+						if (isset($fieldDefinition['show_hide']))
 						{
-							foreach ($a['show_hide'] as $sh)
+							foreach ($fieldDefinition['show_hide'] as $sh)
 							{
 								$onclick_actions[]= "document.getElementById('row_".$sh."').style.display='".($rv==1 ? "" : "none")."';";
 							}
 						}
 
 						// Verstecke andere Elemente wenn Einstellung aktiv
-						if (isset($a['hide_show']))
+						if (isset($fieldDefinition['hide_show']))
 						{
-							foreach ($a['hide_show'] as $sh)
+							foreach ($fieldDefinition['hide_show'] as $sh)
 							{
 								$onclick_actions[]= "document.getElementById('row_".$sh."').style.display='".($rv==1?"none":"")."';";
 							}
@@ -286,59 +286,60 @@
 						}
 
 						echo " /> ";
-					}
-					if (isset($a['show_hide']) && $arr[$a['name']]==$rv)
-					{
-						$hidden_rows = $a['show_hide'];
-					}
-					if (isset($a['hide_show']) && $arr[$a['name']]!=$rv)
-					{
-						$hidden_rows = $a['hide_show'];
+
+                        if (isset($fieldDefinition['show_hide']) && $arr[$fieldDefinition['name']]==$rv)
+                        {
+                            $hidden_rows = $fieldDefinition['show_hide'];
+                        }
+                        if (isset($fieldDefinition['hide_show']) && $arr[$fieldDefinition['name']]!=$rv)
+                        {
+                            $hidden_rows = $fieldDefinition['hide_show'];
+                        }
 					}
 				break;
 				case "checkbox":
-					foreach ($a['rcb_elem'] as $rk=>$rv)
+					foreach ($fieldDefinition['rcb_elem'] as $rk=>$rv)
 					{
-						echo $rk.": <input name=\"".$a['name']."\" type=\"checkbox\" value=\"$rv\"";
-						if (in_array($rv,explode(";",$arr[$a['name']])))
+						echo $rk.": <input name=\"".$fieldDefinition['name']."\" type=\"checkbox\" value=\"$rv\"";
+						if (in_array($rv, explode(";",$arr[$fieldDefinition['name']]), true))
 							echo " checked=\"checked\"";
 						echo " /> ";
 					}
 					echo "";
 				break;
 				case "select":
-					echo "<select name=\"".$a['name']."\">";
+					echo "<select name=\"".$fieldDefinition['name']."\">";
 					echo "<option value=\"\">(leer)</option>";
-					foreach ($a['select_elem'] as $rk=>$rv)
+					foreach ($fieldDefinition['select_elem'] as $rk=>$rv)
 					{
 						echo "<option value=\"$rv\"";
-						if ($arr[$a['name']]==$rv) echo " selected=\"selected\"";
+						if ($arr[$fieldDefinition['name']]==$rv) echo " selected=\"selected\"";
 						echo ">$rk</option> ";
 					}
 					echo "";
 				break;
 				case "fleetaction":
 					echo "";
-					$keys = explode(",",$arr[$a['name']]);
+					$keys = explode(",",$arr[$fieldDefinition['name']]);
 					$actions = FleetAction::getAll();
 					foreach ($actions as $ac)
 					{
-						echo "<input name=\"".$a['name']."[]\" type=\"checkbox\" value=\"".$ac->code()."\"";
-						if (in_array($ac->code(),$keys))
+						echo "<input name=\"".$fieldDefinition['name']."[]\" type=\"checkbox\" value=\"".$ac->code()."\"";
+						if (in_array($ac->code(),$keys, true))
 							echo " checked=\"checked\"";
 						echo " /> ".$ac."<br/>";
 					}
 					echo "";
 					break;
 				default:
-					echo "<input type=\"text\" name=\"".$a['name']."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" value=\"".stripslashes($arr[$a['name']])."\" />";
+					echo "<input type=\"text\" name=\"".$fieldDefinition['name']."\" size=\"".$fieldDefinition['size']."\" maxlength=\"".$fieldDefinition['maxlen']."\" value=\"".stripslashes($arr[$fieldDefinition['name']])."\" />";
 			}
 			echo "</td>\n</tr>\n";
-			if (isset($a['line']) && $a['line']==1)
+			if (isset($fieldDefinition['line']) && $fieldDefinition['line']==1)
 			{
 				echo "<tr><td style=\"height:4px;background:#000\" colspan=\"2\"></td></tr>";
 			}
-			if (isset($a['columnend']) && $a['columnend']==1)
+			if (isset($fieldDefinition['columnend']) && $fieldDefinition['columnend']==1)
 			{
 				echo "</table></td><td style=\"vertical-align:top;\"><table style=\"width:100%;\">";
 			}
@@ -463,7 +464,7 @@
 					$cb_temp_arr = array();
 					foreach ($a['rcb_elem'] as $rk=>$rv)
 					{
-						if (in_array($rv,explode(";",$arr[$a['name']]))) array_push($cb_temp_arr,$rk);
+						if (in_array($rv,explode(";",$arr[$a['name']]), true)) array_push($cb_temp_arr,$rk);
 					}
 					for ($cbx=0;$cbx<count($cb_temp_arr);$cbx++)
 					{
@@ -540,9 +541,10 @@
 					case "checkbox":
 						echo "";
 						$cb_temp_arr = array();
-						foreach ($a['rcb_elem'] as $rk=>$rv)
-						{
-							if (in_array($rv,explode(";",$arr[$a['name']]))) array_push($cb_temp_arr,$rk);
+						foreach ($a['rcb_elem'] as $rk=>$rv) {
+							if (in_array($rv,explode(";",$arr[$a['name']]), true)) {
+							    array_push($cb_temp_arr,$rk);
+                            }
 						}
 						for ($cbx=0;$cbx<count($cb_temp_arr);$cbx++)
 						{
@@ -587,12 +589,3 @@
 		return $r_array;
 	}
 
-	function admin_get_user_rank($user_rank_id)
-	{
-		$res = dbquery("SELECT rank_desc FROM admin_user_ranks WHERE rank_id='".$user_rank_id."';");
-		while ($arr = mysql_fetch_array($res))
-		$user_rank_name = $arr['rank_desc'];
-		return $user_rank_name;
-	}
-
-?>

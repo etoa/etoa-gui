@@ -15,7 +15,7 @@ ErrorHandler::register();
 
 // Renderzeit-Start festlegen
 $render_time = explode(" ", microtime());
-$render_starttime = $render_time[1] + $render_time[0];
+$render_starttime = (int) $render_time[1] + (int) $render_time[0];
 
 define('IMAGE_PATH', "../images/imagepacks/Discovery");
 define('IMAGE_EXT', "png");

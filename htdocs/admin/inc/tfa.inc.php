@@ -3,11 +3,11 @@
 $tfa = new RobThree\Auth\TwoFactorAuth(APP_NAME);
 $errorMessage = null;
 if (isset($_POST['tfa_activate'])) {
-    if (!empty($_POST['tfa_challenge']) && $tfa->verifyCode($_SESSION['tfa_activate_secret'], $_POST['tfa_challenge'])) {
+    if ($_POST['tfa_challenge'] && $tfa->verifyCode($_SESSION['tfa_activate_secret'], $_POST['tfa_challenge'])) {
         $cu->tfaSecret = $_SESSION['tfa_activate_secret'];
         $cu->save();
         unset($_SESSION['tfa_activate_secret']);
-        add_log(8,$cu->nick . ' aktiviert Zwei-Faktor-Authentifizierung');
+        Log::add(8,Log::INFO, $cu->nick . ' aktiviert Zwei-Faktor-Authentifizierung');
         forward('?myprofile');
     }
 
@@ -16,11 +16,11 @@ if (isset($_POST['tfa_activate'])) {
 }
 
 if (isset($_POST['tfa_disable'])) {
-    if (!empty($_POST['tfa_challenge']) && $tfa->verifyCode($cu->tfaSecret, $_POST['tfa_challenge'])) {
+    if ($_POST['tfa_challenge'] && $tfa->verifyCode($cu->tfaSecret, $_POST['tfa_challenge'])) {
         $cu->tfaSecret = '';
         $cu->save();
         unset($_SESSION['tfa_activate_secret']);
-        add_log(8,$cu->nick . ' deaktiviert Zwei-Faktor-Authentifizierung');
+        Log::add(8,Log::INFO, $cu->nick . ' deaktiviert Zwei-Faktor-Authentifizierung');
         forward('?myprofile');
     }
 

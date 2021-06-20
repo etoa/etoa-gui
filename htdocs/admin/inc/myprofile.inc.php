@@ -14,7 +14,6 @@ if (isset($_POST['submitProfile'])) {
     submitProfile($cu, $adminUserRepo, $twig);
 }
 profileIndex($cu, $twig);
-exit();
 
 function submitPassword(AdminUser $cu, AdminUserRepository $adminUserRepo, Environment $twig)
 {
@@ -33,7 +32,7 @@ function submitPassword(AdminUser $cu, AdminUserRepository $adminUserRepo, Envir
 
         $twig->addGlobal('successMessage', 'Das Passwort wurde geändert!');
 
-        add_log(8, $cu->id . " ändert sein Passwort");
+        Log::add(8, Log::INFO,  $cu->id . " ändert sein Passwort");
     } catch (\Exception $ex) {
         $twig->addGlobal('errorMessage', $ex->getMessage());
     }
@@ -52,7 +51,7 @@ function submitProfile(AdminUser $cu, AdminUserRepository $adminUserRepo, Enviro
 
     $twig->addGlobal('successMessage', 'Die Daten wurden geändert!');
 
-    add_log(8, $cu->nick . " ändert seine Daten");
+    Log::add(8, Log::INFO, $cu->nick . " ändert seine Daten");
 }
 
 function profileIndex(AdminUser $cu, Environment $twig)
