@@ -40,7 +40,7 @@ class AdminSession extends Session
 			if ($user != null) {
 				if (validatePasswort($data['login_pw'], $user->passwordString)) {
 					// Check if two factor authentication is enabled for this user
-					if ($user->tfaSecret) {
+					if ($user->tfaSecret != "") {
 						// Check if user supplied challenge
 						if (isset($data['login_challenge'])) {
 							$tfa = new RobThree\Auth\TwoFactorAuth(APP_NAME);
@@ -68,7 +68,7 @@ class AdminSession extends Session
 					session_regenerate_id(true);
 
 					$this->user_id = (int) $user->id;
-					$this->user_nick = (string) $user->nick;
+					$this->user_nick = $user->nick;
 					$t = time();
 					$this->time_login = $t;
 					$this->time_action = $t;
