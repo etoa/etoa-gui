@@ -408,7 +408,8 @@ $adminUserRepo = $app['etoa.admin.user.repository'];
 				$st = $arr['user_specialist_time']>0 ? $arr['user_specialist_time'] : time();
 
 				$ip = $arr['ip_addr']!=null ? $arr['ip_addr'] : $arr['ip_log'];
-				$agent = $arr['user_agent']!=null ? $arr['user_agent'] : $arr['agent_log'];
+                $browserParser = new \WhichBrowser\Parser($arr['user_agent'] ?? $arr['agent_log']);
+                $agent = $browserParser->toString();
 
 				// Javascript
 				echo "<script type=\"text/javascript\">

@@ -61,7 +61,8 @@ if (mysql_num_rows($res)>0)
         else
             echo "<td class=\"tbldata\" style=\"color:#f72\">offline</td>";
         echo "<td class=\"tbldata\">".$arr['ip_addr']."<br/>".Net::getHost($arr['ip_addr'])."</td>";
-        echo "<td class=\"tbldata\">".$arr['user_agent']."</td>";
+        $browserParser = new \WhichBrowser\Parser($arr['user_agent']);
+        echo "<td class=\"tbldata\">".$browserParser->toString()."</td>";
         echo "<td class=\"tbldata\">";
         if (max($arr['time_login'],$arr['time_action'])-$arr['time_login']>0)
             echo tf($arr['time_action']-$arr['time_login']);
