@@ -14,7 +14,9 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/
 
-	/**
+use Doctrine\Common\Collections\ArrayCollection;
+
+/**
 	* Returns a string containing the game name, version and round
 	*/
 	function getGameIdentifier()	{
@@ -673,10 +675,9 @@
 		return $names;
 	}
 
-
 	function tableStart($title="",$width=0,$layout="", $id="")
 	{
-		if ($width>0)
+		if (is_numeric($width) && $width>0)
 		{
 			$w = "width:".$width."px;";
 		}
@@ -2348,7 +2349,7 @@ function imagecreatefromfile($path, $user_functions = false)
 		return "<img src=\"".(defined('IMAGE_DIR')? IMAGE_DIR : 'images')."/icons/".$name.".png\" alt=\"$name\" />";
 	}
 
-	function htmlSelect($name,&$data,$default=null)
+	function htmlSelect($name, array $data,$default=null)
 	{
 		echo '<select name="'.$name.'">';
 		foreach ($data as $k=>$v)
@@ -2574,4 +2575,15 @@ function imagecreatefromfile($path, $user_functions = false)
 		$pattern = '|[[\\/\\!]*?[^\\[\\]]*?]|si';
 		$replace = '';
 		return preg_replace($pattern, $replace, $text_to_search);
+	}
+
+	/**
+	 * Creates a new collection from the given array of data
+	 *
+	 * @param array $data
+	 * @return ArrayCollection
+	 */
+	function collect(array $data): ArrayCollection
+	{
+		return new ArrayCollection($data);
 	}

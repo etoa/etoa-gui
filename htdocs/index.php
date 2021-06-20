@@ -14,6 +14,8 @@
 * @copyright Copyright (c) 2004 EtoA Gaming, www.etoa.ch
 */
 
+use EtoA\Text\TextRepository;
+
 //
 // Basics
 //
@@ -254,7 +256,6 @@ try {
     }
 
     $gameMenu = new GameMenu('game-menu.conf');
-    $tm = new TextManager();
 
     if (ADD_BANNER=="") {
         $twig->addGlobal('adds', false);
@@ -264,8 +265,10 @@ try {
         $twig->addGlobal('adds', false);
     }
 
-    $tm = new TextManager();
-    $infoText = $tm->getText('info');
+    /** @var TextRepository */
+    $textRepo = $app['etoa.text.repository'];
+    $infoText = $textRepo->find('info');
+
     $globals = array_merge($currentPlanetData, [
         'design' => strtolower(str_replace('designs/official/', '', CSS_STYLE)),
         'addBanner' => ADD_BANNER,

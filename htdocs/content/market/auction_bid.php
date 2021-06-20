@@ -1,22 +1,9 @@
 <?php
-	//////////////////////////////////////////////////
-	//		 	 ____    __           ______       			//
-	//			/\  _`\ /\ \__       /\  _  \      			//
-	//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
-	//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
-	//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
-	//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
-	//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
-	//																					 		//
-	//////////////////////////////////////////////////
-	// The Andromeda-Project-Browsergame				 		//
-	// Ein Massive-Multiplayer-Online-Spiel			 		//
-	// Programmiert von Nicolas Perrenoud				 		//
-	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	// www.etoa.ch | mail@etoa.ch								 		//
-	//////////////////////////////////////////////////
-	//
-	//
+
+use EtoA\Support\RuntimeDataStore;
+
+/** @var RuntimeDataStore */
+$runtimeDataStore = $app['etoa.runtime.datastore'];
 
 	// Speichert Bieterangebot in Array
 	$buyRes = array();
@@ -55,7 +42,7 @@
 			$marr = array();
 			foreach ($resNames as $rk => $rn)
 			{
-				$rate = RuntimeDataStore::get('market_rate_'.$rk, 1);
+				$rate = $runtimeDataStore->get('market_rate_'.$rk, (string) 1);
 
 				// Errechnet Rohstoffwert vom Angebot
 				$sell_price += $arr['sell_'.$rk] * $rate;

@@ -1,398 +1,361 @@
 <?PHP
 
-	//////////////////////////////////////////////////
-	//		 	 ____    __           ______       			//
-	//			/\  _`\ /\ \__       /\  _  \      			//
-	//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
-	//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
-	//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
-	//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
-	//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
-	//																					 		//
-	//////////////////////////////////////////////////
-	// The Andromeda-Project-Browsergame				 		//
-	// Ein Massive-Multiplayer-Online-Spiel			 		//
-	// Programmiert von Nicolas Perrenoud				 		//
-	// www.nicu.ch | mail@nicu.ch								 		//
-	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	//////////////////////////////////////////////////
-	//
-	// 	Dateiname: home.php
-	// 	Topic: Willkommensseite der Administration
-	// 	Autor: Nicolas Perrenoud alias MrCage
-	// 	Erstellt: 01.12.2004
-	// 	Bearbeitet von: Nicolas Perrenoud alias MrCage
-	// 	Bearbeitet am: 31.03.2006
-	// 	Kommentar:
-	//
+use EtoA\Admin\AdminRoleManager;
+use EtoA\Admin\AdminSessionManager;
+use EtoA\Admin\AdminSessionRepository;
+use EtoA\Admin\AdminUser;
+use EtoA\Admin\AdminUserRepository;
+use EtoA\Help\TicketSystem\TicketRepository;
+use EtoA\Support\DatabaseManagerRepository;
+use EtoA\Text\TextRepository;
+use EtoA\Universe\CellRepository;
+use League\CommonMark\CommonMarkConverter;
+use Symfony\Component\HttpFoundation\Request;
+use Twig\Environment;
 
-	//
-	// Offline
-	//
-	if ($sub=="offline")
-	{
-		echo "<h1>Spiel offline nehmen</h1>";
+/** @var Request */
+$request = Request::createFromGlobals();
 
-		if (isset($_GET['off']) && $_GET['off']==1)
-		{
-			$cfg->set('offline',1);
-		}
-		if (isset($_GET['on']) && $_GET['on']==1)
-		{
-			$cfg->set('offline',0);
-		}
+if ($sub == "offline") {
+    takeOffline($request);
+} elseif ($sub == "stats") {
+    require("home/stats.inc.php");
+} elseif ($sub === "gamestats") {
+    gameStatsView($twig);
+} elseif ($sub === "changelog") {
+    /** @var CommonMarkConverter */
+    $markdown = $app['etoa.util.markdown'];
 
-		if (isset($_POST['save']))
-		{
-			$cfg->set('offline_ips_allow', $_POST['offline_ips_allow']);
-			$cfg->set('offline_message', $_POST['offline_message']);
-		}
+    changelogView($markdown, $twig);
+} elseif ($sub == "adminlog") {
+    /** @var AdminSessionRepository */
+    $sessionRepository = $app['etoa.admin.session.repository'];
 
-		echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-		if ($cfg->get('offline')==1)
-		{
-			echo "<span style=\"color:#f90;\">Das Spiel ist offline!</span><br/><br/>
-			Erlaubte IP's (deine ist ".$_SERVER['REMOTE_ADDR']."):<br/> <textarea name=\"offline_ips_allow\" rows=\"6\" cols=\"60\">".$cfg->offline_ips_allow->v."</textarea><br/>
-			Nachricht: <br/><textarea name=\"offline_message\" rows=\"6\" cols=\"60\">".$cfg->offline_message->v."</textarea><br/><br/>
-			<input type=\"submit\" value=\"&Auml;nderungen speichern\" name=\"save\" /> &nbsp;
-			<input type=\"button\" value=\"Spiel online stellen\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;on=1'\" />";
+    /** @var AdminUserRepository */
+    $adminUserRepo = $app['etoa.admin.user.repository'];
 
-		}
-		else
-		{
-			echo "<span style=\"color:#0f0;\">Das Spiel ist online!</span><br/><br/>
-			<input type=\"button\" value=\"Spiel offline nehmen\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;off=1'\" />";
-		}
-		echo "</form>";
-	}
+    /** @var AdminSessionManager */
+    $sessionManager = $app['etoa.admin.session.manager'];
 
+    if ($request->request->has('logshow') && $request->request->get('logshow') != "") {
+        adminSessionLogForUserView($request, $s, $sessionRepository, $adminUserRepo);
+    } else {
+        adminSessionLogView($request, $cu, $sessionRepository, $sessionManager);
+    }
+} elseif ($sub == "adminusers") {
+    require("home/adminusers.inc.php");
+} elseif ($sub == "observed") {
+    require("home/observed.inc.php");
+} elseif ($sub == "sysinfo") {
+    /** @var DatabaseManagerRepository */
+    $databaseManager = $app['etoa.db.manager.repository'];
 
-	//
-	// Rangliste
-	//
-	elseif ($sub=="stats")
-	{
-		require("home/stats.inc.php");
-	}
+    systemInfoView($databaseManager, $twig);
+} else {
+    /** @var CellRepository */
+    $universeCellRepo = $app['etoa.universe.cell.repository'];
 
-	//
-	// Statistiken
-	//
-	elseif ($sub === "gamestats") {
-        echo $twig->render('admin/overview/gamestats.html.twig', [
-            'userStats' => file_exists(USERSTATS_OUTFILE) ? USERSTATS_OUTFILE : null,
-            'xmlInfo' => file_exists(XML_INFO_FILE) ? XML_INFO_FILE : null,
-            'gameStats' => is_file(GAMESTATS_FILE) ? file_get_contents(GAMESTATS_FILE) : null,
-        ]);
-        exit();
-	}
+    /** @var TicketRepository */
+    $ticketRepo = $app['etoa.help.ticket.repository'];
 
-	//
-	// Changelog
-	//
-	elseif ($sub === "changelog") {
-		$changelogFile = "../../Changelog.md";
-		$changelogPublicFile = "../../Changelog_public.md";
-        echo $twig->render('admin/overview/changelog.html.twig', [
-            'changelog' => is_file($changelogFile) ? $app['etoa.util.markdown']->convertToHtml(file_get_contents($changelogFile)) : null,
-            'changelogPublic' => is_file($changelogPublicFile) ? $app['etoa.util.markdown']->convertToHtml(file_get_contents($changelogPublicFile)) : null,
-        ]);
-        exit();
-	}
+    /** @var TextRepository */
+    $textRepo = $app['etoa.text.repository'];
 
-	//
-	// Admin Session-Log
-	//
-	elseif ($sub=="adminlog")
-	{
-		echo "<h1>Admin-Log</h1>";
+    /** @var AdminRoleManager */
+    $roleManager = $app['etoa.admin.role.manager'];
 
-		if (isset($_POST['logshow']) && $_POST['logshow']!="")
-		{
-			$ures=dbquery("SELECT
-				user_nick
-				FROM admin_users
-				WHERE user_id=".$_POST['user_id'].";");
-			if (mysql_num_rows($ures)>0)
-			{
-				$uarr=mysql_fetch_array($ures);
-				echo "<h2>Session-Log f&uuml;r ".$uarr['user_nick']."</h2>";
+    indexView($cu, $universeCellRepo, $ticketRepo, $textRepo, $roleManager, $twig);
+}
 
-				$sql = "SELECT
-					l.*,
-					u.user_nick
-				FROM
-					admin_user_sessionlog l
-				INNER JOIN
-					admin_users u
-					ON l.user_id=u.user_id
-					AND l.user_id=".$_POST['user_id']."
-				ORDER BY
-					time_action DESC;";
-				$res=dbquery($sql);
-				if (mysql_num_rows($res)>0)
-				{
-					echo "<table class=\"tb\">
-					<tr>
-						<th>Login</th>
-						<th>Aktivität</th>
-						<th>Logout</th>
-						<th>Dauer</th>
-						<th>IP</th>
-						<th>Browser</th>
-						<th>OS</th>
-					</tr>";
-					while ($arr = mysql_fetch_array($res))
-					{
-						echo "<tr>
-							<td>".date("d.m.Y, H:i",$arr['time_login'])."</td>";
-						echo "<td>";
-						if ($arr['time_action']>0)
-							echo date("d.m.Y H:i",$arr['time_action']);
-						else
-							echo "-";
-						echo "</td>";
-						echo "<td>";
-						if ($arr['time_logout']>0)
-							echo date("d.m.Y, H:i",$arr['time_logout']);
-						else
-							echo "-";
-						echo "</td>";
-						echo "<td>";
-						if (max($arr['time_logout'],$arr['time_action'])-$arr['time_login']>0)
-							echo tf(max($arr['time_logout'],$arr['time_action'])-$arr['time_login']);
-						else
-							echo "-";
-						if ($arr['log_session_key']==$s->id)
-							echo " <span style=\"color:#0f0\">aktiv</span>";
-						echo "</td>";
-						echo "<td title=\"".Net::getHost($arr['ip_addr'])."\">".$arr['ip_addr']."</td>";
-						$browser = get_browser($arr['user_agent'], true);
-						echo "<td title=\"".$arr['user_agent']."\">".$browser['parent']."</td>";
-						echo "<td title=\"".$arr['user_agent']."\">".$browser['platform']."</td>";
-						echo "</tr>";
-					}
-					echo "</table>";
-				}
-				else
-					echo "<i>Keine Eintr&auml;ge vorhanden</i>";
+function takeOffline(Request $request)
+{
+    global $cfg;
+    global $sub;
+    global $page;
 
-			}
-			else
-			{
-				echo "<h2>Fehler</h2><i>User nicht vorhanden</i>";
-			}
-			echo "<br/><br/><input type=\"button\" value=\"Zur &Uuml;bersicht\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" />";
-		}
-		else
-		{
-			$logDelTimespan = array(
-				array(1296000,"15 Tage"),
-				array(2592000,"30 Tage"),
-				array(3888000,"45 Tage"),
-				array(5184000,"60 Tage"),
-			);
+    echo "<h1>Spiel offline nehmen</h1>";
 
-			if (isset($_GET['kick']) && $_GET['kick']>0)
-			{
-				if ($_GET['kick']!=$cu->id)
-				{
-					AdminSession::kick($_GET['kick']);
-					add_log(8,$cu->nick." l&ouml;scht die Session des Administrators mit der ID ".$_GET['kick']);
-				}
-				else
-					echo error_msg("Du kannst nicht dich selbst kicken!");
-			}
+    if ($request->query->has('off') && $request->query->getBoolean('off')) {
+        $cfg->set('offline', 1);
+    }
+    if ($request->query->has('on') && $request->query->getBoolean('on')) {
+        $cfg->set('offline', 0);
+    }
 
-			if (isset($_POST['delentrys']) && $_POST['delentrys']!="")
-			{
-				if (isset($logDelTimespan[$_POST['log_timestamp']]))
-				{
-					$td = $logDelTimespan[$_POST['log_timestamp']][0];
-					$nr = AdminSession::cleanupLogs($td);
-					echo "<p>".$nr." Eintr&auml;ge wurden gel&ouml;scht!</p>";
-				}
-			}
+    if ($request->request->has('save')) {
+        $cfg->set('offline_ips_allow', $request->request->get('offline_ips_allow'));
+        $cfg->set('offline_message', $request->request->get('offline_message'));
+    }
 
-			echo "<h2>Aktive Sessions</h2>";
-			echo "Das Timeout betr&auml;gt ".tf($cfg->admin_timeout->v)."<br/><br/>";
+    echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
+    if ($cfg->get('offline') == 1) {
+        echo "<span style=\"color:#f90;\">Das Spiel ist offline!</span><br/><br/>
+        Erlaubte IP Adressen  (deine ist " . $request->getClientIp() . "):<br/>
+        <textarea name=\"offline_ips_allow\" rows=\"6\" cols=\"60\">" . $cfg->offline_ips_allow->v . "</textarea><br/>
+        Nachricht: <br/>
+        <textarea name=\"offline_message\" rows=\"6\" cols=\"60\">" . $cfg->offline_message->v . "</textarea><br/><br/>
+        <input type=\"submit\" value=\"Änderungen speichern\" name=\"save\" /> &nbsp;
+        <input type=\"button\" value=\"Spiel online stellen\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;on=1'\" />";
+    } else {
+        echo "<span style=\"color:#0f0;\">Das Spiel ist online!</span><br/><br/>
+        <input type=\"button\" value=\"Spiel offline nehmen\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;off=1'\" />";
+    }
+    echo "</form>";
+}
 
-			$res=dbquery("
-				SELECT
-					s.user_id,
-					s.ip_addr,
-					s.user_agent,
-					s.time_login,
-					s.time_action,
-					u.user_nick
-				FROM
-					admin_user_sessions s
-				INNER JOIN
-					admin_users u
-					ON s.user_id=u.user_id
-				ORDER BY
-					time_action DESC;");
-			if (mysql_num_rows($res)>0)
-			{
-				echo "<table class=\"tb\">
-				<tr>
-					<th>Status</th>
-					<th>Nick</th>
-					<th>Login</th>
-					<th>Aktivität</th>
-					<th>Dauer</th>
-					<th>IP</th>
-					<th>User Agent</th>
-					<th>Kicken</th>
-				</tr>";
-				$t = time();
-				while ($arr=mysql_fetch_array($res))
-				{
-					if (ini_get("browscap") != null)
-					{
-						$bc = get_browser($arr['user_agent'], true);
-						$browser = $bc['parent'].' ['.$bc['platform'].']';
-					} else {
-						$browser = $arr['user_agent'];
-					}
-					echo "<tr>
-						<td ".($t - $cfg->admin_timeout->v < $arr['time_action'] ? 'style="color:#0f0;">Online': 'style="color:red;">Timeout')."</td>
-						<td>".$arr['user_nick']."</td>
-						<td>".date("d.m.Y H:i",$arr['time_login'])."</td>
-						<td>".date("d.m.Y H:i",$arr['time_action'])."</td>
-						<td>".tf($arr['time_action']-$arr['time_login'])."</td>
-						<td title=\"".Net::getHost($arr['ip_addr'])."\">".$arr['ip_addr']."</td>
-						<td title=\"".$arr['user_agent']."\">".$browser."</td>
-						<td><a href=\"?page=$page&amp;sub=$sub&amp;kick=".$arr['user_id']."\">Kick</a></td>
-					</tr>";
-				}
-				echo "</table>";
-			}
-			else
-				echo "<i>Keine Eintr&auml;ge vorhanden!</i>";
+function gameStatsView(Environment $twig)
+{
+    echo $twig->render('admin/overview/gamestats.html.twig', [
+        'userStats' => file_exists(USERSTATS_OUTFILE) ? USERSTATS_OUTFILE : null,
+        'xmlInfo' => file_exists(XML_INFO_FILE) ? XML_INFO_FILE : null,
+        'gameStats' => is_file(GAMESTATS_FILE) ? file_get_contents(GAMESTATS_FILE) : null,
+    ]);
+    exit();
+}
 
-			echo "<h2>Session-Log</h2>";
-			$res=dbquery("SELECT
-				user_nick,
-				u.user_id,
-				COUNT(*) as cnt
-			FROM admin_users u
-			INNER JOIN
-				admin_user_sessionlog l
-				ON l.user_id=u.user_id
-			GROUP BY u.user_id ORDER BY u.user_nick;");
-			if (mysql_num_rows($res)>0)
-			{
-				echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-				echo "Benutzer w&auml;hlen: <select name=\"user_id\">";
-				while ($arr=mysql_fetch_array($res))
-				{
-					echo "<option value=\"".$arr['user_id']."\">".$arr['user_nick']." (".$arr['cnt']." Sessions)</option>";
-				}
-				echo "</select> &nbsp; <input type=\"submit\" name=\"logshow\" value=\"Anzeigen\" /></form>";
+function changelogView(CommonMarkConverter $markdown, Environment $twig)
+{
+    $changelogFile = "../../Changelog.md";
+    $changelogPublicFile = "../../Changelog_public.md";
+    echo $twig->render('admin/overview/changelog.html.twig', [
+        'changelog' => is_file($changelogFile) ? $markdown->convertToHtml(file_get_contents($changelogFile)) : null,
+        'changelogPublic' => is_file($changelogPublicFile) ? $markdown->convertToHtml(file_get_contents($changelogPublicFile)) : null,
+    ]);
+    exit();
+}
 
-				$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM admin_user_sessionlog;"));
+function adminSessionLogForUserView(
+    Request $request,
+    AdminSession $s,
+    AdminSessionRepository $sessionRepository,
+    AdminUserRepository $adminUserRepo
+) {
+    global $page;
+    global $sub;
 
-				echo "<h2>Logs löschen</h2>";
-				echo "<form action=\"?page=$page&sub=$sub\" method=\"post\">";
-				echo "Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.<br/><br/>
-					Eintr&auml;ge l&ouml;schen die &auml;lter als <select name=\"log_timestamp\">";
-				foreach ($logDelTimespan as $k => $lts)
-				{
-					echo "<option value=\"".$k."\">".$lts[1]."</option>";
-				}
-				echo "</select> sind: <input type=\"submit\" name=\"delentrys\" value=\"Ausf&uuml;hren\" /></form>";
-			}
-			else
-				echo "<i>Keine Eintr&auml;ge vorhanden</i>";
-		}
-	}
+    $adminUser = $adminUserRepo->find($request->request->getInt('user_id'));
+    if ($adminUser != null) {
+        echo "<h2>Session-Log für " . $adminUser->nick . "</h2>";
 
-	//
-	// User bearbeiten
-	//
-	elseif ($sub=="adminusers")
-	{
-		require("home/adminusers.inc.php");
-	}
+        $sessions = $sessionRepository->findSessionLogsByUser($request->request->getInt('user_id'));
+        if (count($sessions) > 0) {
+            echo "<table class=\"tb\">
+                <tr>
+                    <th>Login</th>
+                    <th>Aktivität</th>
+                    <th>Logout</th>
+                    <th>Dauer</th>
+                    <th>IP</th>
+                    <th>Browser</th>
+                    <th>OS</th>
+                </tr>";
+            foreach ($sessions as $arr) {
+                echo "<tr>
+                        <td>" . date("d.m.Y, H:i", $arr['time_login']) . "</td>";
+                echo "<td>";
+                if ($arr['time_action'] > 0)
+                    echo date("d.m.Y H:i", $arr['time_action']);
+                else
+                    echo "-";
+                echo "</td>";
+                echo "<td>";
+                if ($arr['time_logout'] > 0)
+                    echo date("d.m.Y, H:i", $arr['time_logout']);
+                else
+                    echo "-";
+                echo "</td>";
+                echo "<td>";
+                if (max($arr['time_logout'], $arr['time_action']) - $arr['time_login'] > 0) {
+                    echo tf(max($arr['time_logout'], $arr['time_action']) - $arr['time_login']);
+                } else {
+                    echo "-";
+                }
+                if ($arr['session_id'] == $s->id) {
+                    echo " <span style=\"color:#0f0\">aktiv</span>";
+                }
+                echo "</td>";
+                echo "<td title=\"" . Net::getHost($arr['ip_addr']) . "\">" . $arr['ip_addr'] . "</td>";
+                $browser = get_browser($arr['user_agent'], true);
+                echo "<td title=\"" . $arr['user_agent'] . "\">" . (isset($browser['parent']) ? $browser['parent'] : '?') . "</td>";
+                echo "<td title=\"" . $arr['user_agent'] . "\">" . $browser['platform'] . "</td>";
+                echo "</tr>";
+            }
+            echo "</table>";
+        } else
+            echo "<i>Keine Einträge vorhanden</i>";
+    } else {
+        echo "<h2>Fehler</h2><i>User nicht vorhanden</i>";
+    }
+    echo "<br/><br/><input type=\"button\" value=\"Zur Übersicht\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" />";
+}
 
-	//
-	// User beobachten
-	//
-	elseif ($sub=="observed")
-	{
-		require("home/observed.inc.php");
-	}
+function adminSessionLogView(
+    Request $request,
+    AdminUser $cu,
+    AdminSessionRepository $sessionRepository,
+    AdminSessionManager $sessionManager
+) {
+    global $cfg;
+    global $page;
+    global $sub;
 
-	elseif ($sub === "sysinfo") {
-		$unix = UNIX ? posix_uname() : null;
-		echo $twig->render('admin/overview/sysinfo.html.twig', [
-			'phpVersion' => phpversion(),
-			'dbVersion' => mysql_get_client_info(),
-			'webserverVersion' => $_SERVER['SERVER_SOFTWARE'],
-			'unixName' => UNIX ? $unix['sysname'] . ' ' . $unix['release'] . ' ' . $unix['version'] : null,
-		]);
-		exit();
-	}
+    echo "<h1>Admin-Log</h1>";
 
-	//
-	// Übersicht
-	//
-	else {
-		//
-		// Universum generieren
-		//
-		$res = dbquery("SELECT COUNT(id) FROM cells;");
-		$arr = mysql_fetch_row($res);
+    $logDelTimespan = [
+        [1296000, "15 Tage"],
+        [2592000, "30 Tage"],
+        [3888000, "45 Tage"],
+        [5184000, "60 Tage"],
+    ];
 
-		// Flottensperre aktiv
-		$fleetBanTitle = null;
-		$fleetBanText = null;
-		if ($conf['flightban']['v']==1) {
-			// Prüft, ob die Sperre schon abgelaufen ist
-			if($conf['flightban_time']['p1'] <= time() && $conf['flightban_time']['p2'] >= time()) {
-				$flightban_time_status = "<span style=\"color:#0f0\">Aktiv</span> Es können keine Flüge gestartet werden!";
-			} elseif($conf['flightban_time']['p1'] > time() && $conf['flightban_time']['p2'] > time()) {
-				$flightban_time_status = "Ausstehend";
-			} else {
-				$flightban_time_status = "<span style=\"color:#f90\">Abgelaufen</span>";
-			}
+    if ($request->query->has('kick') && $request->query->getInt('kick') > 0) {
+        $idToKick = $request->query->getInt('kick');
+        if ($idToKick != $cu->id) {
+            $sessionManager->kick($idToKick);
+            Log::add(8, Log::INFO, $cu->nick . " löscht die Session des Administrators mit der ID " . $idToKick);
+        } else {
+            echo error_msg("Du kannst nicht dich selbst kicken!");
+        }
+    }
 
-			$fleetBanTitle = "Flottensperre aktiviert";
-			$fleetBanText = "Die Flottensperre wurde aktiviert.<br><br><b>Status:</b> ".$flightban_time_status."<br><b>Zeit:</b> ".date("d.m.Y H:i",$conf['flightban_time']['p1'])." - ".date("d.m.Y H:i",$conf['flightban_time']['p2'])."<br><b>Grund:</b> ".$conf['flightban']['p1']."<br><br>Zum deaktivieren: <a href=\"?page=fleets&amp;sub=fleetoptions\">Flottenoptionen</a>";
-		}
+    if ($request->request->has('delentrys') && $request->request->get('delentrys') != "") {
+        if (isset($logDelTimespan[$request->request->getInt('log_timestamp')])) {
+            $td = $logDelTimespan[$request->request->getInt('log_timestamp')][0];
+            $nr = $sessionManager->cleanupLogs($td);
+            echo "<p>" . $nr . " Einträge wurden gelöscht!</p>";
+        }
+    }
 
-		// Kampfsperre aktiv
-		if ($conf['battleban']['v']==1) {
-			// Prüft, ob die Sperre schon abgelaufen ist
-			if ($conf['battleban_time']['p1'] <= time() && $conf['battleban_time']['p2'] >= time()) {
-				$battleban_time_status = "<span style=\"color:#0f0\">Aktiv</span> Es können keine Angriffe geflogen werden!";
-			} elseif ($conf['battleban_time']['p1'] > time() && $conf['battleban_time']['p2'] > time()) {
-				$battleban_time_status = "Ausstehend";
-			} else {
-				$battleban_time_status = "<span style=\"color:#f90\">Abgelaufen</span>";
-			}
+    echo "<h2>Aktive Sessions</h2>";
+    echo "Das Timeout beträgt " . tf($cfg->admin_timeout->v) . "<br/><br/>";
 
-			$fleetBanTitle = "Kampfsperre aktiviert";
-			$fleetBanText = "Die Kampfsperre wurde aktiviert.<br><br><b>Status:</b> " . $battleban_time_status . "<br><b>Zeit:</b> " . date("d.m.Y H:i", $conf['battleban_time']['p1']) . " - " . date("d.m.Y H:i", $conf['battleban_time']['p2']) . "<br><b>Grund:</b> " . $conf['battleban']['p1'] . "<br><br>Zum deaktivieren: <a href=\"?page=fleets&amp;sub=fleetoptions\">Flottenoptionen</a>";
-		}
+    $sessions = $sessionRepository->findAll();
 
-		//
-		// Schnellsuche
-		//
-		$_SESSION['planets']['query']=Null;
-		$_SESSION['admin']['user_query']="";
-		$_SESSION['admin']['queries']['alliances']="";
+    if (count($sessions) > 0) {
+        echo "<table class=\"tb\">
+            <tr>
+                <th>Status</th>
+                <th>Nick</th>
+                <th>Login</th>
+                <th>Aktivität</th>
+                <th>Dauer</th>
+                <th>IP</th>
+                <th>User Agent</th>
+                <th>Kicken</th>
+            </tr>";
+        $t = time();
+        foreach ($sessions as $arr) {
+            $browser = get_browser($arr['user_agent'], true);
+            echo "<tr>
+                    <td " . ($t - $cfg->admin_timeout->v < $arr['time_action'] ? 'style="color:#0f0;">Online' : 'style="color:red;">Timeout') . "</td>
+                    <td>" . $arr['user_nick'] . "</td>
+                    <td>" . date("d.m.Y H:i", $arr['time_login']) . "</td>
+                    <td>" . date("d.m.Y H:i", $arr['time_action']) . "</td>
+                    <td>" . tf($arr['time_action'] - $arr['time_login']) . "</td>
+                    <td title=\"" . Net::getHost($arr['ip_addr']) . "\">" . $arr['ip_addr'] . "</td>
+                    <td title=\"" . $arr['user_agent'] . "\">" . (isset($browser['parent']) ? $browser['parent'] : '?') . ' on ' . $browser['platform'] . "</td>
+                    <td><a href=\"?page=$page&amp;sub=$sub&amp;kick=" . $arr['user_id'] . "\">Kick</a></td>
+                </tr>";
+        }
+        echo "</table>";
+    } else
+        echo "<i>Keine Einträge vorhanden!</i>";
 
-		echo $twig->render('admin/overview/overview.html.twig', [
-			'welcomeMessage' => 'Hallo <b>' .$cu->nick. '</b>, willkommen im Administrationsmodus! Deine Rolle(n): <b>' . $cu->getRolesStr() . '.</b>',
-			'hasTfa' => !empty($cu->tfaSecret),
-			'didBigBangHappen' => $arr[0]!=0,
-			'forcePasswordChange' => $cu->forcePasswordChange,
-			'numNewTickets' => Ticket::countNew(),
-			'numOpenTickets' => Ticket::countAssigned($cu->id),
-			'fleetBanText' => $fleetBanText,
-			'fleetBanTitle' => $fleetBanTitle,
-		]);
-		exit();
-	}
+    echo "<h2>Session-Log</h2>";
+    $usersWithSessionLogs = $sessionRepository->findUsersWithSessionLogs();
+    if (count($usersWithSessionLogs) > 0) {
+        echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
+        echo "Benutzer wählen: <select name=\"user_id\">";
+        foreach ($usersWithSessionLogs as $arr) {
+            echo "<option value=\"" . $arr['user_id'] . "\">" . $arr['user_nick'] . " (" . $arr['cnt'] . " Sessions)</option>";
+        }
+        echo "</select> &nbsp; <input type=\"submit\" name=\"logshow\" value=\"Anzeigen\" /></form>";
+
+        echo "<h2>Logs löschen</h2>";
+        echo "<form action=\"?page=$page&sub=$sub\" method=\"post\">";
+        echo "Es sind " . nf($sessionRepository->countSessionLog()) . " Einträge in der Datenbank vorhanden.<br/><br/>
+                Einträge löschen die älter als <select name=\"log_timestamp\">";
+        foreach ($logDelTimespan as $k => $lts) {
+            echo "<option value=\"" . $k . "\">" . $lts[1] . "</option>";
+        }
+        echo "</select> sind: <input type=\"submit\" name=\"delentrys\" value=\"Ausführen\" /></form>";
+    } else {
+        echo "<i>Keine Einträge vorhanden</i>";
+    }
+}
+
+function systemInfoView(DatabaseManagerRepository $databaseManager, Environment $twig)
+{
+    $unix = UNIX ? posix_uname() : null;
+    echo $twig->render('admin/overview/sysinfo.html.twig', [
+        'phpVersion' => phpversion(),
+        'dbVersion' => $databaseManager->getDatabasePlatform(),
+        'webserverVersion' => $_SERVER['SERVER_SOFTWARE'],
+        'unixName' => UNIX ? $unix['sysname'] . ' ' . $unix['release'] . ' ' . $unix['version'] : null,
+    ]);
+    exit();
+}
+
+function indexView(
+    AdminUser $cu,
+    CellRepository $universeCellRepo,
+    TicketRepository $ticketRepo,
+    TextRepository $textRepo,
+    AdminRoleManager $roleManager,
+    Environment $twig
+) {
+    global $conf;
+
+    // Flottensperre aktiv
+    $fleetBanTitle = null;
+    $fleetBanText = null;
+    if ($conf['flightban']['v'] == 1) {
+        // Prüft, ob die Sperre schon abgelaufen ist
+        if ($conf['flightban_time']['p1'] <= time() && $conf['flightban_time']['p2'] >= time()) {
+            $flightban_time_status = "<span style=\"color:#0f0\">Aktiv</span> Es können keine Flüge gestartet werden!";
+        } elseif ($conf['flightban_time']['p1'] > time() && $conf['flightban_time']['p2'] > time()) {
+            $flightban_time_status = "Ausstehend";
+        } else {
+            $flightban_time_status = "<span style=\"color:#f90\">Abgelaufen</span>";
+        }
+
+        $fleetBanTitle = "Flottensperre aktiviert";
+        $fleetBanText = "Die Flottensperre wurde aktiviert.<br><br><b>Status:</b> " . $flightban_time_status . "<br><b>Zeit:</b> " . date("d.m.Y H:i", $conf['flightban_time']['p1']) . " - " . date("d.m.Y H:i", $conf['flightban_time']['p2']) . "<br><b>Grund:</b> " . $conf['flightban']['p1'] . "<br><br>Zum deaktivieren: <a href=\"?page=fleets&amp;sub=fleetoptions\">Flottenoptionen</a>";
+    }
+
+    // Kampfsperre aktiv
+    if ($conf['battleban']['v'] == 1) {
+        // Prüft, ob die Sperre schon abgelaufen ist
+        if ($conf['battleban_time']['p1'] <= time() && $conf['battleban_time']['p2'] >= time()) {
+            $battleban_time_status = "<span style=\"color:#0f0\">Aktiv</span> Es können keine Angriffe geflogen werden!";
+        } elseif ($conf['battleban_time']['p1'] > time() && $conf['battleban_time']['p2'] > time()) {
+            $battleban_time_status = "Ausstehend";
+        } else {
+            $battleban_time_status = "<span style=\"color:#f90\">Abgelaufen</span>";
+        }
+
+        $fleetBanTitle = "Kampfsperre aktiviert";
+        $fleetBanText = "Die Kampfsperre wurde aktiviert.<br><br><b>Status:</b> " . $battleban_time_status . "<br><b>Zeit:</b> " . date("d.m.Y H:i", $conf['battleban_time']['p1']) . " - " . date("d.m.Y H:i", $conf['battleban_time']['p2']) . "<br><b>Grund:</b> " . $conf['battleban']['p1'] . "<br><br>Zum deaktivieren: <a href=\"?page=fleets&amp;sub=fleetoptions\">Flottenoptionen</a>";
+    }
+
+    //
+    // Schnellsuche
+    //
+    $_SESSION['planets']['query'] = Null;
+    $_SESSION['admin']['user_query'] = "";
+    $_SESSION['admin']['queries']['alliances'] = "";
+
+    echo $twig->render('admin/overview/overview.html.twig', [
+        'welcomeMessage' => 'Hallo <b>' . $cu->nick . '</b>, willkommen im Administrationsmodus! Deine Rolle(n): <b>' . $roleManager->getRolesStr($cu) . '.</b>',
+        'hasTfa' => !empty($cu->tfaSecret),
+        'didBigBangHappen' => $universeCellRepo->count() != 0,
+        'forcePasswordChange' => $cu->forcePasswordChange,
+        'numNewTickets' => $ticketRepo->countNew(),
+        'numOpenTickets' => $ticketRepo->countAssigned($cu->id),
+        'fleetBanText' => $fleetBanText,
+        'fleetBanTitle' => $fleetBanTitle,
+        'adminInfo' => $textRepo->getEnabledTextOrDefault('admininfo'),
+        'systemMessage' => $textRepo->getEnabledTextOrDefault('system_message'),
+    ]);
+    exit();
+}

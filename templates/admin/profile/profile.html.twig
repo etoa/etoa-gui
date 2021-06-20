@@ -9,8 +9,8 @@
         {{ macros.messagebox(successMessage, 'success') }}
     {% endif %}
 
-    {% if errMsg|default(false) %}
-        {{ macros.messagebox(errMsg, 'error') }}
+    {% if errorMessage|default(false) %}
+        {{ macros.messagebox(errorMessage, 'error') }}
     {% endif %}
 
     <p>&Auml;ndere hier deine Daten und klicke auf '&Uuml;bernehmen', um die Daten zu speichern:</p>
@@ -40,7 +40,7 @@
                     <option value="{{ key}}" {% if key == user.playerId %}selected="selected"{% endif %}>{{ value }}</option>
                 {% endfor %}
             </select><br/>
-            <p class="buttons"><input type="submit" name="submitdata" value="&Uuml;bernehmen" /></p>
+            <p class="buttons"><input type="submit" name="submitProfile" value="&Uuml;bernehmen" /></p>
         </fieldset>
     </form>
 
@@ -56,7 +56,7 @@
             <label for="user_password2">Neues Passwort (wiederholen)</label>
             <input type="password" id="user_password2" name="user_password2" size="40"  autocomplete="off" />
             <br/>
-            <p class="buttons"><input type="submit" name="submitpw" value="&Uuml;bernehmen" /></p>
+            <p class="buttons"><input type="submit" name="submitPassword" value="&Uuml;bernehmen" /></p>
         </fieldset>
     </form>
 

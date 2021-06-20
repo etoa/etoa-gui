@@ -19,6 +19,7 @@ parameters:
 
     bootstrapFiles:
         - htdocs/inc/init.inc.php
+        - htdocs/admin/inc/admin_functions.inc.php
 
     scanFiles:
         - htdocs/inc/mysqli_polyfill.php

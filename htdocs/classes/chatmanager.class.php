@@ -7,6 +7,8 @@
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////
 
+use EtoA\Text\TextRepository;
+
 class ChatManager {
 
   /**
@@ -92,8 +94,12 @@ class ChatManager {
   * Gets the configured welcome message
   */
   static function getWelcomeMessage($nick) {
-	$tm = new TextManager();
-	$text = $tm->getText('chat_welcome_message');
+    // TODO
+    global $app;
+    /** @var TextRepository */
+    $textRepo = $app['etoa.text.repository'];
+
+    $text = $textRepo->find('chat_welcome_message');
 	if ($text->enabled && $text->content)
 	{
 		return str_replace(

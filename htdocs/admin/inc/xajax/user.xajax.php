@@ -1,5 +1,8 @@
 <?PHP
 
+use EtoA\Admin\AdminUserRepository;
+use EtoA\Help\TicketSystem\TicketRepository;
+
 $xajax->register(XAJAX_FUNCTION,"showTimeBox");
 $xajax->register(XAJAX_FUNCTION,"allianceRankSelector");
 $xajax->register(XAJAX_FUNCTION,"userPointsTable");
@@ -179,13 +182,20 @@ function userPointsTable($uid,$target,$length=100,$start=-1,$end=-1)
 
 function userTickets($uid,$target)
 {
+	global $app;
+
+	/** @var AdminUserRepository */
+	$adminUserRepo = $app['etoa.admin.user.repository'];
+
+	/** @var TicketRepository */
+	$ticketRepo = $app['etoa.help.ticket.repository'];
+
 	$or = new xajaxResponse();
 	ob_start();
 	echo "<table class=\"tb\">";
 
-	$tset = Ticket::find(array("user_id"=>$uid));
-
-	if (count($tset) > 0)
+	$tickets = $ticketRepo->findBy(["user_id" => $uid]);
+	if (count($tickets) > 0)
 	{
 		echo "<tr>
 			<th>ID</th>
@@ -194,15 +204,15 @@ function userTickets($uid,$target)
 			<th>Status</th>
 			<th>Admin</th>
 		</tr>";
-		foreach ($tset as $tid => &$ti)
+		foreach ($tickets as $ticket)
 		{
+			$adminNick = $adminUserRepo->getNick($ticket->adminId);
 			echo "<tr>
-				<td><a href=\"#\" onclick=\"window.open('popup.php?page=tickets&id=".$ti->id."','Tickets','top=20,left='+(screen.availWidth-720)+',width=700, height=600, status=no, scrollbars=yes')\">".$ti->idString."</a></td>";
-//				<td class=\"tbldata\">".popupLink("tickets",$ti->idString,"","&id=".$ti->id)."</td>
-	echo"			<td class=\"tbldata\">".df($ti->time)."</td>
-				<td class=\"tbldata\">".$ti->catName."</td>
-				<td class=\"tbldata\">".$ti->statusName."</td>
-				<td class=\"tbldata\">".$ti->adminNick."</td>
+				<td><a href=\"#\" onclick=\"window.open('popup.php?page=tickets&id=".$ticket->id."','Tickets','top=20,left='+(screen.availWidth-720)+',width=700, height=600, status=no, scrollbars=yes')\">".$ticket->getIdString()."</a></td>
+				<td class=\"tbldata\">".df($ticket->timestamp)."</td>
+				<td class=\"tbldata\">".$ticketRepo->getCategoryName($ticket->catId)."</td>
+				<td class=\"tbldata\">".$ticket->getStatusName()."</td>
+				<td class=\"tbldata\">".$adminNick."</td>
 			</tr>";
 		}
 	}

@@ -1,58 +1,64 @@
 <?PHP
 
-$successMessage = null;
-$errorMessage = null;
-if (isset($_POST['submitpw'])) {
-    if ($cu->checkEqualPassword($_POST['user_password_old'])) {
-        if ($_POST['user_password'] == $_POST['user_password2'] && $_POST['user_password_old'] != $_POST['user_password']) {
-            if (strlen($_POST['user_password']) >= PASSWORD_MINLENGHT) {
-                $cu->setPassword($_POST['user_password']);
-                $successMessage = 'Das Passwort wurde geändert!';
-                add_log(8, $cu->id . " ändert sein Passwort");
-            } else {
-                $errorMessage = 'Das Passwort ist zu kurz! Es muss mindestens ' . PASSWORD_MINLENGHT . ' Zeichen lang sein!';
-            }
-        } else {
-            $errorMessage = 'Die Kennwortwiederholung stimmt nicht oder das alte und das neue Passwort sind gleich!';
+use EtoA\Admin\AdminUser;
+use EtoA\Admin\AdminUserRepository;
+use Twig\Environment;
+
+/** @var AdminUserRepository */
+$adminUserRepo = $app['etoa.admin.user.repository'];
+
+if (isset($_POST['submitPassword'])) {
+    submitPassword($cu, $adminUserRepo, $twig);
+}
+if (isset($_POST['submitProfile'])) {
+    submitProfile($cu, $adminUserRepo, $twig);
+}
+profileIndex($cu, $twig);
+exit();
+
+function submitPassword(AdminUser $cu, AdminUserRepository $adminUserRepo, Environment $twig)
+{
+    try {
+        if (!$cu->checkEqualPassword($_POST['user_password_old'])) {
+            throw new \Exception('Das alte Passwort stimmt nicht mit dem gespeicherten Wert überein!');
         }
-    } else {
-        $errorMessage = 'Das alte Passwort stimmt nicht mit dem gespeicherten Wert überein!';
+        if (!($_POST['user_password'] == $_POST['user_password2'] && $_POST['user_password_old'] != $_POST['user_password'])) {
+            throw new \Exception('Die Kennwortwiederholung stimmt nicht oder das alte und das neue Passwort sind gleich!');
+        }
+        if (strlen($_POST['user_password']) < PASSWORD_MINLENGHT) {
+            throw new \Exception('Das Passwort ist zu kurz! Es muss mindestens ' . PASSWORD_MINLENGHT . ' Zeichen lang sein!');
+        }
+
+        $adminUserRepo->setPassword($cu, $_POST['user_password']);
+
+        $twig->addGlobal('successMessage', 'Das Passwort wurde geändert!');
+
+        add_log(8, $cu->id . " ändert sein Passwort");
+    } catch (\Exception $ex) {
+        $twig->addGlobal('errorMessage', $ex->getMessage());
     }
 }
 
-if (isset($_POST['submitdata'])) {
+function submitProfile(AdminUser $cu, AdminUserRepository $adminUserRepo, Environment $twig)
+{
     $cu->name = $_POST['user_name'];
     $cu->email = $_POST['user_email'];
     $cu->boardUrl = $_POST['user_board_url'];
     $cu->userTheme = $_POST['user_theme'] ?? '';
     $cu->ticketEmail = $_POST['ticketmail'];
     $cu->playerId = $_POST['player_id'];
-    $cu->save();
 
-    if ($cu->playerId != $_POST['player_id']) {
-        dbquery("UPDATE
-                users
-            SET
-                user_ghost='0'
-            WHERE
-                user_id='".$arr['player_id']."';");
+    $adminUserRepo->save($cu);
 
-        dbquery("UPDATE
-                users
-            SET
-                user_ghost='1'
-            WHERE
-                user_id='".$_POST['player_id']."';");
-    }
+    $twig->addGlobal('successMessage', 'Die Daten wurden geändert!');
 
-    $successMessage = 'Die Daten wurden geändert!';
-    add_log(8,$cu->nick." ändert seine Daten");
+    add_log(8, $cu->nick . " ändert seine Daten");
 }
 
-echo $twig->render('admin/profile/profile.html.twig', [
-    'user' => $cu,
-    'users' => Users::getArray(),
-    'errMsg' => $errorMessage,
-    'successMessage' => $successMessage,
-]);
-exit();
+function profileIndex(AdminUser $cu, Environment $twig)
+{
+    echo $twig->render('admin/profile/profile.html.twig', [
+        'user' => $cu,
+        'users' => Users::getArray(),
+    ]);
+}

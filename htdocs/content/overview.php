@@ -25,7 +25,9 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/
 
-	// BEGIN SKRIPT //
+use EtoA\Text\TextRepository;
+
+// BEGIN SKRIPT //
 	echo "<h1>&Uuml;bersicht</h1>";
 
 	if ($s->firstView)
@@ -69,8 +71,11 @@
 	//
 	// Admin-Infos
 	//
-	$tm = new TextManager();
-	$infoText = $tm->getText('info');
+
+	/** @var TextRepository */
+    $textRepo = $app['etoa.text.repository'];
+
+	$infoText = $textRepo->find('info');
 	if ($infoText->enabled && $infoText->content)
 	{
 		echo '<div class="overviewInfoTextContainer">';

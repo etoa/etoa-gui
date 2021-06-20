@@ -53,6 +53,14 @@ $app->register(new \EtoA\Specialist\SpecialistServiceProvider());
 $app->register(new \EtoA\Technology\TechnologyServiceProvider());
 $app->register($tutorialProvider = new \EtoA\Tutorial\TutorialServiceProvider());
 $app->register(new \EtoA\User\UserServiceProvider());
+$app->register(new \EtoA\Admin\AdminUserServiceProvider());
+$app->register(new \EtoA\Text\TextServiceProvider());
+$app->register(new \EtoA\Alliance\AllianceServiceProvider());
+$app->register(new \EtoA\Support\DatabaseManagerServiceProvider());
+$app->register(new \EtoA\Universe\UniverseServiceProvider());
+$app->register(new \EtoA\Help\TicketSystem\TicketSystemServiceProvider());
+$app->register(new \EtoA\Message\MessageServiceProvider());
+$app->register(new \EtoA\Support\RuntimeDataStoreServiceProvider());
 
 $app->mount('/', $questProvider);
 $app->mount('/', $tutorialProvider);

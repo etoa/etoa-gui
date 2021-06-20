@@ -57,6 +57,12 @@ require_once __DIR__ . '/../vendor/autoload.php';
 	// Load default values
 	require_once(RELATIVE_ROOT."inc/def.inc.php");
 
+	if (!isset($app)) {
+        $questSystemEnabled = (bool) Config::getInstance()->get('quest_system_enable');
+        $app = require __DIR__ .'/../src/app.php';
+        $app->boot();
+    }
+
 	$args = array_splice($_SERVER['argv'], 1);
 
 	$verbose = in_array("-v", $args, true);
@@ -69,7 +75,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 			$time = time();
 
 			// Execute tasks
-			$tr = new PeriodicTaskRunner();
+			$tr = new PeriodicTaskRunner($app);
 			$log = '';
 			foreach (PeriodicTaskRunner::getScheduleFromConfig() as $tc) {
 				if (PeriodicTaskRunner::shouldRun($tc['schedule'], $time)) {

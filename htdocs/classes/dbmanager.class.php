@@ -667,16 +667,6 @@ class DBManager implements ISingleton	{
 		return $deleted;
 	}
 
-	public function getDbSize() {
-		$res = $this->safeQuery("
-			SELECT round(sum( data_length + index_length ) / 1024 / 1024,2)
-			FROM information_schema.TABLES
-			WHERE table_schema=?
-			GROUP BY table_schema", array($this->getDbName()));
-		$arr = mysql_fetch_row($res);
-		return $arr[0];
-	}
-
 	/**
 	* Writes a message to error log
 	*/

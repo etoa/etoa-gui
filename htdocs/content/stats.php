@@ -1,29 +1,9 @@
 <?PHP
-	//////////////////////////////////////////////////
-	//		 	 ____    __           ______       			//
-	//			/\  _`\ /\ \__       /\  _  \      			//
-	//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
-	//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
-	//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
-	//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
-	//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
-	//																					 		//
-	//////////////////////////////////////////////////
-	// The Andromeda-Project-Browsergame				 		//
-	// Ein Massive-Multiplayer-Online-Spiel			 		//
-	// Programmiert von Nicolas Perrenoud				 		//
-	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	// www.etoa.ch | mail@etoa.ch								 		//
-	//////////////////////////////////////////////////
-	//
-	//
 
-	/**
-	* Displays user statistics
-	*
-	* @author MrCage <mrcage@etoa.ch>
-	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/
+use EtoA\Support\RuntimeDataStore;
+
+/** @var RuntimeDataStore */
+$runtimeDataStore = $app['etoa.runtime.datastore'];
 
 	// BEGIN SKRIPT //
 
@@ -235,7 +215,7 @@
 		<span class=\"userInactiveColor\">Inaktiv (".USER_INACTIVE_SHOW." Tage)</span>,
 		<span class=\"userAllianceMemberColor\">Allianz(-mitglied)</span>
 		<br/>";
-		$statsUpdate = RuntimeDataStore::get('statsupdate');
+		$statsUpdate = $runtimeDataStore->get('statsupdate');
 		if ($statsUpdate != null)
 		{
 			echo "Letzte Aktualisierung: <b>".df($statsUpdate)." Uhr</b><br/>";

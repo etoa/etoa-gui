@@ -1,6 +1,12 @@
 <?PHP
 
-	$time = time();
+use EtoA\Text\TextRepository;
+use EtoA\Support\RuntimeDataStore;
+
+/** @var RuntimeDataStore */
+$runtimeDataStore = $app['etoa.runtime.datastore'];
+
+$time = time();
 
 	// Get tutorial
 	$ttm = new TutorialManager();
@@ -44,10 +50,11 @@
 			}
 		}
 
-		$tm = new TextManager();
+		/** @var TextRepository */
+		$textRepo = $app['etoa.text.repository'];
 
 		// SYSTEMNACHRICHT //
-		$systemMessage = $tm->getText('system_message');
+		$systemMessage = $textRepo->find('system_message');
 		if ($systemMessage->enabled && $systemMessage->content)
 		{
 			echo "<br />";
@@ -57,10 +64,10 @@
 		}
 
 		//Eventhandler //
-		$backendStatus = RuntimeDataStore::get('backend_status');
+		$backendStatus = $runtimeDataStore->get('backend_status');
 		if ($backendStatus != null && $backendStatus == 0)
 		{
-			$infoText = $tm->getText('backend_offline_message');
+			$infoText = $textRepo->find('backend_offline_message');
 			if ($infoText->enabled && $infoText->content)
 			{
 				echo "<br />";

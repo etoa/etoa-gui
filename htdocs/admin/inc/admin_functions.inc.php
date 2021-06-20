@@ -7,6 +7,8 @@
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////
 
+use Doctrine\DBAL\Query\QueryBuilder;
+
 function popupLink($type,$title,$class="",$params="")
 {
 	$res = "<a href=\"#\" class=\"popuplink".($class!="" ? " $class" : "")."\" ";
@@ -316,6 +318,56 @@ function fieldqueryselbox($name)
 	echo "<option value=\"< '\">ist kleiner</option>";
 	echo "<option value=\"> '\">ist gr&ouml;sser</option>";
 	echo "</select>";
+}
+
+function fieldComparisonSelectBox(string $name): string
+{
+	$options = [
+		'like_wildcard' => 'enthält',
+		'like' => 'ist gleich',
+		'not_like_wildcard' => 'enthält nicht',
+		'not_like' => 'ist ungleich',
+		'lt' => 'ist kleiner',
+		'gt' => 'ist grösser',
+	];
+	$str = "<select name=\"comparisonMode[$name]\">";
+	foreach ($options as $key => $value) {
+		$str .= '<option value="'.$key.'">'.$value.'</option>';
+	}
+	$str .= "</select>";
+	return $str;
+}
+
+function fieldComparisonQuery(QueryBuilder $qry, array $formData, string $column, string $formKey): QueryBuilder
+{
+	$value = $formData[$formKey];
+	switch ($formData['comparisonMode'][$formKey]) {
+		case 'like_wildcard':
+			$comparator = 'LIKE';
+			$value = "%$value%";
+			break;
+		case 'like':
+			$comparator = 'LIKE';
+			break;
+		case 'not_like_wildcard':
+			$comparator = 'NOT LIKE';
+			$value = "%$value%";
+			break;
+		case 'not_like':
+			$comparator = 'NOT LIKE';
+			break;
+		case 'lt':
+			$comparator = '<';
+			break;
+		case 'gt':
+			$comparator = '>';
+			break;
+		default:
+			$comparator = '=';
+	}
+	$qry->andWhere("$column $comparator :$column")
+		->setParameter($column, $value);
+	return $qry;
 }
 
 //DEPRECATED
@@ -1237,7 +1289,9 @@ function showFleetLogs($args=null,$limit=0)
 }
 
 function showDebrisLogs($args=null,$limit=0) {
-    global $resNames;
+	global $app;
+
+	$adminUserRepo = $app['etoa.admin.user.repository'];
 
     $maxtime = is_array($args) ? mktime($args['searchtime_h'],$args['searchtime_i'],$args['searchtime_s'],$args['searchtime_m'],$args['searchtime_d'],$args['searchtime_y']) : time();
 
@@ -1246,16 +1300,15 @@ function showDebrisLogs($args=null,$limit=0) {
     $sql = "SELECT * from logs_debris";
 	$sql2 =" WHERE time<".$maxtime;
 
-
     if (isset($args['searchuser']) && trim($args['searchuser']) != '')
     {
         $sql2 .=" AND user_id = ".User::findIdByNick($args['searchuser'])." ";
     };
     if (isset($args['searchadmin']) && trim($args['searchadmin']) != '')
     {
-        $sql2 .=" AND admin_id=".(AdminUser::findByNick($args['searchadmin'] ? (AdminUser::findByNick($args['searchadmin'])) : 0));
+		$admin = $adminUserRepo->findOneByNick($args['searchadmin']);
+        $sql2 .=" AND admin_id=". ($admin != null ? $admin->id : 0);
     };
-
 
     $res = dbquery(" SELECT COUNT(id) as cnt from logs_debris".$sql2);
     $arr = mysql_fetch_row($res);
@@ -1310,10 +1363,10 @@ function showDebrisLogs($args=null,$limit=0) {
 		</tr>";
         while ($arr = mysql_fetch_assoc($res))
         {
-        	$admin = new AdminUser($arr['admin_id']);
+			$admin = $adminUserRepo->find($arr['admin_id']);
             echo "<tr>
 			<td>".date('d M Y H:i:s',$arr['time'])."</td>
-			<td>".$admin->nick."</td>
+			<td>".($admin != null ? $admin->nick : '?')."</td>
 			<td>".new User($arr['user_id'])."</td>
 			<td>".$arr['metal']."</td>
 			<td>".$arr['crystal']."</td>
@@ -1577,4 +1630,3 @@ function showGameLogs($args=null,$limit=0)
 		}
 		return false;
 	}
-?>

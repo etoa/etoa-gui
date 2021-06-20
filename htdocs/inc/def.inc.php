@@ -1,32 +1,9 @@
 <?PHP
-	//////////////////////////////////////////////////
-	//		 	 ____    __           ______       			//
-	//			/\  _`\ /\ \__       /\  _  \      			//
-	//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
-	//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
-	//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
-	//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
-	//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
-	//																					 		//
-	//////////////////////////////////////////////////
-	// The Andromeda-Project-Browsergame				 		//
-	// Ein Massive-Multiplayer-Online-Spiel			 		//
-	// Programmiert von Nicolas Perrenoud				 		//
-	// www.nicu.ch | mail@nicu.ch								 		//
-	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	//////////////////////////////////////////////////
-	//
-	// 	File: def.inc.php
-	// 	Created: 07.5.2007
-	// 	Last edited: 06.07.2007
-	// 	Last edited by: MrCage <mrcage@etoa.ch>
-	//
-	/**
-	* Definition file, load definitions from database and assigns constants
-	*
-	* @author MrCage mrcage@etoa.ch
-	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/
+
+use EtoA\Support\RuntimeDataStore;
+
+/** @var RuntimeDataStore */
+$runtimeDataStore = $app['etoa.runtime.datastore'];
 
 	$cfg = Config::getInstance();
 
@@ -274,19 +251,19 @@
 	define("AUCTION_DELAY_TIME", $cfg->market_auction_delay_time->v);
 
 	// Titan Taxe
-	define("MARKET_METAL_FACTOR", RuntimeDataStore::get('market_rate_0', 1));
+	define("MARKET_METAL_FACTOR", $runtimeDataStore->get('market_rate_0', (string) 1));
 
 	// Silizium Taxe
-	define("MARKET_CRYSTAL_FACTOR", RuntimeDataStore::get('market_rate_1', 1));
+	define("MARKET_CRYSTAL_FACTOR", $runtimeDataStore->get('market_rate_1', (string) 1));
 
 	// PVC Taxe
-	define("MARKET_PLASTIC_FACTOR", RuntimeDataStore::get('market_rate_2', 1));
+	define("MARKET_PLASTIC_FACTOR", $runtimeDataStore->get('market_rate_2', (string) 1));
 
 	// Tritium Taxe
-	define("MARKET_FUEL_FACTOR", RuntimeDataStore::get('market_rate_3', 1));
+	define("MARKET_FUEL_FACTOR", $runtimeDataStore->get('market_rate_3', (string) 1));
 
 	// Nahrung Taxe
-	define("MARKET_FOOD_FACTOR", RuntimeDataStore::get('market_rate_4', 1));
+	define("MARKET_FOOD_FACTOR", $runtimeDataStore->get('market_rate_4', (string) 1));
 
 	// Mindestpreisgrenze der Schiffe 1=100%
 	define("SHIP_PRICE_FACTOR_MIN", $cfg->ship_price_factor_min->v);

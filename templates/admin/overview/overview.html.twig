@@ -17,18 +17,16 @@
         {{ macros.messagebox('Aktiviere <a href=\"?tfa\">Zwei-Faktor-Authentifizierung</a> um Sicherheit deines Account zu verbessern!"', 'info', 'Zwei-Faktor-Authentifizierung')}}
     {% endif %}
 
-    {% set adminInfo = adminText('admininfo') %}
     {% if adminInfo %}
         {{ macros.messagebox(text2Html(adminInfo), 'info', 'Admin-News')}}
     {% endif %}
 
-    {% set systemMessage = adminText('system_message') %}
     {% if systemMessage %}
         {{ macros.messagebox(text2Html(systemMessage) ~ '<br/><a href=\"?page=texts&amp;id=system_message\">Bearbeiten/Deaktivieren</a>', 'info', 'Systemnachricht aktiv!')}}
     {% endif %}
 
     {% if configValue('offline') == 1 %}
-        {{ macros.messagebox(configValue('offline_message') ~ '<br/><a href=\"?page=$page&amp;sub=offline\">&Auml;ndern</a>', 'warning', 'Spiel offline')}}
+        {{ macros.messagebox(configValue('offline_message') ~ '<br/><a href=\"?page=overview&amp;sub=offline\">&Auml;ndern</a>', 'warning', 'Spiel offline')}}
     {% endif %}
 
     {% if configValue('register_key') %}

@@ -1,18 +1,29 @@
 <?PHP
-	/**
-	* Remove old session logs of users and admins
-	*/
-	class CleanupSessionLogsTask implements IPeriodicTask
-	{
-		function run()
-		{
-			$unr = UserSession::cleanupLogs();
-			$anr = AdminSession::cleanupLogs();
-			return "$unr alte Spieler Session-Logs gelöscht, $anr alte Admin Session-Logs gelöscht";
-		}
 
-		function getDescription() {
-			return "Alte Session-Logs löschen";
-		}
+use EtoA\Admin\AdminSessionManager;
+use Pimple\Container;
+
+/**
+ * Remove old session logs of users and admins
+ */
+class CleanupSessionLogsTask implements IPeriodicTask
+{
+	private AdminSessionManager $sessionManager;
+
+	function __construct(Container $app)
+	{
+		$this->sessionManager = $app['etoa.admin.session.manager'];
 	}
-?>
+
+	function run()
+	{
+		$unr = UserSession::cleanupLogs();
+		$anr = $this->sessionManager->cleanupLogs();
+		return "$unr alte Spieler Session-Logs gelöscht, $anr alte Admin Session-Logs gelöscht";
+	}
+
+	function getDescription()
+	{
+		return "Alte Session-Logs löschen";
+	}
+}
