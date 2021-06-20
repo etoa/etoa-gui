@@ -6,6 +6,21 @@ parameters:
 			path: bin/cronjob.php
 
 		-
+			message: "#^Variable property access on mixed\\.$#"
+			count: 1
+			path: htdocs/admin/content/config/check.inc.php
+
+		-
+			message: "#^Variable property access on mixed\\.$#"
+			count: 3
+			path: htdocs/admin/content/config/editor.inc.php
+
+		-
+			message: "#^Variable property access on mixed\\.$#"
+			count: 6
+			path: htdocs/admin/content/config/restoredefaults.inc.php
+
+		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: htdocs/admin/content/cronjob.php

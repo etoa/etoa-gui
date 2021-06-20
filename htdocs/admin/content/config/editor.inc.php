@@ -7,7 +7,7 @@ $categories = $cfg->categories();
 
 // Current category
 $currentCategory = current(array_keys($categories));
-if (!empty($_GET['category']) && isset($categories[$_GET['category']])) {
+if (isset($_GET['category']) && isset($categories[$_GET['category']])) {
     $currentCategory = $_GET['category'];
 }
 
@@ -30,11 +30,11 @@ if (isset($_POST['submit'])) {
 
 // Iterate over all entries and show current category
 $configData = array();
+$items = [];
 foreach ($categories as $ck => $cv) {
     $configData[$ck] = $cv;
 
     if ($currentCategory == $ck) {
-        $items = [];
         foreach ($cfg->itemInCategory($ck) as $i) {
             $name = $i['name'];
             if (isset($i->v)) {
