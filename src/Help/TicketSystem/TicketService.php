@@ -6,12 +6,14 @@ namespace EtoA\Help\TicketSystem;
 
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Message\MessageRepository;
+use EtoA\User\UserRepository;
 
 class TicketService
 {
     private TicketRepository $ticketRepo;
     private TicketMessageRepository $messageRepo;
     private AdminUserRepository $adminUserRepo;
+    private UserRepository $userRepo;
     private MessageRepository $userMessageRepo;
 
     const INACTIVE_TIME = 72 * 3600; // 72 hours
@@ -20,11 +22,13 @@ class TicketService
         TicketRepository $ticketRepo,
         TicketMessageRepository $messageRepo,
         AdminUserRepository $adminUserRepo,
+        UserRepository $userRepo,
         MessageRepository $userMessageRepo
     ) {
         $this->ticketRepo = $ticketRepo;
         $this->messageRepo = $messageRepo;
         $this->adminUserRepo = $adminUserRepo;
+        $this->userRepo = $userRepo;
         $this->userMessageRepo = $userMessageRepo;
     }
 
@@ -152,5 +156,16 @@ Dein Admin-Team";
     public function getMessages(Ticket $ticket): array
     {
         return $this->messageRepo->findByTicket($ticket->id);
+    }
+
+    public function getAuthorNick(TicketMessage $message): string
+    {
+        if ($message->userId > 0) {
+            return $this->userRepo->getNick($message->userId);
+        }
+        if ($message->adminId > 0) {
+            return $this->adminUserRepo->getNick($message->adminId) . " (Admin)";
+        }
+        return "System";
     }
 }

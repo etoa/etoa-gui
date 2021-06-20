@@ -11,19 +11,6 @@ use EtoA\User\UserRepository;
 
 class TicketMessageRepository extends AbstractRepository
 {
-    private AdminUserRepository $adminUserRepo;
-    private UserRepository $userRepo;
-
-    public function __construct(
-        Connection $connection,
-        AdminUserRepository $adminUserRepo,
-        UserRepository $userRepo
-    ) {
-        parent::__construct($connection);
-        $this->adminUserRepo = $adminUserRepo;
-        $this->userRepo = $userRepo;
-    }
-
     public function count(int $ticketId): int
     {
         return (int) $this->createQueryBuilder()
@@ -104,17 +91,6 @@ class TicketMessageRepository extends AbstractRepository
             ->execute();
 
         $message->id = (int) $this->getConnection()->lastInsertId();
-    }
-
-    public function getAuthorNick(TicketMessage $message): string
-    {
-        if ($message->userId > 0) {
-            return $this->userRepo->getNick($message->userId);
-        }
-        if ($message->adminId > 0) {
-            return $this->adminUserRepo->getNick($message->adminId) . " (Admin)";
-        }
-        return "System";
     }
 
     public function removeByTicketIds(...$ticketIds): void

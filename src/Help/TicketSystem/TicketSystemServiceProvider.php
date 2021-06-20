@@ -18,9 +18,7 @@ class TicketSystemServiceProvider implements ServiceProviderInterface
         };
         $pimple['etoa.help.ticket.message.repository'] = function (Container $pimple): TicketMessageRepository {
             return new TicketMessageRepository(
-                $pimple['db'],
-                $pimple['etoa.admin.user.repository'],
-                $pimple['etoa.user.repository']
+                $pimple['db']
             );
         };
         $pimple['etoa.help.ticket.service'] = function (Container $pimple): TicketService {
@@ -28,6 +26,7 @@ class TicketSystemServiceProvider implements ServiceProviderInterface
                 $pimple['etoa.help.ticket.repository'],
                 $pimple['etoa.help.ticket.message.repository'],
                 $pimple['etoa.admin.user.repository'],
+                $pimple['etoa.user.repository'],
                 $pimple['etoa.user.message.repository']
             );
         };

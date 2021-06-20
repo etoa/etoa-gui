@@ -1,7 +1,6 @@
 <?php
 
 use EtoA\Admin\AdminUserRepository;
-use EtoA\Help\TicketSystem\TicketMessageRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Help\TicketSystem\TicketService;
 use EtoA\User\UserRepository;
@@ -12,9 +11,6 @@ $ticketService = $app['etoa.help.ticket.service'];
 /** @var TicketRepository */
 $ticketRepo = $app['etoa.help.ticket.repository'];
 
-/** @var TicketMessageRepository */
-$ticketMessageRepo = $app['etoa.help.ticket.message.repository'];
-
 /** @var AdminUserRepository */
 $adminUserRepo = $app['etoa.admin.user.repository'];
 
@@ -24,7 +20,7 @@ $userRepo = $app['etoa.user.repository'];
 echo "<h1>Ticketsystem</h1>";
 
 if (isset($_GET['id']) && intval($_GET['id']) > 0) {
-    viewTicket($ticketService, $ticketRepo, $ticketMessageRepo, $adminUserRepo, $userRepo);
+    viewTicket($ticketService, $ticketRepo, $adminUserRepo, $userRepo);
 } elseif (isset($_POST['ticket_submit']) && checker_verify()) {
     storeTicket($ticketService);
 } else {
@@ -34,7 +30,6 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0) {
 function viewTicket(
     TicketService $ticketService,
     TicketRepository $ticketRepo,
-    TicketMessageRepository $ticketMessageRepo,
     AdminUserRepository $adminUserRepo,
     UserRepository $userRepo
 ): void {
@@ -85,7 +80,7 @@ function viewTicket(
     foreach ($ticketService->getMessages($ticket) as $message) {
         echo "<tr>
         <td>" . df($message->timestamp) . "</td>
-        <td>" . $ticketMessageRepo->getAuthorNick($message) . "</td>
+        <td>" . $ticketService->getAuthorNick($message) . "</td>
         <td>" . text2html($message->message) . "</td>
         </tr>";
     }

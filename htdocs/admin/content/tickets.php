@@ -40,7 +40,7 @@ if ($roleManager->checkAllowed($cu, ["master", "super-admin", "game-admin", "tri
     if ($request->query->has('edit') && $request->query->getInt('edit') > 0) {
         editTicket($request, $ticketRepo, $adminUserRepo, $userRepo);
     } elseif ($request->query->has('id') && $request->query->getInt('id') > 0) {
-        ticketDetails($request, $ticketService, $ticketRepo, $ticketMessageRepo, $adminUserRepo, $userRepo, $cu);
+        ticketDetails($request, $ticketService, $ticketRepo, $adminUserRepo, $userRepo, $cu);
     } elseif ($request->query->has('action') && $request->query->get('action') == "new") {
         createNewTicketForm($ticketRepo);
     } elseif ($request->query->has('action') && $request->query->get('action') == "closed") {
@@ -106,7 +106,6 @@ function ticketDetails(
     Request $request,
     TicketService $ticketService,
     TicketRepository $ticketRepo,
-    TicketMessageRepository $ticketMessageRepo,
     AdminUserRepository $adminUserRepo,
     UserRepository $userRepo,
     AdminUser $cu
@@ -213,7 +212,7 @@ function ticketDetails(
     foreach ($ticketService->getMessages($ticket) as $message) {
         echo "<tr>
         <td>" . df($message->timestamp) . "</td>
-        <td>" . $ticketMessageRepo->getAuthorNick($message) . "</td>
+        <td>" . $ticketService->getAuthorNick($message) . "</td>
         <td>" . text2html($message->message) . "</td>
         </tr>";
     }
