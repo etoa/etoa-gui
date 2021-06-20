@@ -170,25 +170,25 @@ function listUsers(
 
     if ($request->request->has('new_submit')) {
         if ($request->request->get('user_nick') != "") {
-            $au = new AdminUser();
-            $au->nick = $request->request->get('user_nick');
-            $au->name = $request->request->get('user_name');
-            $au->email = $request->request->get('user_email');
-            $au->roles = $request->request->has('roles') ? $request->request->get('roles') : [];
-            $au->isContact = $request->request->getBoolean('is_contact');
 
-            $adminUserRepo->save($au);
+            $admin = new AdminUser();
+            $admin->nick = $request->request->get('user_nick');
+            $admin->name = $request->request->get('user_name');
+            $admin->email = $request->request->get('user_email');
+            $admin->roles = $request->request->has('roles') ? $request->request->get('roles') : [];
+            $admin->isContact = $request->request->getBoolean('is_contact');
+            $adminUserRepo->save($admin);
 
             $twig->addGlobal('successMessage', "Gespeichert!");
-            Log::add(8, Log::INFO, "Der Administrator " . $cu->nick . " erstellt einen neuen Administrator: " . $au->nick . "(" . $au->id . ").");
+            Log::add(8, Log::INFO, "Der Administrator " . $cu->nick . " erstellt einen neuen Administrator: " . $admin->nick . "(" . $admin->id . ").");
 
             if ($request->request->get('user_password') != "") {
-                $pw = $request->request->get('user_password');
+                $password = $request->request->get('user_password');
             } else {
-                $pw = generatePasswort();
-                echo "Das Passwort ist: $pw<br/><br/>";
+                $password = generatePasswort();
+                echo "Das Passwort ist: $password<br/><br/>";
             }
-            $adminUserRepo->setPassword($au, $pw);
+            $adminUserRepo->setPassword($admin, $password);
         } else {
             echo "Nick nicht angegeben!<br/><br/>";
         }

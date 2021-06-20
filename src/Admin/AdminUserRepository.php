@@ -26,7 +26,7 @@ class AdminUserRepository extends AbstractRepository
             ->setParameter('id', $id)
             ->execute()
             ->fetchAssociative();
-        return $data !== false ? $this->createObject($data) : null;
+        return $data !== false ? AdminUser::createFromArray($data) : null;
     }
 
     public function findOneByNick(string $nick)
@@ -38,7 +38,7 @@ class AdminUserRepository extends AbstractRepository
             ->setParameter('nick', $nick)
             ->execute()
             ->fetchAssociative();
-        return $data !== false ? $this->createObject($data) : null;
+        return $data !== false ? AdminUser::createFromArray($data) : null;
     }
 
     public function findAll(): array
@@ -50,7 +50,7 @@ class AdminUserRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
         return collect($data)
-            ->map(fn ($arr) => $this->createObject($arr))
+            ->map(fn ($arr) => AdminUser::createFromArray($arr))
             ->toArray();
     }
 
@@ -62,29 +62,6 @@ class AdminUserRepository extends AbstractRepository
             ->orderBy('user_nick')
             ->execute()
             ->fetchAllKeyValue();
-    }
-
-    private function createObject(array $data): AdminUser
-    {
-        $adminUser = new AdminUser();
-        $adminUser->id = (int) $data['user_id'];
-        $adminUser->passwordString = $data['user_password'];
-
-        $adminUser->nick = $data['user_nick'];
-        $adminUser->forcePasswordChange = $data['user_force_pwchange'] > 0;
-
-        $adminUser->name = $data['user_name'];
-        $adminUser->email = $data['user_email'];
-        $adminUser->tfaSecret = $data['tfa_secret'];
-        $adminUser->playerId = (int) $data['player_id'];
-        $adminUser->boardUrl = $data['user_board_url'];
-        $adminUser->userTheme = $data['user_theme'];
-        $adminUser->ticketEmail = $data['ticketmail'] > 0;
-        $adminUser->locked = $data['user_locked'] > 0;
-        $adminUser->roles = explode(",", $data['roles']);
-        $adminUser->isContact = $data['is_contact'] > 0;
-
-        return $adminUser;
     }
 
     public function setPassword(AdminUser $adminUser, string $password, bool $forceChange = false): void

@@ -67,13 +67,13 @@ function sendPasswordForm(Environment $twig): void
 
 function registerFirstUser(AdminUserRepository $adminUserRepo, Environment $twig): void
 {
-    $nu = new AdminUser();
-    $nu->email = $_POST['user_email'];
-    $nu->nick = $_POST['user_nick'];
-    $nu->name = $_POST['user_nick'];
-    $nu->roles = ['master'];
-    $adminUserRepo->save($nu);
-    $adminUserRepo->setPassword($nu, $_POST['user_password']);
+    $newAdmin = new AdminUser();
+    $newAdmin->email = $_POST['user_email'];
+    $newAdmin->nick = $_POST['user_nick'];
+    $newAdmin->name = $_POST['user_nick'];
+    $newAdmin->roles = ['master'];
+    $adminUserRepo->save($newAdmin);
+    $adminUserRepo->setPassword($newAdmin, $_POST['user_password']);
 
     echo $twig->render('admin/login/login-status.html.twig', [
         'title' => 'Admin-User erstellen',
