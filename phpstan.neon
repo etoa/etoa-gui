@@ -19,7 +19,6 @@ parameters:
         - htdocs/admin/content/db
         - htdocs/admin/content/galaxy
         - htdocs/admin/content/home
-        - htdocs/admin/content/misc
         - htdocs/libs
 
     bootstrapFiles:
