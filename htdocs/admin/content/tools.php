@@ -85,7 +85,7 @@ elseif ($sub=="filesharing")
 
 	if (isset($_GET['action']) && $_GET['action']=="rename")
 	{
-		$f = base64_decode($_GET['file']);
+		$f = base64_decode($_GET['file'], true);
 		if (md5($f) == $_GET['h'])
 		{
 			echo "<h2>Umbenennen</h2>
@@ -123,7 +123,7 @@ elseif ($sub=="filesharing")
 
 		if (isset($_GET['action']) && $_GET['action']=="delete")
 		{
-			$f = base64_decode($_GET['file']);
+			$f = base64_decode($_GET['file'], true);
 			if (md5($f) == $_GET['h'])
 			{
 			@unlink($root."/".$f);

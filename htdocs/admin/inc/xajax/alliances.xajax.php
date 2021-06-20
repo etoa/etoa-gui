@@ -157,7 +157,7 @@ function allianceNewsEdit($id)
 	{
 		while ($arr=mysql_fetch_array($res))
 		{
-  		$objResponse->assign("news_".$arr['alliance_news_id']."_actions","innerHTML",$out);
+  		$objResponse->assign("news_".$arr['alliance_news_id']."_actions","innerHTML",'');
   	}
 	}
 	mysql_free_result($res);
@@ -243,7 +243,7 @@ function allianceNewsEdit($id)
 function allianceNewsLoadUserList($nid,$aid,$uid)
 {
 	$objResponse = new xajaxResponse();
-
+    $out = '';
 	if ($aid>0)
 	{
 		$out = '<select name="user_id"><option value="0">(keiner)</option>';
@@ -344,7 +344,7 @@ function showSpend($allianceId,$form)
 
 	$sum = false;
 	$user = 0;
-	$LIMIT = 0;
+    $limit = 0;
 
 	// Summierung der Einzahlungen
 	if($form['output']==1)

@@ -38,7 +38,7 @@ try {
             return;
         }
 
-        if (!empty($_SERVER['QUERY_STRING'])) {
+        if ($_SERVER['QUERY_STRING']) {
             forward("?" . $_SERVER['QUERY_STRING']);
         } else {
             forward(".");
@@ -145,7 +145,7 @@ function adminView(
 
     if (UNIX) {
         $eventHandlerPid = EventHandlerManager::checkDaemonRunning(getAbsPath($cfg->daemon_pidfile));
-        intval(exec("cat /proc/cpuinfo | grep processor | wc -l", $out));
+        exec("cat /proc/cpuinfo | grep processor | wc -l", $out);
         $load = sys_getloadavg();
         $systemLoad = round($load[2] / intval($out[0]) * 100, 2);
 

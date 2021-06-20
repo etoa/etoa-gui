@@ -181,6 +181,7 @@
 		//
 		if (isset($_POST['user_search']) && $_POST['user_search']!="" || isset($_GET['action']) && $_GET['action']=="searchresults")
 		{
+            $sql = '';
 			if ($_POST['user_id']!="")
 				$sql.= " AND user_id='".$_POST['user_id']."' ";
 			if ($_POST['user_nick']!="")
@@ -243,6 +244,7 @@
 
 
 			//data tables
+            $join = '';
 			if (isset($_POST['table']) && $_POST['table'])
 				$join = " INNER JOIN `reports_".$_POST['type']."` AS rd ON reports.id=rd.id ";
 
@@ -364,9 +366,7 @@
 					}
 
 
-					if (isset($sql)) {
-						$sql.= ($_POST['entity_ships']==1) ? " AND rd.entity_ships != '' ": " AND rd.entity_ships='' ";
-					}
+                    $sql.= ($_POST['entity_ships']==1) ? " AND rd.entity_ships != '' ": " AND rd.entity_ships='' ";
 
 					if ($r->userId>0)
 						$uidf = get_user_nick($r->userId);
@@ -555,6 +555,7 @@
 		//
 		if (isset($_POST['user_search']) && $_POST['user_search']!="" || isset($_GET['action']) && $_GET['action']=="searchresults")
 		{
+            $sql = '';
 			if ($_SESSION['admin']['message_query']=="")
 			{
 				if ($_POST['message_user_from_id']!="")

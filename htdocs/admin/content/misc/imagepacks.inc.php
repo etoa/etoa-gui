@@ -93,7 +93,7 @@ if (isset($_GET['manage'])) {
 //
 // Imagepack download
 //
-if (!empty($_GET['download'])) {
+if (isset($_GET['download'])) {
     $imagepack = $_GET['download'];
     if (isset($imagepacks[$imagepack])) {
         $zipFile = tempnam('sys_get_temp_dir', 'imagepack-'.$imagepack);

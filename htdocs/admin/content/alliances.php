@@ -119,7 +119,7 @@ function imagecheck(Request $request, AllianceRepository $repository)
 	$overhead = array();
 	while (count($files) > 0) {
 		$k = array_pop($files);
-		if (!in_array($k, $paths))
+		if (!in_array($k, $paths, true))
 			array_push($overhead, $k);
 	}
 
@@ -254,8 +254,8 @@ function crap(Request $request, AllianceRepository $repository)
 		}
 	} elseif ($request->query->has('action') && $request->query->get('action') == "cleanupEmptyAlliances") {
 		$alliances = $repository->findAll();
+        $cnt = 0;
 		if (count($alliances) > 0) {
-			$cnt = 0;
 			foreach ($alliances as $alliance) {
 				if ($repository->countUsers($alliance['alliance_id']) == 0) {
 					if ($repository->remove($alliance['alliance_id'])) {

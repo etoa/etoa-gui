@@ -9,7 +9,7 @@ $errorMessage = null;
 if (isset($_POST['submit'])) {
     if (isset($_FILES["design"])) {
         // Check MIME type
-        if (in_array($_FILES["design"]['type'], array('application/zip', 'application/x-zip-compressed', 'application/x-zip'))) {
+        if (in_array($_FILES["design"]['type'], array('application/zip', 'application/x-zip-compressed', 'application/x-zip'), true)) {
             // Test if ZIP file can be read
             $zip = new ZipArchive();
             if ($zip->open($_FILES["design"]['tmp_name']) === true) {
@@ -91,7 +91,7 @@ if (isset($_POST['submit'])) {
     }
 }
 // Design download
-else if (!empty($_GET['download'])) {
+else if (isset($_GET['download'])) {
     $design = $_GET['download'];
     if (isset($designs[$design])) {
         $zipFile = tempnam('sys_get_temp_dir', $design);
@@ -111,7 +111,7 @@ else if (!empty($_GET['download'])) {
     }
 }
 // Removal of custom design
-else if (!empty($_GET['remove'])) {
+else if (isset($_GET['remove'])) {
     $design = $_GET['remove'];
     if (isset($designs[$design]) && $designs[$design]['custom']) {
         $dir = $designs[$design]['dir'];

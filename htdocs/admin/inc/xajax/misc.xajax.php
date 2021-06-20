@@ -13,6 +13,7 @@ $xajax->registerFunction("logSelectorCat");
 function planetSelectorByCell($form,$show_user_id=0)
 {
 	$objResponse = new xajaxResponse();
+    $out = '';
 	if ($form['cell_sx']!=0 && $form['cell_sy']!=0 && $form['cell_cx']!=0 && $form['cell_cy']!=0)
 	{
 		$res=dbquery("
@@ -202,7 +203,7 @@ function addShipToPlanet($form)
 	$updata=explode(":",$form['planet_id']);
 	if ($updata[1]>0)
 	{
-		shiplistAdd($updata[0],$updata[1],$form['ship_id'],intval($form['shiplist_count']));
+		shiplistAdd((int) $updata[0], (int) $updata[1], (int) $form['ship_id'],(int) $form['shiplist_count']);
   	$objResponse->addScript("xajax_showShipsOnPlanet(".$updata[0].")");
   }
   else
@@ -289,6 +290,7 @@ function searchUser($val)
 
   	$sOut = "";
   	$nCount = 0;
+    $sLastHit = null;
 
 	$res=dbquery("SELECT
 		user_nick

@@ -217,7 +217,7 @@ abstract class Report
 	/**
 	 * Gets a list of reports
 	 *
-	 * @param array $where WHERE conditions where $arrayKey is database field name
+	 * @param string|array $where WHERE conditions where $arrayKey is database field name
 	 * and $arrayValue is database field value
 	 * @param string $order ORDER query string
 	 * @return array Array containing a list of reports

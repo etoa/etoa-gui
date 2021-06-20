@@ -11,7 +11,7 @@ if ($s->user_id) {
 			realpath(ADMIN_FILESHARING_DIR),
 		);
 		$backupDir = DBManager::getBackupDir();
-		if (!empty($backupDir)) {
+		if ($backupDir) {
 			$allowedDirs[] = realpath($backupDir);
 		}
 		$allow = false;

@@ -14,7 +14,6 @@ parameters:
         - htdocs
 
     excludePaths:
-        - htdocs/admin
         - htdocs/libs
 
     bootstrapFiles:
@@ -29,6 +28,7 @@ parameters:
         - '#Doctrine\\Common\\Cache\\ArrayCache#'
 
         - '#Variable \$(twig|cfg|xajax|s|page|resNames|resIcons|index|link|site|app|cu|conf|mode|popup|cp|planets|time) might not be define#'
+        - '#Variable \$(css_theme|sub|db_fields) might not be define#'
         - '#Access to (protected|private) property [a-z]+::\$[a-z]+#i'
         - '#Access to an undefined property [a-z]+#i'
         - '#Access to an undefined property \$this\((User|Admin)Session\)#'
@@ -37,6 +37,6 @@ parameters:
         - '#Constant (MARKET_RATE_MAX|MARKET_RATE_MIN|MARKET_LEVEL|MARKET_TAX|AUCTION_DELAY_TIME|AUCTION_PRICE_FACTOR_MAX|AUCTION_PRICE_FACTOR_MIN|AUCTION_MIN_DURATION|SHIP_PRICE_FACTOR_MIN|SHIP_PRICE_FACTOR_MAX|MARKET_SELL_TAX|RESS_PRICE_FACTOR_MIN|RESS_PRICE_FACTOR_MAX|MIN_MARKET_LEVEL_SHIP|MIN_MARKET_LEVEL_AUCTION|MIN_MARKET_LEVEL_RESS|MARKET_RATES_COUNT|AUCTION_OVERBID|AUCTION_OVERBID|MARKET_FOOD_FACTOR|MARKET_FUEL_FACTOR|MARKET_PLASTIC_FACTOR|MARKET_CRYSTAL_FACTOR|MARKET_METAL_FACTOR) not found#'
 
 
-        - '#Call to method (script|assign|append|alert|addScriptCall)\(\) on an unknown class xajaxResponse#'
+        - '#Call to method (script|addScript|assign|addAssign|append|alert|addScriptCall|getXML)\(\) on an unknown class xajaxResponse#'
         - '#Call to method (configure|processRequest)\(\) on an unknown class xajax#'
         - '#Instantiated class (xajax|xajaxResponse) not found#'

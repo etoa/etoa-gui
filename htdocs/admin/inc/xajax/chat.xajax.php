@@ -26,6 +26,7 @@ function loadChat($minId)
 				timestamp ASC
 			");
 			$out='';
+            $lastid = null;
 			if (mysql_num_rows($res)>0)
 			{
 

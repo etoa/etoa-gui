@@ -117,7 +117,7 @@ function runCleanup(
 			else $set = true;
 			$ustring .= $uarr[0];
 		}
-		if (empty($ustring)) {
+		if ($ustring === '') {
 			$ustring = "0";
 		}
 
@@ -374,8 +374,8 @@ function cleanupOverView(TicketRepository $ticketRepo)
 	echo '<input type="radio" name="only_deleted" value="0" /><b>Nachrichten löschen:</b> ';
 	echo "Älter als <select name=\"message_timestamp\">";
 	$days = array(1, 7, 14, 21, 28);
-	if (!in_array($cfg->get('messages_threshold_days'), $days))
-		$days[] = $cfg->get('messages_threshold_days');
+	if (!in_array((int) $cfg->get('messages_threshold_days'), $days, true))
+		$days[] = (int) $cfg->get('messages_threshold_days');
 	sort($days);
 	foreach ($days as $ds) {
 		echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $cfg->get('messages_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
@@ -392,8 +392,8 @@ function cleanupOverView(TicketRepository $ticketRepo)
 	echo '<input type="radio" name="only_deleted_reports" value="1" checked="checked" /> <b>Nur \'gelöschte\' Nachrichten löschen:</b> ';
 	echo 'Älter als <select name="message_timestamp_deleted">';
 	$days = array(7, 14, 21, 28);
-	if (!in_array($cfg->p1('messages_threshold_days'), $days)) {
-		$days[] = $cfg->p1('messages_threshold_days');
+	if (!in_array((int) $cfg->p1('messages_threshold_days'), $days, true)) {
+		$days[] = (int) $cfg->p1('messages_threshold_days');
 	}
 	sort($days);
 	foreach ($days as $ds) {
@@ -415,8 +415,8 @@ function cleanupOverView(TicketRepository $ticketRepo)
 	echo '<input type="radio" name="only_deleted" value="0" /><b>Berichte löschen:</b> ';
 	echo "Älter als <select name=\"report_timestamp\">";
 	$days = array(1, 7, 14, 21, 28);
-	if (!in_array($cfg->p1('messages_threshold_days'), $days))
-		$days[] = $cfg->p1('messages_threshold_days');
+	if (!in_array((int) $cfg->p1('messages_threshold_days'), $days, true))
+		$days[] = (int) $cfg->p1('messages_threshold_days');
 	sort($days);
 	foreach ($days as $ds) {
 		echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $cfg->p1('messages_threshold_days')  ? " selected=\"selected\"" : "") . " >" . $ds . " Tage</option>";
@@ -433,8 +433,8 @@ function cleanupOverView(TicketRepository $ticketRepo)
 	echo '<input type="radio" name="only_deleted" value="1" checked="checked" /> <b>Nur \'gelöschte\' Berichte löschen:</b> ';
 	echo 'Älter als <select name="report_timestamp_deleted">';
 	$days = array(7, 14, 21, 28);
-	if (!in_array($cfg->p1('reports_threshold_days'), $days))
-		$days[] = $cfg->p1('reports_threshold_days');
+	if (!in_array((int) $cfg->p1('reports_threshold_days'), $days, true))
+		$days[] = (int) $cfg->p1('reports_threshold_days');
 	sort($days);
 	foreach ($days as $ds) {
 		echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $cfg->p1('reports_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
@@ -452,8 +452,8 @@ function cleanupOverView(TicketRepository $ticketRepo)
 	;"));
 	echo "<b>Logs löschen:</b> Einträge löschen welche älter als <select name=\"log_timestamp\">";
 	$days = array(7, 14, 21, 28);
-	if (!in_array($cfg->get('log_threshold_days'), $days))
-		$days[] = $cfg->get('log_threshold_days');
+	if (!in_array((int) $cfg->get('log_threshold_days'), $days, true))
+		$days[] = (int) $cfg->get('log_threshold_days');
 	sort($days);
 	foreach ($days as $ds) {
 		echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $cfg->get('log_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
@@ -472,8 +472,8 @@ function cleanupOverView(TicketRepository $ticketRepo)
 	echo "<b>Session-Logs löschen:</b> ";
 	echo "Einträge löschen die älter als <select name=\"sess_log_timestamp\">";
 	$days = array(7, 14, 21, 28);
-	if (!in_array($cfg->get('log_threshold_days'), $days))
-		$days[] = $cfg->get('log_threshold_days');
+	if (!in_array((int) $cfg->get('log_threshold_days'), $days, true))
+		$days[] = (int) $cfg->get('log_threshold_days');
 	sort($days);
 	foreach ($days as $ds) {
 		echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $cfg->get('log_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
@@ -491,8 +491,8 @@ function cleanupOverView(TicketRepository $ticketRepo)
 	;"));
 	echo "<b>Punkteverläufe löschen:</b> Einträge löschen die älter als <select name=\"del_user_points\">";
 	$days = array(2, 5, 7, 14, 21, 28);
-	if (!in_array($cfg->get('log_threshold_days'), $days))
-		$days[] = $cfg->get('log_threshold_days');
+	if (!in_array((int) $cfg->get('log_threshold_days'), $days, true))
+		$days[] = (int) $cfg->get('log_threshold_days');
 	sort($days);
 	foreach ($days as $ds) {
 		echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $cfg->get('log_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
@@ -554,7 +554,7 @@ function cleanupOverView(TicketRepository $ticketRepo)
 		else $set = true;
 		$ustring .= $uarr[0];
 	}
-	if (empty($ustring)) {
+	if ($ustring === '') {
 		$ustring = "0";
 	}
 

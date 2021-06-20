@@ -3,8 +3,9 @@
 $successMessage = null;
 $errorMessage = null;
 if (isset($_POST['migrate'])) {
+    $mtx = new Mutex();
+
     try {
-        $mtx = new Mutex();
         $mtx->acquire();
 
         // Migrate schema

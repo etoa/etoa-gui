@@ -46,6 +46,7 @@ $xajax->register(XAJAX_FUNCTION,"reqInfo");
 function planetSelectorByCell($form,$function,$show_user_id=0)
 {
 	$objResponse = new xajaxResponse();
+    $out = '';
 	if ($form['cell_sx']!=0 && $form['cell_sy']!=0 && $form['cell_cx']!=0 && $form['cell_cy']!=0)
 	{
 		$res=dbquery("
@@ -174,9 +175,10 @@ function planetSelectorByUser($userNick,$function,$show_user_id=1)
 		{
 			$out="<select name=\"entity_id\" size=\"".($nr+1)."\" onchange=\"showLoader('shipsOnPlanet');xajax_".$function."(this.options[this.selectedIndex].value);\">\n";
 			$cnt=0;
+            $val = '';
 			while ($parr=mysql_fetch_row($pres))
 			{
-				if (!$cnt)
+				if ($cnt === 0)
 				{
 					$out.="<option value=\"0:".$parr[1]."\">Alle</option>";
 					$cnt++;
@@ -369,7 +371,7 @@ function addShipToPlanet($form)
 
 	if ($updata[1]>0)
 	{
-		shiplistAdd($updata[0],$updata[1],$form['ship_id'],intval($form['shiplist_count']));
+		shiplistAdd((int) $updata[0], (int) $updata[1], (int) $form['ship_id'], (int) $form['shiplist_count']);
   		$objResponse->script("xajax_showShipsOnPlanet('".$form['entity_id']."')");
   	}
   	else
@@ -527,6 +529,7 @@ function editShipByShipId($form,$shipId)
 	{
 		ob_start();
 		tableStart();
+        $out = '';
 		while ($arr=mysql_fetch_array($res))
 		{
 			if ($arr['ship_id']==$shipId)
@@ -693,7 +696,7 @@ function addMissileToPlanet($form)
 	$updata=explode(":",$form['entity_id']);
 	if ($updata[1]>0)
 	{
-		missilelistAdd($updata[0],$updata[1],$form['ship_id'],intval($form['shiplist_count']));
+		missilelistAdd((int) $updata[0], (int) $updata[1], (int) $form['ship_id'], (int) $form['shiplist_count']);
   	$objResponse->script("xajax_showMissilesOnPlanet(".$updata[0].")");
   }
   else
@@ -832,7 +835,7 @@ function addDefenseToPlanet($form)
 	$updata=explode(":",$form['entity_id']);
 	if ($updata[1]>0)
 	{
-		deflistAdd($updata[0],$updata[1],$form['def_id'],intval($form['deflist_count']));
+		deflistAdd((int) $updata[0], (int) $updata[1], (int) $form['def_id'],(int) $form['deflist_count']);
   		$objResponse->script("xajax_showDefenseOnPlanet('".$form['entity_id']."')");
   }
   else
@@ -979,7 +982,7 @@ function addBuildingToPlanet($form)
 	$updata=explode(":",$form['entity_id']);
 	if ($updata[1]>0)
 	{
-		buildlistAdd($updata[0],$updata[1],$form['building_id'],intval($form['buildlist_current_level']));
+		buildlistAdd((int) $updata[0], (int) $updata[1], (int) $form['building_id'],(int) $form['buildlist_current_level']);
   	$objResponse->script("xajax_showBuildingsOnPlanet('".$form['entity_id']."')");
   }
   else
@@ -999,7 +1002,7 @@ function addAllBuildingToPlanet($form,$num)
 	{
 		for($i=1;$i<=$num;$i++)
 		{
-			buildlistAdd($updata[0],$updata[1],$i,intval($form['buildlist_current_level']));
+			buildlistAdd((int) $updata[0], (int) $updata[1], $i, (int) $form['buildlist_current_level']);
 		}
 
   		$objResponse->script("xajax_showBuildingsOnPlanet('".$form['entity_id']."')");
@@ -1033,7 +1036,7 @@ function editBuilding($form,$listId)
 	$objResponse = new xajaxResponse();
 
 	$updata=explode(":",$form['entity_id']);
-	if($updata[0]) {
+	if($updata[0] !== '') {
 		$res = dbquery("
 		SELECT
 			buildlist_current_level,
@@ -1114,6 +1117,7 @@ function searchUser($val,$field_id='user_nick',$box_id='citybox')
 
 	$sOut = "";
 	$nCount = 0;
+    $sLastHit = null;
 
 	$res=dbquery("SELECT user_nick FROM users WHERE user_nick LIKE '".$val."%' LIMIT 20;");
 	if (mysql_num_rows($res)>0)
@@ -1164,7 +1168,7 @@ function searchUserList($val,$function)
 
   	$sOut = "";
   	$nCount = 0;
-
+    $sLastHit = null;
 	$res=dbquery("SELECT
 		user_nick
 	FROM
@@ -1219,6 +1223,7 @@ function searchAlliance($val,$field_id='alliance_name',$box_id='citybox')
 
 	$sOut = "";
 	$nCount = 0;
+    $sLastHit = null;
 
 	$res=dbquery("SELECT alliance_name FROM alliances WHERE alliance_name LIKE '%".$val."%' LIMIT 20;");
 	if (mysql_num_rows($res)>0)
@@ -1267,6 +1272,7 @@ function searchPlanet($val,$field_id='planet_name',$box_id='citybox')
 
 	$sOut = "";
 	$nCount = 0;
+    $sLastHit = null;
 
 	$res=dbquery("SELECT planet_name FROM planets WHERE planet_name LIKE '".$val."%' LIMIT 20;");
 	if (mysql_num_rows($res)>0)
@@ -1484,7 +1490,9 @@ function reqInfo($id,$cat='b')
 	{
 		$req_tbl = "missile_requirements";
 		$req_field = "obj_id";
-	}
+	} else {
+	    throw new \InvalidArgumentException('Unknown cateogry: ' . $cat);
+    }
 
 	$items = array();
 	$res = dbquery("SELECT * FROM $req_tbl WHERE obj_id=".$id." AND req_building_id>0 AND req_level>0 ORDER BY req_level;");
@@ -1551,7 +1559,9 @@ function reqInfo($id,$cat='b')
 	{
 		$img = IMAGE_PATH."/missiles/missile".$id."_middle.".IMAGE_EXT;
 		$name = $m_name[$id];
-	}
+	} else {
+	    throw new \InvalidArgumentException('Unknown category: ' . $cat);
+    }
 	echo "<div class=\"techtreeMainItem\" style=\"background:url('".$img."');\">";
 	echo "<div class=\"techtreeItemName\">".$name."</div>";
 	echo "</div>";
@@ -1571,7 +1581,9 @@ function reqInfo($id,$cat='b')
 		{
 			$req_field = "req_tech_id";
 			$req_level_field = "req_level";
-		}
+		} else {
+		    throw new \InvalidArgumentException('Unknown category: ' . $cat);
+        }
 
 
 		$items = array();

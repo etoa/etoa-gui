@@ -23,6 +23,8 @@ elseif ($action === 'check') {
 elseif ($action === 'repair') {
     $subTitle = 'Reparaturbericht';
     $ores = DBManager::getInstance()->repairTables(true);
+} else {
+    throw new \InvalidArgumentException('Invalid action: ' . $action);
 }
 
 // Fields
