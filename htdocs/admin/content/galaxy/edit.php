@@ -151,16 +151,18 @@
 					echo "<th>Typ</th>
 					<td>
 					<select name=\"planet_type_id\">";
-					$tres = dbquery("SELECT * FROM planet_types ORDER BY type_name;");
-					while ($tarr = mysql_fetch_array($tres))
-					{
-						echo "<option value=\"".$tarr['type_id']."\"";
-						if ($arr['planet_type_id']==$tarr['type_id'])
+                    /** @var \EtoA\Universe\PlanetTypeRepository $planetTypeRepository */
+                    $planetTypeRepository = $app['etoa.universe.planet_type.repository'];
+                    $planetTypeNames = $planetTypeRepository->getPlanetTypeNames(true);
+                    $selectedPlanetTypeName = null;
+					foreach ($planetTypeNames as $planetTypeId => $planetTypeName){
+						echo "<option value=\"".$planetTypeId."\"";
+						if ($arr['planet_type_id']==$planetTypeId)
 						{
 							echo " selected=\"selected\"";
-							$planetTypeName = $tarr['type_name'];
+							$selectedPlanetTypeName = $planetTypeName;
 						}
-						echo ">".$tarr['type_name']."</option>\n";
+						echo ">".$planetTypeName."</option>\n";
 					}
 					echo "</select></td></tr>";
 
@@ -230,7 +232,7 @@
 						echo "<option value=\"".$arr['planet_type_id']."_".$x."\"";
 						if ($arr['planet_image']==$arr['planet_type_id']."_".$x)
 							echo " selected=\"selected\"";
-						echo ">".$planetTypeName." $x</option>\n";
+						echo ">".$selectedPlanetTypeName." $x</option>\n";
 					}
 					echo "</select>
 

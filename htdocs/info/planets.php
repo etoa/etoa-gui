@@ -29,9 +29,9 @@
 		$sort="ASC";
 	}
 
-	$res = dbquery("SELECT * FROM planet_types WHERE type_consider=1 ORDER BY $order $sort;");
-	if (mysql_num_rows($res)>0)
-	{
+    /** @var \EtoA\Universe\PlanetTypeRepository $planetTypeRepository */
+    $planetTypeRepository = $app['etoa.universe.planet_type.repository'];
+    $planetTypes = $planetTypeRepository->getPlanetTypes($order, $sort);
 
 		tableStart("Planetenboni");
 		echo "<tr><td class=\"tbltitle\" colspan=\"2\"><a href=\"?$link&amp;site=$site&amp;order=name\">Name</a></td>";
@@ -46,40 +46,35 @@
 		echo "<td class=\"tbltitle\"><a href=\"?$link&amp;site=$site&amp;order=f_buildtime\">Bauzeit</td>";
 		echo "</tr>";
 
-		while ($arr = mysql_fetch_array($res))
-		{
+		foreach ($planetTypes as $planetType) {
 			$x=mt_rand(1,5);
 
 			echo "<tr><td class=\"tbldata\" style=\"width:40px;background:#000;\">";
 
 			$tt = new Tooltip();
-			$tt->addImage(IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$arr['type_id']."_".$x.".gif");
-			echo "<img src=\"".IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$arr['type_id']."_".$x."_small.gif\" width=\"40\" height=\"40\" alt=\"planet\" border=\"0\" / ".$tt."></td>";
+			$tt->addImage(IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$planetType->id."_".$x.".gif");
+			echo "<img src=\"".IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$planetType->id."_".$x."_small.gif\" width=\"40\" height=\"40\" alt=\"planet\" border=\"0\" / ".$tt."></td>";
 
 			$tt = new Tooltip();
-			$tt->addIcon(IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$arr['type_id']."_".$x."_small.gif");
-			$tt->addTitle($arr['type_name']);
-			if ($arr['type_habitable']==1)
+			$tt->addIcon(IMAGE_PATH."/".IMAGE_PLANET_DIR."/planet".$planetType->id."_".$x."_small.gif");
+			$tt->addTitle($planetType->name);
+			if ($planetType->habitable)
 				$tt->addGoodCond("Bewohnbar");
 			else
 				$tt->addBadCond("Unbewohnbar");
-			if ($arr['type_collect_gas']==1)
+			if ($planetType->collectGas)
 				$tt->addGoodCond("Ermöglich ".RES_FUEL."abbau");
-			$tt->addComment($arr['type_comment']);
-			echo "<td class=\"tbltitle\" ".$tt.">".$arr['type_name']."</td>";
-			echo "<td class=\"tbldata\">".get_percent_string($arr['type_f_metal'],1)."</td>";
-			echo "<td class=\"tbldata\">".get_percent_string($arr['type_f_crystal'],1)."</td>";
-			echo "<td class=\"tbldata\">".get_percent_string($arr['type_f_plastic'],1)."</td>";
-			echo "<td class=\"tbldata\">".get_percent_string($arr['type_f_fuel'],1)."</td>";
-			echo "<td class=\"tbldata\">".get_percent_string($arr['type_f_food'],1)."</td>";
-			echo "<td class=\"tbldata\">".get_percent_string($arr['type_f_power'],1)."</td>";
-			echo "<td class=\"tbldata\">".get_percent_string($arr['type_f_population'],1)."</td>";
-			echo "<td class=\"tbldata\">".get_percent_string($arr['type_f_researchtime'],1,1)."</td>";
-			echo "<td class=\"tbldata\">".get_percent_string($arr['type_f_buildtime'],1,1)."</td>";
+			$tt->addComment($planetType->comment);
+			echo "<td class=\"tbltitle\" ".$tt.">".$planetType->name."</td>";
+			echo "<td class=\"tbldata\">".get_percent_string($planetType->metal,1)."</td>";
+			echo "<td class=\"tbldata\">".get_percent_string($planetType->crystal,1)."</td>";
+			echo "<td class=\"tbldata\">".get_percent_string($planetType->plastic,1)."</td>";
+			echo "<td class=\"tbldata\">".get_percent_string($planetType->fuel,1)."</td>";
+			echo "<td class=\"tbldata\">".get_percent_string($planetType->food,1)."</td>";
+			echo "<td class=\"tbldata\">".get_percent_string($planetType->power,1)."</td>";
+			echo "<td class=\"tbldata\">".get_percent_string($planetType->people,1)."</td>";
+			echo "<td class=\"tbldata\">".get_percent_string($planetType->researchTime,1,1)."</td>";
+			echo "<td class=\"tbldata\">".get_percent_string($planetType->buildTime,1,1)."</td>";
 			echo "</tr>";
 		}
-	}
 	tableEnd();
-
-
-?>
