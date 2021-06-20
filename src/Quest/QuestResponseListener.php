@@ -9,10 +9,9 @@ use Symfony\Component\Workflow\Event\Event;
 
 class QuestResponseListener implements EventSubscriberInterface
 {
-    /** @var QuestPresenter */
-    private $presenter;
+    private QuestPresenter $presenter;
     /** @var array[] */
-    private $quests = [];
+    private array $quests = [];
 
     public function __construct(QuestPresenter $presenter)
     {

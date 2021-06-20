@@ -10,8 +10,7 @@ class MissileDataRepository extends AbstractRepository
 {
     private const MISSILES_NAMES = 'missiles.names';
 
-    /** @var CacheProvider */
-    private $cache;
+    private CacheProvider $cache;
 
     public function __construct(Connection $connection, CacheProvider $cache)
     {

@@ -8,8 +8,7 @@ class SpecialistHire extends Event
 {
     public const HIRE_SUCCESS = 'specialist.hire.success';
 
-    /** @var int */
-    private $specialistId;
+    private int $specialistId;
 
     public function __construct(int $specialistId)
     {

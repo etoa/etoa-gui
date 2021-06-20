@@ -8,8 +8,7 @@ class SpecialistDischarge extends Event
 {
     public const DISCHARGE_SUCCESS = 'specialist.discharge.success';
 
-    /** @var int */
-    private $specialistId;
+    private int $specialistId;
 
     public function __construct(int $specialistId)
     {

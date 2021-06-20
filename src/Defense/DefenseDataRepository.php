@@ -10,8 +10,7 @@ class DefenseDataRepository extends AbstractRepository
 {
     private const DEFENSE_NAMES = 'defense.names';
 
-    /** @var CacheProvider */
-    private $cache;
+    private CacheProvider $cache;
 
     public function __construct(Connection $connection, CacheProvider $cache)
     {

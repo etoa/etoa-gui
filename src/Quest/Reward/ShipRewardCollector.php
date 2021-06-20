@@ -13,10 +13,8 @@ class ShipRewardCollector implements CollectorInterface
 {
     public const TYPE = 'ship';
 
-    /** @var ShipRepository */
-    private $shipRepository;
-    /** @var PlanetRepository */
-    private $planetRepository;
+    private ShipRepository $shipRepository;
+    private PlanetRepository $planetRepository;
 
     public function __construct(ShipRepository $shipRepository, PlanetRepository $planetRepository)
     {

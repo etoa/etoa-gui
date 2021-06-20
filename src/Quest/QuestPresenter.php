@@ -14,17 +14,13 @@ use LittleCubicleGames\Quests\Workflow\QuestDefinitionInterface;
 
 class QuestPresenter
 {
-    /** @var RegistryInterface */
-    private $registry;
-    /** @var MissileDataRepository */
-    private $missileDataRepository;
-    /** @var ShipDataRepository */
-    private $shipDataRepository;
-    /** @var DefenseDataRepository */
-    private $defenseDataRepository;
+    private RegistryInterface $registry;
+    private MissileDataRepository $missileDataRepository;
+    private ShipDataRepository $shipDataRepository;
+    private DefenseDataRepository $defenseDataRepository;
 
     /** @var array[] */
-    private $transitions = [
+    private array $transitions = [
         QuestDefinitionInterface::STATE_AVAILABLE => [
             'transition' => QuestDefinitionInterface::TRANSITION_START,
             'name' => 'Starten',

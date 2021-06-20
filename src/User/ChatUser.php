@@ -4,10 +4,8 @@ namespace EtoA\User;
 
 class ChatUser implements UserInterface
 {
-    /** @var int */
-    private $id;
-    /** @var string */
-    private $nick;
+    private int $id;
+    private string $nick;
 
     public function __construct(int $id, string $nick)
     {

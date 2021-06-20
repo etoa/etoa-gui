@@ -4,8 +4,7 @@ namespace EtoA\Quest\Initialization;
 
 class QuestInitializer extends \LittleCubicleGames\Quests\Initialization\QuestInitializer
 {
-    /** @var bool */
-    private $isQuestSystemOn = true;
+    private bool $isQuestSystemOn = true;
 
     public function setIsQuestSystemOn(bool $isQuestSystemOn): void
     {

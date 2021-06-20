@@ -7,18 +7,13 @@ use LittleCubicleGames\Quests\Entity\TaskInterface;
 
 class Quest implements QuestInterface
 {
-    /** @var int */
-    private $id;
-    /** @var int */
-    private $questId;
-    /** @var int */
-    private $userId;
-    /** @var string */
-    private $slotId;
-    /** @var string */
-    private $state;
+    private ?int $id;
+    private int $questId;
+    private int $userId;
+    private string $slotId;
+    private string $state;
     /** @var Task[] */
-    private $tasks;
+    private array $tasks;
 
     public function __construct(?int $id, int $questId, int $userId, string $slotId, string $state, array $tasks)
     {

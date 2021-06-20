@@ -8,8 +8,7 @@ use Twig\TwigFunction;
 
 class TwigExtension extends AbstractExtension
 {
-    /** @var float */
-    private $startTime;
+    private float $startTime;
 
     public function __construct()
     {

@@ -11,10 +11,8 @@ class HaveTechnologyLevel implements InitProgressHandlerFunctionInterface
 {
     public const NAME = 'have-technology-level';
 
-    /** @var TechnologyRepository */
-    private $technologyRepository;
-    /** @var int */
-    private $buildingId;
+    private TechnologyRepository $technologyRepository;
+    private int $buildingId;
 
     public function __construct(array $attributes, TechnologyRepository $technologyRepository)
     {

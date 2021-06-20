@@ -11,10 +11,8 @@ class HaveBuildingLevel implements InitProgressHandlerFunctionInterface
 {
     public const NAME = 'have-building-level';
 
-    /** @var BuildingRepository */
-    private $buildingRepository;
-    /** @var int */
-    private $buildingId;
+    private BuildingRepository $buildingRepository;
+    private int $buildingId;
 
     public function __construct(array $attributes, BuildingRepository $buildingRepository)
     {

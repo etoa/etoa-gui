@@ -7,8 +7,7 @@ use Doctrine\DBAL\Query\QueryBuilder;
 
 abstract class AbstractRepository
 {
-    /** @var Connection */
-    private $connection;
+    private Connection $connection;
 
     public function __construct(Connection $connection)
     {

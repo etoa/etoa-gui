@@ -11,10 +11,8 @@ class HaveDefense implements InitProgressHandlerFunctionInterface
 {
     public const NAME = 'have-defense';
 
-    /** @var DefenseRepository */
-    private $defenseRepository;
-    /** @var int */
-    private $defenseId;
+    private DefenseRepository $defenseRepository;
+    private int $defenseId;
 
     public function __construct(array $attributes, DefenseRepository $defenseRepository)
     {
