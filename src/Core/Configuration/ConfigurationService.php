@@ -80,6 +80,11 @@ class ConfigurationService
         return (int) $this->param1($key);
     }
 
+    public function param1Float(string $key): float
+    {
+        return (float) $this->param1($key);
+    }
+
     public function param1Boolean(string $key): bool
     {
         return (bool) $this->param1($key);
@@ -98,6 +103,11 @@ class ConfigurationService
     public function param2Boolean(string $key): bool
     {
         return (bool) $this->param2($key);
+    }
+
+    public function param2Float(string $key): float
+    {
+        return (float) $this->param2($key);
     }
 
     // /**

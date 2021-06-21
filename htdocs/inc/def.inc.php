@@ -1,313 +1,313 @@
 <?PHP
 
+use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\RuntimeDataStore;
 
 /** @var RuntimeDataStore */
 $runtimeDataStore = $app['etoa.runtime.datastore'];
 
-	$cfg = Config::getInstance();
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
 
-	/***********************************/
-	/* Design, Layout, Allgmeine Pfade */
-	/***********************************/
+/***********************************/
+/* Design, Layout, Allgmeine Pfade */
+/***********************************/
 
-	//
-	// Layout
-	//
+//
+// Layout
+//
 
-	// Statistik Anzahl Zeilen
-	define ("STATS_NUM_OF_ROWS", $cfg->get('stats_num_rows'));
+// Statistik Anzahl Zeilen
+define("STATS_NUM_OF_ROWS", $config->getInt('stats_num_rows'));
 
-	/****************************/
-	/* Allgemeine Einstellungen */
-	/****************************/
+/****************************/
+/* Allgemeine Einstellungen */
+/****************************/
 
-	// Onlinetime-Threshold
-	define('ONLINE_TIME', $cfg->get('online_threshold'));
+// Onlinetime-Threshold
+define('ONLINE_TIME', $config->getInt('online_threshold'));
 
-	//
-	// Paswort und Nicklänge
-	//
+//
+// Paswort und Nicklänge
+//
 
-	// Minimale Passwortlänge
-	define("PASSWORD_MINLENGHT", $cfg->get('password_minlength'));
+// Minimale Passwortlänge
+define("PASSWORD_MINLENGHT", $config->getInt('password_minlength'));
 
-	// Minimale Passwortlänge
-	define("PASSWORD_MAXLENGHT", $cfg->get('password_minlength'));
+// Minimale Passwortlänge
+define("PASSWORD_MAXLENGHT", $config->getInt('password_minlength'));
 
-	// Minimale Nicklänge
-	define("NICK_MINLENGHT", $cfg->p1('nick_length'));
+// Minimale Nicklänge
+define("NICK_MINLENGHT", $config->param1Int('nick_length'));
 
-	// Maximale Nicklänge
-	define("NICK_MAXLENGHT", $cfg->p2('nick_length'));
+// Maximale Nicklänge
+define("NICK_MAXLENGHT", $config->param2Int('nick_length'));
 
-	// Minimale Nicklänge
-	define("NAME_MAXLENGTH", $cfg->name_length->v);
+// Minimale Nicklänge
+define("NAME_MAXLENGTH", $config->getInt('name_length'));
 
-	//
-	// Inaktive & Urlaubsmodus
-	//
+//
+// Inaktive & Urlaubsmodus
+//
 
-	// Minimale Umode-Dauer
-  	define("MIN_UMOD_TIME", $cfg->hmode_days->v);
+// Minimale Umode-Dauer
+define("MIN_UMOD_TIME", $config->getInt('hmode_days'));
 
-  //MAximale Umode-Dauer
-    define("MAX_UMOD_TIME", $cfg->hmode_days->p1);
+//MAximale Umode-Dauer
+define("MAX_UMOD_TIME", $config->param1Int('hmode_days'));
 
-	// Vergangene Zeit bis Löschung eines Users (atm 21 Tage)
-  	define("USER_INACTIVE_DELETE", $cfg->user_inactive_days->p1);
+// Vergangene Zeit bis Löschung eines Users (atm 21 Tage)
+define("USER_INACTIVE_DELETE", $config->param1Int('user_inactive_days'));
 
-	// Vergangene Zeit bis Löschung falls nie eingeloggt & Zeit bis "Inaktiv" Status Long (atm 14 Tage)
-  	define("USER_NOTLOGIN_DELETE", $cfg->user_inactive_days->p2);
+// Vergangene Zeit bis Löschung falls nie eingeloggt & Zeit bis "Inaktiv" Status Long (atm 14 Tage)
+define("USER_NOTLOGIN_DELETE", $config->param2Int('user_inactive_days'));
 
-	// Zeit bis "Inaktiv" Status (atm 7 Tage)
-  	define("USER_INACTIVE_SHOW", $cfg->user_inactive_days->v);
+// Zeit bis "Inaktiv" Status (atm 7 Tage)
+define("USER_INACTIVE_SHOW", $config->getInt('user_inactive_days'));
 
-	// UNIX-Time (last user action atm -7d)
-	define("USER_INACTIVE_TIME", time() - (24 * 3600 * $cfg->user_inactive_days->v));
+// UNIX-Time (last user action atm -7d)
+define("USER_INACTIVE_TIME", time() - (24 * 3600 * USER_INACTIVE_SHOW));
 
-	// Zeit bis "Inaktiv" Status Long (atm 14 Tage)
-  	define("USER_INACTIVE_LONG", $cfg->user_inactive_days->p2);
+// Zeit bis "Inaktiv" Status Long (atm 14 Tage)
+define("USER_INACTIVE_LONG", $config->param2Int('user_inactive_days'));
 
-	// UNIX-Time (last user action long -14d)
-	define("USER_INACTIVE_TIME_LONG", time() - (24 * 3600 * USER_INACTIVE_LONG));
+// UNIX-Time (last user action long -14d)
+define("USER_INACTIVE_TIME_LONG", time() - (24 * 3600 * USER_INACTIVE_LONG));
 
-	//
-	// Universum
-	//
+//
+// Universum
+//
 
-	// Anzahl Zellen x
-	define("CELL_NUM_X", $cfg->num_of_cells->p1);
+// Anzahl Zellen x
+define("CELL_NUM_X", $config->param1Int('num_of_cells'));
 
-	// Anzahl Zellen y
-	define("CELL_NUM_Y", $cfg->num_of_cells->p2);
+// Anzahl Zellen y
+define("CELL_NUM_Y", $config->param2Int('num_of_cells'));
 
-	// Wurmlöcher
-	define("WH_UPDATE_AFFECT_TIME", $cfg->wh_update->v);
-	define("WH_UPDATE_AFFECT_CNT", $cfg->wh_update->p1);
+// Wurmlöcher
+define("WH_UPDATE_AFFECT_TIME", $config->getInt('wh_update'));
+define("WH_UPDATE_AFFECT_CNT", $config->param1Int('wh_update'));
 
-	// Nachrichten
-	define("FLOOD_CONTROL", $cfg->msg_flood_control->v);	// Wartezeit bis zur nächsten Nachricht
+// Nachrichten
+define("FLOOD_CONTROL", $config->getInt('msg_flood_control'));    // Wartezeit bis zur nächsten Nachricht
 
-	//
-	// Punkteberechnung
-	//
+//
+// Punkteberechnung
+//
 
-	// 1 Punkt für X (STATS_USER_POINTS) verbaute Rohstoffe
-	define("STATS_USER_POINTS", $cfg->points_update->p1);
+// 1 Punkt für X (STATS_USER_POINTS) verbaute Rohstoffe
+define("STATS_USER_POINTS", $config->param1Int('points_update'));
 
-	// 1 Punkt für X (STATS_ALLIANCE_POINTS) User Punkte
-	define("STATS_ALLIANCE_POINTS", $cfg->points_update->p2);
+// 1 Punkt für X (STATS_ALLIANCE_POINTS) User Punkte
+define("STATS_ALLIANCE_POINTS", $config->param2Int('points_update'));
 
-	//
-	// Sonstiges
-	//
+//
+// Sonstiges
+//
 
-	// Anzahl Nahrung, welche Arbeiter benötigen
-	define("PEOPLE_FOOD_USE", $cfg->people_food_require->v);
+// Anzahl Nahrung, welche Arbeiter benötigen
+define("PEOPLE_FOOD_USE", $config->getInt('people_food_require'));
 
-	// Maximale Anzahl Planeten
-	define("USER_MAX_PLANETS", $cfg->user_max_planets->v);
+// Maximale Anzahl Planeten
+define("USER_MAX_PLANETS", $config->getInt('user_max_planets'));
 
-	//Zeit bis Löschantrag ausgeführt wird
-    define ("USER_DELETE_DAYS", $cfg->user_delete_days->v);
+//Zeit bis Löschantrag ausgeführt wird
+define("USER_DELETE_DAYS", $config->getInt('user_delete_days'));
 
-	//
-	// Spezialiasten
-	//
+//
+// Spezialiasten
+//
 
-	// Minimal Punkte für Spezialist (VERALTET)
-	define("SPECIALIST_MIN_POINTS_REQ", $cfg->p2('specialistconfig'));
+// Minimal Punkte für Spezialist (VERALTET)
+define("SPECIALIST_MIN_POINTS_REQ", $config->param2Int('specialistconfig'));
 
-	// Maximale Kostensteigerung
-	define('SPECIALIST_MAX_COSTS_FACTOR', $cfg->p1('specialistconfig'));
+// Maximale Kostensteigerung
+define('SPECIALIST_MAX_COSTS_FACTOR', $config->param1Float('specialistconfig'));
 
-	// Verfügbare Spezialisten pro Typ basierend auf Faktor * Anzahl User
-	define('SPECIALIST_AVAILABILITY_FACTOR', $cfg->get('specialistconfig'));
+// Verfügbare Spezialisten pro Typ basierend auf Faktor * Anzahl User
+define('SPECIALIST_AVAILABILITY_FACTOR', $config->getFloat('specialistconfig'));
 
-	// Kriegsdauer
-	define("WAR_DURATION", 3600 * $cfg->alliance_war_time->v);
-	define("PEACE_DURATION", 3600 * $cfg->alliance_war_time->p1);
+// Kriegsdauer
+define("WAR_DURATION", 3600 * $config->getInt('alliance_war_time'));
+define("PEACE_DURATION", 3600 * $config->param1Int('alliance_war_time'));
 
-  /****************************************************/
-  /* Startwerte (bei erstellung eines neuen Accounts) */
-  /****************************************************/
+/****************************************************/
+/* Startwerte (bei erstellung eines neuen Accounts) */
+/****************************************************/
 
-	// Anzahl Titan
-	define("USR_START_METAL", $cfg->user_start_metal->v);
+// Anzahl Titan
+define("USR_START_METAL", $config->getInt('user_start_metal'));
 
-	// Anzahl Silizium
-	define("USR_START_CRYSTAL", $cfg->user_start_crystal->v);
+// Anzahl Silizium
+define("USR_START_CRYSTAL", $config->getInt('user_start_crystal'));
 
-	// Anzahl PVC
-	define("USR_START_PLASTIC", $cfg->user_start_plastic->v);
+// Anzahl PVC
+define("USR_START_PLASTIC", $config->getInt('user_start_plastic'));
 
-	// Anzahl Tritium
-	define("USR_START_FUEL", $cfg->user_start_fuel->v);
+// Anzahl Tritium
+define("USR_START_FUEL", $config->getInt('user_start_fuel'));
 
-	// Anzahl Nahrung
-	define("USR_START_FOOD", $cfg->user_start_food->v);
+// Anzahl Nahrung
+define("USR_START_FOOD", $config->getInt('user_start_food'));
 
-	// Anzahl Bewohner
-	define("USR_START_PEOPLE", $cfg->user_start_people->v);
+// Anzahl Bewohner
+define("USR_START_PEOPLE", $config->getInt('user_start_people'));
 
-	// "Startplanet" Name
-	define("USR_PLANET_NAME", $cfg->user_planet_name->v);
+// "Startplanet" Name
+define("USR_PLANET_NAME", $config->getInt('user_planet_name'));
 
-  /*********/
-  /* Zeit  */
-  /*********/
+/*********/
+/* Zeit  */
+/*********/
 
-	// Allgegenwertiger Faktor in allen build_times
-	define("GLOBAL_TIME", $cfg->global_time->v);
+// Allgegenwertiger Faktor in allen build_times
+define("GLOBAL_TIME", $config->getInt('global_time'));
 
-	// Gebäudebau Faktor
-	define("BUILD_BUILD_TIME", $cfg->build_build_time->v);
+// Gebäudebau Faktor
+define("BUILD_BUILD_TIME", $config->getFloat('build_build_time'));
 
-	// Forschungsbau Faktor
-	define("RES_BUILD_TIME", $cfg->res_build_time->v);
+// Forschungsbau Faktor
+define("RES_BUILD_TIME", $config->getFloat('res_build_time'));
 
-	// Schiffsbau Faktor
-	define("SHIP_BUILD_TIME", $cfg->ship_build_time->v);
+// Schiffsbau Faktor
+define("SHIP_BUILD_TIME", $config->getFloat('ship_build_time'));
 
-	// Verteidigungsbau Faktor
-	define("DEF_BUILD_TIME", $cfg->def_build_time->v);
+// Verteidigungsbau Faktor
+define("DEF_BUILD_TIME", $config->getFloat('def_build_time'));
 
-	// Flugzeit Faktor (wirkt nicht auf Start/Landezeit)
-	define("FLEET_FACTOR_F", $cfg->flight_flight_time->v);
+// Flugzeit Faktor (wirkt nicht auf Start/Landezeit)
+define("FLEET_FACTOR_F", $config->getFloat('flight_flight_time'));
 
-	// Startzeit Faktor
-	define("FLEET_FACTOR_S", $cfg->flight_start_time->v);
+// Startzeit Faktor
+define("FLEET_FACTOR_S", $config->getFloat('flight_start_time'));
 
-	// Landezeit Faktor
-	define("FLEET_FACTOR_L", $cfg->flight_land_time->v);
+// Landezeit Faktor
+define("FLEET_FACTOR_L", $config->getFloat('flight_land_time'));
 
-  /*************************/
-  /* Flotten & Kampfsystem */
-  /*************************/
+/*************************/
+/* Flotten & Kampfsystem */
+/*************************/
 
-	//
-	// Invasion
-	//
+//
+// Invasion
+//
 
-	// Grundinvasionschance
-	define("INVADE_POSSIBILITY", $cfg->invade_possibility->v);
+// Grundinvasionschance
+define("INVADE_POSSIBILITY", $config->getFloat('invade_possibility'));
 
-	// MAX. Invasionschance
-	define("INVADE_MAX_POSSIBILITY", $cfg->invade_possibility->p1);
+// MAX. Invasionschance
+define("INVADE_MAX_POSSIBILITY", $config->param1Float('invade_possibility'));
 
-	// Min. Invasionschance
-	define("INVADE_MIN_POSSIBILITY", $cfg->invade_possibility->p2);
+// Min. Invasionschance
+define("INVADE_MIN_POSSIBILITY", $config->param2Float('invade_possibility'));
 
-	// wird nicht benötigt!
-	define("INVADE_SHIP_DESTROY", $cfg->invade_ship_destroy->v);
+// wird nicht benötigt!
+define("INVADE_SHIP_DESTROY", $config->getFloat('invade_ship_destroy'));
 
-	// = true/1 um aktive user zu invasieren
-	define("INVADE_ACTIVE_USER", (boolean)$cfg->invade_active_users->v);
+// = true/1 um aktive user zu invasieren
+define("INVADE_ACTIVE_USER", $config->getBoolean('invade_active_users'));
 
-	//
-	// Kampfsystem
-	//
+//
+// Kampfsystem
+//
 
-	// Prozentualer Wiederaufbau der Def
-	define("DEF_RESTORE_PERCENT", $cfg->def_restore_percent->v);
+// Prozentualer Wiederaufbau der Def
+define("DEF_RESTORE_PERCENT", $config->getFloat('def_restore_percent'));
 
-	// Def ins Trümmerfeld
-	define("DEF_WF_PERCENT", $cfg->def_wf_percent->v);
+// Def ins Trümmerfeld
+define("DEF_WF_PERCENT", $config->getFloat('def_wf_percent'));
 
-	// Ship ins Trümmerfeld
-	define("SHIP_WF_PERCENT", $cfg->ship_wf_percent->v);
+// Ship ins Trümmerfeld
+define("SHIP_WF_PERCENT", $config->getFloat('ship_wf_percent'));
 
-	// Chance-Faktor beim Bombardieren + Deaktivieren
-	define("SHIP_BOMB_FACTOR", $cfg->ship_bomb_factor->v);
+// Chance-Faktor beim Bombardieren + Deaktivieren
+define("SHIP_BOMB_FACTOR", $config->getInt('ship_bomb_factor'));
 
-	//
-	// Anfängerschutz
-	//
+//
+// Anfängerschutz
+//
 
-	// Absolute Puntktegrenze
-	define("USER_ATTACK_MIN_POINTS", $cfg->user_attack_min_points->v);
+// Absolute Puntktegrenze
+define("USER_ATTACK_MIN_POINTS", $config->getInt('user_attack_min_points'));
 
-	// Prozentualer Punkteunterschied
-	define("USER_ATTACK_PERCENTAGE", $cfg->user_attack_percentage->v);
+// Prozentualer Punkteunterschied
+define("USER_ATTACK_PERCENTAGE", $config->getFloat('user_attack_percentage'));
 
-  /*********/
-  /* Markt */
-  /*********/
+/*********/
+/* Markt */
+/*********/
 
-	// Aktion beim versenden von Rohstoffen
-	define("FLEET_ACTION_RESS", $cfg->market_ship_action_ress->v);
+// Aktion beim versenden von Rohstoffen
+define("FLEET_ACTION_RESS", $config->get('market_ship_action_ress'));
 
-	// Aktion beim versenden von Schiffen oder Schiffe&Rohstoffe
-	define("FLEET_ACTION_SHIP", $cfg->market_ship_action_ship->v);
+// Aktion beim versenden von Schiffen oder Schiffe&Rohstoffe
+define("FLEET_ACTION_SHIP", $config->get('market_ship_action_ship'));
 
-	// Minimal Flugzeit
-	define("FLIGHT_TIME_MIN", $cfg->market_ship_flight_time->p1);
+// Minimal Flugzeit
+define("FLIGHT_TIME_MIN", $config->param1Int('market_ship_flight_time'));
 
-	// Maximal Flugzeit
-	define("FLIGHT_TIME_MAX", $cfg->market_ship_flight_time->p2);
+// Maximal Flugzeit
+define("FLIGHT_TIME_MAX", $config->param2Int('market_ship_flight_time'));
 
-	// Zeit in stunden, wie lange die auktion nach ablauf noch zu sehen ist
-	define("AUCTION_DELAY_TIME", $cfg->market_auction_delay_time->v);
+// Zeit in stunden, wie lange die auktion nach ablauf noch zu sehen ist
+define("AUCTION_DELAY_TIME", $config->getInt('market_auction_delay_time'));
 
-	// Titan Taxe
-	define("MARKET_METAL_FACTOR", $runtimeDataStore->get('market_rate_0', (string) 1));
+// Titan Taxe
+define("MARKET_METAL_FACTOR", $runtimeDataStore->get('market_rate_0', (string) 1));
 
-	// Silizium Taxe
-	define("MARKET_CRYSTAL_FACTOR", $runtimeDataStore->get('market_rate_1', (string) 1));
+// Silizium Taxe
+define("MARKET_CRYSTAL_FACTOR", $runtimeDataStore->get('market_rate_1', (string) 1));
 
-	// PVC Taxe
-	define("MARKET_PLASTIC_FACTOR", $runtimeDataStore->get('market_rate_2', (string) 1));
+// PVC Taxe
+define("MARKET_PLASTIC_FACTOR", $runtimeDataStore->get('market_rate_2', (string) 1));
 
-	// Tritium Taxe
-	define("MARKET_FUEL_FACTOR", $runtimeDataStore->get('market_rate_3', (string) 1));
+// Tritium Taxe
+define("MARKET_FUEL_FACTOR", $runtimeDataStore->get('market_rate_3', (string) 1));
 
-	// Nahrung Taxe
-	define("MARKET_FOOD_FACTOR", $runtimeDataStore->get('market_rate_4', (string) 1));
+// Nahrung Taxe
+define("MARKET_FOOD_FACTOR", $runtimeDataStore->get('market_rate_4', (string) 1));
 
-	// Mindestpreisgrenze der Schiffe 1=100%
-	define("SHIP_PRICE_FACTOR_MIN", $cfg->ship_price_factor_min->v);
+// Mindestpreisgrenze der Schiffe 1=100%
+define("SHIP_PRICE_FACTOR_MIN", $config->getFloat('ship_price_factor_min'));
 
-	// Höchstpreisgrenze der Schiffe
-	define("SHIP_PRICE_FACTOR_MAX", $cfg->ship_price_factor_max->v);
+// Höchstpreisgrenze der Schiffe
+define("SHIP_PRICE_FACTOR_MAX", $config->getFloat('ship_price_factor_max'));
 
-	// Mindestpreisgrenze der Rohstoffe
-	define("RESS_PRICE_FACTOR_MIN", $cfg->res_price_factor_min->v);
+// Mindestpreisgrenze der Rohstoffe
+define("RESS_PRICE_FACTOR_MIN", $config->getFloat('res_price_factor_min'));
 
-	// Höchstpreisgrenze der Schiffe
-	define("RESS_PRICE_FACTOR_MAX", $cfg->res_price_factor_max->v);
+// Höchstpreisgrenze der Schiffe
+define("RESS_PRICE_FACTOR_MAX", $config->getFloat('res_price_factor_max'));
 
-	// Mindestpreisgrenze der Autkionen (summiert aus Rohstoffen und Schiffen)
-	define("AUCTION_PRICE_FACTOR_MIN", $cfg->auction_price_factor_min->v);
+// Mindestpreisgrenze der Autkionen (summiert aus Rohstoffen und Schiffen)
+define("AUCTION_PRICE_FACTOR_MIN", $config->getFloat('auction_price_factor_min'));
 
-	// Höchstpreisgrenze der Autkionen (summiert aus Rohstoffen und Schiffen)
-	define("AUCTION_PRICE_FACTOR_MAX", $cfg->auction_price_factor_max->v);
+// Höchstpreisgrenze der Autkionen (summiert aus Rohstoffen und Schiffen)
+define("AUCTION_PRICE_FACTOR_MAX", $config->getFloat('auction_price_factor_max'));
 
-	// Gebot muss mindestens X% höher sein als jenes des Vorgebotes entsprechen
-	define("AUCTION_OVERBID", $cfg->auction_overbid->v);
+// Gebot muss mindestens X% höher sein als jenes des Vorgebotes entsprechen
+define("AUCTION_OVERBID", $config->getFloat('auction_overbid'));
 
-	// Zuschlagsfaktor auf die Preise
-	define("MARKET_SELL_TAX", $cfg->market_sell_tax->v);
+// Zuschlagsfaktor auf die Preise
+define("MARKET_SELL_TAX", $config->getFloat('market_sell_tax'));
 
-	// Mindestdauer einer Autkion (in Tagen)
-	define("AUCTION_MIN_DURATION", $cfg->auction_min_duration->v);
+// Mindestdauer einer Autkion (in Tagen)
+define("AUCTION_MIN_DURATION", $config->getInt('auction_min_duration'));
 
-	// Mindest Marktlevel um Rohstoffe zu kaufen und verkaufen
-	define("MIN_MARKET_LEVEL_RESS", $cfg->min_market_level_res->v);
+// Mindest Marktlevel um Rohstoffe zu kaufen und verkaufen
+define("MIN_MARKET_LEVEL_RESS", $config->getInt('min_market_level_res'));
 
-	// Mindest Marktlevel um Schiffe zu kaufen und verkaufen
-	define("MIN_MARKET_LEVEL_SHIP", $cfg->min_market_level_ship->v);
+// Mindest Marktlevel um Schiffe zu kaufen und verkaufen
+define("MIN_MARKET_LEVEL_SHIP", $config->getInt('min_market_level_ship'));
 
-	// Mindest Marktlevel um Auktionen anzubieten und selber zu bieten
-	define("MIN_MARKET_LEVEL_AUCTION", $cfg->min_market_level_auction->v);
+// Mindest Marktlevel um Auktionen anzubieten und selber zu bieten
+define("MIN_MARKET_LEVEL_AUCTION", $config->getInt('min_market_level_auction'));
 
-	// Legt fest, wieviele vergangene Werte bei der Marktkursberechnung mit einbezogen werden
-	define('MARKET_RATES_COUNT', $cfg->market_rates_count->v);
+// Legt fest, wieviele vergangene Werte bei der Marktkursberechnung mit einbezogen werden
+define('MARKET_RATES_COUNT', $config->getInt('market_rates_count'));
 
-	// Minimaler Marktkurs
-	define('MARKET_RATE_MIN', $cfg->market_rate_min->v);
+// Minimaler Marktkurs
+define('MARKET_RATE_MIN', $config->getFloat('market_rate_min'));
 
-	// Maximaler Marktkurs
-	define('MARKET_RATE_MAX', $cfg->market_rate_max->v);
-
-?>
+// Maximaler Marktkurs
+define('MARKET_RATE_MAX', $config->getFloat('market_rate_max'));
