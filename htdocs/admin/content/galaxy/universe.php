@@ -1,4 +1,10 @@
 <?PHP
+
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
   echo "<h1>Universum</h1>";
 
   //
@@ -61,20 +67,20 @@
   {
     echo "<h2>Universum erweitern</h2>";
     echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-    echo "<b>Universum (".$conf['num_of_sectors']['p1']."x".$conf['num_of_sectors']['p2'].") erweitern</b><br><br>";
+    echo "<b>Universum (".$config->param1Int('num_of_sectors')."x".$config->param2Int('num_of_sectors').") erweitern</b><br><br>";
     echo "Erweitere das Universum. Es werden dabei die bereits gespeicherten Daten &uuml;bernommen bez&uuml;glich der der Aufteilung von Planeten, Sonnensystemen, Gasplaneten, Wurml&ouml;chern etc. &Auml;ndere allenfals die Daten unter dem Link \"Universum\".<br><br>";
 
     echo "Gr&ouml;sse nach dem Ausbau: ";
     //erstellt 2 auswahllisten für die ausbaugrösse
         echo "<select name=\"expansion_sector_x\">";
-        for ($x=($conf['num_of_sectors']['p1']+1);10>=$x;$x++)
+        for ($x=($config->param1Int('num_of_sectors')+1);10>=$x;$x++)
         {
                 echo "<option value=\"$x\">$x</option>";
         }
         echo "</select>";
         echo " x ";
         echo "<select name=\"expansion_sector_y\">";
-        for ($x=($conf['num_of_sectors']['p2']+1);10>=$x;$x++)
+        for ($x=($config->param2Int('num_of_sectors')+1);10>=$x;$x++)
         {
                 echo "<option value=\"$x\">$x</option>";
         }

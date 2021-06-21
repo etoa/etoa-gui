@@ -1,29 +1,35 @@
 <?PHP
-	//////////////////////////////////////////////////
-	//		 	 ____    __           ______       			//
-	//			/\  _`\ /\ \__       /\  _  \      			//
-	//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
-	//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
-	//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
-	//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
-	//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
-	//																					 		//
-	//////////////////////////////////////////////////
-	// The Andromeda-Project-Browsergame				 		//
-	// Ein Massive-Multiplayer-Online-Spiel			 		//
-	// Programmiert von Nicolas Perrenoud				 		//
-	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	// www.etoa.ch | mail@etoa.ch								 		//
-	//////////////////////////////////////////////////
-	//
-	//
 
-	/**
-	* Manages technology research
-	*
-	* @author MrCage <mrcage@etoa.ch>
-	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/
+use EtoA\Core\Configuration\ConfigurationService;
+
+//////////////////////////////////////////////////
+//		 	 ____    __           ______       			//
+//			/\  _`\ /\ \__       /\  _  \      			//
+//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
+//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
+//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
+//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
+//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
+//																					 		//
+//////////////////////////////////////////////////
+// The Andromeda-Project-Browsergame				 		//
+// Ein Massive-Multiplayer-Online-Spiel			 		//
+// Programmiert von Nicolas Perrenoud				 		//
+// als Maturaarbeit '04 am Gymnasium Oberaargau	//
+// www.etoa.ch | mail@etoa.ch								 		//
+//////////////////////////////////////////////////
+//
+//
+
+/**
+* Manages technology research
+*
+* @author MrCage <mrcage@etoa.ch>
+* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
+*/
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
 
    // DEFINITIONEN //
 
@@ -129,11 +135,11 @@ if (isset($cp)) {
 		$peopleFoodConsumption = $cfg->value('people_food_require');
 
 		//level zählen welches das forschungslabor über dem angegeben level ist und faktor berechnen
-		$need_bonus_level = CURRENT_LAB_LEVEL - $conf['build_time_boni_forschungslabor']['p1'];
+		$need_bonus_level = CURRENT_LAB_LEVEL - $config->param1Int('build_time_boni_forschungslabor');
 		if ($need_bonus_level<=0) {
 			$time_boni_factor=1;
 		} else {
-			$time_boni_factor=max($conf['build_time_boni_forschungslabor']['p2'] , 1-($need_bonus_level*($conf['build_time_boni_forschungslabor']['v']/100)));
+			$time_boni_factor=max($config->param2Float('build_time_boni_forschungslabor') , 1-($need_bonus_level*($config->getInt('build_time_boni_forschungslabor')/100)));
 		}
 
 		//
@@ -322,11 +328,11 @@ if (isset($cp)) {
 	    	echo "<tr><td>Forschungszeitverringerung:</td><td>";
 	    	if ($need_bonus_level>=0)
 	    	{
-	    		echo get_percent_string($time_boni_factor)." durch Stufe ".CURRENT_LAB_LEVEL." (-".((1-$conf['build_time_boni_forschungslabor']['p2'])*100)."% maximum)";
+	    		echo get_percent_string($time_boni_factor)." durch Stufe ".CURRENT_LAB_LEVEL." (-".((1-$config->param2Float('build_time_boni_forschungslabor'))*100)."% maximum)";
 	    	}
 	    	else
 	    	{
-	    		echo "Stufe ".$conf['build_time_boni_forschungslabor']['p1']." erforderlich!";
+	    		echo "Stufe ".$config->param1Int('build_time_boni_forschungslabor')." erforderlich!";
 	    	}
 			echo '</td></tr>';
 

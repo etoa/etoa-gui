@@ -21,10 +21,6 @@ require __DIR__ . '/init.inc.php';
 	// Connect to database
 	dbconnect();
 
-	// Load config
-	$cfg = Config::getInstance();
-	$conf = $cfg->getArray();
-
     if (!isset($app)) {
         $app = require __DIR__ .'/../../src/app.php';
         $app->boot();

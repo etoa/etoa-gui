@@ -2438,7 +2438,7 @@ function MarketSearchFormularShow($val)
 
 function checkMarketSearchFormular($val)
 {
-		global $conf, $s, $cu;
+    global $s, $cu;
 
 
 

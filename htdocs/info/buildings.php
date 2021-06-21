@@ -1,5 +1,10 @@
 <?PHP
 
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 if ($site!=Null)
 	define("SHOWLEVELS",30);
 else
@@ -182,7 +187,7 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
     elseif ($arr['building_id']==7)
     {
 			$pbarr = mysql_fetch_row(dbquery("SELECT building_people_place FROM buildings WHERE building_id=6;"));
-			echo "Beachte das es einen Grundwohnraum für <b>".nf($conf['user_start_people']['p1'])."</b> Menschen pro Planet gibt. Ebenfalls bietet die
+			echo "Beachte das es einen Grundwohnraum für <b>".nf($config->param1Int('user_start_people'))."</b> Menschen pro Planet gibt. Ebenfalls bietet die
 			<a href=\"?$link&amp;site=buildings&amp;id=6\">Planetenbasis</a> Platz für <b>".$pbarr[0]."</b> Menschen.<br/>";
 
 	    tableStart("Platz f&uuml;r Bewohner");
@@ -197,11 +202,11 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
 	      if($level==$currentLevel)
 	         echo "<tr><td class=\"tbldata2\">$level</td>
 	         <td class=\"tbldata2\">".nf($prod_item)."</td>
-	         <td class=\"tbldata2\">".nf($prod_item+$pbarr[0]+$conf['user_start_people']['p1'])."</td>
+	         <td class=\"tbldata2\">".nf($prod_item+$pbarr[0]+$config->param1Int('user_start_people'))."</td>
 	         </tr>";
 	      else
 	      	echo "<tr><td>$level</td><td>".nf($prod_item)."</td>
-	      	<td>".nf($prod_item+$pbarr[0]+$conf['user_start_people']['p1'])."</td></tr>";
+	      	<td>".nf($prod_item+$pbarr[0]+$config->param1Int('user_start_people'))."</td></tr>";
 	    }
 	    tableEnd();
     }
@@ -278,11 +283,11 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
     elseif ($arr['building_id']==16)
     {
     	$pbarr = mysql_fetch_row(dbquery("SELECT building_store_metal FROM buildings WHERE building_id=6;"));
-      tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf($conf["def_store_capacity"]["v"]).") des Planeten)");
+      tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf($config->getInt("def_store_capacity")).") des Planeten)");
 	    echo "<tr><th>Stufe</th><th>Kapazit&auml;t</th></tr>";
 	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
 	    {
-	      $prod_item = $conf["def_store_capacity"]["v"] + $pbarr[0] + round($arr['building_store_metal'] * pow($arr['building_store_factor'],$level-1));
+	      $prod_item = $config->getInt("def_store_capacity") + $pbarr[0] + round($arr['building_store_metal'] * pow($arr['building_store_factor'],$level-1));
 	      if($level==$currentLevel)
 	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
 	      else
@@ -295,11 +300,11 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
     elseif ($arr['building_id']==17)
     {
     	$pbarr = mysql_fetch_row(dbquery("SELECT building_store_crystal FROM buildings WHERE building_id=6;"));
-      tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf($conf["def_store_capacity"]["v"]).") des Planeten)");
+      tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf($config->getInt("def_store_capacity")).") des Planeten)");
 	    echo "<tr><th>Stufe</th><th>Kapazit&auml;t</th></tr>";
 	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
 	    {
-	      $prod_item = $conf["def_store_capacity"]["v"] + $pbarr[0] + round($arr['building_store_crystal'] * pow($arr['building_store_factor'],$level-1));
+	      $prod_item = $config->getInt("def_store_capacity") + $pbarr[0] + round($arr['building_store_crystal'] * pow($arr['building_store_factor'],$level-1));
 	      if($level==$currentLevel)
 	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
 	      else
@@ -312,11 +317,11 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
     elseif ($arr['building_id']==18)
     {
 	    $pbarr = mysql_fetch_row(dbquery("SELECT building_store_plastic FROM buildings WHERE building_id=6;"));
-	    tableStart("Kapazit&auml;t inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf($conf["def_store_capacity"]["v"]).")");
+	    tableStart("Kapazit&auml;t inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf($config->getInt("def_store_capacity")).")");
 	    echo "<tr><th>Stufe</th><th>Kapazit&auml;t</th></tr>";
 	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
 	    {
-	      $prod_item = $conf["def_store_capacity"]["v"] + $pbarr[0] + round($arr['building_store_plastic'] * pow($arr['building_store_factor'],$level-1));
+	      $prod_item = $config->getInt("def_store_capacity") + $pbarr[0] + round($arr['building_store_plastic'] * pow($arr['building_store_factor'],$level-1));
 	      if($level==$currentLevel)
 	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
 	      else
@@ -329,11 +334,11 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
     elseif ($arr['building_id']==19)
     {
 	    $pbarr = mysql_fetch_row(dbquery("SELECT building_store_food FROM buildings WHERE building_id=6;"));
-      tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf($conf["def_store_capacity"]["v"]).") des Planeten)");
+      tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf($config->getInt("def_store_capacity")).") des Planeten)");
 	    echo "<tr><th>Stufe</th><th>Kapazit&auml;t</th></tr>";
 	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
 	    {
-	      $prod_item = $conf["def_store_capacity"]["v"] + $pbarr[0] + round($arr['building_store_food'] * pow($arr['building_store_factor'],$level-1));
+	      $prod_item = $config->getInt("def_store_capacity") + $pbarr[0] + round($arr['building_store_food'] * pow($arr['building_store_factor'],$level-1));
 	      if($level==$currentLevel)
 	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
 	      else
@@ -346,11 +351,11 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
     elseif ($arr['building_id']==20)
     {
 	    $pbarr = mysql_fetch_row(dbquery("SELECT building_store_fuel FROM buildings WHERE building_id=6;"));
-	    tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf($conf["def_store_capacity"]["v"]).") des Planeten)");
+	    tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($pbarr[0]).") und Standardkapazit&auml;t (".nf($config->getInt("def_store_capacity")).") des Planeten)");
 	    echo "<tr><th>Stufe</th><th>Kapazit&auml;t</th></tr>";
 	    for ($level=$b_level;$level<SHOWLEVELS+$b_level;$level++)
 	    {
-	      $prod_item = $conf["def_store_capacity"]["v"] + $pbarr[0] + round($arr['building_store_fuel'] * pow($arr['building_store_factor'],$level-1));
+	      $prod_item = $config->getInt("def_store_capacity") + $pbarr[0] + round($arr['building_store_fuel'] * pow($arr['building_store_factor'],$level-1));
 	      if($level==$currentLevel)
 	         echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
 	      else
@@ -628,7 +633,7 @@ elseif(isset($_GET['type_id']) && intval($_GET['type_id'])>0)
 	if ($btid==BUILDING_STORE_CAT)
 	{
 		echo "<b>Lagerkapazit&auml;t</b><br>";
-		echo "Du kannst auf einem Planeten nicht unendlich viele Rohstoffe lagern. Jeder Planet hat eine Lagerkapazit&auml;t von ".intval($conf['def_store_capacity']['v']).". Um die Lagerkapazit&auml;t zu erh&ouml;hen, kannst du eine Planetenbasis und danach verschiedene Speicher, Lagerhallen und Silos bauen, welche die Kapazit&auml;t erh&ouml;hen. Wenn eine Zahl in der Rohstoffanzeige rot gef&auml;rbt ist, bedeutet das, dass dieser Rohstoff die Lagerkapazit&auml;t &uuml;berschreitet. Baue in diesem Fall den Speicher aus. Eine &uuml;berschrittene Lagerkapazit&auml;t bedeutet, dass nichts mehr produziert wird, jedoch werden Rohstoffe, die z.B. mit einer Flotte ankommen, trotzdem auf dem Planeten gespeichert.<br>";
+		echo "Du kannst auf einem Planeten nicht unendlich viele Rohstoffe lagern. Jeder Planet hat eine Lagerkapazit&auml;t von ".$config->getInt("def_store_capacity").". Um die Lagerkapazit&auml;t zu erh&ouml;hen, kannst du eine Planetenbasis und danach verschiedene Speicher, Lagerhallen und Silos bauen, welche die Kapazit&auml;t erh&ouml;hen. Wenn eine Zahl in der Rohstoffanzeige rot gef&auml;rbt ist, bedeutet das, dass dieser Rohstoff die Lagerkapazit&auml;t &uuml;berschreitet. Baue in diesem Fall den Speicher aus. Eine &uuml;berschrittene Lagerkapazit&auml;t bedeutet, dass nichts mehr produziert wird, jedoch werden Rohstoffe, die z.B. mit einer Flotte ankommen, trotzdem auf dem Planeten gespeichert.<br>";
 	}
 	elseif($btid==BUILDING_POWER_CAT)
 	{

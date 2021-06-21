@@ -1,8 +1,13 @@
 <?php
 
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 echo "<h2>Aktive Sessions</h2>";
 echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-echo "<p>Das User-Timeout betr&auml;gt ".tf($conf['user_timeout']['v'])."</p>";
+echo "<p>Das User-Timeout betr&auml;gt ".tf($config->getInt('user_timeout'))."</p>";
 
 if (isset($_GET['kick']))
 {
@@ -78,6 +83,3 @@ if (mysql_num_rows($res)>0)
 }
 else
     echo "<br/><br/><i>Keine Eintr&auml;ge vorhanden!</i><br/>";
-
-
-?>

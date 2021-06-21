@@ -4,6 +4,7 @@ use EtoA\Admin\AdminNotesRepository;
 use EtoA\Admin\AdminRoleManager;
 use EtoA\Admin\AdminSessionRepository;
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Support\DatabaseManagerRepository;
 use EtoA\User\UserRepository;
@@ -76,6 +77,9 @@ try {
         /** @var TicketRepository */
         $ticketRepo = $app['etoa.help.ticket.repository'];
 
+        /** @var ConfigurationService */
+        $config = $app['etoa.config.service'];
+
         adminView(
             $s,
             $adminUserRepo,
@@ -85,6 +89,7 @@ try {
             $sessionRepository,
             $databaseManager,
             $ticketRepo,
+            $config,
             $twig
         );
     }
@@ -106,12 +111,11 @@ function adminView(
     AdminSessionRepository $sessionRepository,
     DatabaseManagerRepository $databaseManager,
     TicketRepository $ticketRepo,
+    ConfigurationService $config,
     Environment $twig
 ) {
     global $page;
     global $sub;
-    global $cfg;
-    global $conf;
     global $app;
     global $resNames;
 
@@ -144,7 +148,7 @@ function adminView(
     $twig->addGlobal('isUnix', UNIX);
 
     if (UNIX) {
-        $eventHandlerPid = EventHandlerManager::checkDaemonRunning(getAbsPath($cfg->daemon_pidfile));
+        $eventHandlerPid = EventHandlerManager::checkDaemonRunning(getAbsPath($config->get('daemon_pidfile')));
         exec("cat /proc/cpuinfo | grep processor | wc -l", $out);
         $load = sys_getloadavg();
         $systemLoad = round($load[2] / intval($out[0]) * 100, 2);
@@ -153,10 +157,10 @@ function adminView(
         $twig->addGlobal('eventHandlerPid', $eventHandlerPid);
     }
 
-    $twig->addGlobal('usersOnline', $userRepo->countActiveSessions($cfg->user_timeout->v));
+    $twig->addGlobal('usersOnline', $userRepo->countActiveSessions($config->getInt('user_timeout')));
     $twig->addGlobal('usersCount', $userRepo->count());
-    $twig->addGlobal('usersAllowed', $cfg->enable_register->p2);
-    $twig->addGlobal('adminsOnline', $sessionRepository->countActiveSessions($cfg->admin_timeout->v));
+    $twig->addGlobal('usersAllowed', $config->getInt('enable_register'));
+    $twig->addGlobal('adminsOnline', $sessionRepository->countActiveSessions($config->getInt('admin_timeout')));
     $twig->addGlobal('adminsCount', $adminUserRepo->count());
     $twig->addGlobal('dbSizeInMB', $databaseManager->getDatabaseSize());
 

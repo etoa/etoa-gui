@@ -1,22 +1,28 @@
 <?PHP
-	//////////////////////////////////////////////////
-	//		 	 ____    __           ______       			//
-	//			/\  _`\ /\ \__       /\  _  \      			//
-	//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
-	//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
-	//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
-	//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
-	//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
-	//																					 		//
-	//////////////////////////////////////////////////
-	// The Andromeda-Project-Browsergame				 		//
-	// Ein Massive-Multiplayer-Online-Spiel			 		//
-	// Programmiert von Nicolas Perrenoud				 		//
-	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	// www.etoa.ch | mail@etoa.ch								 		//
-	//////////////////////////////////////////////////
-	//
-	//
+
+use EtoA\Core\Configuration\ConfigurationService;
+
+//////////////////////////////////////////////////
+//		 	 ____    __           ______       			//
+//			/\  _`\ /\ \__       /\  _  \      			//
+//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
+//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
+//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
+//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
+//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
+//																					 		//
+//////////////////////////////////////////////////
+// The Andromeda-Project-Browsergame				 		//
+// Ein Massive-Multiplayer-Online-Spiel			 		//
+// Programmiert von Nicolas Perrenoud				 		//
+// als Maturaarbeit '04 am Gymnasium Oberaargau	//
+// www.etoa.ch | mail@etoa.ch								 		//
+//////////////////////////////////////////////////
+//
+//
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
 
 /** @var Alliance $ally */
 /** @var bool $isFounder */
@@ -63,7 +69,7 @@ if (Alliance::checkActionRights('editmembers'))
 
 			// Handle user move from wing to wing or main
 
-			if($conf['allow_wings']['v'])
+			if($config->getBoolean('allow_wings'))
 			{
 				$checked_arr = array();
 				if (count($ally->wings) > 0)
@@ -173,7 +179,7 @@ if (Alliance::checkActionRights('editmembers'))
 			<th>Punkte:</th>
 			<th>Online:</th>
 			<th>Rang:</th>";
-			if ($conf['allow_wings']['v'] && count($ally->wings) > 0)
+			if ($config->getBoolean('allow_wings') && count($ally->wings) > 0)
 				echo "<th>Umteilen</th>";
 			echo "<th>Aktionen</th>
 		</tr>";
@@ -184,7 +190,7 @@ if (Alliance::checkActionRights('editmembers'))
 			echo "<td>".$mv."</td>
 			<td>".nf($mv->points)."</td>";
 			// Zuletzt online
-			if ((time()-$conf['online_threshold']['v']*60) < $mv->acttime)
+			if ((time()-$config->getInt('online_threshold')*60) < $mv->acttime)
 				echo "<td style=\"color:#0f0;\">online</td>";
 			else
 				echo "<td>".date("d.m.Y H:i",$mv->acttime)."</td>";
@@ -205,7 +211,7 @@ if (Alliance::checkActionRights('editmembers'))
 				echo "</select></td>";
 			}
 
-			if ($conf['allow_wings']['v'] && count($ally->wings) > 0)
+			if ($config->getBoolean('allow_wings') && count($ally->wings) > 0)
 			{
 				echo "<td>";
 				if ($ally->founderId != $mk && !$ally->isAtWar()) {
@@ -242,7 +248,7 @@ if (Alliance::checkActionRights('editmembers'))
 
 
 
-		if ($conf['allow_wings']['v'] && count($ally->wings) > 0)
+		if ($config->getBoolean('allow_wings') && count($ally->wings) > 0)
 		{
 			foreach ($ally->wings as $wid => $wdata)
 			{
@@ -260,7 +266,7 @@ if (Alliance::checkActionRights('editmembers'))
 						<td>".$udata."</td>
 						<td>".nf($udata->points)."</td>";
 						// Zuletzt online
-						if ((time()-$conf['online_threshold']['v']*60) < $udata->acttime)
+						if ((time()-$config->getInt('online_threshold')*60) < $udata->acttime)
 							echo "<td style=\"color:#0f0;\">online</td>";
 						else
 							echo "<td>".date("d.m.Y H:i",$udata->acttime)."</td>";

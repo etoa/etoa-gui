@@ -1,4 +1,7 @@
 <?PHP
+
+use EtoA\Core\Configuration\ConfigurationService;
+
 //////////////////////////////////////////////////
 //		 	 ____    __           ______       			//
 //			/\  _`\ /\ \__       /\  _  \      			//
@@ -17,6 +20,9 @@
 //////////////////////////////////////////////////
 //
 //
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
 
 /**
  * Displays economy information
@@ -516,8 +522,8 @@ if ($cp) {
         echo "<tr><th>Grundkapazit&auml;t</th>";
         $storetotal = [];
         for ($x = 0; $x < 5; $x++) {
-            echo "<td>" . nf($conf['def_store_capacity']['v']) . "</td>";
-            $storetotal[$x] = $conf['def_store_capacity']['v'];
+            echo "<td>" . nf($config->getInt('def_store_capacity')) . "</td>";
+            $storetotal[$x] = $config->getInt('def_store_capacity');
         }
         echo "</tr>";
         while ($barr = mysql_fetch_array($bres)) {

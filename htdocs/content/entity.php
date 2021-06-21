@@ -1,29 +1,35 @@
 <?PHP
-	//////////////////////////////////////////////////
-	//		 	 ____    __           ______       			//
-	//			/\  _`\ /\ \__       /\  _  \      			//
-	//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
-	//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
-	//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
-	//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
-	//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
-	//																					 		//
-	//////////////////////////////////////////////////
-	// The Andromeda-Project-Browsergame				 		//
-	// Ein Massive-Multiplayer-Online-Spiel			 		//
-	// Programmiert von Nicolas Perrenoud				 		//
-	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	// www.etoa.ch | mail@etoa.ch								 		//
-	//////////////////////////////////////////////////
-	//
-	//
 
-	/**
-	* Shows information about a specified planet
-	*
-	* @author MrCage <mrcage@etoa.ch>
-	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/
+use EtoA\Core\Configuration\ConfigurationService;
+
+//////////////////////////////////////////////////
+//		 	 ____    __           ______       			//
+//			/\  _`\ /\ \__       /\  _  \      			//
+//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
+//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
+//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
+//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
+//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
+//																					 		//
+//////////////////////////////////////////////////
+// The Andromeda-Project-Browsergame				 		//
+// Ein Massive-Multiplayer-Online-Spiel			 		//
+// Programmiert von Nicolas Perrenoud				 		//
+// als Maturaarbeit '04 am Gymnasium Oberaargau	//
+// www.etoa.ch | mail@etoa.ch								 		//
+//////////////////////////////////////////////////
+//
+//
+
+/**
+* Shows information about a specified planet
+*
+* @author MrCage <mrcage@etoa.ch>
+* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
+*/
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
 
 	// DATEN LADEN
 
@@ -84,7 +90,7 @@
 					<td>".$ent->fields." total</td></tr>";
 				echo "<tr>
 					<th width=\"100\">Gr&ouml;sse:</th>
-					<td>".nf($conf['field_squarekm']['v']*$ent->fields)." km&sup2;</td></tr>";
+					<td>".nf($config->getInt('field_squarekm')*$ent->fields)." km&sup2;</td></tr>";
 				echo "<tr>
 					<th width=\"100\">Temperatur:</th>
 					<td>".$ent->temp_from."&deg;C bis ".$ent->temp_to."&deg;C <br/><br/>";

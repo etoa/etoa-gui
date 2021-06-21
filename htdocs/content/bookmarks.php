@@ -860,27 +860,27 @@
 			echo "<form action=\"?page=$page\" method=\"post\">";
 			checker_init();
 			echo "<select name=\"sx\">";
-			for ($x=1;$x<=$conf['num_of_sectors']['p1'];$x++)
+			for ($x=1;$x<=$config->param1Int('num_of_sectors');$x++)
 			{
 				echo "<option value=\"$x\">$x</option>";
 			}
 			echo "</select> / <select name=\"sy\">";
-			for ($y=1;$y<=$conf['num_of_sectors']['p2'];$y++)
+			for ($y=1;$y<=$config->param2Int('num_of_sectors');$y++)
 			{
 				echo "<option value=\"$y\">$y</option>";
 			}
 			echo "</select> : <select name=\"cx\">";
-			for ($x=1;$x<=$conf['num_of_cells']['p1'];$x++)
+			for ($x=1;$x<=$config->param1Int('num_of_cells');$x++)
 			{
 				echo "<option value=\"$x\">$x</option>";
 			}
 			echo "</select> / <select name=\"cy\">";
-			for ($y=1;$y<=$conf['num_of_cells']['p2'];$y++)
+			for ($y=1;$y<=$config->param2Int('num_of_cells');$y++)
 			{
 				echo "<option value=\"$y\">$y</option>";
 			}
 			echo "</select> : <select name=\"pos\">";
-			for ($y=0;$y<=$conf['num_planets']['p2'];$y++)
+			for ($y=0;$y<=$config->param2Int('num_planets');$y++)
 			{
 				echo "<option value=\"$y\">$y</option>";
 			}

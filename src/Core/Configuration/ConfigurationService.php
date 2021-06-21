@@ -110,22 +110,6 @@ class ConfigurationService
         return (float) $this->param2($key);
     }
 
-    // /**
-    //  * Wrapper for saving all values in an array (classic-style)
-    //  * @deprecated
-    //  */
-    // public function &getArray(): array
-    // {
-    //     $conf = array();
-    //     foreach ($this->_items as $key => &$i) {
-    //         $conf[$key]['v'] = $i->v;
-    //         $conf[$key]['p1'] = $i->p1;
-    //         $conf[$key]['p2'] = $i->p2;
-    //     }
-    //     unset($i);
-    //     return $conf;
-    // }
-
     public function has(string $name): bool
     {
         return isset($this->_items[$name]);

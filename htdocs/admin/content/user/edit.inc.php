@@ -9,6 +9,9 @@ $ticketRepo = $app['etoa.help.ticket.repository'];
 /** @var AdminUserRepository */
 $adminUserRepo = $app['etoa.admin.user.repository'];
 
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 			if (isset($_GET['id']))
 				$id = $_GET['id'];
 			elseif(isset($_GET['user_id']))
@@ -324,7 +327,7 @@ $adminUserRepo = $app['etoa.admin.user.repository'];
 			// Löschantrag speichern
 			if (isset($_POST['requestdelete']))
 			{
-				$t = time() + ($conf['user_delete_days']['v']*3600*24);
+				$t = time() + ($config->getInt('user_delete_days')*3600*24);
 				dbquery("
 				UPDATE
 					users

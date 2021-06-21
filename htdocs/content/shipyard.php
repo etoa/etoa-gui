@@ -1,29 +1,35 @@
 <?PHP
-	//////////////////////////////////////////////////
-	//		 	 ____    __           ______       			//
-	//			/\  _`\ /\ \__       /\  _  \      			//
-	//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
-	//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
-	//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
-	//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
-	//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
-	//																					 		//
-	//////////////////////////////////////////////////
-	// The Andromeda-Project-Browsergame				 		//
-	// Ein Massive-Multiplayer-Online-Spiel			 		//
-	// Programmiert von Nicolas Perrenoud				 		//
-	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	// www.etoa.ch | mail@etoa.ch								 		//
-	//////////////////////////////////////////////////
-	//
-	//
 
-	/**
-	* Construct ships
-	*
-	* @author MrCage <mrcage@etoa.ch>
-	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/
+use EtoA\Core\Configuration\ConfigurationService;
+
+//////////////////////////////////////////////////
+//		 	 ____    __           ______       			//
+//			/\  _`\ /\ \__       /\  _  \      			//
+//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
+//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
+//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
+//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
+//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
+//																					 		//
+//////////////////////////////////////////////////
+// The Andromeda-Project-Browsergame				 		//
+// Ein Massive-Multiplayer-Online-Spiel			 		//
+// Programmiert von Nicolas Perrenoud				 		//
+// als Maturaarbeit '04 am Gymnasium Oberaargau	//
+// www.etoa.ch | mail@etoa.ch								 		//
+//////////////////////////////////////////////////
+//
+//
+
+/**
+* Construct ships
+*
+* @author MrCage <mrcage@etoa.ch>
+* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
+*/
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
 
 	//Definition für "Info" Link
 	define('ITEMS_TBL',"ships");
@@ -253,14 +259,14 @@
 			}
 
     	// level zählen welches die schiffswerft über dem angegeben level ist und faktor berechnen
-    	$need_bonus_level = CURRENT_SHIPYARD_LEVEL - $conf['build_time_boni_schiffswerft']['p1'];
+    	$need_bonus_level = CURRENT_SHIPYARD_LEVEL - $config->param1Int('build_time_boni_schiffswerft');
     	if($need_bonus_level <= 0)
     	{
     		$time_boni_factor=1;
     	}
     	else
     	{
-    		$time_boni_factor=1-($need_bonus_level*($conf['build_time_boni_schiffswerft']['v']/100));
+    		$time_boni_factor=1-($need_bonus_level*($config->getInt('build_time_boni_schiffswerft')/100));
     	}
     	$people_working = $bl->getPeopleWorking(SHIP_BUILDING_ID);
 
@@ -308,7 +314,7 @@
     	}
     	else
     	{
-    		echo "Stufe ".$conf['build_time_boni_schiffswerft']['p1']." erforderlich!";
+    		echo "Stufe ".$config->getInt('build_time_boni_schiffswerft')." erforderlich!";
     	}
 		echo "</td></tr>";
     	if ($cancel_res_factor>0)
