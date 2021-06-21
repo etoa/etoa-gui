@@ -82,7 +82,8 @@
 							echo "-";
 						echo "</td>";
 						echo "<td>".$arr['ip_addr']."<br/>".Net::getHost($arr['ip_addr'])."</td>";
-						echo "<td>".$arr['user_agent']."</td>";
+                        $browserParser = new \WhichBrowser\Parser($arr['user_agent']);
+						echo "<td>".$browserParser->toString()."</td>";
 						echo "<td>";
 						if (max($arr['time_logout'],$arr['time_action'])-$arr['time_login']>0)
 							echo tf(max($arr['time_logout'],$arr['time_action'])-$arr['time_login']);
