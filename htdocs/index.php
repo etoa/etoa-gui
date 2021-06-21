@@ -56,11 +56,11 @@ if ($_GET['logout'] ?? false) {
     forward(getLoginUrl(['page'=>'logout']), 'Logout');
 }
 
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 // Validate session
 if (!$s->validate()) {
-
-    /** @var ConfigurationService */
-    $config = $app['etoa.config.service'];
 
     if (!$config->get('loginurl')) {
         forward(getLoginUrl());
@@ -92,7 +92,7 @@ defineImagePaths();
 $referer_allow = false;
 if (isset($_SERVER["HTTP_REFERER"])) {
     // Referers
-    $referers = explode("\n", $cfg->referers->v);
+    $referers = explode("\n", $config->get('referers'));
     foreach ($referers as $k => &$v) {
         $referers[$k] = trim($v);
     }
@@ -110,13 +110,13 @@ try {
     ob_start();
 
     // Spiel ist generell gesperrt (ausser fŸr erlaubte IP's)
-    $allowed_ips = explode("\n", $cfg->value('offline_ips_allow'));
+    $allowed_ips = explode("\n", $config->get('offline_ips_allow'));
 
-    if ($cfg->value('offline') == 1 && !in_array($_SERVER['REMOTE_ADDR'], $allowed_ips, true)) {
+    if ($config->getBoolean('offline') && !in_array($_SERVER['REMOTE_ADDR'], $allowed_ips, true)) {
         iBoxStart('Spiel offline',750);
         echo "<img src=\"images/maintenance.jpg\" alt=\"maintenance\" /><br/><br/>";
-        if ($cfg->value('offline_message')!="") {
-            echo text2html($cfg->value('offline_ message'))."<br/><br/>";
+        if ($config->get('offline_message')!="") {
+            echo text2html($config->get('offline_ message'))."<br/><br/>";
         } else {
             echo "Das Spiel ist aufgrund von Wartungsarbeiten momentan offline! Schaue sp&auml;ter nochmals vorbei!<br/><br/>";
         }
@@ -125,7 +125,7 @@ try {
     }
 
     // Login ist gesperrt
-    elseif ($cfg->value('enable_login')==0 && !in_array($_SERVER['REMOTE_ADDR'], $allowed_ips, true)) {
+    elseif (!$config->getBoolean('enable_login') && !in_array($_SERVER['REMOTE_ADDR'], $allowed_ips, true)) {
         iBoxStart("Login geschlossen",750);
         echo "<img src=\"images/keychain.png\" alt=\"maintenance\" /><br/><br/>";
         echo "Der Login momentan geschlossen!<br/><br/>";
@@ -134,10 +134,10 @@ try {
     }
 
     // Login ist erlaubt aber noch zeitlich zu frŸh
-    elseif ($cfg->value('enable_login')==1 && $cfg->value('enable_login')!="" && $cfg->param1('enable_login') > time() && !in_array($_SERVER['REMOTE_ADDR'], $allowed_ips, true)) {
+    elseif ($config->getBoolean('enable_login') && $config->param1Int('enable_login') > time() && !in_array($_SERVER['REMOTE_ADDR'], $allowed_ips, true)) {
         iBoxStart("Login noch geschlossen",750);
         echo "<img src=\"images/keychain.png\" alt=\"maintenance\" /><br/><br/>";
-        echo "Das Spiel startet am ".date("d.m.Y",$cfg->param1('enable_login'))." ab ".date("H:i",$cfg->param1('enable_login'))."!<br/><br/>";
+        echo "Das Spiel startet am ".date("d.m.Y",$config->param1Int('enable_login'))." ab ".date("H:i",$config->param1Int('enable_login'))."!<br/><br/>";
         echo button("Zur Startseite", getLoginUrl());
         iBoxEnd();
     }

@@ -1,8 +1,13 @@
 <?PHP
 /* fastchat von river */
 
+use EtoA\Core\Configuration\ConfigurationService;
+
 define('RELATIVE_ROOT','');
 include_once __DIR__ . '/inc/bootstrap.inc.php';
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
 
 $login = false;
 $chatColor = null;
@@ -28,7 +33,7 @@ if (isset($_SESSION['user_id'])) {
 }
 
 // Select design
-$design = DESIGN_DIRECTORY."/official/".$cfg->value('default_css_style');
+$design = DESIGN_DIRECTORY."/official/".$config->get('default_css_style');
 if (isset($cu) && $cu->properties->cssStyle) {
     if (is_dir(DESIGN_DIRECTORY."/custom/".$cu->properties->cssStyle)) {
         $design = DESIGN_DIRECTORY."/custom/".$cu->properties->cssStyle;

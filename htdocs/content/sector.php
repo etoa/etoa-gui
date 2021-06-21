@@ -1,4 +1,10 @@
 <?PHP
+
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 	//////////////////////////////////////////////////
 	//		 	 ____    __           ______       			//
 	//			/\  _`\ /\ \__       /\  _  \      			//
@@ -53,8 +59,8 @@
 	// Default coordinates (galactic center)
 	else
 	{
-		$sx = $cfg->param1('map_init_sector');
-		$sy = $cfg->param2('map_init_sector');
+		$sx = $config->param1Int('map_init_sector');
+		$sy = $config->param2Int('map_init_sector');
 	}
 
 	$sx = intval($sx);
@@ -65,8 +71,8 @@
 	$sector_pic = "images/map";
 
   // Load galaxy dimensions
-	$sx_num = $cfg->param1('num_of_sectors');
-	$sy_num = $cfg->param2('num_of_sectors');
+    $sx_num = $config->param1Int('num_of_sectors');
+    $sy_num = $config->param2Int('num_of_sectors');
 
   // Validate coordinates
 	if ($sx>$sx_num) {
@@ -215,7 +221,7 @@
   	$user_solsys_ids[]= (int) $arr[0];
   }
 
-  $sectorMap = new SectorMapRenderer($cfg->param1('num_of_cells'), $cfg->param2('num_of_cells'));
+  $sectorMap = new SectorMapRenderer($config->param1Int('num_of_cells'), $config->param2Int('num_of_cells'));
   $sectorMap->enableRuler(true);
   $sectorMap->enableTooltips(true);
   $sectorMap->setUserCellIDs($user_solsys_ids);

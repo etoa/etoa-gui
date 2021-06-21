@@ -14,6 +14,8 @@
  * @copyright Copyright (c) 2004 EtoA Gaming, www.etoa.ch
  */
 
+use EtoA\Core\Configuration\ConfigurationService;
+
 $indexpage = [
     'login' => [
         'url'=>'?index=login',
@@ -35,13 +37,16 @@ $indexpage = [
 
 require_once __DIR__ . '/inc/bootstrap.inc.php';
 
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 $loggedIn = false;
 if ($s->validate(0)) {
     $cu = new CurrentUser($s->user_id);
     $loggedIn = (bool) $cu->isValid;
 }
 
-$design = DESIGN_DIRECTORY . '/official/' . $cfg->value('default_css_style');
+$design = DESIGN_DIRECTORY . '/official/' . $config->get('default_css_style');
 if (isset($cu) && $cu->properties->cssStyle) {
     if (is_dir(DESIGN_DIRECTORY . '/custom/' . $cu->properties->cssStyle)) {
         $design = DESIGN_DIRECTORY . '/custom/' . $cu->properties->cssStyle;
@@ -54,7 +59,7 @@ if (isset($cu) && $cu->properties->imageUrl && $cu->properties->imageExt) {
     define('IMAGE_PATH', $cu->properties->imageUrl);
     define('IMAGE_EXT', $cu->properties->imageExt);
 } else {
-    define('IMAGE_PATH', $cfg->default_image_path->v);
+    define('IMAGE_PATH', $config->get('default_image_path'));
     define('IMAGE_EXT', 'png');
 }
 
@@ -77,16 +82,16 @@ try {
     $show = true;
     $invalidKey = false;
     // Handle case if outgame key is set
-    if ($cfg->register_key->v) {
+    if ($config->filled('register_key')) {
         if (isset($_POST['reg_key_auth_submit'])) {
-            if ($_POST['reg_key_auth_value'] === $cfg->register_key->v) {
-                $s->reg_key_auth = $cfg->register_key->v;
+            if ($_POST['reg_key_auth_value'] === $config->get('register_key')) {
+                $s->reg_key_auth = $config->get('register_key');
             } else {
                 $invalidKey = true;
             }
         }
 
-        if ($s->reg_key_auth !== $cfg->register_key->v) {
+        if ($s->reg_key_auth !== $config->get('register_key')) {
             $show = false;
         }
     }

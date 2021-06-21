@@ -1,4 +1,10 @@
 <?PHP
+
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 	//////////////////////////////////////////////////
 	//		 	 ____    __           ______       			//
 	//			/\  _`\ /\ \__       /\  _  \      			//
@@ -31,7 +37,7 @@
 	define('HELP_URL_SHIP',"?page=help&site=shipyard");
 
 	// Maxmimale Recyclingtech effizient
-	define("RECYC_MAX_PAYBACK", $cfg->recyc_max_payback->v);
+	define("RECYC_MAX_PAYBACK", $config->getFloat('recyc_max_payback'));
 
 	// BEGIN SKRIPT //
 

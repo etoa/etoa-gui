@@ -1,22 +1,9 @@
 <?PHP
-	//////////////////////////////////////////////////
-	//		 	 ____    __           ______       			//
-	//			/\  _`\ /\ \__       /\  _  \      			//
-	//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
-	//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
-	//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
-	//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
-	//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
-	//																					 		//
-	//////////////////////////////////////////////////
-	// The Andromeda-Project-Browsergame				 		//
-	// Ein Massive-Multiplayer-Online-Spiel			 		//
-	// Programmiert von Nicolas Perrenoud				 		//
-	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	// www.etoa.ch | mail@etoa.ch								 		//
-	//////////////////////////////////////////////////
-	//
-	//
+
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
 
 	// Zeigt eigene Rohstoffe an
 	echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
@@ -408,7 +395,7 @@
 							for ($i=$build_cnt-1; $i>=0; $i--)
 							{
 								//Kostenfaktor Schiffe
-								$cost_factor = pow($cfg->get("alliance_shipcosts_factor"),$ship_count+$i);
+								$cost_factor = pow($config->getFloat("alliance_shipcosts_factor"),$ship_count+$i);
 								// Berechnet die Kosten
 								$ship_costs += $cost_factor * $ships[$ship_id]['ship_alliance_costs'];
 							}
@@ -1233,7 +1220,7 @@
 		else
 		{
 			// if changed, also change classes/alliance.class.php
-			echo "<td style=\"text-align:center;\">Schiffsteile pro Stunde: ".ceil($cfg->get('alliance_shippoints_per_hour')*pow($cfg->get('alliance_shippoints_base'),($cu->alliance->buildlist->getLevel(ALLIANCE_SHIPYARD_ID)-1)))."</td>";
+			echo "<td style=\"text-align:center;\">Schiffsteile pro Stunde: ".ceil($config->getInt('alliance_shippoints_per_hour')*pow($config->getFloat('alliance_shippoints_base'),($cu->alliance->buildlist->getLevel(ALLIANCE_SHIPYARD_ID)-1)))."</td>";
 		}
 		echo "</tr>
 		<tr>
@@ -1268,7 +1255,7 @@
 
 
 				//Kostenfaktor Schiffe
-				$cost_factor = pow($cfg->get("alliance_shipcosts_factor"),$ship_count);
+				$cost_factor = pow($config->getFloat("alliance_shipcosts_factor"),$ship_count);
 
 				$path = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$data['ship_id']."_middle.".IMAGE_EXT;
 				tableStart($data['ship_name']);

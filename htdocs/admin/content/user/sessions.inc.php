@@ -59,7 +59,7 @@ if (mysql_num_rows($res)>0)
         echo "<tr><td class=\"tbldata\"><a href=\"?page=user&sub=edit&user_id=".$arr['user_id']."\">".$arr['user_nick']."</a></td>
 			<td class=\"tbldata\">".date("d.m.Y H:i",$arr['time_login'])."</td>
 			<td class=\"tbldata\">".date("d.m.Y  H:i",$arr['time_action'])."</td>";
-        if (time() - $cfg->user_timeout->v < $arr['time_action'] && $arr['id']!='' )
+        if (time() - $config->getInt('user_timeout') < $arr['time_action'] && $arr['id']!='' )
         {
             echo "<td class=\"tbldata\" style=\"color:#0f0\">Online [<a href=\"?page=$page&amp;sub=$sub&amp;kick=".$arr['id']."\">kick</a>]</td>";
         }

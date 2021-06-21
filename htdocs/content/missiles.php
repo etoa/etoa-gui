@@ -35,14 +35,14 @@ $config = $app['etoa.config.service'];
 	define("HELP_URL","?page=help&site=missiles");
 
 	// Raketen, die pro Stufe im Silo gelagert werden können (NEU: dient als Vorfaktor zur Basis)
-	define("MISSILE_SILO_MISSILES_PER_LEVEL", $cfg->missile_silo_missiles_per_level->v);
+	define("MISSILE_SILO_MISSILES_PER_LEVEL", $config->getInt('missile_silo_missiles_per_level'));
 
 	/* Neue Konstante fuer eine exponentiell steigende Raketenzahl (by river) */
 	// Basis des neuen Algorithmus _PER_LEVEL * _ALGO_BASE^(SILO_LEVEL -1)
-	define("MISSILE_SILO_MISSILES_ALGO_BASE", $cfg->missile_silo_missiles_algo_base->v);
+	define("MISSILE_SILO_MISSILES_ALGO_BASE", $config->getFloat('missile_silo_missiles_algo_base'));
 
 	// Anzahl gleichzeitiger Flüge pro Silostufe
-	define("MISSILE_SILO_FLIGHTS_PER_LEVEL", $cfg->missile_silo_flights_per_level->v);
+	define("MISSILE_SILO_FLIGHTS_PER_LEVEL", $config->getInt('missile_silo_flights_per_level'));
 
 	// BEGIN SKRIPT //
 

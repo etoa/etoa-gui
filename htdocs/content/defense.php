@@ -1,4 +1,10 @@
 <?PHP
+
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 	//////////////////////////////////////////////////
 	//		 	 ____    __           ______       			//
 	//			/\  _`\ /\ \__       /\  _  \      			//
@@ -38,16 +44,16 @@
 	define("HELP_URL","?page=help&site=defense");
 
 	// Absolute minimal Bauzeit in Sekunden
-	define("DEFENSE_MIN_BUILD_TIME", $cfg->get('shipyard_min_build_time'));
+	define("DEFENSE_MIN_BUILD_TIME", $config->getInt('shipyard_min_build_time'));
 
 	// Ben. Level für Autragsabbruch
-	define("DEFQUEUE_CANCEL_MIN_LEVEL", $cfg->get('defqueue_cancel_min_level'));
+	define("DEFQUEUE_CANCEL_MIN_LEVEL", $config->getInt('defqueue_cancel_min_level'));
 
-	define("DEFQUEUE_CANCEL_START", $cfg->get('defqueue_cancel_start'));
+	define("DEFQUEUE_CANCEL_START", $config->getFloat('defqueue_cancel_start'));
 
-	define("DEFQUEUE_CANCEL_FACTOR", $cfg->get('defqueue_cancel_factor'));
+	define("DEFQUEUE_CANCEL_FACTOR", $$config->getFloat('defqueue_cancel_factor'));
 
-	define("DEFQUEUE_CANCEL_END", $cfg->get('defqueue_cancel_end'));
+	define("DEFQUEUE_CANCEL_END", $config->getFloat('defqueue_cancel_end'));
 
 	$bl = new BuildList($cp->id,$cu->id);
 
@@ -287,14 +293,14 @@
 			$fields_available = $cp->fields+$cp->fields_extra-$cp->fields_used - $queue_fields;
 
 			// level zählen welches die Waffenfabrik über dem angegeben level ist und faktor berechnen
-			$need_bonus_level = CURRENT_FACTORY_LEVEL - $cfg->p1('build_time_boni_waffenfabrik');
+			$need_bonus_level = CURRENT_FACTORY_LEVEL - $config->param1Int('build_time_boni_waffenfabrik');
 			if($need_bonus_level <= 0)
 			{
 				$time_boni_factor=1;
 			}
 			else
 			{
-				$time_boni_factor=1-($need_bonus_level*($cfg->get('build_time_boni_waffenfabrik')/100));
+				$time_boni_factor=1-($need_bonus_level*($config->getInt('build_time_boni_waffenfabrik')/100));
 			}
 			$people_working = $factory_arr['buildlist_people_working'];
 
@@ -327,8 +333,8 @@
 			echo "</td></tr>";
 			if ($bl->getPeopleWorking(DEF_BUILDING_ID) > 0)
 			{
-				echo '<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td><span id="people_work_done">'.tf($cfg->value('people_work_done') *$bl->getPeopleWorking(DEF_BUILDING_ID)).'</span></td></tr>';
-				echo '<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td><span id="people_food_require">'.nf($cfg->value('people_food_require') * $bl->getPeopleWorking(DEF_BUILDING_ID)).'</span></td></tr>';
+				echo '<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td><span id="people_work_done">'.tf($config->getInt('people_work_done') *$bl->getPeopleWorking(DEF_BUILDING_ID)).'</span></td></tr>';
+				echo '<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td><span id="people_food_require">'.nf($config->getInt('people_food_require') * $bl->getPeopleWorking(DEF_BUILDING_ID)).'</span></td></tr>';
 			}
 			if ($gen_tech_level  > 0)
 			{
@@ -342,7 +348,7 @@
 			}
 			else
 			{
-				echo "Stufe ".$cfg->p1('build_time_boni_waffenfabrik')." erforderlich!";
+				echo "Stufe ".$config->param1Int('build_time_boni_waffenfabrik')." erforderlich!";
 			}
 			echo '</td></tr>';
 			if ($cancel_res_factor>0)
@@ -359,8 +365,8 @@
 
 			$peopleFree = floor($cp->people) - $bl->totalPeopleWorking() + $bl->getPeopleWorking(DEF_BUILDING_ID);
 			$box =  '
-						<input type="hidden" name="workDone" id="workDone" value="'.$cfg->value('people_work_done').'" />
-						<input type="hidden" name="foodRequired" id="foodRequired" value="'.$cfg->value('people_food_require').'" />
+						<input type="hidden" name="workDone" id="workDone" value="'.$config->getInt('people_work_done').'" />
+						<input type="hidden" name="foodRequired" id="foodRequired" value="'.$config->getInt('people_food_require').'" />
 						<input type="hidden" name="peopleFree" id="peopleFree" value="'.$peopleFree.'" />
 						<input type="hidden" name="foodAvaiable" id="foodAvaiable" value="'.$cp->getRes1(4).'" />
 						<input type="hidden" name="peopleOptimized" id="peopleOptimized" value="0" />';
@@ -380,14 +386,14 @@
 								<td><input  type="text"
 											name="timeReduction"
 											id="timeReduction"
-											value="'.tf($cfg->value('people_work_done') * $bl->getPeopleWorking(DEF_BUILDING_ID)).'"
+											value="'.tf($config->getInt('people_work_done') * $bl->getPeopleWorking(DEF_BUILDING_ID)).'"
 											onkeyup="updatePeopleWorkingBox(\'-1\',this.value,\'-1\');" /></td>
 							</tr>
 								<th>Nahrungsverbrauch</th>
 								<td><input  type="text"
 											name="foodUsing"
 											id="foodUsing"
-											value="'.nf($cfg->value('people_food_require') * $bl->getPeopleWorking(DEF_BUILDING_ID)).'"
+											value="'.nf($config->getInt('people_food_require') * $bl->getPeopleWorking(DEF_BUILDING_ID)).'"
 											onkeyup="updatePeopleWorkingBox(\'-1\',\'-1\',this.value);" /></td>
 							</tr>
 							<tr>
@@ -600,7 +606,7 @@
 						}
 
 						//Check for Rene-Bug
-						$additional_food_costs = $people_working*$cfg->value('people_food_require');
+						$additional_food_costs = $people_working*$config->getInt('people_food_require');
 						if ($additional_food_costs!=intval($_POST['additional_food_costs']) || intval($_POST['additional_food_costs'])<0)
 						{
 							$build_cnt=0;
@@ -637,7 +643,7 @@
 							//Rechnet zeit wenn arbeiter eingeteilt sind
 							$btime_min=$btime*(0.1-($gen_tech_level/100));
 							if ($btime_min<DEFENSE_MIN_BUILD_TIME) $btime_min=DEFENSE_MIN_BUILD_TIME;
-							$btime=$btime-$people_working*$cfg->value('people_work_done');
+							$btime=$btime-$people_working*$config->getInt('people_work_done');
 							if ($btime<$btime_min) $btime=$btime_min;
 							$obj_time=ceil($btime);
 
@@ -1048,7 +1054,7 @@
 								// Bauzeit berechnen
 								$btime = ($data['def_costs_metal']+$data['def_costs_crystal']+$data['def_costs_plastic']+$data['def_costs_fuel']+$data['def_costs_food']) / GLOBAL_TIME * DEF_BUILD_TIME * $time_boni_factor * $cu->specialist->defenseTime;
 								$btime_min = $btime * (0.1 - ($gen_tech_level / 100));
-								$peopleOptimized= ceil(($btime-$btime_min)/$cfg->value('people_work_done'));
+								$peopleOptimized= ceil(($btime-$btime_min)/$config->getInt('people_work_done'));
 
 								//Mindest Bauzeit
 								if ($btime_min<DEFENSE_MIN_BUILD_TIME)
@@ -1056,14 +1062,14 @@
 									$btime_min=DEFENSE_MIN_BUILD_TIME;
 								}
 
-								$btime=ceil($btime-$people_working*$cfg->value('people_work_done'));
+								$btime=ceil($btime-$people_working*$config->getInt('people_work_done'));
 								if ($btime<$btime_min)
 								{
 									$btime=$btime_min;
 								}
 
 								//Nahrungskosten berechnen
-								$food_costs = $people_working*$cfg->value('people_food_require');
+								$food_costs = $people_working*$config->getInt('people_food_require');
 
 								//Nahrungskosten versteckt übermitteln
 								echo "<input type=\"hidden\" name=\"additional_food_costs\" value=\"".$food_costs."\" />";

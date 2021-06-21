@@ -1,9 +1,15 @@
 <?PHP
 
+use EtoA\Core\Configuration\ConfigurationService;
+use Symfony\Component\HttpFoundation\Request;
+
 require_once __DIR__ . '/inc/bootstrap.inc.php';
 $app = require __DIR__ . '/../src/app.php';
 
-$request = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
+$request = Request::createFromGlobals();
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
 
 $loggedIn = false;
 if ($s->validate(0)) {
@@ -13,7 +19,7 @@ if ($s->validate(0)) {
     }
 }
 
-$design = DESIGN_DIRECTORY. '/official/' . $cfg->value('default_css_style');
+$design = DESIGN_DIRECTORY. '/official/' . $config->get('default_css_style');
 if (isset($cu) && $cu->properties->cssStyle) {
     if (is_dir(DESIGN_DIRECTORY . '/custom/' . $cu->properties->cssStyle)) {
         $design = DESIGN_DIRECTORY . '/custom/' . $cu->properties->cssStyle;
@@ -26,7 +32,7 @@ if (isset($cu) && $cu->properties->imageUrl && $cu->properties->imageExt) {
     define('IMAGE_PATH',$cu->properties->imageUrl);
     define('IMAGE_EXT',$cu->properties->imageExt);
 } else {
-    define('IMAGE_PATH', $cfg->default_image_path->v);
+    define('IMAGE_PATH', $config->get('default_image_path'));
     define('IMAGE_EXT', 'png');
 }
 

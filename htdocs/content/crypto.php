@@ -1,4 +1,10 @@
 <?PHP
+
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 	//////////////////////////////////////////////////
 	//		 	 ____    __           ______       			//
 	//			/\  _`\ /\ \__       /\  _  \      			//
@@ -26,14 +32,14 @@
 	*/
 
 	// Reichweite in AE für Kryptoanalyse pro Ausbaustufe
-	define("CRYPTO_RANGE_PER_LEVEL", $cfg->crypto_range_per_level->v);
+	define("CRYPTO_RANGE_PER_LEVEL", $config->getInt('crypto_range_per_level'));
 
 	// Kosten an Tritium pro Kryptoanalyse
-	define("CRYPTO_FUEL_COSTS_PER_SCAN", $cfg->crypto_fuel_costs_per_scan->v);
+	define("CRYPTO_FUEL_COSTS_PER_SCAN", $config->getInt('crypto_fuel_costs_per_scan'));
 
-	define("CRYPTO_DEFAULT_COOLDOWN", $cfg->value("crypto_default_cooldown"));
-	define("CRYPTO_COOLDOWN_REDUCTION_PER_LEVEL", $cfg->value("crypto_cooldown_reduction_per_level"));
-	define("CRYPTO_MIN_COOLDOWN", $cfg->value("crypto_min_cooldown"));
+	define("CRYPTO_DEFAULT_COOLDOWN", $config->getInt("crypto_default_cooldown"));
+	define("CRYPTO_COOLDOWN_REDUCTION_PER_LEVEL", $config->getInt("crypto_cooldown_reduction_per_level"));
+	define("CRYPTO_MIN_COOLDOWN", $config->getInt("crypto_min_cooldown"));
 
 	// BEGIN SKRIPT //
 
@@ -50,7 +56,7 @@
 	}
 
 	// Allg. deaktivierung
-  if ($cfg->get('crypto_enable') == 1)
+  if ($config->getBoolean('crypto_enable'))
   {
 	  /**
 	  *
@@ -478,7 +484,7 @@
 
 			tableStart("Kryptocenter-Infos");
 			echo "<tr><th>Aktuelle Reichweite:</th>
-					<td>".nf(CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel)." AE ~".floor(CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel/$cfg->value('cell_length'))." Systeme (+".CRYPTO_RANGE_PER_LEVEL." pro Stufe) </td></tr>";
+					<td>".nf(CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel)." AE ~".floor(CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel/$config->getInt('cell_length'))." Systeme (+".CRYPTO_RANGE_PER_LEVEL." pro Stufe) </td></tr>";
 			echo'<tr><th>Zielinfo:</th><td id="targetinfo">
 								Wähle bitte ein Ziel...
 								</td></tr>';

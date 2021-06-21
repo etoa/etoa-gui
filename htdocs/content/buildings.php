@@ -1,4 +1,10 @@
 <?PHP
+
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 	//////////////////////////////////////////////////
 	//		 	 ____    __           ______       			//
 	//			/\  _`\ /\ \__       /\  _  \      			//
@@ -215,8 +221,8 @@ define('HELP_URL',"?page=help&site=buildings");
 		$peopleFree = floor($cp->people) - $bl->totalPeopleWorking() + $bl->getPeopleWorking(BUILD_BUILDING_ID);
 		// create box to change people working
 		$box =	'
-					<input type="hidden" name="workDone" id="workDone" value="'.$cfg->value('people_work_done').'" />
-					<input type="hidden" name="foodRequired" id="foodRequired" value="'.$cfg->value('people_food_require').'" />
+					<input type="hidden" name="workDone" id="workDone" value="'.$config->getInt('people_work_done').'" />
+					<input type="hidden" name="foodRequired" id="foodRequired" value="'.$config->getInt('people_food_require').'" />
 					<input type="hidden" name="peopleFree" id="peopleFree" value="'.$peopleFree.'" />
 					<input type="hidden" name="foodAvaiable" id="foodAvaiable" value="'.$cp->getRes1(4).'" />';
 		if ($cu->properties->itemShow=='full' && $bid>0 && $bl->item($bid) !== false)
@@ -242,14 +248,14 @@ define('HELP_URL',"?page=help&site=buildings");
 							<td><input	type="text"
 										name="timeReduction"
 										id="timeReduction"
-										value="'.tf($cfg->value('people_work_done') * $bl->getPeopleWorking(BUILD_BUILDING_ID)).'"
+										value="'.tf($config->getInt('people_work_done') * $bl->getPeopleWorking(BUILD_BUILDING_ID)).'"
 										onkeyup="updatePeopleWorkingBox(\'-1\',this.value,\'-1\');" /></td>
 						</tr>
 							<th>Nahrungsverbrauch</th>
 							<td><input	type="text"
 										name="foodUsing"
 										id="foodUsing"
-										value="'.nf($cfg->value('people_food_require') * $bl->getPeopleWorking(BUILD_BUILDING_ID)).'"
+										value="'.nf($config->getInt('people_food_require') * $bl->getPeopleWorking(BUILD_BUILDING_ID)).'"
 										onkeyup="updatePeopleWorkingBox(\'-1\',\'-1\',this.value);" /></td>
 						</tr>
 						<tr>
@@ -291,8 +297,8 @@ define('HELP_URL',"?page=help&site=buildings");
 		echo '</td></tr>';
 		if ($peopleWorking > 0)
 		{
-			echo '<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td><span id="people_work_done">'.tf($cfg->value('people_work_done') * $peopleWorking).'</span></td></tr>';
-			echo '<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td><span id="people_food_require">'.nf($cfg->value('people_food_require') * $peopleWorking).'</span></td></tr>';
+			echo '<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td><span id="people_work_done">'.tf($config->getInt('people_work_done') * $peopleWorking).'</span></td></tr>';
+			echo '<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td><span id="people_food_require">'.nf($config->getInt('people_food_require') * $peopleWorking).'</span></td></tr>';
 		}
 		// Genetics technology level
 		if ($genTechLevel > 0)
@@ -301,7 +307,7 @@ define('HELP_URL',"?page=help&site=buildings");
 			echo '<tr><td>Minimale Bauzeit (mit Arbeiter):</td><td>Bauzeit * '.(0.1-($genTechLevel/100)).'</td></tr>';
 		}
 		// Boost system
-		if ($cfg->value('boost_system_enable') == 1)
+		if ($config->getBoolean('boost_system_enable'))
 		{
 			echo '<tr><td>Geschwindigkeitsboost:</td><td>'.get_percent_string($cu->boostBonusBuilding+1).'</td></tr>';
 		}

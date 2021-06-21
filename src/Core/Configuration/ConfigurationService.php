@@ -115,6 +115,11 @@ class ConfigurationService
         return isset($this->_items[$name]);
     }
 
+    public function filled(string $name): bool
+    {
+        return $this->has($name) && strlen($this->get($name)) > 0;
+    }
+
     // public function __isset(string $name): bool
     // {
     //     return $this->has($name);

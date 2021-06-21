@@ -48,12 +48,11 @@ if ((isset($_GET['info_id']) && intval($_GET['info_id'])>0) || (isset($_GET['id'
 /**************************************************/
 elseif ($cu->allianceId == 0)
 {
-    if (time() > (int) $cu->allianceLeave + (int) $cfg->get("alliance_leave_cooldown"))
-    {
+    if (time() > (int) $cu->allianceLeave + $config->getInt("alliance_leave_cooldown")) {
         require("alliance/foreign.inc.php");
+    } else {
+        echo '<p><b>Du musst ' . (floor((($cu->allianceLeave + $config->getInt("alliance_leave_cooldown")) - time()) / 60)) . ' Minuten warten bis du dich bei einer neuen Allianz bewerben kannst!</b></p>';
     }
-    else
-        echo '<p><b>Du musst '.(floor((($cu->allianceLeave+$cfg->get("alliance_leave_cooldown"))-time())/60)).' Minuten warten bis du dich bei einer neuen Allianz bewerben kannst!</b></p>';
 }
 else
 {

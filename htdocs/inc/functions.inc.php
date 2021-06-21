@@ -2417,8 +2417,13 @@ function defineImagePaths()
 
 function logAccess($target,$domain="",$sub="")
 {
-    global $cfg;
-    if ($cfg->accesslog->v == 1)
+    // TODO
+    global $app;
+
+    /** @var ConfigurationService */
+    $config = $app['etoa.config.service'];
+
+    if ($config->getBoolean('accesslog'))
     {
         if (!isset($_SESSION['accesslog_sid']))
             $_SESSION['accesslog_sid'] = uniqid((string) mt_rand(), true);

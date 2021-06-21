@@ -1,5 +1,10 @@
 <?PHP
 
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 $designs = get_designs();
 
 $customDesignDir = RELATIVE_ROOT.DESIGN_DIRECTORY.'/custom';
@@ -135,9 +140,9 @@ foreach ($designs as $k => $v) {
     ));
     $arr = mysql_fetch_row($res);
     $designs[$k]['users'] = $arr[0];
-    $designs[$k]['default'] = ($k == $cfg->value('default_css_style'));
+    $designs[$k]['default'] = ($k == $config->get('default_css_style'));
     // If it is the default design, add all users who have not explicitly selected a design
-    if ($k == $cfg->value('default_css_style')) {
+    if ($k == $config->get('default_css_style')) {
         $res = dbQuerySave("
         SELECT
             COUNT(id) as cnt
@@ -150,7 +155,7 @@ foreach ($designs as $k => $v) {
     }
 }
 
-$sampleInfoFile = RELATIVE_ROOT.DESIGN_DIRECTORY."/official/".$cfg->value('default_css_style').'/'.DESIGN_CONFIG_FILE_NAME;
+$sampleInfoFile = RELATIVE_ROOT.DESIGN_DIRECTORY."/official/".$config->get('default_css_style').'/'.DESIGN_CONFIG_FILE_NAME;
 
 echo $twig->render('admin/misc/designs.html.twig', [
     'successMessage' => $successMessage,

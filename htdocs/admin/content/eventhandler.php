@@ -1,5 +1,10 @@
 <?PHP
 
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 $successMessage = null;
 $errorMessage = null;
 $actionOutput = null;
@@ -8,17 +13,17 @@ $messageQueueSize = null;
 $sysId = null;
 $log = null;
 if (UNIX) {
-    $pidfile = getAbsPath($cfg->daemon_pidfile->v);
+    $pidfile = getAbsPath($config->get('daemon_pidfile'));
     $eventHandlerPid = EventHandlerManager::checkDaemonRunning($pidfile);
 
     if (isset($_GET['action'])) {
-        $executable = $cfg->daemon_exe->v;
+        $executable = $config->get('daemon_exe');
         if (!$executable) {
             $executable = realpath(RELATIVE_ROOT.'../eventhandler/target/etoad');
         }
-        $instance = $cfg->daemon_instance->v;
+        $instance = $config->get('daemon_instance');
         $configfile = realpath(RELATIVE_ROOT.'config/'.EVENTHANDLER_CONFIG_FILE_NAME);
-        $pidfile = getAbsPath($cfg->daemon_pidfile->v);
+        $pidfile = getAbsPath($config->get('daemon_pidfile'));
 
         if (file_exists($executable)) {
             if (file_exists($configfile)) {
@@ -50,7 +55,7 @@ if (UNIX) {
     }
 
     // Warning: Open-Basedir restrictions may appply
-    $logfile = $cfg->daemon_logfile;
+    $logfile = $config->get('daemon_logfile');
     if (!preg_match('#^/#', $logfile)) {
         $logfile = '../'.$logfile;
     }
@@ -63,7 +68,7 @@ if (UNIX) {
         fclose($lf);
         $log = array_reverse($log);
     } else {
-        $log = "<em>Die Logdatei ".$cfg->daemon_logfile." kann nicht geöffnet werden!</em>";
+        $log = "<em>Die Logdatei ".$config->get('daemon_logfile')." kann nicht geöffnet werden!</em>";
     }
 }
 

@@ -131,8 +131,8 @@ if (isset($cp)) {
      	$peopleWorking = $bl->getPeopleWorking(TECH_BUILDING_ID);
   	    $peopleWorkingGen = $bl->getPeopleWorking(PEOPLE_BUILDING_ID);
 
-		$peopleTimeReduction = $cfg->value('people_work_done');
-		$peopleFoodConsumption = $cfg->value('people_food_require');
+		$peopleTimeReduction = $config->getInt('people_work_done');
+		$peopleFoodConsumption = $config->getInt('people_food_require');
 
 		//level zählen welches das forschungslabor über dem angegeben level ist und faktor berechnen
 		$need_bonus_level = CURRENT_LAB_LEVEL - $config->param1Int('build_time_boni_forschungslabor');
@@ -246,15 +246,15 @@ if (isset($cp)) {
 				$bc['time'] *= $bonus;
 				$maxReduction = $bc['time'] - $bc['time'] * $minBuildTimeFactor;
 
-				$peopleOptimized = ceil($maxReduction / $cfg->value('people_work_done'));
+				$peopleOptimized = ceil($maxReduction / $config->getInt('people_work_done'));
 			}
 		}
 
 
 			// create box to change people working
 			$box =	'
-						<input type="hidden" name="workDone" id="workDone" value="'.$cfg->value('people_work_done').'" />
-						<input type="hidden" name="foodRequired" id="foodRequired" value="'.$cfg->value('people_food_require').'" />
+						<input type="hidden" name="workDone" id="workDone" value="'.$config->getInt('people_work_done').'" />
+						<input type="hidden" name="foodRequired" id="foodRequired" value="'.$config->getInt('people_food_require').'" />
 						<input type="hidden" name="peopleFree" id="peopleFree" value="'.$peopleFree.'" />
 						<input type="hidden" name="foodAvaiable" id="foodAvaiable" value="'.$cp->getRes1(4).'" />';
 			if ($cu->properties->itemShow=='full' && $bid>0) {
@@ -289,14 +289,14 @@ if (isset($cp)) {
 								<td><input	type="text"
 											name="timeReduction"
 											id="timeReduction"
-											value="'.tf($cfg->value('people_work_done') * $people).'"
+											value="'.tf($config->getInt('people_work_done') * $people).'"
 											onkeyup="updatePeopleWorkingBox(\'-1\',this.value,\'-1\');" /></td>
 							</tr>
 								<th>Nahrungsverbrauch</th>
 								<td><input	type="text"
 											name="foodUsing"
 											id="foodUsing"
-											value="'.nf($cfg->value('people_food_require') * $people).'"
+											value="'.nf($config->getInt('people_food_require') * $people).'"
 											onkeyup="updatePeopleWorkingBox(\'-1\',\'-1\',this.value);" /></td>
 							</tr>
 							<tr>

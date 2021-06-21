@@ -259,7 +259,7 @@ if ($cp) {
         $pwrcnt = floor($pwrcnt);
 
         // Boost system
-        if ($cfg->value('boost_system_enable') == 1) {
+        if ($config->getBoolean('boost_system_enable')) {
             $bonusProd = [];
             foreach ($resourceKeys as $resourceKey) {
                 $bonusProd[$resourceKey] = $baseResourceProd[$resourceKey] * $cu->boostBonusProduction;
@@ -370,9 +370,9 @@ if ($cp) {
     $energyTechPowerBonusFactor = 1;
     $tl = new TechList($cu->id);
     $energyTechLevel = $tl->getLevel(ENERGY_TECH_ID);
-    $energyTechPowerBonusRequiredLevel = $cfg->value('energy_tech_power_bonus_required_level');
+    $energyTechPowerBonusRequiredLevel = $config->getInt('energy_tech_power_bonus_required_level');
     if ($energyTechLevel > $energyTechPowerBonusRequiredLevel) {
-        $percentPerLevel = $cfg->value('energy_tech_power_bonus_percent_per_level');
+        $percentPerLevel = $config->getInt('energy_tech_power_bonus_percent_per_level');
         $percent = $percentPerLevel * ($energyTechLevel - $energyTechPowerBonusRequiredLevel);
         $energyTechPowerBonusFactor = (100 + $percent) / 100;
     }
