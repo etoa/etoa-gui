@@ -6,8 +6,7 @@ use EtoA\AbstractDbTestCase;
 
 class ShipDataRepositoryTest extends AbstractDbTestCase
 {
-    /** @var ShipDataRepository */
-    private $repository;
+    private ShipDataRepository $repository;
 
     protected function setUp(): void
     {
@@ -20,5 +19,15 @@ class ShipDataRepositoryTest extends AbstractDbTestCase
     {
         $names = $this->repository->getShipNames();
         $this->assertNotEmpty($names);
+    }
+
+    public function testGetShipWithPowerProduction(): void
+    {
+        $ships = $this->repository->getShipWithPowerProduction();
+
+        $this->assertNotEmpty($ships);
+        foreach ($ships as $ship) {
+            $this->assertGreaterThan(0, $ship->powerProduction);
+        }
     }
 }
