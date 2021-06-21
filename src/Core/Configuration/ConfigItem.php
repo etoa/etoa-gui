@@ -6,16 +6,14 @@ namespace EtoA\Core\Configuration;
 
 class ConfigItem
 {
-    public string $name;
-    public $v;
-    public $p1;
-    public $p2;
+    public $value;
+    public $param1;
+    public $param2;
 
-    function __construct(string $name, $v, $p1, $p2)
+    function __construct($value, $param1, $param2)
     {
-        $this->name = $name;
-        $this->v = $v;
-        $this->p1 = $p1;
-        $this->p2 = $p2;
+        $this->value = $value;
+        $this->param1 = $param1;
+        $this->param2 = $param2;
     }
 }

@@ -6,6 +6,7 @@ namespace EtoA\Core\Configuration;
 
 class ConfigurationService
 {
+    /** @var array<string,ConfigItem> */
     private array $_items;
 
     private $defaultsXml;
@@ -38,10 +39,10 @@ class ConfigurationService
     //     $this->set($name, $val, $param1, $param2);
     // }
 
-    public function set(string $name, $val, $param1 = "", $param2 = ""): void
+    public function set(string $name, $value, $param1 = "", $param2 = ""): void
     {
-        $this->_items[$name] = new ConfigItem($name, $val, $param1, $param2);
-        $this->repository->save($this->_items[$name]);
+        $this->_items[$name] = new ConfigItem($value, $param1, $param2);
+        $this->repository->save($name, $this->_items[$name]);
     }
 
     public function del(string $name): void
@@ -50,9 +51,9 @@ class ConfigurationService
         unset($this->_items[$name]);
     }
 
-    public function get(string $key): string
+    public function get(string $key)
     {
-        return $this->_items[$key]->v;
+        return $this->_items[$key]->value;
     }
 
     public function getInt(string $key): int
@@ -70,9 +71,9 @@ class ConfigurationService
         return (bool) $this->get($key);
     }
 
-    public function param1(string $key): string
+    public function param1(string $key)
     {
-        return $this->_items[$key]->p1;
+        return $this->_items[$key]->param1;
     }
 
     public function param1Int(string $key): int
@@ -90,9 +91,9 @@ class ConfigurationService
         return (bool) $this->param1($key);
     }
 
-    public function param2(string $key): string
+    public function param2(string $key)
     {
-        return $this->_items[$key]->p2;
+        return $this->_items[$key]->param2;
     }
 
     public function param2Int(string $key): int
@@ -141,14 +142,13 @@ class ConfigurationService
         if ($xml = simplexml_load_file(self::DEFAULTS_FILE_PATH)) {
             $this->repository->truncate();
             $cnt = 0;
-            foreach ($xml->items->item as $i) {
+            foreach ($xml->items->item as $itemDefinition) {
                 $item = new ConfigItem(
-                    $i['name'],
-                    (isset($i->v) ? $i->v : ''),
-                    (isset($i->p1) ? $i->p1 : ''),
-                    (isset($i->p2) ? $i->p2 : '')
+                    (isset($itemDefinition->v) ? $itemDefinition->v : ''),
+                    (isset($itemDefinition->p1) ? $itemDefinition->p1 : ''),
+                    (isset($itemDefinition->p2) ? $itemDefinition->p2 : '')
                 );
-                $this->repository->save($item);
+                $this->repository->save($itemDefinition['name'], $item);
                 $cnt++;
             }
             return $cnt;
@@ -163,8 +163,8 @@ class ConfigurationService
         }
         $arr = $this->defaultsXml->xpath("/config/items/item[@name='" . $key . "']");
         if ($arr != null && count($arr) > 0) {
-            $i = $arr[0];
-            return new ConfigItem($key, $i->v, $i->p1, $i->p2);
+            $itemDefinition = $arr[0];
+            return new ConfigItem($itemDefinition->v, $itemDefinition->p1, $itemDefinition->p2);
         }
         return false;
     }

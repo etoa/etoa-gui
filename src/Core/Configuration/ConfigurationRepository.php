@@ -9,23 +9,23 @@ use EtoA\Core\AbstractRepository;
 class ConfigurationRepository extends AbstractRepository
 {
     /**
-     * @return array<ConfigItem>
+     * @return array<string,ConfigItem>
      */
     public function findAll(): array
     {
-        $data = $this->createQueryBuilder()
-            ->select(
-                'config_name',
-                'config_value',
-                'config_param1',
-                'config_param2'
+        return collect(
+            $this->createQueryBuilder()
+                ->select(
+                    'config_name',
+                    'config_value',
+                    'config_param1',
+                    'config_param2'
+                )
+                ->from('config')
+                ->execute()
+                ->fetchAllAssociativeIndexed()
             )
-            ->from('config')
-            ->execute()
-            ->fetchAllAssociativeIndexed();
-        return collect($data)
             ->map(fn ($arr) => new ConfigItem(
-                $arr['config_name'],
                 $arr['config_value'],
                 $arr['config_param1'],
                 $arr['config_param2']
@@ -33,7 +33,7 @@ class ConfigurationRepository extends AbstractRepository
             ->toArray();
     }
 
-    public function save(ConfigItem $item): void
+    public function save(string $name, ConfigItem $item): void
     {
         $this->getConnection()
             ->executeStatement(
@@ -48,18 +48,18 @@ class ConfigurationRepository extends AbstractRepository
                 VALUES
                 (
                     :name,
-                    :val,
+                    :value,
                     :param1,
                     :param2
                 )
                 ON DUPLICATE KEY UPDATE
-                    config_value = :val,
+                    config_value = :value,
                     config_param1 = :param1,
                     config_param2 = :param2
                 ;',
                 [
-                    'name' => $item->name,
-                    'val' => $item->val,
+                    'name' => $name,
+                    'value' => $item->value,
                     'param1' => $item->param1,
                     'param2' => $item->param2,
                 ]
