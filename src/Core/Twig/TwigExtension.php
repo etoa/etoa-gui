@@ -3,6 +3,7 @@
 namespace EtoA\Core\Twig;
 
 use EtoA\Admin\AdminRoleManager;
+use EtoA\Core\Configuration\ConfigurationService;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -10,9 +11,12 @@ class TwigExtension extends AbstractExtension
 {
     private float $startTime;
 
-    public function __construct()
+    private ConfigurationService $config;
+
+    public function __construct(ConfigurationService $config)
     {
         $this->startTime = microtime(true);
+        $this->config = $config;
     }
 
     public function getFunctions()
@@ -98,9 +102,9 @@ class TwigExtension extends AbstractExtension
         return text2html($string);
     }
 
-    public function getConfigValue(string $config)
+    public function getConfigValue(string $config): string
     {
-        return \Config::getInstance()->value($config);
+        return $this->config->get($config);
     }
 
     public function getPopupLink(string $type, string $title, ?string $class = 'popuplink'): string
