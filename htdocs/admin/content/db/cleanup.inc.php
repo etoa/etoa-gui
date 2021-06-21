@@ -1,9 +1,8 @@
 <?PHP
 
 use EtoA\Admin\AdminSessionManager;
-use EtoA\Alliance\AllianceRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
-use EtoA\User\UserRepository;
+use EtoA\Ranking\PointsService;
 
 /** @var TicketRepository */
 $ticketRepo = $app['etoa.help.ticket.repository'];
@@ -11,24 +10,20 @@ $ticketRepo = $app['etoa.help.ticket.repository'];
 /** @var AdminSessionManager */
 $sessionManager = $app['etoa.admin.session.manager'];
 
-/** @var AllianceRepository */
-$allianceRepository = $app['etoa.alliance.repository'];
-
-/** @var UserRepository */
-$userRepo = $app['etoa.user.repository'];
+/** @var PointsService */
+$pointsService = $app['etoa.rankings.points.service'];
 
 echo '<h2>Clean-Up</h2>';
 
 if (isset($_POST['submit_cleanup_selected']) || isset($_POST['submit_cleanup_all'])) {
-	runCleanup($sessionManager, $ticketRepo, $allianceRepository, $userRepo);
+	runCleanup($sessionManager, $ticketRepo, $pointsService);
 }
 cleanupOverView($ticketRepo);
 
 function runCleanup(
 	AdminSessionManager $sessionManager,
 	TicketRepository $ticketRepo,
-	AllianceRepository $allianceRepository,
-	UserRepository $userRepo
+    PointsService $pointsService
 ) {
 	echo "Clean-Up wird durchgeführt...<br/>";
 	$all = isset($_POST['submit_cleanup_all']) ? true : false;
@@ -66,9 +61,9 @@ function runCleanup(
 
 	// User-Point-History
 	if ((isset($_POST['cl_points']) && $_POST['cl_points'] == 1) || $all) {
-		$nr = $userRepo->cleanUpPoints($_POST['del_user_points']);
+		$nr = $pointsService->cleanupUserPoints((int) $_POST['del_user_points']);
 		echo $nr . " Benutzerpunkte-Logs und ";
-		$nr = $allianceRepository->cleanUpPoints((int) $_POST['del_user_points']);
+		$nr = $pointsService->cleanupAlliancePoints((int) $_POST['del_user_points']);
 		echo $nr . " Allianzpunkte-Logs wurden gelöscht!<br/>";
 	}
 

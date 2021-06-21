@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\User;
 
-use Config;
 use EtoA\Core\AbstractRepository;
-use Log;
 
 class UserRepository extends AbstractRepository
 {
@@ -67,22 +65,12 @@ class UserRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function cleanUpPoints(int $threshold = 0): int
+    public function removePointsByTimestamp(int $timestamp): int
     {
-        // TODO
-        $cfg = Config::getInstance();
-
-        $timestamp = $threshold > 0
-            ? time() - $threshold
-            : time() - (24 * 3600 * (int) $cfg->get('log_threshold_days'));
-
-        $affected = (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder()
             ->delete('user_points')
-            ->where("point_timestamp<" . $timestamp)
+            ->where("point_timestamp < :timestamp")
+            ->setParameter('timestamp', $timestamp)
             ->execute();
-
-        Log::add("4", Log::INFO, "$affected Userpunkte-Logs die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
-
-        return $affected;
     }
 }
