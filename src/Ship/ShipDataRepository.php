@@ -4,6 +4,7 @@ namespace EtoA\Ship;
 
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Query\QueryBuilder;
 use EtoA\Core\AbstractRepository;
 
 class ShipDataRepository extends AbstractRepository
@@ -39,13 +40,32 @@ class ShipDataRepository extends AbstractRepository
     }
 
     /**
+     * @return Ship[]
+     */
+    public function getShipsWithAction(string $action): array
+    {
+        $data = $this->shipActionQueryBuilder($action)
+            ->select('*')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new Ship($row), $data);
+    }
+
+    /**
      * @return array<int, string>
      */
     public function getShipNamesWithAction(string $action): array
     {
-        return $this->createQueryBuilder()
+        return $this->shipActionQueryBuilder($action)
             ->select('ship_id, ship_name')
-            ->addSelect()
+            ->execute()
+            ->fetchAllKeyValue();
+    }
+
+    private function shipActionQueryBuilder(string $action): QueryBuilder
+    {
+        return $this->createQueryBuilder()
             ->from('ships')
             ->where('ship_buildable=1')
             ->andWhere('special_ship=0')
@@ -56,9 +76,7 @@ class ShipDataRepository extends AbstractRepository
                 'middle' => '%,' . $action . ',%',
                 'only' => $action,
             ])
-            ->orderBy('ship_name')
-            ->execute()
-            ->fetchAllKeyValue();
+            ->orderBy('ship_name');
     }
 
     /**
