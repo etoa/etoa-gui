@@ -17,22 +17,15 @@ iBoxEnd();
 iBoxStart("Wohnraum");
     echo "Auf einem Planeten ist die Grösse der Bevölkerung begrenzt. Es gibt einen Grundwohnraum für
     <b>".nf($config->param1Int('user_start_people'))."</b> Menschen auf jedem Planeten. Dieser Wert kann durch folgende Gebäude gesteigert werden:<br/>
-    <ul>";
-    $res = dbquery("
-    SELECT
-        building_id,
-    buildings.building_name
-    FROM
-    buildings
-WHERE
-    buildings.building_people_place>0
-    ;");
-    if (mysql_num_rows($res)>0)
-    {
-        while ($arr=mysql_fetch_array($res))
-        {
-            echo "<li><a href=\"?$link&amp;site=buildings&amp;id=".$arr['building_id']."\">".$arr['building_name']."</a></li>";
-        }
+		<ul>";
+
+    /** @var \EtoA\Building\BuildingDataRepository $buildingDataRepository */
+    $buildingDataRepository = $app['etoa.building.datarepository'];
+    $buildingNames = $buildingDataRepository->getBuildingNamesHavingPlaceForPeople();
+
+    foreach ($buildingNames as $buildingId => $buildingName) {
+        echo "<li><a href=\"?$link&amp;site=buildings&amp;id=".$buildingId."\">".$buildingName."</a></li>";
     }
+
     echo "</ul>";
-iBoxEnd();
+    iBoxEnd();
