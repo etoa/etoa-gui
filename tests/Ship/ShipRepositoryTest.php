@@ -6,14 +6,23 @@ use EtoA\AbstractDbTestCase;
 
 class ShipRepositoryTest extends AbstractDbTestCase
 {
-    /** @var ShipRepository */
-    private $repository;
+    private ShipRepository $repository;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->repository = $this->app['etoa.ship.repository'];
+    }
+
+    public function testGetNumberOfShips(): void
+    {
+        $userId = 1;
+        $shipId = 3;
+
+        $this->repository->addShip($shipId, 1, $userId, 1);
+
+        $this->assertSame(1, $this->repository->getNumberOfShips($shipId));
     }
 
     public function testAddShip(): void
