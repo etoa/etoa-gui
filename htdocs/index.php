@@ -1,19 +1,10 @@
 <?PHP
-//////////////////////////////////////////////////////
-// The Andromeda-Project-Browsergame                //
-// Ein Massive-Multiplayer-Online-Spiel             //
-// Programmiert von Nicolas Perrenoud<mail@nicu.ch> //
-// als Maturaarbeit '04 am Gymnasium Oberaargau	    //
-//////////////////////////////////////////////////////
-//////////////////////////////////////////////////////
 
 /**
 * Main game file, provides the template and includes all pages
-*
-* @author MrCage <mrcage@etoa.ch>
-* @copyright Copyright (c) 2004 EtoA Gaming, www.etoa.ch
 */
 
+use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Text\TextRepository;
 
 //
@@ -67,7 +58,11 @@ if ($_GET['logout'] ?? false) {
 
 // Validate session
 if (!$s->validate()) {
-    if (!Config::getInstance()->loginurl->v) {
+
+    /** @var ConfigurationService */
+    $config = $app['etoa.config.service'];
+
+    if (!$config->get('loginurl')) {
         forward(getLoginUrl());
     } else {
         forward(getLoginUrl(['page'=>'err', 'err'=>'nosession']), 'Ungültige Session', $s->lastError);

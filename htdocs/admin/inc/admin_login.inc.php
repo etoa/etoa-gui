@@ -2,14 +2,18 @@
 
 use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Core\Configuration\ConfigurationService;
 use Twig\Environment;
 
 /** @var AdminUserRepository */
 $adminUserRepo = $app['etoa.admin.user.repository'];
 
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 if (isset($_GET['sendpass'])) {
     if (isset($_POST['sendpass_submit'])) {
-        sendPassword($adminUserRepo, $twig);
+        sendPassword($config, $adminUserRepo, $twig);
     } else {
         sendPasswordForm($twig);
     }
@@ -23,8 +27,11 @@ if (isset($_GET['sendpass'])) {
     loginForm($s, $twig);
 }
 
-function sendPassword(AdminUserRepository $adminUserRepo, Environment $twig): void
-{
+function sendPassword(
+    ConfigurationService $config,
+    AdminUserRepository $adminUserRepo,
+    Environment $twig
+): void {
     $user = $adminUserRepo->findOneByNick($_POST['user_nick']);
     if ($user !== null) {
         // TODO: Do not generate password immediately, but send confirmation token
@@ -32,7 +39,7 @@ function sendPassword(AdminUserRepository $adminUserRepo, Environment $twig): vo
         $pw = generatePasswort();
         $adminUserRepo->setPassword($user, $pw, true);
 
-        $msg = "Hallo " . $user->nick . ".\n\nDu hast für die Administration der " . Config::getInstance()->roundname->v . " von EtoA ein neues Passwort angefordert.\n\n";
+        $msg = "Hallo " . $user->nick . ".\n\nDu hast für die Administration der " . $config->get('roundname') . " von EtoA ein neues Passwort angefordert.\n\n";
         $msg .= "Das neue Passwort lautet: $pw\n\n";
         $msg .= "Diese Anfrage wurde am " . date("d.m.Y") . " um " . date("H:i") . " Uhr vom Computer " . Net::getHost($_SERVER['REMOTE_ADDR']) . " aus in Auftrag gegeben.\nBitte denke daran, das Passwort nach dem ersten Login zu ändern!";
         $mail = new Mail("Neues Administrationspasswort", $msg);

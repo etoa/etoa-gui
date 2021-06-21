@@ -2,6 +2,7 @@
 
 use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Text\TextRepository;
 
 $baseUrl = $index != "" ? "?index=" . $index : "?page=" . $page;
@@ -18,6 +19,9 @@ if ($contactText->enabled && $contactText->content) {
 
 /** @var AdminUserRepository */
 $adminUserRepo = $app['etoa.admin.user.repository'];
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
 
 // List of admins
 $admins = collect($adminUserRepo->findAll())
@@ -49,7 +53,7 @@ if (!$admins->isEmpty()) {
 					}
 
 					// Text
-					$text = "Kontakt-Anfrage " . APP_NAME . " " . Config::getInstance()->roundname->v . "\n----------------------\n\n";
+					$text = "Kontakt-Anfrage " . APP_NAME . " " . $config->get('roundname') . "\n----------------------\n\n";
 					if (isset($cu)) {
 						$text .= "Nick: " . $cu->nick . "\n";
 						$text .= "ID: " . $cu->id . "\n";
@@ -89,7 +93,7 @@ if (!$admins->isEmpty()) {
 		}
 		echo '<input type="button" onclick="document.location=\'' . $baseUrl . '\'" value="Zurück" /></div></form>';
 	} else {
-		tableStart('Kontaktpersonen für die ' . Config::getInstance()->roundname->v);
+		tableStart('Kontaktpersonen für die ' . $config->get('roundname'));
 		echo '<tr>
 				<th>Name</th>
 				<th>Mail</th>

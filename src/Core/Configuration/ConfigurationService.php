@@ -195,7 +195,7 @@ class ConfigurationService
         return $c;
     }
 
-    public function itemInCategory($cat)
+    public function itemInCategory($cat): array
     {
         if ($this->defaultsXml == null) {
             $this->defaultsXml = simplexml_load_file(self::DEFAULTS_FILE_PATH);
@@ -203,7 +203,7 @@ class ConfigurationService
         return $this->defaultsXml->xpath("/config/items/item[@cat='" . $cat . "']");
     }
 
-    public function getBaseItems()
+    public function getBaseItems(): array
     {
         if ($this->defaultsXml == null) {
             $this->defaultsXml = simplexml_load_file(self::DEFAULTS_FILE_PATH);
