@@ -6,8 +6,7 @@ use EtoA\AbstractDbTestCase;
 
 class BuildingRepositoryTest extends AbstractDbTestCase
 {
-    /** @var BuildingRepository */
-    private $repository;
+    private BuildingRepository $repository;
 
     protected function setUp(): void
     {
@@ -16,12 +15,12 @@ class BuildingRepositoryTest extends AbstractDbTestCase
         $this->repository = $this->app['etoa.building.repository'];
     }
 
-    public function testGetUserLevelNoBuilding(): void
+    public function testGetUserHighestLevelNoBuilding(): void
     {
-        $this->assertSame(0, $this->repository->getBuildingLevel(1, 1));
+        $this->assertSame(0, $this->repository->getHighestBuildingLevel(1, 1));
     }
 
-    public function testGetUserLevel(): void
+    public function testGetHighestUserLevel(): void
     {
         $userId = 1;
         $buildingId = 3;
@@ -36,6 +35,6 @@ class BuildingRepositoryTest extends AbstractDbTestCase
                 ])->execute();
         }
 
-        $this->assertSame(6, $this->repository->getBuildingLevel($userId, $buildingId));
+        $this->assertSame(6, $this->repository->getHighestBuildingLevel($userId, $buildingId));
     }
 }

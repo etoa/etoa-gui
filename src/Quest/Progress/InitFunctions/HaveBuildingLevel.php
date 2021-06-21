@@ -22,6 +22,6 @@ class HaveBuildingLevel implements InitProgressHandlerFunctionInterface
 
     public function initProgress(QuestInterface $quest, TaskInterface $task): int
     {
-        return $this->buildingRepository->getBuildingLevel($quest->getUser(), $this->buildingId);
+        return $this->buildingRepository->getHighestBuildingLevel($quest->getUser(), $this->buildingId);
     }
 }

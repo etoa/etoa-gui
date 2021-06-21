@@ -17,7 +17,7 @@ class HaveBuildingLevelTest extends TestCase
         $repository = $this->getMockBuilder(BuildingRepository::class)->disableOriginalConstructor()->getMock();
         $repository
             ->expects($this->once())
-            ->method('getBuildingLevel')
+            ->method('getHighestBuildingLevel')
             ->with($this->equalTo($userId), $this->equalTo($buildingId))
             ->willReturn($progress);
 
