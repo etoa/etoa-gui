@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\Text\TextRepository;
 use Pimple\Container;
@@ -11,25 +12,25 @@ class BackendCheckTask implements IPeriodicTask
 {
     private TextRepository $textRepo;
     private RuntimeDataStore $runtimeDataStore;
+    private ConfigurationService $config;
 
     function __construct(Container $app)
     {
         $this->textRepo = $app['etoa.text.repository'];
         $this->runtimeDataStore = $app['etoa.runtime.datastore'];
+        $this->config = $app['etoa.config.service'];
     }
 
     function run()
     {
-        $cfg = Config::getInstance();
-
-        $currentStatus = EventHandlerManager::checkDaemonRunning(getAbsPath($cfg->daemon_pidfile)) > 0 ? true : false;
+        $currentStatus = EventHandlerManager::checkDaemonRunning(getAbsPath($this->config->get('daemon_pidfile'))) > 0;
         $lastStatus = $this->runtimeDataStore->get('backend_status') == 1;
         $change = $currentStatus != $lastStatus;
         if ($change) {
             $infoText = $this->textRepo->find('backend_offline_message');
             $mailText = $currentStatus == 0 ? "Funktioniert wieder" : $infoText->content;
             $mail = new Mail("EtoA-Backend", $mailText);
-            $sendTo = explode(";", $cfg->value("backend_offline_mail"));
+            $sendTo = explode(";", $this->config->get('backend_offline_mail'));
             foreach ($sendTo as $sendMail) {
                 $mail->send($sendMail);
             }
