@@ -41,7 +41,6 @@ try {
 require_once(RELATIVE_ROOT."inc/def.inc.php");
 
 if (!isset($app)) {
-    $questSystemEnabled = (bool) Config::getInstance()->get('quest_system_enable');
     $app = require __DIR__ .'/../src/app.php';
     $app->boot();
 }

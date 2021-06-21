@@ -6,7 +6,6 @@ use EtoA\Core\Configuration\ConfigurationService;
 use Twig\Environment;
 
 if (!isset($app)) {
-    $questSystemEnabled = false;
     $debug = true;
     $app = require __DIR__ .'/../../src/app.php';
     $app->boot();
