@@ -458,12 +458,9 @@
 			$_SESSION['shipqueue']['query']="";
 
 			// Schiffe laden
-			$bres = dbquery("SELECT ship_id,ship_name FROM ships ORDER BY ship_name;");
-			$slist=array();
-			while ($barr=mysql_fetch_array($bres))
-			{
-				$slist[$barr['ship_id']]=$barr['ship_name'];
-			}
+            /** @var \EtoA\Ship\ShipDataRepository $shipRepository */
+            $shipRepository = $app['etoa.ship.datarepository'];
+            $shipNames = $shipRepository->getShipNames();
 
 			// Suchmaske
 			$twig->addGlobal("subtitle", "Suchmaske");
@@ -474,9 +471,8 @@
 			echo "<tr><td class=\"tbltitle\">Spieler ID</td><td class=\"tbldata\"><input type=\"text\" name=\"user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
 			echo "<tr><td class=\"tbltitle\">Spieler Nick</td><td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('user_nick');echo "</td></tr>";
 			echo "<tr><td class=\"tbltitle\">Schiff</td><td class=\"tbldata\"><select name=\"ship_id\"><option value=\"\"><i>---</i></option>";
-			foreach ($slist as $k=>$v)
-			{
-				echo "<option value=\"".$k."\">".$v."</option>";
+			foreach ($shipNames as $shipId => $shipName) {
+				echo "<option value=\"".$shipId."\">".$shipName."</option>";
 			}
 			echo "</select></td>";
 			echo "</table>";
@@ -494,17 +490,9 @@
 		$twig->addGlobal("title", "Schiffliste");
 
 			// Schiffe laden
-			$bres = dbquery("
-			SELECT
-				ship_id,
-				ship_name
-			FROM
-				ships
-			ORDER BY
-				ship_name;");
-			$slist=array();
-			while ($barr=mysql_fetch_array($bres))
-				$slist[$barr['ship_id']]=$barr['ship_name'];
+            /** @var \EtoA\Ship\ShipDataRepository $shipRepository */
+            $shipRepository = $app['etoa.ship.datarepository'];
+            $shipNames = $shipRepository->getShipNames();
 
 			$tblcnt = mysql_fetch_row(dbquery("SELECT count(shiplist_id) FROM shiplist;"));
 
@@ -547,9 +535,9 @@
 			echo "<tr name=\"addObject\" id=\"addObject\" style=\"display:none;\"><th class=\"tbltitle\">Hinzuf&uuml;gen:</th><td class=\"tbldata\">
 			<input type=\"text\" name=\"shiplist_count\" value=\"1\" size=\"7\" maxlength=\"10\" />
 			<select name=\"ship_id\">";
-			foreach ($slist as $k=>$v)
+			foreach ($shipNames as $shipId => $shipName)
 			{
-				echo "<option value=\"".$k."\">".$v."</option>";
+				echo "<option value=\"".$shipId."\">".$shipName."</option>";
 			}
 			echo "</select> &nbsp;
 			<input type=\"button\" onclick=\"showLoaderPrepend('shipsOnPlanet');xajax_addShipToPlanet(xajax.getFormValues('selector'));\" value=\"Hinzuf&uuml;gen\" /></td></tr>";

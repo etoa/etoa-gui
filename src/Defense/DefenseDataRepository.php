@@ -18,6 +18,9 @@ class DefenseDataRepository extends AbstractRepository
         $this->cache = $cache;
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function getDefenseNames(): array
     {
         if (!$this->cache->contains(self::DEFENSE_NAMES)) {

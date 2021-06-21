@@ -18,6 +18,14 @@ class ShipDataRepositoryTest extends AbstractDbTestCase
     public function testGetShipNames(): void
     {
         $names = $this->repository->getShipNames();
+
+        $this->assertNotEmpty($names);
+    }
+
+    public function testGetShipNamesWithAction(): void
+    {
+        $names = $this->repository->getShipNamesWithAction('attack');
+
         $this->assertNotEmpty($names);
     }
 

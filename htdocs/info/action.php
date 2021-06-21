@@ -31,38 +31,21 @@
 			<br/><b>Exklusiv:</b> ".($ac->exclusive() ? 'Ja, nur Spezialschiffe oder Schiffe mit dieser Fähigkeit dürfen mitfliegen.' : 'Nein, alle Schiffe können mitfliegen.');
 			iBoxEnd();
 
-				//Liest alle notwenidgen Daten aus der Schiffs-DB
-				$res = dbquery("
-				SELECT
-	        ship_id,
-	        ship_name
-				FROM
-					ships
-				WHERE
-					ship_buildable='1'
-					AND special_ship='0'
-					AND (
-					ship_actions LIKE '%,".$ac->code()."'
-					OR ship_actions LIKE '".$ac->code().",%'
-					OR ship_actions LIKE '%,".$ac->code().",%'
-					OR ship_actions LIKE '".$ac->code()."'
-					)
-				ORDER BY
-					ship_name ASC");
+            //Liest alle notwenidgen Daten aus der Schiffs-DB
 
-			tableStart("Schiffe");
-			if (mysql_num_rows($res)>0)
-			{
-				while($arr=mysql_fetch_array($res))
-				{
-					echo "<tr><td class=\"tbldata\"><a href=\"".HELP_URL."&amp;id=".$arr['ship_id']."\">".$arr['ship_name']."</a></td></tr> ";
-				}
-			}
-			else
-			{
-				echo "<tr><td class=\"tbldata\">Keine bekannten Schiffe haben diese Aktion</td></tr>";
-			}
-			tableEnd();
+			/** @var \EtoA\Ship\ShipDataRepository $shipRepository */
+			$shipRepository = $app['etoa.ship.datarepository'];
+			$shipNames = $shipRepository->getShipNamesWithAction($ac->code());
+
+            tableStart("Schiffe");
+            if (count($shipNames) > 0) {
+			    foreach ($shipNames as $shipId => $shipName) {
+			        echo "<tr><td class=\"tbldata\"><a href=\"".HELP_URL."&amp;id=".$shipId."\">".$shipName."</a></td></tr> ";
+                }
+            } else {
+                echo "<tr><td class=\"tbldata\">Keine bekannten Schiffe haben diese Aktion</td></tr>";
+            }
+            tableEnd();
 		}
 		echo "&nbsp;<input type=\"button\" value=\"Schiffsaktionen\" onclick=\"document.location='?$link&amp;site=action'\" />";
 	}
