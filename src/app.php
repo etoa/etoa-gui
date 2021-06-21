@@ -22,6 +22,8 @@ $app->register(new \EtoA\Core\TwigServiceProvider(), [
     ],
 ]);
 
+$app->register(new \EtoA\Core\Configuration\ConfigurationServiceProvider());
+
 if ((bool) $app['etoa.quests.enabled']) {
     $app->register(new \LittleCubicleGames\Quests\ServiceProvider());
 }
