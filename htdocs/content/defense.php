@@ -51,7 +51,7 @@ $config = $app['etoa.config.service'];
 
 	define("DEFQUEUE_CANCEL_START", $config->getFloat('defqueue_cancel_start'));
 
-	define("DEFQUEUE_CANCEL_FACTOR", $$config->getFloat('defqueue_cancel_factor'));
+	define("DEFQUEUE_CANCEL_FACTOR", $config->getFloat('defqueue_cancel_factor'));
 
 	define("DEFQUEUE_CANCEL_END", $config->getFloat('defqueue_cancel_end'));
 

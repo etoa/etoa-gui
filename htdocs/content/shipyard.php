@@ -25,7 +25,7 @@ $config = $app['etoa.config.service'];
 
 	define("SHIPQUEUE_CANCEL_START", $config->getFloat('shipqueue_cancel_start'));
 
-	define("SHIPQUEUE_CANCEL_FACTOR", $$config->getFloat('shipqueue_cancel_factor'));
+	define("SHIPQUEUE_CANCEL_FACTOR", $config->getFloat('shipqueue_cancel_factor'));
 
 	define("SHIPQUEUE_CANCEL_END", $config->getFloat('shipqueue_cancel_end'));
 

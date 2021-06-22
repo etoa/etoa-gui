@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Core\Configuration\ConfigurationService;
+
 $xajax->register(XAJAX_FUNCTION,'searchUser');
 $xajax->register(XAJAX_FUNCTION,'getFlightTargetInfo');
 $xajax->register(XAJAX_FUNCTION,'getCryptoDistance');

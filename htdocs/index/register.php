@@ -13,7 +13,7 @@ function getRegisterParams(ConfigurationService $config): array
     return [
         'maxPlayerCount' => $ucnt[0],
         'registrationNotEnabled' => !$config->getBoolean('enable_register'),
-        'registrationLater' => ($config->getBoolean('enable_register') && $config->param1Int('enable_register') && $config->param1Int('enable_register') > time()) ? new \DateTime('@' . $config->param1Int('enable_register')) : null,
+        'registrationLater' => ($config->getBoolean('enable_register') && $config->param1Int('enable_register') > time()) ? new \DateTime('@' . $config->param1Int('enable_register')) : null,
         'registrationFull' => $config->param2Int('enable_register') <= $ucnt[0],
         'userName' => $_SESSION['REGISTER']['register_user_name'] ?? '',
         'userNick' => $_SESSION['REGISTER']['register_user_nick'] ??'',

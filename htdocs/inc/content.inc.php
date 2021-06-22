@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Text\TextRepository;
 use EtoA\Support\RuntimeDataStore;
 

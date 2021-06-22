@@ -1,4 +1,7 @@
 <?php
+
+use EtoA\Core\Configuration\ConfigurationService;
+
 /**
  * Provides session and authentication management
  * for player area.
