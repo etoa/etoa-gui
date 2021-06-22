@@ -16,7 +16,7 @@ echo "<div id=\"logsinfo\"></div>"; //nur zu entwicklungszwecken!
 if ($sub=="errorlog") {
     errorlog($twig);
 } elseif (isset($_POST['alliance_search']) && $_POST['alliance_search']!="" || isset($_GET['action']) && $_GET['action']=="searchresults") {
-    searchResults();
+    logSearchResults();
 } elseif (isset($_GET['sub']) && $_GET['sub']=="view") {
     viewEntry();
 } elseif (isset($_GET['sub']) && $_GET['sub']=="logs_battle") {
@@ -60,7 +60,7 @@ function errorlog(Environment $twig)
     exit();
 }
 
-function searchResults()
+function logSearchResults()
 {
     global $page;
 

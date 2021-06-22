@@ -14,7 +14,7 @@ if ($sub=="accesslog") {
 } elseif ($sub=="ipresolver") {
     ipResolver();
 } else {
-    index();
+    toolsIndex();
 }
 
 function accessLog(ConfigurationService $config)
@@ -244,7 +244,7 @@ function ipResolver()
     echo "</form>";
 }
 
-function index()
+function toolsIndex()
 {
     echo "Wähle ein Tool aus dem Menü!";
 }
