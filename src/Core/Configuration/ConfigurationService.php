@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace EtoA\Core\Configuration;
 
+use Exception;
+
 class ConfigurationService
 {
     /** @var array<string,ConfigItem> */
@@ -11,7 +13,7 @@ class ConfigurationService
 
     private $defaultsXml;
 
-    const DEFAULTS_FILE_PATH = __DIR__ . '/../../htdocs/config/defaults.xml';
+    const DEFAULTS_FILE_PATH = __DIR__ . '/../../../htdocs/config/defaults.xml';
 
     private ConfigurationRepository $repository;
 
@@ -31,29 +33,35 @@ class ConfigurationService
         $this->load();
     }
 
-    // /**
-    //  * @deprecated
-    //  */
-    // public function add(string $name, $val, $param1 = "", $param2 = ""): void
-    // {
-    //     $this->set($name, $val, $param1, $param2);
-    // }
-
     public function set(string $name, $value, $param1 = "", $param2 = ""): void
     {
         $this->_items[$name] = new ConfigItem($value, $param1, $param2);
         $this->repository->save($name, $this->_items[$name]);
     }
 
-    public function del(string $name): void
+    public function forget(string $name): void
     {
         $this->repository->remove($name);
         unset($this->_items[$name]);
     }
 
+    /**
+     * @return array<string,ConfigItem>
+     */
+    public function all(): array
+    {
+        return $this->_items;
+    }
+
     public function get(string $key)
     {
-        return $this->_items[$key]->value;
+        if (isset($this->_items[$key])) {
+            return $this->_items[$key]->value;
+        }
+        if ($elem = $this->loadDefault($key)) {
+            return $elem->value;
+        }
+        throw new Exception('Invalid configuration key ' . $key);
     }
 
     public function getInt(string $key): int
@@ -73,7 +81,13 @@ class ConfigurationService
 
     public function param1(string $key)
     {
-        return $this->_items[$key]->param1;
+        if (isset($this->_items[$key])) {
+            return $this->_items[$key]->param1;
+        }
+        if ($elem = $this->loadDefault($key)) {
+            return $elem->param1;
+        }
+        throw new Exception('Invalid configuration key ' . $key);
     }
 
     public function param1Int(string $key): int
@@ -93,7 +107,13 @@ class ConfigurationService
 
     public function param2(string $key)
     {
-        return $this->_items[$key]->param2;
+        if (isset($this->_items[$key])) {
+            return $this->_items[$key]->param2;
+        }
+        if ($elem = $this->loadDefault($key)) {
+            return $elem->param2;
+        }
+        throw new Exception('Invalid configuration key ' . $key);
     }
 
     public function param2Int(string $key): int
@@ -121,22 +141,6 @@ class ConfigurationService
         return $this->has($name) && strlen($this->get($name)) > 0;
     }
 
-    // public function __isset(string $name): bool
-    // {
-    //     return $this->has($name);
-    // }
-
-    // public function __get($name)
-    // {
-    //     if (isset($this->_items[$name])) {
-    //         return $this->_items[$name];
-    //     }
-    //     if ($elem = $this->loadDefault($name)) {
-    //         return $elem;
-    //     }
-    //     throw new \Exception("Konfigurationsvariable $name existiert nicht!");
-    // }
-
     public function restoreDefaults(): int
     {
         if ($xml = simplexml_load_file(self::DEFAULTS_FILE_PATH)) {
@@ -144,11 +148,11 @@ class ConfigurationService
             $cnt = 0;
             foreach ($xml->items->item as $itemDefinition) {
                 $item = new ConfigItem(
-                    (isset($itemDefinition->v) ? $itemDefinition->v : ''),
-                    (isset($itemDefinition->p1) ? $itemDefinition->p1 : ''),
-                    (isset($itemDefinition->p2) ? $itemDefinition->p2 : '')
+                    (string) $itemDefinition->v ?? '',
+                    (string) $itemDefinition->p1 ?? '',
+                    (string) $itemDefinition->p2 ?? ''
                 );
-                $this->repository->save($itemDefinition['name'], $item);
+                $this->repository->save((string) $itemDefinition['name'], $item);
                 $cnt++;
             }
             return $cnt;
@@ -164,7 +168,11 @@ class ConfigurationService
         $arr = $this->defaultsXml->xpath("/config/items/item[@name='" . $key . "']");
         if ($arr != null && count($arr) > 0) {
             $itemDefinition = $arr[0];
-            return new ConfigItem($itemDefinition->v, $itemDefinition->p1, $itemDefinition->p2);
+            return new ConfigItem(
+                (string) $itemDefinition->v,
+                (string) $itemDefinition->p1,
+                (string) $itemDefinition->p2
+            );
         }
         return false;
     }
