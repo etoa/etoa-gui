@@ -39,17 +39,17 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
 
         tableStart(text2html($building->name));
         echo "<tr>
-			<th style=\"width:220px;background:#000;padding:0px;\" rowspan=\"2\">
-				<img src=\"".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$building->id.".".IMAGE_EXT."\" style=\"width:220px;height:220px;background:#000;margin:0px;\" align=\"top\" alt=\"Bild ".$building->name."\" />
-			</th>
-			<td colspan=\"2\">
-				<div align=\"justify\">".text2html($building->longComment)."</div>
-			</td>
-		</tr>
-		<tr>
-			<th style=\"height:20px;width:120px;\">Maximale Stufe:</th>
-			<td style=\"height:20px;\">".$building->lastLevel."</td>
-		</tr>";
+            <th style=\"width:220px;background:#000;padding:0px;\" rowspan=\"2\">
+                <img src=\"".IMAGE_PATH."/".IMAGE_BUILDING_DIR."/building".$building->id.".".IMAGE_EXT."\" style=\"width:220px;height:220px;background:#000;margin:0px;\" align=\"top\" alt=\"Bild ".$building->name."\" />
+            </th>
+            <td colspan=\"2\">
+                <div align=\"justify\">".text2html($building->longComment)."</div>
+            </td>
+        </tr>
+        <tr>
+            <th style=\"height:20px;width:120px;\">Maximale Stufe:</th>
+            <td style=\"height:20px;\">".$building->lastLevel."</td>
+        </tr>";
         tableEnd();
 
         // Metallmine
@@ -173,7 +173,7 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
                          </tr>";
                 } else {
                     echo "<tr><td>$level</td><td>".nf($prod_item)."</td>
-	      	            <td>".nf($prod_item+$basePeoplePlace+$conf['user_start_people']['p1'])."</td></tr>";
+                          <td>".nf($prod_item+$basePeoplePlace+$conf['user_start_people']['p1'])."</td></tr>";
                 }
             }
 
@@ -380,13 +380,13 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
 
         tableStart ("Kostenentwicklung (Faktor: ".$building->buildCostsFactor.")");
         echo "<tr><th style=\"text-align:center;\">Level</th>
-    			<th>".RES_ICON_METAL."".RES_METAL."</th>
-    			<th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
-    			<th>".RES_ICON_PLASTIC."".RES_PLASTIC."</th>
-    			<th>".RES_ICON_FUEL."".RES_FUEL."</th>
-        	<th>".RES_ICON_FOOD."".RES_FOOD."</th>
+                <th>".RES_ICON_METAL."".RES_METAL."</th>
+                <th>".RES_ICON_CRYSTAL."".RES_CRYSTAL."</th>
+                <th>".RES_ICON_PLASTIC."".RES_PLASTIC."</th>
+                <th>".RES_ICON_FUEL."".RES_FUEL."</th>
+            <th>".RES_ICON_FOOD."".RES_FOOD."</th>
    <!-- 	<th>".RES_ICON_POWER."Energie</th>     -->
-    			<th>Felder</th></tr>";
+                <th>Felder</th></tr>";
         for ($x=0;$x<min(30,$building->lastLevel);$x++)
         {
             $bc = calcBuildingCosts([
@@ -399,13 +399,13 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
                 'building_build_costs_factor' => $building->buildCostsFactor,
             ],$x);
             echo '<tr><td>'.($x+1).'</td>
-    				<td style="text-align:right;">'.nf($bc['metal']).'</td>
-    				<td style="text-align:right;">'.nf($bc['crystal']).'</td>
-    				<td style="text-align:right;">'.nf($bc['plastic']).'</td>
-    				<td style="text-align:right;">'.nf($bc['fuel']).'</td>
-    				<td style="text-align:right;">'.nf($bc['food']).'</td>
+                    <td style="text-align:right;">'.nf($bc['metal']).'</td>
+                    <td style="text-align:right;">'.nf($bc['crystal']).'</td>
+                    <td style="text-align:right;">'.nf($bc['plastic']).'</td>
+                    <td style="text-align:right;">'.nf($bc['fuel']).'</td>
+                    <td style="text-align:right;">'.nf($bc['food']).'</td>
    <!-- 	  <td style="text-align:right;">'.nf($bc['power']).'</td>      -->
-    				<td style="text-align:right;">'.nf($building->fields*($x+1)).'</td></tr>';
+                    <td style="text-align:right;">'.nf($building->fields*($x+1)).'</td></tr>';
         }
         tableEnd();
 
@@ -447,7 +447,7 @@ elseif(isset($_GET['type_id']) && intval($_GET['type_id'])>0)
     {
         echo "<b>Energie</b><br>";
         echo "Wo es eine Produkion hat, braucht es auch Energie. Diese Energie, welche von verschiedenen Anlagen gebraucht wird, spenden uns verschiedene Kraftwerkstypen. Je h&ouml;her diese Ausgebaut sind, desto mehr Leistung erbringen sie und versorgen so die wachsende Wirtschaft.<br>
-		Hat es zu wenig Energie, wird die Produktion prozentual gedrosselt, was verheerende Auswirkungen haben kann!";
+        Hat es zu wenig Energie, wird die Produktion prozentual gedrosselt, was verheerende Auswirkungen haben kann!";
     }
     elseif($btid==BUILDING_GENERAL_CAT)
     {
