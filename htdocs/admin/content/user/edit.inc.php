@@ -328,7 +328,7 @@ if (isset($_POST['delete_user']))
 // Löschantrag speichern
 if (isset($_POST['requestdelete']))
 {
-    $t = time() + ($config->getInt('user_delete_days')*3600*24);
+    $t = time() + ($config->getInt('user_delete_days') * 3600 * 24);
     dbquery("
     UPDATE
         users
@@ -412,7 +412,8 @@ if (mysql_num_rows($res)>0)
     $st = $arr['user_specialist_time']>0 ? $arr['user_specialist_time'] : time();
 
     $ip = $arr['ip_addr']!=null ? $arr['ip_addr'] : $arr['ip_log'];
-    $agent = $arr['user_agent']!=null ? $arr['user_agent'] : $arr['agent_log'];
+    $browserParser = new \WhichBrowser\Parser($arr['user_agent'] ?? $arr['agent_log']);
+    $agent = $browserParser->toString();
 
     // Javascript
     echo "<script type=\"text/javascript\">

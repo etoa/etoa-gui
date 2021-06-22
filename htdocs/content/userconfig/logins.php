@@ -45,11 +45,12 @@
 			<th>Client</th></tr>";
 			while ($arr=mysql_fetch_array($res))
 			{
+                $browserParser = new \WhichBrowser\Parser($arr['user_agent']);
 				echo "<tr><td>".df($arr['time_login'])."</td>";
 				echo "<td>".df($arr['time_action'])."</td>";
 				echo "<td>".$arr['ip_addr']."</td>";
 				echo "<td>".Net::getHost($arr['ip_addr'])."</td>";
-				echo "<td>".$arr['user_agent']."</td></tr>";
+				echo "<td>".$browserParser->toString()."</td></tr>";
 			}
     	tableEnd();
 
@@ -73,10 +74,11 @@
 			<th>Client</th></tr>";
 			while ($arr=mysql_fetch_array($res))
 			{
+                $browserParser = new \WhichBrowser\Parser($arr['user_agent']);
 				echo "<tr><td>".df($arr['time_login'])."</td>";
 				echo "<td>".$arr['ip_addr']."</td>";
 				echo "<td>".Net::getHost($arr['ip_addr'])."</td>";
-				echo "<td>".$arr['user_agent']."</td></tr>";
+				echo "<td>".$browserParser->toString()."</td></tr>";
 			}
     	tableEnd();
 

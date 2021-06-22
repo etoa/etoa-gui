@@ -8,7 +8,24 @@ use EtoA\Core\AbstractRepository;
 
 class BuildingRepository extends AbstractRepository
 {
-    public function getBuildingLevel(int $userId, int $buildingId): int
+    public function getBuildingLevel(int $userId, int $buildingId, int $entityId): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('buildlist_current_level')
+            ->from('buildlist')
+            ->where('buildlist_building_id = :buildingId')
+            ->andWhere('buildlist_user_id = :userId')
+            ->andWhere('buildlist_entity_id = :entityId')
+            ->setParameters([
+                'userId' => $userId,
+                'buildingId' => $buildingId,
+                'entityId' => $entityId,
+            ])
+            ->execute()
+            ->fetchOne();
+    }
+
+    public function getHighestBuildingLevel(int $userId, int $buildingId): int
     {
         return (int) $this->createQueryBuilder()
             ->select('MAX(buildlist_current_level)')

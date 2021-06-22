@@ -168,11 +168,12 @@
 					<th>Client</th></tr>";
 					while ($arr = mysql_fetch_array($res))
 					{
+                        $browserParser = new \WhichBrowser\Parser($arr['user_agent']);
 						echo "<tr>
 						<td><a href=\"?page=$page&amp;sub=$sub&amp;ip=".$arr['ip_addr']."\">".$arr['ip_addr']."</a></td>
 						<td><a href=\"?page=$page&amp;sub=$sub&amp;host=".Net::getHost($arr['ip_addr'])."\">".Net::getHost($arr['ip_addr'])."</a></td>
 						<td>".df($arr['time_action'])."</td>
-						<td>".$arr['user_agent']."</td>
+						<td>".$browserParser->toString()."</td>
 						</tr>";
 					}
 					echo "</table>";
@@ -412,6 +413,7 @@
 				<th>Client</th></tr>";
 				while ($arr = mysql_fetch_array($res))
 				{
+                    $browserParser = new \WhichBrowser\Parser($arr['user_agent']);
 					echo "<div id=\"tt".$arr['user_id']."\" style=\"display:none;\">
 					<a href=\"?page=user&amp;sub=ipsearch&amp;user=".$arr['user_id']."\">IP-Adressen suchen</a><br/>
 					<a href=\"?page=$page&amp;sub=edit&amp;id=".$arr['user_id']."\">Daten bearbeiten</a><br/>
@@ -422,7 +424,7 @@
 					<td>".df($arr['time_action'])."</td>
 					<td><a href=\"?page=$page&amp;sub=$sub&amp;ip=".$arr['ip_addr']."\" ".mTT('IP',$arr['ip_addr']).">".($ip==$arr['ip_addr'] ? 'IP':'-')."</a> /
 					<a href=\"?page=$page&amp;sub=$sub&amp;host=".Net::getHost($arr['ip_addr'])."\" ".mTT('Host',Net::getHost($arr['ip_addr'])).">".($host==Net::getHost($arr['ip_addr']) ? 'Host':'-')."</a></td>
-					<td>".$arr['user_agent']."</td>
+					<td>".$browserParser->toString()."</td>
 					</tr>";
 				}
 				echo "</table>";
@@ -460,6 +462,7 @@
 				<th>Client</th></tr>";
 				while ($arr = mysql_fetch_array($res))
 				{
+                    $browserParser = new \WhichBrowser\Parser($arr['user_agent']);
 					echo "<div id=\"tt".$arr['user_id']."\" style=\"display:none;\">
 					<a href=\"?page=user&amp;sub=ipsearch&amp;user=".$arr['user_id']."\">IP-Adressen suchen</a><br/>
 					<a href=\"?page=$page&amp;sub=edit&amp;id=".$arr['user_id']."\">Daten bearbeiten</a><br/>
@@ -470,7 +473,7 @@
 					<td>".df($arr['time_action'])."</td>
 					<td><a href=\"?page=$page&amp;sub=$sub&amp;ip=".$arr['ip_addr']."\" ".mTT('IP',$arr['ip_addr']).">".($ip==$arr['ip_addr'] ? 'IP':'-')."</a> /
 					<a href=\"?page=$page&amp;sub=$sub&amp;host=".Net::getHost($arr['user_ip'])."\" ".mTT('Host',Net::getHost($arr['user_ip'])).">".($host==Net::getHost($arr['user_ip']) ? 'Host':'-')."</a></td>
-					<td>".$arr['user_agent']."</td>
+					<td>".$browserParser->toString()."</td>
 					</tr>";
 				}
 				echo "</table>";

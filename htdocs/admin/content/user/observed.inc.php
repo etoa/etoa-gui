@@ -78,9 +78,10 @@
 			}
 			echo "</h3>";
 
+            $browserParser = new \WhichBrowser\Parser($arr['user_agent']);
 			echo "<p><b>IP:</b> ".$arr['ip_addr']."<br/>
 			<b>Host:</b> ".Net::getHost($arr['ip_addr'])."<br/>
-			<b>Client:</b> ".$arr['user_agent']."</p>";
+			<b>Client:</b> ".$browserParser->toString()."</p>";
 
 			echo "<p>".button("Neu laden","?page=$page&amp;sub=$sub&amp;surveillance=".$_GET['surveillance']."&amp;session=".$_GET['session'])." &nbsp; ".
 			button("Zurück","?page=$page&amp;sub=$sub&amp;surveillance=".$_GET['surveillance'])."</p>";

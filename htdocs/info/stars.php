@@ -29,10 +29,9 @@
 		$sort="ASC";
 	}
 
-	$res = dbquery("SELECT * FROM sol_types WHERE sol_type_consider=1 ORDER BY $order $sort;");
-	$nr = mysql_num_rows($res);
-	if ($nr>0)
-	{
+    /** @var \EtoA\Universe\SolarTypeRepository $solarTypeRepository */
+    $solarTypeRepository = $app['etoa.universe.solar_type.repository'];
+    $solarTypes = $solarTypeRepository->getSolarTypes($order, $sort);
 
 		tableStart("Sternenboni");
 		echo "<tr><th colspan=\"2\" ><a href=\"?$link&amp;site=$site&amp;order=name\">Name</a></th>";
@@ -47,29 +46,24 @@
 		echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_buildtime\">Bauzeit</th>";
 		echo "</tr>";
 
-		while ($arr = mysql_fetch_array($res))
-		{
+		foreach ($solarTypes as $solarType) {
 			echo "<tr><td style=\"width:40px;background:#000;vertical-align:middle;\">
-				<img src=\"".IMAGE_PATH."/stars/star".$arr['sol_type_id']."_small.".IMAGE_EXT."\" width=\"40\" height=\"40\" alt=\"Stern\"/></a></td>";
+				<img src=\"".IMAGE_PATH."/stars/star".$solarType->id."_small.".IMAGE_EXT."\" width=\"40\" height=\"40\" alt=\"Stern\"/></a></td>";
 
 			/*$tt = new ToolTip();
 			$tt->addIcon(IMAGE_PATH."/stars/star".$arr['sol_type_id']."_small.".IMAGE_EXT."");
 			$tt->addTitle($arr['sol_type_name']);
 			$tt->addComment($arr['sol_type_comment']);"*/
-			echo "<td ".tm($arr['sol_type_name'],$arr['sol_type_comment'])."><b>".$arr['sol_type_name']."</b></td>";
-			echo "<td>".get_percent_string($arr['sol_type_f_metal'],1)."</td>";
-			echo "<td>".get_percent_string($arr['sol_type_f_crystal'],1)."</td>";
-			echo "<td>".get_percent_string($arr['sol_type_f_plastic'],1)."</td>";
-			echo "<td>".get_percent_string($arr['sol_type_f_fuel'],1)."</td>";
-			echo "<td>".get_percent_string($arr['sol_type_f_food'],1)."</td>";
-			echo "<td>".get_percent_string($arr['sol_type_f_power'],1)."</td>";
-			echo "<td>".get_percent_string($arr['sol_type_f_population'],1)."</td>";
-			echo "<td>".get_percent_string($arr['sol_type_f_researchtime'],1,1)."</td>";
-			echo "<td>".get_percent_string($arr['sol_type_f_buildtime'],1,1)."</td>";
+			echo "<td ".tm($solarType->name, $solarType->comment)."><b>".$solarType->name."</b></td>";
+			echo "<td>".get_percent_string($solarType->metal,1)."</td>";
+			echo "<td>".get_percent_string($solarType->crystal,1)."</td>";
+			echo "<td>".get_percent_string($solarType->plastic,1)."</td>";
+			echo "<td>".get_percent_string($solarType->fuel,1)."</td>";
+			echo "<td>".get_percent_string($solarType->food,1)."</td>";
+			echo "<td>".get_percent_string($solarType->power,1)."</td>";
+			echo "<td>".get_percent_string($solarType->people,1)."</td>";
+			echo "<td>".get_percent_string($solarType->researchTime,1,1)."</td>";
+			echo "<td>".get_percent_string($solarType->buildTime,1,1)."</td>";
 			echo "</tr>";
 		}
-	}
 	tableEnd();
-	/* TODU: sol_type_comment */
-
-?>

@@ -51,11 +51,6 @@ parameters:
 			path: htdocs/admin/content/fleets.php
 
 		-
-			message: "#^Variable \\$planetTypeName might not be defined\\.$#"
-			count: 1
-			path: htdocs/admin/content/galaxy/edit.php
-
-		-
 			message: "#^Variable \\$planet_user_id might not be defined\\.$#"
 			count: 2
 			path: htdocs/admin/content/galaxy/edit.php

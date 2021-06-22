@@ -157,16 +157,18 @@ if (isset($id) && $id > 0)
                 echo "<th>Typ</th>
                 <td>
                 <select name=\"planet_type_id\">";
-                $tres = dbquery("SELECT * FROM planet_types ORDER BY type_name;");
-                while ($tarr = mysql_fetch_array($tres))
-                {
-                    echo "<option value=\"".$tarr['type_id']."\"";
-                    if ($arr['planet_type_id']==$tarr['type_id'])
+                /** @var \EtoA\Universe\PlanetTypeRepository $planetTypeRepository */
+                $planetTypeRepository = $app['etoa.universe.planet_type.repository'];
+                $planetTypeNames = $planetTypeRepository->getPlanetTypeNames(true);
+                $selectedPlanetTypeName = null;
+                foreach ($planetTypeNames as $planetTypeId => $planetTypeName){
+                    echo "<option value=\"".$planetTypeId."\"";
+                    if ($arr['planet_type_id']==$planetTypeId)
                     {
                         echo " selected=\"selected\"";
-                        $planetTypeName = $tarr['type_name'];
+                        $selectedPlanetTypeName = $planetTypeName;
                     }
-                    echo ">".$tarr['type_name']."</option>\n";
+                    echo ">".$planetTypeName."</option>\n";
                 }
                 echo "</select></td></tr>";
 
@@ -236,7 +238,7 @@ if (isset($id) && $id > 0)
                     echo "<option value=\"".$arr['planet_type_id']."_".$x."\"";
                     if ($arr['planet_image']==$arr['planet_type_id']."_".$x)
                         echo " selected=\"selected\"";
-                    echo ">".$planetTypeName." $x</option>\n";
+                    echo ">".$selectedPlanetTypeName." $x</option>\n";
                 }
                 echo "</select>
 
@@ -368,12 +370,13 @@ if (isset($id) && $id > 0)
                 <td>
                 <img src=\"".IMAGE_PATH."/stars/star".$arr['type_id']."_small.".IMAGE_EXT."\" style=\"float:left;\" />
                 <select name=\"type_id\">";
-                $tres = dbquery("SELECT * FROM sol_types ORDER BY sol_type_name;");
-                while ($tarr = mysql_fetch_array($tres))
-                {
-                    echo "<option value=\"".$tarr['sol_type_id']."\"";
-                    if ($arr['type_id']==$tarr['sol_type_id']) echo " selected=\"selected\"";
-                    echo ">".$tarr['sol_type_name']."</option>\n";
+                /** @var \EtoA\Universe\SolarTypeRepository $solarTypeRepository */
+                $solarTypeRepository = $app['etoa.universe.solar_type.repository'];
+                $solarTypeNames = $solarTypeRepository->getSolarTypeNames(true);
+                foreach ($solarTypeNames as $solarTypeId => $solarTypeName) {
+                    echo "<option value=\"".$solarTypeId."\"";
+                    if ($arr['type_id']==$solarTypeId) echo " selected=\"selected\"";
+                    echo ">".$solarTypeName."</option>\n";
                 }
                 echo "</select></td></tr>";
                 echo "</table>";
