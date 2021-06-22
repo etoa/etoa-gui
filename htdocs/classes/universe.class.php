@@ -798,6 +798,12 @@ use EtoA\Core\Configuration\ConfigurationService;
         */
         static function reset($all = true)
         {
+            // TODO
+            global $app;
+
+            /** @var ConfigurationService */
+            $config = $app['etoa.config.service'];
+
             $mtx = new Mutex();
             $mtx->acquire();
 
@@ -917,21 +923,11 @@ use EtoA\Core\Configuration\ConfigurationService;
             }
             dbquery("SET FOREIGN_KEY_CHECKS=1;");
 
-            dbquery("
-                    UPDATE
-                        config
-                    SET
-                        config_value='0',
-                        config_param1='0'
-                    WHERE
-                        config_name LIKE '%logger%';");
-            dbquery("
-                    UPDATE
-                        config
-                    SET
-                        config_value='1'
-                    WHERE
-                        config_name IN ('market_metal_factor','market_crystal_factor','market_plastic_factor','market_fuel_factor','market_food_factor');");
+            $config->set('market_metal_factor', 1);
+            $config->set('market_crystal_factor', 1);
+            $config->set('market_plastic_factor', 1);
+            $config->set('market_fuel_factor', 1);
+            $config->set('market_food_factor', 1);
 
             // Remove user XML backups
             $userXmlPath = UserToXml::getDataDirectory();
@@ -944,9 +940,5 @@ use EtoA\Core\Configuration\ConfigurationService;
             $mtx->release();
             return true;
         }
-
-
     }
 
-
-?>

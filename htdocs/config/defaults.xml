@@ -622,7 +622,7 @@ https://etoa.ch</v>
       <v comment="Wings erlauben" type="onoff">0</v>
     </item>
     <item name="townhall_ban" cat="16">
-      <v comment="Rathaus: Standard-Sperrzeit" type="text">86400</v>
+      <v comment="Rathaus: Standard-Sperrzeit" type="int">86400</v>
       <p1 comment="Rathaus: Standard-Sperrtext" type="textarea">Nichtbeachtung der Rathaus-Regeln</p1>
     </item>
 
