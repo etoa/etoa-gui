@@ -17,6 +17,9 @@ use Twig\Environment;
 /** @var Request */
 $request = Request::createFromGlobals();
 
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 if ($sub == "offline") {
     takeOffline($request, $config);
 } elseif ($sub == "stats") {

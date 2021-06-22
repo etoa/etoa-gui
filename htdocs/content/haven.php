@@ -100,7 +100,7 @@ $config = $app['etoa.config.service'];
                 if ($config->getBoolean("battleban") && $config->param1Int("battleban_time") <= time() && $config->param2Int("battleban_time") > time())
                 {
                     iBoxStart("Kampfsperre");
-                    echo 'Es ist momentan nicht m&ouml;glich andere Spieler anzugreifen. Grund: '.text2html($config->param1Int("battleban")).'<br />Die Sperre dauert vom '.date("d.m.Y",$config->param1Int("battleban_time")).' um '.date("H:i",$config->param1Int("battleban_time")).' Uhr bis am '.date("d.m.Y",$config->param2Int("battleban_time"))." um ".date("H:i",$config->param2Int("battleban_time")).' Uhr!';
+                    echo 'Es ist momentan nicht m&ouml;glich andere Spieler anzugreifen. Grund: '.text2html($config->param1("battleban")).'<br />Die Sperre dauert vom '.date("d.m.Y",$config->param1Int("battleban_time")).' um '.date("H:i",$config->param1Int("battleban_time")).' Uhr bis am '.date("d.m.Y",$config->param2Int("battleban_time"))." um ".date("H:i",$config->param2Int("battleban_time")).' Uhr!';
                     iBoxEnd();
                 }
 

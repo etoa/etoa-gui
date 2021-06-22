@@ -1,6 +1,7 @@
 <?php
 
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
 
 /** @var TicketRepository */

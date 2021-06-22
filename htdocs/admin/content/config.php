@@ -25,7 +25,7 @@ function restore(Request $request, ConfigurationService $config, Environment $tw
     $successMessage = null;
     $items = [];
     if ($request->request->has('restoresubmit')) {
-        if ($cnt = $config->restoreDefaults()) {
+        if (($cnt = $config->restoreDefaults()) > 0) {
             $config->reload();
             $successMessage = "$cnt Einstellungen wurden wiederhergestellt!";
             BackendMessage::reloadConfig();

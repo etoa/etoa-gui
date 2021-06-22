@@ -17,7 +17,7 @@ class SetHolydayModeUsersInactiveTask implements IPeriodicTask
 
     function run()
     {
-        if ($this->config->param2Int('hmode_days')) {
+        if ($this->config->param2Boolean('hmode_days')) {
             $nr = Users::setUmodToInactive();
             return "$nr User aus Urlaubsmodus in Inaktivität gesetzt";
         }

@@ -800,15 +800,15 @@ class FleetLaunch
         $actionObjs = array();
 
         $battleban = false;
-        if ($this->config->getBoolean("battleban") && $this->config->param1Int("battleban_time") <= time() && $this->config->param2int("battleban_time") > time())
+        if ($this->config->getBoolean("battleban") && $this->config->param1Int("battleban_time") <= time() && $this->config->param2Int("battleban_time") > time())
         {
-            $this->error = "Kampfsperre von ".df($this->config->param1Int("battleban_time"))." bis ".df($this->config->param2int("battleban_time")).". ".$this->config->param1("battleban");
+            $this->error = "Kampfsperre von ".df($this->config->param1Int("battleban_time"))." bis ".df($this->config->param2Int("battleban_time")).". ".$this->config->param1("battleban");
             $battleban = true;
         }
 
-        if ($this->config->getBoolean("flightban") && $this->config->param1Int("flightban_time")<=time() && $this->config->param2int("flightban_time") > time())
+        if ($this->config->getBoolean("flightban") && $this->config->param1Int("flightban_time")<=time() && $this->config->param2Int("flightban_time") > time())
         {
-            $this->error = "Flottensperre von ".df($this->config->param1Int("flightban_time"))." bis ".df($this->config->param2int("flightban_time")).". ".$this->config->param1("flightban");
+            $this->error = "Flottensperre von ".df($this->config->param1Int("flightban_time"))." bis ".df($this->config->param2Int("flightban_time")).". ".$this->config->param1("flightban");
         }
         else
         {
