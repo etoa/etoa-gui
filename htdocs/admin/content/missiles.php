@@ -7,19 +7,19 @@ use Twig\Environment;
 $config = $app['etoa.config.service'];
 
 if ($sub=="data") {
-    editData($twig);
+    editMissileData($twig);
 } elseif ($sub=="req") {
-    requirements();
+    missileRequirements();
 } else {
-    overview($config);
+    missileOverview($config);
 }
 
-function editData(Environment $twig): void
+function editMissileData(Environment $twig): void
 {
     advanced_form("missiles", $twig);
 }
 
-function requirements(): void
+function missileRequirements(): void
 {
     define("TITLE","Raketemanforderungen");
     define("ITEMS_TBL","missiles");
@@ -35,7 +35,7 @@ function requirements(): void
     include("inc/requirements.inc.php");
 }
 
-function overview(ConfigurationService $config): void
+function missileOverview(ConfigurationService $config): void
 {
     global $page;
     global $sub;
