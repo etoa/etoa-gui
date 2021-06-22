@@ -3,6 +3,7 @@
 namespace EtoA;
 
 use Doctrine\DBAL\Connection;
+use EtoA\Core\Configuration\ConfigurationService;
 use PHPUnit\Framework\TestCase;
 use Silex\Application;
 use Symfony\Component\HttpKernel\Client;
@@ -29,7 +30,11 @@ abstract class WebTestCase extends TestCase
         \mysql_connect($this->connection->getHost(), $this->connection->getUsername(), $this->connection->getPassword(), $this->connection->getDatabase());
 
         require_once __DIR__ . '/../htdocs/inc/bootstrap.inc.php';
-        \Config::restoreDefaults();
+
+        /** @var ConfigurationService */
+        $config = $app['etoa.config.service'];
+
+        $config->restoreDefaults();
 
         return $app;
     }
