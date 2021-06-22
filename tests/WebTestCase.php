@@ -29,10 +29,10 @@ abstract class WebTestCase extends TestCase
         $this->connection = $app['db'];
         \mysql_connect($this->connection->getHost(), $this->connection->getUsername(), $this->connection->getPassword(), $this->connection->getDatabase());
 
-        require_once __DIR__ . '/../htdocs/inc/bootstrap.inc.php';
-
         /** @var ConfigurationService */
         $config = $app['etoa.config.service'];
+
+        require_once __DIR__ . '/../htdocs/inc/bootstrap.inc.php';
 
         $config->restoreDefaults();
 

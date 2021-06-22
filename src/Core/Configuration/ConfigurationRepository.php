@@ -13,8 +13,7 @@ class ConfigurationRepository extends AbstractRepository
      */
     public function findAll(): array
     {
-        return collect(
-            $this->createQueryBuilder()
+        $data = $this->createQueryBuilder()
                 ->select(
                     'config_name',
                     'config_value',
@@ -23,14 +22,12 @@ class ConfigurationRepository extends AbstractRepository
                 )
                 ->from('config')
                 ->execute()
-                ->fetchAllAssociativeIndexed()
-            )
-            ->map(fn ($arr) => new ConfigItem(
-                $arr['config_value'],
-                $arr['config_param1'],
-                $arr['config_param2']
-            ))
-            ->toArray();
+                ->fetchAllAssociativeIndexed();
+        return array_map(fn ($arr) => new ConfigItem(
+            $arr['config_value'],
+            $arr['config_param1'],
+            $arr['config_param2']
+        ), $data);
     }
 
     public function save(string $name, ConfigItem $item): void
