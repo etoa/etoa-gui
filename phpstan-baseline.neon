@@ -56,7 +56,7 @@ parameters:
 			path: htdocs/admin/content/logs.php
 
 		-
-			message: "#^Variable \\$res might not be defined\\.$#"
+			message: "#^Undefined variable: \\$res$#"
 			count: 3
 			path: htdocs/admin/content/logs.php
 
@@ -76,7 +76,7 @@ parameters:
 			path: htdocs/admin/content/messages.php
 
 		-
-			message: "#^Ternary operator condition is always true\\.$#"
+			message: "#^Ternary operator condition is always false\\.$#"
 			count: 2
 			path: htdocs/admin/content/overview.php
 
@@ -108,11 +108,6 @@ parameters:
 		-
 			message: "#^Variable \\$waveCnt might not be defined\\.$#"
 			count: 2
-			path: htdocs/admin/inc/admin_functions.inc.php
-
-		-
-			message: "#^Variable property access on mixed\\.$#"
-			count: 5
 			path: htdocs/admin/inc/admin_functions.inc.php
 
 		-
