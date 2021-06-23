@@ -18,19 +18,49 @@ class MissileDataRepository extends AbstractRepository
         $this->cache = $cache;
     }
 
-    public function getMissileNames(): array
+    public function getMissileNames(bool $showAll = false): array
     {
-        if (!$this->cache->contains(self::MISSILES_NAMES)) {
-            $names = $this->createQueryBuilder()
-                ->select('missile_id, missile_name')
-                ->addSelect()
-                ->from('missiles')
-                ->execute()
-                ->fetchAllKeyValue();
+        $qb = $this->createQueryBuilder()
+            ->select('missile_id, missile_name')
+            ->addSelect()
+            ->from('missiles');
 
-            $this->cache->save(self::MISSILES_NAMES, $names);
+        if (!$showAll) {
+            $qb->where('missile_show = 1');
         }
 
-        return $this->cache->fetch(self::MISSILES_NAMES);
+        return $qb
+            ->orderBy('missile_name')
+            ->execute()
+            ->fetchAllKeyValue();
+    }
+
+    public function getMissile(int $missileId): ?Missile
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('missiles')
+            ->where('missile_show=1')
+            ->andWhere('missile_id = :missileId')
+            ->setParameter('missileId', $missileId)
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? new Missile($data) : null;
+    }
+
+    /**
+     * @return Missile[]
+     */
+    public function getMissiles(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('missiles')
+            ->where('missile_show=1')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn($row) => new Missile($row), $data);
     }
 }
