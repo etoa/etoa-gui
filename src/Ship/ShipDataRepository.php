@@ -129,4 +129,24 @@ class ShipDataRepository extends AbstractRepository
 
         return array_map(fn($row) => new Ship($row), $data);
     }
+
+    /**
+     * @return Ship[]
+     */
+    public function getShipsByRace(int $raceId): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('ships')
+            ->where('ship_race_id = :raceId')
+            ->andWhere('ship_buildable = 1')
+            ->andWhere('ship_show = 1')
+            ->andWhere('special_ship = 0')
+            ->setParameter('raceId', $raceId)
+            ->orderBy('ship_order')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn($row) => new Ship($row), $data);
+    }
 }

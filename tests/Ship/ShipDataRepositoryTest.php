@@ -63,4 +63,14 @@ class ShipDataRepositoryTest extends AbstractDbTestCase
             $this->assertSame(1, $ship->catId);
         }
     }
+
+    public function testGetShipsByRace(): void
+    {
+        $ships = $this->repository->getShipsByRace(1);
+
+        $this->assertNotEmpty($ships);
+        foreach ($ships as $ship) {
+            $this->assertSame(1, $ship->raceId);
+        }
+    }
 }
