@@ -22,21 +22,23 @@ class ShipDataRepository extends AbstractRepository
     /**
      * @return array<int, string>
      */
-    public function getShipNames(): array
+    public function getShipNames(bool $showAll = false): array
     {
-        if (!$this->cache->contains(self::SHIPS_NAMES)) {
-            $names = $this->createQueryBuilder()
-                ->select('ship_id, ship_name')
-                ->addSelect()
-                ->from('ships')
+        $qb = $this->createQueryBuilder()
+            ->select('ship_id, ship_name')
+            ->addSelect()
+            ->from('ships');
+
+        if (!$showAll) {
+            $qb
+                ->where('ship_show = 1')
+                ->andWhere('special_ship = 0');
+        }
+
+        return $qb
                 ->orderBy('ship_name')
                 ->execute()
                 ->fetchAllKeyValue();
-
-            $this->cache->save(self::SHIPS_NAMES, $names);
-        }
-
-        return $this->cache->fetch(self::SHIPS_NAMES);
     }
 
     /**
@@ -94,5 +96,37 @@ class ShipDataRepository extends AbstractRepository
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => new Ship($row), $data);
+    }
+
+    public function getShip(int $shipId): ?Ship
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('ships')
+            ->where('ship_show = 1')
+            ->andWhere('ship_id = :shipId')
+            ->setParameter('shipId', $shipId)
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? new Ship($data) : null;
+    }
+
+    /**
+     * @return Ship[]
+     */
+    public function getShipsByCategory(int $shipCategory, string $order = 'ship_order', string $sort = 'ASC'): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('ships')
+            ->where('ship_cat_id = :category')
+            ->andWhere('ship_show=1')
+            ->setParameter('category', $shipCategory)
+            ->orderBy($order, $sort)
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn($row) => new Ship($row), $data);
     }
 }

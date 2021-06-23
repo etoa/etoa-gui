@@ -45,4 +45,22 @@ class ShipDataRepositoryTest extends AbstractDbTestCase
             $this->assertGreaterThan(0, $ship->powerProduction);
         }
     }
+
+    public function testGetShip(): void
+    {
+        $ship = $this->repository->getShip(1);
+
+        $this->assertNotNull($ship);
+        $this->assertSame(1, $ship->id);
+    }
+
+    public function testGetShipsByCategory(): void
+    {
+        $ships = $this->repository->getShipsByCategory(1);
+
+        $this->assertNotEmpty($ships);
+        foreach ($ships as $ship) {
+            $this->assertSame(1, $ship->catId);
+        }
+    }
 }
