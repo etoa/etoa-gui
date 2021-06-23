@@ -149,4 +149,20 @@ class ShipDataRepository extends AbstractRepository
 
         return array_map(fn($row) => new Ship($row), $data);
     }
+
+    public function getTransformedShipForDefense(int $defenseId): ?Ship
+    {
+        $data = $this->createQueryBuilder()
+            ->select('s.*')
+            ->from('ships', 's')
+            ->innerJoin('s', 'obj_transforms', 't', 't.ship_id=s.ship_id')
+            ->where('t.def_id = :defenseId')
+            ->setParameters([
+                'defenseId' => $defenseId,
+            ])
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? new Ship($data) : null;
+    }
 }
