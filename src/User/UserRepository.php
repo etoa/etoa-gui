@@ -54,6 +54,19 @@ class UserRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    public function setLogoutTime(int $userId)
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_logouttime', ':time')
+            ->where('user_id = :id')
+            ->setParameters([
+                'id' => $userId,
+                'time' => time(),
+            ])
+            ->execute();
+    }
+
     public function countActiveSessions(int $timeout): int
     {
         return (int) $this->createQueryBuilder()

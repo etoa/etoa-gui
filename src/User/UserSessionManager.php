@@ -9,12 +9,18 @@ use Log;
 
 class UserSessionManager
 {
+    private UserSessionRepository $repository;
     private ConfigurationService $config;
+    private UserRepository $userRepository;
 
     public function __construct(
-        ConfigurationService $config
+        UserSessionRepository $repository,
+        ConfigurationService $config,
+        UserRepository $userRepository
     ) {
+        $this->repository = $repository;
         $this->config = $config;
+        $this->userRepository = $userRepository;
     }
 
     public function unregisterSession(string $sessionId = null, bool $logoutPressed = true): void
@@ -23,54 +29,11 @@ class UserSessionManager
             $sessionId = session_id();
         }
 
-        $res = dbquery("
-        SELECT
-            *
-        FROM
-            `user_sessions`
-        WHERE
-            id='" . $sessionId . "'
-        ;");
-        if (mysql_num_rows($res) > 0) {
-            $arr = mysql_fetch_assoc($res);
-            dbquery("
-            INSERT INTO
-                `user_sessionlog`
-            (
-                `session_id` ,
-                `user_id`,
-                `ip_addr`,
-                `user_agent`,
-                `time_login`,
-                `time_action`,
-                `time_logout`
-            )
-            VALUES
-            (
-                '" . $arr['id'] . "',
-                '" . $arr['user_id'] . "',
-                '" . $arr['ip_addr'] . "',
-                '" . $arr['user_agent'] . "',
-                '" . $arr['time_login'] . "',
-                '" . $arr['time_action'] . "',
-                '" . ($logoutPressed == 1 ? time() : 0) . "'
-            )
-            ");
-            dbquery("
-            DELETE FROM
-                `user_sessions`
-            WHERE
-                id='" . $sessionId . "'
-            ;");
-
-            dbquery("
-                    UPDATE
-                        users
-                    SET
-                        user_logouttime='" . time() . "'
-                    WHERE
-                        user_id='" . $arr['user_id'] . "'
-                    LIMIT 1;");
+        $userSession = $this->repository->find($sessionId);
+        if ($userSession != null) {
+            $this->repository->addSessionLog($userSession, $logoutPressed ? time() : 0);
+            $this->repository->remove($sessionId);
+            $this->userRepository->setLogoutTime((int) $userSession['user_id']);
         }
         if ($logoutPressed) {
             session_regenerate_id(true);
@@ -80,18 +43,9 @@ class UserSessionManager
 
     public function cleanup(): void
     {
-        $res = dbquery("
-        SELECT
-            id
-        FROM
-            `user_sessions`
-        WHERE
-            time_action+" . $this->config->getInt('user_timeout') . " < '" . time() . "'
-        ;");
-        if (mysql_num_rows($res) > 0) {
-            while ($arr = mysql_fetch_row($res)) {
-                $this->unregisterSession($arr[0], false);
-            }
+        $sessions = $this->repository->findByTimeout($this->config->getInt('user_timeout'));
+        foreach ($sessions as $session) {
+            $this->unregisterSession($session['id'], false);
         }
     }
 
@@ -101,12 +55,7 @@ class UserSessionManager
             ? time() - $threshold
             : time() - (24 * 3600 * $this->config->param1Int('sessionlog_store_days'));
 
-        dbquery("
-        DELETE FROM
-            `user_sessionlog`
-        WHERE
-            time_action < " . $timestamp . ";");
-        $count = mysql_affected_rows();
+        $count = $this->repository->removeSessionLogs($timestamp);
 
         Log::add(Log::F_SYSTEM, Log::INFO, "$count Usersession-Logs die älter als " . date("d.m.Y, H:i", $timestamp) . " sind wurden gelöscht.");
 
