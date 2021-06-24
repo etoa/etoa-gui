@@ -8,6 +8,17 @@ use EtoA\Core\AbstractRepository;
 
 class UserSessionRepository extends AbstractRepository
 {
+    public function countActiveSessions(int $timeout): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(*)')
+            ->from('user_sessions')
+            ->where('time_action > :timeout')
+            ->setParameter('timeout', time() - $timeout)
+            ->execute()
+            ->fetchOne();
+    }
+
     public function find(string $id): ?array
     {
         $data = $this->createQueryBuilder()

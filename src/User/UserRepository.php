@@ -67,17 +67,6 @@ class UserRepository extends AbstractRepository
             ->execute();
     }
 
-    public function countActiveSessions(int $timeout): int
-    {
-        return (int) $this->createQueryBuilder()
-            ->select('COUNT(*)')
-            ->from('user_sessions')
-            ->where('time_action > :timeout')
-            ->setParameter('timeout', time() - $timeout)
-            ->execute()
-            ->fetchOne();
-    }
-
     public function removePointsByTimestamp(int $timestamp): int
     {
         return (int) $this->createQueryBuilder()
