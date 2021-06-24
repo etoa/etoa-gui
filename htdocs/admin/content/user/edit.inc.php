@@ -231,7 +231,7 @@ if (isset($_POST['save']))
     dbquery($sql);
 
 
-    if($_POST['del_multi'])
+    if (isset($_POST['del_multi']))
     {
         //Multi löschen
         foreach ($_POST['del_multi'] as $m_id=>$data)
@@ -262,7 +262,7 @@ if (isset($_POST['save']))
     }
 
     //Sitting löschen
-    if($_POST['del_sitting'])
+    if(isset($_POST['del_sitting']))
     {
         foreach ($_POST['del_sitting'] as $s_id=>$data)
         {

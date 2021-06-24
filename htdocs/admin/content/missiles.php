@@ -9,7 +9,7 @@ $config = $app['etoa.config.service'];
 if ($sub=="data") {
     editMissileData($twig);
 } elseif ($sub=="req") {
-    missileRequirements();
+    missileRequirements($twig);
 } else {
     missileOverview($config);
 }
@@ -19,7 +19,7 @@ function editMissileData(Environment $twig): void
     advanced_form("missiles", $twig);
 }
 
-function missileRequirements(): void
+function missileRequirements(Environment $twig): void
 {
     define("TITLE","Raketemanforderungen");
     define("ITEMS_TBL","missiles");

@@ -39,7 +39,7 @@ function fleetOptions(ConfigurationService $config): void
         if($flightban_from < $flightban_to)
         {
             $config->set('flightban', 1, $_POST['flightban_reason']);
-            $config->set('flightban_time', null, $flightban_from, $flightban_to);
+            $config->set('flightban_time', '', $flightban_from, $flightban_to);
         }
         else
         {
@@ -62,8 +62,8 @@ function fleetOptions(ConfigurationService $config): void
         if($battleban_from < $battleban_to)
         {
             $config->set('battleban', 1, $_POST['battleban_reason']);
-            $config->set('battleban_time', null, $battleban_from, $battleban_to);
-            $config->set('battleban_arrival_text', null, $_POST['battleban_arrival_text_fleet'], $_POST['battleban_arrival_text_missiles']);
+            $config->set('battleban_time', '', $battleban_from, $battleban_to);
+            $config->set('battleban_arrival_text', '', $_POST['battleban_arrival_text_fleet'], $_POST['battleban_arrival_text_missiles']);
         }
         else
         {

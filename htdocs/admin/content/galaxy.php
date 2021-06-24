@@ -5,11 +5,10 @@ use Twig\Environment;
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
 
-
 if ($sub=="map") {
-    galaxyMap();
+    galaxyMap($config, $twig);
 } elseif ($sub=="exploration") {
-    exploration();
+    exploration($twig);
 } elseif ($sub=="uni") {
     universe();
 } elseif ($sub=="galaxycheck") {
@@ -22,12 +21,12 @@ if ($sub=="map") {
     entities($config);
 }
 
-function galaxyMap()
+function galaxyMap(ConfigurationService $config, Environment $twig)
 {
     require("galaxy/map.inc.php");
 }
 
-function exploration()
+function exploration(Environment $twig)
 {
     require("galaxy/exploration.inc.php");
 }
