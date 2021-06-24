@@ -62,9 +62,6 @@ if (!$action)
 
 $verbose = in_array("-v", $args, true);
 
-/** @var ConfigurationService */
-$config = $app['etoa.config.service'];
-
 //
 // Migrate schema updates
 //
@@ -90,6 +87,10 @@ if ($action == "migrate" || $action == "reset")
 
         // Load config defaults
         if ($action == "reset") {
+
+            /** @var ConfigurationService */
+            $config = $app['etoa.config.service'];
+
             $config->restoreDefaults();
             $config->reload();
         }
@@ -117,6 +118,9 @@ if ($action == "migrate" || $action == "reset")
 //
 else if ($action == "backup")
 {
+    /** @var ConfigurationService */
+    $config = $app['etoa.config.service'];
+
     $dir = DBManager::getBackupDir();
     $gzip = $config->getBoolean('backup_use_gzip');
     $mtx = new Mutex();
