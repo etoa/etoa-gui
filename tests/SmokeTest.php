@@ -7,11 +7,12 @@ use Silex\Application;
 
 class SmokeTest extends TestCase
 {
+    use DbTestTrait;
+
     public function testServiceDefinitions(): void
     {
         $ignoreList = ['twig.runtime.httpkernel'];
-        /** @var Application $app */
-        $app = require dirname(__DIR__).'/src/app.php';
+        $app = $this->setupApplication();
         foreach ($app->keys() as $serviceId) {
             if (!in_array($serviceId, $ignoreList, true)) {
                 $app->offsetGet($serviceId);
