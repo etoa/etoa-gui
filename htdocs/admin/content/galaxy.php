@@ -34,6 +34,9 @@ function exploration()
 
 function universe()
 {
+    global $app;
+    global $page;
+    global $sub;
     require("galaxy/universe.php");
 }
 
