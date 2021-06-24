@@ -48,8 +48,7 @@ class TwigServiceProvider extends \Silex\Provider\TwigServiceProvider
         });
 
         $app->extend('twig', function (Environment $twig, Container $app): Environment {
-            $twig->addExtension(new TwigExtension($app['etoa.config.service']));
-
+            $twig->addExtension(new TwigExtension($app));
             return $twig;
         });
     }
