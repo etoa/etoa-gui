@@ -3,7 +3,6 @@
 use EtoA\Admin\AdminSessionManager;
 use EtoA\Admin\AdminSessionRepository;
 use EtoA\Admin\AdminUserRepository;
-use EtoA\Core\Configuration\ConfigurationService;
 
 /**
  * Provides session and authentication management
@@ -111,9 +110,6 @@ class AdminSession extends Session
         /** @var AdminSessionRepository */
         $repository = $app['etoa.admin.session.repository'];
 
-        /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
-
         if (isset($this->time_login)) {
             $exists = $repository->exists(
                 session_id(),
@@ -123,12 +119,12 @@ class AdminSession extends Session
             );
             if ($exists) {
                 $t = time();
-                if ($this->time_action + $config->getInt('admin_timeout') > $t) {
+                if ($this->time_action + $this->config->getInt('admin_timeout') > $t) {
                     $repository->update(session_id(), $t, $_SERVER['REMOTE_ADDR']);
                     $this->time_action = $t;
                     return true;
                 } else {
-                    $this->lastError = "Das Timeout von " . tf($config->getInt('admin_timeout')) . " wurde überschritten!";
+                    $this->lastError = "Das Timeout von " . tf($this->config->getInt('admin_timeout')) . " wurde überschritten!";
                     $this->lastErrorCode = "timeout";
                 }
             } else {

@@ -263,17 +263,14 @@ class UserSession extends Session
                 // TODO
                 global $app;
 
-                /** @var ConfigurationService */
-                $config = $app['etoa.config.service'];
-
-                if ($this->time_action + $config->getInt('user_timeout') > $t)
+                if ($this->time_action + $this->config->getInt('user_timeout') > $t)
                 {
                     $allows = false;
                     $bot = false;
                     if (($t-$this->time_action)>=5 && ($this->last_span >= $t-$this->time_action-1 && $this->last_span <= $t-$this->time_action+1))
                     {
                         $this->bot_count++;
-                        $bot = $this->bot_count > $config->getInt('bot_max_count');
+                        $bot = $this->bot_count > $this->config->getInt('bot_max_count');
                     }
                     else
                     {
@@ -332,7 +329,7 @@ class UserSession extends Session
                 }
                 else
                 {
-                    $this->lastError = "Das Timeout von ".tf($config->getInt('user_timeout'))." wurde überschritten!";
+                    $this->lastError = "Das Timeout von ".tf($this->config->getInt('user_timeout'))." wurde überschritten!";
                 }
             }
             else

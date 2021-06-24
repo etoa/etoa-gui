@@ -8,7 +8,7 @@ use EtoA\Core\Configuration\ConfigurationService;
  *
  * @author Nicolas Perrenoud <mrcage@etoa.ch>
  */
-abstract class Session implements ISingleton
+abstract class Session
 {
     //
     // Singleton mechanism
@@ -23,11 +23,11 @@ abstract class Session implements ISingleton
      * Returns the single instance of this class (Singleton design pattern)
      * @return static(Session) Instance of the session class
      */
-    public static function getInstance()
+    public static function getInstance(ConfigurationService $config)
     {
         if (!isset(self::$instance))
         {
-            self::$instance = new static();
+            self::$instance = new static($config);
         }
         return self::$instance;
     }
@@ -40,6 +40,8 @@ abstract class Session implements ISingleton
     //
     // Class variables and constants
     //
+
+    protected ConfigurationService $config;
 
     /**
      * @var string Message of the last error
@@ -92,20 +94,16 @@ abstract class Session implements ISingleton
      * The constructor defines the session hash function to be used
      * and names and initiates the session
      */
-    final private function __construct()
+    final private function __construct(ConfigurationService $config)
     {
-        // TODO
-        global $app;
-
-        /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $this->config = $config;
 
         // Use SHA1 hash
         ini_set('session.hash_function', '1');
 
         // Set session name based on round name.
         // MD5 is needed because spaces in roundname cause problems
-        $sname = md5($this->namePrefix . $config->get('roundname'));
+        $sname = md5($this->namePrefix . $this->config->get('roundname'));
         @session_name($sname);
         @session_start();	// Start the session
     }
