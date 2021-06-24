@@ -150,35 +150,36 @@ class ConfigurationService
         return $this->has($name) && strlen($this->get($name)) > 0;
     }
 
-    public function loadXmlDefinitions(): SimpleXMLElement
-    {
-        return simplexml_load_file(self::DEFAULTS_FILE_PATH);
-    }
-
-    public function ensureXmlDefinitionsLoaded(): void
-    {
-        if ($this->defaultsXml == null) {
-            $this->defaultsXml = $this->loadXmlDefinitions();
-        }
-    }
-
     public function restoreDefaults(): int
     {
-        if ($xml = $this->loadXmlDefinitions()) {
-            $this->repository->truncate();
-            $cnt = 0;
-            foreach ($xml->items->item as $itemDefinition) {
-                $item = new ConfigItem(
-                    (string) $itemDefinition->v ?? '',
-                    (string) $itemDefinition->p1 ?? '',
-                    (string) $itemDefinition->p2 ?? ''
-                );
-                $this->repository->save((string) $itemDefinition['name'], $item);
-                $cnt++;
-            }
-            return $cnt;
+        $xml = $this->getXmlDefinitions();
+        $this->repository->truncate();
+        $cnt = 0;
+        foreach ($xml->items->item as $itemDefinition) {
+            $item = new ConfigItem(
+                (string) $itemDefinition->v ?? '',
+                (string) $itemDefinition->p1 ?? '',
+                (string) $itemDefinition->p2 ?? ''
+            );
+            $this->repository->save((string) $itemDefinition['name'], $item);
+            $cnt++;
         }
-        throw new \Exception("Konfigurationsdatei existiert nicht!");
+        return $cnt;
+    }
+
+    public function getXmlDefinitions(): SimpleXMLElement
+    {
+        if (is_file(self::DEFAULTS_FILE_PATH)) {
+            return simplexml_load_file(self::DEFAULTS_FILE_PATH);
+        }
+        throw new Exception("Konfigurationsdatei existiert nicht!");
+    }
+
+    private function ensureXmlDefinitionsLoaded(): void
+    {
+        if ($this->defaultsXml == null) {
+            $this->defaultsXml = $this->getXmlDefinitions();
+        }
     }
 
     public function loadDefault($key)

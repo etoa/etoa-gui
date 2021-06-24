@@ -86,15 +86,14 @@ function check(ConfigurationService $config, Environment $twig)
 {
     $cnt = 0;
     $message = '';
-    if ($xml = $config->loadXmlDefinitions()) {
-        foreach ($xml->items->item as $i) {
-            if (!$config->has($i['name'])) {
-                $message .= $i['name'] . ' existiert in der Standardkonfiguration, aber nicht in der Datenbank! ';
-                $config->set((string)$i['name'], (string)$i->v, (string)$i->p1, (string)$i->p2);
-                $message .= '<b>Behoben</b><br/>';
-            }
-            $cnt++;
+    $xml = $config->getXmlDefinitions();
+    foreach ($xml->items->item as $i) {
+        if (!$config->has($i['name'])) {
+            $message .= $i['name'] . ' existiert in der Standardkonfiguration, aber nicht in der Datenbank! ';
+            $config->set((string)$i['name'], (string)$i->v, (string)$i->p1, (string)$i->p2);
+            $message .= '<b>Behoben</b><br/>';
         }
+        $cnt++;
     }
     $message .= '<p>' . $cnt . ' Einträge in der Standardkonfiguration.</p>';
 
