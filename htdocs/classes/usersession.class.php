@@ -11,8 +11,6 @@ class UserSession extends Session
     const tableUser = "users";
     const tableSession = "user_sessions";
 
-    protected $namePrefix = "user";
-
     function login($data)
     {
         // TODO

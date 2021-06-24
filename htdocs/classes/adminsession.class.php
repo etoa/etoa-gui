@@ -10,8 +10,6 @@ use EtoA\Admin\AdminUserRepository;
  */
 class AdminSession extends Session
 {
-    protected $namePrefix = "admin";
-
     function login($data)
     {
         // TODO
