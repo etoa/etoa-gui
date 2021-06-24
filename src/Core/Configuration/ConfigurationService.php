@@ -9,7 +9,7 @@ use Exception;
 class ConfigurationService
 {
     /** @var array<string,ConfigItem> */
-    private array $_items;
+    private ?array $_items = null;
 
     private $defaultsXml;
 
@@ -20,27 +20,30 @@ class ConfigurationService
     public function __construct(ConfigurationRepository $repository)
     {
         $this->repository = $repository;
-        $this->load();
     }
 
-    private function load(): void
+    private function ensureLoaded(bool $reload = false): void
     {
-        $this->_items = $this->repository->findAll();
+        if ($this->_items === null || $reload) {
+            $this->_items = $this->repository->findAll();
+        }
     }
 
     public function reload(): void
     {
-        $this->load();
+        $this->ensureLoaded(true);
     }
 
     public function set(string $name, $value, $param1 = "", $param2 = ""): void
     {
+        $this->ensureLoaded();
         $this->_items[$name] = new ConfigItem($value, $param1, $param2);
         $this->repository->save($name, $this->_items[$name]);
     }
 
     public function forget(string $name): void
     {
+        $this->ensureLoaded();
         $this->repository->remove($name);
         unset($this->_items[$name]);
     }
@@ -50,11 +53,13 @@ class ConfigurationService
      */
     public function all(): array
     {
+        $this->ensureLoaded();
         return $this->_items;
     }
 
     public function get(string $key)
     {
+        $this->ensureLoaded();
         if (isset($this->_items[$key])) {
             return $this->_items[$key]->value;
         }
@@ -81,6 +86,7 @@ class ConfigurationService
 
     public function param1(string $key)
     {
+        $this->ensureLoaded();
         if (isset($this->_items[$key])) {
             return $this->_items[$key]->param1;
         }
@@ -107,6 +113,7 @@ class ConfigurationService
 
     public function param2(string $key)
     {
+        $this->ensureLoaded();
         if (isset($this->_items[$key])) {
             return $this->_items[$key]->param2;
         }
@@ -133,6 +140,7 @@ class ConfigurationService
 
     public function has(string $name): bool
     {
+        $this->ensureLoaded();
         return isset($this->_items[$name]);
     }
 
