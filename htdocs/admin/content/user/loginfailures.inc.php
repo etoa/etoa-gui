@@ -55,7 +55,7 @@
 				<th><a href=\"?page=$page&amp;sub=$sub&amp;order=2\">IP-Adresse</a></th>
 				<th><a href=\"?page=$page&amp;sub=$sub&amp;order=3\">Hostname</a></th>
 				<th><a href=\"?page=$page&amp;sub=$sub&amp;order=4\">Client</a></th>
-				<th>Aktionen</th></tr>";
+				</tr>";
 				while ($arr=mysql_fetch_array($res))
 				{
 					echo "<tr><td class=\"tbldata\">".df($arr['failure_time'])."</td>";
@@ -63,9 +63,6 @@
 					echo "<td class=\"tbldata\"><a href=\"?page=user&amp;sub=ipsearch&amp;ip=".$arr['failure_ip']."\">".$arr['failure_ip']."</a></td>";
 					echo "<td class=\"tbldata\"><a href=\"?page=user&amp;sub=ipsearch&amp;host=".$arr['failure_host']."\">".$arr['failure_host']."</a></td>
 					<td class=\"tbldata\">".$arr['failure_client']."</td>
-					<td class=\"tbldata\">
-						".cb_button("add_user=".$arr['user_id']."")."
-					</td>
 					</tr>";
 				}
 				echo "</table>";
