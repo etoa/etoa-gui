@@ -14,6 +14,7 @@ if (isset($_POST['submitProfile'])) {
     submitProfile($cu, $adminUserRepo, $twig);
 }
 profileIndex($cu, $twig);
+exit();
 
 function submitPassword(AdminUser $cu, AdminUserRepository $adminUserRepo, Environment $twig)
 {
