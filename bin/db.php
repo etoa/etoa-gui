@@ -47,11 +47,6 @@ try {
     exit(1);
 }
 
-if (!isset($app)) {
-    $app = require __DIR__ .'/../src/app.php';
-    $app->boot();
-}
-
 $args = array_splice($_SERVER['argv'], 1);
 $action = array_shift($args);
 
@@ -87,6 +82,10 @@ if ($action == "migrate" || $action == "reset")
 
         // Load config defaults
         if ($action == "reset") {
+            if (!isset($app)) {
+                $app = require __DIR__ .'/../src/app.php';
+                $app->boot();
+            }
 
             /** @var ConfigurationService */
             $config = $app['etoa.config.service'];
@@ -118,6 +117,11 @@ if ($action == "migrate" || $action == "reset")
 //
 else if ($action == "backup")
 {
+    if (!isset($app)) {
+        $app = require __DIR__ .'/../src/app.php';
+        $app->boot();
+    }
+
     /** @var ConfigurationService */
     $config = $app['etoa.config.service'];
 
