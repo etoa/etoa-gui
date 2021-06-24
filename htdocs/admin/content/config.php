@@ -88,7 +88,7 @@ function check(ConfigurationService $config, Environment $twig)
     $message = '';
     if ($xml = simplexml_load_file(RELATIVE_ROOT . "config/defaults.xml")) {
         foreach ($xml->items->item as $i) {
-            if ($config->has($i['name'])) {
+            if (!$config->has($i['name'])) {
                 $message .= $i['name'] . ' existiert in der Standardkonfiguration, aber nicht in der Datenbank! ';
                 $config->set((string)$i['name'], (string)$i->v, (string)$i->p1, (string)$i->p2);
                 $message .= '<b>Behoben</b><br/>';
