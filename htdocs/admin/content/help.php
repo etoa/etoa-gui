@@ -1,9 +1,8 @@
 <?PHP
 
-/** @var Request */
-
 use Symfony\Component\HttpFoundation\Request;
 
+/** @var Request */
 $request = Request::createFromGlobals();
 
 //
