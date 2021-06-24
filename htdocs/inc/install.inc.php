@@ -14,9 +14,6 @@ if (!isset($app)) {
 /** @var Environment */
 $twig = $app['twig'];
 
-/** @var ConfigurationService */
-$config = $app['etoa.config.service'];
-
 $successMessage = null;
 $errorMessage = null;
 
@@ -51,6 +48,7 @@ if (isset($_POST['install_check'])) {
             'user' => $_SESSION['INSTALL']['db_user'],
             'password' => $_SESSION['INSTALL']['db_password'],
         ];
+        $app['db.options'] = $dbCfg;
         if (DBManager::getInstance()->connect(0, $dbCfg)) {
             $successMessage = 'Datenbankverbindung erfolgreich!';
 
@@ -93,6 +91,7 @@ if ($step === 3) {
         'user' => $_SESSION['INSTALL']['db_user'],
         'password' => $_SESSION['INSTALL']['db_password'],
     );
+    $app['db.options'] = $dbCfg;
     DBManager::getInstance()->connect(0, $dbCfg);
 
     $dbConfigString = json_encode($dbCfg, JSON_PRETTY_PRINT);
@@ -103,6 +102,10 @@ database = ' .$dbCfg['dbname']. '
 user = ' .$dbCfg['user']. '
 password = ' .$dbCfg['password']. '
 ';
+
+    /** @var ConfigurationService */
+    $config = $app['etoa.config.service'];
+
     $config->set("referers",$_SESSION['INSTALL']['referers']);
     $config->set("roundname",$_SESSION['INSTALL']['round_name']);
     $config->set("roundurl",$_SESSION['INSTALL']['round_url']);
@@ -140,12 +143,18 @@ if ($step === 2) {
         'user' => $_SESSION['INSTALL']['db_user'],
         'password' => $_SESSION['INSTALL']['db_password'],
     ];
+    $app['db.options'] = $dbCfg;
     DBManager::getInstance()->connect(0, $dbCfg);
 
     // Migrate database
+    ob_start();
     $cnt = DBManager::getInstance()->migrate();
+    ob_clean();
     if ($cnt > 0) {
         $successMessage = 'Datenbank migriert';
+
+        /** @var ConfigurationService */
+        $config = $app['etoa.config.service'];
 
         // Load config defaults
         $config->restoreDefaults();
@@ -156,6 +165,10 @@ if ($step === 2) {
         $default_round_url = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'];
         $default_referers = $default_round_url."\n".INSTALLER_DEFAULT_LOGINSERVER_URL;
     } else {
+
+        /** @var ConfigurationService */
+        $config = $app['etoa.config.service'];
+
         $default_round_url = $config->get('roundurl');
         $default_referers = $config->get('referers');
     }
