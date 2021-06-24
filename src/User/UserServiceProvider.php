@@ -12,5 +12,9 @@ class UserServiceProvider implements ServiceProviderInterface
         $pimple['etoa.user.repository'] = function (Container $pimple): UserRepository {
             return new UserRepository($pimple['db']);
         };
+
+        $pimple['etoa.user.session.manager'] = function (Container $pimple): UserSessionManager {
+            return new UserSessionManager($pimple['etoa.config.service']);
+        };
     }
 }

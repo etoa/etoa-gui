@@ -1,17 +1,21 @@
 <?php
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserSessionManager;
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
 
+/** @var UserSessionManager */
+$userSessionManager = $app['etoa.user.session.manager'];
+
 echo "<h2>Aktive Sessions</h2>";
 echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-echo "<p>Das User-Timeout betr&auml;gt ".tf($config->getInt('user_timeout'))."</p>";
+echo "<p>Das User-Timeout beträgt ".tf($config->getInt('user_timeout'))."</p>";
 
 if (isset($_GET['kick']))
 {
-    UserSession::kick($_GET['kick']);
+    $userSessionManager->kick($_GET['kick']);
     success_msg("Session ".$_GET['kick']." gelöscht!");
 }
 if (isset($_POST['kick_all']))
@@ -25,12 +29,11 @@ if (isset($_POST['kick_all']))
     {
         while ($arr=mysql_fetch_array($res))
         {
-            UserSession::kick($arr['id']);
+            $userSessionManager->kick($arr['id']);
         }
         success_msg("Alle Sessions gelöscht!");
     }
 }
-
 
 $res=dbquery("SELECT
     s.*,
@@ -83,4 +86,4 @@ if (mysql_num_rows($res)>0)
     echo "</form><br/>";
 }
 else
-    echo "<br/><br/><i>Keine Eintr&auml;ge vorhanden!</i><br/>";
+    echo "<br/><br/><i>Keine Einträge vorhanden!</i><br/>";

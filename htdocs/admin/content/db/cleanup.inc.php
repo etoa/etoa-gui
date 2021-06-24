@@ -4,9 +4,13 @@ use EtoA\Admin\AdminSessionManager;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Ranking\PointsService;
+use EtoA\User\UserSessionManager;
 
 /** @var TicketRepository */
 $ticketRepo = $app['etoa.help.ticket.repository'];
+
+/** @var UserSessionManager */
+$userSessionManager = $app['etoa.user.session.manager'];
 
 /** @var AdminSessionManager */
 $sessionManager = $app['etoa.admin.session.manager'];
@@ -20,11 +24,12 @@ $config = $app['etoa.config.service'];
 echo '<h2>Clean-Up</h2>';
 
 if (isset($_POST['submit_cleanup_selected']) || isset($_POST['submit_cleanup_all'])) {
-	runCleanup($sessionManager, $ticketRepo, $pointsService);
+	runCleanup($userSessionManager, $sessionManager, $ticketRepo, $pointsService);
 }
 cleanupOverView($ticketRepo, $config);
 
 function runCleanup(
+    UserSessionManager $userSessionManager,
 	AdminSessionManager $sessionManager,
 	TicketRepository $ticketRepo,
     PointsService $pointsService
@@ -40,7 +45,7 @@ function runCleanup(
 
 	// Session-Log cleanup
 	if ((isset($_POST['cl_sesslog']) && $_POST['cl_sesslog'] == 1) || $all) {
-		$nr = UserSession::cleanupLogs($_POST['sess_log_timestamp']);
+		$nr = $userSessionManager->cleanupLogs($_POST['sess_log_timestamp']);
 		$nr += $sessionManager->cleanupLogs($_POST['sess_log_timestamp']);
 		echo $nr . " Session-Logs wurden gelöscht!<br/>";
 	}

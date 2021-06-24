@@ -1,27 +1,27 @@
 <?php
 
-use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserSessionManager;
 
 /**
  * Provides session and authentication management
  * for player area.
- *
- * @author Nicolas Perrenoud <mrcage@etoa.ch>
- *
- * @property int $user_id
- * @property string $user_nick
  */
 class UserSession extends Session
 {
     const tableUser = "users";
     const tableSession = "user_sessions";
-    const tableLog = "user_sessionlog";
 
     protected $namePrefix = "user";
 
     function login($data)
     {
-        self::cleanup();
+        // TODO
+        global $app;
+
+        /** @var UserSessionManager */
+        $sessionManager = $app['etoa.user.session.manager'];
+
+        $sessionManager->cleanup();
 
         $loginTimeDifferenceThreshold = 3600;
 
@@ -242,6 +242,12 @@ class UserSession extends Session
      */
     function validate($destroy=1)
     {
+        // TODO
+        global $app;
+
+        /** @var UserSessionManager */
+        $sessionManager = $app['etoa.user.session.manager'];
+
         if (isset($this->time_login))
         {
             $res = dbquery("
@@ -345,8 +351,9 @@ class UserSession extends Session
         {
             // chat logout
             $this->cLogin = false;
+
             // destroy user session
-            self::unregisterSession();
+            $sessionManager->unregisterSession();
         }
         return false;
     }
@@ -402,140 +409,16 @@ class UserSession extends Session
 
     function logout()
     {
+        // TODO
+        global $app;
+
+        /** @var UserSessionManager */
+        $sessionManager = $app['etoa.user.session.manager'];
+
         // chat logout
         $this->cLogin = false;
+
         // destroy session
-        self::unregisterSession();
-    }
-
-    /**
-     * Unregisters a session and save session to session-log
-     *
-     * @param string $sid Session-ID. If null, the current user's session id will be taken
-     * @param bool $logoutPressed True if it was manual logout
-     */
-    static function unregisterSession($sid=null,$logoutPressed = true)
-    {
-        if ($sid == null)
-            $sid = session_id();
-
-        $res = dbquery("
-        SELECT
-            *
-        FROM
-            `".self::tableSession."`
-        WHERE
-            id='".$sid."'
-        ;");
-        if (mysql_num_rows($res)>0)
-        {
-            $arr = mysql_fetch_assoc($res);
-            dbquery("
-            INSERT INTO
-                `".self::tableLog."`
-            (
-                `session_id` ,
-                `user_id`,
-                `ip_addr`,
-                `user_agent`,
-                `time_login`,
-                `time_action`,
-                `time_logout`
-            )
-            VALUES
-            (
-                '".$arr['id']."',
-                '".$arr['user_id']."',
-                '".$arr['ip_addr']."',
-                '".$arr['user_agent']."',
-                '".$arr['time_login']."',
-                '".$arr['time_action']."',
-                '".($logoutPressed==1 ? time() : 0)."'
-            )
-            ");
-            dbquery("
-            DELETE FROM
-                `".self::tableSession."`
-            WHERE
-                id='".$sid."'
-            ;");
-
-            dbquery("
-                    UPDATE
-                        users
-                    SET
-                        user_logouttime='".time()."'
-                    WHERE
-                        user_id='".$arr['user_id']."'
-                    LIMIT 1;");
-        }
-        if ($logoutPressed)
-        {
-            session_regenerate_id(true);
-            session_destroy();
-        }
-    }
-
-    /**
-     * Cleans up sessions with have a timeout. Should be called at login or by cronjob regularly
-     */
-    static function cleanup()
-    {
-        // TODO
-        global $app;
-
-        /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
-
-        $res = dbquery("
-        SELECT
-            id
-        FROM
-            `".self::tableSession."`
-        WHERE
-            time_action+".$config->getInt('user_timeout')." < '".time()."'
-        ;");
-        if (mysql_num_rows($res)>0)
-        {
-            while ($arr = mysql_fetch_row($res))
-            {
-                self::unregisterSession($arr[0],false);
-            }
-        }
-    }
-
-    /**
-     * Removes old session logs from the database
-     * @param int $threshold Time difference in seconds
-     */
-    static function cleanupLogs($threshold=0)
-    {
-        // TODO
-        global $app;
-
-        /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
-
-        $timestamp = $threshold > 0
-            ? time() - $threshold
-            : time() - (24 * 3600 * $config->param1Int('sessionlog_store_days'));
-
-        dbquery("
-        DELETE FROM
-            `".self::tableLog."`
-        WHERE
-            time_action < ".$timestamp.";");
-        $nr = mysql_affected_rows();
-        Log::add(Log::F_SYSTEM, Log::INFO, "$nr Usersession-Logs die älter als ".date("d.m.Y, H:i",$timestamp)." sind wurden gelöscht.");
-        return $nr;
-    }
-
-    /**
-     * Kicks the user with the given session id
-     * @param string $sid Session id
-     */
-    static function kick($sid)
-    {
-        self::unregisterSession($sid,false);
+        $sessionManager->unregisterSession();
     }
 }
