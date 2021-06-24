@@ -86,7 +86,7 @@ function check(ConfigurationService $config, Environment $twig)
 {
     $cnt = 0;
     $message = '';
-    if ($xml = simplexml_load_file(RELATIVE_ROOT . "config/defaults.xml")) {
+    if ($xml = $config->loadXmlDefinitions()) {
         foreach ($xml->items->item as $i) {
             if (!$config->has($i['name'])) {
                 $message .= $i['name'] . ' existiert in der Standardkonfiguration, aber nicht in der Datenbank! ';

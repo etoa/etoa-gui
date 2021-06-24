@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\Core\Configuration;
 
 use Exception;
+use SimpleXMLElement;
 
 class ConfigurationService
 {
@@ -149,9 +150,21 @@ class ConfigurationService
         return $this->has($name) && strlen($this->get($name)) > 0;
     }
 
+    public function loadXmlDefinitions(): SimpleXMLElement
+    {
+        return simplexml_load_file(self::DEFAULTS_FILE_PATH);
+    }
+
+    public function ensureXmlDefinitionsLoaded(): void
+    {
+        if ($this->defaultsXml == null) {
+            $this->defaultsXml = $this->loadXmlDefinitions();
+        }
+    }
+
     public function restoreDefaults(): int
     {
-        if ($xml = simplexml_load_file(self::DEFAULTS_FILE_PATH)) {
+        if ($xml = $this->loadXmlDefinitions()) {
             $this->repository->truncate();
             $cnt = 0;
             foreach ($xml->items->item as $itemDefinition) {
@@ -170,9 +183,7 @@ class ConfigurationService
 
     public function loadDefault($key)
     {
-        if ($this->defaultsXml == null) {
-            $this->defaultsXml = simplexml_load_file(self::DEFAULTS_FILE_PATH);
-        }
+        $this->ensureXmlDefinitionsLoaded();
         $arr = $this->defaultsXml->xpath("/config/items/item[@name='" . $key . "']");
         if ($arr != null && count($arr) > 0) {
             $itemDefinition = $arr[0];
@@ -190,9 +201,7 @@ class ConfigurationService
      */
     public function categories(): array
     {
-        if ($this->defaultsXml == null) {
-            $this->defaultsXml = simplexml_load_file(self::DEFAULTS_FILE_PATH);
-        }
+        $this->ensureXmlDefinitionsLoaded();
         $c = array();
         foreach ($this->defaultsXml->categories->category as $i) {
             $c[(int)$i['id']] = (string)$i;
@@ -202,17 +211,13 @@ class ConfigurationService
 
     public function itemInCategory($cat): array
     {
-        if ($this->defaultsXml == null) {
-            $this->defaultsXml = simplexml_load_file(self::DEFAULTS_FILE_PATH);
-        }
+        $this->ensureXmlDefinitionsLoaded();
         return $this->defaultsXml->xpath("/config/items/item[@cat='" . $cat . "']");
     }
 
     public function getBaseItems(): array
     {
-        if ($this->defaultsXml == null) {
-            $this->defaultsXml = simplexml_load_file(self::DEFAULTS_FILE_PATH);
-        }
+        $this->ensureXmlDefinitionsLoaded();
         return $this->defaultsXml->xpath("/config/items/item[@base='yes']");
     }
 }
