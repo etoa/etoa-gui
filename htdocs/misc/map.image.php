@@ -48,7 +48,7 @@ if (isset($_SESSION) || $admin)
     if ($admin || (isset($s['user_id']) && $s['user_id'] > 0))
     {
 
-        if ($admin && $_GET['user'] ?? false)
+        if ($admin && isset($_GET['user']))
         {
             $user = new User($_GET['user']);
         }
