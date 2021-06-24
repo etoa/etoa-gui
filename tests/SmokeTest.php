@@ -19,4 +19,7 @@ class SmokeTest extends TestCase
             }
         }
     }
+
+    public function tearDown(): void
+    {}
 }
