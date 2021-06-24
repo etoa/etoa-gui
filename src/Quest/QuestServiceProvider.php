@@ -2,6 +2,7 @@
 
 namespace EtoA\Quest;
 
+use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Quest\Initialization\QuestBuilder;
 use EtoA\Quest\Initialization\QuestInitializer;
 use EtoA\Quest\Log\QuestGameLog;
@@ -41,6 +42,13 @@ class QuestServiceProvider implements ServiceProviderInterface, EventListenerPro
 
     public function register(Container $pimple): void
     {
+        $pimple['etoa.quests.enabled'] = function (Container $pimple): bool {
+            /** @var ConfigurationService $config */
+            $config = $pimple['etoa.config.service'];
+
+            return $config->getBoolean('quest_system_enable');
+        };
+
         $pimple['etoa.quest.controller'] = function (Container $pimple): QuestController {
             return new QuestController($pimple['cubicle.quests.advancer'], $pimple['etoa.quest.presenter'], $pimple['cubicle.quests.storage']);
         };

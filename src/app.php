@@ -6,7 +6,6 @@ $app = new \Silex\Application([
     'app.root' => dirname(__DIR__),
     'app.config_dir' => sprintf('%s/htdocs/config/', dirname(__DIR__)),
     'db.options.file' => 'db.conf',
-    'etoa.quests.enabled' => false, // TODO manually disabled for now
 ]);
 if ((bool) $app['debug']) {
     \Symfony\Component\ErrorHandler\Debug::enable();
@@ -23,10 +22,7 @@ $app->register(new \EtoA\Core\TwigServiceProvider(), [
 ]);
 
 $app->register(new \EtoA\Core\Configuration\ConfigurationServiceProvider());
-
-if ((bool) $app['etoa.quests.enabled']) {
-    $app->register(new \LittleCubicleGames\Quests\ServiceProvider());
-}
+$app->register(new \LittleCubicleGames\Quests\ServiceProvider());
 
 // register error handler
 //\Monolog\ErrorHandler::register($app['logger']);
