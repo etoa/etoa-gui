@@ -15,9 +15,12 @@ class ConfigurationServiceProvider implements ServiceProviderInterface
             return new ConfigurationRepository($pimple['db']);
         };
 
+        $pimple['etoa.config.definitions'] = function (): ConfigurationDefinitionsRepository {
+            return new ConfigurationDefinitionsRepository();
+        };
+
         $pimple['etoa.config.service'] = function (Container $pimple): ConfigurationService {
-            return new ConfigurationService($pimple['etoa.config.repository']);
+            return new ConfigurationService($pimple['etoa.config.repository'], $pimple['etoa.config.definitions']);
         };
     }
 }
-

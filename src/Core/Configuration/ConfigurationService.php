@@ -5,22 +5,20 @@ declare(strict_types=1);
 namespace EtoA\Core\Configuration;
 
 use Exception;
-use SimpleXMLElement;
 
 class ConfigurationService
 {
     /** @var array<string,ConfigItem> */
     private ?array $_items = null;
 
-    private $defaultsXml;
-
-    const DEFAULTS_FILE_PATH = __DIR__ . '/../../../htdocs/config/defaults.xml';
-
     private ConfigurationRepository $repository;
 
-    public function __construct(ConfigurationRepository $repository)
+    private ConfigurationDefinitionsRepository $definitions;
+
+    public function __construct(ConfigurationRepository $repository, ConfigurationDefinitionsRepository $definitions)
     {
         $this->repository = $repository;
+        $this->definitions = $definitions;
     }
 
     private function ensureLoaded(bool $reload = false): void
@@ -64,7 +62,7 @@ class ConfigurationService
         if (isset($this->_items[$key])) {
             return $this->_items[$key]->value;
         }
-        if ($elem = $this->loadDefault($key)) {
+        if ($elem = $this->definitions->getItem($key)) {
             return $elem->value;
         }
         throw new Exception('Invalid configuration key ' . $key);
@@ -91,7 +89,7 @@ class ConfigurationService
         if (isset($this->_items[$key])) {
             return $this->_items[$key]->param1;
         }
-        if ($elem = $this->loadDefault($key)) {
+        if ($elem = $this->definitions->getItem($key)) {
             return $elem->param1;
         }
         throw new Exception('Invalid configuration key ' . $key);
@@ -118,7 +116,7 @@ class ConfigurationService
         if (isset($this->_items[$key])) {
             return $this->_items[$key]->param2;
         }
-        if ($elem = $this->loadDefault($key)) {
+        if ($elem = $this->definitions->getItem($key)) {
             return $elem->param2;
         }
         throw new Exception('Invalid configuration key ' . $key);
@@ -152,7 +150,7 @@ class ConfigurationService
 
     public function restoreDefaults(): int
     {
-        $xml = $this->getXmlDefinitions();
+        $xml = $this->definitions->getXmlDefinitions();
         $this->repository->truncate();
         $cnt = 0;
         foreach ($xml->items->item as $itemDefinition) {
@@ -165,60 +163,5 @@ class ConfigurationService
             $cnt++;
         }
         return $cnt;
-    }
-
-    public function getXmlDefinitions(): SimpleXMLElement
-    {
-        if (is_file(self::DEFAULTS_FILE_PATH)) {
-            return simplexml_load_file(self::DEFAULTS_FILE_PATH);
-        }
-        throw new Exception("Konfigurationsdatei existiert nicht!");
-    }
-
-    private function ensureXmlDefinitionsLoaded(): void
-    {
-        if ($this->defaultsXml == null) {
-            $this->defaultsXml = $this->getXmlDefinitions();
-        }
-    }
-
-    public function loadDefault($key)
-    {
-        $this->ensureXmlDefinitionsLoaded();
-        $arr = $this->defaultsXml->xpath("/config/items/item[@name='" . $key . "']");
-        if ($arr != null && count($arr) > 0) {
-            $itemDefinition = $arr[0];
-            return new ConfigItem(
-                (string) $itemDefinition->v,
-                (string) $itemDefinition->p1,
-                (string) $itemDefinition->p2
-            );
-        }
-        return false;
-    }
-
-    /**
-     * @return array<int,string>
-     */
-    public function categories(): array
-    {
-        $this->ensureXmlDefinitionsLoaded();
-        $c = array();
-        foreach ($this->defaultsXml->categories->category as $i) {
-            $c[(int)$i['id']] = (string)$i;
-        }
-        return $c;
-    }
-
-    public function itemInCategory($cat): array
-    {
-        $this->ensureXmlDefinitionsLoaded();
-        return $this->defaultsXml->xpath("/config/items/item[@cat='" . $cat . "']");
-    }
-
-    public function getBaseItems(): array
-    {
-        $this->ensureXmlDefinitionsLoaded();
-        return $this->defaultsXml->xpath("/config/items/item[@base='yes']");
     }
 }

@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Core\Configuration\ConfigurationDefinitionsRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
@@ -7,21 +8,28 @@ use Twig\Environment;
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
 
+/** @var ConfigurationDefinitionsRepository */
+$definitions = $app['etoa.config.definitions'];
+
 /** @var Request */
 $request = Request::createFromGlobals();
 
 if ($sub === 'restoredefaults') {
-    restore($request, $config, $twig);
+    restore($request, $config, $definitions, $twig);
 } elseif ($sub === 'check') {
-    check($config, $twig);
+    check($config, $definitions, $twig);
 } elseif ($sub === 'editor') {
-    editor($request, $config, $twig);
+    editor($request, $config, $definitions, $twig);
 } else {
-    commonConfig($request, $config, $twig);
+    commonConfig($request, $config, $definitions, $twig);
 }
 
-function restore(Request $request, ConfigurationService $config, Environment $twig)
-{
+function restore(
+    Request $request,
+    ConfigurationService $config,
+    ConfigurationDefinitionsRepository $definitions,
+    Environment $twig
+) {
     $successMessage = null;
     $items = [];
     if ($request->request->has('restoresubmit')) {
@@ -33,8 +41,8 @@ function restore(Request $request, ConfigurationService $config, Environment $tw
     }
 
     // Changed values
-    foreach ($config->categories() as $ck => $cv) {
-        foreach ($config->itemInCategory($ck) as $i) {
+    foreach ($definitions->categories() as $ck => $cv) {
+        foreach ($definitions->itemInCategory($ck) as $i) {
             $name = $i['name'];
             if (isset($i->v)) {
                 if ((string)$i->v != $config->get($name)) {
@@ -82,11 +90,14 @@ function restore(Request $request, ConfigurationService $config, Environment $tw
     exit();
 }
 
-function check(ConfigurationService $config, Environment $twig)
-{
+function check(
+    ConfigurationService $config,
+    ConfigurationDefinitionsRepository $definitions,
+    Environment $twig
+) {
     $cnt = 0;
     $message = '';
-    $xml = $config->getXmlDefinitions();
+    $xml = $definitions->getXmlDefinitions();
     foreach ($xml->items->item as $i) {
         if (!$config->has($i['name'])) {
             $message .= $i['name'] . ' existiert in der Standardkonfiguration, aber nicht in der Datenbank! ';
@@ -123,12 +134,16 @@ function check(ConfigurationService $config, Environment $twig)
     exit();
 }
 
-function editor(Request $request, ConfigurationService $config, Environment $twig)
-{
+function editor(
+    Request $request,
+    ConfigurationService $config,
+    ConfigurationDefinitionsRepository $definitions,
+    Environment $twig
+) {
     $successMessage = null;
     $activeTab = null;
     // Load categories
-    $categories = $config->categories();
+    $categories = $definitions->categories();
 
     // Current category
     $currentCategory = current(array_keys($categories));
@@ -140,7 +155,7 @@ function editor(Request $request, ConfigurationService $config, Environment $twi
     if ($request->request->has('submit')) {
         foreach ($categories as $ck => $cv) {
             if ($currentCategory == $ck) {
-                foreach ($config->itemInCategory($ck) as $i) {
+                foreach ($definitions->itemInCategory($ck) as $i) {
                     $v = isset($i->v) ? getFormValue((string)$i->v['type'], (string)$i['name'], "v", $request->request->all()) : "";
                     $p1 = isset($i->p1) ? getFormValue((string)$i->p1['type'], (string)$i['name'], "p1", $request->request->all()) : "";
                     $p2 = isset($i->p2) ? getFormValue((string)$i->p2['type'], (string)$i['name'], "p2", $request->request->all()) : "";
@@ -160,7 +175,7 @@ function editor(Request $request, ConfigurationService $config, Environment $twi
         $configData[$ck] = $cv;
 
         if ($currentCategory == $ck) {
-            foreach ($config->itemInCategory($ck) as $i) {
+            foreach ($definitions->itemInCategory($ck) as $i) {
                 $name = $i['name'];
                 if (isset($i->v)) {
                     $items[] = [
@@ -206,11 +221,15 @@ function editor(Request $request, ConfigurationService $config, Environment $twi
     exit();
 }
 
-function commonConfig(Request $request, ConfigurationService $config, Environment $twig)
-{
+function commonConfig(
+    Request $request,
+    ConfigurationService $config,
+    ConfigurationDefinitionsRepository $definitions,
+    Environment $twig
+) {
     $successMessage = null;
     if ($request->request->has('submit')) {
-        foreach ($config->getBaseItems() as $i) {
+        foreach ($definitions->getBaseItems() as $i) {
             $v = isset($i->v) ? getFormValue((string)$i->v['type'], (string)$i['name'], "v", $request->request->all()) : "";
             $p1 = isset($i->p1) ? getFormValue((string)$i->p1['type'], (string)$i['name'], "p1", $request->request->all()) : "";
             $p2 = isset($i->p2) ? getFormValue((string)$i->p2['type'], (string)$i['name'], "p2", $request->request->all()) : "";
@@ -220,7 +239,7 @@ function commonConfig(Request $request, ConfigurationService $config, Environmen
         $successMessage = 'Änderungen wurden übernommen!';
     }
     $items = [];
-    foreach ($config->getBaseItems() as $i) {
+    foreach ($definitions->getBaseItems() as $i) {
         if (isset($i->v)) {
             $items[] = [
                 'label' => $i->v['comment'],
