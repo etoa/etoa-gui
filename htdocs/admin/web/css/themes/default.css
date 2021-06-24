@@ -761,21 +761,6 @@ body.login #main {
 }
 
 /******************
-* Popup Window    *
-******************/
-
-body.adminpopup {
-	background: #f8f8f8;
-	color:black;
-}
-
-#popupcontainer {
-	margin: 0;
-	padding: 5px 20px 20px 20px;
-	font-size: 0.9em;
-}
-
-/******************
 * Overview        *
 ******************/
 
@@ -864,14 +849,6 @@ body.adminpopup {
   color:#000;
   background:#eee;
   font-weight: normal;
-}
-
-/*
-* Popup
-*/
-
-.popuplink.highlight {
-	color:#ff0;
 }
 
 /*

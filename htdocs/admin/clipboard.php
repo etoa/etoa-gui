@@ -42,7 +42,7 @@ function clipboardIndex(UserRepository $userRepo)
                 if ($userNick != null) {
                     echo "<div id=\"ttuser" . $uid . "\" style=\"display:none;\">
                     <a href=\"index.php?page=user&amp;sub=edit&amp;id=" . $uid . "\" target=\"main\">Daten anzeigen</a><br/>
-                    " . popupLink("sendmessage", "Nachricht senden", "", "id=" . $uid) . "<br/>
+                    <a href=\"index.php?page=sendmessage&amp;id=" . $uid ."\" target=\"main\">Nachricht senden</a><br/>
                     <a href=\"?rem_user=" . $uid . "\" target=\"_self\">Entfernen</a>
                     </div>";
 

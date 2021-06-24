@@ -8,34 +8,6 @@
 //////////////////////////////////////////////////////
 
 use Doctrine\DBAL\Query\QueryBuilder;
-use EtoA\Core\Configuration\ConfigurationService;
-
-function popupLink($type,$title,$class="",$params="")
-{
-    $res = "<a href=\"#\" class=\"popuplink".($class!="" ? " $class" : "")."\" ";
-    $p = $params != "" ? "&amp;".$params : "";
-    switch ($type)
-    {
-        case "tickets":
-            $res .= " onclick=\"window.open('popup.php?page=tickets".$p."','Tickets','top=20,left='+(screen.availWidth-720)+',width=700, height=600, status=no, scrollbars=yes')\"";
-            break;
-        case "notepad":
-            $res .= " onclick=\"window.open('popup.php?page=notepad','Notepad','width=600, height=500, status=no, scrollbars=yes')\"";
-            break;
-        case "sendmessage":
-            $res .= " onclick=\"window.open('popup.php?page=sendmessage".$p."','Message','width=500, height=300, status=no, scrollbars=no')\"";
-            break;
-        default:
-
-    }
-    $res .=">".$title."</a>";
-    return $res;
-}
-
-function openerLink($target,$title,$css="")
-{
-    return "<a href=\"#\" onclick=\"opener.document.location='index.php?".$target."'\" ".($css!="" ? "style=\"$css\"" : "").">".$title."</a>";
-}
 
 /**
 * Shows a table view of a given mysql result
