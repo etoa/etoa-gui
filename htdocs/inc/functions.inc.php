@@ -1519,39 +1519,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 	}
 
 	/**
-	* Gebäude zur gebäudeliste hinzufügen
-	*
-	* @param int $entity entity-ID
-	* @param int $user User-ID
-	* @param int $building Building-ID
-	* @param int $level Anzahl
-	* @author MrCage
-	*/
-	function buildlistAdd($entity,$user,$building,$level)
-	{
-			dbquery("
-				INSERT INTO
-				buildlist
-				(
-					buildlist_user_id,
-					buildlist_entity_id,
-					buildlist_building_id,
-					buildlist_current_level
-				)
-				VALUES
-				(
-					'".$user."',
-					'".$entity."',
-					'".$building."',
-					'".max($level,0)."'
-				)
-				ON DUPLICATE KEY
-				UPDATE
-					buildlist_current_level = '".max($level,0)."';
-			");
-	}
-
-	/**
 	* Zeigt ein Avatarbild an
 	*/
 	function show_avatar($avatar=BOARD_DEFAULT_IMAGE)

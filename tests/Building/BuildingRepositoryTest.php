@@ -25,14 +25,7 @@ class BuildingRepositoryTest extends AbstractDbTestCase
         $userId = 1;
         $buildingId = 3;
         for ($i = 4; $i <= 6; $i++) {
-            $this->connection->createQueryBuilder()
-                ->insert('buildlist')
-                ->values([
-                    'buildlist_user_id' => $userId,
-                    'buildlist_entity_id' => $i,
-                    'buildlist_current_level' => $i,
-                    'buildlist_building_id' => $buildingId,
-                ])->execute();
+            $this->repository->addBuilding($buildingId, $i, $userId, $i);
         }
 
         $this->assertSame(6, $this->repository->getHighestBuildingLevel($userId, $buildingId));
