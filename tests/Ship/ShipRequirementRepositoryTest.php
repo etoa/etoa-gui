@@ -21,4 +21,11 @@ class ShipRequirementRepositoryTest extends AbstractDbTestCase
 
         $this->assertNotEmpty($technologies);
     }
+
+    public function testGetShipsWithRequiredTechnology(): void
+    {
+        $requirements = $this->repository->getShipsWithRequiredTechnology(4);
+
+        $this->assertNotEmpty($requirements);
+    }
 }

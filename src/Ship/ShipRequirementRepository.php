@@ -24,6 +24,26 @@ class ShipRequirementRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn($row) => new ShipRequiredTechnology($row), $data);
+        return array_map(fn($row) => ShipRequiredTechnology::createFromTech($row), $data);
+    }
+
+    /**
+     * @return ShipRequiredTechnology[]
+     */
+    public function getShipsWithRequiredTechnology(int $techId): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('s.ship_id, s.ship_name, r.req_level')
+            ->from('ship_requirements', 'r')
+            ->innerJoin('r', 'ships', 's', 'r.obj_id = s.ship_id')
+            ->where('r.req_tech_id = :techId')
+            ->andWhere('s.special_ship = 0')
+            ->setParameters([
+                'techId' => $techId,
+            ])
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn($row) => ShipRequiredTechnology::createFromShip($row), $data);
     }
 }

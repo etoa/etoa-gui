@@ -8,10 +8,23 @@ class ShipRequiredTechnology
     public string $name;
     public int $requiredLevel;
 
-    public function __construct(array $data)
+    public static function createFromTech(array $data): ShipRequiredTechnology
     {
-        $this->id = (int) $data['tech_id'];
-        $this->name = $data['tech_name'];
-        $this->requiredLevel = (int) $data['req_level'];
+        $requirement = new ShipRequiredTechnology();
+        $requirement->id = (int) $data['tech_id'];
+        $requirement->name = $data['tech_name'];
+        $requirement->requiredLevel = (int) $data['req_level'];
+
+        return $requirement;
+    }
+
+    public static function createFromShip(array $data): ShipRequiredTechnology
+    {
+        $requirement = new ShipRequiredTechnology();
+        $requirement->id = (int) $data['ship_id'];
+        $requirement->name = $data['ship_name'];
+        $requirement->requiredLevel = (int) $data['req_level'];
+
+        return $requirement;
     }
 }
