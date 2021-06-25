@@ -5,19 +5,22 @@ declare(strict_types=1);
 namespace EtoA\Admin;
 
 use EtoA\Core\Configuration\ConfigurationService;
-use Log;
+use EtoA\Core\Logging\Log;
 
 class AdminSessionManager
 {
     private AdminSessionRepository $repository;
     private ConfigurationService $config;
+    private Log $log;
 
     public function __construct(
         AdminSessionRepository $repository,
-        ConfigurationService $config
+        ConfigurationService $config,
+        Log $log
     ) {
         $this->repository = $repository;
         $this->config = $config;
+        $this->log = $log;
     }
 
     /**
@@ -33,7 +36,7 @@ class AdminSessionManager
 
         $count = $this->repository->removeSessionLogs($timestamp);
 
-        Log::add(Log::F_SYSTEM, Log::INFO, "$count Admin-Session-Logs die älter als " . date("d.m.Y, H:i", $timestamp) . " sind wurden gelöscht.");
+        $this->log->add(Log::F_SYSTEM, Log::INFO, "$count Admin-Session-Logs die älter als " . date("d.m.Y, H:i", $timestamp) . " sind wurden gelöscht.");
 
         return $count;
     }

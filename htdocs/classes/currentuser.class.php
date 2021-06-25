@@ -1,6 +1,8 @@
 <?PHP
 
-	/**
+use EtoA\Core\Logging\Log;
+
+/**
 	* Provides methods for accessing
 	* the current logged in user
 	*
@@ -46,6 +48,12 @@
 
 		function setPassword($oldPassword, $newPassword1, $newPassword2, &$returnMsg)
 		{
+            // TODO
+            global $app;
+
+            /** @var Log */
+            $log = $app['etoa.log.service'];
+
 			$res = dbquery("
 			SELECT
 				user_password
@@ -82,7 +90,7 @@
 									user_id='".$this->id."'
 								;"))
 							{
-								Log::add(Log::F_USER, Log::INFO ,"Der Spieler [b]".$this->nick."[/b] &auml;ndert sein Passwort!");
+								$log->add(Log::F_USER, Log::INFO ,"Der Spieler [b]".$this->nick."[/b] &auml;ndert sein Passwort!");
 								$mail = new Mail("Passwortänderung","Hallo ".$this->nick."\n\nDies ist eine Bestätigung, dass du dein Passwort für deinen Account erfolgreich geändert hast!\n\nSolltest du dein Passwort nicht selbst geändet haben, so nimm bitte sobald wie möglich Kontakt mit einem Game-Administrator auf: http://www.etoa.ch/kontakt");
 								$mail->send($this->email);
 								$this->addToUserLog("settings","{nick} ändert sein Passwort.",0);

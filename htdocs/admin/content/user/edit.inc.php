@@ -2,6 +2,7 @@
 
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\Log;
 use EtoA\Help\TicketSystem\TicketRepository;
 
 /** @var TicketRepository */
@@ -12,6 +13,9 @@ $adminUserRepo = $app['etoa.admin.user.repository'];
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
+
+/** @var Log */
+$log = $app['etoa.log.service'];
 
 if (isset($_GET['id']))
     $id = $_GET['id'];
@@ -155,7 +159,7 @@ if (isset($_POST['save']))
         $parr = mysql_fetch_row($pres);
         $sql.= ",user_password='".saltPasswort($_POST['user_password'])."'";
         echo "Das Passwort wurde ge&auml;ndert!<br>";
-        Log::add(Log::F_ADMIN,Log::INFO, $cu->nick." ändert das Passwort von ".$_POST['user_nick']."");
+        $log->add(Log::F_ADMIN,Log::INFO, $cu->nick." ändert das Passwort von ".$_POST['user_nick']."");
     }
 
     // Handle ban

@@ -8,6 +8,7 @@
 //////////////////////////////////////////////////////
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\Log;
 
 /**
 * Provides methods for accessing user information
@@ -819,6 +820,9 @@ class User implements \EtoA\User\UserInterface
         /** @var ConfigurationService */
         $config = $app['etoa.config.service'];
 
+        /** @var Log */
+        $log = $app['etoa.log.service'];
+
         $utx = new UserToXml($this->id);
         if ($xmlfile = $utx->toCacheFile())
         {
@@ -1000,11 +1004,11 @@ class User implements \EtoA\User\UserInterface
 
             //Log schreiben
             if($self)
-                Log::add(Log::F_USER, Log::INFO, "Der Benutzer ".$this->nick." hat sich selbst gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.");
+                $log->add(Log::F_USER, Log::INFO, "Der Benutzer ".$this->nick." hat sich selbst gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.");
             elseif($from!="")
-                Log::add(Log::F_USER,Log::INFO, "Der Benutzer ".$this->nick." wurde von ".$from." gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.");
+                $log->add(Log::F_USER,Log::INFO, "Der Benutzer ".$this->nick." wurde von ".$from." gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.");
             else
-                Log::add(Log::F_USER, Log::INFO, "Der Benutzer ".$this->nick." wurde gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.");
+                $log->add(Log::F_USER, Log::INFO, "Der Benutzer ".$this->nick." wurde gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.");
 
             $text ="Hallo ".$this->nick."
 

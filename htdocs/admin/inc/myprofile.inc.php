@@ -2,20 +2,28 @@
 
 use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Core\Logging\Log;
 use Twig\Environment;
 
 /** @var AdminUserRepository */
 $adminUserRepo = $app['etoa.admin.user.repository'];
 
+/** @var Log */
+$log = $app['etoa.log.service'];
+
 if (isset($_POST['submitPassword'])) {
-    submitPassword($cu, $adminUserRepo, $twig);
+    submitPassword($cu, $adminUserRepo, $log, $twig);
 }
 if (isset($_POST['submitProfile'])) {
-    submitProfile($cu, $adminUserRepo, $twig);
+    submitProfile($cu, $adminUserRepo, $log, $twig);
 }
 profileIndex($cu, $twig);
 
-function submitPassword(AdminUser $cu, AdminUserRepository $adminUserRepo, Environment $twig)
+function submitPassword(
+    AdminUser $cu,
+    AdminUserRepository $adminUserRepo,
+    Log $log,
+    Environment $twig)
 {
     try {
         if (!$cu->checkEqualPassword($_POST['user_password_old'])) {
@@ -32,13 +40,17 @@ function submitPassword(AdminUser $cu, AdminUserRepository $adminUserRepo, Envir
 
         $twig->addGlobal('successMessage', 'Das Passwort wurde geändert!');
 
-        Log::add(Log::F_ADMIN, Log::INFO,  $cu->id . " ändert sein Passwort");
+        $log->add(Log::F_ADMIN, Log::INFO,  $cu->id . " ändert sein Passwort");
     } catch (\Exception $ex) {
         $twig->addGlobal('errorMessage', $ex->getMessage());
     }
 }
 
-function submitProfile(AdminUser $cu, AdminUserRepository $adminUserRepo, Environment $twig)
+function submitProfile(
+    AdminUser $cu,
+    AdminUserRepository $adminUserRepo,
+    Log $log,
+    Environment $twig)
 {
     $cu->name = $_POST['user_name'];
     $cu->email = $_POST['user_email'];
@@ -51,7 +63,7 @@ function submitProfile(AdminUser $cu, AdminUserRepository $adminUserRepo, Enviro
 
     $twig->addGlobal('successMessage', 'Die Daten wurden geändert!');
 
-    Log::add(Log::F_ADMIN, Log::INFO, $cu->nick . " ändert seine Daten");
+    $log->add(Log::F_ADMIN, Log::INFO, $cu->nick . " ändert seine Daten");
 }
 
 function profileIndex(AdminUser $cu, Environment $twig)

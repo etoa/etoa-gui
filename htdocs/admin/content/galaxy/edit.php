@@ -1,9 +1,13 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\Log;
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
+
+/** @var Log */
+$log = $app['etoa.log.service'];
 
 $id = $_GET['id'];
 if (isset($id) && $id > 0)
@@ -128,7 +132,7 @@ if (isset($id) && $id > 0)
                         }
 
                         //Log Schreiben
-                        Log::add(Log::F_GALAXY,Log::INFO,$cu->nick." wechselt den Besitzer vom Planeten: [page galaxy sub=edit id=".$id."][B]".$id."[/B][/page]\nAlter Besitzer: [page user sub=edit user_id=".$_POST['planet_user_id_old']."][B]".$_POST['planet_user_id_old']."[/B][/page]\nNeuer Besitzer: [page user sub=edit user_id=".$_POST['planet_user_id']."][B]".$_POST['planet_user_id']."[/B][/page]");
+                        $log->add(Log::F_GALAXY,Log::INFO,$cu->nick." wechselt den Besitzer vom Planeten: [page galaxy sub=edit id=".$id."][B]".$id."[/B][/page]\nAlter Besitzer: [page user sub=edit user_id=".$_POST['planet_user_id_old']."][B]".$_POST['planet_user_id_old']."[/B][/page]\nNeuer Besitzer: [page user sub=edit user_id=".$_POST['planet_user_id']."][B]".$_POST['planet_user_id']."[/B][/page]");
 
                         success_msg("Der Planet wurde dem User mit der ID: [b]".$_POST['planet_user_id']."[/b] &uuml;bergeben!");
                     }

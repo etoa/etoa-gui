@@ -1,6 +1,7 @@
 <?php
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\Log;
 
 /**
  * Implements a report management system, replacing some of the
@@ -333,6 +334,9 @@ abstract class Report
             /** @var ConfigurationService */
             $config = $app['etoa.config.service'];
 
+            /** @var Log */
+            $log = $app['etoa.log.service'];
+
             $nr = 0;
             if ($onlyDeleted==0)
             {
@@ -453,7 +457,7 @@ abstract class Report
                         AND `timestamp`<'".$timestamp."';
                 ");
                 $nr = mysql_affected_rows();
-                Log::add(Log::F_SYSTEM, Log::INFO, "Unarchivierte Berichte die älter als ".date("d.m.Y H:i",$timestamp)." sind wurden gelöscht!");
+                $log->add(Log::F_SYSTEM, Log::INFO, "Unarchivierte Berichte die älter als ".date("d.m.Y H:i",$timestamp)." sind wurden gelöscht!");
             }
 
             // Deleted
@@ -570,7 +574,7 @@ abstract class Report
                     deleted='1'
                     AND timestamp<'".$timestamp."';
             ");
-            Log::add(Log::F_SYSTEM, Log::INFO, "Unarchivierte Berichte die älter als ".date("d.m.Y H:i",$timestamp)." sind wurden gelöscht!");
+            $log->add(Log::F_SYSTEM, Log::INFO, "Unarchivierte Berichte die älter als ".date("d.m.Y H:i",$timestamp)." sind wurden gelöscht!");
             $nr += mysql_affected_rows();
             return $nr;
         }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace EtoA\Core\Log;
+namespace EtoA\Core\Logging;
 
 class FleetLogEntry
 {

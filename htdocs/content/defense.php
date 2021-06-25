@@ -1,9 +1,13 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\GameLog;
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
+
+/** @var GameLog */
+$gameLog = $app['etoa.log.game.service'];
 
 	//////////////////////////////////////////////////
 	//		 	 ____    __           ______       			//
@@ -729,7 +733,7 @@ $config = $app['etoa.config.service'];
 							[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
 
 							//Log Speichern
-							GameLog::add(GameLog::F_DEF, GameLog::INFO,$log_text,$cu->id,$cu->allianceId,$cp->id, $def_id, 1, $build_cnt);
+							$gameLog->add(GameLog::F_DEF, GameLog::INFO,$log_text,$cu->id,$cu->allianceId,$cp->id, $def_id, 1, $build_cnt);
 
 							echo "<tr><td>".nf($build_cnt)." ".$defs[$def_id]['def_name']." in Auftrag gegeben!</td></tr>";
 
@@ -897,7 +901,7 @@ $config = $app['etoa.config.service'];
 					[b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
 
 					//Log Speichern
-					GameLog::add(GameLog::F_DEF, GameLog::INFO,$log_text,$cu->id,$cu->allianceId,$cp->id, $defId, 0, $queue_count);
+					$gameLog->add(GameLog::F_DEF, GameLog::INFO,$log_text,$cu->id,$cu->allianceId,$cp->id, $defId, 0, $queue_count);
 					header("Refresh:0");
 				}
 			}

@@ -1,9 +1,13 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\GameLog;
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
+
+/** @var GameLog */
+$gameLog = $app['etoa.log.game.service'];
 
 	//Definition für "Info" Link
 	define('ITEMS_TBL',"ships");
@@ -670,7 +674,7 @@ $config = $app['etoa.config.service'];
                             [b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
                             [b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
 
-							GameLog::add(GameLog::F_SHIP, GameLog::INFO,$log_text,$cu->id,$cu->allianceId,$cp->id, $ship_id, 1, $build_cnt);
+							$gameLog->add(GameLog::F_SHIP, GameLog::INFO,$log_text,$cu->id,$cu->allianceId,$cp->id, $ship_id, 1, $build_cnt);
 
 							//Rohstoffe summieren, diese werden nach der Schleife abgezogen
 							$total_metal+=$bc['metal'];
@@ -828,7 +832,7 @@ $config = $app['etoa.config.service'];
                     [b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
 
 					//Log Speichern
-					GameLog::add(GameLog::F_SHIP, GameLog::INFO,$log_text,$cu->id,$cu->allianceId,$cp->id, $ship_id, 0, $queue_count);
+					$gameLog->add(GameLog::F_SHIP, GameLog::INFO,$log_text,$cu->id,$cu->allianceId,$cp->id, $ship_id, 0, $queue_count);
 				    header("Refresh:0");
                 }
 

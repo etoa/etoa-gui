@@ -1,9 +1,13 @@
 <?php
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\Log;
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
+
+/** @var Log */
+$log = $app['etoa.log.service'];
 
 $tfa = new RobThree\Auth\TwoFactorAuth(APP_NAME);
 $errorMessage = null;
@@ -12,7 +16,7 @@ if (isset($_POST['tfa_activate'])) {
         $cu->tfaSecret = $_SESSION['tfa_activate_secret'];
         $cu->save();
         unset($_SESSION['tfa_activate_secret']);
-        Log::add(Log::F_ADMIN,Log::INFO, $cu->nick . ' aktiviert Zwei-Faktor-Authentifizierung');
+        $log->add(Log::F_ADMIN,Log::INFO, $cu->nick . ' aktiviert Zwei-Faktor-Authentifizierung');
         forward('?myprofile');
     }
 
@@ -25,7 +29,7 @@ if (isset($_POST['tfa_disable'])) {
         $cu->tfaSecret = '';
         $cu->save();
         unset($_SESSION['tfa_activate_secret']);
-        Log::add(Log::F_ADMIN,Log::INFO, $cu->nick . ' deaktiviert Zwei-Faktor-Authentifizierung');
+        $log->add(Log::F_ADMIN,Log::INFO, $cu->nick . ' deaktiviert Zwei-Faktor-Authentifizierung');
         forward('?myprofile');
     }
 

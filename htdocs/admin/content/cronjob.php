@@ -1,9 +1,13 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\Log;
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
+
+/** @var Log */
+$log = $app['etoa.log.service'];
 
 // Activate update system
 $successMessage = null;
@@ -70,7 +74,7 @@ if (isset($_GET['runtask'])) {
         $tr = new PeriodicTaskRunner($app);
         $out = $tr->runTask($_GET['runtask']);
         $_SESSION['update_results'] = $title.$out.ob_get_clean();
-        Log::add(Log::F_UPDATES, Log::INFO, "Task [b]".$_GET['runtask']."[/b] manuell ausgeführt:\n".trim($out));
+        $log->add(Log::F_UPDATES, Log::INFO, "Task [b]".$_GET['runtask']."[/b] manuell ausgeführt:\n".trim($out));
     }
     forward('?page='.$page);
 }
@@ -79,16 +83,16 @@ if (isset($_GET['runtask'])) {
 if (isset($_GET['run'])) {
     ob_start();
     $tr = new PeriodicTaskRunner($app);
-    $log = '';
+    $output = '';
     foreach (PeriodicTaskRunner::getScheduleFromConfig() as $tc) {
         if ($_GET['run'] == "all" || PeriodicTaskRunner::shouldRun($tc['schedule'], $time)) {
-            $log.= $tc['name'].': '.$tr->runTask($tc['name']);
+            $output.= $tc['name'].': '.$tr->runTask($tc['name']);
         }
     }
-    $log.= ob_get_clean();
-    $log.= "\nTotal: ".$tr->getTotalDuration().' sec';
-    $_SESSION['update_results'] = $log;
-    Log::add(Log::F_UPDATES, Log::INFO, "Tasks manuell ausgeführt:\n".trim($log));
+    $output.= ob_get_clean();
+    $output.= "\nTotal: ".$tr->getTotalDuration().' sec';
+    $_SESSION['update_results'] = $output;
+    $log->add(Log::F_UPDATES, Log::INFO, "Tasks manuell ausgeführt:\n".trim($output));
     forward('?page='.$page);
 }
 

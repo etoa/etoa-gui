@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\Log;
 
 class Message
 {
@@ -94,6 +95,9 @@ class Message
         /** @var ConfigurationService */
         $config = $app['etoa.config.service'];
 
+        /** @var Log */
+        $log = $app['etoa.log.service'];
+
         $nr = 0;
         if ($onlyDeleted==0)
         {
@@ -136,7 +140,7 @@ class Message
                     AND message_timestamp<'".$timestamp."';
             ");
             $nr = mysql_affected_rows();
-            Log::add(Log::F_SYSTEM, Log::INFO, "Unarchivierte Nachrichten die älter als ".date("d.m.Y H:i",$timestamp)." sind wurden gelöscht!");
+            $log->add(Log::F_SYSTEM, Log::INFO, "Unarchivierte Nachrichten die älter als ".date("d.m.Y H:i",$timestamp)." sind wurden gelöscht!");
         }
 
         // Deleted
@@ -175,7 +179,7 @@ class Message
                 message_deleted='1'
                 AND message_timestamp<'".$timestamp."';
         ");
-        Log::add(Log::F_SYSTEM, Log::INFO, "Unarchivierte Nachrichten die älter als ".date("d.m.Y H:i",$timestamp)." sind wurden gelöscht!");
+        $log->add(Log::F_SYSTEM, Log::INFO, "Unarchivierte Nachrichten die älter als ".date("d.m.Y H:i",$timestamp)." sind wurden gelöscht!");
         $nr += mysql_affected_rows();
         return $nr;
     }

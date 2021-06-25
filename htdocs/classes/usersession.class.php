@@ -1,6 +1,7 @@
 <?php
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\Log;
 
 /**
  * Provides session and authentication management
@@ -219,6 +220,12 @@ class UserSession extends Session
 
         if (isset($tokenlog))
         {
+            // TODO
+            global $app;
+
+            /** @var Log */
+            $log = $app['etoa.log.service'];
+
             $tokenlog = true;
             $text = $this->lastError."\n";
 
@@ -229,7 +236,7 @@ class UserSession extends Session
                 $text.= "GET: ".var_export($_GET,true)."\n";
             $text.= "Agent: ".$_SERVER['HTTP_USER_AGENT']."\n";
             $text.= "Referer: ".$_SERVER['HTTP_REFERER']."\n";
-            Log::add(Log::F_ILLEGALACTION, Log::WARNING, $text);
+            $log->add(Log::F_ILLEGALACTION, Log::WARNING, $text);
         }
 
         return false;
@@ -516,6 +523,9 @@ class UserSession extends Session
         /** @var ConfigurationService */
         $config = $app['etoa.config.service'];
 
+        /** @var Log */
+        $log = $app['etoa.log.service'];
+
         $timestamp = $threshold > 0
             ? time() - $threshold
             : time() - (24 * 3600 * $config->param1Int('sessionlog_store_days'));
@@ -526,7 +536,7 @@ class UserSession extends Session
         WHERE
             time_action < ".$timestamp.";");
         $nr = mysql_affected_rows();
-        Log::add(Log::F_SYSTEM, Log::INFO, "$nr Usersession-Logs die älter als ".date("d.m.Y, H:i",$timestamp)." sind wurden gelöscht.");
+        $log->add(Log::F_SYSTEM, Log::INFO, "$nr Usersession-Logs die älter als ".date("d.m.Y, H:i",$timestamp)." sind wurden gelöscht.");
         return $nr;
     }
 

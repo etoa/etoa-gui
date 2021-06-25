@@ -25,12 +25,17 @@
 	* @copyright Copyright (c) 2004-2008 by EtoA Gaming, www.etoa.net
 	*/
 
-	/** @var int $fleet_id */
+use EtoA\Core\Logging\Log;
+
+/** @var int $fleet_id */
 	/** @var Fleet $fd */
 
 	$lead_id = (int) $_GET['lead_id'] > 0 ? (int) $_GET['lead_id'] : -1;
 
 	$rights = true;
+
+/** @var Log */
+$log = $app['etoa.log.service'];
 
 	if ($lead_id > 0)
 		$fd = new Fleet($fleet_id,-1,$lead_id);
@@ -54,7 +59,7 @@
 					if ($fd->cancelFlight())
 					{
 						success_msg("Flug erfolgreich abgebrochen!");
-						Log::add(Log::F_FLEETACTION,Log::INFO, "Der Spieler [b]".$cu->nick."[/b] bricht den Flug seiner Flotte [b]".$fleet_id."[/b] ab");
+						$log->add(Log::F_FLEETACTION,Log::INFO, "Der Spieler [b]".$cu->nick."[/b] bricht den Flug seiner Flotte [b]".$fleet_id."[/b] ab");
 					}
 					else
 					{
@@ -68,7 +73,7 @@
 					if ($fd->cancelFlight(true))
 					{
 						success_msg("Flug erfolgreich abgebrochen!");
-						Log::add(Log::F_FLEETACTION,Log::INFO, "Der Spieler [b]".$cu->nick."[/b] bricht den ganzen Allianzflug seiner Flotte [b]".$fleet_id."[/b] ab");
+						$log->add(Log::F_FLEETACTION,Log::INFO, "Der Spieler [b]".$cu->nick."[/b] bricht den ganzen Allianzflug seiner Flotte [b]".$fleet_id."[/b] ab");
 					}
 					else
 					{

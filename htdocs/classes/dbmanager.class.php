@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\Log;
 
 /**
 * Database Manager
@@ -307,6 +308,12 @@ class DBManager implements ISingleton	{
 	*/
 	function optimizeTables($manual=false)
 	{
+        // TODO
+        global $app;
+
+        /** @var Log */
+        $log = $app['etoa.log.service'];
+
 		$res = $this->query("SHOW TABLES;");
 		$n = mysql_num_rows($res);
 		$cnt=0;
@@ -323,12 +330,12 @@ class DBManager implements ISingleton	{
 		$ores = $this->query("OPTIMIZE TABLE ".$tbls.";");
 		if ($manual)
 		{
-			Log::add(Log::F_SYSTEM, Log::INFO,$n." Tabellen wurden manuell optimiert!");
+			$log->add(Log::F_SYSTEM, Log::INFO,$n." Tabellen wurden manuell optimiert!");
 			return $ores;
 		}
 		else
 		{
-            Log::add(Log::F_SYSTEM, Log::INFO, $n." Tabellen wurden optimiert!");
+            $log->add(Log::F_SYSTEM, Log::INFO, $n." Tabellen wurden optimiert!");
 			return $n;
 		}
 	}
@@ -338,6 +345,12 @@ class DBManager implements ISingleton	{
 	*/
 	function repairTables($manual=false)
 	{
+        // TODO
+        global $app;
+
+        /** @var Log */
+        $log = $app['etoa.log.service'];
+
 		$res = $this->query("SHOW TABLES;");
 		$n = mysql_num_rows($res);
 		$cnt=0;
@@ -354,12 +367,12 @@ class DBManager implements ISingleton	{
 		$ores = $this->query("REPAIR TABLE ".$tbls.";");
 		if ($manual)
 		{
-            Log::add(Log::F_SYSTEM, Log::INFO, $n." Tabellen wurden manuell repariert!");
+            $log->add(Log::F_SYSTEM, Log::INFO, $n." Tabellen wurden manuell repariert!");
 			return $ores;
 		}
 		else
 		{
-            Log::add(Log::F_SYSTEM, Log::INFO, $n." Tabellen wurden repariert!");
+            $log->add(Log::F_SYSTEM, Log::INFO, $n." Tabellen wurden repariert!");
 			return $n;
 		}
 	}

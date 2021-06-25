@@ -9,6 +9,9 @@
 
 use Doctrine\DBAL\Query\QueryBuilder;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\FleetLog;
+use EtoA\Core\Logging\GameLog;
+use EtoA\Core\Logging\Log;
 
 function popupLink($type,$title,$class="",$params="")
 {

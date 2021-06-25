@@ -18,6 +18,11 @@
 	//
 	//
 
+use EtoA\Core\Logging\Log;
+
+/** @var Log */
+$log = $app['etoa.log.service'];
+
 $cnt = 0;
 			$cnt_error = 0;
 
@@ -245,7 +250,7 @@ $cnt = 0;
 
 									if(mysql_num_rows($multi_res1)!=0 || mysql_num_rows($multi_res2)!=0)
 									{
-										Log::add(Log::F_MULTITRADE,Log::INFO,"[page user sub=edit user_id=".$cu->id."][B]".$cu->nick."[/B][/page] hat von [page user sub=edit user_id=".$arr['user_id']."][B]".$seller."[/B][/page] Rohstoffe gekauft:\n\n".RES_METAL.": ".nf($arr['sell_0'])."\n".RES_CRYSTAL.": ".nf($arr['sell_1'])."\n".RES_PLASTIC.": ".nf($arr['sell_2'])."\n".RES_FUEL.": ".nf($arr['sell_3'])."\n".RES_FOOD.": ".nf($arr['sell_4'])."\n\nDies hat ihn folgende Rohstoffe gekostet:\n".RES_METAL.": ".nf($arr['buy_0'])."\n".RES_CRYSTAL.": ".nf($arr['buy_1'])."\n".RES_PLASTIC.": ".nf($arr['buy_2'])."\n".RES_FUEL.": ".nf($arr['buy_3'])."\n".RES_FOOD.": ".nf($arr['buy_4']));
+										$log->add(Log::F_MULTITRADE,Log::INFO,"[page user sub=edit user_id=".$cu->id."][B]".$cu->nick."[/B][/page] hat von [page user sub=edit user_id=".$arr['user_id']."][B]".$seller."[/B][/page] Rohstoffe gekauft:\n\n".RES_METAL.": ".nf($arr['sell_0'])."\n".RES_CRYSTAL.": ".nf($arr['sell_1'])."\n".RES_PLASTIC.": ".nf($arr['sell_2'])."\n".RES_FUEL.": ".nf($arr['sell_3'])."\n".RES_FOOD.": ".nf($arr['sell_4'])."\n\nDies hat ihn folgende Rohstoffe gekostet:\n".RES_METAL.": ".nf($arr['buy_0'])."\n".RES_CRYSTAL.": ".nf($arr['buy_1'])."\n".RES_PLASTIC.": ".nf($arr['buy_2'])."\n".RES_FUEL.": ".nf($arr['buy_3'])."\n".RES_FOOD.": ".nf($arr['buy_4']));
 									}
 
 									// Zählt die erfolgreich abgewickelten Angebote

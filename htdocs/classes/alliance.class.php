@@ -1,6 +1,7 @@
 <?php
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\Log;
 
 /**
      * The alliance object
@@ -636,6 +637,12 @@ use EtoA\Core\Configuration\ConfigurationService;
         */
         function delete(&$user = null)
         {
+            // TODO
+            global $app;
+
+            /** @var Log */
+            $log = $app['etoa.log.service'];
+
             if (!$this->isAtWar()) {
                 $res = dbquery("SELECT cat_id FROM allianceboard_cat WHERE cat_alliance_id='".$this->id."';");
                 if (mysql_num_rows($res))
@@ -730,10 +737,10 @@ use EtoA\Core\Configuration\ConfigurationService;
                 {
                     $user->alliance = null;
                     $user->addToUserLog("alliance","{nick} löst die Allianz [b]".$this."[/b] auf.");
-                    Log::add(Log::F_ALLIANCE, Log::INFO, "Die Allianz [b]".$this."[/b] wurde von ".$user." aufgelöst!");
+                    $log->add(Log::F_ALLIANCE, Log::INFO, "Die Allianz [b]".$this."[/b] wurde von ".$user." aufgelöst!");
                 }
                 else
-                    Log::add(Log::F_ALLIANCE, Log::INFO, "Die Allianz [b]".$this."[/b] wurde gelöscht!");
+                    $log->add(Log::F_ALLIANCE, Log::INFO, "Die Allianz [b]".$this."[/b] wurde gelöscht!");
                 return true;
             } else {
                 return false;

@@ -3,6 +3,7 @@
 use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\Log;
 use Twig\Environment;
 
 /** @var AdminUserRepository */
@@ -11,9 +12,12 @@ $adminUserRepo = $app['etoa.admin.user.repository'];
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
 
+/** @var Log */
+$log = $app['etoa.log.service'];
+
 if (isset($_GET['sendpass'])) {
     if (isset($_POST['sendpass_submit'])) {
-        sendPassword($config, $adminUserRepo, $twig);
+        sendPassword($config, $adminUserRepo, $log, $twig);
     } else {
         sendPasswordForm($twig);
     }
@@ -30,6 +34,7 @@ if (isset($_GET['sendpass'])) {
 function sendPassword(
     ConfigurationService $config,
     AdminUserRepository $adminUserRepo,
+    Log $log,
     Environment $twig
 ): void {
     $user = $adminUserRepo->findOneByNick($_POST['user_nick']);
@@ -50,7 +55,7 @@ function sendPassword(
         $buttonMsg = 'Zum Login';
         $buttonTarget = '?';
 
-        Log::add(Log::F_ADMIN, Log::INFO,  "Der Administrator " . $user->nick . " (ID: " . $user->id . ") fordert per E-Mail (" . $user->email . ") von " . $_SERVER['REMOTE_ADDR'] . " aus ein neues Passwort an.");
+        $log->add(Log::F_ADMIN, Log::INFO,  "Der Administrator " . $user->nick . " (ID: " . $user->id . ") fordert per E-Mail (" . $user->email . ") von " . $_SERVER['REMOTE_ADDR'] . " aus ein neues Passwort an.");
     } else {
         $msgStyle = 'color_warn';
         $statusMsg = 'Dieser Benutzer existiert nicht!';

@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\Log;
 
 //////////////////////////////////////////////////
 //		 	 ____    __           ______       			//
@@ -23,6 +24,9 @@ use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
+
+/** @var Log */
+$log = $app['etoa.log.service'];
 
 /** @var Alliance $ally */
 /** @var bool $isFounder */
@@ -140,7 +144,7 @@ if (Alliance::checkActionRights('editmembers'))
 			if (isset($ally->members[$fid]))
 			{
 				$ally->founderId = $fid;
-				Log::add(Log::F_ALLIANCE,Log::INFO, "Der Spieler [b]".$ally->founder."[/b] wird vom Spieler [b]".$cu."[/b] zum Gründer befördert.");
+				$log->add(Log::F_ALLIANCE,Log::INFO, "Der Spieler [b]".$ally->founder."[/b] wird vom Spieler [b]".$cu."[/b] zum Gründer befördert.");
 				success_msg("Gründer ge&auml;ndert!");
 			}
 			else
@@ -157,7 +161,7 @@ if (Alliance::checkActionRights('editmembers'))
 				$tmpUser = $ally->members[$kid];
 				if ($ally->kickMember($kid))
 				{
-					Log::add(Log::F_ALLIANCE,Log::INFO, "Der Spieler [b]".$tmpUser."[/b] wurde von [b]".$cu."[/b] aus der Allianz [b]".$ally."[/b] ausgeschlossen!");
+					$log->add(Log::F_ALLIANCE,Log::INFO, "Der Spieler [b]".$tmpUser."[/b] wurde von [b]".$cu."[/b] aus der Allianz [b]".$ally."[/b] ausgeschlossen!");
 					success_msg("Der Spieler [b]".$tmpUser."[/b] wurde aus der Allianz ausgeschlossen!");
 					unset($tmpUser);
 				}

@@ -1,5 +1,8 @@
 <?PHP
-	class UserRating
+
+use EtoA\Core\Logging\Log;
+
+class UserRating
 	{
 		private $id;
 
@@ -84,6 +87,12 @@
 		*/
 		function addBattleRating($rating,$reason="")
 		{
+            // TODO
+            global $app;
+
+            /** @var Log */
+            $log = $app['etoa.log.service'];
+
 			if ($rating!=0)
 			{
 				dbquery("
@@ -94,7 +103,7 @@
 				WHERE
 					id=".$this->id.";");
 				if ($reason!="")
-					Log::add(Log::F_RANKING,Log::INFO, "KP: Der Spieler ".$this->id." erhält ".$rating." Kampfpunkte. Grund: ".$reason);
+					$log->add(Log::F_RANKING,Log::INFO, "KP: Der Spieler ".$this->id." erhält ".$rating." Kampfpunkte. Grund: ".$reason);
 			}
 		}
 
@@ -103,6 +112,12 @@
 		*/
 		function addTradeRating($rating,$sell=true,$reason="")
 		{
+            // TODO
+            global $app;
+
+            /** @var Log */
+            $log = $app['etoa.log.service'];
+
 			$sell = $sell ? ',trades_sell=trades_sell+1' : ',trades_buy=trades_buy+1';
 			dbquery("
 			UPDATE
@@ -113,7 +128,7 @@
 			WHERE
 				id=".$this->id.";");
 			if ($reason!="")
-				Log::add(Log::F_RANKING, Log::INFO, "HP: Der Spieler ".$this->id." erhält ".$rating." Handelspunkte. Grund: ".$reason);
+                $log->add(Log::F_RANKING, Log::INFO, "HP: Der Spieler ".$this->id." erhält ".$rating." Handelspunkte. Grund: ".$reason);
 		}
 
 		/**
@@ -121,6 +136,12 @@
 		*/
 		function addDiplomacyRating($rating,$reason="")
 		{
+            // TODO
+            global $app;
+
+            /** @var Log */
+            $log = $app['etoa.log.service'];
+
 			dbquery("
 			UPDATE
 				user_ratings
@@ -129,7 +150,7 @@
 			WHERE
 				id=".$this->id.";");
 			if ($reason!="")
-				Log::add(Log::F_RANKING, Log::INFO, "DP: Der Spieler ".$this->id." erhält ".$rating." Diplomatiepunke. Grund: ".$reason);
+				$log->add(Log::F_RANKING, Log::INFO, "DP: Der Spieler ".$this->id." erhält ".$rating." Diplomatiepunke. Grund: ".$reason);
 		}
 
 

@@ -19,9 +19,14 @@
 	//
 
 	/** @var int $alliance_market_level */
-	/** @var bool $cd_enabled */
+
+use EtoA\Core\Logging\Log;
+
+/** @var bool $cd_enabled */
 	/** @var int $cooldown */
 
+/** @var Log */
+$log = $app['etoa.log.service'];
 
 	$for_user = 0;
 	$for_alliance = 0;
@@ -132,7 +137,7 @@
             {
                 $sl->add($ship_id, $removed_ships_count);
                 // log action because this was a bug earlier
-                Log::add(Log::F_ILLEGALACTION,Log::WARNING,
+                $log->add(Log::F_ILLEGALACTION,Log::WARNING,
                          'User '.$cu->nick.' hat versucht, auf dem Planeten'.$cp->name()
                          .' mehr Schiffe der ID '.$ship_id .' zu verkaufen, als vorhanden sind.'
                          .' Vorhanden: '.$removed_ships_count.', Versuchte Verkaufszahl: '.$ship_count);

@@ -2,6 +2,7 @@
 
 use Doctrine\Common\Collections\ArrayCollection;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\Log;
 
 /**
 * Returns a string containing the game name, version and round
@@ -720,6 +721,12 @@ function iBoxEnd()
 */
 function reset_planet($planet_id)
 {
+    // TODO
+    global $app;
+
+    /** @var Log */
+    $log = $app['etoa.log.service'];
+
     if ($planet_id>0)
     {
         dbquery("
@@ -774,7 +781,7 @@ function reset_planet($planet_id)
             WHERE
                 deflist_entity_id='".$planet_id."';
         ");
-        Log::add(Log::F_GALAXY, Log::INFO, "Der Planet mit der ID ".$planet_id." wurde zurückgesetzt!");
+        $log->add(Log::F_GALAXY, Log::INFO, "Der Planet mit der ID ".$planet_id." wurde zurückgesetzt!");
         return true;
     }
     else

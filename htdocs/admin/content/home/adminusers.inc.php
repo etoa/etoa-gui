@@ -3,6 +3,7 @@
 use EtoA\Admin\AdminRoleManager;
 use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Core\Logging\Log;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
@@ -15,6 +16,9 @@ $roleManager = $app['etoa.admin.role.manager'];
 /** @var Request */
 $request = Request::createFromGlobals();
 
+/** @var Log */
+$log = $app['etoa.log.service'];
+
 $twig->addGlobal("title", "Admin-Management");
 
 if ($request->query->has('new')) {
@@ -22,7 +26,7 @@ if ($request->query->has('new')) {
 } elseif ($request->query->has('edit') && $request->query->getInt('edit') > 0) {
     editUser($request, $adminUserRepo, $roleManager);
 } else {
-    listUsers($request, $adminUserRepo, $roleManager, $cu, $twig);
+    listUsers($request, $adminUserRepo, $roleManager, $cu, $log, $twig);
 }
 
 function createUser(AdminRoleManager $roleManager)
@@ -162,6 +166,7 @@ function listUsers(
     AdminUserRepository $adminUserRepo,
     AdminRoleManager $roleManager,
     AdminUser $cu,
+    Log $log,
     Environment $twig
 ) {
     global $page;
@@ -181,7 +186,7 @@ function listUsers(
             $adminUserRepo->save($admin);
 
             $twig->addGlobal('successMessage', "Gespeichert!");
-            Log::add(Log::F_ADMIN, Log::INFO, "Der Administrator " . $cu->nick . " erstellt einen neuen Administrator: " . $admin->nick . "(" . $admin->id . ").");
+            $log->add(Log::F_ADMIN, Log::INFO, "Der Administrator " . $cu->nick . " erstellt einen neuen Administrator: " . $admin->nick . "(" . $admin->id . ").");
 
             if ($request->request->get('user_password') != "") {
                 $password = $request->request->get('user_password');
@@ -201,7 +206,7 @@ function listUsers(
 
             if ($request->request->get('user_password') != "") {
                 $adminUserRepo->setPassword($adminUser, $request->request->get('user_password'));
-                Log::add(Log::F_ADMIN, Log::INFO, "Der Administrator " . $cu->nick . " ändert das Passwort des Administrators " . $adminUser->nick . "(" . $adminUser->id . ").");
+                $log->add(Log::F_ADMIN, Log::INFO, "Der Administrator " . $cu->nick . " ändert das Passwort des Administrators " . $adminUser->nick . "(" . $adminUser->id . ").");
             }
 
             $adminUser->nick = $request->request->get('user_nick');
@@ -209,7 +214,7 @@ function listUsers(
             $adminUser->email = $request->request->get('user_email');
             if ($request->request->has('tfa_remove')) {
                 $adminUser->tfaSecret = "";
-                Log::add(Log::F_ADMIN, Log::INFO, "Der Administrator " . $cu->nick . " deaktiviert die Zwei-Faktor-Authentifizierung des Administrators " . $adminUser->nick . "(" . $adminUser->id . ").");
+                $log->add(Log::F_ADMIN, Log::INFO, "Der Administrator " . $cu->nick . " deaktiviert die Zwei-Faktor-Authentifizierung des Administrators " . $adminUser->nick . "(" . $adminUser->id . ").");
             }
             $adminUser->locked = $request->request->getBoolean('user_locked');
             $adminUser->isContact = $request->request->getBoolean('is_contact');
@@ -218,7 +223,7 @@ function listUsers(
             $adminUserRepo->save($adminUser);
 
             $twig->addGlobal('successMessage', "Gespeichert!");
-            Log::add(Log::F_ADMIN, Log::INFO, "Der Administrator " . $cu->nick . " ändert die Daten des Administrators " . $adminUser->nick . " (ID: " . $adminUser->id . ").");
+            $log->add(Log::F_ADMIN, Log::INFO, "Der Administrator " . $cu->nick . " ändert die Daten des Administrators " . $adminUser->nick . " (ID: " . $adminUser->id . ").");
         } else {
             echo "Nick nicht angegeben!<br/><br/>";
         }
@@ -227,7 +232,7 @@ function listUsers(
     if ($request->query->has('del') && $request->query->getInt('del') > 0 && $request->query->getInt('del') != $cu->id) {
         $adminUser = $adminUserRepo->find($request->query->getInt('del'));
         if ($adminUser != null && $adminUserRepo->remove($adminUser)) {
-            Log::add(Log::F_ADMIN, Log::INFO, "Der Administrator " . $cu->nick . " löscht den Administrator " . $adminUser->nick . " (ID: " . $adminUser->id . ").");
+            $log->add(Log::F_ADMIN, Log::INFO, "Der Administrator " . $cu->nick . " löscht den Administrator " . $adminUser->nick . " (ID: " . $adminUser->id . ").");
             echo "Benutzer gelöscht!<br/><br/>";
         }
     }

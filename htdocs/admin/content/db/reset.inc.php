@@ -1,9 +1,13 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\Log;
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
+
+/** @var Log */
+$log = $app['etoa.log.service'];
 
 $successMessage = null;
 $errorMessage = null;
@@ -23,7 +27,7 @@ if (isset($_POST['submit'])) {
         $mtx->acquire();
 
         // Do the backup
-        $log = DBManager::getInstance()->backupDB($dir, $gzip);
+        $output = DBManager::getInstance()->backupDB($dir, $gzip);
 
         // Release mutex
         $mtx->release();
@@ -84,7 +88,7 @@ if (isset($_POST['submit'])) {
         $mtx->release();
 
         // Write log
-        Log::add(Log::F_SYSTEM, Log::ERROR, "[b]Datenbank-Reset fehlgeschlagen[/b]\nFehler: ".$e->getMessage());
+        $log->add(Log::F_SYSTEM, Log::ERROR, "[b]Datenbank-Reset fehlgeschlagen[/b]\nFehler: ".$e->getMessage());
 
         // Show message
         $errorMessage = 'Beim Ausführen des Resaet-Befehls trat ein Fehler auf: ' . $e->getMessage();

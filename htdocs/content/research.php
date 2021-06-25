@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\GameLog;
 
 //////////////////////////////////////////////////
 //		 	 ____    __           ______       			//
@@ -30,6 +31,9 @@ use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
+
+/** @var GameLog */
+$gameLog = $app['etoa.log.game.service'];
 
    // DEFINITIONEN //
 
@@ -553,7 +557,7 @@ if (isset($cp)) {
                                 echo '<script>toggleBox(\'link\'); </script>';
 
                                 //Log Speichern
-								GameLog::add(GameLog::F_TECH, GameLog::INFO, $log_text, $cu->id,$cu->allianceId,$cp->id,$arr['tech_id'], $b_status, $b_level);
+								$gameLog->add(GameLog::F_TECH, GameLog::INFO, $log_text, $cu->id,$cu->allianceId,$cp->id,$arr['tech_id'], $b_status, $b_level);
 							}
 							else
 							{
@@ -635,8 +639,7 @@ if (isset($cp)) {
                             header("Refresh:0; url=?page=research&id=".$bid);
 
 							//Log Speichern
-							GameLog::add(GameLog::F_TECH, GameLog::INFO, $log_text, $cu->id,$cu->allianceId,$cp->id,$arr['tech_id'], $b_status, $b_level);
-
+							$gameLog->add(GameLog::F_TECH, GameLog::INFO, $log_text, $cu->id,$cu->allianceId,$cp->id,$arr['tech_id'], $b_status, $b_level);
 						}
 						else
 						{

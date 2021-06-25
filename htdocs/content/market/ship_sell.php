@@ -18,7 +18,12 @@
 	//
 	//
 
-			$cnt = 0;
+use EtoA\Core\Logging\Log;
+
+/** @var Log */
+$log = $app['etoa.log.service'];
+
+$cnt = 0;
 			$cnt_error = 0;
 
 			foreach ($_POST['ship_market_id'] as $num => $id)
@@ -213,7 +218,7 @@
 						if(mysql_num_rows($multi_res1)!=0 || mysql_num_rows($multi_res2)!=0)
 						{
 							$ship = new Ship($arr['ship_id']);
-					    	Log::add(Log::F_MULTITRADE,Log::INFO,"[page user sub=edit user_id=".$cu->id."][B]".$cu->nick."[/B][/page] hat von [page user sub=edit user_id=".$arr['user_id']."][B]".$seller."[/B][/page] Schiffe gekauft:\n\n".$arr['count']." ".$ship."\n\nund das zu folgendem Preis:\n\n".RES_METAL.": ".nf($arr['costs_0'])."\n".RES_CRYSTAL.": ".nf($arr['costs_1'])."\n".RES_PLASTIC.": ".nf($arr['costs_2'])."\n".RES_FUEL.": ".nf($arr['costs_3'])."\n".RES_FOOD.": ".nf($arr['costs_4']));
+					    	$log->add(Log::F_MULTITRADE,Log::INFO,"[page user sub=edit user_id=".$cu->id."][B]".$cu->nick."[/B][/page] hat von [page user sub=edit user_id=".$arr['user_id']."][B]".$seller."[/B][/page] Schiffe gekauft:\n\n".$arr['count']." ".$ship."\n\nund das zu folgendem Preis:\n\n".RES_METAL.": ".nf($arr['costs_0'])."\n".RES_CRYSTAL.": ".nf($arr['costs_1'])."\n".RES_PLASTIC.": ".nf($arr['costs_2'])."\n".RES_FUEL.": ".nf($arr['costs_3'])."\n".RES_FOOD.": ".nf($arr['costs_4']));
 						}
 
 						// Zählt die erfolgreich abgewickelten Angebote

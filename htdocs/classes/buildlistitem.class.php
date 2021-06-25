@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\GameLog;
 
 class BuildListItem
 {
@@ -296,6 +297,12 @@ class BuildListItem
     public function build()
     {
         // TODO
+        global $app;
+
+        /** @var GameLog */
+        $gameLog = $app['etoa.log.game.service'];
+
+        // TODO
         global $cp, $cu, $bl;
 
         $costs = $this->getBuildCosts();
@@ -375,7 +382,17 @@ class BuildListItem
         [b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
 
         //Log Speichern
-        GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 3, $this->level);
+        $gameLog->add(
+            GameLog::F_BUILD,
+            GameLog::INFO,
+            $log_text,
+            $cu->id,
+            $cu->allianceId,
+            $cp->id,
+            $this->buildingId,
+            3,
+            $this->level
+        );
 
         return;
     }
@@ -410,6 +427,12 @@ class BuildListItem
 
     public function demolish()
     {
+        // TODO
+        global $app;
+
+        /** @var GameLog */
+        $gameLog = $app['etoa.log.game.service'];
+
         // TODO
         global $cp, $cu;
 
@@ -447,13 +470,29 @@ class BuildListItem
         [b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
 
         //Log Speichern
-        GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 4, $this->level);
+        $gameLog->add(
+            GameLog::F_BUILD,
+            GameLog::INFO,
+            $log_text,
+            $cu->id,
+            $cu->allianceId,
+            $cp->id,
+            $this->buildingId,
+            4,
+            $this->level
+        );
 
         return;
     }
 
     public function cancelBuild()
     {
+        // TODO
+        global $app;
+
+        /** @var GameLog */
+        $gameLog = $app['etoa.log.game.service'];
+
         if ($this->endTime > time())
         {
             // TODO
@@ -503,7 +542,17 @@ class BuildListItem
 [b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
 
             //Log Speichern
-            GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 1, $this->level);
+            $gameLog->add(
+                GameLog::F_BUILD,
+                GameLog::INFO,
+                $log_text,
+                $cu->id,
+                $cu->allianceId,
+                $cp->id,
+                $this->buildingId,
+                1,
+                $this->level
+            );
 
             return;
         }
@@ -513,6 +562,12 @@ class BuildListItem
 
     public function cancelDemolish()
     {
+        // TODO
+        global $app;
+
+        /** @var GameLog */
+        $gameLog = $app['etoa.log.game.service'];
+
         if ($this->endTime > time())
         {
             // TODO
@@ -551,7 +606,17 @@ class BuildListItem
             [b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
 
             //Log Speichern
-            GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 2, $this->level);
+            $gameLog->add(
+                GameLog::F_BUILD,
+                GameLog::INFO,
+                $log_text,
+                $cu->id,
+                $cu->allianceId,
+                $cp->id,
+                $this->buildingId,
+                2,
+                $this->level
+            );
 
             return;
         }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace EtoA\Core\Log;
+namespace EtoA\Core\Logging;
 
 use EtoA\Core\Configuration\ConfigurationService;
 
@@ -169,8 +169,6 @@ class Log extends BaseLog
             : time() - (24 * 3600 * $this->config->getInt('log_threshold_days'));
 
         $nr = $this->cleanup($timestamp);
-        $nr += FleetLog::cleanup($timestamp);
-        $nr += BattleLog::cleanup($timestamp);
 
         $this->add(
             Log::F_SYSTEM,

@@ -6,6 +6,7 @@ use EtoA\Admin\AdminSessionRepository;
 use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\Log;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Support\DatabaseManagerRepository;
 use EtoA\Text\TextRepository;
@@ -19,6 +20,9 @@ $request = Request::createFromGlobals();
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
+
+/** @var Log */
+$log = $app['etoa.log.service'];
 
 if ($sub == "offline") {
     takeOffline($request, $config);
@@ -44,7 +48,7 @@ if ($sub == "offline") {
     if ($request->request->has('logshow') && $request->request->get('logshow') != "") {
         adminSessionLogForUserView($request, $s, $sessionRepository, $adminUserRepo);
     } else {
-        adminSessionLogView($request, $config, $cu, $sessionRepository, $sessionManager);
+        adminSessionLogView($request, $config, $cu, $sessionRepository, $sessionManager, $log);
     }
 } elseif ($sub == "adminusers") {
     require("home/adminusers.inc.php");
@@ -200,7 +204,8 @@ function adminSessionLogView(
     ConfigurationService $config,
     AdminUser $cu,
     AdminSessionRepository $sessionRepository,
-    AdminSessionManager $sessionManager
+    AdminSessionManager $sessionManager,
+    Log $log
 ) {
     global $page;
     global $sub;
@@ -218,7 +223,7 @@ function adminSessionLogView(
         $idToKick = $request->query->getInt('kick');
         if ($idToKick != $cu->id) {
             $sessionManager->kick((string) $idToKick);
-            Log::add(Log::F_ADMIN, Log::INFO, $cu->nick . " löscht die Session des Administrators mit der ID " . $idToKick);
+            $log->add(Log::F_ADMIN, Log::INFO, $cu->nick . " löscht die Session des Administrators mit der ID " . $idToKick);
         } else {
             echo error_msg("Du kannst nicht dich selbst kicken!");
         }

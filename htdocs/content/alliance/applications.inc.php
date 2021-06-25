@@ -1,9 +1,13 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\Log;
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
+
+/** @var Log */
+$log = $app['etoa.log.service'];
 
 if (Alliance::checkActionRights('applications'))
 {
@@ -40,7 +44,7 @@ if (Alliance::checkActionRights('applications'))
 
                     // Log schreiben
                     add_alliance_history($cu->allianceId,"Die Bewerbung von [b]".$nick."[/b] wurde akzeptiert!");
-                    Log::add(Log::F_ALLIANCE,Log::INFO, "Der Spieler [b]".$nick."[/b] tritt der Allianz [b][".$alliances[$cu->allianceId]['tag']."] ".$alliances[$cu->allianceId]['name']."[/b] bei!");
+                    $log->add(Log::F_ALLIANCE,Log::INFO, "Der Spieler [b]".$nick."[/b] tritt der Allianz [b][".$alliances[$cu->allianceId]['tag']."] ".$alliances[$cu->allianceId]['name']."[/b] bei!");
 
                     $tu = new User($id);
                     $tu->addToUserLog("alliance","{nick} ist nun ein Mitglied der Allianz ".$alliances[$cu->allianceId]['name'].".");

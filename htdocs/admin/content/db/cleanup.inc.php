@@ -2,6 +2,10 @@
 
 use EtoA\Admin\AdminSessionManager;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\BattleLog;
+use EtoA\Core\Logging\FleetLog;
+use EtoA\Core\Logging\GameLog;
+use EtoA\Core\Logging\Log;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Ranking\PointsService;
 
@@ -17,24 +21,51 @@ $pointsService = $app['etoa.rankings.points.service'];
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
 
+/** @var Log */
+$log = $app['etoa.log.service'];
+
+/** @var GameLog */
+$gameLog = $app['etoa.log.game.service'];
+
+/** @var BattleLog */
+$battleLog = $app['etoa.log.battle.service'];
+
+/** @var FleetLog */
+$fleetLog = $app['etoa.log.fleet.service'];
+
 echo '<h2>Clean-Up</h2>';
 
 if (isset($_POST['submit_cleanup_selected']) || isset($_POST['submit_cleanup_all'])) {
-	runCleanup($sessionManager, $ticketRepo, $pointsService);
+    runCleanup(
+        $sessionManager,
+        $ticketRepo,
+        $pointsService,
+        $log,
+        $gameLog,
+        $battleLog,
+        $fleetLog
+    );
 }
 cleanupOverView($ticketRepo, $config);
 
 function runCleanup(
 	AdminSessionManager $sessionManager,
 	TicketRepository $ticketRepo,
-    PointsService $pointsService
+    PointsService $pointsService,
+    Log $log,
+    GameLog $gameLog,
+    BattleLog $battleLog,
+    FleetLog $fleetLog
 ) {
 	echo "Clean-Up wird durchgeführt...<br/>";
 	$all = isset($_POST['submit_cleanup_all']) ? true : false;
 
 	// Log cleanup
 	if (isset($_POST['cl_log']) || $all) {
-		$nr = Log::removeOld($_POST['log_timestamp']);
+		$nr = $log->removeOld((int) $_POST['log_timestamp']);
+		$nr += $gameLog->removeOld((int) $_POST['log_timestamp']);
+		$nr += $battleLog->removeOld((int) $_POST['log_timestamp']);
+		$nr += $fleetLog->removeOld((int) $_POST['log_timestamp']);
 		echo $nr . " Logs wurden gelöscht!<br/>";
 	}
 

@@ -1,9 +1,13 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\Log;
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
+
+/** @var Log */
+$log = $app['etoa.log.service'];
 
 // Backup erstellen
 $successMessage = null;
@@ -19,22 +23,22 @@ if (isset($_POST['create'])) {
         $mtx->acquire();
 
         // Do the backup
-        $log = DBManager::getInstance()->backupDB($dir, $gzip);
+        $output = DBManager::getInstance()->backupDB($dir, $gzip);
 
         // Release mutex
         $mtx->release();
 
         // Write log
-        Log::add(Log::F_SYSTEM, Log::INFO, "[b]Datenbank-Backup[/b]\n".$log);
+        $log->add(Log::F_SYSTEM, Log::INFO, "[b]Datenbank-Backup[/b]\n".$output);
 
         // Show message
-        $successMessage = $log;
+        $successMessage = $output;
     } catch (Exception $e) {
         // Release mutex
         $mtx->release();
 
         // Write log
-        Log::add(Log::F_SYSTEM, Log::ERROR, "[b]Datenbank-Backup[/b]\nFehler: ".$e->getMessage());
+        $log->add(Log::F_SYSTEM, Log::ERROR, "[b]Datenbank-Backup[/b]\nFehler: ".$e->getMessage());
 
         // Show message
         $errorMessage = 'Beim Ausführen des Backup-Befehls trat ein Fehler auf: ' . $e->getMessage();
@@ -56,18 +60,18 @@ elseif (isset($_GET['action']) && $_GET['action'] === "backuprestore" && $_GET['
             $mtx->acquire();
 
             // Backup current database
-            $log = 'Anlegen einer Sicherungskopie: ';
-            $log.= DBManager::getInstance()->backupDB($dir, $gzip);
+            $output = 'Anlegen einer Sicherungskopie: ';
+            $output.= DBManager::getInstance()->backupDB($dir, $gzip);
 
             // Restore database
-            $log.= "\nWiederherstellen der Datenbank: ";
-            $log.= DBManager::getInstance()->restoreDB($dir, $restorePoint);
+            $output.= "\nWiederherstellen der Datenbank: ";
+            $output.= DBManager::getInstance()->restoreDB($dir, $restorePoint);
 
             // Release mutex
             $mtx->release();
 
             // Write log
-            Log::add(Log::F_SYSTEM, Log::INFO, "[b]Datenbank-Restore[/b]\n".$log);
+            $log->add(Log::F_SYSTEM, Log::INFO, "[b]Datenbank-Restore[/b]\n".$output);
 
             // Show message
             $successMessage = 'Das Backup ' . $restorePoint . ' wurde wiederhergestellt und es wurde eine Sicherungskopie der vorherigen Daten angelegt!';
@@ -76,7 +80,7 @@ elseif (isset($_GET['action']) && $_GET['action'] === "backuprestore" && $_GET['
             $mtx->release();
 
             // Write log
-            Log::add(Log::F_SYSTEM, Log::ERROR, "[b]Datenbank-Restore[/b]\nDie Datenbank konnte nicht vom Backup [b]".$restorePoint."[/b] aus dem Verzeichnis [b]".$dir."[/b] wiederhergestellt werden: ".$e->getMessage());
+            $log->add(Log::F_SYSTEM, Log::ERROR, "[b]Datenbank-Restore[/b]\nDie Datenbank konnte nicht vom Backup [b]".$restorePoint."[/b] aus dem Verzeichnis [b]".$dir."[/b] wiederhergestellt werden: ".$e->getMessage());
 
             // Show message
             $errorMessage = 'Beim Ausf&uuml;hren des Restore-Befehls trat ein Fehler auf! ' . $e->getMessage();

@@ -1,9 +1,13 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\Log;
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
+
+/** @var Log */
+$log = $app['etoa.log.service'];
 
 function getRegisterParams(ConfigurationService $config): array
 {
@@ -41,7 +45,7 @@ if (($_POST['register_submit'] ?? false) && $config->getBoolean('enable_register
             $_POST['register_user_nick'],
             $_POST['register_user_password']
         );
-        Log::add(Log::F_USER,Log::INFO,"Der Benutzer ".$newUser->nick." (".$newUser->realName.", ".$newUser->email.") hat sich registriert!");
+        $log->add(Log::F_USER,Log::INFO,"Der Benutzer ".$newUser->nick." (".$newUser->realName.", ".$newUser->email.") hat sich registriert!");
 
         $verificationRequired = $config->getBoolean('email_verification_required');
         $verificationUrl = null;

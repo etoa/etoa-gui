@@ -1,5 +1,10 @@
 <?PHP
 
+use EtoA\Core\Logging\Log;
+
+/** @var Log */
+$log = $app['etoa.log.service'];
+
 $successMessage = null;
 $errorMessage = null;
 if (isset($_POST['migrate'])) {
@@ -22,7 +27,7 @@ if (isset($_POST['migrate'])) {
         $mtx->release();
 
         // Write log
-        Log::add(Log::F_SYSTEM, Log::ERROR, "[b]Datenbank-Migration fehlgeschlagen[/b]\nFehler: ".$e->getMessage());
+        $log->add(Log::F_SYSTEM, Log::ERROR, "[b]Datenbank-Migration fehlgeschlagen[/b]\nFehler: ".$e->getMessage());
 
         // Show message
         $errorMessage = 'Beim Ausführen des Migration-Befehls trat ein Fehler auf: ' . $e->getMessage();

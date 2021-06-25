@@ -2,6 +2,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\Log;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -70,6 +71,10 @@ try {
         $log.= "\nTotal: ".$tr->getTotalDuration().' sec';
 
         // Write log
+
+        /** @var Log */
+        $log = $app['etoa.log.service'];
+
         if (LOG_UPDATES) {
             $severity = Log::INFO;
         } elseif ($tr->getTotalDuration() > LOG_UPDATES_THRESHOLD) {
@@ -78,7 +83,7 @@ try {
             $severity = Log::DEBUG;
         }
         $text = "Periodische Tasks (".date("d.m.Y H:i:s",$time)."):\n\n".$log;
-        Log::add(Log::F_UPDATES, $severity, $text);
+        $log->add(Log::F_UPDATES, $severity, $text);
 
         if ($verbose) {
             echo $text;

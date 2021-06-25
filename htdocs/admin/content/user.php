@@ -26,6 +26,10 @@
 	// 	Kommentar:
 	//
 
+    use EtoA\Core\Logging\Log;
+
+    /** @var Log */
+    $log = $app['etoa.log.service'];
 
 	//
 	// Fehlerhafte Logins
@@ -71,7 +75,7 @@
 					$_POST['user_ghost']==1
 				);
 				$newUser->setVerified(true);
-				Log::add(Log::F_USER,Log::INFO, "Der Benutzer ".$newUser->nick." (".$newUser->realName.", ".$newUser->email.") wurde registriert!");
+				$log->add(Log::F_USER,Log::INFO, "Der Benutzer ".$newUser->nick." (".$newUser->realName.", ".$newUser->email.") wurde registriert!");
 				success_msg("Benutzer wurde erstellt! [[page user sub=edit id=".$newUser->id."]Details[/page]]");
 			}
 			catch (Exception $e)

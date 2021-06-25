@@ -2,6 +2,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\Log;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -125,6 +126,9 @@ else if ($action == "backup")
     /** @var ConfigurationService */
     $config = $app['etoa.config.service'];
 
+    /** @var Log */
+    $log = $app['etoa.log.service'];
+
     $dir = DBManager::getBackupDir();
     $gzip = $config->getBoolean('backup_use_gzip');
     $mtx = new Mutex();
@@ -135,17 +139,17 @@ else if ($action == "backup")
         $mtx->acquire();
 
         // Restore database
-        $log = DBManager::getInstance()->backupDB($dir, $gzip);
+        $output = DBManager::getInstance()->backupDB($dir, $gzip);
 
         // Release mutex
         $mtx->release();
 
         // Write log
-        Log::add(Log::F_SYSTEM, Log::INFO, "[b]Datenbank-Backup Skript[/b]\n".$log);
+        $log->add(Log::F_SYSTEM, Log::INFO, "[b]Datenbank-Backup Skript[/b]\n" . $output);
 
         // Show output
         if ($verbose) {
-            echo $log;
+            echo $output;
         }
 
         exit(0);
@@ -156,7 +160,7 @@ else if ($action == "backup")
         $mtx->release();
 
         // Write log
-        Log::add(Log::F_SYSTEM, Log::ERROR, "[b]Datenbank-Backup Skript[/b]\nDie Datenbank konnte nicht in das Verzeichnis [b]".$dir."[/b] gesichert werden: ".$e->getMessage());
+        $log->add(Log::F_SYSTEM, Log::ERROR, "[b]Datenbank-Backup Skript[/b]\nDie Datenbank konnte nicht in das Verzeichnis [b]".$dir."[/b] gesichert werden: ".$e->getMessage());
 
         // Show output
         echo "Fehler: ".$e->getMessage();
@@ -179,23 +183,26 @@ else if ($action == "restore")
         $restorePoint = $args[0];
         $mtx = new Mutex();
 
+        /** @var Log */
+        $log = $app['etoa.log.service'];
+
         try
         {
             // Acquire mutex
             $mtx->acquire();
 
             // Restore database
-            $log = DBManager::getInstance()->restoreDB($dir, $restorePoint);
+            $output = DBManager::getInstance()->restoreDB($dir, $restorePoint);
 
             // Release mutex
             $mtx->release();
 
             // Write log
-            Log::add(Log::F_SYSTEM, Log::INFO, "[b]Datenbank-Restore Skript[/b]\n".$log);
+            $log->add(Log::F_SYSTEM, Log::INFO, "[b]Datenbank-Restore Skript[/b]\n" . $output);
 
             // Show output
             if ($verbose) {
-                echo $log;
+                echo $output;
             }
 
             exit(0);
@@ -206,7 +213,7 @@ else if ($action == "restore")
             $mtx->release();
 
             // Write log
-            Log::add(Log::F_SYSTEM, Log::ERROR, "[b]Datenbank-Restore Skript[/b]\nDie Datenbank konnte nicht vom Backup [b]".$restorePoint."[/b] aus dem Verzeichnis [b]".$dir."[/b] wiederhergestellt werden: ".$e->getMessage());
+            $log->add(Log::F_SYSTEM, Log::ERROR, "[b]Datenbank-Restore Skript[/b]\nDie Datenbank konnte nicht vom Backup [b]".$restorePoint."[/b] aus dem Verzeichnis [b]".$dir."[/b] wiederhergestellt werden: ".$e->getMessage());
 
             // Show output
             echo "Fehler: ".$e->getMessage();

@@ -1,6 +1,9 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\FleetLog;
+use EtoA\Core\Logging\GameLog;
+use EtoA\Core\Logging\Log;
 use Twig\Environment;
 
 // TODO

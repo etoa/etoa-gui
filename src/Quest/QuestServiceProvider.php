@@ -68,7 +68,7 @@ class QuestServiceProvider implements ServiceProviderInterface, EventListenerPro
         $pimple['cubicle.quests.logger'] = function (Container $pimple): array {
             return [
                 $pimple['etoa.quest.log.repository'],
-                new QuestGameLog(),
+                new QuestGameLog($pimple['etoa.log.game.service']),
             ];
         };
 

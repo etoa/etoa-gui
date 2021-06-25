@@ -5,9 +5,13 @@
 //
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\Log;
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
+
+/** @var Log */
+$log = $app['etoa.log.service'];
 
 $errorMessage = null;
 $successMessage = null;
@@ -46,7 +50,7 @@ try {
             ;");
 
                 // Log hinzufügen
-                Log::add(Log::F_USER,Log::INFO,'Der Benutzer ' . $_POST['user_nick'] . ' hat ein neues Passwort per E-Mail angefordert!');
+                $log->add(Log::F_USER,Log::INFO,'Der Benutzer ' . $_POST['user_nick'] . ' hat ein neues Passwort per E-Mail angefordert!');
 
                 $_SESSION['pwforgot_success_msg'] = 'Deine Passwort-Anfrage war erfolgreich. Du solltest in einigen Minuten eine E-Mail mit dem neuen Passwort erhalten!';
                 forward('?index='.$index);

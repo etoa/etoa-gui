@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\Log;
 
 class Users
 {
@@ -14,6 +15,9 @@ class Users
 
         /** @var ConfigurationService */
         $config = $app['etoa.config.service'];
+
+        /** @var Log */
+        $log = $app['etoa.log.service'];
 
         $now = time();
 
@@ -43,9 +47,9 @@ class Users
             }
         }
         if ($manual)
-            Log::add(Log::F_SYSTEM, Log::INFO, mysql_num_rows($res)." inaktive User die seit ".date("d.m.Y H:i",$online_time)." nicht mehr online waren oder seit ".date("d.m.Y H:i",$register_time)." keine Punkte haben wurden manuell gelöscht!");
+            $log->add(Log::F_SYSTEM, Log::INFO, mysql_num_rows($res)." inaktive User die seit ".date("d.m.Y H:i",$online_time)." nicht mehr online waren oder seit ".date("d.m.Y H:i",$register_time)." keine Punkte haben wurden manuell gelöscht!");
         else
-            Log::add(Log::F_SYSTEM, Log::INFO, mysql_num_rows($res)." inaktive User die seit ".date("d.m.Y H:i",$online_time)." nicht mehr online waren oder seit ".date("d.m.Y H:i",$register_time)." keine Punkte haben wurden gelöscht!");
+            $log->add(Log::F_SYSTEM, Log::INFO, mysql_num_rows($res)." inaktive User die seit ".date("d.m.Y H:i",$online_time)." nicht mehr online waren oder seit ".date("d.m.Y H:i",$register_time)." keine Punkte haben wurden gelöscht!");
 
         // Nachricht an lange inaktive
         $res =	dbquery("
@@ -121,6 +125,12 @@ die Spielleitung";
     */
     static function removeDeleted($manual=false)
     {
+        // TODO
+        global $app;
+
+        /** @var Log */
+        $log = $app['etoa.log.service'];
+
         $res =	dbquery("
             SELECT
                 user_id
@@ -138,9 +148,9 @@ die Spielleitung";
             }
         }
         if ($manual)
-            Log::add(Log::F_SYSTEM, Log::INFO, mysql_num_rows($res)." als gelöscht markierte User wurden manuell gelöscht!");
+            $log->add(Log::F_SYSTEM, Log::INFO, mysql_num_rows($res)." als gelöscht markierte User wurden manuell gelöscht!");
         else
-            Log::add(Log::F_SYSTEM, Log::INFO, mysql_num_rows($res)." als gelöscht markierte User wurden gelöscht!");
+            $log->add(Log::F_SYSTEM, Log::INFO, mysql_num_rows($res)." als gelöscht markierte User wurden gelöscht!");
         return mysql_num_rows($res);
     }
 

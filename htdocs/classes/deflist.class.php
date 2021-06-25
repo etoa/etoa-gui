@@ -1,6 +1,8 @@
 <?PHP
 
-	class DefList implements IteratorAggregate
+use EtoA\Core\Logging\Log;
+
+class DefList implements IteratorAggregate
 	{
 		private $userId;
 		private $entityId;
@@ -192,13 +194,19 @@
 		*/
 		static function cleanUp()
 		{
+            // TODO
+            global $app;
+
+            /** @var Log */
+            $log = $app['etoa.log.service'];
+
 			dbquery("DELETE FROM
 						`deflist`
 					WHERE
 						`deflist_count`='0'
 						;");
 			$nr = mysql_affected_rows();
-			Log::add(Log::F_SYSTEM, Log::INFO, "$nr leere Verteidigungsdatensätze wurden gelöscht!");
+			$log->add(Log::F_SYSTEM, Log::INFO, "$nr leere Verteidigungsdatensätze wurden gelöscht!");
 			return $nr;
 		}
 

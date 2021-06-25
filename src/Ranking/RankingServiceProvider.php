@@ -13,7 +13,8 @@ class RankingServiceProvider implements ServiceProviderInterface
             return new PointsService(
                 $pimple['etoa.config.service'],
                 $pimple['etoa.user.repository'],
-                $pimple['etoa.alliance.repository']
+                $pimple['etoa.alliance.repository'],
+                $pimple['etoa.log.service']
             );
         };
     }

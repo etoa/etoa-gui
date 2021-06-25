@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Core\Logging\GameLog;
 use EtoA\Help\TicketSystem\TicketRepository;
 
 $xajax->register(XAJAX_FUNCTION,"showTimeBox");

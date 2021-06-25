@@ -6,23 +6,26 @@ namespace EtoA\Ranking;
 
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\Logging\Log;
 use EtoA\User\UserRepository;
-use Log;
 
 class PointsService
 {
     private ConfigurationService $config;
     private UserRepository $userRepo;
     private AllianceRepository $allianceRepo;
+    private Log $log;
 
     public function __construct(
         ConfigurationService $config,
         UserRepository $userRepo,
-        AllianceRepository $allianceRepo)
-    {
+        AllianceRepository $allianceRepo,
+        Log $log
+    ) {
         $this->config = $config;
         $this->userRepo = $userRepo;
         $this->allianceRepo = $allianceRepo;
+        $this->log = $log;
     }
 
     public function cleanupUserPoints(int $threshold = 0): int
@@ -33,7 +36,7 @@ class PointsService
 
         $affected = $this->userRepo->removePointsByTimestamp($timestamp);
 
-        Log::add(Log::F_SYSTEM, Log::INFO, "$affected Userpunkte-Logs die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
+        $this->log->add(Log::F_SYSTEM, Log::INFO, "$affected Userpunkte-Logs die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
 
         return $affected;
     }
@@ -46,7 +49,7 @@ class PointsService
 
         $affected = $this->allianceRepo->removePointsByTimestamp($timestamp);
 
-        Log::add(Log::F_SYSTEM, Log::INFO, "$affected Allianzpunkte-Logs die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
+        $this->log->add(Log::F_SYSTEM, Log::INFO, "$affected Allianzpunkte-Logs die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
 
         return $affected;
     }
