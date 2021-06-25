@@ -1519,39 +1519,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 	}
 
 	/**
-	* Schiffe zur Schiffsliste hinzufügen
-	*
-	* @param int $entity Entity-ID
-	* @param int $user User-ID
-	* @param int $ship Schiff-ID
-	* @param int $cnt Anzahl
-	* @author MrCage
-	*/
-	function shiplistAdd($entity,$user,$ship,$cnt)
-	{
-		dbquery("
-				INSERT INTO
-				shiplist
-				(
-					shiplist_user_id,
-					shiplist_entity_id,
-					shiplist_ship_id,
-					shiplist_count
-				)
-				VALUES
-				(
-					'".$user."',
-					'".$entity."',
-					'".$ship."',
-					'".max($cnt,0)."'
-				)
-				ON DUPLICATE KEY
-				UPDATE
-					shiplist_count = shiplist_count + VALUES(shiplist_count);
-			");
-	}
-
-	/**
 	* Gebäude zur gebäudeliste hinzufügen
 	*
 	* @param int $entity entity-ID

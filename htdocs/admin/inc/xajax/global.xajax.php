@@ -365,13 +365,17 @@ function showShipsOnPlanet($form)
 
 function addShipToPlanet($form)
 {
+    global $app;
+
 	$objResponse = new xajaxResponse();
 
 	$updata=explode(":",$form['entity_id']);
 
 	if ($updata[1]>0)
 	{
-		shiplistAdd((int) $updata[0], (int) $updata[1], (int) $form['ship_id'], (int) $form['shiplist_count']);
+        /** @var \EtoA\Ship\ShipRepository $shipRepository */
+        $shipRepository = $app['etoa.ship.repository'];
+        $shipRepository->addShip((int) $form['ship_id'], (int) $form['shiplist_count'], (int) $updata[1], (int) $updata[0]);
   		$objResponse->script("xajax_showShipsOnPlanet('".$form['entity_id']."')");
   	}
   	else
@@ -842,7 +846,7 @@ function addDefenseToPlanet($form)
 	$updata=explode(":",$form['entity_id']);
 	if ($updata[1]>0)
 	{
-        $defenseRepository->addDefense((int) $form['def_id'], (int) $form['deflist_count'], (int) $updata[1], (int) $form['entity_id']);
+        $defenseRepository->addDefense((int) $form['def_id'], (int) $form['deflist_count'], (int) $updata[1], (int) $updata[0]);
   		$objResponse->script("xajax_showDefenseOnPlanet('".$form['entity_id']."')");
   }
   else
