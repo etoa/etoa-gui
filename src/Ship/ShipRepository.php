@@ -8,46 +8,23 @@ class ShipRepository extends AbstractRepository
 {
     public function addShip(int $shipId, int $amount, int $userId, int $entityId): void
     {
-        $hasShips = (bool) $this->createQueryBuilder()
-            ->select('shiplist_id')
-            ->from('shiplist')
-            ->where('shiplist_user_id = :userId')
-            ->andWhere('shiplist_entity_id = :entityId')
-            ->andWhere('shiplist_ship_id = :shipId')
-            ->setParameters([
-                'shipId' => $shipId,
-                'userId' => $userId,
-                'entityId' => $entityId,
-            ])->execute()->fetchOne();
-
-        if ($hasShips) {
-            $this->createQueryBuilder()
-                ->update('shiplist')
-                ->set('shiplist_count', 'shiplist_count + :amount')
-                ->where('shiplist_ship_id = :shipId')
-                ->andWhere('shiplist_entity_id = :entityId')
-                ->andWhere('shiplist_user_id = :userId')
-                ->setParameters([
-                    'amount' => $amount,
-                    'shipId' => $shipId,
-                    'userId' => $userId,
-                    'entityId' => $entityId,
-                ])->execute();
-        } else {
-            $this->createQueryBuilder()
-                ->insert('shiplist')
-                ->values([
-                    'shiplist_count' => ':amount',
-                    'shiplist_ship_id' => ':shipId',
-                    'shiplist_entity_id' => ':entityId',
-                    'shiplist_user_id' => ':userId',
-                ])
-                ->setParameters([
-                    'amount' => $amount,
-                    'shipId' => $shipId,
-                    'userId' => $userId,
-                    'entityId' => $entityId,
-                ])->execute();
-        }
+        $this->getConnection()->executeQuery('INSERT INTO shiplist (
+                shiplist_user_id,
+                shiplist_entity_id,
+                shiplist_ship_id,
+                shiplist_count
+            ) VALUES (
+                :userId,
+                :entityId,
+                :shipId,
+                :amount
+            ) ON DUPLICATE KEY
+            UPDATE shiplist_count = shiplist_count + VALUES(shiplist_count);
+        ', [
+            'userId' => $userId,
+            'amount' => max(0, $amount),
+            'entityId' => $entityId,
+            'shipId' => $shipId,
+        ]);
     }
 }

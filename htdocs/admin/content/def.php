@@ -26,6 +26,8 @@
 	// 	Kommentar:
 	//
 
+    /** @var \EtoA\Defense\DefenseRepository $defenseRepository */
+    $defenseRepository = $app['etoa.defense.repository'];
 
 	//
 	// Battlepoints
@@ -306,7 +308,7 @@
 	      if (mysql_num_rows($res)>0)
 	      {
 	      	$arr=mysql_fetch_array($res);
-					shiplistAdd($arr['queue_entity_id'],$arr['queue_user_id'],$arr['queue_def_id'],$arr['queue_cnt']);
+	      	$defenseRepository->addDefense((int) $arr['queue_def_id'], (int) $arr['queue_cnt'], (int) $arr['queue_user_id'], (int) $arr['queue_entity_id']);
 					dbquery("
 					DELETE FROM
 						def_queue

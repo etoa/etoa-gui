@@ -164,4 +164,26 @@ class BuildingRepository extends AbstractRepository
         return $qry->execute()
             ->fetchAllAssociative();
     }
+
+    public function addBuilding(int $buildingId, int $level, int $userId, int $entityId): void
+    {
+        $this->getConnection()->executeQuery('INSERT INTO buildlist (
+                buildlist_user_id,
+                buildlist_entity_id,
+                buildlist_building_id,
+                buildlist_current_level
+            ) VALUES (
+                :userId,
+                :entityId,
+                :buildingId,
+                :level
+            ) ON DUPLICATE KEY
+            UPDATE buildlist_current_level = :level;
+        ', [
+            'userId' => $userId,
+            'level' => max(0, $level),
+            'entityId' => $entityId,
+            'buildingId' => $buildingId,
+        ]);
+    }
 }

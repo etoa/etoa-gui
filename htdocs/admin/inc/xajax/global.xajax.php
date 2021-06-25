@@ -365,13 +365,17 @@ function showShipsOnPlanet($form)
 
 function addShipToPlanet($form)
 {
+    global $app;
+
 	$objResponse = new xajaxResponse();
 
 	$updata=explode(":",$form['entity_id']);
 
 	if ($updata[1]>0)
 	{
-		shiplistAdd((int) $updata[0], (int) $updata[1], (int) $form['ship_id'], (int) $form['shiplist_count']);
+        /** @var \EtoA\Ship\ShipRepository $shipRepository */
+        $shipRepository = $app['etoa.ship.repository'];
+        $shipRepository->addShip((int) $form['ship_id'], (int) $form['shiplist_count'], (int) $updata[1], (int) $updata[0]);
   		$objResponse->script("xajax_showShipsOnPlanet('".$form['entity_id']."')");
   	}
   	else
@@ -691,13 +695,15 @@ function showMissilesOnPlanet($pid)
 
 function addMissileToPlanet($form)
 {
+    global $app;
+    /** @var \EtoA\Missile\MissileRepository $missileRepository */
+    $missileRepository = $app['etoa.missile.repository'];
 	$objResponse = new xajaxResponse();
 
 	$updata=explode(":",$form['entity_id']);
-	if ($updata[1]>0)
-	{
-		missilelistAdd((int) $updata[0], (int) $updata[1], (int) $form['ship_id'], (int) $form['shiplist_count']);
-  	$objResponse->script("xajax_showMissilesOnPlanet(".$updata[0].")");
+	if ($updata[1]>0) {
+	    $missileRepository->addMissile((int) $form['ship_id'], (int) $form['shiplist_count'], (int) $updata[1], (int) $updata[0]);
+  	    $objResponse->script("xajax_showMissilesOnPlanet(".$updata[0].")");
   }
   else
   {
@@ -830,12 +836,17 @@ function showDefenseOnPlanet($form)
 
 function addDefenseToPlanet($form)
 {
+    global $app;
+
+    /** @var \EtoA\Defense\DefenseRepository $defenseRepository */
+    $defenseRepository = $app['etoa.defense.repository'];
+
 	$objResponse = new xajaxResponse();
 
 	$updata=explode(":",$form['entity_id']);
 	if ($updata[1]>0)
 	{
-		deflistAdd((int) $updata[0], (int) $updata[1], (int) $form['def_id'],(int) $form['deflist_count']);
+        $defenseRepository->addDefense((int) $form['def_id'], (int) $form['deflist_count'], (int) $updata[1], (int) $updata[0]);
   		$objResponse->script("xajax_showDefenseOnPlanet('".$form['entity_id']."')");
   }
   else
@@ -977,12 +988,15 @@ function showBuildingsOnPlanet($form)
 
 function addBuildingToPlanet($form)
 {
+    global $app;
 	$objResponse = new xajaxResponse();
 
 	$updata=explode(":",$form['entity_id']);
 	if ($updata[1]>0)
 	{
-		buildlistAdd((int) $updata[0], (int) $updata[1], (int) $form['building_id'],(int) $form['buildlist_current_level']);
+	    /** @var \EtoA\Building\BuildingRepository $buildingRepository */
+	    $buildingRepository = $app['etoa.building.repository'];
+        $buildingRepository->addBuilding((int) $form['building_id'], (int) $form['buildlist_current_level'], (int) $updata[1], (int) $updata[0]);
   	$objResponse->script("xajax_showBuildingsOnPlanet('".$form['entity_id']."')");
   }
   else
@@ -995,14 +1009,18 @@ function addBuildingToPlanet($form)
 
 function addAllBuildingToPlanet($form,$num)
 {
+    global $app;
+
 	$objResponse = new xajaxResponse();
 
 	$updata=explode(":",$form['entity_id']);
 	if ($updata[1]>0)
 	{
+        /** @var \EtoA\Building\BuildingRepository $buildingRepository */
+        $buildingRepository = $app['etoa.building.repository'];
 		for($i=1;$i<=$num;$i++)
 		{
-			buildlistAdd((int) $updata[0], (int) $updata[1], $i, (int) $form['buildlist_current_level']);
+            $buildingRepository->addBuilding($i, (int) $form['buildlist_current_level'], (int) $updata[1], (int) $updata[0]);
 		}
 
   		$objResponse->script("xajax_showBuildingsOnPlanet('".$form['entity_id']."')");
