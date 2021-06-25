@@ -621,12 +621,11 @@
 						;");
 
 						// Inform opposite leader
-						$res=dbquery("SELECT alliance_founder_id,alliance_name FROM alliances WHERE alliance_id='".$arr['alliance_bnd_alliance_id2']."'");
-	          $arr=mysql_fetch_array($res);
-	   				send_msg($arr['alliance_founder_id'],MSG_ALLYMAIL_CAT,"Anfrage zurückgenommen","Die Allianz [b]" . $allianceNamesWithTags[$cu->allianceId] . "[/b] hat ihre Büdnisanfrage wieder zurückgezogen.");
+                        $otherAlliance = $allianceRepository->getAlliance($arr['alliance_bnd_alliance_id2']);
+	   				    send_msg($otherAlliance->founderId,MSG_ALLYMAIL_CAT,"Anfrage zurückgenommen","Die Allianz [b]" . $allianceNamesWithTags[$cu->allianceId] . "[/b] hat ihre Büdnisanfrage wieder zurückgezogen.");
 
 						// Display message
-						echo "Anfrage gel&ouml;scht! Die Allianzleitung der Allianz <b>".$arr['alliance_name']."</b> wurde per Nachricht dar&uuml;ber informiert.<br/><br/>";
+						echo "Anfrage gel&ouml;scht! Die Allianzleitung der Allianz <b>".$otherAlliance->name."</b> wurde per Nachricht dar&uuml;ber informiert.<br/><br/>";
 					}
 				}
 

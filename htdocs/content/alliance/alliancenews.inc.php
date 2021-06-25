@@ -153,19 +153,14 @@ if (Alliance::checkActionRights('alliancenews'))
 		}
 		echo '<option '.$selected.' value="0" style="font-weight:bold;color:#0f0;">Öffentliches Rathaus</option>';
 
-		$alliance=dbquery("
-		SELECT
-      alliance_id,
-      alliance_tag,
-      alliance_name
-		FROM
-			alliances");
+		/** @var \EtoA\Alliance\AllianceRepository $allianceRepository */
+		$allianceRepository = $app['etoa.alliance.repository'];
+		$allianceNamesWithTags = $allianceRepository->getAllianceNamesWithTags();
 
-		while ($alliances=mysql_fetch_assoc($alliance))
-		{
-			$selected = ($aid == $alliances['alliance_id']) ? 'selected="selected" ' : "";
+		foreach ($allianceNamesWithTags as $allianceId => $allianceNamesWithTag) {
+			$selected = ($aid == $allianceId) ? 'selected="selected" ' : "";
 
-			echo '<option value="'.$alliances['alliance_id'].'" '.$selected.'>['.$alliances['alliance_tag']."]  ".$alliances['alliance_name']."</option>";
+			echo '<option value="'.$allianceId.'" '.$selected.'>' . $allianceNamesWithTag . "</option>";
 		}
 		echo "</select></td>
 	</tr>";
