@@ -1,9 +1,13 @@
 <?PHP
 
+use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\RuntimeDataStore;
 
 /** @var RuntimeDataStore */
 $runtimeDataStore = $app['etoa.runtime.datastore'];
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
 
 	// BEGIN SKRIPT //
 
@@ -221,14 +225,14 @@ $runtimeDataStore = $app['etoa.runtime.datastore'];
 			echo "Letzte Aktualisierung: <b>".df($statsUpdate)." Uhr</b><br/>";
 		}
 		echo "Die Aktualisierung der Punkte erfolgt ";
-		$h = $conf['points_update']['v']/3600;
+		$h = $config->getInt('points_update')/3600;
 		if ($h>1)
 			echo "alle $h Stunden!<br>";
 		elseif ($h==1)
 			echo " jede Stunde!<br>";
 		else
 		{
-			$m = $conf['points_update']['v']/60;
+			$m = $config->getInt('points_update')/60;
 			echo "alle $m Minuten!<br/>";
 		}
 		echo "Neu angemeldete Benutzer erscheinen erst nach der ersten Aktualisierung in der Liste.<br/>";

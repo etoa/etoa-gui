@@ -1,5 +1,10 @@
 <?php
 
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 $tfa = new RobThree\Auth\TwoFactorAuth(APP_NAME);
 $errorMessage = null;
 if (isset($_POST['tfa_activate'])) {
@@ -38,7 +43,7 @@ if (!isset($secret)) {
     $secret = $tfa->createSecret();
     $_SESSION['tfa_activate_secret'] = $secret;
 }
-$label = Config::getInstance()->roundname->v . ' : ' . $cu->name;
+$label = $config->get('roundname') . ' : ' . $cu->name;
 echo $twig->render('admin/profile/tfa-activate.html.twig', [
     'tfaQrCode' => $tfa->getQRCodeImageAsDataUri($label, $secret),
     'errMsg' => $errorMessage,

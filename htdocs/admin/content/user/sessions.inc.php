@@ -1,8 +1,13 @@
 <?php
 
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 echo "<h2>Aktive Sessions</h2>";
 echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-echo "<p>Das User-Timeout betr&auml;gt ".tf($conf['user_timeout']['v'])."</p>";
+echo "<p>Das User-Timeout betr&auml;gt ".tf($config->getInt('user_timeout'))."</p>";
 
 if (isset($_GET['kick']))
 {
@@ -54,7 +59,7 @@ if (mysql_num_rows($res)>0)
         echo "<tr><td class=\"tbldata\"><a href=\"?page=user&sub=edit&user_id=".$arr['user_id']."\">".$arr['user_nick']."</a></td>
 			<td class=\"tbldata\">".date("d.m.Y H:i",$arr['time_login'])."</td>
 			<td class=\"tbldata\">".date("d.m.Y  H:i",$arr['time_action'])."</td>";
-        if (time() - $cfg->user_timeout->v < $arr['time_action'] && $arr['id']!='' )
+        if (time() - $config->getInt('user_timeout') < $arr['time_action'] && $arr['id']!='' )
         {
             echo "<td class=\"tbldata\" style=\"color:#0f0\">Online [<a href=\"?page=$page&amp;sub=$sub&amp;kick=".$arr['id']."\">kick</a>]</td>";
         }
@@ -79,6 +84,3 @@ if (mysql_num_rows($res)>0)
 }
 else
     echo "<br/><br/><i>Keine Eintr&auml;ge vorhanden!</i><br/>";
-
-
-?>

@@ -10,7 +10,6 @@ trait DbTestTrait
     {
         $environment = 'testing';
         $debug = true;
-        $questSystemEnabled = true;
 
         return require dirname(__DIR__).'/src/app.php';
     }

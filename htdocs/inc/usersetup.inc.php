@@ -1,14 +1,18 @@
 <?PHP
 
+use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Text\TextRepository;
 
 /** @var TextRepository */
 $textRepo = $app['etoa.text.repository'];
 
-$sx_num=$conf['num_of_sectors']['p1'];
-$sy_num=$conf['num_of_sectors']['p2'];
-$cx_num=$conf['num_of_cells']['p1'];
-$cy_num=$conf['num_of_cells']['p2'];
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
+$sx_num = $config->param1Int('num_of_sectors');
+$sy_num = $config->param2Int('num_of_sectors');
+$cx_num = $config->param1Int('num_of_cells');
+$cy_num = $config->param2Int('num_of_cells');
 
 echo "<h1>Willkommen in Andromeda</h1>";
 
@@ -29,9 +33,8 @@ if (isset($s->itemset_key) && isset($_POST[md5($s->itemset_key)]) && isset($_POS
 elseif (isset($_POST['submit_chooseplanet']) && intval($_POST['choosenplanetid'])>0 && checker_verify() && !isset($cp))
 {
     $tp = Planet::getById($_POST['choosenplanetid']);
-    $cfg = Config::getInstance();
 
-    if($tp && $tp->habitable && $tp->userId == 0 && $tp->fields>$cfg->value('user_min_fields')) {
+    if ($tp && $tp->habitable && $tp->userId == 0 && $tp->fields > $config->getInt('user_min_fields')) {
 
         $tp->reset();
         $tp->assignToUser($cu->id,1);

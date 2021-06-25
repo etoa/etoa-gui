@@ -2437,11 +2437,10 @@ function MarketSearchFormularShow($val)
 
 function checkMarketSearchFormular($val)
 {
-    global $conf, $s, $cu, $app;
+    global $s, $cu, $app;
 
     /** @var \EtoA\User\UserRepository $userRepository */
     $userRepository = $app['etoa.user.repository'];
-
 
 		ob_start();
   	$objResponse = new xajaxResponse();

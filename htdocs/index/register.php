@@ -1,47 +1,25 @@
 <?PHP
 
-//////////////////////////////////////////////////
-//		 	 ____    __           ______       			//
-//			/\  _`\ /\ \__       /\  _  \      			//
-//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
-//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
-//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
-//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
-//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
-//																					 		//
-//////////////////////////////////////////////////
-// The Andromeda-Project-Browsergame				 		//
-// Ein Massive-Multiplayer-Online-Spiel			 		//
-// Programmiert von Nicolas Perrenoud				 		//
-// www.nicu.ch | mail@nicu.ch								 		//
-// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-//////////////////////////////////////////////////
-//
-// 	Dateiname: register.php
-// 	Topic: Anmeldung
-// 	Autor: Nicolas Perrenoud alias MrCage
-// 	Erstellt: 01.12.2004
-// 	Bearbeitet von: Nicolas Perrenoud alias MrCage
-// 	Bearbeitet am: 07.03.2006
-// 	Kommentar:
-//
+use EtoA\Core\Configuration\ConfigurationService;
 
-function getRegisterParams(): array{
-    $cfg = Config::getInstance();
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
 
+function getRegisterParams(ConfigurationService $config): array
+{
     // Load user count
-    $ucnt=mysql_fetch_row(dbquery("SELECT COUNT(user_id) FROM users;"));
+    $ucnt = mysql_fetch_row(dbquery("SELECT COUNT(user_id) FROM users;"));
 
     return [
         'maxPlayerCount' => $ucnt[0],
-        'registrationNotEnabled' => $cfg->get('enable_register') == 0,
-        'registrationLater' => ($cfg->get('enable_register') == 1 && $cfg->p1('enable_register') && $cfg->p1('enable_register') > time()) ? new \DateTime('@' . $cfg->p1('enable_register')) : null,
-        'registrationFull' => $cfg->p2('enable_register') <= $ucnt[0],
+        'registrationNotEnabled' => !$config->getBoolean('enable_register'),
+        'registrationLater' => ($config->getBoolean('enable_register') && $config->param1Int('enable_register') > time()) ? new \DateTime('@' . $config->param1Int('enable_register')) : null,
+        'registrationFull' => $config->param2Int('enable_register') <= $ucnt[0],
         'userName' => $_SESSION['REGISTER']['register_user_name'] ?? '',
         'userNick' => $_SESSION['REGISTER']['register_user_nick'] ??'',
         'userEmail' => $_SESSION['REGISTER']['register_user_email'] ?? '',
         'userPassword' => $_SESSION['REGISTER']['register_user_password'] ?? '',
-        'roundName' => Config::getInstance()->roundname->v,
+        'roundName' => $config->get('roundname'),
         'appName' => APP_NAME,
         'nameMaxLength' => NAME_MAXLENGTH,
         'nickMaxLength' => NICK_MAXLENGHT,
@@ -53,7 +31,7 @@ function getRegisterParams(): array{
 //
 // Handle registration submit
 //
-if (($_POST['register_submit'] ?? false) && $cfg->get('enable_register') != 0) {
+if (($_POST['register_submit'] ?? false) && $config->getBoolean('enable_register')) {
     $_SESSION['REGISTER']=$_POST;
 
     try {
@@ -65,16 +43,16 @@ if (($_POST['register_submit'] ?? false) && $cfg->get('enable_register') != 0) {
         );
         Log::add(3,Log::INFO,"Der Benutzer ".$newUser->nick." (".$newUser->realName.", ".$newUser->email.") hat sich registriert!");
 
-        $verificationRequired = Config::getInstance()->email_verification_required->v;
+        $verificationRequired = $config->getBoolean('email_verification_required');
         $verificationUrl = null;
         if ($verificationRequired) {
             $newUser->setVerified(false);
-            $verificationUrl = Config::getInstance()->roundurl.'/show.php?index=verifymail&key='.$newUser->verificationKey;
+            $verificationUrl = $config->get('roundurl').'/show.php?index=verifymail&key='.$newUser->verificationKey;
         } else {
             $newUser->setVerified(true);
         }
 
-        $email_text = "Hallo ".$newUser->nick."\n\nDu hast dich erfolgreich beim Sci-Fi Browsergame Escape to Andromeda für die ".Config::getInstance()->roundname->v." registriert.\nHier nochmals deine Daten:\n\n";
+        $email_text = "Hallo ".$newUser->nick."\n\nDu hast dich erfolgreich beim Sci-Fi Browsergame Escape to Andromeda für die ".$config->get('roundname')." registriert.\nHier nochmals deine Daten:\n\n";
         $email_text.= "Name: ".$newUser->realName."\n";
         $email_text.= "E-Mail: ".$newUser->email."\n";
         $email_text.= "Nick: ".$newUser->nick."\n\n";
@@ -102,11 +80,11 @@ if (($_POST['register_submit'] ?? false) && $cfg->get('enable_register') != 0) {
         ]);
         return;
     } catch (Exception $e) {
-        echo $twig->render('external/register.html.twig', array_merge(getRegisterParams(), [
+        echo $twig->render('external/register.html.twig', array_merge(getRegisterParams($config), [
             'errorMessage' => 'Die Registration hat leider nicht geklappt: ' . $e->getMessage(),
         ]));
         return;
     }
 }
 
-echo $twig->render('external/register.html.twig', getRegisterParams());
+echo $twig->render('external/register.html.twig', getRegisterParams($config));

@@ -1,10 +1,15 @@
 <?PHP
 
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 // Activate update system
 $successMessage = null;
 $errorMessage = null;
 if (($_GET['activateupdate'] ?? null) == 1) {
-    Config::getInstance()->set("update_enabled",1);
+    $config->set("update_enabled", 1);
     $successMessage = 'Tasks aktiviert!';
 }
 

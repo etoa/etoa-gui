@@ -37,7 +37,7 @@
       <v comment="Login-URL (leerlassen für lokales Login)" type="text">https://etoa.ch</v>
     </item>
     <item name="user_timeout" cat="1">
-      <v comment="User-Timeout (wenn man so lange nichts macht, muss man sich neu einloggen) in Sekunden" type="text">2400</v>
+      <v comment="User-Timeout (wenn man so lange nichts macht, muss man sich neu einloggen) in Sekunden" type="int">2400</v>
     </item>
     <item name="mail_sender" cat="1" base="yes">
       <v comment="E-Mail Absender" type="text">no-reply@etoa.ch</v>
@@ -48,7 +48,7 @@
     <item name="enable_register" cat="1" base="yes">
       <v comment="Registration erlauben" type="onoff">1</v>
       <p1 comment="Registration offen ab" type="timedate">1190446200</p1>
-      <p2 comment="Max. User" type="text">15</p2>
+      <p2 comment="Max. User" type="int">15</p2>
     </item>
     <item name="enable_login" cat="1" base="yes">
       <v comment="Login erlauben" type="onoff">1</v>
@@ -60,15 +60,15 @@
       <p2 comment="Zusätzliche Info" type="text"></p2>
     </item>
     <item name="points_update" cat="1">
-      <v comment="Punkteaktualisierung" type="text">3600</v>
-      <p1 comment="Einheiten/Userpunkt" type="text">1000</p1>
-      <p2 comment="Userpunkte/Allypunk" type="text">100</p2>
+      <v comment="Punkteaktualisierung" type="int">3600</v>
+      <p1 comment="Einheiten/Userpunkt" type="int">1000</p1>
+      <p2 comment="Userpunkte/Allypunk" type="int">100</p2>
     </item>
     <item name="show_hmod_users_stats" cat="1">
       <v comment="Spieler im Urlaubsmodus in den Statistiken anzeigen" type="onoff">1</v>
     </item>
     <item name="stats_num_rows" cat="1">
-      <v comment="Statistik Anzahl Daten/Seite" type="text">50</v>
+      <v comment="Statistik Anzahl Daten/Seite" type="int">50</v>
     </item>
     <item name="url_rules" cat="1">
       <v comment="URL: Regeln" type="text">https://etoa.ch/rules</v>
@@ -77,12 +77,12 @@
       <v comment="URL: TeamSpeak" type="text">https://etoa.ch/404.html</v>
     </item>
     <item name="messages_threshold_days" cat="1">
-      <v comment="Aufbewahrungsdauer Nachrichten" type="text">28</v>
-      <p1 comment="Aufbewahrungsdauer Nachrichten im Papierkorb" type="text">14</p1>
+      <v comment="Aufbewahrungsdauer Nachrichten" type="int">28</v>
+      <p1 comment="Aufbewahrungsdauer Nachrichten im Papierkorb" type="int">14</p1>
     </item>
 	<item name="reports_threshold_days" cat="1">
-      <v comment="Aufbewahrungsdauer Berichtes" type="text">42</v>
-      <p1 comment="Aufbewahrungsdauer Berichte im Papierkorb" type="text">42</p1>
+      <v comment="Aufbewahrungsdauer Berichtes" type="int">42</v>
+      <p1 comment="Aufbewahrungsdauer Berichte im Papierkorb" type="int">42</p1>
     </item>
     <item name="referers" cat="1" base="yes">
       <v comment="Zugelassene Referers" type="textarea">https://roundx.game.etoa.net&#xD;
@@ -104,189 +104,189 @@ https://etoa.ch</v>
       <v comment="Registrations-Schl&#xFC;ssel (f&#xFC;r private Runden)" type="text"/>
     </item>
     <item name="bot_max_count" cat="1">
-      <v comment="Bot Counter" type="text">5</v>
+      <v comment="Bot Counter" type="int">5</v>
     </item>
 
     <item name="global_time" cat="2">
-      <v comment="Global Bauzeit in Rohstoffe pro Sekunde, Standard-Wert 12" type="text">12</v>
+      <v comment="Global Bauzeit in Rohstoffe pro Sekunde, Standard-Wert 12" type="int">12</v>
     </item>
     <item name="shipdefbuild_cancel_time" cat="2">
-      <v comment="Schiff/Def Abbruchzeit" type="text">15</v>
+      <v comment="Schiff/Def Abbruchzeit" type="int">15</v>
     </item>
     <item name="build_time_boni_forschungslabor" cat="2">
-      <v comment="-X% Forschungszeit" type="text">5</v>
-      <p1 comment="ab level X" type="text">10</p1>
-      <p2 comment="Maximum" type="text">0.2</p2>
+      <v comment="-X% Forschungszeit" type="int">5</v>
+      <p1 comment="ab level X" type="int">10</p1>
+      <p2 comment="Maximum" type="float">0.2</p2>
     </item>
     <item name="build_time_boni_schiffswerft" cat="2">
-      <v comment="-X% Schiffsbauzeit" type="text">5</v>
-      <p1 comment="ab level X" type="text">10</p1>
+      <v comment="-X% Schiffsbauzeit" type="int">5</v>
+      <p1 comment="ab level X" type="int">10</p1>
     </item>
     <item name="build_time_boni_waffenfabrik" cat="2">
-      <v comment="-X% Verteidigungsbauzeit" type="text">5</v>
-      <p1 comment="ab level X" type="text">10</p1>
+      <v comment="-X% Verteidigungsbauzeit" type="int">5</v>
+      <p1 comment="ab level X" type="int">10</p1>
     </item>
     <item name="ship_build_time" cat="2">
-      <v comment="Schiffs Bauzeit" type="text">0.8</v>
+      <v comment="Schiffs Bauzeit" type="float">0.8</v>
     </item>
     <item name="def_build_time" cat="2">
-      <v comment="Def Bauzeit" type="text">0.8</v>
+      <v comment="Def Bauzeit" type="float">0.8</v>
     </item>
     <item name="build_build_time" cat="2">
-      <v comment="Geb&#xE4;ude Bauzeit" type="text">1</v>
+      <v comment="Geb&#xE4;ude Bauzeit" type="float">1</v>
     </item>
     <item name="flight_flight_time" cat="2">
-      <v comment="Flugzeit" type="text">1</v>
+      <v comment="Flugzeit" type="float">1</v>
     </item>
     <item name="flight_start_time" cat="2">
-      <v comment="Startzeit" type="text">1</v>
+      <v comment="Startzeit" type="float">1</v>
     </item>
     <item name="flight_land_time" cat="2">
-      <v comment="Landezeit" type="text">1</v>
+      <v comment="Landezeit" type="float">1</v>
     </item>
     <item name="res_build_time" cat="2">
-      <v comment="Forschungs Bauzeit" type="text">1</v>
+      <v comment="Forschungs Bauzeit" type="float">1</v>
     </item>
 
     <item name="num_of_sectors" cat="3">
-      <p1 comment="Anzahl Sektoren X" type="text">2</p1>
-      <p2 comment="Anzahl Sektoren Y" type="text">2</p2>
+      <p1 comment="Anzahl Sektoren X" type="int">2</p1>
+      <p2 comment="Anzahl Sektoren Y" type="int">2</p2>
     </item>
     <item name="num_of_cells" cat="3">
-      <p1 comment="Anzahl Zellen X" type="text">10</p1>
-      <p2 comment="Anzahl Zellen Y" type="text">10</p2>
+      <p1 comment="Anzahl Zellen X" type="int">10</p1>
+      <p2 comment="Anzahl Zellen Y" type="int">10</p2>
     </item>
     <item name="num_planets" cat="3">
-      <p1 comment="Min Anzahl Planeten" type="text">5</p1>
-      <p2 comment="Max Anzahl Planeten" type="text">20</p2>
+      <p1 comment="Min Anzahl Planeten" type="int">5</p1>
+      <p2 comment="Max Anzahl Planeten" type="int">20</p2>
     </item>
     <item name="space_percent_solsys" cat="3">
-      <v comment="Sonnensysteme %" type="text">50</v>
+      <v comment="Sonnensysteme %" type="int">50</v>
     </item>
     <item name="space_percent_asteroids" cat="3">
-      <v comment="Asteroiden %" type="text">12</v>
+      <v comment="Asteroiden %" type="int">12</v>
     </item>
     <item name="space_percent_nebulas" cat="3">
-      <v comment="Nebel %" type="text">12</v>
+      <v comment="Nebel %" type="int">12</v>
     </item>
     <item name="space_percent_wormholes" cat="3">
-      <v comment="Wurml&#xF6;cher %" type="text">12</v>
+      <v comment="Wurml&#xF6;cher %" type="int">12</v>
     </item>
     <item name="persistent_wormholes_ratio" cat="3">
-      <v comment="Anteil persistenter Wurml&#xF6;cher %" type="text">10</v>
+      <v comment="Anteil persistenter Wurml&#xF6;cher %" type="int">10</v>
     </item>
     <item name="num_planet_images" cat="3">
-      <v comment="Anzahl Planetenbilder" type="text">5</v>
+      <v comment="Anzahl Planetenbilder" type="int">5</v>
     </item>
     <item name="planet_fields" cat="3">
-      <p1 comment="Min Planetenfelder" type="text">600</p1>
-      <p2 comment="Max Planetenfelder" type="text">2500</p2>
+      <p1 comment="Min Planetenfelder" type="int">600</p1>
+      <p2 comment="Max Planetenfelder" type="int">2500</p2>
     </item>
     <item name="planet_temp" cat="3">
-      <v comment="Planetentemperatur Schritt" type="text">20</v>
-      <p1 comment="Min Planetentemperatur" type="text">-155</p1>
-      <p2 comment="Max Planetentemperatur" type="text">166</p2>
+      <v comment="Planetentemperatur Schritt" type="int">20</v>
+      <p1 comment="Min Planetentemperatur" type="int">-155</p1>
+      <p2 comment="Max Planetentemperatur" type="int">166</p2>
     </item>
     <item name="field_squarekm" cat="3">
-      <v comment="Quadratkilometer/Feld" type="text">11694</v>
+      <v comment="Quadratkilometer/Feld" type="int">11694</v>
     </item>
     <item name="cell_length" cat="3">
-      <v comment="Zellenl&#xE4;nge in AE" type="text">300</v>
+      <v comment="Zellenl&#xE4;nge in AE" type="int">300</v>
     </item>
     <item name="map_init_sector" cat="3">
-      <p1 comment="Standardsektor X" type="text">1</p1>
-      <p2 comment="Standardsektor Y" type="text">1</p2>
+      <p1 comment="Standardsektor X" type="int">1</p1>
+      <p2 comment="Standardsektor Y" type="int">1</p2>
     </item>
     <item name="user_planet_name" cat="3">
       <v comment="Name Startplanet" type="text">Startplanet</v>
     </item>
     <item name="user_min_fields" cat="3">
-      <v comment="Min Felder Startplanet" type="text">1200</v>
+      <v comment="Min Felder Startplanet" type="int">1200</v>
     </item>
     <item name="user_max_planets" cat="3">
-      <v comment="Max Planeten/User" type="text">15</v>
+      <v comment="Max Planeten/User" type="int">15</v>
     </item>
     <item name="asteroid_ress" cat="3">
-      <p1 comment="Min. Asteroiden Ressourcen (min. 5000) pro Rohstoff" type="text">10000</p1>
-      <p2 comment="Max. Asteroiden Ressourcen pro Rohstoff" type="text">1000000</p2>
+      <p1 comment="Min. Asteroiden Ressourcen (min. 5000) pro Rohstoff" type="int">10000</p1>
+      <p2 comment="Max. Asteroiden Ressourcen pro Rohstoff" type="int">1000000</p2>
     </item>
     <item name="nebula_ress" cat="3">
-      <p1 comment="Min. Nebel Ressourcen (min. 5000)" type="text">100000</p1>
-      <p2 comment="Max. Nebel Ressourcen" type="text">3000000</p2>
+      <p1 comment="Min. Nebel Ressourcen (min. 5000)" type="int">100000</p1>
+      <p2 comment="Max. Nebel Ressourcen" type="int">3000000</p2>
     </item>
     <item name="wh_update" cat="3">
-      <v comment="Wurmloch-Update: Zeitschwelle" type="text">172800</v>
-      <p1 comment="Wurmloch-Update: Anzahl &#xC4;nderungen" type="text">1</p1>
+      <v comment="Wurmloch-Update: Zeitschwelle" type="int">172800</v>
+      <p1 comment="Wurmloch-Update: Anzahl &#xC4;nderungen" type="int">1</p1>
     </item>
     <item name="gasplanet" cat="3">
-      <v comment="Gasplanet-Kategorie" type="text">7</v>
-      <p1 comment="Gasplanet: Produktion/Stunde" type="text">3600</p1>
-      <p2 comment="Gasplanet: Kapazit&#xE4;t/Feld" type="text">500</p2>
+      <v comment="Gasplanet-Kategorie" type="int">7</v>
+      <p1 comment="Gasplanet: Produktion/Stunde" type="int">3600</p1>
+      <p2 comment="Gasplanet: Kapazit&#xE4;t/Feld" type="int">500</p2>
     </item>
     <item name="solsys_percent_planet" cat="3">
-      <v comment="Prozentualer Anteil an Planeten / Sternensystem" type="text">85</v>
+      <v comment="Prozentualer Anteil an Planeten / Sternensystem" type="int">85</v>
     </item>
     <item name="solsys_percent_asteroids" cat="3">
-      <v comment="Prozentualer Anteil an Asteroidenfeldern / Sternensystem" type="text">5</v>
+      <v comment="Prozentualer Anteil an Asteroidenfeldern / Sternensystem" type="int">5</v>
     </item>
 
     <item name="user_attack_min_points" cat="4">
-      <v comment="Noobschutz: Min Punkte" type="text">80</v>
+      <v comment="Noobschutz: Min Punkte" type="int">80</v>
     </item>
     <item name="user_attack_percentage" cat="4">
-      <v comment="Noobschutz: Punkteverh&#xE4;ltnis %" type="text">0.3</v>
+      <v comment="Noobschutz: Punkteverh&#xE4;ltnis %" type="float">0.3</v>
     </item>
     <item name="invade_possibility" cat="4">
-      <v comment="Grundinvasionschace" type="text">0.5</v>
-      <p1 comment="Max. Invasionschance" type="text">1</p1>
-      <p2 comment="Min. Invasionschance" type="text">0.1</p2>
+      <v comment="Grundinvasionschace" type="float">0.5</v>
+      <p1 comment="Max. Invasionschance" type="float">1</p1>
+      <p2 comment="Min. Invasionschance" type="float">0.1</p2>
     </item>
     <item name="invade_ship_destroy" cat="4">
-      <v comment="Invasion: WS Schiffzerst&#xF6;rung (diese Konfiguration hat momentan keinen Effekt)" type="text">0.3</v>
+      <v comment="Invasion: WS Schiffzerst&#xF6;rung (diese Konfiguration hat momentan keinen Effekt)" type="float">0.3</v>
     </item>
     <item name="def_restore_percent" cat="4">
-      <v comment="Wiederherstellung Def %" type="text">0.4</v>
+      <v comment="Wiederherstellung Def %" type="float">0.4</v>
     </item>
     <item name="def_wf_percent" cat="4">
-      <v comment="Def ins Tf %" type="text">0.4</v>
+      <v comment="Def ins Tf %" type="float">0.4</v>
     </item>
     <item name="civil_ship_restore_percent" cat="4">
-      <v comment="Wiederherstellung zivile Schiffe Verteidiger %" type="text">1</v>
+      <v comment="Wiederherstellung zivile Schiffe Verteidiger %" type="int">1</v>
     </item>
     <item name="civil_ship_categories" cat="4">
       <v comment="Zivile Schiffe (Kategorien)" type="text">2,7</v>
     </item>
     <item name="ship_wf_percent" cat="4">
-      <v comment="Schiffe ins Tf %" type="text">0.5</v>
+      <v comment="Schiffe ins Tf %" type="float">0.5</v>
     </item>
     <item name="deactivate_fleet" cat="4">
       <v comment="Flotten deaktivieren (diese Konfiguration hat momentan keinen Effekt)" type="onoff"/>
     </item>
     <item name="ship_bomb_factor" cat="4">
-      <v comment="Bombchance % pro Forschungslevel" type="text">5</v>
-      <p1 comment="Minimale Chance" type="text">10</p1>
+      <v comment="Bombchance % pro Forschungslevel" type="int">5</v>
+      <p1 comment="Minimale Chance" type="int">10</p1>
     </item>
     <item name="battle_rounds" cat="4">
-      <v comment="Anzahl Runden (Kampf)" type="text">5</v>
+      <v comment="Anzahl Runden (Kampf)" type="int">5</v>
     </item>
     <item name="max_heal" cat="4">
-        <v comment="Max Heal" type="text">0.9</v>
+        <v comment="Max Heal" type="float">0.9</v>
     </item>
     <item name="gasattack_action" cat="4">
-      <v comment="Gasangriff: Minimale Chance f&#xFC;r erfolgreichen Angriff" type="text">25</v>
-      <p1 comment="Gasangriff: Maximaler Schaden in %" type="text">95</p1>
+      <v comment="Gasangriff: Minimale Chance f&#xFC;r erfolgreichen Angriff" type="int">25</v>
+      <p1 comment="Gasangriff: Maximaler Schaden in %" type="int">95</p1>
     </item>
     <item name="elorating" cat="4">
-      <v comment="Startwert Elo-Rating" type="text">1600</v>
-      <p1 comment="K Variable Elo-Rating" type="text">15</p1>
+      <v comment="Startwert Elo-Rating" type="int">1600</v>
+      <p1 comment="K Variable Elo-Rating" type="int">15</p1>
     </item>
     <item name="battle_rebuildable" cat="4">
-      <v comment="Basicvalue (diese Konfiguration hat momentan keinen Effekt)" type="text">0</v>
-      <p1 comment="Angrefer x * tech lvl % (diese Konfiguration hat momentan keinen Effekt)" type="text">0.75</p1>
-      <p2 comment="Verteidiger x * tech lvl % (diese Konfiguration hat momentan keinen Effekt)" type="text">1</p2>
+      <v comment="Basicvalue (diese Konfiguration hat momentan keinen Effekt)" type="int">0</v>
+      <p1 comment="Angrefer x * tech lvl % (diese Konfiguration hat momentan keinen Effekt)" type="float">0.75</p1>
+      <p2 comment="Verteidiger x * tech lvl % (diese Konfiguration hat momentan keinen Effekt)" type="float">1</p2>
     </item>
     <item name="rebuildable_costs" cat="4">
-      <v comment="Kostenfaktor x * Normal (diese Konfiguration hat momentan keinen Effekt)" type="text">0.25</v>
+      <v comment="Kostenfaktor x * Normal (diese Konfiguration hat momentan keinen Effekt)" type="float">0.25</v>
     </item>
     <item name="invade_active_users" cat="4">
       <v comment="Invasieren von aktiven Spielern" type="onoff">0</v>
@@ -297,60 +297,60 @@ https://etoa.ch</v>
     </item>
     <item name="alliance_fleets_max_players" cat="4">
       <v comment="Anzahl Spieler in einer Allianzflotte oder Support einschränken" type="onoff">1</v>
-      <p1 comment="Maximale Spielerzahl im KB (mindestens 1)" type="text">3</p1>
+      <p1 comment="Maximale Spielerzahl im KB (mindestens 1)" type="int">3</p1>
     </item>
 
     <item name="res_update" cat="5">
-      <v comment="Update-Period of Ressources in seconds" type="text">300</v>
+      <v comment="Update-Period of Ressources in seconds" type="int">300</v>
     </item>
     <item name="def_store_capacity" cat="5">
-      <v comment="Grundkapazit&#xE4;t Speicher" type="text">200000</v>
+      <v comment="Grundkapazit&#xE4;t Speicher" type="int">200000</v>
     </item>
     <item name="user_start_metal" cat="5">
-      <v comment="Startguthaben Metall" type="text">4000</v>
+      <v comment="Startguthaben Metall" type="int">4000</v>
     </item>
     <item name="user_start_crystal" cat="5">
-      <v comment="Startguthaben Kristall" type="text">3000</v>
+      <v comment="Startguthaben Kristall" type="int">3000</v>
     </item>
     <item name="user_start_plastic" cat="5">
-      <v comment="Startguthaben Plastik" type="text">2500</v>
+      <v comment="Startguthaben Plastik" type="int">2500</v>
     </item>
     <item name="user_start_fuel" cat="5">
-      <v comment="Startguthaben Treibstoff" type="text">200</v>
+      <v comment="Startguthaben Treibstoff" type="int">200</v>
     </item>
     <item name="user_start_food" cat="5">
-      <v comment="Startguthaben Nahrung" type="text">500</v>
+      <v comment="Startguthaben Nahrung" type="int">500</v>
     </item>
     <item name="user_start_people" cat="5">
-      <v comment="Startguthaben Menschen" type="text">200</v>
-      <p1 comment="Grundplatz Menschen" type="text">250</p1>
+      <v comment="Startguthaben Menschen" type="int">200</v>
+      <p1 comment="Grundplatz Menschen" type="int">250</p1>
     </item>
     <item name="people_food_require" cat="5">
-      <v comment="Nahrungsverbrauch pro Arbeiter" type="text">12</v>
+      <v comment="Nahrungsverbrauch pro Arbeiter" type="int">12</v>
     </item>
     <item name="people_multiply" cat="5">
-      <v comment="Bev&#xF6;lkerungswachstum" type="text">1.1</v>
+      <v comment="Bev&#xF6;lkerungswachstum" type="float">1.1</v>
     </item>
     <item name="people_work_done" cat="5">
-      <v comment="Zeitverringerung pro Arbeiter" type="text">3</v>
+      <v comment="Zeitverringerung pro Arbeiter" type="int">3</v>
     </item>
     <item name="specialistconfig" cat="5">
-      <v comment="SPECIALIST_AVAILABILITY_FACTOR basierend auf Faktor * Anzahl" type="text">0.3</v>
-      <p1 comment="SPECIALIST_MAX_COSTS_FACTOR" type="text">10</p1>
-      <p2 comment="SPECIALIST_MIN_POINTS_REQ" type="text">100000</p2>
+      <v comment="SPECIALIST_AVAILABILITY_FACTOR basierend auf Faktor * Anzahl" type="float">0.3</v>
+      <p1 comment="SPECIALIST_MAX_COSTS_FACTOR" type="float">10</p1>
+      <p2 comment="SPECIALIST_MIN_POINTS_REQ" type="int">100000</p2>
     </item>
     <item name="energy_tech_power_bonus_required_level" cat="5">
-      <v comment="Energietechnik-Bonus auf Energieproduktion: Mindestlevel" type="text">10</v>
+      <v comment="Energietechnik-Bonus auf Energieproduktion: Mindestlevel" type="int">10</v>
     </item>
     <item name="energy_tech_power_bonus_percent_per_level" cat="5">
-      <v comment="Energietechnik-Bonus auf Energieproduktion: Verbesserung pro Level (%)" type="text">5</v>
+      <v comment="Energietechnik-Bonus auf Energieproduktion: Verbesserung pro Level (%)" type="int">5</v>
     </item>
 
     <item name="market_enabled" cat="6">
       <v comment="Marktplatz aktiv" type="onoff">1</v>
     </item>
     <item name="market_response_time" cat="6">
-      <v comment="Angebotsdauer (in Tagen)" type="text">14</v>
+      <v comment="Angebotsdauer (in Tagen)" type="int">14</v>
     </item>
     <item name="market_ship_action_ress" cat="6">
       <v comment="Handelsschiffaktion bei Rohstoffen" type="text">market</v>
@@ -359,59 +359,59 @@ https://etoa.ch</v>
       <v comment="Handelsschiffaktion bei Schiffen" type="text">market</v>
     </item>
     <item name="market_ship_flight_time" cat="6">
-      <p1 comment="Min. Flugzeit (Minuten)" type="text">15</p1>
-      <p2 comment="Max. Flugzeit (Minuten)" type="text">180</p2>
+      <p1 comment="Min. Flugzeit (Minuten)" type="int">15</p1>
+      <p2 comment="Max. Flugzeit (Minuten)" type="int">180</p2>
     </item>
     <item name="market_auction_delay_time" cat="6">
-      <v comment="Anzeigedauer der Auktionen (Stunden)" type="text">24</v>
+      <v comment="Anzeigedauer der Auktionen (Stunden)" type="int">24</v>
     </item>
     <item name="market_user_reservation_active" cat="6">
       <v comment="Reservation von Angeboten für einen bestimmten Spieler" type="onoff">1</v>
     </item>
 	<item name="ship_price_factor_min" cat="6">
-      <v comment="Mindestpreisgrenze der Schiffe 1=100%" type="text">1</v>
+      <v comment="Mindestpreisgrenze der Schiffe 1=100%" type="float">1</v>
     </item>
 	<item name="ship_price_factor_max" cat="6">
-      <v comment="Höchstpreisgrenze der Schiffe" type="text">2</v>
+      <v comment="Höchstpreisgrenze der Schiffe" type="float">2</v>
     </item>
 	<item name="res_price_factor_min" cat="6">
-      <v comment="Mindestpreisgrenze der Rohstoffe" type="text">0.7</v>
+      <v comment="Mindestpreisgrenze der Rohstoffe" type="float">0.7</v>
     </item>
 	<item name="res_price_factor_max" cat="6">
-      <v comment="Höchstpreisgrenze der Schiffe" type="text">2</v>
+      <v comment="Höchstpreisgrenze der Schiffe" type="float">2</v>
     </item>
 	<item name="auction_price_factor_min" cat="6">
-      <v comment="Mindestpreisgrenze der Autkionen (summiert aus Rohstoffen und Schiffen)" type="text">0.333</v>
+      <v comment="Mindestpreisgrenze der Autkionen (summiert aus Rohstoffen und Schiffen)" type="float">0.333</v>
     </item>
 	<item name="auction_price_factor_max" cat="6">
-      <v comment="Höchstpreisgrenze der Autkionen (summiert aus Rohstoffen und Schiffen)" type="text">3</v>
+      <v comment="Höchstpreisgrenze der Autkionen (summiert aus Rohstoffen und Schiffen)" type="float">3</v>
     </item>
 	<item name="auction_overbid" cat="6">
-      <v comment="Gebot muss mindestens X% höher sein als jenes des Vorgebotes entsprechen" type="text">0.01</v>
+      <v comment="Gebot muss mindestens X% höher sein als jenes des Vorgebotes entsprechen" type="float">0.01</v>
     </item>
 	<item name="market_sell_tax" cat="6">
-      <v comment="Zuschlagsfaktor auf die Preise" type="text">1.005</v>
+      <v comment="Zuschlagsfaktor auf die Preise" type="float">1.005</v>
     </item>
 	<item name="auction_min_duration" cat="6">
-      <v comment="Mindestdauer einer Autkion (in Tagen)" type="text">2</v>
+      <v comment="Mindestdauer einer Autkion (in Tagen)" type="int">2</v>
     </item>
 	<item name="min_market_level_res" cat="6">
-      <v comment="Mindest Marktlevel für Handel von Rohstoffe" type="text">1</v>
+      <v comment="Mindest Marktlevel für Handel von Rohstoffe" type="int">1</v>
     </item>
 	<item name="min_market_level_ship" cat="6">
-      <v comment="Mindest Marktlevel für Handel von Schiffen" type="text">3</v>
+      <v comment="Mindest Marktlevel für Handel von Schiffen" type="int">3</v>
     </item>
 	<item name="min_market_level_auction" cat="6">
-      <v comment="Mindest Marktlevel für Auktionen" type="text">5</v>
+      <v comment="Mindest Marktlevel für Auktionen" type="int">5</v>
     </item>
 	<item name="market_rates_count" cat="6">
-      <v comment="Anzahl vergangener Werte welche bei der Marktkursberechnung mit einbezogen werden" type="text">96</v>
+      <v comment="Anzahl vergangener Werte welche bei der Marktkursberechnung mit einbezogen werden" type="int">96</v>
     </item>
 	<item name="market_rate_min" cat="6">
-      <v comment="Minimaler Marktkurs" type="text">0.1</v>
+      <v comment="Minimaler Marktkurs" type="float">0.1</v>
     </item>
 	<item name="market_rate_max" cat="6">
-      <v comment="Maximaler Marktkurs" type="text">10</v>
+      <v comment="Maximaler Marktkurs" type="float">10</v>
     </item>
 
     <item name="default_image_path" cat="7">
@@ -427,21 +427,21 @@ https://etoa.ch</v>
       <v comment="Bildpaket-Vorverzeichniss" type="text"/>
     </item>
     <item name="imagesize" cat="7">
-      <v comment="Bildgr&#xF6;sse Gross" type="text">220</v>
-      <p1 comment="Bildgr&#xF6;sse Mittel" type="text">120</p1>
-      <p2 comment="Bildgr&#xF6;sse Klein" type="text">40</p2>
+      <v comment="Bildgr&#xF6;sse Gross" type="int">220</v>
+      <p1 comment="Bildgr&#xF6;sse Mittel" type="int">120</p1>
+      <p2 comment="Bildgr&#xF6;sse Klein" type="int">40</p2>
     </item>
     <item name="num_nebula_images" cat="7">
-      <v comment="Anzahl Sternennebel Bilder" type="text">9</v>
+      <v comment="Anzahl Sternennebel Bilder" type="int">9</v>
     </item>
     <item name="num_asteroid_images" cat="7">
-      <v comment="Anzahl Asteroiden Bilder" type="text">5</v>
+      <v comment="Anzahl Asteroiden Bilder" type="int">5</v>
     </item>
     <item name="num_space_images" cat="7">
-      <v comment="Anzahl Raum Bilder" type="text">10</v>
+      <v comment="Anzahl Raum Bilder" type="int">10</v>
     </item>
     <item name="num_wormhole_images" cat="7">
-      <v comment="Anzahl Wurmloch Bilder" type="text">1</v>
+      <v comment="Anzahl Wurmloch Bilder" type="int">1</v>
     </item>
 
     <item name="wordbanlist" cat="8">
@@ -449,58 +449,58 @@ https://etoa.ch</v>
       <p1 comment="Erlaubte W&#xF6;rter" type="textarea"/>
     </item>
     <item name="msg_flood_control" cat="8">
-      <v comment="Flood-Kontrolle (s)" type="text">10</v>
+      <v comment="Flood-Kontrolle (s)" type="int">10</v>
     </item>
     <item name="msg_ban_hours" cat="8">
-      <v comment="Sperrzeit f&#xFC;r Beleidigungen (h)" type="text">0</v>
+      <v comment="Sperrzeit f&#xFC;r Beleidigungen (h)" type="int">0</v>
     </item>
     <item name="mailqueue" cat="8">
-      <v comment="Anzahl Mails pro Mailqueue-Check" type="text">50</v>
+      <v comment="Anzahl Mails pro Mailqueue-Check" type="int">50</v>
     </item>
     <item name="msg_max_store" cat="8">
-      <v comment="Max. Anzahl Nachrichten" type="text">200</v>
-      <p1 comment="Max. Anzahl Nachrichten Archiv" type="text">20</p1>
+      <v comment="Max. Anzahl Nachrichten" type="int">200</v>
+      <p1 comment="Max. Anzahl Nachrichten Archiv" type="int">20</p1>
     </item>
 
     <item name="password_minlength" cat="10">
-      <v comment="Minimale Passwortl&#xE4;nge" type="text">6</v>
-      <p1 comment="Maximale Passwortl&#xE4;nge" type="text">30</p1>
+      <v comment="Minimale Passwortl&#xE4;nge" type="int">6</v>
+      <p1 comment="Maximale Passwortl&#xE4;nge" type="int">30</p1>
     </item>
     <item name="hmode_days" cat="10">
-      <v comment="Urlaubsmodus Mindestdauer" type="text">2</v>
-      <p1 comment="Urlaubsmodus Maximaldauer (in Tagen) falls Dauer begrenzt" type="text">42</p1>
+      <v comment="Urlaubsmodus Mindestdauer" type="int">2</v>
+      <p1 comment="Urlaubsmodus Maximaldauer (in Tagen) falls Dauer begrenzt" type="int">42</p1>
       <p2 comment="Urlaubsmodus-Dauer begrenzen und User danach in Inaktiv-Status setzen" type="onoff">1</p2>
     </item>
     <item name="user_inactive_days" cat="10">
-      <v comment="Inaktiv-Anzeige (Tage)" type="text">7</v>
-      <p1 comment="Tage, nach denen ein User normalerweise gel&#xF6;scht wird" type="text">21</p1>
-      <p2 comment="Tage, nach denen ein User gel&#xF6;scht wird, wenn er noch 0 Punkte hat, oder invasierbar wird (falls das Invasieren von aktiven Spielern deaktiviert ist)" type="text">8</p2>
+      <v comment="Inaktiv-Anzeige (Tage)" type="int">7</v>
+      <p1 comment="Tage, nach denen ein User normalerweise gel&#xF6;scht wird" type="int">21</p1>
+      <p2 comment="Tage, nach denen ein User gel&#xF6;scht wird, wenn er noch 0 Punkte hat, oder invasierbar wird (falls das Invasieren von aktiven Spielern deaktiviert ist)" type="int">8</p2>
     </item>
     <item name="user_ban_min_length" cat="10">
-      <v comment="Minimale Sperrdauer (f&#xFC;r Admin-Modus)" type="text">1</v>
+      <v comment="Minimale Sperrdauer (f&#xFC;r Admin-Modus)" type="int">1</v>
     </item>
     <item name="user_umod_min_length" cat="10">
-      <v comment="Minimale Urlaubsdauer" type="text">2</v>
+      <v comment="Minimale Urlaubsdauer" type="int">2</v>
     </item>
     <item name="user_sitting_days" cat="10">
-      <v comment="Sittertage beim Start" type="text">12</v>
-      <p1 comment="Zusätzliche Sittertage pro Monat" type="text">2</p1>
+      <v comment="Sittertage beim Start" type="int">12</v>
+      <p1 comment="Zusätzliche Sittertage pro Monat" type="int">2</p1>
     </item>
     <item name="online_threshold" cat="10">
-      <v comment="Zeit ab der letzten Aktion eines Users, nach der ein User in der Allianzmemberliste noch online angezeigt wird (in Minuten)" type="text">5</v>
+      <v comment="Zeit ab der letzten Aktion eines Users, nach der ein User in der Allianzmemberliste noch online angezeigt wird (in Minuten)" type="int">5</v>
     </item>
     <item name="nick_length" cat="10">
-      <p1 comment="Min. Nickl&#xE4;nge" type="text">3</p1>
-      <p2 comment="Max. Nickl&#xE4;nge" type="text">15</p2>
+      <p1 comment="Min. Nickl&#xE4;nge" type="int">3</p1>
+      <p2 comment="Max. Nickl&#xE4;nge" type="int">15</p2>
     </item>
     <item name="main_planet_changetime" cat="10">
-      <v comment="Hauptplanet-Wechselminimalzeit (diese Konfiguration hat momentan keinen Effekt)" type="text">7</v>
+      <v comment="Hauptplanet-Wechselminimalzeit (diese Konfiguration hat momentan keinen Effekt)" type="int">7</v>
     </item>
     <item name="name_length" cat="10">
-      <v comment="Maximale L&#xE4;nge des Names" type="text">30</v>
+      <v comment="Maximale L&#xE4;nge des Names" type="int">30</v>
     </item>
     <item name="user_delete_days" cat="10">
-      <v comment="Tage bis zur L&#xF6;schung" type="text">5</v>
+      <v comment="Tage bis zur L&#xF6;schung" type="int">5</v>
     </item>
     <item name="profileimagecheck_done" cat="10">
       <v comment="User-Profilbilder gepr&#xFC;ft" type="timedate">1209569797</v>
@@ -510,7 +510,7 @@ https://etoa.ch</v>
     </item>
 
     <item name="admin_timeout" cat="11">
-      <v comment="Admin-Timeout" type="text">1200</v>
+      <v comment="Admin-Timeout" type="int">1200</v>
     </item>
     <item name="admin_dateformat" cat="11">
       <v comment="Datumsformat" type="text">Y-m-d H:i:s</v>
@@ -537,28 +537,28 @@ https://etoa.ch</v>
       <p2 comment="Raketenankunftstext" type="textarea">Auf dem Weg zu ihrem Ziel flogen deine Raketen in ein intergalaktisches Warpfeld. Sie wurden deaktiviert und in ihr Lager gebeamt.</p2>
     </item>
     <item name="asteroid_action" cat="12">
-      <v comment="Asteroiden sammeln: Wahrscheinlichkeit, dass Schiffe zerst&#xF6;rt werden" type="text">30</v>
-      <p1 comment="Asteroiden sammeln: Max. Anteil zerst&#xF6;rte Schiffe" type="text">20</p1>
-      <p2 comment="Asteroiden sammeln: Minimale Anzahl gesammelter Rohstoffe pro Typ (sofern noch im Asteroiden vorhanden)" type="text">0</p2>
+      <v comment="Asteroiden sammeln: Wahrscheinlichkeit, dass Schiffe zerst&#xF6;rt werden" type="int">30</v>
+      <p1 comment="Asteroiden sammeln: Max. Anteil zerst&#xF6;rte Schiffe" type="int">20</p1>
+      <p2 comment="Asteroiden sammeln: Minimale Anzahl gesammelter Rohstoffe pro Typ (sofern noch im Asteroiden vorhanden)" type="int">0</p2>
     </item>
     <item name="gascollect_action" cat="12">
-      <v comment="Gassauger: Wahrscheinlichkeit, dass Schiffe zerst&#xF6;rt werden" type="text">20</v>
-      <p1 comment="Gassauger: Max. Anteil zerst&#xF6;rte Schiffe" type="text">10</p1>
-      <p2 comment="Gassauger: Mindestens gesammeltes Tritium (sofern noch im Gasplaneten vorhanden)" type="text">1000</p2>
+      <v comment="Gassauger: Wahrscheinlichkeit, dass Schiffe zerst&#xF6;rt werden" type="int">20</v>
+      <p1 comment="Gassauger: Max. Anteil zerst&#xF6;rte Schiffe" type="int">10</p1>
+      <p2 comment="Gassauger: Mindestens gesammeltes Tritium (sofern noch im Gasplaneten vorhanden)" type="int">1000</p2>
     </item>
     <item name="nebula_action" cat="12">
-      <v comment="Nebelsammler:  Wahrscheinlichkeit, dass Schiffe zerst&#xF6;rt werden" type="text">30</v>
-      <p1 comment="Nebelsammler: Max. Anteil zerst&#xF6;rte Schiffe" type="text">50</p1>
-      <p2 comment="Nebelsammler: Mindestens gesammeltes Silizium (sofern noch im Nebel vorhanden)" type="text">1000</p2>
+      <v comment="Nebelsammler:  Wahrscheinlichkeit, dass Schiffe zerst&#xF6;rt werden" type="int">30</v>
+      <p1 comment="Nebelsammler: Max. Anteil zerst&#xF6;rte Schiffe" type="int">50</p1>
+      <p2 comment="Nebelsammler: Mindestens gesammeltes Silizium (sofern noch im Nebel vorhanden)" type="int">1000</p2>
     </item>
     <item name="antrax_action" cat="12">
-      <v comment="Anthrax-Angriff: Minimale Wahrschinelichkeit, dass es gelingt" type="text">30</v>
-      <p1 comment="Anthrax-Angriff: Maximaler Schadensanteil" type="text">90</p1>
+      <v comment="Anthrax-Angriff: Minimale Wahrschinelichkeit, dass es gelingt" type="int">30</v>
+      <p1 comment="Anthrax-Angriff: Maximaler Schadensanteil" type="int">90</p1>
     </item>
     <item name="spyattack_action" cat="12">
-      <v comment="Spioklau: Grundchance" type="text">3</v>
-      <p1 comment="Spioklau: Minimale Chance" type="text">1</p1>
-      <p2 comment="Spioklau: Maximale Chance" type="text">10</p2>
+      <v comment="Spioklau: Grundchance" type="int">3</v>
+      <p1 comment="Spioklau: Minimale Chance" type="int">1</p1>
+      <p2 comment="Spioklau: Maximale Chance" type="int">10</p2>
     </item>
     <item name="emp_action" cat="12">
         <v comment="EMP Bugfix" type="onoff">1</v>
@@ -593,86 +593,86 @@ https://etoa.ch</v>
       <v comment="Allianzen erlauben" type="onoff">1</v>
     </item>
     <item name="alliance_max_member_count" cat="16">
-      <v comment="Maximale Anzahl von Allianzmitgliedern. 0=unendlich" type="text">7</v>
+      <v comment="Maximale Anzahl von Allianzmitgliedern. 0=unendlich" type="int">7</v>
     </item>
     <item name="alliance_membercosts_factor" cat="16">
-      <v comment="Kosten pro Member&#13;&#10;&#13;&#10;Calc: 1 + this.value*(member.count-1)" type="text">0.9</v>
+      <v comment="Kosten pro Member&#13;&#10;&#13;&#10;Calc: 1 + this.value*(member.count-1)" type="float">0.9</v>
     </item>
     <item name="alliance_leave_cooldown" cat="16">
-      <v comment="Zeitgrenze, bevor man sich wieder bewerben kann" type="text">7200</v>
+      <v comment="Zeitgrenze, bevor man sich wieder bewerben kann" type="int">7200</v>
     </item>
     <item name="alliance_shippoints_per_hour" cat="16">
-      <v comment="Schiffspunkte pro Stunde und Werftlevel" type="text">5</v>
+      <v comment="Schiffspunkte pro Stunde und Werftlevel" type="int">5</v>
     </item>
     <item name="alliance_shipcosts_factor" cat="16">
-      <v comment="Kostenfaktor pro Schiff&#13;&#10;&#13;&#10;calc: this.value * ships" type="text">1.02</v>
+      <v comment="Kostenfaktor pro Schiff&#13;&#10;&#13;&#10;calc: this.value * ships" type="float">1.02</v>
     </item>
     <item name="alliance_tech_bonus" cat="16">
-      <v comment="Grundbonus der Kampftechniken" type="text">10</v>
+      <v comment="Grundbonus der Kampftechniken" type="float">10</v>
       <p1 comment="Bonus pro zus&#xE4;tzlichem User im Kampf" type="text"/>
     </item>
     <item name="alliance_war_time" cat="16">
-      <v comment="Dauer eines Krieges (h)" type="text">48</v>
-      <p1 comment="Dauer eines Friedens nach Krieg (h)" type="text">48</p1>
+      <v comment="Dauer eines Krieges (h)" type="int">48</v>
+      <p1 comment="Dauer eines Friedens nach Krieg (h)" type="int">48</p1>
     </item>
     <item name="alliance_shippoints_base" cat="16">
-      <v comment="Faktor für Allianzschiffpunkte" type="text">1.4</v>
+      <v comment="Faktor für Allianzschiffpunkte" type="float">1.4</v>
     </item>
     <item name="allow_wings" cat="16">
       <v comment="Wings erlauben" type="onoff">0</v>
     </item>
     <item name="townhall_ban" cat="16">
-      <v comment="Rathaus: Standard-Sperrzeit" type="text">86400</v>
+      <v comment="Rathaus: Standard-Sperrzeit" type="int">86400</v>
       <p1 comment="Rathaus: Standard-Sperrtext" type="textarea">Nichtbeachtung der Rathaus-Regeln</p1>
     </item>
 
     <item name="discoverymask" cat="17">
-      <v comment="Aufdeckung der Map der Flottenkontrolle pro Level (Radius): 1 + floor(level*this.value)" type="text">0.5</v>
+      <v comment="Aufdeckung der Map der Flottenkontrolle pro Level (Radius): 1 + floor(level*this.value)" type="float">0.5</v>
     </item>
 	<item name="explor_radius" cat="17">
-        <v comment="Aufdeckung der Map durch Explorer (1: 3x3; 2:5x5)" type="text">1</v>
+        <v comment="Aufdeckung der Map durch Explorer (1: 3x3; 2:5x5)" type="int">1</v>
     </item>
 
 	<item name="shipyard_min_build_time" cat="18">
-      <v comment="Raumschiffswerft: Absolute minimal Bauzeit in Sekunden" type="text">1</v>
+      <v comment="Raumschiffswerft: Absolute minimal Bauzeit in Sekunden" type="int">1</v>
     </item>
 	<item name="shipqueue_cancel_min_level" cat="18">
-      <v comment="Raumschiffswerft: Benötigter Level für Abbruch" type="text">5</v>
+      <v comment="Raumschiffswerft: Benötigter Level für Abbruch" type="int">5</v>
     </item>
 	<item name="shipqueue_cancel_start" cat="18">
-      <v comment="Raumschiffswerft: Minimale Resourcenrückgabe bei Abbruch" type="text">0.3</v>
+      <v comment="Raumschiffswerft: Minimale Resourcenrückgabe bei Abbruch" type="float">0.3</v>
     </item>
 	<item name="shipqueue_cancel_factor" cat="18">
-      <v comment="Raumschiffswerft: Faktor für Resourcenrückgabe bei Abbruch" type="text">0.03</v>
+      <v comment="Raumschiffswerft: Faktor für Resourcenrückgabe bei Abbruch" type="float">0.03</v>
     </item>
 	<item name="shipqueue_cancel_end" cat="18">
-      <v comment="Raumschiffswerft: Maximale Resourcenrückgabe bei Abbruch" type="text">0.8</v>
+      <v comment="Raumschiffswerft: Maximale Resourcenrückgabe bei Abbruch" type="float">0.8</v>
     </item>
 	<item name="defense_min_build_time" cat="18">
-      <v comment="Waffenfabrik: Absolute minimal Bauzeit in Sekunden" type="text">1</v>
+      <v comment="Waffenfabrik: Absolute minimal Bauzeit in Sekunden" type="int">1</v>
     </item>
 	<item name="defqueue_cancel_min_level" cat="18">
-      <v comment="Waffenfabrik: Benötigter Level für Abbruch" type="text">5</v>
+      <v comment="Waffenfabrik: Benötigter Level für Abbruch" type="int">5</v>
     </item>
 	<item name="defqueue_cancel_start" cat="18">
-      <v comment="Waffenfabrik: Minimale Resourcenrückgabe bei Abbruch" type="text">0.3</v>
+      <v comment="Waffenfabrik: Minimale Resourcenrückgabe bei Abbruch" type="float">0.3</v>
     </item>
 	<item name="defqueue_cancel_factor" cat="18">
-      <v comment="Waffenfabrik: Faktor für Resourcenrückgabe bei Abbruch" type="text">0.03</v>
+      <v comment="Waffenfabrik: Faktor für Resourcenrückgabe bei Abbruch" type="float">0.03</v>
     </item>
 	<item name="defqueue_cancel_end" cat="18">
-      <v comment="Waffenfabrik: Maximale Resourcenrückgabe bei Abbruch" type="text">0.8</v>
+      <v comment="Waffenfabrik: Maximale Resourcenrückgabe bei Abbruch" type="float">0.8</v>
     </item>
 	<item name="recyc_max_payback" cat="18">
-      <v comment="Recycling: Maxmimale Effizienz der Recyclingtechnologie" type="text">0.9</v>
+      <v comment="Recycling: Maxmimale Effizienz der Recyclingtechnologie" type="float">0.9</v>
     </item>
 
     <item name="log_threshold_days" cat="19">
-      <v comment="Aufbewahrungsdauer Logs" type="text">28</v>
+      <v comment="Aufbewahrungsdauer Logs" type="int">28</v>
     </item>
     <item name="sessionlog_store_days" cat="19">
-      <p1 comment="Aufbewahrungsdauer User-Sessionlogs" type="text">30</p1>
-      <p2 comment="Aufbewahrungsdauer Admin-Sessionlogs" type="text">60</p2>
+      <p1 comment="Aufbewahrungsdauer User-Sessionlogs" type="int">30</p1>
+      <p2 comment="Aufbewahrungsdauer Admin-Sessionlogs" type="int">60</p2>
     </item>
 
     <item name="daemon_exe" cat="20">
@@ -698,7 +698,7 @@ https://etoa.ch</v>
       <v comment="Backup-Pfad (leerlassen für Standardpfad)" type="text"></v>
 	</item>
     <item name="backup_retention_time" cat="21" base="yes">
-      <v comment="Backup-Aufbewahrungsdauer (Tage)" type="text">7</v>
+      <v comment="Backup-Aufbewahrungsdauer (Tage)" type="int">7</v>
     </item>
     <item name="backup_use_gzip" cat="21" base="yes">
       <v comment="Backup mit GZIP komprimieren" type="onoff">0</v>
@@ -712,49 +712,49 @@ https://etoa.ch</v>
       <v comment="Kryptocenter aktivieren" type="onoff">1</v>
     </item>
     <item name="crypto_default_cooldown" cat="23">
-      <v comment="Standard-Cooldown (sec)" type="text">86400</v>
+      <v comment="Standard-Cooldown (sec)" type="int">86400</v>
 	</item>
 	<item name="crypto_cooldown_reduction_per_level" cat="23">
-      <v comment="Cooldown-Reduzierung/Stufe (sec)" type="text">7200</v>
+      <v comment="Cooldown-Reduzierung/Stufe (sec)" type="int">7200</v>
 	</item>
 	<item name="crypto_min_cooldown" cat="23">
-      <v comment="Minimaler Cooldown (sec)" type="text">21600</v>
+      <v comment="Minimaler Cooldown (sec)" type="int">21600</v>
     </item>
 	<item name="crypto_range_per_level" cat="23">
-      <v comment="Reichweite in AE für Kryptoanalyse pro Ausbaustufe" type="text">700</v>
+      <v comment="Reichweite in AE für Kryptoanalyse pro Ausbaustufe" type="int">700</v>
     </item>
 	<item name="crypto_fuel_costs_per_scan" cat="23">
-      <v comment="Kosten an Tritium pro Kryptoanalyse" type="text">10000</v>
+      <v comment="Kosten an Tritium pro Kryptoanalyse" type="int">10000</v>
     </item>
 
     <item name="chat_recent_messages" cat="25">
-      <v comment="Anzahl aktuelle Chat Nachrichten" type="text">200</v>
+      <v comment="Anzahl aktuelle Chat Nachrichten" type="int">200</v>
     </item>
     <item name="chat_user_timeout" cat="25">
-      <v comment="Chat User Timeout in Sekunden" type="text">180</v>
+      <v comment="Chat User Timeout in Sekunden" type="int">180</v>
     </item>
 
     <item name="boost_system_enable" cat="26">
       <v comment="Boost-System aktiv" type="onoff">0</v>
     </item>
     <item name="boost_system_max_res_prod_bonus" cat="26">
-      <v comment="Maximaler Ressourcenproduktionsbonus" type="text">2</v>
+      <v comment="Maximaler Ressourcenproduktionsbonus" type="float">2</v>
     </item>
     <item name="boost_system_max_building_speed_bonus" cat="26">
-      <v comment="Maximaler Baugeschwindigkeitssbonus" type="text">2</v>
+      <v comment="Maximaler Baugeschwindigkeitssbonus" type="float">2</v>
     </item>
 
 	<item name="missile_silo_missiles_per_level" cat="27">
-      <v comment="Raketen, die pro Stufe im Silo gelagert werden können (Vorfaktor)" type="text">5</v>
+      <v comment="Raketen, die pro Stufe im Silo gelagert werden können (Vorfaktor)" type="int">5</v>
     </item>
 	<item name="missile_silo_missiles_algo_base" cat="27">
-      <v comment="Basis für exponentiell steigende Raketenzahl" type="text">1.4</v>
+      <v comment="Basis für exponentiell steigende Raketenzahl" type="float">1.4</v>
     </item>
 	<item name="missile_silo_flights_per_level" cat="27">
-      <v comment="Anzahl gleichzeitiger Flüge pro Silostufe" type="text">1</v>
+      <v comment="Anzahl gleichzeitiger Flüge pro Silostufe" type="int">1</v>
     </item>
 	<item name="missile_battle_shield_factor" cat="27">
-      <v comment="Faktor mit dem die Schilde der Verteidigung bei einem Kampf mit einberechnet werden" type="text">0.3</v>
+      <v comment="Faktor mit dem die Schilde der Verteidigung bei einem Kampf mit einberechnet werden" type="float">0.3</v>
     </item>
 
     <item name="quest_system_enable" cat="28">

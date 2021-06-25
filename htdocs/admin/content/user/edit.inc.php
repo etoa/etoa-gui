@@ -1,6 +1,7 @@
 <?php
 
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
 
 /** @var TicketRepository */
@@ -10,6 +11,9 @@ $ticketRepo = $app['etoa.help.ticket.repository'];
 $adminUserRepo = $app['etoa.admin.user.repository'];
 /** @var \EtoA\User\UserRepository $userRepository */
 $userRepository = $app['etoa.user.repository'];
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
 
 if (isset($_GET['id']))
     $id = $_GET['id'];
@@ -229,7 +233,7 @@ if (isset($_POST['save']))
     dbquery($sql);
 
 
-    if($_POST['del_multi'])
+    if (isset($_POST['del_multi']))
     {
         //Multi löschen
         foreach ($_POST['del_multi'] as $m_id=>$data)
@@ -260,7 +264,7 @@ if (isset($_POST['save']))
     }
 
     //Sitting löschen
-    if($_POST['del_sitting'])
+    if(isset($_POST['del_sitting']))
     {
         foreach ($_POST['del_sitting'] as $s_id=>$data)
         {
@@ -326,7 +330,7 @@ if (isset($_POST['delete_user']))
 // Löschantrag speichern
 if (isset($_POST['requestdelete']))
 {
-    $t = time() + ($conf['user_delete_days']['v']*3600*24);
+    $t = time() + ($config->getInt('user_delete_days') * 3600 * 24);
     dbquery("
     UPDATE
         users
@@ -1269,8 +1273,8 @@ echo '<div class="tabs" id="user_edit_tabs">
                 echo '
                 <img src="'.$name.'" alt="Banner"><br>
                 Generiert: '.df(filemtime($name)).'<br/>
-                <textarea readonly="readonly" rows="2" cols="65">&lt;a href="'.USERBANNER_LINK_URL.'"&gt;&lt;img src="'.$cfg->roundurl.'/'.$name.'" width="468" height="60" alt="EtoA Online-Game" border="0" /&gt;&lt;/a&gt;</textarea>
-                <textarea readonly="readonly" rows="2" cols="65">[url='.USERBANNER_LINK_URL.'][img]'.$cfg->roundurl.'/'.$name.'[/img][/url]</textarea>';
+                <textarea readonly="readonly" rows="2" cols="65">&lt;a href="'.USERBANNER_LINK_URL.'"&gt;&lt;img src="'.$config->get('roundurl').'/'.$name.'" width="468" height="60" alt="EtoA Online-Game" border="0" /&gt;&lt;/a&gt;</textarea>
+                <textarea readonly="readonly" rows="2" cols="65">[url='.USERBANNER_LINK_URL.'][img]'.$config->get('roundurl').'/'.$name.'[/img][/url]</textarea>';
             }
             echo '</td></tr>';
     echo "</table>";

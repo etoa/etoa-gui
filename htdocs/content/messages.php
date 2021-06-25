@@ -1,32 +1,37 @@
 <?PHP
-	//////////////////////////////////////////////////
-	//		 	 ____    __           ______       			//
-	//			/\  _`\ /\ \__       /\  _  \      			//
-	//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
-	//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
-	//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
-	//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
-	//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
-	//																					 		//
-	//////////////////////////////////////////////////
-	// The Andromeda-Project-Browsergame				 		//
-	// Ein Massive-Multiplayer-Online-Spiel			 		//
-	// Programmiert von Nicolas Perrenoud				 		//
-	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	// www.etoa.ch | mail@etoa.ch								 		//
-	//////////////////////////////////////////////////
-	//
-	//
 
-	/**
-	* Ingame-Messaging centre
-	*
-	* @author MrCage <mrcage@etoa.ch>
-	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/
+use EtoA\Core\Configuration\ConfigurationService;
+
+//////////////////////////////////////////////////
+//		 	 ____    __           ______       			//
+//			/\  _`\ /\ \__       /\  _  \      			//
+//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
+//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
+//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
+//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
+//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
+//																					 		//
+//////////////////////////////////////////////////
+// The Andromeda-Project-Browsergame				 		//
+// Ein Massive-Multiplayer-Online-Spiel			 		//
+// Programmiert von Nicolas Perrenoud				 		//
+// als Maturaarbeit '04 am Gymnasium Oberaargau	//
+// www.etoa.ch | mail@etoa.ch								 		//
+//////////////////////////////////////////////////
+//
+//
+
+/**
+* Ingame-Messaging centre
+*
+* @author MrCage <mrcage@etoa.ch>
+* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
+*/
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
 
 	// DEFINITIONEN //
-
 
 	$msgpreview = $cu->properties->msgPreview==1 ? true : false;
 	$msgcreatpreview = $cu->properties->msgCreationPreview==1 ? true : false;
@@ -360,7 +365,7 @@
 				{
 					if (count($_POST['delmsg'])>0)
 					{
-						if(count($_POST['delmsg'])<=($conf['msg_max_store']['p1']-$_POST['archived_msg_cnt']))
+						if(count($_POST['delmsg'])<=($config->param1Int('msg_max_store')-$_POST['archived_msg_cnt']))
 						{
 						foreach ($_POST['delmsg'] as $id=>$val)
 						{
@@ -417,8 +422,8 @@
 
 
 				// Rechnet %-Werte für tabelle (1/2)
-				$readed_table=min(ceil($readed_msg_cnt/$conf['msg_max_store']['v']*100),100);
-				$archived_table=min(ceil($archived_msg_cnt/$conf['msg_max_store']['p1']*100),100);
+				$readed_table=min(ceil($readed_msg_cnt/$config->getInt('msg_max_store')*100),100);
+				$archived_table=min(ceil($archived_msg_cnt/$config->param1Int('msg_max_store')*100),100);
 
 				$r_color = ($readed_table>=90) ? 'color:red;' : '';
 				$a_color = ($archived_table>=90) ? 'color:red;' : '';
@@ -428,10 +433,10 @@
 				tableStart("Nachrichten");
 				echo "<tr>
 					<th style=\"text-align:center;width:50%;".$r_color."\">
-          	Gelesen: ".$readed_msg_cnt."/".$conf['msg_max_store']['v']." Nachrichten
+          	Gelesen: ".$readed_msg_cnt."/".$config->getInt('msg_max_store')." Nachrichten
           </th>
         	<th style=\"text-align:center;width:50%;".$a_color."\">
-          	Archiviert: ".$archived_msg_cnt."/".$conf['msg_max_store']['p1']." Nachrichten
+          	Archiviert: ".$archived_msg_cnt."/".$config->param1Int('msg_max_store')." Nachrichten
         	</th>
         </tr>";
 				echo '<tr>
@@ -604,7 +609,7 @@
 								echo "<b>[Rundmail]</b> ";
 							}
 							//Wenn Speicher voll ist Nachrichten Markieren
-							if($mode!="archiv" && $readed_msg_cnt>=$conf['msg_max_store']['v'])
+							if($mode!="archiv" && $readed_msg_cnt>=$config->getInt('msg_max_store'))
 							{
 								echo "<span style=\"color:red;\">".$subj."</span>";
 							}

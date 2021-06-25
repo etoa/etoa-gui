@@ -1,4 +1,10 @@
 <?PHP
+
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 	//////////////////////////////////////////////////
 	//		 	 ____    __           ______       			//
 	//			/\  _`\ /\ \__       /\  _  \      			//
@@ -25,10 +31,10 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/
 
-	$sx_num = $cfg->param1('num_of_sectors');
-	$sy_num = $cfg->param2('num_of_sectors');
-	$cx_num = $cfg->param1('num_of_cells');
-	$cy_num = $cfg->param2('num_of_cells');
+    $sx_num = $config->param1Int('num_of_sectors');
+    $sy_num = $config->param2Int('num_of_sectors');
+    $cx_num = $config->param1Int('num_of_cells');
+    $cy_num = $config->param2Int('num_of_cells');
 
 	echo '<h1>Galaxie</h1>';
 	tableStart("Galaxiekarte");

@@ -1,13 +1,17 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
+use EtoA\Core\Configuration\ConfigurationService;
+use Twig\Environment;
 
 if (!isset($app)) {
-    $questSystemEnabled = false;
     $debug = true;
     $app = require __DIR__ .'/../../src/app.php';
     $app->boot();
 }
 
-/** @var \Twig\Environment $twig */
+/** @var Environment */
 $twig = $app['twig'];
 
 $successMessage = null;
@@ -44,6 +48,7 @@ if (isset($_POST['install_check'])) {
             'user' => $_SESSION['INSTALL']['db_user'],
             'password' => $_SESSION['INSTALL']['db_password'],
         ];
+        $app['db.options'] = $dbCfg;
         if (DBManager::getInstance()->connect(0, $dbCfg)) {
             $successMessage = 'Datenbankverbindung erfolgreich!';
 
@@ -86,6 +91,7 @@ if ($step === 3) {
         'user' => $_SESSION['INSTALL']['db_user'],
         'password' => $_SESSION['INSTALL']['db_password'],
     );
+    $app['db.options'] = $dbCfg;
     DBManager::getInstance()->connect(0, $dbCfg);
 
     $dbConfigString = json_encode($dbCfg, JSON_PRETTY_PRINT);
@@ -96,11 +102,14 @@ database = ' .$dbCfg['dbname']. '
 user = ' .$dbCfg['user']. '
 password = ' .$dbCfg['password']. '
 ';
-    $cfg = Config::getInstance();
-    $cfg->set("referers",$_SESSION['INSTALL']['referers']);
-    $cfg->set("roundname",$_SESSION['INSTALL']['round_name']);
-    $cfg->set("roundurl",$_SESSION['INSTALL']['round_url']);
-    $cfg->set("loginurl",$_SESSION['INSTALL']['loginserver_url']);
+
+    /** @var ConfigurationService */
+    $config = $app['etoa.config.service'];
+
+    $config->set("referers",$_SESSION['INSTALL']['referers']);
+    $config->set("roundname",$_SESSION['INSTALL']['round_name']);
+    $config->set("roundurl",$_SESSION['INSTALL']['round_url']);
+    $config->set("loginurl",$_SESSION['INSTALL']['loginserver_url']);
 
     writeConfigFile(DBManager::getInstance()->getConfigFile(), $dbConfigString);
     writeConfigFile(EVENTHANDLER_CONFIG_FILE_NAME, $dbConfigStingEventHandler);
@@ -134,26 +143,34 @@ if ($step === 2) {
         'user' => $_SESSION['INSTALL']['db_user'],
         'password' => $_SESSION['INSTALL']['db_password'],
     ];
+    $app['db.options'] = $dbCfg;
     DBManager::getInstance()->connect(0, $dbCfg);
 
     // Migrate database
+    ob_start();
     $cnt = DBManager::getInstance()->migrate();
+    ob_clean();
     if ($cnt > 0) {
         $successMessage = 'Datenbank migriert';
 
-        // Load config defaults
-        Config::restoreDefaults();
-        Config::getInstance()->reload();
-    }
+        /** @var ConfigurationService */
+        $config = $app['etoa.config.service'];
 
-    $cfg = Config::getInstance();
+        // Load config defaults
+        $config->restoreDefaults();
+        $config->reload();
+    }
 
     if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST']) {
         $default_round_url = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'];
         $default_referers = $default_round_url."\n".INSTALLER_DEFAULT_LOGINSERVER_URL;
     } else {
-        $default_round_url = $cfg->get('roundurl');
-        $default_referers = $cfg->get('referers');
+
+        /** @var ConfigurationService */
+        $config = $app['etoa.config.service'];
+
+        $default_round_url = $config->get('roundurl');
+        $default_referers = $config->get('referers');
     }
 
     echo $twig->render('install/step2.html.twig', [

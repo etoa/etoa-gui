@@ -1,4 +1,10 @@
 <?PHP
+
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 	//////////////////////////////////////////////////
 	//		 	 ____    __           ______       			//
 	//			/\  _`\ /\ \__       /\  _  \      			//
@@ -230,7 +236,7 @@
                     $capacity=200;
                 }
 
-                $people_div = $cp->people * (($cfg->get('people_multiply')  + $cp->typePopulation + $cu->race->population + $cp->starPopulation + $cu->specialist->population -4)* (1-($cp->people/($capacity+1)))/24);
+                $people_div = $cp->people * (($config->getFloat('people_multiply')  + $cp->typePopulation + $cu->race->population + $cp->starPopulation + $cu->specialist->population -4)* (1-($cp->people/($capacity+1)))/24);
 
                 if ($x < 5) {
                     echo ' ' . tm("Speicher", "Speicher voll in " . tf($val_time[$p->id][$x]) . "") . '> ';

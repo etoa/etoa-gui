@@ -1,4 +1,7 @@
 <?PHP
+
+use EtoA\Core\Configuration\ConfigurationService;
+
 //////////////////////////////////////////////////
 //		 	 ____    __           ______       			//
 //			/\  _`\ /\ \__       /\  _  \      			//
@@ -17,6 +20,9 @@
 //////////////////////////////////////////////////
 //
 //
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
 
 /**
  * Displays economy information
@@ -253,7 +259,7 @@ if ($cp) {
         $pwrcnt = floor($pwrcnt);
 
         // Boost system
-        if ($cfg->value('boost_system_enable') == 1) {
+        if ($config->getBoolean('boost_system_enable')) {
             $bonusProd = [];
             foreach ($resourceKeys as $resourceKey) {
                 $bonusProd[$resourceKey] = $baseResourceProd[$resourceKey] * $cu->boostBonusProduction;
@@ -364,9 +370,9 @@ if ($cp) {
     $energyTechPowerBonusFactor = 1;
     $tl = new TechList($cu->id);
     $energyTechLevel = $tl->getLevel(ENERGY_TECH_ID);
-    $energyTechPowerBonusRequiredLevel = $cfg->value('energy_tech_power_bonus_required_level');
+    $energyTechPowerBonusRequiredLevel = $config->getInt('energy_tech_power_bonus_required_level');
     if ($energyTechLevel > $energyTechPowerBonusRequiredLevel) {
-        $percentPerLevel = $cfg->value('energy_tech_power_bonus_percent_per_level');
+        $percentPerLevel = $config->getInt('energy_tech_power_bonus_percent_per_level');
         $percent = $percentPerLevel * ($energyTechLevel - $energyTechPowerBonusRequiredLevel);
         $energyTechPowerBonusFactor = (100 + $percent) / 100;
     }
@@ -516,8 +522,8 @@ if ($cp) {
         echo "<tr><th>Grundkapazit&auml;t</th>";
         $storetotal = [];
         for ($x = 0; $x < 5; $x++) {
-            echo "<td>" . nf($conf['def_store_capacity']['v']) . "</td>";
-            $storetotal[$x] = $conf['def_store_capacity']['v'];
+            echo "<td>" . nf($config->getInt('def_store_capacity')) . "</td>";
+            $storetotal[$x] = $config->getInt('def_store_capacity');
         }
         echo "</tr>";
         while ($barr = mysql_fetch_array($bres)) {

@@ -1,4 +1,10 @@
 <?PHP
+
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 $id = $_GET['id'];
 if (isset($id) && $id > 0)
 {
@@ -227,7 +233,7 @@ if (isset($id) && $id > 0)
                 <select name=\"planet_image\" onchange=\"document.getElementById('pimg').src='$imPath'+this.value+'$imPathPost'\">";
                 echo "<option value=\"\">Undefiniert</option>";
 
-                for ($x=1;$x<=$cfg->value('num_planet_images');$x++)
+                for ($x = 1; $x <= $config->getInt('num_planet_images'); $x++)
                 {
                     echo "<option value=\"".$arr['planet_type_id']."_".$x."\"";
                     if ($arr['planet_image']==$arr['planet_type_id']."_".$x)

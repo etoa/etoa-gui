@@ -1,6 +1,11 @@
 <?PHP
 
-$loginUrl = Config::getInstance()->loginurl->v;
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
+$loginUrl = $config->get('loginurl');
 if ($loginUrl) {
     forward($loginUrl);
     return;
@@ -13,20 +18,20 @@ function getErrMsg($err) {
         case "pass":
             return "Falsches Passwort oder falscher Benutzername!";
         case "ip":
-            return "IP-Adresse-&Uuml;berpr&uuml;fungsfehler! Kein Login von diesem Computer m&ouml;glich, da schon eine andere IP mit diesem Account verbunden ist!";
+            return "IP-Adresse-Überprüfungsfehler! Kein Login von diesem Computer möglich, da schon eine andere IP mit diesem Account verbunden ist!";
         case "timeout":
             return "Das Timeout wurde erreicht und du wurdest automatisch ausgeloggt!";
         case "session":
-            return "Session-Cookie-Fehler. &Uuml;berpr&uuml;fe ob dein Browser wirklich Sitzungscookies akzeptiert!";
+            return "Session-Cookie-Fehler. Überprüfe ob dein Browser wirklich Sitzungscookies akzeptiert!";
         case "tomanywindows":
-            return "Es wurden zu viele Fenster ge&ouml;ffnet oder aktualisiert, dies ist leider nicht erlaubt!";
+            return "Es wurden zu viele Fenster geöffnet oder aktualisiert, dies ist leider nicht erlaubt!";
         case "session2":
-            return "Deine Session ist nicht mehr vorhanden! Sie wurde entweder gel&ouml;scht oder sie ist fehlerhaft. Dies kann passieren wenn du dich an einem anderen PC einloggst obwohl du noch mit diesem online warst!";
+            return "Deine Session ist nicht mehr vorhanden! Sie wurde entweder gelöscht oder sie ist fehlerhaft. Dies kann passieren wenn du dich an einem anderen PC einloggst obwohl du noch mit diesem online warst!";
         case "nosession":
-            return "Deine Session ist nicht mehr vorhanden! Sie wurde entweder gel&ouml;scht oder sie ist fehlerhaft. Dies kann passieren wenn du dich an einem anderen PC einloggst obwohl du noch mit diesem online warst!";
+            return "Deine Session ist nicht mehr vorhanden! Sie wurde entweder gelöscht oder sie ist fehlerhaft. Dies kann passieren wenn du dich an einem anderen PC einloggst obwohl du noch mit diesem online warst!";
         case "verification":
             return "Falscher Grafikcode! Bitte gib den linksstehenden Code in der Grafik korrekt in das Feld darunter ein!
-            Diese Massnahme ist leider n&ouml;tig um das Benutzen von automatisierten Programmen (Bots) zu erschweren.";
+            Diese Massnahme ist leider nötig um das Benutzen von automatisierten Programmen (Bots) zu erschweren.";
         case "logintimeout":
             return "Der Login-Schlüssel ist abgelaufen! Bitte logge dich neu ein!";
         case "sameloginkey":
@@ -56,7 +61,7 @@ echo $twig->render('external/login.html.twig', [
     'errorMessage' => $errorMessage,
     'loginToken' => $loginToken,
     'loginUrl' => $loginUrl,
-    'roundName' => Config::getInstance()->roundname->v,
+    'roundName' => $config->get('roundname'),
     'nickField' => $nickField,
     'passwordField' => $passwordField,
 ]);

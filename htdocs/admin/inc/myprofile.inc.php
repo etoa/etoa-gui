@@ -60,4 +60,5 @@ function profileIndex(AdminUser $cu, Environment $twig)
         'user' => $cu,
         'users' => Users::getArray(),
     ]);
+    exit();
 }

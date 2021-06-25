@@ -1,42 +1,48 @@
 <?PHP
-	//////////////////////////////////////////////////
-	//		 	 ____    __           ______       			//
-	//			/\  _`\ /\ \__       /\  _  \      			//
-	//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
-	//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
-	//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
-	//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
-	//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
-	//																					 		//
-	//////////////////////////////////////////////////
-	// The Andromeda-Project-Browsergame				 		//
-	// Ein Massive-Multiplayer-Online-Spiel			 		//
-	// Programmiert von Nicolas Perrenoud				 		//
-	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	// www.etoa.ch | mail@etoa.ch								 		//
-	//////////////////////////////////////////////////
-	//
-	//
 
-	/**
-	* Builds and launches missiles
-	*
-	* @author MrCage <mrcage@etoa.ch>
-	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/
+use EtoA\Core\Configuration\ConfigurationService;
+
+//////////////////////////////////////////////////
+//		 	 ____    __           ______       			//
+//			/\  _`\ /\ \__       /\  _  \      			//
+//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
+//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
+//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
+//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
+//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
+//																					 		//
+//////////////////////////////////////////////////
+// The Andromeda-Project-Browsergame				 		//
+// Ein Massive-Multiplayer-Online-Spiel			 		//
+// Programmiert von Nicolas Perrenoud				 		//
+// als Maturaarbeit '04 am Gymnasium Oberaargau	//
+// www.etoa.ch | mail@etoa.ch								 		//
+//////////////////////////////////////////////////
+//
+//
+
+/**
+* Builds and launches missiles
+*
+* @author MrCage <mrcage@etoa.ch>
+* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
+*/
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
 
 	// Info-Link
 	define("HELP_URL","?page=help&site=missiles");
 
 	// Raketen, die pro Stufe im Silo gelagert werden können (NEU: dient als Vorfaktor zur Basis)
-	define("MISSILE_SILO_MISSILES_PER_LEVEL", $cfg->missile_silo_missiles_per_level->v);
+	define("MISSILE_SILO_MISSILES_PER_LEVEL", $config->getInt('missile_silo_missiles_per_level'));
 
 	/* Neue Konstante fuer eine exponentiell steigende Raketenzahl (by river) */
 	// Basis des neuen Algorithmus _PER_LEVEL * _ALGO_BASE^(SILO_LEVEL -1)
-	define("MISSILE_SILO_MISSILES_ALGO_BASE", $cfg->missile_silo_missiles_algo_base->v);
+	define("MISSILE_SILO_MISSILES_ALGO_BASE", $config->getFloat('missile_silo_missiles_algo_base'));
 
 	// Anzahl gleichzeitiger Flüge pro Silostufe
-	define("MISSILE_SILO_FLIGHTS_PER_LEVEL", $cfg->missile_silo_flights_per_level->v);
+	define("MISSILE_SILO_FLIGHTS_PER_LEVEL", $config->getInt('missile_silo_flights_per_level'));
 
 	// BEGIN SKRIPT //
 
@@ -924,10 +930,10 @@
 					{
 
 						// Kampfsperre prüfen
-						if ($conf['battleban']['v']!=0 && $conf['battleban_time']['p1']<=time() && $conf['battleban_time']['p2']>time())
+						if ($config->getBoolean('battleban') && $config->param1Int('battleban_time')<=time() && $config->param2Int('battleban_time')>time())
 						{
 							iBoxStart("Kampfsperre");
-							echo "Es ist momentan nicht m&ouml;glich andere Spieler anzugreifen. Grund: ".text2html($conf['battleban']['p1'])."<br>Die Sperre dauert vom ".date("d.m.Y",$conf['battleban_time']['p1'])." um ".date("H:i",$conf['battleban_time']['p1'])." Uhr bis am ".date("d.m.Y",$conf['battleban_time']['p2'])." um ".date("H:i",$conf['battleban_time']['p2'])." Uhr!";
+							echo "Es ist momentan nicht m&ouml;glich andere Spieler anzugreifen. Grund: ".text2html($config->param1('battleban'))."<br>Die Sperre dauert vom ".date("d.m.Y",$config->param1Int('battleban_time'))." um ".date("H:i",$config->param1Int('battleban_time'))." Uhr bis am ".date("d.m.Y",$config->param2Int('battleban_time'))." um ".date("H:i",$config->param2Int('battleban_time'))." Uhr!";
 							iBoxEnd();
 						}
 						else

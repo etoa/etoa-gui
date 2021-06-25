@@ -1,100 +1,107 @@
 <?PHP
 
-	/**
-	* Space cells class
-	*
-	* @author Nicolas Perrenoud <mrcage@etoa.ch>
-	*/
-	class Cell
-	{
-		private $id;
-		private $isValid;
-		private $entities;
+use EtoA\Core\Configuration\ConfigurationService;
+
+/**
+* Space cells class
+*
+* @author Nicolas Perrenoud <mrcage@etoa.ch>
+*/
+class Cell
+{
+    private $id;
+    private $isValid;
+    private $entities;
 
     public $sx;
     public $sy;
     public $cx;
     public $cy;
 
-        public function __construct($id=0)
-		{
-			$this->isValid=false;
-			$this->entities=null;
+    private ConfigurationService $config;
 
-			$res=dbquery("
-			SELECT
-	    	cells.sx,
-	    	cells.sy,
-	    	cells.cx,
-	    	cells.cy
-			FROM
-	    	cells
-			WHERE
-			 	id='".intval($id)."';");
-			if (mysql_num_rows($res))
-			{
-				$arr = mysql_fetch_row($res);
-				$this->id=$id;
-				$this->sx=$arr[0];
-				$this->sy=$arr[1];
-				$this->cx=$arr[2];
-				$this->cy=$arr[3];
-				$this->isValid=true;
-			}
-		}
+    public function __construct($id=0)
+    {
+        // TODO
+        global $app;
 
-		public function id()
-		{
-			return $this->id;
-		}
+        $this->config = $app['etoa.config.service'];
 
-		public function isValid()
-		{
-			return $this->isValid;
-		}
+        $this->isValid=false;
+        $this->entities=null;
 
-		function getEntities()
-		{
-			if ($this->entities==null)
-			{
-				$this->entities=array();
-				$res = dbquery("
-				SELECT
-					id,
-					code
-				FROM
-					entities
-				WHERE
-					cell_id=".$this->id."
-				ORDER BY
-					pos
-				");
-				while ($arr=mysql_fetch_row($res))
-				{
-					$this->entities[] = Entity::createFactory($arr[1],$arr[0]);
-				}
-			}
-			return $this->entities;
-		}
+        $res=dbquery("
+        SELECT
+        cells.sx,
+        cells.sy,
+        cells.cx,
+        cells.cy
+        FROM
+        cells
+        WHERE
+                id='".intval($id)."';");
+        if (mysql_num_rows($res))
+        {
+            $arr = mysql_fetch_row($res);
+            $this->id=$id;
+            $this->sx=$arr[0];
+            $this->sy=$arr[1];
+            $this->cx=$arr[2];
+            $this->cy=$arr[3];
+            $this->isValid=true;
+        }
+    }
 
-		function __toString()
-		{
-			return $this->sx."/". $this->sy." : ". $this->cx."/". $this->cy;
-		}
+    public function id()
+    {
+        return $this->id;
+    }
 
-		function absX()
-		{
-			$cfg = Config::getInstance();
-			$cx_num=$cfg->param1('num_of_cells');
-			return (($this->sx - 1) * $cx_num) + $this->cx;
-		}
+    public function isValid()
+    {
+        return $this->isValid;
+    }
 
-		function absY()
-		{
-			$cfg = Config::getInstance();
-			$cy_num=$cfg->param2('num_of_cells');
-			return (($this->sy - 1) * $cy_num) + $this->cy;
-		}
+    function getEntities()
+    {
+        if ($this->entities==null)
+        {
+            $this->entities=array();
+            $res = dbquery("
+            SELECT
+                id,
+                code
+            FROM
+                entities
+            WHERE
+                cell_id=".$this->id."
+            ORDER BY
+                pos
+            ");
+            while ($arr=mysql_fetch_row($res))
+            {
+                $this->entities[] = Entity::createFactory($arr[1],$arr[0]);
+            }
+        }
+        return $this->entities;
+    }
+
+    function __toString()
+    {
+        return $this->sx."/". $this->sy." : ". $this->cx."/". $this->cy;
+    }
+
+    function absX()
+    {
+        $cx_num = $this->config->param1Int('num_of_cells');
+        return (($this->sx - 1) * $cx_num) + $this->cx;
+    }
+
+    function absY()
+    {
+        $cy_num = $this->config->param2Int('num_of_cells');
+        return (($this->sy - 1) * $cy_num) + $this->cy;
+    }
 
     function getSX() {
       return $this->sx;
@@ -112,6 +119,4 @@
       return $this->cy;
     }
 
-	}
-
-?>
+}

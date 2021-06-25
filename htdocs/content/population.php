@@ -1,4 +1,10 @@
 <?PHP
+
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
     //////////////////////////////////////////////////
     //             ____    __           ______      //
     //            /\  _`\ /\ \__       /\  _  \     //
@@ -56,9 +62,9 @@
             tableStart("Wohnfl&auml;che",400);
             echo '<tr>
             <th style="width:150px">Grundwohnfl&auml;che</th>
-            <td>'.nf($cfg->p1('user_start_people')).'</td>
+            <td>'.nf($config->param1Int('user_start_people')).'</td>
             </tr>';
-            $pcnt=$cfg->p1('user_start_people');
+            $pcnt=$config->param1Int('user_start_people');
             while ($arr=mysql_fetch_array($res))
             {
                 $place = round($arr['building_people_place'] * pow($arr['building_store_factor'],$arr['buildlist_current_level']-1));
@@ -311,7 +317,7 @@
                             AND buildlist_user_id='".$cu->id."'
                             AND buildlist_entity_id='".$cp->id."'");
                     }
-                    echo '</td><td>'.(nf($sp_arr['buildlist_people_working']*$cfg->get('people_food_require'))).' t</td></tr>';
+                    echo '</td><td>'.(nf($sp_arr['buildlist_people_working']*$config->getInt('people_food_require'))).' t</td></tr>';
                 }
             }
 
@@ -348,16 +354,16 @@
                             $capacity=200;
             }
             $people_free = floor($cp->people)-$people_working;
-            $people_div = $cp->people * (($cfg->get('people_multiply')  + $cp->typePopulation + $cu->race->population + $cp->starPopulation + $cu->specialist->population -4)* (1-($cp->people/($capacity+1)))/24);
+            $people_div = $cp->people * (($config->getFloat('people_multiply')  + $cp->typePopulation + $cu->race->population + $cp->starPopulation + $cu->specialist->population -4)* (1-($cp->people/($capacity+1)))/24);
 
 
             tableStart("Daten",500);
             echo '<tr><th style="width:300px">Bev&ouml;lkerung total</th><td>'.nf(floor($cp->people)).'</td></tr>';
             echo '<tr><th>Arbeiter</th><td>'.nf($people_working).'</td></tr>';
             echo '<tr><th>Freie Leute</th><td>'.nf($people_free).'</td></tr>';
-            echo '<tr><th>Zeitreduktion pro Arbeiter und Auftrag</th><td>'.tf($cfg->get('people_work_done')).'</td></tr>';
-            echo '<tr><th>Nahrung pro Arbeiter und Auftrag</th><td>'.nf($cfg->get('people_food_require')).' t</td></tr>';
-            echo '<tr><th>Grundwachstumsrate</th><td>'.get_percent_string($cfg->get('people_multiply'))."</td></tr>";
+            echo '<tr><th>Zeitreduktion pro Arbeiter und Auftrag</th><td>'.tf($config->getInt('people_work_done')).'</td></tr>';
+            echo '<tr><th>Nahrung pro Arbeiter und Auftrag</th><td>'.nf($config->getInt('people_food_require')).' t</td></tr>';
+            echo '<tr><th>Grundwachstumsrate</th><td>'.get_percent_string($config->getFloat('people_multiply'))."</td></tr>";
             echo '<tr><th>Wachstumsbonus '.$cp->typeName.'</th><td>'.get_percent_string($cp->typePopulation,1)."</td></tr>";
             echo '<tr><th>Wachstumsbonus '.$cu->race->name.'</th><td>'.get_percent_string($cu->race->population,1)."</td></tr>";
             echo '<tr><th>Wachstumsbonus '.$cp->starTypeName.'</th><td>'.get_percent_string($cp->starPopulation,1).'</td></tr>';

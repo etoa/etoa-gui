@@ -315,14 +315,21 @@ pre.code	{
 * Forms           *
 ******************/
 
-input[type="text"], input[type="password"], textarea	{
+input[type="text"],
+input[type="number"],
+input[type="password"],
+textarea	{
 	padding:3px;
 	margin:3px;
 	box-shadow:inset 1px 1px 1px #eee;
 	font-family: Verdana, sans-serif;
 }
 
-input[type="text"], input[type="password"], select, textarea {
+input[type="text"],
+input[type="number"],
+input[type="password"],
+select,
+textarea {
 	border-width:1px;
 	border-style:solid;
 	border-color: #e2e3ea;
@@ -330,7 +337,11 @@ input[type="text"], input[type="password"], select, textarea {
 	border-top-color: #abadb3;
 }
 
-input[type="text"]:focus, input[type="password"]:focus, select:focus, textarea:focus {
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="password"]:focus,
+select:focus,
+textarea:focus {
 	border-color: #b5cfe7;
 	border-bottom-color: #b7d9ed;
 	border-top-color: #3d7bad;

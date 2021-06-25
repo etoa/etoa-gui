@@ -1,63 +1,55 @@
 <?php
-	echo "<h2>Einstellungen</h2>";
-	HelpUtil::breadCrumbs(array("Einstellungen","settings"));
 
-	$item = array();
-	$item['enable_register']['p2']="Max. Spieler";
-	$item['hmode_days']['v']="Urlaubsmodus Mindestdauer";
-	$item['points_update']['p1']="Einheiten/Userpunkte";
-	$item['points_update']['p2']="Userpunkte/Allianzpunkte";
-	$item['user_delete_days']['v']="Tage bis zur endgültigen Löschung eines Accounts";
-	$item['user_inactive_days']['v']="Spieler werden inaktiv nach (in Tagen)";
-	$item['user_inactive_days']['p1']="Löschung wegen Inaktivität nach (in Tagen)";
-	$item['user_timeout']['v']="Timeout in Sekunden";
+use EtoA\Core\Configuration\ConfigurationService;
 
-	$item['global_time']['v']="Globaler Bauzeitfaktor";
-	$item['flight_start_time']['v']="Startzeitfaktor";
-	$item['flight_land_time']['v']="Landezeitfaktor";
-	$item['flight_flight_time']['v']="Flugzeitfaktor";
-	$item['def_build_time']['v']="Verteidigungsbauzeitfaktor";
-	$item['build_build_time']['v']="Gebäudebauzeitfaktor";
-	$item['res_build_time']['v']="Forschungszeitfaktor";
-	$item['ship_build_time']['v']="Schiffbauzeitfaktor";
-	$item['planet_temp']['p1']="Minimale Planetentemperatur";
-	$item['planet_temp']['p2']="Maximale Planetentemperatur";
-	$item['planet_fields']['p1']="Minimale Feldanzahl";
-	$item['planet_fields']['p2']="Maximale Feldanzahl";
-	$item['num_planets']['p1']="Minimale Planetenanzahl";
-	$item['num_planets']['p2']="Maximale Planetenanzahl";
-	$item['user_max_planets']['v']="Maximale Planeten/User";
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
 
-	$item['def_restore_percent']['v']="Verteidigungswiederherstellung";
-	$item['def_wf_percent']['v']="Verteidigung ins Trümmerfeld";
-	$item['ship_wf_percent']['v']="Schiffe ins Trümmerfeld";
-	$item['user_attack_min_points']['v']="Noobschutz: Minimale Punkte";
-	$item['user_attack_percentage']['v']="Noobschutz: Verhältnis %";
-	$item['alliance_war_time']['v']="Dauer eines Krieges (in Stunden)";
+echo "<h2>Einstellungen</h2>";
+HelpUtil::breadCrumbs(array("Einstellungen","settings"));
 
-	$item['people_food_require']['v']="Nahrungsverbrauch pro Arbeiter";
-	$item['people_multiply']['v']="Bevölkerungswachstum";
+$items = [
+    "Max. Spieler" => $config->param2Int('enable_register'),
+    "Urlaubsmodus Mindestdauer" => $config->getInt('hmode_days'),
+    "Einheiten/Userpunkte" => $config->param1Int('points_update'),
+    "Userpunkte/Allianzpunkte" => $config->param2Int('points_update'),
+    "Tage bis zur endgültigen Löschung eines Accounts" => $config->getInt('user_delete_days'),
+    "Spieler werden inaktiv nach (in Tagen)" => $config->getInt('user_inactive_days'),
+    "Löschung wegen Inaktivität nach (in Tagen)" => $config->param1Int('user_inactive_days'),
+    "Timeout in Sekunden" => $config->getInt('user_timeout'),
+    "Globaler Bauzeitfaktor" => $config->getInt('global_time'),
+    "Startzeitfaktor" => $config->getFloat('flight_start_time'),
+    "Landezeitfaktor" => $config->getFloat('flight_land_time'),
+    "Flugzeitfaktor" => $config->getFloat('flight_flight_time'),
+    "Verteidigungsbauzeitfaktor" => $config->getFloat('def_build_time'),
+    "Gebäudebauzeitfaktor" => $config->getFloat('build_build_time'),
+    "Forschungszeitfaktor" => $config->getFloat('res_build_time'),
+    "Schiffbauzeitfaktor" => $config->getFloat('ship_build_time'),
+    "Minimale Planetentemperatur" => $config->param1Int('planet_temp'),
+    "Maximale Planetentemperatur" => $config->param2Int('planet_temp'),
+    "Minimale Feldanzahl" => $config->param1Int('planet_fields'),
+    "Maximale Feldanzahl" => $config->param2Int('planet_fields'),
+    "Minimale Planetenanzahl" => $config->param1Int('num_planets'),
+    "Maximale Planetenanzahl" => $config->param2Int('num_planets'),
+    "Maximale Planeten/User" => $config->getInt('user_max_planets'),
+    "Verteidigungswiederherstellung" => $config->getFloat('def_restore_percent'),
+    "Verteidigung ins Trümmerfeld" => $config->getFloat('def_wf_percent'),
+    "Schiffe ins Trümmerfeld" => $config->getFloat('ship_wf_percent'),
+    "Noobschutz: Minimale Punkte" => $config->getInt('user_attack_min_points'),
+    "Noobschutz: Verhältnis %" => $config->getInt('user_attack_percentage'),
+    "Dauer eines Krieges (in Stunden)" => $config->getInt('alliance_war_time'),
+    "Nahrungsverbrauch pro Arbeiter" => $config->getInt('people_food_require'),
+    "Bevölkerungswachstum" => $config->getFloat('people_multiply'),
+];
 
-		tableStart("Grundeinstellungen");
-		echo "<tr><th>Name</th>";
-		echo "<th>Wert</th></tr>";
-		if (UNIX)
-		{
-			echo "<tr><td>Revision</td>";
-			echo "<td>";
-			passthru("svnversion");
-			echo "</td></tr>";
-
-		}
-		echo "<tr><td>Spielversion</td>";
-		echo "<td>".getAppVersion()."</td></tr>";
-		foreach ($item as $conf_name => $a)
-		{
-			foreach ($a as $par => $val)
-			{
-				echo "<tr><td>".$val."</td>";
-				echo "<td>".$conf[$conf_name][$par]."</td></tr>";
-			}
-		}
-		tableEnd();
-?>
+tableStart("Grundeinstellungen");
+echo "<tr><th>Name</th>";
+echo "<th>Wert</th></tr>";
+echo "<tr><td>Spielversion</td>";
+echo "<td>".getAppVersion()."</td></tr>";
+foreach ($items as $key => $value)
+{
+    echo "<tr><td>".$key."</td>";
+    echo "<td>".$value."</td></tr>";
+}
+tableEnd();

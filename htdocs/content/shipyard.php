@@ -1,29 +1,9 @@
 <?PHP
-	//////////////////////////////////////////////////
-	//		 	 ____    __           ______       			//
-	//			/\  _`\ /\ \__       /\  _  \      			//
-	//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
-	//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
-	//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
-	//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
-	//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
-	//																					 		//
-	//////////////////////////////////////////////////
-	// The Andromeda-Project-Browsergame				 		//
-	// Ein Massive-Multiplayer-Online-Spiel			 		//
-	// Programmiert von Nicolas Perrenoud				 		//
-	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	// www.etoa.ch | mail@etoa.ch								 		//
-	//////////////////////////////////////////////////
-	//
-	//
 
-	/**
-	* Construct ships
-	*
-	* @author MrCage <mrcage@etoa.ch>
-	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-	*/
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
 
 	//Definition für "Info" Link
 	define('ITEMS_TBL',"ships");
@@ -38,16 +18,16 @@
 	define('HELP_URL',"?page=help&site=shipyard");
 
 	// Absolute minimal Bauzeit in Sekunden
-	define("SHIPYARD_MIN_BUILD_TIME", $cfg->get('shipyard_min_build_time'));
+	define("SHIPYARD_MIN_BUILD_TIME", $config->getInt('shipyard_min_build_time'));
 
 	// Ben. Level für Autragsabbruch
-	define("SHIPQUEUE_CANCEL_MIN_LEVEL", $cfg->get('shipqueue_cancel_min_level'));
+	define("SHIPQUEUE_CANCEL_MIN_LEVEL", $config->getInt('shipqueue_cancel_min_level'));
 
-	define("SHIPQUEUE_CANCEL_START", $cfg->get('shipqueue_cancel_start'));
+	define("SHIPQUEUE_CANCEL_START", $config->getFloat('shipqueue_cancel_start'));
 
-	define("SHIPQUEUE_CANCEL_FACTOR", $cfg->get('shipqueue_cancel_factor'));
+	define("SHIPQUEUE_CANCEL_FACTOR", $config->getFloat('shipqueue_cancel_factor'));
 
-	define("SHIPQUEUE_CANCEL_END", $cfg->get('shipqueue_cancel_end'));
+	define("SHIPQUEUE_CANCEL_END", $config->getFloat('shipqueue_cancel_end'));
 
     $bl = new BuildList($cp->id,$cu->id);
     $tl = new TechList($cu->id);
@@ -253,14 +233,14 @@
 			}
 
     	// level zählen welches die schiffswerft über dem angegeben level ist und faktor berechnen
-    	$need_bonus_level = CURRENT_SHIPYARD_LEVEL - $conf['build_time_boni_schiffswerft']['p1'];
+    	$need_bonus_level = CURRENT_SHIPYARD_LEVEL - $config->param1Int('build_time_boni_schiffswerft');
     	if($need_bonus_level <= 0)
     	{
     		$time_boni_factor=1;
     	}
     	else
     	{
-    		$time_boni_factor=1-($need_bonus_level*($conf['build_time_boni_schiffswerft']['v']/100));
+    		$time_boni_factor=1-($need_bonus_level*($config->getInt('build_time_boni_schiffswerft')/100));
     	}
     	$people_working = $bl->getPeopleWorking(SHIP_BUILDING_ID);
 
@@ -293,8 +273,8 @@
 		echo "</td></tr>";
     	if ($bl->getPeopleWorking(SHIP_BUILDING_ID) > 0)
 		{
-			echo '<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td><span id="people_work_done">'.tf($cfg->value('people_work_done') *$bl->getPeopleWorking(SHIP_BUILDING_ID)).'</span></td></tr>';
-			echo '<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td><span id="people_food_require">'.nf($cfg->value('people_food_require') * $bl->getPeopleWorking(SHIP_BUILDING_ID)).'</span></td></tr>';
+			echo '<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td><span id="people_work_done">'.tf($config->getInt('people_work_done') *$bl->getPeopleWorking(SHIP_BUILDING_ID)).'</span></td></tr>';
+			echo '<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td><span id="people_food_require">'.nf($config->getInt('people_food_require') * $bl->getPeopleWorking(SHIP_BUILDING_ID)).'</span></td></tr>';
 		}
 		if ($gen_tech_level  > 0)
 		{
@@ -308,7 +288,7 @@
     	}
     	else
     	{
-    		echo "Stufe ".$conf['build_time_boni_schiffswerft']['p1']." erforderlich!";
+    		echo "Stufe ".$config->getInt('build_time_boni_schiffswerft')." erforderlich!";
     	}
 		echo "</td></tr>";
     	if ($cancel_res_factor>0)
@@ -324,8 +304,8 @@
 		tableEnd();
 	    $peopleFree = floor($cp->people) - $bl->totalPeopleWorking() + $bl->getPeopleWorking(SHIP_BUILDING_ID);
         $box =  '
-                    <input type="hidden" name="workDone" id="workDone" value="'.$cfg->value('people_work_done').'" />
-                    <input type="hidden" name="foodRequired" id="foodRequired" value="'.$cfg->value('people_food_require').'" />
+                    <input type="hidden" name="workDone" id="workDone" value="'.$config->getInt('people_work_done').'" />
+                    <input type="hidden" name="foodRequired" id="foodRequired" value="'.$config->getInt('people_food_require').'" />
                     <input type="hidden" name="peopleFree" id="peopleFree" value="'.$peopleFree.'" />
                     <input type="hidden" name="foodAvaiable" id="foodAvaiable" value="'.$cp->getRes1(4).'" />
                     <input type="hidden" name="peopleOptimized" id="peopleOptimized" value="0" />';
@@ -345,14 +325,14 @@
                             <td><input  type="text"
                                         name="timeReduction"
                                         id="timeReduction"
-                                        value="'.tf($cfg->value('people_work_done') * $bl->getPeopleWorking(SHIP_BUILDING_ID)).'"
+                                        value="'.tf($config->getInt('people_work_done') * $bl->getPeopleWorking(SHIP_BUILDING_ID)).'"
                                         onkeyup="updatePeopleWorkingBox(\'-1\',this.value,\'-1\');" /></td>
                         </tr>
                             <th>Nahrungsverbrauch</th>
                             <td><input  type="text"
                                         name="foodUsing"
                                         id="foodUsing"
-                                        value="'.nf($cfg->value('people_food_require') * $bl->getPeopleWorking(SHIP_BUILDING_ID)).'"
+                                        value="'.nf($config->getInt('people_food_require') * $bl->getPeopleWorking(SHIP_BUILDING_ID)).'"
                                         onkeyup="updatePeopleWorkingBox(\'-1\',\'-1\',this.value);" /></td>
                         </tr>
                         <tr>
@@ -574,7 +554,7 @@
 						}
 
 						//Check for Rene-Bug
-						$additional_food_costs = $people_working*$cfg->value('people_food_require');
+						$additional_food_costs = $people_working*$config->getInt('people_food_require');
 						if ($additional_food_costs!=intval($_POST['additional_food_costs']) || intval($_POST['additional_food_costs'])<0)
 						{
 							$build_cnt=0;
@@ -611,7 +591,7 @@
 							//Rechnet zeit wenn arbeiter eingeteilt sind
 							$btime_min=$btime*(0.1-($gen_tech_level/100));
 						 	if ($btime_min<SHIPYARD_MIN_BUILD_TIME) $btime_min=SHIPYARD_MIN_BUILD_TIME;
-							$btime=ceil($btime-$people_working*$cfg->value('people_work_done'));
+							$btime=ceil($btime-$people_working*$config->getInt('people_work_done'));
 							if ($btime<$btime_min) $btime=$btime_min;
 							$obj_time=$btime;
 
@@ -1016,7 +996,7 @@
 								// Bauzeit berechnen
 								$btime = ($data['ship_costs_metal'] + $data['ship_costs_crystal'] + $data['ship_costs_plastic'] + $data['ship_costs_fuel'] + $data['ship_costs_food']) / GLOBAL_TIME * SHIP_BUILD_TIME * $time_boni_factor * $cu->specialist->shipTime;
 								$btime_min = $btime * (0.1 - ($gen_tech_level / 100));
-								$peopleOptimized= ceil(($btime-$btime_min)/$cfg->value('people_work_done'));
+								$peopleOptimized= ceil(($btime-$btime_min)/$config->getInt('people_work_done'));
 
 								//Mindest Bauzeit
     			      			if ($btime_min < SHIPYARD_MIN_BUILD_TIME)
@@ -1024,14 +1004,14 @@
 									$btime_min = SHIPYARD_MIN_BUILD_TIME;
 								}
 
-								$btime = ceil($btime - $people_working * $cfg->value('people_work_done'));
+								$btime = ceil($btime - $people_working * $config->getInt('people_work_done'));
 								if ($btime < $btime_min)
 								{
 									$btime = $btime_min;
 								}
 
 								//Nahrungskosten berechnen
-								$food_costs = $people_working * $cfg->value('people_food_require');
+								$food_costs = $people_working * $config->getInt('people_food_require');
 
 								//Nahrungskosten versteckt übermitteln
 								echo "<input type=\"hidden\" name=\"additional_food_costs\" value=\"".$food_costs."\" />";

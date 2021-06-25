@@ -1,4 +1,10 @@
 <?PHP
+
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
   echo "<h1>Universum</h1>";
 
   //
@@ -7,22 +13,22 @@
   if (isset($_POST['submit_create_universe']))
   {
     echo "<h2>Urknall - Schritt 2/3</h2>";
-    $cfg->set("num_of_sectors","",$_POST['num_of_sectors_p1'],$_POST['num_of_sectors_p2']);
-    $cfg->set("num_of_cells","",$_POST['num_of_cells_p1'],$_POST['num_of_cells_p2']);
-    $cfg->set("space_percent_solsys",intval($_POST['space_percent_solsys']));
-    $cfg->set("space_percent_asteroids",intval($_POST['space_percent_asteroids']));
-    $cfg->set("space_percent_nebulas",intval($_POST['space_percent_nebulas']));
-    $cfg->set("space_percent_wormholes",intval($_POST['space_percent_wormholes']));
-    $cfg->set("persistent_wormholes_ratio",max(0, min(100, intval($_POST['persistent_wormholes_ratio']))));
-    $cfg->set("num_planets","",$_POST['num_planets_p1'],$_POST['num_planets_p2']);
-    $cfg->set("solsys_percent_planet",intval($_POST['solsys_percent_planet']));
-    $cfg->set("solsys_percent_asteroids",intval($_POST['solsys_percent_asteroids']));
-    $cfg->set("planet_fields","",$_POST['planet_fields_p1'],$_POST['planet_fields_p2']);
+    $config->set("num_of_sectors", "", $_POST['num_of_sectors_p1'], $_POST['num_of_sectors_p2']);
+    $config->set("num_of_cells", "", $_POST['num_of_cells_p1'], $_POST['num_of_cells_p2']);
+    $config->set("space_percent_solsys", intval($_POST['space_percent_solsys']));
+    $config->set("space_percent_asteroids", intval($_POST['space_percent_asteroids']));
+    $config->set("space_percent_nebulas", intval($_POST['space_percent_nebulas']));
+    $config->set("space_percent_wormholes", intval($_POST['space_percent_wormholes']));
+    $config->set("persistent_wormholes_ratio", max(0, min(100, intval($_POST['persistent_wormholes_ratio']))));
+    $config->set("num_planets", "", $_POST['num_planets_p1'], $_POST['num_planets_p2']);
+    $config->set("solsys_percent_planet", intval($_POST['solsys_percent_planet']));
+    $config->set("solsys_percent_asteroids", intval($_POST['solsys_percent_asteroids']));
+    $config->set("planet_fields", "", $_POST['planet_fields_p1'], $_POST['planet_fields_p2']);
 
     echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
     tableStart("Systfemanordnung",400);
-    $xdim = ($cfg->num_of_sectors->p1*$cfg->num_of_cells->p1);
-    $ydim = ($cfg->num_of_sectors->p2*$cfg->num_of_cells->p2);
+    $xdim = $config->param1Int('num_of_sectors') * $config->param1Int('num_of_cells');
+    $ydim = $config->param2Int('num_of_sectors') * $config->param2Int('num_of_cells');
 
     echo "<tr>
       <th>Dimension:</th>
@@ -61,20 +67,20 @@
   {
     echo "<h2>Universum erweitern</h2>";
     echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-    echo "<b>Universum (".$conf['num_of_sectors']['p1']."x".$conf['num_of_sectors']['p2'].") erweitern</b><br><br>";
+    echo "<b>Universum (".$config->param1Int('num_of_sectors')."x".$config->param2Int('num_of_sectors').") erweitern</b><br><br>";
     echo "Erweitere das Universum. Es werden dabei die bereits gespeicherten Daten &uuml;bernommen bez&uuml;glich der der Aufteilung von Planeten, Sonnensystemen, Gasplaneten, Wurml&ouml;chern etc. &Auml;ndere allenfals die Daten unter dem Link \"Universum\".<br><br>";
 
     echo "Gr&ouml;sse nach dem Ausbau: ";
     //erstellt 2 auswahllisten für die ausbaugrösse
         echo "<select name=\"expansion_sector_x\">";
-        for ($x=($conf['num_of_sectors']['p1']+1);10>=$x;$x++)
+        for ($x=($config->param1Int('num_of_sectors')+1);10>=$x;$x++)
         {
                 echo "<option value=\"$x\">$x</option>";
         }
         echo "</select>";
         echo " x ";
         echo "<select name=\"expansion_sector_y\">";
-        for ($x=($conf['num_of_sectors']['p2']+1);10>=$x;$x++)
+        for ($x=($config->param2Int('num_of_sectors')+1);10>=$x;$x++)
         {
                 echo "<option value=\"$x\">$x</option>";
         }
@@ -176,34 +182,34 @@
         echo "<tr>
           <th>Sektoren:</th>
           <td>
-            <input type=\"text\" name=\"num_of_sectors_p1\" value=\"".$cfg->num_of_sectors->p1."\" size=\"2\" maxlength=\"2\" />x
-            <input type=\"text\" name=\"num_of_sectors_p2\" value=\"".$cfg->num_of_sectors->p2."\" size=\"2\" maxlength=\"2\" />
+            <input type=\"text\" name=\"num_of_sectors_p1\" value=\"".$config->param1Int('num_of_sectors')."\" size=\"2\" maxlength=\"2\" />x
+            <input type=\"text\" name=\"num_of_sectors_p2\" value=\"".$config->param2Int('num_of_sectors')."\" size=\"2\" maxlength=\"2\" />
           </td></tr>";
         echo "<tr>
           <th>Anzahl Zellen pro Sektor:</th>
           <td>
-            <input type=\"text\" name=\"num_of_cells_p1\" value=\"".$cfg->num_of_cells->p1."\" size=\"2\" maxlength=\"2\" />x
-            <input type=\"text\" name=\"num_of_cells_p2\" value=\"".$cfg->num_of_cells->p2."\" size=\"2\" maxlength=\"2\" />
+            <input type=\"text\" name=\"num_of_cells_p1\" value=\"".$config->param1Int('num_of_cells')."\" size=\"2\" maxlength=\"2\" />x
+            <input type=\"text\" name=\"num_of_cells_p2\" value=\"".$config->param2Int('num_of_cells')."\" size=\"2\" maxlength=\"2\" />
           </td></tr>";
         echo "</table>";
 
         tableStart("Verteilung der Systeme",420);
         echo "<tr>
           <th>Sternensysteme:</th>
-          <td><input type=\"text\" name=\"space_percent_solsys\" id=\"space_percent_solsys\" value=\"".$cfg->space_percent_solsys."\" size=\"2\" maxlength=\"2\" onkeyup=\"alignSystemPercentage()\" />%</td>
+          <td><input type=\"text\" name=\"space_percent_solsys\" id=\"space_percent_solsys\" value=\"".$config->getInt('space_percent_solsys')."\" size=\"2\" maxlength=\"2\" onkeyup=\"alignSystemPercentage()\" />%</td>
         </tr>";
         echo "<tr>
           <th>Asteroidenfelder:</th>
-          <td><input type=\"text\" name=\"space_percent_asteroids\" id=\"space_percent_asteroids\" value=\"".$cfg->space_percent_asteroids."\" size=\"2\" maxlength=\"2\" onkeyup=\"alignSystemPercentage()\" />%</td>
+          <td><input type=\"text\" name=\"space_percent_asteroids\" id=\"space_percent_asteroids\" value=\"".$config->getInt('space_percent_asteroids')."\" size=\"2\" maxlength=\"2\" onkeyup=\"alignSystemPercentage()\" />%</td>
         </tr>";
         echo "<tr>
           <th>Nebelwolken:</th>
-          <td><input type=\"text\" name=\"space_percent_nebulas\" id=\"space_percent_nebulas\" value=\"".$cfg->space_percent_nebulas."\" size=\"2\" maxlength=\"2\" onkeyup=\"alignSystemPercentage()\" />%</td>
+          <td><input type=\"text\" name=\"space_percent_nebulas\" id=\"space_percent_nebulas\" value=\"".$config->getInt('space_percent_nebulas')."\" size=\"2\" maxlength=\"2\" onkeyup=\"alignSystemPercentage()\" />%</td>
         </tr>";
         echo "<tr>
           <th>Wurmlöcher:</th>
-          <td><input type=\"text\" name=\"space_percent_wormholes\" id=\"space_percent_wormholes\" value=\"".$cfg->space_percent_wormholes."\" size=\"2\" maxlength=\"2\" onkeyup=\"alignSystemPercentage()\" />%
-		  davon <input type=\"text\" name=\"persistent_wormholes_ratio\" id=\"persistent_wormholes_ratio\" value=\"".$cfg->persistent_wormholes_ratio."\" size=\"2\" maxlength=\"2\" />% persistent
+          <td><input type=\"text\" name=\"space_percent_wormholes\" id=\"space_percent_wormholes\" value=\"".$config->getInt('space_percent_wormholes')."\" size=\"2\" maxlength=\"2\" onkeyup=\"alignSystemPercentage()\" />%
+		  davon <input type=\"text\" name=\"persistent_wormholes_ratio\" id=\"persistent_wormholes_ratio\" value=\"".$config->getInt('persistent_wormholes_ratio')."\" size=\"2\" maxlength=\"2\" />% persistent
 		  </td>
         </tr>";
         echo "<tr>
@@ -215,16 +221,16 @@
         tableStart("Sternensystem",420);
         echo "<tr>
           <th>Objekte pro Sternensystem:</th>
-          <td><input type=\"text\" name=\"num_planets_p1\" value=\"".$cfg->num_planets->p1."\" size=\"2\" maxlength=\"2\" /> min,
-              <input type=\"text\" name=\"num_planets_p2\" value=\"".$cfg->num_planets->p2."\" size=\"2\" maxlength=\"2\" /> max
+          <td><input type=\"text\" name=\"num_planets_p1\" value=\"".$config->param1Int('num_planets')."\" size=\"2\" maxlength=\"2\" /> min,
+              <input type=\"text\" name=\"num_planets_p2\" value=\"".$config->param2Int('num_planets')."\" size=\"2\" maxlength=\"2\" /> max
           </td></tr>";
         echo "<tr>
           <th>Planeten:</th>
-          <td><input type=\"text\" name=\"solsys_percent_planet\" id=\"solsys_percent_planet\" value=\"".$cfg->solsys_percent_planet."\" size=\"2\" maxlength=\"2\" onkeyup=\"alignObjectsInSystemPercentage()\" />%</td>
+          <td><input type=\"text\" name=\"solsys_percent_planet\" id=\"solsys_percent_planet\" value=\"".$config->getInt('solsys_percent_planet')."\" size=\"2\" maxlength=\"2\" onkeyup=\"alignObjectsInSystemPercentage()\" />%</td>
         </tr>";
         echo "<tr>
           <th>Asteroidenfelder:</th>
-          <td><input type=\"text\" name=\"solsys_percent_asteroids\" id=\"solsys_percent_asteroids\" value=\"".$cfg->solsys_percent_asteroids."\" size=\"2\" maxlength=\"2\" onkeyup=\"alignObjectsInSystemPercentage()\" />%</td>
+          <td><input type=\"text\" name=\"solsys_percent_asteroids\" id=\"solsys_percent_asteroids\" value=\"".$config->getInt('solsys_percent_asteroids')."\" size=\"2\" maxlength=\"2\" onkeyup=\"alignObjectsInSystemPercentage()\" />%</td>
         </tr>";
         echo "<tr>
           <th>Leerer Raum:</th>
@@ -237,8 +243,8 @@
         echo "<tr>
           <th>Felder pro Planet:</th>
           <td>
-            <input type=\"text\" name=\"planet_fields_p1\" value=\"".$cfg->planet_fields->p1."\" size=\"2\" maxlength=\"2\" /> min,
-            <input type=\"text\" name=\"planet_fields_p2\" value=\"".$cfg->planet_fields->p2."\" size=\"2\" maxlength=\"2\" /> max
+            <input type=\"text\" name=\"planet_fields_p1\" value=\"".$config->param1Int('planet_fields')."\" size=\"2\" maxlength=\"2\" /> min,
+            <input type=\"text\" name=\"planet_fields_p2\" value=\"".$config->param2Int('planet_fields')."\" size=\"2\" maxlength=\"2\" /> max
           </td>
         </tr>";
         echo "</table>";

@@ -1,30 +1,13 @@
 <?PHP
 
-//////////////////////////////////////////////////
-//		 	 ____    __           ______       			//
-//			/\  _`\ /\ \__       /\  _  \      			//
-//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
-//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
-//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
-//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
-//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
-//																					 		//
-//////////////////////////////////////////////////
-// The Andromeda-Project-Browsergame				 		//
-// Ein Massive-Multiplayer-Online-Spiel			 		//
-// Programmiert von Nicolas Perrenoud				 		//
-// www.nicu.ch | mail@nicu.ch								 		//
-// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-//////////////////////////////////////////////////
 //
-// 	Dateiname: pwforgot.php
 // 	Topic: Passwort-Erneuerung
-// 	Autor: Nicolas Perrenoud alias MrCage
-// 	Erstellt: 01.12.2004
-// 	Bearbeitet von: Nicolas Perrenoud alias MrCage
-// 	Bearbeitet am: 07.03.2006
-// 	Kommentar:
 //
+
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
 
 $errorMessage = null;
 $successMessage = null;
@@ -48,7 +31,7 @@ try {
                 $pw = generatePasswort();
 
                 // Email schreiben
-                $email_text= 'Hallo ' . $_POST['user_nick'] . "\n\nDu hast ein neues Passwort angefordert.\nHier sind die neuen Daten:\n\nUniversum: ".Config::getInstance()->roundname->v."\n\nNick: ".$_POST['user_nick']."\nPasswort: ".$pw."\n\nWeiterhin viel Spass...\nDas EtoA-Team";
+                $email_text = 'Hallo ' . $_POST['user_nick'] . "\n\nDu hast ein neues Passwort angefordert.\nHier sind die neuen Daten:\n\nUniversum: " . $config->get('roundname') . "\n\nNick: " . $_POST['user_nick'] . "\nPasswort: " . $pw . "\n\nWeiterhin viel Spass...\nDas EtoA-Team";
                 $mail = new Mail("Passwort-Anforderung",$email_text);
                 $mail->send($_POST['user_email_fix']);
 
@@ -86,7 +69,7 @@ if (isset($_SESSION['pwforgot_success_msg'])) {
 }
 
 echo $twig->render('external/pwforgot.html.twig', [
-    'roundName' => Config::getInstance()->roundname->v,
+    'roundName' => $config->get('roundname'),
     'checker' => checker_init(),
     'errorMessage' => $errorMessage,
     'successMessage' => $successMessage,

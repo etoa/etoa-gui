@@ -6,21 +6,6 @@ parameters:
 			path: bin/cronjob.php
 
 		-
-			message: "#^Variable property access on mixed\\.$#"
-			count: 1
-			path: htdocs/admin/content/config/check.inc.php
-
-		-
-			message: "#^Variable property access on mixed\\.$#"
-			count: 3
-			path: htdocs/admin/content/config/editor.inc.php
-
-		-
-			message: "#^Variable property access on mixed\\.$#"
-			count: 6
-			path: htdocs/admin/content/config/restoredefaults.inc.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: htdocs/admin/content/cronjob.php
@@ -39,11 +24,6 @@ parameters:
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: htdocs/admin/content/eventhandler.php
-
-		-
-			message: "#^Implicit array creation is not allowed \\- variable \\$conf might not exist\\.$#"
-			count: 4
-			path: htdocs/admin/content/fleets.php
 
 		-
 			message: "#^Variable \\$trgstr might not be defined\\.$#"
@@ -76,7 +56,7 @@ parameters:
 			path: htdocs/admin/content/logs.php
 
 		-
-			message: "#^Variable \\$res might not be defined\\.$#"
+			message: "#^Undefined variable: \\$res$#"
 			count: 3
 			path: htdocs/admin/content/logs.php
 
@@ -128,16 +108,6 @@ parameters:
 		-
 			message: "#^Variable \\$waveCnt might not be defined\\.$#"
 			count: 2
-			path: htdocs/admin/inc/admin_functions.inc.php
-
-		-
-			message: "#^Variable property access on Config\\.$#"
-			count: 5
-			path: htdocs/admin/inc/admin_functions.inc.php
-
-		-
-			message: "#^Variable property access on mixed\\.$#"
-			count: 5
 			path: htdocs/admin/inc/admin_functions.inc.php
 
 		-
@@ -509,11 +479,6 @@ parameters:
 			message: "#^Constant NAME_MAXLENGTH not found\\.$#"
 			count: 1
 			path: htdocs/index/register.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: htdocs/info/settings.php
 
 		-
 			message: "#^Variable \\$x might not be defined\\.$#"

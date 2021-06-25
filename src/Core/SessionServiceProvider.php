@@ -2,6 +2,7 @@
 
 namespace EtoA\Core;
 
+use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\User\ChatUser;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
@@ -18,12 +19,15 @@ class SessionServiceProvider implements ServiceProviderInterface, BootableProvid
 
     public function boot(Application $app): void
     {
-        $app->before(function (Request $request): void {
-            $session = \UserSession::getInstance();
+        $app->before(function (Request $request) use ($app): void {
+            /** @var ConfigurationService */
+            $config = $app['etoa.config.service'];
+
+            $session = \UserSession::getInstance($config);
             if (strpos($request->attributes->get('_route'), 'api.chat') === 0) {
                 $currentUser = $this->validateChatUser($session);
             } else {
-                $currentUser = $this->validateUser($session);
+                $currentUser = $this->validateUser($session, $config);
             }
 
             $request->attributes->set('currentUser', $currentUser);
@@ -39,7 +43,7 @@ class SessionServiceProvider implements ServiceProviderInterface, BootableProvid
         return new ChatUser($session->user_id, $session->user_nick);
     }
 
-    private function validateUser(\UserSession $session): \CurrentUser
+    private function validateUser(\UserSession $session, ConfigurationService $config): \CurrentUser
     {
         if (!$session->validate(0)) {
             throw new AccessDeniedHttpException();
@@ -49,7 +53,7 @@ class SessionServiceProvider implements ServiceProviderInterface, BootableProvid
         if (isset($cu)) {
             $currentUser = $cu;
         } else {
-            $currentUser = new \CurrentUser(\UserSession::getInstance()->user_id);
+            $currentUser = new \CurrentUser(\UserSession::getInstance($config)->user_id);
         }
 
         if (!$currentUser->isValid) {

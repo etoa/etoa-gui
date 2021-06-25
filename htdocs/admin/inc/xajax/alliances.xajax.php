@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Core\Configuration\ConfigurationService;
+
 $xajax->register(XAJAX_FUNCTION,"allianceNewsSave");
 $xajax->register(XAJAX_FUNCTION,"allianceNewsLoad");
 $xajax->register(XAJAX_FUNCTION,"allianceNewsEdit");
@@ -301,20 +303,19 @@ function allianceNewsSave($id,$form)
   return $objResponse;
 }
 
-function allianceNewsSetBanTime($time,$text)
+function allianceNewsSetBanTime($time, $text)
 {
-	dbquery("
-	UPDATE
-		config
-	SET
-		config_value='".$time."',
-		config_param1='".addslashes($text)."'
-	WHERE
-		config_name='townhall_ban'
-	");
-	$objResponse = new xajaxResponse();
- 	$objResponse->alert("Einstellungen gespeichert!");
-  return $objResponse;
+    // TODO
+    global $app;
+
+    /** @var ConfigurationService */
+    $config = $app['etoa.config.service'];
+
+    $config->set('townhall_ban', $time, $text);
+
+    $objResponse = new xajaxResponse();
+    $objResponse->alert("Einstellungen gespeichert!");
+    return $objResponse;
 }
 
 function showSpend($allianceId,$form)

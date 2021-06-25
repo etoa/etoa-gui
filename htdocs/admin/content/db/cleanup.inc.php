@@ -1,9 +1,9 @@
 <?PHP
 
 use EtoA\Admin\AdminSessionManager;
-use EtoA\Alliance\AllianceRepository;
+use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
-use EtoA\User\UserRepository;
+use EtoA\Ranking\PointsService;
 
 /** @var TicketRepository */
 $ticketRepo = $app['etoa.help.ticket.repository'];
@@ -11,24 +11,23 @@ $ticketRepo = $app['etoa.help.ticket.repository'];
 /** @var AdminSessionManager */
 $sessionManager = $app['etoa.admin.session.manager'];
 
-/** @var AllianceRepository */
-$allianceRepository = $app['etoa.alliance.repository'];
+/** @var PointsService */
+$pointsService = $app['etoa.rankings.points.service'];
 
-/** @var UserRepository */
-$userRepo = $app['etoa.user.repository'];
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
 
 echo '<h2>Clean-Up</h2>';
 
 if (isset($_POST['submit_cleanup_selected']) || isset($_POST['submit_cleanup_all'])) {
-	runCleanup($sessionManager, $ticketRepo, $allianceRepository, $userRepo);
+	runCleanup($sessionManager, $ticketRepo, $pointsService);
 }
-cleanupOverView($ticketRepo);
+cleanupOverView($ticketRepo, $config);
 
 function runCleanup(
 	AdminSessionManager $sessionManager,
 	TicketRepository $ticketRepo,
-	AllianceRepository $allianceRepository,
-	UserRepository $userRepo
+    PointsService $pointsService
 ) {
 	echo "Clean-Up wird durchgeführt...<br/>";
 	$all = isset($_POST['submit_cleanup_all']) ? true : false;
@@ -66,9 +65,9 @@ function runCleanup(
 
 	// User-Point-History
 	if ((isset($_POST['cl_points']) && $_POST['cl_points'] == 1) || $all) {
-		$nr = $userRepo->cleanUpPoints($_POST['del_user_points']);
+		$nr = $pointsService->cleanupUserPoints((int) $_POST['del_user_points']);
 		echo $nr . " Benutzerpunkte-Logs und ";
-		$nr = $allianceRepository->cleanUpPoints((int) $_POST['del_user_points']);
+		$nr = $pointsService->cleanupAlliancePoints((int) $_POST['del_user_points']);
 		echo $nr . " Allianzpunkte-Logs wurden gelöscht!<br/>";
 	}
 
@@ -352,10 +351,8 @@ function runCleanup(
 	echo "Clean-Up fertig!<br/><br/>";
 }
 
-function cleanupOverView(TicketRepository $ticketRepo)
+function cleanupOverView(TicketRepository $ticketRepo, ConfigurationService $config)
 {
-	global $conf;
-	global $cfg;
 	global $page;
 	global $sub;
 
@@ -374,11 +371,11 @@ function cleanupOverView(TicketRepository $ticketRepo)
 	echo '<input type="radio" name="only_deleted" value="0" /><b>Nachrichten löschen:</b> ';
 	echo "Älter als <select name=\"message_timestamp\">";
 	$days = array(1, 7, 14, 21, 28);
-	if (!in_array((int) $cfg->get('messages_threshold_days'), $days, true))
-		$days[] = (int) $cfg->get('messages_threshold_days');
+	if (!in_array($config->getInt('messages_threshold_days'), $days, true))
+		$days[] = $config->getInt('messages_threshold_days');
 	sort($days);
 	foreach ($days as $ds) {
-		echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $cfg->get('messages_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
+		echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $config->getInt('messages_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
 	}
 	echo "</select> (" . nf($tblcnt[0]) . " total).<br/>";
 	$tblcnt = mysql_fetch_row(dbquery("
@@ -392,12 +389,12 @@ function cleanupOverView(TicketRepository $ticketRepo)
 	echo '<input type="radio" name="only_deleted_reports" value="1" checked="checked" /> <b>Nur \'gelöschte\' Nachrichten löschen:</b> ';
 	echo 'Älter als <select name="message_timestamp_deleted">';
 	$days = array(7, 14, 21, 28);
-	if (!in_array((int) $cfg->p1('messages_threshold_days'), $days, true)) {
-		$days[] = (int) $cfg->p1('messages_threshold_days');
+	if (!in_array($config->param1Int('messages_threshold_days'), $days, true)) {
+		$days[] = $config->param1Int('messages_threshold_days');
 	}
 	sort($days);
 	foreach ($days as $ds) {
-		echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $cfg->p1('messages_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
+		echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $config->param1Int('messages_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
 	}
 	echo "</select> (" . nf($tblcnt[0]) . " total).";
 	echo '</fieldset><br/>';
@@ -415,11 +412,11 @@ function cleanupOverView(TicketRepository $ticketRepo)
 	echo '<input type="radio" name="only_deleted" value="0" /><b>Berichte löschen:</b> ';
 	echo "Älter als <select name=\"report_timestamp\">";
 	$days = array(1, 7, 14, 21, 28);
-	if (!in_array((int) $cfg->p1('messages_threshold_days'), $days, true))
-		$days[] = (int) $cfg->p1('messages_threshold_days');
+	if (!in_array($config->param1Int('messages_threshold_days'), $days, true))
+		$days[] = $config->param1Int('messages_threshold_days');
 	sort($days);
 	foreach ($days as $ds) {
-		echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $cfg->p1('messages_threshold_days')  ? " selected=\"selected\"" : "") . " >" . $ds . " Tage</option>";
+		echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $config->param1Int('messages_threshold_days')  ? " selected=\"selected\"" : "") . " >" . $ds . " Tage</option>";
 	}
 	echo "</select> (" . nf($tblcnt[0]) . " total).<br/>";
 	$tblcnt = mysql_fetch_row(dbquery("
@@ -433,11 +430,11 @@ function cleanupOverView(TicketRepository $ticketRepo)
 	echo '<input type="radio" name="only_deleted" value="1" checked="checked" /> <b>Nur \'gelöschte\' Berichte löschen:</b> ';
 	echo 'Älter als <select name="report_timestamp_deleted">';
 	$days = array(7, 14, 21, 28);
-	if (!in_array((int) $cfg->p1('reports_threshold_days'), $days, true))
-		$days[] = (int) $cfg->p1('reports_threshold_days');
+	if (!in_array($config->param1Int('reports_threshold_days'), $days, true))
+		$days[] = $config->param1Int('reports_threshold_days');
 	sort($days);
 	foreach ($days as $ds) {
-		echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $cfg->p1('reports_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
+		echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $config->param1Int('reports_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
 	}
 	echo "</select> (" . nf($tblcnt[0]) . " total).";
 	echo '</fieldset><br/>';
@@ -452,11 +449,11 @@ function cleanupOverView(TicketRepository $ticketRepo)
 	;"));
 	echo "<b>Logs löschen:</b> Einträge löschen welche älter als <select name=\"log_timestamp\">";
 	$days = array(7, 14, 21, 28);
-	if (!in_array((int) $cfg->get('log_threshold_days'), $days, true))
-		$days[] = (int) $cfg->get('log_threshold_days');
+	if (!in_array($config->getInt('log_threshold_days'), $days, true))
+		$days[] = $config->getInt('log_threshold_days');
 	sort($days);
 	foreach ($days as $ds) {
-		echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $cfg->get('log_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
+		echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $config->getInt('log_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
 	}
 	echo "</select> sind (" . nf($tblcnt[0]) . " total).";
 	echo '</fieldset><br/>';
@@ -472,11 +469,11 @@ function cleanupOverView(TicketRepository $ticketRepo)
 	echo "<b>Session-Logs löschen:</b> ";
 	echo "Einträge löschen die älter als <select name=\"sess_log_timestamp\">";
 	$days = array(7, 14, 21, 28);
-	if (!in_array((int) $cfg->get('log_threshold_days'), $days, true))
-		$days[] = (int) $cfg->get('log_threshold_days');
+	if (!in_array($config->getInt('log_threshold_days'), $days, true))
+		$days[] = $config->getInt('log_threshold_days');
 	sort($days);
 	foreach ($days as $ds) {
-		echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $cfg->get('log_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
+		echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $config->getInt('log_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
 	}
 	echo "</select> sind (" . nf($tblcnt[0]) . " total).";
 	echo '</fieldset><br/>';
@@ -491,11 +488,11 @@ function cleanupOverView(TicketRepository $ticketRepo)
 	;"));
 	echo "<b>Punkteverläufe löschen:</b> Einträge löschen die älter als <select name=\"del_user_points\">";
 	$days = array(2, 5, 7, 14, 21, 28);
-	if (!in_array((int) $cfg->get('log_threshold_days'), $days, true))
-		$days[] = (int) $cfg->get('log_threshold_days');
+	if (!in_array($config->getInt('log_threshold_days'), $days, true))
+		$days[] = $config->getInt('log_threshold_days');
 	sort($days);
 	foreach ($days as $ds) {
-		echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $cfg->get('log_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
+		echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $config->getInt('log_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
 	}
 	echo "</select> sind (Total: " . nf($tblcnt[0]) . " User,";
 	$tblcnt = mysql_fetch_row(dbquery("
@@ -509,7 +506,7 @@ function cleanupOverView(TicketRepository $ticketRepo)
 
 	// Inactive
 	echo '<fieldset><legend><input type="checkbox" value="1" name="cl_inactive" /> User</legend>';
-	echo nf(Users::getNumInactive()) . " inaktive Benutzer löschen (" . $conf['user_inactive_days']['p2'] . " Tage seit der Registration ohne Login oder " . $conf['user_inactive_days']['p1'] . " Tage nicht mehr eingeloggt)<br/>";
+	echo nf(Users::getNumInactive()) . " inaktive Benutzer löschen (" . $config->param2Int('user_inactive_days') . " Tage seit der Registration ohne Login oder " . $config->param1Int('user_inactive_days') . " Tage nicht mehr eingeloggt)<br/>";
 	$res =	dbquery("
 		SELECT
 			COUNT(user_id)

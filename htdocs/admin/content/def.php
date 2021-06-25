@@ -1,4 +1,8 @@
 <?PHP
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
 
 	//////////////////////////////////////////////////
 	//		 	 ____    __           ______       			//
@@ -750,19 +754,19 @@
 			echo "<tr><th class=\"tbltitle\">Sonnensystem</th><td class=\"tbldata\">
 			<select name=\"cell_sx\" onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showDefenseOnPlanet');\">";
 			echo "<option value=\"0\">Sektor X</option>";
-			for ($x=1;$x<=$conf['num_of_sectors']['p1'];$x++)
+			for ($x=1;$x<=$config->param1Int('num_of_sectors');$x++)
 				echo "<option value=\"$x\">$x</option>";
 			echo "</select>/<select name=\"cell_sy\"  onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showDefenseOnPlanet');\">";
 			echo "<option value=\"0\">Sektor Y</option>";
-			for ($x=1;$x<=$conf['num_of_sectors']['p2'];$x++)
+			for ($x=1;$x<=$config->param2Int('num_of_sectors');$x++)
 				echo "<option value=\"$x\">$x</option>";
 			echo "</select> : <select name=\"cell_cx\" onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showDefenseOnPlanet');\">";
 			echo "<option value=\"0\">Zelle X</option>";
-			for ($x=1;$x<=$conf['num_of_cells']['p1'];$x++)
+			for ($x=1;$x<=$config->param1Int('num_of_cells');$x++)
 				echo "<option value=\"$x\">$x</option>";
 			echo "</select>/<select name=\"cell_cy\" onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showDefenseOnPlanet');\">";
 			echo "<option value=\"0\">Zelle Y</option>";
-			for ($x=1;$x<=$conf['num_of_cells']['p2'];$x++)
+			for ($x=1;$x<=$config->param2Int('num_of_cells');$x++)
 				echo "<option value=\"$x\">$x</option>";
 			echo "</select></td></tr>";
 

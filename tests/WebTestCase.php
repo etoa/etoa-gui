@@ -3,6 +3,7 @@
 namespace EtoA;
 
 use Doctrine\DBAL\Connection;
+use EtoA\Core\Configuration\ConfigurationService;
 use PHPUnit\Framework\TestCase;
 use Silex\Application;
 use Symfony\Component\HttpKernel\Client;
@@ -25,11 +26,16 @@ abstract class WebTestCase extends TestCase
     {
         include_once dirname(__DIR__) . '/htdocs/inc/mysqli_polyfill.php';
         $app = $this->setupApplication();
+        $app['etoa.quests.enabled'] = true;
         $this->connection = $app['db'];
         \mysql_connect($this->connection->getHost(), $this->connection->getUsername(), $this->connection->getPassword(), $this->connection->getDatabase());
 
+        /** @var ConfigurationService */
+        $config = $app['etoa.config.service'];
+
         require_once __DIR__ . '/../htdocs/inc/bootstrap.inc.php';
-        \Config::restoreDefaults();
+
+        $config->restoreDefaults();
 
         return $app;
     }

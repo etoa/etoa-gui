@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Core\Configuration\ConfigurationService;
+
 include("image.inc.php");
 
 define('NUM_LEVELS',25);
@@ -52,9 +54,7 @@ for ($i=$areaOriginX+$stepX;$i<=$areaOriginX+$areaW;$i+=$stepX)
     imagestring($im, 2, (int) ($i-imagefontwidth(2)*strlen((string) $cnt)/2), $areaOriginY, (string) $cnt++, $colBlack);
 }
 
-
 ob_start();
-
 
 for ($i=0;$i<=$maxRatio; $i+=$maxRatio/10)
 {
@@ -93,18 +93,21 @@ $shipRepository = $app['etoa.ship.datarepository'];
 $ships = $shipRepository->getShipWithPowerProduction();
 
 $strx = P_LEFT;
-$cfg = Config::getInstance();
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 foreach ($ships as $ship) {
     $costs1 = $ship->costsMetal + $ship->costsCrystal + $ship->costsPlastic + $ship->costsFuel + $ship->costsFood;
     $prod1 = $ship->powerProduction;
     $ratio = round($costs1 / $prod1,1);
     imageline($im,$areaOriginX,(int) ($areaOriginY-(($ratio/$maxRatio)*$areaH)),$areaOriginX+$areaW,(int) ($areaOriginY-(($ratio/$maxRatio)*$areaH)), $lineCol[$i%7]);
 
-    $tpb1 = Planet::getSolarPowerBonus($cfg->param1('planet_temp'),$cfg->param1('planet_temp')+$cfg->value('planet_temp'));
+    $tpb1 = Planet::getSolarPowerBonus($config->param1Int('planet_temp'), $config->param1Int('planet_temp') + $config->getInt('planet_temp'));
     $ratio = round($costs1 / ($prod1+$tpb1),1);
     MDashedLine($im,$areaOriginX,$areaOriginY-(($ratio/$maxRatio)*$areaH),$areaOriginX+$areaW,$areaOriginY-(($ratio/$maxRatio)*$areaH),$lineCol[$i%7],$colWhite);
 
-    $tpb2 = Planet::getSolarPowerBonus($cfg->param2('planet_temp')-$cfg->value('planet_temp'),$cfg->param2('planet_temp'));
+    $tpb2 = Planet::getSolarPowerBonus($config->param2Int('planet_temp') - $config->getInt('planet_temp'), $config->param2Int('planet_temp'));
     $ratio = round($costs1 / ($prod1+$tpb2),1);
     MDashedLine($im,$areaOriginX,$areaOriginY-(($ratio/$maxRatio)*$areaH),$areaOriginX+$areaW,$areaOriginY-(($ratio/$maxRatio)*$areaH),$lineCol[$i%7],$colWhite);
 
@@ -113,6 +116,8 @@ foreach ($ships as $ship) {
     $i++;
 }
 
+$str = ob_get_clean();
+imagestring($im,2,10,10,$str,$colBlack);
 
 $str = ob_get_clean();
 imagestring($im,2,10,10,$str,$colBlack);

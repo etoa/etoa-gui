@@ -1,5 +1,10 @@
 <?PHP
 
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 /** @var \Symfony\Component\HttpFoundation\Request $request */
 
 define("SHOWLEVELS", $site!=null ? 30 : 5);
@@ -155,7 +160,7 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
         // Wohnmodul
         elseif ($building->id === 7) {
             $basePeoplePlace = $buildingDataRepository->getBuilding(6)->peoplePlace;
-            echo "Beachte das es einen Grundwohnraum für <b>".nf($conf['user_start_people']['p1'])."</b> Menschen pro Planet gibt. Ebenfalls bietet die
+            echo "Beachte das es einen Grundwohnraum für <b>".nf($config->param1Int('user_start_people'))."</b> Menschen pro Planet gibt. Ebenfalls bietet die
                 <a href=\"?$link&amp;site=buildings&amp;id=6\">Planetenbasis</a> Platz für <b>".$basePeoplePlace."</b> Menschen.<br/>";
 
             tableStart("Platz f&uuml;r Bewohner");
@@ -169,11 +174,11 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
                 if ($level === $currentLevel) {
                     echo "<tr><td class=\"tbldata2\">$level</td>
                          <td class=\"tbldata2\">" . nf($prod_item) . "</td>
-                         <td class=\"tbldata2\">" . nf($prod_item + $basePeoplePlace + $conf['user_start_people']['p1']) . "</td>
+                         <td class=\"tbldata2\">" . nf($prod_item + $basePeoplePlace + $config->param1Int('user_start_people')) . "</td>
                          </tr>";
                 } else {
                     echo "<tr><td>$level</td><td>".nf($prod_item)."</td>
-                          <td>".nf($prod_item+$basePeoplePlace+$conf['user_start_people']['p1'])."</td></tr>";
+                          <td>".nf($prod_item+$basePeoplePlace+$config->param1Int('user_start_people'))."</td></tr>";
                 }
             }
 
@@ -203,10 +208,10 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
         // Titanspeicher
         elseif ($building->id === 16) {
             $baseStoreMetal = $buildingDataRepository->getBuilding(6)->storeMetal;
-            tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($baseStoreMetal).") und Standardkapazit&auml;t (".nf($conf["def_store_capacity"]["v"]).") des Planeten)");
+            tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($baseStoreMetal).") und Standardkapazit&auml;t (".nf($config->getInt("def_store_capacity")).") des Planeten)");
             echo "<tr><th>Stufe</th><th>Kapazit&auml;t</th></tr>";
             for ($level = $b_level; $level < SHOWLEVELS + $b_level; $level++) {
-                $prod_item = $conf["def_store_capacity"]["v"] + $baseStoreMetal + round($building->storeMetal * pow($building->storeFactor,$level-1));
+                $prod_item = $config->getInt("def_store_capacity") + $baseStoreMetal + round($building->storeMetal * pow($building->storeFactor,$level-1));
                 if ($level === $currentLevel) {
                     echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
                 } else {
@@ -220,10 +225,10 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
         // Siliziumspeicher
         elseif ($building->id === 17) {
             $baseStoreCrystal = $buildingDataRepository->getBuilding(6)->storeCrystal;
-            tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($baseStoreCrystal).") und Standardkapazit&auml;t (".nf($conf["def_store_capacity"]["v"]).") des Planeten)");
+            tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($baseStoreCrystal).") und Standardkapazit&auml;t (".nf($config->getInt("def_store_capacity")).") des Planeten)");
             echo "<tr><th>Stufe</th><th>Kapazit&auml;t</th></tr>";
             for ($level = $b_level; $level < SHOWLEVELS + $b_level; $level++) {
-                $prod_item = $conf["def_store_capacity"]["v"] + $baseStoreCrystal + round($building->storeCrystal * pow($building->storeFactor,$level-1));
+                $prod_item = $config->getInt("def_store_capacity") + $baseStoreCrystal + round($building->storeCrystal * pow($building->storeFactor,$level-1));
                 if ($level === $currentLevel) {
                     echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
                 } else {
@@ -237,10 +242,10 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
         // Lagerhalle
         elseif ($building->id === 18) {
             $baseStorePlastic = $buildingDataRepository->getBuilding(6)->storePlastic;
-            tableStart("Kapazit&auml;t inklusive Planetenbasiskapazit&auml;t (".nf($baseStorePlastic).") und Standardkapazit&auml;t (".nf($conf["def_store_capacity"]["v"]).")");
+            tableStart("Kapazit&auml;t inklusive Planetenbasiskapazit&auml;t (".nf($baseStorePlastic).") und Standardkapazit&auml;t (".nf($config->getInt("def_store_capacity")).")");
             echo "<tr><th>Stufe</th><th>Kapazit&auml;t</th></tr>";
             for ($level = $b_level; $level < SHOWLEVELS + $b_level; $level++) {
-                $prod_item = $conf["def_store_capacity"]["v"] + $baseStorePlastic + round($building->storePlastic * pow($building->storeFactor,$level-1));
+                $prod_item = $config->getInt("def_store_capacity") + $baseStorePlastic + round($building->storePlastic * pow($building->storeFactor,$level-1));
                 if ($level === $currentLevel) {
                     echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
                 } else {
@@ -254,10 +259,10 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
         // Nahrungssilos
         elseif ($building->id === 19) {
             $baseStoreFood = $buildingDataRepository->getBuilding(6)->storeFood;
-            tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($baseStoreFood).") und Standardkapazit&auml;t (".nf($conf["def_store_capacity"]["v"]).") des Planeten)");
+            tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($baseStoreFood).") und Standardkapazit&auml;t (".nf($config->getInt("def_store_capacity")).") des Planeten)");
             echo "<tr><th>Stufe</th><th>Kapazit&auml;t</th></tr>";
             for ($level = $b_level; $level < SHOWLEVELS + $b_level; $level++) {
-                $prod_item = $conf["def_store_capacity"]["v"] + $baseStoreFood + round($building->storeFood * pow($building->storeFactor,$level-1));
+                $prod_item = $config->getInt("def_store_capacity") + $baseStoreFood + round($building->storeFood * pow($building->storeFactor,$level-1));
                 if ($level === $currentLevel) {
                     echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
                 } else {
@@ -271,10 +276,10 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
         // Tritiumsilo
         elseif ($building->id === 20) {
             $baseStoreFuel = $buildingDataRepository->getBuilding(6)->storeFuel;
-            tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($baseStoreFuel).") und Standardkapazit&auml;t (".nf($conf["def_store_capacity"]["v"]).") des Planeten)");
+            tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (".nf($baseStoreFuel).") und Standardkapazit&auml;t (".nf($config->getInt("def_store_capacity")).") des Planeten)");
             echo "<tr><th>Stufe</th><th>Kapazit&auml;t</th></tr>";
             for ($level = $b_level; $level < SHOWLEVELS + $b_level; $level++) {
-                $prod_item = $conf["def_store_capacity"]["v"] + $baseStoreFuel + round($building->storeFuel * pow($building->storeFactor,$level-1));
+                $prod_item = $config->getInt("def_store_capacity") + $baseStoreFuel + round($building->storeFuel * pow($building->storeFactor,$level-1));
                 if ($level === $currentLevel) {
                     echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">".nf($prod_item)."</td></tr>";
                 } else {
@@ -441,7 +446,7 @@ elseif(isset($_GET['type_id']) && intval($_GET['type_id'])>0)
     if ($btid==BUILDING_STORE_CAT)
     {
         echo "<b>Lagerkapazit&auml;t</b><br>";
-        echo "Du kannst auf einem Planeten nicht unendlich viele Rohstoffe lagern. Jeder Planet hat eine Lagerkapazit&auml;t von ".intval($conf['def_store_capacity']['v']).". Um die Lagerkapazit&auml;t zu erh&ouml;hen, kannst du eine Planetenbasis und danach verschiedene Speicher, Lagerhallen und Silos bauen, welche die Kapazit&auml;t erh&ouml;hen. Wenn eine Zahl in der Rohstoffanzeige rot gef&auml;rbt ist, bedeutet das, dass dieser Rohstoff die Lagerkapazit&auml;t &uuml;berschreitet. Baue in diesem Fall den Speicher aus. Eine &uuml;berschrittene Lagerkapazit&auml;t bedeutet, dass nichts mehr produziert wird, jedoch werden Rohstoffe, die z.B. mit einer Flotte ankommen, trotzdem auf dem Planeten gespeichert.<br>";
+        echo "Du kannst auf einem Planeten nicht unendlich viele Rohstoffe lagern. Jeder Planet hat eine Lagerkapazit&auml;t von ".$config->getInt('def_store_capacity').". Um die Lagerkapazit&auml;t zu erh&ouml;hen, kannst du eine Planetenbasis und danach verschiedene Speicher, Lagerhallen und Silos bauen, welche die Kapazit&auml;t erh&ouml;hen. Wenn eine Zahl in der Rohstoffanzeige rot gef&auml;rbt ist, bedeutet das, dass dieser Rohstoff die Lagerkapazit&auml;t &uuml;berschreitet. Baue in diesem Fall den Speicher aus. Eine &uuml;berschrittene Lagerkapazit&auml;t bedeutet, dass nichts mehr produziert wird, jedoch werden Rohstoffe, die z.B. mit einer Flotte ankommen, trotzdem auf dem Planeten gespeichert.<br>";
     }
     elseif($btid==BUILDING_POWER_CAT)
     {

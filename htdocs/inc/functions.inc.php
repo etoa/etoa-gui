@@ -1,26 +1,19 @@
 <?PHP
-//////////////////////////////////////////////////////
-// The Andromeda-Project-Browsergame                //
-// Ein Massive-Multiplayer-Online-Spiel             //
-// Programmiert von Nicolas Perrenoud<mail@nicu.ch> //
-// als Maturaarbeit '04 am Gymnasium Oberaargau	    //
-//////////////////////////////////////////////////////
-//////////////////////////////////////////////////////
-
-/**
-* Main function file
-*
-* @author MrCage mrcage@etoa.ch
-* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-*/
 
 use Doctrine\Common\Collections\ArrayCollection;
+use EtoA\Core\Configuration\ConfigurationService;
 
 /**
 * Returns a string containing the game name, version and round
 */
-function getGameIdentifier()	{
-    return APP_NAME.' '.getAppVersion().' '.Config::getInstance()->roundname->v;
+function getGameIdentifier() {
+    // TODO
+    global $app;
+
+    /** @var ConfigurationService */
+    $config = $app['etoa.config.service'];
+
+    return APP_NAME . ' ' . getAppVersion() . ' ' . $config->get('roundname');
 }
 
 function getAppVersion() {
@@ -72,16 +65,6 @@ function commitTransaction() {
 
 function rollbackTransaction() {
     dbquery("ROLLBACK;");
-}
-
-/**
-* Gesamte Config-Tabelle lesen und Werte in Array speichern
-* DEPRECATED! This is only a wrapper!
-*/
-function get_all_config()
-{
-    $cfg = Config::getInstance();
-    return $cfg->getArray();
 }
 
 /**
@@ -962,7 +945,6 @@ function show_js_tab_menu($data)
 function get_imagepacks()
 {
     $packs = array();
-    global $conf;
     if ($d=opendir(IMAGEPACK_DIRECTORY))
     {
         while ($f=readdir($d))
@@ -1217,7 +1199,6 @@ function add_user_history($user_id,$text)
 */
 function check_buddys_online($id)
 {
-    global $conf;
     $res = dbquery("
         SELECT
             COUNT(user_id)
@@ -2198,21 +2179,32 @@ function forward($url,$msgTitle=null,$msgText=null)
 
 function showTitle($title)
 {
+    // TODO
+    global $app;
+
+    /** @var ConfigurationService */
+    $config = $app['etoa.config.service'];
+
     echo "<br/><a href=\"?\"><img src=\"images/game_logo.gif\" alt=\"EtoA Logo\" /></a>";
-    echo "<h1>$title - ".Config::getInstance()->roundname->v."</h1>";
+    echo "<h1>$title - " . $config->get('roundname') . "</h1>";
 }
 
 function defineImagePaths()
 {
+    // TODO
     global $cu;
-    $cfg = Config::getInstance();
+    global $app;
+
+    /** @var ConfigurationService */
+    $config = $app['etoa.config.service'];
 
     if (!defined('IMAGE_PATH'))
     {
-        if (!isset($cu) && isset($_SESSION['user_id']))
+        if (!isset($cu) && isset($_SESSION['user_id'])) {
             $cu = new CurrentUser($_SESSION['user_id']);
+        }
 
-        $design = DESIGN_DIRECTORY."/official/".$cfg->value('default_css_style');
+        $design = DESIGN_DIRECTORY . "/official/" . $config->get('default_css_style');
         if (isset($cu) && $cu->properties->cssStyle !='')
         {
             if (is_dir(DESIGN_DIRECTORY."/custom/".$cu->properties->cssStyle))
@@ -2234,7 +2226,7 @@ function defineImagePaths()
         }
         else
         {
-            define("IMAGE_PATH", (ADMIN_MODE ? '../' : '') . $cfg->default_image_path->v);
+            define("IMAGE_PATH", (ADMIN_MODE ? '../' : '') . $config->get('default_image_path'));
             define("IMAGE_EXT","png");
         }
     }
@@ -2242,8 +2234,13 @@ function defineImagePaths()
 
 function logAccess($target,$domain="",$sub="")
 {
-    global $cfg;
-    if ($cfg->accesslog->v == 1)
+    // TODO
+    global $app;
+
+    /** @var ConfigurationService */
+    $config = $app['etoa.config.service'];
+
+    if ($config->getBoolean('accesslog'))
     {
         if (!isset($_SESSION['accesslog_sid']))
             $_SESSION['accesslog_sid'] = uniqid((string) mt_rand(), true);
@@ -2286,7 +2283,13 @@ function fetchJsonConfig($file)	{
 }
 
 function getLoginUrl($args=array()) {
-    $url = Config::getInstance()->loginurl->v;
+    // TODO
+    global $app;
+
+    /** @var ConfigurationService */
+    $config = $app['etoa.config.service'];
+
+    $url = $config->get('loginurl');
     if (!$url) {
         $url = "show.php?index=login";
         if (sizeof($args) > 0 && isset($args['page'])) {

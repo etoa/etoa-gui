@@ -1,4 +1,10 @@
 <?PHP
+
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 	//////////////////////////////////////////////////
 	//		 	 ____    __           ______       			//
 	//			/\  _`\ /\ \__       /\  _  \      			//
@@ -53,8 +59,8 @@
 	// Default coordinates (galactic center)
 	else
 	{
-		$sx = $cfg->param1('map_init_sector');
-		$sy = $cfg->param2('map_init_sector');
+		$sx = $config->param1Int('map_init_sector');
+		$sy = $config->param2Int('map_init_sector');
 	}
 
 	$sx = intval($sx);
@@ -65,8 +71,8 @@
 	$sector_pic = "images/map";
 
   // Load galaxy dimensions
-	$sx_num = $cfg->param1('num_of_sectors');
-	$sy_num = $cfg->param2('num_of_sectors');
+    $sx_num = $config->param1Int('num_of_sectors');
+    $sy_num = $config->param2Int('num_of_sectors');
 
   // Validate coordinates
 	if ($sx>$sx_num) {
@@ -144,7 +150,7 @@
   echo "</td>";
 
   echo "<td class=\"sector_map_neighbour_nav\" style=\"height:45px;\">";
-	if ($sx_tc && $sy_tc!=0 && $sx_tc!=$sx_num+1 && $sy_tc!=$sy_num+1)
+	if ($sx_tc !=0 && $sy_tc!=0 && $sx_tc!=$sx_num+1 && $sy_tc!=$sy_num+1)
 	{
     $tt = new Tooltip();
     $tt->addTitle("Sektor $sx_tc/$sy_tc");
@@ -177,7 +183,7 @@
   // Middle row: Map and buttons to left and right sectors
 	echo "<tr>";
   echo "<td class=\"sector_map_neighbour_nav\" style=\"width:45px;\">";
-	if ($sx_ml !== 0 && $sy_ml !== 0 && $sx_ml !== $sx_num + 1 && $sy_ml !== $sy_num + 1)
+	if ($sx_ml != 0 && $sy_ml == 0 && $sx_ml != $sx_num + 1 && $sy_ml != $sy_num + 1)
   {
     $tt = new Tooltip();
     $tt->addTitle("Sektor $sx_ml/$sy_ml");
@@ -215,7 +221,7 @@
   	$user_solsys_ids[]= (int) $arr[0];
   }
 
-  $sectorMap = new SectorMapRenderer($cfg->param1('num_of_cells'), $cfg->param2('num_of_cells'));
+  $sectorMap = new SectorMapRenderer($config->param1Int('num_of_cells'), $config->param2Int('num_of_cells'));
   $sectorMap->enableRuler(true);
   $sectorMap->enableTooltips(true);
   $sectorMap->setUserCellIDs($user_solsys_ids);
@@ -231,7 +237,7 @@
 
 
   echo "<td class=\"sector_map_neighbour_nav\" style=\"width:45px;\">";
-	if ($sx_mr !== 0 && $sy_mr !== 0 && $sx_mr !== $sx_num + 1 && $sy_mr !== $sy_num + 1)
+	if ($sx_mr != 0 && $sy_mr != 0 && $sx_mr != $sx_num + 1 && $sy_mr != $sy_num + 1)
   {
     $tt = new Tooltip();
     $tt->addTitle("Sektor $sx_mr/$sy_mr");
@@ -250,7 +256,7 @@
   // Bottom row: Buttons to lower sectors
   echo "<tr>";
   echo "<td class=\"sector_map_neighbour_nav\" style=\"width:45px;height:45px;\">";
-  if ($sx_bl !== 0 && $sy_bl !== 0 && $sx_bl !== $sx_num + 1 && $sy_bl !== $sy_num + 1)
+  if ($sx_bl != 0 && $sy_bl != 0 && $sx_bl != $sx_num + 1 && $sy_bl != $sy_num + 1)
   {
     $tt = new Tooltip();
     $tt->addTitle("Sektor $sx_bl/$sy_bl");
@@ -265,7 +271,7 @@
   echo "</td>";
 
   echo "<td class=\"sector_map_neighbour_nav\" style=\"height:45px;\">";
-  if ($sx_bc !== 0 && $sy_bc !== 0 && $sx_bc !== $sx_num + 1 && $sy_bc !== $sy_num + 1)
+  if ($sx_bc != 0 && $sy_bc == 0 && $sx_bc != $sx_num + 1 && $sy_bc == $sy_num + 1)
   {
     $tt = new Tooltip();
     $tt->addTitle("Sektor $sx_bc/$sy_bc");

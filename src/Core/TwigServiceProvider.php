@@ -47,9 +47,8 @@ class TwigServiceProvider extends \Silex\Provider\TwigServiceProvider
             ], $app['twig.options']));
         });
 
-        $app->extend('twig', function (Environment $twig): Environment {
-            $twig->addExtension(new TwigExtension());
-
+        $app->extend('twig', function (Environment $twig, Container $app): Environment {
+            $twig->addExtension(new TwigExtension($app));
             return $twig;
         });
     }

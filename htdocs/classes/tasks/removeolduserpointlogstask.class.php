@@ -1,6 +1,6 @@
 <?PHP
 
-use EtoA\User\UserRepository;
+use EtoA\Ranking\PointsService;
 use Pimple\Container;
 
 /**
@@ -8,16 +8,16 @@ use Pimple\Container;
  */
 class RemoveOldUserPointLogsTask implements IPeriodicTask
 {
-	private UserRepository $userRepository;
+	private PointsService $pointsService;
 
 	function __construct(Container $app)
 	{
-		$this->userRepository = $app['etoa.user.repository'];
+        $this->pointsService = $app['etoa.rankings.points.service'];
 	}
 
 	function run()
 	{
-		$nr = $this->userRepository->cleanUpPoints();
+		$nr = $this->pointsService->cleanupUserPoints();
 		return "$nr alte Userpunkte-Logs gelöscht";
 	}
 

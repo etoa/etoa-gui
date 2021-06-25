@@ -4,13 +4,19 @@ declare(strict_types=1);
 
 namespace EtoA\Admin;
 
+use EtoA\Core\Configuration\ConfigurationService;
+
 class AdminSessionManager
 {
     private AdminSessionRepository $repository;
+    private ConfigurationService $config;
 
-    public function __construct(AdminSessionRepository $repository)
-    {
+    public function __construct(
+        AdminSessionRepository $repository,
+        ConfigurationService $config
+    ) {
         $this->repository = $repository;
+        $this->config = $config;
     }
 
     /**
@@ -20,11 +26,9 @@ class AdminSessionManager
      */
     public function cleanupLogs(int $threshold = 0): int
     {
-        $cfg = \Config::getInstance();
-
         $timestamp = $threshold > 0
             ? time() - $threshold
-            : time() - (24 * 3600 * $cfg->sessionlog_store_days->p2);
+            : time() - (24 * 3600 * $this->config->param2Int('sessionlog_store_days'));
 
         $count = $this->repository->removeSessionLogs($timestamp);
 
@@ -67,9 +71,7 @@ class AdminSessionManager
      */
     public function cleanup()
     {
-        $cfg = \Config::getInstance();
-
-        $sessions = $this->repository->findByTimeout((int)$cfg->admin_timeout->v);
+        $sessions = $this->repository->findByTimeout($this->config->getInt('admin_timeout'));
         foreach ($sessions as $session) {
             $this->unregisterSession($session['id'], false);
         }

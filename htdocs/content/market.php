@@ -1,4 +1,10 @@
 <?PHP
+
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 	//////////////////////////////////////////////////
 	//		 	 ____    __           ______       			//
 	//			/\  _`\ /\ \__       /\  _  \      			//
@@ -53,7 +59,7 @@
 	*
 	********/
 //	echo '<div id="marketinfo"></div>';
-    if ($cfg->market_enabled->v == 1)
+    if ($config->getBoolean('market_enabled'))
     {
 
 	$mode = isset($_GET['mode']) ? $_GET['mode'] : "";

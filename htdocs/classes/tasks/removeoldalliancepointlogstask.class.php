@@ -1,6 +1,6 @@
 <?PHP
 
-use EtoA\Alliance\AllianceRepository;
+use EtoA\Ranking\PointsService;
 use Pimple\Container;
 
 /**
@@ -8,16 +8,16 @@ use Pimple\Container;
  */
 class RemoveOldAlliancePointLogsTask implements IPeriodicTask
 {
-	private AllianceRepository $allianceRepository;
+	private PointsService $pointsService;
 
 	function __construct(Container $app)
 	{
-		$this->allianceRepository = $app['etoa.alliance.repository'];
+        $this->pointsService = $app['etoa.rankings.points.service'];
 	}
 
 	function run()
 	{
-		$nr = $this->allianceRepository->cleanUpPoints();
+		$nr = $this->pointsService->cleanupAlliancePoints();
 		return "$nr alte Allianzpunkte-Logs gelöscht";
 	}
 

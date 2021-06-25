@@ -1,8 +1,13 @@
 <?PHP
+
+use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\RuntimeDataStore;
 
 /** @var RuntimeDataStore */
 $runtimeDataStore = $app['etoa.runtime.datastore'];
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
 
 	echo "<h1>Rangliste</h1>";
 
@@ -623,14 +628,14 @@ $runtimeDataStore = $app['etoa.runtime.datastore'];
 	// Legende
 	//
 	echo "<div style=\"text-align:center;padding:10px;\">Die Aktualisierung der Punkte erfolgt ";
-	$h = $conf['points_update']['v']/3600;
+	$h = $config->getInt('points_update')/3600;
 	if ($h>1)
 		echo "alle $h Stunden!<br/>";
 	elseif ($h==1)
 		echo " jede Stunde!<br/>";
 	else
 	{
-		$m = $conf['points_update']['v']/60;
+		$m = $config->getInt('points_update')/60;
 		echo "alle $m Minuten!<br/>";
 	}
 	$statsUpdate = $runtimeDataStore->get('statsupdate');

@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Core\Configuration\ConfigurationService;
+
 $xajax->register(XAJAX_FUNCTION,'searchUser');
 $xajax->register(XAJAX_FUNCTION,'getFlightTargetInfo');
 $xajax->register(XAJAX_FUNCTION,'getCryptoDistance');
@@ -67,7 +69,13 @@ function searchUser($val,$field_id='user_nick',$box_id='citybox',$separator=";")
 
 function getFlightTargetInfo($f,$sx1,$sy1,$cx1,$cy1,$p1)
 {
-	global $conf, $s;
+    // TODO
+    global $app;
+
+    /** @var ConfigurationService */
+    $config = $app['etoa.config.service'];
+
+	global $s;
 	$objResponse = new xajaxResponse();
 	ob_start();
 	$launch = true;
@@ -98,24 +106,24 @@ function getFlightTargetInfo($f,$sx1,$sy1,$cx1,$cy1,$p1)
 		$cy=1;
 		$objResponse->assign("cy","value",1);
 	}
-	if ($sx>$conf['num_of_sectors']['p1'])
+	if ($sx > $config->param1Int('num_of_sectors'))
 	{
-		$sx=$conf['num_of_sectors']['p1'];
+		$sx = $config->param1Int('num_of_sectors');
 		$objResponse->assign("sx","value",$sx);
 	}
-	if ($sy>$conf['num_of_sectors']['p2'])
+	if ($sy > $config->param2Int('num_of_sectors'))
 	{
-		$sy=$conf['num_of_sectors']['p2'];
+		$sy = $config->param2Int('num_of_sectors');
 		$objResponse->assign("sy","value",$sy);
 	}
-	if ($cx>$conf['num_of_cells']['p1'])
+	if ($cx > $config->param1Int('num_of_cells'))
 	{
-		$cx=$conf['num_of_cells']['p1'];
+		$cx = $config->param1Int('num_of_cells');
 		$objResponse->assign("cx","value",$cx);
 	}
-	if ($cy>$conf['num_of_cells']['p2'])
+	if ($cy > $config->param2Int('num_of_cells'))
 	{
-		$cy=$conf['num_of_cells']['p2'];
+		$cy = $config->param2Int('num_of_cells');
 		$objResponse->assign("cy","value",$cy);
 	}
 	if ($p<1)
@@ -123,9 +131,9 @@ function getFlightTargetInfo($f,$sx1,$sy1,$cx1,$cy1,$p1)
 		$p=1;
 		$objResponse->assign("p","value",$p);
 	}
-	if ($p>$conf['num_planets']['p2'])
+	if ($p > $config->param2Int('num_planets'))
 	{
-		$p=$conf['num_planets']['p2'];
+		$p = $config->param2Int('num_planets');
 		$objResponse->assign("p","value",$p);
 	}
 
@@ -249,7 +257,14 @@ function getFlightTargetInfo($f,$sx1,$sy1,$cx1,$cy1,$p1)
 
 function getCryptoDistance($f,$sx1,$sy1,$cx1,$cy1,$p1)
 {
-	global $conf, $s;
+	global $s;
+
+    // TODO
+    global $app;
+
+    /** @var ConfigurationService */
+    $config = $app['etoa.config.service'];
+
 	$objResponse = new xajaxResponse();
 	ob_start();
 
@@ -281,24 +296,24 @@ function getCryptoDistance($f,$sx1,$sy1,$cx1,$cy1,$p1)
 		$cy=1;
 		$objResponse->assign("cy","value",1);
 	}
-	if ($sx>$conf['num_of_sectors']['p1'])
+	if ($sx>$config->param1Int('num_of_sectors'))
 	{
-		$sx=$conf['num_of_sectors']['p1'];
+		$sx=$config->param1Int('num_of_sectors');
 		$objResponse->assign("sx","value",$sx);
 	}
-	if ($sy>$conf['num_of_sectors']['p2'])
+	if ($sy>$config->param2Int('num_of_sectors'))
 	{
-		$sy=$conf['num_of_sectors']['p2'];
+		$sy=$config->param2Int('num_of_sectors');
 		$objResponse->assign("sy","value",$sy);
 	}
-	if ($cx>$conf['num_of_cells']['p1'])
+	if ($cx>$config->param1Int('num_of_cells'))
 	{
-		$cx=$conf['num_of_cells']['p1'];
+		$cx=$config->param1Int('num_of_cells');
 		$objResponse->assign("cx","value",$cx);
 	}
-	if ($cy>$conf['num_of_cells']['p2'])
+	if ($cy>$config->param2Int('num_of_cells'))
 	{
-		$cy=$conf['num_of_cells']['p2'];
+		$cy=$config->param2Int('num_of_cells');
 		$objResponse->assign("cy","value",$cy);
 	}
 	if ($p<1)
@@ -306,9 +321,9 @@ function getCryptoDistance($f,$sx1,$sy1,$cx1,$cy1,$p1)
 		$p=1;
 		$objResponse->assign("p","value",$p);
 	}
-	if ($p>$conf['num_planets']['p2'])
+	if ($p>$config->param2Int('num_planets'))
 	{
-		$p=$conf['num_planets']['p2'];
+		$p=$config->param2Int('num_planets');
 		$objResponse->assign("p","value",$p);
 	}
 

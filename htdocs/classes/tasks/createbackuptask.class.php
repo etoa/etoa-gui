@@ -1,32 +1,38 @@
 <?PHP
-	/**
-	* Create database backup
-	*/
-	class CreateBackupTask implements IPeriodicTask
-	{
-		function run()
-		{
-			$cfg = Config::getInstance();
 
-			$backupDir = DBManager::getBackupDir();
-			$gzip = $cfg->backup_use_gzip->v == "1";
+use EtoA\Core\Configuration\ConfigurationService;
+use Pimple\Container;
 
-			if ($backupDir != null)
-			{
-				// Remove old backup files
-				$cleaned = DBManager::removeOldBackups($backupDir, $cfg->backup_retention_time->v);
+/**
+ * Create database backup
+ */
+class CreateBackupTask implements IPeriodicTask
+{
+    private ConfigurationService $config;
 
-				$log = DBManager::getInstance()->backupDB($backupDir, $gzip);
-				return $log.", $cleaned alte Backup-Dateien gelöscht";
-			}
-			else
-			{
-				return "Backup konnte nicht erstellt werden, Backup Verzeichnis existiert nicht!";
-			}
-		}
+    public function __construct(Container $app)
+    {
+        $this->config = $app['etoa.config.service'];
+    }
 
-		function getDescription() {
-			return "Backup erstellen";
-		}
-	}
-?>
+    function run()
+    {
+        $backupDir = DBManager::getBackupDir();
+        $gzip = $this->config->getBoolean('backup_use_gzip');
+
+        if ($backupDir != null) {
+            // Remove old backup files
+            $cleaned = DBManager::removeOldBackups($backupDir, $this->config->getInt('backup_retention_time'));
+
+            $log = DBManager::getInstance()->backupDB($backupDir, $gzip);
+            return $log . ", $cleaned alte Backup-Dateien gelöscht";
+        } else {
+            return "Backup konnte nicht erstellt werden, Backup Verzeichnis existiert nicht!";
+        }
+    }
+
+    function getDescription()
+    {
+        return "Backup erstellen";
+    }
+}

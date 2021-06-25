@@ -1,4 +1,10 @@
 <?PHP
+
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 $twig->addGlobal('title', 'Bildpakete verwalten');
 
 $imPackDir = IMAGEPACK_DIRECTORY;
@@ -21,9 +27,9 @@ if (isset($_GET['manage'])) {
         $exts = $imagepack['extensions'];
 
         $sizes = array(
-            "" => $cfg->value('imagesize'),
-            "_middle" => $cfg->p1('imagesize'),
-            "_small" => $cfg->p2('imagesize')
+            "" => $config->getInt('imagesize'),
+            "_middle" => $config->param1Int('imagesize'),
+            "_small" => $config->param2Int('imagesize')
         );
 
         $dira = array(
@@ -35,10 +41,10 @@ if (isset($_GET['manage'])) {
             "ships" => array("ship", DBManager::getInstance()->getArrayFromTable("ships","ship_id")),
             "stars" => array("star", DBManager::getInstance()->getArrayFromTable("sol_types","sol_type_id")),
             "technologies" => array("technology", DBManager::getInstance()->getArrayFromTable("technologies","tech_id")),
-            "nebulas" => array("nebula",range(1,$cfg->value('num_nebula_images'))),
-            "asteroids" => array("asteroids",range(1,$cfg->value('num_asteroid_images'))),
-            "space" => array("space",range(1,$cfg->value('num_space_images'))),
-            "wormholes" => array("wormhole",range(1,$cfg->value('num_wormhole_images'))),
+            "nebulas" => array("nebula",range(1,$config->getInt('num_nebula_images'))),
+            "asteroids" => array("asteroids",range(1,$config->getInt('num_asteroid_images'))),
+            "space" => array("space",range(1,$config->getInt('num_space_images'))),
+            "wormholes" => array("wormhole",range(1,$config->getInt('num_wormhole_images'))),
             "races" => array("race", DBManager::getInstance()->getArrayFromTable("races","race_id")),
         );
 
@@ -113,22 +119,22 @@ if (isset($_GET['download'])) {
     }
 }
 
-$sampleInfoFile = RELATIVE_ROOT . $cfg->value('default_image_path') . '/' . IMAGEPACK_CONFIG_FILE_NAME;
+$sampleInfoFile = RELATIVE_ROOT . $config->get('default_image_path') . '/' . IMAGEPACK_CONFIG_FILE_NAME;
 
 $required_images = [
     "abuildings" => array("building", DBManager::getInstance()->getArrayFromTable("alliance_buildings",["alliance_building_id", "alliance_building_name"],"alliance_building_id")),
-    "asteroids" => array("asteroids",range(1,$cfg->value('num_asteroid_images'))),
+    "asteroids" => array("asteroids",range(1,$config->getInt('num_asteroid_images'))),
     "atechnologies" => array("technology", DBManager::getInstance()->getArrayFromTable("alliance_technologies",["alliance_tech_id","alliance_tech_name"],"alliance_tech_id")),
     "buildings" => array("building", DBManager::getInstance()->getArrayFromTable("buildings",["building_id","building_name"],"building_id")),
     "defense" => array("def", DBManager::getInstance()->getArrayFromTable("defense",["def_id","def_name"],"def_id")),
     "missiles" => array("missile", DBManager::getInstance()->getArrayFromTable("missiles",["missile_id","missile_name"],"missile_id")),
-    "nebulas" => array("nebula",range(1,$cfg->value('num_nebula_images'))),
+    "nebulas" => array("nebula",range(1,$config->getInt('num_nebula_images'))),
     "races" => array("race", DBManager::getInstance()->getArrayFromTable("races",["race_id","race_name"],"race_id")),
     "ships" => array("ship", DBManager::getInstance()->getArrayFromTable("ships",["ship_id", "ship_name"],"ship_id")),
-    "space" => array("space",range(1,$cfg->value('num_space_images'))),
+    "space" => array("space",range(1,$config->getInt('num_space_images'))),
     "stars" => array("star", DBManager::getInstance()->getArrayFromTable("sol_types",["sol_type_id","sol_type_name"],"sol_type_id")),
     "technologies" => array("technology", DBManager::getInstance()->getArrayFromTable("technologies",["tech_id","tech_name"],"tech_id")),
-    "wormholes" => array("wormhole",range(1,$cfg->value('num_wormhole_images'))),
+    "wormholes" => array("wormhole",range(1,$config->getInt('num_wormhole_images'))),
 ];
 echo $twig->render('admin/misc/imagepacks.html.twig', [
     'errorMessage' => $errorMessage,

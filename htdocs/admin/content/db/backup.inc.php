@@ -1,5 +1,10 @@
 <?PHP
 
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 // Backup erstellen
 $successMessage = null;
 $errorMessage = null;
@@ -8,7 +13,7 @@ if (isset($_POST['create'])) {
 
     try {
         $dir = DBManager::getBackupDir();
-        $gzip = Config::getInstance()->backup_use_gzip=="1";
+        $gzip = $config->getBoolean('backup_use_gzip');
 
         // Acquire mutex
         $mtx->acquire();
@@ -42,7 +47,7 @@ elseif (isset($_GET['action']) && $_GET['action'] === "backuprestore" && $_GET['
     try {
         $dir = DBManager::getBackupDir();
         $restorePoint = $_GET['date'];
-        $gzip = Config::getInstance()->backup_use_gzip=="1";
+        $gzip = $config->getBoolean('backup_use_gzip');
 
         $mtx = new Mutex();
 
@@ -83,9 +88,9 @@ elseif (isset($_GET['action']) && $_GET['action'] === "backuprestore" && $_GET['
 
 $frm = new Form("bustn","?page=$page&amp;sub=$sub");
 if (isset($_POST['submit_changes'])) {
-    $cfg->set("backup_dir", $_POST['backup_dir']);
-    $cfg->set("backup_retention_time", $_POST['backup_retention_time']);
-    $cfg->set("backup_use_gzip", $_POST['backup_use_gzip']);
+    $config->set("backup_dir", $_POST['backup_dir']);
+    $config->set("backup_retention_time", $_POST['backup_retention_time']);
+    $config->set("backup_use_gzip", $_POST['backup_use_gzip']);
     $successMessage = 'Einstellungen gespeichert';
 }
 

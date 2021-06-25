@@ -1,12 +1,11 @@
 <?PHP
 
+use EtoA\Core\Configuration\ConfigurationService;
+
 $xajax->register(XAJAX_FUNCTION,"showNumberField");
 $xajax->register(XAJAX_FUNCTION,"createPlayers");
 $xajax->register(XAJAX_FUNCTION,"createValues");
 $xajax->register(XAJAX_FUNCTION,"splitDebris");
-
-
-
 
 function showNumberField() {
     $response = new xajaxResponse();
@@ -40,8 +39,12 @@ function showNumberField() {
 function createPlayers($nr) {
     if($nr>1) {
 
-        $cfg = Config::getInstance();
-        $conf = $cfg->getArray();
+        // TODO
+        global $app;
+
+        /** @var ConfigurationService */
+        $config = $app['etoa.config.service'];
+
         $response = new xajaxResponse();
 
         ob_start();
@@ -60,33 +63,34 @@ function createPlayers($nr) {
                 echo "<th>$fields</th>";
 
             echo '<td><select name="search_cell_s1' . $fields . '">';
-            for ($x = 1; $x <= $conf['num_of_sectors']['p1']; $x++) {
+            for ($x = 1; $x <= $config->param1Int('num_of_sectors'); $x++) {
                 echo "<option value=$x>$x</option>";
             }
             echo '</select>/';
 
             echo '<select name="search_cell_s2' . $fields . '">';
-            for ($x = 1; $x <= $conf['num_of_sectors']['p1']; $x++) {
+            for ($x = 1; $x <= $config->param1Int('num_of_sectors'); $x++) {
                 echo "<option value=$x>$x</option>";
             }
             echo '</select>:';
 
             echo '<select name="search_cell_c1' . $fields . '">';
-            for ($x = 1; $x <= $conf['num_of_cells']['p1']; $x++) {
+            for ($x = 1; $x <= $config->param1Int('num_of_cells'); $x++) {
                 echo "<option value=$x>$x</option>";
             }
             echo '</select>/';
 
             echo '<select name="search_cell_c2' . $fields . '">';
-            for ($x = 1; $x <= $conf['num_of_cells']['p1']; $x++) {
+            for ($x = 1; $x <= $config->param1Int('num_of_cells'); $x++) {
 
                 echo "<option value=$x>$x</option>";
 
             }
 
             echo '</select> : <select name="search_cell_pos' . $fields . '">';
-            for ($x = 0; $x <= $conf['num_planets']['p2']; $x++)
+            for ($x = 0; $x <= $config->param2Int('num_planets'); $x++) {
                 echo "<option value=\"$x\">$x</option>";
+            }
             echo '</select></td><td><input type="number" name="percent' . $fields . '"></td></tr>';
         }
         echo '</table>';
@@ -105,9 +109,6 @@ function createPlayers($nr) {
         $response->assign("players","innerHTML",ob_get_contents());
         ob_end_clean();
         return $response;
-
-
-
     }
 }
 

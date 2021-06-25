@@ -6,7 +6,7 @@ $xajax->register(XAJAX_FUNCTION,'statsShowTable');
 
 function statsShowBox($mode, $sort="", $sortOrder="")
 {
-	global $page, $conf;
+	global $page;
 	$objResponse = new xajaxResponse();
 
 	$_SESSION['statsmode']=$mode;

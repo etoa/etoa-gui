@@ -1,9 +1,13 @@
 <?PHP
 
-$sx_num = $cfg->param1('num_of_sectors');
-$sy_num = $cfg->param2('num_of_sectors');
-$cx_num = $cfg->param1('num_of_cells');
-$cy_num = $cfg->param2('num_of_cells');
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService $config */
+
+$sx_num = $config->param1Int('num_of_sectors');
+$sy_num = $config->param2Int('num_of_sectors');
+$cx_num = $config->param1Int('num_of_cells');
+$cy_num = $config->param2Int('num_of_cells');
 
 $sectorMap = new SectorMapRenderer($cx_num, $cy_num);
 

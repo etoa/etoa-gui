@@ -1,5 +1,10 @@
 <?PHP
 
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 $successMessage = null;
 $errorMessage = null;
 $infoMessage = null;
@@ -12,7 +17,7 @@ if (isset($_POST['submit'])) {
     try {
         // Do the backup
         $dir = DBManager::getBackupDir();
-        $gzip = Config::getInstance()->backup_use_gzip=="1";
+        $gzip = $config->getBoolean('backup_use_gzip');
 
         // Acquire mutex
         $mtx->acquire();
@@ -47,8 +52,8 @@ if (isset($_POST['submit'])) {
             dbquery('SET FOREIGN_KEY_CHECKS=1;');
 
             // Restore default config
-            $cr = Config::restoreDefaults();
-            $cfg->reload();
+            $cr = $config->restoreDefaults();
+            $config->reload();
 
             $mtx->release();
 
@@ -67,8 +72,8 @@ if (isset($_POST['submit'])) {
             DBManager::getInstance()->migrate();
 
             // Load config default
-            Config::restoreDefaults();
-            $cfg->reload();
+            $config->restoreDefaults();
+            $config->reload();
 
             $mtx->release();
 

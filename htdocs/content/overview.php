@@ -27,18 +27,23 @@
 
 use EtoA\Text\TextRepository;
 
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 // BEGIN SKRIPT //
 	echo "<h1>&Uuml;bersicht</h1>";
 
 	if ($s->firstView)
 	{
-		if ($cfg->get("round_end")==1)
+		if ($config->getBoolean("round_end"))
 		{
 			iBoxStart("Ende der Runde");
-			echo "<div style=\"witdh:100%;text-align:center;\">Die Runde endet am <strong>".df($cfg->p1("round_end"))."</strong>!";
-			if ($cfg->p2("round_end"))
+			echo "<div style=\"width:100%;text-align:center;\">Die Runde endet am <strong>".df($config->param1Int("round_end"))."</strong>!";
+			if ($config->param2("round_end"))
 			{
-				echo " ".$cfg->p2("round_end");
+				echo " ".$config->param2("round_end");
 			}
 			echo "</div>";
 			iBoxEnd();
