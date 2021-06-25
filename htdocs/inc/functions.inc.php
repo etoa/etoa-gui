@@ -93,34 +93,6 @@ function get_alliance_names()
     return $names;
 }
 
-/**
-* Allianz Name in Array speichern, aber ohne eigene Allianz
-*/
-function get_alliance_names1($id)
-{
-    $names = array();
-    $res = dbquery("
-        SELECT
-            alliance_tag,
-            alliance_id,
-            alliance_name,
-            alliance_founder_id
-        FROM
-            alliances
-        WHERE
-            alliance_id!='".$id."'
-        ORDER BY
-            alliance_name;
-    ");
-    while ($arr = mysql_fetch_assoc($res))
-    {
-        $names[$arr['alliance_id']]['tag'] = $arr['alliance_tag'];
-        $names[$arr['alliance_id']]['name'] = $arr['alliance_name'];
-        $names[$arr['alliance_id']]['founder_id'] = $arr['alliance_founder_id'];
-    }
-    return $names;
-}
-
 	/**
 * User-Nick via User-Id auslesen
 */
