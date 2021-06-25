@@ -18,7 +18,6 @@ $xajax->register(XAJAX_FUNCTION,'checkMarketSearchFormular');
 $xajax->register(XAJAX_FUNCTION,'marketSearch');
 $xajax->register(XAJAX_FUNCTION,'showAuctionDetail');
 
-
 function marketSearch($form,$order="distance",$orderDirection=0)
 {
 	global $resNames,$resIcons;
@@ -2438,9 +2437,10 @@ function MarketSearchFormularShow($val)
 
 function checkMarketSearchFormular($val)
 {
-    global $s, $cu;
+    global $s, $cu, $app;
 
-
+    /** @var \EtoA\User\UserRepository $userRepository */
+    $userRepository = $app['etoa.user.repository'];
 
 		ob_start();
   	$objResponse = new xajaxResponse();
@@ -2454,22 +2454,21 @@ function checkMarketSearchFormular($val)
 			$sql_add = "";
 			$out_add_nick = "";
 			$out_add_alliance = "";
-			$user_id = 0;
+            $userId = null;
 
 
 			// Prüft Nick Eingaben
 			if($val['user_nick']!="")
 			{
-				if(get_user_id($val['user_nick']) != 0)
-				{
+			    $userId = $userRepository->getUserIdByNick($val['user_nick']);
+				if ($userId !== null) {
 					// Eigener Nick ist unzulässig
-					if(get_user_id($val['user_nick']) != $s['user_id'])
-					{
+					if($userId != $s['user_id']) {
 						$objResponse->assign("check_user_nick","innerHTML", "<div style=\"color:#0f0;font-weight:bold;\">OK!</div>");
-						$user_id = get_user_id($val['user_nick']);
 					}
 					else
 					{
+                        $userId = null;
 						$objResponse->assign("check_user_nick","innerHTML", "<div style=\"color:red;font-weight:bold;\">Eigene Angebote können nicht angezeigt werden!</div>");
 					}
 				}
@@ -2480,9 +2479,9 @@ function checkMarketSearchFormular($val)
 			}
 
 			// Angebote von einem bestimmten User
-			if($user_id != 0)
+			if($userId !== null)
 			{
-				$sql_add .= " AND user_id='".$user_id."'";
+				$sql_add .= " AND user_id='".$userId."'";
 				$out_add_nick = " von ".$val['user_nick']."";
 			}
 
@@ -2632,22 +2631,21 @@ function checkMarketSearchFormular($val)
 			$sql_add = "";
 			$out_add_nick = "";
 			$out_add_alliance = "";
-			$user_id = 0;
+			$userId = null;
 
 
 			// Prüft Nick Eingaben
 			if(isset($val['user_nick']) && $val['user_nick']!="")
 			{
-				if(get_user_id($val['user_nick']) != 0)
-				{
+			    $userId = $userRepository->getUserIdByNick($val['user_nick']);
+				if ($userId !== null) {
 					// Eigener Nick ist unzulässig
-					if(get_user_id($val['user_nick']) != $s['user_id'])
-					{
+					if ($userId != $s['user_id']) {
 						$objResponse->assign("check_user_nick","innerHTML", "<div style=\"color:#0f0;font-weight:bold;\">OK!</div>");
-						$user_id = get_user_id($val['user_nick']);
 					}
 					else
 					{
+                        $userId = null;
 						$objResponse->assign("check_user_nick","innerHTML", "<div style=\"color:red;font-weight:bold;\">Eigene Angebote können nicht angezeigt werden!</div>");
 					}
 				}
@@ -2658,9 +2656,9 @@ function checkMarketSearchFormular($val)
 			}
 
 			// Angebote von einem bestimmten User
-			if($user_id != 0)
+			if($userId !== null)
 			{
-				$sql_add .= " AND user_id='".$user_id."'";
+				$sql_add .= " AND user_id='".$userId."'";
 				$out_add_nick = " von ".$val['user_nick']."";
 			}
 
@@ -2768,23 +2766,23 @@ function checkMarketSearchFormular($val)
 		{
 			$sql_add = "";
 			$out_add_nick = "";
-			$user_id = 0;
+			$userId = 0;
 			$out_add_alliance = "";
 
 
 			// Prüft Nick Eingaben
 			if(isset($val['user_nick']) && $val['user_nick']!="")
 			{
-				if(get_user_id($val['user_nick']) != 0)
-				{
+                $userId = $userRepository->getUserIdByNick($val['user_nick']);
+				if ($userId !== null) {
 					// Eigener Nick ist unzulässig
-					if(get_user_id($val['user_nick']) != $s['user_id'])
+					if ($userId != $s['user_id'])
 					{
 						$objResponse->assign("check_user_nick","innerHTML", "<div style=\"color:#0f0;font-weight:bold;\">OK!</div>");
-						$user_id = get_user_id($val['user_nick']);
 					}
 					else
 					{
+                        $userId = null;
 						$objResponse->assign("check_user_nick","innerHTML", "<div style=\"color:red;font-weight:bold;\">Eigene Angebote können nicht angezeigt werden!</div>");
 					}
 				}
@@ -2795,9 +2793,9 @@ function checkMarketSearchFormular($val)
 			}
 
 			// Angebote von einem bestimmten User
-			if($user_id != 0)
+			if($userId !== null)
 			{
-				$sql_add .= " AND auction_user_id='".$user_id."'";
+				$sql_add .= " AND auction_user_id='".$userId."'";
 				$out_add_nick = " von ".$val['user_nick']."";
 			}
 

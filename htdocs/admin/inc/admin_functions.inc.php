@@ -726,114 +726,119 @@ function showLogs($args=null,$limit=0)
 
 function showAttackAbuseLogs($args=null,$limit=-1,$load=true)
 {
-    $paginationLimit = 50;
+    global $app;
 
-    if ($load)
-    {
-        $action = is_array($args) && isset($args['flaction']) ? $args['flaction'] : 0;
-        $sev = is_array($args) && isset($args['logsev'])  ? $args['logsev'] : 0;
+    /** @var \EtoA\User\UserRepository $userRepository */
+    $userRepository = $app['etoa.user.repository'];
 
-        $landtime = is_array($args) ? mktime($args['searchtime_h'],$args['searchtime_i'],$args['searchtime_s'],$args['searchtime_m'],$args['searchtime_d'],$args['searchtime_y']) : time();
+	$paginationLimit = 50;
 
-        $order = "timestamp ASC";
+	if ($load)
+	{
+		$action = is_array($args) && isset($args['flaction']) ? $args['flaction'] : 0;
+		$sev = is_array($args) && isset($args['logsev'])  ? $args['logsev'] : 0;
 
-        $sql1 = "SELECT ";
-        $sql2 = " * ";
-        $sql3 = " FROM logs_battle l ";
+		$landtime = is_array($args) ? mktime($args['searchtime_h'],$args['searchtime_i'],$args['searchtime_s'],$args['searchtime_m'],$args['searchtime_d'],$args['searchtime_y']) : time();
 
-        if (isset($args['searchfuser']) && $args['searchfuser']!="" && !is_numeric($args['searchfuser']))
-        {
-            $args['searchfuser'] = get_user_id($args['searchfuser']);
-        }
-        if (isset($args['searcheuser']) && $args['searcheuser']!="" && !is_numeric($args['searcheuser']))
-        {
-            $args['searcheuser'] = get_user_id($args['searcheuser']);
-        }
+		$order = "timestamp ASC";
 
-        $sql3.= " WHERE fleet_weapon>0 AND landtime<='".$landtime."' AND landtime>'".($landtime-3600*24)."' ";
-        if ($action!="")
-        {
-            $sql3.=" AND action='".$action."' ";
-        }
-        if ($sev >0)
-        {
-            $sql3.=" AND severity >= ".$sev." ";
-        }
-        if (isset($args['searchfuser']) && is_numeric($args['searchfuser']))
-        {
-            $sql3.=" AND l.user_id LIKE '%,".intval($args['searchfuser']).",%' ";
-        }
-        if (isset($args['searcheuser']) && is_numeric($args['searcheuser']))
-        {
-            $sql3.=" AND l.entity_user_id LIKE '%,".intval($args['searcheuser']).",%' ";
-        }
-        $sql3.= " ORDER BY $order";
+		$sql1 = "SELECT ";
+		$sql2 = " * ";
+		$sql3 = " FROM logs_battle l ";
 
-        $res=dbquery($sql1.$sql2.$sql3);
+		if (isset($args['searchfuser']) && $args['searchfuser']!="" && !is_numeric($args['searchfuser']))
+		{
+			$args['searchfuser'] = $userRepository->getUserIdByNick($args['searchfuser']);
+		}
+		if (isset($args['searcheuser']) && $args['searcheuser']!="" && !is_numeric($args['searcheuser']))
+		{
+			$args['searcheuser'] = $userRepository->getUserIdByNick($args['searcheuser']);
+		}
 
-        $bans = array();
-        $actions = array();
+		$sql3.= " WHERE fleet_weapon>0 AND landtime<='".$landtime."' AND landtime>'".($landtime-3600*24)."' ";
+		if ($action!="")
+		{
+			$sql3.=" AND action='".$action."' ";
+		}
+		if ($sev >0)
+		{
+			$sql3.=" AND severity >= ".$sev." ";
+		}
+		if (isset($args['searchfuser']) && is_numeric($args['searchfuser']))
+		{
+			$sql3.=" AND l.user_id LIKE '%,".intval($args['searchfuser']).",%' ";
+		}
+		if (isset($args['searcheuser']) && is_numeric($args['searcheuser']))
+		{
+			$sql3.=" AND l.entity_user_id LIKE '%,".intval($args['searcheuser']).",%' ";
+		}
+		$sql3.= " ORDER BY $order";
 
-        if (mysql_num_rows($res)>0)
-        {
-            $data = array();
+		$res=dbquery($sql1.$sql2.$sql3);
 
-            $waveMaxCnt = array(3,4);				// Max. 3er/4er Wellen...
-            $waveTime = 15*60;						// ...innerhalb 15mins
+		$bans = array();
+		$actions = array();
 
-            $attacksPerEntity = array(2,4);			// Max. 2/4 mal den gleichen Planeten angreiffen
+		if (mysql_num_rows($res)>0)
+		{
+			$data = array();
 
-            $attackedEntitiesMax = array(5,10);		// Max. Anzahl Planeten die angegriffen werden können...
-            $timeBetweenAttacksOnEntity = 6*3600;	// ...innerhalb 6h
+			$waveMaxCnt = array(3,4);				// Max. 3er/4er Wellen...
+			$waveTime = 15*60;						// ...innerhalb 15mins
 
-            $banRange = 24*3600;					// alle Regeln gelten innerhalb von 24h
+			$attacksPerEntity = array(2,4);			// Max. 2/4 mal den gleichen Planeten angreiffen
 
-            $first_ban_time = 12*3600;							// Sperrzeit beim ersten Vergehen: 12h
-            $add_ban_time = 12*3600;								// Sperrzeit bei jedem weiteren Vergehen: 12h (wird immer dazu addiert)
+			$attackedEntitiesMax = array(5,10);		// Max. Anzahl Planeten die angegriffen werden können...
+			$timeBetweenAttacksOnEntity = 6*3600;	// ...innerhalb 6h
 
-            //Alle Daten werden in einem Array gespeichert, da mehr als 1 Angriffer möglich ist funktioniert das alte Tool nicht mehr
-            while ($arr=mysql_fetch_array($res))
-            {
-                $uid = explode(",",$arr['user_id']);
-                $euid = explode(",",$arr['entity_user_id']);
-                $eUser = $euid[1];
-                $entity = $arr['entity_id'];
-                $time = $arr['landtime'];
-                $war = $arr['war'];
-                $action = $arr['action'];
-                foreach ($uid as $fUser)
-                {
-                    if ($fUser!="")
-                    {
-                        if (!isset($data[$fUser])) $data[$fUser] = array();
-                        if (!isset($data[$fUser][$eUser])) $data[$fUser][$eUser] = array();
-                        if (!isset($data[$fUser][$eUser][$entity])) $data[$fUser][$eUser][$entity] = array();
-                        array_push($data[$fUser][$eUser][$entity],array($time,$war,$action));
-                    }
-                }
-            }
+			$banRange = 24*3600;					// alle Regeln gelten innerhalb von 24h
 
-            foreach ($data as $fUser=>$eUserArr)
-            {
-                foreach ($eUserArr as $eUser=>$eArr)
-                {
-                    $firstTime = 0;
-                    $attackCntTotal = 0;
-                    $attackedEntities = count($eArr);
+			$first_ban_time = 12*3600;							// Sperrzeit beim ersten Vergehen: 12h
+			$add_ban_time = 12*3600;								// Sperrzeit bei jedem weiteren Vergehen: 12h (wird immer dazu addiert)
 
-                    foreach ($eArr as $entity=>$eDataArr)
-                    {
-                        $firstPlanetTime = 0;
-                        $lastPlanetTime = 0;
-                        $attackCntEntity = 0;
-                        $waveStart=0;
-                        $waveEnd = 0;
+			//Alle Daten werden in einem Array gespeichert, da mehr als 1 Angriffer möglich ist funktioniert das alte Tool nicht mehr
+			while ($arr=mysql_fetch_array($res))
+			{
+				$uid = explode(",",$arr['user_id']);
+				$euid = explode(",",$arr['entity_user_id']);
+				$eUser = $euid[1];
+				$entity = $arr['entity_id'];
+				$time = $arr['landtime'];
+				$war = $arr['war'];
+				$action = $arr['action'];
+				foreach ($uid as $fUser)
+				{
+					if ($fUser!="")
+					{
+						if (!isset($data[$fUser])) $data[$fUser] = array();
+						if (!isset($data[$fUser][$eUser])) $data[$fUser][$eUser] = array();
+						if (!isset($data[$fUser][$eUser][$entity])) $data[$fUser][$eUser][$entity] = array();
+						array_push($data[$fUser][$eUser][$entity],array($time,$war,$action));
+					}
+				}
+			}
 
-                        foreach($eDataArr as $eData)
-                        {
-                            $ban = 0;
-                            $banReason = "";
-                            if ($firstTime==0) {
+			foreach ($data as $fUser=>$eUserArr)
+			{
+				foreach ($eUserArr as $eUser=>$eArr)
+				{
+					$firstTime = 0;
+					$attackCntTotal = 0;
+					$attackedEntities = count($eArr);
+
+					foreach ($eArr as $entity=>$eDataArr)
+					{
+						$firstPlanetTime = 0;
+						$lastPlanetTime = 0;
+						$attackCntEntity = 0;
+						$waveStart=0;
+						$waveEnd = 0;
+
+						foreach($eDataArr as $eData)
+						{
+							$ban = 0;
+							$banReason = "";
+							if ($firstTime==0) {
                                 $firstTime = $eData[0];
 
                                 // Wenn mehr als 5 Planeten angegrifen wurden

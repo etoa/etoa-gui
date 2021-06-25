@@ -9,6 +9,8 @@ $ticketRepo = $app['etoa.help.ticket.repository'];
 
 /** @var AdminUserRepository */
 $adminUserRepo = $app['etoa.admin.user.repository'];
+/** @var \EtoA\User\UserRepository $userRepository */
+$userRepository = $app['etoa.user.repository'];
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
@@ -67,26 +69,26 @@ if (isset($_POST['save']))
     //new Multi
     if (($_POST['new_multi']!="")&&(($_POST['multi_reason']!="")))
     {
-        if (get_user_id($_POST['new_multi'])==0)
-        {
+        $newMultiUserId = $userRepository->getUserIdByNick($_POST['new_multi']);
+        if ($newMultiUserId !== null) {
             error_msg("Dieser User exisitert nicht!");
         }
         //ist der eigene nick eingetragen
-        elseif (get_user_id($_POST['new_multi'])==$_GET['id'])
+        elseif ($newMultiUserId ==$_GET['id'])
         {
             error_msg("Man kann nicht den selben Nick im Sitting eintragen!");
         }
         else
         {
             $res = dbquery("SELECT * FROM user_multi WHERE user_id=".$_GET['id']."
-                            AND multi_id =".get_user_id($_POST['new_multi']));
+                            AND multi_id =".$newMultiUserId);
             if (mysql_num_rows($res)==0) {
                 dbquery("
                 INSERT INTO
                     user_multi
                 (user_id,multi_id,connection,timestamp)
                 VALUES
-                (".$_GET['id'].",".get_user_id($_POST['new_multi']).",'".mysql_real_escape_string($_POST['multi_reason'])."',UNIX_TIMESTAMP())");
+                (".$_GET['id'].",".$newMultiUserId.",'".mysql_real_escape_string($_POST['multi_reason'])."',UNIX_TIMESTAMP())");
             }
             else
             {
@@ -100,7 +102,7 @@ if (isset($_POST['save']))
                 WHERE
                     user_id=".$_GET['id']."
                 AND
-                    multi_id = ".get_user_id($_POST['new_multi']));
+                    multi_id = ".$newMultiUserId);
             }
             success_msg("Neuer User angelegt!");
         }
@@ -291,10 +293,10 @@ if (isset($_POST['save']))
             $sitting_to = parseDatePicker('sitting_time_to', $_POST);
             $diff = ceil(($sitting_to - $sitting_from)/86400);
             $pw = saltPasswort($_POST['sitter_password1']);
-            $sitterId = get_user_id($_POST['sitter_nick']);
+            $sitterId = $userRepository->getUserIdByNick($_POST['sitter_nick']);
 
             if($diff>0) {
-                    if($sitterId<>0) {
+                    if($sitterId !== null) {
                     if($diff<=$_POST['user_sitting_days']) {
                         dbquery("INSERT INTO user_sitting (
                                     user_id,sitter_id,password,date_from,date_to

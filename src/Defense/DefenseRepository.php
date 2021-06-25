@@ -6,47 +6,24 @@ class DefenseRepository extends \EtoA\Core\AbstractRepository
 {
     public function addDefense(int $defenseId, int $amount, int $userId, int $entityId): void
     {
-        $hasDefense = (bool) $this->createQueryBuilder()
-            ->select('deflist_id')
-            ->from('deflist')
-            ->where('deflist_user_id = :userId')
-            ->andWhere('deflist_entity_id = :entityId')
-            ->andWhere('deflist_def_id = :defenseId')
-            ->setParameters([
-                'userId' => $userId,
-                'entityId' => $entityId,
-                'defenseId' => $defenseId,
-            ])->execute()->fetchOne();
-
-        if ($hasDefense) {
-            $this->createQueryBuilder()
-                ->update('deflist')
-                ->set('deflist_count', 'deflist_count + :amount')
-                ->where('deflist_def_id = :defenseId')
-                ->andWhere('deflist_entity_id = :entityId')
-                ->andWhere('deflist_user_id = :userId')
-                ->setParameters([
-                    'amount' => $amount,
-                    'defenseId' => $defenseId,
-                    'userId' => $userId,
-                    'entityId' => $entityId,
-                ])->execute();
-        } else {
-            $this->createQueryBuilder()
-                ->insert('deflist')
-                ->values([
-                    'deflist_count' => ':amount',
-                    'deflist_def_id' => ':defenseId',
-                    'deflist_entity_id' => ':entityId',
-                    'deflist_user_id' => ':userId',
-                ])
-                ->setParameters([
-                    'amount' => $amount,
-                    'defenseId' => $defenseId,
-                    'userId' => $userId,
-                    'entityId' => $entityId,
-                ])->execute();
-        }
+        $this->getConnection()->executeQuery('INSERT INTO deflist (
+                deflist_user_id,
+                deflist_entity_id,
+                deflist_def_id,
+                deflist_count
+            ) VALUES (
+                :userId,
+                :entityId,
+                :defenseId,
+                :amount
+            ) ON DUPLICATE KEY
+            UPDATE deflist_count = deflist_count + VALUES(deflist_count);
+        ', [
+            'userId' => $userId,
+            'amount' => max(0, $amount),
+            'entityId' => $entityId,
+            'defenseId' => $defenseId,
+        ]);
     }
 
     public function getDefenseCount(int $userId, int $defenseId): int

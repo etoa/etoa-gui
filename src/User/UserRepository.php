@@ -73,4 +73,30 @@ class UserRepository extends AbstractRepository
             ->setParameter('timestamp', $timestamp)
             ->execute();
     }
+
+    public function getUserIdByNick(string $nick): ?int
+    {
+        $result = $this->createQueryBuilder()
+            ->select('user_id')
+            ->from('users')
+            ->where('user_nick = :nick')
+            ->setParameter('nick', $nick)
+            ->execute()
+            ->fetchOne();
+
+        return $result !== false ? (int) $result : null;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function getUserNicknames(): array
+    {
+        return $this->createQueryBuilder()
+            ->select('user_id, user_nick')
+            ->from('users')
+            ->orderBy('user_nick')
+            ->execute()
+            ->fetchAllKeyValue();
+    }
 }

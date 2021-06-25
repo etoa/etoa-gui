@@ -6,8 +6,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 /**
 * Returns a string containing the game name, version and round
 */
-function getGameIdentifier()
-{
+function getGameIdentifier() {
     // TODO
     global $app;
 
@@ -256,32 +255,6 @@ function get_alliance_id($tag)
 }
 
 /**
-* User-Id via Nick auslesen
-*
-* @param string $nick User-nick
-*/
-function get_user_id($nick)
-{
-    $res = dbquery("
-        SELECT
-            user_id
-        FROM
-            users
-        WHERE
-            user_nick='".mysql_real_escape_string($nick)."';
-    ");
-    if (mysql_num_rows($res)>0)
-    {
-        $arr = mysql_fetch_assoc($res);
-        return $arr['user_id'];
-    }
-    else
-    {
-        return 0;
-    }
-}
-
-/**
 * User-Id via Planeten-Id auslesen
 *
 * @param int $pid Planet-ID
@@ -420,7 +393,7 @@ function format_link($string)
     $string = preg_replace("#([ \n])www\\.([^ ,\n]*)#i", "\\1[url]https://www.\\2[/url]", $string);
     $string = preg_replace("#^(http|https|ftp)://([^ ,\n]*)#i", "[url]\\1://\\2[/url]", $string);
     $string = preg_replace("#^www\\.([^ ,\n]*)#i", "[url]https://www.\\1[/url]", $string);
-        $string = preg_replace('#\[url\]www.([^\[]*)\[/url\]#i', '<a href="https://www.\1">\1</a>', $string);
+    $string = preg_replace('#\[url\]www.([^\[]*)\[/url\]#i', '<a href="https://www.\1">\1</a>', $string);
     $string = preg_replace('#\[url\]([^\[]*)\[/url\]#i', '<a href="\1">\1</a>', $string);
     $string = preg_replace('#\[mailurl\]([^\[]*)\[/mailurl\]#i', '<a href="\1">Link</a>', $string);
     return $string;
@@ -531,13 +504,13 @@ function check_illegal_signs($string)
             && !stristr($string,";")
             && !stristr($string,"&")
         )
-            {
-                return "";
-            }
-            else
-            {
-                return "&lt; &gt; &apos; &quot; ? ! $ = ; &amp;";
-            }
+        {
+            return "";
+        }
+        else
+        {
+            return "&lt; &gt; &apos; &quot; ? ! $ = ; &amp;";
+        }
 }
 
 /**
@@ -1248,7 +1221,7 @@ function check_buddy_req($id)
         FROM
         buddylist
         WHERE
-            bl_buddy_id='".$id."'
+        bl_buddy_id='".$id."'
         AND bl_allow=0");
     $arr = mysql_fetch_row($res);
     return $arr[0];
@@ -1501,162 +1474,6 @@ function errBox($title,$text,$return=0)
 }
 
 /**
-* Schiffe zur Schiffsliste hinzufügen
-*
-* @param int $entity Entity-ID
-* @param int $user User-ID
-* @param int $ship Schiff-ID
-* @param int $cnt Anzahl
-* @author MrCage
-*/
-function shiplistAdd($entity,$user,$ship,$cnt)
-{
-    dbquery("
-            INSERT INTO
-            shiplist
-            (
-                shiplist_user_id,
-                shiplist_entity_id,
-                shiplist_ship_id,
-                shiplist_count
-            )
-            VALUES
-            (
-                '".$user."',
-                '".$entity."',
-                '".$ship."',
-                '".max($cnt,0)."'
-            )
-            ON DUPLICATE KEY
-            UPDATE
-                shiplist_count = shiplist_count + VALUES(shiplist_count);
-        ");
-}
-
-
-/**
-* Verteidigungsanlagen zur Anlagenliste hinzufügen
-*
-* @param int $entity Entity-ID
-* @param int $user User-ID
-* @param int $def Def-ID
-* @param int $cnt Anzahl
-* @author MrCage
-*/
-function deflistAdd($entity,$user,$def,$cnt)
-{
-        dbquery("
-            INSERT INTO
-            deflist
-            (
-                deflist_user_id,
-                deflist_entity_id,
-                deflist_def_id,
-                deflist_count
-            )
-            VALUES
-            (
-                '".$user."',
-                '".$entity."',
-                '".$def."',
-                '".max($cnt,0)."'
-            )
-            ON DUPLICATE KEY
-            UPDATE
-                deflist_count = deflist_count + VALUES(deflist_count);
-        ");
-}
-
-/**
-* Gebäude zur gebäudeliste hinzufügen
-*
-* @param int $entity entity-ID
-* @param int $user User-ID
-* @param int $building Building-ID
-* @param int $level Anzahl
-* @author MrCage
-*/
-function buildlistAdd($entity,$user,$building,$level)
-{
-        dbquery("
-            INSERT INTO
-            buildlist
-            (
-                buildlist_user_id,
-                buildlist_entity_id,
-                buildlist_building_id,
-                buildlist_current_level
-            )
-            VALUES
-            (
-                '".$user."',
-                '".$entity."',
-                '".$building."',
-                '".max($level,0)."'
-            )
-            ON DUPLICATE KEY
-            UPDATE
-                buildlist_current_level = '".max($level,0)."';
-        ");
-}
-
-/**
-* Raketen zur Raketenliste hinzufügen
-*
-* @param int $planet Planet-ID
-* @param int $user User-ID
-* @param int $ship Schiff-ID
-* @param int $cnt Anzahl
-* @author MrCage
-*/
-function missilelistAdd($planet,$user,$ship,$cnt)
-{
-    $res=dbquery("
-        SELECT
-            missilelist_id
-        FROM
-            missilelist
-        WHERE
-            missilelist_user_id='".$user."'
-            AND missilelist_entity_id='".$planet."'
-            AND missilelist_missile_id='".$ship."';
-    ");
-    if (mysql_num_rows($res)>0)
-    {
-        dbquery("
-            UPDATE
-                missilelist
-            SET
-                missilelist_count=missilelist_count+".max($cnt,0)."
-            WHERE
-                missilelist_user_id='".$user."'
-                AND missilelist_entity_id='".$planet."'
-                AND missilelist_missile_id='".$ship."';
-        ");
-    }
-    else
-    {
-        dbquery("
-            INSERT INTO
-            missilelist
-            (
-                missilelist_user_id,
-                missilelist_entity_id,
-                missilelist_missile_id,
-                missilelist_count
-            )
-            VALUES
-            (
-                '".$user."',
-                '".$planet."',
-                '".$ship."',
-                '".max($cnt,0)."'
-            );
-        ");
-    }
-}
-
-/**
 * Zeigt ein Avatarbild an
 */
 function show_avatar($avatar=BOARD_DEFAULT_IMAGE)
@@ -1681,9 +1498,9 @@ function cut_word($txt, $where, $br=0) {
         if ($a==$where) {
         $g++;
         if ($br==0)
-            $d[$c+$g]="\n";
+        $d[$c+$g]="\n";
         else
-            $d[$c+$g]="<br/>";
+        $d[$c+$g]="<br/>";
 
         $a = 0;
         }
@@ -2306,9 +2123,9 @@ function showTechTree($type,$itemId)
 function getInitTT()
 {
     return '<div class="tooltip" id="tooltip" style="display:none;" onmouseup="hideTT();">
-    <div class="tttitle" id="tttitle"></div>
-    <div class="ttcontent" id="ttcontent"></div>
-        </div> ';
+<div class="tttitle" id="tttitle"></div>
+<div class="ttcontent" id="ttcontent"></div>
+    </div> ';
 }
 
 function cTT($title,$content)
@@ -2417,13 +2234,8 @@ function defineImagePaths()
 
 function logAccess($target,$domain="",$sub="")
 {
-    // TODO
-    global $app;
-
-    /** @var ConfigurationService */
-    $config = $app['etoa.config.service'];
-
-    if ($config->getBoolean('accesslog'))
+    global $cfg;
+    if ($cfg->accesslog->v == 1)
     {
         if (!isset($_SESSION['accesslog_sid']))
             $_SESSION['accesslog_sid'] = uniqid((string) mt_rand(), true);
@@ -2465,8 +2277,7 @@ function fetchJsonConfig($file)	{
     return $data;
 }
 
-function getLoginUrl($args=array())
-{
+function getLoginUrl($args=array()) {
     // TODO
     global $app;
 

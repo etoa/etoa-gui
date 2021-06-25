@@ -13,6 +13,9 @@ $config = $app['etoa.config.service'];
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////
 
+    /** @var \EtoA\Ship\ShipRepository $shipRepository */
+    $shipRepository = $app['etoa.ship.repository'];
+
 	//
 	// Battlepoints
 	//
@@ -379,7 +382,7 @@ $config = $app['etoa.config.service'];
 	      if (mysql_num_rows($res)>0)
 	      {
 	      	$arr=mysql_fetch_array($res);
-					shiplistAdd($arr['queue_entity_id'],$arr['queue_user_id'],$arr['queue_ship_id'],$arr['queue_cnt']);
+	      	$shipRepository->addShip((int) $arr['queue_ship_id'], (int) $arr['queue_cnt'], (int) $arr['queue_user_id'], (int) $arr['queue_entity_id']);
 					dbquery("
 					DELETE FROM
 						ship_queue
