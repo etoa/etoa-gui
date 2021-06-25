@@ -34,6 +34,9 @@
 
 		if (isset($_POST['submit']) && checker_verify())
 		{
+            /** @var \EtoA\User\UserRepository $userRepository */
+            $userRepository = $app['etoa.user.repository'];
+
 			$time = time();
 			$rcpts = rawurldecode($_POST['message_user_to']);
 			$rcptarr = explode(";",$rcpts);
@@ -41,9 +44,8 @@
 			iBoxStart("Nachrichtenversand");
 			foreach ($rcptarr as $rcpt)
 			{
-				$uid = get_user_id($rcpt);
-				if ($uid>0)
-				{
+				$uid = $userRepository->getUserIdByNick($rcpt);
+				if ($uid !== null) {
 					// Prüfe Flooding
 					$flood_interval = time()-FLOOD_CONTROL;
 					if (!isset($_SESSION['messagesSent'][$uid]) || $_SESSION['messagesSent'][$uid] < $flood_interval)

@@ -272,32 +272,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 	}
 
 	/**
-	* User-Id via Nick auslesen
-	*
-	* @param string $nick User-nick
-	*/
-	function get_user_id($nick)
-	{
-		$res = dbquery("
-			SELECT
-				user_id
-			FROM
-				users
-			WHERE
-				user_nick='".mysql_real_escape_string($nick)."';
-		");
-		if (mysql_num_rows($res)>0)
-		{
-			$arr = mysql_fetch_assoc($res);
-			return $arr['user_id'];
-		}
-		else
-		{
-			return 0;
-		}
-	}
-
-	/**
 	* User-Id via Planeten-Id auslesen
 	*
 	* @param int $pid Planet-ID
