@@ -243,9 +243,6 @@ class UserSession extends Session
         // TODO
         global $app;
 
-        /** @var UserSessionManager */
-        $sessionManager = $app['etoa.user.session.manager'];
-
         if (isset($this->time_login))
         {
             $res = dbquery("
@@ -349,6 +346,9 @@ class UserSession extends Session
         {
             // chat logout
             $this->cLogin = false;
+
+            /** @var UserSessionManager */
+            $sessionManager = $app['etoa.user.session.manager'];
 
             // destroy user session
             $sessionManager->unregisterSession();
