@@ -36,11 +36,6 @@ parameters:
 			path: htdocs/admin/content/galaxy/edit.php
 
 		-
-			message: "#^Variable \\$sort might not be defined\\.$#"
-			count: 6
-			path: htdocs/admin/content/home/stats.inc.php
-
-		-
 			message: "#^Variable \\$sortOrder might not be defined\\.$#"
 			count: 2
 			path: htdocs/admin/content/home/stats.inc.php
