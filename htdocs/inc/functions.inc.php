@@ -1619,62 +1619,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 	}
 
 	/**
-	* Raketen zur Raketenliste hinzufügen
-	*
-	* @param int $planet Planet-ID
-	* @param int $user User-ID
-	* @param int $ship Schiff-ID
-	* @param int $cnt Anzahl
-	* @author MrCage
-	*/
-	function missilelistAdd($planet,$user,$ship,$cnt)
-	{
-		$res=dbquery("
-			SELECT
-				missilelist_id
-			FROM
-				missilelist
-			WHERE
-				missilelist_user_id='".$user."'
-				AND missilelist_entity_id='".$planet."'
-				AND missilelist_missile_id='".$ship."';
-		");
-		if (mysql_num_rows($res)>0)
-		{
-			dbquery("
-				UPDATE
-					missilelist
-				SET
-					missilelist_count=missilelist_count+".max($cnt,0)."
-				WHERE
-					missilelist_user_id='".$user."'
-					AND missilelist_entity_id='".$planet."'
-					AND missilelist_missile_id='".$ship."';
-			");
-		}
-		else
-		{
-			dbquery("
-				INSERT INTO
-				missilelist
-				(
-					missilelist_user_id,
-					missilelist_entity_id,
-					missilelist_missile_id,
-					missilelist_count
-				)
-				VALUES
-				(
-					'".$user."',
-					'".$planet."',
-					'".$ship."',
-					'".max($cnt,0)."'
-				);
-			");
-		}
-	}
-
-	/**
 	* Zeigt ein Avatarbild an
 	*/
 	function show_avatar($avatar=BOARD_DEFAULT_IMAGE)

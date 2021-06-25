@@ -691,13 +691,15 @@ function showMissilesOnPlanet($pid)
 
 function addMissileToPlanet($form)
 {
+    global $app;
+    /** @var \EtoA\Missile\MissileRepository $missileRepository */
+    $missileRepository = $app['etoa.missile.repository'];
 	$objResponse = new xajaxResponse();
 
 	$updata=explode(":",$form['entity_id']);
-	if ($updata[1]>0)
-	{
-		missilelistAdd((int) $updata[0], (int) $updata[1], (int) $form['ship_id'], (int) $form['shiplist_count']);
-  	$objResponse->script("xajax_showMissilesOnPlanet(".$updata[0].")");
+	if ($updata[1]>0) {
+	    $missileRepository->addMissile((int) $form['ship_id'], (int) $form['shiplist_count'], (int) $updata[1], (int) $updata[0]);
+  	    $objResponse->script("xajax_showMissilesOnPlanet(".$updata[0].")");
   }
   else
   {
