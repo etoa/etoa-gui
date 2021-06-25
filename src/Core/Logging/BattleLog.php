@@ -4,123 +4,59 @@ declare(strict_types=1);
 
 namespace EtoA\Core\Log;
 
+use EtoA\Core\Configuration\ConfigurationService;
+
 class BattleLog extends BaseLog
 {
+    private BattleLogRepository $repository;
+    private ConfigurationService $config;
+    private Log $log;
+
+    public function __construct(
+        BattleLogRepository $repository,
+        ConfigurationService $config,
+        Log $log
+    ) {
+        $this->repository = $repository;
+        $this->config = $config;
+        $this->log = $log;
+    }
+
     /**
      * Processes the log queue and stores
      * all items in the persistend log table
      */
-    static function processQueue()
+    public function processQueue(): int
     {
-        dbquery("
-        INSERT INTO
-            logs_battle
-        (
-          `facility`,
-          `severity`,
-          `fleet_id`,
-          `user_id`,
-          `entity_user_id`,
-          `user_alliance_id`,
-          `entity_user_alliance_id`,
-          `war`,
-          `entity_id`,
-          `action`,
-          `landtime`,
-          `result`,
-          `fleet_ships_cnt`,
-          `entity_ships_cnt`,
-          `entity_defs_cnt`,
-          `fleet_weapon`,
-          `fleet_shield`,
-          `fleet_structure`,
-          `fleet_weapon_bonus`,
-          `fleet_shield_bonus`,
-          `fleet_structure_bonus`,
-          `entity_weapon`,
-          `entity_shield`,
-          `entity_structure`,
-          `entity_weapon_bonus`,
-          `entity_shield_bonus`,
-          `entity_structure_bonus`,
-          `fleet_win_exp`,
-          `entity_win_exp`,
-          `win_metal`,
-          `win_crystal`,
-          `win_pvc`,
-          `win_tritium`,
-          `win_food`,
-          `tf_metal`,
-          `tf_crystal`,
-          `tf_pvc`,
-          `timestamp`
-        )
-        SELECT
-          `facility`,
-          `severity`,
-          `fleet_id`,
-          `user_id`,
-          `entity_user_id`,
-          `user_alliance_id`,
-          `entity_user_alliance_id`,
-          `war`,
-          `entity_id`,
-          `action`,
-          `landtime`,
-          `result`,
-          `fleet_ships_cnt`,
-          `entity_ships_cnt`,
-          `entity_defs_cnt`,
-          `fleet_weapon`,
-          `fleet_shield`,
-          `fleet_structure`,
-          `fleet_weapon_bonus`,
-          `fleet_shield_bonus`,
-          `fleet_structure_bonus`,
-          `entity_weapon`,
-          `entity_shield`,
-          `entity_structure`,
-          `entity_weapon_bonus`,
-          `entity_shield_bonus`,
-          `entity_structure_bonus`,
-          `fleet_win_exp`,
-          `entity_win_exp`,
-          `win_metal`,
-          `win_crystal`,
-          `win_pvc`,
-          `win_tritium`,
-          `win_food`,
-          `tf_metal`,
-          `tf_crystal`,
-          `tf_pvc`,
-          `timestamp`
-        FROM
-            logs_battle_queue
-        ;");
-        $numRecords = mysql_affected_rows();
-        if ($numRecords > 0) {
-            dbquery("
-            DELETE FROM
-                logs_battle_queue
-            LIMIT
-                " . $numRecords . ";");
-        }
-        return $numRecords;
+        return $this->repository->addLogsFromQueue();
     }
 
     /**
      * Removes up old logs from the persistend log table
      *
-     * @param int|string $threshold All items older than this time threshold will be deleted
+     * @param int $threshold All items older than this time threshold will be deleted
      */
-    static function cleanup($threshold)
+    public function cleanup(int $threshold): int
     {
-        dbquery("
-            DELETE FROM
-                logs_battle
-            WHERE
-                timestamp<'" . $threshold . "'
-        ");
-        return mysql_affected_rows();
+        return $this->repository->removeByTimestamp($threshold);
+    }
+
+    /**
+     * Alle alten Logs löschen
+     */
+    public function removeOld(int $threshold = 0): int
+    {
+        $timestamp = $threshold > 0
+            ? time() - $threshold
+            : time() - (24 * 3600 * $this->config->getInt('log_threshold_days'));
+
+        $nr = $this->cleanup($timestamp);
+
+        $this->log->add(
+            Log::F_BATTLE,
+            Log::INFO,
+            "$nr Battle-Logs die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!"
+        );
+        return $nr;
     }
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace EtoA\Core\Log;
 
+use EtoA\Core\Configuration\ConfigurationService;
+
 class Log extends BaseLog
 {
     // Facilities
@@ -83,7 +85,7 @@ class Log extends BaseLog
      */
     const F_RANKING = 17;
     /**
-     * Illegal user action (bots, wrong referes etc)
+     * Illegal user action (bots, wrong referrers etc)
      */
     const F_ILLEGALACTION = 18;
 
@@ -109,87 +111,72 @@ class Log extends BaseLog
         "Illegale Useraktion"
     ];
 
-    public static function add(int $facility, int $severity, string $msg)
+    private LogRepository $repository;
+    private ConfigurationService $config;
+
+    public function __construct(
+        LogRepository $repository,
+        ConfigurationService $config
+    ) {
+        $this->repository = $repository;
+        $this->config = $config;
+    }
+
+    public function add(int $facility, int $severity, string $msg): void
     {
-        if (!is_numeric($facility) || $facility < 0 || $facility > 18)
-        {
+        if (!is_numeric($facility) || $facility < 0 || $facility > 18) {
             $facility = self::F_OTHER;
         }
-        if (!is_numeric($severity) || $severity < 0 || $severity > 4)
-        {
+        if (!is_numeric($severity) || $severity < 0 || $severity > 4) {
             $severity = self::INFO;
         }
-        if ($severity > self::DEBUG || isDebugEnabled())
-        {
-            dbquery("
-            INSERT DELAYED INTO
-                logs_queue
-            (
-                facility,
-                severity,
-                timestamp,
-                ip,
-                message
-            )
-            VALUES
-            (
-                '".$facility."',
-                '".$severity."',
-                '".time()."',
-                '".(isset($_SERVER['REMOTE_ADDR'])?$_SERVER['REMOTE_ADDR']:'')."',
-                '".mysql_real_escape_string($msg)."'
-            );");
+        if ($severity > self::DEBUG || isDebugEnabled()) {
+            $this->repository->addToQueue(
+                $facility,
+                $severity,
+                $msg,
+                isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : ''
+            );
         }
     }
 
     /**
-    * Processes the log queue and stores
-    * all items in the persistend log table
-    */
-    static function processQueue()	{
-        dbquery("
-        INSERT INTO
-            logs
-        (
-            facility,
-            severity,
-            timestamp,
-            ip,
-            message
-        )
-        SELECT
-            facility,
-            severity,
-            timestamp,
-            ip,
-            message
-        FROM
-            logs_queue
-        ;");
-        $numRecords = mysql_affected_rows();
-        if ($numRecords > 0)	{
-            dbquery("
-            DELETE FROM
-                logs_queue
-            LIMIT
-                ".$numRecords.";");
-        }
-        return $numRecords;
-    }
-
-    /**
-    * Removes up old logs from the persistend log table
-    *
-    * @param int $threshold All items older than this time threshold will be deleted
-    */
-    static function cleanup($threshold)
+     * Processes the log queue and stores
+     * all items in the persistend log table
+     */
+    public function processQueue(): int
     {
-        dbquery("
-            DELETE FROM
-                logs
-            WHERE
-                timestamp<'".$threshold."'
-        ");
-        return mysql_affected_rows();
+        return $this->repository->addLogsFromQueue();
+    }
+
+    /**
+     * Removes up old logs from the persistend log table
+     *
+     * @param int $threshold All items older than this time threshold will be deleted
+     */
+    public function cleanup(int $threshold): int
+    {
+        return $this->repository->removeByTimestamp($threshold);
+    }
+
+    /**
+     * Alle alten Logs löschen
+     */
+    public function removeOld(int $threshold = 0): int
+    {
+        $timestamp = $threshold > 0
+            ? time() - $threshold
+            : time() - (24 * 3600 * $this->config->getInt('log_threshold_days'));
+
+        $nr = $this->cleanup($timestamp);
+        $nr += FleetLog::cleanup($timestamp);
+        $nr += BattleLog::cleanup($timestamp);
+
+        $this->add(
+            Log::F_SYSTEM,
+            Log::INFO,
+            "$nr Logs die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!"
+        );
+        return $nr;
     }
 }

@@ -36,28 +36,4 @@ abstract class BaseLog
         "Fehler",
         "Kritisch",
     ];
-
-    /**
-     * Alle alten Logs löschen
-     */
-    static function removeOld($threshold = 0)
-    {
-        // TODO
-        global $app;
-
-        /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
-
-        $timestamp = $threshold > 0
-            ? time() - $threshold
-            : time() - (24 * 3600 * $config->getInt('log_threshold_days'));
-
-        $nr = Log::cleanup($timestamp);
-        $nr += GameLog::cleanup($timestamp);
-        $nr += FleetLog::cleanup($timestamp);
-        $nr += BattleLog::cleanup($timestamp);
-
-        Log::add(Log::F_SYSTEM, Log::INFO, "$nr Logs die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
-        return $nr;
-    }
 }
