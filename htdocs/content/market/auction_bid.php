@@ -153,11 +153,6 @@ $runtimeDataStore = $app['etoa.runtime.datastore'];
 						Log::add(Log::F_MULTITRADE,Log::INFO,"[page user sub=edit user_id=".$cu->id."][B]".$cu->nick."[/B][/page] hat an einer Auktion von [page user sub=edit user_id=".$arr['user_id']."][B]".$seller."[/B][/page] gewonnen:\n\nRohstoffe:\n".RES_METAL.": ".nf($arr['sell_0'])."\n".RES_CRYSTAL.": ".nf($arr['sell_1'])."\n".RES_PLASTIC.": ".nf($arr['sell_2'])."\n".RES_FUEL.": ".nf($arr['sell_3'])."\n".RES_FOOD.": ".nf($arr['sell_4'])."\n\nDies hat ihn folgende Rohstoffe gekostet:\n".RES_METAL.": ".nf($_POST['new_buy_0'])."\n".RES_CRYSTAL.": ".nf($_POST['new_buy_1'])."\n".RES_PLASTIC.": ".nf($_POST['new_buy_2'])."\n".RES_FUEL.": ".nf($_POST['new_buy_3'])."\n".RES_FOOD.": ".nf($_POST['new_buy_4'])."");
 					}
 
-					// Log schreiben
-					//// TODO
-					//add_log(7,"Es wurde folgende Auktion erfolgreich beendet: Der Spieler ".$cu->nick." hat vom Spieler ".$partner_user_nick."  folgende Waren ersteigert:\n\nRohstoffe:\n".RES_METAL.": ".nf($arr['auction_sell_metal'])."\n".RES_CRYSTAL.": ".nf($arr['auction_sell_crystal'])."\n".RES_PLASTIC.": ".nf($arr['auction_sell_plastic'])."\n".RES_FUEL.": ".nf($arr['auction_sell_fuel'])."\n".RES_FOOD.": ".nf($arr['auction_sell_food'])."\n\nDies hat ihn folgende Rohstoffe gekostet:".RES_METAL.": ".nf($_POST['auction_new_buy_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['auction_new_buy_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['auction_new_buy_plastic'])."\n".RES_FUEL.": ".nf($_POST['auction_new_buy_fuel'])."\n".RES_FOOD.": ".nf($_POST['auction_new_buy_food'])."\n\nDie Auktion wird nach ".AUCTION_DELAY_TIME." Stunden gel&ouml;scht",time());
-
-
 					success_msg("Gratulation, du hast die Auktion gewonnen, da du den maximal Betrag geboten hast!");
 
 					// TODO: Market course update

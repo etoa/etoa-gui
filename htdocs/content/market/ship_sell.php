@@ -216,9 +216,6 @@
 					    	Log::add(Log::F_MULTITRADE,Log::INFO,"[page user sub=edit user_id=".$cu->id."][B]".$cu->nick."[/B][/page] hat von [page user sub=edit user_id=".$arr['user_id']."][B]".$seller."[/B][/page] Schiffe gekauft:\n\n".$arr['count']." ".$ship."\n\nund das zu folgendem Preis:\n\n".RES_METAL.": ".nf($arr['costs_0'])."\n".RES_CRYSTAL.": ".nf($arr['costs_1'])."\n".RES_PLASTIC.": ".nf($arr['costs_2'])."\n".RES_FUEL.": ".nf($arr['costs_3'])."\n".RES_FOOD.": ".nf($arr['costs_4']));
 						}
 
-						//Marktlog schreiben
-						//add_log(7,"Der Spieler ".$cu->nick." hat folgende Schiffe von ".$seller_user_nick." gekauft:\n\n".$arr['ship_count']." ".$arr['ship_name']."\n\nund das zu folgendem Preis:\n\n".RES_METAL.": ".nf($arr['ship_costs_metal'])."\n".RES_CRYSTAL.": ".nf($arr['ship_costs_crystal'])."\n".RES_PLASTIC.": ".nf($arr['ship_costs_plastic'])."\n".RES_FUEL.": ".nf($arr['ship_costs_fuel'])."\n".RES_FOOD.": ".nf($arr['ship_costs_food']),time());
-
 						// Zählt die erfolgreich abgewickelten Angebote
 
 					}

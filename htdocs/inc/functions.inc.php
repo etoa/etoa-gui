@@ -585,20 +585,6 @@ function send_msg($user_id,$msg_type,$subject,$text)
 }
 
 /**
-* Speichert Daten in die Log-Tabelle
-*
-    * @deprecated, please replace
-* @param int $log_cat Log Kategorie
-* @param string $log_text Log text
-* @author MrCage
-*/
-function add_log($log_cat, $log_text)
-{
-    Log::add($log_cat,Log::INFO,$log_text);
-}
-
-
-/**
 * Cuts a string by a given length
 */
 function cut_string($string,$num)
