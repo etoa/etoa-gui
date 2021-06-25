@@ -832,12 +832,17 @@ function showDefenseOnPlanet($form)
 
 function addDefenseToPlanet($form)
 {
+    global $app;
+
+    /** @var \EtoA\Defense\DefenseRepository $defenseRepository */
+    $defenseRepository = $app['etoa.defense.repository'];
+
 	$objResponse = new xajaxResponse();
 
 	$updata=explode(":",$form['entity_id']);
 	if ($updata[1]>0)
 	{
-		deflistAdd((int) $updata[0], (int) $updata[1], (int) $form['def_id'],(int) $form['deflist_count']);
+        $defenseRepository->addDefense((int) $form['def_id'], (int) $form['deflist_count'], (int) $updata[1], (int) $form['entity_id']);
   		$objResponse->script("xajax_showDefenseOnPlanet('".$form['entity_id']."')");
   }
   else

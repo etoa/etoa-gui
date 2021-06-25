@@ -1551,40 +1551,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 			");
 	}
 
-
-	/**
-	* Verteidigungsanlagen zur Anlagenliste hinzufügen
-	*
-	* @param int $entity Entity-ID
-	* @param int $user User-ID
-	* @param int $def Def-ID
-	* @param int $cnt Anzahl
-	* @author MrCage
-	*/
-	function deflistAdd($entity,$user,$def,$cnt)
-	{
-			dbquery("
-				INSERT INTO
-				deflist
-				(
-					deflist_user_id,
-					deflist_entity_id,
-					deflist_def_id,
-					deflist_count
-				)
-				VALUES
-				(
-					'".$user."',
-					'".$entity."',
-					'".$def."',
-					'".max($cnt,0)."'
-				)
-				ON DUPLICATE KEY
-				UPDATE
-					deflist_count = deflist_count + VALUES(deflist_count);
-			");
-	}
-
 	/**
 	* Gebäude zur gebäudeliste hinzufügen
 	*
