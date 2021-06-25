@@ -198,7 +198,7 @@
 						`deflist_count`='0'
 						;");
 			$nr = mysql_affected_rows();
-			Log::add("4", Log::INFO, "$nr leere Verteidigungsdatensätze wurden gelöscht!");
+			Log::add(Log::F_SYSTEM, Log::INFO, "$nr leere Verteidigungsdatensätze wurden gelöscht!");
 			return $nr;
 		}
 

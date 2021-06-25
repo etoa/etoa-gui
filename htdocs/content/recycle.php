@@ -169,7 +169,7 @@ $config = $app['etoa.config.service'];
 				//Log schreiben
 				$log="Der User [page user sub=edit user_id=".$cu->id."] [B]".$cu."[/B] [/page] hat auf dem Planeten [page galaxy sub=edit id=".$cp->id()."][B]".$cp->name."[/B][/page] folgende Schiffe mit dem r&uuml;ckgabewert von ".($payback*100)."% recycelt:\n\n".$log_ships."\nDies hat ihm folgende Rohstoffe gegeben:\n".RES_METAL.": ".nf($pb[0])."\n".RES_CRYSTAL.": ".nf($pb[1])."\n".RES_PLASTIC.": ".nf($pb[2])."\n".RES_FUEL.": ".nf($pb[3])."\n".RES_FOOD.": ".nf($pb[4])."\n";
 
-				Log::add(12, Log::INFO, $log);
+				Log::add(Log::F_RECYCLING, Log::INFO, $log);
 			}
 			success_msg(nf($cnt)." Schiffe erfolgreich recycelt!");
             foreach ($recycled as $id => $num) {
@@ -270,7 +270,7 @@ $config = $app['etoa.config.service'];
 				//Log schreiben
 				$log="Der User [page user sub=edit user_id=".$cu->id."] [B]".$cu."[/B] [/page] hat auf dem Planeten [page galaxy sub=edit id=".$cp->id()."][B]".$cp->name."[/B][/page] folgende Verteidigungsanlagen mit dem r&uuml;ckgabewert von ".($payback*100)."% recycelt:\n\n".$log_def."\nDies hat ihm folgende Rohstoffe gegeben:\n".RES_METAL.": ".nf($pb[0])."\n".RES_CRYSTAL.": ".nf($pb[1])."\n".RES_PLASTIC.": ".nf($pb[2])."\n".RES_FUEL.": ".nf($pb[3])."\n".RES_FOOD.": ".nf($pb[4])."\n";
 
-				Log::add(12, Log::INFO, $log);
+				Log::add(Log::F_RECYCLING, Log::INFO, $log);
 			}
 			success_msg("".nf($cnt)." Verteidigungsanlagen erfolgreich recycelt!");
             foreach ($recycled as $id => $num) {

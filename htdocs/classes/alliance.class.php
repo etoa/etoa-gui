@@ -730,10 +730,10 @@ use EtoA\Core\Configuration\ConfigurationService;
                 {
                     $user->alliance = null;
                     $user->addToUserLog("alliance","{nick} löst die Allianz [b]".$this."[/b] auf.");
-                    Log::add("5", Log::INFO, "Die Allianz [b]".$this."[/b] wurde von ".$user." aufgelöst!");
+                    Log::add(Log::F_ALLIANCE, Log::INFO, "Die Allianz [b]".$this."[/b] wurde von ".$user." aufgelöst!");
                 }
                 else
-                    Log::add("5", Log::INFO, "Die Allianz [b]".$this."[/b] wurde gelöscht!");
+                    Log::add(Log::F_ALLIANCE, Log::INFO, "Die Allianz [b]".$this."[/b] wurde gelöscht!");
                 return true;
             } else {
                 return false;

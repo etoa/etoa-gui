@@ -43,9 +43,9 @@ class Users
             }
         }
         if ($manual)
-            Log::add("4", Log::INFO, mysql_num_rows($res)." inaktive User die seit ".date("d.m.Y H:i",$online_time)." nicht mehr online waren oder seit ".date("d.m.Y H:i",$register_time)." keine Punkte haben wurden manuell gelöscht!");
+            Log::add(Log::F_SYSTEM, Log::INFO, mysql_num_rows($res)." inaktive User die seit ".date("d.m.Y H:i",$online_time)." nicht mehr online waren oder seit ".date("d.m.Y H:i",$register_time)." keine Punkte haben wurden manuell gelöscht!");
         else
-            Log::add("4", Log::INFO, mysql_num_rows($res)." inaktive User die seit ".date("d.m.Y H:i",$online_time)." nicht mehr online waren oder seit ".date("d.m.Y H:i",$register_time)." keine Punkte haben wurden gelöscht!");
+            Log::add(Log::F_SYSTEM, Log::INFO, mysql_num_rows($res)." inaktive User die seit ".date("d.m.Y H:i",$online_time)." nicht mehr online waren oder seit ".date("d.m.Y H:i",$register_time)." keine Punkte haben wurden gelöscht!");
 
         // Nachricht an lange inaktive
         $res =	dbquery("
@@ -138,9 +138,9 @@ die Spielleitung";
             }
         }
         if ($manual)
-            Log::add("4", Log::INFO, mysql_num_rows($res)." als gelöscht markierte User wurden manuell gelöscht!");
+            Log::add(Log::F_SYSTEM, Log::INFO, mysql_num_rows($res)." als gelöscht markierte User wurden manuell gelöscht!");
         else
-            Log::add("4", Log::INFO, mysql_num_rows($res)." als gelöscht markierte User wurden gelöscht!");
+            Log::add(Log::F_SYSTEM, Log::INFO, mysql_num_rows($res)." als gelöscht markierte User wurden gelöscht!");
         return mysql_num_rows($res);
     }
 

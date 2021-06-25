@@ -774,7 +774,7 @@ function reset_planet($planet_id)
             WHERE
                 deflist_entity_id='".$planet_id."';
         ");
-        Log::add(6, Log::INFO, "Der Planet mit der ID ".$planet_id." wurde zurückgesetzt!");
+        Log::add(Log::F_GALAXY, Log::INFO, "Der Planet mit der ID ".$planet_id." wurde zurückgesetzt!");
         return true;
     }
     else

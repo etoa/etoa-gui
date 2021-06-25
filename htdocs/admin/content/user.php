@@ -71,7 +71,7 @@
 					$_POST['user_ghost']==1
 				);
 				$newUser->setVerified(true);
-				Log::add(3,Log::INFO, "Der Benutzer ".$newUser->nick." (".$newUser->realName.", ".$newUser->email.") wurde registriert!");
+				Log::add(Log::F_USER,Log::INFO, "Der Benutzer ".$newUser->nick." (".$newUser->realName.", ".$newUser->email.") wurde registriert!");
 				success_msg("Benutzer wurde erstellt! [[page user sub=edit id=".$newUser->id."]Details[/page]]");
 			}
 			catch (Exception $e)

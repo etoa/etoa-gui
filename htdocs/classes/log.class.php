@@ -107,14 +107,7 @@ class Log extends BaseLog
 		"Illegale Useraktion"
 	);
 
-	/**
-	* Adds a log message to the log queue
-	*
-	* @param int|string $facility Event facility
-	* @param int|string $severity Event severity
-	* @param string $msg  Log Message
-	*/
-	static function add($facility, $severity, $msg)
+	public static function add(int $facility, int $severity, string $msg)
 	{
 		if (!is_numeric($facility) || $facility < 0 || $facility > 18)
 		{

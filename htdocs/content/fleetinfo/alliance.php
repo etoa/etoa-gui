@@ -54,7 +54,7 @@
 					if ($fd->cancelFlight())
 					{
 						success_msg("Flug erfolgreich abgebrochen!");
-						Log::add(13,Log::INFO, "Der Spieler [b]".$cu->nick."[/b] bricht den Flug seiner Flotte [b]".$fleet_id."[/b] ab");
+						Log::add(Log::F_FLEETACTION,Log::INFO, "Der Spieler [b]".$cu->nick."[/b] bricht den Flug seiner Flotte [b]".$fleet_id."[/b] ab");
 					}
 					else
 					{
@@ -68,7 +68,7 @@
 					if ($fd->cancelFlight(true))
 					{
 						success_msg("Flug erfolgreich abgebrochen!");
-						Log::add(13,Log::INFO, "Der Spieler [b]".$cu->nick."[/b] bricht den ganzen Allianzflug seiner Flotte [b]".$fleet_id."[/b] ab");
+						Log::add(Log::F_FLEETACTION,Log::INFO, "Der Spieler [b]".$cu->nick."[/b] bricht den ganzen Allianzflug seiner Flotte [b]".$fleet_id."[/b] ab");
 					}
 					else
 					{

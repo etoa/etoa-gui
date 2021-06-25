@@ -1000,11 +1000,11 @@ class User implements \EtoA\User\UserInterface
 
             //Log schreiben
             if($self)
-                Log::add("3", Log::INFO, "Der Benutzer ".$this->nick." hat sich selbst gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.");
+                Log::add(Log::F_USER, Log::INFO, "Der Benutzer ".$this->nick." hat sich selbst gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.");
             elseif($from!="")
-                Log::add("3",Log::INFO, "Der Benutzer ".$this->nick." wurde von ".$from." gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.");
+                Log::add(Log::F_USER,Log::INFO, "Der Benutzer ".$this->nick." wurde von ".$from." gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.");
             else
-                Log::add("3", Log::INFO, "Der Benutzer ".$this->nick." wurde gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.");
+                Log::add(Log::F_USER, Log::INFO, "Der Benutzer ".$this->nick." wurde gelöscht!\nDie Daten des Benutzers wurden nach ".$xmlfile." exportiert.");
 
             $text ="Hallo ".$this->nick."
 

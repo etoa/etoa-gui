@@ -453,7 +453,7 @@ abstract class Report
                         AND `timestamp`<'".$timestamp."';
                 ");
                 $nr = mysql_affected_rows();
-                Log::add("4", Log::INFO, "Unarchivierte Berichte die älter als ".date("d.m.Y H:i",$timestamp)." sind wurden gelöscht!");
+                Log::add(Log::F_SYSTEM, Log::INFO, "Unarchivierte Berichte die älter als ".date("d.m.Y H:i",$timestamp)." sind wurden gelöscht!");
             }
 
             // Deleted
@@ -570,7 +570,7 @@ abstract class Report
                     deleted='1'
                     AND timestamp<'".$timestamp."';
             ");
-            Log::add("4", Log::INFO, "Unarchivierte Berichte die älter als ".date("d.m.Y H:i",$timestamp)." sind wurden gelöscht!");
+            Log::add(Log::F_SYSTEM, Log::INFO, "Unarchivierte Berichte die älter als ".date("d.m.Y H:i",$timestamp)." sind wurden gelöscht!");
             $nr += mysql_affected_rows();
             return $nr;
         }

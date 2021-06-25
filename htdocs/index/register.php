@@ -41,7 +41,7 @@ if (($_POST['register_submit'] ?? false) && $config->getBoolean('enable_register
             $_POST['register_user_nick'],
             $_POST['register_user_password']
         );
-        Log::add(3,Log::INFO,"Der Benutzer ".$newUser->nick." (".$newUser->realName.", ".$newUser->email.") hat sich registriert!");
+        Log::add(Log::F_USER,Log::INFO,"Der Benutzer ".$newUser->nick." (".$newUser->realName.", ".$newUser->email.") hat sich registriert!");
 
         $verificationRequired = $config->getBoolean('email_verification_required');
         $verificationUrl = null;

@@ -32,7 +32,7 @@ function submitPassword(AdminUser $cu, AdminUserRepository $adminUserRepo, Envir
 
         $twig->addGlobal('successMessage', 'Das Passwort wurde geändert!');
 
-        Log::add(8, Log::INFO,  $cu->id . " ändert sein Passwort");
+        Log::add(Log::F_ADMIN, Log::INFO,  $cu->id . " ändert sein Passwort");
     } catch (\Exception $ex) {
         $twig->addGlobal('errorMessage', $ex->getMessage());
     }
@@ -51,7 +51,7 @@ function submitProfile(AdminUser $cu, AdminUserRepository $adminUserRepo, Enviro
 
     $twig->addGlobal('successMessage', 'Die Daten wurden geändert!');
 
-    Log::add(8, Log::INFO, $cu->nick . " ändert seine Daten");
+    Log::add(Log::F_ADMIN, Log::INFO, $cu->nick . " ändert seine Daten");
 }
 
 function profileIndex(AdminUser $cu, Environment $twig)

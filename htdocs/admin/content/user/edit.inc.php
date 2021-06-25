@@ -155,7 +155,7 @@ if (isset($_POST['save']))
         $parr = mysql_fetch_row($pres);
         $sql.= ",user_password='".saltPasswort($_POST['user_password'])."'";
         echo "Das Passwort wurde ge&auml;ndert!<br>";
-        Log::add(8,Log::INFO, $cu->nick." ändert das Passwort von ".$_POST['user_nick']."");
+        Log::add(Log::F_ADMIN,Log::INFO, $cu->nick." ändert das Passwort von ".$_POST['user_nick']."");
     }
 
     // Handle ban

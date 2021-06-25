@@ -956,7 +956,7 @@
 			else
 			{
 				include_once(getcwd().'/inc/bootstrap.inc.php');
-				Log::add(18, Log::INFO, 'Der User '.$_SESSION['user_nick'].' versuchte, ein zweites Wurmloch zu &ouml;ffnen'."\n"
+				Log::add(Log::F_ILLEGALACTION, Log::INFO, 'Der User '.$_SESSION['user_nick'].' versuchte, ein zweites Wurmloch zu &ouml;ffnen'."\n"
 						.'Bereits gesetztes Wurmloch: '.$fleet->wormholeEntryEntity.' mit Austrittspunkt '.$fleet->wormholeExitEntity ."\n"
 						.'Zweites Wumloch: '.$form['man_sx'].' / '.$form['man_sy'].' : '.$form['man_cx'].' / '.$form['man_cy'].' : '.$form['man_p'].'.'
 				);

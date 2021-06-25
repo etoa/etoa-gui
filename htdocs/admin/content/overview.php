@@ -218,7 +218,7 @@ function adminSessionLogView(
         $idToKick = $request->query->getInt('kick');
         if ($idToKick != $cu->id) {
             $sessionManager->kick((string) $idToKick);
-            Log::add(8, Log::INFO, $cu->nick . " löscht die Session des Administrators mit der ID " . $idToKick);
+            Log::add(Log::F_ADMIN, Log::INFO, $cu->nick . " löscht die Session des Administrators mit der ID " . $idToKick);
         } else {
             echo error_msg("Du kannst nicht dich selbst kicken!");
         }
