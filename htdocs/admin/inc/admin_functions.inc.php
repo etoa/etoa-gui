@@ -836,6 +836,11 @@ function showLogs($args=null,$limit=0)
 
 function showAttackAbuseLogs($args=null,$limit=-1,$load=true)
 {
+    global $app;
+
+    /** @var \EtoA\User\UserRepository $userRepository */
+    $userRepository = $app['etoa.user.repository'];
+
 	$paginationLimit = 50;
 
 	if ($load)
@@ -853,11 +858,11 @@ function showAttackAbuseLogs($args=null,$limit=-1,$load=true)
 
 		if (isset($args['searchfuser']) && $args['searchfuser']!="" && !is_numeric($args['searchfuser']))
 		{
-			$args['searchfuser'] = get_user_id($args['searchfuser']);
+			$args['searchfuser'] = $userRepository->getUserIdByNick($args['searchfuser']);
 		}
 		if (isset($args['searcheuser']) && $args['searcheuser']!="" && !is_numeric($args['searcheuser']))
 		{
-			$args['searcheuser'] = get_user_id($args['searcheuser']);
+			$args['searcheuser'] = $userRepository->getUserIdByNick($args['searcheuser']);
 		}
 
 		$sql3.= " WHERE fleet_weapon>0 AND landtime<='".$landtime."' AND landtime>'".($landtime-3600*24)."' ";

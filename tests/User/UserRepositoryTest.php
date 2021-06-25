@@ -6,8 +6,7 @@ use EtoA\AbstractDbTestCase;
 
 class UserRepositoryTest extends AbstractDbTestCase
 {
-    /** @var UserRepository */
-    private $repository;
+    private UserRepository $repository;
 
     protected function setUp(): void
     {
@@ -53,6 +52,20 @@ class UserRepositoryTest extends AbstractDbTestCase
         $this->createUser($userId, $specialistId);
 
         $this->assertSame($specialistId, $this->repository->getSpecialistId($userId));
+    }
+
+    public function testGetUserIdByNick(): void
+    {
+        $this->createUser(1);
+
+        $this->assertSame(1, $this->repository->getUserIdByNick('Nickname'));
+    }
+
+    public function testGetNicknames(): void
+    {
+        $this->createUser(1);
+
+        $this->assertSame([1 => 'Nickname'], $this->repository->getUserNicknames());
     }
 
     private function createUser(int $userId, int $specialistId = 0, int $allianceId = 0, int $points = 0, string $discoverMask = ''): void
