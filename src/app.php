@@ -22,7 +22,6 @@ $app->register(new \EtoA\Core\TwigServiceProvider(), [
 ]);
 
 $app->register(new \EtoA\Core\Configuration\ConfigurationServiceProvider());
-$app->register(new \LittleCubicleGames\Quests\ServiceProvider());
 
 // register error handler
 //\Monolog\ErrorHandler::register($app['logger']);

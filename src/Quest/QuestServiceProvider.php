@@ -14,18 +14,17 @@ use EtoA\Quest\Reward\MissileRewardCollector;
 use EtoA\Quest\Reward\ShipRewardCollector;
 use LittleCubicleGames\Quests\Progress\ProgressFunctionBuilder;
 use LittleCubicleGames\Quests\Progress\StateFunctionBuilder;
+use LittleCubicleGames\Quests\ServiceProvider;
 use LittleCubicleGames\Quests\Storage\QuestStorageInterface;
 use Pimple\Container;
-use Pimple\ServiceProviderInterface;
 use Silex\Api\BootableProviderInterface;
 use Silex\Api\ControllerProviderInterface;
-use Silex\Api\EventListenerProviderInterface;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class QuestServiceProvider implements ServiceProviderInterface, EventListenerProviderInterface, ControllerProviderInterface, BootableProviderInterface
+class QuestServiceProvider extends ServiceProvider implements ControllerProviderInterface, BootableProviderInterface
 {
     public function connect(Application $app): ControllerCollection
     {
@@ -42,11 +41,21 @@ class QuestServiceProvider implements ServiceProviderInterface, EventListenerPro
 
     public function register(Container $pimple): void
     {
-        $pimple['etoa.quests.enabled'] = function (Container $pimple): bool {
-            /** @var ConfigurationService $config */
-            $config = $pimple['etoa.config.service'];
+        parent::register($pimple);
 
-            return $config->getBoolean('quest_system_enable');
+        $pimple['etoa.quests.enabled'] = function (Container $pimple): bool {
+            try {
+                /** @var ConfigurationService $config */
+                $config = $pimple['etoa.config.service'];
+
+                return $config->getBoolean('quest_system_enable');
+            } catch (\Throwable $e) {
+                $pimple['logger']->warning('Failed to load quest config', [
+                    'exception' => $e,
+                ]);
+
+                return false;
+            }
         };
 
         $pimple['etoa.quest.controller'] = function (Container $pimple): QuestController {
@@ -126,6 +135,8 @@ class QuestServiceProvider implements ServiceProviderInterface, EventListenerPro
     public function subscribe(Container $app, EventDispatcherInterface $dispatcher): void
     {
         if ((bool) $app['etoa.quests.enabled']) {
+            parent::subscribe($app, $dispatcher);
+
             $dispatcher->addSubscriber($app['etoa.quest.responselistener']);
         }
     }
