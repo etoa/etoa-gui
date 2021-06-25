@@ -207,7 +207,7 @@ function edit(
 		return;
 	}
 
-	$twig->addGlobal('subtitle', "Allianz bearbeiten: [" . $alliance->tag . "] " . $alliance->name);
+	$twig->addGlobal('subtitle', "Allianz bearbeiten: " . $alliance->nameWithTag);
 
 	$members = $repository->findUsers($id);
 

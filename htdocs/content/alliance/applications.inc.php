@@ -42,7 +42,7 @@ if (Alliance::checkActionRights('applications'))
 
                     // Log schreiben
                     add_alliance_history($cu->allianceId,"Die Bewerbung von [b]".$nick."[/b] wurde akzeptiert!");
-                    Log::add(5,Log::INFO, "Der Spieler [b]".$nick."[/b] tritt der Allianz [b][".$alliance->tag."] ".$alliance->name."[/b] bei!");
+                    Log::add(5,Log::INFO, "Der Spieler [b]".$nick."[/b] tritt der Allianz [b]" . $alliance->nameWithTag . "[/b] bei!");
 
                     $tu = new User($id);
                     $tu->addToUserLog("alliance","{nick} ist nun ein Mitglied der Allianz ".$alliance->name.".");
@@ -90,7 +90,7 @@ if (Alliance::checkActionRights('applications'))
                     if($text != '')
                     {
                         // Nachricht an den Bewerber schicken
-                        send_msg($id,MSG_ALLYMAIL_CAT,"Bewerbung: Nachricht","Antwort auf die Bewerbung an die Allianz [b][".$alliance->tag."] ".$alliance->name."[/b]:\n".$_POST['application_answer_text'][$id]."");
+                        send_msg($id,MSG_ALLYMAIL_CAT,"Bewerbung: Nachricht","Antwort auf die Bewerbung an die Allianz [b]" . $alliance->nameWithTag . "[/b]:\n".$_POST['application_answer_text'][$id]."");
 
                         $cnt++;
                         success_msg($nick.": Nachricht gesendet");

@@ -199,7 +199,7 @@ if ($config->getBoolean("alliance_allow")) {
                     );
                     ");
 
-                    success_msg("Deine Bewerbung bei der Allianz [".$alliance->tag."] ".$alliance->name." wurde gespeichert! Die Allianzleitung wurde informiert und wird deine Bewerbung ansehen.");
+                    success_msg("Deine Bewerbung bei der Allianz " . $alliance->nameWithTag . " wurde gespeichert! Die Allianzleitung wurde informiert und wird deine Bewerbung ansehen.");
                     echo "<input value=\"&Uuml;bersicht\" type=\"button\" onclick=\"document.location='?page=$page'\" />";
                 }
                 else

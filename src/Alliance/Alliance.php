@@ -7,6 +7,7 @@ class Alliance
     public int $id;
     public string $tag;
     public string $name;
+    public string $nameWithTag;
     public ?string $text;
     public ?string $image;
     public bool $imageCheck;
@@ -39,6 +40,7 @@ class Alliance
         $this->id = (int) $data['alliance_id'];
         $this->tag = $data['alliance_tag'];
         $this->name = $data['alliance_name'];
+        $this->nameWithTag = sprintf('[%s] %s', $this->tag, $this->name);
         $this->text = $data['alliance_text'];
         $this->image = $data['alliance_img'];
         $this->imageCheck = (bool) $data['alliance_img_check'];

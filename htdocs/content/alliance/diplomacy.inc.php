@@ -76,7 +76,7 @@
 
         /** @var \EtoA\Alliance\AllianceRepository $allianceRepository */
         $allianceRepository = $app['etoa.alliance.repository'];
-        $allianceNameWithTags = $allianceRepository->getAllianceNamesWithTags();
+        $allianceNamesWithTags = $allianceRepository->getAllianceNamesWithTags();
 
 			//
 			// Kriegserklärung schreiben
@@ -97,7 +97,7 @@
 					echo "<form action=\"?page=$page&amp;action=relations\" method=\"post\" name=\"wardeclaration\">";
 					checker_init();
 
-					tableStart("Kriegserkl&auml;rung an die Allianz [".$otherAlliance->tag."] ".$otherAlliance->name);
+					tableStart("Kriegserkl&auml;rung an die Allianz " . $otherAlliance->nameWithTag);
 					echo "<tr><th>Nachricht:</th><td><textarea rows=\"10\" cols=\"50\" name=\"alliance_bnd_text\"></textarea></td></tr>";
 					echo "<tr><th>Öffentlicher Text:</th><td><textarea rows=\"10\" cols=\"50\" name=\"alliance_bnd_text_pub\"></textarea></td></tr>";
 					tableEnd();
@@ -129,7 +129,7 @@
 						echo "<form action=\"?page=$page&amp;action=relations\" method=\"post\" name=\"pactoffer\">";
 						checker_init();
 
-						tableStart("B&uuml;ndnisanfrage an die Allianz [".$otherAlliance->tag."] ".$otherAlliance->name);
+						tableStart("B&uuml;ndnisanfrage an die Allianz ".$otherAlliance->nameWithTag);
 						echo "<tr>
 							<th>Name des Bündnisses:</th>
 							<td>
@@ -433,7 +433,7 @@
 						$res=dbquery("SELECT alliance_founder_id FROM alliances WHERE alliance_id='".$id."'");
 						$arr=mysql_fetch_array($res);
 
-						send_msg($arr['alliance_founder_id'],MSG_ALLYMAIL_CAT,"Bündnisanfrage","Die Allianz [b]" . $allianceNameWithTags[$cu->allianceId] . "[/b] fragt euch für ein Bündnis an.\n
+						send_msg($arr['alliance_founder_id'],MSG_ALLYMAIL_CAT,"Bündnisanfrage","Die Allianz [b]" . $allianceNamesWithTags[$cu->allianceId] . "[/b] fragt euch für ein Bündnis an.\n
 						[b]Text:[/b] ".addslashes($_POST['alliance_bnd_text'])."\n
 						Geschrieben von [b]".$cu->nick."[/b].\n Gehe auf die [page=alliance]Allianzseite[/page] um die Anfrage zu bearbeiten!");
 					}
@@ -492,14 +492,14 @@
 
 						success_msg("Du hast einer Allianz den Krieg erkl&auml;rt!");
 
-						add_alliance_history($cu->allianceId,"Der Allianz [b]" . $allianceNameWithTags[$id] ."[/b] wird der Krieg erkl&auml;rt!");
-						add_alliance_history($id,"Die Allianz [b]" . $allianceNameWithTags[$cu->allianceId] . "[/b] erkl&auml;rt den Krieg!");
+						add_alliance_history($cu->allianceId,"Der Allianz [b]" . $allianceNamesWithTags[$id] ."[/b] wird der Krieg erkl&auml;rt!");
+						add_alliance_history($id,"Die Allianz [b]" . $allianceNamesWithTags[$cu->allianceId] . "[/b] erkl&auml;rt den Krieg!");
 
 						//Nachricht an den Leader der gegnerischen Allianz schreiben
 						$res=dbquery("SELECT alliance_founder_id FROM alliances WHERE alliance_id='".$id."';");
 						$arr=mysql_fetch_array($res);
 
-						send_msg($arr['alliance_founder_id'],MSG_ALLYMAIL_CAT,"Kriegserklärung","Die Allianz [b]" . $allianceNameWithTags[$cu->allianceId] . "[/b] erklärt euch den Krieg!\n
+						send_msg($arr['alliance_founder_id'],MSG_ALLYMAIL_CAT,"Kriegserklärung","Die Allianz [b]" . $allianceNamesWithTags[$cu->allianceId] . "[/b] erklärt euch den Krieg!\n
 						Die Kriegserklärung wurde von [b]".$cu->nick."[/b] geschrieben.\n Geh auf die Allianzseite für mehr Details!");
 					}
 				}
@@ -623,7 +623,7 @@
 						// Inform opposite leader
 						$res=dbquery("SELECT alliance_founder_id,alliance_name FROM alliances WHERE alliance_id='".$arr['alliance_bnd_alliance_id2']."'");
 	          $arr=mysql_fetch_array($res);
-	   				send_msg($arr['alliance_founder_id'],MSG_ALLYMAIL_CAT,"Anfrage zurückgenommen","Die Allianz [b]" . $allianceNameWithTags[$cu->allianceId] . "[/b] hat ihre Büdnisanfrage wieder zurückgezogen.");
+	   				send_msg($arr['alliance_founder_id'],MSG_ALLYMAIL_CAT,"Anfrage zurückgenommen","Die Allianz [b]" . $allianceNamesWithTags[$cu->allianceId] . "[/b] hat ihre Büdnisanfrage wieder zurückgezogen.");
 
 						// Display message
 						echo "Anfrage gel&ouml;scht! Die Allianzleitung der Allianz <b>".$arr['alliance_name']."</b> wurde per Nachricht dar&uuml;ber informiert.<br/><br/>";
