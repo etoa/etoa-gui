@@ -18,6 +18,9 @@
 	//
 	//
 
+    /** @var \EtoA\Alliance\AllianceRepository $allianceRepository */
+    $allianceRepository = $app['etoa.alliance.repository'];
+
 	/**
 	* Internal messageboard for alliances
 	*
@@ -31,11 +34,10 @@
 	if ($cu->allianceId>0)
 	{
 		// Prüfen ob Allianz existiert
-		$res=dbquery("SELECT alliance_id,alliance_founder_id FROM alliances WHERE alliance_id='".$cu->allianceId."';");
-		if (mysql_num_rows($res)>0)
-		{
-			$arr=mysql_fetch_array($res);
-			define('BOARD_ALLIANCE_ID',$arr['alliance_id']);
+        $alliance = $allianceRepository->getAlliance((int) $cu->allianceId);
+        $allianceNames = $allianceRepository->getAllianceNames();
+		if ($alliance !== null) {
+			define('BOARD_ALLIANCE_ID', $alliance->id);
 
 			//Get Variablen überprüfen und IDs zuordnen
 			$legal=TRUE;
@@ -57,7 +59,6 @@
 						$alliance_bnd_id=$barr['alliance_bnd_alliance_id2'];
 					}
 
-					$alliance=get_alliance_names2($alliance_bnd_id);
 					$_GET['cat']=0;
 				}
 				else
@@ -127,7 +128,7 @@
 			}
 
 			// Gründer prüfen
-			if ($arr['alliance_founder_id']==$cu->id)
+			if ($alliance->founderId==$cu->id)
 				$isFounder=true;
 			else
 				$isFounder=false;
@@ -184,7 +185,7 @@
 						echo "<form action=\"?page=$page&amp;topic=".$npid."&bnd=".$bid."\" method=\"post\">";
 						if (isset($alliance_bnd_id))
 						{
-							echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; <a href=\"?page=$page&amp;bnd=".$tarr['topic_bnd_id']."\">".$alliance[$alliance_bnd_id]['name']."</a> &gt; <a href=\"?page=$page&amp;topic=".$npid."\">".$tarr['topic_subject']."</a> &gt; Neuer Beitrag</h2>";
+							echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; <a href=\"?page=$page&amp;bnd=".$tarr['topic_bnd_id']."\">".$allianceNames[$alliance_bnd_id]."</a> &gt; <a href=\"?page=$page&amp;topic=".$npid."\">".$tarr['topic_subject']."</a> &gt; Neuer Beitrag</h2>";
 						}
 						else
 						{
@@ -229,7 +230,7 @@
 				}
 				else
 					error_msg("Datensatz nicht gefunden!");
-				echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page&bnd=".$bid."&topic=".$arr['post_topic_id']."#".$arr['post_id']."'\" /></form>";
+				echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page&bnd=".$bid."&topic=".$arr['post_topic_id']."#".$epid."'\" /></form>";
 			}
 
 			//
@@ -258,7 +259,7 @@
 				}
 				else
 					error_msg("Datensatz nicht gefunden!");
-				echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page&bnd=".$bid."&topic=".$arr['post_topic_id']."#".$arr['post_id']."' \" /></form>";
+				echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page&bnd=".$bid."&topic=".$arr['post_topic_id']."#".$dpid."' \" /></form>";
 			}
 
 			//
@@ -278,7 +279,7 @@
 					{
 						if ($tarr['topic_bnd_id']>0)
 						{
-							echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; <a href=\"?page=$page&amp;bnd=".$tarr['topic_bnd_id']."\">".$alliance[$alliance_bnd_id]['name']."</a> &gt; ".$tarr['topic_subject']."</h2>";
+							echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; <a href=\"?page=$page&amp;bnd=".$tarr['topic_bnd_id']."\">".$allianceNames[$alliance_bnd_id]."</a> &gt; ".$tarr['topic_subject']."</h2>";
 						}
 						else
 						{
@@ -395,7 +396,7 @@
 				if ($bid>0)
 				{
 					echo "<form action=\"?page=$page&amp;bnd=".$bid."\" method=\"post\">";
-					echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; <a href=\"?page=$page&amp;bnd=".$bid."\">".$alliance[$alliance_bnd_id]['name']."</a> &gt; Neues Thema</h2>";
+					echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; <a href=\"?page=$page&amp;bnd=".$bid."\">".$allianceNames[$alliance_bnd_id]."</a> &gt; Neues Thema</h2>";
 				}
 				else
 				{
@@ -464,7 +465,7 @@
 							echo " /> Nein</td></tr>";
 							if ($bid!=0)
 							{
-								echo "<tr><th>Kategorie:</th><td>".$alliance[$alliance_bnd_id]['name']."</td></tr>";
+								echo "<tr><th>Kategorie:</th><td>".$allianceNames[$alliance_bnd_id]."</td></tr>";
 							}
 							else
 							{
@@ -488,7 +489,7 @@
 				}
 				else
 					error_msg("Datensatz nicht gefunden!");
-				echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page&amp;bnd=".$arr['topic_bnd_id']."'\" /></form>";
+				echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page&amp;bnd=".$bid."'\" /></form>";
 			}
 
 			//
@@ -510,7 +511,7 @@
 				}
 				else
 					error_msg("Datensatz nicht gefunden!");
-				echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page&amp;bnd=".$arr['topic_bnd_id']."'\" /></form>";
+				echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?page=$page&amp;bnd=".$bid."'\" /></form>";
 			}
 
 			//
@@ -616,7 +617,7 @@
 				{
 					if ($legal=TRUE)
 					{
-						echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; ".$alliance[$alliance_bnd_id]['name']."</h2>";
+						echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; ".$allianceNames[$alliance_bnd_id]."</h2>";
 
 						// Save new topic
 						if (isset($_POST['submit']) && isset($_POST['topic_subject']) && isset($_POST['post_text']) && $cu->id>0)
@@ -832,7 +833,7 @@
 					echo "<form action=\"?page=$page\" method=\"post\">";
 					echo "<input type=\"hidden\" name=\"bnd_id\" value=\"".$arr['alliance_bnd_id']."\" />";
 					tableStart();
-					echo "<tr><th>Name:</th><td>".$alliance[$alliance_bnd_id]['name']."</td></tr>";
+					echo "<tr><th>Name:</th><td>".$allianceNames[$alliance_bnd_id]."</td></tr>";
 					echo "<tr><th>Beschreibung:</th><td>".$arr['alliance_bnd_text']."</td></tr>";
 					echo "<tr><th>Zugriff:</th><td>";
 					foreach ($rank as $k=>$v)
@@ -1071,7 +1072,7 @@
 							{
 								$alliance_bnd_id=$arr['alliance_bnd_alliance_id2'];
 							}
-							$alliance=get_alliance_names();
+                            $alliances=get_alliance_names();
 
 							if ($isAdmin || isset($myCat[$arr['alliance_bnd_id']]))
 							{
@@ -1100,10 +1101,10 @@
 											$rstr.= $v.", ";
 									}
 									if ($rstr!="") $rstr=substr($rstr,0,strlen($rstr)-2);
-									echo " ".tm("Admin-Info: ".stripslashes($alliance[$alliance_bnd_id]['name']),/*"<b>Position:</b> ".$arr['cat_order']."<br/>*/"<b>Zugriff:</b> ".$rstr)."";
+									echo " ".tm("Admin-Info: ".stripslashes($alliances[$alliance_bnd_id]['name']),/*"<b>Position:</b> ".$arr['cat_order']."<br/>*/"<b>Zugriff:</b> ".$rstr)."";
 								}
 								echo "><b><a href=\"?page=$page&amp;cat=0&bnd=".$arr['alliance_bnd_id']."\"";
-								echo ">".stripslashes($alliance[$alliance_bnd_id]['name'])."</a></b><br/>".text2html($arr['alliance_bnd_text'])."</td>";
+								echo ">".stripslashes($alliances[$alliance_bnd_id]['name'])."</a></b><br/>".text2html($arr['alliance_bnd_text'])."</td>";
 								$fres=dbquery("SELECT COUNT(*) FROM ".BOARD_POSTS_TABLE.",".BOARD_TOPIC_TABLE." WHERE post_topic_id=topic_id AND topic_bnd_id=".intval($arr['alliance_bnd_id']).";");
 								$farr=mysql_fetch_row($fres);
 								echo "<td>".$farr[0]."</td>";
