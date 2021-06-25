@@ -906,13 +906,15 @@ echo '<div class="tabs" id="user_edit_tabs">
                     <td class=\"tbltitle\">Allianz:</td>
                     <td class=\"tbldata\">
                         <select id=\"user_alliance_id\" name=\"user_alliance_id\" onchange=\"loadAllianceRanks(".$arr['user_alliance_rank_id'].");\">";
-                        $ally_arr=get_alliance_names();
+                        /** @var \EtoA\Alliance\AllianceRepository $allianceRepository */
+                        $allianceRepository = $app['etoa.alliance.repository'];
+                        $allianceNamesWithTags = $allianceRepository->getAllianceNamesWithTags();
                         echo "<option value=\"0\">(Keine)</option>";
-                        foreach ($ally_arr as $aid=>$ak)
+                        foreach ($allianceNamesWithTags as $allianceId => $allianceNamesWithTag)
                         {
-                            echo "<option value=\"$aid\"";
-                            if ($aid==$arr['user_alliance_id']) echo " selected=\"selected\"";
-                            echo ">[".$ak['tag']."]  ".$ak['name']."</option>";
+                            echo "<option value=\"$allianceId\"";
+                            if ($allianceId==$arr['user_alliance_id']) echo " selected=\"selected\"";
+                            echo ">" . $allianceNamesWithTag . "</option>";
                         }
                         echo "</select> Rang: <span id=\"ars\">-</span></td>
                 </tr>";

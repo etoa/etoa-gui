@@ -6,9 +6,12 @@ use EtoA\Core\Configuration\ConfigurationService;
 $config = $app['etoa.config.service'];
 
 if ($config->getBoolean("alliance_allow")) {
-    if ($cu->allianceId == 0)
-    {
-        // Check application
+		if ($cu->allianceId == 0)
+		{
+		    /** @var \EtoA\Alliance\AllianceRepository $allianceRepository */
+		    $allianceRepository = $app['etoa.alliance.repository'];
+
+			// Check application
         $application_alliance=0;
         $application_timestamp = 0;
         $res = dbquery("
@@ -27,16 +30,16 @@ if ($config->getBoolean("alliance_allow")) {
             $application_timestamp=$arr[1];
         }
 
-        //
-        // Infotext bei aktiver Bewerbung
-        //
-        if ($application_alliance>0)
-        {
-            // Bewerbung zurückziehen
-            if (isset($_GET['action']) && $_GET['action']=="cancelapplication")
-            {
-        $alliances = get_alliance_names();
-        send_msg($alliances[$application_alliance]['founder_id'],MSG_ALLYMAIL_CAT,"Bewerbung zurückgezogen","Der Spieler ".$cu->nick." hat die Bewerbung bei deiner Allianz zurückgezogen!");
+			//
+			// Infotext bei aktiver Bewerbung
+			//
+			if ($application_alliance>0)
+			{
+				// Bewerbung zurückziehen
+				if (isset($_GET['action']) && $_GET['action']=="cancelapplication")
+				{
+				    $alliance = $allianceRepository->getAlliance((int) $application_alliance);
+        send_msg($alliance->founderId,MSG_ALLYMAIL_CAT,"Bewerbung zurückgezogen","Der Spieler ".$cu->nick." hat die Bewerbung bei deiner Allianz zurückgezogen!");
         add_alliance_history($application_alliance,"Der Spieler [b]".$cu->nick."[/b] zieht seine Bewerbung zurück.");
         dbquery("
         DELETE FROM
@@ -175,8 +178,8 @@ if ($config->getBoolean("alliance_allow")) {
                 $aid = (int) $_POST['user_alliance_id'];
                 if ($_POST['user_alliance_application']!='')
                 {
-                    $alliances = get_alliance_names();
-                    send_msg($alliances[$aid]['founder_id'],MSG_ALLYMAIL_CAT,"Bewerbung","Der Spieler ".$cu->nick." hat sich bei deiner Allianz beworben. Gehe auf die [page=alliance&action=applications]Allianzseite[/page] für Details!");
+                    $alliance = $allianceRepository->getAlliance($aid);
+                    send_msg($alliance->founderId,MSG_ALLYMAIL_CAT,"Bewerbung","Der Spieler ".$cu->nick." hat sich bei deiner Allianz beworben. Gehe auf die [page=alliance&action=applications]Allianzseite[/page] für Details!");
                     add_alliance_history($aid,"Der Spieler [b]".$cu->nick."[/b] bewirbt sich sich bei der Allianz.");
                     dbquery("
                     INSERT INTO
@@ -196,7 +199,7 @@ if ($config->getBoolean("alliance_allow")) {
                     );
                     ");
 
-                    success_msg("Deine Bewerbung bei der Allianz [".$alliances[$aid]['tag']."] ".$alliances[$aid]['name']." wurde gespeichert! Die Allianzleitung wurde informiert und wird deine Bewerbung ansehen.");
+                    success_msg("Deine Bewerbung bei der Allianz [".$alliance->tag."] ".$alliance->name." wurde gespeichert! Die Allianzleitung wurde informiert und wird deine Bewerbung ansehen.");
                     echo "<input value=\"&Uuml;bersicht\" type=\"button\" onclick=\"document.location='?page=$page'\" />";
                 }
                 else

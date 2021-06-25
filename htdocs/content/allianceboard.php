@@ -829,7 +829,7 @@
 					} else {
 						$alliance_bnd_id=$arr['alliance_bnd_alliance_id2'];
 					}
-					$alliance=get_alliance_names();
+
 					echo "<form action=\"?page=$page\" method=\"post\">";
 					echo "<input type=\"hidden\" name=\"bnd_id\" value=\"".$arr['alliance_bnd_id']."\" />";
 					tableStart();
@@ -1072,7 +1072,6 @@
 							{
 								$alliance_bnd_id=$arr['alliance_bnd_alliance_id2'];
 							}
-                            $alliances=get_alliance_names();
 
 							if ($isAdmin || isset($myCat[$arr['alliance_bnd_id']]))
 							{
@@ -1101,10 +1100,10 @@
 											$rstr.= $v.", ";
 									}
 									if ($rstr!="") $rstr=substr($rstr,0,strlen($rstr)-2);
-									echo " ".tm("Admin-Info: ".stripslashes($alliances[$alliance_bnd_id]['name']),/*"<b>Position:</b> ".$arr['cat_order']."<br/>*/"<b>Zugriff:</b> ".$rstr)."";
+									echo " ".tm("Admin-Info: ".stripslashes($allianceNames[$alliance_bnd_id]),/*"<b>Position:</b> ".$arr['cat_order']."<br/>*/"<b>Zugriff:</b> ".$rstr)."";
 								}
 								echo "><b><a href=\"?page=$page&amp;cat=0&bnd=".$arr['alliance_bnd_id']."\"";
-								echo ">".stripslashes($alliances[$alliance_bnd_id]['name'])."</a></b><br/>".text2html($arr['alliance_bnd_text'])."</td>";
+								echo ">".stripslashes($allianceNames[$alliance_bnd_id])."</a></b><br/>".text2html($arr['alliance_bnd_text'])."</td>";
 								$fres=dbquery("SELECT COUNT(*) FROM ".BOARD_POSTS_TABLE.",".BOARD_TOPIC_TABLE." WHERE post_topic_id=topic_id AND topic_bnd_id=".intval($arr['alliance_bnd_id']).";");
 								$farr=mysql_fetch_row($fres);
 								echo "<td>".$farr[0]."</td>";
