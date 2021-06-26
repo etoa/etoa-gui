@@ -30,6 +30,7 @@ include_once('cell.xajax.php');
 
 	function launchBookmarkProbe($bid)
 	{
+	    global $app;
 		$cp = Entity::createFactoryById($_SESSION['cpid']);
 
 		$objResponse = new xajaxResponse();
@@ -59,12 +60,9 @@ include_once('cell.xajax.php');
 				$shipOutput = "";
 				$probeCount = true;
 				$sidarr = explode(",",$barr['ships']);
-				$ships = [];
-				$sres = dbquery("SELECT ship_id,ship_name FROM ships WHERE ship_show=1 ORDER BY ship_type_id,ship_order;");
-				while ($sarr = mysql_fetch_row($sres))
-				{
-					$ships[$sarr[0]] = $sarr[1];
-				}
+				/** @var \EtoA\Ship\ShipDataRepository $shipDataRepository */
+				$shipDataRepository = $app[\EtoA\Ship\ShipDataRepository::class];
+				$ships = $shipDataRepository->getShipNames(true);
 				foreach ($sidarr as $sd)
 				{
 					$sdi = explode(":",$sd);
