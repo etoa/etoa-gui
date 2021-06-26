@@ -1607,7 +1607,7 @@ echo '</div><div id="tabs-8">';
     {
         tableStart('Tickets','100%');
         echo "<tr>
-            <th>IDsssss</th>
+            <th>ID</th>
             <th>Status</th>
             <th>Kategorie</th>
             <th>Zugeteilter Admin</th>
