@@ -55,7 +55,7 @@ class UserRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function setLogoutTime(int $userId)
+    public function setLogoutTime(int $userId): void
     {
         $this->createQueryBuilder()
             ->update('users')

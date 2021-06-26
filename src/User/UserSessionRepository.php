@@ -8,6 +8,15 @@ use EtoA\Core\AbstractRepository;
 
 class UserSessionRepository extends AbstractRepository
 {
+    public function count(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(*)')
+            ->from('user_sessions')
+            ->execute()
+            ->fetchOne();
+    }
+
     public function countActiveSessions(int $timeout): int
     {
         return (int) $this->createQueryBuilder()
@@ -28,6 +37,7 @@ class UserSessionRepository extends AbstractRepository
             ->setParameter('id', $id)
             ->execute()
             ->fetchAssociative();
+
         return $data !== false ? $data : null;
     }
 
