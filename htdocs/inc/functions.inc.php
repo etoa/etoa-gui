@@ -893,28 +893,6 @@ function add_alliance_history($alliance_id,$text)
 }
 
 /**
-* User-history adder
-* @todo User history no longer uses
-*/
-function add_user_history($user_id,$text)
-{
-    dbquery("
-        INSERT INTO
-        user_history
-        (
-            history_user_id,
-            history_text,
-            history_timestamp
-        )
-        VALUES
-        (
-            '".$user_id."',
-            '".addslashes($text)."',
-            '".time()."'
-        );");
-}
-
-/**
 * Check for buddys who are online
 */
 function check_buddys_online($id)
