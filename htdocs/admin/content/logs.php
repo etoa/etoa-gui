@@ -237,7 +237,7 @@ function gameLog(ConfigurationService $config)
 
 function commonLog()
 {
-    global $page;
+    global $page, $app;
 
     $sql_query = stripslashes($_POST['sql_query']);
 
@@ -423,6 +423,14 @@ function commonLog()
     {
         echo "<form action=\"?page=".$page."\" method=\"post\">";
 
+        /** @var \EtoA\Building\BuildingDataRepository $buildingRepository */
+        $buildingRepository = $app[\EtoA\Building\BuildingDataRepository::class];
+        $buildingNames = $buildingRepository->getBuildingNames(true);
+
+        /** @var \EtoA\Technology\TechnologyDataRepository $technologyRepository */
+        $technologyRepository = $app[\EtoA\Technology\TechnologyDataRepository::class];
+        $technologyNames = $technologyRepository->getTechnologyNames(true);
+
         $res = dbquery($sql_query);
 
         tableStart("".mysql_num_rows($res)." Ergebnisse");
@@ -436,50 +444,11 @@ function commonLog()
         while($arr=mysql_fetch_array($res))
         {
             //Objekt laden
-            if($arr['logs_game_building_id']!=0)
-            {
-                $bres=dbquery("
-                SELECT
-                    building_name
-                FROM
-                    buildings
-                WHERE
-                    building_id='".$arr['logs_game_building_id']."';");
-
-                if(mysql_num_rows($bres)>0)
-                {
-                    $barr=mysql_fetch_array($bres);
-                    $object = $barr['building_name'];
-
-                }
-                else
-                {
-                    $object = "Gebäude?";
-                }
-            }
-            elseif($arr['logs_game_tech_id']!=0)
-            {
-                $tres=dbquery("
-                SELECT
-                    tech_name
-                FROM
-                    technologies
-                WHERE
-                    tech_id='".$arr['logs_game_tech_id']."';");
-
-                if(mysql_num_rows($tres)>0)
-                {
-                    $tarr=mysql_fetch_array($tres);
-                    $object = $tarr['tech_name'];
-
-                }
-                else
-                {
-                    $object = "Forschung?";
-                }
-            }
-            else
-            {
+            if ($arr['logs_game_building_id']!=0) {
+                $object = $buildingNames[$arr['logs_game_building_id']] ?? "Gebäude?";
+            } elseif ($arr['logs_game_tech_id']!=0) {
+                $object = $technologyNames[$arr['logs_game_tech_id']] ?? "Forschung?";
+            } else {
                 $object = "";
             }
 

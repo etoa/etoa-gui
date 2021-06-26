@@ -16,38 +16,42 @@ if ($sub=="techtree")
 
     echo "<select onchange=\"xajax_reqInfo(this.value,'b')\">
     <option value=\"0\">Gebäude wählen...</option>";
-    $bures = dbquery("SELECT building_id,building_name FROM buildings WHERE building_show=1 ORDER BY building_name;");
-    while ($buarr = mysql_fetch_array($bures))
-    {
-        echo "<option value=\"".$buarr['building_id']."\">".$buarr['building_name']."</option>";
+    /** @var \EtoA\Building\BuildingDataRepository $buildingRepository */
+    $buildingRepository = $app[\EtoA\Building\BuildingDataRepository::class];
+    $buildingNames = $buildingRepository->getBuildingNames();
+    foreach ($buildingNames as $buildingId => $buildingName) {
+        echo "<option value=\"".$buildingId."\">".$buildingName."</option>";
     }
     echo "</select> ";
 
-
     echo "<select onchange=\"xajax_reqInfo(this.value,'t')\">
     <option value=\"0\">Technologie wählen...</option>";
+    /** @var \EtoA\Technology\TechnologyDataRepository $technologyRepository */
+    $technologyRepository = $app[\EtoA\Technology\TechnologyDataRepository::class];
+    $technologyNames = $technologyRepository->getTechnologyNames();
     $teres = dbquery("SELECT tech_id,tech_name FROM technologies WHERE tech_show=1 ORDER BY tech_name;");
-    while ($tearr = mysql_fetch_array($teres))
-    {
-        echo "<option value=\"".$tearr['tech_id']."\">".$tearr['tech_name']."</option>";
+    foreach ($technologyNames as $technologyId => $technologyName) {
+        echo "<option value=\"".$technologyId."\">".$technologyName."</option>";
     }
     echo "</select> ";
 
     echo "<select onchange=\"xajax_reqInfo(this.value,'s')\">
     <option value=\"0\">Schiff wählen...</option>";
-    $teres = dbquery("SELECT ship_id,ship_name FROM ships WHERE ship_show=1 AND special_ship=0 ORDER BY ship_name;");
-    while ($tearr = mysql_fetch_array($teres))
-    {
-        echo "<option value=\"".$tearr['ship_id']."\">".$tearr['ship_name']."</option>";
+    /** @var \EtoA\Ship\ShipDataRepository $shipRepository */
+    $shipRepository = $app[\EtoA\Ship\ShipDataRepository::class];
+    $shipNames = $shipRepository->getShipNames();
+    foreach ($shipNames as $shipId => $shipName) {
+        echo "<option value=\"".$shipId."\">".$shipName."</option>";
     }
     echo "</select> ";
 
     echo "<select onchange=\"xajax_reqInfo(this.value,'d')\">
     <option value=\"0\">Verteidigung wählen...</option>";
-    $teres = dbquery("SELECT def_id,def_name FROM defense WHERE def_show=1 ORDER BY def_name;");
-    while ($tearr = mysql_fetch_array($teres))
-    {
-        echo "<option value=\"".$tearr['def_id']."\">".$tearr['def_name']."</option>";
+    /** @var \EtoA\Defense\DefenseDataRepository $defenseRepository */
+    $defenseRepository = $app[\EtoA\Defense\DefenseDataRepository::class];
+    $defenseNames = $defenseRepository->getDefenseNames();
+    foreach ($defenseNames as $defenseId => $defenseName) {
+        echo "<option value=\"".$defenseId."\">".$defenseName."</option>";
     }
     echo "</select><br/><br/>";
 

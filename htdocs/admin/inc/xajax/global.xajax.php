@@ -1440,45 +1440,31 @@ function totalBuildingPrices($form)
 
 function reqInfo($id,$cat='b')
 {
+    global $app;
 	$or = new xajaxResponse();
 	ob_start();
 
 	defineImagePaths();
 
-	// Load items
-    $bu_name = [];
-	$bures = dbquery("SELECT building_id,building_name FROM buildings WHERE building_show=1;");
-	while ($buarr = mysql_fetch_array($bures))
-	{
-		$bu_name[$buarr['building_id']]=$buarr['building_name'];
-	}
-    $te_name = [];
-	$teres = dbquery("SELECT tech_id,tech_name FROM technologies WHERE tech_show=1;");
-	while ($tearr = mysql_fetch_array($teres))
-	{
-		$te_name[$tearr['tech_id']]=$tearr['tech_name'];
-	}
+    /** @var \EtoA\Building\BuildingDataRepository $buildingRepository */
+    $buildingRepository = $app[\EtoA\Building\BuildingDataRepository::class];
+    $buildingNames = $buildingRepository->getBuildingNames();
 
-    $sh_name = [];
-	$teres = dbquery("SELECT ship_id,ship_name FROM ships WHERE ship_show=1 AND special_ship=0;");
-	while ($tearr = mysql_fetch_array($teres))
-	{
-		$sh_name[$tearr['ship_id']]=$tearr['ship_name'];
-	}
+    /** @var \EtoA\Technology\TechnologyDataRepository $technologyRepository */
+    $technologyRepository = $app[\EtoA\Technology\TechnologyDataRepository::class];
+    $technologyNames = $technologyRepository->getTechnologyNames();
 
-    $de_name = [];
-	$teres = dbquery("SELECT def_id,def_name FROM defense WHERE def_show=1;");
-	while ($tearr = mysql_fetch_array($teres))
-	{
-		$de_name[$tearr['def_id']]=$tearr['def_name'];
-	}
+    /** @var \EtoA\Ship\ShipDataRepository $shipRepository */
+    $shipRepository = $app[\EtoA\Ship\ShipDataRepository::class];
+    $shipNames = $shipRepository->getShipNames();
 
-    $m_name = [];
-	$teres = dbquery("SELECT missile_id,missile_name FROM missiles WHERE missile_show=1;");
-	while ($tearr = mysql_fetch_array($teres))
-	{
-		$m_name[$tearr['missile_id']]=$tearr['missile_name'];
-	}
+    /** @var \EtoA\Defense\DefenseDataRepository $defenseRepository */
+    $defenseRepository = $app[\EtoA\Defense\DefenseDataRepository::class];
+    $defenseNames = $defenseRepository->getDefenseNames();
+
+    /** @var \EtoA\Missile\MissileDataRepository $missileRepository */
+    $missileRepository = $app[\EtoA\Missile\MissileDataRepository::class];
+    $missileNames = $missileRepository->getMissileNames();
 
 	//
 	// Required objects
@@ -1519,7 +1505,7 @@ function reqInfo($id,$cat='b')
 	{
 		while($arr=mysql_fetch_assoc($res))
 		{
-			$items[] = array($arr['req_building_id'],$bu_name[$arr['req_building_id']],$arr['req_level'],IMAGE_PATH."/buildings/building".$arr['req_building_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['req_building_id'].",'b')");
+			$items[] = array($arr['req_building_id'],$buildingNames[$arr['req_building_id']],$arr['req_level'],IMAGE_PATH."/buildings/building".$arr['req_building_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['req_building_id'].",'b')");
 		}
 	}
 	$res = dbquery("SELECT * FROM $req_tbl WHERE $req_field=".$id." AND req_tech_id>0 AND req_level>0 ORDER BY req_level;");
@@ -1528,7 +1514,7 @@ function reqInfo($id,$cat='b')
 	{
 		while($arr=mysql_fetch_assoc($res))
 		{
-			$items[] = array($arr['req_tech_id'],$te_name[$arr['req_tech_id']],$arr['req_level'],IMAGE_PATH."/technologies/technology".$arr['req_tech_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['req_tech_id'].",'t')");
+			$items[] = array($arr['req_tech_id'],$technologyNames[$arr['req_tech_id']],$arr['req_level'],IMAGE_PATH."/technologies/technology".$arr['req_tech_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['req_tech_id'].",'t')");
 		}
 	}
 
@@ -1556,27 +1542,27 @@ function reqInfo($id,$cat='b')
 	if ($cat=='b')
 	{
 		$img = IMAGE_PATH."/buildings/building".$id."_middle.".IMAGE_EXT;
-		$name = $bu_name[$id];
+		$name = $buildingNames[$id];
 	}
 	elseif($cat=='t')
 	{
 		$img = IMAGE_PATH."/technologies/technology".$id."_middle.".IMAGE_EXT;
-		$name = $te_name[$id];
+		$name = $technologyNames[$id];
 	}
 	elseif($cat=='s')
 	{
 		$img = IMAGE_PATH."/ships/ship".$id."_middle.".IMAGE_EXT;
-		$name = $sh_name[$id];
+		$name = $shipNames[$id];
 	}
 	elseif($cat=='d')
 	{
 		$img = IMAGE_PATH."/defense/def".$id."_middle.".IMAGE_EXT;
-		$name = $de_name[$id];
+		$name = $defenseNames[$id];
 	}
 	elseif($cat=='m')
 	{
 		$img = IMAGE_PATH."/missiles/missile".$id."_middle.".IMAGE_EXT;
-		$name = $m_name[$id];
+		$name = $missileNames[$id];
 	} else {
 	    throw new \InvalidArgumentException('Unknown category: ' . $cat);
     }
@@ -1611,9 +1597,9 @@ function reqInfo($id,$cat='b')
 		{
 			while($arr=mysql_fetch_assoc($res))
 			{
-				if (isset($bu_name[$arr['obj_id']]))
+				if (isset($buildingNames[$arr['obj_id']]))
 				{
-					$items[] = array($arr['obj_id'],$bu_name[$arr['obj_id']],$arr[$req_level_field],IMAGE_PATH."/buildings/building".$arr['obj_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['obj_id'].",'b')");
+					$items[] = array($arr['obj_id'],$buildingNames[$arr['obj_id']],$arr[$req_level_field],IMAGE_PATH."/buildings/building".$arr['obj_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['obj_id'].",'b')");
 				}
 			}
 		}
@@ -1623,9 +1609,9 @@ function reqInfo($id,$cat='b')
 		{
 			while($arr=mysql_fetch_assoc($res))
 			{
-				if (isset($te_name[$arr['obj_id']]))
+				if (isset($technologyNames[$arr['obj_id']]))
 				{
-					$items[] = array($arr['obj_id'],$te_name[$arr['obj_id']],$arr[$req_level_field],IMAGE_PATH."/technologies/technology".$arr['obj_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['obj_id'].",'t')");
+					$items[] = array($arr['obj_id'],$technologyNames[$arr['obj_id']],$arr[$req_level_field],IMAGE_PATH."/technologies/technology".$arr['obj_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['obj_id'].",'t')");
 				}
 			}
 		}
@@ -1635,9 +1621,9 @@ function reqInfo($id,$cat='b')
 		{
 			while($arr=mysql_fetch_assoc($res))
 			{
-				if (isset($sh_name[$arr['obj_id']]))
+				if (isset($shipNames[$arr['obj_id']]))
 				{
-					$items[] = array($arr['obj_id'],$sh_name[$arr['obj_id']],$arr[$req_level_field],IMAGE_PATH."/ships/ship".$arr['obj_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['obj_id'].",'s')");
+					$items[] = array($arr['obj_id'],$shipNames[$arr['obj_id']],$arr[$req_level_field],IMAGE_PATH."/ships/ship".$arr['obj_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['obj_id'].",'s')");
 				}
 			}
 		}
@@ -1647,9 +1633,9 @@ function reqInfo($id,$cat='b')
 		{
 			while($arr=mysql_fetch_assoc($res))
 			{
-				if (isset($de_name[$arr['obj_id']]))
+				if (isset($defenseNames[$arr['obj_id']]))
 				{
-					$items[] = array($arr['obj_id'],$de_name[$arr['obj_id']],$arr[$req_level_field],IMAGE_PATH."/defense/def".$arr['obj_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['obj_id'].",'d')");
+					$items[] = array($arr['obj_id'],$defenseNames[$arr['obj_id']],$arr[$req_level_field],IMAGE_PATH."/defense/def".$arr['obj_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['obj_id'].",'d')");
 				}
 			}
 		}
@@ -1659,9 +1645,9 @@ function reqInfo($id,$cat='b')
 		{
 			while($arr=mysql_fetch_assoc($res))
 			{
-				if (isset($m_name[$arr['obj_id']]))
+				if (isset($missileNames[$arr['obj_id']]))
 				{
-					$items[] = array($arr['obj_id'],$m_name[$arr['obj_id']],$arr[$req_level_field],IMAGE_PATH."/missiles/missile".$arr['obj_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['obj_id'].",'m')");
+					$items[] = array($arr['obj_id'],$missileNames[$arr['obj_id']],$arr[$req_level_field],IMAGE_PATH."/missiles/missile".$arr['obj_id']."_middle.".IMAGE_EXT,"xajax_reqInfo(".$arr['obj_id'].",'m')");
 				}
 			}
 		}

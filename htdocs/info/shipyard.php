@@ -309,7 +309,7 @@
                     <a href=\"?$link&site=$site&id=".$ship->id."\">
                     <img src=\"$s_img\" alt=\"Schiffbild\" width=\"40\" height=\"40\" border=\"0\"/></a></td>";
                     echo "<td ".tm($ship->name,text2html($ship->shortComment)."<br/><br/>".shipRanking($ship)).">
-                        <a href=\"?$link&site=$site&id=".$ship->id."\">".$ship->id."</a>
+                        <a href=\"?$link&site=$site&id=".$ship->id."\">".$ship->name."</a>
                     </td>";
                     echo "<td>";
                     echo $ship->raceId > 0 ? $raceNames[$ship->raceId] : '-';
