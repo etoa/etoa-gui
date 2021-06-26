@@ -241,7 +241,7 @@ class UniverseGenerator
                 wormholes
             ");
         $nwarr = mysql_fetch_row($nwres);
-        if (fmod($nwarr[0], 2) != 0) {
+        if (fmod((int) $nwarr[0], 2) != 0) {
             echo "<br>Ein Wurmloch ist zuviel, lösche es!<br>";
             $res = dbquery("
                 SELECT

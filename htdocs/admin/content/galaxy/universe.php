@@ -2,6 +2,7 @@
 
 use EtoA\Universe\UniverseGenerator;
 use EtoA\Core\Configuration\ConfigurationService;
+use Symfony\Component\HttpFoundation\Request;
 
 /** @var UniverseGenerator */
 $universeGenerator = $app['etoa.universe.generator'];
@@ -9,25 +10,28 @@ $universeGenerator = $app['etoa.universe.generator'];
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
 
+/** @var Request */
+$request = Request::createFromGlobals();
+
 echo "<h1>Universum</h1>";
 
 //
 // Universum erstellen
 //
-if (isset($_POST['submit_create_universe']))
+if ($request->request->has('submit_create_universe'))
 {
     echo "<h2>Urknall - Schritt 2/3</h2>";
-    $config->set("num_of_sectors", "", $_POST['num_of_sectors_p1'], $_POST['num_of_sectors_p2']);
-    $config->set("num_of_cells", "", $_POST['num_of_cells_p1'], $_POST['num_of_cells_p2']);
-    $config->set("space_percent_solsys", intval($_POST['space_percent_solsys']));
-    $config->set("space_percent_asteroids", intval($_POST['space_percent_asteroids']));
-    $config->set("space_percent_nebulas", intval($_POST['space_percent_nebulas']));
-    $config->set("space_percent_wormholes", intval($_POST['space_percent_wormholes']));
-    $config->set("persistent_wormholes_ratio", max(0, min(100, intval($_POST['persistent_wormholes_ratio']))));
-    $config->set("num_planets", "", $_POST['num_planets_p1'], $_POST['num_planets_p2']);
-    $config->set("solsys_percent_planet", intval($_POST['solsys_percent_planet']));
-    $config->set("solsys_percent_asteroids", intval($_POST['solsys_percent_asteroids']));
-    $config->set("planet_fields", "", $_POST['planet_fields_p1'], $_POST['planet_fields_p2']);
+    $config->set("num_of_sectors", "", $request->request->getInt('num_of_sectors_p1'), $request->request->getInt('num_of_sectors_p2'));
+    $config->set("num_of_cells", "", $request->request->getInt('num_of_cells_p1'), $request->request->getInt('num_of_cells_p2'));
+    $config->set("space_percent_solsys", $request->request->getInt('space_percent_solsys'));
+    $config->set("space_percent_asteroids", $request->request->getInt('space_percent_asteroids'));
+    $config->set("space_percent_nebulas", $request->request->getInt('space_percent_nebulas'));
+    $config->set("space_percent_wormholes", $request->request->getInt('space_percent_wormholes'));
+    $config->set("persistent_wormholes_ratio", max(0, min(100, $request->request->getInt('persistent_wormholes_ratio'))));
+    $config->set("num_planets", "", $request->request->getInt('num_planets_p1'), $request->request->getInt('num_planets_p2'));
+    $config->set("solsys_percent_planet", $request->request->getInt('solsys_percent_planet'));
+    $config->set("solsys_percent_asteroids", $request->request->getInt('solsys_percent_asteroids'));
+    $config->set("planet_fields", "", $request->request->getInt('planet_fields_p1'), $request->request->getInt('planet_fields_p2'));
 
     echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
     tableStart("Systfemanordnung",400);
@@ -67,14 +71,14 @@ if (isset($_POST['submit_create_universe']))
 }
 
 // Erweitern
-elseif(isset($_POST['submit_expansion_universe']))
+elseif ($request->request->has('submit_expansion_universe'))
 {
     echo "<h2>Universum erweitern</h2>";
     echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
     echo "<b>Universum (".$config->param1Int('num_of_sectors')."x".$config->param2Int('num_of_sectors').") erweitern</b><br><br>";
-    echo "Erweitere das Universum. Es werden dabei die bereits gespeicherten Daten &uuml;bernommen bez&uuml;glich der der Aufteilung von Planeten, Sonnensystemen, Gasplaneten, Wurml&ouml;chern etc. &Auml;ndere allenfals die Daten unter dem Link \"Universum\".<br><br>";
+    echo "Erweitere das Universum. Es werden dabei die bereits gespeicherten Daten übernommen bezüglich der der Aufteilung von Planeten, Sonnensystemen, Gasplaneten, Wurmlöchern etc. Ändere allenfals die Daten unter dem Link \"Universum\".<br><br>";
 
-    echo "Gr&ouml;sse nach dem Ausbau: ";
+    echo "Grösse nach dem Ausbau: ";
     //erstellt 2 auswahllisten für die ausbaugrösse
     echo "<select name=\"expansion_sector_x\">";
         for ($x=($config->param1Int('num_of_sectors')+1);10>=$x;$x++)
@@ -96,30 +100,30 @@ elseif(isset($_POST['submit_expansion_universe']))
 }
 
 // Reset
-elseif (isset($_POST['submit_reset']))
+elseif ($request->request->has('submit_reset'))
 {
-    echo "<h2>Runde zur&uuml;cksetzen</h2>";
+    echo "<h2>Runde zurücksetzen</h2>";
     echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-    echo "Runde wirklich zur&uuml;cksetzen?<br/><br/>";
-    echo "<input onclick=\"return confirm('Reset wirklich durchf&uuml;hren?')\" type=\"submit\" name=\"submit_reset2\" value=\"Ja, die gesamte Runde zur&uuml;cksetzen\" >";
+    echo "Runde wirklich zurücksetzen?<br/><br/>";
+    echo "<input onclick=\"return confirm('Reset wirklich durchführen?')\" type=\"submit\" name=\"submit_reset2\" value=\"Ja, die gesamte Runde zurücksetzen\" >";
     echo "</form>";
 }
 
-elseif (isset($_POST['submit_galaxy_reset']))
+elseif ($request->request->has('submit_galaxy_reset'))
 {
     $universeGenerator->reset(false);
     echo "Das Universum wurde zurückgesetzt!<br/><br/>".button("Weiter","?page=$page&amp;sub=$sub");
 }
 
-elseif(isset($_POST['submit_reset2']))
+elseif ($request->request->has('submit_reset2'))
 {
     $universeGenerator->reset();
     echo "Die Runde wurde zurückgesetzt!<br/><br/>".button("Weiter","?page=$page&amp;sub=$sub");
 }
 
-elseif (isset($_POST['submit_addstars']))
+elseif ($request->request->has('submit_addstars'))
 {
-    $n = (int)$_POST['number_of_stars'];
+    $n = $request->request->getInt('number_of_stars');
     if ($n < 0)
     {
       $n = 0;
@@ -131,10 +135,10 @@ elseif (isset($_POST['submit_addstars']))
 // Uni-Optionen
 else
 {
-    if(isset($_POST['submit_create_universe2']))
+    if ($request->request->has('submit_create_universe2'))
     {
       echo "<h2>Urknall - Schritt 3/3</h2>";
-      $universeGenerator->create($_POST['map_image'],$_POST['map_precision']);
+      $universeGenerator->create($request->request->get('map_image'), $request->request->getInt('map_precision'));
       echo "<br/><br/>
       <img src=\"../misc/map.image.php?req_admin\" alt=\"Galaxiekarte\" id=\"img\" usemap=\"#Galaxy\" style=\"border:none;\"/><br/><br/>
       <input type=\"button\" value=\"Weiter\" onclick=\"document.location='?page=$page&sub=uni'\" />";
@@ -180,7 +184,7 @@ else
         <?PHP
 
         echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-        echo "Alle Einstellungen werden von der <a href=\"?page=config&sub=editor&category=3\">Konfiguration</a> &uuml;bernommen!<br/><br/>";
+        echo "Alle Einstellungen werden von der <a href=\"?page=config&sub=editor&category=3\">Konfiguration</a> übernommen!<br/><br/>";
 
         tableStart("Galaxie",420);
         echo "<tr>
@@ -263,7 +267,7 @@ else
     }
     else
     {
-        echo "<h2>&Uuml;bersicht</h2>";
+        echo "<h2>Übersicht</h2>";
 
         tableStart("Informationen", GALAXY_MAP_WIDTH);
         $res = dbquery("SELECT MAX(sx),MAX(sy) FROM cells;");
@@ -317,9 +321,9 @@ else
         }
 
         // Reset
-        echo "<h3>Runde komplett zur&uuml;cksetzen</h3>";
+        echo "<h3>Runde komplett zurücksetzen</h3>";
         echo "Hiermit kann die gesamte Runde zurückgesetzt werden (User, Allianzen, Planeten).<br/><br/>";
-        echo "<input type=\"submit\" name=\"submit_reset\" value=\"Ja, die gesamte Runde zur&uuml;cksetzen\" ><br><br>";
+        echo "<input type=\"submit\" name=\"submit_reset\" value=\"Ja, die gesamte Runde zurücksetzen\" ><br><br>";
 
         echo "</form>";
         }
