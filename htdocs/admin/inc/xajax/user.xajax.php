@@ -208,7 +208,7 @@ function userTickets($uid,$target)
 		{
 			$adminNick = $adminUserRepo->getNick($ticket->adminId);
 			echo "<tr>
-				<td><a href=\"#\" onclick=\"window.open('popup.php?page=tickets&id=".$ticket->id."','Tickets','top=20,left='+(screen.availWidth-720)+',width=700, height=600, status=no, scrollbars=yes')\">".$ticket->getIdString()."</a></td>
+				<td><a href=\"?page=tickets&id=".$ticket->id."\">".$ticket->getIdString()."</a></td>
 				<td class=\"tbldata\">".df($ticket->timestamp)."</td>
 				<td class=\"tbldata\">".$ticketRepo->getCategoryName($ticket->catId)."</td>
 				<td class=\"tbldata\">".$ticket->getStatusName()."</td>

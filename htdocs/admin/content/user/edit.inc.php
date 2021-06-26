@@ -1585,7 +1585,7 @@ echo '</div><div id="tabs-8">';
         foreach ($tickets as $ticket)
         {
             echo "<tr>
-                <td>".popupLink('tickets',$ticket->getIdString(),'','id='.$ticket->id)."</td>
+                <td><a href=\"?page=tickets&id=".$ticket->id."\">".$ticket->getIdString()."</a></td>
                 <td>".$ticket->getStatusName()."</td>
                 <td>".$ticketRepo->getCategoryName($ticket->catId)."</td>
                 <td>".($ticket->adminId > 0 ? $adminUserRepo->getNick($ticket->adminId) : '-')."</td>

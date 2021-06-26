@@ -314,7 +314,7 @@ function membersTab(array $members, array $ranks): void
 				<th>Mitgliedschaft beenden</th></tr>";
 		foreach ($members as $member) {
 			echo "<tr><td id=\"uifo" . $member['user_id'] . "\" style=\"display:none;\"><a href=\"?page=user&amp;sub=edit&amp;id=" . $member['user_id'] . "\">Daten</a><br/>
-				" . popupLink("sendmessage", "Nachricht senden", "", "id=" . $member['user_id']) . "</td>
+                <a href=\"?page=sendmessage&amp;id=" . $member['user_id'] . "\">Nachricht senden</a></td>
 				<td><a href=\"?page=user&amp;sub=edit&amp;id=" . $member['user_id'] . "\" " . cTT($member['user_nick'], "uifo" . $member['user_id'] . "") . ">" . $member['user_nick'] . "</a></td>
 				<td>" . nf($member['user_points']) . " Punkte</td>
 				<td><select name=\"member_rank[" . $member['user_id'] . "]\"><option value=\"0\">-</option>";

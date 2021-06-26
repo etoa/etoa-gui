@@ -184,25 +184,25 @@ $config = $app['etoa.config.service'];
 		echo "<tr>";
 		echo "<th style=\"width:50px;\">Rang</th>";
 		echo "<th>Tag</th>";
-		if ($sort=="bpoints")
+		if (isset($sort) && $sort=="bpoints")
 			echo "<th><i>Gebäude</i> ";
 		else
 			echo "<th>Gebäude ";
 		echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','bpoints','DESC')\" title=\"Absteigend sortieren\"><img src=\"../images/s_desc.png\" alt=\"Absteigend sortieren\" border=\"0\" /></a>";
 		echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','bpoints','ASC')\" title=\"Absteigend sortieren\"><img src=\"../images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a></th>";
-	if ($sort=="tpoints")
+	if (isset($sort) && $sort=="tpoints")
 			echo "<th><i>Forschung</i> ";
 		else
 			echo "<th>Forschung ";
 		echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','tpoints','DESC')\" title=\"Absteigend sortieren\"><img src=\"../images/s_desc.png\" alt=\"Absteigend sortieren\" border=\"0\" /></a>";
 		echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','tpoints','ASC')\" title=\"Absteigend sortieren\"><img src=\"../images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a></th>";
-	if ($sort=="spoints")
+	if (isset($sort) && $sort=="spoints")
 			echo "<th><i>Schiffe</i> ";
 		else
 			echo "<th>Schiffe ";
 		echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','spoints','DESC')\" title=\"Absteigend sortieren\"><img src=\"../images/s_desc.png\" alt=\"Absteigend sortieren\" border=\"0\" /></a>";
 		echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','spoints','ASC')\" title=\"Absteigend sortieren\"><img src=\"../images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a></th>";
-	if ($sort=="epoints")
+	if (isset($sort) && $sort=="epoints")
 			echo "<th><i>Erfahrung</i> ";
 		else
 			echo "<th>Allianzbasis ";
@@ -210,7 +210,7 @@ $config = $app['etoa.config.service'];
 		echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','apoints','ASC')\" title=\"Absteigend sortieren\"><img src=\"../images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a></th>";
 		echo "<th style=\"width:60px;\">Details</th>";
 		echo "</tr>";
-		if ($sort!="" && $sortOrder!="")
+		if (isset($sort) && $sort!="" && $sortOrder!="")
 			$sql="
 			SELECT
 				*
@@ -244,8 +244,7 @@ $config = $app['etoa.config.service'];
 						</td>";
 				echo "<td >
 				<div id=\"ttuser".$arr['alliance_id']."\" style=\"display:none;\">
-					".popUp("Allianzseite","page=alliance&id=".$arr['alliance_id'])."<br/>
-					".popUp("Punkteverlauf","page=$page&amp;mode=$mode&amp;alliancedetail=".$arr['alliance_id'])."<br/>";
+					<a href=\"?page=alliances&amp;sub=edit&amp;id=".$arr['alliance_id']."\">Allianzseite</a><br/>";
 				echo "</div><a href=\"#\" ".cTT($arr['alliance_name'],"ttuser".$arr['alliance_id']).">
 				".$arr['alliance_tag']."</td>";
 				echo "<td >".nf($arr['bpoints'])."</td>";
