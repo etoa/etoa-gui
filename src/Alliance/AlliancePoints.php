@@ -21,4 +21,3 @@ class AlliancePoints
         $this->count = (int) $data['point_cnt'];
     }
 }
-
