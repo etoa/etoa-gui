@@ -92,32 +92,6 @@ function get_user_nick($id)
 }
 
 /**
-* Returns the alliance id of a given alliance tag
-*
-* @param int $tag Alliance tag
-*/
-function get_alliance_id($tag)
-{
-    $res = dbquery("
-        SELECT
-            alliance_id
-        FROM
-            alliances
-        WHERE
-            alliance_tag='".$tag."';
-    ");
-    if (mysql_num_rows($res)>0)
-    {
-        $arr = mysql_fetch_assoc($res);
-        return $arr['alliance_id'];
-    }
-    else
-    {
-        return 0;
-    }
-}
-
-/**
 * User-Id via Planeten-Id auslesen
 *
 * @param int $pid Planet-ID
