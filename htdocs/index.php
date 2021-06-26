@@ -157,29 +157,15 @@ try {
         }
 
         if ($cu->isSetup()) {
-            //
-            // Load current planet
-            //
-            $res = dbquery("
-                SELECT
-                    id,
-                    planet_user_main
-                FROM
-                    planets
-                WHERE
-                    planet_user_id=".$cu->id."
-                ORDER BY
-                    planet_user_main DESC,
-                    planet_name ASC
-            ");
+            /** @var \EtoA\Universe\PlanetRepository $planetRepository */
+            $planetRepository = $app[\EtoA\Universe\PlanetRepository::class];
+            $userPlanets = $planetRepository->getUserPlanets((int) $cu->id);
             $planets = [];
             $mainplanet = 0;
-            if (mysql_num_rows($res)>0) {
-                while ($arr=mysql_fetch_row($res)) {
-                    $planets[] = (int) $arr[0];
-                    if ($arr[1]==1) {
-                        $mainplanet = (int) $arr[0];
-                    }
+            foreach ($userPlanets as $planet) {
+                $planets[] = $planet->id;
+                if ($planet->mainPlanet) {
+                    $mainplanet = $planet->id;
                 }
             }
             // Todo: check if mainplanet is still 0
@@ -212,13 +198,13 @@ try {
     // Check new reports
     $newReports = Report::countNew($cu->id);
 
-    // Count users
-    $ucres = dbquery('SELECT COUNT(user_id) FROM users;');
-    $ucarr = mysql_fetch_row($ucres);
+    /** @var \EtoA\User\UserRepository $userRepository */
+    $userRepository = $app[\EtoA\User\UserRepository::class];
+    $userCount = $userRepository->count();
 
-    // Count online users
-    $gres = dbquery('SELECT COUNT(user_id) FROM user_sessions;');
-    $garr=mysql_fetch_row($gres);
+    /** @var \EtoA\User\UserSessionRepository $userSessionRepository */
+    $userSessionRepository = $app[\EtoA\User\UserSessionRepository::class];
+    $usersOnline = $userSessionRepository->count();
 
     // Count notes
     $np = new Notepad($cu->id);
@@ -280,8 +266,8 @@ try {
         'fleetAttack' => check_fleet_incomming($cu->id),
         'enableKeybinds' => $cu->properties->enableKeybinds,
         'isAdmin' => $cu->admin,
-        'usersOnline' => $garr[0],
-        'usersTotal' => $ucarr[0],
+        'usersOnline' => $usersOnline,
+        'usersTotal' => $userCount,
         'notes' => $numNotes,
         'userPoints' => nf($cu->points),
         'userNick' => $cu->nick,
