@@ -6,9 +6,12 @@ use EtoA\Core\Configuration\ConfigurationService;
 $config = $app['etoa.config.service'];
 
 if ($config->getBoolean("alliance_allow")) {
-    if ($cu->allianceId == 0)
-    {
-        // Check application
+		if ($cu->allianceId == 0)
+		{
+		    /** @var \EtoA\Alliance\AllianceRepository $allianceRepository */
+		    $allianceRepository = $app['etoa.alliance.repository'];
+
+			// Check application
         $application_alliance=0;
         $application_timestamp = 0;
         $res = dbquery("
@@ -27,16 +30,16 @@ if ($config->getBoolean("alliance_allow")) {
             $application_timestamp=$arr[1];
         }
 
-        //
-        // Infotext bei aktiver Bewerbung
-        //
-        if ($application_alliance>0)
-        {
-            // Bewerbung zurückziehen
-            if (isset($_GET['action']) && $_GET['action']=="cancelapplication")
-            {
-        $alliances = get_alliance_names();
-        send_msg($alliances[$application_alliance]['founder_id'],MSG_ALLYMAIL_CAT,"Bewerbung zurückgezogen","Der Spieler ".$cu->nick." hat die Bewerbung bei deiner Allianz zurückgezogen!");
+			//
+			// Infotext bei aktiver Bewerbung
+			//
+			if ($application_alliance>0)
+			{
+				// Bewerbung zurückziehen
+				if (isset($_GET['action']) && $_GET['action']=="cancelapplication")
+				{
+				    $alliance = $allianceRepository->getAlliance((int) $application_alliance);
+        send_msg($alliance->founderId,MSG_ALLYMAIL_CAT,"Bewerbung zurückgezogen","Der Spieler ".$cu->nick." hat die Bewerbung bei deiner Allianz zurückgezogen!");
         add_alliance_history($application_alliance,"Der Spieler [b]".$cu->nick."[/b] zieht seine Bewerbung zurück.");
         dbquery("
         DELETE FROM
@@ -51,29 +54,20 @@ if ($config->getBoolean("alliance_allow")) {
             else
             {
                 echo "<h2>Bewerbungsstatus</h2>";
-                $appres = dbquery("
-                SELECT
-            alliance_tag,
-            alliance_name
-                FROM
-            alliances
-                WHERE
-                    alliance_id=".$application_alliance.";");
-                if (mysql_num_rows($appres)>0)
-                {
-                    $apparr = mysql_fetch_array($appres);
-            success_msg("Du hast dich am ".df($application_timestamp)." bei der Allianz [".$apparr['alliance_tag']."] ".$apparr['alliance_name']." beworben
-            und musst nun darauf warten, dass deine Bewerbung akzeptiert wird!");
-            echo "<input type=\"button\" onclick=\"document.location='?page=$page&action=cancelapplication';\" value=\"Bewerbung zurückziehen\" />";
-                }
-                else
-                {
-            error_msg("Du hast dich am ".df($application_timestamp)." bei einer Allianz beworben, diese Allianz existiert aber leider nicht mehr.
-            Deine Bewerbung wurde deshalb gelöscht!");
-            echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;action=join';\" value=\"Bei einer anderen Allianz bewerben\" />";
-                }
-            }
-        }
+                $alliance = $allianceRepository->getAlliance((int) $application_alliance);
+                if ($alliance !== null) {
+            success_msg("Du hast dich am ".df($application_timestamp)." bei der Allianz " . $alliance->nameWithTag . " beworben
+	         	und musst nun darauf warten, dass deine Bewerbung akzeptiert wird!");
+	         	echo "<input type=\"button\" onclick=\"document.location='?page=$page&action=cancelapplication';\" value=\"Bewerbung zurückziehen\" />";
+					}
+					else
+					{
+	         	error_msg("Du hast dich am ".df($application_timestamp)." bei einer Allianz beworben, diese Allianz existiert aber leider nicht mehr.
+	         	Deine Bewerbung wurde deshalb gelöscht!");
+	         	echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;action=join';\" value=\"Bei einer anderen Allianz bewerben\" />";
+					}
+				}
+			}
 
         //
         // Allianzgründung
@@ -124,37 +118,24 @@ if ($config->getBoolean("alliance_allow")) {
             }
         }
 
-        //
-        // Bewerbung bei einer Allianz
-        //
-        elseif (isset($_GET['action']) && $_GET['action']=="join")
-        {
-            // Bewerbungstext schreiben
-            if (isset($_GET['alliance_id']) && intval($_GET['alliance_id'])>0)
-            {
-                $res=dbquery("
-                SELECT
-                    alliance_id,
-                    alliance_tag,
-                    alliance_name,
-                    alliance_application_template,
-                    alliance_accept_applications
-                FROM
-                    alliances
-                WHERE
-                    alliance_id='".intval($_GET['alliance_id'])."'");
-                if (mysql_num_rows($res)>0)
-                {
-                    $arr=mysql_fetch_array($res);
-                    echo "<h2>Bewerbung bei der Allianz [".$arr['alliance_tag']."] ".$arr['alliance_name']."</h2>";
-                    if($arr['alliance_accept_applications']==1)
-                    {
-                        echo "<form action=\"?page=$page&amp;action=join\" method=\"post\">";
-                        checker_init();
-                        tableStart("Bewerbungstext");
-                        echo "<tr><th>Nachricht:</th><td><textarea rows=\"15\" cols=\"80\" name=\"user_alliance_application\">".$arr['alliance_application_template']."</textarea><br/>".helpLink('textformat', 'Hilfe zur Formatierung')."</td>";
+			//
+			// Bewerbung bei einer Allianz
+			//
+			elseif (isset($_GET['action']) && $_GET['action']=="join")
+			{
+				// Bewerbungstext schreiben
+				if (isset($_GET['alliance_id']) && intval($_GET['alliance_id'])>0)
+				{
+				    $alliance = $allianceRepository->getAlliance((int) $_GET['alliance_id']);
+                if ($alliance !== null) {
+                    echo "<h2>Bewerbung bei der Allianz " . $alliance->nameWithTag . "</h2>";
+						if($alliance->acceptApplications) {
+							echo "<form action=\"?page=$page&amp;action=join\" method=\"post\">";
+							checker_init();
+							tableStart("Bewerbungstext");
+							echo "<tr><th>Nachricht:</th><td><textarea rows=\"15\" cols=\"80\" name=\"user_alliance_application\">".$alliance->acceptApplications."</textarea><br/>".helpLink('textformat', 'Hilfe zur Formatierung')."</td>";
                         tableEnd();
-                        echo "<input type=\"hidden\" name=\"user_alliance_id\" value=\"".intval($arr['alliance_id'])."\" />";
+                        echo "<input type=\"hidden\" name=\"user_alliance_id\" value=\"".$alliance->id."\" />";
                         echo "<input type=\"submit\" name=\"submitapplication\" value=\"Senden\" />&nbsp;<input type=\"button\" onclick=\"document.location='?page=alliance&action=join'\" value=\"Zur&uuml;ck\" /></form>";
                     }
                     else
@@ -175,8 +156,8 @@ if ($config->getBoolean("alliance_allow")) {
                 $aid = (int) $_POST['user_alliance_id'];
                 if ($_POST['user_alliance_application']!='')
                 {
-                    $alliances = get_alliance_names();
-                    send_msg($alliances[$aid]['founder_id'],MSG_ALLYMAIL_CAT,"Bewerbung","Der Spieler ".$cu->nick." hat sich bei deiner Allianz beworben. Gehe auf die [page=alliance&action=applications]Allianzseite[/page] für Details!");
+                    $alliance = $allianceRepository->getAlliance($aid);
+                    send_msg($alliance->founderId,MSG_ALLYMAIL_CAT,"Bewerbung","Der Spieler ".$cu->nick." hat sich bei deiner Allianz beworben. Gehe auf die [page=alliance&action=applications]Allianzseite[/page] für Details!");
                     add_alliance_history($aid,"Der Spieler [b]".$cu->nick."[/b] bewirbt sich sich bei der Allianz.");
                     dbquery("
                     INSERT INTO
@@ -196,7 +177,7 @@ if ($config->getBoolean("alliance_allow")) {
                     );
                     ");
 
-                    success_msg("Deine Bewerbung bei der Allianz [".$alliances[$aid]['tag']."] ".$alliances[$aid]['name']." wurde gespeichert! Die Allianzleitung wurde informiert und wird deine Bewerbung ansehen.");
+                    success_msg("Deine Bewerbung bei der Allianz " . $alliance->nameWithTag . " wurde gespeichert! Die Allianzleitung wurde informiert und wird deine Bewerbung ansehen.");
                     echo "<input value=\"&Uuml;bersicht\" type=\"button\" onclick=\"document.location='?page=$page'\" />";
                 }
                 else

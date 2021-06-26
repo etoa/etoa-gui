@@ -236,13 +236,13 @@ parameters:
 			path: htdocs/content/allianceboard.php
 
 		-
-			message: "#^Variable \\$alliance might not be defined\\.$#"
-			count: 5
+			message: "#^Variable \\$alliance_bnd_id might not be defined\\.$#"
+			count: 4
 			path: htdocs/content/allianceboard.php
 
 		-
-			message: "#^Variable \\$alliance_bnd_id might not be defined\\.$#"
-			count: 4
+			message: "#^Variable \\$arr might not be defined\\.$#"
+			count: 2
 			path: htdocs/content/allianceboard.php
 
 		-

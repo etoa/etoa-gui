@@ -403,31 +403,31 @@ function drop(Request $request, AllianceRepository $repository)
 {
 	global $page;
 
-	$alliance = $repository->find($request->query->getInt('alliance_id'));
+	$alliance = $repository->getAlliance($request->query->getInt('alliance_id'));
 	if ($alliance !== null) {
 		echo "Soll folgende Allianz gelöscht werden?<br/><br/>";
 		echo "<form action=\"?page=$page\" method=\"post\">";
 		echo "<table class=\"tbl\">";
 		echo "<tr><td class=\"tbltitle\" valign=\"top\">ID</td>
-			<td class=\"tbldata\">" . $alliance['alliance_id'] . "</td></tr>";
+			<td class=\"tbldata\">" . $alliance->id . "</td></tr>";
 		echo "<tr><td class=\"tbltitle\" valign=\"top\">Name</td>
-			<td class=\"tbldata\">" . $alliance['alliance_name'] . "</td></tr>";
+			<td class=\"tbldata\">" . $alliance->name . "</td></tr>";
 		echo "<tr><td class=\"tbltitle\" valign=\"top\">Tag</td>
-			<td class=\"tbldata\">" . $alliance['alliance_tag'] . "</td></tr>";
+			<td class=\"tbldata\">" . $alliance->tag . "</td></tr>";
 		$users = get_user_names();
 		echo "<tr><td class=\"tbltitle\" valign=\"top\">Gründer</td>
-			<td class=\"tbldata\">" . $users[$alliance['alliance_founder_id']]['nick'] . "</td></tr>";
+			<td class=\"tbldata\">" . $users[$alliance->founderId]['nick'] . "</td></tr>";
 		echo "<tr><td class=\"tbltitle\" valign=\"top\">Text</td>
-			<td class=\"tbldata\">" . text2html($alliance['alliance_text']) . "</td></tr>";
+			<td class=\"tbldata\">" . text2html($alliance->text) . "</td></tr>";
 		echo "<tr><td class=\"tbltitle\" valign=\"top\">Gründung</td>
-			<td class=\"tbldata\">" . date("Y-m-d H:i:s", $alliance['alliance_foundation_date']) . "</td></tr>";
+			<td class=\"tbldata\">" . date("Y-m-d H:i:s", $alliance->foundationTimestamp) . "</td></tr>";
 		echo "<tr><td class=\"tbltitle\" valign=\"top\">Website</td>
-			<td class=\"tbldata\">" . $alliance['alliance_url'] . "</td></tr>";
-		if (isset($alliance['alliance_img'])) {
-			echo "<tr><td class=\"tbltitle\" valign=\"top\">Bild</td><td class=\"tbldata\"><img src=\"" . ALLIANCE_IMG_DIR . '/' . $alliance['alliance_img'] . "\" width=\"100%\" alt=\"" . $alliance['alliance_img'] . "\" /></td></tr>";
+			<td class=\"tbldata\">" . $alliance->url . "</td></tr>";
+		if ($alliance->image !== null) {
+			echo "<tr><td class=\"tbltitle\" valign=\"top\">Bild</td><td class=\"tbldata\"><img src=\"" . ALLIANCE_IMG_DIR . '/' . $alliance->image . "\" width=\"100%\" alt=\"" . $alliance->image . "\" /></td></tr>";
 		}
 		echo "<tr><td class=\"tbltitle\" valign=\"top\">Mitglieder</td><td class=\"tbldata\">";
-		$usersInAlliance = $repository->findUsers($alliance['alliance_id']);
+		$usersInAlliance = $repository->findUsers($alliance->id);
 		if (count($usersInAlliance) > 0) {
 			echo "<table style=\"width:100%\">";
 			foreach ($usersInAlliance as $uarr)
@@ -440,7 +440,7 @@ function drop(Request $request, AllianceRepository $repository)
 		}
 		echo "</td></tr>";
 		echo "</table>";
-		echo "<input type=\"hidden\" name=\"alliance_id\" value=\"" . $alliance['alliance_id'] . "\" />";
+		echo "<input type=\"hidden\" name=\"alliance_id\" value=\"" . $alliance->id . "\" />";
 		echo "<br/><input type=\"submit\" name=\"drop\" value=\"Löschen\" />&nbsp;";
 		echo "<input type=\"button\" value=\"Zurück\" onclick=\"history.back();\" /> ";
 		echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" />";
