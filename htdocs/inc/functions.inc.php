@@ -92,33 +92,6 @@ function get_user_nick($id)
 }
 
 /**
-* Returns the alliance id of a given alliance name
-*
-* @param int $name Alliance Name
-*/
-function get_alliance_id_by_name($name)
-{
-    $res = dbquery("
-        SELECT
-            alliance_id
-        FROM
-            alliances
-        WHERE
-            alliance_name='".$name."';
-    ");
-    if (mysql_num_rows($res)>0)
-    {
-        $arr = mysql_fetch_assoc($res);
-        return $arr['alliance_id'];
-    }
-    else
-    {
-        return 0;
-    }
-}
-
-
-/**
 * Returns the alliance id of a given alliance tag
 *
 * @param int $tag Alliance tag
