@@ -63,23 +63,14 @@ if ($request->query->has('id')) {
 	tableEnd();
 
 	// Ships
-	$res=dbQuerySave("
-	SELECT
-		ship_id
-	FROM
-		ships
-	WHERE
-	ship_race_id=?
-	AND ship_buildable=1
-	AND special_ship=0;", array($raceId));
-	if (mysql_num_rows($res)>0)
-	{
+    /** @var \EtoA\Ship\ShipDataRepository $shipDataRepository */
+    $shipDataRepository = $app['etoa.ship.datarepository'];
+    $ships = $shipDataRepository->getShipsByRace($raceId);
+	if (count($ships) > 0) {
 		tableStart('',500);
 		echo  "<tr><th colspan=\"3\">Spezielle Schiffe:</th></tr>";
-		while ($arr=mysql_fetch_array($res))
-		{
-			$ship = new Ship($arr['ship_id']);
-			echo "<tr><td style=\"background:black;\"><img src=\"".$ship->imgPath()."\" style=\"width:40px;height:40px;border:none;\" alt=\"ship".$ship->id."\" /></td>
+		foreach ($ships as $ship) {
+			echo "<tr><td style=\"background:black;\"><img src=\"".$ship->getImagePath()."\" style=\"width:40px;height:40px;border:none;\" alt=\"ship".$ship->id."\" /></td>
 			<th style=\"width:180px;\">".text2html($ship->name)."</th>
 			<td>".text2html($ship->shortComment)."</td></tr>";
 		}
@@ -87,26 +78,17 @@ if ($request->query->has('id')) {
 	}
 
 	// Defenses
-	$res=dbQuerySave("
-	SELECT
-		def_id,
-		def_name,
-		def_shortcomment
-	FROM
-		defense
-	WHERE
-	def_race_id=?
-	AND def_buildable=1;", array($raceId));
-	if (mysql_num_rows($res)>0)
-	{
+    /** @var \EtoA\Defense\DefenseDataRepository $defenseDataRepository */
+    $defenseDataRepository = $app['etoa.defense.datarepository'];
+    $defenses = $defenseDataRepository->getDefenseByRace($raceId);
+	if (count($defenses) > 0) {
 		tableStart('',500);
 		echo  "<tr><th colspan=\"3\">Spezielle Verteidigung:</th></tr>";
-		while ($arr=mysql_fetch_array($res))
-		{
-			$s_img = IMAGE_PATH."/".IMAGE_DEF_DIR."/def".$arr['def_id']."_small.".IMAGE_EXT;
-			echo "<tr><td style=\"background:black;\"><img src=\"".$s_img."\" style=\"width:40px;height:40px;border:none;\" alt=\"def".$arr['def_id']."\" /></td>
-			<th style=\"width:180px;\">".text2html($arr['def_name'])."</th>
-			<td>".text2html($arr['def_shortcomment'])."</td></tr>";
+		foreach ($defenses as $defense) {
+			$s_img = IMAGE_PATH."/".IMAGE_DEF_DIR."/def".$defense->id."_small.".IMAGE_EXT;
+			echo "<tr><td style=\"background:black;\"><img src=\"".$s_img."\" style=\"width:40px;height:40px;border:none;\" alt=\"def".$defense->id."\" /></td>
+			<th style=\"width:180px;\">".text2html($defense->name)."</th>
+			<td>".text2html($defense->shortComment)."</td></tr>";
 		}
 		tableEnd();
 	}

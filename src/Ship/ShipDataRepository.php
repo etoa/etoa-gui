@@ -4,6 +4,7 @@ namespace EtoA\Ship;
 
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Query\QueryBuilder;
 use EtoA\Core\AbstractRepository;
 
 class ShipDataRepository extends AbstractRepository
@@ -21,21 +22,36 @@ class ShipDataRepository extends AbstractRepository
     /**
      * @return array<int, string>
      */
-    public function getShipNames(): array
+    public function getShipNames(bool $showAll = false): array
     {
-        if (!$this->cache->contains(self::SHIPS_NAMES)) {
-            $names = $this->createQueryBuilder()
-                ->select('ship_id, ship_name')
-                ->addSelect()
-                ->from('ships')
+        $qb = $this->createQueryBuilder()
+            ->select('ship_id, ship_name')
+            ->addSelect()
+            ->from('ships');
+
+        if (!$showAll) {
+            $qb
+                ->where('ship_show = 1')
+                ->andWhere('special_ship = 0');
+        }
+
+        return $qb
                 ->orderBy('ship_name')
                 ->execute()
                 ->fetchAllKeyValue();
+    }
 
-            $this->cache->save(self::SHIPS_NAMES, $names);
-        }
+    /**
+     * @return Ship[]
+     */
+    public function getShipsWithAction(string $action): array
+    {
+        $data = $this->shipActionQueryBuilder($action)
+            ->select('*')
+            ->execute()
+            ->fetchAllAssociative();
 
-        return $this->cache->fetch(self::SHIPS_NAMES);
+        return array_map(fn ($row) => new Ship($row), $data);
     }
 
     /**
@@ -43,9 +59,15 @@ class ShipDataRepository extends AbstractRepository
      */
     public function getShipNamesWithAction(string $action): array
     {
-        return $this->createQueryBuilder()
+        return $this->shipActionQueryBuilder($action)
             ->select('ship_id, ship_name')
-            ->addSelect()
+            ->execute()
+            ->fetchAllKeyValue();
+    }
+
+    private function shipActionQueryBuilder(string $action): QueryBuilder
+    {
+        return $this->createQueryBuilder()
             ->from('ships')
             ->where('ship_buildable=1')
             ->andWhere('special_ship=0')
@@ -56,9 +78,7 @@ class ShipDataRepository extends AbstractRepository
                 'middle' => '%,' . $action . ',%',
                 'only' => $action,
             ])
-            ->orderBy('ship_name')
-            ->execute()
-            ->fetchAllKeyValue();
+            ->orderBy('ship_name');
     }
 
     /**
@@ -76,5 +96,73 @@ class ShipDataRepository extends AbstractRepository
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => new Ship($row), $data);
+    }
+
+    public function getShip(int $shipId): ?Ship
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('ships')
+            ->where('ship_show = 1')
+            ->andWhere('ship_id = :shipId')
+            ->setParameter('shipId', $shipId)
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? new Ship($data) : null;
+    }
+
+    /**
+     * @return Ship[]
+     */
+    public function getShipsByCategory(int $shipCategory, string $order = 'ship_order', string $sort = 'ASC'): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('ships')
+            ->where('ship_cat_id = :category')
+            ->andWhere('ship_show=1')
+            ->setParameter('category', $shipCategory)
+            ->orderBy($order, $sort)
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new Ship($row), $data);
+    }
+
+    /**
+     * @return Ship[]
+     */
+    public function getShipsByRace(int $raceId): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('ships')
+            ->where('ship_race_id = :raceId')
+            ->andWhere('ship_buildable = 1')
+            ->andWhere('ship_show = 1')
+            ->andWhere('special_ship = 0')
+            ->setParameter('raceId', $raceId)
+            ->orderBy('ship_order')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new Ship($row), $data);
+    }
+
+    public function getTransformedShipForDefense(int $defenseId): ?Ship
+    {
+        $data = $this->createQueryBuilder()
+            ->select('s.*')
+            ->from('ships', 's')
+            ->innerJoin('s', 'obj_transforms', 't', 't.ship_id=s.ship_id')
+            ->where('t.def_id = :defenseId')
+            ->setParameters([
+                'defenseId' => $defenseId,
+            ])
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? new Ship($data) : null;
     }
 }

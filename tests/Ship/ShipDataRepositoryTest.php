@@ -29,6 +29,13 @@ class ShipDataRepositoryTest extends AbstractDbTestCase
         $this->assertNotEmpty($names);
     }
 
+    public function testGetShipsWithAction(): void
+    {
+        $names = $this->repository->getShipsWithAction('attack');
+
+        $this->assertNotEmpty($names);
+    }
+
     public function testGetShipWithPowerProduction(): void
     {
         $ships = $this->repository->getShipWithPowerProduction();
@@ -36,6 +43,34 @@ class ShipDataRepositoryTest extends AbstractDbTestCase
         $this->assertNotEmpty($ships);
         foreach ($ships as $ship) {
             $this->assertGreaterThan(0, $ship->powerProduction);
+        }
+    }
+
+    public function testGetShip(): void
+    {
+        $ship = $this->repository->getShip(1);
+
+        $this->assertNotNull($ship);
+        $this->assertSame(1, $ship->id);
+    }
+
+    public function testGetShipsByCategory(): void
+    {
+        $ships = $this->repository->getShipsByCategory(1);
+
+        $this->assertNotEmpty($ships);
+        foreach ($ships as $ship) {
+            $this->assertSame(1, $ship->catId);
+        }
+    }
+
+    public function testGetShipsByRace(): void
+    {
+        $ships = $this->repository->getShipsByRace(1);
+
+        $this->assertNotEmpty($ships);
+        foreach ($ships as $ship) {
+            $this->assertSame(1, $ship->raceId);
         }
     }
 }

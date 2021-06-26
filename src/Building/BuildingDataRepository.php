@@ -53,4 +53,20 @@ class BuildingDataRepository extends AbstractRepository
             ->execute()
             ->fetchAllKeyValue();
     }
+
+    /**
+     * @return array<int, string>
+     */
+    public function getBuildingNamesHavingPlaceForPeople(): array
+    {
+        return $this->createQueryBuilder()
+            ->select('building_id, building_name')
+            ->addSelect()
+            ->from('buildings')
+            ->where('building_people_place > 0')
+            ->orderBy('building_order')
+            ->addOrderBy('building_name')
+            ->execute()
+            ->fetchAllKeyValue();
+    }
 }

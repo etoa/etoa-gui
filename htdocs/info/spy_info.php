@@ -34,24 +34,15 @@
 
 	tableStart("Spionagesonden");
 	echo "<tr><td class=\"tbltitle\" >Name</td><td class=\"tbltitle\" colspan=\"2\" width=\"90%\">Beschreibung</td></tr>";
-	$res = dbquery("
-	SELECT
-		ship_name,
-		ship_id,
-		ship_shortcomment
-	FROM
-		ships
-	WHERE
-		ship_actions LIKE '%spy%'
-	ORDER BY
-		ship_name;");
-	while ($arr=mysql_fetch_array($res))
-	{
-		echo "<tr><td class=\"tbldata\">".$arr['ship_name']."</td>
-		<td class=\"tbldata\">".$arr['ship_shortcomment']."</td>
-		<td class=\"tbldata\"><a href=\"?".$link."&amp;site=shipyard&amp;id=".$arr['ship_id']."\">Mehr Infos</a></td>
+
+	/** @var \EtoA\Ship\ShipDataRepository $shipReposistory */
+	$shipReposistory = $app['etoa.ship.datarepository'];
+	$ships = $shipReposistory->getShipsWithAction('spy');
+	foreach ($ships as $ship) {
+		echo "<tr><td class=\"tbldata\">".$ship->name."</td>
+		<td class=\"tbldata\">".$ship->shortComment."</td>
+		<td class=\"tbldata\"><a href=\"?".$link."&amp;site=shipyard&amp;id=".$ship->id."\">Mehr Infos</a></td>
 		</tr>";
 	}
 	tableEnd();
 
-?>

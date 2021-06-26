@@ -469,7 +469,7 @@ $config = $app['etoa.config.service'];
 			// Schiffe laden
             /** @var \EtoA\Ship\ShipDataRepository $shipRepository */
             $shipRepository = $app['etoa.ship.datarepository'];
-            $shipNames = $shipRepository->getShipNames();
+            $shipNames = $shipRepository->getShipNames(true);
 
 			// Suchmaske
 			$twig->addGlobal("subtitle", "Suchmaske");
@@ -501,7 +501,7 @@ $config = $app['etoa.config.service'];
 			// Schiffe laden
             /** @var \EtoA\Ship\ShipDataRepository $shipRepository */
             $shipRepository = $app['etoa.ship.datarepository'];
-            $shipNames = $shipRepository->getShipNames();
+            $shipNames = $shipRepository->getShipNames(true);
 
 			$tblcnt = mysql_fetch_row(dbquery("SELECT count(shiplist_id) FROM shiplist;"));
 
