@@ -40,41 +40,19 @@
 	$aid = isset($_GET['alliance']) ? (int) $_GET['alliance'] : 0;
 	if ($aid>0 && count($_SESSION)>0)
 	{
-		$res=dbquery("
-			SELECT
-				alliance_tag,
-				alliance_name,
-				alliance_rank_current
-			FROM
-				alliances
-			WHERE
-				alliance_id='".$aid."';
-		");
-		if (mysql_num_rows($res)>0)
-		{
-			$sql1 = $sql2 = '';
-			$arr=mysql_fetch_array($res);
-			if (intval($_GET['start'])>0)
-				$sql1 = " AND point_timestamp > ".intval($_GET['start'])." ";
-			if (intval($_GET['end'])>0)
-				$sql2 = " AND point_timestamp < ".intval($_GET['end'])." ";
-			$pres=dbquery("
-				SELECT
-					*
-				FROM
-					alliance_points
-				WHERE
-					point_alliance_id='".$aid."'
-					AND point_points>0
-					$sql1
-					$sql2
-				ORDER BY
-					point_timestamp DESC LIMIT ".(DETAIL_LIMIT*6).";
-			");
-			if (mysql_num_rows($pres)>0)
-			{
-				if (floor(mysql_num_rows($pres)/STEP) > 0) {
-					define('B_W', (IM_W-B_B)/floor(mysql_num_rows($pres)/STEP)/2);
+	    /** @var \EtoA\Alliance\AllianceRepository $allianceRepository */
+	    $allianceRepository = $app[\EtoA\Alliance\AllianceRepository::class];
+	    $alliance = $allianceRepository->getAlliance($aid);
+		if ($alliance !== null) {
+		    /** @var \EtoA\Alliance\AlliancePointsRepository $alliancePointsRepository */
+		    $alliancePointsRepository = $app[\EtoA\Alliance\AlliancePointsRepository::class];
+			$start = (int) $_GET['start'] > 0 ? (int) $_GET['start'] : null;
+            $end = (int) $_GET['end'] > 0 ? (int) $_GET['end'] : null;
+
+            $pointEntries = $alliancePointsRepository->getPoints($alliance->id, DETAIL_LIMIT * 6, $start, $end);
+			if (count($pointEntries) > 0) {
+				if (floor(count($pointEntries)/STEP) > 0) {
+					define('B_W', (IM_W-B_B)/floor(count($pointEntries)/STEP)/2);
 				} else {
 					define('B_W', 0);
 				}
@@ -95,20 +73,18 @@
 				$last_update=0;
 				$cnt=0;
 				$points = [];
-				while ($parr=mysql_fetch_array($pres))
-				{
-					if ($last_update==0) $last_update=$parr['point_timestamp'];
-					if ($cnt==0)
-					{
-						$points[$parr['point_timestamp']]=$parr['point_points'];
-						$pmax=max($pmax,$parr['point_points']);
+				foreach ($pointEntries as $entry) {
+					if ($last_update === 0) $last_update = $entry->timestamp;
+					if ($cnt === 0) {
+						$points[$entry->timestamp] = $entry->points;
+						$pmax = max($pmax, $entry->points);
 					}
 					$cnt++;
 					if ($cnt==STEP) $cnt=0;
 				}
 				ksort ($points);
 
-				imagestring($im,FONT_SIZE,(int) (B_B/3),(int) (B_B/3),"Statistiken von [".$arr['alliance_tag']."] ".$arr['alliance_name'].", Rang ".$arr['alliance_rank_current'].", letzes Update: ".date("d.m.Y H:i",$last_update)."",$black);
+				imagestring($im,FONT_SIZE,(int) (B_B/3),(int) (B_B/3),"Statistiken von " . $alliance->nameWithTag . ", Rang ". $alliance->currentRank.", letzes Update: ".date("d.m.Y H:i",$last_update)."",$black);
 				imagestring($im,FONT_SIZE,(int) (B_B/3),(int) (B_B/3+9),"Schrittweite: ".STEP." Stunden, Zeitraum: ".(DETAIL_LIMIT*STEP/24)." Tage",$black);
 				$cnt=0;
 
