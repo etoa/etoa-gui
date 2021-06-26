@@ -92,87 +92,6 @@ function get_user_nick($id)
 }
 
 /**
-* Allianz-Daten via User-Id auslesen
-*
-* @param int $id User ID
-*/
-function get_user_alliance($id)
-{
-    $res = dbquery("
-    SELECT
-        a.alliance_name,
-        a.alliance_id,
-        a.alliance_tag
-    FROM
-        users AS u
-        INNER JOIN alliances AS a
-        ON u.user_alliance_id = a.alliance_id
-        AND u.user_id='".$id."';
-    ");
-    if (mysql_num_rows($res)>0)
-    {
-        return mysql_fetch_assoc($res);
-    }
-    else
-    {
-        return "";
-    }
-}
-
-/**
-* Returns the alliance id of a given alliance name
-*
-* @param int $name Alliance Name
-*/
-function get_alliance_id_by_name($name)
-{
-    $res = dbquery("
-        SELECT
-            alliance_id
-        FROM
-            alliances
-        WHERE
-            alliance_name='".$name."';
-    ");
-    if (mysql_num_rows($res)>0)
-    {
-        $arr = mysql_fetch_assoc($res);
-        return $arr['alliance_id'];
-    }
-    else
-    {
-        return 0;
-    }
-}
-
-
-/**
-* Returns the alliance id of a given alliance tag
-*
-* @param int $tag Alliance tag
-*/
-function get_alliance_id($tag)
-{
-    $res = dbquery("
-        SELECT
-            alliance_id
-        FROM
-            alliances
-        WHERE
-            alliance_tag='".$tag."';
-    ");
-    if (mysql_num_rows($res)>0)
-    {
-        $arr = mysql_fetch_assoc($res);
-        return $arr['alliance_id'];
-    }
-    else
-    {
-        return 0;
-    }
-}
-
-/**
 * User-Id via Planeten-Id auslesen
 *
 * @param int $pid Planet-ID
@@ -315,92 +234,6 @@ function format_link($string)
     $string = preg_replace('#\[url\]([^\[]*)\[/url\]#i', '<a href="\1">\1</a>', $string);
     $string = preg_replace('#\[mailurl\]([^\[]*)\[/mailurl\]#i', '<a href="\1">Link</a>', $string);
     return $string;
-}
-
-/*
-    * Format the data in a row by comparing two user
-    *
-    * @param <User> $uer userobject you need to compare to the $cu
-    *
-    * option 2
-    * @param <Planet> $object
-    *
-    * @return $class
-    */
-function getFormatingColorByUser(&$user)
-{
-    // if the $cu is not active as in xajax functions create one
-    if ( !isset($cu) )
-    {
-        // if there is no session active as on external pages return nothing;
-        if ( !$_SESSION['user_id']) return;
-        $cu = new User($_SESSION['user_id']);
-    }
-
-    $admins = getAdmins();
-    // admin
-    if ( in_array((int) $user->id, $admins, true) )
-    {
-        $class = "adminColor";
-    }
-    // war
-    elseif ($user->allianceId > 0 && $cu->allianceId > 0 && $cu->alliance->checkWar($user->allianceId))
-    {
-        $class = "enemyColor";
-    }
-    // pact
-    elseif ($user->allianceId > 0 && $cu->allianceId > 0 && $cu->alliance->checkBnd($user->allianceId))
-    {
-        $class = "friendColor";
-    }
-    // bannend/locked
-    elseif ($user->locked)
-    {
-        $class = "userLockedColor";
-    }
-    // on holiday
-    elseif ($user->holiday)
-    {
-        $class = "userHolidayColor";
-    }
-    // long time Inactive
-    elseif ($user->lastOnline < time() - USER_INACTIVE_LONG * 86400)
-    {
-        $class = "userLongInactiveColor";
-    }
-    // inactive
-    elseif ($user->lastOnline < time() - USER_INACTIVE_SHOW * 86400)
-    {
-        $class = "userInactiveColor";
-    }
-    // alliance member
-    elseif($cu->allianceId() && $cu->allianceId() == $user->allianceId())
-    {
-        $class = "userAllianceMemberColor";
-    }
-    else
-    {
-        $class = "";
-    }
-
-    return $class;
-}
-
-/**
- * @return int[]
- */
-function getAdmins(): array
-{
-    global $admins;
-    if ( !isset($admins))
-    {
-        $ares = dbquery("SELECT player_id FROM admin_users WHERE player_id<>0;");
-        $admins = [];
-        while ($arow = mysql_fetch_row($ares)) {
-            $admins[] = (int) $arow[0];
-        }
-    }
-    return $admins;
 }
 
 /**
@@ -1024,37 +857,6 @@ function parseDesignInfoFile($file)
 }
 
 /**
-* Überprüft ob ein Gebäude deaktiviert ist
-*
-* $user_id: Benutzer-ID
-* $planet_id: Planet-ID
-* $building_id: Gebäude-ID
-*
-* @todo Typo in method name... bether think of creating a building class
-*/
-function check_building_deactivated($user_id,$planet_id,$building_id)
-{
-    $res=dbquery("
-        SELECT
-            buildlist_deactivated
-        FROM
-            buildlist
-        WHERE
-            buildlist_user_id='".$user_id."'
-            AND buildlist_entity_id='".$planet_id."'
-            AND buildlist_building_id='".$building_id."'
-            AND buildlist_deactivated>'".time()."';
-    ");
-    if (mysql_num_rows($res)>0)
-    {
-        $arr=mysql_fetch_row($res);
-        return $arr[0];
-    }
-    else
-        return false;
-}
-
-/**
 * Fremde, feindliche Flotten
 * Gibt Anzahl feindliche Flotten zurück unter beachtung von Tarn- und Spionagetechnik
 * Sind keine Flotten unterwegs -> return 0
@@ -1085,28 +887,6 @@ function add_alliance_history($alliance_id,$text)
         VALUES
         (
             '".$alliance_id."',
-            '".addslashes($text)."',
-            '".time()."'
-        );");
-}
-
-/**
-* User-history adder
-* @todo User history no longer uses
-*/
-function add_user_history($user_id,$text)
-{
-    dbquery("
-        INSERT INTO
-        user_history
-        (
-            history_user_id,
-            history_text,
-            history_timestamp
-        )
-        VALUES
-        (
-            '".$user_id."',
             '".addslashes($text)."',
             '".time()."'
         );");
