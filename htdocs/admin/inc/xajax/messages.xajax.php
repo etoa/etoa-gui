@@ -5,6 +5,12 @@ $xajax->register(XAJAX_FUNCTION,"restoreReport");
 
 function showDetail($type)
 {
+    global $app;
+
+    /** @var \EtoA\Ship\ShipDataRepository $shipDataRepository */
+    $shipDataRepository = $app[\EtoA\Ship\ShipDataRepository::class];
+    $shipNames = $shipDataRepository->getShipNames(true);
+
 	$or = new xajaxResponse();
 	ob_start();
 	switch ($type)
@@ -28,17 +34,9 @@ function showDetail($type)
 				<td>
 					<select id=\"ship_id\" name=\"ship_id\">
 						<option value=\"\">(egal)</option>";
-			// Schiffe laden
-			$res = dbquery("
-							SELECT
-								ship_id,
-								ship_name
-							FROM
-								ships
-							ORDER BY
-								ship_name;");
-			while ($arr=mysql_fetch_row($res))
-		echo "			<option value=\"".$arr[0]."\">".$arr[1]."</option>";
+			foreach ($shipNames as $shipId => $shipName) {
+                echo "			<option value=\"".$shipId."\">".$shipName."</option>";
+            }
 
 		echo "		</select>
 				</td>
@@ -115,17 +113,10 @@ function showDetail($type)
 					<td>
 						<select id=\"ship_id\" name=\"ship_id\">
 							<option value=\"\">(egal)</option>";
-					// Schiffe laden
-					$res = dbquery("
-								SELECT
-									ship_id,
-									ship_name
-								FROM
-									ships
-								ORDER BY
-									ship_name;");
-					while ($arr=mysql_fetch_row($res))
-			echo "			<option value=\"".$arr[0]."\">".$arr[1]."</option>";
+
+					foreach ($shipNames as $shipId => $shipName) {
+                        echo "			<option value=\"".$shipId."\">".$shipName."</option>";
+                    }
 
 			echo "		</select>
 					</td>

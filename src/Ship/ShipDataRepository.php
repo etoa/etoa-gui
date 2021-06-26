@@ -87,6 +87,21 @@ class ShipDataRepository extends AbstractRepository
     }
 
     /**
+     * @return array<int, string>
+     */
+    public function getFakeableShipNames(): array
+    {
+        return $this->createQueryBuilder()
+            ->select('*')
+            ->addSelect()
+            ->from('ships')
+            ->andWhere('ship_fakeable = 1')
+            ->orderBy('ship_name')
+            ->execute()
+            ->fetchAllKeyValue();
+    }
+
+    /**
      * @return Ship[]
      */
     public function getShipsWithAction(string $action): array

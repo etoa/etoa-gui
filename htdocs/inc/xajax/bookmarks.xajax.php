@@ -68,7 +68,7 @@ include_once('cell.xajax.php');
 					$sdi = explode(":",$sd);
 					$probeCount = min($probeCount,$fleet->addShip($sdi[0],$sdi[1]));
 					if ($shipOutput!="") $shipOutput .= ", ";
-					$shipOutput .= $sdi[1]." ".$ships[$sdi[0]];
+					$shipOutput .= $sdi[1]." ".$ships[(int) $sdi[0]];
 				}
 
 				if ($probeCount)
