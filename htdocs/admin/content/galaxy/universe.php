@@ -15,11 +15,27 @@ $request = Request::createFromGlobals();
 
 echo "<h1>Universum</h1>";
 
-//
-// Universum erstellen
-//
-if ($request->request->has('submit_create_universe'))
+if ($request->request->has('submit_create_universe')) {
+    createUniverse($request, $config);
+} elseif ($request->request->has('submit_expansion_universe')) {
+    extendUniverse($config);
+} elseif ($request->request->has('submit_reset')) {
+    resetUniverse();
+} elseif ($request->request->has('submit_galaxy_reset')) {
+    postResetUniverse($universeGenerator);
+} elseif ($request->request->has('submit_reset2')) {
+    postResetRound($universeGenerator);
+} elseif ($request->request->has('submit_addstars')) {
+    addStars($request, $universeGenerator);
+} else {
+    universeIndex($request, $config, $universeGenerator);
+}
+
+function createUniverse(Request $request, ConfigurationService $config): void
 {
+    global $page;
+    global $sub;
+
     echo "<h2>Urknall - Schritt 2/3</h2>";
     $config->set("num_of_sectors", "", $request->request->getInt('num_of_sectors_p1'), $request->request->getInt('num_of_sectors_p2'));
     $config->set("num_of_cells", "", $request->request->getInt('num_of_cells_p1'), $request->request->getInt('num_of_cells_p2'));
@@ -70,9 +86,11 @@ if ($request->request->has('submit_create_universe'))
     echo "</form>";
 }
 
-// Erweitern
-elseif ($request->request->has('submit_expansion_universe'))
+function extendUniverse(ConfigurationService $config): void
 {
+    global $page;
+    global $sub;
+
     echo "<h2>Universum erweitern</h2>";
     echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
     echo "<b>Universum (".$config->param1Int('num_of_sectors')."x".$config->param2Int('num_of_sectors').") erweitern</b><br><br>";
@@ -99,9 +117,11 @@ elseif ($request->request->has('submit_expansion_universe'))
     echo "</form>";
 }
 
-// Reset
-elseif ($request->request->has('submit_reset'))
+function resetUniverse(): void
 {
+    global $page;
+    global $sub;
+
     echo "<h2>Runde zurücksetzen</h2>";
     echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
     echo "Runde wirklich zurücksetzen?<br/><br/>";
@@ -109,20 +129,29 @@ elseif ($request->request->has('submit_reset'))
     echo "</form>";
 }
 
-elseif ($request->request->has('submit_galaxy_reset'))
+function postResetUniverse(UniverseGenerator $universeGenerator): void
 {
+    global $page;
+    global $sub;
+
     $universeGenerator->reset(false);
     echo "Das Universum wurde zurückgesetzt!<br/><br/>".button("Weiter","?page=$page&amp;sub=$sub");
 }
 
-elseif ($request->request->has('submit_reset2'))
+function postResetRound(UniverseGenerator $universeGenerator): void
 {
+    global $page;
+    global $sub;
+
     $universeGenerator->reset();
     echo "Die Runde wurde zurückgesetzt!<br/><br/>".button("Weiter","?page=$page&amp;sub=$sub");
 }
 
-elseif ($request->request->has('submit_addstars'))
+function addStars(Request $request, UniverseGenerator $universeGenerator): void
 {
+    global $page;
+    global $sub;
+
     $n = $request->request->getInt('number_of_stars');
     if ($n < 0)
     {
@@ -132,9 +161,11 @@ elseif ($request->request->has('submit_addstars'))
     echo " Sternensysteme wurden hinzugefügt!<br/><br/>".button("Weiter","?page=$page&amp;sub=$sub");
 }
 
-// Uni-Optionen
-else
+function universeIndex(Request $request, ConfigurationService $config, UniverseGenerator $universeGenerator): void
 {
+    global $page;
+    global $sub;
+
     if ($request->request->has('submit_create_universe2'))
     {
       echo "<h2>Urknall - Schritt 3/3</h2>";
