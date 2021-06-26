@@ -13,7 +13,7 @@ class TechnologyDataRepository extends AbstractRepository
     {
         return $this->createQueryBuilder()
             ->select('t.tech_id, t.tech_name')
-            ->from('technologies','t')
+            ->from('technologies', 't')
             ->innerJoin('t', 'tech_types', 'tt', 't.tech_type_id = tt.type_id')
             ->where('t.tech_show = 1')
             ->orderBy('tt.type_order')

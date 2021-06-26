@@ -18,6 +18,6 @@ class DefenseCategoryRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn($row) => new DefenseCategory($row), $data);
+        return array_map(fn ($row) => new DefenseCategory($row), $data);
     }
 }

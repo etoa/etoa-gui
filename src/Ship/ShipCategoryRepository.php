@@ -18,7 +18,7 @@ class ShipCategoryRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn($row) => new ShipCategory($row), $data);
+        return array_map(fn ($row) => new ShipCategory($row), $data);
     }
 
     public function getCategory(int $categoryId): ?ShipCategory

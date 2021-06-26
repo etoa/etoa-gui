@@ -60,5 +60,4 @@ class Defense
         $this->maxCount = (int) $data['def_max_count'];
         $this->points = (float) $data['def_points'];
     }
-
 }

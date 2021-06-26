@@ -68,7 +68,7 @@ class DefenseDataRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn($row) => new Defense($row), $data);
+        return array_map(fn ($row) => new Defense($row), $data);
     }
 
     /**
@@ -87,6 +87,6 @@ class DefenseDataRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn($row) => new Defense($row), $data);
+        return array_map(fn ($row) => new Defense($row), $data);
     }
 }
