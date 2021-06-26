@@ -19,9 +19,9 @@ class Message
         $message = new Message();
 
         $message->id = (int) $data['id'];
-        $message->catId =  (int) $data['message_cat_id'];
-        $message->userFrom =  (int) $data['message_user_from'];
-        $message->userTo =  (int) $data['message_user_to'];
+        $message->catId = (int) $data['message_cat_id'];
+        $message->userFrom = (int) $data['message_user_from'];
+        $message->userTo = (int) $data['message_user_to'];
         $message->timestamp = (int) $data['message_timestamp'];
         $message->subject = $data['subject'];
         $message->text = $data['text'];

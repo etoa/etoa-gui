@@ -27,6 +27,7 @@ class TicketSolution
         if ($status == self::INVALID) {
             return "Ungültig";
         }
+
         return 'Offen';
     }
 

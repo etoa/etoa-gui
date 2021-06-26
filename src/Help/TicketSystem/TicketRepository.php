@@ -24,6 +24,7 @@ class TicketRepository extends AbstractRepository
         if ($adminId == 0) {
             return 0;
         }
+
         return (int) $this->createQueryBuilder()
             ->select("COUNT(*)")
             ->from('tickets')
@@ -44,6 +45,7 @@ class TicketRepository extends AbstractRepository
             ->setParameter('id', $id)
             ->execute()
             ->fetchAssociative();
+
         return $data ? Ticket::createFromArray($data) : null;
     }
 
@@ -93,6 +95,7 @@ class TicketRepository extends AbstractRepository
                     'timestamp' => $ticket->timestamp,
                 ])
                 ->execute();
+
             return (int) $affected > 0;
         }
         $this->createQueryBuilder()
@@ -117,6 +120,7 @@ class TicketRepository extends AbstractRepository
             ])
             ->execute();
         $ticket->id = (int) $this->getConnection()->lastInsertId();
+
         return true;
     }
 
@@ -166,6 +170,7 @@ class TicketRepository extends AbstractRepository
             $qry->setParameter($k, $id);
         }
         $affected = (int) $qry->execute();
+
         return $affected;
     }
 
@@ -189,6 +194,7 @@ class TicketRepository extends AbstractRepository
             ->setParameter('id', $catId)
             ->execute()
             ->fetchOne();
+
         return $data !== false ? $data : null;
     }
 }

@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Help\TicketSystem;
 
-use Doctrine\DBAL\Connection;
-use EtoA\Admin\AdminUserRepository;
 use EtoA\Core\AbstractRepository;
-use EtoA\User\UserRepository;
 
 class TicketMessageRepository extends AbstractRepository
 {
@@ -31,6 +28,7 @@ class TicketMessageRepository extends AbstractRepository
             ->setParameter('id', $id)
             ->execute()
             ->fetchAssociative();
+
         return $data ? TicketMessage::createFromArray($data) : null;
     }
 
@@ -47,6 +45,7 @@ class TicketMessageRepository extends AbstractRepository
             ->setParameter('ticket_id', $ticketId)
             ->execute()
             ->fetchAllAssociative();
+
         return collect($data)
             ->map(fn ($arr) => TicketMessage::createFromArray($arr))
             ->toArray();
@@ -63,6 +62,7 @@ class TicketMessageRepository extends AbstractRepository
             ->setParameter('ticket_id', $ticketId)
             ->execute()
             ->fetchAssociative();
+
         return $data ? TicketMessage::createFromArray($data) : null;
     }
 

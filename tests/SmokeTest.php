@@ -3,7 +3,6 @@
 namespace EtoA;
 
 use PHPUnit\Framework\TestCase;
-use Silex\Application;
 
 class SmokeTest extends TestCase
 {
@@ -21,5 +20,6 @@ class SmokeTest extends TestCase
     }
 
     public function tearDown(): void
-    {}
+    {
+    }
 }

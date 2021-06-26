@@ -81,6 +81,7 @@ class BuildingRepository extends AbstractRepository
             ->setParameter('id', $id)
             ->execute()
             ->fetchAssociative();
+
         return $data !== false ? $data : null;
     }
 
@@ -112,6 +113,7 @@ class BuildingRepository extends AbstractRepository
             ->where('buildlist_id = :id')
             ->setParameter('id', $id)
             ->execute();
+
         return (int) $affected > 0;
     }
 

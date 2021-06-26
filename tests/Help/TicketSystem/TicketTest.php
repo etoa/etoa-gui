@@ -8,7 +8,7 @@ use EtoA\AbstractDbTestCase;
 
 class TicketTest extends AbstractDbTestCase
 {
-    public function testGetIdString()
+    public function testGetIdString(): void
     {
         $ticket = new Ticket();
         $ticket->id = 123;

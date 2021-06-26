@@ -27,6 +27,7 @@ class AdminRoleManager
         foreach ($user->roles as $role) {
             $rs[] = $this->getRoleName($role);
         }
+
         return implode(', ', $rs);
     }
 
@@ -48,6 +49,7 @@ class AdminRoleManager
         if (!is_array($rolesToCheck)) {
             $rolesToCheck = explode(",", $rolesToCheck);
         }
+
         return count(array_intersect($rolesToCheck, $userRoles)) > 0;
     }
 }
