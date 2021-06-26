@@ -42,13 +42,18 @@ class BuildingDataRepository extends AbstractRepository
     /**
      * @return array<int, string>
      */
-    public function getBuildingNames(): array
+    public function getBuildingNames(bool $showAll = false): array
     {
-        return $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder()
             ->select('building_id, building_name')
             ->addSelect()
-            ->from('buildings')
-            ->where('building_show = 1')
+            ->from('buildings');
+
+        if (!$showAll) {
+            $qb->where('building_show = 1');
+        }
+
+        return $qb
             ->orderBy('building_name')
             ->execute()
             ->fetchAllKeyValue();
