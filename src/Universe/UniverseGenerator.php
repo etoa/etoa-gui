@@ -15,6 +15,15 @@ use UserToXml;
 class UniverseGenerator
 {
     private ConfigurationService $config;
+    private SolarTypeRepository $solarTypes;
+    private PlanetTypeRepository $planetTypes;
+    private CellRepository $cellRepo;
+    private EntityRepository $entityRepo;
+    private StarRepository $starRepo;
+    private AsteroidsRepository $asteroidsRepo;
+    private NebulaRepository $nebulaRepo;
+    private WormholeRepository $wormholeRepo;
+    private EmptySpaceRepository $emptySpaceRepo;
 
     /**
      * @var array<int>
@@ -26,36 +35,37 @@ class UniverseGenerator
      */
     private array $planet_types = [];
 
-    public function __construct(ConfigurationService $config)
+    public function __construct(
+        ConfigurationService $config,
+        SolarTypeRepository $solarTypes,
+        PlanetTypeRepository $planetTypes,
+        CellRepository $cellRepo,
+        EntityRepository $entityRepo,
+        StarRepository $starRepo,
+        AsteroidsRepository $asteroidsRepo,
+        NebulaRepository $nebulaRepo,
+        WormholeRepository $wormholeRepo,
+        EmptySpaceRepository $emptySpaceRepo
+    )
     {
         $this->config = $config;
+        $this->solarTypes = $solarTypes;
+        $this->planetTypes = $planetTypes;
+        $this->cellRepo = $cellRepo;
+        $this->entityRepo = $entityRepo;
+        $this->starRepo = $starRepo;
+        $this->asteroidsRepo = $asteroidsRepo;
+        $this->nebulaRepo = $nebulaRepo;
+        $this->wormholeRepo = $wormholeRepo;
+        $this->emptySpaceRepo = $emptySpaceRepo;
 
         $this->init();
     }
 
     private function init(): void
     {
-        $res = dbquery("
-            SELECT
-                  sol_type_id
-            FROM
-                sol_types
-            WHERE
-                sol_type_consider=1;");
-        while ($arr = mysql_fetch_array($res)) {
-            $this->sol_types[] = $arr['sol_type_id'];
-        }
-
-        $res = dbquery("
-            SELECT
-            type_id
-            FROM
-                planet_types
-            WHERE
-                type_consider=1;");
-        while ($arr = mysql_fetch_array($res)) {
-            $this->planet_types[] = $arr['type_id'];
-        }
+        $this->sol_types = array_keys($this->solarTypes->getSolarTypeNames());
+        $this->planet_types = array_keys($this->planetTypes->getPlanetTypeNames());
     }
 
     /**
@@ -112,18 +122,18 @@ class UniverseGenerator
                         $ct = mt_rand(1, 100);
 
                         if ($ct <= $perc_solsys) {
-                            $type[$x][$y] = 's';
+                            $type[$x][$y] = EntityType::STAR;
                         } elseif ($ct <= $perc_solsys + $perc_asteroids) {
-                            $type[$x][$y] = 'a';
+                            $type[$x][$y] = EntityType::ASTEROIDS;
                         } elseif ($ct <= $perc_solsys + $perc_asteroids + $perc_nebulas) {
-                            $type[$x][$y] = 'n';
+                            $type[$x][$y] = EntityType::NEBULA;
                         } elseif ($ct <= $perc_solsys + $perc_asteroids + $perc_nebulas + $perc_wormholes) {
-                            $type[$x][$y] = 'w';
+                            $type[$x][$y] = EntityType::WORMHOLE;
                         } else {
-                            $type[$x][$y] = 'e';
+                            $type[$x][$y] = EntityType::EMPTY_SPACE;
                         }
                     } else {
-                        $type[$x][$y] = 'e';
+                        $type[$x][$y] = EntityType::EMPTY_SPACE;
                     }
                 }
             }
@@ -134,149 +144,73 @@ class UniverseGenerator
                 for ($y = 1; $y <= ($sy_num * $cy_num); $y++) {
                     $ct = mt_rand(1, 100);
                     if ($ct <= $perc_solsys) {
-                        $type[$x][$y] = 's';
+                        $type[$x][$y] = EntityType::STAR;
                     } elseif ($ct <= $perc_solsys + $perc_asteroids) {
-                        $type[$x][$y] = 'a';
+                        $type[$x][$y] = EntityType::ASTEROIDS;
                     } elseif ($ct <= $perc_solsys + $perc_asteroids + $perc_nebulas) {
-                        $type[$x][$y] = 'n';
+                        $type[$x][$y] = EntityType::NEBULA;
                     } elseif ($ct <= $perc_solsys + $perc_asteroids + $perc_nebulas + $perc_wormholes) {
-                        $type[$x][$y] = 'w';
+                        $type[$x][$y] = EntityType::WORMHOLE;
                     } else {
-                        $type[$x][$y] = 'e';
+                        $type[$x][$y] = EntityType::EMPTY_SPACE;
                     }
                 }
             }
         }
 
         // Save cell info
-        $sql = "";
-        for ($sx = 1; $sx <= $sx_num; $sx++) {
-            for ($sy = 1; $sy <= $sy_num; $sy++) {
-                for ($cx = 1; $cx <= $cx_num; $cx++) {
-                    for ($cy = 1; $cy <= $cy_num; $cy++) {
-                        // Save cell
-                        if ($sql == "") {
-                            $sql .= "(
-                                    '" . $sx . "',
-                                    '" . $sy . "',
-                                    '" . $cx . "',
-                                    '" . $cy . "'
-                                )";
-                        } else {
-                            $sql .= ",(
-                                    '" . $sx . "',
-                                    '" . $sy . "',
-                                    '" . $cx . "',
-                                    '" . $cy . "'
-                                )";
-                        }
-                    }
-                }
-            }
-        }
+        $coordinates = $this->generateCoordinates($sx_num, $sy_num, $cx_num, $cy_num);
         echo "Zellen geneiert, speichere sie...<br/>";
-        dbquery("
-                INSERT INTO
-                    cells
-                (
-                    sx,
-                    sy,
-                    cx,
-                    cy
-                )
-                VALUES " . $sql);
+        $this->cellRepo->addMultiple($coordinates);
 
         echo "Zellen gespeichert, fülle Objekte rein...<br/>";
-        $res = dbquery("
-            SELECT
-                id,
-                sx,
-                sy,
-                cx,
-                cy
-            FROM
-                cells;");
-        while ($arr = mysql_fetch_row($res)) {
-            $cell_id = $arr[0];
-            $x = (($arr[1] - 1) * 10) + $arr[3];
-            $y = (($arr[2] - 1) * 10) + $arr[4];
+        $cells = $this->cellRepo->findAllCoordinates();
+        foreach ($cells as $cell) {
+            $x = (($cell['sx'] - 1) * $cx_num) + $cell['cx'];
+            $y = (($cell['sy'] - 1) * $cy_num) + $cell['cy'];
 
             // Star system
-            if ($type[$x][$y] == 's') {
-                $this->createStarSystem($cell_id);
+            if ($type[$x][$y] == EntityType::STAR) {
+                $this->createStarSystem((int) $cell['id']);
                 $sol_count++;
             }
 
             // Asteroid Fields
-            elseif ($type[$x][$y] == 'a') {
-                $this->createAsteroids($cell_id);
+            elseif ($type[$x][$y] == EntityType::ASTEROIDS) {
+                $this->createAsteroids((int) $cell['id']);
                 $asteroids_count++;
             }
 
             // Nebulas
-            elseif ($type[$x][$y] == 'n') {
-                $this->createNebula($cell_id);
+            elseif ($type[$x][$y] == EntityType::NEBULA) {
+                $this->createNebula((int) $cell['id']);
                 $nebula_count++;
             }
 
             // Wormholes
-            elseif ($type[$x][$y] == 'w') {
-                $this->createWormhole($cell_id);
+            elseif ($type[$x][$y] == EntityType::WORMHOLE) {
+                $this->createWormhole((int) $cell['id']);
                 $wormhole_count++;
             }
 
             // Empty space
             else {
-                $this->createEmptySpace($cell_id);
+                $this->createEmptySpace((int) $cell['id']);
             }
         }
         echo "Universum erstellt, prüfe Wurmlöcher...<br/>";
 
         // Delete one wormhole if total count is odd
         // Replace it with empty space
-        $nwres = dbquery("
-            SELECT
-                COUNT(id)
-            FROM
-                wormholes
-            ");
-        $nwarr = mysql_fetch_row($nwres);
-        if (fmod((int) $nwarr[0], 2) != 0) {
+        $numWormholes = $this->wormholeRepo->count();
+        if (fmod((int) $numWormholes, 2) != 0) {
             echo "<br>Ein Wurmloch ist zuviel, lösche es!<br>";
-            $res = dbquery("
-                SELECT
-                    id
-                FROM
-                    wormholes
-                ");
-            $arr = mysql_fetch_array($res);
-            dbquery("
-                    UPDATE
-                        entities
-                    SET
-                        code='e'
-                    WHERE
-                        id='" . $arr['id'] . "'
-                ");
-            dbquery("
-                    DELETE FROM
-                        wormholes
-                    WHERE
-                        id='" . $arr['id'] . "'
-                ");
-            dbquery("
-                    INSERT INTO
-                        space
-                    (
-                        id,
-                        lastvisited
-                    )
-                    VALUES
-                    (
-                        " . $arr['id'] . ",
-                        0
-                    );
-                ");
+            $wormholeId = $this->wormholeRepo->getOneId();
+            if ($wormholeId !== null) {
+                $this->entityRepo->updateCode($wormholeId, EntityType::EMPTY_SPACE);
+                $this->wormholeRepo->remove($wormholeId);
+                $this->emptySpaceRepo->add($wormholeId);
+            }
         }
 
         //
@@ -286,20 +220,13 @@ class UniverseGenerator
         // Get all wormholes
         $wh = array();
         $wh_persistent = array();
-        $res = dbquery("
-            SELECT
-                id,
-                target_id,
-                persistent
-            FROM
-                wormholes
-            ");
-        $wormhole_count = mysql_num_rows($res);
-        while ($arr = mysql_fetch_array($res)) {
-            if ($arr['persistent'] == 1) {
-                array_push($wh_persistent, $arr['id']);
+        $wormholes = $this->wormholeRepo->findAll();
+        $wormhole_count = count($wormholes);
+        foreach ($wormholes as $wormhole) {
+            if ($wormhole['persistent'] == 1) {
+                array_push($wh_persistent, (int) $wormhole['id']);
             } else {
-                array_push($wh, $arr['id']);
+                array_push($wh, (int) $wormhole['id']);
             }
         }
 
@@ -310,61 +237,26 @@ class UniverseGenerator
         // Reduce list of persistent wormholes if uneven
         if (fmod(count($wh_persistent), 2) != 0) {
             $lastWormHole = array_pop($wh_persistent);
-            dbquery("
-                UPDATE
-                    wormholes
-                SET
-                    persistent=0
-                WHERE
-                    id='" . $lastWormHole . "';
-                ");
+            $this->wormholeRepo->setPersistent($lastWormHole, false);
             array_push($wh, $lastWormHole);
         }
 
-        $wh_new = array();
+        $wh_new = [];
         while (sizeof($wh) > 0) {
             $wh_new[array_shift($wh)] = array_pop($wh);
         }
         foreach ($wh_new as $k => $v) {
-            dbquery("
-                UPDATE
-                    wormholes
-                SET
-                    target_id='" . $k . "'
-                WHERE
-                    id='" . $v . "';
-                ");
-            dbquery("
-                UPDATE
-                    wormholes
-                SET
-                    target_id='" . $v . "'
-                WHERE
-                    id='" . $k . "';
-                ");
+            $this->wormholeRepo->updateTarget($v, $k);
+            $this->wormholeRepo->updateTarget($k, $v);
         }
 
-        $wh_persistent_new = array();
+        $wh_persistent_new = [];
         while (sizeof($wh_persistent) > 0) {
             $wh_persistent_new[array_shift($wh_persistent)] = array_pop($wh_persistent);
         }
         foreach ($wh_persistent_new as $k => $v) {
-            dbquery("
-                UPDATE
-                    wormholes
-                SET
-                    target_id='" . $k . "'
-                WHERE
-                    id='" . $v . "';
-                ");
-            dbquery("
-                UPDATE
-                    wormholes
-                SET
-                    target_id='" . $v . "'
-                WHERE
-                    id='" . $k . "';
-                ");
+            $this->wormholeRepo->updateTarget($v, $k);
+            $this->wormholeRepo->updateTarget($k, $v);
         }
 
         echo "Platziere Marktplatz...<br />";
@@ -374,19 +266,12 @@ class UniverseGenerator
                 SET
                     code='m'
                 WHERE
-                    code='e'
+                    code='".EntityType::EMPTY_SPACE."'
                 ORDER BY
                     RAND()
                 LIMIT
                     1;");
-        dbquery("
-                DELETE FROM
-                    space
-                WHERE
-                    id='" . mysql_insert_id() . "'
-                LIMIT
-                    1;");
-
+        $this->emptySpaceRepo->remove(mysql_insert_id());
 
         echo "Erstelle Markt und Allianz entity...<br />";
         dbquery("
@@ -395,18 +280,11 @@ class UniverseGenerator
                     SET
                         code='m'
                     WHERE
-                        code='e'
+                        code='".EntityType::EMPTY_SPACE."'
                     ORDER BY
                         RAND()
                     LIMIT 1;");
-
-        dbquery("
-                DELETE FROM
-                    space
-                WHERE
-                    id='" . mysql_insert_id() . "'
-                LIMIT
-                    1;");
+        $this->emptySpaceRepo->remove(mysql_insert_id());
 
         dbquery("
                     UPDATE
@@ -414,83 +292,67 @@ class UniverseGenerator
                     SET
                         code='x'
                     WHERE
-                        code='e'
+                        code='".EntityType::EMPTY_SPACE."'
                     ORDER BY
                         RAND()
                     LIMIT 1;");
-
-        dbquery("
-                DELETE FROM
-                    space
-                WHERE
-                    id='" . mysql_insert_id() . "'
-                LIMIT
-                    1;");
+        $this->emptySpaceRepo->remove(mysql_insert_id());
 
         $mtx->release();
         echo "Universum erstellt!<br> $sol_count Sonnensysteme, $asteroids_count Asteroidenfelder, $nebula_count Nebel und $wormhole_count Wurmlöcher!";
     }
 
-    private function createStarSystem($cell_id, $id = -1): void
+    private function generateCoordinates(int $sx_num, int $sy_num, int $cx_num, int $cy_num): array
+    {
+        $coordinates = [];
+        for ($sx = 1; $sx <= $sx_num; $sx++) {
+            for ($sy = 1; $sy <= $sy_num; $sy++) {
+                for ($cx = 1; $cx <= $cx_num; $cx++) {
+                    for ($cy = 1; $cy <= $cy_num; $cy++) {
+                        $coordinates[] = [
+                            'sx' => $sx,
+                            'sy' => $sy,
+                            'cx' => $cx,
+                            'cy' => $cy,
+                        ];
+                    }
+                }
+            }
+        }
+        return $coordinates;
+    }
+
+    private function createStarSystem(int $cellId, ?int $id = null): void
     {
         $num_planets_min = $this->config->param1Int('num_planets');
         $num_planets_max = $this->config->param2Int('num_planets');
 
         // The Star
-        $st = $this->sol_types[array_rand($this->sol_types)];
+        $type = $this->sol_types[array_rand($this->sol_types)];
 
-        if (-1 === $id) {
-            $sql = "
-                    INSERT INTO
-                        entities
-                    (
-                        cell_id,
-                        code,
-                        pos
-                    )
-                    VALUES
-                    (
-                        " . $cell_id . ",
-                        's',
-                        0
-                    );
-                ";
-            dbquery($sql);
-            $eid = mysql_insert_id();
+        if ($id === null) {
+            $entityId = $this->entityRepo->add($cellId, EntityType::STAR, 0);
         } else {
-            dbquery("UPDATE entities SET code = 's' WHERE id = " . $id . ";");
-            $eid = $id;
+            $this->entityRepo->updateCode($id, EntityType::STAR);
+            $entityId = $id;
         }
-        $sql = "
-                INSERT INTO
-                    stars
-                (
-                    id,
-                    type_id
-                )
-                VALUES
-                (
-                    " . $eid . ",
-                    " . $st . "
-                );
-            ";
-        dbquery($sql);
+        $this->starRepo->add($entityId, $type);
 
         // The planets
         $np = mt_rand($num_planets_min, $num_planets_max);
         for ($cnp = 1; $cnp <= $np; $cnp++) {
             $r = mt_rand(0, 100);
             if ($r <= $this->config->getInt('solsys_percent_planet')) {
-                $this->createPlanet($cell_id, $cnp, $np);
+                $this->createPlanet($cellId, $cnp, $np);
             } elseif ($r <= $this->config->getInt('solsys_percent_planet') + $this->config->getInt('solsys_percent_asteroids')) {
-                $this->createAsteroids($cell_id, $cnp);
+                $this->createAsteroids($cellId, $cnp);
             } else {
-                $this->createEmptySpace($cell_id, $cnp);
+                $this->createEmptySpace($cellId, $cnp);
             }
         }
     }
 
-    private function createPlanet($cell_id, $pos, $np): void
+    private function createPlanet(int $cellId, int $pos, $np): void
     {
         $planet_fields_min = $this->config->param1Int('planet_fields');
         $planet_fields_max = $this->config->param2Int('planet_fields');
@@ -502,23 +364,7 @@ class UniverseGenerator
 
         $num_planet_images = $this->config->getInt('num_planet_images');
 
-        $sql = "
-                INSERT INTO
-                    entities
-                (
-                    cell_id,
-                    code,
-                    pos
-                )
-                VALUES
-                (
-                    " . $cell_id . ",
-                    'p',
-                    " . $pos . "
-                );
-            ";
-        dbquery($sql);
-        $eid = mysql_insert_id();
+        $id = $this->entityRepo->add($cellId, EntityType::PLANET, $pos);
 
         $pt = $this->planet_types[array_rand($this->planet_types)];
         $img_nr = $pt . "_" . mt_rand(1, $num_planet_images);
@@ -540,7 +386,7 @@ class UniverseGenerator
                 )
                 VALUES
                 (
-                    '" . $eid . "',
+                    '" . $id . "',
                     '" . $pt . "',
                     '" . $fields . "',
                     '" . $img_nr . "',
@@ -550,158 +396,36 @@ class UniverseGenerator
         dbquery($sql);    // Planet speichern
     }
 
-    private function createAsteroids($cell_id, $pos = 0): void
+    private function createAsteroids(int $cellId, int $pos = 0): void
     {
-        $sql = "
-                INSERT INTO
-                    entities
-                (
-                    cell_id,
-                    code,
-                    pos
-                )
-                VALUES
-                (
-                    " . $cell_id . ",
-                    'a',
-                    " . $pos . "
-                );
-            ";
-        dbquery($sql);
-        $eid = mysql_insert_id();
+        $metal = mt_rand($this->config->param1Int('asteroid_ress'), $this->config->param2Int('asteroid_ress'));
+        $crystal = mt_rand($this->config->param1Int('asteroid_ress'), $this->config->param2Int('asteroid_ress'));
+        $plastic = mt_rand($this->config->param1Int('asteroid_ress'), $this->config->param2Int('asteroid_ress'));
 
-        $asteroid_metal = mt_rand($this->config->param1Int('asteroid_ress'), $this->config->param2Int('asteroid_ress'));
-        $asteroid_crystal = mt_rand($this->config->param1Int('asteroid_ress'), $this->config->param2Int('asteroid_ress'));
-        $asteroid_plastic = mt_rand($this->config->param1Int('asteroid_ress'), $this->config->param2Int('asteroid_ress'));
-        $sql = "
-                INSERT INTO
-                    asteroids
-                (
-                    id,
-                    res_metal,
-                    res_crystal,
-                    res_plastic
-                )
-                VALUES
-                (
-                    " . $eid . ",
-                    " . $asteroid_metal . ",
-                    " . $asteroid_crystal . ",
-                    " . $asteroid_plastic . "
-                );
-            ";
-        dbquery($sql);
+        $id = $this->entityRepo->add($cellId, EntityType::ASTEROIDS, $pos);
+        $this->asteroidsRepo->add($id, $metal, $crystal, $plastic);
     }
 
-    private function createNebula($cell_id, $pos = 0): void
+    private function createNebula(int $cellId, int $pos = 0): void
     {
-        $sql = "
-                INSERT INTO
-                    entities
-                (
-                    cell_id,
-                    code,
-                    pos
-                )
-                VALUES
-                (
-                    " . $cell_id . ",
-                    'n',
-                    " . $pos . "
-                );
-            ";
-        dbquery($sql);
-        $eid = mysql_insert_id();
+        $crystal = mt_rand($this->config->param1Int('nebula_ress'), $this->config->param2Int('nebula_ress'));
 
-        $nebula_ress = mt_rand($this->config->param1Int('nebula_ress'), $this->config->param2Int('nebula_ress'));
-        $sql = "
-                INSERT INTO
-                    nebulas
-                (
-                    id,
-                    res_crystal
-                )
-                VALUES
-                (
-                    " . $eid . ",
-                    " . $nebula_ress . "
-                );
-            ";
-        dbquery($sql);
+        $id = $this->entityRepo->add($cellId, EntityType::NEBULA, $pos);
+        $this->nebulaRepo->add($id, $crystal);
     }
 
-    private function createWormhole($cell_id, $pos = 0): void
+    private function createWormhole(int $cellId): void
     {
-        $persistent_wormholes_ratio = $this->config->getInt('persistent_wormholes_ratio');
-        $sql = "
-                INSERT INTO
-                    entities
-                (
-                    cell_id,
-                    code,
-                    pos
-                )
-                VALUES
-                (
-                    " . $cell_id . ",
-                    'w',
-                    " . $pos . "
-                );
-            ";
-        dbquery($sql);
-        $eid = mysql_insert_id();
+        $persistent = (mt_rand(0, 100) <= $this->config->getInt('persistent_wormholes_ratio'));
 
-        $persistent = (mt_rand(0, 100) <= $persistent_wormholes_ratio) ? 1 : 0;
-        $sql = "
-                INSERT INTO
-                    wormholes
-                (
-                    id,
-                    changed,
-                    persistent
-                )
-                VALUES
-                (
-                    " . $eid . ",
-                    " . time() . ",
-                    " . $persistent . "
-                );
-            ";
-        dbquery($sql);
+        $id = $this->entityRepo->add($cellId, EntityType::WORMHOLE);
+        $this->wormholeRepo->add($id, $persistent);
     }
 
-    private function createEmptySpace($cell_id, $pos = 0): void
+    private function createEmptySpace(int $cellId, int $pos = 0): void
     {
-        $sql = "
-                INSERT INTO
-                    entities
-                (
-                    cell_id,
-                    code,
-                    pos
-                )
-                VALUES
-                (
-                    " . $cell_id . ",
-                    'e',
-                    " . $pos . "
-                );
-            ";
-        dbquery($sql);
-        $eid = mysql_insert_id();
-
-        $sql = "
-                INSERT INTO
-                    space
-                (
-                    id
-                )
-                VALUES
-                (
-                    " . $eid . "
-                );
-            ";
-        dbquery($sql);
+        $id = $this->entityRepo->add($cellId, EntityType::EMPTY_SPACE, $pos);
+        $this->emptySpaceRepo->add($id);
     }
 
     /**
@@ -710,18 +434,18 @@ class UniverseGenerator
      */
     public function addStarSystems($n = 0): int
     {
-        $res = dbquery("SELECT id, cell_id, code FROM entities WHERE code in ('e', 'a') AND pos=0 ORDER BY RAND() LIMIT " . $n . ";");
+        $res = dbquery("SELECT id, cell_id, code FROM entities WHERE code in ('".EntityType::EMPTY_SPACE."', '".EntityType::ASTEROIDS."') AND pos=0 ORDER BY RAND() LIMIT " . $n . ";");
         $added = 0;
         while ($row = mysql_fetch_array($res)) {
             $sql = '';
-            if ($row['code'] === 'e') {
+            if ($row['code'] === EntityType::EMPTY_SPACE) {
                 $sql = "DELETE FROM space where id='" . $row['id'] . "';";
-            } elseif ($row['code'] === 'a') {
+            } elseif ($row['code'] === EntityType::ASTEROIDS) {
                 $sql = "DELETE FROM asteroids where id='" . $row['id'] . "';";
             }
             if ('' !== $sql) {
                 dbquery($sql);
-                $this->createStarSystem($row['cell_id'], $row['id']);
+                $this->createStarSystem((int) $row['cell_id'], (int) $row['id']);
                 $added++;
             }
         }

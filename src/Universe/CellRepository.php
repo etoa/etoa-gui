@@ -16,4 +16,39 @@ class CellRepository extends AbstractRepository
             ->execute()
             ->fetchOne();
     }
+
+    public function findAllCoordinates(): array
+    {
+        return $this->createQueryBuilder()
+            ->select(
+                "id",
+                "sx",
+                "sy",
+                "cx",
+                "cy"
+            )
+            ->from('cells')
+            ->execute()
+            ->fetchAllAssociative();
+    }
+
+    /**
+     * @param array<array<int>> $values
+     */
+    public function addMultiple(array $values): void
+    {
+        $this->getConnection()
+            ->executeStatement(
+                "INSERT INTO cells
+                (
+                    sx,
+                    sy,
+                    cx,
+                    cy
+                )
+                VALUES " .
+                    implode(',', array_fill(0, count($values), '(?, ?, ? ,?)')),
+                flatten($values)
+            );
+    }
 }

@@ -15,8 +15,43 @@ class UniverseServiceProvider implements ServiceProviderInterface
             return new CellRepository($pimple['db']);
         };
 
+        $pimple['etoa.universe.entity.repository'] = function (Container $pimple): EntityRepository {
+            return new EntityRepository($pimple['db']);
+        };
+
+        $pimple['etoa.universe.star.repository'] = function (Container $pimple): StarRepository {
+            return new StarRepository($pimple['db']);
+        };
+
+        $pimple['etoa.universe.asteroids.repository'] = function (Container $pimple): AsteroidsRepository {
+            return new AsteroidsRepository($pimple['db']);
+        };
+
+        $pimple['etoa.universe.nebula.repository'] = function (Container $pimple): NebulaRepository {
+            return new NebulaRepository($pimple['db']);
+        };
+
+        $pimple['etoa.universe.wormhole.repository'] = function (Container $pimple): WormholeRepository {
+            return new WormholeRepository($pimple['db']);
+        };
+
+        $pimple['etoa.universe.empty_space.repository'] = function (Container $pimple): EmptySpaceRepository {
+            return new EmptySpaceRepository($pimple['db']);
+        };
+
         $pimple['etoa.universe.generator'] = function (Container $pimple): UniverseGenerator {
-            return new UniverseGenerator($pimple['etoa.config.service']);
+            return new UniverseGenerator(
+                $pimple['etoa.config.service'],
+                $pimple['etoa.universe.solar_type.repository'],
+                $pimple['etoa.universe.planet_type.repository'],
+                $pimple['etoa.universe.cell.repository'],
+                $pimple['etoa.universe.entity.repository'],
+                $pimple['etoa.universe.star.repository'],
+                $pimple['etoa.universe.asteroids.repository'],
+                $pimple['etoa.universe.nebula.repository'],
+                $pimple['etoa.universe.wormhole.repository'],
+                $pimple['etoa.universe.empty_space.repository']
+            );
         };
 
         $pimple['etoa.universe.solar_type.repository'] = function (Container $pimple): SolarTypeRepository {
@@ -26,5 +61,6 @@ class UniverseServiceProvider implements ServiceProviderInterface
         $pimple['etoa.universe.planet_type.repository'] = function (Container $pimple): PlanetTypeRepository {
             return new PlanetTypeRepository($pimple['db']);
         };
+
     }
 }
