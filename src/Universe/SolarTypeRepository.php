@@ -40,6 +40,6 @@ class SolarTypeRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn($row) => new SolarType($row), $data);
+        return array_map(fn ($row) => new SolarType($row), $data);
     }
 }

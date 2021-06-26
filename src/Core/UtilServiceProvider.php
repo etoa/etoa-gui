@@ -9,7 +9,7 @@ use Pimple\ServiceProviderInterface;
 
 class UtilServiceProvider implements ServiceProviderInterface
 {
-    public function register(Container $pimple)
+    public function register(Container $pimple): void
     {
         $pimple['etoa.util.markdown'] = function (): ConverterInterface {
             return new CommonMarkConverter();

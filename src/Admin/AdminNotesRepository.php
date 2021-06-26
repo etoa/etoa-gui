@@ -44,6 +44,7 @@ class AdminNotesRepository extends AbstractRepository
             ])
             ->execute()
             ->fetchAssociative();
+
         return $data ? $data : null;
     }
 
@@ -55,7 +56,7 @@ class AdminNotesRepository extends AbstractRepository
                 'titel' => ':titel',
                 'text' => ':text',
                 'date' => time(),
-                'admin_id' => ':admin_id'
+                'admin_id' => ':admin_id',
             ])
             ->setParameters([
                 'titel' => $titel,
@@ -63,6 +64,7 @@ class AdminNotesRepository extends AbstractRepository
                 'admin_id' => $adminId,
             ])
             ->execute();
+
         return (int) $this->getConnection()->lastInsertId();
     }
 
@@ -79,6 +81,7 @@ class AdminNotesRepository extends AbstractRepository
                 'text' => $text,
             ])
             ->execute();
+
         return (int) $affected > 0;
     }
 
@@ -89,6 +92,7 @@ class AdminNotesRepository extends AbstractRepository
             ->where('notes_id = :id')
             ->setParameter('id', $id)
             ->execute();
+
         return (int) $affected > 0;
     }
 }

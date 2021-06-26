@@ -53,11 +53,13 @@ class TextRepository extends AbstractRepository
             $t->label = $this->textDef[$id]['label'];
             $t->description = $this->textDef[$id]['description'];
             $t->isOriginal = ($data['text_content'] == $this->textDef[$id]['default']);
+
             return $t;
         }
         $t = new Text($id, $this->textDef[$id]['default']);
         $t->label = $this->textDef[$id]['label'];
         $t->description = $this->textDef[$id]['description'];
+
         return $t;
     }
 
@@ -77,7 +79,7 @@ class TextRepository extends AbstractRepository
                 [
                     $text->id,
                     $text->content,
-                    $text->enabled ? 1 : 0
+                    $text->enabled ? 1 : 0,
                 ]
             );
     }
@@ -124,6 +126,7 @@ class TextRepository extends AbstractRepository
             if ($text->enabled && $text->content) {
                 return $text->content;
             }
+
             return $default;
         }
 

@@ -44,7 +44,7 @@ class AllianceTechnologyRepository extends AbstractRepository
                 'alliance_techlist_current_level' => ':level',
                 'alliance_techlist_build_start_time' => 0,
                 'alliance_techlist_build_end_time' => 1,
-                'alliance_techlist_member_for' => ' :amount'
+                'alliance_techlist_member_for' => ' :amount',
             ])
             ->setParameters([
                 'alliance' => $allianceId,

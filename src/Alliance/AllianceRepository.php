@@ -36,6 +36,7 @@ class AllianceRepository extends AbstractRepository
             ->setParameter('id', $id)
             ->execute()
             ->fetchAssociative();
+
         return $data !== false ? $data : null;
     }
 

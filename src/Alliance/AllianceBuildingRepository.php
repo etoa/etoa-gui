@@ -45,7 +45,7 @@ class AllianceBuildingRepository extends AbstractRepository
                 'alliance_buildlist_build_start_time' => 0,
                 'alliance_buildlist_build_end_time' => 1,
                 'alliance_buildlist_cooldown' => 0,
-                'alliance_buildlist_member_for' => ' :amount'
+                'alliance_buildlist_member_for' => ' :amount',
             ])
             ->setParameters([
                 'alliance' => $allianceId,

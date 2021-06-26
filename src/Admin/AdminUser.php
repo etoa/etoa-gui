@@ -38,6 +38,7 @@ class AdminUser
         $adminUser->locked = (bool) $data['user_locked'];
         $adminUser->roles = explode(",", $data['roles']);
         $adminUser->isContact = (bool) $data['is_contact'];
+
         return $adminUser;
     }
 

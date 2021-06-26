@@ -66,6 +66,7 @@ Dein Admin-Team";
         if ($changed) {
             $this->addMessage($ticket, "Das Ticket wurde dem Administrator " . $this->adminUserRepo->getNick($ticket->adminId) . " zugewiesen.");
         }
+
         return $changed;
     }
 
@@ -78,8 +79,10 @@ Dein Admin-Team";
             if ($changed) {
                 $this->addMessage($ticket, "Das Ticket wurde geschlossen und als " . TicketSolution::label($ticket->solution) . " gekennzeichnet.");
             }
+
             return $changed;
         }
+
         return false;
     }
 
@@ -93,6 +96,7 @@ Dein Admin-Team";
             if ($changed) {
                 $this->addMessage($ticket, "Das Ticket wurde wieder eröffnet.");
             }
+
             return $changed;
         }
         if ($ticket->status == TicketStatus::ASSIGNED) {
@@ -102,8 +106,10 @@ Dein Admin-Team";
             if ($changed) {
                 $this->addMessage($ticket, "Der Ticketadministrator hat das Ticket wieder als Neu markiert.");
             }
+
             return $changed;
         }
+
         return false;
     }
 
@@ -124,6 +130,7 @@ Dein Admin-Team";
                 }
             }
         }
+
         return $i;
     }
 
@@ -166,6 +173,7 @@ Dein Admin-Team";
         if ($message->adminId > 0) {
             return $this->adminUserRepo->getNick($message->adminId) . " (Admin)";
         }
+
         return "System";
     }
 }

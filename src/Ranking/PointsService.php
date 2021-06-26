@@ -18,8 +18,8 @@ class PointsService
     public function __construct(
         ConfigurationService $config,
         UserRepository $userRepo,
-        AllianceRepository $allianceRepo)
-    {
+        AllianceRepository $allianceRepo
+    ) {
         $this->config = $config;
         $this->userRepo = $userRepo;
         $this->allianceRepo = $allianceRepo;

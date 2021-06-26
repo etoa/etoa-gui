@@ -75,6 +75,6 @@ class ShipDataRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn($row) => new Ship($row), $data);
+        return array_map(fn ($row) => new Ship($row), $data);
     }
 }
