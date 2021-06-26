@@ -44,6 +44,51 @@ class ShipDataRepository extends AbstractRepository
     /**
      * @return Ship[]
      */
+    public function getAllShips(bool $showAll = false, string $oderBy = null): array
+    {
+        $qb = $this->createQueryBuilder()
+            ->select('*')
+            ->addSelect()
+            ->from('ships');
+
+        if (!$showAll) {
+            $qb
+                ->where('ship_show = 1')
+                ->andWhere('special_ship = 0');
+        }
+
+        if ($oderBy !== null) {
+            $qb->orderBy($oderBy, 'DESC');
+        }
+
+        $data = $qb
+            ->addOrderBy('ship_name')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new Ship($row), $data);
+    }
+
+    /**
+     * @return Ship[]
+     */
+    public function getSpecialShips(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->addSelect()
+            ->from('ships')
+            ->andWhere('special_ship = 1')
+            ->orderBy('ship_name')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new Ship($row), $data);
+    }
+
+    /**
+     * @return Ship[]
+     */
     public function getShipsWithAction(string $action): array
     {
         $data = $this->shipActionQueryBuilder($action)
