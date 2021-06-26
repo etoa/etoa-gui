@@ -5,11 +5,13 @@ use Twig\Environment;
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
+/** @var \EtoA\Ship\ShipDataRepository $shipDataRepository */
+$shipDataRepository = $app[\EtoA\Ship\ShipDataRepository::class];
 
 if ($sub=="fleetoptions") {
     fleetOptions($config);
 } else {
-    fleets($config, $twig);
+    fleets($config, $twig, $shipDataRepository);
 }
 
 function fleetOptions(ConfigurationService $config): void
@@ -228,10 +230,11 @@ function fleetOptions(ConfigurationService $config): void
     echo "</form>";
 }
 
-function fleets(ConfigurationService $config, Environment $twig)
+function fleets(ConfigurationService $config, Environment $twig, \EtoA\Ship\ShipDataRepository $shipDataRepository)
 {
     global $page;
     global $sub;
+    $shipNames = $shipDataRepository->getShipNames(true);
 
     $twig->addGlobal('title', "Flotten");
 
@@ -683,16 +686,11 @@ function fleets(ConfigurationService $config, Environment $twig)
 
             $sres=dbquery("
             SELECT
-            ship_name,
-            ship_id,
+            fs_ship_id as ship_id,
             fs_ship_cnt
             FROM
             fleet_ships
-            INNER JOIN
-                ships
-            WHERE
-            fs_ship_id=ship_id
-            AND fs_fleet_id=".intval($_GET['fleetedit']));
+            WHERE fs_fleet_id=".intval($_GET['fleetedit']));
             if (mysql_num_rows($sres)>0)
             {
                 echo "<form action=\"?page=$page&amp;sub=$sub&amp;fleetedit=".intval($_GET['fleetedit'])."\" method=\"post\">";
@@ -700,11 +698,11 @@ function fleets(ConfigurationService $config, Environment $twig)
                 echo "<tr><th class=\"tbltitle\">Typ</th><th class=\"tbltitle\">Anzahl</th><th class=\"tbltitle\">&nbsp;</th></tr>";
                 while ($sarr=mysql_fetch_array($sres))
                 {
-                    echo "<tr><td class=\"tbldata\">".$sarr['ship_name']."</td>";
+                    echo "<tr><td class=\"tbldata\">".$shipNames[$sarr['ship_id']]."</td>";
                     echo "<td class=\"tbldata\">
                         <input type=\"text\" name=\"fs_ship_cnt[".$sarr['ship_id']."]\" value=\"".$sarr['fs_ship_cnt']."\" size=\"5\" /></td>";
                     echo "<td class=\"tbldata\">
-                        <a href=\"?page=$page&amp;sub=$sub&amp;fleetedit=".$_GET['fleetedit']."&amp;shipdel=".$sarr['ship_id']."\" onclick=\"return confirm('Soll ".$sarr['ship_name']." wirklich aus der Flotte entfernt werden?');\">L&ouml;schen</a></td>";
+                        <a href=\"?page=$page&amp;sub=$sub&amp;fleetedit=".$_GET['fleetedit']."&amp;shipdel=".$sarr['ship_id']."\" onclick=\"return confirm('Soll ".$shipNames[$sarr['ship_id']]." wirklich aus der Flotte entfernt werden?');\">L&ouml;schen</a></td>";
                     echo "</tr>";
                 }
 
@@ -713,8 +711,7 @@ function fleets(ConfigurationService $config, Environment $twig)
                 //Zeigt alle gefakten schiffe in der flotte
                 $sfres=dbquery("
                 SELECT
-                    ship_name,
-                    ship_id,
+                    fs_ship_id as ship_id,
                     fs_ship_cnt
                 FROM
                     fleet_ships,
@@ -730,11 +727,11 @@ function fleets(ConfigurationService $config, Environment $twig)
                     echo "<tr><th class=\"tbltitle\">Typ</th><th class=\"tbltitle\">Anzahl</th><th class=\"tbltitle\">&nbsp;</th></tr>";
                     while ($sfarr=mysql_fetch_array($sfres))
                     {
-                        echo "<tr><td class=\"tbldata\">".$sfarr['ship_name']."</td>";
+                        echo "<tr><td class=\"tbldata\">".$shipNames[$sfarr['ship_id']]."</td>";
                         echo "<td class=\"tbldata\"><input type=\"text\" name=\"fs_ship_cnt[".$sfarr['ship_id']."]\" value=\"".$sfarr['fs_ship_cnt']."\" size=\"5\" /></td>";
 
 
-                            echo "<td class=\"tbldata\"><a href=\"?page=$page&amp;sub=$sub&amp;fleetedit=".$_GET['fleetedit']."&amp;shipdel=".$sfarr['ship_id']."\" onclick=\"return confirm('Soll ".$sfarr['ship_name']." wirklich aus der Flotte entfernt werden?');\">L&ouml;schen</a></td>";
+                            echo "<td class=\"tbldata\"><a href=\"?page=$page&amp;sub=$sub&amp;fleetedit=".$_GET['fleetedit']."&amp;shipdel=".$sfarr['ship_id']."\" onclick=\"return confirm('Soll ".$shipNames[$sfarr['ship_id']]." wirklich aus der Flotte entfernt werden?');\">L&ouml;schen</a></td>";
 
                         echo "</tr>";
                     }
@@ -747,10 +744,8 @@ function fleets(ConfigurationService $config, Environment $twig)
 
                 echo "<input type=\"text\" name=\"fs_ship_cnt_new\" value=\"1\" size=\"5\" /> Schiffe des Typs
                 <select name=\"fs_ship_id_new\">";
-                $ssres=dbquery("SELECT ship_id,ship_name FROM ships ORDER BY ship_name;");
-                while ($ssarr=mysql_fetch_array($ssres))
-                {
-                    echo "<option value=\"".$ssarr['ship_id']."\">".$ssarr['ship_name']."</option>";
+                foreach ($shipNames as $shipId => $shipName) {
+                    echo "<option value=\"".$shipId."\">".$shipName."</option>";
                 }
                 echo "</select> hinzuf&uuml;gen:
                 <input type=\"submit\" name=\"newship_submit\" value=\"Ausf&uuml;hren\" /></form><br/>";
@@ -1255,10 +1250,8 @@ function fleets(ConfigurationService $config, Environment $twig)
             <td class=\"tbldata\">
                 <input type=\"text\" name=\"fs_ship_cnt_new\" value=\"1\" size=\"5\" />
                 <select name=\"fs_ship_id_new\">";
-                $ssres=dbquery("SELECT ship_id,ship_name FROM ships ORDER BY ship_name;");
-                while ($ssarr=mysql_fetch_array($ssres))
-                {
-                    echo "<option value=\"".$ssarr['ship_id']."\">".$ssarr['ship_name']."</option>";
+                foreach ($shipNames as $shipId => $shipName) {
+                    echo "<option value=\"".$shipId."\">".$shipName."</option>";
                 }
             echo "</select></td></tr>";
         echo "</table><br/>
@@ -1392,10 +1385,8 @@ function fleets(ConfigurationService $config, Environment $twig)
                 <input type=\"text\" name=\"fs_ship_cnt_new\" value=\"1\" size=\"5\" />
                 <select name=\"fs_ship_id_new\">";
                 echo "<option value=\"0\">Schiff wählen...</option>";
-                $ssres=dbquery("SELECT ship_id,ship_name FROM ships ORDER BY ship_name;");
-                while ($ssarr=mysql_fetch_array($ssres))
-                {
-                    echo "<option value=\"".$ssarr['ship_id']."\">".$ssarr['ship_name']."</option>";
+                foreach ($shipNames as $shipId => $shipName) {
+                    echo "<option value=\"".$shipId."\">".$shipName."</option>";
                 }
             echo "</select></td></tr>";
         echo "</table><br/>

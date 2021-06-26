@@ -3,6 +3,9 @@ use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
+/** @var \EtoA\Defense\DefenseDataRepository $defenseDataRepository */
+$defenseDataRepository = $app[\EtoA\Defense\DefenseDataRepository::class];
+$defenseNames = $defenseDataRepository->getDefenseNames(true);
 
 	//////////////////////////////////////////////////
 	//		 	 ____    __           ______       			//
@@ -396,14 +399,6 @@ $config = $app['etoa.config.service'];
 		{
 			$_SESSION['defqueue']['query']="";
 
-			// Schiffe laden
-			$bres = dbquery("SELECT def_id,def_name FROM defense ORDER BY def_name;");
-			$slist=array();
-			while ($barr=mysql_fetch_array($bres))
-			{
-				$slist[$barr['def_id']]=$barr['def_name'];
-			}
-
 			// Suchmaske
 			echo "Suchmaske:<br/><br/>";
 			echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
@@ -413,9 +408,9 @@ $config = $app['etoa.config.service'];
 			echo "<tr><td class=\"tbltitle\">Spieler ID</td><td class=\"tbldata\"><input type=\"text\" name=\"user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
 			echo "<tr><td class=\"tbltitle\">Spieler Nick</td><td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('user_nick');echo "</td></tr>";
 			echo "<tr><td class=\"tbltitle\">Verteidigung</td><td class=\"tbldata\"><select name=\"def_id\"><option value=\"\"><i>---</i></option>";
-			foreach ($slist as $k=>$v)
+			foreach ($defenseNames as $defenseId => $defenseName)
 			{
-				echo "<option value=\"".$k."\">".$v."</option>";
+				echo "<option value=\"".$defenseId."\">".$defenseName."</option>";
 			}
 			echo "</select></td>";
 			echo "</table>";
@@ -526,22 +521,16 @@ $config = $app['etoa.config.service'];
 				$sql= " AND planets.id=".$updata[0];
 				$_SESSION['defedit']['query']="";
 
-				// Verteidigung laden
-				$bres = dbquery("SELECT def_id,def_name FROM defense ORDER BY def_name;");
-				$slist=array();
-				while ($barr=mysql_fetch_array($bres))
-					$slist[$barr['def_id']]=$barr['def_name'];
-
 				// Hinzufügen
 				echo "<h2>Neue Verteidigungsanlagen hinzuf&uuml;gen</h2>";
 				echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\">";
 				tableStart();
 				echo "<tr><th class=\"tbltitle\">Verteidigung:</th><td class=\"tbldata\"><select name=\"def_id\">";
-				foreach ($slist as $k=>$v)
+				foreach ($defenseNames as $defenseId => $defenseName)
 				{
-					echo "<option value=\"".$k."\"";
-					if ($k==$_POST['def_id']) echo " selected=\"selected\"";
-					echo ">".$v."</option>";
+					echo "<option value=\"".$defenseId."\"";
+					if ($defenseId==$_POST['def_id']) echo " selected=\"selected\"";
+					echo ">".$defenseName."</option>";
 				}
 				echo "</select></td></tr>";
 				if ($_POST['deflist_count'])
@@ -739,12 +728,6 @@ $config = $app['etoa.config.service'];
 			$_SESSION['defedit']['query']="";
 
 			// Verteidigung laden
-			$bres = dbquery("SELECT def_id,def_name FROM defense ORDER BY def_name;");
-			$dlist=array();
-			while ($barr=mysql_fetch_array($bres))
-				$dlist[$barr['def_id']]=$barr['def_name'];
-
-
 			echo "<h2>Schnellsuche</h2>";
 			// Hinzufügen
 			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\" id=\"selector\">";
@@ -783,9 +766,9 @@ $config = $app['etoa.config.service'];
 			echo "<tr><th class=\"tbltitle\">Hinzuf&uuml;gen:</th><td class=\"tbldata\">
 			<input type=\"text\" name=\"deflist_count\" value=\"1\" size=\"1\" maxlength=\"3\" />
 			<select name=\"def_id\">";
-			foreach ($dlist as $k=>$v)
+			foreach ($defenseNames as $defenseId => $defenseName)
 			{
-				echo "<option value=\"".$k."\">".$v."</option>";
+				echo "<option value=\"".$defenseId."\">".$defenseName."</option>";
 			}
 			echo "</select> &nbsp; <input type=\"button\" onclick=\"xajax_addDefenseToPlanet(xajax.getFormValues('selector'));\" value=\"Hinzuf&uuml;gen\" /></td></tr>";
 
@@ -818,8 +801,8 @@ $config = $app['etoa.config.service'];
 			echo "<tr><th class=\"tbltitle\">Spieler ID</td><td class=\"tbldata\"><input type=\"text\" name=\"user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
 			echo "<tr><th class=\"tbltitle\">Spieler Nick</td><td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchUser(this.value,'user_nick','citybox1');\"/> ";fieldqueryselbox('user_nick');echo "<br><div class=\"citybox\" id=\"citybox1\">&nbsp;</div></tr>";
 			echo "<tr><th class=\"tbltitle\">Verteidigung</td><td class=\"tbldata\"><select name=\"def_id\"><option value=\"\"><i>---</i></option>";
-			foreach ($dlist as $k=>$v)
-				echo "<option value=\"".$k."\">".$v."</option>";
+			foreach ($defenseNames as $defenseId=> $defenseName)
+				echo "<option value=\"".$defenseId."\">".$defenseName."</option>";
 			echo "</select></td></tr>";
 			tableEnd();
 			echo "<br/><input type=\"submit\" class=\"button\" name=\"deflist_search\" value=\"Suche starten\" /></form>";
@@ -827,6 +810,3 @@ $config = $app['etoa.config.service'];
 
 		}
 	}
-
-
-?>

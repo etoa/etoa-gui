@@ -227,84 +227,53 @@ function addItemToSet($setid,$form)
 
 function loadItemSelector($cat,$setid)
 {
+    global $app;
 	$or = new xajaxResponse();
 	ob_start();
 	if ($cat=="b")
 	{
-		$res = dbquery("
-		SELECT
-			building_name as name,
-			building_id as id
-		FROM
-			buildings
-		ORDER BY
-			building_type_id,
-			building_order,
-			building_name;
-		");
+	    /** @var \EtoA\Building\BuildingDataRepository $buildingDataRepository */
+	    $buildingDataRepository = $app[\EtoA\Building\BuildingDataRepository::class];
+	    $buildingNames = $buildingDataRepository->getBuildingNames(true);
 		echo "<select name=\"new_item_object_id\">";
-		while ($arr=mysql_fetch_array($res))
-		{
-			echo "<option value=\"".$arr['id']."\">".$arr['name']."</option>";
+		foreach ($buildingNames as $buildingId => $buildingName) {
+			echo "<option value=\"".$buildingId."\">".$buildingName."</option>";
 		}
 		echo "</select> Stufe <input type=\"text\" name=\"new_item_count\" value=\"1\" size=\"3\" />
 		&nbsp; <input type=\"button\" onclick=\"xajax_addItemToSet(".$setid.",xajax.getFormValues('set_".$setid."'))\" value=\"Hinzufügen\" />";
 	}
 	elseif ($cat=="t")
 	{
-		$res = dbquery("
-		SELECT
-			tech_name as name,
-			tech_id as id
-		FROM
-			technologies
-		ORDER BY
-			tech_type_id,
-			tech_order,
-			tech_name;
-		");
+	    /** @var \EtoA\Technology\TechnologyDataRepository $technologyDataRepository */
+	    $technologyDataRepository = $app[\EtoA\Technology\TechnologyDataRepository::class];
+	    $technologyNames = $technologyDataRepository->getTechnologyNames(true);
 		echo "<select name=\"new_item_object_id\">";
-		while ($arr=mysql_fetch_array($res))
-		{
-			echo "<option value=\"".$arr['id']."\">".$arr['name']."</option>";
+		foreach ($technologyNames as $technologyId => $technologyName) {
+			echo "<option value=\"".$technologyId."\">".$technologyName."</option>";
 		}
 		echo "</select> Stufe <input type=\"text\" name=\"new_item_count\" value=\"1\" size=\"3\" />
 		&nbsp; <input type=\"button\" onclick=\"xajax_addItemToSet(".$setid.",xajax.getFormValues('set_".$setid."'))\" value=\"Hinzufügen\" />";
 	}
 	elseif ($cat=="s")
 	{
-		$res = dbquery("
-		SELECT
-			ship_name as name,
-			ship_id as id
-		FROM
-			ships
-		ORDER BY
-			ship_name;
-		");
+	    /** @var \EtoA\Ship\ShipDataRepository $shipDateRepository */
+	    $shipDateRepository = $app[\EtoA\Ship\ShipDataRepository::class];
+	    $shipNames = $shipDateRepository->getShipNames(true);
 		echo "<select name=\"new_item_object_id\">";
-		while ($arr=mysql_fetch_array($res))
-		{
-			echo "<option value=\"".$arr['id']."\">".$arr['name']."</option>";
+		foreach ($shipNames as $shipId => $shipName) {
+			echo "<option value=\"".$shipId."\">".$shipName."</option>";
 		}
 		echo "</select> Anzahl <input type=\"text\" name=\"new_item_count\" value=\"1\" size=\"3\" />
 		&nbsp; <input type=\"button\" onclick=\"xajax_addItemToSet(".$setid.",xajax.getFormValues('set_".$setid."'))\" value=\"Hinzufügen\" />";
 	}
 	elseif ($cat=="d")
 	{
-		$res = dbquery("
-		SELECT
-			def_name as name,
-			def_id as id
-		FROM
-			defense
-		ORDER BY
-			def_name;
-		");
+	    /** @var \EtoA\Defense\DefenseDataRepository $defenseDateRepository */
+	    $defenseDateRepository = $app[\EtoA\Defense\DefenseDataRepository::class];
+	    $defenseNames = $defenseDateRepository->getDefenseNames(true);
 		echo "<select name=\"new_item_object_id\">";
-		while ($arr=mysql_fetch_array($res))
-		{
-			echo "<option value=\"".$arr['id']."\">".$arr['name']."</option>";
+		foreach ($defenseNames as $defenseId => $defenseName) {
+			echo "<option value=\"".$defenseId."\">".$defenseName."</option>";
 		}
 		echo "</select> Anzahl <input type=\"text\" name=\"new_item_count\" value=\"1\" size=\"3\" />
 		&nbsp; <input type=\"button\" onclick=\"xajax_addItemToSet(".$setid.",xajax.getFormValues('set_".$setid."'))\" value=\"Hinzufügen\" />";
@@ -319,5 +288,3 @@ function loadItemSelector($cat,$setid)
 	$or->assign("itemlist_".$setid,"innerHTML",$out);
 	return $or;
 }
-
-?>

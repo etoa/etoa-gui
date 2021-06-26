@@ -5,6 +5,9 @@ use EtoA\Core\Configuration\ConfigurationService;
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
 
+/** @var \EtoA\Ship\ShipDataRepository $shipDataRepository */
+$shipDataRepository = $app[\EtoA\Ship\ShipDataRepository::class];
+
 //////////////////////////////////////////////////////
 // The Andromeda-Project-Browsergame                //
 // Ein Massive-Multiplayer-Online-Spiel             //
@@ -32,25 +35,12 @@ $config = $app['etoa.config.service'];
 		<p><input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></p>
 		</form>";
 
-		$res=dbquery("
-		SELECT
-			ship_id,
-			ship_name,
-			ship_points
-		FROM
-			ships
-		ORDER BY
-			ship_points DESC,
-			ship_name DESC;");
-		if (mysql_num_rows($res)>0)
-		{
-			echo "<table class=\"tb\">";
-			while ($arr=mysql_fetch_array($res))
-			{
-				echo "<tr><th>".$arr['ship_name']."</th><td style=\"width:70%\">".$arr['ship_points']."</td></tr>";
-			}
-			echo "</table>";
-		}
+		$ships = $shipDataRepository->getAllShips(true, 'ship_points');
+        echo "<table class=\"tb\">";
+        foreach ($ships as $ship) {
+            echo "<tr><th>".$ship->name."</th><td style=\"width:70%\">".$ship->points."</td></tr>";
+        }
+        echo "</table>";
 	}
 
 
@@ -62,35 +52,18 @@ $config = $app['etoa.config.service'];
 		$twig->addGlobal("title", "XP-Rechner");
 
 		echo "Schiff wählen: <select onchange=\"document.location='?page=".$page."&sub=".$sub."&id='+this.options[this.selectedIndex].value\">";
-		$res = dbquery("
-		SELECT
-			ship_name,
-			ship_id,
-			special_ship_need_exp,
-			special_ship_exp_factor
-		FROM
-			ships
-		WHERE
-			special_ship=1
-		ORDER BY
-			ship_name
-		");
+		$specialShips = $shipDataRepository->getSpecialShips();
         $ship_xp = 0;
         $ship_xp_multiplier = 0;
-		while ($arr=mysql_fetch_array($res))
-		{
-			if (!isset($ship_xp))
-				$ship_xp = $arr['special_ship_need_exp'];
-			if (!isset($ship_xp_multiplier))
-				$ship_xp_multiplier = $arr['special_ship_exp_factor'];
-			echo "<option value=\"".$arr['ship_id']."\"";
-			if (isset($_GET['id']) && $_GET['id']==$arr['ship_id'])
+		foreach ($specialShips as $ship) {
+			echo "<option value=\"".$ship->id."\"";
+			if ((isset($_GET['id']) && $_GET['id']==$ship->id) || (!isset($_GET['id']) && $ship_xp === 0))
 			{
 				echo " selected=\"selected\"";
-				$ship_xp = $arr['special_ship_need_exp'];
-				$ship_xp_multiplier = $arr['special_ship_exp_factor'];
+				$ship_xp = $ship->specialNeedExp;
+				$ship_xp_multiplier = $ship->specialExpFactor;
 			}
-			echo ">".$arr['ship_name']."</option>";
+			echo ">".$ship->name."</option>";
 		}
 		echo "</select><br/><br/>";
 

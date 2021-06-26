@@ -974,7 +974,7 @@ function showAttackAbuseLogs($args=null,$limit=-1,$load=true)
 
 function showFleetLogs($args=null,$limit=0)
 {
-    global $resNames;
+    global $resNames, $app;
     $paginationLimit = 50;
 
     $action = is_array($args) && isset($args['flaction']) ? $args['flaction'] : 0;
@@ -1075,12 +1075,9 @@ function showFleetLogs($args=null,$limit=0)
             <th>Landezeit</th>
             <th>Flotte</th>
         </tr>";
-        $ships = [];
-        $sres = dbquery("SELECT ship_id,ship_name FROM ships WHERE ship_show=1 ORDER BY ship_type_id,ship_order;");
-        while ($sarr = mysql_fetch_row($sres))
-        {
-            $ships[$sarr[0]] = $sarr[1];
-        }
+        /** @var \EtoA\Ship\ShipDataRepository $shipDataRepository */
+        $shipDataRepository = $app[\EtoA\Ship\ShipDataRepository::class];
+        $shipNames = $shipDataRepository->getShipNames(true);
         while ($arr = mysql_fetch_assoc($res))
         {
             $owner = new User($arr['user_id']);
@@ -1114,7 +1111,7 @@ function showFleetLogs($args=null,$limit=0)
             {
                 $sdi = explode(":",$sd);
                 if ($sdi[0]>0)
-                    echo "<tr><td>".$ships[$sdi[0] ]."</td><td>".nf($sdi[1])."</td><td>".nf($sship[$sdi[0] ])."</td></tr>";
+                    echo "<tr><td>".$shipNames[(int) $sdi[0] ]."</td><td>".nf($sdi[1])."</td><td>".nf($sship[$sdi[0] ])."</td></tr>";
             }
             echo tableEnd();
             tableStart("",450);
@@ -1131,7 +1128,7 @@ function showFleetLogs($args=null,$limit=0)
             {
                 $sdi = explode(":",$sd);
                 if ($sdi[0]>0)
-                    echo "<tr><td>".$ships[$sdi[0] ]."</td><td>".nf($sdi[1])."</td><td>".nf($sship[$sdi[0] ])."</td></tr>";
+                    echo "<tr><td>".$shipNames[(int) $sdi[0] ]."</td><td>".nf($sdi[1])."</td><td>".nf($sship[$sdi[0] ])."</td></tr>";
             }
             echo tableEnd();
             tableStart("",450);

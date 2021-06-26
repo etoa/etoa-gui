@@ -22,6 +22,30 @@ class ShipDataRepositoryTest extends AbstractDbTestCase
         $this->assertNotEmpty($names);
     }
 
+    public function testGetAllShips(): void
+    {
+        $ships = $this->repository->getAllShips();
+
+        $this->assertNotEmpty($ships);
+    }
+
+    public function testGetSpecialShips(): void
+    {
+        $ships = $this->repository->getSpecialShips();
+
+        $this->assertNotEmpty($ships);
+        foreach ($ships as $ship) {
+            $this->assertTrue($ship->special);
+        }
+    }
+
+    public function testGetFakeableShipNames(): void
+    {
+        $shipNames = $this->repository->getFakeableShipNames();
+
+        $this->assertNotEmpty($shipNames);
+    }
+
     public function testGetShipNamesWithAction(): void
     {
         $names = $this->repository->getShipNamesWithAction('attack');

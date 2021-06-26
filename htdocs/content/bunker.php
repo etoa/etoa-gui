@@ -49,19 +49,11 @@
 		$ships = [];
 		if ($mode=="fleet" || $mode=="bunker")
 		{
-			$res = dbquery("
-			SELECT
-				ship_id,
-				ship_name,
-				ship_shortcomment,
-				ship_structure,
-				special_ship
-			FROM
-					ships");
-			while ($arr = mysql_fetch_assoc($res))
-			{
-				$ships[$arr['ship_id']] = $arr;
-			}
+		    /** @var \EtoA\Ship\ShipDataRepository $shipDataRepository */
+		    $shipDataRepository = $app[\EtoA\Ship\ShipDataRepository::class];
+		    foreach ($shipDataRepository->getAllShips(true) as $ship) {
+		        $ships[$ship->id] = $ship;
+            }
 		}
 
 
@@ -126,7 +118,7 @@
 					$jsAllShips = array();	// Array for selectable ships
 					while ($arr = mysql_fetch_assoc($res))
 					{
-						if($ships[$arr['shiplist_ship_id']]['special_ship']==1)
+						if($ships[$arr['shiplist_ship_id']]->special)
 						{
 						echo "<tr>
 							<td style=\"width:40px;background:#000;\">
@@ -164,7 +156,7 @@
 						}
 
 						echo "<td ".tm($arr['ship_name'],"<img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id']."_middle.".IMAGE_EXT."\" style=\"float:left;margin-right:5px;\">".text2html($arr['ship_shortcomment'])."<br/>".$acstr."<br style=\"clear:both;\"/>").">".$arr['ship_name']."</td>";
-						echo "<td width=\"150\">".nf($ships[$arr['shiplist_ship_id']]['ship_structure'])."</td>";
+						echo "<td width=\"150\">".nf($ships[$arr['shiplist_ship_id']]->structure)."</td>";
 						echo "<td width=\"110\">".nf($arr['shiplist_bunkered'])."<br/>";
 
 				  echo "</td>";
@@ -178,7 +170,7 @@
 					<br/>
 					<a href=\"javascript:;\" onclick=\"document.getElementById('ship_bunker_count_".$arr['shiplist_ship_id']."').value=".$arr['shiplist_bunkered'].";document.getElementById('ship_bunker_count_".$arr['shiplist_ship_id']."').select()\">Alle</a> &nbsp;
 					<a href=\"javascript:;\" onclick=\"document.getElementById('ship_bunker_count_".$arr['shiplist_ship_id']."').value=0;document.getElementById('ship_count_".$arr['shiplist_ship_id']."').select()\">Keine</a></td></tr>";
-					$structure += $arr['shiplist_bunkered']*$ships[$arr['shiplist_ship_id']]['ship_structure'];
+					$structure += $arr['shiplist_bunkered']*$ships[$arr['shiplist_ship_id']]->structure;
 					$count += $arr['shiplist_bunkered'];
 					$jsAllShips["ship_bunker_count_".$arr['shiplist_ship_id']]=$arr['shiplist_bunkered'];
 					}
@@ -230,7 +222,7 @@
 					while ($arr = mysql_fetch_assoc($res))
 					{
 						$count -= $arr['shiplist_bunkered'];
-						$structure -= $arr['shiplist_bunkered']*$ships[$arr['shiplist_ship_id']]['ship_structure'];
+						$structure -= $arr['shiplist_bunkered']*$ships[$arr['shiplist_ship_id']]->structure;
 					}
 
 					foreach($_POST['ship_bunker_count'] as $shipId=>$cnt)
@@ -239,11 +231,11 @@
 						if ($cnt>0)
 						{
 							$countBunker = min($count,$cnt);
-							$spaceBunker = $ships[$shipId]['ship_structure']>0 ? min($cnt,$structure/$ships[$shipId]['ship_structure']) : $cnt;
+							$spaceBunker = $ships[$shipId]->structure>0 ? min($cnt,$structure/$ships[$shipId]->structure) : $cnt;
 							$cnt = floor(min($countBunker,$spaceBunker));
 							$cnt = $sl->bunker($shipId,$cnt);
 							$count -= $cnt;
-							$structure -= $cnt*$ships[$shipId]['ship_structure'];
+							$structure -= $cnt*$ships[$shipId]->structure;
 							$counter += $cnt;
 						}
 					}
@@ -297,7 +289,7 @@
 					$jsAllShips = array();	// Array for selectable ships
 					while ($arr = mysql_fetch_assoc($res))
 					{
-						if($ships[$arr['shiplist_ship_id']]['special_ship']==1)
+						if($ships[$arr['shiplist_ship_id']]->special)
 						{
 						echo "<tr>
 							<td style=\"width:40px;background:#000;\">
@@ -337,7 +329,7 @@
 						}
 
 						echo "<td ".tm($arr['ship_name'],"<img src=\"".IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$arr['ship_id']."_middle.".IMAGE_EXT."\" style=\"float:left;margin-right:5px;\">".text2html($arr['ship_shortcomment'])."<br/>".$acstr."<br style=\"clear:both;\"/>").">".$arr['ship_name']."</td>";
-						echo "<td width=\"150\">".nf($ships[$arr['shiplist_ship_id']]['ship_structure'])."</td>";
+						echo "<td width=\"150\">".nf($ships[$arr['shiplist_ship_id']]->structure)."</td>";
 						echo "<td width=\"110\">".nf($arr['shiplist_count'])."<br/>";
 
 				  echo "</td>";
