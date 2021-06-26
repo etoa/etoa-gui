@@ -55,10 +55,6 @@ abstract class Session
      * @var bool True if this is the first run (page) of the session, that means if the user hast just logged in
      */
     protected $firstView = false;
-    /**
-     * @var string Prefix string for the session-id seeding. Must be unique for each inheriting class
-     */
-    protected $namePrefix = "";
 
     //
     // Abstract methds
@@ -101,10 +97,9 @@ abstract class Session
         // Use SHA1 hash
         ini_set('session.hash_function', '1');
 
-        // Set session name based on round name.
-        // MD5 is needed because spaces in roundname cause problems
-        $sname = md5($this->namePrefix . $this->config->get('roundname'));
-        @session_name($sname);
+        // Set session name based on class and game round file system path.
+        $name = md5(get_class($this) . __DIR__);
+        @session_name($name);
         @session_start();	// Start the session
     }
 

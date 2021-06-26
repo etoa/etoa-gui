@@ -8,6 +8,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Support\DatabaseManagerRepository;
 use EtoA\User\UserRepository;
+use EtoA\User\UserSessionRepository;
 use Twig\Environment;
 
 ob_start();
@@ -62,6 +63,9 @@ try {
         /** @var UserRepository */
         $userRepo = $app['etoa.user.repository'];
 
+        /** @var UserSessionRepository */
+        $userSessionRepo = $app['etoa.user.session.repository'];
+
         /** @var AdminNotesRepository */
         $notesRepo = $app['etoa.admin.notes.repository'];
 
@@ -84,6 +88,7 @@ try {
             $s,
             $adminUserRepo,
             $userRepo,
+            $userSessionRepo,
             $notesRepo,
             $roleManager,
             $sessionRepository,
@@ -106,6 +111,7 @@ function adminView(
     AdminSession $s,
     AdminUserRepository $adminUserRepo,
     UserRepository $userRepo,
+    UserSessionRepository $userSessionRepo,
     AdminNotesRepository $notesRepo,
     AdminRoleManager $roleManager,
     AdminSessionRepository $sessionRepository,
@@ -157,7 +163,7 @@ function adminView(
         $twig->addGlobal('eventHandlerPid', $eventHandlerPid);
     }
 
-    $twig->addGlobal('usersOnline', $userRepo->countActiveSessions($config->getInt('user_timeout')));
+    $twig->addGlobal('usersOnline', $userSessionRepo->countActiveSessions($config->getInt('user_timeout')));
     $twig->addGlobal('usersCount', $userRepo->count());
     $twig->addGlobal('usersAllowed', $config->getInt('enable_register'));
     $twig->addGlobal('adminsOnline', $sessionRepository->countActiveSessions($config->getInt('admin_timeout')));
