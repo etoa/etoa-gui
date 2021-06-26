@@ -857,37 +857,6 @@ function parseDesignInfoFile($file)
 }
 
 /**
-* Überprüft ob ein Gebäude deaktiviert ist
-*
-* $user_id: Benutzer-ID
-* $planet_id: Planet-ID
-* $building_id: Gebäude-ID
-*
-* @todo Typo in method name... bether think of creating a building class
-*/
-function check_building_deactivated($user_id,$planet_id,$building_id)
-{
-    $res=dbquery("
-        SELECT
-            buildlist_deactivated
-        FROM
-            buildlist
-        WHERE
-            buildlist_user_id='".$user_id."'
-            AND buildlist_entity_id='".$planet_id."'
-            AND buildlist_building_id='".$building_id."'
-            AND buildlist_deactivated>'".time()."';
-    ");
-    if (mysql_num_rows($res)>0)
-    {
-        $arr=mysql_fetch_row($res);
-        return $arr[0];
-    }
-    else
-        return false;
-}
-
-/**
 * Fremde, feindliche Flotten
 * Gibt Anzahl feindliche Flotten zurück unter beachtung von Tarn- und Spionagetechnik
 * Sind keine Flotten unterwegs -> return 0
