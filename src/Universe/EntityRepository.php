@@ -25,7 +25,7 @@ class EntityRepository extends AbstractRepository
 
     public function findRandomByCodes(array $codes, int $limit): ?array
     {
-        $data = $this->createQueryBuilder()
+        return $this->createQueryBuilder()
             ->select('*')
             ->from('entities')
             ->where('code IN ('. implode(',', array_fill(0, count($codes), '?')).')')
@@ -35,6 +35,29 @@ class EntityRepository extends AbstractRepository
             ->setMaxResults($limit)
             ->execute()
             ->fetchAllAssociative();
+    }
+
+    public function findIncludeCell(int $id): ?array
+    {
+        $data = $this->createQueryBuilder()
+            ->select(
+                'e.id',
+                'c.id as cid',
+                'code',
+                'pos',
+                'sx',
+                'sy',
+                'cx',
+                'cy'
+            )
+            ->from('entities', 'e')
+            ->innerJoin('e', 'cells', 'c', 'e.cell_id=c.id')
+            ->where('e.id = :id')
+            ->setParameters([
+                'id' => $id
+            ])
+            ->execute()
+            ->fetchAssociative();
         return $data !== false ? $data : null;
     }
 
