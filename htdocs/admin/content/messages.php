@@ -22,14 +22,15 @@ $reportRepository = $app[ReportRepository::class];
 $request = Request::createFromGlobals();
 
 if ($sub=="sendmsg") {
-    sendMessageForm($cu, $messageRepository, $userRepository);
+    sendMessageForm($request, $cu, $messageRepository, $userRepository);
 } elseif ($sub=="reports") {
-    manageReports($reportRepository, $userRepository);
+    manageReports($request, $reportRepository, $userRepository);
 } else {
     manageMessages($request, $messageRepository, $userRepository);
 }
 
 function sendMessageForm(
+    Request $request,
     AdminUser $cu,
     MessageRepository $messageRepository,
     UserRepository $userRepository
@@ -43,12 +44,12 @@ function sendMessageForm(
 
     $subj = isset($_GET['message_subject']) ? $_POST['message_subject'] : "";
     $text = "";
-    if (isset($_POST['submit']))
+    if ($request->request->has('submit'))
     {
-        if ($_POST['message_subject']!="" && $_POST['message_text']!="")
+        if ($request->request->get('message_subject') != "" && $request->request->get('message_text') != "")
         {
             $to = array();
-            if ($_POST['rcpt_type']==1)
+            if ($request->request->getInt('rcpt_type') == 1)
             {
                 // Not good style, should use class.. but is faster for this ammount of data
                 $res = dbquery("SELECT user_id,user_nick,user_email FROM users");
@@ -62,19 +63,20 @@ function sendMessageForm(
             }
             else
             {
-                $tu = new User($_POST['message_user_to']);
-                $to[$_POST['message_user_to']] = $tu->nick."<".$tu->email.">";
+                $userId = $request->request->getInt('message_user_to');
+                $recipient = $userRepository->getUser($userId);
+                $to[$userId] = $recipient->getEmailAddress();
             }
 
-            $msg_type = $_POST['msg_type'];
+            $msg_type = $request->request->getInt('msg_type');
 
             if ($msg_type==1 || $msg_type==2)
             {
-                $mail = new Mail($_POST['message_subject'],$_POST['message_text']);
-                if ($_POST['from_id']>0)
+                $mail = new Mail($request->request->get('message_subject'), $request->request->get('message_text'));
+                if ($request->request->getInt('from_id') > 0)
                 {
-                    $atu = new User($cu->playerId);
-                    $reply = $atu->nick."<".$atu->email.">";
+                    $replyUser = $userRepository->getUser($cu->playerId);
+                    $reply = $replyUser->getEmailAddress();
                 }
                 else
                 {
@@ -90,10 +92,10 @@ function sendMessageForm(
                 if ($msg_type==0 || $msg_type==2)
                 {
                     $messageRepository->sendFromUserToUser(
-                        (int) $_POST['from_id'],
+                        $request->request->getInt('from_id'),
                         (int) $k,
-                        $_POST['message_subject'],
-                        $_POST['message_text']
+                        $request->request->get('message_subject'),
+                        $request->request->get('message_text')
                     );
                     $msgCnt++;
                 }
@@ -107,75 +109,62 @@ function sendMessageForm(
                 success_msg("$msgCnt InGame-Nachrichten wurden versendet!");
             if ($mailCnt>0)
                 success_msg("$mailCnt Mails wurden versendet!");
-
         }
         else
         {
             echo MessageBox::error("", "Nachricht konnte nicht gesendet werden! Text oder Titel fehlt!");
         }
-        $subj = $_POST['message_subject'];
-        $text = $_POST['message_text'];
+        $subj = $request->request->get('message_subject');
+        $text = $request->request->get('message_text');
     }
 
-        echo "<form action=\"?page=$page&sub=$sub\" method=\"POST\">";
-        echo "<table width=\"300\" class=\"tb\">";
-        echo "<tr>
-            <th width=\"50\">Sender:</th>
-            <td>";
-        $fres = dbquery("
-        SELECT
-            user_nick,
-            user_id,
-            user_email,
-            user_name
-        FROM
-            users
-        WHERE
-            user_id=".intval($cu->playerId)."
-        ");
-
-        if (mysql_num_rows($fres)>0)
-        {
-            $farr = mysql_fetch_assoc($fres);
-            echo "<input type=\"radio\" name=\"from_id\" id=\"from_id_1\" value=\"".$cu->playerId."\" checked=\"checked\" /> <label for=\"from_id_1\">".$farr['user_nick']." (InGame-Account #".$farr['user_id'].")</label><br/>";
-            echo "<input type=\"radio\" name=\"from_id\" id=\"from_id_0\" value=\"0\" /> <label for=\"from_id_0\">System</label><br/>";
+    echo "<form action=\"?page=$page&sub=$sub\" method=\"POST\">";
+    echo "<table width=\"300\" class=\"tb\">";
+    echo "<tr>
+        <th width=\"50\">Sender:</th>
+        <td>";
+    $playerUser = $userRepository->getUser($cu->playerId);
+    if ($playerUser !== null)
+    {
+        echo "<input type=\"radio\" name=\"from_id\" id=\"from_id_1\" value=\"".$cu->playerId."\" checked=\"checked\" /> <label for=\"from_id_1\">".$playerUser->nick." (InGame-Account #".$playerUser->id.")</label><br/>";
+        echo "<input type=\"radio\" name=\"from_id\" id=\"from_id_0\" value=\"0\" /> <label for=\"from_id_0\">System</label><br/>";
+    }
+    else {
+        echo "System <input type=\"hidden\" name=\"from_id\" value=\"0\" />";
+    }
+    echo "</td></tr>";
+    echo "<tr>
+        <th>Empfänger:</th>
+        <td class=\"tbldata\" width=\"250\">
+        <b>An:</b>
+        <input type=\"radio\" name=\"rcpt_type\" id=\"rcpt_type_1\" value=\"1\"  checked=\"checked\"  onclick=\"document.getElementById('message_user_to').style.display='none';\" /> <label for=\"rcpt_type_1\">Alle Spieler</label>
+        <input type=\"radio\" name=\"rcpt_type\" id=\"rcpt_type_0\" value=\"0\"  onclick=\"document.getElementById('message_user_to').style.display='';\" /> <label for=\"rcpt_type_0\">Einzelner Empfänger</label>
+        <select name=\"message_user_to\" id=\"message_user_to\" style=\"display:none\">";
+        $userNicks = $userRepository->getUserNicknames();
+        foreach ($userNicks as $userId => $userNick) {
+            echo "<option value=\"".$userId."\"";
+            echo ">".$userNick."</option>";
         }
-        else
-            echo "System <input type=\"hidden\" name=\"from_id\" value=\"0\" />";
-        echo "</td></tr>";
-        echo "<tr>
-            <th>Empfänger:</th>
-            <td class=\"tbldata\" width=\"250\">
-            <b>An:</b>
-            <input type=\"radio\" name=\"rcpt_type\" id=\"rcpt_type_1\" value=\"1\"  checked=\"checked\"  onclick=\"document.getElementById('message_user_to').style.display='none';\" /> <label for=\"rcpt_type_1\">Alle Spieler</label>
-            <input type=\"radio\" name=\"rcpt_type\" id=\"rcpt_type_0\" value=\"0\"  onclick=\"document.getElementById('message_user_to').style.display='';\" /> <label for=\"rcpt_type_0\">Einzelner Empfänger</label>
-            <select name=\"message_user_to\" id=\"message_user_to\" style=\"display:none\">";
-            $userNicks = $userRepository->getUserNicknames();
-            foreach ($userNicks as $userId => $userNick) {
-                echo "<option value=\"".$userId."\"";
-                echo ">".$userNick."</option>";
-            }
-        echo "</select> &nbsp;
+    echo "</select> &nbsp;
 
-        <br/>
-        <b>Typ:</b>
-        <input type=\"radio\" name=\"msg_type\" value=\"0\" id=\"msg_type_0\"  checked=\"checked\" /> <label for=\"msg_type_0\">InGame-Nachricht</label>
-        <input type=\"radio\" name=\"msg_type\" value=\"1\" id=\"msg_type_1\" /> <label for=\"msg_type_1\">E-Mail</label>
-        <input type=\"radio\" name=\"msg_type\" value=\"2\" id=\"msg_type_2\" /> <label for=\"msg_type_2\">InGame-Nachricht &amp; E-Mail</label>
-        </td></tr>";
-        echo "<tr>
-            <th>Betreff:</th>
-            <td><input type=\"text\" name=\"message_subject\" value=\"".$subj."\" size=\"60\" maxlength=\"255\"></td></tr>";
-        echo "<tr>
-            <th>Text:</th>
-            <td><textarea name=\"message_text\" rows=\"10\" cols=\"60\">".$text."</textarea></td></tr>";
-        echo "</table>";
-        echo "<p align=\"center\"><input type=\"submit\" class=\"button\" name=\"submit\" value=\"Senden\"></p>";
-        echo "</form>";
-
+    <br/>
+    <b>Typ:</b>
+    <input type=\"radio\" name=\"msg_type\" value=\"0\" id=\"msg_type_0\"  checked=\"checked\" /> <label for=\"msg_type_0\">InGame-Nachricht</label>
+    <input type=\"radio\" name=\"msg_type\" value=\"1\" id=\"msg_type_1\" /> <label for=\"msg_type_1\">E-Mail</label>
+    <input type=\"radio\" name=\"msg_type\" value=\"2\" id=\"msg_type_2\" /> <label for=\"msg_type_2\">InGame-Nachricht &amp; E-Mail</label>
+    </td></tr>";
+    echo "<tr>
+        <th>Betreff:</th>
+        <td><input type=\"text\" name=\"message_subject\" value=\"".$subj."\" size=\"60\" maxlength=\"255\"></td></tr>";
+    echo "<tr>
+        <th>Text:</th>
+        <td><textarea name=\"message_text\" rows=\"10\" cols=\"60\">".$text."</textarea></td></tr>";
+    echo "</table>";
+    echo "<p align=\"center\"><input type=\"submit\" class=\"button\" name=\"submit\" value=\"Senden\"></p>";
+    echo "</form>";
 }
 
-function manageReports(ReportRepository $reportRepository, UserRepository $userRepository): void
+function manageReports(Request $request, ReportRepository $reportRepository, UserRepository $userRepository): void
 {
     global $page;
     global $sub;
@@ -184,14 +173,14 @@ function manageReports(ReportRepository $reportRepository, UserRepository $userR
     //
     // Suchresultate
     //
-    if (isset($_POST['user_search']) && $_POST['user_search']!="" || isset($_GET['action']) && $_GET['action']=="searchresults")
+    if ($request->request->has('user_search') && $_POST['user_search']!="" || isset($_GET['action']) && $_GET['action']=="searchresults")
     {
         $sql = '';
         if ($_POST['user_id']!="")
             $sql.= " AND user_id='".$_POST['user_id']."' ";
         if ($_POST['user_nick']!="")
         {
-            $uid = $userRepository->getUserIdByNick($_POST['user_nick']);
+            $uid = $userRepository->getUserIdByNick($request->request->getInt('user_nick'));
             if ($uid !== null)
                 $sql.= " AND user_id='".$uid."' ";
         }
@@ -199,11 +188,11 @@ function manageReports(ReportRepository $reportRepository, UserRepository $userR
             $sql.= " AND opponent1_id='".$_POST['opponent1_id']."' ";
         if ($_POST['opponent1_nick']!="")
         {
-            $uid = $userRepository->getUserIdByNick($_POST['opponent1_nick']);
+            $uid = $userRepository->getUserIdByNick($request->request->getInt('opponent1_nick'));
             if ($uid !== null)
                 $sql.= " AND opponent1_id='".$uid."' ";
         }
-        if (isset($_POST['subject']) && $_POST['subject']!="")
+        if ($request->request->has('subject') && $_POST['subject']!="")
         {
                 if (stristr($_POST['qmode']['subject'],"%")) $addchars = "%";else $addchars = "";
                 $sql.= " AND subject ".stripslashes($_POST['qmode']['subject']).$_POST['subject']."$addchars'";
@@ -250,14 +239,14 @@ function manageReports(ReportRepository $reportRepository, UserRepository $userR
 
         //data tables
         $join = '';
-        if (isset($_POST['table']) && $_POST['table'])
+        if ($request->request->has('table') && $_POST['table'])
             $join = " INNER JOIN `reports_".$_POST['type']."` AS rd ON reports.id=rd.id ";
 
-        if (isset($_POST['subtype']) && $_POST['subtype'] != "")
+        if ($request->request->has('subtype') && $_POST['subtype'] != "")
             $sql.= " AND rd.subtype='".$_POST['subtype']."'";
 
         //market
-        if (isset($_POST['type']) && $_POST['type']=='market')
+        if ($request->request->has('type') && $_POST['type']=='market')
         {
             if ($_POST['fleet1_id']!="")
                 $sql.= " AND (rd.fleet1_id=".$_POST['fleet1_id']. " OR rd.fleet2_id=".$_POST['fleet1_id'].") ";
@@ -269,39 +258,38 @@ function manageReports(ReportRepository $reportRepository, UserRepository $userR
             if ($_POST['ship_count']!="")
                 $sql.= " AND rd.ship_count=".$_POST['ship_count'];
 
-            if (isset($_POST['sell_0']) && $_POST['sell_0']==1)
+            if ($request->request->has('sell_0') && $_POST['sell_0']==1)
                 $sql.= " AND rd.sell_0>'0'";
-            if (isset($_POST['sell_1']) && $_POST['sell_1']==1)
+            if ($request->request->has('sell_1') && $_POST['sell_1']==1)
                 $sql.= " AND rd.sell_1>'0'";
-            if (isset($_POST['sell_2']) && $_POST['sell_2']==1)
+            if ($request->request->has('sell_2') && $_POST['sell_2']==1)
                 $sql.= " AND rd.sell_2>'0'";
-            if (isset($_POST['sell_3']) && $_POST['sell_3']==1)
+            if ($request->request->has('sell_3') && $_POST['sell_3']==1)
                 $sql.= " AND rd.sell_3>'0'";
-            if (isset($_POST['sell_4']) && $_POST['sell_4']==1)
+            if ($request->request->has('sell_4') && $_POST['sell_4']==1)
                 $sql.= " AND rd.sell_4>'0'";
 
-            if (isset($_POST['buy_0']) && $_POST['buy_0']==1)
+            if ($request->request->has('buy_0') && $_POST['buy_0']==1)
                 $sql.= " AND rd.buy_0>'0'";
-            if (isset($_POST['buy_1']) && $_POST['buy_1']==1)
+            if ($request->request->has('buy_1') && $_POST['buy_1']==1)
                 $sql.= " AND rd.buy_1>'0'";
-            if (isset($_POST['buy_2']) && $_POST['buy_2']==1)
+            if ($request->request->has('buy_2') && $_POST['buy_2']==1)
                 $sql.= " AND rd.buy_2>'0'";
-            if (isset($_POST['buy_3']) && $_POST['buy_3']==1)
+            if ($request->request->has('buy_3') && $_POST['buy_3']==1)
                 $sql.= " AND rd.buy_3>'0'";
-            if (isset($_POST['buy_4']) && $_POST['buy_4']==1)
+            if ($request->request->has('buy_4') && $_POST['buy_4']==1)
                 $sql.= " AND rd.buy_4>'0'";
         }
 
         //battle
-        if (isset($_POST['type']) && $_POST['type']=='battle')
+        if ($request->request->has('type') && $_POST['type']=='battle')
         {
-
-
-
+            // TODO
+            echo "TODO";
         }
 
         //other
-        if (isset($_POST['type']) && $_POST['type']=='other')
+        if ($request->request->has('type') && $_POST['type']=='other')
         {
             if ($_POST['fleet1_id']!="")
                 $sql.= " AND (rd.fleet1_id=".$_POST['fleet1_id']. " OR rd.fleet2_id=".$_POST['fleet1_id'].") ";
@@ -316,15 +304,15 @@ function manageReports(ReportRepository $reportRepository, UserRepository $userR
             elseif ($_POST["ship_count"]!="")
                 $sql.= " AND rd.ships LIKE '%:".$_POST['ship_count'].",%'";
 
-            if (isset($_POST['res_0']) && $_POST['res_0']==1)
+            if ($request->request->has('res_0') && $_POST['res_0']==1)
                 $sql.= " AND rd.res_0>'0'";
-            if (isset($_POST['res_1']) && $_POST['res_1']==1)
+            if ($request->request->has('res_1') && $_POST['res_1']==1)
                 $sql.= " AND rd.res_1>'0'";
-            if (isset($_POST['res_2']) && $_POST['res_2']==1)
+            if ($request->request->has('res_2') && $_POST['res_2']==1)
                 $sql.= " AND rd.res_2>'0'";
-            if (isset($_POST['res_3']) && $_POST['res_3']==1)
+            if ($request->request->has('res_3') && $_POST['res_3']==1)
                 $sql.= " AND rd.res_3>'0'";
-            if (isset($_POST['res_4']) && $_POST['res_4']==1)
+            if ($request->request->has('res_4') && $_POST['res_4']==1)
                 $sql.= " AND rd.res_4>'0'";
 
             if ($_POST['status']!="")
@@ -332,10 +320,7 @@ function manageReports(ReportRepository $reportRepository, UserRepository $userR
 
             if ($_POST['action']!="")
                 $sql.= " AND rd.action='".$_POST['action']."'";
-
-
         }
-
 
         //LIMIT
         if ($_POST['report_limit']!="")
@@ -370,13 +355,11 @@ function manageReports(ReportRepository $reportRepository, UserRepository $userR
                         continue;
                 }
 
-
                 $sql.= ($_POST['entity_ships']==1) ? " AND rd.entity_ships != '' ": " AND rd.entity_ships='' ";
 
-                if ($r->userId>0)
-                    $uidf = get_user_nick($r->userId);
-                else
-                    $uidf = "<i>System</i>";
+                $recipient = $r->userId > 0
+                    ? $userRepository->getNick($r->userId)
+                    : "<i>System</i>";
 
                 if ($r->deleted==1)
                     $style="color:#f90;";
@@ -389,7 +372,7 @@ function manageReports(ReportRepository $reportRepository, UserRepository $userR
                 echo "<tr>";
                 echo "<td style=\"$style;width:110px;\">".date("Y-d-m H:i",$r->timestamp)."</td>";
                 echo "<td style=\"$style\">".$types[$r->type]."</td>";
-                echo "<td style=\"$style\">".cut_string($uidf,11)."</td>";
+                echo "<td style=\"$style\">".cut_string($recipient,11)."</td>";
                 echo "<td><div id=\"r_s_".$rid."\" style=\"".$style."cursor:pointer;\" onclick=\"$('#r_l_".$rid."').toggle();\">".cut_string($r->subject,50)."</div><div id=\"r_l_".$rid."\" style=\"display:none;\"><br/>".$r."</div></td>";
                 echo "</tr>";
             }
@@ -521,7 +504,7 @@ function manageMessages(
     //
     // Suchresultate
     //
-    if (isset($_POST['user_search']) && $_POST['user_search']!="" || isset($_GET['action']) && $_GET['action']=="searchresults")
+    if ($request->request->get('user_search') != "" || $request->query->get('action') == "searchresults")
     {
         $sql = '';
         if ($_SESSION['admin']['message_query']=="")
@@ -572,18 +555,19 @@ function manageMessages(
             }
             if ($_POST['message_deleted']<2)
             {
-                if ($_POST['message_deleted']==1)
-                    $sql.= " AND (message_deleted=1)";
-                else
-                    $sql.= " AND (message_deleted=0)";
+                $sql .= $_POST['message_deleted'] == 1
+                    ? " AND (message_deleted=1)"
+                    : " AND (message_deleted=0)";
             }
-            if ($_POST['message_cat_id']!="")
+            if ($_POST['message_cat_id']!="") {
                 $sql.= " AND message_cat_id=".$_POST['message_cat_id'];
+            }
 
-            if ($_POST['message_limit']!="")
+            if ($_POST['message_limit']!="") {
                 $limit=" LIMIT ".$_POST['message_limit'].";";
-            else
+            } else {
                 $limit=";";
+            }
 
             $sqlstart = "SELECT
                 message_id,
@@ -609,8 +593,9 @@ function manageMessages(
             $sql = $sqlstart.$sql.$sqlend.$limit;
             $_SESSION['admin']['message_query']=$sql;
         }
-        else
+        else {
             $sql = $_SESSION['admin']['message_query'];
+        }
 
         $res = dbquery($sql);
         if (mysql_num_rows($res)>0)
@@ -632,26 +617,26 @@ function manageMessages(
             echo "</tr>";
             while ($arr = mysql_fetch_array($res))
             {
-                if ($arr['message_user_from']>0)
-                    $uidf = get_user_nick($arr['message_user_from']);
-                else
-                    $uidf = "<i>System</i>";
-                if ($arr['message_user_to']>0)
-                    $uidt = get_user_nick($arr['message_user_to']);
-                else
-                    $uidt = "<i>System</i>";
+                $sender = $arr['message_user_from'] > 0
+                    ? $userRepository->getNick((int) $arr['message_user_from'])
+                    : "<i>System</i>";
 
-                if ($arr['message_deleted']==1)
-                    $style="style=\"color:#f90\"";
-                elseif ($arr['message_read']==0)
-                    $style="style=\"color:#0f0\"";
-                elseif($arr['message_archived']==1)
-                    $style="style=\"font-style:italic;\"";
-                else
-                    $style="";
+                $recipient = $arr['message_user_to'] > 0
+                    ? $userRepository->getNick((int) $arr['message_user_to'])
+                    : "<i>System</i>";
+
+                if ($arr['message_deleted'] == 1) {
+                    $style = "style=\"color:#f90\"";
+                } elseif ($arr['message_read'] == 0) {
+                    $style = "style=\"color:#0f0\"";
+                } elseif ($arr['message_archived'] == 1) {
+                    $style = "style=\"font-style:italic;\"";
+                } else {
+                    $style = "";
+                }
                 echo "<tr>";
-                echo "<td $style>".cut_string($uidf,11)."</a></td>";
-                echo "<td $style>".cut_string($uidt,11)."</a></td>";
+                echo "<td $style>".cut_string($sender,11)."</a></td>";
+                echo "<td $style>".cut_string($recipient,11)."</a></td>";
                 echo "<td $style ".mTT($arr['subject'],text2html(substr($arr['text'], 0, 500))).">".cut_string($arr['subject'],20)."</a></td>";
                 echo "<td $style>".date("Y-d-m H:i",$arr['message_timestamp'])."</a></td>";
                 echo "<td $style>".$arr['cat_name']."</td>";

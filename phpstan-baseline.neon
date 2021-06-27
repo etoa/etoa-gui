@@ -56,11 +56,6 @@ parameters:
 			path: htdocs/admin/content/logs.php
 
 		-
-			message: "#^Variable \\$checked might not be defined\\.$#"
-			count: 1
-			path: htdocs/admin/content/messages.php
-
-		-
 			message: "#^Variable \\$mail might not be defined\\.$#"
 			count: 1
 			path: htdocs/admin/content/messages.php

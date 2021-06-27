@@ -213,7 +213,7 @@ class MessageRepository extends AbstractRepository
             ->toArray();
     }
 
-    public function setDeleted(int $id, bool $deleted = true)
+    public function setDeleted(int $id, bool $deleted = true): void
     {
         $this->createQueryBuilder()
             ->update('messages')
@@ -226,7 +226,7 @@ class MessageRepository extends AbstractRepository
             ->execute();
     }
 
-    public function setRead(int $id, bool $read = true)
+    public function setRead(int $id, bool $read = true): void
     {
         $this->createQueryBuilder()
             ->update('messages')
