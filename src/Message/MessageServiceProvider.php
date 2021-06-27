@@ -25,5 +25,9 @@ class MessageServiceProvider implements ServiceProviderInterface
                 $pimple['etoa.config.service']
             );
         };
+
+        $pimple[ReportRepository::class] = function (Container $pimple): ReportRepository {
+            return new ReportRepository($pimple['db']);
+        };
     }
 }

@@ -8,6 +8,15 @@ use EtoA\Core\AbstractRepository;
 
 class MessageRepository extends AbstractRepository
 {
+    public function count(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(*)')
+            ->from('messages')
+            ->execute()
+            ->fetchOne();
+    }
+
     public function checkNew(int $userId): int
     {
         return (int) $this->createQueryBuilder()
@@ -170,6 +179,20 @@ class MessageRepository extends AbstractRepository
         }
     }
 
+    public function find(int $id): ?Message
+    {
+        $data = $this->createQueryBuilder()
+            ->select("*")
+            ->from('messages', 'm')
+            ->innerJoin('m', 'message_data', 'd', 'd.id = m.message_id')
+            ->where('message_id = :message_id')
+            ->setParameter('message_id', $id)
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? Message::createFromArray($data) : null;
+    }
+
     /**
      * @return array<Message>
      */
@@ -188,6 +211,32 @@ class MessageRepository extends AbstractRepository
         return collect($data)
             ->map(fn ($arr) => Message::createFromArray($arr))
             ->toArray();
+    }
+
+    public function setDeleted(int $id, bool $deleted = true)
+    {
+        $this->createQueryBuilder()
+            ->update('messages')
+            ->set('message_deleted', ':deleted')
+            ->where('message_id = :id')
+            ->setParameters([
+                'id' => $id,
+                'deleted' => $deleted,
+            ])
+            ->execute();
+    }
+
+    public function setRead(int $id, bool $read = true)
+    {
+        $this->createQueryBuilder()
+            ->update('messages')
+            ->set('message_read', ':read')
+            ->where('message_id = :id')
+            ->setParameters([
+                'id' => $id,
+                'read' => $read,
+            ])
+            ->execute();
     }
 
     public function remove(int $id): void
@@ -227,5 +276,15 @@ class MessageRepository extends AbstractRepository
             ->execute();
 
         return $affected;
+    }
+
+    public function listCategories(): array
+    {
+        return $this->createQueryBuilder()
+            ->select('cat_id', 'cat_name')
+            ->from('message_cat')
+            ->orderBy('cat_order')
+            ->execute()
+            ->fetchAllKeyValue();
     }
 }
