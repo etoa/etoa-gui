@@ -124,6 +124,7 @@ function adminView(
     global $sub;
     global $app;
     global $resNames;
+    global $cu;
 
     // Load admin user data
     $cu = $adminUserRepo->find($s->user_id);
