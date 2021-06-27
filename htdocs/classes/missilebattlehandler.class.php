@@ -76,11 +76,13 @@ class MissileBattleHandler
 
 				// Schickt Nachricht an den Angreifer
 				$msg = $config->param2('battleban_arrival_text');
-				$uid = get_user_id_by_planet($arr['flight_entity_from']);
+				/** @var \EtoA\Universe\PlanetRepository $planetRepository */
+				$planetRepository = $app[\EtoA\Universe\PlanetRepository::class];
+				$uid = $planetRepository->getPlanetUserId((int) $arr['flight_entity_from']);
 
                 /** @var \EtoA\Message\MessageRepository $messageRepository */
                 $messageRepository = $app[\EtoA\Message\MessageRepository::class];
-                $messageRepository->createSystemMessage((int) $uid, SHIP_WAR_MSG_CAT_ID, 'Ergebnis des Raketenangriffs', $msg);
+                $messageRepository->createSystemMessage($uid, SHIP_WAR_MSG_CAT_ID, 'Ergebnis des Raketenangriffs', $msg);
 			}
 
 			return;

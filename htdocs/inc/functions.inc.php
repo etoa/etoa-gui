@@ -92,34 +92,6 @@ function get_user_nick($id)
 }
 
 /**
-* User-Id via Planeten-Id auslesen
-*
-* @param int $pid Planet-ID
-* @Todo: propabely remove
-*/
-function get_user_id_by_planet($pid)
-{
-    $res = dbquery("
-        SELECT
-            planet_user_id
-        FROM
-            planets
-        WHERE
-            id='".$pid."';
-    ");
-    if (mysql_num_rows($res)>0)
-    {
-        $arr = mysql_fetch_assoc($res);
-        return $arr['planet_user_id'];
-    }
-    else
-    {
-        return 0;
-    }
-
-}
-
-/**
 * Format number
 */
 function nf($number,$colorize=0,$ex=0)	// Number format
@@ -619,21 +591,6 @@ function show_tab_menu($varname,$data)
 }
 
 /**
-* Tab Menu with on-click
-*/
-function show_js_tab_menu($data)
-{
-    echo "<div class=\"tabMenu\">";
-    $cnt=0;
-    foreach ($data as $val => $text)
-    {
-        echo "<a href=\"#\" id=\"tabMenu\" onclick=\"$val\" ".($cnt==count($data)?' class="tabLast"':'').">$text</a>";
-    }
-    echo "<br style=\"clear:both;\"/>";
-    echo "</div>";
-}
-
-/**
  * Get imagepacks
 */
 function get_imagepacks()
@@ -931,15 +888,6 @@ function button($label,$target)
 }
 
 /**
-* A pseudi randomizer
-*/
-function pseudo_randomize($faktor,$qx,$qy,$px,$py)
-{
-    $str = (string) floor((abs(sin($qx)) + abs(sin($qy)) + abs(sin($px)) + abs(sin($py)))*10000);
-    return round ($faktor*(((int) substr($str,strlen($str)-1,1)+1)/10),0);
-}
-
-/**
 * Prevents negative numbers
 */
 function zeroPlus($val)
@@ -1072,28 +1020,6 @@ function df($date,$seconds=1)
 }
 
 /**
-* Fehlermeldungs-Box anzeigen
-*
-* @param string $title Titel
-* @param string $text Text
-* @param int $return Bei 1 String zurückgeben statt ausgeben
-* @athor MrCage
-*/
-function errBox($title,$text,$return=0)
-{
-    $title_str="<br/><div style=\"font-family:arial,helvetica;padding:5px;margin:0px auto; width:600px;background:#225;font-weight:bold;border:1px solid black;\">".text2html($title)."</div>";
-    $text_str="<div style=\"font-family:arial,helvetica;padding:5px;margin:0px auto; width:600px;;background:#223;border:1px solid black;\">".text2html($text)."</div><br/>";
-    if ($return==1)
-    {
-        return $title_str.$text_str;
-    }
-    else
-    {
-        echo $title_str.$text_str;
-    }
-}
-
-/**
 * Zeigt ein Avatarbild an
 */
 function show_avatar($avatar=BOARD_DEFAULT_IMAGE)
@@ -1101,31 +1027,6 @@ function show_avatar($avatar=BOARD_DEFAULT_IMAGE)
     if ($avatar=="") $avatar=BOARD_DEFAULT_IMAGE;
     echo "<div style=\"padding:8px;\">";
     echo "<img id=\"avatar\" src=\"".BOARD_AVATAR_DIR."/".$avatar."\" alt=\"avatar\" style=\"width:64px;height:64px;\"/></div>";
-}
-
-
-/**
-* Cuts words
-*/
-function cut_word($txt, $where, $br=0) {
-    if (!$txt) return false;
-
-    $d = [];
-    for ($c = 0, $a = 0, $g = 0; $c<strlen($txt); $c++) {
-        $d[$c+$g]=$txt[$c];
-        if ($txt[$c]!=" ") $a++;
-        else if ($txt[$c]==" ") $a = 0;
-        if ($a==$where) {
-        $g++;
-        if ($br==0)
-        $d[$c+$g]="\n";
-        else
-        $d[$c+$g]="<br/>";
-
-        $a = 0;
-        }
-    }
-    return implode("", $d);
 }
 
 /**
@@ -1421,138 +1322,6 @@ function generatePasswort()
 }
 
 /**
- * Assesses the security of a password and returns a
- * password strength rating
- */
-function passwordStrength($password, $username = null)
-{
-    if ($username)
-    {
-        $password = str_replace($username, '', $password);
-    }
-
-    $strength = 0;
-    $password_length = strlen($password);
-
-    if ($password_length < 4)
-    {
-        return $strength;
-    }
-
-    else
-    {
-        $strength = $password_length * 4;
-    }
-
-    for ($i = 2; $i <= 4; $i++)
-    {
-        $temp = str_split($password, $i);
-
-        $strength -= (ceil($password_length / $i) - count(array_unique($temp)));
-    }
-
-    preg_match_all('/[0-9]/', $password, $numbers);
-
-    if (count($numbers) > 0)
-    {
-        $numbers = count($numbers[0]);
-
-        if ($numbers >= 3)
-        {
-            $strength += 5;
-        }
-    }
-
-    else
-    {
-        $numbers = 0;
-    }
-
-    preg_match_all('/[|!@#$%&*\/=?,;.:\-_+~^¨\\\]/', $password, $symbols);
-
-    if (count($symbols) > 0)
-    {
-        $symbols = count($symbols[0]);
-
-        if ($symbols >= 2)
-        {
-            $strength += 5;
-        }
-    }
-
-    else
-    {
-        $symbols = 0;
-    }
-
-    preg_match_all('/[a-z]/', $password, $lowercase_characters);
-    preg_match_all('/[A-Z]/', $password, $uppercase_characters);
-
-    if (count($lowercase_characters) > 0)
-    {
-        $lowercase_characters = count($lowercase_characters[0]);
-    }
-
-    else
-    {
-        $lowercase_characters = 0;
-    }
-
-    if (count($uppercase_characters) > 0)
-    {
-        $uppercase_characters = count($uppercase_characters[0]);
-    }
-
-    else
-    {
-        $uppercase_characters = 0;
-    }
-
-    if (($lowercase_characters > 0) && ($uppercase_characters > 0))
-    {
-        $strength += 10;
-    }
-
-    $characters = $lowercase_characters + $uppercase_characters;
-
-    if (($numbers > 0) && ($symbols > 0))
-    {
-        $strength += 15;
-    }
-
-    if (($numbers > 0) && ($characters > 0))
-    {
-        $strength += 15;
-    }
-
-    if (($symbols > 0) && ($characters > 0))
-    {
-        $strength += 15;
-    }
-
-    if (($numbers == 0) && ($symbols == 0))
-    {
-        $strength -= 10;
-    }
-
-    if (($symbols == 0) && ($characters == 0))
-    {
-        $strength -= 10;
-    }
-
-    if ($strength < 0)
-    {
-        $strength = 0;
-    }
-
-    if ($strength > 100)
-    {
-        $strength = 100;
-    }
-    return $strength;
-}
-
-/**
 * Generates a random string
 *
 * @param int $length Length of the string
@@ -1637,15 +1406,6 @@ function jsSlider($elem,$value=100, $target='"#value"')
 
     <?PHP
 }
-
-/**
-* The ultimate answer
-*/
-function answer_to_life_the_universe_and_everything()
-{
-    return 42;
-}
-
 
 /**
 * Startet den Javascript Counter bzw. die Uhr
@@ -1776,18 +1536,6 @@ function htmlSelect($name, array $data,$default=null)
         echo '<option value="'.$k.'" '.($default==$k ? ' selected="selected"': '').'>'.$v.'</option>';
     }
     echo "</select>";
-}
-
-// TODO: Implement this
-function encrypt($str,$salt)
-{
-    return $str;
-}
-
-// TODO: Implement this
-function decrypt($str,$salt)
-{
-    return $str;
 }
 
 function forward($url,$msgTitle=null,$msgText=null)
