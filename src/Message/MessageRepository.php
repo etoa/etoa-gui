@@ -69,7 +69,7 @@ class MessageRepository extends AbstractRepository
         string $text,
         int $catId = 0,
         int $fleetId = 0
-    ) {
+    ): void {
         try {
             if ($catId == 0) {
                 $cat = USER_MSG_CAT_ID;
@@ -99,7 +99,7 @@ class MessageRepository extends AbstractRepository
                     'id' => $id,
                     'subject' => ':subject',
                     'text' => ':text',
-                    'fleet_id' => ':fleet_id'
+                    'fleet_id' => ':fleet_id',
                 ])
                 ->setParameters([
                     'subject' => $subject,

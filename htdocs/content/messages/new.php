@@ -73,7 +73,7 @@
 									$_SESSION['messagesSent'][$uid] = $time;
 									$messageRepository->sendFromUserToUser(
                                         (int) $cu->id,
-                                        (int) $uid,
+                                        $uid,
                                         $_POST['message_subject'],
                                         $_POST['message_text']
                                     );

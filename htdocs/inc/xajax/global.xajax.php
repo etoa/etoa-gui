@@ -454,7 +454,7 @@ function sendMsg($userString, $subject, $message)
                         /** @var \EtoA\Message\MessageRepository $messageRepository */
                         $messageRepository = $app[\EtoA\Message\MessageRepository::class];
 
-                        $messageRepository->sendFromUserToUser((int) $senderId, (int) $uid, $subject, $message);
+                        $messageRepository->sendFromUserToUser((int) $senderId, $uid, $subject, $message);
                         $out = "Nachricht wurde an <b>".$userToNick."</b> gesendet! ";
 					 }
 					 else
