@@ -18,6 +18,9 @@
 	//
 	//
 
+/** @var \EtoA\Message\MessageRepository $messageRepository */
+$messageRepository = $app[\EtoA\Message\MessageRepository::class];
+
 /** @var mixed[] $arr alliance data */
 
 if (Alliance::checkActionRights('massmail'))
@@ -41,7 +44,13 @@ if (Alliance::checkActionRights('massmail'))
 			{
 				$subject=addslashes($_POST['message_subject'])."";
 
-				Message::sendFromUserToUser($cu->id,$uarr['user_id'],$_POST['message_subject'],$_POST['message_text'],MSG_ALLYMAIL_CAT);
+                $messageRepository->sendFromUserToUser(
+                    (int) $cu->id,
+                    (int) $uarr['user_id'],
+                    $_POST['message_subject'],
+                    $_POST['message_text'],
+                    MSG_ALLYMAIL_CAT
+                );
 			}
 			success_msg("Nachricht wurde gesendet!");
 			echo "<input type=\"button\" value=\"Neue Nachricht schreiben\" onclick=\"document.location='?page=$page&action=massmail'\" /> &nbsp; ";

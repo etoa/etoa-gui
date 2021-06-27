@@ -32,6 +32,9 @@
 	/** @var \EtoA\User\UserRepository $userRepository */
     $userRepository = $app['etoa.user.repository'];
 
+    /** @var \EtoA\Message\MessageRepository $messageRepository */
+    $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+
 	//
 	// Send message form
 	//
@@ -89,7 +92,12 @@
 				{
 					if ($msg_type==0 || $msg_type==2)
 					{
-						Message::sendFromUserToUser($_POST['from_id'],$k,$_POST['message_subject'],$_POST['message_text']);
+                        $messageRepository->sendFromUserToUser(
+                            (int) $_POST['from_id'],
+                            (int) $k,
+                            $_POST['message_subject'],
+                            $_POST['message_text']
+                        );
 						$msgCnt++;
 					}
 					if ($msg_type==1 || $msg_type==2)

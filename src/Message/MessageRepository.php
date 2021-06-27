@@ -62,6 +62,60 @@ class MessageRepository extends AbstractRepository
         }
     }
 
+    public function sendFromUserToUser(
+        int $senderId,
+        int $receiverId,
+        string $subject,
+        string $text,
+        int $catId = 0,
+        int $fleetId = 0
+    ) {
+        try {
+            if ($catId == 0) {
+                $cat = USER_MSG_CAT_ID;
+            }
+            $this->getConnection()->beginTransaction();
+
+            $this->createQueryBuilder()
+                ->insert('messages')
+                ->values([
+                    'message_user_from' => ':senderId',
+                    'message_user_to' => ':receiverId',
+                    'message_cat_id' => ':catId',
+                    'message_timestamp' => time(),
+                ])
+                ->setParameters([
+                    'senderId' => $senderId,
+                    'receiverId' => $receiverId,
+                    'catId' => $catId,
+                ])
+                ->execute();
+
+            $id = (int) $this->getConnection()->lastInsertId();
+
+            $this->createQueryBuilder()
+                ->insert('message_data')
+                ->values([
+                    'id' => $id,
+                    'subject' => ':subject',
+                    'text' => ':text',
+                    'fleet_id' => ':fleet_id'
+                ])
+                ->setParameters([
+                    'subject' => $subject,
+                    'text' => $text,
+                    'fleet_id' => $fleetId,
+                ])
+                ->execute();
+
+            $this->getConnection()->commit();
+        } catch (\Exception $ex) {
+            $this->getConnection()->rollBack();
+
+            throw $ex;
+        }
+    }
+
     /**
      * @return array<Message>
      */

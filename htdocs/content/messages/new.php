@@ -18,6 +18,9 @@
 	//
 	//
 
+    /** @var \EtoA\Message\MessageRepository $messageRepository */
+    $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+
 	if (!$cu->isVerified)
 	{
 		iBoxStart("Funktion gesperrt");
@@ -68,7 +71,12 @@
 							if($check_subject=="")
 							{
 									$_SESSION['messagesSent'][$uid] = $time;
-									Message::sendFromUserToUser($cu->id,$uid,$_POST['message_subject'],$_POST['message_text']);
+									$messageRepository->sendFromUserToUser(
+                                        (int) $cu->id,
+                                        (int) $uid,
+                                        $_POST['message_subject'],
+                                        $_POST['message_text']
+                                    );
 
 	         					    echo "Nachricht wurde an <b>".$rcpt."</b> gesendet! ";
 	         		    			$_POST['message_user_to']=null;

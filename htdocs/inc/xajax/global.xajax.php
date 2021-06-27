@@ -451,8 +451,11 @@ function sendMsg($userString, $subject, $message)
 					$check_subject = check_illegal_signs($subject);
 					if($check_subject=="")
 					{
-						 Message::sendFromUserToUser($senderId,$uid,$subject,$message);
-						 $out = "Nachricht wurde an <b>".$userToNick."</b> gesendet! ";
+                        /** @var \EtoA\Message\MessageRepository $messageRepository */
+                        $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+
+                        $messageRepository->sendFromUserToUser((int) $senderId, (int) $uid, $subject, $message);
+                        $out = "Nachricht wurde an <b>".$userToNick."</b> gesendet! ";
 					 }
 					 else
 					 {

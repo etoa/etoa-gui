@@ -24,54 +24,6 @@ class Message
     }
 
     /**
-    * Sends a message from an user to another user
-    */
-    static function sendFromUserToUser($senderId,$receiverId,$subject,$text,$cat=0,$fleetId=0)
-    {
-        try {
-            if ($cat == 0) {
-                $cat = USER_MSG_CAT_ID;
-            }
-            startTransaction();
-            dbquery("INSERT INTO
-                messages
-            (
-                message_user_from,
-                message_user_to,
-                message_timestamp,
-                message_cat_id
-            )
-            VALUES
-            (
-                '".intval($senderId)."',
-                '".intval($receiverId)."',
-                ".time().",
-                ".intval($cat)."
-            );");
-            dbquery("
-                INSERT INTO
-                    message_data
-                (
-                    id,
-                    subject,
-                    text,
-                    fleet_id
-                )
-                VALUES
-                (
-                    ".mysql_insert_id().",
-                '".mysql_real_escape_string($subject)."',
-                '".mysql_real_escape_string($text)."',
-                '".$fleetId."'
-                );
-            ");
-            commitTransaction();
-        } catch (Exception $e) {
-            rollbackTransaction();
-        }
-    }
-
-    /**
     * Delete message with given id
     */
     static function delete($id)
