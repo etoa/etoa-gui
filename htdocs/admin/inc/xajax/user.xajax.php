@@ -231,10 +231,14 @@ function userTickets($uid,$target)
 
 function sendUrgendMsg($uid,$subject,$text)
 {
+    global $app;
+
 	$or = new xajaxResponse();
 	if ($text!="" && $subject!="")
 	{
-		send_msg($uid,USER_MSG_CAT_ID,$subject,$text);
+	    /** @var \EtoA\Message\MessageRepository $messageRepository */
+	    $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+	    $messageRepository->createSystemMessage((int) $uid, USER_MSG_CAT_ID, $subject, $text);
 
 		$or->alert("Nachricht gesendet!");
 		$or->assign('urgendmsgsubject',"value","");

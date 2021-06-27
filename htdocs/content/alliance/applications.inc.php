@@ -38,7 +38,9 @@ if (Alliance::checkActionRights('applications'))
                     success_msg($nick." wurde angenommen.");
 
                     // Nachricht an den Bewerber schicken
-                    send_msg($id,MSG_ALLYMAIL_CAT,"Bewerbung angenommen","Deine Allianzbewerbung wurde angenommen!\n\n[b]Antwort:[/b]\n".addslashes($_POST['application_answer_text'][$id]));
+                    /** @var \EtoA\Message\MessageRepository $messageRepository */
+                    $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+                    $messageRepository->createSystemMessage($id, MSG_ALLYMAIL_CAT, "Bewerbung angenommen", "Deine Allianzbewerbung wurde angenommen!\n\n[b]Antwort:[/b]\n".addslashes($_POST['application_answer_text'][$id]));
 
                     // Log schreiben
                     add_alliance_history($cu->allianceId,"Die Bewerbung von [b]".$nick."[/b] wurde akzeptiert!");
@@ -70,7 +72,9 @@ if (Alliance::checkActionRights('applications'))
                     success_msg($nick." wurde abgelehnt.");
 
                     // Nachricht an den Bewerber schicken
-                    send_msg($id,MSG_ALLYMAIL_CAT,"Bewerbung abgelehnt","Deine Allianzbewerbung wurde abgelehnt!\n\n[b]Antwort:[/b]\n".addslashes($_POST['application_answer_text'][$id]));
+                    /** @var \EtoA\Message\MessageRepository $messageRepository */
+                    $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+                    $messageRepository->createSystemMessage($id, MSG_ALLYMAIL_CAT, "Bewerbung abgelehnt", "Deine Allianzbewerbung wurde abgelehnt!\n\n[b]Antwort:[/b]\n".addslashes($_POST['application_answer_text'][$id]));
 
                     // Log schreiben
                     add_alliance_history($cu->allianceId,"Die Bewerbung von [b]".$nick."[/b] wurde abgelehnt!");
@@ -90,7 +94,9 @@ if (Alliance::checkActionRights('applications'))
                     if($text != '')
                     {
                         // Nachricht an den Bewerber schicken
-                        send_msg($id,MSG_ALLYMAIL_CAT,"Bewerbung: Nachricht","Antwort auf die Bewerbung an die Allianz [b]" . $alliance->nameWithTag . "[/b]:\n".$_POST['application_answer_text'][$id]."");
+                        /** @var \EtoA\Message\MessageRepository $messageRepository */
+                        $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+                        $messageRepository->createSystemMessage($id, MSG_ALLYMAIL_CAT, "Bewerbung: Nachricht", "Antwort auf die Bewerbung an die Allianz [b]" . $alliance->nameWithTag . "[/b]:\n".$_POST['application_answer_text'][$id]."");
 
                         $cnt++;
                         success_msg($nick.": Nachricht gesendet");

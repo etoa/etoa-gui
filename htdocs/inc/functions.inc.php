@@ -264,63 +264,6 @@ function check_illegal_signs($string)
         }
 }
 
-/**
-* Sends a system message to an user
-*/
-function send_msg($user_id,$msg_type,$subject,$text)
-{
-    if ($user_id>0)
-    {
-    dbquery("
-        INSERT INTO
-            messages
-        (
-            message_user_from,
-            message_user_to,
-            message_timestamp,
-            message_cat_id
-        )
-        VALUES
-        (
-            '0',
-            '".intval($user_id)."',
-            '".time()."',
-            '".$msg_type."'
-        );
-    ");
-    dbquery("
-        INSERT INTO
-            message_data
-        (
-            id,
-            subject,
-            text
-        )
-        VALUES
-        (
-            ".mysql_insert_id().",
-            '".mysql_real_escape_string($subject)."',
-            '".mysql_real_escape_string($text)."'
-        );
-    ");
-        return true;
-    }
-    return false;
-}
-
-/**
-* Speichert Daten in die Log-Tabelle
-*
-    * @deprecated, please replace
-* @param int $log_cat Log Kategorie
-* @param string $log_text Log text
-* @author MrCage
-*/
-function add_log($log_cat, $log_text)
-{
-    Log::add($log_cat,Log::INFO,$log_text);
-}
-
 
 /**
 * Cuts a string by a given length

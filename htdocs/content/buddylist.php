@@ -120,7 +120,10 @@
 	                                {
 	                                        dbquery("INSERT INTO buddylist (bl_user_id,bl_buddy_id,bl_allow) VALUES('".$cu->id."','".$arr['user_id']."',0);");
 	                                        success_msg("[b]".$arr['user_nick']."[/b] wurde zu deiner Liste hinzugef&uuml;gt und ihm wurde eine Best&auml;tigungsnachricht gesendet!");
-	                                        send_msg($arr['user_id'],5,"Buddylist-Anfrage von ".$cu->nick,"Der Spieler will dich zu seiner Freundesliste hinzuf&uuml;gen.\n\n[page buddylist]Anfrage bearbeiten[/page]");
+
+                                            /** @var \EtoA\Message\MessageRepository $messageRepository */
+                                            $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+                                            $messageRepository->createSystemMessage((int) $arr['user_id'], 5, "Buddylist-Anfrage von ".$cu->nick, "Der Spieler will dich zu seiner Freundesliste hinzuf&uuml;gen.\n\n[page buddylist]Anfrage bearbeiten[/page]");
 	                                }
 	                                else
 	                                        error_msg("Dieser Eintrag ist schon vorhanden!");
