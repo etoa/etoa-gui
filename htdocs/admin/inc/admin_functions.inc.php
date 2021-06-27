@@ -10,33 +10,6 @@
 use Doctrine\DBAL\Query\QueryBuilder;
 
 /**
-* Shows a table view of a given mysql result
-*
-* @param resource $res MySQL result pointer
-*/
-function db_show_result($res)
-{
-    echo '<table class="tb"><thead><tr>';
-    $fc=0;
-    while ($fo = mysql_fetch_field($res))
-    {
-        echo '<th>'.$fo->name.'</th>';
-        $fc++;
-    }
-    echo '</tr></thead><tbody>';
-    while ($arr=mysql_fetch_row($res))
-    {
-        echo '<tr>';
-        for ($x=0;$x<$fc;$x++)
-        {
-            echo '<td>'.$arr[$x].'</td>';
-        }
-        echo '</tr>';
-    }
-    echo '</tbody></table>';
-}
-
-/**
 * Generates a page for editing table date with
 * an advanced form
 *
