@@ -24,6 +24,7 @@ class WormholeRepository extends AbstractRepository
             ->from('wormholes')
             ->execute()
             ->fetchOne();
+
         return $id !== false ? (int) $id : null;
     }
 
@@ -38,6 +39,7 @@ class WormholeRepository extends AbstractRepository
             ])
             ->execute()
             ->fetchAssociative();
+
         return $data !== false ? $data : null;
     }
 

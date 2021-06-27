@@ -27,7 +27,7 @@ class DatabaseManagerRepository extends AbstractRepository
         return $this->getConnection()->getDatabasePlatform()->getName();
     }
 
-    public function truncateTables(array $tables)
+    public function truncateTables(array $tables): void
     {
         $this->getConnection()
             ->executeStatement('SET FOREIGN_KEY_CHECKS = 0;');

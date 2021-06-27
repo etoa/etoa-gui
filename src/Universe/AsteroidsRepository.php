@@ -28,6 +28,7 @@ class AsteroidsRepository extends AbstractRepository
             ])
             ->execute()
             ->fetchAssociative();
+
         return $data !== false ? $data : null;
     }
 
@@ -78,6 +79,7 @@ class AsteroidsRepository extends AbstractRepository
                 'res_power' => $resPower,
             ])
             ->execute();
+
         return $affected > 0;
     }
 
@@ -109,6 +111,7 @@ class AsteroidsRepository extends AbstractRepository
                 'res_power' => $resPower,
             ])
             ->execute();
+
         return $affected > 0;
     }
 

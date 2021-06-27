@@ -77,6 +77,7 @@ class PlanetRepository extends AbstractRepository
             ])
             ->execute()
             ->fetchAssociative();
+
         return $data !== false ? $data : null;
     }
 
@@ -167,6 +168,7 @@ class PlanetRepository extends AbstractRepository
                 'description' => $description,
             ])
             ->execute();
+
         return $affected > 0;
     }
 
@@ -198,6 +200,7 @@ class PlanetRepository extends AbstractRepository
                 'people' => $people,
             ])
             ->execute();
+
         return $affected > 0;
     }
 

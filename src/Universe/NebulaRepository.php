@@ -28,6 +28,7 @@ class NebulaRepository extends AbstractRepository
             ])
             ->execute()
             ->fetchAssociative();
+
         return $data !== false ? $data : null;
     }
 
@@ -74,6 +75,7 @@ class NebulaRepository extends AbstractRepository
                 'res_power' => $resPower,
             ])
             ->execute();
+
         return $affected > 0;
     }
 
@@ -105,6 +107,7 @@ class NebulaRepository extends AbstractRepository
                 'res_power' => $resPower,
             ])
             ->execute();
+
         return $affected > 0;
     }
 

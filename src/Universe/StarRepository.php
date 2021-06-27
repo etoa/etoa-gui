@@ -28,6 +28,7 @@ class StarRepository extends AbstractRepository
             ])
             ->execute()
             ->fetchAssociative();
+
         return $data !== false ? $data : null;
     }
 
@@ -59,6 +60,7 @@ class StarRepository extends AbstractRepository
                 'name' => $name,
             ])
             ->execute();
+
         return $affected > 0;
     }
 

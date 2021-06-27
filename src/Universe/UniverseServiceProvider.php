@@ -72,6 +72,5 @@ class UniverseServiceProvider implements ServiceProviderInterface
         $pimple['etoa.universe.planet_type.repository'] = function (Container $pimple): PlanetTypeRepository {
             return new PlanetTypeRepository($pimple['db']);
         };
-
     }
 }

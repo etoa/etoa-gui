@@ -20,6 +20,7 @@ class EntityRepository extends AbstractRepository
             ])
             ->execute()
             ->fetchOne();
+
         return $id !== false ? (int) $id : null;
     }
 
@@ -54,10 +55,11 @@ class EntityRepository extends AbstractRepository
             ->innerJoin('e', 'cells', 'c', 'e.cell_id=c.id')
             ->where('e.id = :id')
             ->setParameters([
-                'id' => $id
+                'id' => $id,
             ])
             ->execute()
             ->fetchAssociative();
+
         return $data !== false ? $data : null;
     }
 
@@ -68,7 +70,7 @@ class EntityRepository extends AbstractRepository
             ->values([
                 'cell_id' => ':cell_id',
                 'code' => ':code',
-                'pos' => ':pos'
+                'pos' => ':pos',
             ])
             ->setParameters([
                 'cell_id' => $cellId,
@@ -76,6 +78,7 @@ class EntityRepository extends AbstractRepository
                 'pos' => $pos,
             ])
             ->execute();
+
         return (int) $this->getConnection()->lastInsertId();
     }
 

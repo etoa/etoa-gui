@@ -28,6 +28,7 @@ class EmptySpaceRepository extends AbstractRepository
             ])
             ->execute()
             ->fetchAssociative();
+
         return $data !== false ? $data : null;
     }
 
