@@ -511,7 +511,9 @@ $config = $app['etoa.config.service'];
 										;");
 
 								// Zur Allianzgeschichte hinzufügen
-								add_alliance_history($cu->allianceId,"Folgende Schiffe wurden für [b]".get_user_nick($_POST['user_buy_ship'])."[/b] hergestellt:\n".$log."\n".nf($ship_costs)." Teile wurden dafür benötigt.");
+                                /** @var \EtoA\Alliance\AllianceHistoryRepository $allianceHistoryRepository */
+                                $allianceHistoryRepository = $app[\EtoA\Alliance\AllianceHistoryRepository::class];
+                                $allianceHistoryRepository->addEntry((int) $cu->allianceId, "Folgende Schiffe wurden für [b]".get_user_nick($_POST['user_buy_ship'])."[/b] hergestellt:\n".$log."\n".nf($ship_costs)." Teile wurden dafür benötigt.");
 							}
 							else
 							{

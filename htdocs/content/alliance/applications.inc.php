@@ -43,7 +43,9 @@ if (Alliance::checkActionRights('applications'))
                     $messageRepository->createSystemMessage($id, MSG_ALLYMAIL_CAT, "Bewerbung angenommen", "Deine Allianzbewerbung wurde angenommen!\n\n[b]Antwort:[/b]\n".addslashes($_POST['application_answer_text'][$id]));
 
                     // Log schreiben
-                    add_alliance_history($cu->allianceId,"Die Bewerbung von [b]".$nick."[/b] wurde akzeptiert!");
+                    /** @var \EtoA\Alliance\AllianceHistoryRepository $allianceHistoryRepository */
+                    $allianceHistoryRepository = $app[\EtoA\Alliance\AllianceHistoryRepository::class];
+                    $allianceHistoryRepository->addEntry((int) $cu->allianceId, "Die Bewerbung von [b]".$nick."[/b] wurde akzeptiert!");
                     Log::add(5,Log::INFO, "Der Spieler [b]".$nick."[/b] tritt der Allianz [b]" . $alliance->nameWithTag . "[/b] bei!");
 
                     $tu = new User($id);
@@ -77,7 +79,9 @@ if (Alliance::checkActionRights('applications'))
                     $messageRepository->createSystemMessage($id, MSG_ALLYMAIL_CAT, "Bewerbung abgelehnt", "Deine Allianzbewerbung wurde abgelehnt!\n\n[b]Antwort:[/b]\n".addslashes($_POST['application_answer_text'][$id]));
 
                     // Log schreiben
-                    add_alliance_history($cu->allianceId,"Die Bewerbung von [b]".$nick."[/b] wurde abgelehnt!");
+                    /** @var \EtoA\Alliance\AllianceHistoryRepository $allianceHistoryRepository */
+                    $allianceHistoryRepository = $app[\EtoA\Alliance\AllianceHistoryRepository::class];
+                    $allianceHistoryRepository->addEntry((int) $cu->allianceId, "Die Bewerbung von [b]".$nick."[/b] wurde abgelehnt!");
 
                     // Anfrage löschen
                     dbquery("
