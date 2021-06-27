@@ -7,6 +7,7 @@
 	{
 		function run()
 		{
+		    global $app;
 			$time = time();
 
 			// Assign diplomacy points for pacts
@@ -80,8 +81,10 @@
 					add_alliance_history($arr['a2id'],$text);
 
 					// Send message to leader
-					send_msg($arr['a1f'],MSG_ALLYMAIL_CAT,"Krieg beendet",$text." Während dieser Friedenszeit kann kein neuer Krieg erklärt werden!");
-					send_msg($arr['a2f'],MSG_ALLYMAIL_CAT,"Krieg beendet",$text." Während dieser Friedenszeit kann kein neuer Krieg erklärt werden!");
+                    /** @var \EtoA\Message\MessageRepository $messageRepository */
+                    $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+                    $messageRepository->createSystemMessage((int) $arr['a1f'], MSG_ALLYMAIL_CAT, "Krieg beendet", $text." Während dieser Friedenszeit kann kein neuer Krieg erklärt werden!");
+                    $messageRepository->createSystemMessage((int) $arr['a2f'], MSG_ALLYMAIL_CAT, "Krieg beendet", $text." Während dieser Friedenszeit kann kein neuer Krieg erklärt werden!");
 
 					// Assing diplomacy points
 					$user = new User($arr['alliance_bnd_diplomat_id']);
@@ -136,8 +139,10 @@
 					add_alliance_history($arr['a2id'],$text);
 
 					// Send message to leader
-					send_msg($arr['a1f'],MSG_ALLYMAIL_CAT,"Friedensvertrag abgelaufen!",$text);
-					send_msg($arr['a2f'],MSG_ALLYMAIL_CAT,"Friedensvertrag abgelaufen!",$text);
+                    /** @var \EtoA\Message\MessageRepository $messageRepository */
+                    $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+                    $messageRepository->createSystemMessage((int) $arr['a1f'], MSG_ALLYMAIL_CAT, "Friedensvertrag abgelaufen", $text);
+                    $messageRepository->createSystemMessage((int) $arr['a2f'], MSG_ALLYMAIL_CAT, "Friedensvertrag abgelaufen", $text);
 
 					dbquery("
 					DELETE FROM

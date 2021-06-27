@@ -39,7 +39,9 @@ if ($config->getBoolean("alliance_allow")) {
 				if (isset($_GET['action']) && $_GET['action']=="cancelapplication")
 				{
 				    $alliance = $allianceRepository->getAlliance((int) $application_alliance);
-        send_msg($alliance->founderId,MSG_ALLYMAIL_CAT,"Bewerbung zurückgezogen","Der Spieler ".$cu->nick." hat die Bewerbung bei deiner Allianz zurückgezogen!");
+                    /** @var \EtoA\Message\MessageRepository $messageRepository */
+                    $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+                    $messageRepository->createSystemMessage($alliance->founderId, MSG_ALLYMAIL_CAT, "Bewerbung zurückgezogen", "Der Spieler ".$cu->nick." hat die Bewerbung bei deiner Allianz zurückgezogen!");
         add_alliance_history($application_alliance,"Der Spieler [b]".$cu->nick."[/b] zieht seine Bewerbung zurück.");
         dbquery("
         DELETE FROM
@@ -157,7 +159,9 @@ if ($config->getBoolean("alliance_allow")) {
                 if ($_POST['user_alliance_application']!='')
                 {
                     $alliance = $allianceRepository->getAlliance($aid);
-                    send_msg($alliance->founderId,MSG_ALLYMAIL_CAT,"Bewerbung","Der Spieler ".$cu->nick." hat sich bei deiner Allianz beworben. Gehe auf die [page=alliance&action=applications]Allianzseite[/page] für Details!");
+                    /** @var \EtoA\Message\MessageRepository $messageRepository */
+                    $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+                    $messageRepository->createSystemMessage($alliance->founderId, MSG_ALLYMAIL_CAT, "Bewerbung", "Der Spieler ".$cu->nick." hat sich bei deiner Allianz beworben. Gehe auf die [page=alliance&action=applications]Allianzseite[/page] für Details!");
                     add_alliance_history($aid,"Der Spieler [b]".$cu->nick."[/b] bewirbt sich sich bei der Allianz.");
                     dbquery("
                     INSERT INTO

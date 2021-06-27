@@ -87,7 +87,9 @@
 				".$cu->id."
 			);");
 
-			send_msg($_POST['warning_user_id'],7,"Verwarnung","Du hast vom Administrator ".$cu->nick." eine Verwarnung erhalten!\n\n".$_POST['warning_text']);
+			/** @var \EtoA\Message\MessageRepository $messageRepository */
+			$messageRepository = $app[\EtoA\Message\MessageRepository::class];
+            $messageRepository->createSystemMessage((int) $_POST['warning_user_id'], 7, "Verwarnung", "Du hast vom Administrator ".$cu->nick." eine Verwarnung erhalten!\n\n".$_POST['warning_text']);
 
 			success_msg("Verwarnung gespeichert!");
 		}
