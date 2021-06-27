@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 $app = new \Silex\Application([
-    'debug' => $debug ?? false,
+    'debug' => $debug ?? isDebugEnabled(),
     'app.environment' => $environment ?? 'production',
     'app.root' => dirname(__DIR__),
     'app.config_dir' => sprintf('%s/htdocs/config/', dirname(__DIR__)),
