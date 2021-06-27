@@ -192,8 +192,11 @@ try {
         }
     }
 
+    /** @var \EtoA\Message\MessageRepository $messageRepository */
+    $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+
     // Count Messages
-    define('NEW_MESSAGES',Message::checkNew($cu->id));
+    $newMessages = $messageRepository->checkNew($cu->id);
 
     // Check new reports
     $newReports = Report::countNew($cu->id);
@@ -258,7 +261,7 @@ try {
         'xajaxJS' => $xajax->getJavascript(XAJAX_DIR),
         'bodyTopStuff' => getInitTT(),
         'ownFleetCount' => $ownFleetCount,
-        'messages' => NEW_MESSAGES,
+        'messages' => $newMessages,
         'newreports' => $newReports,
         'blinkMessages' => $cu->properties->msgBlink,
         'buddys' => check_buddys_online($cu->id),

@@ -31,6 +31,9 @@ use EtoA\Core\Configuration\ConfigurationService;
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
 
+/** @var \EtoA\Message\MessageRepository $messageRepository */
+$messageRepository = $app[\EtoA\Message\MessageRepository::class];
+
 	// DEFINITIONEN //
 
 	$msgpreview = $cu->properties->msgPreview==1 ? true : false;
@@ -445,7 +448,7 @@ $config = $app['etoa.config.service'];
         </tr>';
 
         // Wenn es neue Nachrichten hat, Button zum Selektieren anzeigen
-        if(NEW_MESSAGES>0)
+        if ($messageRepository->checkNew($cu->id) > 0)
         {
         	echo '<tr>
   	     					<td style="text-align:center;" colspan="2">

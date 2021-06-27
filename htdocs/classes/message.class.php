@@ -5,25 +5,6 @@ use EtoA\Core\Configuration\ConfigurationService;
 class Message
 {
     /**
-    * Check for new messages
-    */
-    static function checkNew($user_id)
-    {
-        $mres = dbquery("
-            SELECT
-                COUNT(message_id)
-            FROM
-                messages
-            WHERE
-                message_deleted='0'
-                AND message_user_to='".$user_id."'
-                AND message_read='0';
-        ");
-        $count=mysql_fetch_row($mres);
-        return $count[0];
-    }
-
-    /**
     * Alte Nachrichten löschen
     */
     static function removeOld($threshold=0,$onlyDeleted=0)

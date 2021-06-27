@@ -8,6 +8,21 @@ use EtoA\Core\AbstractRepository;
 
 class MessageRepository extends AbstractRepository
 {
+    public function checkNew(int $userId): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(message_id)')
+            ->from('messages')
+            ->where('message_deleted = 0')
+            ->andWhere('message_user_to = :userId')
+            ->andWhere('message_read = 0')
+            ->setParameters([
+                'userId' => $userId,
+            ])
+            ->execute()
+            ->fetchOne();
+    }
+
     /**
      * Sends a message from the system to ghe given user
      *
