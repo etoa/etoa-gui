@@ -63,7 +63,7 @@ class EntityRepository extends AbstractRepository
 
     public function add(int $cellId, string $code, int $pos = 0): int
     {
-        return (int) $this->createQueryBuilder()
+        $this->createQueryBuilder()
             ->insert('entities')
             ->values([
                 'cell_id' => ':cell_id',
@@ -76,12 +76,13 @@ class EntityRepository extends AbstractRepository
                 'pos' => $pos,
             ])
             ->execute();
+        return (int) $this->getConnection()->lastInsertId();
     }
 
     public function updateCode(int $id, string $code): void
     {
         $this->createQueryBuilder()
-            ->update('cells')
+            ->update('entities')
             ->set('code', ':code')
             ->where('id = :id')
             ->setParameters([

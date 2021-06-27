@@ -64,7 +64,7 @@ class PlanetRepository extends AbstractRepository
                 'fields' => $fields,
                 'image' => $image,
                 'temp_from' => $tempFrom,
-                'temp_from' => $tempTo,
+                'temp_to' => $tempTo,
             ])
             ->execute();
     }

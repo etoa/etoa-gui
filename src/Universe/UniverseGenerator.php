@@ -101,7 +101,6 @@ class UniverseGenerator
         $perc_nebulas = $this->config->getInt('space_percent_nebulas');
         $perc_wormholes = $this->config->getInt('space_percent_wormholes');
 
-        $planet_count = 0;
         $sol_count = 0;
         $nebula_count = 0;
         $asteroids_count = 0;

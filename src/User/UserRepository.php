@@ -104,7 +104,7 @@ class UserRepository extends AbstractRepository
     {
         $this->createQueryBuilder()
             ->update('users')
-            ->set('discoverymask', '')
+            ->set('discoverymask', "''")
             ->set('user_setup', (string) 0)
             ->execute();
     }

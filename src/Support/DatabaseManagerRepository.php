@@ -33,10 +33,7 @@ class DatabaseManagerRepository extends AbstractRepository
 
         foreach ($tables as $t) {
             $this->getConnection()
-                ->executeStatement('TRUNCATE :table;',
-            [
-                'table' => $t,
-            ]);
+                ->executeStatement('TRUNCATE '.$t.';');
         }
 
         $this->getConnection()
