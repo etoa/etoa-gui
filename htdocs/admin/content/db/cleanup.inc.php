@@ -3,6 +3,7 @@
 use EtoA\Admin\AdminSessionManager;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
+use EtoA\Message\MessageService;
 use EtoA\Ranking\PointsService;
 use EtoA\User\UserSessionManager;
 
@@ -18,13 +19,16 @@ $sessionManager = $app['etoa.admin.session.manager'];
 /** @var PointsService */
 $pointsService = $app['etoa.rankings.points.service'];
 
+/** @var MessageService */
+$messageService = $app[MessageService::class];
+
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
 
 echo '<h2>Clean-Up</h2>';
 
 if (isset($_POST['submit_cleanup_selected']) || isset($_POST['submit_cleanup_all'])) {
-	runCleanup($userSessionManager, $sessionManager, $ticketRepo, $pointsService);
+	runCleanup($userSessionManager, $sessionManager, $ticketRepo, $pointsService, $messageService);
 }
 cleanupOverView($ticketRepo, $config);
 
@@ -32,7 +36,8 @@ function runCleanup(
     UserSessionManager $userSessionManager,
 	AdminSessionManager $sessionManager,
 	TicketRepository $ticketRepo,
-    PointsService $pointsService
+    PointsService $pointsService,
+    MessageService $messageService
 ) {
 	echo "Clean-Up wird durchgeführt...<br/>";
 	$all = isset($_POST['submit_cleanup_all']) ? true : false;
@@ -52,10 +57,11 @@ function runCleanup(
 
 	/* Message cleanup */
 	if ((isset($_POST['cl_msg']) && $_POST['cl_msg'] == 1) || $all) {
-		if ($_POST['only_deleted'] == 1)
-			$nr = Message::removeOld($_POST['message_timestamp_deleted'], 1);
-		else
-			$nr = Message::removeOld($_POST['message_timestamp']);
+		if ($_POST['only_deleted'] == 1) {
+			$nr = $messageService->removeOld((int) $_POST['message_timestamp_deleted'], true);
+        } else {
+			$nr = $messageService->removeOld((int) $_POST['message_timestamp']);
+        }
 		echo $nr . " Nachrichten wurden gelöscht!<br/>";
 	}
 

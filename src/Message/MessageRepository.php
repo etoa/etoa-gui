@@ -24,6 +24,45 @@ class MessageRepository extends AbstractRepository
     }
 
     /**
+     * @return array<int>
+     */
+    public function findIdsOfDeletedOlderThan(int $timestamp): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('message_id')
+            ->from('messages')
+            ->where('message_deleted = 1')
+            ->andWhere('message_timestamp < :timestamp')
+            ->setParameters([
+                'timestamp' => $timestamp,
+            ])
+            ->execute()
+            ->fetchFirstColumn();
+
+        return array_map(fn ($id) => (int) $id, $data);
+    }
+
+    /**
+     * @return array<int>
+     */
+    public function findIdsOfReadNotArchivedOlderThan(int $timestamp): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('message_id')
+            ->from('messages')
+            ->where('message_archived = 0')
+            ->andWhere('message_read = 1')
+            ->andWhere('message_timestamp < :timestamp')
+            ->setParameters([
+                'timestamp' => $timestamp,
+            ])
+            ->execute()
+            ->fetchFirstColumn();
+
+        return array_map(fn ($id) => (int) $id, $data);
+    }
+
+    /**
      * Sends a message from the system to ghe given user
      *
      * @todo This should eventually replace send_msg() defined in functions.inc.php
@@ -164,5 +203,29 @@ class MessageRepository extends AbstractRepository
             ->where('id = :id')
             ->setParameter('id', $id)
             ->execute();
+    }
+
+    /**
+     * @param array<int> $ids
+     */
+    public function removeBulk(array $ids): int
+    {
+        if (count($ids) == 0) {
+            return 0;
+        }
+
+        $affected = (int) $this->createQueryBuilder()
+            ->delete('messages')
+            ->where('message_id IN ('.implode(',', array_fill(0, count($ids), '?')).')')
+            ->setParameters($ids)
+            ->execute();
+
+        $this->createQueryBuilder()
+            ->delete('message_data')
+            ->where('id IN ('.implode(',', array_fill(0, count($ids), '?')).')')
+            ->setParameters($ids)
+            ->execute();
+
+        return $affected;
     }
 }
