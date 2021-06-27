@@ -21,4 +21,27 @@ class PlanetRepository extends AbstractRepository
 
         return array_map(fn ($row) => new Planet($row), $data);
     }
+
+    public function getUserMainId(int $userId): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('p.id')
+            ->from('planets', 'p')
+            ->where('p.planet_user_main = 1')
+            ->andWhere('p.planet_user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+            ])->execute()->fetchOne();
+    }
+
+    public function getPlanetCount(int $userId): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(p.id)')
+            ->from('planets', 'p')
+            ->where('p.planet_user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+            ])->execute()->fetchOne();
+    }
 }

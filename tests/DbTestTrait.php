@@ -33,5 +33,6 @@ trait DbTestTrait
         $this->connection->executeQuery('TRUNCATE messages');
         $this->connection->executeQuery('TRUNCATE message_data');
         $this->connection->executeQuery('DELETE FROM quests');
+        $this->connection->executeQuery('DELETE FROM market_rates');
     }
 }

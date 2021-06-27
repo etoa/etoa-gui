@@ -3,7 +3,7 @@
 namespace EtoA\Quest\Reward;
 
 use EtoA\Defense\DefenseRepository;
-use EtoA\Planet\PlanetRepository;
+use EtoA\Universe\PlanetRepository;
 use LittleCubicleGames\Quests\Definition\Reward\Reward;
 use LittleCubicleGames\Quests\Entity\QuestInterface;
 use PHPUnit\Framework\TestCase;

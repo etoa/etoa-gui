@@ -1,19 +1,18 @@
 <?php declare(strict_types=1);
 
-namespace EtoA\Planet;
+namespace EtoA\Universe;
 
 use EtoA\AbstractDbTestCase;
 
 class PlanetRepositoryTest extends AbstractDbTestCase
 {
-    /** @var PlanetRepository */
-    private $repository;
+    private PlanetRepository $repository;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->repository = $this->app['etoa.planet.repository'];
+        $this->repository = $this->app[PlanetRepository::class];
     }
 
     public function testGetUserMainId(): void
