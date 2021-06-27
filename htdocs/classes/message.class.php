@@ -24,18 +24,6 @@ class Message
     }
 
     /**
-    * Delete message with given id
-    */
-    static function delete($id)
-    {
-        dbquery("
-            DELETE FROM
-                messages
-            WHERE
-                message_id=".$id.";");
-    }
-
-    /**
     * Alte Nachrichten löschen
     */
     static function removeOld($threshold=0,$onlyDeleted=0)

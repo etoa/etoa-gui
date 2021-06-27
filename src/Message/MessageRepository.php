@@ -135,4 +135,19 @@ class MessageRepository extends AbstractRepository
             ->map(fn ($arr) => Message::createFromArray($arr))
             ->toArray();
     }
+
+    public function remove(int $id): void
+    {
+        $this->createQueryBuilder()
+            ->delete('messages')
+            ->where('message_id = :id')
+            ->setParameter('id', $id)
+            ->execute();
+
+        $this->createQueryBuilder()
+            ->delete('message_data')
+            ->where('id = :id')
+            ->setParameter('id', $id)
+            ->execute();
+    }
 }
