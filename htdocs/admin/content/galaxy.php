@@ -57,6 +57,7 @@ function starTypes(Environment $twig)
 function entities(ConfigurationService $config)
 {
     global $app;
+    global $cu;
     global $page;
     global $sub;
 

@@ -189,16 +189,18 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
                 echo "<option value=\"$userId\"";
                 if ($planet['planet_user_id'] == $userId) {
                     echo " selected=\"selected\"";
-                    $planet_user_id = $userId;
                 }
                 echo ">" . $userNick . "</option>";
             }
             echo "</select> ";
-            if ($planet['planet_user_id']>0 && $users[$planet_user_id]['alliance_id']>0)
+            if ($planet['planet_user_id'] > 0)
             {
-                $ally = new Alliance($users[$planet_user_id]['alliance_id']);
-                echo $ally." &nbsp; ";
-                unset($ally);
+                $allianceId = $userRepo->getAllianceId((int) $planet['planet_user_id']);
+                if ($allianceId > 0) {
+                    $ally = new Alliance($allianceId);
+                    echo $ally." &nbsp; ";
+                    unset($ally);
+                }
             }
             echo "<input type=\"hidden\" name=\"planet_user_id_old\" value=\"".$planet['planet_user_id']."\">";
             echo "<input tabindex=\"29\" type=\"button\" name=\"change_owner\" value=\"Planet übergeben\" class=\"button\" onclick=\"if( confirm('Dieser Planet soll einem neuen Besitzer gehören. Alle Schiffs- und Verteidigungsdaten vom alten Besitzer werden komplett gelöscht.')) document.getElementById('editform').submit()\"/>&nbsp;";
