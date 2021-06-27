@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\EntityType;
 
 include("image.inc.php");
 
@@ -259,45 +260,45 @@ if (isset($_SESSION) || $admin)
 
         if (($admin && !isset($user)) || $user->discovered((($arr['sx'] - 1) * $cx_num) + $arr['cx'],(($arr['sy'] - 1) * $cy_num) + $arr['cy']))
         {
-            if ($arr['code']=='s')
+            if ($arr['code']==EntityType::STAR)
             {
-            $sres = dbquery("
-            SELECT
-                type_id
-            FROM
-                stars
-            WHERE
-                id=".$arr['id']."
-            LIMIT 1;
-            ");
-            $sarr = mysql_fetch_row($sres);
-            $starImageSrc = imagecreatefrompng(IMG_DIR."/stars/star".$sarr[0]."_small.png");
-            imagecopyresampled($im,$starImageSrc,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,imagesx($starImageSrc),imagesy($starImageSrc));
+                $sres = dbquery("
+                SELECT
+                    type_id
+                FROM
+                    stars
+                WHERE
+                    id=".$arr['id']."
+                LIMIT 1;
+                ");
+                $sarr = mysql_fetch_row($sres);
+                $starImageSrc = imagecreatefrompng(IMG_DIR."/stars/star".$sarr[0]."_small.png");
+                imagecopyresampled($im,$starImageSrc,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,imagesx($starImageSrc),imagesy($starImageSrc));
             }
-            elseif ($arr['code']=='w')
+            elseif ($arr['code']==EntityType::WORMHOLE)
             {
-            $wh = new Wormhole($arr['id']);
-            if ($wh->isPersistent())
-            {
-                imagecopyresampled($im,$persistentWormholeImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
-            } else {
-                imagecopyresampled($im,$wormholeImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
+                $wh = new Wormhole($arr['id']);
+                if ($wh->isPersistent())
+                {
+                    imagecopyresampled($im,$persistentWormholeImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
+                } else {
+                    imagecopyresampled($im,$wormholeImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
+                }
             }
-            }
-            elseif ($arr['code']=='a')
+            elseif ($arr['code']==EntityType::ASTEROIDS)
             {
                 imagecopyresampled($im,$asteroidImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
             }
-            elseif ($arr['code']=='n')
+            elseif ($arr['code']==EntityType::NEBULA)
             {
                 imagecopyresampled($im,$nebulaImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
             }
-            elseif ($arr['code']=='e' || $arr['code']=='m')
+            elseif ($arr['code']==EntityType::EMPTY_SPACE || $arr['code']==EntityType::MARKET)
             {
                 imagecopyresampled($im,$spaceImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
             }
             else
-            continue;
+                continue;
         }
         elseif (isset($user))
         {

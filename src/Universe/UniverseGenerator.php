@@ -264,7 +264,7 @@ class UniverseGenerator
                 UPDATE
                     entities
                 SET
-                    code='m'
+                    code='".EntityType::MARKET."'
                 WHERE
                     code='".EntityType::EMPTY_SPACE."'
                 ORDER BY
@@ -278,7 +278,7 @@ class UniverseGenerator
                     UPDATE
                         entities
                     SET
-                        code='m'
+                        code='".EntityType::MARKET."'
                     WHERE
                         code='".EntityType::EMPTY_SPACE."'
                     ORDER BY
@@ -290,7 +290,7 @@ class UniverseGenerator
                     UPDATE
                         entities
                     SET
-                        code='x'
+                        code='".EntityType::ALLIANCE_MARKET."'
                     WHERE
                         code='".EntityType::EMPTY_SPACE."'
                     ORDER BY

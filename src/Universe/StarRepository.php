@@ -17,6 +17,19 @@ class StarRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    public function find(int $id): ?array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('stars')
+            ->where('id = :id')
+            ->setParameters([
+                'id' => $id,
+            ])
+            ->execute();
+        return $data !== false ? $data : null;
+    }
+
     public function add(int $id, int $typeId): void
     {
         $this->createQueryBuilder()
@@ -30,6 +43,22 @@ class StarRepository extends AbstractRepository
                 'type_id' => $typeId,
             ])
             ->execute();
+    }
+
+    public function update(int $id, int $typeId, string $name): bool
+    {
+        $affected = (int) $this->createQueryBuilder()
+            ->update('stars')
+            ->set('type_id', ':type_id')
+            ->set('name', ':name')
+            ->where('id = :id')
+            ->setParameters([
+                'id' => $id,
+                'type_id' => $typeId,
+                'name' => $name,
+            ])
+            ->execute();
+        return $affected > 0;
     }
 
     public function remove(int $id): void

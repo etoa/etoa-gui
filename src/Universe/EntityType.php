@@ -12,4 +12,7 @@ class EntityType
     const NEBULA = 'n';
     const WORMHOLE = 'w';
     const EMPTY_SPACE = 'e';
+    const MARKET = 'm';
+    const ALLIANCE_MARKET = 'x';
+    const UNEXPLORED = 'u';
 }

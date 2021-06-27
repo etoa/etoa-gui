@@ -27,6 +27,19 @@ class WormholeRepository extends AbstractRepository
         return $id !== false ? (int) $id : null;
     }
 
+    public function find(int $id): ?array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('wormholes')
+            ->where('id = :id')
+            ->setParameters([
+                'id' => $id,
+            ])
+            ->execute();
+        return $data !== false ? $data : null;
+    }
+
     public function findAll(): array
     {
         return $this->createQueryBuilder()

@@ -1,9 +1,30 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\AsteroidsRepository;
+use EtoA\Universe\EmptySpaceRepository;
+use EtoA\Universe\EntityType;
+use EtoA\Universe\NebulaRepository;
+use EtoA\Universe\StarRepository;
+use EtoA\Universe\WormholeRepository;
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
+
+/** @var StarRepository */
+$starRepo = $app['etoa.universe.star.repository'];
+
+/** @var AsteroidsRepository */
+$asteroidsRepo = $app['etoa.universe.asteroids.repository'];
+
+/** @var NebulaRepository */
+$nebulaRepo = $app['etoa.universe.nebula.repository'];
+
+/** @var WormholeRepository */
+$wormholeRepo = $app['etoa.universe.wormhole.repository'];
+
+/** @var EmptySpaceRepository */
+$emptySpaceRepo = $app['etoa.universe.empty_space.repository'];
 
 $id = $_GET['id'];
 if (isset($id) && $id > 0)
@@ -41,7 +62,7 @@ if (isset($id) && $id > 0)
     ".button("System dieses Objekts auf der Karte anzeigen","?page=$page&amp;sub=map&amp;cell=".$earr['cid']);
             echo "<br/><br/>";
 
-            if ($earr['code']=='p')
+            if ($earr['code']==EntityType::PLANET)
             {
                 if (isset($_POST['save']))
                 {
@@ -333,49 +354,34 @@ if (isset($id) && $id > 0)
                 echo "</p>";
                 echo "</form>";
             }
-            elseif ($earr['code']=='s')
+            elseif ($earr['code']==EntityType::STAR)
             {
-
                 if (isset($_POST['save']))
                 {
-                    //Daten Speichern
-                    dbquery("
-                    UPDATE
-                        stars
-                    SET
-            name='".mysql_real_escape_string($_POST['name'])."',
-            type_id=".intval($_POST['type_id'])."
-                    WHERE
-                        id='".$id."';");
-                    if (mysql_affected_rows()>0)
+                    if ($starRepo->update($id, (int) $_POST['type_id'], $_POST['name']))
                     {
                         success_msg("Änderungen übernommen");
                     }
                 }
 
-                $res = dbquery("
-                SELECT
-                    *
-                FROM
-                    stars
-                WHERE
-                    id=".$id.";");
-                $arr = mysql_fetch_array($res);
+                $star = $starRepo->find($id);
 
                 echo "<form action=\"?page=$page&sub=edit&id=".$id."\" method=\"post\" id=\"editform\">";
                 tableStart("<span style=\"color:".Entity::$entityColors[$earr['code']]."\">Stern</span>","auto");
                 echo "<tr><th>Name</th>
-                <td><input type=\"text\" name=\"name\" value=\"".$arr['name']."\" size=\"20\" maxlength=\"250\" /></td>";
+                <td><input type=\"text\" name=\"name\" value=\"".$star['name']."\" size=\"20\" maxlength=\"250\" /></td>";
                 echo "<th>Typ</th>
                 <td>
-                <img src=\"".IMAGE_PATH."/stars/star".$arr['type_id']."_small.".IMAGE_EXT."\" style=\"float:left;\" />
+                <img src=\"".IMAGE_PATH."/stars/star".$star['type_id']."_small.".IMAGE_EXT."\" style=\"float:left;\" />
                 <select name=\"type_id\">";
                 /** @var \EtoA\Universe\SolarTypeRepository $solarTypeRepository */
                 $solarTypeRepository = $app['etoa.universe.solar_type.repository'];
                 $solarTypeNames = $solarTypeRepository->getSolarTypeNames(true);
                 foreach ($solarTypeNames as $solarTypeId => $solarTypeName) {
                     echo "<option value=\"".$solarTypeId."\"";
-                    if ($arr['type_id']==$solarTypeId) echo " selected=\"selected\"";
+                    if ($star['type_id']==$solarTypeId) {
+                        echo " selected=\"selected\"";
+                    }
                     echo ">".$solarTypeName."</option>\n";
                 }
                 echo "</select></td></tr>";
@@ -386,66 +392,59 @@ if (isset($id) && $id > 0)
                 echo "<input tabindex=\"28\" type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=searchresults'\" /> ";
                 echo "</form>";
             }
-            elseif ($earr['code']=='a')
+            elseif ($earr['code']==EntityType::ASTEROIDS)
             {
                 if (isset($_POST['save']))
                 {
                     //Daten Speichern
-                    dbquery("
-                    UPDATE
-                        asteroids
-                    SET
-            res_metal='".intval($_POST['res_metal'])."',
-            res_crystal='".intval($_POST['res_crystal'])."',
-            res_plastic='".intval($_POST['res_plastic'])."',
-            res_fuel='".intval($_POST['res_fuel'])."',
-            res_food='".intval($_POST['res_food'])."',
-            res_power='".intval($_POST['res_power'])."',
-            res_metal=res_metal+'".intval($_POST['res_metal_add'])."',
-            res_crystal=res_crystal+'".intval($_POST['res_crystal_add'])."',
-            res_plastic=res_plastic+'".intval($_POST['res_plastic_add'])."',
-            res_fuel=res_fuel+'".intval($_POST['res_fuel_add'])."',
-            res_food=res_food+'".intval($_POST['res_food_add'])."',
-            res_power=res_power+'".intval($_POST['res_power_add'])."'
-                    WHERE
-                        id='".$id."';");
-                    if (mysql_affected_rows()>0)
+                    $affected = $asteroidsRepo->update(
+                        $id,
+                        intval($_POST['res_metal']),
+                        intval($_POST['res_crystal']),
+                        intval($_POST['res_plastic']),
+                        intval($_POST['res_fuel']),
+                        intval($_POST['res_food']),
+                        intval($_POST['res_power'])
+                    );
+                    $affectedAdd = $asteroidsRepo->addResources(
+                        $id,
+                        intval($_POST['res_metal_add']),
+                        intval($_POST['res_crystal_add']),
+                        intval($_POST['res_plastic_add']),
+                        intval($_POST['res_fuel_add']),
+                        intval($_POST['res_food_add']),
+                        intval($_POST['res_power_add'])
+                    );
+                    if ($affected || $affectedAdd)
                     {
                         success_msg("Änderungen übernommen");
                     }
                 }
 
-                $res = dbquery("
-                SELECT
-                    *
-                FROM
-                    asteroids
-                WHERE
-                    id=".$id.";");
-                $arr = mysql_fetch_array($res);
+                $asteroid = $asteroidsRepo->find($id);
 
                 echo "<form action=\"?page=$page&sub=edit&id=".$id."\" method=\"post\" id=\"editform\">";
                 tableStart("<span style=\"color:".Entity::$entityColors[$earr['code']]."\">Asteroidenfeld</span>","auto");
 
                 echo "<tr><th>".RES_METAL."</th>
-                <td><input type=\"text\" name=\"res_metal\" value=\"".intval($arr['res_metal'])."\" size=\"12\" maxlength=\"20\" /><br/>
+                <td><input type=\"text\" name=\"res_metal\" value=\"".intval($asteroid['res_metal'])."\" size=\"12\" maxlength=\"20\" /><br/>
                 +/-: <input type=\"text\" name=\"res_metal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
                 echo "<th>".RES_CRYSTAL."</th>
-                <td><input type=\"text\" name=\"res_crystal\" value=\"".intval($arr['res_crystal'])."\" size=\"12\" maxlength=\"20\" /><br/>
+                <td><input type=\"text\" name=\"res_crystal\" value=\"".intval($asteroid['res_crystal'])."\" size=\"12\" maxlength=\"20\" /><br/>
                 +/-: <input type=\"text\" name=\"res_crystal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 
                 echo "<tr><th>".RES_PLASTIC."</th>
-                <td><input type=\"text\" name=\"res_plastic\" value=\"".intval($arr['res_plastic'])."\" size=\"12\" maxlength=\"20\" /><br/>
+                <td><input type=\"text\" name=\"res_plastic\" value=\"".intval($asteroid['res_plastic'])."\" size=\"12\" maxlength=\"20\" /><br/>
                 +/-: <input type=\"text\" name=\"res_plastic_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
                 echo "<th>".RES_FUEL."</th>
-                <td><input type=\"text\" name=\"res_fuel\" value=\"".intval($arr['res_fuel'])."\" size=\"12\" maxlength=\"20\" /><br/>
+                <td><input type=\"text\" name=\"res_fuel\" value=\"".intval($asteroid['res_fuel'])."\" size=\"12\" maxlength=\"20\" /><br/>
                 +/-: <input type=\"text\" name=\"res_fuel_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 
                 echo "<tr><th>".RES_FOOD."</th>
-                <td><input type=\"text\" name=\"res_food\" value=\"".intval($arr['res_food'])."\" size=\"12\" maxlength=\"20\" /><br/>
+                <td><input type=\"text\" name=\"res_food\" value=\"".intval($asteroid['res_food'])."\" size=\"12\" maxlength=\"20\" /><br/>
                 +/-: <input type=\"text\" name=\"res_food_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
                 echo "<th>".RES_POWER."</th>
-                <td><input type=\"text\" name=\"res_power\" value=\"".intval($arr['res_power'])."\" size=\"12\" maxlength=\"20\" /><br/>
+                <td><input type=\"text\" name=\"res_power\" value=\"".intval($asteroid['res_power'])."\" size=\"12\" maxlength=\"20\" /><br/>
                 +/-: <input type=\"text\" name=\"res_power_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 
                 echo "</table>";
@@ -455,66 +454,59 @@ if (isset($id) && $id > 0)
                 echo "<input tabindex=\"28\" type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=searchresults'\" /> ";
                 echo "</form>";
             }
-            elseif ($earr['code']=='n')
+            elseif ($earr['code']==EntityType::NEBULA)
             {
                 if (isset($_POST['save']))
                 {
                     //Daten Speichern
-                    dbquery("
-                    UPDATE
-                        nebulas
-                    SET
-            res_metal='".intval($_POST['res_metal'])."',
-            res_crystal='".intval($_POST['res_crystal'])."',
-            res_plastic='".intval($_POST['res_plastic'])."',
-            res_fuel='".intval($_POST['res_fuel'])."',
-            res_food='".intval($_POST['res_food'])."',
-            res_power='".intval($_POST['res_power'])."',
-            res_metal=res_metal+'".intval($_POST['res_metal_add'])."',
-            res_crystal=res_crystal+'".intval($_POST['res_crystal_add'])."',
-            res_plastic=res_plastic+'".intval($_POST['res_plastic_add'])."',
-            res_fuel=res_fuel+'".intval($_POST['res_fuel_add'])."',
-            res_food=res_food+'".intval($_POST['res_food_add'])."',
-            res_power=res_power+'".intval($_POST['res_power_add'])."'
-                    WHERE
-                        id='".$id."';");
-                    if (mysql_affected_rows()>0)
+                    $affected = $nebulaRepo->update(
+                        $id,
+                        intval($_POST['res_metal']),
+                        intval($_POST['res_crystal']),
+                        intval($_POST['res_plastic']),
+                        intval($_POST['res_fuel']),
+                        intval($_POST['res_food']),
+                        intval($_POST['res_power'])
+                    );
+                    $affectedAdd = $nebulaRepo->addResources(
+                        $id,
+                        intval($_POST['res_metal_add']),
+                        intval($_POST['res_crystal_add']),
+                        intval($_POST['res_plastic_add']),
+                        intval($_POST['res_fuel_add']),
+                        intval($_POST['res_food_add']),
+                        intval($_POST['res_power_add'])
+                    );
+                    if ($affected || $affectedAdd)
                     {
                         success_msg("Änderungen übernommen");
                     }
                 }
 
-                $res = dbquery("
-                SELECT
-                    *
-                FROM
-                    nebulas
-                WHERE
-                    id=".$id.";");
-                $arr = mysql_fetch_array($res);
+                $nebula = $nebulaRepo->find($id);
 
                 echo "<form action=\"?page=$page&sub=edit&id=".$id."\" method=\"post\" id=\"editform\">";
                 tableStart("<span style=\"color:".Entity::$entityColors[$earr['code']]."\">Interstellarer Nebel</span>","auto");
 
                 echo "<tr><th>".RES_METAL."</th>
-                <td><input type=\"text\" name=\"res_metal\" value=\"".intval($arr['res_metal'])."\" size=\"12\" maxlength=\"20\" /><br/>
+                <td><input type=\"text\" name=\"res_metal\" value=\"".intval($nebula['res_metal'])."\" size=\"12\" maxlength=\"20\" /><br/>
                 +/-: <input type=\"text\" name=\"res_metal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
                 echo "<th>".RES_CRYSTAL."</th>
-                <td><input type=\"text\" name=\"res_crystal\" value=\"".intval($arr['res_crystal'])."\" size=\"12\" maxlength=\"20\" /><br/>
+                <td><input type=\"text\" name=\"res_crystal\" value=\"".intval($nebula['res_crystal'])."\" size=\"12\" maxlength=\"20\" /><br/>
                 +/-: <input type=\"text\" name=\"res_crystal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 
                 echo "<tr><th>".RES_PLASTIC."</th>
-                <td><input type=\"text\" name=\"res_plastic\" value=\"".intval($arr['res_plastic'])."\" size=\"12\" maxlength=\"20\" /><br/>
+                <td><input type=\"text\" name=\"res_plastic\" value=\"".intval($nebula['res_plastic'])."\" size=\"12\" maxlength=\"20\" /><br/>
                 +/-: <input type=\"text\" name=\"res_plastic_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
                 echo "<th>".RES_FUEL."</th>
-                <td><input type=\"text\" name=\"res_fuel\" value=\"".intval($arr['res_fuel'])."\" size=\"12\" maxlength=\"20\" /><br/>
+                <td><input type=\"text\" name=\"res_fuel\" value=\"".intval($nebula['res_fuel'])."\" size=\"12\" maxlength=\"20\" /><br/>
                 +/-: <input type=\"text\" name=\"res_fuel_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 
                 echo "<tr><th>".RES_FOOD."</th>
-                <td><input type=\"text\" name=\"res_food\" value=\"".intval($arr['res_food'])."\" size=\"12\" maxlength=\"20\" /><br/>
+                <td><input type=\"text\" name=\"res_food\" value=\"".intval($nebula['res_food'])."\" size=\"12\" maxlength=\"20\" /><br/>
                 +/-: <input type=\"text\" name=\"res_food_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
                 echo "<th>".RES_POWER."</th>
-                <td><input type=\"text\" name=\"res_power\" value=\"".intval($arr['res_power'])."\" size=\"12\" maxlength=\"20\" /><br/>
+                <td><input type=\"text\" name=\"res_power\" value=\"".intval($nebula['res_power'])."\" size=\"12\" maxlength=\"20\" /><br/>
                 +/-: <input type=\"text\" name=\"res_power_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 
                 echo "</table>";
@@ -524,53 +516,32 @@ if (isset($id) && $id > 0)
                 echo "<input tabindex=\"28\" type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=searchresults'\" /> ";
                 echo "</form>";
             }
-            elseif ($earr['code']=='w')
+            elseif ($earr['code']==EntityType::WORMHOLE)
             {
+                $wormhole = $wormholeRepo->find($id);
+
                 //Daten Speichern
                 if (isset($_POST['save']))
                 {
-                    $wh = new Wormhole($id);
+                    $persistent = $_POST['wormhole_persistent'] == 1;
 
-                    dbquery("
-                    UPDATE
-                        wormholes
-                    SET
-                        persistent=".intval($_POST['wormhole_persistent'])."
-                    WHERE
-                        id='".$id."';");
-
-                    $tid = $wh->targetId();
-                    dbquery("
-                    UPDATE
-                        wormholes
-                    SET
-                        persistent=".intval($_POST['wormhole_persistent'])."
-                    WHERE
-                        id='".$tid."';");
+                    $wormholeRepo->setPersistent($id, $persistent);
+                    $wormholeRepo->updateTarget((int) $wormhole['target_id'], $persistent);
 
                     success_msg("Änderungen übernommen");
                 }
 
-                $res = dbquery("
-                SELECT
-                    *
-                FROM
-                    wormholes
-                WHERE
-                    id=".$id.";");
-                $arr = mysql_fetch_array($res);
-
                 echo "<form action=\"?page=$page&sub=edit&id=".$id."\" method=\"post\" id=\"editform\">";
                 tableStart("<span style=\"color:".Entity::$entityColors[$earr['code']]."\">Wurmloch</span>","auto");
-                echo "<tr><th>Entstanden</th><td>".df($arr['changed'])."</td><tr/>";
+                echo "<tr><th>Entstanden</th><td>".df($wormhole['changed'])."</td><tr/>";
                 echo "<tr><th>Ziel</th>
                 <td>";
-                $ent = Entity::createFactoryById($arr['target_id']);
+                $ent = Entity::createFactoryById($wormhole['target_id']);
                 echo "<a href=\"?page=$page&amp;sub=$sub&amp;id=".$ent->id()."\">".$ent."</a>";
                 echo "</td></tr>";
                 echo "<tr><th>Persistent</th><td>";
-                echo "<input type=\"radio\" name=\"wormhole_persistent\" id=\"wormhole_persistent_0\" value=\"0\" ".($arr['persistent'] == 0 ? " checked=\"checked\"" : "")."> <label for=\"wormhole_persistent_0\">Nein</label> ";
-                echo "<input type=\"radio\" name=\"wormhole_persistent\" id=\"wormhole_persistent_1\" value=\"1\" ".($arr['persistent'] == 1 ? " checked=\"checked\"" : "")."> <label for=\"wormhole_persistent_1\">Ja</label> ";
+                echo "<input type=\"radio\" name=\"wormhole_persistent\" id=\"wormhole_persistent_0\" value=\"0\" ".($wormhole['persistent'] == 0 ? " checked=\"checked\"" : "")."> <label for=\"wormhole_persistent_0\">Nein</label> ";
+                echo "<input type=\"radio\" name=\"wormhole_persistent\" id=\"wormhole_persistent_1\" value=\"1\" ".($wormhole['persistent'] == 1 ? " checked=\"checked\"" : "")."> <label for=\"wormhole_persistent_1\">Ja</label> ";
                 echo "</td><tr/>";
                 echo "</table>";
                 echo "<br/>
@@ -579,23 +550,16 @@ if (isset($id) && $id > 0)
                 echo "<input tabindex=\"28\" type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=searchresults'\" /> ";
                 echo "</form>";
             }
-            elseif ($earr['code']=='e')
+            elseif ($earr['code']==EntityType::EMPTY_SPACE)
             {
-                $res = dbquery("
-                SELECT
-                    *
-                FROM
-                    space
-                WHERE
-                    id=".$id.";");
-                $arr = mysql_fetch_array($res);
+                $space = $emptySpaceRepo->find($id);
 
                 echo "<form action=\"?page=$page&sub=edit&id=".$id."\" method=\"post\" id=\"editform\">";
                 tableStart("<span style=\"color:".Entity::$entityColors[$earr['code']]."\">Leerer Raum</span>","auto");
                 echo "<tr><th>Zuletzt besucht</th>
                 <td>";
-                if ($arr['lastvisited']>0)
-                    df($arr['lastvisited']);
+                if ($space['lastvisited']>0)
+                    df($space['lastvisited']);
                 else
                     echo "Nie";
                 echo "</td></tr>";

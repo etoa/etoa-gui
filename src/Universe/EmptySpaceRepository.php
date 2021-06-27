@@ -17,6 +17,19 @@ class EmptySpaceRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    public function find(int $id): ?array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('space')
+            ->where('id = :id')
+            ->setParameters([
+                'id' => $id,
+            ])
+            ->execute();
+        return $data !== false ? $data : null;
+    }
+
     public function add(int $id, int $lastVisited = 0): void
     {
         $this->createQueryBuilder()
