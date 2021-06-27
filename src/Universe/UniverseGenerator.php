@@ -6,6 +6,8 @@ namespace EtoA\Universe;
 
 use DirectoryIterator;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\DatabaseManagerRepository;
+use EtoA\User\UserRepository;
 use Mutex;
 use UserToXml;
 
@@ -15,15 +17,18 @@ use UserToXml;
 class UniverseGenerator
 {
     private ConfigurationService $config;
+    private UserRepository $userRepo;
     private SolarTypeRepository $solarTypes;
     private PlanetTypeRepository $planetTypes;
     private CellRepository $cellRepo;
     private EntityRepository $entityRepo;
     private StarRepository $starRepo;
+    private PlanetRepository $planetRepo;
     private AsteroidsRepository $asteroidsRepo;
     private NebulaRepository $nebulaRepo;
     private WormholeRepository $wormholeRepo;
     private EmptySpaceRepository $emptySpaceRepo;
+    private DatabaseManagerRepository $databaseManager;
 
     /**
      * @var array<int>
@@ -37,27 +42,33 @@ class UniverseGenerator
 
     public function __construct(
         ConfigurationService $config,
+        UserRepository $userRepo,
         SolarTypeRepository $solarTypes,
         PlanetTypeRepository $planetTypes,
         CellRepository $cellRepo,
         EntityRepository $entityRepo,
         StarRepository $starRepo,
+        PlanetRepository $planetRepo,
         AsteroidsRepository $asteroidsRepo,
         NebulaRepository $nebulaRepo,
         WormholeRepository $wormholeRepo,
-        EmptySpaceRepository $emptySpaceRepo
+        EmptySpaceRepository $emptySpaceRepo,
+        DatabaseManagerRepository $databaseManager
     )
     {
         $this->config = $config;
+        $this->userRepo = $userRepo;
         $this->solarTypes = $solarTypes;
         $this->planetTypes = $planetTypes;
         $this->cellRepo = $cellRepo;
         $this->entityRepo = $entityRepo;
         $this->starRepo = $starRepo;
+        $this->planetRepo = $planetRepo;
         $this->asteroidsRepo = $asteroidsRepo;
         $this->nebulaRepo = $nebulaRepo;
         $this->wormholeRepo = $wormholeRepo;
         $this->emptySpaceRepo = $emptySpaceRepo;
+        $this->databaseManager = $databaseManager;
 
         $this->init();
     }
@@ -260,43 +271,14 @@ class UniverseGenerator
         }
 
         echo "Platziere Marktplatz...<br />";
-        dbquery("
-                UPDATE
-                    entities
-                SET
-                    code='".EntityType::MARKET."'
-                WHERE
-                    code='".EntityType::EMPTY_SPACE."'
-                ORDER BY
-                    RAND()
-                LIMIT
-                    1;");
-        $this->emptySpaceRepo->remove(mysql_insert_id());
+        $id = $this->entityRepo->findRandomId(EntityType::EMPTY_SPACE);
+        $this->entityRepo->updateCode($id, EntityType::MARKET);
+        $this->emptySpaceRepo->remove($id);
 
         echo "Erstelle Markt und Allianz entity...<br />";
-        dbquery("
-                    UPDATE
-                        entities
-                    SET
-                        code='".EntityType::MARKET."'
-                    WHERE
-                        code='".EntityType::EMPTY_SPACE."'
-                    ORDER BY
-                        RAND()
-                    LIMIT 1;");
-        $this->emptySpaceRepo->remove(mysql_insert_id());
-
-        dbquery("
-                    UPDATE
-                        entities
-                    SET
-                        code='".EntityType::ALLIANCE_MARKET."'
-                    WHERE
-                        code='".EntityType::EMPTY_SPACE."'
-                    ORDER BY
-                        RAND()
-                    LIMIT 1;");
-        $this->emptySpaceRepo->remove(mysql_insert_id());
+        $id = $this->entityRepo->findRandomId(EntityType::EMPTY_SPACE);
+        $this->entityRepo->updateCode($id, EntityType::ALLIANCE_MARKET);
+        $this->emptySpaceRepo->remove($id);
 
         $mtx->release();
         echo "Universum erstellt!<br> $sol_count Sonnensysteme, $asteroids_count Asteroidenfelder, $nebula_count Nebel und $wormhole_count Wurmlöcher!";
@@ -366,34 +348,24 @@ class UniverseGenerator
 
         $id = $this->entityRepo->add($cellId, EntityType::PLANET, $pos);
 
-        $pt = $this->planet_types[array_rand($this->planet_types)];
-        $img_nr = $pt . "_" . mt_rand(1, $num_planet_images);
+        $typeId = $this->planet_types[array_rand($this->planet_types)];
+        $imageNumber = $typeId . "_" . mt_rand(1, $num_planet_images);
+
         $fields = mt_rand($planet_fields_min, $planet_fields_max);
+
         $tblock =  (int) round($planet_temp_totaldiff / $np);
         $temp = mt_rand($planet_temp_max - ($tblock * $pos), ($planet_temp_max - ($tblock * $pos) + $tblock));
-        $tmin = $temp - $planet_temp_diff;
-        $tmax = $temp + $planet_temp_diff;
-        $sql = "
-                INSERT INTO
-                    planets
-                (
-                    id,
-                    planet_type_id,
-                    planet_fields,
-                    planet_image,
-                    planet_temp_from,
-                    planet_temp_to
-                )
-                VALUES
-                (
-                    '" . $id . "',
-                    '" . $pt . "',
-                    '" . $fields . "',
-                    '" . $img_nr . "',
-                    '" . $tmin . "',
-                    '" . $tmax . "'
-                )";
-        dbquery($sql);    // Planet speichern
+        $tempMin = $temp - $planet_temp_diff;
+        $tempMax = $temp + $planet_temp_diff;
+
+        $this->planetRepo->add(
+            $id,
+            $typeId,
+            $fields,
+            $imageNumber,
+            $tempMin,
+            $tempMax
+        );
     }
 
     private function createAsteroids(int $cellId, int $pos = 0): void
@@ -429,25 +401,24 @@ class UniverseGenerator
     }
 
     /**
-     * Replaces n asteroid/emptyspace cells
+     * Replaces n asteroid/empty space cells
      * with new star systems
      */
-    public function addStarSystems($n = 0): int
+    public function addStarSystems($quantity = 0): int
     {
-        $res = dbquery("SELECT id, cell_id, code FROM entities WHERE code in ('".EntityType::EMPTY_SPACE."', '".EntityType::ASTEROIDS."') AND pos=0 ORDER BY RAND() LIMIT " . $n . ";");
+        $entities = $this->entityRepo->findRandomByCodes([
+            EntityType::EMPTY_SPACE,
+            EntityType::ASTEROIDS
+        ], $quantity);
         $added = 0;
-        while ($row = mysql_fetch_array($res)) {
-            $sql = '';
-            if ($row['code'] === EntityType::EMPTY_SPACE) {
-                $sql = "DELETE FROM space where id='" . $row['id'] . "';";
-            } elseif ($row['code'] === EntityType::ASTEROIDS) {
-                $sql = "DELETE FROM asteroids where id='" . $row['id'] . "';";
+        foreach ($entities as $entity) {
+            if ($entity['code'] === EntityType::EMPTY_SPACE) {
+                $this->emptySpaceRepo->remove((int) $entity['id']);
+            } elseif ($entity['code'] === EntityType::ASTEROIDS) {
+                $this->asteroidsRepo->remove((int) $entity['id']);
             }
-            if ('' !== $sql) {
-                dbquery($sql);
-                $this->createStarSystem((int) $row['cell_id'], (int) $row['id']);
-                $added++;
-            }
+            $this->createStarSystem((int) $entity['cell_id'], (int) $entity['id']);
+            $added++;
         }
         return $added;
     }
@@ -471,9 +442,8 @@ class UniverseGenerator
         $tbl[] = "wormholes";
         $tbl[] = "space";
 
-        $res = dbquery("SELECT COUNT(id) FROM planets WHERE planet_user_id>0;");
-        $arr = mysql_fetch_row($res);
-        if ($arr[0] > 0) {
+        $planetsWithUserCount = $this->planetRepo->countWithUser();
+        if ($planetsWithUserCount > 0) {
             $tbl[] = "buildlist";
             $tbl[] = "deflist";
             $tbl[] = "def_queue";
@@ -556,37 +526,16 @@ class UniverseGenerator
             $tbl[] = "hostname_cache";
             $tbl[] = "backend_message_queue";
         } else {
-            dbquery("
-                UPDATE
-                    users
-                SET
-                    discoverymask='',
-                    user_setup = 0
-                ");
+            $this->userRepo->resetDiscoveryMask();
         }
 
-        dbquery("SET FOREIGN_KEY_CHECKS=0;");
-        foreach ($tbl as $t) {
-            dbquery("TRUNCATE $t;");
-            echo "Leere Tabelle <b>$t</b><br/>";
-        }
-        dbquery("SET FOREIGN_KEY_CHECKS=1;");
+        $this->databaseManager->truncateTables($tbl);
 
-        dbquery("
-                    UPDATE
-                        config
-                    SET
-                        config_value='0',
-                        config_param1='0'
-                    WHERE
-                        config_name LIKE '%logger%';");
-        dbquery("
-                    UPDATE
-                        config
-                    SET
-                        config_value='1'
-                    WHERE
-                        config_name IN ('market_metal_factor','market_crystal_factor','market_plastic_factor','market_fuel_factor','market_food_factor');");
+        $this->config->set('market_metal_factor', 1);
+        $this->config->set('market_crystal_factor', 1);
+        $this->config->set('market_plastic_factor', 1);
+        $this->config->set('market_fuel_factor', 1);
+        $this->config->set('market_food_factor', 1);
 
         // Remove user XML backups
         $userXmlPath = UserToXml::getDataDirectory();
