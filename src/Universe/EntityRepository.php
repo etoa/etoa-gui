@@ -33,7 +33,7 @@ class EntityRepository extends AbstractRepository
         return $this->createQueryBuilder()
             ->select('*')
             ->from('entities')
-            ->where('code IN ('. implode(',', array_fill(0, count($codes), '?')).')')
+            ->where('code IN (' . implode(',', array_fill(0, count($codes), '?')) . ')')
             ->andWhere('pos = 0')
             ->orderBy('RAND()')
             ->setParameters(array_values($codes))
@@ -56,7 +56,7 @@ class EntityRepository extends AbstractRepository
                 'cy'
             )
             ->from('entities', 'e')
-            ->innerJoin('e', 'cells', 'c', 'e.cell_id=c.id')
+            ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id')
             ->where('e.id = :id')
             ->setParameters([
                 'id' => $id,
@@ -65,6 +65,30 @@ class EntityRepository extends AbstractRepository
             ->fetchAssociative();
 
         return $data !== false ? $data : null;
+    }
+
+    public function findAllIncludeCell(?int $pos = null): array
+    {
+        $qry = $this->createQueryBuilder()
+            ->select(
+                'e.id',
+                'e.code',
+                'c.id as cid',
+                'c.sx',
+                'c.cx',
+                'c.sy',
+                'c.cy'
+            )
+            ->from('entities', 'e')
+            ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id');
+
+        if ($pos !== null) {
+            $qry->where('pos = :pos')
+                ->setParameter('pos', $pos);
+        }
+
+        return $qry->execute()
+            ->fetchAllAssociative();
     }
 
     public function add(int $cellId, string $code, int $pos = 0): int
