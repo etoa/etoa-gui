@@ -92,34 +92,6 @@ function get_user_nick($id)
 }
 
 /**
-* User-Id via Planeten-Id auslesen
-*
-* @param int $pid Planet-ID
-* @Todo: propabely remove
-*/
-function get_user_id_by_planet($pid)
-{
-    $res = dbquery("
-        SELECT
-            planet_user_id
-        FROM
-            planets
-        WHERE
-            id='".$pid."';
-    ");
-    if (mysql_num_rows($res)>0)
-    {
-        $arr = mysql_fetch_assoc($res);
-        return $arr['planet_user_id'];
-    }
-    else
-    {
-        return 0;
-    }
-
-}
-
-/**
 * Format number
 */
 function nf($number,$colorize=0,$ex=0)	// Number format
