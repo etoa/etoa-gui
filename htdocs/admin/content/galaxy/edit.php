@@ -505,18 +505,20 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
         }
         elseif ($entity['code']==EntityType::WORMHOLE)
         {
-            $wormhole = $wormholeRepo->find($id);
-
             //Daten Speichern
             if ($request->request->has('save'))
             {
                 $persistent = $request->request->getBoolean('wormhole_persistent');
 
+                $wormhole = $wormholeRepo->find($id);
+
                 $wormholeRepo->setPersistent($id, $persistent);
-                $wormholeRepo->updateTarget((int) $wormhole['target_id'], $persistent);
+                $wormholeRepo->setPersistent((int) $wormhole['target_id'], $persistent);
 
                 success_msg("Änderungen übernommen");
             }
+
+            $wormhole = $wormholeRepo->find($id);
 
             echo "<form action=\"?page=$page&sub=edit&id=".$id."\" method=\"post\" id=\"editform\">";
             tableStart("<span style=\"color:".Entity::$entityColors[$entity['code']]."\">Wurmloch</span>","auto");
