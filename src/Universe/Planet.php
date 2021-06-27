@@ -49,7 +49,7 @@ class Planet
     public int $wfPlastic;
     public float $people;
     public int $peoplePlace;
-    public string $description;
+    public ?string $description;
     public int $invadedBy;
 
     public function __construct(array $data)

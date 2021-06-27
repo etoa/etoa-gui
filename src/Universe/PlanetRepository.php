@@ -139,7 +139,7 @@ class PlanetRepository extends AbstractRepository
         int $wfCrystal,
         int $wfPlastic,
         int $people,
-        string $description
+        ?string $description
     ): bool {
         $affected = (int) $this->createQueryBuilder()
             ->update('planets')
@@ -179,7 +179,7 @@ class PlanetRepository extends AbstractRepository
                 'wf_crystal' => $wfCrystal,
                 'wf_plastic' => $wfPlastic,
                 'people' => $people,
-                'description' => $description,
+                'description' => $description !== null && strlen($description) > 0 ? $description : null,
             ])
             ->execute();
 
