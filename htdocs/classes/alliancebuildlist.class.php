@@ -357,7 +357,11 @@
 							LIMIT 1;
 							");
 				}
-				add_alliance_history($cu->allianceId,"[b]".$cu->nick."[/b] hat das Gebäude [b]".$this->items[$itemId]->name." (".$lvl.")[/b] in Auftrag gegeben.");
+
+                global $app;
+                /** @var \EtoA\Alliance\AllianceHistoryRepository $allianceHistoryRepository */
+                $allianceHistoryRepository = $app[\EtoA\Alliance\AllianceHistoryRepository::class];
+                $allianceHistoryRepository->addEntry((int) $cu->allianceId, "[b]".$cu->nick."[/b] hat das Gebäude [b]".$this->items[$itemId]->name." (".$lvl.")[/b] in Auftrag gegeben.");
 				return true;
 			}
 			return false;

@@ -494,8 +494,10 @@
 
 						success_msg("Du hast einer Allianz den Krieg erkl&auml;rt!");
 
-						add_alliance_history($cu->allianceId,"Der Allianz [b]" . $allianceNamesWithTags[$id] ."[/b] wird der Krieg erkl&auml;rt!");
-						add_alliance_history($id,"Die Allianz [b]" . $allianceNamesWithTags[$cu->allianceId] . "[/b] erkl&auml;rt den Krieg!");
+                        /** @var \EtoA\Alliance\AllianceHistoryRepository $allianceHistoryRepository */
+                        $allianceHistoryRepository = $app[\EtoA\Alliance\AllianceHistoryRepository::class];
+                        $allianceHistoryRepository->addEntry((int) $cu->allianceId, "Der Allianz [b]" . $allianceNamesWithTags[$id] ."[/b] wird der Krieg erkl&auml;rt!");
+                        $allianceHistoryRepository->addEntry($id, "Die Allianz [b]" . $allianceNamesWithTags[$cu->allianceId] . "[/b] erkl&auml;rt den Krieg!");
 
 						//Nachricht an den Leader der gegnerischen Allianz schreiben
 						$res=dbquery("SELECT alliance_founder_id FROM alliances WHERE alliance_id='".$id."';");
@@ -578,8 +580,10 @@
 						;");
 
 						// Add log
-						add_alliance_history($selfId,"Das Bündnis [b]".$arr['alliance_bnd_name']."[/b] mit der Allianz [b][".$opTag."] ".$opName."[/b] wird aufgelöst!");
-						add_alliance_history($opId,"Die Allianz [b][".$selfTag."] ".$selfName."[/b] löst das Bündnis [b]".$arr['alliance_bnd_name']."[/b] auf!");
+                        /** @var \EtoA\Alliance\AllianceHistoryRepository $allianceHistoryRepository */
+                        $allianceHistoryRepository = $app[\EtoA\Alliance\AllianceHistoryRepository::class];
+                        $allianceHistoryRepository->addEntry((int) $selfId, "Das Bündnis [b]".$arr['alliance_bnd_name']."[/b] mit der Allianz [b][".$opTag."] ".$opName."[/b] wird aufgelöst!");
+                        $allianceHistoryRepository->addEntry((int) $opId, "Die Allianz [b][".$selfTag."] ".$selfName."[/b] löst das Bündnis [b]".$arr['alliance_bnd_name']."[/b] auf!");
 
 						// Send message to leader
 						$fres=dbquery("
@@ -677,9 +681,11 @@
                         $messageRepository->createSystemMessage((int) $arr['a1founder'], MSG_ALLYMAIL_CAT, "Bündnis angenommen",$text);
 
 						// Log decision
-						$text = "Die Allianzen [b][".$arr['a1tag']."] ".$arr['a1name']."[/b] und [b][".$arr['a2tag']."] ".$arr['a2name']."[/b] schliessen ein Bündnis!";
-						add_alliance_history($cu->allianceId,$text);
-						add_alliance_history($arr['a1id'], $text);
+                        $text = "Die Allianzen [b][".$arr['a1tag']."] ".$arr['a1name']."[/b] und [b][".$arr['a2tag']."] ".$arr['a2name']."[/b] schliessen ein Bündnis!";
+                        /** @var \EtoA\Alliance\AllianceHistoryRepository $allianceHistoryRepository */
+                        $allianceHistoryRepository = $app[\EtoA\Alliance\AllianceHistoryRepository::class];
+                        $allianceHistoryRepository->addEntry((int) $cu->allianceId, $text);
+                        $allianceHistoryRepository->addEntry((int) $arr['a1id'], $text);
 
 						// Save pact
 						dbquery("
@@ -744,8 +750,10 @@
 						");
 
 						// Logt die Absage
-						add_alliance_history($cu->allianceId,"Die Bündnisanfrage [b]".$arr['alliance_bnd_name']."[/b] der Allianz [b][".$arr['a2tag']."] ".$arr['a2name']."[/b] wird abgelehnt!");
-						add_alliance_history($arr['a2id'],"Die Bündnisanfrage [b]".$arr['alliance_bnd_name']."[/b] wird von der Allianz [b][".$arr['a1tag']."] ".$arr['a1name']."[/b] abgelehnt!");
+                        /** @var \EtoA\Alliance\AllianceHistoryRepository $allianceHistoryRepository */
+                        $allianceHistoryRepository = $app[\EtoA\Alliance\AllianceHistoryRepository::class];
+                        $allianceHistoryRepository->addEntry((int) $cu->allianceId, "Die Bündnisanfrage [b]".$arr['alliance_bnd_name']."[/b] der Allianz [b][".$arr['a2tag']."] ".$arr['a2name']."[/b] wird abgelehnt!");
+                        $allianceHistoryRepository->addEntry((int) $arr['a2id'], "Die Bündnisanfrage [b]".$arr['alliance_bnd_name']."[/b] wird von der Allianz [b][".$arr['a1tag']."] ".$arr['a1name']."[/b] abgelehnt!");
 
 						success_msg("Bündniss abgelehnt!");
 					}

@@ -42,7 +42,9 @@ if ($config->getBoolean("alliance_allow")) {
                     /** @var \EtoA\Message\MessageRepository $messageRepository */
                     $messageRepository = $app[\EtoA\Message\MessageRepository::class];
                     $messageRepository->createSystemMessage($alliance->founderId, MSG_ALLYMAIL_CAT, "Bewerbung zurückgezogen", "Der Spieler ".$cu->nick." hat die Bewerbung bei deiner Allianz zurückgezogen!");
-        add_alliance_history($application_alliance,"Der Spieler [b]".$cu->nick."[/b] zieht seine Bewerbung zurück.");
+                    /** @var \EtoA\Alliance\AllianceHistoryRepository $allianceHistoryRepository */
+                    $allianceHistoryRepository = $app[\EtoA\Alliance\AllianceHistoryRepository::class];
+                    $allianceHistoryRepository->addEntry($application_alliance, "Der Spieler [b]".$cu->nick."[/b] zieht seine Bewerbung zurück.");
         dbquery("
         DELETE FROM
             alliance_applications
@@ -162,7 +164,9 @@ if ($config->getBoolean("alliance_allow")) {
                     /** @var \EtoA\Message\MessageRepository $messageRepository */
                     $messageRepository = $app[\EtoA\Message\MessageRepository::class];
                     $messageRepository->createSystemMessage($alliance->founderId, MSG_ALLYMAIL_CAT, "Bewerbung", "Der Spieler ".$cu->nick." hat sich bei deiner Allianz beworben. Gehe auf die [page=alliance&action=applications]Allianzseite[/page] für Details!");
-                    add_alliance_history($aid,"Der Spieler [b]".$cu->nick."[/b] bewirbt sich sich bei der Allianz.");
+                    /** @var \EtoA\Alliance\AllianceHistoryRepository $allianceHistoryRepository */
+                    $allianceHistoryRepository = $app[\EtoA\Alliance\AllianceHistoryRepository::class];
+                    $allianceHistoryRepository->addEntry($aid, "Der Spieler [b]".$cu->nick."[/b] bewirbt sich sich bei der Allianz.");
                     dbquery("
                     INSERT INTO
                         alliance_applications

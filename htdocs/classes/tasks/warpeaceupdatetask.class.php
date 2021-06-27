@@ -77,8 +77,10 @@
 				{
 					// Add log
 					$text = "Der Krieg zwischen [b][".$arr['a1tag']."] ".$arr['a1name']."[/b] und [b][".$arr['a2tag']."] ".$arr['a2name']."[/b] ist zu Ende! Es folgt eine Friedenszeit von ".round(PEACE_DURATION/3600)." Stunden.";
-					add_alliance_history($arr['a1id'],$text);
-					add_alliance_history($arr['a2id'],$text);
+                    /** @var \EtoA\Alliance\AllianceHistoryRepository $allianceHistoryRepository */
+                    $allianceHistoryRepository = $app[\EtoA\Alliance\AllianceHistoryRepository::class];
+                    $allianceHistoryRepository->addEntry((int) $arr['a1id'], $text);
+                    $allianceHistoryRepository->addEntry((int) $arr['a2id'], $text);
 
 					// Send message to leader
                     /** @var \EtoA\Message\MessageRepository $messageRepository */
@@ -135,8 +137,10 @@
 				{
 					// Add log
 					$text = "Der Friedensvertrag zwischen [b][".$arr['a1tag']."] ".$arr['a1name']."[/b] und [b][".$arr['a2tag']."] ".$arr['a2name']."[/b] ist abgelaufen. Ihr könnt einander nun wieder Krieg erklären.";
-					add_alliance_history($arr['a1id'],$text);
-					add_alliance_history($arr['a2id'],$text);
+                    /** @var \EtoA\Alliance\AllianceHistoryRepository $allianceHistoryRepository */
+                    $allianceHistoryRepository = $app[\EtoA\Alliance\AllianceHistoryRepository::class];
+                    $allianceHistoryRepository->addEntry((int) $arr['a1id'], $text);
+                    $allianceHistoryRepository->addEntry((int) $arr['a2id'], $text);
 
 					// Send message to leader
                     /** @var \EtoA\Message\MessageRepository $messageRepository */

@@ -815,27 +815,6 @@ function check_fleet_incomming($user_id)
 }
 
 /**
-* Add text to alliance history
-*/
-function add_alliance_history($alliance_id,$text)
-{
-    dbquery("
-        INSERT INTO
-        alliance_history
-        (
-            history_alliance_id,
-            history_text,
-            history_timestamp
-        )
-        VALUES
-        (
-            '".$alliance_id."',
-            '".addslashes($text)."',
-            '".time()."'
-        );");
-}
-
-/**
 * Check for buddys who are online
 */
 function check_buddys_online($id)
