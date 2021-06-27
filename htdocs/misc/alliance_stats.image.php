@@ -46,8 +46,8 @@
 		if ($alliance !== null) {
 		    /** @var \EtoA\Alliance\AlliancePointsRepository $alliancePointsRepository */
 		    $alliancePointsRepository = $app[\EtoA\Alliance\AlliancePointsRepository::class];
-			$start = (int) $_GET['start'] > 0 ? (int) $_GET['start'] : null;
-            $end = (int) $_GET['end'] > 0 ? (int) $_GET['end'] : null;
+			$start = (int) ($_GET['start'] ?? 0) > 0 ? (int) $_GET['start'] : null;
+            $end = (int) ($_GET['end'] ?? 0) > 0 ? (int) $_GET['end'] : null;
 
             $pointEntries = $alliancePointsRepository->getPoints($alliance->id, DETAIL_LIMIT * 6, $start, $end);
 			if (count($pointEntries) > 0) {

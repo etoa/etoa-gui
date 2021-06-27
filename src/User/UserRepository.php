@@ -102,4 +102,17 @@ class UserRepository extends AbstractRepository
             ->execute()
             ->fetchAllKeyValue();
     }
+
+    public function getUser(int $userId): ?User
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('users')
+            ->where('user_id = :userId')
+            ->setParameter('userId', $userId)
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? new User($data) : null;
+    }
 }
