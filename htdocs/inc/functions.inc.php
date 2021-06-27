@@ -55,18 +55,6 @@ function dbQuerySave($query, $params=array()) {
     return DBManager::getInstance()->safeQuery($query, $params);
 }
 
-function startTransaction() {
-    dbquery("START TRANSACTION;");
-}
-
-function commitTransaction() {
-    dbquery("COMMIT;");
-}
-
-function rollbackTransaction() {
-    dbquery("ROLLBACK;");
-}
-
 /**
 * User-Nick via User-Id auslesen
 */
