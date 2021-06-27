@@ -213,7 +213,7 @@ class UniverseGenerator
         // Delete one wormhole if total count is odd
         // Replace it with empty space
         $numWormholes = $this->wormholeRepo->count();
-        if (fmod((int) $numWormholes, 2) != 0) {
+        if (fmod($numWormholes, 2) != 0) {
             echo "<br>Ein Wurmloch ist zuviel, lösche es!<br>";
             $wormholeId = $this->wormholeRepo->getOneId();
             if ($wormholeId !== null) {
