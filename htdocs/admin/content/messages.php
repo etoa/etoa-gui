@@ -408,42 +408,6 @@
 			}
 		}
 
-		/*
-		elseif (isset($_GET['reportedit']) && $_GET['reportedit']=="edit")
-		{
-			$r = Report::createFactory($_GET['report_id']);
-
-			if ($r->userId>0)
-				$uidf = get_user_nick($r->userId);
-			else
-				$uidf = "<i>System</i>";
-
-			echo "<table class=\"tbl\">";
-			echo "<tr><td class=\"tbltitle\" valign=\"top\">ID</td><td class=\"tbldata\">".$r->id."</td></tr>";
-			echo "<tr><td class=\"tbltitle\" valign=\"top\">Empf&auml;nger</td><td class=\"tbldata\">$uidf</td></tr>";
-			echo "<tr><td class=\"tbltitle\" valign=\"top\">Datum</td><td class=\"tbldata\">".date("Y-m-d H:i:s",$r->timestamp)."</td></tr>";
-			echo "<tr><td class=\"tbltitle\" valign=\"top\">Betreff</td><td class=\"tbldata\">".text2html($r->subject)."</td></tr>";
-			echo "<tr><td class=\"tbltitle\" valign=\"top\">Text</td><td class=\"tbldata\">".$r."</td></tr>";
-			echo "<tr><td class=\"tbltitle\" valign=\"top\">Quelltext</td>
-			<td class=\"tbldata\"><textarea rows=\"20\" cols=\"80\" readonly=\"readonly\">".stripslashes($r)."</textarea></td></tr>";
-			echo "<tr><td class=\"tbltitle\" valign=\"top\">Gelesen?</td><td class=\"tbldata\">";
-			switch ($r->read)
-			{
-				case 1: echo "Ja"; break;case 0: echo "Nein";break;
-			}
-			echo "</td></tr>";
-			echo "<tr><td class=\"tbltitle\" valign=\"top\">Gel&ouml;scht?</td><td class=\"tbldata\" id=\"deleted\">";
-			switch ($r->deleted)
-			{
-				case 1: echo "Ja"; break;case 0: echo "Nein";break;
-			}
-			if ($r->deleted) echo "&nbsp;<input type=\"button\" onclick=\"xajax_restoreReport(".$r->id.");\" value=\"Nachricht wiederherstellen\" />";
-			echo "</td></tr>";
-
-			echo "</table><br/><input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=reports&amp;action=searchresults'\" value=\"Zur&uuml;ck zu den Suchergebnissen\" /> &nbsp;
-			<input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=reports'\" value=\"Neue Suche\" />";
-		}*/
-
 		else
 		{
 			$_SESSION['admin']['message_query']=null;
