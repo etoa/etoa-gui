@@ -88,8 +88,8 @@ if ($id > 0)
                 //Daten Speichern
                 $affected = $planetRepo->update(
                     $id,
-                    $request->request->get('planet_name'),
                     $request->request->getInt('planet_type_id'),
+                    $request->request->get('planet_name'),
                     $request->request->getInt('planet_fields'),
                     $request->request->getInt('planet_fields_extra'),
                     $request->request->getInt('planet_temp_from'),

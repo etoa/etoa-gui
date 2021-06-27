@@ -26,7 +26,8 @@ class AsteroidsRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
             ])
-            ->execute();
+            ->execute()
+            ->fetchAssociative();
         return $data !== false ? $data : null;
     }
 

@@ -36,7 +36,8 @@ class PlanetRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
             ])
-            ->execute();
+            ->execute()
+            ->fetchAssociative();
         return $data !== false ? $data : null;
     }
 
@@ -114,7 +115,7 @@ class PlanetRepository extends AbstractRepository
                 'fields' => $fields,
                 'extra_fields' => $extraFields,
                 'temp_from' => $tempFrom,
-                'temp_from' => $tempTo,
+                'temp_to' => $tempTo,
                 'res_metal' => $resMetal,
                 'res_crystal' => $resCrystal,
                 'res_plastic' => $resPlastic,
@@ -140,7 +141,7 @@ class PlanetRepository extends AbstractRepository
         int $people
     ): bool {
         $affected = (int) $this->createQueryBuilder()
-            ->update('asteroids')
+            ->update('planets')
             ->set('planet_res_metal', 'planet_res_metal + :res_metal')
             ->set('planet_res_crystal', 'planet_res_crystal + :res_crystal')
             ->set('planet_res_plastic', 'planet_res_plastic + :res_plastic')
