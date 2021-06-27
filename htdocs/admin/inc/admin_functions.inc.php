@@ -106,23 +106,6 @@ function cb_button($url)
     return "";
 }
 
-
-/**
- * Displays a clickable repair button
- *
- * @param string $url Url of the link
- * @param string $tmTitle
- * @param string $tmText
- * @param string $ocl
-*/
-function repair_button($url, $tmTitle="", $tmText="", $ocl = '')
-{
-    if ($tmTitle!="" && $tmText!="")
-        return "<a href=\"$url\" onclick=\"$ocl\"><img src=\"../images/repair.gif\" alt=\"Reparieren\" style=\"width:18px;height:18px;border:none;\" ".tm($tmTitle,$tmText)."/></a>";
-    else
-        return "<a href=\"$url\"><img src=\"../images/repair.gif\" alt=\"Reparieren\" style=\"width:18px;height:18px;border:none;\" title=\"Reparieren\" /></a>";
-}
-
 /**
 * Displays a clickable delete button
 *
