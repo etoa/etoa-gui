@@ -24,13 +24,17 @@ class EntityRepository extends AbstractRepository
         return $id !== false ? (int) $id : null;
     }
 
-    public function findRandomByCodes(array $codes, int $limit): ?array
+    public function findRandomByCodes(array $codes, int $limit): array
     {
+        if (count($codes) == 0) {
+            return [];
+        }
+
         return $this->createQueryBuilder()
             ->select('*')
             ->from('entities')
             ->where('code IN ('. implode(',', array_fill(0, count($codes), '?')).')')
-            ->andWhere('post = 0')
+            ->andWhere('pos = 0')
             ->orderBy('RAND()')
             ->setParameters(array_values($codes))
             ->setMaxResults($limit)

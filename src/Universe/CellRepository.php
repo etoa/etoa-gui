@@ -17,6 +17,42 @@ class CellRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    public function getSectorDimensions(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('MAX(sx)', 'MAX(sy)')
+            ->from('cells')
+            ->execute()
+            ->fetchNumeric();
+
+        return $data !== false
+            ? [
+                'x' => (int) $data[0],
+                'y' => (int) $data[1],
+            ] : [
+                'x' => 0,
+                'y' => 0,
+            ];
+    }
+
+    public function getCellDimensions(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('MAX(cx)', 'MAX(cy)')
+            ->from('cells')
+            ->execute()
+            ->fetchNumeric();
+
+        return $data !== false
+            ? [
+                'x' => (int) $data[0],
+                'y' => (int) $data[1],
+            ] : [
+                'x' => 0,
+                'y' => 0,
+            ];
+    }
+
     public function findAllCoordinates(): array
     {
         return $this->createQueryBuilder()
