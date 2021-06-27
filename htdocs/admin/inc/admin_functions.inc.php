@@ -63,24 +63,6 @@ function simple_form($module, $twig)
 }
 
 /**
-* Checks permission to access a page
-* for current user and given page rank
-*
-* @param int $rank Required rank
-* @return bool Permission granted or nor
-*/
-function check_perm($rank)
-{
-    global $adminlevel;
-    if ($_SESSION[SESSION_NAME]['group_level']<$rank)
-    {
-        echo "<h1>Kein Zugriff</h1> Du hast keinen Zugriff auf diese Seite! Erwartet ".$adminlevel[$rank]." ($rank), gegeben ".$_SESSION[SESSION_NAME]['group_name']." (".$_SESSION[SESSION_NAME]['group_level'].")<br/>";
-        return false;
-    }
-    return true;
-}
-
-/**
 * Displays a clickable edit button
 *
 * @param string $url Url of the link
