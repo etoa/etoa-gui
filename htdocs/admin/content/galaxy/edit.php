@@ -75,23 +75,21 @@ if ($id > 0)
                     }
                 }
 
-                $addsql = "";
                 if ($request->request->has('rst_user_changed')) {
-                    $addsql .= ",planet_user_changed=0";
-                }
-                if ($pl->typeId != $request->request->getInt('planet_type_id')) {
-                    $addsql .= ",planet_image='" . $request->request->getInt('planet_type_id') . "_1'";
-                } else {
-                    $addsql .= ",planet_image='" . $request->request->get('planet_image') . "'";
+                    $planetRepo->resetUserChanged($id);
                 }
 
-                //Daten Speichern
+                $image = $pl->typeId != $request->request->getInt('planet_type_id')
+                    ? $request->request->getInt('planet_type_id') . "_1"
+                    : $request->request->get('planet_image');
+
                 $affected = $planetRepo->update(
                     $id,
                     $request->request->getInt('planet_type_id'),
                     $request->request->get('planet_name'),
                     $request->request->getInt('planet_fields'),
                     $request->request->getInt('planet_fields_extra'),
+                    $image,
                     $request->request->getInt('planet_temp_from'),
                     $request->request->getInt('planet_temp_to'),
                     $request->request->getInt('planet_res_metal'),

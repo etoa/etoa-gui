@@ -116,6 +116,7 @@ class PlanetRepository extends AbstractRepository
         string $name,
         int $fields,
         int $extraFields,
+        string $image,
         int $tempFrom,
         int $tempTo,
         int $resMetal,
@@ -135,6 +136,7 @@ class PlanetRepository extends AbstractRepository
             ->set('planet_name', ':name')
             ->set('planet_fields', ':fields')
             ->set('planet_fields_extra', ':extra_fields')
+            ->set('planet_image', ':image')
             ->set('planet_temp_from', ':temp_from')
             ->set('planet_temp_to', ':temp_to')
             ->set('planet_res_metal', ':res_metal')
@@ -154,6 +156,7 @@ class PlanetRepository extends AbstractRepository
                 'name' => $name,
                 'fields' => $fields,
                 'extra_fields' => $extraFields,
+                'image' => $image,
                 'temp_from' => $tempFrom,
                 'temp_to' => $tempTo,
                 'res_metal' => $resMetal,
@@ -202,6 +205,18 @@ class PlanetRepository extends AbstractRepository
             ->execute();
 
         return $affected > 0;
+    }
+
+    public function resetUserChanged(int $id): void
+    {
+        $this->createQueryBuilder()
+            ->update('planets')
+            ->set('planet_user_changed', (string) 0)
+            ->where('id = :id')
+            ->setParameters([
+                'id' => $id,
+            ])
+            ->execute();
     }
 
     public function remove(int $id): void
