@@ -38,7 +38,7 @@ $colBlue = imagecolorallocate($im,150,150,240);
 $colViolett = imagecolorallocate($im,200,0,200);
 $colRe = imagecolorallocate($im,200,0,200);
 
-$admin = isset($_SESSION['adminsession']) ? true : false;
+$admin = isset($s) && $s instanceof AdminSession;
 
 if (isset($_SESSION) || $admin)
 {
