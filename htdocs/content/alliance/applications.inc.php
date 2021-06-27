@@ -15,7 +15,9 @@ if (Alliance::checkActionRights('applications'))
         if (count($_POST['application_answer'])>0)
         {
             $cnt = 0;
-            $alliances = get_alliance_names();
+            /** @var \EtoA\Alliance\AllianceRepository $allianceRepository */
+				$allianceRepository = $app['etoa.alliance.repository'];
+				$alliance = $allianceRepository->getAlliance((int) $cu->allianceId);
             $new_member = false;
 
             foreach ($_POST['application_answer'] as $id=>$answer)
@@ -36,14 +38,18 @@ if (Alliance::checkActionRights('applications'))
                     success_msg($nick." wurde angenommen.");
 
                     // Nachricht an den Bewerber schicken
-                    send_msg($id,MSG_ALLYMAIL_CAT,"Bewerbung angenommen","Deine Allianzbewerbung wurde angenommen!\n\n[b]Antwort:[/b]\n".addslashes($_POST['application_answer_text'][$id]));
+                    /** @var \EtoA\Message\MessageRepository $messageRepository */
+                    $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+                    $messageRepository->createSystemMessage($id, MSG_ALLYMAIL_CAT, "Bewerbung angenommen", "Deine Allianzbewerbung wurde angenommen!\n\n[b]Antwort:[/b]\n".addslashes($_POST['application_answer_text'][$id]));
 
                     // Log schreiben
-                    add_alliance_history($cu->allianceId,"Die Bewerbung von [b]".$nick."[/b] wurde akzeptiert!");
-                    Log::add(5,Log::INFO, "Der Spieler [b]".$nick."[/b] tritt der Allianz [b][".$alliances[$cu->allianceId]['tag']."] ".$alliances[$cu->allianceId]['name']."[/b] bei!");
+                    /** @var \EtoA\Alliance\AllianceHistoryRepository $allianceHistoryRepository */
+                    $allianceHistoryRepository = $app[\EtoA\Alliance\AllianceHistoryRepository::class];
+                    $allianceHistoryRepository->addEntry((int) $cu->allianceId, "Die Bewerbung von [b]".$nick."[/b] wurde akzeptiert!");
+                    Log::add(5,Log::INFO, "Der Spieler [b]".$nick."[/b] tritt der Allianz [b]" . $alliance->nameWithTag . "[/b] bei!");
 
                     $tu = new User($id);
-                    $tu->addToUserLog("alliance","{nick} ist nun ein Mitglied der Allianz ".$alliances[$cu->allianceId]['name'].".");
+                    $tu->addToUserLog("alliance","{nick} ist nun ein Mitglied der Allianz ".$alliance->name.".");
 
                     // Speichern
                     dbquery("
@@ -68,10 +74,14 @@ if (Alliance::checkActionRights('applications'))
                     success_msg($nick." wurde abgelehnt.");
 
                     // Nachricht an den Bewerber schicken
-                    send_msg($id,MSG_ALLYMAIL_CAT,"Bewerbung abgelehnt","Deine Allianzbewerbung wurde abgelehnt!\n\n[b]Antwort:[/b]\n".addslashes($_POST['application_answer_text'][$id]));
+                    /** @var \EtoA\Message\MessageRepository $messageRepository */
+                    $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+                    $messageRepository->createSystemMessage($id, MSG_ALLYMAIL_CAT, "Bewerbung abgelehnt", "Deine Allianzbewerbung wurde abgelehnt!\n\n[b]Antwort:[/b]\n".addslashes($_POST['application_answer_text'][$id]));
 
                     // Log schreiben
-                    add_alliance_history($cu->allianceId,"Die Bewerbung von [b]".$nick."[/b] wurde abgelehnt!");
+                    /** @var \EtoA\Alliance\AllianceHistoryRepository $allianceHistoryRepository */
+                    $allianceHistoryRepository = $app[\EtoA\Alliance\AllianceHistoryRepository::class];
+                    $allianceHistoryRepository->addEntry((int) $cu->allianceId, "Die Bewerbung von [b]".$nick."[/b] wurde abgelehnt!");
 
                     // Anfrage löschen
                     dbquery("
@@ -88,7 +98,9 @@ if (Alliance::checkActionRights('applications'))
                     if($text != '')
                     {
                         // Nachricht an den Bewerber schicken
-                        send_msg($id,MSG_ALLYMAIL_CAT,"Bewerbung: Nachricht","Antwort auf die Bewerbung an die Allianz [b][".$alliances[$cu->allianceId]['tag']."] ".$alliances[$cu->allianceId]['name']."[/b]:\n".$_POST['application_answer_text'][$id]."");
+                        /** @var \EtoA\Message\MessageRepository $messageRepository */
+                        $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+                        $messageRepository->createSystemMessage($id, MSG_ALLYMAIL_CAT, "Bewerbung: Nachricht", "Antwort auf die Bewerbung an die Allianz [b]" . $alliance->nameWithTag . "[/b]:\n".$_POST['application_answer_text'][$id]."");
 
                         $cnt++;
                         success_msg($nick.": Nachricht gesendet");

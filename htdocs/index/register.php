@@ -4,17 +4,19 @@ use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
+/** @var \EtoA\User\UserRepository $userRepository */
+$userRepository = $app[\EtoA\User\UserRepository::class];
 
-function getRegisterParams(ConfigurationService $config): array
+function getRegisterParams(ConfigurationService $config, \EtoA\User\UserRepository $userRepository): array
 {
     // Load user count
-    $ucnt = mysql_fetch_row(dbquery("SELECT COUNT(user_id) FROM users;"));
+    $userCount = $userRepository->count();
 
     return [
-        'maxPlayerCount' => $ucnt[0],
+        'maxPlayerCount' => $userCount,
         'registrationNotEnabled' => !$config->getBoolean('enable_register'),
         'registrationLater' => ($config->getBoolean('enable_register') && $config->param1Int('enable_register') > time()) ? new \DateTime('@' . $config->param1Int('enable_register')) : null,
-        'registrationFull' => $config->param2Int('enable_register') <= $ucnt[0],
+        'registrationFull' => $config->param2Int('enable_register') <= $userCount,
         'userName' => $_SESSION['REGISTER']['register_user_name'] ?? '',
         'userNick' => $_SESSION['REGISTER']['register_user_nick'] ??'',
         'userEmail' => $_SESSION['REGISTER']['register_user_email'] ?? '',
@@ -80,11 +82,11 @@ if (($_POST['register_submit'] ?? false) && $config->getBoolean('enable_register
         ]);
         return;
     } catch (Exception $e) {
-        echo $twig->render('external/register.html.twig', array_merge(getRegisterParams($config), [
+        echo $twig->render('external/register.html.twig', array_merge(getRegisterParams($config, $userRepository), [
             'errorMessage' => 'Die Registration hat leider nicht geklappt: ' . $e->getMessage(),
         ]));
         return;
     }
 }
 
-echo $twig->render('external/register.html.twig', getRegisterParams($config));
+echo $twig->render('external/register.html.twig', getRegisterParams($config, $userRepository));

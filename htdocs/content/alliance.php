@@ -363,7 +363,9 @@ WHERE
                 $alliance_tag = $_POST['alliance_tag'];
                 $alliance_name = $_POST['alliance_name'];
 
-                add_alliance_history($cu->allianceId,"[b]".$cu->nick."[/b] ändert den Allianzname und/oder Tag von [b]".$arr['alliance_name']." (".$arr['alliance_tag'].")[/b] in [b]".$_POST['alliance_name']." (".$_POST['alliance_tag'].")[/b]!");
+                /** @var \EtoA\Alliance\AllianceHistoryRepository $allianceHistoryRepository */
+                $allianceHistoryRepository = $app[\EtoA\Alliance\AllianceHistoryRepository::class];
+                $allianceHistoryRepository->addEntry((int) $cu->allianceId, "[b]".$cu->nick."[/b] ändert den Allianzname und/oder Tag von [b]".$arr['alliance_name']." (".$arr['alliance_tag'].")[/b] in [b]".$_POST['alliance_name']." (".$_POST['alliance_tag'].")[/b]!");
             }
             // Name und/oder Tag sind fehlerhaft
             else

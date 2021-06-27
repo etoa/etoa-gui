@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 $app = new \Silex\Application([
-    'debug' => $debug ?? false,
+    'debug' => $debug ?? isDebugEnabled(),
     'app.environment' => $environment ?? 'production',
     'app.root' => dirname(__DIR__),
     'app.config_dir' => sprintf('%s/htdocs/config/', dirname(__DIR__)),
@@ -34,7 +34,6 @@ $app->register(new \EtoA\Core\SessionServiceProvider());
 $app->register(new \EtoA\Defense\DefenseServiceProvider());
 $app->register(new \EtoA\Missile\MissileServiceProvider());
 $app->register(new \EtoA\Race\RaceServiceProvider());
-$app->register(new \EtoA\Planet\PlanetServiceProvider());
 $app->register($questProvider = new \EtoA\Quest\QuestServiceProvider(), [
     'cubicle.quests.autostart' => true,
     'cubicle.quests.slots' => [
@@ -57,6 +56,7 @@ $app->register(new \EtoA\Support\DatabaseManagerServiceProvider());
 $app->register(new \EtoA\Universe\UniverseServiceProvider());
 $app->register(new \EtoA\Help\TicketSystem\TicketSystemServiceProvider());
 $app->register(new \EtoA\Message\MessageServiceProvider());
+$app->register(new \EtoA\Market\MarketServiceProvider());
 $app->register(new \EtoA\Support\RuntimeDataStoreServiceProvider());
 $app->register(new \EtoA\Ranking\RankingServiceProvider());
 

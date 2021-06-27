@@ -26,6 +26,7 @@ class AdminUserRepository extends AbstractRepository
             ->setParameter('id', $id)
             ->execute()
             ->fetchAssociative();
+
         return $data !== false ? AdminUser::createFromArray($data) : null;
     }
 
@@ -38,6 +39,7 @@ class AdminUserRepository extends AbstractRepository
             ->setParameter('nick', $nick)
             ->execute()
             ->fetchAssociative();
+
         return $data !== false ? AdminUser::createFromArray($data) : null;
     }
 
@@ -52,6 +54,7 @@ class AdminUserRepository extends AbstractRepository
             ->orderBy('user_nick')
             ->execute()
             ->fetchAllAssociative();
+
         return collect($data)
             ->map(fn ($arr) => AdminUser::createFromArray($arr))
             ->toArray();
@@ -167,6 +170,7 @@ class AdminUserRepository extends AbstractRepository
             ->setParameter('id', $adminUser->id)
             ->execute();
         $adminUser->id = null;
+
         return (int) $affected > 0;
     }
 
@@ -184,6 +188,7 @@ class AdminUserRepository extends AbstractRepository
             ->setParameter('userId', $userId)
             ->execute()
             ->fetchOne();
+
         return $data !== false ? $data : null;
     }
 }

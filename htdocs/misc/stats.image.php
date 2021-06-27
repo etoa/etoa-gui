@@ -41,45 +41,20 @@
 	imagerectangle($im, 0, 0, IM_W-1, IM_H-1, $black);
 
 	$uid = isset($_GET['user']) ? (int) $_GET['user'] : 0;
-	if ($uid > 0 && count($_SESSION) > 0)
-	{
-		$res=dbquery("
-			SELECT
-				user_nick,
-				user_rank
-			FROM
-				users
-			WHERE
-				user_id='".$uid."';
-		");
-		if (mysql_num_rows($res)>0)
-		{
-			$arr=mysql_fetch_array($res);
-			if (isset($_GET['start']) && intval($_GET['start'])>0)
-				$sql1 = " AND point_timestamp > ".intval($_GET['start'])." ";
-			else
-				$sql1 = "";
-			if (isset($_GET['end']) && intval($_GET['end'])>0)
-				$sql2 = " AND point_timestamp < ".intval($_GET['end'])." ";
-			else
-				$sql2 = "";
+	if ($uid > 0 && count($_SESSION) > 0) {
+	    /** @var \EtoA\User\UserRepository $userRepository */
+	    $userRepository = $app[\EtoA\User\UserRepository::class];
+	    $user = $userRepository->getUser($uid);
+		if ($user !== null) {
+            $start = (int) ($_GET['start'] ?? 0) > 0 ? (int) $_GET['start'] : null;
+            $end = (int) ($_GET['end'] ?? 0) > 0 ? (int) $_GET['end'] : null;
 
-			$pres=dbquery("
-				SELECT
-					*
-				FROM
-					user_points
-				WHERE
-					point_user_id='".$uid."'
-					AND point_points>0
-					$sql1
-					$sql2
-				ORDER BY
-					point_timestamp DESC LIMIT ".(DETAIL_LIMIT*6).";
-			");
-			if (mysql_num_rows($pres)>0)
-			{
-        $records_per_step = floor(mysql_num_rows($pres)/STEP);
+			/** @var \EtoA\User\UserPointsRepository $userPointsRepository */
+			$userPointsRepository = $app[\EtoA\User\UserPointsRepository::class];
+			$pointsEntries = $userPointsRepository->getPoints($uid, DETAIL_LIMIT * 6, $start, $end);
+
+			if (count($pointsEntries) > 0) {
+                $records_per_step = floor(count($pointsEntries)/STEP);
 
 				define('B_W', (IM_W-B_B)/max($records_per_step,1)/2);
 				// Bar colors
@@ -99,20 +74,19 @@
 				$last_update=0;
 				$cnt=0;
 				$points = [];
-				while ($parr=mysql_fetch_array($pres))
-				{
-					if ($last_update==0) $last_update=$parr['point_timestamp'];
+				foreach ($pointsEntries as $entry) {
+					if ($last_update==0) $last_update = $entry->timestamp;
 					if ($cnt==0)
 					{
-						$points[$parr['point_timestamp']]=$parr['point_points'];
-						$pmax=max($pmax,$parr['point_points']);
+						$points[$entry->timestamp] = $entry->points;
+						$pmax=max($pmax,$entry->points);
 					}
 					$cnt++;
 					if ($cnt==STEP) $cnt=0;
 				}
 				ksort ($points);
 
-				imagestring($im,FONT_SIZE,(int) (B_B/3),(int) (B_B/3),"Statistiken von ".$arr['user_nick'].", Rang ".$arr['user_rank'].", letzes Update: ".date("d.m.Y H:i",$last_update)."",$black);
+				imagestring($im,FONT_SIZE,(int) (B_B/3),(int) (B_B/3),"Statistiken von ".$user->nick.", Rang ".$user->rank.", letzes Update: ".date("d.m.Y H:i",$last_update)."",$black);
 				imagestring($im,FONT_SIZE,(int) (B_B/3),(int) (B_B/3+9),"Schrittweite: ".STEP." Stunden, Zeitraum: ".(DETAIL_LIMIT*STEP/24)." Tage",$black);
 				$cnt=0;
 

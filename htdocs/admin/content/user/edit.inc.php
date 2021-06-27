@@ -11,7 +11,8 @@ $ticketRepo = $app['etoa.help.ticket.repository'];
 $adminUserRepo = $app['etoa.admin.user.repository'];
 /** @var \EtoA\User\UserRepository $userRepository */
 $userRepository = $app['etoa.user.repository'];
-
+/** @var \EtoA\Ship\ShipDataRepository $shipDateRepository */
+$shipDateRepository = $app[\EtoA\Ship\ShipDataRepository::class];
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
 
@@ -906,13 +907,15 @@ echo '<div class="tabs" id="user_edit_tabs">
                     <td class=\"tbltitle\">Allianz:</td>
                     <td class=\"tbldata\">
                         <select id=\"user_alliance_id\" name=\"user_alliance_id\" onchange=\"loadAllianceRanks(".$arr['user_alliance_rank_id'].");\">";
-                        $ally_arr=get_alliance_names();
+                        /** @var \EtoA\Alliance\AllianceRepository $allianceRepository */
+                        $allianceRepository = $app['etoa.alliance.repository'];
+                        $allianceNamesWithTags = $allianceRepository->getAllianceNamesWithTags();
                         echo "<option value=\"0\">(Keine)</option>";
-                        foreach ($ally_arr as $aid=>$ak)
+                        foreach ($allianceNamesWithTags as $allianceId => $allianceNamesWithTag)
                         {
-                            echo "<option value=\"$aid\"";
-                            if ($aid==$arr['user_alliance_id']) echo " selected=\"selected\"";
-                            echo ">[".$ak['tag']."]  ".$ak['name']."</option>";
+                            echo "<option value=\"$allianceId\"";
+                            if ($allianceId==$arr['user_alliance_id']) echo " selected=\"selected\"";
+                            echo ">" . $allianceNamesWithTag . "</option>";
                         }
                         echo "</select> Rang: <span id=\"ars\">-</span></td>
                 </tr>";
@@ -920,31 +923,14 @@ echo '<div class="tabs" id="user_edit_tabs">
             <td class=\"tbltitle\">Spionagesonden für Direktscan:</td>
             <td class=\"tbldata\">
             <input type=\"text\" name=\"spyship_count\" maxlength=\"5\" size=\"5\" value=\"".$arr['spyship_count']."\"> &nbsp; ";
-            $sres = dbquery("
-            SELECT
-        ship_id,
-        ship_name
-            FROM
-                ships
-            WHERE
-                ship_buildable='1'
-                AND (
-                ship_actions LIKE '%,spy'
-                OR ship_actions LIKE 'spy,%'
-                OR ship_actions LIKE '%,spy,%'
-                OR ship_actions LIKE 'spy'
-                )
-            ORDER BY
-                ship_name ASC");
-                if (mysql_num_rows($sres)>0)
-                {
+                $shipNames = $shipDateRepository->getShipNamesWithAction('spy');
+                if (count($shipNames) > 0) {
                     echo '<select name="spyship_id"><option value="0">(keines)</option>';
-                    while ($sarr=mysql_fetch_array($sres))
-                    {
-                        echo '<option value="'.$sarr['ship_id'].'"';
-                        if ($arr['spyship_id']==$sarr['ship_id'])
+                    foreach ($shipNames as $shipId => $shipName) {
+                        echo '<option value="'.$shipId.'"';
+                        if ($arr['spyship_id']==$shipId)
                             echo ' selected="selected"';
-                        echo '>'.$sarr['ship_name'].'</option>';
+                        echo '>'.$shipName.'</option>';
                     }
                 }
                 else
@@ -957,31 +943,14 @@ echo '<div class="tabs" id="user_edit_tabs">
             <td class=\"tbltitle\">Analysatoren für Quickanalyse:</td>
             <td class=\"tbldata\">
             <input type=\"text\" name=\"analyzeship_count\" maxlength=\"5\" size=\"5\" value=\"".$arr['analyzeship_count']."\"> &nbsp; ";
-            $sres = dbquery("
-            SELECT
-        ship_id,
-        ship_name
-            FROM
-                ships
-            WHERE
-                ship_buildable='1'
-                AND (
-                ship_actions LIKE '%,analyze'
-                OR ship_actions LIKE 'analyze,%'
-                OR ship_actions LIKE '%,analyze,%'
-                OR ship_actions LIKE 'analyze'
-                )
-            ORDER BY
-                ship_name ASC");
-                if (mysql_num_rows($sres)>0)
-                {
+                $shipNames = $shipDateRepository->getShipNamesWithAction('analyze');
+                if (count($shipNames) > 0) {
                     echo '<select name="analyzeship_id"><option value="0">(keines)</option>';
-                    while ($sarr=mysql_fetch_array($sres))
-                    {
-                        echo '<option value="'.$sarr['ship_id'].'"';
-                        if ($arr['analyzeship_id']==$sarr['ship_id'])
+                    foreach ($shipNames as $shipId => $shipName) {
+                        echo '<option value="'.$shipId.'"';
+                        if ($arr['analyzeship_id']==$shipId)
                             echo ' selected="selected"';
-                        echo '>'.$sarr['ship_name'].'</option>';
+                        echo '>'.$shipName.'</option>';
                     }
                 }
                 else
@@ -1616,7 +1585,7 @@ echo '</div><div id="tabs-8">';
         foreach ($tickets as $ticket)
         {
             echo "<tr>
-                <td>".popupLink('tickets',$ticket->getIdString(),'','id='.$ticket->id)."</td>
+                <td><a href=\"?page=tickets&id=".$ticket->id."\">".$ticket->getIdString()."</a></td>
                 <td>".$ticket->getStatusName()."</td>
                 <td>".$ticketRepo->getCategoryName($ticket->catId)."</td>
                 <td>".($ticket->adminId > 0 ? $adminUserRepo->getNick($ticket->adminId) : '-')."</td>

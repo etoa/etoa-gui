@@ -42,6 +42,7 @@ class UserRepository extends AbstractRepository
             ->setParameter('userId', $userId)
             ->execute()
             ->fetchOne();
+
         return $data !== false ? $data : null;
     }
 
@@ -54,15 +55,17 @@ class UserRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function countActiveSessions(int $timeout): int
+    public function setLogoutTime(int $userId): void
     {
-        return (int) $this->createQueryBuilder()
-            ->select('COUNT(*)')
-            ->from('user_sessions')
-            ->where('time_action > :timeout')
-            ->setParameter('timeout', time() - $timeout)
-            ->execute()
-            ->fetchOne();
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_logouttime', ':time')
+            ->where('user_id = :id')
+            ->setParameters([
+                'id' => $userId,
+                'time' => time(),
+            ])
+            ->execute();
     }
 
     public function removePointsByTimestamp(int $timestamp): int
@@ -107,5 +110,18 @@ class UserRepository extends AbstractRepository
             ->set('discoverymask', "''")
             ->set('user_setup', (string) 0)
             ->execute();
+    }
+
+    public function getUser(int $userId): ?User
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('users')
+            ->where('user_id = :userId')
+            ->setParameter('userId', $userId)
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? new User($data) : null;
     }
 }

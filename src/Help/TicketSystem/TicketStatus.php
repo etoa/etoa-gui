@@ -23,6 +23,7 @@ class TicketStatus
         if ($status == self::ASSIGNED) {
             return "Zugeteilt";
         }
+
         return 'Neu';
     }
 

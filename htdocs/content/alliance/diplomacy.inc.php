@@ -74,8 +74,9 @@
 		echo "<h2>Diplomatie</h2>";
 
 
-
-			$alliances = get_alliance_names();
+        /** @var \EtoA\Alliance\AllianceRepository $allianceRepository */
+        $allianceRepository = $app['etoa.alliance.repository'];
+        $allianceNamesWithTags = $allianceRepository->getAllianceNamesWithTags();
 
 			//
 			// Kriegserklärung schreiben
@@ -90,19 +91,18 @@
 					$check = true;
 				}
 
-				$ares=dbquery("SELECT * FROM alliances WHERE alliance_id='".$aid."';");
-				if (mysql_num_rows($ares)>0 && $check)
+				$otherAlliance = $allianceRepository->getAlliance($aid);
+				if ($otherAlliance !== null && $check)
 				{
-					$aarr=mysql_fetch_array($ares);
 					echo "<form action=\"?page=$page&amp;action=relations\" method=\"post\" name=\"wardeclaration\">";
 					checker_init();
 
-					tableStart("Kriegserkl&auml;rung an die Allianz [".$aarr['alliance_tag']."] ".$aarr['alliance_name']);
+					tableStart("Kriegserkl&auml;rung an die Allianz " . $otherAlliance->nameWithTag);
 					echo "<tr><th>Nachricht:</th><td><textarea rows=\"10\" cols=\"50\" name=\"alliance_bnd_text\"></textarea></td></tr>";
 					echo "<tr><th>Öffentlicher Text:</th><td><textarea rows=\"10\" cols=\"50\" name=\"alliance_bnd_text_pub\"></textarea></td></tr>";
 					tableEnd();
 
-					echo "<input type=\"hidden\" name=\"alliance_bnd_alliance_id\" value=\"".$aarr['alliance_id']."\" />";
+					echo "<input type=\"hidden\" name=\"alliance_bnd_alliance_id\" value=\"".$otherAlliance->id."\" />";
 					echo "<input type=\"submit\" name=\"sbmit_new_war\" value=\"Senden\" onclick=\"return checkWarDeclaration()\" onsubmit=\"return checkWarDeclaration()\" />&nbsp;
 					<input type=\"button\" onclick=\"document.location='?page=alliance&action=relations'\" value=\"Zur&uuml;ck\" />";
 					echo "</form>";
@@ -120,26 +120,16 @@
 			{
 				$aid = intval($_GET['begin_bnd']);
 
-				$ares=dbquery("
-				SELECT
-					alliance_id,
-					alliance_tag,
-					alliance_name,
-					alliance_accept_bnd
-				FROM
-					alliances
-				WHERE
-					alliance_id='".$aid."';");
-				if (mysql_num_rows($ares)>0 && $_GET['begin_bnd'] != $cu->allianceId)
+				$otherAlliance = $allianceRepository->getAlliance($aid);
+				if ($otherAlliance !== null && $otherAlliance->id != $cu->allianceId)
 				{
-					$aarr=mysql_fetch_array($ares);
 
-					if($aarr['alliance_accept_bnd']==1)
+					if($otherAlliance->acceptBnd)
 					{
 						echo "<form action=\"?page=$page&amp;action=relations\" method=\"post\" name=\"pactoffer\">";
 						checker_init();
 
-						tableStart("B&uuml;ndnisanfrage an die Allianz [".$aarr['alliance_tag']."] ".$aarr['alliance_name']);
+						tableStart("B&uuml;ndnisanfrage an die Allianz ".$otherAlliance->nameWithTag);
 						echo "<tr>
 							<th>Name des Bündnisses:</th>
 							<td>
@@ -154,7 +144,7 @@
 						</tr>";
 						tableEnd();
 
-						echo "<input type=\"hidden\" name=\"alliance_bnd_alliance_id\" value=\"".$aarr['alliance_id']."\" />";
+						echo "<input type=\"hidden\" name=\"alliance_bnd_alliance_id\" value=\"".$otherAlliance->id."\" />";
 						echo "<input type=\"submit\" name=\"sbmit_new_bnd\" value=\"Senden\" onclick=\"return checkPactOffer()\" onsubmit=\"return checkPactOffer()\" />&nbsp;
 						<input type=\"button\" onclick=\"document.location='?page=alliance&action=relations'\" value=\"Zur&uuml;ck\" />";
 						echo "</form>";
@@ -443,7 +433,9 @@
 						$res=dbquery("SELECT alliance_founder_id FROM alliances WHERE alliance_id='".$id."'");
 						$arr=mysql_fetch_array($res);
 
-						send_msg($arr['alliance_founder_id'],MSG_ALLYMAIL_CAT,"Bündnisanfrage","Die Allianz [b][".$alliances[$cu->allianceId]['tag']."] ".$alliances[$cu->allianceId]['name']."[/b] fragt euch für ein Bündnis an.\n
+                        /** @var \EtoA\Message\MessageRepository $messageRepository */
+                        $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+                        $messageRepository->createSystemMessage((int) $arr['alliance_founder_id'], MSG_ALLYMAIL_CAT, 'Bündnisanfrage', "Die Allianz [b]" . $allianceNamesWithTags[$cu->allianceId] . "[/b] fragt euch für ein Bündnis an.\n
 						[b]Text:[/b] ".addslashes($_POST['alliance_bnd_text'])."\n
 						Geschrieben von [b]".$cu->nick."[/b].\n Gehe auf die [page=alliance]Allianzseite[/page] um die Anfrage zu bearbeiten!");
 					}
@@ -453,7 +445,6 @@
 				if (isset($_POST['sbmit_new_war']) && intval($_POST['alliance_bnd_alliance_id']) > 0 && checker_verify())
 				{
 					$id = intval($_POST['alliance_bnd_alliance_id']);
-					$alliances = get_alliance_names();
 
 					$war_res = dbquery("
 					SELECT
@@ -503,14 +494,18 @@
 
 						success_msg("Du hast einer Allianz den Krieg erkl&auml;rt!");
 
-						add_alliance_history($cu->allianceId,"Der Allianz [b][".$alliances[$id]['tag']."] ".$alliances[$id]['name']."[/b] wird der Krieg erkl&auml;rt!");
-						add_alliance_history($id,"Die Allianz [b][".$alliances[$cu->allianceId]['tag']."] ".$alliances[$cu->allianceId]['name']."[/b] erkl&auml;rt den Krieg!");
+                        /** @var \EtoA\Alliance\AllianceHistoryRepository $allianceHistoryRepository */
+                        $allianceHistoryRepository = $app[\EtoA\Alliance\AllianceHistoryRepository::class];
+                        $allianceHistoryRepository->addEntry((int) $cu->allianceId, "Der Allianz [b]" . $allianceNamesWithTags[$id] ."[/b] wird der Krieg erkl&auml;rt!");
+                        $allianceHistoryRepository->addEntry($id, "Die Allianz [b]" . $allianceNamesWithTags[$cu->allianceId] . "[/b] erkl&auml;rt den Krieg!");
 
 						//Nachricht an den Leader der gegnerischen Allianz schreiben
 						$res=dbquery("SELECT alliance_founder_id FROM alliances WHERE alliance_id='".$id."';");
 						$arr=mysql_fetch_array($res);
 
-						send_msg($arr['alliance_founder_id'],MSG_ALLYMAIL_CAT,"Kriegserklärung","Die Allianz [b][".$alliances[$cu->allianceId]['tag']."] ".$alliances[$cu->allianceId]['name']."[/b] erklärt euch den Krieg!\n
+                        /** @var \EtoA\Message\MessageRepository $messageRepository */
+                        $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+                        $messageRepository->createSystemMessage((int) $arr['alliance_founder_id'], MSG_ALLYMAIL_CAT, 'Kriegserklärung',"Die Allianz [b]" . $allianceNamesWithTags[$cu->allianceId] . "[/b] erklärt euch den Krieg!\n
 						Die Kriegserklärung wurde von [b]".$cu->nick."[/b] geschrieben.\n Geh auf die Allianzseite für mehr Details!");
 					}
 				}
@@ -585,8 +580,10 @@
 						;");
 
 						// Add log
-						add_alliance_history($selfId,"Das Bündnis [b]".$arr['alliance_bnd_name']."[/b] mit der Allianz [b][".$opTag."] ".$opName."[/b] wird aufgelöst!");
-						add_alliance_history($opId,"Die Allianz [b][".$selfTag."] ".$selfName."[/b] löst das Bündnis [b]".$arr['alliance_bnd_name']."[/b] auf!");
+                        /** @var \EtoA\Alliance\AllianceHistoryRepository $allianceHistoryRepository */
+                        $allianceHistoryRepository = $app[\EtoA\Alliance\AllianceHistoryRepository::class];
+                        $allianceHistoryRepository->addEntry((int) $selfId, "Das Bündnis [b]".$arr['alliance_bnd_name']."[/b] mit der Allianz [b][".$opTag."] ".$opName."[/b] wird aufgelöst!");
+                        $allianceHistoryRepository->addEntry((int) $opId, "Die Allianz [b][".$selfTag."] ".$selfName."[/b] löst das Bündnis [b]".$arr['alliance_bnd_name']."[/b] auf!");
 
 						// Send message to leader
 						$fres=dbquery("
@@ -598,7 +595,9 @@
 							alliance_id='".$opId."'
 						;");
 						$farr=mysql_fetch_array($fres);
-						send_msg($farr['alliance_founder_id'],MSG_ALLYMAIL_CAT,"Bündnis ".$arr['alliance_bnd_name']." beendet","Die Allianz [b][".$selfTag."] ".$selfName."[/b] beendet ihr Bündnis [b]".$arr['alliance_bnd_name']."[/b] mit eurer Allianz!\n
+                        /** @var \EtoA\Message\MessageRepository $messageRepository */
+                        $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+                        $messageRepository->createSystemMessage((int) $farr['alliance_founder_id'], MSG_ALLYMAIL_CAT, "Bündnis ".$arr['alliance_bnd_name']." beendet","Die Allianz [b][".$selfTag."] ".$selfName."[/b] beendet ihr Bündnis [b]".$arr['alliance_bnd_name']."[/b] mit eurer Allianz!\n
 						Ausgelöst von [b]".$cu->nick."[/b].\nBegründung: ".$_POST['pact_end_text']);
 
 						echo "Das B&uuml;ndnis <b>".$arr['alliance_bnd_name']."</b> mit der Allianz <b>".$opName."</b> wurde aufgel&ouml;st!<br/><br/>";
@@ -632,12 +631,13 @@
 						;");
 
 						// Inform opposite leader
-						$res=dbquery("SELECT alliance_founder_id,alliance_name FROM alliances WHERE alliance_id='".$arr['alliance_bnd_alliance_id2']."'");
-	          $arr=mysql_fetch_array($res);
-	   				send_msg($arr['alliance_founder_id'],MSG_ALLYMAIL_CAT,"Anfrage zurückgenommen","Die Allianz [b][".$alliances[$cu->allianceId]['tag']."] ".$alliances[$cu->allianceId]['name']."[/b] hat ihre Büdnisanfrage wieder zurückgezogen.");
+                        $otherAlliance = $allianceRepository->getAlliance($arr['alliance_bnd_alliance_id2']);
+                        /** @var \EtoA\Message\MessageRepository $messageRepository */
+                        $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+                        $messageRepository->createSystemMessage($otherAlliance->founderId, MSG_ALLYMAIL_CAT, "Anfrage zurückgenommen","Die Allianz [b]" . $allianceNamesWithTags[$cu->allianceId] . "[/b] hat ihre Büdnisanfrage wieder zurückgezogen.");
 
 						// Display message
-						echo "Anfrage gel&ouml;scht! Die Allianzleitung der Allianz <b>".$arr['alliance_name']."</b> wurde per Nachricht dar&uuml;ber informiert.<br/><br/>";
+						echo "Anfrage gel&ouml;scht! Die Allianzleitung der Allianz <b>".$otherAlliance->name."</b> wurde per Nachricht dar&uuml;ber informiert.<br/><br/>";
 					}
 				}
 
@@ -676,12 +676,16 @@
 
 						// Send message to alliance leader
 						$text = "Das Bündnis [b]".$arr['alliance_bnd_name']."[/b] zwischen den Allianzen [b][".$arr['a1tag']."] ".$arr['a1name']."[/b] und [b][".$arr['a2tag']."] ".$arr['a2name']."[/b] ist zustande gekommen!\n\nBitte denke daran, einen öffentlichen Text zum Bündnis hinzuzufügen!\n[b]Nachricht:[/b] ".$_POST['pact_answer'];
-						send_msg($arr['a1founder'],MSG_ALLYMAIL_CAT,"Bündnis angenommen",$text);
+                        /** @var \EtoA\Message\MessageRepository $messageRepository */
+                        $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+                        $messageRepository->createSystemMessage((int) $arr['a1founder'], MSG_ALLYMAIL_CAT, "Bündnis angenommen",$text);
 
 						// Log decision
-						$text = "Die Allianzen [b][".$arr['a1tag']."] ".$arr['a1name']."[/b] und [b][".$arr['a2tag']."] ".$arr['a2name']."[/b] schliessen ein Bündnis!";
-						add_alliance_history($cu->allianceId,$text);
-						add_alliance_history($arr['a1id'], $text);
+                        $text = "Die Allianzen [b][".$arr['a1tag']."] ".$arr['a1name']."[/b] und [b][".$arr['a2tag']."] ".$arr['a2name']."[/b] schliessen ein Bündnis!";
+                        /** @var \EtoA\Alliance\AllianceHistoryRepository $allianceHistoryRepository */
+                        $allianceHistoryRepository = $app[\EtoA\Alliance\AllianceHistoryRepository::class];
+                        $allianceHistoryRepository->addEntry((int) $cu->allianceId, $text);
+                        $allianceHistoryRepository->addEntry((int) $arr['a1id'], $text);
 
 						// Save pact
 						dbquery("
@@ -733,7 +737,9 @@
 
 						// Nachricht an den Leader der anfragenden Allianz
 						$text = "Die Bündnisanfrage [b]".$arr['alliance_bnd_name']."[/b] wurde von der Allianz [b][".$arr['a1tag']."] ".$arr['a1name']."[/b] abgelehnt!\n\n[b]Nachricht:[/b] ".$_POST['pact_answer'];
-						send_msg($arr['a1founder'],MSG_ALLYMAIL_CAT,"Bündnisantrag abgelehnt",$text);
+                        /** @var \EtoA\Message\MessageRepository $messageRepository */
+                        $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+                        $messageRepository->createSystemMessage((int) $arr['a1founder'], MSG_ALLYMAIL_CAT, "Bündnisantrag abgelehnt",$text);
 
 						// Löscht BND
 						dbquery("
@@ -744,8 +750,10 @@
 						");
 
 						// Logt die Absage
-						add_alliance_history($cu->allianceId,"Die Bündnisanfrage [b]".$arr['alliance_bnd_name']."[/b] der Allianz [b][".$arr['a2tag']."] ".$arr['a2name']."[/b] wird abgelehnt!");
-						add_alliance_history($arr['a2id'],"Die Bündnisanfrage [b]".$arr['alliance_bnd_name']."[/b] wird von der Allianz [b][".$arr['a1tag']."] ".$arr['a1name']."[/b] abgelehnt!");
+                        /** @var \EtoA\Alliance\AllianceHistoryRepository $allianceHistoryRepository */
+                        $allianceHistoryRepository = $app[\EtoA\Alliance\AllianceHistoryRepository::class];
+                        $allianceHistoryRepository->addEntry((int) $cu->allianceId, "Die Bündnisanfrage [b]".$arr['alliance_bnd_name']."[/b] der Allianz [b][".$arr['a2tag']."] ".$arr['a2name']."[/b] wird abgelehnt!");
+                        $allianceHistoryRepository->addEntry((int) $arr['a2id'], "Die Bündnisanfrage [b]".$arr['alliance_bnd_name']."[/b] wird von der Allianz [b][".$arr['a1tag']."] ".$arr['a1name']."[/b] abgelehnt!");
 
 						success_msg("Bündniss abgelehnt!");
 					}

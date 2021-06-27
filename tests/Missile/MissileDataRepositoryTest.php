@@ -21,4 +21,19 @@ class MissileDataRepositoryTest extends AbstractDbTestCase
         $names = $this->repository->getMissileNames();
         $this->assertNotEmpty($names);
     }
+
+    public function testGetMissiles(): void
+    {
+        $missiles = $this->repository->getMissiles();
+
+        $this->assertNotEmpty($missiles);
+    }
+
+    public function testGetMissile(): void
+    {
+        $missile = $this->repository->getMissile(1);
+
+        $this->assertNotNull($missile);
+        $this->assertSame(1, $missile->id);
+    }
 }

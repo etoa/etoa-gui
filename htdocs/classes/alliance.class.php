@@ -1055,7 +1055,10 @@ use EtoA\Core\Configuration\ConfigurationService;
                     LIMIT 1;");
 
                     // Log schreiben
-                    add_alliance_history($this->id,"Dem Allianzkonto wurden folgende Rohstoffe abgezogen:\n[b]".RES_METAL."[/b]: ".nf($to_pay[1])."\n[b]".RES_CRYSTAL."[/b]: ".nf($to_pay[2])."\n[b]".RES_PLASTIC."[/b]: ".nf($to_pay[3])."\n[b]".RES_FUEL."[/b]: ".nf($to_pay[4])."\n[b]".RES_FOOD."[/b]: ".nf($to_pay[5])."\n\nDie Allianzobjekte sind nun für ".$newMemberCnt." Mitglieder verfügbar!");
+                global $app;
+                /** @var \EtoA\Alliance\AllianceHistoryRepository $allianceHistoryRepository */
+                $allianceHistoryRepository = $app[\EtoA\Alliance\AllianceHistoryRepository::class];
+                $allianceHistoryRepository->addEntry((int) $this->id, "Dem Allianzkonto wurden folgende Rohstoffe abgezogen:\n[b]".RES_METAL."[/b]: ".nf($to_pay[1])."\n[b]".RES_CRYSTAL."[/b]: ".nf($to_pay[2])."\n[b]".RES_PLASTIC."[/b]: ".nf($to_pay[3])."\n[b]".RES_FUEL."[/b]: ".nf($to_pay[4])."\n[b]".RES_FOOD."[/b]: ".nf($to_pay[5])."\n\nDie Allianzobjekte sind nun für ".$newMemberCnt." Mitglieder verfügbar!");
             }
         }
         else

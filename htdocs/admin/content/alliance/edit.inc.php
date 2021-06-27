@@ -200,14 +200,14 @@ function edit(
 ): void {
 	global $page;
 
-	$alliance = $repository->find($id);
+	$alliance = $repository->getAlliance($id);
 
 	if ($alliance === null) {
 		echo 'Alliance does not exist.';
 		return;
 	}
 
-	$twig->addGlobal('subtitle', "Allianz bearbeiten: [" . $alliance['alliance_tag'] . "] " . $alliance['alliance_name']);
+	$twig->addGlobal('subtitle', "Allianz bearbeiten: " . $alliance->nameWithTag);
 
 	$members = $repository->findUsers($id);
 
@@ -265,31 +265,31 @@ function edit(
 	</div>';
 }
 
-function infoTab(array $alliance, array $members): void
+function infoTab(\EtoA\Alliance\Alliance $alliance, array $members): void
 {
 	tableStart();
-	echo "<tr><th>ID</th><td>" . $alliance['alliance_id'] . "</td></tr>";
+	echo "<tr><th>ID</th><td>" . $alliance->id . "</td></tr>";
 	echo "<tr><th>[Tag] Name</th><td>
-			[<input type=\"text\" name=\"alliance_tag\" value=\"" . $alliance['alliance_tag'] . "\" size=\"6\" maxlength=\"6\" required />]
-			<input type=\"text\" name=\"alliance_name\" value=\"" . $alliance['alliance_name'] . "\" size=\"30\" maxlength=\"25\" required />
+			[<input type=\"text\" name=\"alliance_tag\" value=\"" . $alliance->tag . "\" size=\"6\" maxlength=\"6\" required />]
+			<input type=\"text\" name=\"alliance_name\" value=\"" . $alliance->name . "\" size=\"30\" maxlength=\"25\" required />
 		</td></tr>";
 	echo "<tr><th>Gründer</th><td><select name=\"alliance_founder_id\">";
 	echo "<option value=\"0\">(niemand)</option>";
 	foreach ($members as $member) {
 		echo "<option value=\"" . $member['user_id'] . "\"";
-		if ($alliance['alliance_founder_id'] == $member['user_id']) {
+		if ($alliance->founderId == $member['user_id']) {
 			echo " selected=\"selected\"";
 		}
 		echo ">" . $member['user_nick'] . "</option>";
 	}
 	echo "</select></td></tr>";
-	echo "<tr><th>Text</th><td><textarea cols=\"45\" rows=\"10\" name=\"alliance_text\">" . stripslashes($alliance['alliance_text']) . "</textarea></td></tr>";
-	echo "<tr><th>Gründung</th><td>" . date("Y-m-d H:i:s", $alliance['alliance_foundation_date']) . "</td></tr>";
-	echo "<tr><th>Website</th><td><input type=\"text\" name=\"alliance_url\" value=\"" . $alliance['alliance_url'] . "\" size=\"40\" maxlength=\"250\" /></td></tr>";
-	echo "<tr><th>Bewerbungsvorlage</th><td><textarea cols=\"45\" rows=\"10\" name=\"alliance_application_template\">" . stripslashes($alliance['alliance_application_template']) . "</textarea></td></tr>";
+	echo "<tr><th>Text</th><td><textarea cols=\"45\" rows=\"10\" name=\"alliance_text\">" . stripslashes($alliance->text) . "</textarea></td></tr>";
+	echo "<tr><th>Gründung</th><td>" . date("Y-m-d H:i:s", $alliance->foundationTimestamp) . "</td></tr>";
+	echo "<tr><th>Website</th><td><input type=\"text\" name=\"alliance_url\" value=\"" . $alliance->url . "\" size=\"40\" maxlength=\"250\" /></td></tr>";
+	echo "<tr><th>Bewerbungsvorlage</th><td><textarea cols=\"45\" rows=\"10\" name=\"alliance_application_template\">" . stripslashes($alliance->applicationTemplate) . "</textarea></td></tr>";
 	echo "<tr><th>Bild</th><td>";
-	if ($alliance['alliance_img'] != "") {
-		echo '<img src="' . ALLIANCE_IMG_DIR . '/' . $alliance['alliance_img'] . '" alt="Profil" /><br/>';
+	if ($alliance->image != "") {
+		echo '<img src="' . ALLIANCE_IMG_DIR . '/' . $alliance->image . '" alt="Profil" /><br/>';
 		echo "<input type=\"checkbox\" value=\"1\" name=\"alliance_img_del\"> Bild löschen<br/>";
 	} else {
 		echo "Keines";
@@ -314,7 +314,7 @@ function membersTab(array $members, array $ranks): void
 				<th>Mitgliedschaft beenden</th></tr>";
 		foreach ($members as $member) {
 			echo "<tr><td id=\"uifo" . $member['user_id'] . "\" style=\"display:none;\"><a href=\"?page=user&amp;sub=edit&amp;id=" . $member['user_id'] . "\">Daten</a><br/>
-				" . popupLink("sendmessage", "Nachricht senden", "", "id=" . $member['user_id']) . "</td>
+                <a href=\"?page=sendmessage&amp;id=" . $member['user_id'] . "\">Nachricht senden</a></td>
 				<td><a href=\"?page=user&amp;sub=edit&amp;id=" . $member['user_id'] . "\" " . cTT($member['user_nick'], "uifo" . $member['user_id'] . "") . ">" . $member['user_nick'] . "</a></td>
 				<td>" . nf($member['user_points']) . " Punkte</td>
 				<td><select name=\"member_rank[" . $member['user_id'] . "]\"><option value=\"0\">-</option>";
@@ -414,31 +414,31 @@ function historyTab(AllianceRepository $repository, int $id): void
 	tableEnd();
 }
 
-function resourcesTab(array $alliance): void
+function resourcesTab(\EtoA\Alliance\Alliance $alliance): void
 {
 	echo '<table class="tb">';
 	echo "<tr>
 			<th class=\"resmetalcolor\">Titan</th>
 			<td>
-				<input type=\"text\" name=\"res_metal\" id=\"res_metal\" value=\"" . nf($alliance['alliance_res_metal']) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
+				<input type=\"text\" name=\"res_metal\" id=\"res_metal\" value=\"" . nf($alliance->resMetal) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
 			+/-: <input type=\"text\" name=\"res_metal_add\" id=\"res_metal_add\" value=\"0\" size=\"8\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/></td>";
 	echo "<th class=\"rescrystalcolor\">Silizium</th>
-			<td><input type=\"text\" name=\"res_crystal\" id=\"res_crystal\" value=\"" . nf($alliance['alliance_res_crystal']) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
+			<td><input type=\"text\" name=\"res_crystal\" id=\"res_crystal\" value=\"" . nf($alliance->resCrystal) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
 			+/-: <input type=\"text\" name=\"res_crystal_add\" id=\"res_crystal_add\" value=\"0\" size=\"8\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/></td></tr>";
 	echo "<tr><th class=\"resplasticcolor\">PVC</th>
-			<td><input type=\"text\" name=\"res_plastic\" id=\"res_plastic\" value=\"" . nf($alliance['alliance_res_plastic']) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
+			<td><input type=\"text\" name=\"res_plastic\" id=\"res_plastic\" value=\"" . nf($alliance->resPlastic) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
 			+/-: <input type=\"text\" name=\"res_plastic_add\" id=\"res_plastic_add\" value=\"0\" size=\"8\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/></td>";
 	echo "<th class=\"resfuelcolor\">Tritium</th>
-			<td><input type=\"text\" name=\"res_fuel\" id=\"res_fuel\" value=\"" . nf($alliance['alliance_res_fuel']) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
+			<td><input type=\"text\" name=\"res_fuel\" id=\"res_fuel\" value=\"" . nf($alliance->resFuel) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
 			+/-: <input type=\"text\" name=\"res_fuel_add\" id=\"res_fuel_add\" value=\"0\" size=\"8\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/></td></tr>";
 	echo "<tr><th class=\"resfoodcolor\">Nahrung</th>
-			<td><input type=\"text\" name=\"res_food\" id=\"res_food\" value=\"" . nf($alliance['alliance_res_food']) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
+			<td><input type=\"text\" name=\"res_food\" id=\"res_food\" value=\"" . nf($alliance->resFood) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
 			+/-: <input type=\"text\" name=\"res_food_add\" id=\"res_food_add\" value=\"0\" size=\"8\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/></td><td colspan=\"2\">";
 	tableEnd();
 	echo "<p><input type=\"submit\" name=\"res_save\" value=\"Übernehmen\" /></p>";
 }
 
-function depositsTab(array $alliance, array $members): void
+function depositsTab(\EtoA\Alliance\Alliance $alliance, array $members): void
 {
 	echo "<form id=\"filterForm\">";
 	tableStart("Filter");
@@ -470,7 +470,7 @@ function depositsTab(array $alliance, array $members): void
 		</td>
 	</tr><tr>";
 	tableEnd();
-	echo "<p><input type=\"button\" onclick=\"xajax_showSpend(" . $alliance['alliance_id'] . ",xajax.getFormValues('filterForm'))\" value=\"Anzeigen\"\"/></p>";
+	echo "<p><input type=\"button\" onclick=\"xajax_showSpend(" . $alliance->id . ",xajax.getFormValues('filterForm'))\" value=\"Anzeigen\"\"/></p>";
 	echo "</form>";
 
 	echo "<div id=\"spends\">&nbsp;</div>";

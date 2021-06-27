@@ -11,7 +11,7 @@ use Twig\Loader\FilesystemLoader;
 
 class TwigServiceProvider extends \Silex\Provider\TwigServiceProvider
 {
-    public function register(Container $app)
+    public function register(Container $app): void
     {
         parent::register($app);
 
@@ -49,6 +49,7 @@ class TwigServiceProvider extends \Silex\Provider\TwigServiceProvider
 
         $app->extend('twig', function (Environment $twig, Container $app): Environment {
             $twig->addExtension(new TwigExtension($app));
+
             return $twig;
         });
     }

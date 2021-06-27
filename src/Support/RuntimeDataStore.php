@@ -8,22 +8,23 @@ use EtoA\Core\AbstractRepository;
 
 class RuntimeDataStore extends AbstractRepository
 {
-	public function get(string $key, string $default = null): ?string
-	{
-		$value = $this->createQueryBuilder()
-			->select('data_value')
-			->from('runtime_data')
-			->where('data_key = :key')
-			->setParameter('key', $key)
-			->execute()
-			->fetchOne();
-		return $value !== false ? $value : $default;
-	}
+    public function get(string $key, string $default = null): ?string
+    {
+        $value = $this->createQueryBuilder()
+            ->select('data_value')
+            ->from('runtime_data')
+            ->where('data_key = :key')
+            ->setParameter('key', $key)
+            ->execute()
+            ->fetchOne();
 
-	public function set(string $key, string $value): void
-	{
-		$this->getConnection()
-			->executeStatement("
+        return $value !== false ? $value : $default;
+    }
+
+    public function set(string $key, string $value): void
+    {
+        $this->getConnection()
+            ->executeStatement("
 				REPLACE INTO
 					runtime_data
 				(
@@ -36,8 +37,8 @@ class RuntimeDataStore extends AbstractRepository
 					:value
 				)
 				;", [
-				'key' => $key,
-				'value' => $value
-			]);
-	}
+                'key' => $key,
+                'value' => $value,
+            ]);
+    }
 }

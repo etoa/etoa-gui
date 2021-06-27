@@ -72,9 +72,9 @@
 
     {% if isAdminAllowed(userRoles, 'master,super-admin,game-admin,trial-game-admin') %}
         <fieldset class="overview_widget"><legend>Ticket-System</legend>
-            {{ popupLink('tickets', numTickets ~ ' neue Tickets')|raw }} vorhanden
+            <a href="?page=tickets">{{ numTickets ~ ' neue Tickets' }}</a> vorhanden
             <br/>
-            {{ popupLink('tickets', numOpenTickets ~ ' offene Tickets')|raw }} vorhanden
+            <a href="?page=tickets">{{ numOpenTickets ~ ' offene Tickets' }}</a> vorhanden
         </fieldset>
     {% endif %}
 

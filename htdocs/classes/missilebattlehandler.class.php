@@ -77,7 +77,10 @@ class MissileBattleHandler
 				// Schickt Nachricht an den Angreifer
 				$msg = $config->param2('battleban_arrival_text');
 				$uid = get_user_id_by_planet($arr['flight_entity_from']);
-				send_msg($uid,SHIP_WAR_MSG_CAT_ID,'Ergebnis des Raketenangriffs',$msg);
+
+                /** @var \EtoA\Message\MessageRepository $messageRepository */
+                $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+                $messageRepository->createSystemMessage((int) $uid, SHIP_WAR_MSG_CAT_ID, 'Ergebnis des Raketenangriffs', $msg);
 			}
 
 			return;
@@ -405,8 +408,10 @@ class MissileBattleHandler
 					");
 				}
 
-				send_msg($fuid,SHIP_WAR_MSG_CAT_ID,'Ergebnis des Raketenangriffs',$msg_a);
-				send_msg($tuid,SHIP_WAR_MSG_CAT_ID,'Raketenangriff',$msg_d);
+                /** @var \EtoA\Message\MessageRepository $messageRepository */
+                $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+                $messageRepository->createSystemMessage((int) $fuid, SHIP_WAR_MSG_CAT_ID, 'Ergebnis des Raketenangriffs', $msg_a);
+                $messageRepository->createSystemMessage((int) $tuid, SHIP_WAR_MSG_CAT_ID, 'Raketenangriff', $msg_d);
 			}
 		}
 	}

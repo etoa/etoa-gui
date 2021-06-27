@@ -18,6 +18,7 @@ class ConfigurationDefinitionsRepository
         if (is_file(self::DEFAULTS_FILE_PATH)) {
             return simplexml_load_file(self::DEFAULTS_FILE_PATH);
         }
+
         throw new Exception("Konfigurationsdatei existiert nicht!");
     }
 
@@ -34,12 +35,14 @@ class ConfigurationDefinitionsRepository
         $arr = $this->xmlData->xpath("/config/items/item[@name='" . $key . "']");
         if ($arr != null && count($arr) > 0) {
             $itemDefinition = $arr[0];
+
             return new ConfigItem(
                 (string) $itemDefinition->v,
                 (string) $itemDefinition->p1,
                 (string) $itemDefinition->p2
             );
         }
+
         return false;
     }
 
@@ -53,18 +56,21 @@ class ConfigurationDefinitionsRepository
         foreach ($this->xmlData->categories->category as $i) {
             $c[(int)$i['id']] = (string)$i;
         }
+
         return $c;
     }
 
     public function itemInCategory($cat): array
     {
         $this->ensureXmlDefinitionsLoaded();
+
         return $this->xmlData->xpath("/config/items/item[@cat='" . $cat . "']");
     }
 
     public function getBaseItems(): array
     {
         $this->ensureXmlDefinitionsLoaded();
+
         return $this->xmlData->xpath("/config/items/item[@base='yes']");
     }
 }

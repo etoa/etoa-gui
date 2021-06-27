@@ -21,19 +21,72 @@ class DefenseDataRepository extends AbstractRepository
     /**
      * @return array<int, string>
      */
-    public function getDefenseNames(): array
+    public function getDefenseNames(bool $showAll = false): array
     {
-        if (!$this->cache->contains(self::DEFENSE_NAMES)) {
-            $names = $this->createQueryBuilder()
-                ->select('def_id, def_name')
-                ->addSelect()
-                ->from('defense')
-                ->execute()
-                ->fetchAllKeyValue();
+        $qb = $this->createQueryBuilder()
+            ->select('def_id, def_name')
+            ->addSelect()
+            ->from('defense');
 
-            $this->cache->save(self::DEFENSE_NAMES, $names);
+        if (!$showAll) {
+            $qb
+                ->where('def_show = 1');
         }
 
-        return $this->cache->fetch(self::DEFENSE_NAMES);
+        return $qb
+            ->execute()
+            ->fetchAllKeyValue();
+    }
+
+    public function getDefense(int $defenseId): ?Defense
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('defense')
+            ->where('def_show = 1')
+            ->andWhere('def_id = :defenseId')
+            ->setParameter('defenseId', $defenseId)
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? new Defense($data) : null;
+    }
+
+    /**
+     * @return Defense[]
+     */
+    public function getDefenseByRace(int $raceId): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('defense')
+            ->where('def_race_id = :raceId')
+            ->andWhere('def_buildable = 1')
+            ->andWhere('def_show = 1')
+            ->setParameter('raceId', $raceId)
+            ->orderBy('def_order')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new Defense($row), $data);
+    }
+
+    /**
+     * @return Defense[]
+     */
+    public function getDefenseByCategory(int $categoryId): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('defense')
+            ->where('def_cat_id = :categoryId')
+            ->andWhere('def_buildable = 1')
+            ->andWhere('def_show = 1')
+            ->setParameter('categoryId', $categoryId)
+            ->orderBy('def_order')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new Defense($row), $data);
     }
 }

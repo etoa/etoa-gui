@@ -24,7 +24,7 @@ class PlanetType
     {
         $this->id = (int) $data['type_id'];
         $this->name = $data['type_name'];
-        $this->habitable = (bool) $data['type_habitable'];;
+        $this->habitable = (bool) $data['type_habitable'];
         $this->metal = (float) $data['type_f_metal'];
         $this->crystal = (float) $data['type_f_crystal'];
         $this->plastic = (float) $data['type_f_plastic'];

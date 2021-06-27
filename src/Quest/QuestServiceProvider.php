@@ -12,6 +12,7 @@ use EtoA\Quest\Progress\FunctionBuilder;
 use EtoA\Quest\Reward\DefenseRewardCollector;
 use EtoA\Quest\Reward\MissileRewardCollector;
 use EtoA\Quest\Reward\ShipRewardCollector;
+use EtoA\Universe\PlanetRepository;
 use LittleCubicleGames\Quests\Progress\ProgressFunctionBuilder;
 use LittleCubicleGames\Quests\Progress\StateFunctionBuilder;
 use LittleCubicleGames\Quests\ServiceProvider;
@@ -93,13 +94,13 @@ class QuestServiceProvider extends ServiceProvider implements ControllerProvider
         };
 
         $pimple['etoa.quest.reward.shipcollector'] = function (Container $pimple): ShipRewardCollector {
-            return new ShipRewardCollector($pimple['etoa.ship.repository'], $pimple['etoa.planet.repository']);
+            return new ShipRewardCollector($pimple['etoa.ship.repository'], $pimple[PlanetRepository::class]);
         };
         $pimple['etoa.quest.reward.defensecollector'] = function (Container $pimple): DefenseRewardCollector {
-            return new DefenseRewardCollector($pimple['etoa.defense.repository'], $pimple['etoa.planet.repository']);
+            return new DefenseRewardCollector($pimple['etoa.defense.repository'], $pimple[PlanetRepository::class]);
         };
         $pimple['etoa.quest.reward.missilecollector'] = function (Container $pimple): MissileRewardCollector {
-            return new MissileRewardCollector($pimple['etoa.missile.repository'], $pimple['etoa.planet.repository']);
+            return new MissileRewardCollector($pimple['etoa.missile.repository'], $pimple[PlanetRepository::class]);
         };
 
         $pimple['cubicle.quests.rewards.collectors'] = function (Container $pimple): array {

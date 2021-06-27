@@ -6,6 +6,17 @@ use EtoA\Core\AbstractRepository;
 
 class ShipRepository extends AbstractRepository
 {
+    public function getNumberOfShips(int $shipId): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(shiplist_id)')
+            ->from('shiplist')
+            ->where('shiplist_ship_id = :shipId')
+            ->setParameter('shipId', $shipId)
+            ->execute()
+            ->fetchOne();
+    }
+
     public function addShip(int $shipId, int $amount, int $userId, int $entityId): void
     {
         $this->getConnection()->executeQuery('INSERT INTO shiplist (

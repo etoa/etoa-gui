@@ -40,6 +40,17 @@ class BuildingRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    public function getNumberOfBuildings(int $buildingId): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(buildlist_id)')
+            ->from('buildlist')
+            ->where('buildlist_building_id = :buildingId')
+            ->setParameter('buildingId', $buildingId)
+            ->execute()
+            ->fetchOne();
+    }
+
     public function numBuildingListEntries(): int
     {
         return (int) $this->createQueryBuilder()
@@ -81,6 +92,7 @@ class BuildingRepository extends AbstractRepository
             ->setParameter('id', $id)
             ->execute()
             ->fetchAssociative();
+
         return $data !== false ? $data : null;
     }
 
@@ -112,6 +124,7 @@ class BuildingRepository extends AbstractRepository
             ->where('buildlist_id = :id')
             ->setParameter('id', $id)
             ->execute();
+
         return (int) $affected > 0;
     }
 

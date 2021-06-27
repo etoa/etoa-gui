@@ -53,9 +53,11 @@ class MessageRepository extends AbstractRepository
                 ])
                 ->execute();
             $this->getConnection()->commit();
+
             return $id;
         } catch (\Exception $ex) {
             $this->getConnection()->rollBack();
+
             throw $ex;
         }
     }

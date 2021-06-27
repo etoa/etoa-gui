@@ -208,7 +208,7 @@ function userTickets($uid,$target)
 		{
 			$adminNick = $adminUserRepo->getNick($ticket->adminId);
 			echo "<tr>
-				<td><a href=\"#\" onclick=\"window.open('popup.php?page=tickets&id=".$ticket->id."','Tickets','top=20,left='+(screen.availWidth-720)+',width=700, height=600, status=no, scrollbars=yes')\">".$ticket->getIdString()."</a></td>
+				<td><a href=\"?page=tickets&id=".$ticket->id."\">".$ticket->getIdString()."</a></td>
 				<td class=\"tbldata\">".df($ticket->timestamp)."</td>
 				<td class=\"tbldata\">".$ticketRepo->getCategoryName($ticket->catId)."</td>
 				<td class=\"tbldata\">".$ticket->getStatusName()."</td>
@@ -231,10 +231,14 @@ function userTickets($uid,$target)
 
 function sendUrgendMsg($uid,$subject,$text)
 {
+    global $app;
+
 	$or = new xajaxResponse();
 	if ($text!="" && $subject!="")
 	{
-		send_msg($uid,USER_MSG_CAT_ID,$subject,$text);
+	    /** @var \EtoA\Message\MessageRepository $messageRepository */
+	    $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+	    $messageRepository->createSystemMessage((int) $uid, USER_MSG_CAT_ID, $subject, $text);
 
 		$or->alert("Nachricht gesendet!");
 		$or->assign('urgendmsgsubject',"value","");

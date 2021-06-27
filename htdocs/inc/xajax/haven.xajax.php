@@ -1758,6 +1758,7 @@
 
 	function havenCheckAction($code)
 	{
+	    global $app;
 		$response = new xajaxResponse();
 		$fleet = unserialize($_SESSION['haven']['fleetObj']);
 		ob_start();
@@ -1867,19 +1868,12 @@
 		if ($code=="fakeattack")
 		{
 			ob_start();
-			$res = dbquery("SELECT
-							ship_id,
-							ship_name
-						FROM
-							ships
-						WHERE
-							ships.ship_fakeable='1'
-						ORDER BY
-							ships.ship_name;");
+			/** @var \EtoA\Ship\ShipDataRepository $shipDataRepository */
+			$shipDataRepository = $app[\EtoA\Ship\ShipDataRepository::class];
+			$shipNames = $shipDataRepository->getFakeableShipNames();
 			echo "<td colspan=\"3\">";
-			while ($arr = mysql_fetch_row($res))
-			{
-				echo "<input type=\"radio\" name=\"fakeShip\" name=\"fakeShip\" value=\"".$arr[0]."\">&nbsp;".$arr[1]."<br>";
+			foreach ($shipNames as $shipId => $shipName) {
+				echo "<input type=\"radio\" name=\"fakeShip\" name=\"fakeShip\" value=\"".$shipId."\">&nbsp;".$shipName."<br>";
 			}
 			echo "</td>";
 			$response->assign("fakebox","innerHTML",ob_get_contents());

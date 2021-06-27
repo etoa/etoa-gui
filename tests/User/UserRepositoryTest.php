@@ -68,6 +68,15 @@ class UserRepositoryTest extends AbstractDbTestCase
         $this->assertSame([1 => 'Nickname'], $this->repository->getUserNicknames());
     }
 
+    public function testGetUser(): void
+    {
+        $userId = 10;
+
+        $this->createUser($userId);
+
+        $this->assertNotNull($this->repository->getUser($userId));
+    }
+
     private function createUser(int $userId, int $specialistId = 0, int $allianceId = 0, int $points = 0, string $discoverMask = ''): void
     {
         $this->connection

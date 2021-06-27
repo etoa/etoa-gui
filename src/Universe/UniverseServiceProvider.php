@@ -11,6 +11,10 @@ class UniverseServiceProvider implements ServiceProviderInterface
 {
     public function register(Container $pimple): void
     {
+        $pimple[PlanetRepository::class] = function (Container $pimple): PlanetRepository {
+            return new PlanetRepository($pimple['db']);
+        };
+
         $pimple['etoa.universe.cell.repository'] = function (Container $pimple): CellRepository {
             return new CellRepository($pimple['db']);
         };

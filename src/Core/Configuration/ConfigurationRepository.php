@@ -23,6 +23,7 @@ class ConfigurationRepository extends AbstractRepository
                 ->from('config')
                 ->execute()
                 ->fetchAllAssociativeIndexed();
+
         return array_map(fn ($arr) => new ConfigItem(
             $arr['config_value'],
             $arr['config_param1'],

@@ -53,6 +53,7 @@ class ConfigurationService
     public function all(): array
     {
         $this->ensureLoaded();
+
         return $this->_items;
     }
 
@@ -65,6 +66,7 @@ class ConfigurationService
         if ($elem = $this->definitions->getItem($key)) {
             return $elem->value;
         }
+
         throw new Exception('Invalid configuration key ' . $key);
     }
 
@@ -92,6 +94,7 @@ class ConfigurationService
         if ($elem = $this->definitions->getItem($key)) {
             return $elem->param1;
         }
+
         throw new Exception('Invalid configuration key ' . $key);
     }
 
@@ -119,6 +122,7 @@ class ConfigurationService
         if ($elem = $this->definitions->getItem($key)) {
             return $elem->param2;
         }
+
         throw new Exception('Invalid configuration key ' . $key);
     }
 
@@ -140,6 +144,7 @@ class ConfigurationService
     public function has(string $name): bool
     {
         $this->ensureLoaded();
+
         return isset($this->_items[$name]);
     }
 
@@ -162,6 +167,7 @@ class ConfigurationService
             $this->repository->save((string) $itemDefinition['name'], $item);
             $cnt++;
         }
+
         return $cnt;
     }
 }
