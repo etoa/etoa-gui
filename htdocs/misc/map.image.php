@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\CellRepository;
 use EtoA\Universe\EntityRepository;
 use EtoA\Universe\EntityType;
 use EtoA\Universe\StarRepository;
@@ -11,6 +12,9 @@ define('IMG_DIR',"images/imagepacks/Discovery");
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
+
+/** @var CellRepository */
+$cellRepo = $app['etoa.universe.cell.repository'];
 
 /** @var EntityRepository */
 $entityRepo = $app['etoa.universe.entity.repository'];
@@ -106,89 +110,39 @@ if (isset($_SESSION) || $admin)
 
         if (isset($_GET['type']) && $_GET['type']=="alliance")
         {
-            $uid=$_SESSION['user_id'];
-            $res=dbquery("
-                        SELECT
-                            cells.sx,
-                            cells.cx,
-                            cells.sy,
-                            cells.cy,
-                            COUNT(planets.id) AS cnt
-                        FROM
-                            users as u
-                        INNER JOIN
-                            users as a
-                        ON
-                            a.user_alliance_id=u.user_alliance_id
-            AND u.user_alliance_id > 0
-                            AND u.user_id='$uid'
-                        INNER JOIN
-                            planets
-                        ON
-                            planets.planet_user_id=a.user_id
-                        INNER JOIn
-                            entities
-                        ON
-                            entities.id=planets.id
-                        INNER JOIN
-                            cells
-                        ON
-                            cells.id=entities.cell_id
-                        GROUP BY
-                            cells.id;
-            ");
             $col = [];
             for ($x=1;$x<=$p_num_max;$x++)
             {
                 $col[$x] = imagecolorallocate($im,105+(150/$p_num_max*$x),105+(150/$p_num_max*$x),0);
             }
-            while ($arr=mysql_fetch_array($res))
+            $cells = $cellRepo->getCellPopulationForUserAlliance((int) $_SESSION['user_id']);
+            foreach ($cells as $cell)
             {
-                $x = ((($arr['sx']-1)*$cx_num + $arr['cx']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-                $y = $h-$legendHeight+GALAXY_IMAGE_SCALE-((($arr['sy']-1)*$cy_num + $arr['cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-                imagefilledellipse ($im,$x,$y,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[$arr['cnt']]);
+                $x = ((($cell['sx']-1)*$cx_num + $cell['cx']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
+                $y = $h-$legendHeight+GALAXY_IMAGE_SCALE-((($cell['sy']-1)*$cy_num + $cell['cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
+                imagefilledellipse ($im,$x,$y,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[$cell['cnt']]);
             }
-    if ($legend) {
-        imagestring($im,3,10,$h-$legendHeight+10,"Legende:    Viel    Mittel    Wenig",$colWhite);
-        imagefilledellipse ($im,80,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[$p_num_max]);
-        imagefilledellipse ($im,135,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[floor($p_num_max/2)]);
-        imagefilledellipse ($im,205,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[3]);
-    }
+            if ($legend) {
+                imagestring($im,3,10,$h-$legendHeight+10,"Legende:    Viel    Mittel    Wenig",$colWhite);
+                imagefilledellipse ($im,80,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[$p_num_max]);
+                imagefilledellipse ($im,135,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[floor($p_num_max/2)]);
+                imagefilledellipse ($im,205,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[3]);
+            }
         }
         elseif (isset($_GET['type']) && $_GET['type']=="own")
         {
-            $uid=$_SESSION['user_id'];
-            $res=dbquery("
-                        SELECT
-                            cells.sx,
-                            cells.cx,
-                            cells.sy,
-                            cells.cy,
-                            COUNT(planets.id) AS cnt
-                        FROM
-                            planets
-                        INNER JOIN
-                            entities
-                        ON
-                            entities.id=planets.id
-                            AND planets.planet_user_id='$uid'
-                        INNER JOIN
-                            cells
-                        ON
-                            cells.id=entities.cell_id
-                        GROUP BY
-                            cells.id;
-            ");
             $col = [];
             for ($x=1;$x<=$p_num_max;$x++)
             {
                 $col[$x] = imagecolorallocate($im,105+(150/$p_num_max*$x),105+(150/$p_num_max*$x),0);
             }
-            while ($arr=mysql_fetch_array($res))
+
+            $cells = $cellRepo->getCellPopulationForUser((int) $_SESSION['user_id']);
+            foreach ($cells as $cell)
             {
-                $x = ((($arr['sx']-1)*$cx_num + $arr['cx']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-                $y = $h-$legendHeight+GALAXY_IMAGE_SCALE-((($arr['sy']-1)*$cy_num + $arr['cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-                imagefilledellipse ($im,$x,$y,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[$arr['cnt']]);
+                $x = ((($cell['sx']-1)*$cx_num + $cell['cx']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
+                $y = $h-$legendHeight+GALAXY_IMAGE_SCALE-((($cell['sy']-1)*$cy_num + $cell['cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
+                imagefilledellipse ($im,$x,$y,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[$cell['cnt']]);
             }
             if ($legend) {
                 imagestring($im,3,10,$h-$legendHeight+10,"Legende:    Viel    Mittel    Wenig",$colWhite);
@@ -199,34 +153,17 @@ if (isset($_SESSION) || $admin)
         }
         elseif (isset($_GET['type']) && $_GET['type']=="populated")
         {
-            $res=dbquery("
-            SELECT
-                c.sx,
-                c.cx,
-                c.sy,
-                c.cy,
-                COUNT(p.id) AS cnt
-            FROM
-                cells c,
-                planets p,
-                entities e
-            WHERE
-                p.id=e.id
-                AND e.cell_id=c.id
-                AND p.planet_user_id>0
-            GROUP BY
-                e.cell_id
-            ");
             $col = [];
             for ($x=1;$x<=$p_num_max;$x++)
             {
                 $col[$x] = imagecolorallocate($im,(255/$p_num_max*$x),(255/$p_num_max*$x),0);
             }
-            while ($arr=mysql_fetch_assoc($res))
+            $cells = $cellRepo->getCellPopulation();
+            foreach ($cells as $cell)
             {
-                $x = ((($arr['sx']-1)*$cx_num + $arr['cx']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-                $y = $h-$legendHeight+GALAXY_IMAGE_SCALE-((($arr['sy']-1)*$cy_num + $arr['cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-                imagefilledellipse ($im,$x,$y,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[max(3,$arr['cnt'])]);
+                $x = ((($cell['sx']-1)*$cx_num + $cell['cx']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
+                $y = $h-$legendHeight+GALAXY_IMAGE_SCALE-((($cell['sy']-1)*$cy_num + $cell['cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
+                imagefilledellipse ($im,$x,$y,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[max(3,$cell['cnt'])]);
             }
             if ($legend) {
                 imagestring($im,3,10,$h-$legendHeight+10,"Legende:    Viel    Mittel    Wenig",$colWhite);

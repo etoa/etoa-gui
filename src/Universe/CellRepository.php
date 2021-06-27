@@ -87,4 +87,62 @@ class CellRepository extends AbstractRepository
                 flatten($values)
             );
     }
+
+    public function getCellPopulation(): array
+    {
+        return $this->createQueryBuilder()
+            ->select(
+                'c.sx',
+                'c.cx',
+                'c.sy',
+                'c.cy',
+                'COUNT(p.id) AS cnt'
+            )
+            ->from('cells', 'c')
+            ->innerJoin('c', 'entities', 'e', 'e.cell_id = c.id')
+            ->innerJoin('e', 'planets', 'p', 'p.id = e.id AND p.planet_user_id > 0')
+            ->groupBy('e.cell_id')
+            ->execute()
+            ->fetchAllAssociative();
+    }
+
+    public function getCellPopulationForUser(int $userId): array
+    {
+        return $this->createQueryBuilder()
+            ->select(
+                'c.sx',
+                'c.cx',
+                'c.sy',
+                'c.cy',
+                'COUNT(p.id) AS cnt'
+            )
+            ->from('cells', 'c')
+            ->innerJoin('c', 'entities', 'e', 'e.cell_id = c.id')
+            ->innerJoin('e', 'planets', 'p', 'p.id = e.id AND p.planet_user_id = :user')
+            ->groupBy('e.cell_id')
+            ->setParameter('user', $userId)
+            ->execute()
+            ->fetchAllAssociative();
+    }
+
+    public function getCellPopulationForUserAlliance(int $userId): array
+    {
+        return $this->createQueryBuilder()
+            ->select(
+                'c.sx',
+                'c.cx',
+                'c.sy',
+                'c.cy',
+                'COUNT(p.id) AS cnt'
+            )
+            ->from('cells', 'c')
+            ->innerJoin('c', 'entities', 'e', 'e.cell_id = c.id')
+            ->innerJoin('e', 'planets', 'p', 'p.id = e.id')
+            ->innerJoin('p', 'users', 'a', 'p.planet_user_id = a.user_id')
+            ->innerJoin('a', 'users', 'u', 'a.user_alliance_id=u.user_alliance_id AND u.user_alliance_id > 0 AND u.user_id = :user')
+            ->groupBy('e.cell_id')
+            ->setParameter('user', $userId)
+            ->execute()
+            ->fetchAllAssociative();
+    }
 }
