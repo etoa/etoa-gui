@@ -165,9 +165,6 @@ class MessageRepository extends AbstractRepository
         int $fleetId = 0
     ): void {
         try {
-            if ($catId == 0) {
-                $cat = USER_MSG_CAT_ID;
-            }
             $this->getConnection()->beginTransaction();
 
             $this->createQueryBuilder()
@@ -181,7 +178,7 @@ class MessageRepository extends AbstractRepository
                 ->setParameters([
                     'senderId' => $senderId,
                     'receiverId' => $receiverId,
-                    'catId' => $catId,
+                    'catId' => $catId != 0 ? $catId : USER_MSG_CAT_ID,
                 ])
                 ->execute();
 
@@ -489,5 +486,22 @@ class MessageRepository extends AbstractRepository
             ->fetchOne();
 
         return $data !== false ? $data : null;
+    }
+
+    public function isRecipientIgnoringSender(int $senderId, int $recipientId): bool
+    {
+        $data = (int) $this->createQueryBuilder()
+            ->select('COUNT(ignore_id)')
+            ->from('message_ignore')
+            ->where('ignore_owner_id = :recipient')
+            ->andWhere('ignore_target_id = :sender')
+            ->setParameters([
+                'sender' => $senderId,
+                'recipient' => $recipientId,
+            ])
+            ->execute()
+            ->fetchOne();
+
+        return $data > 0;
     }
 }

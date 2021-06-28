@@ -15,15 +15,11 @@ $request = Request::createFromGlobals();
 /** @var \EtoA\User\UserRepository $userRepository */
 $userRepository = $app['etoa.user.repository'];
 
-// DEFINITIONEN //
+$previewMessages = $cu->properties->msgPreview == 1;
 
-$msgpreview = $cu->properties->msgPreview==1 ? true : false;
-$msgcreatpreview = $cu->properties->msgCreationPreview==1 ? true : false;
-
-// BEGIN SKRIPT //
-
-// Modus setzen
-$mode = $request->query->get('mode', '') != '' && ctype_alpha($request->query->get('mode')) ? $request->query->get('mode') : 'inbox';
+$mode = $request->query->get('mode', '') != '' && ctype_alpha($request->query->get('mode'))
+    ? $request->query->get('mode')
+    : 'inbox';
 
 ?>
 <script type="text/javascript">
@@ -390,13 +386,10 @@ else
                             <img src=\"".$im_path."\" alt=\"Mail\" id=\"msgimg".$message->id."\" />
                         </td>
                     <td style=\"width:66%;\" ";
-                    if ($msgpreview)
+                    if ($previewMessages)
                     {
                         // subj has already been encoded above
-                        echo tm($subj, htmlentities(substr(strip_bbcode($message->text),
-                            0,
-                            500
-                        ), ENT_QUOTES, 'UTF-8'));
+                        echo tm($subj, htmlentities(substr(strip_bbcode($message->text), 0, 500), ENT_QUOTES, 'UTF-8'));
                     }
                     echo ">";
                     if ($message->massMail)
@@ -410,7 +403,7 @@ else
                     }
                     else
                     {
-                        if ($msgpreview)
+                        if ($previewMessages)
                         {
                             echo "<a href=\"javascript:;\" onclick=\"toggleBox('msgtext".$message->id."');xajax_messagesSetRead(".$message->id.")\" >".$subj."</a>";
                         }
@@ -425,12 +418,12 @@ else
                     echo "<td style=\"width:2%;text-align:center;padding:0px;vertical-align:middle;\">
                     <input id=\"delcb_".$category['cat_id']."_".$dcnt."\" type=\"checkbox\" name=\"delmsg[".$message->id."]\" value=\"1\" title=\"Nachricht zum Löschen markieren\" /></td>";
                     echo "</tr>\n";
-                    if ($msgpreview)
+                    if ($previewMessages)
                     {
                         echo "<tr style=\"display:none;\" id=\"msgtext".$message->id."\"><td colspan=\"5\" class=\"tbldata\">";
                         echo text2html(addslashes($message->text));
                         echo "<br/><br/>";
-                        $msgadd = "&amp;message_text=".base64_encode($message->id)."&amp;message_sender=".base64_encode($sender);
+                        $msgadd = "&amp;message_text=".base64_encode((string) $message->id)."&amp;message_sender=".base64_encode($sender);
                         if (substr($message->subject, 0, 3) == "Fw:")
                         {
                             $subject = base64_encode($message->subject);
