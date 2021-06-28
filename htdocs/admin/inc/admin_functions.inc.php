@@ -10,33 +10,6 @@
 use Doctrine\DBAL\Query\QueryBuilder;
 
 /**
-* Shows a table view of a given mysql result
-*
-* @param resource $res MySQL result pointer
-*/
-function db_show_result($res)
-{
-    echo '<table class="tb"><thead><tr>';
-    $fc=0;
-    while ($fo = mysql_fetch_field($res))
-    {
-        echo '<th>'.$fo->name.'</th>';
-        $fc++;
-    }
-    echo '</tr></thead><tbody>';
-    while ($arr=mysql_fetch_row($res))
-    {
-        echo '<tr>';
-        for ($x=0;$x<$fc;$x++)
-        {
-            echo '<td>'.$arr[$x].'</td>';
-        }
-        echo '</tr>';
-    }
-    echo '</tbody></table>';
-}
-
-/**
 * Generates a page for editing table date with
 * an advanced form
 *
@@ -60,24 +33,6 @@ function simple_form($module, $twig)
     require_once("inc/form_functions.php");
     require_once("forms/$module.php");
     require_once("inc/simple_forms.php");
-}
-
-/**
-* Checks permission to access a page
-* for current user and given page rank
-*
-* @param int $rank Required rank
-* @return bool Permission granted or nor
-*/
-function check_perm($rank)
-{
-    global $adminlevel;
-    if ($_SESSION[SESSION_NAME]['group_level']<$rank)
-    {
-        echo "<h1>Kein Zugriff</h1> Du hast keinen Zugriff auf diese Seite! Erwartet ".$adminlevel[$rank]." ($rank), gegeben ".$_SESSION[SESSION_NAME]['group_name']." (".$_SESSION[SESSION_NAME]['group_level'].")<br/>";
-        return false;
-    }
-    return true;
 }
 
 /**
@@ -106,22 +61,6 @@ function copy_button($url, $ocl="")
         return "<a href=\"$url\" onclick=\"$ocl\"><img src=\"../images/icons/copy.png\" alt=\"Kopieren\" style=\"width:16px;height:18px;border:none;\" title=\"Kopieren\" /></a>";
     else
         return "<a href=\"$url\"><img src=\"../images/icons/copy.png\" alt=\"Kopieren\" style=\"width:16px;height:18px;border:none;\" title=\"Kopieren\" /></a>";
-}
-
-/**
- * Displays a clickable repair button
- *
- * @param string $url Url of the link
- * @param string $tmTitle
- * @param string $tmText
- * @param string $ocl
-*/
-function repair_button($url, $tmTitle="", $tmText="", $ocl = '')
-{
-    if ($tmTitle!="" && $tmText!="")
-        return "<a href=\"$url\" onclick=\"$ocl\"><img src=\"../images/repair.gif\" alt=\"Reparieren\" style=\"width:18px;height:18px;border:none;\" ".tm($tmTitle,$tmText)."/></a>";
-    else
-        return "<a href=\"$url\"><img src=\"../images/repair.gif\" alt=\"Reparieren\" style=\"width:18px;height:18px;border:none;\" title=\"Reparieren\" /></a>";
 }
 
 /**

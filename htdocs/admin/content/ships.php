@@ -292,8 +292,6 @@ $shipDataRepository = $app[\EtoA\Ship\ShipDataRepository::class];
 					echo "<td class=\"tbldata\"$style>".df($arr['queue_starttime'],1)."</td>";
 					echo "<td class=\"tbldata\"$style>".df($arr['queue_endtime'],1)."</td>";
 					echo "<td class=\"tbldata\"$style>".edit_button("?page=$page&sub=$sub&action=edit&id=".$arr['queue_id']);
-					//if ($error)
-					//	echo " ".repair_button("?page=$page&sub=$sub&action=searchresults&amp;repair=".$arr['shiplist_id'],"Fehler!",$errorMsg);
 					echo "</td>";
 					echo "</tr>";
 				}
