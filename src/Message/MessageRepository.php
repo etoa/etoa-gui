@@ -17,6 +17,26 @@ class MessageRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    public function countNotArchived(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(*)')
+            ->from('messages')
+            ->where('message_archived = 0')
+            ->execute()
+            ->fetchOne();
+    }
+
+    public function countDeleted(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(*)')
+            ->from('messages')
+            ->where('message_deleted = 1')
+            ->execute()
+            ->fetchOne();
+    }
+
     public function countNewForUser(int $userId): int
     {
         return (int) $this->createQueryBuilder()
