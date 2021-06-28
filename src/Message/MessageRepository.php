@@ -234,6 +234,11 @@ class MessageRepository extends AbstractRepository
             ->addOrderBy('message_timestamp', 'DESC')
             ->setMaxResults($limit);
 
+        if (isset($params['id'])) {
+            $qry->andWhere('message_id = :id')
+                ->setParameter('id', $params['id']);
+        }
+
         if (isset($params['user_from_id'])) {
             $qry->andWhere('message_user_from = :user_from_id')
                 ->setParameter('user_from_id', $params['user_from_id']);
