@@ -326,6 +326,11 @@ class MessageRepository extends AbstractRepository
                 ->setParameter('archived', $params['archived']);
         }
 
+        if (isset($params['mailed'])) {
+            $qry->andWhere('message_mailed = :mailed')
+                ->setParameter('mailed', $params['mailed']);
+        }
+
         $data = $qry->execute()
             ->fetchAllAssociative();
 
@@ -432,6 +437,21 @@ class MessageRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
                 'read' => $read,
+            ])
+            ->execute();
+
+        return $affected > 0;
+    }
+
+    public function setMailed(int $userTo, bool $mailed = true): bool
+    {
+        $affected = (int) $this->createQueryBuilder()
+            ->update('messages')
+            ->set('message_mailed', ':mailed')
+            ->where('message_user_to = :userTo')
+            ->setParameters([
+                'userTo' => $userTo,
+                'mailed' => $mailed,
             ])
             ->execute();
 
