@@ -115,4 +115,21 @@ class UserRepository extends AbstractRepository
 
         return $data !== false ? new User($data) : null;
     }
+
+    public function getEmailAddresses(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('user_id', 'user_nick', 'user_email')
+            ->from('users')
+            ->orderBy('user_nick')
+            ->execute()
+            ->fetchAllAssociative();
+
+        $recipients = [];
+        foreach ($data as $item) {
+            $recipients[$item['user_id']] = $item['user_nick']."<".$item['user_email'].">";
+        }
+
+        return $recipients;
+    }
 }

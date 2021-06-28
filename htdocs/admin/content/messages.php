@@ -48,21 +48,10 @@ function sendMessageForm(
     {
         if ($request->request->get('message_subject') != "" && $request->request->get('message_text') != "")
         {
-            $to = array();
-            if ($request->request->getInt('rcpt_type') == 1)
-            {
-                // Not good style, should use class.. but is faster for this ammount of data
-                $res = dbquery("SELECT user_id,user_nick,user_email FROM users");
-                if (mysql_num_rows($res)>0)
-                {
-                    while($arr=mysql_fetch_assoc($res))
-                    {
-                        $to[$arr['user_id']] = $arr['user_nick']."<".$arr['user_email'].">";
-                    }
-                }
-            }
-            else
-            {
+            $to = [];
+            if ($request->request->getInt('rcpt_type') == 1) {
+                $to = $userRepository->getEmailAddresses();
+            } else {
                 $userId = $request->request->getInt('message_user_to');
                 $recipient = $userRepository->getUser($userId);
                 $to[$userId] = $recipient->getEmailAddress();
