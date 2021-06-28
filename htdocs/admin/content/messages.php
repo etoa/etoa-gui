@@ -377,7 +377,7 @@ function manageReports(Request $request, ReportRepository $reportRepository, Use
 
     else
     {
-        // unset($_SESSION['admin.messages.search']);
+        unset($_SESSION['admin.messages.search']);
 
         echo "Suchmaske:<br/><br/>";
         echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
@@ -610,7 +610,7 @@ function manageMessages(
 
     else
     {
-        // unset($_SESSION['admin.messages.search']);
+        unset($_SESSION['admin.messages.search']);
 
         echo "Suchmaske:<br/><br/>";
         echo "<form action=\"?page=$page\" method=\"post\">";
