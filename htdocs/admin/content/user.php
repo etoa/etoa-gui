@@ -421,7 +421,6 @@
 					echo "<td>".($arr['user_race_id']>0 ? $raceNames[$arr['user_race_id']] : '-')."</td>";
 					echo "<td>
 					".edit_button("?page=$page&amp;sub=edit&amp;id=".$arr['user_id'])."
-					".cb_button("add_user=".$arr['user_id']."")."
 					</td>";
 					echo "</tr>";
 				}

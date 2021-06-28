@@ -63,22 +63,6 @@ function copy_button($url, $ocl="")
         return "<a href=\"$url\"><img src=\"../images/icons/copy.png\" alt=\"Kopieren\" style=\"width:16px;height:18px;border:none;\" title=\"Kopieren\" /></a>";
 }
 
-
-/**
-* Displays a clickable edit button
-*
-* @param string $url Url of the link
-*/
-function cb_button($url)
-{
-    global $cb;
-    if ($cb)
-    {
-        return "<a href=\"clipboard.php?".$url."\" target=\"clipboard\"><img src=\"../images/clipboard.png\" alt=\"Zwischenablage\" style=\"width:16px;height:18px;border:none;\" title=\"Zwischenablage\" /></a>";
-    }
-    return "";
-}
-
 /**
 * Displays a clickable delete button
 *
