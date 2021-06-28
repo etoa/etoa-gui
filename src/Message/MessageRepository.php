@@ -322,17 +322,49 @@ class MessageRepository extends AbstractRepository
         return array_map(fn ($arr) => Message::createFromArray($arr), $data);
     }
 
-    public function setDeleted(int $id, bool $deleted = true): bool
+    public function setArchived(int $id, bool $archived = true, ?int $userToId = null): bool
     {
-        $affected = (int) $this->createQueryBuilder()
+        $qry = $this->createQueryBuilder()
+            ->update('messages')
+            ->set('message_archived', ':archived')
+            ->where('message_id = :id')
+            ->setParameters([
+                'id' => $id,
+                'archived' => $archived,
+            ]);
+
+        if ($userToId !== null) {
+            $qry->andWhere('message_user_to = :userToId')
+                ->setParameter('userToId', $userToId);
+        }
+
+        $affected = (int) $qry->execute();
+
+        return $affected > 0;
+    }
+
+    public function setDeleted(int $id, bool $deleted = true, ?int $userToId = null, ?bool $isArchived = null): bool
+    {
+        $qry = $this->createQueryBuilder()
             ->update('messages')
             ->set('message_deleted', ':deleted')
             ->where('message_id = :id')
             ->setParameters([
                 'id' => $id,
                 'deleted' => $deleted,
-            ])
-            ->execute();
+            ]);
+
+        if ($userToId !== null) {
+            $qry->andWhere('message_user_to = :userToId')
+                ->setParameter('userToId', $userToId);
+        }
+
+        if ($isArchived !== null) {
+            $qry->andWhere('message_archived = :isArchived')
+                ->setParameter('isArchived', $isArchived);
+        }
+
+        $affected = (int) $qry->execute();
 
         return $affected > 0;
     }

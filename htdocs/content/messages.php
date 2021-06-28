@@ -23,14 +23,12 @@ $msgcreatpreview = $cu->properties->msgCreationPreview==1 ? true : false;
 // BEGIN SKRIPT //
 
 // Modus setzen
-$mode = isset($_GET['mode']) && ($_GET['mode']!="") && ctype_alpha($_GET['mode']) ? $_GET['mode'] : 'inbox';
+$mode = $request->query->get('mode', '') != '' && ctype_alpha($request->query->get('mode')) ? $request->query->get('mode') : 'inbox';
 
 ?>
 <script type="text/javascript">
     function selectNewMessages()
     {
-        //max = var document.getElementById("msg_cnt").value;
-
         if (document.getElementById("select_new_messages").innerHTML=="Nur neue Nachrichten anzeigen")
         {
             document.getElementById("select_new_messages").innerHTML="Alle Nachrichten anzeigen";
@@ -38,22 +36,20 @@ $mode = isset($_GET['mode']) && ($_GET['mode']!="") && ctype_alpha($_GET['mode']
             // Geht jede einzelne Nachricht durch
             for (x=0;x<=document.getElementById("msg_cnt").value;x++)
             {
-                    document.getElementById('msg_id_'+x).style.display='none';
+                document.getElementById('msg_id_'+x).style.display='none';
             }
-
         }
         else
         {
-                        document.getElementById("select_new_messages").innerHTML="Nur neue Nachrichten anzeigen";
+            document.getElementById("select_new_messages").innerHTML="Nur neue Nachrichten anzeigen";
 
             // Geht jede einzelne Nachricht durch
             for (x=0;x<=document.getElementById("msg_cnt").value;x++)
             {
-                    document.getElementById('msg_id_'+x).style.display='';
+                document.getElementById('msg_id_'+x).style.display='';
             }
         }
     }
-
     </script>
 <?php
 
@@ -212,63 +208,31 @@ else
         // Einzelne Nachricht löschen
         if ($request->request->has('submitdelete') && checker_verify())
         {
-            $message = $messageRepository->find($request->request->getInt('message_id'));
-            if ($message !== null && $message->userTo == $cu->id)
-            {
-                if ($messageRepository->setDeleted($message->id)) {
-                    success_msg("Nachricht wurde gelöscht!");
-                } else {
-                    error_msg("Nachricht konnte nicht gelöscht werden!");
-                }
+            if ($messageRepository->setDeleted($request->request->getInt('message_id'), true, $cu->id)) {
+                success_msg("Nachricht wurde gelöscht!");
+            } else {
+                error_msg("Nachricht konnte nicht gelöscht werden!");
             }
         }
         if ($request->query->getInt('del') > 0)
         {
-            $message = $messageRepository->find($request->query->getInt('del'));
-            if ($message !== null && $message->userTo == $cu->id)
-            {
-                if ($messageRepository->setDeleted($message->id)) {
-                    success_msg("Nachricht wurde gelöscht!");
-                } else {
-                    error_msg("Nachricht konnte nicht gelöscht werden!");
-                }
+            if ($messageRepository->setDeleted($request->query->getInt('del'), true, $cu->id)) {
+                success_msg("Nachricht wurde gelöscht!");
+            } else {
+                error_msg("Nachricht konnte nicht gelöscht werden!");
             }
         }
 
         // Selektiere löschen
         if ($request->request->has('submitdeleteselection')  && checker_verify())
         {
-            if($mode=="archiv")
+            if (count($request->request->get('delmsg')) > 0)
             {
-                $sqladd = " AND message_archived=1";
-            }
-            else
-            {
-                $sqladd = " AND message_archived=0";
-            }
-
-            if (count($_POST['delmsg'])>0)
-            {
-                foreach ($_POST['delmsg'] as $id=>$val)
+                foreach (array_keys($request->request->get('delmsg')) as $id)
                 {
-                    dbquery("
-                    UPDATE
-                        messages
-                    SET
-                        message_deleted=1
-                    WHERE
-                        message_id='".intval($id)."'
-                        AND message_user_to='".$cu->id."'
-                        $sqladd;");
+                    $messageRepository->setDeleted((int) $id, true, $cu->id, $mode == "archiv");
                 }
-                if (count($_POST['delmsg'])==1)
-                {
-                    success_msg("Nachricht wurde gelöscht!");
-                }
-                else
-                {
-                    success_msg("Nachrichten wurden gelöscht!");
-                }
+                success_msg("Nachricht(en) wurden gelöscht!");
             }
         }
 
@@ -289,25 +253,14 @@ else
         {
             if (count($request->request->get('delmsg')) > 0)
             {
-                if(count($_POST['delmsg'])<=($config->param1Int('msg_max_store')-$_POST['archived_msg_cnt']))
+                $archiveSpace = $config->param1Int('msg_max_store') - $request->request->getInt('archived_msg_cnt');
+                if (count($request->request->get('delmsg')) <= $archiveSpace)
                 {
-                    foreach ($_POST['delmsg'] as $id=>$val)
+                    foreach (array_keys($request->request->get('delmsg')) as $id)
                     {
-                        dbquery("
-                        UPDATE
-                            messages
-                        SET
-                            message_archived=1
-                        WHERE
-                            message_id='".intval($id)."'
-                            AND message_user_to='".$cu->id."'
-                            ;");
+                        $messageRepository->setArchived((int) $id, true, $cu->id);
                     }
-                    if (count($_POST['delmsg'])==1) {
-                        success_msg("Nachricht wurde archiviert!");
-                    } else {
-                        success_msg("Nachrichten wurden archiviert!");
-                    }
+                    success_msg("Nachricht(en) wurden archiviert!");
                 }
                 else
                 {
