@@ -5,6 +5,9 @@ use Symfony\Component\HttpFoundation\Request;
 /** @var \EtoA\Message\MessageRepository $messageRepository */
 $messageRepository = $app[\EtoA\Message\MessageRepository::class];
 
+/** @var \EtoA\User\UserRepository $userRepository */
+$userRepository = $app['etoa.user.repository'];
+
 /** @var Request */
 $request = Request::createFromGlobals();
 
@@ -25,11 +28,8 @@ else
 
     if ($request->request->has('submit') && checker_verify())
     {
-        /** @var \EtoA\User\UserRepository $userRepository */
-        $userRepository = $app['etoa.user.repository'];
-
         $time = time();
-        $rcpts = rawurldecode($_POST['message_user_to']);
+        $rcpts = rawurldecode($request->request->get('message_user_to'));
         $rcptarr = explode(";", $rcpts);
 
         iBoxStart("Nachrichtenversand");
@@ -44,7 +44,7 @@ else
                     if (!$messageRepository->isRecipientIgnoringSender($cu->id, $uid))
                     {
                         // Prüfe Titel
-                        $check_subject = check_illegal_signs($_POST['message_subject']);
+                        $check_subject = check_illegal_signs($request->request->get('message_subject'));
                         if($check_subject=="")
                         {
                             $_SESSION['messagesSent'][$uid] = $time;
@@ -52,8 +52,8 @@ else
                             $messageRepository->sendFromUserToUser(
                                 $cu->id,
                                 $uid,
-                                $_POST['message_subject'],
-                                $_POST['message_text']
+                                $request->request->get('message_subject'),
+                                $request->request->get('message_text')
                             );
 
                             echo "Nachricht wurde an <b>".$rcpt."</b> gesendet! ";
@@ -87,7 +87,7 @@ else
     // Wenn Username durch Link weitergegeben wird (z.b. Stats -> mail)
     if ($request->query->has('message_user_to'))
     {
-        $user = get_user_nick(intval($_GET['message_user_to']));
+        $user = $userRepository->getNick($request->query->getInt('message_user_to'));
     }
     // Username löschen falls auf "Weiterleiten" geklcikt wurde
     elseif ($request->request->has('remit'))
@@ -97,7 +97,7 @@ else
     //Der Username wird übernommen wenn dieser angegeben ist
     elseif ($request->request->has('message_user_to'))
     {
-        $user = rawurldecode($_POST['message_user_to']);
+        $user = rawurldecode($request->request->get('message_user_to'));
     }
     else
     {
@@ -114,16 +114,16 @@ else
         // Weiterleiten
         if ($request->request->has('remit'))
         {
-            $subj = 'Fw: '.htmlentities($_POST['message_subject'],ENT_QUOTES,'UTF-8');
+            $subj = 'Fw: '.htmlentities($request->request->get('message_subject'), ENT_QUOTES, 'UTF-8');
         }
         // Antworten und "Re: " voran fügen, wenn dies nicht schon steht
         elseif ($request->request->has('answer'))
         {
-            $subj = 'Re: '.htmlentities($_POST['message_subject'],ENT_QUOTES,'UTF-8');
+            $subj = 'Re: '.htmlentities($request->request->get('message_subject'), ENT_QUOTES, 'UTF-8');
         }
         else
         {
-            $subj = htmlentities($_POST['message_subject'],ENT_QUOTES,'UTF-8');
+            $subj = htmlentities($request->request->get('message_subject'), ENT_QUOTES, 'UTF-8');
         }
     }
     else
@@ -135,12 +135,18 @@ else
     if ($request->request->has('message_text'))
     {
         $text = $request->request->has('message_sender')
-            ? "\n\n[b]Nachricht von ".$_POST['message_sender'].":[/b]\n\n".htmlentities($_POST['message_text'],ENT_QUOTES,'UTF-8')
-            : htmlentities($_POST['message_text'],ENT_QUOTES,'UTF-8');
+            ? "\n\n[b]Nachricht von ".$request->request->get('message_sender').":[/b]\n\n".htmlentities($request->request->get('message_text'), ENT_QUOTES,'UTF-8')
+            : htmlentities($request->request->get('message_text'), ENT_QUOTES,'UTF-8');
     }
     elseif ($request->query->has('message_text'))
     {
-        $sql = "SELECT text FROM message_data INNER JOIN messages ON id=message_id AND message_user_to='".$cu->id."' AND id='".intval(base64_decode(stripslashes($_GET['message_text']), true))."'  LIMIT 1;";
+        echo "--------------------";
+        $sql = "SELECT text
+            FROM message_data
+            INNER JOIN messages ON id=message_id
+                AND message_user_to='".$cu->id."'
+                AND id='".intval(base64_decode(stripslashes($_GET['message_text']), true))."'
+            LIMIT 1;";
         $mres = dbquery($sql);
 
         if ($request->query->has('message_sender'))
@@ -188,12 +194,6 @@ else
             <td width=\"250\"><textarea name=\"message_text\" id=\"message\" rows=\"12\" cols=\"60\" ";
             if ($previewNewMessage)
             {
-                /*
-                echo "onkeyup=\"
-                if(window.mytimeout) window.clearTimeout(window.mytimeout);
-                window.mytimeout = window.setTimeout('xajax_messagesNewMessagePreview(document.getElementById(\'message\').value)', 500);
-                return true;\"";
-                */
                 echo "onkeyup=\"text2html(this.value,'msgPreview');\"";
             }
             echo ">".$text.'</textarea><br/>'.helpLink('textformat', 'Hilfe zur Formatierung').'</td>';

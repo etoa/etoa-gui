@@ -421,6 +421,11 @@ parameters:
 			path: htdocs/inc/functions.inc.php
 
 		-
+			message: "#^Construct empty\\(\\) is not allowed. Use more strict comparison\\.$#"
+			count: 1
+			path: htdocs/inc/functions.inc.php
+
+		-
 			message: "#^If condition is always false\\.$#"
 			count: 2
 			path: htdocs/inc/init.inc.php
