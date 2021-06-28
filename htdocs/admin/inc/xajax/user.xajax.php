@@ -2,6 +2,8 @@
 
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
+use EtoA\Message\MessageRepository;
+use EtoA\User\UserRepository;
 
 $xajax->register(XAJAX_FUNCTION,"showTimeBox");
 $xajax->register(XAJAX_FUNCTION,"allianceRankSelector");
@@ -255,45 +257,23 @@ function sendUrgendMsg($uid,$subject,$text)
 function showLast5Messages($uid,$target,$limit=5)
 {
 	$or = new xajaxResponse();
+
+    // TODO
+    global $app;
+
+    /** @var MessageRepository */
+    $messageRepository = $app[MessageRepository::class];
+
+    /** @var UserRepository */
+    $userRepo = $app['etoa.user.repository'];
+
 	ob_start();
 	echo "<table class=\"tb\">";
-	$lres=dbquery("
-	SELECT
-		user_nick,
-		user_points,
-		message_user_from,
-		md.subject,
-		md.text,
-		message_id,
-		message_timestamp,
-		message_read,
-		alliance_id,
-		alliance_name,
-		alliance_tag
-	FROM
-		messages
-	INNER JOIN
-		message_data as md
-		on md.id=message_id
-	LEFT JOIN
-		(
-			users
-		INNER JOIN
-			alliances
-		ON
-			user_alliance_id=alliance_id
-		)
-	ON
-		message_user_from=user_id
-	WHERE
-		message_user_to='".$uid."'
-	ORDER BY
-		message_timestamp DESC
-	LIMIT
-		".$limit."
-	;");
-	if (mysql_num_rows($lres)>0)
-	{
+
+    $messages = $messageRepository->findBy([
+        'user_to_id' => $uid,
+    ], $limit);
+	if (count($messages) > 0) {
 		echo "<tr>
 			<th>Datum</th>
 			<th>Sender</th>
@@ -302,37 +282,23 @@ function showLast5Messages($uid,$target,$limit=5)
 			<th>Gelesen</th>
 			<th>Optionen</th>
 		</tr>";
-		while ($larr=mysql_fetch_array($lres))
-		{
-			// Generiert MouseOver Text
-			$tm = "";
-			if($larr['user_nick']!="")
-			{
-				$tm .= "Punkte: ".nf($larr['user_points'])."";
-			}
-			if($larr['alliance_id'] != 0)
-			{
-				$tm .= "<br>Allianz: [".$larr['alliance_tag']."] ".$larr['alliance_name']."";
-			}
-
-
+		foreach ($messages as $message) {
 			echo "<tr>
-				<td class=\"tbldata\">".df($larr['message_timestamp'])."</td>
-				<td class=\"tbldata\" ";
-				if($larr['user_nick']!="")
-				{
-					echo tm("",$tm);
-				}
-				echo "><a href=\"?page=user&sub=edit&user_id=".$larr['message_user_from']."\">".$larr['user_nick']."</a></td>
-				<td class=\"tbldata\">".$larr['subject']."</td>
-				<td class=\"tbldata\">".text2html($larr['text'])."</td>
-				<td class=\"tbldata\">".($larr['message_read']==1 ? "Ja" : "Nein")."</td>
-				<td class=\"tbldata\">[<a href=\"?page=messages&sub=edit&message_id=".$larr['message_id']."\">Details</a>]</td>
+				<td class=\"tbldata\">".df($message->timestamp)."</td>
+				<td class=\"tbldata\">";
+            if ($message->userFrom > 0) {
+                echo "<a href=\"?page=user&sub=edit&user_id=".$message->userFrom."\">".$userRepo->getNick($message->userFrom)."</a>";
+            } else {
+                echo "System";
+            }
+            echo "</td>
+				<td class=\"tbldata\">".$message->subject."</td>
+				<td class=\"tbldata\">".text2html($message->text)."</td>
+				<td class=\"tbldata\">".($message->read ? "Ja" : "Nein")."</td>
+				<td class=\"tbldata\">[<a href=\"?page=messages&sub=edit&message_id=".$message->id."\">Details</a>]</td>
 			</tr>";
 		}
-	}
-	else
-	{
+	} else {
 		echo "<tr><td class=\"tbldata\">Keine Nachrichten vorhanden!</td></tr>";
 	}
 	echo "</table>";
