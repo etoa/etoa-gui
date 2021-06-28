@@ -184,7 +184,7 @@ else
             {
                 echo "<input type=\"hidden\" name=\"message_user_to\" value=\"".$message->userFrom."\" />";
                 echo "<input type=\"submit\" value=\"Antworten\" name=\"answer\" />&nbsp;";
-                echo "<input type=\"button\" value=\"Absender ignorieren\" onclick=\"document.location='?page=".$page."&amp;mode=ignore&amp;add=".$marr['message_user_from']."'\" />&nbsp;";
+                echo "<input type=\"button\" value=\"Absender ignorieren\" onclick=\"document.location='?page=".$page."&amp;mode=ignore&amp;add=".$message->userFrom."'\" />&nbsp;";
             }
             echo "<input type=\"button\" value=\"Löschen\" onclick=\"document.location='?page=$page&mode=mode&del=".$message->id."';\" />&nbsp;";
             if ($message->userFrom > 0)
