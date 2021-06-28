@@ -30,7 +30,6 @@
 			SELECT
 				failure_id,
 				failure_time,
-				failure_pw,
 				user_nick,
 				user_id,
 				failure_ip,
