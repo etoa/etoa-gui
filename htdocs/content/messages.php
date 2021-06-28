@@ -327,76 +327,18 @@ else
 
         foreach ($categories as $category)
         {
-            if($mode=="archiv")
-            {
-                $mres = dbquery("
-                SELECT
-                    md.subject,
-                    md.text,
-                    message_id,
-                    message_timestamp,
-                    message_user_from,
-                    message_read,
-                    message_massmail,
-                    message_replied,
-                    message_forwarded,
-                    user_nick
-                FROM
-                    messages
-        INNER JOIN
-            message_data as md
-            ON message_id=md.id
-                LEFT JOIN
-                    users
-                    ON message_user_from=user_id
-                WHERE
-                    message_user_to='".$cu->id."'
-                    AND message_cat_id='".$category['cat_id']."'
-                    AND message_deleted=0
-                    AND message_archived=1
-                ORDER BY
-                    message_timestamp DESC;");
-            }
-            else
-            {
-                $mres = dbquery("
-                SELECT
-                    md.subject,
-                    md.text,
-                    message_id,
-                    message_timestamp,
-                    message_user_from,
-                    message_read,
-                    message_massmail,
-                    message_read,
-                    message_replied,
-                    message_forwarded,
-                    user_nick
-                FROM
-                    messages
-        INNER JOIN
-            message_data as md
-            ON message_id=md.id
-                LEFT JOIN
-                    users
-                    ON message_user_from=user_id
-                WHERE
-                    message_user_to='".$cu->id."'
-                    AND message_cat_id='".$category['cat_id']."'
-                    AND message_deleted=0
-                    AND message_archived=0
-                ORDER BY
-                    message_read ASC,
-                    message_timestamp DESC;");
-            }
-            $ccnt=mysql_num_rows($mres);
+            $messages = $messageRepository->findBy([
+                'user_to_id' => $cu->id,
+                'cat_id' => (int) $category['cat_id'],
+                'deleted' => false,
+                'archived' => $mode == "archiv",
+            ]);
 
-            // Kategorie-Titel
-            if ($ccnt>0)
+            if (count($messages) > 0)
             {
                 echo "<tr>
-                    <th colspan=\"4\">".text2html($category['cat_name'])." (".$ccnt." Nachrichten)</th>
-                    <th style=\"text-align:center;\"><input type=\"button\" id=\"selectBtn[".$category['cat_id']."]\" value=\"X\" onclick=\"xajax_messagesSelectAllInCategory(".$category['cat_id'].",".$ccnt.",this.value)\"/></td>
+                    <th colspan=\"4\">".text2html($category['cat_name'])." (".count($messages)." Nachrichten)</th>
+                    <th style=\"text-align:center;\"><input type=\"button\" id=\"selectBtn[".$category['cat_id']."]\" value=\"X\" onclick=\"xajax_messagesSelectAllInCategory(".$category['cat_id'].",".count($messages).",this.value)\"/></td>
                 </tr>";
             }
             else
@@ -405,19 +347,24 @@ else
                     <th colspan=\"5\">".text2html($category['cat_name'])."</th>
                 </tr>";
             }
-            if ($ccnt>0)
+
+            if (count($messages) > 0)
             {
                 $dcnt=0;
-                while ($marr = mysql_fetch_array($mres))
+                foreach ($messages as $message)
                 {
                     // Sender
-                    $sender = $marr['message_user_from']>0 ? ($marr['user_nick']!='' ? $marr['user_nick'] : '<i>Unbekannt</i>') : '<i>'.$category['cat_sender'].'</i>';
+                    $sender = $message->userFrom > 0
+                        ? ($userRepository->getNick($message->userFrom) ?? '<i>Unbekannt</i>')
+                        : '<i>'.$category['cat_sender'].'</i>';
 
                     // Title
-                    $subj = $marr['subject']!="" ? htmlentities($marr['subject'],ENT_QUOTES,'UTF-8') : "<i>Kein Titel</i>";
+                    $subj = filled($message->subject)
+                        ? htmlentities($message->subject, ENT_QUOTES, 'UTF-8')
+                        : "<i>Kein Titel</i>";
 
                     // Read or not read
-                    if ($marr['message_read']==0)
+                    if (!$message->read)
                     {
                         $im_path = "images/pm_new.gif";
                         $subj = '<strong>'.$subj.'</strong>';
@@ -429,7 +376,7 @@ else
                         $strong = 0;
                     }
 
-                    if ($marr['message_read']==1)
+                    if ($message->read)
                     {
                         echo "<tr id=\"msg_id_".$rcnt."\" style=\"display:;\">";
                         $rcnt++;
@@ -440,21 +387,24 @@ else
                     }
 
                     echo "				<td style=\"width:2%;\">
-                            <img src=\"".$im_path."\" alt=\"Mail\" id=\"msgimg".$marr['message_id']."\" />
+                            <img src=\"".$im_path."\" alt=\"Mail\" id=\"msgimg".$message->id."\" />
                         </td>
                     <td style=\"width:66%;\" ";
                     if ($msgpreview)
                     {
                         // subj has already been encoded above
-                        echo tm($subj,htmlentities(substr(strip_bbcode($marr['text']), 0, 500),ENT_QUOTES,'UTF-8'));
+                        echo tm($subj, htmlentities(substr(strip_bbcode($message->text),
+                            0,
+                            500
+                        ), ENT_QUOTES, 'UTF-8'));
                     }
                     echo ">";
-                    if ($marr['message_massmail']==1)
+                    if ($message->massMail)
                     {
                         echo "<b>[Rundmail]</b> ";
                     }
-                    //Wenn Speicher voll ist Nachrichten Markieren
-                    if($mode!="archiv" && $readMessagesCount>=$config->getInt('msg_max_store'))
+                    // Wenn Speicher voll ist Nachrichten Markieren
+                    if ($mode != "archiv" && $readMessagesCount >= $config->getInt('msg_max_store'))
                     {
                         echo "<span style=\"color:red;\">".$subj."</span>";
                     }
@@ -462,59 +412,59 @@ else
                     {
                         if ($msgpreview)
                         {
-                            echo "<a href=\"javascript:;\" onclick=\"toggleBox('msgtext".$marr['message_id']."');xajax_messagesSetRead(".$marr['message_id'].")\" >".$subj."</a>";
+                            echo "<a href=\"javascript:;\" onclick=\"toggleBox('msgtext".$message->id."');xajax_messagesSetRead(".$message->id.")\" >".$subj."</a>";
                         }
                         else
                         {
-                            echo "<a href=\"?page=$page&amp;msg_id=".$marr['message_id']."&amp;mode=".$mode."\">".$subj."</a>";
+                            echo "<a href=\"?page=$page&amp;msg_id=".$message->id."&amp;mode=".$mode."\">".$subj."</a>";
                         }
                     }
                     echo "</td>";
-                    echo "<td style=\"width:15%;\">".userPopUp($marr['message_user_from'],$marr['user_nick'],0,$strong)."</td>";
-                    echo "<td style=\"width:15%;\">".date("d.m.Y H:i",$marr['message_timestamp'])."</td>";
+                    echo "<td style=\"width:15%;\">" . userPopUp($message->userFrom, $userRepository->getNick($message->userFrom), 0, $strong) . "</td>";
+                    echo "<td style=\"width:15%;\">".date("d.m.Y H:i",$message->timestamp)."</td>";
                     echo "<td style=\"width:2%;text-align:center;padding:0px;vertical-align:middle;\">
-                    <input id=\"delcb_".$category['cat_id']."_".$dcnt."\" type=\"checkbox\" name=\"delmsg[".$marr['message_id']."]\" value=\"1\" title=\"Nachricht zum Löschen markieren\" /></td>";
+                    <input id=\"delcb_".$category['cat_id']."_".$dcnt."\" type=\"checkbox\" name=\"delmsg[".$message->id."]\" value=\"1\" title=\"Nachricht zum Löschen markieren\" /></td>";
                     echo "</tr>\n";
                     if ($msgpreview)
                     {
-                        echo "<tr style=\"display:none;\" id=\"msgtext".$marr['message_id']."\"><td colspan=\"5\" class=\"tbldata\">";
-                        echo text2html(addslashes($marr['text']));
+                        echo "<tr style=\"display:none;\" id=\"msgtext".$message->id."\"><td colspan=\"5\" class=\"tbldata\">";
+                        echo text2html(addslashes($message->text));
                         echo "<br/><br/>";
-                        $msgadd = "&amp;message_text=".base64_encode($marr['message_id'])."&amp;message_sender=".base64_encode($sender);
-                        if(substr($marr['subject'],0,3) == "Fw:")
+                        $msgadd = "&amp;message_text=".base64_encode($message->id)."&amp;message_sender=".base64_encode($sender);
+                        if (substr($message->subject, 0, 3) == "Fw:")
                         {
-                            $subject = base64_encode($marr['subject']);
+                            $subject = base64_encode($message->subject);
                         }
                         else
                         {
-                            $subject = base64_encode("Fw: ".$marr['subject']);
+                            $subject = base64_encode("Fw: ".$message->subject);
                         }
                         echo "<input type=\"button\" value=\"Weiterleiten\" onclick=\"document.location='?page=$page&mode=new&amp;message_subject=".$subject."".$msgadd."'\" name=\"remit\" />&nbsp;";
-                        if ($marr['message_user_from']>0)
+                        if ($message->userFrom > 0)
                         {
-                            if(substr($marr['subject'],0,3) == "Re:")
+                            if (substr($message->subject, 0, 3) == "Re:")
                             {
-                                $subject = base64_encode($marr['subject']);
+                                $subject = base64_encode($message->subject);
                             }
                             else
                             {
-                                $subject = base64_encode("Re: ".$marr['subject']);
+                                $subject = base64_encode("Re: ".$message->subject);
                             }
 
                             if ($cu->properties->msgCopy)
                             {
-                                echo "<input type=\"button\" value=\"Antworten\" name=\"answer\" onclick=\"document.location='?page=$page&mode=new&message_user_to=".$marr['message_user_from']."&amp;message_subject=".$subject."".$msgadd."'\" />&nbsp;";
+                                echo "<input type=\"button\" value=\"Antworten\" name=\"answer\" onclick=\"document.location='?page=$page&mode=new&message_user_to=".$message->userFrom."&amp;message_subject=".$subject."".$msgadd."'\" />&nbsp;";
                             }
                             else
                             {
-                                echo "<input type=\"button\" value=\"Antworten\" name=\"answer\" onclick=\"document.location='?page=$page&mode=new&message_user_to=".$marr['message_user_from']."&amp;message_subject=".$subject."'\" />&nbsp;";
+                                echo "<input type=\"button\" value=\"Antworten\" name=\"answer\" onclick=\"document.location='?page=$page&mode=new&message_user_to=".$message->userFrom."&amp;message_subject=".$subject."'\" />&nbsp;";
                             }
-                            echo "<input type=\"button\" value=\"Absender ignorieren\" onclick=\"document.location='?page=".$page."&amp;mode=ignore&amp;add=".$marr['message_user_from']."'\" />&nbsp;";
+                            echo "<input type=\"button\" value=\"Absender ignorieren\" onclick=\"document.location='?page=".$page."&amp;mode=ignore&amp;add=".$message->userFrom."'\" />&nbsp;";
                         }
-                        echo "<input type=\"button\" value=\"Löschen\" onclick=\"document.location='?page=$page&mode=mode&del=".$marr['message_id']."';\" />&nbsp;";
-                        if ($marr['message_user_from']>0)
+                        echo "<input type=\"button\" value=\"Löschen\" onclick=\"document.location='?page=$page&mode=mode&del=".$message->id."';\" />&nbsp;";
+                        if ($message->userFrom > 0)
                         {
-                            ticket_button('1',"Beleidigung melden",$marr['message_user_from']);
+                            ticket_button('1',"Beleidigung melden", $message->userFrom);
                         }
                         else
                         {

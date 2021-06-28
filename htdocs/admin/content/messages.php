@@ -496,13 +496,13 @@ function manageMessages(
     //
     if ($request->request->get('user_search') != "" || $request->query->get('action') == "searchresults")
     {
-        $formData = $_SESSION['admin.messages.search'] ?? $request->request->all();
+        $params = $_SESSION['admin.messages.search'] ?? getMessageParamsFromRequest($request);
         $limit = $request->request->getInt('message_limit');
 
-        $messages = $messageRepository->findByFormData($formData, $limit);
+        $messages = $messageRepository->findBy($params, $limit);
         if (count($messages) > 0)
         {
-            $_SESSION['admin.messages.search'] = $formData;
+            $_SESSION['admin.messages.search'] = $params;
 
             echo count($messages)." Datensätze vorhanden<br/><br/>";
             if (count($messages) > 20) {
@@ -662,4 +662,48 @@ function manageMessages(
         echo "<br/>Es sind ".nf($messageRepository->count())." Einträge in der Datenbank vorhanden.";
     }
 
+}
+
+function getMessageParamsFromRequest(Request $request): array
+{
+    $params = [];
+
+    if ($request->request->getInt('message_user_from_id') > 0) {
+        $params['user_from_id'] = $request->request->getInt('message_user_from_id');
+    }
+    if (filled($request->request->get('message_user_from_nick'))) {
+        $params['user_from_nick'] = $request->request->get('message_user_from_nick');
+    }
+    if ($request->request->getInt('message_user_to_id') > 0) {
+        $params['user_to_id'] = $request->request->getInt('message_user_to_id');
+    }
+    if (filled($request->request->get('message_user_to_nick'))) {
+        $params['user_to_nick'] = $request->request->get('message_user_to_nick');
+    }
+    if (filled($request->request->get('message_subject'))) {
+        $params['subject'] = $request->request->get('message_subject');
+    }
+    if (filled($request->request->get('message_text'))) {
+        $params['text'] = $request->request->get('message_text');
+    }
+    if ($request->request->getInt('message_fleet_id') > 0) {
+        $params['fleet_id'] = $request->request->getInt('message_fleet_id');
+    }
+    if ($request->request->getInt('message_entity_id') > 0) {
+        $params['entity_id'] = $request->request->getInt('message_entity_id');
+    }
+    if ($request->request->getInt('message_cat_id') > 0) {
+        $params['cat_id'] = $request->request->getInt('message_cat_id');
+    }
+    if ($request->request->getInt('message_read') < 2) {
+        $params['read'] = $request->request->getInt('message_read') == 1;
+    }
+    if ($request->request->getInt('message_massmail') < 2) {
+        $params['massmail'] = $request->request->getInt('message_massmail') == 1;
+    }
+    if ($request->request->getInt('message_deleted') < 2) {
+        $params['deleted'] = $request->request->getInt('message_deleted') == 1;
+    }
+
+    return $params;
 }
