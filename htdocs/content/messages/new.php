@@ -1,5 +1,8 @@
 <?php
 
+use EtoA\Message\MessageRepository;
+use EtoA\User\UserRepository;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /** @var \EtoA\Message\MessageRepository $messageRepository */
@@ -23,64 +26,18 @@ else
 
     if (!isset($_SESSION['messagesSent']))
     {
-        $_SESSION['messagesSent'] = array();
+        $_SESSION['messagesSent'] = [];
     }
 
     if ($request->request->has('submit') && checker_verify())
     {
-        $time = time();
-        $rcpts = rawurldecode($request->request->get('message_user_to'));
-        $rcptarr = explode(";", $rcpts);
-
-        iBoxStart("Nachrichtenversand");
-        foreach ($rcptarr as $rcpt)
-        {
-            $uid = $userRepository->getUserIdByNick($rcpt);
-            if ($uid !== null) {
-                // Prüfe Flooding
-                $flood_interval = time() - FLOOD_CONTROL;
-                if (!isset($_SESSION['messagesSent'][$uid]) || $_SESSION['messagesSent'][$uid] < $flood_interval)
-                {
-                    if (!$messageRepository->isRecipientIgnoringSender($cu->id, $uid))
-                    {
-                        // Prüfe Titel
-                        $check_subject = check_illegal_signs($request->request->get('message_subject'));
-                        if($check_subject=="")
-                        {
-                            $_SESSION['messagesSent'][$uid] = $time;
-
-                            $messageRepository->sendFromUserToUser(
-                                $cu->id,
-                                $uid,
-                                $request->request->get('message_subject'),
-                                $request->request->get('message_text')
-                            );
-
-                            echo "Nachricht wurde an <b>".$rcpt."</b> gesendet! ";
-                            $_POST['message_user_to']=null;
-                            $app['dispatcher']->dispatch(new \EtoA\Message\Event\MessageSend(), \EtoA\Message\Event\MessageSend::SEND_SUCCESS);
-                        }
-                        else
-                        {
-                            echo "Du hast ein unerlaubtes Zeichen ( ".$check_subject." ) im Betreff!<br/>";
-                        }
-                    }
-                    else
-                    {
-                        echo "<b>Fehler:</b> Dieser Benutzer hat dich ignoriert, die Nachricht wurde nicht gesendet!<br/>";
-                    }
-                }
-                else
-                {
-                    echo "<b>Flood-Kontrolle!</b> Du kannst erst nach ".FLOOD_CONTROL." Sekunden eine neue Nachricht an ".$rcpt." schreiben!<br/>";
-                }
-            }
-            else
-            {
-                echo "<b>Fehler:</b> Der Benutzer <b>".$rcpt."</b> existiert nicht!<br/>";
-            }
-        }
-        iBoxEnd();
+        submitSendMessage(
+            $request,
+            $userRepository,
+            $messageRepository,
+            $app['dispatcher'],
+            $cu
+        );
     }
 
     // User zuweisen
@@ -140,7 +97,6 @@ else
     }
     elseif ($request->query->has('message_text'))
     {
-        echo "--------------------";
         $sql = "SELECT text
             FROM message_data
             INNER JOIN messages ON id=message_id
@@ -287,4 +243,79 @@ else
     echo "</script>";
     echo "<input type=\"submit\" name=\"submit\" value=\"Senden\" onclick=\"if (document.getElementById('message_user_to').value=='') {window.alert('Empf&auml;nger fehlt!');document.getElementById('message_user_to').focus();return false;}\">";
     echo "</form>";
+}
+
+function submitSendMessage(
+    Request $request,
+    UserRepository $userRepository,
+    MessageRepository $messageRepository,
+    EventDispatcherInterface $dispatcher,
+    CurrentUser $cu
+): void {
+
+    iBoxStart("Nachrichtenversand");
+
+    $recipientNames = explode(";", rawurldecode($request->request->get('message_user_to')));
+    foreach ($recipientNames as $recipientName)
+    {
+        echo sendMessage(
+            $userRepository,
+            $messageRepository,
+            $dispatcher,
+            $cu->id,
+            $recipientName,
+            $request->request->get('message_subject'),
+            $request->request->get('message_text')
+        );
+    }
+
+    $request->request->remove('message_user_to');
+
+    iBoxEnd();
+}
+
+function sendMessage(
+    UserRepository $userRepository,
+    MessageRepository $messageRepository,
+    EventDispatcherInterface $dispatcher,
+    int $senderId,
+    string $recipientName,
+    string $subject,
+    string $text
+): string {
+
+    $recipientUserId = $userRepository->getUserIdByNick($recipientName);
+    if ($recipientUserId === null) {
+        return "<b>Fehler:</b> Der Benutzer <b>" . $recipientName . "</b> existiert nicht!<br/>";
+    }
+
+    $flood_interval = time() - FLOOD_CONTROL;
+    if (isset($_SESSION['messagesSent'][$recipientUserId]) && $_SESSION['messagesSent'][$recipientUserId] > $flood_interval)
+    {
+        return "<b>Flood-Kontrolle!</b> Du kannst erst nach " . FLOOD_CONTROL . " Sekunden eine neue Nachricht an " . $recipientName . " schreiben!<br/>";
+    }
+
+    if ($messageRepository->isRecipientIgnoringSender($senderId, $recipientUserId))
+    {
+        return "<b>Fehler:</b> Dieser Benutzer hat dich ignoriert, die Nachricht wurde nicht gesendet!<br/>";
+    }
+
+    $check_subject = check_illegal_signs($subject);
+    if ($check_subject!="")
+    {
+        return "Du hast ein unerlaubtes Zeichen ( " . $check_subject . " ) im Betreff!<br/>";
+    }
+
+    $_SESSION['messagesSent'][$recipientUserId] = time();
+
+    $messageRepository->sendFromUserToUser(
+        $senderId,
+        $recipientUserId,
+        $subject,
+        $text
+    );
+
+    $dispatcher->dispatch(new \EtoA\Message\Event\MessageSend(), \EtoA\Message\Event\MessageSend::SEND_SUCCESS);
+
+    return "Nachricht wurde an <b>" . $recipientName . "</b> gesendet!<br>";
 }
