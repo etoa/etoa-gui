@@ -18,6 +18,9 @@
 	//
 	//
 
+/** @var \EtoA\Ship\ShipDataRepository $shipDataRepository */
+$shipDataRepository = $app[\EtoA\Ship\ShipDataRepository::class];
+
  	// Datenänderung übernehmen
   if (isset($_POST['data_submit']) && checker_verify())
   {
@@ -68,68 +71,30 @@
   echo "<tr>
   	<th><b>Spionagesonden für Direktscan:</b></th>
     <td><input type=\"text\" name=\"spyship_count\" maxlength=\"5\" size=\"5\" value=\"".$cu->properties->spyShipCount."\"> ";
-	$sres = dbquery("
-	SELECT
-    ship_id,
-    ship_name
-	FROM
-		ships
-	WHERE
-		ship_buildable='1'
-		AND (
-		ship_actions LIKE '%,spy'
-		OR ship_actions LIKE 'spy,%'
-		OR ship_actions LIKE '%,spy,%'
-		OR ship_actions LIKE 'spy'
-		)
-	ORDER BY
-		ship_name ASC");
-  if (mysql_num_rows($sres)>0)
-  {
-  	echo '<select name="spyship_id"><option value="0">(keines)</option>';
-  	while ($sarr=mysql_fetch_array($sres))
-  	{
-  		echo '<option value="'.$sarr['ship_id'].'"';
-  		if ($cu->properties->spyShipId == $sarr['ship_id'])
-  		 echo ' selected="selected"';
-  		echo '>'.$sarr['ship_name'].'</option>';
-  	}
-  }
-  else
-  {
-  	echo "Momentan steht kein Schiff zur Auswahl!";
-  }
+    $shipNames = $shipDataRepository->getShipNamesWithAction('spy');
+    if (count($shipNames) > 0) {
+        echo '<select name="spyship_id"><option value="0">(keines)</option>';
+        foreach ($shipNames as $shipId => $shipName) {
+            echo '<option value="'.$shipId.'"';
+            if ($cu->properties->spyShipId == $shipId) echo ' selected="selected"';
+            echo '>'.$shipName.'</option>';
+        }
+    } else {
+        echo "Momentan steht kein Schiff zur Auswahl!";
+    }
   echo "</td></tr>";
 
   // Analyzator ships for quick analysis
   echo "<tr>
   	<th><b>Analysatoren für Quickanalyse:</b></th>
     <td><input type=\"text\" name=\"analyzeship_count\" maxlength=\"5\" size=\"5\" value=\"".$cu->properties->analyzeShipCount."\"> ";
-	$sres = dbquery("
-	SELECT
-    ship_id,
-    ship_name
-	FROM
-		ships
-	WHERE
-		ship_buildable='1'
-		AND (
-		ship_actions LIKE '%,analyze'
-		OR ship_actions LIKE 'analyze,%'
-		OR ship_actions LIKE '%,analyze,%'
-		OR ship_actions LIKE 'analyze'
-		)
-	ORDER BY
-		ship_name ASC");
-  if (mysql_num_rows($sres)>0)
-  {
+    $shipNames = $shipDataRepository->getShipNamesWithAction('analyze');
+  if (count($shipNames)>0) {
   	echo '<select name="analyzeship_id"><option value="0">(keines)</option>';
-  	while ($sarr=mysql_fetch_array($sres))
-  	{
-  		echo '<option value="'.$sarr['ship_id'].'"';
-  		if ($cu->properties->analyzeShipId == $sarr['ship_id'])
-  		 echo ' selected="selected"';
-  		echo '>'.$sarr['ship_name'].'</option>';
+  	foreach ($shipNames as $shipId => $shipName) {
+  		echo '<option value="'.$shipId.'"';
+  		if ($cu->properties->analyzeShipId == $shipId) echo ' selected="selected"';
+  		echo '>'.$shipName.'</option>';
   	}
   }
   else
@@ -143,31 +108,13 @@
   	<th><b>Erkundungsschiffe für Direkterkundung:</b></th>
     <td>
     	<input type=\"text\" name=\"exploreship_count\" maxlength=\"5\" size=\"5\" value=\"".$cu->properties->exploreShipCount."\"> ";
-	$sres = dbquery("
-	SELECT
-    ship_id,
-    ship_name
-	FROM
-		ships
-	WHERE
-		ship_buildable='1'
-		AND (
-		ship_actions LIKE '%,explore'
-		OR ship_actions LIKE 'explore,%'
-		OR ship_actions LIKE '%,explore,%'
-		OR ship_actions LIKE 'explore'
-		)
-	ORDER BY
-		ship_name ASC");
-  if (mysql_num_rows($sres)>0)
-  {
+  $shipNames = $shipDataRepository->getShipNamesWithAction('explore');
+  if (count($shipNames)>0) {
   	echo '<select name="exploreship_id"><option value="0">(keines)</option>';
-  	while ($sarr=mysql_fetch_array($sres))
-  	{
-  		echo '<option value="'.$sarr['ship_id'].'"';
-  		if ($cu->properties->exploreShipId == $sarr['ship_id'])
-  		 echo ' selected="selected"';
-  		echo '>'.$sarr['ship_name'].'</option>';
+  	foreach ($shipNames as $shipId => $shipName) {
+  		echo '<option value="'.$shipId.'"';
+  		if ($cu->properties->exploreShipId == $shipId) echo ' selected="selected"';
+  		echo '>'.$shipName.'</option>';
   	}
   }
   else
@@ -243,4 +190,4 @@ echo "<tr>
   tableEnd();
   echo "<input type=\"submit\" name=\"data_submit\" value=\"&Uuml;bernehmen\"/>";
   echo "</form><br/><br/>";
-?>
+

@@ -7,8 +7,7 @@ use EtoA\Core\Logging\Log;
 /**
 * Returns a string containing the game name, version and round
 */
-function getGameIdentifier()
-{
+function getGameIdentifier() {
     // TODO
     global $app;
 
@@ -70,88 +69,6 @@ function rollbackTransaction() {
 }
 
 /**
-* Allianz Name in Array speichern
-*/
-function get_alliance_names()
-{
-    $names = array();
-
-    $res = dbquery("
-    SELECT
-    alliance_tag,
-    alliance_id,
-    alliance_name,
-    alliance_founder_id
-    FROM
-        alliances
-    ORDER BY
-        alliance_name;");
-    while ($arr = mysql_fetch_assoc($res))
-    {
-        $names[$arr['alliance_id']]['tag'] = $arr['alliance_tag'];
-        $names[$arr['alliance_id']]['name'] = $arr['alliance_name'];
-        $names[$arr['alliance_id']]['founder_id'] = $arr['alliance_founder_id'];
-    }
-    return $names;
-}
-
-/**
-* Allianz Name in Array speichern, aber ohne eigene Allianz
-*/
-function get_alliance_names1($id)
-{
-    $names = array();
-    $res = dbquery("
-        SELECT
-            alliance_tag,
-            alliance_id,
-            alliance_name,
-            alliance_founder_id
-        FROM
-            alliances
-        WHERE
-            alliance_id!='".$id."'
-        ORDER BY
-            alliance_name;
-    ");
-    while ($arr = mysql_fetch_assoc($res))
-    {
-        $names[$arr['alliance_id']]['tag'] = $arr['alliance_tag'];
-        $names[$arr['alliance_id']]['name'] = $arr['alliance_name'];
-        $names[$arr['alliance_id']]['founder_id'] = $arr['alliance_founder_id'];
-    }
-    return $names;
-}
-
-/**
-* Allianz Name in Array speichern, jedoch nur eine Allianz
-*/
-function get_alliance_names2($id)
-{
-    $names = array();
-    $res = dbquery("
-        SELECT
-            alliance_tag,
-            alliance_id,
-            alliance_name,
-            alliance_founder_id
-        FROM
-            alliances
-        WHERE
-            alliance_id='".$id."'
-        ORDER BY
-            alliance_name;
-    ");
-    while ($arr = mysql_fetch_assoc($res))
-    {
-        $names[$arr['alliance_id']]['tag'] = $arr['alliance_tag'];
-        $names[$arr['alliance_id']]['name'] = $arr['alliance_name'];
-        $names[$arr['alliance_id']]['founder_id'] = $arr['alliance_founder_id'];
-    }
-    return $names;
-}
-
-/**
 * User-Nick via User-Id auslesen
 */
 function get_user_nick($id)
@@ -173,141 +90,6 @@ function get_user_nick($id)
     {
         return "<i>Unbekannter Benutzer</i>";
     }
-}
-
-/**
-* Allianz-Daten via User-Id auslesen
-*
-* @param int $id User ID
-*/
-function get_user_alliance($id)
-{
-    $res = dbquery("
-    SELECT
-        a.alliance_name,
-        a.alliance_id,
-        a.alliance_tag
-    FROM
-        users AS u
-        INNER JOIN alliances AS a
-        ON u.user_alliance_id = a.alliance_id
-        AND u.user_id='".$id."';
-    ");
-    if (mysql_num_rows($res)>0)
-    {
-        return mysql_fetch_assoc($res);
-    }
-    else
-    {
-        return "";
-    }
-}
-
-/**
-* Returns the alliance id of a given alliance name
-*
-* @param int $name Alliance Name
-*/
-function get_alliance_id_by_name($name)
-{
-    $res = dbquery("
-        SELECT
-            alliance_id
-        FROM
-            alliances
-        WHERE
-            alliance_name='".$name."';
-    ");
-    if (mysql_num_rows($res)>0)
-    {
-        $arr = mysql_fetch_assoc($res);
-        return $arr['alliance_id'];
-    }
-    else
-    {
-        return 0;
-    }
-}
-
-
-/**
-* Returns the alliance id of a given alliance tag
-*
-* @param int $tag Alliance tag
-*/
-function get_alliance_id($tag)
-{
-    $res = dbquery("
-        SELECT
-            alliance_id
-        FROM
-            alliances
-        WHERE
-            alliance_tag='".$tag."';
-    ");
-    if (mysql_num_rows($res)>0)
-    {
-        $arr = mysql_fetch_assoc($res);
-        return $arr['alliance_id'];
-    }
-    else
-    {
-        return 0;
-    }
-}
-
-/**
-* User-Id via Nick auslesen
-*
-* @param string $nick User-nick
-*/
-function get_user_id($nick)
-{
-    $res = dbquery("
-        SELECT
-            user_id
-        FROM
-            users
-        WHERE
-            user_nick='".mysql_real_escape_string($nick)."';
-    ");
-    if (mysql_num_rows($res)>0)
-    {
-        $arr = mysql_fetch_assoc($res);
-        return $arr['user_id'];
-    }
-    else
-    {
-        return 0;
-    }
-}
-
-/**
-* User-Id via Planeten-Id auslesen
-*
-* @param int $pid Planet-ID
-* @Todo: propabely remove
-*/
-function get_user_id_by_planet($pid)
-{
-    $res = dbquery("
-        SELECT
-            planet_user_id
-        FROM
-            planets
-        WHERE
-            id='".$pid."';
-    ");
-    if (mysql_num_rows($res)>0)
-    {
-        $arr = mysql_fetch_assoc($res);
-        return $arr['planet_user_id'];
-    }
-    else
-    {
-        return 0;
-    }
-
 }
 
 /**
@@ -421,96 +203,10 @@ function format_link($string)
     $string = preg_replace("#([ \n])www\\.([^ ,\n]*)#i", "\\1[url]https://www.\\2[/url]", $string);
     $string = preg_replace("#^(http|https|ftp)://([^ ,\n]*)#i", "[url]\\1://\\2[/url]", $string);
     $string = preg_replace("#^www\\.([^ ,\n]*)#i", "[url]https://www.\\1[/url]", $string);
-        $string = preg_replace('#\[url\]www.([^\[]*)\[/url\]#i', '<a href="https://www.\1">\1</a>', $string);
+    $string = preg_replace('#\[url\]www.([^\[]*)\[/url\]#i', '<a href="https://www.\1">\1</a>', $string);
     $string = preg_replace('#\[url\]([^\[]*)\[/url\]#i', '<a href="\1">\1</a>', $string);
     $string = preg_replace('#\[mailurl\]([^\[]*)\[/mailurl\]#i', '<a href="\1">Link</a>', $string);
     return $string;
-}
-
-/*
-    * Format the data in a row by comparing two user
-    *
-    * @param <User> $uer userobject you need to compare to the $cu
-    *
-    * option 2
-    * @param <Planet> $object
-    *
-    * @return $class
-    */
-function getFormatingColorByUser(&$user)
-{
-    // if the $cu is not active as in xajax functions create one
-    if ( !isset($cu) )
-    {
-        // if there is no session active as on external pages return nothing;
-        if ( !$_SESSION['user_id']) return;
-        $cu = new User($_SESSION['user_id']);
-    }
-
-    $admins = getAdmins();
-    // admin
-    if ( in_array((int) $user->id, $admins, true) )
-    {
-        $class = "adminColor";
-    }
-    // war
-    elseif ($user->allianceId > 0 && $cu->allianceId > 0 && $cu->alliance->checkWar($user->allianceId))
-    {
-        $class = "enemyColor";
-    }
-    // pact
-    elseif ($user->allianceId > 0 && $cu->allianceId > 0 && $cu->alliance->checkBnd($user->allianceId))
-    {
-        $class = "friendColor";
-    }
-    // bannend/locked
-    elseif ($user->locked)
-    {
-        $class = "userLockedColor";
-    }
-    // on holiday
-    elseif ($user->holiday)
-    {
-        $class = "userHolidayColor";
-    }
-    // long time Inactive
-    elseif ($user->lastOnline < time() - USER_INACTIVE_LONG * 86400)
-    {
-        $class = "userLongInactiveColor";
-    }
-    // inactive
-    elseif ($user->lastOnline < time() - USER_INACTIVE_SHOW * 86400)
-    {
-        $class = "userInactiveColor";
-    }
-    // alliance member
-    elseif($cu->allianceId() && $cu->allianceId() == $user->allianceId())
-    {
-        $class = "userAllianceMemberColor";
-    }
-    else
-    {
-        $class = "";
-    }
-
-    return $class;
-}
-
-/**
- * @return int[]
- */
-function getAdmins(): array
-{
-    global $admins;
-    if ( !isset($admins))
-    {
-        $ares = dbquery("SELECT player_id FROM admin_users WHERE player_id<>0;");
-        $admins = [];
-        while ($arow = mysql_fetch_row($ares)) {
-            $admins[] = (int) $arow[0];
-        }
-    }
-    return $admins;
 }
 
 /**
@@ -532,58 +228,15 @@ function check_illegal_signs($string)
             && !stristr($string,";")
             && !stristr($string,"&")
         )
-            {
-                return "";
-            }
-            else
-            {
-                return "&lt; &gt; &apos; &quot; ? ! $ = ; &amp;";
-            }
+        {
+            return "";
+        }
+        else
+        {
+            return "&lt; &gt; &apos; &quot; ? ! $ = ; &amp;";
+        }
 }
 
-/**
-* Sends a system message to an user
-*/
-function send_msg($user_id,$msg_type,$subject,$text)
-{
-    if ($user_id>0)
-    {
-    dbquery("
-        INSERT INTO
-            messages
-        (
-            message_user_from,
-            message_user_to,
-            message_timestamp,
-            message_cat_id
-        )
-        VALUES
-        (
-            '0',
-            '".intval($user_id)."',
-            '".time()."',
-            '".$msg_type."'
-        );
-    ");
-    dbquery("
-        INSERT INTO
-            message_data
-        (
-            id,
-            subject,
-            text
-        )
-        VALUES
-        (
-            ".mysql_insert_id().",
-            '".mysql_real_escape_string($subject)."',
-            '".mysql_real_escape_string($text)."'
-        );
-    ");
-        return true;
-    }
-    return false;
-}
 
 /**
 * Cuts a string by a given length
@@ -945,21 +598,6 @@ function show_tab_menu($varname,$data)
 }
 
 /**
-* Tab Menu with on-click
-*/
-function show_js_tab_menu($data)
-{
-    echo "<div class=\"tabMenu\">";
-    $cnt=0;
-    foreach ($data as $val => $text)
-    {
-        echo "<a href=\"#\" id=\"tabMenu\" onclick=\"$val\" ".($cnt==count($data)?' class="tabLast"':'').">$text</a>";
-    }
-    echo "<br style=\"clear:both;\"/>";
-    echo "</div>";
-}
-
-/**
  * Get imagepacks
 */
 function get_imagepacks()
@@ -1126,37 +764,6 @@ function parseDesignInfoFile($file)
 }
 
 /**
-* Überprüft ob ein Gebäude deaktiviert ist
-*
-* $user_id: Benutzer-ID
-* $planet_id: Planet-ID
-* $building_id: Gebäude-ID
-*
-* @todo Typo in method name... bether think of creating a building class
-*/
-function check_building_deactivated($user_id,$planet_id,$building_id)
-{
-    $res=dbquery("
-        SELECT
-            buildlist_deactivated
-        FROM
-            buildlist
-        WHERE
-            buildlist_user_id='".$user_id."'
-            AND buildlist_entity_id='".$planet_id."'
-            AND buildlist_building_id='".$building_id."'
-            AND buildlist_deactivated>'".time()."';
-    ");
-    if (mysql_num_rows($res)>0)
-    {
-        $arr=mysql_fetch_row($res);
-        return $arr[0];
-    }
-    else
-        return false;
-}
-
-/**
 * Fremde, feindliche Flotten
 * Gibt Anzahl feindliche Flotten zurück unter beachtung von Tarn- und Spionagetechnik
 * Sind keine Flotten unterwegs -> return 0
@@ -1169,49 +776,6 @@ function check_fleet_incomming($user_id)
 {
     $fm = new FleetManager($user_id);
     return $fm->loadAggressiv();
-}
-
-/**
-* Add text to alliance history
-*/
-function add_alliance_history($alliance_id,$text)
-{
-    dbquery("
-        INSERT INTO
-        alliance_history
-        (
-            history_alliance_id,
-            history_text,
-            history_timestamp
-        )
-        VALUES
-        (
-            '".$alliance_id."',
-            '".addslashes($text)."',
-            '".time()."'
-        );");
-}
-
-/**
-* User-history adder
-* @todo User history no longer uses
-*/
-function add_user_history($user_id,$text)
-{
-    dbquery("
-        INSERT INTO
-        user_history
-        (
-            history_user_id,
-            history_text,
-            history_timestamp
-        )
-        VALUES
-        (
-            '".$user_id."',
-            '".addslashes($text)."',
-            '".time()."'
-        );");
 }
 
 /**
@@ -1241,7 +805,7 @@ function check_buddy_req($id)
         FROM
         buddylist
         WHERE
-            bl_buddy_id='".$id."'
+        bl_buddy_id='".$id."'
         AND bl_allow=0");
     $arr = mysql_fetch_row($res);
     return $arr[0];
@@ -1328,15 +892,6 @@ function return_btn()
 function button($label,$target)
 {
     return "<input type=\"button\" value=\"$label\" onclick=\"document.location='$target'\" />";
-}
-
-/**
-* A pseudi randomizer
-*/
-function pseudo_randomize($faktor,$qx,$qy,$px,$py)
-{
-    $str = (string) floor((abs(sin($qx)) + abs(sin($qy)) + abs(sin($px)) + abs(sin($py)))*10000);
-    return round ($faktor*(((int) substr($str,strlen($str)-1,1)+1)/10),0);
 }
 
 /**
@@ -1472,184 +1027,6 @@ function df($date,$seconds=1)
 }
 
 /**
-* Fehlermeldungs-Box anzeigen
-*
-* @param string $title Titel
-* @param string $text Text
-* @param int $return Bei 1 String zurückgeben statt ausgeben
-* @athor MrCage
-*/
-function errBox($title,$text,$return=0)
-{
-    $title_str="<br/><div style=\"font-family:arial,helvetica;padding:5px;margin:0px auto; width:600px;background:#225;font-weight:bold;border:1px solid black;\">".text2html($title)."</div>";
-    $text_str="<div style=\"font-family:arial,helvetica;padding:5px;margin:0px auto; width:600px;;background:#223;border:1px solid black;\">".text2html($text)."</div><br/>";
-    if ($return==1)
-    {
-        return $title_str.$text_str;
-    }
-    else
-    {
-        echo $title_str.$text_str;
-    }
-}
-
-/**
-* Schiffe zur Schiffsliste hinzufügen
-*
-* @param int $entity Entity-ID
-* @param int $user User-ID
-* @param int $ship Schiff-ID
-* @param int $cnt Anzahl
-* @author MrCage
-*/
-function shiplistAdd($entity,$user,$ship,$cnt)
-{
-    dbquery("
-            INSERT INTO
-            shiplist
-            (
-                shiplist_user_id,
-                shiplist_entity_id,
-                shiplist_ship_id,
-                shiplist_count
-            )
-            VALUES
-            (
-                '".$user."',
-                '".$entity."',
-                '".$ship."',
-                '".max($cnt,0)."'
-            )
-            ON DUPLICATE KEY
-            UPDATE
-                shiplist_count = shiplist_count + VALUES(shiplist_count);
-        ");
-}
-
-
-/**
-* Verteidigungsanlagen zur Anlagenliste hinzufügen
-*
-* @param int $entity Entity-ID
-* @param int $user User-ID
-* @param int $def Def-ID
-* @param int $cnt Anzahl
-* @author MrCage
-*/
-function deflistAdd($entity,$user,$def,$cnt)
-{
-        dbquery("
-            INSERT INTO
-            deflist
-            (
-                deflist_user_id,
-                deflist_entity_id,
-                deflist_def_id,
-                deflist_count
-            )
-            VALUES
-            (
-                '".$user."',
-                '".$entity."',
-                '".$def."',
-                '".max($cnt,0)."'
-            )
-            ON DUPLICATE KEY
-            UPDATE
-                deflist_count = deflist_count + VALUES(deflist_count);
-        ");
-}
-
-/**
-* Gebäude zur gebäudeliste hinzufügen
-*
-* @param int $entity entity-ID
-* @param int $user User-ID
-* @param int $building Building-ID
-* @param int $level Anzahl
-* @author MrCage
-*/
-function buildlistAdd($entity,$user,$building,$level)
-{
-        dbquery("
-            INSERT INTO
-            buildlist
-            (
-                buildlist_user_id,
-                buildlist_entity_id,
-                buildlist_building_id,
-                buildlist_current_level
-            )
-            VALUES
-            (
-                '".$user."',
-                '".$entity."',
-                '".$building."',
-                '".max($level,0)."'
-            )
-            ON DUPLICATE KEY
-            UPDATE
-                buildlist_current_level = '".max($level,0)."';
-        ");
-}
-
-/**
-* Raketen zur Raketenliste hinzufügen
-*
-* @param int $planet Planet-ID
-* @param int $user User-ID
-* @param int $ship Schiff-ID
-* @param int $cnt Anzahl
-* @author MrCage
-*/
-function missilelistAdd($planet,$user,$ship,$cnt)
-{
-    $res=dbquery("
-        SELECT
-            missilelist_id
-        FROM
-            missilelist
-        WHERE
-            missilelist_user_id='".$user."'
-            AND missilelist_entity_id='".$planet."'
-            AND missilelist_missile_id='".$ship."';
-    ");
-    if (mysql_num_rows($res)>0)
-    {
-        dbquery("
-            UPDATE
-                missilelist
-            SET
-                missilelist_count=missilelist_count+".max($cnt,0)."
-            WHERE
-                missilelist_user_id='".$user."'
-                AND missilelist_entity_id='".$planet."'
-                AND missilelist_missile_id='".$ship."';
-        ");
-    }
-    else
-    {
-        dbquery("
-            INSERT INTO
-            missilelist
-            (
-                missilelist_user_id,
-                missilelist_entity_id,
-                missilelist_missile_id,
-                missilelist_count
-            )
-            VALUES
-            (
-                '".$user."',
-                '".$planet."',
-                '".$ship."',
-                '".max($cnt,0)."'
-            );
-        ");
-    }
-}
-
-/**
 * Zeigt ein Avatarbild an
 */
 function show_avatar($avatar=BOARD_DEFAULT_IMAGE)
@@ -1657,31 +1034,6 @@ function show_avatar($avatar=BOARD_DEFAULT_IMAGE)
     if ($avatar=="") $avatar=BOARD_DEFAULT_IMAGE;
     echo "<div style=\"padding:8px;\">";
     echo "<img id=\"avatar\" src=\"".BOARD_AVATAR_DIR."/".$avatar."\" alt=\"avatar\" style=\"width:64px;height:64px;\"/></div>";
-}
-
-
-/**
-* Cuts words
-*/
-function cut_word($txt, $where, $br=0) {
-    if (!$txt) return false;
-
-    $d = [];
-    for ($c = 0, $a = 0, $g = 0; $c<strlen($txt); $c++) {
-        $d[$c+$g]=$txt[$c];
-        if ($txt[$c]!=" ") $a++;
-        else if ($txt[$c]==" ") $a = 0;
-        if ($a==$where) {
-        $g++;
-        if ($br==0)
-            $d[$c+$g]="\n";
-        else
-            $d[$c+$g]="<br/>";
-
-        $a = 0;
-        }
-    }
-    return implode("", $d);
 }
 
 /**
@@ -1977,138 +1329,6 @@ function generatePasswort()
 }
 
 /**
- * Assesses the security of a password and returns a
- * password strength rating
- */
-function passwordStrength($password, $username = null)
-{
-    if ($username)
-    {
-        $password = str_replace($username, '', $password);
-    }
-
-    $strength = 0;
-    $password_length = strlen($password);
-
-    if ($password_length < 4)
-    {
-        return $strength;
-    }
-
-    else
-    {
-        $strength = $password_length * 4;
-    }
-
-    for ($i = 2; $i <= 4; $i++)
-    {
-        $temp = str_split($password, $i);
-
-        $strength -= (ceil($password_length / $i) - count(array_unique($temp)));
-    }
-
-    preg_match_all('/[0-9]/', $password, $numbers);
-
-    if (count($numbers) > 0)
-    {
-        $numbers = count($numbers[0]);
-
-        if ($numbers >= 3)
-        {
-            $strength += 5;
-        }
-    }
-
-    else
-    {
-        $numbers = 0;
-    }
-
-    preg_match_all('/[|!@#$%&*\/=?,;.:\-_+~^¨\\\]/', $password, $symbols);
-
-    if (count($symbols) > 0)
-    {
-        $symbols = count($symbols[0]);
-
-        if ($symbols >= 2)
-        {
-            $strength += 5;
-        }
-    }
-
-    else
-    {
-        $symbols = 0;
-    }
-
-    preg_match_all('/[a-z]/', $password, $lowercase_characters);
-    preg_match_all('/[A-Z]/', $password, $uppercase_characters);
-
-    if (count($lowercase_characters) > 0)
-    {
-        $lowercase_characters = count($lowercase_characters[0]);
-    }
-
-    else
-    {
-        $lowercase_characters = 0;
-    }
-
-    if (count($uppercase_characters) > 0)
-    {
-        $uppercase_characters = count($uppercase_characters[0]);
-    }
-
-    else
-    {
-        $uppercase_characters = 0;
-    }
-
-    if (($lowercase_characters > 0) && ($uppercase_characters > 0))
-    {
-        $strength += 10;
-    }
-
-    $characters = $lowercase_characters + $uppercase_characters;
-
-    if (($numbers > 0) && ($symbols > 0))
-    {
-        $strength += 15;
-    }
-
-    if (($numbers > 0) && ($characters > 0))
-    {
-        $strength += 15;
-    }
-
-    if (($symbols > 0) && ($characters > 0))
-    {
-        $strength += 15;
-    }
-
-    if (($numbers == 0) && ($symbols == 0))
-    {
-        $strength -= 10;
-    }
-
-    if (($symbols == 0) && ($characters == 0))
-    {
-        $strength -= 10;
-    }
-
-    if ($strength < 0)
-    {
-        $strength = 0;
-    }
-
-    if ($strength > 100)
-    {
-        $strength = 100;
-    }
-    return $strength;
-}
-
-/**
 * Generates a random string
 *
 * @param int $length Length of the string
@@ -2193,15 +1413,6 @@ function jsSlider($elem,$value=100, $target='"#value"')
 
     <?PHP
 }
-
-/**
-* The ultimate answer
-*/
-function answer_to_life_the_universe_and_everything()
-{
-    return 42;
-}
-
 
 /**
 * Startet den Javascript Counter bzw. die Uhr
@@ -2299,9 +1510,9 @@ function showTechTree($type,$itemId)
 function getInitTT()
 {
     return '<div class="tooltip" id="tooltip" style="display:none;" onmouseup="hideTT();">
-    <div class="tttitle" id="tttitle"></div>
-    <div class="ttcontent" id="ttcontent"></div>
-        </div> ';
+<div class="tttitle" id="tttitle"></div>
+<div class="ttcontent" id="ttcontent"></div>
+    </div> ';
 }
 
 function cTT($title,$content)
@@ -2334,35 +1545,11 @@ function htmlSelect($name, array $data,$default=null)
     echo "</select>";
 }
 
-// TODO: Implement this
-function encrypt($str,$salt)
-{
-    return $str;
-}
-
-// TODO: Implement this
-function decrypt($str,$salt)
-{
-    return $str;
-}
-
 function forward($url,$msgTitle=null,$msgText=null)
 {
     header("Location: ".$url);
     echo "<h1>".$msgTitle."</h1><p>".$msgText."</p><p>Falls die Weiterleitung nicht klappt, <a href=\"".$url."l\">hier</a> klicken...</p>";
     exit;
-}
-
-function showTitle($title)
-{
-    // TODO
-    global $app;
-
-    /** @var ConfigurationService */
-    $config = $app['etoa.config.service'];
-
-    echo "<br/><a href=\"?\"><img src=\"images/game_logo.gif\" alt=\"EtoA Logo\" /></a>";
-    echo "<h1>$title - " . $config->get('roundname') . "</h1>";
 }
 
 function defineImagePaths()
@@ -2458,8 +1645,7 @@ function fetchJsonConfig($file)	{
     return $data;
 }
 
-function getLoginUrl($args=array())
-{
+function getLoginUrl($args=array()) {
     // TODO
     global $app;
 

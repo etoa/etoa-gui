@@ -36,11 +36,6 @@ parameters:
 			path: htdocs/admin/content/galaxy/edit.php
 
 		-
-			message: "#^Variable \\$sort might not be defined\\.$#"
-			count: 6
-			path: htdocs/admin/content/home/stats.inc.php
-
-		-
 			message: "#^Variable \\$sortOrder might not be defined\\.$#"
 			count: 2
 			path: htdocs/admin/content/home/stats.inc.php
@@ -93,11 +88,6 @@ parameters:
 		-
 			message: "#^Undefined variable\\: \\$total$#"
 			count: 3
-			path: htdocs/admin/inc/admin_functions.inc.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
 			path: htdocs/admin/inc/admin_functions.inc.php
 
 		-
@@ -216,11 +206,6 @@ parameters:
 			path: htdocs/classes/usersession.class.php
 
 		-
-			message: "#^Variable \\$pw might not be defined\\.$#"
-			count: 1
-			path: htdocs/classes/usersession.class.php
-
-		-
 			message: "#^Comparison operation \"\\>\" between 2\\|3\\|4\\|5\\|6 and 0 is always true\\.$#"
 			count: 2
 			path: htdocs/content/alliance/diplomacy.inc.php
@@ -236,13 +221,13 @@ parameters:
 			path: htdocs/content/allianceboard.php
 
 		-
-			message: "#^Variable \\$alliance might not be defined\\.$#"
-			count: 5
+			message: "#^Variable \\$alliance_bnd_id might not be defined\\.$#"
+			count: 4
 			path: htdocs/content/allianceboard.php
 
 		-
-			message: "#^Variable \\$alliance_bnd_id might not be defined\\.$#"
-			count: 4
+			message: "#^Variable \\$arr might not be defined\\.$#"
+			count: 2
 			path: htdocs/content/allianceboard.php
 
 		-
@@ -432,11 +417,6 @@ parameters:
 
 		-
 			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: htdocs/inc/functions.inc.php
-
-		-
-			message: "#^Variable \\$cu in isset\\(\\) is never defined\\.$#"
 			count: 1
 			path: htdocs/inc/functions.inc.php
 

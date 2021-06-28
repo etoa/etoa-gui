@@ -372,8 +372,9 @@
 				/** @var \EtoA\Race\RaceDataRepository $raceRepository */
 				$raceRepository = $app['etoa.race.datarepository'];
 				$raceNames = $raceRepository->getRaceNames();
-
-				$allys=get_alliance_names();
+				/** @var \EtoA\Alliance\AllianceRepository $allianceRepository */
+                $allianceRepository = $app['etoa.alliance.repository'];
+				$allianceNameWithTags = $allianceRepository->getAllianceNamesWithTags();
 				$time = time();
 
  				tableStart();
@@ -420,11 +421,10 @@
           echo "<td title=\"".$arr['dual_name']."\">".cut_string($arr['dual_name'],15)."</td>";
 					echo "<td title=\"".$arr['dual_email']."\">".cut_string($arr['dual_email'],15)."</td>";
 					echo "<td>".nf($arr['user_points'])."</td>";
-					echo "<td>".($arr['user_alliance_id']>0 ? $allys[$arr['user_alliance_id']]['tag']:'-')."</td>";
+					echo "<td>".($arr['user_alliance_id']>0 ? $allianceNameWithTags[$arr['user_alliance_id']]:'-')."</td>";
 					echo "<td>".($arr['user_race_id']>0 ? $raceNames[$arr['user_race_id']] : '-')."</td>";
 					echo "<td>
 					".edit_button("?page=$page&amp;sub=edit&amp;id=".$arr['user_id'])."
-					".cb_button("add_user=".$arr['user_id']."")."
 					</td>";
 					echo "</tr>";
 				}

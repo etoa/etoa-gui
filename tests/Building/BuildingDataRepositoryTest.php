@@ -22,6 +22,13 @@ class BuildingDataRepositoryTest extends AbstractDbTestCase
         $this->assertNotEmpty($buildings);
     }
 
+    public function testGetBuildingNamesHavingPlaceForPeople(): void
+    {
+        $buildings = $this->repository->getBuildingNamesHavingPlaceForPeople();
+
+        $this->assertNotEmpty($buildings);
+    }
+
     public function testGetBuildingsByType(): void
     {
         $buildings = $this->repository->getBuildingsByType(1);

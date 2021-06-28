@@ -41,22 +41,18 @@
 		echo "<input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";
 
 		echo "<h2>Forschungspunkte</h2>";
-		$res=dbquery("SELECT
-			tech_id,
-			tech_name
-		FROM technologies
-		ORDER BY tech_order,tech_name;");
-		if (mysql_num_rows($res)>0)
-		{
+		/** @var \EtoA\Technology\TechnologyDataRepository $technologyDataRepository */
+		$technologyDataRepository = $app[\EtoA\Technology\TechnologyDataRepository::class];
+		$technologyNames = $technologyDataRepository->getTechnologyNames(true);
+		if (count($technologyNames) > 0) {
 			echo "<table class=\"tb\">";
-			while ($arr=mysql_fetch_array($res))
-			{
-				echo "<tr><th>".$arr['tech_name']."</th><td style=\"width:70%\"><table class=\"tb\">";
+			foreach ($technologyNames as $technologyId => $technologyName) {
+				echo "<tr><th>".$technologyName."</th><td style=\"width:70%\"><table class=\"tb\">";
 				$pres=dbquery("SELECT
 					bp_level,
 					bp_points
 				FROM tech_points
-				WHERE bp_tech_id=".$arr['tech_id']."
+				WHERE bp_tech_id=".$technologyId."
 				ORDER BY bp_level ASC;");
 				if (mysql_num_rows($pres)>0)
 				{

@@ -253,7 +253,7 @@ class TicketServiceTest extends AbstractDbTestCase
         $this->assertEquals(0, $messages[1]->adminId);
     }
 
-    public function testCloseAssignedInactive_withInactiveTicket()
+    public function testCloseAssignedInactive_withInactiveTicket(): void
     {
         // given
         $userId = 1;
@@ -283,7 +283,7 @@ class TicketServiceTest extends AbstractDbTestCase
         $this->assertEquals(TicketSolution::SOLVED, $ticket->solution);
     }
 
-    public function testCloseAssignedInactive_withActiveTicket()
+    public function testCloseAssignedInactive_withActiveTicket(): void
     {
         // given
         $userId = 1;

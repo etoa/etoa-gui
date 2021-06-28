@@ -25,6 +25,15 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/
 
+	/** @var \EtoA\Building\BuildingDataRepository $buildRepository */
+	$buildRepository = $app[\EtoA\Building\BuildingDataRepository::class];
+	/** @var \EtoA\Technology\TechnologyDataRepository $technologyRepository */
+	$technologyRepository = $app[\EtoA\Technology\TechnologyDataRepository::class];
+	/** @var \EtoA\Ship\ShipDataRepository $shipRepository */
+	$shipRepository = $app[\EtoA\Ship\ShipDataRepository::class];
+	/** @var \EtoA\Defense\DefenseDataRepository $defenseRepository */
+	$defenseRepository = $app[\EtoA\Defense\DefenseDataRepository::class];
+
 	// Definitionen
 
 	if(isset($_GET['mode']) && $_GET['mode']!="")
@@ -176,33 +185,8 @@
 			$techlist[$tarr['techlist_tech_id']]=$tarr['techlist_current_level'];
 		}
 
-		// Lade Gebäudenamen
-		$bu_name=array();
-		$bures = dbquery("
-		SELECT
-			building_id,
-			building_name
-		FROM
-			buildings
-		;");
-		while ($buarr = mysql_fetch_array($bures))
-		{
-			$bu_name[$buarr['building_id']]=$buarr['building_name'];
-		}
-
-		// Lade Technologienamen
-		$te_name=array();
-		$teres = dbquery("
-		SELECT
-			tech_id,
-			tech_name
-		FROM
-			technologies
-		");
-		while ($tearr = mysql_fetch_array($teres))
-		{
-			$te_name[$tearr['tech_id']]=$tearr['tech_name'];
-		}
+		$buildingNames = $buildRepository->getBuildingNames();
+		$technologyNames = $technologyRepository->getTechnologyNames();
 
 		// Lade Anforderungen
 		$b_req=array();
@@ -350,11 +334,11 @@
 
 									if (!isset($buildlist[$b]) || $buildlist[$b]<$l)
 									{
-										echo "<td style=\"color:#f00;border-right:none;".$bstyle."\" width=\"130\">".$bu_name[$b]."</td><td style=\"color:#f00;border-left:none;".$bstyle."\" width=\"70\">Stufe ".$l."</td></tr>";
+										echo "<td style=\"color:#f00;border-right:none;".$bstyle."\" width=\"130\">".$buildingNames[$b]."</td><td style=\"color:#f00;border-left:none;".$bstyle."\" width=\"70\">Stufe ".$l."</td></tr>";
 									}
 									else
 									{
-										echo "<td style=\"color:#0f0;border-right:none;".$bstyle."\" width=\"130\">".$bu_name[$b]."</td><td style=\"color:#0f0;border-left:none;".$bstyle."\" width=\"70\">Stufe $l</td></tr>";
+										echo "<td style=\"color:#0f0;border-right:none;".$bstyle."\" width=\"130\">".$buildingNames[$b]."</td><td style=\"color:#0f0;border-left:none;".$bstyle."\" width=\"70\">Stufe $l</td></tr>";
 									}
 									$cnt++;
 								}
@@ -394,11 +378,11 @@
 
 									if (!isset($techlist[$b]) || $techlist[$b]<$l)
 									{
-										echo "<td style=\"color:#f00;border-right:none;".$bstyle."\" width=\"130\">".$te_name[$b]."</td><td style=\"color:#f00;border-left:none;".$bstyle."\" width=\"70\">Stufe ".$l."</td></tr>";
+										echo "<td style=\"color:#f00;border-right:none;".$bstyle."\" width=\"130\">".$technologyNames[$b]."</td><td style=\"color:#f00;border-left:none;".$bstyle."\" width=\"70\">Stufe ".$l."</td></tr>";
 									}
 									else
 									{
-										echo "<td style=\"color:#0f0;border-right:none;".$bstyle."\" width=\"130\">".$te_name[$b]."</td><td style=\"color:#0f0;border-left:none;".$bstyle."\" width=\"70\">Stufe ".$l."</td></tr>";
+										echo "<td style=\"color:#0f0;border-right:none;".$bstyle."\" width=\"130\">".$technologyNames[$b]."</td><td style=\"color:#0f0;border-left:none;".$bstyle."\" width=\"70\">Stufe ".$l."</td></tr>";
 									}
 									$cnt++;
 								}
@@ -495,11 +479,11 @@
 
 							if (!isset($buildlist[$b]) || $buildlist[$b]<$l)
 							{
-								echo "<td style=\"color:#f00;border-right:none;$bstyle\" width=\"130\">".$bu_name[$b]."</td><td style=\"color:#f00;border-left:none;$bstyle\" width=\"70\">Stufe $l</td></tr>";
+								echo "<td style=\"color:#f00;border-right:none;$bstyle\" width=\"130\">".$buildingNames[$b]."</td><td style=\"color:#f00;border-left:none;$bstyle\" width=\"70\">Stufe $l</td></tr>";
 							}
 							else
 							{
-								echo "<td style=\"color:#0f0;border-right:none;$bstyle\" width=\"130\">".$bu_name[$b]."</td><td style=\"color:#0f0;border-left:none;$bstyle\" width=\"70\">Stufe $l</td></tr>";
+								echo "<td style=\"color:#0f0;border-right:none;$bstyle\" width=\"130\">".$buildingNames[$b]."</td><td style=\"color:#0f0;border-left:none;$bstyle\" width=\"70\">Stufe $l</td></tr>";
 							}
 							$cnt++;
 						}
@@ -539,11 +523,11 @@
 
 							if (!isset($techlist[$b]) || $techlist[$b]<$l)
 							{
-								echo "<td style=\"color:#f00;border-right:none;$bstyle\" width=\"130\">".$te_name[$b]."</td><td style=\"color:#f00;border-left:none;$bstyle\" width=\"70\">Stufe $l</td></tr>";
+								echo "<td style=\"color:#f00;border-right:none;$bstyle\" width=\"130\">".$technologyNames[$b]."</td><td style=\"color:#f00;border-left:none;$bstyle\" width=\"70\">Stufe $l</td></tr>";
 							}
 							else
 							{
-								echo "<td style=\"color:#0f0;border-right:none;$bstyle\" width=\"130\">".$te_name[$b]."</td><td style=\"color:#0f0;border-left:none;$bstyle\" width=\"70\">Stufe $l</td></tr>";
+								echo "<td style=\"color:#0f0;border-right:none;$bstyle\" width=\"130\">".$technologyNames[$b]."</td><td style=\"color:#0f0;border-left:none;$bstyle\" width=\"70\">Stufe $l</td></tr>";
 							}
 							$cnt++;
 						}
@@ -565,38 +549,34 @@
 
 		echo "<select onchange=\"xajax_reqInfo(this.value,'b')\">
 		<option value=\"0\">Gebäude wählen...</option>";
-		$bures = dbquery("SELECT building_id,building_name FROM buildings WHERE building_show=1 ORDER BY building_name;");
-		while ($buarr = mysql_fetch_array($bures))
-		{
-			echo "<option value=\"".$buarr['building_id']."\">".$buarr['building_name']."</option>";
+		$buildingNames = $buildRepository->getBuildingNames();
+		foreach ($buildingNames as $buildingId => $buildingName) {
+			echo "<option value=\"".$buildingId."\">".$buildingName."</option>";
 		}
 		echo "</select> ";
 
 
 		echo "<select onchange=\"xajax_reqInfo(this.value,'t')\">
 		<option value=\"0\">Technologie wählen...</option>";
-		$teres = dbquery("SELECT tech_id,tech_name FROM technologies WHERE tech_show=1 ORDER BY tech_name;");
-		while ($tearr = mysql_fetch_array($teres))
-		{
-			echo "<option value=\"".$tearr['tech_id']."\">".$tearr['tech_name']."</option>";
+		$technologyNames = $technologyRepository->getTechnologyNames();
+		foreach ($technologyNames as $technologyId => $technologyName) {
+			echo "<option value=\"".$technologyId."\">".$technologyName."</option>";
 		}
 		echo "</select> ";
 
 		echo "<select onchange=\"xajax_reqInfo(this.value,'s')\">
 		<option value=\"0\">Schiff wählen...</option>";
-		$teres = dbquery("SELECT ship_id,ship_name FROM ships WHERE ship_show=1 AND special_ship=0 ORDER BY ship_name;");
-		while ($tearr = mysql_fetch_array($teres))
-		{
-			echo "<option value=\"".$tearr['ship_id']."\">".$tearr['ship_name']."</option>";
+		$shipNames = $shipRepository->getShipNames();
+		foreach ($shipNames as $shipId => $shipName) {
+			echo "<option value=\"".$shipId."\">".$shipName."</option>";
 		}
 		echo "</select> ";
 
 		echo "<select onchange=\"xajax_reqInfo(this.value,'d')\">
 		<option value=\"0\">Verteidigung wählen...</option>";
-		$teres = dbquery("SELECT def_id,def_name FROM defense WHERE def_show=1 ORDER BY def_name;");
-		while ($tearr = mysql_fetch_array($teres))
-		{
-			echo "<option value=\"".$tearr['def_id']."\">".$tearr['def_name']."</option>";
+		$defenseNames = $defenseRepository->getDefenseNames();
+		foreach ($defenseNames as $defenseId => $defenseName) {
+			echo "<option value=\"".$defenseId."\">".$defenseName."</option>";
 		}
 		echo "</select><br/><br/>";
 
@@ -606,4 +586,3 @@
 
 	}
 }
-?>

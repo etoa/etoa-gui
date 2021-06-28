@@ -7,13 +7,9 @@ use EtoA\Admin\AdminUserRepository;
 /**
  * Provides session and authentication management
  * for admin area.
- *
- * @author Nicolas Perrenoud <mrcage@etoa.ch>
  */
 class AdminSession extends Session
 {
-    protected $namePrefix = "admin";
-
     function login($data)
     {
         // TODO

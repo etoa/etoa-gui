@@ -2,7 +2,7 @@
 
 namespace EtoA\Quest\Progress\InitFunctions;
 
-use EtoA\Planet\PlanetRepository;
+use EtoA\Universe\PlanetRepository;
 use LittleCubicleGames\Quests\Entity\QuestInterface;
 use LittleCubicleGames\Quests\Entity\TaskInterface;
 use PHPUnit\Framework\TestCase;

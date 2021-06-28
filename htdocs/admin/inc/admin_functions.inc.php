@@ -8,64 +8,9 @@
 //////////////////////////////////////////////////////
 
 use Doctrine\DBAL\Query\QueryBuilder;
-use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Core\Logging\FleetLog;
 use EtoA\Core\Logging\GameLog;
 use EtoA\Core\Logging\Log;
-
-function popupLink($type,$title,$class="",$params="")
-{
-    $res = "<a href=\"#\" class=\"popuplink".($class!="" ? " $class" : "")."\" ";
-    $p = $params != "" ? "&amp;".$params : "";
-    switch ($type)
-    {
-        case "tickets":
-            $res .= " onclick=\"window.open('popup.php?page=tickets".$p."','Tickets','top=20,left='+(screen.availWidth-720)+',width=700, height=600, status=no, scrollbars=yes')\"";
-            break;
-        case "notepad":
-            $res .= " onclick=\"window.open('popup.php?page=notepad','Notepad','width=600, height=500, status=no, scrollbars=yes')\"";
-            break;
-        case "sendmessage":
-            $res .= " onclick=\"window.open('popup.php?page=sendmessage".$p."','Message','width=500, height=300, status=no, scrollbars=no')\"";
-            break;
-        default:
-
-    }
-    $res .=">".$title."</a>";
-    return $res;
-}
-
-function openerLink($target,$title,$css="")
-{
-    return "<a href=\"#\" onclick=\"opener.document.location='index.php?".$target."'\" ".($css!="" ? "style=\"$css\"" : "").">".$title."</a>";
-}
-
-/**
-* Shows a table view of a given mysql result
-*
-* @param resource $res MySQL result pointer
-*/
-function db_show_result($res)
-{
-    echo '<table class="tb"><thead><tr>';
-    $fc=0;
-    while ($fo = mysql_fetch_field($res))
-    {
-        echo '<th>'.$fo->name.'</th>';
-        $fc++;
-    }
-    echo '</tr></thead><tbody>';
-    while ($arr=mysql_fetch_row($res))
-    {
-        echo '<tr>';
-        for ($x=0;$x<$fc;$x++)
-        {
-            echo '<td>'.$arr[$x].'</td>';
-        }
-        echo '</tr>';
-    }
-    echo '</tbody></table>';
-}
 
 /**
 * Generates a page for editing table date with
@@ -94,24 +39,6 @@ function simple_form($module, $twig)
 }
 
 /**
-* Checks permission to access a page
-* for current user and given page rank
-*
-* @param int $rank Required rank
-* @return bool Permission granted or nor
-*/
-function check_perm($rank)
-{
-    global $adminlevel;
-    if ($_SESSION[SESSION_NAME]['group_level']<$rank)
-    {
-        echo "<h1>Kein Zugriff</h1> Du hast keinen Zugriff auf diese Seite! Erwartet ".$adminlevel[$rank]." ($rank), gegeben ".$_SESSION[SESSION_NAME]['group_name']." (".$_SESSION[SESSION_NAME]['group_level'].")<br/>";
-        return false;
-    }
-    return true;
-}
-
-/**
 * Displays a clickable edit button
 *
 * @param string $url Url of the link
@@ -137,39 +64,6 @@ function copy_button($url, $ocl="")
         return "<a href=\"$url\" onclick=\"$ocl\"><img src=\"../images/icons/copy.png\" alt=\"Kopieren\" style=\"width:16px;height:18px;border:none;\" title=\"Kopieren\" /></a>";
     else
         return "<a href=\"$url\"><img src=\"../images/icons/copy.png\" alt=\"Kopieren\" style=\"width:16px;height:18px;border:none;\" title=\"Kopieren\" /></a>";
-}
-
-
-/**
-* Displays a clickable edit button
-*
-* @param string $url Url of the link
-*/
-function cb_button($url)
-{
-    global $cb;
-    if ($cb)
-    {
-        return "<a href=\"clipboard.php?".$url."\" target=\"clipboard\"><img src=\"../images/clipboard.png\" alt=\"Zwischenablage\" style=\"width:16px;height:18px;border:none;\" title=\"Zwischenablage\" /></a>";
-    }
-    return "";
-}
-
-
-/**
- * Displays a clickable repair button
- *
- * @param string $url Url of the link
- * @param string $tmTitle
- * @param string $tmText
- * @param string $ocl
-*/
-function repair_button($url, $tmTitle="", $tmText="", $ocl = '')
-{
-    if ($tmTitle!="" && $tmText!="")
-        return "<a href=\"$url\" onclick=\"$ocl\"><img src=\"../images/repair.gif\" alt=\"Reparieren\" style=\"width:18px;height:18px;border:none;\" ".tm($tmTitle,$tmText)."/></a>";
-    else
-        return "<a href=\"$url\"><img src=\"../images/repair.gif\" alt=\"Reparieren\" style=\"width:18px;height:18px;border:none;\" title=\"Reparieren\" /></a>";
 }
 
 /**
@@ -729,114 +623,119 @@ function showLogs($args=null,$limit=0)
 
 function showAttackAbuseLogs($args=null,$limit=-1,$load=true)
 {
-    $paginationLimit = 50;
+    global $app;
 
-    if ($load)
-    {
-        $action = is_array($args) && isset($args['flaction']) ? $args['flaction'] : 0;
-        $sev = is_array($args) && isset($args['logsev'])  ? $args['logsev'] : 0;
+    /** @var \EtoA\User\UserRepository $userRepository */
+    $userRepository = $app['etoa.user.repository'];
 
-        $landtime = is_array($args) ? mktime($args['searchtime_h'],$args['searchtime_i'],$args['searchtime_s'],$args['searchtime_m'],$args['searchtime_d'],$args['searchtime_y']) : time();
+	$paginationLimit = 50;
 
-        $order = "timestamp ASC";
+	if ($load)
+	{
+		$action = is_array($args) && isset($args['flaction']) ? $args['flaction'] : 0;
+		$sev = is_array($args) && isset($args['logsev'])  ? $args['logsev'] : 0;
 
-        $sql1 = "SELECT ";
-        $sql2 = " * ";
-        $sql3 = " FROM logs_battle l ";
+		$landtime = is_array($args) ? mktime($args['searchtime_h'],$args['searchtime_i'],$args['searchtime_s'],$args['searchtime_m'],$args['searchtime_d'],$args['searchtime_y']) : time();
 
-        if (isset($args['searchfuser']) && $args['searchfuser']!="" && !is_numeric($args['searchfuser']))
-        {
-            $args['searchfuser'] = get_user_id($args['searchfuser']);
-        }
-        if (isset($args['searcheuser']) && $args['searcheuser']!="" && !is_numeric($args['searcheuser']))
-        {
-            $args['searcheuser'] = get_user_id($args['searcheuser']);
-        }
+		$order = "timestamp ASC";
 
-        $sql3.= " WHERE fleet_weapon>0 AND landtime<='".$landtime."' AND landtime>'".($landtime-3600*24)."' ";
-        if ($action!="")
-        {
-            $sql3.=" AND action='".$action."' ";
-        }
-        if ($sev >0)
-        {
-            $sql3.=" AND severity >= ".$sev." ";
-        }
-        if (isset($args['searchfuser']) && is_numeric($args['searchfuser']))
-        {
-            $sql3.=" AND l.user_id LIKE '%,".intval($args['searchfuser']).",%' ";
-        }
-        if (isset($args['searcheuser']) && is_numeric($args['searcheuser']))
-        {
-            $sql3.=" AND l.entity_user_id LIKE '%,".intval($args['searcheuser']).",%' ";
-        }
-        $sql3.= " ORDER BY $order";
+		$sql1 = "SELECT ";
+		$sql2 = " * ";
+		$sql3 = " FROM logs_battle l ";
 
-        $res=dbquery($sql1.$sql2.$sql3);
+		if (isset($args['searchfuser']) && $args['searchfuser']!="" && !is_numeric($args['searchfuser']))
+		{
+			$args['searchfuser'] = $userRepository->getUserIdByNick($args['searchfuser']);
+		}
+		if (isset($args['searcheuser']) && $args['searcheuser']!="" && !is_numeric($args['searcheuser']))
+		{
+			$args['searcheuser'] = $userRepository->getUserIdByNick($args['searcheuser']);
+		}
 
-        $bans = array();
-        $actions = array();
+		$sql3.= " WHERE fleet_weapon>0 AND landtime<='".$landtime."' AND landtime>'".($landtime-3600*24)."' ";
+		if ($action!="")
+		{
+			$sql3.=" AND action='".$action."' ";
+		}
+		if ($sev >0)
+		{
+			$sql3.=" AND severity >= ".$sev." ";
+		}
+		if (isset($args['searchfuser']) && is_numeric($args['searchfuser']))
+		{
+			$sql3.=" AND l.user_id LIKE '%,".intval($args['searchfuser']).",%' ";
+		}
+		if (isset($args['searcheuser']) && is_numeric($args['searcheuser']))
+		{
+			$sql3.=" AND l.entity_user_id LIKE '%,".intval($args['searcheuser']).",%' ";
+		}
+		$sql3.= " ORDER BY $order";
 
-        if (mysql_num_rows($res)>0)
-        {
-            $data = array();
+		$res=dbquery($sql1.$sql2.$sql3);
 
-            $waveMaxCnt = array(3,4);				// Max. 3er/4er Wellen...
-            $waveTime = 15*60;						// ...innerhalb 15mins
+		$bans = array();
+		$actions = array();
 
-            $attacksPerEntity = array(2,4);			// Max. 2/4 mal den gleichen Planeten angreiffen
+		if (mysql_num_rows($res)>0)
+		{
+			$data = array();
 
-            $attackedEntitiesMax = array(5,10);		// Max. Anzahl Planeten die angegriffen werden können...
-            $timeBetweenAttacksOnEntity = 6*3600;	// ...innerhalb 6h
+			$waveMaxCnt = array(3,4);				// Max. 3er/4er Wellen...
+			$waveTime = 15*60;						// ...innerhalb 15mins
 
-            $banRange = 24*3600;					// alle Regeln gelten innerhalb von 24h
+			$attacksPerEntity = array(2,4);			// Max. 2/4 mal den gleichen Planeten angreiffen
 
-            $first_ban_time = 12*3600;							// Sperrzeit beim ersten Vergehen: 12h
-            $add_ban_time = 12*3600;								// Sperrzeit bei jedem weiteren Vergehen: 12h (wird immer dazu addiert)
+			$attackedEntitiesMax = array(5,10);		// Max. Anzahl Planeten die angegriffen werden können...
+			$timeBetweenAttacksOnEntity = 6*3600;	// ...innerhalb 6h
 
-            //Alle Daten werden in einem Array gespeichert, da mehr als 1 Angriffer möglich ist funktioniert das alte Tool nicht mehr
-            while ($arr=mysql_fetch_array($res))
-            {
-                $uid = explode(",",$arr['user_id']);
-                $euid = explode(",",$arr['entity_user_id']);
-                $eUser = $euid[1];
-                $entity = $arr['entity_id'];
-                $time = $arr['landtime'];
-                $war = $arr['war'];
-                $action = $arr['action'];
-                foreach ($uid as $fUser)
-                {
-                    if ($fUser!="")
-                    {
-                        if (!isset($data[$fUser])) $data[$fUser] = array();
-                        if (!isset($data[$fUser][$eUser])) $data[$fUser][$eUser] = array();
-                        if (!isset($data[$fUser][$eUser][$entity])) $data[$fUser][$eUser][$entity] = array();
-                        array_push($data[$fUser][$eUser][$entity],array($time,$war,$action));
-                    }
-                }
-            }
+			$banRange = 24*3600;					// alle Regeln gelten innerhalb von 24h
 
-            foreach ($data as $fUser=>$eUserArr)
-            {
-                foreach ($eUserArr as $eUser=>$eArr)
-                {
-                    $firstTime = 0;
-                    $attackCntTotal = 0;
-                    $attackedEntities = count($eArr);
+			$first_ban_time = 12*3600;							// Sperrzeit beim ersten Vergehen: 12h
+			$add_ban_time = 12*3600;								// Sperrzeit bei jedem weiteren Vergehen: 12h (wird immer dazu addiert)
 
-                    foreach ($eArr as $entity=>$eDataArr)
-                    {
-                        $firstPlanetTime = 0;
-                        $lastPlanetTime = 0;
-                        $attackCntEntity = 0;
-                        $waveStart=0;
-                        $waveEnd = 0;
+			//Alle Daten werden in einem Array gespeichert, da mehr als 1 Angriffer möglich ist funktioniert das alte Tool nicht mehr
+			while ($arr=mysql_fetch_array($res))
+			{
+				$uid = explode(",",$arr['user_id']);
+				$euid = explode(",",$arr['entity_user_id']);
+				$eUser = $euid[1];
+				$entity = $arr['entity_id'];
+				$time = $arr['landtime'];
+				$war = $arr['war'];
+				$action = $arr['action'];
+				foreach ($uid as $fUser)
+				{
+					if ($fUser!="")
+					{
+						if (!isset($data[$fUser])) $data[$fUser] = array();
+						if (!isset($data[$fUser][$eUser])) $data[$fUser][$eUser] = array();
+						if (!isset($data[$fUser][$eUser][$entity])) $data[$fUser][$eUser][$entity] = array();
+						array_push($data[$fUser][$eUser][$entity],array($time,$war,$action));
+					}
+				}
+			}
 
-                        foreach($eDataArr as $eData)
-                        {
-                            $ban = 0;
-                            $banReason = "";
-                            if ($firstTime==0) {
+			foreach ($data as $fUser=>$eUserArr)
+			{
+				foreach ($eUserArr as $eUser=>$eArr)
+				{
+					$firstTime = 0;
+					$attackCntTotal = 0;
+					$attackedEntities = count($eArr);
+
+					foreach ($eArr as $entity=>$eDataArr)
+					{
+						$firstPlanetTime = 0;
+						$lastPlanetTime = 0;
+						$attackCntEntity = 0;
+						$waveStart=0;
+						$waveEnd = 0;
+
+						foreach($eDataArr as $eData)
+						{
+							$ban = 0;
+							$banReason = "";
+							if ($firstTime==0) {
                                 $firstTime = $eData[0];
 
                                 // Wenn mehr als 5 Planeten angegrifen wurden
@@ -972,7 +871,7 @@ function showAttackAbuseLogs($args=null,$limit=-1,$load=true)
 
 function showFleetLogs($args=null,$limit=0)
 {
-    global $resNames;
+    global $resNames, $app;
     $paginationLimit = 50;
 
     $action = is_array($args) && isset($args['flaction']) ? $args['flaction'] : 0;
@@ -1073,12 +972,9 @@ function showFleetLogs($args=null,$limit=0)
             <th>Landezeit</th>
             <th>Flotte</th>
         </tr>";
-        $ships = [];
-        $sres = dbquery("SELECT ship_id,ship_name FROM ships WHERE ship_show=1 ORDER BY ship_type_id,ship_order;");
-        while ($sarr = mysql_fetch_row($sres))
-        {
-            $ships[$sarr[0]] = $sarr[1];
-        }
+        /** @var \EtoA\Ship\ShipDataRepository $shipDataRepository */
+        $shipDataRepository = $app[\EtoA\Ship\ShipDataRepository::class];
+        $shipNames = $shipDataRepository->getShipNames(true);
         while ($arr = mysql_fetch_assoc($res))
         {
             $owner = new User($arr['user_id']);
@@ -1112,7 +1008,7 @@ function showFleetLogs($args=null,$limit=0)
             {
                 $sdi = explode(":",$sd);
                 if ($sdi[0]>0)
-                    echo "<tr><td>".$ships[$sdi[0] ]."</td><td>".nf($sdi[1])."</td><td>".nf($sship[$sdi[0] ])."</td></tr>";
+                    echo "<tr><td>".$shipNames[(int) $sdi[0] ]."</td><td>".nf($sdi[1])."</td><td>".nf($sship[$sdi[0] ])."</td></tr>";
             }
             echo tableEnd();
             tableStart("",450);
@@ -1129,7 +1025,7 @@ function showFleetLogs($args=null,$limit=0)
             {
                 $sdi = explode(":",$sd);
                 if ($sdi[0]>0)
-                    echo "<tr><td>".$ships[$sdi[0] ]."</td><td>".nf($sdi[1])."</td><td>".nf($sship[$sdi[0] ])."</td></tr>";
+                    echo "<tr><td>".$shipNames[(int) $sdi[0] ]."</td><td>".nf($sdi[1])."</td><td>".nf($sship[$sdi[0] ])."</td></tr>";
             }
             echo tableEnd();
             tableStart("",450);

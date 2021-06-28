@@ -57,7 +57,7 @@ class AdminSessionManager
      * @param string $sid Session-ID.
      * @param bool $logoutPressed True if it was manual logout
      */
-    public function unregisterSession(string $sid, bool $logoutPressed = true)
+    public function unregisterSession(string $sid, bool $logoutPressed = true): void
     {
         $adminSession = $this->repository->find($sid);
         if ($adminSession != null) {
@@ -73,7 +73,7 @@ class AdminSessionManager
     /**
      * Cleans up sessions with have a timeout. Should be called at login or by cronjob regularly
      */
-    public function cleanup()
+    public function cleanup(): void
     {
         $sessions = $this->repository->findByTimeout($this->config->getInt('admin_timeout'));
         foreach ($sessions as $session) {

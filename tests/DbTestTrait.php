@@ -16,6 +16,7 @@ trait DbTestTrait
 
     protected function tearDown(): void
     {
+        $this->connection->executeQuery('TRUNCATE alliances');
         $this->connection->executeQuery('TRUNCATE planets');
         $this->connection->executeQuery('TRUNCATE techlist');
         $this->connection->executeQuery('TRUNCATE buildlist');
@@ -32,5 +33,6 @@ trait DbTestTrait
         $this->connection->executeQuery('TRUNCATE messages');
         $this->connection->executeQuery('TRUNCATE message_data');
         $this->connection->executeQuery('DELETE FROM quests');
+        $this->connection->executeQuery('DELETE FROM market_rates');
     }
 }

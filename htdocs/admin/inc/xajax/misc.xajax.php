@@ -198,12 +198,16 @@ function showShipsOnPlanet($pid)
 
 function addShipToPlanet($form)
 {
+    global $app;
+
 	$objResponse = new xajaxResponse();
 
 	$updata=explode(":",$form['planet_id']);
 	if ($updata[1]>0)
 	{
-		shiplistAdd((int) $updata[0], (int) $updata[1], (int) $form['ship_id'],(int) $form['shiplist_count']);
+        /** @var \EtoA\Ship\ShipRepository $shipRepository */
+        $shipRepository = $app['etoa.ship.repository'];
+        $shipRepository->addShip((int) $form['ship_id'], (int) $form['shiplist_count'], (int) $updata[1], (int) $updata[0]);
   	$objResponse->addScript("xajax_showShipsOnPlanet(".$updata[0].")");
   }
   else

@@ -29,6 +29,9 @@
 	define("USER_MESSAGE_CAT_ID",1);
 	define("SYS_MESSAGE_CAT_ID",5);
 
+	/** @var \EtoA\User\UserRepository $userRepository */
+    $userRepository = $app['etoa.user.repository'];
+
 	//
 	// Send message form
 	//
@@ -142,11 +145,10 @@
 				<input type=\"radio\" name=\"rcpt_type\" id=\"rcpt_type_1\" value=\"1\"  checked=\"checked\"  onclick=\"document.getElementById('message_user_to').style.display='none';\" /> <label for=\"rcpt_type_1\">Alle Spieler</label>
 				<input type=\"radio\" name=\"rcpt_type\" id=\"rcpt_type_0\" value=\"0\"  onclick=\"document.getElementById('message_user_to').style.display='';\" /> <label for=\"rcpt_type_0\">Einzelner Empfänger</label>
 				<select name=\"message_user_to\" id=\"message_user_to\" style=\"display:none\">";
-				$res=dbquery("SELECT user_id,user_nick FROM users ORDER BY user_nick;");
-				while ($arr=mysql_fetch_array($res))
-				{
-					echo "<option value=\"".$arr['user_id']."\"";
-					echo ">".$arr['user_nick']."</option>";
+			    $userNicks = $userRepository->getUserNicknames();
+				foreach ($userNicks as $userId => $userNick) {
+					echo "<option value=\"".$userId."\"";
+					echo ">".$userNick."</option>";
 				}
 			echo "</select> &nbsp;
 
@@ -186,16 +188,16 @@
 				$sql.= " AND user_id='".$_POST['user_id']."' ";
 			if ($_POST['user_nick']!="")
 			{
-				$uid = get_user_id($_POST['user_nick']);
-				if ($uid>0)
+				$uid = $userRepository->getUserIdByNick($_POST['user_nick']);
+				if ($uid !== null)
 					$sql.= " AND user_id='".$uid."' ";
 			}
 			if ($_POST['opponent1_id']!="")
 				$sql.= " AND opponent1_id='".$_POST['opponent1_id']."' ";
 			if ($_POST['opponent1_nick']!="")
 			{
-				$uid = get_user_id($_POST['opponent1_nick']);
-				if ($uid>0)
+				$uid = $userRepository->getUserIdByNick($_POST['opponent1_nick']);
+				if ($uid !== null)
 					$sql.= " AND opponent1_id='".$uid."' ";
 			}
 			if (isset($_POST['subject']) && $_POST['subject']!="")
@@ -562,16 +564,16 @@
 					$sql.= " AND message_user_from=".$_POST['message_user_from_id'];
 				if ($_POST['message_user_from_nick']!="")
 				{
-					$uid = get_user_id($_POST['message_user_from_nick']);
-					if ($uid>0)
+					$uid = $userRepository->getUserIdByNick($_POST['message_user_from_nick']);
+					if ($uid !== null)
 						$sql.= " AND message_user_from=$uid";
 				}
 				if ($_POST['message_user_to_id']!="")
 					$sql.= " AND message_user_to=".$_POST['message_user_to_id'];
 				if ($_POST['message_user_to_nick']!="")
 				{
-					$uid = get_user_id($_POST['message_user_to_nick']);
-					if ($uid>0)
+					$uid = $userRepository->getUserIdByNick($_POST['message_user_to_nick']);
+					if ($uid !== null)
 						$sql.= " AND message_user_to=$uid";
 				}
 				if ($_POST['message_subject']!="")

@@ -40,6 +40,17 @@ class BuildingRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    public function getNumberOfBuildings(int $buildingId): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(buildlist_id)')
+            ->from('buildlist')
+            ->where('buildlist_building_id = :buildingId')
+            ->setParameter('buildingId', $buildingId)
+            ->execute()
+            ->fetchOne();
+    }
+
     public function numBuildingListEntries(): int
     {
         return (int) $this->createQueryBuilder()
@@ -81,6 +92,7 @@ class BuildingRepository extends AbstractRepository
             ->setParameter('id', $id)
             ->execute()
             ->fetchAssociative();
+
         return $data !== false ? $data : null;
     }
 
@@ -112,6 +124,7 @@ class BuildingRepository extends AbstractRepository
             ->where('buildlist_id = :id')
             ->setParameter('id', $id)
             ->execute();
+
         return (int) $affected > 0;
     }
 
@@ -163,5 +176,27 @@ class BuildingRepository extends AbstractRepository
 
         return $qry->execute()
             ->fetchAllAssociative();
+    }
+
+    public function addBuilding(int $buildingId, int $level, int $userId, int $entityId): void
+    {
+        $this->getConnection()->executeQuery('INSERT INTO buildlist (
+                buildlist_user_id,
+                buildlist_entity_id,
+                buildlist_building_id,
+                buildlist_current_level
+            ) VALUES (
+                :userId,
+                :entityId,
+                :buildingId,
+                :level
+            ) ON DUPLICATE KEY
+            UPDATE buildlist_current_level = :level;
+        ', [
+            'userId' => $userId,
+            'level' => max(0, $level),
+            'entityId' => $entityId,
+            'buildingId' => $buildingId,
+        ]);
     }
 }

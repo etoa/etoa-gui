@@ -18,6 +18,9 @@
 	//
 	//
 
+    /** @var \EtoA\User\UserRepository $userRepository */
+    $userRepository = $app['etoa.user.repository'];
+
 	if (!$s->sittingActive || $s->falseSitter)
 	{
 			//
@@ -51,12 +54,12 @@
                     if ($user[$id]!="" && $_POST['del_multi'][$id]!=1)
                     {
                         //Ist dieser User existent
-                        if (get_user_id($user[$id])==0)
-                        {
+                        $userIdForNick = $userRepository->getUserIdByNick($user[$id]);
+                        if ($userIdForNick !== null) {
                             error_msg("Dieser User exisitert nicht!");
                         }
                         //ist der eigene nick eingetragen
-                        elseif (get_user_id($user[$id])==$cu->id)
+                        elseif ($userIdForNick == $cu->id)
                         {
                             error_msg("Du kannst nicht dich selber eintragen!");
                         }
@@ -67,7 +70,7 @@
                             UPDATE
                                 user_multi
                             SET
-                                multi_id='".get_user_id($user[$id])."',
+                                multi_id='".$userIdForNick."',
                                 connection='".mysql_real_escape_string($_POST['connection'][$id])."',
 								timestamp=UNIX_TIMESTAMP()
                             WHERE

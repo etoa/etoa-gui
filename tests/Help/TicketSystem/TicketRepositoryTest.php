@@ -142,7 +142,7 @@ class TicketRepositoryTest extends AbstractDbTestCase
         $this->assertEquals(0, $this->repository->countNew());
     }
 
-    public function testFindOrphanedIds()
+    public function testFindOrphanedIds(): void
     {
         // given
         $ticketId = 1;
@@ -162,7 +162,7 @@ class TicketRepositoryTest extends AbstractDbTestCase
         $this->assertEquals([$ticketId], $ids);
     }
 
-    public function removeByIds()
+    public function removeByIds(): void
     {
         // given
         $ticketId = 1;

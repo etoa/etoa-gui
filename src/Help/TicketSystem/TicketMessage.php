@@ -24,6 +24,7 @@ class TicketMessage
         $message->adminId = (int) $data['admin_id'];
         $message->timestamp = (int) $data['timestamp'];
         $message->message = $data['message'];
+
         return $message;
     }
 }

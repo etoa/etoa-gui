@@ -11,6 +11,7 @@ use EtoA\Quest\Progress\InitFunctions\HavePoints;
 use EtoA\Quest\Progress\InitFunctions\HaveSpecialist;
 use EtoA\Quest\Progress\InitFunctions\HaveSpecialistType;
 use EtoA\Quest\Progress\InitFunctions\HaveTechnologyLevel;
+use EtoA\Universe\PlanetRepository;
 use LittleCubicleGames\Quests\Progress\Functions\HandlerFunctionInterface;
 use LittleCubicleGames\Quests\Progress\ProgressFunctionBuilderInterface;
 use Pimple\Container;
@@ -38,7 +39,7 @@ class ContainerAwareFunctionBuilder implements ProgressFunctionBuilderInterface
             case HavePoints::NAME:
                 return new HavePoints($this->container['etoa.user.repository']);
             case HavePlanetCount::NAME:
-                return new HavePlanetCount($this->container['etoa.planet.repository']);
+                return new HavePlanetCount($this->container[PlanetRepository::class]);
             case HaveAlliance::NAME:
                 return new HaveAlliance($this->container['etoa.user.repository']);
             case HaveSpecialist::NAME:

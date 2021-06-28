@@ -742,6 +742,10 @@ function logSelectorCat($cat)
 
 function checkLogFormular($val)
 {
+    global $app;
+
+    /** @var \EtoA\User\UserRepository $userRepository */
+    $userRepository = $app['etoa.user.repository'];
 
 	ob_start();
 	$objResponse = new xajaxResponse();
@@ -772,13 +776,13 @@ function checkLogFormular($val)
 		// Angreiffer
 		if($val['user_nick_entity']!="")
 		{
-			$sql_add .= " AND fleet_user_id='".get_user_id($val['user_nick_fleet'])."'";
+			$sql_add .= " AND fleet_user_id='".$userRepository->getUserIdByNick($val['user_nick_fleet'])."'";
 		}
 
 		// Verteidiger
 		if($val['user_nick_entity']!="")
 		{
-			$sql_add .= " AND entity_user_id='".get_user_id($val['user_nick_entity'])."'";
+			$sql_add .= " AND entity_user_id='".$userRepository->getUserIdByNick($val['user_nick_entity'])."'";
 		}
 
 		// Aktion
@@ -821,13 +825,13 @@ function checkLogFormular($val)
 		// Angreiffer
 		if($val['user_nick_a']!="")
 		{
-			$sql_add .= " AND logs_battle_user1_id='".get_user_id($val['user_nick_a'])."'";
+			$sql_add .= " AND logs_battle_user1_id='".$userRepository->getUserIdByNick($val['user_nick_a'])."'";
 		}
 
 		// Verteidiger
 		if($val['user_nick_d']!="")
 		{
-			$sql_add .= " AND logs_battle_user2_id='".get_user_id($val['user_nick_d'])."'";
+			$sql_add .= " AND logs_battle_user2_id='".$userRepository->getUserIdByNick($val['user_nick_d'])."'";
 		}
 
 		// Allianz Angreiffer
@@ -982,7 +986,7 @@ function checkLogFormular($val)
 		// User
 		if($val['user_nick_a']!="")
 		{
-			$sql_add .= " AND logs_game_user_id='".get_user_id($val['user_nick_a'])."'";
+			$sql_add .= " AND logs_game_user_id='".$userRepository->getUserIdByNick($val['user_nick_a'])."'";
 		}
 
 		// Min. Zeit

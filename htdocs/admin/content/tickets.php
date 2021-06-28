@@ -171,8 +171,8 @@ function ticketDetails(
     }
 
     echo "<div id=\"ttuser\" style=\"display:none;\">
-    " . openerLink("page=user&sub=edit&id=" . $ticket->userId, "Daten anzeigen") . "<br/>
-    " . popupLink("sendmessage", "Nachricht senden", "", "id=" . $ticket->userId) . "<br/>
+    <a href=\"?page=user&sub=edit&id=" . $ticket->userId ."\">Daten anzeigen</a><br/>
+    <a href=\"?page=sendmessage&amp;id=" . $ticket->userId . "\">Nachricht senden</a><br/>
     </div>";
 
     echo '<form action="?page=' . $page . '&amp;id=' . $ticket->id . '" method="post">';
@@ -339,8 +339,8 @@ function activeTickets(
         echo "<tr><th>ID</th><th>Status</th><th>Kategorie</th><th>User</th><th>Letzte Änderung</th></tr>";
         foreach ($newTickets as $ticket) {
             echo "<div id=\"tt" . $ticket->id . "\" style=\"display:none;\">
-            " . openerLink("page=user&sub=edit&id=" . $ticket->userId, "Daten anzeigen") . "<br/>
-            " . popupLink("sendmessage", "Nachricht senden", "", "id=" . $ticket->userId) . "<br/>
+            <a href=\"?page=user&sub=edit&id=" . $ticket->userId ."\">Daten anzeigen</a><br/>
+            <a href=\"?page=sendmessage&amp;id=" . $ticket->userId . "\">Nachricht senden</a><br/>
             </div>";
 
             $userNick = $userRepo->getNick($ticket->userId);

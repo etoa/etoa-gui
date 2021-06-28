@@ -31,7 +31,6 @@ class TwigExtension extends AbstractExtension
             new TwigFunction('onClick', [$this, 'getOnClick']),
             new TwigFunction('text2Html', [$this, 'text2Html']),
             new TwigFunction('configValue', [$this, 'getConfigValue']),
-            new TwigFunction('popupLink', [$this, 'getPopupLink']),
             new TwigFunction('isAdminAllowed', [$this, 'isAdminAllowed']),
             new TwigFunction('renderTime', [$this, 'renderTime']),
             new TwigFunction('formatTimestamp', [$this, 'formatTimestamp']),
@@ -109,17 +108,6 @@ class TwigExtension extends AbstractExtension
         $config = $this->app['etoa.config.service'];
 
         return $config->get($key);
-    }
-
-    public function getPopupLink(string $type, string $title, ?string $class = 'popuplink'): string
-    {
-        return sprintf(
-            '<a href="#" class="%s" onclick="window.open(\'popup.php?page=%s\',\'%s\',\'width=600, height=500, status=no, scrollbars=yes\')">%s</a>',
-            $class,
-            $type,
-            $title,
-            $title
-        );
     }
 
     public function isAdminAllowed(array $userRoles, $required): bool

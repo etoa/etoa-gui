@@ -403,7 +403,9 @@ $config = $app['etoa.config.service'];
 											// Inform oponent
 											if ($target->ownerId()>0)
 											{
-												send_msg($target->ownerId(),SHIP_SPY_MSG_CAT_ID,"Funkstörung","Eure Flottenkontrolle hat soeben eine kurzzeitige Störung des Kommunikationsnetzes festgestellt. Es kann sein, dass fremde Spione in das Netz eingedrungen sind und Flottendaten geklaut haben.");
+                                                /** @var \EtoA\Message\MessageRepository $messageRepository */
+                                                $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+                                                $messageRepository->createSystemMessage((int) $target->ownerId(), SHIP_SPY_MSG_CAT_ID, "Funkstörung", "Eure Flottenkontrolle hat soeben eine kurzzeitige Störung des Kommunikationsnetzes festgestellt. Es kann sein, dass fremde Spione in das Netz eingedrungen sind und Flottendaten geklaut haben.");
 											}
 
 											// Display result
@@ -419,7 +421,9 @@ $config = $app['etoa.config.service'];
 											}
 
 											// Mail result
-											send_msg($cu->id,SHIP_MISC_MSG_CAT_ID,"Kryptocenter-Bericht",$out);
+                                            /** @var \EtoA\Message\MessageRepository $messageRepository */
+                                            $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+                                            $messageRepository->createSystemMessage((int) $cu->id, SHIP_MISC_MSG_CAT_ID, "Kryptocenter-Bericht", $out);
 
 											// Set cooldown
 											$cd = time()+$cooldown;
@@ -442,7 +446,9 @@ $config = $app['etoa.config.service'];
 										{
 											if ($op_jam>0 && $target->ownerId()>0)
 											{
-												send_msg($target->ownerId(),SHIP_SPY_MSG_CAT_ID,"Störsender erfolgreich","Eure Techniker haben festgestellt, dass von einem anderen Planeten eine Entschlüsselung eures Funkverkehrs versucht wurde. Daraufhin haben eure Störsender die Funknetze mit falschen Werten überlastet, so dass die gegnerische Analyse fehlschlug!");
+                                                /** @var \EtoA\Message\MessageRepository $messageRepository */
+                                                $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+                                                $messageRepository->createSystemMessage($target->ownerId(), SHIP_SPY_MSG_CAT_ID, "Störsender erfolgreich", "Eure Techniker haben festgestellt, dass von einem anderen Planeten eine Entschlüsselung eures Funkverkehrs versucht wurde. Daraufhin haben eure Störsender die Funknetze mit falschen Werten überlastet, so dass die gegnerische Analyse fehlschlug!");
 											}
 											error_msg("Die Analyse schlug leider fehl! Eure Empfangsgeräte haben zu viel Rauschen aufgenommen; anscheinend hat der Zielplanet ein aktives Störfeld oder die dortige Flottenkontrolle ist zu gut getarnt (Chance: ".$chance.")!");
 										    $cd = time()+$cooldown;

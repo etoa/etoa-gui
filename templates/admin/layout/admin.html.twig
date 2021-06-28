@@ -13,12 +13,9 @@
                     <li><a href="?myprofile=1">{{ currentUserNick }}</a></li>
                     <li><a href="?adminlist=1">Adminliste</a></li>
                     {% if isAdminAllowed(userRoles, ['master', 'super-admin', 'game-admin', 'trial-game-admin']) %}
-                        <li>{{ popupLink('tickets', numTickets > 0 ? 'Tickets (' ~ numTickets ~ ')' : 'Tickets', numTickets ? 'highlight' : null)|raw }}</li>
+                        <li><a href="?page=tickets">{{ numTickets > 0 ? 'Tickets (' ~ numTickets ~ ')' : 'Tickets' }}</a></li>
                     {% endif %}
-                    <li>{{ popupLink('notepad', numNotes > 0 ? 'Notizblock (' ~ numNotes ~ ')' : 'Notizblock', numNotes ? 'highlight' : null)|raw }}</li>
-                    {% if not isCb|default(false) %}
-                        <li><a href="frameset.php?page={{ page }}{% if sub|default(false) %}&sub={{ sub }}{% endif %}" target="_top">Zwischenablage</a></li>
-                    {% endif %}
+                    <li><a href="?page=notepad">{{ numNotes > 0 ? 'Notizblock (' ~ numNotes ~ ')' : 'Notizblock' }}</li>
                     <li><a href="{{ etoaUrl('login') }}" target="_blank">Spiel-Login</a></li>
                     <li><a href="?logout=1">Logout</a></li>
                 </ul>

@@ -210,18 +210,9 @@ if ($mode=="fleet")
             name;");
     if (mysql_num_rows($res)>0)
     {
-        // Load Shipdata
-        $ships = [];
-        $sres = dbquery("
-                    SELECT
-                        ship_id,
-                        ship_name
-                    FROM
-                        ships");
-        while ($sarr = mysql_fetch_row($sres))
-        {
-            $ships[$sarr[0]] = $sarr[1];
-        }
+        /** @var \EtoA\Ship\ShipDataRepository $shipDataRepository */
+        $shipDataRepository = $app[\EtoA\Ship\ShipDataRepository::class];
+        $shipNames = $shipDataRepository->getShipNames(true);
 
         tableStart("Gespeicherte Favoriten");
         echo "<tr>
@@ -249,7 +240,7 @@ if ($mode=="fleet")
             foreach ($sidarr as $sd)
             {
                 $sdi = explode(":",$sd);
-                echo nf($sdi[1])." ".$ships[$sdi[0]]."<br />";
+                echo nf($sdi[1])." ".$shipNames[(int) $sdi[0]]."<br />";
             }
             echo "</td>
                     <td id=\"fleet_bm_actions_" . $arr['id'] . "\" class=\"tbldata\">
@@ -320,19 +311,19 @@ elseif ($mode=="new")
 
                 $res = explode(",",$barr['res']);
                 $fetch = explode(",",$barr['resfetch']);
-                $ships = array();
+                $shipNames = array();
                 $ship = explode(",",$barr['ships']);
                 foreach ($ship as $shipdata)
                 {
                     $s = explode(":", $shipdata);
-                    $ships[$s[0] ] = $s[1];
+                    $shipNames[$s[0] ] = $s[1];
                 }
 
                 // Fill data array
                 $data = array_merge($data,$earr);
                 $data['res'] = $res;
                 $data['fetch'] = $fetch;
-                $data['ships'] = $ships;
+                $data['ships'] = $shipNames;
                 $data['speed'] = $barr['speed'];
                 $data['name'] = $barr['name'];
                 $data['id'] = $barr['id'];

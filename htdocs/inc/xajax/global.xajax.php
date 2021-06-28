@@ -419,6 +419,11 @@ function formatNumbers($field_id,$val,$format=0,$max)
 
 function sendMsg($userString, $subject, $message)
 {
+    global $app;
+
+    /** @var \EtoA\User\UserRepository $userRepository */
+    $userRepository = $app['etoa.user.repository'];
+
 	 $objResponse = new xajaxResponse();
 
 	 $userArr = explode(";", $userString);
@@ -426,9 +431,8 @@ function sendMsg($userString, $subject, $message)
 	 $out = '';
 	 foreach ($userArr as $userToNick)
 	 {
-		  $uid = get_user_id($userToNick);
-		  if ($uid> 0 )
-		  {
+		  $uid = $userRepository->getUserIdByNick($userToNick);
+		  if ($uid !== null) {
 			  // Prüfe Ignore
 			  $res = dbquery("
 					SELECT

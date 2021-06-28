@@ -391,7 +391,10 @@ elseif ($mode=="finished")
         iBoxStart("Willkommen");
         echo text2html($welcomeText->content);
         iBoxEnd();
-        send_msg($cu->id,USER_MSG_CAT_ID, 'Willkommen', $welcomeText->content);
+
+        /** @var \EtoA\Message\MessageRepository $messageRepository */
+        $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+        $messageRepository->createSystemMessage($cu->id, USER_MSG_CAT_ID, 'Willkommen', $welcomeText->content);
     }
     echo '<input type="button" value="Zum Heimatplaneten" onclick="document.location=\'?page=planetoverview\'" />';
 }

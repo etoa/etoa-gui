@@ -26,6 +26,7 @@ class Ticket
         $ticket->catId = (int) $data['cat_id'];
         $ticket->userId = (int) $data['user_id'];
         $ticket->adminId = (int) $data['admin_id'];
+
         return $ticket;
     }
 
@@ -39,6 +40,7 @@ class Ticket
         if ($this->status == TicketStatus::CLOSED && isset(TicketSolution::items()[$this->solution])) {
             return TicketStatus::label($this->status) . ": " . TicketSolution::label($this->solution);
         }
+
         return TicketStatus::label($this->status);
     }
 }

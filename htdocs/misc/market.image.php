@@ -41,36 +41,32 @@
 	$bgfw = 0.8;
 	imagecopyresized($im, $imh, (int) (($w-($w*$bgfw))/2),(int) (($h-($h*$bgfh))/2),0,0,(int) ($w*$bgfw),(int) ($h*$bgfh), imagesx($imh),imagesy($imh));
 
-
-
-	$res = dbquery("
-	SELECT
-		*
-	FROM
-		market_rates
-	ORDER BY
-		id DESC
-	LIMIT ".MARKET_RATES_COUNT.";");
-	$nr = mysql_num_rows($res);
-	if ($nr>0)
-	{
+	/** @var \EtoA\Market\MarketRateRepository $marketRateRepository */
+    $marketRateRepository = $app[\EtoA\Market\MarketRateRepository::class];
+    $marketRates = $marketRateRepository->getRates((int) MARKET_RATES_COUNT);
+    $nr = count($marketRates);
+	if ($nr > 0) {
 		$ts1 = null;
 		$ts2 = null;
 		$grates = array();
 		$drate = 0;
 
-		while ($arr = mysql_fetch_assoc($res))
-		{
-			$rates = [];
-			for ($i=0;$i<NUM_RESOURCES;$i++)
-			{
-				$rates[$i] = $arr['rate_'.$i];
-			}
-			$drate = max(max($rates),$drate);
+		foreach ($marketRates as $marketRate) {
+			$rates = [
+			    $marketRate->rate0,
+                $marketRate->rate1,
+                $marketRate->rate2,
+                $marketRate->rate3,
+                $marketRate->rate4,
+                $marketRate->rate5,
+            ];
+			$drate = max(max($rates), $drate);
 			$grates[] = $rates;
-			if ($ts1==null)
-				$ts1 = $arr['timestamp'];
-			$ts2 = $arr['timestamp'];
+			if ($ts1 === null) {
+                $ts1 = $marketRate->timestamp;
+            }
+
+			$ts2 = $marketRate->timestamp;
 		}
 		$grates = array_reverse($grates);
 		$drate *= 1.2;
@@ -144,5 +140,3 @@
 
 	imagepng($im);
 
-
-?>
