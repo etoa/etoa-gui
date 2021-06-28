@@ -8,7 +8,8 @@ use EtoA\Core\AbstractRepository;
 
 class FleetLogRepository extends AbstractRepository
 {
-    public function addToQueue(FleetLogEntry $entry) {
+    public function addToQueue(FleetLogEntry $entry): void
+    {
         $this->getConnection()
             ->executeStatement(
                 "INSERT DELAYED INTO
@@ -35,30 +36,28 @@ class FleetLogRepository extends AbstractRepository
                     `entity_ships_start`,
                     `entity_ships_end`
                 ) VALUES (
-                    '".$entry->fleetId."',
-                    '".$entry->facility."',
-                    '".time()."',
-                    '".$entry->text."',
-                    '".$entry->userId."',
-                    '".$entry->userId."',
-                    '".$entry->sourceId."',
-                    '".$entry->targetId."',
-                    '".$entry->launchtime."',
-                    '".$entry->landtime."',
-                    '".$entry->action."',
-                    '".$entry->status."',
-                    '".$entry->fleetResStart."',
-                    '".$entry->fleetResEnd."',
-                    '".$entry->fleetShipStart."',
-                    '".$entry->fleetShipEnd."',
-                    '".$entry->entityResStart."',
-                    '".$entry->entityResEnd."',
-                    '".$entry->entityShipStart."',
-                    '".$entry->entityShipEnd."'
+                    '" . $entry->fleetId . "',
+                    '" . $entry->facility . "',
+                    '" . time() . "',
+                    '" . $entry->text . "',
+                    '" . $entry->userId . "',
+                    '" . $entry->userId . "',
+                    '" . $entry->sourceId . "',
+                    '" . $entry->targetId . "',
+                    '" . $entry->launchtime . "',
+                    '" . $entry->landtime . "',
+                    '" . $entry->action . "',
+                    '" . $entry->status . "',
+                    '" . $entry->fleetResStart . "',
+                    '" . $entry->fleetResEnd . "',
+                    '" . $entry->fleetShipStart . "',
+                    '" . $entry->fleetShipEnd . "',
+                    '" . $entry->entityResStart . "',
+                    '" . $entry->entityResEnd . "',
+                    '" . $entry->entityShipStart . "',
+                    '" . $entry->entityShipEnd . "'
                 );",
-                [
-
-                ]
+                []
             );
     }
 
@@ -128,6 +127,7 @@ class FleetLogRepository extends AbstractRepository
                 );
         }
         $this->getConnection()->commit();
+
         return $numRecords;
     }
 
@@ -137,7 +137,7 @@ class FleetLogRepository extends AbstractRepository
             ->delete('logs_fleet')
             ->where('timestamp < :threshold')
             ->setParameters([
-                'threshold' => $threshold
+                'threshold' => $threshold,
             ])
             ->execute();
     }

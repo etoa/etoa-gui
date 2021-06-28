@@ -57,6 +57,7 @@ class BattleLog extends BaseLog
             Log::INFO,
             "$nr Battle-Logs die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!"
         );
+
         return $nr;
     }
 }

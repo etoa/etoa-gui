@@ -8,7 +8,7 @@ use EtoA\Core\AbstractRepository;
 
 class LogRepository extends AbstractRepository
 {
-    public function addToQueue(int $facility, int $severity, string $message, string $ip)
+    public function addToQueue(int $facility, int $severity, string $message, string $ip): void
     {
         $this->getConnection()
             ->executeStatement(
@@ -28,13 +28,15 @@ class LogRepository extends AbstractRepository
                     :timestamp
                     :ip,
                     :message
-                );", [
+                );",
+                [
                     'facility' => $facility,
                     'severity' => $severity,
                     'timestamp' => time(),
                     'ip' => $ip,
                     'message' => $message,
-                ]);
+                ]
+            );
     }
 
     public function addLogsFromQueue(): int
@@ -73,6 +75,7 @@ class LogRepository extends AbstractRepository
                 );
         }
         $this->getConnection()->commit();
+
         return $numRecords;
     }
 
@@ -82,7 +85,7 @@ class LogRepository extends AbstractRepository
             ->delete('logs')
             ->where('timestamp < :threshold')
             ->setParameters([
-                'threshold' => $threshold
+                'threshold' => $threshold,
             ])
             ->execute();
     }

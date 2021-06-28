@@ -19,7 +19,7 @@ class GameLogRepository extends AbstractRepository
         int $objectId,
         int $status,
         int $level
-    ) {
+    ): void {
         $this->getConnection()
             ->executeStatement(
                 "INSERT DELAYED INTO
@@ -116,6 +116,7 @@ class GameLogRepository extends AbstractRepository
                 );
         }
         $this->getConnection()->commit();
+
         return $numRecords;
     }
 
@@ -125,7 +126,7 @@ class GameLogRepository extends AbstractRepository
             ->delete('logs_game')
             ->where('timestamp < :threshold')
             ->setParameters([
-                'threshold' => $threshold
+                'threshold' => $threshold,
             ])
             ->execute();
     }

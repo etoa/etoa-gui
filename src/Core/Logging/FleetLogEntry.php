@@ -65,7 +65,7 @@ class FleetLogEntry
         $this->pilots = 0;
     }
 
-    public function addFleetRes($res, $people, $fetch = null, $end = true)
+    public function addFleetRes($res, $people, $fetch = null, $end = true): void
     {
         $string = "";
         foreach ($res as $rid => $rcnt) {
@@ -88,14 +88,14 @@ class FleetLogEntry
         }
     }
 
-    public function launch()
+    public function launch(): void
     {
         $this->entityResEnd = $this->sourceEntity->getResourceLog();
         $this->facility = FleetLog::F_LAUNCH;
         $this->launched = true;
     }
 
-    public function cancel($fleetId, $launchtime, $landtime, $targetId, $action, $status, $pilots)
+    public function cancel($fleetId, $launchtime, $landtime, $targetId, $action, $status, $pilots): void
     {
         $this->fleetId = 0;
         $this->facility = FleetLog::F_CANCEL;

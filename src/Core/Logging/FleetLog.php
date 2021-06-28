@@ -29,12 +29,12 @@ class FleetLog extends BaseLog
      */
     const F_RETURN = 4;
 
-    static public $facilities = [
+    public static $facilities = [
         "Sonstige",
         "Start",
         "Abbruch",
         "Aktion",
-        "Rückkehr"
+        "Rückkehr",
     ];
 
     private FleetLogRepository $repository;
@@ -51,7 +51,7 @@ class FleetLog extends BaseLog
         $this->log = $log;
     }
 
-    function __destruct()
+    public function __destruct()
     {
         $entry = new FleetLogEntry();
         if ($entry->launched) {
@@ -95,6 +95,7 @@ class FleetLog extends BaseLog
             Log::INFO,
             "$nr Fleet-Logs die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!"
         );
+
         return $nr;
     }
 }

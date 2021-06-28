@@ -89,7 +89,7 @@ class Log extends BaseLog
      */
     const F_ILLEGALACTION = 18;
 
-    static public $facilities = [
+    public static $facilities = [
         "Sonstiges",
         "Kampfberichte",
         "Beleidigungen",
@@ -108,7 +108,7 @@ class Log extends BaseLog
         "Updates",
         "Schiffe",
         "Ranglisten",
-        "Illegale Useraktion"
+        "Illegale Useraktion",
     ];
 
     private LogRepository $repository;
@@ -175,6 +175,7 @@ class Log extends BaseLog
             Log::INFO,
             "$nr Logs die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!"
         );
+
         return $nr;
     }
 }

@@ -24,7 +24,7 @@ class GameLog extends BaseLog
     const F_DEF = 4;
     const F_QUESTS = 5;
 
-    static public $facilities = array(
+    public static $facilities = array(
         "Sonstiges",
         "Gebäude",
         "Forschungen",
@@ -116,6 +116,7 @@ class GameLog extends BaseLog
             Log::INFO,
             "$nr Game-Logs die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!"
         );
+
         return $nr;
     }
 }

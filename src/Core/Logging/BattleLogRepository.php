@@ -110,6 +110,7 @@ class BattleLogRepository extends AbstractRepository
                 );
         }
         $this->getConnection()->commit();
+
         return $numRecords;
     }
 
@@ -119,7 +120,7 @@ class BattleLogRepository extends AbstractRepository
             ->delete('logs_battle')
             ->where('timestamp < :threshold')
             ->setParameters([
-                'threshold' => $threshold
+                'threshold' => $threshold,
             ])
             ->execute();
     }
