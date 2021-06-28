@@ -180,7 +180,7 @@ function manageReports(Request $request, ReportRepository $reportRepository, Use
             $sql.= " AND user_id='".$_POST['user_id']."' ";
         if ($_POST['user_nick']!="")
         {
-            $uid = $userRepository->getUserIdByNick($request->request->getInt('user_nick'));
+            $uid = $userRepository->getUserIdByNick($request->request->get('user_nick'));
             if ($uid !== null)
                 $sql.= " AND user_id='".$uid."' ";
         }
@@ -188,7 +188,7 @@ function manageReports(Request $request, ReportRepository $reportRepository, Use
             $sql.= " AND opponent1_id='".$_POST['opponent1_id']."' ";
         if ($_POST['opponent1_nick']!="")
         {
-            $uid = $userRepository->getUserIdByNick($request->request->getInt('opponent1_nick'));
+            $uid = $userRepository->getUserIdByNick($request->request->get('opponent1_nick'));
             if ($uid !== null)
                 $sql.= " AND opponent1_id='".$uid."' ";
         }
@@ -388,7 +388,8 @@ function manageReports(Request $request, ReportRepository $reportRepository, Use
 
     else
     {
-        $_SESSION['admin']['message_query']=null;
+        // unset($_SESSION['admin.messages.search']);
+
         echo "Suchmaske:<br/><br/>";
         echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
         tableStart("",'auto');
@@ -506,105 +507,22 @@ function manageMessages(
     //
     if ($request->request->get('user_search') != "" || $request->query->get('action') == "searchresults")
     {
-        $sql = '';
-        if ($_SESSION['admin']['message_query']=="")
+        $formData = $_SESSION['admin.messages.search'] ?? $request->request->all();
+        $limit = $request->request->getInt('message_limit');
+
+        $messages = $messageRepository->findByFormData($formData, $limit);
+        if (count($messages) > 0)
         {
-            if ($_POST['message_user_from_id']!="")
-                $sql.= " AND message_user_from=".$_POST['message_user_from_id'];
-            if ($_POST['message_user_from_nick']!="")
-            {
-                $uid = $userRepository->getUserIdByNick($_POST['message_user_from_nick']);
-                if ($uid !== null)
-                    $sql.= " AND message_user_from=$uid";
-            }
-            if ($_POST['message_user_to_id']!="")
-                $sql.= " AND message_user_to=".$_POST['message_user_to_id'];
-            if ($_POST['message_user_to_nick']!="")
-            {
-                $uid = $userRepository->getUserIdByNick($_POST['message_user_to_nick']);
-                if ($uid !== null)
-                    $sql.= " AND message_user_to=$uid";
-            }
-            if ($_POST['message_subject']!="")
-            {
-                if (stristr($_POST['qmode']['message_subject'],"%")) $addchars = "%";else $addchars = "";
-                $sql.= " AND md.subject ".stripslashes($_POST['qmode']['message_subject']).$_POST['message_subject']."$addchars'";
-            }
-            if ($_POST['message_text']!="")
-            {
-                if (stristr($_POST['qmode']['message_text'],"%")) $addchars = "%";else $addchars = "";
-                $sql.= " AND md.text ".stripslashes($_POST['qmode']['message_text']).$_POST['message_text']."$addchars'";
-            }
-            if ($_POST['message_fleet_id']!="")
-                $sql.= " AND md.fleet_id=".$_POST['message_fleet_id'];
-            if ($_POST['message_entity_id']!="")
-                $sql.= " AND md.entity_id=".$_POST['message_entity_id'];
-            if ($_POST['message_read']<2)
-            {
-                if ($_POST['message_read']==1)
-                    $sql.= " AND (message_read=1)";
-                else
-                    $sql.= " AND (message_read=0)";
-            }
-            if ($_POST['message_massmail']<2)
-            {
-                if ($_POST['message_massmail']==1)
-                    $sql.= " AND (message_massmail=1)";
-                else
-                    $sql.= " AND (message_massmail=0)";
-            }
-            if ($_POST['message_deleted']<2)
-            {
-                $sql .= $_POST['message_deleted'] == 1
-                    ? " AND (message_deleted=1)"
-                    : " AND (message_deleted=0)";
-            }
-            if ($_POST['message_cat_id']!="") {
-                $sql.= " AND message_cat_id=".$_POST['message_cat_id'];
-            }
+            $_SESSION['admin.messages.search'] = $formData;
 
-            if ($_POST['message_limit']!="") {
-                $limit=" LIMIT ".$_POST['message_limit'].";";
-            } else {
-                $limit=";";
-            }
-
-            $sqlstart = "SELECT
-                message_id,
-                message_user_from,
-                message_user_to,
-                md.subject,
-                md.text,
-                message_timestamp,
-                message_deleted,
-                message_read,
-                message_archived,
-                cat_name
-                FROM
-                    messages
-                INNER JOIN
-                        message_data as md
-                        ON message_id=md.id
-                INNER JOIN
-                    message_cat
-                    ON message_cat_id=cat_id
-                WHERE 1 ";
-            $sqlend = " ORDER BY message_timestamp DESC";
-            $sql = $sqlstart.$sql.$sqlend.$limit;
-            $_SESSION['admin']['message_query']=$sql;
-        }
-        else {
-            $sql = $_SESSION['admin']['message_query'];
-        }
-
-        $res = dbquery($sql);
-        if (mysql_num_rows($res)>0)
-        {
-            echo mysql_num_rows($res)." Datensätze vorhanden<br/><br/>";
-            if (mysql_num_rows($res)>20)
+            echo count($messages)." Datensätze vorhanden<br/><br/>";
+            if (count($messages) > 20) {
                 echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /><br/><br/>";
+            }
 
             echo "<b>Legende:</b> <span style=\"color:#0f0;\">Ungelesen</span>, <span style=\"color:#f90;\">Gelöscht</span>, <span style=\"font-style:italic;\">Archiviert</span><br/><br/>";
+
+            $categories = $messageRepository->listCategories();
 
             echo "<table class=\"tb\">";
             echo "<tr>";
@@ -615,21 +533,21 @@ function manageMessages(
             echo "<th>Kategorie</th>";
             echo "<th>Aktion</th>";
             echo "</tr>";
-            while ($arr = mysql_fetch_array($res))
+            foreach ($messages as $message)
             {
-                $sender = $arr['message_user_from'] > 0
-                    ? $userRepository->getNick((int) $arr['message_user_from'])
+                $sender = $message->userFrom > 0
+                    ? $userRepository->getNick($message->userFrom)
                     : "<i>System</i>";
 
-                $recipient = $arr['message_user_to'] > 0
-                    ? $userRepository->getNick((int) $arr['message_user_to'])
+                $recipient = $message->userTo > 0
+                    ? $userRepository->getNick($message->userTo)
                     : "<i>System</i>";
 
-                if ($arr['message_deleted'] == 1) {
+                if ($message->deleted) {
                     $style = "style=\"color:#f90\"";
-                } elseif ($arr['message_read'] == 0) {
+                } elseif (!$message->read) {
                     $style = "style=\"color:#0f0\"";
-                } elseif ($arr['message_archived'] == 1) {
+                } elseif ($message->archived) {
                     $style = "style=\"font-style:italic;\"";
                 } else {
                     $style = "";
@@ -637,11 +555,11 @@ function manageMessages(
                 echo "<tr>";
                 echo "<td $style>".cut_string($sender,11)."</a></td>";
                 echo "<td $style>".cut_string($recipient,11)."</a></td>";
-                echo "<td $style ".mTT($arr['subject'],text2html(substr($arr['text'], 0, 500))).">".cut_string($arr['subject'],20)."</a></td>";
-                echo "<td $style>".date("Y-d-m H:i",$arr['message_timestamp'])."</a></td>";
-                echo "<td $style>".$arr['cat_name']."</td>";
-                echo "<td>".edit_button("?page=$page&sub=edit&message_id=".$arr['message_id'])." ";
-                echo del_button("?page=$page&sub=trash&message_id=".$arr['message_id'])."</td>";
+                echo "<td $style ".mTT($message->subject, text2html(substr($message->text, 0, 500))).">".cut_string($message->subject,20)."</a></td>";
+                echo "<td $style>".date("Y-d-m H:i",$message->timestamp)."</a></td>";
+                echo "<td $style>".($categories[$message->catId] ?? '-')."</td>";
+                echo "<td>".edit_button("?page=$page&sub=edit&message_id=".$message->id)." ";
+                echo del_button("?page=$page&sub=trash&message_id=".$message->id)."</td>";
                 echo "</tr>";
             }
             echo "</table><br/>";
@@ -703,27 +621,39 @@ function manageMessages(
 
     else
     {
-        $_SESSION['admin']['message_query']=null;
+        // unset($_SESSION['admin.messages.search']);
+
         echo "Suchmaske:<br/><br/>";
         echo "<form action=\"?page=$page\" method=\"post\">";
         echo "<table class=\"tb\">";
-        echo "<tr><th style=\"width:130px;\">Sender-ID</th><td><input type=\"text\" name=\"message_user_from_id\" value=\"\" size=\"4\" maxlength=\"250\" /></td>";
-        echo "<tr><th>Sender-Nick</th><td><input type=\"text\" name=\"message_user_from_nick\" id=\"message_user_from_nick\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchUser(this.value,'message_user_from_nick','citybox');\" /><br><div class=\"citybox\" id=\"citybox\">&nbsp;</div></td>";
-        echo "<tr><th>Empfänger-ID</th><td><input type=\"text\" name=\"message_user_to_id\" value=\"\" size=\"4\" maxlength=\"250\" /></td>";
-        echo "<tr><th>Empfänger-Nick</th><td><input type=\"text\" name=\"message_user_to_nick\" id=\"message_user_to_nick\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchUser(this.value,'message_user_to_nick','citybox1');\" /><br><div class=\"citybox\" id=\"citybox1\">&nbsp;</div></td>";
-        echo "<tr><th>Betreff</th><td><input type=\"text\" name=\"message_subject\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('message_subject');echo "</td></tr>";
-        echo "<tr><th>Text</th><td><input type=\"text\" name=\"message_text\" value=\"\" size=\"20\" maxlength=\"250\" /> ";fieldqueryselbox('message_text');echo "</td></tr>";
-        echo "<tr><th style=\"width:130px;\">Flotten-ID</th><td><input type=\"text\" name=\"message_fleet_id\" value=\"\" size=\"4\" maxlength=\"250\" /></td>";
-        echo "<tr><th style=\"width:130px;\">Entitiy-ID</th><td><input type=\"text\" name=\"message_entity_id\" value=\"\" size=\"4\" maxlength=\"250\" /></td>";
-        echo "<tr><th>Gelesen</th><td><input type=\"radio\" name=\"message_read\" value=\"2\" checked=\"checked\" /> Egal
-        <input type=\"radio\" name=\"message_read\" value=\"0\" /> Nein
-        <input type=\"radio\" name=\"message_read\" value=\"1\" /> Ja</td></tr>";
-        echo "<tr><th>Rundmail</th><td><input type=\"radio\" name=\"message_massmail\" value=\"2\" checked=\"checked\" /> Egal
-        <input type=\"radio\" name=\"message_massmail\" value=\"0\" /> Nein
-        <input type=\"radio\" name=\"message_massmail\" value=\"1\" /> Ja</td></tr>";
-        echo "<tr><th>Gelöscht</th><td><input type=\"radio\" name=\"message_deleted\" value=\"2\" checked=\"checked\" /> Egal
-        <input type=\"radio\" name=\"message_deleted\" value=\"0\" /> Nein
-        <input type=\"radio\" name=\"message_deleted\" value=\"1\" /> Ja</td></tr>";
+        echo "<tr><th style=\"width:130px;\">Sender-ID</th>
+            <td><input type=\"text\" name=\"message_user_from_id\" value=\"\" size=\"4\" maxlength=\"250\" /></td>";
+        echo "<tr><th>Sender-Nick</th>
+            <td><input type=\"text\" name=\"message_user_from_nick\" id=\"message_user_from_nick\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchUser(this.value,'message_user_from_nick','citybox');\" /><br><div class=\"citybox\" id=\"citybox\">&nbsp;</div></td>";
+        echo "<tr><th>Empfänger-ID</th>
+            <td><input type=\"text\" name=\"message_user_to_id\" value=\"\" size=\"4\" maxlength=\"250\" /></td>";
+        echo "<tr><th>Empfänger-Nick</th>
+            <td><input type=\"text\" name=\"message_user_to_nick\" id=\"message_user_to_nick\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchUser(this.value,'message_user_to_nick','citybox1');\" /><br><div class=\"citybox\" id=\"citybox1\">&nbsp;</div></td>";
+        echo "<tr><th>Betreff enthält</th>
+            <td><input type=\"text\" name=\"message_subject\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
+        echo "<tr><th>Text enthält</th>
+            <td><input type=\"text\" name=\"message_text\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
+        echo "<tr><th style=\"width:130px;\">Flotten-ID</th>
+            <td><input type=\"text\" name=\"message_fleet_id\" value=\"\" size=\"4\" maxlength=\"250\" /></td>";
+        echo "<tr><th style=\"width:130px;\">Entitiy-ID</th>
+            <td><input type=\"text\" name=\"message_entity_id\" value=\"\" size=\"4\" maxlength=\"250\" /></td>";
+        echo "<tr><th>Gelesen</th>
+            <td><input type=\"radio\" name=\"message_read\" value=\"2\" checked=\"checked\" /> Egal
+                <input type=\"radio\" name=\"message_read\" value=\"0\" /> Nein
+                <input type=\"radio\" name=\"message_read\" value=\"1\" /> Ja</td></tr>";
+        echo "<tr><th>Rundmail</th>
+            <td><input type=\"radio\" name=\"message_massmail\" value=\"2\" checked=\"checked\" /> Egal
+                <input type=\"radio\" name=\"message_massmail\" value=\"0\" /> Nein
+                <input type=\"radio\" name=\"message_massmail\" value=\"1\" /> Ja</td></tr>";
+        echo "<tr><th>Gelöscht</th>
+            <td><input type=\"radio\" name=\"message_deleted\" value=\"2\" checked=\"checked\" /> Egal
+                <input type=\"radio\" name=\"message_deleted\" value=\"0\" /> Nein
+                <input type=\"radio\" name=\"message_deleted\" value=\"1\" /> Ja</td></tr>";
         echo "<tr><th>Kategorie</th><td><select name=\"message_cat_id\">";
         echo "<option value=\"\">(egal)</option>";
         $categories = $messageRepository->listCategories();
