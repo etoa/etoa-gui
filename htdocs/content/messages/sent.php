@@ -32,7 +32,7 @@ function viewSentMessage(
     if (count($messages) > 0) {
         $message = $messages[0];
 
-        $subj = $message->subject != ''
+        $subj = filled($message->subject)
             ? htmlentities($message->subject, ENT_QUOTES, 'UTF-8')
             : "<i>Kein Titel</i>";
 
@@ -67,7 +67,7 @@ function listSentMessages(
     ]);
     if (count($messages) > 0) {
         foreach ($messages as $message) {
-            $im_path = $message->read
+            $im_path = !$message->read
                 ? "images/pm_new.gif"
                 : "images/pm_normal.gif";
 
@@ -75,7 +75,7 @@ function listSentMessages(
             <a href=\"?page=$page&msg_id=" . $message->id . "&mode=" . $mode . "\">
             <img src=\"" . $im_path . "\" style=\"border:none;width:16px;height:18px;\"></a></td>";
             echo "<td ><a href=\"?page=$page&msg_id=" . $message->id . "&mode=" . $mode . "\">";
-            echo $message->subject != ""
+            echo filled($message->subject)
                 ? htmlentities($message->subject, ENT_QUOTES, 'UTF-8')
                 : "<i>Kein Titel</i>";
             echo "</a></td><td style=\"width:120px;\">" . userPopUp($message->userTo, $userRepository->getNick($message->userTo), 0) . "</td>";

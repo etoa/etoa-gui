@@ -32,14 +32,14 @@ if (!$cu->isVerified) {
         );
     }
 
-    sendMessageForm($request, $userRepository, $messageRepository, $cu);
+    sendMessageForm($request, $cu, $messageRepository, $userRepository);
 }
 
 function sendMessageForm(
     Request $request,
-    UserRepository $userRepository,
+    CurrentUser $cu,
     MessageRepository $messageRepository,
-    CurrentUser $cu
+    UserRepository $userRepository
 ): void {
     global $page;
     global $mode;
@@ -221,7 +221,7 @@ function getInitialMessageText(
         $messages = $messageRepository->findBy([
             'id' => $messageId,
             'user_to_id' => $cu->id,
-        ], 1);
+        ]);
         if (count($messages) > 0) {
             if ($request->query->has('message_sender')) {
                 return "\n\n[b]Nachricht von " . base64_decode($request->query->get('message_sender'), true) . ":[/b]\n\n" . htmlentities($messages[0]->text, ENT_QUOTES, 'UTF-8');
