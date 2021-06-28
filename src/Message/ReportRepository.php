@@ -16,4 +16,24 @@ class ReportRepository extends AbstractRepository
             ->execute()
             ->fetchOne();
     }
+
+    public function countNotArchived(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(*)')
+            ->from('reports')
+            ->where('archived = 0')
+            ->execute()
+            ->fetchOne();
+    }
+
+    public function countDeleted(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(*)')
+            ->from('reports')
+            ->where('deleted = 1')
+            ->execute()
+            ->fetchOne();
+    }
 }

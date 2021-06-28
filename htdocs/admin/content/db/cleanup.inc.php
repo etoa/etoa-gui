@@ -5,6 +5,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\Message\MessageService;
+use EtoA\Message\ReportRepository;
 use EtoA\Ranking\PointsService;
 use EtoA\User\UserSessionManager;
 
@@ -29,12 +30,15 @@ $config = $app['etoa.config.service'];
 /** @var MessageRepository */
 $messageRepository = $app[MessageRepository::class];
 
+/** @var ReportRepository */
+$reportRepository = $app[ReportRepository::class];
+
 echo '<h2>Clean-Up</h2>';
 
 if (isset($_POST['submit_cleanup_selected']) || isset($_POST['submit_cleanup_all'])) {
 	runCleanup($userSessionManager, $sessionManager, $ticketRepo, $pointsService, $messageService);
 }
-cleanupOverView($ticketRepo, $config, $messageRepository);
+cleanupOverView($ticketRepo, $config, $messageRepository, $reportRepository);
 
 function runCleanup(
     UserSessionManager $userSessionManager,
@@ -369,7 +373,8 @@ function runCleanup(
 function cleanupOverView(
     TicketRepository $ticketRepo,
     ConfigurationService $config,
-    MessageRepository $messageRepository
+    MessageRepository $messageRepository,
+    ReportRepository $reportRepository
 ): void {
 	global $page;
 	global $sub;
@@ -404,14 +409,6 @@ function cleanupOverView(
 
 	/* Reports */
 	echo '<fieldset><legend><input type="checkbox" value="1" name="cl_report" /> Berichte</legend>';
-	$tblcnt = mysql_fetch_row(dbquery("
-	SELECT
-		COUNT(id)
-	FROM
-		reports
-	WHERE
-		archived=0
-	;"));
 	echo '<input type="radio" name="only_deleted" value="0" /><b>Berichte löschen:</b> ';
 	echo "Älter als <select name=\"report_timestamp\">";
 	$days = array(1, 7, 14, 21, 28);
@@ -421,15 +418,8 @@ function cleanupOverView(
 	foreach ($days as $ds) {
 		echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $config->param1Int('messages_threshold_days')  ? " selected=\"selected\"" : "") . " >" . $ds . " Tage</option>";
 	}
-	echo "</select> (" . nf($tblcnt[0]) . " total).<br/>";
-	$tblcnt = mysql_fetch_row(dbquery("
-	SELECT
-		COUNT(id)
-	FROM
-		reports
-	WHERE
-		deleted=1
-	;"));
+	echo "</select> (" . nf($reportRepository->countNotArchived()) . " total).<br/>";
+
 	echo '<input type="radio" name="only_deleted" value="1" checked="checked" /> <b>Nur \'gelöschte\' Berichte löschen:</b> ';
 	echo 'Älter als <select name="report_timestamp_deleted">';
 	$days = array(7, 14, 21, 28);
@@ -439,7 +429,7 @@ function cleanupOverView(
 	foreach ($days as $ds) {
 		echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $config->param1Int('reports_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
 	}
-	echo "</select> (" . nf($tblcnt[0]) . " total).";
+	echo "</select> (" . nf($reportRepository->countDeleted()) . " total).";
 	echo '</fieldset><br/>';
 
 	// Logs
