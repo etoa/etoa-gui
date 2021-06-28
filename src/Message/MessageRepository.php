@@ -17,7 +17,7 @@ class MessageRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function checkNew(int $userId): int
+    public function countNewForUser(int $userId): int
     {
         return (int) $this->createQueryBuilder()
             ->select('COUNT(message_id)')
@@ -25,6 +25,37 @@ class MessageRepository extends AbstractRepository
             ->where('message_deleted = 0')
             ->andWhere('message_user_to = :userId')
             ->andWhere('message_read = 0')
+            ->setParameters([
+                'userId' => $userId,
+            ])
+            ->execute()
+            ->fetchOne();
+    }
+
+    public function countReadForUser(int $userId): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(message_id)')
+            ->from('messages')
+            ->where('message_read = 1')
+            ->andWhere('message_deleted = 0')
+            ->andWhere('message_archived = 0')
+            ->andWhere('message_user_to = :userId')
+            ->setParameters([
+                'userId' => $userId,
+            ])
+            ->execute()
+            ->fetchOne();
+    }
+
+    public function countArchivedForUser(int $userId): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(message_id)')
+            ->from('messages')
+            ->where('message_archived = 1')
+            ->andWhere('message_deleted = 0')
+            ->andWhere('message_user_to = :userId')
             ->setParameters([
                 'userId' => $userId,
             ])
@@ -291,9 +322,9 @@ class MessageRepository extends AbstractRepository
         return array_map(fn ($arr) => Message::createFromArray($arr), $data);
     }
 
-    public function setDeleted(int $id, bool $deleted = true): void
+    public function setDeleted(int $id, bool $deleted = true): bool
     {
-        $this->createQueryBuilder()
+        $affected = (int) $this->createQueryBuilder()
             ->update('messages')
             ->set('message_deleted', ':deleted')
             ->where('message_id = :id')
@@ -302,11 +333,39 @@ class MessageRepository extends AbstractRepository
                 'deleted' => $deleted,
             ])
             ->execute();
+
+        return $affected > 0;
     }
 
-    public function setRead(int $id, bool $read = true): void
+    public function setDeletedForUser(int $userId, bool $deleted = true, ?int $userFromId, ?bool $isArchived = null): bool
     {
-        $this->createQueryBuilder()
+        $qry = $this->createQueryBuilder()
+            ->update('messages')
+            ->set('message_deleted', ':deleted')
+            ->where('message_user_to = :userId')
+            ->setParameters([
+                'userId' => $userId,
+                'deleted' => $deleted,
+            ]);
+
+        if ($userFromId !== null) {
+            $qry->andWhere('message_user_from = :userFromId')
+                ->setParameter('userFromId', $userFromId);
+        }
+
+        if ($isArchived !== null) {
+            $qry->andWhere('message_archived = :isArchived')
+                ->setParameter('isArchived', $isArchived);
+        }
+
+        $affected = (int) $qry->execute();
+
+        return $affected > 0;
+    }
+
+    public function setRead(int $id, bool $read = true): bool
+    {
+        $affected = (int) $this->createQueryBuilder()
             ->update('messages')
             ->set('message_read', ':read')
             ->where('message_id = :id')
@@ -315,6 +374,8 @@ class MessageRepository extends AbstractRepository
                 'read' => $read,
             ])
             ->execute();
+
+        return $affected > 0;
     }
 
     public function remove(int $id): void
@@ -367,5 +428,28 @@ class MessageRepository extends AbstractRepository
             ->orderBy('cat_order')
             ->execute()
             ->fetchAllKeyValue();
+    }
+
+    public function findAllCategories(): array
+    {
+        return $this->createQueryBuilder()
+            ->select('cat_id', 'cat_name', 'cat_desc', 'cat_sender')
+            ->from('message_cat')
+            ->orderBy('cat_order')
+            ->execute()
+            ->fetchAllAssociative();
+    }
+
+    public function getCategorySender(int $catId): ?string
+    {
+        $data = $this->createQueryBuilder()
+            ->select('cat_sender')
+            ->from('message_cat')
+            ->where('cat_id = :cat_id')
+            ->setParameter('cat_id', $catId)
+            ->execute()
+            ->fetchOne();
+
+        return $data !== false ? $data : null;
     }
 }

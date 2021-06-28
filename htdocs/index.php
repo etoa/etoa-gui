@@ -196,7 +196,7 @@ try {
     $messageRepository = $app[\EtoA\Message\MessageRepository::class];
 
     // Count Messages
-    $newMessages = $messageRepository->checkNew($cu->id);
+    $newMessages = $messageRepository->countNewForUser($cu->id);
 
     // Check new reports
     $newReports = Report::countNew($cu->id);
