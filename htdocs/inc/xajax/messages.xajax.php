@@ -1,16 +1,7 @@
 <?PHP
 
-$xajax->register(XAJAX_FUNCTION,'messagesNewMessagePreview');
 $xajax->register(XAJAX_FUNCTION,'messagesSelectAllInCategory');
 $xajax->register(XAJAX_FUNCTION,'messagesSetRead');
-
-//Nachriten Vorschau
-function messagesNewMessagePreview($val)
-{
-  $objResponse = new xajaxResponse();
- 	$objResponse->assign('msgPreview', 'innerHTML', text2html($val));
- 	return $objResponse;
-}
 
 //Selektiert alle Nachrichten in einer Kategorie
 function messagesSelectAllInCategory($cid,$cnt,$bv)
