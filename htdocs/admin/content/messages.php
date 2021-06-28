@@ -46,7 +46,7 @@ function sendMessageForm(
 
     echo "Nachricht an einen Spieler senden:<br/><br/>";
 
-    $subj = isset($_GET['message_subject']) ? $_POST['message_subject'] : "";
+    $subj = $request->query->get('message_subject', '');
     $text = "";
     if ($request->request->has('submit'))
     {
@@ -166,7 +166,7 @@ function manageReports(Request $request, ReportRepository $reportRepository, Use
     //
     // Suchresultate
     //
-    if ($request->request->has('user_search') && $_POST['user_search']!="" || isset($_GET['action']) && $_GET['action']=="searchresults")
+    if ($request->request->has('user_search') && $_POST['user_search']!="" || $request->query->get('action') == "searchresults")
     {
         $sql = '';
         if ($_POST['user_id']!="")
@@ -579,7 +579,7 @@ function manageMessages(
         $sender = $message->userFrom > 0 ? $userRepository->getNick($message->userFrom) : "<i>System</i>";
         $recipient = $message->userTo > 0 ? $userRepository->getNick($message->userTo) : "<i>System</i>";
 
-        echo "<form action=\"?page=$page&sub=edit&message_id=".$_GET['message_id']."\" method=\"post\">";
+        echo "<form action=\"?page=$page&sub=edit&message_id=".$request->query->getInt('message_id')."\" method=\"post\">";
         echo "<table class=\"tbl\">";
         echo "<tr><td class=\"tbltitle\" valign=\"top\">ID</td><td class=\"tbldata\">".$message->id."</td></tr>";
         echo "<tr><td class=\"tbltitle\" valign=\"top\">Sender</td><td class=\"tbldata\">$sender</td></tr>";
