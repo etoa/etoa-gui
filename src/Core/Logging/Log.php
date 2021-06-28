@@ -124,10 +124,10 @@ class Log extends BaseLog
 
     public function add(int $facility, int $severity, string $msg): void
     {
-        if (!is_numeric($facility) || $facility < 0 || $facility > 18) {
+        if ($facility < 0 || $facility > 18) {
             $facility = self::F_OTHER;
         }
-        if (!is_numeric($severity) || $severity < 0 || $severity > 4) {
+        if ($severity < 0 || $severity > 4) {
             $severity = self::INFO;
         }
         if ($severity > self::DEBUG || isDebugEnabled()) {

@@ -64,7 +64,7 @@ class FleetLogRepository extends AbstractRepository
     public function addLogsFromQueue(): int
     {
         $this->getConnection()->beginTransaction();
-        $numRecords = (int) $this->getConnection()
+        $numRecords = $this->getConnection()
             ->executeStatement(
                 "INSERT INTO
                     logs_fleet
