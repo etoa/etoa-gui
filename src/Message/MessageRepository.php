@@ -480,6 +480,19 @@ class MessageRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
+    public function getCategoryName(int $catId): ?string
+    {
+        $data = $this->createQueryBuilder()
+            ->select('cat_name')
+            ->from('message_cat')
+            ->where('cat_id = :cat_id')
+            ->setParameter('cat_id', $catId)
+            ->execute()
+            ->fetchOne();
+
+        return $data !== false ? $data : null;
+    }
+
     public function getCategorySender(int $catId): ?string
     {
         $data = $this->createQueryBuilder()

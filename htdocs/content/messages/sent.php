@@ -13,7 +13,7 @@ $userRepository = $app['etoa.user.repository'];
 /** @var Request */
 $request = Request::createFromGlobals();
 
-if ($request->query->has('msg_id') && $request->query->getInt('msg_id') > 0) {
+if ($request->query->getInt('msg_id') > 0) {
     viewSentMessage($cu, $messageRepository, $userRepository, $request->query->getInt('msg_id'));
 } else {
     listSentMessages($cu, $messageRepository, $userRepository);
@@ -27,19 +27,18 @@ function viewSentMessage(
 ): void {
     $messages = $messageRepository->findBy([
         'id' => $id,
-        'user_from_id' => $cu->id
+        'user_from_id' => $cu->id,
     ]);
     if (count($messages) > 0) {
         $message = $messages[0];
 
-        $subj = filled($message->subject)
+        $subject = filled($message->subject)
             ? htmlentities($message->subject, ENT_QUOTES, 'UTF-8')
             : "<i>Kein Titel</i>";
 
         tableStart();
-        echo "<tr><th colspan=\"2\">" . $subj . "</th></tr>";
+        echo "<tr><th colspan=\"2\">" . $subject . "</th></tr>";
         echo "<tr><th style=\"width:100px;\">Datum:</td><td>" . date("d.m.Y H:i", $message->timestamp) . "</td></tr>";
-        echo "<tr><th>Sender:</th><td>" . userPopUp($cu->id, $cu->nick, 0) . "</td></tr>";
         echo "<tr><th>Empfänger:</th><td>" . userPopUp($message->userTo, $userRepository->getNick($message->userTo), 0) . "</td></tr>";
         echo "<tr><th>Text:</td><td>" . text2html(addslashes($message->text)) . "</td></tr>";
         tableEnd();
@@ -67,6 +66,7 @@ function listSentMessages(
     ]);
     if (count($messages) > 0) {
         foreach ($messages as $message) {
+
             $im_path = !$message->read
                 ? "images/pm_new.gif"
                 : "images/pm_normal.gif";

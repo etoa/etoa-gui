@@ -253,13 +253,13 @@ function listMessagesOverview(
     $previewMessages = $cu->properties->msgPreview == 1;
 
     echo "<form action=\"?page=$page&amp;mode=" . $mode . "\" method=\"post\"><div>";
-    $cstr = checker_init();
+    checker_init();
     echo "<input type=\"hidden\" name=\"archived_msg_cnt\" value=\"" . $archivedMessagesCount . "\" />";
 
     // Nachrichten
     tableStart("Kategorien");
     $messageCount = 0;
-    $rcnt = 0;
+    $messagesReadCount = 0;
 
     $categories = $messageRepository->findAllCategories();
     $categories[] = [
@@ -312,13 +312,13 @@ function listMessagesOverview(
                 }
 
                 if ($message->read) {
-                    echo "<tr id=\"msg_id_" . $rcnt . "\" style=\"display:;\">";
-                    $rcnt++;
+                    echo "<tr id=\"msg_id_" . $messagesReadCount . "\" style=\"display:;\">";
+                    $messagesReadCount++;
                 } else {
                     echo "<tr style=\"display:;\">";
                 }
 
-                echo "				<td style=\"width:2%;\">
+                echo "<td style=\"width:2%;\">
                         <img src=\"" . $im_path . "\" alt=\"Mail\" id=\"msgimg" . $message->id . "\" />
                     </td>
                 <td style=\"width:66%;\" ";
@@ -390,6 +390,7 @@ function listMessagesOverview(
         }
     }
     tableEnd();
+
     if ($messageCount > 0) {
         // Übergibt alle Nachrichten-ID's an die javascript funktion
         echo "<input type=\"hidden\" id=\"msg_cnt\" value=\"" . $messageCount . "\" />";
@@ -402,5 +403,4 @@ function listMessagesOverview(
         }
     }
     echo "</div></form>";
-
 }
