@@ -1,6 +1,8 @@
 <?php
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Message\MessageCategory;
+use EtoA\Message\MessageCategoryRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -8,8 +10,11 @@ use Symfony\Component\HttpFoundation\Request;
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
 
-/** @var \EtoA\Message\MessageRepository $messageRepository */
-$messageRepository = $app[\EtoA\Message\MessageRepository::class];
+/** @var MessageRepository */
+$messageRepository = $app[MessageRepository::class];
+
+/** @var MessageCategoryRepository */
+$messageCategoryRepository = $app[MessageCategoryRepository::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();
@@ -67,14 +72,15 @@ if ($mode == "new") {
 } elseif ($mode == "sent") {
     require('content/messages/sent.php');
 } elseif ($request->query->getInt('msg_id') > 0) {
-    viewSingleMessage($request, $messageRepository, $userRepository, $cu);
+    viewSingleMessage($request, $messageRepository, $messageCategoryRepository, $userRepository, $cu);
 } else {
-    listMessagesOverview($request, $messageRepository, $userRepository, $cu, $config);
+    listMessagesOverview($request, $messageRepository, $messageCategoryRepository, $userRepository, $cu, $config);
 }
 
 function viewSingleMessage(
     Request $request,
     MessageRepository $messageRepository,
+    MessageCategoryRepository $messageCategoryRepository,
     UserRepository $userRepository,
     CurrentUser $cu
 ): void {
@@ -92,7 +98,7 @@ function viewSingleMessage(
         // Sender
         $sender = $message->userFrom > 0
             ? ($userRepository->getNick($message->userFrom) ?? '<i>Unbekannt</i>')
-            : '<i>' . $messageRepository->getCategorySender($message->catId) . '</i>';
+            : '<i>' . $messageCategoryRepository->getSender($message->catId) . '</i>';
 
         // Title
         $subj = filled($message->subject)
@@ -158,6 +164,7 @@ function viewSingleMessage(
 function listMessagesOverview(
     Request $request,
     MessageRepository $messageRepository,
+    MessageCategoryRepository $messageCategoryRepository,
     UserRepository $userRepository,
     CurrentUser $cu,
     ConfigurationService $config
@@ -261,30 +268,31 @@ function listMessagesOverview(
     $messageCount = 0;
     $messagesReadCount = 0;
 
-    $categories = $messageRepository->findAllCategories();
-    $categories[] = [
-        'cat_id' => 0,
-        'cat_name' => "Ohne Kategorie",
-        'cat_desc' => "",
-        'cat_sender' => "System",
-    ];
+    $categories = $messageCategoryRepository->findAll();
+
+    $otherCategory = new MessageCategory();
+    $otherCategory->id = 0;
+    $otherCategory->name = 'Ohne Kategorie';
+    $otherCategory->description = '';
+    $otherCategory->sender = 'System';
+    $categories[] = $otherCategory;
 
     foreach ($categories as $category) {
         $messages = $messageRepository->findBy([
             'user_to_id' => $cu->id,
-            'cat_id' => (int) $category['cat_id'],
+            'cat_id' => $category->id,
             'deleted' => false,
             'archived' => $mode == "archiv",
         ]);
 
         if (count($messages) > 0) {
             echo "<tr>
-                <th colspan=\"4\">" . text2html($category['cat_name']) . " (" . count($messages) . " Nachrichten)</th>
-                <th style=\"text-align:center;\"><input type=\"button\" id=\"selectBtn[" . $category['cat_id'] . "]\" value=\"X\" onclick=\"xajax_messagesSelectAllInCategory(" . $category['cat_id'] . "," . count($messages) . ",this.value)\"/></td>
+                <th colspan=\"4\">" . text2html($category->name) . " (" . count($messages) . " Nachrichten)</th>
+                <th style=\"text-align:center;\"><input type=\"button\" id=\"selectBtn[" . $category->id. "]\" value=\"X\" onclick=\"xajax_messagesSelectAllInCategory(" . $category->id . "," . count($messages) . ",this.value)\"/></td>
             </tr>";
         } else {
             echo "<tr>
-                <th colspan=\"5\">" . text2html($category['cat_name']) . "</th>
+                <th colspan=\"5\">" . text2html($category->name) . "</th>
             </tr>";
         }
 
@@ -294,7 +302,7 @@ function listMessagesOverview(
                 // Sender
                 $sender = $message->userFrom > 0
                     ? ($userRepository->getNick($message->userFrom) ?? '<i>Unbekannt</i>')
-                    : '<i>' . $category['cat_sender'] . '</i>';
+                    : '<i>' . $category->sender . '</i>';
 
                 // Title
                 $subj = filled($message->subject)
@@ -344,7 +352,7 @@ function listMessagesOverview(
                 echo "<td style=\"width:15%;\">" . userPopUp($message->userFrom, $userRepository->getNick($message->userFrom), 0, $strong) . "</td>";
                 echo "<td style=\"width:15%;\">" . date("d.m.Y H:i", $message->timestamp) . "</td>";
                 echo "<td style=\"width:2%;text-align:center;padding:0px;vertical-align:middle;\">
-                <input id=\"delcb_" . $category['cat_id'] . "_" . $dcnt . "\" type=\"checkbox\" name=\"delmsg[" . $message->id . "]\" value=\"1\" title=\"Nachricht zum Löschen markieren\" /></td>";
+                <input id=\"delcb_" . $category->id . "_" . $dcnt . "\" type=\"checkbox\" name=\"delmsg[" . $message->id . "]\" value=\"1\" title=\"Nachricht zum Löschen markieren\" /></td>";
                 echo "</tr>\n";
                 if ($previewMessages) {
                     echo "<tr style=\"display:none;\" id=\"msgtext" . $message->id . "\"><td colspan=\"5\" class=\"tbldata\">";

@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Admin\AdminUser;
+use EtoA\Message\MessageCategoryRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\Message\ReportRepository;
 use EtoA\User\UserRepository;
@@ -12,8 +13,11 @@ define("SYS_MESSAGE_CAT_ID",5);
 /** @var \EtoA\User\UserRepository $userRepository */
 $userRepository = $app['etoa.user.repository'];
 
-/** @var \EtoA\Message\MessageRepository $messageRepository */
-$messageRepository = $app[\EtoA\Message\MessageRepository::class];
+/** @var MessageRepository */
+$messageRepository = $app[MessageRepository::class];
+
+/** @var MessageCategoryRepository */
+$messageCategoryRepository = $app[MessageCategoryRepository::class];
 
 /** @var ReportRepository */
 $reportRepository = $app[ReportRepository::class];
@@ -26,7 +30,7 @@ if ($sub=="sendmsg") {
 } elseif ($sub=="reports") {
     manageReports($request, $reportRepository, $userRepository);
 } else {
-    manageMessages($request, $messageRepository, $userRepository);
+    manageMessages($request, $messageRepository, $messageCategoryRepository, $userRepository);
 }
 
 function sendMessageForm(
@@ -486,6 +490,7 @@ function manageReports(Request $request, ReportRepository $reportRepository, Use
 function manageMessages(
     Request $request,
     MessageRepository $messageRepository,
+    MessageCategoryRepository $messageCategoryRepository,
     UserRepository $userRepository
 ): void {
     global $page;
@@ -511,7 +516,7 @@ function manageMessages(
 
             echo "<b>Legende:</b> <span style=\"color:#0f0;\">Ungelesen</span>, <span style=\"color:#f90;\">Gelöscht</span>, <span style=\"font-style:italic;\">Archiviert</span><br/><br/>";
 
-            $categories = $messageRepository->listCategories();
+            $categories = $messageCategoryRepository->getNames();
 
             echo "<table class=\"tb\">";
             echo "<tr>";
@@ -645,7 +650,7 @@ function manageMessages(
                 <input type=\"radio\" name=\"message_deleted\" value=\"1\" /> Ja</td></tr>";
         echo "<tr><th>Kategorie</th><td><select name=\"message_cat_id\">";
         echo "<option value=\"\">(egal)</option>";
-        $categories = $messageRepository->listCategories();
+        $categories = $messageCategoryRepository->getNames();
         foreach ($categories as $categoryId => $categoryName) {
             echo "<option value=\"".$categoryId."\">".$categoryName."</option>";
         }

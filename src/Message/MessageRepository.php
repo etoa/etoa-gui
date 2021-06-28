@@ -457,55 +457,6 @@ class MessageRepository extends AbstractRepository
         return $affected;
     }
 
-    /**
-     * @return array<int,string>
-     */
-    public function listCategories(): array
-    {
-        return $this->createQueryBuilder()
-            ->select('cat_id', 'cat_name')
-            ->from('message_cat')
-            ->orderBy('cat_order')
-            ->execute()
-            ->fetchAllKeyValue();
-    }
-
-    public function findAllCategories(): array
-    {
-        return $this->createQueryBuilder()
-            ->select('cat_id', 'cat_name', 'cat_desc', 'cat_sender')
-            ->from('message_cat')
-            ->orderBy('cat_order')
-            ->execute()
-            ->fetchAllAssociative();
-    }
-
-    public function getCategoryName(int $catId): ?string
-    {
-        $data = $this->createQueryBuilder()
-            ->select('cat_name')
-            ->from('message_cat')
-            ->where('cat_id = :cat_id')
-            ->setParameter('cat_id', $catId)
-            ->execute()
-            ->fetchOne();
-
-        return $data !== false ? $data : null;
-    }
-
-    public function getCategorySender(int $catId): ?string
-    {
-        $data = $this->createQueryBuilder()
-            ->select('cat_sender')
-            ->from('message_cat')
-            ->where('cat_id = :cat_id')
-            ->setParameter('cat_id', $catId)
-            ->execute()
-            ->fetchOne();
-
-        return $data !== false ? $data : null;
-    }
-
     public function isRecipientIgnoringSender(int $senderId, int $recipientId): bool
     {
         $data = (int) $this->createQueryBuilder()

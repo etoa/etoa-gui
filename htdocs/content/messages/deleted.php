@@ -1,11 +1,15 @@
 <?PHP
 
+use EtoA\Message\MessageCategoryRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 
-/** @var \EtoA\Message\MessageRepository $messageRepository */
-$messageRepository = $app[\EtoA\Message\MessageRepository::class];
+/** @var MessageRepository */
+$messageRepository = $app[MessageRepository::class];
+
+/** @var MessageCategoryRepository */
+$messageCategoryRepository = $app[MessageCategoryRepository::class];
 
 /** @var \EtoA\User\UserRepository $userRepository */
 $userRepository = $app['etoa.user.repository'];
@@ -16,7 +20,7 @@ $request = Request::createFromGlobals();
 if ($request->query->getInt('msg_id') > 0) {
     viewDeletedMessage($cu, $messageRepository, $userRepository, $request->query->getInt('msg_id'));
 } else {
-    listDeletedMessages($request, $cu, $messageRepository, $userRepository);
+    listDeletedMessages($request, $cu, $messageRepository, $messageCategoryRepository, $userRepository);
 }
 
 function viewDeletedMessage(
@@ -56,6 +60,7 @@ function listDeletedMessages(
     Request $request,
     CurrentUser $cu,
     MessageRepository $messageRepository,
+    MessageCategoryRepository $messageCategoryRepository,
     UserRepository $userRepository
 ): void {
     global $page;
@@ -85,7 +90,7 @@ function listDeletedMessages(
             <a href=\"?page=$page&msg_id=" . $message->id . "&mode=" . $mode . "\">
             <img src=\"images/pm_normal.gif\" style=\"border:none;width:16px;height:18px;\"></a></td>";
             echo "<td><a href=\"?page=$page&msg_id=" . $message->id . "&mode=" . $mode . "\">" . $subject . "</a></td>";
-            echo "<td style=\"width:120px;\">" . $messageRepository->getCategoryName($message->catId) . "</td>";
+            echo "<td style=\"width:120px;\">" . $messageCategoryRepository->getName($message->catId) . "</td>";
             echo "<td style=\"width:120px;\">" . userPopUp($message->userFrom, $userRepository->getNick($message->userFrom), 0) . "</td>";
             echo "<td style=\"width:120px;\">" . date("d.m.Y H:i", $message->timestamp) . "</td>";
         }
