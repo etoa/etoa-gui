@@ -1,4 +1,4 @@
-<?PHP
+<?php
 
 use EtoA\Message\MessageRepository;
 

@@ -1,7 +1,6 @@
-<?PHP
+<?php
 
 $xajax->register(XAJAX_FUNCTION,"showDetail");
-$xajax->register(XAJAX_FUNCTION,"restoreReport");
 
 function showDetail($type)
 {
@@ -154,16 +153,3 @@ function showDetail($type)
 	ob_end_clean();
 	return $or;
 }
-
-function restoreReport($id)
-{
-	$or = new xajaxResponse();
-	$r = Report::createFactory($id);
-	$r->deleted = false;
-	$or->assign('deleted','innerHTML','Nein');
-	return $or;
-}
-
-
-
-?>
