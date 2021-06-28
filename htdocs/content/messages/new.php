@@ -1,11 +1,15 @@
 <?php
 
+use EtoA\Message\MessageIgnoreRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 
-/** @var \EtoA\Message\MessageRepository $messageRepository */
-$messageRepository = $app[\EtoA\Message\MessageRepository::class];
+/** @var MessageRepository */
+$messageRepository = $app[MessageRepository::class];
+
+/** @var MessageIgnoreRepository */
+$messageIgnoreRepository = $app[MessageIgnoreRepository::class];
 
 /** @var \EtoA\User\UserRepository $userRepository */
 $userRepository = $app['etoa.user.repository'];
@@ -27,6 +31,7 @@ if (!$cu->isVerified) {
             $request,
             $userRepository,
             $messageRepository,
+            $messageIgnoreRepository,
             $cu,
             $app['dispatcher']
         );
@@ -237,6 +242,7 @@ function submitSendMessage(
     Request $request,
     UserRepository $userRepository,
     MessageRepository $messageRepository,
+    MessageIgnoreRepository $messageIgnoreRepository,
     CurrentUser $cu,
     $dispatcher
 ): void {
@@ -248,6 +254,7 @@ function submitSendMessage(
         echo sendMessage(
             $userRepository,
             $messageRepository,
+            $messageIgnoreRepository,
             $cu->id,
             $recipientName,
             $request->request->get('message_subject'),
@@ -264,6 +271,7 @@ function submitSendMessage(
 function sendMessage(
     UserRepository $userRepository,
     MessageRepository $messageRepository,
+    MessageIgnoreRepository $messageIgnoreRepository,
     int $senderId,
     string $recipientName,
     string $subject,
@@ -281,7 +289,7 @@ function sendMessage(
         return "<b>Flood-Kontrolle!</b> Du kannst erst nach " . FLOOD_CONTROL . " Sekunden eine neue Nachricht an " . $recipientName . " schreiben!<br/>";
     }
 
-    if ($messageRepository->isRecipientIgnoringSender($senderId, $recipientUserId)) {
+    if ($messageIgnoreRepository->isRecipientIgnoringSender($senderId, $recipientUserId)) {
         return "<b>Fehler:</b> Dieser Benutzer hat dich ignoriert, die Nachricht wurde nicht gesendet!<br/>";
     }
 

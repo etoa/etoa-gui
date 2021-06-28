@@ -456,21 +456,4 @@ class MessageRepository extends AbstractRepository
 
         return $affected;
     }
-
-    public function isRecipientIgnoringSender(int $senderId, int $recipientId): bool
-    {
-        $data = (int) $this->createQueryBuilder()
-            ->select('COUNT(ignore_id)')
-            ->from('message_ignore')
-            ->where('ignore_owner_id = :recipient')
-            ->andWhere('ignore_target_id = :sender')
-            ->setParameters([
-                'sender' => $senderId,
-                'recipient' => $recipientId,
-            ])
-            ->execute()
-            ->fetchOne();
-
-        return $data > 0;
-    }
 }
