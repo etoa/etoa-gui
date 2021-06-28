@@ -2,7 +2,6 @@
 
 use EtoA\Message\MessageRepository;
 use EtoA\User\UserRepository;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /** @var \EtoA\Message\MessageRepository $messageRepository */
@@ -28,8 +27,8 @@ if (!$cu->isVerified) {
             $request,
             $userRepository,
             $messageRepository,
-            $app['dispatcher'],
-            $cu
+            $cu,
+            $app['dispatcher']
         );
     }
 
@@ -238,8 +237,8 @@ function submitSendMessage(
     Request $request,
     UserRepository $userRepository,
     MessageRepository $messageRepository,
-    EventDispatcherInterface $dispatcher,
-    CurrentUser $cu
+    CurrentUser $cu,
+    $dispatcher
 ): void {
 
     iBoxStart("Nachrichtenversand");
@@ -249,11 +248,11 @@ function submitSendMessage(
         echo sendMessage(
             $userRepository,
             $messageRepository,
-            $dispatcher,
             $cu->id,
             $recipientName,
             $request->request->get('message_subject'),
-            $request->request->get('message_text')
+            $request->request->get('message_text'),
+            $dispatcher,
         );
     }
 
@@ -265,11 +264,11 @@ function submitSendMessage(
 function sendMessage(
     UserRepository $userRepository,
     MessageRepository $messageRepository,
-    EventDispatcherInterface $dispatcher,
     int $senderId,
     string $recipientName,
     string $subject,
-    string $text
+    string $text,
+    $dispatcher
 ): string {
 
     $recipientUserId = $userRepository->getUserIdByNick($recipientName);
