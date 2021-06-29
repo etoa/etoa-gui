@@ -1,11 +1,15 @@
 <?PHP
 
 use EtoA\Alliance\AllianceHistoryRepository;
+use EtoA\Alliance\AllianceManagementService;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\InvalidAllianceParametersException;
 use EtoA\Core\Configuration\ConfigurationService;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
+
+/** @var AllianceManagementService */
+$allianceManagementService = $arr[AllianceManagementService::class];
 
 /** @var AllianceRepository */
 $repository = $app['etoa.alliance.repository'];
@@ -26,7 +30,7 @@ if ($sub == "imagecheck") {
 } elseif ($sub == "techdata") {
 	advanced_form("alliancetechnologies", $twig);
 } elseif ($sub == "create") {
-	create($request, $repository, $allianceHistoryRepository);
+	create($request, $allianceManagementService, $repository, $allianceHistoryRepository);
 } elseif ($sub == "news") {
 	news($config);
 } elseif ($sub == "crap") {
@@ -157,6 +161,7 @@ function imagecheck(Request $request, AllianceRepository $repository)
 
 function create(
     Request $request,
+    AllianceManagementService $allianceManagementService,
     AllianceRepository $repository,
     AllianceHistoryRepository $allianceHistoryRepository
 ):void {
@@ -169,7 +174,7 @@ function create(
 		// TODO refactor wild mix between active-record classes and repository pattern
 		$founder = new User($request->request->getInt('alliance_founder_id'));
 		try {
-			$id = $repository->create(
+			$id = $allianceManagementService->create(
 				$request->request->get('alliance_tag'),
 				$request->request->get('alliance_name'),
 				$founder->id,
