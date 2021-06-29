@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
 /** @var AllianceManagementService */
-$allianceManagementService = $arr[AllianceManagementService::class];
+$allianceManagementService = $app[AllianceManagementService::class];
 
 /** @var AllianceRepository */
 $repository = $app['etoa.alliance.repository'];

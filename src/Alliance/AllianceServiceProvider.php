@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Alliance;
 
+use EtoA\User\UserLogRepository;
 use EtoA\User\UserRepository;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
@@ -19,7 +20,8 @@ class AllianceServiceProvider implements ServiceProviderInterface
             return new AllianceManagementService(
                 $pimple[AllianceRepository::class],
                 $pimple[AllianceHistoryRepository::class],
-                $pimple[UserRepository::class]
+                $pimple[UserRepository::class],
+                $pimple[UserLogRepository::class]
             );
         };
 
