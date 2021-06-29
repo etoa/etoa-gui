@@ -167,12 +167,12 @@ function create(
 
 	if ($request->request->has('create')) {
 		try {
-			$id = $allianceManagementService->create(
+			$alliance = $allianceManagementService->create(
 				$request->request->get('alliance_tag'),
 				$request->request->get('alliance_name'),
 				$request->request->getInt('alliance_founder_id'),
 			);
-			success_msg("Allianz wurde erstellt! [[page alliances sub=edit id=" . $id . "]Details[/page]]");
+			success_msg("Allianz " . $alliance->toString() . " wurde erstellt! [[page alliances sub=edit id=" . $alliance->id . "]Details[/page]]");
 		} catch (InvalidAllianceParametersException $ex) {
 			error_msg("Allianz konnte nicht erstellt werden!\n\n" . $ex->getMessage() . "");
 		}

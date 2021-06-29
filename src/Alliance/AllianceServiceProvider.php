@@ -21,7 +21,8 @@ class AllianceServiceProvider implements ServiceProviderInterface
                 $pimple[AllianceRepository::class],
                 $pimple[AllianceHistoryRepository::class],
                 $pimple[UserRepository::class],
-                $pimple[UserLogRepository::class]
+                $pimple[UserLogRepository::class],
+                $pimple['dispatcher']
             );
         };
 

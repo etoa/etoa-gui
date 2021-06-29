@@ -1,9 +1,14 @@
 <?PHP
 
+use EtoA\Alliance\AllianceManagementService;
+use EtoA\Alliance\InvalidAllianceParametersException;
 use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
+
+/** @var AllianceManagementService */
+$allianceManagementService = $app[AllianceManagementService::class];
 
 if ($config->getBoolean("alliance_allow")) {
 		if ($cu->allianceId == 0)
@@ -86,24 +91,15 @@ if ($config->getBoolean("alliance_allow")) {
             // Allianzgründung speichern
             if (isset($_POST['createsubmit']) && $_POST['createsubmit']!="" && checker_verify())
             {
-                $rtnMsg = "";
-                if (Alliance::create(array(
-                    "tag" => $_POST['alliance_tag'],
-                    "name" => $_POST['alliance_name'],
-                    "founder" => $cu
-                    ),$rtnMsg))
-                {
-                    success_msg("Allianz [b]".$rtnMsg."[/b] gegründet!");
+                try {
+                    $alliance = $allianceManagementService->create($_POST['alliance_tag'], $_POST['alliance_name'], $cu->id);
+                    success_msg("Allianz [b]".$alliance->toString()."[/b] gegründet!");
                     echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Weiter\" />";
                     $finish = true;
-
-                    $app['dispatcher']->dispatch(new \EtoA\Alliance\Event\AllianceCreate(), \EtoA\Alliance\Event\AllianceCreate::CREATE_SUCCESS);
-                }
-                else
-                {
+                } catch (InvalidAllianceParametersException $ex) {
                     $defTag = $_POST['alliance_tag'];
                     $defName = $_POST['alliance_name'];
-                    error_msg($rtnMsg);
+                    error_msg($ex->getMessage());
                 }
             }
             if (!$finish)

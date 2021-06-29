@@ -13,20 +13,23 @@ class AllianceManagementService
     private AllianceHistoryRepository $historyRepository;
     private UserRepository $userRepository;
     private UserLogRepository $userLogRepository;
+    private $dispatcher;
 
     public function __construct(
         AllianceRepository $repository,
         AllianceHistoryRepository $historyRepository,
         UserRepository $userRepository,
-        UserLogRepository $userLogRepository)
+        UserLogRepository $userLogRepository,
+        $dispatcher)
     {
         $this->repository = $repository;
         $this->historyRepository = $historyRepository;
         $this->userRepository = $userRepository;
         $this->userLogRepository = $userLogRepository;
+        $this->dispatcher = $dispatcher;
     }
 
-    public function create(string $tag, string $name, ?int $founderId): int
+    public function create(string $tag, string $name, ?int $founderId): Alliance
     {
         if ($name == "" || $tag == "") {
             throw new InvalidAllianceParametersException("Name/Tag fehlt!");
@@ -61,6 +64,8 @@ class AllianceManagementService
         $this->userLogRepository->add($founder, "alliance", "{nick} hat die Allianz [b]" . $alliance->toString() . "[/b] gegründet.");
         $this->historyRepository->addEntry($id, "Die Allianz [b]" . $alliance->toString() . "[/b] wurde von [b]" . $founder->nick . "[/b] gegründet!");
 
-        return $id;
+        $this->dispatcher->dispatch(new Event\AllianceCreate(), Event\AllianceCreate::CREATE_SUCCESS);
+
+        return $alliance;
     }
 }
