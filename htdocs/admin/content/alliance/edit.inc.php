@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Alliance\AllianceBuildingRepository;
+use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceTechnologyRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -8,6 +9,9 @@ use Twig\Environment;
 
 /** @var AllianceRepository */
 $repository = $app['etoa.alliance.repository'];
+
+/** @var AllianceHistoryRepository */
+$historyRepository = $app[AllianceHistoryRepository::class];
 
 /** @var AllianceBuildingRepository */
 $buildingRepository = $app['etoa.alliance.building.repository'];
@@ -42,7 +46,7 @@ if ($request->request->has('info_save') && $request->request->get('info_save') !
 } elseif ($request->request->has('techs') && $request->request->get('techs') != "") {
 	saveTechnologies($request, $technologyRepository, $id, $twig);
 }
-edit($repository, $buildingRepository, $technologyRepository, $id, $twig);
+edit($repository, $buildingRepository, $technologyRepository, $historyRepository, $id, $twig);
 
 function saveInfo(Request $request, AllianceRepository $repository, int $id, Environment $twig)
 {
@@ -195,6 +199,7 @@ function edit(
 	AllianceRepository $repository,
 	AllianceBuildingRepository $buildingRepository,
 	AllianceTechnologyRepository $technologyRepository,
+    AllianceHistoryRepository $historyRepository,
 	int $id,
 	Environment $twig
 ): void {
@@ -240,7 +245,7 @@ function edit(
 
 	echo '</div><div id="tabs-4">';
 
-	historyTab($repository, $id);
+	historyTab($historyRepository, $id);
 
 	echo '</div><div id="tabs-5">';
 
@@ -397,13 +402,13 @@ function diplomacyTab(AllianceRepository $repository, int $id): void
 	}
 }
 
-function historyTab(AllianceRepository $repository, int $id): void
+function historyTab(AllianceHistoryRepository $historyRepository, int $id): void
 {
 	tableStart();
 	echo "<tr>
 			<th style=\"width:120px;\">Datum / Zeit</th>
 			<th>Ereignis</th></tr>";
-	$historyEntries = $repository->findHistoryEntries($id);
+	$historyEntries = $historyRepository->findForAlliance($id);
 	if (count($historyEntries) > 0) {
 		foreach ($historyEntries as $harr) {
 			echo "<tr><td>" . date("d.m.Y H:i", $harr['history_timestamp']) . "</td><td class=\"tbldata\">" . text2html($harr['history_text']) . "</td></tr>";

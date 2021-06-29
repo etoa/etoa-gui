@@ -24,4 +24,17 @@ class AllianceHistoryRepository extends AbstractRepository
             ])
             ->execute();
     }
+
+    public function findForAlliance(int $allianceId): array
+    {
+        return $this->createQueryBuilder()
+            ->select('*')
+            ->from('alliance_history')
+            ->where('history_alliance_id = :allianceId')
+            ->orderBy('history_timestamp', 'DESC')
+            ->setParameter('allianceId', $allianceId)
+            ->execute()
+            ->fetchAllAssociative();
+    }
+
 }
