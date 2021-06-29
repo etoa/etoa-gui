@@ -666,7 +666,7 @@ WHERE
                 $entries = $allianceHistoryRepository->findForAlliance($cu->allianceId, 5);
                 if (count($entries) > 0) {
                     foreach ($entries as $entry) {
-                        echo "<div class=\"infoLog\">" . text2html($entries['history_text']) . " <span>" . df($entries['history_timestamp'], 0) . "</span></div>";
+                        echo "<div class=\"infoLog\">" . text2html($entry->text) . " <span>" . df($entry->timestamp, 0) . "</span></div>";
                     }
                 }
                 echo "</td></tr>";

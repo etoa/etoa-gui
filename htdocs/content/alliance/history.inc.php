@@ -13,7 +13,7 @@ if (Alliance::checkActionRights('history')) {
     echo "<tr><th style=\"width:120px;\">Datum / Zeit</th><th>Ereignis</th></tr>";
     $entries = $allianceHistoryRepository->findForAlliance((int) $arr['alliance_id']);
     foreach ($entries as $entry) {
-        echo "<tr><td>" . date("d.m.Y H:i", $entry['history_timestamp']) . "</td><td>" . text2html($entry['history_text']) . "</td></tr>";
+        echo "<tr><td>" . date("d.m.Y H:i", $entry->timestamp) . "</td><td>" . text2html($entry->text) . "</td></tr>";
     }
     tableEnd();
     echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=$page'\" />";

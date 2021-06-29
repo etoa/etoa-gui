@@ -408,10 +408,10 @@ function historyTab(AllianceHistoryRepository $historyRepository, int $id): void
 	echo "<tr>
 			<th style=\"width:120px;\">Datum / Zeit</th>
 			<th>Ereignis</th></tr>";
-	$historyEntries = $historyRepository->findForAlliance($id);
-	if (count($historyEntries) > 0) {
-		foreach ($historyEntries as $harr) {
-			echo "<tr><td>" . date("d.m.Y H:i", $harr['history_timestamp']) . "</td><td class=\"tbldata\">" . text2html($harr['history_text']) . "</td></tr>";
+	$entries = $historyRepository->findForAlliance($id);
+	if (count($entries) > 0) {
+		foreach ($entries as $entry) {
+			echo "<tr><td>" . date("d.m.Y H:i", $entry->timestamp) . "</td><td class=\"tbldata\">" . text2html($entry->text) . "</td></tr>";
 		}
 	} else {
 		echo "<tr><td colspan=\"3\" class=\"tbldata\"><i>Keine Daten vorhanden!</i></td></tr>";

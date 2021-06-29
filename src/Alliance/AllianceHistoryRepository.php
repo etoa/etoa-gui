@@ -25,9 +25,12 @@ class AllianceHistoryRepository extends AbstractRepository
             ->execute();
     }
 
+    /**
+     * @return array<AllianceHistoryEntry>
+     */
     public function findForAlliance(int $allianceId, ?int $limit = null): array
     {
-        return $this->createQueryBuilder()
+        $data = $this->createQueryBuilder()
             ->select('*')
             ->from('alliance_history')
             ->where('history_alliance_id = :allianceId')
@@ -36,6 +39,8 @@ class AllianceHistoryRepository extends AbstractRepository
             ->setMaxResults($limit)
             ->execute()
             ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new AllianceHistoryEntry($row), $data);
     }
 
     public function removeForAlliance(int $allianceId): void
