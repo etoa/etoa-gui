@@ -1,6 +1,5 @@
 <?PHP
 
-use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceManagementService;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\InvalidAllianceParametersException;
@@ -13,9 +12,6 @@ $allianceManagementService = $arr[AllianceManagementService::class];
 
 /** @var AllianceRepository */
 $repository = $app['etoa.alliance.repository'];
-
-/** @var AllianceHistoryRepository */
-$allianceHistoryRepository = $app[AllianceHistoryRepository::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();
@@ -30,7 +26,7 @@ if ($sub == "imagecheck") {
 } elseif ($sub == "techdata") {
 	advanced_form("alliancetechnologies", $twig);
 } elseif ($sub == "create") {
-	create($request, $allianceManagementService, $repository, $allianceHistoryRepository);
+	create($request, $allianceManagementService, $repository);
 } elseif ($sub == "news") {
 	news($config);
 } elseif ($sub == "crap") {
@@ -162,8 +158,7 @@ function imagecheck(Request $request, AllianceRepository $repository)
 function create(
     Request $request,
     AllianceManagementService $allianceManagementService,
-    AllianceRepository $repository,
-    AllianceHistoryRepository $allianceHistoryRepository
+    AllianceRepository $repository
 ):void {
 	global $page;
 	global $sub;
@@ -171,19 +166,13 @@ function create(
 	echo "<h1>Allianz erstellen</h1>";
 
 	if ($request->request->has('create')) {
-		// TODO refactor wild mix between active-record classes and repository pattern
-		$founder = new User($request->request->getInt('alliance_founder_id'));
 		try {
 			$id = $allianceManagementService->create(
 				$request->request->get('alliance_tag'),
 				$request->request->get('alliance_name'),
-				$founder->id,
+				$request->request->getInt('alliance_founder_id'),
 			);
-			$alliance = new Alliance($id);
-			$founder->alliance = $alliance;
-			$founder->addToUserLog("alliance", "{nick} hat die Allianz [b]" . $alliance . "[/b] gegründet.");
-            $allianceHistoryRepository->addEntry($id, "Die Allianz [b]" . $alliance . "[/b] wurde von [b]" . $founder . "[/b] gegründet!");
-			success_msg("Allianz wurde erstellt! [[page alliances sub=edit id=" . $alliance->id . "]Details[/page]]");
+			success_msg("Allianz wurde erstellt! [[page alliances sub=edit id=" . $id . "]Details[/page]]");
 		} catch (InvalidAllianceParametersException $ex) {
 			error_msg("Allianz konnte nicht erstellt werden!\n\n" . $ex->getMessage() . "");
 		}
