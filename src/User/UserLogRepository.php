@@ -8,7 +8,7 @@ use EtoA\Core\AbstractRepository;
 
 class UserLogRepository extends AbstractRepository
 {
-    public function add(User $user, string $zone, string $message, bool $public = true)
+    public function add(User $user, string $zone, string $message, bool $public = true): void
     {
         $search = ["{user}", "{nick}"];
         $replace = [$user->nick, $user->nick];
