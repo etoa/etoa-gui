@@ -14,6 +14,12 @@ class AllianceServiceProvider implements ServiceProviderInterface
      */
     public function register(Container $pimple): void
     {
+        $pimple[AllianceManagementService::class] = function (Container $pimple): AllianceManagementService {
+            return new AllianceManagementService(
+                $pimple[AllianceRepository::class]
+            );
+        };
+
         $pimple[AllianceRepository::class] = function (Container $pimple): AllianceRepository {
             return new AllianceRepository($pimple['db']);
         };
