@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace EtoA\Alliance;
 
@@ -8,18 +10,18 @@ class AllianceHistoryRepository extends AbstractRepository
 {
     public function addEntry(int $allianceId, string $text): void
     {
-        $this->getConnection()->executeQuery('INSERT INTO alliance_history (
-            history_alliance_id,
-            history_text,
-            history_timestamp
-        ) VALUES (
-            :allianceId,
-            :text,
-            :timestamp
-        )', [
-            'allianceId' => $allianceId,
-            'text' => $text,
-            'timestamp' => time(),
-        ]);
+        $this->createQueryBuilder()
+            ->insert('alliance_history')
+            ->values([
+                'history_alliance_id' => ':allianceId',
+                'history_text' => ':text',
+                'history_timestamp' => ':timestamp',
+            ])
+            ->setParameters([
+                'allianceId' => $allianceId,
+                'text' => $text,
+                'timestamp' => time(),
+            ])
+            ->execute();
     }
 }
