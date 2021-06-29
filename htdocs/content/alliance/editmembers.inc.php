@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 
 //////////////////////////////////////////////////
@@ -23,6 +24,9 @@ use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
+
+/** @var AllianceHistoryRepository */
+$allianceHistoryRepository = $app[AllianceHistoryRepository::class];
 
 /** @var Alliance $ally */
 /** @var bool $isFounder */
@@ -61,7 +65,7 @@ if (Alliance::checkActionRights('editmembers'))
 					if (mysql_num_rows(dbquery("SELECT user_id FROM users WHERE user_alliance_rank_id!='$rid' AND user_id='$uid';"))>0)
 					{
 						dbquery("UPDATE users SET user_alliance_rank_id='$rid' WHERE user_id='$uid';");
-						$ally->addHistory("Der Spieler [b]".get_user_nick($uid)."[/b] erhält den Rang [b]".$rank[$rid]."[/b].");
+						$allianceHistoryRepository->addEntry($ally->id, "Der Spieler [b]".get_user_nick($uid)."[/b] erhält den Rang [b]".$rank[$rid]."[/b].");
 					}
 				}
 				success_msg("&Auml;nderungen wurden übernommen!");

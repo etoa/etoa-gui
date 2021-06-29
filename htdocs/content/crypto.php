@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
@@ -195,6 +196,9 @@ $config = $app['etoa.config.service'];
 
 										// Calculate success chance
 										$chance = ($cryptoCenterLevel-$op_jam) + (0.3*($self_spy - $op_stealth)) + mt_rand(0,2)-1;
+
+                                        /** @var AllianceHistoryRepository */
+                                        $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
 
 										// Do the scan if chance >= 0
 										if ($chance >= 0)
@@ -429,7 +433,7 @@ $config = $app['etoa.config.service'];
 											$cd = time()+$cooldown;
 											$cu->alliance->buildlist->setCooldown(ALLIANCE_CRYPTO_ID, $cd, $cu->id);
 
-											$cu->alliance->addHistory("Der Spieler [b]".$cu."[/b] hat den Planeten ".$target->name()."[/b] (".$sx."/".$sy." : ".$cx."/".$cy." : ".$pp.") gescannt!");
+											$allianceHistoryRepository->addEntry($cu->alliance->id, "Der Spieler [b]".$cu."[/b] hat den Planeten ".$target->name()."[/b] (".$sx."/".$sy." : ".$cx."/".$cy." : ".$pp.") gescannt!");
 
 											if ($cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID, $cu->id) > time())
 											{
@@ -454,8 +458,7 @@ $config = $app['etoa.config.service'];
 										    $cd = time()+$cooldown;
 											$cu->alliance->buildlist->setCooldown(ALLIANCE_CRYPTO_ID, $cd, $cu->id);
 
-											$cu->alliance->addHistory("Der Spieler [b]".$cu."[/b] hat den Planeten ".$target->name()."[/b] (".$sx."/".$sy." : ".$cx."/".$cy." : ".$pp.") gescannt!");
-
+                                            $allianceHistoryRepository->addEntry($cu->alliance->id, "Der Spieler [b]".$cu."[/b] hat den Planeten ".$target->name()."[/b] (".$sx."/".$sy." : ".$cx."/".$cy." : ".$pp.") gescannt!");
 										}
 									}
 									else

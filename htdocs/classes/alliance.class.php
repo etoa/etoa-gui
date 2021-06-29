@@ -1,5 +1,6 @@
 <?php
 
+use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 
 /**
@@ -142,19 +143,11 @@ use EtoA\Core\Configuration\ConfigurationService;
                 foreach ($this->changedFields as $k=>$v)
                 {
                     if ($k == "visits")
-                    $sql.= " alliance_visits=".$this->$k.",";
+                        $sql.= " alliance_visits=".$this->$k.",";
                     elseif ($k == "visitsExt")
-                    $sql.= " alliance_visits_ext=".$this->$k.",";
+                        $sql.= " alliance_visits_ext=".$this->$k.",";
                     elseif ($k == "founderId")
-                    $sql.= " alliance_founder_id=".$this->$k.",";
-                   /*
-                    elseif ($k == "profileImage")
-                    {
-                        if ($this->profileImage == "")
-                        $sql.= " user_profile_img='',user_profile_img_check=0,";
-              else
-                        $sql.= " user_profile_img='".$this->profileImage."',user_profile_img_check=1,";
-                    }*/
+                        $sql.= " alliance_founder_id=".$this->$k.",";
                     else
                         echo " $k has no valid UPDATE query!<br/>";
                 }
@@ -196,9 +189,16 @@ use EtoA\Core\Configuration\ConfigurationService;
                     {
                         $this->$key = intval($val);
                         $this->founder = & $this->members[$val];
-                        $this->addHistory("Der Spieler [b]".$this->founder."[/b] wird zum Gründer befördert.");
+
+                        // TODO
+                        global $app;
+
+                        /** @var AllianceHistoryRepository */
+                        $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
+                        $allianceHistoryRepository->addEntry($this->id, "Der Spieler [b]".$this->founder."[/b] wird zum Gründer befördert.");
+
                         $this->founder->sendMessage(MSG_ALLYMAIL_CAT,"Gründer","Du hast nun die Gründerrechte deiner Allianz!");
-                        $this->founder->addToUserLog("alliance","{nick} ist nun Gründer der Allianz ".$this);
+                        $this->founder->addToUserLog("alliance","{nick} ist nun Gründer der Allianz ".$this->__toString());
                         $this->changedFields[$key] = true;
                         return true;
                     }
@@ -305,6 +305,9 @@ use EtoA\Core\Configuration\ConfigurationService;
         */
         public function addMember($userId)
         {
+            // TODO
+            global $app;
+
             $this->getMembers();
             if (!isset($this->members[$userId]))
             {
@@ -319,8 +322,12 @@ use EtoA\Core\Configuration\ConfigurationService;
                     if ($tmpUser->alliance === $this)
                     {
                         $this->members[$userId] = $tmpUser;
-                        $this->members[$userId]->sendMessage(MSG_ALLYMAIL_CAT,"Allianzaufnahme","Du wurdest in die Allianz [b]".$this."[/b] aufgenommen!");
-                        $this->addHistory("[b]".$tmpUser."[/b] wurde als neues Mitglied aufgenommen");
+                        $this->members[$userId]->sendMessage(MSG_ALLYMAIL_CAT,"Allianzaufnahme","Du wurdest in die Allianz [b]".$this->__toString()."[/b] aufgenommen!");
+
+                        /** @var AllianceHistoryRepository */
+                        $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
+                        $allianceHistoryRepository->addEntry($this->id, "[b]".$tmpUser."[/b] wurde als neues Mitglied aufgenommen");
+
                         $this->calcMemberCosts();
                         return true;
                     }
@@ -335,6 +342,9 @@ use EtoA\Core\Configuration\ConfigurationService;
         */
         public function kickMember($userId,$kick=1)
         {
+            // TODO
+            global $app;
+
             if (!$this->isAtWar())
             {
                 $res = dbquery("SELECT id FROM fleet WHERE user_id='" . $userId . "' AND (action='alliance' OR action='support') LIMIT 1;");
@@ -347,12 +357,15 @@ use EtoA\Core\Configuration\ConfigurationService;
                         if ($this->members[$userId]->allianceId == 0)
                         {
                             if ($kick==1) {
-                                $this->members[$userId]->sendMessage(MSG_ALLYMAIL_CAT,"Allianzausschluss","Du wurdest aus der Allianz [b]".$this."[/b] ausgeschlossen!");
+                                $this->members[$userId]->sendMessage(MSG_ALLYMAIL_CAT,"Allianzausschluss","Du wurdest aus der Allianz [b]".$this->__toString()."[/b] ausgeschlossen!");
                             } else {
                                 $this->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Allianzaustritt","Der Spieler ".$this->members[$userId]." trat aus der Allianz aus!");
                             }
 
-                            $this->addHistory("[b]".$this->members[$userId]."[/b] ist nun kein Mitglied mehr von uns.");
+                            /** @var AllianceHistoryRepository */
+                            $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
+                            $allianceHistoryRepository->addEntry($this->id, "[b]".$this->members[$userId]."[/b] ist nun kein Mitglied mehr von uns.");
+
                             unset($this->members[$userId]);
                             return true;
                         }
@@ -442,7 +455,7 @@ use EtoA\Core\Configuration\ConfigurationService;
                 if (mysql_affected_rows()>0)
                 {
                     $this->wingRequests[$allianceId] = new Alliance($allianceId);
-                    $this->wingRequests[$allianceId]->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Wing-Anfrage","Die Allianz [b]".$this."[/b] möchte eure Allianz als Wing hinzufügen. [page alliance action=wings]Anfrage beantworten[/page]");
+                    $this->wingRequests[$allianceId]->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Wing-Anfrage","Die Allianz [b]".$this->__toString()."[/b] möchte eure Allianz als Wing hinzufügen. [page alliance action=wings]Anfrage beantworten[/page]");
                     return true;
                 }
             }
@@ -468,13 +481,13 @@ use EtoA\Core\Configuration\ConfigurationService;
             {
                 if ($this->wingRequests != null)
                 {
-                    $this->wingRequests[$wingId]->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Wing-Anfrage zurückgezogen","Die Allianz [b]".$this."[/b] hat die Wing-Anfrage zurückgezogen.");
+                    $this->wingRequests[$wingId]->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Wing-Anfrage zurückgezogen","Die Allianz [b]".$this->__toString()."[/b] hat die Wing-Anfrage zurückgezogen.");
                     unset($this->wingRequests[$wingId]);
                 }
                 else
                 {
                     $tmpWing = new Alliance($wingId);
-                    $tmpWing->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Wing-Anfrage zurückgezogen","Die Allianz [b]".$this."[/b] hat die Wing-Anfrage zurückgezogen.");
+                    $tmpWing->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Wing-Anfrage zurückgezogen","Die Allianz [b]".$this->__toString()."[/b] hat die Wing-Anfrage zurückgezogen.");
                     unset($tmpWing);
                 }
                 return true;
@@ -500,7 +513,7 @@ use EtoA\Core\Configuration\ConfigurationService;
                 ");
                 if (mysql_affected_rows()>0)
                 {
-                    $this->__get('motherRequest')->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Wing-Anfrage zurückgewiesen","Die Allianz [b]".$this."[/b] hat die Wing-Anfrage zurückgewiesen.");
+                    $this->__get('motherRequest')->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Wing-Anfrage zurückgewiesen","Die Allianz [b]".$this->__toString()."[/b] hat die Wing-Anfrage zurückgewiesen.");
                     $this->motherRequestId = 0;
                     $this->motherRequest = null;
                     return true;
@@ -514,6 +527,9 @@ use EtoA\Core\Configuration\ConfigurationService;
         */
         public function grantWingRequest()
         {
+            // TODO
+            global $app;
+
             if ($this->motherRequestId > 0)
             {
                 $res = dbquery("
@@ -531,9 +547,13 @@ use EtoA\Core\Configuration\ConfigurationService;
                     $this->motherId = $this->motherRequestId;
                     $this->motherRequestId = 0;
                     $this->motherRequest = null;
-                    $this->__get('mother')->addHistory("[b]".$this."[/b] wurde als neuer Wing hinzugefügt.");
-                    $this->addHistory("Wir sind nun ein Wing von [b]".$this->__get('mother')."[/b]");
-                    $this->__get('mother')->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Neuer Wing","Die Allianz [b]".$this."[/b] ist nun ein Wing von [b]".$this->__get('mother')."[/b]");
+
+                    /** @var AllianceHistoryRepository */
+                    $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
+                    $allianceHistoryRepository->addEntry($this->__get('mother')->id, "[b]".$this->__toString()."[/b] wurde als neuer Wing hinzugefügt.");
+                    $allianceHistoryRepository->addEntry($this->id, "Wir sind nun ein Wing von [b]".$this->__get('mother')."[/b]");
+
+                    $this->__get('mother')->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Neuer Wing","Die Allianz [b]".$this->__toString()."[/b] ist nun ein Wing von [b]".$this->__get('mother')."[/b]");
                     return true;
                 }
             }
@@ -545,6 +565,9 @@ use EtoA\Core\Configuration\ConfigurationService;
         */
         public function addWing($allianceId)
         {
+            // TODO
+            global $app;
+
             $this->getWings();
             if ($allianceId != $this->id && !isset($this->wings[$allianceId]))
             {
@@ -560,10 +583,13 @@ use EtoA\Core\Configuration\ConfigurationService;
                 if (mysql_affected_rows()>0)
                 {
                     $this->wings[$allianceId] = new Alliance($allianceId);
-                    $this->addHistory($this->wings[$allianceId]." wurde als neuer Wing hinzugefügt.");
-                    $this->wings[$allianceId]->addHistory("Wir sing nun ein Wing von ".$this);
-                    $this->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Neuer Wing","Die Allianz [b]".$this->wings[$allianceId]."[/b] ist nun ein Wing von [b]".$this."[/b]");
-                    $this->wings[$allianceId]->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Neuer Wing","Die Allianz [b]".$this->wings[$allianceId]."[/b] ist nun ein Wing von [b]".$this."[/b]");
+
+                    /** @var AllianceHistoryRepository */
+                    $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
+                    $allianceHistoryRepository->addEntry($this->id, $this->wings[$allianceId]." wurde als neuer Wing hinzugefügt.");
+                    $allianceHistoryRepository->addEntry($this->wings[$allianceId]->id, "Wir sing nun ein Wing von ".$this->__toString());
+                    $this->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Neuer Wing","Die Allianz [b]".$this->wings[$allianceId]."[/b] ist nun ein Wing von [b]".$this->__toString()."[/b]");
+                    $this->wings[$allianceId]->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Neuer Wing","Die Allianz [b]".$this->wings[$allianceId]."[/b] ist nun ein Wing von [b]".$this->__toString()."[/b]");
                     return true;
                 }
             }
@@ -575,6 +601,9 @@ use EtoA\Core\Configuration\ConfigurationService;
         */
         public function removeWing($wingId)
         {
+            // TODO
+            global $app;
+
             dbquery("
             UPDATE
                 alliances
@@ -586,19 +615,21 @@ use EtoA\Core\Configuration\ConfigurationService;
             ");
             if (mysql_affected_rows()>0)
             {
+                /** @var AllianceHistoryRepository */
+                $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
                 if ($this->wings != null)
                 {
-                    $this->addHistory($this->wings[$wingId]." ist nun kein Wing mehr von uns");
-                    $this->wings[$wingId]->addHistory("Wir sind nun kein Wing mehr von [b]".$this."[/b]");
-                    $this->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Wing aufgelöst","Die Allianz [b]".$this->wings[$wingId]."[/b] ist kein Wing mehr von [b]".$this."[/b]");
-                    $this->wings[$wingId]->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Wing aufgelöst","Die Allianz [b]".$this->wings[$wingId]."[/b] ist kein Wing mehr von [b]".$this."[/b]");
+                    $allianceHistoryRepository->addEntry($this->id, $this->wings[$wingId]." ist nun kein Wing mehr von uns");
+                    $allianceHistoryRepository->addEntry($this->wings[$wingId]->id, "Wir sind nun kein Wing mehr von [b]".$this->__toString()."[/b]");
+                    $this->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Wing aufgelöst","Die Allianz [b]".$this->wings[$wingId]."[/b] ist kein Wing mehr von [b]".$this->__toString()."[/b]");
+                    $this->wings[$wingId]->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT,"Wing aufgelöst","Die Allianz [b]".$this->wings[$wingId]."[/b] ist kein Wing mehr von [b]".$this->__toString()."[/b]");
                     unset($this->wings[$wingId]);
                 }
                 else
                 {
                     $tmpWing = new Alliance($wingId);
-                    $this->addHistory($tmpWing." ist nun kein Wing mehr.");
-                    $tmpWing->addHistory("Wir sind nun kein Wing mehr von [b]".$this."[/b]");
+                    $allianceHistoryRepository->addEntry($this->id, $tmpWing." ist nun kein Wing mehr.");
+                    $allianceHistoryRepository->addEntry($tmpWing->id, "Wir sind nun kein Wing mehr von [b]".$this->__toString()."[/b]");
                     unset($tmpWing);
                 }
                 return true;
@@ -606,36 +637,14 @@ use EtoA\Core\Configuration\ConfigurationService;
             return false;
         }
 
-        //
-        // Misc functions
-        //
-
-        /**
-        * Add text to alliance history
-        */
-        function addHistory($text)
-        {
-            dbquery("
-            INSERT INTO
-                alliance_history
-                (
-                    history_alliance_id,
-                    history_text,
-                    history_timestamp
-                )
-                VALUES
-                (
-                    '".$this->id."',
-                    '".addslashes($text)."',
-                    '".time()."'
-                );");
-        }
-
         /**
         * Delete alliance
         */
         function delete(&$user = null)
         {
+            // TODO
+            global $app;
+
             if (!$this->isAtWar()) {
                 $res = dbquery("SELECT cat_id FROM allianceboard_cat WHERE cat_alliance_id='".$this->id."';");
                 if (mysql_num_rows($res))
@@ -683,7 +692,11 @@ use EtoA\Core\Configuration\ConfigurationService;
                         OR alliance_bnd_alliance_id2='".$this->id."';
                 ");
                 dbquery("DELETE FROM alliance_buildlist WHERE alliance_buildlist_alliance_id='".$this->id."';");
-                dbquery("DELETE FROM alliance_history WHERE history_alliance_id='".$this->id."';");
+
+                /** @var AllianceHistoryRepository */
+                $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
+                $allianceHistoryRepository->removeForAlliance($this->id);
+
                 dbquery("DELETE FROM alliance_news WHERE alliance_news_alliance_id='".$this->id."';");
                 dbquery("DELETE FROM alliance_points WHERE point_alliance_id='".$this->id."';");
                 dbquery("DELETE FROM alliance_polls WHERE poll_alliance_id='".$this->id."';");
@@ -729,11 +742,11 @@ use EtoA\Core\Configuration\ConfigurationService;
                 if($user!=null)
                 {
                     $user->alliance = null;
-                    $user->addToUserLog("alliance","{nick} löst die Allianz [b]".$this."[/b] auf.");
-                    Log::add("5", Log::INFO, "Die Allianz [b]".$this."[/b] wurde von ".$user." aufgelöst!");
+                    $user->addToUserLog("alliance","{nick} löst die Allianz [b]".$this->__toString()."[/b] auf.");
+                    Log::add("5", Log::INFO, "Die Allianz [b]".$this->__toString()."[/b] wurde von ".$user." aufgelöst!");
                 }
                 else
-                    Log::add("5", Log::INFO, "Die Allianz [b]".$this."[/b] wurde gelöscht!");
+                    Log::add("5", Log::INFO, "Die Allianz [b]".$this->__toString()."[/b] wurde gelöscht!");
                 return true;
             } else {
                 return false;
@@ -775,6 +788,9 @@ use EtoA\Core\Configuration\ConfigurationService;
         */
         static function create($data, &$returnMsg)
         {
+            // TODO
+            global $app;
+
             if (isset($data['name'])
             && isset($data['tag'])
             && $data['name']!=""
@@ -823,7 +839,11 @@ use EtoA\Core\Configuration\ConfigurationService;
                                 $returnMsg = new Alliance(mysql_insert_id());
                                 $data['founder']->alliance = $returnMsg;
                                 $data['founder']->addToUserLog("alliance","{nick} hat die Allianz [b]".$returnMsg."[/b] gegründet.");
-                                $returnMsg->addHistory("Die Allianz [b]".$returnMsg."[/b] wurde von [b]".$data['founder']."[/b] gegründet!");
+
+                                /** @var AllianceHistoryRepository */
+                                $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
+                                $allianceHistoryRepository->addEntry($returnMsg->id, "Die Allianz [b]".$returnMsg."[/b] wurde von [b]".$data['founder']."[/b] gegründet!");
+
                                 return true;
                             }
                             else
@@ -923,6 +943,9 @@ use EtoA\Core\Configuration\ConfigurationService;
       */
       public function calcMemberCosts($save=true,$addMembers=1)
       {
+        // TODO
+        global $app;
+
         // Zählt aktuelle Memberanzahl und und läd den Wert, für welche Anzahl User die Allianzobjekte gebaut wurden
         $this->getMembers();
         $newMemberCnt = count($this->members) + $addMembers;
@@ -1054,8 +1077,6 @@ use EtoA\Core\Configuration\ConfigurationService;
                         alliance_id='".$this->id."'
                     LIMIT 1;");
 
-                    // Log schreiben
-                global $app;
                 /** @var \EtoA\Alliance\AllianceHistoryRepository $allianceHistoryRepository */
                 $allianceHistoryRepository = $app[\EtoA\Alliance\AllianceHistoryRepository::class];
                 $allianceHistoryRepository->addEntry((int) $this->id, "Dem Allianzkonto wurden folgende Rohstoffe abgezogen:\n[b]".RES_METAL."[/b]: ".nf($to_pay[1])."\n[b]".RES_CRYSTAL."[/b]: ".nf($to_pay[2])."\n[b]".RES_PLASTIC."[/b]: ".nf($to_pay[3])."\n[b]".RES_FUEL."[/b]: ".nf($to_pay[4])."\n[b]".RES_FOOD."[/b]: ".nf($to_pay[5])."\n\nDie Allianzobjekte sind nun für ".$newMemberCnt." Mitglieder verfügbar!");
