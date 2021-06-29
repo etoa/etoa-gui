@@ -71,4 +71,13 @@ class AllianceTechnologyRepository extends AbstractRepository
             ])
             ->execute();
     }
+
+    public function removeForAlliance(int $allianceId): void
+    {
+        $this->createQueryBuilder()
+            ->delete('alliance_techlist')
+            ->where('alliance_techlist_alliance_id = :allianceId')
+            ->setParameter('allianceId', $allianceId)
+            ->execute();
+    }
 }

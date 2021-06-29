@@ -6,11 +6,20 @@ namespace EtoA\Alliance;
 
 use EtoA\User\UserLogRepository;
 use EtoA\User\UserRepository;
+use Log;
 
 class AllianceManagementService
 {
     private AllianceRepository $repository;
     private AllianceHistoryRepository $historyRepository;
+    private AllianceBoardRepository $boardRepository;
+    private AllianceApplicationRepository $applicationRepository;
+    private AllianceBuildingRepository $buildingRepository;
+    private AllianceTechnologyRepository $technologyRepository;
+    private AlliancePaymentRepository $paymentRepository;
+    private AllianceNewsRepository $newsRepository;
+    private AlliancePointRepository $pointRepository;
+    private AlliancePollRepository $pollRepository;
     private UserRepository $userRepository;
     private UserLogRepository $userLogRepository;
     private $dispatcher;
@@ -18,12 +27,28 @@ class AllianceManagementService
     public function __construct(
         AllianceRepository $repository,
         AllianceHistoryRepository $historyRepository,
+        AllianceBoardRepository $boardRepository,
+        AllianceApplicationRepository $applicationRepository,
+        AllianceBuildingRepository $buildingRepository,
+        AllianceTechnologyRepository $technologyRepository,
+        AlliancePaymentRepository $paymentRepository,
+        AllianceNewsRepository $newsRepository,
+        AlliancePointRepository $pointRepository,
+        AlliancePollRepository $pollRepository,
         UserRepository $userRepository,
         UserLogRepository $userLogRepository,
-        $dispatcher)
-    {
+        $dispatcher
+    ) {
         $this->repository = $repository;
         $this->historyRepository = $historyRepository;
+        $this->boardRepository = $boardRepository;
+        $this->applicationRepository = $applicationRepository;
+        $this->buildingRepository = $buildingRepository;
+        $this->technologyRepository = $technologyRepository;
+        $this->paymentRepository = $paymentRepository;
+        $this->newsRepository = $newsRepository;
+        $this->pointRepository = $pointRepository;
+        $this->pollRepository = $pollRepository;
         $this->userRepository = $userRepository;
         $this->userLogRepository = $userLogRepository;
         $this->dispatcher = $dispatcher;
@@ -69,14 +94,63 @@ class AllianceManagementService
         return $alliance;
     }
 
-    public function remove(int $id): bool
+    public function remove(int $id, ?int $userId = null): bool
     {
-        $removed = $this->repository->remove($id);
+        $boardCategories = $this->boardRepository->findCategoryIdsForAlliance($id);
+        foreach ($boardCategories as $categoryId) {
+            $this->boardRepository->removeCategoryRanksForCategory($categoryId);
+            $topics = $this->boardRepository->findTopicIdsForCategory($categoryId);
+            foreach ($topics as $topicId) {
+                $this->boardRepository->removePostsForTopic($topicId);
+            }
+            $this->boardRepository->removeTopicsForCategory($categoryId);
+        }
+        $this->boardRepository->removeCategoriesForAlliance($id);
 
-        $this->repository->deleteRanks($id);
+        $this->applicationRepository->removeForAlliance($id);
+
+        $diplomacies = $this->repository->findDiplomacies($id);
+        foreach ($diplomacies as $diplomacy) {
+            $topics = $this->boardRepository->findTopicIdsForDiplomacy((int) $diplomacy['alliance_bnd_id']);
+            foreach ($topics as $topicId) {
+                $this->boardRepository->removePostsForTopic($topicId);
+            }
+            $this->boardRepository->removeTopicsForDiplomacy((int) $diplomacy['alliance_bnd_id']);
+        }
         $this->repository->deleteDiplomacies($id);
 
-        $this->allianceHistoryRepository->removeForAlliance($id);
+        $this->buildingRepository->removeForAlliance($id);
+        $this->technologyRepository->removeForAlliance($id);
+        $this->paymentRepository->removeForAlliance($id);
+        $this->newsRepository->removeForAlliance($id);
+        $this->pointRepository->removeForAlliance($id);
+        $this->pollRepository->removeForAlliance($id);
+
+        $ranks = $this->repository->findRanks($id);
+        foreach ($ranks as $rank) {
+            $this->repository->removeRank((int) $rank['rank_id']);
+        }
+        $this->repository->deleteRanks($id);
+
+        $this->repository->detachWings($id);
+
+        $this->repository->removeAllUsers($id);
+
+        $alliance = $this->repository->getAlliance($id);
+
+        $removed = $this->repository->remove($id);
+
+        if ($alliance !== null) {
+            $user = $userId !== null ? $this->userRepository->getUser($userId) : null;
+            if ($user !== null) {
+                $this->userLogRepository->add($user, "alliance", "{nick} löst die Allianz [b]" . $alliance->toString() . "[/b] auf.");
+                Log::add(Log::F_ALLIANCE, Log::INFO, "Die Allianz [b]" . $alliance->toString() . "[/b] wurde von " . $user->nick . " aufgelöst!");
+            } else {
+                Log::add(Log::F_ALLIANCE, Log::INFO, "Die Allianz [b]" . $alliance->toString() . "[/b] wurde gelöscht!");
+            }
+        }
+
+        $this->historyRepository->removeForAlliance($id);
 
         return $removed;
     }

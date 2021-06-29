@@ -470,7 +470,7 @@ function index(
 		if ($allianceManagementService->remove($request->request->getInt('alliance_id'))) {
 			echo "Die Allianz wurde gelöscht!<br/><br/>";
 		} else {
-			echo MessageBox::error("", "Allianz konnte nicht gelöscht werden (ist sie in einem aktiven Krieg?)");
+			echo MessageBox::error("", "Allianz konnte nicht gelöscht werden.");
 		}
 	}
 

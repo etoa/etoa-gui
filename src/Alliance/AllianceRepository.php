@@ -534,6 +534,17 @@ class AllianceRepository extends AbstractRepository
             ->execute();
     }
 
+    public function removeAllUsers(int $allianceId): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_alliance_id', (string) 0)
+            ->set('user_alliance_rank_id', (string) 0)
+            ->where('user_alliance_id = :allianceId')
+            ->setParameter('allianceId', $allianceId)
+            ->execute();
+    }
+
     public function listSoloUsers(): array
     {
         return $this->createQueryBuilder()
@@ -653,6 +664,27 @@ class AllianceRepository extends AbstractRepository
             ->delete('alliance_points')
             ->where("point_timestamp < :timestamp")
             ->setParameter('timestamp', $timestamp)
+            ->execute();
+    }
+
+    public function detachWings(int $id): void
+    {
+        $this->createQueryBuilder()
+            ->update('alliances')
+            ->set('alliance_mother', (string) 0)
+            ->where('alliance_mother = :id')
+            ->setParameters([
+                'id' => $id,
+            ])
+            ->execute();
+
+        $this->createQueryBuilder()
+            ->update('alliances')
+            ->set('alliance_mother_request', (string) 0)
+            ->where('alliance_mother_request = :id')
+            ->setParameters([
+                'id' => $id,
+            ])
             ->execute();
     }
 }

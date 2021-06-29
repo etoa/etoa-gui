@@ -7,6 +7,7 @@
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////
 
+use EtoA\Alliance\AllianceManagementService;
 use EtoA\Core\Configuration\ConfigurationService;
 
 /**
@@ -946,7 +947,10 @@ class User implements \EtoA\User\UserInterface
                 else
                 {
                     // Wenn der User das einzige/letzte Mitglied der Allianz ist wird sie aufgelöst
-                    $this->__get('alliance')->delete($this);
+
+                    /** @var AllianceManagementService */
+                    $allianceManagementService = $app[AllianceManagementService::class];
+                    $allianceManagementService->remove($this->allianceId, $this->id);
                 }
             }
 

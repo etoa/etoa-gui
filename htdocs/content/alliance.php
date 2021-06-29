@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Alliance\AllianceHistoryRepository;
+use EtoA\Alliance\AllianceManagementService;
 use EtoA\Core\Configuration\ConfigurationService;
 
 //////////////////////////////////////////////////
@@ -31,6 +32,9 @@ use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
+
+/** @var AllianceManagementService */
+$allianceManagementService = $app[AllianceManagementService::class];
 
 // BEGIN SKRIPT //
 echo "<h1>Allianz</h1>";
@@ -443,7 +447,7 @@ WHERE
         && checker_verify()
         && !$cu->alliance->isAtWar())
         {
-            $ally->delete($cu);
+            $allianceManagementService->remove($ally->id, $cu->id);
             echo "Die Allianz wurde aufgel&ouml;st!<br/><br/>
             <input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"&Uuml;bersicht\" />";
         }
