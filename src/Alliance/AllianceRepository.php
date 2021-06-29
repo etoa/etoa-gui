@@ -512,6 +512,20 @@ class AllianceRepository extends AbstractRepository
             ->execute();
     }
 
+    public function addUser(int $allianceId, int $userId): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_alliance_id', ':allianceId')
+            ->set('user_alliance_rank_id', (string) 0)
+            ->where('user_id = :userId')
+            ->setParameters([
+                'allianceId' => $allianceId,
+                'userId' => $userId,
+            ])
+            ->execute();
+    }
+
     public function removeUser(int $userId): void
     {
         $this->createQueryBuilder()

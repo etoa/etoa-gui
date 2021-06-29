@@ -4,24 +4,26 @@ declare(strict_types=1);
 
 namespace EtoA\Alliance;
 
-use Alliance;
+use EtoA\User\UserLogRepository;
 use EtoA\User\UserRepository;
-use User;
 
 class AllianceManagementService
 {
     private AllianceRepository $repository;
     private AllianceHistoryRepository $historyRepository;
     private UserRepository $userRepository;
+    private UserLogRepository $userLogRepository;
 
     public function __construct(
         AllianceRepository $repository,
         AllianceHistoryRepository $historyRepository,
-        UserRepository $userRepository)
+        UserRepository $userRepository,
+        UserLogRepository $userLogRepository)
     {
         $this->repository = $repository;
         $this->historyRepository = $historyRepository;
         $this->userRepository = $userRepository;
+        $this->userLogRepository = $userLogRepository;
     }
 
     public function create(string $tag, string $name, ?int $founderId): int
@@ -46,17 +48,18 @@ class AllianceManagementService
             throw new InvalidAllianceParametersException("Allianzgründer-ID fehlt!");
         }
 
-        // TODO refactor
-        $founder = new User($founderId);
+        $founder = $this->userRepository->getUser($founderId);
+        if ($founder === null) {
+            throw new InvalidAllianceParametersException("Allianzgründer existiert nicht!");
+        }
 
         $id = $this->repository->add($tag, $name, $founderId);
+        $this->repository->addUser($id, $founderId);
 
-        // TODO refactor
-        $alliance = new Alliance($id);
-        $founder->alliance = $alliance;
-        $founder->addToUserLog("alliance", "{nick} hat die Allianz [b]" . $alliance->__toString() . "[/b] gegründet.");
+        $alliance = $this->repository->getAlliance($id);
 
-        $this->historyRepository->addEntry($id, "Die Allianz [b]" . $alliance->__toString() . "[/b] wurde von [b]" . $founder . "[/b] gegründet!");
+        $this->userLogRepository->add($founder, "alliance", "{nick} hat die Allianz [b]" . $alliance->toString() . "[/b] gegründet.");
+        $this->historyRepository->addEntry($id, "Die Allianz [b]" . $alliance->toString() . "[/b] wurde von [b]" . $founder->nick . "[/b] gegründet!");
 
         return $id;
     }

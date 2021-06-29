@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace EtoA\Alliance;
 
@@ -67,5 +69,10 @@ class Alliance
         $this->resFuel = (int) $data['alliance_res_fuel'];
         $this->resFood = (int) $data['alliance_res_food'];
         $this->objectsForMembers = (int) $data['alliance_objects_for_members'];
+    }
+
+    public function toString(): string
+    {
+        return "[" . $this->tag . "] " . $this->name;
     }
 }
