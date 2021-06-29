@@ -406,9 +406,6 @@ class AllianceRepository extends AbstractRepository
             ->setParameter('id', $id)
             ->execute();
 
-        $this->deleteRanks($id);
-        $this->deleteDiplomacies($id);
-
         return $affected > 0;
     }
 

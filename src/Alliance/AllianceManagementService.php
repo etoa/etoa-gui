@@ -68,4 +68,16 @@ class AllianceManagementService
 
         return $alliance;
     }
+
+    public function remove(int $id): bool
+    {
+        $removed = $this->repository->remove($id);
+
+        $this->repository->deleteRanks($id);
+        $this->repository->deleteDiplomacies($id);
+
+        $this->allianceHistoryRepository->removeForAlliance($id);
+
+        return $removed;
+    }
 }
