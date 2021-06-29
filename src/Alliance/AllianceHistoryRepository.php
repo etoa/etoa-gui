@@ -37,4 +37,12 @@ class AllianceHistoryRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
+    public function removeForAlliance(int $allianceId): void
+    {
+        $this->createQueryBuilder()
+            ->delete('alliance_history')
+            ->where('history_alliance_id = :allianceId')
+            ->setParameter('allianceId', $allianceId)
+            ->execute();
+    }
 }

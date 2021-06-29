@@ -642,6 +642,9 @@ use EtoA\Core\Configuration\ConfigurationService;
         */
         function delete(&$user = null)
         {
+            // TODO
+            global $app;
+
             if (!$this->isAtWar()) {
                 $res = dbquery("SELECT cat_id FROM allianceboard_cat WHERE cat_alliance_id='".$this->id."';");
                 if (mysql_num_rows($res))
@@ -689,7 +692,11 @@ use EtoA\Core\Configuration\ConfigurationService;
                         OR alliance_bnd_alliance_id2='".$this->id."';
                 ");
                 dbquery("DELETE FROM alliance_buildlist WHERE alliance_buildlist_alliance_id='".$this->id."';");
-                dbquery("DELETE FROM alliance_history WHERE history_alliance_id='".$this->id."';");
+
+                /** @var AllianceHistoryRepository */
+                $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
+                $allianceHistoryRepository->removeForAlliance($this->id);
+
                 dbquery("DELETE FROM alliance_news WHERE alliance_news_alliance_id='".$this->id."';");
                 dbquery("DELETE FROM alliance_points WHERE point_alliance_id='".$this->id."';");
                 dbquery("DELETE FROM alliance_polls WHERE poll_alliance_id='".$this->id."';");
