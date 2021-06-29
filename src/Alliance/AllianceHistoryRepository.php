@@ -25,7 +25,7 @@ class AllianceHistoryRepository extends AbstractRepository
             ->execute();
     }
 
-    public function findForAlliance(int $allianceId): array
+    public function findForAlliance(int $allianceId, ?int $limit = null): array
     {
         return $this->createQueryBuilder()
             ->select('*')
@@ -33,6 +33,7 @@ class AllianceHistoryRepository extends AbstractRepository
             ->where('history_alliance_id = :allianceId')
             ->orderBy('history_timestamp', 'DESC')
             ->setParameter('allianceId', $allianceId)
+            ->setMaxResults($limit)
             ->execute()
             ->fetchAllAssociative();
     }

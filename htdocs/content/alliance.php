@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 
 //////////////////////////////////////////////////
@@ -659,21 +660,13 @@ WHERE
                 echo "<tr>
                     <th width=\"120\">Letzte Ereignisse:</th>
                     <td colspan=\"2\">";
-                $hres=dbquery("
-                SELECT
-                    *
-                FROM
-                    alliance_history
-                WHERE
-                    history_alliance_id=".$cu->allianceId."
-                ORDER BY
-                    history_timestamp DESC
-                LIMIT 5;");
-                if(mysql_num_rows($hres)>0)
-                {
-                    while ($harr=mysql_fetch_array($hres))
-                    {
-                        echo "<div class=\"infoLog\">".text2html($harr['history_text'])." <span>".df($harr['history_timestamp'],0)."</span></div>";
+
+                /** @var AllianceHistoryRepository */
+                $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
+                $entries = $allianceHistoryRepository->findForAlliance($cu->allianceId, 5);
+                if (count($entries) > 0) {
+                    foreach ($entries as $entry) {
+                        echo "<div class=\"infoLog\">" . text2html($entries['history_text']) . " <span>" . df($entries['history_timestamp'], 0) . "</span></div>";
                     }
                 }
                 echo "</td></tr>";
