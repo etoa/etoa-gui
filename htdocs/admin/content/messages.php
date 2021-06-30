@@ -67,7 +67,7 @@ function sendMessageForm(
 
             $msg_type = $request->request->getInt('msg_type');
 
-            if (in_array($msg_type, [MESSAGE_TYPE_EMAIL, MESSAGE_TYPE_BOTH]))
+            if (in_array($msg_type, [MESSAGE_TYPE_EMAIL, MESSAGE_TYPE_BOTH], true))
             {
                 $mail = new Mail($request->request->get('message_subject'), $request->request->get('message_text'));
                 if ($request->request->getInt('from_id') > 0)
