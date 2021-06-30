@@ -108,9 +108,6 @@ define("INVADE_ACTIVE_USER", $config->getBoolean('invade_active_users'));
 // Kampfsystem
 //
 
-// Def ins Trümmerfeld
-define("DEF_WF_PERCENT", $config->getFloat('def_wf_percent'));
-
 // Ship ins Trümmerfeld
 define("SHIP_WF_PERCENT", $config->getFloat('ship_wf_percent'));
 
