@@ -2,11 +2,16 @@
 
 use EtoA\Alliance\AllianceApplicationRepository;
 use EtoA\Alliance\AllianceManagementService;
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\User\UserRepository;
+use Symfony\Component\HttpFoundation\Request;
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
+
+/** @var AllianceRepository */
+$allianceRepository = $app[AllianceRepository::class];
 
 /** @var AllianceManagementService */
 $allianceManagementService = $app[AllianceManagementService::class];
@@ -17,24 +22,25 @@ $allianceApplicationRepository = $app[AllianceApplicationRepository::class];
 /** @var UserRepository */
 $userRepository = $app[UserRepository::class];
 
+/** @var Request */
+$request = Request::createFromGlobals();
+
 if (Alliance::checkActionRights('applications'))
 {
     $maxMemberCount = $config->getInt("alliance_max_member_count");
 
     echo "<h2>Bewerbungen</h2>";
-    if(isset($_POST['applicationsubmit']) && checker_verify())
+    if ($request->request->has('applicationsubmit') && checker_verify())
     {
-        if (count($_POST['application_answer'])>0)
+        if (count($request->request->get('application_answer'))>0)
         {
             $cnt = 0;
-            /** @var \EtoA\Alliance\AllianceRepository $allianceRepository */
-				$allianceRepository = $app['etoa.alliance.repository'];
-				$alliance = $allianceRepository->getAlliance((int) $cu->allianceId);
+            $alliance = $allianceRepository->getAlliance((int) $cu->allianceId);
             $new_member = false;
 
-            foreach ($_POST['application_answer'] as $id=>$answer)
+            foreach ($request->request->get('application_answer') as $id=>$answer)
             {
-                $nick = $_POST['application_user_nick_'.$id.''];
+                $nick = $request->request->get('application_user_nick_'.$id);
 
                 // Anfrage annehmen
                 if ($answer==2)
@@ -48,7 +54,7 @@ if (Alliance::checkActionRights('applications'))
                     $new_member = true;
                     success_msg($nick." wurde angenommen.");
 
-                    $allianceManagementService->addMember($cu->allianceId, $id, $_POST['application_answer_text'][$id]);
+                    $allianceManagementService->addMember($cu->allianceId, $id, $request->request->get('application_answer_text')[$id]);
                 }
                 // Anfrage ablehnen
                 elseif($answer==1)
@@ -56,18 +62,18 @@ if (Alliance::checkActionRights('applications'))
                     $cnt++;
                     success_msg($nick." wurde abgelehnt.");
 
-                    $allianceManagementService->dismissApplication($cu->allianceId, $id, $_POST['application_answer_text'][$id]);
+                    $allianceManagementService->dismissApplication($cu->allianceId, $id, $request->request->get('application_answer_text')[$id]);
                 }
                 // Anfrage unbearbeitet lassen, jedoch Nachricht verschicken wenn etwas geschrieben ist
                 else
                 {
-                    $text = str_replace(' ','',$_POST['application_answer_text'][$id]);
-                    if($text != '')
+                    $text = str_replace(' ','',$request->request->get('application_answer_text')[$id]);
+                    if ($text != '')
                     {
                         // Nachricht an den Bewerber schicken
                         /** @var \EtoA\Message\MessageRepository $messageRepository */
                         $messageRepository = $app[\EtoA\Message\MessageRepository::class];
-                        $messageRepository->createSystemMessage($id, MSG_ALLYMAIL_CAT, "Bewerbung: Nachricht", "Antwort auf die Bewerbung an die Allianz [b]" . $alliance->nameWithTag . "[/b]:\n".$_POST['application_answer_text'][$id]."");
+                        $messageRepository->createSystemMessage($id, MSG_ALLYMAIL_CAT, "Bewerbung: Nachricht", "Antwort auf die Bewerbung an die Allianz [b]" . $alliance->nameWithTag . "[/b]:\n".$request->request->get('application_answer_text')[$id]."");
 
                         $cnt++;
                         success_msg($nick.": Nachricht gesendet");

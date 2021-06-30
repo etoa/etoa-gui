@@ -169,6 +169,42 @@ class AllianceManagementService
         return $removed;
     }
 
+    public function submitApplication(int $allianceId, int $userId, string $applicationText): void
+    {
+        $alliance = $this->repository->getAlliance($allianceId);
+        if ($alliance === null) {
+            return;
+        }
+
+        $user = $this->userRepository->getUser($userId);
+        if ($user === null) {
+            return;
+        }
+
+        $this->applicationRepository->add($allianceId, $userId, $applicationText);
+
+        $this->messageRepository->createSystemMessage($alliance->founderId, MSG_ALLYMAIL_CAT, "Bewerbung", "Der Spieler ".$user->nick." hat sich bei deiner Allianz beworben. Gehe auf die [page=alliance&action=applications]Allianzseite[/page] für Details!");
+        $this->historyRepository->addEntry($allianceId, "Der Spieler [b]".$user->nick."[/b] bewirbt sich sich bei der Allianz.");
+    }
+
+    public function withdrawApplication(int $allianceId, int $userId): void
+    {
+        $alliance = $this->repository->getAlliance($allianceId);
+        if ($alliance === null) {
+            return;
+        }
+
+        $user = $this->userRepository->getUser($userId);
+        if ($user === null) {
+            return;
+        }
+
+        $this->applicationRepository->removeForAllianceAndUser($allianceId, $userId);
+
+        $this->messageRepository->createSystemMessage($alliance->founderId, MSG_ALLYMAIL_CAT, "Bewerbung zurückgezogen", "Der Spieler ".$user->nick." hat die Bewerbung bei deiner Allianz zurückgezogen!");
+        $this->historyRepository->addEntry($allianceId, "Der Spieler [b]".$user->nick."[/b] zieht seine Bewerbung zurück.");
+    }
+
     public function dismissApplication(int $allianceId, int $userId, ?string $applicationAnswerText): void
     {
         $user = $this->userRepository->getUser($userId);
@@ -190,7 +226,7 @@ class AllianceManagementService
         }
 
         $maxMemberCount = $this->config->getInt("alliance_max_member_count");
-        if ($maxMemberCount > 0 && $this->memberCount > $maxMemberCount) {
+        if ($maxMemberCount > 0 && $this->repository->countUsers($allianceId) > $maxMemberCount) {
             return false;
         }
 
@@ -210,7 +246,7 @@ class AllianceManagementService
 
         if ($fromApplication) {
             $this->messageRepository->createSystemMessage($userId, MSG_ALLYMAIL_CAT, "Bewerbung angenommen", "Deine Allianzbewerbung wurde angenommen!\n\n[b]Antwort:[/b]\n" . $applicationAnswerText);
-            $this->allianceHistoryRepository->addEntry($allianceId, "Die Bewerbung von [b]" . $user->nick . "[/b] wurde akzeptiert!");
+            $this->historyRepository->addEntry($allianceId, "Die Bewerbung von [b]" . $user->nick . "[/b] wurde akzeptiert!");
 
             Log::add(5, Log::INFO, "Der Spieler [b]" . $user->nick . "[/b] tritt der Allianz [b]" . $alliance->toString() . "[/b] bei!");
             $this->userLogRepository->add($user, "alliance", "{nick} ist nun ein Mitglied der Allianz " . $alliance->toString() . ".");
@@ -254,7 +290,7 @@ class AllianceManagementService
             $this->messageRepository->createSystemMessage($alliance->founderId, MSG_ALLYMAIL_CAT, "Allianzaustritt", "Der Spieler " . $user->nick . " trat aus der Allianz aus!");
         }
 
-        $this->historyRepository->addEntry($allianceId, "[b]" . $this->members[$userId] . "[/b] ist nun kein Mitglied mehr von uns.");
+        $this->historyRepository->addEntry($allianceId, "[b]" . $user->nick . "[/b] ist nun kein Mitglied mehr von uns.");
 
         return true;
     }

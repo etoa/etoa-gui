@@ -107,6 +107,22 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
+    /**
+     * @return array<Alliance>
+     */
+    public function findOpen(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select("*")
+            ->from('alliances')
+            ->where('alliance_accept_applications = 1')
+            ->orderBy('alliance_tag')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new Alliance($row), $data);
+    }
+
     public function exists(string $tag, string $name): bool
     {
         $exists = $this->createQueryBuilder()
@@ -316,7 +332,7 @@ class AllianceRepository extends AbstractRepository
             ->select('alliance_bnd_id')
             ->from('alliance_bnd')
             ->where('alliance_bnd_level = 3')
-            ->andWhere('alliance_bnd_alliance_id1 = :allianceId ΟR alliance_bnd_alliance_id2 = :allianceId')
+            ->andWhere('alliance_bnd_alliance_id1 = :allianceId OR alliance_bnd_alliance_id2 = :allianceId')
             ->setParameters([
                 'allianceId' => $allianceId,
             ])

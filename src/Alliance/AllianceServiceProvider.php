@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Alliance;
 
+use EtoA\Fleet\FleetRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\User\UserLogRepository;
 use EtoA\User\UserRepository;
