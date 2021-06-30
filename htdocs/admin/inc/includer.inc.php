@@ -35,8 +35,6 @@ $config = $app['etoa.config.service'];
 
 define('DATE_FORMAT', $config->get('admin_dateformat'));
 
-define('USER_HMODE_DEFAULT_TIME', 3600 * 24 * $config->get('user_umod_min_length'));    // Standardurlaubszeit
-
 define('ADMIN_FILESHARING_DIR', CACHE_ROOT . "/admin");
 
 $css_theme = (!isset($themePath) || !is_file("web/css/themes/" . $themePath . "css")) ? "default" : $themePath;
