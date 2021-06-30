@@ -50,7 +50,6 @@ class UniverseServiceProvider implements ServiceProviderInterface
         $pimple[UniverseGenerator::class] = function (Container $pimple): UniverseGenerator {
             return new UniverseGenerator(
                 $pimple['etoa.config.service'],
-                $pimple['etoa.user.repository'],
                 $pimple[SolarTypeRepository::class],
                 $pimple[PlanetTypeRepository::class],
                 $pimple[CellRepository::class],
@@ -60,7 +59,15 @@ class UniverseServiceProvider implements ServiceProviderInterface
                 $pimple[AsteroidsRepository::class],
                 $pimple[NebulaRepository::class],
                 $pimple[WormholeRepository::class],
-                $pimple[EmptySpaceRepository::class],
+                $pimple[EmptySpaceRepository::class]
+            );
+        };
+
+        $pimple[UniverseResetService::class] = function (Container $pimple): UniverseResetService {
+            return new UniverseResetService(
+                $pimple['etoa.config.service'],
+                $pimple['etoa.user.repository'],
+                $pimple[PlanetRepository::class],
                 $pimple['etoa.db.manager.repository']
             );
         };

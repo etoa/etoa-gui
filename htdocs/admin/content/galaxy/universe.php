@@ -8,11 +8,15 @@ use EtoA\Universe\EmptySpaceRepository;
 use EtoA\Universe\NebulaRepository;
 use EtoA\Universe\PlanetRepository;
 use EtoA\Universe\StarRepository;
+use EtoA\Universe\UniverseResetService;
 use EtoA\Universe\WormholeRepository;
 use Symfony\Component\HttpFoundation\Request;
 
 /** @var UniverseGenerator */
 $universeGenerator = $app[UniverseGenerator::class];
+
+/** @var UniverseResetService */
+$universeResetService = $app[UniverseResetService::class];
 
 /** @var CellRepository */
 $cellRepo = $app[CellRepository::class];
@@ -50,9 +54,9 @@ if ($request->request->has('submit_create_universe')) {
 } elseif ($request->request->has('submit_reset')) {
     resetUniverse();
 } elseif ($request->request->has('submit_galaxy_reset')) {
-    postResetUniverse($universeGenerator);
+    postResetUniverse($universeResetService);
 } elseif ($request->request->has('submit_reset2')) {
-    postResetRound($universeGenerator);
+    postResetRound($universeResetService);
 } elseif ($request->request->has('submit_addstars')) {
     addStars($request, $universeGenerator);
 } else {
@@ -163,21 +167,21 @@ function resetUniverse(): void
     echo "</form>";
 }
 
-function postResetUniverse(UniverseGenerator $universeGenerator): void
+function postResetUniverse(UniverseResetService $universeResetService): void
 {
     global $page;
     global $sub;
 
-    $universeGenerator->reset(false);
+    $universeResetService->reset(false);
     echo "Das Universum wurde zurückgesetzt!<br/><br/>" . button("Weiter", "?page=$page&amp;sub=$sub");
 }
 
-function postResetRound(UniverseGenerator $universeGenerator): void
+function postResetRound(UniverseResetService $universeResetService): void
 {
     global $page;
     global $sub;
 
-    $universeGenerator->reset();
+    $universeResetService->reset();
     echo "Die Runde wurde zurückgesetzt!<br/><br/>" . button("Weiter", "?page=$page&amp;sub=$sub");
 }
 
