@@ -61,11 +61,11 @@ function sendMessageForm(
         {
             $to = [];
             if ($request->request->getInt('rcpt_type') === RECIPIENT_TYPE_ALL) {
-                $to = $userRepository->getEmailAddresses();
+                $to = $userRepository->getEmailAddressesWithDisplayName();
             } else {
                 $userId = $request->request->getInt('message_user_to');
                 $recipient = $userRepository->getUser($userId);
-                $to[$userId] = $recipient->getEmailAddress();
+                $to[$userId] = $recipient->getEmailAddressWithDisplayName();
             }
 
             $msg_type = $request->request->getInt('msg_type');
@@ -76,7 +76,7 @@ function sendMessageForm(
                 if ($request->request->getInt('from_id') > 0)
                 {
                     $replyUser = $userRepository->getUser($cu->playerId);
-                    $reply = $replyUser->getEmailAddress();
+                    $reply = $replyUser->getEmailAddressWithDisplayName();
                 }
                 else
                 {

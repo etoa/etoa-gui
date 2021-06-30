@@ -119,7 +119,7 @@ class UserRepository extends AbstractRepository
     /**
      * @return array<int,string>
      */
-    public function getEmailAddresses(): array
+    public function getEmailAddressesWithDisplayName(): array
     {
         $data = $this->createQueryBuilder()
             ->select('user_id', 'user_nick', 'user_email')
