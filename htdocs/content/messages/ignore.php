@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 $messageIgnoreRepository = $app[MessageIgnoreRepository::class];
 
 /** @var UserRepository */
-$userRepository = $app['etoa.user.repository'];
+$userRepository = $app[UserRepository::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();

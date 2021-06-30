@@ -11,8 +11,8 @@ $messageRepository = $app[MessageRepository::class];
 /** @var MessageIgnoreRepository */
 $messageIgnoreRepository = $app[MessageIgnoreRepository::class];
 
-/** @var \EtoA\User\UserRepository $userRepository */
-$userRepository = $app['etoa.user.repository'];
+/** @var UserRepository */
+$userRepository = $app[UserRepository::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();

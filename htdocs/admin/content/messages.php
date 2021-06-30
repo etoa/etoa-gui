@@ -10,8 +10,8 @@ use Symfony\Component\HttpFoundation\Request;
 define("USER_MESSAGE_CAT_ID",1);
 define("SYS_MESSAGE_CAT_ID",5);
 
-/** @var \EtoA\User\UserRepository $userRepository */
-$userRepository = $app['etoa.user.repository'];
+/** @var UserRepository */
+$userRepository = $app[UserRepository::class];
 
 /** @var MessageRepository */
 $messageRepository = $app[MessageRepository::class];

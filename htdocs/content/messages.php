@@ -19,8 +19,8 @@ $messageCategoryRepository = $app[MessageCategoryRepository::class];
 /** @var Request */
 $request = Request::createFromGlobals();
 
-/** @var \EtoA\User\UserRepository $userRepository */
-$userRepository = $app['etoa.user.repository'];
+/** @var UserRepository */
+$userRepository = $app[UserRepository::class];
 
 $mode = $request->query->get('mode', '') != '' && ctype_alpha($request->query->get('mode'))
     ? $request->query->get('mode')
