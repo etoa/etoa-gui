@@ -58,16 +58,6 @@ define("USER_INACTIVE_LONG", $config->param2Int('user_inactive_days'));
 define("FLOOD_CONTROL", $config->getInt('msg_flood_control'));    // Wartezeit bis zur nächsten Nachricht
 
 //
-// Punkteberechnung
-//
-
-// 1 Punkt für X (STATS_USER_POINTS) verbaute Rohstoffe
-define("STATS_USER_POINTS", $config->param1Int('points_update'));
-
-// 1 Punkt für X (STATS_ALLIANCE_POINTS) User Punkte
-define("STATS_ALLIANCE_POINTS", $config->param2Int('points_update'));
-
-//
 // Sonstiges
 //
 
