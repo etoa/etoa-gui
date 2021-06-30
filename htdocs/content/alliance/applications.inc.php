@@ -75,12 +75,6 @@ if (Alliance::checkActionRights('applications'))
                 }
             }
 
-            // Wenn neue Members hinzugefügt worde sind werden ev. die Allianzrohstoffe angepasst
-            if($new_member)
-            {
-                $cu->alliance->calcMemberCosts();
-            }
-
             success_msg("Änderungen übernommen");
         }
     }

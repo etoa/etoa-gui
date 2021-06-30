@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Alliance\AllianceManagementService;
+
 $xajax->register(XAJAX_FUNCTION,'showAllianceMembers');
 $xajax->register(XAJAX_FUNCTION,'showAllianceMemberAddCosts');
 
@@ -110,19 +112,25 @@ function showAllianceMembers($alliance_id=0,$field_id)
 
 function showAllianceMemberAddCosts($allianceId=0,$form)
 {
+    // TODO
+    global $app;
+
+    /** @var AllianceManagementService */
+    $allianceManagementService = $app[AllianceManagementService::class];
+
 	ob_start();
 	$objResponse = new xajaxResponse();
 	$cnt = 0;
 
-	foreach ($form['application_answer'] as $answear)
+	foreach ($form['application_answer'] as $answer)
 	{
-		if ($answear==2) $cnt++;
+		if ($answer==2) {
+            $cnt++;
+        }
 	}
 	if($allianceId!=0)
 	{
-		$alliance = new Alliance($allianceId);
-
-		echo $alliance->calcMemberCosts(false,$cnt);
+		echo $allianceManagementService->calcMemberCosts((int) $allianceId, false, $cnt);
 	}
 
 	$objResponse->assign("memberCostsTD","innerHTML",ob_get_contents());
