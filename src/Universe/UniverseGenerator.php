@@ -75,56 +75,6 @@ class UniverseGenerator
         $this->planet_types = array_keys($this->planetTypes->getPlanetTypeNames());
     }
 
-    public function exists(): bool
-    {
-        return $this->cellRepo->count() > 0;
-    }
-
-    public function isInhabited(): bool
-    {
-        return $this->planetRepo->countWithUser() > 0;
-    }
-
-    public function getSectorDimensions(): array
-    {
-        return $this->cellRepo->getSectorDimensions();
-    }
-
-    public function getCellDimensions(): array
-    {
-        return $this->cellRepo->getCellDimensions();
-    }
-
-    public function countStars(): int
-    {
-        return $this->starRepo->count();
-    }
-
-    public function countPlanets(): int
-    {
-        return $this->planetRepo->count();
-    }
-
-    public function countAsteroids(): int
-    {
-        return $this->asteroidsRepo->count();
-    }
-
-    public function countNebulas(): int
-    {
-        return $this->nebulaRepo->count();
-    }
-
-    public function countWormholes(): int
-    {
-        return $this->wormholeRepo->count();
-    }
-
-    public function countEmptySpace(): int
-    {
-        return $this->emptySpaceRepo->count();
-    }
-
     /**
      * Create the universe.
      * And there was light!

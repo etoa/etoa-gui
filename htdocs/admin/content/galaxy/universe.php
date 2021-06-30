@@ -1,11 +1,39 @@
-<?PHP
+<?php
 
 use EtoA\Universe\UniverseGenerator;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\AsteroidsRepository;
+use EtoA\Universe\CellRepository;
+use EtoA\Universe\EmptySpaceRepository;
+use EtoA\Universe\NebulaRepository;
+use EtoA\Universe\PlanetRepository;
+use EtoA\Universe\StarRepository;
+use EtoA\Universe\WormholeRepository;
 use Symfony\Component\HttpFoundation\Request;
 
 /** @var UniverseGenerator */
 $universeGenerator = $app[UniverseGenerator::class];
+
+/** @var CellRepository */
+$cellRepo = $app[CellRepository::class];
+
+/** @var StarRepository */
+$starRepo = $app[StarRepository::class];
+
+/** @var PlanetRepository */
+$planetRepo = $app[PlanetRepository::class];
+
+/** @var AsteroidsRepository */
+$asteroidsRepo = $app[AsteroidsRepository::class];
+
+/** @var NebulaRepository */
+$nebulaRepo = $app[NebulaRepository::class];
+
+/** @var WormholeRepository */
+$wormholeRepo = $app[WormholeRepository::class];
+
+/** @var EmptySpaceRepository */
+$emptySpaceRepo = $app[EmptySpaceRepository::class];
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
@@ -31,7 +59,14 @@ if ($request->request->has('submit_create_universe')) {
     universeIndex(
         $request,
         $config,
-        $universeGenerator
+        $universeGenerator,
+        $cellRepo,
+        $starRepo,
+        $planetRepo,
+        $asteroidsRepo,
+        $nebulaRepo,
+        $wormholeRepo,
+        $emptySpaceRepo
     );
 }
 
@@ -162,7 +197,14 @@ function addStars(Request $request, UniverseGenerator $universeGenerator): void
 function universeIndex(
     Request $request,
     ConfigurationService $config,
-    UniverseGenerator $universeGenerator
+    UniverseGenerator $universeGenerator,
+    CellRepository $cellRepo,
+    StarRepository $starRepo,
+    PlanetRepository $planetRepo,
+    AsteroidsRepository $asteroidsRepo,
+    NebulaRepository $nebulaRepo,
+    WormholeRepository $wormholeRepo,
+    EmptySpaceRepository $emptySpaceRepo
 ): void {
     global $page;
     global $sub;
@@ -178,7 +220,7 @@ function universeIndex(
       <img src=\"../misc/map.image.php?req_admin\" alt=\"Galaxiekarte\" id=\"img\" usemap=\"#Galaxy\" style=\"border:none;\"/><br/><br/>
       <input type=\"button\" value=\"Weiter\" onclick=\"document.location='?page=$page&sub=uni'\" />";
     } else {
-        if (!$universeGenerator->exists()) {
+        if ($cellRepo->count() == 0) {
             echo "<h2>Urknall - Schritt 1/3</h2>";
             echo "Das Universum existiert noch nicht, bitte prüfe die Einstellungen und klicke auf 'Weiter':<br/><br/>";
 
@@ -294,18 +336,18 @@ function universeIndex(
         } else {
             echo "<h2>Übersicht</h2>";
 
-            $sectorDimensions = $universeGenerator->getSectorDimensions();
-            $cellDimensions = $universeGenerator->getCellDimensions();
+            $sectorDimensions = $cellRepo->getSectorDimensions();
+            $cellDimensions = $cellRepo->getCellDimensions();
 
             tableStart("Informationen", GALAXY_MAP_WIDTH);
             echo "<tr><th>Sektoren</th><td>" . $sectorDimensions['x'] . " x " . $sectorDimensions['y'] . "</td></tr>";
             echo "<tr><th>Zellen pro Sektor</th><td>" . $cellDimensions['x'] . " x " . $cellDimensions['y'] . "</td></tr>";
-            echo "<tr><th>Sterne</th><td>" . nf($universeGenerator->countStars()) . "</td></tr>";
-            echo "<tr><th>Planeten</th><td>" . nf($universeGenerator->countPlanets()) . "</td></tr>";
-            echo "<tr><th>Asteroidenfelder</th><td>" . nf($universeGenerator->countAsteroids()) . "</td></tr>";
-            echo "<tr><th>Nebel</th><td>" . nf($universeGenerator->countNebulas()) . "</td></tr>";
-            echo "<tr><th>Wurmlöcher</th><td>" . nf($universeGenerator->countWormholes()) . "</td></tr>";
-            echo "<tr><th>Leerer Raum</th><td>" . nf($universeGenerator->countEmptySpace()) . "</td></tr>";
+            echo "<tr><th>Sterne</th><td>" . nf($starRepo->count()) . "</td></tr>";
+            echo "<tr><th>Planeten</th><td>" . nf($planetRepo->count()) . "</td></tr>";
+            echo "<tr><th>Asteroidenfelder</th><td>" . nf($asteroidsRepo->count()) . "</td></tr>";
+            echo "<tr><th>Nebel</th><td>" . nf($nebulaRepo->count()) . "</td></tr>";
+            echo "<tr><th>Wurmlöcher</th><td>" . nf($wormholeRepo->count()) . "</td></tr>";
+            echo "<tr><th>Leerer Raum</th><td>" . nf($emptySpaceRepo->count()) . "</td></tr>";
             tableEnd();
 
             echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
@@ -314,12 +356,11 @@ function universeIndex(
             echo "Hiermit können <input style=\"width:3em\" type=\"number\" name=\"number_of_stars\" value=\"0\" > Sternensysteme hinzugfügt werden.<br/><br/>";
             echo "<input type=\"submit\" name=\"submit_addstars\" value=\"Ja, Sternensysteme hinzufügen\" ><br><br>";
 
-            if (!$universeGenerator->isInhabited()) {
-                echo "<h3>Universum löschen</h3>";
+            echo "<h3>Universum löschen</h3>";
+            if ($planetRepo->countWithUser() == 0) {
                 echo "Es sind noch keine Planeten im Besitz von Spielern. Das Universum kann ohne Probleme gelöscht werden.<br/><br/>
                     <input type=\"submit\" name=\"submit_galaxy_reset\" value=\"Universum zurücksetzen\" ><br/>";
             } else {
-                echo "<h3>Universum löschen</h3>";
                 echo "Es sind bereits Planeten im Besitz von Spielern. Du kannst das Universum zurücksetzen, jedoch werden
                     sämtliche Gebäude, Schiffe, Forschungen etc von den Spielern gelöscht.<br/><br/>
                     <input type=\"submit\" name=\"submit_galaxy_reset\" value=\"Universum zurücksetzen\" onclick=\"return confirm('Universum wirklich zurücksetzen? ALLE Einheiten der Spieler werden gelöscht, jedoch keine Spieleraccounts!')\"><br/>";
