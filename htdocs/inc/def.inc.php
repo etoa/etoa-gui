@@ -44,9 +44,6 @@ define("MIN_UMOD_TIME", $config->getInt('hmode_days'));
 //MAximale Umode-Dauer
 define("MAX_UMOD_TIME", $config->param1Int('hmode_days'));
 
-// Vergangene Zeit bis Löschung eines Users (atm 21 Tage)
-define("USER_INACTIVE_DELETE", $config->param1Int('user_inactive_days'));
-
 // Vergangene Zeit bis Löschung falls nie eingeloggt & Zeit bis "Inaktiv" Status Long (atm 14 Tage)
 define("USER_NOTLOGIN_DELETE", $config->param2Int('user_inactive_days'));
 
