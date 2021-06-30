@@ -21,9 +21,6 @@ $config = $app['etoa.config.service'];
 /* Allgemeine Einstellungen */
 /****************************/
 
-// Onlinetime-Threshold
-define('ONLINE_TIME', $config->getInt('online_threshold'));
-
 //
 // Paswort und Nicklänge
 //
