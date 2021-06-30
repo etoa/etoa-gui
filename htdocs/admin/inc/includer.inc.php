@@ -25,8 +25,6 @@ define('IMAGE_EXT', "png");
 define('SESSION_NAME', "adminsession");
 
 define('URL_SEARCH_STRING', "page=$page&amp;sub=$sub&amp;tmp=1");
-define('URL_SEARCH_STRING2', "page=$page");
-define('URL_SEARCH_STRING3', "page=$page");
 
 define('ADMIN_FILESHARING_DIR', CACHE_ROOT . "/admin");
 
