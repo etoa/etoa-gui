@@ -54,10 +54,6 @@ define("USER_INACTIVE_LONG", $config->param2Int('user_inactive_days'));
 // Universum
 //
 
-// Wurmlöcher
-define("WH_UPDATE_AFFECT_TIME", $config->getInt('wh_update'));
-define("WH_UPDATE_AFFECT_CNT", $config->param1Int('wh_update'));
-
 // Nachrichten
 define("FLOOD_CONTROL", $config->getInt('msg_flood_control'));    // Wartezeit bis zur nächsten Nachricht
 

@@ -181,6 +181,12 @@
 		*/
 		static function randomize()
 		{
+            // TODO
+            global $app;
+
+            /** @var ConfigurationService */
+            $config = $app['etoa.config.service'];
+
 			$time = time();
 			$del = array();
 			// L?schen
@@ -193,10 +199,10 @@
 				WHERE
 					persistent=0
 					AND target_id>'0'
-					AND changed<".($time-WH_UPDATE_AFFECT_TIME)."
+					AND changed<".($time - $config->getInt('wh_update'))."
 				ORDER BY
 					RAND()
-				LIMIT ".WH_UPDATE_AFFECT_CNT.";
+				LIMIT ".$config->param1Int('wh_update').";
 			");
 
 			while ($arr=mysql_fetch_row($res))
