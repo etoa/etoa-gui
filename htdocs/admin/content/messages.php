@@ -32,9 +32,9 @@ $reportRepository = $app[ReportRepository::class];
 /** @var Request */
 $request = Request::createFromGlobals();
 
-if ($sub=="sendmsg") {
+if ($sub == "sendmsg") {
     sendMessageForm($request, $cu, $messageRepository, $userRepository);
-} elseif ($sub=="reports") {
+} elseif ($sub == "reports") {
     manageReports($request, $reportRepository, $userRepository);
 } else {
     manageMessages($request, $messageRepository, $messageCategoryRepository, $userRepository);
@@ -175,169 +175,191 @@ function manageReports(Request $request, ReportRepository $reportRepository, Use
     //
     // Suchresultate
     //
-    if ($request->request->has('user_search') && $_POST['user_search']!="" || $request->query->get('action') == "searchresults")
+    if ($request->request->has('user_search') && $request->request->get('user_search') != "" || $request->query->get('action') == "searchresults")
     {
         $sql = '';
-        if ($_POST['user_id']!="")
-            $sql.= " AND user_id='".$_POST['user_id']."' ";
-        if ($_POST['user_nick']!="")
+        if ($request->request->getInt('user_id') > 0) {
+            $sql.= " AND user_id='".$request->request->getInt('user_id')."' ";
+        }
+        if ($request->request->get('user_nick') != "")
         {
             $uid = $userRepository->getUserIdByNick($request->request->get('user_nick'));
-            if ($uid !== null)
+            if ($uid !== null) {
                 $sql.= " AND user_id='".$uid."' ";
+            }
         }
-        if ($_POST['opponent1_id']!="")
-            $sql.= " AND opponent1_id='".$_POST['opponent1_id']."' ";
-        if ($_POST['opponent1_nick']!="")
+        if ($request->request->getInt('opponent1_id') > 0) {
+            $sql.= " AND opponent1_id='".$request->request->getInt('opponent1_id')."' ";
+        }
+        if ($request->request->get('opponent1_nick') != "")
         {
             $uid = $userRepository->getUserIdByNick($request->request->get('opponent1_nick'));
-            if ($uid !== null)
+            if ($uid !== null) {
                 $sql.= " AND opponent1_id='".$uid."' ";
+            }
         }
-        if ($request->request->has('subject') && $_POST['subject']!="")
+        if ($request->request->has('subject') && $request->request->get('subject') != "")
         {
-                if (stristr($_POST['qmode']['subject'],"%")) $addchars = "%";else $addchars = "";
-                $sql.= " AND subject ".stripslashes($_POST['qmode']['subject']).$_POST['subject']."$addchars'";
+            if (stristr($request->request->get('qmode')['subject'],"%")) $addchars = "%"; else $addchars = "";
+            $sql.= " AND subject ".stripslashes($request->request->get('qmode')['subject']).$request->request->get('subject')."$addchars'";
         }
 
-        if ($_POST['read']<2)
-        {
-            if ($_POST['read']==1)
-                $sql.= " AND (read=1)";
-            else
+        if ($request->request->getInt('read') == 1) {
+            $sql.= " AND (read=1)";
+        } elseif ($request->request->getInt('read') == 0) {
                 $sql.= " AND (read=0)";
         }
-        if ($_POST['deleted']<2)
-        {
-            if ($_POST['deleted']==1)
-                $sql.= " AND (deleted=1)";
-            else
-                $sql.= " AND (deleted=0)";
+        if ($request->request->getInt('deleted') == 1) {
+            $sql.= " AND (deleted=1)";
+        } else if ($request->request->getInt('deleted') == 0) {
+            $sql.= " AND (deleted=0)";
         }
-        if ($_POST['type']!="")
-            $sql.= " AND type='".$_POST['type']."' ";
+        if ($request->request->get('type') != "")
+            $sql.= " AND type='".$request->request->get('type')."' ";
 
-        if ($_POST['date_from']!="")
+        if ($request->request->get('date_from') != "")
         {
-            if ($ts = strtotime($_POST['date_from']))
+            if ($ts = strtotime($request->request->get('date_from'))) {
                 $sql.= " AND (timestamp>".$ts.")";
-            else
+            }
+            else {
                 echo "Ungültiges Datum";
+            }
         }
 
-        if ($_POST['date_to']!="")
+        if ($request->request->get('date_to') != "")
         {
-            if ($ts = strtotime($_POST['date_to']))
+            if ($ts = strtotime($request->request->get('date_to'))) {
                 $sql.= " AND (timestamp<".$ts.")";
-            else
+            } else {
                 echo "Ungültiges Datum";
+            }
         }
 
-        if ($_POST['entity1_id']!="")
-            $sql.= " AND (entity1_id=".$_POST['entity1_id']. " OR entity2_id=".$_POST['entity1_id'].") ";
-        if ($_POST['entity2_id']!="")
-            $sql.= " AND (entity2_id=".$_POST['entity2_id']. " OR entity1_id=".$_POST['entity2_id'].") ";
-
+        if ($request->request->getInt('entity1_id') > 0) {
+            $sql.= " AND (entity1_id=".$request->request->getInt('entity1_id'). " OR entity2_id=".$request->request->getInt('entity1_id').") ";
+        }
+        if ($request->request->getInt('entity2_id') > 0) {
+            $sql.= " AND (entity2_id=".$request->request->getInt('entity2_id'). " OR entity1_id=".$request->request->getInt('entity2_id').") ";
+        }
 
         //data tables
         $join = '';
-        if ($request->request->has('table') && $_POST['table'])
-            $join = " INNER JOIN `reports_".$_POST['type']."` AS rd ON reports.id=rd.id ";
+        if ($request->request->has('table') && $request->request->get('table')) {
+            $join = " INNER JOIN `reports_".$request->request->get('type')."` AS rd ON reports.id=rd.id ";
+        }
 
-        if ($request->request->has('subtype') && $_POST['subtype'] != "")
-            $sql.= " AND rd.subtype='".$_POST['subtype']."'";
+        if ($request->request->has('subtype') && $request->request->get('subtype') != "") {
+            $sql.= " AND rd.subtype='".$request->request->get('subtype')."'";
+        }
 
         //market
-        if ($request->request->has('type') && $_POST['type']=='market')
+        if ($request->request->has('type') && $request->request->get('type') == 'market')
         {
-            if ($_POST['fleet1_id']!="")
-                $sql.= " AND (rd.fleet1_id=".$_POST['fleet1_id']. " OR rd.fleet2_id=".$_POST['fleet1_id'].") ";
-            if ($_POST['fleet2_id']!="")
-                $sql.= " AND (rd.fleet2_id=".$_POST['fleet2_id']. " OR rd.fleet1_id=".$_POST['fleet2_id'].") ";
+            if ($request->request->getInt('fleet1_id') > 0) {
+                $sql.= " AND (rd.fleet1_id=".$request->request->getInt('fleet1_id'). " OR rd.fleet2_id=".$request->request->getInt('fleet1_id').") ";
+            }
+            if ($request->request->getInt('fleet2_id') > 0) {
+                $sql.= " AND (rd.fleet2_id=".$request->request->getInt('fleet2_id'). " OR rd.fleet1_id=".$request->request->get('fleet2_id').") ";
+            }
 
-            if ($_POST['ship_id']!="")
-                $sql.= " AND rd.ship_id=".$_POST['ship_id'];
-            if ($_POST['ship_count']!="")
-                $sql.= " AND rd.ship_count=".$_POST['ship_count'];
+            if ($request->request->getInt('ship_id') > 0) {
+                $sql.= " AND rd.ship_id=".$request->request->getInt('ship_id');
+            }
+            if ($request->request->get('ship_count') > 0) {
+                $sql.= " AND rd.ship_count=".$request->request->getInt('ship_count');
+            }
 
-            if ($request->request->has('sell_0') && $_POST['sell_0']==1)
+            if ($request->request->has('sell_0') && $request->request->getInt('sell_0')==1)
                 $sql.= " AND rd.sell_0>'0'";
-            if ($request->request->has('sell_1') && $_POST['sell_1']==1)
+            if ($request->request->has('sell_1') && $request->request->getInt('sell_1')==1)
                 $sql.= " AND rd.sell_1>'0'";
-            if ($request->request->has('sell_2') && $_POST['sell_2']==1)
+            if ($request->request->has('sell_2') && $request->request->getInt('sell_2')==1)
                 $sql.= " AND rd.sell_2>'0'";
-            if ($request->request->has('sell_3') && $_POST['sell_3']==1)
+            if ($request->request->has('sell_3') && $request->request->getInt('sell_3')==1)
                 $sql.= " AND rd.sell_3>'0'";
-            if ($request->request->has('sell_4') && $_POST['sell_4']==1)
+            if ($request->request->has('sell_4') && $request->request->getInt('sell_4')==1)
                 $sql.= " AND rd.sell_4>'0'";
 
-            if ($request->request->has('buy_0') && $_POST['buy_0']==1)
+            if ($request->request->has('buy_0') && $request->request->getInt('buy_0')==1)
                 $sql.= " AND rd.buy_0>'0'";
-            if ($request->request->has('buy_1') && $_POST['buy_1']==1)
+            if ($request->request->has('buy_1') && $request->request->getInt('buy_1')==1)
                 $sql.= " AND rd.buy_1>'0'";
-            if ($request->request->has('buy_2') && $_POST['buy_2']==1)
+            if ($request->request->has('buy_2') && $request->request->getInt('buy_2')==1)
                 $sql.= " AND rd.buy_2>'0'";
-            if ($request->request->has('buy_3') && $_POST['buy_3']==1)
+            if ($request->request->has('buy_3') && $request->request->getInt('buy_3')==1)
                 $sql.= " AND rd.buy_3>'0'";
-            if ($request->request->has('buy_4') && $_POST['buy_4']==1)
+            if ($request->request->has('buy_4') && $request->request->getInt('buy_4')==1)
                 $sql.= " AND rd.buy_4>'0'";
         }
 
         //battle
-        if ($request->request->has('type') && $_POST['type']=='battle')
+        if ($request->request->has('type') && $request->request->get('type') == 'battle')
         {
             // TODO
             echo "TODO";
         }
 
         //other
-        if ($request->request->has('type') && $_POST['type']=='other')
+        if ($request->request->has('type') && $request->request->get('type') == 'other')
         {
-            if ($_POST['fleet1_id']!="")
-                $sql.= " AND (rd.fleet1_id=".$_POST['fleet1_id']. " OR rd.fleet2_id=".$_POST['fleet1_id'].") ";
-
-            if ($_POST['ship_id']!="")
-            {
-                if ($_POST['ship_count']!="")
-                    $sql.= " AND rd.ships LIKE '%".$_POST['ship_id'].":".$_POST['ship_count'].",%'";
-                else
-                    $sql.= " AND rd.ships LIKE '%".$_POST['ship_id'].":%'";
+            if ($request->request->getInt('fleet1_id') > 0) {
+                $sql.= " AND (rd.fleet1_id=".$request->request->getInt('fleet1_id'). " OR rd.fleet2_id=".$request->request->getInt('fleet1_id').") ";
             }
-            elseif ($_POST["ship_count"]!="")
-                $sql.= " AND rd.ships LIKE '%:".$_POST['ship_count'].",%'";
 
-            if ($request->request->has('res_0') && $_POST['res_0']==1)
+            if ($request->request->getInt('ship_id') > 0)
+            {
+                if ($request->request->getInt('ship_count') > 0) {
+                    $sql.= " AND rd.ships LIKE '%".$request->request->getInt('ship_id').":".$request->request->getInt('ship_count').",%'";
+                } else {
+                    $sql.= " AND rd.ships LIKE '%".$request->request->getInt('ship_id').":%'";
+                }
+            }
+            elseif ($request->request->getInt("ship_count") != "") {
+                $sql.= " AND rd.ships LIKE '%:".$request->request->getInt('ship_count').",%'";
+            }
+
+            if ($request->request->has('res_0') && $request->request->getInt('res_0')==1) {
                 $sql.= " AND rd.res_0>'0'";
-            if ($request->request->has('res_1') && $_POST['res_1']==1)
+            }
+            if ($request->request->has('res_1') && $request->request->getInt('res_1')==1) {
                 $sql.= " AND rd.res_1>'0'";
-            if ($request->request->has('res_2') && $_POST['res_2']==1)
+            }
+            if ($request->request->has('res_2') && $request->request->getInt('res_2')==1) {
                 $sql.= " AND rd.res_2>'0'";
-            if ($request->request->has('res_3') && $_POST['res_3']==1)
+            }
+            if ($request->request->has('res_3') && $request->request->getInt('res_3')==1) {
                 $sql.= " AND rd.res_3>'0'";
-            if ($request->request->has('res_4') && $_POST['res_4']==1)
+            }
+            if ($request->request->has('res_4') && $request->request->getInt('res_4')==1) {
                 $sql.= " AND rd.res_4>'0'";
+            }
 
-            if ($_POST['status']!="")
-                $sql.= " AND rd.status='".$_POST['status']."'";
+            if ($request->request->get('status')!="") {
+                $sql.= " AND rd.status='".$request->request->get('status')."'";
+            }
 
-            if ($_POST['action']!="")
-                $sql.= " AND rd.action='".$_POST['action']."'";
+            if ($request->request->get('action')!="") {
+                $sql.= " AND rd.action='".$request->request->get('action')."'";
+            }
         }
 
         //LIMIT
-        if ($_POST['report_limit']!="")
-            $limit=$_POST['report_limit'];
-        else
-            $limit="1";
+        if ($request->request->getInt('report_limit') != "") {
+            $limit = $request->request->getInt('report_limit');
+        } else {
+            $limit = 1;
+        }
 
-        $reports = Report::find($sql,null,$limit,0,true,$join);
+        $reports = Report::find($sql, null, $limit, 0, true, $join);
 
         $cnt = count($reports);
         echo $cnt." Datensätze vorhanden<br/><br/>";
         if ($cnt>0)
         {
-            if ($cnt>20)
+            if ($cnt > 20) {
                 echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" value=\"Neue Suche\" /><br/><br/>";
+            }
 
             echo "<b>Legende:</b> <span style=\"color:#0f0;\">Ungelesen</span>, <span style=\"color:#f90;\">Gelöscht</span>, <span style=\"font-style:italic;\">Archiviert</span><br/><br/>";
 
@@ -351,13 +373,13 @@ function manageReports(Request $request, ReportRepository $reportRepository, Use
             $types = Report::$types;
             foreach ($reports as $rid=>$r)
             {
-                if ($_POST['type']=='battle' && $_POST["entity_ships"]==1)
+                if ($request->request->get('type') == 'battle' && $request->request->getInt("entity_ships")==1)
                 {
                     if ($r->entityShips =="" || $r->entityShips == 0)
                         continue;
                 }
 
-                $sql.= ($_POST['entity_ships']==1) ? " AND rd.entity_ships != '' ": " AND rd.entity_ships='' ";
+                $sql.= ($request->request->getInt('entity_ships')==1) ? " AND rd.entity_ships != '' ": " AND rd.entity_ships='' ";
 
                 $recipient = $r->userId > 0
                     ? $userRepository->getNick($r->userId)
