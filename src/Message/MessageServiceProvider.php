@@ -23,10 +23,6 @@ class MessageServiceProvider implements ServiceProviderInterface
             return new MessageIgnoreRepository($pimple['db']);
         };
 
-        $pimple['etoa.user.message.repository'] = function (Container $pimple): MessageRepository {
-            return $pimple[MessageRepository::class];
-        };
-
         $pimple[MessageService::class] = function (Container $pimple): MessageService {
             return new MessageService(
                 $pimple[MessageRepository::class],
