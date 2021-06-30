@@ -169,7 +169,11 @@ function universeIndex(
 
     if ($request->request->has('submit_create_universe2')) {
         echo "<h2>Urknall - Schritt 3/3</h2>";
-        $universeGenerator->create($request->request->get('map_image'), $request->request->getInt('map_precision'));
+        $output = $universeGenerator->create(
+            $request->request->get('map_image'),
+            $request->request->getInt('map_precision')
+        );
+        echo implode('<br>', $output);
         echo "<br/><br/>
       <img src=\"../misc/map.image.php?req_admin\" alt=\"Galaxiekarte\" id=\"img\" usemap=\"#Galaxy\" style=\"border:none;\"/><br/><br/>
       <input type=\"button\" value=\"Weiter\" onclick=\"document.location='?page=$page&sub=uni'\" />";

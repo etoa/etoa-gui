@@ -131,16 +131,21 @@ class UniverseGenerator
     /**
      * Create the universe.
      * And there was light!
+     *
+     * @return array<string>
      */
-    public function create($mapImage = "", $mapPrecision = 95): void
+    public function create($mapImage = "", $mapPrecision = 95): array
     {
+        $output = [];
+
         $mtx = new Mutex();
         $mtx->acquire();
 
         $mapPrecision = max(0, $mapPrecision);
         $mapPrecision = min($mapPrecision, 100);
 
-        echo "Lade Schöpfungs-Einstellungen...!<br>";
+        $output[] = "Lade Schöpfungs-Einstellungen...";
+
         $sx_num = $this->config->param1Int('num_of_sectors');
         $sy_num = $this->config->param2Int('num_of_sectors');
         $cx_num = $this->config->param1Int('num_of_cells');
@@ -155,7 +160,7 @@ class UniverseGenerator
         $asteroids_count = 0;
         $wormhole_count = 0;
 
-        echo "Erstelle Universum mit " . $sx_num * $sy_num . " Sektoren à " . $cx_num * $cy_num . " Zellen, d.h. " . $sx_num * $sy_num * $cx_num * $cy_num . " Zellen total<br>";
+        $output[] = "Erstelle Universum mit " . $sx_num * $sy_num . " Sektoren à " . $cx_num * $cy_num . " Zellen, d.h. " . $sx_num * $sy_num * $cx_num * $cy_num . " Zellen total.";
 
         $type = array();
 
@@ -170,7 +175,7 @@ class UniverseGenerator
             $w = imagesx($im);
             $h = imagesy($im);
 
-            echo "Bildvorlage gefunden, verwende diese: <img src=\"" . $imgpath . "\" /><br/>";
+            $output[] = "Bildvorlage gefunden, verwende diese: <img src=\"" . $imgpath . "\" />";
 
             for ($x = 1; $x <= $w; $x++) {
                 for ($y = 1; $y <= $h; $y++) {
@@ -219,10 +224,10 @@ class UniverseGenerator
 
         // Save cell info
         $coordinates = $this->generateCoordinates($sx_num, $sy_num, $cx_num, $cy_num);
-        echo "Zellen geneiert, speichere sie...<br/>";
+        $output[] = "Zellen geneiert, speichere sie...";
         $this->cellRepo->addMultiple($coordinates);
 
-        echo "Zellen gespeichert, fülle Objekte rein...<br/>";
+        $output[] = "Zellen gespeichert, fülle Objekte rein...";
         $cells = $this->cellRepo->findAllCoordinates();
         foreach ($cells as $cell) {
             $x = (($cell['sx'] - 1) * $cx_num) + $cell['cx'];
@@ -257,13 +262,13 @@ class UniverseGenerator
                 $this->createEmptySpace((int) $cell['id']);
             }
         }
-        echo "Universum erstellt, prüfe Wurmlöcher...<br/>";
+        $output[] = "Universum erstellt, prüfe Wurmlöcher...";
 
         // Delete one wormhole if total count is odd
         // Replace it with empty space
         $numWormholes = $this->wormholeRepo->count();
         if (fmod($numWormholes, 2) != 0) {
-            echo "<br>Ein Wurmloch ist zuviel, lösche es!<br>";
+            $output[] = "Ein Wurmloch ist zuviel, lösche es!";
             $wormholeId = $this->wormholeRepo->getOneId();
             if ($wormholeId !== null) {
                 $this->entityRepo->updateCode($wormholeId, EntityType::EMPTY_SPACE);
@@ -318,18 +323,21 @@ class UniverseGenerator
             $this->wormholeRepo->updateTarget($k, $v);
         }
 
-        echo "Platziere Marktplatz...<br />";
+        $output[] = "Platziere Marktplatz...";
         $id = $this->entityRepo->findRandomId(EntityType::EMPTY_SPACE);
         $this->entityRepo->updateCode($id, EntityType::MARKET);
         $this->emptySpaceRepo->remove($id);
 
-        echo "Erstelle Markt und Allianz entity...<br />";
+        $output[] = "Erstelle Markt und Allianz entity...";
         $id = $this->entityRepo->findRandomId(EntityType::EMPTY_SPACE);
         $this->entityRepo->updateCode($id, EntityType::ALLIANCE_MARKET);
         $this->emptySpaceRepo->remove($id);
 
         $mtx->release();
-        echo "Universum erstellt!<br> $sol_count Sonnensysteme, $asteroids_count Asteroidenfelder, $nebula_count Nebel und $wormhole_count Wurmlöcher!";
+        $output[] = "Universum erstellt!";
+        $output[] = "$sol_count Sonnensysteme, $asteroids_count Asteroidenfelder, $nebula_count Nebel und $wormhole_count Wurmlöcher!";
+
+        return $output;
     }
 
     private function generateCoordinates(int $sx_num, int $sy_num, int $cx_num, int $cy_num): array
