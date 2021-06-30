@@ -15,11 +15,11 @@ class UniverseServiceProvider implements ServiceProviderInterface
             return new PlanetRepository($pimple['db']);
         };
 
-        $pimple['etoa.universe.cell.repository'] = function (Container $pimple): CellRepository {
+        $pimple[CellRepository::class] = function (Container $pimple): CellRepository {
             return new CellRepository($pimple['db']);
         };
 
-        $pimple['etoa.universe.entity.repository'] = function (Container $pimple): EntityRepository {
+        $pimple[EntityRepository::class] = function (Container $pimple): EntityRepository {
             return new EntityRepository($pimple['db']);
         };
 
@@ -53,8 +53,8 @@ class UniverseServiceProvider implements ServiceProviderInterface
                 $pimple['etoa.user.repository'],
                 $pimple[SolarTypeRepository::class],
                 $pimple[PlanetTypeRepository::class],
-                $pimple['etoa.universe.cell.repository'],
-                $pimple['etoa.universe.entity.repository'],
+                $pimple[CellRepository::class],
+                $pimple[EntityRepository::class],
                 $pimple['etoa.universe.star.repository'],
                 $pimple['etoa.universe.planet.repository'],
                 $pimple['etoa.universe.asteroids.repository'],

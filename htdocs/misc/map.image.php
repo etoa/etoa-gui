@@ -14,10 +14,10 @@ define('IMG_DIR',"images/imagepacks/Discovery");
 $config = $app['etoa.config.service'];
 
 /** @var CellRepository */
-$cellRepo = $app['etoa.universe.cell.repository'];
+$cellRepo = $app[CellRepository::class];
 
 /** @var EntityRepository */
-$entityRepo = $app['etoa.universe.entity.repository'];
+$entityRepo = $app[EntityRepository::class];
 
 /** @var StarRepository */
 $starRepo = $app['etoa.universe.star.repository'];

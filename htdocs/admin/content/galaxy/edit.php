@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 $config = $app['etoa.config.service'];
 
 /** @var EntityRepository */
-$entityRepo = $app['etoa.universe.entity.repository'];
+$entityRepo = $app[EntityRepository::class];
 
 /** @var StarRepository */
 $starRepo = $app['etoa.universe.star.repository'];
