@@ -1,6 +1,8 @@
 <?PHP
 
-	function admin_create_new_dataset($db_fields)
+use EtoA\Core\Configuration\ConfigurationService;
+
+function admin_create_new_dataset($db_fields)
 	{
 		foreach ($db_fields as $k=>$a)
 		{

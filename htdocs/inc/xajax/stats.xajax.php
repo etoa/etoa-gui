@@ -366,9 +366,9 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 
 	if ($limit>0)
 	{
-		$limit = $limit.",".$numRows;
 		$nextlimit = $limit+$numRows;
 		$prevlimit = $limit-$numRows;
+		$limit = $limit.",".$numRows;
 	}
 	else
 	{

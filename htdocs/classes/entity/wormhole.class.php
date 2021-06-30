@@ -1,6 +1,8 @@
 <?PHP
 
-	/**
+use EtoA\Core\Configuration\ConfigurationService;
+
+/**
 	* Class for nebula entity
 	*/
 	class Wormhole extends Entity
