@@ -12,7 +12,7 @@ $eventHandlerPid = null;
 $messageQueueSize = null;
 $sysId = null;
 $log = null;
-if (UNIX) {
+if (isUnixOS()) {
     $pidfile = getAbsPath($config->get('daemon_pidfile'));
     $eventHandlerPid = EventHandlerManager::checkDaemonRunning($pidfile);
 
