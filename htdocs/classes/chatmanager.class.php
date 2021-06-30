@@ -179,7 +179,7 @@ class ChatManager {
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
         $res = dbquery('
             SELECT user_id,nick
@@ -206,7 +206,7 @@ class ChatManager {
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
         $res = dbquery("
             SELECT id

@@ -40,7 +40,7 @@ $wormholeRepo = $app[WormholeRepository::class];
 $emptySpaceRepo = $app[EmptySpaceRepository::class];
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();

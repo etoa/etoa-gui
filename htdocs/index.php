@@ -57,7 +57,7 @@ if ($_GET['logout'] ?? false) {
 }
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 // Validate session
 if (!$s->validate()) {

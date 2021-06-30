@@ -95,7 +95,7 @@ $ships = $shipRepository->getShipWithPowerProduction();
 $strx = P_LEFT;
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 foreach ($ships as $ship) {
     $costs1 = $ship->costsMetal + $ship->costsCrystal + $ship->costsPlastic + $ship->costsFuel + $ship->costsFood;

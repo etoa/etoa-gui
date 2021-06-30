@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Admin;
 
+use EtoA\Core\Configuration\ConfigurationService;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
@@ -26,7 +27,7 @@ class AdminUserServiceProvider implements ServiceProviderInterface
         $pimple['etoa.admin.session.manager'] = function (Container $pimple): AdminSessionManager {
             return new AdminSessionManager(
                 $pimple['etoa.admin.session.repository'],
-                $pimple['etoa.config.service']
+                $pimple[ConfigurationService::class]
             );
         };
     }

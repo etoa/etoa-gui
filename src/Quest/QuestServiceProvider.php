@@ -47,7 +47,7 @@ class QuestServiceProvider extends ServiceProvider implements ControllerProvider
         $pimple['etoa.quests.enabled'] = function (Container $pimple): bool {
             try {
                 /** @var ConfigurationService $config */
-                $config = $pimple['etoa.config.service'];
+                $config = $pimple[ConfigurationService::class];
 
                 return $config->getBoolean('quest_system_enable');
             } catch (\Throwable $e) {

@@ -7,7 +7,7 @@ use EtoA\Support\RuntimeDataStore;
 $runtimeDataStore = $app['etoa.runtime.datastore'];
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 	// BEGIN SKRIPT //
 

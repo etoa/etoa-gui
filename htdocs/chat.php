@@ -7,7 +7,7 @@ define('RELATIVE_ROOT','');
 include_once __DIR__ . '/inc/bootstrap.inc.php';
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 $login = false;
 $chatColor = null;

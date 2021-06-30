@@ -50,7 +50,7 @@ class BattleReport extends Report
         // TODO
         global $app;
 
-        $this->config = $app['etoa.config.service'];
+        $this->config = $app[ConfigurationService::class];
 
         global $resNames;
         parent::__construct($args);

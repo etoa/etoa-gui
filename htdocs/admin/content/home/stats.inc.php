@@ -7,7 +7,7 @@ use EtoA\Support\RuntimeDataStore;
 $runtimeDataStore = $app['etoa.runtime.datastore'];
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 	echo "<h1>Rangliste</h1>";
 

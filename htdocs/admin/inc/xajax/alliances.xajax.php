@@ -309,7 +309,7 @@ function allianceNewsSetBanTime($time, $text)
     global $app;
 
     /** @var ConfigurationService */
-    $config = $app['etoa.config.service'];
+    $config = $app[ConfigurationService::class];
 
     $config->set('townhall_ban', $time, $text);
 

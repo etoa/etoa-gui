@@ -31,7 +31,7 @@ define('URL_SEARCH_STRING2', "page=$page");
 define('URL_SEARCH_STRING3', "page=$page");
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 define('DATE_FORMAT', $config->get('admin_dateformat'));
 

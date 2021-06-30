@@ -17,7 +17,7 @@ $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
 $request = Request::createFromGlobals();
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 if ($sub == "imagecheck") {
 	imagecheck($request, $repository);

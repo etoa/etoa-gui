@@ -30,7 +30,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 */
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 // BEGIN SKRIPT //
 echo "<h1>Allianz</h1>";

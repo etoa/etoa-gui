@@ -7,7 +7,7 @@ use Twig\Environment;
 global $app;
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 $twig->addGlobal('title', 'Logs');
 

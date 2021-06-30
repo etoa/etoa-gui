@@ -82,7 +82,7 @@ try {
         $ticketRepo = $app['etoa.help.ticket.repository'];
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
         adminView(
             $s,

@@ -14,7 +14,7 @@ $userRepository = $app['etoa.user.repository'];
 /** @var \EtoA\Ship\ShipDataRepository $shipDateRepository */
 $shipDateRepository = $app[\EtoA\Ship\ShipDataRepository::class];
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 if (isset($_GET['id']))
     $id = $_GET['id'];

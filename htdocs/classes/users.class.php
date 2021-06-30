@@ -13,7 +13,7 @@ class Users
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
         $now = time();
 
@@ -92,7 +92,7 @@ die Spielleitung";
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
         $now = time();
 
@@ -196,7 +196,7 @@ die Spielleitung";
             global $app;
 
             /** @var ConfigurationService */
-            $config = $app['etoa.config.service'];
+            $config = $app[ConfigurationService::class];
 
             $days = $config->param1Int("user_sitting_days");
         }

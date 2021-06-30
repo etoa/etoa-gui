@@ -18,7 +18,7 @@ use Twig\Environment;
 $request = Request::createFromGlobals();
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 if ($sub == "offline") {
     takeOffline($request, $config);
@@ -69,7 +69,7 @@ if ($sub == "offline") {
     $roleManager = $app['etoa.admin.role.manager'];
 
     /** @var ConfigurationService */
-    $config = $app['etoa.config.service'];
+    $config = $app[ConfigurationService::class];
 
     indexView($config, $cu, $universeCellRepo, $ticketRepo, $textRepo, $roleManager, $twig);
 }

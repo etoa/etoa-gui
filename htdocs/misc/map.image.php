@@ -11,7 +11,7 @@ include("image.inc.php");
 define('IMG_DIR',"images/imagepacks/Discovery");
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 /** @var CellRepository */
 $cellRepo = $app[CellRepository::class];

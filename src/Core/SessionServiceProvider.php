@@ -21,7 +21,7 @@ class SessionServiceProvider implements ServiceProviderInterface, BootableProvid
     {
         $app->before(function (Request $request) use ($app): void {
             /** @var ConfigurationService */
-            $config = $app['etoa.config.service'];
+            $config = $app[ConfigurationService::class];
 
             $session = \UserSession::getInstance($config);
             if (strpos($request->attributes->get('_route'), 'api.chat') === 0) {

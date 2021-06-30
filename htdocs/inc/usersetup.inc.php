@@ -9,7 +9,7 @@ use EtoA\Universe\SolarTypeRepository;
 $textRepo = $app['etoa.text.repository'];
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 $sx_num = $config->param1Int('num_of_sectors');
 $sy_num = $config->param2Int('num_of_sectors');

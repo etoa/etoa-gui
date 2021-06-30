@@ -33,7 +33,7 @@ require __DIR__ . '/init.inc.php';
     require_once __DIR__ . '/def.inc.php';
 
     /** @var ConfigurationService */
-    $config = $app['etoa.config.service'];
+    $config = $app[ConfigurationService::class];
 
     // Init session
     if (ADMIN_MODE) {

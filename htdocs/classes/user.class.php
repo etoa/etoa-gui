@@ -817,7 +817,7 @@ class User implements \EtoA\User\UserInterface
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
         $utx = new UserToXml($this->id);
         if ($xmlfile = $utx->toCacheFile())
@@ -1280,7 +1280,7 @@ die Spielleitung";
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
         // Validate required data is not empty
         if (!$name || !$email || !$nick || !$password)
@@ -1487,7 +1487,7 @@ die Spielleitung";
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
         $sx_num = $config->param1Int('num_of_sectors');
         $cx_num = $config->param1Int('num_of_cells');
@@ -1534,7 +1534,7 @@ die Spielleitung";
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
         $sy_num = $config->param2Int('num_of_sectors');
         $cy_num = $config->param2Int('num_of_cells');
@@ -1576,7 +1576,7 @@ die Spielleitung";
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
         $sx_num = $config->param1Int('num_of_sectors');
         $cx_num = $config->param1Int('num_of_cells');
@@ -1611,7 +1611,7 @@ die Spielleitung";
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
         $sx_num = $config->param1Int('num_of_sectors');
         $cx_num = $config->param1Int('num_of_cells');

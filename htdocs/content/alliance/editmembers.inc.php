@@ -23,7 +23,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 //
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 /** @var AllianceHistoryRepository */
 $allianceHistoryRepository = $app[AllianceHistoryRepository::class];

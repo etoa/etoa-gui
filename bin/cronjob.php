@@ -52,7 +52,7 @@ $verbose = in_array("-v", $args, true);
 try {
 
     /** @var ConfigurationService */
-    $config = $app['etoa.config.service'];
+    $config = $app[ConfigurationService::class];
 
     // Prüfen ob Updates eingeschaltet sind
     if ($config->getBoolean('update_enabled'))

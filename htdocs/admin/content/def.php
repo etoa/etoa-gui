@@ -2,7 +2,7 @@
 use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 /** @var \EtoA\Defense\DefenseDataRepository $defenseDataRepository */
 $defenseDataRepository = $app[\EtoA\Defense\DefenseDataRepository::class];
 $defenseNames = $defenseDataRepository->getDefenseNames(true);

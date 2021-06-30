@@ -3,7 +3,7 @@
 use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 if ($config->getBoolean("alliance_allow")) {
 		if ($cu->allianceId == 0)

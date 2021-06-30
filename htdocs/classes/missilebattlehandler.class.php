@@ -15,7 +15,7 @@ class MissileBattleHandler
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
 		// Faktor mit dem die Schilde der Verteidigung bei einem Kampf mit einberechnet werden.
 		define("MISSILE_BATTLE_SHIELD_FACTOR", $config->getFloat('missile_battle_shield_factor'));

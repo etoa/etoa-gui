@@ -18,7 +18,7 @@ use EtoA\Support\RuntimeDataStore;
             global $app;
 
             /** @var ConfigurationService */
-            $config = $app['etoa.config.service'];
+            $config = $app[ConfigurationService::class];
 
             ob_start();
 
@@ -219,7 +219,7 @@ use EtoA\Support\RuntimeDataStore;
             global $app;
 
             /** @var ConfigurationService */
-            $config = $app['etoa.config.service'];
+            $config = $app[ConfigurationService::class];
 
             $time = time();
             $inactivetime = 86400 * USER_INACTIVE_SHOW;
@@ -1136,7 +1136,7 @@ use EtoA\Support\RuntimeDataStore;
             global $app;
 
             /** @var ConfigurationService */
-            $config = $app['etoa.config.service'];
+            $config = $app[ConfigurationService::class];
 
             $dir = USERBANNER_DIR;
             if (!is_dir($dir)) {
@@ -1250,7 +1250,7 @@ use EtoA\Support\RuntimeDataStore;
             global $app;
 
             /** @var ConfigurationService */
-            $config = $app['etoa.config.service'];
+            $config = $app[ConfigurationService::class];
 
           if ($id>0)
             $sql = "
@@ -1321,7 +1321,7 @@ use EtoA\Support\RuntimeDataStore;
             global $app;
 
             /** @var ConfigurationService */
-            $config = $app['etoa.config.service'];
+            $config = $app[ConfigurationService::class];
 
           if ($id>0) {
             $sql = "
@@ -1393,7 +1393,7 @@ use EtoA\Support\RuntimeDataStore;
             global $app;
 
             /** @var ConfigurationService */
-            $config = $app['etoa.config.service'];
+            $config = $app[ConfigurationService::class];
 
           $res = dbquery("
           SELECT
@@ -1433,7 +1433,7 @@ use EtoA\Support\RuntimeDataStore;
             global $app;
 
             /** @var ConfigurationService */
-            $config = $app['etoa.config.service'];
+            $config = $app[ConfigurationService::class];
 
           $res = dbquery("
           SELECT

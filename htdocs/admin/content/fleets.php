@@ -4,7 +4,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use Twig\Environment;
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 /** @var \EtoA\Ship\ShipDataRepository $shipDataRepository */
 $shipDataRepository = $app[\EtoA\Ship\ShipDataRepository::class];
 

@@ -29,7 +29,7 @@ class PlanetManager
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
         $filter = '';
         if($fp>0) {

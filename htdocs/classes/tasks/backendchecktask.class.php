@@ -18,7 +18,7 @@ class BackendCheckTask implements IPeriodicTask
     {
         $this->textRepo = $app['etoa.text.repository'];
         $this->runtimeDataStore = $app['etoa.runtime.datastore'];
-        $this->config = $app['etoa.config.service'];
+        $this->config = $app[ConfigurationService::class];
     }
 
     function run()

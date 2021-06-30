@@ -4,7 +4,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\User\UserSessionManager;
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 /** @var UserSessionManager */
 $userSessionManager = $app['etoa.user.session.manager'];

@@ -105,7 +105,7 @@ class TwigExtension extends AbstractExtension
     public function getConfigValue(string $key): string
     {
         /** @var ConfigurationService */
-        $config = $this->app['etoa.config.service'];
+        $config = $this->app[ConfigurationService::class];
 
         return $config->get($key);
     }

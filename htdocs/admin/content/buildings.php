@@ -12,7 +12,7 @@ $repository = $app['etoa.building.repository'];
 $request = Request::createFromGlobals();
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 if ($sub == "prices") {
     priceCalculator($repository);

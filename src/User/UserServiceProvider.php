@@ -2,6 +2,7 @@
 
 namespace EtoA\User;
 
+use EtoA\Core\Configuration\ConfigurationService;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
@@ -32,7 +33,7 @@ class UserServiceProvider implements ServiceProviderInterface
         $pimple['etoa.user.session.manager'] = function (Container $pimple): UserSessionManager {
             return new UserSessionManager(
                 $pimple['etoa.user.session.repository'],
-                $pimple['etoa.config.service'],
+                $pimple[ConfigurationService::class],
                 $pimple['etoa.user.repository']
             );
         };

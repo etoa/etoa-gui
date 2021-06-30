@@ -25,7 +25,7 @@ $pointsService = $app['etoa.rankings.points.service'];
 $messageService = $app[MessageService::class];
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 /** @var MessageRepository */
 $messageRepository = $app[MessageRepository::class];

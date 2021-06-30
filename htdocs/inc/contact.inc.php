@@ -21,7 +21,7 @@ if ($contactText->enabled && $contactText->content) {
 $adminUserRepo = $app['etoa.admin.user.repository'];
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 // List of admins
 $admins = collect($adminUserRepo->findAll())

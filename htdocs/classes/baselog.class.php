@@ -41,7 +41,7 @@ abstract class BaseLog
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
         $timestamp = $threshold > 0
             ? time() - $threshold
