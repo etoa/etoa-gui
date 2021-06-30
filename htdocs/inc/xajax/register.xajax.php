@@ -1,6 +1,8 @@
 <?PHP
 
-	$xajax->register(XAJAX_FUNCTION,'registerCheckName');
+use EtoA\Core\Configuration\ConfigurationService;
+
+$xajax->register(XAJAX_FUNCTION,'registerCheckName');
 	$xajax->register(XAJAX_FUNCTION,'registerCheckNick');
 	$xajax->register(XAJAX_FUNCTION,'registerCheckEmail');
 	$xajax->register(XAJAX_FUNCTION,'registerCheckPassword');
@@ -103,17 +105,23 @@ function registerCheckEmail($val)
 //Überprüft die Korrektheit des Passworts
 function registerCheckPassword($val)
 {
+    // TODO
+    global $app;
+
+    /** @var ConfigurationService */
+    $config = $app['etoa.config.service'];
+
 	$objResponse = new xajaxResponse();
 	$objResponse->assign('passwordStatus', 'style.fontWeight', "bold");
 
-	if (strlen($val)>=PASSWORD_MINLENGHT)
+	if (strlen($val)>=$config->getInt('password_minlength'))
 	{
 		$objResponse->assign('passwordStatus', 'innerHTML', "Ok");
 		$objResponse->assign('passwordStatus', 'style.color', "#0f0");
 	}
 	else
 	{
-		$objResponse->assign('passwordStatus', 'innerHTML', "Das Passwort ist noch zu kurz (mind. ".PASSWORD_MINLENGHT." Zeichen sind nötig)!");
+		$objResponse->assign('passwordStatus', 'innerHTML', "Das Passwort ist noch zu kurz (mind. ".$config->getInt('password_minlength')." Zeichen sind nötig)!");
 		$objResponse->assign('passwordStatus', 'style.color', "#f90");
 	}
 

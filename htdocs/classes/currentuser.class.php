@@ -1,6 +1,8 @@
 <?PHP
 
-	/**
+use EtoA\Core\Configuration\ConfigurationService;
+
+/**
 	* Provides methods for accessing
 	* the current logged in user
 	*
@@ -46,6 +48,12 @@
 
 		function setPassword($oldPassword, $newPassword1, $newPassword2, &$returnMsg)
 		{
+            // TODO
+            global $app;
+
+            /** @var ConfigurationService */
+            $config = $app['etoa.config.service'];
+
 			$res = dbquery("
 			SELECT
 				user_password
@@ -71,7 +79,7 @@
 				{
 					if ($newPassword1==$newPassword2)
 					{
-						if (strlen($newPassword1)>=PASSWORD_MINLENGHT)
+						if (strlen($newPassword1)>=$config->getInt('password_minlength'))
 						{
 							if (dbquery("
 								UPDATE
@@ -91,7 +99,7 @@
 						}
 						else
 						{
-							$returnMsg = "Das Passwort muss mindestens ".PASSWORD_MINLENGHT." Zeichen lang sein!";
+							$returnMsg = "Das Passwort muss mindestens ".$config->getInt('password_minlength')." Zeichen lang sein!";
 						}
 					}
 					else

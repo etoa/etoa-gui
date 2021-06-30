@@ -18,6 +18,11 @@
 	//
 	//
 
+    use EtoA\Core\Configuration\ConfigurationService;
+
+    /** @var ConfigurationService */
+    $config = $app['etoa.config.service'];
+
     /** @var \EtoA\User\UserRepository $userRepository */
     $userRepository = $app['etoa.user.repository'];
 
@@ -157,7 +162,7 @@
 						$arr = mysql_fetch_row($res);
 						$sitterId = $arr[0];
 						$sitterRegistered=$arr[1];
-						if ($_POST['sitter_password1']==$_POST['sitter_password2'] && $_POST['sitter_password1']!="" && strlen($_POST['sitter_password1'])>=PASSWORD_MINLENGHT)
+						if ($_POST['sitter_password1']==$_POST['sitter_password2'] && $_POST['sitter_password1']!="" && strlen($_POST['sitter_password1'])>=$config->getInt('password_minlength'))
 						{
 							$pw = saltPasswort($_POST['sitter_password1']);
 
@@ -198,7 +203,7 @@
 						}
 						else
 						{
-							error_msg("Passwörter sind nicht gleich oder zu kurz (mind. ".PASSWORD_MINLENGHT." Zeichen)");
+							error_msg("Passwörter sind nicht gleich oder zu kurz (mind. ".$config->getInt('password_minlength')." Zeichen)");
 						}
 					}
 					else

@@ -1323,9 +1323,9 @@ die Spielleitung";
         }
 
         // Validate password
-        if (strlen($password) < PASSWORD_MINLENGHT)
+        if (strlen($password) < $config->getInt('password_minlength'))
         {
-            throw new Exception("Das Passwort ist noch zu kurz (mind. ".PASSWORD_MINLENGHT." Zeichen sind nötig)!");
+            throw new Exception("Das Passwort ist noch zu kurz (mind. ".$config->getInt('password_minlength')." Zeichen sind nötig)!");
         }
 
         // Check existing user
