@@ -732,13 +732,13 @@ function getMessageParamsFromRequest(Request $request): array
         $params['cat_id'] = $request->request->getInt('message_cat_id');
     }
     if ($request->request->getInt('message_read') < 2) {
-        $params['read'] = $request->request->getInt('message_read') == 1;
+        $params['read'] = $request->request->getInt('message_read') === 1;
     }
     if ($request->request->getInt('message_massmail') < 2) {
-        $params['massmail'] = $request->request->getInt('message_massmail') == 1;
+        $params['massmail'] = $request->request->getInt('message_massmail') === 1;
     }
     if ($request->request->getInt('message_deleted') < 2) {
-        $params['deleted'] = $request->request->getInt('message_deleted') == 1;
+        $params['deleted'] = $request->request->getInt('message_deleted') === 1;
     }
 
     return $params;
