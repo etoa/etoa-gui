@@ -635,7 +635,7 @@ $config = $app['etoa.config.service'];
 								+ $defs[$def_id]['def_costs_plastic']
 								+ $defs[$def_id]['def_costs_fuel']
 								+ $defs[$def_id]['def_costs_food'])
-								/ GLOBAL_TIME * DEF_BUILD_TIME
+								/ GLOBAL_TIME * $config->getFloat('def_build_time')
 								* $time_boni_factor
 								* $cu->specialist->defenseTime;
 
@@ -1052,7 +1052,7 @@ $config = $app['etoa.config.service'];
 								}
 
 								// Bauzeit berechnen
-								$btime = ($data['def_costs_metal']+$data['def_costs_crystal']+$data['def_costs_plastic']+$data['def_costs_fuel']+$data['def_costs_food']) / GLOBAL_TIME * DEF_BUILD_TIME * $time_boni_factor * $cu->specialist->defenseTime;
+								$btime = ($data['def_costs_metal']+$data['def_costs_crystal']+$data['def_costs_plastic']+$data['def_costs_fuel']+$data['def_costs_food']) / GLOBAL_TIME * $config->getFloat('def_build_time') * $time_boni_factor * $cu->specialist->defenseTime;
 								$btime_min = $btime * (0.1 - ($gen_tech_level / 100));
 								$peopleOptimized= ceil(($btime-$btime_min)/$config->getInt('people_work_done'));
 
