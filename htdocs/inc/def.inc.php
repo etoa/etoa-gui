@@ -65,13 +65,6 @@ define("FLOOD_CONTROL", $config->getInt('msg_flood_control'));    // Wartezeit b
 define("WAR_DURATION", 3600 * $config->getInt('alliance_war_time'));
 define("PEACE_DURATION", 3600 * $config->param1Int('alliance_war_time'));
 
-/****************************************************/
-/* Startwerte (bei erstellung eines neuen Accounts) */
-/****************************************************/
-
-// "Startplanet" Name
-define("USR_PLANET_NAME", $config->getInt('user_planet_name'));
-
 /*********/
 /* Zeit  */
 /*********/
