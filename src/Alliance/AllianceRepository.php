@@ -523,6 +523,23 @@ class AllianceRepository extends AbstractRepository
             ->execute();
     }
 
+    public function hasUser(int $allianceId, int $userId): bool
+    {
+        $data = $this->createQueryBuilder()
+            ->select('user_id')
+            ->from('users')
+            ->where('user_id = :userId')
+            ->andWhere('user_alliance_id = :allianceId')
+            ->setParameters([
+                'userId' => $userId,
+                'allianceId' => $allianceId,
+            ])
+            ->execute()
+            ->fetchOne();
+
+        return $data !== false;
+    }
+
     public function removeUser(int $userId): void
     {
         $this->createQueryBuilder()
@@ -686,5 +703,20 @@ class AllianceRepository extends AbstractRepository
                 'id' => $id,
             ])
             ->execute();
+    }
+
+    public function setObjectsForMembers(int $allianceId, int $memberCount): bool
+    {
+        $affected = $this->createQueryBuilder()
+            ->update('alliances')
+            ->set('alliance_objects_for_members', ':memberCount')
+            ->where('alliance_id = :allianceId')
+            ->setParameters([
+                'allianceId' => $allianceId,
+                'memberCount' => $memberCount,
+            ])
+            ->execute();
+
+        return (int) $affected > 0;
     }
 }

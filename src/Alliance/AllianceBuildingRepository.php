@@ -81,4 +81,18 @@ class AllianceBuildingRepository extends AbstractRepository
             ->setParameter('allianceId', $allianceId)
             ->execute();
     }
+
+    public function setMemberCountIfHigher(int $allianceId, int $newMemberCnt): void
+    {
+        $this->createQueryBuilder()
+        ->update('alliance_buildlist')
+        ->set('alliance_buildlist_member_for', ':newMemberCnt')
+        ->where('alliance_buildlist_alliance_id = :allianceId')
+        ->andWhere('alliance_buildlist_member_for < :newMemberCnt')
+        ->setParameters([
+            'newMemberCnt' => $newMemberCnt,
+            'allianceId' => $allianceId,
+        ])
+        ->execute();
+    }
 }

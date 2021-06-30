@@ -1,29 +1,14 @@
 <?PHP
 
 use EtoA\Alliance\AllianceHistoryRepository;
+use EtoA\Alliance\AllianceManagementService;
 use EtoA\Core\Configuration\ConfigurationService;
-
-//////////////////////////////////////////////////
-//		 	 ____    __           ______       			//
-//			/\  _`\ /\ \__       /\  _  \      			//
-//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
-//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
-//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
-//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
-//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
-//																					 		//
-//////////////////////////////////////////////////
-// The Andromeda-Project-Browsergame				 		//
-// Ein Massive-Multiplayer-Online-Spiel			 		//
-// Programmiert von Nicolas Perrenoud				 		//
-// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-// www.etoa.ch | mail@etoa.ch								 		//
-//////////////////////////////////////////////////
-//
-//
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
+
+/** @var AllianceManagementService */
+$allianceManagementService = $app[AllianceManagementService::class];
 
 /** @var AllianceHistoryRepository */
 $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
@@ -116,7 +101,7 @@ if (Alliance::checkActionRights('editmembers'))
 					{
 						if ($target_alliance == $ally->id)
 						{
-							if ($ally->addMember($moving_user_id)) {
+							if ($allianceManagementService->addMember($ally->id, $moving_user_id)) {
 								success_msg($ally->members[$moving_user_id]." wurde umgeteilt!");
 							} else {
 								error_msg("Umteilung nicht möglich, User ist bereits Mitglied oder die maximale Anzahl an Mitgliedern wurde erreicht!");
@@ -124,7 +109,7 @@ if (Alliance::checkActionRights('editmembers'))
 						}
 						else
 						{
-							if ($ally->wings[$target_alliance]->addMember($moving_user_id)) {
+							if ($allianceManagementService->addMember($ally->wings[$target_alliance]->id, $moving_user_id)) {
 								success_msg($ally->wings[$target_alliance]->members[$moving_user_id]." wurde verschoben!");
 							} else {
 								error_msg("Verschiebung nicht möglich, User ist bereits Mitglied oder die maximale Anzahl an Mitgliedern wurde erreicht!");

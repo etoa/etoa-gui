@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace EtoA\Alliance;
 
+use AllianceBuildList;
+use AllianceTechlist;
+use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Message\MessageRepository;
 use EtoA\User\UserLogRepository;
 use EtoA\User\UserRepository;
 use Log;
@@ -22,6 +26,8 @@ class AllianceManagementService
     private AlliancePollRepository $pollRepository;
     private UserRepository $userRepository;
     private UserLogRepository $userLogRepository;
+    private ConfigurationService $config;
+    private MessageRepository $messageRepo;
     private $dispatcher;
 
     public function __construct(
@@ -37,6 +43,8 @@ class AllianceManagementService
         AlliancePollRepository $pollRepository,
         UserRepository $userRepository,
         UserLogRepository $userLogRepository,
+        ConfigurationService $config,
+        MessageRepository $messageRepo,
         $dispatcher
     ) {
         $this->repository = $repository;
@@ -51,6 +59,8 @@ class AllianceManagementService
         $this->pollRepository = $pollRepository;
         $this->userRepository = $userRepository;
         $this->userLogRepository = $userLogRepository;
+        $this->config = $config;
+        $this->messageRepo = $messageRepo;
         $this->dispatcher = $dispatcher;
     }
 
@@ -153,5 +163,151 @@ class AllianceManagementService
         $this->historyRepository->removeForAlliance($id);
 
         return $removed;
+    }
+
+    public function addMember(int $allianceId, int $userId): bool
+    {
+        if ($this->repository->hasUser($allianceId, $userId)) {
+            return false;
+        }
+
+        $maxMemberCount = $this->config->getInt("alliance_max_member_count");
+        if ($maxMemberCount > 0 && $this->memberCount > $maxMemberCount) {
+            return false;
+        }
+
+        $alliance = $this->repository->getAlliance($allianceId);
+        if ($alliance === null) {
+            return false;
+        }
+
+        $user = $this->userRepository->getUser($userId);
+        if ($user === null) {
+            return false;
+        }
+
+        $this->repository->addUser($allianceId, $userId);
+
+        $this->messageRepo->createSystemMessage($userId, MSG_ALLYMAIL_CAT, "Allianzaufnahme", "Du wurdest in die Allianz [b]" . $alliance->toString() . "[/b] aufgenommen!");
+        $this->historyRepository->addEntry($this->id, "[b]" . $user->nick . "[/b] wurde als neues Mitglied aufgenommen");
+
+        $this->calcMemberCosts($allianceId);
+
+        return true;
+    }
+
+    public function calcMemberCosts(int $allianceId, bool $save = true, int $addMembers = 1): string
+    {
+        // Zählt aktuelle Memberanzahl und und läd den Wert, für welche Anzahl User die Allianzobjekte gebaut wurden
+        $members = $this->repository->findUsers($allianceId);
+        $newMemberCnt = count($members) + $addMembers;
+        if ($save) {
+            $newMemberCnt--;
+        }
+
+        // Allianzrohstoffe anpassen, wenn die Allianzobjekte nicht für diese Anzahl ausgebaut sind
+
+        //Aktuelle, neue und zu zahlende Kosten
+        $costs = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
+        $newCosts = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
+        $toPay = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
+
+        // Berechnet Kostendifferenz
+
+        $buildlist = new AllianceBuildList($allianceId);
+        $buildingIterator = $buildlist->getIterator();
+
+        while ($buildingIterator->valid()) {
+            if ($buildlist->getMemberFor($buildingIterator->key()) < $newMemberCnt) {
+                // Wenn ein Gebäude in Bau ist, wird die Stufe zur berechnung bereits erhöht
+                $level = $buildlist->getLevel($buildingIterator->key());
+                if ($buildlist->isUnderConstruction($buildingIterator->key())) {
+                    $level++;
+                }
+
+                // Berechnungen nur durchführen, wenn die Stufe >0 ist oder sich das Objekt in Bau befindet
+                // Dies ist eine Sicherheit für den Fall, dass die Stufe manuel zurückgesetzt wird. Es würden falsche Kosten entstehen
+                if ($level > 0 || $buildlist->isUnderConstruction($buildingIterator->key())) {
+                    // Kosten von jedem Level des Gebäudes wird berechnet
+                    for ($x = 1; $x <= $level; $x++) {
+                        $buildCosts = $buildingIterator->current()->getCosts($x, $buildlist->getMemberFor($buildingIterator->key()));
+
+                        foreach ($buildCosts as $rid => $cost) {
+                            $costs[$rid] += $cost;
+                        }
+
+                        $buildCosts = $buildingIterator->current()->getCosts($x, $newMemberCnt);
+
+                        foreach ($buildCosts as $rid => $cost) {
+                            $newCosts[$rid] += $cost;
+                        }
+                    }
+                }
+            }
+            $buildingIterator->next();
+        }
+        if ($save) {
+            $this->buildingRepository->setMemberCountIfHigher($allianceId, $newMemberCnt);
+        }
+
+        $techlist = new AllianceTechlist($allianceId);
+        $techIterator = $techlist->getIterator();
+
+        while ($techIterator->valid()) {
+            if ($techlist->getMemberFor($techIterator->key()) < $newMemberCnt) {
+                // Wenn eine Techin Bau ist, wird die Stufe zur berechnung bereits erhöht
+                $level = $techlist->getLevel($techIterator->key());
+                if ($techlist->isUnderConstruction($techIterator->key())) {
+                    $level++;
+                }
+
+                // Berechnungen nur durchführen, wenn die Stufe >0 ist oder sich das Objekt in Bau befindet
+                // Dies ist eine Sicherheit für den Fall, dass die Stufe manuel zurückgesetzt wird. Es würden falsche Kosten entstehen
+                if ($level > 0 || $techlist->isUnderConstruction($techIterator->key())) {
+                    // Kosten von jedem Level des Gebäudes wird berechnet
+                    for ($x = 1; $x <= $level; $x++) {
+                        $buildCosts = $techIterator->current()->getCosts($x, $techlist->getMemberFor($techIterator->key()));
+
+                        foreach ($buildCosts as $rid => $cost) {
+                            $costs[$rid] += $cost;
+                        }
+
+                        $buildCosts = $techIterator->current()->getCosts($x, $newMemberCnt);
+
+                        foreach ($buildCosts as $rid => $cost) {
+                            $newCosts[$rid] += $cost;
+                        }
+                    }
+                }
+            }
+            $techIterator->next();
+        }
+        if ($save) {
+            $this->technologyRepository->setMemberCountIfHigher($allianceId, $newMemberCnt);
+        }
+
+        // Berechnet die zu zahlenden Rohstoffe
+        foreach ($costs as $rid => $cost) {
+            $toPay[$rid] = $newCosts[$rid] - $cost;
+        }
+
+        if ($save) {
+            // Zieht Rohstoffe vom Allianzkonto ab und speichert Anzahl Members, für welche nun bezahlt ist
+            if (array_sum($toPay) > 0) {
+                $this->repository->addResources(
+                    $allianceId,
+                    -$toPay[1],
+                    -$toPay[2],
+                    -$toPay[3],
+                    -$toPay[4],
+                    -$toPay[5]
+                );
+                $this->repository->setObjectsForMembers($allianceId, $newMemberCnt);
+
+                $this->historyRepository->addEntry($allianceId, "Dem Allianzkonto wurden folgende Rohstoffe abgezogen:\n[b]" . RES_METAL . "[/b]: " . nf($toPay[1]) . "\n[b]" . RES_CRYSTAL . "[/b]: " . nf($toPay[2]) . "\n[b]" . RES_PLASTIC . "[/b]: " . nf($toPay[3]) . "\n[b]" . RES_FUEL . "[/b]: " . nf($toPay[4]) . "\n[b]" . RES_FOOD . "[/b]: " . nf($toPay[5]) . "\n\nDie Allianzobjekte sind nun für " . $newMemberCnt . " Mitglieder verfügbar!");
+            }
+        }
+
+        return text2html("Bei der Aufnahme von " . $addMembers . " Member werden dem Allianzkonto folgende Rohstoffe abgezogen:\n[b]" . RES_METAL . "[/b]: " . nf($toPay[1]) . "\n[b]" . RES_CRYSTAL . "[/b]: " . nf($toPay[2]) . "\n[b]" . RES_PLASTIC . "[/b]: " . nf($toPay[3]) . "\n[b]" . RES_FUEL . "[/b]: " . nf($toPay[4]) . "\n[b]" . RES_FOOD . "[/b]: " . nf($toPay[5]));
     }
 }

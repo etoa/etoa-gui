@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Alliance;
 
+use EtoA\Message\MessageRepository;
 use EtoA\User\UserLogRepository;
 use EtoA\User\UserRepository;
 use Pimple\Container;
@@ -30,6 +31,8 @@ class AllianceServiceProvider implements ServiceProviderInterface
                 $pimple[AlliancePollRepository::class],
                 $pimple[UserRepository::class],
                 $pimple[UserLogRepository::class],
+                $pimple['etoa.config.service'],
+                $pimple[MessageRepository::class],
                 $pimple['dispatcher']
             );
         };

@@ -80,4 +80,18 @@ class AllianceTechnologyRepository extends AbstractRepository
             ->setParameter('allianceId', $allianceId)
             ->execute();
     }
+
+    public function setMemberCountIfHigher(int $allianceId, int $newMemberCnt): void
+    {
+        $this->createQueryBuilder()
+        ->update('alliance_techlist')
+        ->set('alliance_techlist_member_for', ':newMemberCnt')
+        ->where('alliance_techlist_alliance_id = :allianceId')
+        ->andWhere('alliance_techlist_member_for < :newMemberCnt')
+        ->setParameters([
+            'newMemberCnt' => $newMemberCnt,
+            'allianceId' => $allianceId,
+        ])
+        ->execute();
+    }
 }

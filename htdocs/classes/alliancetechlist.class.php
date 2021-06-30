@@ -32,7 +32,7 @@
 				$this->load();
 		}
 
-		public function getIterator()
+		public function getIterator(): ArrayIterator
 		{
 			if ($this->items == null)
 				$this->load();

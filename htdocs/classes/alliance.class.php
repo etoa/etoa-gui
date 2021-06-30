@@ -301,43 +301,6 @@ use EtoA\Core\Configuration\ConfigurationService;
         }
 
         /**
-        * Adds a new user to the alliance
-        */
-        public function addMember($userId)
-        {
-            // TODO
-            global $app;
-
-            $this->getMembers();
-            if (!isset($this->members[$userId]))
-            {
-                $maxMemberCount = $this->config->getInt("alliance_max_member_count");
-                if ($maxMemberCount > 0 && $this->memberCount > $maxMemberCount) {
-                    return false;
-                }
-
-                $tmpUser = new User($userId);
-                if ($tmpUser->isValid)
-                {
-                    if ($tmpUser->alliance === $this)
-                    {
-                        $this->members[$userId] = $tmpUser;
-                        $this->members[$userId]->sendMessage(MSG_ALLYMAIL_CAT,"Allianzaufnahme","Du wurdest in die Allianz [b]".$this->__toString()."[/b] aufgenommen!");
-
-                        /** @var AllianceHistoryRepository */
-                        $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
-                        $allianceHistoryRepository->addEntry($this->id, "[b]".$tmpUser."[/b] wurde als neues Mitglied aufgenommen");
-
-                        $this->calcMemberCosts();
-                        return true;
-                    }
-                }
-                unset($tmpUser);
-            }
-            return false;
-        }
-
-        /**
         * Removes an user from the alliance
         */
         public function kickMember($userId,$kick=1)
