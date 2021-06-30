@@ -58,13 +58,6 @@ define("USER_INACTIVE_LONG", $config->param2Int('user_inactive_days'));
 define("FLOOD_CONTROL", $config->getInt('msg_flood_control'));    // Wartezeit bis zur nächsten Nachricht
 
 //
-// Sonstiges
-//
-
-//Zeit bis Löschantrag ausgeführt wird
-define("USER_DELETE_DAYS", $config->getInt('user_delete_days'));
-
-//
 // Spezialiasten
 //
 

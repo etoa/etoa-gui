@@ -774,9 +774,15 @@ class User implements \EtoA\User\UserInterface
      * Löschantrag stellen
      */
     function deleteRequest($pw) {
+        // TODO
+        global $app;
+
+        /** @var ConfigurationService */
+        $config = $app['etoa.config.service'];
+
         if (validatePasswort($pw, $this->pw))
         {
-            $t = time() + (USER_DELETE_DAYS*3600*24);
+            $t = time() + ($config->getInt('user_delete_days')*3600*24);
             dbquery("
                 UPDATE
                     users
