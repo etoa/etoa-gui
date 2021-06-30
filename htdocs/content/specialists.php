@@ -18,10 +18,15 @@
 	//
 	//
 
-	$t = time();
+use EtoA\Core\Configuration\ConfigurationService;
+
+$t = time();
 
 	/** @var \EtoA\Specialist\SpecialistDataRepository $speciaistRepository */
 	$speciaistRepository = $app['etoa.specialist.datarepository'];
+
+    /** @var ConfigurationService */
+    $config = $app['etoa.config.service'];
 
 	$uCnt = User::count();
 	$totAvail = ceil($uCnt*SPECIALIST_AVAILABILITY_FACTOR);
@@ -51,7 +56,7 @@
 				$used = min($tarr[0],$totAvail);
 				$avail = $totAvail - $used;
 				if ($totAvail!=0)
-					$factor = 1 + (SPECIALIST_MAX_COSTS_FACTOR / $totAvail * $used);
+					$factor = 1 + ($config->param1Float('specialistconfig') / $totAvail * $used);
 				else
 					$factor = 1;
 
@@ -313,7 +318,7 @@
 		$used = min($tarr[0],$totAvail);
 		$avail = $totAvail - $used;
 		if ($totAvail!=0)
-			$factor = 1 + (SPECIALIST_MAX_COSTS_FACTOR / $totAvail * $used);
+			$factor = 1 + ($config->param1Float('specialistconfig') / $totAvail * $used);
 		else
 			$factor = 1;
 

@@ -61,9 +61,6 @@ define("FLOOD_CONTROL", $config->getInt('msg_flood_control'));    // Wartezeit b
 // Spezialiasten
 //
 
-// Maximale Kostensteigerung
-define('SPECIALIST_MAX_COSTS_FACTOR', $config->param1Float('specialistconfig'));
-
 // Verfügbare Spezialisten pro Typ basierend auf Faktor * Anzahl User
 define('SPECIALIST_AVAILABILITY_FACTOR', $config->getFloat('specialistconfig'));
 
