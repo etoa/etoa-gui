@@ -29,7 +29,7 @@ class UserLogRepository extends AbstractRepository
                 'timestamp' => time(),
                 'zone' => $zone,
                 'message' => $message,
-                'host' => gethostbyname($_SERVER['REMOTE_ADDR']),
+                'host' => isset($_SERVER['REMOTE_ADDR']) ? gethostbyname($_SERVER['REMOTE_ADDR']) : '',
                 'public' => $public,
             ])
             ->execute();

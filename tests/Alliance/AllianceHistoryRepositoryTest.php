@@ -16,6 +16,21 @@ class AllianceHistoryRepositoryTest extends AbstractDbTestCase
 
     public function testAddEntry(): void
     {
-        $this->repository->addEntry(1, 'test');
+        $allianceId = 1;
+        $text = 'test';
+
+        // when
+        $id = $this->repository->addEntry($allianceId, $text);
+
+        // then
+        $record = $this->connection->createQueryBuilder()
+            ->select('*')
+            ->from('alliance_history')
+            ->where('history_id = ' . $id)
+            ->execute()
+            ->fetchAssociative();
+
+        $this->assertEquals($allianceId, $record['history_alliance_id']);
+        $this->assertEquals($text, $record['history_text']);
     }
 }

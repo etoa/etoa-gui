@@ -68,7 +68,7 @@ class AllianceManagementService
         $this->dispatcher = $dispatcher;
     }
 
-    public function create(string $tag, string $name, ?int $founderId): Alliance
+    public function create(string $tag, string $name, int $founderId): Alliance
     {
         if ($name == "" || $tag == "") {
             throw new InvalidAllianceParametersException("Name/Tag fehlt!");
@@ -86,7 +86,7 @@ class AllianceManagementService
             throw new InvalidAllianceParametersException("Eine Allianz mit diesem Tag oder Namen existiert bereits!");
         }
 
-        if ($founderId === null || $founderId <= 0) {
+        if ($founderId <= 0) {
             throw new InvalidAllianceParametersException("Allianzgründer-ID fehlt!");
         }
 
