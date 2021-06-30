@@ -17,9 +17,6 @@ $config = $app['etoa.config.service'];
 // Layout
 //
 
-// Statistik Anzahl Zeilen
-define("STATS_NUM_OF_ROWS", $config->getInt('stats_num_rows'));
-
 /****************************/
 /* Allgemeine Einstellungen */
 /****************************/
