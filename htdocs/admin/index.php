@@ -129,13 +129,6 @@ function adminView(
     // Load admin user data
     $cu = $adminUserRepo->find($s->user_id);
 
-    // Zwischenablage
-    if (isset($_GET['cbclose'])) {
-        $s->clipboard = null;
-    }
-    $cb = isset($s->clipboard) && $s->clipboard == 1 ? true : false;
-    $twig->addGlobal('isCb', $cb);
-
     $searchQuery = $_POST['search_query'] ?? '';
     $navMenu = fetchJsonConfig("admin-menu.conf");
 

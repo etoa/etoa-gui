@@ -155,7 +155,6 @@ class UserSession extends Session
                                                     failure_time,
                                                     failure_ip,
                                                     failure_user_id,
-                                                    failure_pw,
                                                     failure_client
                                                 )
                                                 VALUES
@@ -163,7 +162,6 @@ class UserSession extends Session
                                                     '".$t."',
                                                     '".$_SERVER['REMOTE_ADDR']."',
                                                     '".$uarr['user_id']."',
-                                                    '".$pw."',
                                                     '".$_SERVER['HTTP_USER_AGENT']."'
                                                 );");
                                         $this->lastErrorCode = "pass";
