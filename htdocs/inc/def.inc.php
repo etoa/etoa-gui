@@ -124,9 +124,6 @@ define("FLEET_ACTION_RESS", $config->get('market_ship_action_ress'));
 // Aktion beim versenden von Schiffen oder Schiffe&Rohstoffe
 define("FLEET_ACTION_SHIP", $config->get('market_ship_action_ship'));
 
-// Maximal Flugzeit
-define("FLIGHT_TIME_MAX", $config->param2Int('market_ship_flight_time'));
-
 // Zeit in stunden, wie lange die auktion nach ablauf noch zu sehen ist
 define("AUCTION_DELAY_TIME", $config->getInt('market_auction_delay_time'));
 
