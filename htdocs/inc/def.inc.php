@@ -50,9 +50,6 @@ define("USER_INACTIVE_SHOW", $config->getInt('user_inactive_days'));
 // Zeit bis "Inaktiv" Status Long (atm 14 Tage)
 define("USER_INACTIVE_LONG", $config->param2Int('user_inactive_days'));
 
-// UNIX-Time (last user action long -14d)
-define("USER_INACTIVE_TIME_LONG", time() - (24 * 3600 * USER_INACTIVE_LONG));
-
 //
 // Universum
 //

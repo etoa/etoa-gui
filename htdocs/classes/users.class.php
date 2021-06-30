@@ -19,7 +19,8 @@ class Users
 
         $register_time = $now - (24 * 3600 * $config->param2Int('user_inactive_days'));        // Zeit nach der ein User gelöscht wird wenn er noch 0 Punkte hat
         $online_time = $now - (24 * 3600 * $config->param1Int('user_inactive_days'));    // Zeit nach der ein User normalerweise gelöscht wird
-        $inactive_time = $now - (24 * 3600 * USER_INACTIVE_TIME_LONG);
+        $user_inactive_time_long = time() - (24 * 3600 * $config->param2Int('user_inactive_days'));
+        $inactive_time = $now - (24 * 3600 * $user_inactive_time_long);
 
         $res =	dbquery("
             SELECT
@@ -98,7 +99,6 @@ die Spielleitung";
 
         $register_time = time() - (24 * 3600 * $config->param2Int('user_inactive_days'));        // Zeit nach der ein User gelöscht wird wenn er noch 0 Punkte hat
         $online_time = time() - (24 * 3600 * $config->param1Int('user_inactive_days'));    // Zeit nach der ein User normalerweise gelöscht wird
-        $inactive_time = time() - (24 * 3600 * USER_INACTIVE_TIME_LONG);
 
         $res =	dbquery("
             SELECT
