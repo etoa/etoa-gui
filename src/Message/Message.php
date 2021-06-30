@@ -13,6 +13,10 @@ class Message
     public int $timestamp;
     public string $subject;
     public string $text;
+    public bool $read;
+    public bool $deleted;
+    public bool $massMail;
+    public bool $archived;
 
     public static function createFromArray(array $data): Message
     {
@@ -25,6 +29,10 @@ class Message
         $message->timestamp = (int) $data['message_timestamp'];
         $message->subject = $data['subject'];
         $message->text = $data['text'];
+        $message->read = $data['message_read'] == 1;
+        $message->deleted = $data['message_deleted'] == 1;
+        $message->massMail = $data['message_massmail'] == 1;
+        $message->archived = $data['message_archived'] == 1;
 
         return $message;
     }

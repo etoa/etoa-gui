@@ -16,7 +16,7 @@ if (($_GET['activateupdate'] ?? null) == 1) {
 // Cron configuration
 $cronjob = null;
 $crontabUser = null;
-if (UNIX) {
+if (isUnixOS()) {
     $scriptname = dirname(realpath(__DIR__."/../../"))."/bin/cronjob.php";
     $cronjob = '* * * * * ' . $scriptname;
     $crontabUser = trim(shell_exec('id'));

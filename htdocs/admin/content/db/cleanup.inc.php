@@ -3,6 +3,9 @@
 use EtoA\Admin\AdminSessionManager;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
+use EtoA\Message\MessageRepository;
+use EtoA\Message\MessageService;
+use EtoA\Message\ReportRepository;
 use EtoA\Ranking\PointsService;
 use EtoA\User\UserSessionManager;
 
@@ -18,21 +21,31 @@ $sessionManager = $app['etoa.admin.session.manager'];
 /** @var PointsService */
 $pointsService = $app['etoa.rankings.points.service'];
 
+/** @var MessageService */
+$messageService = $app[MessageService::class];
+
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
+
+/** @var MessageRepository */
+$messageRepository = $app[MessageRepository::class];
+
+/** @var ReportRepository */
+$reportRepository = $app[ReportRepository::class];
 
 echo '<h2>Clean-Up</h2>';
 
 if (isset($_POST['submit_cleanup_selected']) || isset($_POST['submit_cleanup_all'])) {
-	runCleanup($userSessionManager, $sessionManager, $ticketRepo, $pointsService);
+	runCleanup($userSessionManager, $sessionManager, $ticketRepo, $pointsService, $messageService);
 }
-cleanupOverView($ticketRepo, $config);
+cleanupOverView($ticketRepo, $config, $messageRepository, $reportRepository);
 
 function runCleanup(
     UserSessionManager $userSessionManager,
 	AdminSessionManager $sessionManager,
 	TicketRepository $ticketRepo,
-    PointsService $pointsService
+    PointsService $pointsService,
+    MessageService $messageService
 ) {
 	echo "Clean-Up wird durchgeführt...<br/>";
 	$all = isset($_POST['submit_cleanup_all']) ? true : false;
@@ -52,10 +65,11 @@ function runCleanup(
 
 	/* Message cleanup */
 	if ((isset($_POST['cl_msg']) && $_POST['cl_msg'] == 1) || $all) {
-		if ($_POST['only_deleted'] == 1)
-			$nr = Message::removeOld($_POST['message_timestamp_deleted'], 1);
-		else
-			$nr = Message::removeOld($_POST['message_timestamp']);
+		if ($_POST['only_deleted'] == 1) {
+			$nr = $messageService->removeOld((int) $_POST['message_timestamp_deleted'], true);
+        } else {
+			$nr = $messageService->removeOld((int) $_POST['message_timestamp']);
+        }
 		echo $nr . " Nachrichten wurden gelöscht!<br/>";
 	}
 
@@ -356,8 +370,12 @@ function runCleanup(
 	echo "Clean-Up fertig!<br/><br/>";
 }
 
-function cleanupOverView(TicketRepository $ticketRepo, ConfigurationService $config)
-{
+function cleanupOverView(
+    TicketRepository $ticketRepo,
+    ConfigurationService $config,
+    MessageRepository $messageRepository,
+    ReportRepository $reportRepository
+): void {
 	global $page;
 	global $sub;
 
@@ -365,14 +383,6 @@ function cleanupOverView(TicketRepository $ticketRepo, ConfigurationService $con
 
 	/* Messages */
 	echo '<fieldset><legend><input type="checkbox" value="1" name="cl_msg" /> Nachrichten</legend>';
-	$tblcnt = mysql_fetch_row(dbquery("
-	SELECT
-		COUNT(message_id)
-	FROM
-		messages
-	WHERE
-		message_archived=0
-	;"));
 	echo '<input type="radio" name="only_deleted" value="0" /><b>Nachrichten löschen:</b> ';
 	echo "Älter als <select name=\"message_timestamp\">";
 	$days = array(1, 7, 14, 21, 28);
@@ -382,15 +392,8 @@ function cleanupOverView(TicketRepository $ticketRepo, ConfigurationService $con
 	foreach ($days as $ds) {
 		echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $config->getInt('messages_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
 	}
-	echo "</select> (" . nf($tblcnt[0]) . " total).<br/>";
-	$tblcnt = mysql_fetch_row(dbquery("
-	SELECT
-		COUNT(message_id)
-	FROM
-		messages
-	WHERE
-		message_deleted=1
-	;"));
+	echo "</select> (" . nf($messageRepository->countNotArchived()) . " total).<br/>";
+
 	echo '<input type="radio" name="only_deleted_reports" value="1" checked="checked" /> <b>Nur \'gelöschte\' Nachrichten löschen:</b> ';
 	echo 'Älter als <select name="message_timestamp_deleted">';
 	$days = array(7, 14, 21, 28);
@@ -401,19 +404,11 @@ function cleanupOverView(TicketRepository $ticketRepo, ConfigurationService $con
 	foreach ($days as $ds) {
 		echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $config->param1Int('messages_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
 	}
-	echo "</select> (" . nf($tblcnt[0]) . " total).";
+	echo "</select> (" . nf($messageRepository->countDeleted()) . " total).";
 	echo '</fieldset><br/>';
 
 	/* Reports */
 	echo '<fieldset><legend><input type="checkbox" value="1" name="cl_report" /> Berichte</legend>';
-	$tblcnt = mysql_fetch_row(dbquery("
-	SELECT
-		COUNT(id)
-	FROM
-		reports
-	WHERE
-		archived=0
-	;"));
 	echo '<input type="radio" name="only_deleted" value="0" /><b>Berichte löschen:</b> ';
 	echo "Älter als <select name=\"report_timestamp\">";
 	$days = array(1, 7, 14, 21, 28);
@@ -423,15 +418,8 @@ function cleanupOverView(TicketRepository $ticketRepo, ConfigurationService $con
 	foreach ($days as $ds) {
 		echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $config->param1Int('messages_threshold_days')  ? " selected=\"selected\"" : "") . " >" . $ds . " Tage</option>";
 	}
-	echo "</select> (" . nf($tblcnt[0]) . " total).<br/>";
-	$tblcnt = mysql_fetch_row(dbquery("
-	SELECT
-		COUNT(id)
-	FROM
-		reports
-	WHERE
-		deleted=1
-	;"));
+	echo "</select> (" . nf($reportRepository->countNotArchived()) . " total).<br/>";
+
 	echo '<input type="radio" name="only_deleted" value="1" checked="checked" /> <b>Nur \'gelöschte\' Berichte löschen:</b> ';
 	echo 'Älter als <select name="report_timestamp_deleted">';
 	$days = array(7, 14, 21, 28);
@@ -441,7 +429,7 @@ function cleanupOverView(TicketRepository $ticketRepo, ConfigurationService $con
 	foreach ($days as $ds) {
 		echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $config->param1Int('reports_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
 	}
-	echo "</select> (" . nf($tblcnt[0]) . " total).";
+	echo "</select> (" . nf($reportRepository->countDeleted()) . " total).";
 	echo '</fieldset><br/>';
 
 	// Logs

@@ -12,7 +12,7 @@ class PlanetTypeRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app['etoa.universe.planet_type.repository'];
+        $this->repository = $this->app[PlanetTypeRepository::class];
     }
 
     public function testGetPlanetTypeNames(): void

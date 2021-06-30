@@ -1,6 +1,10 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\CellRepository;
+use EtoA\Universe\EntityRepository;
+use EtoA\Universe\EntityType;
+use EtoA\Universe\StarRepository;
 
 include("image.inc.php");
 
@@ -8,6 +12,15 @@ define('IMG_DIR',"images/imagepacks/Discovery");
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
+
+/** @var CellRepository */
+$cellRepo = $app[CellRepository::class];
+
+/** @var EntityRepository */
+$entityRepo = $app[EntityRepository::class];
+
+/** @var StarRepository */
+$starRepo = $app[StarRepository::class];
 
 $sx_num = $config->param1Int('num_of_sectors');
 $sy_num = $config->param2Int('num_of_sectors');
@@ -37,7 +50,7 @@ $colBlue = imagecolorallocate($im,150,150,240);
 $colViolett = imagecolorallocate($im,200,0,200);
 $colRe = imagecolorallocate($im,200,0,200);
 
-$admin = isset($_SESSION['adminsession']) ? true : false;
+$admin = isset($s) && $s instanceof AdminSession;
 
 if (isset($_SESSION) || $admin)
 {
@@ -81,257 +94,162 @@ if (isset($_SESSION) || $admin)
         $persistentWormholeImage = imagecreatetruecolor(GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
         imagecopyresampled($persistentWormholeImage,$persistentWormholeImageSrc,0,0,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,imagesx($persistentWormholeImageSrc),imagesy($persistentWormholeImageSrc));
 
-    $unexploredImages = array();
-    for ($i=1;$i<7;$i++) {
-    $unexploredImageSrc = imagecreatefrompng(IMG_DIR."/unexplored/fog$i.png");
-    $unexploredImages[$i] = imagecreatetruecolor(GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
-        imagecopyresampled($unexploredImages[$i],$unexploredImageSrc,0,0,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,imagesx($unexploredImageSrc),imagesy($unexploredImageSrc));
-    }
+        $unexploredImages = array();
+        for ($i=1;$i<7;$i++) {
+            $unexploredImageSrc = imagecreatefrompng(IMG_DIR."/unexplored/fog$i.png");
+            $unexploredImages[$i] = imagecreatetruecolor(GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
+            imagecopyresampled($unexploredImages[$i],$unexploredImageSrc,0,0,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,imagesx($unexploredImageSrc),imagesy($unexploredImageSrc));
+        }
 
-    $fogborderImages = array();
-    for ($i=1;$i<16;$i++) {
-    $fogborderImageSrc = imagecreatefrompng(IMG_DIR."/unexplored/fogborder$i.png");
-    $fogborderImages[$i] = imagecreatetruecolor(GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
-        imagecopyresampled($fogborderImages[$i],$fogborderImageSrc,0,0,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,imagesx($fogborderImageSrc),imagesy($fogborderImageSrc));
-    }
+        $fogborderImages = array();
+        for ($i=1;$i<16;$i++) {
+            $fogborderImageSrc = imagecreatefrompng(IMG_DIR."/unexplored/fogborder$i.png");
+            $fogborderImages[$i] = imagecreatetruecolor(GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
+            imagecopyresampled($fogborderImages[$i],$fogborderImageSrc,0,0,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,imagesx($fogborderImageSrc),imagesy($fogborderImageSrc));
+        }
 
         if (isset($_GET['type']) && $_GET['type']=="alliance")
         {
-            $uid=$_SESSION['user_id'];
-            $res=dbquery("
-                        SELECT
-                            cells.sx,
-                            cells.cx,
-                            cells.sy,
-                            cells.cy,
-                            COUNT(planets.id) AS cnt
-                        FROM
-                            users as u
-                        INNER JOIN
-                            users as a
-                        ON
-                            a.user_alliance_id=u.user_alliance_id
-            AND u.user_alliance_id > 0
-                            AND u.user_id='$uid'
-                        INNER JOIN
-                            planets
-                        ON
-                            planets.planet_user_id=a.user_id
-                        INNER JOIn
-                            entities
-                        ON
-                            entities.id=planets.id
-                        INNER JOIN
-                            cells
-                        ON
-                            cells.id=entities.cell_id
-                        GROUP BY
-                            cells.id;
-            ");
             $col = [];
             for ($x=1;$x<=$p_num_max;$x++)
             {
                 $col[$x] = imagecolorallocate($im,105+(150/$p_num_max*$x),105+(150/$p_num_max*$x),0);
             }
-            while ($arr=mysql_fetch_array($res))
+            $cells = $cellRepo->getCellPopulationForUserAlliance((int) $_SESSION['user_id']);
+            foreach ($cells as $cell)
             {
-                $x = ((($arr['sx']-1)*$cx_num + $arr['cx']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-                $y = $h-$legendHeight+GALAXY_IMAGE_SCALE-((($arr['sy']-1)*$cy_num + $arr['cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-                imagefilledellipse ($im,$x,$y,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[$arr['cnt']]);
+                $x = ((($cell->sx - 1) * $cx_num + $cell->cx) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE / 2);
+                $y = $h - $legendHeight + GALAXY_IMAGE_SCALE - ((($cell->sy - 1) * $cy_num + $cell->cy) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE / 2);
+                imagefilledellipse($im, $x, $y, GALAXY_MAP_DOT_RADIUS * 2, GALAXY_MAP_DOT_RADIUS * 2, $col[$cell->count]);
             }
-    if ($legend) {
-        imagestring($im,3,10,$h-$legendHeight+10,"Legende:    Viel    Mittel    Wenig",$colWhite);
-        imagefilledellipse ($im,80,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[$p_num_max]);
-        imagefilledellipse ($im,135,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[floor($p_num_max/2)]);
-        imagefilledellipse ($im,205,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[3]);
-    }
+            if ($legend) {
+                imagestring($im,3,10,$h-$legendHeight+10,"Legende:    Viel    Mittel    Wenig",$colWhite);
+                imagefilledellipse ($im,80,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[$p_num_max]);
+                imagefilledellipse ($im,135,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[floor($p_num_max/2)]);
+                imagefilledellipse ($im,205,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[3]);
+            }
         }
         elseif (isset($_GET['type']) && $_GET['type']=="own")
         {
-            $uid=$_SESSION['user_id'];
-            $res=dbquery("
-                        SELECT
-                            cells.sx,
-                            cells.cx,
-                            cells.sy,
-                            cells.cy,
-                            COUNT(planets.id) AS cnt
-                        FROM
-                            planets
-                        INNER JOIN
-                            entities
-                        ON
-                            entities.id=planets.id
-                            AND planets.planet_user_id='$uid'
-                        INNER JOIN
-                            cells
-                        ON
-                            cells.id=entities.cell_id
-                        GROUP BY
-                            cells.id;
-            ");
             $col = [];
             for ($x=1;$x<=$p_num_max;$x++)
             {
                 $col[$x] = imagecolorallocate($im,105+(150/$p_num_max*$x),105+(150/$p_num_max*$x),0);
             }
-            while ($arr=mysql_fetch_array($res))
+
+            $cells = $cellRepo->getCellPopulationForUser((int) $_SESSION['user_id']);
+            foreach ($cells as $cell)
             {
-                $x = ((($arr['sx']-1)*$cx_num + $arr['cx']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-                $y = $h-$legendHeight+GALAXY_IMAGE_SCALE-((($arr['sy']-1)*$cy_num + $arr['cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-                imagefilledellipse ($im,$x,$y,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[$arr['cnt']]);
+                $x = ((($cell->sx - 1) * $cx_num + $cell->cx) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE / 2);
+                $y = $h - $legendHeight + GALAXY_IMAGE_SCALE - ((($cell->sy - 1) * $cy_num + $cell->cy) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE / 2);
+                imagefilledellipse($im, $x, $y, GALAXY_MAP_DOT_RADIUS * 2, GALAXY_MAP_DOT_RADIUS * 2, $col[$cell->count]);
             }
-    if ($legend) {
-        imagestring($im,3,10,$h-$legendHeight+10,"Legende:    Viel    Mittel    Wenig",$colWhite);
-        imagefilledellipse ($im,80,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[$p_num_max]);
-        imagefilledellipse ($im,135,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[floor($p_num_max/2)]);
-        imagefilledellipse ($im,205,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[3]);
-    }
+            if ($legend) {
+                imagestring($im,3,10,$h-$legendHeight+10,"Legende:    Viel    Mittel    Wenig",$colWhite);
+                imagefilledellipse ($im,80,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[$p_num_max]);
+                imagefilledellipse ($im,135,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[floor($p_num_max/2)]);
+                imagefilledellipse ($im,205,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[3]);
+            }
         }
         elseif (isset($_GET['type']) && $_GET['type']=="populated")
         {
-            $res=dbquery("
-            SELECT
-                c.sx,
-                c.cx,
-                c.sy,
-                c.cy,
-                COUNT(p.id) AS cnt
-            FROM
-                cells c,
-                planets p,
-                entities e
-            WHERE
-                p.id=e.id
-                AND e.cell_id=c.id
-                AND p.planet_user_id>0
-            GROUP BY
-                e.cell_id
-            ");
             $col = [];
             for ($x=1;$x<=$p_num_max;$x++)
             {
                 $col[$x] = imagecolorallocate($im,(255/$p_num_max*$x),(255/$p_num_max*$x),0);
             }
-            while ($arr=mysql_fetch_assoc($res))
+            $cells = $cellRepo->getCellPopulation();
+            foreach ($cells as $cell)
             {
-                $x = ((($arr['sx']-1)*$cx_num + $arr['cx']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-                $y = $h-$legendHeight+GALAXY_IMAGE_SCALE-((($arr['sy']-1)*$cy_num + $arr['cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-                imagefilledellipse ($im,$x,$y,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[max(3,$arr['cnt'])]);
+                $x = ((($cell->sx - 1) * $cx_num + $cell->cx) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE / 2);
+                $y = $h - $legendHeight + GALAXY_IMAGE_SCALE - ((($cell->sy - 1) * $cy_num + $cell->cy) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE / 2);
+                imagefilledellipse($im, $x, $y, GALAXY_MAP_DOT_RADIUS * 2, GALAXY_MAP_DOT_RADIUS * 2, $col[max(3, $cell->count)]);
             }
-    if ($legend) {
-        imagestring($im,3,10,$h-$legendHeight+10,"Legende:    Viel    Mittel    Wenig",$colWhite);
-        imagefilledellipse ($im,80,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[$p_num_max]);
-        imagefilledellipse ($im,135,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[floor($p_num_max/2)]);
-        imagefilledellipse ($im,205,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[3]);
-    }
+            if ($legend) {
+                imagestring($im,3,10,$h-$legendHeight+10,"Legende:    Viel    Mittel    Wenig",$colWhite);
+                imagefilledellipse ($im,80,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[$p_num_max]);
+                imagefilledellipse ($im,135,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[floor($p_num_max/2)]);
+                imagefilledellipse ($im,205,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[3]);
+            }
         }
         else
         {
-            $res=dbquery("
-            SELECT
-                cells.sx,
-                cells.cx,
-                cells.sy,
-                cells.cy,
-                entities.id,
-                entities.code
-            FROM
-                cells
-            INNER JOIN
-                entities
-                ON entities.cell_id = cells.id
-                AND entities.pos=0
-            ");
-            if (mysql_num_rows($res)>0)
+            $entities = $entityRepo->findAllIncludeCell(0);
+            if (count($entities) > 0)
             {
-                while ($arr=mysql_fetch_array($res))
+                foreach ($entities as $entity)
                 {
-        $x = ((($arr['sx']-1)*$cx_num + $arr['cx']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-        $y = $h-$legendHeight+GALAXY_IMAGE_SCALE-((($arr['sy']-1)*$cy_num + $arr['cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-        $xe = $x-(GALAXY_IMAGE_SCALE/2);
-        $ye = $y-(GALAXY_IMAGE_SCALE/2);
+                    $x = ((($entity->sx - 1) * $cx_num + $entity->cx) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE / 2);
+                    $y = $h - $legendHeight + GALAXY_IMAGE_SCALE - ((($entity->sy - 1) * $cy_num + $entity->cy) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE / 2);
+                    $xe = $x - (GALAXY_IMAGE_SCALE / 2);
+                    $ye = $y - (GALAXY_IMAGE_SCALE / 2);
 
-        $sx = $arr['sx'];
-        $sy = $arr['sy'];
-        $xcoords = $arr['cx'];
-        $ycoords = $arr['cy'];
+                    $sx = $entity->sx;
+                    $sy = $entity->sy;
+                    $xcoords = $entity->cx;
+                    $ycoords = $entity->cy;
 
-        if (($admin && !isset($user)) || $user->discovered((($arr['sx'] - 1) * $cx_num) + $arr['cx'],(($arr['sy'] - 1) * $cy_num) + $arr['cy']))
-        {
-            if ($arr['code']=='s')
-            {
-            $sres = dbquery("
-            SELECT
-                type_id
-            FROM
-                stars
-            WHERE
-                id=".$arr['id']."
-            LIMIT 1;
-            ");
-            $sarr = mysql_fetch_row($sres);
-            $starImageSrc = imagecreatefrompng(IMG_DIR."/stars/star".$sarr[0]."_small.png");
-            imagecopyresampled($im,$starImageSrc,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,imagesx($starImageSrc),imagesy($starImageSrc));
-            }
-            elseif ($arr['code']=='w')
-            {
-            $wh = new Wormhole($arr['id']);
-            if ($wh->isPersistent())
-            {
-                imagecopyresampled($im,$persistentWormholeImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
-            } else {
-                imagecopyresampled($im,$wormholeImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
-            }
-            }
-            elseif ($arr['code']=='a')
-            {
-                imagecopyresampled($im,$asteroidImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
-            }
-            elseif ($arr['code']=='n')
-            {
-                imagecopyresampled($im,$nebulaImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
-            }
-            elseif ($arr['code']=='e' || $arr['code']=='m')
-            {
-                imagecopyresampled($im,$spaceImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
-            }
-            else
-            continue;
-        }
-        elseif (isset($user))
-        {
-            $fogCode = 0;
-            // Bottom
-            $fogCode += $ycoords > 1 && $user->discovered((($sx - 1) * $cx_num) + $xcoords  , (($sy - 1) * $cy_num) + $ycoords-1) ? 1 : 0;
-            // Left
-            $fogCode += $xcoords > 1 && $user->discovered((($sx - 1) * $cx_num) + $xcoords-1, (($sy - 1) * $cy_num) + $ycoords  ) ? 2 : 0;
-            // Right
-            $fogCode += $xcoords < $cx_num && $user->discovered((($sx - 1) * $cx_num) + $xcoords+1, (($sy - 1) * $cy_num) + $ycoords  ) ? 4 : 0;
-            // Top
-            $fogCode += $ycoords < $cy_num && $user->discovered((($sx - 1) * $cx_num) + $xcoords  , (($sy - 1) * $cy_num) + $ycoords+1) ? 8 : 0;
-            if ($fogCode > 0) {
-                imagecopyresampled($im,$fogborderImages[$fogCode],$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
-            } else {
-                imagecopyresampled($im,$unexploredImages[mt_rand(1,6)],$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
-            }
-        }
+                    if (($admin && !isset($user)) || $user->discovered((($entity->sx - 1) * $cx_num) + $entity->cx,(($entity->sy - 1) * $cy_num) + $entity->cy))
+                    {
+                        if ($entity->code == EntityType::STAR)
+                        {
+                            $star = $starRepo->find($entity->id);
+                            $starImageSrc = imagecreatefrompng(IMG_DIR."/stars/star".$star['type_id']."_small.png");
+                            imagecopyresampled($im,$starImageSrc,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,imagesx($starImageSrc),imagesy($starImageSrc));
+                        }
+                        elseif ($entity->code == EntityType::WORMHOLE)
+                        {
+                            $wh = new Wormhole($entity->id);
+                            if ($wh->isPersistent())
+                            {
+                                imagecopyresampled($im,$persistentWormholeImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
+                            } else {
+                                imagecopyresampled($im,$wormholeImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
+                            }
+                        }
+                        elseif ($entity->code == EntityType::ASTEROIDS)
+                        {
+                            imagecopyresampled($im,$asteroidImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
+                        }
+                        elseif ($entity->code == EntityType::NEBULA)
+                        {
+                            imagecopyresampled($im,$nebulaImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
+                        }
+                        elseif ($entity->code == EntityType::EMPTY_SPACE || $entity->code == EntityType::MARKET)
+                        {
+                            imagecopyresampled($im,$spaceImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
+                        }
+                        else {
+                            continue;
+                        }
+                    }
+                    elseif (isset($user))
+                    {
+                        $fogCode = 0;
+                        // Bottom
+                        $fogCode += $ycoords > 1 && $user->discovered((($sx - 1) * $cx_num) + $xcoords  , (($sy - 1) * $cy_num) + $ycoords-1) ? 1 : 0;
+                        // Left
+                        $fogCode += $xcoords > 1 && $user->discovered((($sx - 1) * $cx_num) + $xcoords-1, (($sy - 1) * $cy_num) + $ycoords  ) ? 2 : 0;
+                        // Right
+                        $fogCode += $xcoords < $cx_num && $user->discovered((($sx - 1) * $cx_num) + $xcoords+1, (($sy - 1) * $cy_num) + $ycoords  ) ? 4 : 0;
+                        // Top
+                        $fogCode += $ycoords < $cy_num && $user->discovered((($sx - 1) * $cx_num) + $xcoords  , (($sy - 1) * $cy_num) + $ycoords+1) ? 8 : 0;
+                        if ($fogCode > 0) {
+                            imagecopyresampled($im,$fogborderImages[$fogCode],$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
+                        } else {
+                            imagecopyresampled($im,$unexploredImages[mt_rand(1,6)],$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
+                        }
+                    }
                 }
             }
             else
             {
                 imagestring($im,3,20,20,"Universum existiert noch nicht!",$colWhite);
             }
-            /*
-            imagestring($im,3,10,$h-$legendHeight+10,"Legende:    Stern    Asteroidenfeld    Nebel    Wurmloch",$colWhite);
-            imagefilledellipse ($im,80,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$colWhite);
-            imagefilledellipse ($im,145,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$colGrey);
-            imagefilledellipse ($im,270,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$colOrange);
-            imagefilledellipse ($im,335,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$colViolett);
-            */
-    if ($legend) {
-        imagestring($im,3,10,$h-$legendHeight+10,"Galaxiekarte",$colWhite);
-    }
+
+            if ($legend) {
+                imagestring($im,3,10,$h-$legendHeight+10,"Galaxiekarte",$colWhite);
+            }
         }
 
         for ($x=($cx_num*GALAXY_IMAGE_SCALE);$x<$w;$x+=($cx_num*GALAXY_IMAGE_SCALE))

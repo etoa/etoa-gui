@@ -6,11 +6,6 @@ parameters:
 			path: bin/cronjob.php
 
 		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: htdocs/admin/content/cronjob.php
-
-		-
 			message: "#^Only booleans are allowed in an if condition, string\\|null given\\.$#"
 			count: 1
 			path: htdocs/admin/content/cronjob.php
@@ -21,19 +16,9 @@ parameters:
 			path: htdocs/admin/content/db/maintenance.inc.php
 
 		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: htdocs/admin/content/eventhandler.php
-
-		-
 			message: "#^Variable \\$trgstr might not be defined\\.$#"
 			count: 1
 			path: htdocs/admin/content/fleets.php
-
-		-
-			message: "#^Variable \\$planet_user_id might not be defined\\.$#"
-			count: 2
-			path: htdocs/admin/content/galaxy/edit.php
 
 		-
 			message: "#^Variable \\$sortOrder might not be defined\\.$#"
@@ -56,11 +41,6 @@ parameters:
 			path: htdocs/admin/content/logs.php
 
 		-
-			message: "#^Variable \\$checked might not be defined\\.$#"
-			count: 1
-			path: htdocs/admin/content/messages.php
-
-		-
 			message: "#^Variable \\$mail might not be defined\\.$#"
 			count: 1
 			path: htdocs/admin/content/messages.php
@@ -69,11 +49,6 @@ parameters:
 			message: "#^Variable \\$reply might not be defined\\.$#"
 			count: 1
 			path: htdocs/admin/content/messages.php
-
-		-
-			message: "#^Ternary operator condition is always true\\.$#"
-			count: 2
-			path: htdocs/admin/content/overview.php
 
 		-
 			message: "#^Variable \\$iparr might not be defined\\.$#"
@@ -121,11 +96,6 @@ parameters:
 			path: htdocs/admin/inc/xajax_admin.inc.php
 
 		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: htdocs/admin/index.php
-
-		-
 			message: "#^Call to an undefined method BuildList\\:\\:getBuildTime\\(\\)\\.$#"
 			count: 1
 			path: htdocs/classes/buildlist.class.php
@@ -141,44 +111,14 @@ parameters:
 			path: htdocs/classes/buildlistitem.class.php
 
 		-
-			message: "#^Left side of && is always false\\.$#"
-			count: 2
-			path: htdocs/classes/dbmanager.class.php
-
-		-
-			message: "#^Left side of && is always true\\.$#"
-			count: 2
-			path: htdocs/classes/dbmanager.class.php
-
-		-
-			message: "#^Negated boolean expression is always false\\.$#"
-			count: 2
-			path: htdocs/classes/dbmanager.class.php
-
-		-
 			message: "#^Only booleans are allowed in an if condition, string\\|null given\\.$#"
 			count: 2
-			path: htdocs/classes/dbmanager.class.php
-
-		-
-			message: "#^Ternary operator condition is always false\\.$#"
-			count: 3
 			path: htdocs/classes/dbmanager.class.php
 
 		-
 			message: "#^Right side of \\|\\| is always true\\.$#"
 			count: 1
 			path: htdocs/classes/fleetlaunch.class.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: htdocs/classes/imageupload.class.php
-
-		-
-			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: htdocs/classes/mutex.class.php
 
 		-
 			message: "#^Variable \\$x might not be defined\\.$#"
@@ -311,16 +251,6 @@ parameters:
 			path: htdocs/content/market/new.php
 
 		-
-			message: "#^Variable \\$marr might not be defined\\.$#"
-			count: 1
-			path: htdocs/content/messages/new.php
-
-		-
-			message: "#^Variable \\$msgcreatpreview might not be defined\\.$#"
-			count: 1
-			path: htdocs/content/messages/new.php
-
-		-
 			message: "#^Variable \\$heal_tech_level might not be defined\\.$#"
 			count: 2
 			path: htdocs/content/planetoverview.php
@@ -406,23 +336,18 @@ parameters:
 			path: htdocs/inc/functions.inc.php
 
 		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: htdocs/inc/functions.inc.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
-			count: 1
-			path: htdocs/inc/functions.inc.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
 			path: htdocs/inc/functions.inc.php
 
 		-
 			message: "#^Variable variables are not allowed\\.$#"
 			count: 2
+			path: htdocs/inc/functions.inc.php
+
+		-
+			message: "#^Construct empty\\(\\) is not allowed. Use more strict comparison\\.$#"
+			count: 1
 			path: htdocs/inc/functions.inc.php
 
 		-

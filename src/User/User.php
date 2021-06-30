@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace EtoA\User;
 
@@ -139,5 +141,10 @@ class User
         $this->verificationKey = $data['verification_key'];
         $this->npc = (int) $data['npc'];
         $this->userChangedMainPlanet = (bool) $data['user_changed_main_planet'];
+    }
+
+    public function getEmailAddressWithDisplayName(): string
+    {
+        return $this->nick . "<" . $this->email . ">";
     }
 }

@@ -55,18 +55,6 @@ function dbQuerySave($query, $params=array()) {
     return DBManager::getInstance()->safeQuery($query, $params);
 }
 
-function startTransaction() {
-    dbquery("START TRANSACTION;");
-}
-
-function commitTransaction() {
-    dbquery("COMMIT;");
-}
-
-function rollbackTransaction() {
-    dbquery("ROLLBACK;");
-}
-
 /**
 * User-Nick via User-Id auslesen
 */
@@ -1714,28 +1702,42 @@ function rrmdir($dir) {
 * Returns true if the debug mode is enabled
 * by checking the existence of the file config/debug
 */
-function isDebugEnabled() {
+function isDebugEnabled(): bool
+{
     return file_exists(RELATIVE_ROOT.'config/debug');
 }
 
 /**
 * Returns true if script is run on command line
 */
-function isCLI() {
+function isCLI(): bool
+{
     return php_sapi_name() === 'cli';
+}
+
+function isUnixOS(): bool
+{
+    return defined('POSIX_F_OK');
+}
+
+function isWindowsOS(): bool
+{
+    return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
 }
 
 /**
 * Returns true if the specified unix command exists
 */
-function unix_command_exists($cmd) {
-    if (UNIX) {
+function unix_command_exists(string $cmd): bool
+{
+    if (isUnixOS()) {
         return (bool) shell_exec("which $cmd 2>/dev/null");
     }
     return false;
 }
 
-function getAbsPath($path) {
+function getAbsPath(string $path): string
+{
     return (substr($path, 0, 1) != "/" ? realpath(RELATIVE_ROOT).'/' : '').$path;
 }
 
@@ -1763,4 +1765,57 @@ function stripBBCode($text_to_search)
 function collect(array $data): ArrayCollection
 {
     return new ArrayCollection($data);
+}
+
+if (! function_exists('blank')) {
+    /**
+     * Determine if the given value is "blank".
+     *
+     * @param  mixed  $value
+     * @return bool
+     * @see https://github.com/illuminate/support/blob/master/helpers.php
+     */
+    function blank($value)
+    {
+        if (is_null($value)) {
+            return true;
+        }
+
+        if (is_string($value)) {
+            return trim($value) === '';
+        }
+
+        if (is_numeric($value) || is_bool($value)) {
+            return false;
+        }
+
+        if ($value instanceof Countable) {
+            return count($value) === 0;
+        }
+
+        return empty($value);
+    }
+}
+
+if (! function_exists('filled')) {
+    /**
+     * Determine if a value is "filled".
+     *
+     * @param  mixed  $value
+     * @return bool
+     * @see https://github.com/illuminate/support/blob/master/helpers.php
+     */
+    function filled($value)
+    {
+        return ! blank($value);
+    }
+}
+
+function flatten(array $array): array
+{
+    $return = array();
+    array_walk_recursive($array, function ($a) use (&$return): void {
+        $return[] = $a;
+    });
+    return $return;
 }

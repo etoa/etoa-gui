@@ -103,6 +103,15 @@ class UserRepository extends AbstractRepository
             ->fetchAllKeyValue();
     }
 
+    public function resetDiscoveryMask(): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('discoverymask', "''")
+            ->set('user_setup', (string) 0)
+            ->execute();
+    }
+
     public function getUser(int $userId): ?User
     {
         $data = $this->createQueryBuilder()
@@ -114,5 +123,25 @@ class UserRepository extends AbstractRepository
             ->fetchAssociative();
 
         return $data !== false ? new User($data) : null;
+    }
+
+    /**
+     * @return array<int,string>
+     */
+    public function getEmailAddressesWithDisplayName(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('user_id', 'user_nick', 'user_email')
+            ->from('users')
+            ->orderBy('user_nick')
+            ->execute()
+            ->fetchAllAssociative();
+
+        $recipients = [];
+        foreach ($data as $item) {
+            $recipients[(int) $item['user_id']] = $item['user_nick']."<".$item['user_email'].">";
+        }
+
+        return $recipients;
     }
 }

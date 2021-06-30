@@ -1267,10 +1267,21 @@
 
 						// bugfix - check for alliance added by river
 						if ($form['fleet_action'] == "alliance" && $fleet->getLeader() == 0 && $fleet->owner->alliance && count($form['msgUser']) > 0) {
+
+                            /** @var \EtoA\Message\MessageRepository $messageRepository */
+                            $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+
 							$subject = "Allianzangriff (" . $fleet->targetEntity . ")";
 							$text = "[b]Angriffsdaten:[/b][table][tr][td]Flottenkennzeichen:[/td][td]" . $fleet->owner->alliance->tag . "-" . $fid . "[/td][/tr][tr][td]Flottenleader:[/td][td]" . $fleet->owner->nick . "[/td][/tr][tr][td]Zielplanet:[/td][td]" . $fleet->targetEntity . "[/td][/tr][tr][td]Ankunftszeit:[/td][td]" . date("d.m.y, H:i:s", $fleet->landTime) . "[/td][/tr][/table]" . $form['message_text'];
 							foreach ($form['msgUser'] as $uid) {
-								Message::sendFromUserToUser($fleet->ownerId(), $uid, $subject, $text, 6, $fid);
+								$messageRepository->sendFromUserToUser(
+                                    (int) $fleet->ownerId(),
+                                    (int) $uid,
+                                    $subject,
+                                    $text,
+                                    6,
+                                    $fid
+                                );
 							}
 						}
 

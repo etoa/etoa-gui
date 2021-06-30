@@ -9,7 +9,7 @@ class Planet
     public bool $mainPlanet;
     public int $userChanged;
     public int $lastUserId;
-    public string $name;
+    public ?string $name;
     public int $typeId;
     public int $fields;
     public int $fieldsExtra;
@@ -49,7 +49,7 @@ class Planet
     public int $wfPlastic;
     public float $people;
     public int $peoplePlace;
-    public string $description;
+    public ?string $description;
     public int $invadedBy;
 
     public function __construct(array $data)

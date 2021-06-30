@@ -2,6 +2,8 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Text\TextRepository;
+use EtoA\Universe\PlanetTypeRepository;
+use EtoA\Universe\SolarTypeRepository;
 
 /** @var TextRepository */
 $textRepo = $app['etoa.text.repository'];
@@ -149,8 +151,9 @@ elseif ($mode=="checkplanet")
     </tr>
     </table>";
     tableStart("Filter",300);
-    /** @var \EtoA\Universe\SolarTypeRepository $solarTypeRepository */
-    $solarTypeRepository = $app['etoa.universe.solar_type.repository'];
+
+    /** @var SolarTypeRepository  */
+    $solarTypeRepository = $app[SolarTypeRepository::class];
     $solarTypeNames = $solarTypeRepository->getSolarTypeNames();
     echo "<tr>
         <th>Sonnentyp:</th>
@@ -174,8 +177,9 @@ elseif ($mode=="checkplanet")
         <th>Planettyp:</th>
         <td><select name=\"filter_planet_id\" id=\"filter_planet_id\">
         <option value=\"0\">Bitte wählen...</option>";
-    /** @var \EtoA\Universe\PlanetTypeRepository $planetTypeRepository */
-    $planetTypeRepository = $app['etoa.universe.planet_type.repository'];
+
+    /** @var PlanetTypeRepository */
+    $planetTypeRepository = $app[PlanetTypeRepository::class];
     $planetTypeNames = $planetTypeRepository->getPlanetTypeNames();
     foreach ($planetTypeNames as $planetTypeId => $planetTypeName) {
         $selected = 0;

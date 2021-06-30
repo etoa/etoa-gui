@@ -26,7 +26,7 @@ class TicketServiceTest extends AbstractDbTestCase
 
         $this->repository = $this->app['etoa.help.ticket.repository'];
         $this->service = $this->app['etoa.help.ticket.service'];
-        $this->userMessageRepository = $this->app['etoa.user.message.repository'];
+        $this->userMessageRepository = $this->app[MessageRepository::class];
     }
 
     public function testCreate(): void
