@@ -179,7 +179,7 @@ class AllianceManagementService
         $this->applicationRepository->removeForAllianceAndUser($allianceId, $userId);
     }
 
-    public function addMember(int $allianceId, int $userId, ?string $applicationAnswerText): bool
+    public function addMember(int $allianceId, int $userId, ?string $applicationAnswerText = null): bool
     {
         if ($this->repository->hasUser($allianceId, $userId)) {
             return false;
