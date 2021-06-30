@@ -61,9 +61,6 @@ define("FLOOD_CONTROL", $config->getInt('msg_flood_control'));    // Wartezeit b
 // Spezialiasten
 //
 
-// Minimal Punkte für Spezialist (VERALTET)
-define("SPECIALIST_MIN_POINTS_REQ", $config->param2Int('specialistconfig'));
-
 // Maximale Kostensteigerung
 define('SPECIALIST_MAX_COSTS_FACTOR', $config->param1Float('specialistconfig'));
 
