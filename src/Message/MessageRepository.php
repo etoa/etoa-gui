@@ -77,8 +77,6 @@ class MessageRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return collect($data)
-            ->map(fn ($arr) => Message::createFromArray($arr))
-            ->toArray();
+        return array_map(fn ($arr) => Message::createFromArray($arr), $data);
     }
 }
