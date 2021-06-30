@@ -9,22 +9,6 @@ $runtimeDataStore = $app['etoa.runtime.datastore'];
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
 
-/***********************************/
-/* Design, Layout, Allgmeine Pfade */
-/***********************************/
-
-//
-// Layout
-//
-
-/****************************/
-/* Allgemeine Einstellungen */
-/****************************/
-
-//
-// Paswort und Nicklänge
-//
-
 // Minimale Passwortlänge
 define("PASSWORD_MINLENGHT", $config->getInt('password_minlength'));
 
@@ -33,10 +17,6 @@ define("NICK_MINLENGHT", $config->param1Int('nick_length'));
 
 // Maximale Nicklänge
 define("NICK_MAXLENGHT", $config->param2Int('nick_length'));
-
-//
-// Inaktive & Urlaubsmodus
-//
 
 // Minimale Umode-Dauer
 define("MIN_UMOD_TIME", $config->getInt('hmode_days'));
@@ -50,24 +30,12 @@ define("USER_INACTIVE_SHOW", $config->getInt('user_inactive_days'));
 // Zeit bis "Inaktiv" Status Long (atm 14 Tage)
 define("USER_INACTIVE_LONG", $config->param2Int('user_inactive_days'));
 
-//
-// Universum
-//
-
 // Nachrichten
 define("FLOOD_CONTROL", $config->getInt('msg_flood_control'));    // Wartezeit bis zur nächsten Nachricht
-
-//
-// Spezialiasten
-//
 
 // Kriegsdauer
 define("WAR_DURATION", 3600 * $config->getInt('alliance_war_time'));
 define("PEACE_DURATION", 3600 * $config->param1Int('alliance_war_time'));
-
-/*********/
-/* Zeit  */
-/*********/
 
 // Allgegenwertiger Faktor in allen build_times
 define("GLOBAL_TIME", $config->getInt('global_time'));
@@ -93,30 +61,14 @@ define("FLEET_FACTOR_S", $config->getFloat('flight_start_time'));
 // Landezeit Faktor
 define("FLEET_FACTOR_L", $config->getFloat('flight_land_time'));
 
-/*************************/
-/* Flotten & Kampfsystem */
-/*************************/
-
-//
-// Invasion
-//
-
 // = true/1 um aktive user zu invasieren
 define("INVADE_ACTIVE_USER", $config->getBoolean('invade_active_users'));
-
-//
-// Anfängerschutz
-//
 
 // Absolute Puntktegrenze
 define("USER_ATTACK_MIN_POINTS", $config->getInt('user_attack_min_points'));
 
 // Prozentualer Punkteunterschied
 define("USER_ATTACK_PERCENTAGE", $config->getFloat('user_attack_percentage'));
-
-/*********/
-/* Markt */
-/*********/
 
 // Aktion beim versenden von Rohstoffen
 define("FLEET_ACTION_RESS", $config->get('market_ship_action_ress'));
