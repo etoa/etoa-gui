@@ -12,7 +12,7 @@ class SolarTypeRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app['etoa.universe.solar_type.repository'];
+        $this->repository = $this->app[SolarTypeRepository::class];
     }
 
     public function testGetSolarTypeNames(): void

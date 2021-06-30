@@ -57,7 +57,7 @@ if ($sub == "offline") {
     systemInfoView($databaseManager, $twig);
 } else {
     /** @var CellRepository */
-    $universeCellRepo = $app['etoa.universe.cell.repository'];
+    $universeCellRepo = $app[CellRepository::class];
 
     /** @var TicketRepository */
     $ticketRepo = $app['etoa.help.ticket.repository'];

@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\EntityType;
 
 /**
 * Abstract class for all space entities
@@ -290,23 +291,23 @@ abstract class Entity
     {
         switch ($type)
         {
-            case 's':
+            case EntityType::STAR:
                 return new Star($id);
-            case 'p':
+            case EntityType::PLANET:
                 return Planet::getById($id);
-            case 'a':
+            case EntityType::ASTEROIDS:
                 return new AsteroidField($id);
-            case 'n':
+            case EntityType::NEBULA:
                 return new Nebula($id);
-            case 'w':
+            case EntityType::WORMHOLE:
                 return new Wormhole($id);
-            case 'e':
+            case EntityType::EMPTY_SPACE:
                 return new EmptySpace($id);
-            case 'm':
+            case EntityType::MARKET:
                 return new Market($id);
-            case 'u':
+            case EntityType::UNEXPLORED:
                 return new UnExplored($id);
-            case 'x':
+            case EntityType::ALLIANCE_MARKET:
                 return new Allianz($id);
             default:
                 return new UnknownEntity($id);
@@ -334,21 +335,21 @@ abstract class Entity
 
             switch ($type)
             {
-                case 's':
+                case EntityType::STAR:
                     return new Star($id);
-                case 'p':
+                case EntityType::PLANET:
                     return Planet::getById($id);
-                case 'a':
+                case EntityType::ASTEROIDS:
                     return new AsteroidField($id);
-                case 'n':
+                case EntityType::NEBULA:
                     return new Nebula($id);
-                case 'w':
+                case EntityType::WORMHOLE:
                     return new Wormhole($id);
-                case 'e':
+                case EntityType::EMPTY_SPACE:
                     return new EmptySpace($id);
-                case 'm':
+                case EntityType::MARKET:
                     return new Market($id);
-                case 'x':
+                case EntityType::ALLIANCE_MARKET:
                     return new Allianz($id);
                 default:
                     return new UnknownEntity($id);
@@ -388,21 +389,21 @@ abstract class Entity
 
             switch ($type)
             {
-                case 's':
+                case EntityType::STAR:
                     return new Star($id);
-                case 'p':
+                case EntityType::PLANET:
                     return Planet::getById($id);
-                case 'a':
+                case EntityType::ASTEROIDS:
                     return new AsteroidField($id);
-                case 'n':
+                case EntityType::NEBULA:
                     return new Nebula($id);
-                case 'w':
+                case EntityType::WORMHOLE:
                     return new Wormhole($id);
-                case 'e':
+                case EntityType::EMPTY_SPACE:
                     return new EmptySpace($id);
-                case 'm':
+                case EntityType::MARKET:
                     return new Market($id);
-                case 'x':
+                case EntityType::ALLIANCE_MARKET:
                     return new Allianz($id);
                 default:
                     return new UnknownEntity($id);
@@ -440,16 +441,16 @@ abstract class Entity
         return false;
     }
 
-    public static $entityColors = array(
-        's'=>'#ff0',
-        'p'=>'#0f0',
-        'a'=>'#ccc',
-        'n'=>'#FF00FF',
-        'w'=>'#8000FF',
-        'e'=>'#55f',
-        'x'=>'#fff',
-        'm'=>'#fff'
-    );
+    public static $entityColors = [
+        EntityType::STAR => '#ff0',
+        EntityType::PLANET => '#0f0',
+        EntityType::ASTEROIDS => '#ccc',
+        EntityType::NEBULA => '#FF00FF',
+        EntityType::WORMHOLE => '#8000FF',
+        EntityType::EMPTY_SPACE => '#55f',
+        EntityType::ALLIANCE_MARKET => '#fff',
+        EntityType::MARKET => '#fff'
+    ];
 
     public function detailLink()
     {

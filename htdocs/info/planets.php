@@ -1,6 +1,11 @@
 <?PHP
 
-	echo "<h2>Planeten</h2>";
+use EtoA\Universe\PlanetTypeRepository;
+
+/** @var PlanetTypeRepository */
+$planetTypeRepository = $app[PlanetTypeRepository::class];
+
+echo "<h2>Planeten</h2>";
 	HelpUtil::breadCrumbs(array("Planeten","planets"));
 
 	if (isset($_GET['order']) && ctype_alpha($_GET['order']))
@@ -29,10 +34,6 @@
 		$sort="ASC";
 	}
 
-    /** @var \EtoA\Universe\PlanetTypeRepository $planetTypeRepository */
-    $planetTypeRepository = $app['etoa.universe.planet_type.repository'];
-    $planetTypes = $planetTypeRepository->getPlanetTypes($order, $sort);
-
 		tableStart("Planetenboni");
 		echo "<tr><td class=\"tbltitle\" colspan=\"2\"><a href=\"?$link&amp;site=$site&amp;order=name\">Name</a></td>";
 		echo "<td class=\"tbltitle\"><a href=\"?$link&amp;site=$site&amp;order=f_metal\">".RES_METAL."</td>";
@@ -46,6 +47,7 @@
 		echo "<td class=\"tbltitle\"><a href=\"?$link&amp;site=$site&amp;order=f_buildtime\">Bauzeit</td>";
 		echo "</tr>";
 
+        $planetTypes = $planetTypeRepository->getPlanetTypes($order, $sort);
 		foreach ($planetTypes as $planetType) {
 			$x=mt_rand(1,5);
 
