@@ -795,7 +795,8 @@ echo '<div class="tabs" id="user_edit_tabs">
                 <tr>
                     <td class=\"tbltitle\" valign=\"top\">Bis</td>
                     <td class=\"tbldata\">";
-                        showDatepicker("user_blocked_to", $arr['user_blocked_from']>0 ? $arr['user_blocked_to'] : time()+USER_BLOCKED_DEFAULT_TIME, true);
+                        $userBlockedDefaultTime = 3600 * 24 * $config->get('user_ban_min_length');
+                        showDatepicker("user_blocked_to", $arr['user_blocked_from']>0 ? $arr['user_blocked_to'] : time()+$userBlockedDefaultTime, true);
                 echo "</td>
                 </tr>
                 <tr>
