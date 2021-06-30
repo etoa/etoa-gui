@@ -47,9 +47,6 @@ define("MAX_UMOD_TIME", $config->param1Int('hmode_days'));
 // Zeit bis "Inaktiv" Status (atm 7 Tage)
 define("USER_INACTIVE_SHOW", $config->getInt('user_inactive_days'));
 
-// UNIX-Time (last user action atm -7d)
-define("USER_INACTIVE_TIME", time() - (24 * 3600 * USER_INACTIVE_SHOW));
-
 // Zeit bis "Inaktiv" Status Long (atm 14 Tage)
 define("USER_INACTIVE_LONG", $config->param2Int('user_inactive_days'));
 
