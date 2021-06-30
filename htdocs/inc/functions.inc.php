@@ -55,18 +55,6 @@ function dbQuerySave($query, $params=array()) {
     return DBManager::getInstance()->safeQuery($query, $params);
 }
 
-function startTransaction() {
-    dbquery("START TRANSACTION;");
-}
-
-function commitTransaction() {
-    dbquery("COMMIT;");
-}
-
-function rollbackTransaction() {
-    dbquery("ROLLBACK;");
-}
-
 /**
 * User-Nick via User-Id auslesen
 */
@@ -1777,6 +1765,50 @@ function stripBBCode($text_to_search)
 function collect(array $data): ArrayCollection
 {
     return new ArrayCollection($data);
+}
+
+if (! function_exists('blank')) {
+    /**
+     * Determine if the given value is "blank".
+     *
+     * @param  mixed  $value
+     * @return bool
+     * @see https://github.com/illuminate/support/blob/master/helpers.php
+     */
+    function blank($value)
+    {
+        if (is_null($value)) {
+            return true;
+        }
+
+        if (is_string($value)) {
+            return trim($value) === '';
+        }
+
+        if (is_numeric($value) || is_bool($value)) {
+            return false;
+        }
+
+        if ($value instanceof Countable) {
+            return count($value) === 0;
+        }
+
+        return empty($value);
+    }
+}
+
+if (! function_exists('filled')) {
+    /**
+     * Determine if a value is "filled".
+     *
+     * @param  mixed  $value
+     * @return bool
+     * @see https://github.com/illuminate/support/blob/master/helpers.php
+     */
+    function filled($value)
+    {
+        return ! blank($value);
+    }
 }
 
 function flatten(array $array): array

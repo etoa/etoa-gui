@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace EtoA\User;
 
@@ -8,7 +10,7 @@ class User
     public string $name;
     public string $nick;
     public string $password;
-    public string $passwordTemp;
+    public ?string $passwordTemp;
     public int $lastLogin;
     public int $lastOnline;
     public int $loginTime;
@@ -21,7 +23,7 @@ class User
     public ?string $hostname;
     public int $blockedFrom;
     public int $blockedTo;
-    public string $banReason;
+    public ?string $banReason;
     public int $attackBans;
     public int $banAdminId;
     public int $hmodFrom;
@@ -39,20 +41,20 @@ class User
     public int $rankHighest;
     public int $allianceRankId;
     public int $registered;
-    public string $profileText;
+    public ?string $profileText;
     public bool $ghost;
     public bool $admin;
     public bool $chatAdmin;
     public int $visits;
     public ?string $avatar;
-    public string $signature;
+    public ?string $signature;
     public ?string $client;
     public int $resFromRaid;
     public int $resFromTf;
     public int $resFromAsteroid;
     public int $resFromNebula;
     public int $userMainPlanetChanged;
-    public string $profileBoardUrl;
+    public ?string $profileBoardUrl;
     public ?string $profileImage;
     public bool $profileImageCheck;
     public int $specialistId;
@@ -65,8 +67,8 @@ class User
     public int $discoveryMaskLastUpdated;
     public float $boosBonusProduction;
     public float $boosBonusBuilding;
-    public string $dualEmail;
-    public string $dualName;
+    public ?string $dualEmail;
+    public ?string $dualName;
     public ?string $verificationKey;
     public int $npc;
     public bool $userChangedMainPlanet;
@@ -139,5 +141,10 @@ class User
         $this->verificationKey = $data['verification_key'];
         $this->npc = (int) $data['npc'];
         $this->userChangedMainPlanet = (bool) $data['user_changed_main_planet'];
+    }
+
+    public function getEmailAddressWithDisplayName(): string
+    {
+        return $this->nick . "<" . $this->email . ">";
     }
 }

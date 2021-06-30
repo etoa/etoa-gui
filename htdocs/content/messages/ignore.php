@@ -1,146 +1,87 @@
-<?PHP
-	//////////////////////////////////////////////////
-	//		 	 ____    __           ______       			//
-	//			/\  _`\ /\ \__       /\  _  \      			//
-	//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
-	//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
-	//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
-	//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
-	//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
-	//																					 		//
-	//////////////////////////////////////////////////
-	// The Andromeda-Project-Browsergame				 		//
-	// Ein Massive-Multiplayer-Online-Spiel			 		//
-	// Programmiert von Nicolas Perrenoud				 		//
-	// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-	// www.etoa.ch | mail@etoa.ch								 		//
-	//////////////////////////////////////////////////
-	//
-	//
+<?php
 
-		// Ignorierung hinzufügen
-		if ((isset($_POST['submit_ignore']) && intval($_POST['target_id'])>0) || isset($_GET['add']) && intval($_GET['add'])>0)
-		{
-			if ($_GET['add'])
-			{
-				$_POST['target_id']=$_GET['add'];
-			}
-			dbquery("
-			DELETE FROM
-				message_ignore
-			WHERE
-				ignore_owner_id=".$cu->id."
-				AND ignore_target_id=".intval($_POST['target_id'])."
-			;");
-			dbquery("
-			INSERT INTO
-				message_ignore
-			(
-				ignore_owner_id,
-				ignore_target_id
-			)
-			VALUES
-			(
-			  ".$cu->id.",
-			  ".intval($_POST['target_id'])."
-			)
-			");
-			success_msg("Spieler wurde ignoriert!");
-		}
+use EtoA\Message\MessageIgnoreRepository;
+use EtoA\User\UserRepository;
+use Symfony\Component\HttpFoundation\Request;
 
+/** @var MessageIgnoreRepository */
+$messageIgnoreRepository = $app[MessageIgnoreRepository::class];
 
-		// Ignorierung löschen
-		if (isset($_GET['remove']) && intval($_GET['remove'])>0)
-		{
-			dbquery("
-			DELETE FROM
-				message_ignore
-			WHERE
-				ignore_owner_id=".$cu->id."
-				AND ignore_target_id=".intval($_GET['remove'])."
-			;");
-			success_msg("Spieler wurde von der Liste entfernt!");
-		}
+/** @var UserRepository */
+$userRepository = $app[UserRepository::class];
 
-		tableStart('Ignorierliste');
-		echo '<tr><th style="text-align:center;">Falls du von einem Benutzer belästigt wirst kannst du ihn hier ignorieren:</th></tr>';
-		$res=dbquery("SELECT
-			user_id,
-			user_nick
-		FROM
-			users
-		WHERE
-			user_id!=".$cu->id."
-		ORDER BY
-			user_nick");
-		if (mysql_num_rows($res)>0)
-		{
-			echo '<tr><td style="text-align:center;"><form action="?page='.$page.'&amp;mode='.$mode.'" method="post"><div>
-			<select name="target_id"><option value="0">Spieler wählen...</option>';
-			while ($arr=mysql_fetch_array($res))
-			{
-				echo '<option value="'.$arr['user_id'].'">'.$arr['user_nick'].'</option>';
-			}
-			echo '</select> <input type="submit" name="submit_ignore" value="Nachrichten dieses Spielers ignorieren" /></div></form></td>';
-		}
-		echo '</tr>';
-		tableEnd();
+/** @var Request */
+$request = Request::createFromGlobals();
 
-		// Spieler die man ignoriert
-		$res=dbquery("SELECT
-			user_id,
-			user_nick
-		FROM
-			message_ignore
-		INNER JOIN
-			users
-			ON ignore_target_id=user_id
-			AND ignore_owner_id=".$cu->id."
-		ORDER BY
-			user_nick");
-		if (mysql_num_rows($res)>0)
-		{
-			tableStart();
-			echo '<tr><th>Spieler</th><th>Aktionen</th></tr>';
-			while ($arr=mysql_fetch_array($res))
-			{
-				echo '<tr><td>'.$arr['user_nick'].'</td>
-				<td><a href="?page='.$page.'&amp;mode=new&amp;message_user_to='.$arr['user_id'].'">Nachricht</a>
-				<a href="?page=userinfo&amp;id='.$arr['user_id'].'">Profil</a>
-				<a href="?page='.$page.'&amp;mode='.$mode.'&amp;remove='.$arr['user_id'].'">Entfernen</a>
-				</td></tr>';
-			}
-			tableEnd();
-		}
-		else
-		{
-			error_msg('Keine ignorierten Spieler vorhanden!',1);
-		}
+// Ignorierung hinzufügen
+if (($request->request->has('submit_ignore') && $request->request->getInt('target_id') > 0)
+    || $request->query->getInt('add') > 0
+) {
+    if ($request->query->has('add')) {
+        $request->request->set('target_id', $request->query->getInt('add'));
+    }
 
-		// Spieler bei denen man ignoriert ist
-		$res=dbquery("SELECT
-			user_id,
-			user_nick
-		FROM
-			message_ignore
-		INNER JOIN
-			users
-			ON ignore_owner_id=user_id
-			AND ignore_target_id=".$cu->id."
-		ORDER BY
-			user_nick");
-		if (mysql_num_rows($res)>0)
-		{
-			echo '<br/><br/>Du wirst von folgenden Spielern ignoriert:<br/><br/>';
-			tableStart();
-			echo '<tr><th>Spieler</th><th>Aktionen</th></tr>';
-			while ($arr=mysql_fetch_array($res))
-			{
-				echo '<tr><td>'.$arr['user_nick'].'</td>
-				<td><a href="?page=userinfo&amp;id='.$arr['user_id'].'">Profil</a>
-				<a href="?page='.$page.'&amp;mode='.$mode.'&amp;add='.$arr['user_id'].'">Ebenfalls ignorieren</a>
-				</td></tr>';
-			}
-			tableEnd();
-		}
-?>
+    $messageIgnoreRepository->remove($cu->id, $request->request->getInt('target_id'));
+    $messageIgnoreRepository->add($cu->id, $request->request->getInt('target_id'));
+
+    success_msg("Spieler wurde ignoriert!");
+}
+
+// Ignorierung löschen
+if ($request->query->getInt('remove') > 0) {
+    $messageIgnoreRepository->remove($cu->id, $request->query->getInt('remove'));
+
+    success_msg("Spieler wurde von der Liste entfernt!");
+}
+
+$users = $userRepository->getUserNicknames();
+unset($users[$cu->id]);
+
+tableStart('Ignorierliste');
+echo '<tr><th style="text-align:center;">Falls du von einem Benutzer belästigt wirst kannst du ihn hier ignorieren:</th></tr>';
+if (count($users) > 0) {
+    echo '<tr><td style="text-align:center;"><form action="?page=' . $page . '&amp;mode=' . $mode . '" method="post"><div>
+    <select name="target_id"><option value="0">Spieler wählen...</option>';
+    foreach ($users as $userId => $userNick) {
+        echo '<option value="' . $userId . '">' . $userNick . '</option>';
+    }
+    echo '</select> <input type="submit" name="submit_ignore" value="Nachrichten dieses Spielers ignorieren" /></div></form></td>';
+}
+echo '</tr>';
+tableEnd();
+
+// Spieler die man ignoriert
+$targets = $messageIgnoreRepository->findForOwner($cu->id);
+if (count($targets) > 0) {
+    tableStart();
+    echo '<tr><th>Spieler</th><th>Aktionen</th></tr>';
+    foreach ($targets as $target) {
+        if (isset($users[$target])) {
+            echo '<tr><td>' . $users[$target] . '</td>
+            <td><a href="?page=' . $page . '&amp;mode=new&amp;message_user_to=' . $target . '">Nachricht</a>
+            <a href="?page=userinfo&amp;id=' . $target . '">Profil</a>
+            <a href="?page=' . $page . '&amp;mode=' . $mode . '&amp;remove=' . $target . '">Entfernen</a>
+            </td></tr>';
+        }
+    }
+    tableEnd();
+} else {
+    error_msg('Keine ignorierten Spieler vorhanden!', 1);
+}
+
+// Spieler bei denen man ignoriert ist
+$owners = $messageIgnoreRepository->findForTarget($cu->id);
+if (count($owners) > 0) {
+    echo '<br/><br/>Du wirst von folgenden Spielern ignoriert:<br/><br/>';
+    tableStart();
+    echo '<tr><th>Spieler</th><th>Aktionen</th></tr>';
+    foreach ($owners as $owner) {
+        if (isset($users[$owner])) {
+            echo '<tr><td>' . $users[$owner] . '</td>
+            <td><a href="?page=userinfo&amp;id=' . $owner . '">Profil</a>
+            <a href="?page=' . $page . '&amp;mode=' . $mode . '&amp;add=' . $owner . '">Ebenfalls ignorieren</a>
+            </td></tr>';
+        }
+    }
+    tableEnd();
+}

@@ -124,4 +124,24 @@ class UserRepository extends AbstractRepository
 
         return $data !== false ? new User($data) : null;
     }
+
+    /**
+     * @return array<int,string>
+     */
+    public function getEmailAddressesWithDisplayName(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('user_id', 'user_nick', 'user_email')
+            ->from('users')
+            ->orderBy('user_nick')
+            ->execute()
+            ->fetchAllAssociative();
+
+        $recipients = [];
+        foreach ($data as $item) {
+            $recipients[(int) $item['user_id']] = $item['user_nick']."<".$item['user_email'].">";
+        }
+
+        return $recipients;
+    }
 }

@@ -7,9 +7,6 @@ $xajax->register(XAJAX_FUNCTION,'getFlightTargetInfo');
 $xajax->register(XAJAX_FUNCTION,'getCryptoDistance');
 $xajax->register(XAJAX_FUNCTION,'formatNumbers');
 
-$xajax->register(XAJAX_FUNCTION,'sendMsg');
-
-
 //Listet gefundene User auf
 function searchUser($val,$field_id='user_nick',$box_id='citybox',$separator=";")
 {
@@ -416,62 +413,3 @@ function formatNumbers($field_id,$val,$format=0,$max)
 	ob_end_clean();
   return $objResponse;
 }
-
-function sendMsg($userString, $subject, $message)
-{
-    global $app;
-
-    /** @var \EtoA\User\UserRepository $userRepository */
-    $userRepository = $app['etoa.user.repository'];
-
-	 $objResponse = new xajaxResponse();
-
-	 $userArr = explode(";", $userString);
-	 $senderId = $_SESSION['user_id'];
-	 $out = '';
-	 foreach ($userArr as $userToNick)
-	 {
-		  $uid = $userRepository->getUserIdByNick($userToNick);
-		  if ($uid !== null) {
-			  // Prüfe Ignore
-			  $res = dbquery("
-					SELECT
-						  COUNT(ignore_id)
-					 FROM
-						  message_ignore
-					 WHERE
-						  ignore_owner_id=".$uid."
-						  AND ignore_target_id=".$senderId."
-					  LIMIT 1
-				  ;");
-			  $arr=mysql_fetch_row($res);
-			  if ($arr[0] == 0)
-			  {
-					//// Prüfe Titel
-					$check_subject = check_illegal_signs($subject);
-					if($check_subject=="")
-					{
-						 Message::sendFromUserToUser($senderId,$uid,$subject,$message);
-						 $out = "Nachricht wurde an <b>".$userToNick."</b> gesendet! ";
-					 }
-					 else
-					 {
-						  $out = "Du hast ein unerlaubtes Zeichen ( ".$check_subject." ) im Betreff!<br/>";
-					  }
-			 }
-			 else
-			 {
-				 $out = "Dieser Benutzer hat dich ignoriert, die Nachricht wurde nicht gesendet!<br/>";
-			 }
-		  }
-		  else
-		  {
-			  $out = "Der Benutzer <b>".$userToNick."</b> existiert nicht!<br/>";
-		  }
-	 }
-	 $objResponse->addScriptCall('bindings()');
-	$objResponse->append('info', "innerHTML", $out);
-
-	return $objResponse;
-}
-?>
