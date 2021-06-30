@@ -108,9 +108,6 @@ define("INVADE_ACTIVE_USER", $config->getBoolean('invade_active_users'));
 // Kampfsystem
 //
 
-// Ship ins Trümmerfeld
-define("SHIP_WF_PERCENT", $config->getFloat('ship_wf_percent'));
-
 // Chance-Faktor beim Bombardieren + Deaktivieren
 define("SHIP_BOMB_FACTOR", $config->getInt('ship_bomb_factor'));
 
