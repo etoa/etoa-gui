@@ -145,66 +145,12 @@ class UniverseGenerator
                 $this->createEmptySpace((int) $cell['id']);
             }
         }
+
         $output[] = "Universum erstellt, prüfe Wurmlöcher...";
+        $wormholeCount = $this->removeOddWormhole();
 
-        // Delete one wormhole if total count is odd
-        // Replace it with empty space
-        $numWormholes = $this->wormholeRepo->count();
-        if (fmod($numWormholes, 2) != 0) {
-            $output[] = "Ein Wurmloch ist zuviel, lösche es!";
-            $wormholeId = $this->wormholeRepo->getOneId();
-            if ($wormholeId !== null) {
-                $this->entityRepo->updateCode($wormholeId, EntityType::EMPTY_SPACE);
-                $this->wormholeRepo->remove($wormholeId);
-                $this->emptySpaceRepo->add($wormholeId);
-            }
-        }
-
-        //
-        // Wormhole-Linking
-        //
-
-        // Get all wormholes
-        $wormholes = [];
-        $persistentWormholes = [];
-        $allWormholes = $this->wormholeRepo->findAll();
-        $wormholeCount = count($allWormholes);
-        foreach ($allWormholes as $wormhole) {
-            if ($wormhole['persistent'] == 1) {
-                array_push($persistentWormholes, (int) $wormhole['id']);
-            } else {
-                array_push($wormholes, (int) $wormhole['id']);
-            }
-        }
-
-        // Shuffle wormholes
-        shuffle($wormholes);
-        shuffle($persistentWormholes);
-
-        // Reduce list of persistent wormholes if uneven
-        if (fmod(count($persistentWormholes), 2) != 0) {
-            $lastWormHole = array_pop($persistentWormholes);
-            $this->wormholeRepo->setPersistent($lastWormHole, false);
-            array_push($wormholes, $lastWormHole);
-        }
-
-        $newWormholes = [];
-        while (sizeof($wormholes) > 0) {
-            $newWormholes[array_shift($wormholes)] = array_pop($wormholes);
-        }
-        foreach ($newWormholes as $k => $v) {
-            $this->wormholeRepo->updateTarget($v, $k);
-            $this->wormholeRepo->updateTarget($k, $v);
-        }
-
-        $newPersistentWormholes = [];
-        while (sizeof($persistentWormholes) > 0) {
-            $newPersistentWormholes[array_shift($persistentWormholes)] = array_pop($persistentWormholes);
-        }
-        foreach ($newPersistentWormholes as $k => $v) {
-            $this->wormholeRepo->updateTarget($v, $k);
-            $this->wormholeRepo->updateTarget($k, $v);
-        }
+        $output[] = "Verknüpfe Wurmlöcher...";
+        $this->linkWormholes();
 
         $output[] = "Platziere Marktplatz...";
         $id = $this->entityRepo->findRandomId(EntityType::EMPTY_SPACE);
@@ -409,6 +355,65 @@ class UniverseGenerator
     {
         $id = $this->entityRepo->add($cellId, EntityType::EMPTY_SPACE, $pos);
         $this->emptySpaceRepo->add($id);
+    }
+
+    private function removeOddWormhole(): int
+    {
+        $numWormholes = $this->wormholeRepo->count();
+        if (fmod($numWormholes, 2) != 0) {
+            $output[] = "Ein Wurmloch ist zuviel, lösche es!";
+            $wormholeId = $this->wormholeRepo->getOneId();
+            if ($wormholeId !== null) {
+                $this->entityRepo->updateCode($wormholeId, EntityType::EMPTY_SPACE);
+                $this->wormholeRepo->remove($wormholeId);
+                $this->emptySpaceRepo->add($wormholeId);
+                $numWormholes--;
+            }
+        }
+        return $numWormholes;
+    }
+
+    private function linkWormholes(): void
+    {
+        $wormholes = [];
+        $persistentWormholes = [];
+
+        foreach ($this->wormholeRepo->findAll() as $wormhole) {
+            if ($wormhole['persistent'] == 1) {
+                array_push($persistentWormholes, (int) $wormhole['id']);
+            } else {
+                array_push($wormholes, (int) $wormhole['id']);
+            }
+        }
+
+        // Shuffle wormholes
+        shuffle($wormholes);
+        shuffle($persistentWormholes);
+
+        // Reduce list of persistent wormholes if uneven
+        if (fmod(count($persistentWormholes), 2) != 0) {
+            $lastWormHole = array_pop($persistentWormholes);
+            $this->wormholeRepo->setPersistent($lastWormHole, false);
+            array_push($wormholes, $lastWormHole);
+        }
+
+        $newWormholes = [];
+        while (sizeof($wormholes) > 0) {
+            $newWormholes[array_shift($wormholes)] = array_pop($wormholes);
+        }
+        foreach ($newWormholes as $k => $v) {
+            $this->wormholeRepo->updateTarget($v, $k);
+            $this->wormholeRepo->updateTarget($k, $v);
+        }
+
+        $newPersistentWormholes = [];
+        while (sizeof($persistentWormholes) > 0) {
+            $newPersistentWormholes[array_shift($persistentWormholes)] = array_pop($persistentWormholes);
+        }
+        foreach ($newPersistentWormholes as $k => $v) {
+            $this->wormholeRepo->updateTarget($v, $k);
+            $this->wormholeRepo->updateTarget($k, $v);
+        }
     }
 
     /**
