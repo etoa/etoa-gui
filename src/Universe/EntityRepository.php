@@ -42,7 +42,7 @@ class EntityRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    public function findIncludeCell(int $id): ?array
+    public function findIncludeCell(int $id): ?Entity
     {
         $data = $this->createQueryBuilder()
             ->select(
@@ -64,15 +64,19 @@ class EntityRepository extends AbstractRepository
             ->execute()
             ->fetchAssociative();
 
-        return $data !== false ? $data : null;
+        return $data !== false ? new Entity($data) : null;
     }
 
+    /**
+     * @return array<Entity>
+     */
     public function findAllIncludeCell(?int $pos = null): array
     {
         $qry = $this->createQueryBuilder()
             ->select(
                 'e.id',
                 'e.code',
+                'e.pos',
                 'c.id as cid',
                 'c.sx',
                 'c.cx',
@@ -87,8 +91,10 @@ class EntityRepository extends AbstractRepository
                 ->setParameter('pos', $pos);
         }
 
-        return $qry->execute()
+        $data = $qry->execute()
             ->fetchAllAssociative();
+
+        return array_map(fn (array $arr) => new Entity($arr), $data);
     }
 
     public function add(int $cellId, string $code, int $pos = 0): int

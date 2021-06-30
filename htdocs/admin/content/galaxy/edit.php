@@ -45,17 +45,17 @@ if ($id > 0)
     $entity = $entityRepo->findIncludeCell($id);
     if ($entity !== null)
     {
-        echo "<h2>Raumobjekt ".$entity['sx']."/".$entity['sy']." : ".$entity['cx']."/".$entity['cy']." : ".$entity['pos']." bearbeiten</h2>";
+        echo "<h2>Raumobjekt " . $entity->toString() . " bearbeiten</h2>";
         if ($id > 1) {
             echo button("&lt;&lt; Vorheriges Objekt","?page=$page&amp;sub=$sub&id=".($id-1)."");
         }
-        echo " &nbsp; Objekt ".$entity['id']." &nbsp; ";
+        echo " &nbsp; Objekt ".$entity->id." &nbsp; ";
         echo button("Nächstes Objekt &gt;&gt;","?page=$page&amp;sub=$sub&id=".($id+1)."")."<br/><br/>
-        ".button("Alle Objekte dieser Zelle/dieses Systems anzeigen","?page=$page".searchQueryUrl("cell_s:=:".$entity['sx']."_".$entity['sy'].";cell_c:=:".$entity['cx']."_".$entity['cy']))."
-        ".button("System dieses Objekts auf der Karte anzeigen","?page=$page&amp;sub=map&amp;cell=".$entity['cid']);
+        ".button("Alle Objekte dieser Zelle/dieses Systems anzeigen","?page=$page".searchQueryUrl("cell_s:=:".$entity->sx."_".$entity->sy.";cell_c:=:".$entity->cx."_".$entity->cy))."
+        ".button("System dieses Objekts auf der Karte anzeigen","?page=$page&amp;sub=map&amp;cell=".$entity->cellId);
         echo "<br/><br/>";
 
-        if ($entity['code']==EntityType::PLANET)
+        if ($entity->code == EntityType::PLANET)
         {
             if ($request->request->has('save'))
             {
@@ -152,7 +152,7 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
             $planet = $planetRepo->find($id);
 
             echo "<form action=\"?page=$page&sub=edit&id=".$id."\" method=\"post\" id=\"editform\">";
-            tableStart("<span style=\"color:".Entity::$entityColors[$entity['code']]."\">Planet</span>","auto");
+            tableStart("<span style=\"color:".Entity::$entityColors[$entity->code]."\">Planet</span>","auto");
 
 
             echo "<tr><th>Name</t>
@@ -341,7 +341,7 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
             echo "</p>";
             echo "</form>";
         }
-        elseif ($entity['code']==EntityType::STAR)
+        elseif ($entity->code == EntityType::STAR)
         {
             if ($request->request->has('save'))
             {
@@ -354,7 +354,7 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
             $star = $starRepo->find($id);
 
             echo "<form action=\"?page=$page&sub=edit&id=".$id."\" method=\"post\" id=\"editform\">";
-            tableStart("<span style=\"color:".Entity::$entityColors[$entity['code']]."\">Stern</span>","auto");
+            tableStart("<span style=\"color:".Entity::$entityColors[$entity->code]."\">Stern</span>","auto");
             echo "<tr><th>Name</th>
             <td><input type=\"text\" name=\"name\" value=\"".$star['name']."\" size=\"20\" maxlength=\"250\" /></td>";
             echo "<th>Typ</th>
@@ -379,7 +379,7 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
             echo "<input tabindex=\"28\" type=\"button\" value=\"Zurück zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=searchresults'\" /> ";
             echo "</form>";
         }
-        elseif ($entity['code']==EntityType::ASTEROIDS)
+        elseif ($entity->code == EntityType::ASTEROIDS)
         {
             if ($request->request->has('save'))
             {
@@ -411,7 +411,7 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
             $asteroid = $asteroidsRepo->find($id);
 
             echo "<form action=\"?page=$page&sub=edit&id=".$id."\" method=\"post\" id=\"editform\">";
-            tableStart("<span style=\"color:".Entity::$entityColors[$entity['code']]."\">Asteroidenfeld</span>","auto");
+            tableStart("<span style=\"color:".Entity::$entityColors[$entity->code]."\">Asteroidenfeld</span>","auto");
 
             echo "<tr><th>".RES_METAL."</th>
             <td><input type=\"text\" name=\"res_metal\" value=\"".intval($asteroid['res_metal'])."\" size=\"12\" maxlength=\"20\" /><br/>
@@ -441,7 +441,7 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
             echo "<input tabindex=\"28\" type=\"button\" value=\"Zurück zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=searchresults'\" /> ";
             echo "</form>";
         }
-        elseif ($entity['code']==EntityType::NEBULA)
+        elseif ($entity->code == EntityType::NEBULA)
         {
             if ($request->request->has('save'))
             {
@@ -473,7 +473,7 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
             $nebula = $nebulaRepo->find($id);
 
             echo "<form action=\"?page=$page&sub=edit&id=".$id."\" method=\"post\" id=\"editform\">";
-            tableStart("<span style=\"color:".Entity::$entityColors[$entity['code']]."\">Interstellarer Nebel</span>","auto");
+            tableStart("<span style=\"color:".Entity::$entityColors[$entity->code]."\">Interstellarer Nebel</span>","auto");
 
             echo "<tr><th>".RES_METAL."</th>
             <td><input type=\"text\" name=\"res_metal\" value=\"".intval($nebula['res_metal'])."\" size=\"12\" maxlength=\"20\" /><br/>
@@ -503,7 +503,7 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
             echo "<input tabindex=\"28\" type=\"button\" value=\"Zurück zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=searchresults'\" /> ";
             echo "</form>";
         }
-        elseif ($entity['code']==EntityType::WORMHOLE)
+        elseif ($entity->code == EntityType::WORMHOLE)
         {
             //Daten Speichern
             if ($request->request->has('save'))
@@ -521,7 +521,7 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
             $wormhole = $wormholeRepo->find($id);
 
             echo "<form action=\"?page=$page&sub=edit&id=".$id."\" method=\"post\" id=\"editform\">";
-            tableStart("<span style=\"color:".Entity::$entityColors[$entity['code']]."\">Wurmloch</span>","auto");
+            tableStart("<span style=\"color:".Entity::$entityColors[$entity->code]."\">Wurmloch</span>","auto");
             echo "<tr><th>Entstanden</th><td>".df($wormhole['changed'])."</td><tr/>";
             echo "<tr><th>Ziel</th>
             <td>";
@@ -539,12 +539,12 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
             echo "<input tabindex=\"28\" type=\"button\" value=\"Zurück zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=searchresults'\" /> ";
             echo "</form>";
         }
-        elseif ($entity['code']==EntityType::EMPTY_SPACE)
+        elseif ($entity->code == EntityType::EMPTY_SPACE)
         {
             $space = $emptySpaceRepo->find($id);
 
             echo "<form action=\"?page=$page&sub=edit&id=".$id."\" method=\"post\" id=\"editform\">";
-            tableStart("<span style=\"color:".Entity::$entityColors[$entity['code']]."\">Leerer Raum</span>","auto");
+            tableStart("<span style=\"color:".Entity::$entityColors[$entity->code]."\">Leerer Raum</span>","auto");
             echo "<tr><th>Zuletzt besucht</th>
             <td>";
             echo ($space['lastvisited'] > 0) ? df($space['lastvisited']) : "Nie";
@@ -558,7 +558,7 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
         }
         else
         {
-            error_msg("Für diesen Entitätstyp (".$entity['code'].") existiert noch kein Bearbeitungsformular!");
+            error_msg("Für diesen Entitätstyp (".$entity->code.") existiert noch kein Bearbeitungsformular!");
             echo "<br/><br/><input type=\"button\" value=\"Zurück zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=searchresults'\" /> ";
         }
     }

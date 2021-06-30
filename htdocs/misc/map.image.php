@@ -179,27 +179,27 @@ if (isset($_SESSION) || $admin)
             {
                 foreach ($entities as $entity)
                 {
-                    $x = ((($entity['sx']-1)*$cx_num + $entity['cx']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-                    $y = $h-$legendHeight+GALAXY_IMAGE_SCALE-((($entity['sy']-1)*$cy_num + $entity['cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-                    $xe = $x-(GALAXY_IMAGE_SCALE/2);
-                    $ye = $y-(GALAXY_IMAGE_SCALE/2);
+                    $x = ((($entity->sx - 1) * $cx_num + $entity->cx) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE / 2);
+                    $y = $h - $legendHeight + GALAXY_IMAGE_SCALE - ((($entity->sy - 1) * $cy_num + $entity->cy) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE / 2);
+                    $xe = $x - (GALAXY_IMAGE_SCALE / 2);
+                    $ye = $y - (GALAXY_IMAGE_SCALE / 2);
 
-                    $sx = $entity['sx'];
-                    $sy = $entity['sy'];
-                    $xcoords = $entity['cx'];
-                    $ycoords = $entity['cy'];
+                    $sx = $entity->sx;
+                    $sy = $entity->sy;
+                    $xcoords = $entity->cx;
+                    $ycoords = $entity->cy;
 
-                    if (($admin && !isset($user)) || $user->discovered((($entity['sx'] - 1) * $cx_num) + $entity['cx'],(($entity['sy'] - 1) * $cy_num) + $entity['cy']))
+                    if (($admin && !isset($user)) || $user->discovered((($entity->sx - 1) * $cx_num) + $entity->cx,(($entity->sy - 1) * $cy_num) + $entity->cy))
                     {
-                        if ($entity['code']==EntityType::STAR)
+                        if ($entity->code == EntityType::STAR)
                         {
-                            $star = $starRepo->find((int) $entity['id']);
+                            $star = $starRepo->find((int) $entity->id);
                             $starImageSrc = imagecreatefrompng(IMG_DIR."/stars/star".$star['type_id']."_small.png");
                             imagecopyresampled($im,$starImageSrc,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,imagesx($starImageSrc),imagesy($starImageSrc));
                         }
-                        elseif ($entity['code']==EntityType::WORMHOLE)
+                        elseif ($entity->code == EntityType::WORMHOLE)
                         {
-                            $wh = new Wormhole($entity['id']);
+                            $wh = new Wormhole($entity->id);
                             if ($wh->isPersistent())
                             {
                                 imagecopyresampled($im,$persistentWormholeImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
@@ -207,15 +207,15 @@ if (isset($_SESSION) || $admin)
                                 imagecopyresampled($im,$wormholeImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
                             }
                         }
-                        elseif ($entity['code']==EntityType::ASTEROIDS)
+                        elseif ($entity->code == EntityType::ASTEROIDS)
                         {
                             imagecopyresampled($im,$asteroidImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
                         }
-                        elseif ($entity['code']==EntityType::NEBULA)
+                        elseif ($entity->code == EntityType::NEBULA)
                         {
                             imagecopyresampled($im,$nebulaImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
                         }
-                        elseif ($entity['code']==EntityType::EMPTY_SPACE || $entity['code']==EntityType::MARKET)
+                        elseif ($entity->code == EntityType::EMPTY_SPACE || $entity->code == EntityType::MARKET)
                         {
                             imagecopyresampled($im,$spaceImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
                         }
