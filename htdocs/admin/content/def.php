@@ -352,11 +352,11 @@ $defenseNames = $defenseDataRepository->getDefenseNames(true);
 			{
 				$arr = mysql_fetch_array($res);
 				if ($arr['queue_starttime']>0)
-					$bst = date(DATE_FORMAT,$arr['queue_starttime']);
+					$bst = date($config->get('admin_dateformat'),$arr['queue_starttime']);
 				else
 					$bst = "";
 				if ($arr['queue_endtime']>0)
-					$bet = date(DATE_FORMAT,$arr['queue_endtime']);
+					$bet = date($config->get('admin_dateformat'),$arr['queue_endtime']);
 				else
 					$bet = "";
 

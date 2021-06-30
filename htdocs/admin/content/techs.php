@@ -1,5 +1,10 @@
 <?PHP
 
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 	//////////////////////////////////////////////////
 	//		 	 ____    __           ______       			//
 	//			/\  _`\ /\ \__       /\  _  \      			//
@@ -394,8 +399,8 @@
 				}
 				echo "</select></td></tr>";
 
-				if ($arr['techlist_build_start_time']>0) $bst = date(DATE_FORMAT,$arr['techlist_build_start_time']); else $bst = "";
-				if ($arr['techlist_build_end_time']>0) $bet = date(DATE_FORMAT,$arr['techlist_build_end_time']); else $bet = "";
+				if ($arr['techlist_build_start_time']>0) $bst = date($config->get('admin_dateformat'),$arr['techlist_build_start_time']); else $bst = "";
+				if ($arr['techlist_build_end_time']>0) $bet = date($config->get('admin_dateformat'),$arr['techlist_build_end_time']); else $bet = "";
 				echo "<tr><td class=\"tbltitle\" valign=\"top\">Baustart</td><td class=\"tbldata\"><input type=\"text\" name=\"techlist_build_start_time\" id=\"techlist_build_start_time\" value=\"$bst\" size=\"20\" maxlength=\"30\" /> <input type=\"button\" value=\"Jetzt\" onclick=\"document.getElementById('techlist_build_start_time').value='".date("Y-m-d H:i:s")."'\" /></td></tr>";
 				echo "<tr><td class=\"tbltitle\" valign=\"top\">Bauende</td><td class=\"tbldata\"><input type=\"text\" name=\"techlist_build_end_time\" value=\"$bet\" size=\"20\" maxlength=\"30\" /></td></tr>";
 				echo "</table>";

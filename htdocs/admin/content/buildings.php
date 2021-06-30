@@ -252,8 +252,8 @@ function buildingList(
                 echo ">$val</option>";
             }
             echo "</select></td></tr>";
-            $bst = $entry['buildlist_build_start_time'] > 0 ? date(DATE_FORMAT, $entry['buildlist_build_start_time']) : "";
-            $bet = $entry['buildlist_build_end_time'] > 0 ? date(DATE_FORMAT, $entry['buildlist_build_end_time']) : "";
+            $bst = $entry['buildlist_build_start_time'] > 0 ? date($config->get('admin_dateformat'), $entry['buildlist_build_start_time']) : "";
+            $bet = $entry['buildlist_build_end_time'] > 0 ? date($config->get('admin_dateformat'), $entry['buildlist_build_end_time']) : "";
             echo "<tr><th>Baustart</th><td><input type=\"text\" name=\"buildlist_build_start_time\" id=\"buildlist_build_start_time\" value=\"$bst\" size=\"20\" maxlength=\"30\" /> <input type=\"button\" value=\"Jetzt\" onclick=\"document.getElementById('buildlist_build_start_time').value='" . date("Y-d-m h:i") . "'\" /></td></tr>";
             echo "<tr><th>Bauende</th><td><input type=\"text\" name=\"buildlist_build_end_time\" value=\"$bet\" size=\"20\" maxlength=\"30\" /></td></tr>";
             echo "</table>";
