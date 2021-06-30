@@ -1,6 +1,5 @@
 <?PHP
 
-use EtoA\Core\Configuration\ConfigurationService;
 use Symfony\Component\ErrorHandler\Debug;
 use Symfony\Component\ErrorHandler\ErrorHandler;
 
@@ -24,7 +23,6 @@ define('IMAGE_EXT', "png");
 // Feste Konstanten
 
 define('SESSION_NAME', "adminsession");
-define('USER_TABLE_NAME', 'admin_users');
 
 define('URL_SEARCH_STRING', "page=$page&amp;sub=$sub&amp;tmp=1");
 define('URL_SEARCH_STRING2', "page=$page");
