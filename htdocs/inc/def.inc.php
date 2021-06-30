@@ -101,9 +101,6 @@ define("FLEET_FACTOR_L", $config->getFloat('flight_land_time'));
 // Invasion
 //
 
-// Min. Invasionschance
-define("INVADE_MIN_POSSIBILITY", $config->param2Float('invade_possibility'));
-
 // wird nicht benötigt!
 define("INVADE_SHIP_DESTROY", $config->getFloat('invade_ship_destroy'));
 
