@@ -88,9 +88,12 @@ class CellRepository extends AbstractRepository
             );
     }
 
+    /**
+     * @return array<CellPopulation>
+     */
     public function getCellPopulation(): array
     {
-        return $this->createQueryBuilder()
+        $data = $this->createQueryBuilder()
             ->select(
                 'c.sx',
                 'c.cx',
@@ -104,11 +107,16 @@ class CellRepository extends AbstractRepository
             ->groupBy('e.cell_id')
             ->execute()
             ->fetchAllAssociative();
+
+        return array_map(fn (array $arr) => new CellPopulation($arr), $data);
     }
 
+    /**
+     * @return array<CellPopulation>
+     */
     public function getCellPopulationForUser(int $userId): array
     {
-        return $this->createQueryBuilder()
+        $data = $this->createQueryBuilder()
             ->select(
                 'c.sx',
                 'c.cx',
@@ -123,11 +131,16 @@ class CellRepository extends AbstractRepository
             ->setParameter('user', $userId)
             ->execute()
             ->fetchAllAssociative();
+
+        return array_map(fn (array $arr) => new CellPopulation($arr), $data);
     }
 
+    /**
+     * @return array<CellPopulation>
+     */
     public function getCellPopulationForUserAlliance(int $userId): array
     {
-        return $this->createQueryBuilder()
+        $data = $this->createQueryBuilder()
             ->select(
                 'c.sx',
                 'c.cx',
@@ -144,5 +157,7 @@ class CellRepository extends AbstractRepository
             ->setParameter('user', $userId)
             ->execute()
             ->fetchAllAssociative();
+
+        return array_map(fn (array $arr) => new CellPopulation($arr), $data);
     }
 }

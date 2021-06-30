@@ -118,9 +118,9 @@ if (isset($_SESSION) || $admin)
             $cells = $cellRepo->getCellPopulationForUserAlliance((int) $_SESSION['user_id']);
             foreach ($cells as $cell)
             {
-                $x = ((($cell['sx']-1)*$cx_num + $cell['cx']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-                $y = $h-$legendHeight+GALAXY_IMAGE_SCALE-((($cell['sy']-1)*$cy_num + $cell['cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-                imagefilledellipse ($im,$x,$y,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[$cell['cnt']]);
+                $x = ((($cell->sx - 1) * $cx_num + $cell->cx) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE / 2);
+                $y = $h - $legendHeight + GALAXY_IMAGE_SCALE - ((($cell->sy - 1) * $cy_num + $cell->cy) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE / 2);
+                imagefilledellipse($im, $x, $y, GALAXY_MAP_DOT_RADIUS * 2, GALAXY_MAP_DOT_RADIUS * 2, $col[$cell->count]);
             }
             if ($legend) {
                 imagestring($im,3,10,$h-$legendHeight+10,"Legende:    Viel    Mittel    Wenig",$colWhite);
@@ -140,9 +140,9 @@ if (isset($_SESSION) || $admin)
             $cells = $cellRepo->getCellPopulationForUser((int) $_SESSION['user_id']);
             foreach ($cells as $cell)
             {
-                $x = ((($cell['sx']-1)*$cx_num + $cell['cx']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-                $y = $h-$legendHeight+GALAXY_IMAGE_SCALE-((($cell['sy']-1)*$cy_num + $cell['cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-                imagefilledellipse ($im,$x,$y,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[$cell['cnt']]);
+                $x = ((($cell->sx - 1) * $cx_num + $cell->cx) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE / 2);
+                $y = $h - $legendHeight + GALAXY_IMAGE_SCALE - ((($cell->sy - 1) * $cy_num + $cell->cy) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE / 2);
+                imagefilledellipse($im, $x, $y, GALAXY_MAP_DOT_RADIUS * 2, GALAXY_MAP_DOT_RADIUS * 2, $col[$cell->count]);
             }
             if ($legend) {
                 imagestring($im,3,10,$h-$legendHeight+10,"Legende:    Viel    Mittel    Wenig",$colWhite);
@@ -161,9 +161,9 @@ if (isset($_SESSION) || $admin)
             $cells = $cellRepo->getCellPopulation();
             foreach ($cells as $cell)
             {
-                $x = ((($cell['sx']-1)*$cx_num + $cell['cx']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-                $y = $h-$legendHeight+GALAXY_IMAGE_SCALE-((($cell['sy']-1)*$cy_num + $cell['cy']) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE/2);
-                imagefilledellipse ($im,$x,$y,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[max(3,$cell['cnt'])]);
+                $x = ((($cell->sx - 1) * $cx_num + $cell->cx) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE / 2);
+                $y = $h - $legendHeight + GALAXY_IMAGE_SCALE - ((($cell->sy - 1) * $cy_num + $cell->cy) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE / 2);
+                imagefilledellipse($im, $x, $y, GALAXY_MAP_DOT_RADIUS * 2, GALAXY_MAP_DOT_RADIUS * 2, $col[max(3, $cell->count)]);
             }
             if ($legend) {
                 imagestring($im,3,10,$h-$legendHeight+10,"Legende:    Viel    Mittel    Wenig",$colWhite);
