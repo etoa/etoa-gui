@@ -61,9 +61,6 @@ define("FLOOD_CONTROL", $config->getInt('msg_flood_control'));    // Wartezeit b
 // Sonstiges
 //
 
-// Maximale Anzahl Planeten
-define("USER_MAX_PLANETS", $config->getInt('user_max_planets'));
-
 //Zeit bis Löschantrag ausgeführt wird
 define("USER_DELETE_DAYS", $config->getInt('user_delete_days'));
 
