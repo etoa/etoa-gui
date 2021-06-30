@@ -101,9 +101,6 @@ define("FLEET_FACTOR_L", $config->getFloat('flight_land_time'));
 // Invasion
 //
 
-// wird nicht benötigt!
-define("INVADE_SHIP_DESTROY", $config->getFloat('invade_ship_destroy'));
-
 // = true/1 um aktive user zu invasieren
 define("INVADE_ACTIVE_USER", $config->getBoolean('invade_active_users'));
 
