@@ -10,8 +10,8 @@ use Mutex;
 class UniverseGenerator
 {
     private ConfigurationService $config;
-    private SolarTypeRepository $solarTypes;
-    private PlanetTypeRepository $planetTypes;
+    private SolarTypeRepository $solarTypesRepo;
+    private PlanetTypeRepository $planetTypesRepo;
     private CellRepository $cellRepo;
     private EntityRepository $entityRepo;
     private StarRepository $starRepo;
@@ -24,17 +24,19 @@ class UniverseGenerator
     /**
      * @var array<int>
      */
-    private array $sol_types = [];
+    private array $solTypes = [];
 
     /**
      * @var array<int>
      */
-    private array $planet_types = [];
+    private array $planetTypes = [];
+
+    private const GALAXY_IMAGE_DIR_PATH = "../images/galaxylayouts";
 
     public function __construct(
         ConfigurationService $config,
-        SolarTypeRepository $solarTypes,
-        PlanetTypeRepository $planetTypes,
+        SolarTypeRepository $solarTypesRepo,
+        PlanetTypeRepository $planetTypesRepo,
         CellRepository $cellRepo,
         EntityRepository $entityRepo,
         StarRepository $starRepo,
@@ -45,8 +47,8 @@ class UniverseGenerator
         EmptySpaceRepository $emptySpaceRepo
     ) {
         $this->config = $config;
-        $this->solarTypes = $solarTypes;
-        $this->planetTypes = $planetTypes;
+        $this->solarTypesRepo = $solarTypesRepo;
+        $this->planetTypesRepo = $planetTypesRepo;
         $this->cellRepo = $cellRepo;
         $this->entityRepo = $entityRepo;
         $this->starRepo = $starRepo;
@@ -61,8 +63,8 @@ class UniverseGenerator
 
     private function init(): void
     {
-        $this->sol_types = array_keys($this->solarTypes->getSolarTypeNames());
-        $this->planet_types = array_keys($this->planetTypes->getPlanetTypeNames());
+        $this->solTypes = array_keys($this->solarTypesRepo->getSolarTypeNames());
+        $this->planetTypes = array_keys($this->planetTypesRepo->getPlanetTypeNames());
     }
 
     /**
@@ -71,127 +73,71 @@ class UniverseGenerator
      *
      * @return array<string>
      */
-    public function create($mapImage = "", $mapPrecision = 95): array
+    public function create(string $mapImage = "", int $mapPrecision = 95): array
     {
         $output = [];
 
-        $mtx = new Mutex();
-        $mtx->acquire();
+        $lock = new Mutex();
+        $lock->acquire();
 
         $mapPrecision = max(0, $mapPrecision);
         $mapPrecision = min($mapPrecision, 100);
 
         $output[] = "Lade Schöpfungs-Einstellungen...";
 
-        $sx_num = $this->config->param1Int('num_of_sectors');
-        $sy_num = $this->config->param2Int('num_of_sectors');
-        $cx_num = $this->config->param1Int('num_of_cells');
-        $cy_num = $this->config->param2Int('num_of_cells');
-        $perc_solsys = $this->config->getInt('space_percent_solsys');
-        $perc_asteroids = $this->config->getInt('space_percent_asteroids');
-        $perc_nebulas = $this->config->getInt('space_percent_nebulas');
-        $perc_wormholes = $this->config->getInt('space_percent_wormholes');
+        $numberOfSectorsX = $this->config->param1Int('num_of_sectors');
+        $numberOfSectorsY = $this->config->param2Int('num_of_sectors');
+        $numberOfCellsX = $this->config->param1Int('num_of_cells');
+        $numberOfCellsY = $this->config->param2Int('num_of_cells');
 
-        $sol_count = 0;
-        $nebula_count = 0;
-        $asteroids_count = 0;
-        $wormhole_count = 0;
+        $starCount = 0;
+        $nebulaCount = 0;
+        $asteroidsCount = 0;
+        $wormholeCount = 0;
 
-        $output[] = "Erstelle Universum mit " . $sx_num * $sy_num . " Sektoren à " . $cx_num * $cy_num . " Zellen, d.h. " . $sx_num * $sy_num * $cx_num * $cy_num . " Zellen total.";
+        $output[] = "Erstelle Universum mit " . $numberOfSectorsX * $numberOfSectorsY . " Sektoren à " . $numberOfCellsX * $numberOfCellsY . " Zellen, d.h. " . $numberOfSectorsX * $numberOfSectorsY * $numberOfCellsX * $numberOfCellsY . " Zellen total.";
 
-        $type = [];
-
-        //
-        // Set cell types
-        //
-
-        // by image
-        $imgpath = "../images/galaxylayouts/" . $mapImage;
-        if ($mapImage != "" && is_file($imgpath)) {
-            $im = imagecreatefrompng($imgpath);
-            $w = imagesx($im);
-            $h = imagesy($im);
-
-            $output[] = "Bildvorlage gefunden, verwende diese: <img src=\"" . $imgpath . "\" />";
-
-            for ($x = 1; $x <= $w; $x++) {
-                for ($y = 1; $y <= $h; $y++) {
-                    $o = imagecolorat($im, $x - 1, $h - $y);
-                    $pr = random_int(0, 100);
-
-                    if (($o > 0 && $pr <= $mapPrecision) || ($o == 0 && $pr >= $mapPrecision)) {
-                        $ct = random_int(1, 100);
-
-                        if ($ct <= $perc_solsys) {
-                            $type[$x][$y] = EntityType::STAR;
-                        } elseif ($ct <= $perc_solsys + $perc_asteroids) {
-                            $type[$x][$y] = EntityType::ASTEROIDS;
-                        } elseif ($ct <= $perc_solsys + $perc_asteroids + $perc_nebulas) {
-                            $type[$x][$y] = EntityType::NEBULA;
-                        } elseif ($ct <= $perc_solsys + $perc_asteroids + $perc_nebulas + $perc_wormholes) {
-                            $type[$x][$y] = EntityType::WORMHOLE;
-                        } else {
-                            $type[$x][$y] = EntityType::EMPTY_SPACE;
-                        }
-                    } else {
-                        $type[$x][$y] = EntityType::EMPTY_SPACE;
-                    }
-                }
-            }
-        }
-        // by randomizer with config values
-        else {
-            for ($x = 1; $x <= ($sx_num * $cx_num); $x++) {
-                for ($y = 1; $y <= ($sy_num * $cy_num); $y++) {
-                    $ct = random_int(1, 100);
-                    if ($ct <= $perc_solsys) {
-                        $type[$x][$y] = EntityType::STAR;
-                    } elseif ($ct <= $perc_solsys + $perc_asteroids) {
-                        $type[$x][$y] = EntityType::ASTEROIDS;
-                    } elseif ($ct <= $perc_solsys + $perc_asteroids + $perc_nebulas) {
-                        $type[$x][$y] = EntityType::NEBULA;
-                    } elseif ($ct <= $perc_solsys + $perc_asteroids + $perc_nebulas + $perc_wormholes) {
-                        $type[$x][$y] = EntityType::WORMHOLE;
-                    } else {
-                        $type[$x][$y] = EntityType::EMPTY_SPACE;
-                    }
-                }
-            }
+        $imagePath = self::GALAXY_IMAGE_DIR_PATH . "/" . $mapImage;
+        if ($mapImage != "" && is_file($imagePath)) {
+            $output[] = "Bildvorlage gefunden, verwende diese: <img src=\"" . $imagePath . "\" />";
+            $type = $this->getTypeMatrixFromImage($imagePath, $mapPrecision);
+        } else {
+            $type = $this->getRandomTypeMatrix($numberOfSectorsX, $numberOfSectorsY, $numberOfCellsX, $numberOfCellsY);
         }
 
         // Save cell info
-        $coordinates = $this->generateCoordinates($sx_num, $sy_num, $cx_num, $cy_num);
+        $coordinates = $this->generateCoordinates($numberOfSectorsX, $numberOfSectorsY, $numberOfCellsX, $numberOfCellsY);
         $output[] = "Zellen geneiert, speichere sie...";
         $this->cellRepo->addMultiple($coordinates);
 
         $output[] = "Zellen gespeichert, fülle Objekte rein...";
         $cells = $this->cellRepo->findAllCoordinates();
         foreach ($cells as $cell) {
-            $x = (($cell['sx'] - 1) * $cx_num) + $cell['cx'];
-            $y = (($cell['sy'] - 1) * $cy_num) + $cell['cy'];
+            $x = (($cell['sx'] - 1) * $numberOfCellsX) + $cell['cx'];
+            $y = (($cell['sy'] - 1) * $numberOfCellsY) + $cell['cy'];
 
             // Star system
             if ($type[$x][$y] == EntityType::STAR) {
                 $this->createStarSystem((int) $cell['id']);
-                $sol_count++;
+                $starCount++;
             }
 
             // Asteroid Fields
             elseif ($type[$x][$y] == EntityType::ASTEROIDS) {
                 $this->createAsteroids((int) $cell['id']);
-                $asteroids_count++;
+                $asteroidsCount++;
             }
 
             // Nebulas
             elseif ($type[$x][$y] == EntityType::NEBULA) {
                 $this->createNebula((int) $cell['id']);
-                $nebula_count++;
+                $nebulaCount++;
             }
 
             // Wormholes
             elseif ($type[$x][$y] == EntityType::WORMHOLE) {
                 $this->createWormhole((int) $cell['id']);
-                $wormhole_count++;
+                $wormholeCount++;
             }
 
             // Empty space
@@ -219,43 +165,43 @@ class UniverseGenerator
         //
 
         // Get all wormholes
-        $wh = [];
-        $wh_persistent = [];
-        $wormholes = $this->wormholeRepo->findAll();
-        $wormhole_count = count($wormholes);
-        foreach ($wormholes as $wormhole) {
+        $wormholes = [];
+        $persistentWormholes = [];
+        $allWormholes = $this->wormholeRepo->findAll();
+        $wormholeCount = count($allWormholes);
+        foreach ($allWormholes as $wormhole) {
             if ($wormhole['persistent'] == 1) {
-                array_push($wh_persistent, (int) $wormhole['id']);
+                array_push($persistentWormholes, (int) $wormhole['id']);
             } else {
-                array_push($wh, (int) $wormhole['id']);
+                array_push($wormholes, (int) $wormhole['id']);
             }
         }
 
         // Shuffle wormholes
-        shuffle($wh);
-        shuffle($wh_persistent);
+        shuffle($wormholes);
+        shuffle($persistentWormholes);
 
         // Reduce list of persistent wormholes if uneven
-        if (fmod(count($wh_persistent), 2) != 0) {
-            $lastWormHole = array_pop($wh_persistent);
+        if (fmod(count($persistentWormholes), 2) != 0) {
+            $lastWormHole = array_pop($persistentWormholes);
             $this->wormholeRepo->setPersistent($lastWormHole, false);
-            array_push($wh, $lastWormHole);
+            array_push($wormholes, $lastWormHole);
         }
 
-        $wh_new = [];
-        while (sizeof($wh) > 0) {
-            $wh_new[array_shift($wh)] = array_pop($wh);
+        $newWormholes = [];
+        while (sizeof($wormholes) > 0) {
+            $newWormholes[array_shift($wormholes)] = array_pop($wormholes);
         }
-        foreach ($wh_new as $k => $v) {
+        foreach ($newWormholes as $k => $v) {
             $this->wormholeRepo->updateTarget($v, $k);
             $this->wormholeRepo->updateTarget($k, $v);
         }
 
-        $wh_persistent_new = [];
-        while (sizeof($wh_persistent) > 0) {
-            $wh_persistent_new[array_shift($wh_persistent)] = array_pop($wh_persistent);
+        $newPersistentWormholes = [];
+        while (sizeof($persistentWormholes) > 0) {
+            $newPersistentWormholes[array_shift($persistentWormholes)] = array_pop($persistentWormholes);
         }
-        foreach ($wh_persistent_new as $k => $v) {
+        foreach ($newPersistentWormholes as $k => $v) {
             $this->wormholeRepo->updateTarget($v, $k);
             $this->wormholeRepo->updateTarget($k, $v);
         }
@@ -270,20 +216,91 @@ class UniverseGenerator
         $this->entityRepo->updateCode($id, EntityType::ALLIANCE_MARKET);
         $this->emptySpaceRepo->remove($id);
 
-        $mtx->release();
+        $lock->release();
+
         $output[] = "Universum erstellt!";
-        $output[] = "$sol_count Sonnensysteme, $asteroids_count Asteroidenfelder, $nebula_count Nebel und $wormhole_count Wurmlöcher!";
+        $output[] = "$starCount Sonnensysteme, $asteroidsCount Asteroidenfelder, $nebulaCount Nebel und $wormholeCount Wurmlöcher!";
 
         return $output;
     }
 
-    private function generateCoordinates(int $sx_num, int $sy_num, int $cx_num, int $cy_num): array
+    private function getTypeMatrixFromImage(string $imagePath, int $mapPrecision): array
+    {
+        $type = [];
+
+        $percentageStars = $this->config->getInt('space_percent_solsys');
+        $percentageAsteroids = $this->config->getInt('space_percent_asteroids');
+        $percentageNebulas = $this->config->getInt('space_percent_nebulas');
+        $percentageWormholes = $this->config->getInt('space_percent_wormholes');
+
+        $image = imagecreatefrompng($imagePath);
+        $width = imagesx($image);
+        $height = imagesy($image);
+
+        for ($x = 1; $x <= $width; $x++) {
+            for ($y = 1; $y <= $height; $y++) {
+                $color = imagecolorat($image, $x - 1, $height - $y);
+                $pr = random_int(0, 100);
+
+                if (($color > 0 && $pr <= $mapPrecision) || ($color == 0 && $pr >= $mapPrecision)) {
+                    $ct = random_int(1, 100);
+
+                    if ($ct <= $percentageStars) {
+                        $type[$x][$y] = EntityType::STAR;
+                    } elseif ($ct <= $percentageStars + $percentageAsteroids) {
+                        $type[$x][$y] = EntityType::ASTEROIDS;
+                    } elseif ($ct <= $percentageStars + $percentageAsteroids + $percentageNebulas) {
+                        $type[$x][$y] = EntityType::NEBULA;
+                    } elseif ($ct <= $percentageStars + $percentageAsteroids + $percentageNebulas + $percentageWormholes) {
+                        $type[$x][$y] = EntityType::WORMHOLE;
+                    } else {
+                        $type[$x][$y] = EntityType::EMPTY_SPACE;
+                    }
+                } else {
+                    $type[$x][$y] = EntityType::EMPTY_SPACE;
+                }
+            }
+        }
+
+        return $type;
+    }
+
+    private function getRandomTypeMatrix(int $numberOfSectorsX, int $numberOfSectorsY, int $numberOfCellsX, int $numberOfCellsY): array
+    {
+        $type = [];
+
+        $percentageStars = $this->config->getInt('space_percent_solsys');
+        $percentageAsteroids = $this->config->getInt('space_percent_asteroids');
+        $percentageNebulas = $this->config->getInt('space_percent_nebulas');
+        $percentageWormholes = $this->config->getInt('space_percent_wormholes');
+
+        for ($x = 1; $x <= ($numberOfSectorsX * $numberOfCellsX); $x++) {
+            for ($y = 1; $y <= ($numberOfSectorsY * $numberOfCellsY); $y++) {
+                $ct = random_int(1, 100);
+                if ($ct <= $percentageStars) {
+                    $type[$x][$y] = EntityType::STAR;
+                } elseif ($ct <= $percentageStars + $percentageAsteroids) {
+                    $type[$x][$y] = EntityType::ASTEROIDS;
+                } elseif ($ct <= $percentageStars + $percentageAsteroids + $percentageNebulas) {
+                    $type[$x][$y] = EntityType::NEBULA;
+                } elseif ($ct <= $percentageStars + $percentageAsteroids + $percentageNebulas + $percentageWormholes) {
+                    $type[$x][$y] = EntityType::WORMHOLE;
+                } else {
+                    $type[$x][$y] = EntityType::EMPTY_SPACE;
+                }
+            }
+        }
+
+        return $type;
+    }
+
+    private function generateCoordinates(int $numberOfSectorsX, int $numberOfSectorsY, int $numberOfCellsX, int $numberOfCellsY): array
     {
         $coordinates = [];
-        for ($sx = 1; $sx <= $sx_num; $sx++) {
-            for ($sy = 1; $sy <= $sy_num; $sy++) {
-                for ($cx = 1; $cx <= $cx_num; $cx++) {
-                    for ($cy = 1; $cy <= $cy_num; $cy++) {
+        for ($sx = 1; $sx <= $numberOfSectorsX; $sx++) {
+            for ($sy = 1; $sy <= $numberOfSectorsY; $sy++) {
+                for ($cx = 1; $cx <= $numberOfCellsX; $cx++) {
+                    for ($cy = 1; $cy <= $numberOfCellsY; $cy++) {
                         $coordinates[] = [
                             'sx' => $sx,
                             'sy' => $sy,
@@ -304,7 +321,7 @@ class UniverseGenerator
         $num_planets_max = $this->config->param2Int('num_planets');
 
         // The Star
-        $type = $this->sol_types[array_rand($this->sol_types)];
+        $type = $this->solTypes[array_rand($this->solTypes)];
 
         if ($id === null) {
             $entityId = $this->entityRepo->add($cellId, EntityType::STAR, 0);
@@ -342,7 +359,7 @@ class UniverseGenerator
 
         $id = $this->entityRepo->add($cellId, EntityType::PLANET, $pos);
 
-        $typeId = $this->planet_types[array_rand($this->planet_types)];
+        $typeId = $this->planetTypes[array_rand($this->planetTypes)];
         $imageNumber = $typeId . "_" . random_int(1, $num_planet_images);
 
         $fields = random_int($planet_fields_min, $planet_fields_max);
