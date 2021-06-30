@@ -239,7 +239,7 @@ class BuildListItem
 
             $bonus = $cu->race->buildTime + $cp->typeBuildtime + $cp->starBuildtime + $cu->specialist->buildTime - 3;
 
-            $bc['time'] = (array_sum($bc)) / GLOBAL_TIME * BUILD_BUILD_TIME;
+            $bc['time'] = (array_sum($bc)) / $this->config->getInt('global_time') * BUILD_BUILD_TIME;
             $bc['time'] *= $bonus;
 
             // Boost
@@ -394,7 +394,7 @@ class BuildListItem
 
         $bonus = $cu->race->buildTime + $cp->typeBuildtime + $cp->starBuildtime + $cu->specialist->buildTime - 3;
 
-        $bc['time'] = (array_sum($bc)) / GLOBAL_TIME * BUILD_BUILD_TIME;
+        $bc['time'] = (array_sum($bc)) / $this->config->getInt('global_time') * BUILD_BUILD_TIME;
         $bc['time'] *= $bonus;
         $bc['time'] /= $cu->boostBonusBuilding+1;
 

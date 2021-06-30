@@ -1180,6 +1180,12 @@ function calcBuildingCosts($buildingArray, $level, $fac=1)
 {
     global $cp;
     global $cu;
+
+    global $app;
+
+    /** @var ConfigurationService */
+    $config = $app['etoa.config.service'];
+
     $bc=array();
     $bc['metal'] = $fac * $buildingArray['building_costs_metal'] * pow($buildingArray['building_build_costs_factor'],$level);
     $bc['crystal'] = $fac * $buildingArray['building_costs_crystal'] * pow($buildingArray['building_build_costs_factor'],$level);
@@ -1197,7 +1203,7 @@ function calcBuildingCosts($buildingArray, $level, $fac=1)
         $starBuildTime = $cp->starBuildtime;
 
     $bonus = $cu->race->buildTime + $typeBuildTime + $starBuildTime + $cu->specialist->buildTime - 3;
-    $bc['time'] = ($bc['metal']+$bc['crystal']+$bc['plastic']+$bc['fuel']+$bc['food']) / GLOBAL_TIME * BUILD_BUILD_TIME;
+    $bc['time'] = ($bc['metal']+$bc['crystal']+$bc['plastic']+$bc['fuel']+$bc['food']) / $config->getInt('global_time') * BUILD_BUILD_TIME;
     $bc['time'] *= $bonus;
     return $bc;
 }
