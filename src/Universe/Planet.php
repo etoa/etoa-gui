@@ -9,7 +9,7 @@ class Planet
     public bool $mainPlanet;
     public int $userChanged;
     public int $lastUserId;
-    public string $name;
+    public ?string $name;
     public int $typeId;
     public int $fields;
     public int $fieldsExtra;

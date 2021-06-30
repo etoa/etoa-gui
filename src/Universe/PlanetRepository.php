@@ -77,7 +77,7 @@ class PlanetRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function find(int $id): ?array
+    public function find(int $id): ?Planet
     {
         $data = $this->createQueryBuilder()
             ->select('*')
@@ -89,7 +89,7 @@ class PlanetRepository extends AbstractRepository
             ->execute()
             ->fetchAssociative();
 
-        return $data !== false ? $data : null;
+        return $data !== false ? new Planet($data) : null;
     }
 
     public function add(

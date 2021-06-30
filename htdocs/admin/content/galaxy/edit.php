@@ -156,7 +156,7 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
 
 
             echo "<tr><th>Name</t>
-            <td><input type=\"text\" name=\"planet_name\" value=\"".$planet['planet_name']."\" size=\"20\" maxlength=\"250\" /></td>";
+            <td><input type=\"text\" name=\"planet_name\" value=\"".$planet->name."\" size=\"20\" maxlength=\"250\" /></td>";
             echo "<th>Typ</th>
             <td>
             <select name=\"planet_type_id\">";
@@ -166,7 +166,7 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
             $selectedPlanetTypeName = null;
             foreach ($planetTypeNames as $planetTypeId => $planetTypeName){
                 echo "<option value=\"".$planetTypeId."\"";
-                if ($planet['planet_type_id']==$planetTypeId)
+                if ($planet->typeId == $planetTypeId)
                 {
                     echo " selected=\"selected\"";
                     $selectedPlanetTypeName = $planetTypeName;
@@ -185,66 +185,66 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
             echo "<option value=\"0\">(niemand)</option>";
             foreach ($userRepo->getUserNicknames() as $userId => $userNick) {
                 echo "<option value=\"$userId\"";
-                if ($planet['planet_user_id'] == $userId) {
+                if ($planet->userId == $userId) {
                     echo " selected=\"selected\"";
                 }
                 echo ">" . $userNick . "</option>";
             }
             echo "</select> ";
-            if ($planet['planet_user_id'] > 0)
+            if ($planet->userId > 0)
             {
-                $allianceId = $userRepo->getAllianceId((int) $planet['planet_user_id']);
+                $allianceId = $userRepo->getAllianceId($planet->userId);
                 if ($allianceId > 0) {
                     $ally = new Alliance($allianceId);
                     echo $ally." &nbsp; ";
                     unset($ally);
                 }
             }
-            echo "<input type=\"hidden\" name=\"planet_user_id_old\" value=\"".$planet['planet_user_id']."\">";
+            echo "<input type=\"hidden\" name=\"planet_user_id_old\" value=\"".$planet->userId."\">";
             echo "<input tabindex=\"29\" type=\"button\" name=\"change_owner\" value=\"Planet übergeben\" class=\"button\" onclick=\"if( confirm('Dieser Planet soll einem neuen Besitzer gehören. Alle Schiffs- und Verteidigungsdaten vom alten Besitzer werden komplett gelöscht.')) document.getElementById('editform').submit()\"/>&nbsp;";
             echo "</td></tr>";
 
             echo "<tr>
             <th>Hauptplanet</th>
             <td>";
-            if ($planet['planet_user_id']>0)
+            if ($planet->userId>0)
             {
-                echo "<input type=\"checkbox\" name=\"planet_user_main\" ".($planet['planet_user_main']==1 ? " checked=\"checked\"" : "")." value=\"1\"/> Ist Hauptplanet";
+                echo "<input type=\"checkbox\" name=\"planet_user_main\" ".($planet->mainPlanet ? " checked=\"checked\"" : "")." value=\"1\"/> Ist Hauptplanet";
             }
             else
                 echo "-";
             echo "</td>
             <th>Letzer Besitzerwechsel</th>
             <td>
-            ".($planet['planet_user_changed']>0 ? df($planet['planet_user_changed'])." <input type=\"checkbox\" name=\"rst_user_changed\" value=\"1\" /> Reset" : '-')."
+            ".($planet->userChanged >0 ? df($planet->userChanged)." <input type=\"checkbox\" name=\"rst_user_changed\" value=\"1\" /> Reset" : '-')."
             </td>
             </tr>";
 
             echo "<tr><td style=\"height:2px;\" colspan=\"4\"></td></tr>";
 
             echo "<tr><th>Felder / Extra-Felder</th>
-            <td><input type=\"text\" name=\"planet_fields\" value=\"".$planet['planet_fields']."\" size=\"10\" maxlength=\"250\" />
-            <input type=\"text\" name=\"planet_fields_extra\" value=\"".$planet['planet_fields_extra']."\" size=\"10\" maxlength=\"250\" /></td>";
+            <td><input type=\"text\" name=\"planet_fields\" value=\"".$planet->fields."\" size=\"10\" maxlength=\"250\" />
+            <input type=\"text\" name=\"planet_fields_extra\" value=\"".$planet->fieldsExtra."\" size=\"10\" maxlength=\"250\" /></td>";
             echo "<th>Felder benutzt</th>
-            <td>".nf($planet['planet_fields_used'])."</td></tr>";
+            <td>".nf($planet->fieldsUsed)."</td></tr>";
 
             echo "<tr><th>Temperatur</th>
             <td>
-                <input type=\"text\" name=\"planet_temp_from\" value=\"".$planet['planet_temp_from']."\" size=\"4\" maxlength=\"5\" />
-                bis <input type=\"text\" name=\"planet_temp_to\" value=\"".$planet['planet_temp_to']."\" size=\"4\" maxlength=\"5\" /> &deg;C
+                <input type=\"text\" name=\"planet_temp_from\" value=\"".$planet->tempFrom."\" size=\"4\" maxlength=\"5\" />
+                bis <input type=\"text\" name=\"planet_temp_to\" value=\"".$planet->tempTo."\" size=\"4\" maxlength=\"5\" /> &deg;C
             </td>";
             $imPath = IMAGE_PATH."/planets/planet";
             $imPathPost = "_small.".IMAGE_EXT;
             echo "<th>Bild</th>
             <td>
-            <img id=\"pimg\" src=\"".$imPath.$planet['planet_image'].$imPathPost."\" style=\"float:left;\" />
+            <img id=\"pimg\" src=\"".$imPath.$planet->image.$imPathPost."\" style=\"float:left;\" />
             <select name=\"planet_image\" onchange=\"document.getElementById('pimg').src='$imPath'+this.value+'$imPathPost'\">";
             echo "<option value=\"\">Undefiniert</option>";
 
             for ($x = 1; $x <= $config->getInt('num_planet_images'); $x++)
             {
-                echo "<option value=\"".$planet['planet_type_id']."_".$x."\"";
-                if ($planet['planet_image']==$planet['planet_type_id']."_".$x)
+                echo "<option value=\"".$planet->typeId."_".$x."\"";
+                if ($planet->image == $planet->typeId."_".$x)
                     echo " selected=\"selected\"";
                 echo ">".$selectedPlanetTypeName." $x</option>\n";
             }
@@ -257,78 +257,78 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
             echo "<td style=\"height:2px;\" colspan=\"4\"></td></tr>";
 
             echo "<tr><th class=\"resmetalcolor\">Titan</th>
-            <td><input type=\"text\" name=\"planet_res_metal\" value=\"".intval($planet['planet_res_metal'])."\" size=\"12\" maxlength=\"20\" /><br/>
+            <td><input type=\"text\" name=\"planet_res_metal\" value=\"".intval($planet->resMetal)."\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"planet_res_metal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
             echo "<th class=\"rescrystalcolor\">Silizium</th>
-            <td><input type=\"text\" name=\"planet_res_crystal\" value=\"".intval($planet['planet_res_crystal'])."\" size=\"12\" maxlength=\"20\" /><br/>
+            <td><input type=\"text\" name=\"planet_res_crystal\" value=\"".intval($planet->resCrystal)."\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"planet_res_crystal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 
             echo "<tr><th class=\"resplasticcolor\">PVC</th>
-            <td><input type=\"text\" name=\"planet_res_plastic\" value=\"".intval($planet['planet_res_plastic'])."\" size=\"12\" maxlength=\"20\" /><br/>
+            <td><input type=\"text\" name=\"planet_res_plastic\" value=\"".intval($planet->resPlastic)."\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"planet_res_plastic_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
             echo "<th class=\"resfuelcolor\">Tritium</th>
-            <td><input type=\"text\" name=\"planet_res_fuel\" value=\"".intval($planet['planet_res_fuel'])."\" size=\"12\" maxlength=\"20\" /><br/>
+            <td><input type=\"text\" name=\"planet_res_fuel\" value=\"".intval($planet->resFuel)."\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"planet_res_fuel_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 
             echo "<tr><th class=\"resfoodcolor\">Nahrung</th>
-            <td><input type=\"text\" name=\"planet_res_food\" value=\"".intval($planet['planet_res_food'])."\" size=\"12\" maxlength=\"20\" /><br/>
+            <td><input type=\"text\" name=\"planet_res_food\" value=\"".intval($planet->resFood)."\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"planet_res_food_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
             echo "<th class=\"respeoplecolor\">Bevölkerung</th>
-            <td><input type=\"text\" name=\"planet_people\" value=\"".intval($planet['planet_people'])."\" size=\"12\" maxlength=\"20\" /><br/>
+            <td><input type=\"text\" name=\"planet_people\" value=\"".intval($planet->people)."\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"planet_people_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 
             echo "<td style=\"height:2px;\" colspan=\"4\"></td></tr>";
 
             echo "<tr><th>Produktion ".RES_METAL."</th>
-            <td>".nf($planet['planet_prod_metal'])."</td>";
+            <td>".nf($planet->prodMetal)."</td>";
             echo "<th>Speicher ".RES_METAL.":</th>
-            <td>".nf($planet['planet_store_metal'])."</td></tr>";
+            <td>".nf($planet->storeMetal)."</td></tr>";
 
             echo "<tr><th>Produktion ".RES_CRYSTAL."</th>
-            <td>".nf($planet['planet_prod_crystal'])."</td>";
+            <td>".nf($planet->prodCrystal)."</td>";
             echo "<th>Speicher ".RES_CRYSTAL.":</th>
-            <td>".nf($planet['planet_store_crystal'])."</td></tr>";
+            <td>".nf($planet->storeCrystal)."</td></tr>";
 
             echo "<tr><th>Produktion ".RES_PLASTIC."</th>
-            <td>".nf($planet['planet_prod_plastic'])."</td>";
+            <td>".nf($planet->prodPlastic)."</td>";
             echo "<th>Speicher ".RES_PLASTIC.":</th>
-            <td>".nf($planet['planet_store_plastic'])."</td></tr>";
+            <td>".nf($planet->storePlastic)."</td></tr>";
 
             echo "<tr><th>Produktion ".RES_FUEL."</th>
-            <td>".nf($planet['planet_prod_fuel'])."</td>";
+            <td>".nf($planet->prodFuel)."</td>";
             echo "<th>Speicher ".RES_FUEL.":</th>
-            <td>".nf($planet['planet_store_fuel'])."</td></tr>";
+            <td>".nf($planet->storeFuel)."</td></tr>";
 
             echo "<tr><th>Produktion ".RES_FOOD."</th>
-            <td>".nf($planet['planet_prod_food'])."</td>";
+            <td>".nf($planet->prodFood)."</td>";
             echo "<th>Speicher ".RES_FOOD.":</th>
-            <td>".nf($planet['planet_store_food'])."</td></tr>";
+            <td>".nf($planet->storeFood)."</td></tr>";
 
             echo "<tr><th>Verbrauch Energie:</th>
-            <td>".nf($planet['planet_use_power'])."</td>";
+            <td>".nf($planet->usePower)."</td>";
             echo "<th>Produktion Energie:</th>
-            <td>".nf($planet['planet_prod_power'])."</td></tr>";
+            <td>".nf($planet->prodPower)."</td></tr>";
 
             echo "<tr><th>Wohnraum</th>
-            <td>".nf($planet['planet_people_place'])."</td>";
+            <td>".nf($planet->peoplePlace)."</td>";
             echo "<th>Bevölkerungswachstum</th>
-            <td>".nf($planet['planet_prod_people'])."</td></tr>";
+            <td>".nf($planet->prodPeople)."</td></tr>";
 
             echo "<td style=\"height:2px;\" colspan=\"4\"></td></tr>";
 
             echo "<tr><th>Trümmerfeld Titan</th>
-            <td><input type=\"text\" name=\"planet_wf_metal\" value=\"".$planet['planet_wf_metal']."\" size=\"20\" maxlength=\"250\" /></td>";
+            <td><input type=\"text\" name=\"planet_wf_metal\" value=\"".$planet->wfMetal."\" size=\"20\" maxlength=\"250\" /></td>";
             echo "<th>Trümmerfeld Silizium</th>
-            <td><input type=\"text\" name=\"planet_wf_crystal\" value=\"".$planet['planet_wf_crystal']."\" size=\"20\" maxlength=\"250\" /></td></tr>";
+            <td><input type=\"text\" name=\"planet_wf_crystal\" value=\"".$planet->wfCrystal."\" size=\"20\" maxlength=\"250\" /></td></tr>";
 
             echo "<tr><th>Trümmerfeld PVC</th>
-            <td><input type=\"text\" name=\"planet_wf_plastic\" value=\"".$planet['planet_wf_plastic']."\" size=\"20\" maxlength=\"250\" /></td>";
+            <td><input type=\"text\" name=\"planet_wf_plastic\" value=\"".$planet->wfPlastic."\" size=\"20\" maxlength=\"250\" /></td>";
             echo "<th>Updated</th>
-            <td>".date("d.m.Y H:i",$planet['planet_last_updated'])."</th></tr>";
+            <td>".date("d.m.Y H:i",$planet->lastUpdated)."</th></tr>";
 
 
             echo "<tr><th>Beschreibung</td>
-            <td colspan=\"3\"><textarea name=\"planet_desc\" rows=\"2\" cols=\"50\" >".stripslashes($planet['planet_desc'])."</textarea></td></tr>";
+            <td colspan=\"3\"><textarea name=\"planet_desc\" rows=\"2\" cols=\"50\" >".stripslashes($planet->description)."</textarea></td></tr>";
             echo "</table>";
             echo "<br/>";
             echo "<p>";
@@ -337,7 +337,7 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
             echo "<input tabindex=\"28\" type=\"button\" value=\"Zurück zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=searchresults'\" /> ";
             echo "</p><hr/><p>";
             echo "<input type=\"submit\" name=\"calcres\" value=\"Neu berechnen\" class=\"button\" />&nbsp;";
-            echo "<input type=\"button\" value=\"Gebäude\" onclick=\"document.location='?page=buildings&action=search&query=".searchQuery(array("entity_id"=>$planet['id']))."'\" /> &nbsp;";
+            echo "<input type=\"button\" value=\"Gebäude\" onclick=\"document.location='?page=buildings&action=search&query=".searchQuery(array("entity_id"=>$planet->id))."'\" /> &nbsp;";
             echo "</p>";
             echo "</form>";
         }
