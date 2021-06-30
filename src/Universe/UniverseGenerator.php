@@ -11,9 +11,6 @@ use EtoA\User\UserRepository;
 use Mutex;
 use UserToXml;
 
-/**
- * @todo Create and use repositories for planets, stars etc.
- */
 class UniverseGenerator
 {
     private ConfigurationService $config;
