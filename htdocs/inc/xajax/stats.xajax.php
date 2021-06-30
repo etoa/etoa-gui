@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Core\Configuration\ConfigurationService;
+
 $xajax->register(XAJAX_FUNCTION,'statsShowBox');
 $xajax->register(XAJAX_FUNCTION,'statsShowTable');
 

@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Core\Configuration\ConfigurationService;
+
 $xajax->register(XAJAX_FUNCTION,'launchBookmarkProbe');
 $xajax->register(XAJAX_FUNCTION,'searchShipList');
 $xajax->register(XAJAX_FUNCTION,'bookmarkTargetInfo');

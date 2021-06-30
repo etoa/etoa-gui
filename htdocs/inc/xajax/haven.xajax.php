@@ -1,7 +1,10 @@
 <?PHP
 
 	// Main dialogs
-	$xajax->register(XAJAX_FUNCTION,"havenShowShips");
+
+use EtoA\Core\Configuration\ConfigurationService;
+
+$xajax->register(XAJAX_FUNCTION,"havenShowShips");
 	$xajax->register(XAJAX_FUNCTION,"havenShowTarget");
 	$xajax->register(XAJAX_FUNCTION,"havenShowWormhole");
 	$xajax->register(XAJAX_FUNCTION,"havenShowAction");
