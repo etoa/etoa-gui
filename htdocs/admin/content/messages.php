@@ -87,13 +87,13 @@ function sendMessageForm(
             $mailCnt = 0;
             $msgCnt = 0;
 
-            foreach ($to as $k=>$v)
+            foreach ($to as $userId => $userEmail)
             {
                 if (in_array($msg_type, [MESSAGE_TYPE_IN_GAME, MESSAGE_TYPE_BOTH], true))
                 {
                     $messageRepository->sendFromUserToUser(
                         $request->request->getInt('from_id'),
-                        (int) $k,
+                        $userId,
                         $request->request->get('message_subject'),
                         $request->request->get('message_text')
                     );
@@ -101,14 +101,16 @@ function sendMessageForm(
                 }
                 if (in_array($msg_type, [MESSAGE_TYPE_EMAIL, MESSAGE_TYPE_BOTH], true))
                 {
-                    $mail->send($v,$reply);
+                    $mail->send($userEmail, $reply);
                     $mailCnt++;
                 }
             }
-            if ($msgCnt>0)
+            if ($msgCnt>0) {
                 success_msg("$msgCnt InGame-Nachrichten wurden versendet!");
-            if ($mailCnt>0)
+            }
+            if ($mailCnt>0) {
                 success_msg("$mailCnt Mails wurden versendet!");
+            }
         }
         else
         {

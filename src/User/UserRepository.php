@@ -116,6 +116,9 @@ class UserRepository extends AbstractRepository
         return $data !== false ? new User($data) : null;
     }
 
+    /**
+     * @return array<int,string>
+     */
     public function getEmailAddresses(): array
     {
         $data = $this->createQueryBuilder()
@@ -127,7 +130,7 @@ class UserRepository extends AbstractRepository
 
         $recipients = [];
         foreach ($data as $item) {
-            $recipients[$item['user_id']] = $item['user_nick']."<".$item['user_email'].">";
+            $recipients[(int) $item['user_id']] = $item['user_nick']."<".$item['user_email'].">";
         }
 
         return $recipients;
