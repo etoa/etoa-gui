@@ -20,7 +20,7 @@ $cellRepo = $app[CellRepository::class];
 $entityRepo = $app[EntityRepository::class];
 
 /** @var StarRepository */
-$starRepo = $app['etoa.universe.star.repository'];
+$starRepo = $app[StarRepository::class];
 
 $sx_num = $config->param1Int('num_of_sectors');
 $sy_num = $config->param2Int('num_of_sectors');

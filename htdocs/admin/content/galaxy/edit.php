@@ -21,22 +21,22 @@ $config = $app['etoa.config.service'];
 $entityRepo = $app[EntityRepository::class];
 
 /** @var StarRepository */
-$starRepo = $app['etoa.universe.star.repository'];
+$starRepo = $app[StarRepository::class];
 
 /** @var PlanetRepository */
-$planetRepo = $app['etoa.universe.planet.repository'];
+$planetRepo = $app[PlanetRepository::class];
 
 /** @var AsteroidsRepository */
-$asteroidsRepo = $app['etoa.universe.asteroids.repository'];
+$asteroidsRepo = $app[AsteroidsRepository::class];
 
 /** @var NebulaRepository */
-$nebulaRepo = $app['etoa.universe.nebula.repository'];
+$nebulaRepo = $app[NebulaRepository::class];
 
 /** @var WormholeRepository */
-$wormholeRepo = $app['etoa.universe.wormhole.repository'];
+$wormholeRepo = $app[WormholeRepository::class];
 
 /** @var EmptySpaceRepository */
-$emptySpaceRepo = $app['etoa.universe.empty_space.repository'];
+$emptySpaceRepo = $app[EmptySpaceRepository::class];
 
 /** @var SolarTypeRepository */
 $solarTypeRepository = $app[SolarTypeRepository::class];

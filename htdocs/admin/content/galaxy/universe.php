@@ -5,7 +5,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use Symfony\Component\HttpFoundation\Request;
 
 /** @var UniverseGenerator */
-$universeGenerator = $app['etoa.universe.generator'];
+$universeGenerator = $app[UniverseGenerator::class];
 
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
