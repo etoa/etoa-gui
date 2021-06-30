@@ -159,7 +159,7 @@ class UniverseGenerator
 
         $output[] = "Erstelle Universum mit " . $sx_num * $sy_num . " Sektoren à " . $cx_num * $cy_num . " Zellen, d.h. " . $sx_num * $sy_num * $cx_num * $cy_num . " Zellen total.";
 
-        $type = array();
+        $type = [];
 
         //
         // Set cell types
@@ -279,8 +279,8 @@ class UniverseGenerator
         //
 
         // Get all wormholes
-        $wh = array();
-        $wh_persistent = array();
+        $wh = [];
+        $wh_persistent = [];
         $wormholes = $this->wormholeRepo->findAll();
         $wormhole_count = count($wormholes);
         foreach ($wormholes as $wormhole) {
