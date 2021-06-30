@@ -108,9 +108,6 @@ define("INVADE_ACTIVE_USER", $config->getBoolean('invade_active_users'));
 // Kampfsystem
 //
 
-// Prozentualer Wiederaufbau der Def
-define("DEF_RESTORE_PERCENT", $config->getFloat('def_restore_percent'));
-
 // Def ins Trümmerfeld
 define("DEF_WF_PERCENT", $config->getFloat('def_wf_percent'));
 
