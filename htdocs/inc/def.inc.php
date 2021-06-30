@@ -105,13 +105,6 @@ define("FLEET_FACTOR_L", $config->getFloat('flight_land_time'));
 define("INVADE_ACTIVE_USER", $config->getBoolean('invade_active_users'));
 
 //
-// Kampfsystem
-//
-
-// Chance-Faktor beim Bombardieren + Deaktivieren
-define("SHIP_BOMB_FACTOR", $config->getInt('ship_bomb_factor'));
-
-//
 // Anfängerschutz
 //
 
