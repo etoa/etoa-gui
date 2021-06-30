@@ -79,10 +79,7 @@ if (isset($_POST['new_submit']))
 
 echo "<form action=\"?".URL_SEARCH_STRING."\" method=\"post\">";
 if (!defined("DB_OVERVIEW_ORDER")) define("DB_OVERVIEW_ORDER","ASC");
-if (defined("DB_CONDITION"))
-	$sql = "SELECT * FROM ".DB_TABLE." WHERE ".DB_CONDITION." ORDER BY `".DB_OVERVIEW_ORDER_FIELD."` ".DB_OVERVIEW_ORDER.";";
-else
-	$sql = "SELECT * FROM ".DB_TABLE." ORDER BY `".DB_OVERVIEW_ORDER_FIELD."` ".DB_OVERVIEW_ORDER.";";
+$sql = "SELECT * FROM ".DB_TABLE." ORDER BY `".DB_OVERVIEW_ORDER_FIELD."` ".DB_OVERVIEW_ORDER.";";
 $res = dbquery($sql);
 if (mysql_num_rows($res)!=0)
 {
