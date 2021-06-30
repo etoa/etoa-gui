@@ -9,7 +9,7 @@ use Twig\Environment;
 $config = $app[ConfigurationService::class];
 
 /** @var ConfigurationDefinitionsRepository */
-$definitions = $app['etoa.config.definitions'];
+$definitions = $app[ConfigurationDefinitionsRepository::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();
