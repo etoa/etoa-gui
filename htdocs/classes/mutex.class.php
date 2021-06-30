@@ -31,7 +31,7 @@
 
 		private static function isSupported() {
 			$os = isset($_SERVER['OS']) ? $_SERVER['OS'] : '';
-			return UNIX && !preg_match('/^win/i', $os) && function_exists('sem_get');
+			return isUnixOS() && !preg_match('/^win/i', $os) && function_exists('sem_get');
 		}
 
 		/**

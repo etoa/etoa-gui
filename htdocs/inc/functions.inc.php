@@ -1702,28 +1702,42 @@ function rrmdir($dir) {
 * Returns true if the debug mode is enabled
 * by checking the existence of the file config/debug
 */
-function isDebugEnabled() {
+function isDebugEnabled(): bool
+{
     return file_exists(RELATIVE_ROOT.'config/debug');
 }
 
 /**
 * Returns true if script is run on command line
 */
-function isCLI() {
+function isCLI(): bool
+{
     return php_sapi_name() === 'cli';
+}
+
+function isUnixOS(): bool
+{
+    return defined('POSIX_F_OK');
+}
+
+function isWindowsOS(): bool
+{
+    return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
 }
 
 /**
 * Returns true if the specified unix command exists
 */
-function unix_command_exists($cmd) {
-    if (UNIX) {
+function unix_command_exists(string $cmd): bool
+{
+    if (isUnixOS()) {
         return (bool) shell_exec("which $cmd 2>/dev/null");
     }
     return false;
 }
 
-function getAbsPath($path) {
+function getAbsPath(string $path): string
+{
     return (substr($path, 0, 1) != "/" ? realpath(RELATIVE_ROOT).'/' : '').$path;
 }
 
@@ -1795,4 +1809,13 @@ if (! function_exists('filled')) {
     {
         return ! blank($value);
     }
+}
+
+function flatten(array $array): array
+{
+    $return = array();
+    array_walk_recursive($array, function ($a) use (&$return): void {
+        $return[] = $a;
+    });
+    return $return;
 }

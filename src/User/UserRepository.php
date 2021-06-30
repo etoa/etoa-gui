@@ -103,6 +103,15 @@ class UserRepository extends AbstractRepository
             ->fetchAllKeyValue();
     }
 
+    public function resetDiscoveryMask(): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('discoverymask', "''")
+            ->set('user_setup', (string) 0)
+            ->execute();
+    }
+
     public function getUser(int $userId): ?User
     {
         $data = $this->createQueryBuilder()

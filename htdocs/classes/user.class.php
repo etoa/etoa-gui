@@ -1504,7 +1504,7 @@ die Spielleitung";
         ");
         $this->dmask = '';
         $arr = mysql_fetch_row($res);
-        if (strlen($arr[0])<3)
+        if (!isset($arr[0]) || strlen($arr[0])<3)
         {
             for ($x=1;$x<=$sx_num*$cx_num;$x++)
             {

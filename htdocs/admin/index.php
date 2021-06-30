@@ -124,6 +124,7 @@ function adminView(
     global $sub;
     global $app;
     global $resNames;
+    global $cu;
 
     // Load admin user data
     $cu = $adminUserRepo->find($s->user_id);
@@ -144,9 +145,9 @@ function adminView(
     $twig->addGlobal('numNotes', $numNotes);
     $twig->addGlobal('currentUserNick', $cu->nick);
     $twig->addGlobal('userRoles', $cu->roles);
-    $twig->addGlobal('isUnix', UNIX);
+    $twig->addGlobal('isUnix', isUnixOS());
 
-    if (UNIX) {
+    if (isUnixOS()) {
         $eventHandlerPid = EventHandlerManager::checkDaemonRunning(getAbsPath($config->get('daemon_pidfile')));
         exec("cat /proc/cpuinfo | grep processor | wc -l", $out);
         $load = sys_getloadavg();

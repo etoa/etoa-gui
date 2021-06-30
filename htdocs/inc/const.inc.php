@@ -5,18 +5,6 @@
 	// Timezone
 	define('TIMEZONE', 'Europe/Zurich');
 
-	// OS-Version feststellen
-	if (defined('POSIX_F_OK'))
-	{
-		define('UNIX', true);
-		define('WINDOWS', false);
-	}
-	else
-	{
-		define('UNIX', false);
-		define('WINDOWS', true);
-	}
-
 	/***********
 	* Database *
 	***********/

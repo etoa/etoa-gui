@@ -57,7 +57,7 @@ if ($sub == "offline") {
     systemInfoView($databaseManager, $twig);
 } else {
     /** @var CellRepository */
-    $universeCellRepo = $app['etoa.universe.cell.repository'];
+    $universeCellRepo = $app[CellRepository::class];
 
     /** @var TicketRepository */
     $ticketRepo = $app['etoa.help.ticket.repository'];
@@ -292,12 +292,12 @@ function adminSessionLogView(
 
 function systemInfoView(DatabaseManagerRepository $databaseManager, Environment $twig)
 {
-    $unix = UNIX ? posix_uname() : null;
+    $unix = isUnixOS() ? posix_uname() : null;
     echo $twig->render('admin/overview/sysinfo.html.twig', [
         'phpVersion' => phpversion(),
         'dbVersion' => $databaseManager->getDatabasePlatform(),
         'webserverVersion' => $_SERVER['SERVER_SOFTWARE'],
-        'unixName' => UNIX ? $unix['sysname'] . ' ' . $unix['release'] . ' ' . $unix['version'] : null,
+        'unixName' => isUnixOS() ? $unix['sysname'] . ' ' . $unix['release'] . ' ' . $unix['version'] : null,
     ]);
     exit();
 }

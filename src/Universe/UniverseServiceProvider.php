@@ -15,15 +15,68 @@ class UniverseServiceProvider implements ServiceProviderInterface
             return new PlanetRepository($pimple['db']);
         };
 
-        $pimple['etoa.universe.cell.repository'] = function (Container $pimple): CellRepository {
+        $pimple[CellRepository::class] = function (Container $pimple): CellRepository {
             return new CellRepository($pimple['db']);
         };
 
-        $pimple['etoa.universe.solar_type.repository'] = function (Container $pimple): SolarTypeRepository {
+        $pimple[EntityRepository::class] = function (Container $pimple): EntityRepository {
+            return new EntityRepository($pimple['db']);
+        };
+
+        $pimple[StarRepository::class] = function (Container $pimple): StarRepository {
+            return new StarRepository($pimple['db']);
+        };
+
+        $pimple[PlanetRepository::class] = function (Container $pimple): PlanetRepository {
+            return new PlanetRepository($pimple['db']);
+        };
+
+        $pimple[AsteroidsRepository::class] = function (Container $pimple): AsteroidsRepository {
+            return new AsteroidsRepository($pimple['db']);
+        };
+
+        $pimple[NebulaRepository::class] = function (Container $pimple): NebulaRepository {
+            return new NebulaRepository($pimple['db']);
+        };
+
+        $pimple[WormholeRepository::class] = function (Container $pimple): WormholeRepository {
+            return new WormholeRepository($pimple['db']);
+        };
+
+        $pimple[EmptySpaceRepository::class] = function (Container $pimple): EmptySpaceRepository {
+            return new EmptySpaceRepository($pimple['db']);
+        };
+
+        $pimple[UniverseGenerator::class] = function (Container $pimple): UniverseGenerator {
+            return new UniverseGenerator(
+                $pimple['etoa.config.service'],
+                $pimple[SolarTypeRepository::class],
+                $pimple[PlanetTypeRepository::class],
+                $pimple[CellRepository::class],
+                $pimple[EntityRepository::class],
+                $pimple[StarRepository::class],
+                $pimple[PlanetRepository::class],
+                $pimple[AsteroidsRepository::class],
+                $pimple[NebulaRepository::class],
+                $pimple[WormholeRepository::class],
+                $pimple[EmptySpaceRepository::class]
+            );
+        };
+
+        $pimple[UniverseResetService::class] = function (Container $pimple): UniverseResetService {
+            return new UniverseResetService(
+                $pimple['etoa.config.service'],
+                $pimple['etoa.user.repository'],
+                $pimple[PlanetRepository::class],
+                $pimple['etoa.db.manager.repository']
+            );
+        };
+
+        $pimple[SolarTypeRepository::class] = function (Container $pimple): SolarTypeRepository {
             return new SolarTypeRepository($pimple['db']);
         };
 
-        $pimple['etoa.universe.planet_type.repository'] = function (Container $pimple): PlanetTypeRepository {
+        $pimple[PlanetTypeRepository::class] = function (Container $pimple): PlanetTypeRepository {
             return new PlanetTypeRepository($pimple['db']);
         };
     }
