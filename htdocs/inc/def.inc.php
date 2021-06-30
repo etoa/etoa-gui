@@ -101,9 +101,6 @@ define("FLEET_FACTOR_L", $config->getFloat('flight_land_time'));
 // Invasion
 //
 
-// Grundinvasionschance
-define("INVADE_POSSIBILITY", $config->getFloat('invade_possibility'));
-
 // MAX. Invasionschance
 define("INVADE_MAX_POSSIBILITY", $config->param1Float('invade_possibility'));
 
