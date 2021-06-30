@@ -86,7 +86,7 @@ function sendMessageForm(
 
             foreach ($to as $k=>$v)
             {
-                if (in_array($msg_type, [MESSAGE_TYPE_IN_GAME, MESSAGE_TYPE_BOTH]))
+                if (in_array($msg_type, [MESSAGE_TYPE_IN_GAME, MESSAGE_TYPE_BOTH], true))
                 {
                     $messageRepository->sendFromUserToUser(
                         $request->request->getInt('from_id'),
@@ -96,7 +96,7 @@ function sendMessageForm(
                     );
                     $msgCnt++;
                 }
-                if (in_array($msg_type, [MESSAGE_TYPE_EMAIL, MESSAGE_TYPE_BOTH]))
+                if (in_array($msg_type, [MESSAGE_TYPE_EMAIL, MESSAGE_TYPE_BOTH], true))
                 {
                     $mail->send($v,$reply);
                     $mailCnt++;
