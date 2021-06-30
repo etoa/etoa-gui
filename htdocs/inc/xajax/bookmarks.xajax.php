@@ -231,6 +231,12 @@ include_once('cell.xajax.php');
 		$response = new xajaxResponse();
 		ob_start();
 
+        // TODO
+        global $app;
+
+        /** @var ConfigurationService */
+        $config = $app['etoa.config.service'];
+
 		$pos = (int)$form['pos'];
 		$sx = (int)$form['sx'];
 		$sy = (int)$form['sy'];
@@ -238,8 +244,8 @@ include_once('cell.xajax.php');
 		$cy = (int)$form['cy'];
 		if ($sx>0 && $sy>0 && $cx>0 && $cy>0 && $pos>=0)
 		{
-			$absX = (($sx - 1)* CELL_NUM_X) + $cx;
-			$absY = (($sy-1) * CELL_NUM_Y) + $cy;
+			$absX = (($sx - 1)* $config->param1Int('num_of_cells')) + $cx;
+			$absY = (($sy-1) * $config->param2Int('num_of_cells')) + $cy;
 
 			$user = new CurrentUser($_SESSION['user_id']);
 

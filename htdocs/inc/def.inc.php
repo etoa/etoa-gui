@@ -54,12 +54,6 @@ define("USER_INACTIVE_LONG", $config->param2Int('user_inactive_days'));
 // Universum
 //
 
-// Anzahl Zellen x
-define("CELL_NUM_X", $config->param1Int('num_of_cells'));
-
-// Anzahl Zellen y
-define("CELL_NUM_Y", $config->param2Int('num_of_cells'));
-
 // Wurmlöcher
 define("WH_UPDATE_AFFECT_TIME", $config->getInt('wh_update'));
 define("WH_UPDATE_AFFECT_CNT", $config->param1Int('wh_update'));
