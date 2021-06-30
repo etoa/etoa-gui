@@ -55,9 +55,7 @@ class AdminUserRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return collect($data)
-            ->map(fn ($arr) => AdminUser::createFromArray($arr))
-            ->toArray();
+        return array_map(fn (array $arr) => AdminUser::createFromArray($arr), $data);
     }
 
     /**

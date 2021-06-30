@@ -46,9 +46,7 @@ class TicketMessageRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return collect($data)
-            ->map(fn ($arr) => TicketMessage::createFromArray($arr))
-            ->toArray();
+        return array_map(fn (array $arr) => TicketMessage::createFromArray($arr), $data);
     }
 
     public function findLastMessageForTicket(int $ticketId): ?TicketMessage

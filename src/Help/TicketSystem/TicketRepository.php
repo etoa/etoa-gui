@@ -66,9 +66,7 @@ class TicketRepository extends AbstractRepository
         $data = $qry->execute()
             ->fetchAllAssociative();
 
-        return collect($data)
-            ->map(fn ($arr) => Ticket::createFromArray($arr))
-            ->toArray();
+        return array_map(fn (array $arr) => Ticket::createFromArray($arr), $data);
     }
 
     public function persist(Ticket $ticket): bool
@@ -129,15 +127,15 @@ class TicketRepository extends AbstractRepository
      */
     public function findAssignedIds(): array
     {
-        return collect($this->createQueryBuilder()
+        $data = $this->createQueryBuilder()
             ->select("id")
             ->from('tickets')
             ->where("status = :status")
             ->setParameter('status', TicketStatus::ASSIGNED)
             ->execute()
-            ->fetchFirstColumn())
-            ->map(fn ($val) => (int) $val)
-            ->toArray();
+            ->fetchFirstColumn();
+
+        return array_map(fn ($val) => (int) $val, $data);
     }
 
     /**
@@ -145,14 +143,14 @@ class TicketRepository extends AbstractRepository
      */
     public function findOrphanedIds(): array
     {
-        return collect($this->createQueryBuilder()
+        $data = $this->createQueryBuilder()
             ->select('id')
             ->from('tickets', 't')
             ->where('!(t.user_id IN(SELECT u.user_id FROM users u))')
             ->execute()
-            ->fetchFirstColumn())
-            ->map(fn ($val) => (int) $val)
-            ->toArray();
+            ->fetchFirstColumn();
+
+        return array_map(fn ($val) => (int) $val, $data);
     }
 
     public function removeByIds(...$ticketIds): int
