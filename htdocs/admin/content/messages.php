@@ -245,7 +245,7 @@ function manageReports(Request $request, ReportRepository $reportRepository, Use
 
         //data tables
         $join = '';
-        if ($request->request->has('table') && $request->request->get('table')) {
+        if ($request->request->has('type') && $request->request->get('type') != "") {
             $join = " INNER JOIN `reports_".$request->request->get('type')."` AS rd ON reports.id=rd.id ";
         }
 
