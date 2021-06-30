@@ -213,6 +213,12 @@
 
 	function admin_edit_dataset($db_fields,$arr)
 	{
+        // TODO
+        global $app;
+
+        /** @var ConfigurationService */
+        $config = $app['etoa.config.service'];
+
 		$hidden_rows = array();
 
 		echo "<tr><td style=\"vertical-align:top;\"><table style=\"width:100%;\">";
@@ -249,7 +255,7 @@
 					echo "<input $stl type=\"password\" name=\"".$fieldDefinition['name']."\" size=\"".$fieldDefinition['size']."\" maxlength=\"".$fieldDefinition['maxlen']."\" value=\"\" />";
 				break;
 				case "timestamp":
-					echo "<input $stl type=\"text\" name=\"".$fieldDefinition['name']."\" size=\"".$fieldDefinition['size']."\" maxlength=\"".$fieldDefinition['maxlen']."\" value=\"".date(DATE_FORMAT,$arr[$fieldDefinition['name']])."\" />";
+					echo "<input $stl type=\"text\" name=\"".$fieldDefinition['name']."\" size=\"".$fieldDefinition['size']."\" maxlength=\"".$fieldDefinition['maxlen']."\" value=\"".date($config->get('admin_dateformat'),$arr[$fieldDefinition['name']])."\" />";
 				break;
 				case "textarea":
 					echo "<textarea $stl name=\"".$fieldDefinition['name']."\" rows=\"".$fieldDefinition['rows']."\" cols=\"".$fieldDefinition['cols']."\">".stripslashes($arr[$fieldDefinition['name']])."</textarea>";
@@ -417,6 +423,12 @@
 
 	function admin_delete_dataset($db_fields,$arr)
 	{
+        // TODO
+        global $app;
+
+        /** @var ConfigurationService */
+        $config = $app['etoa.config.service'];
+
 		foreach ($db_fields as $k=>$a)
 		{
 			switch ($a['type'])
@@ -443,7 +455,7 @@
 				break;
 				case "timestamp":
 					echo "<tr><th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>";
-					echo "<td class=\"tbldata\" width=\"200\">".date(DATE_FORMAT,$arr[$a['name']])."</td></tr>";
+					echo "<td class=\"tbldata\" width=\"200\">".date($config->get('admin_dateformat'),$arr[$a['name']])."</td></tr>";
 				break;
 				case "textarea":
 					echo "<tr><th class=\"tbltitle\" width=\"200\">".$a['text'].":</th>";
@@ -489,6 +501,12 @@
 
 	function admin_show_overview($db_fields,$arr)
 	{
+        // TODO
+        global $app;
+
+        /** @var ConfigurationService */
+        $config = $app['etoa.config.service'];
+
 		foreach ($db_fields as $k=>$a)
 		{
 			if ($a['show_overview']==1)
@@ -520,7 +538,7 @@
 						echo "".$arr[$a['name']]."";
 					break;
 					case "timestamp":
-						echo "".date(DATE_FORMAT,$arr[$a['name']])."";
+						echo "".date($config->get('admin_dateformat'),$arr[$a['name']])."";
 					break;
 					case "textarea":
 						echo "";
