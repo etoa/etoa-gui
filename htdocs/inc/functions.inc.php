@@ -1203,7 +1203,7 @@ function calcBuildingCosts($buildingArray, $level, $fac=1)
         $starBuildTime = $cp->starBuildtime;
 
     $bonus = $cu->race->buildTime + $typeBuildTime + $starBuildTime + $cu->specialist->buildTime - 3;
-    $bc['time'] = ($bc['metal']+$bc['crystal']+$bc['plastic']+$bc['fuel']+$bc['food']) / $config->getInt('global_time') * BUILD_BUILD_TIME;
+    $bc['time'] = ($bc['metal']+$bc['crystal']+$bc['plastic']+$bc['fuel']+$bc['food']) / $config->getInt('global_time') * $config->getFloat('build_build_time');
     $bc['time'] *= $bonus;
     return $bc;
 }

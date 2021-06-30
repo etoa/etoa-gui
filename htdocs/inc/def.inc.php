@@ -37,9 +37,6 @@ define("FLOOD_CONTROL", $config->getInt('msg_flood_control'));    // Wartezeit b
 define("WAR_DURATION", 3600 * $config->getInt('alliance_war_time'));
 define("PEACE_DURATION", 3600 * $config->param1Int('alliance_war_time'));
 
-// Gebäudebau Faktor
-define("BUILD_BUILD_TIME", $config->getFloat('build_build_time'));
-
 // Flugzeit Faktor (wirkt nicht auf Start/Landezeit)
 define("FLEET_FACTOR_F", $config->getFloat('flight_flight_time'));
 
