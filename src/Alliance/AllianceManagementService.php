@@ -27,7 +27,7 @@ class AllianceManagementService
     private UserRepository $userRepository;
     private UserLogRepository $userLogRepository;
     private ConfigurationService $config;
-    private MessageRepository $messageRepo;
+    private MessageRepository $messageRepository;
     private $dispatcher;
 
     public function __construct(
@@ -44,7 +44,7 @@ class AllianceManagementService
         UserRepository $userRepository,
         UserLogRepository $userLogRepository,
         ConfigurationService $config,
-        MessageRepository $messageRepo,
+        MessageRepository $messageRepository,
         $dispatcher
     ) {
         $this->repository = $repository;
@@ -60,7 +60,7 @@ class AllianceManagementService
         $this->userRepository = $userRepository;
         $this->userLogRepository = $userLogRepository;
         $this->config = $config;
-        $this->messageRepo = $messageRepo;
+        $this->messageRepository = $messageRepository;
         $this->dispatcher = $dispatcher;
     }
 
@@ -165,7 +165,21 @@ class AllianceManagementService
         return $removed;
     }
 
-    public function addMember(int $allianceId, int $userId): bool
+    public function dismissApplication(int $allianceId, int $userId, ?string $applicationAnswerText): void
+    {
+        $user = $this->userRepository->getUser($userId);
+        if ($user === null) {
+            return;
+        }
+
+        $this->messageRepository->createSystemMessage($userId, MSG_ALLYMAIL_CAT, "Bewerbung abgelehnt", "Deine Allianzbewerbung wurde abgelehnt!\n\n[b]Antwort:[/b]\n" . $applicationAnswerText);
+
+        $this->historyRepository->addEntry($allianceId, "Die Bewerbung von [b]" . $user->nick . "[/b] wurde abgelehnt!");
+
+        $this->applicationRepository->removeForAllianceAndUser($allianceId, $userId);
+    }
+
+    public function addMember(int $allianceId, int $userId, ?string $applicationAnswerText): bool
     {
         if ($this->repository->hasUser($allianceId, $userId)) {
             return false;
@@ -188,8 +202,18 @@ class AllianceManagementService
 
         $this->repository->addUser($allianceId, $userId);
 
-        $this->messageRepo->createSystemMessage($userId, MSG_ALLYMAIL_CAT, "Allianzaufnahme", "Du wurdest in die Allianz [b]" . $alliance->toString() . "[/b] aufgenommen!");
-        $this->historyRepository->addEntry($this->id, "[b]" . $user->nick . "[/b] wurde als neues Mitglied aufgenommen");
+        $fromApplication = $this->applicationRepository->removeForAllianceAndUser($allianceId, $userId);
+
+        if ($fromApplication) {
+            $this->messageRepository->createSystemMessage($userId, MSG_ALLYMAIL_CAT, "Bewerbung angenommen", "Deine Allianzbewerbung wurde angenommen!\n\n[b]Antwort:[/b]\n" . $applicationAnswerText);
+            $this->allianceHistoryRepository->addEntry($allianceId, "Die Bewerbung von [b]" . $user->nick . "[/b] wurde akzeptiert!");
+
+            Log::add(5, Log::INFO, "Der Spieler [b]" . $user->nick . "[/b] tritt der Allianz [b]" . $alliance->toString() . "[/b] bei!");
+            $this->userLogRepository->add($user, "alliance", "{nick} ist nun ein Mitglied der Allianz " . $alliance->toString() . ".");
+        } else {
+            $this->messageRepository->createSystemMessage($userId, MSG_ALLYMAIL_CAT, "Allianzaufnahme", "Du wurdest in die Allianz [b]" . $alliance->toString() . "[/b] aufgenommen!");
+            $this->historyRepository->addEntry($allianceId, "[b]" . $user->nick . "[/b] wurde als neues Mitglied aufgenommen");
+        }
 
         $this->calcMemberCosts($allianceId);
 
