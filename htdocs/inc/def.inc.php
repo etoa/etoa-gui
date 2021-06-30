@@ -9,12 +9,6 @@ $runtimeDataStore = $app['etoa.runtime.datastore'];
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
 
-// Minimale Nicklänge
-define("NICK_MINLENGHT", $config->param1Int('nick_length'));
-
-// Maximale Nicklänge
-define("NICK_MAXLENGHT", $config->param2Int('nick_length'));
-
 // Minimale Umode-Dauer
 define("MIN_UMOD_TIME", $config->getInt('hmode_days'));
 

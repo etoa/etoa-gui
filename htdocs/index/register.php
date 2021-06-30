@@ -24,7 +24,7 @@ function getRegisterParams(ConfigurationService $config, \EtoA\User\UserReposito
         'roundName' => $config->get('roundname'),
         'appName' => APP_NAME,
         'nameMaxLength' => $config->getInt('name_length'),
-        'nickMaxLength' => NICK_MAXLENGHT,
+        'nickMaxLength' => $config->param2Int('nick_length'),
         'rulesUrl' => RULES_URL,
         'privacyUrl' => PRIVACY_URL,
     ];

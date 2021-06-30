@@ -39,11 +39,17 @@ function registerCheckName($val)
 //Überprüft die Korrektheit des Nicks und prüft ob dieser schon vorhanden ist
 function registerCheckNick($val)
 {
+    // TODO
+    global $app;
+
+    /** @var ConfigurationService */
+    $config = $app['etoa.config.service'];
+
 	$objResponse = new xajaxResponse();
 	$objResponse->assign('nickStatus', 'style.fontWeight', "bold");
 	if (checkValidNick($val))
 	{
-		if (strlen($val)>=NICK_MINLENGHT)
+		if (strlen($val)>=$config->param1Int('nick_length'))
 		{
 			$res=dbquery("SELECT user_id FROM users WHERE user_nick='$val';");
             if (mysql_num_rows($res)>0)
@@ -59,7 +65,7 @@ function registerCheckNick($val)
         }
         else
         {
-            $objResponse->assign('nickStatus', 'innerHTML', "Der Benutzername ist noch zu kurz (Mind. ".NICK_MINLENGHT." Zeichen)!");
+            $objResponse->assign('nickStatus', 'innerHTML', "Der Benutzername ist noch zu kurz (Mind. ".$config->param1Int('nick_length')." Zeichen)!");
             $objResponse->assign('nickStatus', 'style.color', "#f90");
         }
     }

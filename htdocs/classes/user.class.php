@@ -1317,9 +1317,9 @@ die Spielleitung";
             throw new Exception("Dein Nickname darf nicht nur aus Leerzeichen bestehen!");
         }
         $nick_length = strlen(utf8_decode($nick));
-        if ($nick_length < NICK_MINLENGHT || $nick_length > NICK_MAXLENGHT)
+        if ($nick_length < $config->param1Int('nick_length') || $nick_length > $config->param2Int('nick_length'))
         {
-            throw new Exception("Dein Nickname muss mindestens ".NICK_MINLENGHT." Zeichen und maximum ".NICK_MAXLENGHT." Zeichen haben!");
+            throw new Exception("Dein Nickname muss mindestens ".$config->param1Int('nick_length')." Zeichen und maximum ".$config->param2Int('nick_length')." Zeichen haben!");
         }
 
         // Validate password
