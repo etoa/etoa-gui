@@ -28,9 +28,6 @@ $config = $app['etoa.config.service'];
 // Minimale Passwortlänge
 define("PASSWORD_MINLENGHT", $config->getInt('password_minlength'));
 
-// Minimale Passwortlänge
-define("PASSWORD_MAXLENGHT", $config->getInt('password_minlength'));
-
 // Minimale Nicklänge
 define("NICK_MINLENGHT", $config->param1Int('nick_length'));
 
