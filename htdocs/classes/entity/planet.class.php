@@ -1,4 +1,7 @@
 <?PHP
+
+use EtoA\Core\Configuration\ConfigurationService;
+
 /**
 * Planet class
 *
@@ -442,17 +445,23 @@ class Planet extends Entity implements OwnableEntity
 
 		function setDefaultResources()
 		{
+            // TODO
+            global $app;
+
+            /** @var ConfigurationService */
+            $config = $app['etoa.config.service'];
+
 			// Set default resources
 			dbquery("
 			UPDATE
 				planets
 			SET
-	      planet_res_metal='".USR_START_METAL."',
-	      planet_res_crystal='".USR_START_CRYSTAL."',
-	      planet_res_plastic='".USR_START_PLASTIC."',
-	      planet_res_fuel='".USR_START_FUEL."',
-	      planet_res_food='".USR_START_FOOD."',
-	      planet_people=".USR_START_PEOPLE."
+	      planet_res_metal='".$config->getInt('user_start_metal')."',
+	      planet_res_crystal='".$config->getInt('user_start_crystal')."',
+	      planet_res_plastic='".$config->getInt('user_start_plastic')."',
+	      planet_res_fuel='".$config->getInt('user_start_fuel')."',
+	      planet_res_food='".$config->getInt('user_start_food')."',
+	      planet_people=".$config->getInt('user_start_people')."
 			WHERE
 				id=".$this->id().";");
 		}

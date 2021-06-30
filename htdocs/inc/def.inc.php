@@ -69,24 +69,6 @@ define("PEACE_DURATION", 3600 * $config->param1Int('alliance_war_time'));
 /* Startwerte (bei erstellung eines neuen Accounts) */
 /****************************************************/
 
-// Anzahl Titan
-define("USR_START_METAL", $config->getInt('user_start_metal'));
-
-// Anzahl Silizium
-define("USR_START_CRYSTAL", $config->getInt('user_start_crystal'));
-
-// Anzahl PVC
-define("USR_START_PLASTIC", $config->getInt('user_start_plastic'));
-
-// Anzahl Tritium
-define("USR_START_FUEL", $config->getInt('user_start_fuel'));
-
-// Anzahl Nahrung
-define("USR_START_FOOD", $config->getInt('user_start_food'));
-
-// Anzahl Bewohner
-define("USR_START_PEOPLE", $config->getInt('user_start_people'));
-
 // "Startplanet" Name
 define("USR_PLANET_NAME", $config->getInt('user_planet_name'));
 
