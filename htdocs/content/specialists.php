@@ -29,7 +29,7 @@ $t = time();
     $config = $app['etoa.config.service'];
 
 	$uCnt = User::count();
-	$totAvail = ceil($uCnt*SPECIALIST_AVAILABILITY_FACTOR);
+	$totAvail = ceil($uCnt*$config->getFloat('specialistconfig'));
 
 	echo '<h1>Spezialisten</h1>';
 	echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);

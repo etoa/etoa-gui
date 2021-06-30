@@ -61,9 +61,6 @@ define("FLOOD_CONTROL", $config->getInt('msg_flood_control'));    // Wartezeit b
 // Spezialiasten
 //
 
-// Verfügbare Spezialisten pro Typ basierend auf Faktor * Anzahl User
-define('SPECIALIST_AVAILABILITY_FACTOR', $config->getFloat('specialistconfig'));
-
 // Kriegsdauer
 define("WAR_DURATION", 3600 * $config->getInt('alliance_war_time'));
 define("PEACE_DURATION", 3600 * $config->param1Int('alliance_war_time'));
