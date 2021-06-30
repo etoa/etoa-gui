@@ -43,9 +43,6 @@ define("GLOBAL_TIME", $config->getInt('global_time'));
 // Gebäudebau Faktor
 define("BUILD_BUILD_TIME", $config->getFloat('build_build_time'));
 
-// Forschungsbau Faktor
-define("RES_BUILD_TIME", $config->getFloat('res_build_time'));
-
 // Schiffsbau Faktor
 define("SHIP_BUILD_TIME", $config->getFloat('ship_build_time'));
 
