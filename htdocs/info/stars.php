@@ -1,6 +1,11 @@
 <?PHP
 
-	echo "<h2>Sterne</h2>";
+use EtoA\Universe\SolarTypeRepository;
+
+/** @var SolarTypeRepository */
+$solarTypeRepository = $app[SolarTypeRepository::class];
+
+echo "<h2>Sterne</h2>";
 	HelpUtil::breadCrumbs(array("Sterne","stars"));
 
 	if (isset($_GET['order']) && ctype_alpha($_GET['order']))
@@ -29,10 +34,6 @@
 		$sort="ASC";
 	}
 
-    /** @var \EtoA\Universe\SolarTypeRepository $solarTypeRepository */
-    $solarTypeRepository = $app['etoa.universe.solar_type.repository'];
-    $solarTypes = $solarTypeRepository->getSolarTypes($order, $sort);
-
 		tableStart("Sternenboni");
 		echo "<tr><th colspan=\"2\" ><a href=\"?$link&amp;site=$site&amp;order=name\">Name</a></th>";
 		echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_metal\">".RES_METAL."</th>";
@@ -46,14 +47,11 @@
 		echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_buildtime\">Bauzeit</th>";
 		echo "</tr>";
 
+        $solarTypes = $solarTypeRepository->getSolarTypes($order, $sort);
 		foreach ($solarTypes as $solarType) {
 			echo "<tr><td style=\"width:40px;background:#000;vertical-align:middle;\">
 				<img src=\"".IMAGE_PATH."/stars/star".$solarType->id."_small.".IMAGE_EXT."\" width=\"40\" height=\"40\" alt=\"Stern\"/></a></td>";
 
-			/*$tt = new ToolTip();
-			$tt->addIcon(IMAGE_PATH."/stars/star".$arr['sol_type_id']."_small.".IMAGE_EXT."");
-			$tt->addTitle($arr['sol_type_name']);
-			$tt->addComment($arr['sol_type_comment']);"*/
 			echo "<td ".tm($solarType->name, $solarType->comment)."><b>".$solarType->name."</b></td>";
 			echo "<td>".get_percent_string($solarType->metal,1)."</td>";
 			echo "<td>".get_percent_string($solarType->crystal,1)."</td>";

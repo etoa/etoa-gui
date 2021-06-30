@@ -7,6 +7,8 @@ use EtoA\Universe\EmptySpaceRepository;
 use EtoA\Universe\EntityRepository;
 use EtoA\Universe\EntityType;
 use EtoA\Universe\NebulaRepository;
+use EtoA\Universe\PlanetTypeRepository;
+use EtoA\Universe\SolarTypeRepository;
 use EtoA\Universe\StarRepository;
 use EtoA\Universe\WormholeRepository;
 use EtoA\User\UserRepository;
@@ -35,6 +37,12 @@ $wormholeRepo = $app['etoa.universe.wormhole.repository'];
 
 /** @var EmptySpaceRepository */
 $emptySpaceRepo = $app['etoa.universe.empty_space.repository'];
+
+/** @var SolarTypeRepository */
+$solarTypeRepository = $app[SolarTypeRepository::class];
+
+/** @var PlanetTypeRepository */
+$planetTypeRepository = $app[PlanetTypeRepository::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();
@@ -160,8 +168,6 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
             echo "<th>Typ</th>
             <td>
             <select name=\"planet_type_id\">";
-            /** @var \EtoA\Universe\PlanetTypeRepository $planetTypeRepository */
-            $planetTypeRepository = $app['etoa.universe.planet_type.repository'];
             $planetTypeNames = $planetTypeRepository->getPlanetTypeNames(true);
             $selectedPlanetTypeName = null;
             foreach ($planetTypeNames as $planetTypeId => $planetTypeName){
@@ -361,8 +367,6 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
             <td>
             <img src=\"".IMAGE_PATH."/stars/star".$star['type_id']."_small.".IMAGE_EXT."\" style=\"float:left;\" />
             <select name=\"type_id\">";
-            /** @var \EtoA\Universe\SolarTypeRepository $solarTypeRepository */
-            $solarTypeRepository = $app['etoa.universe.solar_type.repository'];
             $solarTypeNames = $solarTypeRepository->getSolarTypeNames(true);
             foreach ($solarTypeNames as $solarTypeId => $solarTypeName) {
                 echo "<option value=\"".$solarTypeId."\"";
