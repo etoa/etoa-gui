@@ -9,12 +9,6 @@ $runtimeDataStore = $app['etoa.runtime.datastore'];
 /** @var ConfigurationService */
 $config = $app['etoa.config.service'];
 
-// Minimale Umode-Dauer
-define("MIN_UMOD_TIME", $config->getInt('hmode_days'));
-
-//MAximale Umode-Dauer
-define("MAX_UMOD_TIME", $config->param1Int('hmode_days'));
-
 // Zeit bis "Inaktiv" Status (atm 7 Tage)
 define("USER_INACTIVE_SHOW", $config->getInt('user_inactive_days'));
 

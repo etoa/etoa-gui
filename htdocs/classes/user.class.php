@@ -1038,6 +1038,11 @@ die Spielleitung";
 
     function activateUmode($force = false)
     {
+        // TODO
+        global $app;
+
+        /** @var ConfigurationService */
+        $config = $app['etoa.config.service'];
 
         $cres = dbquery("SELECT id FROM fleet WHERE user_id='" . $this->id . "';");
         $carr = mysql_fetch_row($cres);
@@ -1119,7 +1124,7 @@ die Spielleitung";
 
                 $hfrom = time();
 
-                $hto = $hfrom + (MIN_UMOD_TIME*24*3600);
+                $hto = $hfrom + ($config->getInt('hmode_days')*24*3600);
                 dbquery("
                         UPDATE
                             planets

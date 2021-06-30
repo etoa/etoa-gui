@@ -207,6 +207,12 @@ die Spielleitung";
     // check for $conf['hmode_days']['p2'] BEFORE calling this function
     static function setUmodToInactive()
     {
+        // TODO
+        global $app;
+
+        /** @var ConfigurationService */
+        $config = $app['etoa.config.service'];
+
         $now = time();
 
         // set all users who are inactive
@@ -225,7 +231,7 @@ die Spielleitung";
                         ." AND
                             user_hmode_from > 0
                         AND
-                            user_hmode_from<".(time()-MAX_UMOD_TIME*86400));
+                            user_hmode_from<".(time()-$config->param1Int('hmode_days')*86400));
 
         while ($arr=mysql_fetch_row($res))
         {  	$hmodTime = time() - $arr[1];
