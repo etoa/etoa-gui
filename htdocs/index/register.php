@@ -23,7 +23,7 @@ function getRegisterParams(ConfigurationService $config, \EtoA\User\UserReposito
         'userPassword' => $_SESSION['REGISTER']['register_user_password'] ?? '',
         'roundName' => $config->get('roundname'),
         'appName' => APP_NAME,
-        'nameMaxLength' => NAME_MAXLENGTH,
+        'nameMaxLength' => $config->getInt('name_length'),
         'nickMaxLength' => NICK_MAXLENGHT,
         'rulesUrl' => RULES_URL,
         'privacyUrl' => PRIVACY_URL,

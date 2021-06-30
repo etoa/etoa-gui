@@ -34,9 +34,6 @@ define("NICK_MINLENGHT", $config->param1Int('nick_length'));
 // Maximale Nicklänge
 define("NICK_MAXLENGHT", $config->param2Int('nick_length'));
 
-// Minimale Nicklänge
-define("NAME_MAXLENGTH", $config->getInt('name_length'));
-
 //
 // Inaktive & Urlaubsmodus
 //
