@@ -53,9 +53,12 @@ class CellRepository extends AbstractRepository
             ];
     }
 
+    /**
+     * @return array<Cell>
+     */
     public function findAllCoordinates(): array
     {
-        return $this->createQueryBuilder()
+        $data = $this->createQueryBuilder()
             ->select(
                 "id",
                 "sx",
@@ -66,6 +69,8 @@ class CellRepository extends AbstractRepository
             ->from('cells')
             ->execute()
             ->fetchAllAssociative();
+
+        return array_map(fn (array $arr) => new Cell($arr), $data);
     }
 
     /**

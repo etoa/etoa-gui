@@ -113,36 +113,35 @@ class UniverseGenerator
         $output[] = "Zellen gespeichert, fülle Objekte rein...";
         $cells = $this->cellRepo->findAllCoordinates();
         foreach ($cells as $cell) {
-            $x = (($cell['sx'] - 1) * $numberOfCellsX) + $cell['cx'];
-            $y = (($cell['sy'] - 1) * $numberOfCellsY) + $cell['cy'];
+            [$x, $y] = $cell->getAbsoluteCoordinates($numberOfCellsX, $numberOfCellsY);
 
             // Star system
             if ($type[$x][$y] == EntityType::STAR) {
-                $this->createStarSystem((int) $cell['id']);
+                $this->createStarSystem($cell->id);
                 $starCount++;
             }
 
             // Asteroid Fields
             elseif ($type[$x][$y] == EntityType::ASTEROIDS) {
-                $this->createAsteroids((int) $cell['id']);
+                $this->createAsteroids($cell->id);
                 $asteroidsCount++;
             }
 
             // Nebulas
             elseif ($type[$x][$y] == EntityType::NEBULA) {
-                $this->createNebula((int) $cell['id']);
+                $this->createNebula($cell->id);
                 $nebulaCount++;
             }
 
             // Wormholes
             elseif ($type[$x][$y] == EntityType::WORMHOLE) {
-                $this->createWormhole((int) $cell['id']);
+                $this->createWormhole($cell->id);
                 $wormholeCount++;
             }
 
             // Empty space
             else {
-                $this->createEmptySpace((int) $cell['id']);
+                $this->createEmptySpace($cell->id);
             }
         }
 
@@ -379,10 +378,10 @@ class UniverseGenerator
         $persistentWormholes = [];
 
         foreach ($this->wormholeRepo->findAll() as $wormhole) {
-            if ($wormhole['persistent'] == 1) {
-                array_push($persistentWormholes, (int) $wormhole['id']);
+            if ($wormhole->persistent) {
+                array_push($persistentWormholes, $wormhole->id);
             } else {
-                array_push($wormholes, (int) $wormhole['id']);
+                array_push($wormholes, $wormhole->id);
             }
         }
 
@@ -429,12 +428,12 @@ class UniverseGenerator
 
         $added = 0;
         foreach ($entities as $entity) {
-            if ($entity['code'] === EntityType::EMPTY_SPACE) {
-                $this->emptySpaceRepo->remove((int) $entity['id']);
-            } elseif ($entity['code'] === EntityType::ASTEROIDS) {
-                $this->asteroidsRepo->remove((int) $entity['id']);
+            if ($entity->code === EntityType::EMPTY_SPACE) {
+                $this->emptySpaceRepo->remove($entity->id);
+            } elseif ($entity->code === EntityType::ASTEROIDS) {
+                $this->asteroidsRepo->remove($entity->id);
             }
-            $this->createStarSystem((int) $entity['cell_id'], (int) $entity['id']);
+            $this->createStarSystem($entity->cellId, $entity->id);
             $added++;
         }
 

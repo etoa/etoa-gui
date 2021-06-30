@@ -24,15 +24,28 @@ class EntityRepository extends AbstractRepository
         return $id !== false ? (int) $id : null;
     }
 
+    /**
+     * @return array<Entity>
+     */
     public function findRandomByCodes(array $codes, int $limit): array
     {
         if (count($codes) == 0) {
             return [];
         }
 
-        return $this->createQueryBuilder()
-            ->select('*')
-            ->from('entities')
+        $data = $this->createQueryBuilder()
+            ->select(
+                'e.id',
+                'c.id as cid',
+                'code',
+                'pos',
+                'sx',
+                'sy',
+                'cx',
+                'cy'
+            )
+            ->from('entities', 'e')
+            ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id')
             ->where('code IN (' . implode(',', array_fill(0, count($codes), '?')) . ')')
             ->andWhere('pos = 0')
             ->orderBy('RAND()')
@@ -40,6 +53,8 @@ class EntityRepository extends AbstractRepository
             ->setMaxResults($limit)
             ->execute()
             ->fetchAllAssociative();
+
+        return array_map(fn (array $arr) => new Entity($arr), $data);
     }
 
     public function findIncludeCell(int $id): ?Entity

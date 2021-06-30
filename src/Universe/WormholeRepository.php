@@ -28,7 +28,7 @@ class WormholeRepository extends AbstractRepository
         return $id !== false ? (int) $id : null;
     }
 
-    public function find(int $id): ?array
+    public function find(int $id): ?Wormhole
     {
         $data = $this->createQueryBuilder()
             ->select('*')
@@ -40,16 +40,21 @@ class WormholeRepository extends AbstractRepository
             ->execute()
             ->fetchAssociative();
 
-        return $data !== false ? $data : null;
+        return $data !== false ? new Wormhole($data) : null;
     }
 
+    /**
+     * @return array<Wormhole>
+     */
     public function findAll(): array
     {
-        return $this->createQueryBuilder()
+        $data = $this->createQueryBuilder()
             ->select("*")
             ->from('wormholes')
             ->execute()
             ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new Wormhole($row), $data);
     }
 
     public function add(int $id, bool $persistent): void

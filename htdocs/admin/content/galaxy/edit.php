@@ -516,8 +516,8 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
 
                 $wormhole = $wormholeRepo->find($id);
 
-                $wormholeRepo->setPersistent($id, $persistent);
-                $wormholeRepo->setPersistent((int) $wormhole['target_id'], $persistent);
+                $wormholeRepo->setPersistent($wormhole->id, $persistent);
+                $wormholeRepo->setPersistent($wormhole->targetId, $persistent);
 
                 success_msg("Änderungen übernommen");
             }
@@ -526,15 +526,15 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
 
             echo "<form action=\"?page=$page&sub=edit&id=".$id."\" method=\"post\" id=\"editform\">";
             tableStart("<span style=\"color:".Entity::$entityColors[$entity->code]."\">Wurmloch</span>","auto");
-            echo "<tr><th>Entstanden</th><td>".df($wormhole['changed'])."</td><tr/>";
+            echo "<tr><th>Entstanden</th><td>".df($wormhole->changed)."</td><tr/>";
             echo "<tr><th>Ziel</th>
             <td>";
-            $ent = Entity::createFactoryById($wormhole['target_id']);
+            $ent = Entity::createFactoryById($wormhole->targetId);
             echo "<a href=\"?page=$page&amp;sub=$sub&amp;id=".$ent->id()."\">".$ent."</a>";
             echo "</td></tr>";
             echo "<tr><th>Persistent</th><td>";
-            echo "<input type=\"radio\" name=\"wormhole_persistent\" id=\"wormhole_persistent_0\" value=\"0\" ".($wormhole['persistent'] == 0 ? " checked=\"checked\"" : "")."> <label for=\"wormhole_persistent_0\">Nein</label> ";
-            echo "<input type=\"radio\" name=\"wormhole_persistent\" id=\"wormhole_persistent_1\" value=\"1\" ".($wormhole['persistent'] == 1 ? " checked=\"checked\"" : "")."> <label for=\"wormhole_persistent_1\">Ja</label> ";
+            echo "<input type=\"radio\" name=\"wormhole_persistent\" id=\"wormhole_persistent_0\" value=\"0\" ".(!$wormhole->persistent ? " checked=\"checked\"" : "")."> <label for=\"wormhole_persistent_0\">Nein</label> ";
+            echo "<input type=\"radio\" name=\"wormhole_persistent\" id=\"wormhole_persistent_1\" value=\"1\" ".($wormhole->persistent ? " checked=\"checked\"" : "")."> <label for=\"wormhole_persistent_1\">Ja</label> ";
             echo "</td><tr/>";
             echo "</table>";
             echo "<br/>
