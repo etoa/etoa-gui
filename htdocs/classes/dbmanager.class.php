@@ -410,7 +410,7 @@ class DBManager implements ISingleton	{
 
 	public function backupDB($backupDir, $gzip)
 	{
-		$mysqldump = WINDOWS ? WINDOWS_MYSQLDUMP_PATH : "mysqldump";
+		$mysqldump = isWindowsOS() ? WINDOWS_MYSQLDUMP_PATH : "mysqldump";
 
 		if (is_dir($backupDir))
 		{
@@ -418,7 +418,7 @@ class DBManager implements ISingleton	{
 
 			if ($gzip)
 			{
-				if (!UNIX)
+				if (!isUnixOS())
 				{
 					throw new Exception("Das Erstellen von GZIP Backups wird nur auf UNIX Systemen unterstützt!");
 				}
@@ -430,7 +430,7 @@ class DBManager implements ISingleton	{
 				$cmd = $mysqldump." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." -P".$this->getPort()." --default-character-set=utf8 ".$this->getDbName()." -r ".$file;
 			}
 
-			if (WINDOWS && !file_exists($mysqldump) || UNIX && !unix_command_exists($mysqldump))
+			if (isWindowsOS() && !file_exists($mysqldump) || isUnixOS() && !unix_command_exists($mysqldump))
 			{
 				$this->dumpIntoFile($file);
 			}
@@ -488,14 +488,14 @@ class DBManager implements ISingleton	{
 	}
 
 	private function loadFile($file) {
-		$mysql = WINDOWS ? WINDOWS_MYSQL_PATH : "mysql";
-        $mysqldump = WINDOWS ? WINDOWS_MYSQLDUMP_PATH : "mysqldump";
+		$mysql = isWindowsOS() ? WINDOWS_MYSQL_PATH : "mysql";
+        $mysqldump = isWindowsOS() ? WINDOWS_MYSQLDUMP_PATH : "mysqldump";
 		if (file_exists($file))
 		{
 			$ext = pathinfo ($file, PATHINFO_EXTENSION);
 			if ($ext == "gz")
 			{
-				if (!UNIX)
+				if (!isUnixOS())
 				{
 					throw new Exception("Das Laden von GZIP SQL Dateien wird nur auf UNIX Systemen unterstützt!");
 				}
@@ -506,7 +506,7 @@ class DBManager implements ISingleton	{
 				$cmd = $mysql." -u".$this->getUser()." -p".$this->getPassword()." -h".$this->getHost()." -P".$this->getPort()." --default-character-set=utf8 ".$this->getDbName()." < ".$file;
 			}
 
-			if (WINDOWS && !file_exists($mysql) || UNIX && !unix_command_exists($mysqldump))
+			if (isWindowsOS() && !file_exists($mysql) || isUnixOS() && !unix_command_exists($mysqldump))
 			{
 				$this->importFromFile($file);
 			}

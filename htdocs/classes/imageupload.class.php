@@ -71,8 +71,9 @@
                     @unlink($fpath);
 				}
                 move_uploaded_file($source,$fpath);
-                if (UNIX)
+                if (isUnixOS()) {
                 	chmod($fpath,FILE_UPLOAD_PERMS);
+                }
 
                 if (is_array($this->resize) && ($ims[0] > $this->resize[0] || $ims[1] > $this->resize[1]))
 								{
