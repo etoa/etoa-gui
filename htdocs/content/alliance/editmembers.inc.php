@@ -78,11 +78,11 @@ if (Alliance::checkActionRights('editmembers'))
 									{
 										if ($wf == $ally->id)
 										{
-											$ally->kickMember($uk);
+                                            $allianceManagementService->kickMember($ally->id, $uk);
 										}
 										else
 										{
-											$ally->wings[$wf]->kickMember($uk);
+                                            $allianceManagementService->kickMember($ally->wings[$wf]->id, $uk);
 										}
 
 										$checked_arr[$uk] = $wt;
@@ -144,7 +144,7 @@ if (Alliance::checkActionRights('editmembers'))
 			if (isset($ally->members[$kid]))
 			{
 				$tmpUser = $ally->members[$kid];
-				if ($ally->kickMember($kid))
+				if ($allianceManagementService->kickMember($ally->id, $kid))
 				{
 					Log::add(5,Log::INFO, "Der Spieler [b]".$tmpUser."[/b] wurde von [b]".$cu."[/b] aus der Allianz [b]".$ally."[/b] ausgeschlossen!");
 					success_msg("Der Spieler [b]".$tmpUser."[/b] wurde aus der Allianz ausgeschlossen!");

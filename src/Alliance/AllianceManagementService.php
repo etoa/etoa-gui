@@ -220,6 +220,39 @@ class AllianceManagementService
         return true;
     }
 
+    public function kickMember(int $allianceId, int $userId, $kicked = true): bool
+    {
+        $alliance = $this->repository->getAlliance($allianceId);
+        if ($alliance === null) {
+            return false;
+        }
+
+        $user = $this->userRepository->getUser($userId);
+        if ($user === null) {
+            return false;
+        }
+
+        if ($this->repository->isAtWar($allianceId)) {
+            return false;
+        }
+
+        $res = dbquery("SELECT id FROM fleet WHERE user_id='" . $userId . "' AND (action='alliance' OR action='support') LIMIT 1;");
+        if (mysql_num_rows($res) != 0) {
+            return false;
+        }
+
+        $this->repository->removeUser($userId, true);
+        if ($kicked) {
+            $this->messageRepository->createSystemMessage($userId, MSG_ALLYMAIL_CAT, "Allianzausschluss", "Du wurdest aus der Allianz [b]" . $alliance->toString() . "[/b] ausgeschlossen!");
+        } else {
+            $this->messageRepository->createSystemMessage($alliance->founderId, MSG_ALLYMAIL_CAT, "Allianzaustritt", "Der Spieler " . $user->nick . " trat aus der Allianz aus!");
+        }
+
+        $this->historyRepository->addEntry($allianceId, "[b]" . $this->members[$userId] . "[/b] ist nun kein Mitglied mehr von uns.");
+
+        return true;
+    }
+
     public function calcMemberCosts(int $allianceId, bool $save = true, int $addMembers = 1): string
     {
         // Zählt aktuelle Memberanzahl und und läd den Wert, für welche Anzahl User die Allianzobjekte gebaut wurden

@@ -276,7 +276,7 @@ WHERE
         {
             if (isset($_POST['submit_leave']))
             {
-                if ($ally->kickMember($cu->id,0)) {
+                if ($allianceManagementService->kickMember($ally->id, $cu->id, false)) {
                     success_msg("Du bist aus der Allianz ausgetreten!");
                 } else {
                     error_msg("Du konntest nicht aus der Allianz austreten, da die Allianz entweder im Krieg ist oder du noch Allianzflotten in der Luft hast!!");

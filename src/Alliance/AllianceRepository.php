@@ -107,7 +107,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    public function exists(string $tag, string $name) :bool
+    public function exists(string $tag, string $name): bool
     {
         $exists = $this->createQueryBuilder()
             ->select('alliance_id')
@@ -127,19 +127,19 @@ class AllianceRepository extends AbstractRepository
     public function add(string $tag, string $name, int $founderId): int
     {
         $this->createQueryBuilder()
-        ->insert('alliances')
-        ->values([
-            'alliance_tag' => ':tag',
-            'alliance_name' => ':name',
-            'alliance_founder_id' => ':founder',
-            'alliance_foundation_date' => time(),
-            'alliance_public_memberlist' => 1,
-        ])
-        ->setParameters([
-            'name' => $name,
-            'tag' => $tag,
-            'founder' => $founderId,
-        ])->execute();
+            ->insert('alliances')
+            ->values([
+                'alliance_tag' => ':tag',
+                'alliance_name' => ':name',
+                'alliance_founder_id' => ':founder',
+                'alliance_foundation_date' => time(),
+                'alliance_public_memberlist' => 1,
+            ])
+            ->setParameters([
+                'name' => $name,
+                'tag' => $tag,
+                'founder' => $founderId,
+            ])->execute();
 
         return (int) $this->getConnection()->lastInsertId();
     }
@@ -308,6 +308,22 @@ class AllianceRepository extends AbstractRepository
             ])
             ->execute()
             ->fetchAllAssociative();
+    }
+
+    public function isAtWar(int $allianceId): bool
+    {
+        $data = $this->createQueryBuilder()
+            ->select('alliance_bnd_id')
+            ->from('alliance_bnd')
+            ->where('alliance_bnd_level = 3')
+            ->andWhere('alliance_bnd_alliance_id1 = :allianceId ΟR alliance_bnd_alliance_id2 = :allianceId')
+            ->setParameters([
+                'allianceId' => $allianceId,
+            ])
+            ->execute()
+            ->fetchOne();
+
+        return $data !== false;
     }
 
     public function deleteOrphanedRanks(): int
@@ -540,15 +556,21 @@ class AllianceRepository extends AbstractRepository
         return $data !== false;
     }
 
-    public function removeUser(int $userId): void
+    public function removeUser(int $userId, bool $setLeaveTime = false): void
     {
-        $this->createQueryBuilder()
+        $qry = $this->createQueryBuilder()
             ->update('users')
             ->set('user_alliance_id', (string) 0)
             ->set('user_alliance_rank_id', (string) 0)
             ->where('user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->execute();
+            ->setParameter('userId', $userId);
+
+        if ($setLeaveTime) {
+            $qry->set('user_alliance_leave', ':time')
+                ->setParameter('time', time());
+        }
+
+        $qry->execute();
     }
 
     public function removeAllUsers(int $allianceId): void
