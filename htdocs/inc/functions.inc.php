@@ -1533,18 +1533,6 @@ function forward($url,$msgTitle=null,$msgText=null)
     exit;
 }
 
-function showTitle($title)
-{
-    // TODO
-    global $app;
-
-    /** @var ConfigurationService */
-    $config = $app['etoa.config.service'];
-
-    echo "<br/><a href=\"?\"><img src=\"images/game_logo.gif\" alt=\"EtoA Logo\" /></a>";
-    echo "<h1>$title - " . $config->get('roundname') . "</h1>";
-}
-
 function defineImagePaths()
 {
     // TODO

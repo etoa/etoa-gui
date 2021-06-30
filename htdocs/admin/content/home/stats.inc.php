@@ -316,7 +316,6 @@ $config = $app['etoa.config.service'];
 							echo "<td>".nf($arr['diplomacy_rating'])."</td>";
 							echo "<td>
 							".edit_button("?page=user&amp;sub=edit&amp;id=".$arr['user_id']."")."
-							".cb_button("add_user=".$arr['user_id']."")."
 							</td>";
 							echo "</tr>";
 							$cnt++;
@@ -383,7 +382,6 @@ $config = $app['etoa.config.service'];
 							echo "<td>".nf($arr['battle_rating'])."</td>";
 							echo "<td>
 							".edit_button("?page=user&amp;sub=edit&amp;id=".$arr['user_id']."")."
-							".cb_button("add_user=".$arr['user_id']."")."
 							</td>";
 							echo "</tr>";
 							$cnt++;
@@ -447,7 +445,6 @@ $config = $app['etoa.config.service'];
 							echo "<td>".nf($arr['trade_rating'])."</td>";
 							echo "<td>
 							".edit_button("?page=user&amp;sub=edit&amp;id=".$arr['user_id']."")."
-							".cb_button("add_user=".$arr['user_id']."")."
 							</td>";
 							echo "</tr>";
 							$cnt++;
@@ -610,7 +607,6 @@ $config = $app['etoa.config.service'];
 				echo "<td $addstyle >".nf($arr['points'])."</td>";
 				echo "<td $addstyle >
 				".edit_button("?page=user&amp;sub=edit&amp;id=".$arr['id']."")."
-				".cb_button("add_user=".$arr['id']."")."
 				</td>";
 				echo "</tr>";
 			}

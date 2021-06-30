@@ -86,11 +86,6 @@ parameters:
 			path: htdocs/admin/inc/admin_functions.inc.php
 
 		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: htdocs/admin/inc/admin_functions.inc.php
-
-		-
 			message: "#^Variable \\$lastWave might not be defined\\.$#"
 			count: 1
 			path: htdocs/admin/inc/admin_functions.inc.php
@@ -203,11 +198,6 @@ parameters:
 		-
 			message: "#^Result of \\|\\| is always true\\.$#"
 			count: 2
-			path: htdocs/classes/usersession.class.php
-
-		-
-			message: "#^Variable \\$pw might not be defined\\.$#"
-			count: 1
 			path: htdocs/classes/usersession.class.php
 
 		-

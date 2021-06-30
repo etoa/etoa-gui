@@ -394,7 +394,7 @@ elseif ($mode=="finished")
 
         /** @var \EtoA\Message\MessageRepository $messageRepository */
         $messageRepository = $app[\EtoA\Message\MessageRepository::class];
-        $messageRepository->createSystemMessage($cu->id, USER_MSG_CAT_ID, "}", $welcomeText->content);
+        $messageRepository->createSystemMessage($cu->id, USER_MSG_CAT_ID, 'Willkommen', $welcomeText->content);
     }
     echo '<input type="button" value="Zum Heimatplaneten" onclick="document.location=\'?page=planetoverview\'" />';
 }

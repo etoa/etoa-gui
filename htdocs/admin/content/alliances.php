@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\InvalidAllianceParametersException;
 use EtoA\Core\Configuration\ConfigurationService;
@@ -8,6 +9,9 @@ use Twig\Environment;
 
 /** @var AllianceRepository */
 $repository = $app['etoa.alliance.repository'];
+
+/** @var AllianceHistoryRepository */
+$allianceHistoryRepository = $app[AllianceHistoryRepository::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();
@@ -22,7 +26,7 @@ if ($sub == "imagecheck") {
 } elseif ($sub == "techdata") {
 	advanced_form("alliancetechnologies", $twig);
 } elseif ($sub == "create") {
-	create($request, $repository);
+	create($request, $repository, $allianceHistoryRepository);
 } elseif ($sub == "news") {
 	news($config);
 } elseif ($sub == "crap") {
@@ -151,8 +155,11 @@ function imagecheck(Request $request, AllianceRepository $repository)
 	}
 }
 
-function create(Request $request, AllianceRepository $repository)
-{
+function create(
+    Request $request,
+    AllianceRepository $repository,
+    AllianceHistoryRepository $allianceHistoryRepository
+):void {
 	global $page;
 	global $sub;
 
@@ -170,7 +177,7 @@ function create(Request $request, AllianceRepository $repository)
 			$alliance = new Alliance($id);
 			$founder->alliance = $alliance;
 			$founder->addToUserLog("alliance", "{nick} hat die Allianz [b]" . $alliance . "[/b] gegründet.");
-			$alliance->addHistory("Die Allianz [b]" . $alliance . "[/b] wurde von [b]" . $founder . "[/b] gegründet!");
+            $allianceHistoryRepository->addEntry($id, "Die Allianz [b]" . $alliance . "[/b] wurde von [b]" . $founder . "[/b] gegründet!");
 			success_msg("Allianz wurde erstellt! [[page alliances sub=edit id=" . $alliance->id . "]Details[/page]]");
 		} catch (InvalidAllianceParametersException $ex) {
 			error_msg("Allianz konnte nicht erstellt werden!\n\n" . $ex->getMessage() . "");
