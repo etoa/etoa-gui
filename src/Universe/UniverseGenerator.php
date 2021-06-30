@@ -361,7 +361,6 @@ class UniverseGenerator
     {
         $numWormholes = $this->wormholeRepo->count();
         if (fmod($numWormholes, 2) != 0) {
-            $output[] = "Ein Wurmloch ist zuviel, lösche es!";
             $wormholeId = $this->wormholeRepo->getOneId();
             if ($wormholeId !== null) {
                 $this->entityRepo->updateCode($wormholeId, EntityType::EMPTY_SPACE);
@@ -370,6 +369,7 @@ class UniverseGenerator
                 $numWormholes--;
             }
         }
+
         return $numWormholes;
     }
 
