@@ -14,6 +14,9 @@ define('MESSAGE_TYPE_IN_GAME', 0);
 define('MESSAGE_TYPE_EMAIL', 1);
 define('MESSAGE_TYPE_BOTH', 2);
 
+define('RECIPIENT_TYPE_SINGLE', 0);
+define('RECIPIENT_TYPE_ALL', 1);
+
 /** @var UserRepository */
 $userRepository = $app[UserRepository::class];
 
@@ -57,7 +60,7 @@ function sendMessageForm(
         if ($request->request->get('message_subject') != "" && $request->request->get('message_text') != "")
         {
             $to = [];
-            if ($request->request->getInt('rcpt_type') == 1) {
+            if ($request->request->getInt('rcpt_type') === RECIPIENT_TYPE_ALL) {
                 $to = $userRepository->getEmailAddresses();
             } else {
                 $userId = $request->request->getInt('message_user_to');
@@ -134,8 +137,8 @@ function sendMessageForm(
         <th>Empfänger:</th>
         <td class=\"tbldata\" width=\"250\">
         <b>An:</b>
-        <input type=\"radio\" name=\"rcpt_type\" id=\"rcpt_type_1\" value=\"1\"  checked=\"checked\"  onclick=\"document.getElementById('message_user_to').style.display='none';\" /> <label for=\"rcpt_type_1\">Alle Spieler</label>
-        <input type=\"radio\" name=\"rcpt_type\" id=\"rcpt_type_0\" value=\"0\"  onclick=\"document.getElementById('message_user_to').style.display='';\" /> <label for=\"rcpt_type_0\">Einzelner Empfänger</label>
+        <input type=\"radio\" name=\"rcpt_type\" id=\"rcpt_type_1\" value=\"".RECIPIENT_TYPE_ALL."\"  checked=\"checked\"  onclick=\"document.getElementById('message_user_to').style.display='none';\" /> <label for=\"rcpt_type_1\">Alle Spieler</label>
+        <input type=\"radio\" name=\"rcpt_type\" id=\"rcpt_type_0\" value=\"".RECIPIENT_TYPE_SINGLE."\"  onclick=\"document.getElementById('message_user_to').style.display='';\" /> <label for=\"rcpt_type_0\">Einzelner Empfänger</label>
         <select name=\"message_user_to\" id=\"message_user_to\" style=\"display:none\">";
         $userNicks = $userRepository->getUserNicknames();
         foreach ($userNicks as $userId => $userNick) {
