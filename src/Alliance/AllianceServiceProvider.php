@@ -33,6 +33,7 @@ class AllianceServiceProvider implements ServiceProviderInterface
                 $pimple[UserLogRepository::class],
                 $pimple['etoa.config.service'],
                 $pimple[MessageRepository::class],
+                $pimple[FleetRepository::class],
                 $pimple['dispatcher']
             );
         };

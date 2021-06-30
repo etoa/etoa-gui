@@ -7,6 +7,7 @@ namespace EtoA\Alliance;
 use AllianceBuildList;
 use AllianceTechlist;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Fleet\FleetRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\User\UserLogRepository;
 use EtoA\User\UserRepository;
@@ -28,6 +29,7 @@ class AllianceManagementService
     private UserLogRepository $userLogRepository;
     private ConfigurationService $config;
     private MessageRepository $messageRepository;
+    private FleetRepository $fleetRepository;
     private $dispatcher;
 
     public function __construct(
@@ -45,6 +47,7 @@ class AllianceManagementService
         UserLogRepository $userLogRepository,
         ConfigurationService $config,
         MessageRepository $messageRepository,
+        FleetRepository $fleetRepository,
         $dispatcher
     ) {
         $this->repository = $repository;
@@ -61,6 +64,7 @@ class AllianceManagementService
         $this->userLogRepository = $userLogRepository;
         $this->config = $config;
         $this->messageRepository = $messageRepository;
+        $this->fleetRepository = $fleetRepository;
         $this->dispatcher = $dispatcher;
     }
 
@@ -236,8 +240,10 @@ class AllianceManagementService
             return false;
         }
 
-        $res = dbquery("SELECT id FROM fleet WHERE user_id='" . $userId . "' AND (action='alliance' OR action='support') LIMIT 1;");
-        if (mysql_num_rows($res) != 0) {
+        if (
+            $this->fleetRepository->hasAnyFleetsWithAction($userId, 'alliance')
+            || $this->fleetRepository->hasAnyFleetsWithAction($userId, 'support')
+        ) {
             return false;
         }
 
