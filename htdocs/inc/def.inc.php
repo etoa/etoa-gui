@@ -124,9 +124,6 @@ define("FLEET_ACTION_RESS", $config->get('market_ship_action_ress'));
 // Aktion beim versenden von Schiffen oder Schiffe&Rohstoffe
 define("FLEET_ACTION_SHIP", $config->get('market_ship_action_ship'));
 
-// Minimal Flugzeit
-define("FLIGHT_TIME_MIN", $config->param1Int('market_ship_flight_time'));
-
 // Maximal Flugzeit
 define("FLIGHT_TIME_MAX", $config->param2Int('market_ship_flight_time'));
 
