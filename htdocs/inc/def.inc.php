@@ -61,9 +61,6 @@ define("FLOOD_CONTROL", $config->getInt('msg_flood_control'));    // Wartezeit b
 // Sonstiges
 //
 
-// Anzahl Nahrung, welche Arbeiter benötigen
-define("PEOPLE_FOOD_USE", $config->getInt('people_food_require'));
-
 // Maximale Anzahl Planeten
 define("USER_MAX_PLANETS", $config->getInt('user_max_planets'));
 
