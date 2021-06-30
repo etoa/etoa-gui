@@ -10,6 +10,10 @@ use Symfony\Component\HttpFoundation\Request;
 define("USER_MESSAGE_CAT_ID",1);
 define("SYS_MESSAGE_CAT_ID",5);
 
+define('MESSAGE_TYPE_IN_GAME', 0);
+define('MESSAGE_TYPE_EMAIL', 1);
+define('MESSAGE_TYPE_BOTH', 2);
+
 /** @var UserRepository */
 $userRepository = $app[UserRepository::class];
 
@@ -63,7 +67,7 @@ function sendMessageForm(
 
             $msg_type = $request->request->getInt('msg_type');
 
-            if ($msg_type==1 || $msg_type==2)
+            if (in_array($msg_type, [MESSAGE_TYPE_EMAIL, MESSAGE_TYPE_BOTH]))
             {
                 $mail = new Mail($request->request->get('message_subject'), $request->request->get('message_text'));
                 if ($request->request->getInt('from_id') > 0)
@@ -82,7 +86,7 @@ function sendMessageForm(
 
             foreach ($to as $k=>$v)
             {
-                if ($msg_type==0 || $msg_type==2)
+                if (in_array($msg_type, [MESSAGE_TYPE_IN_GAME, MESSAGE_TYPE_BOTH]))
                 {
                     $messageRepository->sendFromUserToUser(
                         $request->request->getInt('from_id'),
@@ -92,7 +96,7 @@ function sendMessageForm(
                     );
                     $msgCnt++;
                 }
-                if ($msg_type==1 || $msg_type==2)
+                if (in_array($msg_type, [MESSAGE_TYPE_EMAIL, MESSAGE_TYPE_BOTH]))
                 {
                     $mail->send($v,$reply);
                     $mailCnt++;
@@ -142,9 +146,9 @@ function sendMessageForm(
 
     <br/>
     <b>Typ:</b>
-    <input type=\"radio\" name=\"msg_type\" value=\"0\" id=\"msg_type_0\"  checked=\"checked\" /> <label for=\"msg_type_0\">InGame-Nachricht</label>
-    <input type=\"radio\" name=\"msg_type\" value=\"1\" id=\"msg_type_1\" /> <label for=\"msg_type_1\">E-Mail</label>
-    <input type=\"radio\" name=\"msg_type\" value=\"2\" id=\"msg_type_2\" /> <label for=\"msg_type_2\">InGame-Nachricht &amp; E-Mail</label>
+    <input type=\"radio\" name=\"msg_type\" value=\"".MESSAGE_TYPE_IN_GAME."\" id=\"msg_type_0\"  checked=\"checked\" /> <label for=\"msg_type_0\">InGame-Nachricht</label>
+    <input type=\"radio\" name=\"msg_type\" value=\"".MESSAGE_TYPE_EMAIL."\" id=\"msg_type_1\" /> <label for=\"msg_type_1\">E-Mail</label>
+    <input type=\"radio\" name=\"msg_type\" value=\"".MESSAGE_TYPE_BOTH."\" id=\"msg_type_2\" /> <label for=\"msg_type_2\">InGame-Nachricht &amp; E-Mail</label>
     </td></tr>";
     echo "<tr>
         <th>Betreff:</th>
