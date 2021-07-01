@@ -1,7 +1,9 @@
 <?PHP
 
-/** @var \EtoA\Missile\MissileDataRepository $missileDataRepository */
-$missileDataRepository = $app['etoa.missile.datarepository'];
+use EtoA\Missile\MissileDataRepository;
+
+/** @var MissileDataRepository */
+$missileDataRepository = $app[MissileDataRepository::class];
 
 	echo "<h2>Raketen</h2>";
 

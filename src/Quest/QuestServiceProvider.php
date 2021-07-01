@@ -4,6 +4,7 @@ namespace EtoA\Quest;
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
+use EtoA\Missile\MissileDataRepository;
 use EtoA\Quest\Initialization\QuestBuilder;
 use EtoA\Quest\Initialization\QuestInitializer;
 use EtoA\Quest\Log\QuestGameLog;
@@ -126,7 +127,7 @@ class QuestServiceProvider extends ServiceProvider implements ControllerProvider
         $pimple[QuestPresenter::class] = function (Container $pimple): QuestPresenter {
             return new QuestPresenter(
                 $pimple['cubicle.quests.registry'],
-                $pimple['etoa.missile.datarepository'],
+                $pimple[MissileDataRepository::class],
                 $pimple[ShipDataRepository::class],
                 $pimple['etoa.defense.datarepository']
             );
