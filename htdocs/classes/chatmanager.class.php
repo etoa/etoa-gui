@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Chat\ChatRepository;
+use EtoA\Chat\ChatUserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Text\TextRepository;
 
@@ -10,19 +12,11 @@ class ChatManager {
     */
     static function sendSystemMessage($msg)
     {
-        dbQuerySave("
-            INSERT INTO
-                chat
-            (
-                timestamp,
-                text
-            )
-            VALUES
-            (
-                UNIX_TIMESTAMP(),?
-            );",
-            array($msg)
-        );
+        global $app;
+
+        /** @var ChatRepository $chatRepository */
+        $chatRepository = $app[ChatRepository::class];
+        $chatRepository->addSystemMessage($msg);
     }
 
     /**
@@ -31,57 +25,35 @@ class ChatManager {
     */
     static function kickUser($uid, $msg = '')
     {
-        if($msg == '')
-        {
-            $msg = 'Kicked by Admin';
-        }
-        $res = dbQuerySave('
-            UPDATE
-               chat_users
-            SET
-                kick="'.mysql_real_escape_string($msg).'"
-            WHERE
-                user_id=?',
-        array($uid)
-        );
-        if (mysql_affected_rows()>0)
-        {
-            return true;
-        }
-        return false;
+        global $app;
+        /** @var ChatUserRepository $chatUserRepository */
+        $chatUserRepository = $app[ChatUserRepository::class];
+
+        $msg = $msg ? $msg :'Kicked by Admin';
+
+        return (bool) $chatUserRepository->kickUser($uid, $msg);
     }
 
     /**
     * Inserts or updates a user in the chat user table
     */
     static function updateUserEntry($id, $nick) {
-        dbQuerySave('
-            REPLACE INTO
-            chat_users
-            (
-            timestamp,
-            user_id,
-            nick
-            )
-            VALUES
-            (
-            UNIX_TIMESTAMP(),?,?
-            )',
-            array($id, $nick)
-        );
-        }
+        global $app;
+
+        /** @var ChatUserRepository $chatUserRepository */
+        $chatUserRepository = $app[ChatUserRepository::class];
+        $chatUserRepository->updateChatUser((int) $id, $nick);
+    }
 
         /**
          * Performs an ordinary logout of an user
         */
         static function logoutUser($userId) {
-        dbQuerySave('
-            DELETE FROM
-            chat_users
-            WHERE
-            user_id=?;',
-            array($userId)
-        );
+            global $app;
+
+            /** @var ChatUserRepository $chatUserRepository */
+            $chatUserRepository = $app[ChatUserRepository::class];
+            $chatUserRepository->deleteUser((int) $userId);
     }
 
     /**
@@ -109,16 +81,12 @@ class ChatManager {
     * Returns true if the specified user is online in the chat
     */
     static function isUserOnline($userId) {
-        $res = dbQuerySave('
-            SELECT
-            COUNT(user_id)
-            FROM
-            chat_users
-            WHERE
-            user_id =?',
-            array($userId)
-        );
-        return mysql_num_rows($res) > 0;
+        global $app;
+
+        /** @var ChatUserRepository $chatUserRepository */
+        $chatUserRepository = $app[ChatUserRepository::class];
+
+        return (bool) $chatUserRepository->getChatUser($userId);
     }
 
     /**
@@ -126,47 +94,32 @@ class ChatManager {
      */
     static function getUserOnlineNumber()
     {
-        $res = dbquery('
-        SELECT
-            COUNT(`user_id`)
-        FROM
-            `chat_users`
-        ;');
-        $arr = mysql_fetch_array($res);
-        if(is_integer($arr[0]))
-        {
-            return $arr[0];
-        }
-        else
-        {
-            return 0;
-        }
+        global $app;
+
+        /** @var ChatUserRepository $chatUserRepository */
+        $chatUserRepository = $app[ChatUserRepository::class];
+
+        return count($chatUserRepository->getChatUsers());
     }
 
     /**
      * Gets a list of users currently being online in the chat
     */
     static function getUserOnlineList() {
-        $data = array();
-        $res = dbquery('
-        SELECT
-            nick,
-            user_id
-        FROM
-            chat_users
-        ORDER BY
-            nick;');
-        $nr = mysql_num_rows($res);
-        if ($nr > 0)
-        {
-            while ($arr=mysql_fetch_assoc($res))
-            {
-            $data[] = array(
-                'id' => $arr['user_id'],
-                'nick' => $arr['nick']
-            );
-            }
+        global $app;
+
+        /** @var ChatUserRepository $chatUserRepository */
+        $chatUserRepository = $app[ChatUserRepository::class];
+
+        $data = [];
+        $chatUsers = $chatUserRepository->getChatUsers();
+        foreach ($chatUsers as $chatUser) {
+            $data[] = [
+                'id' => $chatUser->id,
+                'nick' => $chatUser->nick,
+            ];
         }
+
         return $data;
     }
 
@@ -180,20 +133,16 @@ class ChatManager {
 
         /** @var ConfigurationService */
         $config = $app[ConfigurationService::class];
+        /** @var ChatUserRepository $chatUserRepository */
+        $chatUserRepository = $app[ChatUserRepository::class];
 
-        $res = dbquery('
-            SELECT user_id,nick
-            FROM chat_users
-            WHERE timestamp < UNIX_TIMESTAMP() - '.$config->getInt('chat_user_timeout').';'
-        );
-        if (mysql_num_rows($res)>0)
-        {
-            $arr = mysql_fetch_assoc($res);
-            self::sendSystemMessage($arr['nick'].' verlässt den Chat (Timeout).');
-            dbquery('DELETE FROM chat_users WHERE user_id = '.$arr['user_id'].';');
-            return mysql_affected_rows();
+        $chatUsers = $chatUserRepository->getTimedOutChatUsers($config->getInt('chat_user_timeout'));
+        foreach ($chatUsers as $chatUser) {
+            self::sendSystemMessage($chatUser->nick.' verlässt den Chat (Timeout).');
+            $chatUserRepository->deleteUser($chatUser->id);
         }
-        return 0;
+
+        return count($chatUsers);
     }
 
     /**
@@ -208,18 +157,9 @@ class ChatManager {
         /** @var ConfigurationService */
         $config = $app[ConfigurationService::class];
 
-        $res = dbquery("
-            SELECT id
-            FROM chat
-            ORDER BY id DESC
-            LIMIT ".$config->getInt('chat_recent_messages').",1;"
-        );
-        if (mysql_num_rows($res)>0)
-        {
-            $arr=mysql_fetch_row($res);
-            dbquery("DELETE FROM chat WHERE id < ".$arr[0]);
-            return mysql_affected_rows();
-        }
-        return 0;
+        /** @var ChatRepository $chatRepository */
+        $chatRepository = $app[ChatRepository::class];
+
+        return $chatRepository->cleanupMessage($config->getInt('chat_recent_messages'));
     }
 }
