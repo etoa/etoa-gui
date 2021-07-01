@@ -30,7 +30,10 @@
 	//
 	// Fehlerhafte Logins
 	//
-	if ($sub=="xml")
+
+use EtoA\Alliance\AllianceRepository;
+
+if ($sub=="xml")
 	{
 		require("user/xml.inc.php");
 	}
@@ -368,8 +371,8 @@
 				/** @var \EtoA\Race\RaceDataRepository $raceRepository */
 				$raceRepository = $app['etoa.race.datarepository'];
 				$raceNames = $raceRepository->getRaceNames();
-				/** @var \EtoA\Alliance\AllianceRepository $allianceRepository */
-                $allianceRepository = $app['etoa.alliance.repository'];
+				/** @var AllianceRepository */
+                $allianceRepository = $app[AllianceRepository::class];
 				$allianceNameWithTags = $allianceRepository->getAllianceNamesWithTags();
 				$time = time();
 

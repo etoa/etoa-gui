@@ -2,6 +2,7 @@
 
 namespace EtoA\Ranking;
 
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\User\UserRepository;
 use Pimple\Container;
@@ -15,7 +16,7 @@ class RankingServiceProvider implements ServiceProviderInterface
             return new PointsService(
                 $pimple[ConfigurationService::class],
                 $pimple[UserRepository::class],
-                $pimple['etoa.alliance.repository']
+                $pimple[AllianceRepository::class]
             );
         };
     }

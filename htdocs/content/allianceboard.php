@@ -18,8 +18,11 @@
 	//
 	//
 
-    /** @var \EtoA\Alliance\AllianceRepository $allianceRepository */
-    $allianceRepository = $app['etoa.alliance.repository'];
+
+use EtoA\Alliance\AllianceRepository;
+
+    /** @var AllianceRepository */
+    $allianceRepository = $app[AllianceRepository::class];
 
 	/**
 	* Internal messageboard for alliances

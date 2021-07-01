@@ -1,6 +1,7 @@
 <?php
 
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\User\UserRepository;
@@ -908,8 +909,8 @@ echo '<div class="tabs" id="user_edit_tabs">
                     <td class=\"tbltitle\">Allianz:</td>
                     <td class=\"tbldata\">
                         <select id=\"user_alliance_id\" name=\"user_alliance_id\" onchange=\"loadAllianceRanks(".$arr['user_alliance_rank_id'].");\">";
-                        /** @var \EtoA\Alliance\AllianceRepository $allianceRepository */
-                        $allianceRepository = $app['etoa.alliance.repository'];
+                        /** @var AllianceRepository */
+                        $allianceRepository = $app[AllianceRepository::class];
                         $allianceNamesWithTags = $allianceRepository->getAllianceNamesWithTags();
                         echo "<option value=\"0\">(Keine)</option>";
                         foreach ($allianceNamesWithTags as $allianceId => $allianceNamesWithTag)
