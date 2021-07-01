@@ -76,7 +76,7 @@ try {
         $sessionRepository = $app['etoa.admin.session.repository'];
 
         /** @var DatabaseManagerRepository */
-        $databaseManager = $app['etoa.db.manager.repository'];
+        $databaseManager = $app[DatabaseManagerRepository::class];
 
         /** @var TicketRepository */
         $ticketRepo = $app['etoa.help.ticket.repository'];

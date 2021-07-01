@@ -52,7 +52,7 @@ if ($sub == "offline") {
     require("home/observed.inc.php");
 } elseif ($sub == "sysinfo") {
     /** @var DatabaseManagerRepository */
-    $databaseManager = $app['etoa.db.manager.repository'];
+    $databaseManager = $app[DatabaseManagerRepository::class];
 
     systemInfoView($databaseManager, $twig);
 } else {

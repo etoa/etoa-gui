@@ -11,7 +11,7 @@ class DatabaseManagerServiceProvider implements ServiceProviderInterface
 {
     public function register(Container $pimple): void
     {
-        $pimple['etoa.db.manager.repository'] = function (Container $pimple): DatabaseManagerRepository {
+        $pimple[DatabaseManagerRepository::class] = function (Container $pimple): DatabaseManagerRepository {
             return new DatabaseManagerRepository($pimple['db']);
         };
     }
