@@ -10,7 +10,7 @@ use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Support\DatabaseManagerRepository;
 use EtoA\Text\TextRepository;
 use EtoA\Universe\CellRepository;
-use League\CommonMark\ConverterInterface;
+use League\CommonMark\MarkdownConverterInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
@@ -27,8 +27,8 @@ if ($sub == "offline") {
 } elseif ($sub === "gamestats") {
     gameStatsView($twig);
 } elseif ($sub === "changelog") {
-    /** @var ConverterInterface */
-    $markdown = $app[ConverterInterface::class];
+    /** @var MarkdownConverterInterface */
+    $markdown = $app[MarkdownConverterInterface::class];
 
     changelogView($markdown, $twig);
 } elseif ($sub == "adminlog") {
@@ -119,7 +119,7 @@ function gameStatsView(Environment $twig)
     exit();
 }
 
-function changelogView(ConverterInterface $markdown, Environment $twig)
+function changelogView(MarkdownConverterInterface $markdown, Environment $twig)
 {
     $changelogFile = "../../Changelog.md";
     $changelogPublicFile = "../../Changelog_public.md";
