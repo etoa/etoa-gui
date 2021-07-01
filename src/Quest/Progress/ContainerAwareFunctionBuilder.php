@@ -2,6 +2,7 @@
 
 namespace EtoA\Quest\Progress;
 
+use EtoA\Building\BuildingRepository;
 use EtoA\Quest\Progress\InitFunctions\HaveAlliance;
 use EtoA\Quest\Progress\InitFunctions\HaveBuildingLevel;
 use EtoA\Quest\Progress\InitFunctions\HaveDefense;
@@ -30,7 +31,7 @@ class ContainerAwareFunctionBuilder implements ProgressFunctionBuilderInterface
     {
         switch ($taskName) {
             case HaveBuildingLevel::NAME:
-                return new HaveBuildingLevel($attributes, $this->container['etoa.building.repository']);
+                return new HaveBuildingLevel($attributes, $this->container[BuildingRepository::class]);
             case HaveTechnologyLevel::NAME:
                 return new HaveTechnologyLevel($attributes, $this->container['etoa.technology.repository']);
             case HaveDefense::NAME:

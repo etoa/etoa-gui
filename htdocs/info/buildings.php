@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
@@ -37,8 +38,8 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
 
         $currentLevel = 0;
         if (isset($cu) && isset($cp)) {
-            /** @var \EtoA\Building\BuildingRepository $buildingRepository */
-            $buildingRepository = $app['etoa.building.repository'];
+            /** @var BuildingRepository */
+            $buildingRepository = $app[BuildingRepository::class];
             $currentLevel = $buildingRepository->getBuildingLevel((int) $cu->id, $currentBuildingId, (int) $cp->id);
         }
 

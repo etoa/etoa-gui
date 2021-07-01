@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
 /** @var BuildingRepository */
-$repository = $app['etoa.building.repository'];
+$repository = $app[BuildingRepository::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();

@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
@@ -12,8 +13,8 @@ echo "<tr><td colspan=\"6\">
 <img src=\"misc/powerproduction.image.php\" alt=\"Graph\" />
 </td></tr>";
 
-/** @var \EtoA\Building\BuildingRepository $buildingRepository */
-$buildingRepository = $app['etoa.building.repository'];
+/** @var BuildingRepository */
+$buildingRepository = $app[BuildingRepository::class];
 /** @var \EtoA\Building\BuildingDataRepository $buildingDataRepository */
 $buildingDataRepository = $app['etoa.building.datarepository'];
 $buildings = $buildingDataRepository->getBuildingsByType(BUILDING_POWER_CAT);
