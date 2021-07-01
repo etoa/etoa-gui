@@ -12,7 +12,7 @@ class UserRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app['etoa.user.repository'];
+        $this->repository = $this->app[UserRepository::class];
     }
 
     public function testGetDiscoverMask(): void

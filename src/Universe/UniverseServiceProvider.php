@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\Universe;
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserRepository;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
@@ -67,7 +68,7 @@ class UniverseServiceProvider implements ServiceProviderInterface
         $pimple[UniverseResetService::class] = function (Container $pimple): UniverseResetService {
             return new UniverseResetService(
                 $pimple[ConfigurationService::class],
-                $pimple['etoa.user.repository'],
+                $pimple[UserRepository::class],
                 $pimple[PlanetRepository::class],
                 $pimple['etoa.db.manager.repository']
             );

@@ -184,7 +184,7 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
             echo "<tr><td style=\"height:2px;\" colspan=\"4\"></td></tr>";
 
             /** @var UserRepository */
-            $userRepo = $app['etoa.user.repository'];
+            $userRepo = $app[UserRepository::class];
 
             //Listet alle User der Spiels auf
             echo "<tr><th>Besitzer</th><td colspan=\"3\"><select name=\"planet_user_id\">";

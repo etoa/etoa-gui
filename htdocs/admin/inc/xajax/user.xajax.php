@@ -265,7 +265,7 @@ function showLast5Messages($uid,$target,$limit=5)
     $messageRepository = $app[MessageRepository::class];
 
     /** @var UserRepository */
-    $userRepo = $app['etoa.user.repository'];
+    $userRepo = $app[UserRepository::class];
 
 	ob_start();
 	echo "<table class=\"tb\">";

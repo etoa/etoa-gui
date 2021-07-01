@@ -3,14 +3,15 @@
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
+use EtoA\User\UserRepository;
 
 /** @var TicketRepository */
 $ticketRepo = $app['etoa.help.ticket.repository'];
 
 /** @var AdminUserRepository */
 $adminUserRepo = $app['etoa.admin.user.repository'];
-/** @var \EtoA\User\UserRepository $userRepository */
-$userRepository = $app['etoa.user.repository'];
+/** @var UserRepository */
+$userRepository = $app[UserRepository::class];
 /** @var \EtoA\Ship\ShipDataRepository $shipDateRepository */
 $shipDateRepository = $app[\EtoA\Ship\ShipDataRepository::class];
 /** @var ConfigurationService */

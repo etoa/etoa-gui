@@ -8,6 +8,7 @@
 //////////////////////////////////////////////////////
 
 use Doctrine\DBAL\Query\QueryBuilder;
+use EtoA\User\UserRepository;
 
 /**
 * Generates a page for editing table date with
@@ -622,8 +623,8 @@ function showAttackAbuseLogs($args=null,$limit=-1,$load=true)
 {
     global $app;
 
-    /** @var \EtoA\User\UserRepository $userRepository */
-    $userRepository = $app['etoa.user.repository'];
+    /** @var UserRepository */
+    $userRepository = $app[UserRepository::class];
 
 	$paginationLimit = 50;
 

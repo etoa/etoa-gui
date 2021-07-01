@@ -18,8 +18,10 @@
 	//
 	//
 
-    /** @var \EtoA\User\UserRepository $userRepository */
-    $userRepository = $app['etoa.user.repository'];
+use EtoA\User\UserRepository;
+
+/** @var UserRepository */
+$userRepository = $app[UserRepository::class];
 
 	if (!$s->sittingActive || $s->falseSitter)
 	{

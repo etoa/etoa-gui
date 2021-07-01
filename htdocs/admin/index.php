@@ -61,7 +61,7 @@ try {
         $adminUserRepo = $app['etoa.admin.user.repository'];
 
         /** @var UserRepository */
-        $userRepo = $app['etoa.user.repository'];
+        $userRepo = $app[UserRepository::class];
 
         /** @var UserSessionRepository */
         $userSessionRepo = $app['etoa.user.session.repository'];

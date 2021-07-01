@@ -24,7 +24,7 @@ $ticketMessageRepo = $app['etoa.help.ticket.message.repository'];
 $adminUserRepo = $app['etoa.admin.user.repository'];
 
 /** @var UserRepository */
-$userRepo = $app['etoa.user.repository'];
+$userRepo = $app[UserRepository::class];
 
 /** @var AdminRoleManager */
 $roleManager = $app['etoa.admin.role.manager'];

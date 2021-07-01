@@ -15,7 +15,7 @@ $ticketRepo = $app['etoa.help.ticket.repository'];
 $adminUserRepo = $app['etoa.admin.user.repository'];
 
 /** @var UserRepository */
-$userRepo = $app['etoa.user.repository'];
+$userRepo = $app[UserRepository::class];
 
 echo "<h1>Ticketsystem</h1>";
 

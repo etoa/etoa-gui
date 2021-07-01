@@ -12,6 +12,7 @@ use EtoA\Quest\Progress\InitFunctions\HaveSpecialist;
 use EtoA\Quest\Progress\InitFunctions\HaveSpecialistType;
 use EtoA\Quest\Progress\InitFunctions\HaveTechnologyLevel;
 use EtoA\Universe\PlanetRepository;
+use EtoA\User\UserRepository;
 use LittleCubicleGames\Quests\Progress\Functions\HandlerFunctionInterface;
 use LittleCubicleGames\Quests\Progress\ProgressFunctionBuilderInterface;
 use Pimple\Container;
@@ -35,17 +36,17 @@ class ContainerAwareFunctionBuilder implements ProgressFunctionBuilderInterface
             case HaveDefense::NAME:
                 return new HaveDefense($attributes, $this->container['etoa.defense.repository']);
             case HaveGalaxyDiscovered::NAME:
-                return new HaveGalaxyDiscovered($this->container['etoa.user.repository']);
+                return new HaveGalaxyDiscovered($this->container[UserRepository::class]);
             case HavePoints::NAME:
-                return new HavePoints($this->container['etoa.user.repository']);
+                return new HavePoints($this->container[UserRepository::class]);
             case HavePlanetCount::NAME:
                 return new HavePlanetCount($this->container[PlanetRepository::class]);
             case HaveAlliance::NAME:
-                return new HaveAlliance($this->container['etoa.user.repository']);
+                return new HaveAlliance($this->container[UserRepository::class]);
             case HaveSpecialist::NAME:
-                return new HaveSpecialist($this->container['etoa.user.repository']);
+                return new HaveSpecialist($this->container[UserRepository::class]);
             case HaveSpecialistType::NAME:
-                return new HaveSpecialistType($attributes, $this->container['etoa.user.repository']);
+                return new HaveSpecialistType($attributes, $this->container[UserRepository::class]);
         }
 
         return null;
