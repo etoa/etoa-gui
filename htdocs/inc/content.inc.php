@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Quest\QuestResponseListener;
 use EtoA\Text\TextRepository;
 use EtoA\Support\RuntimeDataStore;
 
@@ -275,5 +276,5 @@ else
 }
 
 if ($app['etoa.quests.enabled']) {
-    $twig->addGlobal('quests', array_values($app['etoa.quest.responselistener']->getQuests()));
+    $twig->addGlobal('quests', array_values($app[QuestResponseListener::class]->getQuests()));
 }

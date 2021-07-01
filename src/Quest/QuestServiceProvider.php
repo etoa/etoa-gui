@@ -67,7 +67,7 @@ class QuestServiceProvider extends ServiceProvider implements ControllerProvider
             return new QuestController($pimple['cubicle.quests.advancer'], $pimple[QuestPresenter::class], $pimple['cubicle.quests.storage']);
         };
 
-        $pimple['etoa.quest.repository'] = function (Container $pimple): QuestRepository {
+        $pimple[QuestRepository::class] = function (Container $pimple): QuestRepository {
             return new QuestRepository($pimple['db']);
         };
 
@@ -76,7 +76,7 @@ class QuestServiceProvider extends ServiceProvider implements ControllerProvider
         };
 
         $pimple['cubicle.quests.storage'] = function (Container $pimple): QuestStorageInterface {
-            return $pimple['etoa.quest.repository'];
+            return $pimple[QuestRepository::class];
         };
 
         $pimple['cubicle.quests.logger'] = function (Container $pimple): array {
@@ -132,7 +132,7 @@ class QuestServiceProvider extends ServiceProvider implements ControllerProvider
             );
         };
 
-        $pimple['etoa.quest.responselistener'] = function (Container $pimple): QuestResponseListener {
+        $pimple[QuestResponseListener::class] = function (Container $pimple): QuestResponseListener {
             return new QuestResponseListener($pimple[QuestPresenter::class]);
         };
     }
@@ -142,7 +142,7 @@ class QuestServiceProvider extends ServiceProvider implements ControllerProvider
         if ((bool) $app['etoa.quests.enabled']) {
             parent::subscribe($app, $dispatcher);
 
-            $dispatcher->addSubscriber($app['etoa.quest.responselistener']);
+            $dispatcher->addSubscriber($app[QuestResponseListener::class]);
         }
     }
 
