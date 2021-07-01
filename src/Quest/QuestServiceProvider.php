@@ -19,7 +19,7 @@ use EtoA\Quest\Reward\ShipRewardCollector;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Tutorial\TutorialUserProgressRepository;
-use EtoA\Universe\PlanetRepository;
+use EtoA\Universe\Planet\PlanetRepository;
 use LittleCubicleGames\Quests\Progress\ProgressFunctionBuilder;
 use LittleCubicleGames\Quests\Progress\StateFunctionBuilder;
 use LittleCubicleGames\Quests\ServiceProvider;

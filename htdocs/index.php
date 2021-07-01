@@ -6,6 +6,7 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Text\TextRepository;
+use EtoA\Universe\Planet\PlanetRepository;
 
 //
 // Basics
@@ -157,8 +158,8 @@ try {
         }
 
         if ($cu->isSetup()) {
-            /** @var \EtoA\Universe\PlanetRepository $planetRepository */
-            $planetRepository = $app[\EtoA\Universe\PlanetRepository::class];
+            /** @var PlanetRepository */
+            $planetRepository = $app[PlanetRepository::class];
             $userPlanets = $planetRepository->getUserPlanets((int) $cu->id);
             $planets = [];
             $mainplanet = 0;

@@ -14,7 +14,7 @@ use EtoA\Quest\Progress\InitFunctions\HaveSpecialist;
 use EtoA\Quest\Progress\InitFunctions\HaveSpecialistType;
 use EtoA\Quest\Progress\InitFunctions\HaveTechnologyLevel;
 use EtoA\Technology\TechnologyRepository;
-use EtoA\Universe\PlanetRepository;
+use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserRepository;
 use LittleCubicleGames\Quests\Progress\Functions\HandlerFunctionInterface;
 use LittleCubicleGames\Quests\Progress\ProgressFunctionBuilderInterface;

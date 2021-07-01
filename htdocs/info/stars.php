@@ -1,6 +1,6 @@
 <?PHP
 
-use EtoA\Universe\SolarTypeRepository;
+use EtoA\Universe\Star\SolarTypeRepository;
 
 /** @var SolarTypeRepository */
 $solarTypeRepository = $app[SolarTypeRepository::class];

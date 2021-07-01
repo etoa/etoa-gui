@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace EtoA\Universe;
+namespace EtoA\Universe\Wormhole;
 
 use EtoA\Core\AbstractRepository;
 

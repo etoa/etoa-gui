@@ -2,7 +2,7 @@
 
 namespace EtoA\Quest\Progress\InitFunctions;
 
-use EtoA\Universe\PlanetRepository;
+use EtoA\Universe\Planet\PlanetRepository;
 use LittleCubicleGames\Quests\Entity\QuestInterface;
 use LittleCubicleGames\Quests\Entity\TaskInterface;
 use LittleCubicleGames\Quests\Progress\Functions\InitProgressHandlerFunctionInterface;

@@ -1,16 +1,16 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Universe\PlanetRepository;
-use EtoA\Universe\AsteroidsRepository;
-use EtoA\Universe\EmptySpaceRepository;
-use EtoA\Universe\EntityRepository;
-use EtoA\Universe\EntityType;
-use EtoA\Universe\NebulaRepository;
-use EtoA\Universe\PlanetTypeRepository;
-use EtoA\Universe\SolarTypeRepository;
-use EtoA\Universe\StarRepository;
-use EtoA\Universe\WormholeRepository;
+use EtoA\Universe\Asteroids\AsteroidsRepository;
+use EtoA\Universe\EmptySpace\EmptySpaceRepository;
+use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Entity\EntityType;
+use EtoA\Universe\Nebula\NebulaRepository;
+use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Planet\PlanetTypeRepository;
+use EtoA\Universe\Star\SolarTypeRepository;
+use EtoA\Universe\Star\StarRepository;
+use EtoA\Universe\Wormhole\WormholeRepository;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 

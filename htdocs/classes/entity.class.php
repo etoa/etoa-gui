@@ -1,7 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Universe\EntityType;
+use EtoA\Universe\Entity\EntityType;
 
 /**
 * Abstract class for all space entities

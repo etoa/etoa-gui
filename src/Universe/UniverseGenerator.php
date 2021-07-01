@@ -5,6 +5,17 @@ declare(strict_types=1);
 namespace EtoA\Universe;
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\Asteroids\AsteroidsRepository;
+use EtoA\Universe\Cell\CellRepository;
+use EtoA\Universe\EmptySpace\EmptySpaceRepository;
+use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Entity\EntityType;
+use EtoA\Universe\Nebula\NebulaRepository;
+use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Planet\PlanetTypeRepository;
+use EtoA\Universe\Star\SolarTypeRepository;
+use EtoA\Universe\Star\StarRepository;
+use EtoA\Universe\Wormhole\WormholeRepository;
 use Mutex;
 
 class UniverseGenerator

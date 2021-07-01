@@ -1,6 +1,6 @@
 <?PHP
 
-use EtoA\Universe\PlanetTypeRepository;
+use EtoA\Universe\Planet\PlanetTypeRepository;
 
 /** @var PlanetTypeRepository */
 $planetTypeRepository = $app[PlanetTypeRepository::class];

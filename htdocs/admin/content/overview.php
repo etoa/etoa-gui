@@ -9,7 +9,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Support\DatabaseManagerRepository;
 use EtoA\Text\TextRepository;
-use EtoA\Universe\CellRepository;
+use EtoA\Universe\Cell\CellRepository;
 use League\CommonMark\MarkdownConverterInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;

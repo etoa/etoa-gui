@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace EtoA\Universe;
+namespace EtoA\Universe\Star;
 
 use EtoA\Core\AbstractRepository;
 

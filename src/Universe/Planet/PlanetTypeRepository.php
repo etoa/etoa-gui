@@ -1,6 +1,8 @@
-<?php declare(strict_types=1);
+<?php
 
-namespace EtoA\Universe;
+declare(strict_types=1);
+
+namespace EtoA\Universe\Planet;
 
 use EtoA\Core\AbstractRepository;
 
