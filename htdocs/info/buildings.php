@@ -2,6 +2,7 @@
 
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingRepository;
+use EtoA\Building\BuildingTypeDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
@@ -482,8 +483,9 @@ else
 {
     HelpUtil::breadCrumbs(array("Geb&auml;ude","buildings"));
 
-    /** @var \EtoA\Building\BuildingTypeDataRepository $buildingTypeRepository */
-    $buildingTypeRepository = $app['etoa.building_type.datarepository'];
+    /** @var BuildingTypeDataRepository */
+    $buildingTypeRepository = $app[BuildingTypeDataRepository::class];
+
     /** @var BuildingDataRepository */
     $buildingDataRepository = $app[BuildingDataRepository::class];
 

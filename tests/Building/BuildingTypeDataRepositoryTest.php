@@ -12,7 +12,7 @@ class BuildingTypeDataRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app['etoa.building_type.datarepository'];
+        $this->repository = $this->app[BuildingTypeDataRepository::class];
     }
 
     public function testGetTypeNames(): void
