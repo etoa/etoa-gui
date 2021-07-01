@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Building\BuildingRepository;
+use EtoA\Defense\DefenseRepository;
 
 $xajax->register(XAJAX_FUNCTION,"planetSelectorByCell");
 $xajax->register(XAJAX_FUNCTION,"planetSelectorByUser");
@@ -840,8 +841,8 @@ function addDefenseToPlanet($form)
 {
     global $app;
 
-    /** @var \EtoA\Defense\DefenseRepository $defenseRepository */
-    $defenseRepository = $app['etoa.defense.repository'];
+    /** @var DefenseRepository */
+    $defenseRepository = $app[DefenseRepository::class];
 
 	$objResponse = new xajaxResponse();
 

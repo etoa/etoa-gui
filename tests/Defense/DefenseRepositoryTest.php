@@ -6,14 +6,13 @@ use EtoA\AbstractDbTestCase;
 
 class DefenseRepositoryTest extends AbstractDbTestCase
 {
-    /** @var DefenseRepository */
-    private $repository;
+    private DefenseRepository $repository;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->repository = $this->app['etoa.defense.repository'];
+        $this->repository = $this->app[DefenseRepository::class];
     }
 
     public function testAddDefense(): void
