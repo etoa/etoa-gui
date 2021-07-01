@@ -8,7 +8,7 @@ class EntityType
 {
     const STAR = 's';
     const PLANET = 'p';
-    const ASTEROIDS = 'a';
+    const ASTEROID = 'a';
     const NEBULA = 'n';
     const WORMHOLE = 'w';
     const EMPTY_SPACE = 'e';

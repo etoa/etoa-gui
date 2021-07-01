@@ -2,7 +2,7 @@
 
 use EtoA\Universe\UniverseGenerator;
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Universe\Asteroids\AsteroidsRepository;
+use EtoA\Universe\Asteroid\AsteroidRepository;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\EmptySpace\EmptySpaceRepository;
 use EtoA\Universe\Nebula\NebulaRepository;
@@ -27,8 +27,8 @@ $starRepo = $app[StarRepository::class];
 /** @var PlanetRepository */
 $planetRepo = $app[PlanetRepository::class];
 
-/** @var AsteroidsRepository */
-$asteroidsRepo = $app[AsteroidsRepository::class];
+/** @var AsteroidRepository */
+$asteroidRepo = $app[AsteroidRepository::class];
 
 /** @var NebulaRepository */
 $nebulaRepo = $app[NebulaRepository::class];
@@ -67,7 +67,7 @@ if ($request->request->has('submit_create_universe')) {
         $cellRepo,
         $starRepo,
         $planetRepo,
-        $asteroidsRepo,
+        $asteroidRepo,
         $nebulaRepo,
         $wormholeRepo,
         $emptySpaceRepo
@@ -205,7 +205,7 @@ function universeIndex(
     CellRepository $cellRepo,
     StarRepository $starRepo,
     PlanetRepository $planetRepo,
-    AsteroidsRepository $asteroidsRepo,
+    AsteroidRepository $asteroidRepo,
     NebulaRepository $nebulaRepo,
     WormholeRepository $wormholeRepo,
     EmptySpaceRepository $emptySpaceRepo
@@ -348,7 +348,7 @@ function universeIndex(
             echo "<tr><th>Zellen pro Sektor</th><td>" . $cellDimensions['x'] . " x " . $cellDimensions['y'] . "</td></tr>";
             echo "<tr><th>Sterne</th><td>" . nf($starRepo->count()) . "</td></tr>";
             echo "<tr><th>Planeten</th><td>" . nf($planetRepo->count()) . "</td></tr>";
-            echo "<tr><th>Asteroidenfelder</th><td>" . nf($asteroidsRepo->count()) . "</td></tr>";
+            echo "<tr><th>Asteroidenfelder</th><td>" . nf($asteroidRepo->count()) . "</td></tr>";
             echo "<tr><th>Nebel</th><td>" . nf($nebulaRepo->count()) . "</td></tr>";
             echo "<tr><th>Wurmlöcher</th><td>" . nf($wormholeRepo->count()) . "</td></tr>";
             echo "<tr><th>Leerer Raum</th><td>" . nf($emptySpaceRepo->count()) . "</td></tr>";

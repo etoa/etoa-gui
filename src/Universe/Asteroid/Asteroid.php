@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace EtoA\Universe\Asteroids;
+namespace EtoA\Universe\Asteroid;
 
 class Asteroid
 {

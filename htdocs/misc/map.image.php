@@ -207,7 +207,7 @@ if (isset($_SESSION) || $admin)
                                 imagecopyresampled($im,$wormholeImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
                             }
                         }
-                        elseif ($entity->code == EntityType::ASTEROIDS)
+                        elseif ($entity->code == EntityType::ASTEROID)
                         {
                             imagecopyresampled($im,$asteroidImage,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
                         }

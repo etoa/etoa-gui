@@ -1,7 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Universe\Asteroids\AsteroidsRepository;
+use EtoA\Universe\Asteroid\AsteroidRepository;
 use EtoA\Universe\EmptySpace\EmptySpaceRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityType;
@@ -26,8 +26,8 @@ $starRepo = $app[StarRepository::class];
 /** @var PlanetRepository */
 $planetRepo = $app[PlanetRepository::class];
 
-/** @var AsteroidsRepository */
-$asteroidsRepo = $app[AsteroidsRepository::class];
+/** @var AsteroidRepository */
+$asteroidRepo = $app[AsteroidRepository::class];
 
 /** @var NebulaRepository */
 $nebulaRepo = $app[NebulaRepository::class];
@@ -383,12 +383,12 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
             echo "<input tabindex=\"28\" type=\"button\" value=\"Zurück zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=searchresults'\" /> ";
             echo "</form>";
         }
-        elseif ($entity->code == EntityType::ASTEROIDS)
+        elseif ($entity->code == EntityType::ASTEROID)
         {
             if ($request->request->has('save'))
             {
                 //Daten Speichern
-                $affected = $asteroidsRepo->update(
+                $affected = $asteroidRepo->update(
                     $id,
                     $request->request->getInt('res_metal'),
                     $request->request->getInt('res_crystal'),
@@ -397,7 +397,7 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
                     $request->request->getInt('res_food'),
                     $request->request->getInt('res_power')
                 );
-                $affectedAdd = $asteroidsRepo->addResources(
+                $affectedAdd = $asteroidRepo->addResources(
                     $id,
                     $request->request->getInt('res_metal_add'),
                     $request->request->getInt('res_crystal_add'),
@@ -412,7 +412,7 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
                 }
             }
 
-            $asteroid = $asteroidsRepo->find($id);
+            $asteroid = $asteroidRepo->find($id);
 
             echo "<form action=\"?page=$page&sub=edit&id=".$id."\" method=\"post\" id=\"editform\">";
             tableStart("<span style=\"color:".Entity::$entityColors[$entity->code]."\">Asteroidenfeld</span>","auto");

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace EtoA\Universe\Asteroids;
+namespace EtoA\Universe\Asteroid;
 
 use EtoA\Core\AbstractRepository;
 
-class AsteroidsRepository extends AbstractRepository
+class AsteroidRepository extends AbstractRepository
 {
     public function count(): int
     {

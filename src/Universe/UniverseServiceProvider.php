@@ -6,7 +6,7 @@ namespace EtoA\Universe;
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\DatabaseManagerRepository;
-use EtoA\Universe\Asteroids\AsteroidsRepository;
+use EtoA\Universe\Asteroid\AsteroidRepository;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\EmptySpace\EmptySpaceRepository;
 use EtoA\Universe\Entity\EntityRepository;
@@ -40,8 +40,8 @@ class UniverseServiceProvider implements ServiceProviderInterface
             return new PlanetRepository($pimple['db']);
         };
 
-        $pimple[AsteroidsRepository::class] = function (Container $pimple): AsteroidsRepository {
-            return new AsteroidsRepository($pimple['db']);
+        $pimple[AsteroidRepository::class] = function (Container $pimple): AsteroidRepository {
+            return new AsteroidRepository($pimple['db']);
         };
 
         $pimple[NebulaRepository::class] = function (Container $pimple): NebulaRepository {
@@ -65,7 +65,7 @@ class UniverseServiceProvider implements ServiceProviderInterface
                 $pimple[EntityRepository::class],
                 $pimple[StarRepository::class],
                 $pimple[PlanetRepository::class],
-                $pimple[AsteroidsRepository::class],
+                $pimple[AsteroidRepository::class],
                 $pimple[NebulaRepository::class],
                 $pimple[WormholeRepository::class],
                 $pimple[EmptySpaceRepository::class]

@@ -295,7 +295,7 @@ abstract class Entity
                 return new Star($id);
             case EntityType::PLANET:
                 return Planet::getById($id);
-            case EntityType::ASTEROIDS:
+            case EntityType::ASTEROID:
                 return new AsteroidField($id);
             case EntityType::NEBULA:
                 return new Nebula($id);
@@ -339,7 +339,7 @@ abstract class Entity
                     return new Star($id);
                 case EntityType::PLANET:
                     return Planet::getById($id);
-                case EntityType::ASTEROIDS:
+                case EntityType::ASTEROID:
                     return new AsteroidField($id);
                 case EntityType::NEBULA:
                     return new Nebula($id);
@@ -393,7 +393,7 @@ abstract class Entity
                     return new Star($id);
                 case EntityType::PLANET:
                     return Planet::getById($id);
-                case EntityType::ASTEROIDS:
+                case EntityType::ASTEROID:
                     return new AsteroidField($id);
                 case EntityType::NEBULA:
                     return new Nebula($id);
@@ -444,7 +444,7 @@ abstract class Entity
     public static $entityColors = [
         EntityType::STAR => '#ff0',
         EntityType::PLANET => '#0f0',
-        EntityType::ASTEROIDS => '#ccc',
+        EntityType::ASTEROID => '#ccc',
         EntityType::NEBULA => '#FF00FF',
         EntityType::WORMHOLE => '#8000FF',
         EntityType::EMPTY_SPACE => '#55f',

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace EtoA\Universe;
 
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Universe\Asteroids\AsteroidsRepository;
+use EtoA\Universe\Asteroid\AsteroidRepository;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\EmptySpace\EmptySpaceRepository;
 use EtoA\Universe\Entity\EntityRepository;
@@ -27,7 +27,7 @@ class UniverseGenerator
     private EntityRepository $entityRepo;
     private StarRepository $starRepo;
     private PlanetRepository $planetRepo;
-    private AsteroidsRepository $asteroidsRepo;
+    private AsteroidRepository $asteroidRepo;
     private NebulaRepository $nebulaRepo;
     private WormholeRepository $wormholeRepo;
     private EmptySpaceRepository $emptySpaceRepo;
@@ -52,7 +52,7 @@ class UniverseGenerator
         EntityRepository $entityRepo,
         StarRepository $starRepo,
         PlanetRepository $planetRepo,
-        AsteroidsRepository $asteroidsRepo,
+        AsteroidRepository $asteroidRepo,
         NebulaRepository $nebulaRepo,
         WormholeRepository $wormholeRepo,
         EmptySpaceRepository $emptySpaceRepo
@@ -64,7 +64,7 @@ class UniverseGenerator
         $this->entityRepo = $entityRepo;
         $this->starRepo = $starRepo;
         $this->planetRepo = $planetRepo;
-        $this->asteroidsRepo = $asteroidsRepo;
+        $this->asteroidRepo = $asteroidRepo;
         $this->nebulaRepo = $nebulaRepo;
         $this->wormholeRepo = $wormholeRepo;
         $this->emptySpaceRepo = $emptySpaceRepo;
@@ -133,8 +133,8 @@ class UniverseGenerator
             }
 
             // Asteroid Fields
-            elseif ($type[$x][$y] == EntityType::ASTEROIDS) {
-                $this->createAsteroids($cell->id);
+            elseif ($type[$x][$y] == EntityType::ASTEROID) {
+                $this->createAsteroid($cell->id);
                 $asteroidsCount++;
             }
 
@@ -204,7 +204,7 @@ class UniverseGenerator
                     if ($ct <= $percentageStars) {
                         $type[$x][$y] = EntityType::STAR;
                     } elseif ($ct <= $percentageStars + $percentageAsteroids) {
-                        $type[$x][$y] = EntityType::ASTEROIDS;
+                        $type[$x][$y] = EntityType::ASTEROID;
                     } elseif ($ct <= $percentageStars + $percentageAsteroids + $percentageNebulas) {
                         $type[$x][$y] = EntityType::NEBULA;
                     } elseif ($ct <= $percentageStars + $percentageAsteroids + $percentageNebulas + $percentageWormholes) {
@@ -236,7 +236,7 @@ class UniverseGenerator
                 if ($ct <= $percentageStars) {
                     $type[$x][$y] = EntityType::STAR;
                 } elseif ($ct <= $percentageStars + $percentageAsteroids) {
-                    $type[$x][$y] = EntityType::ASTEROIDS;
+                    $type[$x][$y] = EntityType::ASTEROID;
                 } elseif ($ct <= $percentageStars + $percentageAsteroids + $percentageNebulas) {
                     $type[$x][$y] = EntityType::NEBULA;
                 } elseif ($ct <= $percentageStars + $percentageAsteroids + $percentageNebulas + $percentageWormholes) {
@@ -294,7 +294,7 @@ class UniverseGenerator
             if ($r <= $this->config->getInt('solsys_percent_planet')) {
                 $this->createPlanet($cellId, $cnp, $np);
             } elseif ($r <= $this->config->getInt('solsys_percent_planet') + $this->config->getInt('solsys_percent_asteroids')) {
-                $this->createAsteroids($cellId, $cnp);
+                $this->createAsteroid($cellId, $cnp);
             } else {
                 $this->createEmptySpace($cellId, $cnp);
             }
@@ -335,14 +335,14 @@ class UniverseGenerator
         );
     }
 
-    private function createAsteroids(int $cellId, int $pos = 0): void
+    private function createAsteroid(int $cellId, int $pos = 0): void
     {
         $metal = random_int($this->config->param1Int('asteroid_ress'), $this->config->param2Int('asteroid_ress'));
         $crystal = random_int($this->config->param1Int('asteroid_ress'), $this->config->param2Int('asteroid_ress'));
         $plastic = random_int($this->config->param1Int('asteroid_ress'), $this->config->param2Int('asteroid_ress'));
 
-        $id = $this->entityRepo->add($cellId, EntityType::ASTEROIDS, $pos);
-        $this->asteroidsRepo->add($id, $metal, $crystal, $plastic);
+        $id = $this->entityRepo->add($cellId, EntityType::ASTEROID, $pos);
+        $this->asteroidRepo->add($id, $metal, $crystal, $plastic);
     }
 
     private function createNebula(int $cellId, int $pos = 0): void
@@ -434,15 +434,15 @@ class UniverseGenerator
     {
         $entities = $this->entityRepo->findRandomByCodes([
             EntityType::EMPTY_SPACE,
-            EntityType::ASTEROIDS,
+            EntityType::ASTEROID,
         ], $quantity);
 
         $added = 0;
         foreach ($entities as $entity) {
             if ($entity->code === EntityType::EMPTY_SPACE) {
                 $this->emptySpaceRepo->remove($entity->id);
-            } elseif ($entity->code === EntityType::ASTEROIDS) {
-                $this->asteroidsRepo->remove($entity->id);
+            } elseif ($entity->code === EntityType::ASTEROID) {
+                $this->asteroidRepo->remove($entity->id);
             }
             $this->createStarSystem($entity->cellId, $entity->id);
             $added++;
