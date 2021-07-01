@@ -14,7 +14,7 @@ $repository = $app[AllianceRepository::class];
 $historyRepository = $app[AllianceHistoryRepository::class];
 
 /** @var AllianceBuildingRepository */
-$buildingRepository = $app['etoa.alliance.building.repository'];
+$buildingRepository = $app[AllianceBuildingRepository::class];
 
 /** @var AllianceTechnologyRepository */
 $technologyRepository = $app['etoa.alliance.technology.repository'];

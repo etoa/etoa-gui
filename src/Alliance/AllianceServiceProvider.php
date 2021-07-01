@@ -26,7 +26,7 @@ class AllianceServiceProvider implements ServiceProviderInterface
             return new AllianceHistoryRepository($pimple['db']);
         };
 
-        $pimple['etoa.alliance.building.repository'] = function (Container $pimple): AllianceBuildingRepository {
+        $pimple[AllianceBuildingRepository::class] = function (Container $pimple): AllianceBuildingRepository {
             return new AllianceBuildingRepository($pimple['db']);
         };
         $pimple['etoa.alliance.technology.repository'] = function (Container $pimple): AllianceTechnologyRepository {
