@@ -1,6 +1,7 @@
 <?php
 
 use EtoA\Chat\ChatBanRepository;
+use EtoA\Chat\ChatUserRepository;
 
 $xajax->register(XAJAX_FUNCTION,'loadChat');
 $xajax->register(XAJAX_FUNCTION,'showChatUsers');
@@ -68,27 +69,21 @@ function loadChat($minId)
 
 function showChatUsers()
 {
+    global $app;
+
+    /** @var ChatUserRepository $chatUserRepository */
+    $chatUserRepository = $app[ChatUserRepository::class];
+    $chatUsers = $chatUserRepository->getChatUsers();
+
 	$ajax = new xajaxResponse();
-	$res = dbquery("
-	SELECT
-		nick,
-		user_id,
-		timestamp
-	FROM
-		chat_users
-	");
 	$out="";
-	$nr = mysql_num_rows($res);
-	if ($nr>0)
-	{
-		$t = time();
-		while ($arr=mysql_fetch_assoc($res))
-		{
-			$out.= "<a href=\"?page=user&amp;sub=edit&amp;id=".$arr['user_id']."\">
-			".$arr['nick']."</a> ".date("H:i:s",$arr['timestamp'])."
-			<a href=\"?page=chat&amp;kick=".$arr['user_id']."\">Kick</a>
-			<a href=\"?page=chat&amp;ban=".$arr['user_id']."\">Ban</a>
-			<a href=\"?page=chat&amp;del=".$arr['user_id']."\">Del</a>
+	if (count($chatUsers) > 0) {
+		foreach ($chatUsers as $chatUser) {
+			$out.= "<a href=\"?page=user&amp;sub=edit&amp;id=".$chatUser->id."\">
+			".$chatUser->nick."</a> ".date("H:i:s",$chatUser->timestamp)."
+			<a href=\"?page=chat&amp;kick=".$chatUser->id."\">Kick</a>
+			<a href=\"?page=chat&amp;ban=".$chatUser->id."\">Ban</a>
+			<a href=\"?page=chat&amp;del=".$chatUser->id."\">Del</a>
 <br/>";
 		}
 	}

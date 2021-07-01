@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Chat\ChatBanRepository;
+use EtoA\Chat\ChatUserRepository;
 
 class ChatPollJsonResponder extends JsonResponder
 {
@@ -21,9 +22,10 @@ class ChatPollJsonResponder extends JsonResponder
     // Check user is logged in
     if (isset($_SESSION['user_id']))
     {
+        $userId = (int) $_SESSION['user_id'];
         /** @var ChatBanRepository $chatBanRepository */
         $chatBanRepository = $this->app[ChatBanRepository::class];
-        $ban = $chatBanRepository->getUserBan((int) $_SESSION['user_id']);
+        $ban = $chatBanRepository->getUserBan($userId);
 
         if ($ban !== null) {
             return [
@@ -32,40 +34,24 @@ class ChatPollJsonResponder extends JsonResponder
             ];
         }
 
-      // else query user and kicked
-      $res = dbquery('
-      SELECT
-        user_id,kick
-      FROM
-        chat_users
-      WHERE
-        user_id='.$_SESSION['user_id'].';');
+        /** @var ChatUserRepository $chatUserRepository */
+        $chatUserRepository = $this->app[ChatUserRepository::class];
+        $chatUser = $chatUserRepository->getChatUser($userId);
 
-      if (mysql_num_rows($res)>0)
-      {
-        // User already exists
-        $arr = mysql_fetch_assoc($res);
-        if($arr['kick'] != '')
-        {
-          // User got kicked
-          dbquery('
-          DELETE FROM
-            chat_users
-          WHERE
-            user_id='.$_SESSION['user_id'].';');
-          return array(
-            'cmd' => 'ki',
-            'msg' => StringUtils::replaceAsciiControlCharsUnicode($arr['kick'])
-          );
-        }
+        if ($chatUser !== null) {
+            if ($chatUser->kick !== null) {
+                $chatUserRepository->deleteUser($userId);
+                 return [
+                    'cmd' => 'ki',
+                    'msg' => StringUtils::replaceAsciiControlCharsUnicode($chatUser->kick)
+                ];
+            }
 
-      }
-      else
-      {
-        // User does not exist yet
-        ChatManager::sendSystemMessage($_SESSION['user_nick'].' betritt den Chat.');
-        $data['cmd'] = 'li';
-        $data['msg'] = ChatManager::getWelcomeMessage($_SESSION['user_nick']);
+        } else {
+            // User does not exist yet
+            ChatManager::sendSystemMessage($_SESSION['user_nick'].' betritt den Chat.');
+            $data['cmd'] = 'li';
+            $data['msg'] = ChatManager::getWelcomeMessage($_SESSION['user_nick']);
       }
 
       // User exists, not kicked, not banned.

@@ -4,9 +4,12 @@
 	// Updates
 	//
 use EtoA\Chat\ChatBanRepository;
+use EtoA\Chat\ChatUserRepository;
 
 /** @var ChatBanRepository $chatBanRepository */
 $chatBanRepository = $app[ChatBanRepository::class];
+/** @var ChatUserRepository $chatUserRepository */
+$chatUserRepository = $app[ChatUserRepository::class];
 
 if($sub=='log')
 	{
@@ -100,43 +103,26 @@ if($sub=='log')
 	{
 		if (isset($_GET['ban']) && $_GET['ban'] > 0)
 		{
-			$uid = (int) $_GET['ban'];
-			$chatBanRepository->banUser($uid, 'Banned by Admin');
-
-			dbquery("
-			UPDATE
-				chat_users
-			SET
-				kick='Bannend by Admin'
-			WHERE
-				user_id='".$uid."'");
-			ChatManager::sendSystemMessage(get_user_nick($uid)." wurde gebannt!");
+			$userId = (int) $_GET['ban'];
+			$chatBanRepository->banUser($userId, 'Banned by Admin');
+            $chatUserRepository->kickUser($userId, 'Bannend by Admin');
+			ChatManager::sendSystemMessage(get_user_nick($userId)." wurde gebannt!");
 		}
 		elseif(isset($_GET['unban']) && $_GET['unban'] > 0)
 		{
-			$uid = (int) $_GET['unban'];
-			$chatBanRepository->deleteBan($uid);
+			$userId = (int) $_GET['unban'];
+			$chatBanRepository->deleteBan($userId);
 		}
 		elseif(isset($_GET['kick']) && $_GET['kick'] > 0)
 		{
-			$uid = $_GET['kick'];
-			dbquery("
-			UPDATE
-				chat_users
-			SET
-				kick='Kicked by Admin'
-			WHERE
-				user_id='".$uid."'");
-			ChatManager::sendSystemMessage(get_user_nick($uid)." wurde gekickt!");
+			$userId = (int) $_GET['kick'];
+			$chatUserRepository->kickUser($userId, 'Bannend by Admin');
+			ChatManager::sendSystemMessage(get_user_nick($userId)." wurde gekickt!");
 		}
 		elseif(isset($_GET['del']) && $_GET['del'] > 0)
 		{
-			$uid = $_GET['del'];
-			dbquery("
-			DELETE FROM
-				chat_users
-			WHERE
-				user_id='".$uid."'");
+			$userId = (int) $_GET['del'];
+			$chatUserRepository->deleteUser($userId);
 		}
 	?>
 
