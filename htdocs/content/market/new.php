@@ -132,7 +132,7 @@ if ($possible>0)
             <label for=\"resource_offer_reservation_2\" ".tm("Reservation","Fall dieses Angebot nur Spieler aus deiner Allianz kaufen sollen, mach hier ein H&auml;kchen").">F&uuml;r Allianzmitglieder</label>";
         }
         echo "</td>";
-        echo "<td style=\"vertical-align:middle\"><input type=\"text\" name=\"resource_offer_user_nick\" id=\"resource_offer_user_nick\"  maxlength=\"".NICK_MAXLENGHT."\" size=\"25\" autocomplete=\"off\" value=\"\" onkeyup=\"xajax_searchUser(this.value,'resource_offer_user_nick')\"><br/><div class=\"citybox\" id=\"citybox\">&nbsp;</div></td>";
+        echo "<td style=\"vertical-align:middle\"><input type=\"text\" name=\"resource_offer_user_nick\" id=\"resource_offer_user_nick\"  maxlength=\"".$config->param2Int('nick_length')."\" size=\"25\" autocomplete=\"off\" value=\"\" onkeyup=\"xajax_searchUser(this.value,'resource_offer_user_nick')\"><br/><div class=\"citybox\" id=\"citybox\">&nbsp;</div></td>";
         echo "</tr>";
 
         // Status Nachricht (Ajax Überprüfungstext)
@@ -349,7 +349,7 @@ if ($possible>0)
                 <label for=\"ship_offer_reservation_2\" ".tm("Reservation","Fall dieses Angebot nur Spieler aus deiner Allianz kaufen sollen, mach hier ein H&auml;kchen").">F&uuml;r Allianzmitglieder</label>";
             }
             echo "</td>";
-            echo "<td style=\"vertical-align:middle\"><input type=\"text\" name=\"ship_offer_user_nick\" id=\"ship_offer_user_nick\"  maxlength=\"".NICK_MAXLENGHT."\" size=\"25\" autocomplete=\"off\" value=\"\" onkeyup=\"xajax_searchUser(this.value,'ship_offer_user_nick')\"><br/><div class=\"citybox\" id=\"citybox\">&nbsp;</div></td>";
+            echo "<td style=\"vertical-align:middle\"><input type=\"text\" name=\"ship_offer_user_nick\" id=\"ship_offer_user_nick\"  maxlength=\"".$config->param2Int('nick_length')."\" size=\"25\" autocomplete=\"off\" value=\"\" onkeyup=\"xajax_searchUser(this.value,'ship_offer_user_nick')\"><br/><div class=\"citybox\" id=\"citybox\">&nbsp;</div></td>";
             echo "</tr>";
 
             // Status Nachricht (Ajax Überprüfungstext)

@@ -381,11 +381,6 @@ parameters:
 			path: htdocs/inc/xajax/global.xajax.php
 
 		-
-			message: "#^Constant NAME_MAXLENGTH not found\\.$#"
-			count: 1
-			path: htdocs/index/register.php
-
-		-
 			message: "#^Variable \\$x might not be defined\\.$#"
 			count: 1
 			path: htdocs/misc/alliance_stats.image.php

@@ -775,9 +775,15 @@ class User implements \EtoA\User\UserInterface
      * Löschantrag stellen
      */
     function deleteRequest($pw) {
+        // TODO
+        global $app;
+
+        /** @var ConfigurationService */
+        $config = $app['etoa.config.service'];
+
         if (validatePasswort($pw, $this->pw))
         {
-            $t = time() + (USER_DELETE_DAYS*3600*24);
+            $t = time() + ($config->getInt('user_delete_days')*3600*24);
             dbquery("
                 UPDATE
                     users
@@ -1036,6 +1042,11 @@ die Spielleitung";
 
     function activateUmode($force = false)
     {
+        // TODO
+        global $app;
+
+        /** @var ConfigurationService */
+        $config = $app['etoa.config.service'];
 
         $cres = dbquery("SELECT id FROM fleet WHERE user_id='" . $this->id . "';");
         $carr = mysql_fetch_row($cres);
@@ -1117,7 +1128,7 @@ die Spielleitung";
 
                 $hfrom = time();
 
-                $hto = $hfrom + (MIN_UMOD_TIME*24*3600);
+                $hto = $hfrom + ($config->getInt('hmode_days')*24*3600);
                 dbquery("
                         UPDATE
                             planets
@@ -1315,15 +1326,15 @@ die Spielleitung";
             throw new Exception("Dein Nickname darf nicht nur aus Leerzeichen bestehen!");
         }
         $nick_length = strlen(utf8_decode($nick));
-        if ($nick_length < NICK_MINLENGHT || $nick_length > NICK_MAXLENGHT)
+        if ($nick_length < $config->param1Int('nick_length') || $nick_length > $config->param2Int('nick_length'))
         {
-            throw new Exception("Dein Nickname muss mindestens ".NICK_MINLENGHT." Zeichen und maximum ".NICK_MAXLENGHT." Zeichen haben!");
+            throw new Exception("Dein Nickname muss mindestens ".$config->param1Int('nick_length')." Zeichen und maximum ".$config->param2Int('nick_length')." Zeichen haben!");
         }
 
         // Validate password
-        if (strlen($password) < PASSWORD_MINLENGHT)
+        if (strlen($password) < $config->getInt('password_minlength'))
         {
-            throw new Exception("Das Passwort ist noch zu kurz (mind. ".PASSWORD_MINLENGHT." Zeichen sind nötig)!");
+            throw new Exception("Das Passwort ist noch zu kurz (mind. ".$config->getInt('password_minlength')." Zeichen sind nötig)!");
         }
 
         // Check existing user

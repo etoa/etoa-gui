@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Core\Configuration\ConfigurationService;
+
 $xajax->register(XAJAX_FUNCTION,'statsShowBox');
 $xajax->register(XAJAX_FUNCTION,'statsShowTable');
 
@@ -328,6 +330,14 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 	global $page;
 	$objResponse = new xajaxResponse();
 
+    // TODO
+    global $app;
+
+    /** @var ConfigurationService */
+    $config = $app['etoa.config.service'];
+
+    $numRows = $config->getInt('stats_num_rows');
+
 	// Datensatznavigation
 	$counter = 0;
 	if($mode=="diplomacy" || $mode=="battle" || $mode=="trade")
@@ -356,17 +366,17 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 
 	if ($limit>0)
 	{
-		$limit = $limit.",".STATS_NUM_OF_ROWS;
-		$nextlimit = $limit+STATS_NUM_OF_ROWS;
-		$prevlimit = $limit-STATS_NUM_OF_ROWS;
+		$nextlimit = $limit+$numRows;
+		$prevlimit = $limit-$numRows;
+		$limit = $limit.",".$numRows;
 	}
 	else
 	{
-		$limit = "0,".STATS_NUM_OF_ROWS;
-		$nextlimit = STATS_NUM_OF_ROWS;
+		$limit = "0,".$numRows;
+		$nextlimit = $numRows;
 		$prevlimit = -1;
 	}
-	$lastlimit = (ceil($num/STATS_NUM_OF_ROWS)*STATS_NUM_OF_ROWS)-STATS_NUM_OF_ROWS;
+	$lastlimit = (ceil($num/$numRows)*$numRows)-$numRows;
 
 	// Punktetabelle
 
@@ -474,7 +484,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 		$queryParams = array();
 		if ($userstring!="")
 		{
-			$limit="0,".STATS_NUM_OF_ROWS;
+			$limit="0,".$numRows;
 			if ($absolute==1)
 			{
 				if($mode=="diplomacy" || $mode=="battle" || $mode=="trade")
@@ -645,18 +655,18 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
 			ob_start();
 			if ($userstring=='')
 			{
-				if ($prevlimit>-1 && STATS_NUM_OF_ROWS*2<$num)
+				if ($prevlimit>-1 && $numRows*2<$num)
 					echo "<input type=\"button\" value=\"&lt;&lt;\" onclick=\"loadingMsgPrepend('statsTable','Lade...');xajax_statsShowTable('$mode',0,'',0,'$orderBy')\">";
 				if ($prevlimit>-1)
 					echo "<input type=\"button\" value=\"&lt;\" onclick=\"loadingMsgPrepend('statsTable','Lade...');xajax_statsShowTable('$mode',$prevlimit,'',0,'$orderBy')\">";
 				if ($nextlimit<$num)
 					echo "<input type=\"button\" value=\"&gt;\" onclick=\"loadingMsgPrepend('statsTable','Lade...');xajax_statsShowTable('$mode',$nextlimit,'',0,'$orderBy')\">";
-				if ($nextlimit<$num && STATS_NUM_OF_ROWS*2<$num)
+				if ($nextlimit<$num && $numRows*2<$num)
 					echo "<input type=\"button\" value=\"&gt;&gt;\" onclick=\"loadingMsgPrepend('statsTable','Lade...');xajax_statsShowTable('$mode',$lastlimit,'',0,'$orderBy')\">";
 				echo "<select onchange=\"loadingMsgPrepend('statsTable','Lade...');xajax_statsShowTable('$mode',this.options[this.selectedIndex].value,'',0,'$orderBy')\">";
-				for ($x=1;$x<=$num;$x+=STATS_NUM_OF_ROWS)
+				for ($x=1;$x<=$num;$x+=$numRows)
 				{
-					$dif = $x+STATS_NUM_OF_ROWS-1;
+					$dif = $x+$numRows-1;
 					if ($dif>$num) $dif=$num;
 					$oval=$x-1;
 					echo "<option value=\"$oval\"";

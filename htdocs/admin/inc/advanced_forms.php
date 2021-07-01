@@ -177,10 +177,7 @@ else
 	echo "<input type=\"button\" value=\"Neuer Datensatz hinzuf&uuml;gen\" name=\"new\" onclick=\"document.location='?".URL_SEARCH_STRING."&amp;action=new'\" /><br/><br/>";
 
 	if (!defined("DB_OVERVIEW_ORDER")) define("DB_OVERVIEW_ORDER","ASC");
-	if (defined("DB_CONDITION"))
-		$sql = "SELECT * FROM ".DB_TABLE." WHERE ".DB_CONDITION." ORDER BY ".DB_OVERVIEW_ORDER_FIELD." ".DB_OVERVIEW_ORDER.";";
-	else
-		$sql = "SELECT * FROM ".DB_TABLE." ORDER BY ".DB_OVERVIEW_ORDER_FIELD." ".DB_OVERVIEW_ORDER.";";
+    $sql = "SELECT * FROM ".DB_TABLE." ORDER BY ".DB_OVERVIEW_ORDER_FIELD." ".DB_OVERVIEW_ORDER.";";
 	if ($res = dbquery($sql))
 	{
 		echo "<table width=\"100%\" cellpadding=\"3\" cellspacing=\"1\" align=\"center\"><tr>";

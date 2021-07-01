@@ -1,13 +1,13 @@
 <?PHP
-//////////////////////////////////////////////////////
-// The Andromeda-Project-Browsergame                //
-// Ein Massive-Multiplayer-Online-Spiel             //
-// Programmiert von Nicolas Perrenoud<mail@nicu.ch> //
-// als Maturaarbeit '04 am Gymnasium Oberaargau	    //
-//////////////////////////////////////////////////////
-//////////////////////////////////////////////////////
+
+use EtoA\Core\Configuration\ConfigurationService;
 
 $twig->addGlobal("title", MODUL_NAME);
+
+global $app;
+
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
 
 if (isset($_POST['apply_submit']))
 {
@@ -79,10 +79,7 @@ if (isset($_POST['new_submit']))
 
 echo "<form action=\"?".URL_SEARCH_STRING."\" method=\"post\">";
 if (!defined("DB_OVERVIEW_ORDER")) define("DB_OVERVIEW_ORDER","ASC");
-if (defined("DB_CONDITION"))
-	$sql = "SELECT * FROM ".DB_TABLE." WHERE ".DB_CONDITION." ORDER BY `".DB_OVERVIEW_ORDER_FIELD."` ".DB_OVERVIEW_ORDER.";";
-else
-	$sql = "SELECT * FROM ".DB_TABLE." ORDER BY `".DB_OVERVIEW_ORDER_FIELD."` ".DB_OVERVIEW_ORDER.";";
+$sql = "SELECT * FROM ".DB_TABLE." ORDER BY `".DB_OVERVIEW_ORDER_FIELD."` ".DB_OVERVIEW_ORDER.";";
 $res = dbquery($sql);
 if (mysql_num_rows($res)!=0)
 {
@@ -121,7 +118,7 @@ if (mysql_num_rows($res)!=0)
 					echo "<input type=\"password\" name=\"".$a['name']."[".$arr[DB_TABLE_ID]."]\" value=\"".$arr[$a['name']]."\" size=\"".$a['size']."\" maxlength=\"".$a['maxlen']."\" /></td>\n";
 				break;
 				case "timestamp":
-					echo "<input type=\"text\" name=\"".$a['name']."[".$arr[DB_TABLE_ID]."]\" value=\"".date(DATE_FORMAT,$arr[$a['name']])."\" /></td>\n";
+					echo "<input type=\"text\" name=\"".$a['name']."[".$arr[DB_TABLE_ID]."]\" value=\"".date($config->get('admin_dateformat'),$arr[$a['name']])."\" /></td>\n";
 				break;
 				case "textarea":
 					echo "<input type=\"text\" name=\"".$a['name']."[".$arr[DB_TABLE_ID]."]\" value=\"";

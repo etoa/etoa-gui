@@ -2,21 +2,29 @@
 
 use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Core\Configuration\ConfigurationService;
 use Twig\Environment;
 
 /** @var AdminUserRepository */
 $adminUserRepo = $app['etoa.admin.user.repository'];
 
+/** @var ConfigurationService */
+$config = $app['etoa.config.service'];
+
 if (isset($_POST['submitPassword'])) {
-    submitPassword($cu, $adminUserRepo, $twig);
+    submitPassword($cu, $adminUserRepo, $config, $twig);
 }
 if (isset($_POST['submitProfile'])) {
     submitProfile($cu, $adminUserRepo, $twig);
 }
 profileIndex($cu, $twig);
 
-function submitPassword(AdminUser $cu, AdminUserRepository $adminUserRepo, Environment $twig)
-{
+function submitPassword(
+    AdminUser $cu,
+    AdminUserRepository $adminUserRepo,
+    ConfigurationService $config,
+    Environment $twig
+): void {
     try {
         if (!$cu->checkEqualPassword($_POST['user_password_old'])) {
             throw new \Exception('Das alte Passwort stimmt nicht mit dem gespeicherten Wert überein!');
@@ -24,8 +32,8 @@ function submitPassword(AdminUser $cu, AdminUserRepository $adminUserRepo, Envir
         if (!($_POST['user_password'] == $_POST['user_password2'] && $_POST['user_password_old'] != $_POST['user_password'])) {
             throw new \Exception('Die Kennwortwiederholung stimmt nicht oder das alte und das neue Passwort sind gleich!');
         }
-        if (strlen($_POST['user_password']) < PASSWORD_MINLENGHT) {
-            throw new \Exception('Das Passwort ist zu kurz! Es muss mindestens ' . PASSWORD_MINLENGHT . ' Zeichen lang sein!');
+        if (strlen($_POST['user_password']) < $config->getInt('password_minlength')) {
+            throw new \Exception('Das Passwort ist zu kurz! Es muss mindestens ' . $config->getInt('password_minlength') . ' Zeichen lang sein!');
         }
 
         $adminUserRepo->setPassword($cu, $_POST['user_password']);
