@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Chat\ChatRepository;
 use EtoA\Chat\ChatUserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Text\TextRepository;
@@ -11,19 +12,11 @@ class ChatManager {
     */
     static function sendSystemMessage($msg)
     {
-        dbQuerySave("
-            INSERT INTO
-                chat
-            (
-                timestamp,
-                text
-            )
-            VALUES
-            (
-                UNIX_TIMESTAMP(),?
-            );",
-            array($msg)
-        );
+        global $app;
+
+        /** @var ChatRepository $chatRepository */
+        $chatRepository = $app[ChatRepository::class];
+        $chatRepository->addSystemMessage($msg);
     }
 
     /**
@@ -164,18 +157,9 @@ class ChatManager {
         /** @var ConfigurationService */
         $config = $app[ConfigurationService::class];
 
-        $res = dbquery("
-            SELECT id
-            FROM chat
-            ORDER BY id DESC
-            LIMIT ".$config->getInt('chat_recent_messages').",1;"
-        );
-        if (mysql_num_rows($res)>0)
-        {
-            $arr=mysql_fetch_row($res);
-            dbquery("DELETE FROM chat WHERE id < ".$arr[0]);
-            return mysql_affected_rows();
-        }
-        return 0;
+        /** @var ChatRepository $chatRepository */
+        $chatRepository = $app[ChatRepository::class];
+
+        return $chatRepository->cleanupMessage($config->getInt('chat_recent_messages'));
     }
 }

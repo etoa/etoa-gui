@@ -2,6 +2,7 @@
 
 use EtoA\Chat\ChatBanRepository;
 use EtoA\Chat\ChatLogRepository;
+use EtoA\Chat\ChatRepository;
 
 class ChatPushJsonResponder extends JsonResponder
 {
@@ -215,25 +216,9 @@ class ChatPushJsonResponder extends JsonResponder
         // Woo Hoo, Md5 hashtable
         if ($ct!='' && (!isset($_SESSION['lastchatmsg']) || $_SESSION['lastchatmsg']!= $hash) )
         {
-          dbquery("INSERT INTO
-            chat
-          (
-            timestamp,
-            nick,
-            text,
-            color,
-            user_id,
-            admin
-          )
-          VALUES
-          (
-            ".time().",
-            '".$_SESSION['user_nick']."',
-            '".mysql_real_escape_string(($ct))."',
-            '".(isset($_SESSION['ccolor'])?('#'.$_SESSION['ccolor']):'')."',
-            '".$_SESSION['user_id']."',
-            '".$admin."'
-          );");
+            /** @var ChatRepository $chatRepository */
+            $chatRepository = $this->app[ChatRepository::class];
+            $chatRepository->addMessage((int) $_SESSION['user_id'], $_SESSION['user_nick'], $ct, isset($_SESSION['ccolor']) ? '#'.$_SESSION['ccolor'] : '', $admin);
 
           /** @var ChatLogRepository $chatLogRepository */
           $chatLogRepository = $this->app[ChatLogRepository::class];

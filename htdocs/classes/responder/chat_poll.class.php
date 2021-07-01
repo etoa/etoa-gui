@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Chat\ChatBanRepository;
+use EtoA\Chat\ChatRepository;
 use EtoA\Chat\ChatUserRepository;
 
 class ChatPollJsonResponder extends JsonResponder
@@ -58,23 +59,9 @@ class ChatPollJsonResponder extends JsonResponder
       ChatManager::updateUserEntry($_SESSION['user_id'], $_SESSION['user_nick']);
 
       // Query new messages
-      $res = dbquery('
-      SELECT
-        id,
-        nick,
-        timestamp,
-        text,
-        color,
-        user_id,
-        admin
-      FROM
-        chat
-      WHERE
-        id>'.intval($params['minId']).'
-        AND channel_id='.intval($params['chanId']).'
-      ORDER BY
-        timestamp ASC
-      ');
+      /** @var ChatRepository $chatRepository */
+      $chatRepository = $this->app[ChatRepository::class];
+      $messages = $chatRepository->getMessagesAfter((int) $params['minId'], (int) $params['chanId']);
 
       $lastid = intval($params['minId']);
       // check whether 'login' has been set
@@ -83,24 +70,19 @@ class ChatPollJsonResponder extends JsonResponder
         $data['cmd'] = 'up';
       }
       $data['out'] = array();
-      if (mysql_num_rows($res)>0)
-      {
-        // new messages available
-        while ($arr=mysql_fetch_assoc($res))
-        {
+      foreach ($messages as $message) {
          $data['out'][] = array(
-            'id' => $arr['id'],
-            'text' => StringUtils::replaceAsciiControlChars(htmlspecialchars($arr['text'])),
-            'time' => date("H:i",$arr['timestamp']),
-            'color' => $arr['color'],
-            'userId' => $arr['user_id'],
-            'nick' => $arr['nick'],
-            'admin' => $arr['admin']
+            'id' => $message->id,
+            'text' => StringUtils::replaceAsciiControlChars(htmlspecialchars($message->text)),
+            'time' => date("H:i", $message->timestamp),
+            'color' => $message->color,
+            'userId' => $message->userId,
+            'nick' => $message->nick,
+            'admin' => $message->admin
           );
-          $lastid = $arr['id'];
-        }
+          $lastid = $message->id;
       }
-      $data['lastId'] = intval($lastid);
+      $data['lastId'] = $lastid;
     }
     else
     {
@@ -113,4 +95,3 @@ class ChatPollJsonResponder extends JsonResponder
     return $data;
   }
 }
-?>

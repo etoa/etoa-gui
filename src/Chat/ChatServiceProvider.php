@@ -20,5 +20,9 @@ class ChatServiceProvider implements ServiceProviderInterface
         $pimple[ChatLogRepository::class] = function (Container $pimple): ChatLogRepository {
             return new ChatLogRepository($pimple['db']);
         };
+
+        $pimple[ChatRepository::class] = function (Container $pimple): ChatRepository {
+            return new ChatRepository($pimple['db']);
+        };
     }
 }

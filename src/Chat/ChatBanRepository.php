@@ -42,8 +42,7 @@ class ChatBanRepository extends AbstractRepository
 				chat_banns
 			(user_id, reason, timestamp)
 			VALUES (:userId, :reason, :time)
-			ON DUPLICATE KEY UPDATE timestamp = :time' . ($forceReason ? ',reason=:reason' : '')
-        , [
+			ON DUPLICATE KEY UPDATE timestamp = :time' . ($forceReason ? ',reason=:reason' : ''), [
             'userId' => $userId,
             'reason' => $reason,
             'time' => time(),
