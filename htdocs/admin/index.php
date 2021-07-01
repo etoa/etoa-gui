@@ -67,10 +67,10 @@ try {
         $userSessionRepo = $app[UserSessionRepository::class];
 
         /** @var AdminNotesRepository */
-        $notesRepo = $app['etoa.admin.notes.repository'];
+        $notesRepo = $app[AdminNotesRepository::class];
 
         /** @var AdminRoleManager */
-        $roleManager = $app['etoa.admin.role.manager'];
+        $roleManager = $app[AdminRoleManager::class];
 
         /** @var AdminSessionRepository */
         $sessionRepository = $app['etoa.admin.session.repository'];

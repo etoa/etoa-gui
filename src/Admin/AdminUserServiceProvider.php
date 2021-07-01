@@ -15,10 +15,10 @@ class AdminUserServiceProvider implements ServiceProviderInterface
         $pimple[AdminUserRepository::class] = function (Container $pimple): AdminUserRepository {
             return new AdminUserRepository($pimple['db']);
         };
-        $pimple['etoa.admin.role.manager'] = function (): AdminRoleManager {
+        $pimple[AdminRoleManager::class] = function (): AdminRoleManager {
             return new AdminRoleManager();
         };
-        $pimple['etoa.admin.notes.repository'] = function (Container $pimple): AdminNotesRepository {
+        $pimple[AdminNotesRepository::class] = function (Container $pimple): AdminNotesRepository {
             return new AdminNotesRepository($pimple['db']);
         };
         $pimple['etoa.admin.session.repository'] = function (Container $pimple): AdminSessionRepository {

@@ -66,7 +66,7 @@ if ($sub == "offline") {
     $textRepo = $app['etoa.text.repository'];
 
     /** @var AdminRoleManager */
-    $roleManager = $app['etoa.admin.role.manager'];
+    $roleManager = $app[AdminRoleManager::class];
 
     /** @var ConfigurationService */
     $config = $app[ConfigurationService::class];

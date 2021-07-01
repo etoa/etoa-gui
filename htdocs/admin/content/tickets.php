@@ -27,7 +27,7 @@ $adminUserRepo = $app[AdminUserRepository::class];
 $userRepo = $app[UserRepository::class];
 
 /** @var AdminRoleManager */
-$roleManager = $app['etoa.admin.role.manager'];
+$roleManager = $app[AdminRoleManager::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();

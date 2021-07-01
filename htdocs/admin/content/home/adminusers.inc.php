@@ -10,7 +10,7 @@ use Twig\Environment;
 $adminUserRepo = $app[AdminUserRepository::class];
 
 /** @var AdminRoleManager */
-$roleManager = $app['etoa.admin.role.manager'];
+$roleManager = $app[AdminRoleManager::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();

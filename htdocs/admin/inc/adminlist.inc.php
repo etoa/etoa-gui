@@ -7,7 +7,7 @@ use EtoA\Admin\AdminUserRepository;
 $adminUserRepo = $app[AdminUserRepository::class];
 
 /** @var AdminRoleManager */
-$roleManager = $app['etoa.admin.role.manager'];
+$roleManager = $app[AdminRoleManager::class];
 
 adminListIndex($adminUserRepo, $roleManager);
 
