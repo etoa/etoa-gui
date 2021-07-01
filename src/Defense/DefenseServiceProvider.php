@@ -20,9 +20,5 @@ class DefenseServiceProvider implements ServiceProviderInterface
         $pimple[DefenseCategoryRepository::class] = function (Container $pimple): DefenseCategoryRepository {
             return new DefenseCategoryRepository($pimple['db']);
         };
-
-        $pimple['etoa.defense_category.repository'] = function (Container $pimple): DefenseCategoryRepository {
-            return $pimple[DefenseCategoryRepository::class];
-        };
     }
 }

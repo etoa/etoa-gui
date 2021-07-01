@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Defense\DefenseCategoryRepository;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipDataRepository;
@@ -101,8 +102,8 @@ else
         $sort="ASC";
     }
 
-    /** @var \EtoA\Defense\DefenseCategoryRepository $defenseCategoryRepository */
-    $defenseCategoryRepository = $app['etoa.defense_category.repository'];
+    /** @var DefenseCategoryRepository */
+    $defenseCategoryRepository = $app[DefenseCategoryRepository::class];
     $defenseCategories = $defenseCategoryRepository->getAllCategories();
     foreach ($defenseCategories as $defenseCategory) {
         $defenses = $defenseDataRepository->getDefenseByCategory($defenseCategory->id);
