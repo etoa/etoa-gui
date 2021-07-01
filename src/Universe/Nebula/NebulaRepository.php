@@ -17,7 +17,7 @@ class NebulaRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function find(int $id): ?array
+    public function find(int $id): ?Nebula
     {
         $data = $this->createQueryBuilder()
             ->select('*')
@@ -29,7 +29,7 @@ class NebulaRepository extends AbstractRepository
             ->execute()
             ->fetchAssociative();
 
-        return $data !== false ? $data : null;
+        return $data !== false ? new Nebula($data) : null;
     }
 
     public function add(int $id, int $resCrystal): void

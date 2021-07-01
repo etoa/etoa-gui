@@ -432,7 +432,7 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
             +/-: <input type=\"text\" name=\"res_fuel_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 
             echo "<tr><th>".RES_FOOD."</th>
-            <td><input type=\"text\" name=\"res_food\" value=\"".intval($asteroid->resFuel)."\" size=\"12\" maxlength=\"20\" /><br/>
+            <td><input type=\"text\" name=\"res_food\" value=\"".intval($asteroid->resFood)."\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_food_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
             echo "<th>".RES_POWER."</th>
             <td><input type=\"text\" name=\"res_power\" value=\"".intval($asteroid->resPower)."\" size=\"12\" maxlength=\"20\" /><br/>
@@ -480,24 +480,24 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
             tableStart("<span style=\"color:".Entity::$entityColors[$entity->code]."\">Interstellarer Nebel</span>","auto");
 
             echo "<tr><th>".RES_METAL."</th>
-            <td><input type=\"text\" name=\"res_metal\" value=\"".intval($nebula['res_metal'])."\" size=\"12\" maxlength=\"20\" /><br/>
+            <td><input type=\"text\" name=\"res_metal\" value=\"".intval($nebula->resMetal)."\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_metal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
             echo "<th>".RES_CRYSTAL."</th>
-            <td><input type=\"text\" name=\"res_crystal\" value=\"".intval($nebula['res_crystal'])."\" size=\"12\" maxlength=\"20\" /><br/>
+            <td><input type=\"text\" name=\"res_crystal\" value=\"".intval($nebula->resCrystal)."\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_crystal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 
             echo "<tr><th>".RES_PLASTIC."</th>
-            <td><input type=\"text\" name=\"res_plastic\" value=\"".intval($nebula['res_plastic'])."\" size=\"12\" maxlength=\"20\" /><br/>
+            <td><input type=\"text\" name=\"res_plastic\" value=\"".intval($nebula->resPlastic)."\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_plastic_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
             echo "<th>".RES_FUEL."</th>
-            <td><input type=\"text\" name=\"res_fuel\" value=\"".intval($nebula['res_fuel'])."\" size=\"12\" maxlength=\"20\" /><br/>
+            <td><input type=\"text\" name=\"res_fuel\" value=\"".intval($nebula->resFuel)."\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_fuel_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 
             echo "<tr><th>".RES_FOOD."</th>
-            <td><input type=\"text\" name=\"res_food\" value=\"".intval($nebula['res_food'])."\" size=\"12\" maxlength=\"20\" /><br/>
+            <td><input type=\"text\" name=\"res_food\" value=\"".intval($nebula->resFood)."\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_food_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
             echo "<th>".RES_POWER."</th>
-            <td><input type=\"text\" name=\"res_power\" value=\"".intval($nebula['res_power'])."\" size=\"12\" maxlength=\"20\" /><br/>
+            <td><input type=\"text\" name=\"res_power\" value=\"".intval($nebula->resPower)."\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_power_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 
             echo "</table>";
