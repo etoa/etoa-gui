@@ -3,7 +3,12 @@
 	//
 	// Updates
 	//
-	if($sub=='log')
+use EtoA\Chat\ChatBanRepository;
+
+/** @var ChatBanRepository $chatBanRepository */
+$chatBanRepository = $app[ChatBanRepository::class];
+
+if($sub=='log')
 	{
 		echo "<h1>InGame-Chat Log</h1>";
 		echo "<table class=\"tb\">
@@ -95,12 +100,8 @@
 	{
 		if (isset($_GET['ban']) && $_GET['ban'] > 0)
 		{
-			$uid = $_GET['ban'];
-			dbquery("INSERT INTO
-				chat_banns
-			(user_id,reason,timestamp)
-			VALUES (".$uid.",'Banned by Admin',".time().")
-			ON DUPLICATE KEY UPDATE timestamp=".time()."");
+			$uid = (int) $_GET['ban'];
+			$chatBanRepository->banUser($uid, 'Banned by Admin');
 
 			dbquery("
 			UPDATE
@@ -113,11 +114,8 @@
 		}
 		elseif(isset($_GET['unban']) && $_GET['unban'] > 0)
 		{
-			$uid = $_GET['unban'];
-			dbquery("DELETE FROM
-				chat_banns
-			WHERE
-				user_id=".$uid.";");
+			$uid = (int) $_GET['unban'];
+			$chatBanRepository->deleteBan($uid);
 		}
 		elseif(isset($_GET['kick']) && $_GET['kick'] > 0)
 		{

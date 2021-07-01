@@ -1,4 +1,7 @@
 <?PHP
+
+use EtoA\Chat\ChatBanRepository;
+
 class ChatPollJsonResponder extends JsonResponder
 {
   function getRequiredParams() {
@@ -18,25 +21,16 @@ class ChatPollJsonResponder extends JsonResponder
     // Check user is logged in
     if (isset($_SESSION['user_id']))
     {
-      // Query for ban
-      $res = dbquery('
-      SELECT
-        user_id,reason,timestamp
-      FROM
-        chat_banns
-      WHERE
-        user_id='.$_SESSION['user_id'].';');
+        /** @var ChatBanRepository $chatBanRepository */
+        $chatBanRepository = $this->app[ChatBanRepository::class];
+        $ban = $chatBanRepository->getUserBan((int) $_SESSION['user_id']);
 
-      // die if banned
-      if(mysql_num_rows($res)>0)
-      {
-         // banned
-        $arr = mysql_fetch_assoc($res);
-        return array(
-          'cmd' => 'bn',
-          'msg' => StringUtils::replaceAsciiControlCharsUnicode($arr['reason'])
-        );
-      }
+        if ($ban !== null) {
+            return [
+                'cmd' => 'bn',
+                'msg' => StringUtils::replaceAsciiControlCharsUnicode($ban->reason),
+            ];
+        }
 
       // else query user and kicked
       $res = dbquery('

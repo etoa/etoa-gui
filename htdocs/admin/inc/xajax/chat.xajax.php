@@ -1,4 +1,7 @@
 <?php
+
+use EtoA\Chat\ChatBanRepository;
+
 $xajax->register(XAJAX_FUNCTION,'loadChat');
 $xajax->register(XAJAX_FUNCTION,'showChatUsers');
 $xajax->register(XAJAX_FUNCTION,'showBannedChatUsers');
@@ -99,41 +102,28 @@ function showChatUsers()
 
 function showBannedChatUsers()
 {
-	ob_start();
+    global $app;
+    /** @var ChatBanRepository $chatBanRepository */
+    $chatBanRepository = $app[ChatBanRepository::class];
+
 	$ajax = new xajaxResponse();
-	$res = dbquery("
-	SELECT
-		u.user_id,
-		u.user_nick as nick,
-		b.reason,
-		b.timestamp
-	FROM
-		chat_banns b
-	INNER JOIN
-		users u ON u.user_id=b.user_id
-	");
+	$bans = $chatBanRepository->getBans();
 	$out="";
-	$nr = mysql_num_rows($res);
-	if ($nr>0)
-	{
-		$t = time();
+	if (count($bans) > 0) {
 		$out.= "<ul>";
-		while ($arr=mysql_fetch_assoc($res))
-		{
-			$out.= "<li><a href=\"?page=user&amp;sub=edit&amp;id=".$arr['user_id']."\">".$arr['nick']."</a>
-			 ".$arr['reason']." (".date("H:i:s",$arr['timestamp']).")
-			<a href=\"?page=chat&amp;unban=".$arr['user_id']."\">Unbannen</a></li>";
+		foreach ($bans as $ban) {
+			$out.= "<li><a href=\"?page=user&amp;sub=edit&amp;id=".$ban->userId."\">".$ban->userNick."</a>
+			 ".$ban->reason." (".date("H:i:s",$ban->timestamp).")
+			<a href=\"?page=chat&amp;unban=".$ban->userId."\">Unbannen</a></li>";
 		}
 		$out.="</ul>";
-	}
-	else
-		$out.="Keine User gebannt!<br/>";
+	} else {
+        $out.="Keine User gebannt!<br/>";
+    }
+
 	$ajax->assign("bannedchatuserlist","innerHTML",$out);
 
 	$ajax->script("setTimeout(\"xajax_showBannedChatUsers();\",10000);");
-	$out = ob_get_clean();
-  return $ajax;
+
+    return $ajax;
 }
-
-
-?>
