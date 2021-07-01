@@ -13,10 +13,6 @@ class TechnologyServiceProvider implements ServiceProviderInterface
             return new TechnologyRepository($pimple['db']);
         };
 
-        $pimple['etoa.technology.repository'] = function (Container $pimple): TechnologyRepository {
-            return ($pimple[TechnologyRepository::class]);
-        };
-
         $pimple[TechnologyDataRepository::class] = function (Container $pimple): TechnologyDataRepository {
             return new TechnologyDataRepository($pimple['db']);
         };

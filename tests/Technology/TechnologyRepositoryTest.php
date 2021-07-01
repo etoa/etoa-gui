@@ -6,14 +6,13 @@ use EtoA\AbstractDbTestCase;
 
 class TechnologyRepositoryTest extends AbstractDbTestCase
 {
-    /** @var TechnologyRepository */
-    private $repository;
+    private TechnologyRepository $repository;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->repository = $this->app['etoa.technology.repository'];
+        $this->repository = $this->app[TechnologyRepository::class];
     }
 
     public function testGetUserLevelNoTechnology(): void
