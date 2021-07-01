@@ -1,20 +1,27 @@
 <?php
 
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
+use EtoA\Race\RaceDataRepository;
+use EtoA\Specialist\SpecialistDataRepository;
+use EtoA\User\UserRepository;
 
 /** @var TicketRepository */
-$ticketRepo = $app['etoa.help.ticket.repository'];
+$ticketRepo = $app[TicketRepository::class];
 
 /** @var AdminUserRepository */
-$adminUserRepo = $app['etoa.admin.user.repository'];
-/** @var \EtoA\User\UserRepository $userRepository */
-$userRepository = $app['etoa.user.repository'];
+$adminUserRepo = $app[AdminUserRepository::class];
+
+/** @var UserRepository */
+$userRepository = $app[UserRepository::class];
+
 /** @var \EtoA\Ship\ShipDataRepository $shipDateRepository */
 $shipDateRepository = $app[\EtoA\Ship\ShipDataRepository::class];
+
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 if (isset($_GET['id']))
     $id = $_GET['id'];
@@ -868,12 +875,14 @@ echo '<div class="tabs" id="user_edit_tabs">
     * Game-Daten
     */
 
-    /** @var \EtoA\Race\RaceDataRepository $raceRepository */
-    $raceRepository = $app['etoa.race.datarepository'];
+    /** @var RaceDataRepository */
+    $raceRepository = $app[RaceDataRepository::class];
 
     $raceNames = $raceRepository->getRaceNames();
-    /** @var \EtoA\Specialist\SpecialistDataRepository $specialistRepository */
-    $specialistRepository = $app['etoa.specialist.datarepository'];
+
+    /** @var SpecialistDataRepository */
+    $specialistRepository = $app[SpecialistDataRepository::class];
+
     $specialistNames = $specialistRepository->getSpecialistNames();
 
     echo "<table class=\"tbl\">";
@@ -909,8 +918,8 @@ echo '<div class="tabs" id="user_edit_tabs">
                     <td class=\"tbltitle\">Allianz:</td>
                     <td class=\"tbldata\">
                         <select id=\"user_alliance_id\" name=\"user_alliance_id\" onchange=\"loadAllianceRanks(".$arr['user_alliance_rank_id'].");\">";
-                        /** @var \EtoA\Alliance\AllianceRepository $allianceRepository */
-                        $allianceRepository = $app['etoa.alliance.repository'];
+                        /** @var AllianceRepository */
+                        $allianceRepository = $app[AllianceRepository::class];
                         $allianceNamesWithTags = $allianceRepository->getAllianceNamesWithTags();
                         echo "<option value=\"0\">(Keine)</option>";
                         foreach ($allianceNamesWithTags as $allianceId => $allianceNamesWithTag)

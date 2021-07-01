@@ -16,10 +16,10 @@ class AdminSession extends Session
         global $app;
 
         /** @var AdminSessionManager */
-        $sessionManager = $app['etoa.admin.session.manager'];
+        $sessionManager = $app[AdminSessionManager::class];
 
         /** @var AdminUserRepository */
-        $userRepository = $app['etoa.admin.user.repository'];
+        $userRepository = $app[AdminUserRepository::class];
 
         $sessionManager->cleanup();
 
@@ -101,10 +101,10 @@ class AdminSession extends Session
         global $app;
 
         /** @var AdminSessionManager */
-        $sessionManager = $app['etoa.admin.session.manager'];
+        $sessionManager = $app[AdminSessionManager::class];
 
         /** @var AdminSessionRepository */
-        $repository = $app['etoa.admin.session.repository'];
+        $repository = $app[AdminSessionRepository::class];
 
         if (isset($this->time_login)) {
             $exists = $repository->exists(
@@ -141,7 +141,7 @@ class AdminSession extends Session
         global $app;
 
         /** @var AdminSessionRepository */
-        $repository = $app['etoa.admin.session.repository'];
+        $repository = $app[AdminSessionRepository::class];
 
         $repository->removeByUserOrId(session_id(), intval($this->user_id));
         $repository->create(
@@ -159,7 +159,7 @@ class AdminSession extends Session
         global $app;
 
         /** @var AdminSessionManager */
-        $sessionManager = $app['etoa.admin.session.manager'];
+        $sessionManager = $app[AdminSessionManager::class];
 
         $sessionManager->unregisterSession(session_id());
     }

@@ -7,10 +7,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
 /** @var AdminUserRepository */
-$adminUserRepo = $app['etoa.admin.user.repository'];
+$adminUserRepo = $app[AdminUserRepository::class];
 
 /** @var AdminRoleManager */
-$roleManager = $app['etoa.admin.role.manager'];
+$roleManager = $app[AdminRoleManager::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();

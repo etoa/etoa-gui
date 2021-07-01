@@ -29,7 +29,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 */
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 $mode = (isset($_GET['mode']) && $_GET['mode']!="" && ctype_alpha($_GET['mode'])) ? $_GET['mode'] : 'target';
 

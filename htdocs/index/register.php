@@ -3,7 +3,7 @@
 use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 /** @var \EtoA\User\UserRepository $userRepository */
 $userRepository = $app[\EtoA\User\UserRepository::class];
 

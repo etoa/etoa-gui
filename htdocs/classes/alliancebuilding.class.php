@@ -21,7 +21,7 @@ class AllianceBuilding
         // TODO
         global $app;
 
-        $this->config = $app['etoa.config.service'];
+        $this->config = $app[ConfigurationService::class];
 
         try
         {

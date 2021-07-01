@@ -6,13 +6,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
 /** @var BuildingRepository */
-$repository = $app['etoa.building.repository'];
+$repository = $app[BuildingRepository::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 if ($sub == "prices") {
     priceCalculator($repository);

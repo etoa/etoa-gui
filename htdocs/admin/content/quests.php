@@ -14,7 +14,7 @@ foreach ($questDefinitions as $questDefinition) {
 
 if ($sub === 'list') {
     /** @var QuestPresenter $questPresenter */
-    $questPresenter = $app['etoa.quest.presenter'];
+    $questPresenter = $app[QuestPresenter::class];
     echo '
     <table width="100%" cellpadding="3" cellspacing="1" align="center">
         <tbody>
@@ -40,7 +40,7 @@ if ($sub === 'list') {
     echo '</tbody></table>';
 } elseif (isset($_GET['action']) && $_GET['action'] === 'edit') {
     /** @var QuestRepository $repository */
-    $repository = $app['etoa.quest.repository'];
+    $repository = $app[QuestRepository::class];
 
     $quest = null;
     if (isset($_POST['del'])) {
@@ -132,7 +132,7 @@ if ($sub === 'list') {
 
     if (isset($_POST['quest_search'])) {
         /** @var QuestRepository $repository */
-        $repository = $app['etoa.quest.repository'];
+        $repository = $app[QuestRepository::class];
         $userNick = null;
         if ($_POST['user_nick'] !== '') {
             $userNick = '%'.$_POST['user_nick'].'%';

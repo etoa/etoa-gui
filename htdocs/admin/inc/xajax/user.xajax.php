@@ -187,10 +187,10 @@ function userTickets($uid,$target)
 	global $app;
 
 	/** @var AdminUserRepository */
-	$adminUserRepo = $app['etoa.admin.user.repository'];
+	$adminUserRepo = $app[AdminUserRepository::class];
 
 	/** @var TicketRepository */
-	$ticketRepo = $app['etoa.help.ticket.repository'];
+	$ticketRepo = $app[TicketRepository::class];
 
 	$or = new xajaxResponse();
 	ob_start();
@@ -265,7 +265,7 @@ function showLast5Messages($uid,$target,$limit=5)
     $messageRepository = $app[MessageRepository::class];
 
     /** @var UserRepository */
-    $userRepo = $app['etoa.user.repository'];
+    $userRepo = $app[UserRepository::class];
 
 	ob_start();
 	echo "<table class=\"tb\">";

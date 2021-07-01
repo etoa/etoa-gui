@@ -18,6 +18,8 @@
 	//
 	//
 
+use EtoA\Alliance\AllianceRepository;
+
 if (Alliance::checkActionRights('alliancenews'))
 {
 
@@ -153,8 +155,8 @@ if (Alliance::checkActionRights('alliancenews'))
 		}
 		echo '<option '.$selected.' value="0" style="font-weight:bold;color:#0f0;">Öffentliches Rathaus</option>';
 
-		/** @var \EtoA\Alliance\AllianceRepository $allianceRepository */
-		$allianceRepository = $app['etoa.alliance.repository'];
+		/** @var AllianceRepository */
+		$allianceRepository = $app[AllianceRepository::class];
 		$allianceNamesWithTags = $allianceRepository->getAllianceNamesWithTags();
 
 		foreach ($allianceNamesWithTags as $allianceId => $allianceNamesWithTag) {

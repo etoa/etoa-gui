@@ -1,15 +1,16 @@
 <?PHP
 
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 if ($config->getBoolean("alliance_allow")) {
 		if ($cu->allianceId == 0)
 		{
-		    /** @var \EtoA\Alliance\AllianceRepository $allianceRepository */
-		    $allianceRepository = $app['etoa.alliance.repository'];
+		    /** @var AllianceRepository */
+		    $allianceRepository = $app[AllianceRepository::class];
 
 			// Check application
         $application_alliance=0;

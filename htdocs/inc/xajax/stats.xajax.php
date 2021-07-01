@@ -334,7 +334,7 @@ function statsShowTable($mode, $limit=0, $userstring="", $absolute=0, $orderBy='
     global $app;
 
     /** @var ConfigurationService */
-    $config = $app['etoa.config.service'];
+    $config = $app[ConfigurationService::class];
 
     $numRows = $config->getInt('stats_num_rows');
 

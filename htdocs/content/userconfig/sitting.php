@@ -18,13 +18,14 @@
 	//
 	//
 
-    use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserRepository;
+use EtoA\Core\Configuration\ConfigurationService;
+
+/** @var UserRepository */
+$userRepository = $app[UserRepository::class];
 
     /** @var ConfigurationService */
-    $config = $app['etoa.config.service'];
-
-    /** @var \EtoA\User\UserRepository $userRepository */
-    $userRepository = $app['etoa.user.repository'];
+    $config = $app[ConfigurationService::class];
 
 	if (!$s->sittingActive || $s->falseSitter)
 	{

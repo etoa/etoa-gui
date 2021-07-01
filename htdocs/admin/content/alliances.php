@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
 /** @var AllianceRepository */
-$repository = $app['etoa.alliance.repository'];
+$repository = $app[AllianceRepository::class];
 
 /** @var AllianceHistoryRepository */
 $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
@@ -17,7 +17,7 @@ $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
 $request = Request::createFromGlobals();
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 if ($sub == "imagecheck") {
 	imagecheck($request, $repository);

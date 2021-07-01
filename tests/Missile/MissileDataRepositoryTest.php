@@ -13,7 +13,7 @@ class MissileDataRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app['etoa.missile.datarepository'];
+        $this->repository = $this->app[MissileDataRepository::class];
     }
 
     public function testGetMissileNames(): void

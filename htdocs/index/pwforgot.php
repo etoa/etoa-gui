@@ -7,7 +7,7 @@
 use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 $errorMessage = null;
 $successMessage = null;

@@ -1,6 +1,8 @@
 <?PHP
 
+use EtoA\Building\BuildingDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Ship\ShipDataRepository;
 
 include("image.inc.php");
 
@@ -63,8 +65,8 @@ for ($i=0;$i<=$maxRatio; $i+=$maxRatio/10)
 
 $strx = P_LEFT;
 $i = 0;
-/** @var \EtoA\Building\BuildingDataRepository $buildingRepository */
-$buildingRepository = $app['etoa.building.datarepository'];
+/** @var BuildingDataRepository */
+$buildingRepository = $app[BuildingDataRepository::class];
 $buildings = $buildingRepository->getBuildingsByType(BUILDING_POWER_CAT);
 foreach ($buildings as $building) {
     $startX = $areaOriginX;
@@ -88,14 +90,15 @@ foreach ($buildings as $building) {
     $i++;
 }
 
-/** @var \EtoA\Ship\ShipDataRepository $shipRepository */
-$shipRepository = $app['etoa.ship.datarepository'];
+/** @var ShipDataRepository */
+$shipRepository = $app[ShipDataRepository::class];
+
 $ships = $shipRepository->getShipWithPowerProduction();
 
 $strx = P_LEFT;
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 foreach ($ships as $ship) {
     $costs1 = $ship->costsMetal + $ship->costsCrystal + $ship->costsPlastic + $ship->costsFuel + $ship->costsFood;

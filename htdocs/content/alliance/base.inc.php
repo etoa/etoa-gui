@@ -3,7 +3,7 @@
 use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 	// Zeigt eigene Rohstoffe an
 	echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);

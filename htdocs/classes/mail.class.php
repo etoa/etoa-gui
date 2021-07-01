@@ -17,7 +17,7 @@ class Mail
         // TODO
         global $app;
 
-        $this->config = $app['etoa.config.service'];
+        $this->config = $app[ConfigurationService::class];
 
         $this->subject = APP_NAME.' '.$this->config->get('roundname').": ".$subject;
         if ($useTemplate)

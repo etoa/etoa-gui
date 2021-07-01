@@ -8,7 +8,7 @@ use EtoA\Text\TextRepository;
 $baseUrl = $index != "" ? "?index=" . $index : "?page=" . $page;
 
 /** @var TextRepository */
-$textRepo = $app['etoa.text.repository'];
+$textRepo = $app[TextRepository::class];
 
 $contactText = $textRepo->find('contact_message');
 if ($contactText->enabled && $contactText->content) {
@@ -18,10 +18,10 @@ if ($contactText->enabled && $contactText->content) {
 }
 
 /** @var AdminUserRepository */
-$adminUserRepo = $app['etoa.admin.user.repository'];
+$adminUserRepo = $app[AdminUserRepository::class];
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 // List of admins
 $admins = collect($adminUserRepo->findAll())

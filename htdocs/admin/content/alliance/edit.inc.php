@@ -8,16 +8,16 @@ use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
 /** @var AllianceRepository */
-$repository = $app['etoa.alliance.repository'];
+$repository = $app[AllianceRepository::class];
 
 /** @var AllianceHistoryRepository */
 $historyRepository = $app[AllianceHistoryRepository::class];
 
 /** @var AllianceBuildingRepository */
-$buildingRepository = $app['etoa.alliance.building.repository'];
+$buildingRepository = $app[AllianceBuildingRepository::class];
 
 /** @var AllianceTechnologyRepository */
-$technologyRepository = $app['etoa.alliance.technology.repository'];
+$technologyRepository = $app[AllianceTechnologyRepository::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();

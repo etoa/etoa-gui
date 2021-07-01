@@ -69,13 +69,14 @@
 	//
 	//
 
-	if (Alliance::checkActionRights('relations'))
+use EtoA\Alliance\AllianceRepository;
+
+if (Alliance::checkActionRights('relations'))
 	{
 		echo "<h2>Diplomatie</h2>";
 
-
-        /** @var \EtoA\Alliance\AllianceRepository $allianceRepository */
-        $allianceRepository = $app['etoa.alliance.repository'];
+        /** @var AllianceRepository */
+        $allianceRepository = $app[AllianceRepository::class];
         $allianceNamesWithTags = $allianceRepository->getAllianceNamesWithTags();
 
 			//

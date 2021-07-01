@@ -65,7 +65,7 @@ class FleetLaunch
         // TODO
         global $app;
 
-        $this->config = $app['etoa.config.service'];
+        $this->config = $app[ConfigurationService::class];
 
         $this->sourceEntity = $sourceEnt;
         $this->owner = $ownerEnt;

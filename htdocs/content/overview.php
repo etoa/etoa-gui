@@ -30,7 +30,7 @@ use EtoA\Text\TextRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 // BEGIN SKRIPT //
 	echo "<h1>&Uuml;bersicht</h1>";
@@ -78,7 +78,7 @@ $config = $app['etoa.config.service'];
 	//
 
 	/** @var TextRepository */
-    $textRepo = $app['etoa.text.repository'];
+    $textRepo = $app[TextRepository::class];
 
 	$infoText = $textRepo->find('info');
 	if ($infoText->enabled && $infoText->content)

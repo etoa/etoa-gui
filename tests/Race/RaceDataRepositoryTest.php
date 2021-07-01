@@ -12,7 +12,7 @@ class RaceDataRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->raceDataRepository = $this->app['etoa.race.datarepository'];
+        $this->raceDataRepository = $this->app[RaceDataRepository::class];
     }
 
     public function testGetRaceNames(): void

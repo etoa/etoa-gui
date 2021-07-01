@@ -12,7 +12,7 @@ class BuildingRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app['etoa.building.repository'];
+        $this->repository = $this->app[BuildingRepository::class];
     }
 
     public function testGetUserHighestLevelNoBuilding(): void

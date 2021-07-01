@@ -12,22 +12,22 @@ use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 
 /** @var TicketService */
-$ticketService = $app['etoa.help.ticket.service'];
+$ticketService = $app[TicketService::class];
 
 /** @var TicketRepository */
-$ticketRepo = $app['etoa.help.ticket.repository'];
+$ticketRepo = $app[TicketRepository::class];
 
 /** @var TicketMessageRepository */
-$ticketMessageRepo = $app['etoa.help.ticket.message.repository'];
+$ticketMessageRepo = $app[TicketMessageRepository::class];
 
 /** @var AdminUserRepository */
-$adminUserRepo = $app['etoa.admin.user.repository'];
+$adminUserRepo = $app[AdminUserRepository::class];
 
 /** @var UserRepository */
-$userRepo = $app['etoa.user.repository'];
+$userRepo = $app[UserRepository::class];
 
 /** @var AdminRoleManager */
-$roleManager = $app['etoa.admin.role.manager'];
+$roleManager = $app[AdminRoleManager::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();

@@ -12,7 +12,7 @@ class AllianceRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app['etoa.alliance.repository'];
+        $this->repository = $this->app[AllianceRepository::class];
     }
 
     public function testGetAlliance(): void

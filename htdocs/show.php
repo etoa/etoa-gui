@@ -38,7 +38,7 @@ $indexpage = [
 require_once __DIR__ . '/inc/bootstrap.inc.php';
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 $loggedIn = false;
 if ($s->validate(0)) {

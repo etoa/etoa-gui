@@ -58,31 +58,31 @@ try {
         include __DIR__ . '/inc/admin_login.inc.php';
     } else {
         /** @var AdminUserRepository */
-        $adminUserRepo = $app['etoa.admin.user.repository'];
+        $adminUserRepo = $app[AdminUserRepository::class];
 
         /** @var UserRepository */
-        $userRepo = $app['etoa.user.repository'];
+        $userRepo = $app[UserRepository::class];
 
         /** @var UserSessionRepository */
-        $userSessionRepo = $app['etoa.user.session.repository'];
+        $userSessionRepo = $app[UserSessionRepository::class];
 
         /** @var AdminNotesRepository */
-        $notesRepo = $app['etoa.admin.notes.repository'];
+        $notesRepo = $app[AdminNotesRepository::class];
 
         /** @var AdminRoleManager */
-        $roleManager = $app['etoa.admin.role.manager'];
+        $roleManager = $app[AdminRoleManager::class];
 
         /** @var AdminSessionRepository */
-        $sessionRepository = $app['etoa.admin.session.repository'];
+        $sessionRepository = $app[AdminSessionRepository::class];
 
         /** @var DatabaseManagerRepository */
-        $databaseManager = $app['etoa.db.manager.repository'];
+        $databaseManager = $app[DatabaseManagerRepository::class];
 
         /** @var TicketRepository */
-        $ticketRepo = $app['etoa.help.ticket.repository'];
+        $ticketRepo = $app[TicketRepository::class];
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
         adminView(
             $s,

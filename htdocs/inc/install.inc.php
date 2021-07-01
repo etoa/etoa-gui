@@ -104,7 +104,7 @@ password = ' .$dbCfg['password']. '
 ';
 
     /** @var ConfigurationService */
-    $config = $app['etoa.config.service'];
+    $config = $app[ConfigurationService::class];
 
     $config->set("referers",$_SESSION['INSTALL']['referers']);
     $config->set("roundname",$_SESSION['INSTALL']['round_name']);
@@ -154,7 +154,7 @@ if ($step === 2) {
         $successMessage = 'Datenbank migriert';
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
         // Load config defaults
         $config->restoreDefaults();
@@ -167,7 +167,7 @@ if ($step === 2) {
     } else {
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
         $default_round_url = $config->get('roundurl');
         $default_referers = $config->get('referers');

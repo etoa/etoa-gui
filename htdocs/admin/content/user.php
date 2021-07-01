@@ -30,7 +30,11 @@
 	//
 	// Fehlerhafte Logins
 	//
-	if ($sub=="xml")
+
+use EtoA\Alliance\AllianceRepository;
+use EtoA\Race\RaceDataRepository;
+
+if ($sub=="xml")
 	{
 		require("user/xml.inc.php");
 	}
@@ -365,11 +369,11 @@
 					echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /><br/><br/>";
 				}
 
-				/** @var \EtoA\Race\RaceDataRepository $raceRepository */
-				$raceRepository = $app['etoa.race.datarepository'];
+				/** @var RaceDataRepository */
+				$raceRepository = $app[RaceDataRepository::class];
 				$raceNames = $raceRepository->getRaceNames();
-				/** @var \EtoA\Alliance\AllianceRepository $allianceRepository */
-                $allianceRepository = $app['etoa.alliance.repository'];
+				/** @var AllianceRepository */
+                $allianceRepository = $app[AllianceRepository::class];
 				$allianceNameWithTags = $allianceRepository->getAllianceNamesWithTags();
 				$time = time();
 
@@ -464,8 +468,8 @@
 			echo "<tr><th>IP-Adresse</th><td class=\"tbldata\"><input type=\"text\" name=\"user_ip\" value=\"\" size=\"20\" maxlength=\"250\" /> </td></tr>";
 			echo "<tr><th>Allianz</th><td class=\"tbldata\"><input type=\"text\" name=\"user_alliance\" id=\"user_alliance\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchAlliance(this.value,'user_alliance','citybox2');\"/> <br><div class=\"citybox\" id=\"citybox2\">&nbsp;</div></td></tr>";
 
-			/** @var \EtoA\Race\RaceDataRepository $raceRepository */
-			$raceRepository = $app['etoa.race.datarepository'];
+			/** @var RaceDataRepository */
+			$raceRepository = $app[RaceDataRepository::class];
 			$raceNames = $raceRepository->getRaceNames();
 
 			echo "<tr><th>Rasse</th><td class=\"tbldata\"><select name=\"user_race_id\">";

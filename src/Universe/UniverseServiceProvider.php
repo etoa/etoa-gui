@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace EtoA\Universe;
 
+use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\DatabaseManagerRepository;
+use EtoA\User\UserRepository;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
@@ -49,7 +52,7 @@ class UniverseServiceProvider implements ServiceProviderInterface
 
         $pimple[UniverseGenerator::class] = function (Container $pimple): UniverseGenerator {
             return new UniverseGenerator(
-                $pimple['etoa.config.service'],
+                $pimple[ConfigurationService::class],
                 $pimple[SolarTypeRepository::class],
                 $pimple[PlanetTypeRepository::class],
                 $pimple[CellRepository::class],
@@ -65,10 +68,10 @@ class UniverseServiceProvider implements ServiceProviderInterface
 
         $pimple[UniverseResetService::class] = function (Container $pimple): UniverseResetService {
             return new UniverseResetService(
-                $pimple['etoa.config.service'],
-                $pimple['etoa.user.repository'],
+                $pimple[ConfigurationService::class],
+                $pimple[UserRepository::class],
                 $pimple[PlanetRepository::class],
-                $pimple['etoa.db.manager.repository']
+                $pimple[DatabaseManagerRepository::class]
             );
         };
 

@@ -11,7 +11,7 @@ function getGameIdentifier() {
     global $app;
 
     /** @var ConfigurationService */
-    $config = $app['etoa.config.service'];
+    $config = $app[ConfigurationService::class];
 
     return APP_NAME . ' ' . getAppVersion() . ' ' . $config->get('roundname');
 }
@@ -1172,7 +1172,7 @@ function calcBuildingCosts($buildingArray, $level, $fac=1)
     global $app;
 
     /** @var ConfigurationService */
-    $config = $app['etoa.config.service'];
+    $config = $app[ConfigurationService::class];
 
     $bc=array();
     $bc['metal'] = $fac * $buildingArray['building_costs_metal'] * pow($buildingArray['building_build_costs_factor'],$level);
@@ -1546,7 +1546,7 @@ function defineImagePaths()
     global $app;
 
     /** @var ConfigurationService */
-    $config = $app['etoa.config.service'];
+    $config = $app[ConfigurationService::class];
 
     if (!defined('IMAGE_PATH'))
     {
@@ -1588,7 +1588,7 @@ function logAccess($target,$domain="",$sub="")
     global $app;
 
     /** @var ConfigurationService */
-    $config = $app['etoa.config.service'];
+    $config = $app[ConfigurationService::class];
 
     if ($config->getBoolean('accesslog'))
     {
@@ -1637,7 +1637,7 @@ function getLoginUrl($args=array()) {
     global $app;
 
     /** @var ConfigurationService */
-    $config = $app['etoa.config.service'];
+    $config = $app[ConfigurationService::class];
 
     $url = $config->get('loginurl');
     if (!$url) {

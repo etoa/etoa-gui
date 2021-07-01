@@ -1,8 +1,10 @@
 <?PHP
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseRepository;
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
+
 /** @var \EtoA\Defense\DefenseDataRepository $defenseDataRepository */
 $defenseDataRepository = $app[\EtoA\Defense\DefenseDataRepository::class];
 $defenseNames = $defenseDataRepository->getDefenseNames(true);
@@ -33,8 +35,8 @@ $defenseNames = $defenseDataRepository->getDefenseNames(true);
 	// 	Kommentar:
 	//
 
-    /** @var \EtoA\Defense\DefenseRepository $defenseRepository */
-    $defenseRepository = $app['etoa.defense.repository'];
+    /** @var DefenseRepository */
+    $defenseRepository = $app[DefenseRepository::class];
 
 	//
 	// Battlepoints

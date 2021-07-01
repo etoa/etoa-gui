@@ -25,12 +25,12 @@ class TutorialServiceProvider implements ServiceProviderInterface, ControllerPro
 
     public function register(Container $pimple): void
     {
-        $pimple['etoa.tutorial.userprogressrepository'] = function (Container $pimple): TutorialUserProgressRepository {
+        $pimple[TutorialUserProgressRepository::class] = function (Container $pimple): TutorialUserProgressRepository {
             return new TutorialUserProgressRepository($pimple['db']);
         };
 
         $pimple['etoa.tutorial.controller'] = function (Container $pimple): TutorialController {
-            return new TutorialController($pimple['etoa.tutorial.userprogressrepository']);
+            return new TutorialController($pimple[TutorialUserProgressRepository::class]);
         };
     }
 }

@@ -93,7 +93,7 @@ class OtherReport extends Report
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
         ob_start();
         $ent1 = Entity::createFactoryById($this->entity1Id);

@@ -1,9 +1,12 @@
 <?PHP
 
+use EtoA\Building\BuildingDataRepository;
+use EtoA\Building\BuildingRepository;
+use EtoA\Building\BuildingTypeDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 /** @var \Symfony\Component\HttpFoundation\Request $request */
 
@@ -16,8 +19,8 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
 
     $b_level = 1;
 
-    /** @var \EtoA\Building\BuildingDataRepository $buildingDataRepository */
-    $buildingDataRepository = $app['etoa.building.datarepository'];
+    /** @var BuildingDataRepository */
+    $buildingDataRepository = $app[BuildingDataRepository::class];
 
     $building = $buildingDataRepository->getBuilding($currentBuildingId);
     if ($building !== null) {
@@ -37,8 +40,8 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
 
         $currentLevel = 0;
         if (isset($cu) && isset($cp)) {
-            /** @var \EtoA\Building\BuildingRepository $buildingRepository */
-            $buildingRepository = $app['etoa.building.repository'];
+            /** @var BuildingRepository */
+            $buildingRepository = $app[BuildingRepository::class];
             $currentLevel = $buildingRepository->getBuildingLevel((int) $cu->id, $currentBuildingId, (int) $cp->id);
         }
 
@@ -480,10 +483,11 @@ else
 {
     HelpUtil::breadCrumbs(array("Geb&auml;ude","buildings"));
 
-    /** @var \EtoA\Building\BuildingTypeDataRepository $buildingTypeRepository */
-    $buildingTypeRepository = $app['etoa.building_type.datarepository'];
-    /** @var \EtoA\Building\BuildingDataRepository $buildingDataRepository */
-    $buildingDataRepository = $app['etoa.building.datarepository'];
+    /** @var BuildingTypeDataRepository */
+    $buildingTypeRepository = $app[BuildingTypeDataRepository::class];
+
+    /** @var BuildingDataRepository */
+    $buildingDataRepository = $app[BuildingDataRepository::class];
 
     $buildingTypeNames = $buildingTypeRepository->getTypeNames();
 

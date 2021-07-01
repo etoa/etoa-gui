@@ -449,7 +449,7 @@ class Planet extends Entity implements OwnableEntity
             global $app;
 
             /** @var ConfigurationService */
-            $config = $app['etoa.config.service'];
+            $config = $app[ConfigurationService::class];
 
 			// Set default resources
 			dbquery("

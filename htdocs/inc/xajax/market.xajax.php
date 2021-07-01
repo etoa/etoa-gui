@@ -1,6 +1,9 @@
 <?PHP
 
 /*******************************************/
+
+use EtoA\User\UserRepository;
+
 /* Markt: Rohstoff/Preis Kalkulator        */
 /* Berechnet div. Preise und Prüft Angebot */
 /*******************************************/
@@ -2439,8 +2442,8 @@ function checkMarketSearchFormular($val)
 {
     global $s, $cu, $app;
 
-    /** @var \EtoA\User\UserRepository $userRepository */
-    $userRepository = $app['etoa.user.repository'];
+    /** @var UserRepository */
+    $userRepository = $app[UserRepository::class];
 
 		ob_start();
   	$objResponse = new xajaxResponse();

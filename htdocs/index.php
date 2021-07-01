@@ -57,7 +57,7 @@ if ($_GET['logout'] ?? false) {
 }
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 // Validate session
 if (!$s->validate()) {
@@ -250,7 +250,7 @@ try {
     }
 
     /** @var TextRepository */
-    $textRepo = $app['etoa.text.repository'];
+    $textRepo = $app[TextRepository::class];
     $infoText = $textRepo->find('info');
 
     $globals = array_merge($currentPlanetData, [

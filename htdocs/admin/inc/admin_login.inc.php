@@ -6,10 +6,10 @@ use EtoA\Core\Configuration\ConfigurationService;
 use Twig\Environment;
 
 /** @var AdminUserRepository */
-$adminUserRepo = $app['etoa.admin.user.repository'];
+$adminUserRepo = $app[AdminUserRepository::class];
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 if (isset($_GET['sendpass'])) {
     if (isset($_POST['sendpass_submit'])) {

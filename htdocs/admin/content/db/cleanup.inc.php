@@ -10,22 +10,22 @@ use EtoA\Ranking\PointsService;
 use EtoA\User\UserSessionManager;
 
 /** @var TicketRepository */
-$ticketRepo = $app['etoa.help.ticket.repository'];
+$ticketRepo = $app[TicketRepository::class];
 
 /** @var UserSessionManager */
-$userSessionManager = $app['etoa.user.session.manager'];
+$userSessionManager = $app[UserSessionManager::class];
 
 /** @var AdminSessionManager */
-$sessionManager = $app['etoa.admin.session.manager'];
+$sessionManager = $app[AdminSessionManager::class];
 
 /** @var PointsService */
-$pointsService = $app['etoa.rankings.points.service'];
+$pointsService = $app[PointsService::class];
 
 /** @var MessageService */
 $messageService = $app[MessageService::class];
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 /** @var MessageRepository */
 $messageRepository = $app[MessageRepository::class];

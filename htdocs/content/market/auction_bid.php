@@ -3,7 +3,7 @@
 use EtoA\Support\RuntimeDataStore;
 
 /** @var RuntimeDataStore */
-$runtimeDataStore = $app['etoa.runtime.datastore'];
+$runtimeDataStore = $app[RuntimeDataStore::class];
 
 	// Speichert Bieterangebot in Array
 	$buyRes = array();

@@ -15,7 +15,7 @@ class Townhall
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
         $rssValue = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
         $rssValue .= "<rss version=\"2.0\">\r\n";

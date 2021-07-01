@@ -1,10 +1,17 @@
 <?PHP
 
-/** @var \EtoA\Race\RaceDataRepository $raceRepository */
-$raceRepository = $app['etoa.race.datarepository'];
+use EtoA\Defense\DefenseCategoryRepository;
+use EtoA\Defense\DefenseDataRepository;
+use EtoA\Race\RaceDataRepository;
+use EtoA\Ship\ShipDataRepository;
+
+/** @var RaceDataRepository */
+$raceRepository = $app[RaceDataRepository::class];
+
 $raceNames = $raceRepository->getRaceNames();
-/** @var \EtoA\Defense\DefenseDataRepository $defenseDataRepository */
-$defenseDataRepository = $app['etoa.defense.datarepository'];
+
+/** @var DefenseDataRepository */
+$defenseDataRepository = $app[DefenseDataRepository::class];
 
 echo "<h2>Verteidigung</h2>";
 
@@ -41,8 +48,9 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
         echo "<tr><td class=\"tbltitle\">Max. Anzahl</td><td class=\"tbldata\">".nf($defense->maxCount)."</td></tr>";
         tableEnd();
 
-        /** @var \EtoA\Ship\ShipDataRepository $shipDataRepository */
-        $shipDataRepository = $app['etoa.ship.datarepository'];
+        /** @var ShipDataRepository */
+        $shipDataRepository = $app[ShipDataRepository::class];
+
         $ship = $shipDataRepository->getTransformedShipForDefense($defense->id);
         if ($ship !== null) {
             iBoxStart("Transformation");
@@ -94,8 +102,8 @@ else
         $sort="ASC";
     }
 
-    /** @var \EtoA\Defense\DefenseCategoryRepository $defenseCategoryRepository */
-    $defenseCategoryRepository = $app['etoa.defense_category.repository'];
+    /** @var DefenseCategoryRepository */
+    $defenseCategoryRepository = $app[DefenseCategoryRepository::class];
     $defenseCategories = $defenseCategoryRepository->getAllCategories();
     foreach ($defenseCategories as $defenseCategory) {
         $defenses = $defenseDataRepository->getDefenseByCategory($defenseCategory->id);

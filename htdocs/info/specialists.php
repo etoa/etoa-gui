@@ -1,5 +1,8 @@
 <?PHP
-	echo "<h2>Spezialisten</h2>";
+
+use EtoA\Specialist\SpecialistDataRepository;
+
+echo "<h2>Spezialisten</h2>";
 	HelpUtil::breadCrumbs(array("Spezialisten","specialists"));
 
 	iBoxStart("Info");
@@ -11,8 +14,8 @@
 	um Platz für einen neuen zu schaffen; man erhält in diesem Fall aber keine Ressourcen zurück.";
 	iBoxEnd();
 
-	/** @var \EtoA\Specialist\SpecialistDataRepository $speciaistRepository */
-	$speciaistRepository = $app['etoa.specialist.datarepository'];
+	/** @var SpecialistDataRepository */
+	$speciaistRepository = $app[SpecialistDataRepository::class];
 	$specialists = $speciaistRepository->getActiveSpecialists();
 
 	tableStart("Verfügbare Spezialisten",'95%');

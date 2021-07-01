@@ -10,7 +10,7 @@ use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Support\DatabaseManagerRepository;
 use EtoA\Text\TextRepository;
 use EtoA\Universe\CellRepository;
-use League\CommonMark\CommonMarkConverter;
+use League\CommonMark\MarkdownConverterInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
@@ -18,7 +18,7 @@ use Twig\Environment;
 $request = Request::createFromGlobals();
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 if ($sub == "offline") {
     takeOffline($request, $config);
@@ -27,19 +27,19 @@ if ($sub == "offline") {
 } elseif ($sub === "gamestats") {
     gameStatsView($twig);
 } elseif ($sub === "changelog") {
-    /** @var CommonMarkConverter */
-    $markdown = $app['etoa.util.markdown'];
+    /** @var MarkdownConverterInterface */
+    $markdown = $app[MarkdownConverterInterface::class];
 
     changelogView($markdown, $twig);
 } elseif ($sub == "adminlog") {
     /** @var AdminSessionRepository */
-    $sessionRepository = $app['etoa.admin.session.repository'];
+    $sessionRepository = $app[AdminSessionRepository::class];
 
     /** @var AdminUserRepository */
-    $adminUserRepo = $app['etoa.admin.user.repository'];
+    $adminUserRepo = $app[AdminUserRepository::class];
 
     /** @var AdminSessionManager */
-    $sessionManager = $app['etoa.admin.session.manager'];
+    $sessionManager = $app[AdminSessionManager::class];
 
     if ($request->request->has('logshow') && $request->request->get('logshow') != "") {
         adminSessionLogForUserView($request, $s, $sessionRepository, $adminUserRepo);
@@ -52,7 +52,7 @@ if ($sub == "offline") {
     require("home/observed.inc.php");
 } elseif ($sub == "sysinfo") {
     /** @var DatabaseManagerRepository */
-    $databaseManager = $app['etoa.db.manager.repository'];
+    $databaseManager = $app[DatabaseManagerRepository::class];
 
     systemInfoView($databaseManager, $twig);
 } else {
@@ -60,16 +60,16 @@ if ($sub == "offline") {
     $universeCellRepo = $app[CellRepository::class];
 
     /** @var TicketRepository */
-    $ticketRepo = $app['etoa.help.ticket.repository'];
+    $ticketRepo = $app[TicketRepository::class];
 
     /** @var TextRepository */
-    $textRepo = $app['etoa.text.repository'];
+    $textRepo = $app[TextRepository::class];
 
     /** @var AdminRoleManager */
-    $roleManager = $app['etoa.admin.role.manager'];
+    $roleManager = $app[AdminRoleManager::class];
 
     /** @var ConfigurationService */
-    $config = $app['etoa.config.service'];
+    $config = $app[ConfigurationService::class];
 
     indexView($config, $cu, $universeCellRepo, $ticketRepo, $textRepo, $roleManager, $twig);
 }
@@ -119,7 +119,7 @@ function gameStatsView(Environment $twig)
     exit();
 }
 
-function changelogView(CommonMarkConverter $markdown, Environment $twig)
+function changelogView(MarkdownConverterInterface $markdown, Environment $twig)
 {
     $changelogFile = "../../Changelog.md";
     $changelogPublicFile = "../../Changelog_public.md";

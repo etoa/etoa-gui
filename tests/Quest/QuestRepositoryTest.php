@@ -10,14 +10,13 @@ use LittleCubicleGames\Quests\Workflow\QuestDefinitionInterface;
 
 class QuestRepositoryTest extends AbstractDbTestCase
 {
-    /** @var QuestRepository */
-    private $repository;
+    private QuestRepository $repository;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->repository = $this->app['etoa.quest.repository'];
+        $this->repository = $this->app[QuestRepository::class];
     }
 
     public function testSave(): void

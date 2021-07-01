@@ -12,7 +12,7 @@ class CreateBackupTask implements IPeriodicTask
 
     public function __construct(Container $app)
     {
-        $this->config = $app['etoa.config.service'];
+        $this->config = $app[ConfigurationService::class];
     }
 
     function run()

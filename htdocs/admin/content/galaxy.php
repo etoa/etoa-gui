@@ -3,7 +3,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use Twig\Environment;
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 if ($sub=="map") {
     galaxyMap($config, $twig);

@@ -9,7 +9,7 @@ $app = require __DIR__ . '/../src/app.php';
 $request = Request::createFromGlobals();
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 $loggedIn = false;
 if ($s->validate(0)) {

@@ -8,7 +8,7 @@ use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 /** @var MessageRepository */
 $messageRepository = $app[MessageRepository::class];

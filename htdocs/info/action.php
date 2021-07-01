@@ -1,5 +1,8 @@
 <?PHP
-	echo "<h2>Schiffsaktionen</h2>";
+
+use EtoA\Ship\ShipDataRepository;
+
+echo "<h2>Schiffsaktionen</h2>";
 
 	define("HELP_URL","?$link&amp;site=shipyard");
 
@@ -33,8 +36,9 @@
 
             //Liest alle notwenidgen Daten aus der Schiffs-DB
 
-			/** @var \EtoA\Ship\ShipDataRepository $shipRepository */
-			$shipRepository = $app['etoa.ship.datarepository'];
+			/** @var ShipDataRepository */
+			$shipRepository = $app[ShipDataRepository::class];
+
 			$shipNames = $shipRepository->getShipNamesWithAction($ac->code());
 
             tableStart("Schiffe");

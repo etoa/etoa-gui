@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\User\UserRepository;
+
 $xajax->register(XAJAX_FUNCTION,"logSelectorCat");
 $xajax->register(XAJAX_FUNCTION,"checkLogFormular");
 $xajax->register(XAJAX_FUNCTION,"logChangeButton");
@@ -744,8 +746,8 @@ function checkLogFormular($val)
 {
     global $app;
 
-    /** @var \EtoA\User\UserRepository $userRepository */
-    $userRepository = $app['etoa.user.repository'];
+    /** @var UserRepository */
+    $userRepository = $app[UserRepository::class];
 
 	ob_start();
 	$objResponse = new xajaxResponse();

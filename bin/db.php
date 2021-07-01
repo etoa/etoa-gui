@@ -88,7 +88,7 @@ if ($action == "migrate" || $action == "reset")
             }
 
             /** @var ConfigurationService */
-            $config = $app['etoa.config.service'];
+            $config = $app[ConfigurationService::class];
 
             $config->restoreDefaults();
             $config->reload();
@@ -123,7 +123,7 @@ else if ($action == "backup")
     }
 
     /** @var ConfigurationService */
-    $config = $app['etoa.config.service'];
+    $config = $app[ConfigurationService::class];
 
     $dir = DBManager::getBackupDir();
     $gzip = $config->getBoolean('backup_use_gzip');

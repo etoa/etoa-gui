@@ -70,7 +70,7 @@ function getFlightTargetInfo($f,$sx1,$sy1,$cx1,$cy1,$p1)
     global $app;
 
     /** @var ConfigurationService */
-    $config = $app['etoa.config.service'];
+    $config = $app[ConfigurationService::class];
 
 	global $s;
 	$objResponse = new xajaxResponse();
@@ -260,7 +260,7 @@ function getCryptoDistance($f,$sx1,$sy1,$cx1,$cy1,$p1)
     global $app;
 
     /** @var ConfigurationService */
-    $config = $app['etoa.config.service'];
+    $config = $app[ConfigurationService::class];
 
 	$objResponse = new xajaxResponse();
 	ob_start();

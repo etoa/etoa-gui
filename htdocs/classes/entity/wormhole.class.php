@@ -187,7 +187,7 @@ use EtoA\Core\Configuration\ConfigurationService;
             global $app;
 
             /** @var ConfigurationService */
-            $config = $app['etoa.config.service'];
+            $config = $app[ConfigurationService::class];
 
 			$time = time();
 			$del = array();

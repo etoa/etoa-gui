@@ -22,7 +22,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 //
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 if (isset($_GET['id']) && intval($_GET['id'])>0)
     $id = intval($_GET['id']);

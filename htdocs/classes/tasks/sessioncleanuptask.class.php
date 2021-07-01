@@ -15,8 +15,8 @@ class SessionCleanupTask implements IPeriodicTask
 
 	function __construct(Container $app)
 	{
-        $this->userSessionManager = $app['etoa.user.session.manager'];
-		$this->sessionManager = $app['etoa.admin.session.manager'];
+        $this->userSessionManager = $app[UserSessionManager::class];
+		$this->sessionManager = $app[AdminSessionManager::class];
 	}
 
 	function run()

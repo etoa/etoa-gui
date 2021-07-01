@@ -6,10 +6,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 /** @var ConfigurationDefinitionsRepository */
-$definitions = $app['etoa.config.definitions'];
+$definitions = $app[ConfigurationDefinitionsRepository::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();

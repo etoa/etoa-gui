@@ -1,9 +1,10 @@
 <?PHP
 
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 if (Alliance::checkActionRights('applications'))
 {
@@ -15,8 +16,8 @@ if (Alliance::checkActionRights('applications'))
         if (count($_POST['application_answer'])>0)
         {
             $cnt = 0;
-            /** @var \EtoA\Alliance\AllianceRepository $allianceRepository */
-				$allianceRepository = $app['etoa.alliance.repository'];
+            /** @var AllianceRepository */
+				$allianceRepository = $app[AllianceRepository::class];
 				$alliance = $allianceRepository->getAlliance((int) $cu->allianceId);
             $new_member = false;
 

@@ -17,7 +17,7 @@ class UserSession extends Session
         global $app;
 
         /** @var UserSessionManager */
-        $sessionManager = $app['etoa.user.session.manager'];
+        $sessionManager = $app[UserSessionManager::class];
 
         $sessionManager->cleanup();
 
@@ -346,7 +346,7 @@ class UserSession extends Session
             $this->cLogin = false;
 
             /** @var UserSessionManager */
-            $sessionManager = $app['etoa.user.session.manager'];
+            $sessionManager = $app[UserSessionManager::class];
 
             // destroy user session
             $sessionManager->unregisterSession();
@@ -409,7 +409,7 @@ class UserSession extends Session
         global $app;
 
         /** @var UserSessionManager */
-        $sessionManager = $app['etoa.user.session.manager'];
+        $sessionManager = $app[UserSessionManager::class];
 
         // chat logout
         $this->cLogin = false;

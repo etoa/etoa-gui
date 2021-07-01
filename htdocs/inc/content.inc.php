@@ -1,14 +1,15 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Quest\QuestResponseListener;
 use EtoA\Text\TextRepository;
 use EtoA\Support\RuntimeDataStore;
 
 /** @var RuntimeDataStore */
-$runtimeDataStore = $app['etoa.runtime.datastore'];
+$runtimeDataStore = $app[RuntimeDataStore::class];
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 $time = time();
 
@@ -55,7 +56,7 @@ else
     }
 
     /** @var TextRepository */
-    $textRepo = $app['etoa.text.repository'];
+    $textRepo = $app[TextRepository::class];
 
     // SYSTEMNACHRICHT //
     $systemMessage = $textRepo->find('system_message');
@@ -275,5 +276,5 @@ else
 }
 
 if ($app['etoa.quests.enabled']) {
-    $twig->addGlobal('quests', array_values($app['etoa.quest.responselistener']->getQuests()));
+    $twig->addGlobal('quests', array_values($app[QuestResponseListener::class]->getQuests()));
 }

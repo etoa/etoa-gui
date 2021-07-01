@@ -331,7 +331,7 @@ abstract class Report
             global $app;
 
             /** @var ConfigurationService */
-            $config = $app['etoa.config.service'];
+            $config = $app[ConfigurationService::class];
 
             $nr = 0;
             if ($onlyDeleted==0)

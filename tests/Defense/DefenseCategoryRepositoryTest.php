@@ -12,7 +12,7 @@ class DefenseCategoryRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app['etoa.defense_category.repository'];
+        $this->repository = $this->app[DefenseCategoryRepository::class];
     }
 
     public function testGetAllCategories(): void

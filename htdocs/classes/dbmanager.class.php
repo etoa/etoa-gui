@@ -642,7 +642,7 @@ class DBManager implements ISingleton	{
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
 		$backupDir = $config->get('backup_dir');
 		if ($backupDir) {

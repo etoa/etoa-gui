@@ -3,6 +3,10 @@
 namespace EtoA\Quest;
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseDataRepository;
+use EtoA\Defense\DefenseRepository;
+use EtoA\Missile\MissileDataRepository;
+use EtoA\Missile\MissileRepository;
 use EtoA\Quest\Initialization\QuestBuilder;
 use EtoA\Quest\Initialization\QuestInitializer;
 use EtoA\Quest\Log\QuestGameLog;
@@ -12,6 +16,9 @@ use EtoA\Quest\Progress\FunctionBuilder;
 use EtoA\Quest\Reward\DefenseRewardCollector;
 use EtoA\Quest\Reward\MissileRewardCollector;
 use EtoA\Quest\Reward\ShipRewardCollector;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipRepository;
+use EtoA\Tutorial\TutorialUserProgressRepository;
 use EtoA\Universe\PlanetRepository;
 use LittleCubicleGames\Quests\Progress\ProgressFunctionBuilder;
 use LittleCubicleGames\Quests\Progress\StateFunctionBuilder;
@@ -47,7 +54,7 @@ class QuestServiceProvider extends ServiceProvider implements ControllerProvider
         $pimple['etoa.quests.enabled'] = function (Container $pimple): bool {
             try {
                 /** @var ConfigurationService $config */
-                $config = $pimple['etoa.config.service'];
+                $config = $pimple[ConfigurationService::class];
 
                 return $config->getBoolean('quest_system_enable');
             } catch (\Throwable $e) {
@@ -60,24 +67,24 @@ class QuestServiceProvider extends ServiceProvider implements ControllerProvider
         };
 
         $pimple['etoa.quest.controller'] = function (Container $pimple): QuestController {
-            return new QuestController($pimple['cubicle.quests.advancer'], $pimple['etoa.quest.presenter'], $pimple['cubicle.quests.storage']);
+            return new QuestController($pimple['cubicle.quests.advancer'], $pimple[QuestPresenter::class], $pimple['cubicle.quests.storage']);
         };
 
-        $pimple['etoa.quest.repository'] = function (Container $pimple): QuestRepository {
+        $pimple[QuestRepository::class] = function (Container $pimple): QuestRepository {
             return new QuestRepository($pimple['db']);
         };
 
-        $pimple['etoa.quest.log.repository'] = function (Container $pimple): QuestLogRepository {
+        $pimple[QuestLogRepository::class] = function (Container $pimple): QuestLogRepository {
             return new QuestLogRepository($pimple['db']);
         };
 
         $pimple['cubicle.quests.storage'] = function (Container $pimple): QuestStorageInterface {
-            return $pimple['etoa.quest.repository'];
+            return $pimple[QuestRepository::class];
         };
 
         $pimple['cubicle.quests.logger'] = function (Container $pimple): array {
             return [
-                $pimple['etoa.quest.log.repository'],
+                $pimple[QuestLogRepository::class],
                 new QuestGameLog(),
             ];
         };
@@ -93,21 +100,21 @@ class QuestServiceProvider extends ServiceProvider implements ControllerProvider
             return new QuestBuilder();
         };
 
-        $pimple['etoa.quest.reward.shipcollector'] = function (Container $pimple): ShipRewardCollector {
-            return new ShipRewardCollector($pimple['etoa.ship.repository'], $pimple[PlanetRepository::class]);
+        $pimple[ShipRewardCollector::class] = function (Container $pimple): ShipRewardCollector {
+            return new ShipRewardCollector($pimple[ShipRepository::class], $pimple[PlanetRepository::class]);
         };
-        $pimple['etoa.quest.reward.defensecollector'] = function (Container $pimple): DefenseRewardCollector {
-            return new DefenseRewardCollector($pimple['etoa.defense.repository'], $pimple[PlanetRepository::class]);
+        $pimple[DefenseRewardCollector::class] = function (Container $pimple): DefenseRewardCollector {
+            return new DefenseRewardCollector($pimple[DefenseRepository::class], $pimple[PlanetRepository::class]);
         };
-        $pimple['etoa.quest.reward.missilecollector'] = function (Container $pimple): MissileRewardCollector {
-            return new MissileRewardCollector($pimple['etoa.missile.repository'], $pimple[PlanetRepository::class]);
+        $pimple[MissileRewardCollector::class] = function (Container $pimple): MissileRewardCollector {
+            return new MissileRewardCollector($pimple[MissileRepository::class], $pimple[PlanetRepository::class]);
         };
 
         $pimple['cubicle.quests.rewards.collectors'] = function (Container $pimple): array {
             return [
-                $pimple['etoa.quest.reward.shipcollector'],
-                $pimple['etoa.quest.reward.defensecollector'],
-                $pimple['etoa.quest.reward.missilecollector'],
+                $pimple[ShipRewardCollector::class],
+                $pimple[DefenseRewardCollector::class],
+                $pimple[MissileRewardCollector::class],
             ];
         };
 
@@ -119,17 +126,17 @@ class QuestServiceProvider extends ServiceProvider implements ControllerProvider
             ]);
         };
 
-        $pimple['etoa.quest.presenter'] = function (Container $pimple): QuestPresenter {
+        $pimple[QuestPresenter::class] = function (Container $pimple): QuestPresenter {
             return new QuestPresenter(
                 $pimple['cubicle.quests.registry'],
-                $pimple['etoa.missile.datarepository'],
-                $pimple['etoa.ship.datarepository'],
-                $pimple['etoa.defense.datarepository']
+                $pimple[MissileDataRepository::class],
+                $pimple[ShipDataRepository::class],
+                $pimple[DefenseDataRepository::class]
             );
         };
 
-        $pimple['etoa.quest.responselistener'] = function (Container $pimple): QuestResponseListener {
-            return new QuestResponseListener($pimple['etoa.quest.presenter']);
+        $pimple[QuestResponseListener::class] = function (Container $pimple): QuestResponseListener {
+            return new QuestResponseListener($pimple[QuestPresenter::class]);
         };
     }
 
@@ -138,7 +145,7 @@ class QuestServiceProvider extends ServiceProvider implements ControllerProvider
         if ((bool) $app['etoa.quests.enabled']) {
             parent::subscribe($app, $dispatcher);
 
-            $dispatcher->addSubscriber($app['etoa.quest.responselistener']);
+            $dispatcher->addSubscriber($app[QuestResponseListener::class]);
         }
     }
 
@@ -146,7 +153,7 @@ class QuestServiceProvider extends ServiceProvider implements ControllerProvider
     {
         $app->before(function (Request $request, Application $app): void {
             $currentUser = $request->attributes->get('currentUser');
-            if ($currentUser instanceof \CurrentUser && $currentUser->isSetup() && $app['etoa.tutorial.userprogressrepository']->hasFinishedTutorial($currentUser->getId())) {
+            if ($currentUser instanceof \CurrentUser && $currentUser->isSetup() && $app[TutorialUserProgressRepository::class]->hasFinishedTutorial($currentUser->getId())) {
                 $app['cubicle.quests.initializer']->initialize($currentUser->getId());
             }
         });

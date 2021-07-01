@@ -91,7 +91,7 @@ class ChatManager {
         // TODO
         global $app;
         /** @var TextRepository */
-        $textRepo = $app['etoa.text.repository'];
+        $textRepo = $app[TextRepository::class];
 
         $text = $textRepo->find('chat_welcome_message');
         if ($text->enabled && $text->content)
@@ -179,7 +179,7 @@ class ChatManager {
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
         $res = dbquery('
             SELECT user_id,nick
@@ -206,7 +206,7 @@ class ChatManager {
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
         $res = dbquery("
             SELECT id

@@ -1,6 +1,11 @@
 <?PHP
 
-	define("RANKING_SHIP_STRUCTURE",20000);
+use EtoA\Race\RaceDataRepository;
+use EtoA\Ship\ShipCategoryRepository;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipRequirementRepository;
+
+define("RANKING_SHIP_STRUCTURE",20000);
 	define("RANKING_SHIP_SHIELD",25000);
 	define("RANKING_SHIP_WEAPON",50000);
 	define("RANKING_SHIP_SPEED",5000);
@@ -46,13 +51,14 @@
 
 	echo "<h2>Raumschiffe</h2>";
 
-    /** @var \EtoA\Ship\ShipDataRepository $shipDataRepository */
-    $shipDataRepository = $app['etoa.ship.datarepository'];
-    /** @var \EtoA\Ship\ShipCategoryRepository $shipCategoryRepository */
-    $shipCategoryRepository = $app['etoa.ship_category.repository'];
+    /** @var ShipDataRepository */
+    $shipDataRepository = $app[ShipDataRepository::class];
 
-	/** @var \EtoA\Race\RaceDataRepository $raceRepository */
-	$raceRepository = $app['etoa.race.datarepository'];
+    /** @var ShipCategoryRepository */
+    $shipCategoryRepository = $app[ShipCategoryRepository::class];
+
+	/** @var RaceDataRepository */
+	$raceRepository = $app[RaceDataRepository::class];
 	$raceNames = $raceRepository->getRaceNames();
 
 	//
@@ -161,8 +167,8 @@
 						<td style=\"font-weight:bold;\">Antriebstechnologie</td>
 						<td>";
 
-                /** @var \EtoA\Ship\ShipRequirementRepository $shipRequirementRepository */
-                $shipRequirementRepository = $app['etoa.ship_requirement.repository'];
+                /** @var ShipRequirementRepository */
+                $shipRequirementRepository = $app[ShipRequirementRepository::class];
                 $technologies = $shipRequirementRepository->getRequiredSpeedTechnologies($ship->id);
                 foreach ($technologies as $technology) {
                     echo "<a href=\"?page=help&amp;site=research&amp;id=".$technology->id."\">".$technology->name."</a> (Stufe ".$technology->requiredLevel.")<br/>";

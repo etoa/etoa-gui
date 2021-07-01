@@ -43,7 +43,7 @@ function createPlayers($nr) {
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
         $response = new xajaxResponse();
 

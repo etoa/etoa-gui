@@ -219,7 +219,7 @@ function admin_create_new_dataset($db_fields)
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
 		$hidden_rows = array();
 
@@ -429,7 +429,7 @@ function admin_create_new_dataset($db_fields)
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
 		foreach ($db_fields as $k=>$a)
 		{
@@ -507,7 +507,7 @@ function admin_create_new_dataset($db_fields)
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
 		foreach ($db_fields as $k=>$a)
 		{

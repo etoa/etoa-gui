@@ -2,6 +2,7 @@
 
 namespace EtoA\User;
 
+use EtoA\Core\Configuration\ConfigurationService;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
@@ -13,27 +14,19 @@ class UserServiceProvider implements ServiceProviderInterface
             return new UserRepository($pimple['db']);
         };
 
-        $pimple['etoa.user.repository'] = function (Container $pimple): UserRepository {
-            return $pimple[UserRepository::class];
-        };
-
         $pimple[UserSessionRepository::class] = function (Container $pimple): UserSessionRepository {
             return new UserSessionRepository($pimple['db']);
-        };
-
-        $pimple['etoa.user.session.repository'] = function (Container $pimple): UserSessionRepository {
-            return $pimple[UserSessionRepository::class];
         };
 
         $pimple[UserPointsRepository::class] = function (Container $pimple): UserPointsRepository {
             return new UserPointsRepository($pimple['db']);
         };
 
-        $pimple['etoa.user.session.manager'] = function (Container $pimple): UserSessionManager {
+        $pimple[UserSessionManager::class] = function (Container $pimple): UserSessionManager {
             return new UserSessionManager(
-                $pimple['etoa.user.session.repository'],
-                $pimple['etoa.config.service'],
-                $pimple['etoa.user.repository']
+                $pimple[UserSessionRepository::class],
+                $pimple[ConfigurationService::class],
+                $pimple[UserRepository::class]
             );
         };
     }

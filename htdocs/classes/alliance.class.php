@@ -65,7 +65,7 @@ use EtoA\Core\Configuration\ConfigurationService;
             // TODO
             global $app;
 
-            $this->config = $app['etoa.config.service'];
+            $this->config = $app[ConfigurationService::class];
 
           $this->id = $id;
           $this->valid = false;
@@ -1166,7 +1166,7 @@ use EtoA\Core\Configuration\ConfigurationService;
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
         $pres = dbquery("SELECT
                             alliance_buildlist_alliance_id,

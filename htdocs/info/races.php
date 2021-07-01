@@ -1,9 +1,18 @@
-<?PHP declare(strict_types=1);
-/** @var \Symfony\Component\BrowserKit\Request $request */
-/** @var \EtoA\Race\RaceDataRepository $raceRepository */
-$raceRepository = $app['etoa.race.datarepository'];
+<?PHP
+
+declare(strict_types=1);
+
+use EtoA\Defense\DefenseDataRepository;
+use EtoA\Race\RaceDataRepository;
+use EtoA\Ship\ShipDataRepository;
+
+/** @var RaceDataRepository */
+$raceRepository = $app[RaceDataRepository::class];
+
 $raceNames = $raceRepository->getRaceNames();
 $url = "?$link&amp;site=$site";
+
+/** @var \Symfony\Component\BrowserKit\Request $request */
 
 if ($request->query->has('id')) {
     $raceId = $request->query->getInt('id');
@@ -63,8 +72,10 @@ if ($request->query->has('id')) {
 	tableEnd();
 
 	// Ships
-    /** @var \EtoA\Ship\ShipDataRepository $shipDataRepository */
-    $shipDataRepository = $app['etoa.ship.datarepository'];
+
+    /** @var ShipDataRepository */
+    $shipDataRepository = $app[ShipDataRepository::class];
+
     $ships = $shipDataRepository->getShipsByRace($raceId);
 	if (count($ships) > 0) {
 		tableStart('',500);
@@ -78,8 +89,8 @@ if ($request->query->has('id')) {
 	}
 
 	// Defenses
-    /** @var \EtoA\Defense\DefenseDataRepository $defenseDataRepository */
-    $defenseDataRepository = $app['etoa.defense.datarepository'];
+    /** @var DefenseDataRepository */
+    $defenseDataRepository = $app[DefenseDataRepository::class];
     $defenses = $defenseDataRepository->getDefenseByRace($raceId);
 	if (count($defenses) > 0) {
 		tableStart('',500);

@@ -6,7 +6,7 @@ $adminUserId = $cu->id;
 if ($adminUserId > 0) {
 
 	/** @var AdminNotesRepository */
-	$notesRepo = $app['etoa.admin.notes.repository'];
+	$notesRepo = $app[AdminNotesRepository::class];
 
 	if (isset($_GET['chk']) && $_GET['chk'] == 'new') {
 		createNote();

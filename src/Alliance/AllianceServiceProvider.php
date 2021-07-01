@@ -18,10 +18,6 @@ class AllianceServiceProvider implements ServiceProviderInterface
             return new AllianceRepository($pimple['db']);
         };
 
-        $pimple['etoa.alliance.repository'] = function (Container $pimple): AllianceRepository {
-            return $pimple[AllianceRepository::class];
-        };
-
         $pimple[AlliancePointsRepository::class] = function (Container $pimple): AlliancePointsRepository {
             return new AlliancePointsRepository($pimple['db']);
         };
@@ -30,10 +26,10 @@ class AllianceServiceProvider implements ServiceProviderInterface
             return new AllianceHistoryRepository($pimple['db']);
         };
 
-        $pimple['etoa.alliance.building.repository'] = function (Container $pimple): AllianceBuildingRepository {
+        $pimple[AllianceBuildingRepository::class] = function (Container $pimple): AllianceBuildingRepository {
             return new AllianceBuildingRepository($pimple['db']);
         };
-        $pimple['etoa.alliance.technology.repository'] = function (Container $pimple): AllianceTechnologyRepository {
+        $pimple[AllianceTechnologyRepository::class] = function (Container $pimple): AllianceTechnologyRepository {
             return new AllianceTechnologyRepository($pimple['db']);
         };
     }

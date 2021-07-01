@@ -1,9 +1,13 @@
 <?PHP
 
+use EtoA\Building\BuildingDataRepository;
+use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipRepository;
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 echo "<h2>Energie</h2>";
 
@@ -12,10 +16,10 @@ echo "<tr><td colspan=\"6\">
 <img src=\"misc/powerproduction.image.php\" alt=\"Graph\" />
 </td></tr>";
 
-/** @var \EtoA\Building\BuildingRepository $buildingRepository */
-$buildingRepository = $app['etoa.building.repository'];
-/** @var \EtoA\Building\BuildingDataRepository $buildingDataRepository */
-$buildingDataRepository = $app['etoa.building.datarepository'];
+/** @var BuildingRepository */
+$buildingRepository = $app[BuildingRepository::class];
+/** @var BuildingDataRepository */
+$buildingDataRepository = $app[BuildingDataRepository::class];
 $buildings = $buildingDataRepository->getBuildingsByType(BUILDING_POWER_CAT);
 
 echo "<tr>
@@ -39,10 +43,12 @@ foreach ($buildings as $building) {
 		</tr>";
 	}
 
-    /** @var \EtoA\Ship\ShipRepository $shipRepository */
-    $shipRepository = $app['etoa.ship.repository'];
-    /** @var \EtoA\Ship\ShipDataRepository $shipDataRepository */
-    $shipDataRepository = $app['etoa.ship.datarepository'];
+    /** @var ShipRepository */
+    $shipRepository = $app[ShipRepository::class];
+
+    /** @var ShipDataRepository */
+    $shipDataRepository = $app[ShipDataRepository::class];
+
     $ships = $shipDataRepository->getShipWithPowerProduction();
 
 	foreach ($ships as $ship) {

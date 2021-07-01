@@ -52,7 +52,7 @@ use EtoA\Core\Configuration\ConfigurationService;
             global $app;
 
             /** @var ConfigurationService */
-            $config = $app['etoa.config.service'];
+            $config = $app[ConfigurationService::class];
 
 			$res = dbquery("
 			SELECT

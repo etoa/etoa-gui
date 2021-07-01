@@ -14,7 +14,7 @@ class TicketRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app['etoa.help.ticket.repository'];
+        $this->repository = $this->app[TicketRepository::class];
     }
 
     private function createTicket(
