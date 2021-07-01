@@ -12,7 +12,7 @@ class DefenseDataRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app['etoa.defense.datarepository'];
+        $this->repository = $this->app[DefenseDataRepository::class];
     }
 
     public function testGetDefenseNames(): void

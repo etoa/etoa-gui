@@ -1,5 +1,6 @@
 <?PHP declare(strict_types=1);
 
+use EtoA\Defense\DefenseDataRepository;
 use EtoA\Ship\ShipDataRepository;
 
 /** @var \Symfony\Component\BrowserKit\Request $request */
@@ -83,8 +84,8 @@ if ($request->query->has('id')) {
 	}
 
 	// Defenses
-    /** @var \EtoA\Defense\DefenseDataRepository $defenseDataRepository */
-    $defenseDataRepository = $app['etoa.defense.datarepository'];
+    /** @var DefenseDataRepository */
+    $defenseDataRepository = $app[DefenseDataRepository::class];
     $defenses = $defenseDataRepository->getDefenseByRace($raceId);
 	if (count($defenses) > 0) {
 		tableStart('',500);

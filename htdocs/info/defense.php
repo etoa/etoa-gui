@@ -1,13 +1,16 @@
 <?PHP
 
-/** @var \EtoA\Race\RaceDataRepository $raceRepository */
-
+use EtoA\Defense\DefenseDataRepository;
+use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipDataRepository;
 
+/** @var RaceDataRepository */
 $raceRepository = $app['etoa.race.datarepository'];
+
 $raceNames = $raceRepository->getRaceNames();
-/** @var \EtoA\Defense\DefenseDataRepository $defenseDataRepository */
-$defenseDataRepository = $app['etoa.defense.datarepository'];
+
+/** @var DefenseDataRepository */
+$defenseDataRepository = $app[DefenseDataRepository::class];
 
 echo "<h2>Verteidigung</h2>";
 
