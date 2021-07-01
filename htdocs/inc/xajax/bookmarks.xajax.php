@@ -237,7 +237,7 @@ include_once('cell.xajax.php');
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
 		$pos = (int)$form['pos'];
 		$sx = (int)$form['sx'];

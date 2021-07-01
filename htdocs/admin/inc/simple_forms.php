@@ -7,7 +7,7 @@ $twig->addGlobal("title", MODUL_NAME);
 global $app;
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 if (isset($_POST['apply_submit']))
 {

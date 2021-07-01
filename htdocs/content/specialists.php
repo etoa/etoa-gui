@@ -27,7 +27,7 @@ $t = time();
 	$speciaistRepository = $app[SpecialistDataRepository::class];
 
     /** @var ConfigurationService */
-    $config = $app['etoa.config.service'];
+    $config = $app[ConfigurationService::class];
 
 	$uCnt = User::count();
 	$totAvail = ceil($uCnt*$config->getFloat('specialistconfig'));

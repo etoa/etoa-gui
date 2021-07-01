@@ -661,7 +661,7 @@ $xajax->register(XAJAX_FUNCTION,"havenShowShips");
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
 		$response = new xajaxResponse();
 
@@ -992,7 +992,7 @@ $xajax->register(XAJAX_FUNCTION,"havenShowShips");
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
 		$response = new xajaxResponse();
 		defineImagePaths();
@@ -1387,7 +1387,7 @@ $xajax->register(XAJAX_FUNCTION,"havenShowShips");
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
 		$response = new xajaxResponse();
 		$alliance = "";
@@ -1532,7 +1532,7 @@ $xajax->register(XAJAX_FUNCTION,"havenShowShips");
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
         $response = new xajaxResponse();
 

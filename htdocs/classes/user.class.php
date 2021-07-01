@@ -778,7 +778,7 @@ class User implements \EtoA\User\UserInterface
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
         if (validatePasswort($pw, $this->pw))
         {
@@ -1042,7 +1042,7 @@ die Spielleitung";
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
         $cres = dbquery("SELECT id FROM fleet WHERE user_id='" . $this->id . "';");
         $carr = mysql_fetch_row($cres);

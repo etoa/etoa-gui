@@ -43,7 +43,7 @@ function registerCheckNick($val)
     global $app;
 
     /** @var ConfigurationService */
-    $config = $app['etoa.config.service'];
+    $config = $app[ConfigurationService::class];
 
 	$objResponse = new xajaxResponse();
 	$objResponse->assign('nickStatus', 'style.fontWeight', "bold");
@@ -115,7 +115,7 @@ function registerCheckPassword($val)
     global $app;
 
     /** @var ConfigurationService */
-    $config = $app['etoa.config.service'];
+    $config = $app[ConfigurationService::class];
 
 	$objResponse = new xajaxResponse();
 	$objResponse->assign('passwordStatus', 'style.fontWeight', "bold");

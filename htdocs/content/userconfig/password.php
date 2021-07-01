@@ -21,7 +21,7 @@
     use EtoA\Core\Configuration\ConfigurationService;
 
     /** @var ConfigurationService */
-    $config = $app['etoa.config.service'];
+    $config = $app[ConfigurationService::class];
 
 	iBoxStart("Logins");
 	echo "Solltest du Probleme mit dem Passwort haben schreibe

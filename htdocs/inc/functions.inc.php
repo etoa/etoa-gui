@@ -1172,7 +1172,7 @@ function calcBuildingCosts($buildingArray, $level, $fac=1)
     global $app;
 
     /** @var ConfigurationService */
-    $config = $app['etoa.config.service'];
+    $config = $app[ConfigurationService::class];
 
     $bc=array();
     $bc['metal'] = $fac * $buildingArray['building_costs_metal'] * pow($buildingArray['building_build_costs_factor'],$level);

@@ -211,7 +211,7 @@ die Spielleitung";
         global $app;
 
         /** @var ConfigurationService */
-        $config = $app['etoa.config.service'];
+        $config = $app[ConfigurationService::class];
 
         $now = time();
 

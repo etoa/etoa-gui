@@ -9,7 +9,7 @@ use Twig\Environment;
 $adminUserRepo = $app[AdminUserRepository::class];
 
 /** @var ConfigurationService */
-$config = $app['etoa.config.service'];
+$config = $app[ConfigurationService::class];
 
 if (isset($_POST['submitPassword'])) {
     submitPassword($cu, $adminUserRepo, $config, $twig);
