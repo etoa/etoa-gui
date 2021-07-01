@@ -236,8 +236,8 @@ $config = $app[ConfigurationService::class];
 			echo "alle $m Minuten!<br/>";
 		}
 		echo "Neu angemeldete Benutzer erscheinen erst nach der ersten Aktualisierung in der Liste.<br/>";
-		echo "F&uuml;r ".STATS_USER_POINTS." verbaute Rohstoffe bekommt der Spieler 1 Punkt in der Statistik<br/>
-		F&uuml;r ".STATS_ALLIANCE_POINTS." Spielerpunkte bekommt die Allianz 1 Punkt in der Statistik";
+		echo "F&uuml;r ".$config->param1Int('points_update')." verbaute Rohstoffe bekommt der Spieler 1 Punkt in der Statistik<br/>
+		F&uuml;r ".$config->param2Int('points_update')." Spielerpunkte bekommt die Allianz 1 Punkt in der Statistik";
 		iBoxEnd();
 	}
 ?>

@@ -908,7 +908,7 @@ use EtoA\Support\RuntimeDataStore;
                 $points=0;
                 while ($level<=$arr[2])
                 {
-                    $points += $arr[3]*pow($arr[1],$level-1)/STATS_USER_POINTS;
+                    $points += $arr[3]*pow($arr[1],$level-1)/$config->param1Int('points_update');
                     $techs[$arr[0]][$level] = $points;
                     $level++;
                 }
@@ -930,7 +930,7 @@ use EtoA\Support\RuntimeDataStore;
                 $points=0;
                 while ($level<=$arr[2])
                 {
-                    $points += $arr[3]*pow($arr[1],$level-1)/STATS_USER_POINTS;
+                    $points += $arr[3]*pow($arr[1],$level-1)/$config->param1Int('points_update');
                     $buildings[$arr[0]][$level] = $points;
                     $level++;
                 }

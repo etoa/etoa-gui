@@ -126,7 +126,7 @@ else
     // Urlaubsmodus
     if ($cu->deleted == 0) {
         echo "<tr><th style=\"width:150px;\">Urlaubsmodus</th>
-        <td>Im Urlaubsmodus kannst du nicht angegriffen werden, aber deine Produktion steht auch still. </br> Dauer: mindestens ".MIN_UMOD_TIME." Tage, nach ".MAX_UMOD_TIME." Tagen Urlaubsmodus wird der Account inaktiv und kann wieder angegriffen werden.</td>
+        <td>Im Urlaubsmodus kannst du nicht angegriffen werden, aber deine Produktion steht auch still. </br> Dauer: mindestens ".$config->getInt('hmode_days')." Tage, nach ".$config->param1Int('hmode_days')." Tagen Urlaubsmodus wird der Account inaktiv und kann wieder angegriffen werden.</td>
         <td>";
 
         if ($cu->hmode_from>0 && $cu->hmode_from<time() && $cu->hmode_to<time())

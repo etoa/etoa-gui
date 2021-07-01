@@ -19,14 +19,18 @@
 	//
 
 use EtoA\Specialist\SpecialistDataRepository;
+use EtoA\Core\Configuration\ConfigurationService;
 
 $t = time();
 
 	/** @var SpecialistDataRepository */
 	$speciaistRepository = $app[SpecialistDataRepository::class];
 
+    /** @var ConfigurationService */
+    $config = $app['etoa.config.service'];
+
 	$uCnt = User::count();
-	$totAvail = ceil($uCnt*SPECIALIST_AVAILABILITY_FACTOR);
+	$totAvail = ceil($uCnt*$config->getFloat('specialistconfig'));
 
 	echo '<h1>Spezialisten</h1>';
 	echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
@@ -53,7 +57,7 @@ $t = time();
 				$used = min($tarr[0],$totAvail);
 				$avail = $totAvail - $used;
 				if ($totAvail!=0)
-					$factor = 1 + (SPECIALIST_MAX_COSTS_FACTOR / $totAvail * $used);
+					$factor = 1 + ($config->param1Float('specialistconfig') / $totAvail * $used);
 				else
 					$factor = 1;
 
@@ -315,7 +319,7 @@ $t = time();
 		$used = min($tarr[0],$totAvail);
 		$avail = $totAvail - $used;
 		if ($totAvail!=0)
-			$factor = 1 + (SPECIALIST_MAX_COSTS_FACTOR / $totAvail * $used);
+			$factor = 1 + ($config->param1Float('specialistconfig') / $totAvail * $used);
 		else
 			$factor = 1;
 

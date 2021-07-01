@@ -242,7 +242,7 @@ if (isset($cp)) {
 				$bonus = $cu->race->researchTime + $cp->typeResearchtime + $cp->starResearchtime - 2;
 				$bonus *= $cu->specialist->researchTime;
 
-				$bc['time'] = (array_sum($bc)) / GLOBAL_TIME * RES_BUILD_TIME * $time_boni_factor;
+				$bc['time'] = (array_sum($bc)) / $config->getInt('global_time') * $config->getFloat('res_build_time') * $time_boni_factor;
 				$bc['time'] *= $bonus;
 				$maxReduction = $bc['time'] - $bc['time'] * $minBuildTimeFactor;
 
@@ -424,11 +424,11 @@ if (isset($cp)) {
 					// Bauzeit
 					$bonus = $cu->race->researchTime + $cp->typeResearchtime + $cp->starResearchtime - 2;
 
-					$btime = ($bc['metal']+$bc['crystal']+$bc['plastic']+$bc['fuel']+$bc['food']) / GLOBAL_TIME * RES_BUILD_TIME * $time_boni_factor;
+					$btime = ($bc['metal']+$bc['crystal']+$bc['plastic']+$bc['fuel']+$bc['food']) / $config->getInt('global_time') * $config->getFloat('res_build_time') * $time_boni_factor;
 					$btime *= $bonus * $cu->specialist->researchTime;
 
 					//Nächste Stufe
-					$btimen = ($bcn['metal']+$bcn['crystal']+$bcn['plastic']+$bcn['fuel']+$bcn['food']) / GLOBAL_TIME * RES_BUILD_TIME * $time_boni_factor;
+					$btimen = ($bcn['metal']+$bcn['crystal']+$bcn['plastic']+$bcn['fuel']+$bcn['food']) / $config->getInt('global_time') * $config->getFloat('res_build_time') * $time_boni_factor;
 					$btimen  *= $bonus * $cu->specialist->researchTime;
 
 

@@ -19,9 +19,13 @@
 	//
 
 use EtoA\User\UserRepository;
+use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var UserRepository */
 $userRepository = $app[UserRepository::class];
+
+    /** @var ConfigurationService */
+    $config = $app[ConfigurationService::class];
 
 	if (!$s->sittingActive || $s->falseSitter)
 	{
@@ -159,7 +163,7 @@ $userRepository = $app[UserRepository::class];
 						$arr = mysql_fetch_row($res);
 						$sitterId = $arr[0];
 						$sitterRegistered=$arr[1];
-						if ($_POST['sitter_password1']==$_POST['sitter_password2'] && $_POST['sitter_password1']!="" && strlen($_POST['sitter_password1'])>=PASSWORD_MINLENGHT)
+						if ($_POST['sitter_password1']==$_POST['sitter_password2'] && $_POST['sitter_password1']!="" && strlen($_POST['sitter_password1'])>=$config->getInt('password_minlength'))
 						{
 							$pw = saltPasswort($_POST['sitter_password1']);
 
@@ -200,7 +204,7 @@ $userRepository = $app[UserRepository::class];
 						}
 						else
 						{
-							error_msg("Passwörter sind nicht gleich oder zu kurz (mind. ".PASSWORD_MINLENGHT." Zeichen)");
+							error_msg("Passwörter sind nicht gleich oder zu kurz (mind. ".$config->getInt('password_minlength')." Zeichen)");
 						}
 					}
 					else

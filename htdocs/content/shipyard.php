@@ -583,7 +583,7 @@ $config = $app[ConfigurationService::class];
 							+ $ships[$ship_id]['ship_costs_plastic']
 							+ $ships[$ship_id]['ship_costs_fuel']
 							+ $ships[$ship_id]['ship_costs_food'])
-							/ GLOBAL_TIME * SHIP_BUILD_TIME
+							/ $config->getInt('global_time') * $config->getFloat('ship_build_time')
 							* $time_boni_factor
 							* $cu->specialist->shipTime;
 
@@ -994,7 +994,7 @@ $config = $app[ConfigurationService::class];
 								}
 
 								// Bauzeit berechnen
-								$btime = ($data['ship_costs_metal'] + $data['ship_costs_crystal'] + $data['ship_costs_plastic'] + $data['ship_costs_fuel'] + $data['ship_costs_food']) / GLOBAL_TIME * SHIP_BUILD_TIME * $time_boni_factor * $cu->specialist->shipTime;
+								$btime = ($data['ship_costs_metal'] + $data['ship_costs_crystal'] + $data['ship_costs_plastic'] + $data['ship_costs_fuel'] + $data['ship_costs_food']) / $config->getInt('global_time') * $config->getFloat('ship_build_time') * $time_boni_factor * $cu->specialist->shipTime;
 								$btime_min = $btime * (0.1 - ($gen_tech_level / 100));
 								$peopleOptimized= ceil(($btime-$btime_min)/$config->getInt('people_work_done'));
 

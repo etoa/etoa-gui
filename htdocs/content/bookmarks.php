@@ -73,8 +73,8 @@ if ((isset($_POST['submitEdit']) || isset($_POST['submitNew'])) && (isset($_POST
         $arr=mysql_fetch_row($res);
 
         //Check discovered for fleet bookmarks, bugfix by river
-        $absX = (($sx-1) * CELL_NUM_X) + $cx;
-        $absY = (($sy-1) * CELL_NUM_Y) + $cy;
+        $absX = (($sx-1) * $config->param1Int('num_of_cells')) + $cx;
+        $absY = (($sy-1) * $config->param2Int('num_of_cells')) + $cy;
         if ($cu->discovered($absX,$absY))
         {
             // Create shipstring
@@ -742,8 +742,8 @@ else
             $cy = intval($_POST['cy']);
             $pos = intval($_POST['pos']);
 
-            $absX = (($sx-1) * CELL_NUM_X) + $cx;
-            $absY = (($sy-1) * CELL_NUM_Y) + $cy;
+            $absX = (($sx-1) * $config->param1Int('num_of_cells')) + $cx;
+            $absY = (($sy-1) * $config->param2Int('num_of_cells')) + $cy;
             if ($cu->discovered($absX,$absY))
             {
                 $res=dbquery("
