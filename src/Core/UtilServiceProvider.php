@@ -11,7 +11,7 @@ class UtilServiceProvider implements ServiceProviderInterface
 {
     public function register(Container $pimple): void
     {
-        $pimple['etoa.util.markdown'] = function (): ConverterInterface {
+        $pimple[ConverterInterface::class] = function (): ConverterInterface {
             return new CommonMarkConverter();
         };
     }
