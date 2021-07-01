@@ -6,8 +6,11 @@ namespace EtoA\Universe;
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\DatabaseManagerRepository;
+use EtoA\Universe\Asteroids\AsteroidsRepository;
 use EtoA\Universe\Cell\CellRepository;
+use EtoA\Universe\EmptySpace\EmptySpaceRepository;
 use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Nebula\NebulaRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\Universe\Star\SolarTypeRepository;

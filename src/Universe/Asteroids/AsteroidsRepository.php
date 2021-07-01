@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace EtoA\Universe;
+namespace EtoA\Universe\Asteroids;
 
 use EtoA\Core\AbstractRepository;
 
-class NebulaRepository extends AbstractRepository
+class AsteroidsRepository extends AbstractRepository
 {
     public function count(): int
     {
         return (int) $this->createQueryBuilder()
             ->select("COUNT(id)")
-            ->from('nebulas')
+            ->from('asteroids')
             ->execute()
             ->fetchOne();
     }
@@ -21,7 +21,7 @@ class NebulaRepository extends AbstractRepository
     {
         $data = $this->createQueryBuilder()
             ->select('*')
-            ->from('nebulas')
+            ->from('asteroids')
             ->where('id = :id')
             ->setParameters([
                 'id' => $id,
@@ -32,17 +32,21 @@ class NebulaRepository extends AbstractRepository
         return $data !== false ? $data : null;
     }
 
-    public function add(int $id, int $resCrystal): void
+    public function add(int $id, int $resMetal, int $resCrystal, int $resPlastic): void
     {
         $this->createQueryBuilder()
-            ->insert('nebulas')
+            ->insert('asteroids')
             ->values([
                 'id' => ':id',
+                'res_metal' => ':res_metal',
                 'res_crystal' => ':res_crystal',
+                'res_plastic' => ':res_plastic',
             ])
             ->setParameters([
                 'id' => $id,
+                'res_metal' => $resMetal,
                 'res_crystal' => $resCrystal,
+                'res_plastic' => $resPlastic,
             ])
             ->execute();
     }
@@ -57,7 +61,7 @@ class NebulaRepository extends AbstractRepository
         int $resPower
     ): bool {
         $affected = (int) $this->createQueryBuilder()
-            ->update('nebulas')
+            ->update('asteroids')
             ->set('res_metal', ':res_metal')
             ->set('res_crystal', ':res_crystal')
             ->set('res_plastic', ':res_plastic')
@@ -89,7 +93,7 @@ class NebulaRepository extends AbstractRepository
         int $resPower
     ): bool {
         $affected = (int) $this->createQueryBuilder()
-            ->update('nebulas')
+            ->update('asteroids')
             ->set('res_metal', 'res_metal + :res_metal')
             ->set('res_crystal', 'res_crystal + :res_crystal')
             ->set('res_plastic', 'res_plastic + :res_plastic')
@@ -114,7 +118,7 @@ class NebulaRepository extends AbstractRepository
     public function remove(int $id): void
     {
         $this->createQueryBuilder()
-            ->delete('nebulas')
+            ->delete('asteroids')
             ->where('id = :id')
             ->setParameter('id', $id)
             ->execute();

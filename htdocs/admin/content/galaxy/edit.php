@@ -1,11 +1,11 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Universe\AsteroidsRepository;
-use EtoA\Universe\EmptySpaceRepository;
+use EtoA\Universe\Asteroids\AsteroidsRepository;
+use EtoA\Universe\EmptySpace\EmptySpaceRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityType;
-use EtoA\Universe\NebulaRepository;
+use EtoA\Universe\Nebula\NebulaRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\Universe\Star\SolarTypeRepository;
