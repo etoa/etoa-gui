@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\Planet\PlanetRepository;
 
 class MissileBattleHandler
 {
@@ -76,8 +77,8 @@ class MissileBattleHandler
 
 				// Schickt Nachricht an den Angreifer
 				$msg = $config->param2('battleban_arrival_text');
-				/** @var \EtoA\Universe\PlanetRepository $planetRepository */
-				$planetRepository = $app[\EtoA\Universe\PlanetRepository::class];
+				/** @var PlanetRepository */
+				$planetRepository = $app[PlanetRepository::class];
 				$uid = $planetRepository->getPlanetUserId((int) $arr['flight_entity_from']);
 
                 /** @var \EtoA\Message\MessageRepository $messageRepository */

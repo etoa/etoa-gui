@@ -3,7 +3,7 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Text\TextRepository;
-use EtoA\Universe\PlanetTypeRepository;
+use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\Universe\SolarTypeRepository;
 
 /** @var TextRepository */

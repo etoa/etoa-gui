@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace EtoA\Universe;
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Planet\PlanetTypeRepository;
 use Mutex;
 
 class UniverseGenerator

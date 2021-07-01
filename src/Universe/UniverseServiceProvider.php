@@ -6,6 +6,8 @@ namespace EtoA\Universe;
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\DatabaseManagerRepository;
+use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\User\UserRepository;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
@@ -14,10 +16,6 @@ class UniverseServiceProvider implements ServiceProviderInterface
 {
     public function register(Container $pimple): void
     {
-        $pimple[PlanetRepository::class] = function (Container $pimple): PlanetRepository {
-            return new PlanetRepository($pimple['db']);
-        };
-
         $pimple[CellRepository::class] = function (Container $pimple): CellRepository {
             return new CellRepository($pimple['db']);
         };

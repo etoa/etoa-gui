@@ -6,7 +6,7 @@ use EtoA\Universe\AsteroidsRepository;
 use EtoA\Universe\CellRepository;
 use EtoA\Universe\EmptySpaceRepository;
 use EtoA\Universe\NebulaRepository;
-use EtoA\Universe\PlanetRepository;
+use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\StarRepository;
 use EtoA\Universe\UniverseResetService;
 use EtoA\Universe\WormholeRepository;
