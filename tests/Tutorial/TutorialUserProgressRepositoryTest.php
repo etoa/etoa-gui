@@ -13,7 +13,7 @@ class TutorialUserProgressRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app['etoa.tutorial.userprogressrepository'];
+        $this->repository = $this->app[TutorialUserProgressRepository::class];
     }
 
     public function testHasReadTutorialNoProgress(): void

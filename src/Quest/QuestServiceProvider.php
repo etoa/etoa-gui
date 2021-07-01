@@ -15,6 +15,7 @@ use EtoA\Quest\Reward\MissileRewardCollector;
 use EtoA\Quest\Reward\ShipRewardCollector;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Tutorial\TutorialUserProgressRepository;
 use EtoA\Universe\PlanetRepository;
 use LittleCubicleGames\Quests\Progress\ProgressFunctionBuilder;
 use LittleCubicleGames\Quests\Progress\StateFunctionBuilder;
@@ -149,7 +150,7 @@ class QuestServiceProvider extends ServiceProvider implements ControllerProvider
     {
         $app->before(function (Request $request, Application $app): void {
             $currentUser = $request->attributes->get('currentUser');
-            if ($currentUser instanceof \CurrentUser && $currentUser->isSetup() && $app['etoa.tutorial.userprogressrepository']->hasFinishedTutorial($currentUser->getId())) {
+            if ($currentUser instanceof \CurrentUser && $currentUser->isSetup() && $app[TutorialUserProgressRepository::class]->hasFinishedTutorial($currentUser->getId())) {
                 $app['cubicle.quests.initializer']->initialize($currentUser->getId());
             }
         });
