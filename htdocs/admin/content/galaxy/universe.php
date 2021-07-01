@@ -7,7 +7,7 @@ use EtoA\Universe\CellRepository;
 use EtoA\Universe\EmptySpaceRepository;
 use EtoA\Universe\NebulaRepository;
 use EtoA\Universe\Planet\PlanetRepository;
-use EtoA\Universe\StarRepository;
+use EtoA\Universe\Star\StarRepository;
 use EtoA\Universe\UniverseResetService;
 use EtoA\Universe\WormholeRepository;
 use Symfony\Component\HttpFoundation\Request;

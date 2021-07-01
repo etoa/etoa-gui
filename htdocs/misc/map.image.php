@@ -4,7 +4,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Universe\CellRepository;
 use EtoA\Universe\EntityRepository;
 use EtoA\Universe\EntityType;
-use EtoA\Universe\StarRepository;
+use EtoA\Universe\Star\StarRepository;
 
 include("image.inc.php");
 

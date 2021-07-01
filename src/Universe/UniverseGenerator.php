@@ -7,6 +7,8 @@ namespace EtoA\Universe;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetTypeRepository;
+use EtoA\Universe\Star\SolarTypeRepository;
+use EtoA\Universe\Star\StarRepository;
 use Mutex;
 
 class UniverseGenerator
