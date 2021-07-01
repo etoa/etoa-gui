@@ -60,7 +60,7 @@ if ($sub == "offline") {
     $universeCellRepo = $app[CellRepository::class];
 
     /** @var TicketRepository */
-    $ticketRepo = $app['etoa.help.ticket.repository'];
+    $ticketRepo = $app[TicketRepository::class];
 
     /** @var TextRepository */
     $textRepo = $app['etoa.text.repository'];

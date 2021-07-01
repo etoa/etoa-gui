@@ -190,7 +190,7 @@ function userTickets($uid,$target)
 	$adminUserRepo = $app[AdminUserRepository::class];
 
 	/** @var TicketRepository */
-	$ticketRepo = $app['etoa.help.ticket.repository'];
+	$ticketRepo = $app[TicketRepository::class];
 
 	$or = new xajaxResponse();
 	ob_start();

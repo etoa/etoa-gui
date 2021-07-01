@@ -10,7 +10,7 @@ use EtoA\Ranking\PointsService;
 use EtoA\User\UserSessionManager;
 
 /** @var TicketRepository */
-$ticketRepo = $app['etoa.help.ticket.repository'];
+$ticketRepo = $app[TicketRepository::class];
 
 /** @var UserSessionManager */
 $userSessionManager = $app[UserSessionManager::class];

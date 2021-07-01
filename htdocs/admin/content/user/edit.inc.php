@@ -7,7 +7,7 @@ use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\User\UserRepository;
 
 /** @var TicketRepository */
-$ticketRepo = $app['etoa.help.ticket.repository'];
+$ticketRepo = $app[TicketRepository::class];
 
 /** @var AdminUserRepository */
 $adminUserRepo = $app[AdminUserRepository::class];

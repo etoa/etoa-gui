@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 $ticketService = $app['etoa.help.ticket.service'];
 
 /** @var TicketRepository */
-$ticketRepo = $app['etoa.help.ticket.repository'];
+$ticketRepo = $app[TicketRepository::class];
 
 /** @var TicketMessageRepository */
 $ticketMessageRepo = $app['etoa.help.ticket.message.repository'];

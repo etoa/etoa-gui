@@ -14,7 +14,7 @@ class TicketSystemServiceProvider implements ServiceProviderInterface
 {
     public function register(Container $pimple): void
     {
-        $pimple['etoa.help.ticket.repository'] = function (Container $pimple): TicketRepository {
+        $pimple[TicketRepository::class] = function (Container $pimple): TicketRepository {
             return new TicketRepository(
                 $pimple['db']
             );
@@ -26,7 +26,7 @@ class TicketSystemServiceProvider implements ServiceProviderInterface
         };
         $pimple['etoa.help.ticket.service'] = function (Container $pimple): TicketService {
             return new TicketService(
-                $pimple['etoa.help.ticket.repository'],
+                $pimple[TicketRepository::class],
                 $pimple['etoa.help.ticket.message.repository'],
                 $pimple[AdminUserRepository::class],
                 $pimple[UserRepository::class],

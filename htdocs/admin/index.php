@@ -79,7 +79,7 @@ try {
         $databaseManager = $app[DatabaseManagerRepository::class];
 
         /** @var TicketRepository */
-        $ticketRepo = $app['etoa.help.ticket.repository'];
+        $ticketRepo = $app[TicketRepository::class];
 
         /** @var ConfigurationService */
         $config = $app[ConfigurationService::class];
