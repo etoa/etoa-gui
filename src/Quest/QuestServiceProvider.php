@@ -5,6 +5,7 @@ namespace EtoA\Quest;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Missile\MissileDataRepository;
+use EtoA\Missile\MissileRepository;
 use EtoA\Quest\Initialization\QuestBuilder;
 use EtoA\Quest\Initialization\QuestInitializer;
 use EtoA\Quest\Log\QuestGameLog;
@@ -105,7 +106,7 @@ class QuestServiceProvider extends ServiceProvider implements ControllerProvider
             return new DefenseRewardCollector($pimple[DefenseRepository::class], $pimple[PlanetRepository::class]);
         };
         $pimple[MissileRewardCollector::class] = function (Container $pimple): MissileRewardCollector {
-            return new MissileRewardCollector($pimple['etoa.missile.repository'], $pimple[PlanetRepository::class]);
+            return new MissileRewardCollector($pimple[MissileRepository::class], $pimple[PlanetRepository::class]);
         };
 
         $pimple['cubicle.quests.rewards.collectors'] = function (Container $pimple): array {

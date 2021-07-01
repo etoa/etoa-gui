@@ -6,14 +6,13 @@ use EtoA\AbstractDbTestCase;
 
 class MissileRepositoryTest extends AbstractDbTestCase
 {
-    /** @var MissileRepository */
-    private $repository;
+    private MissileRepository $repository;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->repository = $this->app['etoa.missile.repository'];
+        $this->repository = $this->app[MissileRepository::class];
     }
 
     public function testAddMissile(): void

@@ -2,6 +2,7 @@
 
 use EtoA\Building\BuildingRepository;
 use EtoA\Defense\DefenseRepository;
+use EtoA\Missile\MissileRepository;
 use EtoA\Ship\ShipRepository;
 
 $xajax->register(XAJAX_FUNCTION,"planetSelectorByCell");
@@ -701,8 +702,8 @@ function showMissilesOnPlanet($pid)
 function addMissileToPlanet($form)
 {
     global $app;
-    /** @var \EtoA\Missile\MissileRepository $missileRepository */
-    $missileRepository = $app['etoa.missile.repository'];
+    /** @var MissileRepository */
+    $missileRepository = $app[MissileRepository::class];
 	$objResponse = new xajaxResponse();
 
 	$updata=explode(":",$form['entity_id']);

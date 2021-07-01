@@ -13,10 +13,6 @@ class MissileServiceProvider implements ServiceProviderInterface
             return new MissileRepository($pimple['db']);
         };
 
-        $pimple['etoa.missile.repository'] = function (Container $pimple): MissileRepository {
-            return $pimple[MissileRepository::class];
-        };
-
         $pimple[MissileDataRepository::class] = function (Container $pimple): MissileDataRepository {
             return new MissileDataRepository($pimple['db'], $pimple['db.cache']);
         };
