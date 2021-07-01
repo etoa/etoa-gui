@@ -1117,7 +1117,7 @@ use EtoA\Support\RuntimeDataStore;
             unset($techs);
 
             /** @var RuntimeDataStore */
-            $runtimeDataStore = $app['etoa.runtime.datastore'];
+            $runtimeDataStore = $app[RuntimeDataStore::class];
 
             // Zeit in Config speichern
             $runtimeDataStore->set('statsupdate', (string) time());

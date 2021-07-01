@@ -143,7 +143,7 @@ class MarketHandler
         global $app;
 
         /** @var RuntimeDataStore */
-        $runtimeDataStore = $app['etoa.runtime.datastore'];
+        $runtimeDataStore = $app[RuntimeDataStore::class];
 
         $rates = self::calcRate();
 

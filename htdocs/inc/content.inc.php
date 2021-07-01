@@ -5,7 +5,7 @@ use EtoA\Text\TextRepository;
 use EtoA\Support\RuntimeDataStore;
 
 /** @var RuntimeDataStore */
-$runtimeDataStore = $app['etoa.runtime.datastore'];
+$runtimeDataStore = $app[RuntimeDataStore::class];
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];

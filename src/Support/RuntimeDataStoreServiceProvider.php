@@ -11,7 +11,7 @@ class RuntimeDataStoreServiceProvider implements ServiceProviderInterface
 {
     public function register(Container $pimple): void
     {
-        $pimple['etoa.runtime.datastore'] = function (Container $pimple): RuntimeDataStore {
+        $pimple[RuntimeDataStore::class] = function (Container $pimple): RuntimeDataStore {
             return new RuntimeDataStore($pimple['db']);
         };
     }
