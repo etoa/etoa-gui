@@ -1,7 +1,10 @@
 <?PHP
 
 	// Main dialogs
-	$xajax->register(XAJAX_FUNCTION,"havenShowShips");
+
+use EtoA\Core\Configuration\ConfigurationService;
+
+$xajax->register(XAJAX_FUNCTION,"havenShowShips");
 	$xajax->register(XAJAX_FUNCTION,"havenShowTarget");
 	$xajax->register(XAJAX_FUNCTION,"havenShowWormhole");
 	$xajax->register(XAJAX_FUNCTION,"havenShowAction");
@@ -654,6 +657,12 @@
 	*/
 	function havenShowWormhole($form)
 	{
+        // TODO
+        global $app;
+
+        /** @var ConfigurationService */
+        $config = $app['etoa.config.service'];
+
 		$response = new xajaxResponse();
 
 		// Do some checks
@@ -664,8 +673,8 @@
 
 			if ($fleet->wormholeEntryEntity == null)
 			{
-				$absX = (($form['man_sx']-1) * CELL_NUM_X) + $form['man_cx'];
-				$absY = (($form['man_sy']-1) * CELL_NUM_Y) + $form['man_cy'];
+				$absX = (($form['man_sx']-1) * $config->param1Int('num_of_cells')) + $form['man_cx'];
+				$absY = (($form['man_sy']-1) * $config->param2Int('num_of_cells')) + $form['man_cy'];
 				if ($fleet->owner->discovered($absX,$absY) == 0)
 					$code='u';
 				else
@@ -979,6 +988,12 @@
 	*/
 	function havenShowAction($form)
 	{
+        // TODO
+        global $app;
+
+        /** @var ConfigurationService */
+        $config = $app['etoa.config.service'];
+
 		$response = new xajaxResponse();
 		defineImagePaths();
 
@@ -988,8 +1003,8 @@
 			// Get fleet object
 			$fleet = unserialize($_SESSION['haven']['fleetObj']);
 
-			$absX = (($form['man_sx']-1) * CELL_NUM_X) + $form['man_cx'];
-			$absY = (($form['man_sy']-1) * CELL_NUM_Y) + $form['man_cy'];
+			$absX = (($form['man_sx']-1) * $config->param1Int('num_of_cells')) + $form['man_cx'];
+			$absY = (($form['man_sy']-1) * $config->param2Int('num_of_cells')) + $form['man_cy'];
 			if ($fleet->owner->discovered($absX,$absY) == 0)
 				$code='u';
 			else
@@ -1368,6 +1383,12 @@
 	*/
 	function havenTargetInfo($form)
 	{
+        // TODO
+        global $app;
+
+        /** @var ConfigurationService */
+        $config = $app['etoa.config.service'];
+
 		$response = new xajaxResponse();
 		$alliance = "";
 		$target = false;
@@ -1382,8 +1403,8 @@
 		$pos = intval($form['man_p']);
 		if ($sx>0 && $sy>0 && $cx>0 && $cy>0 && $pos>=0)
 		{
-			$absX = (($sx - 1) * CELL_NUM_X) + $cx;
-			$absY = (($sy - 1) * CELL_NUM_Y) + $cy;
+			$absX = (($sx - 1) * $config->param1Int('num_of_cells')) + $cx;
+			$absY = (($sy - 1) * $config->param2Int('num_of_cells')) + $cy;
 			/** @var FleetLaunch $fleet */
 			$fleet = unserialize($_SESSION['haven']['fleetObj']);
 
@@ -1507,7 +1528,13 @@
 
 	function havenBookmark($form)
 	{
-		$response = new xajaxResponse();
+        // TODO
+        global $app;
+
+        /** @var ConfigurationService */
+        $config = $app['etoa.config.service'];
+
+        $response = new xajaxResponse();
 
 		/** @var FleetLaunch $fleet */
 		$fleet = unserialize($_SESSION['haven']['fleetObj']);
@@ -1551,8 +1578,8 @@
 		If ($fleet->sBonusSpeed>1)
 			$speedString .= " (inkl. ".get_percent_string($fleet->sBonusSpeed,1)." Mysticum-Bonus)";
 
-		$absX = (($csx - 1) * CELL_NUM_X) + $ccx;
-		$absY = (($csy - 1) * CELL_NUM_Y) + $ccy;
+		$absX = (($csx - 1) * $config->param1Int('num_of_cells')) + $ccx;
+		$absY = (($csy - 1) * $config->param2Int('num_of_cells')) + $ccy;
 
 		if ($fleet->owner->discovered($absX,$absY) == 0)
 			$code='u';
