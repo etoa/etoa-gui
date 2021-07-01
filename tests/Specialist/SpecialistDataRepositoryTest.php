@@ -12,7 +12,7 @@ class SpecialistDataRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->specialistDataRepository = $this->app['etoa.specialist.datarepository'];
+        $this->specialistDataRepository = $this->app[SpecialistDataRepository::class];
     }
 
     public function testGetSpecialistNames(): void

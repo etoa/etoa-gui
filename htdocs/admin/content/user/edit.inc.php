@@ -5,6 +5,7 @@ use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Race\RaceDataRepository;
+use EtoA\Specialist\SpecialistDataRepository;
 use EtoA\User\UserRepository;
 
 /** @var TicketRepository */
@@ -12,10 +13,13 @@ $ticketRepo = $app[TicketRepository::class];
 
 /** @var AdminUserRepository */
 $adminUserRepo = $app[AdminUserRepository::class];
+
 /** @var UserRepository */
 $userRepository = $app[UserRepository::class];
+
 /** @var \EtoA\Ship\ShipDataRepository $shipDateRepository */
 $shipDateRepository = $app[\EtoA\Ship\ShipDataRepository::class];
+
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
 
@@ -873,8 +877,10 @@ echo '<div class="tabs" id="user_edit_tabs">
     $raceRepository = $app[RaceDataRepository::class];
 
     $raceNames = $raceRepository->getRaceNames();
-    /** @var \EtoA\Specialist\SpecialistDataRepository $specialistRepository */
-    $specialistRepository = $app['etoa.specialist.datarepository'];
+
+    /** @var SpecialistDataRepository */
+    $specialistRepository = $app[SpecialistDataRepository::class];
+
     $specialistNames = $specialistRepository->getSpecialistNames();
 
     echo "<table class=\"tbl\">";

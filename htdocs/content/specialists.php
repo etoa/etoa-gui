@@ -18,10 +18,12 @@
 	//
 	//
 
-	$t = time();
+use EtoA\Specialist\SpecialistDataRepository;
 
-	/** @var \EtoA\Specialist\SpecialistDataRepository $speciaistRepository */
-	$speciaistRepository = $app['etoa.specialist.datarepository'];
+$t = time();
+
+	/** @var SpecialistDataRepository */
+	$speciaistRepository = $app[SpecialistDataRepository::class];
 
 	$uCnt = User::count();
 	$totAvail = ceil($uCnt*SPECIALIST_AVAILABILITY_FACTOR);

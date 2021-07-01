@@ -9,7 +9,7 @@ class SpecialistServiceProvider implements ServiceProviderInterface
 {
     public function register(Container $pimple): void
     {
-        $pimple['etoa.specialist.datarepository'] = function (Container $pimple): SpecialistDataRepository {
+        $pimple[SpecialistDataRepository::class] = function (Container $pimple): SpecialistDataRepository {
             return new SpecialistDataRepository($pimple['db']);
         };
     }
