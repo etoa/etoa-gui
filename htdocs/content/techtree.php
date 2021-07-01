@@ -25,7 +25,9 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/
 
-	/** @var \EtoA\Building\BuildingDataRepository $buildRepository */
+use EtoA\Race\RaceDataRepository;
+
+/** @var \EtoA\Building\BuildingDataRepository $buildRepository */
 	$buildRepository = $app[\EtoA\Building\BuildingDataRepository::class];
 	/** @var \EtoA\Technology\TechnologyDataRepository $technologyRepository */
 	$technologyRepository = $app[\EtoA\Technology\TechnologyDataRepository::class];
@@ -149,8 +151,9 @@
 		//
 
 		// Lade Rassennamen
-		/** @var \EtoA\Race\RaceDataRepository $raceRepository */
-		$raceRepository = $app['etoa.race.datarepository'];
+		/** @var RaceDataRepository */
+		$raceRepository = $app[RaceDataRepository::class];
+
 		$raceNames = $raceRepository->getRaceNames();
 
 		// Lade Gebäudelistenlevel

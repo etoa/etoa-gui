@@ -1,4 +1,7 @@
 <?PHP
+
+use EtoA\Race\RaceDataRepository;
+
 class GetRaceInfosJsonResponder extends JsonResponder
 {
   function getRequiredParams() {
@@ -14,8 +17,8 @@ class GetRaceInfosJsonResponder extends JsonResponder
 	$val = $params['id'];
 
 	if ($val > 0) {
-        /** @var \EtoA\Race\RaceDataRepository $raceRepository */
-        $raceRepository = $this->app['etoa.race.datarepository'];
+        /** @var RaceDataRepository */
+        $raceRepository = $this->app[RaceDataRepository::class];
         $race = $raceRepository->getRace((int) $val);
 
 		if ($race !== null) {

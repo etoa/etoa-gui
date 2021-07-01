@@ -6,7 +6,7 @@ use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipDataRepository;
 
 /** @var RaceDataRepository */
-$raceRepository = $app['etoa.race.datarepository'];
+$raceRepository = $app[RaceDataRepository::class];
 
 $raceNames = $raceRepository->getRaceNames();
 

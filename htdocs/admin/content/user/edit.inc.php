@@ -4,6 +4,7 @@ use EtoA\Admin\AdminUserRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
+use EtoA\Race\RaceDataRepository;
 use EtoA\User\UserRepository;
 
 /** @var TicketRepository */
@@ -868,8 +869,8 @@ echo '<div class="tabs" id="user_edit_tabs">
     * Game-Daten
     */
 
-    /** @var \EtoA\Race\RaceDataRepository $raceRepository */
-    $raceRepository = $app['etoa.race.datarepository'];
+    /** @var RaceDataRepository */
+    $raceRepository = $app[RaceDataRepository::class];
 
     $raceNames = $raceRepository->getRaceNames();
     /** @var \EtoA\Specialist\SpecialistDataRepository $specialistRepository */

@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipDataRepository;
 
 define("RANKING_SHIP_STRUCTURE",20000);
@@ -54,8 +55,8 @@ define("RANKING_SHIP_STRUCTURE",20000);
     /** @var \EtoA\Ship\ShipCategoryRepository $shipCategoryRepository */
     $shipCategoryRepository = $app['etoa.ship_category.repository'];
 
-	/** @var \EtoA\Race\RaceDataRepository $raceRepository */
-	$raceRepository = $app['etoa.race.datarepository'];
+	/** @var RaceDataRepository */
+	$raceRepository = $app[RaceDataRepository::class];
 	$raceNames = $raceRepository->getRaceNames();
 
 	//

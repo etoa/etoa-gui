@@ -1,13 +1,18 @@
-<?PHP declare(strict_types=1);
+<?PHP
+
+declare(strict_types=1);
 
 use EtoA\Defense\DefenseDataRepository;
+use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipDataRepository;
 
-/** @var \Symfony\Component\BrowserKit\Request $request */
-/** @var \EtoA\Race\RaceDataRepository $raceRepository */
-$raceRepository = $app['etoa.race.datarepository'];
+/** @var RaceDataRepository */
+$raceRepository = $app[RaceDataRepository::class];
+
 $raceNames = $raceRepository->getRaceNames();
 $url = "?$link&amp;site=$site";
+
+/** @var \Symfony\Component\BrowserKit\Request $request */
 
 if ($request->query->has('id')) {
     $raceId = $request->query->getInt('id');

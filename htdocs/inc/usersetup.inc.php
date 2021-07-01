@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Race\RaceDataRepository;
 use EtoA\Text\TextRepository;
 use EtoA\Universe\PlanetTypeRepository;
 use EtoA\Universe\SolarTypeRepository;
@@ -366,8 +367,9 @@ elseif ($mode=="race")
     Bitte wählt die Rasse eures Volkes aus.<br/>
     Jede Rasse hat Vor- und Nachteile sowie einige Spezialeinheiten:<br/><br/>";
 
-    /** @var \EtoA\Race\RaceDataRepository $raceRepository */
-    $raceRepository = $app['etoa.race.datarepository'];
+    /** @var RaceDataRepository */
+    $raceRepository = $app[RaceDataRepository::class];
+
     $raceNames = $raceRepository->getRaceNames();
 
     echo "<select name=\"register_user_race_id\" id=\"register_user_race_id\">
