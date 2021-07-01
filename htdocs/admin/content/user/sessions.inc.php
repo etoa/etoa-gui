@@ -7,7 +7,7 @@ use EtoA\User\UserSessionManager;
 $config = $app[ConfigurationService::class];
 
 /** @var UserSessionManager */
-$userSessionManager = $app['etoa.user.session.manager'];
+$userSessionManager = $app[UserSessionManager::class];
 
 echo "<h2>Aktive Sessions</h2>";
 echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";

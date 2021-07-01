@@ -13,7 +13,7 @@ use EtoA\User\UserSessionManager;
 $ticketRepo = $app['etoa.help.ticket.repository'];
 
 /** @var UserSessionManager */
-$userSessionManager = $app['etoa.user.session.manager'];
+$userSessionManager = $app[UserSessionManager::class];
 
 /** @var AdminSessionManager */
 $sessionManager = $app['etoa.admin.session.manager'];
