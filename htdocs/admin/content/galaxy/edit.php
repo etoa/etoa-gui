@@ -551,7 +551,7 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
             tableStart("<span style=\"color:".Entity::$entityColors[$entity->code]."\">Leerer Raum</span>","auto");
             echo "<tr><th>Zuletzt besucht</th>
             <td>";
-            echo ($space['lastvisited'] > 0) ? df($space['lastvisited']) : "Nie";
+            echo ($space->lastVisited > 0) ? df($space->lastVisited) : "Nie";
             echo "</td></tr>";
             echo "</table>";
             echo "<br/>

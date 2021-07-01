@@ -17,7 +17,7 @@ class EmptySpaceRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function find(int $id): ?array
+    public function find(int $id): ?EmptySpace
     {
         $data = $this->createQueryBuilder()
             ->select('*')
@@ -29,7 +29,7 @@ class EmptySpaceRepository extends AbstractRepository
             ->execute()
             ->fetchAssociative();
 
-        return $data !== false ? $data : null;
+        return $data !== false ? new EmptySpace($data) : null;
     }
 
     public function add(int $id, int $lastVisited = 0): void
