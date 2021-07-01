@@ -9,14 +9,13 @@ use LittleCubicleGames\Quests\Workflow\QuestDefinitionInterface;
 
 class QuestLogRepositoryTest extends AbstractDbTestCase
 {
-    /** @var QuestLogRepository */
-    private $repository;
+    private QuestLogRepository $repository;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->repository = $this->app['etoa.quest.log.repository'];
+        $this->repository = $this->app[QuestLogRepository::class];
     }
 
     public function testLog(): void

@@ -71,7 +71,7 @@ class QuestServiceProvider extends ServiceProvider implements ControllerProvider
             return new QuestRepository($pimple['db']);
         };
 
-        $pimple['etoa.quest.log.repository'] = function (Container $pimple): QuestLogRepository {
+        $pimple[QuestLogRepository::class] = function (Container $pimple): QuestLogRepository {
             return new QuestLogRepository($pimple['db']);
         };
 
@@ -81,7 +81,7 @@ class QuestServiceProvider extends ServiceProvider implements ControllerProvider
 
         $pimple['cubicle.quests.logger'] = function (Container $pimple): array {
             return [
-                $pimple['etoa.quest.log.repository'],
+                $pimple[QuestLogRepository::class],
                 new QuestGameLog(),
             ];
         };
