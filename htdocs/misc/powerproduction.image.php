@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Building\BuildingDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 
 include("image.inc.php");
@@ -63,8 +64,8 @@ for ($i=0;$i<=$maxRatio; $i+=$maxRatio/10)
 
 $strx = P_LEFT;
 $i = 0;
-/** @var \EtoA\Building\BuildingDataRepository $buildingRepository */
-$buildingRepository = $app['etoa.building.datarepository'];
+/** @var BuildingDataRepository */
+$buildingRepository = $app[BuildingDataRepository::class];
 $buildings = $buildingRepository->getBuildingsByType(BUILDING_POWER_CAT);
 foreach ($buildings as $building) {
     $startX = $areaOriginX;

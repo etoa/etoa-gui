@@ -17,10 +17,6 @@ class BuidingServiceProvider implements ServiceProviderInterface
             return new BuildingDataRepository($pimple['db']);
         };
 
-        $pimple['etoa.building.datarepository'] = function (Container $pimple): BuildingDataRepository {
-            return $pimple[BuildingDataRepository::class];
-        };
-
         $pimple[BuildingTypeDataRepository::class] = function (Container $pimple): BuildingTypeDataRepository {
             return new BuildingTypeDataRepository($pimple['db']);
         };

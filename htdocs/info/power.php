@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 
@@ -15,8 +16,8 @@ echo "<tr><td colspan=\"6\">
 
 /** @var BuildingRepository */
 $buildingRepository = $app[BuildingRepository::class];
-/** @var \EtoA\Building\BuildingDataRepository $buildingDataRepository */
-$buildingDataRepository = $app['etoa.building.datarepository'];
+/** @var BuildingDataRepository */
+$buildingDataRepository = $app[BuildingDataRepository::class];
 $buildings = $buildingDataRepository->getBuildingsByType(BUILDING_POWER_CAT);
 
 echo "<tr>

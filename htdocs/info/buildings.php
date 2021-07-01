@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 
@@ -17,8 +18,8 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
 
     $b_level = 1;
 
-    /** @var \EtoA\Building\BuildingDataRepository $buildingDataRepository */
-    $buildingDataRepository = $app['etoa.building.datarepository'];
+    /** @var BuildingDataRepository */
+    $buildingDataRepository = $app[BuildingDataRepository::class];
 
     $building = $buildingDataRepository->getBuilding($currentBuildingId);
     if ($building !== null) {
@@ -483,8 +484,8 @@ else
 
     /** @var \EtoA\Building\BuildingTypeDataRepository $buildingTypeRepository */
     $buildingTypeRepository = $app['etoa.building_type.datarepository'];
-    /** @var \EtoA\Building\BuildingDataRepository $buildingDataRepository */
-    $buildingDataRepository = $app['etoa.building.datarepository'];
+    /** @var BuildingDataRepository */
+    $buildingDataRepository = $app[BuildingDataRepository::class];
 
     $buildingTypeNames = $buildingTypeRepository->getTypeNames();
 
