@@ -1,7 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Universe\CellRepository;
+use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\EntityRepository;
 use EtoA\Universe\EntityType;
 use EtoA\Universe\Star\StarRepository;
