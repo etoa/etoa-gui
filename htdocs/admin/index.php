@@ -58,7 +58,7 @@ try {
         include __DIR__ . '/inc/admin_login.inc.php';
     } else {
         /** @var AdminUserRepository */
-        $adminUserRepo = $app['etoa.admin.user.repository'];
+        $adminUserRepo = $app[AdminUserRepository::class];
 
         /** @var UserRepository */
         $userRepo = $app[UserRepository::class];

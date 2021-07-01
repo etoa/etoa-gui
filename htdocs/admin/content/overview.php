@@ -36,7 +36,7 @@ if ($sub == "offline") {
     $sessionRepository = $app['etoa.admin.session.repository'];
 
     /** @var AdminUserRepository */
-    $adminUserRepo = $app['etoa.admin.user.repository'];
+    $adminUserRepo = $app[AdminUserRepository::class];
 
     /** @var AdminSessionManager */
     $sessionManager = $app['etoa.admin.session.manager'];

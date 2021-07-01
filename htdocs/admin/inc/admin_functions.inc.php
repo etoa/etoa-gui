@@ -8,6 +8,7 @@
 //////////////////////////////////////////////////////
 
 use Doctrine\DBAL\Query\QueryBuilder;
+use EtoA\Admin\AdminUserRepository;
 use EtoA\User\UserRepository;
 
 /**
@@ -1085,7 +1086,7 @@ function showFleetLogs($args=null,$limit=0)
 function showDebrisLogs($args=null,$limit=0) {
     global $app;
 
-    $adminUserRepo = $app['etoa.admin.user.repository'];
+    $adminUserRepo = $app[AdminUserRepository::class];
 
     $maxtime = is_array($args) ? mktime($args['searchtime_h'],$args['searchtime_i'],$args['searchtime_s'],$args['searchtime_m'],$args['searchtime_d'],$args['searchtime_y']) : time();
 

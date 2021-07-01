@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Help\TicketSystem;
 
+use EtoA\Admin\AdminUserRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\User\UserRepository;
 use Pimple\Container;
@@ -27,7 +28,7 @@ class TicketSystemServiceProvider implements ServiceProviderInterface
             return new TicketService(
                 $pimple['etoa.help.ticket.repository'],
                 $pimple['etoa.help.ticket.message.repository'],
-                $pimple['etoa.admin.user.repository'],
+                $pimple[AdminUserRepository::class],
                 $pimple[UserRepository::class],
                 $pimple[MessageRepository::class]
             );

@@ -6,7 +6,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use Twig\Environment;
 
 /** @var AdminUserRepository */
-$adminUserRepo = $app['etoa.admin.user.repository'];
+$adminUserRepo = $app[AdminUserRepository::class];
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];

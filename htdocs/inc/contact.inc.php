@@ -18,7 +18,7 @@ if ($contactText->enabled && $contactText->content) {
 }
 
 /** @var AdminUserRepository */
-$adminUserRepo = $app['etoa.admin.user.repository'];
+$adminUserRepo = $app[AdminUserRepository::class];
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];

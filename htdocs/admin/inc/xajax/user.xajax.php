@@ -187,7 +187,7 @@ function userTickets($uid,$target)
 	global $app;
 
 	/** @var AdminUserRepository */
-	$adminUserRepo = $app['etoa.admin.user.repository'];
+	$adminUserRepo = $app[AdminUserRepository::class];
 
 	/** @var TicketRepository */
 	$ticketRepo = $app['etoa.help.ticket.repository'];

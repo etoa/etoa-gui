@@ -12,7 +12,7 @@ class AdminUserServiceProvider implements ServiceProviderInterface
 {
     public function register(Container $pimple): void
     {
-        $pimple['etoa.admin.user.repository'] = function (Container $pimple): AdminUserRepository {
+        $pimple[AdminUserRepository::class] = function (Container $pimple): AdminUserRepository {
             return new AdminUserRepository($pimple['db']);
         };
         $pimple['etoa.admin.role.manager'] = function (): AdminRoleManager {

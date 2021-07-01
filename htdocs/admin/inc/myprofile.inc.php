@@ -5,7 +5,7 @@ use EtoA\Admin\AdminUserRepository;
 use Twig\Environment;
 
 /** @var AdminUserRepository */
-$adminUserRepo = $app['etoa.admin.user.repository'];
+$adminUserRepo = $app[AdminUserRepository::class];
 
 if (isset($_POST['submitPassword'])) {
     submitPassword($cu, $adminUserRepo, $twig);

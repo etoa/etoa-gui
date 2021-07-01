@@ -19,7 +19,7 @@ class AdminSession extends Session
         $sessionManager = $app['etoa.admin.session.manager'];
 
         /** @var AdminUserRepository */
-        $userRepository = $app['etoa.admin.user.repository'];
+        $userRepository = $app[AdminUserRepository::class];
 
         $sessionManager->cleanup();
 

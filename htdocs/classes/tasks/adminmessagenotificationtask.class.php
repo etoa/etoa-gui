@@ -16,7 +16,7 @@ class AdminMessageNotificationTask implements IPeriodicTask
 
     public function __construct(Container $app)
     {
-        $this->adminUserRepo = $app['etoa.admin.user.repository'];
+        $this->adminUserRepo = $app[AdminUserRepository::class];
         $this->userRepo = $app[UserRepository::class];
         $this->messageRepository = $app[MessageRepository::class];
     }

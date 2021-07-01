@@ -9,7 +9,7 @@ use EtoA\User\UserRepository;
 $ticketRepo = $app['etoa.help.ticket.repository'];
 
 /** @var AdminUserRepository */
-$adminUserRepo = $app['etoa.admin.user.repository'];
+$adminUserRepo = $app[AdminUserRepository::class];
 /** @var UserRepository */
 $userRepository = $app[UserRepository::class];
 /** @var \EtoA\Ship\ShipDataRepository $shipDateRepository */
