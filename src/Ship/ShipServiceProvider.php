@@ -24,10 +24,6 @@ class ShipServiceProvider implements ServiceProviderInterface
             return new ShipCategoryRepository($pimple['db']);
         };
 
-        $pimple['etoa.ship_category.repository'] = function (Container $pimple): ShipCategoryRepository {
-            return $pimple[ShipCategoryRepository::class];
-        };
-
         $pimple[ShipRequirementRepository::class] = function (Container $pimple): ShipRequirementRepository {
             return new ShipRequirementRepository($pimple['db']);
         };

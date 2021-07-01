@@ -12,7 +12,7 @@ class ShipCategoryRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app['etoa.ship_category.repository'];
+        $this->repository = $this->app[ShipCategoryRepository::class];
     }
 
     public function testGetAllCategories(): void
