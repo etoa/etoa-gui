@@ -9,7 +9,7 @@ use EtoA\Universe\NebulaRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Star\StarRepository;
 use EtoA\Universe\UniverseResetService;
-use EtoA\Universe\WormholeRepository;
+use EtoA\Universe\Wormhole\WormholeRepository;
 use Symfony\Component\HttpFoundation\Request;
 
 /** @var UniverseGenerator */

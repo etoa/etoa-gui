@@ -10,7 +10,7 @@ use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\Universe\Star\SolarTypeRepository;
 use EtoA\Universe\Star\StarRepository;
-use EtoA\Universe\WormholeRepository;
+use EtoA\Universe\Wormhole\WormholeRepository;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 
