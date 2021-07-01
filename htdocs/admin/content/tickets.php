@@ -12,7 +12,7 @@ use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 
 /** @var TicketService */
-$ticketService = $app['etoa.help.ticket.service'];
+$ticketService = $app[TicketService::class];
 
 /** @var TicketRepository */
 $ticketRepo = $app[TicketRepository::class];

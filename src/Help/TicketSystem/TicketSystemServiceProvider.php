@@ -24,7 +24,7 @@ class TicketSystemServiceProvider implements ServiceProviderInterface
                 $pimple['db']
             );
         };
-        $pimple['etoa.help.ticket.service'] = function (Container $pimple): TicketService {
+        $pimple[TicketService::class] = function (Container $pimple): TicketService {
             return new TicketService(
                 $pimple[TicketRepository::class],
                 $pimple[TicketMessageRepository::class],

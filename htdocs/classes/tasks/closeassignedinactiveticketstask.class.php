@@ -12,7 +12,7 @@ class CloseAssignedInactiveTicketsTask implements IPeriodicTask
 
 	function __construct(Container $app)
 	{
-		$this->ticketService = $app['etoa.help.ticket.service'];
+		$this->ticketService = $app[TicketService::class];
 	}
 
 	function run()
