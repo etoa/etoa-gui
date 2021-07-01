@@ -162,7 +162,7 @@ class TicketRepositoryTest extends AbstractDbTestCase
         $this->assertEquals([$ticketId], $ids);
     }
 
-    public function removeByIds(): void
+    public function testRemoveByIds(): void
     {
         // given
         $ticketId = 1;
