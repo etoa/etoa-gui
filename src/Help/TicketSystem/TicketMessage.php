@@ -10,6 +10,7 @@ namespace EtoA\Help\TicketSystem;
 class TicketMessage
 {
     public int $id;
+    public int $ticketId;
     public string $message;
     public int $timestamp;
     public ?int $userId;

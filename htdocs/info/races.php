@@ -12,7 +12,7 @@ $raceRepository = $app[RaceDataRepository::class];
 $raceNames = $raceRepository->getRaceNames();
 $url = "?$link&amp;site=$site";
 
-/** @var \Symfony\Component\BrowserKit\Request $request */
+/** @var \Symfony\Component\HttpFoundation\Request $request */
 
 if ($request->query->has('id')) {
     $raceId = $request->query->getInt('id');

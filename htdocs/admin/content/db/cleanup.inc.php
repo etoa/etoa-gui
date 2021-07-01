@@ -3,6 +3,7 @@
 use EtoA\Admin\AdminSessionManager;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
+use EtoA\Help\TicketSystem\TicketService;
 use EtoA\Message\MessageRepository;
 use EtoA\Message\MessageService;
 use EtoA\Message\ReportRepository;
@@ -32,15 +33,18 @@ $messageRepository = $app[MessageRepository::class];
 
 /** @var ReportRepository */
 $reportRepository = $app[ReportRepository::class];
+/** @var TicketService */
+$ticketService = $app[TicketService::class];
 
 echo '<h2>Clean-Up</h2>';
 
 if (isset($_POST['submit_cleanup_selected']) || isset($_POST['submit_cleanup_all'])) {
-	runCleanup($userSessionManager, $sessionManager, $ticketRepo, $pointsService, $messageService);
+	runCleanup($ticketService, $userSessionManager, $sessionManager, $ticketRepo, $pointsService, $messageService);
 }
 cleanupOverView($ticketRepo, $config, $messageRepository, $reportRepository);
 
 function runCleanup(
+    TicketService $ticketService,
     UserSessionManager $userSessionManager,
 	AdminSessionManager $sessionManager,
 	TicketRepository $ticketRepo,
@@ -177,7 +181,7 @@ function runCleanup(
 		}
 		if (isset($_POST['del_tickets'])) {
 			$ticketIds = $ticketRepo->findOrphanedIds();
-			$deletedTickets = $ticketRepo->removeByIds(...$ticketIds);
+			$deletedTickets = $ticketService->removeByIds(...$ticketIds);
 			echo $deletedTickets . " verwaiste Tickets wurden gelöscht!<br/>";
 		}
 		if (isset($_POST['del_reports'])) {

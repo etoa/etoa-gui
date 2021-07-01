@@ -159,17 +159,14 @@ class TicketRepository extends AbstractRepository
             return 0;
         }
 
-        $this->messageRepo->removeByTicketIds(...$ticketIds);
-
         $qry = $this->createQueryBuilder()
             ->delete('tickets')
             ->where('id IN(' . implode(',', array_fill(0, count($ticketIds), '?')) . ')');
         foreach ($ticketIds as $k => $id) {
             $qry->setParameter($k, $id);
         }
-        $affected = (int) $qry->execute();
 
-        return $affected;
+        return (int) $qry->execute();
     }
 
     public function findAllCategoriesAsMap()

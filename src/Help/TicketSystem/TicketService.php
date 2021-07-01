@@ -176,4 +176,15 @@ Dein Admin-Team";
 
         return "System";
     }
+
+    public function removeByIds(...$ticketIds): int
+    {
+        if (count($ticketIds) === 0) {
+            return 0;
+        }
+
+        $this->messageRepo->removeByTicketIds($ticketIds);
+
+        return $this->ticketRepo->removeByIds($ticketIds);
+    }
 }
