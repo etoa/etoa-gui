@@ -14,7 +14,7 @@ foreach ($questDefinitions as $questDefinition) {
 
 if ($sub === 'list') {
     /** @var QuestPresenter $questPresenter */
-    $questPresenter = $app['etoa.quest.presenter'];
+    $questPresenter = $app[QuestPresenter::class];
     echo '
     <table width="100%" cellpadding="3" cellspacing="1" align="center">
         <tbody>
