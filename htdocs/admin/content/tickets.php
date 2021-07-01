@@ -18,7 +18,7 @@ $ticketService = $app['etoa.help.ticket.service'];
 $ticketRepo = $app[TicketRepository::class];
 
 /** @var TicketMessageRepository */
-$ticketMessageRepo = $app['etoa.help.ticket.message.repository'];
+$ticketMessageRepo = $app[TicketMessageRepository::class];
 
 /** @var AdminUserRepository */
 $adminUserRepo = $app[AdminUserRepository::class];
