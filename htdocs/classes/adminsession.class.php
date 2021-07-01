@@ -16,7 +16,7 @@ class AdminSession extends Session
         global $app;
 
         /** @var AdminSessionManager */
-        $sessionManager = $app['etoa.admin.session.manager'];
+        $sessionManager = $app[AdminSessionManager::class];
 
         /** @var AdminUserRepository */
         $userRepository = $app[AdminUserRepository::class];
@@ -101,7 +101,7 @@ class AdminSession extends Session
         global $app;
 
         /** @var AdminSessionManager */
-        $sessionManager = $app['etoa.admin.session.manager'];
+        $sessionManager = $app[AdminSessionManager::class];
 
         /** @var AdminSessionRepository */
         $repository = $app[AdminSessionRepository::class];
@@ -159,7 +159,7 @@ class AdminSession extends Session
         global $app;
 
         /** @var AdminSessionManager */
-        $sessionManager = $app['etoa.admin.session.manager'];
+        $sessionManager = $app[AdminSessionManager::class];
 
         $sessionManager->unregisterSession(session_id());
     }

@@ -16,7 +16,7 @@ $ticketRepo = $app['etoa.help.ticket.repository'];
 $userSessionManager = $app[UserSessionManager::class];
 
 /** @var AdminSessionManager */
-$sessionManager = $app['etoa.admin.session.manager'];
+$sessionManager = $app[AdminSessionManager::class];
 
 /** @var PointsService */
 $pointsService = $app['etoa.rankings.points.service'];

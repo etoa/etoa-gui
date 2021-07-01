@@ -24,7 +24,7 @@ class AdminUserServiceProvider implements ServiceProviderInterface
         $pimple[AdminSessionRepository::class] = function (Container $pimple): AdminSessionRepository {
             return new AdminSessionRepository($pimple['db']);
         };
-        $pimple['etoa.admin.session.manager'] = function (Container $pimple): AdminSessionManager {
+        $pimple[AdminSessionManager::class] = function (Container $pimple): AdminSessionManager {
             return new AdminSessionManager(
                 $pimple[AdminSessionRepository::class],
                 $pimple[ConfigurationService::class]

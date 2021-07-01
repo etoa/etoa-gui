@@ -39,7 +39,7 @@ if ($sub == "offline") {
     $adminUserRepo = $app[AdminUserRepository::class];
 
     /** @var AdminSessionManager */
-    $sessionManager = $app['etoa.admin.session.manager'];
+    $sessionManager = $app[AdminSessionManager::class];
 
     if ($request->request->has('logshow') && $request->request->get('logshow') != "") {
         adminSessionLogForUserView($request, $s, $sessionRepository, $adminUserRepo);
