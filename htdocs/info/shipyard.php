@@ -1,6 +1,8 @@
 <?PHP
 
-	define("RANKING_SHIP_STRUCTURE",20000);
+use EtoA\Ship\ShipDataRepository;
+
+define("RANKING_SHIP_STRUCTURE",20000);
 	define("RANKING_SHIP_SHIELD",25000);
 	define("RANKING_SHIP_WEAPON",50000);
 	define("RANKING_SHIP_SPEED",5000);
@@ -46,8 +48,9 @@
 
 	echo "<h2>Raumschiffe</h2>";
 
-    /** @var \EtoA\Ship\ShipDataRepository $shipDataRepository */
-    $shipDataRepository = $app['etoa.ship.datarepository'];
+    /** @var ShipDataRepository */
+    $shipDataRepository = $app[ShipDataRepository::class];
+
     /** @var \EtoA\Ship\ShipCategoryRepository $shipCategoryRepository */
     $shipCategoryRepository = $app['etoa.ship_category.repository'];
 

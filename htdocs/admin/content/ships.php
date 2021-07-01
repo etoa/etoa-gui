@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
 
 /** @var ConfigurationService */
@@ -439,8 +440,8 @@ $shipDataRepository = $app[\EtoA\Ship\ShipDataRepository::class];
 			$_SESSION['shipqueue']['query']="";
 
 			// Schiffe laden
-            /** @var \EtoA\Ship\ShipDataRepository $shipRepository */
-            $shipRepository = $app['etoa.ship.datarepository'];
+            /** @var ShipDataRepository */
+            $shipRepository = $app[ShipDataRepository::class];
             $shipNames = $shipRepository->getShipNames(true);
 
 			// Suchmaske
@@ -471,8 +472,10 @@ $shipDataRepository = $app[\EtoA\Ship\ShipDataRepository::class];
 		$twig->addGlobal("title", "Schiffliste");
 
 			// Schiffe laden
-            /** @var \EtoA\Ship\ShipDataRepository $shipRepository */
-            $shipRepository = $app['etoa.ship.datarepository'];
+
+            /** @var ShipDataRepository */
+            $shipRepository = $app[ShipDataRepository::class];
+
             $shipNames = $shipRepository->getShipNames(true);
 
 			$tblcnt = mysql_fetch_row(dbquery("SELECT count(shiplist_id) FROM shiplist;"));

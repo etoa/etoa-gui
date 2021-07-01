@@ -47,7 +47,7 @@ foreach ($buildings as $building) {
     $shipRepository = $app[ShipRepository::class];
 
     /** @var ShipDataRepository */
-    $shipDataRepository = $app['etoa.ship.datarepository'];
+    $shipDataRepository = $app[ShipDataRepository::class];
 
     $ships = $shipDataRepository->getShipWithPowerProduction();
 

@@ -13,6 +13,7 @@ use EtoA\Quest\Progress\FunctionBuilder;
 use EtoA\Quest\Reward\DefenseRewardCollector;
 use EtoA\Quest\Reward\MissileRewardCollector;
 use EtoA\Quest\Reward\ShipRewardCollector;
+use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Universe\PlanetRepository;
 use LittleCubicleGames\Quests\Progress\ProgressFunctionBuilder;
@@ -125,7 +126,7 @@ class QuestServiceProvider extends ServiceProvider implements ControllerProvider
             return new QuestPresenter(
                 $pimple['cubicle.quests.registry'],
                 $pimple['etoa.missile.datarepository'],
-                $pimple['etoa.ship.datarepository'],
+                $pimple[ShipDataRepository::class],
                 $pimple['etoa.defense.datarepository']
             );
         };

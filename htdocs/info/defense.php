@@ -1,6 +1,9 @@
 <?PHP
 
 /** @var \EtoA\Race\RaceDataRepository $raceRepository */
+
+use EtoA\Ship\ShipDataRepository;
+
 $raceRepository = $app['etoa.race.datarepository'];
 $raceNames = $raceRepository->getRaceNames();
 /** @var \EtoA\Defense\DefenseDataRepository $defenseDataRepository */
@@ -41,8 +44,9 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0)
         echo "<tr><td class=\"tbltitle\">Max. Anzahl</td><td class=\"tbldata\">".nf($defense->maxCount)."</td></tr>";
         tableEnd();
 
-        /** @var \EtoA\Ship\ShipDataRepository $shipDataRepository */
-        $shipDataRepository = $app['etoa.ship.datarepository'];
+        /** @var ShipDataRepository */
+        $shipDataRepository = $app[ShipDataRepository::class];
+
         $ship = $shipDataRepository->getTransformedShipForDefense($defense->id);
         if ($ship !== null) {
             iBoxStart("Transformation");

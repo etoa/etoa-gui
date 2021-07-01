@@ -1,4 +1,7 @@
 <?PHP declare(strict_types=1);
+
+use EtoA\Ship\ShipDataRepository;
+
 /** @var \Symfony\Component\BrowserKit\Request $request */
 /** @var \EtoA\Race\RaceDataRepository $raceRepository */
 $raceRepository = $app['etoa.race.datarepository'];
@@ -63,8 +66,10 @@ if ($request->query->has('id')) {
 	tableEnd();
 
 	// Ships
-    /** @var \EtoA\Ship\ShipDataRepository $shipDataRepository */
-    $shipDataRepository = $app['etoa.ship.datarepository'];
+
+    /** @var ShipDataRepository */
+    $shipDataRepository = $app[ShipDataRepository::class];
+
     $ships = $shipDataRepository->getShipsByRace($raceId);
 	if (count($ships) > 0) {
 		tableStart('',500);

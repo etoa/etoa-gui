@@ -2,6 +2,7 @@
 
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Ship\ShipDataRepository;
 
 include("image.inc.php");
 
@@ -89,8 +90,9 @@ foreach ($buildings as $building) {
     $i++;
 }
 
-/** @var \EtoA\Ship\ShipDataRepository $shipRepository */
-$shipRepository = $app['etoa.ship.datarepository'];
+/** @var ShipDataRepository */
+$shipRepository = $app[ShipDataRepository::class];
+
 $ships = $shipRepository->getShipWithPowerProduction();
 
 $strx = P_LEFT;

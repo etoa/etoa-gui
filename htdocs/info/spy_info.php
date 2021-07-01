@@ -1,5 +1,8 @@
 <?PHP
-	echo "<h2>Spionagesystem</h2>";
+
+use EtoA\Ship\ShipDataRepository;
+
+echo "<h2>Spionagesystem</h2>";
 	HelpUtil::breadCrumbs(array("Spionagesystem","spy_info"));
 
 	iBoxStart("Spionage");
@@ -35,8 +38,9 @@
 	tableStart("Spionagesonden");
 	echo "<tr><td class=\"tbltitle\" >Name</td><td class=\"tbltitle\" colspan=\"2\" width=\"90%\">Beschreibung</td></tr>";
 
-	/** @var \EtoA\Ship\ShipDataRepository $shipReposistory */
-	$shipReposistory = $app['etoa.ship.datarepository'];
+	/** @var ShipDataRepository */
+	$shipReposistory = $app[ShipDataRepository::class];
+
 	$ships = $shipReposistory->getShipsWithAction('spy');
 	foreach ($ships as $ship) {
 		echo "<tr><td class=\"tbldata\">".$ship->name."</td>
