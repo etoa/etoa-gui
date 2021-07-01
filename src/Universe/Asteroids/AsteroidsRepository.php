@@ -17,7 +17,7 @@ class AsteroidsRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function find(int $id): ?array
+    public function find(int $id): ?Asteroid
     {
         $data = $this->createQueryBuilder()
             ->select('*')
@@ -29,7 +29,7 @@ class AsteroidsRepository extends AbstractRepository
             ->execute()
             ->fetchAssociative();
 
-        return $data !== false ? $data : null;
+        return $data !== false ? new Asteroid($data) : null;
     }
 
     public function add(int $id, int $resMetal, int $resCrystal, int $resPlastic): void
