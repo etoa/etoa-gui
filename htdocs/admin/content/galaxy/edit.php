@@ -362,15 +362,15 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
             echo "<form action=\"?page=$page&sub=edit&id=".$id."\" method=\"post\" id=\"editform\">";
             tableStart("<span style=\"color:".Entity::$entityColors[$entity->code]."\">Stern</span>","auto");
             echo "<tr><th>Name</th>
-            <td><input type=\"text\" name=\"name\" value=\"".$star['name']."\" size=\"20\" maxlength=\"250\" /></td>";
+            <td><input type=\"text\" name=\"name\" value=\"".$star->name."\" size=\"20\" maxlength=\"250\" /></td>";
             echo "<th>Typ</th>
             <td>
-            <img src=\"".IMAGE_PATH."/stars/star".$star['type_id']."_small.".IMAGE_EXT."\" style=\"float:left;\" />
+            <img src=\"".IMAGE_PATH."/stars/star".$star->typeId."_small.".IMAGE_EXT."\" style=\"float:left;\" />
             <select name=\"type_id\">";
             $solarTypeNames = $solarTypeRepository->getSolarTypeNames(true);
             foreach ($solarTypeNames as $solarTypeId => $solarTypeName) {
                 echo "<option value=\"".$solarTypeId."\"";
-                if ($star['type_id']==$solarTypeId) {
+                if ($star->typeId == $solarTypeId) {
                     echo " selected=\"selected\"";
                 }
                 echo ">".$solarTypeName."</option>\n";

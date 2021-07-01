@@ -194,7 +194,7 @@ if (isset($_SESSION) || $admin)
                         if ($entity->code == EntityType::STAR)
                         {
                             $star = $starRepo->find($entity->id);
-                            $starImageSrc = imagecreatefrompng(IMG_DIR."/stars/star".$star['type_id']."_small.png");
+                            $starImageSrc = imagecreatefrompng(IMG_DIR."/stars/star".$star->typeId."_small.png");
                             imagecopyresampled($im,$starImageSrc,$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,imagesx($starImageSrc),imagesy($starImageSrc));
                         }
                         elseif ($entity->code == EntityType::WORMHOLE)
