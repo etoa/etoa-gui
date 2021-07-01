@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Chat\ChatBanRepository;
+use EtoA\Chat\ChatLogRepository;
 
 class ChatPushJsonResponder extends JsonResponder
 {
@@ -233,25 +234,10 @@ class ChatPushJsonResponder extends JsonResponder
             '".$_SESSION['user_id']."',
             '".$admin."'
           );");
-          dbquery("INSERT INTO
-            chat_log
-          (
-            timestamp,
-            nick,
-            text,
-            color,
-            user_id,
-            admin
-          )
-          VALUES
-          (
-            ".time().",
-            '".$_SESSION['user_nick']."',
-            '".mysql_real_escape_string(($ct))."',
-            '".(isset($_SESSION['ccolor'])?('#'.$_SESSION['ccolor']):'')."',
-            '".$_SESSION['user_id']."',
-            '".$admin."'
-          );");
+
+          /** @var ChatLogRepository $chatLogRepository */
+          $chatLogRepository = $this->app[ChatLogRepository::class];
+          $chatLogRepository->addLog((int) $_SESSION['user_id'], $_SESSION['user_nick'], $ct, isset($_SESSION['ccolor']) ? '#'.$_SESSION['ccolor'] : '', $admin);
           $_SESSION['lastchatmsg']=$hash;
         }
         else

@@ -4,12 +4,15 @@
 	// Updates
 	//
 use EtoA\Chat\ChatBanRepository;
+use EtoA\Chat\ChatLogRepository;
 use EtoA\Chat\ChatUserRepository;
 
 /** @var ChatBanRepository $chatBanRepository */
 $chatBanRepository = $app[ChatBanRepository::class];
 /** @var ChatUserRepository $chatUserRepository */
 $chatUserRepository = $app[ChatUserRepository::class];
+/** @var ChatLogRepository $chatLogRepository */
+$chatLogRepository = $app[ChatLogRepository::class];
 
 if($sub=='log')
 	{
@@ -32,8 +35,8 @@ if($sub=='log')
 		{
 			echo "Datum ";
 		}
-		echo "<a href=\"?page=$page&amp;sub=$sub&amp;mode=".$mode."&amp;order_field=timestamp&amp;order=DESC\" title=\"Absteigend sortieren\"><img src=\"../images/s_desc.png\" alt=\"Absteigend sortieren\" border=\"0\" /></a>";
-		echo "<a href=\"?page=$page&amp;sub=$sub&amp;mode=".$mode."&amp;order_field=timestamp&amp;order=ASC\" title=\"Absteigend sortieren\"><img src=\"../images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a>";
+		echo "<a href=\"?page=$page&amp;sub=$sub&amp;order_field=timestamp&amp;order=DESC\" title=\"Absteigend sortieren\"><img src=\"../images/s_desc.png\" alt=\"Absteigend sortieren\" border=\"0\" /></a>";
+		echo "<a href=\"?page=$page&amp;sub=$sub&amp;order_field=timestamp&amp;order=ASC\" title=\"Absteigend sortieren\"><img src=\"../images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a>";
 		echo "</th>";
 
 		if (isset($_GET['order_field']) && $_GET['order_field']=="nick")
@@ -44,8 +47,8 @@ if($sub=='log')
 		{
 			echo "<th>User ";
 		}
-		echo "<a href=\"?page=$page&amp;sub=$sub&amp;mode=".$mode."&amp;order_field=nick&amp;order=DESC\" title=\"Absteigend sortieren\"><img src=\"../images/s_desc.png\" alt=\"Absteigend sortieren\" border=\"0\" /></a>";
-		echo "<a href=\"?page=$page&amp;sub=$sub&amp;mode=".$mode."&amp;order_field=nick&amp;order=ASC\" title=\"Absteigend sortieren\"><img src=\"../images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a>";
+		echo "<a href=\"?page=$page&amp;sub=$sub&amp;order_field=nick&amp;order=DESC\" title=\"Absteigend sortieren\"><img src=\"../images/s_desc.png\" alt=\"Absteigend sortieren\" border=\"0\" /></a>";
+		echo "<a href=\"?page=$page&amp;sub=$sub&amp;order_field=nick&amp;order=ASC\" title=\"Absteigend sortieren\"><img src=\"../images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a>";
 		echo "<th>Nachricht</th>";
 		echo "</tr>";
 
@@ -67,26 +70,15 @@ if($sub=='log')
 			$sort="DESC";
 		}
 
-		$res=dbquery("
-		SELECT
-				*
-		FROM
-			chat_log
-		ORDER BY
-			$order $sort
-		LIMIT 10000;");
-		if (mysql_num_rows($res)>0)
-		{
-			$cnt = 1;
-			while ($arr=mysql_fetch_array($res))
-			{
+		$logs = $chatLogRepository->getLogs($order, $sort);
+		if (count($logs) > 0) {
+		    foreach ($logs as $chatLog) {
 				echo "<tr>";
-				echo "<td>".date("d.m.Y",$arr['timestamp'])."</td>";
-				echo "<td>".date("H:i:s",$arr['timestamp'])."</td>";
-				echo "<td><a href=\"?page=user&sub=edit&id=".$arr['user_id']."\">".$arr['nick']."</a></td>";
-				echo "<td>".$arr['text']."</td>";
+				echo "<td>".date("d.m.Y",$chatLog->timestamp)."</td>";
+				echo "<td>".date("H:i:s",$chatLog->timestamp)."</td>";
+				echo "<td><a href=\"?page=user&sub=edit&id=".$chatLog->userId."\">".$chatLog->nick."</a></td>";
+				echo "<td>".$chatLog->text."</td>";
 				echo "</tr>";
-				$cnt++;
 			}
 		}
 		else
