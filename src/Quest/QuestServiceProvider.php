@@ -13,6 +13,7 @@ use EtoA\Quest\Progress\FunctionBuilder;
 use EtoA\Quest\Reward\DefenseRewardCollector;
 use EtoA\Quest\Reward\MissileRewardCollector;
 use EtoA\Quest\Reward\ShipRewardCollector;
+use EtoA\Ship\ShipRepository;
 use EtoA\Universe\PlanetRepository;
 use LittleCubicleGames\Quests\Progress\ProgressFunctionBuilder;
 use LittleCubicleGames\Quests\Progress\StateFunctionBuilder;
@@ -95,7 +96,7 @@ class QuestServiceProvider extends ServiceProvider implements ControllerProvider
         };
 
         $pimple['etoa.quest.reward.shipcollector'] = function (Container $pimple): ShipRewardCollector {
-            return new ShipRewardCollector($pimple['etoa.ship.repository'], $pimple[PlanetRepository::class]);
+            return new ShipRewardCollector($pimple[ShipRepository::class], $pimple[PlanetRepository::class]);
         };
         $pimple['etoa.quest.reward.defensecollector'] = function (Container $pimple): DefenseRewardCollector {
             return new DefenseRewardCollector($pimple[DefenseRepository::class], $pimple[PlanetRepository::class]);

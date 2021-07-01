@@ -12,7 +12,7 @@ class ShipRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app['etoa.ship.repository'];
+        $this->repository = $this->app[ShipRepository::class];
     }
 
     public function testGetNumberOfShips(): void

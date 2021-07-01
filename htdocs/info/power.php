@@ -3,6 +3,8 @@
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -41,10 +43,12 @@ foreach ($buildings as $building) {
 		</tr>";
 	}
 
-    /** @var \EtoA\Ship\ShipRepository $shipRepository */
-    $shipRepository = $app['etoa.ship.repository'];
-    /** @var \EtoA\Ship\ShipDataRepository $shipDataRepository */
+    /** @var ShipRepository */
+    $shipRepository = $app[ShipRepository::class];
+
+    /** @var ShipDataRepository */
     $shipDataRepository = $app['etoa.ship.datarepository'];
+
     $ships = $shipDataRepository->getShipWithPowerProduction();
 
 	foreach ($ships as $ship) {

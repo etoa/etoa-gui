@@ -2,6 +2,7 @@
 
 use EtoA\Building\BuildingRepository;
 use EtoA\Defense\DefenseRepository;
+use EtoA\Ship\ShipRepository;
 
 $xajax->register(XAJAX_FUNCTION,"planetSelectorByCell");
 $xajax->register(XAJAX_FUNCTION,"planetSelectorByUser");
@@ -376,8 +377,9 @@ function addShipToPlanet($form)
 
 	if ($updata[1]>0)
 	{
-        /** @var \EtoA\Ship\ShipRepository $shipRepository */
-        $shipRepository = $app['etoa.ship.repository'];
+        /** @var ShipRepository */
+        $shipRepository = $app[ShipRepository::class];
+
         $shipRepository->addShip((int) $form['ship_id'], (int) $form['shiplist_count'], (int) $updata[1], (int) $updata[0]);
   		$objResponse->script("xajax_showShipsOnPlanet('".$form['entity_id']."')");
   	}

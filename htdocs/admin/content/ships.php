@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Ship\ShipRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -16,8 +17,8 @@ $shipDataRepository = $app[\EtoA\Ship\ShipDataRepository::class];
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////
 
-    /** @var \EtoA\Ship\ShipRepository $shipRepository */
-    $shipRepository = $app['etoa.ship.repository'];
+    /** @var ShipRepository */
+    $shipRepository = $app[ShipRepository::class];
 
 	//
 	// Battlepoints
