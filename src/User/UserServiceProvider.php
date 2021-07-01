@@ -18,17 +18,13 @@ class UserServiceProvider implements ServiceProviderInterface
             return new UserSessionRepository($pimple['db']);
         };
 
-        $pimple['etoa.user.session.repository'] = function (Container $pimple): UserSessionRepository {
-            return $pimple[UserSessionRepository::class];
-        };
-
         $pimple[UserPointsRepository::class] = function (Container $pimple): UserPointsRepository {
             return new UserPointsRepository($pimple['db']);
         };
 
         $pimple['etoa.user.session.manager'] = function (Container $pimple): UserSessionManager {
             return new UserSessionManager(
-                $pimple['etoa.user.session.repository'],
+                $pimple[UserSessionRepository::class],
                 $pimple[ConfigurationService::class],
                 $pimple[UserRepository::class]
             );
