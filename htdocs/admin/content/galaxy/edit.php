@@ -3,8 +3,8 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Universe\AsteroidsRepository;
 use EtoA\Universe\EmptySpaceRepository;
-use EtoA\Universe\EntityRepository;
-use EtoA\Universe\EntityType;
+use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\NebulaRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetTypeRepository;
