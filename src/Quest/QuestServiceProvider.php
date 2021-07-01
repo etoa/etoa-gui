@@ -97,21 +97,21 @@ class QuestServiceProvider extends ServiceProvider implements ControllerProvider
             return new QuestBuilder();
         };
 
-        $pimple['etoa.quest.reward.shipcollector'] = function (Container $pimple): ShipRewardCollector {
+        $pimple[ShipRewardCollector::class] = function (Container $pimple): ShipRewardCollector {
             return new ShipRewardCollector($pimple[ShipRepository::class], $pimple[PlanetRepository::class]);
         };
-        $pimple['etoa.quest.reward.defensecollector'] = function (Container $pimple): DefenseRewardCollector {
+        $pimple[DefenseRewardCollector::class] = function (Container $pimple): DefenseRewardCollector {
             return new DefenseRewardCollector($pimple[DefenseRepository::class], $pimple[PlanetRepository::class]);
         };
-        $pimple['etoa.quest.reward.missilecollector'] = function (Container $pimple): MissileRewardCollector {
+        $pimple[MissileRewardCollector::class] = function (Container $pimple): MissileRewardCollector {
             return new MissileRewardCollector($pimple['etoa.missile.repository'], $pimple[PlanetRepository::class]);
         };
 
         $pimple['cubicle.quests.rewards.collectors'] = function (Container $pimple): array {
             return [
-                $pimple['etoa.quest.reward.shipcollector'],
-                $pimple['etoa.quest.reward.defensecollector'],
-                $pimple['etoa.quest.reward.missilecollector'],
+                $pimple[ShipRewardCollector::class],
+                $pimple[DefenseRewardCollector::class],
+                $pimple[MissileRewardCollector::class],
             ];
         };
 
