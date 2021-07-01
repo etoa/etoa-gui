@@ -8,7 +8,7 @@ use EtoA\Text\TextRepository;
 $baseUrl = $index != "" ? "?index=" . $index : "?page=" . $page;
 
 /** @var TextRepository */
-$textRepo = $app['etoa.text.repository'];
+$textRepo = $app[TextRepository::class];
 
 $contactText = $textRepo->find('contact_message');
 if ($contactText->enabled && $contactText->content) {

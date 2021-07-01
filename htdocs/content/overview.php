@@ -78,7 +78,7 @@ $config = $app[ConfigurationService::class];
 	//
 
 	/** @var TextRepository */
-    $textRepo = $app['etoa.text.repository'];
+    $textRepo = $app[TextRepository::class];
 
 	$infoText = $textRepo->find('info');
 	if ($infoText->enabled && $infoText->content)

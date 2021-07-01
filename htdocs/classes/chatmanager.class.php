@@ -91,7 +91,7 @@ class ChatManager {
         // TODO
         global $app;
         /** @var TextRepository */
-        $textRepo = $app['etoa.text.repository'];
+        $textRepo = $app[TextRepository::class];
 
         $text = $textRepo->find('chat_welcome_message');
         if ($text->enabled && $text->content)

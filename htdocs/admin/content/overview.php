@@ -63,7 +63,7 @@ if ($sub == "offline") {
     $ticketRepo = $app[TicketRepository::class];
 
     /** @var TextRepository */
-    $textRepo = $app['etoa.text.repository'];
+    $textRepo = $app[TextRepository::class];
 
     /** @var AdminRoleManager */
     $roleManager = $app[AdminRoleManager::class];

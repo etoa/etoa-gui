@@ -55,7 +55,7 @@ else
     }
 
     /** @var TextRepository */
-    $textRepo = $app['etoa.text.repository'];
+    $textRepo = $app[TextRepository::class];
 
     // SYSTEMNACHRICHT //
     $systemMessage = $textRepo->find('system_message');

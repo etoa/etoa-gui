@@ -4,7 +4,7 @@ use EtoA\Text\TextRepository;
 use Twig\Environment;
 
 /** @var TextRepository */
-$textRepo = $app['etoa.text.repository'];
+$textRepo = $app[TextRepository::class];
 
 if (isset($_GET['id'])) {
     editText($textRepo, $twig);

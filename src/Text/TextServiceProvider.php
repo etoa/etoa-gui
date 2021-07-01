@@ -11,7 +11,7 @@ class TextServiceProvider implements ServiceProviderInterface
 {
     public function register(Container $pimple): void
     {
-        $pimple['etoa.text.repository'] = function (Container $pimple): TextRepository {
+        $pimple[TextRepository::class] = function (Container $pimple): TextRepository {
             return new TextRepository($pimple['db']);
         };
     }

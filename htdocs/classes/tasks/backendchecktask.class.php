@@ -16,7 +16,7 @@ class BackendCheckTask implements IPeriodicTask
 
     function __construct(Container $app)
     {
-        $this->textRepo = $app['etoa.text.repository'];
+        $this->textRepo = $app[TextRepository::class];
         $this->runtimeDataStore = $app['etoa.runtime.datastore'];
         $this->config = $app[ConfigurationService::class];
     }

@@ -6,7 +6,7 @@ use EtoA\Universe\PlanetTypeRepository;
 use EtoA\Universe\SolarTypeRepository;
 
 /** @var TextRepository */
-$textRepo = $app['etoa.text.repository'];
+$textRepo = $app[TextRepository::class];
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
