@@ -73,7 +73,7 @@ try {
         $roleManager = $app[AdminRoleManager::class];
 
         /** @var AdminSessionRepository */
-        $sessionRepository = $app['etoa.admin.session.repository'];
+        $sessionRepository = $app[AdminSessionRepository::class];
 
         /** @var DatabaseManagerRepository */
         $databaseManager = $app[DatabaseManagerRepository::class];

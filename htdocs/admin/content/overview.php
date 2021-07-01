@@ -33,7 +33,7 @@ if ($sub == "offline") {
     changelogView($markdown, $twig);
 } elseif ($sub == "adminlog") {
     /** @var AdminSessionRepository */
-    $sessionRepository = $app['etoa.admin.session.repository'];
+    $sessionRepository = $app[AdminSessionRepository::class];
 
     /** @var AdminUserRepository */
     $adminUserRepo = $app[AdminUserRepository::class];

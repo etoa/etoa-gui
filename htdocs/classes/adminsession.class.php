@@ -104,7 +104,7 @@ class AdminSession extends Session
         $sessionManager = $app['etoa.admin.session.manager'];
 
         /** @var AdminSessionRepository */
-        $repository = $app['etoa.admin.session.repository'];
+        $repository = $app[AdminSessionRepository::class];
 
         if (isset($this->time_login)) {
             $exists = $repository->exists(
@@ -141,7 +141,7 @@ class AdminSession extends Session
         global $app;
 
         /** @var AdminSessionRepository */
-        $repository = $app['etoa.admin.session.repository'];
+        $repository = $app[AdminSessionRepository::class];
 
         $repository->removeByUserOrId(session_id(), intval($this->user_id));
         $repository->create(

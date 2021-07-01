@@ -21,12 +21,12 @@ class AdminUserServiceProvider implements ServiceProviderInterface
         $pimple[AdminNotesRepository::class] = function (Container $pimple): AdminNotesRepository {
             return new AdminNotesRepository($pimple['db']);
         };
-        $pimple['etoa.admin.session.repository'] = function (Container $pimple): AdminSessionRepository {
+        $pimple[AdminSessionRepository::class] = function (Container $pimple): AdminSessionRepository {
             return new AdminSessionRepository($pimple['db']);
         };
         $pimple['etoa.admin.session.manager'] = function (Container $pimple): AdminSessionManager {
             return new AdminSessionManager(
-                $pimple['etoa.admin.session.repository'],
+                $pimple[AdminSessionRepository::class],
                 $pimple[ConfigurationService::class]
             );
         };
