@@ -17,7 +17,7 @@ $historyRepository = $app[AllianceHistoryRepository::class];
 $buildingRepository = $app[AllianceBuildingRepository::class];
 
 /** @var AllianceTechnologyRepository */
-$technologyRepository = $app['etoa.alliance.technology.repository'];
+$technologyRepository = $app[AllianceTechnologyRepository::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();

@@ -29,7 +29,7 @@ class AllianceServiceProvider implements ServiceProviderInterface
         $pimple[AllianceBuildingRepository::class] = function (Container $pimple): AllianceBuildingRepository {
             return new AllianceBuildingRepository($pimple['db']);
         };
-        $pimple['etoa.alliance.technology.repository'] = function (Container $pimple): AllianceTechnologyRepository {
+        $pimple[AllianceTechnologyRepository::class] = function (Container $pimple): AllianceTechnologyRepository {
             return new AllianceTechnologyRepository($pimple['db']);
         };
     }
