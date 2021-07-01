@@ -19,7 +19,7 @@ $userSessionManager = $app[UserSessionManager::class];
 $sessionManager = $app[AdminSessionManager::class];
 
 /** @var PointsService */
-$pointsService = $app['etoa.rankings.points.service'];
+$pointsService = $app[PointsService::class];
 
 /** @var MessageService */
 $messageService = $app[MessageService::class];

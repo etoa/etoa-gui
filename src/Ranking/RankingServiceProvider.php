@@ -12,7 +12,7 @@ class RankingServiceProvider implements ServiceProviderInterface
 {
     public function register(Container $pimple): void
     {
-        $pimple['etoa.rankings.points.service'] = function (Container $pimple): PointsService {
+        $pimple[PointsService::class] = function (Container $pimple): PointsService {
             return new PointsService(
                 $pimple[ConfigurationService::class],
                 $pimple[UserRepository::class],

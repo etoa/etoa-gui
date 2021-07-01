@@ -12,7 +12,7 @@ class RemoveOldUserPointLogsTask implements IPeriodicTask
 
 	function __construct(Container $app)
 	{
-        $this->pointsService = $app['etoa.rankings.points.service'];
+        $this->pointsService = $app[PointsService::class];
 	}
 
 	function run()
