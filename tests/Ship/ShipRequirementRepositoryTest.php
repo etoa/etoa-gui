@@ -12,7 +12,7 @@ class ShipRequirementRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app['etoa.ship_requirement.repository'];
+        $this->repository = $this->app[ShipRequirementRepository::class];
     }
 
     public function testGetRequiredSpeedTechnologies(): void

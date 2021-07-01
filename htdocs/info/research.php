@@ -1,6 +1,8 @@
 <?PHP
 
-	$techSpeedCategory = 1;
+use EtoA\Ship\ShipRequirementRepository;
+
+$techSpeedCategory = 1;
 	echo "<h2>Technologien</h2>";
 
 	/** @var \EtoA\Technology\TechnologyDataRepository $technologyDataRepository */
@@ -35,8 +37,8 @@
 			tableEnd();
 
 			if ($technology->typeId === $techSpeedCategory) {
-			    /** @var \EtoA\Ship\ShipRequirementRepository $shipRequirementRepository */
-			    $shipRequirementRepository = $app['etoa.ship_requirement.repository'];
+			    /** @var ShipRequirementRepository */
+			    $shipRequirementRepository = $app[ShipRequirementRepository::class];
                 $requirements = $shipRequirementRepository->getShipsWithRequiredTechnology($technology->id);
 				if (count($requirements) > 0) {
 					tableStart("Folgende Schiffe verwenden diesen Antrieb");
