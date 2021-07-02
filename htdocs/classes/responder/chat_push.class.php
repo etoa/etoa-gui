@@ -1,4 +1,9 @@
 <?PHP
+
+use EtoA\Chat\ChatBanRepository;
+use EtoA\Chat\ChatLogRepository;
+use EtoA\Chat\ChatRepository;
+
 class ChatPushJsonResponder extends JsonResponder
 {
   function getRequiredParams() {
@@ -60,6 +65,8 @@ class ChatPushJsonResponder extends JsonResponder
       $words = StringUtils::splitBySpaces($ct);
       $commandMatch = array();
 
+      /** @var ChatBanRepository $chatBanRepository */
+      $chatBanRepository = $this->app[ChatBanRepository::class];
 
       // Handle command
       if (count($words) > 0 && preg_match('#^/([a-z]+)$#i', array_shift($words), $commandMatch))
@@ -113,13 +120,7 @@ class ChatPushJsonResponder extends JsonResponder
             if ($uid>0)
             {
               $text = (count($words) > 1) ? implode(' ', array_slice($words, 1)) : '';
-              dbquery('
-              INSERT INTO
-                chat_banns
-                (user_id,reason,timestamp)
-              VALUES ('.$uid.',"'.mysql_real_escape_string($text).'",'.time().')
-              ON DUPLICATE KEY UPDATE
-              timestamp='.time().',reason="'.mysql_real_escape_string($text).'"');
+              $chatBanRepository->banUser((int) $uid, $text, true);
               ChatManager::kickUser($uid, $text);
               ChatManager::sendSystemMessage($words[0].' wurde gebannt! Grund: '.$text);
             }
@@ -145,34 +146,24 @@ class ChatPushJsonResponder extends JsonResponder
           if (isset($words[0]))
           {
             $uid = User::findIdByNick($words[0]);
-            if ($uid>0)
-            {
-              dbquery('DELETE FROM
-                chat_banns
-              WHERE
-                user_id='.$uid.';');
-              if (mysql_affected_rows()>0)
-              {
-                return array(
-                  'cmd' => 'aa',
-                  'msg' => 'Unbanned '.$words[0].'!'
-                );
-              }
-              else
-              {
+            if ($uid>0) {
+                $deleted = $chatBanRepository->deleteBan((int) $uid);
+                if ($deleted > 0) {
+                    return [
+                        'cmd' => 'aa',
+                        'msg' => 'Unbanned '.$words[0].'!'
+                    ];
+                }
+
                 return array(
                   'cmd' => 'aa',
                   'msg' => 'A user with that nick is not banned!'
                 );
-              }
             }
-            else
-            {
-              return array(
+            return array(
                 'cmd' => 'aa',
                 'msg' => 'A user with this nick does not exist!'
-              );
-            }
+             );
           }
           else
           {
@@ -185,38 +176,27 @@ class ChatPushJsonResponder extends JsonResponder
 
         elseif ($command == "banlist" && $admin > 0 && $admin != 3)
         {
-          $res = dbquery('SELECT
-            user_id,reason,timestamp
-          FROM
-            chat_banns
-          ;');
-          if (mysql_num_rows($res)>0)
-          {
-            $list = array();
-            while ($arr=mysql_fetch_assoc($res))
-            {
-              $tu = new User($arr['user_id']);
-              if ($tu->isValid)
-              {
-                $list[] = array(
-                  'nick' => $tu->nick,
-                  'reason' => $arr['reason'],
-                  'date' => df($arr['timestamp'])
+            $bans = $chatBanRepository->getBans();
+            if (count($bans) > 0) {
+                $list = [];
+                foreach ($bans as $ban) {
+                    $list[] = array(
+                        'nick' => $ban->userNick,
+                        'reason' => $ban->reason,
+                        'date' => df($ban->timestamp)
+                    );
+                }
+
+                return array(
+                    'cmd' => 'bl',
+                    'list' => $list
                 );
-              }
             }
-            return array(
-              'cmd' => 'bl',
-              'list' => $list
-            );
-          }
-          else
-          {
+
             return array(
               'cmd' => 'aa',
               'msg' => 'Bannliste leer!'
             );
-          }
         }
 
         // Unknown command
@@ -236,44 +216,13 @@ class ChatPushJsonResponder extends JsonResponder
         // Woo Hoo, Md5 hashtable
         if ($ct!='' && (!isset($_SESSION['lastchatmsg']) || $_SESSION['lastchatmsg']!= $hash) )
         {
-          dbquery("INSERT INTO
-            chat
-          (
-            timestamp,
-            nick,
-            text,
-            color,
-            user_id,
-            admin
-          )
-          VALUES
-          (
-            ".time().",
-            '".$_SESSION['user_nick']."',
-            '".mysql_real_escape_string(($ct))."',
-            '".(isset($_SESSION['ccolor'])?('#'.$_SESSION['ccolor']):'')."',
-            '".$_SESSION['user_id']."',
-            '".$admin."'
-          );");
-          dbquery("INSERT INTO
-            chat_log
-          (
-            timestamp,
-            nick,
-            text,
-            color,
-            user_id,
-            admin
-          )
-          VALUES
-          (
-            ".time().",
-            '".$_SESSION['user_nick']."',
-            '".mysql_real_escape_string(($ct))."',
-            '".(isset($_SESSION['ccolor'])?('#'.$_SESSION['ccolor']):'')."',
-            '".$_SESSION['user_id']."',
-            '".$admin."'
-          );");
+            /** @var ChatRepository $chatRepository */
+            $chatRepository = $this->app[ChatRepository::class];
+            $chatRepository->addMessage((int) $_SESSION['user_id'], $_SESSION['user_nick'], $ct, isset($_SESSION['ccolor']) ? '#'.$_SESSION['ccolor'] : '', $admin);
+
+          /** @var ChatLogRepository $chatLogRepository */
+          $chatLogRepository = $this->app[ChatLogRepository::class];
+          $chatLogRepository->addLog((int) $_SESSION['user_id'], $_SESSION['user_nick'], $ct, isset($_SESSION['ccolor']) ? '#'.$_SESSION['ccolor'] : '', $admin);
           $_SESSION['lastchatmsg']=$hash;
         }
         else
@@ -292,4 +241,3 @@ class ChatPushJsonResponder extends JsonResponder
     return $data;
   }
 }
-?>

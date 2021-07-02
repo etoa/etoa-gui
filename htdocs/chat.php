@@ -1,6 +1,7 @@
 <?PHP
 /* fastchat von river */
 
+use EtoA\Chat\ChatBanRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 
 define('RELATIVE_ROOT','');
@@ -8,6 +9,8 @@ include_once __DIR__ . '/inc/bootstrap.inc.php';
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+/** @var ChatBanRepository $chatBanRepository */
+$chatBanRepository = $app[ChatBanRepository::class];
 
 $login = false;
 $chatColor = null;
@@ -15,16 +18,9 @@ $errorMessage = null;
 if (isset($_SESSION['user_id'])) {
     $login = true;
 
-    $res = dbquery("
-        SELECT * FROM
-            chat_banns
-        WHERE
-            user_id=" . $_SESSION['user_id'] . ";");
-    if (!isset($res)) {
-        $errorMessage = 'Irgend etwas lief schief. Versuche den Chat neu zu laden.';
-    } elseif (mysql_num_rows($res) > 0) {
-        $arr = mysql_fetch_assoc($res);
-        $errorMessage = 'Du wurdest vom Chat gebannt!<br/><br/><b>Grund:</b> ' . $arr['reason'];
+    $chatBan = $chatBanRepository->getUserBan((int) $_SESSION['user_id']);
+    if ($chatBan !== null) {
+        $errorMessage = 'Du wurdest vom Chat gebannt!<br/><br/><b>Grund:</b> ' . $chatBan->reason;
     } else {
         $cu = new CurrentUser($_SESSION['user_id']);
         $_SESSION['ccolor'] = $cu->properties->chatColor;
