@@ -22,4 +22,16 @@ class PlanetService
         $this->entityRepository = $entityRepository;
         $this->config = $config;
     }
+
+    /**
+     * @return array<int,string>
+     */
+    public function getUserPlanetNames(int $userId): array
+    {
+        $data = array();
+        foreach ($this->repository->getUserPlanets($userId) as $planet) {
+            $data[$planet->id] = filled($planet->name) ? $planet->name : 'Unbenannt';
+        }
+        return $data;
+    }
 }
