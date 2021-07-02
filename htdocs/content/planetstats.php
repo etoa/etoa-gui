@@ -122,8 +122,8 @@ foreach ($planets as $planet) {
 
     //Bewohner
     if ($planet->prodPeople > 0) {
-        if ($planet->people_place - $planet->people > 0) {
-            $val_time[$planet->id][5] = ceil(($planet->people_place - $planet->people) / $planet->prodPeople * 3600);
+        if ($planet->peoplePlace - $planet->people > 0) {
+            $val_time[$planet->id][5] = ceil(($planet->peoplePlace - $planet->people) / $planet->prodPeople * 3600);
         } else {
             $val_time[$planet->id][5] = 0;
         }
