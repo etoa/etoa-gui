@@ -10,17 +10,14 @@ use EtoA\Universe\Entity\EntityRepository;
 class PlanetService
 {
     private PlanetRepository $repository;
-    private EntityRepository $entityRepo;
-    private ConfigurationService $config;
+    private EntityRepository $entityRepository;
 
     public function __construct(
         PlanetRepository $repository,
-        EntityRepository $entityRepository,
-        ConfigurationService $config
+        EntityRepository $entityRepository
     ) {
         $this->repository = $repository;
         $this->entityRepository = $entityRepository;
-        $this->config = $config;
     }
 
     /**

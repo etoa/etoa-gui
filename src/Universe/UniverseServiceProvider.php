@@ -70,8 +70,7 @@ class UniverseServiceProvider implements ServiceProviderInterface
         $pimple[PlanetService::class] = function (Container $pimple): PlanetService {
             return new PlanetService(
                 $pimple[PlanetRepository::class],
-                $pimple[EntityRepository::class],
-                $pimple[ConfigurationService::class]
+                $pimple[EntityRepository::class]
             );
         };
 
