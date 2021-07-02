@@ -3,14 +3,22 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Text\TextRepository;
+use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\Universe\Star\SolarTypeRepository;
+use Symfony\Component\HttpFoundation\Request;
 
 /** @var TextRepository */
 $textRepo = $app[TextRepository::class];
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
+/** @var PlanetRepository */
+$planetRepo = $app[PlanetRepository::class];
+
+/** @var Request */
+$request = Request::createFromGlobals();
 
 $sx_num = $config->param1Int('num_of_sectors');
 $sy_num = $config->param2Int('num_of_sectors');
@@ -25,17 +33,17 @@ $mode = null;
 
 // Apply chosen itemset
 /** @var UserSession $s */
-if (isset($s->itemset_key) && isset($_POST[md5($s->itemset_key)]) && isset($_POST['itemset_id']))
+if (isset($s->itemset_key) && $request->request->has(md5($s->itemset_key)) && $request->request->has('itemset_id'))
 {
-    Usersetup::addItemSetListToPlanet($s->itemset_planet,$cu->id,$_POST['itemset_id']);
+    Usersetup::addItemSetListToPlanet($s->itemset_planet, $cu->id, $request->request->getInt('itemset_id'));
     $s->itemset_key=null;
     $s->itemset_planet=null;
     $cu->setSetupFinished();
     $mode = "finished";
 }
-elseif (isset($_POST['submit_chooseplanet']) && intval($_POST['choosenplanetid'])>0 && checker_verify() && !isset($cp))
+elseif ($request->request->has('submit_chooseplanet') && $request->request->getInt('choosenplanetid') > 0 && checker_verify() && !isset($cp))
 {
-    $tp = Planet::getById($_POST['choosenplanetid']);
+    $tp = Planet::getById($request->request->getInt('choosenplanetid'));
 
     if ($tp && $tp->habitable && $tp->userId == 0 && $tp->fields > $config->getInt('user_min_fields')) {
 
@@ -72,14 +80,23 @@ elseif (isset($_POST['submit_chooseplanet']) && intval($_POST['choosenplanetid']
         }
     }
 }
-elseif (isset($_GET['setup_sx']) && isset($_GET['setup_sy']) && $_GET['setup_sx']>0 && $_GET['setup_sy']>0 && $_GET['setup_sx']<=$sx_num && $_GET['setup_sy']<=$sy_num)
-{
-    if ($pid = PlanetManager::getFreePlanet($_GET['setup_sx'],$_GET['setup_sy'],array_key_exists('filter_p',$_GET) ? $_GET['filter_p'] : null,array_key_exists('filter_s',$_GET) ? $_GET['filter_s'] : null))
-    {
+elseif (
+    $request->query->has('setup_sx')
+    && $request->query->getInt('setup_sx') > 0
+    && $request->query->has('setup_sy')
+    && $request->query->getInt('setup_sy') > 0
+    && $request->query->getInt('setup_sx') <= $sx_num
+    && $request->query->getInt('setup_sy') <= $sy_num
+) {
+    if ($pid = $planetRepo->getRandomFreePlanetId(
+        $request->query->getInt('setup_sx'),
+        $request->query->getInt('setup_sy'),
+        $config->getInt('user_min_fields'),
+        $request->query->get('filter_p'),
+        $request->query->get('filter_s'))
+    ) {
         $mode = "checkplanet";
-    }
-    else
-    {
+    } else {
         echo "Leider konnte kein geeigneter Planet in diesem Sektor gefunden werden.<br/>
         Bitte wähle einen anderen Sektor!<br/><br/>";
         $mode = "choosesector";
@@ -90,9 +107,9 @@ elseif ($cu->raceId >0 && !isset($cp))
 {
     $mode = "choosesector";
 }
-elseif (isset($_POST['submit_setup1']) && intval($_POST['register_user_race_id'])>0 && checker_verify())
+elseif ($request->request->has('submit_setup1') && $request->request->getInt('register_user_race_id') > 0 && checker_verify())
 {
-    $cu->race = new Race($_POST['register_user_race_id']);
+    $cu->race = new Race($request->request->getInt('register_user_race_id'));
     $mode = "choosesector";
 }
 elseif ($cu->raceId==0)
@@ -165,7 +182,7 @@ elseif ($mode=="checkplanet")
     foreach ($solarTypeNames as $solarTypeId => $solarTypeName) {
         $selected = 0;
 
-        if ((array_key_exists('filter_s',$_GET) ? $_GET['filter_s'] : null) == $solarTypeId) {
+        if ($request->query->getInt('filter_s') == $solarTypeId) {
             $selected = 'selected';
         }
         echo "<option value=\"".$solarTypeId."\"";
@@ -185,7 +202,7 @@ elseif ($mode=="checkplanet")
     foreach ($planetTypeNames as $planetTypeId => $planetTypeName) {
         $selected = 0;
 
-        if ((array_key_exists('filter_p',$_GET) ? $_GET['filter_p'] : null) == $planetTypeId) {
+        if ($request->query->getInt('filter_p') == $planetTypeId) {
             $selected = 'selected';
         }
 

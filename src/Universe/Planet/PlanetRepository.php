@@ -92,6 +92,54 @@ class PlanetRepository extends AbstractRepository
         return $data !== false ? new Planet($data) : null;
     }
 
+    public function getRandomFreePlanetId(int $sx = 0, int $sy = 0, ?int $minFields = null, ?int $planetType = null, ?int $starType = null): ?int
+    {
+        $qry = $this->createQueryBuilder()
+            ->select('p.id')
+            ->from('planets', 'p')
+            ->where('p.planet_user_id = 0')
+            ->innerJoin('p', 'planet_types', 't', 'p.planet_type_id = t.type_id AND t.type_habitable = 1')
+            ->innerJoin('p', 'entities', 'e', 'p.id = e.id')
+            ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id')
+            ->orderBy('RAND()')
+            ->setMaxResults(1);
+
+        if ($sx > 0) {
+            $qry->andWhere('c.sx = :sx')
+                ->setParameter('sx', $sx);
+        }
+
+        if ($sy > 0) {
+            $qry->andWhere('c.sy = :sy')
+                ->setParameter('sy', $sy);
+        }
+
+        if ($planetType > 0) {
+            $qry->andWhere('p.planet_type_id = :planetType')
+                ->setParameter('planetType', $planetType);
+        }
+
+        if ($minFields > 0) {
+            $qry->andWhere('p.planet_fields > :minFields')
+                ->setParameter('minFields', $minFields);
+        }
+
+        if ($starType > 0) {
+            $qry->andWhere('e.cell_id = any (
+                    select cell_id FROM entities WHERE id = any (
+                        select id from stars where type_id = :starType
+                    )
+                )')
+                ->setParameter('starType', $starType);
+        }
+
+        $data = $qry
+            ->execute()
+            ->fetchOne();
+
+        return $data !== false ? (int) $data : null;
+    }
+
     public function add(
         int $id,
         int $typeId,
