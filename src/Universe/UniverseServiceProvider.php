@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace EtoA\Universe;
 
+use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseRepository;
+use EtoA\Ship\ShipRepository;
 use EtoA\Support\DatabaseManagerRepository;
 use EtoA\Universe\Asteroid\AsteroidRepository;
 use EtoA\Universe\Cell\CellRepository;
@@ -69,7 +72,10 @@ class UniverseServiceProvider implements ServiceProviderInterface
 
         $pimple[PlanetService::class] = function (Container $pimple): PlanetService {
             return new PlanetService(
-                $pimple[PlanetRepository::class]
+                $pimple[PlanetRepository::class],
+                $pimple[BuildingRepository::class],
+                $pimple[ShipRepository::class],
+                $pimple[DefenseRepository::class],
             );
         };
 

@@ -39,4 +39,19 @@ class DefenseRepository extends \EtoA\Core\AbstractRepository
             ])->execute()
             ->fetchOne();
     }
+
+    public function removeForEntity(int $entityId): void
+    {
+        $this->createQueryBuilder()
+            ->delete('def_queue')
+            ->where('queue_entity_id = :entityId')
+            ->setParameter('entityId', $entityId)
+            ->execute();
+
+        $this->createQueryBuilder()
+            ->delete('deflist')
+            ->where('deflist_entity_id = :entityId')
+            ->setParameter('entityId', $entityId)
+            ->execute();
+    }
 }

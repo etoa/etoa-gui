@@ -7,6 +7,7 @@ use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Nebula\NebulaRepository;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Planet\PlanetService;
 use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\Universe\Star\SolarTypeRepository;
 use EtoA\Universe\Star\StarRepository;
@@ -43,6 +44,9 @@ $solarTypeRepository = $app[SolarTypeRepository::class];
 
 /** @var PlanetTypeRepository */
 $planetTypeRepository = $app[PlanetTypeRepository::class];
+
+/** @var PlanetService */
+$planetService = $app[PlanetService::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();
@@ -132,8 +136,7 @@ if ($id > 0)
                 if ($request->request->get('planet_user_id') != $request->request->get('planet_user_id_old'))
                 {
                     //Planet dem neuen User übergeben (Schiffe und Verteidigung werden vom Planeten gelöscht!)
-                    $pl = Planet::getById($id);
-                    $pl->chown($request->request->getInt('planet_user_id'));
+                    $planetService->changeOwner($id, $request->request->getInt('planet_user_id'));
 
                     if ($request->request->getInt('planet_user_id') == 0)
                     {

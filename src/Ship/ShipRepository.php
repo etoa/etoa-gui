@@ -38,4 +38,19 @@ class ShipRepository extends AbstractRepository
             'shipId' => $shipId,
         ]);
     }
+
+    public function removeForEntity(int $entityId): void
+    {
+        $this->createQueryBuilder()
+            ->delete('ship_queue')
+            ->where('queue_entity_id = :entityId')
+            ->setParameter('entityId', $entityId)
+            ->execute();
+
+        $this->createQueryBuilder()
+            ->delete('shiplist')
+            ->where('shiplist_entity_id = :entityId')
+            ->setParameter('entityId', $entityId)
+            ->execute();
+    }
 }
