@@ -59,6 +59,7 @@ class Entity
             case EntityType::UNEXPLORED:
                 return 'Unerforschte Raumzelle!';
         }
+
         return 'Unbekannter Raum';
     }
 }

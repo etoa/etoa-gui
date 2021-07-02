@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace EtoA\Bookmark;
 
 use EtoA\Universe\Entity\EntityRepository;
-use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
 
 class BookmarkService
@@ -24,7 +23,7 @@ class BookmarkService
         $this->entityRepository = $entityRepository;
     }
 
-    function drawSelector(int $userId, string $formElementId, string $js = ""): string
+    public function drawSelector(int $userId, string $formElementId, string $js = ""): string
     {
         $userPlanets = $this->planetService->getUserPlanetNames($userId);
         $bookmarks = $this->repository->findForUser($userId);
