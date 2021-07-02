@@ -15,12 +15,6 @@ class PlanetManager
         $this->num = count($i);
     }
 
-    public function itemObjects()
-    {
-        $this->load();
-        return $this->itemObjects;
-    }
-
     public function prevId($currendId)
     {
         for ($x=0;$x<$this->num;$x++)
