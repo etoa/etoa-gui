@@ -492,7 +492,7 @@ if (isset($cp))
 
 			echo "<div id=\"tabDefense\" style=\"".($sub=="defense" ? '' : 'display:none;')."\">";
 			tableStart("Kampfstärke");
-			if (mysql_num_rows($res)>0)
+			if ($dl->count() >0)
 			{
 				  // Forschung laden und bonus dazu rechnen
 			  // Liest Level der Waffen-,Schild-,Panzerungs-,Regena Tech aus Datenbank (att)
