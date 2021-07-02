@@ -43,11 +43,12 @@ if (isset($s->itemset_key) && $request->request->has(md5($s->itemset_key)) && $r
 }
 elseif ($request->request->has('submit_chooseplanet') && $request->request->getInt('choosenplanetid') > 0 && checker_verify() && !isset($cp))
 {
-    $tp = Planet::getById($request->request->getInt('choosenplanetid'));
+    $planetId = $request->request->getInt('choosenplanetid');
+    $tp = Planet::getById($planetId);
 
     if ($tp && $tp->habitable && $tp->userId == 0 && $tp->fields > $config->getInt('user_min_fields')) {
 
-        $tp->reset();
+        $planetRepo->reset($planetId );
         $tp->assignToUser($cu->id,1);
         $tp->setDefaultResources();
 

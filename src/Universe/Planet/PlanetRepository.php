@@ -289,6 +289,48 @@ class PlanetRepository extends AbstractRepository
         return $affected > 0;
     }
 
+    public function reset(int $id): void
+    {
+        $this->createQueryBuilder()
+            ->update('planets')
+            ->set('planet_user_id', (string) 0)
+            ->set('planet_name', '""')
+            ->set('planet_user_main', (string) 0)
+            ->set('planet_fields_used', (string) 0)
+            ->set('planet_fields_extra', (string) 0)
+            ->set('planet_res_metal', (string) 0)
+            ->set('planet_res_crystal', (string) 0)
+            ->set('planet_res_fuel', (string) 0)
+            ->set('planet_res_plastic', (string) 0)
+            ->set('planet_res_food', (string) 0)
+            ->set('planet_use_power', (string) 0)
+            ->set('planet_last_updated', (string) 0)
+            ->set('planet_prod_metal', (string) 0)
+            ->set('planet_prod_crystal', (string) 0)
+            ->set('planet_prod_plastic', (string) 0)
+            ->set('planet_prod_fuel', (string) 0)
+            ->set('planet_prod_food', (string) 0)
+            ->set('planet_prod_power', (string) 0)
+            ->set('planet_bunker_metal', (string) 0)
+            ->set('planet_bunker_crystal', (string) 0)
+            ->set('planet_bunker_plastic', (string) 0)
+            ->set('planet_bunker_fuel', (string) 0)
+            ->set('planet_bunker_food', (string) 0)
+            ->set('planet_store_metal', (string) 0)
+            ->set('planet_store_crystal', (string) 0)
+            ->set('planet_store_plastic', (string) 0)
+            ->set('planet_store_fuel', (string) 0)
+            ->set('planet_store_food', (string) 0)
+            ->set('planet_people', (string) 1)
+            ->set('planet_people_place', (string) 0)
+            ->set('planet_desc', '""')
+            ->where('id = :id')
+            ->setParameters([
+                'id' => $id,
+            ])
+            ->execute();
+    }
+
     public function resetUserChanged(int $id): void
     {
         $this->createQueryBuilder()

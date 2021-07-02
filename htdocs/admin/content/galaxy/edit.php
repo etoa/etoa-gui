@@ -140,7 +140,7 @@ if ($id > 0)
 
                     if ($request->request->getInt('planet_user_id') == 0)
                     {
-                        $pl->reset();
+                        $planetRepo->reset($id);
                     }
 
                     //Log Schreiben

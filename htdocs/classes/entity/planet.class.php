@@ -466,48 +466,6 @@ class Planet extends Entity implements OwnableEntity
 				id=".$this->id().";");
 		}
 
-		function reset()
-		{
-			dbquery("
-				UPDATE
-					planets
-				SET
-					planet_user_id=0,
-					planet_name='',
-					planet_user_main=0,
-					planet_fields_used=0,
-					planet_fields_extra=0,
-					planet_res_metal=0,
-					planet_res_crystal=0,
-					planet_res_fuel=0,
-					planet_res_plastic=0,
-					planet_res_food=0,
-					planet_use_power=0,
-					planet_last_updated=0,
-					planet_prod_metal=0,
-					planet_prod_crystal=0,
-					planet_prod_plastic=0,
-					planet_prod_fuel=0,
-					planet_prod_food=0,
-					planet_prod_power=0,
-					planet_bunker_metal=0,
-					planet_bunker_crystal=0,
-					planet_bunker_plastic=0,
-					planet_bunker_fuel=0,
-					planet_bunker_food=0,
-					planet_store_metal=0,
-					planet_store_crystal=0,
-					planet_store_plastic=0,
-					planet_store_fuel=0,
-					planet_store_food=0,
-					planet_people=1,
-					planet_people_place=0,
-					planet_desc=''
-				WHERE
-					id='".$this->id."';
-			");
-		}
-
 		//
 		// Getters
 		//
