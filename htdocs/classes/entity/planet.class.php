@@ -831,56 +831,6 @@ class Planet extends Entity implements OwnableEntity
 		}
 
 		/**
-		* Set this planet as the users main
-		* planet and remove main flag from all other
-		* planets of this user
-		*/
-		function setMain()
-		{
-			if (!$this->isMain)
-			{
-				$this->isMain=true;
-				dbquery("
-					UPDATE
-						planets
-					SET
-						planet_user_main=0
-					WHERE
-						planet_user_id='".$this->userId."'
-				");
-				dbquery("
-					UPDATE
-						planets
-					SET
-						planet_user_main=1
-					WHERE
-						id='".$this->id."'
-				");
-				return true;
-			}
-			return false;
-		}
-
-		function unsetMain()
-		{
-			if ($this->isMain)
-			{
-				$this->isMain=false;
-				dbquery("
-					UPDATE
-						planets
-					SET
-						planet_user_main=0
-					WHERE
-						id='".$this->id."'
-				");
-				return true;
-			}
-			return false;
-		}
-
-
-		/**
 		* ۢrnimmt einen Planeten (Invasion)
 		*
 		* @param int $new_user_id User ID des 'ۢernehmers'

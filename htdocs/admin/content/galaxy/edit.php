@@ -67,18 +67,14 @@ if ($id > 0)
         {
             if ($request->request->has('save'))
             {
-                $pl = Planet::getById($id);
+                $planet = $planetRepo->find($id);
 
-                if ($request->request->has('planet_user_main'))
-                {
-                    if ($pl->setMain())
+                if ($request->request->has('planet_user_main')) {
+                    if (!$planet->mainPlanet && $planetRepo->setMain($id, $planet->userId)) {
                         success_msg("Hauptplanet gesetzt; ursprüngliche Hautpplanet-Zuordnung entfernt!");
-                }
-                else
-                {
-                    if ($pl->isMain)
-                    {
-                        $pl->unsetMain();
+                    }
+                } else {
+                    if ($planet->mainPlanet && $planetRepo->unsetMain($id)) {
                         success_msg("Hauptplanet-Zuordnung entfernt. Denke daran, einen neuen Hautplanet festzulegen!");
                     }
                 }
@@ -87,7 +83,7 @@ if ($id > 0)
                     $planetRepo->resetUserChanged($id);
                 }
 
-                $image = $pl->typeId != $request->request->getInt('planet_type_id')
+                $image = $planet->typeId != $request->request->getInt('planet_type_id')
                     ? $request->request->getInt('planet_type_id') . "_1"
                     : $request->request->get('planet_image');
 

@@ -1,35 +1,13 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
-
-//////////////////////////////////////////////////
-//		 	 ____    __           ______       			//
-//			/\  _`\ /\ \__       /\  _  \      			//
-//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
-//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
-//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
-//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
-//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
-//																					 		//
-//////////////////////////////////////////////////
-// The Andromeda-Project-Browsergame				 		//
-// Ein Massive-Multiplayer-Online-Spiel			 		//
-// Programmiert von Nicolas Perrenoud				 		//
-// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-// www.etoa.ch | mail@etoa.ch								 		//
-//////////////////////////////////////////////////
-//
-//
-
-/**
-* Shows information about the current planet
-*
-* @author MrCage <mrcage@etoa.ch>
-* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
-*/
+use EtoA\Universe\Planet\PlanetRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
+/** @var PlanetRepository */
+$planetRepo = $app[PlanetRepository::class];
 
 // BEGIN SKRIPT //
 
@@ -149,11 +127,13 @@ if (isset($cp))
 						<input type=\"button\" value=\"Zurück\" onclick=\"document.location='?page=$page'\" />";
 					}
 				}
-				else
+				else {
 					error_msg("Du kannst deinen Hauptplaneten nur ein Mal ändern!");
+                }
 			}
-			else
+			else {
 				error_msg("Dies ist bereits dein Hauptplanet!");
+            }
 		}
 
 		// Kolonie zum Hauptplaneten machen ausführen
@@ -166,18 +146,20 @@ if (isset($cp))
 				{
 					if(!$cu->changedMainPlanet())
 					{
-						if ($cp->setMain())
+						if ($planetRepo->setMain($cp->id, $cu->id))
 						{
 							$cu->setChangedMainPlanet(true);
 							$cu->addToUserLog("planets", "{nick} wählt [b]".$cp."[/b] als neuen Hauptplanet aus.", 0);
 							echo "<br><b>".$cp->name()."</b> ist nun dein Hauptplanet!<br/><br/>
 							<input type=\"button\" value=\"Zurück\" onclick=\"document.location='?page=$page'\" />";
 						}
-						else
+						else {
 							error_msg("Beim Aufheben der Kolonie trat ein Fehler auf! Bitte wende dich an einen Game-Admin!");
+                        }
 					}
-					else
+					else {
 						error_msg("Du kannst deinen Hauptplaneten nur ein Mal ändern!");
+                    }
 				}
 				else
 				{
@@ -186,8 +168,9 @@ if (isset($cp))
 					<input type=\"button\" value=\"Zurück\" onclick=\"document.location='?page=$page'\" />";
 				}
 			}
-			else
+			else {
 				error_msg("Dies ist bereits ein Hauptplanet!");
+            }
 		}
 
 		//

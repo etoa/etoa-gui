@@ -278,6 +278,49 @@ class PlanetRepository extends AbstractRepository
             ->execute();
     }
 
+    public function setMain(int $id, int $userId): bool
+    {
+        if ($userId == 0) {
+            return false;
+        }
+
+        $this->createQueryBuilder()
+            ->update('planets')
+            ->set('planet_user_main', (string) 0)
+            ->where('planet_user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+            ])
+            ->execute();
+
+        $affected = (int) $this->createQueryBuilder()
+            ->update('planets')
+            ->set('planet_user_main', (string) 1)
+            ->where('id = :id')
+            ->andWhere('planet_user_id = :userId')
+            ->setParameters([
+                'id' => $id,
+                'userId' => $userId,
+            ])
+            ->execute();
+
+        return $affected > 0;
+    }
+
+    public function unsetMain(int $id): bool
+    {
+        $affected = (int) $this->createQueryBuilder()
+            ->update('planets')
+            ->set('planet_user_main', (string) 0)
+            ->where('id = :id')
+            ->setParameters([
+                'id' => $id,
+            ])
+            ->execute();
+
+        return $affected > 0;
+    }
+
     public function remove(int $id): void
     {
         $this->createQueryBuilder()
