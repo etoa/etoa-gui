@@ -4,20 +4,14 @@ declare(strict_types=1);
 
 namespace EtoA\Universe\Planet;
 
-use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Universe\Entity\EntityRepository;
-
 class PlanetService
 {
     private PlanetRepository $repository;
-    private EntityRepository $entityRepository;
 
     public function __construct(
-        PlanetRepository $repository,
-        EntityRepository $entityRepository
+        PlanetRepository $repository
     ) {
         $this->repository = $repository;
-        $this->entityRepository = $entityRepository;
     }
 
     /**
