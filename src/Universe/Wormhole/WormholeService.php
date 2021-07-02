@@ -12,7 +12,7 @@ use EtoA\Universe\Entity\EntityType;
 class WormholeService
 {
     private WormholeRepository $repository;
-    private EntityRepository $entityRepo;
+    private EntityRepository $entityRepository;
     private EmptySpaceRepository $emptySpaceRepo;
     private ConfigurationService $config;
 
@@ -33,12 +33,13 @@ class WormholeService
         $changedBefore = time() - $this->config->getInt('wh_update');
         $numberOfWormholesToChange = $this->config->param1Int('wh_update');
 
+        /** @var int[] */
         $toBeDeleted = [];
 
         $wormholes = $this->repository->findNonPersistentInRandomOrder($changedBefore, $numberOfWormholesToChange);
         foreach ($wormholes as $wormhole) {
             if (!in_array($wormhole->id, $toBeDeleted, true)) {
-                array_push($del, $wormhole->id, $wormhole->targetId);
+                array_push($toBeDeleted, $wormhole->id, $wormhole->targetId);
             }
         }
 
@@ -47,17 +48,17 @@ class WormholeService
         }
 
         foreach ($toBeDeleted as $id) {
-            $this->entityRepo->updateCode($id, EntityType::EMPTY_SPACE);
+            $this->entityRepository->updateCode($id, EntityType::EMPTY_SPACE);
             $this->repository->remove($id);
             $this->emptySpaceRepo->add($id);
         }
 
-        $emptySpaceEntities = $this->entityRepo->findRandomByCodes([EntityType::EMPTY_SPACE], count($toBeDeleted));
+        $emptySpaceEntities = $this->entityRepository->findRandomByCodes([EntityType::EMPTY_SPACE], count($toBeDeleted));
         for ($x = 0; $x < count($emptySpaceEntities); $x += 2) {
             $space1 = $emptySpaceEntities[$x];
             $space2 = $emptySpaceEntities[$x + 1];
-            $this->entityRepo->updateCode($space1->id, EntityType::WORMHOLE);
-            $this->entityRepo->updateCode($space2->id, EntityType::WORMHOLE);
+            $this->entityRepository->updateCode($space1->id, EntityType::WORMHOLE);
+            $this->entityRepository->updateCode($space2->id, EntityType::WORMHOLE);
             $this->emptySpaceRepo->remove($space1->id);
             $this->emptySpaceRepo->remove($space2->id);
             $this->repository->add($space1->id, false, $space2->id);

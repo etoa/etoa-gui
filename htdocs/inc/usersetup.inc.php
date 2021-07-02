@@ -94,7 +94,7 @@ elseif (
         $config->getInt('user_min_fields'),
         $request->query->get('filter_p'),
         $request->query->get('filter_s'))
-    ) {
+    !== null) {
         $mode = "checkplanet";
     } else {
         echo "Leider konnte kein geeigneter Planet in diesem Sektor gefunden werden.<br/>
