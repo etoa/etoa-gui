@@ -4,6 +4,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Text\TextRepository;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Planet\PlanetService;
 use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\Universe\Star\SolarTypeRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,6 +17,9 @@ $config = $app[ConfigurationService::class];
 
 /** @var PlanetRepository */
 $planetRepo = $app[PlanetRepository::class];
+
+/** @var PlanetService */
+$planetService = $app[PlanetService::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();
@@ -48,9 +52,9 @@ elseif ($request->request->has('submit_chooseplanet') && $request->request->getI
 
     if ($tp && $tp->habitable && $tp->userId == 0 && $tp->fields > $config->getInt('user_min_fields')) {
 
-        $planetRepo->reset($planetId );
+        $planetRepo->reset($planetId);
         $tp->assignToUser($cu->id,1);
-        $tp->setDefaultResources();
+        $planetService->setDefaultResources($planetId);
 
         $cu->addToUserLog("planets","{nick} wählt [b]".$tp."[/b] als Hauptplanet aus.",0);
 

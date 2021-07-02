@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\Universe\Planet;
 
 use EtoA\Building\BuildingRepository;
+use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Ship\ShipRepository;
 
@@ -14,17 +15,20 @@ class PlanetService
     private BuildingRepository $buildingRepository;
     private ShipRepository $shipRepository;
     private DefenseRepository $defenseRepository;
+    private ConfigurationService $config;
 
     public function __construct(
         PlanetRepository $repository,
         BuildingRepository $buildingRepository,
         ShipRepository $shipRepository,
-        DefenseRepository $defenseRepository
+        DefenseRepository $defenseRepository,
+        ConfigurationService $config
     ) {
         $this->repository = $repository;
         $this->buildingRepository = $buildingRepository;
         $this->shipRepository = $shipRepository;
         $this->defenseRepository = $defenseRepository;
+        $this->config = $config;
     }
 
     /**
@@ -56,5 +60,18 @@ class PlanetService
         }
         $this->shipRepository->removeForEntity($id);
         $this->defenseRepository->removeForEntity($id);
+    }
+
+    public function setDefaultResources(int $id): void
+    {
+        $this->repository->setResources(
+            $id,
+            $this->config->getInt('user_start_metal'),
+            $this->config->getInt('user_start_crystal'),
+            $this->config->getInt('user_start_plastic'),
+            $this->config->getInt('user_start_fuel'),
+            $this->config->getInt('user_start_food'),
+            $this->config->getInt('user_start_people')
+        );
     }
 }

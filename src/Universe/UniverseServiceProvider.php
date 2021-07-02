@@ -76,6 +76,7 @@ class UniverseServiceProvider implements ServiceProviderInterface
                 $pimple[BuildingRepository::class],
                 $pimple[ShipRepository::class],
                 $pimple[DefenseRepository::class],
+                $pimple[ConfigurationService::class],
             );
         };
 

@@ -443,29 +443,6 @@ class Planet extends Entity implements OwnableEntity
 			$this->desc=$comment;
 		}
 
-		function setDefaultResources()
-		{
-            // TODO
-            global $app;
-
-            /** @var ConfigurationService */
-            $config = $app[ConfigurationService::class];
-
-			// Set default resources
-			dbquery("
-			UPDATE
-				planets
-			SET
-	      planet_res_metal='".$config->getInt('user_start_metal')."',
-	      planet_res_crystal='".$config->getInt('user_start_crystal')."',
-	      planet_res_plastic='".$config->getInt('user_start_plastic')."',
-	      planet_res_fuel='".$config->getInt('user_start_fuel')."',
-	      planet_res_food='".$config->getInt('user_start_food')."',
-	      planet_people=".$config->getInt('user_start_people')."
-			WHERE
-				id=".$this->id().";");
-		}
-
 		//
 		// Getters
 		//

@@ -234,6 +234,38 @@ class PlanetRepository extends AbstractRepository
         return $affected > 0;
     }
 
+    public function setResources(
+        int $id,
+        int $resMetal,
+        int $resCrystal,
+        int $resPlastic,
+        int $resFuel,
+        int $resFood,
+        int $people
+    ): bool {
+        $affected = (int) $this->createQueryBuilder()
+            ->update('planets')
+            ->set('planet_res_metal', ':res_metal')
+            ->set('planet_res_crystal', ':res_crystal')
+            ->set('planet_res_plastic', ':res_plastic')
+            ->set('planet_res_fuel', ':res_fuel')
+            ->set('planet_res_food', ':res_food')
+            ->set('planet_people', ':people')
+            ->where('id = :id')
+            ->setParameters([
+                'id' => $id,
+                'res_metal' => $resMetal,
+                'res_crystal' => $resCrystal,
+                'res_plastic' => $resPlastic,
+                'res_fuel' => $resFuel,
+                'res_food' => $resFood,
+                'people' => $people,
+            ])
+            ->execute();
+
+        return $affected > 0;
+    }
+
     public function addResources(
         int $id,
         int $resMetal,
