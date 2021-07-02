@@ -57,7 +57,29 @@ class WormholeRepository extends AbstractRepository
         return array_map(fn ($row) => new Wormhole($row), $data);
     }
 
-    public function add(int $id, bool $persistent): void
+    /**
+     * @return array<Wormhole>
+     */
+    public function findNonPersistentInRandomOrder(int $changedBefore, ?int $limit = null): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select("*")
+            ->from('wormholes')
+            ->where('persistent = 0')
+            ->andWhere('target_id > 0')
+            ->andWhere('changed < :changed')
+            ->orderBy('RAND()')
+            ->setMaxResults($limit)
+            ->setParameters([
+                'changed' => $changedBefore,
+            ])
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new Wormhole($row), $data);
+    }
+
+    public function add(int $id, bool $persistent, int $targetId = 0): void
     {
         $this->createQueryBuilder()
             ->insert('wormholes')
@@ -65,11 +87,13 @@ class WormholeRepository extends AbstractRepository
                 'id' => ':id',
                 'changed' => ':changed',
                 'persistent' => ':persistent',
+                'target_id' => ':targetId',
             ])
             ->setParameters([
                 'id' => $id,
                 'changed' => time(),
                 'persistent' => $persistent,
+                'targetId' => $targetId,
             ])
             ->execute();
     }

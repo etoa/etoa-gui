@@ -16,6 +16,7 @@ use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\Universe\Star\SolarTypeRepository;
 use EtoA\Universe\Star\StarRepository;
 use EtoA\Universe\Wormhole\WormholeRepository;
+use EtoA\Universe\Wormhole\WormholeService;
 use EtoA\User\UserRepository;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
@@ -54,6 +55,15 @@ class UniverseServiceProvider implements ServiceProviderInterface
 
         $pimple[EmptySpaceRepository::class] = function (Container $pimple): EmptySpaceRepository {
             return new EmptySpaceRepository($pimple['db']);
+        };
+
+        $pimple[WormholeService::class] = function (Container $pimple): WormholeService {
+            return new WormholeService(
+                $pimple[WormholeRepository::class],
+                $pimple[EntityRepository::class],
+                $pimple[EmptySpaceRepository::class],
+                $pimple[ConfigurationService::class]
+            );
         };
 
         $pimple[UniverseGenerator::class] = function (Container $pimple): UniverseGenerator {
