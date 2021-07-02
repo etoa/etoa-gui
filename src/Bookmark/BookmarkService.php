@@ -36,14 +36,14 @@ class BookmarkService
 
         foreach ($userPlanets as $id => $name) {
             $entity = $this->entityRepository->findIncludeCell($id);
-                echo "<option
+            echo "<option
                 value=\"" . $entity->id . "\"
-                data-sx=\"".$entity->sx."\"
-                data-sy=\"".$entity->sy."\"
-                data-cx=\"".$entity->cx."\"
-                data-cy=\"".$entity->cy."\"
-                data-pos=\"".$entity->pos."\"
-            >" . $entity->toString() ." (" . $name . ")</option>";
+                data-sx=\"" . $entity->sx . "\"
+                data-sy=\"" . $entity->sy . "\"
+                data-cx=\"" . $entity->cx . "\"
+                data-cy=\"" . $entity->cy . "\"
+                data-pos=\"" . $entity->pos . "\"
+            >" . $entity->toString() . " (" . $name . ")</option>";
         }
 
         echo "<option value=\"\">-----------------------------</option>";
@@ -52,11 +52,11 @@ class BookmarkService
             $entity = $this->entityRepository->findIncludeCell($bookmark->entityId);
             echo "<option
                 value=\"" . $entity->id . "\"
-                data-sx=\"".$entity->sx."\"
-                data-sy=\"".$entity->sy."\"
-                data-cx=\"".$entity->cx."\"
-                data-cy=\"".$entity->cy."\"
-                data-pos=\"".$entity->pos."\"
+                data-sx=\"" . $entity->sx . "\"
+                data-sy=\"" . $entity->sy . "\"
+                data-cx=\"" . $entity->cx . "\"
+                data-cy=\"" . $entity->cy . "\"
+                data-pos=\"" . $entity->pos . "\"
             >";
             echo $entity->toString();
             if (filled($bookmark->comment)) {
