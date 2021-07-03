@@ -5,6 +5,7 @@
  */
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Ship\ShipDataRepository;
 
 /**
  * Description of otherreport
@@ -94,6 +95,9 @@ class OtherReport extends Report
 
         /** @var ConfigurationService */
         $config = $app[ConfigurationService::class];
+        /** @var ShipDataRepository $shipRepository */
+        $shipRepository = $app[ShipDataRepository::class];
+        $shipNames = $shipRepository->getShipNames(true);
 
         ob_start();
         $ent1 = Entity::createFactoryById($this->entity1Id);
@@ -117,14 +121,13 @@ class OtherReport extends Report
                 {
                     echo '<table>';
                     $shipArr = explode(',',$this->ships);
-                    $ships = Ship::getItems();
                     foreach ($shipArr as $ship)
                     {
                         if ($ship!='')
                         {
                             $data = explode(':',$ship);
                             echo '<tr>
-                                    <td>'.$ships[$data[0] ].' </td>
+                                    <td>'.$shipNames[(int) $data[0] ].' </td>
                                     <td style="text-align:right;"> '.nf($data[1]).'</td>
                                 </tr>';
                         }
@@ -168,14 +171,14 @@ class OtherReport extends Report
                     echo '<br />Aufgrund einer Kolision mit einem Asteroiden sind einige deiner Schiffe zerst&ouml;rt worden:<br />';
                     echo '<table>';
                     $shipArr = explode(',',$this->ships);
-                    $ships = Ship::getItems();
+
                     foreach ($shipArr as $ship)
                     {
                         if ($ship!='')
                         {
                             $data = explode(':',$ship);
                             echo '<tr>
-                                    <td>'.$ships[$data[0] ].' </td>
+                                    <td>'.$shipNames[(int) $data[0] ].' </td>
                                     <td style="text-align:right;"> '.nf($data[1]).'</td>
                                 </tr>';
                         }
@@ -199,14 +202,13 @@ class OtherReport extends Report
                 {
                     echo '<table>';
                     $shipArr = explode(',',$this->ships);
-                    $ships = Ship::getItems();
                     foreach ($shipArr as $ship)
                     {
                         if ($ship!='')
                         {
                             $data = explode(':',$ship);
                             echo '<tr>
-                                    <td>'.$ships[$data[0] ].' </td>
+                                    <td>'.$shipNames[(int) $data[0] ].' </td>
                                     <td style="text-align:right;"> '.nf($data[1]).'</td>
                                 </tr>';
                         }
@@ -228,14 +230,13 @@ class OtherReport extends Report
                 {
                     echo '<table>';
                     $shipArr = explode(',',$this->ships);
-                    $ships = Ship::getItems();
                     foreach ($shipArr as $ship)
                     {
                         if ($ship!='')
                         {
                             $data = explode(':',$ship);
                             echo '<tr>
-                                    <td>'.$ships[$data[0] ].' </td>
+                                    <td>'.$shipNames[(int) $data[0] ].' </td>
                                     <td style="text-align:right;"> '.nf($data[1]).'</td>
                                 </tr>';
                         }
@@ -295,14 +296,13 @@ class OtherReport extends Report
                     echo '<br />Aufgrund starker Wasserstoffexplosionen sind einige deiner Schiffe zerst&ouml;rt worden:<br />';
                     echo '<table>';
                     $shipArr = explode(',',$this->ships);
-                    $ships = Ship::getItems();
                     foreach ($shipArr as $ship)
                     {
                         if ($ship!='')
                         {
                             $data = explode(':',$ship);
                             echo '<tr>
-                                    <td>'.$ships[$data[0] ].' </td>
+                                    <td>'.$shipNames[(int) $data[0] ].' </td>
                                     <td style="text-align:right;"> '.nf($data[1]).'</td>
                                 </tr>';
                         }
@@ -325,14 +325,13 @@ class OtherReport extends Report
                     echo '<br /><strong>SCHIFFE</strong><br />';
                     echo '<table>';
                     $shipArr = explode(',',$this->ships);
-                    $ships = Ship::getItems();
                     foreach ($shipArr as $ship)
                     {
                         if ($ship!='')
                         {
                             $data = explode(':',$ship);
                             echo '<tr>
-                                    <td>'.$ships[$data[0] ].' </td>
+                                    <td>'.$shipNames[(int) $data[0] ].' </td>
                                     <td style="text-align:right;"> '.nf($data[1]).'</td>
                                 </tr>';
                         }
@@ -376,14 +375,13 @@ class OtherReport extends Report
                     echo '<br />Einige Schiffe deiner Flotte verirrten sich in einem Interstellarer Gasnebel und konnten nicht mehr gefunden werden:<br />';
                     echo '<table>';
                     $shipArr = explode(',',$this->ships);
-                    $ships = Ship::getItems();
                     foreach ($shipArr as $ship)
                     {
                         if ($ship!='')
                         {
                             $data = explode(':',$ship);
                             echo '<tr>
-                                    <td>'.$ships[$data[0] ].' </td>
+                                    <td>'.$shipNames[(int) $data[0] ].' </td>
                                     <td style="text-align:right;"> '.nf($data[1]).'</td>
                                 </tr>';
                         }

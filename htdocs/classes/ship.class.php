@@ -166,27 +166,6 @@
 		{
 			return max(0,floor(1 + ((log($xp)-log($base_xp))/log($factor))));
 		}
-
-		static function getItems()
-		{
-			$res = dbquery("
-			SELECT
-				*
-			FROM
-				ships
-			ORDER BY
-				ship_order
-			;");
-			$rtn=array();
-			while($arr = mysql_fetch_assoc($res))
-			{
-				$rtn[$arr['ship_id']] = new Ship($arr);
-			}
-			return $rtn;
-		}
-
-
-
 	}
 
 ?>

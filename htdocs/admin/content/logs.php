@@ -2,6 +2,7 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
+use EtoA\Ship\ShipDataRepository;
 use Twig\Environment;
 
 // TODO
@@ -720,6 +721,8 @@ function checkFights()
 
 function newGamelogs()
 {
+    global $app;
+
     echo "<h2>Spiellogs</h2>";
 
     ?>
@@ -765,9 +768,11 @@ function newGamelogs()
                     break;
                 case '3':
                     <?PHP
-                    foreach (Ship::getItems() as $k => $v)
+                    /** @var ShipDataRepository $shipRepository */
+                    $shipRepository = $app[ShipDataRepository::class];
+                    foreach ($shipRepository->getShipNames(true) as $shipId => $shipName)
                     {
-                        echo "elem.options[elem.options.length] = new Option('$v',$k);";
+                        echo "elem.options[elem.options.length] = new Option('$shipName',$shipId);";
                     }
                     ?>
                     break;

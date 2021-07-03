@@ -5,6 +5,7 @@
  */
 
 use EtoA\Defense\DefenseDataRepository;
+use EtoA\Ship\ShipDataRepository;
 
 /**
  * Description of spyreport
@@ -154,16 +155,19 @@ class SpyReport extends Report
 						echo '<i>Nichts vorhanden!</i><br />';
 					else
 					{
+                        /** @var ShipDataRepository $shipRepository */
+                        $shipRepository = $app[ShipDataRepository::class];
+                        $shipNames = $shipRepository->getShipNames(true);
+
 						echo '<table>';
 						$shipArr = explode(',',$this->ships);
-						$ships = Ship::getItems();
 						foreach ($shipArr as $ship)
 						{
 							if ($ship!='')
 							{
 								$data = explode(':',$ship);
 								echo '<tr>
-										<td>'.$ships[$data[0] ].' </td>
+										<td>'.$shipNames[(int) $data[0] ].' </td>
 										<td style="text-align:right;"> '.nf($data[1]).'</td>
 									</tr>';
 							}
@@ -189,7 +193,7 @@ class SpyReport extends Report
 							{
 								$data = explode(':',$defense);
 								echo '<tr>
-										<td>'.$defenseNames[$data[0] ].' </td>
+										<td>'.$defenseNames[(int) $data[0] ].' </td>
 										<td style="text-align:right;"> '.nf($data[1]).'</td>
 									</tr>';
 							}
