@@ -263,12 +263,12 @@ function crap(Request $request, AllianceRepository $repository)
 			echo "Fehlerhafte Daten gelöscht.";
 		}
 	} elseif ($request->query->has('action') && $request->query->get('action') == "cleanupEmptyAlliances") {
-		$alliances = $repository->findAll();
+		$alliances = $repository->findAllWithoutUsers();
         $cnt = 0;
 		if (count($alliances) > 0) {
 			foreach ($alliances as $alliance) {
-				if ($repository->countUsers($alliance['alliance_id']) == 0) {
-					if ($repository->remove($alliance['alliance_id'])) {
+				if ($repository->countUsers((int) $alliance['alliance_id']) == 0) {
+					if ($repository->remove((int) $alliance['alliance_id'])) {
 						$cnt++;
 					}
 				}

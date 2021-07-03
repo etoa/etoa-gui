@@ -62,11 +62,11 @@ class ChatManager {
     static function getWelcomeMessage($nick) {
         // TODO
         global $app;
-        /** @var TextRepository */
+        /** @var TextRepository $textRepo */
         $textRepo = $app[TextRepository::class];
 
         $text = $textRepo->find('chat_welcome_message');
-        if ($text->enabled && $text->content)
+        if ($text->isEnabled())
         {
             return str_replace(
                 array('%nick%'),

@@ -15,6 +15,9 @@ class RecycleDefense implements EventHandlerFunctionInterface
         return $task->getProgress() + $event->getCount();
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getEventMap(): array
     {
         return [DefenseRecycle::RECYCLE_SUCCESS => 'handle'];

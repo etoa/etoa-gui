@@ -177,7 +177,10 @@ Dein Admin-Team";
         return "System";
     }
 
-    public function removeByIds(...$ticketIds): int
+    /**
+     * @param int[] $ticketIds
+     */
+    public function removeByIds(array $ticketIds): int
     {
         if (count($ticketIds) === 0) {
             return 0;

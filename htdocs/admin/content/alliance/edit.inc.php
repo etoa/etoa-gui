@@ -84,7 +84,7 @@ function saveMembers(Request $request, AllianceRepository $repository, Environme
 	}
 	if (count($request->request->get('member_rank')) > 0) {
 		foreach ($request->request->get('member_rank') as $userId => $rankId) {
-			$repository->assignRankToUser($rankId, $userId);
+			$repository->assignRankToUser((int) $rankId, (int) $userId);
 		}
 	}
 	// Ränge speichern
@@ -304,6 +304,9 @@ function infoTab(\EtoA\Alliance\Alliance $alliance, array $members): void
 	echo "<p><input type=\"submit\" name=\"info_save\" value=\"Übernehmen\" /></p>";
 }
 
+/**
+ * @param \EtoA\Alliance\AllianceRank[] $ranks
+ */
 function membersTab(array $members, array $ranks): void
 {
 	tableStart();
@@ -324,11 +327,11 @@ function membersTab(array $members, array $ranks): void
 				<td>" . nf($member['user_points']) . " Punkte</td>
 				<td><select name=\"member_rank[" . $member['user_id'] . "]\"><option value=\"0\">-</option>";
 			foreach ($ranks as $rank) {
-				echo "<option value=\"" . $rank['rank_id'] . "\"";
-				if ($member['user_alliance_rank_id'] == $rank['rank_id']) {
+				echo "<option value=\"" . $rank->id . "\"";
+				if ($member['user_alliance_rank_id'] == $rank->id) {
 					echo " selected=\"selected\"";
 				}
-				echo ">" . $rank['rank_name'] . "</option>";
+				echo ">" . $rank->name . "</option>";
 			}
 			echo "</select></td>";
 			echo "<td><input type=\"checkbox\" name=\"member_kick[" . $member['user_id'] . "]\" value=\"1\" /></td></tr>";
@@ -343,17 +346,17 @@ function membersTab(array $members, array $ranks): void
 		echo "<table class=\"tb\">";
 		echo "<tr><th>Name</th><th>Level</th><th>Löschen</th></tr>";
 		foreach ($ranks as $rank) {
-			echo "<tr><td><input type=\"text\" size=\"35\" name=\"rank_name[" . $rank['rank_id'] . "]\" value=\"" . $rank['rank_name'] . "\" /></td>";
-			echo "<td><select name=\"rank_level[" . $rank['rank_id'] . "]\">";
+			echo "<tr><td><input type=\"text\" size=\"35\" name=\"rank_name[" . $rank->id . "]\" value=\"" . $rank->name . "\" /></td>";
+			echo "<td><select name=\"rank_level[" . $rank->id . "]\">";
 			for ($x = 0; $x <= 9; $x++) {
 				echo "<option value=\"$x\"";
-				if ($rank['rank_level'] == $x) {
+				if ($rank->level == $x) {
 					echo " selected=\"selected\"";
 				}
 				echo ">$x</option>";
 			}
 			echo "</select></td>";
-			echo "<td><input type=\"checkbox\" name=\"rank_del[" . $rank['rank_id'] . "]\" value=\"1\" /></td></tr>";
+			echo "<td><input type=\"checkbox\" name=\"rank_del[" . $rank->id . "]\" value=\"1\" /></td></tr>";
 		}
 		echo "</table>";
 	} else
@@ -524,7 +527,7 @@ function buildingsTab(AllianceRepository $repository, AllianceBuildingRepository
 	if (count($buildings) > 0) {
 		echo '<select name="alliance_building_id">';
 		foreach ($buildings as $building) {
-			echo "<option value=\"" . $building['alliance_building_id'] . "\">" . $building['alliance_building_name'] . "</option>";
+			echo "<option value=\"" . $building->id . "\">" . $building->name . "</option>";
 		}
 		echo "</select>";
 	}
@@ -574,7 +577,7 @@ function technologiesTab(AllianceRepository $repository, AllianceTechnologyRepos
 	if (count($technologies) > 0) {
 		echo '<select name="alliance_tech_id">';
 		foreach ($technologies as $technology) {
-			echo "<option value=\"" . $technology['alliance_tech_id'] . "\">" . $technology['alliance_tech_name'] . "</option>";
+			echo "<option value=\"" . $technology->id . "\">" . $technology->name . "</option>";
 		}
 		echo "</select>";
 	}

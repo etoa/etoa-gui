@@ -15,6 +15,9 @@ class Quest implements QuestInterface
     /** @var Task[] */
     private array $tasks;
 
+    /**
+     * @param Task[] $tasks
+     */
     public function __construct(?int $id, int $questId, int $userId, string $slotId, string $state, array $tasks)
     {
         $this->id = $id;
@@ -66,6 +69,9 @@ class Quest implements QuestInterface
         return $this->slotId;
     }
 
+    /**
+     * @return array<int, int>
+     */
     public function getProgressMap(): array
     {
         $map = [];

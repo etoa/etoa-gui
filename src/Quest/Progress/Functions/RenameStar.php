@@ -15,6 +15,9 @@ class RenameStar implements EventHandlerFunctionInterface
         return $task->getProgress() + 1;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getEventMap(): array
     {
         return [StarRename::RENAME_SUCCESS => 'handle'];

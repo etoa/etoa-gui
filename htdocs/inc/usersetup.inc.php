@@ -12,7 +12,7 @@ use EtoA\Universe\Star\SolarTypeRepository;
 use EtoA\Universe\Star\StarRepository;
 use Symfony\Component\HttpFoundation\Request;
 
-/** @var TextRepository */
+/** @var TextRepository $textRepo */
 $textRepo = $app[TextRepository::class];
 
 /** @var ConfigurationService */
@@ -386,7 +386,7 @@ elseif ($mode=="finished")
     echo "<h2>Einrichtung abgeschlossen</h2>";
 
     $welcomeText = $textRepo->find('welcome_message');
-    if ($welcomeText->enabled && $welcomeText->content)
+    if ($welcomeText->isEnabled())
     {
         iBoxStart("Willkommen");
         echo text2html($welcomeText->content);

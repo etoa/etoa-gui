@@ -33,6 +33,11 @@ class ConfigurationService
         $this->ensureLoaded(true);
     }
 
+    /**
+     * @param int|bool|string|float $value
+     * @param int|bool|string|float $param1
+     * @param int|bool|string|float $param2
+     */
     public function set(string $name, $value, $param1 = "", $param2 = ""): void
     {
         $this->ensureLoaded();
@@ -57,13 +62,17 @@ class ConfigurationService
         return $this->_items;
     }
 
+    /**
+     * @return int|bool|string|float
+     */
     public function get(string $key)
     {
         $this->ensureLoaded();
         if (isset($this->_items[$key])) {
             return $this->_items[$key]->value;
         }
-        if ($elem = $this->definitions->getItem($key)) {
+        $elem = $this->definitions->getItem($key);
+        if ($elem !== null) {
             return $elem->value;
         }
 
@@ -85,13 +94,17 @@ class ConfigurationService
         return (bool) $this->get($key);
     }
 
+    /**
+     * @return int|bool|string|float
+     */
     public function param1(string $key)
     {
         $this->ensureLoaded();
         if (isset($this->_items[$key])) {
             return $this->_items[$key]->param1;
         }
-        if ($elem = $this->definitions->getItem($key)) {
+        $elem = $this->definitions->getItem($key);
+        if ($elem !== null) {
             return $elem->param1;
         }
 
@@ -113,13 +126,17 @@ class ConfigurationService
         return (bool) $this->param1($key);
     }
 
+    /**
+     * @return int|bool|string|float
+     */
     public function param2(string $key)
     {
         $this->ensureLoaded();
         if (isset($this->_items[$key])) {
             return $this->_items[$key]->param2;
         }
-        if ($elem = $this->definitions->getItem($key)) {
+        $elem = $this->definitions->getItem($key);
+        if ($elem !== null) {
             return $elem->param2;
         }
 

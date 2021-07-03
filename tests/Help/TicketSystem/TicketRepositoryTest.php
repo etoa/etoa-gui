@@ -177,7 +177,7 @@ class TicketRepositoryTest extends AbstractDbTestCase
         $this->assertNotNull($this->repository->find($ticketId));
 
         // when
-        $result = $this->repository->removeByIds($ticketId);
+        $result = $this->repository->removeByIds([$ticketId]);
 
         // then
         $this->assertEquals(1, $result);

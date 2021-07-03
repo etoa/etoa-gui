@@ -36,7 +36,7 @@ parameters:
 			path: htdocs/admin/content/logs.php
 
 		-
-			message: "#^Undefined variable: \\$res$#"
+			message: "#^Undefined variable\\: \\$res$#"
 			count: 3
 			path: htdocs/admin/content/logs.php
 
@@ -124,6 +124,11 @@ parameters:
 			message: "#^Variable \\$x might not be defined\\.$#"
 			count: 1
 			path: htdocs/classes/planetmanager.class.php
+
+		-
+			message: "#^Method Report\\:\\:find\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: htdocs/classes/report.class.php
 
 		-
 			message: "#^Method Session\\:\\:getInstance\\(\\) should return static\\(Session\\) but returns Session\\.$#"
@@ -316,8 +321,18 @@ parameters:
 			path: htdocs/inc/bootstrap.inc.php
 
 		-
+			message: "#^Construct empty\\(\\) is not allowed\\. Use more strict comparison\\.$#"
+			count: 1
+			path: htdocs/inc/functions.inc.php
+
+		-
 			message: "#^Dynamic call to static method XMLReader\\:\\:open\\(\\)\\.$#"
 			count: 2
+			path: htdocs/inc/functions.inc.php
+
+		-
+			message: "#^Function collect\\(\\) return type with generic class Doctrine\\\\Common\\\\Collections\\\\ArrayCollection does not specify its types\\: TKey, T$#"
+			count: 1
 			path: htdocs/inc/functions.inc.php
 
 		-
@@ -328,11 +343,6 @@ parameters:
 		-
 			message: "#^Variable variables are not allowed\\.$#"
 			count: 2
-			path: htdocs/inc/functions.inc.php
-
-		-
-			message: "#^Construct empty\\(\\) is not allowed. Use more strict comparison\\.$#"
-			count: 1
 			path: htdocs/inc/functions.inc.php
 
 		-
@@ -384,4 +394,24 @@ parameters:
 			message: "#^Variable \\$x might not be defined\\.$#"
 			count: 1
 			path: htdocs/misc/stats.image.php
+
+		-
+			message: "#^Method EtoA\\\\Alliance\\\\AllianceRepository\\:\\:findBuildings\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Alliance/AllianceRepository.php
+
+		-
+			message: "#^Method EtoA\\\\Alliance\\\\AllianceRepository\\:\\:findTechnologies\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Alliance/AllianceRepository.php
+
+		-
+			message: "#^Method EtoA\\\\Building\\\\BuildingRepository\\:\\:fetchBuildingListEntry\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Building/BuildingRepository.php
+
+		-
+			message: "#^Method EtoA\\\\Building\\\\BuildingRepository\\:\\:findByFormData\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Building/BuildingRepository.php
 

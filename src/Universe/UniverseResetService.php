@@ -35,7 +35,7 @@ class UniverseResetService
      * Resets the universe and all user data
      * The Anti-Big-Bang
      */
-    public function reset($all = true): void
+    public function reset(bool $all = true): void
     {
         $mtx = new Mutex();
         $mtx->acquire();

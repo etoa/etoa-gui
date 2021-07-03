@@ -29,6 +29,9 @@ class ContainerAwareFunctionBuilder implements ProgressFunctionBuilderInterface
         $this->container = $container;
     }
 
+    /**
+     * @param array<mixed> $attributes
+     */
     public function build(string $taskName, array $attributes): ?HandlerFunctionInterface
     {
         switch ($taskName) {

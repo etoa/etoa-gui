@@ -15,6 +15,9 @@ class BuyMissile implements EventHandlerFunctionInterface
         return $task->getProgress() + $event->getCount();
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getEventMap(): array
     {
         return [MissileBuy::BUY_SUCCESS => 'handle'];

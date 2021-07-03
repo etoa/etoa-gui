@@ -6,6 +6,7 @@ namespace EtoA\Admin;
 
 class AdminRoleManager
 {
+    /** @var array<string, string> */
     private static $roles;
 
     public function __construct()
@@ -16,7 +17,7 @@ class AdminRoleManager
         }
     }
 
-    public function getRoleName($name): string
+    public function getRoleName(string $name): string
     {
         return self::$roles[$name];
     }
@@ -39,11 +40,18 @@ class AdminRoleManager
         return self::$roles;
     }
 
+    /**
+     * @param string|string[] $rolesToCheck
+     */
     public function checkAllowed(AdminUser $user, $rolesToCheck): bool
     {
         return $this->checkAllowedRoles($user->roles, $rolesToCheck);
     }
 
+    /**
+     * @param string[] $userRoles
+     * @param string|string[] $rolesToCheck
+     */
     public function checkAllowedRoles(array $userRoles, $rolesToCheck): bool
     {
         if (!is_array($rolesToCheck)) {

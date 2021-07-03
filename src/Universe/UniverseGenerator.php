@@ -180,6 +180,9 @@ class UniverseGenerator
         return $output;
     }
 
+    /**
+     * @return array<int, array<int, string>>
+     */
     private function getTypeMatrixFromImage(string $imagePath, int $mapPrecision): array
     {
         $type = [];
@@ -221,6 +224,9 @@ class UniverseGenerator
         return $type;
     }
 
+    /**
+     * @return array<int, array<int, string>>
+     */
     private function getRandomTypeMatrix(int $numberOfSectorsX, int $numberOfSectorsY, int $numberOfCellsX, int $numberOfCellsY): array
     {
         $type = [];
@@ -250,6 +256,9 @@ class UniverseGenerator
         return $type;
     }
 
+    /**
+     * @return array<array<string, int>>
+     */
     private function generateCoordinates(int $numberOfSectorsX, int $numberOfSectorsY, int $numberOfCellsX, int $numberOfCellsY): array
     {
         $coordinates = [];
@@ -301,7 +310,7 @@ class UniverseGenerator
         }
     }
 
-    private function createPlanet(int $cellId, int $pos, $np): void
+    private function createPlanet(int $cellId, int $pos, int $np): void
     {
         $planet_fields_min = $this->config->param1Int('planet_fields');
         $planet_fields_max = $this->config->param2Int('planet_fields');
@@ -430,7 +439,7 @@ class UniverseGenerator
      * Replaces n asteroid/empty space cells
      * with new star systems
      */
-    public function addStarSystems($quantity = 0): int
+    public function addStarSystems(int $quantity = 0): int
     {
         $entities = $this->entityRepo->findRandomByCodes([
             EntityType::EMPTY_SPACE,

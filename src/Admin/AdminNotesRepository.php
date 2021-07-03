@@ -19,9 +19,12 @@ class AdminNotesRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    /**
+     * @return AdminNote[]
+     */
     public function findAllForAdmin(int $adminId): array
     {
-        return $this->createQueryBuilder()
+        $data = $this->createQueryBuilder()
             ->select("*")
             ->from('admin_notes')
             ->where('admin_id = :adminId')
@@ -29,9 +32,11 @@ class AdminNotesRepository extends AbstractRepository
             ->orderBy('date', 'DESC')
             ->execute()
             ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new AdminNote($row), $data);
     }
 
-    public function findForAdmin(int $id, int $adminId): ?array
+    public function findForAdmin(int $id, int $adminId): ?AdminNote
     {
         $data = $this->createQueryBuilder()
             ->select("*")
@@ -45,7 +50,7 @@ class AdminNotesRepository extends AbstractRepository
             ->execute()
             ->fetchAssociative();
 
-        return $data ? $data : null;
+        return $data !== false ? new AdminNote($data) : null;
     }
 
     public function create(string $titel, string $text, int $adminId): int

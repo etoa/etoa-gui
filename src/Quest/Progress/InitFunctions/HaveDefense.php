@@ -14,6 +14,9 @@ class HaveDefense implements InitProgressHandlerFunctionInterface
     private DefenseRepository $defenseRepository;
     private int $defenseId;
 
+    /**
+     * @param array<string, int> $attributes
+     */
     public function __construct(array $attributes, DefenseRepository $defenseRepository)
     {
         $this->defenseRepository = $defenseRepository;

@@ -7,8 +7,7 @@ use LittleCubicleGames\Quests\Entity\TaskInterface;
 
 class LaunchMissileTest extends AbstractProgressFunctionTestCase
 {
-    /** @var LaunchMissile */
-    private $progressFunction;
+    private LaunchMissile $progressFunction;
 
     protected function setUp(): void
     {
@@ -17,6 +16,7 @@ class LaunchMissileTest extends AbstractProgressFunctionTestCase
 
     /**
      * @dataProvider providerHandle
+     * @param array<int, int> $missiles
      */
     public function testHandle(int $currentProgress, array $missiles, int $expectedProgress): void
     {

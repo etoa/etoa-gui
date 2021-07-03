@@ -15,6 +15,9 @@ class HireSpecialist implements EventHandlerFunctionInterface
         return $task->getProgress() + 1;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getEventMap(): array
     {
         return [SpecialistHire::HIRE_SUCCESS => 'handle'];

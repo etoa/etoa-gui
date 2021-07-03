@@ -43,6 +43,9 @@ class QuestPresenter
         $this->defenseDataRepository = $defenseDataRepository;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function present(QuestInterface $quest, Slot $slot = null): array
     {
         /** @var \LittleCubicleGames\Quests\Definition\Quest\Quest $questDefinition */
@@ -64,6 +67,11 @@ class QuestPresenter
         ];
     }
 
+    /**
+     * @param array<int, int> $progressMap
+     * @param array{operator: string, children: array, value: int, id: int} $taskData
+     * @return array<mixed>
+     */
     private function buildProgress(array $progressMap, array $taskData): array
     {
         switch ($taskData['operator']) {
@@ -95,6 +103,10 @@ class QuestPresenter
         }
     }
 
+    /**
+     * @param array{rewards: array} $data
+     * @return string[]
+     */
     public function buildRewards(array $data): array
     {
         if (!isset($data['rewards'])) {

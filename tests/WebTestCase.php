@@ -12,10 +12,8 @@ abstract class WebTestCase extends TestCase
 {
     use DbTestTrait;
 
-    /** @var Connection */
-    protected $connection;
-    /** @var Application */
-    protected $app;
+    protected Connection $connection;
+    protected Application $app;
 
     protected function setUp(): void
     {
@@ -40,6 +38,9 @@ abstract class WebTestCase extends TestCase
         return $app;
     }
 
+    /**
+     * @param array<string, mixed> $server
+     */
     public function createClient(array $server = []): Client
     {
         if (!class_exists('Symfony\Component\BrowserKit\Client')) {

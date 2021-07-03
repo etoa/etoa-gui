@@ -15,6 +15,9 @@ class DischargeSpecialist implements EventHandlerFunctionInterface
         return $task->getProgress() + 1;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getEventMap(): array
     {
         return [SpecialistDischarge::DISCHARGE_SUCCESS => 'handle'];

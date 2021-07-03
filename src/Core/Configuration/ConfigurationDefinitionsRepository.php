@@ -9,7 +9,7 @@ use SimpleXMLElement;
 
 class ConfigurationDefinitionsRepository
 {
-    private $xmlData;
+    private ?SimpleXMLElement $xmlData = null;
 
     const DEFAULTS_FILE_PATH = __DIR__ . '/../../../htdocs/config/defaults.xml';
 
@@ -29,11 +29,11 @@ class ConfigurationDefinitionsRepository
         }
     }
 
-    public function getItem($key)
+    public function getItem(string $key): ?ConfigItem
     {
         $this->ensureXmlDefinitionsLoaded();
         $arr = $this->xmlData->xpath("/config/items/item[@name='" . $key . "']");
-        if ($arr != null && count($arr) > 0) {
+        if ($arr !== false && count($arr) > 0) {
             $itemDefinition = $arr[0];
 
             return new ConfigItem(
@@ -43,7 +43,7 @@ class ConfigurationDefinitionsRepository
             );
         }
 
-        return false;
+        return null;
     }
 
     /**
@@ -60,13 +60,19 @@ class ConfigurationDefinitionsRepository
         return $c;
     }
 
-    public function itemInCategory($cat): array
+    /**
+     * @return \SimpleXMLElement[]
+     */
+    public function itemInCategory(int $cat): array
     {
         $this->ensureXmlDefinitionsLoaded();
 
         return $this->xmlData->xpath("/config/items/item[@cat='" . $cat . "']");
     }
 
+    /**
+     * @return \SimpleXMLElement[]
+     */
     public function getBaseItems(): array
     {
         $this->ensureXmlDefinitionsLoaded();

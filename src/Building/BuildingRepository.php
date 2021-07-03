@@ -60,6 +60,9 @@ class BuildingRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function buildingNames(): array
     {
         return $this->createQueryBuilder()
@@ -158,9 +161,12 @@ class BuildingRepository extends AbstractRepository
         return (int) $affected > 0;
     }
 
+    /**
+     * @return BuildingPoint[]
+     */
     public function fetchPointsForBuilding(int $buildingId): array
     {
-        return $this->createQueryBuilder()
+        $data = $this->createQueryBuilder()
             ->select('bp_level', 'bp_points')
             ->from('building_points')
             ->where('bp_building_id = :buildingId')
@@ -168,8 +174,13 @@ class BuildingRepository extends AbstractRepository
             ->setParameter('buildingId', $buildingId)
             ->execute()
             ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new BuildingPoint($row), $data);
     }
 
+    /**
+     * @param array<string, mixed> $formData
+     */
     public function findByFormData(array $formData): array
     {
         $qry = $this->createQueryBuilder()

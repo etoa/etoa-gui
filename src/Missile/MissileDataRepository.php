@@ -18,6 +18,9 @@ class MissileDataRepository extends AbstractRepository
         $this->cache = $cache;
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function getMissileNames(bool $showAll = false): array
     {
         $qb = $this->createQueryBuilder()

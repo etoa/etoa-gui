@@ -151,7 +151,7 @@ function buildingPoints(Request $request, BuildingRepository $repository)
                     if ($cnt == 0) {
                         echo "<tr>";
                     }
-                    echo "<th>" . $parr['bp_level'] . "</th><td>" . $parr['bp_points'] . "</td>";
+                    echo "<th>" . $parr->level . "</th><td>" . $parr->points . "</td>";
                     if ($cnt == "3") {
                         echo "</tr>";
                         $cnt = 0;

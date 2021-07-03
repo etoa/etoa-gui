@@ -15,6 +15,9 @@ class RecycleShip implements EventHandlerFunctionInterface
         return $task->getProgress() + $event->getCount();
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getEventMap(): array
     {
         return [ShipRecycle::RECYCLE_SUCCESS => 'handle'];

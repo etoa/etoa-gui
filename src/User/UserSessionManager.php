@@ -33,7 +33,7 @@ class UserSessionManager
         if ($userSession != null) {
             $this->repository->addSessionLog($userSession, $logoutPressed ? time() : 0);
             $this->repository->remove($sessionId);
-            $this->userRepository->setLogoutTime((int) $userSession['user_id']);
+            $this->userRepository->setLogoutTime($userSession->userId);
         }
         if ($logoutPressed) {
             session_regenerate_id(true);
@@ -45,7 +45,7 @@ class UserSessionManager
     {
         $sessions = $this->repository->findByTimeout($this->config->getInt('user_timeout'));
         foreach ($sessions as $session) {
-            $this->unregisterSession($session['id'], false);
+            $this->unregisterSession($session->id, false);
         }
     }
 

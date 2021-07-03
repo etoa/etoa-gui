@@ -17,6 +17,9 @@ class CellRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    /**
+     * @return array{x: int, y: int}
+     */
     public function getSectorDimensions(): array
     {
         $data = $this->createQueryBuilder()
@@ -35,6 +38,9 @@ class CellRepository extends AbstractRepository
             ];
     }
 
+    /**
+     * @return array{x: int, y: int}
+     */
     public function getCellDimensions(): array
     {
         $data = $this->createQueryBuilder()

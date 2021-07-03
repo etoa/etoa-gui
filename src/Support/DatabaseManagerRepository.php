@@ -27,6 +27,9 @@ class DatabaseManagerRepository extends AbstractRepository
         return $this->getConnection()->getDatabasePlatform()->getName();
     }
 
+    /**
+     * @param string[] $tables
+     */
     public function truncateTables(array $tables): void
     {
         $this->getConnection()

@@ -17,16 +17,6 @@ class AllianceRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function findAll(): array
-    {
-        return $this->createQueryBuilder()
-            ->select("*")
-            ->from('alliances')
-            ->orderBy('alliance_tag')
-            ->execute()
-            ->fetchAllAssociative();
-    }
-
     /**
      * @return array<int, string>
      */
@@ -73,6 +63,10 @@ class AllianceRepository extends AbstractRepository
         return $data !== false ? new Alliance($data) : null;
     }
 
+    /**
+     * @param array<string, int|string|bool> $formData
+     * @return array<array{alliance_id: string, alliance_name: string, alliance_tag:string, alliance_foundation_date:string, alliance_founder_id: string, cnt:string}>
+     */
     public function findByFormData(array $formData): array
     {
         $qry = $this->createQueryBuilder()
@@ -219,6 +213,9 @@ class AllianceRepository extends AbstractRepository
         return (int) $affected > 0;
     }
 
+    /**
+     * @return array<array{alliance_id: string, alliance_tag: string, alliance_name: string, alliance_img: string}>
+     */
     public function findAllWithUncheckedPictures(): array
     {
         return $this->createQueryBuilder()
@@ -235,6 +232,9 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
+    /**
+     * @return array<array{alliance_id: string, alliance_tag: string, alliance_name: string, alliance_img: string}>
+     */
     public function findAllWithPictures(): array
     {
         return $this->createQueryBuilder()
@@ -250,9 +250,12 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
+    /**
+     * @return AllianceRank[]
+     */
     public function findRanks(int $allianceId): array
     {
-        return $this->createQueryBuilder()
+        $data = $this->createQueryBuilder()
             ->select(
                 'rank_id',
                 'rank_level',
@@ -264,6 +267,8 @@ class AllianceRepository extends AbstractRepository
             ->setParameter('allianceId', $allianceId)
             ->execute()
             ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new AllianceRank($row), $data);
     }
 
     public function updateRank(int $id, string $name, int $level): void
@@ -297,6 +302,9 @@ class AllianceRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    /**
+     * @return array<array{alliance_bnd_id: string, a1id: string, a2id: string, a1name:string, a2name: string, lvl: string, name: string, date: string}>
+     */
     public function findDiplomacies(int $allianceId): array
     {
         return $this->createQueryBuilder()
@@ -376,6 +384,9 @@ class AllianceRepository extends AbstractRepository
             );
     }
 
+    /**
+     * @return array<array{alliance_id: string, alliance_name: string, alliance_tag: string}>
+     */
     public function findAllWithoutFounder(): array
     {
         return $this->getConnection()
@@ -394,6 +405,9 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
+    /**
+     * @return array<array{alliance_id: string, alliance_name: string, alliance_tag: string}>
+     */
     public function findAllWithoutUsers(): array
     {
         return $this->getConnection()
@@ -480,6 +494,9 @@ class AllianceRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    /**
+     * @return array<array{user_id: string, user_nick: string, user_points: string, user_alliance_rank_id: string}>
+     */
     public function findUsers(int $allianceId): array
     {
         return $this->createQueryBuilder()
@@ -498,7 +515,7 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    public function assignRankToUser($rankId, $userId): void
+    public function assignRankToUser(int $rankId, int $userId): void
     {
         $this->createQueryBuilder()
             ->update('users')
@@ -537,6 +554,9 @@ class AllianceRepository extends AbstractRepository
             ->execute();
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function listSoloUsers(): array
     {
         return $this->createQueryBuilder()
@@ -548,6 +568,9 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllKeyValue();
     }
 
+    /**
+     * @return array<array{user_id: string, user_nick: string, user_email: string}>
+     */
     public function findAllSoloUsers(): array
     {
         return $this->getConnection()
