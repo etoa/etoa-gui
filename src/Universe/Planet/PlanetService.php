@@ -8,6 +8,7 @@ use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Ship\ShipRepository;
+use Log;
 
 class PlanetService
 {
@@ -86,5 +87,19 @@ class PlanetService
         }
 
         return IMAGE_PATH . "/planets/planet" . $planet->image . "_small." . IMAGE_EXT;
+    }
+
+    public function reset(int $id): void
+    {
+        if ($id == 0) {
+            return;
+        }
+
+        $this->repository->reset($id);
+        $this->shipRepository->removeForEntity($id);
+        $this->defenseRepository->removeForEntity($id);
+        $this->buildingRepository->removeForEntity($id);
+
+        Log::add(6, Log::INFO, "Der Planet mit der ID " . $id . " wurde zurückgesetzt!");
     }
 }

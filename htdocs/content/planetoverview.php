@@ -4,10 +4,14 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Planet\PlanetService;
 use Symfony\Component\HttpFoundation\Request;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
+/** @var PlanetService */
+$planetService = $app[PlanetService::class];
 
 /** @var PlanetRepository */
 $planetRepo = $app[PlanetRepository::class];
@@ -72,21 +76,17 @@ if (isset($cp))
                     {
                         if ($cu->id == $planet->userId)
                         {
-                            if (reset_planet($planet->id))
-                            {
-                                $mainPlanetId = $planetRepo->getUserMainId($cu->id);
+                            $planetService->reset($planet->id);
 
-                                echo "<br>Die Kolonie wurde aufgehoben!<br>";
-                                echo "<a href=\"?page=overview&planet_id=".$mainPlanetId."\">Zur Übersicht</a>";
+                            $mainPlanetId = $planetRepo->getUserMainId($cu->id);
 
-                                $planet = null;
-                            }
-                            else {
-                                error_msg("Beim Aufheben der Kolonie trat ein Fehler auf! Bitte wende dich an einen Game-Admin!");
-                            }
+                            echo "<br>Die Kolonie wurde aufgehoben!<br>";
+                            echo "<a href=\"?page=overview&planet_id=".$mainPlanetId."\">Zur Übersicht</a>";
+
+                            $planet = null;
                         }
                         else {
-                            error_msg("Der Planet ist aktuell nicht ausgewählt, er gehört nicht dir oder er ist ein Hauptplanet!");
+                            error_msg("Der Planet ist aktuell nicht ausgewählt oder er gehört nicht dir!");
                         }
                     }
                     else {
