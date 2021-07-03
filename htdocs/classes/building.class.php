@@ -207,28 +207,6 @@
 		// Statics
 		//
 
-		static function getItems($type=0,$show=1)
-		{
-			$res = dbquery("
-			SELECT
-				*
-			FROM
-				buildings
-			WHERE
-				1
-				".($show==1 ? " AND building_show=1" : "")."
-				".($type>0 ? " AND building_type_id=".$type."" : "")."
-			ORDER BY
-				building_order
-			;");
-			$rtn=array();
-			while($arr = mysql_fetch_assoc($res))
-			{
-				$rtn[$arr['building_id']] = new Building($arr);
-			}
-			return $rtn;
-		}
-
 		static function getBuildTypes()
 		{
 			return [

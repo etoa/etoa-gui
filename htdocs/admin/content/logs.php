@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Building\BuildingDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Ship\ShipDataRepository;
@@ -753,9 +754,11 @@ function newGamelogs()
             {
                 case '1':
                     <?PHP
-                    foreach (Building::getItems() as $k => $v)
+                    /** @var BuildingDataRepository $buildingRepository */
+                    $buildingRepository = $app[BuildingDataRepository::class];
+                    foreach ($buildingRepository->getBuildingNames(true) as $buildingId => $buildingName)
                     {
-                        echo "elem.options[elem.options.length] = new Option('$v',$k);";
+                        echo "elem.options[elem.options.length] = new Option('$buildingName',$buildingId);";
                     }
                     ?>
                     break;

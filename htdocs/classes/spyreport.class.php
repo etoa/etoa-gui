@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 
+use EtoA\Building\BuildingDataRepository;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Technology\TechnologyDataRepository;
@@ -110,14 +111,16 @@ class SpyReport extends Report
 					{
 						echo '<table>';
 						$buildArr = explode(',',$this->buildings);
-						$buildings = Building::getItems();
+						/** @var BuildingDataRepository $buildingRepository */
+						$buildingRepository = $app[BuildingDataRepository::class];
+						$buildingNames = $buildingRepository->getBuildingNames(true);
 						foreach ($buildArr as $building)
 						{
 							if ($building!='')
 							{
 								$data = explode(':',$building);
 								echo '<tr>
-										<td>'.$buildings[$data[0] ].' </td>
+										<td>'.$buildingNames[(int) $data[0] ].' </td>
 										<td style="text-align:right;"> '.$data[1].'</td>
 									</tr>';
 							}
