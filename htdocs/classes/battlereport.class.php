@@ -1,6 +1,7 @@
 <?php
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseDataRepository;
 
 /**
  * Description of battlereport
@@ -349,14 +350,16 @@ class BattleReport extends Report
                                 {
                                     echo '<table>';
                                     $defArr = explode(',',$this->entityDef);
-                                    $def = Defense::getItems();
+                                    /** @var DefenseDataRepository $defenseRepository */
+                                    $defenseRepository = $app[DefenseDataRepository::class];
+                                    $defenseNames = $defenseRepository->getDefenseNames(true);
                                     foreach ($defArr as $defense)
                                     {
                                         if ($defense!='')
                                         {
                                             $data = explode(':',$defense);
                                             echo '<tr>
-                                                    <td>'.$def[$data[0] ].' </td>
+                                                    <td>'.$defenseNames[$data[0] ].' </td>
                                                     <td style="text-align:right;"> '.nf($data[1]).'</td>
                                                 </tr>';
                                         }
@@ -557,14 +560,16 @@ class BattleReport extends Report
                                 {
                                     echo '<table>';
                                     $defArr = explode(',',$this->entityDefEnd);
-                                    $def = Defense::getItems();
+                                    /** @var DefenseDataRepository $defenseRepository */
+                                    $defenseRepository = $app[DefenseDataRepository::class];
+                                    $defenseNames = $defenseRepository->getDefenseNames(true);
                                     foreach ($defArr as $defense)
                                     {
                                         if ($defense!='')
                                         {
                                             $data = explode(':',$defense);
                                             echo '<tr>
-                                                    <td>'.$def[$data[0] ].' </td>';
+                                                    <td>'.$defenseNames[$data[0] ].' </td>';
                                                     if ($data[2]>0)
                                                     {
                                                         echo '<td style="text-align:right;"> '.nf($data[1]).'</td>';

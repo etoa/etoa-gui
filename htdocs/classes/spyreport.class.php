@@ -4,6 +4,8 @@
  * and open the template in the editor.
  */
 
+use EtoA\Defense\DefenseDataRepository;
+
 /**
  * Description of spyreport
  *
@@ -84,7 +86,7 @@ class SpyReport extends Report
 
 	function __toString()
 	{
-		global $resNames;
+		global $resNames, $app;
 
 		ob_start();
 		$ent1 = Entity::createFactoryById($this->entity1Id);
@@ -178,14 +180,16 @@ class SpyReport extends Report
 					{
 						echo '<table>';
 						$defArr = explode(',',$this->def);
-						$def = Defense::getItems();
+						/** @var DefenseDataRepository $defenseRepository */
+						$defenseRepository = $app[DefenseDataRepository::class];
+						$defenseNames = $defenseRepository->getDefenseNames(true);
 						foreach ($defArr as $defense)
 						{
 							if ($defense!='')
 							{
 								$data = explode(':',$defense);
 								echo '<tr>
-										<td>'.$def[$data[0] ].' </td>
+										<td>'.$defenseNames[$data[0] ].' </td>
 										<td style="text-align:right;"> '.nf($data[1]).'</td>
 									</tr>';
 							}

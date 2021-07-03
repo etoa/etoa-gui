@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseDataRepository;
 use Twig\Environment;
 
 // TODO
@@ -772,9 +773,11 @@ function newGamelogs()
                     break;
                 case '4':
                     <?PHP
-                    foreach (Defense::getItems() as $k => $v)
+                    /** @var DefenseDataRepository $defenseRepository */
+                    $defenseRepository = $app[DefenseDataRepository::class];
+                    foreach ($defenseRepository->getDefenseNames(true) as $defenseId => $defenseName)
                     {
-                        echo "elem.options[elem.options.length] = new Option('$v',$k);";
+                        echo "elem.options[elem.options.length] = new Option('$defenseId',$defenseName);";
                     }
                     ?>
                     break;
