@@ -20,16 +20,20 @@
 
 use EtoA\Specialist\SpecialistDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserRepository;
 
 $t = time();
 
 	/** @var SpecialistDataRepository */
 	$speciaistRepository = $app[SpecialistDataRepository::class];
 
+	/** @var UserRepository $userRepository */
+	$userRepository = $app[UserRepository::class];
+
     /** @var ConfigurationService */
     $config = $app[ConfigurationService::class];
 
-	$uCnt = User::count();
+	$uCnt = $userRepository->count();
 	$totAvail = ceil($uCnt*$config->getFloat('specialistconfig'));
 
 	echo '<h1>Spezialisten</h1>';

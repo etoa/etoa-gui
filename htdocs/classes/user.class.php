@@ -1390,16 +1390,6 @@ die Spielleitung";
         throw new Exception("Ein unbekannter Fehler trat auf! ".mysql_error());
     }
 
-    /**
-    * Returns the total number of users
-    */
-    static public function count()
-    {
-        $ures = dbquery("SELECT COUNT(user_id) FROM ".self::tableName.";");
-        $uarr = mysql_fetch_row($ures);
-        return $uarr[0];
-    }
-
     public function detailLink()
     {
         return "<a href=\"?page=userinfo&amp;id=".$this->id."\">".$this->__toString()."</a>";
