@@ -432,7 +432,6 @@ function error_msg($text,$type=0,$exit=0,$addition=0,$stacktrace=null)
     }
 }
 
-
 /**
 * Prozentwert generieren und zurückgeben
 *

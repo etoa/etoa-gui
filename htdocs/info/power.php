@@ -5,6 +5,7 @@ use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Universe\Planet\Planet;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -54,8 +55,8 @@ foreach ($buildings as $building) {
 	foreach ($ships as $ship) {
 	    $sum = $shipRepository->getNumberOfShips($ship->id);
 
-    $tpb1 = Planet::getSolarPowerBonus($config->param1Int('planet_temp'),$config->param1Int('planet_temp')+$config->getInt('planet_temp'));
-    $tpb2 = Planet::getSolarPowerBonus($config->param2Int('planet_temp')-$config->getInt('planet_temp'),$config->param2Int('planet_temp'));
+    $tpb1 = Planet::getSolarPowerBonus($config->param1Int('planet_temp'), $config->param1Int('planet_temp') + $config->getInt('planet_temp'));
+    $tpb2 = Planet::getSolarPowerBonus($config->param2Int('planet_temp') - $config->getInt('planet_temp'), $config->param2Int('planet_temp'));
 
     echo "<tr>
     <td>".$ship->name."</td>

@@ -368,50 +368,6 @@ class Planet extends Entity implements OwnableEntity
 		    $this->resFood+=$fo;
 		}
 
-		/**
-		* Calculate bonus power production based on temperature
-		*/
-		function solarPowerBonus()
-		{
-			$v = floor(($this->temp_from + $this->temp_to)/4);
-			if ($v <= -100)
-			{
-				$v = -99;
-			}
-			return $v;
-		}
-
-		/**
-		* Calculate bonus power production based on temperature
-		*/
-		function fuelProductionBonus()
-		{
-			$v = floor(($this->temp_from + $this->temp_to)/25);
-			return -$v;
-		}
-
-		/**
-		* Calculate bonus power production based on temperature
-		*/
-		static function getSolarPowerBonus($t_min,$t_max)
-		{
-			$v = floor(($t_max + $t_min)/4);
-			if ($v <= -100)
-			{
-				$v = -99;
-			}
-			return $v;
-		}
-
-		/**
-		* Calculate bonus power production based on temperature
-		*/
-		function getFuelProductionBonus()
-		{
-			$v = floor(($this->temp_from + $this->temp_to)/25);
-			return $v/100;
-		}
-
 		//
 		// Getters
 		//

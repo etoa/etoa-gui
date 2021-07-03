@@ -86,29 +86,17 @@ if ($id>0)
                     echo "<tr>
                         <th width=\"100\">Temperatur:</th>
                         <td>".$planet->tempFrom."&deg;C bis ".$planet->tempTo."&deg;C <br/><br/>";
-                        echo "<img src=\"images/heat_small.png\" alt=\"Heat\" style=\"width:16px;float:left;\" />
+                    echo "<img src=\"images/heat_small.png\" alt=\"Heat\" style=\"width:16px;float:left;\" />
                         Wärmebonus: ".helpLink("tempbonus")."<br/> ";
-                        $spw = $ent->solarPowerBonus();
-                        if ($spw>=0)
-                        {
-                            echo "<span style=\"color:#0f0\">+".$spw."</span>";
-                        }
-                        else
-                        {
-                            echo "<span style=\"color:#f00\">".$spw."</span>";
-                        }
-                        echo " Energie pro Solarsatellit <br style=\"clear:both;\"/><br/>
+                    $solarProdBonus = $planet->solarPowerBonus();
+                    $color = $solarProdBonus>=0 ? '#0f0' : '#f00';
+                    echo "<span style=\"color:".$color."\">".($solarProdBonus > 0 ? '+' : '').$solarProdBonus."</span>";
+                    echo " Energie pro Solarsatellit <br style=\"clear:both;\"/><br/>
                         <img src=\"images/ice_small.png\" alt=\"Cold\" style=\"width:16px;float:left;\" />
                         Kältebonus: ".helpLink("tempbonus")."<br/> ";
-                        $spw = $ent->fuelProductionBonus();
-                        if ($spw>=0)
-                        {
-                            echo "<span style=\"color:#0f0\">+".$spw."%</span>";
-                        }
-                        else
-                        {
-                            echo "<span style=\"color:#f00\">".$spw."%</span>";
-                        }
+                    $fuelProdBonus = $planet->fuelProductionBonus();
+                    $color = $fuelProdBonus >= 0 ? '#0f0' : '#f00';
+                    echo "<span style=\"color:".$color."\">".($fuelProdBonus > 0 ? '+' : '').$fuelProdBonus."%</span>";
                     echo " ".RES_FUEL."-Produktion </td></tr>";
 
                     if (filled($planet->description)) {

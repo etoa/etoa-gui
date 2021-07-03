@@ -1,37 +1,18 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
-
-//////////////////////////////////////////////////
-//		 	 ____    __           ______       			//
-//			/\  _`\ /\ \__       /\  _  \      			//
-//			\ \ \L\_\ \ ,_\   ___\ \ \L\ \     			//
-//			 \ \  _\L\ \ \/  / __`\ \  __ \    			//
-//			  \ \ \L\ \ \ \_/\ \L\ \ \ \/\ \   			//
-//	  		 \ \____/\ \__\ \____/\ \_\ \_\  			//
-//			    \/___/  \/__/\/___/  \/_/\/_/  	 		//
-//																					 		//
-//////////////////////////////////////////////////
-// The Andromeda-Project-Browsergame				 		//
-// Ein Massive-Multiplayer-Online-Spiel			 		//
-// Programmiert von Nicolas Perrenoud				 		//
-// als Maturaarbeit '04 am Gymnasium Oberaargau	//
-// www.etoa.ch | mail@etoa.ch								 		//
-//////////////////////////////////////////////////
-//
-//
+use EtoA\Universe\Planet\PlanetRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
 
-/**
- * Displays economy information
- *
- * @author MrCage <mrcage@etoa.ch>
- * @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
- */
+/** @var PlanetRepository */
+$planetRepo = $app[PlanetRepository::class];
 
 if ($cp) {
+
+    $planet = $planetRepo->find($cp->id);
+
     //
     // Poduktionsrate umstellen
     //
@@ -42,15 +23,15 @@ if ($cp) {
                 if ($val > 1) $val = 1;
                 if ($val < 0) $val = 0;
                 dbquery("
-					UPDATE
-						buildlist
-					SET
-						buildlist_prod_percent=$val
-					WHERE
-						buildlist_user_id=" . $cu->id . "
-						AND buildlist_entity_id=" . $cp->id . "
-						AND buildlist_building_id='" . intval($id) . "'
-					;");
+                    UPDATE
+                        buildlist
+                    SET
+                        buildlist_prod_percent=$val
+                    WHERE
+                        buildlist_user_id=" . $cu->id . "
+                        AND buildlist_entity_id=" . $cp->id . "
+                        AND buildlist_building_id='" . intval($id) . "'
+                    ;");
             }
             success_msg("Änderungen gespeichert!");
 
@@ -85,40 +66,40 @@ if ($cp) {
     $powerUsed = 0;
     echo "<form action=\"?page=$page\" method=\"post\">";
     $bres = dbquery("
-		SELECT
-			b.building_id,
-			b.building_name,
-			b.building_type_id,
-			b.building_prod_metal,
-			b.building_prod_crystal,
-			b.building_prod_plastic,
-			b.building_prod_fuel,
-			b.building_prod_food,
-			b.building_power_use,
-			b.building_production_factor,
-			l.buildlist_current_level,
-			l.buildlist_prod_percent
-		FROM
-		buildings AS b
-		INNER JOIN
-    	buildlist AS l
-			ON	b.building_id=l.buildlist_building_id
-	    AND l.buildlist_user_id=" . $cu->id . "
-	    AND l.buildlist_entity_id=" . $cp->id() . "
-	    AND l.buildlist_current_level>0
-	    AND (b.building_prod_metal>0
-	        OR b.building_prod_crystal>0
-	        OR b.building_prod_plastic>0
-	        OR b.building_prod_fuel>0
-	        OR b.building_prod_food>0
-	        OR b.building_power_use>0)
-		ORDER BY
-			b.building_type_id,
-			b.building_order;");
+        SELECT
+            b.building_id,
+            b.building_name,
+            b.building_type_id,
+            b.building_prod_metal,
+            b.building_prod_crystal,
+            b.building_prod_plastic,
+            b.building_prod_fuel,
+            b.building_prod_food,
+            b.building_power_use,
+            b.building_production_factor,
+            l.buildlist_current_level,
+            l.buildlist_prod_percent
+        FROM
+        buildings AS b
+        INNER JOIN
+        buildlist AS l
+            ON	b.building_id=l.buildlist_building_id
+        AND l.buildlist_user_id=" . $cu->id . "
+        AND l.buildlist_entity_id=" . $cp->id() . "
+        AND l.buildlist_current_level>0
+        AND (b.building_prod_metal>0
+            OR b.building_prod_crystal>0
+            OR b.building_prod_plastic>0
+            OR b.building_prod_fuel>0
+            OR b.building_prod_food>0
+            OR b.building_power_use>0)
+        ORDER BY
+            b.building_type_id,
+            b.building_order;");
     if (mysql_num_rows($bres) > 0) {
         tableStart("Rohstoffproduktion und Energieverbrauch");
         echo "<tr>
-						<th style=\"width:200px;\">Geb&auml;ude</th>";
+                        <th style=\"width:200px;\">Geb&auml;ude</th>";
         echo "<th class=\"resmetalcolor\">" . RES_METAL . "</th>";
         echo "<th class=\"rescrystalcolor\">" . RES_CRYSTAL . "</th>";
         echo "<th class=\"resplasticcolor\">" . RES_PLASTIC . "</th>";
@@ -146,8 +127,8 @@ if ($cp) {
             if ($barr['buildlist_current_level'] > 0) {
                 // Errechnen der Produktion pro Gebäude
                 echo "<tr>
-					<td>
-						" . $barr['building_name'] . " (" . $barr['buildlist_current_level'] . ")";
+                    <td>
+                        " . $barr['building_name'] . " (" . $barr['buildlist_current_level'] . ")";
                 if ($barr['buildlist_prod_percent'] == 0) {
                     echo "<br/><span style=\"color:red;font-size:8pt;\">Produktion ausgeschaltet!</span>";
                 }
@@ -179,7 +160,7 @@ if ($cp) {
                     $prodIncludingBoni['plastic'] += $bareBuildingProduction['plastic'] * $boni;
                 }
                 if ($bareBuildingProduction['fuel'] != "") {
-                    $boni = $cp->typeFuel - 1 + $cu->race->fuel - 1 + $cp->starFuel - 1 + $cu->specialist->prodFuel - 1  + $cp->getFuelProductionBonus() * -1;
+                    $boni = $cp->typeFuel - 1 + $cu->race->fuel - 1 + $cp->starFuel - 1 + $cu->specialist->prodFuel - 1  + $planet->getFuelProductionBonusFactor() * -1;
                     $prodIncludingBoni['fuel'] += $bareBuildingProduction['fuel'] * $boni;
                 }
                 if ($bareBuildingProduction['food'] != "") {
@@ -199,7 +180,7 @@ if ($cp) {
 
                 //KälteBonusString
                 $fuelBonus = "Kältebonus: ";
-                $spw = $cp->fuelProductionBonus();
+                $spw = $planet->fuelProductionBonus();
                 if ($spw >= 0) {
                     $fuelBonus .= "<span style=\"color:#0f0\">+" . $spw . "%</span>";
                 } else {
@@ -296,8 +277,8 @@ if ($cp) {
         }
         echo "<td style=\"color:#f00\">" . nf($pwrcnt) . "</td>";
         echo "<td rowspan=\"3\" style=\"color:#f00;vertical-align:middle;\">
-				<input type=\"submit\" name=\"submitpercent\" class=\"button\" style=\"font-size:8pt;\" value=\"Speichern\" />
-			</td>";
+                <input type=\"submit\" name=\"submitpercent\" class=\"button\" style=\"font-size:8pt;\" value=\"Speichern\" />
+            </td>";
         echo "</tr>";
 
         echo "<tr><th>TOTAL pro Tag</th>";
@@ -342,10 +323,10 @@ if ($cp) {
     echo "</form>";
 
     echo "<div>
-		<input type=\"button\" onclick=\"document.location='?page=specialists'\" value=\"Spezialisten\" /> &nbsp; ";
+        <input type=\"button\" onclick=\"document.location='?page=specialists'\" value=\"Spezialisten\" /> &nbsp; ";
     echo "<input type=\"button\" onclick=\"document.location='?page=planetstats'\" value=\"Ressourcen aller Planeten anzeigen\" /> &nbsp;
-		<input type=\"button\" onclick=\"document.location='?page=economy&action=update'\" value=\"Neu Berechnen\" />
-		</div>";
+        <input type=\"button\" onclick=\"document.location='?page=economy&action=update'\" value=\"Neu Berechnen\" />
+        </div>";
 
     //
     // Resource Bunker
@@ -354,7 +335,7 @@ if ($cp) {
     if ($blvl > 0) {
         iBoxStart("Rohstoffbunker");
         echo "In deinem <b>" . $bl->item(RES_BUNKER_ID) . "</b> der Stufe <b>$blvl</b> werden bei einem
-			Angriff <b>" . nf($bl->getBunkerRes()) . "</b> Resourcen gesichert!";
+            Angriff <b>" . nf($bl->getBunkerRes()) . "</b> Resourcen gesichert!";
         iBoxEnd();
     }
 
@@ -364,7 +345,7 @@ if ($cp) {
     //
     tableStart("Energieproduktion");
     echo "<tr><th style=\"width:230px;\">Gebäude</th>
-		<th colspan=\"3\">" . RES_ICON_POWER . "Energie</th></tr>";
+        <th colspan=\"3\">" . RES_ICON_POWER . "Energie</th></tr>";
 
     // Energy technology bonus
     $energyTechPowerBonusFactor = 1;
@@ -384,16 +365,16 @@ if ($cp) {
 
     // Power produced by buildings
     $pres = dbquery("
-		SELECT
-			b.building_id,
-			b.building_name,
-			b.building_type_id,
-			b.building_prod_power,
-			b.building_power_use,
-			b.building_production_factor,
-			l.buildlist_current_level,
-			l.buildlist_prod_percent
-		FROM
+        SELECT
+            b.building_id,
+            b.building_name,
+            b.building_type_id,
+            b.building_prod_power,
+            b.building_power_use,
+            b.building_production_factor,
+            l.buildlist_current_level,
+            l.buildlist_prod_percent
+        FROM
       buildings AS b
       INNER JOIN
       buildlist AS l
@@ -402,9 +383,9 @@ if ($cp) {
       AND l.buildlist_entity_id='" . $cp->id . "'
       AND l.buildlist_current_level>'0'
       AND b.building_prod_power>'0'
-		ORDER BY
-			b.building_order,
-			b.building_name;");
+        ORDER BY
+            b.building_order,
+            b.building_name;");
     if (mysql_num_rows($pres) > 0) {
         while ($parr = mysql_fetch_array($pres)) {
             // Calculate power production
@@ -423,33 +404,30 @@ if ($cp) {
 
     // Power produced by ships
     $sres = dbquery("
-		SELECT
-			shiplist_count,
-			ship_prod_power,
-			ship_name
-		FROM
-			shiplist
-		INNER JOIN
-			ships
-			ON shiplist_ship_id=ship_id
-			AND shiplist_entity_id=" . $cp->id . "
-			AND shiplist_user_id=" . $cu->id . "
-			AND ship_prod_power>0
-		");
+        SELECT
+            shiplist_count,
+            ship_prod_power,
+            ship_name
+        FROM
+            shiplist
+        INNER JOIN
+            ships
+            ON shiplist_ship_id=ship_id
+            AND shiplist_entity_id=" . $cp->id . "
+            AND shiplist_user_id=" . $cu->id . "
+            AND ship_prod_power>0
+        ");
     if (mysql_num_rows($sres) > 0) {
-        $dtemp = $cp->solarPowerBonus();
-        if ($dtemp < 0)
-            $dtempstr = "<span style=\"color:#f00\">" . $dtemp . "</span>";
-        else
-            $dtempstr = "<span style=\"color:#0f0\">+" . $dtemp . "</span>";
-
+        $solarProdBonus = $planet->solarPowerBonus();
+        $color = $solarProdBonus>=0 ? '#0f0' : '#f00';
+        $solarTempString = "<span style=\"color:".$color."\">".($solarProdBonus > 0 ? '+' : '').$solarProdBonus."</span>";
         while ($sarr = mysql_fetch_array($sres)) {
-            $pwr = ($sarr['ship_prod_power'] + $dtemp);
+            $pwr = ($sarr['ship_prod_power'] + $solarProdBonus);
             $pwr *= $bonusFactor;
             $pwrt = $pwr * $sarr['shiplist_count'];
             echo "<tr><th>" . $sarr['ship_name'] . " (" . nf($sarr['shiplist_count']) . ")</th>";
             echo "<td colspan=\"3\">" . nf($pwrt) . "
-				(Energie pro Satellit: " . (($pwr)) . " = " . $sarr['ship_prod_power'] . " Basis, " . $dtempstr . " bedingt durch Entfernung zur Sonne, " . get_percent_string($bonusFactor, 1) . " durch Energiebonus)</td>";
+                (Energie pro Satellit: " . (($pwr)) . " = " . $sarr['ship_prod_power'] . " Basis, " . $solarTempString . " bedingt durch Entfernung zur Sonne, " . get_percent_string($bonusFactor, 1) . " durch Energiebonus)</td>";
             echo "</tr>";
             $cnt['power'] += $pwrt;
         }
@@ -463,22 +441,22 @@ if ($cp) {
         $powerFree = $powerProduced - $powerUsed;
         echo "<tr><th>Benutzt</td><td";
         echo ">" . nf($powerUsed) . "</td><td>" . round($powerUsed / $powerProduced * 100, 2) . "%</th>
-			<td>
-			<img src=\"misc/progress.image.php?r=1&w=100&p=" . round($powerUsed / $powerProduced * 100, 2) . "\" alt=\"progress\" />
-			</td>
-			</tr>";
+            <td>
+            <img src=\"misc/progress.image.php?r=1&w=100&p=" . round($powerUsed / $powerProduced * 100, 2) . "\" alt=\"progress\" />
+            </td>
+            </tr>";
         if ($powerFree < 0)
             $style = " style=\"color:#f00\"";
         else
             $style = " style=\"color:#0f0\"";
         echo "<tr><th>Verfügbar</td><td $style>
-			" . nf($powerFree) . "
-			</td>
-			<td $style>
-			" . round($powerFree / $powerProduced * 100, 2) . "%</td>
-			<td>
-			<img src=\"misc/progress.image.php?w=100&p=" . round($powerFree / $powerProduced * 100, 2) . "\" alt=\"progress\" />
-			</td></tr>";
+            " . nf($powerFree) . "
+            </td>
+            <td $style>
+            " . round($powerFree / $powerProduced * 100, 2) . "%</td>
+            <td>
+            <img src=\"misc/progress.image.php?w=100&p=" . round($powerFree / $powerProduced * 100, 2) . "\" alt=\"progress\" />
+            </td></tr>";
     }
     tableEnd();
 
@@ -487,7 +465,7 @@ if ($cp) {
     //
 
     $bres = dbquery("
-		SELECT
+        SELECT
             b.building_name,
             b.building_store_metal,
             b.building_store_crystal,
@@ -496,10 +474,10 @@ if ($cp) {
             b.building_store_food,
             b.building_store_factor,
             l.buildlist_current_level
-		FROM
+        FROM
             buildings AS b,
             buildlist AS l
-		WHERE
+        WHERE
             b.building_id = l.buildlist_building_id
             AND l.buildlist_entity_id=" . $cp->id . "
             AND l.buildlist_current_level>0
@@ -571,7 +549,7 @@ if ($cp) {
     tableStart("Boni");
 
     echo "<tr><th>Rohstoff</th>
-		<th>" . $cp->typeName . "</th>";
+        <th>" . $cp->typeName . "</th>";
     echo "<th>" . $cu->race->name . "</th>";
     echo "<th>" . $cp->starTypeName . "</th>";
     echo "<th>" . $cu->specialist->name . "</th>";
@@ -675,8 +653,6 @@ if ($cp) {
     echo "<td>" . get_percent_string(array($cu->race->fleetSpeedFactor, $cu->specialist->fleetSpeedFactor), 1) . "</td></tr>";
 
     tableEnd();
-} else
+} else {
     error_msg("Dieser Planet existiert nicht oder er geh&ouml;rt nicht dir!");
-
-?>
-
+}
