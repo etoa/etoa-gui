@@ -4,6 +4,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Text\TextRepository;
 use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
 use EtoA\Universe\Planet\PlanetTypeRepository;
@@ -56,7 +57,7 @@ if (isset($s->itemset_key) && $request->request->has(md5($s->itemset_key)) && $r
     Usersetup::addItemSetListToPlanet($s->itemset_planet, $cu->id, $request->request->getInt('itemset_id'));
     $s->itemset_key=null;
     $s->itemset_planet=null;
-    // $cu->setSetupFinished();
+    $cu->setSetupFinished();
     $mode = "finished";
 }
 elseif ($request->request->has('submit_chooseplanet') && $request->request->getInt('choosenplanetid') > 0 && checker_verify() && !isset($cp))
@@ -90,12 +91,12 @@ elseif ($request->request->has('submit_chooseplanet') && $request->request->getI
         {
             $arr = mysql_fetch_array($res);
             Usersetup::addItemSetListToPlanet($planetId, $cu->id, $arr['set_id']);
-            // $cu->setSetupFinished();
+            $cu->setSetupFinished();
             $mode = "finished";
         }
         else
         {
-            // $cu->setSetupFinished();
+            $cu->setSetupFinished();
             $mode = "finished";
         }
     }
@@ -322,77 +323,32 @@ elseif ($mode=="choosesector")
     echo "<img src=\"misc/map.image.php\" alt=\"Galaxiekarte\" id=\"img\" usemap=\"#Galaxy\" style=\"border:none;\"/>";
 
     echo "<map name=\"Galaxy\">\n";
-    $sec_x_size=GALAXY_MAP_WIDTH/$sx_num;
-    $sec_y_size=GALAXY_MAP_WIDTH/$sy_num;
-    $xcnt=1;
-    $ycnt=1;
-    for ($x=0;$x<GALAXY_MAP_WIDTH;$x+=$sec_x_size)
+    $sec_x_size = GALAXY_MAP_WIDTH / $sx_num;
+    $sec_y_size = GALAXY_MAP_WIDTH / $sy_num;
+    $xcnt = 1;
+    $ycnt = 1;
+    for ($x = 0; $x < GALAXY_MAP_WIDTH; $x += $sec_x_size)
     {
-        $ycnt=1;
-        for ($y=0;$y<GALAXY_MAP_WIDTH;$y+=$sec_y_size)
+        $ycnt = 1;
+        for ($y = 0; $y < GALAXY_MAP_WIDTH; $y += $sec_y_size)
         {
-            $res = dbquery("
-            SELECT
-                COUNT(entities.id)
-            FROM
-                cells
-            INNER JOIN
-                entities
-                ON entities.cell_id=cells.id
-                AND entities.code='s'
-                AND sx=".$xcnt."
-                AND sy=".$ycnt."
-            ;
-            ");
-            $arr = mysql_fetch_row($res);
-
-            $res = dbquery("
-            SELECT
-                COUNT(entities.id)
-            FROM
-                cells
-            INNER JOIN
-                entities
-                ON entities.cell_id=cells.id
-                AND entities.code='p'
-                AND sx=".$xcnt."
-                AND sy=".$ycnt."
-            ;
-            ");
-            $arr2 = mysql_fetch_row($res);
-
-            $res = dbquery("
-            SELECT
-                COUNT(entities.id)
-            FROM
-                cells
-            INNER JOIN
-            (
-                entities
-                INNER JOIN
-                    planets
-                    ON planets.id=entities.id
-                    AND planet_user_id>0
-                )
-                ON entities.cell_id=cells.id
-                AND	cells.sx=".$xcnt."
-                AND cells.sy=".$ycnt."
-            ;");
-            $arr3 = mysql_fetch_row($res);
+            $countStars = $entityRepository->countEntitiesOfCodeInSector($xcnt, $ycnt, EntityType::STAR);
+            $countPlanets = $entityRepository->countEntitiesOfCodeInSector($xcnt, $ycnt, EntityType::PLANET);
+            $countInhabitedPlanets = $planetRepo->countWithUserInSector($xcnt, $ycnt);
 
             $tt = new Tooltip();
             $tt->addTitle("Sektor $xcnt/$ycnt");
-            $tt->addText("Sternensysteme: ".$arr[0]);
-            $tt->addText("Planeten: ".$arr2[0]);
-            $tt->addGoodCond("Bewohnte Planeten: ".$arr3[0]);
-            $tt->addComment("Klickt hier um euren Heimatplaneten in Sektor <b>".$xcnt."/".$ycnt."</b> anzusiedeln!");
-        echo "<area shape=\"rect\" coords=\"$x,".(GALAXY_MAP_WIDTH-$y).",".($x+$sec_x_size).",".(GALAXY_MAP_WIDTH-$y-$sec_y_size)."\" href=\"?setup_sx=".$xcnt."&amp;setup_sy=".$ycnt."\" alt=\"Sektor $xcnt / $ycnt\" ".$tt.">\n";
-        $ycnt++;
+            $tt->addText("Sternensysteme: " . $countStars);
+            $tt->addText("Planeten: " . $countPlanets);
+            $tt->addGoodCond("Bewohnte Planeten: " . $countInhabitedPlanets);
+            $tt->addComment("Klickt hier um euren Heimatplaneten in Sektor <b>" . $xcnt . "/" . $ycnt . "</b> anzusiedeln!");
+
+            echo "<area shape=\"rect\" coords=\"$x," . (GALAXY_MAP_WIDTH - $y) . "," . ($x + $sec_x_size) . "," . (GALAXY_MAP_WIDTH - $y - $sec_y_size) . "\" href=\"?setup_sx=" . $xcnt . "&amp;setup_sy=" . $ycnt . "\" alt=\"Sektor $xcnt / $ycnt\" " . $tt . ">\n";
+            $ycnt++;
         }
         $xcnt++;
     }
     echo "</map>\n";
-
 
     echo "</form>";
 }

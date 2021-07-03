@@ -8,6 +8,24 @@ use EtoA\Core\AbstractRepository;
 
 class EntityRepository extends AbstractRepository
 {
+    public function countEntitiesOfCodeInSector(int $sx, int $sy, string $code): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(e.id)')
+            ->from('entities', 'e')
+            ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id')
+            ->where('code = :code')
+            ->andWhere('sx = :sx')
+            ->andWhere('sy = :sy')
+            ->setParameters([
+                'sx' => $sx,
+                'sy' => $sy,
+                'code' => $code,
+            ])
+            ->execute()
+            ->fetchOne();
+    }
+
     public function findRandomId(string $code): ?int
     {
         $id = $this->createQueryBuilder()

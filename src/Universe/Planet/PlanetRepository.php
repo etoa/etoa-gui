@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\Universe\Planet;
 
 use EtoA\Core\AbstractRepository;
+use EtoA\Universe\Entity\EntityType;
 
 class PlanetRepository extends AbstractRepository
 {
@@ -73,6 +74,25 @@ class PlanetRepository extends AbstractRepository
             ->select("COUNT(id)")
             ->from('planets')
             ->where('planet_user_id > 0')
+            ->execute()
+            ->fetchOne();
+    }
+
+    public function countWithUserInSector(int $sx, int $sy): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(e.id)')
+            ->from('entities', 'e')
+            ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id')
+            ->innerJoin('e', 'planets', 'p', 'p.id = e.id AND p.planet_user_id > 0')
+            ->where('code = :code')
+            ->andWhere('sx = :sx')
+            ->andWhere('sy = :sy')
+            ->setParameters([
+                'sx' => $sx,
+                'sy' => $sy,
+                'code' => EntityType::PLANET,
+            ])
             ->execute()
             ->fetchOne();
     }
