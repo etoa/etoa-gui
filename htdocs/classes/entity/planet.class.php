@@ -625,46 +625,6 @@ class Planet extends Entity implements OwnableEntity
 			return false;
 		}
 
-
-		function chgBunker($i,$amount)
-		{
-            $amount = intval($amount);
-
-			switch ($i)
-			{
-				case 1:
-					$str = "planet_bunker_metal=".$amount."";
-                    $this->bunkerMetal=$amount;
-					break;
-				case 2:
-					$str = "planet_bunker_crystal=".$amount."";
-                    $this->bunkerCrystal=$amount;
-					break;
-				case 3:
-					$str = "planet_bunker_plastic=".$amount."";
-                    $this->bunkerPlastic=$amount;
-					break;
-				case 4:
-					$str = "planet_bunker_fuel=".$amount."";
-                    $this->bunkerFuel=$amount;
-					break;
-				case 5:
-					$str = "planet_bunker_food=".$amount."";
-		    $this->bunkerFood=$amount;
-					break;
-				default:
-					return;
-			}
-			$sql = "
-	   			UPDATE
-	    			planets
-	    		SET
-		        	".$str."
-	    		WHERE
-	    			id='".$this->id."';";
-	   		dbquery($sql);
-		}
-
 		function reloadRes()
 		{
 			$res = dbquery("

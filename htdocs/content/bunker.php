@@ -357,11 +357,16 @@ if ($cp)
                 $sum = nf_back($_POST['bunker_metal']) + nf_back($_POST['bunker_crystal']) + nf_back($_POST['bunker_plastic']) + nf_back($_POST['bunker_fuel']) + nf_back($_POST['bunker_food']);
                 $percent = $sum/$bl->getBunkerRes();
                 if ($percent<1) $percent =1;
-                $cp->chgBunker(1,nf_back($_POST['bunker_metal'])/$percent);
-                $cp->chgBunker(2,nf_back($_POST['bunker_crystal'])/$percent);
-                $cp->chgBunker(3,nf_back($_POST['bunker_plastic'])/$percent);
-                $cp->chgBunker(4,nf_back($_POST['bunker_fuel'])/$percent);
-                $cp->chgBunker(5,nf_back($_POST['bunker_food'])/$percent);
+
+                $planetRepo->updateBunker(
+                    $planet->id,
+                    nf_back($_POST['bunker_metal'])/$percent,
+                    nf_back($_POST['bunker_crystal'])/$percent,
+                    nf_back($_POST['bunker_plastic'])/$percent,
+                    nf_back($_POST['bunker_fuel'])/$percent,
+                    nf_back($_POST['bunker_food'])/$percent
+                );
+                $planet = $planetRepo->find($cp->id);
 
                 echo "<br />";
                 success_msg("Änderungen wurden übernommen!");
