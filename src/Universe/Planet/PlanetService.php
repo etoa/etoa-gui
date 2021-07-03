@@ -84,6 +84,7 @@ class PlanetService
         if ($opt == "m") {
             return IMAGE_PATH . "/planets/planet" . $planet->image . "_middle." . IMAGE_EXT;
         }
+
         return IMAGE_PATH . "/planets/planet" . $planet->image . "_small." . IMAGE_EXT;
     }
 }
