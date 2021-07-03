@@ -1175,20 +1175,5 @@ use EtoA\Core\Configuration\ConfigurationService;
             }
         }
     }
-
-    /**
-    * Returns the number of members of the given alliance
-    */
-    static public function countMembers($allianceId) {
-        $narr = mysql_fetch_row(dbquery("
-        SELECT
-            COUNT(user_id) as member_count
-        FROM
-            users
-        WHERE
-            user_alliance_id=".$allianceId."
-        ;"));
-        return $narr[0];
-    }
 }
 ?>
