@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 
 /** @var ConfigurationService */
@@ -8,6 +9,9 @@ $config = $app[ConfigurationService::class];
 
 /** @var PlanetRepository */
 $planetRepo = $app[PlanetRepository::class];
+
+/** @var ResourceBoxDrawer */
+$resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 
 if ($cp) {
 
@@ -29,25 +33,24 @@ if ($cp) {
                         buildlist_prod_percent=$val
                     WHERE
                         buildlist_user_id=" . $cu->id . "
-                        AND buildlist_entity_id=" . $cp->id . "
+                        AND buildlist_entity_id=" . $planet->id . "
                         AND buildlist_building_id='" . intval($id) . "'
                     ;");
             }
             success_msg("Änderungen gespeichert!");
 
             // Send
-            BackendMessage::updatePlanet($cp->id);
+            BackendMessage::updatePlanet($planet->id);
         }
     }
 
+    echo "<h1>Wirtschaft des Planeten " . $planet->name . "</h1>";
+    echo $resourceBoxDrawer->getHTML($planet);
 
-    echo "<h1>Wirtschaft des Planeten " . $cp->name . "</h1>";
-    echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
-
-    $bl = new BuildList($cp->id, $cp->id);
+    $bl = new BuildList($planet->id, $cu->id);
 
     if (isset($_GET['action']) && $_GET['action'] == "update") {
-        BackendMessage::updatePlanet($cp->id);
+        BackendMessage::updatePlanet($planet->id);
         success_msg("Planet wird neu berechnet!");
     }
 
@@ -85,7 +88,7 @@ if ($cp) {
         buildlist AS l
             ON	b.building_id=l.buildlist_building_id
         AND l.buildlist_user_id=" . $cu->id . "
-        AND l.buildlist_entity_id=" . $cp->id() . "
+        AND l.buildlist_entity_id=" . $planet->id . "
         AND l.buildlist_current_level>0
         AND (b.building_prod_metal>0
             OR b.building_prod_crystal>0
@@ -301,11 +304,11 @@ if ($cp) {
         $powerUsed = $pwrcnt;
 
         // Bei zuwenig Strom Warnmessage
-        if ($pwrcnt > $cp->prodPower) {
-            echo "<tr><td colspan=\"8\" style=\"color:#f00; text-align:center;\">Zuwenig Energie! " . nf(floor($pwrcnt)) . " ben&ouml;tigt, " . nf(floor($cp->prodPower)) . " verf&uuml;gbar. Gesamtproduktion wird auf " . (round($cp->prodPower / $pwrcnt, 3) * 100) . "% gesenkt!</td></tr>";
+        if ($pwrcnt > $planet->prodPower) {
+            echo "<tr><td colspan=\"8\" style=\"color:#f00; text-align:center;\">Zuwenig Energie! " . nf(floor($pwrcnt)) . " ben&ouml;tigt, " . nf(floor($planet->prodPower)) . " verf&uuml;gbar. Gesamtproduktion wird auf " . (round($planet->prodPower / $pwrcnt, 3) * 100) . "% gesenkt!</td></tr>";
 
             foreach ($resourceKeys as $resourceKey) {
-                $cnt[$resourceKey] = floor($cnt[$resourceKey] * $cp->prodPower / $pwrcnt);
+                $cnt[$resourceKey] = floor($cnt[$resourceKey] * $planet->prodPower / $pwrcnt);
             }
 
             echo "<tr><th>TOTAL</th>";
@@ -313,7 +316,7 @@ if ($cp) {
                 echo "<td>" . nf($cnt[$resourceKey]) . "</td>";
             }
 
-            echo "<td colspan=\"2\">" . nf(floor($cp->prodPower)) . "</td>";
+            echo "<td colspan=\"2\">" . nf(floor($planet->prodPower)) . "</td>";
             echo "</tr>";
         }
         tableEnd();
@@ -380,7 +383,7 @@ if ($cp) {
       buildlist AS l
       ON b.building_id=l.buildlist_building_id
       AND l.buildlist_user_id='" . $cu->id . "'
-      AND l.buildlist_entity_id='" . $cp->id . "'
+      AND l.buildlist_entity_id='" . $planet->id . "'
       AND l.buildlist_current_level>'0'
       AND b.building_prod_power>'0'
         ORDER BY
@@ -413,7 +416,7 @@ if ($cp) {
         INNER JOIN
             ships
             ON shiplist_ship_id=ship_id
-            AND shiplist_entity_id=" . $cp->id . "
+            AND shiplist_entity_id=" . $planet->id . "
             AND shiplist_user_id=" . $cu->id . "
             AND ship_prod_power>0
         ");
@@ -479,7 +482,7 @@ if ($cp) {
             buildlist AS l
         WHERE
             b.building_id = l.buildlist_building_id
-            AND l.buildlist_entity_id=" . $cp->id . "
+            AND l.buildlist_entity_id=" . $planet->id . "
             AND l.buildlist_current_level>0
             AND
                 (b.building_store_metal>0
@@ -526,11 +529,11 @@ if ($cp) {
         }
         echo "</tr>";
         echo "<tr><th>Benuzt</th>";
-        $percent_metal_storage = $cp->storeMetal > 0 ? round($cp->resMetal / $cp->storeMetal * 100) : 0;
-        $percent_crystal_storage = $cp->storeCrystal > 0 ? round($cp->resCrystal / $cp->storeCrystal * 100) : 0;
-        $percent_plastic_storage = $cp->storePlastic > 0 ? round($cp->resPlastic / $cp->storePlastic * 100) : 0;
-        $percent_fuel_storage = $cp->storeFuel > 0 ? round($cp->resFuel / $cp->storeFuel * 100) : 0;
-        $percent_food_storage = $cp->storeFood > 0 ? round($cp->resFood / $cp->storeFood * 100) : 0;
+        $percent_metal_storage = $planet->storeMetal > 0 ? round($planet->resMetal / $planet->storeMetal * 100) : 0;
+        $percent_crystal_storage = $planet->storeCrystal > 0 ? round($planet->resCrystal / $planet->storeCrystal * 100) : 0;
+        $percent_plastic_storage = $planet->storePlastic > 0 ? round($planet->resPlastic / $planet->storePlastic * 100) : 0;
+        $percent_fuel_storage = $planet->storeFuel > 0 ? round($planet->resFuel / $planet->storeFuel * 100) : 0;
+        $percent_food_storage = $planet->storeFood > 0 ? round($planet->resFood / $planet->storeFood * 100) : 0;
         echo "<td><img src=\"misc/progress.image.php?r=1&w=100&p=" . $percent_metal_storage . "\" alt=\"progress\" /></td>";
         echo "<td><img src=\"misc/progress.image.php?r=1&w=100&p=" . $percent_crystal_storage . "\" alt=\"progress\" /></td>";
         echo "<td><img src=\"misc/progress.image.php?r=1&w=100&p=" . $percent_plastic_storage . "\" alt=\"progress\" /></td>";

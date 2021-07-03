@@ -3,6 +3,7 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
@@ -28,6 +29,9 @@ $fleetRepo = $app[FleetRepository::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();
+
+/** @var ResourceBoxDrawer */
+$resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 
 // BEGIN SKRIPT //
 
@@ -213,7 +217,7 @@ if (isset($cp))
         $dl = new DefList($planet->id, $cu->id, 1);
 
         echo "<h1>Übersicht über den Planeten ".$planet->name."</h1>";
-        echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
+        echo $resourceBoxDrawer->getHTML($planet);
 
         if ($request->query->has('sub') && $request->query->get('sub') == "ships") {
             $sub="ships";
