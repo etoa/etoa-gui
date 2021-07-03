@@ -3,11 +3,13 @@
 use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserRepository;
 use Twig\Environment;
 
 /** @var AdminUserRepository */
 $adminUserRepo = $app[AdminUserRepository::class];
-
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
 
@@ -17,7 +19,7 @@ if (isset($_POST['submitPassword'])) {
 if (isset($_POST['submitProfile'])) {
     submitProfile($cu, $adminUserRepo, $twig);
 }
-profileIndex($cu, $twig);
+profileIndex($cu, $twig, $userRepository);
 
 function submitPassword(
     AdminUser $cu,
@@ -62,11 +64,11 @@ function submitProfile(AdminUser $cu, AdminUserRepository $adminUserRepo, Enviro
     Log::add(8, Log::INFO, $cu->nick . " ändert seine Daten");
 }
 
-function profileIndex(AdminUser $cu, Environment $twig)
+function profileIndex(AdminUser $cu, Environment $twig, UserRepository $userRepository)
 {
     echo $twig->render('admin/profile/profile.html.twig', [
         'user' => $cu,
-        'users' => Users::getArray(),
+        'users' => $userRepository->getUserNicknames(),
     ]);
     exit();
 }

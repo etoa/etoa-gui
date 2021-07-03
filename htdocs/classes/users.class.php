@@ -177,17 +177,6 @@ die Spielleitung";
         ");
     }
 
-    static function getArray()
-    {
-        $res = dbquery("SELECT user_id,user_nick FROM users;");
-        $rtn = array();
-        while ($arr=mysql_fetch_row($res))
-        {
-            $rtn[$arr[0]] = $arr[1];
-        }
-        return $rtn;
-    }
-
     static function addSittingDays(int $days = 0)
     {
         if ($days == 0)
