@@ -412,24 +412,6 @@ class Planet extends Entity implements OwnableEntity
 			return $v/100;
 		}
 
-		function setNameAndComment($name,$comment)
-		{
-			$name = str_replace("'", '', $name);
-			$name = stripBBCode($name);
-			$comment = str_replace("'", '', $comment);
-
-			dbquery("
-			UPDATE
-				planets
-			SET
-				planet_name='".mysql_real_escape_string($name)."',
-				planet_desc='".mysql_real_escape_string($comment)."'
-			WHERE
-				id='".$this->id."';");
-			$this->name=$name;
-			$this->desc=$comment;
-		}
-
 		//
 		// Getters
 		//

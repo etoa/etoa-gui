@@ -356,6 +356,21 @@ class PlanetRepository extends AbstractRepository
         return $affected > 0;
     }
 
+    public function setNameAndComment(int $id, string $name, string $comment): void
+    {
+        $this->createQueryBuilder()
+            ->update('planets')
+            ->set('planet_name', ':name')
+            ->set('planet_desc', ':comment')
+            ->where('id = :id')
+            ->setParameters([
+                'id' => $id,
+                'name' => $name,
+                'comment' => $comment,
+            ])
+            ->execute();
+    }
+
     public function reset(int $id): void
     {
         $this->createQueryBuilder()

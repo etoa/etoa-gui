@@ -3,6 +3,7 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,6 +16,9 @@ $planetService = $app[PlanetService::class];
 
 /** @var PlanetRepository */
 $planetRepo = $app[PlanetRepository::class];
+
+/** @var EntityRepository */
+$entityRepository = $app[EntityRepository::class];
 
 /** @var ShipRepository */
 $shipRepo = $app[ShipRepository::class];
@@ -58,8 +62,9 @@ if (isset($cp))
                 <input type=\"button\" value=\"Zurück\" onclick=\"document.location='?page=$page'\" />";
             }
         }
-        else
+        else {
             error_msg("Dies ist ein Hauptplanet! Hauptplaneten können nicht aufgegeben werden!");
+        }
     }
 
     // Kolonie aufheben ausführen
@@ -156,8 +161,10 @@ if (isset($cp))
                 {
                     if ($planetRepo->setMain($planet->id, $cu->id))
                     {
+                        $entity = $entityRepository->findIncludeCell($planet->id);
+
                         $cu->setChangedMainPlanet(true);
-                        $cu->addToUserLog("planets", "{nick} wählt [b]".$cp."[/b] als neuen Hauptplanet aus.", 0);
+                        $cu->addToUserLog("planets", "{nick} wählt [b]".$entity->toString()."[/b] als neuen Hauptplanet aus.", 0);
                         echo "<br><b>".$planet->name."</b> ist nun dein Hauptplanet!<br/><br/>
                         <input type=\"button\" value=\"Zurück\" onclick=\"document.location='?page=$page'\" />";
                     }
@@ -190,12 +197,15 @@ if (isset($cp))
         {
             if ($request->request->get('planet_name', '') != '')
             {
-                // setNameAndComment() escapes strings
-                $initialName = $planet->name;
-                $cp->setNameAndComment($request->request->get('planet_name'), $request->request->get('planet_desc'));
-                if ($initialName !== $cp->name) {
+                $planetRepo->setNameAndComment(
+                    $planet->id,
+                    stripBBCode($request->request->get('planet_name')),
+                    $request->request->get('planet_desc')
+                );
+                if ($request->request->get('planet_name') !== $planet->name) {
                     $app['dispatcher']->dispatch(new \EtoA\Planet\Event\PlanetRename(), \EtoA\Planet\Event\PlanetRename::RENAME_SUCCESS);
                 }
+                $planet = $planetRepo->find($planet->id);
             }
         }
 
