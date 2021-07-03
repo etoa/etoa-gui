@@ -70,7 +70,7 @@ if (isset($cp))
                 {
                     if (!$fleetRepo->hasFleetsRelatedToEntity($planet->id))
                     {
-                        if ($cu->id == $planet->userId && !$planet->mainPlanet)
+                        if ($cu->id == $planet->userId)
                         {
                             if (reset_planet($planet->id))
                             {
