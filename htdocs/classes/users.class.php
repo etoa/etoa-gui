@@ -144,22 +144,6 @@ die Spielleitung";
         return mysql_num_rows($res);
     }
 
-    static function addSittingDays(int $days = 0)
-    {
-        if ($days == 0)
-        {
-            // TODO
-            global $app;
-
-            /** @var ConfigurationService */
-            $config = $app[ConfigurationService::class];
-
-            $days = $config->param1Int("user_sitting_days");
-        }
-
-        dbquery("UPDATE `users` SET `user_sitting_days`=`user_sitting_days`+'".$days."';");
-    }
-
     // check for $conf['hmode_days']['p2'] BEFORE calling this function
     static function setUmodToInactive()
     {

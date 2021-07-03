@@ -173,4 +173,16 @@ class UserRepository extends AbstractRepository
             'blockedBefore' => time(),
         ]);
     }
+
+    public function addSittingDays(int $days): void
+    {
+        $this->getConnection()->executeQuery("
+            UPDATE
+                users
+            SET
+                user_sitting_days = user_sitting_days + :days';
+        ", [
+            'days' => $days,
+        ]);
+    }
 }
