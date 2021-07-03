@@ -144,66 +144,6 @@ die Spielleitung";
         return mysql_num_rows($res);
     }
 
-    /**
-    * Abgelaufene Sperren löschen
-    *
-    */
-    static function removeOldBanns()
-    {
-        dbquery("
-            UPDATE
-                users
-            SET
-                user_blocked_from='0',
-                user_blocked_to='0',
-                user_ban_reason='',
-                user_ban_admin_id='0'
-            WHERE
-                user_blocked_to<'".time()."';
-        ");
-    }
-
-    /**
-    * Spionageangriffscounter auf 0 setzen
-    * @deprecated altes Balancing
-    */
-    static function resetSpyattacks()
-    {
-        dbquery("
-                UPDATE
-                    users
-                SET
-                    spyattack_counter='0';
-        ");
-    }
-
-    static function getArray()
-    {
-        $res = dbquery("SELECT user_id,user_nick FROM users;");
-        $rtn = array();
-        while ($arr=mysql_fetch_row($res))
-        {
-            $rtn[$arr[0]] = $arr[1];
-        }
-        return $rtn;
-    }
-
-    static function addSittingDays(int $days = 0)
-    {
-        if ($days == 0)
-        {
-            // TODO
-            global $app;
-
-            /** @var ConfigurationService */
-            $config = $app[ConfigurationService::class];
-
-            $days = $config->param1Int("user_sitting_days");
-        }
-
-        dbquery("UPDATE `users` SET `user_sitting_days`=`user_sitting_days`+'".$days."';");
-    }
-
     // check for $conf['hmode_days']['p2'] BEFORE calling this function
     static function setUmodToInactive()
     {

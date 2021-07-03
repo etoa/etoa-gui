@@ -544,23 +544,6 @@ class User implements \EtoA\User\UserInterface
         $this->isVerified = $verified;
     }
 
-    public static function findFirstByVerificationKey($verificationKey) {
-        $res = dbQuerySave("
-        SELECT
-            user_id
-        FROM
-            ".self::tableName."
-        WHERE
-            verification_key=?
-        ;", [
-            $verificationKey
-        ]);
-        if ($arr = mysql_fetch_row($res)) {
-            return new User($arr[0]);
-        }
-        return null;
-    }
-
     public function isInactiv()
     {
         if (!$this->admin)
@@ -1388,35 +1371,6 @@ die Spielleitung";
             return new User($uid);
         }
         throw new Exception("Ein unbekannter Fehler trat auf! ".mysql_error());
-    }
-
-    /**
-    * Returns the total number of users
-    */
-    static public function count()
-    {
-        $ures = dbquery("SELECT COUNT(user_id) FROM ".self::tableName.";");
-        $uarr = mysql_fetch_row($ures);
-        return $uarr[0];
-    }
-
-    static function findIdByNick($nick)
-    {
-        $res = dbquery("
-        SELECT
-            user_id
-        FROM
-            ".self::tableName."
-        WHERE
-            user_nick='".mysql_real_escape_string($nick)."'
-        LIMIT 1;
-        ");
-        if (mysql_num_rows($res)>0)
-        {
-            $arr = mysql_fetch_row($res);
-            return $arr[0];
-        }
-        return 0;
     }
 
     public function detailLink()

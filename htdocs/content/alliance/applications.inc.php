@@ -5,6 +5,8 @@ use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+/** @var AllianceRepository $allianceRepository */
+$allianceRepository = $app[AllianceRepository::class];
 
 if (Alliance::checkActionRights('applications'))
 {
@@ -16,9 +18,7 @@ if (Alliance::checkActionRights('applications'))
         if (count($_POST['application_answer'])>0)
         {
             $cnt = 0;
-            /** @var AllianceRepository */
-				$allianceRepository = $app[AllianceRepository::class];
-				$alliance = $allianceRepository->getAlliance((int) $cu->allianceId);
+            $alliance = $allianceRepository->getAlliance((int) $cu->allianceId);
             $new_member = false;
 
             foreach ($_POST['application_answer'] as $id=>$answer)
@@ -29,7 +29,7 @@ if (Alliance::checkActionRights('applications'))
                 // Anfrage annehmen
                 if ($answer==2)
                 {
-                    if ($maxMemberCount != 0 && Alliance::countMembers($cu->allianceId) >= $maxMemberCount) {
+                    if ($maxMemberCount != 0 && $allianceRepository->countUsers((int) $cu->allianceId) >= $maxMemberCount) {
                         error_msg("Maximale Anzahl an Mitgliedern erreicht!");
                         break;
                     }
@@ -119,7 +119,7 @@ if (Alliance::checkActionRights('applications'))
         }
     }
 
-    $currentMemberCount = Alliance::countMembers($cu->allianceId);
+    $currentMemberCount = $allianceRepository->countUsers((int) $cu->allianceId);
 
     echo "<form action=\"?page=$page&action=applications\" method=\"post\" id=\"applicationsForm\">";
     checker_init();

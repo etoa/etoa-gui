@@ -1087,6 +1087,8 @@ function showDebrisLogs($args=null,$limit=0) {
     global $app;
 
     $adminUserRepo = $app[AdminUserRepository::class];
+    /** @var UserRepository $userRepository */
+    $userRepository = $app[UserRepository::class];
 
     $maxtime = is_array($args) ? mktime($args['searchtime_h'],$args['searchtime_i'],$args['searchtime_s'],$args['searchtime_m'],$args['searchtime_d'],$args['searchtime_y']) : time();
 
@@ -1097,7 +1099,7 @@ function showDebrisLogs($args=null,$limit=0) {
 
     if (isset($args['searchuser']) && trim($args['searchuser']) != '')
     {
-        $sql2 .=" AND user_id = ".User::findIdByNick($args['searchuser'])." ";
+        $sql2 .=" AND user_id = ".$userRepository->getUserIdByNick($args['searchuser'])." ";
     };
     if (isset($args['searchadmin']) && trim($args['searchadmin']) != '')
     {
