@@ -53,4 +53,18 @@ class ShipRepository extends AbstractRepository
             ->setParameter('entityId', $entityId)
             ->execute();
     }
+
+    public function hasShipsOnEntity(int $entityId): bool
+    {
+        $count = (int) $this->createQueryBuilder()
+            ->select('COUNT(shiplist_id)')
+            ->from('shiplist')
+            ->where('shiplist_entity_id = :entityId')
+            ->andWhere('shiplist_count  > 0')
+            ->setParameter('entityId', $entityId)
+            ->execute()
+            ->fetchOne();
+
+        return $count > 0;
+    }
 }

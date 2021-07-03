@@ -1,6 +1,8 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Fleet\FleetRepository;
+use EtoA\Ship\ShipRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -9,6 +11,12 @@ $config = $app[ConfigurationService::class];
 
 /** @var PlanetRepository */
 $planetRepo = $app[PlanetRepository::class];
+
+/** @var ShipRepository */
+$shipRepo = $app[ShipRepository::class];
+
+/** @var FleetRepository */
+$fleetRepo = $app[FleetRepository::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();
@@ -58,43 +66,36 @@ if (isset($cp))
             $threshold = $planet->userChanged + COLONY_DELETE_THRESHOLD;
             if ($threshold < time())
             {
-                if (mysql_num_rows(dbquery("SELECT shiplist_id FROM shiplist WHERE shiplist_entity_id='".$planet->id."' AND shiplist_count>0;"))==0)
+                if (!$shipRepo->hasShipsOnEntity($planet->id))
                 {
-                    if (mysql_num_rows(dbquery("SELECT id FROM fleet WHERE entity_to='".$planet->id."' OR entity_from='".$planet->id."';"))==0)
+                    if (!$fleetRepo->hasFleetsRelatedToEntity($planet->id))
                     {
-                        if (mysql_num_rows(dbquery("SELECT id FROM planets WHERE id='".$planet->id."' AND planet_user_id='".$cu->id."' AND planet_user_main=0;"))==1)
+                        if ($cu->id == $planet->userId && !$planet->mainPlanet)
                         {
                             if (reset_planet($planet->id))
                             {
-                                //Liest ID des Hauptplaneten aus
-                                $main_res=dbquery("
-                                SELECT
-                                    id
-                                FROM
-                                    planets
-                                WHERE
-                                    planet_user_id='".$cu->id."'
-                                    AND planet_user_main=1;");
-                                $main_arr=mysql_fetch_array($main_res);
+                                $mainPlanetId = $planetRepo->getUserMainId($cu->id);
 
                                 echo "<br>Die Kolonie wurde aufgehoben!<br>";
-                                echo "<a href=\"?page=overview&planet_id=".$main_arr['id']."\">Zur Übersicht</a>";
+                                echo "<a href=\"?page=overview&planet_id=".$mainPlanetId."\">Zur Übersicht</a>";
 
-                                // Todo: see what happens with $cp, perhaps forward
-                                $cp->id=NULL;
-                                $cpid = $main_arr['id'];
+                                $planet = null;
                             }
-                            else
+                            else {
                                 error_msg("Beim Aufheben der Kolonie trat ein Fehler auf! Bitte wende dich an einen Game-Admin!");
+                            }
                         }
-                        else
-                            error_msg("Der Planet ist aktuell nicht ausgew&auml;hlt, er gehört nicht dir oder er ist ein Hauptplanet!");
+                        else {
+                            error_msg("Der Planet ist aktuell nicht ausgewählt, er gehört nicht dir oder er ist ein Hauptplanet!");
+                        }
                     }
-                    else
+                    else {
                         error_msg("Kolonie kann nicht gelöscht werden da Schiffe von/zu diesem Planeten unterwegs sind!");
+                    }
                 }
-                else
+                else {
                     error_msg("Kolonie kann nicht gelöscht werden da noch Schiffe auf dem Planeten stationiert sind oder Schiffe noch im Bau sind!");
+                }
             }
             else
             {
@@ -103,8 +104,9 @@ if (isset($cp))
                 <input type=\"button\" value=\"Zurück\" onclick=\"document.location='?page=$page'\" />";
             }
         }
-        else
+        else {
             error_msg("Dies ist ein Hauptplanet! Hauptplaneten können nicht aufgegeben werden!");
+        }
     }
     // Kolonie zum Hauptplaneten machen
     if ($request->query->has('action') && $request->query->get('action') == "change_main")
@@ -182,7 +184,7 @@ if (isset($cp))
     //
     // Planeteninfo anzeigen
     //
-    else
+    elseif (isset($planet))
     {
         if ($request->request->get('submit_change', '') != '')
         {
@@ -299,7 +301,7 @@ if (isset($cp))
         <img src=\"misc/progress.image.php?r=1&w=650&p=".round($planet->fieldsUsed/$planet->fields*100)."\" alt=\"progress\" style=\"width:100%;\"/>
         <br/>Benutzt: ".$planet->fieldsUsed.", Total: ".nf($planet->fields)." = ".nf($cp->fieldsBase)." Basisfelder + ".nf($planet->fieldsExtra)." zusätzliche Felder<br/></td></tr>
         <tr><td style=\"width:50%;vertical-align:top;padding:5px;\">";
-        tableStart("Geb&auml;ude",'100%');
+        tableStart("Gebäude",'100%');
         $bl = new BuildList($planet->id, $cu->id, 1);
         if ($bl->count() > 0)
         {
@@ -319,7 +321,7 @@ if (isset($cp))
             echo "<tr><th colspan=\"2\">Total</th><td>".nf($fcnt)."</td></tr>";
         }
         else
-            echo "<tr><td><i>Keine Geb&auml;ude vorhanden!</i></td></tr>";
+            echo "<tr><td><i>Keine Gebäude vorhanden!</i></td></tr>";
         tableEnd();
         echo "</td><td style=\"width:50%;vertical-align:top;padding:5px;\">";
         tableStart("Verteidigungsanlagen",'100%');
