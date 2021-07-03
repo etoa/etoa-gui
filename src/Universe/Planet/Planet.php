@@ -104,4 +104,9 @@ class Planet
         $this->description = $data['planet_desc'];
         $this->invadedBy = (int) $data['invadedby'];
     }
+
+    public function hasDebrisField(): bool
+    {
+        return $this->wfMetal + $this->wfCrystal + $this->wfPlastic > 0;
+    }
 }

@@ -252,7 +252,7 @@ if (isset($cp))
         iBoxStart("Übersicht");
         echo "<div style=\"position:relative;height:320px;padding:0px;background:#000 url('images/stars_middle.jpg');\">
         <div style=\"position:absolute;right:20px;top:20px;\">
-        <img src=\"".$cp->imagePath('b')."\" style=\"width:220px;height:220px;\" alt=\"Planet\" /></div>";
+        <img src=\"". $planetService->imagePath($planet, 'b')."\" style=\"width:220px;height:220px;\" alt=\"Planet\" /></div>";
         echo "<div class=\"planetOverviewName\"><a href=\"javascript:;\" onclick=\"showTab('tabName')\">".$planet->name."</a></div>";
         echo "<div class=\"planetOverviewList\">
         <div class=\"planetOverviewItem\">Grösse</div> ".nf($config->getInt('field_squarekm')*$planet->fields)." km&sup2;<br style=\"clear:left;\"/>
@@ -262,12 +262,12 @@ if (isset($cp))
         <div class=\"planetOverviewItem\">Stern</div> ".helpLink("stars",$cp->starTypeName)."<br style=\"clear:left;\"/>
         <div class=\"planetOverviewItem\">Planetentyp</div> ".helpLink("planets",$cp->type())."<br style=\"clear:left;\"/>
         <div class=\"planetOverviewItem\">Felder</div> <a href=\"javascript:;\" onclick=\"showTab('tabFields')\">".nf($planet->fieldsUsed)." von ".(nf($planet->fields))." benutzt</a> (".round($planet->fieldsUsed/$planet->fields*100)."%)<br style=\"clear:left;\"/>";
-        if ($cp->debrisField)
+        if ($planet->hasDebrisField())
         {
             echo "<div class=\"planetOverviewItem\">Trümmerfeld</div>
-            <span class=\"resmetal\">".nf($cp->debrisMetal,0,1)."</span>
-            <span class=\"rescrystal\">".nf($cp->debrisCrystal,0,1)."</span>
-            <span class=\"resplastic\">".nf($cp->debrisPlastic,0,1)."</span>
+            <span class=\"resmetal\">".nf($planet->wfMetal,0,1)."</span>
+            <span class=\"rescrystal\">".nf($planet->wfCrystal,0,1)."</span>
+            <span class=\"resplastic\">".nf($planet->wfPlastic,0,1)."</span>
             <br style=\"clear:left;\"/>";
         }
         if (filled($planet->description)) {
