@@ -1400,25 +1400,6 @@ die Spielleitung";
         return $uarr[0];
     }
 
-    static function findIdByNick($nick)
-    {
-        $res = dbquery("
-        SELECT
-            user_id
-        FROM
-            ".self::tableName."
-        WHERE
-            user_nick='".mysql_real_escape_string($nick)."'
-        LIMIT 1;
-        ");
-        if (mysql_num_rows($res)>0)
-        {
-            $arr = mysql_fetch_row($res);
-            return $arr[0];
-        }
-        return 0;
-    }
-
     public function detailLink()
     {
         return "<a href=\"?page=userinfo&amp;id=".$this->id."\">".$this->__toString()."</a>";
