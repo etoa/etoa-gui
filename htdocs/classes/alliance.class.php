@@ -915,30 +915,6 @@ use EtoA\Core\Configuration\ConfigurationService;
       }
 
       /**
-      * Returns a sorted list of all alliances
-      */
-      static public function & getList()
-      {
-          $rtn = array();
-          $res = dbquery("
-          SELECT
-              alliance_id,
-              alliance_tag,
-              alliance_name
-          FROM
-              alliances
-            ORDER BY
-                alliance_name
-          ");
-          if (mysql_num_rows($res)>0)
-          {
-              while ($arr = mysql_fetch_row($res))
-                  $rtn[$arr[0]] = "[".$arr[1]."] ".$arr[2];
-          }
-          return $rtn;
-      }
-
-      /**
       * Calc costs at adding a new Member
       */
       public function calcMemberCosts($save=true,$addMembers=1)
