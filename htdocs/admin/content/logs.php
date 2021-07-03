@@ -3,6 +3,7 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Technology\TechnologyDataRepository;
 use Twig\Environment;
 
 // TODO
@@ -429,8 +430,8 @@ function commonLog()
         $buildingRepository = $app[\EtoA\Building\BuildingDataRepository::class];
         $buildingNames = $buildingRepository->getBuildingNames(true);
 
-        /** @var \EtoA\Technology\TechnologyDataRepository $technologyRepository */
-        $technologyRepository = $app[\EtoA\Technology\TechnologyDataRepository::class];
+        /** @var TechnologyDataRepository $technologyRepository */
+        $technologyRepository = $app[TechnologyDataRepository::class];
         $technologyNames = $technologyRepository->getTechnologyNames(true);
 
         $res = dbquery($sql_query);
@@ -760,9 +761,11 @@ function newGamelogs()
                     break;
                 case '2':
                     <?PHP
-                    foreach (Technology::getItems() as $k => $v)
+                    /** @var TechnologyDataRepository $technologyRepository */
+                    $technologyRepository = $app[TechnologyDataRepository::class];
+                    foreach ($technologyRepository->getTechnologyNames(true) as $techId => $technologyName)
                     {
-                        echo "elem.options[elem.options.length] = new Option('$v',$k);";
+                        echo "elem.options[elem.options.length] = new Option('$technologyName',$techId);";
                     }
                     ?>
                     break;

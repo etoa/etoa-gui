@@ -6,6 +6,7 @@
 
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Technology\TechnologyDataRepository;
 
 /**
  * Description of spyreport
@@ -133,14 +134,16 @@ class SpyReport extends Report
 					{
 						echo '<table>';
 						$techArr = explode(',',$this->technologies);
-						$technologies = Technology::getItems();
+                        /** @var TechnologyDataRepository $technologyRepository */
+                        $technologyRepository = $app[TechnologyDataRepository::class];
+                        $technologyNames = $technologyRepository->getTechnologyNames(true);
 						foreach ($techArr as $tech)
 						{
 							if ($tech!='')
 							{
 								$data = explode(':',$tech);
 								echo '<tr>
-										<td>'.$technologies[$data[0] ].' </td>
+										<td>'.$technologyNames[(int) $data[0] ].' </td>
 										<td style="text-align:right;"> '.$data[1].'</td>
 									</tr>';
 							}
