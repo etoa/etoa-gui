@@ -144,25 +144,6 @@ die Spielleitung";
         return mysql_num_rows($res);
     }
 
-    /**
-    * Abgelaufene Sperren löschen
-    *
-    */
-    static function removeOldBanns()
-    {
-        dbquery("
-            UPDATE
-                users
-            SET
-                user_blocked_from='0',
-                user_blocked_to='0',
-                user_ban_reason='',
-                user_ban_admin_id='0'
-            WHERE
-                user_blocked_to<'".time()."';
-        ");
-    }
-
     static function addSittingDays(int $days = 0)
     {
         if ($days == 0)

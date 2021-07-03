@@ -156,4 +156,21 @@ class UserRepository extends AbstractRepository
 
         return $recipients;
     }
+
+    public function removeOldBans(): void
+    {
+        $this->getConnection()->executeQuery("
+            UPDATE
+                users
+            SET
+                user_blocked_from = 0,
+                user_blocked_to = 0,
+                user_ban_reason = '',
+                user_ban_admin_id = 0
+            WHERE
+                user_blocked_to < :blockedBefore';
+        ", [
+            'blockedBefore' => time(),
+        ]);
+    }
 }
