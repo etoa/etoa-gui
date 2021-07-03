@@ -544,23 +544,6 @@ class User implements \EtoA\User\UserInterface
         $this->isVerified = $verified;
     }
 
-    public static function findFirstByVerificationKey($verificationKey) {
-        $res = dbQuerySave("
-        SELECT
-            user_id
-        FROM
-            ".self::tableName."
-        WHERE
-            verification_key=?
-        ;", [
-            $verificationKey
-        ]);
-        if ($arr = mysql_fetch_row($res)) {
-            return new User($arr[0]);
-        }
-        return null;
-    }
-
     public function isInactiv()
     {
         if (!$this->admin)

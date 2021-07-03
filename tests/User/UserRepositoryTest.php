@@ -76,4 +76,15 @@ class UserRepositoryTest extends AbstractDbTestCase
 
         $this->assertNotNull($this->repository->getUser($userId));
     }
+
+    public function testMarkVerifiedByVerificationKey(): void
+    {
+        $userId = 10;
+
+        $this->createUser($userId, 0, 0, 0, '', 'verification-key');
+
+        $this->assertTrue($this->repository->markVerifiedByVerificationKey('verification-key'));
+
+        $this->assertFalse($this->repository->markVerifiedByVerificationKey('verification-key'));
+    }
 }

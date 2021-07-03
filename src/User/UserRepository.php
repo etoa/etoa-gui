@@ -90,6 +90,18 @@ class UserRepository extends AbstractRepository
         return $result !== false ? (int) $result : null;
     }
 
+    public function markVerifiedByVerificationKey(string $verificationKey): bool
+    {
+        return (bool) $this->createQueryBuilder()
+            ->update('users')
+            ->set('verification_key', ':updatedKey')
+            ->where('verification_key = :key')
+            ->setParameter('key', $verificationKey)
+            ->setParameter('updatedKey', '')
+            ->setMaxResults(1)
+            ->execute();
+    }
+
     /**
      * @return array<int, string>
      */

@@ -21,7 +21,7 @@ class AbstractDbTestCase extends TestCase
         $this->connection = $this->app['db'];
     }
 
-    protected function createUser(int $userId, int $specialistId = 0, int $allianceId = 0, int $points = 0, string $discoverMask = ''): void
+    protected function createUser(int $userId, int $specialistId = 0, int $allianceId = 0, int $points = 0, string $discoverMask = '', string $verificationKey = ''): void
     {
         $this->connection
             ->createQueryBuilder()
@@ -52,6 +52,7 @@ class AbstractDbTestCase extends TestCase
                 'user_specialist_id' => ':specialistId',
                 'user_alliance_id' => ':allianceId',
                 'user_points' => ':points',
+                'verification_key' => ':verificationKey',
             ])->setParameters([
                 'userId' => $userId,
                 'setup' => 1,
@@ -65,6 +66,7 @@ class AbstractDbTestCase extends TestCase
                 'allianceId' => $allianceId,
                 'points' => $points,
                 'discoverymask' => $discoverMask,
+                'verificationKey' => $verificationKey,
             ])->execute();
     }
 }
