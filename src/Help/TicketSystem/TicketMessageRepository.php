@@ -91,7 +91,10 @@ class TicketMessageRepository extends AbstractRepository
         $message->id = (int) $this->getConnection()->lastInsertId();
     }
 
-    public function removeByTicketIds(...$ticketIds): void
+    /**
+     * @param int[] $ticketIds
+     */
+    public function removeByTicketIds(array $ticketIds): void
     {
         if (count($ticketIds) == 0) {
             return;

@@ -15,6 +15,9 @@ class RenamePlanet implements EventHandlerFunctionInterface
         return $task->getProgress() + 1;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getEventMap(): array
     {
         return [PlanetRename::RENAME_SUCCESS => 'handle'];

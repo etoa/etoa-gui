@@ -14,6 +14,9 @@ class HaveSpecialistType implements InitProgressHandlerFunctionInterface
     private UserRepository $userRepository;
     private int $specialistId;
 
+    /**
+     * @param array<string, int> $attributes
+     */
     public function __construct(array $attributes, UserRepository $userRepository)
     {
         $this->userRepository = $userRepository;

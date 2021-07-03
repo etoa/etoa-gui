@@ -10,7 +10,8 @@ use Doctrine\DBAL\Connection;
 
 class TextRepository extends AbstractRepository
 {
-    private $textDef;
+    /** @var array<string, array<string, string>> */
+    private array $textDef;
 
     public function __construct(Connection $connection)
     {
@@ -28,6 +29,9 @@ class TextRepository extends AbstractRepository
         return $this->textDef[$id]['label'];
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllTextIDs(): array
     {
         return array_keys($this->textDef);
@@ -48,11 +52,11 @@ class TextRepository extends AbstractRepository
             ->fetchAssociative();
         if ($data) {
             $t = new Text($id, $data['text_content']);
-            $t->updated = $data['text_updated'];
+            $t->updated = (int) $data['text_updated'];
             $t->enabled = ($data['text_enabled'] > 0);
             $t->label = $this->textDef[$id]['label'];
             $t->description = $this->textDef[$id]['description'];
-            $t->isOriginal = ($data['text_content'] == $this->textDef[$id]['default']);
+            $t->isOriginal = $data['text_content'] === $this->textDef[$id]['default'];
 
             return $t;
         }
@@ -123,7 +127,7 @@ class TextRepository extends AbstractRepository
     {
         $text = $this->find($key);
         if ($text !== null) {
-            if ($text->enabled && $text->content) {
+            if ($text->enabled && $text->content !== '') {
                 return $text->content;
             }
 

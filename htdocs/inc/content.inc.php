@@ -55,12 +55,12 @@ else
         }
     }
 
-    /** @var TextRepository */
+    /** @var TextRepository $textRepo */
     $textRepo = $app[TextRepository::class];
 
     // SYSTEMNACHRICHT //
     $systemMessage = $textRepo->find('system_message');
-    if ($systemMessage->enabled && $systemMessage->content)
+    if ($systemMessage->isEnabled())
     {
         echo "<br />";
         iBoxStart("<span style=\"color:red;\">WICHTIGE SYSTEMNACHRICHT</span>");
@@ -73,7 +73,7 @@ else
     if ($backendStatus != null && $backendStatus == 0)
     {
         $infoText = $textRepo->find('backend_offline_message');
-        if ($infoText->enabled && $infoText->content)
+        if ($infoText->isEnabled())
         {
             echo "<br />";
             iBoxStart("<span style=\"color:red;\">UPDATEDIENST</span>");

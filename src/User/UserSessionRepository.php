@@ -28,7 +28,7 @@ class UserSessionRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function find(string $id): ?array
+    public function find(string $id): ?UserSession
     {
         $data = $this->createQueryBuilder()
             ->select("*")
@@ -38,18 +38,23 @@ class UserSessionRepository extends AbstractRepository
             ->execute()
             ->fetchAssociative();
 
-        return $data !== false ? $data : null;
+        return $data !== false ? new UserSession($data) : null;
     }
 
+    /**
+     * @return UserSession[]
+     */
     public function findByTimeout(int $timeout): array
     {
-        return $this->createQueryBuilder()
+        $data = $this->createQueryBuilder()
             ->select("id")
             ->from('user_sessions')
             ->where('time_action + :timeout = ' . time())
             ->setParameter('timeout', $timeout)
             ->execute()
             ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new UserSession($row), $data);
     }
 
     public function remove(string $id): void
@@ -61,7 +66,7 @@ class UserSessionRepository extends AbstractRepository
             ->execute();
     }
 
-    public function addSessionLog(array $userSession, ?int $logoutTime): void
+    public function addSessionLog(UserSession $userSession, ?int $logoutTime): void
     {
         $this->createQueryBuilder()
             ->insert('user_sessionlog')
@@ -75,12 +80,12 @@ class UserSessionRepository extends AbstractRepository
                 'time_logout' => $logoutTime ?? time(),
             ])
             ->setParameters([
-                'id' => $userSession['id'],
-                'user_id' => $userSession['user_id'],
-                'ip_addr' => $userSession['ip_addr'],
-                'user_agent' => $userSession['user_agent'],
-                'time_login' => $userSession['time_login'],
-                'time_action' => $userSession['time_action'],
+                'id' => $userSession->id,
+                'user_id' => $userSession->userId,
+                'ip_addr' => $userSession->ipAddr,
+                'user_agent' => $userSession->userAgent,
+                'time_login' => $userSession->timeLogin,
+                'time_action' => $userSession->timeAction,
             ])
             ->execute();
     }

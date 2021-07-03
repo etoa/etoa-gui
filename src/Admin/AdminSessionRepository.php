@@ -19,46 +19,48 @@ class AdminSessionRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function find($id): ?array
+    public function find(string $id): ?AdminSession
     {
         $data = $this->createQueryBuilder()
-            ->select("*")
-            ->from('admin_user_sessions')
+            ->select('s.*', 'u.user_nick')
+            ->from('admin_user_sessions', 's')
+            ->innerJoin('s', 'admin_users', 'u', 's.user_id=u.user_id')
             ->where('id = :id')
             ->setParameter('id', $id)
             ->execute()
             ->fetchAssociative();
 
-        return $data !== false ? $data : null;
+        return $data !== false ? new AdminSession($data) : null;
     }
 
+    /**
+     * @return string[]
+     */
     public function findByTimeout(int $timeout): array
     {
-        return $this->createQueryBuilder()
+        return array_column($this->createQueryBuilder()
             ->select("id")
             ->from('admin_user_sessions')
             ->where('time_action + :timeout = ' . time())
             ->setParameter('timeout', $timeout)
             ->execute()
-            ->fetchAllAssociative();
+            ->fetchAllAssociative(), 'id');
     }
 
+    /**
+     * @return AdminSession[]
+     */
     public function findAll(): array
     {
-        return $this->createQueryBuilder()
-            ->select(
-                's.user_id',
-                's.ip_addr',
-                's.user_agent',
-                's.time_login',
-                's.time_action',
-                'u.user_nick'
-            )
+        $data = $this->createQueryBuilder()
+            ->select('s.*', 'u.user_nick')
             ->from('admin_user_sessions', 's')
             ->innerJoin('s', 'admin_users', 'u', 's.user_id=u.user_id')
             ->orderBy('time_action', 'DESC')
             ->execute()
             ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new AdminSession($row), $data);
     }
 
     public function exists(string $id, int $userId, string $userAgent, int $timeLogin): bool
@@ -101,7 +103,7 @@ class AdminSessionRepository extends AbstractRepository
             ->execute();
     }
 
-    public function update($id, int $time, string $ipAddress): void
+    public function update(string $id, int $time, string $ipAddress): void
     {
         $this->createQueryBuilder()
             ->update('admin_user_sessions')
@@ -116,7 +118,7 @@ class AdminSessionRepository extends AbstractRepository
             ->execute();
     }
 
-    public function remove($id): void
+    public function remove(string $id): void
     {
         $this->createQueryBuilder()
             ->delete('admin_user_sessions')
@@ -125,7 +127,7 @@ class AdminSessionRepository extends AbstractRepository
             ->execute();
     }
 
-    public function removeByUserOrId($id, int $userId): void
+    public function removeByUserOrId(string $id, int $userId): void
     {
         $this->createQueryBuilder()
             ->delete('admin_user_sessions')
@@ -145,7 +147,7 @@ class AdminSessionRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function addSessionLog(array $adminSession, ?int $logoutTime): void
+    public function addSessionLog(AdminSession $adminSession, ?int $logoutTime): void
     {
         // TODO: Introduce admin session class for $adminSession and set it as type
 
@@ -161,12 +163,12 @@ class AdminSessionRepository extends AbstractRepository
                 'time_logout' => $logoutTime ?? time(),
             ])
             ->setParameters([
-                'id' => $adminSession['id'],
-                'user_id' => $adminSession['user_id'],
-                'ip_addr' => $adminSession['ip_addr'],
-                'user_agent' => $adminSession['user_agent'],
-                'time_login' => $adminSession['time_login'],
-                'time_action' => $adminSession['time_action'],
+                'id' => $adminSession->id,
+                'user_id' => $adminSession->userId,
+                'ip_addr' => $adminSession->ipAddr,
+                'user_agent' => $adminSession->userAgent,
+                'time_login' => $adminSession->timeLogin,
+                'time_action' => $adminSession->timeAction,
             ])
             ->execute();
     }
@@ -180,9 +182,12 @@ class AdminSessionRepository extends AbstractRepository
             ->execute();
     }
 
+    /**
+     * @return AdminSessionLog[]
+     */
     public function findSessionLogsByUser(int $userId): array
     {
-        return $this->createQueryBuilder()
+        $data = $this->createQueryBuilder()
             ->select("l.*", 'u.user_nick')
             ->from("admin_user_sessionlog", 'l')
             ->innerJoin('l', 'admin_users', 'u', 'l.user_id=u.user_id AND l.user_id = :user_id')
@@ -190,11 +195,16 @@ class AdminSessionRepository extends AbstractRepository
             ->setParameter('user_id', $userId)
             ->execute()
             ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new AdminSessionLog($row), $data);
     }
 
+    /**
+     * @return AdminSessionCount[]
+     */
     public function findUsersWithSessionLogs(): array
     {
-        return $this->createQueryBuilder()
+        $data = $this->createQueryBuilder()
             ->select("user_nick", 'u.user_id', 'COUNT(*) as cnt')
             ->from("admin_users", 'u')
             ->innerJoin('u', 'admin_user_sessionlog', 'l', 'l.user_id=u.user_id')
@@ -202,5 +212,7 @@ class AdminSessionRepository extends AbstractRepository
             ->orderBy('u.user_nick')
             ->execute()
             ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new AdminSessionCount($row), $data);
     }
 }

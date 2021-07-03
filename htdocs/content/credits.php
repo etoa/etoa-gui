@@ -4,11 +4,11 @@ use EtoA\Text\TextRepository;
 
 echo '<h1>Credits</h1>';
 
-	/** @var TextRepository */
+	/** @var TextRepository $textRepo */
     $textRepo = $app[TextRepository::class];
 
 	$credits = $textRepo->find('credits');
-	if ($credits->enabled && $credits->content)
+	if ($credits->isEnabled())
 	{
 		iBoxStart();
 		echo text2html($credits->content);

@@ -43,6 +43,7 @@ class EntityRepository extends AbstractRepository
     }
 
     /**
+     * @param string[] $codes
      * @return array<Entity>
      */
     public function findRandomByCodes(array $codes, int $limit): array

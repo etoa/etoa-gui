@@ -11,6 +11,9 @@ class MissileLaunch extends Event
     /** @var int[] */
     private array $missiles;
 
+    /**
+     * @param int[] $missiles
+     */
     public function __construct(array $missiles)
     {
         $this->missiles = $missiles;

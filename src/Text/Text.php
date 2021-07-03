@@ -6,17 +6,22 @@ namespace EtoA\Text;
 
 class Text
 {
-    public $id;
-    public $label;
-    public $description;
-    public $content;
-    public $updated;
-    public $enabled = true;
-    public $isOriginal = true;
+    public string $id;
+    public string $label;
+    public string $description;
+    public string $content;
+    public int $updated;
+    public bool $enabled = true;
+    public bool $isOriginal = true;
 
-    public function __construct($id, $content)
+    public function __construct(string $id, string $content)
     {
         $this->id = $id;
         $this->content = $content;
+    }
+
+    public function isEnabled(): bool
+    {
+        return $this->enabled && $this->content !== '';
     }
 }

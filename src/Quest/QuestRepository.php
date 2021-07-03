@@ -69,6 +69,9 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
         return $quests;
     }
 
+    /**
+     * @param array[] $questData
+     */
     private function buildQuest(int $questId, array $questData): Quest
     {
         $tasks = [];
@@ -146,6 +149,9 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
         return $quest;
     }
 
+    /**
+     * @return array<array>
+     */
     public function searchQuests(?int $questId, ?int $userId, ?string $questState, ?string $userNick): array
     {
         $qb = $this->createQueryBuilder()
@@ -187,6 +193,9 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
             ->execute()->fetchAllAssociative();
     }
 
+    /**
+     * @return ?mixed[]
+     */
     public function getQuest(int $questId): ?array
     {
         $result = $this->createQueryBuilder()

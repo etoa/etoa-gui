@@ -157,33 +157,33 @@ function adminSessionLogForUserView(
                 </tr>";
             foreach ($sessions as $arr) {
                 echo "<tr>
-                        <td>" . date("d.m.Y, H:i", $arr['time_login']) . "</td>";
+                        <td>" . date("d.m.Y, H:i", $arr->timeLogin) . "</td>";
                 echo "<td>";
                 if ($arr['time_action'] > 0)
-                    echo date("d.m.Y H:i", $arr['time_action']);
+                    echo date("d.m.Y H:i", $arr->timeAction);
                 else
                     echo "-";
                 echo "</td>";
                 echo "<td>";
-                if ($arr['time_logout'] > 0)
-                    echo date("d.m.Y, H:i", $arr['time_logout']);
+                if ($arr->timeLogout > 0)
+                    echo date("d.m.Y, H:i", $arr->timeLogout);
                 else
                     echo "-";
                 echo "</td>";
                 echo "<td>";
-                if (max($arr['time_logout'], $arr['time_action']) - $arr['time_login'] > 0) {
-                    echo tf(max($arr['time_logout'], $arr['time_action']) - $arr['time_login']);
+                if (max($arr->timeLogout, $arr->timeAction) - $arr->timeLogin > 0) {
+                    echo tf(max($arr->timeLogout, $arr->timeAction) - $arr->timeLogin);
                 } else {
                     echo "-";
                 }
-                if ($arr['session_id'] == $s->id) {
+                if ($arr->sessionId == $s->id) {
                     echo " <span style=\"color:#0f0\">aktiv</span>";
                 }
                 echo "</td>";
-                echo "<td title=\"" . Net::getHost($arr['ip_addr']) . "\">" . $arr['ip_addr'] . "</td>";
-                $browserParser = new \WhichBrowser\Parser($arr['user_agent']);
-                echo "<td title=\"" . $arr['user_agent'] . "\">" . $browserParser->browser->toString() . "</td>";
-                echo "<td title=\"" . $arr['user_agent'] . "\">" . $browserParser->os->toString() . "</td>";
+                echo "<td title=\"" . Net::getHost($arr->ipAddr) . "\">" . $arr->ipAddr . "</td>";
+                $browserParser = new \WhichBrowser\Parser($arr->userAgent);
+                echo "<td title=\"" . $arr->userAgent . "\">" . $browserParser->browser->toString() . "</td>";
+                echo "<td title=\"" . $arr->userAgent . "\">" . $browserParser->os->toString() . "</td>";
                 echo "</tr>";
             }
             echo "</table>";
@@ -251,16 +251,16 @@ function adminSessionLogView(
             </tr>";
         $t = time();
         foreach ($sessions as $arr) {
-            $browserParser = new \WhichBrowser\Parser($arr['user_agent']);
+            $browserParser = new \WhichBrowser\Parser($arr->userAgent);
             echo "<tr>
-                    <td " . ($t - $config->getInt('admin_timeout') < $arr['time_action'] ? 'style="color:#0f0;">Online' : 'style="color:red;">Timeout') . "</td>
-                    <td>" . $arr['user_nick'] . "</td>
-                    <td>" . date("d.m.Y H:i", $arr['time_login']) . "</td>
-                    <td>" . date("d.m.Y H:i", $arr['time_action']) . "</td>
-                    <td>" . tf($arr['time_action'] - $arr['time_login']) . "</td>
-                    <td title=\"" . Net::getHost($arr['ip_addr']) . "\">" . $arr['ip_addr'] . "</td>
-                    <td title=\"" . $arr['user_agent'] . "\">" . $browserParser->toString() . "</td>
-                    <td><a href=\"?page=$page&amp;sub=$sub&amp;kick=" . $arr['user_id'] . "\">Kick</a></td>
+                    <td " . ($t - $config->getInt('admin_timeout') < $arr->timeAction ? 'style="color:#0f0;">Online' : 'style="color:red;">Timeout') . "</td>
+                    <td>" . $arr->userNick . "</td>
+                    <td>" . date("d.m.Y H:i", $arr->timeLogin) . "</td>
+                    <td>" . date("d.m.Y H:i", $arr->timeAction) . "</td>
+                    <td>" . tf($arr->timeAction - $arr->timeLogin) . "</td>
+                    <td title=\"" . Net::getHost($arr->ipAddr) . "\">" . $arr->ipAddr . "</td>
+                    <td title=\"" . $arr->userAgent . "\">" . $browserParser->toString() . "</td>
+                    <td><a href=\"?page=$page&amp;sub=$sub&amp;kick=" . $arr->userId . "\">Kick</a></td>
                 </tr>";
         }
         echo "</table>";
@@ -273,7 +273,7 @@ function adminSessionLogView(
         echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
         echo "Benutzer wählen: <select name=\"user_id\">";
         foreach ($usersWithSessionLogs as $arr) {
-            echo "<option value=\"" . $arr['user_id'] . "\">" . $arr['user_nick'] . " (" . $arr['cnt'] . " Sessions)</option>";
+            echo "<option value=\"" . $arr->userId . "\">" . $arr->userNick . " (" . $arr->count . " Sessions)</option>";
         }
         echo "</select> &nbsp; <input type=\"submit\" name=\"logshow\" value=\"Anzeigen\" /></form>";
 

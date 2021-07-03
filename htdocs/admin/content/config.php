@@ -304,9 +304,6 @@ function displayField(ConfigurationService $config, $type, $confname, $field)
             break;
         case "timedate":
             $confValue = $value;
-            if ($confValue instanceof SimpleXMLElement) {
-                $confValue = (string)$confValue;
-            }
 
             echo "<select name=\"config_" . $field . "_d[" . $confname . "]\" class=\"inputfield-$type\">";
             for ($x = 1; $x < 32; $x++) {

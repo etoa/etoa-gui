@@ -15,6 +15,9 @@ class CreateAlliance implements EventHandlerFunctionInterface
         return $task->getProgress() + 1;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getEventMap(): array
     {
         return [AllianceCreate::CREATE_SUCCESS => 'handle'];

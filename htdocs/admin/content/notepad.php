@@ -54,9 +54,9 @@ function editNote(AdminNotesRepository $notesRepo, int $adminUserId)
 
 	echo "<h1>Notizen</h1>";
 	echo "<form action=\"?page=notepad&amp;func=editieren\" method=\"post\">";
-	echo "<input type=\"hidden\" name=\"pid\" value=\"" . $note['notes_id'] . "\">
-	<input type=\"Text\" name=\"Titel\" value=\"" . $note['titel'] . "\" size=\"50\"/><br><br>";
-	echo "<textarea name=\"Text\" cols=\"80\" rows=\"20\">" . $note['text'] . "</textarea><br><br>";
+	echo "<input type=\"hidden\" name=\"pid\" value=\"" . $note->id . "\">
+	<input type=\"Text\" name=\"Titel\" value=\"" . $note->title . "\" size=\"50\"/><br><br>";
+	echo "<textarea name=\"Text\" cols=\"80\" rows=\"20\">" . $note->text . "</textarea><br><br>";
 	echo "<input type=\"Submit\" name=\"Ändern\" value=\"Ändern\"></input>";
 	echo "</form>";
 }
@@ -86,15 +86,15 @@ function noteIndex(AdminNotesRepository $notesRepo, int $adminUserId)
 		echo "<br>";
 		tableStart("Notizübersicht", "95%");
 		foreach ($notes as $note) {
-			$datum = date("d.m.Y", $note['date']);
-			$uhrzeit = date("H:i", $note['date']);
+			$datum = date("d.m.Y", $note->date);
+			$uhrzeit = date("H:i", $note->date);
 
 			echo "<tr>
-			<td width=\"120\"><b>" . text2html($note['titel']) . "</b><br/>" . $datum . " " . $uhrzeit . "</td>";
-			echo "<td width=\"350\">" . text2html($note['text']) . "</td>";
+			<td width=\"120\"><b>" . text2html($note->title) . "</b><br/>" . $datum . " " . $uhrzeit . "</td>";
+			echo "<td width=\"350\">" . text2html($note->text) . "</td>";
 			echo "<td>
-			<a href=\"?page=$page&amp;chk=edit&pid=" . $note['notes_id'] . "\">Bearbeiten</a><br>
-			<a href=\"?page=$page&amp;chk=del&pid=" . $note['notes_id'] . "\" onclick=\"return confirm('Eintrag löschen?')\">Löschen</a>
+			<a href=\"?page=$page&amp;chk=edit&pid=" . $note->id . "\">Bearbeiten</a><br>
+			<a href=\"?page=$page&amp;chk=del&pid=" . $note->id . "\" onclick=\"return confirm('Eintrag löschen?')\">Löschen</a>
 			</td></tr>";
 		}
 		echo "</table>";

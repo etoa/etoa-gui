@@ -181,7 +181,7 @@ function runCleanup(
 		}
 		if (isset($_POST['del_tickets'])) {
 			$ticketIds = $ticketRepo->findOrphanedIds();
-			$deletedTickets = $ticketService->removeByIds(...$ticketIds);
+			$deletedTickets = $ticketService->removeByIds($ticketIds);
 			echo $deletedTickets . " verwaiste Tickets wurden gelöscht!<br/>";
 		}
 		if (isset($_POST['del_reports'])) {

@@ -242,6 +242,7 @@ class MessageRepository extends AbstractRepository
     }
 
     /**
+     * @param array<string, int|string|bool> $params
      * @return array<Message>
      */
     public function findBy(array $params = [], ?int $limit = null): array
