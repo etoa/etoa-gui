@@ -229,25 +229,6 @@
 			return $rtn;
 		}
 
-		static function getTypes()
-		{
-			$res = dbquery("
-			SELECT
-				type_id as id,
-				type_name as name
-			FROM
-				building_types
-			ORDER BY
-				type_order
-			;");
-			$rtn=array();
-			while($arr = mysql_fetch_assoc($res))
-			{
-				$rtn[$arr['id']] = $arr['name'];
-			}
-			return $rtn;
-		}
-
 		static function getBuildTypes()
 		{
 			return [
