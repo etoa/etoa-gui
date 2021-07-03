@@ -117,6 +117,36 @@ class BuildingRepository extends AbstractRepository
         return (int) $affected > 0;
     }
 
+    public function updateUserForEntity(int $newUserId, int $entityId): void
+    {
+        $this->createQueryBuilder()
+            ->update('buildlist')
+            ->set('buildlist_user_id', ':newUserId')
+            ->where('buildlist_entity_id = :entityId')
+            ->setParameters([
+                'newUserId' => $newUserId,
+                'entityId' => $entityId,
+            ])
+            ->execute();
+    }
+
+    public function removeForEntity(int $entityId): void
+    {
+        $this->createQueryBuilder()
+            ->delete('building_queue')
+            ->where('entity_id = :entityId')
+            ->setParameter('entityId', $entityId)
+            ->execute();
+
+        $this->createQueryBuilder()
+            ->delete('buildlist')
+            ->where('buildlist_entity_id = :entityId')
+            ->setParameters([
+                'entityId' => $entityId,
+            ])
+            ->execute();
+    }
+
     public function deleteBuildingListEntry(int $id): bool
     {
         $affected = $this->createQueryBuilder()

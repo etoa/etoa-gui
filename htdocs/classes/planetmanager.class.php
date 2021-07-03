@@ -1,7 +1,5 @@
 <?PHP
 
-use EtoA\Core\Configuration\ConfigurationService;
-
 class PlanetManager
 {
     private $items;
@@ -15,71 +13,6 @@ class PlanetManager
         $this->loaded=false;
         $this->itemObjects = array();
         $this->num = count($i);
-    }
-
-    public function itemObjects()
-    {
-        $this->load();
-        return $this->itemObjects;
-    }
-
-    static function getFreePlanet($sx=0,$sy=0, $fp=0, $fs=0)
-    {
-        // TODO
-        global $app;
-
-        /** @var ConfigurationService */
-        $config = $app[ConfigurationService::class];
-
-        $filter = '';
-        if($fp>0) {
-            $filter = " AND planets.planet_type_id = $fp";
-        }
-
-        if($fs>0) {
-            $filter .= " AND entities.cell_id = any (
-                    select cell_id FROM entities WHERE id = any (
-                        select id from stars where type_id = $fs
-                    )
-                )";
-        }
-
-        $sql = "
-            SELECT
-                planets.id
-            FROM
-                cells
-            INNER JOIN
-            (
-                entities
-                INNER JOIN
-                (
-                    planets
-                    INNER JOIN
-                        planet_types
-                        ON planet_type_id=type_id
-                        AND type_habitable=1
-                )
-                ON planets.id=entities.id
-                AND planets.planet_fields>'".$config->getInt('user_min_fields')."'
-                AND planets.planet_user_id='0'$filter
-                )
-            ON entities.cell_id=cells.id ";
-        if ($sx>0)
-            $sql.=" AND cells.sx=".$sx." ";
-        if ($sy>0)
-            $sql.=" AND cells.sy=".$sy." ";
-
-        $sql.="ORDER BY
-                RAND()
-        LIMIT 1";
-        $tres = dbquery($sql);
-        if (mysql_num_rows($tres)==0)
-        {
-            return false;
-        }
-        $tarr = mysql_fetch_row($tres);
-        return $tarr[0];
     }
 
     public function prevId($currendId)

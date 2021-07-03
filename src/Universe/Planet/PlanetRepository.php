@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\Universe\Planet;
 
 use EtoA\Core\AbstractRepository;
+use EtoA\Universe\Entity\EntityType;
 
 class PlanetRepository extends AbstractRepository
 {
@@ -77,6 +78,25 @@ class PlanetRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    public function countWithUserInSector(int $sx, int $sy): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(e.id)')
+            ->from('entities', 'e')
+            ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id')
+            ->innerJoin('e', 'planets', 'p', 'p.id = e.id AND p.planet_user_id > 0')
+            ->where('code = :code')
+            ->andWhere('sx = :sx')
+            ->andWhere('sy = :sy')
+            ->setParameters([
+                'sx' => $sx,
+                'sy' => $sy,
+                'code' => EntityType::PLANET,
+            ])
+            ->execute()
+            ->fetchOne();
+    }
+
     public function find(int $id): ?Planet
     {
         $data = $this->createQueryBuilder()
@@ -90,6 +110,54 @@ class PlanetRepository extends AbstractRepository
             ->fetchAssociative();
 
         return $data !== false ? new Planet($data) : null;
+    }
+
+    public function getRandomFreePlanetId(int $sx = 0, int $sy = 0, ?int $minFields = null, ?int $planetType = null, ?int $starType = null): ?int
+    {
+        $qry = $this->createQueryBuilder()
+            ->select('p.id')
+            ->from('planets', 'p')
+            ->where('p.planet_user_id = 0')
+            ->innerJoin('p', 'planet_types', 't', 'p.planet_type_id = t.type_id AND t.type_habitable = 1')
+            ->innerJoin('p', 'entities', 'e', 'p.id = e.id')
+            ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id')
+            ->orderBy('RAND()')
+            ->setMaxResults(1);
+
+        if ($sx > 0) {
+            $qry->andWhere('c.sx = :sx')
+                ->setParameter('sx', $sx);
+        }
+
+        if ($sy > 0) {
+            $qry->andWhere('c.sy = :sy')
+                ->setParameter('sy', $sy);
+        }
+
+        if ($planetType > 0) {
+            $qry->andWhere('p.planet_type_id = :planetType')
+                ->setParameter('planetType', $planetType);
+        }
+
+        if ($minFields > 0) {
+            $qry->andWhere('p.planet_fields > :minFields')
+                ->setParameter('minFields', $minFields);
+        }
+
+        if ($starType > 0) {
+            $qry->andWhere('e.cell_id = any (
+                    select cell_id FROM entities WHERE id = any (
+                        select id from stars where type_id = :starType
+                    )
+                )')
+                ->setParameter('starType', $starType);
+        }
+
+        $data = $qry
+            ->execute()
+            ->fetchOne();
+
+        return $data !== false ? (int) $data : null;
     }
 
     public function add(
@@ -186,6 +254,38 @@ class PlanetRepository extends AbstractRepository
         return $affected > 0;
     }
 
+    public function setResources(
+        int $id,
+        int $resMetal,
+        int $resCrystal,
+        int $resPlastic,
+        int $resFuel,
+        int $resFood,
+        int $people
+    ): bool {
+        $affected = (int) $this->createQueryBuilder()
+            ->update('planets')
+            ->set('planet_res_metal', ':res_metal')
+            ->set('planet_res_crystal', ':res_crystal')
+            ->set('planet_res_plastic', ':res_plastic')
+            ->set('planet_res_fuel', ':res_fuel')
+            ->set('planet_res_food', ':res_food')
+            ->set('planet_people', ':people')
+            ->where('id = :id')
+            ->setParameters([
+                'id' => $id,
+                'res_metal' => $resMetal,
+                'res_crystal' => $resCrystal,
+                'res_plastic' => $resPlastic,
+                'res_fuel' => $resFuel,
+                'res_food' => $resFood,
+                'people' => $people,
+            ])
+            ->execute();
+
+        return $affected > 0;
+    }
+
     public function addResources(
         int $id,
         int $resMetal,
@@ -218,6 +318,101 @@ class PlanetRepository extends AbstractRepository
         return $affected > 0;
     }
 
+    public function assignToUser(int $id, int $userId, bool $main = false): void
+    {
+        $this->createQueryBuilder()
+            ->update('planets')
+            ->set('planet_user_id', ':userId')
+            ->set('planet_user_main', ':main')
+            ->where('id = :id')
+            ->setParameters([
+                'id' => $id,
+                'userId' => $userId,
+                'main' => $main,
+            ])
+            ->execute();
+    }
+
+    public function changeUser(int $id, int $userId, ?string $name = null): bool
+    {
+        $qry = $this->createQueryBuilder()
+            ->update('planets')
+            ->set('planet_user_id', ':userId')
+            ->set('planet_user_changed', 'UNIX_TIMESTAMP()')
+            ->set('planet_user_main', (string) 0)
+            ->where('id = :id')
+            ->setParameters([
+                'id' => $id,
+                'userId' => $userId,
+            ]);
+
+        if ($name !== null) {
+            $qry->set('planet_name', ':name')
+                ->setParameter('name', $name);
+        }
+
+        $affected = (int) $qry->execute();
+
+        return $affected > 0;
+    }
+
+    public function setNameAndComment(int $id, string $name, string $comment): void
+    {
+        $this->createQueryBuilder()
+            ->update('planets')
+            ->set('planet_name', ':name')
+            ->set('planet_desc', ':comment')
+            ->where('id = :id')
+            ->setParameters([
+                'id' => $id,
+                'name' => $name,
+                'comment' => $comment,
+            ])
+            ->execute();
+    }
+
+    public function reset(int $id): void
+    {
+        $this->createQueryBuilder()
+            ->update('planets')
+            ->set('planet_user_id', (string) 0)
+            ->set('planet_name', '""')
+            ->set('planet_user_main', (string) 0)
+            ->set('planet_fields_used', (string) 0)
+            ->set('planet_fields_extra', (string) 0)
+            ->set('planet_res_metal', (string) 0)
+            ->set('planet_res_crystal', (string) 0)
+            ->set('planet_res_fuel', (string) 0)
+            ->set('planet_res_plastic', (string) 0)
+            ->set('planet_res_food', (string) 0)
+            ->set('planet_use_power', (string) 0)
+            ->set('planet_last_updated', (string) 0)
+            ->set('planet_prod_metal', (string) 0)
+            ->set('planet_prod_crystal', (string) 0)
+            ->set('planet_prod_plastic', (string) 0)
+            ->set('planet_prod_fuel', (string) 0)
+            ->set('planet_prod_food', (string) 0)
+            ->set('planet_prod_power', (string) 0)
+            ->set('planet_bunker_metal', (string) 0)
+            ->set('planet_bunker_crystal', (string) 0)
+            ->set('planet_bunker_plastic', (string) 0)
+            ->set('planet_bunker_fuel', (string) 0)
+            ->set('planet_bunker_food', (string) 0)
+            ->set('planet_store_metal', (string) 0)
+            ->set('planet_store_crystal', (string) 0)
+            ->set('planet_store_plastic', (string) 0)
+            ->set('planet_store_fuel', (string) 0)
+            ->set('planet_store_food', (string) 0)
+            ->set('planet_people', (string) 1)
+            ->set('planet_people_place', (string) 0)
+            ->set('planet_desc', '""')
+            ->where('id = :id')
+            ->setParameters([
+                'id' => $id,
+            ])
+            ->execute();
+    }
+
     public function resetUserChanged(int $id): void
     {
         $this->createQueryBuilder()
@@ -228,6 +423,49 @@ class PlanetRepository extends AbstractRepository
                 'id' => $id,
             ])
             ->execute();
+    }
+
+    public function setMain(int $id, int $userId): bool
+    {
+        if ($userId == 0) {
+            return false;
+        }
+
+        $this->createQueryBuilder()
+            ->update('planets')
+            ->set('planet_user_main', (string) 0)
+            ->where('planet_user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+            ])
+            ->execute();
+
+        $affected = (int) $this->createQueryBuilder()
+            ->update('planets')
+            ->set('planet_user_main', (string) 1)
+            ->where('id = :id')
+            ->andWhere('planet_user_id = :userId')
+            ->setParameters([
+                'id' => $id,
+                'userId' => $userId,
+            ])
+            ->execute();
+
+        return $affected > 0;
+    }
+
+    public function unsetMain(int $id): bool
+    {
+        $affected = (int) $this->createQueryBuilder()
+            ->update('planets')
+            ->set('planet_user_main', (string) 0)
+            ->where('id = :id')
+            ->setParameters([
+                'id' => $id,
+            ])
+            ->execute();
+
+        return $affected > 0;
     }
 
     public function remove(int $id): void

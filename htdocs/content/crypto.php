@@ -1,10 +1,14 @@
 <?PHP
 
 use EtoA\Alliance\AllianceHistoryRepository;
+use EtoA\Bookmark\BookmarkService;
 use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
+/** @var BookmarkService */
+$bookmarkService = $app[BookmarkService::class];
 
 	//////////////////////////////////////////////////
 	//		 	 ____    __           ______       			//
@@ -543,7 +547,6 @@ $config = $app[ConfigurationService::class];
 						// Bookmarks laden
 						//
 
-						$bm = new BookmarkManager($cu->id);
 						echo 'Koordinaten eingeben:
 								<input type="text" onkeyup="'.$keyup_command.'" name="sx" id="sx" value="'.$coords[0].'" size="2" maxlength="2" /> /
 								<input type="text" onkeyup="'.$keyup_command.'" name="sy" id="sy" value="'.$coords[1].'" size="2" maxlength="2" /> :
@@ -553,8 +556,30 @@ $config = $app[ConfigurationService::class];
 
 						// Bookmarkliste anzeigen
 						echo '<i>oder</i> Favorit wählen: ';
-						$bm->drawSelector("bookmarkselect","applyBookmark();");
+						echo $bookmarkService->drawSelector($cu->id, "bookmarkselect", "applyBookmark();");
 						iBoxEnd();
+
+                        echo "<script type=\"text/javascript\">
+                        function applyBookmark()
+                        {
+                            let select_id = document.getElementById('bookmarkselect').selectedIndex;
+                            let select_val = document.getElementById('bookmarkselect').options[select_id];
+                            if (select_val && select_val.dataset.sx)
+                            {
+                                document.getElementById('sx').value = select_val.dataset.sx;
+                                document.getElementById('sy').value = select_val.dataset.sy;
+                                document.getElementById('cx').value = select_val.dataset.cx;
+                                document.getElementById('cy').value = select_val.dataset.cy;
+                                document.getElementById('p').value = select_val.dataset.pos;
+                            } else {
+                                document.getElementById('sx').value = '';
+                                document.getElementById('sy').value = '';
+                                document.getElementById('cx').value = '';
+                                document.getElementById('cy').value = '';
+                                document.getElementById('p').value = '';
+                            }
+                        }
+                        </script>";
 
 						if ($cp->resFuel >= CRYPTO_FUEL_COSTS_PER_SCAN)
 						{

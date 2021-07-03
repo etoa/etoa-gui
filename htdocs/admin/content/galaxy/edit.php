@@ -1,12 +1,13 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Universe\Asteroids\AsteroidsRepository;
+use EtoA\Universe\Asteroid\AsteroidRepository;
 use EtoA\Universe\EmptySpace\EmptySpaceRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Nebula\NebulaRepository;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Planet\PlanetService;
 use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\Universe\Star\SolarTypeRepository;
 use EtoA\Universe\Star\StarRepository;
@@ -26,8 +27,8 @@ $starRepo = $app[StarRepository::class];
 /** @var PlanetRepository */
 $planetRepo = $app[PlanetRepository::class];
 
-/** @var AsteroidsRepository */
-$asteroidsRepo = $app[AsteroidsRepository::class];
+/** @var AsteroidRepository */
+$asteroidRepo = $app[AsteroidRepository::class];
 
 /** @var NebulaRepository */
 $nebulaRepo = $app[NebulaRepository::class];
@@ -43,6 +44,9 @@ $solarTypeRepository = $app[SolarTypeRepository::class];
 
 /** @var PlanetTypeRepository */
 $planetTypeRepository = $app[PlanetTypeRepository::class];
+
+/** @var PlanetService */
+$planetService = $app[PlanetService::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();
@@ -67,18 +71,14 @@ if ($id > 0)
         {
             if ($request->request->has('save'))
             {
-                $pl = Planet::getById($id);
+                $planet = $planetRepo->find($id);
 
-                if ($request->request->has('planet_user_main'))
-                {
-                    if ($pl->setMain())
+                if ($request->request->has('planet_user_main')) {
+                    if (!$planet->mainPlanet && $planetRepo->setMain($id, $planet->userId)) {
                         success_msg("Hauptplanet gesetzt; ursprüngliche Hautpplanet-Zuordnung entfernt!");
-                }
-                else
-                {
-                    if ($pl->isMain)
-                    {
-                        $pl->unsetMain();
+                    }
+                } else {
+                    if ($planet->mainPlanet && $planetRepo->unsetMain($id)) {
                         success_msg("Hauptplanet-Zuordnung entfernt. Denke daran, einen neuen Hautplanet festzulegen!");
                     }
                 }
@@ -87,7 +87,7 @@ if ($id > 0)
                     $planetRepo->resetUserChanged($id);
                 }
 
-                $image = $pl->typeId != $request->request->getInt('planet_type_id')
+                $image = $planet->typeId != $request->request->getInt('planet_type_id')
                     ? $request->request->getInt('planet_type_id') . "_1"
                     : $request->request->get('planet_image');
 
@@ -136,12 +136,11 @@ if ($id > 0)
                 if ($request->request->get('planet_user_id') != $request->request->get('planet_user_id_old'))
                 {
                     //Planet dem neuen User übergeben (Schiffe und Verteidigung werden vom Planeten gelöscht!)
-                    $pl = Planet::getById($id);
-                    $pl->chown($request->request->getInt('planet_user_id'));
+                    $planetService->changeOwner($id, $request->request->getInt('planet_user_id'));
 
                     if ($request->request->getInt('planet_user_id') == 0)
                     {
-                        $pl->reset();
+                        $planetRepo->reset($id);
                     }
 
                     //Log Schreiben
@@ -362,15 +361,15 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
             echo "<form action=\"?page=$page&sub=edit&id=".$id."\" method=\"post\" id=\"editform\">";
             tableStart("<span style=\"color:".Entity::$entityColors[$entity->code]."\">Stern</span>","auto");
             echo "<tr><th>Name</th>
-            <td><input type=\"text\" name=\"name\" value=\"".$star['name']."\" size=\"20\" maxlength=\"250\" /></td>";
+            <td><input type=\"text\" name=\"name\" value=\"".$star->name."\" size=\"20\" maxlength=\"250\" /></td>";
             echo "<th>Typ</th>
             <td>
-            <img src=\"".IMAGE_PATH."/stars/star".$star['type_id']."_small.".IMAGE_EXT."\" style=\"float:left;\" />
+            <img src=\"".IMAGE_PATH."/stars/star".$star->typeId."_small.".IMAGE_EXT."\" style=\"float:left;\" />
             <select name=\"type_id\">";
             $solarTypeNames = $solarTypeRepository->getSolarTypeNames(true);
             foreach ($solarTypeNames as $solarTypeId => $solarTypeName) {
                 echo "<option value=\"".$solarTypeId."\"";
-                if ($star['type_id']==$solarTypeId) {
+                if ($star->typeId == $solarTypeId) {
                     echo " selected=\"selected\"";
                 }
                 echo ">".$solarTypeName."</option>\n";
@@ -383,12 +382,12 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
             echo "<input tabindex=\"28\" type=\"button\" value=\"Zurück zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=searchresults'\" /> ";
             echo "</form>";
         }
-        elseif ($entity->code == EntityType::ASTEROIDS)
+        elseif ($entity->code == EntityType::ASTEROID)
         {
             if ($request->request->has('save'))
             {
                 //Daten Speichern
-                $affected = $asteroidsRepo->update(
+                $affected = $asteroidRepo->update(
                     $id,
                     $request->request->getInt('res_metal'),
                     $request->request->getInt('res_crystal'),
@@ -397,7 +396,7 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
                     $request->request->getInt('res_food'),
                     $request->request->getInt('res_power')
                 );
-                $affectedAdd = $asteroidsRepo->addResources(
+                $affectedAdd = $asteroidRepo->addResources(
                     $id,
                     $request->request->getInt('res_metal_add'),
                     $request->request->getInt('res_crystal_add'),
@@ -412,30 +411,30 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
                 }
             }
 
-            $asteroid = $asteroidsRepo->find($id);
+            $asteroid = $asteroidRepo->find($id);
 
             echo "<form action=\"?page=$page&sub=edit&id=".$id."\" method=\"post\" id=\"editform\">";
             tableStart("<span style=\"color:".Entity::$entityColors[$entity->code]."\">Asteroidenfeld</span>","auto");
 
             echo "<tr><th>".RES_METAL."</th>
-            <td><input type=\"text\" name=\"res_metal\" value=\"".intval($asteroid['res_metal'])."\" size=\"12\" maxlength=\"20\" /><br/>
+            <td><input type=\"text\" name=\"res_metal\" value=\"".intval($asteroid->resMetal)."\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_metal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
             echo "<th>".RES_CRYSTAL."</th>
-            <td><input type=\"text\" name=\"res_crystal\" value=\"".intval($asteroid['res_crystal'])."\" size=\"12\" maxlength=\"20\" /><br/>
+            <td><input type=\"text\" name=\"res_crystal\" value=\"".intval($asteroid->resCrystal)."\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_crystal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 
             echo "<tr><th>".RES_PLASTIC."</th>
-            <td><input type=\"text\" name=\"res_plastic\" value=\"".intval($asteroid['res_plastic'])."\" size=\"12\" maxlength=\"20\" /><br/>
+            <td><input type=\"text\" name=\"res_plastic\" value=\"".intval($asteroid->resPlastic)."\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_plastic_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
             echo "<th>".RES_FUEL."</th>
-            <td><input type=\"text\" name=\"res_fuel\" value=\"".intval($asteroid['res_fuel'])."\" size=\"12\" maxlength=\"20\" /><br/>
+            <td><input type=\"text\" name=\"res_fuel\" value=\"".intval($asteroid->resFuel)."\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_fuel_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 
             echo "<tr><th>".RES_FOOD."</th>
-            <td><input type=\"text\" name=\"res_food\" value=\"".intval($asteroid['res_food'])."\" size=\"12\" maxlength=\"20\" /><br/>
+            <td><input type=\"text\" name=\"res_food\" value=\"".intval($asteroid->resFood)."\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_food_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
             echo "<th>".RES_POWER."</th>
-            <td><input type=\"text\" name=\"res_power\" value=\"".intval($asteroid['res_power'])."\" size=\"12\" maxlength=\"20\" /><br/>
+            <td><input type=\"text\" name=\"res_power\" value=\"".intval($asteroid->resPower)."\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_power_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 
             echo "</table>";
@@ -480,24 +479,24 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
             tableStart("<span style=\"color:".Entity::$entityColors[$entity->code]."\">Interstellarer Nebel</span>","auto");
 
             echo "<tr><th>".RES_METAL."</th>
-            <td><input type=\"text\" name=\"res_metal\" value=\"".intval($nebula['res_metal'])."\" size=\"12\" maxlength=\"20\" /><br/>
+            <td><input type=\"text\" name=\"res_metal\" value=\"".intval($nebula->resMetal)."\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_metal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
             echo "<th>".RES_CRYSTAL."</th>
-            <td><input type=\"text\" name=\"res_crystal\" value=\"".intval($nebula['res_crystal'])."\" size=\"12\" maxlength=\"20\" /><br/>
+            <td><input type=\"text\" name=\"res_crystal\" value=\"".intval($nebula->resCrystal)."\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_crystal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 
             echo "<tr><th>".RES_PLASTIC."</th>
-            <td><input type=\"text\" name=\"res_plastic\" value=\"".intval($nebula['res_plastic'])."\" size=\"12\" maxlength=\"20\" /><br/>
+            <td><input type=\"text\" name=\"res_plastic\" value=\"".intval($nebula->resPlastic)."\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_plastic_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
             echo "<th>".RES_FUEL."</th>
-            <td><input type=\"text\" name=\"res_fuel\" value=\"".intval($nebula['res_fuel'])."\" size=\"12\" maxlength=\"20\" /><br/>
+            <td><input type=\"text\" name=\"res_fuel\" value=\"".intval($nebula->resFuel)."\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_fuel_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 
             echo "<tr><th>".RES_FOOD."</th>
-            <td><input type=\"text\" name=\"res_food\" value=\"".intval($nebula['res_food'])."\" size=\"12\" maxlength=\"20\" /><br/>
+            <td><input type=\"text\" name=\"res_food\" value=\"".intval($nebula->resFood)."\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_food_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
             echo "<th>".RES_POWER."</th>
-            <td><input type=\"text\" name=\"res_power\" value=\"".intval($nebula['res_power'])."\" size=\"12\" maxlength=\"20\" /><br/>
+            <td><input type=\"text\" name=\"res_power\" value=\"".intval($nebula->resPower)."\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_power_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 
             echo "</table>";
@@ -551,7 +550,7 @@ Neuer Besitzer: [page user sub=edit user_id=".$request->request->getInt('planet_
             tableStart("<span style=\"color:".Entity::$entityColors[$entity->code]."\">Leerer Raum</span>","auto");
             echo "<tr><th>Zuletzt besucht</th>
             <td>";
-            echo ($space['lastvisited'] > 0) ? df($space['lastvisited']) : "Nie";
+            echo ($space->lastVisited > 0) ? df($space->lastVisited) : "Nie";
             echo "</td></tr>";
             echo "</table>";
             echo "<br/>

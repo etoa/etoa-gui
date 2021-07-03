@@ -8,6 +8,24 @@ use EtoA\Core\AbstractRepository;
 
 class EntityRepository extends AbstractRepository
 {
+    public function countEntitiesOfCodeInSector(int $sx, int $sy, string $code): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(e.id)')
+            ->from('entities', 'e')
+            ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id')
+            ->where('code = :code')
+            ->andWhere('sx = :sx')
+            ->andWhere('sy = :sy')
+            ->setParameters([
+                'sx' => $sx,
+                'sy' => $sy,
+                'code' => $code,
+            ])
+            ->execute()
+            ->fetchOne();
+    }
+
     public function findRandomId(string $code): ?int
     {
         $id = $this->createQueryBuilder()
@@ -75,6 +93,33 @@ class EntityRepository extends AbstractRepository
             ->where('e.id = :id')
             ->setParameters([
                 'id' => $id,
+            ])
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? new Entity($data) : null;
+    }
+
+    public function findByCellAndPosition(int $cellId, int $position): ?Entity
+    {
+        $data = $this->createQueryBuilder()
+            ->select(
+                'e.id',
+                'c.id as cid',
+                'code',
+                'pos',
+                'sx',
+                'sy',
+                'cx',
+                'cy'
+            )
+            ->from('entities', 'e')
+            ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id')
+            ->where('e.cell_id = :cellId')
+            ->andWhere('e.pos = :position')
+            ->setParameters([
+                'cellId' => $cellId,
+                'position' => $position,
             ])
             ->execute()
             ->fetchAssociative();

@@ -236,11 +236,6 @@ parameters:
 			path: htdocs/content/defense.php
 
 		-
-			message: "#^Variable \\$pm might not be defined\\.$#"
-			count: 1
-			path: htdocs/content/fleetstats.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: htdocs/content/help.php
@@ -289,11 +284,6 @@ parameters:
 			message: "#^Variable \\$weapon_tech_name might not be defined\\.$#"
 			count: 2
 			path: htdocs/content/planetoverview.php
-
-		-
-			message: "#^Variable \\$pm might not be defined\\.$#"
-			count: 1
-			path: htdocs/content/planetstats.php
 
 		-
 			message: "#^Foreach overwrites \\$bid with its key variable\\.$#"
@@ -351,17 +341,7 @@ parameters:
 			path: htdocs/inc/init.inc.php
 
 		-
-			message: "#^Variable \\$pid might not be defined\\.$#"
-			count: 2
-			path: htdocs/inc/usersetup.inc.php
-
-		-
 			message: "#^Variable \\$res might not be defined\\.$#"
-			count: 1
-			path: htdocs/inc/usersetup.inc.php
-
-		-
-			message: "#^Variable \\$tp might not be defined\\.$#"
 			count: 1
 			path: htdocs/inc/usersetup.inc.php
 

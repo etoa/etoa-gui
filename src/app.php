@@ -60,6 +60,8 @@ $app->register(new \EtoA\Message\MessageServiceProvider());
 $app->register(new \EtoA\Market\MarketServiceProvider());
 $app->register(new \EtoA\Support\RuntimeDataStoreServiceProvider());
 $app->register(new \EtoA\Ranking\RankingServiceProvider());
+$app->register(new \EtoA\Bookmark\BookmarkServiceProvider());
+$app->register(new \EtoA\Fleet\FleetServiceProvider());
 
 $app->mount('/', $questProvider);
 $app->mount('/', $tutorialProvider);

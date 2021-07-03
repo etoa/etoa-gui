@@ -3,14 +3,41 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Text\TextRepository;
+use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Entity\EntityType;
+use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Planet\PlanetService;
 use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\Universe\Star\SolarTypeRepository;
+use EtoA\Universe\Star\StarRepository;
+use Symfony\Component\HttpFoundation\Request;
 
 /** @var TextRepository */
 $textRepo = $app[TextRepository::class];
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
+/** @var PlanetRepository */
+$planetRepo = $app[PlanetRepository::class];
+
+/** @var PlanetService */
+$planetService = $app[PlanetService::class];
+
+/** @var SolarTypeRepository  */
+$solarTypeRepository = $app[SolarTypeRepository::class];
+
+/** @var PlanetTypeRepository */
+$planetTypeRepository = $app[PlanetTypeRepository::class];
+
+/** @var EntityRepository */
+$entityRepository = $app[EntityRepository::class];
+
+/** @var StarRepository */
+$starRepository = $app[StarRepository::class];
+
+/** @var Request */
+$request = Request::createFromGlobals();
 
 $sx_num = $config->param1Int('num_of_sectors');
 $sy_num = $config->param2Int('num_of_sectors');
@@ -25,25 +52,27 @@ $mode = null;
 
 // Apply chosen itemset
 /** @var UserSession $s */
-if (isset($s->itemset_key) && isset($_POST[md5($s->itemset_key)]) && isset($_POST['itemset_id']))
+if (isset($s->itemset_key) && $request->request->has(md5($s->itemset_key)) && $request->request->has('itemset_id'))
 {
-    Usersetup::addItemSetListToPlanet($s->itemset_planet,$cu->id,$_POST['itemset_id']);
+    Usersetup::addItemSetListToPlanet($s->itemset_planet, $cu->id, $request->request->getInt('itemset_id'));
     $s->itemset_key=null;
     $s->itemset_planet=null;
     $cu->setSetupFinished();
     $mode = "finished";
 }
-elseif (isset($_POST['submit_chooseplanet']) && intval($_POST['choosenplanetid'])>0 && checker_verify() && !isset($cp))
+elseif ($request->request->has('submit_chooseplanet') && $request->request->getInt('choosenplanetid') > 0 && checker_verify() && !isset($cp))
 {
-    $tp = Planet::getById($_POST['choosenplanetid']);
+    $planetId = $request->request->getInt('choosenplanetid');
+    $planet = $planetRepo->find($planetId);
 
-    if ($tp && $tp->habitable && $tp->userId == 0 && $tp->fields > $config->getInt('user_min_fields')) {
+    if ($planet !== null && $planetTypeRepository->isHabitable($planet->typeId) && $planet->userId == 0 && $planet->fields > $config->getInt('user_min_fields')) {
 
-        $tp->reset();
-        $tp->assignToUser($cu->id,1);
-        $tp->setDefaultResources();
+        $planetRepo->reset($planetId);
+        $planetRepo->assignToUser($planetId, $cu->id, true);
+        $planetService->setDefaultResources($planetId);
 
-        $cu->addToUserLog("planets","{nick} wählt [b]".$tp."[/b] als Hauptplanet aus.",0);
+        $entity = $entityRepository->findIncludeCell($planetId);
+        $cu->addToUserLog("planets", "{nick} wählt [b]" . $entity->toString() . "[/b] als Hauptplanet aus.", 0);
 
         $res = dbquery("
             SELECT
@@ -61,7 +90,7 @@ elseif (isset($_POST['submit_chooseplanet']) && intval($_POST['choosenplanetid']
         elseif(mysql_num_rows($res)==1)
         {
             $arr = mysql_fetch_array($res);
-            Usersetup::addItemSetListToPlanet($tp->id,$cu->id,$arr['set_id']);
+            Usersetup::addItemSetListToPlanet($planetId, $cu->id, $arr['set_id']);
             $cu->setSetupFinished();
             $mode = "finished";
         }
@@ -72,14 +101,23 @@ elseif (isset($_POST['submit_chooseplanet']) && intval($_POST['choosenplanetid']
         }
     }
 }
-elseif (isset($_GET['setup_sx']) && isset($_GET['setup_sy']) && $_GET['setup_sx']>0 && $_GET['setup_sy']>0 && $_GET['setup_sx']<=$sx_num && $_GET['setup_sy']<=$sy_num)
-{
-    if ($pid = PlanetManager::getFreePlanet($_GET['setup_sx'],$_GET['setup_sy'],array_key_exists('filter_p',$_GET) ? $_GET['filter_p'] : null,array_key_exists('filter_s',$_GET) ? $_GET['filter_s'] : null))
-    {
+elseif (
+    $request->query->has('setup_sx')
+    && $request->query->getInt('setup_sx') > 0
+    && $request->query->has('setup_sy')
+    && $request->query->getInt('setup_sy') > 0
+    && $request->query->getInt('setup_sx') <= $sx_num
+    && $request->query->getInt('setup_sy') <= $sy_num
+) {
+    $pid = $planetRepo->getRandomFreePlanetId(
+        $request->query->getInt('setup_sx'),
+        $request->query->getInt('setup_sy'),
+        $config->getInt('user_min_fields'),
+        $request->query->get('filter_p'),
+        $request->query->get('filter_s'));
+    if ($pid !== null) {
         $mode = "checkplanet";
-    }
-    else
-    {
+    } else {
         echo "Leider konnte kein geeigneter Planet in diesem Sektor gefunden werden.<br/>
         Bitte wähle einen anderen Sektor!<br/><br/>";
         $mode = "choosesector";
@@ -90,9 +128,9 @@ elseif ($cu->raceId >0 && !isset($cp))
 {
     $mode = "choosesector";
 }
-elseif (isset($_POST['submit_setup1']) && intval($_POST['register_user_race_id'])>0 && checker_verify())
+elseif ($request->request->has('submit_setup1') && $request->request->getInt('register_user_race_id') > 0 && checker_verify())
 {
-    $cu->race = new Race($_POST['register_user_race_id']);
+    $cu->race = new Race($request->request->getInt('register_user_race_id'));
     $mode = "choosesector";
 }
 elseif ($cu->raceId==0)
@@ -100,11 +138,11 @@ elseif ($cu->raceId==0)
     $mode = "race";
 }
 
-if ($mode=="itemsets")
+if ($mode=="itemsets" && isset($planet))
 {
     $k = mt_rand(10000,99999);
     $s->temset_key=$k;
-    $s->itemset_planet=$tp->id();
+    $s->itemset_planet = $planet->id;
     iBoxStart("Start-Objekte");
     echo "<form action=\"?\" method=\"post\">";
     checker_init();
@@ -117,32 +155,38 @@ if ($mode=="itemsets")
     echo "</select> <input type=\"submit\" value=\"Weiter\" name=\"".md5((string) $k)."\" /></form>";
     iBoxEnd();
 }
-elseif ($mode=="checkplanet")
+elseif ($mode=="checkplanet" && isset($pid))
 {
     echo "<form action=\"?\" method=\"post\">";
     checker_init();
 
     echo "<h2>Planetenwahl bestätigen</h2>";
-    $tp = Planet::getById($pid);
 
-    echo "<input type=\"hidden\" name=\"choosenplanetid\" value=\"".$pid."\" />";
+    $planet = $planetRepo->find($pid);
+    $planetType = $planetTypeRepository->find($planet->typeId);
+    $entity = $entityRepository->findIncludeCell($planet->id);
+    $starEntity = $entityRepository->findByCellAndPosition($entity->cellId, 0);
+    $star = $starRepository->find($starEntity->id);
+    $starType = $solarTypeRepository->find($star->typeId);
+
+    echo "<input type=\"hidden\" name=\"choosenplanetid\" value=\"".$planet->id."\" />";
     echo "Folgender Planet wurde für Euch ausgewählt:<br/><br/>";
     tableStart("Daten",300);
-    echo "<tr><th>Koordinaten:</th><td>".$tp."</td></tr>";
+    echo "<tr><th>Koordinaten:</th><td>".$entity->coordinatesString()."</td></tr>";
     echo "<tr>
         <th>Sonnentyp:</th>
-        <td>".$tp->starTypeName."</td></tr>";
+        <td>".$starType->name."</td></tr>";
     echo "<tr>
         <th>Planettyp:</th>
-        <td>".$tp->type()."</td></tr>";
+        <td>".$planetType->name."</td></tr>";
     echo "<tr>
         <th>Felder:</td>
-        <td>".$tp->fields." total</td></tr>";
+        <td>".$planet->fields." total</td></tr>";
     echo "<tr>
         <th>Temperatur:</td>
-        <td>".$tp->temp_from."&deg;C bis ".$tp->temp_to."&deg;C";
+        <td>".$planet->tempFrom."&deg;C bis ".$planet->tempTo."&deg;C";
     echo "</td></tr>";
-    echo "<tr><th>Ansicht:</th><td style=\"background:#000;text-align:center;\"><img src=\"".$tp->imagePath("m")."\" style=\"border:none;\" alt=\"planet\" /></td></tr>
+    echo "<tr><th>Ansicht:</th><td style=\"background:#000;text-align:center;\"><img src=\"" .$planetService->imagePath($planet, "m") . "\" style=\"border:none;\" alt=\"planet\" /></td></tr>
     </table>";
     echo "<table class='tb'>
     <tr>
@@ -153,19 +197,17 @@ elseif ($mode=="checkplanet")
     </table>";
     tableStart("Filter",300);
 
-    /** @var SolarTypeRepository  */
-    $solarTypeRepository = $app[SolarTypeRepository::class];
-    $solarTypeNames = $solarTypeRepository->getSolarTypeNames();
     echo "<tr>
         <th>Sonnentyp:</th>
         <td>
 
         <select name=\"filter_sol_id\" id=\"filter_sol_id\">
         <option value=\"0\">Bitte wählen...</option>";
+    $solarTypeNames = $solarTypeRepository->getSolarTypeNames();
     foreach ($solarTypeNames as $solarTypeId => $solarTypeName) {
         $selected = 0;
 
-        if ((array_key_exists('filter_s',$_GET) ? $_GET['filter_s'] : null) == $solarTypeId) {
+        if ($request->query->getInt('filter_s') == $solarTypeId) {
             $selected = 'selected';
         }
         echo "<option value=\"".$solarTypeId."\"";
@@ -178,14 +220,11 @@ elseif ($mode=="checkplanet")
         <th>Planettyp:</th>
         <td><select name=\"filter_planet_id\" id=\"filter_planet_id\">
         <option value=\"0\">Bitte wählen...</option>";
-
-    /** @var PlanetTypeRepository */
-    $planetTypeRepository = $app[PlanetTypeRepository::class];
     $planetTypeNames = $planetTypeRepository->getPlanetTypeNames();
     foreach ($planetTypeNames as $planetTypeId => $planetTypeName) {
         $selected = 0;
 
-        if ((array_key_exists('filter_p',$_GET) ? $_GET['filter_p'] : null) == $planetTypeId) {
+        if ($request->query->getInt('filter_p') == $planetTypeId) {
             $selected = 'selected';
         }
 
@@ -197,70 +236,70 @@ elseif ($mode=="checkplanet")
 
     tableStart("Bonis dieser Zusammenstellung",600);
     echo "<tr><th>Rohstoff</th>
-    <th>".$tp->typeName."</th>";
+    <th>".$planetType->name."</th>";
     echo "<th>".$cu->race->name."</th>";
-    echo "<th>".$tp->starTypeName."</th>";
+    echo "<th>".$starType->name."</th>";
     echo "<th>TOTAL</th></tr>";
 
-    echo "<tr><td class=\"tbldata\">".RES_ICON_METAL."Produktion ".RES_METAL."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string($tp->typeMetal,1)."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string($cu->race->metal,1)."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string($tp->starMetal,1)."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string(array($tp->typeMetal,$cu->race->metal,$tp->starMetal),1)."</td></tr>";
+    echo "<tr><td class=\"tbldata\">" . RES_ICON_METAL . "Produktion " . RES_METAL . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string($planetType->metal, 1) . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string($cu->race->metal, 1) . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string($starType->metal, 1) . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string([$planetType->metal, $cu->race->metal, $starType->metal], 1) . "</td></tr>";
 
-    echo "<tr><td class=\"tbldata\">".RES_ICON_CRYSTAL."Produktion ".RES_CRYSTAL."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string($tp->typeCrystal,1)."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string($cu->race->crystal,1)."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string($tp->starCrystal,1)."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string(array($tp->typeCrystal,$cu->race->crystal,$tp->starCrystal),1)."</td></tr>";
+    echo "<tr><td class=\"tbldata\">" . RES_ICON_CRYSTAL . "Produktion " . RES_CRYSTAL . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string($planetType->crystal, 1) . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string($cu->race->crystal, 1) . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string($starType->crystal, 1) . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string([$planetType->crystal, $cu->race->crystal, $starType->crystal], 1) . "</td></tr>";
 
-    echo "<tr><td class=\"tbldata\">".RES_ICON_PLASTIC."Produktion ".RES_PLASTIC."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string($tp->typePlastic,1)."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string($cu->race->plastic,1)."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string($tp->starPlastic,1)."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string(array($tp->typePlastic,$cu->race->plastic,$tp->starPlastic),1)."</td></tr>";
+    echo "<tr><td class=\"tbldata\">" . RES_ICON_PLASTIC . "Produktion " . RES_PLASTIC . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string($planetType->plastic, 1) . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string($cu->race->plastic, 1) . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string($starType->plastic, 1) . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string([$planetType->plastic, $cu->race->plastic, $starType->plastic], 1) . "</td></tr>";
 
-    echo "<tr><td class=\"tbldata\">".RES_ICON_FUEL."Produktion ".RES_FUEL."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string($tp->typeFuel,1)."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string($cu->race->fuel,1)."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string($tp->starFuel,1)."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string(array($tp->typeFuel,$cu->race->fuel,$tp->starFuel),1)."</td></tr>";
+    echo "<tr><td class=\"tbldata\">" . RES_ICON_FUEL . "Produktion " . RES_FUEL . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string($planetType->fuel, 1) . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string($cu->race->fuel, 1) . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string($starType->fuel, 1) . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string([$planetType->fuel, $cu->race->fuel, $starType->fuel], 1) . "</td></tr>";
 
-    echo "<tr><td class=\"tbldata\">".RES_ICON_FOOD."Produktion ".RES_FOOD."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string($tp->typeFood,1)."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string($cu->race->food,1)."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string($tp->starFood,1)."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string(array($tp->typeFood,$cu->race->food,$tp->starFood),1)."</td></tr>";
+    echo "<tr><td class=\"tbldata\">" . RES_ICON_FOOD . "Produktion " . RES_FOOD . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string($planetType->food, 1) . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string($cu->race->food, 1) . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string($starType->food, 1) . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string([$planetType->food, $cu->race->food, $starType->food], 1) . "</td></tr>";
 
-    echo "<tr><td class=\"tbldata\">".RES_ICON_POWER."Produktion Energie</td>";
-    echo "<td class=\"tbldata\">".get_percent_string($tp->typePower,1)."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string($cu->race->power,1)."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string($tp->starPower,1)."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string(array($tp->typePower,$cu->race->power,$tp->starPower),1)."</td></tr>";
+    echo "<tr><td class=\"tbldata\">" . RES_ICON_POWER . "Produktion Energie</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string($planetType->power, 1) . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string($cu->race->power, 1) . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string($starType->power, 1) . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string([$planetType->power, $cu->race->power, $starType->power], 1) . "</td></tr>";
 
-    echo "<tr><td class=\"tbldata\">".RES_ICON_PEOPLE."Bev&ouml;lkerungswachstum</td>";
-    echo "<td class=\"tbldata\">".get_percent_string($tp->typePopulation,1)."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string($cu->race->population,1)."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string($tp->starPopulation,1)."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string(array($tp->typePopulation,$cu->race->population,$tp->starPopulation),1)."</td></tr>";
+    echo "<tr><td class=\"tbldata\">" . RES_ICON_PEOPLE . "Bevölkerungswachstum</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string($planetType->people, 1) . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string($cu->race->population, 1) . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string($starType->people, 1) . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string([$planetType->people, $cu->race->population, $starType->people], 1) . "</td></tr>";
 
-    echo "<tr><td class=\"tbldata\">".RES_ICON_TIME."Forschungszeit</td>";
-    echo "<td class=\"tbldata\">".get_percent_string($tp->typeResearchtime,1,1)."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string($cu->race->researchTime,1,1)."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string($tp->starResearchtime,1,1)."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string(array($tp->typeResearchtime,$cu->race->researchTime,$tp->starResearchtime),1,1)."</td></tr>";
+    echo "<tr><td class=\"tbldata\">" . RES_ICON_TIME . "Forschungszeit</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string($planetType->researchTime, 1, 1) . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string($cu->race->researchTime, 1, 1) . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string($starType->researchTime, 1, 1) . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string([$planetType->researchTime, $cu->race->researchTime, $starType->researchTime], 1, 1) . "</td></tr>";
 
-    echo "<tr><td class=\"tbldata\">".RES_ICON_TIME."Bauzeit (Geb&auml;ude)</td>";
-    echo "<td class=\"tbldata\">".get_percent_string($tp->typeBuildtime,1,1)."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string($cu->race->buildTime,1,1)."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string($tp->starBuildtime,1,1)."</td>";
-    echo "<td class=\"tbldata\">".get_percent_string(array($tp->typeBuildtime,$cu->race->buildTime,$tp->starBuildtime),1,1)."</td></tr>";
+    echo "<tr><td class=\"tbldata\">" . RES_ICON_TIME . "Bauzeit (Geb&auml;ude)</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string($planetType->buildTime, 1, 1) . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string($cu->race->buildTime, 1, 1) . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string($starType->buildTime, 1, 1) . "</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string([$planetType->buildTime, $cu->race->buildTime, $starType->buildTime], 1, 1) . "</td></tr>";
 
-    echo "<tr><td class=\"tbldata\">".RES_ICON_TIME."Fluggeschwindigkeit</td>";
+    echo "<tr><td class=\"tbldata\">" . RES_ICON_TIME . "Fluggeschwindigkeit</td>";
     echo "<td class=\"tbldata\">-</td>";
-    echo "<td class=\"tbldata\">".get_percent_string($cu->race->fleetSpeedFactor,1)."</td>";
+    echo "<td class=\"tbldata\">" . get_percent_string($cu->race->fleetSpeedFactor, 1) . "</td>";
     echo "<td class=\"tbldata\">-</td>";
-    echo "<td class=\"tbldata\">".get_percent_string($cu->race->fleetSpeedFactor,1)."</td></tr>";
+    echo "<td class=\"tbldata\">" . get_percent_string($cu->race->fleetSpeedFactor, 1) . "</td></tr>";
     tableEnd();
 
     echo "<input type=\"submit\" name=\"submit_chooseplanet\" value=\"Auswählen\" />
@@ -278,83 +317,38 @@ elseif ($mode=="choosesector")
 
     echo "Anzeigen: <select onchange=\"document.getElementById('img').src='misc/map.image.php'+this.options[this.selectedIndex].value;\">
     <option value=\"?t=".time()."\">Normale Galaxieansicht</option>
-    <option value=\"?type=populated&t=".time()."\">Bev&ouml;lkerte Systeme</option>
+    <option value=\"?type=populated&t=".time()."\">Bevölkerte Systeme</option>
 
     </select><br/><br/>";
     echo "<img src=\"misc/map.image.php\" alt=\"Galaxiekarte\" id=\"img\" usemap=\"#Galaxy\" style=\"border:none;\"/>";
 
     echo "<map name=\"Galaxy\">\n";
-    $sec_x_size=GALAXY_MAP_WIDTH/$sx_num;
-    $sec_y_size=GALAXY_MAP_WIDTH/$sy_num;
-    $xcnt=1;
-    $ycnt=1;
-    for ($x=0;$x<GALAXY_MAP_WIDTH;$x+=$sec_x_size)
+    $sec_x_size = GALAXY_MAP_WIDTH / $sx_num;
+    $sec_y_size = GALAXY_MAP_WIDTH / $sy_num;
+    $xcnt = 1;
+    $ycnt = 1;
+    for ($x = 0; $x < GALAXY_MAP_WIDTH; $x += $sec_x_size)
     {
-        $ycnt=1;
-        for ($y=0;$y<GALAXY_MAP_WIDTH;$y+=$sec_y_size)
+        $ycnt = 1;
+        for ($y = 0; $y < GALAXY_MAP_WIDTH; $y += $sec_y_size)
         {
-            $res = dbquery("
-            SELECT
-                COUNT(entities.id)
-            FROM
-                cells
-            INNER JOIN
-                entities
-                ON entities.cell_id=cells.id
-                AND entities.code='s'
-                AND sx=".$xcnt."
-                AND sy=".$ycnt."
-            ;
-            ");
-            $arr = mysql_fetch_row($res);
-
-            $res = dbquery("
-            SELECT
-                COUNT(entities.id)
-            FROM
-                cells
-            INNER JOIN
-                entities
-                ON entities.cell_id=cells.id
-                AND entities.code='p'
-                AND sx=".$xcnt."
-                AND sy=".$ycnt."
-            ;
-            ");
-            $arr2 = mysql_fetch_row($res);
-
-            $res = dbquery("
-            SELECT
-                COUNT(entities.id)
-            FROM
-                cells
-            INNER JOIN
-            (
-                entities
-                INNER JOIN
-                    planets
-                    ON planets.id=entities.id
-                    AND planet_user_id>0
-                )
-                ON entities.cell_id=cells.id
-                AND	cells.sx=".$xcnt."
-                AND cells.sy=".$ycnt."
-            ;");
-            $arr3 = mysql_fetch_row($res);
+            $countStars = $entityRepository->countEntitiesOfCodeInSector($xcnt, $ycnt, EntityType::STAR);
+            $countPlanets = $entityRepository->countEntitiesOfCodeInSector($xcnt, $ycnt, EntityType::PLANET);
+            $countInhabitedPlanets = $planetRepo->countWithUserInSector($xcnt, $ycnt);
 
             $tt = new Tooltip();
             $tt->addTitle("Sektor $xcnt/$ycnt");
-            $tt->addText("Sternensysteme: ".$arr[0]);
-            $tt->addText("Planeten: ".$arr2[0]);
-            $tt->addGoodCond("Bewohnte Planeten: ".$arr3[0]);
-            $tt->addComment("Klickt hier um euren Heimatplaneten in Sektor <b>".$xcnt."/".$ycnt."</b> anzusiedeln!");
-        echo "<area shape=\"rect\" coords=\"$x,".(GALAXY_MAP_WIDTH-$y).",".($x+$sec_x_size).",".(GALAXY_MAP_WIDTH-$y-$sec_y_size)."\" href=\"?setup_sx=".$xcnt."&amp;setup_sy=".$ycnt."\" alt=\"Sektor $xcnt / $ycnt\" ".$tt.">\n";
-        $ycnt++;
+            $tt->addText("Sternensysteme: " . $countStars);
+            $tt->addText("Planeten: " . $countPlanets);
+            $tt->addGoodCond("Bewohnte Planeten: " . $countInhabitedPlanets);
+            $tt->addComment("Klickt hier um euren Heimatplaneten in Sektor <b>" . $xcnt . "/" . $ycnt . "</b> anzusiedeln!");
+
+            echo "<area shape=\"rect\" coords=\"$x," . (GALAXY_MAP_WIDTH - $y) . "," . ($x + $sec_x_size) . "," . (GALAXY_MAP_WIDTH - $y - $sec_y_size) . "\" href=\"?setup_sx=" . $xcnt . "&amp;setup_sy=" . $ycnt . "\" alt=\"Sektor $xcnt / $ycnt\" " . $tt . ">\n";
+            $ycnt++;
         }
         $xcnt++;
     }
     echo "</map>\n";
-
 
     echo "</form>";
 }

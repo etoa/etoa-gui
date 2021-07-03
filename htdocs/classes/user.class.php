@@ -8,6 +8,8 @@
 //////////////////////////////////////////////////////
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Planet\PlanetService;
 
 /**
 * Provides methods for accessing user information
@@ -825,6 +827,12 @@ class User implements \EtoA\User\UserInterface
         /** @var ConfigurationService */
         $config = $app[ConfigurationService::class];
 
+        /** @var PlanetRepository */
+        $planetRepo = $app[PlanetRepository::class];
+
+        /** @var PlanetService */
+        $planetService = $app[PlanetService::class];
+
         $utx = new UserToXml($this->id);
         if ($xmlfile = $utx->toCacheFile())
         {
@@ -864,52 +872,35 @@ class User implements \EtoA\User\UserInterface
             //
             //Planeten Reseten und Handelschiffe die auf dem Weg zu einem Planeten sind löschen
             //
-            $pres=dbquery("
-                SELECT
-                    id,
-                    planet_name,
-                    planet_res_metal,
-                    planet_res_crystal,
-                    planet_res_plastic,
-                    planet_res_fuel,
-                    planet_res_food
-                FROM
-                    planets
-                WHERE
-                    planet_user_id='".$this->id."';
-            ");
-            if (mysql_num_rows($pres)>0)
+            $userPlanets = $planetRepo->getUserPlanets($this->id);
+            foreach ($userPlanets as $planet)
             {
-                while ($parr=mysql_fetch_assoc($pres))
+                //löscht alle markt-handelschiffe die auf dem weg zu dem user sind
+                $fres2=dbquery("
+                    SELECT
+                        id
+                    FROM
+                        fleet
+                    WHERE
+                        entity_to='".$planet->id."'
+                        AND (action='".FLEET_ACTION_RESS."' OR action='".FLEET_ACTION_SHIP."');
+                ");
+                if (mysql_num_rows($fres2)>0)
                 {
-                    //löscht alle markt-handelschiffe die auf dem weg zu dem user sind
-                    $fres2=dbquery("
-                        SELECT
-                            id
-                        FROM
-                            fleet
-                        WHERE
-                            entity_to='".$parr['id']."'
-                            AND (action='".FLEET_ACTION_RESS."' OR action='".FLEET_ACTION_SHIP."');
-                    ");
-                    if (mysql_num_rows($fres2)>0)
+                    while ($farr2=mysql_fetch_assoc($fres2))
                     {
-                        while ($farr2=mysql_fetch_assoc($fres2))
-                        {
-                            // Flotten-Schiffe löschen
-                            dbquery("
-                                DELETE FROM
-                                    fleet_ships
-                                WHERE
-                                    fs_fleet_id='".$farr2['id']."';
-                            ");
-                        }
+                        // Flotten-Schiffe löschen
+                        dbquery("
+                            DELETE FROM
+                                fleet_ships
+                            WHERE
+                                fs_fleet_id='".$farr2['id']."';
+                        ");
                     }
-                    //Setzt Planet zurück
-                    reset_planet($parr['id']);
                 }
-            }
 
+                $planetService->reset($planet->id);
+            }
 
             //
             // Allianz löschen (falls alleine) oder einen Nachfolger bestimmen

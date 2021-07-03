@@ -44,4 +44,34 @@ class SolarTypeRepository extends AbstractRepository
 
         return array_map(fn ($row) => new SolarType($row), $data);
     }
+
+    public function find(int $id): ?SolarType
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('sol_types')
+            ->where('sol_type_id = :id')
+            ->setParameters([
+                'id' => $id,
+            ])
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? new SolarType($data) : null;
+    }
+
+    public function getName(int $id): ?string
+    {
+        $data = $this->createQueryBuilder()
+            ->select('sol_type_name')
+            ->from('sol_types')
+            ->where('sol_type_id = :id')
+            ->setParameters([
+                'id' => $id,
+            ])
+            ->execute()
+            ->fetchOne();
+
+        return $data !== false ? $data : null;
+    }
 }

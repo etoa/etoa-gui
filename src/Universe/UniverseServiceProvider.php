@@ -4,18 +4,23 @@ declare(strict_types=1);
 
 namespace EtoA\Universe;
 
+use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseRepository;
+use EtoA\Ship\ShipRepository;
 use EtoA\Support\DatabaseManagerRepository;
-use EtoA\Universe\Asteroids\AsteroidsRepository;
+use EtoA\Universe\Asteroid\AsteroidRepository;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\EmptySpace\EmptySpaceRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Nebula\NebulaRepository;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Planet\PlanetService;
 use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\Universe\Star\SolarTypeRepository;
 use EtoA\Universe\Star\StarRepository;
 use EtoA\Universe\Wormhole\WormholeRepository;
+use EtoA\Universe\Wormhole\WormholeService;
 use EtoA\User\UserRepository;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
@@ -40,8 +45,8 @@ class UniverseServiceProvider implements ServiceProviderInterface
             return new PlanetRepository($pimple['db']);
         };
 
-        $pimple[AsteroidsRepository::class] = function (Container $pimple): AsteroidsRepository {
-            return new AsteroidsRepository($pimple['db']);
+        $pimple[AsteroidRepository::class] = function (Container $pimple): AsteroidRepository {
+            return new AsteroidRepository($pimple['db']);
         };
 
         $pimple[NebulaRepository::class] = function (Container $pimple): NebulaRepository {
@@ -56,6 +61,25 @@ class UniverseServiceProvider implements ServiceProviderInterface
             return new EmptySpaceRepository($pimple['db']);
         };
 
+        $pimple[WormholeService::class] = function (Container $pimple): WormholeService {
+            return new WormholeService(
+                $pimple[WormholeRepository::class],
+                $pimple[EntityRepository::class],
+                $pimple[EmptySpaceRepository::class],
+                $pimple[ConfigurationService::class]
+            );
+        };
+
+        $pimple[PlanetService::class] = function (Container $pimple): PlanetService {
+            return new PlanetService(
+                $pimple[PlanetRepository::class],
+                $pimple[BuildingRepository::class],
+                $pimple[ShipRepository::class],
+                $pimple[DefenseRepository::class],
+                $pimple[ConfigurationService::class],
+            );
+        };
+
         $pimple[UniverseGenerator::class] = function (Container $pimple): UniverseGenerator {
             return new UniverseGenerator(
                 $pimple[ConfigurationService::class],
@@ -65,7 +89,7 @@ class UniverseServiceProvider implements ServiceProviderInterface
                 $pimple[EntityRepository::class],
                 $pimple[StarRepository::class],
                 $pimple[PlanetRepository::class],
-                $pimple[AsteroidsRepository::class],
+                $pimple[AsteroidRepository::class],
                 $pimple[NebulaRepository::class],
                 $pimple[WormholeRepository::class],
                 $pimple[EmptySpaceRepository::class]

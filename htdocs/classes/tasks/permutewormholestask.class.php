@@ -1,17 +1,28 @@
-<?PHP
-	/**
-	* Permute wormholes
-	*/
-	class PermuteWormholesTask implements IPeriodicTask
-	{
-		function run()
-		{
-			Wormhole::randomize();
-			return "Wurml&ouml;cher vertauscht";
-		}
+<?php
 
-		function getDescription() {
-			return "Wurmlöcher vertauschen";
-		}
-	}
-?>
+use EtoA\Universe\Wormhole\WormholeService;
+use Pimple\Container;
+
+/**
+ * Permute wormholes
+ */
+class PermuteWormholesTask implements IPeriodicTask
+{
+    private WormholeService $wormholeService;
+
+    function __construct(Container $app)
+    {
+        $this->wormholeService = $app[WormholeService::class];
+    }
+
+    function run()
+    {
+        $this->wormholeService->randomize();
+        return "Wurmlöcher vertauscht";
+    }
+
+    function getDescription()
+    {
+        return "Wurmlöcher vertauschen";
+    }
+}
