@@ -163,20 +163,6 @@ die Spielleitung";
         ");
     }
 
-    /**
-    * Spionageangriffscounter auf 0 setzen
-    * @deprecated altes Balancing
-    */
-    static function resetSpyattacks()
-    {
-        dbquery("
-                UPDATE
-                    users
-                SET
-                    spyattack_counter='0';
-        ");
-    }
-
     static function addSittingDays(int $days = 0)
     {
         if ($days == 0)
