@@ -123,7 +123,7 @@ class ChatPushJsonResponder extends JsonResponder
             if ($uid>0)
             {
               $text = (count($words) > 1) ? implode(' ', array_slice($words, 1)) : '';
-              $chatBanRepository->banUser((int) $uid, $text, true);
+              $chatBanRepository->banUser($uid, $text, true);
               ChatManager::kickUser($uid, $text);
               ChatManager::sendSystemMessage($words[0].' wurde gebannt! Grund: '.$text);
             }
@@ -150,7 +150,7 @@ class ChatPushJsonResponder extends JsonResponder
           {
             $uid = $userRepository->getUserIdByNick($words[0]);
             if ($uid>0) {
-                $deleted = $chatBanRepository->deleteBan((int) $uid);
+                $deleted = $chatBanRepository->deleteBan($uid);
                 if ($deleted > 0) {
                     return [
                         'cmd' => 'aa',
