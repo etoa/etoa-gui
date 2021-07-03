@@ -412,19 +412,6 @@ class Planet extends Entity implements OwnableEntity
 			return $v/100;
 		}
 
-		function assignToUser($uid,$main=0)
-		{
-	    $sql = "
-	    UPDATE
-	    	planets
-	    SET
-				planet_user_id=".intval($uid).",
-				planet_user_main=".intval($main)."
-	    WHERE
-	    	id='".$this->id."';";
-	    dbquery($sql);
-		}
-
 		function setNameAndComment($name,$comment)
 		{
 			$name = str_replace("'", '', $name);

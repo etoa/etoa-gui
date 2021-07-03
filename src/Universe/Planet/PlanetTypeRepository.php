@@ -46,4 +46,41 @@ class PlanetTypeRepository extends AbstractRepository
 
         return array_map(fn ($row) => new PlanetType($row), $data);
     }
+
+    public function find(int $id): ?PlanetType
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('planet_types')
+            ->where('type_id = :id')
+            ->setParameters([
+                'id' => $id,
+            ])
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? new PlanetType($data) : null;
+    }
+
+    public function isHabitable(int $typeId): bool
+    {
+        $type = $this->find($typeId);
+
+        return $type !== null && $type->habitable;
+    }
+
+    public function getName(int $id): ?string
+    {
+        $data = $this->createQueryBuilder()
+            ->select('type_name')
+            ->from('planet_types')
+            ->where('type_id = :id')
+            ->setParameters([
+                'id' => $id,
+            ])
+            ->execute()
+            ->fetchOne();
+
+        return $data !== false ? $data : null;
+    }
 }

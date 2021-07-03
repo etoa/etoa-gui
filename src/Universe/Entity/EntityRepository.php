@@ -82,6 +82,33 @@ class EntityRepository extends AbstractRepository
         return $data !== false ? new Entity($data) : null;
     }
 
+    public function findByCellAndPosition(int $cellId, int $position): ?Entity
+    {
+        $data = $this->createQueryBuilder()
+            ->select(
+                'e.id',
+                'c.id as cid',
+                'code',
+                'pos',
+                'sx',
+                'sy',
+                'cx',
+                'cy'
+            )
+            ->from('entities', 'e')
+            ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id')
+            ->where('e.cell_id = :cellId')
+            ->andWhere('e.pos = :position')
+            ->setParameters([
+                'cellId' => $cellId,
+                'position' => $position,
+            ])
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? new Entity($data) : null;
+    }
+
     /**
      * @return array<Entity>
      */

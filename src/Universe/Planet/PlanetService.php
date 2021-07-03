@@ -74,4 +74,16 @@ class PlanetService
             $this->config->getInt('user_start_people')
         );
     }
+
+    public function imagePath(Planet $planet, string $opt = ""): string
+    {
+        defineImagePaths();
+        if ($opt == "b") {
+            return IMAGE_PATH . "/planets/planet" . $planet->image . "." . IMAGE_EXT;
+        }
+        if ($opt == "m") {
+            return IMAGE_PATH . "/planets/planet" . $planet->image . "_middle." . IMAGE_EXT;
+        }
+        return IMAGE_PATH . "/planets/planet" . $planet->image . "_small." . IMAGE_EXT;
+    }
 }

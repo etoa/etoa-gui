@@ -298,6 +298,20 @@ class PlanetRepository extends AbstractRepository
         return $affected > 0;
     }
 
+    public function assignToUser(int $id, int $userId, bool $main = false)
+    {
+        $qry = $this->createQueryBuilder()
+            ->update('planets')
+            ->set('planet_user_id', ':userId')
+            ->set('planet_user_main', ':main')
+            ->where('id = :id')
+            ->setParameters([
+                'id' => $id,
+                'userId' => $userId,
+                'main' => $main,
+            ]);
+    }
+
     public function changeUser(int $id, int $userId, ?string $name = null): bool
     {
         $qry = $this->createQueryBuilder()
