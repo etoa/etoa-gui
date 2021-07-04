@@ -2,6 +2,7 @@
 
 /*******************************************/
 
+use EtoA\Ship\ShipDataRepository;
 use EtoA\User\UserRepository;
 
 /* Markt: Rohstoff/Preis Kalkulator        */
@@ -23,7 +24,7 @@ $xajax->register(XAJAX_FUNCTION,'showAuctionDetail');
 
 function marketSearch($form,$order="distance",$orderDirection=0)
 {
-	global $resNames,$resIcons;
+	global $resNames,$resIcons, $app;
 	ob_start();
  	$ajax = new xajaxResponse();
 
@@ -333,14 +334,17 @@ function marketSearch($form,$order="distance",$orderDirection=0)
 						$i=0;
 						$resCnt = count($resNames);
 
+                        /** @var ShipDataRepository $shipRepository */
+                        $shipRepository = $app[ShipDataRepository::class];
+                        $shipNames = $shipRepository->getShipNames(true);
+
 						echo '<tbody class="offer">';
 						foreach ($resNames as $rk => $rn)
 						{
 							echo "<tr>";
 							if ($i==0)
 							{
-								$ship = new Ship($arr['ship_id']);
-								echo "<td rowspan=\"$resCnt\">".$arr['count']." <a href=\"?page=help&site=shipyard&id=".$arr['ship_id']."\">".$ship."</a></td>";
+								echo "<td rowspan=\"$resCnt\">".$arr['count']." <a href=\"?page=help&site=shipyard&id=".$arr['ship_id']."\">".$shipNames[$arr['ship_id']]."</a></td>";
 							}
 							echo "<td class=\"rescolor".$rk." rname\">".$resIcons[$rk]."<b>".$rn."</b>:</td>
 							<td class=\"rescolor".$rk." rdema\">".nf($arr['costs_'.$rk])."</td>";

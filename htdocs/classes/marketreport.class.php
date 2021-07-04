@@ -4,6 +4,8 @@
  * and open the template in the editor.
  */
 
+use EtoA\Ship\ShipDataRepository;
+
 /**
  * Description of marketreport
  *
@@ -153,7 +155,7 @@ class MarketReport extends Report
 
 	function __toString()
 	{
-		global $resNames;
+		global $resNames, $app;
 
 		ob_start();
 		$ent = Entity::createFactoryById($this->entity1Id);
@@ -266,12 +268,15 @@ class MarketReport extends Report
 				break;
 
 			case "shipadd":
+                /** @var ShipDataRepository $shipRepository */
+                $shipRepository = $app[ShipDataRepository::class];
+                $shipNames = $shipRepository->getShipNames(true);
+
 				echo "Du hast folgendes Angebot (#".$this->recordId.") im <a href=\"?page=market&amp;mode=user_sell&amp;change_entity=".$this->entity1Id."\">Marktplatz</a>
 				auf ".$ent->detailLink()." eingestellt:<br/><br/>";
 				if ($this->content !="")
 					echo $this->content."<br/><br/>";
-				$ts = new Ship($this->shipId);
-				echo "".nf($this->shipCount)." <b>".$ts."</b> <br/><br/> ";
+				echo "".nf($this->shipCount)." <b>".$shipNames[$this->shipId]."</b> <br/><br/> ";
 				echo "zu einem Preis von: <br/><br/>";
 				echo "<table class=\"tb\" style=\"width:auto;margin:5px;\">";
 				echo "<tr>
@@ -290,10 +295,13 @@ class MarketReport extends Report
 				break;
 
 			case "shipcancel":
+                /** @var ShipDataRepository $shipRepository */
+                $shipRepository = $app[ShipDataRepository::class];
+                $shipNames = $shipRepository->getShipNames(true);
+
 				echo "Du hast das Angebot #".$this->recordId." im <a href=\"?page=market&amp;mode=user_sell&amp;change_entity=".$this->entity1Id."\">Marktplatz</a>
 				auf ".$ent->detailLink()." abgebrochen!<br/><br/>";
-				$ts = new Ship($this->shipId);
-				echo "".nf($this->shipCount)." <b>".$ts."</b> <br/><br/> ";
+				echo "".nf($this->shipCount)." <b>".$shipNames[$this->shipId]."</b> <br/><br/> ";
 				echo "zu einem Preis von: <br/><br/>";
 				echo "<table class=\"tb\" style=\"width:auto;margin:5px;\">";
 				echo "<tr>
@@ -312,12 +320,15 @@ class MarketReport extends Report
 				echo "".floor($this->shipCount*$this->factor)." Schiffe (".round($this->factor*100)."%) wurden zurückerstattet.";
 				break;
 			case "shipbought":
+                /** @var ShipDataRepository $shipRepository */
+                $shipRepository = $app[ShipDataRepository::class];
+                $shipNames = $shipRepository->getShipNames(true);
+
 				$op = new User($this->opponent1Id);
 				$ent2 = Entity::createFactoryById($this->entity2Id);
 				$sellerFleet = new Fleet($this->fleet2Id);
 				echo "Du hast folgendes Angebot (#".$this->recordId.") von ".$op->detailLink()." gekauft:<br/><br/>";
-				$ts = new Ship($this->shipId);
-				echo "".nf($this->shipCount)." <b>".$ts."</b> <br/><br/> ";
+				echo "".nf($this->shipCount)." <b>".$shipNames[$this->shipId]."</b> <br/><br/> ";
 				echo "zu einem Preis von: <br/><br/>";
 				echo "<table class=\"tb\" style=\"width:auto;margin:5px;\">";
 				echo "<tr>
@@ -339,13 +350,16 @@ class MarketReport extends Report
 					echo " Landung: ".df($sellerFleet->landTime())."";
 				break;
 			case "shipsold":
+                /** @var ShipDataRepository $shipRepository */
+                $shipRepository = $app[ShipDataRepository::class];
+                $shipNames = $shipRepository->getShipNames(true);
+
 				$op = new User($this->opponent1Id);
 				$ent2 = Entity::createFactoryById($this->entity2Id);
 
 				echo "Du hast folgendes Angebot (#".$this->recordId.") im <a href=\"?page=market&amp;mode=user_sell&amp;change_entity=".$this->entity1Id."\">Marktplatz</a>
 				auf ".$ent->detailLink()." an ".$op->detailLink()." verkauft:<br/><br/>";
-				$ts = new Ship($this->shipId);
-				echo "".nf($this->shipCount)." <b>".$ts."</b> <br/><br/> ";
+				echo "".nf($this->shipCount)." <b>".$shipNames[$this->shipId]."</b> <br/><br/> ";
 				echo "zu einem Preis von: <br/><br/>";
 				echo "<table class=\"tb\" style=\"width:auto;margin:5px;\">";
 				echo "<tr>

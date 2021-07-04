@@ -18,6 +18,8 @@
 	//
 	//
 
+use EtoA\Ship\ShipDataRepository;
+
 $cnt = 0;
 			$cnt_error = 0;
 
