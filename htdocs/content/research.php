@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Technology\TechnologyDataRepository;
 
 //////////////////////////////////////////////////
 //		 	 ____    __           ______       			//
@@ -1049,11 +1050,13 @@ if (isset($cp)) {
 											$tmtext .= "<div style=\"color:".($v[2]?'#0f0':'#f30')."\">".$b." Stufe ".$v[1]."</div>";
 											unset($b);
 										}
+
+                                        /** @var TechnologyDataRepository $technologyRepository */
+                                        $technologyRepository = $app[TechnologyDataRepository::class];
+                                        $technologyNames = $technologyRepository->getTechnologyNames(true);
 										foreach ($t_req_info as $v)
 										{
-											$b = new Technology($v[0]);
-											$tmtext .= "<div style=\"color:".($v[2]?'#0f0':'#f30')."\">".$b." Stufe ".$v[1]."</div>";
-											unset($b);
+											$tmtext .= "<div style=\"color:".($v[2]?'#0f0':'#f30')."\">".$technologyNames[$v[0]]." Stufe ".$v[1]."</div>";
 										}
 
 

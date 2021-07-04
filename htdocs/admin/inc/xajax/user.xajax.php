@@ -3,6 +3,7 @@
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Message\MessageRepository;
+use EtoA\Technology\TechnologyDataRepository;
 use EtoA\User\UserRepository;
 
 $xajax->register(XAJAX_FUNCTION,"showTimeBox");
@@ -449,6 +450,8 @@ function addUserLog($uid,$target,$text) {
 
 function loadEconomy($uid,$target)
 {
+    global $app;
+
 	$or = new xajaxResponse();
 	ob_start();
 
@@ -947,10 +950,13 @@ function loadEconomy($uid,$target)
 						<th>Optionen</th>
 					</tr>";
 
+					/** @var TechnologyDataRepository $techRepository */
+                    $techRepository = $app[TechnologyDataRepository::class];
+					$technologyNames = $techRepository->getTechnologyNames(true);
 					while ($larr = mysql_fetch_array($lres))
 					{
 						$te = ($larr['entity_id']>0) ? Entity::createFactoryById($larr['entity_id']) : "-";
-						$ob = new Technology($larr['object_id'])." ".($larr['level']>0 ? $larr['level'] : '');
+						$ob = $technologyNames[$larr['object_id']]." ".($larr['level']>0 ? $larr['level'] : '');
 						switch ($larr['status'])
 						{
 							case 3: $obStatus="Erforschung";break;

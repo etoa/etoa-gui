@@ -3,6 +3,7 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Technology\TechnologyDataRepository;
 
 /**
  * Description of battlereport
@@ -247,8 +248,11 @@ class BattleReport extends Report
                 echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat versucht den Planeten '.$ent1->detailLink().' zu übernehmen. Dieser Versuch schlug aber fehl und die Flotte machte sich auf den Rückweg!';
                 break;
             case 'spyattack':
+                /** @var TechnologyDataRepository $technologyRepository */
+                $technologyRepository = $app[TechnologyDataRepository::class];
+                $techNames = $technologyRepository->getTechnologyNames(true);
                 $data = explode(':',$this->content);
-                $tech = new Technology($data[0]);
+                $tech = $techNames[(int) $data[0]];
                 echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat erfolgreich einen Spionageangriff durchgeführt und erfuhr so die Geheimnisse der Forschung '.$tech.' bis zum Level '.$data[1].'.';
                 break;
             case 'spyattackfailed':

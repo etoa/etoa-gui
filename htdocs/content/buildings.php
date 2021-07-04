@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Technology\TechnologyDataRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -618,11 +619,12 @@ define('HELP_URL',"?page=help&site=buildings");
 								$tmtext .= "<div style=\"color:".($level<=$bl->getLevel($id)?'#0f0':'#f30')."\">".$b." Stufe ".$level."</div>";
 								unset($b);
 							}
+							/** @var TechnologyDataRepository $technologyRepository */
+							$technologyRepository = $app[TechnologyDataRepository::class];
+							$technologyNames = $technologyRepository->getTechnologyNames(true);
 							foreach ($it->current()->building->getTechRequirements() as $id=>$level)
 							{
-								$b = new Technology($id);
-								$tmtext .= "<div style=\"color:".($level<=$bl->tl->getLevel($id)?'#0f0':'#f30')."\">".$b." Stufe ".$level."</div>";
-								unset($b);
+								$tmtext .= "<div style=\"color:".($level<=$bl->tl->getLevel($id)?'#0f0':'#f30')."\">".$technologyNames[$id]." Stufe ".$level."</div>";
 							}
 
 							$color = '#999';
