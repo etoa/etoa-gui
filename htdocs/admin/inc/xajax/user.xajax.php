@@ -2,6 +2,7 @@
 
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Building\BuildingDataRepository;
+use EtoA\Defense\DefenseDataRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\Ship\ShipDataRepository;
@@ -1103,10 +1104,14 @@ function loadEconomy($uid,$target)
 						<th>Optionen</th>
 					</tr>";
 
+					/** @var DefenseDataRepository $defenseRepository */
+					$defenseRepository = $app[DefenseDataRepository::class];
+					$defenseNames = $defenseRepository->getDefenseNames(true);
+
 					while ($larr = mysql_fetch_array($lres))
 					{
 						$te = ($larr['entity_id']>0) ? Entity::createFactoryById($larr['entity_id']) : "-";
-						$ob = $larr['object_id'] > 0 ? new Defense($larr['object_id']).' '.($larr['level']>0 ? $larr['level'].'x' : '') : '-';
+						$ob = $larr['object_id'] > 0 ? $defenseNames[$larr['object_id']].' '.($larr['level']>0 ? $larr['level'].'x' : '') : '-';
 						switch ($larr['status'])
 						{
 							case 1: $obStatus="Bau";break;
