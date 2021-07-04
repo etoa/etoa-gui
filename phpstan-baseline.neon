@@ -351,11 +351,6 @@ parameters:
 			path: htdocs/inc/init.inc.php
 
 		-
-			message: "#^Variable \\$res might not be defined\\.$#"
-			count: 1
-			path: htdocs/inc/usersetup.inc.php
-
-		-
 			message: "#^Right side of && is always false\\.$#"
 			count: 1
 			path: htdocs/inc/xajax.inc.php

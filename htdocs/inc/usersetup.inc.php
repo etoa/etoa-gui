@@ -132,6 +132,10 @@ elseif ($cu->raceId==0)
 
 if ($mode=="itemsets" && isset($planet))
 {
+    /** @var DefaultItemRepository $defaultItemRepository */
+    $defaultItemRepository = $app[DefaultItemRepository::class];
+    $sets = $defaultItemRepository->getSets();
+
     $k = mt_rand(10000,99999);
     $s->temset_key=$k;
     $s->itemset_planet = $planet->id;

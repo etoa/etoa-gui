@@ -37,7 +37,6 @@ class DefaultItemRepository extends AbstractRepository
             ])
             ->setParameter('name', $name)
             ->execute();
-
     }
 
     public function toggleSetActive(int $setId): void
@@ -48,7 +47,6 @@ class DefaultItemRepository extends AbstractRepository
             ->where('set_id = :id')
             ->setParameter('id', $setId)
             ->execute();
-
     }
 
     public function deleteSet(int $setId): void

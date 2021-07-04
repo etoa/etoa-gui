@@ -17,7 +17,7 @@ class Usersetup
 
         /** @var DefaultItemRepository $defaultItemRepository */
         $defaultItemRepository = $app[DefaultItemRepository::class];
-        $defaultItems = $defaultItemRepository->getItemsGroupedByCategory((int) $setid);
+        $defaultItems = $defaultItemRepository->getItemsGroupedByCategory($setid);
 
 		// Add buildings
 		if (isset($defaultItems['b'])) {
