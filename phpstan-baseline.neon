@@ -16,11 +16,6 @@ parameters:
 			path: htdocs/admin/content/db/maintenance.inc.php
 
 		-
-			message: "#^Variable \\$trgstr might not be defined\\.$#"
-			count: 1
-			path: htdocs/admin/content/fleets.php
-
-		-
 			message: "#^Variable \\$sortOrder might not be defined\\.$#"
 			count: 2
 			path: htdocs/admin/content/home/stats.inc.php

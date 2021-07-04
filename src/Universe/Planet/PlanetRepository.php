@@ -25,6 +25,22 @@ class PlanetRepository extends AbstractRepository
         return array_map(fn ($row) => new Planet($row), $data);
     }
 
+    /**
+     * @return Planet[]
+     */
+    public function getMainPlanets(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('planets')
+            ->where('planet_user_main = 1')
+            ->andWhere('planet_user_id > 0')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new Planet($row), $data);
+    }
+
     public function getPlanetUserId(int $planetId): int
     {
         return (int) $this->createQueryBuilder()
@@ -293,7 +309,7 @@ class PlanetRepository extends AbstractRepository
         int $resPlastic,
         int $resFuel,
         int $resFood,
-        int $people
+        int $people = 0
     ): bool {
         $affected = (int) $this->createQueryBuilder()
             ->update('planets')
@@ -316,6 +332,19 @@ class PlanetRepository extends AbstractRepository
             ->execute();
 
         return $affected > 0;
+    }
+
+    public function addPeople(int $id, int $amount): void
+    {
+        $this->createQueryBuilder()
+            ->update('planets')
+            ->set('planet_people', 'planet_people + :people')
+            ->where('id = :id')
+            ->setParameters([
+                'id' => $id,
+                'people' => $amount,
+            ])
+            ->execute();
     }
 
     public function assignToUser(int $id, int $userId, bool $main = false): void

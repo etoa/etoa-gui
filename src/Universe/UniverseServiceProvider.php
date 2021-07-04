@@ -13,6 +13,7 @@ use EtoA\Universe\Asteroid\AsteroidRepository;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\EmptySpace\EmptySpaceRepository;
 use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Nebula\NebulaRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
@@ -111,6 +112,14 @@ class UniverseServiceProvider implements ServiceProviderInterface
 
         $pimple[PlanetTypeRepository::class] = function (Container $pimple): PlanetTypeRepository {
             return new PlanetTypeRepository($pimple['db']);
+        };
+
+        $pimple[EntityService::class] = function (Container $pimple): EntityService {
+            return new EntityService(
+                $pimple[UserRepository::class],
+                $pimple[PlanetRepository::class],
+                $pimple[StarRepository::class]
+            );
         };
     }
 }
