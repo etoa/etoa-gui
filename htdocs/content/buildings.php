@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Building\BuildingDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Technology\TechnologyDataRepository;
 
@@ -613,11 +614,13 @@ define('HELP_URL',"?page=help&site=buildings");
 						{
 							$subtitle =  'Voraussetzungen fehlen';
 							$tmtext = '<span style="color:#999">Baue zuerst die nötigen Gebäude und erforsche die nötigen Technologien um diese Gebäude zu bauen!</span><br/>';
+
+                            /** @var BuildingDataRepository $buildingRepository */
+                            $buildingRepository = $app[BuildingDataRepository::class];
+                            $buildingNames = $buildingRepository->getBuildingNames(true);
 							foreach ($it->current()->building->getBuildingRequirements() as $id=>$level)
 							{
-								$b = new Building($id);
-								$tmtext .= "<div style=\"color:".($level<=$bl->getLevel($id)?'#0f0':'#f30')."\">".$b." Stufe ".$level."</div>";
-								unset($b);
+								$tmtext .= "<div style=\"color:".($level<=$bl->getLevel($id)?'#0f0':'#f30')."\">".$buildingNames[$id]." Stufe ".$level."</div>";
 							}
 							/** @var TechnologyDataRepository $technologyRepository */
 							$technologyRepository = $app[TechnologyDataRepository::class];

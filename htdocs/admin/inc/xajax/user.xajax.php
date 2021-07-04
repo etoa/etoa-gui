@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Building\BuildingDataRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\Technology\TechnologyDataRepository;
@@ -878,10 +879,14 @@ function loadEconomy($uid,$target)
 						<th>Optionen</th>
 					</tr>";
 
+                    /** @var BuildingDataRepository $buildingRepository */
+                    $buildingRepository = $app[BuildingDataRepository::class];
+                    $buildingNames = $buildingRepository->getBuildingNames(true);
+
 					while ($lbarr = mysql_fetch_array($lbres))
 					{
 						$te = ($lbarr['entity_id']>0) ? Entity::createFactoryById($lbarr['entity_id']) : "-";
-						$ob = new Building($lbarr['object_id'])." ".($lbarr['level']>0 ? $lbarr['level'] : '');
+						$ob = $buildingNames[$lbarr['object_id']]." ".($lbarr['level']>0 ? $lbarr['level'] : '');
 						switch ($lbarr['status'])
 						{
 							case 1: $obStatus="Ausbau abgebrochen";break;

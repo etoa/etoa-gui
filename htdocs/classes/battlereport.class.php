@@ -1,5 +1,6 @@
 <?php
 
+use EtoA\Building\BuildingDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Ship\ShipDataRepository;
@@ -170,7 +171,10 @@ class BattleReport extends Report
                 break;
             case 'bombard':
                 $data = explode(':',$this->content);
-                $building = new Building($data[0]);
+                /** @var BuildingDataRepository $buildingRepository */
+                $buildingRepository = $app[BuildingDataRepository::class];
+                $buildingNames = $buildingRepository->getBuildingNames(true);
+                $building = $buildingNames[(int) $data[0]];
                 echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat das Gebäude '.$building.' des Planeten '.$ent1->detailLink().' von Stufe '.$data[2].' auf Stufe '.$data[1].' zur&uuml;ck gesetzt.';
                 break;
             case 'bombardfailed':
@@ -178,7 +182,10 @@ class BattleReport extends Report
                 break;
             case 'emp':
                 $data = explode(':',$this->content);
-                $building = new Building($data[0]);
+                /** @var BuildingDataRepository $buildingRepository */
+                $buildingRepository = $app[BuildingDataRepository::class];
+                $buildingNames = $buildingRepository->getBuildingNames(true);
+                $building = $buildingNames[(int) $data[0]];
                 echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat das Gebäude '.$building.' des Planeten '.$ent1->detailLink().' für '.$data[1].' h deaktiviert.';
                 break;
             case 'empfailed':
