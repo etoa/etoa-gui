@@ -33,4 +33,11 @@ class MissileRepositoryTest extends AbstractDbTestCase
         $this->assertEquals($entityId, $missile['missilelist_entity_id']);
         $this->assertEquals(30, $missile['missilelist_count']);
     }
+
+    public function testCount(): void
+    {
+        $this->repository->addMissile(1, 1, 1, 1);
+
+        $this->assertSame(1, $this->repository->count());
+    }
 }

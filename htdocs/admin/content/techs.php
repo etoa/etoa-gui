@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Technology\TechnologyDataRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -46,8 +47,8 @@ $config = $app[ConfigurationService::class];
 		echo "<input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";
 
 		echo "<h2>Forschungspunkte</h2>";
-		/** @var \EtoA\Technology\TechnologyDataRepository $technologyDataRepository */
-		$technologyDataRepository = $app[\EtoA\Technology\TechnologyDataRepository::class];
+		/** @var TechnologyDataRepository $technologyDataRepository */
+		$technologyDataRepository = $app[TechnologyDataRepository::class];
 		$technologyNames = $technologyDataRepository->getTechnologyNames(true);
 		if (count($technologyNames) > 0) {
 			echo "<table class=\"tb\">";
@@ -200,29 +201,22 @@ $config = $app[ConfigurationService::class];
      			$updata=explode(":",$_POST['planet_id']);
 
      			if(isset($_POST['all_techs'])) {
-     				$res=dbquery("SELECT
-						tech_id,
-						tech_name
-					FROM technologies
-					ORDER BY tech_order,tech_name;");
-					if (mysql_num_rows($res)>0)
-					{
-						while ($arr=mysql_fetch_array($res))
-						{
-							if (mysql_num_rows(dbquery("SELECT techlist_id FROM techlist WHERE techlist_user_id=".$updata[1]." AND techlist_tech_id=".$arr['tech_id'].";"))==0)
-							{
-								dbquery("INSERT INTO techlist (techlist_entity_id,techlist_user_id,techlist_tech_id,techlist_current_level) VALUES (".$updata[0].",".$updata[1].",".$arr['tech_id'].",".$_POST['techlist_current_level'].");");
-							}
-							else
-							{
-								dbquery("UPDATE techlist
-										 SET techlist_current_level = ".$_POST['techlist_current_level']."
-										 WHERE techlist_user_id = ".$updata[1]."
-										 AND techlist_tech_id = ".$arr['tech_id']);
-							}
+                    $technologyDataRepository = $app[TechnologyDataRepository::class];
+     			    $technologyNames = $technologyDataRepository->getTechnologyNames(true);
+                    foreach (array_keys($technologyNames) as $technologyId) {
+                        if (mysql_num_rows(dbquery("SELECT techlist_id FROM techlist WHERE techlist_user_id=".$updata[1]." AND techlist_tech_id=".$technologyId.";"))==0)
+                        {
+                            dbquery("INSERT INTO techlist (techlist_entity_id,techlist_user_id,techlist_tech_id,techlist_current_level) VALUES (".$updata[0].",".$updata[1].",".$technologyId.",".$_POST['techlist_current_level'].");");
+                        }
+                        else
+                        {
+                            dbquery("UPDATE techlist
+                                     SET techlist_current_level = ".$_POST['techlist_current_level']."
+                                     WHERE techlist_user_id = ".$updata[1]."
+                                     AND techlist_tech_id = ".$technologyId);
+                        }
 
-						}
-					}
+                    }
 					echo "Technologien wurden aktualisiert!<br/>";
      			}
      			else {
@@ -244,22 +238,18 @@ $config = $app[ConfigurationService::class];
 				$sql= " AND user_id=".$updata[1];
 				$_SESSION['search']['tech']['query']=null;
 
-				// Technologien laden
-				$bres = dbquery("SELECT tech_id,tech_name FROM technologies ORDER BY tech_type_id,tech_order,tech_name;");
-				$tlist=array();
-				while ($barr=mysql_fetch_array($bres))
-					$tlist[$barr['tech_id']]=$barr['tech_name'];
+				$technologyDataRepository = $app[TechnologyDataRepository::class];
+				$technologyNames = $technologyDataRepository->getTechnologyNames(true);
 
 				// Hinzufügen
 				echo "<h2>Neue Technologien hinzuf&uuml;gen</h2>";
 				echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\">";
 				tableStart();
 				echo "<tr><th class=\"tbltitle\">Technologie:</th><td class=\"tbldata\"><select name=\"tech_id\">";
-				foreach ($tlist as $k=>$v)
-				{
-					echo "<option value=\"".$k."\"";
-					if ($k==$_POST['tech_id']) echo " selected=\"selected\"";
-					echo ">".$v."</option>";
+				foreach ($technologyNames as $techId => $technologyName) {
+					echo "<option value=\"".$techId."\"";
+					if ($techId==$_POST['tech_id']) echo " selected=\"selected\"";
+					echo ">".$technologyName."</option>";
 				}
 				echo "</select></td></tr>";
 				if ($_POST['techlist_current_level'])
@@ -429,11 +419,9 @@ $config = $app[ConfigurationService::class];
 			$_SESSION['search']['tech']['query']=null;
 
 			// Technologien laden
-			$bres = dbquery("SELECT tech_id,tech_name FROM technologies ORDER BY tech_type_id,tech_order,tech_name;");
-			$tlist=array();
-			while ($barr=mysql_fetch_array($bres)) {
-				$tlist[$barr['tech_id']]=$barr['tech_name'];
-			}
+            /** @var TechnologyDataRepository $technologyDataRepository */
+            $technologyDataRepository = $app[TechnologyDataRepository::class];
+            $technologyNames = $technologyDataRepository->getTechnologyNames(true);
 
 			// Suchmaske
 			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\">";
@@ -445,8 +433,8 @@ $config = $app[ConfigurationService::class];
 			fieldqueryselbox('user_nick');
 			echo "<br><div class=\"citybox\" id=\"citybox1\">&nbsp;</div></td></tr>";
 			echo "<tr><td class=\"tbltitle\">Forschung</td><td class=\"tbldata\"><select name=\"tech_id\"><option value=\"\"><i>---</i></option>";
-			foreach ($tlist as $k=>$v)
-				echo "<option value=\"".$k."\">".$v."</option>";
+			foreach ($technologyNames as $techId => $technologyName)
+				echo "<option value=\"".$techId."\">".$technologyName."</option>";
 			echo "</select></td></tr>";
 			echo "</table>";
 			echo "<br/><input type=\"submit\" name=\"techlist_search\" value=\"Suche starten\" /></form>";
@@ -457,8 +445,8 @@ $config = $app[ConfigurationService::class];
 			echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\">";
 			echo "<table class=\"tbl\">";
 			echo "<tr><th class=\"tbltitle\">Technologie</th><td class=\"tbldata\"><select name=\"tech_id\">";
-			foreach ($tlist as $k=>$v)
-				echo "<option value=\"".$k."\">".$v."</option>";
+			foreach ($technologyNames as $techId => $technologyName)
+				echo "<option value=\"".$techId."\">".$technologyName."</option>";
 			echo "</select><br>Alle Techs <input type='checkbox' name='all_techs'></td></tr>";
 			echo "<tr><th class=\"tbltitle\">Stufe</th><td class=\"tbldata\"><input type=\"text\" name=\"techlist_current_level\" value=\"1\" size=\"1\" maxlength=\"3\" /></td></tr>";
 			echo "<tr><th class=\"tbltitle\">f&uuml;r den Spieler</th><td class=\"tbldata\"> <select name=\"planet_id\"><";
