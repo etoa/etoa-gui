@@ -29,7 +29,6 @@ if ($sub=="techtree")
     /** @var \EtoA\Technology\TechnologyDataRepository $technologyRepository */
     $technologyRepository = $app[\EtoA\Technology\TechnologyDataRepository::class];
     $technologyNames = $technologyRepository->getTechnologyNames();
-    $teres = dbquery("SELECT tech_id,tech_name FROM technologies WHERE tech_show=1 ORDER BY tech_name;");
     foreach ($technologyNames as $technologyId => $technologyName) {
         echo "<option value=\"".$technologyId."\">".$technologyName."</option>";
     }

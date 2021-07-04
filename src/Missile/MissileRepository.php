@@ -48,4 +48,13 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
                 ])->execute();
         }
     }
+
+    public function count(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select("COUNT(missilelist_id)")
+            ->from('missilelist')
+            ->execute()
+            ->fetchOne();
+    }
 }

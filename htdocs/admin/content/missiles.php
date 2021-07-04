@@ -1,17 +1,23 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Missile\MissileDataRepository;
+use EtoA\Missile\MissileRepository;
 use Twig\Environment;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+/** @var MissileDataRepository $missileDataRepository */
+$missileDataRepository = $app[MissileDataRepository::class];
+/** @var MissileRepository $missileRepository */
+$missileRepository = $app[MissileRepository::class];
 
 if ($sub=="data") {
     editMissileData($twig);
 } elseif ($sub=="req") {
     missileRequirements($twig);
 } else {
-    missileOverview($config);
+    missileOverview($config, $missileDataRepository, $missileRepository);
 }
 
 function editMissileData(Environment $twig): void
@@ -35,20 +41,12 @@ function missileRequirements(Environment $twig): void
     include("inc/requirements.inc.php");
 }
 
-function missileOverview(ConfigurationService $config): void
+function missileOverview(ConfigurationService $config, MissileDataRepository $missileDataRepository, MissileRepository $missileRepository): void
 {
     global $page;
     global $sub;
 
     echo "<h1>Listen bearbeiten</h1>";
-
-    // Objekte laden
-    $bres = dbquery("SELECT missile_id,missile_name FROM missiles ORDER BY missile_name;");
-    $slist=array();
-    while ($barr=mysql_fetch_array($bres))
-    {
-        $slist[$barr['missile_id']]=$barr['missile_name'];
-    }
 
     // Hinzufügen
     echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\" id=\"selector\">";
@@ -87,9 +85,10 @@ function missileOverview(ConfigurationService $config): void
     echo "<tr><th class=\"tbltitle\">Hinzuf&uuml;gen:</th><td class=\"tbldata\">
     <input type=\"text\" name=\"shiplist_count\" value=\"1\" size=\"1\" maxlength=\"3\" />
     <select name=\"ship_id\">";
-    foreach ($slist as $k=>$v)
+    $missileNames = $missileDataRepository->getMissileNames(true);
+    foreach ($missileNames as $missileId => $missileName)
     {
-        echo "<option value=\"".$k."\">".$v."</option>";
+        echo "<option value=\"".$missileId."\">".$missileName."</option>";
     }
     echo "</select> &nbsp; <input type=\"button\" onclick=\"xajax_addMissileToPlanet(xajax.getFormValues('selector'));\" value=\"Hinzuf&uuml;gen\" /></td></tr>";
 
@@ -108,6 +107,5 @@ function missileOverview(ConfigurationService $config): void
         }
     }
 
-    $tblcnt = mysql_fetch_row(dbquery("SELECT count(missilelist_id) FROM missilelist;"));
-    echo "Es sind ".nf($tblcnt[0])." Einträge in der Datenbank vorhanden.<br/>";
+    echo "Es sind ".nf($missileRepository->count())." Einträge in der Datenbank vorhanden.<br/>";
 }
