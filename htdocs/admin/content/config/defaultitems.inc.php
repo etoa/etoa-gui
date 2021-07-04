@@ -27,7 +27,7 @@ if (isset($_GET['delset']) && $_GET['delset']>0) {
 	echo "Set gelöscht!<br/><br/>";
 }
 
-$defaultItemSets = $defaultItemRepository->getSets(true);
+$defaultItemSets = $defaultItemRepository->getSets(false);
 if (count($defaultItemSets) > 0) {
     foreach ($defaultItemSets as $defaultItemSet) {
 		echo "<fieldset><legend>";

@@ -55,4 +55,18 @@ class DefaultItemRepositoryTest extends AbstractDbTestCase
 
         $this->assertEmpty($sets);
     }
+
+    public function testGetItemsGroupedByCategory(): void
+    {
+        $this->repository->addItemToSet(1, 'b', 1, 1);
+
+        $defaultItems = $this->repository->getItemsGroupedByCategory(1);
+
+        $this->assertNotEmpty($defaultItems);;
+    }
+    public function testAddItemToSet(): void
+    {
+        $this->assertTrue($this->repository->addItemToSet(1, 'b', 1, 1));
+        $this->assertFalse($this->repository->addItemToSet(1, 'b', 1, 1));
+    }
 }
