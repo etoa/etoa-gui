@@ -19,7 +19,7 @@ class DefaultItemRepositoryTest extends AbstractDbTestCase
     {
         $this->repository->createSet('Test');
 
-        $sets = $this->repository->getSets();
+        $sets = $this->repository->getSets(false);
 
         $this->assertNotEmpty($sets);
     }
@@ -28,7 +28,7 @@ class DefaultItemRepositoryTest extends AbstractDbTestCase
     {
         $this->repository->createSet('Test');
 
-        $sets = $this->repository->getSets();
+        $sets = $this->repository->getSets(false);
 
         $this->assertNotEmpty($sets);
         $this->assertFalse($sets[0]->active);
@@ -45,7 +45,7 @@ class DefaultItemRepositoryTest extends AbstractDbTestCase
     {
         $this->repository->createSet('Test');
 
-        $sets = $this->repository->getSets();
+        $sets = $this->repository->getSets(false);
 
         $this->assertNotEmpty($sets);
 

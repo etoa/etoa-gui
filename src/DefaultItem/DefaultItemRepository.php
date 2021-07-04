@@ -9,12 +9,18 @@ class DefaultItemRepository extends AbstractRepository
     /**
      * @return DefaultItemSet[]
      */
-    public function getSets(): array
+    public function getSets(bool $activeOnly = true): array
     {
-        $data = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder()
             ->select('*')
             ->from('default_item_sets')
-            ->orderBy('set_name')
+            ->orderBy('set_name');
+
+        if ($activeOnly) {
+            $qb->where('set_active = true');
+        }
+
+        $data = $qb
             ->execute()
             ->fetchAllAssociative();
 
