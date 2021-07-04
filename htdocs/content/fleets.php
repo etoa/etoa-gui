@@ -29,7 +29,9 @@
 	// Eigene Flotten
 	//
 
-	echo "<h1>Flotten</h1>";
+use EtoA\Ship\ShipDataRepository;
+
+echo "<h1>Flotten</h1>";
 
 	echo "<br/><input type=\"button\" onclick=\"document.location='?page=fleetstats'\" value=\"Schiffs&uuml;bersicht anzeigen\" /> &nbsp; ";
 
@@ -343,17 +345,19 @@
 								$ships[$fd->parseFake($sid)] = $scnt;
 						}
 
+                        /** @var ShipDataRepository $shipRepository */
+                        $shipRepository = $app[ShipDataRepository::class];
+                        $shipNames = $shipRepository->getShipNames(true);
 						foreach ($ships as $sid=> $scnt)
 						{
 							$str = "";
-							$ship = new Ship($sid);
 
 							//Opfer sieht die genau Anzahl jedes Schifftypes in einer Flotte
 							if (SPY_TECH_SHOW_NUMSHIPS<=$fm->spyTech())
 							{
 								$str= "".$scnt." ";
 							}
-								$str.= "".$ship->name();
+								$str.= "".$shipNames[$sid];
 								$shipStr[] = $str;
 						}
 					}

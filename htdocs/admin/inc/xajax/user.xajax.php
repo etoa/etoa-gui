@@ -4,6 +4,7 @@ use EtoA\Admin\AdminUserRepository;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Message\MessageRepository;
+use EtoA\Ship\ShipDataRepository;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\User\UserRepository;
 
@@ -1028,10 +1029,14 @@ function loadEconomy($uid,$target)
 						<th>Optionen</th>
 					</tr>";
 
+                    /** @var ShipDataRepository $shipRepository */
+                    $shipRepository = $app[ShipDataRepository::class];
+                    $shipNames = $shipRepository->getShipNames(true);
+
 					while ($larr = mysql_fetch_array($lres))
 					{
 						$te = ($larr['entity_id']>0) ? Entity::createFactoryById($larr['entity_id']) : "-";
-						$ob = $larr['object_id'] > 0 ? new Ship($larr['object_id']).' '.($larr['level']>0 ? $larr['level'].'x' : '') : '-';
+						$ob = $larr['object_id'] > 0 ? $shipNames[$larr['object_id']].' '.($larr['level']>0 ? $larr['level'].'x' : '') : '-';
 						switch ($larr['status'])
 						{
 							case 1: $obStatus="Bau";break;
