@@ -6,85 +6,52 @@ Sets inaktiv, erhält der Spieler keine Objekte. Klicke auf einen Objektnamen um
 
 // Switch set status (active or inactive)
 // Trick: Modulo operation reduces code
-if (isset($_GET['switchsetstatus']) && $_GET['switchsetstatus']>0)
-{
-	dbquery("
-	UPDATE
-		default_item_sets
-	SET
-		set_active=(set_active+1)%2
-	WHERE
-		set_id=".$_GET['switchsetstatus']."
-	");
+use EtoA\DefaultItem\DefaultItemRepository;
+
+/** @var DefaultItemRepository $defaultItemRepository */
+$defaultItemRepository = $app[DefaultItemRepository::class];
+
+if (isset($_GET['switchsetstatus']) && $_GET['switchsetstatus']>0) {
+    $defaultItemRepository->toggleSetActive((int) $_GET['switchsetstatus']);
 	echo "Set Status geändert!<br/><br/>";
 }
 
 // Create new set
-if (isset($_POST['new_set_submit']))
-{
-	dbquery("
-	INSERT INTO
-		default_item_sets
-	(
-		set_name,
-		set_active
-	)
-	VALUES
-	(
-		'".addslashes($_POST['new_set_name'])."',
-		0
-	);
-	");
+if (isset($_POST['new_set_submit'])) {
+    $defaultItemRepository->createSet($_POST['new_set_name']);
 }
 
 // Delte set
-if (isset($_GET['delset']) && $_GET['delset']>0)
-{
-	dbquery("
-	DELETE FROM
-		default_item_sets
-	WHERE
-		set_id=".$_GET['delset']."
-	");
-	dbquery("
-	DELETE FROM
-		default_items
-	WHERE
-		item_set_id=".$_GET['delset']."
-	");
+if (isset($_GET['delset']) && $_GET['delset']>0) {
+    $defaultItemRepository->deleteSet((int) $_GET['delset']);
 	echo "Set gelöscht!<br/><br/>";
 }
 
-
-
-$res = dbquery("SELECT * FROM default_item_sets ORDER BY set_name;");
-if (mysql_num_rows($res)>0)
-{
-	while ($arr=mysql_fetch_array($res))
-	{
+$defaultItemSets = $defaultItemRepository->getSets();
+if (count($defaultItemSets) > 0) {
+    foreach ($defaultItemSets as $defaultItemSet) {
 		echo "<fieldset><legend>";
-		if ($arr['set_active']==1)
-		{
-			echo "<span style=\"color:#0f0;\">".$arr['set_name']."</span> (<a href=\"?page=$page&amp;sub=$sub&amp;switchsetstatus=".$arr['set_id']."\">Deaktivieren</a>)";
+		if ($defaultItemSet->active) {
+			echo "<span style=\"color:#0f0;\">".$defaultItemSet->name."</span> (<a href=\"?page=$page&amp;sub=$sub&amp;switchsetstatus=".$defaultItemSet->id."\">Deaktivieren</a>)";
 		}
 		else
 		{
-			echo "<span style=\"color:#999;\">".$arr['set_name']."</span>  (<a href=\"?page=$page&amp;sub=$sub&amp;switchsetstatus=".$arr['set_id']."\">Aktivieren</a>)";
+			echo "<span style=\"color:#999;\">".$defaultItemSet->name."</span>  (<a href=\"?page=$page&amp;sub=$sub&amp;switchsetstatus=".$defaultItemSet->id."\">Aktivieren</a>)";
 		}
-		echo " [<a href=\"?page=$page&amp;sub=$sub&amp;delset=".$arr['set_id']."\" onclick=\"return confirm('Gesamtes Set wirklich löschen?');\">Löschen</a>]";
+		echo " [<a href=\"?page=$page&amp;sub=$sub&amp;delset=".$defaultItemSet->id."\" onclick=\"return confirm('Gesamtes Set wirklich löschen?');\">Löschen</a>]";
 		echo "</legend>";
-		echo "<div id=\"setcontent_".$arr['set_id']."\">Wird geladen...</div>";
+		echo "<div id=\"setcontent_".$defaultItemSet->id."\">Wird geladen...</div>";
 			echo "<br/><br/>
-			<form action=\"?\" method=\"post\" id=\"set_".$arr['set_id']."\">Hinzufügen:
-			<select name=\"new_item_cat\" id=\"new_item_cat\" onchange=\"showLoaderInline('itemlist_".$arr['set_id']."');xajax_loadItemSelector(this.value,".$arr['set_id'].")\">
+			<form action=\"?\" method=\"post\" id=\"set_".$defaultItemSet->id."\">Hinzufügen:
+			<select name=\"new_item_cat\" id=\"new_item_cat\" onchange=\"showLoaderInline('itemlist_".$defaultItemSet->id."');xajax_loadItemSelector(this.value,".$defaultItemSet->id.")\">
 			<option value=\"\">Kategorie wählen...</option>
 			<option value=\"b\">Gebäude</option>
 			<option value=\"t\">Technologien</option>
 			<option value=\"s\">Schiffe</option>
 			<option value=\"d\">Verteidigung</option>
-			</select> <span id=\"itemlist_".$arr['set_id']."\"></span></form>";
+			</select> <span id=\"itemlist_".$defaultItemSet->id."\"></span></form>";
 		echo "</fieldset><br/>
-		<script type=\"text/javascript\">$(function(){ showLoaderInline('setcontent_".$arr['set_id']."');xajax_loadItemSet(".$arr['set_id']."); });</script>";
+		<script type=\"text/javascript\">$(function(){ showLoaderInline('setcontent_".$defaultItemSet->id."');xajax_loadItemSet(".$defaultItemSet->id."); });</script>";
 	}
 }
 else
