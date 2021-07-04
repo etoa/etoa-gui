@@ -33,6 +33,7 @@
 
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Race\RaceDataRepository;
+use EtoA\User\UserRepository;
 
 if ($sub=="xml")
 	{
@@ -101,10 +102,11 @@ if ($sub=="xml")
 		echo "<tr><th>Rasse:</th><td>
 		<select name=\"user_race\" />
 		<option value=\"0\">Keine</option>";
-		$res = dbquery("SELECT * FROM races ORDER BY race_name");
-		while ($arr = mysql_fetch_assoc($res))
-		{
-			echo "<option value=\"".$arr['race_id']."\">".$arr['race_name']."</option>";
+		/** @var RaceDataRepository $raceRepository */
+		$raceRepository = $app[RaceDataRepository::class];
+		$raceNames = $raceRepository->getRaceNames();
+		foreach ($raceNames as $raceId => $raceName) {
+			echo "<option value=\"".$raceId."\">".$raceName."</option>";
 		}
 		echo "</select>
 		</td></td>";
@@ -493,8 +495,9 @@ if ($sub=="xml")
 			echo "</table>";
 			echo "<br/><input type=\"submit\" name=\"user_search\" value=\"Suche starten\" /> (wenn nichts eingegeben wird werden alle Datens&auml;tze angezeigt)</form>";
 
-			$tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM users;"));
-			echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.";
+			/** @var UserRepository $userRepository */
+			$userRepository = $app[UserRepository::class];
+			echo "<br/>Es sind ".nf($userRepository->count())." Eintr&auml;ge in der Datenbank vorhanden.";
 
 		}
 	}

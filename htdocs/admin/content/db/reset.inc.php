@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\DatabaseManagerRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -34,22 +35,20 @@ if (isset($_POST['submit'])) {
             $mtx->acquire();
 
             $tbls = DBManager::getInstance()->getAllTables();
-
-            // Empty tables
-            dbquery("SET FOREIGN_KEY_CHECKS=0;");
-            $tc = 0;
             $emptyTables = [];
             foreach ($tbls as $t) {
                 if (!in_array($t, $persistentTables['definitions'], true) && $t !== DBManager::SCHEMA_MIGRATIONS_TABLE) {
-                    dbquery("TRUNCATE $t;");
                     $emptyTables[] = $t;
-                    $tc++;
                 }
             }
+
             if (count($emptyTables) > 0) {
+                /** @var DatabaseManagerRepository $dbManagerRepository */
+                $dbManagerRepository = $app[DatabaseManagerRepository::class];
+                $dbManagerRepository->truncateTables($emptyTables);
+
                 $infoMessage = 'Leere Tabellen: ' . implode(', ', $emptyTables);
             }
-            dbquery('SET FOREIGN_KEY_CHECKS=1;');
 
             // Restore default config
             $cr = $config->restoreDefaults();
@@ -57,7 +56,7 @@ if (isset($_POST['submit'])) {
 
             $mtx->release();
 
-            $successMessage = "$tc Tabellen geleert, $cr Einstellungen auf Standard zurückgesetzt!";
+            $successMessage = count($emptyTables) . " Tabellen geleert, $cr Einstellungen auf Standard zurückgesetzt!";
         }
 
         // Drop tables
