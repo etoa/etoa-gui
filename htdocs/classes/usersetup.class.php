@@ -1,30 +1,27 @@
 <?PHP
 
-	class Usersetup
+use EtoA\DefaultItem\DefaultItemRepository;
+
+class Usersetup
 	{
 	/**
 	* Add an item setlist to a given planet
 	*/
 	static function addItemSetListToPlanet($planetid,$userid,$setid)
 	{
+	    global $app;
+
 		$planetid = intval($planetid);
 		$userid = intval($userid);
 		$setid = intval($setid);
 
+        /** @var DefaultItemRepository $defaultItemRepository */
+        $defaultItemRepository = $app[DefaultItemRepository::class];
+        $defaultItems = $defaultItemRepository->getItemsGroupedByCategory($setid);
+
 		// Add buildings
-		$ires = dbquery("
-		SELECT
-			item_object_id as id,
-			item_count as count
-		FROM
-			default_items
-		WHERE
-			item_set_id=".$setid."
-			AND item_cat='b';");
-		if (mysql_num_rows($ires)>0)
-		{
-			while($iarr = mysql_fetch_assoc($ires))
-			{
+		if (isset($defaultItems['b'])) {
+		    foreach ($defaultItems['b'] as $defaultItem) {
 				dbquery("INSERT INTO
 					buildlist
 					(
@@ -35,28 +32,17 @@
 					)
 					VALUES
 					(
-						".$iarr['id'].",
+						".$defaultItem->objectId.",
 						".$userid.",
 						".$planetid.",
-						".$iarr['count']."
+						".$defaultItem->count."
 					);");
 			}
 		}
 
 		// Add technologies
-		$ires = dbquery("
-		SELECT
-			item_object_id as id,
-			item_count as count
-		FROM
-			default_items
-		WHERE
-			item_set_id=".$setid."
-			AND item_cat='t';");
-		if (mysql_num_rows($ires)>0)
-		{
-			while($iarr = mysql_fetch_assoc($ires))
-			{
+        if (isset($defaultItems['t'])) {
+		    foreach ($defaultItems['t'] as $defaultItem) {
 				dbquery("INSERT INTO
 					techlist
 					(
@@ -67,28 +53,17 @@
 					)
 					VALUES
 					(
-						".$iarr['id'].",
+						".$defaultItem->objectId.",
 						".$userid.",
 						".$planetid.",
-						".$iarr['count']."
+						".$defaultItem->count."
 					);");
 			}
 		}
 
 		// Add ships
-		$ires = dbquery("
-		SELECT
-			item_object_id as id,
-			item_count as count
-		FROM
-			default_items
-		WHERE
-			item_set_id=".$setid."
-			AND item_cat='s';");
-		if (mysql_num_rows($ires)>0)
-		{
-			while($iarr = mysql_fetch_assoc($ires))
-			{
+        if (isset($defaultItems['s'])) {
+            foreach ($defaultItems['s'] as $defaultItem) {
 				dbquery("INSERT INTO
 					shiplist
 					(
@@ -99,28 +74,17 @@
 					)
 					VALUES
 					(
-						".$iarr['id'].",
+						".$defaultItem->objectId.",
 						".$userid.",
 						".$planetid.",
-						".$iarr['count']."
+						".$defaultItem->count."
 					);");
 			}
 		}
 
 		// Add defense
-		$ires = dbquery("
-		SELECT
-			item_object_id as id,
-			item_count as count
-		FROM
-			default_items
-		WHERE
-			item_set_id=".$setid."
-			AND item_cat='d';");
-		if (mysql_num_rows($ires)>0)
-		{
-			while($iarr = mysql_fetch_assoc($ires))
-			{
+        if (isset($defaultItems['d'])) {
+            foreach ($defaultItems['d'] as $defaultItem) {
 				dbquery("INSERT INTO
 					deflist
 					(
@@ -131,10 +95,10 @@
 					)
 					VALUES
 					(
-						".$iarr['id'].",
+						".$defaultItem->id.",
 						".$userid.",
 						".$planetid.",
-						".$iarr['count']."
+						".$defaultItem->count."
 					);");
 			}
 		}
@@ -143,6 +107,3 @@
 
 	}
 
-
-
-?>

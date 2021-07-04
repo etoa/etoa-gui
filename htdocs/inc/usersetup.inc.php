@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\DefaultItem\DefaultItemRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Text\TextRepository;
 use EtoA\Universe\Entity\EntityRepository;
@@ -74,23 +75,14 @@ elseif ($request->request->has('submit_chooseplanet') && $request->request->getI
         $entity = $entityRepository->findIncludeCell($planetId);
         $cu->addToUserLog("planets", "{nick} wählt [b]" . $entity->toString() . "[/b] als Hauptplanet aus.", 0);
 
-        $res = dbquery("
-            SELECT
-                set_id,
-                set_name
-            FROM
-                default_item_sets
-            WHERE
-                set_active=1
-            ");
-        if (mysql_num_rows($res)>1)
-        {
+        /** @var DefaultItemRepository $defaultItemRepository */
+        $defaultItemRepository = $app[DefaultItemRepository::class];
+        $sets = $defaultItemRepository->getSets();
+        if (count($sets) > 1) {
             $mode="itemsets";
         }
-        elseif(mysql_num_rows($res)==1)
-        {
-            $arr = mysql_fetch_array($res);
-            Usersetup::addItemSetListToPlanet($planetId, $cu->id, $arr['set_id']);
+        elseif(count($sets) === 1) {
+            Usersetup::addItemSetListToPlanet($planetId, $cu->id, $sets[0]->id);
             $cu->setSetupFinished();
             $mode = "finished";
         }
@@ -140,6 +132,10 @@ elseif ($cu->raceId==0)
 
 if ($mode=="itemsets" && isset($planet))
 {
+    /** @var DefaultItemRepository $defaultItemRepository */
+    $defaultItemRepository = $app[DefaultItemRepository::class];
+    $sets = $defaultItemRepository->getSets();
+
     $k = mt_rand(10000,99999);
     $s->temset_key=$k;
     $s->itemset_planet = $planet->id;
@@ -148,9 +144,8 @@ if ($mode=="itemsets" && isset($planet))
     checker_init();
     echo "Euch stehen mehrere Vorlagen von Start-Objekte zur Auswahl. Bitte wählt eine Vorlage aus, die darin definierten Objekte
     werden dann eurem Hauptplanet hinzugefügt: <br/><br/><select name=\"itemset_id\">";
-    while ($arr=mysql_fetch_array($res))
-    {
-        echo "<option value=\"".$arr['set_id']."\">".$arr['set_name']."</option>";
+    foreach ($sets as $set) {
+        echo "<option value=\"".$set->id."\">".$set->name."</option>";
     }
     echo "</select> <input type=\"submit\" value=\"Weiter\" name=\"".md5((string) $k)."\" /></form>";
     iBoxEnd();
