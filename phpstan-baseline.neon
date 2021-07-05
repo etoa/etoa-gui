@@ -400,3 +400,8 @@ parameters:
 			count: 1
 			path: src/Building/BuildingRepository.php
 
+		-
+			message: "#^Method EtoA\\\\UI\\\\EntityCoordinatesSelector\\:\\:parse\\(\\) has parameter \\$parameters with no value type specified in iterable type Symfony\\\\Component\\\\HttpFoundation\\\\ParameterBag\\.$#"
+			count: 1
+			path: src/UI/EntityCoordinatesSelector.php
+
