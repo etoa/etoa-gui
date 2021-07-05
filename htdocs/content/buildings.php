@@ -7,18 +7,16 @@ use EtoA\Technology\TechnologyDataRepository;
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
 
-// DEFINITIONEN //
-
 if ($cu->properties->itemShow!='full')
 {
-define('NUM_BUILDINGS_PER_ROW',9);
-define('TABLE_WIDTH','');
+    define('NUM_BUILDINGS_PER_ROW',9);
+    define('TABLE_WIDTH','');
 }
 else
 {
-define('NUM_BUILDINGS_PER_ROW',5);
-define('CELL_WIDTH',120);
-define('TABLE_WIDTH','auto');
+    define('NUM_BUILDINGS_PER_ROW',5);
+    define('CELL_WIDTH',120);
+    define('TABLE_WIDTH','auto');
 }
 
 define('HELP_URL',"?page=help&site=buildings");
@@ -33,8 +31,6 @@ else
     $use_img_filter = false;
 }
 
-// SKRIPT //
-
 if (isset($cp))
 {
     echo "<h1>Bauhof des Planeten ".$cp->name()."</h1>";
@@ -44,7 +40,6 @@ if (isset($cp))
     // Load buildlist object
     $bl = new BuildList($cp->id,$cu->id,2);
     $bid=0;
-
 
     // create posted id for small view
     if (isset($_POST['command_build']) && is_array($_POST['command_build']))

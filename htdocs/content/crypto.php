@@ -20,10 +20,6 @@ define("CRYPTO_DEFAULT_COOLDOWN", $config->getInt("crypto_default_cooldown"));
 define("CRYPTO_COOLDOWN_REDUCTION_PER_LEVEL", $config->getInt("crypto_cooldown_reduction_per_level"));
 define("CRYPTO_MIN_COOLDOWN", $config->getInt("crypto_min_cooldown"));
 
-// BEGIN SKRIPT //
-
-//echo "<form action=\"?page=$page\" id='targetForm' method=\"post\">";
-
 // Gebäude Level und Arbeiter laden
 if ($cu->allianceId!=0)
 {
@@ -258,7 +254,7 @@ if ($config->getBoolean('crypto_enable'))
                                                                         FROM
                                                                             fleet_ships
                                                                         INNER JOIN
-                                                                                ships
+                                                                            ships
                                                                         ON ship_id=fs_ship_id
                                                                             AND fs_fleet_id=".$farr[0].";");
                                                         if (mysql_num_rows($sres)>0)
