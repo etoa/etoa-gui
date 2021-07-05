@@ -1,6 +1,8 @@
 <?PHP
 
-	class BuildList implements IteratorAggregate
+use EtoA\Universe\Planet\PlanetRepository;
+
+class BuildList implements IteratorAggregate
 	{
 		private $entityId;
 		private $ownerId;
@@ -26,6 +28,8 @@
 
 		public static $GENTECH = 0;
 
+        private PlanetRepository $planetRepo;
+
 		/**
 		 * Constructor
 		 * @param int $entityId
@@ -36,6 +40,11 @@
 		 */
         public function __construct($entityId,$ownerId,$load=0)
 		{
+            // TODO
+            global $app;
+
+            $this->planetRepo = $app[PlanetRepository::class];
+
 			$this->entityId = $entityId;
 			$this->ownerId = $ownerId;
 			if ($load>0)
@@ -631,7 +640,7 @@
 
 				$cst = $itm->getCosts($lvl);
 
-				$this->entity->changeRes(-$cst[1],-$cst[2],-$cst[3],-$cst[4],-$cst[5]);
+                $this->planetRepo->addResources($this->entity->id, -$cst[1], -$cst[2], -$cst[3], -$cst[4], -$cst[5]);
 
 				$t = time();
 				$startTime = $t;
@@ -840,8 +849,9 @@
 					else
 						$this->entity = &$cp;
 				}
-				if ($cashBack > 0)
-					$this->entity->changeRes($arr[0]*$cashBack,$arr[1]*$cashBack,$arr[2]*$cashBack,$arr[3]*$cashBack,$arr[4]*$cashBack);
+				if ($cashBack > 0) {
+                    $this->planetRepo->addResources($this->entity->id, $arr[0] * $cashBack, $arr[1] * $cashBack, $arr[2] * $cashBack, $arr[3] * $cashBack, $arr[4] * $cashBack);
+                }
 
 				dbquery("
 				DELETE FROM
