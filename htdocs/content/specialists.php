@@ -57,8 +57,6 @@ if (isset($_POST['submit_engage']) && isset($_POST['engage']))
             else
                 $factor = 1;
 
-
-
             if ($cu->points >= $specalist->pointsRequirement) {
                 if (
                     $planet->resMetal >= $specalist->costsMetal * $factor &&
@@ -80,12 +78,14 @@ if (isset($_POST['submit_engage']) && isset($_POST['engage']))
                     $cu->specialistId = $specalist->id;
                     $cu->specialistTime = $st;
 
-                    $cp->changeRes(
-                    -$specalist->costsMetal * $factor,
-                    -$specalist->costsCrystal * $factor,
-                    -$specalist->costsPlastic * $factor,
-                    -$specalist->costsFuel * $factor,
-                    -$specalist->costsFood * $factor);
+                    $planetRepo->addResources(
+                        $planet->id,
+                        -$specalist->costsMetal * $factor,
+                        -$specalist->costsCrystal * $factor,
+                        -$specalist->costsPlastic * $factor,
+                        -$specalist->costsFuel * $factor,
+                        -$specalist->costsFood * $factor
+                    );
 
                     //Update every planet
                     foreach ($planets as $pid) {

@@ -317,7 +317,7 @@ if ($shipyard && $shipyard->level)
                 <input type="hidden" name="workDone" id="workDone" value="'.$config->getInt('people_work_done').'" />
                 <input type="hidden" name="foodRequired" id="foodRequired" value="'.$config->getInt('people_food_require').'" />
                 <input type="hidden" name="peopleFree" id="peopleFree" value="'.$peopleFree.'" />
-                <input type="hidden" name="foodAvaiable" id="foodAvaiable" value="'.$cp->getRes1(4).'" />
+                <input type="hidden" name="foodAvaiable" id="foodAvaiable" value="'.$planet->resFood.'" />
                 <input type="hidden" name="peopleOptimized" id="peopleOptimized" value="0" />';
 
     $box .= '   <tr>
@@ -445,13 +445,13 @@ if ($shipyard && $shipyard->level)
             echo "<tr><th>Ergebnisse des Bauauftrags</th></tr>";
 
             //Log variablen setzten
-            $log_ships="";
-            $total_duration=0;
-            $total_metal=0;
-            $total_crystal=0;
-            $total_plastic=0;
-            $total_fuel=0;
-            $total_food=0;
+            $log_ships = "";
+
+            $totalMetal = 0;
+            $totalCrystal = 0;
+            $totalPlastic = 0;
+            $totalFuel = 0;
+            $totalFood = 0;
 
             // Endzeit bereits laufender Aufträge laden
             $end_time=time();
@@ -478,28 +478,28 @@ if ($shipyard && $shipyard->level)
                 {
                     $buildCountOriginal = $build_cnt;
 
-                // Zählt die Anzahl Schiffe dieses Typs im ganzen Account...
-                $ship_count = 0;
-                // ... auf den Planeten
-                if(isset($shiplist[$ship_id]))
-                {
-                $ship_count += array_sum($shiplist[$ship_id]);
-                }
-                // ... im Bunker
-                if(isset($bunkered[$ship_id]))
-                {
-                $ship_count += array_sum($bunkered[$ship_id]);
-                }
-                // ... in der Bauliste
-                if(isset($queue_total[$ship_id]))
-                {
-                $ship_count += $queue_total[$ship_id];
-                }
-                    // ... in der Luft
-                if(isset($fleet[$ship_id]))
-                {
-                $ship_count += $fleet[$ship_id];
-                }
+                    // Zählt die Anzahl Schiffe dieses Typs im ganzen Account...
+                    $ship_count = 0;
+                    // ... auf den Planeten
+                    if(isset($shiplist[$ship_id]))
+                    {
+                        $ship_count += array_sum($shiplist[$ship_id]);
+                    }
+                    // ... im Bunker
+                    if(isset($bunkered[$ship_id]))
+                    {
+                        $ship_count += array_sum($bunkered[$ship_id]);
+                    }
+                    // ... in der Bauliste
+                    if(isset($queue_total[$ship_id]))
+                    {
+                        $ship_count += $queue_total[$ship_id];
+                    }
+                        // ... in der Luft
+                    if(isset($fleet[$ship_id]))
+                    {
+                        $ship_count += $fleet[$ship_id];
+                    }
 
                     //Anzahl überprüfen, ob diese die maximalzahl übersteigt, gegebenenfalls ändern
                     if ($build_cnt + $ship_count > $ships[$ship_id]['ship_max_count'] && $ships[$ship_id]['ship_max_count']!=0)
@@ -507,54 +507,40 @@ if ($shipyard && $shipyard->level)
                         $build_cnt=max(0,$ships[$ship_id]['ship_max_count']-$ship_count);
                     }
 
-                // TODO: Überprüfen
+                    // TODO: Überprüfen
                     //Wenn der User nicht genug Ress hat, die Anzahl Schiffe drosseln
                     $bf = [];
                     $bc = [];
+
                     //Titan
-                    if ($ships[$ship_id]['ship_costs_metal']>0)
-                    {
-                        $bf['metal']=$planet->resMetal/$ships[$ship_id]['ship_costs_metal'];
-                    }
-                    else
-                    {
-                        $bc['metal']=0;
+                    if ($ships[$ship_id]['ship_costs_metal'] > 0) {
+                        $bf['metal'] = $planet->resMetal / $ships[$ship_id]['ship_costs_metal'];
+                    } else {
+                        $bc['metal'] = 0;
                     }
                     //Silizium
-                    if ($ships[$ship_id]['ship_costs_crystal']>0)
-                    {
-                        $bf['crystal']=$planet->resCrystal/$ships[$ship_id]['ship_costs_crystal'];
-                    }
-                    else
-                    {
-                        $bc['crystal']=0;
+                    if ($ships[$ship_id]['ship_costs_crystal'] > 0) {
+                        $bf['crystal'] = $planet->resCrystal / $ships[$ship_id]['ship_costs_crystal'];
+                    } else {
+                        $bc['crystal'] = 0;
                     }
                     //PVC
-                    if ($ships[$ship_id]['ship_costs_plastic']>0)
-                    {
-                        $bf['plastic']=$planet->resPlastic/$ships[$ship_id]['ship_costs_plastic'];
-                    }
-                    else
-                    {
-                        $bc['plastic']=0;
+                    if ($ships[$ship_id]['ship_costs_plastic'] > 0) {
+                        $bf['plastic'] = $planet->resPlastic / $ships[$ship_id]['ship_costs_plastic'];
+                    } else {
+                        $bc['plastic'] = 0;
                     }
                     //Tritium
-                    if ($ships[$ship_id]['ship_costs_fuel']>0)
-                    {
-                        $bf['fuel']=$planet->resFuel/$ships[$ship_id]['ship_costs_fuel'];
-                    }
-                    else
-                    {
-                        $bc['fuel']=0;
+                    if ($ships[$ship_id]['ship_costs_fuel'] > 0) {
+                        $bf['fuel'] = $planet->resFuel / $ships[$ship_id]['ship_costs_fuel'];
+                    } else {
+                        $bc['fuel'] = 0;
                     }
                     //Nahrung
-                    if (intval($_POST['additional_food_costs'])>0 || $ships[$ship_id]['ship_costs_food']>0)
-                    {
-                            $bf['food']=$planet->resFood/(intval($_POST['additional_food_costs'])+$ships[$ship_id]['ship_costs_food']);
-                    }
-                    else
-                    {
-                        $bc['food']=0;
+                    if (intval($_POST['additional_food_costs']) > 0 || $ships[$ship_id]['ship_costs_food'] > 0) {
+                        $bf['food'] = $planet->resFood / (intval($_POST['additional_food_costs']) + $ships[$ship_id]['ship_costs_food']);
+                    } else {
+                        $bc['food'] = 0;
                     }
 
                     //Anzahl Drosseln ???
@@ -579,13 +565,6 @@ if ($shipyard && $shipyard->level)
                         $bc['plastic']=$ships[$ship_id]['ship_costs_plastic']*$build_cnt;
                         $bc['fuel']=$ships[$ship_id]['ship_costs_fuel']*$build_cnt;
                         $bc['food']=(intval($_POST['additional_food_costs'])+$ships[$ship_id]['ship_costs_food'])*$build_cnt;
-
-                        //Berechnete Ress provisorisch abziehen
-                        $cp->resMetal-=$bc['metal'];
-                        $cp->resCrystal-=$bc['crystal'];
-                        $cp->resPlastic-=$bc['plastic'];
-                        $cp->resFuel-=$bc['fuel'];
-                        $cp->resFood-=$bc['food'];
 
                         // Bauzeit pro Schiff berechnen
                         $btime = ($ships[$ship_id]['ship_costs_metal']
@@ -654,44 +633,43 @@ if ($shipyard && $shipyard->level)
 
                         echo "<tr><td>".nf($build_cnt)." ".$ships[$ship_id]['ship_name']." in Auftrag gegeben!</td></tr>";
 
+                        //Rohstoffe summieren, diese werden nach der Schleife abgezogen
+                        $totalMetal += $bc['metal'];
+                        $totalCrystal += $bc['crystal'];
+                        $totalPlastic += $bc['plastic'];
+                        $totalFuel += $bc['fuel'];
+                        $totalFood += $bc['food'];
+
                         //Log schreiben
                         $log_text = "[b]Schiffsauftrag Bauen[/b]
 
-                        [b]Start:[/b] ".date("d.m.Y H:i:s",$end_time)."
-                        [b]Ende:[/b] ".date("d.m.Y H:i:s",$end_time)."
-                        [b]Dauer:[/b] ".tf($duration)."
-                        [b]Dauer pro Einheit:[/b] ".tf($obj_time)."
-                        [b]Schiffswerft Level:[/b] ".CURRENT_SHIPYARD_LEVEL."
-                        [b]Eingesetzte Bewohner:[/b] ".nf($people_working)."
-                        [b]Gen-Tech Level:[/b] ".$gen_tech_level."
-                        [b]Eingesetzter Spezialist:[/b] ".$cu->specialist->name."
+                        [b]Start:[/b] " . date("d.m.Y H:i:s", $end_time) . "
+                        [b]Ende:[/b] " . date("d.m.Y H:i:s", $end_time) . "
+                        [b]Dauer:[/b] " . tf($duration) . "
+                        [b]Dauer pro Einheit:[/b] " . tf($obj_time) . "
+                        [b]Schiffswerft Level:[/b] " . CURRENT_SHIPYARD_LEVEL . "
+                        [b]Eingesetzte Bewohner:[/b] " . nf($people_working) . "
+                        [b]Gen-Tech Level:[/b] " . $gen_tech_level . "
+                        [b]Eingesetzter Spezialist:[/b] " . $cu->specialist->name . "
 
                         [b]Kosten[/b]
-                        [b]".RES_METAL.":[/b] ".nf($bc['metal'])."
-                        [b]".RES_CRYSTAL.":[/b] ".nf($bc['crystal'])."
-                        [b]".RES_PLASTIC.":[/b] ".nf($bc['plastic'])."
-                        [b]".RES_FUEL.":[/b] ".nf($bc['fuel'])."
-                        [b]".RES_FOOD.":[/b] ".nf($bc['food'])."
+                        [b]" . RES_METAL . ":[/b] " . nf($bc['metal']) . "
+                        [b]" . RES_CRYSTAL . ":[/b] " . nf($bc['crystal']) . "
+                        [b]" . RES_PLASTIC . ":[/b] " . nf($bc['plastic']) . "
+                        [b]" . RES_FUEL . ":[/b] " . nf($bc['fuel']) . "
+                        [b]" . RES_FOOD . ":[/b] " . nf($bc['food']) . "
 
                         [b]Rohstoffe auf dem Planeten[/b]
-                        [b]".RES_METAL.":[/b] ".nf($planet->resMetal)."
-                        [b]".RES_CRYSTAL.":[/b] ".nf($planet->resCrystal)."
-                        [b]".RES_PLASTIC.":[/b] ".nf($planet->resPlastic)."
-                        [b]".RES_FUEL.":[/b] ".nf($planet->resFuel)."
-                        [b]".RES_FOOD.":[/b] ".nf($planet->resFood)."";
+                        [b]" . RES_METAL . ":[/b] " . nf($planet->resMetal - $totalMetal) . "
+                        [b]" . RES_CRYSTAL . ":[/b] " . nf($planet->resCrystal - $totalCrystal) . "
+                        [b]" . RES_PLASTIC . ":[/b] " . nf($planet->resPlastic - $totalPlastic) . "
+                        [b]" . RES_FUEL . ":[/b] " . nf($planet->resFuel - $totalFuel) . "
+                        [b]" . RES_FOOD . ":[/b] " . nf($planet->resFood - $totalFood);
 
                         GameLog::add(GameLog::F_SHIP, GameLog::INFO,$log_text,$cu->id,$cu->allianceId,$planet->id, $ship_id, 1, $build_cnt);
 
-                        //Rohstoffe summieren, diese werden nach der Schleife abgezogen
-                        $total_metal+=$bc['metal'];
-                        $total_crystal+=$bc['crystal'];
-                        $total_plastic+=$bc['plastic'];
-                        $total_fuel+=$bc['fuel'];
-                        $total_food+=$bc['food'];
-
                         //Daten für Log speichern
                         $log_ships.="<b>".$ships[$ship_id]['ship_name']."</b>: ".nf($build_cnt)." (".tf($duration).")<br>";
-                        $total_duration+=$duration;
                     }
                     else
                     {
@@ -701,15 +679,8 @@ if ($shipyard && $shipyard->level)
                 }
             }
 
-            // Die Rohstoffe der $c-variablen wieder beigeben, da sie sonst doppelt abgezogen werden
-            $cp->resMetal+=$total_metal;
-            $cp->resCrystal+=$total_crystal;
-            $cp->resPlastic+=$total_plastic;
-            $cp->resFuel+=$total_fuel;
-            $cp->resFood+=$total_food;
-
             //Rohstoffe vom Planeten abziehen und aktualisieren
-            $cp->changeRes(-$total_metal,-$total_crystal,-$total_plastic,-$total_fuel,-$total_food);
+            $planetRepo->addResources($planet->id, -$totalMetal, -$totalCrystal, -$totalPlastic, -$totalFuel, -$totalFood);
 
             if ($counter==0)
             {
@@ -718,7 +689,6 @@ if ($shipyard && $shipyard->level)
             tableEnd();
             header("Refresh:0");
         }
-
 
         checker_init();
 
@@ -730,17 +700,16 @@ if ($shipyard && $shipyard->level)
             $id = intval($_GET['cancel']);
             if (isset($queue[$id]))
             {
-
                 //Zu erhaltende Rohstoffe errechnen
                 $obj_cnt = min(ceil(($queue[$id]['queue_endtime']-max($time,$queue[$id]['queue_starttime']))/$queue[$id]['queue_objtime']),$queue[$id]['queue_cnt']);
                 echo "Breche den Bau von ".$obj_cnt." ".$ships[$queue[$id]['queue_ship_id']]['ship_name']." ab...<br/>";
 
                 $ret = [];
-                $ret['metal']=$ships[$queue[$id]['queue_ship_id']]['ship_costs_metal']*$obj_cnt*$cancel_res_factor;
-                $ret['crystal']=$ships[$queue[$id]['queue_ship_id']]['ship_costs_crystal']*$obj_cnt*$cancel_res_factor;
-                $ret['plastic']=$ships[$queue[$id]['queue_ship_id']]['ship_costs_plastic']*$obj_cnt*$cancel_res_factor;
-                $ret['fuel']=$ships[$queue[$id]['queue_ship_id']]['ship_costs_fuel']*$obj_cnt*$cancel_res_factor;
-                $ret['food']=$ships[$queue[$id]['queue_ship_id']]['ship_costs_food']*$obj_cnt*$cancel_res_factor;
+                $ret['metal'] = $ships[$queue[$id]['queue_ship_id']]['ship_costs_metal'] * $obj_cnt * $cancel_res_factor;
+                $ret['crystal'] = $ships[$queue[$id]['queue_ship_id']]['ship_costs_crystal'] * $obj_cnt * $cancel_res_factor;
+                $ret['plastic'] = $ships[$queue[$id]['queue_ship_id']]['ship_costs_plastic'] * $obj_cnt * $cancel_res_factor;
+                $ret['fuel'] = $ships[$queue[$id]['queue_ship_id']]['ship_costs_fuel'] * $obj_cnt * $cancel_res_factor;
+                $ret['food'] = $ships[$queue[$id]['queue_ship_id']]['ship_costs_food'] * $obj_cnt * $cancel_res_factor;
 
                 // Daten für Log speichern
                 $ship_name = $ships[$queue[$id]['queue_ship_id']]['ship_name'];
@@ -749,7 +718,6 @@ if ($shipyard && $shipyard->level)
                 $queue_objtime = $queue[$id]['queue_objtime'];
                 $start_time = $queue[$id]['queue_starttime'];
                 $end_time = $queue[$id]['queue_endtime'];
-
 
                 //Auftrag löschen
                 dbquery("
@@ -813,37 +781,35 @@ if ($shipyard && $shipyard->level)
                 $queue[$id] = NULL;
 
                 //Rohstoffe dem Planeten gutschreiben und aktualisieren
-                $cp->changeRes($ret['metal'],$ret['crystal'],$ret['plastic'],$ret['fuel'],$ret['food']);
+                $planetRepo->addResources($planet->id, $ret['metal'], $ret['crystal'], $ret['plastic'], $ret['fuel'], $ret['food']);
 
                 echo "Der Auftrag wurde abgebrochen!<br/><br/>";
 
                 //Log schreiben
                 $log_text = "[b]Schiffsauftrag Abbruch[/b]
 
-                [b]Auftragsdauer:[/b] ".tf($queue_objtime*$queue_count)."
+                [b]Auftragsdauer:[/b] " . tf($queue_objtime * $queue_count) . "
 
                 [b]Erhaltene Rohstoffe[/b]
-                [b]Faktor:[/b] ".$cancel_res_factor."
-                [b]".RES_METAL.":[/b] ".nf($ret['metal'])."
-                [b]".RES_CRYSTAL.":[/b] ".nf($ret['crystal'])."
-                [b]".RES_PLASTIC.":[/b] ".nf($ret['plastic'])."
-                [b]".RES_FUEL.":[/b] ".nf($ret['fuel'])."
-                [b]".RES_FOOD.":[/b] ".nf($ret['food'])."
+                [b]Faktor:[/b] " . $cancel_res_factor . "
+                [b]" . RES_METAL . ":[/b] " . nf($ret['metal']) . "
+                [b]" . RES_CRYSTAL . ":[/b] " . nf($ret['crystal']) . "
+                [b]" . RES_PLASTIC . ":[/b] " . nf($ret['plastic']) . "
+                [b]" . RES_FUEL . ":[/b] " . nf($ret['fuel']) . "
+                [b]" . RES_FOOD . ":[/b] " . nf($ret['food']) . "
 
                 [b]Rohstoffe auf dem Planeten[/b]
-                [b]".RES_METAL.":[/b] ".nf($planet->resMetal)."
-                [b]".RES_CRYSTAL.":[/b] ".nf($planet->resCrystal)."
-                [b]".RES_PLASTIC.":[/b] ".nf($planet->resPlastic)."
-                [b]".RES_FUEL.":[/b] ".nf($planet->resFuel)."
-                [b]".RES_FOOD.":[/b] ".nf($planet->resFood)."";
+                [b]" . RES_METAL . ":[/b] " . nf($planet->resMetal + $ret['metal']) . "
+                [b]" . RES_CRYSTAL . ":[/b] " . nf($planet->resCrystal + $ret['crystal']) . "
+                [b]" . RES_PLASTIC . ":[/b] " . nf($planet->resPlastic + $ret['plastic']) . "
+                [b]" . RES_FUEL . ":[/b] " . nf($planet->resFuel + $ret['fuel']) . "
+                [b]" . RES_FOOD . ":[/b] " . nf($planet->resFood + $ret['food']);
 
                 //Log Speichern
-                GameLog::add(GameLog::F_SHIP, GameLog::INFO,$log_text,$cu->id,$cu->allianceId,$planet->id, $ship_id, 0, $queue_count);
+                GameLog::add(GameLog::F_SHIP, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $ship_id, 0, $queue_count);
                 header("Refresh:0");
             }
-
         }
-
 
         /*********************************
         * Liste der Bauaufträge anzeigen *

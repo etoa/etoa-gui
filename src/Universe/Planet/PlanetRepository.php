@@ -304,11 +304,11 @@ class PlanetRepository extends AbstractRepository
 
     public function addResources(
         int $id,
-        int $resMetal,
-        int $resCrystal,
-        int $resPlastic,
-        int $resFuel,
-        int $resFood,
+        float $resMetal,
+        float $resCrystal,
+        float $resPlastic,
+        float $resFuel,
+        float $resFood,
         int $people = 0
     ): bool {
         $affected = (int) $this->createQueryBuilder()

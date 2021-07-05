@@ -238,7 +238,7 @@ if (isset($cp)) {
                     <input type="hidden" name="workDone" id="workDone" value="'.$config->getInt('people_work_done').'" />
                     <input type="hidden" name="foodRequired" id="foodRequired" value="'.$config->getInt('people_food_require').'" />
                     <input type="hidden" name="peopleFree" id="peopleFree" value="'.$peopleFree.'" />
-                    <input type="hidden" name="foodAvaiable" id="foodAvaiable" value="'.$cp->getRes1(4).'" />';
+                    <input type="hidden" name="foodAvaiable" id="foodAvaiable" value="'.$planet->resFood.'" />';
         if ($cu->properties->itemShow=='full' && $bid>0) {
             $box .= '<input type="hidden" name="peopleOptimized" id="peopleOptimized" value="' . $peopleOptimized . '" />';
         } else {
@@ -501,40 +501,40 @@ if (isset($cp)) {
                                         AND buildlist_entity_id='" . $planet->id . "'");
                             }
 
-                            $planet_id=$planet->id;
+                            $planet_id = $planet->id;
 
                             //Rohstoffe vom Planeten abziehen und aktualisieren
-                            $cp->changeRes(-$bc['metal'],-$bc['crystal'],-$bc['plastic'],-$bc['fuel'],-$bc['food']);
+                            $planetRepo->addResources($planet->id, -$bc['metal'], -$bc['crystal'], -$bc['plastic'], -$bc['fuel'], -$bc['food']);
+
                             $b_status=3;
 
                             //Log schreiben
                             $log_text = "[b]Forschung Ausbau[/b]
 
-                            [b]Erforschungsdauer:[/b] ".tf($btime)."
-                            [b]Ende:[/b] ".date("d.m.Y H:i:s", (int) $end_time)."
-                            [b]Forschungslabor Level:[/b] ".CURRENT_LAB_LEVEL."
-                            [b]Eingesetzte Bewohner:[/b] ".nf($peopleWorking)."
-                            [b]Gen-Tech Level:[/b] ".GEN_TECH_LEVEL."
-                            [b]Eingesetzter Spezialist:[/b] ".$cu->specialist->name."
+                            [b]Erforschungsdauer:[/b] " . tf($btime) . "
+                            [b]Ende:[/b] " . date("d.m.Y H:i:s", (int) $end_time) . "
+                            [b]Forschungslabor Level:[/b] " . CURRENT_LAB_LEVEL . "
+                            [b]Eingesetzte Bewohner:[/b] " . nf($peopleWorking) . "
+                            [b]Gen-Tech Level:[/b] " . GEN_TECH_LEVEL . "
+                            [b]Eingesetzter Spezialist:[/b] " . $cu->specialist->name . "
 
                             [b]Kosten[/b]
-                            [b]".RES_METAL.":[/b] ".nf($bc['metal'])."
-                            [b]".RES_CRYSTAL.":[/b] ".nf($bc['crystal'])."
-                            [b]".RES_PLASTIC.":[/b] ".nf($bc['plastic'])."
-                            [b]".RES_FUEL.":[/b] ".nf($bc['fuel'])."
-                            [b]".RES_FOOD.":[/b] ".nf($bc['food'])."
+                            [b]" . RES_METAL . ":[/b] " . nf($bc['metal']) . "
+                            [b]" . RES_CRYSTAL . ":[/b] " . nf($bc['crystal']) . "
+                            [b]" . RES_PLASTIC . ":[/b] " . nf($bc['plastic']) . "
+                            [b]" . RES_FUEL . ":[/b] " . nf($bc['fuel']) . "
+                            [b]" . RES_FOOD . ":[/b] " . nf($bc['food']) . "
 
                             [b]Restliche Rohstoffe auf dem Planeten[/b]
-                            [b]".RES_METAL.":[/b] ".nf($planet->resMetal)."
-                            [b]".RES_CRYSTAL.":[/b] ".nf($planet->resCrystal)."
-                            [b]".RES_PLASTIC.":[/b] ".nf($planet->resPlastic)."
-                            [b]".RES_FUEL.":[/b] ".nf($planet->resFuel)."
-                            [b]".RES_FOOD.":[/b] ".nf($planet->resFood)."";
+                            [b]" . RES_METAL . ":[/b] " . nf($planet->resMetal - $bc['metal']) . "
+                            [b]" . RES_CRYSTAL . ":[/b] " . nf($planet->resCrystal - $bc['crystal']) . "
+                            [b]" . RES_PLASTIC . ":[/b] " . nf($planet->resPlastic - $bc['plastic']) . "
+                            [b]" . RES_FUEL . ":[/b] " . nf($planet->resFuel - $bc['fuel']) . "
+                            [b]" . RES_FOOD . ":[/b] " . nf($planet->resFood - $bc['food']);
+
+                            GameLog::add(GameLog::F_TECH, GameLog::INFO, $log_text, $cu->id,$cu->allianceId,$planet->id,$arr['tech_id'], $b_status, $b_level);
 
                             echo '<script>toggleBox(\'link\'); </script>';
-
-                            //Log Speichern
-                            GameLog::add(GameLog::F_TECH, GameLog::INFO, $log_text, $cu->id,$cu->allianceId,$planet->id,$arr['tech_id'], $b_status, $b_level);
                         }
                         else
                         {
@@ -588,35 +588,36 @@ if (isset($cp)) {
                         }
 
                         //Rohstoffe zurückgeben und aktualisieren
-                        $cp->changeRes($bc['metal']*$fac,$bc['crystal']*$fac,$bc['plastic']*$fac,$bc['fuel']*$fac,$bc['food']*$fac);
+                        $planetRepo->addResources($planet->id, $bc['metal'] * $fac, $bc['crystal'] * $fac, $bc['plastic'] * $fac, $bc['fuel'] * $fac, $bc['food'] * $fac);
+
                         $b_status=0;
                         $builing_something=false;
 
                         //Log schreiben
                         $log_text = "[b]Forschung Abbruch[/b]
 
-                        [b]Start der Forschung:[/b] ".date("d.m.Y H:i:s",$start_time)."
-                        [b]Ende der Forschung:[/b] ".date("d.m.Y H:i:s",$end_time)."
+                        [b]Start der Forschung:[/b] " . date("d.m.Y H:i:s", $start_time) . "
+                        [b]Ende der Forschung:[/b] " . date("d.m.Y H:i:s", $end_time) . "
 
                         [b]Erhaltene Rohstoffe[/b]
-                        [b]Faktor:[/b] ".$fac."
-                        [b]".RES_METAL.":[/b] ".nf($bc['metal']*$fac)."
-                        [b]".RES_CRYSTAL.":[/b] ".nf($bc['crystal']*$fac)."
-                        [b]".RES_PLASTIC.":[/b] ".nf($bc['plastic']*$fac)."
-                        [b]".RES_FUEL.":[/b] ".nf($bc['fuel']*$fac)."
-                        [b]".RES_FOOD.":[/b] ".nf($bc['food']*$fac)."
+                        [b]Faktor:[/b] " . $fac . "
+                        [b]" . RES_METAL . ":[/b] " . nf($bc['metal'] * $fac) . "
+                        [b]" . RES_CRYSTAL . ":[/b] " . nf($bc['crystal'] * $fac) . "
+                        [b]" . RES_PLASTIC . ":[/b] " . nf($bc['plastic'] * $fac) . "
+                        [b]" . RES_FUEL . ":[/b] " . nf($bc['fuel'] * $fac) . "
+                        [b]" . RES_FOOD . ":[/b] " . nf($bc['food'] * $fac) . "
 
                         [b]Rohstoffe auf dem Planeten[/b]
-                        [b]".RES_METAL.":[/b] ".nf($planet->resMetal)."
-                        [b]".RES_CRYSTAL.":[/b] ".nf($planet->resCrystal)."
-                        [b]".RES_PLASTIC.":[/b] ".nf($planet->resPlastic)."
-                        [b]".RES_FUEL.":[/b] ".nf($planet->resFuel)."
-                        [b]".RES_FOOD.":[/b] ".nf($planet->resFood)."";
-
-                        header("Refresh:0; url=?page=research&id=".$bid);
+                        [b]" . RES_METAL . ":[/b] " . nf($planet->resMetal + $bc['metal'] * $fac) . "
+                        [b]" . RES_CRYSTAL . ":[/b] " . nf($planet->resCrystal + $bc['crystal'] * $fac) . "
+                        [b]" . RES_PLASTIC . ":[/b] " . nf($planet->resPlastic + $bc['plastic'] * $fac) . "
+                        [b]" . RES_FUEL . ":[/b] " . nf($planet->resFuel + $bc['fuel'] * $fac) . "
+                        [b]" . RES_FOOD . ":[/b] " . nf($planet->resFood + $bc['food'] * $fac);
 
                         //Log Speichern
                         GameLog::add(GameLog::F_TECH, GameLog::INFO, $log_text, $cu->id,$cu->allianceId,$planet->id,$arr['tech_id'], $b_status, $b_level);
+
+                        header("Refresh:0; url=?page=research&id=".$bid);
                     }
                     else
                     {
@@ -790,7 +791,7 @@ if (isset($cp)) {
                 // Bau abbrechen
                 if ($b_status==3)
                 {
-                    if ($planet_id==$planet->id)
+                    if ($planet_id == $planet->id)
                     {
                             echo "<tr><td><input type=\"submit\" class=\"button\" id=\"buildcancel\" name=\"command_cbuild\" value=\"Abbrechen\"  onclick=\"if (this.value=='Abbrechen'){return confirm('Wirklich abbrechen?');}\" /></td>";
                             echo '<td id="buildtime" style="vertical-align:middle;">-</td>

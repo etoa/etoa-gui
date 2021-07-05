@@ -380,7 +380,7 @@ if ($config->getBoolean('crypto_enable'))
                                         $out.="\n\nEntschlüsselchance: $decryptlevel";
 
                                         // Subtract resources
-                                        $cp->changeRes(0,0,0,-CRYPTO_FUEL_COSTS_PER_SCAN,0);
+                                        $planetRepo->addResources($planet->id, 0, 0, 0, -CRYPTO_FUEL_COSTS_PER_SCAN, 0);
                                         $cu->alliance->changeRes(0,0,0,-CRYPTO_FUEL_COSTS_PER_SCAN,0);
 
                                         // Inform oponent
