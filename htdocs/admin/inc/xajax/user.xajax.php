@@ -1,8 +1,12 @@
 <?PHP
 
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Building\BuildingDataRepository;
+use EtoA\Defense\DefenseDataRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Message\MessageRepository;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Technology\TechnologyDataRepository;
 use EtoA\User\UserRepository;
 
 $xajax->register(XAJAX_FUNCTION,"showTimeBox");
@@ -449,6 +453,8 @@ function addUserLog($uid,$target,$text) {
 
 function loadEconomy($uid,$target)
 {
+    global $app;
+
 	$or = new xajaxResponse();
 	ob_start();
 
@@ -875,10 +881,14 @@ function loadEconomy($uid,$target)
 						<th>Optionen</th>
 					</tr>";
 
+                    /** @var BuildingDataRepository $buildingRepository */
+                    $buildingRepository = $app[BuildingDataRepository::class];
+                    $buildingNames = $buildingRepository->getBuildingNames(true);
+
 					while ($lbarr = mysql_fetch_array($lbres))
 					{
 						$te = ($lbarr['entity_id']>0) ? Entity::createFactoryById($lbarr['entity_id']) : "-";
-						$ob = new Building($lbarr['object_id'])." ".($lbarr['level']>0 ? $lbarr['level'] : '');
+						$ob = $buildingNames[$lbarr['object_id']]." ".($lbarr['level']>0 ? $lbarr['level'] : '');
 						switch ($lbarr['status'])
 						{
 							case 1: $obStatus="Ausbau abgebrochen";break;
@@ -947,10 +957,13 @@ function loadEconomy($uid,$target)
 						<th>Optionen</th>
 					</tr>";
 
+					/** @var TechnologyDataRepository $techRepository */
+                    $techRepository = $app[TechnologyDataRepository::class];
+					$technologyNames = $techRepository->getTechnologyNames(true);
 					while ($larr = mysql_fetch_array($lres))
 					{
 						$te = ($larr['entity_id']>0) ? Entity::createFactoryById($larr['entity_id']) : "-";
-						$ob = new Technology($larr['object_id'])." ".($larr['level']>0 ? $larr['level'] : '');
+						$ob = $technologyNames[$larr['object_id']]." ".($larr['level']>0 ? $larr['level'] : '');
 						switch ($larr['status'])
 						{
 							case 3: $obStatus="Erforschung";break;
@@ -1017,10 +1030,14 @@ function loadEconomy($uid,$target)
 						<th>Optionen</th>
 					</tr>";
 
+                    /** @var ShipDataRepository $shipRepository */
+                    $shipRepository = $app[ShipDataRepository::class];
+                    $shipNames = $shipRepository->getShipNames(true);
+
 					while ($larr = mysql_fetch_array($lres))
 					{
 						$te = ($larr['entity_id']>0) ? Entity::createFactoryById($larr['entity_id']) : "-";
-						$ob = $larr['object_id'] > 0 ? new Ship($larr['object_id']).' '.($larr['level']>0 ? $larr['level'].'x' : '') : '-';
+						$ob = $larr['object_id'] > 0 ? $shipNames[$larr['object_id']].' '.($larr['level']>0 ? $larr['level'].'x' : '') : '-';
 						switch ($larr['status'])
 						{
 							case 1: $obStatus="Bau";break;
@@ -1087,10 +1104,14 @@ function loadEconomy($uid,$target)
 						<th>Optionen</th>
 					</tr>";
 
+					/** @var DefenseDataRepository $defenseRepository */
+					$defenseRepository = $app[DefenseDataRepository::class];
+					$defenseNames = $defenseRepository->getDefenseNames(true);
+
 					while ($larr = mysql_fetch_array($lres))
 					{
 						$te = ($larr['entity_id']>0) ? Entity::createFactoryById($larr['entity_id']) : "-";
-						$ob = $larr['object_id'] > 0 ? new Defense($larr['object_id']).' '.($larr['level']>0 ? $larr['level'].'x' : '') : '-';
+						$ob = $larr['object_id'] > 0 ? $defenseNames[$larr['object_id']].' '.($larr['level']>0 ? $larr['level'].'x' : '') : '-';
 						switch ($larr['status'])
 						{
 							case 1: $obStatus="Bau";break;

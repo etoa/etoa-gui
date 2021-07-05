@@ -74,7 +74,7 @@ class AdminSessionManager
     {
         $sessions = $this->repository->findByTimeout($this->config->getInt('admin_timeout'));
         foreach ($sessions as $session) {
-            $this->unregisterSession($session['id'], false);
+            $this->unregisterSession($session, false);
         }
     }
 }

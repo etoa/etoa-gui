@@ -1,6 +1,10 @@
 <?PHP
 
+use EtoA\Building\BuildingDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseDataRepository;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Technology\TechnologyDataRepository;
 use Twig\Environment;
 
 // TODO
@@ -427,8 +431,8 @@ function commonLog()
         $buildingRepository = $app[\EtoA\Building\BuildingDataRepository::class];
         $buildingNames = $buildingRepository->getBuildingNames(true);
 
-        /** @var \EtoA\Technology\TechnologyDataRepository $technologyRepository */
-        $technologyRepository = $app[\EtoA\Technology\TechnologyDataRepository::class];
+        /** @var TechnologyDataRepository $technologyRepository */
+        $technologyRepository = $app[TechnologyDataRepository::class];
         $technologyNames = $technologyRepository->getTechnologyNames(true);
 
         $res = dbquery($sql_query);
@@ -719,6 +723,8 @@ function checkFights()
 
 function newGamelogs()
 {
+    global $app;
+
     echo "<h2>Spiellogs</h2>";
 
     ?>
@@ -748,33 +754,41 @@ function newGamelogs()
             {
                 case '1':
                     <?PHP
-                    foreach (Building::getItems() as $k => $v)
+                    /** @var BuildingDataRepository $buildingRepository */
+                    $buildingRepository = $app[BuildingDataRepository::class];
+                    foreach ($buildingRepository->getBuildingNames(true) as $buildingId => $buildingName)
                     {
-                        echo "elem.options[elem.options.length] = new Option('$v',$k);";
+                        echo "elem.options[elem.options.length] = new Option('$buildingName',$buildingId);";
                     }
                     ?>
                     break;
                 case '2':
                     <?PHP
-                    foreach (Technology::getItems() as $k => $v)
+                    /** @var TechnologyDataRepository $technologyRepository */
+                    $technologyRepository = $app[TechnologyDataRepository::class];
+                    foreach ($technologyRepository->getTechnologyNames(true) as $techId => $technologyName)
                     {
-                        echo "elem.options[elem.options.length] = new Option('$v',$k);";
+                        echo "elem.options[elem.options.length] = new Option('$technologyName',$techId);";
                     }
                     ?>
                     break;
                 case '3':
                     <?PHP
-                    foreach (Ship::getItems() as $k => $v)
+                    /** @var ShipDataRepository $shipRepository */
+                    $shipRepository = $app[ShipDataRepository::class];
+                    foreach ($shipRepository->getShipNames(true) as $shipId => $shipName)
                     {
-                        echo "elem.options[elem.options.length] = new Option('$v',$k);";
+                        echo "elem.options[elem.options.length] = new Option('$shipName',$shipId);";
                     }
                     ?>
                     break;
                 case '4':
                     <?PHP
-                    foreach (Defense::getItems() as $k => $v)
+                    /** @var DefenseDataRepository $defenseRepository */
+                    $defenseRepository = $app[DefenseDataRepository::class];
+                    foreach ($defenseRepository->getDefenseNames(true) as $defenseId => $defenseName)
                     {
-                        echo "elem.options[elem.options.length] = new Option('$v',$k);";
+                        echo "elem.options[elem.options.length] = new Option('$defenseId',$defenseName);";
                     }
                     ?>
                     break;

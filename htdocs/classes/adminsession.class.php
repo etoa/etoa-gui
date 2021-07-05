@@ -140,7 +140,7 @@ class AdminSession extends Session
         // TODO
         global $app;
 
-        /** @var AdminSessionRepository */
+        /** @var AdminSessionRepository $repository */
         $repository = $app[AdminSessionRepository::class];
 
         $repository->removeByUserOrId(session_id(), intval($this->user_id));

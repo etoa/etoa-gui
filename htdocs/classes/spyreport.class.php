@@ -4,6 +4,11 @@
  * and open the template in the editor.
  */
 
+use EtoA\Building\BuildingDataRepository;
+use EtoA\Defense\DefenseDataRepository;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Technology\TechnologyDataRepository;
+
 /**
  * Description of spyreport
  *
@@ -84,7 +89,7 @@ class SpyReport extends Report
 
 	function __toString()
 	{
-		global $resNames;
+		global $resNames, $app;
 
 		ob_start();
 		$ent1 = Entity::createFactoryById($this->entity1Id);
@@ -106,14 +111,16 @@ class SpyReport extends Report
 					{
 						echo '<table>';
 						$buildArr = explode(',',$this->buildings);
-						$buildings = Building::getItems();
+						/** @var BuildingDataRepository $buildingRepository */
+						$buildingRepository = $app[BuildingDataRepository::class];
+						$buildingNames = $buildingRepository->getBuildingNames(true);
 						foreach ($buildArr as $building)
 						{
 							if ($building!='')
 							{
 								$data = explode(':',$building);
 								echo '<tr>
-										<td>'.$buildings[$data[0] ].' </td>
+										<td>'.$buildingNames[(int) $data[0] ].' </td>
 										<td style="text-align:right;"> '.$data[1].'</td>
 									</tr>';
 							}
@@ -130,14 +137,16 @@ class SpyReport extends Report
 					{
 						echo '<table>';
 						$techArr = explode(',',$this->technologies);
-						$technologies = Technology::getItems();
+                        /** @var TechnologyDataRepository $technologyRepository */
+                        $technologyRepository = $app[TechnologyDataRepository::class];
+                        $technologyNames = $technologyRepository->getTechnologyNames(true);
 						foreach ($techArr as $tech)
 						{
 							if ($tech!='')
 							{
 								$data = explode(':',$tech);
 								echo '<tr>
-										<td>'.$technologies[$data[0] ].' </td>
+										<td>'.$technologyNames[(int) $data[0] ].' </td>
 										<td style="text-align:right;"> '.$data[1].'</td>
 									</tr>';
 							}
@@ -152,16 +161,19 @@ class SpyReport extends Report
 						echo '<i>Nichts vorhanden!</i><br />';
 					else
 					{
+                        /** @var ShipDataRepository $shipRepository */
+                        $shipRepository = $app[ShipDataRepository::class];
+                        $shipNames = $shipRepository->getShipNames(true);
+
 						echo '<table>';
 						$shipArr = explode(',',$this->ships);
-						$ships = Ship::getItems();
 						foreach ($shipArr as $ship)
 						{
 							if ($ship!='')
 							{
 								$data = explode(':',$ship);
 								echo '<tr>
-										<td>'.$ships[$data[0] ].' </td>
+										<td>'.$shipNames[(int) $data[0] ].' </td>
 										<td style="text-align:right;"> '.nf($data[1]).'</td>
 									</tr>';
 							}
@@ -178,14 +190,16 @@ class SpyReport extends Report
 					{
 						echo '<table>';
 						$defArr = explode(',',$this->def);
-						$def = Defense::getItems();
+						/** @var DefenseDataRepository $defenseRepository */
+						$defenseRepository = $app[DefenseDataRepository::class];
+						$defenseNames = $defenseRepository->getDefenseNames(true);
 						foreach ($defArr as $defense)
 						{
 							if ($defense!='')
 							{
 								$data = explode(':',$defense);
 								echo '<tr>
-										<td>'.$def[$data[0] ].' </td>
+										<td>'.$defenseNames[(int) $data[0] ].' </td>
 										<td style="text-align:right;"> '.nf($data[1]).'</td>
 									</tr>';
 							}

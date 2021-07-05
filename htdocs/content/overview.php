@@ -77,11 +77,11 @@ $config = $app[ConfigurationService::class];
 	// Admin-Infos
 	//
 
-	/** @var TextRepository */
+	/** @var TextRepository $textRepo */
     $textRepo = $app[TextRepository::class];
 
 	$infoText = $textRepo->find('info');
-	if ($infoText->enabled && $infoText->content)
+	if ($infoText->isEnabled())
 	{
 		echo '<div class="overviewInfoTextContainer">';
 		iBoxStart(": Wichtige Information :");

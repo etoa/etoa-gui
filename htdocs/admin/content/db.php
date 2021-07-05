@@ -26,6 +26,8 @@
 // 	Kommentar:
 //
 
+use EtoA\Support\DatabaseManagerRepository;
+
 $twig->addGlobal('title', 'Datenbank');
 
 //
@@ -74,11 +76,9 @@ elseif($sub === 'cleanup') {
 // Übersicht
 //
 else {
-    $st = [];
-    $res = dbquery("SHOW GLOBAL STATUS;");
-    while ($arr = mysql_fetch_array($res)) {
-        $st[strtolower($arr['Variable_name'])] = $arr['Value'];
-    }
+    /** @var DatabaseManagerRepository $dbManagerRepository */
+    $dbManagerRepository = $app[DatabaseManagerRepository::class];
+    $st = $dbManagerRepository->getGlobalStatus();
 
     $uts = $st['uptime'];
     $utm = round($uts / 60);
@@ -89,13 +89,12 @@ else {
     $ts = [];
     $tn = [];
     $engines = [];
-    $res = dbquery("SHOW TABLE STATUS FROM " . DBManager::getInstance()->getDbName() . ";");
     $rows = $datal = 0;
-    while ($arr = mysql_fetch_array($res)) {
-        $rows += $arr['Rows'];
-        $datal += $arr['Data_length'] + $arr['Index_length'];
+    foreach ($dbManagerRepository->getTableStatus() as $arr) {
+        $rows += (int) $arr['Rows'];
+        $datal += (int) $arr['Data_length'] + (int) $arr['Index_length'];
         $tr[$arr['Name']] = $arr['Rows'];
-        $ts[$arr['Name']] = $arr['Data_length'] + $arr['Index_length'];
+        $ts[$arr['Name']] = (int) $arr['Data_length'] + (int) $arr['Index_length'];
         $tn[$arr['Name']] = $arr['Name'];
         $engines[$arr['Name']] = $arr['Engine'];
     }

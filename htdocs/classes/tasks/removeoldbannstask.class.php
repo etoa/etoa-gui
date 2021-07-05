@@ -1,12 +1,20 @@
 <?PHP
-	/**
+
+use EtoA\User\UserRepository;
+
+/**
 	* Remove old, outdated banns
 	*/
 	class RemoveOldBannsTask implements IPeriodicTask
 	{
 		function run()
 		{
-			Users::removeOldBanns();
+		    global $app;
+
+		    /** @var UserRepository $userRepository */
+		    $userRepository = $app[UserRepository::class];
+            $userRepository->removeOldBans();
+
 			return "Abgelaufene Sperren gelöscht";
 		}
 

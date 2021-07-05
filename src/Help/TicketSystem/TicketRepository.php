@@ -50,6 +50,7 @@ class TicketRepository extends AbstractRepository
     }
 
     /**
+     * @param array<string, int|string> $args
      * @return array<Ticket>
      */
     public function findBy(array $args = []): array
@@ -153,7 +154,10 @@ class TicketRepository extends AbstractRepository
         return array_map(fn ($val) => (int) $val, $data);
     }
 
-    public function removeByIds(...$ticketIds): int
+    /**
+     * @param int[] $ticketIds
+     */
+    public function removeByIds(array $ticketIds): int
     {
         if (count($ticketIds) == 0) {
             return 0;
@@ -169,7 +173,10 @@ class TicketRepository extends AbstractRepository
         return (int) $qry->execute();
     }
 
-    public function findAllCategoriesAsMap()
+    /**
+     * @return array<int, string>
+     */
+    public function findAllCategoriesAsMap(): array
     {
         return $this->createQueryBuilder()
             ->select("id", 'name')

@@ -42,7 +42,7 @@ if ($roleManager->checkAllowed($cu, ["master", "super-admin", "game-admin", "tri
     } elseif ($request->query->has('id') && $request->query->getInt('id') > 0) {
         ticketDetails($request, $ticketService, $ticketRepo, $adminUserRepo, $userRepo, $cu);
     } elseif ($request->query->has('action') && $request->query->get('action') == "new") {
-        createNewTicketForm($ticketRepo);
+        createNewTicketForm($ticketRepo, $userRepo);
     } elseif ($request->query->has('action') && $request->query->get('action') == "closed") {
         closedTickets($ticketRepo, $ticketMessageRepo, $adminUserRepo, $userRepo);
     } else {
@@ -252,7 +252,7 @@ function ticketDetails(
     echo "</form><br/>";
 }
 
-function createNewTicketForm(TicketRepository $ticketRepo)
+function createNewTicketForm(TicketRepository $ticketRepo, UserRepository $userRepository)
 {
     global $page;
 
@@ -260,7 +260,7 @@ function createNewTicketForm(TicketRepository $ticketRepo)
     echo '<form action="?page=' . $page . '" method="post">';
     tableStart();
     echo '<tr><th>User:</th><td>';
-    htmlSelect("user_id", Users::getArray());
+    htmlSelect("user_id", $userRepository->getUserNicknames());
     echo '</td></tr>';
     echo '<tr><th>Kategorie:</th><td>';
     htmlSelect("cat_id", $ticketRepo->findAllCategoriesAsMap());

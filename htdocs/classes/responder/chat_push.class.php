@@ -3,6 +3,7 @@
 use EtoA\Chat\ChatBanRepository;
 use EtoA\Chat\ChatLogRepository;
 use EtoA\Chat\ChatRepository;
+use EtoA\User\UserRepository;
 
 class ChatPushJsonResponder extends JsonResponder
 {
@@ -67,6 +68,8 @@ class ChatPushJsonResponder extends JsonResponder
 
       /** @var ChatBanRepository $chatBanRepository */
       $chatBanRepository = $this->app[ChatBanRepository::class];
+      /** @var UserRepository $userRepository */
+      $userRepository = $this->app[UserRepository::class];
 
       // Handle command
       if (count($words) > 0 && preg_match('#^/([a-z]+)$#i', array_shift($words), $commandMatch))
@@ -78,7 +81,7 @@ class ChatPushJsonResponder extends JsonResponder
         {
           if (isset($words[0]))
           {
-            $uid = User::findIdByNick($words[0]);
+            $uid = $userRepository->getUserIdByNick($words[0]);
             if ($uid>0)
             {
               $msg = (count($words) > 1) ? implode(' ', array_slice($words, 1)) : '';
@@ -116,11 +119,11 @@ class ChatPushJsonResponder extends JsonResponder
         {
           if (isset($words[0]))
           {
-            $uid = User::findIdByNick($words[0]);
+            $uid = $userRepository->getUserIdByNick($words[0]);
             if ($uid>0)
             {
               $text = (count($words) > 1) ? implode(' ', array_slice($words, 1)) : '';
-              $chatBanRepository->banUser((int) $uid, $text, true);
+              $chatBanRepository->banUser($uid, $text, true);
               ChatManager::kickUser($uid, $text);
               ChatManager::sendSystemMessage($words[0].' wurde gebannt! Grund: '.$text);
             }
@@ -145,9 +148,9 @@ class ChatPushJsonResponder extends JsonResponder
         {
           if (isset($words[0]))
           {
-            $uid = User::findIdByNick($words[0]);
+            $uid = $userRepository->getUserIdByNick($words[0]);
             if ($uid>0) {
-                $deleted = $chatBanRepository->deleteBan((int) $uid);
+                $deleted = $chatBanRepository->deleteBan($uid);
                 if ($deleted > 0) {
                     return [
                         'cmd' => 'aa',

@@ -7,6 +7,9 @@ use LittleCubicleGames\Quests\Progress\ProgressFunctionBuilderInterface;
 
 class FunctionBuilder implements ProgressFunctionBuilderInterface
 {
+    /**
+     * @param array<mixed> $attributes
+     */
     public function build(string $taskName, array $attributes): ?HandlerFunctionInterface
     {
         switch ($taskName) {

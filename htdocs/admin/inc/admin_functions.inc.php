@@ -9,6 +9,10 @@
 
 use Doctrine\DBAL\Query\QueryBuilder;
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Building\BuildingDataRepository;
+use EtoA\Defense\DefenseDataRepository;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Technology\TechnologyDataRepository;
 use EtoA\User\UserRepository;
 
 /**
@@ -971,8 +975,8 @@ function showFleetLogs($args=null,$limit=0)
             <th>Landezeit</th>
             <th>Flotte</th>
         </tr>";
-        /** @var \EtoA\Ship\ShipDataRepository $shipDataRepository */
-        $shipDataRepository = $app[\EtoA\Ship\ShipDataRepository::class];
+        /** @var ShipDataRepository $shipDataRepository */
+        $shipDataRepository = $app[ShipDataRepository::class];
         $shipNames = $shipDataRepository->getShipNames(true);
         while ($arr = mysql_fetch_assoc($res))
         {
@@ -1087,6 +1091,8 @@ function showDebrisLogs($args=null,$limit=0) {
     global $app;
 
     $adminUserRepo = $app[AdminUserRepository::class];
+    /** @var UserRepository $userRepository */
+    $userRepository = $app[UserRepository::class];
 
     $maxtime = is_array($args) ? mktime($args['searchtime_h'],$args['searchtime_i'],$args['searchtime_s'],$args['searchtime_m'],$args['searchtime_d'],$args['searchtime_y']) : time();
 
@@ -1097,7 +1103,7 @@ function showDebrisLogs($args=null,$limit=0) {
 
     if (isset($args['searchuser']) && trim($args['searchuser']) != '')
     {
-        $sql2 .=" AND user_id = ".User::findIdByNick($args['searchuser'])." ";
+        $sql2 .=" AND user_id = ".$userRepository->getUserIdByNick($args['searchuser'])." ";
     };
     if (isset($args['searchadmin']) && trim($args['searchadmin']) != '')
     {
@@ -1277,6 +1283,19 @@ function showGameLogs($args=null,$limit=0)
             echo "<input type=\"button\" value=\"&gt;&gt;\" disabled=\"disabled\" /> ";
         }
 
+        /** @var TechnologyDataRepository $technologyRepository */
+        $technologyRepository = $app[TechnologyDataRepository::class];
+        $technologyNames = $technologyRepository->getTechnologyNames(true);
+        /** @var BuildingDataRepository $buildingRepository */
+        $buildingRepository = $app[BuildingDataRepository::class];
+        $buildingNames = $buildingRepository->getBuildingNames(true);
+        /** @var ShipDataRepository $shipRepository */
+        $shipRepository = $app[ShipDataRepository::class];
+        $shipNames = $shipRepository->getShipNames(true);
+        /** @var DefenseDataRepository $defenseRepository */
+        $defenseRepository = $app[DefenseDataRepository::class];
+        $defenseNames = $defenseRepository->getDefenseNames(true);
+
         echo "</div><div style=\"float:right\">
         ".($limit+1)." - ".($limit+$nr)." von $total
         </div><br style=\"clear:both;\" />
@@ -1300,7 +1319,7 @@ function showGameLogs($args=null,$limit=0)
             switch ($arr['facility'])
             {
                 case GameLog::F_BUILD:
-                    $ob = new Building($arr['object_id'])." ".($arr['level']>0 ? $arr['level'] : '');
+                    $ob = $buildingNames[$arr['object_id']]." ".($arr['level']>0 ? $arr['level'] : '');
                     switch ($arr['status'])
                     {
                         case 1: $obStatus="Ausbau abgebrochen";break;
@@ -1311,7 +1330,7 @@ function showGameLogs($args=null,$limit=0)
                     }
                     break;
                 case GameLog::F_TECH:
-                    $ob = new Technology($arr['object_id'])." ".($arr['level']>0 ? $arr['level'] : '');
+                    $ob = $technologyNames[$arr['object_id']]." ".($arr['level']>0 ? $arr['level'] : '');
                     switch ($arr['status'])
                     {
                         case 3: $obStatus="Erforschung";break;
@@ -1320,7 +1339,7 @@ function showGameLogs($args=null,$limit=0)
                     }
                     break;
                 case GameLog::F_SHIP:
-                    $ob = $arr['object_id'] > 0 ? new Ship($arr['object_id']).' '.($arr['level']>0 ? $arr['level'].'x' : '') : '-';
+                    $ob = $arr['object_id'] > 0 ? $shipNames[$arr['object_id']].' '.($arr['level']>0 ? $arr['level'].'x' : '') : '-';
                     switch ($arr['status'])
                     {
                         case 1: $obStatus="Bau";break;
@@ -1329,7 +1348,7 @@ function showGameLogs($args=null,$limit=0)
                     }
                     break;
                 case GameLog::F_DEF:
-                    $ob = $arr['object_id'] > 0 ? new Defense($arr['object_id']).' '.($arr['level']>0 ? $arr['level'].'x' : '') : '-';
+                    $ob = $arr['object_id'] > 0 ? $defenseNames[$arr['object_id']].' '.($arr['level']>0 ? $arr['level'].'x' : '') : '-';
                     switch ($arr['status'])
                     {
                         case 1: $obStatus="Bau";break;

@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 
 //////////////////////////////////////////////////
@@ -23,6 +24,8 @@ use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+/** @var AllianceRepository $allianceRepository */
+$allianceRepository = $app[AllianceRepository::class];
 
 /** @var Alliance $ally */
 
@@ -147,10 +150,10 @@ if ($config->getBoolean('allow_wings') && Alliance::checkActionRights('wings'))
 	echo "<form action=\"?page=$page&amp;action=wings\" method=\"post\">";
 	iBoxStart("Allianz als Wing hinzufügen");
 	echo "Allianz wählen: <select name=\"add_wing_id\">";
-	foreach (Alliance::getList() as $k => $v)
+	foreach ($allianceRepository->getAllianceNamesWithTags() as $allianceId => $allianceNameWithTag)
 	{
-		if ($k != $ally->id && !isset($ally->wings[$k]))
-			echo "<option value=\"$k\">$v</option>";
+		if ($allianceId != $ally->id && !isset($ally->wings[$allianceId]))
+			echo "<option value=\"$allianceId\">$allianceNameWithTag</option>";
 	}
 	echo "</select> &nbsp;
 	<input type=\"submit\" name=\"add_wing\" value=\"Hinzufügen\" /> ";

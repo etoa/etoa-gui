@@ -7,11 +7,11 @@ use EtoA\Text\TextRepository;
 
 $baseUrl = $index != "" ? "?index=" . $index : "?page=" . $page;
 
-/** @var TextRepository */
+/** @var TextRepository $textRepo */
 $textRepo = $app[TextRepository::class];
 
 $contactText = $textRepo->find('contact_message');
-if ($contactText->enabled && $contactText->content) {
+if ($contactText->isEnabled()) {
 	iBoxStart();
 	echo text2html($contactText->content);
 	iBoxEnd();

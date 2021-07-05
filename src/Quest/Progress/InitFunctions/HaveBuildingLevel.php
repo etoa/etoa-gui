@@ -14,6 +14,9 @@ class HaveBuildingLevel implements InitProgressHandlerFunctionInterface
     private BuildingRepository $buildingRepository;
     private int $buildingId;
 
+    /**
+     * @param array<string, int> $attributes
+     */
     public function __construct(array $attributes, BuildingRepository $buildingRepository)
     {
         $this->buildingRepository = $buildingRepository;

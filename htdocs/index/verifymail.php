@@ -1,13 +1,14 @@
 <?PHP
 
+use EtoA\User\UserRepository;
+
 $success = false;
 $errorMessage = null;
 if (isset($_GET['key'])) {
-    $user = User::findFirstByVerificationKey($_GET['key']);
-    if ($user) {
-        $user->setVerified(true);
-        $success = true;
-    } else {
+    /** @var UserRepository $userRepository */
+    $userRepository = $app[UserRepository::class];
+    $success = $userRepository->markVerifiedByVerificationKey($_GET['key']);
+    if (!$success) {
         $errorMessage = 'Der Verifikationscode ist ungültig!';
     }
 } else {

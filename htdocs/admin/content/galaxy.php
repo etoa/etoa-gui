@@ -1,5 +1,6 @@
 <?PHP
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\Planet\PlanetRepository;
 use Twig\Environment;
 
 /** @var ConfigurationService */
@@ -451,8 +452,9 @@ function entities(ConfigurationService $config)
             }
             echo "
         </select> <input type=\"submit\" name=\"search_submit\" value=\"Suchen\" /></form>";
-        $tblcnt = mysql_fetch_row(dbquery("SELECT count(id) FROM planets;"));
-        echo "<br/>Es sind ".nf($tblcnt[0])." Eintr&auml;ge in der Datenbank vorhanden.";
+        /** @var PlanetRepository $planetRepository */
+        $planetRepository = $app[PlanetRepository::class];
+        echo "<br/>Es sind ".nf($planetRepository->count())." Eintr&auml;ge in der Datenbank vorhanden.";
 
         echo "<script type=\"text/javascript\">document.forms['dbsearch'].elements[2].focus();</script>";
     }

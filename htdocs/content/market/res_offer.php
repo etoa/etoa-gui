@@ -1,4 +1,7 @@
 <?php
+
+use EtoA\User\UserRepository;
+
 	//////////////////////////////////////////////////
 	//		 	 ____    __           ______       			//
 	//			/\  _`\ /\ \__       /\  _  \      			//
@@ -22,12 +25,15 @@
 	/** @var bool $cd_enabled */
 	/** @var int $cooldown */
 
+    /** @var UserRepository $userRepository */
+    $userRepository = $app[UserRepository::class];
+
 	$for_user = 0;
 	$for_alliance = 0;
 
 	if ($_POST['resource_offer_reservation'] == 1)
 	{
-		$for_user = User::findIdByNick(trim($_POST['resource_offer_user_nick']));
+		$for_user = $userRepository->getUserIdByNick(trim($_POST['resource_offer_user_nick']));
 		if ($for_user == 0)
 		{
 			$errMsg = "Reservation nicht möglich, Spieler nicht gefunden!";

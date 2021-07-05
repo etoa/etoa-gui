@@ -19,6 +19,7 @@ class AdminUser
     public bool $ticketEmail = false;
     public bool $locked = false;
     public bool $isContact = true;
+    /** @var string[] */
     public array $roles = [];
 
     public static function createFromArray(array $data): AdminUser
@@ -42,7 +43,7 @@ class AdminUser
         return $adminUser;
     }
 
-    public function checkEqualPassword($newPassword)
+    public function checkEqualPassword(string $newPassword): bool
     {
         return validatePasswort($newPassword, $this->passwordString);
     }

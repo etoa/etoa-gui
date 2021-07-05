@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\RuntimeDataStore;
 
 /** @var RuntimeDataStore */
@@ -80,10 +81,12 @@ $runtimeDataStore = $app[RuntimeDataStore::class];
 		$res=dbquery("SELECT * FROM market_ship ORDER BY datum DESC;");
 		if (mysql_num_rows($res)>0)
 		{
+		    /** @var ShipDataRepository $shipRepository */
+		    $shipRepository = $app[ShipDataRepository::class];
+		    $shipNames = $shipRepository->getShipNames(true);
 			while ($arr=mysql_fetch_array($res))
 			{
 				$username=get_user_nick($arr['user_id']);
-				$ship = new Ship($arr['ship_id']);
 				echo "<form action=\"?page=$page&sub=$sub\" method=\"POST\">\n";
 				echo "<input type=\"hidden\" name=\"ship_market_id\" value=\"".$arr['id']."\">";
 				echo "<table class=\"tb\">
@@ -109,7 +112,7 @@ $runtimeDataStore = $app[RuntimeDataStore::class];
 								Schiffname:
 							</th>
 							<td colspan=\"2\" width=\"200\">
-								".$ship."
+								".$shipNames[$arr['ship_id']]."
 							</td>
 							<th width=\"100\">
 								Anzahl:
@@ -153,6 +156,10 @@ $runtimeDataStore = $app[RuntimeDataStore::class];
 		$res=dbquery("SELECT * FROM market_auction ORDER BY date_end ASC;");
 		if (mysql_num_rows($res)>0)
 		{
+            /** @var ShipDataRepository $shipRepository */
+            $shipRepository = $app[ShipDataRepository::class];
+            $shipNames = $shipRepository->getShipNames(true);
+
 			while ($arr=mysql_fetch_array($res))
 			{
 						tableStart();
@@ -185,9 +192,8 @@ $runtimeDataStore = $app[RuntimeDataStore::class];
 						// Sind Schiffe angeboten
 						if($arr['ship_id']>0)
 						{
-							$ship = new Ship($arr['ship_id']);
 							echo "<td rowspan=\"5\">
-									".$arr['ship_count']." <a href=\"?page=help&site=shipyard&id=".$arr['ship_id']."\">".$ship."</a>
+									".$arr['ship_count']." <a href=\"?page=help&site=shipyard&id=".$arr['ship_id']."\">".$shipNames[$arr['ship_id']]."</a>
 								</td>";
 						}
 						else

@@ -1,6 +1,10 @@
 <?php
 
+use EtoA\Building\BuildingDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseDataRepository;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Technology\TechnologyDataRepository;
 
 /**
  * Description of battlereport
@@ -146,12 +150,16 @@ class BattleReport extends Report
 
     function __toString()
     {
-        global $resNames;
+        global $resNames, $app;
 
         ob_start();
         $ent1 = Entity::createFactoryById($this->entity1Id);
         $ent2 = Entity::createFactoryById($this->entity2Id);
         $user = new User($this->opponent1Id);
+
+        /** @var ShipDataRepository $shipRepository */
+        $shipRepository = $app[ShipDataRepository::class];
+        $shipNames = $shipRepository->getShipNames(true);
 
         switch ($this->subType)
         {
@@ -163,7 +171,10 @@ class BattleReport extends Report
                 break;
             case 'bombard':
                 $data = explode(':',$this->content);
-                $building = new Building($data[0]);
+                /** @var BuildingDataRepository $buildingRepository */
+                $buildingRepository = $app[BuildingDataRepository::class];
+                $buildingNames = $buildingRepository->getBuildingNames(true);
+                $building = $buildingNames[(int) $data[0]];
                 echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat das Gebäude '.$building.' des Planeten '.$ent1->detailLink().' von Stufe '.$data[2].' auf Stufe '.$data[1].' zur&uuml;ck gesetzt.';
                 break;
             case 'bombardfailed':
@@ -171,7 +182,10 @@ class BattleReport extends Report
                 break;
             case 'emp':
                 $data = explode(':',$this->content);
-                $building = new Building($data[0]);
+                /** @var BuildingDataRepository $buildingRepository */
+                $buildingRepository = $app[BuildingDataRepository::class];
+                $buildingNames = $buildingRepository->getBuildingNames(true);
+                $building = $buildingNames[(int) $data[0]];
                 echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat das Gebäude '.$building.' des Planeten '.$ent1->detailLink().' für '.$data[1].' h deaktiviert.';
                 break;
             case 'empfailed':
@@ -196,14 +210,13 @@ class BattleReport extends Report
                 {
                     echo '<table>';
                     $shipArr = explode(',',$this->ships);
-                    $ships = Ship::getItems();
                     foreach ($shipArr as $ship)
                     {
                         if ($ship!='')
                         {
                             $data = explode(':',$ship);
                             echo '<tr>
-                                    <td>'.$ships[$data[0] ].' </td>
+                                    <td>'.$shipNames[(int) $data[0]].' </td>
                                     <td style="text-align:right;"> '.nf($data[1]).'</td>
                                 </tr>';
                         }
@@ -242,8 +255,11 @@ class BattleReport extends Report
                 echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat versucht den Planeten '.$ent1->detailLink().' zu übernehmen. Dieser Versuch schlug aber fehl und die Flotte machte sich auf den Rückweg!';
                 break;
             case 'spyattack':
+                /** @var TechnologyDataRepository $technologyRepository */
+                $technologyRepository = $app[TechnologyDataRepository::class];
+                $techNames = $technologyRepository->getTechnologyNames(true);
                 $data = explode(':',$this->content);
-                $tech = new Technology($data[0]);
+                $tech = $techNames[(int) $data[0]];
                 echo 'Eine Flotte vom Planeten '.$ent2->detailLink().' hat erfolgreich einen Spionageangriff durchgeführt und erfuhr so die Geheimnisse der Forschung '.$tech.' bis zum Level '.$data[1].'.';
                 break;
             case 'spyattackfailed':
@@ -299,14 +315,13 @@ class BattleReport extends Report
                                 {
                                     echo '<table>';
                                     $shipArr = explode(',',$this->ships);
-                                    $ships = Ship::getItems();
                                     foreach ($shipArr as $ship)
                                     {
                                         if ($ship!='')
                                         {
                                             $data = explode(':',$ship);
                                             echo '<tr>
-                                                    <td>'.$ships[$data[0] ].' </td>
+                                                    <td>'.$shipNames[(int) $data[0] ].' </td>
                                                     <td style="text-align:right;"> '.nf($data[1]).'</td>
                                                 </tr>';
                                         }
@@ -322,14 +337,13 @@ class BattleReport extends Report
                                 {
                                     echo '<table>';
                                     $shipArr = explode(',',$this->entityShips);
-                                    $ships = Ship::getItems();
                                     foreach ($shipArr as $ship)
                                     {
                                         if ($ship!='')
                                         {
                                             $data = explode(':',$ship);
                                             echo '<tr>
-                                                    <td>'.$ships[$data[0] ].' </td>
+                                                    <td>'.$shipNames[(int) $data[0] ].' </td>
                                                     <td style="text-align:right;"> '.nf($data[1]).'</td>
                                                 </tr>';
                                         }
@@ -349,14 +363,16 @@ class BattleReport extends Report
                                 {
                                     echo '<table>';
                                     $defArr = explode(',',$this->entityDef);
-                                    $def = Defense::getItems();
+                                    /** @var DefenseDataRepository $defenseRepository */
+                                    $defenseRepository = $app[DefenseDataRepository::class];
+                                    $defenseNames = $defenseRepository->getDefenseNames(true);
                                     foreach ($defArr as $defense)
                                     {
                                         if ($defense!='')
                                         {
                                             $data = explode(':',$defense);
                                             echo '<tr>
-                                                    <td>'.$def[$data[0] ].' </td>
+                                                    <td>'.$defenseNames[(int) $data[0] ].' </td>
                                                     <td style="text-align:right;"> '.nf($data[1]).'</td>
                                                 </tr>';
                                         }
@@ -486,14 +502,13 @@ class BattleReport extends Report
                                 {
                                     echo '<table>';
                                     $shipArr = explode(',',$this->shipsEnd);
-                                    $ships = Ship::getItems();
                                     foreach ($shipArr as $ship)
                                     {
                                         if ($ship!='')
                                         {
                                             $data = explode(':',$ship);
                                             echo '<tr>
-                                                    <td>'.$ships[$data[0] ].' </td>
+                                                    <td>'.$shipNames[(int) $data[0] ].' </td>
                                                     <td style="text-align:right;"> '.nf($data[1]).'</td>
                                                 </tr>';
                                         }
@@ -509,14 +524,13 @@ class BattleReport extends Report
                                 {
                                     echo '<table>';
                                     $shipArr = explode(',',$this->entityShipsEnd);
-                                    $ships = Ship::getItems();
                                     foreach ($shipArr as $ship)
                                     {
                                         if ($ship!='')
                                         {
                                             $data = explode(':',$ship);
                                             echo '<tr>
-                                                    <td>'.$ships[$data[0] ].' </td>';
+                                                    <td>'.$shipNames[(int) $data[0] ].' </td>';
                                                     if ($data[2]>0)
                                                     {
                                                         echo '<td style="text-align:right;"> '.nf($data[1]).'</td>';
@@ -557,14 +571,16 @@ class BattleReport extends Report
                                 {
                                     echo '<table>';
                                     $defArr = explode(',',$this->entityDefEnd);
-                                    $def = Defense::getItems();
+                                    /** @var DefenseDataRepository $defenseRepository */
+                                    $defenseRepository = $app[DefenseDataRepository::class];
+                                    $defenseNames = $defenseRepository->getDefenseNames(true);
                                     foreach ($defArr as $defense)
                                     {
                                         if ($defense!='')
                                         {
                                             $data = explode(':',$defense);
                                             echo '<tr>
-                                                    <td>'.$def[$data[0] ].' </td>';
+                                                    <td>'.$defenseNames[(int) $data[0] ].' </td>';
                                                     if ($data[2]>0)
                                                     {
                                                         echo '<td style="text-align:right;"> '.nf($data[1]).'</td>';

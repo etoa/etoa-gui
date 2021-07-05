@@ -18,6 +18,9 @@ class QuestResponseListener implements EventSubscriberInterface
         $this->presenter = $presenter;
     }
 
+    /**
+     * @return array[]
+     */
     public function getQuests(): array
     {
         return array_map(function (array $data): array {
@@ -42,6 +45,9 @@ class QuestResponseListener implements EventSubscriberInterface
         unset($this->quests[$quest->getId()]);
     }
 
+    /**
+     * @return array<string, string>
+     */
     public static function getSubscribedEvents(): array
     {
         return [

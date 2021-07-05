@@ -21,6 +21,9 @@ class ChatUserRepository extends AbstractRepository
         return array_map(fn (array $row) => new ChatUser($row), $data);
     }
 
+    /**
+     * @return ChatUser[]
+     */
     public function getTimedOutChatUsers(int $timeout): array
     {
         $data = $this->createQueryBuilder()

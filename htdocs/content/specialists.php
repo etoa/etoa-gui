@@ -4,9 +4,13 @@ use EtoA\Specialist\SpecialistDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\User\UserRepository;
 
 /** @var SpecialistDataRepository */
 $speciaistRepository = $app[SpecialistDataRepository::class];
+
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -21,11 +25,11 @@ $t = time();
 
 $planet = $planetRepo->find($cp->id);
 
-$uCnt = User::count();
-$totAvail = ceil($uCnt*$config->getFloat('specialistconfig'));
-
 echo '<h1>Spezialisten</h1>';
 echo $resourceBoxDrawer->getHTML($planet);
+
+$uCnt = $userRepository->count();
+$totAvail = ceil($uCnt*$config->getFloat('specialistconfig'));
 
 //
 // Engage specialist

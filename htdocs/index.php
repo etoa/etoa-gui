@@ -250,7 +250,7 @@ try {
         $twig->addGlobal('adds', false);
     }
 
-    /** @var TextRepository */
+    /** @var TextRepository $textRepo */
     $textRepo = $app[TextRepository::class];
     $infoText = $textRepo->find('info');
 
@@ -280,7 +280,7 @@ try {
         'topNav' => $gameMenu->getTopNav(),
         'mainNav' => $gameMenu->getMainNav(),
         'renderTime' => $watch->stop('render')->getDuration() / 1000,
-        'infoText' => $infoText->enabled && $infoText->content ? $infoText->content : null,
+        'infoText' => $infoText->isEnabled() ? $infoText->content : null,
         'helpBox' => $cu->properties->helpBox == 1,
         'noteBox' => $cu->properties->noteBox==1,
     ]);

@@ -1,8 +1,10 @@
 <?PHP
 
+use EtoA\Building\BuildingDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Technology\TechnologyDataRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -437,7 +439,6 @@ if (isset($cp)) {
                 {
                     if (!$building_something)
                     {
-
                         if ($planet->resMetal >= $bc['metal'] && $planet->resCrystal >= $bc['crystal'] && $planet->resPlastic >= $bc['plastic']  && $planet->resFuel >= $bc['fuel']  && $planet->resFood >= $bc['food']) {
                             $start_time = time();
                             $end_time = time() + $btime;
@@ -616,7 +617,6 @@ if (isset($cp)) {
 
                         //Log Speichern
                         GameLog::add(GameLog::F_TECH, GameLog::INFO, $log_text, $cu->id,$cu->allianceId,$planet->id,$arr['tech_id'], $b_status, $b_level);
-
                     }
                     else
                     {
@@ -1023,19 +1023,21 @@ if (isset($cp)) {
                                     $subtitle =  'Voraussetzungen fehlen';
                                     $tmtext = '<span style="color:#999">Baue zuerst die nötigen Gebäude und erforsche die nötigen Technologien um diese Technologie zu erforschen!</span><br/>';
 
+                                    /** @var BuildingDataRepository $buildingRepository */
+                                    $buildingRepository = $app[BuildingDataRepository::class];
+                                    $buildingNames = $buildingRepository->getBuildingNames(true);
                                     foreach ($b_req_info as $v)
                                     {
-                                        $b = new Building($v[0]);
-                                        $tmtext .= "<div style=\"color:".($v[2]?'#0f0':'#f30')."\">".$b." Stufe ".$v[1]."</div>";
-                                        unset($b);
-                                    }
-                                    foreach ($t_req_info as $v)
-                                    {
-                                        $b = new Technology($v[0]);
-                                        $tmtext .= "<div style=\"color:".($v[2]?'#0f0':'#f30')."\">".$b." Stufe ".$v[1]."</div>";
-                                        unset($b);
+                                        $tmtext .= "<div style=\"color:".($v[2]?'#0f0':'#f30')."\">".$buildingNames[$v[0]]." Stufe ".$v[1]."</div>";
                                     }
 
+                                    /** @var TechnologyDataRepository $technologyRepository */
+                                    $technologyRepository = $app[TechnologyDataRepository::class];
+                                    $technologyNames = $technologyRepository->getTechnologyNames(true);
+                                    foreach ($t_req_info as $v)
+                                    {
+                                        $tmtext .= "<div style=\"color:".($v[2]?'#0f0':'#f30')."\">".$technologyNames[$v[0]]." Stufe ".$v[1]."</div>";
+                                    }
 
                                     $color = '#999';
                                     if($use_img_filter)

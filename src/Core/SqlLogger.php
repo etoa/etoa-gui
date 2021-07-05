@@ -25,6 +25,10 @@ class SqlLogger implements \Doctrine\DBAL\Logging\SQLLogger
     {
     }
 
+    /**
+     * @param array<string, int|string|int[]|string[]> $params
+     * @return array<string, int|string>
+     */
     private function normalizeParams(array $params): array
     {
         foreach ($params as $index => $param) {

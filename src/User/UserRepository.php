@@ -90,6 +90,18 @@ class UserRepository extends AbstractRepository
         return $result !== false ? (int) $result : null;
     }
 
+    public function markVerifiedByVerificationKey(string $verificationKey): bool
+    {
+        return (bool) $this->createQueryBuilder()
+            ->update('users')
+            ->set('verification_key', ':updatedKey')
+            ->where('verification_key = :key')
+            ->setParameter('key', $verificationKey)
+            ->setParameter('updatedKey', '')
+            ->setMaxResults(1)
+            ->execute();
+    }
+
     /**
      * @return array<int, string>
      */
@@ -143,5 +155,34 @@ class UserRepository extends AbstractRepository
         }
 
         return $recipients;
+    }
+
+    public function removeOldBans(): void
+    {
+        $this->getConnection()->executeQuery("
+            UPDATE
+                users
+            SET
+                user_blocked_from = 0,
+                user_blocked_to = 0,
+                user_ban_reason = '',
+                user_ban_admin_id = 0
+            WHERE
+                user_blocked_to < :blockedBefore';
+        ", [
+            'blockedBefore' => time(),
+        ]);
+    }
+
+    public function addSittingDays(int $days): void
+    {
+        $this->getConnection()->executeQuery("
+            UPDATE
+                users
+            SET
+                user_sitting_days = user_sitting_days + :days';
+        ", [
+            'days' => $days,
+        ]);
     }
 }

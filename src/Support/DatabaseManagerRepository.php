@@ -27,6 +27,9 @@ class DatabaseManagerRepository extends AbstractRepository
         return $this->getConnection()->getDatabasePlatform()->getName();
     }
 
+    /**
+     * @param string[] $tables
+     */
     public function truncateTables(array $tables): void
     {
         $this->getConnection()
@@ -39,5 +42,28 @@ class DatabaseManagerRepository extends AbstractRepository
 
         $this->getConnection()
             ->executeStatement('SET FOREIGN_KEY_CHECKS = 1;');
+    }
+
+    /**
+     * @return array<string, string|int>
+     */
+    public function getGlobalStatus(): array
+    {
+        $data = $this->getConnection()->fetchAllAssociative('SHOW GLOBAL STATUS');
+
+        $result = [];
+        foreach ($data as $row) {
+            $result[strtolower($row['Variable_name'])] = $row['Value'];
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return array<array{Name: string, Rows: string, Data_length: string, Index_length: string, Engine: string}>
+     */
+    public function getTableStatus(): array
+    {
+        return $this->getConnection()->fetchAllAssociative('SHOW TABLE STATUS');
     }
 }

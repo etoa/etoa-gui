@@ -8,13 +8,18 @@ use EtoA\Core\AbstractRepository;
 
 class AllianceTechnologyRepository extends AbstractRepository
 {
+    /**
+     * @return AllianceTechnology[]
+     */
     public function findAll(): array
     {
-        return $this->createQueryBuilder()
+        $data = $this->createQueryBuilder()
             ->select("*")
             ->from('alliance_technologies')
             ->execute()
             ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new AllianceTechnology($row), $data);
     }
 
     public function existsInAlliance(int $allianceId, int $technologyId): bool

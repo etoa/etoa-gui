@@ -15,6 +15,9 @@ class SendMessage implements EventHandlerFunctionInterface
         return $task->getProgress() + 1;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getEventMap(): array
     {
         return [MessageSend::SEND_SUCCESS => 'handle'];

@@ -110,6 +110,10 @@ class TwigExtension extends AbstractExtension
         return $config->get($key);
     }
 
+    /**
+     * @param string[] $userRoles
+     * @param string|string[] $required
+     */
     public function isAdminAllowed(array $userRoles, $required): bool
     {
         return (new AdminRoleManager())->checkAllowedRoles($userRoles, $required);
@@ -120,6 +124,9 @@ class TwigExtension extends AbstractExtension
         return round(microtime(true) - $this->startTime, 3);
     }
 
+    /**
+     * @param string|int $timestamp
+     */
     public function formatTimestamp($timestamp): string
     {
         return (new \DateTime('@' . $timestamp))->format('d.m.Y, H:i:s');

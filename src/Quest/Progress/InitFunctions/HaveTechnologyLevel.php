@@ -14,6 +14,9 @@ class HaveTechnologyLevel implements InitProgressHandlerFunctionInterface
     private TechnologyRepository $technologyRepository;
     private int $buildingId;
 
+    /**
+     * @param array<string, int> $attributes
+     */
     public function __construct(array $attributes, TechnologyRepository $technologyRepository)
     {
         $this->technologyRepository = $technologyRepository;

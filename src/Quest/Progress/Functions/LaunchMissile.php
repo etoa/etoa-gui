@@ -15,6 +15,9 @@ class LaunchMissile implements EventHandlerFunctionInterface
         return $task->getProgress() + $event->getMissileCount();
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getEventMap(): array
     {
         return [MissileLaunch::LAUNCH_SUCCESS => 'handle'];
