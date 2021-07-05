@@ -171,7 +171,6 @@ class BuildListItem
         }
     }
 
-
     private function load($id)
     {
         $res = dbquery("SELECT
