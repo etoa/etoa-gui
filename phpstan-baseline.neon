@@ -16,11 +16,6 @@ parameters:
 			path: htdocs/admin/content/db/maintenance.inc.php
 
 		-
-			message: "#^Variable \\$trgstr might not be defined\\.$#"
-			count: 1
-			path: htdocs/admin/content/fleets.php
-
-		-
 			message: "#^Variable \\$sortOrder might not be defined\\.$#"
 			count: 2
 			path: htdocs/admin/content/home/stats.inc.php
@@ -404,4 +399,9 @@ parameters:
 			message: "#^Method EtoA\\\\Building\\\\BuildingRepository\\:\\:findByFormData\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Building/BuildingRepository.php
+
+		-
+			message: "#^Method EtoA\\\\UI\\\\EntityCoordinatesSelector\\:\\:parse\\(\\) has parameter \\$parameters with no value type specified in iterable type Symfony\\\\Component\\\\HttpFoundation\\\\ParameterBag\\.$#"
+			count: 1
+			path: src/UI/EntityCoordinatesSelector.php
 

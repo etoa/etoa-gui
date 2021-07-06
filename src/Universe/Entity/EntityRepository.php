@@ -128,6 +128,39 @@ class EntityRepository extends AbstractRepository
         return $data !== false ? new Entity($data) : null;
     }
 
+    public function findByCoordinates(EntityCoordinates $coordinates): ?Entity
+    {
+        $data = $this->createQueryBuilder()
+            ->select(
+                'e.id',
+                'c.id as cid',
+                'code',
+                'pos',
+                'sx',
+                'sy',
+                'cx',
+                'cy'
+            )
+            ->from('entities', 'e')
+            ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id')
+            ->where('c.sx = :sx')
+            ->andWhere('c.sy = :sy')
+            ->andWhere('c.cx = :cx')
+            ->andWhere('c.cy = :cy')
+            ->andWhere('e.pos = :pos')
+            ->setParameters([
+                'sx' => $coordinates->sx,
+                'sy' => $coordinates->sy,
+                'cx' => $coordinates->cx,
+                'cy' => $coordinates->cy,
+                'pos' => $coordinates->pos,
+            ])
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? new Entity($data) : null;
+    }
+
     /**
      * @return array<Entity>
      */

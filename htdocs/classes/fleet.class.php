@@ -634,37 +634,6 @@
 		}
 
 		/**
-		* Returns the flight. This switches the source
-		* and the target and adjusts the correct time
-		*/
-		function returnFlight()
-		{
-			if ($this->status == 0)
-			{
-				if ($this->landTime() > time())
-					$difftime = $this->landTime() - $this->launchTime;
-				else
-					$difftime = time() - $this->launchTime;
-
-				$this->launchTime = time();
-				$this->landTime = $this->launchTime + $difftime ;
-
-				$tmp = $this->targetId;
-				$this->targetId = $this->sourceId;
-				$this->sourceId = $tmp;
-
-				$this->status = 1;
-				$this->leaderId = 0;
-
-				$this->update();
-				return true;
-			}
-			else
-				$this->error = "Flotte ist bereits auf dem R�ckflug!";
-			return false;
-		}
-
-		/**
 		* Updates changed data with the database
 		*/
 		private function update()
@@ -729,69 +698,6 @@
 			}
 			$this->shipIds[$shipId] = $this->shipIds[$shipId] + $count;
 			return true;
-		}
-
-		/**
-		* Remove all ships of the given ship id from the fleet
-		*/
-		function removeShips($shipId)
-		{
-			dbquery("
-			DELETE FROM
-				fleet_ships
-			WHERE
-				fs_ship_id=".$shipId."
-				AND fs_fleet_id=".$this->id."
-			;");
-			unset ($this->shipIds[$shipId]);
-			unset ($this->ships[$shipId]);
-			return (boolean)mysql_affected_rows();
-		}
-
-
-		/**
-		* Land fleet
-		*/
-		function land()
-		{
-			if (($this->ownerId==0 || $this->ownerId==$this->getTarget()->ownerId()) && $this->getTarget()->ownerId() > 0)
-			{
-				$sl = new ShipList($this->targetId,$this->getTarget()->ownerId());
-
-				foreach ($this->getShipIds() as $sid => $scnt)
-				{
-					$sl->add($sid,$scnt);
-					$this->removeShips($sid);
-				}
-
-				// TODO: Perhaps all entities can get res in the future...
-				if ($this->getTarget()->code == 'p')
-				{
-					$this->getTarget()->changeRes($this->resMetal,$this->resCrystal,$this->resPlasic,$this->resFuel,$this->resFood,$this->resPower);
-					$this->getTarget()->chgPeople($this->pilots + $this->resPeople);
-
-					// Add halve of the resources used for the engines to the target,
-					// if the action, for example, is colonize or position
-					if ($this->status == 0)
-					{
-						$this->getTarget()->changeRes(0,0,0,$this->usageFuel/2,$this->usageFood/2,$this->usagePower/2);
-					}
-				}
-
-				dbquery("
-				DELETE FROM
-					fleet
-				WHERE
-					id=".$_GET['fleetedit'].";");
-
-				$this->valid = false;
-				return true;
-			}
-			else
-			{
-				$this->error = "Kann Flotte nicht landen, Ziel ist unbewohnt oder Flottenbesitzer entspricht nicht Zielbesitzer.";
-			}
-			return false;
 		}
 
         /**

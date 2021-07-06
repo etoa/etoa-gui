@@ -384,18 +384,6 @@ class Planet extends Entity implements OwnableEntity
 		function ownerLocked() { return $this->owner->locked; }
 		function ownerAlliance() { return $this->owner->allianceId; }
 
-		function chgPeople($diff)
-		{
-		    $sql = "
-			    UPDATE
-	    			planets
-	    		SET
-        			planet_people=planet_people+".intval($diff)."
-	    		WHERE
-	    			id='".$this->id."';";
-			dbquery($sql);
-		}
-
 		function getRes($i)
 		{
 			switch ($i)
