@@ -357,7 +357,7 @@ class PlanetRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
                 'userId' => $userId,
-                'main' => $main,
+                'main' => (int) $main,
             ])
             ->execute();
     }
