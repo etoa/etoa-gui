@@ -199,19 +199,20 @@ class UserRepository extends AbstractRepository
         ]);
     }
 
-    public function create(string $nick, string $name, string $email): int
+    public function create(string $nick, string $name, string $email, string $password): int
     {
         $this->createQueryBuilder()
         ->insert('users')
         ->values([
             'user_nick' => ':nick',
             'user_name' => ':name',
-            'user_email' => ':email',
+            'user_password' => ':password',
         ])
         ->setParameters([
             'nick' => $nick,
             'name' => $name,
             'email' => $email,
+            'password' => saltPasswort($password),
         ])
         ->execute();
 

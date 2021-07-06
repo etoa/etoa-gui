@@ -41,8 +41,8 @@ class FleetScanServiceTest extends WebTestCase
     public function testScanFleets_withNoFleets(): void
     {
         // given
-        $userId1 = $this->userRepository->create('Aggressor', 'Hans Muster', 'hans@example.com');
-        $userId2 = $this->userRepository->create('Victim', 'Peter Meier', 'peter@example.com');
+        $userId1 = $this->userRepository->create('Aggressor', 'Hans Muster', 'hans@example.com', 'password');
+        $userId2 = $this->userRepository->create('Victim', 'Peter Meier', 'peter@example.com', 'password');
         $allianceId1 = $this->allianceRepository->create('TST', 'Testers', $userId1);
         $this->userRepository->setAllianceId($userId1, $allianceId1);
         $this->allianceBuildingRepository->setUserCooldown($userId1, ALLIANCE_CRYPTO_ID, 0);
@@ -74,8 +74,8 @@ class FleetScanServiceTest extends WebTestCase
     public function testScanFleets_withOneIncomingFleet(): void
     {
         // given
-        $userId1 = $this->userRepository->create('Aggressor', 'Hans Muster', 'hans@example.com');
-        $userId2 = $this->userRepository->create('Victim', 'Peter Meier', 'peter@example.com');
+        $userId1 = $this->userRepository->create('Aggressor', 'Hans Muster', 'hans@example.com', 'password');
+        $userId2 = $this->userRepository->create('Victim', 'Peter Meier', 'peter@example.com', 'password');
         $allianceId1 = $this->allianceRepository->create('TST', 'Testers', $userId1);
         $this->userRepository->setAllianceId($userId1, $allianceId1);
         $this->allianceBuildingRepository->setUserCooldown($userId1, ALLIANCE_CRYPTO_ID, 0);
