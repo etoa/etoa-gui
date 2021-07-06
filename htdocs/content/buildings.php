@@ -2,10 +2,18 @@
 
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\UI\ResourceBoxDrawer;
+use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Technology\TechnologyDataRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
+/** @var PlanetRepository */
+$planetRepo = $app[PlanetRepository::class];
+
+/** @var ResourceBoxDrawer */
+$resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 
 if ($cu->properties->itemShow!='full')
 {
@@ -33,12 +41,13 @@ else
 
 if (isset($cp))
 {
-    echo "<h1>Bauhof des Planeten ".$cp->name()."</h1>";
+    $planet = $planetRepo->find($cp->id);
 
-    echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
+    echo "<h1>Bauhof des Planeten ".$planet->name."</h1>";
 
-    // Load buildlist object
-    $bl = new BuildList($cp->id,$cu->id,2);
+    echo $resourceBoxDrawer->getHTML($planet);
+
+    $bl = new BuildList($planet->id, $cu->id, 2);
     $bid=0;
 
     // create posted id for small view
@@ -189,7 +198,7 @@ if (isset($cp))
     $checker = ob_get_contents();
     ob_end_clean();
 
-    $peopleFree = floor($cp->people) - $bl->totalPeopleWorking() + $bl->getPeopleWorking(BUILD_BUILDING_ID);
+    $peopleFree = floor($planet->people) - $bl->totalPeopleWorking() + $bl->getPeopleWorking(BUILD_BUILDING_ID);
     // create box to change people working
     $box =	'
                 <input type="hidden" name="workDone" id="workDone" value="'.$config->getInt('people_work_done').'" />

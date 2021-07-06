@@ -368,50 +368,6 @@ class Planet extends Entity implements OwnableEntity
 		    $this->resFood+=$fo;
 		}
 
-		/**
-		* Calculate bonus power production based on temperature
-		*/
-		function solarPowerBonus()
-		{
-			$v = floor(($this->temp_from + $this->temp_to)/4);
-			if ($v <= -100)
-			{
-				$v = -99;
-			}
-			return $v;
-		}
-
-		/**
-		* Calculate bonus power production based on temperature
-		*/
-		function fuelProductionBonus()
-		{
-			$v = floor(($this->temp_from + $this->temp_to)/25);
-			return -$v;
-		}
-
-		/**
-		* Calculate bonus power production based on temperature
-		*/
-		static function getSolarPowerBonus($t_min,$t_max)
-		{
-			$v = floor(($t_max + $t_min)/4);
-			if ($v <= -100)
-			{
-				$v = -99;
-			}
-			return $v;
-		}
-
-		/**
-		* Calculate bonus power production based on temperature
-		*/
-		function getFuelProductionBonus()
-		{
-			$v = floor(($this->temp_from + $this->temp_to)/25);
-			return $v/100;
-		}
-
 		//
 		// Getters
 		//
@@ -667,46 +623,6 @@ class Planet extends Entity implements OwnableEntity
 				return true;
 			}
 			return false;
-		}
-
-
-		function chgBunker($i,$amount)
-		{
-            $amount = intval($amount);
-
-			switch ($i)
-			{
-				case 1:
-					$str = "planet_bunker_metal=".$amount."";
-                    $this->bunkerMetal=$amount;
-					break;
-				case 2:
-					$str = "planet_bunker_crystal=".$amount."";
-                    $this->bunkerCrystal=$amount;
-					break;
-				case 3:
-					$str = "planet_bunker_plastic=".$amount."";
-                    $this->bunkerPlastic=$amount;
-					break;
-				case 4:
-					$str = "planet_bunker_fuel=".$amount."";
-                    $this->bunkerFuel=$amount;
-					break;
-				case 5:
-					$str = "planet_bunker_food=".$amount."";
-		    $this->bunkerFood=$amount;
-					break;
-				default:
-					return;
-			}
-			$sql = "
-	   			UPDATE
-	    			planets
-	    		SET
-		        	".$str."
-	    		WHERE
-	    			id='".$this->id."';";
-	   		dbquery($sql);
 		}
 
 		function reloadRes()

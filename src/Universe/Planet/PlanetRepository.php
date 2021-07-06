@@ -371,6 +371,33 @@ class PlanetRepository extends AbstractRepository
             ->execute();
     }
 
+    public function updateBunker(
+        int $id,
+        float $metal,
+        float $crystal,
+        float $plastic,
+        float $fuel,
+        float $food
+    ): void {
+        $this->createQueryBuilder()
+            ->update('planets')
+            ->set('planet_bunker_metal', ':metal')
+            ->set('planet_bunker_crystal', ':crystal')
+            ->set('planet_bunker_plastic', ':plastic')
+            ->set('planet_bunker_fuel', ':fuel')
+            ->set('planet_bunker_food', ':food')
+            ->where('id = :id')
+            ->setParameters([
+                'id' => $id,
+                'metal' => $metal,
+                'crystal' => $crystal,
+                'plastic' => $plastic,
+                'fuel' => $fuel,
+                'food' => $food,
+            ])
+            ->execute();
+    }
+
     public function reset(int $id): void
     {
         $this->createQueryBuilder()

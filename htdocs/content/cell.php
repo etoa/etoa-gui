@@ -212,8 +212,10 @@ if (isset($_POST['starname_submit']) && $_POST['starname']!="" && intval($_POST[
                 }
                 $class .="\" ";
 
-                if ($ent->entityCode()==='p')
+                if ($ent->entityCode() === EntityType::PLANET)
                 {
+                    $planet = $planetRepo->find($ent->id());
+
                     $tm="";
                     $tm.= "<b>Felder</b>: ".nf($ent->fields);
                     $tm.= "<br/><b>Bewohnbar</b>: ";
@@ -237,26 +239,14 @@ if (isset($_POST['starname_submit']) && $_POST['starname']!="" && intval($_POST[
                     if ($ent->typeBuildtime!=1)
                         $tm.="<br/><b>Bauzeit:</b> ".get_percent_string($ent->typeBuildtime,1,1);
                     $tm.= "<br /><br/><b>Wärmebonus</b>: ";
-                    $spw = $ent->solarPowerBonus();
-                    if ($spw>=0)
-                    {
-                        $tm.= "<span style=\"color:#0f0\">+".$spw."</span>";
-                    }
-                    else
-                    {
-                        $tm.= "<span style=\"color:#f00\">".$spw."</span>";
-                    }
+                    $solarProdBonus = $planet->solarPowerBonus();
+                    $color = $solarProdBonus>=0 ? '#0f0' : '#f00';
+                    $tm.= "<span style=\"color:".$color."\">".($solarProdBonus > 0 ? '+' : '').$solarProdBonus."</span>";
                     $tm.= " Energie pro Solarsatellit";
                     $tm.= "<br /><b>Kältebonus</b>: ";
-                    $spw = $ent->fuelProductionBonus();
-                    if ($spw>=0)
-                    {
-                        $tm.= "<span style=\"color:#0f0\">+".$spw."%</span>";
-                    }
-                    else
-                    {
-                        $tm.= "<span style=\"color:#f00\">".$spw."%</span>";
-                    }
+                    $fuelProdBonus = $planet->fuelProductionBonus();
+                    $color = $fuelProdBonus >= 0 ? '#0f0' : '#f00';
+                    $tm.= "<span style=\"color:".$color."\">".($fuelProdBonus > 0 ? '+' : '').$fuelProdBonus."%</span>";
                     $tm.= " ".RES_FUEL."-Produktion";
                 }
 

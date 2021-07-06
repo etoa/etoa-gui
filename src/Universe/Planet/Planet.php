@@ -109,4 +109,33 @@ class Planet
     {
         return $this->wfMetal + $this->wfCrystal + $this->wfPlastic > 0;
     }
+
+    public function solarPowerBonus(): float
+    {
+        return self::getSolarPowerBonus($this->tempFrom, $this->tempTo);
+    }
+
+    public static function getSolarPowerBonus(int $tempFrom, int $tempTo): float
+    {
+        $value = floor(($tempFrom + $tempTo) / 4);
+        if ($value <= -100) {
+            $value = -99;
+        }
+
+        return $value;
+    }
+
+    public function fuelProductionBonus(): float
+    {
+        $value = floor(($this->tempFrom + $this->tempTo) / 25);
+
+        return -$value;
+    }
+
+    public function getFuelProductionBonusFactor(): float
+    {
+        $value = floor(($this->tempFrom + $this->tempTo) / 25);
+
+        return $value / 100;
+    }
 }

@@ -236,11 +236,6 @@ parameters:
 			path: htdocs/content/crypto.php
 
 		-
-			message: "#^Variable \\$bwmsg might not be defined\\.$#"
-			count: 5
-			path: htdocs/content/defense.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: htdocs/content/help.php

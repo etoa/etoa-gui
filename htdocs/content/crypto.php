@@ -3,12 +3,20 @@
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Bookmark\BookmarkService;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\UI\ResourceBoxDrawer;
+use EtoA\Universe\Planet\PlanetRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
 
 /** @var BookmarkService */
 $bookmarkService = $app[BookmarkService::class];
+
+/** @var PlanetRepository */
+$planetRepo = $app[PlanetRepository::class];
+
+/** @var ResourceBoxDrawer */
+$resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 
 // Reichweite in AE für Kryptoanalyse pro Ausbaustufe
 define("CRYPTO_RANGE_PER_LEVEL", $config->getInt('crypto_range_per_level'));
@@ -20,15 +28,12 @@ define("CRYPTO_DEFAULT_COOLDOWN", $config->getInt("crypto_default_cooldown"));
 define("CRYPTO_COOLDOWN_REDUCTION_PER_LEVEL", $config->getInt("crypto_cooldown_reduction_per_level"));
 define("CRYPTO_MIN_COOLDOWN", $config->getInt("crypto_min_cooldown"));
 
+$planet = $planetRepo->find($cp->id);
+
 // Gebäude Level und Arbeiter laden
-if ($cu->allianceId!=0)
-{
-    $cryptoCenterLevel = $cu->alliance->buildlist->getLevel(ALLIANCE_CRYPTO_ID);
-}
-else
-{
-    $cryptoCenterLevel = 0;
-}
+$cryptoCenterLevel = $cu->allianceId != 0
+    ? $cu->alliance->buildlist->getLevel(ALLIANCE_CRYPTO_ID)
+    : 0;
 
 // Allg. deaktivierung
 if ($config->getBoolean('crypto_enable'))
@@ -44,7 +49,7 @@ if ($config->getBoolean('crypto_enable'))
     {
         // Titel
         echo "<h1>Allianzkryptocenter (Stufe ".$cryptoCenterLevel.") der Allianz ".$cu->alliance."</h1>";
-        echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
+        echo $resourceBoxDrawer->getHTML($planet);
 
         // Calculate cooldown
         $cooldown = max(CRYPTO_MIN_COOLDOWN, CRYPTO_DEFAULT_COOLDOWN - (CRYPTO_COOLDOWN_REDUCTION_PER_LEVEL*($cryptoCenterLevel-1)));
@@ -71,7 +76,7 @@ if ($config->getBoolean('crypto_enable'))
                 $pp = intval($_POST['p']);
                 if ($sx>0 && $sy>0 && $cx>0 && $cy>0 && $pp>0)
                 {
-                    if ($cp->resFuel >= CRYPTO_FUEL_COSTS_PER_SCAN)
+                    if ($planet->resFuel >= CRYPTO_FUEL_COSTS_PER_SCAN)
                     {
                         if ($cu->alliance->resFuel >= CRYPTO_FUEL_COSTS_PER_SCAN)
                         {
@@ -452,7 +457,7 @@ if ($config->getBoolean('crypto_enable'))
                     }
                     else
                     {
-                        error_msg("Zuwenig ".RES_FUEL.", ".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." benötigt, ".nf($cp->resFuel)." vorhanden!");
+                        error_msg("Zuwenig ".RES_FUEL.", ".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." benötigt, ".nf($planet->resFuel)." vorhanden!");
                     }
                 }
                 else
@@ -551,13 +556,13 @@ if ($config->getBoolean('crypto_enable'))
                     }
                     </script>";
 
-                    if ($cp->resFuel >= CRYPTO_FUEL_COSTS_PER_SCAN)
+                    if ($planet->resFuel >= CRYPTO_FUEL_COSTS_PER_SCAN)
                     {
                         echo '<input type="submit" name="scan" value="Analyse für '.nf(CRYPTO_FUEL_COSTS_PER_SCAN).' '.RES_FUEL.' starten" />';
                     }
                     else
                     {
-                        echo "Zuwenig Rohstoffe für eine Analyse vorhanden, ".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." ".RES_FUEL." benötigt, ".nf($cp->resFuel)." vorhanden!";
+                        echo "Zuwenig Rohstoffe für eine Analyse vorhanden, ".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." ".RES_FUEL." benötigt, ".nf($planet->resFuel)." vorhanden!";
                     }
                 echo '</form>';
             echo '</body>';
@@ -573,8 +578,8 @@ if ($config->getBoolean('crypto_enable'))
     else
     {
         // Titel
-        echo "<h1>Kryptocenter des Planeten ".$cp->name."</h1>";
-        echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
+        echo "<h1>Kryptocenter des Planeten ".$planet->name."</h1>";
+        echo $resourceBoxDrawer->getHTML($planet);
 
         info_msg("Das Kryptocenter wurde noch nicht gebaut!");
     }
@@ -582,8 +587,8 @@ if ($config->getBoolean('crypto_enable'))
 else
 {
     // Titel
-    echo "<h1>Kryptocenter des Planeten ".$cp->name."</h1>";
-    echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
+    echo "<h1>Kryptocenter des Planeten ".$planet->name."</h1>";
+    echo $resourceBoxDrawer->getHTML($planet);
 
     info_msg("Aufgrund eines intergalaktischen Moratoriums der Völkerföderation der Galaxie Andromeda
     sind sämtliche elektronischen Spionagetätigkeiten zurzeit nicht erlaubt!");

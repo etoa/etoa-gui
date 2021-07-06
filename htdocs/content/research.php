@@ -2,12 +2,18 @@
 
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\UI\ResourceBoxDrawer;
+use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Technology\TechnologyDataRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
 
-// DEFINITIONEN //
+/** @var PlanetRepository */
+$planetRepo = $app[PlanetRepository::class];
+
+/** @var ResourceBoxDrawer */
+$resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 
 define('NUM_BUILDINGS_PER_ROW',5);
 define('CELL_WIDTH',120);
@@ -20,9 +26,10 @@ if ($cu->properties->imageFilter ==1) {
     $use_img_filter = false;
 }
 
-// SKRIPT //
 if (isset($cp)) {
-    $bl = new BuildList($cp->id(),$cu->id);
+    $planet = $planetRepo->find($cp->id);
+
+    $bl = new BuildList($planet->id, $cu->id);
 
     if ($bl->getLevel(TECH_BUILDING_ID) > 0) {
         define('CURRENT_LAB_LEVEL',$bl->getLevel(TECH_BUILDING_ID));
@@ -33,8 +40,8 @@ if (isset($cp)) {
 
 
         // Überschrift
-        echo "<h1>Forschungslabor (Stufe ".CURRENT_LAB_LEVEL.") des Planeten ".$cp->name."</h1>";
-        echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
+        echo "<h1>Forschungslabor (Stufe ".CURRENT_LAB_LEVEL.") des Planeten ".$planet->name."</h1>";
+        echo $resourceBoxDrawer->getHTML($planet);
 
         // Forschungsliste laden && Gentech level definieren
         $tres = dbquery("
@@ -98,7 +105,7 @@ if (isset($cp)) {
         }
 
         // reload buildlist and techlist in case the number of workers has changed.
-        $bl = new BuildList($cp->id(),$cu->id);
+        $bl = new BuildList($planet->id, $cu->id);
 
         $tl = new TechList($cu->id);
         $minBuildTimeFactor = (0.1-(GEN_TECH_LEVEL/100));
@@ -130,7 +137,7 @@ if (isset($cp)) {
             FROM
                 buildlist
             WHERE
-                buildlist_entity_id='".$cp->id()."'
+                buildlist_entity_id='".$planet->id."'
             ;");
         while ($blarr = mysql_fetch_array($blres)) {
             $buildlist[$blarr['buildlist_building_id']]=$blarr['buildlist_current_level'];
@@ -178,9 +185,9 @@ if (isset($cp)) {
         ob_end_clean();
 
         if($bid==GEN_TECH_ID)
-            $peopleFree = floor($cp->people) - $bl->totalPeopleWorking() + ($peopleWorkingGen);
+            $peopleFree = floor($planet->people) - $bl->totalPeopleWorking() + ($peopleWorkingGen);
         else
-            $peopleFree = floor($cp->people) - $bl->totalPeopleWorking() + ($peopleWorking);
+            $peopleFree = floor($planet->people) - $bl->totalPeopleWorking() + ($peopleWorking);
 
         $peopleOptimized = 0;
         $currentTechData = null;
@@ -225,7 +232,6 @@ if (isset($cp)) {
                 $peopleOptimized = ceil($maxReduction / $config->getInt('people_work_done'));
             }
         }
-
 
         // create box to change people working
         $box =	'
@@ -433,8 +439,7 @@ if (isset($cp)) {
                 {
                     if (!$building_something)
                     {
-
-                        if ($cp->resMetal >= $bc['metal'] && $cp->resCrystal >= $bc['crystal'] && $cp->resPlastic >= $bc['plastic']  && $cp->resFuel >= $bc['fuel']  && $cp->resFood >= $bc['food']) {
+                        if ($planet->resMetal >= $bc['metal'] && $planet->resCrystal >= $bc['crystal'] && $planet->resPlastic >= $bc['plastic']  && $planet->resFuel >= $bc['fuel']  && $planet->resFood >= $bc['food']) {
                             $start_time = time();
                             $end_time = time() + $btime;
                             // if (sizeof($techlist[$arr['tech_id']])>0)
@@ -446,7 +451,7 @@ if (isset($cp)) {
                                     techlist_build_type='3',
                                     techlist_build_start_time='" . time() . "',
                                     techlist_build_end_time='" . $end_time . "',
-                                    techlist_entity_id='" . $cp->id() . "'
+                                    techlist_entity_id='" . $planet->id . "'
                                 WHERE
                                     techlist_tech_id='" . $arr['tech_id'] . "'
                                     AND techlist_user_id='" . $cu->id . "';");
@@ -464,7 +469,7 @@ if (isset($cp)) {
                                 )
                                 VALUES
                                 (
-                                    '" . $cp->id() . "',
+                                    '" . $planet->id . "',
                                     '3',
                                     '" . time() . "',
                                     '" . $end_time . "',
@@ -482,7 +487,7 @@ if (isset($cp)) {
                                     WHERE
                                         buildlist_building_id='" . PEOPLE_BUILDING_ID . "'
                                         AND buildlist_user_id='" . $cu->id . "'
-                                        AND buildlist_entity_id='" . $cp->id . "'");
+                                        AND buildlist_entity_id='" . $planet->id . "'");
                             }
                             else {
                                 dbquery("
@@ -493,10 +498,10 @@ if (isset($cp)) {
                                     WHERE
                                         buildlist_building_id='" . TECH_BUILDING_ID . "'
                                         AND buildlist_user_id='" . $cu->id . "'
-                                        AND buildlist_entity_id='" . $cp->id . "'");
+                                        AND buildlist_entity_id='" . $planet->id . "'");
                             }
 
-                            $planet_id=$cp->id();
+                            $planet_id=$planet->id;
 
                             //Rohstoffe vom Planeten abziehen und aktualisieren
                             $cp->changeRes(-$bc['metal'],-$bc['crystal'],-$bc['plastic'],-$bc['fuel'],-$bc['food']);
@@ -520,16 +525,16 @@ if (isset($cp)) {
                             [b]".RES_FOOD.":[/b] ".nf($bc['food'])."
 
                             [b]Restliche Rohstoffe auf dem Planeten[/b]
-                            [b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
-                            [b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
-                            [b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
-                            [b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
-                            [b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
+                            [b]".RES_METAL.":[/b] ".nf($planet->resMetal)."
+                            [b]".RES_CRYSTAL.":[/b] ".nf($planet->resCrystal)."
+                            [b]".RES_PLASTIC.":[/b] ".nf($planet->resPlastic)."
+                            [b]".RES_FUEL.":[/b] ".nf($planet->resFuel)."
+                            [b]".RES_FOOD.":[/b] ".nf($planet->resFood)."";
 
                             echo '<script>toggleBox(\'link\'); </script>';
 
                             //Log Speichern
-                            GameLog::add(GameLog::F_TECH, GameLog::INFO, $log_text, $cu->id,$cu->allianceId,$cp->id,$arr['tech_id'], $b_status, $b_level);
+                            GameLog::add(GameLog::F_TECH, GameLog::INFO, $log_text, $cu->id,$cu->allianceId,$planet->id,$arr['tech_id'], $b_status, $b_level);
                         }
                         else
                         {
@@ -568,7 +573,7 @@ if (isset($cp)) {
                                     WHERE
                                         buildlist_building_id='" . PEOPLE_BUILDING_ID . "'
                                         AND buildlist_user_id='" . $cu->id . "'
-                                        AND buildlist_entity_id='" . $cp->id . "'");
+                                        AND buildlist_entity_id='" . $planet->id . "'");
                         }
                         else {
                             dbquery("
@@ -579,7 +584,7 @@ if (isset($cp)) {
                                     WHERE
                                         buildlist_building_id='" . TECH_BUILDING_ID . "'
                                         AND buildlist_user_id='" . $cu->id . "'
-                                        AND buildlist_entity_id='" . $cp->id . "'");
+                                        AND buildlist_entity_id='" . $planet->id . "'");
                         }
 
                         //Rohstoffe zurückgeben und aktualisieren
@@ -602,17 +607,16 @@ if (isset($cp)) {
                         [b]".RES_FOOD.":[/b] ".nf($bc['food']*$fac)."
 
                         [b]Rohstoffe auf dem Planeten[/b]
-                        [b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
-                        [b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
-                        [b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
-                        [b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
-                        [b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
+                        [b]".RES_METAL.":[/b] ".nf($planet->resMetal)."
+                        [b]".RES_CRYSTAL.":[/b] ".nf($planet->resCrystal)."
+                        [b]".RES_PLASTIC.":[/b] ".nf($planet->resPlastic)."
+                        [b]".RES_FUEL.":[/b] ".nf($planet->resFuel)."
+                        [b]".RES_FOOD.":[/b] ".nf($planet->resFood)."";
 
                         header("Refresh:0; url=?page=research&id=".$bid);
 
                         //Log Speichern
-                        GameLog::add(GameLog::F_TECH, GameLog::INFO, $log_text, $cu->id,$cu->allianceId,$cp->id,$arr['tech_id'], $b_status, $b_level);
-
+                        GameLog::add(GameLog::F_TECH, GameLog::INFO, $log_text, $cu->id,$cu->allianceId,$planet->id,$arr['tech_id'], $b_status, $b_level);
                     }
                     else
                     {
@@ -705,29 +709,29 @@ if (isset($cp)) {
                 if ($b_status==0)
                 {
                     // Wartezeiten auf Ressourcen berechnen
-                    if ($cp->prodMetal>0) $bwait['metal']=ceil(($bc['metal']-$cp->resMetal)/$cp->prodMetal*3600);else $bwait['metal']=0;
-                    if ($cp->prodCrystal>0) $bwait['crystal']=ceil(($bc['crystal']-$cp->resCrystal)/$cp->prodCrystal*3600);else $bwait['crystal']=0;
-                    if ($cp->prodPlastic>0) $bwait['plastic']=ceil(($bc['plastic']-$cp->resPlastic)/$cp->prodPlastic*3600);else $bwait['plastic']=0;
-                    if ($cp->prodFuel>0) $bwait['fuel']=ceil(($bc['fuel']-$cp->resFuel)/$cp->prodFuel*3600);else $bwait['fuel']=0;
-                    if ($cp->prodFood>0) $bwait['food']=ceil(($bc['food']-$cp->resFood)/$cp->prodFood*3600);else $bwait['food']=0;
+                    if ($planet->prodMetal>0) $bwait['metal']=ceil(($bc['metal']-$planet->resMetal)/$planet->prodMetal*3600);else $bwait['metal']=0;
+                    if ($planet->prodCrystal>0) $bwait['crystal']=ceil(($bc['crystal']-$planet->resCrystal)/$planet->prodCrystal*3600);else $bwait['crystal']=0;
+                    if ($planet->prodPlastic>0) $bwait['plastic']=ceil(($bc['plastic']-$planet->resPlastic)/$planet->prodPlastic*3600);else $bwait['plastic']=0;
+                    if ($planet->prodFuel>0) $bwait['fuel']=ceil(($bc['fuel']-$planet->resFuel)/$planet->prodFuel*3600);else $bwait['fuel']=0;
+                    if ($planet->prodFood>0) $bwait['food']=ceil(($bc['food']-$planet->resFood)/$planet->prodFood*3600);else $bwait['food']=0;
                     $bwmax=max($bwait['metal'],$bwait['crystal'],$bwait['plastic'],$bwait['fuel'],$bwait['food']);
 
                     // Baukosten-String
                     $bcstring = "<td";
-                    if ($bc['metal']>$cp->resMetal)
-                        $bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff","<b>".nf($bc['metal']-$cp->resMetal)."</b> ".RES_METAL."<br/>Bereit in <b>".tf($bwait['metal'])."</b>");
+                    if ($bc['metal']>$planet->resMetal)
+                        $bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff","<b>".nf($bc['metal']-$planet->resMetal)."</b> ".RES_METAL."<br/>Bereit in <b>".tf($bwait['metal'])."</b>");
                     $bcstring.= ">".nf($bc['metal'])."</td><td";
-                    if ($bc['crystal']>$cp->resCrystal)
-                        $bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['crystal']-$cp->resCrystal)." ".RES_CRYSTAL."<br/>Bereit in <b>".tf($bwait['crystal'])."</b>");
+                    if ($bc['crystal']>$planet->resCrystal)
+                        $bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['crystal']-$planet->resCrystal)." ".RES_CRYSTAL."<br/>Bereit in <b>".tf($bwait['crystal'])."</b>");
                     $bcstring.= ">".nf($bc['crystal'])."</td><td";
-                    if ($bc['plastic']>$cp->resPlastic)
-                        $bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['plastic']-$cp->resPlastic)." ".RES_PLASTIC."<br/>Bereit in <b>".tf($bwait['plastic'])."</b>");
+                    if ($bc['plastic']>$planet->resPlastic)
+                        $bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['plastic']-$planet->resPlastic)." ".RES_PLASTIC."<br/>Bereit in <b>".tf($bwait['plastic'])."</b>");
                     $bcstring.= ">".nf($bc['plastic'])."</td><td";
-                    if ($bc['fuel']>$cp->resFuel)
-                        $bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['fuel']-$cp->resFuel)." ".RES_FUEL."<br/>Bereit in <b>".tf($bwait['fuel'])."</b>");
+                    if ($bc['fuel']>$planet->resFuel)
+                        $bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['fuel']-$planet->resFuel)." ".RES_FUEL."<br/>Bereit in <b>".tf($bwait['fuel'])."</b>");
                     $bcstring.= ">".nf($bc['fuel'])."</td><td";
-                    if ($bc['food']>$cp->resFood)
-                        $bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['food']-$cp->resFood)." ".RES_FOOD."<br/>Bereit in <b>".tf($bwait['food'])."</b>");
+                    if ($bc['food']>$planet->resFood)
+                        $bcstring.= $notAvStyle." ".tm("Fehlender Rohstoff",nf($bc['food']-$planet->resFood)." ".RES_FOOD."<br/>Bereit in <b>".tf($bwait['food'])."</b>");
                     $bcstring.= ">".nf($bc['food'])."</td></tr>";
             // Maximale Stufe erreicht
                     //$techlist[$bid]
@@ -762,7 +766,7 @@ if (isset($cp)) {
                         }
                     }
                     // Zuwenig Rohstoffe vorhanden
-                    elseif ($cp->resMetal<$bc['metal'] || $cp->resCrystal<$bc['crystal']  || $cp->resPlastic<$bc['plastic']  || $cp->resFuel<$bc['fuel']  || $cp->resFood<$bc['food'])
+                    elseif ($planet->resMetal<$bc['metal'] || $planet->resCrystal<$bc['crystal']  || $planet->resPlastic<$bc['plastic']  || $planet->resFuel<$bc['fuel']  || $planet->resFood<$bc['food'])
                     {
                         echo "<tr><td style=\"color:red;\">Erforschen</td><td>".tf($btime)."</td>";
                         echo $bcstring;
@@ -786,7 +790,7 @@ if (isset($cp)) {
                 // Bau abbrechen
                 if ($b_status==3)
                 {
-                    if ($planet_id==$cp->id())
+                    if ($planet_id==$planet->id)
                     {
                             echo "<tr><td><input type=\"submit\" class=\"button\" id=\"buildcancel\" name=\"command_cbuild\" value=\"Abbrechen\"  onclick=\"if (this.value=='Abbrechen'){return confirm('Wirklich abbrechen?');}\" /></td>";
                             echo '<td id="buildtime" style="vertical-align:middle;">-</td>
@@ -1035,7 +1039,6 @@ if (isset($cp)) {
                                         $tmtext .= "<div style=\"color:".($v[2]?'#0f0':'#f30')."\">".$technologyNames[$v[0]]." Stufe ".$v[1]."</div>";
                                     }
 
-
                                     $color = '#999';
                                     if($use_img_filter)
                                     {
@@ -1067,7 +1070,7 @@ if (isset($cp)) {
                     $bc['food'] = $bv['tech_costs_food'] * $cu->specialist->costsResearch * pow($bv['tech_build_costs_factor'],$b_level);
 
                                     // Zuwenig Ressourcen
-                                    if($b_level<$bv['last_level'] && ($cp->resMetal < $bc['metal'] || $cp->resCrystal < $bc['crystal']  || $cp->resPlastic < $bc['plastic']  || $cp->resFuel < $bc['fuel']  || $cp->resFood < $bc['food']))
+                                    if($b_level<$bv['last_level'] && ($planet->resMetal < $bc['metal'] || $planet->resCrystal < $bc['crystal']  || $planet->resPlastic < $bc['plastic']  || $planet->resFuel < $bc['fuel']  || $planet->resFood < $bc['food']))
                                     {
                                         $tmtext = "<span style=\"color:#f00\">Zuwenig Ressourcen f&uuml;r<br/>weitere Forschungen!</span><br/>";
                                         $color = '#f00';
@@ -1171,12 +1174,11 @@ if (isset($cp)) {
                 echo "<i>Es k&ouml;nnen noch keine Forschungen erforscht werden!</i>";
             }
         }
-
     }
     else
     {
-        echo "<h1>Forschungslabor des Planeten ".$cp->name."</h1>";
-        echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
+        echo "<h1>Forschungslabor des Planeten ".$planet->name."</h1>";
+        echo $resourceBoxDrawer->getHTML($planet);
         info_msg("Das Forschungslabor wurde noch nicht gebaut!");
     }
 }

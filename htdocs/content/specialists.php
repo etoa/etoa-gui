@@ -2,9 +2,9 @@
 
 use EtoA\Specialist\SpecialistDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\UI\ResourceBoxDrawer;
+use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserRepository;
-
-$t = time();
 
 /** @var SpecialistDataRepository */
 $speciaistRepository = $app[SpecialistDataRepository::class];
@@ -15,11 +15,21 @@ $userRepository = $app[UserRepository::class];
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
 
-$uCnt = $userRepository->count();
-$totAvail = ceil($uCnt*$config->getFloat('specialistconfig'));
+/** @var PlanetRepository */
+$planetRepo = $app[PlanetRepository::class];
+
+/** @var ResourceBoxDrawer */
+$resourceBoxDrawer = $app[ResourceBoxDrawer::class];
+
+$t = time();
+
+$planet = $planetRepo->find($cp->id);
 
 echo '<h1>Spezialisten</h1>';
-echo ResourceBoxDrawer::getHTML($cp, $cu->properties->smallResBox);
+echo $resourceBoxDrawer->getHTML($planet);
+
+$uCnt = $userRepository->count();
+$totAvail = ceil($uCnt*$config->getFloat('specialistconfig'));
 
 //
 // Engage specialist
@@ -51,11 +61,11 @@ if (isset($_POST['submit_engage']) && isset($_POST['engage']))
 
             if ($cu->points >= $specalist->pointsRequirement) {
                 if (
-                    $cp->resMetal >= $specalist->costsMetal * $factor &&
-                    $cp->resCrystal >= $specalist->costsCrystal * $factor &&
-                    $cp->resPlastic >= $specalist->costsPlastic * $factor &&
-                    $cp->resFuel >= $specalist->costsFuel * $factor &&
-                    $cp->resFood >= $specalist->costsFood * $factor
+                    $planet->resMetal >= $specalist->costsMetal * $factor &&
+                    $planet->resCrystal >= $specalist->costsCrystal * $factor &&
+                    $planet->resPlastic >= $specalist->costsPlastic * $factor &&
+                    $planet->resFuel >= $specalist->costsFuel * $factor &&
+                    $planet->resFood >= $specalist->costsFood * $factor
                 ) {
                     $st = $t + (86400 * $specalist->days);
                     dbquery("
@@ -332,11 +342,11 @@ foreach ($specialists as $specialist) {
         echo '<td>';
         if ($avail > 0)
         {
-            if ($cp->resMetal >= $specialist->costsMetal*$factor &&
-            $cp->resCrystal >= $specialist->costsCrystal*$factor &&
-            $cp->resPlastic >= $specialist->costsPlastic*$factor &&
-            $cp->resFuel >= $specialist->costsFuel*$factor &&
-            $cp->resFood >= $specialist->costsFood*$factor &&
+            if ($planet->resMetal >= $specialist->costsMetal*$factor &&
+            $planet->resCrystal >= $specialist->costsCrystal*$factor &&
+            $planet->resPlastic >= $specialist->costsPlastic*$factor &&
+            $planet->resFuel >= $specialist->costsFuel*$factor &&
+            $planet->resFood >= $specialist->costsFood*$factor &&
             $cu->points >= $specialist->pointsRequirement
             )
             {
