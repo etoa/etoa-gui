@@ -206,6 +206,7 @@ class UserRepository extends AbstractRepository
         ->values([
             'user_nick' => ':nick',
             'user_name' => ':name',
+            'user_email' => ':email',
             'user_password' => ':password',
         ])
         ->setParameters([
