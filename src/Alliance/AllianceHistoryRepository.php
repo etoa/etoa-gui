@@ -8,7 +8,7 @@ use EtoA\Core\AbstractRepository;
 
 class AllianceHistoryRepository extends AbstractRepository
 {
-    public function addEntry(int $allianceId, string $text): void
+    public function addEntry(int $allianceId, string $text): int
     {
         $this->createQueryBuilder()
             ->insert('alliance_history')
@@ -23,6 +23,8 @@ class AllianceHistoryRepository extends AbstractRepository
                 'timestamp' => time(),
             ])
             ->execute();
+
+        return (int) $this->getConnection()->lastInsertId();
     }
 
     /**
