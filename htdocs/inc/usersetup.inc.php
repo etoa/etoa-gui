@@ -53,16 +53,13 @@ $mode = null;
 
 // Apply chosen itemset
 /** @var UserSession $s */
-if (isset($s->itemset_key) && $request->request->has(md5($s->itemset_key)) && $request->request->has('itemset_id'))
-{
+if (isset($s->itemset_key) && $request->request->has(md5($s->itemset_key)) && $request->request->has('itemset_id')) {
     Usersetup::addItemSetListToPlanet($s->itemset_planet, $cu->id, $request->request->getInt('itemset_id'));
-    $s->itemset_key=null;
-    $s->itemset_planet=null;
+    $s->itemset_key = null;
+    $s->itemset_planet = null;
     $cu->setSetupFinished();
     $mode = "finished";
-}
-elseif ($request->request->has('submit_chooseplanet') && $request->request->getInt('choosenplanetid') > 0 && checker_verify() && !isset($cp))
-{
+} elseif ($request->request->has('submit_chooseplanet') && $request->request->getInt('choosenplanetid') > 0 && checker_verify() && !isset($cp)) {
     $planetId = $request->request->getInt('choosenplanetid');
     $planet = $planetRepo->find($planetId);
 
@@ -79,21 +76,17 @@ elseif ($request->request->has('submit_chooseplanet') && $request->request->getI
         $defaultItemRepository = $app[DefaultItemRepository::class];
         $sets = $defaultItemRepository->getSets();
         if (count($sets) > 1) {
-            $mode="itemsets";
-        }
-        elseif(count($sets) === 1) {
+            $mode = "itemsets";
+        } elseif (count($sets) === 1) {
             Usersetup::addItemSetListToPlanet($planetId, $cu->id, $sets[0]->id);
             $cu->setSetupFinished();
             $mode = "finished";
-        }
-        else
-        {
+        } else {
             $cu->setSetupFinished();
             $mode = "finished";
         }
     }
-}
-elseif (
+} elseif (
     $request->query->has('setup_sx')
     && $request->query->getInt('setup_sx') > 0
     && $request->query->has('setup_sy')
@@ -106,7 +99,8 @@ elseif (
         $request->query->getInt('setup_sy'),
         $config->getInt('user_min_fields'),
         $request->query->get('filter_p'),
-        $request->query->get('filter_s'));
+        $request->query->get('filter_s')
+    );
     if ($pid !== null) {
         $mode = "checkplanet";
     } else {
@@ -114,30 +108,22 @@ elseif (
         Bitte wähle einen anderen Sektor!<br/><br/>";
         $mode = "choosesector";
     }
-}
-
-elseif ($cu->raceId >0 && !isset($cp))
-{
+} elseif ($cu->raceId > 0 && !isset($cp)) {
     $mode = "choosesector";
-}
-elseif ($request->request->has('submit_setup1') && $request->request->getInt('register_user_race_id') > 0 && checker_verify())
-{
+} elseif ($request->request->has('submit_setup1') && $request->request->getInt('register_user_race_id') > 0 && checker_verify()) {
     $cu->race = new Race($request->request->getInt('register_user_race_id'));
     $mode = "choosesector";
-}
-elseif ($cu->raceId==0)
-{
+} elseif ($cu->raceId == 0) {
     $mode = "race";
 }
 
-if ($mode=="itemsets" && isset($planet))
-{
+if ($mode == "itemsets" && isset($planet)) {
     /** @var DefaultItemRepository $defaultItemRepository */
     $defaultItemRepository = $app[DefaultItemRepository::class];
     $sets = $defaultItemRepository->getSets();
 
-    $k = mt_rand(10000,99999);
-    $s->temset_key=$k;
+    $k = mt_rand(10000, 99999);
+    $s->temset_key = $k;
     $s->itemset_planet = $planet->id;
     iBoxStart("Start-Objekte");
     echo "<form action=\"?\" method=\"post\">";
@@ -145,13 +131,11 @@ if ($mode=="itemsets" && isset($planet))
     echo "Euch stehen mehrere Vorlagen von Start-Objekte zur Auswahl. Bitte wählt eine Vorlage aus, die darin definierten Objekte
     werden dann eurem Hauptplanet hinzugefügt: <br/><br/><select name=\"itemset_id\">";
     foreach ($sets as $set) {
-        echo "<option value=\"".$set->id."\">".$set->name."</option>";
+        echo "<option value=\"" . $set->id . "\">" . $set->name . "</option>";
     }
-    echo "</select> <input type=\"submit\" value=\"Weiter\" name=\"".md5((string) $k)."\" /></form>";
+    echo "</select> <input type=\"submit\" value=\"Weiter\" name=\"" . md5((string) $k) . "\" /></form>";
     iBoxEnd();
-}
-elseif ($mode=="checkplanet" && isset($pid))
-{
+} elseif ($mode == "checkplanet" && isset($pid)) {
     echo "<form action=\"?\" method=\"post\">";
     checker_init();
 
@@ -164,24 +148,24 @@ elseif ($mode=="checkplanet" && isset($pid))
     $star = $starRepository->find($starEntity->id);
     $starType = $solarTypeRepository->find($star->typeId);
 
-    echo "<input type=\"hidden\" name=\"choosenplanetid\" value=\"".$planet->id."\" />";
+    echo "<input type=\"hidden\" name=\"choosenplanetid\" value=\"" . $planet->id . "\" />";
     echo "Folgender Planet wurde für Euch ausgewählt:<br/><br/>";
-    tableStart("Daten",300);
-    echo "<tr><th>Koordinaten:</th><td>".$entity->coordinatesString()."</td></tr>";
+    tableStart("Daten", 300);
+    echo "<tr><th>Koordinaten:</th><td>" . $entity->coordinatesString() . "</td></tr>";
     echo "<tr>
         <th>Sonnentyp:</th>
-        <td>".$starType->name."</td></tr>";
+        <td>" . $starType->name . "</td></tr>";
     echo "<tr>
         <th>Planettyp:</th>
-        <td>".$planetType->name."</td></tr>";
+        <td>" . $planetType->name . "</td></tr>";
     echo "<tr>
         <th>Felder:</td>
-        <td>".$planet->fields." total</td></tr>";
+        <td>" . $planet->fields . " total</td></tr>";
     echo "<tr>
         <th>Temperatur:</td>
-        <td>".$planet->tempFrom."&deg;C bis ".$planet->tempTo."&deg;C";
+        <td>" . $planet->tempFrom . "&deg;C bis " . $planet->tempTo . "&deg;C";
     echo "</td></tr>";
-    echo "<tr><th>Ansicht:</th><td style=\"background:#000;text-align:center;\"><img src=\"" .$planetService->imagePath($planet, "m") . "\" style=\"border:none;\" alt=\"planet\" /></td></tr>
+    echo "<tr><th>Ansicht:</th><td style=\"background:#000;text-align:center;\"><img src=\"" . $planetService->imagePath($planet, "m") . "\" style=\"border:none;\" alt=\"planet\" /></td></tr>
     </table>";
     echo "<table class='tb'>
     <tr>
@@ -190,7 +174,7 @@ elseif ($mode=="checkplanet" && isset($pid))
     </td>
     </tr>
     </table>";
-    tableStart("Filter",300);
+    tableStart("Filter", 300);
 
     echo "<tr>
         <th>Sonnentyp:</th>
@@ -205,8 +189,8 @@ elseif ($mode=="checkplanet" && isset($pid))
         if ($request->query->getInt('filter_s') == $solarTypeId) {
             $selected = 'selected';
         }
-        echo "<option value=\"".$solarTypeId."\"";
-        echo "$selected>".$solarTypeName."</option>";
+        echo "<option value=\"" . $solarTypeId . "\"";
+        echo "$selected>" . $solarTypeName . "</option>";
     }
     echo "</select>
 
@@ -223,17 +207,17 @@ elseif ($mode=="checkplanet" && isset($pid))
             $selected = 'selected';
         }
 
-        echo "<option value=\"".$planetTypeId."\"";
-        echo "$selected>".$planetTypeName."</option>";
+        echo "<option value=\"" . $planetTypeId . "\"";
+        echo "$selected>" . $planetTypeName . "</option>";
     }
     echo "</select></td></tr>
     </table>";
 
-    tableStart("Bonis dieser Zusammenstellung",600);
+    tableStart("Bonis dieser Zusammenstellung", 600);
     echo "<tr><th>Rohstoff</th>
-    <th>".$planetType->name."</th>";
-    echo "<th>".$cu->race->name."</th>";
-    echo "<th>".$starType->name."</th>";
+    <th>" . $planetType->name . "</th>";
+    echo "<th>" . $cu->race->name . "</th>";
+    echo "<th>" . $starType->name . "</th>";
     echo "<th>TOTAL</th></tr>";
 
     echo "<tr><td class=\"tbldata\">" . RES_ICON_METAL . "Produktion " . RES_METAL . "</td>";
@@ -302,17 +286,15 @@ elseif ($mode=="checkplanet" && isset($pid))
     value=\"Einen neuen Planeten auswählen\" />
     <input type=\"submit\" name=\"redo\" value=\"Einen neuen Sektor auswählen\" />";
     echo "</form>";
-}
-elseif ($mode=="choosesector")
-{
+} elseif ($mode == "choosesector") {
     echo "<form action=\"?\" method=\"post\">";
     checker_init();
     echo "<h2>Heimatsektor auswählen</h2>";
     echo "Wählt einen Sektor aus, in dem sich euer Heimatplanet befinden soll:<br/><br/>";
 
     echo "Anzeigen: <select onchange=\"document.getElementById('img').src='misc/map.image.php'+this.options[this.selectedIndex].value;\">
-    <option value=\"?t=".time()."\">Normale Galaxieansicht</option>
-    <option value=\"?type=populated&t=".time()."\">Bevölkerte Systeme</option>
+    <option value=\"?t=" . time() . "\">Normale Galaxieansicht</option>
+    <option value=\"?type=populated&t=" . time() . "\">Bevölkerte Systeme</option>
 
     </select><br/><br/>";
     echo "<img src=\"misc/map.image.php\" alt=\"Galaxiekarte\" id=\"img\" usemap=\"#Galaxy\" style=\"border:none;\"/>";
@@ -322,11 +304,9 @@ elseif ($mode=="choosesector")
     $sec_y_size = GALAXY_MAP_WIDTH / $sy_num;
     $xcnt = 1;
     $ycnt = 1;
-    for ($x = 0; $x < GALAXY_MAP_WIDTH; $x += $sec_x_size)
-    {
+    for ($x = 0; $x < GALAXY_MAP_WIDTH; $x += $sec_x_size) {
         $ycnt = 1;
-        for ($y = 0; $y < GALAXY_MAP_WIDTH; $y += $sec_y_size)
-        {
+        for ($y = 0; $y < GALAXY_MAP_WIDTH; $y += $sec_y_size) {
             $countStars = $entityRepository->countEntitiesOfCodeInSector($xcnt, $ycnt, EntityType::STAR);
             $countPlanets = $entityRepository->countEntitiesOfCodeInSector($xcnt, $ycnt, EntityType::PLANET);
             $countInhabitedPlanets = $planetRepo->countWithUserInSector($xcnt, $ycnt);
@@ -346,9 +326,7 @@ elseif ($mode=="choosesector")
     echo "</map>\n";
 
     echo "</form>";
-}
-elseif ($mode=="race")
-{
+} elseif ($mode == "race") {
     echo "<form action=\"?\" method=\"post\">";
     checker_init();
 
@@ -364,8 +342,8 @@ elseif ($mode=="race")
     echo "<select name=\"register_user_race_id\" id=\"register_user_race_id\">
     <option value=\"0\">Bitte wählen...</option>";
     foreach ($raceNames as $raceId => $raceName) {
-        echo "<option value=\"".$raceId."\"";
-        echo ">".$raceName."</option>";
+        echo "<option value=\"" . $raceId . "\"";
+        echo ">" . $raceName . "</option>";
     }
     echo "</select>";
 
@@ -375,14 +353,11 @@ elseif ($mode=="race")
     echo "<br/><br/><div id=\"raceInfo\"></div>";
     echo "<br/><br/><input type=\"submit\" name=\"submit_setup1\" id=\"submit_setup1\" value=\"Weiter\" />";
     echo "</form>";
-}
-elseif ($mode=="finished")
-{
+} elseif ($mode == "finished") {
     echo "<h2>Einrichtung abgeschlossen</h2>";
 
     $welcomeText = $textRepo->find('welcome_message');
-    if ($welcomeText->isEnabled())
-    {
+    if ($welcomeText->isEnabled()) {
         iBoxStart("Willkommen");
         echo text2html($welcomeText->content);
         iBoxEnd();
@@ -392,9 +367,7 @@ elseif ($mode=="finished")
         $messageRepository->createSystemMessage($cu->id, USER_MSG_CAT_ID, 'Willkommen', $welcomeText->content);
     }
     echo '<input type="button" value="Zum Heimatplaneten" onclick="document.location=\'?page=planetoverview\'" />';
-}
-else
-{
+} else {
     echo "Fehler";
 }
 echo "</div>";

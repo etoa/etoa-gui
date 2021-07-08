@@ -7,7 +7,7 @@ use Twig\Environment;
 
 if (!isset($app)) {
     $debug = true;
-    $app = require __DIR__ .'/../../src/app.php';
+    $app = require __DIR__ . '/../../src/app.php';
     $app->boot();
 }
 
@@ -52,17 +52,17 @@ if (isset($_POST['install_check'])) {
         if (DBManager::getInstance()->connect(0, $dbCfg)) {
             $successMessage = 'Datenbankverbindung erfolgreich!';
 
-            $_SESSION['INSTALL']['step']=2;
+            $_SESSION['INSTALL']['step'] = 2;
             $step = 2;
         } else {
-            $errorMessage = 'Verbindung fehlgeschlagen! Fehler: '.mysql_error();
-            $_SESSION['INSTALL']['step']=1;
+            $errorMessage = 'Verbindung fehlgeschlagen! Fehler: ' . mysql_error();
+            $_SESSION['INSTALL']['step'] = 1;
             $step = 1;
         }
     } else {
         $errorMessage = 'Achtung! Du hast nicht alle Felder ausgef&uuml;lt!';
     }
-} elseif($_POST['step2_submit'] ?? false) {
+} elseif ($_POST['step2_submit'] ?? false) {
     $step = 2;
 
     $_SESSION['INSTALL']['round_name'] = $_POST['round_name'];
@@ -97,19 +97,19 @@ if ($step === 3) {
     $dbConfigString = json_encode($dbCfg, JSON_PRETTY_PRINT);
 
     $dbConfigStingEventHandler = '[mysql]
-host = ' .$dbCfg['host']. '
-database = ' .$dbCfg['dbname']. '
-user = ' .$dbCfg['user']. '
-password = ' .$dbCfg['password']. '
+host = ' . $dbCfg['host'] . '
+database = ' . $dbCfg['dbname'] . '
+user = ' . $dbCfg['user'] . '
+password = ' . $dbCfg['password'] . '
 ';
 
     /** @var ConfigurationService */
     $config = $app[ConfigurationService::class];
 
-    $config->set("referers",$_SESSION['INSTALL']['referers']);
-    $config->set("roundname",$_SESSION['INSTALL']['round_name']);
-    $config->set("roundurl",$_SESSION['INSTALL']['round_url']);
-    $config->set("loginurl",$_SESSION['INSTALL']['loginserver_url']);
+    $config->set("referers", $_SESSION['INSTALL']['referers']);
+    $config->set("roundname", $_SESSION['INSTALL']['round_name']);
+    $config->set("roundurl", $_SESSION['INSTALL']['round_url']);
+    $config->set("loginurl", $_SESSION['INSTALL']['loginserver_url']);
 
     writeConfigFile(DBManager::getInstance()->getConfigFile(), $dbConfigString);
     writeConfigFile(EVENTHANDLER_CONFIG_FILE_NAME, $dbConfigStingEventHandler);
@@ -162,8 +162,8 @@ if ($step === 2) {
     }
 
     if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST']) {
-        $default_round_url = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'];
-        $default_referers = $default_round_url."\n".INSTALLER_DEFAULT_LOGINSERVER_URL;
+        $default_round_url = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'];
+        $default_referers = $default_round_url . "\n" . INSTALLER_DEFAULT_LOGINSERVER_URL;
     } else {
 
         /** @var ConfigurationService */
@@ -198,5 +198,3 @@ echo $twig->render('install/step1.html.twig', [
     'db_user' => $_SESSION['INSTALL']['db_user'] ?? 'etoa_roundx',
     'db_password' => $_SESSION['INSTALL']['db_password'] ?? '',
 ]);
-
-
