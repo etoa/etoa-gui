@@ -1,7 +1,7 @@
 <?PHP
 
 use EtoA\User\UserService;
-use Pimple\Psr11\Container;
+use Pimple\Container;
 
 /**
  * Remove users marked as deleted

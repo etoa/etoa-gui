@@ -131,11 +131,6 @@ parameters:
 			path: htdocs/classes/session.class.php
 
 		-
-			message: "#^Variable \\$tarr might not be defined\\.$#"
-			count: 2
-			path: htdocs/classes/users.class.php
-
-		-
 			message: "#^Left side of \\|\\| is always true\\.$#"
 			count: 1
 			path: htdocs/classes/usersession.class.php
