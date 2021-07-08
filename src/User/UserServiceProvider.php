@@ -29,5 +29,12 @@ class UserServiceProvider implements ServiceProviderInterface
                 $pimple[UserRepository::class]
             );
         };
+
+        $pimple[UserService::class] = function (Container $pimple): UserService {
+            return new UserService(
+                $pimple[ConfigurationService::class],
+                $pimple[UserRepository::class]
+            );
+        };
     }
 }
