@@ -4,66 +4,6 @@ use EtoA\Core\Configuration\ConfigurationService;
 
 class Users
 {
-    /**
-    * Gets the number of inactive users
-    */
-    static function getNumInactive()
-    {
-        // TODO
-        global $app;
-
-        /** @var ConfigurationService */
-        $config = $app[ConfigurationService::class];
-
-        $now = time();
-
-        $register_time = time() - (24 * 3600 * $config->param2Int('user_inactive_days'));        // Zeit nach der ein User gelöscht wird wenn er noch 0 Punkte hat
-        $online_time = time() - (24 * 3600 * $config->param1Int('user_inactive_days'));    // Zeit nach der ein User normalerweise gelöscht wird
-
-        $res =	dbquery("
-            SELECT
-                COUNT(user_id)
-            FROM
-                users
-            WHERE
-                user_ghost='0'
-                AND admin=0
-                AND `user_blocked_to`<'".$now."'
-                AND ((user_registered<'".$register_time."' AND user_points='0')
-                OR (user_logouttime<'".$online_time."' AND user_logouttime>0 AND user_hmode_from='0'));
-        ");
-        $arr = mysql_fetch_row($res);
-        return $arr[0];
-    }
-
-    /**
-    * Delete user marked as delete
-    */
-    static function removeDeleted($manual=false)
-    {
-        $res =	dbquery("
-            SELECT
-                user_id
-            FROM
-                users
-            WHERE
-                user_deleted>0 && user_deleted<".time()."
-        ");
-        if (mysql_num_rows($res)>0)
-        {
-            while ($arr=mysql_fetch_assoc($res))
-            {
-                $usr = new User($arr['user_id']);
-                $usr->delete();
-            }
-        }
-        if ($manual)
-            Log::add("4", Log::INFO, mysql_num_rows($res)." als gelöscht markierte User wurden manuell gelöscht!");
-        else
-            Log::add("4", Log::INFO, mysql_num_rows($res)." als gelöscht markierte User wurden gelöscht!");
-        return mysql_num_rows($res);
-    }
-
     // check for $conf['hmode_days']['p2'] BEFORE calling this function
     static function setUmodToInactive()
     {

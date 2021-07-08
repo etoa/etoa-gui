@@ -187,6 +187,25 @@ class UserRepository extends AbstractRepository
     }
 
     /**
+     * @return array<User>
+     */
+    public function findDeleted(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('users')
+            ->where('user_deleted > 0')
+            ->andWhere('user_deleted < :time')
+            ->setParameters([
+                'time' => time(),
+            ])
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn($row) => new User($row), $data);
+    }
+
+    /**
      * @return array<int,string>
      */
     public function getEmailAddressesWithDisplayName(): array

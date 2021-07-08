@@ -54,7 +54,13 @@ if (isset($_POST['submit_cleanup_selected']) || isset($_POST['submit_cleanup_all
         $userService
     );
 }
-cleanupOverView($ticketRepo, $config, $messageRepository, $reportRepository);
+cleanupOverView(
+    $ticketRepo,
+    $config,
+    $messageRepository,
+    $reportRepository,
+    $userService
+);
 
 function runCleanup(
     TicketService $ticketService,
@@ -113,7 +119,7 @@ function runCleanup(
         $num = $userService->removeInactive();
         $userService->informLongInactive();
 		echo $num . " inaktive User wurden gelöscht!<br/>";
-		$num = Users::removeDeleted(true);
+		$num = $userService->removeDeleted(true);
 		echo $num . " gelöschte User wurden endgültig gelöscht!<br/>";
 	}
 
@@ -393,7 +399,8 @@ function cleanupOverView(
     TicketRepository $ticketRepo,
     ConfigurationService $config,
     MessageRepository $messageRepository,
-    ReportRepository $reportRepository
+    ReportRepository $reportRepository,
+    UserService $userService
 ): void {
 	global $page;
 	global $sub;
@@ -518,7 +525,7 @@ function cleanupOverView(
 
 	// Inactive
 	echo '<fieldset><legend><input type="checkbox" value="1" name="cl_inactive" /> User</legend>';
-	echo nf(Users::getNumInactive()) . " inaktive Benutzer löschen (" . $config->param2Int('user_inactive_days') . " Tage seit der Registration ohne Login oder " . $config->param1Int('user_inactive_days') . " Tage nicht mehr eingeloggt)<br/>";
+	echo nf($userService->getNumInactive()) . " inaktive Benutzer löschen (" . $config->param2Int('user_inactive_days') . " Tage seit der Registration ohne Login oder " . $config->param1Int('user_inactive_days') . " Tage nicht mehr eingeloggt)<br/>";
 	$res =	dbquery("
 		SELECT
 			COUNT(user_id)

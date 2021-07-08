@@ -23,10 +23,10 @@ class UserService
 
     public function removeInactive(bool $manual = false): int
     {
-        // Zeit nach der ein User gelöscht wird wenn er noch 0 Punkte hat
+        /** @var int $registerTime Zeit nach der ein User gelöscht wird wenn er noch 0 Punkte hat */
         $registerTime = time() - (24 * 3600 * $this->config->param2Int('user_inactive_days'));
 
-        // Zeit nach der ein User normalerweise gelöscht wird
+        /** @var int $onlineTime Zeit nach der ein User normalerweise gelöscht wird */
         $onlineTime = time() - (24 * 3600 * $this->config->param1Int('user_inactive_days'));
 
         $inactiveUsers = $this->userRepository->findInactive($registerTime, $onlineTime);
@@ -45,8 +45,8 @@ class UserService
 
     public function informLongInactive(): void
     {
-        $user_inactive_time_long = time() - (24 * 3600 * $this->config->param2Int('user_inactive_days'));
-        $inactiveTime = time() - (24 * 3600 * $user_inactive_time_long);
+        $userInactiveTimeLong = time() - (24 * 3600 * $this->config->param2Int('user_inactive_days'));
+        $inactiveTime = time() - (24 * 3600 * $userInactiveTimeLong);
 
         $longInactive = $this->userRepository->findLongInactive($inactiveTime - (3600 * 24), $inactiveTime);
         foreach ($longInactive as $user) {
@@ -62,5 +62,34 @@ die Spielleitung";
             $mail = new Mail('Inaktivität', $text);
             $mail->send($user->email);
         }
+    }
+
+    public function getNumInactive()
+    {
+        /** @var int $registerTime Zeit nach der ein User gelöscht wird wenn er noch 0 Punkte hat */
+        $registerTime = time() - (24 * 3600 * $this->config->param2Int('user_inactive_days'));
+
+        /** @var int $onlineTime Zeit nach der ein User normalerweise gelöscht wird */
+        $onlineTime = time() - (24 * 3600 * $this->config->param1Int('user_inactive_days'));
+
+        $inactiveUsers = $this->userRepository->findInactive($registerTime, $onlineTime);
+
+        return count($inactiveUsers);
+    }
+
+    public function removeDeleted($manual = false)
+    {
+        $deletedUsers = $this->userRepository->findDeleted();
+        foreach ($deletedUsers as $user) {
+            $this->userRepository->remove($user->id);
+        }
+
+        Log::add(
+            Log::F_SYSTEM,
+            Log::INFO,
+            count($deletedUsers) . ' als gelöscht markierte User wurden ' . ($manual ? 'manuell' : '') . ' gelöscht!'
+        );
+
+        return count($deletedUsers);
     }
 }
