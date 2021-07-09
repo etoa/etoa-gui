@@ -7,7 +7,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 *
 * @author Nicolas Perrenoud <mrcage@etoa.ch>
 */
-class Planet extends Entity implements OwnableEntity
+class Planet extends Entity
 {
 	protected $id;
 	protected bool $isMain;
@@ -342,30 +342,6 @@ class Planet extends Entity implements OwnableEntity
 		function getCoordinates()
 		{
 			return $this->formatedCoords();
-		}
-
-		/**
-		* Changes resources on a planet
-		*/
-		function changeRes($m,$c,$p,$fu,$fo,$pw=0)
-		{
-		    $sql = "
-		    UPDATE
-		    	planets
-		    SET
-                planet_res_metal=planet_res_metal+".$m.",
-                planet_res_crystal=planet_res_crystal+".$c.",
-                planet_res_plastic=planet_res_plastic+".$p.",
-                planet_res_fuel=planet_res_fuel+".$fu.",
-                planet_res_food=planet_res_food+".$fo."
-		    WHERE
-		    	id='".$this->id."';";
-		    dbquery($sql);
-		    $this->resMetal+=$m;
-		    $this->resCrystal+=$c;
-		    $this->resPlastic+=$p;
-		    $this->resFuel+=$fu;
-		    $this->resFood+=$fo;
 		}
 
 		//

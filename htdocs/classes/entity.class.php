@@ -220,69 +220,6 @@ abstract class Entity
         return array($this->sx,$this->sy,$this->cx,$this->cy,$this->pos);
     }
 
-    public function distance(Entity $target)
-    {
-        return $this->distanceByCoords($target->sx(), $target->sy(), $target->cx(), $target->cy(), $target->pos());
-    }
-
-    /**
-    * Calculates the distance to another cell specified by its coordinates
-    *
-    * @param int $sx Sector X
-    * @param int $sy Sector Y
-    * @param int $cx Cell X
-    * @param int $cy Cell Y
-    * @param int $p Entity position
-    */
-    public function distanceByCoords($sx, $sy, $cx, $cy, $p)
-    {
-        // Länge vom Solsys in AE
-        $cellLengthAE = $this->config->get('cell_length');
-        // Max. Planeten im Solsys
-        $maxNumEntitiesPerSystem = $this->config->param2Int('num_planets');
-
-        // Number of cells per sector
-        $cellsPerSectorX = $this->config->param1Int('num_of_cells');
-        $cellsPerSectorY = $this->config->param2Int('num_of_cells');
-
-        // Absolute coordinates of current cell
-        $cAbsX = (($this->sx()-1) * $cellsPerSectorX) + $this->cx();
-        $cAbsY = (($this->sy()-1) * $cellsPerSectorY) + $this->cy();
-
-        // Absolute coordinates of target cell
-        $tAbsX = (($sx-1) * $cellsPerSectorX) + $cx;
-        $tAbsY = (($sy-1) * $cellsPerSectorY) + $cy;
-
-        // Entity position in cell (Planet position in sol system)
-        $p1 = $this->pos();
-        $p2 = $p;
-
-        // Get difference on x axis in absolute coordinates
-        $dx = abs($tAbsX - $cAbsX);
-        // Get difference on y axis in absolute coordinates
-        $dy = abs($tAbsY - $cAbsY);
-        // Use Pythagorean theorem to get the absolute length
-        $hypotenuse = sqrt(pow($dx,2) + pow($dy,2));
-        // Multiply with AE units per cell
-        $cellDistanceAE = $hypotenuse * $cellLengthAE;
-
-        // The distance between the innermost and outermost possible entity in the system
-        // The outermost entity lies at half distance to the cell edge
-        $distanceInnerOuterEntity = $cellLengthAE/4/$maxNumEntitiesPerSystem;
-
-        // Planetendistanz wenn sie im selben Solsys sind
-        if ($cellDistanceAE == 0)
-        {
-            $finalDistance = abs($p2 - $p1) * $distanceInnerOuterEntity;
-        }
-        // Planetendistanz wenn sie nicht im selben Solsys sind
-        else
-        {
-            $finalDistance = $cellDistanceAE + $cellLengthAE - ($distanceInnerOuterEntity * ($p1 + $p2));
-        }
-        return round($finalDistance);
-    }
-
     /**
      * Creates an instance of a child class
     * using the factory design pattern

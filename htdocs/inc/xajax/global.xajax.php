@@ -1,6 +1,12 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\Entity\EntityCoordinates;
+use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Entity\EntityService;
+use EtoA\Universe\Entity\EntityType;
+use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\User\UserRepository;
 
 $xajax->register(XAJAX_FUNCTION,'searchUser');
 $xajax->register(XAJAX_FUNCTION,'getFlightTargetInfo');
@@ -10,59 +16,58 @@ $xajax->register(XAJAX_FUNCTION,'formatNumbers');
 //Listet gefundene User auf
 function searchUser($val,$field_id='user_nick',$box_id='citybox',$separator=";")
 {
-	$outNick = "";
-	$temp = "";
-	$nicks = explode($separator,$val);
-	foreach ($nicks as $nick)
-	{
-		if (strlen($temp)>0) $outNick.=$temp.=";";
-		$val=trim($nick);
-		$temp=$val;
-	}
-	$sOut = "";
-	$nCount = 0;
-	$sLastHit = null;
+    $outNick = "";
+    $temp = "";
+    $nicks = explode($separator,$val);
+    foreach ($nicks as $nick)
+    {
+        if (strlen($temp)>0) $outNick.=$temp.=";";
+        $val=trim($nick);
+        $temp=$val;
+    }
+    $sOut = "";
+    $nCount = 0;
+    $sLastHit = null;
 
-	$res=dbquery("SELECT user_nick FROM users WHERE user_nick LIKE '".$val."%' LIMIT 20;");
-	if (mysql_num_rows($res)>0)
-	{
-		while($arr=mysql_fetch_row($res))
-		{
-			$nCount++;
-			$sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('".$field_id."').value=(document.getElementById('".$field_id."').value && document.getElementById('".$field_id."').value.indexOf(';')!=-1)?document.getElementById('".$field_id."').value.replace(/^(.+);[^;]+$/,'$1;')+'".htmlentities($arr[0],ENT_QUOTES,'UTF-8')."':'".htmlentities($arr[0],ENT_QUOTES,'UTF-8')."';document.getElementById('".$box_id."').style.display = 'none';\">".htmlentities($arr[0],ENT_QUOTES,'UTF-8')."</a>";
-			$sLastHit = $arr[0];
-		}
-	}
+    $res=dbquery("SELECT user_nick FROM users WHERE user_nick LIKE '".$val."%' LIMIT 20;");
+    if (mysql_num_rows($res)>0)
+    {
+        while($arr=mysql_fetch_row($res))
+        {
+            $nCount++;
+            $sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('".$field_id."').value=(document.getElementById('".$field_id."').value && document.getElementById('".$field_id."').value.indexOf(';')!=-1)?document.getElementById('".$field_id."').value.replace(/^(.+);[^;]+$/,'$1;')+'".htmlentities($arr[0],ENT_QUOTES,'UTF-8')."':'".htmlentities($arr[0],ENT_QUOTES,'UTF-8')."';document.getElementById('".$box_id."').style.display = 'none';\">".htmlentities($arr[0],ENT_QUOTES,'UTF-8')."</a>";
+            $sLastHit = $arr[0];
+        }
+    }
 
-	if($nCount > 20)
-	{
-		$sOut = "";
-	}
+    if($nCount > 20)
+    {
+        $sOut = "";
+    }
 
-	$objResponse = new xajaxResponse();
+    $objResponse = new xajaxResponse();
 
-	if(strlen($sOut) > 0)
-	{
-		$sOut = "".$sOut."";
-		$objResponse->script("document.getElementById('".$box_id."').style.display = \"block\"");
-	}
-	else
-	{
-		$objResponse->script("document.getElementById('".$box_id."').style.display = \"none\"");
-	}
+    if(strlen($sOut) > 0)
+    {
+        $sOut = "".$sOut."";
+        $objResponse->script("document.getElementById('".$box_id."').style.display = \"block\"");
+    }
+    else
+    {
+        $objResponse->script("document.getElementById('".$box_id."').style.display = \"none\"");
+    }
 
-	//Wenn nur noch ein User in frage kommt, diesen Anzeigen
-	if($nCount == 1)
-	{
-		$objResponse->script("document.getElementById('".$box_id."').style.display = \"none\"");
-		$objResponse->script("document.getElementById('".$field_id."').value = \"".$outNick.$sLastHit."\"");
-		$objResponse->script("document.getElementById('".$field_id."').focus()");
-	}
-	$objResponse->assign($box_id, "innerHTML", $sOut);
+    //Wenn nur noch ein User in frage kommt, diesen Anzeigen
+    if($nCount == 1)
+    {
+        $objResponse->script("document.getElementById('".$box_id."').style.display = \"none\"");
+        $objResponse->script("document.getElementById('".$field_id."').value = \"".$outNick.$sLastHit."\"");
+        $objResponse->script("document.getElementById('".$field_id."').focus()");
+    }
+    $objResponse->assign($box_id, "innerHTML", $sOut);
 
-	return $objResponse;
+    return $objResponse;
 }
-
 
 function getFlightTargetInfo($f,$sx1,$sy1,$cx1,$cy1,$p1)
 {
@@ -72,189 +77,206 @@ function getFlightTargetInfo($f,$sx1,$sy1,$cx1,$cy1,$p1)
     /** @var ConfigurationService */
     $config = $app[ConfigurationService::class];
 
-	global $s;
-	$objResponse = new xajaxResponse();
-	ob_start();
-	$launch = true;
+    /** @var EntityRepository */
+    $entityRepository = $app[EntityRepository::class];
 
-	$sx=intval($f['sx']);
-	$sy=intval($f['sy']);
-	$cx=intval($f['cx']);
-	$cy=intval($f['cy']);
-	$p=intval($f['p']);
+    /** @var PlanetRepository */
+    $planetRepository = $app[PlanetRepository::class];
 
-	if ($sx<1)
-	{
-		$sx=1;
-		$objResponse->assign("sx","value",1);
-	}
-	if ($sy<1)
-	{
-		$sy=1;
-		$objResponse->assign("sy","value",1);
-	}
-	if ($cx<1)
-	{
-		$cx=1;
-		$objResponse->assign("cx","value",1);
-	}
-	if ($cy<1)
-	{
-		$cy=1;
-		$objResponse->assign("cy","value",1);
-	}
-	if ($sx > $config->param1Int('num_of_sectors'))
-	{
-		$sx = $config->param1Int('num_of_sectors');
-		$objResponse->assign("sx","value",$sx);
-	}
-	if ($sy > $config->param2Int('num_of_sectors'))
-	{
-		$sy = $config->param2Int('num_of_sectors');
-		$objResponse->assign("sy","value",$sy);
-	}
-	if ($cx > $config->param1Int('num_of_cells'))
-	{
-		$cx = $config->param1Int('num_of_cells');
-		$objResponse->assign("cx","value",$cx);
-	}
-	if ($cy > $config->param2Int('num_of_cells'))
-	{
-		$cy = $config->param2Int('num_of_cells');
-		$objResponse->assign("cy","value",$cy);
-	}
-	if ($p<1)
-	{
-		$p=1;
-		$objResponse->assign("p","value",$p);
-	}
-	if ($p > $config->param2Int('num_planets'))
-	{
-		$p = $config->param2Int('num_planets');
-		$objResponse->assign("p","value",$p);
-	}
+    /** @var UserRepository */
+    $userRepository = $app[UserRepository::class];
 
-	// Total selected missiles
-	$total=0;
-	$speed = 0;
-	$range = 0;
+    /** @var EntityService */
+    $entityService = $app[EntityService::class];
 
-	// Calc speed
-	if (isset($f['count']))
-	{
-		foreach ($f['speed'] as $k => $v)
-		{
-			if (!isset($speed) && $f['count'][$k]>0)
-			{
-				$speed = $v;
-				$total+=$f['count'][$k];
-			}
-			elseif ($f['count'][$k]>0)
-			{
-				$speed = min($v,$speed);
-				$total+=$f['count'][$k];
-			}
-		}
+    $sourceCoordinates = new EntityCoordinates($sx1, $sy1, $cx1, $cy1, $p1);
 
-		// Calc range
-		foreach ($f['range'] as $k => $v)
-		{
-			if (!isset($range) && $f['count'][$k]>0)
-			{
-				$range = $v;
-			}
-			elseif ($f['count'][$k]>0)
-			{
-				$range = min($v,$range);
-			}
-		}
-	}
+    global $s;
+    $objResponse = new xajaxResponse();
+    ob_start();
+    $launch = true;
 
-	if ($total > 0) {
-		if ($p > 0) {
-			$target = Entity::createFactoryByCoords($sx, $sy, $cx, $cy, $p);
-			if (!$target instanceof Planet) {
-				$objResponse->assign("targetinfo","innerHTML","Hier existiert kein Planet!");
-				$objResponse->assign("targetinfo","style.color",'#f00');
-				$launch=false;
-				$objResponse->assign("targetcell","value",0);
-				$objResponse->assign("targetplanet","value",0);
-			} else {
-				if ($target->name()) {
-					$out = "<b>Planet:</b> ".$target->name();
-				} else {
-					$out = "<i>Unbenannter Planet</i>";
-				}
+    $sx=intval($f['sx']);
+    $sy=intval($f['sy']);
+    $cx=intval($f['cx']);
+    $cy=intval($f['cy']);
+    $p=intval($f['p']);
 
-				if ($target->owner()) {
-					$out.=" <b>Besitzer:</b> " . $target->owner()->nick;
-					if ($s->getInstance()->user_id == $target->owner()->id) {
-						$out.=' (Eigener Planet)';
-						$objResponse->assign("targetinfo","style.color",'#f00');
-						$launch=false;
-					} else {
-						$objResponse->assign("targetinfo","style.color",'#0f0');
-					}
-				} else {
-					$objResponse->assign("targetinfo","style.color",'#f00');
-					$launch=false;
-				}
+    if ($sx<1)
+    {
+        $sx=1;
+        $objResponse->assign("sx","value",1);
+    }
+    if ($sy<1)
+    {
+        $sy=1;
+        $objResponse->assign("sy","value",1);
+    }
+    if ($cx<1)
+    {
+        $cx=1;
+        $objResponse->assign("cx","value",1);
+    }
+    if ($cy<1)
+    {
+        $cy=1;
+        $objResponse->assign("cy","value",1);
+    }
+    if ($sx > $config->param1Int('num_of_sectors'))
+    {
+        $sx = $config->param1Int('num_of_sectors');
+        $objResponse->assign("sx","value",$sx);
+    }
+    if ($sy > $config->param2Int('num_of_sectors'))
+    {
+        $sy = $config->param2Int('num_of_sectors');
+        $objResponse->assign("sy","value",$sy);
+    }
+    if ($cx > $config->param1Int('num_of_cells'))
+    {
+        $cx = $config->param1Int('num_of_cells');
+        $objResponse->assign("cx","value",$cx);
+    }
+    if ($cy > $config->param2Int('num_of_cells'))
+    {
+        $cy = $config->param2Int('num_of_cells');
+        $objResponse->assign("cy","value",$cy);
+    }
+    if ($p<1)
+    {
+        $p=1;
+        $objResponse->assign("p","value",$p);
+    }
+    if ($p > $config->param2Int('num_planets'))
+    {
+        $p = $config->param2Int('num_planets');
+        $objResponse->assign("p","value",$p);
+    }
 
-				$objResponse->assign("targetinfo","innerHTML",$out);
-				$objResponse->assign("targetcell","value",$target->cellId());
-				$objResponse->assign("targetplanet","value",$target->id());
-			}
+    // Total selected missiles
+    $total=0;
+    $speed = 0;
+    $range = 0;
 
-			if ($target) {
-				$distanceValue = $target->distanceByCoords($sx1, $sy1, $cx1, $cy1, $p1);
-				$timeforflight = $distanceValue / $speed * 3600;
-				$distance = sprintf('%s AE', nf($distanceValue));
-			} else {
-				$distanceValue = -1;
-				$distance = '-';
-				$timeforflight = null;
-			}
+    // Calc speed
+    if (isset($f['count']))
+    {
+        foreach ($f['speed'] as $k => $v)
+        {
+            if (!isset($speed) && $f['count'][$k]>0)
+            {
+                $speed = $v;
+                $total+=$f['count'][$k];
+            }
+            elseif ($f['count'][$k]>0)
+            {
+                $speed = min($v,$speed);
+                $total+=$f['count'][$k];
+            }
+        }
 
-			$objResponse->assign("time","innerHTML",tf($timeforflight));
-			$objResponse->assign("timeforflight","value",$timeforflight);
-			$objResponse->assign("distance","innerHTML",$distance);
+        // Calc range
+        foreach ($f['range'] as $k => $v)
+        {
+            if (!isset($range) && $f['count'][$k]>0)
+            {
+                $range = $v;
+            }
+            elseif ($f['count'][$k]>0)
+            {
+                $range = min($v,$range);
+            }
+        }
+    }
 
-			if ($distanceValue === -1) {
-				$objResponse->assign("distance","style.color","#f00");
-				$launch=false;
-			} elseif ($distanceValue > $range) {
-				$objResponse->assign("distance","style.color","#f00");
-				$objResponse->append("distance","innerHTML"," (zu weit entfernt, ".nf($range)." max)");
-				$launch=false;
-			} else {
-				$objResponse->assign("distance","style.color","#0f0");
-			}
-			$objResponse->assign("speed","innerHTML",round($speed,2)." AE/h");
-		} else {
-			$launch=false;
-		}
-	} else {
-		$objResponse->assign("targetinfo","innerHTML","Keine Raketen gewählt!");
-		$launch=false;
-	}
+    if ($total > 0) {
+        if ($p > 0) {
+            $targetCoordinates = new EntityCoordinates($sx,$sy,$cx,$cy,$p);
+            $targetEntity = $entityRepository->findByCoordinates($targetCoordinates);
+            if ($targetEntity === null || $targetEntity->code !== EntityType::PLANET) {
+                $objResponse->assign("targetinfo","innerHTML","Hier existiert kein Planet!");
+                $objResponse->assign("targetinfo","style.color",'#f00');
+                $launch=false;
+                $objResponse->assign("targetcell","value",0);
+                $objResponse->assign("targetplanet","value",0);
+            } else {
+                $planet = $planetRepository->find($targetEntity->id);
 
-	if ($launch) {
-		$objResponse->assign("launchbutton","style.color",'#0f0');
-		$objResponse->assign("launchbutton","disabled",false);
-	} else {
-		$objResponse->assign("launchbutton","style.color",'#f00');
-		$objResponse->assign("launchbutton","disabled",true);
-	}
+                if (filled($planet->name)) {
+                    $out = "<b>Planet:</b> ".$planet->name;
+                } else {
+                    $out = "<i>Unbenannter Planet</i>";
+                }
 
-	$objResponse->append("targetinfo","innerHTML",ob_get_contents());
-	ob_end_clean();
-	return $objResponse;
+                if ($planet->userId > 0) {
+                    $out.=" <b>Besitzer:</b> " . $userRepository->getNick($planet->userId);
+                    if ($s->getInstance($config)->user_id == $planet->userId) {
+                        $out.=' (Eigener Planet)';
+                        $objResponse->assign("targetinfo","style.color",'#f00');
+                        $launch=false;
+                    } else {
+                        $objResponse->assign("targetinfo","style.color",'#0f0');
+                    }
+                } else {
+                    $objResponse->assign("targetinfo","style.color",'#f00');
+                    $launch=false;
+                }
+
+                $objResponse->assign("targetinfo","innerHTML",$out);
+                $objResponse->assign("targetcell","value",$targetEntity->cellId);
+                $objResponse->assign("targetplanet","value",$targetEntity->id);
+            }
+
+            if ($targetEntity !== null) {
+                $distanceValue = $entityService->distanceByCoords($sourceCoordinates, $targetCoordinates);
+                $timeforflight = $distanceValue / $speed * 3600;
+                $distance = sprintf('%s AE', nf($distanceValue));
+            } else {
+                $distanceValue = -1;
+                $distance = '-';
+                $timeforflight = null;
+            }
+
+            $objResponse->assign("time","innerHTML",tf($timeforflight));
+            $objResponse->assign("timeforflight","value",$timeforflight);
+            $objResponse->assign("distance","innerHTML",$distance);
+
+            if ($distanceValue === -1) {
+                $objResponse->assign("distance","style.color","#f00");
+                $launch=false;
+            } elseif ($distanceValue > $range) {
+                $objResponse->assign("distance","style.color","#f00");
+                $objResponse->append("distance","innerHTML"," (zu weit entfernt, ".nf($range)." max)");
+                $launch=false;
+            } else {
+                $objResponse->assign("distance","style.color","#0f0");
+            }
+            $objResponse->assign("speed","innerHTML",round($speed,2)." AE/h");
+        } else {
+            $launch=false;
+        }
+    } else {
+        $objResponse->assign("targetinfo","innerHTML","Keine Raketen gewählt!");
+        $launch=false;
+    }
+
+    if ($launch) {
+        $objResponse->assign("launchbutton","style.color",'#0f0');
+        $objResponse->assign("launchbutton","disabled",false);
+    } else {
+        $objResponse->assign("launchbutton","style.color",'#f00');
+        $objResponse->assign("launchbutton","disabled",true);
+    }
+
+    $objResponse->append("targetinfo","innerHTML",ob_get_contents());
+    ob_end_clean();
+    return $objResponse;
 }
 
 
-function getCryptoDistance($f,$sx1,$sy1,$cx1,$cy1,$p1)
+function getCryptoDistance($f, $sx1, $sy1, $cx1, $cy1, $p1)
 {
-	global $s;
+    global $s;
 
     // TODO
     global $app;
@@ -262,154 +284,169 @@ function getCryptoDistance($f,$sx1,$sy1,$cx1,$cy1,$p1)
     /** @var ConfigurationService */
     $config = $app[ConfigurationService::class];
 
-	$objResponse = new xajaxResponse();
-	ob_start();
+    /** @var EntityRepository */
+    $entityRepository = $app[EntityRepository::class];
 
-	$sx=intval($f['sx']);
-	$sy=intval($f['sy']);
-	$cx=intval($f['cx']);
-	$cy=intval($f['cy']);
-	$p=intval($f['p']);
+    /** @var PlanetRepository */
+    $planetRepository = $app[PlanetRepository::class];
 
-	$range= $f['range'];
+    /** @var UserRepository */
+    $userRepository = $app[UserRepository::class];
 
-	if ($sx<1)
-	{
-		$sx=1;
-		$objResponse->assign("sx","value",1);
-	}
-	if ($sy<1)
-	{
-		$sy=1;
-		$objResponse->assign("sy","value",1);
-	}
-	if ($cx<1)
-	{
-		$cx=1;
-		$objResponse->assign("cx","value",1);
-	}
-	if ($cy<1)
-	{
-		$cy=1;
-		$objResponse->assign("cy","value",1);
-	}
-	if ($sx>$config->param1Int('num_of_sectors'))
-	{
-		$sx=$config->param1Int('num_of_sectors');
-		$objResponse->assign("sx","value",$sx);
-	}
-	if ($sy>$config->param2Int('num_of_sectors'))
-	{
-		$sy=$config->param2Int('num_of_sectors');
-		$objResponse->assign("sy","value",$sy);
-	}
-	if ($cx>$config->param1Int('num_of_cells'))
-	{
-		$cx=$config->param1Int('num_of_cells');
-		$objResponse->assign("cx","value",$cx);
-	}
-	if ($cy>$config->param2Int('num_of_cells'))
-	{
-		$cy=$config->param2Int('num_of_cells');
-		$objResponse->assign("cy","value",$cy);
-	}
-	if ($p<1)
-	{
-		$p=1;
-		$objResponse->assign("p","value",$p);
-	}
-	if ($p>$config->param2Int('num_planets'))
-	{
-		$p=$config->param2Int('num_planets');
-		$objResponse->assign("p","value",$p);
-	}
+    /** @var EntityService */
+    $entityService = $app[EntityService::class];
 
-	$target = Entity::createFactoryByCoords($sx,$sy,$cx,$cy,$p);
-	if (!$target instanceof Planet) {
-		$objResponse->assign("targetinfo","innerHTML","Hier existiert kein Planet!");
-		$objResponse->assign("targetinfo","style.color",'#f00');
-		$objResponse->assign("targetcell","value",0);
-		$objResponse->assign("targetplanet","value",0);
-		$objResponse->assign("distance", "innerHTML", "-");
-		$objResponse->assign("distance","style.color","#f00");
+    $sourceCoordinates = new EntityCoordinates($sx1, $sy1, $cx1, $cy1, $p1);
 
-		return $objResponse;
-	}
+    $objResponse = new xajaxResponse();
+    ob_start();
 
-	if ($target->name) {
-		$out = "<b>Planet:</b> " . $target->name;
-	} else {
-		$out = "<i>Unbenannter Planet</i>";
-	}
+    $sx=intval($f['sx']);
+    $sy=intval($f['sy']);
+    $cx=intval($f['cx']);
+    $cy=intval($f['cy']);
+    $p=intval($f['p']);
 
-	if ($target->owner()->isValid) {
-		$owner = $target->owner();
-		$out .= " <b>Besitzer:</b> " . $owner->nick;
-		if ($s->getInstance()->user_id == $owner->id && $owner->id > 0) {
-			$out.=' (Eigener Planet)';
-			$objResponse->assign("targetinfo","style.color",'#f00');
-		} else {
-			$objResponse->assign("targetinfo","style.color",'#0f0');
-		}
-	} else {
-		$objResponse->assign("targetinfo","style.color",'#f00');
-	}
+    $range= $f['range'];
 
-	$objResponse->assign("targetinfo","innerHTML",$out);
-	$objResponse->assign("targetcell","value", $target->cellId());
-	$objResponse->assign("targetplanet","value", $target->id());
+    if ($sx<1)
+    {
+        $sx=1;
+        $objResponse->assign("sx","value",1);
+    }
+    if ($sy<1)
+    {
+        $sy=1;
+        $objResponse->assign("sy","value",1);
+    }
+    if ($cx<1)
+    {
+        $cx=1;
+        $objResponse->assign("cx","value",1);
+    }
+    if ($cy<1)
+    {
+        $cy=1;
+        $objResponse->assign("cy","value",1);
+    }
+    if ($sx>$config->param1Int('num_of_sectors'))
+    {
+        $sx=$config->param1Int('num_of_sectors');
+        $objResponse->assign("sx","value",$sx);
+    }
+    if ($sy>$config->param2Int('num_of_sectors'))
+    {
+        $sy=$config->param2Int('num_of_sectors');
+        $objResponse->assign("sy","value",$sy);
+    }
+    if ($cx>$config->param1Int('num_of_cells'))
+    {
+        $cx=$config->param1Int('num_of_cells');
+        $objResponse->assign("cx","value",$cx);
+    }
+    if ($cy>$config->param2Int('num_of_cells'))
+    {
+        $cy=$config->param2Int('num_of_cells');
+        $objResponse->assign("cy","value",$cy);
+    }
+    if ($p<1)
+    {
+        $p=1;
+        $objResponse->assign("p","value",$p);
+    }
+    if ($p>$config->param2Int('num_planets'))
+    {
+        $p=$config->param2Int('num_planets');
+        $objResponse->assign("p","value",$p);
+    }
 
-	$launch=false; // TODO this looks broken. I think this should be true
-	$distance = $target->distanceByCoords($sx1, $sy1, $cx1, $cy1, $p1);
+    $targetCoordinates = new EntityCoordinates($sx,$sy,$cx,$cy,$p);
+    $targetEntity = $entityRepository->findByCoordinates($targetCoordinates);
+    if ($targetEntity === null || $targetEntity->code !== EntityType::PLANET) {
+        $objResponse->assign("targetinfo","innerHTML","Hier existiert kein Planet!");
+        $objResponse->assign("targetinfo","style.color",'#f00');
+        $objResponse->assign("targetcell","value",0);
+        $objResponse->assign("targetplanet","value",0);
+        $objResponse->assign("distance", "innerHTML", "-");
+        $objResponse->assign("distance","style.color","#f00");
 
-	$objResponse->assign("distance","innerHTML",nf($distance)." AE");
-	if ($distance > $range) {
-		$objResponse->assign("distance","style.color","#f00");
-		$objResponse->append("distance","innerHTML"," (zu weit entfernt, ".nf($range)." max)");
-		$launch=false;
-	} else {
-		$objResponse->assign("distance","style.color","#0f0");
-	}
+        return $objResponse;
+    }
 
-	if ($launch) {
-		$objResponse->assign("scan","style.color",'#0f0');
-		$objResponse->assign("scan","disabled",false);
-	} else {
-		$objResponse->assign("scan","style.color",'#f00');
-		$objResponse->assign("scan","disabled",true);
-	}
+    $planet = $planetRepository->find($targetEntity->id);
+    if (filled($planet->name)) {
+        $out = "<b>Planet:</b> " . $planet->name;
+    } else {
+        $out = "<i>Unbenannter Planet</i>";
+    }
 
-	$objResponse->append("targetinfo","innerHTML",ob_get_contents());
-	ob_end_clean();
+    if ($planet->userId > 0) {
+        $out .= " <b>Besitzer:</b> " . $userRepository->getNick($planet->userId);
+        if ($s->getInstance($config)->user_id == $planet->userId) {
+            $out.=' (Eigener Planet)';
+            $objResponse->assign("targetinfo","style.color",'#f00');
+        } else {
+            $objResponse->assign("targetinfo","style.color",'#0f0');
+        }
+    } else {
+        $objResponse->assign("targetinfo","style.color",'#f00');
+    }
+
+    $objResponse->assign("targetinfo","innerHTML",$out);
+    $objResponse->assign("targetcell","value", $targetEntity->cellId);
+    $objResponse->assign("targetplanet","value", $targetEntity->id);
+
+    $launch=false; // TODO this looks broken. I think this should be true
+
+    $distance = $entityService->distanceByCoords($sourceCoordinates, $targetCoordinates);
+
+    $objResponse->assign("distance","innerHTML",nf($distance)." AE");
+    if ($distance > $range) {
+        $objResponse->assign("distance","style.color","#f00");
+        $objResponse->append("distance","innerHTML"," (zu weit entfernt, ".nf($range)." max)");
+        $launch=false;
+    } else {
+        $objResponse->assign("distance","style.color","#0f0");
+    }
+
+    if ($launch) {
+        $objResponse->assign("scan","style.color",'#0f0');
+        $objResponse->assign("scan","disabled",false);
+    } else {
+        $objResponse->assign("scan","style.color",'#f00');
+        $objResponse->assign("scan","disabled",true);
+    }
+
+    $objResponse->append("targetinfo","innerHTML",ob_get_contents());
+    ob_end_clean();
     return $objResponse;
 }
-
 
 // Formatiert Zahlen
 function formatNumbers($field_id,$val,$format=0,$max)
 {
-	$objResponse = new xajaxResponse();
-	ob_start();
-	$val = str_replace('`', '', $val);
-	$val = str_replace('k', '000', $val);
-	$val = str_replace('m', '000000', $val);
+    $objResponse = new xajaxResponse();
+    ob_start();
+    $val = str_replace('`', '', $val);
+    $val = str_replace('k', '000', $val);
+    $val = str_replace('m', '000000', $val);
 
-	if($max!="")
-	{
-		$val = min($val,$max);
-	}
+    if($max!="")
+    {
+        $val = min($val,$max);
+    }
 
-	$val = abs((int) $val);
-	if($format==1) {
-		$out = nf($val);
-	} else {
-		$out = $val;
-	}
+    $val = abs((int) $val);
+    if($format==1) {
+        $out = nf($val);
+    } else {
+        $out = $val;
+    }
 
 
-	$objResponse->assign($field_id,"value",$out);
+    $objResponse->assign($field_id,"value",$out);
 
-	$objResponse->assign("population_info","innerHTML",ob_get_contents());
-	ob_end_clean();
+    $objResponse->assign("population_info","innerHTML",ob_get_contents());
+    ob_end_clean();
   return $objResponse;
 }

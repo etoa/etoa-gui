@@ -55,6 +55,19 @@ class UserRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    public function setAllianceId(int $userId, int $allianceId): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_alliance_id', ':allianceId')
+            ->where('user_id = :id')
+            ->setParameters([
+                'id' => $userId,
+                'allianceId' => $allianceId,
+            ])
+            ->execute();
+    }
+
     public function setLogoutTime(int $userId): void
     {
         $this->createQueryBuilder()
@@ -184,5 +197,27 @@ class UserRepository extends AbstractRepository
         ", [
             'days' => $days,
         ]);
+    }
+
+    public function create(string $nick, string $name, string $email, string $password): int
+    {
+        $this->createQueryBuilder()
+        ->insert('users')
+        ->values([
+            'user_nick' => ':nick',
+            'user_name' => ':name',
+            'user_email' => ':email',
+            'user_email_fix' => ':email',
+            'user_password' => ':password',
+        ])
+        ->setParameters([
+            'nick' => $nick,
+            'name' => $name,
+            'email' => $email,
+            'password' => saltPasswort($password),
+        ])
+        ->execute();
+
+        return (int) $this->getConnection()->lastInsertId();
     }
 }

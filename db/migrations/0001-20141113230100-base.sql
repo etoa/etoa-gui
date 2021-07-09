@@ -1386,7 +1386,7 @@ CREATE TABLE IF NOT EXISTS `fleet` (
   `pilots` bigint(12) unsigned NOT NULL DEFAULT '0',
   `usage_fuel` int(10) unsigned NOT NULL DEFAULT '0',
   `usage_food` int(10) unsigned NOT NULL DEFAULT '0',
-  `usage_power` int(10) unsigned NOT NULL,
+  `usage_power` int(10) unsigned NOT NULL DEFAULT '0',
   `support_usage_fuel` int(10) unsigned NOT NULL DEFAULT '0',
   `support_usage_food` int(10) unsigned NOT NULL DEFAULT '0',
   `res_metal` bigint(12) unsigned NOT NULL DEFAULT '0',

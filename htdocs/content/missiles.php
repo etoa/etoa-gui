@@ -2,6 +2,7 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\UI\ResourceBoxDrawer;
+use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 
 /** @var ConfigurationService */
@@ -9,6 +10,9 @@ $config = $app[ConfigurationService::class];
 
 /** @var PlanetRepository */
 $planetRepo = $app[PlanetRepository::class];
+
+/** @var EntityRepository */
+$entityRepository = $app[EntityRepository::class];
 
 /** @var ResourceBoxDrawer */
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
@@ -270,7 +274,6 @@ $silo_level = $werft_arr['buildlist_current_level'];
                 }
             }
 
-
             // Load flights
             $flights = array();
             $fcnt=0;
@@ -321,8 +324,6 @@ $silo_level = $werft_arr['buildlist_current_level'];
                 }
             }
 
-
-
             // Kaufen
             if (isset($_POST['buy']) && checker_verify())
             {
@@ -370,10 +371,10 @@ $silo_level = $werft_arr['buildlist_current_level'];
                             $mcosts[4]=$missiles[$k]['missile_costs_food']*$v;
 
                             if ($planet->resMetal >= $mcosts[0] &&
-                            $planet->resCrystal >= $mcosts[1] &&
-                            $planet->resPlastic >= $mcosts[2] &&
-                            $planet->resFuel >= $mcosts[3] &&
-                            $planet->resFood >= $mcosts[4])
+                                $planet->resCrystal >= $mcosts[1] &&
+                                $planet->resPlastic >= $mcosts[2] &&
+                                $planet->resFuel >= $mcosts[3] &&
+                                $planet->resFood >= $mcosts[4])
                             {
                                 if (isset($missilelist[$k]))
                                 {
@@ -407,7 +408,8 @@ $silo_level = $werft_arr['buildlist_current_level'];
                                     );");
                                     $missilelist[$k]=$v;
                                 }
-                                $cp->changeRes(-$mcosts[0],-$mcosts[1],-$mcosts[2],-$mcosts[3],-$mcosts[4]);
+
+                                $planetRepo->addResources($planet->id, - $mcosts[0], -$mcosts[1], -$mcosts[2], -$mcosts[3], -$mcosts[4]);
                                 success_msg($v." ".$missiles[$k]['missile_name']." wurden gekauft!");
 
                                 $app['dispatcher']->dispatch(new \EtoA\Missile\Event\MissileBuy($k, $v), \EtoA\Missile\Event\MissileBuy::BUY_SUCCESS);
@@ -972,6 +974,7 @@ $silo_level = $werft_arr['buildlist_current_level'];
                                 }
                             }
 
+                            $entity = $entityRepository->findIncludeCell($planet->id);
                             $coords = [];
                             if (isset($_GET['target']))
                             {
@@ -994,19 +997,17 @@ $silo_level = $werft_arr['buildlist_current_level'];
                                 $coords[2] = $tarr['cx'];
                                 $coords[3] = $tarr['cy'];
                                 $coords[4] = $tarr['pos'];
-
-
                             }
                             else
                             {
-                                $coords[0] = $cp->sx;
-                                $coords[1] = $cp->sy;
-                                $coords[2] = $cp->cx;
-                                $coords[3] = $cp->cy;
-                                $coords[4] = $cp->pos;
+                                $coords[0] = $entity->sx;
+                                $coords[1] = $entity->sy;
+                                $coords[2] = $entity->cx;
+                                $coords[3] = $entity->cy;
+                                $coords[4] = $entity->pos;
                             }
 
-                            $keyup_command = 'xajax_getFlightTargetInfo(xajax.getFormValues(\'targetForm\'),'.$cp->sx.','.$cp->sy.','.$cp->cx.','.$cp->cy.','.$cp->pos.');';
+                            $keyup_command = 'xajax_getFlightTargetInfo(xajax.getFormValues(\'targetForm\'),'.$entity->sx.','.$entity->sy.','.$entity->cx.','.$entity->cy.','.$entity->pos.');';
                             echo '<form action="?page='.$page.'" method="post" id="targetForm">';
                             echo $cstr;
                             tableStart("Raketen starten");
