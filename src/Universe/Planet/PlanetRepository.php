@@ -481,6 +481,19 @@ class PlanetRepository extends AbstractRepository
             ->execute();
     }
 
+    public function setLastUpdated(int $id, int $timestamp): void
+    {
+        $this->createQueryBuilder()
+            ->update('planets')
+            ->set('planet_last_updated', 'timestamp')
+            ->where('id = :id')
+            ->setParameters([
+                'id' => $id,
+                'timestamp' => $timestamp,
+            ])
+            ->execute();
+    }
+
     public function setMain(int $id, int $userId): bool
     {
         if ($userId == 0) {

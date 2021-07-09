@@ -6,6 +6,9 @@ namespace EtoA\User;
 
 use BackendMessage;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseRepository;
+use EtoA\Ship\ShipRepository;
+use EtoA\Universe\Planet\PlanetRepository;
 use Log;
 use Mail;
 
@@ -13,13 +16,21 @@ class UserService
 {
     private ConfigurationService $config;
     private UserRepository $userRepository;
+    private PlanetRepository $planetRepository;
+    private ShipRepository $shipRepository;
+    private DefenseRepository $defenseRepository;
 
     public function __construct(
         ConfigurationService $config,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        PlanetRepository $planetRepository,
+        ShipRepository $shipRepository,
+        DefenseRepository $defenseRepository
     ) {
         $this->config = $config;
         $this->userRepository = $userRepository;
+        $this->planetRepository = $planetRepository;
+        $this->defenseRepository = $defenseRepository;
     }
 
     public function removeInactive(bool $manual = false): int
@@ -160,88 +171,31 @@ die Spielleitung";
                 );
             }
 
-            $sres = dbquery(
-                "SELECT
-                    queue_id,
-                    queue_endtime,
-                    queue_starttime
-                FROM
-                    ship_queue
-                WHERE
-                    queue_user_id = '" . $user->id . "'
-                ORDER BY
-                    queue_starttime ASC;"
-            );
-
-            while ($sarr = mysql_fetch_row($sres)) {
-                dbquery(
-                    "UPDATE
-                        ship_queue
-                    SET
-                        queue_build_type = 0,
-                        queue_starttime = queue_starttime + " . $hmodTime . ",
-                        queue_endtime = queue_endtime + " . $hmodTime . "
-                    WHERE
-                        queue_id=" . $sarr[0] . ";"
-                );
+            $shipQueueItems = $this->shipRepository->findQueueItemsForUser($user->id);
+            foreach ($shipQueueItems as $item) {
+                $item->buildType = 0;
+                $item->startTime = $item->startTime + $hmodTime;
+                $item->endTime = $item->endTime + $hmodTime;
+                $this->shipRepository->saveQueueItem($item);
             }
 
-            $dres = dbquery(
-                "SELECT
-                    queue_id,
-                    queue_endtime,
-                    queue_starttime
-                FROM
-                    def_queue
-                WHERE
-                    queue_user_id='" . $user->id . "'
-                ORDER BY
-                    queue_starttime ASC;"
-            );
-
-            while ($darr = mysql_fetch_row($dres)) {
-                dbquery(
-                    "UPDATE
-                        def_queue
-                    SET
-                        queue_build_type=0,
-                        queue_starttime=queue_starttime+" . $hmodTime . ",
-                        queue_endtime=queue_endtime+" . $hmodTime . "
-                    WHERE
-                        queue_id=" . $darr[0] . ";"
-                );
+            $defQueueItems = $this->defenseRepository->findQueueItemsForUser($user->id);
+            foreach ($defQueueItems as $item) {
+                $item->buildType = 0;
+                $item->startTime = $item->startTime + $hmodTime;
+                $item->endTime = $item->endTime + $hmodTime;
+                $this->defenseRepository->saveQueueItem($item);
             }
 
-            dbquery(
-                "UPDATE
-                    users
-                SET
-                    user_specialist_time=user_specialist_time+" . $hmodTime . "
-                WHERE
-                    user_specialist_id > 0
-                    AND user_id=" . $user->id
-            );
+            $this->userRepository->addSpecialistTime($user->id, $hmodTime);
 
-            dbquery(
-                "UPDATE planets
-                SET planet_last_updated=" . time() . "
-                WHERE planet_user_id=" . $user->id
-            );
-
-            $pres = dbquery(
-                "SELECT
-                    id
-                FROM
-                    planets
-                WHERE
-                    planet_user_id=" . $user->id
-            );
-
-            while ($darr = mysql_fetch_row($pres)) {
-                BackendMessage::updatePlanet($darr['id']);
+            $userPlanets = $this->planetRepository->getUserPlanets($user->id);
+            foreach ($userPlanets as $planet) {
+                $this->planetRepository->setLastUpdated($planet->id, time());
+                BackendMessage::updatePlanet($planet->id);
             }
         }
 
-        return mysql_affected_rows();
+        return count($users);
     }
 }

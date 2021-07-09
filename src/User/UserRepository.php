@@ -68,6 +68,20 @@ class UserRepository extends AbstractRepository
             ->execute();
     }
 
+    public function addSpecialistTime(int $userId, int $time): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_specialist_time', 'user_specialist_time + :time')
+            ->where('user_id = :id')
+            ->andWhere('user_specialist_id > 0')
+            ->setParameters([
+                'id' => $userId,
+                'time' => $time,
+            ])
+            ->execute();
+    }
+
     public function disableHolidayMode(int $userId): void
     {
         $this->createQueryBuilder()
