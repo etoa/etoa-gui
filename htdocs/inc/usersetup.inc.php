@@ -31,7 +31,7 @@ $solarTypeRepository = $app[SolarTypeRepository::class];
 /** @var PlanetTypeRepository */
 $planetTypeRepository = $app[PlanetTypeRepository::class];
 
-/** @var EntityRepository */
+/** @var EntityRepository $entityRepository */
 $entityRepository = $app[EntityRepository::class];
 
 /** @var StarRepository */
