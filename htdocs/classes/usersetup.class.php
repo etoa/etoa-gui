@@ -1,9 +1,13 @@
 <?PHP
 
+use EtoA\Building\BuildingRepository;
 use EtoA\DefaultItem\DefaultItemRepository;
+use EtoA\Defense\DefenseRepository;
+use EtoA\Ship\ShipRepository;
+use EtoA\Technology\TechnologyRepository;
 
 class Usersetup
-	{
+{
 	/**
 	* Add an item setlist to a given planet
 	*/
@@ -19,91 +23,41 @@ class Usersetup
         $defaultItemRepository = $app[DefaultItemRepository::class];
         $defaultItems = $defaultItemRepository->getItemsGroupedByCategory($setid);
 
-		// Add buildings
+        // Add buildings
+        /** @var BuildingRepository $buildingRepository */
+        $buildingRepository = $app[BuildingRepository::class];
 		if (isset($defaultItems['b'])) {
 		    foreach ($defaultItems['b'] as $defaultItem) {
-				dbquery("INSERT INTO
-					buildlist
-					(
-						buildlist_building_id,
-						buildlist_user_id,
-						buildlist_entity_id,
-						buildlist_current_level
-					)
-					VALUES
-					(
-						".$defaultItem->objectId.",
-						".$userid.",
-						".$planetid.",
-						".$defaultItem->count."
-					);");
+                $buildingRepository->addBuilding($defaultItem->objectId, $defaultItem->count, $userid, $planetid);
 			}
 		}
 
 		// Add technologies
+        /** @var TechnologyRepository $technologyRepository */
+        $technologyRepository = $app[TechnologyRepository::class];
         if (isset($defaultItems['t'])) {
 		    foreach ($defaultItems['t'] as $defaultItem) {
-				dbquery("INSERT INTO
-					techlist
-					(
-						techlist_tech_id,
-						techlist_user_id,
-						techlist_entity_id,
-						techlist_current_level
-					)
-					VALUES
-					(
-						".$defaultItem->objectId.",
-						".$userid.",
-						".$planetid.",
-						".$defaultItem->count."
-					);");
+		        $technologyRepository->addTechnology($defaultItem->objectId, $defaultItem->count, $userid, $planetid);
 			}
 		}
 
 		// Add ships
+        /** @var ShipRepository $shipRepository */
+        $shipRepository = $app[ShipRepository::class];
         if (isset($defaultItems['s'])) {
             foreach ($defaultItems['s'] as $defaultItem) {
-				dbquery("INSERT INTO
-					shiplist
-					(
-						shiplist_ship_id,
-						shiplist_user_id,
-						shiplist_entity_id,
-						shiplist_count
-					)
-					VALUES
-					(
-						".$defaultItem->objectId.",
-						".$userid.",
-						".$planetid.",
-						".$defaultItem->count."
-					);");
+                $shipRepository->addShip($defaultItem->objectId, $defaultItem->count, $userid, $planetid);
 			}
 		}
 
 		// Add defense
+        /** @var DefenseRepository $defenseRepository */
+        $defenseRepository = $app[DefenseRepository::class];
         if (isset($defaultItems['d'])) {
             foreach ($defaultItems['d'] as $defaultItem) {
-				dbquery("INSERT INTO
-					deflist
-					(
-						deflist_def_id,
-						deflist_user_id,
-						deflist_entity_id,
-						deflist_count
-					)
-					VALUES
-					(
-						".$defaultItem->id.",
-						".$userid.",
-						".$planetid.",
-						".$defaultItem->count."
-					);");
+                $defenseRepository->addDefense($defaultItem->objectId, $defaultItem->count, $userid, $planetid);
 			}
 		}
 	}
-
-
-	}
+}
 
