@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Technology\TechnologyRepository;
+
 class BuildList implements IteratorAggregate
 	{
 		private $entityId;
@@ -16,9 +18,6 @@ class BuildList implements IteratorAggregate
 		private $tmpItems = array();
 
 		private $totalPeopleWorking = null;
-
-		/** @var TechList */
-		public $tl = null;
 
 		private $errorMsg;
 
@@ -96,8 +95,12 @@ class BuildList implements IteratorAggregate
 
 		private function load($load=1)
 		{
-			$this->tl = new TechList($this->ownerId);
-			self::$GENTECH = $this->tl->getLevel(GEN_TECH_ID);
+		    global $app;
+
+            /** @var TechnologyRepository $technologyRepository */
+            $technologyRepository = $app[TechnologyRepository::class];
+
+			self::$GENTECH = $technologyRepository->getTechnologyLevel((int) $this->ownerId, GEN_TECH_ID);
 			$this->items = array();
 			$this->count = 0;
 
@@ -564,9 +567,14 @@ class BuildList implements IteratorAggregate
 					}
 				}
 				$req = $this->items[$bid]->building->getTechRequirements();
+                global $app;
+
+                /** @var TechnologyRepository $technologyRepository */
+                $technologyRepository = $app[TechnologyRepository::class];
+                $techlist = $technologyRepository->getTechnologyLevels($this->ownerId);
 				foreach ($req as $rk=>$rv)
 				{
-					if ($rv > $this->tl->getLevel($rk))
+					if ($rv > ($techlist[$rk] ?? 0))
 					{
 						return false;
 					}

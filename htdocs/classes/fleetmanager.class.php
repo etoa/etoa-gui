@@ -1,6 +1,8 @@
 <?PHP
 
-	class FleetManager
+use EtoA\Technology\TechnologyRepository;
+
+class FleetManager
 	{
 		private $userId;
 		private $allianceId;
@@ -68,13 +70,16 @@
 
 		function loadForeign()
 		{
+		    global $app;
+
 			$this->count = 0;
 			$this->aggressivCount = 0;
 			$this->fleet = array();
 
 			//User Spytech
-			$tl = new TechList($this->userId);
-			$this->userSpyTechLevel = $tl->getLevel(SPY_TECH_ID);
+            /** @var TechnologyRepository $technologyRepository */
+            $technologyRepository = $app[TechnologyRepository::class];
+			$this->userSpyTechLevel = $technologyRepository->getTechnologyLevel((int) $this->userId, SPY_TECH_ID);
 
 			$specialist = new Specialist(0,0,$this->userId);
 			$this->userSpyTechLevel += $specialist->spyLevel;
@@ -112,8 +117,7 @@
 
 						if ($cFleet->getAction()->visible()) {
 							if ($cFleet->getAction()->attitude()==3) {
-								$otl = new TechList($cFleet->ownerId());
-								$opTarnTech = $otl->getLevel(TARN_TECH_ID);
+								$opTarnTech = $technologyRepository->getTechnologyLevel((int) $cFleet->ownerId(), TARN_TECH_ID);
 								$specialist = new Specialist(0,0,$cFleet->ownerId());
 								$opTarnTech += $specialist->tarnLevel;
 

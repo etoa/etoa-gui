@@ -2,6 +2,7 @@
 
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Technology\TechnologyDataRepository;
@@ -46,6 +47,10 @@ if (isset($cp))
     echo "<h1>Bauhof des Planeten ".$planet->name."</h1>";
 
     echo $resourceBoxDrawer->getHTML($planet);
+
+    /** @var TechnologyRepository $technologyRepository */
+    $technologyRepository = $app[TechnologyRepository::class];
+    $techlist = $technologyRepository->getTechnologyLevels($cu->getId());
 
     $bl = new BuildList($planet->id, $cu->id, 2);
     $bid=0;
@@ -256,7 +261,7 @@ if (isset($cp))
     // create infobox incl. editable stuff for working people adjustements
     //
     $peopleWorking = $bl->getPeopleWorking(BUILD_BUILDING_ID);
-    $genTechLevel = $bl->tl->getLevel(GEN_TECH_ID);
+    $genTechLevel = $techlist[GEN_TECH_ID] ?? 0;
         tableStart('Bauhof-Infos');
     echo '<colgroup><col style="width:400px;"/><col/></colgroup>';
     // Specialist
@@ -605,7 +610,7 @@ if (isset($cp))
                         $technologyNames = $technologyRepository->getTechnologyNames(true);
                         foreach ($it->current()->building->getTechRequirements() as $id=>$level)
                         {
-                            $tmtext .= "<div style=\"color:".($level<=$bl->tl->getLevel($id)?'#0f0':'#f30')."\">".$technologyNames[$id]." Stufe ".$level."</div>";
+                            $tmtext .= "<div style=\"color:".($level <= ($techlist[$id] ?? 0) ?'#0f0':'#f30')."\">".$technologyNames[$id]." Stufe ".$level."</div>";
                         }
 
                         $color = '#999';

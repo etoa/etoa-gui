@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 
@@ -352,8 +353,11 @@ if ($cp) {
 
     // Energy technology bonus
     $energyTechPowerBonusFactor = 1;
-    $tl = new TechList($cu->id);
-    $energyTechLevel = $tl->getLevel(ENERGY_TECH_ID);
+
+    /** @var TechnologyRepository $technologyRepository */
+    $technologyRepository = $app[TechnologyRepository::class];
+    $energyTechLevel = $technologyRepository->getTechnologyLevel($cu->getId(), ENERGY_TECH_ID);
+
     $energyTechPowerBonusRequiredLevel = $config->getInt('energy_tech_power_bonus_required_level');
     if ($energyTechLevel > $energyTechPowerBonusRequiredLevel) {
         $percentPerLevel = $config->getInt('energy_tech_power_bonus_percent_per_level');

@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 
@@ -40,7 +41,10 @@ define("SHIPQUEUE_CANCEL_END", $config->getFloat('shipqueue_cancel_end'));
 $planet = $planetRepo->find($cp->id);
 
 $bl = new BuildList($planet->id, $cu->id);
-$tl = new TechList($cu->id);
+
+/** @var TechnologyRepository $technologyRepository */
+$technologyRepository = $app[TechnologyRepository::class];
+$techlist = $technologyRepository->getTechnologyLevels($cu->getId());
 
 $shipyard = $bl->item(SHIP_BUILDING_ID);
 
@@ -109,7 +113,7 @@ if ($shipyard && $shipyard->level)
         }
 
         //Gentechlevel definieren
-        $gen_tech_level = $tl->getLevel(GEN_TECH_ID);
+        $gen_tech_level = $techlist[GEN_TECH_ID] ?? 0;
 
         // Gebaute Schiffe laden
         $shiplist = [];
@@ -936,7 +940,7 @@ if ($shipyard && $shipyard->level)
                         {
                             foreach ($req[$data['ship_id']]['t'] as $id=>$level)
                             {
-                                if ($tl->getLevel($id) < $level)
+                                if (($techlist[$id] ?? 0) < $level)
                                 {
                                     $build_ship = 0;
                                 }
