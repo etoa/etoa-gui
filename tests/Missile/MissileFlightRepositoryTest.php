@@ -15,8 +15,19 @@ class MissileFlightRepositoryTest extends AbstractDbTestCase
         $this->repository = $this->app[MissileFlightRepository::class];
     }
 
-    public function teststartFlight(): void
+    public function testStartFlight(): void
     {
-        $this->repository->startFlight(1, 2, 10, [1 => 1]);
+        $flightId = $this->repository->startFlight(1, 2, 10, [1 => 1]);
+
+        $this->assertGreaterThan(0, $flightId);
+    }
+
+    public function testDeleteFlight(): void
+    {
+        $flightId = $this->repository->startFlight(1, 2, 10, [1 => 1]);
+
+        $deleted = $this->repository->deleteFlight($flightId, 1);
+
+        $this->assertTrue($deleted);
     }
 }

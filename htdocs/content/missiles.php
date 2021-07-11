@@ -113,25 +113,10 @@ $silo_level = $werft_arr['buildlist_current_level'];
             // Self destruct flight
             if (isset($_GET['selfdestruct']) && $_GET['selfdestruct']>0)
             {
-                dbquery("
-                DELETE FROM
-                    missile_flights
-                WHERE
-                    flight_entity_from=".$planet->id."
-                    AND flight_id=".intval($_GET['selfdestruct'])."
-                ;");
-                if (mysql_affected_rows()>0)
-                {
-                    dbquery("
-                    DELETE FROM
-                        missile_flights_obj
-                    WHERE
-                        obj_flight_id=".intval($_GET['selfdestruct'])."
-                    ;");
+                if ($missileFlightRepository->deleteFlight((int) $_GET['selfdestruct'], $planet->id)) {
                     success_msg("Die Raketen haben sich selbst zerstört!");
                 }
             }
-
 
             // Load missiles
             /** @var MissileDataRepository $missileDataRepository */
