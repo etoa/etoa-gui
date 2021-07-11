@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Building\BuildingDataRepository;
+use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -130,18 +131,9 @@ if (isset($cp)) {
         //
 
         // Load built buildings
-        $buildlist = [];
-        $blres = dbquery("
-            SELECT
-                *
-            FROM
-                buildlist
-            WHERE
-                buildlist_entity_id='".$planet->id."'
-            ;");
-        while ($blarr = mysql_fetch_array($blres)) {
-            $buildlist[$blarr['buildlist_building_id']]=$blarr['buildlist_current_level'];
-        }
+        /** @var BuildingRepository $buildingRepository */
+        $buildingRepository = $app[BuildingRepository::class];
+        $buildlist = $buildingRepository->getBuildingLevels($planet->id);
 
         // Load requirements
         $b_req = [];

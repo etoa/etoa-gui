@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Missile\MissileRequirement;
 use EtoA\Missile\MissileRequirementRepository;
@@ -91,24 +92,12 @@ $silo_level = $werft_arr['buildlist_current_level'];
             }
 
             // Gebäudeliste laden
-            $sql ="
-            SELECT
-                buildlist_current_level,
-                buildlist_building_id
-            FROM
-                buildlist
-            WHERE
-                buildlist_user_id='".$cu->id."'
-                AND buildlist_entity_id='".$planet->id."';";
+            /** @var BuildingRepository $buildingRepository */
+            $buildingRepository = $app[BuildingRepository::class];
+            $buildlist = $buildingRepository->getBuildingLevels($planet->id);
 
-            $blres = dbquery($sql);
             $builing_something=false;
-            $buildlist = [];
             $techlist = [];
-            while ($blarr = mysql_fetch_array($blres))
-            {
-                $buildlist[$blarr['buildlist_building_id']]=$blarr['buildlist_current_level'];
-            }
             // Technologieliste laden
             $tres = dbquery("
             SELECT

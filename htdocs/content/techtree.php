@@ -25,6 +25,7 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/
 
+use EtoA\Building\BuildingRepository;
 use EtoA\Race\RaceDataRepository;
 
 /** @var \EtoA\Building\BuildingDataRepository $buildRepository */
@@ -157,20 +158,9 @@ use EtoA\Race\RaceDataRepository;
 		$raceNames = $raceRepository->getRaceNames();
 
 		// Lade Gebäudelistenlevel
-		$buildlist=array();
-		$bres = dbquery("
-		SELECT
-			buildlist_current_level,
-			buildlist_building_id
-		FROM
-			buildlist
-		WHERE
-			buildlist_entity_id='".$cp->id()."'
-		;");
-		while ($barr = mysql_fetch_array($bres))
-		{
-			$buildlist[$barr['buildlist_building_id']] = $barr['buildlist_current_level'];
-		}
+        /** @var BuildingRepository $buildingRepository */
+        $buildingRepository = $app[BuildingRepository::class];
+        $buildlist = $buildingRepository->getBuildingLevels((int) $cp->id);
 
 		// Lade Techlistenlevel
 		$techlist=array();

@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -144,20 +145,9 @@ if (mysql_num_rows($factory_res)>0)
         }
 
         //Gebäude laden
-        $buildlist = [];
-        $res = dbquery("
-                    SELECT
-                        buildlist_building_id,
-                        buildlist_current_level
-                    FROM
-                        buildlist
-                    WHERE
-                        buildlist_entity_id='".$planet->id."';");
-
-        while ($arr = mysql_fetch_assoc($res))
-        {
-            $buildlist[$arr['buildlist_building_id']]=$arr['buildlist_current_level'];
-        }
+        /** @var BuildingRepository $buildingRepository */
+        $buildingRepository = $app[BuildingRepository::class];
+        $buildlist = $buildingRepository->getBuildingLevels($planet->id);
 
         // Gebaute Verteidigung laden
         $deflist = [];

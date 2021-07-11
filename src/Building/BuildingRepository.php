@@ -8,6 +8,24 @@ use EtoA\Core\AbstractRepository;
 
 class BuildingRepository extends AbstractRepository
 {
+    /**
+     * @return array<int, int>
+     */
+    public function getBuildingLevels(int $entityId): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('buildlist_building_id, buildlist_current_level')
+            ->from('buildlist')
+            ->andWhere('buildlist_entity_id = :entityId')
+            ->setParameters([
+                'entityId' => $entityId,
+            ])
+            ->execute()
+            ->fetchAllKeyValue();
+
+        return array_map(fn ($value) => (int) $value , $data);
+    }
+
     public function getBuildingLevel(int $userId, int $buildingId, int $entityId): int
     {
         return (int) $this->createQueryBuilder()
