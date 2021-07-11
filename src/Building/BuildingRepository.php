@@ -240,4 +240,55 @@ class BuildingRepository extends AbstractRepository
             'buildingId' => $buildingId,
         ]);
     }
+
+    /**
+     * @return BuildingListItem[]
+     */
+    public function findForUser(int $userId): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('buildlist')
+            ->where('buildlist_user_id = :userId')
+            ->setParameter('userId', $userId)
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new BuildingListItem($row), $data);
+    }
+
+    public function save(BuildingListItem $item): void
+    {
+        $this->createQueryBuilder()
+            ->update('buildlist')
+            ->set('buildlist_user_id', 'userId')
+            ->set('buildlist_building_id', 'buildingId')
+            ->set('buildlist_entity_id', 'entityId')
+            ->set('buildlist_current_level', 'currentLevel')
+            ->set('buildlist_build_type', 'buildType')
+            ->set('buildlist_build_start_time', 'startTime')
+            ->set('buildlist_build_end_time', 'endTime')
+            ->set('buildlist_prod_percent', 'prodPercent')
+            ->set('buildlist_people_working', 'peopleWorking')
+            ->set('buildlist_people_working_status', 'peopleWorkingStatus')
+            ->set('buildlist_deactivated', 'deactivated')
+            ->set('buildlist_cooldown', 'cooldown')
+            ->where('buildlist_id = :id')
+            ->setParameters([
+                'id' => $item->id,
+                'userId' => $item->userId,
+                'buildingId' => $item->buildingId,
+                'entityId' => $item->entityId,
+                'currentLevel' => $item->currentLevel,
+                'buildType' => $item->buildType,
+                'startTime' => $item->startTime,
+                'endTime' => $item->endTime,
+                'prodPercent' => $item->prodPercent,
+                'peopleWorking' => $item->peopleWorking,
+                'peopleWorkingStatus' => $item->peopleWorkingStatus,
+                'deactivated' => $item->deactivated,
+                'cooldown' => $item->cooldown,
+            ])
+            ->execute();
+    }
 }

@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace EtoA\User;
 
 use BackendMessage;
+use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use Log;
 use Mail;
@@ -17,6 +19,8 @@ class UserService
     private ConfigurationService $config;
     private UserRepository $userRepository;
     private PlanetRepository $planetRepository;
+    private BuildingRepository $buildingRepository;
+    private TechnologyRepository $technologyRepository;
     private ShipRepository $shipRepository;
     private DefenseRepository $defenseRepository;
 
@@ -24,12 +28,17 @@ class UserService
         ConfigurationService $config,
         UserRepository $userRepository,
         PlanetRepository $planetRepository,
+        BuildingRepository $buildingRepository,
+        TechnologyRepository $technologyRepository,
         ShipRepository $shipRepository,
         DefenseRepository $defenseRepository
     ) {
         $this->config = $config;
         $this->userRepository = $userRepository;
         $this->planetRepository = $planetRepository;
+        $this->buildingRepository = $buildingRepository;
+        $this->technologyRepository = $technologyRepository;
+        $this->shipRepository = $shipRepository;
         $this->defenseRepository = $defenseRepository;
     }
 
@@ -117,73 +126,41 @@ die Spielleitung";
             $newLogoutTime = time() - ($this->config->param2Int('user_inactive_days') * 86400);
             $this->userRepository->setLogoutTime($user->id, $newLogoutTime);
 
-            $bres = dbquery(
-                "SELECT
-                    buildlist_id,
-                    buildlist_build_end_time,
-                    buildlist_build_start_time,
-                    buildlist_build_type
-                FROM
-                    buildlist
-                WHERE
-                    buildlist_build_start_time>0
-                    AND buildlist_build_type>0
-                    AND buildlist_user_id=" . $user->id
-            );
-
-            while ($barr = mysql_fetch_row($bres)) {
-                dbquery(
-                    "UPDATE
-                        buildlist
-                    SET
-                        buildlist_build_type= 3,
-                        buildlist_build_start_time=buildlist_build_start_time+" . $hmodTime . ",
-                        buildlist_build_end_time=buildlist_build_end_time+" . $hmodTime . "
-                    WHERE
-                        buildlist_id=" . $barr[0]
-                );
+            $buildingItems = $this->buildingRepository->findForUser($user->id);
+            foreach ($buildingItems as $item) {
+                if ($item->startTime == 0 || $item->endTime == 0) {
+                    continue;
+                }
+                $item->buildType = 3;
+                $item->startTime += $hmodTime;
+                $item->endTime += $hmodTime;
+                $this->buildingRepository->save($item);
             }
 
-            $tres = dbquery(
-                "SELECT
-                    techlist_id,
-                    techlist_build_end_time,
-                    techlist_build_start_time,
-                    techlist_build_type
-                FROM
-                    techlist
-                WHERE
-                    techlist_build_start_time>0
-                    AND techlist_build_type>0
-                    AND techlist_user_id=" . $user->id
-            );
-
-            while ($tarr = mysql_fetch_row($tres)) {
-                dbquery(
-                    "UPDATE
-                        techlist
-                    SET
-                        techlist_build_type=3,
-                        techlist_build_start_time=techlist_build_start_time+" . $hmodTime . ",
-                        techlist_build_end_time=techlist_build_end_time+" . $hmodTime . "
-                    WHERE
-                        techlist_id=" . $tarr[0]
-                );
+            $technologyItems = $this->technologyRepository->findForUser($user->id);
+            foreach ($technologyItems as $item) {
+                if ($item->startTime == 0 || $item->endTime == 0) {
+                    continue;
+                }
+                $item->buildType = 3;
+                $item->startTime += $hmodTime;
+                $item->endTime += $hmodTime;
+                $this->technologyRepository->save($item);
             }
 
             $shipQueueItems = $this->shipRepository->findQueueItemsForUser($user->id);
             foreach ($shipQueueItems as $item) {
                 $item->buildType = 0;
-                $item->startTime = $item->startTime + $hmodTime;
-                $item->endTime = $item->endTime + $hmodTime;
+                $item->startTime += $hmodTime;
+                $item->endTime += $hmodTime;
                 $this->shipRepository->saveQueueItem($item);
             }
 
             $defQueueItems = $this->defenseRepository->findQueueItemsForUser($user->id);
             foreach ($defQueueItems as $item) {
                 $item->buildType = 0;
-                $item->startTime = $item->startTime + $hmodTime;
-                $item->endTime = $item->endTime + $hmodTime;
+                $item->startTime += $hmodTime;
+                $item->endTime += $hmodTime;
                 $this->defenseRepository->saveQueueItem($item);
             }
 
