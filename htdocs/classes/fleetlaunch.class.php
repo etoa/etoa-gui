@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Technology\TechnologyRepository;
 
 /**
 * Fleet launch class, provides the full workflow for starting a fleet
@@ -135,14 +136,9 @@ class FleetLaunch
         }
 
         //Wormhole enable?
-        $this->wormholeEnable=false;
-        $res = dbquery("SELECT techlist_current_level FROM techlist WHERE techlist_tech_id=".TECH_WORMHOLE." AND techlist_user_id='".$this->ownerId."';");
-        if (mysql_num_rows($res))
-        {
-            $arr = mysql_fetch_row($res);
-            $this->wormholeEnable=$arr[0];
-        }
-
+        /** @var TechnologyRepository $technologyRepository */
+        $technologyRepository = $app[TechnologyRepository::class];
+        $this->wormholeEnable = $technologyRepository->getTechnologyLevel((int) $this->ownerId, TECH_WORMHOLE) > 0;
     }
 
     //
