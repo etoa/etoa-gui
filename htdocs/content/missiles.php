@@ -328,38 +328,8 @@ $silo_level = $werft_arr['buildlist_current_level'];
                                 $planet->resFuel >= $mcosts[3] &&
                                 $planet->resFood >= $mcosts[4])
                             {
-                                if (isset($missilelist[$k]))
-                                {
-                                    dbquery("
-                                    UPDATE
-                                        missilelist
-                                    SET
-                                        missilelist_count=missilelist_count+".$v."
-                                    WHERE
-                                        missilelist_user_id=".$cu->id."
-                                        AND missilelist_entity_id=".$planet->id."
-                                        AND missilelist_missile_id=".$k."
-                                    ");
-                                    $missilelist[$k]+=$v;
-                                }
-                                else
-                                {
-                                    dbquery("
-                                    INSERT INTO
-                                        missilelist
-                                    (
-                                        missilelist_user_id,
-                                        missilelist_entity_id,
-                                        missilelist_missile_id,
-                                        missilelist_count
-                                    ) VALUES (
-                                        ".$cu->id.",
-                                        ".$planet->id.",
-                                        ".$k.",
-                                        ".$v."
-                                    );");
-                                    $missilelist[$k]=$v;
-                                }
+                                $missileRepository->addMissile($k, $v, $cu->getId(), $planet->id);
+                                $missilelist[$k] = $v + ($missilelist[$k] ?? 0);
 
                                 $planetRepo->addResources($planet->id, - $mcosts[0], -$mcosts[1], -$mcosts[2], -$mcosts[3], -$mcosts[4]);
                                 success_msg($v." ".$missiles[$k]->name." wurden gekauft!");
