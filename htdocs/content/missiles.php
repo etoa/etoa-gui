@@ -1,6 +1,8 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Missile\MissileRequirement;
+use EtoA\Missile\MissileRequirementRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -71,25 +73,23 @@ $silo_level = $werft_arr['buildlist_current_level'];
         {
 
             // Requirements
-            $b_req = [];
-            $rres = dbquery("
-            SELECT
-                *
-            FROM
-                missile_requirements
-            ;");
-            while ($rarr = mysql_fetch_array($rres))
-            {
-                if ($rarr['req_building_id']>0)
-                {
-                    $b_req[$rarr['obj_id']]['b'][$rarr['req_building_id']]=$rarr['req_level'];
+            /** @var MissileRequirementRepository $missileRequirementRepository */
+            $missileRequirementRepository = $app[MissileRequirementRepository::class];
+            $requirements = $missileRequirementRepository->getAll();
+            /** @var MissileRequirement[][] $buildingRequirements */
+            $buildingRequirements = [];
+            /** @var MissileRequirement[][] $technologyRequirements */
+            $technologyRequirements = [];
+            foreach ($requirements as $requirement) {
+                if ($requirement->requiredBuildingId > 0) {
+                    $buildingRequirements[$requirement->missileId][] = $requirement;
                 }
 
-                if ($rarr['req_tech_id']>0)
-                {
-                    $b_req[$rarr['obj_id']]['t'][$rarr['req_tech_id']]=$rarr['req_level'];
+                if ($requirement->requiredTechnologyId > 0) {
+                    $technologyRequirements[$requirement->missileId][] = $requirement;
                 }
             }
+
             // Gebäudeliste laden
             $sql ="
             SELECT
@@ -541,22 +541,17 @@ $silo_level = $werft_arr['buildlist_current_level'];
 
                     // Check requirements for this building
                     $requirements_passed = true;
-                    if (count($b_req[$mid]['b'])>0)
-                    {
-                        foreach ($b_req[$mid]['b'] as $b => $l)
-                        {
-                            if (!isset($buildlist[$b]) || $buildlist[$b] < $l)
-                            {
+                    if (count($buildingRequirements[$mid]) > 0) {
+                        foreach ($buildingRequirements[$mid] as $requirement) {
+                            if (!isset($buildlist[$requirement->requiredBuildingId]) || $buildlist[$requirement->requiredBuildingId] < $requirement->requiredLevel) {
                                 $requirements_passed = false;
                             }
                         }
                     }
-                    if (count($b_req[$mid]['t'])>0)
-                    {
-                        foreach ($b_req[$mid]['t'] as $id => $l)
-                        {
-                            if (!isset($techlist[$id]) || $techlist[$id] < $l)
-                            {
+
+                    if (count($technologyRequirements[$mid]) > 0) {
+                        foreach ($technologyRequirements[$mid] as $requirement) {
+                            if (!isset($techlist[$requirement->requiredTechnologyId]) || $techlist[$requirement->requiredTechnologyId] < $requirement->requiredLevel) {
                                 $requirements_passed = false;
                             }
                         }
