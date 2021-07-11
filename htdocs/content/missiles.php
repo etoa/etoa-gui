@@ -203,16 +203,7 @@ $silo_level = $werft_arr['buildlist_current_level'];
                             ".$v."
                         );");
                         // Update list
-                        dbquery("
-                        UPDATE
-                            missilelist
-                        SET
-                            missilelist_count=missilelist_count-".$v."
-                        WHERE
-                            missilelist_user_id=".$cu->id."
-                            AND missilelist_entity_id=".$planet->id."
-                            AND missilelist_missile_id=".$k."
-                        ;");
+                        $missileRepository->addMissile($k, -$v, $cu->getId(), $planet->id);
                         $missilelist[$k]-=$v;
                         $lcnt+=$v;
                     }
@@ -375,16 +366,7 @@ $silo_level = $werft_arr['buildlist_current_level'];
                             $valid=true;
                             $bc = min($v,$missilelist[$k]);
 
-                            dbquery("
-                            UPDATE
-                                missilelist
-                            SET
-                                missilelist_count=missilelist_count-".$bc."
-                            WHERE
-                                missilelist_user_id=".$cu->id."
-                                AND missilelist_entity_id=".$planet->id."
-                                AND missilelist_missile_id=".$k."
-                            ");
+                            $missileRepository->addMissile($k, -$bc, $cu->getId(), $planet->id);
                             $missilelist[$k]-=$bc;
                             $cnt-=$bc;
                             success_msg($bc." ".$missiles[$k]->name." wurden verschrottet!");
