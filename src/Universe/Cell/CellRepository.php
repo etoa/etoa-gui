@@ -79,6 +79,27 @@ class CellRepository extends AbstractRepository
         return array_map(fn (array $arr) => new Cell($arr), $data);
     }
 
+    public function create(int $sx, int $sy, int $cx, int $cy): int
+    {
+        $this->createQueryBuilder()
+            ->insert('cells')
+            ->values([
+                'sx' => ':sx',
+                'sy' => ':sy',
+                'cx' => ':cx',
+                'cy' => ':cy',
+            ])
+            ->setParameters([
+                'sx' => $sx,
+                'sy' => $sy,
+                'cx' => $cx,
+                'cy' => $cy,
+            ])
+            ->execute();
+
+        return (int) $this->getConnection()->lastInsertId();
+    }
+
     /**
      * @param array<array<int>> $values
      */

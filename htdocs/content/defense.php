@@ -352,7 +352,7 @@ if (mysql_num_rows($factory_res)>0)
                     <input type="hidden" name="workDone" id="workDone" value="'.$config->getInt('people_work_done').'" />
                     <input type="hidden" name="foodRequired" id="foodRequired" value="'.$config->getInt('people_food_require').'" />
                     <input type="hidden" name="peopleFree" id="peopleFree" value="'.$peopleFree.'" />
-                    <input type="hidden" name="foodAvaiable" id="foodAvaiable" value="'.$cp->getRes1(4).'" />
+                    <input type="hidden" name="foodAvaiable" id="foodAvaiable" value="'.$planet->resFood.'" />
                     <input type="hidden" name="peopleOptimized" id="peopleOptimized" value="0" />';
 
         $box .= '   <tr>
@@ -476,14 +476,11 @@ if (mysql_num_rows($factory_res)>0)
             tableStart();
             echo "<tr><th>Ergebnisse des Bauauftrags</th></tr>";
 
-            //Log variablen setzten
-            $log_defs="";
-            $total_duration=0;
-            $total_metal=0;
-            $total_crystal=0;
-            $total_plastic=0;
-            $total_fuel=0;
-            $total_food=0;
+            $totalMetal = 0;
+            $totalCrystal = 0;
+            $totalPlastic = 0;
+            $totalFuel = 0;
+            $totalFood = 0;
 
             // Endzeit bereits laufender Aufträge laden
             $end_time=time();
@@ -495,7 +492,6 @@ if (mysql_num_rows($factory_res)>0)
                     $end_time = $data['queue_endtime'];
                 }
             }
-
 
             //
             // Bauaufträge speichern
@@ -538,49 +534,34 @@ if (mysql_num_rows($factory_res)>0)
                     //Titan
                     $bf = [];
                     $bc = [];
-                    if ($defs[$def_id]['def_costs_metal']>0)
-                    {
-                        $bf['metal']=$planet->resMetal/$defs[$def_id]['def_costs_metal'];
-                    }
-                    else
-                    {
-                        $bc['metal']=0;
+                    if ($defs[$def_id]['def_costs_metal'] > 0) {
+                        $bf['metal'] = $planet->resMetal / $defs[$def_id]['def_costs_metal'];
+                    } else {
+                        $bc['metal'] = 0;
                     }
                     //Silizium
-                    if ($defs[$def_id]['def_costs_crystal']>0)
-                    {
-                        $bf['crystal']=$planet->resCrystal/$defs[$def_id]['def_costs_crystal'];
-                    }
-                    else
-                    {
-                        $bc['crystal']=0;
+                    if ($defs[$def_id]['def_costs_crystal'] > 0) {
+                        $bf['crystal'] = $planet->resCrystal / $defs[$def_id]['def_costs_crystal'];
+                    } else {
+                        $bc['crystal'] = 0;
                     }
                     //PVC
-                    if ($defs[$def_id]['def_costs_plastic']>0)
-                    {
-                        $bf['plastic']=$planet->resPlastic/$defs[$def_id]['def_costs_plastic'];
-                    }
-                    else
-                    {
-                        $bc['plastic']=0;
+                    if ($defs[$def_id]['def_costs_plastic'] > 0) {
+                        $bf['plastic'] = $planet->resPlastic / $defs[$def_id]['def_costs_plastic'];
+                    } else {
+                        $bc['plastic'] = 0;
                     }
                     //Tritium
-                    if ($defs[$def_id]['def_costs_fuel']>0)
-                    {
-                        $bf['fuel']=$planet->resFuel/$defs[$def_id]['def_costs_fuel'];
-                    }
-                    else
-                    {
-                        $bc['fuel']=0;
+                    if ($defs[$def_id]['def_costs_fuel'] > 0) {
+                        $bf['fuel'] = $planet->resFuel / $defs[$def_id]['def_costs_fuel'];
+                    } else {
+                        $bc['fuel'] = 0;
                     }
                     //Nahrung
-                    if (intval($_POST['additional_food_costs'])>0 || $defs[$def_id]['def_costs_food']>0)
-                    {
-                            $bf['food']=$planet->resFood/(intval($_POST['additional_food_costs'])+$defs[$def_id]['def_costs_food']);
-                    }
-                    else
-                    {
-                        $bc['food']=0;
+                    if (intval($_POST['additional_food_costs']) > 0 || $defs[$def_id]['def_costs_food'] > 0) {
+                        $bf['food'] = $planet->resFood / (intval($_POST['additional_food_costs']) + $defs[$def_id]['def_costs_food']);
+                    } else {
+                        $bc['food'] = 0;
                     }
 
                     //Anzahl Drosseln
@@ -600,39 +581,32 @@ if (mysql_num_rows($factory_res)>0)
                     if ($build_cnt>0)
                     {
                         //Errechne Kosten pro auftrag schiffe
-                        $bc['metal']=$defs[$def_id]['def_costs_metal']*$build_cnt;
-                        $bc['crystal']=$defs[$def_id]['def_costs_crystal']*$build_cnt;
-                        $bc['plastic']=$defs[$def_id]['def_costs_plastic']*$build_cnt;
-                        $bc['fuel']=$defs[$def_id]['def_costs_fuel']*$build_cnt;
-                        $bc['food']=(intval($_POST['additional_food_costs'])+$defs[$def_id]['def_costs_food'])*$build_cnt;
-
-                        //Berechnete Ress provisorisch abziehen
-                        $cp->resMetal-=$bc['metal'];
-                        $cp->resCrystal-=$bc['crystal'];
-                        $cp->resPlastic-=$bc['plastic'];
-                        $cp->resFuel-=$bc['fuel'];
-                        $cp->resFood-=$bc['food'];
+                        $bc['metal'] = $defs[$def_id]['def_costs_metal'] * $build_cnt;
+                        $bc['crystal'] = $defs[$def_id]['def_costs_crystal'] * $build_cnt;
+                        $bc['plastic'] = $defs[$def_id]['def_costs_plastic'] * $build_cnt;
+                        $bc['fuel'] = $defs[$def_id]['def_costs_fuel'] * $build_cnt;
+                        $bc['food'] = (intval($_POST['additional_food_costs']) + $defs[$def_id]['def_costs_food']) * $build_cnt;
 
                         // Bauzeit pro Def berechnen
                         $btime = ($defs[$def_id]['def_costs_metal']
-                            + $defs[$def_id]['def_costs_crystal']
-                            + $defs[$def_id]['def_costs_plastic']
-                            + $defs[$def_id]['def_costs_fuel']
-                            + $defs[$def_id]['def_costs_food'])
+                                + $defs[$def_id]['def_costs_crystal']
+                                + $defs[$def_id]['def_costs_plastic']
+                                + $defs[$def_id]['def_costs_fuel']
+                                + $defs[$def_id]['def_costs_food'])
                             / $config->getInt('global_time') * $config->getFloat('def_build_time')
                             * $time_boni_factor
                             * $cu->specialist->defenseTime;
 
                         // TODO: Überprüfen
                         //Rechnet zeit wenn arbeiter eingeteilt sind
-                        $btime_min=$btime*(0.1-($gen_tech_level/100));
-                        if ($btime_min<DEFENSE_MIN_BUILD_TIME) $btime_min=DEFENSE_MIN_BUILD_TIME;
-                        $btime=$btime-$people_working*$config->getInt('people_work_done');
-                        if ($btime<$btime_min) $btime=$btime_min;
-                        $obj_time=ceil($btime);
+                        $btime_min = $btime * (0.1 - ($gen_tech_level / 100));
+                        if ($btime_min < DEFENSE_MIN_BUILD_TIME) $btime_min = DEFENSE_MIN_BUILD_TIME;
+                        $btime = $btime - $people_working * $config->getInt('people_work_done');
+                        if ($btime < $btime_min) $btime = $btime_min;
+                        $obj_time = ceil($btime);
 
                         // Gesamte Bauzeit berechnen
-                        $duration=$build_cnt*$obj_time;
+                        $duration = $build_cnt * $obj_time;
 
                         // Setzt Starzeit des Auftrages, direkt nach dem letzten Auftrag
                         $start_time = $end_time;
@@ -685,51 +659,44 @@ if (mysql_num_rows($factory_res)>0)
                         }
                         $queue_entity[$def_id]['queue_cnt'] += $build_cnt;
 
-
-                        //Log schreiben
-                        $log_text = "[b]Verteidigungsauftrag Bauen[/b]
-
-                        [b]Start:[/b] ".date("d.m.Y H:i:s",$start_time)."
-                        [b]Ende:[/b] ".date("d.m.Y H:i:s",(int) $end_time)."
-                        [b]Dauer:[/b] ".tf($duration)."
-                        [b]Dauer pro Einheit:[/b] ".tf($obj_time)."
-                        [b]Waffenfabrik Level:[/b] ".CURRENT_FACTORY_LEVEL."
-                        [b]Eingesetzte Bewohner:[/b] ".nf($people_working)."
-                        [b]Gen-Tech Level:[/b] ".$gen_tech_level."
-                        [b]Eingesetzter Spezialist:[/b] ".$cu->specialist->name."
-
-                        [b]Kosten[/b]
-                        [b]".RES_METAL.":[/b] ".nf($bc['metal'])."
-                        [b]".RES_CRYSTAL.":[/b] ".nf($bc['crystal'])."
-                        [b]".RES_PLASTIC.":[/b] ".nf($bc['plastic'])."
-                        [b]".RES_FUEL.":[/b] ".nf($bc['fuel'])."
-                        [b]".RES_FOOD.":[/b] ".nf($bc['food'])."
-
-                        [b]Rohstoffe auf dem Planeten[/b]
-                        [b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
-                        [b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
-                        [b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
-                        [b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
-                        [b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
-
-                        //Log Speichern
-                        GameLog::add(GameLog::F_DEF, GameLog::INFO,$log_text,$cu->id,$cu->allianceId,$planet->id, $def_id, 1, $build_cnt);
-
                         echo "<tr><td>".nf($build_cnt)." ".$defs[$def_id]['def_name']." in Auftrag gegeben!</td></tr>";
 
                         //Rohstoffe summieren, diese werden nach der Schleife abgezogen
-                        $total_metal+=$bc['metal'];
-                        $total_crystal+=$bc['crystal'];
-                        $total_plastic+=$bc['plastic'];
-                        $total_fuel+=$bc['fuel'];
-                        $total_food+=$bc['food'];
+                        $totalMetal += $bc['metal'];
+                        $totalCrystal += $bc['crystal'];
+                        $totalPlastic += $bc['plastic'];
+                        $totalFuel += $bc['fuel'];
+                        $totalFood += $bc['food'];
 
                         //Felder subtrahieren
                         $fields_available -= $build_cnt * $defs[$def_id]['def_fields'];
 
+                        $log_text = "[b]Verteidigungsauftrag Bauen[/b]
 
-                        //Daten für Log speichern
-                        $total_duration+=$duration;
+                        [b]Start:[/b] " . date("d.m.Y H:i:s", $start_time) . "
+                        [b]Ende:[/b] " . date("d.m.Y H:i:s", (int) $end_time) . "
+                        [b]Dauer:[/b] " . tf($duration) . "
+                        [b]Dauer pro Einheit:[/b] " . tf($obj_time) . "
+                        [b]Waffenfabrik Level:[/b] " . CURRENT_FACTORY_LEVEL . "
+                        [b]Eingesetzte Bewohner:[/b] " . nf($people_working) . "
+                        [b]Gen-Tech Level:[/b] " . $gen_tech_level . "
+                        [b]Eingesetzter Spezialist:[/b] " . $cu->specialist->name . "
+
+                        [b]Kosten[/b]
+                        [b]" . RES_METAL . ":[/b] " . nf($bc['metal']) . "
+                        [b]" . RES_CRYSTAL . ":[/b] " . nf($bc['crystal']) . "
+                        [b]" . RES_PLASTIC . ":[/b] " . nf($bc['plastic']) . "
+                        [b]" . RES_FUEL . ":[/b] " . nf($bc['fuel']) . "
+                        [b]" . RES_FOOD . ":[/b] " . nf($bc['food']) . "
+
+                        [b]Rohstoffe auf dem Planeten[/b]
+                        [b]" . RES_METAL . ":[/b] " . nf($planet->resMetal - $totalMetal) . "
+                        [b]" . RES_CRYSTAL . ":[/b] " . nf($planet->resCrystal - $totalCrystal) . "
+                        [b]" . RES_PLASTIC . ":[/b] " . nf($planet->resPlastic - $totalPlastic) . "
+                        [b]" . RES_FUEL . ":[/b] " . nf($planet->resFuel - $totalFuel) . "
+                        [b]" . RES_FOOD . ":[/b] " . nf($planet->resFood - $totalFood);
+
+                        GameLog::add(GameLog::F_DEF, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $def_id, 1, $build_cnt);
                     }
                     else
                     {
@@ -739,15 +706,7 @@ if (mysql_num_rows($factory_res)>0)
                 }
             }
 
-            // Die Rohstoffe der $c-variablen wieder beigeben, da sie sonst doppelt abgezogen werden
-            $cp->resMetal+=$total_metal;
-            $cp->resCrystal+=$total_crystal;
-            $cp->resPlastic+=$total_plastic;
-            $cp->resFuel+=$total_fuel;
-            $cp->resFood+=$total_food;
-
-            //Rohstoffe vom Planeten abziehen und aktualisieren
-            $cp->changeRes(-$total_metal,-$total_crystal,-$total_plastic,-$total_fuel,-$total_food);
+            $planetRepo->addResources($planet->id, -$totalMetal, -$totalCrystal, -$totalPlastic, -$totalFuel, -$totalFood);
 
             if ($counter==0)
             {
@@ -755,7 +714,6 @@ if (mysql_num_rows($factory_res)>0)
             }
             tableEnd();
         }
-
 
         checker_init();
 
@@ -767,7 +725,6 @@ if (mysql_num_rows($factory_res)>0)
             $id = intval($_GET['cancel']);
             if (isset($queue[$id]))
             {
-
                 //Zu erhaltende Rohstoffe errechnen
                 $obj_cnt = min(ceil(($queue[$id]['queue_endtime']-max($time,$queue[$id]['queue_starttime']))/$queue[$id]['queue_objtime']),$queue[$id]['queue_cnt']);
                 echo "Breche den Bau von ".$obj_cnt." ".$defs[$queue[$id]['queue_def_id']]['def_name']." ab...<br/>";
@@ -779,7 +736,6 @@ if (mysql_num_rows($factory_res)>0)
                 $ret['fuel']=$defs[$queue[$id]['queue_def_id']]['def_costs_fuel']*$obj_cnt*$cancel_res_factor;
                 $ret['food']=$defs[$queue[$id]['queue_def_id']]['def_costs_food']*$obj_cnt*$cancel_res_factor;
 
-
                 // Daten für Log speichern
                 $def_name = $defs[$queue[$id]['queue_def_id']]['def_name'];
                 $defId = $queue[$id]['queue_def_id'];
@@ -790,7 +746,6 @@ if (mysql_num_rows($factory_res)>0)
 
                 //Felder addieren
                 $fields_available += $queue_count * $defs[$queue[$id]['queue_def_id']]['def_fields'];
-
 
                 //Auftrag löschen
                 dbquery("
@@ -856,36 +811,35 @@ if (mysql_num_rows($factory_res)>0)
                 $queue[$id] = NULL;
 
                 //Rohstoffe dem Planeten gutschreiben und aktualisieren
-                $cp->changeRes($ret['metal'],$ret['crystal'],$ret['plastic'],$ret['fuel'],$ret['food']);
+                $planetRepo->addResources($planet->id, $ret['metal'], $ret['crystal'], $ret['plastic'], $ret['fuel'], $ret['food']);
 
                 echo "Der Auftrag wurde abgebrochen!<br/><br/>";
 
                 //Log schreiben
                 $log_text = "[b]Verteidigungsauftrag Abbruch[/b]
 
-                [b]Auftragsdauer:[/b] ".tf($queue_objtime* $queue_count )."
+                [b]Auftragsdauer:[/b] " . tf($queue_objtime * $queue_count) . "
 
                 [b]Erhaltene Rohstoffe[/b]
-                [b]Faktor:[/b] ".$cancel_res_factor."
-                [b]".RES_METAL.":[/b] ".nf($ret['metal'])."
-                [b]".RES_CRYSTAL.":[/b] ".nf($ret['crystal'])."
-                [b]".RES_PLASTIC.":[/b] ".nf($ret['plastic'])."
-                [b]".RES_FUEL.":[/b] ".nf($ret['fuel'])."
-                [b]".RES_FOOD.":[/b] ".nf($ret['food'])."
+                [b]Faktor:[/b] " . $cancel_res_factor . "
+                [b]" . RES_METAL . ":[/b] " . nf($ret['metal']) . "
+                [b]" . RES_CRYSTAL . ":[/b] " . nf($ret['crystal']) . "
+                [b]" . RES_PLASTIC . ":[/b] " . nf($ret['plastic']) . "
+                [b]" . RES_FUEL . ":[/b] " . nf($ret['fuel']) . "
+                [b]" . RES_FOOD . ":[/b] " . nf($ret['food']) . "
 
                 [b]Rohstoffe auf dem Planeten[/b]
-                [b]".RES_METAL.":[/b] ".nf($cp->resMetal)."
-                [b]".RES_CRYSTAL.":[/b] ".nf($cp->resCrystal)."
-                [b]".RES_PLASTIC.":[/b] ".nf($cp->resPlastic)."
-                [b]".RES_FUEL.":[/b] ".nf($cp->resFuel)."
-                [b]".RES_FOOD.":[/b] ".nf($cp->resFood)."";
+                [b]" . RES_METAL . ":[/b] " . nf($planet->resMetal + $ret['metal']) . "
+                [b]" . RES_CRYSTAL . ":[/b] " . nf($planet->resCrystal + $ret['crystal']) . "
+                [b]" . RES_PLASTIC . ":[/b] " . nf($planet->resPlastic + $ret['plastic']) . "
+                [b]" . RES_FUEL . ":[/b] " . nf($planet->resFuel + $ret['fuel']) . "
+                [b]" . RES_FOOD . ":[/b] " . nf($planet->resFood + $ret['food']);
 
                 //Log Speichern
-                GameLog::add(GameLog::F_DEF, GameLog::INFO,$log_text,$cu->id,$cu->allianceId,$planet->id, $defId, 0, $queue_count);
+                GameLog::add(GameLog::F_DEF, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $defId, 0, $queue_count);
                 header("Refresh:0");
             }
         }
-
 
         /*********************************
         * Liste der Bauaufträge anzeigen *
@@ -959,8 +913,6 @@ if (mysql_num_rows($factory_res)>0)
             }
             tableEnd();
         }
-
-
 
         /***********************
         * Verteidigung auflisten    *

@@ -91,11 +91,6 @@ parameters:
 			path: htdocs/admin/inc/xajax_admin.inc.php
 
 		-
-			message: "#^Call to an undefined method BuildList\\:\\:getBuildTime\\(\\)\\.$#"
-			count: 1
-			path: htdocs/classes/buildlist.class.php
-
-		-
 			message: "#^Result of \\|\\| is always true\\.$#"
 			count: 1
 			path: htdocs/classes/buildlistitem.class.php

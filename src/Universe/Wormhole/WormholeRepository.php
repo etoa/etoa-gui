@@ -92,7 +92,7 @@ class WormholeRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
                 'changed' => time(),
-                'persistent' => $persistent,
+                'persistent' => (int) $persistent,
                 'targetId' => $targetId,
             ])
             ->execute();
@@ -119,7 +119,7 @@ class WormholeRepository extends AbstractRepository
             ->where('id = :id')
             ->setParameters([
                 'id' => $id,
-                'persistent' => $persistent,
+                'persistent' => (int) $persistent,
             ])
             ->execute();
     }

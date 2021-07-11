@@ -48,6 +48,21 @@ class DefenseRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    public function countJammingDevicesOnEntity(int $entityId): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('dl.deflist_count')
+            ->from('deflist', 'dl')
+            ->where('dl.deflist_entity_id = :entityId')
+            ->andWhere('dl.deflist_count > 0')
+            ->innerJoin('dl', 'defense', 'd', 'dl.deflist_def_id = d.def_id AND def_jam = 1')
+            ->setParameters([
+                'entityId' => $entityId,
+            ])
+            ->execute()
+            ->fetchOne();
+    }
+
     public function removeForEntity(int $entityId): void
     {
         $this->createQueryBuilder()

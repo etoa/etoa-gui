@@ -1,10 +1,19 @@
 <?PHP
 
-use EtoA\Alliance\AllianceHistoryRepository;
+use EtoA\Alliance\AllianceBuildingRepository;
+use EtoA\Alliance\AllianceRights;
 use EtoA\Bookmark\BookmarkService;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Fleet\Exception\FleetScanFailedException;
+use EtoA\Fleet\Exception\FleetScanPreconditionsNotMetException;
+use EtoA\Fleet\FleetScanService;
+use EtoA\Fleet\Exception\InvalidFleetScanParameterException;
 use EtoA\UI\ResourceBoxDrawer;
+use EtoA\Universe\Entity\EntityCoordinates;
+use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\User\UserRepository;
+use Symfony\Component\HttpFoundation\Request;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -12,533 +21,120 @@ $config = $app[ConfigurationService::class];
 /** @var BookmarkService */
 $bookmarkService = $app[BookmarkService::class];
 
+/** @var UserRepository */
+$userRepository = $app[UserRepository::class];
+
 /** @var PlanetRepository */
-$planetRepo = $app[PlanetRepository::class];
+$planetRepository = $app[PlanetRepository::class];
+
+/** @var EntityRepository */
+$entityRepository = $app[EntityRepository::class];
+
+/** @var FleetScanService */
+$fleetScanService = $app[FleetScanService::class];
+
+/** @var AllianceBuildingRepository */
+$allianceBuildingRepository = $app[AllianceBuildingRepository::class];
 
 /** @var ResourceBoxDrawer */
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 
-// Reichweite in AE für Kryptoanalyse pro Ausbaustufe
-define("CRYPTO_RANGE_PER_LEVEL", $config->getInt('crypto_range_per_level'));
+/** @var Request */
+$request = Request::createFromGlobals();
 
-// Kosten an Tritium pro Kryptoanalyse
-define("CRYPTO_FUEL_COSTS_PER_SCAN", $config->getInt('crypto_fuel_costs_per_scan'));
-
-define("CRYPTO_DEFAULT_COOLDOWN", $config->getInt("crypto_default_cooldown"));
-define("CRYPTO_COOLDOWN_REDUCTION_PER_LEVEL", $config->getInt("crypto_cooldown_reduction_per_level"));
-define("CRYPTO_MIN_COOLDOWN", $config->getInt("crypto_min_cooldown"));
-
-$planet = $planetRepo->find($cp->id);
+$planet = $planetRepository->find($cp->id);
+$currentUser = $userRepository->getUser($cu->id);
 
 // Gebäude Level und Arbeiter laden
-$cryptoCenterLevel = $cu->allianceId != 0
-    ? $cu->alliance->buildlist->getLevel(ALLIANCE_CRYPTO_ID)
-    : 0;
+$cryptoCenterLevel = $allianceBuildingRepository->getLevel($currentUser->allianceId, ALLIANCE_CRYPTO_ID);
 
 // Allg. deaktivierung
-if ($config->getBoolean('crypto_enable'))
-{
-    /**
-     *
-    * Abschnitt mit Crypto als Allianzgebäude
-    *
-    **/
-
+if ($config->getBoolean('crypto_enable')) {
     // Prüfen ob Gebäude gebaut ist
-    if ($cryptoCenterLevel > 0)
-    {
-        // Titel
-        echo "<h1>Allianzkryptocenter (Stufe ".$cryptoCenterLevel.") der Allianz ".$cu->alliance."</h1>";
+    if ($cryptoCenterLevel > 0) {
+        echo "<h1>Allianzkryptocenter (Stufe " . $cryptoCenterLevel . ") der Allianz " . $cu->alliance . "</h1>";
         echo $resourceBoxDrawer->getHTML($planet);
 
-        // Calculate cooldown
-        $cooldown = max(CRYPTO_MIN_COOLDOWN, CRYPTO_DEFAULT_COOLDOWN - (CRYPTO_COOLDOWN_REDUCTION_PER_LEVEL*($cryptoCenterLevel-1)));
-        if ($cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID, $cu->id) > time())
-        {
-            $status_text = "Bereit in <span id=\"cdcd\">".tf($cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID, $cu->id)-time()."</span>");
-            $cd_enabled=true;
-        }
-        else
-        {
-            $status_text = "Bereit";
-            $cd_enabled=false;
-        }
+        if ($request->request->has('scan') && checker_verify()) {
+            if ($cu->alliance->checkActionRightsNA(AllianceRights::CRYPTO_MINISTER)) {
+                $targetCoordinates = new EntityCoordinates(
+                    $request->request->getInt('sx'),
+                    $request->request->getInt('sy'),
+                    $request->request->getInt('cx'),
+                    $request->request->getInt('cy'),
+                    $request->request->getInt('p')
+                );
+                $targetEntity = $entityRepository->findByCoordinates($targetCoordinates);
+                try {
+                    $out = $fleetScanService->scanFleets($currentUser, $planet, $cryptoCenterLevel, $targetEntity);
 
-        // Scan
-        if (isset($_POST['scan']) && checker_verify() && !$cd_enabled)
-        {
-            if ($cu->alliance->checkActionRightsNA("cryptominister"))
-            {
-                $sx = intval($_POST['sx']);
-                $sy = intval($_POST['sy']);
-                $cx = intval($_POST['cx']);
-                $cy = intval($_POST['cy']);
-                $pp = intval($_POST['p']);
-                if ($sx>0 && $sy>0 && $cx>0 && $cy>0 && $pp>0)
-                {
-                    if ($planet->resFuel >= CRYPTO_FUEL_COSTS_PER_SCAN)
-                    {
-                        if ($cu->alliance->resFuel >= CRYPTO_FUEL_COSTS_PER_SCAN)
-                        {
-                            $target = Entity::createFactoryByCoords($sx,$sy,$cx,$cy,$pp);
-                            if ($target != false)
-                            {
-                                $dist = $cp->distance($target);
-                                if ($dist <= CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel)
-                                {
-                                    // Load oponent's jamming device count
-                                    $jres = dbquery("
-                                                    SELECT
-                                                        deflist_count
-                                                    FROM
-                                                        deflist
-                                                    INNER JOIN
-                                                        defense
-                                                    ON deflist_def_id=def_id
-                                                        AND deflist_count>0
-                                                        AND def_jam=1
-                                                        AND deflist_entity_id=".$target->id().";");
-                                    $op_jam = 0;
-                                    if (mysql_num_rows($jres)>0)
-                                    {
-                                        $jarr=mysql_fetch_row($jres);
-                                        $op_jam += $jarr[0];
-                                    }
-
-                                    // Load oponents computer and stealth technologies
-                                    $op_stealth = 0;
-                                    $tres = dbquery("
-                                                    SELECT
-                                                        techlist_current_level
-                                                    FROM
-                                                        techlist
-                                                    WHERE
-                                                        techlist_tech_id=".TARN_TECH_ID."
-                                                        AND techlist_user_id=".$target->ownerId()."");
-                                    if ($target->owner->allianceId() > 0)
-                                    {
-                                        $op_stealth += $target->owner->alliance->techlist->getLevel(ALLIANCE_TECH_TARN_ID);
-                                    }
-                                    $op_stealth += $target->owner->specialist->tarnLevel;
-
-                                    if (mysql_num_rows($tres)>0)
-                                    {
-                                        $jarr=mysql_fetch_row($tres);
-                                        $op_stealth += $jarr[0];
-                                    }
-
-                                    $tres = dbquery("
-                                                    SELECT
-                                                        techlist_current_level
-                                                    FROM
-                                                        techlist
-                                                    WHERE
-                                                        techlist_tech_id=".COMPUTER_TECH_ID."
-                                                        AND techlist_user_id=".$target->ownerId()."");
-                                    $op_computer = 0;
-                                    if (mysql_num_rows($tres)>0)
-                                    {
-                                        $jarr=mysql_fetch_row($tres);
-                                        $op_computer += $jarr[0];
-                                    }
-
-                                    // Load own computer and spy technologies
-                                    $tres = dbquery("
-                                                    SELECT
-                                                        techlist_current_level
-                                                    FROM
-                                                        techlist
-                                                    WHERE
-                                                        techlist_tech_id=".SPY_TECH_ID."
-                                                        AND techlist_user_id=".$cu->id."");
-                                    $self_spy = $cu->alliance->techlist->getLevel(ALLIANCE_TECH_SPY_ID) + $cu->specialist->spyLevel;
-
-                                    if (mysql_num_rows($tres)>0)
-                                    {
-                                        $jarr=mysql_fetch_row($tres);
-                                        $self_spy += $jarr[0];
-                                    }
-                                    $tres = dbquery("
-                                                    SELECT
-                                                        techlist_current_level
-                                                    FROM
-                                                        techlist
-                                                    WHERE
-                                                        techlist_tech_id=".COMPUTER_TECH_ID."
-                                                        AND techlist_user_id=".$cu->id."");
-                                    $self_computer = 0;
-                                    if (mysql_num_rows($tres)>0)
-                                    {
-                                        $jarr=mysql_fetch_row($tres);
-                                        $self_computer += $jarr[0];
-                                    }
-
-                                    // Calculate success chance
-                                    $chance = ($cryptoCenterLevel-$op_jam) + (0.3*($self_spy - $op_stealth)) + mt_rand(0,2)-1;
-
-                                    /** @var AllianceHistoryRepository */
-                                    $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
-
-                                    // Do the scan if chance >= 0
-                                    if ($chance >= 0)
-                                    {
-                                        $decryptlevel = ($cryptoCenterLevel-$op_jam) + (0.75*($self_spy + $self_computer - $op_stealth - $op_computer)) + mt_rand(0,2)-1;
-
-                                        // Decrypt level
-                                        // < 0 Only show that there are some fleets
-                                        // 0 <= 10 Show that there are x fleets
-                                        // 10 <= 15 Show that there are x fleets from y belonging to z, show hour
-                                        // 15 <= 20 Also show ship types, show mninutes with +- 15 mins
-                                        // 20 <= 25 Also show count of ships and time in minutes
-                                        // 25 <= 30 Also show count of every ship and exact time
-                                        // >30 Show action
-
-                                        $out="[b]Flottenscan vom Planeten ".$target->name()."[/b] (".$sx."/".$sy." : ".$cx."/".$cy." : ".$pp.")\n\n";
-
-                                        $out.="[b]Eintreffende Flotten[/b]\n\n";
-                                        $fres = dbquery("
-                                                        SELECT
-                                                            id
-                                                        FROM
-                                                            fleet
-                                                        WHERE
-                                                            entity_to=".$target->id()."");
-                                        if (mysql_num_rows($fres)>0)
-                                        {
-                                            if ($decryptlevel<0)
-                                            {
-                                                $out.="Es sind Flotten unterwegs\n";
-                                            }
-                                            else if ($decryptlevel<10)
-                                            {
-                                                $out.="Es sind ".mysql_num_rows($fres)." Flotten unterwegs\n";
-                                            }
-                                            else
-                                            {
-                                                while ($farr=mysql_fetch_row($fres))
-                                                {
-                                                    $fd = new Fleet($farr[0]);
-                                                    $source = $fd->getSource();
-                                                    $owner = new User($fd->ownerId());
-
-                                                    $out.='[b]Herkunft:[/b] '.$source.', [b]Besitzer:[/b] '.$owner;
-                                                    $out.= "\n[b]Ankunft:[/b] ";
-
-                                                    if ($decryptlevel<=15)
-                                                    {
-                                                        $rand = random_int(0, 30*60*2);
-                                                        $out.="Zwischen ".date("d.m.Y H:i",$fd->landTime() - $rand)." und ".date("d.m.Y H:i",$fd->landTime()+(2*30*60)-$rand)." Uhr";
-                                                    }
-                                                    elseif ($decryptlevel<=20)
-                                                    {
-                                                        $rand = random_int(0, 2*7*60);
-                                                        $out.="Zwischen ".date("d.m.Y H:i",$fd->landTime()-$rand)." und ".date("d.m.Y H:i",$fd->landTime()+(2*7*60)-$rand)." Uhr";
-                                                    }
-                                                    elseif ($decryptlevel<=25)
-                                                    {
-                                                        $out.=date("d.m.Y H:i",$fd->landTime())." Uhr";
-                                                    }
-                                                    else
-                                                    {
-                                                        $out.=date("d.m.Y H:i:s",$fd->landTime())." Uhr";
-                                                    }
-
-                                                    if ($decryptlevel>30)
-                                                    {
-                                                        $out.=", [b]Aktion:[/b] ".substr($fd->getAction(),25,-7)."\n";
-                                                    }
-                                                    else
-                                                        $out.="\n";
-
-                                                    if ($decryptlevel>=15)
-                                                    {
-                                                        $sres = dbquery("
-                                                                        SELECT
-                                                                            ship_name,
-                                                                            fs_ship_cnt
-                                                                        FROM
-                                                                            fleet_ships
-                                                                        INNER JOIN
-                                                                            ships
-                                                                        ON ship_id=fs_ship_id
-                                                                            AND fs_fleet_id=".$farr[0].";");
-                                                        if (mysql_num_rows($sres)>0)
-                                                        {
-                                                            $cntr=0;
-                                                            while ($sarr=mysql_fetch_array($sres))
-                                                            {
-                                                                if ($decryptlevel <=25 )
-                                                                {
-                                                                    $out.="".$sarr['ship_name']."\n";
-                                                                }
-                                                                else
-                                                                {
-                                                                    $out.=$sarr['fs_ship_cnt']." ".$sarr['ship_name']."\n";
-                                                                }
-                                                                $cntr+=$sarr['fs_ship_cnt'];
-                                                            }
-                                                            if ($decryptlevel >20)
-                                                            {
-                                                                $out.=$cntr." Schiffe total\n";
-                                                            }
-                                                        }
-                                                    }
-                                                    $out.="\n";
-                                                }
-                                            }
-                                        }
-                                        else
-                                        {
-                                            $out.="Keine eintreffenden Flotten gefunden!\n\n";
-                                        }
-
-                                        $out.="[b]Wegfliegende Flotten[/b]\n\n";
-                                        $fres = dbquery("
-                                                        SELECT
-                                                            id
-                                                        FROM
-                                                            fleet
-                                                        WHERE
-                                                            entity_from=".$target->id()."
-                                                            AND entity_to<>".$target->id()."");
-                                        if (mysql_num_rows($fres)>0)
-                                        {
-                                            if ($decryptlevel<0)
-                                            {
-                                                $out.="Es sind Flotten unterwegs\n";
-                                            }
-                                            else if ($decryptlevel<10)
-                                            {
-                                                $out.="Es sind ".mysql_num_rows($fres)." Flotten unterwegs\n";
-                                            }
-                                            else
-                                            {
-                                                while ($farr=mysql_fetch_row($fres))
-                                                {
-                                                    $fd = new Fleet($farr[0]);
-                                                    $source = $fd->getTarget();
-                                                    $owner = new User($fd->ownerId());
-
-                                                    $out.='[b]Ziel:[/b] '.$source.', [b]Besitzer:[/b] '.$owner;
-                                                    $out.= "\n[b]Ankunft:[/b] ";
-
-                                                    if ($decryptlevel<=15)
-                                                    {
-                                                        $out.="Zwischen ".date("d.m.Y H:i",$fd->landTime()-(30*60))." und ".date("d.m.Y H:i",$fd->landTime()+(30*60))." Uhr";
-                                                    }
-                                                    elseif ($decryptlevel<=20)
-                                                    {
-                                                        $out.="Zwischen ".date("d.m.Y H:i",$fd->landTime()-(7*60))." und ".date("d.m.Y H:i",$fd->landTime()+(7*60))." Uhr";
-                                                    }
-                                                    elseif ($decryptlevel<=25)
-                                                    {
-                                                        $out.=date("d.m.Y H:i",$fd->landTime())." Uhr";
-                                                    }
-                                                    else
-                                                    {
-                                                        $out.=date("d.m.Y H:i:s",$fd->landTime())." Uhr";
-                                                    }
-
-                                                    if ($decryptlevel>30)
-                                                    {
-                                                        $out.=", [b]Aktion:[/b] ".substr($fd->getAction(),25,-7)."\n";
-                                                    }
-                                                    else
-                                                        $out.="\n";
-
-                                                    if ($decryptlevel>=15)
-                                                    {
-                                                        $cntr=0;
-                                                        foreach ($fd->getShips() as $sid => $sdat)
-                                                        {
-                                                            $sids = $fd->getShipIds();
-                                                            $cnt = $sids[$sid];
-                                                            if ($decryptlevel <=25 )
-                                                            {
-                                                                $out.="".$sdat."\n";
-                                                            }
-                                                            else
-                                                            {
-                                                                $out.=$cnt." ".$sdat."\n";
-                                                            }
-                                                            $cntr+=$cnt;
-                                                        }
-                                                        if ($decryptlevel >20)
-                                                        {
-                                                            $out.=$cntr." Schiffe total\n";
-                                                        }
-                                                    }
-                                                    $out.="\n";
-                                                }
-                                            }
-                                        }
-                                        else
-                                        {
-                                            $out.='Keine abfliegenden Flotten gefunden!';
-                                        }
-
-                                        $out.="\n\nEntschlüsselchance: $decryptlevel";
-
-                                        // Subtract resources
-                                        $cp->changeRes(0,0,0,-CRYPTO_FUEL_COSTS_PER_SCAN,0);
-                                        $cu->alliance->changeRes(0,0,0,-CRYPTO_FUEL_COSTS_PER_SCAN,0);
-
-                                        // Inform oponent
-                                        if ($target->ownerId()>0)
-                                        {
-                                            /** @var \EtoA\Message\MessageRepository $messageRepository */
-                                            $messageRepository = $app[\EtoA\Message\MessageRepository::class];
-                                            $messageRepository->createSystemMessage((int) $target->ownerId(), SHIP_SPY_MSG_CAT_ID, "Funkstörung", "Eure Flottenkontrolle hat soeben eine kurzzeitige Störung des Kommunikationsnetzes festgestellt. Es kann sein, dass fremde Spione in das Netz eingedrungen sind und Flottendaten geklaut haben.");
-                                        }
-
-                                        // Display result
-                                        iBoxStart("Ergebnis der Analyse");
-                                        echo text2html($out);
-                                        iBoxEnd();
-
-                                        // Add note to user's notepad if selected
-                                        if (isset($_POST['scan_to_notes']))
-                                        {
-                                            $np = new Notepad($cu->id);
-                                            $np->add("Flottenscan: ".$target,$out);
-                                        }
-
-                                        // Mail result
-                                        /** @var \EtoA\Message\MessageRepository $messageRepository */
-                                        $messageRepository = $app[\EtoA\Message\MessageRepository::class];
-                                        $messageRepository->createSystemMessage((int) $cu->id, SHIP_MISC_MSG_CAT_ID, "Kryptocenter-Bericht", $out);
-
-                                        // Set cooldown
-                                        $cd = time()+$cooldown;
-                                        $cu->alliance->buildlist->setCooldown(ALLIANCE_CRYPTO_ID, $cd, $cu->id);
-
-                                        $allianceHistoryRepository->addEntry($cu->alliance->id, "Der Spieler [b]".$cu."[/b] hat den Planeten ".$target->name()."[/b] (".$sx."/".$sy." : ".$cx."/".$cy." : ".$pp.") gescannt!");
-
-                                        if ($cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID, $cu->id) > time())
-                                        {
-                                            $status_text = "Bereit in <span id=\"cdcd\">".tf($cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID, $cu->id)-time()."</span>");
-                                            $cd_enabled=true;
-                                        }
-                                        else
-                                        {
-                                            $status_text = "Bereit";
-                                            $cd_enabled=false;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if ($op_jam>0 && $target->ownerId()>0)
-                                        {
-                                            /** @var \EtoA\Message\MessageRepository $messageRepository */
-                                            $messageRepository = $app[\EtoA\Message\MessageRepository::class];
-                                            $messageRepository->createSystemMessage($target->ownerId(), SHIP_SPY_MSG_CAT_ID, "Störsender erfolgreich", "Eure Techniker haben festgestellt, dass von einem anderen Planeten eine Entschlüsselung eures Funkverkehrs versucht wurde. Daraufhin haben eure Störsender die Funknetze mit falschen Werten überlastet, so dass die gegnerische Analyse fehlschlug!");
-                                        }
-                                        error_msg("Die Analyse schlug leider fehl! Eure Empfangsgeräte haben zu viel Rauschen aufgenommen; anscheinend hat der Zielplanet ein aktives Störfeld oder die dortige Flottenkontrolle ist zu gut getarnt (Chance: ".$chance.")!");
-                                        $cd = time()+$cooldown;
-                                        $cu->alliance->buildlist->setCooldown(ALLIANCE_CRYPTO_ID, $cd, $cu->id);
-
-                                        $allianceHistoryRepository->addEntry($cu->alliance->id, "Der Spieler [b]".$cu."[/b] hat den Planeten ".$target->name()."[/b] (".$sx."/".$sy." : ".$cx."/".$cy." : ".$pp.") gescannt!");
-                                    }
-                                }
-                                else
-                                {
-                                    error_msg("Das Ziel ist zu weit entfernt (".nf(ceil($dist))." AE, momentan sind ".nf(CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel)." möglich, ".CRYPTO_RANGE_PER_LEVEL." pro Gebäudestufe)!");
-                                }
-                            }
-                            else
-                            {
-                                error_msg("Am gewählten Ziel existiert kein Planet!");
-                            }
-                        }
-                        else
-                        {
-                            error_msg("Zuwenig Allianzrohstoffe ".RES_FUEL.", ".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." benötigt, ".nf($cu->alliance->resFuel)." vorhanden!");
-                        }
-                    }
-                    else
-                    {
-                        error_msg("Zuwenig ".RES_FUEL.", ".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." benötigt, ".nf($planet->resFuel)." vorhanden!");
-                    }
+                    iBoxStart("Ergebnis der Analyse");
+                    echo text2html($out);
+                    iBoxEnd();
+                } catch (FleetScanPreconditionsNotMetException | InvalidFleetScanParameterException | FleetScanFailedException $ex) {
+                    error_msg($ex->getMessage());
                 }
-                else
-                {
-                    error_msg("Ungültige Koordinaten!");
-                }
-            }
-            else
+            } else {
                 error_msg("Du besitzt nicht die notwendigen Rechte!");
+            }
         }
 
+        $userCooldownDiff = $fleetScanService->getUserCooldownDifference($currentUser->id);
 
         tableStart("Kryptocenter-Infos");
         echo "<tr><th>Aktuelle Reichweite:</th>
-                <td>".nf(CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel)." AE ~".floor(CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel/$config->getInt('cell_length'))." Systeme (+".CRYPTO_RANGE_PER_LEVEL." pro Stufe) </td></tr>";
-        echo'<tr><th>Zielinfo:</th><td id="targetinfo">
-                            Wähle bitte ein Ziel...
-                            </td></tr>';
-        echo'<tr><th>Entfernung:</th><td id="distance">-
-                </td></tr>';
+                <td>" . nf($config->getInt('crypto_range_per_level') * $cryptoCenterLevel) . " AE ~" . floor($config->getInt('crypto_range_per_level') * $cryptoCenterLevel / $config->getInt('cell_length')) . " Systeme (+" . $config->getInt('crypto_range_per_level') . " pro Stufe) </td></tr>";
+        if ($userCooldownDiff == 0) {
+            echo '<tr><th>Zielinfo:</th><td id="targetinfo">
+                                Wähle bitte ein Ziel...
+                                </td></tr>';
+            echo '<tr><th>Entfernung:</th><td id="distance">-
+                    </td></tr>';
+        }
         echo "<tr><th>Kosten pro Scan:</th>
-                <td>".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." ".RES_FUEL." und ".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." ".RES_FUEL." Allianzrohstoffe</td></tr>";
+                <td>" . nf($config->getInt('crypto_fuel_costs_per_scan')) . " " . RES_FUEL . " und " . nf($config->getInt('crypto_fuel_costs_per_scan')) . " " . RES_FUEL . " Allianzrohstoffe</td></tr>";
         echo "<tr><th>Abklingzeit:</th>
-                <td>".tf($cooldown)." (-".tf(CRYPTO_COOLDOWN_REDUCTION_PER_LEVEL)." pro Stufe, minimal ".tf(CRYPTO_MIN_COOLDOWN).")</td></tr>";
+                <td>" . tf($fleetScanService->calculateCooldown($cryptoCenterLevel)) . " (-" . tf($config->getInt("crypto_cooldown_reduction_per_level")) . " pro Stufe, minimal " . tf($config->getInt("crypto_min_cooldown")) . ")</td></tr>";
+        $statusText = $userCooldownDiff > 0 ? "Bereit in <span id=\"cdcd\">" . tf($userCooldownDiff) . "</span>" : "Bereit";
         echo "<tr><th>Status:</th>
-                <td>".$status_text."</td></tr>";
+                <td>" . $statusText . "</td></tr>";
         tableEnd();
 
-        if (!$cd_enabled)
-        {
-            $coords = [];
-            if (isset($_GET['target']) && intval($_GET['target'])>0)
-            {
-                $ent = Entity::createFactoryById($_GET['target']);
-                $coords = $ent->coordsArray();
-            }
-            elseif(isset($_POST['scan']))
-            {
-                $coords[0] = $sx;
-                $coords[1] = $sy;
-                $coords[2] = $cx;
-                $coords[3] = $cy;
-                $coords[4] = $pp;
-            }
-            else
-            {
-                $coords[0] = $cp->sx;
-                $coords[1] = $cp->sy;
-                $coords[2] = $cp->cx;
-                $coords[3] = $cp->cy;
-                $coords[4] = $cp->pos;
+        if ($fleetScanService->getUserCooldownDifference($currentUser->id) == 0) {
+            $planetEntity = $entityRepository->findIncludeCell($planet->id);
+
+            $coords = $planetEntity->getCoordinates();
+            if ($request->query->has('target') && $request->query->getInt('target') > 0) {
+                $targetEntity = $entityRepository->findIncludeCell($request->query->getInt('target'));
+                if ($targetEntity !== null) {
+                    $coords = $targetEntity->getCoordinates();
+                }
+            } elseif ($request->request->has('scan')) {
+                $coords = new EntityCoordinates($sx, $sy, $cx, $cy, $pp);
             }
 
-            $keyup_command = 'xajax_getCryptoDistance(xajax.getFormValues(\'targetForm\'),'.$cp->sx.','.$cp->sy.','.$cp->cx.','.$cp->cy.','.$cp->pos.');';
-            echo'<body onload="'.$keyup_command.'">';
-                echo '<form action="?page='.$page.'" method="post" id="targetForm">';
-                    echo '<input type="hidden" value='.CRYPTO_RANGE_PER_LEVEL*$cryptoCenterLevel.' name="range" />';
-                    checker_init();
-                    iBoxStart("Ziel für Flottenanalyse wahlen:");
+            $keyup_command = 'xajax_getCryptoDistance(xajax.getFormValues(\'targetForm\'),' . $planetEntity->sx . ',' . $planetEntity->sy . ',' . $planetEntity->cx . ',' . $planetEntity->cy . ',' . $planetEntity->pos . ');';
+            echo '<body onload="' . $keyup_command . '">';
+            echo '<form action="?page=' . $page . '" method="post" id="targetForm">';
+            echo '<input type="hidden" value=' . $config->getInt('crypto_range_per_level') * $cryptoCenterLevel . ' name="range" />';
+            checker_init();
 
-                    //
-                    // Bookmarks laden
-                    //
+            iBoxStart("Ziel für Flottenanalyse wahlen:");
+            echo 'Koordinaten eingeben:
+                            <input type="text" onkeyup="' . $keyup_command . '" name="sx" id="sx" value="' . $coords->sx . '" size="2" maxlength="2" /> /
+                            <input type="text" onkeyup="' . $keyup_command . '" name="sy" id="sy" value="' . $coords->sy . '" size="2" maxlength="2" /> :
+                            <input type="text" onkeyup="' . $keyup_command . '" name="cx" id="cx" value="' . $coords->cx . '" size="2" maxlength="2" /> /
+                            <input type="text" onkeyup="' . $keyup_command . '" name="cy" id="cy" value="' . $coords->cy . '" size="2" maxlength="2" /> :
+                            <input type="text" onkeyup="' . $keyup_command . '" name="p" id="p" value="' . $coords->pos . '" size="2" maxlength="2" /><br /><br />';
+            echo '<i>oder</i> Favorit wählen: ';
+            echo $bookmarkService->drawSelector($currentUser->id, "bookmark_select", "applyBookmark();");
+            iBoxEnd();
 
-                    echo 'Koordinaten eingeben:
-                            <input type="text" onkeyup="'.$keyup_command.'" name="sx" id="sx" value="'.$coords[0].'" size="2" maxlength="2" /> /
-                            <input type="text" onkeyup="'.$keyup_command.'" name="sy" id="sy" value="'.$coords[1].'" size="2" maxlength="2" /> :
-                            <input type="text" onkeyup="'.$keyup_command.'" name="cx" id="cx" value="'.$coords[2].'" size="2" maxlength="2" /> /
-                            <input type="text" onkeyup="'.$keyup_command.'" name="cy" id="cy" value="'.$coords[3].'" size="2" maxlength="2" /> :
-                            <input type="text" onkeyup="'.$keyup_command.'" name="p" id="p" value="'.$coords[4].'" size="2" maxlength="2" /><br /><br />';
-
-                    // Bookmarkliste anzeigen
-                    echo '<i>oder</i> Favorit wählen: ';
-                    echo $bookmarkService->drawSelector($cu->id, "bookmarkselect", "applyBookmark();");
-                    iBoxEnd();
-
-                    echo "<script type=\"text/javascript\">
+            echo "<script type=\"text/javascript\">
                     function applyBookmark()
                     {
-                        let select_id = document.getElementById('bookmarkselect').selectedIndex;
-                        let select_val = document.getElementById('bookmarkselect').options[select_id];
+                        let select_id = document.getElementById('bookmark_select').selectedIndex;
+                        let select_val = document.getElementById('bookmark_select').options[select_id];
                         if (select_val && select_val.dataset.sx)
                         {
                             document.getElementById('sx').value = select_val.dataset.sx;
@@ -546,6 +142,7 @@ if ($config->getBoolean('crypto_enable'))
                             document.getElementById('cx').value = select_val.dataset.cx;
                             document.getElementById('cy').value = select_val.dataset.cy;
                             document.getElementById('p').value = select_val.dataset.pos;
+                            " . $keyup_command . "
                         } else {
                             document.getElementById('sx').value = '';
                             document.getElementById('sy').value = '';
@@ -556,38 +153,27 @@ if ($config->getBoolean('crypto_enable'))
                     }
                     </script>";
 
-                    if ($planet->resFuel >= CRYPTO_FUEL_COSTS_PER_SCAN)
-                    {
-                        echo '<input type="submit" name="scan" value="Analyse für '.nf(CRYPTO_FUEL_COSTS_PER_SCAN).' '.RES_FUEL.' starten" />';
-                    }
-                    else
-                    {
-                        echo "Zuwenig Rohstoffe für eine Analyse vorhanden, ".nf(CRYPTO_FUEL_COSTS_PER_SCAN)." ".RES_FUEL." benötigt, ".nf($planet->resFuel)." vorhanden!";
-                    }
-                echo '</form>';
+            if ($planet->resFuel >= $config->getInt('crypto_fuel_costs_per_scan')) {
+                echo '<input type="submit" name="scan" value="Analyse für ' . nf($config->getInt('crypto_fuel_costs_per_scan')) . ' ' . RES_FUEL . ' starten" />';
+            } else {
+                echo "Zuwenig Rohstoffe für eine Analyse vorhanden, " . nf($config->getInt('crypto_fuel_costs_per_scan')) . " " . RES_FUEL . " benötigt, " . nf($planet->resFuel) . " vorhanden!";
+            }
+            echo '</form>';
             echo '</body>';
+        } else {
+            $userCooldown = $allianceBuildingRepository->getUserCooldown($currentUser->id, ALLIANCE_CRYPTO_ID);
+            echo "<b>Diese Funktion wurde vor kurzem benutzt! <br/>";
+            echo "Du musst bis " . df($userCooldown) . " warten, um die Funktion wieder zu benutzen!</b>";
+            countDown("cdcd", $userCooldown);
         }
-        else
-        {
-            echo "<b>Diese Funktion wurde vor kurzem benutzt! <br/>
-                Du musst bis ".df($cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID, $cu->id))." warten, um die Funktion wieder zu benutzen!</b>";
-
-            countDown("cdcd",$cu->alliance->buildlist->getCooldown(ALLIANCE_CRYPTO_ID, $cu->id));
-        }
-    }
-    else
-    {
-        // Titel
-        echo "<h1>Kryptocenter des Planeten ".$planet->name."</h1>";
+    } else {
+        echo "<h1>Kryptocenter des Planeten " . $planet->name . "</h1>";
         echo $resourceBoxDrawer->getHTML($planet);
 
         info_msg("Das Kryptocenter wurde noch nicht gebaut!");
     }
-}
-else
-{
-    // Titel
-    echo "<h1>Kryptocenter des Planeten ".$planet->name."</h1>";
+} else {
+    echo "<h1>Kryptocenter des Planeten " . $planet->name . "</h1>";
     echo $resourceBoxDrawer->getHTML($planet);
 
     info_msg("Aufgrund eines intergalaktischen Moratoriums der Völkerföderation der Galaxie Andromeda

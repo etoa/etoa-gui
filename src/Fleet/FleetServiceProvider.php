@@ -2,8 +2,20 @@
 
 namespace EtoA\Fleet;
 
+use EtoA\Alliance\AllianceBuildingRepository;
+use EtoA\Alliance\AllianceHistoryRepository;
+use EtoA\Alliance\AllianceRepository;
+use EtoA\Alliance\AllianceTechnologyRepository;
+use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseRepository;
+use EtoA\Message\MessageRepository;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Specialist\SpecialistDataRepository;
+use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\User\UserRepository;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
@@ -23,6 +35,26 @@ class FleetServiceProvider implements ServiceProviderInterface
                 $pimple[PlanetRepository::class],
                 $pimple[EntityRepository::class],
                 $pimple[FleetRepository::class]
+            );
+        };
+
+        $pimple[FleetScanService::class] = function (Container $pimple): FleetScanService {
+            return new FleetScanService(
+                $pimple[ConfigurationService::class],
+                $pimple[UserRepository::class],
+                $pimple[PlanetRepository::class],
+                $pimple[EntityRepository::class],
+                $pimple[FleetRepository::class],
+                $pimple[EntityService::class],
+                $pimple[DefenseRepository::class],
+                $pimple[TechnologyRepository::class],
+                $pimple[ShipDataRepository::class],
+                $pimple[MessageRepository::class],
+                $pimple[AllianceBuildingRepository::class],
+                $pimple[AllianceTechnologyRepository::class],
+                $pimple[AllianceRepository::class],
+                $pimple[AllianceHistoryRepository::class],
+                $pimple[SpecialistDataRepository::class]
             );
         };
     }

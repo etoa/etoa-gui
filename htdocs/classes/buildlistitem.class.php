@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\Planet\PlanetRepository;
 
 class BuildListItem
 {
@@ -34,6 +35,7 @@ class BuildListItem
     private $nextCosts = array();
 
     private ConfigurationService $config;
+    private PlanetRepository $planetRepo;
 
     /**
      * @param int|array $id
@@ -45,6 +47,7 @@ class BuildListItem
         global $app;
 
         $this->config = $app[ConfigurationService::class];
+        $this->planetRepo = $app[PlanetRepository::class];
 
         if (is_array($id))
         {
@@ -167,7 +170,6 @@ class BuildListItem
             return null;
         }
     }
-
 
     private function load($id)
     {
@@ -349,7 +351,8 @@ class BuildListItem
 
 
         BuildList::$underConstruction = true;
-        $cp->changeRes(-$costs['costs0'],-$costs['costs1'],-$costs['costs2'],-$costs['costs3'],-$costs['costs4']);
+
+        $this->planetRepo->addResources($cp->id, -$costs['costs0'], -$costs['costs1'], -$costs['costs2'], -$costs['costs3'], -$costs['costs4']);
 
         //Log schreiben
         $log_text = "[b]Gebäudebau[/b]
@@ -424,7 +427,8 @@ class BuildListItem
 
         dbquery("UPDATE buildlist SET buildlist_build_type='4', buildlist_build_start_time='".$this->startTime."', buildlist_build_end_time='".$this->endTime."' WHERE buildlist_id='".$this->id."' LIMIT 1;");
         BuildList::$underConstruction = true;
-        $cp->changeRes(-$costs['costs0'],-$costs['costs1'],-$costs['costs2'],-$costs['costs3'],-$costs['costs4']);
+
+        $this->planetRepo->addResources($cp->id, -$costs['costs0'], -$costs['costs1'], -$costs['costs2'], -$costs['costs3'], -$costs['costs4']);
 
         //Log schreiben
         $log_text = "[b]Gebäudeabriss[/b]
@@ -478,8 +482,8 @@ class BuildListItem
                     AND buildlist_entity_id='" . $cp->id . "'");
 
             BuildList::$underConstruction = false;
-            //Rohstoffe vom Planeten abziehen und aktualisieren
-            $cp->changeRes($costs['costs0']*$fac,$costs['costs1']*$fac,$costs['costs2']*$fac,$costs['costs3']*$fac,$costs['costs4']*$fac);
+
+            $this->planetRepo->addResources($cp->id, $costs['costs0'] * $fac, $costs['costs1'] * $fac, $costs['costs2'] * $fac, $costs['costs3'] * $fac, $costs['costs4'] * $fac);
 
             //Log schreiben
             $log_text = "[b]Gebäudebau Abbruch[/b]
@@ -526,8 +530,8 @@ class BuildListItem
 
             dbquery("UPDATE buildlist SET buildlist_build_type='0', buildlist_build_start_time='0', buildlist_build_end_time='0' WHERE buildlist_id='".$this->id."' LIMIT 1;");
             BuildList::$underConstruction = false;
-            //Rohstoffe vom Planeten abziehen und aktualisieren
-            $cp->changeRes($costs['costs0']*$fac,$costs['costs1']*$fac,$costs['costs2']*$fac,$costs['costs3']*$fac,$costs['costs4']*$fac);
+
+            $this->planetRepo->addResources($cp->id, $costs['costs0'] * $fac, $costs['costs1'] * $fac, $costs['costs2'] * $fac, $costs['costs3'] * $fac, $costs['costs4'] * $fac);
 
             //Log schreiben
             $log_text = "[b]Gebäudeabriss Abbruch[/b]
