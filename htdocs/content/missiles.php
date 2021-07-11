@@ -2,6 +2,7 @@
 
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Missile\MissileDataRepository;
 use EtoA\Missile\MissileRequirement;
 use EtoA\Missile\MissileRequirementRepository;
 use EtoA\Technology\TechnologyRepository;
@@ -128,25 +129,9 @@ $silo_level = $werft_arr['buildlist_current_level'];
 
 
             // Load missiles
-            $missiles = array();
-            $res = dbquery("
-            SELECT
-                *
-            FROM
-                missiles
-            WHERE
-                missile_show=1
-            ORDER BY
-                missile_name
-            ;");
-            $mc = mysql_num_rows($res);
-            if ($mc > 0)
-            {
-                while ($arr=mysql_fetch_array($res))
-                {
-                    $missiles[$arr['missile_id']]=$arr;
-                }
-            }
+            /** @var MissileDataRepository $missileDataRepository */
+            $missileDataRepository = $app[MissileDataRepository::class];
+            $missiles = $missileDataRepository->getMissiles();
 
             // Load list
             $missilelist = array();
@@ -163,10 +148,10 @@ $silo_level = $werft_arr['buildlist_current_level'];
             $cnt = 0;
             if (mysql_num_rows($res)>0)
             {
-                while ($arr=mysql_fetch_array($res))
+                while ($missile=mysql_fetch_array($res))
                 {
-                    $missilelist[$arr['mlid']]=$arr['cnt'];
-                    $cnt += $arr['cnt'];
+                    $missilelist[$missile['mlid']]=$missile['cnt'];
+                    $cnt += $missile['cnt'];
                 }
             }
 
@@ -273,13 +258,13 @@ $silo_level = $werft_arr['buildlist_current_level'];
             ;");
             if (mysql_num_rows($res)>0)
             {
-                while ($arr=mysql_fetch_array($res))
+                while ($missile=mysql_fetch_array($res))
                 {
                     $fcnt++;
-                    $flights[$arr['flight_id']]['landtime']=$arr['flight_landtime'];
-                    $flights[$arr['flight_id']]['planet_name']=$arr['planet_name'];
-                    $flights[$arr['flight_id']]['id']=$arr['id'];
-                    $flights[$arr['flight_id']]['obj']=array();
+                    $flights[$missile['flight_id']]['landtime']=$missile['flight_landtime'];
+                    $flights[$missile['flight_id']]['planet_name']=$missile['planet_name'];
+                    $flights[$missile['flight_id']]['id']=$missile['id'];
+                    $flights[$missile['flight_id']]['obj']=array();
                     $ores = dbquery("
                     SELECT
                         obj_cnt,
@@ -290,14 +275,14 @@ $silo_level = $werft_arr['buildlist_current_level'];
                     INNER JOIN
                         missiles
                         ON missile_id=obj_missile_id
-                        AND obj_flight_id=".$arr['flight_id']."
+                        AND obj_flight_id=".$missile['flight_id']."
                     ;");
                     if (mysql_num_rows($ores)>0)
                     {
                         while ($oarr=mysql_fetch_array($ores))
                         {
-                            $flights[$arr['flight_id']]['obj'][$oarr['missile_id']]['count']=$oarr['obj_cnt'];
-                            $flights[$arr['flight_id']]['obj'][$oarr['missile_id']]['name']=$oarr['missile_name'];
+                            $flights[$missile['flight_id']]['obj'][$oarr['missile_id']]['count']=$oarr['obj_cnt'];
+                            $flights[$missile['flight_id']]['obj'][$oarr['missile_id']]['name']=$oarr['missile_name'];
                         }
                     }
                 }
@@ -343,11 +328,11 @@ $silo_level = $werft_arr['buildlist_current_level'];
                             $bc+=$v;
 
                             $mcosts = [];
-                            $mcosts[0]=$missiles[$k]['missile_costs_metal']*$v;
-                            $mcosts[1]=$missiles[$k]['missile_costs_crystal']*$v;
-                            $mcosts[2]=$missiles[$k]['missile_costs_plastic']*$v;
-                            $mcosts[3]=$missiles[$k]['missile_costs_fuel']*$v;
-                            $mcosts[4]=$missiles[$k]['missile_costs_food']*$v;
+                            $mcosts[0]=$missiles[$k]->costsMetal*$v;
+                            $mcosts[1]=$missiles[$k]->costsCrystal*$v;
+                            $mcosts[2]=$missiles[$k]->costsPlastic*$v;
+                            $mcosts[3]=$missiles[$k]->costsFuel*$v;
+                            $mcosts[4]=$missiles[$k]->costsFood*$v;
 
                             if ($planet->resMetal >= $mcosts[0] &&
                                 $planet->resCrystal >= $mcosts[1] &&
@@ -389,13 +374,13 @@ $silo_level = $werft_arr['buildlist_current_level'];
                                 }
 
                                 $planetRepo->addResources($planet->id, - $mcosts[0], -$mcosts[1], -$mcosts[2], -$mcosts[3], -$mcosts[4]);
-                                success_msg($v." ".$missiles[$k]['missile_name']." wurden gekauft!");
+                                success_msg($v." ".$missiles[$k]->name." wurden gekauft!");
 
                                 $app['dispatcher']->dispatch(new \EtoA\Missile\Event\MissileBuy($k, $v), \EtoA\Missile\Event\MissileBuy::BUY_SUCCESS);
                             }
                             else
                             {
-                                error_msg("Konnte ".$missiles[$k]['missile_name']." nicht kaufen, zu wenig Ressourcen!");
+                                error_msg("Konnte ".$missiles[$k]->name." nicht kaufen, zu wenig Ressourcen!");
                             }
                         }
                         if ($bc==0)
@@ -444,7 +429,7 @@ $silo_level = $werft_arr['buildlist_current_level'];
                             ");
                             $missilelist[$k]-=$bc;
                             $cnt-=$bc;
-                            success_msg($bc." ".$missiles[$k]['missile_name']." wurden verschrottet!");
+                            success_msg($bc." ".$missiles[$k]->name." wurden verschrottet!");
                         }
                     }
                     if (!$valid)
@@ -485,7 +470,7 @@ $silo_level = $werft_arr['buildlist_current_level'];
 
 
             // Raketen anzeigen
-            if ($mc > 0)
+            if (count($missiles) > 0)
             {
                 if ($max_space > 0)
                 {
@@ -515,21 +500,21 @@ $silo_level = $werft_arr['buildlist_current_level'];
                 tableStart("Raketen verwalten");
 
                 $cnt2 = 0;
-                foreach ($missiles as $mid => $arr)
+                foreach ($missiles as $missile)
                 {
 
                     // Check requirements for this building
                     $requirements_passed = true;
-                    if (count($buildingRequirements[$mid]) > 0) {
-                        foreach ($buildingRequirements[$mid] as $requirement) {
+                    if (count($buildingRequirements[$missile->id]) > 0) {
+                        foreach ($buildingRequirements[$missile->id] as $requirement) {
                             if (!isset($buildlist[$requirement->requiredBuildingId]) || $buildlist[$requirement->requiredBuildingId] < $requirement->requiredLevel) {
                                 $requirements_passed = false;
                             }
                         }
                     }
 
-                    if (count($technologyRequirements[$mid]) > 0) {
-                        foreach ($technologyRequirements[$mid] as $requirement) {
+                    if (count($technologyRequirements[$missile->id]) > 0) {
+                        foreach ($technologyRequirements[$missile->id] as $requirement) {
                             if (!isset($techlist[$requirement->requiredTechnologyId]) || $techlist[$requirement->requiredTechnologyId] < $requirement->requiredLevel) {
                                 $requirements_passed = false;
                             }
@@ -544,9 +529,9 @@ $silo_level = $werft_arr['buildlist_current_level'];
                         $store = $max_space - $cnt;
 
                         //Titan
-                        if($arr['missile_costs_metal']>0)
+                        if($missile->costsMetal>0)
                         {
-                            $build_cnt_metal=floor($planet->resMetal/$arr['missile_costs_metal']);
+                            $build_cnt_metal=floor($planet->resMetal/$missile->costsMetal);
                         }
                         else
                         {
@@ -554,9 +539,9 @@ $silo_level = $werft_arr['buildlist_current_level'];
                         }
 
                         //Silizium
-                        if($arr['missile_costs_crystal']>0)
+                        if($missile->costsCrystal>0)
                         {
-                            $build_cnt_crystal=floor($planet->resCrystal/$arr['missile_costs_crystal']);
+                            $build_cnt_crystal=floor($planet->resCrystal/$missile->costsCrystal);
                         }
                         else
                         {
@@ -564,9 +549,9 @@ $silo_level = $werft_arr['buildlist_current_level'];
                         }
 
                         //PVC
-                        if($arr['missile_costs_plastic']>0)
+                        if($missile->costsPlastic>0)
                         {
-                            $build_cnt_plastic=floor($planet->resPlastic/$arr['missile_costs_plastic']);
+                            $build_cnt_plastic=floor($planet->resPlastic/$missile->costsPlastic);
                         }
                         else
                         {
@@ -574,9 +559,9 @@ $silo_level = $werft_arr['buildlist_current_level'];
                         }
 
                         //Tritium
-                        if($arr['missile_costs_fuel']>0)
+                        if($missile->costsFuel>0)
                         {
-                            $build_cnt_fuel=floor($planet->resFuel/$arr['missile_costs_fuel']);
+                            $build_cnt_fuel=floor($planet->resFuel/$missile->costsFuel);
                         }
                         else
                         {
@@ -584,9 +569,9 @@ $silo_level = $werft_arr['buildlist_current_level'];
                         }
 
                         //Nahrung
-                        if($arr['missile_costs_food']>0)
+                        if($missile->costsFood>0)
                         {
-                            $build_cnt_food=floor($planet->resFood/$arr['missile_costs_food']);
+                            $build_cnt_food=floor($planet->resFood/$missile->costsFood);
                         }
                         else
                         {
@@ -597,7 +582,7 @@ $silo_level = $werft_arr['buildlist_current_level'];
                         $missile_max_build=min($build_cnt_metal,$build_cnt_crystal,$build_cnt_plastic,$build_cnt_fuel,$build_cnt_food,$store);
 
                         // Grösste Zahl die eingegeben werden kann (Da man auch verschrotten kann)
-                        $available_missles = isset($missilelist[$mid]) ? $missilelist[$mid] : 0;
+                        $available_missles = isset($missilelist[$missile->id]) ? $missilelist[$missile->id] : 0;
                         $missile_max_number = max($missile_max_build, $available_missles);
 
                         //Tippbox Nachricht generieren
@@ -618,7 +603,7 @@ $silo_level = $werft_arr['buildlist_current_level'];
                     $bwait = [];
                     if ($planet->prodMetal>0)
                     {
-                        $bwait['metal']=ceil(($arr['missile_costs_metal']-$planet->resMetal)/$planet->prodMetal*3600);
+                        $bwait['metal']=ceil(($missile->costsMetal-$planet->resMetal)/$planet->prodMetal*3600);
                     }
                     else
                     {
@@ -628,7 +613,7 @@ $silo_level = $werft_arr['buildlist_current_level'];
                     //Wartezeit Silizium
                     if ($planet->prodCrystal>0)
                     {
-                        $bwait['crystal']=ceil(($arr['missile_costs_crystal']-$planet->resCrystal)/$planet->prodCrystal*3600);
+                        $bwait['crystal']=ceil(($missile->costsCrystal-$planet->resCrystal)/$planet->prodCrystal*3600);
                     }
                     else
                     {
@@ -638,7 +623,7 @@ $silo_level = $werft_arr['buildlist_current_level'];
                     //Wartezeit PVC
                     if ($planet->prodPlastic>0)
                     {
-                        $bwait['plastic']=ceil(($arr['missile_costs_plastic']-$planet->resPlastic)/$planet->prodPlastic*3600);
+                        $bwait['plastic']=ceil(($missile->costsPlastic-$planet->resPlastic)/$planet->prodPlastic*3600);
                     }
                     else
                     {
@@ -648,7 +633,7 @@ $silo_level = $werft_arr['buildlist_current_level'];
                     //Wartezeit Tritium
                     if ($planet->prodFuel>0)
                     {
-                        $bwait['fuel']=ceil(($arr['missile_costs_fuel']-$planet->resFuel)/$planet->prodFuel*3600);
+                        $bwait['fuel']=ceil(($missile->costsFuel-$planet->resFuel)/$planet->prodFuel*3600);
                     }
                     else
                     {
@@ -658,7 +643,7 @@ $silo_level = $werft_arr['buildlist_current_level'];
                     //Wartezeit Nahrung
                     if ($planet->prodFood>0)
                     {
-                        $bwait['food']=ceil(($arr['missile_costs_food']-$planet->resFood)/$planet->prodFood*3600);
+                        $bwait['food']=ceil(($missile->costsFood-$planet->resFood)/$planet->prodFood*3600);
                     }
                     else
                     {
@@ -677,7 +662,7 @@ $silo_level = $werft_arr['buildlist_current_level'];
 
                         //Stellt Rohstoff Rot dar, wenn es von diesem zu wenig auf dem Planeten hat
                         //Titan
-                        if($arr['missile_costs_metal']>$planet->resMetal)
+                        if($missile->costsMetal>$planet->resMetal)
                         {
                             $ress_style_metal="style=\"color:red;\"";
                         }
@@ -687,7 +672,7 @@ $silo_level = $werft_arr['buildlist_current_level'];
                         }
 
                         //Silizium
-                        if($arr['missile_costs_crystal']>$planet->resCrystal)
+                        if($missile->costsCrystal>$planet->resCrystal)
                         {
                             $ress_style_crystal="style=\"color:red;\"";
                         }
@@ -697,7 +682,7 @@ $silo_level = $werft_arr['buildlist_current_level'];
                         }
 
                         //PVC
-                        if($arr['missile_costs_plastic']>$planet->resPlastic)
+                        if($missile->costsPlastic>$planet->resPlastic)
                         {
                             $ress_style_plastic="style=\"color:red;\"";
                         }
@@ -707,7 +692,7 @@ $silo_level = $werft_arr['buildlist_current_level'];
                         }
 
                         //Tritium
-                        if($arr['missile_costs_fuel']>$planet->resFuel)
+                        if($missile->costsFuel>$planet->resFuel)
                         {
                             $ress_style_fuel="style=\"color:red;\"";
                         }
@@ -717,7 +702,7 @@ $silo_level = $werft_arr['buildlist_current_level'];
                         }
 
                         //Nahrung
-                        if($arr['missile_costs_food']>$planet->resFood)
+                        if($missile->costsFood>$planet->resFood)
                         {
                             $ress_style_food="style=\"color:red;\"";
                         }
@@ -736,24 +721,24 @@ $silo_level = $werft_arr['buildlist_current_level'];
                                 </tr>";
                 }
 
-                    $d_img = IMAGE_PATH.'/missiles/missile'.$mid.'_middle.'.IMAGE_EXT;
+                    $d_img = IMAGE_PATH.'/missiles/missile'.$missile->id.'_middle.'.IMAGE_EXT;
                     echo "<tr>
-                                <th colspan=\"5\">".$arr['missile_name']."</th>
+                                <th colspan=\"5\">".$missile->name."</th>
                             </tr>
                             <tr>
                                 <td width=\"120\" height=\"120\" rowspan=\"5\">";
                                     //Bild mit Link zur Hilfe darstellen
-                                                echo "<a href=\"".HELP_URL."&amp;id=".$mid."\" title=\"Info zu dieser Rakete anzeigen\">
+                                                echo "<a href=\"".HELP_URL."&amp;id=".$missile->id."\" title=\"Info zu dieser Rakete anzeigen\">
                                 <img src=\"".$d_img."\" width=\"120\" height=\"120\" border=\"0\" /></a>";
                     echo "</td>
-                                <td colspan=\"4\" valign=\"top\">".$arr['missile_sdesc']."</td>
+                                <td colspan=\"4\" valign=\"top\">".$missile->shortDescription."</td>
                             </tr>
                             <tr>
                                 <th>Geschwindigkeit:</th>
                                 <td>";
-                                if($arr['missile_speed']>0)
+                                if($missile->speed>0)
                                 {
-                                echo "".nf($arr['missile_speed'])."";
+                                echo "".nf($missile->speed)."";
                                 }
                                 else
                                 {
@@ -766,9 +751,9 @@ $silo_level = $werft_arr['buildlist_current_level'];
                             <tr>
                                 <th>Reichweite:</th>
                                 <td>";
-                                if($arr['missile_range']>0)
+                                if($missile->range>0)
                                 {
-                                echo "".nf($arr['missile_range'])." AE";
+                                echo "".nf($missile->range)." AE";
                                 }
                                 else
                                 {
@@ -779,15 +764,15 @@ $silo_level = $werft_arr['buildlist_current_level'];
                             <tr>
                                 <th>";
 
-                                if ($arr['missile_def']>0)
+                                if ($missile->def>0)
                                             {
                                                 echo "Sprengköpfe";
                                             }
-                                            elseif ($arr['missile_damage']>0)
+                                            elseif ($missile->damage>0)
                                             {
                                                 echo "Schaden";
                                             }
-                                            elseif($arr['missile_deactivate']>0)
+                                            elseif($missile->deactivate>0)
                                             {
                                                 echo "Schaden";
                                             }
@@ -795,13 +780,13 @@ $silo_level = $werft_arr['buildlist_current_level'];
                         echo "</th>
                                 <td>";
 
-                                if ($arr['missile_def']>0)
+                                if ($missile->def>0)
                                             {
-                                                echo nf($arr['missile_def']);
+                                                echo nf($missile->def);
                                             }
-                                            elseif ($arr['missile_damage']>0)
+                                            elseif ($missile->damage>0)
                                             {
-                                                echo nf($arr['missile_damage']);
+                                                echo nf($missile->damage);
                                             }
                                             else
                                             {
@@ -811,14 +796,14 @@ $silo_level = $werft_arr['buildlist_current_level'];
                     echo "</td>
                                 <th rowspan=\"2\">Kaufen:</th>
                             <td rowspan=\"2\">
-                                        <input type=\"text\" value=\"0\" id=\"missile_count_".$mid."\" name=\"missile_count[".$mid."]\" size=\"5\" maxlength=\"9\" ".tm("",$tm_cnt)." onkeyup=\"FormatNumber(this.id,this.value, ".$missile_max_number.", '', '');\"/><br><a href=\"javascript:;\" onclick=\"document.getElementById('missile_count_".$mid."').value=".$missile_max_build.";\">max</a>
+                                        <input type=\"text\" value=\"0\" id=\"missile_count_".$missile->id."\" name=\"missile_count[".$missile->id."]\" size=\"5\" maxlength=\"9\" ".tm("",$tm_cnt)." onkeyup=\"FormatNumber(this.id,this.value, ".$missile_max_number.", '', '');\"/><br><a href=\"javascript:;\" onclick=\"document.getElementById('missile_count_".$missile->id."').value=".$missile_max_build.";\">max</a>
                             </td>";
                 echo "<tr>
                             <th>EMP:</th>
                             <td>";
-                            if($arr['missile_deactivate']>0)
+                            if($missile->deactivate>0)
                                             {
-                                                echo tf($arr['missile_deactivate']);
+                                                echo tf($missile->deactivate);
                                             }
                                             else
                                             {
@@ -836,19 +821,19 @@ $silo_level = $werft_arr['buildlist_current_level'];
                                 <th height=\"20\" width=\"98\">".RES_FOOD."</th></tr>";
                     echo "<tr>
                                 <td height=\"20\" width=\"110\" ".$ress_style_metal.">
-                                    ".nf($arr['missile_costs_metal'])."
+                                    ".nf($missile->costsMetal)."
                                 </td>
                                 <td height=\"20\" width=\"25%\" ".$ress_style_crystal.">
-                                    ".nf($arr['missile_costs_crystal'])."
+                                    ".nf($missile->costsCrystal)."
                                 </td>
                                 <td height=\"20\" width=\"25%\" ".$ress_style_plastic.">
-                                    ".nf($arr['missile_costs_plastic'])."
+                                    ".nf($missile->costsPlastic)."
                                 </td>
                                 <td height=\"20\" width=\"25%\" ".$ress_style_fuel.">
-                                    ".nf($arr['missile_costs_fuel'])."
+                                    ".nf($missile->costsFuel)."
                                 </td>
                                 <td height=\"20\" width=\"25%\" ".$ress_style_food.">
-                                    ".nf($arr['missile_costs_food'])."
+                                    ".nf($missile->costsFood)."
                                 </td>
                             </tr>";
                 }
@@ -856,22 +841,22 @@ $silo_level = $werft_arr['buildlist_current_level'];
                 //Einfache Ansicht der Schiffsliste
                 else
                 {
-                    $d_img = IMAGE_PATH.'/missiles/missile'.$mid.'_middle.'.IMAGE_EXT;
+                    $d_img = IMAGE_PATH.'/missiles/missile'.$missile->id.'_middle.'.IMAGE_EXT;
                     echo "<tr>
                                     <td>";
                                         //Bild mit Link zur Hilfe darstellen
-                                    echo "<a href=\"".HELP_URL."&amp;id=".$mid."\"><img src=\"".$d_img."\" width=\"40\" height=\"40\" border=\"0\" /></a></td>";
+                                    echo "<a href=\"".HELP_URL."&amp;id=".$missile->id."\"><img src=\"".$d_img."\" width=\"40\" height=\"40\" border=\"0\" /></a></td>";
                         echo "<th width=\"40%\">
-                                        ".$arr['missile_name']."<br/>
+                                        ".$missile->name."<br/>
                                         <span style=\"font-weight:500;font-size:8pt;\">
-                                        <b>Vorhanden:</b> ".nf($missilelist[$mid])."</span></th>
-                                    <td width=\"10%\" ".$ress_style_metal.">".nf($arr['missile_costs_metal'])."</td>
-                                    <td width=\"10%\" ".$ress_style_crystal.">".nf($arr['missile_costs_crystal'])."</td>
-                                    <td width=\"10%\" ".$ress_style_plastic.">".nf($arr['missile_costs_plastic'])."</td>
-                                    <td width=\"10%\" ".$ress_style_fuel.">".nf($arr['missile_costs_fuel'])."</td>
-                                    <td width=\"10%\" ".$ress_style_food.">".nf($arr['missile_costs_food'])."</td>
+                                        <b>Vorhanden:</b> ".nf($missilelist[$missile->id])."</span></th>
+                                    <td width=\"10%\" ".$ress_style_metal.">".nf($missile->costsMetal)."</td>
+                                    <td width=\"10%\" ".$ress_style_crystal.">".nf($missile->costsCrystal)."</td>
+                                    <td width=\"10%\" ".$ress_style_plastic.">".nf($missile->costsPlastic)."</td>
+                                    <td width=\"10%\" ".$ress_style_fuel.">".nf($missile->costsFuel)."</td>
+                                    <td width=\"10%\" ".$ress_style_food.">".nf($missile->costsFood)."</td>
                                     <td>
-                                        <input type=\"text\" value=\"0\" id=\"missile_count_".$mid."\" name=\"missile_count[".$mid."]\" size=\"5\" maxlength=\"9\" ".tm("",$tm_cnt)." tabindex=\"0\" onkeyup=\"FormatNumber(this.id,this.value, ".$missile_max_number.", '', '');\"/><br><a href=\"javascript:;\" onclick=\"document.getElementById('missile_count_".$mid."').value=".$missile_max_build.";\">max</a>
+                                        <input type=\"text\" value=\"0\" id=\"missile_count_".$missile->id."\" name=\"missile_count[".$missile->id."]\" size=\"5\" maxlength=\"9\" ".tm("",$tm_cnt)." tabindex=\"0\" onkeyup=\"FormatNumber(this.id,this.value, ".$missile_max_number.", '', '');\"/><br><a href=\"javascript:;\" onclick=\"document.getElementById('missile_count_".$missile->id."').value=".$missile_max_build.";\">max</a>
                                     </td>
                                 </tr>";
                 }
@@ -990,12 +975,12 @@ $silo_level = $werft_arr['buildlist_current_level'];
                             $lblcnt=0;
                             foreach ($missilelist as $k => $v)
                             {
-                                if ($v > 0 && $missiles[$k]['missile_launchable']==1)
+                                if ($v > 0 && $missiles[$k]->launchable)
                                 {
-                                    echo '<input type="hidden" value="'.$missiles[$k]['missile_speed'].'" name="speed['.$k.']" />';
-                                    echo '<input type="hidden" value="'.$missiles[$k]['missile_range'].'" name="range['.$k.']" />';
+                                    echo '<input type="hidden" value="'.$missiles[$k]->speed.'" name="speed['.$k.']" />';
+                                    echo '<input type="hidden" value="'.$missiles[$k]->range.'" name="range['.$k.']" />';
                                     echo '<input type="text" value="0" id="missle_'.$k.'" name="count['.$k.']" size="4" onkeyup="FormatNumber(this.id,this.value, \''.$v.'\', \'\', \'\');'.$keyup_command.'"/>
-                                    '.$missiles[$k]['missile_name'].' ('.$v.' vorhanden)<br/>';
+                                    '.$missiles[$k]->name.' ('.$v.' vorhanden)<br/>';
                                     $lblcnt++;
                                 }
                             }
