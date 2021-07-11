@@ -3,6 +3,7 @@
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Missile\MissileDataRepository;
+use EtoA\Missile\MissileRepository;
 use EtoA\Missile\MissileRequirement;
 use EtoA\Missile\MissileRequirementRepository;
 use EtoA\Technology\TechnologyRepository;
@@ -134,25 +135,12 @@ $silo_level = $werft_arr['buildlist_current_level'];
             $missiles = $missileDataRepository->getMissiles();
 
             // Load list
-            $missilelist = array();
-            $res = dbquery("
-            SELECT
-                missilelist_missile_id as mlid,
-                missilelist_count as cnt
-            FROM
-                missilelist
-            WHERE
-                missilelist_user_id=".$cu->id."
-                AND missilelist_entity_id=".$planet->id."
-            ;");
+            /** @var MissileRepository $missileRepository */
+            $missileRepository = $app[MissileRepository::class];
+            $missilelist = $missileRepository->getMissilesCounts($cu->getId(), $planet->id);
             $cnt = 0;
-            if (mysql_num_rows($res)>0)
-            {
-                while ($missile=mysql_fetch_array($res))
-                {
-                    $missilelist[$missile['mlid']]=$missile['cnt'];
-                    $cnt += $missile['cnt'];
-                }
+            foreach ($missilelist as $count) {
+                $cnt += $count;
             }
 
             // Launch missiles
