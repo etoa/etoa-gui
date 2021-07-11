@@ -4,6 +4,7 @@ use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Missile\MissileRequirement;
 use EtoA\Missile\MissileRequirementRepository;
+use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -91,28 +92,17 @@ $silo_level = $werft_arr['buildlist_current_level'];
                 }
             }
 
+            $builing_something=false;
+
             // Gebäudeliste laden
             /** @var BuildingRepository $buildingRepository */
             $buildingRepository = $app[BuildingRepository::class];
             $buildlist = $buildingRepository->getBuildingLevels($planet->id);
 
-            $builing_something=false;
-            $techlist = [];
             // Technologieliste laden
-            $tres = dbquery("
-            SELECT
-                techlist_tech_id,
-                techlist_current_level
-            FROM
-                techlist
-            WHERE
-                techlist_user_id='".$cu->id."'
-            ;");
-            while ($tarr = mysql_fetch_array($tres))
-            {
-                $techlist[$tarr['techlist_tech_id']]=$tarr['techlist_current_level'];
-            }
-
+            /** @var TechnologyRepository $technologyRepository */
+            $technologyRepository = $app[TechnologyRepository::class];
+            $techlist = $technologyRepository->getTechnologyLevels($cu->getId());
 
             // Self destruct flight
             if (isset($_GET['selfdestruct']) && $_GET['selfdestruct']>0)

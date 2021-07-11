@@ -2,6 +2,7 @@
 
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 
@@ -124,24 +125,12 @@ if (mysql_num_rows($factory_res)>0)
 
         //Technologien laden und Gentechlevel definieren
         $gen_tech_level = 0;
-        $techlist = [];
-        $res = dbquery("
-                    SELECT
-                        techlist_tech_id,
-                        techlist_current_level
-                    FROM
-                        techlist
-                    WHERE
-                        techlist_user_id='".$cu->id."';");
+        /** @var TechnologyRepository $technologyRepository */
+        $technologyRepository = $app[TechnologyRepository::class];
+        $techlist = $technologyRepository->getTechnologyLevels($cu->getId());
 
-        while ($arr = mysql_fetch_assoc($res))
-        {
-            $techlist[$arr['techlist_tech_id']]=$arr['techlist_current_level'];
-
-            if($arr['techlist_tech_id']==GEN_TECH_ID && $arr['techlist_current_level']>0)
-            {
-                $gen_tech_level = $arr['techlist_current_level'];
-            }
+        if (isset($techlist[GEN_TECH_ID]) && $techlist[GEN_TECH_ID] > 0) {
+            $gen_tech_level = $techlist[GEN_TECH_ID];
         }
 
         //Gebäude laden

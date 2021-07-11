@@ -2,8 +2,9 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\RuntimeDataStore;
+use EtoA\Technology\TechnologyRepository;
 
-    /**
+/**
     * Provides static functions for
     * calculating and displaying
     * player ranking
@@ -529,23 +530,13 @@ use EtoA\Support\RuntimeDataStore;
                 }
 
                 // Punkte für Forschung
-                $res = dbquery("
-                    SELECT
-                        techlist_current_level,
-                        techlist_tech_id
-                    FROM
-                        techlist
-                    WHERE
-                        techlist_user_id='".$user_id."';
-                ");
-                if (mysql_num_rows($res)>0)
-                {
-                    while ($arr = mysql_fetch_assoc($res))
-                    {
-                        $p = round($tech[$arr['techlist_tech_id']][$arr['techlist_current_level']]);
-                        $points+=$p;
-                        $points_tech+=$p;
-                    }
+                /** @var TechnologyRepository $technologyRepository */
+                $technologyRepository = $app[TechnologyRepository::class];
+                $techList = $technologyRepository->getTechnologyLevels($user_id);
+                foreach ($techList as $technologyId => $level) {
+                    $p = round($tech[$technologyId][$level]);
+                    $points+=$p;
+                    $points_tech+=$p;
                 }
 
                 // Punkte für XP

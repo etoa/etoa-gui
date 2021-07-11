@@ -6,6 +6,23 @@ use EtoA\Core\AbstractRepository;
 
 class TechnologyRepository extends AbstractRepository
 {
+    /**
+     * @return array<int, int>
+     */
+    public function getTechnologyLevels(int $userId): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('techlist_tech_id, techlist_current_level')
+            ->from('techlist')
+            ->where('techlist_user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+            ])->execute()
+            ->fetchAllKeyValue();
+
+        return array_map(fn ($value) => (int) $value, $data);
+    }
+
     public function getTechnologyLevel(int $userId, int $technologyId): int
     {
         return (int) $this->createQueryBuilder()
