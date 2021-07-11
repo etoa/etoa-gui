@@ -3,6 +3,7 @@
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Missile\MissileDataRepository;
+use EtoA\Missile\MissileFlightRepository;
 use EtoA\Missile\MissileRepository;
 use EtoA\Missile\MissileRequirement;
 use EtoA\Missile\MissileRequirementRepository;
@@ -22,6 +23,9 @@ $entityRepository = $app[EntityRepository::class];
 
 /** @var ResourceBoxDrawer */
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
+
+/** @var MissileFlightRepository $missileFlightRepository */
+$missileFlightRepository = $app[MissileFlightRepository::class];
 
 // Info-Link
 define("HELP_URL","?page=help&site=missiles");
@@ -167,46 +171,17 @@ $silo_level = $werft_arr['buildlist_current_level'];
                     }
                 }
 
-                if (count($launch) > 0)
-                {
+                if (count($launch) > 0) {
                     // Save flight
-                    dbquery("
-                    INSERT INTO
-                        missile_flights
-                    (
-                        flight_entity_from,
-                        flight_entity_to,
-                        flight_starttime,
-                        flight_landtime
-                    ) VALUES (
-                        '".$planet->id."',
-                        '".intval($_POST['targetplanet'])."',
-                        UNIX_TIMESTAMP(),
-                        UNIX_TIMESTAMP()+".intval($_POST['timeforflight'])."
-                    );"); // TODO: timeforflight comes from client? srsly?
-                    $fid = mysql_insert_id();
-                    foreach ($launch as $k => $v)
-                    {
-                        $k = intval($k);
-                        $v = intval($v);
-                        // Save flying missiles
-                        dbquery("
-                        INSERT INTO
-                            missile_flights_obj
-                        (
-                            obj_flight_id,
-                            obj_missile_id,
-                            obj_cnt
-                        ) VALUES (
-                            ".$fid.",
-                            ".$k.",
-                            ".$v."
-                        );");
+                    $missileFlightRepository->startFlight($planet->id, (int) $_POST['targetplanet'], (int) $_POST['timeforflight'], $launch); // TODO: timeforflight comes from client? srsly?
+
+                    foreach ($launch as $missileId => $count) {
                         // Update list
-                        $missileRepository->addMissile($k, -$v, $cu->getId(), $planet->id);
-                        $missilelist[$k]-=$v;
-                        $lcnt+=$v;
+                        $missileRepository->addMissile($missileId, -$count, $cu->getId(), $planet->id);
+                        $missilelist[$missileId] -= $count;
+                        $lcnt += $count;
                     }
+
                     $cnt-=$lcnt;
                     success_msg("Raketen gestartet!");
                     $app['dispatcher']->dispatch(new \EtoA\Missile\Event\MissileLaunch($launch), \EtoA\Missile\Event\MissileLaunch::LAUNCH_SUCCESS);
