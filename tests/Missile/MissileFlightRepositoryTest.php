@@ -22,6 +22,16 @@ class MissileFlightRepositoryTest extends AbstractDbTestCase
         $this->assertGreaterThan(0, $flightId);
     }
 
+    public function testGetFlights(): void
+    {
+        $this->repository->startFlight(3, 2, 10, [1 => 1]);
+        $result = $this->connection->executeQuery('INSERT INTO planets (id) VALUES (2)');
+
+        $flights = $this->repository->getFlights(3);
+
+        $this->assertNotEmpty($flights);
+    }
+
     public function testDeleteFlight(): void
     {
         $flightId = $this->repository->startFlight(1, 2, 10, [1 => 1]);

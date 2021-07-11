@@ -7,6 +7,23 @@ use EtoA\Core\AbstractRepository;
 class MissileFlightRepository extends AbstractRepository
 {
     /**
+     * @return MissileFlight[]
+     */
+    public function getFlights(int $entityFromId): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('f.flight_landtime, f.flight_id, p.planet_name, p.id')
+            ->from('missile_flights', 'f')
+            ->innerJoin('f', 'planets', 'p', 'p.id = f.flight_entity_to')
+            ->where('flight_entity_from = :entityFrom')
+            ->setParameter('entityFrom', $entityFromId)
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new MissileFlight($row), $data);
+    }
+
+    /**
      * @param array<int, int> $missiles
      */
     public function startFlight(int $fromEntity, int $toEntity, int $duration, array $missiles): int

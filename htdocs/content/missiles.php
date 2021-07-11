@@ -178,33 +178,15 @@ $silo_level = $werft_arr['buildlist_current_level'];
             }
 
             // Load flights
-            $flights = array();
-            $fcnt=0;
-            $res = dbquery("
-            SELECT
-                flight_landtime,
-                flight_id,
-                planet_name,
-                id
-            FROM
-                missile_flights
-            INNER JOIN
-            (
-                planets
-            )
-                ON flight_entity_to=id
-                AND flight_entity_from=".$planet->id."
-            ;");
-            if (mysql_num_rows($res)>0)
-            {
-                while ($missile=mysql_fetch_array($res))
-                {
-                    $fcnt++;
-                    $flights[$missile['flight_id']]['landtime']=$missile['flight_landtime'];
-                    $flights[$missile['flight_id']]['planet_name']=$missile['planet_name'];
-                    $flights[$missile['flight_id']]['id']=$missile['id'];
-                    $flights[$missile['flight_id']]['obj']=array();
-                    $ores = dbquery("
+            $missileFlight = $missileFlightRepository->getFlights($planet->id);
+            $flights = [];
+            $fcnt = count($missileFlight);
+            foreach ($missileFlight as $flight) {
+                $flights[$flight->id]['landtime']=$flight->landTime;
+                $flights[$flight->id]['planet_name']=$flight->targetPlanetName;
+                $flights[$flight->id]['id']=$flight->targetPlanetId;
+                $flights[$flight->id]['obj']=array();
+                $ores = dbquery("
                     SELECT
                         obj_cnt,
                         missile_id,
@@ -214,15 +196,14 @@ $silo_level = $werft_arr['buildlist_current_level'];
                     INNER JOIN
                         missiles
                         ON missile_id=obj_missile_id
-                        AND obj_flight_id=".$missile['flight_id']."
+                        AND obj_flight_id=".$flight->id."
                     ;");
-                    if (mysql_num_rows($ores)>0)
+                if (mysql_num_rows($ores)>0)
+                {
+                    while ($oarr=mysql_fetch_array($ores))
                     {
-                        while ($oarr=mysql_fetch_array($ores))
-                        {
-                            $flights[$missile['flight_id']]['obj'][$oarr['missile_id']]['count']=$oarr['obj_cnt'];
-                            $flights[$missile['flight_id']]['obj'][$oarr['missile_id']]['name']=$oarr['missile_name'];
-                        }
+                        $flights[$flight->id]['obj'][$oarr['missile_id']]['count']=$oarr['obj_cnt'];
+                        $flights[$flight->id]['obj'][$oarr['missile_id']]['name']=$oarr['missile_name'];
                     }
                 }
             }
