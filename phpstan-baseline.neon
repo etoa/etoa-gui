@@ -231,46 +231,6 @@ parameters:
 			path: htdocs/content/market/new.php
 
 		-
-			message: "#^Variable \\$heal_tech_level might not be defined\\.$#"
-			count: 2
-			path: htdocs/content/planetoverview.php
-
-		-
-			message: "#^Variable \\$heal_tech_name might not be defined\\.$#"
-			count: 2
-			path: htdocs/content/planetoverview.php
-
-		-
-			message: "#^Variable \\$shield_tech_level might not be defined\\.$#"
-			count: 2
-			path: htdocs/content/planetoverview.php
-
-		-
-			message: "#^Variable \\$shield_tech_name might not be defined\\.$#"
-			count: 2
-			path: htdocs/content/planetoverview.php
-
-		-
-			message: "#^Variable \\$structure_tech_level might not be defined\\.$#"
-			count: 2
-			path: htdocs/content/planetoverview.php
-
-		-
-			message: "#^Variable \\$structure_tech_name might not be defined\\.$#"
-			count: 2
-			path: htdocs/content/planetoverview.php
-
-		-
-			message: "#^Variable \\$weapon_tech_level might not be defined\\.$#"
-			count: 2
-			path: htdocs/content/planetoverview.php
-
-		-
-			message: "#^Variable \\$weapon_tech_name might not be defined\\.$#"
-			count: 2
-			path: htdocs/content/planetoverview.php
-
-		-
 			message: "#^Foreach overwrites \\$bid with its key variable\\.$#"
 			count: 1
 			path: htdocs/content/research.php

@@ -192,10 +192,7 @@ use EtoA\Technology\TechnologyRepository;
 			if ($rarr['req_tech_id']>0) $b_req[$rarr['obj_id']]['t'][$rarr['req_tech_id']]=$rarr['req_level'];
 		}
 
-		if ($mode=="ships")
-			$sl = new ShipList($cp->id,$cu->id);
-
-		// Wenn Kategorien vorhanden sind (Gebäude, Forschungen)
+            // Wenn Kategorien vorhanden sind (Gebäude, Forschungen)
 		if (defined("TYPES_TBL") && defined("ITEM_TYPE_FLD") && defined("TYPE_ORDER_FLD"))
 		{
 			$tres = dbquery("

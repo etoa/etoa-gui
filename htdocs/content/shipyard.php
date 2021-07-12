@@ -59,7 +59,7 @@ $shipyard = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, SH
 $tabulator = 1;
 
 // Prüfen ob Werft gebaut ist
-if ($shipyard !== null && $shipyard->currentLevel) {
+if ($shipyard !== null && $shipyard->currentLevel > 0) {
     // Titel
     echo "<h1>Raumschiffswerft (Stufe ".$shipyard->currentLevel.") des Planeten ".$planet->name."</h1>";
 

@@ -41,8 +41,6 @@ if ($cp)
     $fleetBunker = $buildingDataRepository->getBuilding(FLEET_BUNKER_ID);
     $resBunker = $buildingDataRepository->getBuilding(RES_BUNKER_ID);
 
-    $sl = new ShipList($planet->id, $cu->id);
-
     $ships = [];
     if ($mode=="fleet" || $mode=="bunker")
     {
@@ -56,7 +54,7 @@ if ($cp)
 
     if ($mode=="bunker")
     {
-        if ($fleetBunkerLevel) {
+        if ($fleetBunkerLevel > 0) {
             if (isset($_POST['submit_bunker_fleet']) && checker_verify())
             {
                 $count = 0;

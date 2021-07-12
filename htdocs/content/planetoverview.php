@@ -3,6 +3,7 @@
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Ship\ShipDataRepository;
@@ -51,6 +52,9 @@ $buildingDataRepository = $app[BuildingDataRepository::class];
 $techDataRepository = $app[TechnologyDataRepository::class];
 /** @var TechnologyRepository $techRepository */
 $techRepository = $app[TechnologyRepository::class];
+/** @var DefenseDataRepository $defenseDataRepository */
+$defenseDataRepository = $app[DefenseDataRepository::class];
+
 // BEGIN SKRIPT //
 
 /** @var ?Planet $cp - The current Planet */
@@ -233,9 +237,6 @@ if (isset($cp))
             }
         }
 
-        $sl = new ShipList($planet->id, $cu->id, 1);
-        $dl = new DefList($planet->id, $cu->id, 1);
-
         echo "<h1>Übersicht über den Planeten ".$planet->name."</h1>";
         echo $resourceBoxDrawer->getHTML($planet);
 
@@ -358,20 +359,22 @@ if (isset($cp))
         else
             echo "<tr><td><i>Keine Gebäude vorhanden!</i></td></tr>";
         tableEnd();
+
         echo "</td><td style=\"width:50%;vertical-align:top;padding:5px;\">";
         tableStart("Verteidigungsanlagen",'100%');
         $defenseCounts = $defenseRepository->getEntityDefenseCounts($cu->getId(), $planet->id);
+        $defenses = $defenseDataRepository->getAllDefenses();
         if (count($defenseCounts) > 0) {
             $dfcnt=0;
             echo "<tr><th>Name</th><th>Anzahl</th><th>Felder</th></tr>";
-            foreach ($dl as $k => &$v)
+            foreach ($defenseCounts as $defenseId => $count)
             {
-                echo "<tr><th>".$v."</th>";
-                echo "<td>".$defenseCounts[(int) $k]."</td>";
-                echo "<td>".nf($defenseCounts[(int) $k] * $v->fieldsUsed)."</td></tr>";
-                $dfcnt+=$defenseCounts[(int) $k] * $v->fieldsUsed;
+                echo "<tr><th>".$defenses[$defenseId]->name."</th>";
+                echo "<td>".$count."</td>";
+                echo "<td>".nf($count * $defenses[$defenseId]->fields)."</td></tr>";
+                $dfcnt += $count * $defenses[$defenseId]->fields;
             }
-            unset($v);
+
             echo "<tr><th colspan=\"2\">Total</th><td>".nf($dfcnt)."</td></tr>";
         }
         else
@@ -384,11 +387,16 @@ if (isset($cp))
         // Schiffe
         //
 
+        $bonusStructure = 0;
+        $bonusShield = 0;
+        $bonusWeapon = 0;
+        $bonusHeal = 0;
+
         echo "<div id=\"tabShips\" style=\"".($sub=="ships" ? '' : 'display:none;')."\">";
         tableStart("Kampfstärke");
         $shipCounts = $shipRepo->getEntityShipCounts($cu->getId(), $planet->id);
         if (count($shipCounts) > 0) {
-            // Forschung laden und bonus dazu rechnen
+            $ships = $shipDataRepository->getAllShips(true);
             $shield_tech_level = $techlist[SHIELD_TECH_ID] ?? 0;
             $shield_tech_a = 1 + ($shield_tech_level / 10);
 
@@ -401,49 +409,66 @@ if (isset($cp))
             $heal_tech_level = $techlist[REGENA_TECH_ID] ?? 0;
             $heal_tech_a = 1 + ($heal_tech_level / 10);
 
+            $totalStructure = 0;
+            $totalShield = 0;
+            $totalWeapon = 0;
+            $totalHeal = 0;
+            foreach ($shipCounts as $shipId => $shipCount) {
+                $totalStructure += $shipCount + $ships[$shipId]->structure;
+                $bonusStructure += $shipCount + $ships[$shipId]->specialBonusStructure;
+                $totalShield += $shipCount + $ships[$shipId]->shield;
+                $bonusShield += $shipCount + $ships[$shipId]->specialBonusShield;
+                $totalWeapon += $shipCount + $ships[$shipId]->weapon;
+                $bonusWeapon += $shipCount + $ships[$shipId]->specialBonusWeapon;
+                $totalWeapon += $shipCount + $ships[$shipId]->weapon;
+                $bonusWeapon += $shipCount + $ships[$shipId]->specialBonusWeapon;
+                $totalHeal += $shipCount + $ships[$shipId]->heal;
+                $bonusHeal += $shipCount + $ships[$shipId]->specialBonusHeal;
+            }
+
             echo "<tr><th><b>Einheit</b></th><th>Grundwerte</th><th>Aktuelle Werte</th></tr>";
             echo "<tr>
                     <td><b>Struktur:</b></td>
-                    <td>".nf($sl->getTotalStrucure())."</td>
-                    <td>".nf($sl->getTotalStrucure()*($structure_tech_a+$sl->getBStructure()));
+                    <td>".nf($totalStructure)."</td>
+                    <td>".nf($totalStructure * ($structure_tech_a + $bonusStructure));
                     if ($structure_tech_a>1)
                     {
                         echo " (".get_percent_string($structure_tech_a,1)." durch ".$techNames[STRUCTURE_TECH_ID]." ".$structure_tech_level;
-                        if ($sl->getBStructure()>0)
-                            echo ", ".get_percent_string((1+$sl->getBStructure()),1)." durch Spezialschiffe";
+                        if ($bonusStructure > 0)
+                            echo ", ".get_percent_string((1 + $bonusStructure),1)." durch Spezialschiffe";
                         echo ")";
                     }
                     echo "</td></tr>";
             echo "<tr><td><b>Schilder:</b></td>
-                    <td>".nf($sl->getTotalShield())."</td>
-                    <td>".nf($sl->getTotalShield()*($shield_tech_a+$sl->getBShield()));
+                    <td>".nf($totalShield)."</td>
+                    <td>".nf($totalShield * ($shield_tech_a + $bonusShield));
                     if ($shield_tech_a>1)
                     {
                         echo " (".get_percent_string($shield_tech_a,1)." durch ".$techNames[SHIELD_TECH_ID]." ".$shield_tech_level;
-                        if ($sl->getBShield()>0)
-                            echo ", ".get_percent_string((1+$sl->getBShield()),1)." durch Spezialschiffe";
+                        if ($bonusShield > 0)
+                            echo ", ".get_percent_string((1 + $bonusShield),1)." durch Spezialschiffe";
                         echo ")";
                     }
                     echo "</td></tr>";
             echo "<tr><td><b>Waffen:</b></td>
-                    <td>".nf($sl->getTotalWeapon())."</td>
-                    <td>".nf($sl->getTotalWeapon()*($weapon_tech_a+$sl->getBWeapon()));
+                    <td>".nf($totalWeapon)."</td>
+                    <td>".nf($totalWeapon * ($weapon_tech_a + $bonusWeapon));
                     if ($weapon_tech_a>1)
                     {
                         echo " (".get_percent_string($weapon_tech_a,1)." durch ".$techNames[WEAPON_TECH_ID]." ".$weapon_tech_level;
-                        if ($sl->getBWeapon()>0)
-                            echo ", ".get_percent_string((1+$sl->getBWeapon()),1)." durch Spezialschiffe";
+                        if ($bonusWeapon > 0)
+                            echo ", ".get_percent_string((1 + $bonusWeapon),1)." durch Spezialschiffe";
                         echo ")";
                     }
                     echo "</td></tr>";
             echo "<tr><td><b>Reparatur:</b></td>
-                    <td>".nf($sl->getTotalHeal())."</td>
-                    <td>".nf($sl->getTotalHeal()*($heal_tech_a+$sl->getBHeal()));
+                    <td>".nf($totalHeal)."</td>
+                    <td>".nf($totalHeal * ($heal_tech_a + $bonusHeal));
                     if ($heal_tech_a>1)
                     {
                         echo " (".get_percent_string($heal_tech_a,1)." durch ".$techNames[REGENA_TECH_ID]." ".$heal_tech_level;
-            if ($sl->getBHeal()>0)
-                            echo ", ".get_percent_string((1+$sl->getBHeal()),1)." durch Spezialschiffe";
+            if ($bonusHeal > 0)
+                            echo ", ".get_percent_string((1 + $bonusHeal),1)." durch Spezialschiffe";
                         echo ")";
                     }
                     echo "</td></tr>";
@@ -491,49 +516,61 @@ if (isset($cp))
             $heal_tech_level = $techlist[REGENA_TECH_ID] ?? 0;
             $heal_tech_a = 1 + ($heal_tech_level / 10);
 
+            $totalStructure = 0;
+            $totalShield = 0;
+            $totalWeapon = 0;
+            $totalHeal = 0;
+            foreach ($defenseCounts as $defenseId => $defenseCount) {
+                $totalStructure += $defenseCount + $defenses[$defenseId]->structure;
+                $totalShield += $defenseCount + $defenses[$defenseId]->shield;
+                $totalWeapon += $defenseCount + $defenses[$defenseId]->weapon;
+                $totalWeapon += $defenseCount + $defenses[$defenseId]->weapon;
+                $totalHeal += $defenseCount + $defenses[$defenseId]->heal;
+            }
+
                 echo "<tr><th><b>Einheit</b></th><th>Grundwerte</th><th>Aktuelle Werte</th></tr>";
             echo "<tr>
                     <td><b>Struktur:</b></td>
-                    <td>".nf($dl->getTotalStrucure())."</td>
-                    <td>".nf($dl->getTotalStrucure()*($structure_tech_a+$sl->getBStructure()));
+                    <td>".nf($totalStructure)."</td>
+                    <td>".nf($totalStructure * ($structure_tech_a + $bonusStructure));
                     if ($structure_tech_a>1)
                     {
                         echo " (".get_percent_string($structure_tech_a,1)." durch ".$techNames[STRUCTURE_TECH_ID]." ".$structure_tech_level;
-            if ($sl->getBStructure()>0)
-                            echo ", ".get_percent_string((1+$sl->getBStructure()),1)." durch Spezialschiffe";
+            if ($bonusStructure > 0)
+                            echo ", ".get_percent_string((1 + $bonusStructure),1)." durch Spezialschiffe";
                         echo ")";
                     }
                     echo "</td></tr>";
             echo "<tr><td><b>Schilder:</b></td>
-                    <td>".nf($dl->getTotalShield())."</td>
-                    <td>".nf($dl->getTotalShield()*($shield_tech_a+$sl->getBShield()));
+                    <td>".nf($totalShield)."</td>
+                    <td>".nf($totalShield * ($shield_tech_a + $bonusShield));
                     if ($shield_tech_a>1)
                     {
                         echo " (".get_percent_string($shield_tech_a,1)." durch ".$techNames[SHIELD_TECH_ID]." ".$shield_tech_level;
-            if ($sl->getBShield()>0)
-                            echo ", ".get_percent_string((1+$sl->getBShield()),1)." durch Spezialschiffe";
+            if ($bonusShield > 0)
+                            echo ", ".get_percent_string((1 + $bonusShield),1)." durch Spezialschiffe";
                         echo ")";
                     }
                     echo "</td></tr>";
             echo "<tr><td><b>Waffen:</b></td>
-                    <td>".nf($dl->getTotalWeapon())."</td>
-                    <td>".nf($dl->getTotalWeapon()*($weapon_tech_a+$sl->getBWeapon()));
+                    <td>".nf($totalWeapon)."</td>
+                    <td>".nf($totalWeapon * ($weapon_tech_a + $bonusWeapon));
                     if ($weapon_tech_a>1)
                     {
                         echo " (".get_percent_string($weapon_tech_a,1)." durch ".$techNames[WEAPON_TECH_ID]." ".$weapon_tech_level;
-            if ($sl->getBWeapon()>0)
-                            echo ", ".get_percent_string((1+$sl->getBWeapon()),1)." durch Spezialschiffe";
+            if ($bonusWeapon > 0)
+                            echo ", ".get_percent_string((1 + $bonusWeapon),1)." durch Spezialschiffe";
                         echo ")";
                     }
                     echo "</td></tr>";
             echo "<tr><td><b>Reparatur:</b></td>
-                    <td>".nf($dl->getTotalHeal())."</td>
-                    <td>".nf($dl->getTotalHeal()*($heal_tech_a+$sl->getBHeal()));
+                    <td>".nf($totalHeal)."</td>
+                    <td>".nf($totalHeal * ($heal_tech_a + $bonusHeal));
                     if ($heal_tech_a>1)
                     {
                         echo " (".get_percent_string($heal_tech_a,1)." durch ".$techNames[REGENA_TECH_ID]." ".$heal_tech_level;
-                    if ($sl->getBHeal()>0)
-                            echo ", ".get_percent_string((1+$sl->getBHeal()),1)." durch Spezialschiffe";
+                    if ($bonusHeal > 0)
+                            echo ", ".get_percent_string((1 + $bonusHeal),1)." durch Spezialschiffe";
                         echo ")";
         }
                     echo "</td></tr>";
@@ -548,12 +585,12 @@ if (isset($cp))
 
         tableStart("Details");
         echo "<tr><th>Typ</th><th>Anzahl</th><th>Felder</th></tr>";
-        foreach ($dl as $k => &$v)
+        foreach ($defenseCounts as $defenseId => $defenseCount)
         {
             echo "<tr>
-                <td>".$v."</td>
-                <td>".nf($defenseCounts[(int) $k])."</td>
-                <td>".nf($defenseCounts[(int) $k] * $v->fieldsUsed)."</td>
+                <td>".$defenses[$defenseId]->name."</td>
+                <td>".nf($defenseCount)."</td>
+                <td>".nf($defenseCount * $defenses[$defenseId]->fields)."</td>
                 </tr>";
         }
         unset($v);
