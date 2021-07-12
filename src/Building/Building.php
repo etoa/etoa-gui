@@ -89,16 +89,16 @@ class Building
 
     public function calculateBunkerResources(int $level): int
     {
-        return $this->bunkerRes * (int) pow($this->storeFactor,$level - 1);
+        return $this->bunkerRes * (int) $this->storeFactor ** ($level - 1);
     }
 
     public function calculateBunkerFleetSpace(int $level): int
     {
-        return $this->bunkerFleetSpace * (int) pow($this->storeFactor,$level - 1);
+        return $this->bunkerFleetSpace * (int) $this->storeFactor ** ($level - 1);
     }
 
     public function calculateBunkerFleetCount(int $level): int
     {
-        return $this->bunkerFleetCount * (int) pow($this->storeFactor,$level - 1);
+        return $this->bunkerFleetCount * (int) $this->storeFactor ** ($level - 1);
     }
 }
