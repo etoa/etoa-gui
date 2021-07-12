@@ -27,6 +27,9 @@ $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 /** @var MissileFlightRepository $missileFlightRepository */
 $missileFlightRepository = $app[MissileFlightRepository::class];
 
+/** @var BuildingRepository $buildingRepository */
+$buildingRepository = $app[BuildingRepository::class];
+
 // Info-Link
 define("HELP_URL","?page=help&site=missiles");
 
@@ -45,40 +48,23 @@ $planet = $planetRepo->find($cp->id);
 echo "<form action=\"?page=$page\" method=\"post\">";
 
 // Gebäude Level und Arbeiter laden
-$werft_res = dbquery("
-SELECT
-buildlist_current_level,
-buildlist_people_working,
-buildlist_deactivated,
-buildlist_prod_percent
-FROM
-buildlist
-WHERE
-buildlist_entity_id='".$planet->id."'
-AND buildlist_building_id='".BUILD_MISSILE_ID."'
-AND buildlist_current_level>='1'
-AND buildlist_user_id='".$cu->id."'");
+$missileBuilding = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, BUILD_MISSILE_ID);
 
 // Prüfen ob Gebäude gebaut ist
-if (mysql_num_rows($werft_res)>0)
-{
-$werft_arr=mysql_fetch_array($werft_res);
-$silo_level = $werft_arr['buildlist_current_level'];
+if ($missileBuilding !== null) {
     // New exponential missile number algorithm by river
     // $max_space = per_level * algo_base ^ (silo_level - 1)
-    $max_space = ceil(MISSILE_SILO_MISSILES_PER_LEVEL*pow(MISSILE_SILO_MISSILES_ALGO_BASE,$silo_level-1));
-    $max_flights = $silo_level*MISSILE_SILO_FLIGHTS_PER_LEVEL;
+    $max_space = ceil(MISSILE_SILO_MISSILES_PER_LEVEL*pow(MISSILE_SILO_MISSILES_ALGO_BASE,$missileBuilding->currentLevel-1));
+    $max_flights = $missileBuilding->currentLevel*MISSILE_SILO_FLIGHTS_PER_LEVEL;
 
     // Titel
-    echo "<h1>Raketensilo (Stufe ".$silo_level.") des Planeten ".$planet->name."</h1>";
+    echo "<h1>Raketensilo (Stufe ".$missileBuilding->currentLevel.") des Planeten ".$planet->name."</h1>";
 
     // Ressourcen anzeigen
     echo $resourceBoxDrawer->getHTML($planet);
 
-    if ($planet->prodPower - $planet->usePower >= 0 && $planet->prodPower>0 && $werft_arr['buildlist_prod_percent']==1)
-    {
-        if ($werft_arr['buildlist_deactivated'] < time())
-        {
+    if ($planet->prodPower - $planet->usePower >= 0 && $planet->prodPower>0 && $missileBuilding->prodPercent === 1) {
+        if ($missileBuilding->deactivated < time()) {
 
             // Requirements
             /** @var MissileRequirementRepository $missileRequirementRepository */
@@ -101,8 +87,6 @@ $silo_level = $werft_arr['buildlist_current_level'];
             $builing_something=false;
 
             // Gebäudeliste laden
-            /** @var BuildingRepository $buildingRepository */
-            $buildingRepository = $app[BuildingRepository::class];
             $buildlist = $buildingRepository->getBuildingLevels($planet->id);
 
             // Technologieliste laden
@@ -932,7 +916,7 @@ $silo_level = $werft_arr['buildlist_current_level'];
         }
         else
         {
-            info_msg("Dieses Gebäude ist noch bis ".df($werft_arr['buildlist_deactivated'])." deaktiviert!");
+            info_msg("Dieses Gebäude ist noch bis ".df($missileBuilding->deactivated)." deaktiviert!");
         }
     }
     else

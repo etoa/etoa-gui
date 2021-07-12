@@ -275,6 +275,26 @@ class BuildingRepository extends AbstractRepository
         return array_map(fn ($row) => new BuildingListItem($row), $data);
     }
 
+    public function getEntityBuilding(int $userId, int $entityId, int $buildingId): ?BuildingListItem
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('buildlist')
+            ->where('buildlist_user_id = :userId')
+            ->andWhere('buildlist_entity_id = :entityId')
+            ->andWhere('buildlist_building_id = :buildingId')
+            ->andWhere('buildlist_current_level > 1')
+            ->setParameters([
+                'userId' => $userId,
+                'entityId' => $entityId,
+                'buildingId' => $buildingId,
+            ])
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? new BuildingListItem($data) : null;
+    }
+
     public function save(BuildingListItem $item): void
     {
         $this->createQueryBuilder()
