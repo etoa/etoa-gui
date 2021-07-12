@@ -24,14 +24,19 @@ class TechnologyRepositoryTest extends AbstractDbTestCase
     {
         $userId = 1;
         $technologyId = 3;
-        $this->connection->createQueryBuilder()
-            ->insert('techlist')
-            ->values([
-                'techlist_user_id' => $userId,
-                'techlist_current_level' => 6,
-                'techlist_tech_id' => $technologyId,
-            ])->execute();
+
+        $this->repository->addTechnology($technologyId, 6, $userId, 1);
 
         $this->assertSame(6, $this->repository->getTechnologyLevel($userId, $technologyId));
+    }
+
+    public function testGetUserLevels(): void
+    {
+        $userId = 1;
+        $technologyId = 3;
+
+        $this->repository->addTechnology($technologyId, 6, $userId, 1);
+
+        $this->assertSame([$technologyId => 6], $this->repository->getTechnologyLevels($userId));
     }
 }

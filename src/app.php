@@ -64,6 +64,7 @@ $app->register(new \EtoA\Ranking\RankingServiceProvider());
 $app->register(new \EtoA\Bookmark\BookmarkServiceProvider());
 $app->register(new \EtoA\Fleet\FleetServiceProvider());
 $app->register(new \EtoA\UI\UIServiceProvider());
+$app->register(new \EtoA\Tip\TipServiceProvider());
 
 $app->mount('/', $questProvider);
 $app->mount('/', $tutorialProvider);

@@ -1,7 +1,9 @@
 <?PHP
 
 use EtoA\Building\BuildingDataRepository;
+use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Technology\TechnologyDataRepository;
@@ -34,8 +36,8 @@ if (isset($cp)) {
     if ($bl->getLevel(TECH_BUILDING_ID) > 0) {
         define('CURRENT_LAB_LEVEL',$bl->getLevel(TECH_BUILDING_ID));
 
-        $tl = new TechList($cu->id);
-        define("GEN_TECH_LEVEL",$tl->getLevel(GEN_TECH_ID));
+        $technologyRepository = $app[TechnologyRepository::class];
+        define("GEN_TECH_LEVEL", $technologyRepository->getTechnologyLevel($cu->getId(), GEN_TECH_ID));
         $minBuildTimeFactor = (0.1-(GEN_TECH_LEVEL/100));
 
 
@@ -107,7 +109,6 @@ if (isset($cp)) {
         // reload buildlist and techlist in case the number of workers has changed.
         $bl = new BuildList($planet->id, $cu->id);
 
-        $tl = new TechList($cu->id);
         $minBuildTimeFactor = (0.1-(GEN_TECH_LEVEL/100));
 
         // People working in the tech building.
@@ -130,18 +131,9 @@ if (isset($cp)) {
         //
 
         // Load built buildings
-        $buildlist = [];
-        $blres = dbquery("
-            SELECT
-                *
-            FROM
-                buildlist
-            WHERE
-                buildlist_entity_id='".$planet->id."'
-            ;");
-        while ($blarr = mysql_fetch_array($blres)) {
-            $buildlist[$blarr['buildlist_building_id']]=$blarr['buildlist_current_level'];
-        }
+        /** @var BuildingRepository $buildingRepository */
+        $buildingRepository = $app[BuildingRepository::class];
+        $buildlist = $buildingRepository->getBuildingLevels($planet->id);
 
         // Load requirements
         $b_req = [];

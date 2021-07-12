@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 
@@ -230,11 +231,14 @@ if ($cp)
                     $requirements_passed = true;
                     $rres = dbquery("SELECT * FROM tech_requirements where obj_id=".GEN_TECH_ID);
                     $bl = new BuildList($planet->id, $cu->id);
-                    $tl = new TechList($cu->id);
+
+                    /** @var TechnologyRepository $technologyRepository */
+                    $technologyRepository = $app[TechnologyRepository::class];
+                    $techlist = $technologyRepository->getTechnologyLevels($cu->getId());
 
                     while ($rarr = mysql_fetch_array($rres)) {
                         if ($rarr['req_tech_id']>0) {
-                            if (($rarr['req_level']) > ($tl->getLevel($rarr['req_tech_id']))) {
+                            if (($rarr['req_level']) > ($techlist[$rarr['req_tech_id']] ?? 0)) {
                                 $requirements_passed = false;
                             }
                         }

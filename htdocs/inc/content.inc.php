@@ -1,9 +1,12 @@
 <?PHP
 
+use EtoA\Admin\AdminUserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Quest\QuestResponseListener;
 use EtoA\Text\TextRepository;
 use EtoA\Support\RuntimeDataStore;
+use EtoA\Tip\TipRepository;
+use EtoA\User\UserSurveillanceRepository;
 
 /** @var RuntimeDataStore */
 $runtimeDataStore = $app[RuntimeDataStore::class];
@@ -29,22 +32,14 @@ if (!$cu->isSetup() && $page != "help" && $page != "contact") {
 } else {
     // Show tipps
     if (ENABLE_TIPS == 1 && $s->firstView) {
-        $res = dbquery("
-        SELECT
-            tip_text
-        FROM
-            tips
-        WHERE
-            tip_active=1
-        ORDER BY
-            RAND()
-        LIMIT 1;
-        ");
-        if (mysql_num_rows($res) > 0) {
-            $arr = mysql_fetch_array($res);
+        /** @var TipRepository $tipRepository */
+        $tipRepository = $app[TipRepository::class];
+        $tipText = $tipRepository->getRandomTipText();
+
+        if ($tipText !== null) {
             echo "<br/>";
             iBoxStart("<span style=\"color:#0f0;\">TIPP</span>");
-            echo text2html($arr[0]);
+            echo text2html($tipText);
             iBoxEnd();
         }
     }
@@ -118,18 +113,12 @@ if (!$cu->isSetup() && $page != "help" && $page != "contact") {
         bis <span style="color:#0f0">' . date("d.m.Y, H:i", $cu->blocked_to) . '</span><br/>
         <b>Gesamtdauer der Sperre:</b> ' . tf($cu->blocked_to - $cu->blocked_from) . '<br/>
         <b>Dauer:</b> ' . tf($cu->blocked_to - max(time(), $cu->blocked_from)) . '<br/>';
-        $ares = dbquery("
-        SELECT
-            user_nick,
-            user_email
-        FROM
-            admin_users
-        WHERE
-            user_id='" . $cu->ban_admin_id . "'
-        ;");
-        if (mysql_num_rows($ares) > 0) {
-            $aarr = mysql_fetch_row($ares);
-            echo '<b>Gesperrt von:</b> ' . $aarr[0] . ', <a href="mailto:' . $aarr[1] . '">' . $aarr[1] . '</a><br/>';
+
+        /** @var AdminUserRepository $adminUserRepository */
+        $adminUserRepository = $app[AdminUserRepository::class];
+        $adminUser = $adminUserRepository->find((int) $cu->ban_admin_id);
+        if ($adminUser !== null) {
+            echo '<b>Gesperrt von:</b> ' . $adminUser->nick . ', <a href="mailto:' . $adminUser->email . '">' . $adminUser->email . '</a><br/>';
         }
         echo '<br/>Solltest du Fragen zu dieser Sperrung haben oder dich ungerecht behandelt fühlen,<br/>
         dann <a href="?page=contact">melde</a> dich bei einem Game-Administrator.';
@@ -185,22 +174,9 @@ if (!$cu->isSetup() && $page != "help" && $page != "contact") {
                 }
             }
 
-            dbQuerySave("INSERT DELAYED INTO
-                user_surveillance
-            (
-                timestamp,
-                user_id,
-                page,
-                request,
-                request_raw,
-                post,
-                session
-            )
-            VALUES
-            (
-                UNIX_TIMESTAMP(),
-                ?, ?, ?, ?, ?, ?
-            )", array($cu->id, $page, $req, $_SERVER['QUERY_STRING'], $post, $s->id));
+            /** @var UserSurveillanceRepository $userSurveillanceRepository */
+            $userSurveillanceRepository = $app[UserSurveillanceRepository::class];
+            $userSurveillanceRepository->addEntry($cu->getId(), $page, $req, $_SERVER['QUERY_STRING'], $post, $s->id);
         }
 
         // Change display mode (full/small) if requested

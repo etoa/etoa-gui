@@ -25,16 +25,22 @@
 	* @copyright Copyright (c) 2004-2007 by EtoA Gaming, www.etoa.net
 	*/
 
+use EtoA\Building\BuildingDataRepository;
+use EtoA\Building\BuildingRepository;
+use EtoA\Defense\DefenseDataRepository;
 use EtoA\Race\RaceDataRepository;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Technology\TechnologyRepository;
 
-/** @var \EtoA\Building\BuildingDataRepository $buildRepository */
-	$buildRepository = $app[\EtoA\Building\BuildingDataRepository::class];
-	/** @var \EtoA\Technology\TechnologyDataRepository $technologyRepository */
-	$technologyRepository = $app[\EtoA\Technology\TechnologyDataRepository::class];
-	/** @var \EtoA\Ship\ShipDataRepository $shipRepository */
-	$shipRepository = $app[\EtoA\Ship\ShipDataRepository::class];
-	/** @var \EtoA\Defense\DefenseDataRepository $defenseRepository */
-	$defenseRepository = $app[\EtoA\Defense\DefenseDataRepository::class];
+/** @var BuildingDataRepository $buildRepository */
+	$buildRepository = $app[BuildingDataRepository::class];
+	/** @var TechnologyDataRepository $technologyDataRepository */
+	$technologyDataRepository = $app[TechnologyDataRepository::class];
+	/** @var ShipDataRepository $shipRepository */
+	$shipRepository = $app[ShipDataRepository::class];
+	/** @var DefenseDataRepository $defenseRepository */
+	$defenseRepository = $app[DefenseDataRepository::class];
 
 	// Definitionen
 
@@ -157,39 +163,17 @@ use EtoA\Race\RaceDataRepository;
 		$raceNames = $raceRepository->getRaceNames();
 
 		// Lade Gebäudelistenlevel
-		$buildlist=array();
-		$bres = dbquery("
-		SELECT
-			buildlist_current_level,
-			buildlist_building_id
-		FROM
-			buildlist
-		WHERE
-			buildlist_entity_id='".$cp->id()."'
-		;");
-		while ($barr = mysql_fetch_array($bres))
-		{
-			$buildlist[$barr['buildlist_building_id']] = $barr['buildlist_current_level'];
-		}
+        /** @var BuildingRepository $buildingRepository */
+        $buildingRepository = $app[BuildingRepository::class];
+        $buildlist = $buildingRepository->getBuildingLevels((int) $cp->id);
 
 		// Lade Techlistenlevel
-		$techlist=array();
-		$tres = dbquery("
-		SELECT
-			techlist_current_level,
-			techlist_tech_id
-		FROM
-			techlist
-		WHERE
-			techlist_user_id='".$cu->id."'
-		;");
-		while ($tarr = mysql_fetch_array($tres))
-		{
-			$techlist[$tarr['techlist_tech_id']]=$tarr['techlist_current_level'];
-		}
+        /** @var TechnologyRepository $technologyRepository */
+        $technologyRepository = $app[TechnologyRepository::class];
+        $techlist = $technologyRepository->getTechnologyLevels($cu->getId());
 
 		$buildingNames = $buildRepository->getBuildingNames();
-		$technologyNames = $technologyRepository->getTechnologyNames();
+		$technologyNames = $technologyDataRepository->getTechnologyNames();
 
 		// Lade Anforderungen
 		$b_req=array();
@@ -561,7 +545,7 @@ use EtoA\Race\RaceDataRepository;
 
 		echo "<select onchange=\"xajax_reqInfo(this.value,'t')\">
 		<option value=\"0\">Technologie wählen...</option>";
-		$technologyNames = $technologyRepository->getTechnologyNames();
+		$technologyNames = $technologyDataRepository->getTechnologyNames();
 		foreach ($technologyNames as $technologyId => $technologyName) {
 			echo "<option value=\"".$technologyId."\">".$technologyName."</option>";
 		}

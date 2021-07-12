@@ -16,5 +16,13 @@ class MissileServiceProvider implements ServiceProviderInterface
         $pimple[MissileDataRepository::class] = function (Container $pimple): MissileDataRepository {
             return new MissileDataRepository($pimple['db'], $pimple['db.cache']);
         };
+
+        $pimple[MissileRequirementRepository::class] = function (Container $pimple): MissileRequirementRepository {
+            return new MissileRequirementRepository($pimple['db']);
+        };
+
+        $pimple[MissileFlightRepository::class] = function (Container $pimple): MissileFlightRepository {
+            return new MissileFlightRepository($pimple['db']);
+        };
     }
 }

@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 
@@ -25,20 +26,11 @@ echo "<h1>Recyclingstation des Planeten ".$planet->name."</h1>";
 echo $resourceBoxDrawer->getHTML($planet);
 
 //Recycling Level laden
-$rtres = dbquery("
-SELECT
-    techlist_current_level
-FROM
-    techlist
-WHERE
-    techlist_user_id=".$cu->id."
-    AND techlist_tech_id=".RECYC_TECH_ID."
-    AND techlist_current_level>0;");
+/** @var TechnologyRepository $technologyRepository */
+$technologyRepository = $app[TechnologyRepository::class];
+$tech_level = $technologyRepository->getTechnologyLevel($cu->getId(), RECYC_TECH_ID);
 
-if (mysql_num_rows($rtres)>0)
-{
-    $rtarr = mysql_fetch_row($rtres);
-    $tech_level = $rtarr[0];
+if ($tech_level > 0) {
     $payback_max = RECYC_MAX_PAYBACK;
     $payback = ($payback_max)-($payback_max/$tech_level);
     $pb_percent = round($payback*100,2);

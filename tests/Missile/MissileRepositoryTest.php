@@ -40,4 +40,11 @@ class MissileRepositoryTest extends AbstractDbTestCase
 
         $this->assertSame(1, $this->repository->count());
     }
+
+    public function testGetMissilesCounts(): void
+    {
+        $this->repository->addMissile(1, 2, 1, 1);
+
+        $this->assertSame([1 => 2], $this->repository->getMissilesCounts(1, 1));
+    }
 }

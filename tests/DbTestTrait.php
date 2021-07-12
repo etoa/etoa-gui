@@ -28,11 +28,13 @@ trait DbTestTrait
         $this->connection->executeQuery('TRUNCATE shiplist');
         $this->connection->executeQuery('TRUNCATE deflist');
         $this->connection->executeQuery('TRUNCATE missilelist');
+        $this->connection->executeQuery('TRUNCATE missile_flights');
         $this->connection->executeQuery('TRUNCATE quest_tasks');
         $this->connection->executeQuery('TRUNCATE quest_log');
         $this->connection->executeQuery('TRUNCATE tutorial_user_progress');
         $this->connection->executeQuery('TRUNCATE user_sessions');
         $this->connection->executeQuery('TRUNCATE users');
+        $this->connection->executeQuery('TRUNCATE user_surveillance');
         $this->connection->executeQuery('TRUNCATE tickets');
         $this->connection->executeQuery('TRUNCATE ticket_msg');
         $this->connection->executeQuery('TRUNCATE messages');

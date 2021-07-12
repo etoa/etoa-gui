@@ -36,15 +36,19 @@ class BuildingRepositoryTest extends AbstractDbTestCase
         $userId = 1;
         $buildingId = 10;
 
-        $this->connection->createQueryBuilder()
-            ->insert('buildlist')
-            ->values([
-                'buildlist_user_id' => $userId,
-                'buildlist_entity_id' => 1,
-                'buildlist_current_level' => 10,
-                'buildlist_building_id' => $buildingId,
-            ])->execute();
+        $this->repository->addBuilding($buildingId, 10, $userId, 1);
 
         $this->assertSame(1, $this->repository->getNumberOfBuildings($buildingId));
+    }
+
+    public function testGetBuildingLevels(): void
+    {
+        $userId = 1;
+        $buildingId = 3;
+        $level = 2;
+        $entityId = 4;
+        $this->repository->addBuilding($buildingId, $level, $userId, $entityId);
+
+        $this->assertSame([$buildingId => $level], $this->repository->getBuildingLevels($entityId));
     }
 }
