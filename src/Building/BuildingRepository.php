@@ -17,6 +17,7 @@ class BuildingRepository extends AbstractRepository
             ->select('buildlist_building_id, buildlist_current_level')
             ->from('buildlist')
             ->andWhere('buildlist_entity_id = :entityId')
+            ->andWhere('buildlist_current_level > 0')
             ->setParameters([
                 'entityId' => $entityId,
             ])

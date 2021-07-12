@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Building\BuildingDataRepository;
+use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Fleet\FleetRepository;
@@ -39,6 +41,10 @@ $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 $shipDataRepository = $app[ShipDataRepository::class];
 /** @var DefenseRepository $defenseRepository */
 $defenseRepository = $app[DefenseRepository::class];
+/** @var BuildingRepository $buildingRepository */
+$buildingRepository = $app[BuildingRepository::class];
+/** @var BuildingDataRepository $buildingDataRepository */
+$buildingDataRepository = $app[BuildingDataRepository::class];
 // BEGIN SKRIPT //
 
 /** @var ?Planet $cp - The current Planet */
@@ -322,20 +328,21 @@ if (isset($cp))
         <br/>Benutzt: ".$planet->fieldsUsed.", Total: ".nf($planet->fields)." = ".nf($cp->fieldsBase)." Basisfelder + ".nf($planet->fieldsExtra)." zusätzliche Felder<br/></td></tr>
         <tr><td style=\"width:50%;vertical-align:top;padding:5px;\">";
         tableStart("Gebäude",'100%');
-        $bl = new BuildList($planet->id, $cu->id, 1);
-        if ($bl->count() > 0)
-        {
+
+        $buildingLevels = $buildingRepository->getBuildingLevels($planet->id);
+        if (count($buildingLevels) > 0) {
+            $buildings = $buildingDataRepository->getBuildings();
             $fcnt=0;
             echo "<tr>
                 <th>Name</th>
                 <th>Stufe</th>
                 <th>Felder</th></tr>";
-            foreach ($bl as $k => &$v)
-            {
-                echo "<tr><th>".$v."</th>";
-                echo "<td>".$bl->getLevel($k)."</td>";
-                echo "<td>".nf($bl->getLevel($k) * $v->building->fields)."</td></tr>";
-                $fcnt += $bl->getLevel($k) * $v->building->fields;
+            foreach ($buildingLevels as $buildingId => $buildingLevel) {
+                $building = $buildings[$buildingId];
+                echo "<tr><th>".$building->name."</th>";
+                echo "<td>".$buildingLevel."</td>";
+                echo "<td>".nf($buildingLevel * $building->fields)."</td></tr>";
+                $fcnt += $buildingLevel * $building->fields;
             }
             unset($v);
             echo "<tr><th colspan=\"2\">Total</th><td>".nf($fcnt)."</td></tr>";

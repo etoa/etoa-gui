@@ -172,29 +172,6 @@ class BuildList implements IteratorAggregate
 			}
 		}
 
-		function count()
-		{
-			if ($this->count != null)
-				return $this->count;
-			if ($this->items != null)
-			{
-				$this->count = count($this->items);
-				return $this->count;
-			}
-			$res = dbquery("
-			SELECT
-				COUNT(buildlist_id)
-			FROM
-				buildlist
-			WHERE
-				buildlist_user_id=".$this->ownerId ."
-				AND buildlist_entity_id=".$this->entityId."
-			;");
-			$arr = mysql_fetch_row($res);
-			$this->count = $arr[0];
-			return $this->count;
-		}
-
 		function item($bid)
 		{
 			if ($this->items==null)
