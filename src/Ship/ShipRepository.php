@@ -21,6 +21,40 @@ class ShipRepository extends AbstractRepository
 
     public function addShip(int $shipId, int $amount, int $userId, int $entityId): void
     {
+        if ($amount < 0) {
+            throw new \InvalidArgumentException('Cannot add negative ship count');
+        }
+
+        $this->changeShipCount($shipId, $amount, $userId, $entityId);
+    }
+
+    public function removeShips(int $shipId, int $amount, int $userId, int $entityId): int
+    {
+        if ($amount < 0) {
+            throw new \InvalidArgumentException('Cannot remove negative ship count');
+        }
+
+        $available = (int) $this->createQueryBuilder()
+            ->select('shiplist_count')
+            ->from('shiplist')
+            ->where('shiplist_ship_id = :shipId')
+            ->andWhere('shiplist_user_id = :userId')
+            ->andWhere('shiplist_entity_id = :entityId')
+            ->setParameters([
+                'userId' => $userId,
+                'entityId' => $entityId,
+                'shipId' => $shipId,
+            ])->execute()->fetchOne();
+
+        $amount = min($available, $amount);
+
+        $this->changeShipCount($shipId, -$amount, $userId, $entityId);
+
+        return $amount;
+    }
+
+    private function changeShipCount(int $shipId, int $amount, int $userId, int $entityId): void
+    {
         $this->getConnection()->executeQuery('INSERT INTO shiplist (
                 shiplist_user_id,
                 shiplist_entity_id,

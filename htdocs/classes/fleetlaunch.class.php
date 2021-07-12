@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Ship\ShipRepository;
 use EtoA\Technology\TechnologyRepository;
 
 /**
@@ -493,6 +494,8 @@ class FleetLaunch
 
     function launch()
     {
+        global $app;
+
         if ($this->actionOk)
         {
             if ($this->checkHaven())
@@ -501,11 +504,12 @@ class FleetLaunch
                 $this->landTime = ($time+$this->getDuration());
 
                 // Subtract ships from source
-                $sl = new ShipList($this->sourceEntity->id(),$this->ownerId);
+                /** @var ShipRepository $shipRepository */
+                $shipRepository = $app[ShipRepository::class];
                 $addcnt = 0;
                 foreach ($this->ships as $sid => $sda)
                 {
-                    $this->ships[$sid]['count'] = $sl->remove($sid,$sda['count']);
+                    $this->ships[$sid]['count'] = $shipRepository->removeShips((int) $sid, (int) $sda['count'], (int) $this->ownerId, (int) $this->sourceEntity->id());
                     $addcnt+=$this->ships[$sid]['count'];
                 }
 

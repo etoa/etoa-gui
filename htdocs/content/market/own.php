@@ -19,6 +19,11 @@
 	//
 
 
+use EtoA\Ship\ShipRepository;
+
+/** @var ShipRepository $shipRepository */
+$shipRepository = $app[ShipRepository::class];
+
 	// Schiffangebot löschen
 	// <editor-fold>
 	if (isset($_POST['ship_cancel']))
@@ -50,11 +55,10 @@
 					$marr['buy_'.$rk] = $scrow['costs_'.$rk];
 				}
 
-				$returnCount = floor($scrow['count']*$return_factor);
+				$returnCount = (int) floor($scrow['count']*$return_factor);
 				if ($returnCount>0)
 				{
-					$rsl = new ShipList($scrow['entity_id'],$scrow['user_id']);
-					$rsl->add($scrow['ship_id'], $returnCount);
+                    $shipRepository->addShip((int) $scrow['ship_id'], $returnCount, (int) $scrow['user_id'], (int) $scrow['entity_id']);
 				}
 
 				dbquery("
