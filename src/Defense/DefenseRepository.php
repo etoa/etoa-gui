@@ -1,29 +1,37 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace EtoA\Defense;
 
-class DefenseRepository extends \EtoA\Core\AbstractRepository
+use EtoA\Core\AbstractRepository;
+
+class DefenseRepository extends AbstractRepository
 {
     public function addDefense(int $defenseId, int $amount, int $userId, int $entityId): void
     {
-        $this->getConnection()->executeQuery('INSERT INTO deflist (
-                deflist_user_id,
-                deflist_entity_id,
-                deflist_def_id,
-                deflist_count
-            ) VALUES (
-                :userId,
-                :entityId,
-                :defenseId,
-                :amount
-            ) ON DUPLICATE KEY
-            UPDATE deflist_count = deflist_count + VALUES(deflist_count);
-        ', [
-            'userId' => $userId,
-            'amount' => max(0, $amount),
-            'entityId' => $entityId,
-            'defenseId' => $defenseId,
-        ]);
+        $this->getConnection()
+            ->executeQuery(
+                'INSERT INTO deflist (
+                    deflist_user_id,
+                    deflist_entity_id,
+                    deflist_def_id,
+                    deflist_count
+                ) VALUES (
+                    :userId,
+                    :entityId,
+                    :defenseId,
+                    :amount
+                ) ON DUPLICATE KEY
+                UPDATE deflist_count = deflist_count + VALUES(deflist_count);
+            ',
+                [
+                    'userId' => $userId,
+                    'amount' => max(0, $amount),
+                    'entityId' => $entityId,
+                    'defenseId' => $defenseId,
+                ]
+            );
     }
 
     public function getDefenseCount(int $userId, int $defenseId): int
@@ -67,6 +75,52 @@ class DefenseRepository extends \EtoA\Core\AbstractRepository
             ->delete('deflist')
             ->where('deflist_entity_id = :entityId')
             ->setParameter('entityId', $entityId)
+            ->execute();
+    }
+
+    /**
+     * @return DefenseQueueItem[]
+     */
+    public function findQueueItemsForUser(int $userId): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('def_queue')
+            ->where('queue_user_id = :userId')
+            ->setParameter('userId', $userId)
+            ->orderBy('queue_starttime', 'ASC')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new DefenseQueueItem($row), $data);
+    }
+
+    public function saveQueueItem(DefenseQueueItem $item): void
+    {
+        $this->createQueryBuilder()
+            ->update('def_queue')
+            ->set('queue_user_id', 'userId')
+            ->set('queue_def_id', 'defenseId')
+            ->set('queue_entity_id', 'entityId')
+            ->set('queue_cnt', 'count')
+            ->set('queue_starttime', 'startTime')
+            ->set('queue_endtime', 'endTime')
+            ->set('queue_objtime', 'objectTime')
+            ->set('queue_build_type', 'buildType')
+            ->set('queue_user_click_time', 'userClickTime')
+            ->where('id = :id')
+            ->setParameters([
+                'id' => $item->id,
+                'userId' => $item->userId,
+                'defenseId' => $item->defenseId,
+                'entityId' => $item->entityId,
+                'count' => $item->count,
+                'startTime' => $item->startTime,
+                'endTime' => $item->endTime,
+                'objectTime' => $item->objectTime,
+                'buildType' => $item->buildType,
+                'userClickTime' => $item->userClickTime,
+            ])
             ->execute();
     }
 }

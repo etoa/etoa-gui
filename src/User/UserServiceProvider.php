@@ -2,7 +2,12 @@
 
 namespace EtoA\User;
 
+use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseRepository;
+use EtoA\Ship\ShipRepository;
+use EtoA\Technology\TechnologyRepository;
+use EtoA\Universe\Planet\PlanetRepository;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
@@ -31,6 +36,18 @@ class UserServiceProvider implements ServiceProviderInterface
                 $pimple[UserSessionRepository::class],
                 $pimple[ConfigurationService::class],
                 $pimple[UserRepository::class]
+            );
+        };
+
+        $pimple[UserService::class] = function (Container $pimple): UserService {
+            return new UserService(
+                $pimple[ConfigurationService::class],
+                $pimple[UserRepository::class],
+                $pimple[PlanetRepository::class],
+                $pimple[BuildingRepository::class],
+                $pimple[TechnologyRepository::class],
+                $pimple[ShipRepository::class],
+                $pimple[DefenseRepository::class]
             );
         };
     }

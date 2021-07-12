@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace EtoA\Ship;
 
@@ -66,5 +68,49 @@ class ShipRepository extends AbstractRepository
             ->fetchOne();
 
         return $count > 0;
+    }
+
+    /**
+     * @return ShipQueueItem[]
+     */
+    public function findQueueItemsForUser(int $userId): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('ship_queue')
+            ->where('queue_user_id = :userId')
+            ->setParameter('userId', $userId)
+            ->orderBy('queue_starttime', 'ASC')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new ShipQueueItem($row), $data);
+    }
+
+    public function saveQueueItem(ShipQueueItem $item): void
+    {
+        $this->createQueryBuilder()
+            ->update('ship_queue')
+            ->set('queue_user_id', 'userId')
+            ->set('queue_ship_id', 'shipId')
+            ->set('queue_entity_id', 'entityId')
+            ->set('queue_cnt', 'count')
+            ->set('queue_starttime', 'startTime')
+            ->set('queue_endtime', 'endTime')
+            ->set('queue_objtime', 'objectTime')
+            ->set('queue_build_type', 'buildType')
+            ->where('id = :id')
+            ->setParameters([
+                'id' => $item->id,
+                'userId' => $item->userId,
+                'shipId' => $item->shipId,
+                'entityId' => $item->entityId,
+                'count' => $item->count,
+                'startTime' => $item->startTime,
+                'endTime' => $item->endTime,
+                'objectTime' => $item->objectTime,
+                'buildType' => $item->buildType,
+            ])
+            ->execute();
     }
 }
