@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Building\BuildingDataRepository;
+use EtoA\Building\BuildingRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -12,6 +14,10 @@ $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 
 /** @var ShipRepository $shipRepository */
 $shipRepository = $app[ShipRepository::class];
+/** @var BuildingDataRepository $buildingDataRepository */
+$buildingDataRepository = $app[BuildingDataRepository::class];
+/** @var BuildingRepository $buildingRepository */
+$buildingRepository = $app[BuildingRepository::class];
 
 if ($cp)
 {
@@ -30,7 +36,11 @@ if ($cp)
 
     $mode = (isset($_GET['mode']) && ctype_alsc($_GET['mode'])) ? $_GET['mode'] : "res";
 
-    $bl = new BuildList($planet->id, $cu->id);
+    $fleetBunkerLevel = $buildingRepository->getBuildingLevel($cu->getId(), FLEET_BUNKER_ID, $planet->id);
+    $resBunkerLevel = $buildingRepository->getBuildingLevel($cu->getId(), RES_BUNKER_ID, $planet->id);
+    $fleetBunker = $buildingDataRepository->getBuilding(FLEET_BUNKER_ID);
+    $resBunker = $buildingDataRepository->getBuilding(RES_BUNKER_ID);
+
     $sl = new ShipList($planet->id, $cu->id);
 
     $ships = [];
@@ -46,8 +56,7 @@ if ($cp)
 
     if ($mode=="bunker")
     {
-        if ($bl->getLevel(FLEET_BUNKER_ID)>0)
-        {
+        if ($fleetBunkerLevel) {
             if (isset($_POST['submit_bunker_fleet']) && checker_verify())
             {
                 $count = 0;
@@ -161,7 +170,7 @@ if ($cp)
                 $count += $arr['shiplist_bunkered'];
                 $jsAllShips["ship_bunker_count_".$arr['shiplist_ship_id']]=$arr['shiplist_bunkered'];
                 }
-            echo "<tr><th colspan=\"2\">Benutzt:</th><td>".nf($structure)."/".nf($bl->getBunkerFleetSpace())."</td><td>".nf($count)."/".nf($bl->getBunkerFleetCount())."</td><td >";
+            echo "<tr><th colspan=\"2\">Benutzt:</th><td>".nf($structure)."/".nf($fleetBunker->calculateBunkerFleetSpace($fleetBunkerLevel))."</td><td>".nf($count)."/".nf($fleetBunker->calculateBunkerFleetCount($fleetBunkerLevel))."</td><td >";
 
         // Select all ships button
         echo "<a href=\"javascript:;\" onclick=\"";
@@ -171,8 +180,8 @@ if ($cp)
         }
         echo "\">Alle wählen</a>";
         echo "</td></tr>
-            <tr><th colspan=\"2\">Verfügbar:</th><td><img src=\"misc/progress.image.php?r=1&w=100&p=".round($structure/$bl->getBunkerFleetSpace()*100)."\" alt=\"progress\" /></td>
-            <td><img src=\"misc/progress.image.php?r=1&w=100&p=".round($count/$bl->getBunkerFleetCount()*100)."\" alt=\"progress\" /></td><td></td></tr>";
+            <tr><th colspan=\"2\">Verfügbar:</th><td><img src=\"misc/progress.image.php?r=1&w=100&p=".round($structure/$fleetBunker->calculateBunkerFleetSpace($fleetBunkerLevel)*100)."\" alt=\"progress\" /></td>
+            <td><img src=\"misc/progress.image.php?r=1&w=100&p=".round($count/$fleetBunker->calculateBunkerFleetCount($fleetBunkerLevel)*100)."\" alt=\"progress\" /></td><td></td></tr>";
             tableEnd();
             echo "<input type=\"submit\" name=\"submit_bunker_fleet\" value=\"Ausbunkern\" />";
             echo "</form>";
@@ -185,13 +194,12 @@ if ($cp)
     }
     elseif ($mode=="fleet")
     {
-        if ($bl->getLevel(FLEET_BUNKER_ID)>0)
-        {
+        if ($fleetBunkerLevel > 0) {
             if (isset($_POST['submit_bunker_fleet']) && checker_verify())
             {
 
-                $count = $bl->getBunkerFleetCount();
-                $structure = $bl->getBunkerFleetSpace();
+                $count = $fleetBunker->calculateBunkerFleetCount($fleetBunkerLevel);
+                $structure = $fleetBunker->calculateBunkerFleetSpace($fleetBunkerLevel);
                 $countBunker = 0;
                 $spaceBunker = 0;
                 $counter = 0;
@@ -344,12 +352,11 @@ if ($cp)
     }
     else
     {
-        if ($bl->getLevel(RES_BUNKER_ID)>0)
-        {
+        if ($resBunkerLevel > 0) {
             if (isset($_POST['submit_bunker_res']) && checker_verify())
             {
                 $sum = nf_back($_POST['bunker_metal']) + nf_back($_POST['bunker_crystal']) + nf_back($_POST['bunker_plastic']) + nf_back($_POST['bunker_fuel']) + nf_back($_POST['bunker_food']);
-                $percent = $sum/$bl->getBunkerRes();
+                $percent = $sum/$resBunker->calculateBunkerResources($resBunkerLevel);
                 if ($percent<1) $percent =1;
 
                 $planetRepo->updateBunker(
@@ -385,8 +392,8 @@ if ($cp)
             <tr><th style=\"width:150px\">".RES_ICON_FOOD."".RES_FOOD."</th>
                 <td><input type=\"text\" id=\"bunker_food\" name=\"bunker_food\" value=\"".nf($planet->bunkerFood)."\" size=\"8\" maxlength=\"20\" onKeyUp=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
             <tr><th style=\"width:150px\">Benutzt:</th>
-            <td>".nf($bunkered)."/".nf($bl->getBunkerRes())."</td></tr>
-            <tr><th>Verfügbar:</th><td><img src=\"misc/progress.image.php?r=1&w=100&p=".round($bunkered/$bl->getBunkerRes()*100)."\" alt=\"progress\" /></td></tr>";
+            <td>".nf($bunkered)."/".nf($resBunker->calculateBunkerResources($resBunkerLevel))."</td></tr>
+            <tr><th>Verfügbar:</th><td><img src=\"misc/progress.image.php?r=1&w=100&p=".round($bunkered/$resBunker->calculateBunkerResources($resBunkerLevel)*100)."\" alt=\"progress\" /></td></tr>";
             tableEnd();
             echo "<input type=\"submit\" name=\"submit_bunker_res\" value=\"Speichern\" />";
             echo "</form>";

@@ -51,7 +51,7 @@ echo "<form action=\"?page=$page\" method=\"post\">";
 $missileBuilding = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, BUILD_MISSILE_ID);
 
 // Prüfen ob Gebäude gebaut ist
-if ($missileBuilding !== null) {
+if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
     // New exponential missile number algorithm by river
     // $max_space = per_level * algo_base ^ (silo_level - 1)
     $max_space = ceil(MISSILE_SILO_MISSILES_PER_LEVEL*pow(MISSILE_SILO_MISSILES_ALGO_BASE,$missileBuilding->currentLevel-1));
@@ -64,7 +64,7 @@ if ($missileBuilding !== null) {
     echo $resourceBoxDrawer->getHTML($planet);
 
     if ($planet->prodPower - $planet->usePower >= 0 && $planet->prodPower>0 && $missileBuilding->prodPercent === 1) {
-        if ($missileBuilding->deactivated < time()) {
+        if ($missileBuilding->isDeactivated()) {
 
             // Requirements
             /** @var MissileRequirementRepository $missileRequirementRepository */

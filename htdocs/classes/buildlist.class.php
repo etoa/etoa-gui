@@ -190,24 +190,6 @@ class BuildList implements IteratorAggregate
 			return self::$underConstruction;
 		}
 
-		function getLevel($bid)
-		{
-			if ($this->items==null)
-				$this->load();
-			if (isset($this->items[$bid]))
-				return $this->items[$bid]->level;
-			return 0;
-		}
-
-		function getStatus($bid)
-		{
-			if ($this->items==null)
-				$this->load();
-			if (isset($this->items[$bid]))
-				return $this->items[$bid]->buildType;
-			return 0;
-		}
-
 		function getDeactivated($bid)
 		{
 			if ($this->items==null)
@@ -306,42 +288,6 @@ class BuildList implements IteratorAggregate
 			$this->totalPeopleWorking = $pbarr[0];
 
 			return $this->totalPeopleWorking;
-		}
-
-		function getBunkerRes()
-		{
-			if ($this->items==null)
-				$this->load();
-			$this->bunkerRes= 0;
-			foreach ($this->items as $k=>&$v)
-			{
-				$this->bunkerRes+= $v->building->bunkerRes * pow($v->building->storeFactor,$v->level-1);
-			}
-			return $this->bunkerRes;
-		}
-
-		function getBunkerFleetCount()
-		{
-			if ($this->items==null)
-				$this->load();
-			$this->bunkerFleetCount= 0;
-			foreach ($this->items as $k=>&$v)
-			{
-				$this->bunkerFleetCount+= $v->building->bunkerFleetCount * pow($v->building->storeFactor,$v->level-1);
-			}
-			return $this->bunkerFleetCount;
-		}
-
-		function getBunkerFleetSpace()
-		{
-			if ($this->items==null)
-				$this->load();
-			$this->bunkerFleetSpace= 0;
-			foreach ($this->items as $k=>&$v)
-			{
-				$this->bunkerFleetSpace+= $v->building->bunkerFleetSpace * pow($v->building->storeFactor,$v->level-1);
-			}
-			return $this->bunkerFleetSpace;
 		}
 
 		function getCosts($bid,$type='build',$levelUp=0)

@@ -55,7 +55,7 @@ $tabulator = 1;
 $factoryBuilding = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, FACTORY_ID);
 
 // Prüfen ob Fabrik gebaut ist
-if ($factoryBuilding !== null) {
+if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
     // Titel
     echo "<h1>Waffenfabrik (Stufe ".$factoryBuilding->currentLevel.") des Planeten ".$planet->name."</h1>";
 
@@ -63,7 +63,7 @@ if ($factoryBuilding !== null) {
     echo $resourceBoxDrawer->getHTML($planet);
 
     // Prüfen ob dieses Gebäude deaktiviert wurde
-    if ($factoryBuilding->deactivated>time()) {
+    if ($factoryBuilding->isDeactivated()) {
         iBoxStart("Geb&auml;ude nicht bereit");
         echo "Diese Waffenfabrik ist bis ".date("d.m.Y H:i",$factoryBuilding->deactivated)." deaktiviert.";
         iBoxEnd();

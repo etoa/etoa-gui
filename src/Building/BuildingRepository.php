@@ -284,7 +284,6 @@ class BuildingRepository extends AbstractRepository
             ->where('buildlist_user_id = :userId')
             ->andWhere('buildlist_entity_id = :entityId')
             ->andWhere('buildlist_building_id = :buildingId')
-            ->andWhere('buildlist_current_level > 1')
             ->setParameters([
                 'userId' => $userId,
                 'entityId' => $entityId,

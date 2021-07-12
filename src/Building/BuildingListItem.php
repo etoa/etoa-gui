@@ -36,4 +36,9 @@ class BuildingListItem
         $this->deactivated = (int) $data['buildlist_deactivated'];
         $this->cooldown = (int) $data['buildlist_cooldown'];
     }
+
+    public function isDeactivated(): bool
+    {
+        return $this->deactivated > time();
+    }
 }

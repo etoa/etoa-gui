@@ -86,4 +86,19 @@ class Building
         $this->bunkerFleetCount = (int) $data['building_bunker_fleet_count'];
         $this->bunkerFleetSpace = (int) $data['building_bunker_fleet_space'];
     }
+
+    public function calculateBunkerResources(int $level): int
+    {
+        return $this->bunkerRes * (int) pow($this->storeFactor,$level - 1);
+    }
+
+    public function calculateBunkerFleetSpace(int $level): int
+    {
+        return $this->bunkerFleetSpace * (int) pow($this->storeFactor,$level - 1);
+    }
+
+    public function calculateBunkerFleetCount(int $level): int
+    {
+        return $this->bunkerFleetCount * (int) pow($this->storeFactor,$level - 1);
+    }
 }

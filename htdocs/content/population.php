@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
@@ -236,6 +237,10 @@ if ($cp)
                     $technologyRepository = $app[TechnologyRepository::class];
                     $techlist = $technologyRepository->getTechnologyLevels($cu->getId());
 
+                    /** @var BuildingRepository $buildingRepository */
+                    $buildingRepository = $app[BuildingRepository::class];
+                    $buildingLevels = $buildingRepository->getBuildingLevels($planet->id);
+
                     while ($rarr = mysql_fetch_array($rres)) {
                         if ($rarr['req_tech_id']>0) {
                             if (($rarr['req_level']) > ($techlist[$rarr['req_tech_id']] ?? 0)) {
@@ -244,7 +249,7 @@ if ($cp)
                         }
                         if ($rarr['req_building_id']>0) {
 
-                            if (($rarr['req_level']) > ($bl->getLevel($rarr['req_building_id']))) {
+                            if (($rarr['req_level']) > ($buildingLevels[$rarr['req_building_id']] ?? 0)) {
                                 $requirements_passed = false;
                             }
                         }
