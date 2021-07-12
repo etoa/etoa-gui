@@ -20,7 +20,23 @@ class MissileFlightRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn (array $row) => new MissileFlight($row), $data);
+        $objects = [];
+        if (count($data) > 0) {
+            $ids = array_map(fn(array $row) => $row['flight_id'], $data);
+            $qb = $this->createQueryBuilder();
+            $rows = $qb
+                ->select('f.obj_flight_id, f.obj_missile_id, f.obj_cnt')
+                ->from('missile_flights_obj', 'f')
+                ->where($qb->expr()->in('obj_flight_id', $ids))
+                ->execute()
+                ->fetchAllAssociative();
+
+            foreach ($rows as $row) {
+                $objects[(int) $row['obj_flight_id']][(int) $row['obj_missile_id']] = (int) $row['obj_cnt'];
+            }
+        }
+
+        return array_map(fn (array $row) => new MissileFlight($row, $objects[(int) $row['flight_id']] ?? []), $data);
     }
 
     /**

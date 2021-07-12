@@ -178,35 +178,8 @@ $silo_level = $werft_arr['buildlist_current_level'];
             }
 
             // Load flights
-            $missileFlight = $missileFlightRepository->getFlights($planet->id);
-            $flights = [];
-            $fcnt = count($missileFlight);
-            foreach ($missileFlight as $flight) {
-                $flights[$flight->id]['landtime']=$flight->landTime;
-                $flights[$flight->id]['planet_name']=$flight->targetPlanetName;
-                $flights[$flight->id]['id']=$flight->targetPlanetId;
-                $flights[$flight->id]['obj']=array();
-                $ores = dbquery("
-                    SELECT
-                        obj_cnt,
-                        missile_id,
-                        missile_name
-                    FROM
-                        missile_flights_obj
-                    INNER JOIN
-                        missiles
-                        ON missile_id=obj_missile_id
-                        AND obj_flight_id=".$flight->id."
-                    ;");
-                if (mysql_num_rows($ores)>0)
-                {
-                    while ($oarr=mysql_fetch_array($ores))
-                    {
-                        $flights[$flight->id]['obj'][$oarr['missile_id']]['count']=$oarr['obj_cnt'];
-                        $flights[$flight->id]['obj'][$oarr['missile_id']]['name']=$oarr['missile_name'];
-                    }
-                }
-            }
+            $flights = $missileFlightRepository->getFlights($planet->id);
+            $fcnt = count($flights);
 
             // Kaufen
             if (isset($_POST['buy']) && checker_verify())
@@ -329,22 +302,22 @@ $silo_level = $werft_arr['buildlist_current_level'];
             // Flüge anzeigen
             if ($fcnt>0)
             {
+                $missileNames = $missileDataRepository->getMissileNames(true);
                 $time = time();
                 tableStart("Abgefeuerte Raketen");
                 echo "<tr><th>Ziel</th><th>Flugdauer</th><th>Ankunftszeit</th><th>Raketen</th><th>Optionen</th></tr>";
-                foreach ($flights as $flid => $fl)
-                {
-                    $countdown = ($fl['landtime']-$time>=0) ? tf($fl['landtime']-$time) : 'Im Ziel';
-                    echo '<tr><td>'.$fl['planet_name'].'</td>
+                foreach ($flights as $flight) {
+                    $countdown = ($flight->landTime - $time>=0) ? tf($flight->landTime - $time) : 'Im Ziel';
+                    echo '<tr><td>'.$flight->targetPlanetName.'</td>
                     <td>'.$countdown.'</td>
-                    <td>'.df($fl['landtime']).'</td>
+                    <td>'.df($flight->landTime).'</td>
                     <td>';
-                    foreach ($fl['obj'] as $flo)
+                    foreach ($flight->missiles as $missileId => $count)
                     {
-                        echo nf($flo['count']).' '.$flo['name'].'<br/>';
+                        echo nf($count).' '.$missileNames[$missileId].'<br/>';
                     }
                     echo '</td>
-                    <td><a href="?page='.$page.'&amp;selfdestruct='.$flid.'" onclick="return confirm(\'Sollen die gewählten Raketen wirklich selbstzerstört werden?\')">Selbstzerstörung</a></td></tr>';
+                    <td><a href="?page='.$page.'&amp;selfdestruct='.$flight->id.'" onclick="return confirm(\'Sollen die gewählten Raketen wirklich selbstzerstört werden?\')">Selbstzerstörung</a></td></tr>';
                 }
                 tableEnd();
             }
