@@ -21,7 +21,7 @@ $planetRepo = $app[PlanetRepository::class];
 /** @var EntityRepository */
 $entityRepository = $app[EntityRepository::class];
 
-/** @var ShipRepository */
+/** @var ShipRepository $shipRepo */
 $shipRepo = $app[ShipRepository::class];
 
 /** @var FleetRepository */
@@ -365,8 +365,8 @@ if (isset($cp))
 
         echo "<div id=\"tabShips\" style=\"".($sub=="ships" ? '' : 'display:none;')."\">";
         tableStart("Kampfstärke");
-        if ($sl->count() > 0)
-        {
+        $shipCounts = $shipRepo->getEntityShipCounts($cu->getId(), $planet->id);
+        if (count($shipCounts) > 0) {
                 // Forschung laden und bonus dazu rechnen
             // Liest Level der Waffen-,Schild-,Panzerungs-,Regena Tech aus Datenbank (att)
                 $weapon_tech_a=1;
@@ -471,7 +471,7 @@ if (isset($cp))
                     }
                     echo "</td></tr>";
             echo "<tr><td><b>Anzahl Schiffe:</b></td>
-            <td colspan=\"2\">".nf($sl->count())."</td></tr>";
+            <td colspan=\"2\">".nf(array_sum($shipCounts))."</td></tr>";
         }
         else
         {
@@ -485,7 +485,7 @@ if (isset($cp))
         {
             echo "<tr>
                 <td>".$v."</td>
-                <td>".nf($sl->count($k))."</td>
+                <td>".nf($shipCounts[(int) $k])."</td>
                 <td>".nf($sl->countBunkered($k))."</td>
                 </tr>";
         }

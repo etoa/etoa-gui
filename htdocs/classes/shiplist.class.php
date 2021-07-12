@@ -74,28 +74,6 @@
 			return 0;
 		}
 
-		function count($item=null)
-		{
-			if ($this->countArr != null)
-				return $item>0 ? $this->countArr[$item] : $this->count;
-
-			if ($this->count != null)
-				return $this->count;
-
-			$res = dbquery("
-			SELECT
-				SUM(shiplist_count)
-			FROM
-				shiplist
-			WHERE
-				shiplist_user_id=".$this->userId ."
-				AND shiplist_entity_id=".$this->entityId."
-				".($item>0 ? " AND shiplist_ship_id=".$item."" : "")."
-			;");
-			$arr = mysql_fetch_row($res);
-			return $arr[0];
-		}
-
 		function getTotalStrucure()
 		{
   		if ($this->items == null)

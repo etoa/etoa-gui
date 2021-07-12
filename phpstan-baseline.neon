@@ -291,11 +291,6 @@ parameters:
 			path: htdocs/content/research.php
 
 		-
-			message: "#^Variable \\$sl might not be defined\\.$#"
-			count: 1
-			path: htdocs/content/techtree.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 2
 			path: htdocs/inc/bootstrap.inc.php

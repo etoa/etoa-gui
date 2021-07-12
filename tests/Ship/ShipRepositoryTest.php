@@ -71,4 +71,15 @@ class ShipRepositoryTest extends AbstractDbTestCase
 
         $this->assertSame(10, $amount);
     }
+
+    public function testGetEntityShipCounts(): void
+    {
+        $userId = 3;
+        $shipId = 5;
+        $entityId = 10;
+
+        $this->repository->addShip($shipId, 10, $userId, $entityId);
+
+        $this->assertSame([$shipId => 10], $this->repository->getEntityShipCounts($userId, $entityId));
+    }
 }
