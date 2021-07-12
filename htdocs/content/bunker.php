@@ -56,8 +56,8 @@ if ($cp)
                     $cnt = nf_back($cnt);
                     if ($cnt>0)
                     {
+                        $cnt = $shipRepository->leaveBunker($cu->getId(), $planet->id, $shipId, $cnt);
                         $count += $cnt;
-                        $sl->leaveShelter($shipId,$cnt);
                     }
                 }
                 if ($count>0)
@@ -209,7 +209,7 @@ if ($cp)
                     {
                         $countBunker = min($count,$cnt);
                         $spaceBunker = $ships[$shipId]->structure>0 ? min($cnt,$structure/$ships[$shipId]->structure) : $cnt;
-                        $cnt = floor(min($countBunker,$spaceBunker));
+                        $cnt = (int) floor(min($countBunker,$spaceBunker));
                         $cnt = $shipRepository->bunker($cu->getId(), $planet->id, $shipId, $cnt);
                         $count -= $cnt;
                         $structure -= $cnt*$ships[$shipId]->structure;
