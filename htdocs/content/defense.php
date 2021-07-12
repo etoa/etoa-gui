@@ -9,11 +9,14 @@ use EtoA\Universe\Planet\PlanetRepository;
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
 
-/** @var PlanetRepository */
+/** @var PlanetRepository $planetRepo */
 $planetRepo = $app[PlanetRepository::class];
 
 /** @var ResourceBoxDrawer */
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
+
+/** @var BuildingRepository $buildingRepository */
+$buildingRepository = $app[BuildingRepository::class];
 
 //Definition für "Info" Link
 define("ITEMS_TBL","defense");
@@ -49,36 +52,20 @@ $bl = new BuildList($planet->id, $cu->id);
 $tabulator = 1;
 
 //Fabrik Level und Arbeiter laden
-$factory_res = dbquery("
-                        SELECT
-                        buildlist_current_level,
-                        buildlist_people_working,
-                        buildlist_deactivated
-                    FROM
-                        buildlist
-                    WHERE
-                        buildlist_entity_id='".$planet->id."'
-                        AND buildlist_building_id='".FACTORY_ID."'
-                        AND buildlist_current_level>='1'
-                        AND buildlist_user_id='".$cu->id."'");
+$factoryBuilding = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, FACTORY_ID);
 
 // Prüfen ob Fabrik gebaut ist
-if (mysql_num_rows($factory_res)>0)
-{
-    $factory_arr = mysql_fetch_assoc($factory_res);
-    define('CURRENT_FACTORY_LEVEL',$factory_arr['buildlist_current_level']);
-
+if ($factoryBuilding !== null) {
     // Titel
-    echo "<h1>Waffenfabrik (Stufe ".CURRENT_FACTORY_LEVEL.") des Planeten ".$planet->name."</h1>";
+    echo "<h1>Waffenfabrik (Stufe ".$factoryBuilding->currentLevel.") des Planeten ".$planet->name."</h1>";
 
     // Ressourcen anzeigen
     echo $resourceBoxDrawer->getHTML($planet);
 
     // Prüfen ob dieses Gebäude deaktiviert wurde
-    if ($factory_arr['buildlist_deactivated']>time())
-    {
+    if ($factoryBuilding->deactivated>time()) {
         iBoxStart("Geb&auml;ude nicht bereit");
-        echo "Diese Waffenfabrik ist bis ".date("d.m.Y H:i",$factory_arr['buildlist_deactivated'])." deaktiviert.";
+        echo "Diese Waffenfabrik ist bis ".date("d.m.Y H:i",$factoryBuilding->deactivated)." deaktiviert.";
         iBoxEnd();
     }
     // Werft anzeigen
@@ -134,8 +121,6 @@ if (mysql_num_rows($factory_res)>0)
         }
 
         //Gebäude laden
-        /** @var BuildingRepository $buildingRepository */
-        $buildingRepository = $app[BuildingRepository::class];
         $buildlist = $buildingRepository->getBuildingLevels($planet->id);
 
         // Gebaute Verteidigung laden
@@ -256,7 +241,7 @@ if (mysql_num_rows($factory_res)>0)
         $fields_available = $planet->fields + $planet->fieldsExtra - $planet->fieldsUsed - $queueFields;
 
         // level zählen welches die Waffenfabrik über dem angegeben level ist und faktor berechnen
-        $need_bonus_level = CURRENT_FACTORY_LEVEL - $config->param1Int('build_time_boni_waffenfabrik');
+        $need_bonus_level = $factoryBuilding->currentLevel - $config->param1Int('build_time_boni_waffenfabrik');
         if($need_bonus_level <= 0)
         {
             $time_boni_factor=1;
@@ -265,12 +250,12 @@ if (mysql_num_rows($factory_res)>0)
         {
             $time_boni_factor=1-($need_bonus_level*($config->getInt('build_time_boni_waffenfabrik')/100));
         }
-        $people_working = $factory_arr['buildlist_people_working'];
+        $people_working = $factoryBuilding->peopleWorking;
 
         // Faktor der zurückerstatteten Ressourcen bei einem Abbruch des Auftrags berechnen
-        if (CURRENT_FACTORY_LEVEL>=DEFQUEUE_CANCEL_MIN_LEVEL)
+        if ($factoryBuilding->currentLevel>=DEFQUEUE_CANCEL_MIN_LEVEL)
         {
-            $cancel_res_factor = min(DEFQUEUE_CANCEL_END,DEFQUEUE_CANCEL_START+((CURRENT_FACTORY_LEVEL-DEFQUEUE_CANCEL_MIN_LEVEL)*DEFQUEUE_CANCEL_FACTOR));
+            $cancel_res_factor = min(DEFQUEUE_CANCEL_END,DEFQUEUE_CANCEL_START+(($factoryBuilding->currentLevel-DEFQUEUE_CANCEL_MIN_LEVEL)*DEFQUEUE_CANCEL_FACTOR));
         }
         else
         {
@@ -307,7 +292,7 @@ if (mysql_num_rows($factory_res)>0)
         echo '<tr><td>Bauzeitverringerung:</td><td>';
         if ($need_bonus_level>=0)
         {
-            echo get_percent_string($time_boni_factor)." durch Stufe ".CURRENT_FACTORY_LEVEL."";
+            echo get_percent_string($time_boni_factor)." durch Stufe ".$factoryBuilding->currentLevel."";
         }
         else
         {
@@ -656,7 +641,7 @@ if (mysql_num_rows($factory_res)>0)
                         [b]Ende:[/b] " . date("d.m.Y H:i:s", (int) $end_time) . "
                         [b]Dauer:[/b] " . tf($duration) . "
                         [b]Dauer pro Einheit:[/b] " . tf($obj_time) . "
-                        [b]Waffenfabrik Level:[/b] " . CURRENT_FACTORY_LEVEL . "
+                        [b]Waffenfabrik Level:[/b] " . $factoryBuilding->currentLevel . "
                         [b]Eingesetzte Bewohner:[/b] " . nf($people_working) . "
                         [b]Gen-Tech Level:[/b] " . $gen_tech_level . "
                         [b]Eingesetzter Spezialist:[/b] " . $cu->specialist->name . "
