@@ -122,43 +122,6 @@
 			return $i;
 		}
 
-		function add($defId,$cnt)
-		{
-			$cnt = intval($cnt);
-			$defId = intval($defId);
-
-			dbquery("
-				UPDATE
-					deflist
-				SET
-					deflist_count=deflist_count+".max($cnt,0)."
-				WHERE
-					deflist_user_id='".$this->userId."'
-					AND deflist_entity_id='".$this->entityId."'
-					AND deflist_def_id='".$defId."';
-			");
-			if(mysql_affected_rows()==0)
-			{
-				dbquery("
-					INSERT INTO
-					deflist
-					(
-						deflist_user_id,
-						deflist_entity_id,
-						deflist_def_id,
-						deflist_count
-					)
-					VALUES
-					(
-						'".$this->userId."',
-						'".$this->entityId."',
-						'".$defId."',
-						'".max($cnt,0)."'
-					);
-				");
-			}
-		}
-
 		function remove($defId,$cnt)
 		{
 			$defId = intval($defId);

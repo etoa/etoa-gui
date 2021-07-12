@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -16,6 +17,8 @@ $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 
 /** @var ShipRepository $shipRepository */
 $shipRepository = $app[ShipRepository::class];
+/** @var DefenseRepository $defenseRepository */
+$defenseRepository = $app[DefenseRepository::class];
 
 if ($cp)
 {
@@ -164,8 +167,6 @@ if ($cp)
                 }
 
                 if (isset($_POST['stransform_submit'])) {
-                    $dl = new DefList($planet->id, $cu->id);
-
                     $transformed_counter = 0;
                     if (isset($_POST['stransform']) && count($_POST['stransform']) > 0) {
                         foreach ($_POST['stransform'] as $ship_id => $v) {
@@ -188,7 +189,12 @@ if ($cp)
                                 $arr = mysql_fetch_assoc($res);
                                 $packcount = intval(min(max(0, $v),$arr['cnt']));
                                 if ($packcount>0) {
-                                    $dl->add($arr['id'], $shipRepository->removeShips($ship_id, $packcount, $cu->getId(), $planet->id));
+                                    $defenseRepository->addDefense(
+                                        (int)$arr['id'],
+                                        $shipRepository->removeShips($ship_id, $packcount, $cu->getId(), $planet->id),
+                                        $cu->getId(),
+                                        $planet->id
+                                    );
                                     $transformed_counter += $packcount;
                                 }
                             }
