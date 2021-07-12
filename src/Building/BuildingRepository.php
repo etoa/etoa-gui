@@ -23,7 +23,7 @@ class BuildingRepository extends AbstractRepository
             ->execute()
             ->fetchAllKeyValue();
 
-        return array_map(fn ($value) => (int) $value , $data);
+        return array_map(fn ($value) => (int) $value, $data);
     }
 
     public function getBuildingLevel(int $userId, int $buildingId, int $entityId): int
