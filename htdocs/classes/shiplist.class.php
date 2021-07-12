@@ -6,7 +6,6 @@
 		private $entityId;
 		private $items = null;
 		private $countArr = null;
-		private $bunkeredArr = null;
 		private $count = null;
 		private $special = null;
 
@@ -47,7 +46,6 @@
 			{
 				$this->items[$arr['lid']] = new Ship($arr);
 				$this->countArr[$arr['lid']] = $arr['lcnt'];
-				$this->bunkeredArr[$arr['lid']] = $arr['lbcnt'];
 				$this->count += $arr['lcnt'];
 				if ($arr['special_ship'])
 				{
@@ -66,13 +64,6 @@
   			$this->load();
     	return new ArrayIterator($this->items);
   	}
-
-		function countBunkered($item)
-		{
-			if ($this->bunkeredArr != null)
-				return $this->bunkeredArr[$item];
-			return 0;
-		}
 
 		function getTotalStrucure()
 		{

@@ -2,6 +2,7 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
+use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Entity\EntityRepository;
@@ -33,6 +34,8 @@ $request = Request::createFromGlobals();
 /** @var ResourceBoxDrawer */
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 
+/** @var ShipDataRepository $shipDataRepository */
+$shipDataRepository = $app[ShipDataRepository::class];
 // BEGIN SKRIPT //
 
 /** @var ?Planet $cp - The current Planet */
@@ -481,12 +484,14 @@ if (isset($cp))
 
         tableStart("Details");
         echo "<tr><th>Typ</th><th>Anzahl</th><th>Eingebunkert</th></tr>";
-        foreach ($sl as $k => &$v)
+        $shipNames = $shipDataRepository->getShipNames(true);
+        $bunkerCounts = $shipRepo->getBunkeredCount($cu->getId(), $planet->id);
+        foreach (array_unique(array_merge(array_keys($bunkerCounts), array_keys($shipCounts))) as $shipId)
         {
             echo "<tr>
-                <td>".$v."</td>
-                <td>".nf($shipCounts[(int) $k])."</td>
-                <td>".nf($sl->countBunkered($k))."</td>
+                <td>".$shipNames[$shipId]."</td>
+                <td>".nf($shipCounts[$shipId] ?? 0)."</td>
+                <td>".nf($bunkerCounts[$shipId] ?? 0)."</td>
                 </tr>";
         }
         unset($v);
