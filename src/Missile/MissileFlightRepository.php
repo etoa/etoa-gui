@@ -22,7 +22,7 @@ class MissileFlightRepository extends AbstractRepository
 
         $objects = [];
         if (count($data) > 0) {
-            $ids = array_map(fn(array $row) => $row['flight_id'], $data);
+            $ids = array_map(fn (array $row) => $row['flight_id'], $data);
             $qb = $this->createQueryBuilder();
             $rows = $qb
                 ->select('f.obj_flight_id, f.obj_missile_id, f.obj_cnt')
