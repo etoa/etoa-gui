@@ -69,6 +69,28 @@ class DefenseRepository extends AbstractRepository
             );
     }
 
+
+    /**
+     * @return array<int, int>
+     */
+    public function getEntityDefenseCounts(int $userId, int $entityId): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('deflist_def_id, deflist_count')
+            ->from('deflist')
+            ->where('deflist_user_id = :userId')
+            ->andWhere('deflist_entity_id = :entityId')
+            ->andWhere('deflist_count > 0')
+            ->setParameters([
+                'userId' => $userId,
+                'entityId' => $entityId,
+            ])
+            ->execute()
+            ->fetchAllKeyValue();
+
+        return array_map(fn ($value) => (int) $value, $data);
+    }
+
     public function getDefenseCount(int $userId, int $defenseId): int
     {
         return (int) $this->createQueryBuilder()

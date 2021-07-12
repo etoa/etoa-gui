@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseRepository;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
@@ -36,6 +37,8 @@ $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 
 /** @var ShipDataRepository $shipDataRepository */
 $shipDataRepository = $app[ShipDataRepository::class];
+/** @var DefenseRepository $defenseRepository */
+$defenseRepository = $app[DefenseRepository::class];
 // BEGIN SKRIPT //
 
 /** @var ?Planet $cp - The current Planet */
@@ -342,16 +345,16 @@ if (isset($cp))
         tableEnd();
         echo "</td><td style=\"width:50%;vertical-align:top;padding:5px;\">";
         tableStart("Verteidigungsanlagen",'100%');
-        if ($dl->count() > 0)
-        {
+        $defenseCounts = $defenseRepository->getEntityDefenseCounts($cu->getId(), $planet->id);
+        if (count($defenseCounts) > 0) {
             $dfcnt=0;
             echo "<tr><th>Name</th><th>Anzahl</th><th>Felder</th></tr>";
             foreach ($dl as $k => &$v)
             {
                 echo "<tr><th>".$v."</th>";
-                echo "<td>".$dl->count($k)."</td>";
-                echo "<td>".nf($dl->count($k)*$v->fieldsUsed)."</td></tr>";
-                $dfcnt+=$dl->count($k)*$v->fieldsUsed;
+                echo "<td>".$defenseCounts[(int) $k]."</td>";
+                echo "<td>".nf($defenseCounts[(int) $k] * $v->fieldsUsed)."</td></tr>";
+                $dfcnt+=$defenseCounts[(int) $k] * $v->fieldsUsed;
             }
             unset($v);
             echo "<tr><th colspan=\"2\">Total</th><td>".nf($dfcnt)."</td></tr>";
@@ -504,8 +507,7 @@ if (isset($cp))
 
         echo "<div id=\"tabDefense\" style=\"".($sub=="defense" ? '' : 'display:none;')."\">";
         tableStart("Kampfstärke");
-        if ($dl->count() >0)
-        {
+        if (count($defenseCounts) > 0) {
                 // Forschung laden und bonus dazu rechnen
             // Liest Level der Waffen-,Schild-,Panzerungs-,Regena Tech aus Datenbank (att)
                 $weapon_tech_a=1;
@@ -610,7 +612,7 @@ if (isset($cp))
         }
                     echo "</td></tr>";
             echo "<tr><td><b>Anzahl Anlagen:</b></td>
-            <td colspan=\"2\">".nf($dl->count())."</td></tr>";
+            <td colspan=\"2\">".nf(array_sum($defenseCounts))."</td></tr>";
         }
         else
         {
@@ -624,8 +626,8 @@ if (isset($cp))
         {
             echo "<tr>
                 <td>".$v."</td>
-                <td>".nf($dl->count($k))."</td>
-                <td>".nf($dl->count($k)*$v->fieldsUsed)."</td>
+                <td>".nf($defenseCounts[(int) $k])."</td>
+                <td>".nf($defenseCounts[(int) $k] * $v->fieldsUsed)."</td>
                 </tr>";
         }
         unset($v);

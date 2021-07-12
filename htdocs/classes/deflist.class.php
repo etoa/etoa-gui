@@ -51,29 +51,6 @@
     	return new ArrayIterator($this->items);
   	}
 
-		function count($item=null)
-		{
-			if ($this->countArr != null)
-				return $item>0 ? $this->countArr[$item] : $this->count;
-
-			if ($this->count != null)
-				return $this->count;
-
-			$res = dbquery("
-			SELECT
-				SUM(deflist_count)
-			FROM
-				deflist
-			WHERE
-				deflist_user_id=".$this->userId ."
-				AND deflist_entity_id=".$this->entityId."
-				".($item>0 ? " AND deflist_def_id=".$item."" : "")."
-			;");
-			$arr = mysql_fetch_row($res);
-			$this->count = $arr[0];
-			return $this->count;
-		}
-
 		function getTotalStrucure()
 		{
   		if ($this->items == null)
