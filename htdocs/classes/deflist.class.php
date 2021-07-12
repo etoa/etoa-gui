@@ -122,34 +122,6 @@
 			return $i;
 		}
 
-		function remove($defId,$cnt)
-		{
-			$defId = intval($defId);
-
-			$res = dbquery("SELECT
-								deflist_id,
-								deflist_count
-							FROM
-								deflist
-							WHERE
-								deflist_def_id=".$defId."
-								AND deflist_user_id='".$this->userId."'
-								AND deflist_entity_id='".$this->entityId."';");
-			$arr = mysql_fetch_row($res);
-
-			$delable = intval(min($cnt,$arr[1]));
-
-			dbquery("UPDATE
-				deflist
-			SET
-				deflist_count = deflist_count - ".$delable."
-			WHERE
-				deflist_def_id=".$defId."
-				AND deflist_id='".$arr[0]."';");
-
-			return $delable;
-		}
-
 		/**
 		* Remove empty data
 		*/

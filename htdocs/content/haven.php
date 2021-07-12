@@ -130,8 +130,6 @@ if ($cp)
             if ($numMobile > 0)
             {
                 if (isset($_POST['dtransform_submit'])) {
-                    $dl = new DefList($planet->id, $cu->id);
-
                     $transformed_counter = 0;
                     if (isset($_POST['dtransform']) && count($_POST['dtransform']) > 0) {
                         foreach ($_POST['dtransform'] as $def_id => $v) {
@@ -154,7 +152,12 @@ if ($cp)
                                 $packcount = intval(min(max(0, $v), $arr['cnt']));
 
                                 if ($packcount > 0) {
-                                    $shipRepository->addShip($arr['id'], $dl->remove($def_id, $packcount), $cu->getId(), $planet->id);
+                                    $shipRepository->addShip(
+                                        (int) $arr['id'],
+                                        $defenseRepository->removeDefense((int) $def_id, $packcount, $cu->getId(), $planet->id),
+                                        $cu->getId(),
+                                        $planet->id
+                                    );
                                     $transformed_counter += $packcount;
                                 }
                             }
