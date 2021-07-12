@@ -68,7 +68,7 @@ class UserRepository extends AbstractRepository
             ->execute();
     }
 
-    public function setLogoutTime(int $userId): void
+    public function setLogoutTime(int $userId, ?int $time = null): void
     {
         $this->createQueryBuilder()
             ->update('users')
@@ -76,7 +76,34 @@ class UserRepository extends AbstractRepository
             ->where('user_id = :id')
             ->setParameters([
                 'id' => $userId,
-                'time' => time(),
+                'time' => $time ?? time(),
+            ])
+            ->execute();
+    }
+
+    public function addSpecialistTime(int $userId, int $time): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_specialist_time', 'user_specialist_time + :time')
+            ->where('user_id = :id')
+            ->andWhere('user_specialist_id > 0')
+            ->setParameters([
+                'id' => $userId,
+                'time' => $time,
+            ])
+            ->execute();
+    }
+
+    public function disableHolidayMode(int $userId): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_hmode_from', (string) 0)
+            ->set('user_hmode_to', (string) 0)
+            ->where('user_id = :id')
+            ->setParameters([
+                'id' => $userId,
             ])
             ->execute();
     }
@@ -151,6 +178,97 @@ class UserRepository extends AbstractRepository
     }
 
     /**
+     * @return array<User>
+     */
+    public function findInactive(int $registerTime, int $onlineTime): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('users')
+            ->where('user_ghost = 0')
+            ->andWhere('admin = 0')
+            ->andWhere('user_blocked_to < :time')
+            ->andWhere('((user_registered < :registerTime AND user_points = 0)
+                OR (user_logouttime < :onlineTime AND user_logouttime > 0 AND user_hmode_from = 0))')
+            ->setParameters([
+                'time' => time(),
+                'registerTime' => $registerTime,
+                'onlineTime' => $onlineTime,
+            ])
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new User($row), $data);
+    }
+
+    /**
+     * @return array<User>
+     */
+    public function findLongInactive(int $logoutTimeFrom, int $logoutTimeTo): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('users')
+            ->where('user_ghost = 0')
+            ->andWhere('admin = 0')
+            ->andWhere('user_blocked_to < :time')
+            ->andWhere('user_logouttime > :logoutTimeFrom')
+            ->andWhere('user_logouttime < :logoutTimeTo')
+            ->andWhere('user_hmode_from = 0')
+            ->setParameters([
+                'time' => time(),
+                'logoutTimeFrom' => $logoutTimeFrom,
+                'logoutTimeTo' => $logoutTimeTo,
+            ])
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new User($row), $data);
+    }
+
+    /**
+     * @return array<User>
+     */
+    public function findInactiveInHolidayMode(int $threshold): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('users')
+            ->where('user_ghost = 0')
+            ->andWhere('admin = 0')
+            ->andWhere('user_blocked_to < :time')
+            ->andWhere('user_hmode_from > 0')
+            ->andWhere('user_hmode_from < :threshold')
+            ->setParameters([
+                'time' => time(),
+                'threshold' => $threshold,
+            ])
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new User($row), $data);
+    }
+
+    /**
+     * @return array<User>
+     */
+    public function findDeleted(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('users')
+            ->where('user_deleted > 0')
+            ->andWhere('user_deleted < :time')
+            ->setParameters([
+                'time' => time(),
+            ])
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new User($row), $data);
+    }
+
+    /**
      * @return array<int,string>
      */
     public function getEmailAddressesWithDisplayName(): array
@@ -164,7 +282,7 @@ class UserRepository extends AbstractRepository
 
         $recipients = [];
         foreach ($data as $item) {
-            $recipients[(int) $item['user_id']] = $item['user_nick']."<".$item['user_email'].">";
+            $recipients[(int) $item['user_id']] = $item['user_nick'] . "<" . $item['user_email'] . ">";
         }
 
         return $recipients;
@@ -197,6 +315,17 @@ class UserRepository extends AbstractRepository
         ", [
             'days' => $days,
         ]);
+    }
+
+    public function remove(int $id): bool
+    {
+        $affected = (int) $this->createQueryBuilder()
+            ->delete('users')
+            ->where('user_id = :id')
+            ->setParameter('id', $id)
+            ->execute();
+
+        return $affected > 0;
     }
 
     public function create(string $nick, string $name, string $email, string $password): int

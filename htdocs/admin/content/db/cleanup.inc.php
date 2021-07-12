@@ -8,6 +8,7 @@ use EtoA\Message\MessageRepository;
 use EtoA\Message\MessageService;
 use EtoA\Message\ReportRepository;
 use EtoA\Ranking\PointsService;
+use EtoA\User\UserService;
 use EtoA\User\UserSessionManager;
 
 /** @var TicketRepository */
@@ -33,15 +34,33 @@ $messageRepository = $app[MessageRepository::class];
 
 /** @var ReportRepository */
 $reportRepository = $app[ReportRepository::class];
+
 /** @var TicketService */
 $ticketService = $app[TicketService::class];
+
+/** @var UserService */
+$userService = $app[UserService::class];
 
 echo '<h2>Clean-Up</h2>';
 
 if (isset($_POST['submit_cleanup_selected']) || isset($_POST['submit_cleanup_all'])) {
-	runCleanup($ticketService, $userSessionManager, $sessionManager, $ticketRepo, $pointsService, $messageService);
+    runCleanup(
+        $ticketService,
+        $userSessionManager,
+        $sessionManager,
+        $ticketRepo,
+        $pointsService,
+        $messageService,
+        $userService
+    );
 }
-cleanupOverView($ticketRepo, $config, $messageRepository, $reportRepository);
+cleanupOverView(
+    $ticketRepo,
+    $config,
+    $messageRepository,
+    $reportRepository,
+    $userService
+);
 
 function runCleanup(
     TicketService $ticketService,
@@ -49,7 +68,8 @@ function runCleanup(
 	AdminSessionManager $sessionManager,
 	TicketRepository $ticketRepo,
     PointsService $pointsService,
-    MessageService $messageService
+    MessageService $messageService,
+    UserService $userService
 ) {
 	echo "Clean-Up wird durchgeführt...<br/>";
 	$all = isset($_POST['submit_cleanup_all']) ? true : false;
@@ -96,9 +116,10 @@ function runCleanup(
 
 	// Inactive and delete jobs
 	if ((isset($_POST['cl_inactive']) && $_POST['cl_inactive'] == 1) || $all) {
-		$num = Users::removeInactive(true);
+        $num = $userService->removeInactive();
+        $userService->informLongInactive();
 		echo $num . " inaktive User wurden gelöscht!<br/>";
-		$num = Users::removeDeleted(true);
+		$num = $userService->removeDeleted(true);
 		echo $num . " gelöschte User wurden endgültig gelöscht!<br/>";
 	}
 
@@ -378,7 +399,8 @@ function cleanupOverView(
     TicketRepository $ticketRepo,
     ConfigurationService $config,
     MessageRepository $messageRepository,
-    ReportRepository $reportRepository
+    ReportRepository $reportRepository,
+    UserService $userService
 ): void {
 	global $page;
 	global $sub;
@@ -503,7 +525,7 @@ function cleanupOverView(
 
 	// Inactive
 	echo '<fieldset><legend><input type="checkbox" value="1" name="cl_inactive" /> User</legend>';
-	echo nf(Users::getNumInactive()) . " inaktive Benutzer löschen (" . $config->param2Int('user_inactive_days') . " Tage seit der Registration ohne Login oder " . $config->param1Int('user_inactive_days') . " Tage nicht mehr eingeloggt)<br/>";
+	echo nf($userService->getNumInactive()) . " inaktive Benutzer löschen (" . $config->param2Int('user_inactive_days') . " Tage seit der Registration ohne Login oder " . $config->param1Int('user_inactive_days') . " Tage nicht mehr eingeloggt)<br/>";
 	$res =	dbquery("
 		SELECT
 			COUNT(user_id)
