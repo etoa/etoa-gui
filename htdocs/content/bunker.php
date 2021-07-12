@@ -1,13 +1,17 @@
 <?PHP
 
+use EtoA\Ship\ShipRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 
-/** @var PlanetRepository */
+/** @var PlanetRepository $planetRepo */
 $planetRepo = $app[PlanetRepository::class];
 
 /** @var ResourceBoxDrawer */
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
+
+/** @var ShipRepository $shipRepository */
+$shipRepository = $app[ShipRepository::class];
 
 if ($cp)
 {
@@ -191,21 +195,11 @@ if ($cp)
                 $countBunker = 0;
                 $spaceBunker = 0;
                 $counter = 0;
-                $res = dbquery("
-                    SELECT
-                        shiplist_ship_id,
-                        shiplist_bunkered
-                    FROM
-                        shiplist
-                    WHERE
-                        shiplist_user_id=".$cu->id."
-                        AND shiplist_entity_id=".$planet->id."
-                        AND shiplist_bunkered>0
-                    ;");
-                while ($arr = mysql_fetch_assoc($res))
-                {
-                    $count -= $arr['shiplist_bunkered'];
-                    $structure -= $arr['shiplist_bunkered']*$ships[$arr['shiplist_ship_id']]->structure;
+
+                $bunkeredShips = $shipRepository->getBunkeredCount($cu->getId(), $planet->id);
+                foreach ($bunkeredShips as $shipId => $shipCount) {
+                    $count -= $shipCount;
+                    $structure -= $shipCount * $ships[$shipId]->structure;
                 }
 
                 foreach($_POST['ship_bunker_count'] as $shipId=>$cnt)
@@ -216,7 +210,7 @@ if ($cp)
                         $countBunker = min($count,$cnt);
                         $spaceBunker = $ships[$shipId]->structure>0 ? min($cnt,$structure/$ships[$shipId]->structure) : $cnt;
                         $cnt = floor(min($countBunker,$spaceBunker));
-                        $cnt = $sl->bunker($shipId,$cnt);
+                        $cnt = $shipRepository->bunker($cu->getId(), $planet->id, $shipId, $cnt);
                         $count -= $cnt;
                         $structure -= $cnt*$ships[$shipId]->structure;
                         $counter += $cnt;

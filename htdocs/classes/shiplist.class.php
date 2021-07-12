@@ -209,34 +209,6 @@
 			return $delable;
 		}
 
-		function bunker($shipId,$cnt)
-		{
-			$res = dbquery("SELECT
-								shiplist_id,
-								shiplist_count
-							FROM
-								shiplist
-							WHERE
-								shiplist_ship_id=".$shipId."
-								AND shiplist_user_id='".$this->userId."'
-								AND shiplist_entity_id='".$this->entityId."';");
-			$arr = mysql_fetch_row($res);
-
-			$delable = max(0,min($cnt,$arr[1]));
-
-			dbquery("UPDATE
-						shiplist
-					SET
-						shiplist_bunkered = shiplist_bunkered + ".$delable.",
-						shiplist_count = shiplist_count - ".$delable."
-					WHERE
-						shiplist_ship_id=".$shipId."
-						AND shiplist_id='".$arr[0]."'
-					LIMIT 1;");
-
-			return $delable;
-		}
-
 		function leaveShelter($shipId,$cnt)
 		{
 			$res = dbquery("SELECT

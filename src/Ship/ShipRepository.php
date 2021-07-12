@@ -113,4 +113,60 @@ class ShipRepository extends AbstractRepository
             ])
             ->execute();
     }
+
+    public function bunker(int $userId, int $entityId, int $shipId, int $count): int
+    {
+        $info = $this->createQueryBuilder()
+            ->select('shiplist_id', 'shiplist_count')
+            ->from('shiplist')
+            ->where('shiplist_ship_id = :shipId')
+            ->andWhere('shiplist_user_id = :userId')
+            ->andWhere('shiplist_entity_id = :entityId')
+            ->setParameters([
+                'userId' => $userId,
+                'entityId' => $entityId,
+                'shipId' => $shipId,
+            ])->execute()->fetchAssociative();
+
+        if ($info === false) {
+            return 0;
+        }
+
+        $delable = max(0, min($count, (int) $info['shiplist_count']));
+
+        $this->createQueryBuilder()
+            ->update('shiplist')
+            ->set('shiplist_bunkered', 'shiplist_bunkered + :change')
+            ->set('shiplist_count', 'shiplist_count - :change')
+            ->where('shiplist_ship_id = :shipId')
+            ->andWhere('shiplist_id = :id')
+            ->setParameters([
+                'change' => $delable,
+                'id' => $info['shiplist_id'],
+                'shipId' => $shipId,
+            ])->execute();
+
+        return $delable;
+    }
+
+    /**
+     * @return array<int, int>
+     */
+    public function getBunkeredCount(int $userId, int $entityId): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('shiplist_ship_id, shiplist_bunkered')
+            ->from('shiplist')
+            ->where('shiplist_entity_id = :entityId')
+            ->andWhere('shiplist_user_id = :userId')
+            ->andWhere('shiplist_bunkered  > 0')
+            ->setParameters([
+                'entityId' => $entityId,
+                'userId' => $userId,
+            ])
+            ->execute()
+            ->fetchAllKeyValue();
+
+        return array_map(fn ($value) => (int) $value, $data);
+    }
 }

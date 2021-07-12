@@ -43,4 +43,17 @@ class ShipRepositoryTest extends AbstractDbTestCase
         $this->assertEquals($entityId, $ship['shiplist_entity_id']);
         $this->assertEquals(30, $ship['shiplist_count']);
     }
+
+    public function testBunker(): void
+    {
+        $userId = 3;
+        $shipId = 5;
+        $entityId = 10;
+
+        $this->repository->addShip($shipId, 10, $userId, $entityId);
+
+        $amount = $this->repository->bunker($userId, $entityId, $shipId, 100);
+
+        $this->assertSame(10, $amount);
+    }
 }
