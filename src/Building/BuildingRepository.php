@@ -329,4 +329,15 @@ class BuildingRepository extends AbstractRepository
             ])
             ->execute();
     }
+
+    public function getPeopleWorking(int $entityId): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('SUM(buildlist_people_working)')
+            ->from('buildlist')
+            ->where('buildlist_entity_id = :entityId')
+            ->setParameter('entityId', $entityId)
+            ->execute()
+            ->fetchOne();
+    }
 }

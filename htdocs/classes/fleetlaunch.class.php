@@ -194,8 +194,7 @@ class FleetLaunch
                 if ($this->possibleFleetStarts > 0)
                 {
                     // Piloten
-                    $bl = new BuildList($this->sourceEntity->id(),$this->ownerId,$action);
-                    $this->pilotsAvailable = max(0,floor($this->sourceEntity->people() - $bl->totalPeopleWorking()));
+                    $this->pilotsAvailable = max(0,floor($this->sourceEntity->people() - $buildingRepository->getPeopleWorking($this->sourceEntity->id())));
 
                     $this->havenOk = true;
                 }

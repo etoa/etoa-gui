@@ -177,9 +177,9 @@ if (isset($cp)) {
         ob_end_clean();
 
         if($bid==GEN_TECH_ID)
-            $peopleFree = floor($planet->people) - $bl->totalPeopleWorking() + ($peopleWorkingGen);
+            $peopleFree = floor($planet->people) - $buildingRepository->getPeopleWorking($planet->id) + ($peopleWorkingGen);
         else
-            $peopleFree = floor($planet->people) - $bl->totalPeopleWorking() + ($peopleWorking);
+            $peopleFree = floor($planet->people) - $buildingRepository->getPeopleWorking($planet->id) + ($peopleWorking);
 
         $peopleOptimized = 0;
         $currentTechData = null;

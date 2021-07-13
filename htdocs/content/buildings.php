@@ -11,7 +11,7 @@ use EtoA\Technology\TechnologyDataRepository;
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
 
-/** @var PlanetRepository */
+/** @var PlanetRepository $planetRepo */
 $planetRepo = $app[PlanetRepository::class];
 
 /** @var ResourceBoxDrawer */
@@ -209,7 +209,7 @@ if (isset($cp))
     $checker = ob_get_contents();
     ob_end_clean();
 
-    $peopleFree = floor($planet->people) - $bl->totalPeopleWorking() + $bl->getPeopleWorking(BUILD_BUILDING_ID);
+    $peopleFree = floor($planet->people) - $buildingRepository->getPeopleWorking($planet->id) + $bl->getPeopleWorking(BUILD_BUILDING_ID);
     // create box to change people working
     $box =	'
                 <input type="hidden" name="workDone" id="workDone" value="'.$config->getInt('people_work_done').'" />

@@ -44,8 +44,6 @@ define("SHIPQUEUE_CANCEL_END", $config->getFloat('shipqueue_cancel_end'));
 
 $planet = $planetRepo->find($cp->id);
 
-$bl = new BuildList($planet->id, $cu->id);
-
 /** @var TechnologyRepository $technologyRepository */
 $technologyRepository = $app[TechnologyRepository::class];
 $techlist = $technologyRepository->getTechnologyLevels($cu->getId());
@@ -316,7 +314,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
         $cancelable = false;
     }
     tableEnd();
-    $peopleFree = floor($planet->people) - $bl->totalPeopleWorking() + $shipyard->peopleWorking;
+    $peopleFree = floor($planet->people) - $buildingRepository->getPeopleWorking($planet->id) + $shipyard->peopleWorking;
     $box =  '
                 <input type="hidden" name="workDone" id="workDone" value="'.$config->getInt('people_work_done').'" />
                 <input type="hidden" name="foodRequired" id="foodRequired" value="'.$config->getInt('people_food_require').'" />

@@ -311,7 +311,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
         }
         tableEnd();
 
-        $peopleFree = floor($planet->people) - $bl->totalPeopleWorking() + $bl->getPeopleWorking(DEF_BUILDING_ID);
+        $peopleFree = floor($planet->people) - $buildingRepository->getPeopleWorking($planet->id) + $bl->getPeopleWorking(DEF_BUILDING_ID);
         $box =  '
                     <input type="hidden" name="workDone" id="workDone" value="'.$config->getInt('people_work_done').'" />
                     <input type="hidden" name="foodRequired" id="foodRequired" value="'.$config->getInt('people_food_require').'" />
