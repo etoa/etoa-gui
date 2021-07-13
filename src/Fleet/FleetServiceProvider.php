@@ -10,6 +10,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipRepository;
 use EtoA\Specialist\SpecialistDataRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Entity\EntityRepository;
@@ -34,7 +35,8 @@ class FleetServiceProvider implements ServiceProviderInterface
             return new FleetService(
                 $pimple[PlanetRepository::class],
                 $pimple[EntityRepository::class],
-                $pimple[FleetRepository::class]
+                $pimple[FleetRepository::class],
+                $pimple[ShipRepository::class]
             );
         };
 

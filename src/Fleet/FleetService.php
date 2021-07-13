@@ -4,25 +4,28 @@ declare(strict_types=1);
 
 namespace EtoA\Fleet;
 
+use EtoA\Ship\ShipRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\PlanetRepository;
-use ShipList;
 
 class FleetService
 {
     private PlanetRepository $planetRepository;
     private EntityRepository $entityRepository;
     private FleetRepository $fleetRepository;
+    private ShipRepository $shipRepository;
 
     public function __construct(
         PlanetRepository $planetRepository,
         EntityRepository $entityRepository,
-        FleetRepository $fleetRepository
+        FleetRepository $fleetRepository,
+        ShipRepository $shipRepository
     ) {
         $this->planetRepository = $planetRepository;
         $this->entityRepository = $entityRepository;
         $this->fleetRepository = $fleetRepository;
+        $this->shipRepository = $shipRepository;
     }
 
     public function cancel(int $fleetId, bool $returning = false): void
@@ -64,10 +67,9 @@ class FleetService
             throw new InvalidFleetParametersException('Cannot land foreign fleet on planet.');
         }
 
-        $sl = new ShipList($planet->id, $planet->userId);
         foreach ($this->fleetRepository->findAllShipsInFleet($fleet->id) as $shipEntry) {
             if ($shipEntry->shipId > 0) {
-                $sl->add($shipEntry->shipId, $shipEntry->count);
+                $this->shipRepository->addShip($shipEntry->shipId, $shipEntry->count, $planet->userId, $planet->id);
             }
             $this->fleetRepository->removeShipsFromFleet($fleet->id, $shipEntry->shipId);
         }

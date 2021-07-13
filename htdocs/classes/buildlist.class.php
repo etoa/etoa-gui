@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Building\BuildingRepository;
 use EtoA\Technology\TechnologyRepository;
 
 class BuildList implements IteratorAggregate
@@ -16,8 +17,6 @@ class BuildList implements IteratorAggregate
 		public static $underConstruction = false;
 
 		private $tmpItems = array();
-
-		private $totalPeopleWorking = null;
 
 		private $errorMsg;
 
@@ -172,29 +171,6 @@ class BuildList implements IteratorAggregate
 			}
 		}
 
-		function count()
-		{
-			if ($this->count != null)
-				return $this->count;
-			if ($this->items != null)
-			{
-				$this->count = count($this->items);
-				return $this->count;
-			}
-			$res = dbquery("
-			SELECT
-				COUNT(buildlist_id)
-			FROM
-				buildlist
-			WHERE
-				buildlist_user_id=".$this->ownerId ."
-				AND buildlist_entity_id=".$this->entityId."
-			;");
-			$arr = mysql_fetch_row($res);
-			$this->count = $arr[0];
-			return $this->count;
-		}
-
 		function item($bid)
 		{
 			if ($this->items==null)
@@ -211,24 +187,6 @@ class BuildList implements IteratorAggregate
 			if (!isset(self::$underConstruction))
 				$this->load();
 			return self::$underConstruction;
-		}
-
-		function getLevel($bid)
-		{
-			if ($this->items==null)
-				$this->load();
-			if (isset($this->items[$bid]))
-				return $this->items[$bid]->level;
-			return 0;
-		}
-
-		function getStatus($bid)
-		{
-			if ($this->items==null)
-				$this->load();
-			if (isset($this->items[$bid]))
-				return $this->items[$bid]->buildType;
-			return 0;
 		}
 
 		function getDeactivated($bid)
@@ -258,6 +216,11 @@ class BuildList implements IteratorAggregate
 		// use only for tech and buildings
 		function setPeopleWorking($bid,$people,$tech=false)
 		{
+		    global $app;
+
+		    /** @var BuildingRepository $buildingRepository */
+		    $buildingRepository = $app[BuildingRepository::class];
+
 			if ($this->items==null)
 				$this->load();
 
@@ -270,7 +233,7 @@ class BuildList implements IteratorAggregate
 					global $cp;
 					// Free: Total people on planet minus total working people on planet
 					// PLUS people working in this building (these can be set again)
-					$free = $cp->people - $this->totalPeopleWorking() + $this->items[$bid]->peopleWorking;
+					$free = $cp->people - $buildingRepository->getPeopleWorking($this->entityId) + $this->items[$bid]->peopleWorking;
 					if ($free >= $people)
 					{
 						return $this->items[$bid]->setPeopleWorking($people, $tech);
@@ -300,71 +263,6 @@ class BuildList implements IteratorAggregate
 			{
 				$this->items[$bid]->cooldown = $cd;
 			}
-		}
-
-		function totalPeopleWorking()
-		{
-			if ($this->totalPeopleWorking>-1)
-
-				return $this->totalPeopleWorking;
-			if ($this->items!=null)
-			{
-				$this->totalPeopleWorking = 0;
-				foreach ($this->items as $k=>&$v)
-				{
-					$this->totalPeopleWorking+=$v->peopleWorking;
-				}
-				unset($v);
-				return $this->totalPeopleWorking;
-			}
-
-			$res = dbquery("SELECT
-								SUM(buildlist_people_working)
-							FROM
-								buildlist
-							WHERE
-								buildlist_entity_id='".$this->entityId."';");
-			$pbarr = mysql_fetch_row($res);
-
-			$this->totalPeopleWorking = $pbarr[0];
-
-			return $this->totalPeopleWorking;
-		}
-
-		function getBunkerRes()
-		{
-			if ($this->items==null)
-				$this->load();
-			$this->bunkerRes= 0;
-			foreach ($this->items as $k=>&$v)
-			{
-				$this->bunkerRes+= $v->building->bunkerRes * pow($v->building->storeFactor,$v->level-1);
-			}
-			return $this->bunkerRes;
-		}
-
-		function getBunkerFleetCount()
-		{
-			if ($this->items==null)
-				$this->load();
-			$this->bunkerFleetCount= 0;
-			foreach ($this->items as $k=>&$v)
-			{
-				$this->bunkerFleetCount+= $v->building->bunkerFleetCount * pow($v->building->storeFactor,$v->level-1);
-			}
-			return $this->bunkerFleetCount;
-		}
-
-		function getBunkerFleetSpace()
-		{
-			if ($this->items==null)
-				$this->load();
-			$this->bunkerFleetSpace= 0;
-			foreach ($this->items as $k=>&$v)
-			{
-				$this->bunkerFleetSpace+= $v->building->bunkerFleetSpace * pow($v->building->storeFactor,$v->level-1);
-			}
-			return $this->bunkerFleetSpace;
 		}
 
 		function getCosts($bid,$type='build',$levelUp=0)

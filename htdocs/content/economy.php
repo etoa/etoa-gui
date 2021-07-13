@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Building\BuildingDataRepository;
+use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
@@ -13,6 +15,11 @@ $planetRepo = $app[PlanetRepository::class];
 
 /** @var ResourceBoxDrawer */
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
+
+/** @var BuildingRepository $buildingRepository */
+$buildingRepository = $app[BuildingRepository::class];
+/** @var BuildingDataRepository $buildingDataRepository */
+$buildingDataRepository = $app[BuildingDataRepository::class];
 
 if ($cp) {
 
@@ -47,8 +54,6 @@ if ($cp) {
 
     echo "<h1>Wirtschaft des Planeten " . $planet->name . "</h1>";
     echo $resourceBoxDrawer->getHTML($planet);
-
-    $bl = new BuildList($planet->id, $cu->id);
 
     if (isset($_GET['action']) && $_GET['action'] == "update") {
         BackendMessage::updatePlanet($planet->id);
@@ -335,11 +340,12 @@ if ($cp) {
     //
     // Resource Bunker
     //
-    $blvl = $bl->getLevel(RES_BUNKER_ID);
+    $blvl = $buildingRepository->getBuildingLevel($cu->getId(), RES_BUNKER_ID, $planet->id);
+    $building = $buildingDataRepository->getBuilding(RES_BUNKER_ID);
     if ($blvl > 0) {
         iBoxStart("Rohstoffbunker");
-        echo "In deinem <b>" . $bl->item(RES_BUNKER_ID) . "</b> der Stufe <b>$blvl</b> werden bei einem
-            Angriff <b>" . nf($bl->getBunkerRes()) . "</b> Resourcen gesichert!";
+        echo "In deinem <b>" . $building->name . "</b> der Stufe <b>$blvl</b> werden bei einem
+            Angriff <b>" . nf($building->calculateBunkerResources($blvl)) . "</b> Resourcen gesichert!";
         iBoxEnd();
     }
 

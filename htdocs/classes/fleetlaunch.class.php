@@ -1,6 +1,8 @@
 <?PHP
 
+use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Ship\ShipRepository;
 use EtoA\Technology\TechnologyRepository;
 
 /**
@@ -154,6 +156,8 @@ class FleetLaunch
     */
     function checkHaven()
     {
+        global $app;
+
         $this->havenOk = false;
 
         // Check if flights are possible
@@ -169,27 +173,28 @@ class FleetLaunch
                 $action = 2;
             }
 
-            $bl = new BuildList($this->sourceEntity->id(),$this->ownerId,$action);
+            /** @var BuildingRepository $buildingRepository */
+            $buildingRepository = $app[BuildingRepository::class];
+            $fleetControl = $buildingRepository->getEntityBuilding((int) $this->ownerId, (int) $this->sourceEntity->id(), FLEET_CONTROL_ID);
 
             // Check if haven is out of order
-            if ($dt = $bl->getDeactivated(FLEET_CONTROL_ID))
-                {
-                $this->error = "Dieser Raumschiffhafen ist bis ".df($dt)." deaktiviert.";
-            }
-            else
-            {
+            if (null === $fleetControl || $fleetControl->currentLevel === 0) {
+                $this->error = "Der Raumschiffhafen ist noch nicht gebaut.";
+            } elseif ($fleetControl->isDeactivated()) {
+                $this->error = "Dieser Raumschiffhafen ist bis ".df($fleetControl->deactivated)." deaktiviert.";
+            } else {
                 $fm = new FleetManager($this->ownerId);
                 $this->fleetSlotsUsed = $fm->countControlledByEntity($this->sourceEntity->id());
                 unset($fm);
 
-                $this->fleetControlLevel = $bl->getLevel(FLEET_CONTROL_ID);
+                $this->fleetControlLevel = $fleetControl->currentLevel;
                 $totalSlots = FLEET_NOCONTROL_NUM + $this->fleetControlLevel + $this->specialist->fleetMax;
                 $this->possibleFleetStarts = $totalSlots - $this->fleetSlotsUsed;
 
                 if ($this->possibleFleetStarts > 0)
                 {
                     // Piloten
-                    $this->pilotsAvailable = max(0,floor($this->sourceEntity->people() - $bl->totalPeopleWorking()));
+                    $this->pilotsAvailable = max(0,floor($this->sourceEntity->people() - $buildingRepository->getPeopleWorking($this->sourceEntity->id())));
 
                     $this->havenOk = true;
                 }
@@ -493,6 +498,8 @@ class FleetLaunch
 
     function launch()
     {
+        global $app;
+
         if ($this->actionOk)
         {
             if ($this->checkHaven())
@@ -501,11 +508,12 @@ class FleetLaunch
                 $this->landTime = ($time+$this->getDuration());
 
                 // Subtract ships from source
-                $sl = new ShipList($this->sourceEntity->id(),$this->ownerId);
+                /** @var ShipRepository $shipRepository */
+                $shipRepository = $app[ShipRepository::class];
                 $addcnt = 0;
                 foreach ($this->ships as $sid => $sda)
                 {
-                    $this->ships[$sid]['count'] = $sl->remove($sid,$sda['count']);
+                    $this->ships[$sid]['count'] = $shipRepository->removeShips((int) $sid, (int) $sda['count'], (int) $this->ownerId, (int) $this->sourceEntity->id());
                     $addcnt+=$this->ships[$sid]['count'];
                 }
 

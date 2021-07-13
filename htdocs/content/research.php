@@ -17,6 +17,9 @@ $planetRepo = $app[PlanetRepository::class];
 /** @var ResourceBoxDrawer */
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 
+/** @var BuildingRepository $buildingRepository */
+$buildingRepository = $app[BuildingRepository::class];
+
 define('NUM_BUILDINGS_PER_ROW',5);
 define('CELL_WIDTH',120);
 define('TABLE_WIDTH','auto');
@@ -33,16 +36,15 @@ if (isset($cp)) {
 
     $bl = new BuildList($planet->id, $cu->id);
 
-    if ($bl->getLevel(TECH_BUILDING_ID) > 0) {
-        define('CURRENT_LAB_LEVEL',$bl->getLevel(TECH_BUILDING_ID));
-
+    $researchBuilding = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, TECH_BUILDING_ID);
+    if ($researchBuilding !== null && $researchBuilding->currentLevel > 0) {
         $technologyRepository = $app[TechnologyRepository::class];
         define("GEN_TECH_LEVEL", $technologyRepository->getTechnologyLevel($cu->getId(), GEN_TECH_ID));
         $minBuildTimeFactor = (0.1-(GEN_TECH_LEVEL/100));
 
 
         // Überschrift
-        echo "<h1>Forschungslabor (Stufe ".CURRENT_LAB_LEVEL.") des Planeten ".$planet->name."</h1>";
+        echo "<h1>Forschungslabor (Stufe ".$researchBuilding->currentLevel.") des Planeten ".$planet->name."</h1>";
         echo $resourceBoxDrawer->getHTML($planet);
 
         // Forschungsliste laden && Gentech level definieren
@@ -119,7 +121,7 @@ if (isset($cp)) {
         $peopleFoodConsumption = $config->getInt('people_food_require');
 
         //level zählen welches das forschungslabor über dem angegeben level ist und faktor berechnen
-        $need_bonus_level = CURRENT_LAB_LEVEL - $config->param1Int('build_time_boni_forschungslabor');
+        $need_bonus_level = $researchBuilding->currentLevel - $config->param1Int('build_time_boni_forschungslabor');
         if ($need_bonus_level<=0) {
             $time_boni_factor=1;
         } else {
@@ -131,8 +133,6 @@ if (isset($cp)) {
         //
 
         // Load built buildings
-        /** @var BuildingRepository $buildingRepository */
-        $buildingRepository = $app[BuildingRepository::class];
         $buildlist = $buildingRepository->getBuildingLevels($planet->id);
 
         // Load requirements
@@ -177,9 +177,9 @@ if (isset($cp)) {
         ob_end_clean();
 
         if($bid==GEN_TECH_ID)
-            $peopleFree = floor($planet->people) - $bl->totalPeopleWorking() + ($peopleWorkingGen);
+            $peopleFree = floor($planet->people) - $buildingRepository->getPeopleWorking($planet->id) + ($peopleWorkingGen);
         else
-            $peopleFree = floor($planet->people) - $bl->totalPeopleWorking() + ($peopleWorking);
+            $peopleFree = floor($planet->people) - $buildingRepository->getPeopleWorking($planet->id) + ($peopleWorking);
 
         $peopleOptimized = 0;
         $currentTechData = null;
@@ -302,7 +302,7 @@ if (isset($cp)) {
         echo "<tr><td>Forschungszeitverringerung:</td><td>";
         if ($need_bonus_level>=0)
         {
-            echo get_percent_string($time_boni_factor)." durch Stufe ".CURRENT_LAB_LEVEL." (-".((1-$config->param2Float('build_time_boni_forschungslabor'))*100)."% maximum)";
+            echo get_percent_string($time_boni_factor)." durch Stufe ".$researchBuilding->currentLevel." (-".((1-$config->param2Float('build_time_boni_forschungslabor'))*100)."% maximum)";
         }
         else
         {
@@ -505,7 +505,7 @@ if (isset($cp)) {
 
                             [b]Erforschungsdauer:[/b] " . tf($btime) . "
                             [b]Ende:[/b] " . date("d.m.Y H:i:s", (int) $end_time) . "
-                            [b]Forschungslabor Level:[/b] " . CURRENT_LAB_LEVEL . "
+                            [b]Forschungslabor Level:[/b] " . $researchBuilding->currentLevel . "
                             [b]Eingesetzte Bewohner:[/b] " . nf($peopleWorking) . "
                             [b]Gen-Tech Level:[/b] " . GEN_TECH_LEVEL . "
                             [b]Eingesetzter Spezialist:[/b] " . $cu->specialist->name . "

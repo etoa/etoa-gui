@@ -89,4 +89,25 @@ class DefenseDataRepository extends AbstractRepository
 
         return array_map(fn ($row) => new Defense($row), $data);
     }
+
+    /**
+     * @return array<int, Defense>
+     */
+    public function getAllDefenses(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('defense')
+            ->orderBy('def_order')
+            ->execute()
+            ->fetchAllAssociative();
+
+        $result = [];
+        foreach ($data as $row) {
+            $defense = new Defense($row);
+            $result[$defense->id] = $defense;
+        }
+
+        return $result;
+    }
 }

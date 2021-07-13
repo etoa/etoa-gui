@@ -6,6 +6,26 @@ use EtoA\Core\AbstractRepository;
 
 class BuildingDataRepository extends AbstractRepository
 {
+    /**
+     * @return array<int, Building>
+     */
+    public function getBuildings(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('b.*')
+            ->from('buildings', 'b')
+            ->execute()
+            ->fetchAllAssociative();
+
+        $buildings = [];
+        foreach ($data as $row) {
+            $building = new Building($row);
+            $buildings[$building->id] = $building;
+        }
+
+        return $buildings;
+    }
+
     public function getBuilding(int $buildingId): ?Building
     {
         $data = $this->createQueryBuilder()

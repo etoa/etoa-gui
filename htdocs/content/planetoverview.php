@@ -1,8 +1,15 @@
 <?PHP
 
+use EtoA\Building\BuildingDataRepository;
+use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseDataRepository;
+use EtoA\Defense\DefenseRepository;
 use EtoA\Fleet\FleetRepository;
+use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -21,7 +28,7 @@ $planetRepo = $app[PlanetRepository::class];
 /** @var EntityRepository */
 $entityRepository = $app[EntityRepository::class];
 
-/** @var ShipRepository */
+/** @var ShipRepository $shipRepo */
 $shipRepo = $app[ShipRepository::class];
 
 /** @var FleetRepository */
@@ -33,6 +40,21 @@ $request = Request::createFromGlobals();
 /** @var ResourceBoxDrawer */
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 
+/** @var ShipDataRepository $shipDataRepository */
+$shipDataRepository = $app[ShipDataRepository::class];
+/** @var DefenseRepository $defenseRepository */
+$defenseRepository = $app[DefenseRepository::class];
+/** @var BuildingRepository $buildingRepository */
+$buildingRepository = $app[BuildingRepository::class];
+/** @var BuildingDataRepository $buildingDataRepository */
+$buildingDataRepository = $app[BuildingDataRepository::class];
+/** @var TechnologyDataRepository $techDataRepository */
+$techDataRepository = $app[TechnologyDataRepository::class];
+/** @var TechnologyRepository $techRepository */
+$techRepository = $app[TechnologyRepository::class];
+/** @var DefenseDataRepository $defenseDataRepository */
+$defenseDataRepository = $app[DefenseDataRepository::class];
+
 // BEGIN SKRIPT //
 
 /** @var ?Planet $cp - The current Planet */
@@ -41,6 +63,8 @@ $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 if (isset($cp))
 {
     $planet = $planetRepo->find($cp->id);
+    $techNames = $techDataRepository->getTechnologyNames(true);
+    $techlist = $techRepository->getTechnologyLevels($cu->getId());
 
     // Kolonie aufgeben
     if ($request->query->has('action') && $request->query->get('action') == "remove")
@@ -213,9 +237,6 @@ if (isset($cp))
             }
         }
 
-        $sl = new ShipList($planet->id, $cu->id, 1);
-        $dl = new DefList($planet->id, $cu->id, 1);
-
         echo "<h1>Übersicht über den Planeten ".$planet->name."</h1>";
         echo $resourceBoxDrawer->getHTML($planet);
 
@@ -316,20 +337,21 @@ if (isset($cp))
         <br/>Benutzt: ".$planet->fieldsUsed.", Total: ".nf($planet->fields)." = ".nf($cp->fieldsBase)." Basisfelder + ".nf($planet->fieldsExtra)." zusätzliche Felder<br/></td></tr>
         <tr><td style=\"width:50%;vertical-align:top;padding:5px;\">";
         tableStart("Gebäude",'100%');
-        $bl = new BuildList($planet->id, $cu->id, 1);
-        if ($bl->count() > 0)
-        {
+
+        $buildingLevels = $buildingRepository->getBuildingLevels($planet->id);
+        if (count($buildingLevels) > 0) {
+            $buildings = $buildingDataRepository->getBuildings();
             $fcnt=0;
             echo "<tr>
                 <th>Name</th>
                 <th>Stufe</th>
                 <th>Felder</th></tr>";
-            foreach ($bl as $k => &$v)
-            {
-                echo "<tr><th>".$v."</th>";
-                echo "<td>".$bl->getLevel($k)."</td>";
-                echo "<td>".nf($bl->getLevel($k) * $v->building->fields)."</td></tr>";
-                $fcnt += $bl->getLevel($k) * $v->building->fields;
+            foreach ($buildingLevels as $buildingId => $buildingLevel) {
+                $building = $buildings[$buildingId];
+                echo "<tr><th>".$building->name."</th>";
+                echo "<td>".$buildingLevel."</td>";
+                echo "<td>".nf($buildingLevel * $building->fields)."</td></tr>";
+                $fcnt += $buildingLevel * $building->fields;
             }
             unset($v);
             echo "<tr><th colspan=\"2\">Total</th><td>".nf($fcnt)."</td></tr>";
@@ -337,20 +359,22 @@ if (isset($cp))
         else
             echo "<tr><td><i>Keine Gebäude vorhanden!</i></td></tr>";
         tableEnd();
+
         echo "</td><td style=\"width:50%;vertical-align:top;padding:5px;\">";
         tableStart("Verteidigungsanlagen",'100%');
-        if ($dl->count() > 0)
-        {
+        $defenseCounts = $defenseRepository->getEntityDefenseCounts($cu->getId(), $planet->id);
+        $defenses = $defenseDataRepository->getAllDefenses();
+        if (count($defenseCounts) > 0) {
             $dfcnt=0;
             echo "<tr><th>Name</th><th>Anzahl</th><th>Felder</th></tr>";
-            foreach ($dl as $k => &$v)
+            foreach ($defenseCounts as $defenseId => $count)
             {
-                echo "<tr><th>".$v."</th>";
-                echo "<td>".$dl->count($k)."</td>";
-                echo "<td>".nf($dl->count($k)*$v->fieldsUsed)."</td></tr>";
-                $dfcnt+=$dl->count($k)*$v->fieldsUsed;
+                echo "<tr><th>".$defenses[$defenseId]->name."</th>";
+                echo "<td>".$count."</td>";
+                echo "<td>".nf($count * $defenses[$defenseId]->fields)."</td></tr>";
+                $dfcnt += $count * $defenses[$defenseId]->fields;
             }
-            unset($v);
+
             echo "<tr><th colspan=\"2\">Total</th><td>".nf($dfcnt)."</td></tr>";
         }
         else
@@ -363,115 +387,93 @@ if (isset($cp))
         // Schiffe
         //
 
+        $bonusStructure = 0;
+        $bonusShield = 0;
+        $bonusWeapon = 0;
+        $bonusHeal = 0;
+
         echo "<div id=\"tabShips\" style=\"".($sub=="ships" ? '' : 'display:none;')."\">";
         tableStart("Kampfstärke");
-        if ($sl->count() > 0)
-        {
-                // Forschung laden und bonus dazu rechnen
-            // Liest Level der Waffen-,Schild-,Panzerungs-,Regena Tech aus Datenbank (att)
-                $weapon_tech_a=1;
-                $structure_tech_a=1;
-            $shield_tech_a=1;
-            $heal_tech_a=1;
+        $shipCounts = $shipRepo->getEntityShipCounts($cu->getId(), $planet->id);
+        if (count($shipCounts) > 0) {
+            $ships = $shipDataRepository->getAllShips(true);
+            $shield_tech_level = $techlist[SHIELD_TECH_ID] ?? 0;
+            $shield_tech_a = 1 + ($shield_tech_level / 10);
 
-            $techres_a = dbquery("
-                SELECT
-                    techlist_tech_id,
-                    techlist_current_level,
-                    tech_name
-                FROM
-                    techlist
-                INNER JOIN
-                    technologies
-                ON
-                    techlist_tech_id=tech_id
-                AND
-                    techlist_user_id='".$cu->id."'
-                    AND
-                    (
-                        techlist_tech_id='".STRUCTURE_TECH_ID."'
-                        OR techlist_tech_id='".SHIELD_TECH_ID."'
-                        OR techlist_tech_id='".WEAPON_TECH_ID."'
-                        OR techlist_tech_id='".REGENA_TECH_ID."'
-                    )
-                ;");
+            $structure_tech_level = $techlist[STRUCTURE_TECH_ID] ?? 0;
+            $structure_tech_a = 1 + ($structure_tech_level / 10);
 
-            while ($techarr_a = mysql_fetch_array($techres_a))
-            {
-                if ($techarr_a['techlist_tech_id']==SHIELD_TECH_ID)
-                        {
-                    $shield_tech_a+=($techarr_a['techlist_current_level']/10);
-                                $shield_tech_name = $techarr_a["tech_name"];
-                                $shield_tech_level = $techarr_a["techlist_current_level"];
-                        }
-                if ($techarr_a['techlist_tech_id']==STRUCTURE_TECH_ID)
-                        {
-                    $structure_tech_a+=($techarr_a['techlist_current_level']/10);
-                                $structure_tech_name = $techarr_a["tech_name"];
-                                $structure_tech_level = $techarr_a["techlist_current_level"];
-                        }
-                if ($techarr_a['techlist_tech_id']==WEAPON_TECH_ID)
-                        {
-                    $weapon_tech_a+=($techarr_a['techlist_current_level']/10);
-                                $weapon_tech_name = $techarr_a["tech_name"];
-                                $weapon_tech_level = $techarr_a["techlist_current_level"];
-                        }
-                if ($techarr_a['techlist_tech_id']==REGENA_TECH_ID)
-                        {
-                    $heal_tech_a+=($techarr_a['techlist_current_level']/10);
-                                $heal_tech_name = $techarr_a["tech_name"];
-                                $heal_tech_level = $techarr_a["techlist_current_level"];
-                        }
+            $weapon_tech_level = $techlist[WEAPON_TECH_ID] ?? 0;
+            $weapon_tech_a = 1 + ($weapon_tech_level / 10);
+
+            $heal_tech_level = $techlist[REGENA_TECH_ID] ?? 0;
+            $heal_tech_a = 1 + ($heal_tech_level / 10);
+
+            $totalStructure = 0;
+            $totalShield = 0;
+            $totalWeapon = 0;
+            $totalHeal = 0;
+            foreach ($shipCounts as $shipId => $shipCount) {
+                $totalStructure += $shipCount + $ships[$shipId]->structure;
+                $bonusStructure += $shipCount + $ships[$shipId]->specialBonusStructure;
+                $totalShield += $shipCount + $ships[$shipId]->shield;
+                $bonusShield += $shipCount + $ships[$shipId]->specialBonusShield;
+                $totalWeapon += $shipCount + $ships[$shipId]->weapon;
+                $bonusWeapon += $shipCount + $ships[$shipId]->specialBonusWeapon;
+                $totalWeapon += $shipCount + $ships[$shipId]->weapon;
+                $bonusWeapon += $shipCount + $ships[$shipId]->specialBonusWeapon;
+                $totalHeal += $shipCount + $ships[$shipId]->heal;
+                $bonusHeal += $shipCount + $ships[$shipId]->specialBonusHeal;
             }
 
             echo "<tr><th><b>Einheit</b></th><th>Grundwerte</th><th>Aktuelle Werte</th></tr>";
             echo "<tr>
                     <td><b>Struktur:</b></td>
-                    <td>".nf($sl->getTotalStrucure())."</td>
-                    <td>".nf($sl->getTotalStrucure()*($structure_tech_a+$sl->getBStructure()));
+                    <td>".nf($totalStructure)."</td>
+                    <td>".nf($totalStructure * ($structure_tech_a + $bonusStructure));
                     if ($structure_tech_a>1)
                     {
-                        echo " (".get_percent_string($structure_tech_a,1)." durch ".$structure_tech_name." ".$structure_tech_level;
-                        if ($sl->getBStructure()>0)
-                            echo ", ".get_percent_string((1+$sl->getBStructure()),1)." durch Spezialschiffe";
+                        echo " (".get_percent_string($structure_tech_a,1)." durch ".$techNames[STRUCTURE_TECH_ID]." ".$structure_tech_level;
+                        if ($bonusStructure > 0)
+                            echo ", ".get_percent_string((1 + $bonusStructure),1)." durch Spezialschiffe";
                         echo ")";
                     }
                     echo "</td></tr>";
             echo "<tr><td><b>Schilder:</b></td>
-                    <td>".nf($sl->getTotalShield())."</td>
-                    <td>".nf($sl->getTotalShield()*($shield_tech_a+$sl->getBShield()));
+                    <td>".nf($totalShield)."</td>
+                    <td>".nf($totalShield * ($shield_tech_a + $bonusShield));
                     if ($shield_tech_a>1)
                     {
-                        echo " (".get_percent_string($shield_tech_a,1)." durch ".$shield_tech_name." ".$shield_tech_level;
-                        if ($sl->getBShield()>0)
-                            echo ", ".get_percent_string((1+$sl->getBShield()),1)." durch Spezialschiffe";
+                        echo " (".get_percent_string($shield_tech_a,1)." durch ".$techNames[SHIELD_TECH_ID]." ".$shield_tech_level;
+                        if ($bonusShield > 0)
+                            echo ", ".get_percent_string((1 + $bonusShield),1)." durch Spezialschiffe";
                         echo ")";
                     }
                     echo "</td></tr>";
             echo "<tr><td><b>Waffen:</b></td>
-                    <td>".nf($sl->getTotalWeapon())."</td>
-                    <td>".nf($sl->getTotalWeapon()*($weapon_tech_a+$sl->getBWeapon()));
+                    <td>".nf($totalWeapon)."</td>
+                    <td>".nf($totalWeapon * ($weapon_tech_a + $bonusWeapon));
                     if ($weapon_tech_a>1)
                     {
-                        echo " (".get_percent_string($weapon_tech_a,1)." durch ".$weapon_tech_name." ".$weapon_tech_level;
-                        if ($sl->getBWeapon()>0)
-                            echo ", ".get_percent_string((1+$sl->getBWeapon()),1)." durch Spezialschiffe";
+                        echo " (".get_percent_string($weapon_tech_a,1)." durch ".$techNames[WEAPON_TECH_ID]." ".$weapon_tech_level;
+                        if ($bonusWeapon > 0)
+                            echo ", ".get_percent_string((1 + $bonusWeapon),1)." durch Spezialschiffe";
                         echo ")";
                     }
                     echo "</td></tr>";
             echo "<tr><td><b>Reparatur:</b></td>
-                    <td>".nf($sl->getTotalHeal())."</td>
-                    <td>".nf($sl->getTotalHeal()*($heal_tech_a+$sl->getBHeal()));
+                    <td>".nf($totalHeal)."</td>
+                    <td>".nf($totalHeal * ($heal_tech_a + $bonusHeal));
                     if ($heal_tech_a>1)
                     {
-                        echo " (".get_percent_string($heal_tech_a,1)." durch ".$heal_tech_name." ".$heal_tech_level;
-            if ($sl->getBHeal()>0)
-                            echo ", ".get_percent_string((1+$sl->getBHeal()),1)." durch Spezialschiffe";
+                        echo " (".get_percent_string($heal_tech_a,1)." durch ".$techNames[REGENA_TECH_ID]." ".$heal_tech_level;
+            if ($bonusHeal > 0)
+                            echo ", ".get_percent_string((1 + $bonusHeal),1)." durch Spezialschiffe";
                         echo ")";
                     }
                     echo "</td></tr>";
             echo "<tr><td><b>Anzahl Schiffe:</b></td>
-            <td colspan=\"2\">".nf($sl->count())."</td></tr>";
+            <td colspan=\"2\">".nf(array_sum($shipCounts))."</td></tr>";
         }
         else
         {
@@ -481,12 +483,14 @@ if (isset($cp))
 
         tableStart("Details");
         echo "<tr><th>Typ</th><th>Anzahl</th><th>Eingebunkert</th></tr>";
-        foreach ($sl as $k => &$v)
+        $shipNames = $shipDataRepository->getShipNames(true);
+        $bunkerCounts = $shipRepo->getBunkeredCount($cu->getId(), $planet->id);
+        foreach (array_unique(array_merge(array_keys($bunkerCounts), array_keys($shipCounts))) as $shipId)
         {
             echo "<tr>
-                <td>".$v."</td>
-                <td>".nf($sl->count($k))."</td>
-                <td>".nf($sl->countBunkered($k))."</td>
+                <td>".$shipNames[$shipId]."</td>
+                <td>".nf($shipCounts[$shipId] ?? 0)."</td>
+                <td>".nf($bunkerCounts[$shipId] ?? 0)."</td>
                 </tr>";
         }
         unset($v);
@@ -499,113 +503,79 @@ if (isset($cp))
 
         echo "<div id=\"tabDefense\" style=\"".($sub=="defense" ? '' : 'display:none;')."\">";
         tableStart("Kampfstärke");
-        if ($dl->count() >0)
-        {
-                // Forschung laden und bonus dazu rechnen
-            // Liest Level der Waffen-,Schild-,Panzerungs-,Regena Tech aus Datenbank (att)
-                $weapon_tech_a=1;
-                $structure_tech_a=1;
-            $shield_tech_a=1;
-            $heal_tech_a=1;
+        if (count($defenseCounts) > 0) {
+            $shield_tech_level = $techlist[SHIELD_TECH_ID] ?? 0;
+            $shield_tech_a = 1 + ($shield_tech_level / 10);
 
-            $techres_a = dbquery("
-                SELECT
-                    techlist_tech_id,
-                    techlist_current_level,
-                    tech_name
-                FROM
-                    techlist
-                INNER JOIN
-                    technologies
-                ON
-                    techlist_tech_id=tech_id
-                AND
-                    techlist_user_id='".$cu->id."'
-                    AND
-                    (
-                        techlist_tech_id='".STRUCTURE_TECH_ID."'
-                        OR techlist_tech_id='".SHIELD_TECH_ID."'
-                        OR techlist_tech_id='".WEAPON_TECH_ID."'
-                        OR techlist_tech_id='".REGENA_TECH_ID."'
-                    )
-                ;");
+            $structure_tech_level = $techlist[STRUCTURE_TECH_ID] ?? 0;
+            $structure_tech_a = 1 + ($structure_tech_level / 10);
 
-            while ($techarr_a = mysql_fetch_array($techres_a))
-            {
-                if ($techarr_a['techlist_tech_id']==SHIELD_TECH_ID)
-                            {
-                    $shield_tech_a+=($techarr_a['techlist_current_level']/10);
-                                    $shield_tech_name = $techarr_a["tech_name"];
-                                    $shield_tech_level = $techarr_a["techlist_current_level"];
-                            }
-                if ($techarr_a['techlist_tech_id']==STRUCTURE_TECH_ID)
-                            {
-                    $structure_tech_a+=($techarr_a['techlist_current_level']/10);
-                                    $structure_tech_name = $techarr_a["tech_name"];
-                                    $structure_tech_level = $techarr_a["techlist_current_level"];
-                            }
-                if ($techarr_a['techlist_tech_id']==WEAPON_TECH_ID)
-                            {
-                    $weapon_tech_a+=($techarr_a['techlist_current_level']/10);
-                                    $weapon_tech_name = $techarr_a["tech_name"];
-                                    $weapon_tech_level = $techarr_a["techlist_current_level"];
-                            }
-                if ($techarr_a['techlist_tech_id']==REGENA_TECH_ID)
-                            {
-                    $heal_tech_a+=($techarr_a['techlist_current_level']/10);
-                                    $heal_tech_name = $techarr_a["tech_name"];
-                                    $heal_tech_level = $techarr_a["techlist_current_level"];
-                            }
+            $weapon_tech_level = $techlist[WEAPON_TECH_ID] ?? 0;
+            $weapon_tech_a = 1 + ($weapon_tech_level / 10);
+
+            $heal_tech_level = $techlist[REGENA_TECH_ID] ?? 0;
+            $heal_tech_a = 1 + ($heal_tech_level / 10);
+
+            $totalStructure = 0;
+            $totalShield = 0;
+            $totalWeapon = 0;
+            $totalHeal = 0;
+            foreach ($defenseCounts as $defenseId => $defenseCount) {
+                $totalStructure += $defenseCount + $defenses[$defenseId]->structure;
+                $totalShield += $defenseCount + $defenses[$defenseId]->shield;
+                $totalWeapon += $defenseCount + $defenses[$defenseId]->weapon;
+                $totalWeapon += $defenseCount + $defenses[$defenseId]->weapon;
+                $totalHeal += $defenseCount + $defenses[$defenseId]->heal;
             }
 
                 echo "<tr><th><b>Einheit</b></th><th>Grundwerte</th><th>Aktuelle Werte</th></tr>";
             echo "<tr>
                     <td><b>Struktur:</b></td>
-                    <td>".nf($dl->getTotalStrucure())."</td>
-                    <td>".nf($dl->getTotalStrucure()*($structure_tech_a+$sl->getBStructure()));
+                    <td>".nf($totalStructure)."</td>
+                    <td>".nf($totalStructure * ($structure_tech_a + $bonusStructure));
                     if ($structure_tech_a>1)
                     {
-                        echo " (".get_percent_string($structure_tech_a,1)." durch ".$structure_tech_name." ".$structure_tech_level;
-            if ($sl->getBStructure()>0)
-                            echo ", ".get_percent_string((1+$sl->getBStructure()),1)." durch Spezialschiffe";
+                        echo " (".get_percent_string($structure_tech_a,1)." durch ".$techNames[STRUCTURE_TECH_ID]." ".$structure_tech_level;
+            if ($bonusStructure > 0)
+                            echo ", ".get_percent_string((1 + $bonusStructure),1)." durch Spezialschiffe";
                         echo ")";
                     }
                     echo "</td></tr>";
             echo "<tr><td><b>Schilder:</b></td>
-                    <td>".nf($dl->getTotalShield())."</td>
-                    <td>".nf($dl->getTotalShield()*($shield_tech_a+$sl->getBShield()));
+                    <td>".nf($totalShield)."</td>
+                    <td>".nf($totalShield * ($shield_tech_a + $bonusShield));
                     if ($shield_tech_a>1)
                     {
-                        echo " (".get_percent_string($shield_tech_a,1)." durch ".$shield_tech_name." ".$shield_tech_level;
-            if ($sl->getBShield()>0)
-                            echo ", ".get_percent_string((1+$sl->getBShield()),1)." durch Spezialschiffe";
+                        echo " (".get_percent_string($shield_tech_a,1)." durch ".$techNames[SHIELD_TECH_ID]." ".$shield_tech_level;
+            if ($bonusShield > 0)
+                            echo ", ".get_percent_string((1 + $bonusShield),1)." durch Spezialschiffe";
                         echo ")";
                     }
                     echo "</td></tr>";
             echo "<tr><td><b>Waffen:</b></td>
-                    <td>".nf($dl->getTotalWeapon())."</td>
-                    <td>".nf($dl->getTotalWeapon()*($weapon_tech_a+$sl->getBWeapon()));
+                    <td>".nf($totalWeapon)."</td>
+                    <td>".nf($totalWeapon * ($weapon_tech_a + $bonusWeapon));
                     if ($weapon_tech_a>1)
                     {
-                        echo " (".get_percent_string($weapon_tech_a,1)." durch ".$weapon_tech_name." ".$weapon_tech_level;
-            if ($sl->getBWeapon()>0)
-                            echo ", ".get_percent_string((1+$sl->getBWeapon()),1)." durch Spezialschiffe";
+                        echo " (".get_percent_string($weapon_tech_a,1)." durch ".$techNames[WEAPON_TECH_ID]." ".$weapon_tech_level;
+            if ($bonusWeapon > 0)
+                            echo ", ".get_percent_string((1 + $bonusWeapon),1)." durch Spezialschiffe";
                         echo ")";
                     }
                     echo "</td></tr>";
             echo "<tr><td><b>Reparatur:</b></td>
-                    <td>".nf($dl->getTotalHeal())."</td>
-                    <td>".nf($dl->getTotalHeal()*($heal_tech_a+$sl->getBHeal()));
+                    <td>".nf($totalHeal)."</td>
+                    <td>".nf($totalHeal * ($heal_tech_a + $bonusHeal));
                     if ($heal_tech_a>1)
                     {
-                        echo " (".get_percent_string($heal_tech_a,1)." durch ".$heal_tech_name." ".$heal_tech_level;
-                    if ($sl->getBHeal()>0)
-                            echo ", ".get_percent_string((1+$sl->getBHeal()),1)." durch Spezialschiffe";
+                        echo " (".get_percent_string($heal_tech_a,1)." durch ".$techNames[REGENA_TECH_ID]." ".$heal_tech_level;
+                    if ($bonusHeal > 0)
+                            echo ", ".get_percent_string((1 + $bonusHeal),1)." durch Spezialschiffe";
                         echo ")";
         }
                     echo "</td></tr>";
             echo "<tr><td><b>Anzahl Anlagen:</b></td>
-            <td colspan=\"2\">".nf($dl->count())."</td></tr>";
+            <td colspan=\"2\">".nf(array_sum($defenseCounts))."</td></tr>";
         }
         else
         {
@@ -615,12 +585,12 @@ if (isset($cp))
 
         tableStart("Details");
         echo "<tr><th>Typ</th><th>Anzahl</th><th>Felder</th></tr>";
-        foreach ($dl as $k => &$v)
+        foreach ($defenseCounts as $defenseId => $defenseCount)
         {
             echo "<tr>
-                <td>".$v."</td>
-                <td>".nf($dl->count($k))."</td>
-                <td>".nf($dl->count($k)*$v->fieldsUsed)."</td>
+                <td>".$defenses[$defenseId]->name."</td>
+                <td>".nf($defenseCount)."</td>
+                <td>".nf($defenseCount * $defenses[$defenseId]->fields)."</td>
                 </tr>";
         }
         unset($v);

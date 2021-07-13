@@ -19,6 +19,15 @@
 	//
 
 
+use EtoA\Building\BuildingRepository;
+use EtoA\Ship\ShipRepository;
+
+/** @var ShipRepository $shipRepository */
+$shipRepository = $app[ShipRepository::class];
+
+/** @var BuildingRepository $buildingRepository */
+$buildingRepository = $app[BuildingRepository::class];
+
 	// Schiffangebot löschen
 	// <editor-fold>
 	if (isset($_POST['ship_cancel']))
@@ -39,8 +48,8 @@
 			if (mysql_num_rows($scres)>0)
 			{
 				$scrow=mysql_fetch_array($scres);
-				$bl = new BuildList($scrow['entity_id'], $cu->id);
-				$return_factor = floor((1 - 1/($bl->getLevel(MARKTPLATZ_ID)+1))*100)/100;
+                $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, (int) $scrow['entity_id']);
+				$return_factor = floor((1 - 1/($marketLevel+1))*100)/100;
 				$marr = array('factor'=>$return_factor,"ship_id"=>$scrow['ship_id'],"ship_count"=>$scrow['count']);
 				foreach ($resNames as $rk => $rn)
 				{
@@ -50,11 +59,10 @@
 					$marr['buy_'.$rk] = $scrow['costs_'.$rk];
 				}
 
-				$returnCount = floor($scrow['count']*$return_factor);
+				$returnCount = (int) floor($scrow['count']*$return_factor);
 				if ($returnCount>0)
 				{
-					$rsl = new ShipList($scrow['entity_id'],$scrow['user_id']);
-					$rsl->add($scrow['ship_id'], $returnCount);
+                    $shipRepository->addShip((int) $scrow['ship_id'], $returnCount, (int) $scrow['user_id'], (int) $scrow['entity_id']);
 				}
 
 				dbquery("
@@ -104,8 +112,8 @@
 			$rcrow = mysql_fetch_assoc($rcres);
 
 			$rarr = array();
-			$bl = new BuildList($rcrow['entity_id'], $cu->id);
-			$return_factor = floor((1 - 1/($bl->getLevel(MARKTPLATZ_ID)+1))*100)/100;
+            $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, (int) $rcrow['entity_id']);
+			$return_factor = floor((1 - 1/($marketLevel+1))*100)/100;
 			$marr = array('factor'=>$return_factor);
 			foreach ($resNames as $rk => $rn)
 			{
@@ -164,8 +172,8 @@
 			$acrow=mysql_fetch_array($acres);
 
 			$rarr = array();
-			$bl = new BuildList($acrow['entity_id'], $cu->id);
-			$return_factor = floor((1 - 1/($bl->getLevel(MARKTPLATZ_ID)+1))*100)/100;
+            $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, (int) $acrow['entity_id']);
+			$return_factor = floor((1 - 1/($marketLevel+1))*100)/100;
 			$marr = array('factor'=>$return_factor);
 			foreach ($resNames as $rk => $rn)
 			{
@@ -254,8 +262,8 @@
 				$i = 0;
 
 				$te = Entity::createFactoryById($row['entity_id']);
-				$bl = new BuildList($row['entity_id'], $cu->id);
-				$return_factor = floor((1 - 1/($bl->getLevel(MARKTPLATZ_ID)+1))*100)/100;
+                $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, (int) $row['entity_id']);
+				$return_factor = floor((1 - 1/($marketLevel+1))*100)/100;
 				$info_string = "Wenn du das Angebot zur&uuml;ckziehst erh&auml;lst du ".($return_factor*100)."% des Angebotes zur&uuml;ck (abgerundet).";
 				if ($te!=null)
 				{
@@ -345,8 +353,8 @@
 
 				$i=0;
 				$resCnt = count($resNames);
-				$bl = new BuildList($arr['entity_id'], $cu->id);
-				$return_factor = floor((1 - 1/($bl->getLevel(MARKTPLATZ_ID)+1))*100)/100;
+                $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, (int) $arr['entity_id']);
+				$return_factor = floor((1 - 1/($marketLevel+1))*100)/100;
 				$info_string = "Wenn du das Angebot zur&uuml;ckziehst erh&auml;lst du ".($return_factor*100)."% des Angebotes zur&uuml;ck (abgerundet).";
 				foreach ($resNames as $rk => $rn)
 				{
@@ -456,8 +464,8 @@
 					}
 				}
 				echo "</td>";
-				$bl = new BuildList($arr['entity_id'], $cu->id);
-				$return_factor = floor((1 - 1/($bl->getLevel(MARKTPLATZ_ID)+1))*100)/100;
+                $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, (int) $arr['entity_id']);
+				$return_factor = floor((1 - 1/($marketLevel+1))*100)/100;
 				$info_string = "Wenn du das Angebot zur&uuml;ckziehst erh&auml;lst du ".($return_factor*100)."% des Angebotes zur&uuml;ck (abgerundet).";
 				echo "<td ".tt($info_string)." style=\"width:100px;\">";
 				if ($arr['date_end']-time()>0 && $arr['bidcount']==0 && $arr['buyable']==1)

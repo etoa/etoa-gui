@@ -17,6 +17,7 @@ class BuildingRepository extends AbstractRepository
             ->select('buildlist_building_id, buildlist_current_level')
             ->from('buildlist')
             ->andWhere('buildlist_entity_id = :entityId')
+            ->andWhere('buildlist_current_level > 0')
             ->setParameters([
                 'entityId' => $entityId,
             ])
@@ -275,6 +276,25 @@ class BuildingRepository extends AbstractRepository
         return array_map(fn ($row) => new BuildingListItem($row), $data);
     }
 
+    public function getEntityBuilding(int $userId, int $entityId, int $buildingId): ?BuildingListItem
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('buildlist')
+            ->where('buildlist_user_id = :userId')
+            ->andWhere('buildlist_entity_id = :entityId')
+            ->andWhere('buildlist_building_id = :buildingId')
+            ->setParameters([
+                'userId' => $userId,
+                'entityId' => $entityId,
+                'buildingId' => $buildingId,
+            ])
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? new BuildingListItem($data) : null;
+    }
+
     public function save(BuildingListItem $item): void
     {
         $this->createQueryBuilder()
@@ -308,5 +328,16 @@ class BuildingRepository extends AbstractRepository
                 'cooldown' => $item->cooldown,
             ])
             ->execute();
+    }
+
+    public function getPeopleWorking(int $entityId): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('SUM(buildlist_people_working)')
+            ->from('buildlist')
+            ->where('buildlist_entity_id = :entityId')
+            ->setParameter('entityId', $entityId)
+            ->execute()
+            ->fetchOne();
     }
 }

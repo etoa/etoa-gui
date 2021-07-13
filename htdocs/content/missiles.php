@@ -27,6 +27,9 @@ $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 /** @var MissileFlightRepository $missileFlightRepository */
 $missileFlightRepository = $app[MissileFlightRepository::class];
 
+/** @var BuildingRepository $buildingRepository */
+$buildingRepository = $app[BuildingRepository::class];
+
 // Info-Link
 define("HELP_URL","?page=help&site=missiles");
 
@@ -45,40 +48,23 @@ $planet = $planetRepo->find($cp->id);
 echo "<form action=\"?page=$page\" method=\"post\">";
 
 // Gebäude Level und Arbeiter laden
-$werft_res = dbquery("
-SELECT
-buildlist_current_level,
-buildlist_people_working,
-buildlist_deactivated,
-buildlist_prod_percent
-FROM
-buildlist
-WHERE
-buildlist_entity_id='".$planet->id."'
-AND buildlist_building_id='".BUILD_MISSILE_ID."'
-AND buildlist_current_level>='1'
-AND buildlist_user_id='".$cu->id."'");
+$missileBuilding = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, BUILD_MISSILE_ID);
 
 // Prüfen ob Gebäude gebaut ist
-if (mysql_num_rows($werft_res)>0)
-{
-$werft_arr=mysql_fetch_array($werft_res);
-$silo_level = $werft_arr['buildlist_current_level'];
+if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
     // New exponential missile number algorithm by river
     // $max_space = per_level * algo_base ^ (silo_level - 1)
-    $max_space = ceil(MISSILE_SILO_MISSILES_PER_LEVEL*pow(MISSILE_SILO_MISSILES_ALGO_BASE,$silo_level-1));
-    $max_flights = $silo_level*MISSILE_SILO_FLIGHTS_PER_LEVEL;
+    $max_space = ceil(MISSILE_SILO_MISSILES_PER_LEVEL*pow(MISSILE_SILO_MISSILES_ALGO_BASE,$missileBuilding->currentLevel-1));
+    $max_flights = $missileBuilding->currentLevel*MISSILE_SILO_FLIGHTS_PER_LEVEL;
 
     // Titel
-    echo "<h1>Raketensilo (Stufe ".$silo_level.") des Planeten ".$planet->name."</h1>";
+    echo "<h1>Raketensilo (Stufe ".$missileBuilding->currentLevel.") des Planeten ".$planet->name."</h1>";
 
     // Ressourcen anzeigen
     echo $resourceBoxDrawer->getHTML($planet);
 
-    if ($planet->prodPower - $planet->usePower >= 0 && $planet->prodPower>0 && $werft_arr['buildlist_prod_percent']==1)
-    {
-        if ($werft_arr['buildlist_deactivated'] < time())
-        {
+    if ($planet->prodPower - $planet->usePower >= 0 && $planet->prodPower>0 && $missileBuilding->prodPercent === 1) {
+        if ($missileBuilding->isDeactivated()) {
 
             // Requirements
             /** @var MissileRequirementRepository $missileRequirementRepository */
@@ -101,8 +87,6 @@ $silo_level = $werft_arr['buildlist_current_level'];
             $builing_something=false;
 
             // Gebäudeliste laden
-            /** @var BuildingRepository $buildingRepository */
-            $buildingRepository = $app[BuildingRepository::class];
             $buildlist = $buildingRepository->getBuildingLevels($planet->id);
 
             // Technologieliste laden
@@ -178,35 +162,8 @@ $silo_level = $werft_arr['buildlist_current_level'];
             }
 
             // Load flights
-            $missileFlight = $missileFlightRepository->getFlights($planet->id);
-            $flights = [];
-            $fcnt = count($missileFlight);
-            foreach ($missileFlight as $flight) {
-                $flights[$flight->id]['landtime']=$flight->landTime;
-                $flights[$flight->id]['planet_name']=$flight->targetPlanetName;
-                $flights[$flight->id]['id']=$flight->targetPlanetId;
-                $flights[$flight->id]['obj']=array();
-                $ores = dbquery("
-                    SELECT
-                        obj_cnt,
-                        missile_id,
-                        missile_name
-                    FROM
-                        missile_flights_obj
-                    INNER JOIN
-                        missiles
-                        ON missile_id=obj_missile_id
-                        AND obj_flight_id=".$flight->id."
-                    ;");
-                if (mysql_num_rows($ores)>0)
-                {
-                    while ($oarr=mysql_fetch_array($ores))
-                    {
-                        $flights[$flight->id]['obj'][$oarr['missile_id']]['count']=$oarr['obj_cnt'];
-                        $flights[$flight->id]['obj'][$oarr['missile_id']]['name']=$oarr['missile_name'];
-                    }
-                }
-            }
+            $flights = $missileFlightRepository->getFlights($planet->id);
+            $fcnt = count($flights);
 
             // Kaufen
             if (isset($_POST['buy']) && checker_verify())
@@ -329,22 +286,22 @@ $silo_level = $werft_arr['buildlist_current_level'];
             // Flüge anzeigen
             if ($fcnt>0)
             {
+                $missileNames = $missileDataRepository->getMissileNames(true);
                 $time = time();
                 tableStart("Abgefeuerte Raketen");
                 echo "<tr><th>Ziel</th><th>Flugdauer</th><th>Ankunftszeit</th><th>Raketen</th><th>Optionen</th></tr>";
-                foreach ($flights as $flid => $fl)
-                {
-                    $countdown = ($fl['landtime']-$time>=0) ? tf($fl['landtime']-$time) : 'Im Ziel';
-                    echo '<tr><td>'.$fl['planet_name'].'</td>
+                foreach ($flights as $flight) {
+                    $countdown = ($flight->landTime - $time>=0) ? tf($flight->landTime - $time) : 'Im Ziel';
+                    echo '<tr><td>'.$flight->targetPlanetName.'</td>
                     <td>'.$countdown.'</td>
-                    <td>'.df($fl['landtime']).'</td>
+                    <td>'.df($flight->landTime).'</td>
                     <td>';
-                    foreach ($fl['obj'] as $flo)
+                    foreach ($flight->missiles as $missileId => $count)
                     {
-                        echo nf($flo['count']).' '.$flo['name'].'<br/>';
+                        echo nf($count).' '.$missileNames[$missileId].'<br/>';
                     }
                     echo '</td>
-                    <td><a href="?page='.$page.'&amp;selfdestruct='.$flid.'" onclick="return confirm(\'Sollen die gewählten Raketen wirklich selbstzerstört werden?\')">Selbstzerstörung</a></td></tr>';
+                    <td><a href="?page='.$page.'&amp;selfdestruct='.$flight->id.'" onclick="return confirm(\'Sollen die gewählten Raketen wirklich selbstzerstört werden?\')">Selbstzerstörung</a></td></tr>';
                 }
                 tableEnd();
             }
@@ -959,7 +916,7 @@ $silo_level = $werft_arr['buildlist_current_level'];
         }
         else
         {
-            info_msg("Dieses Gebäude ist noch bis ".df($werft_arr['buildlist_deactivated'])." deaktiviert!");
+            info_msg("Dieses Gebäude ist noch bis ".df($missileBuilding->deactivated)." deaktiviert!");
         }
     }
     else

@@ -1,17 +1,24 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseRepository;
+use EtoA\Ship\ShipRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
 
-/** @var PlanetRepository */
+/** @var PlanetRepository $planetRepo */
 $planetRepo = $app[PlanetRepository::class];
 
 /** @var ResourceBoxDrawer */
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
+
+/** @var ShipRepository $shipRepository */
+$shipRepository = $app[ShipRepository::class];
+/** @var DefenseRepository $defenseRepository */
+$defenseRepository = $app[DefenseRepository::class];
 
 if ($cp)
 {
@@ -123,9 +130,6 @@ if ($cp)
             if ($numMobile > 0)
             {
                 if (isset($_POST['dtransform_submit'])) {
-                    $sl = new ShipList($planet->id, $cu->id);
-                    $dl = new DefList($planet->id, $cu->id);
-
                     $transformed_counter = 0;
                     if (isset($_POST['dtransform']) && count($_POST['dtransform']) > 0) {
                         foreach ($_POST['dtransform'] as $def_id => $v) {
@@ -148,7 +152,12 @@ if ($cp)
                                 $packcount = intval(min(max(0, $v), $arr['cnt']));
 
                                 if ($packcount > 0) {
-                                    $sl->add($arr['id'],$dl->remove($def_id, $packcount));
+                                    $shipRepository->addShip(
+                                        (int) $arr['id'],
+                                        $defenseRepository->removeDefense((int) $def_id, $packcount, $cu->getId(), $planet->id),
+                                        $cu->getId(),
+                                        $planet->id
+                                    );
                                     $transformed_counter += $packcount;
                                 }
                             }
@@ -161,9 +170,6 @@ if ($cp)
                 }
 
                 if (isset($_POST['stransform_submit'])) {
-                    $sl = new ShipList($planet->id, $cu->id);
-                    $dl = new DefList($planet->id, $cu->id);
-
                     $transformed_counter = 0;
                     if (isset($_POST['stransform']) && count($_POST['stransform']) > 0) {
                         foreach ($_POST['stransform'] as $ship_id => $v) {
@@ -186,7 +192,12 @@ if ($cp)
                                 $arr = mysql_fetch_assoc($res);
                                 $packcount = intval(min(max(0, $v),$arr['cnt']));
                                 if ($packcount>0) {
-                                    $dl->add($arr['id'],$sl->remove($ship_id, $packcount));
+                                    $defenseRepository->addDefense(
+                                        (int)$arr['id'],
+                                        $shipRepository->removeShips($ship_id, $packcount, $cu->getId(), $planet->id),
+                                        $cu->getId(),
+                                        $planet->id
+                                    );
                                     $transformed_counter += $packcount;
                                 }
                             }

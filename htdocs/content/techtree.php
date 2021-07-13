@@ -30,6 +30,7 @@ use EtoA\Building\BuildingRepository;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipRepository;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyRepository;
 
@@ -37,10 +38,12 @@ use EtoA\Technology\TechnologyRepository;
 	$buildRepository = $app[BuildingDataRepository::class];
 	/** @var TechnologyDataRepository $technologyDataRepository */
 	$technologyDataRepository = $app[TechnologyDataRepository::class];
-	/** @var ShipDataRepository $shipRepository */
-	$shipRepository = $app[ShipDataRepository::class];
+	/** @var ShipDataRepository $shipDataRepository */
+	$shipDataRepository = $app[ShipDataRepository::class];
 	/** @var DefenseDataRepository $defenseRepository */
 	$defenseRepository = $app[DefenseDataRepository::class];
+	/** @var ShipRepository $shipRepository */
+	$shipRepository = $app[ShipRepository::class];
 
 	// Definitionen
 
@@ -189,10 +192,7 @@ use EtoA\Technology\TechnologyRepository;
 			if ($rarr['req_tech_id']>0) $b_req[$rarr['obj_id']]['t'][$rarr['req_tech_id']]=$rarr['req_level'];
 		}
 
-		if ($mode=="ships")
-			$sl = new ShipList($cp->id,$cu->id);
-
-		// Wenn Kategorien vorhanden sind (Gebäude, Forschungen)
+            // Wenn Kategorien vorhanden sind (Gebäude, Forschungen)
 		if (defined("TYPES_TBL") && defined("ITEM_TYPE_FLD") && defined("TYPE_ORDER_FLD"))
 		{
 			$tres = dbquery("
@@ -243,14 +243,15 @@ use EtoA\Technology\TechnologyRepository;
 				$cntr=0;
 				if (mysql_num_rows($res)>0)
 				{
+				    $shipCounts = $shipRepository->getEntityShipCounts($cu->getId(), (int) $cp->id);
 					while ($arr=mysql_fetch_array($res))
 					{
 						// Make sure epic special ships are only shown when already built
 						$show = true;
-						if ($mode=="ships" && $arr['special_ship']==1)
-						{
-							if ($sl->count($arr[ITEM_ID_FLD])==0)
-								$show = false;
+						if ($mode=="ships" && $arr['special_ship']==1) {
+							if (!isset($shipCounts[(int) $arr[ITEM_ID_FLD]])) {
+                                $show = false;
+                            }
 						}
 
 						if ($show)
@@ -553,7 +554,7 @@ use EtoA\Technology\TechnologyRepository;
 
 		echo "<select onchange=\"xajax_reqInfo(this.value,'s')\">
 		<option value=\"0\">Schiff wählen...</option>";
-		$shipNames = $shipRepository->getShipNames();
+		$shipNames = $shipDataRepository->getShipNames();
 		foreach ($shipNames as $shipId => $shipName) {
 			echo "<option value=\"".$shipId."\">".$shipName."</option>";
 		}

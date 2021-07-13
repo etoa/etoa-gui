@@ -1,5 +1,6 @@
 <?php
 
+use EtoA\Ship\ShipRepository;
 use EtoA\User\UserRepository;
 
 	//////////////////////////////////////////////////
@@ -27,6 +28,8 @@ use EtoA\User\UserRepository;
 
     /** @var UserRepository $userRepository */
     $userRepository = $app[UserRepository::class];
+    /** @var ShipRepository $shipRepository */
+    $shipRepository = $app[ShipRepository::class];
 
 	$for_user = 0;
 	$for_alliance = 0;
@@ -70,10 +73,8 @@ use EtoA\User\UserRepository;
 		}
 
 		// Überprüft ob die angegebene Anzahl Schiffe noch vorhanden ist (eventuelle Zerstörung durch Kampf?)
-		$sl = new ShipList($cp->id,$cu->id);
-
 		// Schiffe vom Planeten abziehen
-        $removed_ships_count = $sl->remove($ship_id,$ship_count);
+        $removed_ships_count = $shipRepository->removeShips((int) $ship_id, (int) $ship_count, $cu->getId(), (int) $cp->id);
 
         // Falls alle Schiffe abgezogen werden konnten
 		if ($ship_count == $removed_ships_count)
@@ -135,7 +136,7 @@ use EtoA\User\UserRepository;
             // if only some ships have been removed, re-add the removed ships
 			if($removed_ships_count > 0)
             {
-                $sl->add($ship_id, $removed_ships_count);
+                $shipRepository->addShip($ship_id, $removed_ships_count, $cu->getId(), (int) $cp->id);
                 // log action because this was a bug earlier
                 Log::add(Log::F_ILLEGALACTION,Log::WARNING,
                          'User '.$cu->nick.' hat versucht, auf dem Planeten'.$cp->name()

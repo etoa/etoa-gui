@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
@@ -13,6 +14,9 @@ $planetRepo = $app[PlanetRepository::class];
 
 /** @var ResourceBoxDrawer */
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
+
+/** @var BuildingRepository $buildingRepository */
+$buildingRepository = $app[BuildingRepository::class];
 
 //Definition für "Info" Link
 define('ITEMS_TBL',"ships");
@@ -40,13 +44,11 @@ define("SHIPQUEUE_CANCEL_END", $config->getFloat('shipqueue_cancel_end'));
 
 $planet = $planetRepo->find($cp->id);
 
-$bl = new BuildList($planet->id, $cu->id);
-
 /** @var TechnologyRepository $technologyRepository */
 $technologyRepository = $app[TechnologyRepository::class];
 $techlist = $technologyRepository->getTechnologyLevels($cu->getId());
 
-$shipyard = $bl->item(SHIP_BUILDING_ID);
+$shipyard = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, SHIP_BUILDING_ID);
 
 
 // BEGIN SKRIPT //
@@ -55,18 +57,15 @@ $shipyard = $bl->item(SHIP_BUILDING_ID);
 $tabulator = 1;
 
 // Prüfen ob Werft gebaut ist
-if ($shipyard && $shipyard->level)
-{
-    define('CURRENT_SHIPYARD_LEVEL', $shipyard->level);
-
+if ($shipyard !== null && $shipyard->currentLevel > 0) {
     // Titel
-    echo "<h1>Raumschiffswerft (Stufe ".CURRENT_SHIPYARD_LEVEL.") des Planeten ".$planet->name."</h1>";
+    echo "<h1>Raumschiffswerft (Stufe ".$shipyard->currentLevel.") des Planeten ".$planet->name."</h1>";
 
     // Ressourcen anzeigen
     echo $resourceBoxDrawer->getHTML($planet);
 
     // Prüfen ob dieses Gebäude deaktiviert wurde
-    if ($shipyard->deactivated > time())
+    if ($shipyard->isDeactivated())
     {
         iBoxStart("Geb&auml;ude nicht bereit");
         echo "Diese Schiffswerft ist bis ".date("d.m.Y H:i", $shipyard->deactivated)." deaktiviert.";
@@ -247,7 +246,7 @@ if ($shipyard && $shipyard->level)
         }
 
     // level zählen welches die schiffswerft über dem angegeben level ist und faktor berechnen
-    $need_bonus_level = CURRENT_SHIPYARD_LEVEL - $config->param1Int('build_time_boni_schiffswerft');
+    $need_bonus_level = $shipyard->currentLevel - $config->param1Int('build_time_boni_schiffswerft');
     if($need_bonus_level <= 0)
     {
         $time_boni_factor=1;
@@ -256,12 +255,11 @@ if ($shipyard && $shipyard->level)
     {
         $time_boni_factor=1-($need_bonus_level*($config->getInt('build_time_boni_schiffswerft')/100));
     }
-    $people_working = $bl->getPeopleWorking(SHIP_BUILDING_ID);
 
     // Faktor der zurückerstatteten Ressourcen bei einem Abbruch des Auftrags berechnen
-    if (CURRENT_SHIPYARD_LEVEL>=SHIPQUEUE_CANCEL_MIN_LEVEL)
+    if ($shipyard->currentLevel>=SHIPQUEUE_CANCEL_MIN_LEVEL)
     {
-        $cancel_res_factor = min(SHIPQUEUE_CANCEL_END,SHIPQUEUE_CANCEL_START+((CURRENT_SHIPYARD_LEVEL-SHIPQUEUE_CANCEL_MIN_LEVEL)*SHIPQUEUE_CANCEL_FACTOR));
+        $cancel_res_factor = min(SHIPQUEUE_CANCEL_END,SHIPQUEUE_CANCEL_START+(($shipyard->currentLevel-SHIPQUEUE_CANCEL_MIN_LEVEL)*SHIPQUEUE_CANCEL_FACTOR));
     }
     else
     {
@@ -279,16 +277,16 @@ if ($shipyard && $shipyard->level)
     {
         echo "<tr><td>Bauzeitverringerung durch ".$cu->specialist->name.":</td><td>".get_percent_string($cu->specialist->shipTime)."</td></tr>";
     }
-    echo "<tr><td>Eingestellte Arbeiter:</td><td>".nf($bl->getPeopleWorking(SHIP_BUILDING_ID));
+    echo "<tr><td>Eingestellte Arbeiter:</td><td>".nf($shipyard->peopleWorking);
     if (count($queue) === 0)
     {
         echo '&nbsp;<a href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
     }
     echo "</td></tr>";
-    if ($bl->getPeopleWorking(SHIP_BUILDING_ID) > 0)
+    if ($shipyard->peopleWorking > 0)
     {
-        echo '<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td><span id="people_work_done">'.tf($config->getInt('people_work_done') *$bl->getPeopleWorking(SHIP_BUILDING_ID)).'</span></td></tr>';
-        echo '<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td><span id="people_food_require">'.nf($config->getInt('people_food_require') * $bl->getPeopleWorking(SHIP_BUILDING_ID)).'</span></td></tr>';
+        echo '<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td><span id="people_work_done">'.tf($config->getInt('people_work_done') * $shipyard->peopleWorking).'</span></td></tr>';
+        echo '<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td><span id="people_food_require">'.nf($config->getInt('people_food_require') * $shipyard->peopleWorking).'</span></td></tr>';
     }
     if ($gen_tech_level  > 0)
     {
@@ -298,7 +296,7 @@ if ($shipyard && $shipyard->level)
     echo "<tr><td>Bauzeitverringerung:</td><td>";
     if ($need_bonus_level>=0)
     {
-        echo get_percent_string($time_boni_factor)." durch Stufe ".CURRENT_SHIPYARD_LEVEL;
+        echo get_percent_string($time_boni_factor)." durch Stufe ".$shipyard->currentLevel;
     }
     else
     {
@@ -316,7 +314,7 @@ if ($shipyard && $shipyard->level)
         $cancelable = false;
     }
     tableEnd();
-    $peopleFree = floor($planet->people) - $bl->totalPeopleWorking() + $bl->getPeopleWorking(SHIP_BUILDING_ID);
+    $peopleFree = floor($planet->people) - $buildingRepository->getPeopleWorking($planet->id) + $shipyard->peopleWorking;
     $box =  '
                 <input type="hidden" name="workDone" id="workDone" value="'.$config->getInt('people_work_done').'" />
                 <input type="hidden" name="foodRequired" id="foodRequired" value="'.$config->getInt('people_food_require').'" />
@@ -330,7 +328,7 @@ if ($shipyard && $shipyard->level)
                             <input  type="text"
                                     name="peopleWorking"
                                     id="peopleWorking"
-                                    value="'.nf($bl->getPeopleWorking(SHIP_BUILDING_ID)).'"
+                                    value="'.nf($shipyard->peopleWorking).'"
                                     onkeyup="updatePeopleWorkingBox(this.value,\'-1\',\'-1\');"/>
                     </td>
                     </tr>
@@ -339,14 +337,14 @@ if ($shipyard && $shipyard->level)
                         <td><input  type="text"
                                     name="timeReduction"
                                     id="timeReduction"
-                                    value="'.tf($config->getInt('people_work_done') * $bl->getPeopleWorking(SHIP_BUILDING_ID)).'"
+                                    value="'.tf($config->getInt('people_work_done') * $shipyard->peopleWorking).'"
                                     onkeyup="updatePeopleWorkingBox(\'-1\',this.value,\'-1\');" /></td>
                     </tr>
                         <th>Nahrungsverbrauch</th>
                         <td><input  type="text"
                                     name="foodUsing"
                                     id="foodUsing"
-                                    value="'.nf($config->getInt('people_food_require') * $bl->getPeopleWorking(SHIP_BUILDING_ID)).'"
+                                    value="'.nf($config->getInt('people_food_require') * $shipyard->peopleWorking).'"
                                     onkeyup="updatePeopleWorkingBox(\'-1\',\'-1\',this.value);" /></td>
                     </tr>
                     <tr>
@@ -554,7 +552,7 @@ if ($shipyard && $shipyard->level)
                     }
 
                     //Check for Rene-Bug
-                    $additional_food_costs = $people_working*$config->getInt('people_food_require');
+                    $additional_food_costs = $shipyard->peopleWorking * $config->getInt('people_food_require');
                     if ($additional_food_costs!=intval($_POST['additional_food_costs']) || intval($_POST['additional_food_costs'])<0)
                     {
                         $build_cnt=0;
@@ -584,7 +582,7 @@ if ($shipyard && $shipyard->level)
                         //Rechnet zeit wenn arbeiter eingeteilt sind
                         $btime_min=$btime*(0.1-($gen_tech_level/100));
                         if ($btime_min<SHIPYARD_MIN_BUILD_TIME) $btime_min=SHIPYARD_MIN_BUILD_TIME;
-                        $btime=ceil($btime-$people_working*$config->getInt('people_work_done'));
+                        $btime=ceil($btime-$shipyard->peopleWorking * $config->getInt('people_work_done'));
                         if ($btime<$btime_min) $btime=$btime_min;
                         $obj_time=$btime;
 
@@ -651,8 +649,8 @@ if ($shipyard && $shipyard->level)
                         [b]Ende:[/b] " . date("d.m.Y H:i:s", $end_time) . "
                         [b]Dauer:[/b] " . tf($duration) . "
                         [b]Dauer pro Einheit:[/b] " . tf($obj_time) . "
-                        [b]Schiffswerft Level:[/b] " . CURRENT_SHIPYARD_LEVEL . "
-                        [b]Eingesetzte Bewohner:[/b] " . nf($people_working) . "
+                        [b]Schiffswerft Level:[/b] " . $shipyard->currentLevel . "
+                        [b]Eingesetzte Bewohner:[/b] " . nf($shipyard->peopleWorking) . "
                         [b]Gen-Tech Level:[/b] " . $gen_tech_level . "
                         [b]Eingesetzter Spezialist:[/b] " . $cu->specialist->name . "
 
@@ -920,6 +918,7 @@ if ($shipyard && $shipyard->level)
                                     </tr>';
                     }
 
+                    $buildingLevels = $buildingRepository->getBuildingLevels($planet->id);
                     foreach ($ships as $data)
                     {
                         // Prüfen ob Schiff gebaut werden kann
@@ -929,7 +928,7 @@ if ($shipyard && $shipyard->level)
                         {
                             foreach ($req[$data['ship_id']]['b'] as $id=>$level)
                             {
-                                if ($bl->getLevel($id) < $level)
+                                if (($buildingLevels[(int) $id] ?? 0) < $level)
                                 {
                                     $build_ship = 0;
                                 }
@@ -984,14 +983,14 @@ if ($shipyard && $shipyard->level)
                                 $btime_min = SHIPYARD_MIN_BUILD_TIME;
                             }
 
-                            $btime = ceil($btime - $people_working * $config->getInt('people_work_done'));
+                            $btime = ceil($btime - $shipyard->peopleWorking * $config->getInt('people_work_done'));
                             if ($btime < $btime_min)
                             {
                                 $btime = $btime_min;
                             }
 
                             //Nahrungskosten berechnen
-                            $food_costs = $people_working * $config->getInt('people_food_require');
+                            $food_costs = $shipyard->peopleWorking * $config->getInt('people_food_require');
 
                             //Nahrungskosten versteckt übermitteln
                             echo "<input type=\"hidden\" name=\"additional_food_costs\" value=\"".$food_costs."\" />";

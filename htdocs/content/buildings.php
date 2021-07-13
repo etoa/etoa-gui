@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Building\BuildingDataRepository;
+use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
@@ -10,11 +11,14 @@ use EtoA\Technology\TechnologyDataRepository;
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
 
-/** @var PlanetRepository */
+/** @var PlanetRepository $planetRepo */
 $planetRepo = $app[PlanetRepository::class];
 
 /** @var ResourceBoxDrawer */
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
+
+/** @var BuildingRepository $buildingRepository */
+$buildingRepository = $app[BuildingRepository::class];
 
 if ($cu->properties->itemShow!='full')
 {
@@ -113,6 +117,8 @@ if (isset($cp))
             }
         }
 
+        $building = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, $bid);
+
         // people working changed
         if (isset($_POST['submit_people_form']))
         {
@@ -123,7 +129,7 @@ if (isset($cp))
         }
 
         // build building
-        if (isset($_POST['command_build']) && $bl->getStatus($bid)==0)
+        if (isset($_POST['command_build']) && ($building === null || $building->buildType === 0))
         {
             if ($bl->build($bid))
             {
@@ -136,7 +142,7 @@ if (isset($cp))
         }
 
         // demolish building
-        elseif (isset($_POST['command_demolish']) && $bl->getStatus($bid)==0)
+        elseif (isset($_POST['command_demolish']) && ($building !== null && $building->buildType === 0))
         {
             if ($bl->demolish($bid))
             {
@@ -149,7 +155,7 @@ if (isset($cp))
         }
 
         // cancel build building
-        elseif (isset($_POST['command_cbuild']) && $bl->getStatus($bid)==3)
+        elseif (isset($_POST['command_cbuild']) && $building !== null && $building->buildType === 3)
         {
             if ($bl->cancelBuild($bid))
             {
@@ -162,7 +168,7 @@ if (isset($cp))
         }
 
         // cancel demolish building
-        elseif (isset($_POST['command_cdemolish']) && $bl->getStatus($bid)==4)
+        elseif (isset($_POST['command_cdemolish']) && $building !== null && $building->buildType === 4)
         {
             if ($bl->cancelDemolish($bid))
             {
@@ -175,17 +181,17 @@ if (isset($cp))
         }
 
         // create design relateted stuff
-        if ($bl->getStatus($bid)==3 && $bl->getLevel($bid)>0)
+        if ($building !== null && $building->buildType === 3 && $building->currentLevel > 0)
         {
             $color="color:#0f0;";
             $status_text="Wird ausgebaut";
         }
-        elseif ($bl->getStatus($bid)==3)
+        elseif ($building !== null && $building->buildType === 3)
         {
             $color="color:#0f0;";
             $status_text="Wird gebaut";
         }
-        elseif ($bl->getStatus($bid)==4)
+        elseif ($building !== null && $building->buildType === 4)
         {
             $color="color:#f80;";
             $status_text="Wird abgerissen";
@@ -203,7 +209,7 @@ if (isset($cp))
     $checker = ob_get_contents();
     ob_end_clean();
 
-    $peopleFree = floor($planet->people) - $bl->totalPeopleWorking() + $bl->getPeopleWorking(BUILD_BUILDING_ID);
+    $peopleFree = floor($planet->people) - $buildingRepository->getPeopleWorking($planet->id) + $bl->getPeopleWorking(BUILD_BUILDING_ID);
     // create box to change people working
     $box =	'
                 <input type="hidden" name="workDone" id="workDone" value="'.$config->getInt('people_work_done').'" />
@@ -557,6 +563,7 @@ if (isset($cp))
         ;");
         if (mysql_num_rows($tres)>0)
         {
+            $buildingLevels = $buildingRepository->getBuildingLevels($planet->id);
             // Jede Kategorie durchgehen
             echo '<form action="?page='.$page.'" method="post"><div>';
             echo $checker;
@@ -603,7 +610,7 @@ if (isset($cp))
                         $buildingNames = $buildingRepository->getBuildingNames(true);
                         foreach ($it->current()->building->getBuildingRequirements() as $id=>$level)
                         {
-                            $tmtext .= "<div style=\"color:".($level<=$bl->getLevel($id)?'#0f0':'#f30')."\">".$buildingNames[$id]." Stufe ".$level."</div>";
+                            $tmtext .= "<div style=\"color:".($level<=($buildingLevels[$id] ?? 0) ? '#0f0':'#f30')."\">".$buildingNames[$id]." Stufe ".$level."</div>";
                         }
                         /** @var TechnologyDataRepository $technologyRepository */
                         $technologyRepository = $app[TechnologyDataRepository::class];

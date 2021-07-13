@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -12,6 +13,8 @@ $planetRepo = $app[PlanetRepository::class];
 
 /** @var ResourceBoxDrawer */
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
+/** @var BuildingRepository $buildingRepository */
+$buildingRepository = $app[BuildingRepository::class];
 
 /********
 *	Datei-Struktur
@@ -47,22 +50,20 @@ if ($config->getBoolean('market_enabled'))
 {
     $mode = isset($_GET['mode']) ? $_GET['mode'] : "";
 
+    $market = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, MARKTPLATZ_ID);
+
     //Überprüfung ob der Marktplatz schon gebaut wurde
-    $bl = new BuildList($planet->id,$cu->id);
-    if ($bl->getLevel(MARKTPLATZ_ID) > 0)
-    {
+    if ($market !== null && $market->currentLevel > 0) {
         // Header
         //<editor-fold>
 
-        define("MARKET_LEVEL",$bl->getLevel(MARKTPLATZ_ID));
         define("MARKET_TAX", max(1,MARKET_SELL_TAX * $cu->specialist->tradeBonus));
 
         // Show title
-        echo '<h1>Marktplatz (Stufe '.MARKET_LEVEL.') des Planeten '.$planet->name.'</h1>';
+        echo '<h1>Marktplatz (Stufe '.$market->currentLevel.') des Planeten '.$planet->name.'</h1>';
         echo $resourceBoxDrawer->getHTML($planet);
 
-        $deactivatedUntil = $bl->getDeactivated(MARKTPLATZ_ID);
-        if ($deactivatedUntil < time())
+        if ($market->isDeactivated())
         {
             // Load javascript
             require("content/market/js.php");
@@ -105,7 +106,7 @@ if ($config->getBoolean('market_enabled'))
 
         // Summiert die eingestellten Angebote und berechnet die Anzahl der noch einstellbaren Angebote
         $anzahl = $cnt_arr['ress_cnt'] + $cnt_arr['ship_cnt'] + $cnt_arr['auction_cnt'];
-        $possible=MARKET_LEVEL-$anzahl;
+        $possible=$market->currentLevel-$anzahl;
 
         // Lädt Stufe des Allianzmarktplatzes
         if ($cu->allianceId()>0)
@@ -143,7 +144,7 @@ if ($config->getBoolean('market_enabled'))
         }
 
         // Definiert den Rückgabefaktor beim zurückziehen eines Angebots
-        $return_factor = floor((1 - 1/(MARKET_LEVEL+1))*100)/100;
+        $return_factor = floor((1 - 1/($market->currentLevel+1))*100)/100;
 
 
         //Marktinof Bof
@@ -612,7 +613,7 @@ if ($config->getBoolean('market_enabled'))
         }
         else
         {
-            info_msg("Dieses Gebäude ist noch bis ".df($deactivatedUntil)." deaktiviert!");
+            info_msg("Dieses Gebäude ist noch bis ".df($market->deactivated)." deaktiviert!");
         }
     }
 
