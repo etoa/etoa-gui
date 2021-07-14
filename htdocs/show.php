@@ -1,37 +1,23 @@
 <?PHP
-//////////////////////////////////////////////////////
-// The Andromeda-Project-Browsergame                //
-// Ein Massive-Multiplayer-Online-Spiel             //
-// Programmiert von Nicolas Perrenoud<mail@nicu.ch> //
-// als Maturaarbeit '04 am Gymnasium Oberaargau	    //
-//////////////////////////////////////////////////////
-//////////////////////////////////////////////////////
-
-/**
- * Alternative main file for out of game viewing of specific pages
- *
- * @author MrCage mrcage@etoa.ch
- * @copyright Copyright (c) 2004 EtoA Gaming, www.etoa.ch
- */
 
 use EtoA\Core\Configuration\ConfigurationService;
 
 $indexpage = [
     'login' => [
-        'url'=>'?index=login',
-        'label'=>'Einloggen'
+        'url' => '?index=login',
+        'label' => 'Einloggen'
     ],
     'register' => [
-        'url'=>'?index=register',
-        'label'=>'Registrieren'
+        'url' => '?index=register',
+        'label' => 'Registrieren'
     ],
     'pwforgot' => [
-        'url'=>'?index=pwforgot',
-        'label'=>'Passwort'
+        'url' => '?index=pwforgot',
+        'label' => 'Passwort'
     ],
     'contact' => [
-        'url'=>'?index=contact',
-        'label'=>'Kontakt'
+        'url' => '?index=contact',
+        'label' => 'Kontakt'
     ]
 ];
 
@@ -69,7 +55,7 @@ if (file_exists(CSS_STYLE . '/external.css')) {
 } else {
     $additionalCss[] = 'web/css/external.css';
 }
-$twig->addGlobal('gameTitle', getGameIdentifier().(isset($indexpage[$index]) ? ' - '.$indexpage[$index]['label'] : ''));
+$twig->addGlobal('gameTitle', getGameIdentifier() . (isset($indexpage[$index]) ? ' - ' . $indexpage[$index]['label'] : ''));
 $twig->addGlobal('templateDir', CSS_STYLE);
 $twig->addGlobal('additionalCss', $additionalCss);
 $twig->addGlobal('xajaxJS', $xajax->getJavascript(XAJAX_DIR));
@@ -104,7 +90,7 @@ try {
         if ($index) {
             $index = $index === 'stats' ? 'ladder' : $index;
             $sub = 'index/';
-            if (!preg_match('^[a-z\_]+$^',$index) || strlen($index) > 50) {
+            if (!preg_match('^[a-z\_]+$^', $index) || strlen($index) > 50) {
                 echo $twig->render('external/invalid-page.html.twig', []);
                 return;
             }

@@ -32,39 +32,39 @@ echo "<tr>
 <th>Total gebaut</th>
 </tr>";
 foreach ($buildings as $building) {
-	    $sum = $buildingRepository->getNumberOfBuildings($building->id);
+    $sum = $buildingRepository->getNumberOfBuildings($building->id);
 
     echo "<tr>
-    <td>".$building->name."</td>
-    <td>".$building->prodPower."</td>
-    <td>".$building->buildCostsFactor."</td>
-    <td>".$building->productionFactor."</td>
-    <td>".$building->fields."</td>
-		<td>".nf($sum)."</td>
-		</tr>";
-	}
+    <td>" . $building->name . "</td>
+    <td>" . $building->prodPower . "</td>
+    <td>" . $building->buildCostsFactor . "</td>
+    <td>" . $building->productionFactor . "</td>
+    <td>" . $building->fields . "</td>
+        <td>" . nf($sum) . "</td>
+        </tr>";
+}
 
-    /** @var ShipRepository */
-    $shipRepository = $app[ShipRepository::class];
+/** @var ShipRepository */
+$shipRepository = $app[ShipRepository::class];
 
-    /** @var ShipDataRepository */
-    $shipDataRepository = $app[ShipDataRepository::class];
+/** @var ShipDataRepository */
+$shipDataRepository = $app[ShipDataRepository::class];
 
-    $ships = $shipDataRepository->getShipWithPowerProduction();
+$ships = $shipDataRepository->getShipWithPowerProduction();
 
-	foreach ($ships as $ship) {
-	    $sum = $shipRepository->getNumberOfShips($ship->id);
+foreach ($ships as $ship) {
+    $sum = $shipRepository->getNumberOfShips($ship->id);
 
     $tpb1 = Planet::getSolarPowerBonus($config->param1Int('planet_temp'), $config->param1Int('planet_temp') + $config->getInt('planet_temp'));
     $tpb2 = Planet::getSolarPowerBonus($config->param2Int('planet_temp') - $config->getInt('planet_temp'), $config->param2Int('planet_temp'));
 
     echo "<tr>
-    <td>".$ship->name."</td>
-    <td>".$ship->powerProduction." (".$tpb1." bis +".$tpb2.")</td>
+    <td>" . $ship->name . "</td>
+    <td>" . $ship->powerProduction . " (" . $tpb1 . " bis +" . $tpb2 . ")</td>
     <td></td>
     <td></td>
     <td></td>
-    <td>".nf($sum)."</td>
+    <td>" . nf($sum) . "</td>
     </tr>";
 }
 tableEnd();

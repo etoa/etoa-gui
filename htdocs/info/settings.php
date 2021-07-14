@@ -6,7 +6,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 $config = $app[ConfigurationService::class];
 
 echo "<h2>Einstellungen</h2>";
-HelpUtil::breadCrumbs(array("Einstellungen","settings"));
+HelpUtil::breadCrumbs(array("Einstellungen", "settings"));
 
 $items = [
     "Max. Spieler" => $config->param2Int('enable_register'),
@@ -46,10 +46,9 @@ tableStart("Grundeinstellungen");
 echo "<tr><th>Name</th>";
 echo "<th>Wert</th></tr>";
 echo "<tr><td>Spielversion</td>";
-echo "<td>".getAppVersion()."</td></tr>";
-foreach ($items as $key => $value)
-{
-    echo "<tr><td>".$key."</td>";
-    echo "<td>".$value."</td></tr>";
+echo "<td>" . getAppVersion() . "</td></tr>";
+foreach ($items as $key => $value) {
+    echo "<tr><td>" . $key . "</td>";
+    echo "<td>" . $value . "</td></tr>";
 }
 tableEnd();

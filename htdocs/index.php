@@ -1,8 +1,8 @@
 <?PHP
 
 /**
-* Main game file, provides the template and includes all pages
-*/
+ * Main game file, provides the template and includes all pages
+ */
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Text\TextRepository;
@@ -39,7 +39,7 @@ header("Cache-Control: no-cache, must-revalidate");
 // Login if requested
 if (isset($_POST['login'])) {
     if (!$s->login($_POST)) {
-        forward(getLoginUrl(['page'=>'err', 'err' => $s->lastErrorCode]), 'Loginfehler', $s->lastError);
+        forward(getLoginUrl(['page' => 'err', 'err' => $s->lastErrorCode]), 'Loginfehler', $s->lastError);
     }
 
     forward('.');
@@ -54,7 +54,7 @@ if ($_GET['ttool'] ?? false) {
 // Perform logout if requested
 if ($_GET['logout'] ?? false) {
     $s->logout();
-    forward(getLoginUrl(['page'=>'logout']), 'Logout');
+    forward(getLoginUrl(['page' => 'logout']), 'Logout');
 }
 
 /** @var ConfigurationService */
@@ -66,7 +66,7 @@ if (!$s->validate()) {
     if (!$config->get('loginurl')) {
         forward(getLoginUrl());
     } else {
-        forward(getLoginUrl(['page'=>'err', 'err'=>'nosession']), 'Ungültige Session', $s->lastError);
+        forward(getLoginUrl(['page' => 'err', 'err' => 'nosession']), 'Ungültige Session', $s->lastError);
     }
 }
 
@@ -75,7 +75,7 @@ $cu = new CurrentUser($s->user_id);
 
 // Check if it is valid user
 if (!$cu->isValid) {
-    forward(getLoginUrl(['page'=>'err', 'err'=>'usernotfound']), 'Benutzer nicht mehr vorhanden');
+    forward(getLoginUrl(['page' => 'err', 'err' => 'usernotfound']), 'Benutzer nicht mehr vorhanden');
 }
 
 //
@@ -98,10 +98,10 @@ if (isset($_SERVER["HTTP_REFERER"])) {
         $referers[$k] = trim($v);
     }
     unset($v);
-    $referers[] = 'http://'.$_SERVER['HTTP_HOST'];
+    $referers[] = 'http://' . $_SERVER['HTTP_HOST'];
     foreach ($referers as &$rfr) {
-        if (substr($_SERVER["HTTP_REFERER"],0, strlen($rfr)) === $rfr) {
-            $referer_allow=true;
+        if (substr($_SERVER["HTTP_REFERER"], 0, strlen($rfr)) === $rfr) {
+            $referer_allow = true;
         }
     }
     unset($rfr);
@@ -114,10 +114,10 @@ try {
     $allowed_ips = explode("\n", $config->get('offline_ips_allow'));
 
     if ($config->getBoolean('offline') && !in_array($_SERVER['REMOTE_ADDR'], $allowed_ips, true)) {
-        iBoxStart('Spiel offline',750);
+        iBoxStart('Spiel offline', 750);
         echo "<img src=\"images/maintenance.jpg\" alt=\"maintenance\" /><br/><br/>";
-        if ($config->get('offline_message')!="") {
-            echo text2html($config->get('offline_ message'))."<br/><br/>";
+        if ($config->get('offline_message') != "") {
+            echo text2html($config->get('offline_ message')) . "<br/><br/>";
         } else {
             echo "Das Spiel ist aufgrund von Wartungsarbeiten momentan offline! Schaue sp&auml;ter nochmals vorbei!<br/><br/>";
         }
@@ -127,7 +127,7 @@ try {
 
     // Login ist gesperrt
     elseif (!$config->getBoolean('enable_login') && !in_array($_SERVER['REMOTE_ADDR'], $allowed_ips, true)) {
-        iBoxStart("Login geschlossen",750);
+        iBoxStart("Login geschlossen", 750);
         echo "<img src=\"images/keychain.png\" alt=\"maintenance\" /><br/><br/>";
         echo "Der Login momentan geschlossen!<br/><br/>";
         echo button("Zur Startseite", getLoginUrl());
@@ -136,9 +136,9 @@ try {
 
     // Login ist erlaubt aber noch zeitlich zu frŸh
     elseif ($config->getBoolean('enable_login') && $config->param1Int('enable_login') > time() && !in_array($_SERVER['REMOTE_ADDR'], $allowed_ips, true)) {
-        iBoxStart("Login noch geschlossen",750);
+        iBoxStart("Login noch geschlossen", 750);
         echo "<img src=\"images/keychain.png\" alt=\"maintenance\" /><br/><br/>";
-        echo "Das Spiel startet am ".date("d.m.Y",$config->param1Int('enable_login'))." ab ".date("H:i",$config->param1Int('enable_login'))."!<br/><br/>";
+        echo "Das Spiel startet am " . date("d.m.Y", $config->param1Int('enable_login')) . " ab " . date("H:i", $config->param1Int('enable_login')) . "!<br/><br/>";
         echo button("Zur Startseite", getLoginUrl());
         iBoxEnd();
     }
@@ -147,14 +147,14 @@ try {
     elseif (!$referer_allow && isset($_SERVER["HTTP_REFERER"])) {
         echo "<div style=\"text-align:center;\">
         <h1>Falscher Referer</h1>
-        Der Zugriff auf das Spiel ist nur anderen internen Seiten aus m&ouml;glich! Ein externes Verlinken direkt in das Game hinein ist nicht gestattet! Dein Referer: ".$_SERVER["HTTP_REFERER"]."<br/><br/>
-        <a href=\"".getLoginUrl() ."\">Hauptseite</a></div>";
+        Der Zugriff auf das Spiel ist nur anderen internen Seiten aus m&ouml;glich! Ein externes Verlinken direkt in das Game hinein ist nicht gestattet! Dein Referer: " . $_SERVER["HTTP_REFERER"] . "<br/><br/>
+        <a href=\"" . getLoginUrl() . "\">Hauptseite</a></div>";
     }
 
     // Zugriff erlauben und Inhalt anzeigen
     else {
         if ($s->firstView && $cu->properties->startUpChat == 1) {
-            echo "<script type=\"text/javascript\">".CHAT_ONCLICK."</script>";
+            echo "<script type=\"text/javascript\">" . CHAT_ONCLICK . "</script>";
         }
 
         if ($cu->isSetup()) {
@@ -242,9 +242,9 @@ try {
 
     $gameMenu = new GameMenu('game-menu.conf');
 
-    if (ADD_BANNER=="") {
+    if (ADD_BANNER == "") {
         $twig->addGlobal('adds', false);
-    } elseif ($cu->properties->showAdds==1 || FORCE_ADDS==1) {
+    } elseif ($cu->properties->showAdds == 1 || FORCE_ADDS == 1) {
         $twig->addGlobal('adds', true);
     } else {
         $twig->addGlobal('adds', false);
@@ -282,7 +282,7 @@ try {
         'renderTime' => $watch->stop('render')->getDuration() / 1000,
         'infoText' => $infoText->isEnabled() ? $infoText->content : null,
         'helpBox' => $cu->properties->helpBox == 1,
-        'noteBox' => $cu->properties->noteBox==1,
+        'noteBox' => $cu->properties->noteBox == 1,
     ]);
     foreach ($globals as $key => $value) {
         $twig->addGlobal($key, $value);
@@ -300,7 +300,7 @@ try {
         'content' => $e,
     ]);
 } finally {
-    $_SESSION['lastpage']=$page;
+    $_SESSION['lastpage'] = $page;
 
     dbclose();
 }
