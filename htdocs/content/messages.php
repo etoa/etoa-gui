@@ -288,7 +288,7 @@ function listMessagesOverview(
         if (count($messages) > 0) {
             echo "<tr>
                 <th colspan=\"4\">" . text2html($category->name) . " (" . count($messages) . " Nachrichten)</th>
-                <th style=\"text-align:center;\"><input type=\"button\" id=\"selectBtn[" . $category->id. "]\" value=\"X\" onclick=\"xajax_messagesSelectAllInCategory(" . $category->id . "," . count($messages) . ",this.value)\"/></td>
+                <th style=\"text-align:center;\"><input type=\"button\" id=\"selectBtn[" . $category->id . "]\" value=\"X\" onclick=\"xajax_messagesSelectAllInCategory(" . $category->id . "," . count($messages) . ",this.value)\"/></td>
             </tr>";
         } else {
             echo "<tr>
