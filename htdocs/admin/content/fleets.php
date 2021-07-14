@@ -86,48 +86,38 @@ function fleetOptions(Request $request, ConfigurationService $config): void
     //
 
     // Flottensperre deaktivieren
-    if ($request->request->has('flightban_deactivate'))
-    {
+    if ($request->request->has('flightban_deactivate')) {
         $config->set('flightban', 0, '');
     }
 
     // Flottensperre aktivieren
-    if ($request->request->has('flightban_activate') || $request->request->has('flightban_update'))
-    {
+    if ($request->request->has('flightban_activate') || $request->request->has('flightban_update')) {
         $flightban_from = parseDatePicker('flightban_time_from', $request->request->all());
         $flightban_to = parseDatePicker('flightban_time_to', $request->request->all());
 
-        if($flightban_from < $flightban_to)
-        {
+        if ($flightban_from < $flightban_to) {
             $config->set('flightban', 1, $request->request->get('flightban_reason'));
             $config->set('flightban_time', '', $flightban_from, $flightban_to);
-        }
-        else
-        {
+        } else {
             echo "<b>Fehler:</b> Das Ende muss nach dem Start erfolgen!<br><br>";
         }
     }
 
     // Kampfsperre deaktivieren
-    if ($request->request->has('battleban_deactivate'))
-    {
+    if ($request->request->has('battleban_deactivate')) {
         $config->set('battleban', 0, '');
     }
 
     // Kampfsperre aktivieren
-    if ($request->request->has('battleban_activate') || $request->request->has('battleban_update'))
-    {
+    if ($request->request->has('battleban_activate') || $request->request->has('battleban_update')) {
         $battleban_from = parseDatePicker('battleban_time_from', $request->request->all());
         $battleban_to = parseDatePicker('battleban_time_to', $request->request->all());
 
-        if($battleban_from < $battleban_to)
-        {
+        if ($battleban_from < $battleban_to) {
             $config->set('battleban', 1, $request->request->get('battleban_reason'));
             $config->set('battleban_time', '', $battleban_from, $battleban_to);
             $config->set('battleban_arrival_text', '', $request->request->get('battleban_arrival_text_fleet'), $request->request->get('battleban_arrival_text_missiles'));
-        }
-        else
-        {
+        } else {
             echo "<b>Fehler:</b> Das Ende muss nach dem Start erfolgen!<br><br>";
         }
     }
@@ -139,34 +129,27 @@ function fleetOptions(Request $request, ConfigurationService $config): void
     //
 
     // Setzt Variabeln wenn Flottensperre aktiv...
-    if ($config->getBoolean('flightban'))
-    {
+    if ($config->getBoolean('flightban')) {
         // Prüft, ob die Sperre zum jetzigen Zeitpunkt gilt
-        if ($config->param1Int('flightban_time') <=time() && $config->param2Int('flightban_time') >= time())
-        {
+        if ($config->param1Int('flightban_time') <= time() && $config->param2Int('flightban_time') >= time()) {
             $flightban_time_status = "Sie wirkt zum jetzigen Zeitpunkt!";
-        }
-        elseif ($config->param1Int('flightban_time') > time() && $config->param2Int('flightban_time') > time())
-        {
-            $flightban_time_status = "Sie wirkt erst ab: ".date("d.m.Y H:i",$config->param1Int('flightban_time'))."!";
-        }
-        else
-        {
+        } elseif ($config->param1Int('flightban_time') > time() && $config->param2Int('flightban_time') > time()) {
+            $flightban_time_status = "Sie wirkt erst ab: " . date("d.m.Y H:i", $config->param1Int('flightban_time')) . "!";
+        } else {
             $flightban_time_status = "Sie ist nun aber abgelaufen!";
         }
 
-        $flightban_status = "<div style=\"color:#f90\">Die Flottensperre ist aktiviert! ".$flightban_time_status."</div>";
+        $flightban_status = "<div style=\"color:#f90\">Die Flottensperre ist aktiviert! " . $flightban_time_status . "</div>";
         $flightban_time_from = $config->param1Int('flightban_time');
         $flightban_time_to = $config->param2Int('flightban_time');
         $flightban_reason = $config->param1('flightban');
         $flightban_button = "<input type=\"submit\" name=\"flightban_update\" value=\"Aktualisieren\" /> <input type=\"submit\" name=\"flightban_deactivate\" value=\"Deaktivieren\" />";
     }
     // ...wenn nicht aktiv
-    else
-    {
+    else {
         $flightban_status = "<div style=\"color:#0f0\">Die Flottensperre ist deaktiviert!</div>";
         $flightban_time_from = time();
-        $flightban_time_to = time()+3600;
+        $flightban_time_to = time() + 3600;
         $flightban_reason = "";
         $flightban_button = "<input type=\"submit\" name=\"flightban_activate\" value=\"Aktivieren\" />";
     }
@@ -178,62 +161,55 @@ function fleetOptions(Request $request, ConfigurationService $config): void
                 </tr>
                 <tr>
                     <td class=\"tbltitle\" width=\"15%\">Status</td>
-                    <td class=\"tbldata\" width=\"85%\">".$flightban_status."</td>
+                    <td class=\"tbldata\" width=\"85%\">" . $flightban_status . "</td>
                 </tr>
                 <tr>
                     <td class=\"tbltitle\">Von</td>
                     <td class=\"tbldata\">";
-                    echo showDatepicker("flightban_time_from", $flightban_time_from, true);
-        echo "</td>
+    echo showDatepicker("flightban_time_from", $flightban_time_from, true);
+    echo "</td>
                 </tr>
                 <tr>
                     <td class=\"tbltitle\">Bis</td>
                     <td class=\"tbldata\">";
-                    echo showDatepicker("flightban_time_to", $flightban_time_to, true);
-        echo "</td>
+    echo showDatepicker("flightban_time_to", $flightban_time_to, true);
+    echo "</td>
                 </tr>
                 <tr>
                     <td class=\"tbltitle\">Grund</td>
                     <td class=\"tbldata\">
-                        <textarea name=\"flightban_reason\" cols=\"50\" rows=\"3\">".$flightban_reason."</textarea>
+                        <textarea name=\"flightban_reason\" cols=\"50\" rows=\"3\">" . $flightban_reason . "</textarea>
                     </td>
                 </tr>
             </table>
-            <p>".$flightban_button."</p><br/>";
+            <p>" . $flightban_button . "</p><br/>";
 
     //
     // Kampfsperre
     //
 
     // Setzt Variabeln wenn Kampfsperre aktiv...
-    if ($config->getBoolean('battleban'))
-    {
+    if ($config->getBoolean('battleban')) {
         // Prüft, ob die Sperre zum jetzigen Zeitpunkt gilt
-        if ($config->param1Int('battleban_time') <=time() && $config->param2Int('battleban_time') >= time())
-        {
+        if ($config->param1Int('battleban_time') <= time() && $config->param2Int('battleban_time') >= time()) {
             $battleban_time_status = "Sie wirkt zum jetzigen Zeitpunkt!";
-        }
-        elseif ($config->param1Int('battleban_time') > time() && $config->param2Int('battleban_time') > time())
-        {
-            $battleban_time_status = "Sie wirkt erst ab: ".date("d.m.Y H:i",$config->param1Int('battleban_time'))."!";
-        }
-        else
-        {
+        } elseif ($config->param1Int('battleban_time') > time() && $config->param2Int('battleban_time') > time()) {
+            $battleban_time_status = "Sie wirkt erst ab: " . date("d.m.Y H:i", $config->param1Int('battleban_time')) . "!";
+        } else {
             $battleban_time_status = "Sie ist nun aber abgelaufen!";
         }
 
-        $battleban_status = "<div style=\"color:#f90\">Die Kampfsperre ist aktiviert! ".$battleban_time_status."</div>";
+        $battleban_status = "<div style=\"color:#f90\">Die Kampfsperre ist aktiviert! " . $battleban_time_status . "</div>";
         $battleban_time_from = $config->param1Int('battleban_time');
         $battleban_time_to = $config->param2Int('battleban_time');
         $battleban_reason = $config->param1('battleban');
         $battleban_button = "<input type=\"submit\" name=\"battleban_update\" value=\"Aktualisieren\" /> <input type=\"submit\" name=\"battleban_deactivate\" value=\"Deaktivieren\" />";
     }
     // ...wenn nicht aktiv
-    else
-    {
+    else {
         $battleban_status = "<div style=\"color:#0f0\">Die Kampfsperre ist deaktiviert!</div>";
         $battleban_time_from = time();
-        $battleban_time_to = time()+3600;
+        $battleban_time_to = time() + 3600;
         $battleban_reason = "";
         $battleban_button = "<input type=\"submit\" name=\"battleban_activate\" value=\"Aktivieren\" />";
     }
@@ -246,24 +222,24 @@ function fleetOptions(Request $request, ConfigurationService $config): void
                 </tr>
                 <tr>
                     <td class=\"tbltitle\" width=\"15%\">Status</td>
-                    <td class=\"tbldata\" width=\"85%\">".$battleban_status."</td>
+                    <td class=\"tbldata\" width=\"85%\">" . $battleban_status . "</td>
                 </tr>
                 <tr>
                     <td class=\"tbltitle\">Von</td>
                     <td class=\"tbldata\">";
-                    showDatepicker("battleban_time_from", $battleban_time_from, true);
-        echo "</td>
+    showDatepicker("battleban_time_from", $battleban_time_from, true);
+    echo "</td>
                 </tr>
                 <tr>
                     <td class=\"tbltitle\">Bis</td>
                     <td class=\"tbldata\">";
-                    showDatepicker("battleban_time_to", $battleban_time_to, true);
-        echo "</td>
+    showDatepicker("battleban_time_to", $battleban_time_to, true);
+    echo "</td>
                 </tr>
                 <tr>
                     <td class=\"tbltitle\">Grund</td>
                     <td class=\"tbldata\">
-                        <textarea name=\"battleban_reason\" cols=\"50\" rows=\"3\">".$battleban_reason."</textarea>
+                        <textarea name=\"battleban_reason\" cols=\"50\" rows=\"3\">" . $battleban_reason . "</textarea>
                     </td>
                 </tr>
                 <tr>
@@ -272,18 +248,18 @@ function fleetOptions(Request $request, ConfigurationService $config): void
                 <tr>
                     <td class=\"tbltitle\">Flotten</td>
                     <td class=\"tbldata\">
-                        <textarea name=\"battleban_arrival_text_fleet\" cols=\"50\" rows=\"3\">".$config->param1('battleban_arrival_text')."</textarea>
+                        <textarea name=\"battleban_arrival_text_fleet\" cols=\"50\" rows=\"3\">" . $config->param1('battleban_arrival_text') . "</textarea>
                     </td>
                 </tr>
                 <tr>
                     <td class=\"tbltitle\">Raketen</td>
                     <td class=\"tbldata\">
-                        <textarea name=\"battleban_arrival_text_missiles\" cols=\"50\" rows=\"3\">".$config->param2('battleban_arrival_text')."</textarea>
+                        <textarea name=\"battleban_arrival_text_missiles\" cols=\"50\" rows=\"3\">" . $config->param2('battleban_arrival_text') . "</textarea>
                     </td>
                 </tr>
             </tr>
         </table>
-        <p>".$battleban_button."</p>";
+        <p>" . $battleban_button . "</p>";
 
     echo "</form>";
 }
@@ -825,7 +801,7 @@ function fleetSearchResults(
 
             $owner = $fleet->userId > 0
                 ? $userRepository->getNick($fleet->userId)
-                :"<span style=\"color:#99f\">System</span>";
+                : "<span style=\"color:#99f\">System</span>";
             echo "<td class=\"tbldata\" $stl>" . $owner . "</td>";
 
             if ($fleetAction = \FleetAction::createFactory($fleet->action)) {
@@ -842,10 +818,10 @@ function fleetSearchResults(
             }
 
             $startEntity = $entityRepository->findIncludeCell($fleet->entityFrom);
-            echo "<td class=\"tbldata\" $stl>".$entityService->formattedString($startEntity) . "</td>";
+            echo "<td class=\"tbldata\" $stl>" . $entityService->formattedString($startEntity) . "</td>";
 
             $endEntity = $entityRepository->findIncludeCell($fleet->entityTo);
-            echo "<td class=\"tbldata\" $stl>".$entityService->formattedString($endEntity) . "</td>";
+            echo "<td class=\"tbldata\" $stl>" . $entityService->formattedString($endEntity) . "</td>";
 
             echo "<td class=\"tbldata\" $stl>" . date("d.m.y", $fleet->launchTime) . " &nbsp; " . date("H:i:s", $fleet->launchTime) . "</td>";
             echo "<td class=\"tbldata\" $stl>" . date("d.m.y", $fleet->landTime) . " &nbsp; " . date("H:i:s", $fleet->landTime) . "</td>";

@@ -3,7 +3,7 @@
 $errorMessage = null;
 $successMessage = null;
 $users = [];
-$res=dbquery("
+$res = dbquery("
 SELECT
     user_id,
     user_nick
@@ -12,7 +12,7 @@ FROM
 ORDER BY
     user_nick
 ;");
-if (mysql_num_rows($res)>0) {
+if (mysql_num_rows($res) > 0) {
     while ($arr = mysql_fetch_assoc($res)) {
         $users[$arr['user_id']] = $arr['user_nick'];
     }
@@ -22,7 +22,7 @@ if (mysql_num_rows($res)>0) {
 
 $uid = null;
 $user = null;
-if (isset($_GET['user_id']) && $_GET['user_id']>0) {
+if (isset($_GET['user_id']) && $_GET['user_id'] > 0) {
     $uid = $_GET['user_id'];
 
     $user = new User($uid);
@@ -41,7 +41,8 @@ if (isset($_GET['user_id']) && $_GET['user_id']>0) {
         $cy = intval($_POST['cy']);
         $radius = abs(intval($_POST['radius']));
 
-        $res = dbQuerySave("
+        $res = dbQuerySave(
+            "
             SELECT
                 id
             FROM
@@ -56,7 +57,8 @@ if (isset($_GET['user_id']) && $_GET['user_id']>0) {
                 $sy,
                 $cx,
                 $cy
-            ));
+            )
+        );
         if (mysql_num_rows($res)) {
             $arr = mysql_fetch_row($res);
             $cell = new Cell($arr[0]);

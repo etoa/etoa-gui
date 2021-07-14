@@ -7,8 +7,8 @@ use EtoA\Message\ReportRepository;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 
-define("USER_MESSAGE_CAT_ID",1);
-define("SYS_MESSAGE_CAT_ID",5);
+define("USER_MESSAGE_CAT_ID", 1);
+define("SYS_MESSAGE_CAT_ID", 5);
 
 define('MESSAGE_TYPE_IN_GAME', 0);
 define('MESSAGE_TYPE_EMAIL', 1);
@@ -55,10 +55,8 @@ function sendMessageForm(
 
     $subj = $request->query->get('message_subject', '');
     $text = "";
-    if ($request->request->has('submit'))
-    {
-        if ($request->request->get('message_subject') != "" && $request->request->get('message_text') != "")
-        {
+    if ($request->request->has('submit')) {
+        if ($request->request->get('message_subject') != "" && $request->request->get('message_text') != "") {
             $to = [];
             if ($request->request->getInt('rcpt_type') === RECIPIENT_TYPE_ALL) {
                 $to = $userRepository->getEmailAddressesWithDisplayName();
@@ -70,16 +68,12 @@ function sendMessageForm(
 
             $msg_type = $request->request->getInt('msg_type');
 
-            if (in_array($msg_type, [MESSAGE_TYPE_EMAIL, MESSAGE_TYPE_BOTH], true))
-            {
+            if (in_array($msg_type, [MESSAGE_TYPE_EMAIL, MESSAGE_TYPE_BOTH], true)) {
                 $mail = new Mail($request->request->get('message_subject'), $request->request->get('message_text'));
-                if ($request->request->getInt('from_id') > 0)
-                {
+                if ($request->request->getInt('from_id') > 0) {
                     $replyUser = $userRepository->getUser($cu->playerId);
                     $reply = $replyUser->getEmailAddressWithDisplayName();
-                }
-                else
-                {
+                } else {
                     $reply = "";
                 }
             }
@@ -87,10 +81,8 @@ function sendMessageForm(
             $mailCnt = 0;
             $msgCnt = 0;
 
-            foreach ($to as $userId => $userEmail)
-            {
-                if (in_array($msg_type, [MESSAGE_TYPE_IN_GAME, MESSAGE_TYPE_BOTH], true))
-                {
+            foreach ($to as $userId => $userEmail) {
+                if (in_array($msg_type, [MESSAGE_TYPE_IN_GAME, MESSAGE_TYPE_BOTH], true)) {
                     $messageRepository->sendFromUserToUser(
                         $request->request->getInt('from_id'),
                         $userId,
@@ -99,21 +91,18 @@ function sendMessageForm(
                     );
                     $msgCnt++;
                 }
-                if (in_array($msg_type, [MESSAGE_TYPE_EMAIL, MESSAGE_TYPE_BOTH], true))
-                {
+                if (in_array($msg_type, [MESSAGE_TYPE_EMAIL, MESSAGE_TYPE_BOTH], true)) {
                     $mail->send($userEmail, $reply);
                     $mailCnt++;
                 }
             }
-            if ($msgCnt>0) {
+            if ($msgCnt > 0) {
                 success_msg("$msgCnt InGame-Nachrichten wurden versendet!");
             }
-            if ($mailCnt>0) {
+            if ($mailCnt > 0) {
                 success_msg("$mailCnt Mails wurden versendet!");
             }
-        }
-        else
-        {
+        } else {
             echo MessageBox::error("", "Nachricht konnte nicht gesendet werden! Text oder Titel fehlt!");
         }
         $subj = $request->request->get('message_subject');
@@ -126,12 +115,10 @@ function sendMessageForm(
         <th width=\"50\">Sender:</th>
         <td>";
     $playerUser = $userRepository->getUser($cu->playerId);
-    if ($playerUser !== null)
-    {
-        echo "<input type=\"radio\" name=\"from_id\" id=\"from_id_1\" value=\"".$cu->playerId."\" checked=\"checked\" /> <label for=\"from_id_1\">".$playerUser->nick." (InGame-Account #".$playerUser->id.")</label><br/>";
+    if ($playerUser !== null) {
+        echo "<input type=\"radio\" name=\"from_id\" id=\"from_id_1\" value=\"" . $cu->playerId . "\" checked=\"checked\" /> <label for=\"from_id_1\">" . $playerUser->nick . " (InGame-Account #" . $playerUser->id . ")</label><br/>";
         echo "<input type=\"radio\" name=\"from_id\" id=\"from_id_0\" value=\"0\" /> <label for=\"from_id_0\">System</label><br/>";
-    }
-    else {
+    } else {
         echo "System <input type=\"hidden\" name=\"from_id\" value=\"0\" />";
     }
     echo "</td></tr>";
@@ -139,28 +126,28 @@ function sendMessageForm(
         <th>Empfänger:</th>
         <td class=\"tbldata\" width=\"250\">
         <b>An:</b>
-        <input type=\"radio\" name=\"rcpt_type\" id=\"rcpt_type_1\" value=\"".RECIPIENT_TYPE_ALL."\"  checked=\"checked\"  onclick=\"document.getElementById('message_user_to').style.display='none';\" /> <label for=\"rcpt_type_1\">Alle Spieler</label>
-        <input type=\"radio\" name=\"rcpt_type\" id=\"rcpt_type_0\" value=\"".RECIPIENT_TYPE_SINGLE."\"  onclick=\"document.getElementById('message_user_to').style.display='';\" /> <label for=\"rcpt_type_0\">Einzelner Empfänger</label>
+        <input type=\"radio\" name=\"rcpt_type\" id=\"rcpt_type_1\" value=\"" . RECIPIENT_TYPE_ALL . "\"  checked=\"checked\"  onclick=\"document.getElementById('message_user_to').style.display='none';\" /> <label for=\"rcpt_type_1\">Alle Spieler</label>
+        <input type=\"radio\" name=\"rcpt_type\" id=\"rcpt_type_0\" value=\"" . RECIPIENT_TYPE_SINGLE . "\"  onclick=\"document.getElementById('message_user_to').style.display='';\" /> <label for=\"rcpt_type_0\">Einzelner Empfänger</label>
         <select name=\"message_user_to\" id=\"message_user_to\" style=\"display:none\">";
-        $userNicks = $userRepository->getUserNicknames();
-        foreach ($userNicks as $userId => $userNick) {
-            echo "<option value=\"".$userId."\"";
-            echo ">".$userNick."</option>";
-        }
+    $userNicks = $userRepository->getUserNicknames();
+    foreach ($userNicks as $userId => $userNick) {
+        echo "<option value=\"" . $userId . "\"";
+        echo ">" . $userNick . "</option>";
+    }
     echo "</select> &nbsp;
 
     <br/>
     <b>Typ:</b>
-    <input type=\"radio\" name=\"msg_type\" value=\"".MESSAGE_TYPE_IN_GAME."\" id=\"msg_type_0\"  checked=\"checked\" /> <label for=\"msg_type_0\">InGame-Nachricht</label>
-    <input type=\"radio\" name=\"msg_type\" value=\"".MESSAGE_TYPE_EMAIL."\" id=\"msg_type_1\" /> <label for=\"msg_type_1\">E-Mail</label>
-    <input type=\"radio\" name=\"msg_type\" value=\"".MESSAGE_TYPE_BOTH."\" id=\"msg_type_2\" /> <label for=\"msg_type_2\">InGame-Nachricht &amp; E-Mail</label>
+    <input type=\"radio\" name=\"msg_type\" value=\"" . MESSAGE_TYPE_IN_GAME . "\" id=\"msg_type_0\"  checked=\"checked\" /> <label for=\"msg_type_0\">InGame-Nachricht</label>
+    <input type=\"radio\" name=\"msg_type\" value=\"" . MESSAGE_TYPE_EMAIL . "\" id=\"msg_type_1\" /> <label for=\"msg_type_1\">E-Mail</label>
+    <input type=\"radio\" name=\"msg_type\" value=\"" . MESSAGE_TYPE_BOTH . "\" id=\"msg_type_2\" /> <label for=\"msg_type_2\">InGame-Nachricht &amp; E-Mail</label>
     </td></tr>";
     echo "<tr>
         <th>Betreff:</th>
-        <td><input type=\"text\" name=\"message_subject\" value=\"".$subj."\" size=\"60\" maxlength=\"255\"></td></tr>";
+        <td><input type=\"text\" name=\"message_subject\" value=\"" . $subj . "\" size=\"60\" maxlength=\"255\"></td></tr>";
     echo "<tr>
         <th>Text:</th>
-        <td><textarea name=\"message_text\" rows=\"10\" cols=\"60\">".$text."</textarea></td></tr>";
+        <td><textarea name=\"message_text\" rows=\"10\" cols=\"60\">" . $text . "</textarea></td></tr>";
     echo "</table>";
     echo "<p align=\"center\"><input type=\"submit\" class=\"button\" name=\"submit\" value=\"Senden\"></p>";
     echo "</form>";
@@ -175,172 +162,161 @@ function manageReports(Request $request, ReportRepository $reportRepository, Use
     //
     // Suchresultate
     //
-    if ($request->request->has('user_search') && $request->request->get('user_search') != "" || $request->query->get('action') == "searchresults")
-    {
+    if ($request->request->has('user_search') && $request->request->get('user_search') != "" || $request->query->get('action') == "searchresults") {
         $sql = '';
         if ($request->request->getInt('user_id') > 0) {
-            $sql.= " AND user_id='".$request->request->getInt('user_id')."' ";
+            $sql .= " AND user_id='" . $request->request->getInt('user_id') . "' ";
         }
-        if ($request->request->get('user_nick') != "")
-        {
+        if ($request->request->get('user_nick') != "") {
             $uid = $userRepository->getUserIdByNick($request->request->get('user_nick'));
             if ($uid !== null) {
-                $sql.= " AND user_id='".$uid."' ";
+                $sql .= " AND user_id='" . $uid . "' ";
             }
         }
         if ($request->request->getInt('opponent1_id') > 0) {
-            $sql.= " AND opponent1_id='".$request->request->getInt('opponent1_id')."' ";
+            $sql .= " AND opponent1_id='" . $request->request->getInt('opponent1_id') . "' ";
         }
-        if ($request->request->get('opponent1_nick') != "")
-        {
+        if ($request->request->get('opponent1_nick') != "") {
             $uid = $userRepository->getUserIdByNick($request->request->get('opponent1_nick'));
             if ($uid !== null) {
-                $sql.= " AND opponent1_id='".$uid."' ";
+                $sql .= " AND opponent1_id='" . $uid . "' ";
             }
         }
-        if ($request->request->has('subject') && $request->request->get('subject') != "")
-        {
-            if (stristr($request->request->get('qmode')['subject'],"%")) $addchars = "%"; else $addchars = "";
-            $sql.= " AND subject ".stripslashes($request->request->get('qmode')['subject']).$request->request->get('subject')."$addchars'";
+        if ($request->request->has('subject') && $request->request->get('subject') != "") {
+            if (stristr($request->request->get('qmode')['subject'], "%")) $addchars = "%";
+            else $addchars = "";
+            $sql .= " AND subject " . stripslashes($request->request->get('qmode')['subject']) . $request->request->get('subject') . "$addchars'";
         }
 
         if ($request->request->getInt('read') == 1) {
-            $sql.= " AND (read=1)";
+            $sql .= " AND (read=1)";
         } elseif ($request->request->getInt('read') == 0) {
-                $sql.= " AND (read=0)";
+            $sql .= " AND (read=0)";
         }
         if ($request->request->getInt('deleted') == 1) {
-            $sql.= " AND (deleted=1)";
+            $sql .= " AND (deleted=1)";
         } else if ($request->request->getInt('deleted') == 0) {
-            $sql.= " AND (deleted=0)";
+            $sql .= " AND (deleted=0)";
         }
         if ($request->request->get('type') != "")
-            $sql.= " AND type='".$request->request->get('type')."' ";
+            $sql .= " AND type='" . $request->request->get('type') . "' ";
 
-        if ($request->request->get('date_from') != "")
-        {
+        if ($request->request->get('date_from') != "") {
             if ($ts = strtotime($request->request->get('date_from'))) {
-                $sql.= " AND (timestamp>".$ts.")";
-            }
-            else {
+                $sql .= " AND (timestamp>" . $ts . ")";
+            } else {
                 echo "Ungültiges Datum";
             }
         }
 
-        if ($request->request->get('date_to') != "")
-        {
+        if ($request->request->get('date_to') != "") {
             if ($ts = strtotime($request->request->get('date_to'))) {
-                $sql.= " AND (timestamp<".$ts.")";
+                $sql .= " AND (timestamp<" . $ts . ")";
             } else {
                 echo "Ungültiges Datum";
             }
         }
 
         if ($request->request->getInt('entity1_id') > 0) {
-            $sql.= " AND (entity1_id=".$request->request->getInt('entity1_id'). " OR entity2_id=".$request->request->getInt('entity1_id').") ";
+            $sql .= " AND (entity1_id=" . $request->request->getInt('entity1_id') . " OR entity2_id=" . $request->request->getInt('entity1_id') . ") ";
         }
         if ($request->request->getInt('entity2_id') > 0) {
-            $sql.= " AND (entity2_id=".$request->request->getInt('entity2_id'). " OR entity1_id=".$request->request->getInt('entity2_id').") ";
+            $sql .= " AND (entity2_id=" . $request->request->getInt('entity2_id') . " OR entity1_id=" . $request->request->getInt('entity2_id') . ") ";
         }
 
         //data tables
         $join = '';
         if ($request->request->has('type') && $request->request->get('type') != "") {
-            $join = " INNER JOIN `reports_".$request->request->get('type')."` AS rd ON reports.id=rd.id ";
+            $join = " INNER JOIN `reports_" . $request->request->get('type') . "` AS rd ON reports.id=rd.id ";
         }
 
         if ($request->request->has('subtype') && $request->request->get('subtype') != "") {
-            $sql.= " AND rd.subtype='".$request->request->get('subtype')."'";
+            $sql .= " AND rd.subtype='" . $request->request->get('subtype') . "'";
         }
 
         //market
-        if ($request->request->has('type') && $request->request->get('type') == 'market')
-        {
+        if ($request->request->has('type') && $request->request->get('type') == 'market') {
             if ($request->request->getInt('fleet1_id') > 0) {
-                $sql.= " AND (rd.fleet1_id=".$request->request->getInt('fleet1_id'). " OR rd.fleet2_id=".$request->request->getInt('fleet1_id').") ";
+                $sql .= " AND (rd.fleet1_id=" . $request->request->getInt('fleet1_id') . " OR rd.fleet2_id=" . $request->request->getInt('fleet1_id') . ") ";
             }
             if ($request->request->getInt('fleet2_id') > 0) {
-                $sql.= " AND (rd.fleet2_id=".$request->request->getInt('fleet2_id'). " OR rd.fleet1_id=".$request->request->get('fleet2_id').") ";
+                $sql .= " AND (rd.fleet2_id=" . $request->request->getInt('fleet2_id') . " OR rd.fleet1_id=" . $request->request->get('fleet2_id') . ") ";
             }
 
             if ($request->request->getInt('ship_id') > 0) {
-                $sql.= " AND rd.ship_id=".$request->request->getInt('ship_id');
+                $sql .= " AND rd.ship_id=" . $request->request->getInt('ship_id');
             }
             if ($request->request->get('ship_count') > 0) {
-                $sql.= " AND rd.ship_count=".$request->request->getInt('ship_count');
+                $sql .= " AND rd.ship_count=" . $request->request->getInt('ship_count');
             }
 
-            if ($request->request->has('sell_0') && $request->request->getInt('sell_0')==1)
-                $sql.= " AND rd.sell_0>'0'";
-            if ($request->request->has('sell_1') && $request->request->getInt('sell_1')==1)
-                $sql.= " AND rd.sell_1>'0'";
-            if ($request->request->has('sell_2') && $request->request->getInt('sell_2')==1)
-                $sql.= " AND rd.sell_2>'0'";
-            if ($request->request->has('sell_3') && $request->request->getInt('sell_3')==1)
-                $sql.= " AND rd.sell_3>'0'";
-            if ($request->request->has('sell_4') && $request->request->getInt('sell_4')==1)
-                $sql.= " AND rd.sell_4>'0'";
+            if ($request->request->has('sell_0') && $request->request->getInt('sell_0') == 1)
+                $sql .= " AND rd.sell_0>'0'";
+            if ($request->request->has('sell_1') && $request->request->getInt('sell_1') == 1)
+                $sql .= " AND rd.sell_1>'0'";
+            if ($request->request->has('sell_2') && $request->request->getInt('sell_2') == 1)
+                $sql .= " AND rd.sell_2>'0'";
+            if ($request->request->has('sell_3') && $request->request->getInt('sell_3') == 1)
+                $sql .= " AND rd.sell_3>'0'";
+            if ($request->request->has('sell_4') && $request->request->getInt('sell_4') == 1)
+                $sql .= " AND rd.sell_4>'0'";
 
-            if ($request->request->has('buy_0') && $request->request->getInt('buy_0')==1)
-                $sql.= " AND rd.buy_0>'0'";
-            if ($request->request->has('buy_1') && $request->request->getInt('buy_1')==1)
-                $sql.= " AND rd.buy_1>'0'";
-            if ($request->request->has('buy_2') && $request->request->getInt('buy_2')==1)
-                $sql.= " AND rd.buy_2>'0'";
-            if ($request->request->has('buy_3') && $request->request->getInt('buy_3')==1)
-                $sql.= " AND rd.buy_3>'0'";
-            if ($request->request->has('buy_4') && $request->request->getInt('buy_4')==1)
-                $sql.= " AND rd.buy_4>'0'";
+            if ($request->request->has('buy_0') && $request->request->getInt('buy_0') == 1)
+                $sql .= " AND rd.buy_0>'0'";
+            if ($request->request->has('buy_1') && $request->request->getInt('buy_1') == 1)
+                $sql .= " AND rd.buy_1>'0'";
+            if ($request->request->has('buy_2') && $request->request->getInt('buy_2') == 1)
+                $sql .= " AND rd.buy_2>'0'";
+            if ($request->request->has('buy_3') && $request->request->getInt('buy_3') == 1)
+                $sql .= " AND rd.buy_3>'0'";
+            if ($request->request->has('buy_4') && $request->request->getInt('buy_4') == 1)
+                $sql .= " AND rd.buy_4>'0'";
         }
 
         //battle
-        if ($request->request->has('type') && $request->request->get('type') == 'battle')
-        {
+        if ($request->request->has('type') && $request->request->get('type') == 'battle') {
             // TODO
             echo "TODO";
         }
 
         //other
-        if ($request->request->has('type') && $request->request->get('type') == 'other')
-        {
+        if ($request->request->has('type') && $request->request->get('type') == 'other') {
             if ($request->request->getInt('fleet1_id') > 0) {
-                $sql.= " AND (rd.fleet1_id=".$request->request->getInt('fleet1_id'). " OR rd.fleet2_id=".$request->request->getInt('fleet1_id').") ";
+                $sql .= " AND (rd.fleet1_id=" . $request->request->getInt('fleet1_id') . " OR rd.fleet2_id=" . $request->request->getInt('fleet1_id') . ") ";
             }
 
-            if ($request->request->getInt('ship_id') > 0)
-            {
+            if ($request->request->getInt('ship_id') > 0) {
                 if ($request->request->getInt('ship_count') > 0) {
-                    $sql.= " AND rd.ships LIKE '%".$request->request->getInt('ship_id').":".$request->request->getInt('ship_count').",%'";
+                    $sql .= " AND rd.ships LIKE '%" . $request->request->getInt('ship_id') . ":" . $request->request->getInt('ship_count') . ",%'";
                 } else {
-                    $sql.= " AND rd.ships LIKE '%".$request->request->getInt('ship_id').":%'";
+                    $sql .= " AND rd.ships LIKE '%" . $request->request->getInt('ship_id') . ":%'";
                 }
-            }
-            elseif ($request->request->getInt("ship_count") != "") {
-                $sql.= " AND rd.ships LIKE '%:".$request->request->getInt('ship_count').",%'";
-            }
-
-            if ($request->request->has('res_0') && $request->request->getInt('res_0')==1) {
-                $sql.= " AND rd.res_0>'0'";
-            }
-            if ($request->request->has('res_1') && $request->request->getInt('res_1')==1) {
-                $sql.= " AND rd.res_1>'0'";
-            }
-            if ($request->request->has('res_2') && $request->request->getInt('res_2')==1) {
-                $sql.= " AND rd.res_2>'0'";
-            }
-            if ($request->request->has('res_3') && $request->request->getInt('res_3')==1) {
-                $sql.= " AND rd.res_3>'0'";
-            }
-            if ($request->request->has('res_4') && $request->request->getInt('res_4')==1) {
-                $sql.= " AND rd.res_4>'0'";
+            } elseif ($request->request->getInt("ship_count") != "") {
+                $sql .= " AND rd.ships LIKE '%:" . $request->request->getInt('ship_count') . ",%'";
             }
 
-            if ($request->request->get('status')!="") {
-                $sql.= " AND rd.status='".$request->request->get('status')."'";
+            if ($request->request->has('res_0') && $request->request->getInt('res_0') == 1) {
+                $sql .= " AND rd.res_0>'0'";
+            }
+            if ($request->request->has('res_1') && $request->request->getInt('res_1') == 1) {
+                $sql .= " AND rd.res_1>'0'";
+            }
+            if ($request->request->has('res_2') && $request->request->getInt('res_2') == 1) {
+                $sql .= " AND rd.res_2>'0'";
+            }
+            if ($request->request->has('res_3') && $request->request->getInt('res_3') == 1) {
+                $sql .= " AND rd.res_3>'0'";
+            }
+            if ($request->request->has('res_4') && $request->request->getInt('res_4') == 1) {
+                $sql .= " AND rd.res_4>'0'";
             }
 
-            if ($request->request->get('action')!="") {
-                $sql.= " AND rd.action='".$request->request->get('action')."'";
+            if ($request->request->get('status') != "") {
+                $sql .= " AND rd.status='" . $request->request->get('status') . "'";
+            }
+
+            if ($request->request->get('action') != "") {
+                $sql .= " AND rd.action='" . $request->request->get('action') . "'";
             }
         }
 
@@ -354,9 +330,8 @@ function manageReports(Request $request, ReportRepository $reportRepository, Use
         $reports = Report::find($sql, null, $limit, 0, true, $join);
 
         $cnt = count($reports);
-        echo $cnt." Datensätze vorhanden<br/><br/>";
-        if ($cnt>0)
-        {
+        echo $cnt . " Datensätze vorhanden<br/><br/>";
+        if ($cnt > 0) {
             if ($cnt > 20) {
                 echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" value=\"Neue Suche\" /><br/><br/>";
             }
@@ -371,52 +346,45 @@ function manageReports(Request $request, ReportRepository $reportRepository, Use
             echo "<th>Betreff</th>";
             echo "</tr>";
             $types = Report::$types;
-            foreach ($reports as $rid=>$r)
-            {
-                if ($request->request->get('type') == 'battle' && $request->request->getInt("entity_ships")==1)
-                {
-                    if ($r->entityShips =="" || $r->entityShips == 0)
+            foreach ($reports as $rid => $r) {
+                if ($request->request->get('type') == 'battle' && $request->request->getInt("entity_ships") == 1) {
+                    if ($r->entityShips == "" || $r->entityShips == 0)
                         continue;
                 }
 
-                $sql.= ($request->request->getInt('entity_ships')==1) ? " AND rd.entity_ships != '' ": " AND rd.entity_ships='' ";
+                $sql .= ($request->request->getInt('entity_ships') == 1) ? " AND rd.entity_ships != '' " : " AND rd.entity_ships='' ";
 
                 $recipient = $r->userId > 0
                     ? $userRepository->getNick($r->userId)
                     : "<i>System</i>";
 
-                if ($r->deleted==1)
-                    $style="color:#f90;";
-                elseif ($r->read==0)
-                    $style="color:#0f0;";
-                elseif($r->archived==1)
-                    $style="font-style:italic;";
+                if ($r->deleted == 1)
+                    $style = "color:#f90;";
+                elseif ($r->read == 0)
+                    $style = "color:#0f0;";
+                elseif ($r->archived == 1)
+                    $style = "font-style:italic;";
                 else
-                    $style="";
+                    $style = "";
                 echo "<tr>";
-                echo "<td style=\"$style;width:110px;\">".date("Y-d-m H:i",$r->timestamp)."</td>";
-                echo "<td style=\"$style\">".$types[$r->type]."</td>";
-                echo "<td style=\"$style\">".cut_string($recipient,11)."</td>";
-                echo "<td><div id=\"r_s_".$rid."\" style=\"".$style."cursor:pointer;\" onclick=\"$('#r_l_".$rid."').toggle();\">".cut_string($r->subject,50)."</div><div id=\"r_l_".$rid."\" style=\"display:none;\"><br/>".$r."</div></td>";
+                echo "<td style=\"$style;width:110px;\">" . date("Y-d-m H:i", $r->timestamp) . "</td>";
+                echo "<td style=\"$style\">" . $types[$r->type] . "</td>";
+                echo "<td style=\"$style\">" . cut_string($recipient, 11) . "</td>";
+                echo "<td><div id=\"r_s_" . $rid . "\" style=\"" . $style . "cursor:pointer;\" onclick=\"$('#r_l_" . $rid . "').toggle();\">" . cut_string($r->subject, 50) . "</div><div id=\"r_l_" . $rid . "\" style=\"display:none;\"><br/>" . $r . "</div></td>";
                 echo "</tr>";
             }
             echo "</table><br/>";
             echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" value=\"Neue Suche\" />";
-        }
-        else
-        {
+        } else {
             echo "Die Suche lieferte keine Resultate!<br/><br/>";
             echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Zur&uuml;ck\" /><br/><br/>";
         }
-    }
-
-    else
-    {
+    } else {
         unset($_SESSION['admin.messages.search']);
 
         echo "Suchmaske:<br/><br/>";
         echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-        tableStart("",'auto');
+        tableStart("", 'auto');
         echo "		<tr>
                         <th>Empfänger-ID</th>
                         <td>
@@ -450,8 +418,8 @@ function manageReports(Request $request, ReportRepository $reportRepository, Use
                             <td>
                                 <select name=\"type\" onchange=\"xajax_showDetail(this.value);\" >
                                     <option value=\"\">(egal)</option>";
-        foreach (Report::$types as $k=>$v)
-            echo "					<option value=\"".$k."\">".$v."</option>";
+        foreach (Report::$types as $k => $v)
+            echo "					<option value=\"" . $k . "\">" . $v . "</option>";
 
         echo "					</select>
                             </td>
@@ -504,7 +472,7 @@ function manageReports(Request $request, ReportRepository $reportRepository, Use
                             <th>Anzahl Datensätze</th>
                             <td class=\"tbldata\">
                                 <select name=\"report_limit\">";
-        for ($x=100;$x<=2000;$x+=100)
+        for ($x = 100; $x <= 2000; $x += 100)
             echo "					<option value=\"$x\">$x</option>";
         echo "					</select>
                             </td>
@@ -514,7 +482,7 @@ function manageReports(Request $request, ReportRepository $reportRepository, Use
                     <p><input type=\"submit\" class=\"button\" name=\"user_search\" value=\"Suche starten\" /></p>
                 </form>";
 
-        echo "<br/>Es sind ".nf($reportRepository->count())." Einträge in der Datenbank vorhanden.";
+        echo "<br/>Es sind " . nf($reportRepository->count()) . " Einträge in der Datenbank vorhanden.";
     }
 }
 
@@ -530,17 +498,15 @@ function manageMessages(
     //
     // Suchresultate
     //
-    if ($request->request->get('user_search') != "" || $request->query->get('action') == "searchresults")
-    {
+    if ($request->request->get('user_search') != "" || $request->query->get('action') == "searchresults") {
         $params = $_SESSION['admin.messages.search'] ?? getMessageParamsFromRequest($request);
         $limit = $request->request->getInt('message_limit');
 
         $messages = $messageRepository->findBy($params, $limit);
-        if (count($messages) > 0)
-        {
+        if (count($messages) > 0) {
             $_SESSION['admin.messages.search'] = $params;
 
-            echo count($messages)." Datensätze vorhanden<br/><br/>";
+            echo count($messages) . " Datensätze vorhanden<br/><br/>";
             if (count($messages) > 20) {
                 echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /><br/><br/>";
             }
@@ -558,8 +524,7 @@ function manageMessages(
             echo "<th>Kategorie</th>";
             echo "<th>Aktion</th>";
             echo "</tr>";
-            foreach ($messages as $message)
-            {
+            foreach ($messages as $message) {
                 $sender = $message->userFrom > 0
                     ? $userRepository->getNick($message->userFrom)
                     : "<i>System</i>";
@@ -578,27 +543,22 @@ function manageMessages(
                     $style = "";
                 }
                 echo "<tr>";
-                echo "<td $style>".cut_string($sender,11)."</a></td>";
-                echo "<td $style>".cut_string($recipient,11)."</a></td>";
-                echo "<td $style ".mTT($message->subject, text2html(substr($message->text, 0, 500))).">".cut_string($message->subject,20)."</a></td>";
-                echo "<td $style>".date("Y-d-m H:i",$message->timestamp)."</a></td>";
-                echo "<td $style>".($categories[$message->catId] ?? '-')."</td>";
-                echo "<td>".edit_button("?page=$page&sub=edit&message_id=".$message->id)." ";
-                echo del_button("?page=$page&sub=trash&message_id=".$message->id)."</td>";
+                echo "<td $style>" . cut_string($sender, 11) . "</a></td>";
+                echo "<td $style>" . cut_string($recipient, 11) . "</a></td>";
+                echo "<td $style " . mTT($message->subject, text2html(substr($message->text, 0, 500))) . ">" . cut_string($message->subject, 20) . "</a></td>";
+                echo "<td $style>" . date("Y-d-m H:i", $message->timestamp) . "</a></td>";
+                echo "<td $style>" . ($categories[$message->catId] ?? '-') . "</td>";
+                echo "<td>" . edit_button("?page=$page&sub=edit&message_id=" . $message->id) . " ";
+                echo del_button("?page=$page&sub=trash&message_id=" . $message->id) . "</td>";
                 echo "</tr>";
             }
             echo "</table><br/>";
             echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" />";
-        }
-        else
-        {
+        } else {
             echo "Die Suche lieferte keine Resultate!<br/><br/>";
             echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Zur&uuml;ck\" /><br/><br/>";
         }
-    }
-
-    elseif ($request->query->get('sub') == "edit")
-    {
+    } elseif ($request->query->get('sub') == "edit") {
         if ($request->request->has('msg_edit')) {
             $messageRepository->setDeleted(
                 $request->query->getInt('message_id'),
@@ -610,22 +570,22 @@ function manageMessages(
         $sender = $message->userFrom > 0 ? $userRepository->getNick($message->userFrom) : "<i>System</i>";
         $recipient = $message->userTo > 0 ? $userRepository->getNick($message->userTo) : "<i>System</i>";
 
-        echo "<form action=\"?page=$page&sub=edit&message_id=".$request->query->getInt('message_id')."\" method=\"post\">";
+        echo "<form action=\"?page=$page&sub=edit&message_id=" . $request->query->getInt('message_id') . "\" method=\"post\">";
         echo "<table class=\"tbl\">";
-        echo "<tr><td class=\"tbltitle\" valign=\"top\">ID</td><td class=\"tbldata\">".$message->id."</td></tr>";
+        echo "<tr><td class=\"tbltitle\" valign=\"top\">ID</td><td class=\"tbldata\">" . $message->id . "</td></tr>";
         echo "<tr><td class=\"tbltitle\" valign=\"top\">Sender</td><td class=\"tbldata\">$sender</td></tr>";
         echo "<tr><td class=\"tbltitle\" valign=\"top\">Empfänger</td><td class=\"tbldata\">$recipient</td></tr>";
-        echo "<tr><td class=\"tbltitle\" valign=\"top\">Datum</td><td class=\"tbldata\">".date("Y-m-d H:i:s",$message->timestamp)."</td></tr>";
-        echo "<tr><td class=\"tbltitle\" valign=\"top\">Betreff</td><td class=\"tbldata\">".text2html($message->subject)."</td></tr>";
-        echo "<tr><td class=\"tbltitle\" valign=\"top\">Text</td><td class=\"tbldata\">".text2html($message->text)."</td></tr>";
+        echo "<tr><td class=\"tbltitle\" valign=\"top\">Datum</td><td class=\"tbldata\">" . date("Y-m-d H:i:s", $message->timestamp) . "</td></tr>";
+        echo "<tr><td class=\"tbltitle\" valign=\"top\">Betreff</td><td class=\"tbldata\">" . text2html($message->subject) . "</td></tr>";
+        echo "<tr><td class=\"tbltitle\" valign=\"top\">Text</td><td class=\"tbldata\">" . text2html($message->text) . "</td></tr>";
         echo "<tr><td class=\"tbltitle\" valign=\"top\">Quelltext</td>
-        <td class=\"tbldata\"><textarea rows=\"20\" cols=\"80\" readonly=\"readonly\">".$message->text."</textarea></td></tr>";
+        <td class=\"tbldata\"><textarea rows=\"20\" cols=\"80\" readonly=\"readonly\">" . $message->text . "</textarea></td></tr>";
         echo "<tr><td class=\"tbltitle\" valign=\"top\">Gelesen?</td><td class=\"tbldata\">";
         echo $message->read ? "Ja" : "Nein";
         echo "</td></tr>";
         echo "<tr><td class=\"tbltitle\" valign=\"top\">Gelöscht?</td><td class=\"tbldata\">";
         $checked = $message->deleted ? 'checked' : '';
-        echo '<input type="checkbox" name="check" '.$checked.'>';
+        echo '<input type="checkbox" name="check" ' . $checked . '>';
         echo " <input type=\"submit\" name=\"msg_edit\" value=\"Speichern\" />";
         echo "</td></tr>";
         echo "<tr><td class=\"tbltitle\" valign=\"top\">Rundmail?</td><td class=\"tbldata\">";
@@ -635,17 +595,11 @@ function manageMessages(
         echo "</table><br/><input type=\"button\" onclick=\"document.location='?page=$page&amp;action=searchresults'\" value=\"Zur&uuml;ck zu den Suchergebnissen\" /> &nbsp;
         <input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" />";
         echo "</form>";
-    }
-
-    elseif ($request->query->get('sub') == "trash")
-    {
+    } elseif ($request->query->get('sub') == "trash") {
         $messageRepository->setRead($request->query->getInt('message_id'));
         $messageRepository->setDeleted($request->query->getInt('message_id'));
-        forward('?page='.$page.'&action=searchresults');
-    }
-
-    else
-    {
+        forward('?page=' . $page . '&action=searchresults');
+    } else {
         unset($_SESSION['admin.messages.search']);
 
         echo "Suchmaske:<br/><br/>";
@@ -683,7 +637,7 @@ function manageMessages(
         echo "<option value=\"\">(egal)</option>";
         $categories = $messageCategoryRepository->getNames();
         foreach ($categories as $categoryId => $categoryName) {
-            echo "<option value=\"".$categoryId."\">".$categoryName."</option>";
+            echo "<option value=\"" . $categoryId . "\">" . $categoryName . "</option>";
         }
         echo "</select></tr>";
         echo "<tr><th>Anzahl Datensätze</th><td class=\"tbldata\"><select name=\"message_limit\">";
@@ -695,9 +649,8 @@ function manageMessages(
         echo "</table>";
         echo "<br/><input type=\"submit\" class=\"button\" name=\"user_search\" value=\"Suche starten\" /></form>";
 
-        echo "<br/>Es sind ".nf($messageRepository->count())." Einträge in der Datenbank vorhanden.";
+        echo "<br/>Es sind " . nf($messageRepository->count()) . " Einträge in der Datenbank vorhanden.";
     }
-
 }
 
 function getMessageParamsFromRequest(Request $request): array

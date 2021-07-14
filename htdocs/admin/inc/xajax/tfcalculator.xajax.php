@@ -2,12 +2,13 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 
-$xajax->register(XAJAX_FUNCTION,"showNumberField");
-$xajax->register(XAJAX_FUNCTION,"createPlayers");
-$xajax->register(XAJAX_FUNCTION,"createValues");
-$xajax->register(XAJAX_FUNCTION,"splitDebris");
+$xajax->register(XAJAX_FUNCTION, "showNumberField");
+$xajax->register(XAJAX_FUNCTION, "createPlayers");
+$xajax->register(XAJAX_FUNCTION, "createValues");
+$xajax->register(XAJAX_FUNCTION, "splitDebris");
 
-function showNumberField() {
+function showNumberField()
+{
     $response = new xajaxResponse();
     ob_start();
     echo '<form id="createForm">
@@ -30,14 +31,15 @@ function showNumberField() {
                 <input type="button" id ="createPlayers" value="Felder erzeugen" style="display: none" onclick="xajax_createPlayers(document.getElementById(\'number_fields\').value)"/>
           <form>';
 
-    $response->assign("numbers","innerHTML",ob_get_contents());
+    $response->assign("numbers", "innerHTML", ob_get_contents());
     ob_end_clean();
 
     return $response;
 }
 
-function createPlayers($nr) {
-    if($nr>1) {
+function createPlayers($nr)
+{
+    if ($nr > 1) {
 
         // TODO
         global $app;
@@ -84,7 +86,6 @@ function createPlayers($nr) {
             for ($x = 1; $x <= $config->param1Int('num_of_cells'); $x++) {
 
                 echo "<option value=$x>$x</option>";
-
             }
 
             echo '</select> : <select name="search_cell_pos' . $fields . '">';
@@ -106,7 +107,7 @@ function createPlayers($nr) {
         echo '<p><input type="submit" name="calc_values" value ="Berechnen"></p>';
         echo '</form>';
 
-        $response->assign("players","innerHTML",ob_get_contents());
+        $response->assign("players", "innerHTML", ob_get_contents());
         ob_end_clean();
         return $response;
     }
@@ -129,40 +130,39 @@ function createValues($form, $nr)
                 <th>Anteil PVC</th>
             </tr>';
 
-    for ($fields=1; $fields <= $nr; $fields++) {
-        $entity = Entity::createFactoryByCoords($form['search_cell_s1'.$fields],$form['search_cell_s2'.$fields],$form['search_cell_c1'.$fields],$form['search_cell_c2'.$fields],$form['search_cell_pos'.$fields]);
-        if(!$entity) {
+    for ($fields = 1; $fields <= $nr; $fields++) {
+        $entity = Entity::createFactoryByCoords($form['search_cell_s1' . $fields], $form['search_cell_s2' . $fields], $form['search_cell_c1' . $fields], $form['search_cell_c2' . $fields], $form['search_cell_pos' . $fields]);
+        if (!$entity) {
             $error = true;
-        }
-        else {
+        } else {
             echo '
             <tr>
-                <td>'.$entity->owner()->nick.'</td>
-                <td>'.$entity.'</td>
-                <td><input type = "number" value ="'.(round($form['total_tit']*($form['percent'.$fields]/100))).'" name="tit'.$fields.'"/></td>
-                <td><input type = "number" value ="'.(round($form['total_sili']*($form['percent'.$fields]/100))).'" name ="sili'.$fields.'"/></td>
-                <td><input type = "number" value ="'.(round($form['total_pvc']*($form['percent'.$fields]/100))).'" name ="pvc'.$fields.'"/></td>
+                <td>' . $entity->owner()->nick . '</td>
+                <td>' . $entity . '</td>
+                <td><input type = "number" value ="' . (round($form['total_tit'] * ($form['percent' . $fields] / 100))) . '" name="tit' . $fields . '"/></td>
+                <td><input type = "number" value ="' . (round($form['total_sili'] * ($form['percent' . $fields] / 100))) . '" name ="sili' . $fields . '"/></td>
+                <td><input type = "number" value ="' . (round($form['total_pvc'] * ($form['percent' . $fields] / 100))) . '" name ="pvc' . $fields . '"/></td>
             </tr>';
         }
     }
     echo '</table><p><input type="submit" name="submit_values" value ="Aufteilen"></p></form>';
 
-    if($error) {
+    if ($error) {
         $out = 'Ungültige Koordinaten!';
-    }
-    else {
+    } else {
         $out = ob_get_contents();
     }
 
 
-    $response->assign("calc","innerHTML", $out);
+    $response->assign("calc", "innerHTML", $out);
     ob_end_clean();
     return $response;
 };
 
-function splitDebris($formValues,$formPlayers) {
+function splitDebris($formValues, $formPlayers)
+{
 
-    $players = (sizeof($formValues)-1)/3;
+    $players = (sizeof($formValues) - 1) / 3;
     $response = new xajaxResponse();
 
     for ($fields = 1; $fields <= $players; $fields++) {
@@ -203,9 +203,9 @@ function splitDebris($formValues,$formPlayers) {
                         " . time() . ",
                         " . $_SESSION['user_id'] . ",
                         " . $entity->userId . ",
-                        " . (-1*(intval($formPlayers['total_tit']) - intval($formValues['tit' . $fields]))) . ",
-                        " . (-1*(intval($formPlayers['total_sili']) - intval($formValues['sili' . $fields]))) . ",
-                        " . (-1*(intval($formPlayers['total_pvc']) - intval($formValues['pvc' . $fields]))) . "
+                        " . (-1 * (intval($formPlayers['total_tit']) - intval($formValues['tit' . $fields]))) . ",
+                        " . (-1 * (intval($formPlayers['total_sili']) - intval($formValues['sili' . $fields]))) . ",
+                        " . (-1 * (intval($formPlayers['total_pvc']) - intval($formValues['pvc' . $fields]))) . "
                     )";
             } else {
                 $sql = "
@@ -250,9 +250,8 @@ function splitDebris($formValues,$formPlayers) {
             dbquery($sql);
             dbquery($logs);
 
-            $response->assign("tfContent","innerHTML", "Trümmerfeld aufgeteilt!");
-        }
-        else {
+            $response->assign("tfContent", "innerHTML", "Trümmerfeld aufgeteilt!");
+        } else {
             $response->alert("Fehler, das Trümmerfeld konnte nicht aufgeteilt werden!");
             break;
         }

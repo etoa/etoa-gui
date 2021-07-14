@@ -7,7 +7,7 @@ $config = $app[ConfigurationService::class];
 
 $designs = get_designs();
 
-$customDesignDir = RELATIVE_ROOT.DESIGN_DIRECTORY.'/custom';
+$customDesignDir = RELATIVE_ROOT . DESIGN_DIRECTORY . '/custom';
 $successMessage = null;
 $errorMessage = null;
 // Design upload
@@ -105,7 +105,7 @@ else if (isset($_GET['download'])) {
         try {
             createZipFromDirectory($dir, $zipFile);
             header('Content-Type: application/zip');
-            header('Content-disposition: attachment; filename='.$design.'.zip');
+            header('Content-disposition: attachment; filename=' . $design . '.zip');
             header('Content-Length: ' . filesize($zipFile));
             readfile($zipFile);
             unlink($zipFile);
@@ -128,16 +128,18 @@ else if (isset($_GET['remove'])) {
 
 // Show all designs
 foreach ($designs as $k => $v) {
-    $res = dbQuerySave("
+    $res = dbQuerySave(
+        "
     SELECT
         COUNT(id) as cnt
     FROM
         user_properties
     WHERE
         css_style=?;",
-    array(
-        $k
-    ));
+        array(
+            $k
+        )
+    );
     $arr = mysql_fetch_row($res);
     $designs[$k]['users'] = $arr[0];
     $designs[$k]['default'] = ($k == $config->get('default_css_style'));
@@ -155,7 +157,7 @@ foreach ($designs as $k => $v) {
     }
 }
 
-$sampleInfoFile = RELATIVE_ROOT.DESIGN_DIRECTORY."/official/".$config->get('default_css_style').'/'.DESIGN_CONFIG_FILE_NAME;
+$sampleInfoFile = RELATIVE_ROOT . DESIGN_DIRECTORY . "/official/" . $config->get('default_css_style') . '/' . DESIGN_CONFIG_FILE_NAME;
 
 echo $twig->render('admin/misc/designs.html.twig', [
     'successMessage' => $successMessage,
