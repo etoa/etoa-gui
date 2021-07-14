@@ -5,81 +5,80 @@ use EtoA\Support\RuntimeDataStore;
 use EtoA\Technology\TechnologyRepository;
 
 /**
-    * Provides static functions for
-    * calculating and displaying
-    * player ranking
-    */
-    class Ranking {
+ * Provides static functions for
+ * calculating and displaying
+ * player ranking
+ */
+class Ranking
+{
 
-        /**
-        * Shows player tytles
-        */
-        private static function getTitles($admin=0,$extern=0) {
-            // TODO
-            global $app;
+    /**
+     * Shows player tytles
+     */
+    private static function getTitles($admin = 0, $extern = 0)
+    {
+        // TODO
+        global $app;
 
-            /** @var ConfigurationService */
-            $config = $app[ConfigurationService::class];
+        /** @var ConfigurationService */
+        $config = $app[ConfigurationService::class];
 
-            ob_start();
+        ob_start();
 
-            $img_dir = ($admin==1) ? "../images" : "images";
+        $img_dir = ($admin == 1) ? "../images" : "images";
 
-            $titles=array(
-                "total"=>"",
-                "fleet"=>"_ships",
-                "tech"=>"_tech",
-                "buildings"=>"_buildings",
-                "exp"=>"_exp");
+        $titles = array(
+            "total" => "",
+            "fleet" => "_ships",
+            "tech" => "_tech",
+            "buildings" => "_buildings",
+            "exp" => "_exp"
+        );
 
-            $titles2 = array('battle','trade','diplomacy');
+        $titles2 = array('battle', 'trade', 'diplomacy');
 
-            tableStart("Allgemeine Titel");
-            $cnt = 0;
-            foreach ($titles as $k=> $v)
-            {
-                $res = dbquery("
+        tableStart("Allgemeine Titel");
+        $cnt = 0;
+        foreach ($titles as $k => $v) {
+            $res = dbquery("
                 SELECT
                     nick,
-                    points".$v.",
+                    points" . $v . ",
                     id
                 FROM
                     user_stats
                 WHERE
-                    rank".$v.">0
-                    AND points".$v.">0
+                    rank" . $v . ">0
+                    AND points" . $v . ">0
                 ORDER BY
-                    rank".$v." ASC
+                    rank" . $v . " ASC
                 LIMIT 1;");
-                if (mysql_num_rows($res)>0)
-                {
-                    $arr=mysql_fetch_row($res);
-                    $profile = ($admin==1) ? "?page=user&amp;sub=edit&amp;user_id=".$arr[2]."" : "?page=userinfo&amp;id=".$arr[2];
-                    echo "<tr>
+            if (mysql_num_rows($res) > 0) {
+                $arr = mysql_fetch_row($res);
+                $profile = ($admin == 1) ? "?page=user&amp;sub=edit&amp;user_id=" . $arr[2] . "" : "?page=userinfo&amp;id=" . $arr[2];
+                echo "<tr>
                         <th class=\"tbltitle\" style=\"width:100px;height:100px;\">
-                            <img src='".$img_dir."/medals/medal_".$k.".png' alt=\"medal\" style=\"height:100px;\" />
+                            <img src='" . $img_dir . "/medals/medal_" . $k . ".png' alt=\"medal\" style=\"height:100px;\" />
                         </th>
                         <td class=\"tbldata\" style=\"font-size:16pt;vertical-align:middle;padding:2px 10px 2px 10px;width:400px;\">
-                            ".$config->get('userrank_'.$k)."
+                            " . $config->get('userrank_' . $k) . "
                         </td>
                         <td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">
-                            <span style=\"font-size:13pt;color:#ff0;\">".$arr[0]."</span><br/><br/>
-                            ".nf($arr[1])." Punkte<br/><br/>";
-                            if (!$extern)
-                            {
-                                echo "[<a href=\"".$profile."\">Profil</a>]";
-                            }
-                        echo "</td>
-                    </tr>";
+                            <span style=\"font-size:13pt;color:#ff0;\">" . $arr[0] . "</span><br/><br/>
+                            " . nf($arr[1]) . " Punkte<br/><br/>";
+                if (!$extern) {
+                    echo "[<a href=\"" . $profile . "\">Profil</a>]";
                 }
-                $cnt++;
+                echo "</td>
+                    </tr>";
             }
-            foreach ($titles2 as $v)
-            {
-                $res = dbquery("
+            $cnt++;
+        }
+        foreach ($titles2 as $v) {
+            $res = dbquery("
                 SELECT
                     user_nick,
-                    ".$v."_rating,
+                    " . $v . "_rating,
                     user_id
                 FROM
                     users
@@ -87,41 +86,38 @@ use EtoA\Technology\TechnologyRepository;
                     user_ratings
                 ON user_id=id
                 AND
-                    ".$v."_rating>0
+                    " . $v . "_rating>0
                 AND user_ghost=0
                 ORDER BY
-                    ".$v."_rating DESC
+                    " . $v . "_rating DESC
                 LIMIT 1;");
-                if (mysql_num_rows($res)>0)
-                {
-                    $arr=mysql_fetch_row($res);
-                    $profile = ($admin==1) ? "?page=user&amp;sub=edit&amp;user_id=".$arr[2]."" : "?page=userinfo&amp;id=".$arr[2];
-                    echo "<tr>
+            if (mysql_num_rows($res) > 0) {
+                $arr = mysql_fetch_row($res);
+                $profile = ($admin == 1) ? "?page=user&amp;sub=edit&amp;user_id=" . $arr[2] . "" : "?page=userinfo&amp;id=" . $arr[2];
+                echo "<tr>
                         <th class=\"tbltitle\" style=\"width:100px;height:100px;\">
-                            <img src='".$img_dir."/medals/medal_".$v.".png' style=\"height:100px;\" />
+                            <img src='" . $img_dir . "/medals/medal_" . $v . ".png' style=\"height:100px;\" />
                         </th>
                         <td class=\"tbldata\" style=\"font-size:16pt;vertical-align:middle;padding:2px 10px 2px 10px;width:400px;\">
-                            ".$config->get('userrank_'.$v)."
+                            " . $config->get('userrank_' . $v) . "
                         </td>
                         <td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">
-                            <span style=\"font-size:13pt;color:#ff0;\">".$arr[0]."</span><br/><br/>
-                            ".nf($arr[1])." Punkte<br/><br/>";
-                            if (!$extern)
-                            {
-                                echo "[<a href=\"".$profile."\">Profil</a>]";
-                            }
-                        echo "</td>
-                    </tr>";
+                            <span style=\"font-size:13pt;color:#ff0;\">" . $arr[0] . "</span><br/><br/>
+                            " . nf($arr[1]) . " Punkte<br/><br/>";
+                if (!$extern) {
+                    echo "[<a href=\"" . $profile . "\">Profil</a>]";
                 }
-                $cnt++;
+                echo "</td>
+                    </tr>";
             }
-            if ($cnt==0)
-            {
-                echo "<tr><td class=\"tbldata\">Keine Titel vorhanden (kein Spieler hat die minimale Punktzahl zum Erwerb eines Titels erreicht)!</td></tr>";
-            }
-            tableEnd();
-            tableStart("Rassenleader");
-            $rres = dbquery("
+            $cnt++;
+        }
+        if ($cnt == 0) {
+            echo "<tr><td class=\"tbldata\">Keine Titel vorhanden (kein Spieler hat die minimale Punktzahl zum Erwerb eines Titels erreicht)!</td></tr>";
+        }
+        tableEnd();
+        tableStart("Rassenleader");
+        $rres = dbquery("
             SELECT
                 race_id,
                 race_leadertitle,
@@ -131,9 +127,8 @@ use EtoA\Technology\TechnologyRepository;
             ORDER BY
                 race_name;
             ");
-            while ($rarr = mysql_fetch_assoc($rres))
-            {
-                $res = dbquery("
+        while ($rarr = mysql_fetch_assoc($rres)) {
+            $res = dbquery("
                 SELECT
                     user_nick,
                     user_points,
@@ -141,133 +136,128 @@ use EtoA\Technology\TechnologyRepository;
                 FROM
                     users
                 WHERE
-                    user_race_id=".$rarr['race_id']."
+                    user_race_id=" . $rarr['race_id'] . "
                     AND user_ghost=0
                 ORDER BY
                     user_points DESC
                 LIMIT 1;
                 ");
-                if (mysql_num_rows($res)>0)
-                {
-                    $arr = mysql_fetch_row($res);
-                    $cres = dbquery("SELECT COUNT(user_race_id) FROM users WHERE user_race_id=".$rarr['race_id']."");
-                    $carr = mysql_fetch_row($cres);
-                    $profile = ($admin==1) ? "?page=user&amp;sub=edit&amp;user_id=".$arr[2]."" : "?page=userinfo&amp;id=".$arr[2];
+            if (mysql_num_rows($res) > 0) {
+                $arr = mysql_fetch_row($res);
+                $cres = dbquery("SELECT COUNT(user_race_id) FROM users WHERE user_race_id=" . $rarr['race_id'] . "");
+                $carr = mysql_fetch_row($cres);
+                $profile = ($admin == 1) ? "?page=user&amp;sub=edit&amp;user_id=" . $arr[2] . "" : "?page=userinfo&amp;id=" . $arr[2];
 
-                    echo "<tr>
+                echo "<tr>
                         <th class=\"tbltitle\" style=\"width:70px;height:70px;\">
-                            <img src='".$img_dir."/medals/medal_race.png' style=\"height:70px;\" />
+                            <img src='" . $img_dir . "/medals/medal_race.png' style=\"height:70px;\" />
                         </th>
                         <td class=\"tbldata\" style=\"vertical-align:middle;padding:2px 10px 2px 10px;width:360px;\">
-                            <div style=\"font-size:16pt;\">".$rarr['race_leadertitle']."</div>
-                            ".$carr[0]." V&ouml;lker
+                            <div style=\"font-size:16pt;\">" . $rarr['race_leadertitle'] . "</div>
+                            " . $carr[0] . " V&ouml;lker
                         </td>
                         <td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">
-                            <span style=\"font-size:13pt;color:#ff0;\">".$arr[0]."</span><br/><br/>
-                            ".nf($arr[1])." Punkte &nbsp;&nbsp;&nbsp;";
-                            if (!$extern)
-                            {
-                                echo "[<a href=\"".$profile."\">Profil</a>]";
-                            }
-                        echo "</td>
-                    </tr>";
+                            <span style=\"font-size:13pt;color:#ff0;\">" . $arr[0] . "</span><br/><br/>
+                            " . nf($arr[1]) . " Punkte &nbsp;&nbsp;&nbsp;";
+                if (!$extern) {
+                    echo "[<a href=\"" . $profile . "\">Profil</a>]";
                 }
-            }
-            tableEnd();
-
-            $rtn = ob_get_contents();
-            ob_end_clean();
-            return $rtn;
-        }
-
-        /**
-        * Writes generated titles to cache files
-        */
-        static function calcTitles() {
-            $dir = CACHE_ROOT."/out";
-            if (!is_dir($dir)) {
-                mkdir($dir);
-            }
-
-            $file_u = $dir."/usertitles.gen";
-            $file_a = $dir."/usertitles_a.gen";
-            $file_ex = $dir."/usertitles_ex.gen";
-            $titles_u = Ranking::getTitles();
-            $titles_a = Ranking::getTitles(1);
-            $titles_ex = Ranking::getTitles(0,1);
-            if ($d = fopen ($file_u,"w+"))
-            {
-                fwrite($d,$titles_u);
-                fclose($d);
-            }
-            if ($d = fopen ($file_a,"w+"))
-            {
-                fwrite($d,$titles_a);
-                fclose($d);
-            }
-            if ($d = fopen ($file_ex,"w+"))
-            {
-                fwrite($d,$titles_ex);
-                fclose($d);
+                echo "</td>
+                    </tr>";
             }
         }
+        tableEnd();
 
-        /**
-        * Punkteberechnung
-        */
-        static function calc($manual=false) {
-            // TODO
-            global $app;
+        $rtn = ob_get_contents();
+        ob_end_clean();
+        return $rtn;
+    }
 
-            /** @var ConfigurationService */
-            $config = $app[ConfigurationService::class];
+    /**
+     * Writes generated titles to cache files
+     */
+    static function calcTitles()
+    {
+        $dir = CACHE_ROOT . "/out";
+        if (!is_dir($dir)) {
+            mkdir($dir);
+        }
 
-            $time = time();
-            $inactivetime = 86400 * USER_INACTIVE_SHOW;
-            $allpoints = 0;
-            $res_amount_per_point = $config->param1Int('points_update');
+        $file_u = $dir . "/usertitles.gen";
+        $file_a = $dir . "/usertitles_a.gen";
+        $file_ex = $dir . "/usertitles_ex.gen";
+        $titles_u = Ranking::getTitles();
+        $titles_a = Ranking::getTitles(1);
+        $titles_ex = Ranking::getTitles(0, 1);
+        if ($d = fopen($file_u, "w+")) {
+            fwrite($d, $titles_u);
+            fclose($d);
+        }
+        if ($d = fopen($file_a, "w+")) {
+            fwrite($d, $titles_a);
+            fclose($d);
+        }
+        if ($d = fopen($file_ex, "w+")) {
+            fwrite($d, $titles_ex);
+            fclose($d);
+        }
+    }
 
-            // Schiffe laden
-            $res = dbquery("
+    /**
+     * Punkteberechnung
+     */
+    static function calc($manual = false)
+    {
+        // TODO
+        global $app;
+
+        /** @var ConfigurationService */
+        $config = $app[ConfigurationService::class];
+
+        $time = time();
+        $inactivetime = 86400 * USER_INACTIVE_SHOW;
+        $allpoints = 0;
+        $res_amount_per_point = $config->param1Int('points_update');
+
+        // Schiffe laden
+        $res = dbquery("
                 SELECT
                     ship_id,
                     ship_points
                 FROM
                     ships;
             ");
-            $ship=array();
-            while ($arr = mysql_fetch_row($res))
-            {
-                $ship[$arr[0]]=$arr[1];
-            }
+        $ship = array();
+        while ($arr = mysql_fetch_row($res)) {
+            $ship[$arr[0]] = $arr[1];
+        }
 
-            // Verteidigung laden
-            $res = dbquery("
+        // Verteidigung laden
+        $res = dbquery("
                 SELECT
                     def_id,
                     def_points
                 FROM
                     defense
             ;");
-            $def=array();
-            while ($arr = mysql_fetch_row($res))
-            {
-                $def[$arr[0]]=$arr[1];
-            }
+        $def = array();
+        while ($arr = mysql_fetch_row($res)) {
+            $def[$arr[0]] = $arr[1];
+        }
 
-            // Gebäudepunkte berechnen falls nocht nicht vorhanden
-            $arr = mysql_fetch_row(dbquery("
+        // Gebäudepunkte berechnen falls nocht nicht vorhanden
+        $arr = mysql_fetch_row(dbquery("
                 SELECT
                     COUNT(bp_points)
                 FROM
                     building_points;
             "));
-            if ($arr[0] == 0) {
-                self::calcBuildingPoints();
-            }
+        if ($arr[0] == 0) {
+            self::calcBuildingPoints();
+        }
 
-            // Gebäude laden
-            $res = dbquery("
+        // Gebäude laden
+        $res = dbquery("
                 SELECT
                     bp_building_id,
                     bp_level,
@@ -275,28 +265,26 @@ use EtoA\Technology\TechnologyRepository;
                 FROM
                     building_points;
             ");
-            $building=array();
-            if (mysql_num_rows($res)>0)
-            {
-                while ($arr = mysql_fetch_row($res))
-                {
-                    $building[$arr[0]][$arr[1]]=$arr[2];
-                }
+        $building = array();
+        if (mysql_num_rows($res) > 0) {
+            while ($arr = mysql_fetch_row($res)) {
+                $building[$arr[0]][$arr[1]] = $arr[2];
             }
+        }
 
-            // Technologiepunkte berechnen falls nocht nicht vorhanden
-            $arr = mysql_fetch_row(dbquery("
+        // Technologiepunkte berechnen falls nocht nicht vorhanden
+        $arr = mysql_fetch_row(dbquery("
                 SELECT
                     COUNT(bp_points)
                 FROM
                     tech_points;
             "));
-            if ($arr[0] == 0) {
-                self::calcTechPoints();
-            }
+        if ($arr[0] == 0) {
+            self::calcTechPoints();
+        }
 
-            // Technologien laden
-            $res = dbquery("
+        // Technologien laden
+        $res = dbquery("
                 SELECT
                     bp_tech_id,
                     bp_level,
@@ -304,17 +292,15 @@ use EtoA\Technology\TechnologyRepository;
                 FROM
                     tech_points;
             ");
-            $tech=array();
-            if (mysql_num_rows($res)>0)
-            {
-                while ($arr = mysql_fetch_row($res))
-                {
-                    $tech[$arr[0]][$arr[1]]=$arr[2];
-                }
+        $tech = array();
+        if (mysql_num_rows($res) > 0) {
+            while ($arr = mysql_fetch_row($res)) {
+                $tech[$arr[0]][$arr[1]] = $arr[2];
             }
+        }
 
-            // Cells laden
-            $res = dbquery("
+        // Cells laden
+        $res = dbquery("
                 SELECT
                     id,
                     sx,
@@ -322,43 +308,40 @@ use EtoA\Technology\TechnologyRepository;
                 FROM
                     cells;
             ");
-            $cells=array();
-            while ($arr = mysql_fetch_row($res))
-            {
-                $cells[$arr[0]][0] = $arr[1];
-                $cells[$arr[0]][1] = $arr[2];
-            }
+        $cells = array();
+        while ($arr = mysql_fetch_row($res)) {
+            $cells[$arr[0]][0] = $arr[1];
+            $cells[$arr[0]][1] = $arr[2];
+        }
 
-            // Rassen laden
-            $rres = dbquery("
+        // Rassen laden
+        $rres = dbquery("
                 SELECT
                     race_id,
                     race_name
                 FROM
                     races
             ");
-            $race=array();
-            while($rarr=mysql_fetch_assoc($rres))
-            {
-                $race[$rarr['race_id']]=$rarr['race_name'];
-            }
+        $race = array();
+        while ($rarr = mysql_fetch_assoc($rres)) {
+            $race[$rarr['race_id']] = $rarr['race_name'];
+        }
 
-            // Allianzen laden
-            $rres = dbquery("
+        // Allianzen laden
+        $rres = dbquery("
                 SELECT
                     alliance_id,
                     alliance_tag
                 FROM
                     alliances
             ");
-            $alliance=array();
-            while($rarr=mysql_fetch_assoc($rres))
-            {
-                $alliance[$rarr['alliance_id']]=$rarr['alliance_tag'];
-            }
+        $alliance = array();
+        while ($rarr = mysql_fetch_assoc($rres)) {
+            $alliance[$rarr['alliance_id']] = $rarr['alliance_tag'];
+        }
 
-            // Load 'old' ranks
-            $res = dbquery("
+        // Load 'old' ranks
+        $res = dbquery("
                 SELECT
                     id,
                     rank,
@@ -369,24 +352,22 @@ use EtoA\Technology\TechnologyRepository;
                 FROM
                     user_stats;
             ");
-            $oldranks = array();
-            if (mysql_num_rows($res)>0)
-            {
-                while ($arr=mysql_fetch_row($res))
-                {
-                    $oldranks[$arr[0]][0]=$arr[1];
-                    $oldranks[$arr[0]][1]=$arr[2];
-                    $oldranks[$arr[0]][2]=$arr[3];
-                    $oldranks[$arr[0]][3]=$arr[4];
-                    $oldranks[$arr[0]][4]=$arr[5];
-                }
+        $oldranks = array();
+        if (mysql_num_rows($res) > 0) {
+            while ($arr = mysql_fetch_row($res)) {
+                $oldranks[$arr[0]][0] = $arr[1];
+                $oldranks[$arr[0]][1] = $arr[2];
+                $oldranks[$arr[0]][2] = $arr[3];
+                $oldranks[$arr[0]][3] = $arr[4];
+                $oldranks[$arr[0]][4] = $arr[5];
             }
+        }
 
-            // Statistiktabelle leeren
-            dbquery("TRUNCATE TABLE user_stats;");
+        // Statistiktabelle leeren
+        dbquery("TRUNCATE TABLE user_stats;");
 
-            // User-ID's laden
-            $ures =	dbquery("
+        // User-ID's laden
+        $ures =    dbquery("
                 SELECT
                     user_id,
                     user_nick,
@@ -399,39 +380,38 @@ use EtoA\Technology\TechnologyRepository;
                 FROM
                     users
                 WHERE
-                    user_ghost=0".
-                    // same check as below to set `user_stats`.`hmod` field
-                    ($config->getBoolean('show_hmod_users_stats') ? '' : ' AND (user_hmode_from = 0)').
+                    user_ghost=0" .
+            // same check as below to set `user_stats`.`hmod` field
+            ($config->getBoolean('show_hmod_users_stats') ? '' : ' AND (user_hmode_from = 0)') .
             ';');
 
-            $user_stats_query = "";
-            $user_points_query = "";
-            $user_rank_highest=array();
-            $max_points_building = 0;
-            $points_building_arr = array();
-            $max_points = 0;
-            $points_arr = array();
+        $user_stats_query = "";
+        $user_points_query = "";
+        $user_rank_highest = array();
+        $max_points_building = 0;
+        $points_building_arr = array();
+        $max_points = 0;
+        $points_arr = array();
 
-            while ($uarr=mysql_fetch_assoc($ures))
-            {
-                $user_id = $uarr['user_id'];
+        while ($uarr = mysql_fetch_assoc($ures)) {
+            $user_id = $uarr['user_id'];
 
-                // first 24hours no highest rank calculation
-                if (time()>(3600*24+$config->param1Int("enable_login"))) {
-                    $user_rank_highest[$user_id] = $uarr['user_rank_highest']>0 ? $uarr['user_rank_highest'] : 9999;
-                } else {
-                    $user_rank_highest[$user_id] = 0;
-                }
+            // first 24hours no highest rank calculation
+            if (time() > (3600 * 24 + $config->param1Int("enable_login"))) {
+                $user_rank_highest[$user_id] = $uarr['user_rank_highest'] > 0 ? $uarr['user_rank_highest'] : 9999;
+            } else {
+                $user_rank_highest[$user_id] = 0;
+            }
 
-                $points = 0.0;
-                $points_ships = 0.0;
-                $points_tech = 0;
-                $points_building = 0;
-                $sx = 0;
-                $sy = 0;
+            $points = 0.0;
+            $points_ships = 0.0;
+            $points_tech = 0;
+            $points_building = 0;
+            $sx = 0;
+            $sy = 0;
 
-                // Zelle des Hauptplaneten
-                $res = dbquery("
+            // Zelle des Hauptplaneten
+            $res = dbquery("
                     SELECT
                         cell_id
                     FROM
@@ -441,17 +421,16 @@ use EtoA\Technology\TechnologyRepository;
                     ON
                         planets.id=entities.id
                         AND planets.planet_user_main=1
-                        AND planets.planet_user_id='".$user_id."';
+                        AND planets.planet_user_id='" . $user_id . "';
                 ");
-                if (mysql_num_rows($res))
-                {
-                    $arr = mysql_fetch_row($res);
-                    $sx = $cells[$arr[0]][0];
-                    $sy = $cells[$arr[0]][1];
-                }
+            if (mysql_num_rows($res)) {
+                $arr = mysql_fetch_row($res);
+                $sx = $cells[$arr[0]][0];
+                $sy = $cells[$arr[0]][1];
+            }
 
-                // Punkte für Schiffe (aus Planeten)
-                $res = dbquery("
+            // Punkte für Schiffe (aus Planeten)
+            $res = dbquery("
                     SELECT
                         shiplist_ship_id,
                         shiplist_count,
@@ -459,18 +438,17 @@ use EtoA\Technology\TechnologyRepository;
                     FROM
                         shiplist
                     WHERE
-                        shiplist_user_id='".$user_id."';
+                        shiplist_user_id='" . $user_id . "';
                 ");
-                while ($arr = mysql_fetch_assoc($res))
-                {
-                    $p = ($arr['shiplist_bunkered']+$arr['shiplist_count'])*$ship[$arr['shiplist_ship_id']];
-                    $points+=$p;
-                    $points_ships+=$p;
-                }
+            while ($arr = mysql_fetch_assoc($res)) {
+                $p = ($arr['shiplist_bunkered'] + $arr['shiplist_count']) * $ship[$arr['shiplist_ship_id']];
+                $points += $p;
+                $points_ships += $p;
+            }
 
-                //
-                // Punkte für Schiffe (in Flotten)
-                $res = dbquery("
+            //
+            // Punkte für Schiffe (in Flotten)
+            $res = dbquery("
                     SELECT
                         fs.fs_ship_id,
                         fs.fs_ship_cnt
@@ -480,79 +458,74 @@ use EtoA\Technology\TechnologyRepository;
                         fleet_ships AS fs
                         ON f.id = fs.fs_fleet_id
                         AND fs.fs_ship_faked='0'
-                        AND f.user_id='".$user_id."'
+                        AND f.user_id='" . $user_id . "'
                 ;");
-                while ($arr = mysql_fetch_assoc($res))
-                {
-                    $p = $arr['fs_ship_cnt']*$ship[$arr['fs_ship_id']];
-                    $points+=$p;
-                    $points_ships+=$p;
-                }
+            while ($arr = mysql_fetch_assoc($res)) {
+                $p = $arr['fs_ship_cnt'] * $ship[$arr['fs_ship_id']];
+                $points += $p;
+                $points_ships += $p;
+            }
 
-                // Punkte für Verteidigung
-                $res = dbquery("
+            // Punkte für Verteidigung
+            $res = dbquery("
                     SELECT
                         deflist_count,
                         deflist_def_id
                     FROM
                         deflist
                     WHERE
-                        deflist_user_id='".$user_id."';
+                        deflist_user_id='" . $user_id . "';
                 ");
-                while ($arr = mysql_fetch_assoc($res))
-                {
-                    $p = round($arr['deflist_count']*$def[$arr['deflist_def_id']]);
-                    $points+=$p;
-                    $points_building+=$p;
-                }
+            while ($arr = mysql_fetch_assoc($res)) {
+                $p = round($arr['deflist_count'] * $def[$arr['deflist_def_id']]);
+                $points += $p;
+                $points_building += $p;
+            }
 
-                // Punkte für Gebäude
-                $res = dbquery("
+            // Punkte für Gebäude
+            $res = dbquery("
                     SELECT
                         buildlist_current_level,
                         buildlist_building_id
                     FROM
                         buildlist
                     WHERE
-                        buildlist_user_id='".$user_id."';
+                        buildlist_user_id='" . $user_id . "';
                 ");
-                if (mysql_num_rows($res)>0)
-                {
-                    while ($arr = mysql_fetch_assoc($res))
-                    {
-                        if ($arr['buildlist_current_level'] > 0)
-                        {
-                            $p = round($building[$arr['buildlist_building_id']][$arr['buildlist_current_level']]);
-                            $points+=$p;
-                            $points_building+=$p;
-                        }
+            if (mysql_num_rows($res) > 0) {
+                while ($arr = mysql_fetch_assoc($res)) {
+                    if ($arr['buildlist_current_level'] > 0) {
+                        $p = round($building[$arr['buildlist_building_id']][$arr['buildlist_current_level']]);
+                        $points += $p;
+                        $points_building += $p;
                     }
                 }
+            }
 
-                // Punkte für Forschung
-                /** @var TechnologyRepository $technologyRepository */
-                $technologyRepository = $app[TechnologyRepository::class];
-                $techList = $technologyRepository->getTechnologyLevels($user_id);
-                foreach ($techList as $technologyId => $level) {
-                    $p = round($tech[$technologyId][$level]);
-                    $points+=$p;
-                    $points_tech+=$p;
-                }
+            // Punkte für Forschung
+            /** @var TechnologyRepository $technologyRepository */
+            $technologyRepository = $app[TechnologyRepository::class];
+            $techList = $technologyRepository->getTechnologyLevels($user_id);
+            foreach ($techList as $technologyId => $level) {
+                $p = round($tech[$technologyId][$level]);
+                $points += $p;
+                $points_tech += $p;
+            }
 
-                // Punkte für XP
-                $res = dbquery("
+            // Punkte für XP
+            $res = dbquery("
                     SELECT
                         SUM(shiplist_special_ship_exp)
                     FROM
                         shiplist
                     WHERE
-                        shiplist_user_id='".$user_id."'
+                        shiplist_user_id='" . $user_id . "'
                         AND shiplist_count=1;
                 ");
-                $arr = mysql_fetch_row($res);
-                $points_exp = max(0,$arr[0]);
+            $arr = mysql_fetch_row($res);
+            $points_exp = max(0, $arr[0]);
 
-                $res = dbquery("
+            $res = dbquery("
                     SELECT
                         SUM(fs_special_ship_exp)
                     FROM
@@ -562,51 +535,50 @@ use EtoA\Technology\TechnologyRepository;
                     ON
                         fleet.id=fleet_ships.fs_fleet_id
                     AND
-                        fleet.user_id='".$user_id."'
+                        fleet.user_id='" . $user_id . "'
                     AND
                         fleet_ships.fs_ship_cnt='1'
                 ");
-                $arr = mysql_fetch_row($res);
-                $points_exp += max(0,$arr[0]);
+            $arr = mysql_fetch_row($res);
+            $points_exp += max(0, $arr[0]);
 
-                // Save part of insert query
-                $user_stats_query .= ",(
-                        ".$user_id.",
-                        ".$points.",
-                        ".$points_ships.",
-                        ".$points_tech.",
-                        ".$points_building.",
-                        ".$points_exp.",
-                        '".$uarr['user_nick']."',
-                        '".($uarr['user_alliance_id']>0 ? $alliance[$uarr['user_alliance_id']] : '')."',
-                        '".$uarr['user_alliance_id']."',
-                        '".($uarr['user_race_id']>0 ? $race[$uarr['user_race_id']] : '')."',
-                        '".$sx."',
-                        '".$sy."',
-                        '".($uarr['user_blocked_to'] > $time ? 1 : 0)."',
-                        '".($uarr['user_logouttime'] < $time-$inactivetime ? 1 : 0)."',
-                        '".($uarr['user_hmode_from'] > 0 ? 1 : 0)."'
+            // Save part of insert query
+            $user_stats_query .= ",(
+                        " . $user_id . ",
+                        " . $points . ",
+                        " . $points_ships . ",
+                        " . $points_tech . ",
+                        " . $points_building . ",
+                        " . $points_exp . ",
+                        '" . $uarr['user_nick'] . "',
+                        '" . ($uarr['user_alliance_id'] > 0 ? $alliance[$uarr['user_alliance_id']] : '') . "',
+                        '" . $uarr['user_alliance_id'] . "',
+                        '" . ($uarr['user_race_id'] > 0 ? $race[$uarr['user_race_id']] : '') . "',
+                        '" . $sx . "',
+                        '" . $sy . "',
+                        '" . ($uarr['user_blocked_to'] > $time ? 1 : 0) . "',
+                        '" . ($uarr['user_logouttime'] < $time - $inactivetime ? 1 : 0) . "',
+                        '" . ($uarr['user_hmode_from'] > 0 ? 1 : 0) . "'
                     )";
-                $user_points_query.=",(
-                        '".$user_id."',
-                        '".time()."',
-                        '".$points."',
-                        '".$points_ships."',
-                        '".$points_tech."',
-                        '".$points_building."'
+            $user_points_query .= ",(
+                        '" . $user_id . "',
+                        '" . time() . "',
+                        '" . $points . "',
+                        '" . $points_ships . "',
+                        '" . $points_tech . "',
+                        '" . $points_building . "'
                     )";
 
-                $allpoints+=$points;
+            $allpoints += $points;
 
-                $max_points_building = max($max_points_building, $points_building);
-                $points_building_arr[$user_id] = $points_building;
-            }
-            unset($user_id);
+            $max_points_building = max($max_points_building, $points_building);
+            $points_building_arr[$user_id] = $points_building;
+        }
+        unset($user_id);
 
-            // Save points in memory cached table
-            if ($user_stats_query!="")
-            {
-                dbquery("
+        // Save points in memory cached table
+        if ($user_stats_query != "") {
+            dbquery("
                     INSERT INTO
                         user_stats
                     (
@@ -627,17 +599,16 @@ use EtoA\Technology\TechnologyRepository;
                         hmod
                     )
                     VALUES
-                        ".substr($user_stats_query,1)."
+                        " . substr($user_stats_query, 1) . "
                     ;
                 ");
-            }
+        }
 
 
 
-            // Save points to user points table
-            if ($user_points_query!="")
-            {
-                dbquery("
+        // Save points to user points table
+        if ($user_points_query != "") {
+            dbquery("
                     INSERT INTO
                     user_points
                     (
@@ -649,26 +620,26 @@ use EtoA\Technology\TechnologyRepository;
                         point_building_points
                     )
                     VALUES
-                        ".substr($user_points_query,1)."
+                        " . substr($user_points_query, 1) . "
                 ");
-            }
+        }
 
-            // Array Löschen (Speicher freigeben)
-            unset($ship);
-            unset($def);
-            unset($building);
-            unset($tech);
-            unset($p);
-            unset($points);
-            unset($points_ships);
-            unset($points_tech);
-            unset($points_building);
-            unset($user_stats_query);
-            unset($user_points_query);
+        // Array Löschen (Speicher freigeben)
+        unset($ship);
+        unset($def);
+        unset($building);
+        unset($tech);
+        unset($p);
+        unset($points);
+        unset($points_ships);
+        unset($points_tech);
+        unset($points_building);
+        unset($user_stats_query);
+        unset($user_points_query);
 
-            // Ranking (Total Points)
+        // Ranking (Total Points)
 
-            $res = dbquery("
+        $res = dbquery("
             SELECT
                 id,
                 points
@@ -677,73 +648,70 @@ use EtoA\Technology\TechnologyRepository;
             ORDER BY
                 points DESC;
             ");
-            $cnt=1;
-            if (mysql_num_rows($res)>0)
-            {
-                while($arr=mysql_fetch_row($res))
-                {
-                    $rs = 0;
-                    if (isset($oldranks[$arr[0]]))
-                    {
-                        if ($cnt < $oldranks[$arr[0]][0])
-                            $rs = 1;
-                        elseif ($cnt > $oldranks[$arr[0]][0])
-                            $rs = 2;
-                    }
-                    dbquery("
+        $cnt = 1;
+        if (mysql_num_rows($res) > 0) {
+            while ($arr = mysql_fetch_row($res)) {
+                $rs = 0;
+                if (isset($oldranks[$arr[0]])) {
+                    if ($cnt < $oldranks[$arr[0]][0])
+                        $rs = 1;
+                    elseif ($cnt > $oldranks[$arr[0]][0])
+                        $rs = 2;
+                }
+                dbquery("
                     UPDATE
                         user_stats
                     SET
-                        rank=".$cnt.",
-                        rankshift=".$rs."
+                        rank=" . $cnt . ",
+                        rankshift=" . $rs . "
                     WHERE
-                        id=".$arr[0].";");
-                    dbquery("
+                        id=" . $arr[0] . ";");
+                dbquery("
                     UPDATE
                         users
                     SET
-                        user_rank=".$cnt.",
-                        user_points=".$arr[1].",
-                        user_rank_highest=".min($cnt,$user_rank_highest[$arr[0]])."
+                        user_rank=" . $cnt . ",
+                        user_points=" . $arr[1] . ",
+                        user_rank_highest=" . min($cnt, $user_rank_highest[$arr[0]]) . "
                     WHERE
-                        user_id=".$arr[0]."
+                        user_id=" . $arr[0] . "
                     ");
 
-                    $max_points = max($max_points, $arr[1]);
-                    $points_arr[$arr[0]] = $arr[1];
+                $max_points = max($max_points, $arr[1]);
+                $points_arr[$arr[0]] = $arr[1];
 
-                    $cnt++;
-                }
+                $cnt++;
             }
+        }
 
-            // Update boost bonus
-            if ($config->getBoolean('boost_system_enable') && $max_points_building > 0) {
-                $max_prod = $config->getFloat('boost_system_max_res_prod_bonus');
-                $max_build = $config->getFloat('boost_system_max_building_speed_bonus');
-                foreach ($points_arr as $uid => $up) {
-                    dbquery("
+        // Update boost bonus
+        if ($config->getBoolean('boost_system_enable') && $max_points_building > 0) {
+            $max_prod = $config->getFloat('boost_system_max_res_prod_bonus');
+            $max_build = $config->getFloat('boost_system_max_building_speed_bonus');
+            foreach ($points_arr as $uid => $up) {
+                dbquery("
                         UPDATE
                             users
                         SET
-                            boost_bonus_production=".($max_prod * ($max_points - $up) / $max_points).",
-                            boost_bonus_building=".($max_build * ($max_points - $up) / $max_points)."
+                            boost_bonus_production=" . ($max_prod * ($max_points - $up) / $max_points) . ",
+                            boost_bonus_building=" . ($max_build * ($max_points - $up) / $max_points) . "
                         WHERE
-                            user_id=".$uid.";");
-                }
-            } else {
-                dbquery("
+                            user_id=" . $uid . ";");
+            }
+        } else {
+            dbquery("
                     UPDATE
                         users
                     SET
                         boost_bonus_production=0,
                         boost_bonus_building=0;");
-            }
+        }
 
 
-            unset($user_rank_highest);
+        unset($user_rank_highest);
 
-            // Ranking (Ships)
-            $res = dbquery("
+        // Ranking (Ships)
+        $res = dbquery("
             SELECT
                 id
             FROM
@@ -751,33 +719,30 @@ use EtoA\Technology\TechnologyRepository;
             ORDER BY
                 points_ships DESC;
             ");
-            $cnt=1;
-            if (mysql_num_rows($res)>0)
-            {
-                while($arr=mysql_fetch_row($res))
-                {
-                    $rs = 0;
-                    if (isset($oldranks[$arr[0]]))
-                    {
-                        if ($cnt < $oldranks[$arr[0]][1])
-                            $rs = 1;
-                        elseif ($cnt > $oldranks[$arr[0]][1])
-                            $rs = 2;
-                    }
-                    dbquery("
+        $cnt = 1;
+        if (mysql_num_rows($res) > 0) {
+            while ($arr = mysql_fetch_row($res)) {
+                $rs = 0;
+                if (isset($oldranks[$arr[0]])) {
+                    if ($cnt < $oldranks[$arr[0]][1])
+                        $rs = 1;
+                    elseif ($cnt > $oldranks[$arr[0]][1])
+                        $rs = 2;
+                }
+                dbquery("
                     UPDATE
                         user_stats
                     SET
-                        rank_ships=".$cnt.",
-                        rankshift_ships=".$rs."
+                        rank_ships=" . $cnt . ",
+                        rankshift_ships=" . $rs . "
                     WHERE
-                        id=".$arr[0].";");
-                    $cnt++;
-                }
+                        id=" . $arr[0] . ";");
+                $cnt++;
             }
+        }
 
-            // Ranking (Tech)
-            $res = dbquery("
+        // Ranking (Tech)
+        $res = dbquery("
             SELECT
                 id
             FROM
@@ -785,33 +750,30 @@ use EtoA\Technology\TechnologyRepository;
             ORDER BY
                 points_tech DESC;
             ");
-            $cnt=1;
-            if (mysql_num_rows($res)>0)
-            {
-                while($arr=mysql_fetch_row($res))
-                {
-                    $rs = 0;
-                    if (isset($oldranks[$arr[0]]))
-                    {
-                        if ($cnt < $oldranks[$arr[0]][2])
-                            $rs = 1;
-                        elseif ($cnt > $oldranks[$arr[0]][2])
-                            $rs = 2;
-                    }
-                    dbquery("
+        $cnt = 1;
+        if (mysql_num_rows($res) > 0) {
+            while ($arr = mysql_fetch_row($res)) {
+                $rs = 0;
+                if (isset($oldranks[$arr[0]])) {
+                    if ($cnt < $oldranks[$arr[0]][2])
+                        $rs = 1;
+                    elseif ($cnt > $oldranks[$arr[0]][2])
+                        $rs = 2;
+                }
+                dbquery("
                     UPDATE
                         user_stats
                     SET
-                        rank_tech=".$cnt.",
-                        rankshift_tech=".$rs."
+                        rank_tech=" . $cnt . ",
+                        rankshift_tech=" . $rs . "
                     WHERE
-                        id=".$arr[0].";");
-                    $cnt++;
-                }
+                        id=" . $arr[0] . ";");
+                $cnt++;
             }
+        }
 
-            // Ranking (Buildings)
-            $res = dbquery("
+        // Ranking (Buildings)
+        $res = dbquery("
             SELECT
                 id
             FROM
@@ -819,33 +781,30 @@ use EtoA\Technology\TechnologyRepository;
             ORDER BY
                 points_buildings DESC;
             ");
-            $cnt=1;
-            if (mysql_num_rows($res)>0)
-            {
-                while($arr=mysql_fetch_row($res))
-                {
-                    $rs = 0;
-                    if (isset($oldranks[$arr[0]]))
-                    {
-                        if ($cnt < $oldranks[$arr[0]][3])
-                            $rs = 1;
-                        elseif ($cnt > $oldranks[$arr[0]][3])
-                            $rs = 2;
-                    }
-                    dbquery("
+        $cnt = 1;
+        if (mysql_num_rows($res) > 0) {
+            while ($arr = mysql_fetch_row($res)) {
+                $rs = 0;
+                if (isset($oldranks[$arr[0]])) {
+                    if ($cnt < $oldranks[$arr[0]][3])
+                        $rs = 1;
+                    elseif ($cnt > $oldranks[$arr[0]][3])
+                        $rs = 2;
+                }
+                dbquery("
                     UPDATE
                         user_stats
                     SET
-                        rank_buildings=".$cnt.",
-                        rankshift_buildings=".$rs."
+                        rank_buildings=" . $cnt . ",
+                        rankshift_buildings=" . $rs . "
                     WHERE
-                        id=".$arr[0].";");
-                    $cnt++;
-                }
+                        id=" . $arr[0] . ";");
+                $cnt++;
             }
+        }
 
-            // Ranking (Exp)
-            $res = dbquery("
+        // Ranking (Exp)
+        $res = dbquery("
             SELECT
                 id
             FROM
@@ -853,37 +812,34 @@ use EtoA\Technology\TechnologyRepository;
             ORDER BY
                 points_exp DESC;
             ");
-            $cnt=1;
-            if (mysql_num_rows($res)>0)
-            {
-                while($arr=mysql_fetch_row($res))
-                {
-                    $rs = 0;
-                    if (isset($oldranks[$arr[0]]))
-                    {
-                        if ($cnt < $oldranks[$arr[0]][4])
-                            $rs = 1;
-                        elseif ($cnt > $oldranks[$arr[0]][4])
-                            $rs = 2;
-                    }
-                    dbquery("
+        $cnt = 1;
+        if (mysql_num_rows($res) > 0) {
+            while ($arr = mysql_fetch_row($res)) {
+                $rs = 0;
+                if (isset($oldranks[$arr[0]])) {
+                    if ($cnt < $oldranks[$arr[0]][4])
+                        $rs = 1;
+                    elseif ($cnt > $oldranks[$arr[0]][4])
+                        $rs = 2;
+                }
+                dbquery("
                     UPDATE
                         user_stats
                     SET
-                        rank_exp=".$cnt.",
-                        rankshift_exp=".$rs."
+                        rank_exp=" . $cnt . ",
+                        rankshift_exp=" . $rs . "
                     WHERE
-                        id=".$arr[0].";");
-                    $cnt++;
-                }
+                        id=" . $arr[0] . ";");
+                $cnt++;
             }
-            unset($oldranks);
+        }
+        unset($oldranks);
 
-            // Allianz Statistik generieren
-            dbquery("TRUNCATE TABLE alliance_stats;");
+        // Allianz Statistik generieren
+        dbquery("TRUNCATE TABLE alliance_stats;");
 
-            // Technologien laden
-            $res = dbquery("
+        // Technologien laden
+        $res = dbquery("
                 SELECT
                     alliance_tech_id,
                     alliance_tech_costs_factor,
@@ -892,21 +848,20 @@ use EtoA\Technology\TechnologyRepository;
                 FROM
                     alliance_technologies;
             ");
-            $techs=array();
-            $level=1;
-            while ($arr = mysql_fetch_row($res)) {
-                $level=1;
-                $points=0;
-                while ($level<=$arr[2])
-                {
-                    $points += $arr[3]*pow($arr[1],$level-1)/$config->param1Int('points_update');
-                    $techs[$arr[0]][$level] = $points;
-                    $level++;
-                }
+        $techs = array();
+        $level = 1;
+        while ($arr = mysql_fetch_row($res)) {
+            $level = 1;
+            $points = 0;
+            while ($level <= $arr[2]) {
+                $points += $arr[3] * pow($arr[1], $level - 1) / $config->param1Int('points_update');
+                $techs[$arr[0]][$level] = $points;
+                $level++;
             }
+        }
 
-            // Gebäude laden
-            $res = dbquery("
+        // Gebäude laden
+        $res = dbquery("
                 SELECT
                     alliance_building_id,
                     alliance_building_costs_factor,
@@ -915,19 +870,18 @@ use EtoA\Technology\TechnologyRepository;
                 FROM
                     alliance_buildings;
             ");
-            $buildings=array();
-            while ($arr = mysql_fetch_row($res)) {
-                $level=1;
-                $points=0;
-                while ($level<=$arr[2])
-                {
-                    $points += $arr[3]*pow($arr[1],$level-1)/$config->param1Int('points_update');
-                    $buildings[$arr[0]][$level] = $points;
-                    $level++;
-                }
+        $buildings = array();
+        while ($arr = mysql_fetch_row($res)) {
+            $level = 1;
+            $points = 0;
+            while ($level <= $arr[2]) {
+                $points += $arr[3] * pow($arr[1], $level - 1) / $config->param1Int('points_update');
+                $buildings[$arr[0]][$level] = $points;
+                $level++;
             }
+        }
 
-            $res=dbquery("SELECT
+        $res = dbquery("SELECT
                 a.alliance_tag,
                 a.alliance_name,
                 a.alliance_id,
@@ -946,66 +900,59 @@ use EtoA\Technology\TechnologyRepository;
             ORDER BY
                 SUM(u.points) DESC
             ;");
-            if (mysql_num_rows($res)>0)
-            {
-                while ($arr=mysql_fetch_assoc($res))
-                {
-                    $apoints=0;
-                    $upoints=0;
-                    $bpoints=0;
-                    $tpoints=0;
-                    if ($arr['upoints']>0 && $config->param2Int('points_update')>0)
-                    {
-                        $upoints = floor($arr['upoints'] / $config->param2Int('points_update'));
-                    }
+        if (mysql_num_rows($res) > 0) {
+            while ($arr = mysql_fetch_assoc($res)) {
+                $apoints = 0;
+                $upoints = 0;
+                $bpoints = 0;
+                $tpoints = 0;
+                if ($arr['upoints'] > 0 && $config->param2Int('points_update') > 0) {
+                    $upoints = floor($arr['upoints'] / $config->param2Int('points_update'));
+                }
 
-                    $bres=dbquery("SELECT
+                $bres = dbquery("SELECT
                                      alliance_buildlist_building_id,
                                     alliance_buildlist_current_level
                                 FROM
                                     alliance_buildlist
                                 WHERE
-                                    alliance_buildlist_alliance_id='".$arr['alliance_id']."'
+                                    alliance_buildlist_alliance_id='" . $arr['alliance_id'] . "'
                                     AND alliance_buildlist_current_level>0;");
-                    if (mysql_num_rows($bres)>0)
-                    {
-                        while ($barr=mysql_fetch_row($bres))
-                        {
-                            $bpoints += $buildings[$barr[0]][$barr[1]];
-                        }
+                if (mysql_num_rows($bres) > 0) {
+                    while ($barr = mysql_fetch_row($bres)) {
+                        $bpoints += $buildings[$barr[0]][$barr[1]];
                     }
+                }
 
-                    $tres=dbquery("SELECT
+                $tres = dbquery("SELECT
                                      alliance_techlist_tech_id,
                                     alliance_techlist_current_level
                                 FROM
                                     alliance_techlist
                                 WHERE
-                                    alliance_techlist_alliance_id='".$arr['alliance_id']."'
+                                    alliance_techlist_alliance_id='" . $arr['alliance_id'] . "'
                                     AND alliance_techlist_current_level>0;");
-                    if (mysql_num_rows($tres)>0)
-                    {
-                        while ($tarr=mysql_fetch_row($tres))
-                        {
-                            $tpoints += $techs[$tarr[0]][$tarr[1]];
-                        }
+                if (mysql_num_rows($tres) > 0) {
+                    while ($tarr = mysql_fetch_row($tres)) {
+                        $tpoints += $techs[$tarr[0]][$tarr[1]];
                     }
+                }
 
-                    $sres=dbquery("SELECT
+                $sres = dbquery("SELECT
                                       SUM(`user_alliace_shippoints_used`)
                                 FROM
                                     users
                                 WHERE
-                                    user_alliance_id='".$arr['alliance_id']."'
+                                    user_alliance_id='" . $arr['alliance_id'] . "'
                                 GROUP BY
                                     user_alliance_id
                                 LIMIT 1;");
-                    $sarr=mysql_fetch_row($sres);
+                $sarr = mysql_fetch_row($sres);
 
-                    $apoints = $tpoints + $bpoints + $sarr[0];
-                    $points = $apoints + $upoints;
+                $apoints = $tpoints + $bpoints + $sarr[0];
+                $points = $apoints + $upoints;
 
-                    dbQuerySave("
+                dbQuerySave("
                     INSERT INTO
                         alliance_stats
                     (
@@ -1037,21 +984,21 @@ use EtoA\Technology\TechnologyRepository;
                         ?,
                         ?
                     );", [
-                        $arr['alliance_id'],
-                        $arr['alliance_tag'],
-                        $arr['alliance_name'],
-                        $points,
-                        $upoints,
-                        $apoints,
-                        $sarr[0],
-                        $tpoints,
-                        $bpoints,
-                        $arr['uavg'],
-                        $arr['cnt'],
-                        $arr['alliance_rank_current']
-                    ]);
+                    $arr['alliance_id'],
+                    $arr['alliance_tag'],
+                    $arr['alliance_name'],
+                    $points,
+                    $upoints,
+                    $apoints,
+                    $sarr[0],
+                    $tpoints,
+                    $bpoints,
+                    $arr['uavg'],
+                    $arr['cnt'],
+                    $arr['alliance_rank_current']
+                ]);
 
-                    dbquery("
+                dbquery("
                     INSERT INTO
                         alliance_points
                     (
@@ -1063,16 +1010,15 @@ use EtoA\Technology\TechnologyRepository;
                     )
                     VALUES
                     (
-                        '".$arr['alliance_id']."',
-                        '".time()."',
-                        '".$points."',
-                        '".$arr['uavg']."',
-                        '".$arr['cnt']."'
+                        '" . $arr['alliance_id'] . "',
+                        '" . time() . "',
+                        '" . $points . "',
+                        '" . $arr['uavg'] . "',
+                        '" . $arr['cnt'] . "'
                     );");
-
-                }
             }
-            $res=dbquery("SELECT
+        }
+        $res = dbquery("SELECT
                 alliance_id,
                 points,
                 alliance_rank_last
@@ -1081,62 +1027,61 @@ use EtoA\Technology\TechnologyRepository;
             ORDER BY
                 points DESC
             ;");
-            if (mysql_num_rows($res)>0)
-            {
-                $rank=1;
-                while ($arr=mysql_fetch_assoc($res))
-                {
-                    dbquery("UPDATE
+        if (mysql_num_rows($res) > 0) {
+            $rank = 1;
+            while ($arr = mysql_fetch_assoc($res)) {
+                dbquery("UPDATE
                                 alliance_stats
                             SET
-                                alliance_rank_current='".$rank."'
+                                alliance_rank_current='" . $rank . "'
                             WHERE
-                                alliance_id='".$arr['alliance_id']."';");
-                    dbquery("UPDATE
+                                alliance_id='" . $arr['alliance_id'] . "';");
+                dbquery("UPDATE
                                 alliances
                             SET
-                                alliance_points='".$arr['points']."',
-                                alliance_rank_current='".$rank."',
-                                alliance_rank_last='".$arr['alliance_rank_last']."'
+                                alliance_points='" . $arr['points'] . "',
+                                alliance_rank_current='" . $rank . "',
+                                alliance_rank_last='" . $arr['alliance_rank_last'] . "'
                             WHERE
-                                alliance_id='".$arr['alliance_id']."';");
-                    $rank++;
-                }
+                                alliance_id='" . $arr['alliance_id'] . "';");
+                $rank++;
             }
-
-            unset($buildings);
-            unset($techs);
-
-            /** @var RuntimeDataStore */
-            $runtimeDataStore = $app[RuntimeDataStore::class];
-
-            // Zeit in Config speichern
-            $runtimeDataStore->set('statsupdate', (string) time());
-
-            $num = mysql_num_rows($ures);
-
-            // Arrays löschen (Speicher freigeben)
-            mysql_free_result($res);
-            unset($arr);
-
-            return array($num, $allpoints);
         }
 
-        static function createUserBanner() {
-            // TODO
-            global $app;
+        unset($buildings);
+        unset($techs);
 
-            /** @var ConfigurationService */
-            $config = $app[ConfigurationService::class];
+        /** @var RuntimeDataStore */
+        $runtimeDataStore = $app[RuntimeDataStore::class];
 
-            $dir = USERBANNER_DIR;
-            if (!is_dir($dir)) {
-                mkdir($dir);
-            }
+        // Zeit in Config speichern
+        $runtimeDataStore->set('statsupdate', (string) time());
 
-            $createdFiles = array();
+        $num = mysql_num_rows($ures);
 
-            $res=dbquery("
+        // Arrays löschen (Speicher freigeben)
+        mysql_free_result($res);
+        unset($arr);
+
+        return array($num, $allpoints);
+    }
+
+    static function createUserBanner()
+    {
+        // TODO
+        global $app;
+
+        /** @var ConfigurationService */
+        $config = $app[ConfigurationService::class];
+
+        $dir = USERBANNER_DIR;
+        if (!is_dir($dir)) {
+            mkdir($dir);
+        }
+
+        $createdFiles = array();
+
+        $res = dbquery("
             SELECT
                 u.user_nick,
                 a.alliance_tag,
@@ -1156,94 +1101,102 @@ use EtoA\Technology\TechnologyRepository;
                 races r
                 On u.user_race_id=r.race_id
             ");
-            while ($arr = mysql_fetch_assoc($res))
-            {
-                if ($arr['admin'] == 1) {
-                    $pt = "  -  Game-Admin";
-                } elseif ($arr['user_ghost'] == 1) {
-                    $pt = "";
-                } else {
-                    $pt = "  -  ".nf($arr['user_points'])." Punkte, Platz ".$arr['user_rank']."";
-                }
-                $text = $config->get('roundname').$pt;
-
-                $im = self::createUserBannerImage(USERBANNER_WIDTH, USERBANNER_HEIGTH, USERBANNER_BACKGROUND_IMAGE, USERBANNER_FONT,
-                    $arr['user_nick'], $arr['alliance_tag'], $arr['alliance_name'], $arr['race_name'], $text);
-
-                $file = self::getUserBannerPath($arr['user_id']);
-                if (file_exists($file))
-                {
-                    unlink($file);
-                }
-                imagepng($im,$file);
-                chmod($file,0777);
-                imagedestroy($im);
-                $createdFiles[] = $file;
+        while ($arr = mysql_fetch_assoc($res)) {
+            if ($arr['admin'] == 1) {
+                $pt = "  -  Game-Admin";
+            } elseif ($arr['user_ghost'] == 1) {
+                $pt = "";
+            } else {
+                $pt = "  -  " . nf($arr['user_points']) . " Punkte, Platz " . $arr['user_rank'] . "";
             }
+            $text = $config->get('roundname') . $pt;
 
-            // Remove old banner images
-            $dh = opendir($dir);
-            while ($f = readdir($dh)) {
-                $fp = $dir.'/'.$f;
-                if (is_file($fp) && !in_array($fp, $createdFiles, true)) {
-                    unlink($fp);
-                }
+            $im = self::createUserBannerImage(
+                USERBANNER_WIDTH,
+                USERBANNER_HEIGTH,
+                USERBANNER_BACKGROUND_IMAGE,
+                USERBANNER_FONT,
+                $arr['user_nick'],
+                $arr['alliance_tag'],
+                $arr['alliance_name'],
+                $arr['race_name'],
+                $text
+            );
+
+            $file = self::getUserBannerPath($arr['user_id']);
+            if (file_exists($file)) {
+                unlink($file);
             }
-            closedir($dh);
+            imagepng($im, $file);
+            chmod($file, 0777);
+            imagedestroy($im);
+            $createdFiles[] = $file;
         }
 
-        static function getUserBannerPath($userId) {
-            return USERBANNER_DIR.'/'.md5('user'.$userId).'.png';
+        // Remove old banner images
+        $dh = opendir($dir);
+        while ($f = readdir($dh)) {
+            $fp = $dir . '/' . $f;
+            if (is_file($fp) && !in_array($fp, $createdFiles, true)) {
+                unlink($fp);
+            }
+        }
+        closedir($dh);
+    }
+
+    static function getUserBannerPath($userId)
+    {
+        return USERBANNER_DIR . '/' . md5('user' . $userId) . '.png';
+    }
+
+    static function createUserBannerImage($w, $h, $backgroundImage, $font, $nick, $allianceTag, $allianceName, $race, $text)
+    {
+        $im = imagecreatefrompng($backgroundImage);
+
+        $colBlack = imagecolorallocate($im, 0, 0, 0);
+        $colGrey = imagecolorallocate($im, 120, 120, 120);
+        $colYellow = imagecolorallocate($im, 255, 255, 0);
+        $colOrange = imagecolorallocate($im, 255, 100, 0);
+        $colWhite = imagecolorallocate($im, 255, 255, 255);
+        $colGreen = imagecolorallocate($im, 0, 255, 0);
+        $colBlue = imagecolorallocate($im, 150, 150, 240);
+        $colViolett = imagecolorallocate($im, 200, 0, 200);
+        $colRe = imagecolorallocate($im, 200, 0, 200);
+
+        $nsize = imagettfbbox(16, 0, $font, $nick);
+
+        // Nick
+        imagettftext($im, 16, 0, 6, 21, $colBlack, $font, $nick);
+        imagettftext($im, 16, 0, 5, 20, $colWhite, $font, $nick);
+
+        // Race
+        imagettftext($im, 11, 0, $nsize[2] - $nsize[0] + 16, 21, $colBlack, $font, $race);
+        imagettftext($im, 11, 0, $nsize[2] - $nsize[0] + 15, 20, $colWhite, $font, $race);
+
+        // Alliance
+        if ($allianceTag) {
+            imagettftext($im, 9, 0, 9, 39, $colBlack, $font, "<" . $allianceTag . "> " . $allianceName);
+            imagettftext($im, 9, 0, 8, 38, $colWhite, $font, "<" . $allianceTag . "> " . $allianceName);
         }
 
-        static function createUserBannerImage($w, $h, $backgroundImage, $font, $nick, $allianceTag, $allianceName, $race, $text) {
-            $im = imagecreatefrompng($backgroundImage);
-
-            $colBlack = imagecolorallocate($im,0,0,0);
-            $colGrey = imagecolorallocate($im,120,120,120);
-            $colYellow = imagecolorallocate($im,255,255,0);
-            $colOrange = imagecolorallocate($im,255,100,0);
-            $colWhite = imagecolorallocate($im,255,255,255);
-            $colGreen = imagecolorallocate($im,0,255,0);
-            $colBlue = imagecolorallocate($im,150,150,240);
-            $colViolett = imagecolorallocate($im,200,0,200);
-            $colRe = imagecolorallocate($im,200,0,200);
-
-            $nsize = imagettfbbox(16,0,$font, $nick);
-
-            // Nick
-            imagettftext ($im, 16, 0, 6, 21, $colBlack, $font, $nick);
-            imagettftext ($im, 16, 0, 5, 20, $colWhite, $font, $nick);
-
-            // Race
-            imagettftext ($im, 11, 0, $nsize[2]-$nsize[0] + 16, 21, $colBlack, $font, $race);
-            imagettftext ($im, 11, 0, $nsize[2]-$nsize[0] + 15, 20, $colWhite, $font, $race);
-
-            // Alliance
-            if ($allianceTag)
-            {
-                imagettftext ($im, 9, 0, 9, 39, $colBlack, $font,"<".$allianceTag."> ".$allianceName);
-                imagettftext ($im, 9, 0, 8, 38, $colWhite, $font,"<".$allianceTag."> ".$allianceName);
-            }
-
-            // Text
-            if ($text)
-            {
-                imagettftext ($im, 9, 0, 9, 54, $colBlack, $font, $text);
-                imagettftext ($im, 9, 0, 8, 53, $colWhite, $font, $text);
-            }
-
-            return $im;
+        // Text
+        if ($text) {
+            imagettftext($im, 9, 0, 9, 54, $colBlack, $font, $text);
+            imagettftext($im, 9, 0, 8, 53, $colWhite, $font, $text);
         }
 
-        static function calcBuildingPoints($id=0) {
-            // TODO
-            global $app;
+        return $im;
+    }
 
-            /** @var ConfigurationService */
-            $config = $app[ConfigurationService::class];
+    static function calcBuildingPoints($id = 0)
+    {
+        // TODO
+        global $app;
 
-          if ($id>0)
+        /** @var ConfigurationService */
+        $config = $app[ConfigurationService::class];
+
+        if ($id > 0)
             $sql = "
             SELECT
               building_id,
@@ -1257,8 +1210,8 @@ use EtoA\Technology\TechnologyRepository;
             FROM
               buildings
             WHERE
-              building_id=".$id.";";
-          else
+              building_id=" . $id . ";";
+        else
             $sql = "
             SELECT
               building_id,
@@ -1271,25 +1224,22 @@ use EtoA\Technology\TechnologyRepository;
               building_last_level
             FROM
               buildings;";
-          dbquery("DELETE FROM building_points;");
-          $res = dbquery($sql);
-          $mnr = mysql_num_rows($res);
-          if ($mnr>0)
-          {
-            while ($arr = mysql_fetch_array($res))
-            {
-              for ($level=1;$level<=intval($arr['building_last_level']);$level++)
-              {
-                $r = $arr['building_costs_metal']
-                +$arr['building_costs_crystal']
-                +$arr['building_costs_fuel']
-                +$arr['building_costs_plastic']
-                +$arr['building_costs_food'];
-                $p = ($r*(1-pow($arr['building_build_costs_factor'],$level))
-                /(1-$arr['building_build_costs_factor']))
-                / $config->param1Int('points_update');
+        dbquery("DELETE FROM building_points;");
+        $res = dbquery($sql);
+        $mnr = mysql_num_rows($res);
+        if ($mnr > 0) {
+            while ($arr = mysql_fetch_array($res)) {
+                for ($level = 1; $level <= intval($arr['building_last_level']); $level++) {
+                    $r = $arr['building_costs_metal']
+                        + $arr['building_costs_crystal']
+                        + $arr['building_costs_fuel']
+                        + $arr['building_costs_plastic']
+                        + $arr['building_costs_food'];
+                    $p = ($r * (1 - pow($arr['building_build_costs_factor'], $level))
+                        / (1 - $arr['building_build_costs_factor']))
+                        / $config->param1Int('points_update');
 
-                dbquery("
+                    dbquery("
                 INSERT INTO
                   building_points
                 (
@@ -1298,23 +1248,24 @@ use EtoA\Technology\TechnologyRepository;
                   bp_points
                 )
                 VALUES
-            (".$arr['building_id'].",
-            '".$level."',
-            '".$p."');");
-              }
+            (" . $arr['building_id'] . ",
+            '" . $level . "',
+            '" . $p . "');");
+                }
             }
-          }
-          return "Die Geb&auml;udepunkte von $mnr Geb&auml;uden wurden aktualisiert!";
         }
+        return "Die Geb&auml;udepunkte von $mnr Geb&auml;uden wurden aktualisiert!";
+    }
 
-        static function calcTechPoints($id=0) {
-            // TODO
-            global $app;
+    static function calcTechPoints($id = 0)
+    {
+        // TODO
+        global $app;
 
-            /** @var ConfigurationService */
-            $config = $app[ConfigurationService::class];
+        /** @var ConfigurationService */
+        $config = $app[ConfigurationService::class];
 
-          if ($id>0) {
+        if ($id > 0) {
             $sql = "
             SELECT
               tech_id,
@@ -1328,8 +1279,8 @@ use EtoA\Technology\TechnologyRepository;
             FROM
               technologies
             WHERE
-              tech_id=".$id.";";
-          } else	{
+              tech_id=" . $id . ";";
+        } else {
             $sql = "
             SELECT
               tech_id,
@@ -1342,26 +1293,23 @@ use EtoA\Technology\TechnologyRepository;
               tech_last_level
             FROM
               technologies;";
-          }
-          dbquery("DELETE FROM tech_points;");
-          $res = dbquery($sql);
-          $mnr = mysql_num_rows($res);
-          if ($mnr>0)
-          {
-            while ($arr = mysql_fetch_array($res))
-            {
-              for ($level=1;$level<=intval($arr['tech_last_level']);$level++)
-              {
-                $r = $arr['tech_costs_metal']
-                +$arr['tech_costs_crystal']
-                +$arr['tech_costs_fuel']
-                +$arr['tech_costs_plastic']
-                +$arr['tech_costs_food'];
-                $p = ($r*(1-pow($arr['tech_build_costs_factor'],$level))
-                /(1-$arr['tech_build_costs_factor']))
-                / $config->param1Int('points_update');
+        }
+        dbquery("DELETE FROM tech_points;");
+        $res = dbquery($sql);
+        $mnr = mysql_num_rows($res);
+        if ($mnr > 0) {
+            while ($arr = mysql_fetch_array($res)) {
+                for ($level = 1; $level <= intval($arr['tech_last_level']); $level++) {
+                    $r = $arr['tech_costs_metal']
+                        + $arr['tech_costs_crystal']
+                        + $arr['tech_costs_fuel']
+                        + $arr['tech_costs_plastic']
+                        + $arr['tech_costs_food'];
+                    $p = ($r * (1 - pow($arr['tech_build_costs_factor'], $level))
+                        / (1 - $arr['tech_build_costs_factor']))
+                        / $config->param1Int('points_update');
 
-                dbquery("
+                    dbquery("
                 INSERT INTO
                   tech_points
                 (
@@ -1370,23 +1318,24 @@ use EtoA\Technology\TechnologyRepository;
                   bp_points
                 )
                 VALUES
-                (".$arr['tech_id'].",
-                '".$level."',
-                '".$p."');");
-              }
+                (" . $arr['tech_id'] . ",
+                '" . $level . "',
+                '" . $p . "');");
+                }
             }
-          }
-          return "Die Punkte von $mnr Technologien wurden aktualisiert!";
         }
+        return "Die Punkte von $mnr Technologien wurden aktualisiert!";
+    }
 
-        static function calcShipPoints() {
-            // TODO
-            global $app;
+    static function calcShipPoints()
+    {
+        // TODO
+        global $app;
 
-            /** @var ConfigurationService */
-            $config = $app[ConfigurationService::class];
+        /** @var ConfigurationService */
+        $config = $app[ConfigurationService::class];
 
-          $res = dbquery("
+        $res = dbquery("
           SELECT
             ship_id,
             ship_costs_metal,
@@ -1396,37 +1345,36 @@ use EtoA\Technology\TechnologyRepository;
             ship_costs_food
           FROM
             ships;");
-          $mnr = mysql_num_rows($res);
-          if ($mnr>0)
-          {
-            while ($arr = mysql_fetch_array($res))
-            {
-              $p = ($arr['ship_costs_metal']
-              +$arr['ship_costs_crystal']
-              +$arr['ship_costs_fuel']
-              +$arr['ship_costs_plastic']
-              +$arr['ship_costs_food'])
-              /$config->param1Int('points_update');
-              dbquery("
+        $mnr = mysql_num_rows($res);
+        if ($mnr > 0) {
+            while ($arr = mysql_fetch_array($res)) {
+                $p = ($arr['ship_costs_metal']
+                    + $arr['ship_costs_crystal']
+                    + $arr['ship_costs_fuel']
+                    + $arr['ship_costs_plastic']
+                    + $arr['ship_costs_food'])
+                    / $config->param1Int('points_update');
+                dbquery("
               UPDATE
                 ships
               SET
-                ship_points=".$p."
+                ship_points=" . $p . "
               WHERE
-                ship_id=".$arr['ship_id'].";");
+                ship_id=" . $arr['ship_id'] . ";");
             }
-          }
-          return "Die Punkte von $mnr Schiffen wurden aktualisiert!";
         }
+        return "Die Punkte von $mnr Schiffen wurden aktualisiert!";
+    }
 
-        static function calcDefensePoints() {
-            // TODO
-            global $app;
+    static function calcDefensePoints()
+    {
+        // TODO
+        global $app;
 
-            /** @var ConfigurationService */
-            $config = $app[ConfigurationService::class];
+        /** @var ConfigurationService */
+        $config = $app[ConfigurationService::class];
 
-          $res = dbquery("
+        $res = dbquery("
           SELECT
             def_id,
             def_costs_metal,
@@ -1436,26 +1384,23 @@ use EtoA\Technology\TechnologyRepository;
             def_costs_food
           FROM
             defense;");
-          $mnr = mysql_num_rows($res);
-          if ($mnr>0)
-          {
-            while ($arr = mysql_fetch_array($res))
-            {
-              $p = ($arr['def_costs_metal']+
-              $arr['def_costs_crystal']
-              +$arr['def_costs_fuel']
-              +$arr['def_costs_plastic']
-              +$arr['def_costs_food'])
-              /$config->param1Int('points_update');
-              dbquery("UPDATE
+        $mnr = mysql_num_rows($res);
+        if ($mnr > 0) {
+            while ($arr = mysql_fetch_array($res)) {
+                $p = ($arr['def_costs_metal'] +
+                    $arr['def_costs_crystal']
+                    + $arr['def_costs_fuel']
+                    + $arr['def_costs_plastic']
+                    + $arr['def_costs_food'])
+                    / $config->param1Int('points_update');
+                dbquery("UPDATE
               defense
                SET
                 def_points=$p
               WHERE
-                def_id=".$arr['def_id'].";");
+                def_id=" . $arr['def_id'] . ";");
             }
-          }
-          return "Die Battlepoints von $mnr Verteidigungsanlagen wurden aktualisiert!";
         }
+        return "Die Battlepoints von $mnr Verteidigungsanlagen wurden aktualisiert!";
     }
-?>
+}

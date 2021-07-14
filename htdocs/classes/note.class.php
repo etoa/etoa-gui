@@ -1,26 +1,34 @@
 <?PHP
 
-	class Note
-	{
-		private $subject,$text,$timestamp,$id;
+class Note
+{
+    private $subject, $text, $timestamp, $id;
 
-        public function __construct($id,$subject,$text,$timestamp=0)
-		{
-			$this->subject = $subject;
-			$this->text = $text;
-			$this->id = $id;
-			$this->timestamp = $timestamp==0 ? time() : $timestamp;
-		}
+    public function __construct($id, $subject, $text, $timestamp = 0)
+    {
+        $this->subject = $subject;
+        $this->text = $text;
+        $this->id = $id;
+        $this->timestamp = $timestamp == 0 ? time() : $timestamp;
+    }
 
-		function subject() { return $this->subject; }
+    function subject()
+    {
+        return $this->subject;
+    }
 
-		function text() { return $this->text; }
+    function text()
+    {
+        return $this->text;
+    }
 
-		function timestamp() { return $this->timestamp; }
+    function timestamp()
+    {
+        return $this->timestamp;
+    }
 
-		function id() { return $this->id; }
-
-	}
-
-
-?>
+    function id()
+    {
+        return $this->id;
+    }
+}

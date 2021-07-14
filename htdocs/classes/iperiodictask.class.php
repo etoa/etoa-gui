@@ -1,7 +1,6 @@
 <?PHP
-	interface IPeriodicTask
-	{
-		function run();
-		function getDescription();
-	}
-?>
+interface IPeriodicTask
+{
+    function run();
+    function getDescription();
+}

@@ -8,21 +8,21 @@ use Pimple\Container;
  */
 class RemoveOldAlliancePointLogsTask implements IPeriodicTask
 {
-	private PointsService $pointsService;
+    private PointsService $pointsService;
 
-	function __construct(Container $app)
-	{
+    function __construct(Container $app)
+    {
         $this->pointsService = $app[PointsService::class];
-	}
+    }
 
-	function run()
-	{
-		$nr = $this->pointsService->cleanupAlliancePoints();
-		return "$nr alte Allianzpunkte-Logs gelöscht";
-	}
+    function run()
+    {
+        $nr = $this->pointsService->cleanupAlliancePoints();
+        return "$nr alte Allianzpunkte-Logs gelöscht";
+    }
 
-	function getDescription()
-	{
-		return "Alte Allianzpunkte-Logs löschen";
-	}
+    function getDescription()
+    {
+        return "Alte Allianzpunkte-Logs löschen";
+    }
 }

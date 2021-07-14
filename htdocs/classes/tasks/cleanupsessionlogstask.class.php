@@ -11,23 +11,23 @@ class CleanupSessionLogsTask implements IPeriodicTask
 {
     private UserSessionManager $userSessionManager;
 
-	private AdminSessionManager $sessionManager;
+    private AdminSessionManager $sessionManager;
 
-	function __construct(Container $app)
-	{
+    function __construct(Container $app)
+    {
         $this->userSessionManager = $app[UserSessionManager::class];
-		$this->sessionManager = $app[AdminSessionManager::class];
-	}
+        $this->sessionManager = $app[AdminSessionManager::class];
+    }
 
-	function run()
-	{
-		$userSessions = $this->userSessionManager->cleanupLogs();
-		$adminSessions = $this->sessionManager->cleanupLogs();
-		return "$userSessions alte Spieler Session-Logs gelöscht, $adminSessions alte Admin Session-Logs gelöscht";
-	}
+    function run()
+    {
+        $userSessions = $this->userSessionManager->cleanupLogs();
+        $adminSessions = $this->sessionManager->cleanupLogs();
+        return "$userSessions alte Spieler Session-Logs gelöscht, $adminSessions alte Admin Session-Logs gelöscht";
+    }
 
-	function getDescription()
-	{
-		return "Alte Session-Logs löschen";
-	}
+    function getDescription()
+    {
+        return "Alte Session-Logs löschen";
+    }
 }

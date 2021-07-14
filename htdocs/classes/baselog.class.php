@@ -33,9 +33,9 @@ abstract class BaseLog
     static public $severities = array("Debug", "Information", "Warnung", "Fehler", "Kritisch");
 
     /**
-    * Alle alten Logs löschen
-    */
-    static function removeOld($threshold=0)
+     * Alle alten Logs löschen
+     */
+    static function removeOld($threshold = 0)
     {
         // TODO
         global $app;
@@ -48,12 +48,11 @@ abstract class BaseLog
             : time() - (24 * 3600 * $config->getInt('log_threshold_days'));
 
         $nr = Log::cleanup($timestamp);
-        $nr+= GameLog::cleanup($timestamp);
-        $nr+= FleetLog::cleanup($timestamp);
-        $nr+= BattleLog::cleanup($timestamp);
+        $nr += GameLog::cleanup($timestamp);
+        $nr += FleetLog::cleanup($timestamp);
+        $nr += BattleLog::cleanup($timestamp);
 
-        Log::add(Log::F_SYSTEM, Log::INFO, "$nr Logs die älter als ".date("d.m.Y H:i", $timestamp)." sind wurden gelöscht!");
+        Log::add(Log::F_SYSTEM, Log::INFO, "$nr Logs die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
         return $nr;
     }
 }
-?>

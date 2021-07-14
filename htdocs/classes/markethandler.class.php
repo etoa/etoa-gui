@@ -9,13 +9,13 @@ use EtoA\Support\RuntimeDataStore;
  */
 class MarketHandler
 {
-    static function calcRate($ts=null)
+    static function calcRate($ts = null)
     {
         // Resulting rates
-        $rates = array_fill(0,NUM_RESOURCES,1);
-        $res_rates = array_fill(0,NUM_RESOURCES,1);
+        $rates = array_fill(0, NUM_RESOURCES, 1);
+        $res_rates = array_fill(0, NUM_RESOURCES, 1);
 
-        $where = $ts!= null ? ' WHERE timestamp<='.$ts.' ' : '';
+        $where = $ts != null ? ' WHERE timestamp<=' . $ts . ' ' : '';
 
         // Load previous rates
         $res = dbquery("
@@ -23,40 +23,32 @@ class MarketHandler
             *
         FROM
             market_rates
-        ".$where."
+        " . $where . "
         ORDER BY
             id DESC
-        LIMIT ".MARKET_RATES_COUNT.";");
+        LIMIT " . MARKET_RATES_COUNT . ";");
         $nr = mysql_num_rows($res);
         $rc = 0;
-        while ($arr = mysql_fetch_assoc($res))
-        {
+        while ($arr = mysql_fetch_assoc($res)) {
             // Weight factor calculation. Insert any other formula if you desire so.
             // Newer values should weight more than older values
-            $factor = $nr-$rc;
+            $factor = $nr - $rc;
             //$factor = log($nr-$rc);
 
             // For every resource calculate the ration and multiply with the weight factor
-            for ($i=0;$i<NUM_RESOURCES;$i++)
-            {
-                if ($arr['supply_'.$i]>0)
-                {
-                    $r = ($arr['demand_'.$i] / $arr['supply_'.$i]);
+            for ($i = 0; $i < NUM_RESOURCES; $i++) {
+                if ($arr['supply_' . $i] > 0) {
+                    $r = ($arr['demand_' . $i] / $arr['supply_' . $i]);
                     if ($r > MARKET_RATE_MAX)
                         $rates[$i] += MARKET_RATE_MAX * $factor;
                     if ($r < MARKET_RATE_MIN)
                         $rates[$i] += MARKET_RATE_MIN * $factor;
                     else
                         $rates[$i] += $r * $factor;
-                }
-                else
-                {
-                    if ($arr['demand_'.$i]>0)
-                    {
+                } else {
+                    if ($arr['demand_' . $i] > 0) {
                         $rates[$i] += MARKET_RATE_MAX * $factor;
-                    }
-                    else
-                    {
+                    } else {
                         $rates[$i] += 1 * $factor;
                     }
                 }
@@ -65,9 +57,8 @@ class MarketHandler
         }
         // Normalize the resulting values
         $normalizer = array_sum($rates) / NUM_RESOURCES;
-        for ($i=0;$i<NUM_RESOURCES;$i++)
-        {
-            $rates[$i] = round($rates[$i]/$normalizer,2);
+        for ($i = 0; $i < NUM_RESOURCES; $i++) {
+            $rates[$i] = round($rates[$i] / $normalizer, 2);
         }
 
         //Adding planet/fleet res in universe
@@ -99,35 +90,27 @@ class MarketHandler
         $parr = mysql_fetch_array($pres);
         $farr = mysql_fetch_array($fres);
 
-        if ($parr!=null && $farr!=null && isset($parr[0]) && isset($farr[0]))
-        {
+        if ($parr != null && $farr != null && isset($parr[0]) && isset($farr[0])) {
 
-            for ($i=0;$i<NUM_RESOURCES;$i++)
-            {
-                $res_rates[$i] = 1/($parr[$i]+$farr[$i]);
+            for ($i = 0; $i < NUM_RESOURCES; $i++) {
+                $res_rates[$i] = 1 / ($parr[$i] + $farr[$i]);
             }
 
             $normalizer = array_sum($res_rates) / NUM_RESOURCES;
-            for ($i=0;$i<NUM_RESOURCES;$i++)
-            {
-                $res_rates[$i] = round($res_rates[$i]/$normalizer,2);
+            for ($i = 0; $i < NUM_RESOURCES; $i++) {
+                $res_rates[$i] = round($res_rates[$i] / $normalizer, 2);
             }
 
-            for ($i=0;$i<NUM_RESOURCES;$i++)
-            {
-                $rates[$i] = $res_rates[$i]+$rates[$i];
+            for ($i = 0; $i < NUM_RESOURCES; $i++) {
+                $rates[$i] = $res_rates[$i] + $rates[$i];
             }
 
             $normalizer = array_sum($rates) / NUM_RESOURCES;
-            for ($i=0;$i<NUM_RESOURCES;$i++)
-            {
-                $rates[$i] = round($rates[$i]/$normalizer,2);
+            for ($i = 0; $i < NUM_RESOURCES; $i++) {
+                $rates[$i] = round($rates[$i] / $normalizer, 2);
             }
-        }
-        else
-        {
-                        for ($i=0;$i<NUM_RESOURCES;$i++)
-                        {
+        } else {
+            for ($i = 0; $i < NUM_RESOURCES; $i++) {
                 $rates[$i] = 1;
             }
         }
@@ -148,11 +131,10 @@ class MarketHandler
         $rates = self::calcRate();
 
         $sf = $sv = "";
-        for ($i=0;$i<NUM_RESOURCES;$i++)
-        {
-            $runtimeDataStore->set('market_rate_'.$i, (string) $rates[$i]);
-            $sf .="rate_".$i.",";
-            $sv .=$rates[$i].",";
+        for ($i = 0; $i < NUM_RESOURCES; $i++) {
+            $runtimeDataStore->set('market_rate_' . $i, (string) $rates[$i]);
+            $sf .= "rate_" . $i . ",";
+            $sv .= $rates[$i] . ",";
         }
 
         // Add a new row to the rates table. This row gets filled from now on with buy results
@@ -166,28 +148,27 @@ class MarketHandler
         VALUES
         (
             $sv
-            ".time()."
+            " . time() . "
         )
         ");
 
         // Remove old values
-        $res = dbquery("SELECT id FROM market_rates ORDER BY id DESC LIMIT ".(MARKET_RATES_COUNT*2).", 1");
-        if (mysql_num_rows($res)>0)
-        {
+        $res = dbquery("SELECT id FROM market_rates ORDER BY id DESC LIMIT " . (MARKET_RATES_COUNT * 2) . ", 1");
+        if (mysql_num_rows($res) > 0) {
             $arr = mysql_fetch_row($res);
             dbquery("
             DELETE FROM
                 market_rates
             WHERE
-                id < ".$arr[0]."
+                id < " . $arr[0] . "
             ");
         }
     }
 
     /**
-    * Add resources when a transaction is made
-    */
-    static function addResToRate($supply,$demand)
+     * Add resources when a transaction is made
+     */
+    static function addResToRate($supply, $demand)
     {
         global $resNames;
         $res = dbquery("
@@ -200,12 +181,11 @@ class MarketHandler
         LIMIT 1");
         $arr = mysql_fetch_row($res);
         $id = $arr[0];
-        $ssql="";
-        foreach ($resNames as $rk => $rn)
-        {
-            if ($ssql!="")
-                $ssql.=",";
-            $ssql.= "supply_".$rk."=".$supply[$rk].",demand_".$rk."=".$demand[$rk]."";
+        $ssql = "";
+        foreach ($resNames as $rk => $rn) {
+            if ($ssql != "")
+                $ssql .= ",";
+            $ssql .= "supply_" . $rk . "=" . $supply[$rk] . ",demand_" . $rk . "=" . $demand[$rk] . "";
         }
         dbquery("
         UPDATE
@@ -213,8 +193,7 @@ class MarketHandler
         SET
             $ssql
         WHERE
-            id=".$id."
+            id=" . $id . "
         ");
     }
 }
-?>

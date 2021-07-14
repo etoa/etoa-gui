@@ -1,8 +1,11 @@
 <?PHP
-class TutorialManager {
+class TutorialManager
+{
 
-	function getTextById($id) {
-		$res = dbQuerySave('
+    function getTextById($id)
+    {
+        $res = dbQuerySave(
+            '
 			SELECT
 				text_tutorial_id,
 				text_title,
@@ -12,16 +15,18 @@ class TutorialManager {
 				tutorial_texts
 			WHERE
 				text_id=?;',
-			array($id));
-		if ($arr = mysql_fetch_assoc($res)) {
-			$t = new TutorialText();
-			$t->id = $id;
-			$t->tutorialId = $arr['text_tutorial_id'];
-			$t->title = $arr['text_title'];
-			$t->content = $arr['text_content'];
-			$t->step = $arr['text_step'];
+            array($id)
+        );
+        if ($arr = mysql_fetch_assoc($res)) {
+            $t = new TutorialText();
+            $t->id = $id;
+            $t->tutorialId = $arr['text_tutorial_id'];
+            $t->title = $arr['text_title'];
+            $t->content = $arr['text_content'];
+            $t->step = $arr['text_step'];
 
-			$pres = dbQuerySave('
+            $pres = dbQuerySave(
+                '
 				SELECT
 					text_step
 				FROM
@@ -32,12 +37,14 @@ class TutorialManager {
 				ORDER BY
 					text_step DESC
 				LIMIT 1;',
-				array($t->tutorialId, $t->step));
-			if ($parr = mysql_fetch_row($pres)) {
-				$t->prev = $parr[0];
-			}
+                array($t->tutorialId, $t->step)
+            );
+            if ($parr = mysql_fetch_row($pres)) {
+                $t->prev = $parr[0];
+            }
 
-			$nres = dbQuerySave('
+            $nres = dbQuerySave(
+                '
 				SELECT
 					text_step
 				FROM
@@ -48,18 +55,21 @@ class TutorialManager {
 				ORDER BY
 					text_step
 				LIMIT 1;',
-				array($t->tutorialId, $t->step));
-			if ($narr = mysql_fetch_row($nres)) {
-				$t->next = $narr[0];
-			}
+                array($t->tutorialId, $t->step)
+            );
+            if ($narr = mysql_fetch_row($nres)) {
+                $t->next = $narr[0];
+            }
 
-			return $t;
-		}
-		return null;
-	}
+            return $t;
+        }
+        return null;
+    }
 
-	function getText($tutorialId, $step=0) {
-		$res = dbQuerySave('
+    function getText($tutorialId, $step = 0)
+    {
+        $res = dbQuerySave(
+            '
 			SELECT
 				text_id
 			FROM
@@ -70,24 +80,30 @@ class TutorialManager {
 			ORDER BY
 				text_step DESC
 			LIMIT 1;',
-			array($tutorialId, $step));
-		if ($arr = mysql_fetch_row($res)) {
-			return $this->getTextById($arr[0]);
-		}
-		return null;
-	}
+            array($tutorialId, $step)
+        );
+        if ($arr = mysql_fetch_row($res)) {
+            return $this->getTextById($arr[0]);
+        }
+        return null;
+    }
 
-	function setUserProgess($userId, $tutorialId, $textStep) {
-		dbQuerySave('
+    function setUserProgess($userId, $tutorialId, $textStep)
+    {
+        dbQuerySave(
+            '
 			REPLACE INTO
 				tutorial_user_progress
 			(tup_user_id, tup_tutorial_id, tup_text_step)
 			VALUES (?,?,?);',
-			array($userId, $tutorialId, $textStep));
-	}
+            array($userId, $tutorialId, $textStep)
+        );
+    }
 
-	function getUserProgess($userId, $tutorialId) {
-		$res = dbQuerySave('
+    function getUserProgess($userId, $tutorialId)
+    {
+        $res = dbQuerySave(
+            '
 			SELECT
 				tup_text_step
 			FROM
@@ -95,15 +111,18 @@ class TutorialManager {
 			WHERE
 				tup_user_id=?
 				AND tup_tutorial_id=?;',
-			array($userId, $tutorialId));
-		if ($arr = mysql_fetch_row($res)) {
-			return $arr[0];
-		}
-		return 0;
-	}
+            array($userId, $tutorialId)
+        );
+        if ($arr = mysql_fetch_row($res)) {
+            return $arr[0];
+        }
+        return 0;
+    }
 
-	function hasReadTutorial($userId, $tutorialId) {
-		$res = dbQuerySave('
+    function hasReadTutorial($userId, $tutorialId)
+    {
+        $res = dbQuerySave(
+            '
 			SELECT
 				tup_closed
 			FROM
@@ -111,15 +130,18 @@ class TutorialManager {
 			WHERE
 				tup_user_id=?
 				AND tup_tutorial_id=?;',
-			array($userId, $tutorialId));
-		if ($arr = mysql_fetch_row($res)) {
-			return $arr[0] == 1;
-		}
-		return false;
-	}
+            array($userId, $tutorialId)
+        );
+        if ($arr = mysql_fetch_row($res)) {
+            return $arr[0] == 1;
+        }
+        return false;
+    }
 
-	function reopenTutorial($userId, $tutorialId) {
-		dbQuerySave('
+    function reopenTutorial($userId, $tutorialId)
+    {
+        dbQuerySave(
+            '
 			UPDATE
 				tutorial_user_progress
 			SET
@@ -127,19 +149,18 @@ class TutorialManager {
 			WHERE
 				tup_user_id=?
 				AND tup_tutorial_id=?;',
-			array($userId, $tutorialId));
-	}
+            array($userId, $tutorialId)
+        );
+    }
 
-	function reopenAllTutorials($userId) {
-		dbquery('
+    function reopenAllTutorials($userId)
+    {
+        dbquery('
 			UPDATE
 				tutorial_user_progress
 			SET
 				tup_closed=0
 			WHERE
-				tup_user_id='.$userId);
-
-	}
-
+				tup_user_id=' . $userId);
+    }
 }
-?>

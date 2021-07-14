@@ -4,108 +4,102 @@ use EtoA\Building\BuildingRepository;
 use EtoA\Technology\TechnologyRepository;
 
 class BuildList implements IteratorAggregate
-	{
-		private $entityId;
-		private $ownerId;
+{
+    private $entityId;
+    private $ownerId;
 
-		private $entity;
-		private $owner;
+    private $entity;
+    private $owner;
 
-		/** @var BuildListItem[] */
-		private $items = null;
-		private $count = null;
-		public static $underConstruction = false;
+    /** @var BuildListItem[] */
+    private $items = null;
+    private $count = null;
+    public static $underConstruction = false;
 
-		private $tmpItems = array();
+    private $tmpItems = array();
 
-		private $errorMsg;
+    private $errorMsg;
 
-		public static $GENTECH = 0;
+    public static $GENTECH = 0;
 
-		/**
-		 * Constructor
-		 * @param int $entityId
-		 * @param int $ownerId
-		 * @param int $load
-		*
-		* @access public
-		 */
-        public function __construct($entityId,$ownerId,$load=0)
-		{
-			$this->entityId = $entityId;
-			$this->ownerId = $ownerId;
-			if ($load>0)
-				$this->load($load);
-		}
+    /**
+     * Constructor
+     * @param int $entityId
+     * @param int $ownerId
+     * @param int $load
+     *
+     * @access public
+     */
+    public function __construct($entityId, $ownerId, $load = 0)
+    {
+        $this->entityId = $entityId;
+        $this->ownerId = $ownerId;
+        if ($load > 0)
+            $this->load($load);
+    }
 
-		/**
-		*  Returns an Iterator with every element in the buildlist,
-		* to specify the selection use the $load param in the Constructor
-		*
-		* @return ArrayIterator with key() building_id and current() buildlistitem
-		*
-		* @access public
-		*/
-		public function getIterator()
-		{
-			if ($this->items == null)
-				$this->load();
-			return new ArrayIterator($this->items);
-		}
+    /**
+     *  Returns an Iterator with every element in the buildlist,
+     * to specify the selection use the $load param in the Constructor
+     *
+     * @return ArrayIterator with key() building_id and current() buildlistitem
+     *
+     * @access public
+     */
+    public function getIterator()
+    {
+        if ($this->items == null)
+            $this->load();
+        return new ArrayIterator($this->items);
+    }
 
-		/**
-		*  Returns an ArrayIterator with every element in the selected category,
-		* use the $mode param to specify the returned buildings aswell as the $load param in the Constructor
-		*
-		* @param int $catId
-	 	* @param string $mode {all | buildable | resable}
-		*
-		* @return ArrayIterator	with key() building_id and current() buildlistitem
-		*
-		* @access public
-		*/
-		public function getCatIterator($catId=0, $mode='all')
-		{
-			if ($this->items == null)
-				$this->load();
-			$catItems = array();
+    /**
+     *  Returns an ArrayIterator with every element in the selected category,
+     * use the $mode param to specify the returned buildings aswell as the $load param in the Constructor
+     *
+     * @param int $catId
+     * @param string $mode {all | buildable | resable}
+     *
+     * @return ArrayIterator	with key() building_id and current() buildlistitem
+     *
+     * @access public
+     */
+    public function getCatIterator($catId = 0, $mode = 'all')
+    {
+        if ($this->items == null)
+            $this->load();
+        $catItems = array();
 
-			foreach ($this->items as $id=>$item)
-			{
-				if ($item->building->typeId == $catId)
-				{
-					$add = true;
-					if ($mode == 'buildable')
-					{
-						if (!$this->requirementsPassed($id) || $item->isMaxLevel())
-							$add = false;
-					}
-					elseif ($mode == 'resable')
-					{
-						if (!($this->checkBuildable($id,false) == 1))
-							$add = false;
-					}
-					if ($add)
-						$catItems[$id] = $item;
-				}
-			}
-			return new ArrayIterator($catItems);
-		}
+        foreach ($this->items as $id => $item) {
+            if ($item->building->typeId == $catId) {
+                $add = true;
+                if ($mode == 'buildable') {
+                    if (!$this->requirementsPassed($id) || $item->isMaxLevel())
+                        $add = false;
+                } elseif ($mode == 'resable') {
+                    if (!($this->checkBuildable($id, false) == 1))
+                        $add = false;
+                }
+                if ($add)
+                    $catItems[$id] = $item;
+            }
+        }
+        return new ArrayIterator($catItems);
+    }
 
-		private function load($load=1)
-		{
-		    global $app;
+    private function load($load = 1)
+    {
+        global $app;
 
-            /** @var TechnologyRepository $technologyRepository */
-            $technologyRepository = $app[TechnologyRepository::class];
+        /** @var TechnologyRepository $technologyRepository */
+        $technologyRepository = $app[TechnologyRepository::class];
 
-			self::$GENTECH = $technologyRepository->getTechnologyLevel((int) $this->ownerId, GEN_TECH_ID);
-			$this->items = array();
-			$this->count = 0;
+        self::$GENTECH = $technologyRepository->getTechnologyLevel((int) $this->ownerId, GEN_TECH_ID);
+        $this->items = array();
+        $this->count = 0;
 
-			if ($load==3)
-			{
-				$sql = "SELECT
+        if ($load == 3) {
+            $sql = "SELECT
 							l.*,
 							i.*
 						FROM
@@ -114,15 +108,13 @@ class BuildList implements IteratorAggregate
 							buildings i
 						ON
 							l.buildlist_building_id = i.building_id
-							AND l.buildlist_entity_id='".$this->entityId."'
+							AND l.buildlist_entity_id='" . $this->entityId . "'
 							AND l.buildlist_current_level>='0'
 						ORDER BY
 							i.building_order,
 							i.building_name;";
-			}
-			elseif ($load==2)
-			{
-				$sql = "SELECT
+        } elseif ($load == 2) {
+            $sql = "SELECT
 							l.*,
 							i.*
 						FROM
@@ -131,15 +123,14 @@ class BuildList implements IteratorAggregate
 							buildlist l
 						ON
 							l.buildlist_building_id = i.building_id
-							AND l.buildlist_entity_id='".$this->entityId."'
+							AND l.buildlist_entity_id='" . $this->entityId . "'
 						WHERE i.building_show='1'
 						ORDER BY
 							i.building_order,
 							i.building_name;";
-			}
-			else //this is for the cases $load==0 and $load==1
-			{
-				$sql = "SELECT
+        } else //this is for the cases $load==0 and $load==1
+        {
+            $sql = "SELECT
 							l.*,
 							i.*
 						FROM
@@ -148,345 +139,305 @@ class BuildList implements IteratorAggregate
 							buildings i
 						ON
 							l.buildlist_building_id = i.building_id
-							AND l.buildlist_entity_id='".$this->entityId."'
+							AND l.buildlist_entity_id='" . $this->entityId . "'
 							AND l.buildlist_current_level>'0'
 						ORDER BY
 							i.building_order,
 							i.building_name;";
-			}
-			$res = dbquery($sql);
+        }
+        $res = dbquery($sql);
 
-			if (mysql_num_rows($res)>0)
-			{
-				while ($arr = mysql_fetch_assoc($res))
-				{
-					$this->items[$arr['building_id']] = new BuildListItem($arr);
-					$this->count++;
+        if (mysql_num_rows($res) > 0) {
+            while ($arr = mysql_fetch_assoc($res)) {
+                $this->items[$arr['building_id']] = new BuildListItem($arr);
+                $this->count++;
 
-					if (($arr['buildlist_build_type']==3 || $arr['buildlist_build_type']==4) && $arr['buildlist_build_end_time']>time())
-					{
-						self::$underConstruction = true;
-					}
-				}
-			}
-		}
+                if (($arr['buildlist_build_type'] == 3 || $arr['buildlist_build_type'] == 4) && $arr['buildlist_build_end_time'] > time()) {
+                    self::$underConstruction = true;
+                }
+            }
+        }
+    }
 
-		function item($bid)
-		{
-			if ($this->items==null)
-				$this->load();
-			if (isset($this->items[$bid]))
-				return $this->items[$bid];
-			if (isset($this->tmpItems[$bid]))
-				return $this->tmpItems[$bid];
-			return false;
-		}
+    function item($bid)
+    {
+        if ($this->items == null)
+            $this->load();
+        if (isset($this->items[$bid]))
+            return $this->items[$bid];
+        if (isset($this->tmpItems[$bid]))
+            return $this->tmpItems[$bid];
+        return false;
+    }
 
-		function isUnderConstruction()
-		{
-			if (!isset(self::$underConstruction))
-				$this->load();
-			return self::$underConstruction;
-		}
+    function isUnderConstruction()
+    {
+        if (!isset(self::$underConstruction))
+            $this->load();
+        return self::$underConstruction;
+    }
 
-		function getDeactivated($bid)
-		{
-			if ($this->items==null)
-				$this->load();
-			if (isset($this->items[$bid]))
-			{
-				if ($this->items[$bid]->deactivated > time()) {
-					 return $this->items[$bid]->deactivated;
-				}
-			}
-			return false;
-		}
+    function getDeactivated($bid)
+    {
+        if ($this->items == null)
+            $this->load();
+        if (isset($this->items[$bid])) {
+            if ($this->items[$bid]->deactivated > time()) {
+                return $this->items[$bid]->deactivated;
+            }
+        }
+        return false;
+    }
 
-		function getPeopleWorking($bid)
-		{
-			if ($this->items==null)
-				$this->load();
-			if (isset($this->items[$bid]))
-			{
-				return $this->items[$bid]->peopleWorking;
-			}
-			return 0;
-		}
+    function getPeopleWorking($bid)
+    {
+        if ($this->items == null)
+            $this->load();
+        if (isset($this->items[$bid])) {
+            return $this->items[$bid]->peopleWorking;
+        }
+        return 0;
+    }
 
-		// use only for tech and buildings
-		function setPeopleWorking($bid,$people,$tech=false)
-		{
-		    global $app;
+    // use only for tech and buildings
+    function setPeopleWorking($bid, $people, $tech = false)
+    {
+        global $app;
 
-		    /** @var BuildingRepository $buildingRepository */
-		    $buildingRepository = $app[BuildingRepository::class];
+        /** @var BuildingRepository $buildingRepository */
+        $buildingRepository = $app[BuildingRepository::class];
 
-			if ($this->items==null)
-				$this->load();
+        if ($this->items == null)
+            $this->load();
 
-			// BUGFIX: if first part is false, check for $tech in second part!
+        // BUGFIX: if first part is false, check for $tech in second part!
 
-			if ((!$tech && !$this->isUnderConstruction()) || ($tech))
-			{
-				if (isset($this->items[$bid]))
-				{
-					global $cp;
-					// Free: Total people on planet minus total working people on planet
-					// PLUS people working in this building (these can be set again)
-					$free = $cp->people - $buildingRepository->getPeopleWorking($this->entityId) + $this->items[$bid]->peopleWorking;
-					if ($free >= $people)
-					{
-						return $this->items[$bid]->setPeopleWorking($people, $tech);
-					}
-				}
-			}
-			return false;
-		}
+        if ((!$tech && !$this->isUnderConstruction()) || ($tech)) {
+            if (isset($this->items[$bid])) {
+                global $cp;
+                // Free: Total people on planet minus total working people on planet
+                // PLUS people working in this building (these can be set again)
+                $free = $cp->people - $buildingRepository->getPeopleWorking($this->entityId) + $this->items[$bid]->peopleWorking;
+                if ($free >= $people) {
+                    return $this->items[$bid]->setPeopleWorking($people, $tech);
+                }
+            }
+        }
+        return false;
+    }
 
-		function getCooldown($bid)
-		{
-			if ($this->items==null)
-				$this->load();
-			if (isset($this->items[$bid]))
-			{
-				if ($this->items[$bid]->cooldown > time())
-					return $this->items[$bid]->cooldown;
-			}
-			return false;
-		}
+    function getCooldown($bid)
+    {
+        if ($this->items == null)
+            $this->load();
+        if (isset($this->items[$bid])) {
+            if ($this->items[$bid]->cooldown > time())
+                return $this->items[$bid]->cooldown;
+        }
+        return false;
+    }
 
-		function setCooldown($bid,$cd)
-		{
-			if ($this->items==null)
-				$this->load();
-			if (isset($this->items[$bid]))
-			{
-				$this->items[$bid]->cooldown = $cd;
-			}
-		}
+    function setCooldown($bid, $cd)
+    {
+        if ($this->items == null)
+            $this->load();
+        if (isset($this->items[$bid])) {
+            $this->items[$bid]->cooldown = $cd;
+        }
+    }
 
-		function getCosts($bid,$type='build',$levelUp=0)
-		{
-			if ($type=='build')
-			{
-				return $this->items[$bid]->getBuildCosts($levelUp);
-			}
-			else
-			{
-				return $this->items[$bid]->getDemolishCosts($levelUp);
-			}
-		}
+    function getCosts($bid, $type = 'build', $levelUp = 0)
+    {
+        if ($type == 'build') {
+            return $this->items[$bid]->getBuildCosts($levelUp);
+        } else {
+            return $this->items[$bid]->getDemolishCosts($levelUp);
+        }
+    }
 
-		function build($bid)
-		{
-			if ($this->checkBuildable($bid)>0)
-			{
-				if (isset($this->items[$bid]))
-				{
-					$this->errorMsg =  $this->items[$bid]->build();
-					if ($this->errorMsg=="")
-						return true;
-					else
-						return false;
-				}
-			}
-			$this->errorMsg = "Geb&auml;de nicht baubar!";
-			return false;
-		}
+    function build($bid)
+    {
+        if ($this->checkBuildable($bid) > 0) {
+            if (isset($this->items[$bid])) {
+                $this->errorMsg =  $this->items[$bid]->build();
+                if ($this->errorMsg == "")
+                    return true;
+                else
+                    return false;
+            }
+        }
+        $this->errorMsg = "Geb&auml;de nicht baubar!";
+        return false;
+    }
 
-		function demolish($bid)
-		{
-			if ($this->checkDemolishable($bid))
-			{
-				$this->errorMsg =  $this->items[$bid]->demolish();
-				if ($this->errorMsg=="")
-					return true;
-				else
-					return false;
-			}
-			$this->errorMsg = "Geb&auml;de nicht abreissbar!";
-			return false;
-		}
+    function demolish($bid)
+    {
+        if ($this->checkDemolishable($bid)) {
+            $this->errorMsg =  $this->items[$bid]->demolish();
+            if ($this->errorMsg == "")
+                return true;
+            else
+                return false;
+        }
+        $this->errorMsg = "Geb&auml;de nicht abreissbar!";
+        return false;
+    }
 
-		function cancelBuild($bid)
-		{
-			if (isset($this->items[$bid]))
-			{
-				$this->errorMsg =  $this->items[$bid]->cancelBuild();
-				if ($this->errorMsg=="")
-					return true;
-				else
-					return false;
-			}
-			$this->errorMsg = "Geb&aauml;de nicht vorhanden!";
-			return false;
-		}
+    function cancelBuild($bid)
+    {
+        if (isset($this->items[$bid])) {
+            $this->errorMsg =  $this->items[$bid]->cancelBuild();
+            if ($this->errorMsg == "")
+                return true;
+            else
+                return false;
+        }
+        $this->errorMsg = "Geb&aauml;de nicht vorhanden!";
+        return false;
+    }
 
-		function cancelDemolish($bid)
-		{
-			if (isset($this->items[$bid]))
-			{
-				$this->errorMsg =  $this->items[$bid]->cancelDemolish();
-				if ($this->errorMsg=="")
-					return true;
-				else
-					return false;
-			}
-			$this->errorMsg = "Geb&aauml;de nicht vorhanden!";
-			return false;
-		}
+    function cancelDemolish($bid)
+    {
+        if (isset($this->items[$bid])) {
+            $this->errorMsg =  $this->items[$bid]->cancelDemolish();
+            if ($this->errorMsg == "")
+                return true;
+            else
+                return false;
+        }
+        $this->errorMsg = "Geb&aauml;de nicht vorhanden!";
+        return false;
+    }
 
-		/**
-		* Check wether an item is buildable. Conditions are
-		* no building under construction, enough resources, not maxed out level, enough fieldsUsed,
-		* and satisfied prerequisites.
-		*
-		*
-		*	@return int 1=buildable,0=not buildable but show resbox, -1= not buildable & no res box
-		*/
-		function checkBuildable($bid, $uncheckConstruction=false)
-		{
-			if (!isset($this->items[$bid]->buildableStatus))
-			{
-				// check all the buildings
-				if (!$this->isUnderConstruction() || $uncheckConstruction)
-				{
-					global $cu,$cp;
-					if ($this->entity == null)
-					{
-						if ($cp->id != $this->entityId)
-							$this->entity = Entity::createFactoryById($this->entityId);
-						else
-							$this->entity = &$cp;
-					}
+    /**
+     * Check wether an item is buildable. Conditions are
+     * no building under construction, enough resources, not maxed out level, enough fieldsUsed,
+     * and satisfied prerequisites.
+     *
+     *
+     *	@return int 1=buildable,0=not buildable but show resbox, -1= not buildable & no res box
+     */
+    function checkBuildable($bid, $uncheckConstruction = false)
+    {
+        if (!isset($this->items[$bid]->buildableStatus)) {
+            // check all the buildings
+            if (!$this->isUnderConstruction() || $uncheckConstruction) {
+                global $cu, $cp;
+                if ($this->entity == null) {
+                    if ($cp->id != $this->entityId)
+                        $this->entity = Entity::createFactoryById($this->entityId);
+                    else
+                        $this->entity = &$cp;
+                }
 
-					// check max level
-					if (!$this->items[$bid]->isMaxLevel())
-					{
-						$cst = $this->items[$bid]->getBuildCosts();
-						// Check costs
-						if ($cst['costs0'] <= $this->entity->getRes1(0)
-							&& $cst['costs1'] <= $this->entity->getRes1(1)
-							&& $cst['costs2'] <= $this->entity->getRes1(2)
-							&& $cst['costs3'] <= $this->entity->getRes1(3)
-							&& $cst['costs4'] <= $this->entity->getRes1(4))
-						{
-							// check fields
-							if ($this->items[$bid]->building->fields==0 || $cp->fields_used+$this->items[$bid]->building->fields <= $cp->fields+$cp->fields_extra)
-							{
-								if ($this->requirementsPassed($bid))
-									$this->items[$bid]->buildableStatus = 1;
-								else
-								{
-									$this->errorMsg = 'Voraussetzungen nicht erf&uuml;llt!';
-									$this->items[$bid]->buildableStatus = -1;
-								}
-							}
-							else
-							{
-								$this->errorMsg = 'Nicht gen&uuml;gend Felder vorhanden!';
-								$this->items[$bid]->buildableStatus = 0;
-							}
-						}
-						else
-						{
-							$this->errorMsg = 'Zuwenig Rohstoffe vorhanden!';
-							$this->items[$bid]->buildableStatus = 0;
-						}
-					}
-					else
-					{
-						$this->errorMsg = 'Maximalstufe erreicht! Kein weiterer Ausbau m&ouml;glich!';
-						$this->items[$bid]->buildableStatus = -1;
-					}
-				}
-				else
-				{
-					$this->errorMsg = 'Es wird gerade an einem Geb&auml;ude gebaut!';
-					$this->items[$bid]->buildableStatus = 0;
-				}
-			}
-			return $this->items[$bid]->buildableStatus;
-		}
-
-		/**
-		* Check wether an item is demolishable. Conditions are
-		* no building under construction and enough resources.
-		*/
-		function checkDemolishable($bid)
-		{
-			// check all the buildings
-            $this->load(3);
-
-            if(!$this->getDeactivated($bid)) {
-                if (!$this->isUnderConstruction())
-                {
-                    global $cu,$cp;
-                    if ($this->entity == null)
-                    {
-                        if ($cp->id != $this->entityId)
-                            $this->entity = Entity::createFactoryById($this->entityId);
-                        else
-                            $this->entity = &$cp;
-                    }
-
-                    $cst = $this->items[$bid]->getDemolishCosts();
+                // check max level
+                if (!$this->items[$bid]->isMaxLevel()) {
+                    $cst = $this->items[$bid]->getBuildCosts();
                     // Check costs
-                    if ($cst['costs0'] <= $this->entity->getRes1(0)
+                    if (
+                        $cst['costs0'] <= $this->entity->getRes1(0)
                         && $cst['costs1'] <= $this->entity->getRes1(1)
                         && $cst['costs2'] <= $this->entity->getRes1(2)
                         && $cst['costs3'] <= $this->entity->getRes1(3)
-                        && $cst['costs4'] <= $this->entity->getRes1(4))
-                    {
-                        return true;
+                        && $cst['costs4'] <= $this->entity->getRes1(4)
+                    ) {
+                        // check fields
+                        if ($this->items[$bid]->building->fields == 0 || $cp->fields_used + $this->items[$bid]->building->fields <= $cp->fields + $cp->fields_extra) {
+                            if ($this->requirementsPassed($bid))
+                                $this->items[$bid]->buildableStatus = 1;
+                            else {
+                                $this->errorMsg = 'Voraussetzungen nicht erf&uuml;llt!';
+                                $this->items[$bid]->buildableStatus = -1;
+                            }
+                        } else {
+                            $this->errorMsg = 'Nicht gen&uuml;gend Felder vorhanden!';
+                            $this->items[$bid]->buildableStatus = 0;
+                        }
+                    } else {
+                        $this->errorMsg = 'Zuwenig Rohstoffe vorhanden!';
+                        $this->items[$bid]->buildableStatus = 0;
                     }
-                    else
-                        $this->errorMsg = "Zuwenig Rohstoffe vorhanden!";
+                } else {
+                    $this->errorMsg = 'Maximalstufe erreicht! Kein weiterer Ausbau m&ouml;glich!';
+                    $this->items[$bid]->buildableStatus = -1;
                 }
-                else
-                    $this->errorMsg = "Es wird gerade an einem Geb&auml;ude gebaut!";
-                return false;
-			}
-			else {
-                $this->errorMsg = "Das Geb&auml;ude wurde deaktiviert!";
-			}
-		}
+            } else {
+                $this->errorMsg = 'Es wird gerade an einem Geb&auml;ude gebaut!';
+                $this->items[$bid]->buildableStatus = 0;
+            }
+        }
+        return $this->items[$bid]->buildableStatus;
+    }
 
-		public function requirementsPassed($bid=0)
-		{
-			if (isset($this->items[$bid]))
-			{
-				$req = $this->items[$bid]->building->getBuildingRequirements();
-				foreach ($req as $rk=>$rv)
-				{
-					if (isset($this->items[$rk]) && $rv> $this->items[$rk]->level)
-					{
-						return false;
-					}
-				}
-				$req = $this->items[$bid]->building->getTechRequirements();
-                global $app;
+    /**
+     * Check wether an item is demolishable. Conditions are
+     * no building under construction and enough resources.
+     */
+    function checkDemolishable($bid)
+    {
+        // check all the buildings
+        $this->load(3);
 
-                /** @var TechnologyRepository $technologyRepository */
-                $technologyRepository = $app[TechnologyRepository::class];
-                $techlist = $technologyRepository->getTechnologyLevels($this->ownerId);
-				foreach ($req as $rk=>$rv)
-				{
-					if ($rv > ($techlist[$rk] ?? 0))
-					{
-						return false;
-					}
-				}
-				return true;
-			}
-			return false;
-		}
+        if (!$this->getDeactivated($bid)) {
+            if (!$this->isUnderConstruction()) {
+                global $cu, $cp;
+                if ($this->entity == null) {
+                    if ($cp->id != $this->entityId)
+                        $this->entity = Entity::createFactoryById($this->entityId);
+                    else
+                        $this->entity = &$cp;
+                }
 
-		/**
-		* Returns a message of the last error produced by this instance
-		*/
-		function getLastError()
-		{
-			return $this->errorMsg;
-		}
-	}
+                $cst = $this->items[$bid]->getDemolishCosts();
+                // Check costs
+                if (
+                    $cst['costs0'] <= $this->entity->getRes1(0)
+                    && $cst['costs1'] <= $this->entity->getRes1(1)
+                    && $cst['costs2'] <= $this->entity->getRes1(2)
+                    && $cst['costs3'] <= $this->entity->getRes1(3)
+                    && $cst['costs4'] <= $this->entity->getRes1(4)
+                ) {
+                    return true;
+                } else
+                    $this->errorMsg = "Zuwenig Rohstoffe vorhanden!";
+            } else
+                $this->errorMsg = "Es wird gerade an einem Geb&auml;ude gebaut!";
+            return false;
+        } else {
+            $this->errorMsg = "Das Geb&auml;ude wurde deaktiviert!";
+        }
+    }
+
+    public function requirementsPassed($bid = 0)
+    {
+        if (isset($this->items[$bid])) {
+            $req = $this->items[$bid]->building->getBuildingRequirements();
+            foreach ($req as $rk => $rv) {
+                if (isset($this->items[$rk]) && $rv > $this->items[$rk]->level) {
+                    return false;
+                }
+            }
+            $req = $this->items[$bid]->building->getTechRequirements();
+            global $app;
+
+            /** @var TechnologyRepository $technologyRepository */
+            $technologyRepository = $app[TechnologyRepository::class];
+            $techlist = $technologyRepository->getTechnologyLevels($this->ownerId);
+            foreach ($req as $rk => $rv) {
+                if ($rv > ($techlist[$rk] ?? 0)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Returns a message of the last error produced by this instance
+     */
+    function getLastError()
+    {
+        return $this->errorMsg;
+    }
+}

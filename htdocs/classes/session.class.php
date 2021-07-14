@@ -25,8 +25,7 @@ abstract class Session
      */
     public static function getInstance(ConfigurationService $config)
     {
-        if (!isset(self::$instance))
-        {
+        if (!isset(self::$instance)) {
             self::$instance = new static($config);
         }
         return self::$instance;
@@ -35,7 +34,9 @@ abstract class Session
     /**
      * The Clone operator. Cloning is prohibitet by this definition
      */
-    final function __clone() {}
+    final function __clone()
+    {
+    }
 
     //
     // Class variables and constants
@@ -100,7 +101,7 @@ abstract class Session
         // Set session name based on class and game round file system path.
         $name = md5(get_class($this) . __DIR__);
         @session_name($name);
-        @session_start();	// Start the session
+        @session_start();    // Start the session
     }
 
     /**
@@ -111,17 +112,16 @@ abstract class Session
      */
     function __get($field)
     {
-        if ($field=="lastError")
-            return ($this->lastError!=null) ? $this->lastError : "";
-        if ($field=="lastErrorCode")
-            return ($this->lastErrorCode!=null) ? $this->lastErrorCode : "general";
-        if ($field=="id")
+        if ($field == "lastError")
+            return ($this->lastError != null) ? $this->lastError : "";
+        if ($field == "lastErrorCode")
+            return ($this->lastErrorCode != null) ? $this->lastErrorCode : "general";
+        if ($field == "id")
             return session_id();
-        if ($field=="firstView")
+        if ($field == "firstView")
             return $this->firstView;
 
-        if (isset($_SESSION[$field]))
-        {
+        if (isset($_SESSION[$field])) {
             return $_SESSION[$field];
         }
         return null;
@@ -145,15 +145,12 @@ abstract class Session
      * @param mixed $value Property value
      * @return bool True if setting was successfull
      */
-    function __set($field,$value)
+    function __set($field, $value)
     {
-        if ($field=="lastError" || $field=="id")
-        {
+        if ($field == "lastError" || $field == "id") {
             error_msg("Private Variable!");
             return false;
-        }
-        else
-        {
+        } else {
             $_SESSION[$field] = $value;
         }
         return true;
@@ -169,4 +166,3 @@ abstract class Session
         unset($_SESSION[$field]);
     }
 }
-?>

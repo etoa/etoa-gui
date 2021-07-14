@@ -3,132 +3,148 @@
 use EtoA\Core\Configuration\ConfigurationService;
 
 /**
-	* Class for nebula entity
-	*/
-	class Wormhole extends Entity
-	{
-		protected $id;
-		protected $coordsLoaded;
-		public $pos;
-		protected $isValid;
-		public $sx;
-		public $sy;
-		public $cx;
-		public $cy;
-		protected $cellId;
-		private $name;
-		private $targetId;
-		private $persistent;
-		private $changed;
-		private $dataLoaded;
+ * Class for nebula entity
+ */
+class Wormhole extends Entity
+{
+    protected $id;
+    protected $coordsLoaded;
+    public $pos;
+    protected $isValid;
+    public $sx;
+    public $sy;
+    public $cx;
+    public $cy;
+    protected $cellId;
+    private $name;
+    private $targetId;
+    private $persistent;
+    private $changed;
+    private $dataLoaded;
 
-		/**
-		* The constructor
-		*/
-        public function __construct($id=0)
-		{
-			$this->isValid = true;
-			$this->id = intval($id);
-			$this->pos = 0;
-			$this->name = "";
-			$this->coordsLoaded=false;
-			$this->dataLoaded=false;
-			$this->targetId=-1;
-			$this->changed=-1;
-			$this->isVisible = true;
-		}
+    /**
+     * The constructor
+     */
+    public function __construct($id = 0)
+    {
+        $this->isValid = true;
+        $this->id = intval($id);
+        $this->pos = 0;
+        $this->name = "";
+        $this->coordsLoaded = false;
+        $this->dataLoaded = false;
+        $this->targetId = -1;
+        $this->changed = -1;
+        $this->isVisible = true;
+    }
 
     public function allowedFleetActions()
     {
-    	return array("flight","explore");
+        return array("flight", "explore");
     }
 
-		/**
-		* Returns id
-		*/
-		function id() { return $this->id; }
+    /**
+     * Returns id
+     */
+    function id()
+    {
+        return $this->id;
+    }
 
-		/**
-		* Returns id
-		*/
-		function name() { return $this->name; }
-
-
-		/**
-		* Returns owner
-		*/
-		function owner() { return "Niemand"; }
-
-		/**
-		* Returns owner
-		*/
-		function ownerId() { return 0; }
-
-		function ownerMain() { return false; }
+    /**
+     * Returns id
+     */
+    function name()
+    {
+        return $this->name;
+    }
 
 
-		/**
-		* Returns type string
-		*/
-		function entityCodeString() { return "Wurmloch"; }
+    /**
+     * Returns owner
+     */
+    function owner()
+    {
+        return "Niemand";
+    }
 
-		/**
-		* Returns type
-		*/
-		function type()
-		{
-			if (!$this->dataLoaded)
-			{
-				$this->loadData();
-			}
-			return $this->persistent ? "stabil" : "veränderlich";
-		}
+    /**
+     * Returns owner
+     */
+    function ownerId()
+    {
+        return 0;
+    }
 
-		function imagePath($opt="")
-		{
-			defineImagePaths();
-			if (!$this->dataLoaded)
-			{
-				$this->loadData();
-			}
-			$prefix = $this->persistent ? 'wormhole_persistent' : 'wormhole';
-			return IMAGE_PATH."/wormholes/".$prefix."1_small.".IMAGE_EXT;
-		}
+    function ownerMain()
+    {
+        return false;
+    }
 
-		/**
-		* Returns type
-		*/
-		function entityCode() { return "w"; }
 
-		/**
-		* To-String function
-		*/
-		function __toString()
-		{
-			if (!$this->coordsLoaded)
-			{
-				$this->loadCoords();
-			}
-			return $this->formatedCoords();
-		}
+    /**
+     * Returns type string
+     */
+    function entityCodeString()
+    {
+        return "Wurmloch";
+    }
 
-		/**
-		* Returns the cell id
-		*/
-		function cellId()
-		{
-			if (!$this->coordsLoaded)
-			{
-				$this->loadCoords();
-			}
-			return $this->cellId;
-		}
+    /**
+     * Returns type
+     */
+    function type()
+    {
+        if (!$this->dataLoaded) {
+            $this->loadData();
+        }
+        return $this->persistent ? "stabil" : "veränderlich";
+    }
 
-		function loadData()
-		{
-			if ($this->dataLoaded==false)
-			{
-				$res=dbquery("
+    function imagePath($opt = "")
+    {
+        defineImagePaths();
+        if (!$this->dataLoaded) {
+            $this->loadData();
+        }
+        $prefix = $this->persistent ? 'wormhole_persistent' : 'wormhole';
+        return IMAGE_PATH . "/wormholes/" . $prefix . "1_small." . IMAGE_EXT;
+    }
+
+    /**
+     * Returns type
+     */
+    function entityCode()
+    {
+        return "w";
+    }
+
+    /**
+     * To-String function
+     */
+    function __toString()
+    {
+        if (!$this->coordsLoaded) {
+            $this->loadCoords();
+        }
+        return $this->formatedCoords();
+    }
+
+    /**
+     * Returns the cell id
+     */
+    function cellId()
+    {
+        if (!$this->coordsLoaded) {
+            $this->loadCoords();
+        }
+        return $this->cellId;
+    }
+
+    function loadData()
+    {
+        if ($this->dataLoaded == false) {
+            $res = dbquery("
 				SELECT
 					target_id,
 					persistent,
@@ -136,51 +152,45 @@ use EtoA\Core\Configuration\ConfigurationService;
 				FROM
 					wormholes
 				WHERE
-					id=".$this->id.";
+					id=" . $this->id . ";
 				");
-				if (mysql_num_rows($res)>0)
-				{
-					$arr=mysql_fetch_assoc($res);
-					$this->targetId=$arr['target_id'];
-					$this->persistent=($arr['persistent']==1);
-					$this->changed=$arr['changed'];
-					$this->dataLoaded=true;
-				}
-			}
-		}
+            if (mysql_num_rows($res) > 0) {
+                $arr = mysql_fetch_assoc($res);
+                $this->targetId = $arr['target_id'];
+                $this->persistent = ($arr['persistent'] == 1);
+                $this->changed = $arr['changed'];
+                $this->dataLoaded = true;
+            }
+        }
+    }
 
-		function targetId()
-		{
-			if (!$this->dataLoaded)
-			{
-				$this->loadData();
-			}
-			return $this->targetId;
-		}
+    function targetId()
+    {
+        if (!$this->dataLoaded) {
+            $this->loadData();
+        }
+        return $this->targetId;
+    }
 
-		function isPersistent()
-		{
-			if (!$this->dataLoaded)
-			{
-				$this->loadData();
-			}
-			return $this->persistent;
-		}
+    function isPersistent()
+    {
+        if (!$this->dataLoaded) {
+            $this->loadData();
+        }
+        return $this->persistent;
+    }
 
-		function changed()
-		{
-			if (!$this->dataLoaded)
-			{
-				$this->loadData();
-			}
-			return $this->changed;
-		}
+    function changed()
+    {
+        if (!$this->dataLoaded) {
+            $this->loadData();
+        }
+        return $this->changed;
+    }
 
-		public function getFleetTargetForwarder()
-		{
-			// Forward in 0 secs to the other end of the wormhole and allow selection of new target
-			return array($this->targetId,0,true);
-		}
-
-	}
-?>
+    public function getFleetTargetForwarder()
+    {
+        // Forward in 0 secs to the other end of the wormhole and allow selection of new target
+        return array($this->targetId, 0, true);
+    }
+}

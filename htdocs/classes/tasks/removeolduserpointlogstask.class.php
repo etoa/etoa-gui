@@ -8,21 +8,21 @@ use Pimple\Container;
  */
 class RemoveOldUserPointLogsTask implements IPeriodicTask
 {
-	private PointsService $pointsService;
+    private PointsService $pointsService;
 
-	function __construct(Container $app)
-	{
+    function __construct(Container $app)
+    {
         $this->pointsService = $app[PointsService::class];
-	}
+    }
 
-	function run()
-	{
-		$nr = $this->pointsService->cleanupUserPoints();
-		return "$nr alte Userpunkte-Logs gelöscht";
-	}
+    function run()
+    {
+        $nr = $this->pointsService->cleanupUserPoints();
+        return "$nr alte Userpunkte-Logs gelöscht";
+    }
 
-	function getDescription()
-	{
-		return "Alte Benutzerpunkte-Logs löschen";
-	}
+    function getDescription()
+    {
+        return "Alte Benutzerpunkte-Logs löschen";
+    }
 }

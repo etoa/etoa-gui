@@ -3,97 +3,94 @@
 use EtoA\Technology\TechnologyRepository;
 
 class FleetManager
-	{
-		private $userId;
-		private $allianceId;
-		/** @var int */
-		private $userSpyTechLevel;
-		private $count;
-		private $aggressivCount;
-		private $fleet;
+{
+    private $userId;
+    private $allianceId;
+    /** @var int */
+    private $userSpyTechLevel;
+    private $count;
+    private $aggressivCount;
+    private $fleet;
 
-        public function __construct($userId,$allianceId=0)
-		{
-			$this->userId = $userId;
-			$this->allianceId = $allianceId;
-			$this->count = 0;
-			$this->fleet = array();
-		}
+    public function __construct($userId, $allianceId = 0)
+    {
+        $this->userId = $userId;
+        $this->allianceId = $allianceId;
+        $this->count = 0;
+        $this->fleet = array();
+    }
 
-		function countControlledByEntity($entId)
-		{
-			$res = dbquery("
+    function countControlledByEntity($entId)
+    {
+        $res = dbquery("
 			SELECT
 				COUNT(id)
 			FROM
 				fleet
 			WHERE
-				user_id='".$this->userId."'
+				user_id='" . $this->userId . "'
 			AND
 				((
-					entity_from='".$entId."'
+					entity_from='" . $entId . "'
 					AND status=0
 				)
 				OR
 				(
-					entity_to='".$entId."'
+					entity_to='" . $entId . "'
 					AND status>0
 				));");
-			$arr = mysql_fetch_row($res);
-			return $arr[0];
-		}
+        $arr = mysql_fetch_row($res);
+        return $arr[0];
+    }
 
-		function loadOwn()
-		{
-			$this->count = 0;
-			$this->fleet = array();
+    function loadOwn()
+    {
+        $this->count = 0;
+        $this->fleet = array();
 
-			//Lädt Flottendaten
-			$fres = dbquery("
+        //Lädt Flottendaten
+        $fres = dbquery("
 			SELECT
 				id
 			FROM
 				fleet
 			WHERE
-				user_id='".$this->userId."'
+				user_id='" . $this->userId . "'
 			ORDER BY
 				landtime DESC;");
-			if (mysql_num_rows($fres)>0)
-			{
-				while ($farr = mysql_fetch_row($fres))
-				{
-					$this->fleet[$farr[0]] = new Fleet($farr[0]);
-					$this->count++;
-				}
-			}
-		}
+        if (mysql_num_rows($fres) > 0) {
+            while ($farr = mysql_fetch_row($fres)) {
+                $this->fleet[$farr[0]] = new Fleet($farr[0]);
+                $this->count++;
+            }
+        }
+    }
 
-		function loadForeign()
-		{
-		    global $app;
+    function loadForeign()
+    {
+        global $app;
 
-			$this->count = 0;
-			$this->aggressivCount = 0;
-			$this->fleet = array();
+        $this->count = 0;
+        $this->aggressivCount = 0;
+        $this->fleet = array();
 
-			//User Spytech
-            /** @var TechnologyRepository $technologyRepository */
-            $technologyRepository = $app[TechnologyRepository::class];
-			$this->userSpyTechLevel = $technologyRepository->getTechnologyLevel((int) $this->userId, SPY_TECH_ID);
+        //User Spytech
+        /** @var TechnologyRepository $technologyRepository */
+        $technologyRepository = $app[TechnologyRepository::class];
+        $this->userSpyTechLevel = $technologyRepository->getTechnologyLevel((int) $this->userId, SPY_TECH_ID);
 
-			$specialist = new Specialist(0,0,$this->userId);
-			$this->userSpyTechLevel += $specialist->spyLevel;
+        $specialist = new Specialist(0, 0, $this->userId);
+        $this->userSpyTechLevel += $specialist->spyLevel;
 
-			if (SPY_TECH_SHOW_ATTITUDE<= (int) $this->userSpyTechLevel)
-            {
-				//Lädt Flottendaten
-				// TODO: This is not good query because it needs to know the planet table structure
+        if (SPY_TECH_SHOW_ATTITUDE <= (int) $this->userSpyTechLevel) {
+            //Lädt Flottendaten
+            // TODO: This is not good query because it needs to know the planet table structure
 
-				// Lade Flotten-id und leader-id (für Allianzangriffe)
-				// von Flotten, die auf einen Planet des aktuellen Users fliegen
-				// und nicht vom aktuellen User stammen
-				// und bei Allianzflotten nur von der Leader-Flotte
-				$fres = dbquery("
+            // Lade Flotten-id und leader-id (für Allianzangriffe)
+            // von Flotten, die auf einen Planet des aktuellen Users fliegen
+            // und nicht vom aktuellen User stammen
+            // und bei Allianzflotten nur von der Leader-Flotte
+            $fres = dbquery("
 					SELECT
 						f.id,
 						f.leader_id
@@ -102,33 +99,30 @@ class FleetManager
 					INNER JOIN
 						planets p
 					ON p.id=f.entity_to
-						AND p.planet_user_id=".$this->userId."
-						AND f.user_id!='".$this->userId."'
+						AND p.planet_user_id=" . $this->userId . "
+						AND f.user_id!='" . $this->userId . "'
 						AND !(f.action='alliance' AND f.leader_id!=f.id)
 					ORDER BY
 						landtime DESC;");
-				if (mysql_num_rows($fres)>0)
-				{
-					while ($farr = mysql_fetch_row($fres))
-					{
-						// cFleet contains all attached fleets if it
-						// is an alliance fleet.
-						$cFleet = new Fleet($farr[0],-1,$farr[1]);
+            if (mysql_num_rows($fres) > 0) {
+                while ($farr = mysql_fetch_row($fres)) {
+                    // cFleet contains all attached fleets if it
+                    // is an alliance fleet.
+                    $cFleet = new Fleet($farr[0], -1, $farr[1]);
 
-						if ($cFleet->getAction()->visible()) {
-							if ($cFleet->getAction()->attitude()==3) {
-								$opTarnTech = $technologyRepository->getTechnologyLevel((int) $cFleet->ownerId(), TARN_TECH_ID);
-								$specialist = new Specialist(0,0,$cFleet->ownerId());
-								$opTarnTech += $specialist->tarnLevel;
+                    if ($cFleet->getAction()->visible()) {
+                        if ($cFleet->getAction()->attitude() == 3) {
+                            $opTarnTech = $technologyRepository->getTechnologyLevel((int) $cFleet->ownerId(), TARN_TECH_ID);
+                            $specialist = new Specialist(0, 0, $cFleet->ownerId());
+                            $opTarnTech += $specialist->tarnLevel;
 
-								$diffTimeFactor = max($opTarnTech-$this->userSpyTechLevel,0);
-								$specialShipBonusTarn = 0;
+                            $diffTimeFactor = max($opTarnTech - $this->userSpyTechLevel, 0);
+                            $specialShipBonusTarn = 0;
 
-								// Minbari fleet hide ability does not work with alliance attacks
-								// TODO: Improvement would be differentiation between single fleets
-                if($cFleet->getAction()->code() != 'alliance')
-								{
-                    $specialBoniRes = dbquery("
+                            // Minbari fleet hide ability does not work with alliance attacks
+                            // TODO: Improvement would be differentiation between single fleets
+                            if ($cFleet->getAction()->code() != 'alliance') {
+                                $specialBoniRes = dbquery("
 										SELECT
 											s.special_ship_bonus_tarn,
 											fs.fs_special_ship_bonus_tarn
@@ -137,121 +131,112 @@ class FleetManager
 										INNER JOIN
 											fleet_ships fs
 										ON s.ship_id = fs.fs_ship_id
-											AND fs.fs_fleet_id='".$farr[0]."'
+											AND fs.fs_fleet_id='" . $farr[0] . "'
 											AND s.special_ship='1';");
-                                    if(mysql_num_rows($specialBoniRes)>0)
-                                    {
-                                        while ($specialBoniArr = mysql_fetch_assoc($specialBoniRes))
-                                        {
-                                            $specialShipBonusTarn += $specialBoniArr['special_ship_bonus_tarn'] * $specialBoniArr['fs_special_ship_bonus_tarn'];
-                                        }
+                                if (mysql_num_rows($specialBoniRes) > 0) {
+                                    while ($specialBoniArr = mysql_fetch_assoc($specialBoniRes)) {
+                                        $specialShipBonusTarn += $specialBoniArr['special_ship_bonus_tarn'] * $specialBoniArr['fs_special_ship_bonus_tarn'];
                                     }
                                 }
-								$diffTimeFactor = 0.1 * min(9,$diffTimeFactor + 10 * $specialShipBonusTarn);
+                            }
+                            $diffTimeFactor = 0.1 * min(9, $diffTimeFactor + 10 * $specialShipBonusTarn);
 
-								if ($cFleet->remainingTime() <  ($cFleet->landTime() - $cFleet->launchTime())*(1 - $diffTimeFactor)) {
-									$this->fleet[$farr[0]] = $cFleet;
-									$this->count++;
-									$this->aggressivCount++;
-								}
-							} else {
-								$this->fleet[$farr[0]] = $cFleet;
-								$this->count++;
-							}
-						}
-					}
-				}
-			}
-		}
+                            if ($cFleet->remainingTime() <  ($cFleet->landTime() - $cFleet->launchTime()) * (1 - $diffTimeFactor)) {
+                                $this->fleet[$farr[0]] = $cFleet;
+                                $this->count++;
+                                $this->aggressivCount++;
+                            }
+                        } else {
+                            $this->fleet[$farr[0]] = $cFleet;
+                            $this->count++;
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-		function loadAllianceSupport()
-		{
-			$this->count = 0;
-			$this->fleet = array();
-			//Lädt Flottendaten
-			// TODO: This is not good query because it needs to know the planet table structure
-			$fres = dbquery("
+    function loadAllianceSupport()
+    {
+        $this->count = 0;
+        $this->fleet = array();
+        //Lädt Flottendaten
+        // TODO: This is not good query because it needs to know the planet table structure
+        $fres = dbquery("
 			SELECT
 				f.id
 			FROM
 				fleet f
 			INNER JOIN
 				users u
-				ON u.user_alliance_id='".$this->allianceId."'
+				ON u.user_alliance_id='" . $this->allianceId . "'
 				AND u.user_id=f.user_id
 				AND action='support'
 			ORDER BY
 				landtime DESC;");
-			if (mysql_num_rows($fres)>0)
-			{
-				while ($farr = mysql_fetch_row($fres))
-				{
-					$this->fleet[$farr[0]] = new Fleet($farr[0]);
-					$this->count++;
-				}
-			}
-		}
+        if (mysql_num_rows($fres) > 0) {
+            while ($farr = mysql_fetch_row($fres)) {
+                $this->fleet[$farr[0]] = new Fleet($farr[0]);
+                $this->count++;
+            }
+        }
+    }
 
-		function loadAllianceAttacks()
-		{
-			$this->count = 0;
-			$this->fleet = array();
-			//Lädt Flottendaten
-			$fres = dbquery("
+    function loadAllianceAttacks()
+    {
+        $this->count = 0;
+        $this->fleet = array();
+        //Lädt Flottendaten
+        $fres = dbquery("
 			SELECT
 				id
 			FROM
 				fleet
 			WHERE
-				next_id='".$this->allianceId."'
+				next_id='" . $this->allianceId . "'
 				AND leader_id=id
 				AND action='alliance'
 				AND status='0'
 			ORDER BY
 				landtime DESC;");
-			if (mysql_num_rows($fres)>0)
-			{
-				while ($farr = mysql_fetch_row($fres))
-				{
-					$this->fleet[$farr[0]] = new Fleet($farr[0]);
-					$this->count++;
-				}
-			}
-		}
+        if (mysql_num_rows($fres) > 0) {
+            while ($farr = mysql_fetch_row($fres)) {
+                $this->fleet[$farr[0]] = new Fleet($farr[0]);
+                $this->count++;
+            }
+        }
+    }
 
 
 
 
 
 
-		function count()
-		{
-			return $this->count;
-		}
+    function count()
+    {
+        return $this->count;
+    }
 
-		function getAll()
-		{
-			return $this->fleet;
-		}
+    function getAll()
+    {
+        return $this->fleet;
+    }
 
-		function spyTech()
-		{
-			return $this->userSpyTechLevel;
-		}
+    function spyTech()
+    {
+        return $this->userSpyTechLevel;
+    }
 
-		function attitude()
-		{
-			if ($this->aggressivCount==$this->count) return "color:#f00";
-			elseif ($this->aggressivCount==0) return "color:#0f0";
-			else return "color:orange";
-		}
+    function attitude()
+    {
+        if ($this->aggressivCount == $this->count) return "color:#f00";
+        elseif ($this->aggressivCount == 0) return "color:#0f0";
+        else return "color:orange";
+    }
 
-		function loadAggressiv()
-		{
-			$this->loadForeign();
-			return $this->aggressivCount;
-		}
-
-	}
-
-?>
+    function loadAggressiv()
+    {
+        $this->loadForeign();
+        return $this->aggressivCount;
+    }
+}

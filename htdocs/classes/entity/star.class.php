@@ -1,36 +1,36 @@
 <?PHP
 
-	/**
-	* Star-Class
-	*
-	* @author Nicolas Perrenoud <mrcage@etoa.ch>
-	*/
-	class Star extends Entity
-	{
-		protected $id;
-		protected $pos;
-		private $name;
-		private $typeId;
-		protected $isValid;
-		protected $typeName;
-		public $named;
-		protected $coordsLoaded;
-		protected $sx;
-		protected $sy;
-		protected $cx;
-		protected $cy;
-		protected $cellId;
+/**
+ * Star-Class
+ *
+ * @author Nicolas Perrenoud <mrcage@etoa.ch>
+ */
+class Star extends Entity
+{
+    protected $id;
+    protected $pos;
+    private $name;
+    private $typeId;
+    protected $isValid;
+    protected $typeName;
+    public $named;
+    protected $coordsLoaded;
+    protected $sx;
+    protected $sy;
+    protected $cx;
+    protected $cy;
+    protected $cellId;
 
-		/**
-		* The constructor
-		*/
-        public function __construct($id=0)
-		{
-			$this->isValid=false;
-			$this->coordsLoaded=false;
-     		$this->isVisible = true;
+    /**
+     * The constructor
+     */
+    public function __construct($id = 0)
+    {
+        $this->isValid = false;
+        $this->coordsLoaded = false;
+        $this->isVisible = true;
 
-			$res=dbquery("
+        $res = dbquery("
 			SELECT
 	    	stars.name,
 	    	stars.type_id,
@@ -41,169 +41,181 @@
 	    INNER JOIN
 	    	entities
 	    ON entities.id=stars.id
-				AND	stars.id='".intval($id)."'
+				AND	stars.id='" . intval($id) . "'
 			INNER JOIN sol_types
 				ON stars.type_id=sol_types.sol_type_id;");
-			if (mysql_num_rows($res))
-			{
-				$arr = mysql_fetch_row($res);
-				$this->id=$id;
+        if (mysql_num_rows($res)) {
+            $arr = mysql_fetch_row($res);
+            $this->id = $id;
 
-				if ($arr[0]!="")
-				{
-					$this->name = stripslashes($arr[0]);
-				 	$this->named = true;
-				}
-				else
-				{
-				 	$this->name = "Unbenannt";
-				 	$this->named = false;
-				}
-				$this->typeId = $arr[1];
-				$this->pos = $arr[2];
-				$this->typeName = $arr[3];
+            if ($arr[0] != "") {
+                $this->name = stripslashes($arr[0]);
+                $this->named = true;
+            } else {
+                $this->name = "Unbenannt";
+                $this->named = false;
+            }
+            $this->typeId = $arr[1];
+            $this->pos = $arr[2];
+            $this->typeName = $arr[3];
 
-				$this->isValid=true;
-			}
-		}
+            $this->isValid = true;
+        }
+    }
 
-		public function typeData()
-		{
-				$res = dbquery("
+    public function typeData()
+    {
+        $res = dbquery("
 				SELECT
 					*
 				FROM
 					sol_types
 				WHERE
-					sol_type_id=".$this->typeId."
+					sol_type_id=" . $this->typeId . "
 				;");
-				$arr = mysql_fetch_assoc($res);
-				$rtn = array(
-				"metal" => $arr['sol_type_f_metal'],
-				"crystal" => $arr['sol_type_f_crystal'],
-				"plastic" => $arr['sol_type_f_plastic'],
-				"fuel" => $arr['sol_type_f_fuel'],
-				"food" => $arr['sol_type_f_food'],
-				"power" => $arr['sol_type_f_power'],
-				"population" => $arr['sol_type_f_population'],
-				"buildtime" => $arr['sol_type_f_buildtime'],
-				"researchtime" => $arr['sol_type_f_researchtime'],
-				"comment" => $arr['sol_type_comment']
-				);
-				return $rtn;
-		}
+        $arr = mysql_fetch_assoc($res);
+        $rtn = array(
+            "metal" => $arr['sol_type_f_metal'],
+            "crystal" => $arr['sol_type_f_crystal'],
+            "plastic" => $arr['sol_type_f_plastic'],
+            "fuel" => $arr['sol_type_f_fuel'],
+            "food" => $arr['sol_type_f_food'],
+            "power" => $arr['sol_type_f_power'],
+            "population" => $arr['sol_type_f_population'],
+            "buildtime" => $arr['sol_type_f_buildtime'],
+            "researchtime" => $arr['sol_type_f_researchtime'],
+            "comment" => $arr['sol_type_comment']
+        );
+        return $rtn;
+    }
 
     public function allowedFleetActions()
     {
-    	return array("flight","explore");
+        return array("flight", "explore");
     }
 
-		/**
-		* Returns validity
-		*/
-		public function isValid()
-		{
-			return $this->isValid;
-		}
+    /**
+     * Returns validity
+     */
+    public function isValid()
+    {
+        return $this->isValid;
+    }
 
-		/**
-		* Returns id
-		*/
-		function id() { return $this->id; }
+    /**
+     * Returns id
+     */
+    function id()
+    {
+        return $this->id;
+    }
 
-		/**
-		* Returns id
-		*/
-		function name() { return (addslashes($this->name)); }
-
-
-		/**
-		* Returns owner
-		*/
-		function owner() { return "Niemand"; }
-
-		/**
-		* Returns owner
-		*/
-		function ownerId() { return 0; }
-
-		function ownerMain() { return false; }
+    /**
+     * Returns id
+     */
+    function name()
+    {
+        return (addslashes($this->name));
+    }
 
 
-		/**
-		* Returns type string
-		*/
-		function entityCodeString() { return "Stern"; }
+    /**
+     * Returns owner
+     */
+    function owner()
+    {
+        return "Niemand";
+    }
 
-		/**
-		* Returns star type
-		*/
-		function type()
-		{
-			return $this->typeName;
-		}
+    /**
+     * Returns owner
+     */
+    function ownerId()
+    {
+        return 0;
+    }
 
-		function imagePath($opt="")
-		{
-			defineImagePaths();
-			if ($opt=="b")
-			{
-				return IMAGE_PATH."/stars/star".$this->typeId.".".IMAGE_EXT;
-			}
-			return IMAGE_PATH."/stars/star".$this->typeId."_small.".IMAGE_EXT;
-		}
+    function ownerMain()
+    {
+        return false;
+    }
 
-		/**
-		* Returns type
-		*/
-		function entityCode() { return "s"; }
 
-		/**
-		* To-String function
-		*/
-		function __toString()
-		{
-			if (!$this->coordsLoaded)
-			{
-				$this->loadCoords();
-			}
-			return $this->formatedCoords()." ".$this->name;
-		}
+    /**
+     * Returns type string
+     */
+    function entityCodeString()
+    {
+        return "Stern";
+    }
 
-		function cellId()
-		{
-			if (!$this->coordsLoaded)
-			{
-				$this->loadCoords();
-			}
-			return $this->cellId;
-		}
+    /**
+     * Returns star type
+     */
+    function type()
+    {
+        return $this->typeName;
+    }
 
-		/**
-		* Name star
-		*/
-		public function setNewName($name,$strict=1)
-		{
-			$name = stripBBCode($name);
-			if ($strict == 0 || !$this->named)
-			{
-				dbquery("
+    function imagePath($opt = "")
+    {
+        defineImagePaths();
+        if ($opt == "b") {
+            return IMAGE_PATH . "/stars/star" . $this->typeId . "." . IMAGE_EXT;
+        }
+        return IMAGE_PATH . "/stars/star" . $this->typeId . "_small." . IMAGE_EXT;
+    }
+
+    /**
+     * Returns type
+     */
+    function entityCode()
+    {
+        return "s";
+    }
+
+    /**
+     * To-String function
+     */
+    function __toString()
+    {
+        if (!$this->coordsLoaded) {
+            $this->loadCoords();
+        }
+        return $this->formatedCoords() . " " . $this->name;
+    }
+
+    function cellId()
+    {
+        if (!$this->coordsLoaded) {
+            $this->loadCoords();
+        }
+        return $this->cellId;
+    }
+
+    /**
+     * Name star
+     */
+    public function setNewName($name, $strict = 1)
+    {
+        $name = stripBBCode($name);
+        if ($strict == 0 || !$this->named) {
+            dbquery("
 				UPDATE
 					stars
 				SET
-					name='".mysql_real_escape_string($name)."'
+					name='" . mysql_real_escape_string($name) . "'
 				WHERE
-					id=".$this->id."
+					id=" . $this->id . "
 				");
-				$this->name=$name;
-				$this->named=true;
-				return true;
-			}
-			return false;
-		}
-		public function getFleetTargetForwarder()
-		{
-			return null;
-		}
-	}
-?>
+            $this->name = $name;
+            $this->named = true;
+            return true;
+        }
+        return false;
+    }
+    public function getFleetTargetForwarder()
+    {
+        return null;
+    }
+}

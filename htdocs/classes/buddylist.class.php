@@ -11,15 +11,13 @@ class Buddylist implements IteratorAggregate
     private $lastError = '';
     private $loaded = false;
 
-    public function __construct($userId=0, $load=0)
+    public function __construct($userId = 0, $load = 0)
     {
         $this->ownerId = $userId;
 
-        if ($load)
-        {
+        if ($load) {
             $this->loadBuddys(1);
         }
-
     }
 
     public function __toString()
@@ -35,16 +33,13 @@ class Buddylist implements IteratorAggregate
      */
     public function __set($key, $val)
     {
-        try
-        {
-            throw new EException("Properties der Klasse ".__CLASS__." sind read-only!");
+        try {
+            throw new EException("Properties der Klasse " . __CLASS__ . " sind read-only!");
             /*
             if (!property_exists($this,$key))
                 throw new EException("Property $key existiert nicht in der Klasse ".__CLASS__);
             $this->$key = $val;*/
-        }
-        catch (EException $e)
-        {
+        } catch (EException $e) {
             echo $e;
         }
     }
@@ -57,16 +52,13 @@ class Buddylist implements IteratorAggregate
      */
     public function __get($key)
     {
-        try
-        {
-            if (!property_exists($this,$key))
-                throw new EException("Property $key existiert nicht in ".__CLASS__);
+        try {
+            if (!property_exists($this, $key))
+                throw new EException("Property $key existiert nicht in " . __CLASS__);
 
 
             return $this->$key;
-        }
-        catch (EException $e)
-        {
+        } catch (EException $e) {
             echo $e;
             return null;
         }
@@ -79,24 +71,18 @@ class Buddylist implements IteratorAggregate
      *
      * @access public
      */
-    public function getIterator($type='buddys')
+    public function getIterator($type = 'buddys')
     {
-        if (!$this->loaded)
-        {
+        if (!$this->loaded) {
             $this->loadBuddys(1);
         }
 
-        if ($type == 'buddys')
-        {
-            if ($this->buddyCount)
-            {
+        if ($type == 'buddys') {
+            if ($this->buddyCount) {
                 return new ArrayIterator($this->buddys);
             }
-        }
-        else
-        {
-            if ($this->requestCount)
-            {
+        } else {
+            if ($this->requestCount) {
                 return new ArrayIterator($this->requests);
             }
         }
@@ -105,17 +91,13 @@ class Buddylist implements IteratorAggregate
 
     public function getBuddy($userId)
     {
-        if (!$this->loaded)
-        {
+        if (!$this->loaded) {
             $this->loadBuddy($userId);
         }
 
-        if ( isset($this->buddys[$userId]) )
-        {
+        if (isset($this->buddys[$userId])) {
             return $this->buddys[$userId];
-        }
-        elseif ( isset($this->requests[$userId]) )
-        {
+        } elseif (isset($this->requests[$userId])) {
             return $this->requests[$userId];
         }
 
@@ -135,40 +117,32 @@ class Buddylist implements IteratorAggregate
      *
      * @access public
      */
-    public function addBuddy($userId, $comment="")
+    public function addBuddy($userId, $comment = "")
     {
         // if there is no entry
-        if ($this->isBuddy($userId) == -1)
-        {
-            dbquery("INSERT INTO `buddylist` (`bl_user_id`, `bl_buddy_id`, `bl_comment`) VALUES ('".$this->ownerId."', '".$userId."', '".$comment,"');");
+        if ($this->isBuddy($userId) == -1) {
+            dbquery("INSERT INTO `buddylist` (`bl_user_id`, `bl_buddy_id`, `bl_comment`) VALUES ('" . $this->ownerId . "', '" . $userId . "', '" . $comment, "');");
             $this->loadBuddy($userId);
             //TODO: create a request msg or better a report
 
             return true;
-        }
-        elseif ($this->isBuddy($userId) == 1)
-        {
+        } elseif ($this->isBuddy($userId) == 1) {
             $this->lastError = "Es besteht bereits ein Eintrag in der Buddyliste.";
 
             return false;
-        }
-        else
-        {
-            $res = dbquery("SELECT bl_user_id FROM buddylist WHERE bl_user_id='".$userId."' AND bl_buddy_id='".$this->ownerId."' LIMIT 1;");
+        } else {
+            $res = dbquery("SELECT bl_user_id FROM buddylist WHERE bl_user_id='" . $userId . "' AND bl_buddy_id='" . $this->ownerId . "' LIMIT 1;");
 
             // if there is already an entry where the other user sent the request then accept the request
-            if (mysql_num_rows($res))
-            {
-                if ($this->acceptBuddy($userId))
-                {
-                        $this->lastError = "Es bestand schon eine Anfrage des User für einen Eintrag. Dieser wurde nun angenommen";
+            if (mysql_num_rows($res)) {
+                if ($this->acceptBuddy($userId)) {
+                    $this->lastError = "Es bestand schon eine Anfrage des User für einen Eintrag. Dieser wurde nun angenommen";
                 }
                 return false;
             }
 
             // else the request already exists
-            else
-            {
+            else {
                 $this->lastError = "Die Anfrage besteht bereits.";
                 return false;
             }
@@ -187,25 +161,20 @@ class Buddylist implements IteratorAggregate
     public function acceptBuddy($userId)
     {
         // if there is an buddy request
-        if ($this->isBuddy($userId) == 0)
-        {
-            dbquery("UPDATE buddylist SET bl_allow='1' WHERE bl_user_id='".$userId."' AND bl_buddy_id='".$this->ownerId."' LIMIT 1;");
+        if ($this->isBuddy($userId) == 0) {
+            dbquery("UPDATE buddylist SET bl_allow='1' WHERE bl_user_id='" . $userId . "' AND bl_buddy_id='" . $this->ownerId . "' LIMIT 1;");
 
             // if the request was updated -> success
-            if (mysql_affected_rows () > 0)
-            {
+            if (mysql_affected_rows() > 0) {
                 // TODO create msg or report
 
                 // TODO move buddy to other array
-                if ( $this->loaded )
-                {
+                if ($this->loaded) {
                     unset($this->requests['user_id']);
                     $this->loadBuddy($userId);
                 }
                 return true;
-            }
-            else
-            {
+            } else {
                 $this->lastError = "Es konnte keine Anfrage angenommen werden.";
                 return false;
             }
@@ -227,12 +196,10 @@ class Buddylist implements IteratorAggregate
      */
     public function declineBuddy($userId)
     {
-        if ($this->isBuddy($userId) == 0)
-        {
-            dbquery("DELETE FROM buddylist WHERE bl_user_id='".$userId."' AND bl_buddy_id='".$this->ownerId."' LIMIT 1;");
+        if ($this->isBuddy($userId) == 0) {
+            dbquery("DELETE FROM buddylist WHERE bl_user_id='" . $userId . "' AND bl_buddy_id='" . $this->ownerId . "' LIMIT 1;");
 
-            if ( $this->loaded )
-            {
+            if ($this->loaded) {
                 unset($this->requests['user_id']);
             }
             //TODO create msg or report
@@ -255,12 +222,10 @@ class Buddylist implements IteratorAggregate
      */
     public function deleteBudyy($userId)
     {
-        if ($this->isBuddy($userId) == 1)
-        {
-            dbquery("DELETE FROM buddylist WHERE (bl_user_id='".$userId."' AND bl_buddy_id='".$this->ownerId."') OR (bl_user_id='".$this->ownerId."' AND bl_buddy_id='".$userId."') LIMIT 1;");
+        if ($this->isBuddy($userId) == 1) {
+            dbquery("DELETE FROM buddylist WHERE (bl_user_id='" . $userId . "' AND bl_buddy_id='" . $this->ownerId . "') OR (bl_user_id='" . $this->ownerId . "' AND bl_buddy_id='" . $userId . "') LIMIT 1;");
 
-            if ( $this->loaded )
-            {
+            if ($this->loaded) {
                 unset($this->buddys['user_id']);
             }
             return true;
@@ -281,18 +246,15 @@ class Buddylist implements IteratorAggregate
     public function isBuddy($userId)
     {
         // if the list is no loaded, load just the data from the buddylist table. Userdata and all that stuff are not needed
-        if (!$this->loaded)
-        {
-            $res = dbquery("SELECT bl_allow FROM buddylist WHERE (bl_user_id='".$this->ownerId."' AND bl_buddy_id='".$userId."') OR (bl_buddy_id='".$this->ownerId."' AND bl_user_id='".$userId."');");
-            if (mysql_num_rows($res))
-            {
+        if (!$this->loaded) {
+            $res = dbquery("SELECT bl_allow FROM buddylist WHERE (bl_user_id='" . $this->ownerId . "' AND bl_buddy_id='" . $userId . "') OR (bl_buddy_id='" . $this->ownerId . "' AND bl_user_id='" . $userId . "');");
+            if (mysql_num_rows($res)) {
                 $arr = mysql_fetch_row($res);
                 return $arr[0];
             }
         }
         // check if there is an entry in the db
-        if (isset($this->buddys[$userId]))
-        {
+        if (isset($this->buddys[$userId])) {
             return $this->buddys[$userId];
         }
 
@@ -307,33 +269,32 @@ class Buddylist implements IteratorAggregate
     private function loadBuddy($userId)
     {
         //TODO check if already loaded
-        $res = dbquery("SELECT * FROM buddylist WHERE (bl_user_id='".$this->ownerId."' AND bl_buddy_id='".$userId."') OR (bl_buddy_id='".$this->ownerId."' AND bl_user_id='".$userId."');");
-        if (mysql_num_rows($res))
-        {
+        $res = dbquery("SELECT * FROM buddylist WHERE (bl_user_id='" . $this->ownerId . "' AND bl_buddy_id='" . $userId . "') OR (bl_buddy_id='" . $this->ownerId . "' AND bl_user_id='" . $userId . "');");
+        if (mysql_num_rows($res)) {
             $arr = mysql_fetch_assoc($res);
 
-            if ($this->ownerId == $arr['bl_user_id'])
-            {
-                $this->buddys[$arr['bl_buddy_id'] ] = array("id" => $arr['bl_id'],
-                                                            "allow" => $arr['bl_allow'],
-                                                            "comment" => $arr['bl_comment'],
-                                                            "user" => new User($arr['bl_buddy_id']) );
-            }
-            else
-            {
-                if ($arr['bl_allow'] == 1)
-                {
-                    $this->buddys[$arr['bl_user_id'] ] = array("id" => $arr['bl_id'],
-                                                                "allow" => $arr['bl_allow'],
-                                                                "comment" => $arr['bl_comment_buddy'],
-                                                                "user" => new User($arr['bl_user_id']) );
-                }
-                else
-                {
-                    $this->requests[$arr['bl_user_id'] ] = array("id" => $arr['bl_id'],
-                                                                "allow" => $arr['bl_allow'],
-                                                                "comment" => $arr['bl_comment_buddy'],
-                                                                "user" => new User($arr['bl_user_id']) );
+            if ($this->ownerId == $arr['bl_user_id']) {
+                $this->buddys[$arr['bl_buddy_id']] = array(
+                    "id" => $arr['bl_id'],
+                    "allow" => $arr['bl_allow'],
+                    "comment" => $arr['bl_comment'],
+                    "user" => new User($arr['bl_buddy_id'])
+                );
+            } else {
+                if ($arr['bl_allow'] == 1) {
+                    $this->buddys[$arr['bl_user_id']] = array(
+                        "id" => $arr['bl_id'],
+                        "allow" => $arr['bl_allow'],
+                        "comment" => $arr['bl_comment_buddy'],
+                        "user" => new User($arr['bl_user_id'])
+                    );
+                } else {
+                    $this->requests[$arr['bl_user_id']] = array(
+                        "id" => $arr['bl_id'],
+                        "allow" => $arr['bl_allow'],
+                        "comment" => $arr['bl_comment_buddy'],
+                        "user" => new User($arr['bl_user_id'])
+                    );
                 }
             }
         }
@@ -346,70 +307,54 @@ class Buddylist implements IteratorAggregate
      *
      * @access public
      */
-    private function loadBuddys($load=0)
+    private function loadBuddys($load = 0)
     {
-        if ($load !== 0)
-        {
-            $res = dbquery("SELECT * FROM buddylist WHERE bl_user_id='".$this->ownerId."' OR bl_buddy_id='".$this->ownerId."';");
-        }
-        else
-        {
-            $res = dbquery("SELECT bl_user_id, bl_buddy_id, bl_allow FROM buddylist WHERE bl_user_id='".$this->ownerId."' OR bl_buddy_id='".$this->ownerId."';");
+        if ($load !== 0) {
+            $res = dbquery("SELECT * FROM buddylist WHERE bl_user_id='" . $this->ownerId . "' OR bl_buddy_id='" . $this->ownerId . "';");
+        } else {
+            $res = dbquery("SELECT bl_user_id, bl_buddy_id, bl_allow FROM buddylist WHERE bl_user_id='" . $this->ownerId . "' OR bl_buddy_id='" . $this->ownerId . "';");
         }
 
         $this->buddyCount = mysql_num_rows($res);
-        if ($this->buddyCount)
-        {
-            while ($arr = mysql_fetch_assoc($res))
-            {
-                if ($load !== 0)
-                {
-                    if ($this->ownerId == $arr['bl_user_id'])
-                    {
-                        $this->buddys[$arr['bl_buddy_id'] ] = array("id" => $arr['bl_id'],
-                                                                        "allow" => $arr['bl_allow'],
-                                                                        "comment" => $arr['bl_comment'],
-                                                                        "user" => new User($arr['bl_buddy_id']) );
-                    }
-                    else
-                    {
-                        if ($arr['bl_allow'] == 1)
-                        {
-                            $this->buddys[$arr['bl_user_id'] ] = array("id" => $arr['bl_id'],
-                                                                        "allow" => $arr['bl_allow'],
-                                                                        "comment" => $arr['bl_comment_buddy'],
-                                                                        "user" => new User($arr['bl_user_id']) );
-                        }
-                        else
-                        {
-                            $this->requests[$arr['bl_user_id'] ] = array("id" => $arr['bl_id'],
-                                                                        "allow" => $arr['bl_allow'],
-                                                                        "comment" => $arr['bl_comment_buddy'],
-                                                                        "user" => new User($arr['bl_user_id']) );
+        if ($this->buddyCount) {
+            while ($arr = mysql_fetch_assoc($res)) {
+                if ($load !== 0) {
+                    if ($this->ownerId == $arr['bl_user_id']) {
+                        $this->buddys[$arr['bl_buddy_id']] = array(
+                            "id" => $arr['bl_id'],
+                            "allow" => $arr['bl_allow'],
+                            "comment" => $arr['bl_comment'],
+                            "user" => new User($arr['bl_buddy_id'])
+                        );
+                    } else {
+                        if ($arr['bl_allow'] == 1) {
+                            $this->buddys[$arr['bl_user_id']] = array(
+                                "id" => $arr['bl_id'],
+                                "allow" => $arr['bl_allow'],
+                                "comment" => $arr['bl_comment_buddy'],
+                                "user" => new User($arr['bl_user_id'])
+                            );
+                        } else {
+                            $this->requests[$arr['bl_user_id']] = array(
+                                "id" => $arr['bl_id'],
+                                "allow" => $arr['bl_allow'],
+                                "comment" => $arr['bl_comment_buddy'],
+                                "user" => new User($arr['bl_user_id'])
+                            );
                             $this->requestCount++;
                         }
-
-                        }
-                }
-                else
-                {
-                    if ($this->ownerId == $arr['bl_user_id'])
-                    {
-                        $this->buddys[$arr['bl_buddy_id'] ] = $arr['bl_allow'];
                     }
-                    else
-                    {
-                        $this->buddys[$arr['bl_user_id'] ] = $arr['bl_allow'];
+                } else {
+                    if ($this->ownerId == $arr['bl_user_id']) {
+                        $this->buddys[$arr['bl_buddy_id']] = $arr['bl_allow'];
+                    } else {
+                        $this->buddys[$arr['bl_user_id']] = $arr['bl_allow'];
                     }
                 }
-
             }
-        }
-        else
-        {
+        } else {
             $this->lastError = "Es sind keine Buddyeinträge vorhanden.";
         }
         $this->loaded = true;
-
     }
 }
