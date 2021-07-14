@@ -215,13 +215,12 @@ if ($cp) {
                     for ($x = 0; $x < 1; $x += 0.1) {
                         if ($x > 0.9) {
                             $vx = 0;
-                        }
-                        else {
+                        } else {
                             $vx = 1 - $x;
                         }
                         $perc = $vx * 100;
                         echo "<option value=\"" . $vx . "\"";
-                        if (doubleval($vx) >= doubleval($prod_percent)){
+                        if (doubleval($vx) >= doubleval($prod_percent)) {
                             echo " selected=\"selected\"";
                         }
                         echo ">" . $perc . " %</option>\n";
@@ -432,8 +431,8 @@ if ($cp) {
         ");
     if (mysql_num_rows($sres) > 0) {
         $solarProdBonus = $planet->solarPowerBonus();
-        $color = $solarProdBonus>=0 ? '#0f0' : '#f00';
-        $solarTempString = "<span style=\"color:".$color."\">".($solarProdBonus > 0 ? '+' : '').$solarProdBonus."</span>";
+        $color = $solarProdBonus >= 0 ? '#0f0' : '#f00';
+        $solarTempString = "<span style=\"color:" . $color . "\">" . ($solarProdBonus > 0 ? '+' : '') . $solarProdBonus . "</span>";
         while ($sarr = mysql_fetch_array($sres)) {
             $pwr = ($sarr['ship_prod_power'] + $solarProdBonus);
             $pwr *= $bonusFactor;

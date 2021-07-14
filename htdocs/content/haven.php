@@ -20,21 +20,17 @@ $shipRepository = $app[ShipRepository::class];
 /** @var DefenseRepository $defenseRepository */
 $defenseRepository = $app[DefenseRepository::class];
 
-if ($cp)
-{
+if ($cp) {
     $planet = $planetRepo->find($cp->id);
 
-    echo '<h1>Raumschiffhafen des Planeten '.$planet->name.'</h1>';
+    echo '<h1>Raumschiffhafen des Planeten ' . $planet->name . '</h1>';
     echo $resourceBoxDrawer->getHTML($planet);
 
-    if (!$cu->isVerified)
-    {
+    if (!$cu->isVerified) {
         iBoxStart("Funktion gesperrt");
         echo "Solange deine E-Mail Adresse nicht bestätigt ist, kannst du keine Flotten versenden!";
         iBoxEnd();
-    }
-    else
-    {
+    } else {
         // Count number of mobile defense structures
         $ndarr = mysql_fetch_row(dbquery("
         SELECT
@@ -47,8 +43,8 @@ if ($cp)
         INNER JOIN
             deflist l
             ON l.deflist_def_id=d.def_id
-            AND l.deflist_user_id=".$cu->id."
-            AND l.deflist_entity_id=".$planet->id."
+            AND l.deflist_user_id=" . $cu->id . "
+            AND l.deflist_entity_id=" . $planet->id . "
             AND l.deflist_count > 0"));
         $nsarr = mysql_fetch_row(dbquery("
         SELECT
@@ -61,18 +57,17 @@ if ($cp)
         INNER JOIN
             shiplist l
             ON l.shiplist_ship_id=d.ship_id
-            AND l.shiplist_user_id=".$cu->id."
-            AND l.shiplist_entity_id=".$planet->id."
+            AND l.shiplist_user_id=" . $cu->id . "
+            AND l.shiplist_entity_id=" . $planet->id . "
             AND l.shiplist_count > 0"));
 
         $numMobile = (int) $ndarr[0] + (int) $nsarr[0];
 
-        $mode = isset($_GET['mode']) && ($_GET['mode']!="") && ctype_alpha($_GET['mode']) ? $_GET['mode'] : 'launch';
-        if ($numMobile > 0)
-        {
-            show_tab_menu("mode",array(
-                "launch"=>"Flotten versenden",
-                "transship"=>"Mobile Anlagen umladen",
+        $mode = isset($_GET['mode']) && ($_GET['mode'] != "") && ctype_alpha($_GET['mode']) ? $_GET['mode'] : 'launch';
+        if ($numMobile > 0) {
+            show_tab_menu("mode", array(
+                "launch" => "Flotten versenden",
+                "transship" => "Mobile Anlagen umladen",
             ));
             echo "<br/>";
         }
@@ -80,26 +75,21 @@ if ($cp)
         //
         // Launch fleet
         //
-        if ($mode == "launch")
-        {
+        if ($mode == "launch") {
 
             //
             // Kampfsperre prüfen
             //
-            if ($config->getBoolean("battleban") && $config->param1Int("battleban_time") <= time() && $config->param2Int("battleban_time") > time())
-            {
+            if ($config->getBoolean("battleban") && $config->param1Int("battleban_time") <= time() && $config->param2Int("battleban_time") > time()) {
                 iBoxStart("Kampfsperre");
-                echo 'Es ist momentan nicht m&ouml;glich andere Spieler anzugreifen. Grund: '.text2html($config->param1("battleban")).'<br />Die Sperre dauert vom '.date("d.m.Y",$config->param1Int("battleban_time")).' um '.date("H:i",$config->param1Int("battleban_time")).' Uhr bis am '.date("d.m.Y",$config->param2Int("battleban_time"))." um ".date("H:i",$config->param2Int("battleban_time")).' Uhr!';
+                echo 'Es ist momentan nicht m&ouml;glich andere Spieler anzugreifen. Grund: ' . text2html($config->param1("battleban")) . '<br />Die Sperre dauert vom ' . date("d.m.Y", $config->param1Int("battleban_time")) . ' um ' . date("H:i", $config->param1Int("battleban_time")) . ' Uhr bis am ' . date("d.m.Y", $config->param2Int("battleban_time")) . " um " . date("H:i", $config->param2Int("battleban_time")) . ' Uhr!';
                 iBoxEnd();
             }
 
-            if (isset($_GET['target']) && intval($_GET['target'])>0)
-            {
-                $_SESSION['haven']['targetId']=intval($_GET['target']);
-            }
-            elseif (isset($_GET['cellTarget']) && intval($_GET['cellTarget'])>0)
-            {
-                $_SESSION['haven']['cellTargetId']=intval($_GET['cellTarget']);
+            if (isset($_GET['target']) && intval($_GET['target']) > 0) {
+                $_SESSION['haven']['targetId'] = intval($_GET['target']);
+            } elseif (isset($_GET['cellTarget']) && intval($_GET['cellTarget']) > 0) {
+                $_SESSION['haven']['cellTargetId'] = intval($_GET['cellTarget']);
             }
 
             // Fleet object
@@ -109,7 +99,7 @@ if ($cp)
 
             // Set vars for xajax
             $_SESSION['haven'] = Null;
-            $_SESSION['haven']['fleetObj']=serialize($fleet);
+            $_SESSION['haven']['fleetObj'] = serialize($fleet);
 
             echo '<div id="havenContent">
             <div id="havenContentShips" style="">
@@ -125,10 +115,8 @@ if ($cp)
         //
         // Mobile defenses
         //
-        else if ($mode == "transship")
-        {
-            if ($numMobile > 0)
-            {
+        else if ($mode == "transship") {
+            if ($numMobile > 0) {
                 if (isset($_POST['dtransform_submit'])) {
                     $transformed_counter = 0;
                     if (isset($_POST['dtransform']) && count($_POST['dtransform']) > 0) {
@@ -143,10 +131,10 @@ if ($cp)
                                 INNER JOIN
                                     obj_transforms t
                                     ON t.def_id=l.deflist_def_id
-                                    AND l.deflist_user_id=".$cu->id."
-                                    AND l.deflist_entity_id=".$planet->id."
+                                    AND l.deflist_user_id=" . $cu->id . "
+                                    AND l.deflist_entity_id=" . $planet->id . "
                                     AND l.deflist_count > 0
-                                    AND l.deflist_def_id=".intval($def_id)."");
+                                    AND l.deflist_def_id=" . intval($def_id) . "");
                             if (mysql_num_rows($res)) {
                                 $arr = mysql_fetch_assoc($res);
                                 $packcount = intval(min(max(0, $v), $arr['cnt']));
@@ -184,14 +172,14 @@ if ($cp)
                                 INNER JOIN
                                     obj_transforms t
                                     ON t.ship_id=l.shiplist_ship_id
-                                    AND l.shiplist_user_id=".$cu->id."
-                                    AND l.shiplist_entity_id=".$planet->id."
+                                    AND l.shiplist_user_id=" . $cu->id . "
+                                    AND l.shiplist_entity_id=" . $planet->id . "
                                     AND l.shiplist_count > 0
-                                    AND l.shiplist_ship_id=".$ship_id."");
+                                    AND l.shiplist_ship_id=" . $ship_id . "");
                             if (mysql_num_rows($res)) {
                                 $arr = mysql_fetch_assoc($res);
-                                $packcount = intval(min(max(0, $v),$arr['cnt']));
-                                if ($packcount>0) {
+                                $packcount = intval(min(max(0, $v), $arr['cnt']));
+                                if ($packcount > 0) {
                                     $defenseRepository->addDefense(
                                         (int)$arr['id'],
                                         $shipRepository->removeShips($ship_id, $packcount, $cu->getId(), $planet->id),
@@ -223,16 +211,16 @@ if ($cp)
                     INNER JOIN
                         deflist l
                         ON l.deflist_def_id=d.def_id
-                        AND l.deflist_user_id=".$cu->id."
-                        AND l.deflist_entity_id=".$planet->id."
+                        AND l.deflist_user_id=" . $cu->id . "
+                        AND l.deflist_entity_id=" . $planet->id . "
                         AND l.deflist_count > 0");
                 if (mysql_num_rows($otres) > 0) {
                     echo "<form action=\"?page=$page&mode=$mode\" method=\"post\">";
                     tableStart("Verteidigungsanlagen auf Träger verladen");
                     echo "<tr><th>Typ</th><th>Anzahl</th></tr>";
                     while ($otarr = mysql_fetch_assoc($otres)) {
-                        echo "<tr><td>".$otarr['name']."</td>
-                            <td><input type=\"text\" name=\"dtransform[".$otarr['id']."]\" value=\"".$otarr['cnt']."\" size=\"7\" /></td></tr>";
+                        echo "<tr><td>" . $otarr['name'] . "</td>
+                            <td><input type=\"text\" name=\"dtransform[" . $otarr['id'] . "]\" value=\"" . $otarr['cnt'] . "\" size=\"7\" /></td></tr>";
                     }
 
                     tableEnd();
@@ -252,24 +240,22 @@ if ($cp)
                     INNER JOIN
                         shiplist l
                         ON l.shiplist_ship_id=d.ship_id
-                        AND l.shiplist_user_id=".$cu->id."
-                        AND l.shiplist_entity_id=".$planet->id."
+                        AND l.shiplist_user_id=" . $cu->id . "
+                        AND l.shiplist_entity_id=" . $planet->id . "
                         AND l.shiplist_count > 0");
                 if (mysql_num_rows($otres) > 0) {
                     echo "<form action=\"?page=$page&mode=$mode\" method=\"post\">";
                     tableStart("Mobile Verteidigung installieren");
                     echo "<tr><th>Typ</th><th>Anzahl</th></tr>";
                     while ($otarr = mysql_fetch_assoc($otres)) {
-                        echo "<tr><td>".$otarr['name']."</td>
-                            <td><input type=\"text\" name=\"stransform[".$otarr['id']."]\" value=\"".$otarr['cnt']."\" size=\"7\" /></td></tr>";
+                        echo "<tr><td>" . $otarr['name'] . "</td>
+                            <td><input type=\"text\" name=\"stransform[" . $otarr['id'] . "]\" value=\"" . $otarr['cnt'] . "\" size=\"7\" /></td></tr>";
                     }
 
                     tableEnd();
                     echo "<input type=\"submit\" name=\"stransform_submit\" value=\"Ausladen und installieren\" /></form><br/>";
                 }
-            }
-            else
-            {
+            } else {
                 info_msg("Keine mobilen Anlagen vorhanden!");
             }
         }

@@ -29,16 +29,14 @@ echo '<h1>Spezialisten</h1>';
 echo $resourceBoxDrawer->getHTML($planet);
 
 $uCnt = $userRepository->count();
-$totAvail = ceil($uCnt*$config->getFloat('specialistconfig'));
+$totAvail = ceil($uCnt * $config->getFloat('specialistconfig'));
 
 //
 // Engage specialist
 //
-if (isset($_POST['submit_engage']) && isset($_POST['engage']))
-{
+if (isset($_POST['submit_engage']) && isset($_POST['engage'])) {
     echo "<br/>";
-    if ($cu->specialistTime < $t)
-    {
+    if ($cu->specialistTime < $t) {
         $specalist = $speciaistRepository->getSpecialist((int) $_POST['engage']);
         if ($specalist !== null) {
             $tres = dbquery("
@@ -47,12 +45,12 @@ if (isset($_POST['submit_engage']) && isset($_POST['engage']))
             FROM
                 users
             WHERE
-                user_specialist_time>".time()."
-                AND user_specialist_id=".$specalist->id.";");
+                user_specialist_time>" . time() . "
+                AND user_specialist_id=" . $specalist->id . ";");
             $tarr = mysql_fetch_row($tres);
-            $used = min($tarr[0],$totAvail);
+            $used = min($tarr[0], $totAvail);
             $avail = $totAvail - $used;
-            if ($totAvail!=0)
+            if ($totAvail != 0)
                 $factor = 1 + ($config->param1Float('specialistconfig') / $totAvail * $used);
             else
                 $factor = 1;
@@ -70,10 +68,10 @@ if (isset($_POST['submit_engage']) && isset($_POST['engage']))
                     UPDATE
                         users
                     SET
-                        user_specialist_id=".$specalist->id.",
-                        user_specialist_time=".$st."
+                        user_specialist_id=" . $specalist->id . ",
+                        user_specialist_time=" . $st . "
                     WHERE
-                        user_id=".$cu->id."
+                        user_id=" . $cu->id . "
                     ;");
                     $cu->specialistId = $specalist->id;
                     $cu->specialistTime = $st;
@@ -93,26 +91,18 @@ if (isset($_POST['submit_engage']) && isset($_POST['engage']))
                     }
                     success_msg('Der gewählte Spezialist wurde eingestellt!');
                     $app['dispatcher']->dispatch(new \EtoA\Specialist\Event\SpecialistHire($cu->specialistId), \EtoA\Specialist\Event\SpecialistHire::HIRE_SUCCESS);
-                }
-                else
-                {
+                } else {
                     error_msg('Zuwenig Rohstoffe vorhanden!');
                 }
-            }
-            else
-            {
+            } else {
                 error_msg('Zuwenig Punkte!');
             }
-        }
-        else
-        {
+        } else {
             error_msg('Spezialist nicht gefunden!');
         }
-    }
-    else
-    {
+    } else {
         error_msg('Es ist bereits ein Spezialist eingestellt.
-        Seine Anstellung dauert noch bis '.df($cu->specialistTime).'.
+        Seine Anstellung dauert noch bis ' . df($cu->specialistTime) . '.
         Du musst warten bis seine Anstellung beendet ist!');
     }
 }
@@ -120,11 +110,9 @@ if (isset($_POST['submit_engage']) && isset($_POST['engage']))
 //
 // Discharge specialist
 //
-if (isset($_POST['discharge']))
-{
+if (isset($_POST['discharge'])) {
     echo '<br/>';
-    if ($cu->specialistId > 0 && $cu->specialistTime > $t)
-    {
+    if ($cu->specialistId > 0 && $cu->specialistTime > $t) {
         $inUse = false;
         $specialist = $speciaistRepository->getSpecialist((int) $cu->specialistId);
         if ($specialist !== null) {
@@ -132,13 +120,10 @@ if (isset($_POST['discharge']))
 
             // check if a research is in progress if using the professor
             if ($specialist->timeTechnologies !== 1.0) {
-                $res = dbquery("SELECT techlist_id, techlist_build_start_time FROM techlist WHERE techlist_user_id='".$cu->id."' AND techlist_build_end_time > '".$t."';");
-                if (mysql_num_rows($res) > 0)
-                {
-                    while($arr = mysql_fetch_assoc($res))
-                    {
-                        if($arr['techlist_build_start_time'] > $inittime)
-                        {
+                $res = dbquery("SELECT techlist_id, techlist_build_start_time FROM techlist WHERE techlist_user_id='" . $cu->id . "' AND techlist_build_end_time > '" . $t . "';");
+                if (mysql_num_rows($res) > 0) {
+                    while ($arr = mysql_fetch_assoc($res)) {
+                        if ($arr['techlist_build_start_time'] > $inittime) {
                             $inUse = true;
                             break;
                         }
@@ -148,13 +133,10 @@ if (isset($_POST['discharge']))
 
             //Ingenieur
             if ($specialist->timeDefense !== 1.0) {
-                $res = dbquery("SELECT queue_id, queue_user_click_time FROM def_queue WHERE queue_user_id='" . $cu->id ."' AND queue_endtime > '".$t."';");
-                if (mysql_num_rows($res) > 0)
-                {
-                    while($arr = mysql_fetch_assoc($res))
-                    {
-                        if($arr['queue_user_click_time'] > $inittime)
-                        {
+                $res = dbquery("SELECT queue_id, queue_user_click_time FROM def_queue WHERE queue_user_id='" . $cu->id . "' AND queue_endtime > '" . $t . "';");
+                if (mysql_num_rows($res) > 0) {
+                    while ($arr = mysql_fetch_assoc($res)) {
+                        if ($arr['queue_user_click_time'] > $inittime) {
                             $inUse = true;
                             break;
                         }
@@ -164,13 +146,10 @@ if (isset($_POST['discharge']))
 
             //Architekt
             if ($specialist->timeBuildings !== 1.0) {
-                $res = dbquery("SELECT buildlist_build_start_time FROM buildlist WHERE buildlist_user_id='" . $cu->id ."' AND buildlist_build_end_time > '".$t."';");
-                if (mysql_num_rows($res) > 0)
-                {
-                    while($arr = mysql_fetch_assoc($res))
-                    {
-                        if($arr['buildlist_build_start_time'] > $inittime)
-                        {
+                $res = dbquery("SELECT buildlist_build_start_time FROM buildlist WHERE buildlist_user_id='" . $cu->id . "' AND buildlist_build_end_time > '" . $t . "';");
+                if (mysql_num_rows($res) > 0) {
+                    while ($arr = mysql_fetch_assoc($res)) {
+                        if ($arr['buildlist_build_start_time'] > $inittime) {
                             $inUse = true;
                             break;
                         }
@@ -180,25 +159,18 @@ if (isset($_POST['discharge']))
 
             //Admiral
             if ($specialist->fleetSpeed !== 1.0) {
-                $res = dbquery("SELECT launchtime,landtime,status FROM fleet WHERE user_id=".$cu->id);
-                if (mysql_num_rows($res) > 0)
-                {
-                    while($arr = mysql_fetch_assoc($res))
-                    {
-                        if($arr['launchtime'] > $inittime)
-                        {
-                            if ($arr['status'] == 0)
-                            {
+                $res = dbquery("SELECT launchtime,landtime,status FROM fleet WHERE user_id=" . $cu->id);
+                if (mysql_num_rows($res) > 0) {
+                    while ($arr = mysql_fetch_assoc($res)) {
+                        if ($arr['launchtime'] > $inittime) {
+                            if ($arr['status'] == 0) {
                                 $inUse = true;
                                 break;
-                            }
-                            else
-                            {
-                                $duration= $arr['landtime'] - $arr['launchtime'];
-                                $org_launchtime = $arr['launchtime']-$duration;
+                            } else {
+                                $duration = $arr['landtime'] - $arr['launchtime'];
+                                $org_launchtime = $arr['launchtime'] - $duration;
 
-                                if ($org_launchtime >= $inittime)
-                                {
+                                if ($org_launchtime >= $inittime) {
                                     $inUse = true;
                                     break;
                                 }
@@ -207,18 +179,13 @@ if (isset($_POST['discharge']))
                     }
                 }
             }
-        }
-        else
-        {
+        } else {
             error_msg("Du hast einen Spezialist eingestellt, der gar nicht existiert. Cheater!");
         }
 
-        if ($inUse)
-        {
+        if ($inUse) {
             error_msg('Der Spezialist wird gerade verwendet!');
-        }
-        else
-        {
+        } else {
             dbquery("
             UPDATE
                 users
@@ -226,7 +193,7 @@ if (isset($_POST['discharge']))
                 user_specialist_id=0,
                 user_specialist_time=0
             WHERE
-                user_id=".$cu->id."
+                user_id=" . $cu->id . "
             ;");
             $specialistId = $cu->specialistId;
             $cu->specialistId = 0;
@@ -235,9 +202,7 @@ if (isset($_POST['discharge']))
             success_msg('Der Spezialist wurde entlassen!');
             $app['dispatcher']->dispatch(new \EtoA\Specialist\Event\SpecialistDischarge($specialistId), \EtoA\Specialist\Event\SpecialistDischarge::DISCHARGE_SUCCESS);
         }
-    }
-    else
-    {
+    } else {
         error_msg('Du kannst niemanden entlassen, da kein Spezialist angestellt ist!');
     }
 }
@@ -246,12 +211,11 @@ if (isset($_POST['discharge']))
 // Show current engaged specialist
 //
 $s_active = false;
-if ($cu->specialistId > 0 && $cu->specialistTime > $t)
-{
+if ($cu->specialistId > 0 && $cu->specialistTime > $t) {
     $s_active = true;
 
     $specialist = $speciaistRepository->getSpecialist((int) $cu->specialistId);
-    echo "<form action=\"?page=".$page."\" method=\"post\">";
+    echo "<form action=\"?page=" . $page . "\" method=\"post\">";
     tableStart("Momentan eingestellter Spezialist");
     echo '<tr>
     <th>Funktion</th>
@@ -260,8 +224,8 @@ if ($cu->specialistId > 0 && $cu->specialistTime > $t)
     <th>Aktionen</th>
     </tr>';
     echo '<tr>
-    <td>'.$specialist->name.'</td>
-    <td>'.df($cu->specialistTime).'</td>
+    <td>' . $specialist->name . '</td>
+    <td>' . df($cu->specialistTime) . '</td>
     <td id="countDownElem">';
     if ($cu->specialistTime - $t > 0)
         echo tf($cu->specialistTime - $t);
@@ -277,26 +241,24 @@ if ($cu->specialistId > 0 && $cu->specialistTime > $t)
     tableEnd();
     echo "</form>";
     if ($cu->specialistTime - $t > 0)
-        countDown("countDownElem",$cu->specialistTime,"dischargeElem");
+        countDown("countDownElem", $cu->specialistTime, "dischargeElem");
 }
 
 
 //
 // Show all specialists
 //
-if (!$s_active)
-{
-    echo "<form action=\"?page=".$page."\" method=\"post\">";
+if (!$s_active) {
+    echo "<form action=\"?page=" . $page . "\" method=\"post\">";
 }
-tableStart("Galaktisches Arbeitsamt ".helpLink('specialists')."");
+tableStart("Galaktisches Arbeitsamt " . helpLink('specialists') . "");
 echo "<tr>
 <th>Name</th>
 <th>Benötigte Punkte</th>
 <th>Anstellbar für</th>
 <th>Verfügbar</th>
 <th>Kosten</th>";
-if (!$s_active)
-{
+if (!$s_active) {
     echo "<th>Auswahl</th>";
 }
 echo "</tr>";
@@ -309,56 +271,50 @@ foreach ($specialists as $specialist) {
     FROM
         users
     WHERE
-        user_specialist_time>".time()."
-        AND user_specialist_id=".$specialist->id.";");
+        user_specialist_time>" . time() . "
+        AND user_specialist_id=" . $specialist->id . ";");
     $tarr = mysql_fetch_row($tres);
-    $used = min($tarr[0],$totAvail);
+    $used = min($tarr[0], $totAvail);
     $avail = $totAvail - $used;
-    if ($totAvail!=0)
+    if ($totAvail != 0)
         $factor = 1 + ($config->param1Float('specialistconfig') / $totAvail * $used);
     else
         $factor = 1;
 
     echo '<tr>';
-    echo '<th style="width:140px;">'.$specialist->name.'</th>';
+    echo '<th style="width:140px;">' . $specialist->name . '</th>';
     echo '<td>';
     echo nf($specialist->pointsRequirement);
     echo '</td>';
     echo '<td>';
-    echo $specialist->days.' Tage';
+    echo $specialist->days . ' Tage';
     echo '</td>';
-    echo '<td style="color:'.($avail>0?'#0f0':'#f90').'">';
-    echo $avail." / ".$totAvail;
+    echo '<td style="color:' . ($avail > 0 ? '#0f0' : '#f90') . '">';
+    echo $avail . " / " . $totAvail;
     echo '</td>';
     echo '<td style="width:150px;">';
-    echo RES_ICON_METAL.nf($specialist->costsMetal*$factor).' '.RES_METAL.'<br style="clear:both;"/>';
-    echo RES_ICON_CRYSTAL.nf($specialist->costsCrystal*$factor).' '.RES_CRYSTAL.'<br style="clear:both;"/>';
-    echo RES_ICON_PLASTIC.nf($specialist->costsPlastic*$factor).' '.RES_PLASTIC.'<br style="clear:both;"/>';
-    echo RES_ICON_FUEL.nf($specialist->costsFuel*$factor).' '.RES_FUEL.'<br style="clear:both;"/>';
-    echo RES_ICON_FOOD.nf($specialist->costsFood*$factor).' '.RES_FOOD.'<br style="clear:both;"/>';
+    echo RES_ICON_METAL . nf($specialist->costsMetal * $factor) . ' ' . RES_METAL . '<br style="clear:both;"/>';
+    echo RES_ICON_CRYSTAL . nf($specialist->costsCrystal * $factor) . ' ' . RES_CRYSTAL . '<br style="clear:both;"/>';
+    echo RES_ICON_PLASTIC . nf($specialist->costsPlastic * $factor) . ' ' . RES_PLASTIC . '<br style="clear:both;"/>';
+    echo RES_ICON_FUEL . nf($specialist->costsFuel * $factor) . ' ' . RES_FUEL . '<br style="clear:both;"/>';
+    echo RES_ICON_FOOD . nf($specialist->costsFood * $factor) . ' ' . RES_FOOD . '<br style="clear:both;"/>';
     echo '</td>';
-    if (!$s_active)
-    {
+    if (!$s_active) {
         echo '<td>';
-        if ($avail > 0)
-        {
-            if ($planet->resMetal >= $specialist->costsMetal*$factor &&
-            $planet->resCrystal >= $specialist->costsCrystal*$factor &&
-            $planet->resPlastic >= $specialist->costsPlastic*$factor &&
-            $planet->resFuel >= $specialist->costsFuel*$factor &&
-            $planet->resFood >= $specialist->costsFood*$factor &&
-            $cu->points >= $specialist->pointsRequirement
-            )
-            {
-                echo '<input type="radio" name="engage" value="'.$specialist->id.'" />';
-            }
-            else
-            {
+        if ($avail > 0) {
+            if (
+                $planet->resMetal >= $specialist->costsMetal * $factor &&
+                $planet->resCrystal >= $specialist->costsCrystal * $factor &&
+                $planet->resPlastic >= $specialist->costsPlastic * $factor &&
+                $planet->resFuel >= $specialist->costsFuel * $factor &&
+                $planet->resFood >= $specialist->costsFood * $factor &&
+                $cu->points >= $specialist->pointsRequirement
+            ) {
+                echo '<input type="radio" name="engage" value="' . $specialist->id . '" />';
+            } else {
                 echo 'Zuwenig Rohstoffe/Punkte';
             }
-        }
-        else
-        {
+        } else {
             echo "Zurzeit nicht verfügbar!";
         }
         echo '</td>';
@@ -368,8 +324,7 @@ foreach ($specialists as $specialist) {
 tableEnd();
 
 
-if (!$s_active)
-{
+if (!$s_active) {
     echo '<input type="submit" name="submit_engage" value="Gewählten Spezialisten einstellen" /></form>';
 }
 
