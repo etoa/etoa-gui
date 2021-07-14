@@ -7,11 +7,11 @@ $config = $app[ConfigurationService::class];
 
 echo "<h1>Tools</h1>";
 
-if ($sub=="accesslog") {
+if ($sub == "accesslog") {
     accessLog($config);
-} elseif ($sub=="filesharing") {
+} elseif ($sub == "filesharing") {
     fileSharing();
-} elseif ($sub=="ipresolver") {
+} elseif ($sub == "ipresolver") {
     ipResolver();
 } else {
     toolsIndex();
@@ -24,62 +24,54 @@ function accessLog(ConfigurationService $config)
 
     echo "<h2>Seitenzugriffe</h2>";
 
-    $frm = new Form("accesslog","?page=$page&amp;sub=$sub");
-    if (isset($_POST['submit_toggle']))
-    {
+    $frm = new Form("accesslog", "?page=$page&amp;sub=$sub");
+    if (isset($_POST['submit_toggle'])) {
         $config->set("accesslog", !$config->getBoolean('accesslog'));
         success_msg("Einstellungen gespeichert");
     }
-    if (isset($_POST['submit_truncate']))
-    {
+    if (isset($_POST['submit_truncate'])) {
         dbquery("DELETE FROM accesslog;");
         success_msg("Aufzeichnungen gelöscht");
     }
 
     echo $frm->begin();
-    if ($config->getBoolean('accesslog'))
-    {
+    if ($config->getBoolean('accesslog')) {
         echo "<p>Seitenzugriffe werden aufgezeichnet.
         <input type=\"submit\" value=\"Deaktivieren\" name=\"submit_toggle\"  />";
-    }
-    else
-    {
+    } else {
         echo "<p>Seitenzugriffe werden momentan NICHT aufgezeichnet.
         <input type=\"submit\" value=\"Aktivieren\" name=\"submit_toggle\"  />";
     }
     echo " <input type=\"submit\" value=\"Aufzeichnungen löschen\" name=\"submit_truncate\"  /></p>";
     echo $frm->end();
 
-    $domains = array('ingame','public','admin');
+    $domains = array('ingame', 'public', 'admin');
 
-    foreach ($domains as $d)
-    {
+    foreach ($domains as $d) {
         $res = dbquery("
         SELECT target,COUNT(target) cnt
         FROM accesslog
         WHERE domain='$d'
         GROUP BY target
         ORDER BY cnt DESC");
-        echo "<h3>".ucfirst($d)."</h3>";
+        echo "<h3>" . ucfirst($d) . "</h3>";
         echo "<table class=\"tb\" style=\"width:500px\"><tr>
         <th>Ziel</th>
         <th style=\"width:90px\">Zugriffe
         <th style=\"width:200px\">Unterbereiche</th></tr>";
-        while ($arr = mysql_fetch_assoc($res))
-        {
-            echo "<tr><td>".$arr['target']."</td>
-            <td>".$arr['cnt']."</td>
+        while ($arr = mysql_fetch_assoc($res)) {
+            echo "<tr><td>" . $arr['target'] . "</td>
+            <td>" . $arr['cnt'] . "</td>
             <td style=\"padding:1px\"><table style=\"margin:0;width:100%;border:none;\">";
             $sres = dbquery("
                         SELECT sub,COUNT(sub) cnt
                         FROM accesslog
-                        WHERE domain='$d' AND target='".$arr['target']."'
+                        WHERE domain='$d' AND target='" . $arr['target'] . "'
                         GROUP BY sub
                         ORDER BY cnt DESC");
-            while ($sarr = mysql_fetch_assoc($sres))
-                        {
-                    echo "<tr><td>".$sarr['sub']."</td>
-                <td style=\"width:60px\">".$sarr['cnt']."</td></tr>";
+            while ($sarr = mysql_fetch_assoc($sres)) {
+                echo "<tr><td>" . $sarr['sub'] . "</td>
+                <td style=\"width:60px\">" . $sarr['cnt'] . "</td></tr>";
             }
             echo "</table></td>
             </tr>";
@@ -97,60 +89,44 @@ function fileSharing()
 
     echo "<h2>Filesharing</h2>";
 
-    if (isset($_GET['action']) && $_GET['action']=="rename")
-    {
+    if (isset($_GET['action']) && $_GET['action'] == "rename") {
         $f = base64_decode($_GET['file'], true);
-        if (md5($f) == $_GET['h'])
-        {
+        if (md5($f) == $_GET['h']) {
             echo "<h2>Umbenennen</h2>
             <form action=\"?page=$page&sub=$sub\" method=\"post\">";
             echo "Dateiname:
-            <input type=\"text\" name=\"rename\" value=\"".$f."\" />
-            <input type=\"hidden\" name=\"rename_old\" value=\"".$f."\" />
+            <input type=\"text\" name=\"rename\" value=\"" . $f . "\" />
+            <input type=\"hidden\" name=\"rename_old\" value=\"" . $f . "\" />
             &nbsp; <input type=\"submit\" name=\"rename_submit\" value=\"Umbenennen\" /> &nbsp;
             </form>";
-        }
-        else
-        {
+        } else {
             echo "Fehler im Dateinamen!";
         }
-    }
-    else
-    {
-        if (isset($_FILES["datei"]))
-        {
-            if(move_uploaded_file($_FILES["datei"]['tmp_name'],$root."/".$_FILES["datei"]['name']))
-            {
-                echo "Die Datei <b>".$_FILES["datei"]['name']."</b> wurde heraufgeladen!<br/><br/>";
-            }
-            else
-            {
+    } else {
+        if (isset($_FILES["datei"])) {
+            if (move_uploaded_file($_FILES["datei"]['tmp_name'], $root . "/" . $_FILES["datei"]['name'])) {
+                echo "Die Datei <b>" . $_FILES["datei"]['name'] . "</b> wurde heraufgeladen!<br/><br/>";
+            } else {
                 echo "Fehler beim Upload!<br/><br/>";
             }
         }
 
-        if (isset($_POST['rename_submit']) && $_POST['rename']!="")
-        {
-            rename($root."/".$_POST['rename_old'],$root."/".$_POST['rename']);
+        if (isset($_POST['rename_submit']) && $_POST['rename'] != "") {
+            rename($root . "/" . $_POST['rename_old'], $root . "/" . $_POST['rename']);
             echo "Datei wurde umbenannt!<br/><br/>";
         }
 
-        if (isset($_GET['action']) && $_GET['action']=="delete")
-        {
+        if (isset($_GET['action']) && $_GET['action'] == "delete") {
             $f = base64_decode($_GET['file'], true);
-            if (md5($f) == $_GET['h'])
-            {
-            @unlink($root."/".$f);
-            echo "Datei wurde gelöscht!<br/><br/>";
-            }
-            else
-            {
+            if (md5($f) == $_GET['h']) {
+                @unlink($root . "/" . $f);
+                echo "Datei wurde gelöscht!<br/><br/>";
+            } else {
                 echo "Fehler im Dateinamen!";
             }
         }
 
-        if ($d = opendir($root))
-        {
+        if ($d = opendir($root)) {
             $cnt = 0;
             echo "<table class=\"tb\">
             <tr>
@@ -159,26 +135,23 @@ function fileSharing()
                 <th>Datum</th>
                 <th style=\"width:150px;\">Optionen</th>
             </tr>";
-            while ($f = readdir($d))
-            {
-                $file = $root."/".$f;
-                if (is_file($file) && substr($f,0,1)!=".")
-                {
-                    $link = "file=".base64_encode($f)."&h=".md5($f);
+            while ($f = readdir($d)) {
+                $file = $root . "/" . $f;
+                if (is_file($file) && substr($f, 0, 1) != ".") {
+                    $link = "file=" . base64_encode($f) . "&h=" . md5($f);
                     echo "<tr>
-                        <td><a href=\"".createDownloadLink($file)."\">$f</a></td>
-                        <td>".byte_format(filesize($file))."</td>
-                        <td>".df(filemtime($file))."</td>
+                        <td><a href=\"" . createDownloadLink($file) . "\">$f</a></td>
+                        <td>" . byte_format(filesize($file)) . "</td>
+                        <td>" . df(filemtime($file)) . "</td>
                         <td>
-                            <a href=\"?page=$page&amp;sub=$sub&amp;action=rename&".$link."\">Umbenennen</a>
-                            <a href=\"?page=$page&amp;sub=$sub&amp;action=delete&".$link."\" onclick=\"return confirm('Soll diese Datei wirklich gelöscht werden?')\">Löschen</a>
+                            <a href=\"?page=$page&amp;sub=$sub&amp;action=rename&" . $link . "\">Umbenennen</a>
+                            <a href=\"?page=$page&amp;sub=$sub&amp;action=delete&" . $link . "\" onclick=\"return confirm('Soll diese Datei wirklich gelöscht werden?')\">Löschen</a>
                         </td>
                     </tr>";
                     $cnt++;
                 }
             }
-            if ($cnt==0)
-            {
+            if ($cnt == 0) {
                 echo "<tr><td colspan=\"4\"><i>Keine Dateien vorhanden!</i></td></tr>";
             }
             echo "</table>";
@@ -191,9 +164,7 @@ function fileSharing()
             <input type=\"submit\" name=\"submit\" value=\"Datei heraufladen\" />
             </form>
             ";
-        }
-        else
-        {
+        } else {
             echo "Verzeichnis $root kann nicht gefunden werden!";
         }
     }
@@ -207,36 +178,29 @@ function ipResolver()
     $ip = "";
     $host = "";
 
-    if (isset($_POST['resolve']))
-    {
-        if ($_POST['address']!="")
-        {
+    if (isset($_POST['resolve'])) {
+        if ($_POST['address'] != "") {
             $ip = $_POST['address'];
             $host = Net::getHost($_POST['address']);
-            echo "Die IP <b>".$ip."</b> hat den Hostnamen <b>".$host."</b><br/>";
-
-        }
-        elseif ($_POST['hostname']!="")
-        {
+            echo "Die IP <b>" . $ip . "</b> hat den Hostnamen <b>" . $host . "</b><br/>";
+        } elseif ($_POST['hostname'] != "") {
             $ip = gethostbyname($_POST['hostname']);
             $host = $_POST['hostname'];
-            echo "Die Host <b>".$host."</b> hat die IP <b>".$ip."</b><br/>";
+            echo "Die Host <b>" . $host . "</b> hat die IP <b>" . $ip . "</b><br/>";
         }
     }
-    if (isset($_POST['whois']))
-    {
+    if (isset($_POST['whois'])) {
         echo "<div style=\"border:1px solid #fff;background:#000;padding:3px;\">";
-        $cmd = "whois ".$_POST['hostname'];
+        $cmd = "whois " . $_POST['hostname'];
         $out = array();
-        exec($cmd,$out);
-        foreach ($out as $o)
-        {
+        exec($cmd, $out);
+        foreach ($out as $o) {
             echo "$o <br/>";
         }
         echo "</div>";
     }
     echo "<h2>IP-Resolver</h2>";
-    echo '<form action="?page='.$page.'&amp;sub='.$sub.'" method="post">';
+    echo '<form action="?page=' . $page . '&amp;sub=' . $sub . '" method="post">';
     echo "IP-Adresse: <input type=\"text\" name=\"address\" value=\"$ip\" /><br/>";
     echo "oder Hostname: <input type=\"text\" name=\"hostname\" value=\"$host\" /><br/><br/>";
     echo "<input type=\"submit\" name=\"resolve\" value=\"Auflösen\" /> &nbsp; ";

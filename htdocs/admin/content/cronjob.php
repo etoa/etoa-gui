@@ -17,7 +17,7 @@ if (($_GET['activateupdate'] ?? null) == 1) {
 $cronjob = null;
 $crontabUser = null;
 if (isUnixOS()) {
-    $scriptname = dirname(realpath(__DIR__."/../../"))."/bin/cronjob.php";
+    $scriptname = dirname(realpath(__DIR__ . "/../../")) . "/bin/cronjob.php";
     $cronjob = '* * * * * ' . $scriptname;
     $crontabUser = trim(shell_exec('id'));
 
@@ -27,7 +27,7 @@ if (isUnixOS()) {
 
     // Enable cronjob
     if (isset($_GET['enablecronjob']) && !in_array($cronjob, $crontab, true)) {
-        $out = shell_exec('(crontab -l 2>/dev/null; echo "'.$cronjob.'") | crontab -');
+        $out = shell_exec('(crontab -l 2>/dev/null; echo "' . $cronjob . '") | crontab -');
         if ($out) {
             $errorMessage = 'Cronjob konnte nicht aktiviert werden: ' . $out;
         }
@@ -65,14 +65,14 @@ foreach (PeriodicTaskRunner::getScheduleFromConfig() as $tc) {
 // Run periodic task if requested
 if (isset($_GET['runtask'])) {
     if (isset($periodictasks[$_GET['runtask']])) {
-        $title = "[b]Task: ".$periodictasks[$_GET['runtask']]['desc']."[/b] (".$_GET['runtask'].")\n";
+        $title = "[b]Task: " . $periodictasks[$_GET['runtask']]['desc'] . "[/b] (" . $_GET['runtask'] . ")\n";
         ob_start();
         $tr = new PeriodicTaskRunner($app);
         $out = $tr->runTask($_GET['runtask']);
-        $_SESSION['update_results'] = $title.$out.ob_get_clean();
-        Log::add(Log::F_UPDATES, Log::INFO, "Task [b]".$_GET['runtask']."[/b] manuell ausgeführt:\n".trim($out));
+        $_SESSION['update_results'] = $title . $out . ob_get_clean();
+        Log::add(Log::F_UPDATES, Log::INFO, "Task [b]" . $_GET['runtask'] . "[/b] manuell ausgeführt:\n" . trim($out));
     }
-    forward('?page='.$page);
+    forward('?page=' . $page);
 }
 
 // Run current or all tasks if requested
@@ -82,14 +82,14 @@ if (isset($_GET['run'])) {
     $log = '';
     foreach (PeriodicTaskRunner::getScheduleFromConfig() as $tc) {
         if ($_GET['run'] == "all" || PeriodicTaskRunner::shouldRun($tc['schedule'], $time)) {
-            $log.= $tc['name'].': '.$tr->runTask($tc['name']);
+            $log .= $tc['name'] . ': ' . $tr->runTask($tc['name']);
         }
     }
-    $log.= ob_get_clean();
-    $log.= "\nTotal: ".$tr->getTotalDuration().' sec';
+    $log .= ob_get_clean();
+    $log .= "\nTotal: " . $tr->getTotalDuration() . ' sec';
     $_SESSION['update_results'] = $log;
-    Log::add(Log::F_UPDATES, Log::INFO, "Tasks manuell ausgeführt:\n".trim($log));
-    forward('?page='.$page);
+    Log::add(Log::F_UPDATES, Log::INFO, "Tasks manuell ausgeführt:\n" . trim($log));
+    forward('?page=' . $page);
 }
 
 // Handle result message

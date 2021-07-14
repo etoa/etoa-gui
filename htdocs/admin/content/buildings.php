@@ -202,8 +202,8 @@ function buildingList(
     Request $request,
     BuildingRepository $repository,
     ConfigurationService $config,
-    Environment $twig)
-{
+    Environment $twig
+) {
     global $page;
     global $sub;
 

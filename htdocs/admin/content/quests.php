@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use EtoA\Quest\QuestPresenter;
 use EtoA\Quest\QuestRepository;
@@ -29,12 +31,12 @@ if ($sub === 'list') {
     foreach ($app['cubicle.quests.quests'] as $quest) {
         echo '
         <tr>
-            <td class="tbldata">' . $quest['id'].'</td>
-            <td class="tbldata">' . $quest['title'].'</td>
-            <td class="tbldata">' . $quest['description'].'</td>
-            <td class="tbldata">' . (isset($quest['trigger']) ? $quest['trigger']['type'] . ' ' . $quest['trigger']['operator'] . ' ' . $quest['trigger']['value'] : '').'</td>
+            <td class="tbldata">' . $quest['id'] . '</td>
+            <td class="tbldata">' . $quest['title'] . '</td>
+            <td class="tbldata">' . $quest['description'] . '</td>
+            <td class="tbldata">' . (isset($quest['trigger']) ? $quest['trigger']['type'] . ' ' . $quest['trigger']['operator'] . ' ' . $quest['trigger']['value'] : '') . '</td>
             <td class="tbldata">' . $quest['task']['type'] . ' ' . $quest['task']['operator'] . ' ' . $quest['task']['value'] . '</td>
-            <td class="tbldata">' . implode("\n", $questPresenter->buildRewards($quest)) .'</td>
+            <td class="tbldata">' . implode("\n", $questPresenter->buildRewards($quest)) . '</td>
         </tr>';
     }
     echo '</tbody></table>';
@@ -87,7 +89,7 @@ if ($sub === 'list') {
     };
 
     echo '
-        <form action="?page='.$page.'&amp;sub='.$sub.'&amp;action=search" method="post">
+        <form action="?page=' . $page . '&amp;sub=' . $sub . '&amp;action=search" method="post">
             <table class="tbl">
                 <tr>
                     <td class="tbltitle">Spieler ID</td>
@@ -107,7 +109,7 @@ if ($sub === 'list') {
                         <select name="quest_id">
                             <option value=""><i>---</i></option>';
     foreach ($app['cubicle.quests.quests'] as $quest) {
-        echo '<option value=' .$quest['id']. '>' .$quest['title']. '</option>';
+        echo '<option value=' . $quest['id'] . '>' . $quest['title'] . '</option>';
     }
 
     echo '              </select>
@@ -119,7 +121,7 @@ if ($sub === 'list') {
                         <select name="quest_state">
                             <option value=""><i>---</i></option>';
     foreach (QuestDefinition::STATES as $state) {
-        echo '<option value="' . $state. '">' . $state . '</option>';
+        echo '<option value="' . $state . '">' . $state . '</option>';
     }
 
     echo '              </select>
@@ -135,7 +137,7 @@ if ($sub === 'list') {
         $repository = $app[QuestRepository::class];
         $userNick = null;
         if ($_POST['user_nick'] !== '') {
-            $userNick = '%'.$_POST['user_nick'].'%';
+            $userNick = '%' . $_POST['user_nick'] . '%';
         }
         $quests = $repository->searchQuests($getParam($_POST['quest_id']), $getParam($_POST['user_id']), $_POST['quest_state'], $userNick);
         if (count($quests) > 0) {
@@ -150,12 +152,12 @@ if ($sub === 'list') {
                 $style = in_array($data['state'], [QuestDefinition::STATE_AVAILABLE, QuestDefinition::STATE_IN_PROGRESS, QuestDefinition::STATE_COMPLETED], true) ? ' style="color:#0f0"' : '';
 
                 echo '<tr>
-                        <td>'.$data['id'].'</td>';
+                        <td>' . $data['id'] . '</td>';
 
-                echo "<td class=\"tbldata\"$style ".mTT($data['user_nick'],nf($data['user_points'])." Punkte").">".cut_string($data['user_nick'],11)."</a></td>";
-                echo "<td class=\"tbldata\"$style>".$questMap[$data['quest_data_id']]."</a></td>";
-                echo "<td class=\"tbldata\"$style>".$data['state'] . '</td>';
-                echo "<td class=\"tbldata\">".edit_button("?page=$page&sub=$sub&action=edit&quest_id=".$data['id'])."</td>";
+                echo "<td class=\"tbldata\"$style " . mTT($data['user_nick'], nf($data['user_points']) . " Punkte") . ">" . cut_string($data['user_nick'], 11) . "</a></td>";
+                echo "<td class=\"tbldata\"$style>" . $questMap[$data['quest_data_id']] . "</a></td>";
+                echo "<td class=\"tbldata\"$style>" . $data['state'] . '</td>';
+                echo "<td class=\"tbldata\">" . edit_button("?page=$page&sub=$sub&action=edit&quest_id=" . $data['id']) . "</td>";
                 echo '</tr>';
             }
             echo '</table>';

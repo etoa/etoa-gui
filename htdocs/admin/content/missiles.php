@@ -12,9 +12,9 @@ $missileDataRepository = $app[MissileDataRepository::class];
 /** @var MissileRepository $missileRepository */
 $missileRepository = $app[MissileRepository::class];
 
-if ($sub=="data") {
+if ($sub == "data") {
     editMissileData($twig);
-} elseif ($sub=="req") {
+} elseif ($sub == "req") {
     missileRequirements($twig);
 } else {
     missileOverview($config, $missileDataRepository, $missileRepository);
@@ -27,16 +27,16 @@ function editMissileData(Environment $twig): void
 
 function missileRequirements(Environment $twig): void
 {
-    define("TITLE","Raketemanforderungen");
-    define("ITEMS_TBL","missiles");
-    define("REQ_TBL","missile_requirements");
-    define("REQ_ITEM_FLD","obj_id");
-    define("ITEM_ID_FLD","missile_id");
-    define("ITEM_NAME_FLD","missile_name");
-    define("ITEM_ENABLE_FLD","missile_show");
-    define("ITEM_ORDER_FLD","missile_name");
+    define("TITLE", "Raketemanforderungen");
+    define("ITEMS_TBL", "missiles");
+    define("REQ_TBL", "missile_requirements");
+    define("REQ_ITEM_FLD", "obj_id");
+    define("ITEM_ID_FLD", "missile_id");
+    define("ITEM_NAME_FLD", "missile_name");
+    define("ITEM_ENABLE_FLD", "missile_show");
+    define("ITEM_ORDER_FLD", "missile_name");
 
-    define("ITEM_IMAGE_PATH",IMAGE_PATH."/missiles/missile<DB_TABLE_ID>_small.".IMAGE_EXT);
+    define("ITEM_IMAGE_PATH", IMAGE_PATH . "/missiles/missile<DB_TABLE_ID>_small." . IMAGE_EXT);
 
     include("inc/requirements.inc.php");
 }
@@ -56,19 +56,19 @@ function missileOverview(ConfigurationService $config, MissileDataRepository $mi
     echo "<tr><th class=\"tbltitle\">Sonnensystem</th><td class=\"tbldata\">
     <select name=\"cell_sx\" onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showMissilesOnPlanet',1);\">";
     echo "<option value=\"0\">Sektor X</option>";
-    for ($x=1;$x<=$config->param1Int('num_of_sectors');$x++)
+    for ($x = 1; $x <= $config->param1Int('num_of_sectors'); $x++)
         echo "<option value=\"$x\">$x</option>";
     echo "</select>/<select name=\"cell_sy\"  onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showMissilesOnPlanet',1);\">";
     echo "<option value=\"0\">Sektor Y</option>";
-    for ($x=1;$x<=$config->param2Int('num_of_sectors');$x++)
+    for ($x = 1; $x <= $config->param2Int('num_of_sectors'); $x++)
         echo "<option value=\"$x\">$x</option>";
     echo "</select> : <select name=\"cell_cx\" onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showMissilesOnPlanet',1);\">";
     echo "<option value=\"0\">Zelle X</option>";
-    for ($x=1;$x<=$config->param1Int('num_of_cells');$x++)
+    for ($x = 1; $x <= $config->param1Int('num_of_cells'); $x++)
         echo "<option value=\"$x\">$x</option>";
     echo "</select>/<select name=\"cell_cy\" onChange=\"xajax_planetSelectorByCell(xajax.getFormValues('selector'),'showMissilesOnPlanet',1);\">";
     echo "<option value=\"0\">Zelle Y</option>";
-    for ($x=1;$x<=$config->param2Int('num_of_cells');$x++)
+    for ($x = 1; $x <= $config->param2Int('num_of_cells'); $x++)
         echo "<option value=\"$x\">$x</option>";
     echo "</select></td></tr>";
 
@@ -86,9 +86,8 @@ function missileOverview(ConfigurationService $config, MissileDataRepository $mi
     <input type=\"text\" name=\"shiplist_count\" value=\"1\" size=\"1\" maxlength=\"3\" />
     <select name=\"ship_id\">";
     $missileNames = $missileDataRepository->getMissileNames(true);
-    foreach ($missileNames as $missileId => $missileName)
-    {
-        echo "<option value=\"".$missileId."\">".$missileName."</option>";
+    foreach ($missileNames as $missileId => $missileName) {
+        echo "<option value=\"" . $missileId . "\">" . $missileName . "</option>";
     }
     echo "</select> &nbsp; <input type=\"button\" onclick=\"xajax_addMissileToPlanet(xajax.getFormValues('selector'));\" value=\"Hinzuf&uuml;gen\" /></td></tr>";
 
@@ -99,13 +98,11 @@ function missileOverview(ConfigurationService $config, MissileDataRepository $mi
     echo '<script type="text/javascript">document.forms[0].user_nick.focus();</script>';
 
     //Add User
-    if (searchQueryArray($sa,$so))
-    {
-        if (isset($sa['user_nick']))
-        {
-            echo "<script type=\"text/javascript\">document.getElementById('userlist_nick').value=\"".$sa['user_nick'][1]."\";xajax_searchUserList('".$sa['user_nick'][1]."','showMissilesOnPlanet');</script>";
+    if (searchQueryArray($sa, $so)) {
+        if (isset($sa['user_nick'])) {
+            echo "<script type=\"text/javascript\">document.getElementById('userlist_nick').value=\"" . $sa['user_nick'][1] . "\";xajax_searchUserList('" . $sa['user_nick'][1] . "','showMissilesOnPlanet');</script>";
         }
     }
 
-    echo "Es sind ".nf($missileRepository->count())." Einträge in der Datenbank vorhanden.<br/>";
+    echo "Es sind " . nf($missileRepository->count()) . " Einträge in der Datenbank vorhanden.<br/>";
 }

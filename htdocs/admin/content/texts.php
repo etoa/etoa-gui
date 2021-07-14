@@ -62,7 +62,7 @@ function previewText(TextRepository $textRepo, Environment $twig)
         exit();
     }
 
-	echo $twig->render('admin/texts/edit.html.twig', [
+    echo $twig->render('admin/texts/edit.html.twig', [
         'subtitle' => 'Textvorschau',
     ]);
     exit();
@@ -73,7 +73,7 @@ function enableText(TextRepository $textRepo)
     global $page;
 
     $id = $_GET['enable'];
-	if ($textRepo->isValidTextId($id)) {
+    if ($textRepo->isValidTextId($id)) {
         $t = $textRepo->find($id);
         $t->enabled = true;
         $textRepo->save($t);

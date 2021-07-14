@@ -19,10 +19,10 @@ if (isUnixOS()) {
     if (isset($_GET['action'])) {
         $executable = $config->get('daemon_exe');
         if (!$executable) {
-            $executable = realpath(RELATIVE_ROOT.'../eventhandler/target/etoad');
+            $executable = realpath(RELATIVE_ROOT . '../eventhandler/target/etoad');
         }
         $instance = $config->get('daemon_instance');
-        $configfile = realpath(RELATIVE_ROOT.'config/'.EVENTHANDLER_CONFIG_FILE_NAME);
+        $configfile = realpath(RELATIVE_ROOT . 'config/' . EVENTHANDLER_CONFIG_FILE_NAME);
         $pidfile = getAbsPath($config->get('daemon_pidfile'));
 
         if (file_exists($executable)) {
@@ -51,24 +51,24 @@ if (isUnixOS()) {
 
     if (function_exists('posix_uname')) {
         $un = posix_uname();
-        $sysId = $un['sysname']." ".$un['release']." ".$un['version'];
+        $sysId = $un['sysname'] . " " . $un['release'] . " " . $un['version'];
     }
 
     // Warning: Open-Basedir restrictions may appply
     $logfile = $config->get('daemon_logfile');
     if (!preg_match('#^/#', $logfile)) {
-        $logfile = '../'.$logfile;
+        $logfile = '../' . $logfile;
     }
     if (is_file($logfile)) {
-        $lf = fopen($logfile,"r");
+        $lf = fopen($logfile, "r");
         $log = [];
-        while($l = fgets($lf)) {
+        while ($l = fgets($lf)) {
             $log[] = $l;
         }
         fclose($lf);
         $log = array_reverse($log);
     } else {
-        $log = "<em>Die Logdatei ".$config->get('daemon_logfile')." kann nicht geöffnet werden!</em>";
+        $log = "<em>Die Logdatei " . $config->get('daemon_logfile') . " kann nicht geöffnet werden!</em>";
     }
 }
 

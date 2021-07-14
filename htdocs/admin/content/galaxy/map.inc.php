@@ -13,26 +13,26 @@ $sectorMap = new SectorMapRenderer($cx_num, $cy_num);
 
 // Selected cell
 if (isset($_GET['cell'])) {
-  $cell = new Cell($_GET['cell']);
-  if ($cell->isValid()) {
-    $sectorMap->setSelectedCell($cell);
-  }
+    $cell = new Cell($_GET['cell']);
+    if ($cell->isValid()) {
+        $sectorMap->setSelectedCell($cell);
+    }
 }
 
 // View map as user
 if (isset($_GET['user'])) {
-  $user = new CurrentUser($_GET['user']);
-  if ($user->isValid) {
-    $sectorMap->setImpersonatedUser($user);
-  }
+    $user = new CurrentUser($_GET['user']);
+    if ($user->isValid) {
+        $sectorMap->setImpersonatedUser($user);
+    }
 }
 
 // Draw map
 $mapsectors = array();
 for ($sy = $sy_num; $sy > 0; $sy--) {
-  for ($sx = 1; $sx <= $sx_num; $sx++) {
-    $mapsectors[$sy][$sx] = $sectorMap->render($sx, $sy);
-  }
+    for ($sx = 1; $sx <= $sx_num; $sx++) {
+        $mapsectors[$sy][$sx] = $sectorMap->render($sx, $sy);
+    }
 }
 echo $twig->render('admin/galaxy/map.html.twig', [
     'mapSectors' => $mapsectors,

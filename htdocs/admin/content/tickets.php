@@ -171,7 +171,7 @@ function ticketDetails(
     }
 
     echo "<div id=\"ttuser\" style=\"display:none;\">
-    <a href=\"?page=user&sub=edit&id=" . $ticket->userId ."\">Daten anzeigen</a><br/>
+    <a href=\"?page=user&sub=edit&id=" . $ticket->userId . "\">Daten anzeigen</a><br/>
     <a href=\"?page=sendmessage&amp;id=" . $ticket->userId . "\">Nachricht senden</a><br/>
     </div>";
 
@@ -339,7 +339,7 @@ function activeTickets(
         echo "<tr><th>ID</th><th>Status</th><th>Kategorie</th><th>User</th><th>Letzte Änderung</th></tr>";
         foreach ($newTickets as $ticket) {
             echo "<div id=\"tt" . $ticket->id . "\" style=\"display:none;\">
-            <a href=\"?page=user&sub=edit&id=" . $ticket->userId ."\">Daten anzeigen</a><br/>
+            <a href=\"?page=user&sub=edit&id=" . $ticket->userId . "\">Daten anzeigen</a><br/>
             <a href=\"?page=sendmessage&amp;id=" . $ticket->userId . "\">Nachricht senden</a><br/>
             </div>";
 

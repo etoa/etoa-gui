@@ -6,4 +6,3 @@ echo '<div id="tfContent">
 </div>';
 
 echo '<script type="text/javascript">xajax_showNumberField();</script>';
-
