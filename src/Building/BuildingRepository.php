@@ -181,23 +181,6 @@ class BuildingRepository extends AbstractRepository
     }
 
     /**
-     * @return BuildingPoint[]
-     */
-    public function fetchPointsForBuilding(int $buildingId): array
-    {
-        $data = $this->createQueryBuilder()
-            ->select('bp_level', 'bp_points')
-            ->from('building_points')
-            ->where('bp_building_id = :buildingId')
-            ->orderBy('bp_level', 'ASC')
-            ->setParameter('buildingId', $buildingId)
-            ->execute()
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new BuildingPoint($row), $data);
-    }
-
-    /**
      * @param array<string, mixed> $formData
      */
     public function findByFormData(array $formData): array

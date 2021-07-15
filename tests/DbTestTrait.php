@@ -36,6 +36,7 @@ trait DbTestTrait
         $this->connection->executeQuery('TRUNCATE users');
         $this->connection->executeQuery('TRUNCATE user_surveillance');
         $this->connection->executeQuery('TRUNCATE tech_points');
+        $this->connection->executeQuery('TRUNCATE building_points');
         $this->connection->executeQuery('TRUNCATE tickets');
         $this->connection->executeQuery('TRUNCATE ticket_msg');
         $this->connection->executeQuery('TRUNCATE messages');
