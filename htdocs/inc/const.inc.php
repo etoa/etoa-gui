@@ -368,19 +368,19 @@ define("BUILDING_STORE_CAT", 4);
 define("RES_BUILDING_CAT", 2);
 
 // Gebäude welches den Status des Bauhofes wiedergibt
-define("BUILD_BUILDING_ID", 6);
+define("BUILD_BUILDING_ID", \EtoA\Building\BuildingId::BUILDING);
 
 // Gebäude welches den Status das Wohnheim wiedergibt
-define("PEOPLE_BUILDING_ID", 7);
+define("PEOPLE_BUILDING_ID", \EtoA\Building\BuildingId::PEOPLE);
 
 // Gebäude welches den Status des Forschungslabors wiedergibt
-define("TECH_BUILDING_ID", 8);
+define("TECH_BUILDING_ID", \EtoA\Building\BuildingId::TECHNOLOGY);
 
 // Gebäude welches den Status der Schiffswerft wiedergibt
-define("SHIP_BUILDING_ID", 9);
+define("SHIP_BUILDING_ID", \EtoA\Building\BuildingId::SHIPYARD);
 
 // Gebäude welches den Status der Waffenfabrik wiedergibt
-define("DEF_BUILDING_ID", 10);
+define("DEF_BUILDING_ID", \EtoA\Building\BuildingId::DEFENSE);
 
 // ID der Schiffswerft
 define("SHIPYARD_ID", 9);

@@ -330,14 +330,16 @@ class BuildingRepository extends AbstractRepository
             ->execute();
     }
 
-    public function getPeopleWorking(int $entityId): int
+    public function getPeopleWorking(int $entityId): PeopleWorking
     {
-        return (int) $this->createQueryBuilder()
-            ->select('SUM(buildlist_people_working)')
+         $data = $this->createQueryBuilder()
+            ->select('buildlist_building_id, buildlist_people_working')
             ->from('buildlist')
             ->where('buildlist_entity_id = :entityId')
             ->setParameter('entityId', $entityId)
             ->execute()
-            ->fetchOne();
+            ->fetchAllKeyValue();
+
+         return new PeopleWorking($data);
     }
 }

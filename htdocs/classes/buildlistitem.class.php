@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Universe\Planet\PlanetRepository;
 
@@ -196,9 +197,15 @@ class BuildListItem
 
     public function getBuildCosts($levelUp = 0)
     {
+        global ;
+
         if (!(count($this->costs) > 0 && !$levelUp) || !(count($this->nextCosts) > 0  && $levelUp)) {
             // TODO
-            global $resNames, $cp, $cu, $bl;
+            global $resNames, $cp, $cu, $bl, $app;
+
+            /** @var BuildingRepository $buildingRepository */
+            $buildingRepository = $app[BuildingRepository::class];
+            $peopleWorking = $buildingRepository->getPeopleWorking($this->entityId);
 
             $bc = array();
             foreach ($resNames as $rk => $rn) {
@@ -222,12 +229,12 @@ class BuildListItem
                 $bc['costs5'] = ($cu->specialist->costsBuilding * $this->building->costs[5] * pow($this->building->prodFactor, $this->level + $levelUp));
             }
 
-            if ($bl->getPeopleWorking(BUILD_BUILDING_ID) > 0) {
+            if ($peopleWorking->building > 0) {
                 $bc['min_time'] = $bc['time'] * $this->minBuildTimeFactor();
-                $bc['time'] -= ($bl->getPeopleWorking(BUILD_BUILDING_ID) * $this->config->getInt('people_work_done'));
+                $bc['time'] -= ($peopleWorking->building * $this->config->getInt('people_work_done'));
                 if ($bc['time'] < $bc['min_time'])
                     $bc['time'] = $bc['min_time'];
-                $bc['costs4'] += $bl->getPeopleWorking(BUILD_BUILDING_ID) * $this->config->getInt('people_food_require');
+                $bc['costs4'] += $peopleWorking->building * $this->config->getInt('people_food_require');
             }
 
             if ($levelUp)
@@ -258,7 +265,11 @@ class BuildListItem
     public function build()
     {
         // TODO
-        global $cp, $cu, $bl;
+        global $cp, $cu, $bl, $app;
+
+        /** @var BuildingRepository $buildingRepository */
+        $buildingRepository = $app[BuildingRepository::class];
+        $peopleWorking = $buildingRepository->getPeopleWorking($this->entityId);
 
         $costs = $this->getBuildCosts();
         $this->changedFields['startTime'] = "buildlist_build_start_time";
@@ -316,7 +327,7 @@ class BuildListItem
 
         [b]Baudauer:[/b] " . tf($costs['time']) . "
         [b]Ende:[/b] " . date("d.m.Y H:i:s", $this->endTime) . "
-        [b]Eingesetzte Bewohner:[/b] " . nf($bl->getPeopleWorking(BUILD_BUILDING_ID)) . "
+        [b]Eingesetzte Bewohner:[/b] " . nf($peopleWorking->building) . "
         [b]Gen-Tech Level:[/b] " . BuildList::$GENTECH . "
         [b]Eingesetzter Spezialist:[/b] " . $cu->specialist->name . "
 

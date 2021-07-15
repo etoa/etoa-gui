@@ -101,8 +101,9 @@ if (isset($cp)) {
         $minBuildTimeFactor = (0.1 - (GEN_TECH_LEVEL / 100));
 
         // People working in the tech building.
-        $peopleWorking = $bl->getPeopleWorking(TECH_BUILDING_ID);
-        $peopleWorkingGen = $bl->getPeopleWorking(PEOPLE_BUILDING_ID);
+        $peopleWorking = $buildingRepository->getPeopleWorking($planet->id);
+        $peopleWorkingResearch = $peopleWorking->research;
+        $peopleWorkingGen = $peopleWorking->people;
 
         $peopleTimeReduction = $config->getInt('people_work_done');
         $peopleFoodConsumption = $config->getInt('people_food_require');
@@ -164,9 +165,9 @@ if (isset($cp)) {
         ob_end_clean();
 
         if ($bid == GEN_TECH_ID)
-            $peopleFree = floor($planet->people) - $buildingRepository->getPeopleWorking($planet->id) + ($peopleWorkingGen);
+            $peopleFree = floor($planet->people) - $peopleWorking->total + ($peopleWorkingGen);
         else
-            $peopleFree = floor($planet->people) - $buildingRepository->getPeopleWorking($planet->id) + ($peopleWorking);
+            $peopleFree = floor($planet->people) - $peopleWorking->total + ($peopleWorkingResearch);
 
         $peopleOptimized = 0;
         $currentTechData = null;
@@ -229,7 +230,7 @@ if (isset($cp)) {
             $people = $peopleWorkingGen;
         } else {
             $form_button = 'submit_people_form';
-            $people = $peopleWorking;
+            $people = $peopleWorkingResearch;
         }
 
         $box .= '	<tr>
@@ -301,7 +302,7 @@ if (isset($cp)) {
 
         // Worker
         echo "<tr><td><th>Normal</th></td><th>Gentech</th></tr>";
-        echo "<tr><td>Eingestellte Arbeiter:</td><td>" . nf($peopleWorking);
+        echo "<tr><td>Eingestellte Arbeiter:</td><td>" . nf($peopleWorkingResearch);
 
         if (($building_something <> 1) && ($bid > 0) && ($bid <> 23)) {
             echo '&nbsp;<a id ="link" href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
@@ -313,9 +314,9 @@ if (isset($cp)) {
         }
 
         echo '</td></tr>';
-        if (($peopleWorking > 0) || ($peopleWorkingGen > 0)) {
-            echo "<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td>" . tf($peopleTimeReduction * $peopleWorking) . "</td><td>" . tf($peopleTimeReduction * $peopleWorkingGen) . "</td></tr>";
-            echo "<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td>" . nf($peopleFoodConsumption * $peopleWorking) . "</td><td>" . nf($peopleFoodConsumption * $peopleWorkingGen) . "</td></tr>";
+        if (($peopleWorkingResearch > 0) || ($peopleWorkingGen > 0)) {
+            echo "<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td>" . tf($peopleTimeReduction * $peopleWorkingResearch) . "</td><td>" . tf($peopleTimeReduction * $peopleWorkingGen) . "</td></tr>";
+            echo "<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td>" . nf($peopleFoodConsumption * $peopleWorkingResearch) . "</td><td>" . nf($peopleFoodConsumption * $peopleWorkingGen) . "</td></tr>";
         }
 
         tableEnd();
@@ -379,11 +380,11 @@ if (isset($cp)) {
                 // Berechnet mindest Bauzeit in beachtung von Gentechlevel
                 $btime_min = $btime * $minBuildTimeFactor;
                 if ($bid != GEN_TECH_ID) {
-                    $btime = $btime - $peopleWorking * $peopleTimeReduction;
+                    $btime = $btime - $peopleWorkingResearch * $peopleTimeReduction;
                     if ($btime < $btime_min) {
                         $btime = $btime_min;
                     }
-                    $bc['food'] += $peopleWorking * $peopleFoodConsumption;
+                    $bc['food'] += $peopleWorkingResearch * $peopleFoodConsumption;
                 } else {
                     $btime = $btime - $peopleWorkingGen * $peopleTimeReduction;
                     if ($btime < $btime_min) {
@@ -472,7 +473,7 @@ if (isset($cp)) {
                             [b]Erforschungsdauer:[/b] " . tf($btime) . "
                             [b]Ende:[/b] " . date("d.m.Y H:i:s", (int) $end_time) . "
                             [b]Forschungslabor Level:[/b] " . $researchBuilding->currentLevel . "
-                            [b]Eingesetzte Bewohner:[/b] " . nf($peopleWorking) . "
+                            [b]Eingesetzte Bewohner:[/b] " . nf($peopleWorkingResearch) . "
                             [b]Gen-Tech Level:[/b] " . GEN_TECH_LEVEL . "
                             [b]Eingesetzter Spezialist:[/b] " . $cu->specialist->name . "
 

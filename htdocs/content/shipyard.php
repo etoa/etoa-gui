@@ -285,7 +285,8 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
             $cancelable = false;
         }
         tableEnd();
-        $peopleFree = floor($planet->people) - $buildingRepository->getPeopleWorking($planet->id) + $shipyard->peopleWorking;
+        $peopleWorking = $buildingRepository->getPeopleWorking($planet->id);
+        $peopleFree = floor($planet->people) - $peopleWorking->total + $peopleWorking->shipyard;
         $box =  '
                 <input type="hidden" name="workDone" id="workDone" value="' . $config->getInt('people_work_done') . '" />
                 <input type="hidden" name="foodRequired" id="foodRequired" value="' . $config->getInt('people_food_require') . '" />
