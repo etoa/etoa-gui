@@ -33,6 +33,15 @@ class AllianceRepositoryTest extends AbstractDbTestCase
         $this->assertSame([12 => 'Alliance'], $allianceNames);
     }
 
+    public function testGetAllianceTags(): void
+    {
+        $this->connection->executeQuery("INSERT INTO alliances (alliance_id, alliance_name, alliance_tag) VALUES (12, 'Alliance', 'tag')");
+
+        $allianceTags = $this->repository->getAllianceTags();
+
+        $this->assertSame([12 => 'tag'], $allianceTags);
+    }
+
     public function testGetAllianceNamesWithTags(): void
     {
         $this->connection->executeQuery("INSERT INTO alliances (alliance_id, alliance_name, alliance_tag) VALUES (13, 'Alliance', 'tag')");

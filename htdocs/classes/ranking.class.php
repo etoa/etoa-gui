@@ -1,6 +1,8 @@
 <?PHP
 
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Race\RaceDataRepository;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyPointRepository;
@@ -301,30 +303,14 @@ class Ranking
         }
 
         // Rassen laden
-        $rres = dbquery("
-                SELECT
-                    race_id,
-                    race_name
-                FROM
-                    races
-            ");
-        $race = array();
-        while ($rarr = mysql_fetch_assoc($rres)) {
-            $race[$rarr['race_id']] = $rarr['race_name'];
-        }
+        /** @var RaceDataRepository $raceRepository */
+        $raceRepository = $app[RaceDataRepository::class];
+        $race = $raceRepository->getRaceNames();
 
         // Allianzen laden
-        $rres = dbquery("
-                SELECT
-                    alliance_id,
-                    alliance_tag
-                FROM
-                    alliances
-            ");
-        $alliance = array();
-        while ($rarr = mysql_fetch_assoc($rres)) {
-            $alliance[$rarr['alliance_id']] = $rarr['alliance_tag'];
-        }
+        /** @var AllianceRepository $allianceRepository */
+        $allianceRepository = $app[AllianceRepository::class];
+        $alliance = $allianceRepository->getAllianceTags();
 
         // Load 'old' ranks
         $res = dbquery("
