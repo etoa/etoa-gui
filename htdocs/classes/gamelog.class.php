@@ -1,49 +1,46 @@
 <?PHP
 class GameLog extends BaseLog
 {
-	protected static $table = "logs_game";
-	protected static $queueTable = "logs_game_queue";
+    protected static $table = "logs_game";
+    protected static $queueTable = "logs_game_queue";
 
-	// Facilities
+    // Facilities
 
-	/**
-	 * Others
-	 */
-	const F_OTHER = 0;
-	/**
-	 * Buildings 1
-	 */
-	const F_BUILD = 1;
-	const F_TECH = 2;
-	const F_SHIP = 3;
-	const F_DEF = 4;
-	const F_QUESTS = 5;
+    /**
+     * Others
+     */
+    const F_OTHER = 0;
+    /**
+     * Buildings 1
+     */
+    const F_BUILD = 1;
+    const F_TECH = 2;
+    const F_SHIP = 3;
+    const F_DEF = 4;
+    const F_QUESTS = 5;
 
-	static public $facilities = array(
-	"Sonstiges",
-	"Gebäude",
-	"Forschungen",
-	"Schiffe",
-	"Verteidigungsanlagen",
-	"Quests",
-	);
+    static public $facilities = array(
+        "Sonstiges",
+        "Gebäude",
+        "Forschungen",
+        "Schiffe",
+        "Verteidigungsanlagen",
+        "Quests",
+    );
 
-	static function add($facility, $severity, $msg,$userId, $allianceId, $entityId, $objectId=0, $status=0, $level=0)
-	{
-		if (!is_numeric($facility) || $facility < 0 || $facility > 5)
-		{
-			$facility = self::F_OTHER;
-		}
-		if (!is_numeric($severity) || $severity < 0 || $severity > 4)
-		{
-			$severity = self::INFO;
-		}
-		if ($severity > self::DEBUG || isDebugEnabled())
-		{
-			//Speichert Log
-			dbquery("
+    static function add($facility, $severity, $msg, $userId, $allianceId, $entityId, $objectId = 0, $status = 0, $level = 0)
+    {
+        if (!is_numeric($facility) || $facility < 0 || $facility > 5) {
+            $facility = self::F_OTHER;
+        }
+        if (!is_numeric($severity) || $severity < 0 || $severity > 4) {
+            $severity = self::INFO;
+        }
+        if ($severity > self::DEBUG || isDebugEnabled()) {
+            //Speichert Log
+            dbquery("
 			INSERT DELAYED INTO
-				".self::$queueTable."
+				" . self::$queueTable . "
 			(
 				facility,
 				severity,
@@ -59,29 +56,30 @@ class GameLog extends BaseLog
 			)
 			VALUES
 			(
-				".$facility.",
-				".$severity.",
-				'".time()."',
-				'".addslashes($msg)."',
-				'".$_SERVER['REMOTE_ADDR']."',
-				'".intval($userId)."',
-				'".intval($allianceId)."',
-				'".intval($entityId)."',
-				'".intval($objectId)."',
-				'".intval($status)."',
-				'".intval($level)."'
+				" . $facility . ",
+				" . $severity . ",
+				'" . time() . "',
+				'" . addslashes($msg) . "',
+				'" . $_SERVER['REMOTE_ADDR'] . "',
+				'" . intval($userId) . "',
+				'" . intval($allianceId) . "',
+				'" . intval($entityId) . "',
+				'" . intval($objectId) . "',
+				'" . intval($status) . "',
+				'" . intval($level) . "'
 			);");
-		}
-	}
+        }
+    }
 
-	/**
-	* Processes the log queue and stores
-	* all items in the persistend log table
-	*/
-	static function processQueue()	{
-		dbquery("
+    /**
+     * Processes the log queue and stores
+     * all items in the persistend log table
+     */
+    static function processQueue()
+    {
+        dbquery("
 		INSERT INTO
-			".self::$table."
+			" . self::$table . "
 		(
 			facility,
 			severity,
@@ -108,33 +106,32 @@ class GameLog extends BaseLog
 			status,
 			level
 		FROM
-			".self::$queueTable."
+			" . self::$queueTable . "
 		;");
-		$numRecords = mysql_affected_rows();
-		if ($numRecords > 0)	{
-			dbquery("
+        $numRecords = mysql_affected_rows();
+        if ($numRecords > 0) {
+            dbquery("
 			DELETE FROM
-				".self::$queueTable."
+				" . self::$queueTable . "
 			LIMIT
-				".$numRecords.";");
-		}
-		return $numRecords;
-	}
+				" . $numRecords . ";");
+        }
+        return $numRecords;
+    }
 
-	/**
-	* Removes up old logs from the persistend log table
-	*
-	* @param int|string $threshold All items older than this time threshold will be deleted
-	*/
-	static function cleanup($threshold)
-	{
-		dbquery("
+    /**
+     * Removes up old logs from the persistend log table
+     *
+     * @param int|string $threshold All items older than this time threshold will be deleted
+     */
+    static function cleanup($threshold)
+    {
+        dbquery("
 			DELETE FROM
-				".self::$table."
+				" . self::$table . "
 			WHERE
-				timestamp<'".$threshold."'
+				timestamp<'" . $threshold . "'
 		");
-		return mysql_affected_rows();
-	}
+        return mysql_affected_rows();
+    }
 }
-?>

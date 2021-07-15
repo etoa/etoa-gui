@@ -1,17 +1,18 @@
 <?PHP
 class BattleLog extends BaseLog
 {
-	protected static $table = "logs_battle";
-	protected static $queueTable = "logs_battle_queue";
+    protected static $table = "logs_battle";
+    protected static $queueTable = "logs_battle_queue";
 
-	/**
-	* Processes the log queue and stores
-	* all items in the persistend log table
-	*/
-	static function processQueue()	{
-		dbquery("
+    /**
+     * Processes the log queue and stores
+     * all items in the persistend log table
+     */
+    static function processQueue()
+    {
+        dbquery("
 		INSERT INTO
-			".self::$table."
+			" . self::$table . "
 		(
 		  `facility`,
 		  `severity`,
@@ -92,33 +93,32 @@ class BattleLog extends BaseLog
 		  `tf_pvc`,
 		  `timestamp`
 		FROM
-			".self::$queueTable."
+			" . self::$queueTable . "
 		;");
-		$numRecords = mysql_affected_rows();
-		if ($numRecords > 0)	{
-			dbquery("
+        $numRecords = mysql_affected_rows();
+        if ($numRecords > 0) {
+            dbquery("
 			DELETE FROM
-				".self::$queueTable."
+				" . self::$queueTable . "
 			LIMIT
-				".$numRecords.";");
-		}
-		return $numRecords;
-	}
+				" . $numRecords . ";");
+        }
+        return $numRecords;
+    }
 
-	/**
-	* Removes up old logs from the persistend log table
-	*
-	* @param int|string $threshold All items older than this time threshold will be deleted
-	*/
-	static function cleanup($threshold)
-	{
-		dbquery("
+    /**
+     * Removes up old logs from the persistend log table
+     *
+     * @param int|string $threshold All items older than this time threshold will be deleted
+     */
+    static function cleanup($threshold)
+    {
+        dbquery("
 			DELETE FROM
-				".self::$table."
+				" . self::$table . "
 			WHERE
-				timestamp<'".$threshold."'
+				timestamp<'" . $threshold . "'
 		");
-		return mysql_affected_rows();
-	}
+        return mysql_affected_rows();
+    }
 }
-?>

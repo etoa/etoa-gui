@@ -8,21 +8,21 @@ use Pimple\Container;
  */
 class CloseAssignedInactiveTicketsTask implements IPeriodicTask
 {
-	private TicketService $ticketService;
+    private TicketService $ticketService;
 
-	function __construct(Container $app)
-	{
-		$this->ticketService = $app[TicketService::class];
-	}
+    function __construct(Container $app)
+    {
+        $this->ticketService = $app[TicketService::class];
+    }
 
-	function run()
-	{
-		$this->ticketService->closeAssignedInactive();
-		return "Inaktive Tickets geschlossen";
-	}
+    function run()
+    {
+        $this->ticketService->closeAssignedInactive();
+        return "Inaktive Tickets geschlossen";
+    }
 
-	function getDescription()
-	{
-		return "Inaktive Tickets schliessen welche von einem Admin beantwortet wurden";
-	}
+    function getDescription()
+    {
+        return "Inaktive Tickets schliessen welche von einem Admin beantwortet wurden";
+    }
 }

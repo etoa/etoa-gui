@@ -23,26 +23,21 @@ class AllianceTechnology
 
         $this->config = $app[ConfigurationService::class];
 
-        try
-        {
-            if (is_array($id))
-            {
+        try {
+            if (is_array($id)) {
                 $arr = $id;
-            }
-            else
-            {
+            } else {
                 $res = dbquery("
                 SELECT
                     *
                 FROM
                     alliance_technologies
                 WHERE
-                    alliance_tech_id='".intval($id)."'
+                    alliance_tech_id='" . intval($id) . "'
                 LIMIT 1");
-                if (mysql_num_rows($res)>0)
+                if (mysql_num_rows($res) > 0)
                     $arr = mysql_fetch_assoc($res);
-                else
-                {
+                else {
                     throw new EException("Forschung $id existiert nicht!");
                 }
             }
@@ -64,13 +59,10 @@ class AllianceTechnology
             $this->buildTime = $arr['alliance_tech_build_time'];
             $this->show = $arr['alliance_tech_show'];
 
-            $this->tRequirements = array($arr['alliance_tech_needed_id']=>$arr['alliance_tech_needed_level']);
+            $this->tRequirements = array($arr['alliance_tech_needed_id'] => $arr['alliance_tech_needed_level']);
 
             $this->isValid = true;
-
-        }
-        catch (Exception $e)
-        {
+        } catch (Exception $e) {
             echo $e;
             return;
         }
@@ -88,43 +80,43 @@ class AllianceTechnology
 
     function imgPathSmall()
     {
-        return IMAGE_PATH."/".IMAGE_ALLIANCE_TECHNOLOGY_DIR."/technology".$this->id."_small.".IMAGE_EXT;
+        return IMAGE_PATH . "/" . IMAGE_ALLIANCE_TECHNOLOGY_DIR . "/technology" . $this->id . "_small." . IMAGE_EXT;
     }
 
     function imgPathMiddle()
     {
-        return IMAGE_PATH."/".IMAGE_ALLIANCE_TECHNOLOGY_DIR."/technology".$this->id."_middle.".IMAGE_EXT;
+        return IMAGE_PATH . "/" . IMAGE_ALLIANCE_TECHNOLOGY_DIR . "/technology" . $this->id . "_middle." . IMAGE_EXT;
     }
 
     function imgPathBig()
     {
-        return IMAGE_PATH."/".IMAGE_ALLIANCE_TECHNOLOGY_DIR."/technology".$this->id.".".IMAGE_EXT;
+        return IMAGE_PATH . "/" . IMAGE_ALLIANCE_TECHNOLOGY_DIR . "/technology" . $this->id . "." . IMAGE_EXT;
     }
 
     function imgSmall()
     {
-        return "<img src=\"".$this->imgPathSmall()."\" style=\"width:40px;height:40px;\" alt=\"".$this."\"/>";
+        return "<img src=\"" . $this->imgPathSmall() . "\" style=\"width:40px;height:40px;\" alt=\"" . $this . "\"/>";
     }
 
     function imgMiddle()
     {
-        return "<img src=\"".$this->imgPathMiddle()."\" style=\"width:120px;height:120px;\" alt=\"".$this."\"/>";
+        return "<img src=\"" . $this->imgPathMiddle() . "\" style=\"width:120px;height:120px;\" alt=\"" . $this . "\"/>";
     }
 
     function imgBig()
     {
-        return "<img src=\"".$this->imgPathBig()."\" style=\"width:220px;height:220px;\" alt=\"".$this."\"/>";
+        return "<img src=\"" . $this->imgPathBig() . "\" style=\"width:220px;height:220px;\" alt=\"" . $this . "\"/>";
     }
 
-    function getCosts($level=1,$members=1)
+    function getCosts($level = 1, $members = 1)
     {
-        $level = max(1,$level);
-        $members = max(1,$members);
+        $level = max(1, $level);
+        $members = max(1, $members);
 
-        $factor = pow($this->costsFactor,$level-1);
-        $memberFactor = 1 + ($members-1) * $this->config->getFloat('alliance_membercosts_factor');
-        $bc=array();
-        for ($i=1;$i<=6;$i++)
+        $factor = pow($this->costsFactor, $level - 1);
+        $memberFactor = 1 + ($members - 1) * $this->config->getFloat('alliance_membercosts_factor');
+        $bc = array();
+        for ($i = 1; $i <= 6; $i++)
             $bc[$i] = ceil($this->costs[$i] * $factor * $memberFactor);
         return $bc;
     }

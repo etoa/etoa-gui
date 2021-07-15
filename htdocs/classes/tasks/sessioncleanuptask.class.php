@@ -11,23 +11,23 @@ class SessionCleanupTask implements IPeriodicTask
 {
     private UserSessionManager $userSessionManager;
 
-	private AdminSessionManager $sessionManager;
+    private AdminSessionManager $sessionManager;
 
-	function __construct(Container $app)
-	{
+    function __construct(Container $app)
+    {
         $this->userSessionManager = $app[UserSessionManager::class];
-		$this->sessionManager = $app[AdminSessionManager::class];
-	}
+        $this->sessionManager = $app[AdminSessionManager::class];
+    }
 
-	function run()
-	{
-		$this->userSessionManager->cleanup();
-		$this->sessionManager->cleanup();
-		return "Session cleanup";
-	}
+    function run()
+    {
+        $this->userSessionManager->cleanup();
+        $this->sessionManager->cleanup();
+        return "Session cleanup";
+    }
 
-	function getDescription()
-	{
-		return "Session Cleanup";
-	}
+    function getDescription()
+    {
+        return "Session Cleanup";
+    }
 }

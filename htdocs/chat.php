@@ -4,7 +4,7 @@
 use EtoA\Chat\ChatBanRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 
-define('RELATIVE_ROOT','');
+define('RELATIVE_ROOT', '');
 include_once __DIR__ . '/inc/bootstrap.inc.php';
 
 /** @var ConfigurationService */
@@ -29,21 +29,21 @@ if (isset($_SESSION['user_id'])) {
 }
 
 // Select design
-$design = DESIGN_DIRECTORY."/official/".$config->get('default_css_style');
+$design = DESIGN_DIRECTORY . "/official/" . $config->get('default_css_style');
 if (isset($cu) && $cu->properties->cssStyle) {
-    if (is_dir(DESIGN_DIRECTORY."/custom/".$cu->properties->cssStyle)) {
-        $design = DESIGN_DIRECTORY."/custom/".$cu->properties->cssStyle;
-    } else if (is_dir(DESIGN_DIRECTORY."/official/".$cu->properties->cssStyle)) {
-        $design = DESIGN_DIRECTORY."/official/".$cu->properties->cssStyle;
+    if (is_dir(DESIGN_DIRECTORY . "/custom/" . $cu->properties->cssStyle)) {
+        $design = DESIGN_DIRECTORY . "/custom/" . $cu->properties->cssStyle;
+    } else if (is_dir(DESIGN_DIRECTORY . "/official/" . $cu->properties->cssStyle)) {
+        $design = DESIGN_DIRECTORY . "/official/" . $cu->properties->cssStyle;
     }
 }
 define('CSS_STYLE', $design);
 
 // Chat design css
-if (file_exists(CSS_STYLE."/chat.css")) {
-$chatCss = CSS_STYLE."/chat.css";
+if (file_exists(CSS_STYLE . "/chat.css")) {
+    $chatCss = CSS_STYLE . "/chat.css";
 } else {
-$chatCss = 'web/css/chat.css';
+    $chatCss = 'web/css/chat.css';
 }
 
 echo $twig->render('layout/chat.html.twig', [

@@ -3,124 +3,106 @@
 use EtoA\Core\Configuration\ConfigurationService;
 
 /**
-	* Provides methods for accessing
-	* the current logged in user
-	*
-	* @author Nicolas Perrenoud<mrcage@etoa.ch>
-	*/
-	class CurrentUser extends User
-	{
-		protected $property;
+ * Provides methods for accessing
+ * the current logged in user
+ *
+ * @author Nicolas Perrenoud<mrcage@etoa.ch>
+ */
+class CurrentUser extends User
+{
+    protected $property;
 
-		/**
-		* Constructor which calls the default parent constructor
-		* and loads settings
-		*/
-        public function __construct($userId)
-		{
-			parent::__construct($userId);
-		}
+    /**
+     * Constructor which calls the default parent constructor
+     * and loads settings
+     */
+    public function __construct($userId)
+    {
+        parent::__construct($userId);
+    }
 
-		//
-		// Methods
-		//
+    //
+    // Methods
+    //
 
-		/**
-		* Set setup status to false
-		*/
-		public function setNotSetup()
-		{
-			$this->setup = false;
-		}
+    /**
+     * Set setup status to false
+     */
+    public function setNotSetup()
+    {
+        $this->setup = false;
+    }
 
-		function setSetupFinished()
-		{
-	    $sql = "
+    function setSetupFinished()
+    {
+        $sql = "
 	    UPDATE
 	    	users
 	    SET
 				user_setup=1
 	    WHERE
-	    	user_id='".$this->id."';";
-	    dbquery($sql);
-	    $this->setup=true;
-		}
+	    	user_id='" . $this->id . "';";
+        dbquery($sql);
+        $this->setup = true;
+    }
 
-		function setPassword($oldPassword, $newPassword1, $newPassword2, &$returnMsg)
-		{
-            // TODO
-            global $app;
+    function setPassword($oldPassword, $newPassword1, $newPassword2, &$returnMsg)
+    {
+        // TODO
+        global $app;
 
-            /** @var ConfigurationService */
-            $config = $app[ConfigurationService::class];
+        /** @var ConfigurationService */
+        $config = $app[ConfigurationService::class];
 
-			$res = dbquery("
+        $res = dbquery("
 			SELECT
 				user_password
 			FROM
 				users
 			WHERE
-				user_id=".$this->id."
+				user_id=" . $this->id . "
 			LIMIT 1;");
-			$arr = mysql_fetch_row($res);
-			if (validatePasswort($oldPassword, $arr[0]))
-			{
-				$res = dbquery("
+        $arr = mysql_fetch_row($res);
+        if (validatePasswort($oldPassword, $arr[0])) {
+            $res = dbquery("
 				SELECT
 					COUNT(*)
 				FROM
 					user_sitting
 				WHERE
-					password='".md5($_POST['user_password1'])."'
-					AND user_id=".$this->id."
+					password='" . md5($_POST['user_password1']) . "'
+					AND user_id=" . $this->id . "
 				LIMIT 1;");
-				$arr = mysql_fetch_row($res);
-				if ($arr[0]==0)
-				{
-					if ($newPassword1==$newPassword2)
-					{
-						if (strlen($newPassword1)>=$config->getInt('password_minlength'))
-						{
-							if (dbquery("
+            $arr = mysql_fetch_row($res);
+            if ($arr[0] == 0) {
+                if ($newPassword1 == $newPassword2) {
+                    if (strlen($newPassword1) >= $config->getInt('password_minlength')) {
+                        if (dbquery("
 								UPDATE
 									users
 								SET
-									user_password='".saltPasswort($newPassword1)."'
+									user_password='" . saltPasswort($newPassword1) . "'
 								WHERE
-									user_id='".$this->id."'
-								;"))
-							{
-								Log::add(3, Log::INFO ,"Der Spieler [b]".$this->nick."[/b] &auml;ndert sein Passwort!");
-								$mail = new Mail("Passwortänderung","Hallo ".$this->nick."\n\nDies ist eine Bestätigung, dass du dein Passwort für deinen Account erfolgreich geändert hast!\n\nSolltest du dein Passwort nicht selbst geändet haben, so nimm bitte sobald wie möglich Kontakt mit einem Game-Administrator auf: http://www.etoa.ch/kontakt");
-								$mail->send($this->email);
-								$this->addToUserLog("settings","{nick} ändert sein Passwort.",0);
-								return true;
-							}
-						}
-						else
-						{
-							$returnMsg = "Das Passwort muss mindestens ".$config->getInt('password_minlength')." Zeichen lang sein!";
-						}
-					}
-					else
-					{
-						$returnMsg="Die Eingaben m&uuml;ssen identisch sein!";
-					}
-				}
-				else
-				{
-					$returnMsg="Das Passwort darf nicht identisch mit dem Sitterpasswort sein!";
-				}
-			}
-			else
-			{
-				$returnMsg = "Dein altes Passwort stimmt nicht mit dem gespeicherten Passwort &uuml;berein!";
-			}
-			return false;
-		}
-
-	}
-
-
-
-?>
+									user_id='" . $this->id . "'
+								;")) {
+                            Log::add(3, Log::INFO, "Der Spieler [b]" . $this->nick . "[/b] &auml;ndert sein Passwort!");
+                            $mail = new Mail("Passwortänderung", "Hallo " . $this->nick . "\n\nDies ist eine Bestätigung, dass du dein Passwort für deinen Account erfolgreich geändert hast!\n\nSolltest du dein Passwort nicht selbst geändet haben, so nimm bitte sobald wie möglich Kontakt mit einem Game-Administrator auf: http://www.etoa.ch/kontakt");
+                            $mail->send($this->email);
+                            $this->addToUserLog("settings", "{nick} ändert sein Passwort.", 0);
+                            return true;
+                        }
+                    } else {
+                        $returnMsg = "Das Passwort muss mindestens " . $config->getInt('password_minlength') . " Zeichen lang sein!";
+                    }
+                } else {
+                    $returnMsg = "Die Eingaben m&uuml;ssen identisch sein!";
+                }
+            } else {
+                $returnMsg = "Das Passwort darf nicht identisch mit dem Sitterpasswort sein!";
+            }
+        } else {
+            $returnMsg = "Dein altes Passwort stimmt nicht mit dem gespeicherten Passwort &uuml;berein!";
+        }
+        return false;
+    }
+}

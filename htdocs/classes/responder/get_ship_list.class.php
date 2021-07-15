@@ -1,15 +1,17 @@
 <?PHP
 class GetShipListJsonResponder extends JsonResponder
 {
-  function getRequiredParams() {
-    return array('q');
-  }
+    function getRequiredParams()
+    {
+        return array('q');
+    }
 
-  function getResponse($params) {
+    function getResponse($params)
+    {
 
-    $data = array();
+        $data = array();
 
-		$res=dbquery("
+        $res = dbquery("
     SELECT
 			ship_id,
 			ship_name
@@ -17,25 +19,22 @@ class GetShipListJsonResponder extends JsonResponder
 			ships
 		WHERE
 			(ship_show=1 || ship_buildable=1)
-			AND ship_name LIKE '".$params['q']."%'
+			AND ship_name LIKE '" . $params['q'] . "%'
     ORDER BY
       ship_name
 		LIMIT 20;");
-    $nr = mysql_num_rows($res);
-    $data['count'] = $nr;
-		if ($nr > 0)
-	  {
-      $data['entries'] = array();
-			while($arr = mysql_fetch_row($res))
-			{
-		    $data['entries'][] = array(
-          'id' => $arr[0],
-          'name' => $arr[1]
-        );
-	    }
-		}
+        $nr = mysql_num_rows($res);
+        $data['count'] = $nr;
+        if ($nr > 0) {
+            $data['entries'] = array();
+            while ($arr = mysql_fetch_row($res)) {
+                $data['entries'][] = array(
+                    'id' => $arr[0],
+                    'name' => $arr[1]
+                );
+            }
+        }
 
-    return $data;
-  }
+        return $data;
+    }
 }
-?>

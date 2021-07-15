@@ -8,16 +8,16 @@ use EtoA\Technology\TechnologyRepository;
 
 class Usersetup
 {
-	/**
-	* Add an item setlist to a given planet
-	*/
-	static function addItemSetListToPlanet($planetid,$userid,$setid)
-	{
-	    global $app;
+    /**
+     * Add an item setlist to a given planet
+     */
+    static function addItemSetListToPlanet($planetid, $userid, $setid)
+    {
+        global $app;
 
-		$planetid = intval($planetid);
-		$userid = intval($userid);
-		$setid = intval($setid);
+        $planetid = intval($planetid);
+        $userid = intval($userid);
+        $setid = intval($setid);
 
         /** @var DefaultItemRepository $defaultItemRepository */
         $defaultItemRepository = $app[DefaultItemRepository::class];
@@ -26,38 +26,37 @@ class Usersetup
         // Add buildings
         /** @var BuildingRepository $buildingRepository */
         $buildingRepository = $app[BuildingRepository::class];
-		if (isset($defaultItems['b'])) {
-		    foreach ($defaultItems['b'] as $defaultItem) {
+        if (isset($defaultItems['b'])) {
+            foreach ($defaultItems['b'] as $defaultItem) {
                 $buildingRepository->addBuilding($defaultItem->objectId, $defaultItem->count, $userid, $planetid);
-			}
-		}
+            }
+        }
 
-		// Add technologies
+        // Add technologies
         /** @var TechnologyRepository $technologyRepository */
         $technologyRepository = $app[TechnologyRepository::class];
         if (isset($defaultItems['t'])) {
-		    foreach ($defaultItems['t'] as $defaultItem) {
-		        $technologyRepository->addTechnology($defaultItem->objectId, $defaultItem->count, $userid, $planetid);
-			}
-		}
+            foreach ($defaultItems['t'] as $defaultItem) {
+                $technologyRepository->addTechnology($defaultItem->objectId, $defaultItem->count, $userid, $planetid);
+            }
+        }
 
-		// Add ships
+        // Add ships
         /** @var ShipRepository $shipRepository */
         $shipRepository = $app[ShipRepository::class];
         if (isset($defaultItems['s'])) {
             foreach ($defaultItems['s'] as $defaultItem) {
                 $shipRepository->addShip($defaultItem->objectId, $defaultItem->count, $userid, $planetid);
-			}
-		}
+            }
+        }
 
-		// Add defense
+        // Add defense
         /** @var DefenseRepository $defenseRepository */
         $defenseRepository = $app[DefenseRepository::class];
         if (isset($defaultItems['d'])) {
             foreach ($defaultItems['d'] as $defaultItem) {
                 $defenseRepository->addDefense($defaultItem->objectId, $defaultItem->count, $userid, $planetid);
-			}
-		}
-	}
+            }
+        }
+    }
 }
-

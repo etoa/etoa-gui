@@ -18,7 +18,7 @@ iBoxEnd();
 iBoxStart("Wohnraum");
     echo "Auf einem Planeten ist die Grösse der Bevölkerung begrenzt. Es gibt einen Grundwohnraum für
     <b>".nf($config->param1Int('user_start_people'))."</b> Menschen auf jedem Planeten. Dieser Wert kann durch folgende Gebäude gesteigert werden:<br/>
-		<ul>";
+        <ul>";
 
     /** @var BuildingDataRepository */
     $buildingDataRepository = $app[BuildingDataRepository::class];
