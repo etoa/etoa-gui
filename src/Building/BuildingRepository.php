@@ -332,7 +332,7 @@ class BuildingRepository extends AbstractRepository
 
     public function getPeopleWorking(int $entityId): PeopleWorking
     {
-         $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder()
             ->select('buildlist_building_id, buildlist_people_working')
             ->from('buildlist')
             ->where('buildlist_entity_id = :entityId')
@@ -340,7 +340,7 @@ class BuildingRepository extends AbstractRepository
             ->execute()
             ->fetchAllKeyValue();
 
-         return new PeopleWorking($data);
+        return new PeopleWorking($data);
     }
 
     public function markBuildingWorkingStatus(int $userId, int $entityId, int $buildingId, bool $working): bool
