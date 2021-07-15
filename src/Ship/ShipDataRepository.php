@@ -41,6 +41,21 @@ class ShipDataRepository extends AbstractRepository
                 ->fetchAllKeyValue();
     }
 
+
+    /**
+     * @return array<int, float>
+     */
+    public function getShipPoints(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('ship_id, ship_points')
+            ->from('ships')
+            ->execute()
+            ->fetchAllKeyValue();
+
+        return array_map(fn ($value) => (float) $value, $data);
+    }
+
     /**
      * @return Ship[]
      */

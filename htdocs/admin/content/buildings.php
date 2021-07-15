@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Building\BuildingPointRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,11 +14,13 @@ $request = Request::createFromGlobals();
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+/** @var BuildingPointRepository $buildingPointRepository */
+$buildingPointRepository = $app[BuildingPointRepository::class];
 
 if ($sub == "prices") {
     priceCalculator($repository);
 } elseif ($sub == "points") {
-    buildingPoints($request, $repository);
+    buildingPoints($request, $repository, $buildingPointRepository);
 } elseif ($sub == "type") {
     editCategories($twig);
 } elseif ($sub == "data") {
@@ -124,7 +127,7 @@ function priceCalculator(BuildingRepository $repository)
     echo "</table></form>";
 }
 
-function buildingPoints(Request $request, BuildingRepository $repository)
+function buildingPoints(Request $request, BuildingRepository $repository, BuildingPointRepository $buildingPointRepository)
 {
     global $page;
     global $sub;
@@ -141,17 +144,17 @@ function buildingPoints(Request $request, BuildingRepository $repository)
     echo "<h2>Gebäudepunkte</h2>";
     $buildingNames = $repository->buildingNames();
     if (count($buildingNames) > 0) {
+        $buildingPoints = $buildingPointRepository->getAllMap();
         echo "<table class=\"tb\">";
         foreach ($buildingNames as $key => $value) {
             echo "<tr><th>" . $value . "</th><td style=\"width:70%\"><table class=\"tb\">";
-            $pointsData = $repository->fetchPointsForBuilding($key);
-            if (count($pointsData) > 0) {
+            if (isset($buildingPoints[$key])) {
                 $cnt = 0;
-                foreach ($pointsData as $parr) {
+                foreach ($buildingPoints[$key] as $level => $points) {
                     if ($cnt == 0) {
                         echo "<tr>";
                     }
-                    echo "<th>" . $parr->level . "</th><td>" . $parr->points . "</td>";
+                    echo "<th>" . $level . "</th><td>" . $points . "</td>";
                     if ($cnt == "3") {
                         echo "</tr>";
                         $cnt = 0;

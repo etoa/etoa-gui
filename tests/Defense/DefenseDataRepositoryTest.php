@@ -21,6 +21,12 @@ class DefenseDataRepositoryTest extends AbstractDbTestCase
         $this->assertNotEmpty($names);
     }
 
+    public function testGetDefensePoints(): void
+    {
+        $points = $this->repository->getDefensePoints();
+        $this->assertNotEmpty($points);
+    }
+
     public function testGetDefense(): void
     {
         $defense = $this->repository->getDefense(1);

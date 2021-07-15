@@ -1,7 +1,17 @@
 <?PHP
 
+use EtoA\Alliance\AllianceRepository;
+use EtoA\Building\BuildingDataRepository;
+use EtoA\Building\BuildingPointRepository;
+use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseDataRepository;
+use EtoA\Race\RaceDataRepository;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipRepository;
 use EtoA\Support\RuntimeDataStore;
+use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Technology\TechnologyPointRepository;
 use EtoA\Technology\TechnologyRepository;
 
 /**
@@ -220,84 +230,35 @@ class Ranking
         $res_amount_per_point = $config->param1Int('points_update');
 
         // Schiffe laden
-        $res = dbquery("
-                SELECT
-                    ship_id,
-                    ship_points
-                FROM
-                    ships;
-            ");
-        $ship = array();
-        while ($arr = mysql_fetch_row($res)) {
-            $ship[$arr[0]] = $arr[1];
-        }
+        /** @var ShipDataRepository $shipRepository */
+        $shipRepository = $app[ShipDataRepository::class];
+        $ship = $shipRepository->getShipPoints();
 
         // Verteidigung laden
-        $res = dbquery("
-                SELECT
-                    def_id,
-                    def_points
-                FROM
-                    defense
-            ;");
-        $def = array();
-        while ($arr = mysql_fetch_row($res)) {
-            $def[$arr[0]] = $arr[1];
-        }
+        /** @var DefenseDataRepository $defenseRepository */
+        $defenseRepository = $app[DefenseDataRepository::class];
+        $def = $defenseRepository->getDefensePoints();
 
         // Gebäudepunkte berechnen falls nocht nicht vorhanden
-        $arr = mysql_fetch_row(dbquery("
-                SELECT
-                    COUNT(bp_points)
-                FROM
-                    building_points;
-            "));
-        if ($arr[0] == 0) {
+        /** @var BuildingPointRepository $buildingPointRepository */
+        $buildingPointRepository = $app[BuildingPointRepository::class];
+        if (!$buildingPointRepository->areCalculated()) {
             self::calcBuildingPoints();
         }
 
         // Gebäude laden
-        $res = dbquery("
-                SELECT
-                    bp_building_id,
-                    bp_level,
-                    bp_points
-                FROM
-                    building_points;
-            ");
-        $building = array();
-        if (mysql_num_rows($res) > 0) {
-            while ($arr = mysql_fetch_row($res)) {
-                $building[$arr[0]][$arr[1]] = $arr[2];
-            }
-        }
+        $building = $buildingPointRepository->getAllMap();
+
+        /** @var TechnologyPointRepository $technologyPointRepository */
+        $technologyPointRepository = $app[TechnologyPointRepository::class];
 
         // Technologiepunkte berechnen falls nocht nicht vorhanden
-        $arr = mysql_fetch_row(dbquery("
-                SELECT
-                    COUNT(bp_points)
-                FROM
-                    tech_points;
-            "));
-        if ($arr[0] == 0) {
+        if (!$technologyPointRepository->areCalculated()) {
             self::calcTechPoints();
         }
 
         // Technologien laden
-        $res = dbquery("
-                SELECT
-                    bp_tech_id,
-                    bp_level,
-                    bp_points
-                FROM
-                    tech_points;
-            ");
-        $tech = array();
-        if (mysql_num_rows($res) > 0) {
-            while ($arr = mysql_fetch_row($res)) {
-                $tech[$arr[0]][$arr[1]] = $arr[2];
-            }
-        }
+        $techPoints = $technologyPointRepository->getAllMap();
 
         // Cells laden
         $res = dbquery("
@@ -315,30 +276,14 @@ class Ranking
         }
 
         // Rassen laden
-        $rres = dbquery("
-                SELECT
-                    race_id,
-                    race_name
-                FROM
-                    races
-            ");
-        $race = array();
-        while ($rarr = mysql_fetch_assoc($rres)) {
-            $race[$rarr['race_id']] = $rarr['race_name'];
-        }
+        /** @var RaceDataRepository $raceRepository */
+        $raceRepository = $app[RaceDataRepository::class];
+        $race = $raceRepository->getRaceNames();
 
         // Allianzen laden
-        $rres = dbquery("
-                SELECT
-                    alliance_id,
-                    alliance_tag
-                FROM
-                    alliances
-            ");
-        $alliance = array();
-        while ($rarr = mysql_fetch_assoc($rres)) {
-            $alliance[$rarr['alliance_id']] = $rarr['alliance_tag'];
-        }
+        /** @var AllianceRepository $allianceRepository */
+        $allianceRepository = $app[AllianceRepository::class];
+        $alliance = $allianceRepository->getAllianceTags();
 
         // Load 'old' ranks
         $res = dbquery("
@@ -507,7 +452,7 @@ class Ranking
             $technologyRepository = $app[TechnologyRepository::class];
             $techList = $technologyRepository->getTechnologyLevels($user_id);
             foreach ($techList as $technologyId => $level) {
-                $p = round($tech[$technologyId][$level]);
+                $p = round($techPoints[$technologyId][$level]);
                 $points += $p;
                 $points_tech += $p;
             }
@@ -628,7 +573,7 @@ class Ranking
         unset($ship);
         unset($def);
         unset($building);
-        unset($tech);
+        unset($techPoints);
         unset($p);
         unset($points);
         unset($points_ships);
@@ -1188,7 +1133,7 @@ class Ranking
         return $im;
     }
 
-    static function calcBuildingPoints($id = 0)
+    static function calcBuildingPoints()
     {
         // TODO
         global $app;
@@ -1196,135 +1141,71 @@ class Ranking
         /** @var ConfigurationService */
         $config = $app[ConfigurationService::class];
 
-        if ($id > 0)
-            $sql = "
-            SELECT
-              building_id,
-              building_costs_metal,
-              building_costs_crystal,
-              building_costs_fuel,
-              building_costs_plastic,
-              building_costs_food,
-              building_build_costs_factor,
-              building_last_level
-            FROM
-              buildings
-            WHERE
-              building_id=" . $id . ";";
-        else
-            $sql = "
-            SELECT
-              building_id,
-              building_costs_metal,
-              building_costs_crystal,
-              building_costs_fuel,
-              building_costs_plastic,
-              building_costs_food,
-              building_build_costs_factor,
-              building_last_level
-            FROM
-              buildings;";
-        dbquery("DELETE FROM building_points;");
-        $res = dbquery($sql);
-        $mnr = mysql_num_rows($res);
-        if ($mnr > 0) {
-            while ($arr = mysql_fetch_array($res)) {
-                for ($level = 1; $level <= intval($arr['building_last_level']); $level++) {
-                    $r = $arr['building_costs_metal']
-                        + $arr['building_costs_crystal']
-                        + $arr['building_costs_fuel']
-                        + $arr['building_costs_plastic']
-                        + $arr['building_costs_food'];
-                    $p = ($r * (1 - pow($arr['building_build_costs_factor'], $level))
-                        / (1 - $arr['building_build_costs_factor']))
-                        / $config->param1Int('points_update');
+        /** @var BuildingDataRepository $buildingRepository */
+        $buildingRepository = $app[BuildingDataRepository::class];
+        /** @var BuildingPointRepository $buildingPointRepository */
+        $buildingPointRepository = $app[BuildingPointRepository::class];
 
-                    dbquery("
-                INSERT INTO
-                  building_points
-                (
-                  bp_building_id,
-                  bp_level,
-                  bp_points
-                )
-                VALUES
-            (" . $arr['building_id'] . ",
-            '" . $level . "',
-            '" . $p . "');");
-                }
+        $buildings = $buildingRepository->getBuildings();
+        $buildingPointRepository->deleteAll();
+
+        foreach ($buildings as $building) {
+            $points = [];
+            for ($level = 1; $level <= $building->lastLevel; $level++) {
+                $r = $building->costsMetal
+                    + $building->costsCrystal
+                    + $building->costsFuel
+                    + $building->costsPlastic
+                    + $building->costsFood;
+                $p = ($r * (1 - pow($building->buildCostsFactor, $level))
+                    / (1 - $building->buildCostsFactor))
+                    / $config->param1Int('points_update');
+
+                $points[$level] = $p;
             }
+
+            $buildingPointRepository->add($building->id, $points);
         }
-        return "Die Geb&auml;udepunkte von $mnr Geb&auml;uden wurden aktualisiert!";
+
+        return sprintf("Die Geb&auml;udepunkte von %s Geb&auml;uden wurden aktualisiert!", count($buildings));
     }
 
-    static function calcTechPoints($id = 0)
+    static function calcTechPoints()
     {
         // TODO
         global $app;
 
         /** @var ConfigurationService */
         $config = $app[ConfigurationService::class];
+        /** @var TechnologyDataRepository $technologyRepository */
+        $technologyRepository = $app[TechnologyDataRepository::class];
+        /** @var TechnologyPointRepository $technologyPointRepository */
+        $technologyPointRepository = $app[TechnologyPointRepository::class];
 
-        if ($id > 0) {
-            $sql = "
-            SELECT
-              tech_id,
-              tech_costs_metal,
-              tech_costs_crystal,
-              tech_costs_fuel,
-              tech_costs_plastic,
-              tech_costs_food,
-              tech_build_costs_factor,
-              tech_last_level
-            FROM
-              technologies
-            WHERE
-              tech_id=" . $id . ";";
-        } else {
-            $sql = "
-            SELECT
-              tech_id,
-              tech_costs_metal,
-              tech_costs_crystal,
-              tech_costs_fuel,
-              tech_costs_plastic,
-              tech_costs_food,
-              tech_build_costs_factor,
-              tech_last_level
-            FROM
-              technologies;";
-        }
-        dbquery("DELETE FROM tech_points;");
-        $res = dbquery($sql);
-        $mnr = mysql_num_rows($res);
-        if ($mnr > 0) {
-            while ($arr = mysql_fetch_array($res)) {
-                for ($level = 1; $level <= intval($arr['tech_last_level']); $level++) {
-                    $r = $arr['tech_costs_metal']
-                        + $arr['tech_costs_crystal']
-                        + $arr['tech_costs_fuel']
-                        + $arr['tech_costs_plastic']
-                        + $arr['tech_costs_food'];
-                    $p = ($r * (1 - pow($arr['tech_build_costs_factor'], $level))
-                        / (1 - $arr['tech_build_costs_factor']))
+        $technologies = $technologyRepository->getTechnologies();
+        $technologyPointRepository->deleteAll();
+
+        if (count($technologies) > 0) {
+            foreach ($technologies as $technology) {
+                $points = [];
+                for ($level = 1; $level <= $technology->lastLevel; $level++) {
+                    $r = $technology->costsMetal
+                        + $technology->costsCrystal
+                        + $technology->costsFuel
+                        + $technology->costsPlastic
+                        + $technology->costsFood;
+                    $p = ($r * (1 - pow($technology->buildCostsFactor, $level))
+                        / (1 - $technology->buildCostsFactor))
                         / $config->param1Int('points_update');
 
-                    dbquery("
-                INSERT INTO
-                  tech_points
-                (
-                  bp_tech_id,
-                  bp_level,
-                  bp_points
-                )
-                VALUES
-                (" . $arr['tech_id'] . ",
-                '" . $level . "',
-                '" . $p . "');");
+                    $points[$level] = $p;
                 }
+
+                $technologyPointRepository->add($technology->id, $points);
             }
         }
-        return "Die Punkte von $mnr Technologien wurden aktualisiert!";
+
+        return sprintf("Die Punkte von %s Technologien wurden aktualisiert!", count($technologies));
     }
 
     static function calcShipPoints()

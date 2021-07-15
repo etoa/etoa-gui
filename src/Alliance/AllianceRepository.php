@@ -33,6 +33,19 @@ class AllianceRepository extends AbstractRepository
     /**
      * @return array<int, string>
      */
+    public function getAllianceTags(): array
+    {
+        return $this->createQueryBuilder()
+            ->select("alliance_id, alliance_tag")
+            ->from('alliances')
+            ->orderBy('alliance_name')
+            ->execute()
+            ->fetchAllKeyValue();
+    }
+
+    /**
+     * @return array<int, string>
+     */
     public function getAllianceNamesWithTags(): array
     {
         $rows = $this->createQueryBuilder()
