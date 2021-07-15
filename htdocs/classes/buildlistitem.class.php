@@ -197,8 +197,6 @@ class BuildListItem
 
     public function getBuildCosts($levelUp = 0)
     {
-        global ;
-
         if (!(count($this->costs) > 0 && !$levelUp) || !(count($this->nextCosts) > 0  && $levelUp)) {
             // TODO
             global $resNames, $cp, $cu, $bl, $app;

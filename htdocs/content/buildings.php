@@ -2,6 +2,7 @@
 
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingRepository;
+use EtoA\Building\BuildingTypeDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
@@ -466,22 +467,25 @@ if (isset($cp)) {
         show_tab_menu("mode", $tabitems);
         $mode = (isset($_GET['mode']) && ctype_alpha($_GET['mode'])) ? $_GET['mode'] : "all";
 
-        $tres = dbquery("SELECT
-                            type_id,
-                            type_name
-                        FROM
-                            building_types
-                        ORDER BY
-                            type_order ASC
-        ;");
-        if (mysql_num_rows($tres) > 0) {
+        /** @var BuildingTypeDataRepository $buildingTypeRepository */
+        $buildingTypeRepository = $app[BuildingTypeDataRepository::class];
+        $buildingTypeNames = $buildingTypeRepository->getTypeNames();
+        if (count($buildingTypeNames) > 0) {
             $buildingLevels = $buildingRepository->getBuildingLevels($planet->id);
             // Jede Kategorie durchgehen
             echo '<form action="?page=' . $page . '" method="post"><div>';
             echo $checker;
 
-            while ($tarr = mysql_fetch_array($tres)) {
-                tableStart($tarr['type_name'], TABLE_WIDTH);
+            /** @var BuildingDataRepository $buildingRepository */
+            $buildingRepository = $app[BuildingDataRepository::class];
+            $buildingNames = $buildingRepository->getBuildingNames(true);
+
+            /** @var TechnologyDataRepository $technologyRepository */
+            $technologyRepository = $app[TechnologyDataRepository::class];
+            $technologyNames = $technologyRepository->getTechnologyNames(true);
+
+            foreach ($buildingTypeNames as $typeId => $typeName) {
+                tableStart($typeName, TABLE_WIDTH);
 
                 //Einfache Ansicht
                 if ($cu->properties->itemShow != 'full') {
@@ -500,7 +504,7 @@ if (isset($cp)) {
                 $cnt = 0; // Counter for current row
                 $scnt = 0; // Counter for shown buildings
 
-                $it = $bl->getCatIterator($tarr['type_id'], $mode);
+                $it = $bl->getCatIterator($typeId, $mode);
 
                 while ($it->valid()) {
                     if ($cu->properties->itemShow != 'full')
@@ -513,15 +517,10 @@ if (isset($cp)) {
                         $subtitle =  'Voraussetzungen fehlen';
                         $tmtext = '<span style="color:#999">Baue zuerst die nötigen Gebäude und erforsche die nötigen Technologien um diese Gebäude zu bauen!</span><br/>';
 
-                        /** @var BuildingDataRepository $buildingRepository */
-                        $buildingRepository = $app[BuildingDataRepository::class];
-                        $buildingNames = $buildingRepository->getBuildingNames(true);
                         foreach ($it->current()->building->getBuildingRequirements() as $id => $level) {
                             $tmtext .= "<div style=\"color:" . ($level <= ($buildingLevels[$id] ?? 0) ? '#0f0' : '#f30') . "\">" . $buildingNames[$id] . " Stufe " . $level . "</div>";
                         }
-                        /** @var TechnologyDataRepository $technologyRepository */
-                        $technologyRepository = $app[TechnologyDataRepository::class];
-                        $technologyNames = $technologyRepository->getTechnologyNames(true);
+
                         foreach ($it->current()->building->getTechRequirements() as $id => $level) {
                             $tmtext .= "<div style=\"color:" . ($level <= ($techlist[$id] ?? 0) ? '#0f0' : '#f30') . "\">" . $technologyNames[$id] . " Stufe " . $level . "</div>";
                         }
