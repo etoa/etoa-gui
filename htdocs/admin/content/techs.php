@@ -2,6 +2,7 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Technology\TechnologyPointRepository;
 use EtoA\Technology\TechnologyRepository;
 
 /** @var ConfigurationService */
@@ -10,6 +11,9 @@ $config = $app[ConfigurationService::class];
 $technologyRepository = $app[TechnologyRepository::class];
 /** @var TechnologyDataRepository $technologyDataRepository */
 $technologyDataRepository = $app[TechnologyDataRepository::class];
+/** @var TechnologyPointRepository $technologyPointRepository */
+$technologyPointRepository = $app[TechnologyPointRepository::class];
+
 //
 // Forschungspunkte
 //
@@ -25,21 +29,18 @@ if ($sub == "points") {
     echo "<h2>Forschungspunkte</h2>";
     $technologyNames = $technologyDataRepository->getTechnologyNames(true);
     if (count($technologyNames) > 0) {
+        $techPoints = $technologyPointRepository->getAllMap();
+
         echo "<table class=\"tb\">";
         foreach ($technologyNames as $technologyId => $technologyName) {
             echo "<tr><th>" . $technologyName . "</th><td style=\"width:70%\"><table class=\"tb\">";
-            $pres = dbquery("SELECT
-                    bp_level,
-                    bp_points
-                FROM tech_points
-                WHERE bp_tech_id=" . $technologyId . "
-                ORDER BY bp_level ASC;");
-            if (mysql_num_rows($pres) > 0) {
+            $points = $technologyPointRepository->getAllMap();
+            if (isset($techPoints[$technologyId])) {
                 $cnt = 0;
-                while ($parr = mysql_fetch_array($pres)) {
+                foreach ($techPoints[$technologyId] as $level => $point) {
                     if ($cnt == 0)
                         echo "<tr>";
-                    echo "<th>" . $parr['bp_level'] . "</th><td>" . $parr['bp_points'] . "</td>";
+                    echo "<th>" . $level . "</th><td>" . $point . "</td>";
                     if ($cnt == "3") {
                         echo "</tr>";
                         $cnt = 0;
