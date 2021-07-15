@@ -24,7 +24,8 @@ $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 $buildingRepository = $app[BuildingRepository::class];
 /** @var TechnologyDataRepository $technologyDataRepository */
 $technologyDataRepository = $app[TechnologyDataRepository::class];
-
+/** @var TechnologyRepository $technologyRepository */
+$technologyRepository = $app[TechnologyRepository::class];
 define('NUM_BUILDINGS_PER_ROW', 5);
 define('CELL_WIDTH', 120);
 define('TABLE_WIDTH', 'auto');
@@ -43,7 +44,6 @@ if (isset($cp)) {
 
     $researchBuilding = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, TECH_BUILDING_ID);
     if ($researchBuilding !== null && $researchBuilding->currentLevel > 0) {
-        $technologyRepository = $app[TechnologyRepository::class];
         define("GEN_TECH_LEVEL", $technologyRepository->getTechnologyLevel($cu->getId(), GEN_TECH_ID));
         $minBuildTimeFactor = (0.1 - (GEN_TECH_LEVEL / 100));
 
@@ -52,24 +52,18 @@ if (isset($cp)) {
         echo $resourceBoxDrawer->getHTML($planet);
 
         // Forschungsliste laden && Gentech level definieren
-        $tres = dbquery("
-        SELECT
-            *
-        FROM
-            techlist
-        WHERE
-            techlist_user_id='" . $cu->id . "';");
+        $userTechnologies = $technologyRepository->findForUser($cu->getId());
         $building_something = false;
         $building_gen = false;
         $techlist = [];
-        while ($tarr = mysql_fetch_array($tres)) {
-            $techlist[$tarr['techlist_tech_id']] = $tarr;
+        foreach ($userTechnologies as $userTechnology) {
+            $techlist[$userTechnology->technologyId] = $userTechnology;
             // Check, ob schon eine Technik geforscht wird
             // BUGFIX: this is tech, NO check for same planet,
             // because only one tech at the same time per user
 
-            if ($tarr['techlist_build_type'] > 2) {
-                if ($tarr['techlist_tech_id'] == 23) {
+            if ($userTechnology->buildType > 2) {
+                if ($userTechnology->technologyId === 23) {
                     $building_gen = true;
                 } else {
                     $building_something = true;
@@ -190,7 +184,7 @@ if (isset($cp)) {
                 $costs[5] = $technology->costsPower;
                 $level = 0;
                 if (isset($techlist[$technology->id])) {
-                    $level = $techlist[$technology->id]['techlist_current_level'];
+                    $level = $techlist[$technology->id]->currentLevel;
                 }
 
                 foreach ($resNames as $rk => $rn) {
@@ -334,11 +328,11 @@ if (isset($cp)) {
                 if (isset($techlist[$technology->id])) {
                     $built = true;
 
-                    $b_level = $techlist[$technology->id]['techlist_current_level'];
-                    $b_status = $techlist[$technology->id]['techlist_build_type'];
-                    $start_time = $techlist[$technology->id]['techlist_build_start_time'];
-                    $end_time = $techlist[$technology->id]['techlist_build_end_time'];
-                    $planet_id = $techlist[$technology->id]['techlist_entity_id'];
+                    $b_level = $techlist[$technology->id]->currentLevel;
+                    $b_status = $techlist[$technology->id]->buildType;
+                    $start_time = $techlist[$technology->id]->startTime;
+                    $end_time = $techlist[$technology->id]->endTime;
+                    $planet_id = $techlist[$technology->id]->entityId;
                 }
                 // Tech wurde noch nicht erforscht. Es werden Default Werte vergeben
                 else {
@@ -473,7 +467,7 @@ if (isset($cp)) {
 
 
                 if (isset($_POST['command_cbuild']) && $b_status == 3) {
-                    if (isset($techlist[$technology->id]['techlist_build_end_time']) && $techlist[$technology->id]['techlist_build_end_time'] > time()) {
+                    if (isset($techlist[$technology->id]->endTime) && $techlist[$technology->id]->endTime > time()) {
                         $fac = ($end_time - time()) / ($end_time - $start_time);
                         dbquery("
                         UPDATE
@@ -565,7 +559,7 @@ if (isset($cp)) {
                 }
                 if (isset($b_req[$bid]['t']) && count($b_req[$bid]['t']) > 0) {
                     foreach ($b_req[$bid]['t'] as $id => $level) {
-                        if (!isset($techlist[$id]['techlist_current_level']) || $techlist[$id]['techlist_current_level'] < $level) {
+                        if (!isset($techlist[$id]->currentLevel) || $techlist[$id]->currentLevel < $level) {
                             $requirements_passed = false;
                         }
                     }
@@ -626,7 +620,6 @@ if (isset($cp)) {
                             $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", nf($bc['food'] - $planet->resFood) . " " . RES_FOOD . "<br/>Bereit in <b>" . tf($bwait['food']) . "</b>");
                         $bcstring .= ">" . nf($bc['food']) . "</td></tr>";
                         // Maximale Stufe erreicht
-                        //$techlist[$bid]
 
                         if ($b_level >= $technology->lastLevel) {
                             echo "<tr><td colspan=\"7\"><i>Keine Weiterentwicklung m&ouml;glich.</i></td></tr>";
@@ -789,9 +782,9 @@ if (isset($cp)) {
 
                             // Aktuellen Level feststellen wenn Tech vorhanden
                             if (isset($techlist[$tech->id])) {
-                                $b_level = intval($techlist[$tech->id]['techlist_current_level']);
-                                $start_time = intval($techlist[$tech->id]['techlist_build_start_time']);
-                                $end_time = intval($techlist[$tech->id]['techlist_build_end_time']);
+                                $b_level = $techlist[$tech->id]->currentLevel;
+                                $start_time = $techlist[$tech->id]->startTime;
+                                $end_time = $techlist[$tech->id]->endTime;
                             } else {
                                 $b_level = 0;
                                 $end_time = 0;
@@ -803,7 +796,7 @@ if (isset($cp)) {
                             $t_req_info = array();
                             if (isset($b_req[$tech->id]['t']) && count($b_req[$tech->id]['t']) > 0) {
                                 foreach ($b_req[$tech->id]['t'] as $b => $l) {
-                                    if (!isset($techlist[$b]['techlist_current_level']) || $techlist[$b]['techlist_current_level'] < $l) {
+                                    if (!isset($techlist[$b]->currentLevel) || $techlist[$b]->currentLevel < $l) {
                                         $t_req_info[] = array($b, $l, false);
                                         $requirements_passed = false;
                                     } else
@@ -854,7 +847,7 @@ if (isset($cp)) {
                                     $img = "" . IMAGE_PATH . "/" . IMAGE_TECHNOLOGY_DIR . "/technology" . $tech->id . "." . IMAGE_EXT . "";
                                 }
                                 // Ist im Bau
-                                elseif (isset($techlist[$tech->id]['techlist_build_type']) && $techlist[$tech->id]['techlist_build_type'] == 3) {
+                                elseif (isset($techlist[$tech->id]) && $techlist[$tech->id]->buildType === 3) {
                                     $subtitle =  "Forschung auf Stufe " . ($b_level + 1);
                                     $tmtext = "<span style=\"color:#0f0\">Wird erforscht!<br/>Dauer: " . tf($end_time - time()) . "</span><br/>";
                                     $color = '#0f0';
@@ -910,7 +903,7 @@ if (isset($cp)) {
                                         <div style=\"position:relative;height:" . CELL_WIDTH . "px;overflow:hidden\">
                                         <div class=\"buildOverviewObjectTitle\">" . $tech->name . "</div>";
                                 echo "<a href=\"?page=$page&amp;id=" . $tech->id . "\" " . tm($tech->name, "<b>" . $subtitle . "</b><br/>" . $tmtext . $tech->shortComment) . " style=\"display:block;height:180px;\"><img class=\"" . $filterStyleClass . "\" src=\"" . $img . "\"/></a>";
-                                if ($b_level > 0 || ($b_level == 0 && isset($techlist[$tech->id]['techlist_build_type']) && $techlist[$tech->id]['techlist_build_type'] == 3)) {
+                                if ($b_level > 0 || ($b_level == 0 && isset($techlist[$tech->id]) && $techlist[$tech->id]->buildType === 3)) {
                                     echo "<div class=\"buildOverviewObjectLevel\" style=\"color:" . $color . "\">" . $b_level . "</div>";
                                 }
                                 echo "</div></td>\n";
