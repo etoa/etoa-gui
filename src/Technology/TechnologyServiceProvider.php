@@ -20,5 +20,9 @@ class TechnologyServiceProvider implements ServiceProviderInterface
         $pimple[TechnologyTypeRepository::class] = function (Container $pimple): TechnologyTypeRepository {
             return new TechnologyTypeRepository($pimple['db']);
         };
+
+        $pimple[TechnologyRequirementRepository::class] = function (Container $pimple): TechnologyRequirementRepository {
+            return new TechnologyRequirementRepository($pimple['db']);
+        };
     }
 }

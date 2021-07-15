@@ -6,6 +6,8 @@ use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Technology\Technology;
 use EtoA\Technology\TechnologyRepository;
+use EtoA\Technology\TechnologyRequirement;
+use EtoA\Technology\TechnologyRequirementRepository;
 use EtoA\Technology\TechnologyTypeRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -123,17 +125,21 @@ if (isset($cp)) {
         $buildlist = $buildingRepository->getBuildingLevels($planet->id);
 
         // Load requirements
-        $b_req = [];
-        $rres = dbquery("
-            SELECT
-                *
-            FROM
-                tech_requirements;");
-        while ($rarr = mysql_fetch_array($rres)) {
-            if ($rarr['req_building_id'] > 0)
-                $b_req[$rarr['obj_id']]['b'][$rarr['req_building_id']] = $rarr['req_level'];
-            if ($rarr['req_tech_id'] > 0)
-                $b_req[$rarr['obj_id']]['t'][$rarr['req_tech_id']] = $rarr['req_level'];
+        /** @var TechnologyRequirement[][] $buildingRequirements */
+        $buildingRequirements = [];
+        /** @var TechnologyRequirement[][] $technologyRequirements */
+        $technologyRequirements = [];
+        /** @var TechnologyRequirementRepository $technologyRequirementRepository */
+        $technologyRequirementRepository = $app[TechnologyRequirementRepository::class];
+        $requirements = $technologyRequirementRepository->getAll();
+        foreach ($requirements as $requirement) {
+            if ($requirement->requiredBuildingId > 0) {
+                $buildingRequirements[$requirement->technologyId][] = $requirement;
+            }
+
+            if ($requirement->requiredTechnologyId > 0) {
+                $technologyRequirements[$requirement->technologyId][] = $requirement;
+            }
         }
 
         $bid = 0;
@@ -385,7 +391,7 @@ if (isset($cp)) {
                         if ($planet->resMetal >= $bc['metal'] && $planet->resCrystal >= $bc['crystal'] && $planet->resPlastic >= $bc['plastic']  && $planet->resFuel >= $bc['fuel']  && $planet->resFood >= $bc['food']) {
                             $start_time = time();
                             $end_time = time() + $btime;
-                            $technologyRepository->updateBuildStatus($cu->getId(), $planet->id, $technology->id, 3, $end_time, $end_time);
+                            $technologyRepository->updateBuildStatus($cu->getId(), $planet->id, $technology->id, 3, $start_time, (int) $end_time);
                             $buildingId = $technology->id === GEN_TECH_ID ? BuildingId::PEOPLE : BuildingId::TECHNOLOGY;
                             $buildingRepository->markBuildingWorkingStatus($cu->getId(), $planet->id, $buildingId, true);
 
@@ -506,17 +512,17 @@ if (isset($cp)) {
 
                 // Check requirements for this building
                 $requirements_passed = true;
-                $bid = $technology->id;
-                if (isset($b_req[$bid]['b']) && count($b_req[$bid]['b']) > 0) {
-                    foreach ($b_req[$bid]['b'] as $b => $l) {
-                        if (!isset($buildlist[$b]) || $buildlist[$b] < $l) {
+                if (isset($buildingRequirements[$technology->id])) {
+                    foreach ($buildingRequirements[$technology->id] as $requirement) {
+                        if (!isset($buildlist[$requirement->requiredBuildingId]) || $buildlist[$requirement->requiredBuildingId] < $requirement->requiredLevel) {
                             $requirements_passed = false;
                         }
                     }
                 }
-                if (isset($b_req[$bid]['t']) && count($b_req[$bid]['t']) > 0) {
-                    foreach ($b_req[$bid]['t'] as $id => $level) {
-                        if (!isset($techlist[$id]->currentLevel) || $techlist[$id]->currentLevel < $level) {
+
+                if (isset($technologyRequirements[$technology->id])) {
+                    foreach ($technologyRequirements[$technology->id] as $requirement) {
+                        if (!isset($techlist[$requirement->requiredTechnologyId]) || $techlist[$requirement->requiredTechnologyId]->currentLevel < $requirement->requiredLevel) {
                             $requirements_passed = false;
                         }
                     }
