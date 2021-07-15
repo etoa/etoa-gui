@@ -37,6 +37,8 @@ class TechnologyDataRepository extends AbstractRepository
             ->select('*')
             ->from('technologies')
             ->where('tech_show = 1')
+            ->orderBy('tech_order')
+            ->addOrderBy('tech_name')
             ->execute()
             ->fetchAllAssociative();
 

@@ -4,7 +4,9 @@ use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Technology\Technology;
 use EtoA\Technology\TechnologyRepository;
+use EtoA\Technology\TechnologyTypeRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Technology\TechnologyDataRepository;
@@ -758,80 +760,38 @@ if (isset($cp)) {
         // Übersicht anziegen
         //
         else {
-
-
             // Load categories
-            $tres = dbquery("
-            SELECT
-                *
-            FROM
-        tech_types
-            ORDER BY
-                type_order ASC
-            ;");
-            if (mysql_num_rows($tres) > 0) {
-
+            /** @var TechnologyTypeRepository $technologyTypeRepository */
+            $technologyTypeRepository = $app[TechnologyTypeRepository::class];
+            $technologyTypes = $technologyTypeRepository->getTypes();
+            if (count($technologyTypes) > 0) {
                 // Load technologies
-                $bres = dbquery("
-                SELECT
-                    tech_type_id,
-                    tech_id,
-                    tech_name,
-                    tech_last_level,
-                    tech_shortcomment,
-                    tech_costs_metal,
-                    tech_costs_crystal,
-                    tech_costs_plastic,
-                    tech_costs_fuel,
-                    tech_costs_food,
-                    tech_build_costs_factor,
-                    tech_show
-                FROM
-                    technologies
-                WHERE
-                    tech_show='1'
-                ORDER BY
-                    tech_order,
-                    tech_name
-                ;");
-                $tech = array();
-                if (mysql_num_rows($bres) > 0) {
-                    while ($barr = mysql_fetch_array($bres)) {
-                        $tid = $barr['tech_type_id'];
-                        $bid = $barr['tech_id'];
-                        $tech[$tid][$bid]['name'] = $barr['tech_name'];
-                        $tech[$tid][$bid]['last_level'] = $barr['tech_last_level'];
-                        $tech[$tid][$bid]['shortcomment'] = $barr['tech_shortcomment'];
-                        $tech[$tid][$bid]['tech_costs_metal'] = $barr['tech_costs_metal'];
-                        $tech[$tid][$bid]['tech_costs_crystal'] = $barr['tech_costs_crystal'];
-                        $tech[$tid][$bid]['tech_costs_plastic'] = $barr['tech_costs_plastic'];
-                        $tech[$tid][$bid]['tech_costs_fuel'] = $barr['tech_costs_fuel'];
-                        $tech[$tid][$bid]['tech_costs_food'] = $barr['tech_costs_food'];
-                        $tech[$tid][$bid]['tech_build_costs_factor'] = $barr['tech_build_costs_factor'];
-                        $tech[$tid][$bid]['show'] = $barr['tech_show'];
-                    }
+                $technologies = $technologyDataRepository->getTechnologies();
+                /** @var array<int, array<Technology>> $groupedTechnologies */
+                $groupedTechnologies = [];
+                foreach ($technologies as $tech) {
+                    $groupedTechnologies[$tech->typeId][] = $tech;
                 }
+
+                $technologyNames = $technologyDataRepository->getTechnologyNames(true);
 
                 $cstr = $checker;
                 echo "<form action=\"?page=$page\" method=\"post\"><div>";
                 echo $cstr;
-                while ($tarr = mysql_fetch_array($tres)) {
-                    tableStart($tarr['type_name'], TABLE_WIDTH);
+                foreach ($technologyTypes as $technologyType) {
+                    tableStart($technologyType->name, TABLE_WIDTH);
                     $cnt = 0; // Counter for current row
                     $scnt = 0; // Counter for shown techs
 
-                    // Check if techs are avalaiable in this category
-                    /** @var array[] $bdata */
-                    $bdata = $tech[$tarr['type_id']];
-                    if (count($bdata) > 0) {
+                    if (isset($groupedTechnologies[$technologyType->id])) {
                         // Run through all techs in this cat
-                        foreach ($bdata as $bid => $bv) {
+                        foreach ($groupedTechnologies[$technologyType->id] as $tech) {
 
                             // Aktuellen Level feststellen wenn Tech vorhanden
-                            if (isset($techlist[$bid])) {
-                                $b_level = intval($techlist[$bid]['techlist_current_level']);
-                                $start_time = intval($techlist[$bid]['techlist_build_start_time']);
-                                $end_time = intval($techlist[$bid]['techlist_build_end_time']);
+                            if (isset($techlist[$tech->id])) {
+                                $b_level = intval($techlist[$tech->id]['techlist_current_level']);
+                                $start_time = intval($techlist[$tech->id]['techlist_build_start_time']);
+                                $end_time = intval($techlist[$tech->id]['techlist_build_end_time']);
                             } else {
                                 $b_level = 0;
                                 $end_time = 0;
@@ -841,8 +801,8 @@ if (isset($cp)) {
                             $requirements_passed = true;
                             $b_req_info = array();
                             $t_req_info = array();
-                            if (isset($b_req[$bid]['t']) && count($b_req[$bid]['t']) > 0) {
-                                foreach ($b_req[$bid]['t'] as $b => $l) {
+                            if (isset($b_req[$tech->id]['t']) && count($b_req[$tech->id]['t']) > 0) {
+                                foreach ($b_req[$tech->id]['t'] as $b => $l) {
                                     if (!isset($techlist[$b]['techlist_current_level']) || $techlist[$b]['techlist_current_level'] < $l) {
                                         $t_req_info[] = array($b, $l, false);
                                         $requirements_passed = false;
@@ -850,8 +810,8 @@ if (isset($cp)) {
                                         $t_req_info[] = array($b, $l, true);
                                 }
                             }
-                            if (isset($b_req[$bid]['b']) && count($b_req[$bid]['b']) > 0) {
-                                foreach ($b_req[$bid]['b'] as $id => $level) {
+                            if (isset($b_req[$tech->id]['b']) && count($b_req[$tech->id]['b']) > 0) {
+                                foreach ($b_req[$tech->id]['b'] as $id => $level) {
                                     if (!isset($buildlist[$id]) || $buildlist[$id] < $level) {
                                         $requirements_passed = false;
                                         $b_req_info[] = array($id, $level, false);
@@ -862,15 +822,15 @@ if (isset($cp)) {
                             }
 
                             $filterStyleClass = "";
-                            if ($bv['show'] == 0 && $b_level > 0) {
+                            if (!$tech->show && $b_level > 0) {
                                 $subtitle =  'Kann nicht erforscht werden';
                                 $tmtext = '<span style="color:#999">Es ist nicht vorgesehen dass diese Technologie erforscht werden kann!</span><br/>';
                                 $color = '#999';
                                 if ($use_img_filter) {
                                     $filterStyleClass = "filter-unavailable";
                                 }
-                                $img = "" . IMAGE_PATH . "/" . IMAGE_TECHNOLOGY_DIR . "/technology" . $bid . "." . IMAGE_EXT . "";
-                            } elseif ($bv['show'] == 1) {
+                                $img = "" . IMAGE_PATH . "/" . IMAGE_TECHNOLOGY_DIR . "/technology" . $tech->id . "." . IMAGE_EXT . "";
+                            } elseif ($tech->show) {
                                 // Voraussetzungen nicht erfüllt
                                 if (!$requirements_passed) {
                                     $subtitle =  'Voraussetzungen fehlen';
@@ -883,9 +843,6 @@ if (isset($cp)) {
                                         $tmtext .= "<div style=\"color:" . ($v[2] ? '#0f0' : '#f30') . "\">" . $buildingNames[$v[0]] . " Stufe " . $v[1] . "</div>";
                                     }
 
-                                    /** @var TechnologyDataRepository $technologyRepository */
-                                    $technologyRepository = $app[TechnologyDataRepository::class];
-                                    $technologyNames = $technologyRepository->getTechnologyNames(true);
                                     foreach ($t_req_info as $v) {
                                         $tmtext .= "<div style=\"color:" . ($v[2] ? '#0f0' : '#f30') . "\">" . $technologyNames[$v[0]] . " Stufe " . $v[1] . "</div>";
                                     }
@@ -894,45 +851,40 @@ if (isset($cp)) {
                                     if ($use_img_filter) {
                                         $filterStyleClass = "filter-unavailable";
                                     }
-                                    $img = "" . IMAGE_PATH . "/" . IMAGE_TECHNOLOGY_DIR . "/technology" . $bid . "." . IMAGE_EXT . "";
+                                    $img = "" . IMAGE_PATH . "/" . IMAGE_TECHNOLOGY_DIR . "/technology" . $tech->id . "." . IMAGE_EXT . "";
                                 }
                                 // Ist im Bau
-                                elseif (isset($techlist[$bid]['techlist_build_type']) && $techlist[$bid]['techlist_build_type'] == 3) {
+                                elseif (isset($techlist[$tech->id]['techlist_build_type']) && $techlist[$tech->id]['techlist_build_type'] == 3) {
                                     $subtitle =  "Forschung auf Stufe " . ($b_level + 1);
                                     $tmtext = "<span style=\"color:#0f0\">Wird erforscht!<br/>Dauer: " . tf($end_time - time()) . "</span><br/>";
                                     $color = '#0f0';
                                     if ($use_img_filter) {
                                         $filterStyleClass = "filter-building";
                                     }
-                                    $img = "" . IMAGE_PATH . "/" . IMAGE_TECHNOLOGY_DIR . "/technology" . $bid . "." . IMAGE_EXT . "";
+                                    $img = "" . IMAGE_PATH . "/" . IMAGE_TECHNOLOGY_DIR . "/technology" . $tech->id . "." . IMAGE_EXT . "";
                                 }
                                 // Untätig
                                 else {
                                     // Baukostenberechnung          Baukosten = Grundkosten * (Kostenfaktor ^ Ausbaustufe)
-                                    $bc = [];
-                                    $bc['metal'] = $bv['tech_costs_metal'] * $cu->specialist->costsResearch * pow($bv['tech_build_costs_factor'], $b_level);
-                                    $bc['crystal'] = $bv['tech_costs_crystal'] * $cu->specialist->costsResearch * pow($bv['tech_build_costs_factor'], $b_level);
-                                    $bc['plastic'] = $bv['tech_costs_plastic'] * $cu->specialist->costsResearch * pow($bv['tech_build_costs_factor'], $b_level);
-                                    $bc['fuel'] = $bv['tech_costs_fuel'] * $cu->specialist->costsResearch * pow($bv['tech_build_costs_factor'], $b_level);
-                                    $bc['food'] = $bv['tech_costs_food'] * $cu->specialist->costsResearch * pow($bv['tech_build_costs_factor'], $b_level);
+                                    $bc = calcTechCosts($tech, $b_level, $cu->specialist->costsResearch);
 
                                     // Zuwenig Ressourcen
-                                    if ($b_level < $bv['last_level'] && ($planet->resMetal < $bc['metal'] || $planet->resCrystal < $bc['crystal']  || $planet->resPlastic < $bc['plastic']  || $planet->resFuel < $bc['fuel']  || $planet->resFood < $bc['food'])) {
+                                    if ($b_level < $tech->lastLevel && ($planet->resMetal < $bc['metal'] || $planet->resCrystal < $bc['crystal']  || $planet->resPlastic < $bc['plastic']  || $planet->resFuel < $bc['fuel']  || $planet->resFood < $bc['food'])) {
                                         $tmtext = "<span style=\"color:#f00\">Zuwenig Ressourcen f&uuml;r<br/>weitere Forschungen!</span><br/>";
                                         $color = '#f00';
                                         if ($use_img_filter) {
                                             $filterStyleClass = "filter-noresources";
                                         }
-                                        $img = "" . IMAGE_PATH . "/" . IMAGE_TECHNOLOGY_DIR . "/technology" . $bid . "." . IMAGE_EXT . "";
+                                        $img = "" . IMAGE_PATH . "/" . IMAGE_TECHNOLOGY_DIR . "/technology" . $tech->id . "." . IMAGE_EXT . "";
                                     } else {
                                         $tmtext = "";
                                         $color = '#fff';
-                                        $img = "" . IMAGE_PATH . "/" . IMAGE_TECHNOLOGY_DIR . "/technology" . $bid . "." . IMAGE_EXT . "";
+                                        $img = "" . IMAGE_PATH . "/" . IMAGE_TECHNOLOGY_DIR . "/technology" . $tech->id . "." . IMAGE_EXT . "";
                                     }
 
                                     if ($b_level == 0) {
                                         $subtitle = "Noch nicht erforscht";
-                                    } elseif ($b_level >= $bv['last_level']) {
+                                    } elseif ($b_level >= $tech->lastLevel) {
                                         $subtitle = 'Vollständig erforscht';
                                     } else {
                                         $subtitle = 'Stufe ' . $b_level . '';
@@ -942,8 +894,8 @@ if (isset($cp)) {
 
 
                             // Display all buildings that are buildable or are already built
-                            if (($bv['show'] == 1) || $b_level > 0) {
-                                $img = "" . IMAGE_PATH . "/" . IMAGE_TECHNOLOGY_DIR . "/technology" . $bid . "_middle." . IMAGE_EXT . "";
+                            if ($tech->show || $b_level > 0) {
+                                $img = "" . IMAGE_PATH . "/" . IMAGE_TECHNOLOGY_DIR . "/technology" . $tech->id . "_middle." . IMAGE_EXT . "";
 
                                 if (!$requirements_passed) {
                                     $filterStyleClass = "filter-unavailable";
@@ -956,9 +908,9 @@ if (isset($cp)) {
 
                                 echo "<td style=\"width:" . CELL_WIDTH . "px;height:" . CELL_WIDTH . "px ;padding:0px;\">
                                         <div style=\"position:relative;height:" . CELL_WIDTH . "px;overflow:hidden\">
-                                        <div class=\"buildOverviewObjectTitle\">" . $bv['name'] . "</div>";
-                                echo "<a href=\"?page=$page&amp;id=" . $bid . "\" " . tm($bv['name'], "<b>" . $subtitle . "</b><br/>" . $tmtext . $bv['shortcomment']) . " style=\"display:block;height:180px;\"><img class=\"" . $filterStyleClass . "\" src=\"" . $img . "\"/></a>";
-                                if ($b_level > 0 || ($b_level == 0 && isset($techlist[$bid]['techlist_build_type']) && $techlist[$bid]['techlist_build_type'] == 3)) {
+                                        <div class=\"buildOverviewObjectTitle\">" . $tech->name . "</div>";
+                                echo "<a href=\"?page=$page&amp;id=" . $tech->id . "\" " . tm($tech->name, "<b>" . $subtitle . "</b><br/>" . $tmtext . $tech->shortComment) . " style=\"display:block;height:180px;\"><img class=\"" . $filterStyleClass . "\" src=\"" . $img . "\"/></a>";
+                                if ($b_level > 0 || ($b_level == 0 && isset($techlist[$tech->id]['techlist_build_type']) && $techlist[$tech->id]['techlist_build_type'] == 3)) {
                                     echo "<div class=\"buildOverviewObjectLevel\" style=\"color:" . $color . "\">" . $b_level . "</div>";
                                 }
                                 echo "</div></td>\n";

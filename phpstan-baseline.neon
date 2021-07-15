@@ -231,11 +231,6 @@ parameters:
 			path: htdocs/content/market/new.php
 
 		-
-			message: "#^Foreach overwrites \\$bid with its key variable\\.$#"
-			count: 1
-			path: htdocs/content/research.php
-
-		-
 			message: "#^Variable \\$color might not be defined\\.$#"
 			count: 1
 			path: htdocs/content/research.php
