@@ -217,17 +217,6 @@ class BuildList implements IteratorAggregate
         return false;
     }
 
-    function getCooldown($bid)
-    {
-        if ($this->items == null)
-            $this->load();
-        if (isset($this->items[$bid])) {
-            if ($this->items[$bid]->cooldown > time())
-                return $this->items[$bid]->cooldown;
-        }
-        return false;
-    }
-
     function setCooldown($bid, $cd)
     {
         if ($this->items == null)
