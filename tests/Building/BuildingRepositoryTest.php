@@ -73,4 +73,15 @@ class BuildingRepositoryTest extends AbstractDbTestCase
 
         $this->assertSame(0, $this->repository->getPeopleWorking($entityId)->total);
     }
+
+    public function testMarkBuildingWorkingStatus(): void
+    {
+        $userId = 1;
+        $buildingId = BuildingId::TECHNOLOGY;
+        $level = 2;
+        $entityId = 4;
+        $this->repository->addBuilding($buildingId, $level, $userId, $entityId);
+
+        $this->assertTrue($this->repository->markBuildingWorkingStatus($userId, $entityId, $buildingId, true));
+    }
 }

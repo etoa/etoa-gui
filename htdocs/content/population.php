@@ -14,6 +14,8 @@ $planetRepo = $app[PlanetRepository::class];
 
 /** @var ResourceBoxDrawer */
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
+/** @var BuildingRepository $buildingRepository */
+$buildingRepository = $app[BuildingRepository::class];
 
 if ($cp) {
     $planet = $planetRepo->find($cp->id);
@@ -228,8 +230,6 @@ if ($cp) {
                     $technologyRepository = $app[TechnologyRepository::class];
                     $techlist = $technologyRepository->getTechnologyLevels($cu->getId());
 
-                    /** @var BuildingRepository $buildingRepository */
-                    $buildingRepository = $app[BuildingRepository::class];
                     $buildingLevels = $buildingRepository->getBuildingLevels($planet->id);
 
                     while ($rarr = mysql_fetch_array($rres)) {
@@ -268,29 +268,13 @@ if ($cp) {
                     echo $sp_arr['buildlist_people_working'];
 
                     //Sperrt arbeiter
-                    dbquery("
-                    UPDATE
-                        buildlist
-                    SET
-                        buildlist_people_working_status='1'
-                    WHERE
-                        buildlist_building_id='" . $sp_arr['building_id'] . "'
-                        AND buildlist_user_id='" . $cu->id . "'
-                        AND buildlist_entity_id='" . $planet->id . "'");
+                    $buildingRepository->markBuildingWorkingStatus($cu->getId(), $planet->id, (int) $sp_arr['building_id'], true);
                 } else {
 
                     echo '<input type="text" id="' . $sp_arr['building_id'] . '" name="people_work[' . $sp_arr['building_id'] . ']" value="' . $sp_arr['buildlist_people_working'] . '" size="8" maxlength="20" onKeyUp="FormatNumber(this.id,this.value, ' . $planet->people . ', \'\', \'\');"/>';
 
                     //Entsperrt arbeiter
-                    dbquery("
-                    UPDATE
-                        buildlist
-                    SET
-                        buildlist_people_working_status='0'
-                    WHERE
-                        buildlist_building_id='" . $sp_arr['building_id'] . "'
-                        AND buildlist_user_id='" . $cu->id . "'
-                        AND buildlist_entity_id='" . $planet->id . "'");
+                    $buildingRepository->markBuildingWorkingStatus($cu->getId(), $planet->id, (int) $sp_arr['building_id'], false);
                 }
                 echo '</td><td>' . (nf($sp_arr['buildlist_people_working'] * $config->getInt('people_food_require'))) . ' t</td></tr>';
             }

@@ -342,4 +342,20 @@ class BuildingRepository extends AbstractRepository
 
          return new PeopleWorking($data);
     }
+
+    public function markBuildingWorkingStatus(int $userId, int $entityId, int $buildingId, bool $working): bool
+    {
+        return (bool) $this->createQueryBuilder()
+            ->update('buildlist')
+            ->set('buildlist_people_working_status', ':status')
+            ->where('buildlist_building_id = :buildingId')
+            ->andWhere('buildlist_user_id = :userId')
+            ->andWhere('buildlist_entity_id = :entityId')
+            ->setParameters([
+                'buildingId' => $buildingId,
+                'entityId' => $entityId,
+                'userId' => $userId,
+                'status' => (int) $working,
+            ])->execute();
+    }
 }

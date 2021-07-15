@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Building\BuildingDataRepository;
+use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Technology\TechnologyRepository;
@@ -423,27 +424,8 @@ if (isset($cp)) {
                                 );");
                             }
 
-                            if ($technology->id == GEN_TECH_ID) {
-                                dbquery("
-                                    UPDATE
-                                        buildlist
-                                    SET
-                                        buildlist_people_working_status='1'
-                                    WHERE
-                                        buildlist_building_id='" . PEOPLE_BUILDING_ID . "'
-                                        AND buildlist_user_id='" . $cu->id . "'
-                                        AND buildlist_entity_id='" . $planet->id . "'");
-                            } else {
-                                dbquery("
-                                    UPDATE
-                                        buildlist
-                                    SET
-                                        buildlist_people_working_status='1'
-                                    WHERE
-                                        buildlist_building_id='" . TECH_BUILDING_ID . "'
-                                        AND buildlist_user_id='" . $cu->id . "'
-                                        AND buildlist_entity_id='" . $planet->id . "'");
-                            }
+                            $buildingId = $technology->id === GEN_TECH_ID ? BuildingId::PEOPLE : BuildingId::TECHNOLOGY;
+                            $buildingRepository->markBuildingWorkingStatus($cu->getId(), $planet->id, $buildingId, true);
 
                             $planet_id = $planet->id;
 
@@ -502,27 +484,8 @@ if (isset($cp)) {
                             techlist_tech_id='" . $technology->id . "'
                             AND techlist_user_id='" . $cu->id . "';");
 
-                        if ($technology->id == GEN_TECH_ID) {
-                            dbquery("
-                                    UPDATE
-                                        buildlist
-                                    SET
-                                        buildlist_people_working_status='0'
-                                    WHERE
-                                        buildlist_building_id='" . PEOPLE_BUILDING_ID . "'
-                                        AND buildlist_user_id='" . $cu->id . "'
-                                        AND buildlist_entity_id='" . $planet->id . "'");
-                        } else {
-                            dbquery("
-                                    UPDATE
-                                        buildlist
-                                    SET
-                                        buildlist_people_working_status='0'
-                                    WHERE
-                                        buildlist_building_id='" . TECH_BUILDING_ID . "'
-                                        AND buildlist_user_id='" . $cu->id . "'
-                                        AND buildlist_entity_id='" . $planet->id . "'");
-                        }
+                        $buildingId = $technology->id === GEN_TECH_ID ? BuildingId::PEOPLE : BuildingId::TECHNOLOGY;
+                        $buildingRepository->markBuildingWorkingStatus($cu->getId(), $planet->id, $buildingId, false);
 
                         //Rohstoffe zurückgeben und aktualisieren
                         $planetRepo->addResources($planet->id, $bc['metal'] * $fac, $bc['crystal'] * $fac, $bc['plastic'] * $fac, $bc['fuel'] * $fac, $bc['food'] * $fac);

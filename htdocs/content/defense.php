@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Technology\TechnologyRepository;
@@ -561,15 +562,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                                 '" . time() . "');");
                         $deflist_id = mysql_insert_id();
 
-                        dbquery("
-                            UPDATE
-                                buildlist
-                            SET
-                                buildlist_people_working_status='1'
-                            WHERE
-                                buildlist_building_id='" . DEF_BUILDING_ID . "'
-                                AND buildlist_user_id='" . $cu->id . "'
-                                AND buildlist_entity_id='" . $planet->id . "'");
+                        $buildingRepository->markBuildingWorkingStatus($cu->getId(), $planet->id, BuildingId::DEFENSE, true);
 
                         // Queue Array aktualisieren
                         $queue_data = array();
@@ -675,15 +668,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                     WHERE
                         queue_id='" . $id . "';");
 
-                dbquery("
-                UPDATE
-                    buildlist
-                SET
-                    buildlist_people_working_status='0'
-                WHERE
-                    buildlist_building_id='" . DEF_BUILDING_ID . "'
-                    AND buildlist_user_id='" . $cu->id . "'
-                    AND buildlist_entity_id='" . $planet->id . "'");
+                $buildingRepository->markBuildingWorkingStatus($cu->getId(), $planet->id, BuildingId::DEFENSE, false);
 
                 // Nachkommende Aufträge werden Zeitlich nach vorne verschoben
                 $tres = dbquery("
