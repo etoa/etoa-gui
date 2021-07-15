@@ -350,14 +350,7 @@ if (isset($cp)) {
 
 
                 $bc = calcTechCosts($technology, $b_level, $cu->specialist->costsResearch);
-
-                $bcn = [];
-                $bcn['metal'] = $cu->specialist->costsResearch * $technology->costsMetal * pow($technology->buildCostsFactor, $b_level + 1);
-                $bcn['crystal'] = $cu->specialist->costsResearch * $technology->costsCrystal * pow($technology->buildCostsFactor, $b_level + 1);
-                $bcn['plastic'] = $cu->specialist->costsResearch * $technology->costsPlastic * pow($technology->buildCostsFactor, $b_level + 1);
-                $bcn['fuel'] = $cu->specialist->costsResearch * $technology->costsFuel * pow($technology->buildCostsFactor, $b_level + 1);
-                $bcn['food'] = $cu->specialist->costsResearch * $technology->costsFood * pow($technology->buildCostsFactor, $b_level + 1);
-
+                $bcn = calcTechCosts($technology, $b_level + 1, $cu->specialist->costsResearch);
 
                 // Bauzeit
                 $bonus = $cu->race->researchTime + $cp->typeResearchtime + $cp->starResearchtime - 2;
