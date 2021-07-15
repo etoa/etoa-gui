@@ -2,10 +2,14 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Technology\TechnologyRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
-
+/** @var TechnologyRepository $technologyRepository */
+$technologyRepository = $app[TechnologyRepository::class];
+/** @var TechnologyDataRepository $technologyDataRepository */
+$technologyDataRepository = $app[TechnologyDataRepository::class];
 //
 // Forschungspunkte
 //
@@ -19,8 +23,6 @@ if ($sub == "points") {
     echo "<input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";
 
     echo "<h2>Forschungspunkte</h2>";
-    /** @var TechnologyDataRepository $technologyDataRepository */
-    $technologyDataRepository = $app[TechnologyDataRepository::class];
     $technologyNames = $technologyDataRepository->getTechnologyNames(true);
     if (count($technologyNames) > 0) {
         echo "<table class=\"tb\">";
@@ -157,38 +159,19 @@ else {
         if (isset($_POST['new'])) {
             $updata = explode(":", $_POST['planet_id']);
 
+            $technologyNames = $technologyDataRepository->getTechnologyNames(true);
             if (isset($_POST['all_techs'])) {
-                $technologyDataRepository = $app[TechnologyDataRepository::class];
-                $technologyNames = $technologyDataRepository->getTechnologyNames(true);
                 foreach (array_keys($technologyNames) as $technologyId) {
-                    if (mysql_num_rows(dbquery("SELECT techlist_id FROM techlist WHERE techlist_user_id=" . $updata[1] . " AND techlist_tech_id=" . $technologyId . ";")) == 0) {
-                        dbquery("INSERT INTO techlist (techlist_entity_id,techlist_user_id,techlist_tech_id,techlist_current_level) VALUES (" . $updata[0] . "," . $updata[1] . "," . $technologyId . "," . $_POST['techlist_current_level'] . ");");
-                    } else {
-                        dbquery("UPDATE techlist
-                                     SET techlist_current_level = " . $_POST['techlist_current_level'] . "
-                                     WHERE techlist_user_id = " . $updata[1] . "
-                                     AND techlist_tech_id = " . $technologyId);
-                    }
+                    $technologyRepository->addTechnology($technologyId, (int) $_POST['techlist_current_level'], (int) $updata[1], 0);
                 }
                 echo "Technologien wurden aktualisiert!<br/>";
             } else {
-                if (mysql_num_rows(dbquery("SELECT techlist_id FROM techlist WHERE techlist_user_id=" . $updata[1] . " AND techlist_tech_id=" . $_POST['tech_id'] . ";")) == 0) {
-                    dbquery("INSERT INTO techlist (techlist_entity_id,techlist_user_id,techlist_tech_id,techlist_current_level) VALUES (" . $updata[0] . "," . $updata[1] . "," . $_POST['tech_id'] . "," . $_POST['techlist_current_level'] . ");");
-                    echo "Technologie wurde hinzugef&uuml;gt!<br/>";
-                } else {
-                    dbquery("UPDATE techlist
-                                 SET techlist_current_level = " . $_POST['techlist_current_level'] . "
-                                 WHERE techlist_user_id = " . $updata[1] . "
-                                 AND techlist_tech_id = " . $_POST['tech_id']);
-                    echo "Technologie wurde aktualisiert!<br/>";
-                }
+                $technologyRepository->addTechnology((int) $_POST['tech_id'], (int) $_POST['techlist_current_level'], (int) $updata[1], 0);
+                echo "Technologie wurde hinzugefügt!<br/>";
             }
 
             $sql = " AND user_id=" . $updata[1];
             $_SESSION['search']['tech']['query'] = null;
-
-            $technologyDataRepository = $app[TechnologyDataRepository::class];
-            $technologyNames = $technologyDataRepository->getTechnologyNames(true);
 
             // Hinzufügen
             echo "<h2>Neue Technologien hinzuf&uuml;gen</h2>";

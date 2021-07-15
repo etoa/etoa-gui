@@ -189,16 +189,6 @@ class BuildList implements IteratorAggregate
         return false;
     }
 
-    function getPeopleWorking($bid)
-    {
-        if ($this->items == null)
-            $this->load();
-        if (isset($this->items[$bid])) {
-            return $this->items[$bid]->peopleWorking;
-        }
-        return 0;
-    }
-
     // use only for tech and buildings
     function setPeopleWorking($bid, $people, $tech = false)
     {
@@ -217,33 +207,14 @@ class BuildList implements IteratorAggregate
                 global $cp;
                 // Free: Total people on planet minus total working people on planet
                 // PLUS people working in this building (these can be set again)
-                $free = $cp->people - $buildingRepository->getPeopleWorking($this->entityId) + $this->items[$bid]->peopleWorking;
+                $peopleWorking = $buildingRepository->getPeopleWorking($this->entityId);
+                $free = $cp->people - $peopleWorking->total + $peopleWorking->getById($bid);
                 if ($free >= $people) {
                     return $this->items[$bid]->setPeopleWorking($people, $tech);
                 }
             }
         }
         return false;
-    }
-
-    function getCooldown($bid)
-    {
-        if ($this->items == null)
-            $this->load();
-        if (isset($this->items[$bid])) {
-            if ($this->items[$bid]->cooldown > time())
-                return $this->items[$bid]->cooldown;
-        }
-        return false;
-    }
-
-    function setCooldown($bid, $cd)
-    {
-        if ($this->items == null)
-            $this->load();
-        if (isset($this->items[$bid])) {
-            $this->items[$bid]->cooldown = $cd;
-        }
     }
 
     function getCosts($bid, $type = 'build', $levelUp = 0)

@@ -2,6 +2,7 @@
 
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingRepository;
+use EtoA\Building\BuildingTypeDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
@@ -162,7 +163,8 @@ if (isset($cp)) {
     $checker = ob_get_contents();
     ob_end_clean();
 
-    $peopleFree = floor($planet->people) - $buildingRepository->getPeopleWorking($planet->id) + $bl->getPeopleWorking(BUILD_BUILDING_ID);
+    $peopleWorking = $buildingRepository->getPeopleWorking($planet->id);
+    $peopleFree = floor($planet->people) - $peopleWorking->total + $peopleWorking->building;
     // create box to change people working
     $box =    '
                 <input type="hidden" name="workDone" id="workDone" value="' . $config->getInt('people_work_done') . '" />
@@ -180,7 +182,7 @@ if (isset($cp)) {
                             <input 	type="text"
                                     name="peopleWorking"
                                     id="peopleWorking"
-                                    value="' . nf($bl->getPeopleWorking(BUILD_BUILDING_ID)) . '"
+                                    value="' . nf($peopleWorking->building) . '"
                                     onkeyup="updatePeopleWorkingBox(this.value,\'-1\',\'-1\');"/>
                     </td>
                     </tr>
@@ -189,14 +191,14 @@ if (isset($cp)) {
                         <td><input	type="text"
                                     name="timeReduction"
                                     id="timeReduction"
-                                    value="' . tf($config->getInt('people_work_done') * $bl->getPeopleWorking(BUILD_BUILDING_ID)) . '"
+                                    value="' . tf($config->getInt('people_work_done') * $peopleWorking->building) . '"
                                     onkeyup="updatePeopleWorkingBox(\'-1\',this.value,\'-1\');" /></td>
                     </tr>
                         <th>Nahrungsverbrauch</th>
                         <td><input	type="text"
                                     name="foodUsing"
                                     id="foodUsing"
-                                    value="' . nf($config->getInt('people_food_require') * $bl->getPeopleWorking(BUILD_BUILDING_ID)) . '"
+                                    value="' . nf($config->getInt('people_food_require') * $peopleWorking->building) . '"
                                     onkeyup="updatePeopleWorkingBox(\'-1\',\'-1\',this.value);" /></td>
                     </tr>
                     <tr>
@@ -215,7 +217,6 @@ if (isset($cp)) {
     //
     // create infobox incl. editable stuff for working people adjustements
     //
-    $peopleWorking = $bl->getPeopleWorking(BUILD_BUILDING_ID);
     $genTechLevel = $techlist[GEN_TECH_ID] ?? 0;
     tableStart('Bauhof-Infos');
     echo '<colgroup><col style="width:400px;"/><col/></colgroup>';
@@ -227,14 +228,14 @@ if (isset($cp)) {
         echo '<tr><td>Bauzeitverringerung durch ' . $cu->specialist->name . ':</td><td>' . get_percent_string($cu->specialist->buildTime) . '</td></tr>';
     }
     // Worker
-    echo '<tr><td>Eingestellte Arbeiter:</td><td><span id="people_working">' . nf($peopleWorking) . '</span>';
+    echo '<tr><td>Eingestellte Arbeiter:</td><td><span id="people_working">' . nf($peopleWorking->building) . '</span>';
     if (!$bl->isUnderConstruction()) {
         echo '&nbsp;<a href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
     }
     echo '</td></tr>';
-    if ($peopleWorking > 0) {
-        echo '<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td><span id="people_work_done">' . tf($config->getInt('people_work_done') * $peopleWorking) . '</span></td></tr>';
-        echo '<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td><span id="people_food_require">' . nf($config->getInt('people_food_require') * $peopleWorking) . '</span></td></tr>';
+    if ($peopleWorking->building > 0) {
+        echo '<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td><span id="people_work_done">' . tf($config->getInt('people_work_done') * $peopleWorking->building) . '</span></td></tr>';
+        echo '<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td><span id="people_food_require">' . nf($config->getInt('people_food_require') * $peopleWorking->building) . '</span></td></tr>';
     }
     // Genetics technology level
     if ($genTechLevel > 0) {
@@ -466,22 +467,25 @@ if (isset($cp)) {
         show_tab_menu("mode", $tabitems);
         $mode = (isset($_GET['mode']) && ctype_alpha($_GET['mode'])) ? $_GET['mode'] : "all";
 
-        $tres = dbquery("SELECT
-                            type_id,
-                            type_name
-                        FROM
-                            building_types
-                        ORDER BY
-                            type_order ASC
-        ;");
-        if (mysql_num_rows($tres) > 0) {
+        /** @var BuildingTypeDataRepository $buildingTypeRepository */
+        $buildingTypeRepository = $app[BuildingTypeDataRepository::class];
+        $buildingTypeNames = $buildingTypeRepository->getTypeNames();
+        if (count($buildingTypeNames) > 0) {
             $buildingLevels = $buildingRepository->getBuildingLevels($planet->id);
             // Jede Kategorie durchgehen
             echo '<form action="?page=' . $page . '" method="post"><div>';
             echo $checker;
 
-            while ($tarr = mysql_fetch_array($tres)) {
-                tableStart($tarr['type_name'], TABLE_WIDTH);
+            /** @var BuildingDataRepository $buildingRepository */
+            $buildingRepository = $app[BuildingDataRepository::class];
+            $buildingNames = $buildingRepository->getBuildingNames(true);
+
+            /** @var TechnologyDataRepository $technologyRepository */
+            $technologyRepository = $app[TechnologyDataRepository::class];
+            $technologyNames = $technologyRepository->getTechnologyNames(true);
+
+            foreach ($buildingTypeNames as $typeId => $typeName) {
+                tableStart($typeName, TABLE_WIDTH);
 
                 //Einfache Ansicht
                 if ($cu->properties->itemShow != 'full') {
@@ -500,7 +504,7 @@ if (isset($cp)) {
                 $cnt = 0; // Counter for current row
                 $scnt = 0; // Counter for shown buildings
 
-                $it = $bl->getCatIterator($tarr['type_id'], $mode);
+                $it = $bl->getCatIterator($typeId, $mode);
 
                 while ($it->valid()) {
                     if ($cu->properties->itemShow != 'full')
@@ -513,15 +517,10 @@ if (isset($cp)) {
                         $subtitle =  'Voraussetzungen fehlen';
                         $tmtext = '<span style="color:#999">Baue zuerst die nötigen Gebäude und erforsche die nötigen Technologien um diese Gebäude zu bauen!</span><br/>';
 
-                        /** @var BuildingDataRepository $buildingRepository */
-                        $buildingRepository = $app[BuildingDataRepository::class];
-                        $buildingNames = $buildingRepository->getBuildingNames(true);
                         foreach ($it->current()->building->getBuildingRequirements() as $id => $level) {
                             $tmtext .= "<div style=\"color:" . ($level <= ($buildingLevels[$id] ?? 0) ? '#0f0' : '#f30') . "\">" . $buildingNames[$id] . " Stufe " . $level . "</div>";
                         }
-                        /** @var TechnologyDataRepository $technologyRepository */
-                        $technologyRepository = $app[TechnologyDataRepository::class];
-                        $technologyNames = $technologyRepository->getTechnologyNames(true);
+
                         foreach ($it->current()->building->getTechRequirements() as $id => $level) {
                             $tmtext .= "<div style=\"color:" . ($level <= ($techlist[$id] ?? 0) ? '#0f0' : '#f30') . "\">" . $technologyNames[$id] . " Stufe " . $level . "</div>";
                         }

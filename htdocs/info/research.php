@@ -57,14 +57,7 @@ if (isset($_GET['id'])) {
                   <th class=\"tbltitle\">" . RES_ICON_FUEL . "" . RES_FUEL . "</th>
                   <th class=\"tbltitle\">" . RES_ICON_FOOD . "" . RES_FOOD . "</th></tr>";
         for ($x = 0; $x < min(30, $technology->lastLevel); $x++) {
-            $bc = calcTechCosts([
-                'tech_costs_metal' => $technology->costsMetal,
-                'tech_costs_crystal' => $technology->costsCrystal,
-                'tech_costs_plastic' => $technology->costsPlastic,
-                'tech_costs_fuel' => $technology->costsFuel,
-                'tech_costs_food' => $technology->costsFood,
-                'tech_build_costs_factor' => $technology->buildCostsFactor,
-            ], $x);
+            $bc = calcTechCosts($technology, $x);
             echo '<tr><td class="tbldata">' . ($x + 1) . '</td>
                       <td class="tbldata" style="text-align:right;">' . nf($bc['metal']) . '</td>
                       <td class="tbldata" style="text-align:right;">' . nf($bc['crystal']) . '</td>

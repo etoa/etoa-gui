@@ -39,4 +39,12 @@ class TechnologyRepositoryTest extends AbstractDbTestCase
 
         $this->assertSame([$technologyId => 6], $this->repository->getTechnologyLevels($userId));
     }
+
+    public function testUpdateBuildStatus(): void
+    {
+        $userId = 1;
+        $technologyId = 3;
+
+        $this->assertTrue($this->repository->updateBuildStatus($userId, 1, $technologyId, 0, 0, 0));
+    }
 }

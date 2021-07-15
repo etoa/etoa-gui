@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Technology\TechnologyRepository;
@@ -56,6 +57,8 @@ $factoryBuilding = $buildingRepository->getEntityBuilding($cu->getId(), $planet-
 
 // Prüfen ob Fabrik gebaut ist
 if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
+    $peopleWorking = $buildingRepository->getPeopleWorking($planet->id);
+
     // Titel
     echo "<h1>Waffenfabrik (Stufe " . $factoryBuilding->currentLevel . ") des Planeten " . $planet->name . "</h1>";
 
@@ -263,9 +266,9 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
             echo '&nbsp;<a href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
         }
         echo "</td></tr>";
-        if ($bl->getPeopleWorking(DEF_BUILDING_ID) > 0) {
-            echo '<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td><span id="people_work_done">' . tf($config->getInt('people_work_done') * $bl->getPeopleWorking(DEF_BUILDING_ID)) . '</span></td></tr>';
-            echo '<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td><span id="people_food_require">' . nf($config->getInt('people_food_require') * $bl->getPeopleWorking(DEF_BUILDING_ID)) . '</span></td></tr>';
+        if ($peopleWorking->defense > 0) {
+            echo '<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td><span id="people_work_done">' . tf($config->getInt('people_work_done') * $peopleWorking->defense) . '</span></td></tr>';
+            echo '<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td><span id="people_food_require">' . nf($config->getInt('people_food_require') * $peopleWorking->defense) . '</span></td></tr>';
         }
         if ($gen_tech_level  > 0) {
             echo '<tr><td>Gentechnologie:</td><td>' . $gen_tech_level . '</td></tr>';
@@ -287,7 +290,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
         }
         tableEnd();
 
-        $peopleFree = floor($planet->people) - $buildingRepository->getPeopleWorking($planet->id) + $bl->getPeopleWorking(DEF_BUILDING_ID);
+        $peopleFree = floor($planet->people) - $peopleWorking->total + $peopleWorking->defense;
         $box =  '
                     <input type="hidden" name="workDone" id="workDone" value="' . $config->getInt('people_work_done') . '" />
                     <input type="hidden" name="foodRequired" id="foodRequired" value="' . $config->getInt('people_food_require') . '" />
@@ -301,7 +304,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                                 <input  type="text"
                                         name="peopleWorking"
                                         id="peopleWorking"
-                                        value="' . nf($bl->getPeopleWorking(DEF_BUILDING_ID)) . '"
+                                        value="' . nf($peopleWorking->defense) . '"
                                         onkeyup="updatePeopleWorkingBox(this.value,\'-1\',\'-1\');"/>
                         </td>
                         </tr>
@@ -310,14 +313,14 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                             <td><input  type="text"
                                         name="timeReduction"
                                         id="timeReduction"
-                                        value="' . tf($config->getInt('people_work_done') * $bl->getPeopleWorking(DEF_BUILDING_ID)) . '"
+                                        value="' . tf($config->getInt('people_work_done') * $peopleWorking->defense) . '"
                                         onkeyup="updatePeopleWorkingBox(\'-1\',this.value,\'-1\');" /></td>
                         </tr>
                             <th>Nahrungsverbrauch</th>
                             <td><input  type="text"
                                         name="foodUsing"
                                         id="foodUsing"
-                                        value="' . nf($config->getInt('people_food_require') * $bl->getPeopleWorking(DEF_BUILDING_ID)) . '"
+                                        value="' . nf($config->getInt('people_food_require') * $peopleWorking->defense) . '"
                                         onkeyup="updatePeopleWorkingBox(\'-1\',\'-1\',this.value);" /></td>
                         </tr>
                         <tr>
@@ -559,15 +562,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                                 '" . time() . "');");
                         $deflist_id = mysql_insert_id();
 
-                        dbquery("
-                            UPDATE
-                                buildlist
-                            SET
-                                buildlist_people_working_status='1'
-                            WHERE
-                                buildlist_building_id='" . DEF_BUILDING_ID . "'
-                                AND buildlist_user_id='" . $cu->id . "'
-                                AND buildlist_entity_id='" . $planet->id . "'");
+                        $buildingRepository->markBuildingWorkingStatus($cu->getId(), $planet->id, BuildingId::DEFENSE, true);
 
                         // Queue Array aktualisieren
                         $queue_data = array();
@@ -673,15 +668,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                     WHERE
                         queue_id='" . $id . "';");
 
-                dbquery("
-                UPDATE
-                    buildlist
-                SET
-                    buildlist_people_working_status='0'
-                WHERE
-                    buildlist_building_id='" . DEF_BUILDING_ID . "'
-                    AND buildlist_user_id='" . $cu->id . "'
-                    AND buildlist_entity_id='" . $planet->id . "'");
+                $buildingRepository->markBuildingWorkingStatus($cu->getId(), $planet->id, BuildingId::DEFENSE, false);
 
                 // Nachkommende Aufträge werden Zeitlich nach vorne verschoben
                 $tres = dbquery("
