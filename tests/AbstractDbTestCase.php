@@ -8,6 +8,7 @@ use Pimple\Container;
 
 class AbstractDbTestCase extends TestCase
 {
+    private static ?Connection $staticConnection = null;
     use DbTestTrait;
 
     protected Container $app;
@@ -18,7 +19,12 @@ class AbstractDbTestCase extends TestCase
         parent::setUp();
 
         $this->app = $this->setupApplication();
-        $this->connection = $this->app['db'];
+
+        if (null === self::$staticConnection) {
+            self::$staticConnection = $this->connection = $this->app['db'];
+        } else {
+            $this->connection = $this->app['db'] = self::$staticConnection;
+        }
     }
 
     protected function createUser(int $userId, int $specialistId = 0, int $allianceId = 0, int $points = 0, string $discoverMask = '', string $verificationKey = ''): void
