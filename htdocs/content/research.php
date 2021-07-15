@@ -19,6 +19,8 @@ $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 
 /** @var BuildingRepository $buildingRepository */
 $buildingRepository = $app[BuildingRepository::class];
+/** @var TechnologyDataRepository $technologyDataRepository */
+$technologyDataRepository = $app[TechnologyDataRepository::class];
 
 define('NUM_BUILDINGS_PER_ROW', 5);
 define('CELL_WIDTH', 120);
@@ -170,37 +172,29 @@ if (isset($cp)) {
             $peopleFree = floor($planet->people) - $peopleWorking->total + ($peopleWorkingResearch);
 
         $peopleOptimized = 0;
-        $currentTechData = null;
+        $technology = null;
         if ($bid > 0) {
             // Forschungsdaten laden
-            $res = dbquery("
-            SELECT
-                *
-            FROM
-                technologies
-            WHERE
-                tech_id='" . $bid . "'
-                AND tech_show='1';");
-            if (mysql_num_rows($res) > 0) {
-                $currentTechData = mysql_fetch_array($res);
+            $technology = $technologyDataRepository->getTechnology($bid);
+            if ($technology !== null) {
                 $bc = array();
                 $costs = array();
-                $costs[0] = $currentTechData['tech_costs_metal'];
-                $costs[1] = $currentTechData['tech_costs_crystal'];
-                $costs[2] = $currentTechData['tech_costs_plastic'];
-                $costs[3] = $currentTechData['tech_costs_fuel'];
-                $costs[4] = $currentTechData['tech_costs_food'];
-                $costs[5] = $currentTechData['tech_costs_power'];
+                $costs[0] = $technology->costsMetal;
+                $costs[1] = $technology->costsCrystal;
+                $costs[2] = $technology->costsPlastic;
+                $costs[3] = $technology->costsFuel;
+                $costs[4] = $technology->costsFood;
+                $costs[5] = $technology->costsPower;
                 $level = 0;
-                if (isset($techlist[$bid])) {
-                    $level = $techlist[$bid]['techlist_current_level'];
+                if (isset($techlist[$technology->id])) {
+                    $level = $techlist[$technology->id]['techlist_current_level'];
                 }
 
                 foreach ($resNames as $rk => $rn) {
                     //BUGFIX by river: costsResearch factor. Still whole code is wrong, but at least consistent now.
-                    $bc['costs' . $rk] = $cu->specialist->costsResearch * $costs[$rk] * pow($currentTechData['tech_build_costs_factor'], $level);
+                    $bc['costs' . $rk] = $cu->specialist->costsResearch * $costs[$rk] * pow($technology->buildCostsFactor, $level);
                 }
-                $bc['costs5'] = $costs[5] * pow($currentTechData['tech_build_costs_factor'], $level);
+                $bc['costs5'] = $costs[5] * pow($technology->buildCostsFactor, $level);
 
                 $bonus = $cu->race->researchTime + $cp->typeResearchtime + $cp->starResearchtime - 2;
                 $bonus *= $cu->specialist->researchTime;
@@ -332,17 +326,16 @@ if (isset($cp)) {
         //Forschung erforschen/abbrechen
         //
         if ($bid > 0) {
-            $arr = $currentTechData;
-            if ($arr) {
+            if ($technology !== null) {
                 // Prüft, ob Technik schon erforscht wurde und setzt Variablen
-                if (isset($techlist[$arr['tech_id']])) {
+                if (isset($techlist[$technology->id])) {
                     $built = true;
 
-                    $b_level = $techlist[$arr['tech_id']]['techlist_current_level'];
-                    $b_status = $techlist[$arr['tech_id']]['techlist_build_type'];
-                    $start_time = $techlist[$arr['tech_id']]['techlist_build_start_time'];
-                    $end_time = $techlist[$arr['tech_id']]['techlist_build_end_time'];
-                    $planet_id = $techlist[$arr['tech_id']]['techlist_entity_id'];
+                    $b_level = $techlist[$technology->id]['techlist_current_level'];
+                    $b_status = $techlist[$technology->id]['techlist_build_type'];
+                    $start_time = $techlist[$technology->id]['techlist_build_start_time'];
+                    $end_time = $techlist[$technology->id]['techlist_build_end_time'];
+                    $planet_id = $techlist[$technology->id]['techlist_entity_id'];
                 }
                 // Tech wurde noch nicht erforscht. Es werden Default Werte vergeben
                 else {
@@ -356,14 +349,14 @@ if (isset($cp)) {
                 }
 
 
-                $bc = calcTechCosts($arr, $b_level, $cu->specialist->costsResearch);
+                $bc = calcTechCosts($technology, $b_level, $cu->specialist->costsResearch);
 
                 $bcn = [];
-                $bcn['metal'] = $cu->specialist->costsResearch * $arr['tech_costs_metal'] * pow($arr['tech_build_costs_factor'], $b_level + 1);
-                $bcn['crystal'] = $cu->specialist->costsResearch * $arr['tech_costs_crystal'] * pow($arr['tech_build_costs_factor'], $b_level + 1);
-                $bcn['plastic'] = $cu->specialist->costsResearch * $arr['tech_costs_plastic'] * pow($arr['tech_build_costs_factor'], $b_level + 1);
-                $bcn['fuel'] = $cu->specialist->costsResearch * $arr['tech_costs_fuel'] * pow($arr['tech_build_costs_factor'], $b_level + 1);
-                $bcn['food'] = $cu->specialist->costsResearch * $arr['tech_costs_food'] * pow($arr['tech_build_costs_factor'], $b_level + 1);
+                $bcn['metal'] = $cu->specialist->costsResearch * $technology->costsMetal * pow($technology->buildCostsFactor, $b_level + 1);
+                $bcn['crystal'] = $cu->specialist->costsResearch * $technology->costsCrystal * pow($technology->buildCostsFactor, $b_level + 1);
+                $bcn['plastic'] = $cu->specialist->costsResearch * $technology->costsPlastic * pow($technology->buildCostsFactor, $b_level + 1);
+                $bcn['fuel'] = $cu->specialist->costsResearch * $technology->costsFuel * pow($technology->buildCostsFactor, $b_level + 1);
+                $bcn['food'] = $cu->specialist->costsResearch * $technology->costsFood * pow($technology->buildCostsFactor, $b_level + 1);
 
 
                 // Bauzeit
@@ -402,8 +395,7 @@ if (isset($cp)) {
                         if ($planet->resMetal >= $bc['metal'] && $planet->resCrystal >= $bc['crystal'] && $planet->resPlastic >= $bc['plastic']  && $planet->resFuel >= $bc['fuel']  && $planet->resFood >= $bc['food']) {
                             $start_time = time();
                             $end_time = time() + $btime;
-                            // if (sizeof($techlist[$arr['tech_id']])>0)
-                            if (isset($techlist[$arr['tech_id']])) {
+                            if (isset($techlist[$technology->id])) {
                                 dbquery("
                                 UPDATE
                                     techlist
@@ -413,7 +405,7 @@ if (isset($cp)) {
                                     techlist_build_end_time='" . $end_time . "',
                                     techlist_entity_id='" . $planet->id . "'
                                 WHERE
-                                    techlist_tech_id='" . $arr['tech_id'] . "'
+                                    techlist_tech_id='" . $technology->id . "'
                                     AND techlist_user_id='" . $cu->id . "';");
                             } else {
                                 dbquery("
@@ -433,12 +425,12 @@ if (isset($cp)) {
                                     '3',
                                     '" . time() . "',
                                     '" . $end_time . "',
-                                    '" . $arr['tech_id'] . "',
+                                    '" . $technology->id . "',
                                     '" . $cu->id . "'
                                 );");
                             }
 
-                            if ($arr['tech_id'] == GEN_TECH_ID) {
+                            if ($technology->id == GEN_TECH_ID) {
                                 dbquery("
                                     UPDATE
                                         buildlist
@@ -491,7 +483,7 @@ if (isset($cp)) {
                             [b]" . RES_FUEL . ":[/b] " . nf($planet->resFuel - $bc['fuel']) . "
                             [b]" . RES_FOOD . ":[/b] " . nf($planet->resFood - $bc['food']);
 
-                            GameLog::add(GameLog::F_TECH, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $arr['tech_id'], $b_status, $b_level);
+                            GameLog::add(GameLog::F_TECH, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $technology->id, $b_status, $b_level);
 
                             echo '<script>toggleBox(\'link\'); </script>';
                         } else {
@@ -504,7 +496,7 @@ if (isset($cp)) {
 
 
                 if (isset($_POST['command_cbuild']) && $b_status == 3) {
-                    if (isset($techlist[$arr['tech_id']]['techlist_build_end_time']) && $techlist[$arr['tech_id']]['techlist_build_end_time'] > time()) {
+                    if (isset($techlist[$technology->id]['techlist_build_end_time']) && $techlist[$technology->id]['techlist_build_end_time'] > time()) {
                         $fac = ($end_time - time()) / ($end_time - $start_time);
                         dbquery("
                         UPDATE
@@ -514,10 +506,10 @@ if (isset($cp)) {
                             techlist_build_start_time='0',
                             techlist_build_end_time='0'
                         WHERE
-                            techlist_tech_id='" . $arr['tech_id'] . "'
+                            techlist_tech_id='" . $technology->id . "'
                             AND techlist_user_id='" . $cu->id . "';");
 
-                        if ($arr['tech_id'] == GEN_TECH_ID) {
+                        if ($technology->id == GEN_TECH_ID) {
                             dbquery("
                                     UPDATE
                                         buildlist
@@ -567,7 +559,7 @@ if (isset($cp)) {
                         [b]" . RES_FOOD . ":[/b] " . nf($planet->resFood + $bc['food'] * $fac);
 
                         //Log Speichern
-                        GameLog::add(GameLog::F_TECH, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $arr['tech_id'], $b_status, $b_level);
+                        GameLog::add(GameLog::F_TECH, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $technology->id, $b_status, $b_level);
 
                         header("Refresh:0; url=?page=research&id=" . $bid);
                     } else {
@@ -586,11 +578,11 @@ if (isset($cp)) {
                 //
                 // Forschungsdaten anzeigen
                 //
-                tableStart(text2html($arr['tech_name'] . " " . $b_level));
+                tableStart(text2html($technology->name . " " . $b_level));
                 echo "<tr><td width=\"220\" rowspan=\"3\" style=\"background:#000;;vertical-align:middle;\">
-                " . helpImageLink("research&amp;id=" . $arr['tech_id'], IMAGE_PATH . "/" . IMAGE_TECHNOLOGY_DIR . "/technology" . $arr['tech_id'] . "." . IMAGE_EXT, $arr['tech_name'], "width:220px;height:220px") . "
+                " . helpImageLink("research&amp;id=" . $technology->id, IMAGE_PATH . "/" . IMAGE_TECHNOLOGY_DIR . "/technology" . $technology->id . "." . IMAGE_EXT, $technology->name, "width:220px;height:220px") . "
                 </td>";
-                echo "<td valign=\"top\" colspan=\"2\">" . text2html($arr['tech_shortcomment']) . "</td></tr>";
+                echo "<td valign=\"top\" colspan=\"2\">" . text2html($technology->shortComment) . "</td></tr>";
                 echo "<tr><th height=\"20\" width=\"50%\">Status:</th>";
                 echo "<td id=\"buildstatus\" width=\"50%\" style=\"" . $color . "\">$status_text</td></tr>";
                 echo "<tr><th height=\"20\" width=\"50%\">Stufe:</th>";
@@ -605,7 +597,7 @@ if (isset($cp)) {
 
                 // Check requirements for this building
                 $requirements_passed = true;
-                $bid = $arr['tech_id'];
+                $bid = $technology->id;
                 if (isset($b_req[$bid]['b']) && count($b_req[$bid]['b']) > 0) {
                     foreach ($b_req[$bid]['b'] as $b => $l) {
                         if (!isset($buildlist[$b]) || $buildlist[$b] < $l) {
@@ -625,7 +617,7 @@ if (isset($cp)) {
                 // Baumenü
                 //
                 echo "<form action=\"?page=$page\" method=\"post\">";
-                echo "<input type=\"hidden\" name=\"id\" value=\"" . $arr['tech_id'] . "\">";
+                echo "<input type=\"hidden\" name=\"id\" value=\"" . $technology->id . "\">";
                 echo $checker;
 
 
@@ -678,13 +670,13 @@ if (isset($cp)) {
                         // Maximale Stufe erreicht
                         //$techlist[$bid]
 
-                        if ($b_level >= $arr['tech_last_level']) {
+                        if ($b_level >= $technology->lastLevel) {
                             echo "<tr><td colspan=\"7\"><i>Keine Weiterentwicklung m&ouml;glich.</i></td></tr>";
                         }
                         // Es wird bereits geforscht
                         elseif ($building_something) {
                             //Sonderfeld Gentech
-                            if ($arr['tech_id'] == GEN_TECH_ID) {
+                            if ($technology->id == GEN_TECH_ID) {
                                 if (!$building_gen) {
                                     echo "<tr><td><input type=\"submit\" class=\"button\" name=\"command_build\" value=\"Erforschen\"></td><td>" . tf($btime) . "</td>";
                                     echo "<td>" . nf($bc['metal']) . "</td><td>" . nf($bc['crystal']) . "</td><td>" . nf($bc['plastic']) . "</td><td>" . nf($bc['fuel']) . "</td><td>" . nf($bc['food']) . "</td></tr>";
@@ -725,7 +717,7 @@ if (isset($cp)) {
                             echo "<tr><td><input type=\"submit\" class=\"button\" id=\"buildcancel\" name=\"command_cbuild\" value=\"Abbrechen\"  onclick=\"if (this.value=='Abbrechen'){return confirm('Wirklich abbrechen?');}\" /></td>";
                             echo '<td id="buildtime" style="vertical-align:middle;">-</td>
                         <td colspan="5"  id="progressbar" style="text-align:center;vertical-align:middle;font-weight:bold;"></td></tr>';
-                            if ($b_level < $arr['tech_last_level'] - 1)
+                            if ($b_level < $technology->lastLevel - 1)
                                 echo "<tr><td width=\"90\">N&auml;chste Stufe:</td><td>" . tf($btimen) . "</td><td>" . nf($bcn['metal']) . "</td><td>" . nf($bcn['crystal']) . "</td><td>" . nf($bcn['plastic']) . "</td><td>" . nf($bcn['fuel']) . "</td><td>" . nf($bcn['food']) . "</td></tr>";
                             countDown("buildtime", $end_time, "buildcancel");
                             jsProgressBar("progressbar", $start_time, $end_time);

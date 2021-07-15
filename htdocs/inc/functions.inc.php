@@ -1060,22 +1060,21 @@ function calcAllianceBuildingCosts($buildingArray, $level, $fac = 1)
 /**
  * Calculates costs per level for a given technology costs array
  *
- * @param array<string, float> $arr Array of db cost values
  * @param int $l Level
  * @param float $fac costFactor (like specialist)
  * @return array<string, float> Array of calculated costs
  *
  */
-function calcTechCosts($arr, $l, $fac = 1)
+function calcTechCosts(\EtoA\Technology\Technology $technology, $l, $fac = 1)
 {
 
     // Baukostenberechnung          Baukosten = Grundkosten * (Kostenfaktor ^ Ausbaustufe)
     $bc = array();
-    $bc['metal'] = $fac * $arr['tech_costs_metal'] * pow($arr['tech_build_costs_factor'], $l);
-    $bc['crystal'] = $fac * $arr['tech_costs_crystal'] * pow($arr['tech_build_costs_factor'], $l);
-    $bc['plastic'] = $fac * $arr['tech_costs_plastic'] * pow($arr['tech_build_costs_factor'], $l);
-    $bc['fuel'] = $fac * $arr['tech_costs_fuel'] * pow($arr['tech_build_costs_factor'], $l);
-    $bc['food'] = $fac * $arr['tech_costs_food'] * pow($arr['tech_build_costs_factor'], $l);
+    $bc['metal'] = $fac * $technology->costsMetal * pow($technology->buildCostsFactor, $l);
+    $bc['crystal'] = $fac * $technology->costsCrystal * pow($technology->buildCostsFactor, $l);
+    $bc['plastic'] = $fac * $technology->costsPlastic * pow($technology->buildCostsFactor, $l);
+    $bc['fuel'] = $fac * $technology->costsFuel * pow($technology->buildCostsFactor, $l);
+    $bc['food'] = $fac * $technology->costsFood * pow($technology->buildCostsFactor, $l);
     return $bc;
 }
 
