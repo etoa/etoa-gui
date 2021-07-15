@@ -103,4 +103,32 @@ class TechnologyRepository extends AbstractRepository
             'technologyId' => $technologyId,
         ]);
     }
+
+    public function updateBuildStatus(int $userId, int $entityId, int $technologyId, int $status, int $startTime, int $endTime): bool
+    {
+        return (bool) $this->getConnection()->executeQuery('INSERT INTO techlist (
+                techlist_user_id,
+                techlist_entity_id,
+                techlist_tech_id,
+                techlist_build_type,
+                techlist_build_start_time,
+                techlist_build_end_time
+            ) VALUES (
+                :userId,
+                :entityId,
+                :technologyId,
+                :status,
+                :startTime,
+                :endTime
+            ) ON DUPLICATE KEY
+            UPDATE techlist_entity_id = :entityId, techlist_build_type = :status, techlist_build_start_time = :startTime, techlist_build_end_time = :endTime;
+        ', [
+            'userId' => $userId,
+            'entityId' => $entityId,
+            'technologyId' => $technologyId,
+            'status' => $status,
+            'startTime' => $startTime,
+            'endTime' => $endTime,
+        ]);
+    }
 }

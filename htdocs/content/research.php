@@ -385,41 +385,7 @@ if (isset($cp)) {
                         if ($planet->resMetal >= $bc['metal'] && $planet->resCrystal >= $bc['crystal'] && $planet->resPlastic >= $bc['plastic']  && $planet->resFuel >= $bc['fuel']  && $planet->resFood >= $bc['food']) {
                             $start_time = time();
                             $end_time = time() + $btime;
-                            if (isset($techlist[$technology->id])) {
-                                dbquery("
-                                UPDATE
-                                    techlist
-                                SET
-                                    techlist_build_type='3',
-                                    techlist_build_start_time='" . time() . "',
-                                    techlist_build_end_time='" . $end_time . "',
-                                    techlist_entity_id='" . $planet->id . "'
-                                WHERE
-                                    techlist_tech_id='" . $technology->id . "'
-                                    AND techlist_user_id='" . $cu->id . "';");
-                            } else {
-                                dbquery("
-                                INSERT INTO
-                                techlist
-                                (
-                                    techlist_entity_id,
-                                    techlist_build_type,
-                                    techlist_build_start_time,
-                                    techlist_build_end_time,
-                                    techlist_tech_id,
-                                    techlist_user_id
-                                )
-                                VALUES
-                                (
-                                    '" . $planet->id . "',
-                                    '3',
-                                    '" . time() . "',
-                                    '" . $end_time . "',
-                                    '" . $technology->id . "',
-                                    '" . $cu->id . "'
-                                );");
-                            }
-
+                            $technologyRepository->updateBuildStatus($cu->getId(), $planet->id, $technology->id, 3, $end_time, $end_time);
                             $buildingId = $technology->id === GEN_TECH_ID ? BuildingId::PEOPLE : BuildingId::TECHNOLOGY;
                             $buildingRepository->markBuildingWorkingStatus($cu->getId(), $planet->id, $buildingId, true);
 
@@ -469,16 +435,7 @@ if (isset($cp)) {
                 if (isset($_POST['command_cbuild']) && $b_status == 3) {
                     if (isset($techlist[$technology->id]->endTime) && $techlist[$technology->id]->endTime > time()) {
                         $fac = ($end_time - time()) / ($end_time - $start_time);
-                        dbquery("
-                        UPDATE
-                            techlist
-                        SET
-                            techlist_build_type='0',
-                            techlist_build_start_time='0',
-                            techlist_build_end_time='0'
-                        WHERE
-                            techlist_tech_id='" . $technology->id . "'
-                            AND techlist_user_id='" . $cu->id . "';");
+                        $technologyRepository->updateBuildStatus($cu->getId(), 0, $technology->id, 0, 0, 0);
 
                         $buildingId = $technology->id === GEN_TECH_ID ? BuildingId::PEOPLE : BuildingId::TECHNOLOGY;
                         $buildingRepository->markBuildingWorkingStatus($cu->getId(), $planet->id, $buildingId, false);
