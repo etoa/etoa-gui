@@ -38,6 +38,20 @@ class DefenseDataRepository extends AbstractRepository
             ->fetchAllKeyValue();
     }
 
+    /**
+     * @return array<int, float>
+     */
+    public function getDefensePoints(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('def_id, def_points')
+            ->from('defense')
+            ->execute()
+            ->fetchAllKeyValue();
+
+        return array_map(fn ($value) => (float) $value, $data);
+    }
+
     public function getDefense(int $defenseId): ?Defense
     {
         $data = $this->createQueryBuilder()

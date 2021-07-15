@@ -5,7 +5,10 @@ use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingPointRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseDataRepository;
 use EtoA\Race\RaceDataRepository;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipRepository;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyPointRepository;
@@ -227,30 +230,14 @@ class Ranking
         $res_amount_per_point = $config->param1Int('points_update');
 
         // Schiffe laden
-        $res = dbquery("
-                SELECT
-                    ship_id,
-                    ship_points
-                FROM
-                    ships;
-            ");
-        $ship = array();
-        while ($arr = mysql_fetch_row($res)) {
-            $ship[$arr[0]] = $arr[1];
-        }
+        /** @var ShipDataRepository $shipRepository */
+        $shipRepository = $app[ShipDataRepository::class];
+        $ship = $shipRepository->getShipPoints();
 
         // Verteidigung laden
-        $res = dbquery("
-                SELECT
-                    def_id,
-                    def_points
-                FROM
-                    defense
-            ;");
-        $def = array();
-        while ($arr = mysql_fetch_row($res)) {
-            $def[$arr[0]] = $arr[1];
-        }
+        /** @var DefenseDataRepository $defenseRepository */
+        $defenseRepository = $app[DefenseDataRepository::class];
+        $def = $defenseRepository->getDefensePoints();
 
         // Gebäudepunkte berechnen falls nocht nicht vorhanden
         /** @var BuildingPointRepository $buildingPointRepository */
