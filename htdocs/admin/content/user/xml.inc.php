@@ -1,4 +1,7 @@
 <?PHP
+
+use EtoA\User\UserRepository;
+
 $twig->addGlobal("title", "XML-Import/Export");
 
 $path = UserToXml::getDataDirectory();
@@ -206,19 +209,11 @@ else {
         einem User ein Backup erstellen willst, kannst du das hier tun:</p>";
     echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
     echo "<p>Spieler wählen: <select name=\"export_user_id\">";
-    $res = dbquery("
-        SELECT
-            user_id,
-            user_nick
-        FROM
-            users
-        ORDER BY
-            user_nick;
-        ");
-    if (mysql_num_rows($res) > 0) {
-        while ($arr = mysql_fetch_array($res)) {
-            echo "<option value=\"" . $arr['user_id'] . "\">" . $arr['user_nick'] . "</option>";
-        }
+    /** @var UserRepository $userRepository */
+    $userRepository = $app[UserRepository::class];
+    $userNicks = $userRepository->getUserNicknames();
+    foreach ($userNicks as $userId => $userNick) {
+        echo "<option value=\"" . $userId . "\">" . $userNick . "</option>";
     }
     echo "</select>
         <input type=\"submit\" name=\"exportcache\" value=\"Exportieren\" />

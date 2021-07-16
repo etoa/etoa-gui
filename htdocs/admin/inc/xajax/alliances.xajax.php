@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 
 $xajax->register(XAJAX_FUNCTION, "allianceNewsSave");
@@ -131,6 +132,8 @@ function allianceNewsRemoveOld($ts)
 
 function allianceNewsEdit($id)
 {
+    global $app;
+
     $objResponse = new xajaxResponse();
 
     $res = dbquery("
@@ -158,22 +161,10 @@ function allianceNewsEdit($id)
     ;");
     if (mysql_num_rows($res) > 0) {
         $arr = mysql_fetch_array($res);
-        $ares = dbquery("
-        SELECT
-            alliance_id,
-            alliance_name,
-            alliance_tag
-        FROM
-            alliances
-        ORDER BY
-            alliance_tag
-        ;");
-        $alliances = array();
-        if (mysql_num_rows($ares) > 0) {
-            while ($aarr = mysql_fetch_array($ares)) {
-                $alliances[$aarr['alliance_id']] = '[' . $aarr['alliance_tag'] . '] ' . $aarr['alliance_name'];
-            }
-        }
+
+        /** @var AllianceRepository $allianceRepository */
+        $allianceRepository = $app[AllianceRepository::class];
+        $alliances = $allianceRepository->getAllianceNamesWithTags();
 
         $out = '<select name="alliance_id" onchange="xajax_allianceNewsLoadUserList(' . $id . ',this.options[this.selectedIndex].value,0);"><option value="0">(keine)</option>';
         $ca = 0;

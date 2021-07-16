@@ -1,18 +1,17 @@
 <?PHP
 
+use EtoA\Building\BuildingDataRepository;
+use EtoA\Technology\TechnologyDataRepository;
+
 $twig->addGlobal("title", TITLE);
 
 // Lade Gebäude- & Technologienamen
-$bu = [];
-$bures = dbquery("SELECT building_id,building_name FROM buildings;");
-while ($buarr = mysql_fetch_array($bures)) {
-    $bu[$buarr['building_id']] = $buarr['building_name'];
-}
-$te = [];
-$teres = dbquery("SELECT tech_id,tech_name FROM technologies;");
-while ($tearr = mysql_fetch_array($teres)) {
-    $te[$tearr['tech_id']] = $tearr['tech_name'];
-}
+/** @var BuildingDataRepository $buildingRepository */
+$buildingRepository = $app[BuildingDataRepository::class];
+$bu = $buildingRepository->getBuildingNames(true);
+/** @var TechnologyDataRepository $technologyRepository */
+$technologyRepository = $app[TechnologyDataRepository::class];
+$te = $technologyRepository->getTechnologyNames(true);
 
 $res = dbquery("
     SELECT
