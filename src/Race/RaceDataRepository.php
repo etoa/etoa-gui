@@ -67,4 +67,31 @@ class RaceDataRepository extends AbstractRepository
 
         return array_map(fn (array $row) => new Race($row), $data);
     }
+
+    /**
+     * @return array<array<string,int>>
+     */
+    public function getNumberOfRacesByType(): array
+    {
+        return $this->getConnection()
+            ->executeQuery(
+                "SELECT
+                    races.race_name as name,
+                    COUNT(users.user_race_id) as cnt
+                FROM
+                    users
+                INNER JOIN
+                    races
+                ON
+                    users.user_race_id = races.race_id
+                    AND users.user_ghost = 0
+                    AND users.user_hmode_from = 0
+                    AND users.user_hmode_to = 0
+                GROUP BY
+                    races.race_id
+                ORDER BY
+                    cnt DESC;"
+            )
+            ->fetchAllAssociative();
+    }
 }

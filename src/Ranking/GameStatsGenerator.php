@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace EtoA\Ranking;
 
+use EtoA\Race\RaceDataRepository;
+use EtoA\Universe\Planet\PlanetTypeRepository;
+use EtoA\Universe\Star\SolarTypeRepository;
 use Exception;
 
 class GameStatsGenerator
@@ -11,6 +14,20 @@ class GameStatsGenerator
     private const GAME_STATS_FILE = CACHE_ROOT . "/out/gamestats.html";
 
     private const ROW_LIMIT = 15;
+
+    private PlanetTypeRepository $planetTypeRepository;
+    private SolarTypeRepository $solarTypeRepository;
+    private RaceDataRepository $raceDataRepository;
+
+    public function __construct(
+        PlanetTypeRepository $planetTypeRepository,
+        SolarTypeRepository $solarTypeRepository,
+        RaceDataRepository $raceDataRepository
+    ) {
+        $this->planetTypeRepository = $planetTypeRepository;
+        $this->solarTypeRepository = $solarTypeRepository;
+        $this->raceDataRepository = $raceDataRepository;
+    }
 
     public function readCached(): ?string
     {
@@ -77,37 +94,20 @@ class GameStatsGenerator
     {
         $out = "<table width=\"100%\" class=\"tb\">";
         $out .= "<tr><th  colspan=\"3\">Bewohnte Planetentypen</th></tr>";
-        $res = dbquery("
-            SELECT
-                planet_types.type_name,
-                COUNT(planets.planet_type_id) as cnt
-            FROM
-                planet_types
-            INNER JOIN
-                (
-                    planets
-                INNER JOIN
-                    users
-                ON
-                    planet_user_id=user_id
-                    AND user_ghost=0
-                    AND user_hmode_from=0
-                    AND user_hmode_to=0
-                )
-            ON
-                planet_type_id=type_id
-            GROUP BY
-                planet_types.type_id
-            ORDER BY
-                cnt DESC;");
         $rank = 1;
         $total = 0;
-        while ($arr = mysql_fetch_array($res)) {
-            $out .= "<tr><td >" . $rank . "</td><td >" . $arr['type_name'] . "</td><td >" . $arr['cnt'] . "</td></tr>";
-            $rank++;
+        foreach ($this->planetTypeRepository->getNumberOfOwnedPlanetsByType() as $arr) {
+            $out .= "<tr>
+                <td>" . $rank++ . "</td>
+                <td>" . $arr['name'] . "</td>
+                <td>" . $arr['cnt'] . "</td>
+            </tr>";
             $total += $arr['cnt'];
         }
-        $out .= "<tr><td  colspan=\"2\"><b>Total</b></td><td ><b>" . $total . "</b></td></tr>";
+        $out .= "<tr>
+            <td colspan=\"2\"><b>Total</b></td>
+            <td ><b>" . $total . "</b></td>
+        </tr>";
         $out .= "</table>";
 
         return $out;
@@ -116,30 +116,21 @@ class GameStatsGenerator
     private function numberOfOwnedSystemsByType(): string
     {
         $out = "<table width=\"100%\" class=\"tb\">";
-        $out .= "<tr><th  colspan=\"3\">Benannte Systeme</th></tr>";
-        $res = dbquery("
-            SELECT
-                t.sol_type_name,
-                COUNT(id) as cnt
-            FROM
-                stars s
-            INNER JOIN
-                sol_types t
-            ON
-                s.type_id=t.sol_type_id
-                AND s.name!=''
-            GROUP BY
-                s.type_id
-            ORDER BY
-                cnt DESC;");
+        $out .= "<tr><th colspan=\"3\">Benannte Systeme</th></tr>";
         $rank = 1;
         $total = 0;
-        while ($arr = mysql_fetch_array($res)) {
-            $out .= "<tr><td >" . $rank . "</td><td >" . $arr['sol_type_name'] . "</td><td >" . $arr['cnt'] . "</td></tr>";
-            $rank++;
+        foreach ($this->solarTypeRepository->getNumberOfNamedSystemsByType() as $arr) {
+            $out .= "<tr>
+                <td>" . $rank++ . "</td>
+                <td>" . $arr['name'] . "</td>
+                <td>" . $arr['cnt'] . "</td>
+            </tr>";
             $total += $arr['cnt'];
         }
-        $out .= "<tr><td  colspan=\"2\"><b>Total</b></td><td ><b>" . $total . "</b></td></tr>";
+        $out .= "<tr>
+            <td colspan=\"2\"><b>Total</b></td>
+            <td ><b>" . $total . "</b></td>
+        </tr>";
         $out .= "</table>";
 
         return $out;
@@ -149,31 +140,20 @@ class GameStatsGenerator
     {
         $out = "<table width=\"100%\" class=\"tb\">";
         $out .= "<tr><th  colspan=\"3\">Rassen</th></tr>";
-        $res = dbquery("
-            SELECT
-                races.race_name,
-                COUNT(users.user_race_id) as cnt
-            FROM
-                users
-            INNER JOIN
-                races
-            ON
-                users.user_race_id=races.race_id
-                AND users.user_ghost=0
-                AND users.user_hmode_from=0
-                AND users.user_hmode_to=0
-            GROUP BY
-                races.race_id
-            ORDER BY
-                cnt DESC;");
         $rank = 1;
         $total = 0;
-        while ($arr = mysql_fetch_array($res)) {
-            $out .= "<tr><td >" . $rank . "</td><td >" . $arr['race_name'] . "</td><td >" . $arr['cnt'] . "</td></tr>";
-            $rank++;
+        foreach ($this->raceDataRepository->getNumberOfRacesByType() as $arr) {
+            $out .= "<tr>
+                <td>" . $rank++ . "</td>
+                <td>" . $arr['name'] . "</td>
+                <td>" . $arr['cnt'] . "</td>
+            </tr>";
             $total += $arr['cnt'];
         }
-        $out .= "<tr><td  colspan=\"2\"><b>Total</b></td><td ><b>" . $total . "</b></td></tr>";
+        $out .= "<tr>
+            <td colspan=\"2\"><b>Total</b></td>
+            <td><b>" . $total . "</b></td>
+        </tr>";
         $out .= "</table>";
 
         return $out;

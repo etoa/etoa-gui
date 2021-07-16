@@ -6,6 +6,9 @@ namespace EtoA\Ranking;
 
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Race\RaceDataRepository;
+use EtoA\Universe\Planet\PlanetTypeRepository;
+use EtoA\Universe\Star\SolarTypeRepository;
 use EtoA\User\UserRepository;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
@@ -23,7 +26,11 @@ class RankingServiceProvider implements ServiceProviderInterface
         };
 
         $pimple[GameStatsGenerator::class] = function (Container $pimple): GameStatsGenerator {
-            return new GameStatsGenerator();
+            return new GameStatsGenerator(
+                $pimple[PlanetTypeRepository::class],
+                $pimple[SolarTypeRepository::class],
+                $pimple[RaceDataRepository::class],
+            );
         };
     }
 }

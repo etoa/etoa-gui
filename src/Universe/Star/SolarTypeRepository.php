@@ -74,4 +74,29 @@ class SolarTypeRepository extends AbstractRepository
 
         return $data !== false ? $data : null;
     }
+
+    /**
+     * @return array<array<string,int>>
+     */
+    public function getNumberOfNamedSystemsByType(): array
+    {
+        return $this->getConnection()
+            ->executeQuery(
+                "SELECT
+                    t.sol_type_name as name,
+                    COUNT(id) as cnt
+                FROM
+                    stars s
+                INNER JOIN
+                    sol_types t
+                ON
+                    s.type_id = t.sol_type_id
+                    AND s.name != ''
+                GROUP BY
+                    s.type_id
+                ORDER BY
+                    cnt DESC;"
+            )
+            ->fetchAllAssociative();
+    }
 }
