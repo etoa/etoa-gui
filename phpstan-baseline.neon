@@ -231,6 +231,11 @@ parameters:
 			path: htdocs/content/market/new.php
 
 		-
+			message: "#^Variable property access on EtoA\\\\Market\\\\MarketRate\\.$#"
+			count: 7
+			path: src/Market/MarketHandler.php
+
+		-
 			message: "#^Variable \\$color might not be defined\\.$#"
 			count: 1
 			path: htdocs/content/research.php
