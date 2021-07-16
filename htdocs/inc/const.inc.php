@@ -576,8 +576,6 @@ define('CONTACT_REQUIRED_MAIL_SUFFIX', "@etoa.ch");
 
 define('LOG_UPDATES', false);
 define('LOG_UPDATES_THRESHOLD', 10);
-define('GAMESTATS_FILE', CACHE_ROOT . "/out/gamestats.html");
-define('GAMESTATS_ROW_LIMIT', 15);
 define('USERSTATS_OUTFILE', CACHE_ROOT . "/out/userstats.png");
 define('XML_INFO_FILE', CACHE_ROOT . "/xml/info.xml");
 

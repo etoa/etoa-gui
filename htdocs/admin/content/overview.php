@@ -7,6 +7,7 @@ use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
+use EtoA\Ranking\GameStatsGenerator;
 use EtoA\Support\DatabaseManagerRepository;
 use EtoA\Text\TextRepository;
 use EtoA\Universe\Cell\CellRepository;
@@ -20,12 +21,15 @@ $request = Request::createFromGlobals();
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
 
+/** @var GameStatsGenerator */
+$gameStatsGenerator = $app[GameStatsGenerator::class];
+
 if ($sub == "offline") {
     takeOffline($request, $config);
 } elseif ($sub == "stats") {
     require("home/stats.inc.php");
 } elseif ($sub === "gamestats") {
-    gameStatsView($twig);
+    gameStatsView($gameStatsGenerator, $twig);
 } elseif ($sub === "changelog") {
     /** @var MarkdownConverterInterface */
     $markdown = $app[MarkdownConverterInterface::class];
@@ -109,12 +113,12 @@ function takeOffline(Request $request, ConfigurationService $config)
     echo "</form>";
 }
 
-function gameStatsView(Environment $twig)
+function gameStatsView(GameStatsGenerator $gameStatsGenerator, Environment $twig)
 {
     echo $twig->render('admin/overview/gamestats.html.twig', [
         'userStats' => file_exists(USERSTATS_OUTFILE) ? USERSTATS_OUTFILE : null,
         'xmlInfo' => file_exists(XML_INFO_FILE) ? XML_INFO_FILE : null,
-        'gameStats' => is_file(GAMESTATS_FILE) ? file_get_contents(GAMESTATS_FILE) : null,
+        'gameStats' => $gameStatsGenerator->readCached(),
     ]);
     exit();
 }

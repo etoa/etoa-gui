@@ -8,8 +8,19 @@ use Exception;
 
 class GameStatsGenerator
 {
-    public function generateAndSave(string $file): void
+    private const GAME_STATS_FILE = CACHE_ROOT . "/out/gamestats.html";
+
+    private const ROW_LIMIT = 15;
+
+    public function readCached(): ?string
     {
+        return is_file(self::GAME_STATS_FILE) ? file_get_contents(self::GAME_STATS_FILE) : null;
+    }
+
+    public function generateAndSave(): void
+    {
+        $file = self::GAME_STATS_FILE;
+
         $dir = dirname($file);
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
@@ -755,7 +766,7 @@ class GameStatsGenerator
             buildings.building_id
         ORDER BY
             cnt DESC
-        LIMIT " . GAMESTATS_ROW_LIMIT . ";");
+        LIMIT " . self::ROW_LIMIT . ";");
         $rank = 1;
         $total = 0;
         while ($arr = mysql_fetch_array($res)) {

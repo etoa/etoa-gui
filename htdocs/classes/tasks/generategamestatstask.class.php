@@ -17,7 +17,7 @@ class GenerateGameStatsTask implements IPeriodicTask
 
     function run()
     {
-        $this->gameStatsGenerator->generateAndSave(GAMESTATS_FILE);
+        $this->gameStatsGenerator->generateAndSave();
         return "Spielstatistiken erstellt";
     }
 
