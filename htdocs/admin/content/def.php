@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\Defense;
 use EtoA\Defense\DefenseRepository;
 
 /** @var ConfigurationService */
@@ -25,16 +26,13 @@ if ($sub == "battlepoints") {
     echo "Nach jeder direkter &Auml;nderung an den Verteidigungsanlagen via Datenbank m&uuml;ssen die Punkte neu berechnet werden: ";
     echo "<br/><br/><input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";
     echo "<h2>Battlepoints</h2>";
-    $res = dbquery("SELECT
-            def_id,
-            def_name,
-            def_points
-        FROM defense
-        ORDER BY def_points DESC, def_name DESC;");
-    if (mysql_num_rows($res) > 0) {
+    $defenses = $defenseDataRepository->getAllDefenses();
+    usort($defenses, fn (Defense $a, Defense $b) => $b->points <=> $a->points);
+
+    if (count($defenses) > 0) {
         echo "<table class=\"tb\">";
-        while ($arr = mysql_fetch_array($res)) {
-            echo "<tr><th>" . $arr['def_name'] . "</th><td style=\"width:70%\">" . $arr['def_points'] . "</td></tr>";
+        foreach ($defenses as $defense) {
+            echo "<tr><th>" . $defense->name . "</th><td style=\"width:70%\">" . $defense->points . "</td></tr>";
         }
         echo "</table>";
     }
