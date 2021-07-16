@@ -11,6 +11,20 @@ use EtoA\Universe\Resources\BaseResources;
 class PlanetRepository extends AbstractRepository
 {
     /**
+     * @return int[]
+     */
+    public function getAllIds(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select("id")
+            ->from('planets')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => (int) $row['id'], $data);
+    }
+
+    /**
      * @return Planet[]
      */
     public function getUserPlanets(int $userId): array

@@ -2,9 +2,15 @@
 
 global $app;
 
+use EtoA\Universe\Asteroid\AsteroidRepository;
+use EtoA\Universe\Cell\CellRepository;
+use EtoA\Universe\EmptySpace\EmptySpaceRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityType;
+use EtoA\Universe\Nebula\NebulaRepository;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Star\StarRepository;
+use EtoA\Universe\Wormhole\WormholeRepository;
 use EtoA\User\UserRepository;
 
 echo "<h1>Integritätscheck</h1>";
@@ -74,79 +80,65 @@ if (count($usersWithMultiplePlanets) > 0) {
 /** @var EntityRepository $entityRepository */
 $entityRepository = $app[EntityRepository::class];
 $entityCodes = $entityRepository->getEntityCodes();
+
+/** @var StarRepository $starRepository */
+$starRepository = $app[StarRepository::class];
+$starIds = $starRepository->getAllIds();
+
+/** @var WormholeRepository $wormholeRepository */
+$wormholeRepository = $app[WormholeRepository::class];
+$wormholeIds = $wormholeRepository->getAllIds();
+
+/** @var AsteroidRepository $asteroidRepository */
+$asteroidRepository = $app[AsteroidRepository::class];
+$asteroidIds = $asteroidRepository->getAllIds();
+
+/** @var NebulaRepository $nebulaRepository */
+$nebulaRepository = $app[NebulaRepository::class];
+$nebulaIds = $nebulaRepository->getAllIds();
+
+/** @var EmptySpaceRepository $emptySpaceRepository */
+$emptySpaceRepository = $app[EmptySpaceRepository::class];
+$emptySpaceIds = $emptySpaceRepository->getAllIds();
+
+$planetIds = $planetRepository->getAllIds();
 if (count($entityCodes) > 0) {
     $errcnt = 0;
     echo "<h2>Entitäten werden auf Integrität geprüft...</h2>";
     foreach ($entityCodes as $entityId => $entityCode) {
         switch ($entityCode) {
             case EntityType::STAR:
-                $eres = dbquery("
-          SELECT
-            id
-          FROM
-            stars
-          WHERE id=" . $entityId . ";");
-                if (mysql_num_rows($eres) == 0) {
+                if (!in_array($entityId, $starIds, true)) {
                     echo "Fehlender Detaildatensatz bei Entität " . $entityId . " (Stern)<br/>";
                     $errcnt++;
                 }
                 break;
             case EntityType::PLANET:
-                $eres = dbquery("
-          SELECT
-            id
-          FROM
-            planets
-          WHERE id=" . $entityId . ";");
-                if (mysql_num_rows($eres) == 0) {
+                if (!in_array($entityId, $planetIds, true)) {
                     echo "Fehlender Detaildatensatz bei Entität " . $entityId . " (Planet)<br/>";
                     $errcnt++;
                 }
                 break;
             case EntityType::ASTEROID:
-                $eres = dbquery("
-          SELECT
-            id
-          FROM
-            asteroids
-          WHERE id=" . $entityId . ";");
-                if (mysql_num_rows($eres) == 0) {
+                if (!in_array($entityId, $asteroidIds, true)) {
                     echo "Fehlender Detaildatensatz bei Entität " . $entityId . " (Asteroidenfeld)<br/>";
                     $errcnt++;
                 }
                 break;
             case EntityType::NEBULA:
-                $eres = dbquery("
-          SELECT
-            id
-          FROM
-            nebulas
-          WHERE id=" . $entityId . ";");
-                if (mysql_num_rows($eres) == 0) {
+                if (!in_array($entityId, $nebulaIds, true)) {
                     echo "Fehlender Detaildatensatz bei Entität " . $entityId . " (Nebel)<br/>";
                     $errcnt++;
                 }
                 break;
             case EntityType::WORMHOLE:
-                $eres = dbquery("
-          SELECT
-            id
-          FROM
-            wormholes
-          WHERE id=" . $entityId . ";");
-                if (mysql_num_rows($eres) == 0) {
+                if (!in_array($entityId, $wormholeIds, true)) {
                     echo "Fehlender Detaildatensatz bei Entität " . $entityId . " (Wurmloch)<br/>";
                     $errcnt++;
                 }
                 break;
             case EntityType::EMPTY_SPACE:
-                $eres = dbquery("
-          SELECT
-            id
-          FROM
-            space
-          WHERE id=" . $entityId . ";");
-                if (mysql_num_rows($eres) == 0) {
+                if (!in_array($entityId, $emptySpaceIds, true)) {
                     echo "Fehlender Detaildatensatz bei Entität " . $entityId . " (Leerer Raum)<br/>";
                     $errcnt++;
                 }
@@ -169,135 +161,84 @@ if (count($entityCodes) > 0) {
     echo MessageBox::info("", "Keine Entitäten vorhanden!");
 }
 
-
-$res = dbquery("
-  SELECT
-    id
-  FROM
-    stars;");
-if (mysql_num_rows($res) > 0) {
+if (count($starIds) > 0) {
     $errcnt = 0;
     echo "<h2>Sterne werden auf Integrität geprüft...</h2>";
-    while ($arr = mysql_fetch_assoc($res)) {
-        $eres = dbquery("
-      SELECT
-        code
-      FROM
-        entities
-      WHERE
-        id=" . $arr['id'] . ";");
-        if (mysql_num_rows($eres) == 0) {
-            echo "Fehlender Entitätsdatemsatz bei Stern " . $arr['id'] . "<br/>";
+    foreach ($starIds as $starId) {
+        if (!isset($entityCodes[$starId])) {
+            echo "Fehlender Entitätsdatemsatz bei Stern " . $starId . "<br/>";
             $errcnt++;
-        } else {
-            $earr = mysql_fetch_array($eres);
-            if ($earr['code'] != 's') {
-                echo "Falscher Code (" . $earr['code'] . ") bei Stern <a href=\"?page=galaxy&sub=edit&id=" . $arr['id'] . "\">" . $arr['id'] . "</a><br/>";
-                $errcnt++;
-            }
+        } elseif ($entityCodes[$starId] !== EntityType::STAR) {
+            echo "Falscher Code (" . $entityCodes[$starId] . ") bei Stern <a href=\"?page=galaxy&sub=edit&id=" . $starId . "\">" . $starId . "</a><br/>";
+            $errcnt++;
         }
     }
     if ($errcnt > 0) {
-        echo MessageBox::warning("", mysql_num_rows($res) . " Datensätze geprüft. Es wurden <b>$errcnt</b> Fehler gefunden!");
+        echo MessageBox::warning("", count($starIds) . " Datensätze geprüft. Es wurden <b>$errcnt</b> Fehler gefunden!");
     } else {
-        echo MessageBox::ok("", mysql_num_rows($res) . " Datensätze geprüft. Keine Fehler gefunden!");
+        echo MessageBox::ok("", count($starIds) . " Datensätze geprüft. Keine Fehler gefunden!");
     }
 } else {
     echo MessageBox::info("", "Keine Sterne vorhanden!");
 }
 
-$res = dbquery("
-  SELECT
-    id
-  FROM
-    wormholes;");
-if (mysql_num_rows($res) > 0) {
+if (count($wormholeIds) > 0) {
     $errcnt = 0;
     echo "<h2>Wurmlöcher werden auf Integrität geprüft...</h2>";
-    while ($arr = mysql_fetch_assoc($res)) {
-        $eres = dbquery("
-      SELECT
-        code
-      FROM
-        entities
-      WHERE
-        id=" . $arr['id'] . ";");
-        if (mysql_num_rows($eres) == 0) {
-            echo "Fehlender Entitätsdatemsatz bei Wurmloch " . $arr['id'] . "<br/>";
+    foreach ($wormholeIds as $wormholeId) {
+        if (!isset($entityCodes[$wormholeId])) {
+            echo "Fehlender Entitätsdatemsatz bei Wurmloch " . $wormholeId . "<br/>";
             $errcnt++;
-        } else {
-            $earr = mysql_fetch_array($eres);
-            if ($earr['code'] != 'w') {
-                echo "Falscher Code (" . $earr['code'] . ") bei Wurmloch <a href=\"?page=galaxy&sub=edit&id=" . $arr['id'] . "\">" . $arr['id'] . "</a><br/>";
-                $errcnt++;
-            }
+        } elseif ($entityCodes[$wormholeId] !== EntityType::WORMHOLE) {
+            echo "Falscher Code (" . $entityCodes[$wormholeId] . ") bei Wurmloch <a href=\"?page=galaxy&sub=edit&id=" . $wormholeId . "\">" . $wormholeId . "</a><br/>";
+            $errcnt++;
         }
     }
     if ($errcnt > 0) {
-        echo MessageBox::warning("", mysql_num_rows($res) . " Datensätze geprüft. Es wurden <b>$errcnt</b> Fehler gefunden!");
+        echo MessageBox::warning("", count($wormholeIds) . " Datensätze geprüft. Es wurden <b>$errcnt</b> Fehler gefunden!");
     } else {
-        echo MessageBox::ok("", mysql_num_rows($res) . " Datensätze geprüft. Keine Fehler gefunden!");
+        echo MessageBox::ok("", count($wormholeIds) . " Datensätze geprüft. Keine Fehler gefunden!");
     }
 } else {
     echo MessageBox::info("", "Keine Wurmlöcher vorhanden!");
 }
 
-$res = dbquery("
-  SELECT
-    id
-  FROM
-    space;");
-if (mysql_num_rows($res) > 0) {
+if (count($emptySpaceIds) > 0) {
     $errcnt = 0;
     echo "<h2>Leere Räume werden auf Integrität geprüft...</h2>";
-    while ($arr = mysql_fetch_assoc($res)) {
-        $eres = dbquery("
-      SELECT
-        code
-      FROM
-        entities
-      WHERE
-        id=" . $arr['id'] . ";");
-        if (mysql_num_rows($eres) == 0) {
-            echo "Fehlender Entitätsdatemsatz bei leerem Raum " . $arr['id'] . "<br/>";
+    foreach ($emptySpaceIds as $emptySpaceId) {
+        if (!isset($entityCodes[$emptySpaceId])) {
+            echo "Fehlender Entitätsdatemsatz bei leerem Raum " . $emptySpaceId . "<br/>";
             $errcnt++;
-        } else {
-            $earr = mysql_fetch_array($eres);
-            if ($earr['code'] != 'e') {
-                echo "Falscher Code (" . $earr['code'] . ") bei leerem Raum <a href=\"?page=galaxy&sub=edit&id=" . $arr['id'] . "\">" . $arr['id'] . "</a>.<br/>";
-                $errcnt++;
-            }
+        } elseif ($entityCodes[$emptySpaceId] !== EntityType::EMPTY_SPACE) {
+            echo "Falscher Code (" . $entityCodes[$emptySpaceId] . ") bei leerem Raum <a href=\"?page=galaxy&sub=edit&id=" . $emptySpaceId . "\">" . $emptySpaceId . "</a>.<br/>";
+            $errcnt++;
         }
     }
     if ($errcnt > 0) {
-        echo MessageBox::warning("", mysql_num_rows($res) . " Datensätze geprüft. Es wurden <b>$errcnt</b> Fehler gefunden!");
+        echo MessageBox::warning("", count($emptySpaceIds) . " Datensätze geprüft. Es wurden <b>$errcnt</b> Fehler gefunden!");
     } else {
-        echo MessageBox::ok("", mysql_num_rows($res) . " Datensätze geprüft. Keine Fehler gefunden!");
+        echo MessageBox::ok("", count($emptySpaceIds) . " Datensätze geprüft. Keine Fehler gefunden!");
     }
 } else {
     echo MessageBox::info("", "Keine leeren Räume vorhanden!");
 }
 
-$res = dbquery("SELECT id FROM cells;");
-if (mysql_num_rows($res) > 0) {
+/** @var CellRepository $cellRepository */
+$cellRepository = $app[CellRepository::class];
+$cellIds = $cellRepository->getAllIds();
+if (count($cellIds) > 0) {
     $errcnt = 0;
     echo "<h2>Zellen werden auf Integrität geprüft...</h2>";
-    while ($arr = mysql_fetch_assoc($res)) {
-        $eres = dbquery("
-        SELECT
-          id
-        FROM
-          entities
-        WHERE cell_id=" . $arr['id'] . ";");
-        if (mysql_num_rows($eres) == 0) {
-            $earr = mysql_fetch_assoc($eres);
-            echo "Fehlende Entität " . $earr['id'] . " bei Zelle <a href=\"?page=galaxy&sub=edit&id=" . $arr['id'] . "\">" . $arr['id'] . "</a><br/>";
+    foreach ($cellIds as $cellId) {
+        if (!isset($entityCodes[$cellId])) {
+            echo "Fehlende Entität " . $cellId . " bei Zelle <a href=\"?page=galaxy&sub=edit&id=" . $cellId . "\">" . $cellId . "</a><br/>";
             $errcnt++;
         }
     }
     if ($errcnt > 0) {
-        echo MessageBox::warning("", mysql_num_rows($res) . " Datensätze geprüft. Es wurden <b>$errcnt</b> Fehler gefunden!");
+        echo MessageBox::warning("", count($cellIds) . " Datensätze geprüft. Es wurden <b>$errcnt</b> Fehler gefunden!");
     } else {
-        echo MessageBox::ok("", mysql_num_rows($res) . " Datensätze geprüft. Keine Fehler gefunden!");
+        echo MessageBox::ok("", count($cellIds) . " Datensätze geprüft. Keine Fehler gefunden!");
     }
 }
