@@ -4,28 +4,67 @@ declare(strict_types=1);
 
 namespace EtoA\Ranking;
 
+use Exception;
+
 class GameStatsGenerator
 {
+    public function generateAndSave(string $file): void
+    {
+        $dir = dirname($file);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+
+        if (file_put_contents($file, $this->generate()) === false) {
+            throw new Exception("Error! Could not write game stats file $file!");
+        }
+    }
+
     public function generate(): string
     {
-        // Renderzeit-Start festlegen
-        $render_time = explode(" ", microtime());
-        $render_starttime = (int) $render_time[1] + (int) $render_time[0];
+        $renderStartTime = timerStart();
 
-        //
-        //Universum
-        //
+        $out = '';
+        $out .= $this->createUniverseStats();
+        $out .= $this->createResourceStats();
+        $out .= $this->createOverallConstructionStats();
+        $out .= $this->createBestPlayerConstructionStats();
+        $out .= $this->createMiscStats();
 
+        $renderTime = timerStop($renderStartTime);
+        $out .= "<br/>Erstellt am " . date("d.m.Y") . " um " . date("H:i") . " Uhr ";
+        $out .= " in " . $renderTime . " Sekunden";
+
+        return $out;
+    }
+
+    private function createUniverseStats(): string
+    {
         $out = "<h2>Universum</h2>";
         $out .= "<table width=\"95%\">";
         $out .= "<tr>";
 
-        /****************************************/
-        /* Bewohnte Planetentypen               */
-        /* Anzahl bewohnter Planeten pro Typ    */
-        /****************************************/
+        $out .= "<td style=\"width:33%;vertical-align:top;\">";
+        $out .= $this->numberOfOwnedPlanetsByType();
+        $out .= "</td>";
 
-        $out .= "<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
+        $out .= "<td style=\"width:33%;vertical-align:top;\">";
+        $out .= $this->numberOfOwnedSystemsByType();
+        $out .= "</td>";
+
+        $out .= "<td style=\"width:33%;vertical-align:top;\">";
+        $out .= $this->numberOfRacesByType();
+        $out .= "</td>";
+
+        $out .= "</tr>";
+        $out .= "</table>";
+
+        return $out;
+    }
+
+    private function numberOfOwnedPlanetsByType(): string
+    {
+        $out = "<table width=\"100%\" class=\"tb\">";
         $out .= "<tr><th  colspan=\"3\">Bewohnte Planetentypen</th></tr>";
         $res = dbquery("
             SELECT
@@ -58,16 +97,14 @@ class GameStatsGenerator
             $total += $arr['cnt'];
         }
         $out .= "<tr><td  colspan=\"2\"><b>Total</b></td><td ><b>" . $total . "</b></td></tr>";
-        $out .= "</table></td>";
+        $out .= "</table>";
 
+        return $out;
+    }
 
-
-        /****************************************/
-        /* Benannte Systeme                     */
-        /* Anzahl benannter Systeme pro Typ     */
-        /****************************************/
-
-        $out .= "<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
+    private function numberOfOwnedSystemsByType(): string
+    {
+        $out = "<table width=\"100%\" class=\"tb\">";
         $out .= "<tr><th  colspan=\"3\">Benannte Systeme</th></tr>";
         $res = dbquery("
             SELECT
@@ -92,16 +129,14 @@ class GameStatsGenerator
             $total += $arr['cnt'];
         }
         $out .= "<tr><td  colspan=\"2\"><b>Total</b></td><td ><b>" . $total . "</b></td></tr>";
-        $out .= "</table></td>";
+        $out .= "</table>";
 
+        return $out;
+    }
 
-
-        /****************************/
-        /* Rassen                   */
-        /* Anzahl Rassen pro Typ    */
-        /*********************** ****/
-
-        $out .= "<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
+    private function numberOfRacesByType(): string
+    {
+        $out = "<table width=\"100%\" class=\"tb\">";
         $out .= "<tr><th  colspan=\"3\">Rassen</th></tr>";
         $res = dbquery("
             SELECT
@@ -128,24 +163,38 @@ class GameStatsGenerator
             $total += $arr['cnt'];
         }
         $out .= "<tr><td  colspan=\"2\"><b>Total</b></td><td ><b>" . $total . "</b></td></tr>";
-        $out .= "</table></td>";
+        $out .= "</table>";
+
+        return $out;
+    }
+
+    private function createResourceStats(): string
+    {
+        $out = "<h2>Rohstoffe</h2>";
+        $out .= "<table width=\"95%\">";
+        $out .= "<tr>";
+
+        $out .= "<td style=\"width:33%;vertical-align:top;\">";
+        $out .= $this->maxResourcesOnAPlanet();
+        $out .= "</td>";
+
+        $out .= "<td style=\"width:33%;vertical-align:top;\">";
+        $out .= $this->maxResourcesInUniverse();
+        $out .= "</td>";
+
+        $out .= "<td style=\"width:33%;vertical-align:top;\">";
+        $out .= $this->maxResourcesOfAPlayer();
+        $out .= "</td>";
 
         $out .= "</tr>";
         $out .= "</table>";
 
-        //
-        //Rohstoffe
-        //
-        $out .= "<h2>Rohstoffe</h2>";
-        $out .= "<table width=\"95%\">";
-        $out .= "<tr>";
+        return $out;
+    }
 
-        /****************************************/
-        /* Max Ressourcen auf einem Planeten    */
-        /*                                      */
-        /****************************************/
-
-        $out .= "<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
+    private function maxResourcesOnAPlanet(): string
+    {
+        $out = "<table width=\"100%\" class=\"tb\">";
         $out .= "<tr><th  colspan=\"3\">Max Ressourcen auf einem Planeten</th></tr>";
 
         //Anzahl Titan
@@ -302,14 +351,14 @@ class GameStatsGenerator
                 <td >" . nf($arr['res']) . "</td>
                 <td >" . $arr['type'] . "</td>
             </tr>";
-        $out .= "</table></td>";
+        $out .= "</table>";
 
-        /****************************************/
-        /* Total Ressourcen im Universum        */
-        /*                                      */
-        /****************************************/
+        return $out;
+    }
 
-        $out .= "<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
+    private function maxResourcesInUniverse(): string
+    {
+        $out = "<table width=\"100%\" class=\"tb\">";
         $out .= "<tr><th  colspan=\"4\">Total Ressourcen im Universum</th></tr>";
         $out .= "<tr><th >Ressource</th><th >Total</th><th >Durchschnitt</th><th >Planeten</th></tr>";
 
@@ -432,14 +481,14 @@ class GameStatsGenerator
                 <td >" . nf($arr['avg']) . "</td>
                 <td >" . nf($arr['cnt']) . "</td>
             </tr>";
-        $out .= "</table></td>";
+        $out .= "</table>";
 
-        /****************************************/
-        /* Max Ressourcen eines Spielers        */
-        /* Total Rohstoffe in einem Account     */
-        /****************************************/
+        return $out;
+    }
 
-        $out .= "<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
+    private function maxResourcesOfAPlayer(): string
+    {
+        $out = "<table width=\"100%\" class=\"tb\">";
         $out .= "<tr><th  colspan=\"3\">Max Ressourcen eines Spielers</th></tr>";
 
         //Anzahl Titan
@@ -567,25 +616,38 @@ class GameStatsGenerator
                 <td >" . nf($arr['sum']) . "</td>
             </tr>";
 
-        $out .= "</table></td>";
+        $out .= "</table>";
+
+        return $out;
+    }
+
+    private function createOverallConstructionStats(): string
+    {
+        $out = "<h2>Konstruktionen (Gesamt Anzahl von allen Spielern)</h2>";
+        $out .= "<table width=\"95%\">";
+        $out .= "<tr>";
+
+        $out .= "<td style=\"width:33%;vertical-align:top;\">";
+        $out .= $this->overallShipsInUniverse();
+        $out .= "</td>";
+
+        $out .= "<td style=\"width:33%;vertical-align:top;\">";
+        $out .= $this->overallDefenseInUniverse();
+        $out .= "</td>";
+
+        $out .= "<td style=\"width:33%;vertical-align:top;\">";
+        $out .= $this->overallBuildingsInUniverse();
+        $out .= "</td>";
 
         $out .= "</tr>";
         $out .= "</table>";
 
-        //
-        // Konstruktionen (von allen spielern)
-        //
+        return $out;
+    }
 
-        $out .= "<h2>Konstruktionen (Gesamt Anzahl von allen Spielern)</h2>";
-        $out .= "<table width=\"95%\">";
-        $out .= "<tr>";
-
-        /***************************************************/
-        /* Schiffe						        		   */
-        /* Gesamt Anzahl im Universum + Beste Leistung     */
-        /***************************************************/
-
-        $out .= "<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
+    private function overallShipsInUniverse(): string
+    {
+        $out = "<table width=\"100%\" class=\"tb\">";
         $out .= "<tr><th  colspan=\"4\">Schiffe ohne Flotten (Beste Leistung, Gesamt)</th></tr>";
         $res = dbquery("
         SELECT
@@ -620,16 +682,14 @@ class GameStatsGenerator
             $total += $arr['cnt'];
         }
         $out .= "<tr><td  colspan=\"2\"><b>Total</b></td><td >&nbsp;</td><td ><b>" . nf($total) . "</b></td></tr>";
-        $out .= "</table></td>";
+        $out .= "</table>";
 
+        return $out;
+    }
 
-
-        /***************************************************/
-        /* Verteidigung					        		   */
-        /* Gesamt Anzahl im Universum + Beste Leistung     */
-        /***************************************************/
-
-        $out .= "<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
+    private function overallDefenseInUniverse(): string
+    {
+        $out = "<table width=\"100%\" class=\"tb\">";
         $out .= "<tr><th  colspan=\"4\">Verteidigung</th></tr>";
         $res = dbquery("
         SELECT
@@ -663,14 +723,14 @@ class GameStatsGenerator
             $total += $arr['cnt'];
         }
         $out .= "<tr><td  colspan=\"2\"><b>Total</b></td><td >&nbsp;</td><td ><b>" . nf($total) . "</b></td></tr>";
-        $out .= "</table></td>";
+        $out .= "</table>";
 
-        /****************************************/
-        /* Geb?ude						       	*/
-        /* Gesamt Anzahl Level im Universum     */
-        /****************************************/
+        return $out;
+    }
 
-        $out .= "<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
+    private function overallBuildingsInUniverse(): string
+    {
+        $out = "<table width=\"100%\" class=\"tb\">";
         $out .= "<tr><th  colspan=\"3\">Geb&auml;ude</th></tr>";
         $res = dbquery("
         SELECT
@@ -704,163 +764,192 @@ class GameStatsGenerator
             $total += $arr['cnt'];
         }
         $out .= "<tr><td  colspan=\"2\"><b>Total</b></td><td ><b>" . nf($total) . "</b></td></tr>";
-        $out .= "</table></td>";
-        $out .= "</tr>";
         $out .= "</table>";
 
-        //
-        // Konstruktionen (von den besten Spielern)
-        //
+        return $out;
+    }
 
-        $out .= "<h2>Konstruktionen (Die beste Leistung eines Einzelnen)</h2>";
+    private function createBestPlayerConstructionStats(): string
+    {
+        $out = "<h2>Konstruktionen (Die beste Leistung eines Einzelnen)</h2>";
         $out .= "<table width=\"95%\">";
         $out .= "<tr>";
 
+        $out .= "<td style=\"width:33%;vertical-align:top;\">";
+        $out .= $this->bestPlayerResearchStats();
+        $out .= "</td>";
 
-        /************************/
-        /* Forschungen			*/
-        /*					    */
-        /************************/
-        $out .= "<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
+        $out .= "<td style=\"width:33%;vertical-align:top;\">";
+        $out .= $this->bestPlayerBuildingStats();
+        $out .= "</td>";
+
+        $out .= "<td style=\"width:33%;vertical-align:top;\">";
+        $out .= $this->specialShipStats();
+        $out .= "</td>";
+
+        $out .= "</tr>";
+        $out .= "</table>";
+
+        return $out;
+    }
+
+    private function bestPlayerResearchStats(): string
+    {
+        $out = "<table width=\"100%\" class=\"tb\">";
         $out .= "<tr><th  colspan=\"3\">Forschungen</th></tr>";
         $res = dbquery("
-	SELECT
-	    technologies.tech_name,
-	    MAX(techlist.techlist_current_level) as max
-	FROM
-	    technologies
-	INNER JOIN
-	    (
-	        techlist
-	    INNER JOIN
-	        users
-	    ON
-	        techlist_user_id=user_id
-	        AND user_ghost=0
-            AND user_hmode_from=0
-            AND user_hmode_to=0
-	    )
-	ON
-	    tech_id=techlist_tech_id
-	GROUP BY
-	    technologies.tech_id
-	ORDER BY
-	    max DESC;");
+            SELECT
+                technologies.tech_name,
+                MAX(techlist.techlist_current_level) as max
+            FROM
+                technologies
+            INNER JOIN
+                (
+                    techlist
+                INNER JOIN
+                    users
+                ON
+                    techlist_user_id=user_id
+                    AND user_ghost=0
+                    AND user_hmode_from=0
+                    AND user_hmode_to=0
+                )
+            ON
+                tech_id=techlist_tech_id
+            GROUP BY
+                technologies.tech_id
+            ORDER BY
+                max DESC;");
         $rank = 1;
         $total = 0;
         while ($arr = mysql_fetch_array($res)) {
             $out .= "<tr><td >" . $rank . "</td><td >" . $arr['tech_name'] . "</td><td >" . nf($arr['max']) . "</td></tr>";
             $rank++;
         }
-        $out .= "</table></td>";
+        $out .= "</table>";
 
-        /************************/
-        /* Geb?ude			    */
-        /*					    */
-        /************************/
+        return $out;
+    }
 
-        $out .= "<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
+    private function bestPlayerBuildingStats(): string
+    {
+        $out = "<table width=\"100%\" class=\"tb\">";
         $out .= "<tr><th  colspan=\"3\">Geb&auml;ude</th></tr>";
         $res = dbquery("
-	SELECT
-	    buildings.building_name,
-	    MAX(buildlist.buildlist_current_level) as max
-	FROM
-	    buildings
-	INNER JOIN
-	    (
-	        buildlist
-	    INNER JOIN
-	        users
-	    ON
-	        buildlist_user_id=user_id
-	        AND user_ghost=0
-	        AND user_hmode_from=0
-	        AND user_hmode_to=0
-	    )
-	ON
-	    building_id=buildlist_building_id
-	GROUP BY
-	    buildings.building_id
-	ORDER BY
-	    max DESC;");
+            SELECT
+                buildings.building_name,
+                MAX(buildlist.buildlist_current_level) as max
+            FROM
+                buildings
+            INNER JOIN
+                (
+                    buildlist
+                INNER JOIN
+                    users
+                ON
+                    buildlist_user_id=user_id
+                    AND user_ghost=0
+                    AND user_hmode_from=0
+                    AND user_hmode_to=0
+                )
+            ON
+                building_id=buildlist_building_id
+            GROUP BY
+                buildings.building_id
+            ORDER BY
+                max DESC;");
         $rank = 1;
         $total = 0;
         while ($arr = mysql_fetch_array($res)) {
             $out .= "<tr><td >" . $rank . "</td><td >" . $arr['building_name'] . "</td><td >" . nf($arr['max']) . "</td></tr>";
             $rank++;
         }
-        $out .= "</table></td>";
+        $out .= "</table>";
 
-        /************************/
-        /* Spezialschiffe		*/
-        /* Level + EXP			*/
-        /************************/
+        return $out;
+    }
 
-        $out .= "<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
+    private function specialShipStats(): string
+    {
+        $out = "<table width=\"100%\" class=\"tb\">";
         $out .= "<tr><th  colspan=\"4\">Spezialschiffe (Level, EXP)</th></tr>";
         $res = dbquery("
-	SELECT
-	    ships.ship_name,
-	    MAX(shiplist.shiplist_special_ship_level) as level,
-	    MAX(shiplist.shiplist_special_ship_exp) as exp
-	FROM
-	    ships
-	INNER JOIN
-	    (
-	        shiplist
-	    INNER JOIN
-	        users
-	    ON
-	        shiplist_user_id=user_id
-	        AND user_ghost=0
-            AND user_hmode_from=0
-            AND user_hmode_to=0
-	    )
-	ON
-	    shiplist_ship_id=ship_id
-	    AND ships.special_ship=1
-	GROUP BY
-	    ships.ship_id
-	ORDER BY
-	    exp DESC;");
+            SELECT
+                ships.ship_name,
+                MAX(shiplist.shiplist_special_ship_level) as level,
+                MAX(shiplist.shiplist_special_ship_exp) as exp
+            FROM
+                ships
+            INNER JOIN
+                (
+                    shiplist
+                INNER JOIN
+                    users
+                ON
+                    shiplist_user_id=user_id
+                    AND user_ghost=0
+                    AND user_hmode_from=0
+                    AND user_hmode_to=0
+                )
+            ON
+                shiplist_ship_id=ship_id
+                AND ships.special_ship=1
+            GROUP BY
+                ships.ship_id
+            ORDER BY
+                exp DESC;");
         $rank = 1;
         $total = 0;
         while ($arr = mysql_fetch_array($res)) {
             $out .= "<tr><td >" . $rank . "</td><td >" . $arr['ship_name'] . "</td><td >" . nf($arr['level']) . "</td><td >" . nf($arr['exp']) . "</td></tr>";
             $rank++;
         }
-        $out .= "</table></td>";
-
-        $out .= "</tr>";
         $out .= "</table>";
 
-        //
-        //Sonstiges
-        //
+        return $out;
+    }
 
+    private function createMiscStats(): string
+    {
         $limit = 5;
-        $out .= "<h2>Sonstiges</h2>";
+
+        $out = "<h2>Sonstiges</h2>";
         $out .= "<table width=\"95%\"><tr>";
 
-        /****************/
-        /* Design				*/
-        /****************/
+        $out .= "<td style=\"width:33%;vertical-align:top;\">";
+        $out .= $this->designStats($limit);
+        $out .= "</td>";
 
-        $rplc = array("css_style/" => "");
-        $out .= "<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
+        $out .= "<td style=\"width:33%;vertical-align:top;\">";
+        $out .= $this->imagePackStats($limit);
+        $out .= "</td>";
+
+        $out .= "<td style=\"width:33%;vertical-align:top;\">";
+        $out .= $this->imageExtensionStats($limit);
+        $out .= "</td>";
+
+        $out .= "</tr>";
+
+        $out .= "</table>";
+
+        return $out;
+    }
+
+    private function designStats(int $limit): string
+    {
+        $out = "<table width=\"100%\" class=\"tb\">";
         $out .= "<tr><th  colspan=\"4\">Design</th></tr>";
         $res = dbquery("
-		SELECT
-		    css_style,
-		    COUNT(id) as cnt
-		FROM
-		    user_properties
-		GROUP BY
-		    css_style
-		ORDER BY
-		    cnt DESC
-		LIMIT $limit;");
+            SELECT
+                css_style,
+                COUNT(id) as cnt
+            FROM
+                user_properties
+            GROUP BY
+                css_style
+            ORDER BY
+                cnt DESC
+            LIMIT $limit;");
         $rank = 1;
         $total = 0;
         $i = array();
@@ -870,121 +959,88 @@ class GameStatsGenerator
             $total += $row['cnt'];
 
             $out .= "<tr><td >" . $rank . "</td>";
-            if ($row['css_style'] != "")
-                $out .= "<td >" . strtr($row['css_style'], $rplc) . "</td>";
-            else
-                $out .= "<td ><i>Standard</i></td>";
+            $out .= $row['css_style'] != ""
+                ? "<td >" . strtr($row['css_style'], ["css_style/" => ""]) . "</td>"
+                : "<td ><i>Standard</i></td>";
             $out .= "<td >" . nf($row['cnt']) . "</td>";
             $out .= "<td >" . round(100 / $total * $row['cnt'], 2) . "%</td></tr>";
             $rank++;
         }
-        $out .= "</table></td>";
-
-        /******************/
-        /* Bildpaket			*/
-        /******************/
-
-        $rplc = array("images/themes/" => "");
-        $out .= "<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
-        $out .= "<tr><th  colspan=\"4\">Bildpaket</th></tr>";
-        $res = dbquery("
-		SELECT
-		    image_url,
-		    COUNT(id) as cnt
-		FROM
-		    user_properties
-		GROUP BY
-		    image_url
-		ORDER BY
-		    cnt DESC
-		LIMIT $limit;");
-        $rank = 1;
-        $total = 0;
-        $i = array();
-        $num = mysql_num_rows($res);
-        while ($arr = mysql_fetch_array($res)) {
-            array_push($i, $arr);
-            $total += $arr['cnt'];
-
-            $out .= "<tr><td >" . $rank . "</td>";
-            if ($arr['image_url'] != "")
-                $out .= "<td >" . strtr($arr['image_url'], $rplc) . "</td>";
-            else
-                $out .= "<td ><i>Standard</i></td>";
-            $out .= "<td >" . nf($arr['cnt']) . "</td>";
-            $out .= "<td >" . round(100 / $total * $arr['cnt'], 2) . "%</td></tr>";
-            $rank++;
-        }
-        $out .= "</table></td>";
-
-        /**********************/
-        /* Bilderweiterung		*/
-        /**********************/
-
-        $out .= "<td style=\"width:33%;vertical-align:top;\"><table width=\"100%\" class=\"tb\">";
-        $out .= "<tr><th  colspan=\"4\">Bild-Erweiterung</th></tr>";
-        $res = dbquery("
-		SELECT
-			image_ext,
-			COUNT(id) as cnt
-		FROM
-			user_properties
-		GROUP BY
-			image_ext
-		ORDER BY
-			cnt DESC
-		LIMIT $limit;");
-        $rank = 1;
-        $total = 0;
-        $i = array();
-        $num = mysql_num_rows($res);
-        while ($arr = mysql_fetch_array($res)) {
-            array_push($i, $arr);
-            $total += $arr['cnt'];
-
-            $out .= "<tr><td >" . $rank . "</td>";
-            if ($arr['image_ext'] != "")
-                $out .= "<td >" . $arr['image_ext'] . "</td>";
-            else
-                $out .= "<td ><i>Standard</i></td>";
-            $out .= "<td >" . nf($arr['cnt']) . "</td>";
-            $out .= "<td >" . round(100 / $total * $arr['cnt'], 2) . "%</td></tr>";
-            $rank++;
-        }
-
-        $out .= "</table></td>";
-
-        $out .= "</tr>";
-
         $out .= "</table>";
-
-        $out .= "<br/>Erstellt am " . date("d.m.Y") . " um " . date("H:i") . " Uhr ";
-
-        // Renderzeit
-        $render_time = explode(' ', microtime());
-        $rtime = (int) $render_time[1] + (int) $render_time[0] - $render_starttime;
-        $out .= " in " . round($rtime, 3) . " Sekunden";
 
         return $out;
     }
 
-    public function generateAndSave(string $file): bool
+    private function imagePackStats(int $limit): string
     {
-        $dir = dirname($file);
-        if (!is_dir($dir)) {
-            mkdir($dir, 0777, true);
+        $out = "<table width=\"100%\" class=\"tb\">";
+        $out .= "<tr><th  colspan=\"4\">Bildpaket</th></tr>";
+        $res = dbquery("
+        SELECT
+            image_url,
+            COUNT(id) as cnt
+        FROM
+            user_properties
+        GROUP BY
+            image_url
+        ORDER BY
+            cnt DESC
+        LIMIT $limit;");
+        $rank = 1;
+        $total = 0;
+        $i = array();
+        $num = mysql_num_rows($res);
+        while ($arr = mysql_fetch_array($res)) {
+            array_push($i, $arr);
+            $total += $arr['cnt'];
+
+            $out .= "<tr><td >" . $rank . "</td>";
+            $out .= $arr['image_url'] != ""
+                ? "<td >" . strtr($arr['image_url'], ["images/themes/" => ""]) . "</td>"
+                : "<td ><i>Standard</i></td>";
+            $out .= "<td >" . nf($arr['cnt']) . "</td>";
+            $out .= "<td >" . round(100 / $total * $arr['cnt'], 2) . "%</td></tr>";
+            $rank++;
+        }
+        $out .= "</table>";
+
+        return $out;
+    }
+
+    private function imageExtensionStats(int $limit): string
+    {
+        $out = "<table width=\"100%\" class=\"tb\">";
+        $out .= "<tr><th  colspan=\"4\">Bild-Erweiterung</th></tr>";
+        $res = dbquery("
+        SELECT
+            image_ext,
+            COUNT(id) as cnt
+        FROM
+            user_properties
+        GROUP BY
+            image_ext
+        ORDER BY
+            cnt DESC
+        LIMIT $limit;");
+        $rank = 1;
+        $total = 0;
+        $i = array();
+        $num = mysql_num_rows($res);
+        while ($arr = mysql_fetch_array($res)) {
+            array_push($i, $arr);
+            $total += $arr['cnt'];
+
+            $out .= "<tr><td >" . $rank . "</td>";
+            $out .= $arr['image_ext'] != ""
+                ? "<td >" . $arr['image_ext'] . "</td>"
+                : "<td ><i>Standard</i></td>";
+            $out .= "<td >" . nf($arr['cnt']) . "</td>";
+            $out .= "<td >" . round(100 / $total * $arr['cnt'], 2) . "%</td></tr>";
+            $rank++;
         }
 
-        if ($f = fopen($file, "w+")) {
-            $str = $this->generate();
-            if (!fwrite($f, $str)) {
-                echo "Error! Could not write gamestats file $file!";
-                return false;
-            }
-            fclose($f);
-            return true;
-        }
-        echo "Error! Could not open gamestats file $file!";
-        return false;
+        $out .= "</table>";
+
+        return $out;
     }
 }

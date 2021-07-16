@@ -1,7 +1,7 @@
 <?PHP
 
 use EtoA\Ranking\GameStatsGenerator;
-use Pimple\Psr11\Container;
+use Pimple\Container;
 
 /**
  * Generate and store game statistics
