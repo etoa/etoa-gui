@@ -2,6 +2,8 @@
 
 global $app;
 
+use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserRepository;
 
@@ -69,94 +71,99 @@ if (count($usersWithMultiplePlanets) > 0) {
     echo MessageBox::ok("", "Keine Fehler gefunden!");
 }
 
-
-$res = dbquery("SELECT id,code FROM entities;");
-if (mysql_num_rows($res) > 0) {
+/** @var EntityRepository $entityRepository */
+$entityRepository = $app[EntityRepository::class];
+$entityCodes = $entityRepository->getEntityCodes();
+if (count($entityCodes) > 0) {
     $errcnt = 0;
     echo "<h2>Entitäten werden auf Integrität geprüft...</h2>";
-    while ($arr = mysql_fetch_assoc($res)) {
-        switch ($arr['code']) {
-            case 's':
+    foreach ($entityCodes as $entityId => $entityCode) {
+        switch ($entityCode) {
+            case EntityType::STAR:
                 $eres = dbquery("
           SELECT
             id
           FROM
             stars
-          WHERE id=" . $arr['id'] . ";");
+          WHERE id=" . $entityId . ";");
                 if (mysql_num_rows($eres) == 0) {
-                    echo "Fehlender Detaildatensatz bei Entität " . $arr['id'] . " (Stern)<br/>";
+                    echo "Fehlender Detaildatensatz bei Entität " . $entityId . " (Stern)<br/>";
                     $errcnt++;
                 }
                 break;
-            case 'p':
+            case EntityType::PLANET:
                 $eres = dbquery("
           SELECT
             id
           FROM
             planets
-          WHERE id=" . $arr['id'] . ";");
+          WHERE id=" . $entityId . ";");
                 if (mysql_num_rows($eres) == 0) {
-                    echo "Fehlender Detaildatensatz bei Entität " . $arr['id'] . " (Planet)<br/>";
+                    echo "Fehlender Detaildatensatz bei Entität " . $entityId . " (Planet)<br/>";
                     $errcnt++;
                 }
                 break;
-            case 'a':
+            case EntityType::ASTEROID:
                 $eres = dbquery("
           SELECT
             id
           FROM
             asteroids
-          WHERE id=" . $arr['id'] . ";");
+          WHERE id=" . $entityId . ";");
                 if (mysql_num_rows($eres) == 0) {
-                    echo "Fehlender Detaildatensatz bei Entität " . $arr['id'] . " (Asteroidenfeld)<br/>";
+                    echo "Fehlender Detaildatensatz bei Entität " . $entityId . " (Asteroidenfeld)<br/>";
                     $errcnt++;
                 }
                 break;
-            case 'n':
+            case EntityType::NEBULA:
                 $eres = dbquery("
           SELECT
             id
           FROM
             nebulas
-          WHERE id=" . $arr['id'] . ";");
+          WHERE id=" . $entityId . ";");
                 if (mysql_num_rows($eres) == 0) {
-                    echo "Fehlender Detaildatensatz bei Entität " . $arr['id'] . " (Nebel)<br/>";
+                    echo "Fehlender Detaildatensatz bei Entität " . $entityId . " (Nebel)<br/>";
                     $errcnt++;
                 }
                 break;
-            case 'w':
+            case EntityType::WORMHOLE:
                 $eres = dbquery("
           SELECT
             id
           FROM
             wormholes
-          WHERE id=" . $arr['id'] . ";");
+          WHERE id=" . $entityId . ";");
                 if (mysql_num_rows($eres) == 0) {
-                    echo "Fehlender Detaildatensatz bei Entität " . $arr['id'] . " (Wurmloch)<br/>";
+                    echo "Fehlender Detaildatensatz bei Entität " . $entityId . " (Wurmloch)<br/>";
                     $errcnt++;
                 }
                 break;
-            case 'e':
+            case EntityType::EMPTY_SPACE:
                 $eres = dbquery("
           SELECT
             id
           FROM
             space
-          WHERE id=" . $arr['id'] . ";");
+          WHERE id=" . $entityId . ";");
                 if (mysql_num_rows($eres) == 0) {
-                    echo "Fehlender Detaildatensatz bei Entität " . $arr['id'] . " (Leerer Raum)<br/>";
+                    echo "Fehlender Detaildatensatz bei Entität " . $entityId . " (Leerer Raum)<br/>";
                     $errcnt++;
                 }
                 break;
+            case EntityType::ALLIANCE_MARKET:
+            case EntityType::MARKET:
+                // No need to check anything here
+                break;
             default:
-                echo "Achtung! Entität <a href=\"?page=galaxy&sub=edit&id=" . $arr['id'] . "\">" . $arr['id'] . "</a> hat einen unbekannten Code (" . $arr['code'] . ")<br/>";
+                echo "Achtung! Entität <a href=\"?page=galaxy&sub=edit&id=" . $entityId . "\">" . $entityId . "</a> hat einen unbekannten Code (" . $entityCode . ")<br/>";
                 $errcnt++;
         }
     }
     if ($errcnt > 0) {
-        echo MessageBox::warning("", mysql_num_rows($res) . " Datensätze geprüft. Es wurden <b>$errcnt</b> Fehler gefunden!");
+        echo MessageBox::warning("", count($entityCodes) . " Datensätze geprüft. Es wurden <b>$errcnt</b> Fehler gefunden!");
     } else {
-        echo MessageBox::ok("", mysql_num_rows($res) . " Datensätze geprüft. Keine Fehler gefunden!");
+        echo MessageBox::ok("", count($entityCodes) . " Datensätze geprüft. Keine Fehler gefunden!");
     }
 } else {
     echo MessageBox::info("", "Keine Entitäten vorhanden!");

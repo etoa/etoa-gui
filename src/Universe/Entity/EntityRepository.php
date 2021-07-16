@@ -222,4 +222,16 @@ class EntityRepository extends AbstractRepository
             ])
             ->execute();
     }
+
+    /**
+     * @return array<int, string>
+     */
+    public function getEntityCodes(): array
+    {
+        return $this->createQueryBuilder()
+            ->select('id, code')
+            ->from('entities')
+            ->execute()
+            ->fetchAllKeyValue();
+    }
 }
