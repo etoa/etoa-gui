@@ -1,6 +1,8 @@
 <?PHP
 
-	include("image.inc.php");
+use EtoA\Core\Configuration\ConfigurationService;
+
+include("image.inc.php");
 
 	$w = 600;
 	$h = 400;
@@ -43,7 +45,11 @@
 
 	/** @var \EtoA\Market\MarketRateRepository $marketRateRepository */
     $marketRateRepository = $app[\EtoA\Market\MarketRateRepository::class];
-    $marketRates = $marketRateRepository->getRates((int) MARKET_RATES_COUNT);
+
+    /** @var ConfigurationService */
+    $config = $app[ConfigurationService::class];
+
+    $marketRates = $marketRateRepository->getRates($config->getInt('market_rates_count'));
     $nr = count($marketRates);
 	if ($nr > 0) {
 		$ts1 = null;

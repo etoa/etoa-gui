@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\Fleet;
 
 use EtoA\Core\AbstractRepository;
+use EtoA\Universe\Resources\BaseResources;
 
 class FleetRepository extends AbstractRepository
 {
@@ -317,5 +318,29 @@ class FleetRepository extends AbstractRepository
             ->where('fs_fleet_id = :fleetId')
             ->setParameter('fleetId', $fleetId)
             ->execute();
+    }
+
+    public function getGlobalResources(): BaseResources
+    {
+        $data = $this->createQueryBuilder()
+            ->select(
+                'SUM(res_metal) as metal',
+                'SUM(res_crystal) as crystal',
+                'SUM(res_plastic) as plastic',
+                'SUM(res_fuel) as fuel',
+                'SUM(res_food) as food'
+            )
+            ->from('fleet')
+            ->execute()
+            ->fetchAssociative();
+
+        $res = new BaseResources();
+        $res->metal = (int) $data['metal'];
+        $res->crystal = (int) $data['crystal'];
+        $res->plastic = (int) $data['plastic'];
+        $res->fuel = (int) $data['fuel'];
+        $res->food = (int) $data['food'];
+
+        return $res;
     }
 }
