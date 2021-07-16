@@ -1,12 +1,12 @@
-<?PHP
+<?php
 
-class GameStats
+declare(strict_types=1);
+
+namespace EtoA\Ranking;
+
+class GameStatsGenerator
 {
-    /*********************
-     * Statistik-Funktion *
-     *********************/
-
-    static function generate()
+    public function generate(): string
     {
         // Renderzeit-Start festlegen
         $render_time = explode(" ", microtime());
@@ -133,16 +133,12 @@ class GameStats
         $out .= "</tr>";
         $out .= "</table>";
 
-
-
-
         //
         //Rohstoffe
         //
         $out .= "<h2>Rohstoffe</h2>";
         $out .= "<table width=\"95%\">";
         $out .= "<tr>";
-
 
         /****************************************/
         /* Max Ressourcen auf einem Planeten    */
@@ -308,8 +304,6 @@ class GameStats
             </tr>";
         $out .= "</table></td>";
 
-
-
         /****************************************/
         /* Total Ressourcen im Universum        */
         /*                                      */
@@ -439,8 +433,6 @@ class GameStats
                 <td >" . nf($arr['cnt']) . "</td>
             </tr>";
         $out .= "</table></td>";
-
-
 
         /****************************************/
         /* Max Ressourcen eines Spielers        */
@@ -580,10 +572,6 @@ class GameStats
         $out .= "</tr>";
         $out .= "</table>";
 
-
-
-
-
         //
         // Konstruktionen (von allen spielern)
         //
@@ -591,8 +579,6 @@ class GameStats
         $out .= "<h2>Konstruktionen (Gesamt Anzahl von allen Spielern)</h2>";
         $out .= "<table width=\"95%\">";
         $out .= "<tr>";
-
-
 
         /***************************************************/
         /* Schiffe						        		   */
@@ -679,8 +665,6 @@ class GameStats
         $out .= "<tr><td  colspan=\"2\"><b>Total</b></td><td >&nbsp;</td><td ><b>" . nf($total) . "</b></td></tr>";
         $out .= "</table></td>";
 
-
-
         /****************************************/
         /* Geb?ude						       	*/
         /* Gesamt Anzahl Level im Universum     */
@@ -723,8 +707,6 @@ class GameStats
         $out .= "</table></td>";
         $out .= "</tr>";
         $out .= "</table>";
-
-
 
         //
         // Konstruktionen (von den besten Spielern)
@@ -772,8 +754,6 @@ class GameStats
         }
         $out .= "</table></td>";
 
-
-
         /************************/
         /* Geb?ude			    */
         /*					    */
@@ -811,8 +791,6 @@ class GameStats
             $rank++;
         }
         $out .= "</table></td>";
-
-
 
         /************************/
         /* Spezialschiffe		*/
@@ -857,7 +835,6 @@ class GameStats
         $out .= "</tr>";
         $out .= "</table>";
 
-
         //
         //Sonstiges
         //
@@ -865,8 +842,6 @@ class GameStats
         $limit = 5;
         $out .= "<h2>Sonstiges</h2>";
         $out .= "<table width=\"95%\"><tr>";
-
-
 
         /****************/
         /* Design				*/
@@ -904,8 +879,6 @@ class GameStats
             $rank++;
         }
         $out .= "</table></td>";
-
-
 
         /******************/
         /* Bildpaket			*/
@@ -995,7 +968,7 @@ class GameStats
         return $out;
     }
 
-    static function generateAndSave($file)
+    public function generateAndSave(string $file): bool
     {
         $dir = dirname($file);
         if (!is_dir($dir)) {
@@ -1003,7 +976,7 @@ class GameStats
         }
 
         if ($f = fopen($file, "w+")) {
-            $str = self::generate();
+            $str = $this->generate();
             if (!fwrite($f, $str)) {
                 echo "Error! Could not write gamestats file $file!";
                 return false;

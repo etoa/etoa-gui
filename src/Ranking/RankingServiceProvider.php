@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace EtoA\Ranking;
 
@@ -18,6 +20,10 @@ class RankingServiceProvider implements ServiceProviderInterface
                 $pimple[UserRepository::class],
                 $pimple[AllianceRepository::class]
             );
+        };
+
+        $pimple[GameStatsGenerator::class] = function (Container $pimple): GameStatsGenerator {
+            return new GameStatsGenerator();
         };
     }
 }
