@@ -192,4 +192,25 @@ class CellRepository extends AbstractRepository
 
         return array_map(fn (array $arr) => new CellPopulation($arr), $data);
     }
+
+    public function getCellIdByCoordinates(int $sx, int $sy, int $cx, int $cy): ?Cell
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('cells')
+            ->where('sx = :sx')
+            ->andWhere('sy = :sy')
+            ->andWhere('cx = :cx')
+            ->andWhere('cy = :cy')
+            ->setParameters([
+                'sx' => $sx,
+                'sy' => $sy,
+                'cx' => $cx,
+                'cy' => $cy,
+            ])
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? new Cell($data) : null;
+    }
 }
