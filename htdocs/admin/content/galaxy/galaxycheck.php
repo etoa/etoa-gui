@@ -1,33 +1,29 @@
 <?PHP
 
+global $app;
+
+use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\User\UserRepository;
+
 echo "<h1>Integritätscheck</h1>";
 
 echo "<h2>Prüfen ob zu allen Planeten mit einer User-Id auch ein User existiert...</h2>";
-$user = array();
-$res = dbquery("SELECT user_id,user_nick FROM users;");
-if (mysql_num_rows($res) > 0) {
-    while ($arr = mysql_fetch_array($res)) {
-        $user[$arr['user_id']] = $arr['user_nick'];
-    }
-}
-$res = dbquery("
-  SELECT
-    id,
-    planet_user_id,
-    planet_user_main
-  FROM
-    planets
-  WHERE
-    planet_user_id>0
-  ;");
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
+$user = $userRepository->getUserNicknames();
+
+/** @var PlanetRepository $planetRepository */
+$planetRepository = $app[PlanetRepository::class];
+$planets = $planetRepository->getPlanetsAssignedToUsers();
+
 $cnt = 0;
 $rowStr = "";
-if (mysql_num_rows($res) > 0) {
-    while ($arr = mysql_fetch_array($res)) {
-        if (is_array($user[$arr['planet_user_id']]) && count($user[$arr['planet_user_id']]) == 0) {
+if (count($planets) > 0) {
+    foreach ($planets as $planet) {
+        if (!isset($user[$planet->userId])) {
             $cnt++;
-            $rowStr += "<tr><td>" . $arr['planet_name'] . "</td><td>" . $arr['id'] . "</td><td>" . $arr['planet_user_id'] . "</td>
-        <td><a href=\"?page=$page&sub=edit&amp;id=" . $arr['id'] . "\">Bearbeiten</a></td></tr>";
+            $rowStr += "<tr><td>" . $planet->name . "</td><td>" . $planet->id . "</td><td>" . $planet->userId . "</td>
+        <td><a href=\"?page=$page&sub=edit&amp;id=" . $planet->id . "\">Bearbeiten</a></td></tr>";
         }
     }
     if ($cnt == 0) {
@@ -43,22 +39,11 @@ if (mysql_num_rows($res) > 0) {
 
 
 echo "<h2>Prüfe auf Hauptplaneten ohne User...</h2>";
-$res = dbquery("
-  SELECT
-    planet_name,
-    id
-  FROM
-    planets
-  WHERE
-    planet_user_main=1
-    AND planet_user_id=0
-  ");
-if (mysql_num_rows($res) > 0) {
+$mainPlanetsWithoutOwner = $planetRepository->getMainPlanetsWithoutOwner();
+if (count($mainPlanetsWithoutOwner) > 0) {
     echo "<table class=\"tb\"><tr><th>Name</th><th>Id</th><th>Aktionen</th></tr>";
-    while ($arr = mysql_fetch_array($res)) {
-        if (count($user[$arr['planet_user_id']]) == 0) {
-            echo "<tr><td>" . $arr['planet_name'] . "</td><td>" . $arr['id'] . "</td><td><a href=\"?page=$page&sub=edit&amp;id=" . $arr['id'] . "\">Bearbeiten</a></td></tr>";
-        }
+    foreach ($mainPlanetsWithoutOwner as $planet) {
+        echo "<tr><td>" . $planet->name . "</td><td>" . $planet->id . "</td><td><a href=\"?page=$page&sub=edit&amp;id=" . $planet->id . "\">Bearbeiten</a></td></tr>";
     }
     echo "</table>";
 } else {
@@ -66,33 +51,17 @@ if (mysql_num_rows($res) > 0) {
 }
 
 echo "<h2>Prüfe auf User ohne Hauptplanet / mit zuviel Hauptplaneten...</h2>";
-$res = dbquery("
-  select
-    p.*,
-    u.user_nick
-  from
-  (
-    select
-      sum(planet_user_main) as s,
-      planet_user_id as uid
-    from
-      planets
-    group by
-      planet_user_id
-  ) as p
-  inner join
-    users u
-  on
-    u.user_id=p.uid
-    and uid>0
-    and (s=0
-    or s>1)
-    ");
-if (mysql_num_rows($res) > 0) {
+
+$userPlanetCounts = [];
+foreach ($planets as $planet) {
+    $userPlanetCounts[$planet->userId] = isset($userPlanetCounts[$planet->userId]) ? $userPlanetCounts[$planet->userId] + 1 : 1;
+}
+$usersWithMultiplePlanets = array_filter($userPlanetCounts, fn (int $count) => $count > 1);
+if (count($usersWithMultiplePlanets) > 0) {
     echo "<table class=\"tb\"><tr><th>Nick</th><th>Anzahl Hauptplaneten</th></tr>";
-    while ($arr = mysql_fetch_array($res)) {
-        echo "<tr><td>" . $arr['user_nick'] . " (" . $arr['uid'] . ")</td>
-      <td>" . $arr['s'] . "</td>
+    foreach ($usersWithMultiplePlanets as $userId => $count) {
+        echo "<tr><td>" . $user[$userId] . " (" . $userId . ")</td>
+      <td>" . $count . "</td>
       </tr>";
     }
     echo "</table>";
