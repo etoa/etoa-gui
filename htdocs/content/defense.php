@@ -3,6 +3,8 @@
 use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseQueueRepository;
+use EtoA\Defense\DefenseRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -18,6 +20,10 @@ $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 
 /** @var BuildingRepository $buildingRepository */
 $buildingRepository = $app[BuildingRepository::class];
+/** @var DefenseRepository $defenseRepository */
+$defenseRepository = $app[DefenseRepository::class];
+/** @var DefenseQueueRepository $defenseQueueRepository */
+$defenseQueueRepository = $app[DefenseQueueRepository::class];
 
 //Definition für "Info" Link
 define("ITEMS_TBL", "defense");
@@ -124,20 +130,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
         $buildlist = $buildingRepository->getBuildingLevels($planet->id);
 
         // Gebaute Verteidigung laden
-        $deflist = [];
-        $res = dbquery("
-                    SELECT
-                        deflist_def_id,
-                        deflist_entity_id,
-                        deflist_count
-                    FROM
-                        deflist
-                    WHERE
-                        deflist_entity_id ='" . $planet->id . "';");
-
-        while ($arr = mysql_fetch_assoc($res)) {
-            $deflist[$arr['deflist_def_id']][$arr['deflist_entity_id']] = $arr['deflist_count'];
-        }
+        $deflist = $defenseRepository->getEntityDefenseCounts($cu->getId(), $planet->id);
 
         // Bauliste vom aktuellen Planeten laden (wird nach "Abbrechen" nochmals geladen)
         $res = dbquery("
@@ -440,8 +433,8 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                     // Zählt die Anzahl Verteidigugn dieses Typs im ganzen Account...
                     $def_count = 0;
                     // ... auf den Planeten
-                    if (isset($deflist[$def_id][$planet->id])) {
-                        $def_count += $deflist[$def_id][$planet->id];
+                    if (isset($deflist[$def_id])) {
+                        $def_count += $deflist[$def_id];
                     }
 
                     // ... in der Bauliste
@@ -540,27 +533,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                         $end_time = $start_time + $duration;
 
                         // Auftrag speichern
-                        dbquery("
-                            INSERT INTO
-                            def_queue
-                                (queue_user_id,
-                                queue_def_id,
-                                queue_entity_id,
-                                queue_cnt,
-                                queue_starttime,
-                                queue_endtime,
-                                queue_objtime,
-                                queue_user_click_time)
-                            VALUES
-                                ('" . $cu->id . "',
-                                '" . $def_id . "',
-                                '" . $planet->id . "',
-                                '" . $build_cnt . "',
-                                '" . $start_time . "',
-                                '" . $end_time . "',
-                                '" . $obj_time . "',
-                                '" . time() . "');");
-                        $deflist_id = mysql_insert_id();
+                        $deflist_id = $defenseQueueRepository->add($cu->getId(), $def_id, $planet->id, $build_cnt, $start_time, (int) $end_time, (int) $obj_time);
 
                         $buildingRepository->markBuildingWorkingStatus($cu->getId(), $planet->id, BuildingId::DEFENSE, true);
 
@@ -662,11 +635,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                 $fields_available += $queue_count * $defs[$queue[$id]['queue_def_id']]['def_fields'];
 
                 //Auftrag löschen
-                dbquery("
-                    DELETE FROM
-                        def_queue
-                    WHERE
-                        queue_id='" . $id . "';");
+                $defenseQueueRepository->deleteQueueItem($id);
 
                 $buildingRepository->markBuildingWorkingStatus($cu->getId(), $planet->id, BuildingId::DEFENSE, false);
 
@@ -861,8 +830,8 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                             // Zählt die Anzahl Schiffe dieses Typs im ganzen Account...
                             $def_count = 0;
                             // ... auf den Planeten
-                            if (isset($deflist[$data['def_id']][$planet->id])) {
-                                $def_count += $deflist[$data['def_id']][$planet->id];
+                            if (isset($deflist[$data['def_id']])) {
+                                $def_count += $deflist[$data['def_id']];
                             }
                             // ... in der Bauliste
                             if (isset($queue_entity[$data['def_id']])) {
@@ -1040,8 +1009,8 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                             }
 
                             // Speichert die Anzahl gebauter Schiffe in eine Variable
-                            if (isset($deflist[$data['def_id']][$planet->id])) {
-                                $deflist_count = $deflist[$data['def_id']][$planet->id];
+                            if (isset($deflist[$data['def_id']])) {
+                                $deflist_count = $deflist[$data['def_id']];
                             } else {
                                 $deflist_count = 0;
                             }
