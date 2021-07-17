@@ -211,40 +211,50 @@ class GameStatsGenerator
         $out .= "<tr><th  colspan=\"3\">Max Ressourcen auf einem Planeten</th></tr>";
 
         $metal = $this->planetRepository->getMaxMetalOnAPlanet();
-        $out .= "<tr>
+        if ($metal !== null) {
+            $out .= "<tr>
                 <td >" . RES_METAL . "</td>
                 <td >" . nf($metal['res']) . "</td>
                 <td >" . $metal['type'] . "</td>
             </tr>";
+        }
 
         $crystal = $this->planetRepository->getMaxCrystalOnAPlanet();
-        $out .= "<tr>
-                <td >" . RES_CRYSTAL . "</td>
-                <td >" . nf($crystal['res']) . "</td>
-                <td >" . $crystal['type'] . "</td>
-            </tr>";
+        if ($crystal !== null) {
+            $out .= "<tr>
+                    <td >" . RES_CRYSTAL . "</td>
+                    <td >" . nf($crystal['res']) . "</td>
+                    <td >" . $crystal['type'] . "</td>
+                </tr>";
+        }
 
         $plastic = $this->planetRepository->getMaxPlasticOnAPlanet();
-        $out .= "<tr>
-                <td >" . RES_PLASTIC . "</td>
-                <td >" . nf($plastic['res']) . "</td>
-                <td >" . $plastic['type'] . "</td>
-            </tr>";
+        if ($plastic !== null) {
+            $out .= "<tr>
+                    <td >" . RES_PLASTIC . "</td>
+                    <td >" . nf($plastic['res']) . "</td>
+                    <td >" . $plastic['type'] . "</td>
+                </tr>";
+        }
 
         $fuel = $this->planetRepository->getMaxFuelOnAPlanet();
-        $out .= "<tr>
-                <td >" . RES_FUEL . "</td>
-                <td >" . nf($fuel['res']) . "</td>
-                <td >" . $fuel['type'] . "</td>
-            </tr>";
+        if ($fuel !== null) {
+            $out .= "<tr>
+                    <td >" . RES_FUEL . "</td>
+                    <td >" . nf($fuel['res']) . "</td>
+                    <td >" . $fuel['type'] . "</td>
+                </tr>";
+        }
 
         $food = $this->planetRepository->getMaxFoodOnAPlanet();
-        $out .= "<tr>
-                <td >" . RES_FOOD . "</td>
-                <td >" . nf($food['res']) . "</td>
-                <td >" . $food['type'] . "</td>
-            </tr>";
-        $out .= "</table>";
+        if ($food !== null) {
+            $out .= "<tr>
+                    <td >" . RES_FOOD . "</td>
+                    <td >" . nf($food['res']) . "</td>
+                    <td >" . $food['type'] . "</td>
+                </tr>";
+            $out .= "</table>";
+        }
 
         return $out;
     }
@@ -540,6 +550,7 @@ class GameStatsGenerator
         $rank = 1;
         $total = 0;
         foreach ($this->userPropertiesRepository->getDesignStats($limit) as $arr) {
+            $total += (int) $arr['cnt'];
             $out .= "<tr>
                 <td>" . $rank++ . "</td>";
             $out .= $arr['css_style'] != ""
@@ -547,7 +558,6 @@ class GameStatsGenerator
                 : "<td><i>Standard</i></td>";
             $out .= "<td>" . nf($arr['cnt']) . "</td>";
             $out .= "<td>" . round(100 / $total * (int) $arr['cnt'], 2) . "%</td></tr>";
-            $total += (int) $arr['cnt'];
         }
         $out .= "</table>";
 
@@ -561,6 +571,7 @@ class GameStatsGenerator
         $rank = 1;
         $total = 0;
         foreach ($this->userPropertiesRepository->getImagePackStats($limit) as $arr) {
+            $total += (int) $arr['cnt'];
             $out .= "<tr>
                 <td>" . $rank++ . "</td>";
             $out .= $arr['image_url'] != ""
@@ -568,7 +579,6 @@ class GameStatsGenerator
                 : "<td><i>Standard</i></td>";
             $out .= "<td>" . nf($arr['cnt']) . "</td>";
             $out .= "<td>" . round(100 / $total * (int) $arr['cnt'], 2) . "%</td></tr>";
-            $total += (int) $arr['cnt'];
         }
         $out .= "</table>";
 
@@ -582,6 +592,7 @@ class GameStatsGenerator
         $rank = 1;
         $total = 0;
         foreach ($this->userPropertiesRepository->getImageExtensionStats($limit) as $arr) {
+            $total += (int) $arr['cnt'];
             $out .= "<tr>
                 <td>" . $rank++ . "</td>";
             $out .= $arr['image_ext'] != ""
@@ -589,7 +600,6 @@ class GameStatsGenerator
                 : "<td><i>Standard</i></td>";
             $out .= "<td>" . nf($arr['cnt']) . "</td>";
             $out .= "<td>" . round(100 / $total * (int) $arr['cnt'], 2) . "%</td></tr>";
-            $total += (int) $arr['cnt'];
         }
 
         $out .= "</table>";

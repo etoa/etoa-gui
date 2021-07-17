@@ -732,51 +732,51 @@ class PlanetRepository extends AbstractRepository
     }
 
     /**
-     * @return string[]
+     * @return ?string[]
      */
-    public function getMaxMetalOnAPlanet(): array
+    public function getMaxMetalOnAPlanet(): ?array
     {
         return $this->getMaxResourcesOnAPlanet('planet_res_metal');
     }
 
     /**
-     * @return string[]
+     * @return ?string[]
      */
-    public function getMaxCrystalOnAPlanet(): array
+    public function getMaxCrystalOnAPlanet(): ?array
     {
         return $this->getMaxResourcesOnAPlanet('planet_res_crystal');
     }
 
     /**
-     * @return string[]
+     * @return ?string[]
      */
-    public function getMaxPlasticOnAPlanet(): array
+    public function getMaxPlasticOnAPlanet(): ?array
     {
         return $this->getMaxResourcesOnAPlanet('planet_res_plastic');
     }
 
     /**
-     * @return string[]
+     * @return ?string[]
      */
-    public function getMaxFuelOnAPlanet(): array
+    public function getMaxFuelOnAPlanet(): ?array
     {
         return $this->getMaxResourcesOnAPlanet('planet_res_fuel');
     }
 
     /**
-     * @return string[]
+     * @return ?string[]
      */
-    public function getMaxFoodOnAPlanet(): array
+    public function getMaxFoodOnAPlanet(): ?array
     {
         return $this->getMaxResourcesOnAPlanet('planet_res_food');
     }
 
     /**
-     * @return string[]
+     * @return ?string[]
      */
-    private function getMaxResourcesOnAPlanet(string $field): array
+    private function getMaxResourcesOnAPlanet(string $field): ?array
     {
-        return $this->getConnection()
+        $data = $this->getConnection()
             ->executeQuery(
                 "SELECT
                     " . $field . " AS res,
@@ -789,17 +789,19 @@ class PlanetRepository extends AbstractRepository
                     INNER JOIN
                         users
                     ON
-                        planet_user_id=user_id
-                        AND user_ghost=0
-                        AND user_hmode_from=0
-                        AND user_hmode_to=0
+                        planet_user_id = user_id
+                        AND user_ghost = 0
+                        AND user_hmode_from = 0
+                        AND user_hmode_to = 0
                     )
                 ON
-                    planet_type_id=type_id
+                    planet_type_id = type_id
                 ORDER BY
                     res DESC
                 LIMIT 1;"
             )
             ->fetchAssociative();
+
+        return $data !== false ? $data : null;
     }
 }
