@@ -76,7 +76,7 @@ class SolarTypeRepository extends AbstractRepository
     }
 
     /**
-     * @return array<array<string,int>>
+     * @return array<string[]>
      */
     public function getNumberOfNamedSystemsByType(): array
     {

@@ -69,7 +69,7 @@ class RaceDataRepository extends AbstractRepository
     }
 
     /**
-     * @return array<array<string,int>>
+     * @return array<string[]>
      */
     public function getNumberOfRacesByType(): array
     {

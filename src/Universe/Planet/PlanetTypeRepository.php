@@ -85,7 +85,7 @@ class PlanetTypeRepository extends AbstractRepository
     }
 
     /**
-     * @return array<array<string,int>>
+     * @return array<string[]>
      */
     public function getNumberOfOwnedPlanetsByType(): array
     {
