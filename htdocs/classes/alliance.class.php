@@ -2,6 +2,7 @@
 
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Message\MessageRepository;
 
 /**
  * The alliance object
@@ -301,7 +302,10 @@ class Alliance
             if ($tmpUser->isValid) {
                 if ($tmpUser->alliance === $this) {
                     $this->members[$userId] = $tmpUser;
-                    $this->members[$userId]->sendMessage(MSG_ALLYMAIL_CAT, "Allianzaufnahme", "Du wurdest in die Allianz [b]" . $this->__toString() . "[/b] aufgenommen!");
+
+                    /** @var MessageRepository $messageRepository */
+                    $messageRepository = $app[MessageRepository::class];
+                    $messageRepository->createSystemMessage($userId, MSG_ALLYMAIL_CAT, "Allianzaufnahme", "Du wurdest in die Allianz [b]" . $this->__toString() . "[/b] aufgenommen!");
 
                     /** @var AllianceHistoryRepository */
                     $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
