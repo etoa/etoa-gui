@@ -2,6 +2,7 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipQueueRepository;
 use EtoA\Ship\ShipRepository;
 
 /** @var ConfigurationService */
@@ -12,6 +13,8 @@ $shipDataRepository = $app[\EtoA\Ship\ShipDataRepository::class];
 
 /** @var ShipRepository */
 $shipRepository = $app[ShipRepository::class];
+/** @var ShipQueueRepository $shipQueueRepository */
+$shipQueueRepository = $app[ShipQueueRepository::class];
 
 //
 // Battlepoints
@@ -276,49 +279,27 @@ elseif ($sub == "queue") {
     elseif (isset($_GET['action']) && $_GET['action'] == "edit" && $_GET['id'] > 0) {
         // Änderungen speichern
         if ($_POST['save'] != "") {
-            dbquery("
-                UPDATE
-                    ship_queue
-                SET
-            queue_cnt='" . $_POST['queue_cnt'] . "',
-            queue_starttime=UNIX_TIMESTAMP('" . $_POST['queue_starttime'] . "'),
-            queue_endtime=UNIX_TIMESTAMP('" . $_POST['queue_endtime'] . "')
-                WHERE
-                    queue_id='" . $_GET['id'] . "';");
+            $queueItem = $shipQueueRepository->getQueueItem((int) $_GET['id']);
+            if ($queueItem !== null) {
+                $queueItem->count = (int) $_POST['queue_cnt'];
+                $queueItem->startTime = (new \DateTime($_POST['queue_starttime']))->getTimestamp();
+                $queueItem->endTime = (new \DateTime($_POST['queue_endtime']))->getTimestamp();
+                $shipQueueRepository->saveQueueItem($queueItem);
+            }
         }
 
         // Auftrag löschen
         elseif ($_POST['del'] != "") {
-            dbquery("
-                DELETE FROM
-                    ship_queue
-                WHERE
-                    queue_id='" . $_GET['id'] . "';");
+            $shipQueueRepository->deleteQueueItem((int) $_GET['id']);
             echo "Datensatz entfernt!<br/><br/>";
         }
 
         // Auftrag abschliessen
         elseif ($_POST['build_finish'] != "") {
-            $res = dbquery("
-                SELECT
-                    queue_entity_id,
-                    queue_user_id,
-                    queue_ship_id,
-                    queue_cnt
-                FROM
-              ship_queue
-          WHERE
-              queue_id='" . $_GET['id'] . "'
-          ;");
-            if (mysql_num_rows($res) > 0) {
-                $arr = mysql_fetch_array($res);
-                $shipRepository->addShip((int) $arr['queue_ship_id'], (int) $arr['queue_cnt'], (int) $arr['queue_user_id'], (int) $arr['queue_entity_id']);
-                dbquery("
-                    DELETE FROM
-                        ship_queue
-                    WHERE
-                        queue_id='" . $_GET['id'] . "'
-                    ;");
+            $queueItem = $shipQueueRepository->getQueueItem((int) $_GET['id']);
+            if ($queueItem !== null) {
+                $shipRepository->addShip($queueItem->shipId, $queueItem->count, $queueItem->userId, $queueItem->endTime);
+                $shipQueueRepository->deleteQueueItem($queueItem->id);
             }
             echo "Bau abgeschlossen!<br/><br/>";
         }
@@ -416,8 +397,8 @@ elseif ($sub == "queue") {
         echo "</select></td>";
         echo "</table>";
         echo "<p><input type=\"submit\" class=\"button\" name=\"shipqueue_search\" value=\"Suche starten\" /></p></form>";
-        $tblcnt = mysql_fetch_row(dbquery("SELECT COUNT(queue_id) FROM ship_queue;"));
-        echo "<p>Es sind " . nf($tblcnt[0]) . " Eintr&auml;ge in der Datenbank vorhanden.</p>";
+        $tblcnt = $shipQueueRepository->count();
+        echo "<p>Es sind " . nf($tblcnt) . " Eintr&auml;ge in der Datenbank vorhanden.</p>";
     }
 }
 

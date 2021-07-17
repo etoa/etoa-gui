@@ -3,6 +3,7 @@
 use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Ship\ShipQueueRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -18,6 +19,8 @@ $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 
 /** @var BuildingRepository $buildingRepository */
 $buildingRepository = $app[BuildingRepository::class];
+/** @var ShipQueueRepository $shipQueueRepository */
+$shipQueueRepository = $app[ShipQueueRepository::class];
 
 //Definition für "Info" Link
 define('ITEMS_TBL', "ships");
@@ -550,25 +553,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                         $end_time = $start_time + $duration;
 
                         // Auftrag speichern
-                        dbquery("
-                        INSERT INTO
-                        ship_queue
-                            (queue_user_id,
-                            queue_ship_id,
-                            queue_entity_id,
-                            queue_cnt,
-                            queue_starttime,
-                            queue_endtime,
-                            queue_objtime)
-                        VALUES
-                            ('" . $cu->id . "',
-                            '" . $ship_id . "',
-                            '" . $planet->id . "',
-                            '" . $build_cnt . "',
-                            '" . $start_time . "',
-                            '" . $end_time . "',
-                            '" . $obj_time . "');");
-                        $shiplist_id = mysql_insert_id();
+                        $shiplist_id = $shipQueueRepository->add($cu->getId(), $ship_id, $planet->id, $build_cnt, $start_time, (int) $end_time, (int) $obj_time);
 
                         $buildingRepository->markBuildingWorkingStatus($cu->getId(), $planet->id, BuildingId::SHIPYARD, true);
 
@@ -665,11 +650,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                 $end_time = $queue[$id]['queue_endtime'];
 
                 //Auftrag löschen
-                dbquery("
-                DELETE FROM
-                    ship_queue
-                WHERE
-                    queue_id='" . $id . "';");
+                $shipQueueRepository->deleteQueueItem($id);
 
                 $buildingRepository->markBuildingWorkingStatus($cu->getId(), $planet->id, BuildingId::SHIPYARD, false);
 
