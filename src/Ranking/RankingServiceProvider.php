@@ -7,6 +7,7 @@ namespace EtoA\Ranking;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Race\RaceDataRepository;
+use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\Universe\Star\SolarTypeRepository;
 use EtoA\User\UserRepository;
@@ -30,6 +31,7 @@ class RankingServiceProvider implements ServiceProviderInterface
                 $pimple[PlanetTypeRepository::class],
                 $pimple[SolarTypeRepository::class],
                 $pimple[RaceDataRepository::class],
+                $pimple[PlanetRepository::class]
             );
         };
     }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\Ranking;
 
 use EtoA\Race\RaceDataRepository;
+use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\Universe\Star\SolarTypeRepository;
 use Exception;
@@ -18,15 +19,18 @@ class GameStatsGenerator
     private PlanetTypeRepository $planetTypeRepository;
     private SolarTypeRepository $solarTypeRepository;
     private RaceDataRepository $raceDataRepository;
+    private PlanetRepository $planetRepository;
 
     public function __construct(
         PlanetTypeRepository $planetTypeRepository,
         SolarTypeRepository $solarTypeRepository,
-        RaceDataRepository $raceDataRepository
+        RaceDataRepository $raceDataRepository,
+        PlanetRepository $planetRepository
     ) {
         $this->planetTypeRepository = $planetTypeRepository;
         $this->solarTypeRepository = $solarTypeRepository;
         $this->raceDataRepository = $raceDataRepository;
+        $this->planetRepository = $planetRepository;
     }
 
     public function readCached(): ?string
@@ -188,159 +192,39 @@ class GameStatsGenerator
         $out = "<table width=\"100%\" class=\"tb\">";
         $out .= "<tr><th  colspan=\"3\">Max Ressourcen auf einem Planeten</th></tr>";
 
-        //Anzahl Titan
-        $res = dbquery("
-            SELECT
-                planet_res_metal AS res,
-                type_name AS type
-            FROM
-                planet_types
-            INNER JOIN
-                (
-                    planets
-                INNER JOIN
-                    users
-                ON
-                    planet_user_id=user_id
-                    AND user_ghost=0
-                    AND user_hmode_from=0
-                    AND user_hmode_to=0
-                )
-            ON
-                planet_type_id=type_id
-            ORDER BY
-                res DESC
-            LIMIT 1;
-                ");
-        $arr = mysql_fetch_array($res);
+        $metal = $this->planetRepository->getMaxMetalOnAPlanet();
         $out .= "<tr>
                 <td >" . RES_METAL . "</td>
-                <td >" . nf($arr['res']) . "</td>
-                <td >" . $arr['type'] . "</td>
+                <td >" . nf($metal['res']) . "</td>
+                <td >" . $metal['type'] . "</td>
             </tr>";
 
-        //Anzahl Silizium
-        $res = dbquery("
-            SELECT
-                planet_res_crystal AS res,
-                type_name AS type
-            FROM
-                planet_types
-            INNER JOIN
-                (
-                    planets
-                INNER JOIN
-                    users
-                ON
-                    planet_user_id=user_id
-                    AND user_ghost=0
-                    AND user_hmode_from=0
-                    AND user_hmode_to=0
-                )
-            ON
-                planet_type_id=type_id
-            ORDER BY
-                res DESC
-            LIMIT 1;
-                ");
-        $arr = mysql_fetch_array($res);
+        $crystal = $this->planetRepository->getMaxCrystalOnAPlanet();
         $out .= "<tr>
                 <td >" . RES_CRYSTAL . "</td>
-                <td >" . nf($arr['res']) . "</td>
-                <td >" . $arr['type'] . "</td>
+                <td >" . nf($crystal['res']) . "</td>
+                <td >" . $crystal['type'] . "</td>
             </tr>";
 
-        //Anzahl PVC
-        $res = dbquery("
-            SELECT
-                planet_res_plastic AS res,
-                type_name AS type
-            FROM
-                planet_types
-            INNER JOIN
-                (
-                    planets
-                INNER JOIN
-                    users
-                ON
-                    planet_user_id=user_id
-                    AND user_ghost=0
-                    AND user_hmode_from=0
-                    AND user_hmode_to=0
-                )
-            ON
-                planet_type_id=type_id
-            ORDER BY
-                res DESC
-            LIMIT 1;
-                ");
-        $arr = mysql_fetch_array($res);
+        $plastic = $this->planetRepository->getMaxPlasticOnAPlanet();
         $out .= "<tr>
                 <td >" . RES_PLASTIC . "</td>
-                <td >" . nf($arr['res']) . "</td>
-                <td >" . $arr['type'] . "</td>
+                <td >" . nf($plastic['res']) . "</td>
+                <td >" . $plastic['type'] . "</td>
             </tr>";
 
-        //Anzahl Tritium
-        $res = dbquery("
-            SELECT
-                planet_res_fuel AS res,
-                type_name AS type
-            FROM
-                planet_types
-            INNER JOIN
-                (
-                    planets
-                INNER JOIN
-                    users
-                ON
-                    planet_user_id=user_id
-                    AND user_ghost=0
-                    AND user_hmode_from=0
-                    AND user_hmode_to=0
-                )
-            ON
-                planet_type_id=type_id
-            ORDER BY
-                res DESC
-            LIMIT 1;
-                ");
-        $arr = mysql_fetch_array($res);
+        $fuel = $this->planetRepository->getMaxFuelOnAPlanet();
         $out .= "<tr>
                 <td >" . RES_FUEL . "</td>
-                <td >" . nf($arr['res']) . "</td>
-                <td >" . $arr['type'] . "</td>
+                <td >" . nf($fuel['res']) . "</td>
+                <td >" . $fuel['type'] . "</td>
             </tr>";
 
-        //Anzahl Nahrung
-        $res = dbquery("
-            SELECT
-                planet_res_food AS res,
-                type_name AS type
-            FROM
-                planet_types
-            INNER JOIN
-                (
-                    planets
-                INNER JOIN
-                    users
-                ON
-                    planet_user_id=user_id
-                    AND user_ghost=0
-                    AND user_hmode_from=0
-                    AND user_hmode_to=0
-                )
-            ON
-                planet_type_id=type_id
-            ORDER BY
-                res DESC
-            LIMIT 1;
-                ");
-        $arr = mysql_fetch_array($res);
+        $food = $this->planetRepository->getMaxFoodOnAPlanet();
         $out .= "<tr>
                 <td >" . RES_FOOD . "</td>
-                <td >" . nf($arr['res']) . "</td>
-                <td >" . $arr['type'] . "</td>
+                <td >" . nf($food['res']) . "</td>
+                <td >" . $food['type'] . "</td>
             </tr>";
         $out .= "</table>";
 
@@ -353,124 +237,44 @@ class GameStatsGenerator
         $out .= "<tr><th  colspan=\"4\">Total Ressourcen im Universum</th></tr>";
         $out .= "<tr><th >Ressource</th><th >Total</th><th >Durchschnitt</th><th >Planeten</th></tr>";
 
-        //Anzahl Titan
-        $res = dbquery("
-            SELECT
-                SUM(planet_res_metal) AS sum,
-                AVG(planet_res_metal) AS avg,
-                COUNT(id) AS cnt
-            FROM
-                planets
-            INNER JOIN
-                users
-            ON
-                planet_user_id=user_id
-                AND user_ghost=0
-                AND user_hmode_from=0
-                AND user_hmode_to=0
-                AND planet_res_metal>0");
-        $arr = mysql_fetch_array($res);
+        $metal = $this->planetRepository->getMaxMetal();
         $out .= "<tr>
                 <td >" . RES_METAL . "</td>
-                <td >" . nf($arr['sum']) . "</td>
-                <td >" . nf($arr['avg']) . "</td>
-                <td >" . nf($arr['cnt']) . "</td>
+                <td >" . nf($metal['sum']) . "</td>
+                <td >" . nf($metal['avg']) . "</td>
+                <td >" . nf($metal['cnt']) . "</td>
             </tr>";
 
-        //Anzahl Silizium
-        $res = dbquery("
-            SELECT
-                SUM(planet_res_crystal) AS sum,
-                AVG(planet_res_crystal) AS avg,
-                COUNT(id) AS cnt
-            FROM
-                planets
-            INNER JOIN
-                users
-            ON
-                planet_user_id=user_id
-                AND user_ghost=0
-                AND user_hmode_from=0
-                AND user_hmode_to=0
-                AND planet_res_crystal>0");
-        $arr = mysql_fetch_array($res);
+        $crystal = $this->planetRepository->getMaxCrystal();
         $out .= "<tr>
                 <td >" . RES_CRYSTAL . "</td>
-                <td >" . nf($arr['sum']) . "</td>
-                <td >" . nf($arr['avg']) . "</td>
-                <td >" . nf($arr['cnt']) . "</td>
+                <td >" . nf($crystal['sum']) . "</td>
+                <td >" . nf($crystal['avg']) . "</td>
+                <td >" . nf($crystal['cnt']) . "</td>
             </tr>";
 
-        //Anzahl PVC
-        $res = dbquery("
-            SELECT
-                SUM(planet_res_plastic) AS sum,
-                AVG(planet_res_plastic) AS avg,
-                COUNT(id) AS cnt
-            FROM
-                planets
-            INNER JOIN
-                users
-            ON
-                planet_user_id=user_id
-                AND user_ghost=0
-                AND user_hmode_from=0
-                AND user_hmode_to=0
-                AND planet_res_plastic>0");
-        $arr = mysql_fetch_array($res);
+        $plastic = $this->planetRepository->getMaxPlastic();
         $out .= "<tr>
                 <td >" . RES_PLASTIC . "</td>
-                <td >" . nf($arr['sum']) . "</td>
-                <td >" . nf($arr['avg']) . "</td>
-                <td >" . nf($arr['cnt']) . "</td>
+                <td >" . nf($plastic['sum']) . "</td>
+                <td >" . nf($plastic['avg']) . "</td>
+                <td >" . nf($plastic['cnt']) . "</td>
             </tr>";
 
-        //Anzahl Tritium
-        $res = dbquery("
-            SELECT
-                SUM(planet_res_fuel) AS sum,
-                AVG(planet_res_fuel) AS avg,
-                COUNT(id) AS cnt
-            FROM
-                planets
-            INNER JOIN
-                users
-            ON
-                planet_user_id=user_id
-                AND user_ghost=0
-                AND user_hmode_from=0
-                AND user_hmode_to=0
-                AND planet_res_fuel>0");
-        $arr = mysql_fetch_array($res);
+        $fuel = $this->planetRepository->getMaxFuel();
         $out .= "<tr>
                 <td >" . RES_FUEL . "</td>
-                <td >" . nf($arr['sum']) . "</td>
-                <td >" . nf($arr['avg']) . "</td>
-                <td >" . nf($arr['cnt']) . "</td>
+                <td >" . nf($fuel['sum']) . "</td>
+                <td >" . nf($fuel['avg']) . "</td>
+                <td >" . nf($fuel['cnt']) . "</td>
             </tr>";
 
-        //Anzahl Nahrung
-        $res = dbquery("
-            SELECT
-                SUM(planet_res_food) AS sum,
-                AVG(planet_res_food) AS avg,
-                COUNT(id) AS cnt
-            FROM
-                planets
-            INNER JOIN
-                users
-            ON
-                planet_user_id=user_id
-                AND user_ghost=0
-                AND user_hmode_from=0
-                AND user_hmode_to=0
-                AND planet_res_food>0");
-        $arr = mysql_fetch_array($res);
+        $food = $this->planetRepository->getMaxFood();
         $out .= "<tr>
                 <td >" . RES_FOOD . "</td>
-                <td >" . nf($arr['sum']) . "</td>
-                <td >" . nf($arr['avg']) . "</td>
-                <td >" . nf($arr['cnt']) . "</td>
+                <td >" . nf($food['sum']) . "</td>
+                <td >" . nf($food['avg']) . "</td>
+                <td >" . nf($food['cnt']) . "</td>
             </tr>";
         $out .= "</table>";
 
@@ -481,132 +285,26 @@ class GameStatsGenerator
     {
         $out = "<table width=\"100%\" class=\"tb\">";
         $out .= "<tr><th  colspan=\"3\">Max Ressourcen eines Spielers</th></tr>";
-
-        //Anzahl Titan
-        $res = dbquery("
-            SELECT
-                SUM(planet_res_metal) AS sum
-            FROM
-                planets
-            INNER JOIN
-                users
-            ON
-                user_id=planet_user_id
-                AND user_ghost=0
-                AND user_hmode_from=0
-                AND user_hmode_to=0
-            GROUP BY
-                planet_user_id
-            ORDER BY
-                sum DESC
-            LIMIT 1;
-                ");
-        $arr = mysql_fetch_array($res);
         $out .= "<tr>
                 <td >" . RES_METAL . "</td>
-                <td >" . nf($arr['sum']) . "</td>
+                <td >" . nf($this->planetRepository->getMaxMetalOfAPlayer()) . "</td>
             </tr>";
-
-        //Anzahl Silizium
-        $res = dbquery("
-            SELECT
-                SUM(planet_res_crystal) AS sum
-            FROM
-                planets
-            INNER JOIN
-                users
-            ON
-                user_id=planet_user_id
-                AND user_ghost=0
-                AND user_hmode_from=0
-                AND user_hmode_to=0
-            GROUP BY
-                planet_user_id
-            ORDER BY
-                sum DESC
-            LIMIT 1;
-                ");
-        $arr = mysql_fetch_array($res);
         $out .= "<tr>
                 <td >" . RES_CRYSTAL . "</td>
-                <td >" . nf($arr['sum']) . "</td>
+                <td >" . nf($this->planetRepository->getMaxCrystalOfAPlayer()) . "</td>
             </tr>";
-
-        //Anzahl PVC
-        $res = dbquery("
-            SELECT
-                SUM(planet_res_plastic) AS sum
-            FROM
-                planets
-            INNER JOIN
-                users
-            ON
-                user_id=planet_user_id
-                AND user_ghost=0
-                AND user_hmode_from=0
-                AND user_hmode_to=0
-            GROUP BY
-                planet_user_id
-            ORDER BY
-                sum DESC
-            LIMIT 1;
-                ");
-        $arr = mysql_fetch_array($res);
         $out .= "<tr>
                 <td >" . RES_PLASTIC . "</td>
-                <td >" . nf($arr['sum']) . "</td>
+                <td >" . nf($this->planetRepository->getMaxPlasticOfAPlayer()) . "</td>
             </tr>";
-
-        //Anzahl Tritium
-        $res = dbquery("
-            SELECT
-                SUM(planet_res_fuel) AS sum
-            FROM
-                planets
-            INNER JOIN
-                users
-            ON
-                user_id=planet_user_id
-                AND user_ghost=0
-                AND user_hmode_from=0
-                AND user_hmode_to=0
-            GROUP BY
-                planet_user_id
-            ORDER BY
-                sum DESC
-            LIMIT 1;
-                ");
-        $arr = mysql_fetch_array($res);
         $out .= "<tr>
                 <td >" . RES_FUEL . "</td>
-                <td >" . nf($arr['sum']) . "</td>
+                <td >" . nf($this->planetRepository->getMaxFuelOfAPlayer()) . "</td>
             </tr>";
-
-        //Anzahl Nahrung
-        $res = dbquery("
-            SELECT
-                SUM(planet_res_food) AS sum
-            FROM
-                planets
-            INNER JOIN
-                users
-            ON
-                user_id=planet_user_id
-                AND user_ghost=0
-                AND user_hmode_from=0
-                AND user_hmode_to=0
-            GROUP BY
-                planet_user_id
-            ORDER BY
-                sum DESC
-            LIMIT 1;
-                ");
-        $arr = mysql_fetch_array($res);
         $out .= "<tr>
                 <td >" . RES_FOOD . "</td>
-                <td >" . nf($arr['sum']) . "</td>
+                <td >" . nf($this->planetRepository->getMaxFoodOfAPlayer()) . "</td>
             </tr>";
-
         $out .= "</table>";
 
         return $out;
