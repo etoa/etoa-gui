@@ -58,6 +58,16 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
             ->fetchOne();
     }
 
+    public function countEmpty(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select("COUNT(missilelist_id)")
+            ->from('missilelist')
+            ->where('missilelist_count = 0')
+            ->execute()
+            ->fetchOne();
+    }
+
     /**
      * @return array<int, int>
      */

@@ -1,15 +1,23 @@
 <?PHP
 
 use EtoA\Admin\AdminSessionManager;
+use EtoA\Alliance\AlliancePointsRepository;
+use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Help\TicketSystem\TicketService;
 use EtoA\Message\MessageRepository;
 use EtoA\Message\MessageService;
 use EtoA\Message\ReportRepository;
+use EtoA\Missile\MissileRepository;
 use EtoA\Ranking\PointsService;
+use EtoA\Ship\ShipRepository;
+use EtoA\Technology\TechnologyRepository;
+use EtoA\User\UserRepository;
 use EtoA\User\UserService;
 use EtoA\User\UserSessionManager;
+use EtoA\User\UserSessionRepository;
 
 /** @var TicketRepository */
 $ticketRepo = $app[TicketRepository::class];
@@ -71,6 +79,8 @@ function runCleanup(
     MessageService $messageService,
     UserService $userService
 ) {
+    global $app;
+
     echo "Clean-Up wird durchgeführt...<br/>";
     $all = isset($_POST['submit_cleanup_all']) ? true : false;
 
@@ -149,19 +159,13 @@ function runCleanup(
 
     // Userdata
     if ((isset($_POST['cl_userdata']) && $_POST['cl_userdata'] == 1) || $all) {
-        $ures = dbquery("SELECT
-                            user_id
-                        FROM
-                            `users`;");
-        $ustring = "";
-        $set = false;
-        while ($uarr = mysql_fetch_row($ures)) {
-            if ($set) $ustring .= ",";
-            else $set = true;
-            $ustring .= $uarr[0];
-        }
-        if ($ustring === '') {
-            $ustring = "0";
+        /** @var UserRepository $userRepository */
+        $userRepository = $app[UserRepository::class];
+        $userIds = array_keys($userRepository->getUserNicknames());
+        if (count($userIds) > 0) {
+            $ustring = implode(',', $userIds);
+        } else {
+            $ustring = 0;
         }
 
         if (isset($_POST['del_user_log'])) {
@@ -404,6 +408,7 @@ function cleanupOverView(
 ): void {
     global $page;
     global $sub;
+    global $app;
 
     echo "<form action=\"?page=$page&sub=$sub\" method=\"post\">";
 
@@ -479,12 +484,9 @@ function cleanupOverView(
 
     // User-Sessions
     echo '<fieldset><legend><input type="checkbox" value="1" name="cl_sesslog" /> Session-Logs</legend>';
-    $tblcnt = mysql_fetch_row(dbquery("
-    SELECT
-        COUNT(*)
-    FROM
-        user_sessionlog
-    ;"));
+    /** @var UserSessionRepository $userSessionRepository */
+    $userSessionRepository = $app[UserSessionRepository::class];
+    $tblcnt = $userSessionRepository->count();
     echo "<b>Session-Logs löschen:</b> ";
     echo "Einträge löschen die älter als <select name=\"sess_log_timestamp\">";
     $days = array(7, 14, 21, 28);
@@ -494,17 +496,14 @@ function cleanupOverView(
     foreach ($days as $ds) {
         echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $config->getInt('log_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
     }
-    echo "</select> sind (" . nf($tblcnt[0]) . " total).";
+    echo "</select> sind (" . nf($tblcnt) . " total).";
     echo '</fieldset><br/>';
 
     // User-Points
     echo '<fieldset><legend><input type="checkbox" value="1" name="cl_points" /> Punkteverlauf</legend>';
-    $tblcnt = mysql_fetch_row(dbquery("
-    SELECT
-        COUNT(*)
-    FROM
-        user_points
-    ;"));
+    /** @var \EtoA\User\UserPointsRepository $userPointRepository */
+    $userPointRepository = $app[\EtoA\User\UserPointsRepository::class];
+    $tblcnt = $userPointRepository->count();
     echo "<b>Punkteverläufe löschen:</b> Einträge löschen die älter als <select name=\"del_user_points\">";
     $days = array(2, 5, 7, 14, 21, 28);
     if (!in_array($config->getInt('log_threshold_days'), $days, true))
@@ -513,14 +512,12 @@ function cleanupOverView(
     foreach ($days as $ds) {
         echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $config->getInt('log_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
     }
-    echo "</select> sind (Total: " . nf($tblcnt[0]) . " User,";
-    $tblcnt = mysql_fetch_row(dbquery("
-    SELECT
-        COUNT(*)
-    FROM
-        alliance_points
-    ;"));
-    echo " " . nf($tblcnt[0]) . " Allianz).";
+    echo "</select> sind (Total: " . nf($tblcnt) . " User,";
+
+    /** @var AlliancePointsRepository $alliancePointsRepository */
+    $alliancePointsRepository = $app[AlliancePointsRepository::class];
+    $tblcnt = $alliancePointsRepository->count();
+    echo " " . nf($tblcnt) . " Allianz).";
     echo '</fieldset><br/>';
 
     // Inactive
@@ -559,19 +556,13 @@ function cleanupOverView(
 
     // Userdata
     echo '<fieldset><legend><input type="checkbox" value="1" name="cl_userdata" /> Userdata von gelöschten Spielern</legend>';
-    $ures = dbquery("SELECT
-                        user_id
-                    FROM
-                        `users`;");
-    $ustring = "";
-    $set = false;
-    while ($uarr = mysql_fetch_row($ures)) {
-        if ($set) $ustring .= ",";
-        else $set = true;
-        $ustring .= $uarr[0];
-    }
-    if ($ustring === '') {
-        $ustring = "0";
+    /** @var UserRepository $userRepository */
+    $userRepository = $app[UserRepository::class];
+    $userIds = array_keys($userRepository->getUserNicknames());
+    if (count($userIds) > 0) {
+        $ustring = implode(',', $userIds);
+    } else {
+        $ustring = 0;
     }
 
     $lres = dbquery("SELECT
@@ -694,102 +685,37 @@ function cleanupOverView(
 
     /* Object lists */
     echo '<fieldset><legend><input type="checkbox" value="1" name="cl_objlist" /> Objektlisten</legend>';
-    $res =    dbquery("
-    SELECT
-         COUNT( shiplist_id )
-    FROM
-        shiplist
-    WHERE
-        shiplist_count =0
-        AND shiplist_bunkered =0
-        AND shiplist_special_ship=0
-    ;");
-    $scnt = mysql_fetch_row($res);
-    $res =    dbquery("
-    SELECT
-         COUNT( shiplist_id )
-    FROM
-        shiplist
-    ;");
-    $stcnt = mysql_fetch_row($res);
 
-    $res =    dbquery("
-    SELECT
-         COUNT( deflist_id )
-    FROM
-        deflist
-    WHERE
-        deflist_count =0
-    ;");
-    $dcnt = mysql_fetch_row($res);
-    $res =    dbquery("
-    SELECT
-         COUNT( deflist_id )
-    FROM
-        deflist
-    ;");
-    $dtcnt = mysql_fetch_row($res);
+    /** @var ShipRepository $shipRepository */
+    $shipRepository = $app[ShipRepository::class];
+    $scnt = $shipRepository->countEmpty();
+    $stcnt = $shipRepository->count();
 
-    $res =    dbquery("
-    SELECT
-         COUNT( missilelist_id )
-    FROM
-        missilelist
-    WHERE
-        missilelist_count =0
-    ;");
-    $mcnt = mysql_fetch_row($res);
-    $res =    dbquery("
-    SELECT
-         COUNT( missilelist_id )
-    FROM
-        missilelist
-    ;");
-    $mtcnt = mysql_fetch_row($res);
+    /** @var DefenseRepository $defenseRepository */
+    $defenseRepository = $app[DefenseRepository::class];
+    $dcnt = $defenseRepository->countEmpty();
+    $dtcnt = $defenseRepository->count();
 
-    $res =    dbquery("
-    SELECT
-         COUNT( buildlist_id )
-    FROM
-        buildlist
-    WHERE
-        buildlist_current_level=0
-        AND buildlist_build_start_time=0
-        AND buildlist_build_end_time=0
-    ;");
-    $bcnt = mysql_fetch_row($res);
-    $res =    dbquery("
-    SELECT
-         COUNT( buildlist_id )
-    FROM
-        buildlist
-    ;");
-    $btcnt = mysql_fetch_row($res);
+    /** @var MissileRepository $missileRepository */
+    $missileRepository = $app[MissileRepository::class];
+    $mcnt = $missileRepository->countEmpty();
+    $mtcnt = $missileRepository->count();
 
-    $res =    dbquery("
-    SELECT
-         COUNT( techlist_id )
-    FROM
-        techlist
-    WHERE
-        techlist_current_level=0
-        AND techlist_build_start_time=0
-        AND techlist_build_end_time=0
-    ;");
-    $tcnt = mysql_fetch_row($res);
-    $res =    dbquery("
-    SELECT
-         COUNT( techlist_id )
-    FROM
-        techlist
-    ;");
-    $ttcnt = mysql_fetch_row($res);
+    /** @var BuildingRepository $buildingRepository */
+    $buildingRepository = $app[BuildingRepository::class];
+    $bcnt = $buildingRepository->countEmpty();
+    $btcnt = $buildingRepository->numBuildingListEntries();
 
-    echo "<b>Leere Schiffdatensätze:</b> " . nf($scnt[0]) . " vorhanden (" . nf($stcnt[0]) . " total).<br/>";
-    echo "<b>Leere Verteidigungsdatensätze:</b> " . nf($dcnt[0]) . " vorhanden (" . nf($dtcnt[0]) . " total).<br/>";
-    echo "<b>Leere Raketendatensäte:</b> " . nf($mcnt[0]) . " vorhanden (" . nf($mtcnt[0]) . " total).<br/>";
-    echo "<b>Leere Gebäudedatensätze:</b> " . nf($bcnt[0]) . " vorhanden (" . nf($btcnt[0]) . " total).<br/>";
-    echo "<b>Leere Forschungsdatensätze:</b> " . nf($tcnt[0]) . " vorhanden (" . nf($ttcnt[0]) . " total).<br/>";
+    /** @var TechnologyRepository $technologyRepository */
+    $technologyRepository = $app[TechnologyRepository::class];
+    $tcnt = $technologyRepository->countEmpty();
+    $ttcnt = $technologyRepository->count();
+
+    echo "<b>Leere Schiffdatensätze:</b> " . nf($scnt) . " vorhanden (" . nf($stcnt) . " total).<br/>";
+    echo "<b>Leere Verteidigungsdatensätze:</b> " . nf($dcnt) . " vorhanden (" . nf($dtcnt) . " total).<br/>";
+    echo "<b>Leere Raketendatensäte:</b> " . nf($mcnt) . " vorhanden (" . nf($mtcnt) . " total).<br/>";
+    echo "<b>Leere Gebäudedatensätze:</b> " . nf($bcnt) . " vorhanden (" . nf($btcnt) . " total).<br/>";
+    echo "<b>Leere Forschungsdatensätze:</b> " . nf($tcnt) . " vorhanden (" . nf($ttcnt) . " total).<br/>";
     echo '</fieldset><br/>';
 
     echo '<input type="submit" name="submit_cleanup_selected" value="Selektiere ausführen" /> &nbsp; ';

@@ -260,6 +260,27 @@ class ShipRepository extends AbstractRepository
         return $delable;
     }
 
+    public function count(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(shiplist_id)')
+            ->from('shiplist')
+            ->execute()
+            ->fetchOne();
+    }
+
+    public function countEmpty(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(shiplist_id)')
+            ->from('shiplist')
+            ->where('shiplist_count = 0')
+            ->andWhere('shiplist_bunkered = 0')
+            ->andWhere('shiplist_special_ship = 0')
+            ->execute()
+            ->fetchOne();
+    }
+
     /**
      * @return array<int, array{name: string, cnt: int, max: int}>
      */

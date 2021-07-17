@@ -132,6 +132,27 @@ class TechnologyRepository extends AbstractRepository
         ]);
     }
 
+    public function count(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(techlist_id)')
+            ->from('techlist')
+            ->execute()
+            ->fetchOne();
+    }
+
+    public function countEmpty(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(techlist_id)')
+            ->from('techlist')
+            ->where('techlist_current_level=0')
+            ->andWhere('techlist_build_start_time=0')
+            ->andWhere('techlist_build_end_time=0')
+            ->execute()
+            ->fetchOne();
+    }
+
     /**
      * @return array<int, array{name: string, max: int}>
      */

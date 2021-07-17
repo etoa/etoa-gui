@@ -115,4 +115,13 @@ class UserSessionRepository extends AbstractRepository
             ->setParameter('timestamp', $timestamp)
             ->execute();
     }
+
+    public function countLogs(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(*)')
+            ->from('user_sessionlog')
+            ->execute()
+            ->fetchOne();
+    }
 }

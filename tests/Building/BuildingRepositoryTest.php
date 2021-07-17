@@ -84,4 +84,13 @@ class BuildingRepositoryTest extends AbstractDbTestCase
 
         $this->assertTrue($this->repository->markBuildingWorkingStatus($userId, $entityId, $buildingId, true));
     }
+
+    public function testCountEmpty(): void
+    {
+        $this->assertSame(0, $this->repository->countEmpty());
+
+        $this->repository->addBuilding(1, 0, 1, 1);
+
+        $this->assertSame(1, $this->repository->countEmpty());
+    }
 }

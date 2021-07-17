@@ -79,6 +79,18 @@ class BuildingRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    public function countEmpty(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(buildlist_id)')
+            ->from('buildlist')
+            ->where('buildlist_current_level=0')
+            ->andWhere('buildlist_build_start_time=0')
+            ->andWhere('buildlist_build_end_time=0')
+            ->execute()
+            ->fetchOne();
+    }
+
     /**
      * @return array<int, string>
      */

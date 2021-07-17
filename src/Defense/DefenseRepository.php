@@ -174,6 +174,16 @@ class DefenseRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    public function countEmpty(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(deflist_id)')
+            ->from('deflist')
+            ->where('deflist_count = 0')
+            ->execute()
+            ->fetchOne();
+    }
+
     /**
      * @return array<int, array{name: string, cnt: int, max: int}>
      */

@@ -47,4 +47,18 @@ class TechnologyRepositoryTest extends AbstractDbTestCase
 
         $this->assertTrue($this->repository->updateBuildStatus($userId, 1, $technologyId, 0, 0, 0));
     }
+
+    public function testCount(): void
+    {
+        $this->assertSame(0, $this->repository->count());
+    }
+
+    public function testCountEmpty(): void
+    {
+        $this->assertSame(0, $this->repository->countEmpty());
+
+        $this->repository->addTechnology(1, 0, 1, 1);
+
+        $this->assertSame(1, $this->repository->countEmpty());
+    }
 }
