@@ -14,7 +14,7 @@ $ticketRepo = $app[TicketRepository::class];
 /** @var AdminUserRepository */
 $adminUserRepo = $app[AdminUserRepository::class];
 
-/** @var UserRepository */
+/** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
 
 /** @var \EtoA\Ship\ShipDataRepository $shipDateRepository */
@@ -30,14 +30,13 @@ elseif (isset($_GET['user_id']))
 else
     $id = 0;
 
-$nick = mysql_fetch_row(dbquery("SELECT user_nick FROM users WHERE user_id=" . $id . ";"))[0];
+$user = $userRepository->getUser((int) $id);
 
 // Geänderte Daten speichern
 if (isset($_POST['save'])) {
-    if ($nick !== $_POST['user_nick']) {
-
-        $user = new User($id);
-        $user->addToUserLog("settings", "{nick} hat seinen Namen zu " . $_POST['user_nick'] . " geändert.", 1);
+    $logUser = new User($id);
+    if ($user->nick !== $_POST['user_nick']) {
+        $logUser->addToUserLog("settings", "{nick} hat seinen Namen zu " . $_POST['user_nick'] . " geändert.", 1);
     }
 
     // Speichert Usertdaten in der Tabelle "users"
@@ -118,32 +117,22 @@ if (isset($_POST['save'])) {
 
     // Handle  image
     if (isset($_POST['profile_img_del']) && $_POST['profile_img_del'] == 1) {
-        $res = dbquery("SELECT user_profile_img FROM users WHERE user_id=" . $id . ";");
-        if (mysql_num_rows($res) > 0) {
-            $arr = mysql_fetch_array($res);
-            if (file_exists(PROFILE_IMG_DIR . "/" . $arr['user_profile_img'])) {
-                unlink(PROFILE_IMG_DIR . "/" . $arr['user_profile_img']);
-            }
-            $sql .= ",user_profile_img=''";
+        if (file_exists(PROFILE_IMG_DIR . "/" . $user->profileImage)) {
+            unlink(PROFILE_IMG_DIR . "/" . $user->profileImage);
         }
+        $sql .= ",user_profile_img=''";
     }
 
     // Handle avatar
     if (isset($_POST['avatar_img_del']) && $_POST['avatar_img_del'] == 1) {
-        $res = dbquery("SELECT user_avatar FROM users WHERE user_id=" . $id . ";");
-        if (mysql_num_rows($res) > 0) {
-            $arr = mysql_fetch_array($res);
-            if (file_exists(BOARD_AVATAR_DIR . "/" . $arr['user_avatar'])) {
-                unlink(BOARD_AVATAR_DIR . "/" . $arr['user_avatar']);
-            }
-            $sql .= ",user_avatar=''";
+        if (file_exists(BOARD_AVATAR_DIR . "/" . $user->avatar)) {
+            unlink(BOARD_AVATAR_DIR . "/" . $user->avatar);
         }
+        $sql .= ",user_avatar=''";
     }
 
     // Handle password
     if (isset($_POST['user_password']) && $_POST['user_password'] != "") {
-        $pres = dbquery("SELECT user_registered FROM users WHERE user_id='" . $id . "';");
-        $parr = mysql_fetch_row($pres);
         $sql .= ",user_password='" . saltPasswort($_POST['user_password']) . "'";
         echo "Das Passwort wurde ge&auml;ndert!<br>";
         Log::add(8, Log::INFO, $cu->nick . " ändert das Passwort von " . $_POST['user_nick'] . "");
@@ -158,9 +147,7 @@ if (isset($_POST['save'])) {
         $sql .= ",user_ban_admin_id='" . $_POST['user_ban_admin_id'] . "'";
         $sql .= ",user_ban_reason='" . addslashes($_POST['user_ban_reason']) . "'";
 
-        $usr = new User($id);
-
-        $usr->addToUserLog("account", "{nick} wird von [b]" . date("d.m.Y H:i", $ban_from) . "[/b] bis [b]" . date("d.m.Y H:i", $ban_to) . "[/b] gesperrt.\n[b]Grund:[/b] " . addslashes($_POST['user_ban_reason']) . "\n[b]Verantwortlich: [/b] " . mysql_fetch_array(dbquery("SELECT user_nick FROM admin_users WHERE user_id = " . $_POST['user_ban_admin_id']))['user_nick'], 1);
+        $logUser->addToUserLog("account", "{nick} wird von [b]" . date("d.m.Y H:i", $ban_from) . "[/b] bis [b]" . date("d.m.Y H:i", $ban_to) . "[/b] gesperrt.\n[b]Grund:[/b] " . addslashes($_POST['user_ban_reason']) . "\n[b]Verantwortlich: [/b] " . mysql_fetch_array(dbquery("SELECT user_nick FROM admin_users WHERE user_id = " . $_POST['user_ban_admin_id']))['user_nick'], 1);
     } else {
         $sql .= ",user_blocked_from=0";
         $sql .= ",user_blocked_to=0";
@@ -170,13 +157,11 @@ if (isset($_POST['save'])) {
 
     // Handle holiday mode
     if ($_POST['umod_enable'] == 1) {
-        $usr = new User($id);
-        $usr->activateUmode(true);
+        $logUser->activateUmode(true);
         $sql .= ",user_hmode_from='" . parseDatePicker('user_hmode_from', $_POST) . "'";
         $sql .= ",user_hmode_to='" . parseDatePicker('user_hmode_to', $_POST) . "'";
     } else {
-        $usr = new User($id);
-        $usr->removeUmode(true);
+        $logUser->removeUmode(true);
     }
 
     // Perform query

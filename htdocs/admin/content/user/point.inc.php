@@ -1,23 +1,21 @@
 <?PHP
+
+use EtoA\User\UserRepository;
+
 echo "<h1>Punktespeicherung</h1>";
-$res = dbquery("
-        SELECT
-            user_id,
-            user_nick
-        FROM
-            users
-        ORDER BY
-            user_nick
-        ;");
-if (mysql_num_rows($res) > 0) {
+
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
+$userNicks = $userRepository->getUserNicknames();
+if (count($userNicks) > 0) {
     echo "<b>Punkteentwicklung anzeigen f&uuml;r:</b> <select onchange=\"document.location='?page=$page&sub=$sub&user_id='+this.options[this.selectedIndex].value\">";
     echo "<option value=\"0\" style=\"font-style:italic;\">(Benutzer w&auml;hlen...)</option>";
-    while ($arr = mysql_fetch_array($res)) {
-        echo "<option value=\"" . $arr['user_id'] . "\"";
-        if (isset($_GET['user_id']) && $_GET['user_id'] == $arr['user_id']) {
+    foreach ($userNicks as $userId => $userNick) {
+        echo "<option value=\"" . $userId . "\"";
+        if (isset($_GET['user_id']) && $_GET['user_id'] == $userId) {
             echo ' selected="selected"';
         }
-        echo ">" . $arr['user_nick'] . "</option>";
+        echo ">" . $userNick . "</option>";
     }
     echo "</select><br/><br/>";
     $tblcnt = mysql_fetch_row(dbquery("
@@ -32,23 +30,12 @@ if (mysql_num_rows($res) > 0) {
 }
 
 if (isset($_GET['user_id']) && $_GET['user_id'] > 0) {
-    $res = dbquery("
-            SELECT
-                user_nick,
-                user_points,
-                user_rank,
-                user_id
-            FROM
-                users
-            WHERE
-                user_id='" . $_GET['user_id'] . "'
-            ;");
-    if (mysql_num_rows($res) > 0) {
-        $arr = mysql_fetch_array($res);
-        echo "<h2>Punktedetails f&uuml;r <a href=\"?page=$page&amp;action=edit&amp;id=" . $arr['user_id'] . "\">" . $arr['user_nick'] . "</a></h2>";
-        echo "<b>Punkte aktuell:</b> " . nf($arr['user_points']) . ", <b>Rang aktuell:</b> " . $arr['user_rank'] . "<br/><br/>";
-        echo "<img src=\"../misc/stats.image.php?user=" . $arr['user_id'] . "\" alt=\"Diagramm\" /><br/><br/>";
-        $pres = dbquery("SELECT * FROM user_points WHERE point_user_id='" . $_GET['user_id'] . "' ORDER BY point_timestamp DESC;");
+    $user = $userRepository->getUser((int) $_GET['user_id']);
+    if ($user !== null) {
+        echo "<h2>Punktedetails f&uuml;r <a href=\"?page=$page&amp;action=edit&amp;id=" . $user->id . "\">" . $user->nick . "</a></h2>";
+        echo "<b>Punkte aktuell:</b> " . nf($user->points) . ", <b>Rang aktuell:</b> " . $user->rank . "<br/><br/>";
+        echo "<img src=\"../misc/stats.image.php?user=" . $user->id . "\" alt=\"Diagramm\" /><br/><br/>";
+        $pres = dbquery("SELECT * FROM user_points WHERE point_user_id='" . $user->id . "' ORDER BY point_timestamp DESC;");
         if (mysql_num_rows($pres) > 0) {
             $points = [];
             $fleet = [];
