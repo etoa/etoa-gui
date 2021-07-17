@@ -6,9 +6,24 @@ namespace EtoA\Universe\Planet;
 
 use EtoA\Core\AbstractRepository;
 use EtoA\Universe\Entity\EntityType;
+use EtoA\Universe\Resources\BaseResources;
 
 class PlanetRepository extends AbstractRepository
 {
+    /**
+     * @return int[]
+     */
+    public function getAllIds(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select("id")
+            ->from('planets')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => (int) $row['id'], $data);
+    }
+
     /**
      * @return Planet[]
      */
@@ -28,6 +43,21 @@ class PlanetRepository extends AbstractRepository
     /**
      * @return Planet[]
      */
+    public function getPlanetsAssignedToUsers(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('planets')
+            ->where('planet_user_id > 0')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new Planet($row), $data);
+    }
+
+    /**
+     * @return Planet[]
+     */
     public function getMainPlanets(): array
     {
         $data = $this->createQueryBuilder()
@@ -35,6 +65,22 @@ class PlanetRepository extends AbstractRepository
             ->from('planets')
             ->where('planet_user_main = 1')
             ->andWhere('planet_user_id > 0')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new Planet($row), $data);
+    }
+
+    /**
+     * @return Planet[]
+     */
+    public function getMainPlanetsWithoutOwner(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('planets')
+            ->where('planet_user_main = 1')
+            ->andWhere('planet_user_id = 0')
             ->execute()
             ->fetchAllAssociative();
 
@@ -544,5 +590,30 @@ class PlanetRepository extends AbstractRepository
             ->where('id = :id')
             ->setParameter('id', $id)
             ->execute();
+    }
+
+    public function getGlobalResources(): BaseResources
+    {
+        $data = $this->createQueryBuilder()
+            ->select(
+                'SUM(planet_res_metal) as metal',
+                'SUM(planet_res_crystal) as crystal',
+                'SUM(planet_res_plastic) as plastic',
+                'SUM(planet_res_fuel) as fuel',
+                'SUM(planet_res_food) as food'
+            )
+            ->from('planets', 'p')
+            ->innerJoin('p', 'users', 'u', 'planet_user_id = user_id AND user_ghost = 0')
+            ->execute()
+            ->fetchAssociative();
+
+        $res = new BaseResources();
+        $res->metal = (int) $data['metal'];
+        $res->crystal = (int) $data['crystal'];
+        $res->plastic = (int) $data['plastic'];
+        $res->fuel = (int) $data['fuel'];
+        $res->food = (int) $data['food'];
+
+        return $res;
     }
 }

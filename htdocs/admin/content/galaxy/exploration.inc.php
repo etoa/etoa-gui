@@ -1,22 +1,18 @@
 <?PHP
 
+use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\Cell\CellRepository;
+use EtoA\User\UserRepository;
+
+global $app;
+
 $errorMessage = null;
 $successMessage = null;
-$users = [];
-$res = dbquery("
-SELECT
-    user_id,
-    user_nick
-FROM
-    users
-ORDER BY
-    user_nick
-;");
-if (mysql_num_rows($res) > 0) {
-    while ($arr = mysql_fetch_assoc($res)) {
-        $users[$arr['user_id']] = $arr['user_nick'];
-    }
-} else {
+
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
+$users = $userRepository->getUserNicknames();
+if (count($users) === 0) {
     $errorMessage = 'Keine Benutzer vorhanden!';
 }
 
@@ -41,31 +37,16 @@ if (isset($_GET['user_id']) && $_GET['user_id'] > 0) {
         $cy = intval($_POST['cy']);
         $radius = abs(intval($_POST['radius']));
 
-        $res = dbQuerySave(
-            "
-            SELECT
-                id
-            FROM
-                cells
-            WHERE
-                sx=?
-                AND sy=?
-                AND cx=?
-                AND cy=?;",
-            array(
-                $sx,
-                $sy,
-                $cx,
-                $cy
-            )
-        );
-        if (mysql_num_rows($res)) {
-            $arr = mysql_fetch_row($res);
-            $cell = new Cell($arr[0]);
-            if ($cell->isValid()) {
-                $user->setDiscovered($cell->absX(), $cell->absY(), $radius);
-                $successMessage = 'Koordinaten erkundet!';
-            }
+        /** @var CellRepository $cellRepository */
+        $cellRepository = $app[CellRepository::class];
+        /** @var ConfigurationService $config */
+        $config = $app[ConfigurationService::class];
+
+        $cell = $cellRepository->getCellIdByCoordinates($sx, $sy, $cx, $cy);
+        if ($cell !== null) {
+            [$absX, $absY] = $cell->getAbsoluteCoordinates($config->param1Int('num_of_cells'), $config->param2Int('num_of_cells'));
+            $user->setDiscovered($absX, $absY, $radius);
+            $successMessage = 'Koordinaten erkundet!';
         } else {
             $errorMessage = 'Ungültige Koordinate!';
         }

@@ -8,6 +8,20 @@ use EtoA\Core\AbstractRepository;
 
 class EmptySpaceRepository extends AbstractRepository
 {
+    /**
+     * @return int[]
+     */
+    public function getAllIds(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select("id")
+            ->from('space')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => (int) $row['id'], $data);
+    }
+
     public function count(): int
     {
         return (int) $this->createQueryBuilder()

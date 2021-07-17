@@ -99,12 +99,3 @@ define("MIN_MARKET_LEVEL_SHIP", $config->getInt('min_market_level_ship'));
 
 // Mindest Marktlevel um Auktionen anzubieten und selber zu bieten
 define("MIN_MARKET_LEVEL_AUCTION", $config->getInt('min_market_level_auction'));
-
-// Legt fest, wieviele vergangene Werte bei der Marktkursberechnung mit einbezogen werden
-define('MARKET_RATES_COUNT', $config->getInt('market_rates_count'));
-
-// Minimaler Marktkurs
-define('MARKET_RATE_MIN', $config->getFloat('market_rate_min'));
-
-// Maximaler Marktkurs
-define('MARKET_RATE_MAX', $config->getFloat('market_rate_max'));

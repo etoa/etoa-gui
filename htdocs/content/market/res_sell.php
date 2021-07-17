@@ -1,5 +1,7 @@
 <?php
 
+use EtoA\Market\MarketHandler;
+
 $cnt = 0;
 $cnt_error = 0;
 
@@ -246,4 +248,6 @@ if ($cnt_error > 0) {
 }
 
 // Gekaufte/Verkaufte Rohstoffe in Config-DB speichern für Kursberechnung
-MarketHandler::addResToRate($supplyTotal, $demandTotal);
+/** @var MarketHandler */
+$marketHandler = $app[MarketHandler::class];
+$marketHandler->addResToRate($supplyTotal, $demandTotal);
