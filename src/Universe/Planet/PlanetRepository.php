@@ -11,6 +11,20 @@ use EtoA\Universe\Resources\BaseResources;
 class PlanetRepository extends AbstractRepository
 {
     /**
+     * @return int[]
+     */
+    public function getAllIds(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select("id")
+            ->from('planets')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => (int) $row['id'], $data);
+    }
+
+    /**
      * @return Planet[]
      */
     public function getUserPlanets(int $userId): array
@@ -29,6 +43,21 @@ class PlanetRepository extends AbstractRepository
     /**
      * @return Planet[]
      */
+    public function getPlanetsAssignedToUsers(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('planets')
+            ->where('planet_user_id > 0')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new Planet($row), $data);
+    }
+
+    /**
+     * @return Planet[]
+     */
     public function getMainPlanets(): array
     {
         $data = $this->createQueryBuilder()
@@ -36,6 +65,22 @@ class PlanetRepository extends AbstractRepository
             ->from('planets')
             ->where('planet_user_main = 1')
             ->andWhere('planet_user_id > 0')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new Planet($row), $data);
+    }
+
+    /**
+     * @return Planet[]
+     */
+    public function getMainPlanetsWithoutOwner(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('planets')
+            ->where('planet_user_main = 1')
+            ->andWhere('planet_user_id = 0')
             ->execute()
             ->fetchAllAssociative();
 

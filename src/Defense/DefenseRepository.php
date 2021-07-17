@@ -18,6 +18,28 @@ class DefenseRepository extends AbstractRepository
         $this->changeDefenseCount($defenseId, $amount, $userId, $entityId);
     }
 
+    public function setDefenseCount(int $id, int $count): void
+    {
+        $this->createQueryBuilder()
+            ->update('defense')
+            ->set('deflist_count', ':count')
+            ->where('deflist_id = :id')
+            ->setParameters([
+                'count' => $count,
+                'id' => $id,
+            ])->execute();
+    }
+
+    public function removeEntry(int $id): void
+    {
+        $this->createQueryBuilder()
+            ->delete('deflist')
+            ->where('deflist_id = :id')
+            ->setParameters([
+                'id' => $id,
+            ])->execute();
+    }
+
     public function removeDefense(int $defenseId, int $amount, int $userId, int $entityId): int
     {
         if ($amount < 0) {
@@ -135,49 +157,20 @@ class DefenseRepository extends AbstractRepository
             ->execute();
     }
 
-    /**
-     * @return DefenseQueueItem[]
-     */
-    public function findQueueItemsForUser(int $userId): array
-    {
-        $data = $this->createQueryBuilder()
-            ->select('*')
-            ->from('def_queue')
-            ->where('queue_user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->orderBy('queue_starttime', 'ASC')
-            ->execute()
-            ->fetchAllAssociative();
-
-        return array_map(fn ($row) => new DefenseQueueItem($row), $data);
-    }
-
-    public function saveQueueItem(DefenseQueueItem $item): void
+    public function cleanupEmpty(): void
     {
         $this->createQueryBuilder()
-            ->update('def_queue')
-            ->set('queue_user_id', 'userId')
-            ->set('queue_def_id', 'defenseId')
-            ->set('queue_entity_id', 'entityId')
-            ->set('queue_cnt', 'count')
-            ->set('queue_starttime', 'startTime')
-            ->set('queue_endtime', 'endTime')
-            ->set('queue_objtime', 'objectTime')
-            ->set('queue_build_type', 'buildType')
-            ->set('queue_user_click_time', 'userClickTime')
-            ->where('id = :id')
-            ->setParameters([
-                'id' => $item->id,
-                'userId' => $item->userId,
-                'defenseId' => $item->defenseId,
-                'entityId' => $item->entityId,
-                'count' => $item->count,
-                'startTime' => $item->startTime,
-                'endTime' => $item->endTime,
-                'objectTime' => $item->objectTime,
-                'buildType' => $item->buildType,
-                'userClickTime' => $item->userClickTime,
-            ])
+            ->delete('deflist')
+            ->where('deflist_count = 0')
             ->execute();
+    }
+
+    public function count(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(*)')
+            ->from('deflist')
+            ->execute()
+            ->fetchOne();
     }
 }

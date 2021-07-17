@@ -8,6 +8,20 @@ use EtoA\Core\AbstractRepository;
 
 class CellRepository extends AbstractRepository
 {
+    /**
+     * @return int[]
+     */
+    public function getAllIds(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select("id")
+            ->from('cells')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => (int) $row['id'], $data);
+    }
+
     public function count(): int
     {
         return (int) $this->createQueryBuilder()
@@ -191,5 +205,26 @@ class CellRepository extends AbstractRepository
             ->fetchAllAssociative();
 
         return array_map(fn (array $arr) => new CellPopulation($arr), $data);
+    }
+
+    public function getCellIdByCoordinates(int $sx, int $sy, int $cx, int $cy): ?Cell
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('cells')
+            ->where('sx = :sx')
+            ->andWhere('sy = :sy')
+            ->andWhere('cx = :cx')
+            ->andWhere('cy = :cy')
+            ->setParameters([
+                'sx' => $sx,
+                'sy' => $sy,
+                'cx' => $cx,
+                'cy' => $cy,
+            ])
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? new Cell($data) : null;
     }
 }

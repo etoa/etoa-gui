@@ -27,6 +27,7 @@ trait DbTestTrait
         $this->connection->executeQuery('TRUNCATE buildlist');
         $this->connection->executeQuery('TRUNCATE shiplist');
         $this->connection->executeQuery('TRUNCATE deflist');
+        $this->connection->executeQuery('TRUNCATE def_queue');
         $this->connection->executeQuery('TRUNCATE missilelist');
         $this->connection->executeQuery('TRUNCATE missile_flights');
         $this->connection->executeQuery('TRUNCATE quest_tasks');

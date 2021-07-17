@@ -1,7 +1,10 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\Defense;
+use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Defense\DefenseRepository;
+use Symfony\Component\HttpFoundation\Request;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -10,9 +13,12 @@ $config = $app[ConfigurationService::class];
 $defenseDataRepository = $app[\EtoA\Defense\DefenseDataRepository::class];
 $defenseNames = $defenseDataRepository->getDefenseNames(true);
 
-/** @var DefenseRepository */
+/** @var DefenseRepository $defenseRepository */
 $defenseRepository = $app[DefenseRepository::class];
+/** @var DefenseQueueRepository $defenseQueueRepository */
+$defenseQueueRepository = $app[DefenseQueueRepository::class];
 
+$request = Request::createFromGlobals();
 //
 // Battlepoints
 //
@@ -25,16 +31,13 @@ if ($sub == "battlepoints") {
     echo "Nach jeder direkter &Auml;nderung an den Verteidigungsanlagen via Datenbank m&uuml;ssen die Punkte neu berechnet werden: ";
     echo "<br/><br/><input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";
     echo "<h2>Battlepoints</h2>";
-    $res = dbquery("SELECT
-            def_id,
-            def_name,
-            def_points
-        FROM defense
-        ORDER BY def_points DESC, def_name DESC;");
-    if (mysql_num_rows($res) > 0) {
+    $defenses = $defenseDataRepository->getAllDefenses();
+    usort($defenses, fn (Defense $a, Defense $b) => $b->points <=> $a->points);
+
+    if (count($defenses) > 0) {
         echo "<table class=\"tb\">";
-        while ($arr = mysql_fetch_array($res)) {
-            echo "<tr><th>" . $arr['def_name'] . "</th><td style=\"width:70%\">" . $arr['def_points'] . "</td></tr>";
+        foreach ($defenses as $defense) {
+            echo "<tr><th>" . $defense->name . "</th><td style=\"width:70%\">" . $defense->points . "</td></tr>";
         }
         echo "</table>";
     }
@@ -107,30 +110,30 @@ elseif ($sub == "queue") {
 
         // Suchquery generieren
         $sql = '';
-        if ($_SESSION['defqueue']['query'] == "") {
-            if ($_POST['planet_id'] != "") {
+        if (!isset($_SESSION['defqueue']['query']) || $_SESSION['defqueue']['query'] == "") {
+            if ($request->request->getInt('planet_id') > 0) {
                 if ($sql != "") $sql .= " AND ";
-                $sql .= "queue_entity_id=" . $_POST['planet_id'];
+                $sql .= "queue_entity_id=" . $request->request->getInt('planet_id');
             }
-            if ($_POST['planet_name'] != "") {
+            if ((bool) $request->request->get('planet_name')) {
                 if ($sql != "") $sql .= " AND ";
                 if (stristr($_POST['qmode']['planet_name'], "%")) $addchars = "%";
                 else $addchars = "";
                 $sql .= "planet_name " . stripslashes($_POST['qmode']['planet_name']) . $_POST['planet_name'] . "$addchars'";
             }
-            if ($_POST['user_id'] != "") {
+            if ($request->request->getInt('user_id') > 0) {
                 if ($sql != "") $sql .= " AND ";
-                $sql .= "queue_user_id=" . $_POST['user_id'];
+                $sql .= "queue_user_id=" . $request->request->getInt('user_id');
             }
-            if ($_POST['user_nick'] != "") {
+            if ((bool) $request->request->get('user_nick')) {
                 if ($sql != "") $sql .= " AND ";
                 if (stristr($_POST['qmode']['user_nick'], "%")) $addchars = "%";
                 else $addchars = "";
                 $sql .= "user_nick " . stripslashes($_POST['qmode']['user_nick']) . $_POST['user_nick'] . "$addchars'";
             }
-            if ($_POST['def_id'] != "") {
+            if ($request->request->getInt('def_id') > 0) {
                 if ($sql != "") $sql .= " AND ";
-                $sql .= "queue_def_id=" . $_POST['def_id'];
+                $sql .= "queue_def_id=" . $request->request->getInt('def_id');
             }
 
             if ($sql != "") {
@@ -203,7 +206,7 @@ elseif ($sub == "queue") {
                 echo "<td class=\"tbldata\" $style>" . $arr['queue_id'] . "</a></td>";
                 echo "<td class=\"tbldata\"$style " . mTT($arr['def_name'], "<b>Schiff-ID:</b> " . $arr['def_id']) . ">" . $arr['def_name'] . "</td>";
                 echo "<td class=\"tbldata\"$style>" . nf($arr['queue_cnt']) . "</td>";
-                echo "<td class=\"tbldata\"$style " . mTT($arr['planet_name'], "<b>Planet-ID:</b> " . $arr['id'] . "<br/><b>Koordinaten:</b> " . $arr['cell_sx'] . "/" . $arr['cell_sy'] . " : " . $arr['cell_cx'] . "/" . $arr['cell_cy'] . " : " . $arr['planet_solsys_pos']) . ">" . cut_string($arr['planet_name'], 11) . "</td>";
+                echo "<td class=\"tbldata\"$style " . mTT($arr['planet_name'], "<b>Planet-ID:</b> " . $arr['id'] . "<br/><b>Koordinaten:</b> " . $arr['sx'] . "/" . $arr['sy'] . " : " . $arr['cx'] . "/" . $arr['cy'] . " : " . $arr['pos']) . ">" . cut_string($arr['planet_name'], 11) . "</td>";
                 echo "<td class=\"tbldata\"$style " . mTT($arr['user_nick'], "<b>User-ID:</b> " . $arr['user_id'] . "<br/><b>Punkte:</b> " . nf($arr['user_points'])) . ">" . cut_string($arr['user_nick'], 11) . "</td>";
                 echo "<td class=\"tbldata\"$style>" . df($arr['queue_starttime'], 1) . "</td>";
                 echo "<td class=\"tbldata\"$style>" . df($arr['queue_endtime'], 1) . "</td>";
@@ -225,50 +228,29 @@ elseif ($sub == "queue") {
     //
     elseif (isset($_GET['action']) && $_GET['action'] == "edit" && $_GET['id'] > 0) {
         // Änderungen speichern
-        if ($_POST['save'] != "") {
-            dbquery("
-                UPDATE
-                    def_queue
-                SET
-            queue_cnt='" . $_POST['queue_cnt'] . "',
-            queue_starttime=UNIX_TIMESTAMP('" . $_POST['queue_starttime'] . "'),
-            queue_endtime=UNIX_TIMESTAMP('" . $_POST['queue_endtime'] . "')
-                WHERE
-                    queue_id='" . $_GET['id'] . "';");
+        if ($request->request->has('save')) {
+            $queueItem = $defenseQueueRepository->getQueueItem((int) $_GET['id']);
+            if ($queueItem !== null) {
+                $queueItem->count = (int) $_POST['queue_cnt'];
+                $queueItem->startTime = (new \DateTime($_POST['queue_starttime']))->getTimestamp();
+                $queueItem->endTime = (new \DateTime($_POST['queue_endtime']))->getTimestamp();
+
+                $defenseQueueRepository->saveQueueItem($queueItem);
+            }
         }
 
         // Auftrag löschen
-        elseif ($_POST['del'] != "") {
-            dbquery("
-                DELETE FROM
-                    def_queue
-                WHERE
-                    queue_id='" . $_GET['id'] . "';");
+        elseif ($request->request->has('del')) {
+            $defenseQueueRepository->deleteQueueItem((int) $_GET['id']);
             echo "Datensatz entfernt!<br/><br/>";
         }
 
         // Auftrag abschliessen
-        elseif ($_POST['build_finish'] != "") {
-            $res = dbquery("
-                SELECT
-                    queue_entity_id,
-                    queue_user_id,
-                    queue_def_id,
-                    queue_cnt
-                FROM
-              def_queue
-          WHERE
-              queue_id='" . $_GET['id'] . "'
-          ;");
-            if (mysql_num_rows($res) > 0) {
-                $arr = mysql_fetch_array($res);
-                $defenseRepository->addDefense((int) $arr['queue_def_id'], (int) $arr['queue_cnt'], (int) $arr['queue_user_id'], (int) $arr['queue_entity_id']);
-                dbquery("
-                    DELETE FROM
-                        def_queue
-                    WHERE
-                        queue_id='" . $_GET['id'] . "'
-                    ;");
+        elseif ($request->request->has('build_finish')) {
+            $queueItem = $defenseQueueRepository->getQueueItem((int) $_GET['id']);
+            if ($queueItem !== null) {
+                $defenseRepository->addDefense($queueItem->defenseId, $queueItem->count, $queueItem->userId, $queueItem->entityId);
+                $defenseQueueRepository->deleteQueueItem((int) $_GET['id']);
             }
             echo "Bau abgeschlossen!<br/><br/>";
         }
@@ -361,8 +343,8 @@ elseif ($sub == "queue") {
         echo "</select></td>";
         echo "</table>";
         echo "<br/><input type=\"submit\" class=\"button\" name=\"defqueue_search\" value=\"Suche starten\" /></form>";
-        $tblcnt = mysql_fetch_row(dbquery("SELECT COUNT(queue_id) FROM def_queue;"));
-        echo "<br/>Es sind " . nf($tblcnt[0]) . " Eintr&auml;ge in der Datenbank vorhanden.<br/>";
+        $tblcnt = $defenseQueueRepository->count();
+        echo "<br/>Es sind " . nf($tblcnt) . " Eintr&auml;ge in der Datenbank vorhanden.<br/>";
     }
 }
 
@@ -447,13 +429,8 @@ else {
         // Verteidigung hinzufügen
         if (isset($_POST['new'])) {
             $updata = explode(":", $_POST['planet_id']);
-            if (mysql_num_rows(dbquery("SELECT deflist_id FROM deflist WHERE deflist_entity_id=" . $updata[0] . " AND deflist_def_id=" . $_POST['def_id'] . ";")) == 0) {
-                dbquery("INSERT INTO deflist (deflist_entity_id,deflist_user_id,deflist_def_id,deflist_count) VALUES (" . $updata[0] . "," . $updata[1] . "," . $_POST['def_id'] . "," . $_POST['deflist_count'] . ");");
-                echo "Verteidigung wurde hinzugef&uuml;gt!<br/>";
-            } else {
-                dbquery("UPDATE deflist SET deflist_count=deflist_count+" . $_POST['deflist_count'] . " WHERE deflist_entity_id=" . $updata[0] . " AND deflist_def_id=" . $_POST['def_id'] . ";");
-                echo "Verteidigung wurde hinzugef&uuml;gt!<br/>";
-            }
+            $defenseRepository->addDefense((int) $_POST['def_id'], (int) $_POST['deflist_count'], (int) $updata[1], (int) $updata[0]);
+            echo "Verteidigung wurde hinzugefügt!<br/>";
             $sql = " AND planets.id=" . $updata[0];
             $_SESSION['defedit']['query'] = "";
 
@@ -510,25 +487,25 @@ else {
         }
 
         // Suchquery generieren
-        elseif ($_SESSION['defedit']['query'] == "") {
-            if ($_POST['planet_id'] != "")
-                $sql .= " AND id='" . $_POST['planet_id'] . "'";
-            if ($_POST['planet_name'] != "") {
+        elseif (!isset($_SESSION['defedit']['query']) || $_SESSION['defedit']['query'] == "") {
+            if ($request->request->getInt('planet_id') > 0)
+                $sql .= " AND id='" . $request->request->getInt('planet_id') . "'";
+            if ((bool) $request->request->get('planet_name')) {
                 if (stristr($_POST['qmode']['planet_name'], "%"))
                     $addchars = "%";
                 else $addchars = "";
                 $sql .= " AND planet_name " . stripslashes($_POST['qmode']['planet_name']) . $_POST['planet_name'] . "$addchars'";
             }
-            if ($_POST['user_id'] != "")
-                $sql .= " AND user_id='" . $_POST['user_id'] . "'";
-            if ($_POST['user_nick'] != "") {
+            if ($request->request->getInt('user_id') > 0)
+                $sql .= " AND user_id='" . $request->request->getInt('user_id') . "'";
+            if ((bool) $request->request->get('user_nick')) {
                 if (stristr($_POST['qmode']['user_nick'], "%"))
                     $addchars = "%";
                 else $addchars = "";
                 $sql .= " AND user_nick " . stripslashes($_POST['qmode']['user_nick']) . $_POST['user_nick'] . "$addchars'";
             }
-            if ($_POST['def_id'] != "")
-                $sql .= " AND def_id='" . $_POST['def_id'] . "'";
+            if ($request->request->getInt('def_id') > 0)
+                $sql .= " AND def_id='" . $request->request->getInt('def_id') . "'";
 
 
             $sql = $sqlstart . $sql . $sqlend;
@@ -538,18 +515,13 @@ else {
 
 
         if (isset($_POST['save'])) {
-            dbquery("UPDATE
-                    deflist
-                SET
-                    deflist_count='" . $_POST['deflist_count'] . "'
-                WHERE
-                    deflist_id='" . $_POST['deflist_id'] . "';");
+            $defenseRepository->setDefenseCount((int) $_POST['deflist_id'], (int) $_POST['deflist_count']);
             success_msg("Gespeichert");
         } elseif (isset($_POST['del'])) {
-            dbquery("DELETE FROM deflist WHERE deflist_id='" . $_POST['deflist_id'] . "';");
+            $defenseRepository->removeEntry((int) $_POST['deflist_id']);
             success_msg("Gelöscht");
         } elseif (isset($_GET['cleanup']) && $_GET['cleanup'] == 1) {
-            dbquery("DELETE FROM deflist WHERE deflist_count=0;");
+            $defenseRepository->cleanupEmpty();
             success_msg("Aufgeräumt");
         }
 
@@ -702,8 +674,8 @@ else {
             }
         }
 
-        $tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM deflist;"));
-        echo "Es sind " . nf($tblcnt[0]) . " Eintr&auml;ge in der Datenbank vorhanden.<br/><br />";
+        $tblcnt = $defenseRepository->count();
+        echo "Es sind " . nf($tblcnt) . " Eintr&auml;ge in der Datenbank vorhanden.<br/><br />";
 
 
         // Suchmaske

@@ -7,7 +7,7 @@ namespace EtoA\User;
 use BackendMessage;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Defense\DefenseRepository;
+use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -22,7 +22,7 @@ class UserService
     private BuildingRepository $buildingRepository;
     private TechnologyRepository $technologyRepository;
     private ShipRepository $shipRepository;
-    private DefenseRepository $defenseRepository;
+    private DefenseQueueRepository $defenseQueueRepository;
 
     public function __construct(
         ConfigurationService $config,
@@ -31,7 +31,7 @@ class UserService
         BuildingRepository $buildingRepository,
         TechnologyRepository $technologyRepository,
         ShipRepository $shipRepository,
-        DefenseRepository $defenseRepository
+        DefenseQueueRepository $defenseRepository
     ) {
         $this->config = $config;
         $this->userRepository = $userRepository;
@@ -39,7 +39,7 @@ class UserService
         $this->buildingRepository = $buildingRepository;
         $this->technologyRepository = $technologyRepository;
         $this->shipRepository = $shipRepository;
-        $this->defenseRepository = $defenseRepository;
+        $this->defenseQueueRepository = $defenseRepository;
     }
 
     public function removeInactive(bool $manual = false): int
@@ -156,12 +156,12 @@ die Spielleitung";
                 $this->shipRepository->saveQueueItem($item);
             }
 
-            $defQueueItems = $this->defenseRepository->findQueueItemsForUser($user->id);
+            $defQueueItems = $this->defenseQueueRepository->findQueueItemsForUser($user->id);
             foreach ($defQueueItems as $item) {
                 $item->buildType = 0;
                 $item->startTime += $hmodTime;
                 $item->endTime += $hmodTime;
-                $this->defenseRepository->saveQueueItem($item);
+                $this->defenseQueueRepository->saveQueueItem($item);
             }
 
             $this->userRepository->addSpecialistTime($user->id, $hmodTime);
