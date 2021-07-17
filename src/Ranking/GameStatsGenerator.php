@@ -12,6 +12,7 @@ use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\Universe\Star\SolarTypeRepository;
+use EtoA\User\UserPropertiesRepository;
 use Exception;
 
 class GameStatsGenerator
@@ -26,6 +27,7 @@ class GameStatsGenerator
     private TechnologyRepository $technologyRepository;
     private ShipRepository $shipRepository;
     private DefenseRepository $defenseRepository;
+    private UserPropertiesRepository $userPropertiesRepository;
 
     public function __construct(
         PlanetTypeRepository $planetTypeRepository,
@@ -35,7 +37,8 @@ class GameStatsGenerator
         BuildingRepository $buildingRepository,
         TechnologyRepository $technologyRepository,
         ShipRepository $shipRepository,
-        DefenseRepository $defenseRepository
+        DefenseRepository $defenseRepository,
+        UserPropertiesRepository $userPropertiesRepository
     ) {
         $this->planetTypeRepository = $planetTypeRepository;
         $this->solarTypeRepository = $solarTypeRepository;
@@ -45,6 +48,7 @@ class GameStatsGenerator
         $this->technologyRepository = $technologyRepository;
         $this->shipRepository = $shipRepository;
         $this->defenseRepository = $defenseRepository;
+        $this->userPropertiesRepository = $userPropertiesRepository;
     }
 
     public function readCached(): ?string
@@ -532,33 +536,18 @@ class GameStatsGenerator
     private function designStats(int $limit): string
     {
         $out = "<table width=\"100%\" class=\"tb\">";
-        $out .= "<tr><th  colspan=\"4\">Design</th></tr>";
-        $res = dbquery("
-            SELECT
-                css_style,
-                COUNT(id) as cnt
-            FROM
-                user_properties
-            GROUP BY
-                css_style
-            ORDER BY
-                cnt DESC
-            LIMIT $limit;");
+        $out .= "<tr><th colspan=\"4\">Design</th></tr>";
         $rank = 1;
         $total = 0;
-        $i = array();
-        $num = mysql_num_rows($res);
-        while ($row = mysql_fetch_array($res)) {
-            $i[] = $row;
-            $total += $row['cnt'];
-
-            $out .= "<tr><td >" . $rank . "</td>";
-            $out .= $row['css_style'] != ""
-                ? "<td >" . strtr($row['css_style'], ["css_style/" => ""]) . "</td>"
-                : "<td ><i>Standard</i></td>";
-            $out .= "<td >" . nf($row['cnt']) . "</td>";
-            $out .= "<td >" . round(100 / $total * $row['cnt'], 2) . "%</td></tr>";
-            $rank++;
+        foreach ($this->userPropertiesRepository->getDesignStats($limit) as $arr) {
+            $out .= "<tr>
+                <td>" . $rank++ . "</td>";
+            $out .= $arr['css_style'] != ""
+                ? "<td>" . strtr($arr['css_style'], ["css_style/" => ""]) . "</td>"
+                : "<td><i>Standard</i></td>";
+            $out .= "<td>" . nf($arr['cnt']) . "</td>";
+            $out .= "<td>" . round(100 / $total * (int) $arr['cnt'], 2) . "%</td></tr>";
+            $total += (int) $arr['cnt'];
         }
         $out .= "</table>";
 
@@ -568,33 +557,18 @@ class GameStatsGenerator
     private function imagePackStats(int $limit): string
     {
         $out = "<table width=\"100%\" class=\"tb\">";
-        $out .= "<tr><th  colspan=\"4\">Bildpaket</th></tr>";
-        $res = dbquery("
-        SELECT
-            image_url,
-            COUNT(id) as cnt
-        FROM
-            user_properties
-        GROUP BY
-            image_url
-        ORDER BY
-            cnt DESC
-        LIMIT $limit;");
+        $out .= "<tr><th colspan=\"4\">Bildpaket</th></tr>";
         $rank = 1;
         $total = 0;
-        $i = array();
-        $num = mysql_num_rows($res);
-        while ($arr = mysql_fetch_array($res)) {
-            array_push($i, $arr);
-            $total += $arr['cnt'];
-
-            $out .= "<tr><td >" . $rank . "</td>";
+        foreach ($this->userPropertiesRepository->getImagePackStats($limit) as $arr) {
+            $out .= "<tr>
+                <td>" . $rank++ . "</td>";
             $out .= $arr['image_url'] != ""
-                ? "<td >" . strtr($arr['image_url'], ["images/themes/" => ""]) . "</td>"
-                : "<td ><i>Standard</i></td>";
-            $out .= "<td >" . nf($arr['cnt']) . "</td>";
-            $out .= "<td >" . round(100 / $total * $arr['cnt'], 2) . "%</td></tr>";
-            $rank++;
+                ? "<td>" . strtr($arr['image_url'], ["images/themes/" => ""]) . "</td>"
+                : "<td><i>Standard</i></td>";
+            $out .= "<td>" . nf($arr['cnt']) . "</td>";
+            $out .= "<td>" . round(100 / $total * (int) $arr['cnt'], 2) . "%</td></tr>";
+            $total += (int) $arr['cnt'];
         }
         $out .= "</table>";
 
@@ -604,33 +578,18 @@ class GameStatsGenerator
     private function imageExtensionStats(int $limit): string
     {
         $out = "<table width=\"100%\" class=\"tb\">";
-        $out .= "<tr><th  colspan=\"4\">Bild-Erweiterung</th></tr>";
-        $res = dbquery("
-        SELECT
-            image_ext,
-            COUNT(id) as cnt
-        FROM
-            user_properties
-        GROUP BY
-            image_ext
-        ORDER BY
-            cnt DESC
-        LIMIT $limit;");
+        $out .= "<tr><th colspan=\"4\">Bild-Erweiterung</th></tr>";
         $rank = 1;
         $total = 0;
-        $i = array();
-        $num = mysql_num_rows($res);
-        while ($arr = mysql_fetch_array($res)) {
-            array_push($i, $arr);
-            $total += $arr['cnt'];
-
-            $out .= "<tr><td >" . $rank . "</td>";
+        foreach ($this->userPropertiesRepository->getImageExtensionStats($limit) as $arr) {
+            $out .= "<tr>
+                <td>" . $rank++ . "</td>";
             $out .= $arr['image_ext'] != ""
-                ? "<td >" . $arr['image_ext'] . "</td>"
-                : "<td ><i>Standard</i></td>";
-            $out .= "<td >" . nf($arr['cnt']) . "</td>";
-            $out .= "<td >" . round(100 / $total * $arr['cnt'], 2) . "%</td></tr>";
-            $rank++;
+                ? "<td>" . $arr['image_ext'] . "</td>"
+                : "<td><i>Standard</i></td>";
+            $out .= "<td>" . nf($arr['cnt']) . "</td>";
+            $out .= "<td>" . round(100 / $total * (int) $arr['cnt'], 2) . "%</td></tr>";
+            $total += (int) $arr['cnt'];
         }
 
         $out .= "</table>";
