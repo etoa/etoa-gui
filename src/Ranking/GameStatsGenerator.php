@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace EtoA\Ranking;
 
+use EtoA\Building\BuildingRepository;
+use EtoA\Defense\DefenseRepository;
 use EtoA\Race\RaceDataRepository;
+use EtoA\Ship\ShipRepository;
+use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\Universe\Star\SolarTypeRepository;
@@ -14,23 +18,33 @@ class GameStatsGenerator
 {
     private const GAME_STATS_FILE = CACHE_ROOT . "/out/gamestats.html";
 
-    private const ROW_LIMIT = 15;
-
     private PlanetTypeRepository $planetTypeRepository;
     private SolarTypeRepository $solarTypeRepository;
     private RaceDataRepository $raceDataRepository;
     private PlanetRepository $planetRepository;
+    private BuildingRepository $buildingRepository;
+    private TechnologyRepository $technologyRepository;
+    private ShipRepository $shipRepository;
+    private DefenseRepository $defenseRepository;
 
     public function __construct(
         PlanetTypeRepository $planetTypeRepository,
         SolarTypeRepository $solarTypeRepository,
         RaceDataRepository $raceDataRepository,
-        PlanetRepository $planetRepository
+        PlanetRepository $planetRepository,
+        BuildingRepository $buildingRepository,
+        TechnologyRepository $technologyRepository,
+        ShipRepository $shipRepository,
+        DefenseRepository $defenseRepository
     ) {
         $this->planetTypeRepository = $planetTypeRepository;
         $this->solarTypeRepository = $solarTypeRepository;
         $this->raceDataRepository = $raceDataRepository;
         $this->planetRepository = $planetRepository;
+        $this->buildingRepository = $buildingRepository;
+        $this->technologyRepository = $technologyRepository;
+        $this->shipRepository = $shipRepository;
+        $this->defenseRepository = $defenseRepository;
     }
 
     public function readCached(): ?string
@@ -338,39 +352,23 @@ class GameStatsGenerator
     {
         $out = "<table width=\"100%\" class=\"tb\">";
         $out .= "<tr><th  colspan=\"4\">Schiffe ohne Flotten (Beste Leistung, Gesamt)</th></tr>";
-        $res = dbquery("
-        SELECT
-            ships.ship_name,
-            SUM(shiplist.shiplist_count+shiplist.shiplist_bunkered) as cnt,
-            MAX(shiplist.shiplist_count+shiplist.shiplist_bunkered) as max
-        FROM
-            ships
-        INNER JOIN
-            (
-                shiplist
-            INNER JOIN
-                users
-            ON
-                shiplist_user_id=user_id
-                AND user_ghost=0
-                AND user_hmode_from=0
-                AND user_hmode_to=0
-            )
-        ON
-            shiplist_ship_id=ship_id
-            AND ships.special_ship=0
-        GROUP BY
-            ships.ship_id
-        ORDER BY
-            cnt DESC;");
         $rank = 1;
         $total = 0;
-        while ($arr = mysql_fetch_array($res)) {
-            $out .= "<tr><td >" . $rank . "</td><td >" . $arr['ship_name'] . "</td><td >" . nf($arr['max']) . "</td><td >" . nf($arr['cnt']) . "</td></tr>";
+        foreach ($this->shipRepository->getOverallCount() as $arr) {
+            $out .= "<tr>
+                <td>" . $rank . "</td>
+                <td>" . $arr['name'] . "</td>
+                <td>" . nf($arr['max']) . "</td>
+                <td>" . nf($arr['cnt']) . "</td>
+            </tr>";
             $rank++;
             $total += $arr['cnt'];
         }
-        $out .= "<tr><td  colspan=\"2\"><b>Total</b></td><td >&nbsp;</td><td ><b>" . nf($total) . "</b></td></tr>";
+        $out .= "<tr>
+            <td colspan=\"2\"><b>Total</b></td>
+            <td>&nbsp;</td>
+            <td><b>" . nf($total) . "</b></td>
+        </tr>";
         $out .= "</table>";
 
         return $out;
@@ -379,39 +377,24 @@ class GameStatsGenerator
     private function overallDefenseInUniverse(): string
     {
         $out = "<table width=\"100%\" class=\"tb\">";
-        $out .= "<tr><th  colspan=\"4\">Verteidigung</th></tr>";
-        $res = dbquery("
-        SELECT
-            defense.def_name,
-            SUM(deflist.deflist_count) as cnt,
-            MAX(deflist.deflist_count) as max
-        FROM
-            defense
-        INNER JOIN
-            (
-                deflist
-            INNER JOIN
-                users
-            ON
-                deflist_user_id=user_id
-                AND user_ghost=0
-                AND user_hmode_from=0
-                AND user_hmode_to=0
-            )
-        ON
-            deflist_def_id=def_id
-        GROUP BY
-            defense.def_id
-        ORDER BY
-            cnt DESC;");
+        $out .= "<tr><th colspan=\"4\">Verteidigung</th></tr>";
         $rank = 1;
         $total = 0;
-        while ($arr = mysql_fetch_array($res)) {
-            $out .= "<tr><td >" . $rank . "</td><td >" . $arr['def_name'] . "</td><td >" . nf($arr['max']) . "</td><td >" . nf($arr['cnt']) . "</td></tr>";
+        foreach ($this->defenseRepository->getOverallCount() as $arr) {
+            $out .= "<tr>
+                <td>" . $rank . "</td>
+                <td>" . $arr['name'] . "</td>
+                <td>" . nf($arr['max']) . "</td>
+                <td>" . nf($arr['cnt']) . "</td>
+            </tr>";
             $rank++;
             $total += $arr['cnt'];
         }
-        $out .= "<tr><td  colspan=\"2\"><b>Total</b></td><td >&nbsp;</td><td ><b>" . nf($total) . "</b></td></tr>";
+        $out .= "<tr>
+            <td colspan=\"2\"><b>Total</b></td>
+            <td>&nbsp;</td>
+            <td><b>" . nf($total) . "</b></td>
+        </tr>";
         $out .= "</table>";
 
         return $out;
@@ -421,38 +404,21 @@ class GameStatsGenerator
     {
         $out = "<table width=\"100%\" class=\"tb\">";
         $out .= "<tr><th  colspan=\"3\">Geb&auml;ude</th></tr>";
-        $res = dbquery("
-        SELECT
-            buildings.building_name,
-            SUM(buildlist.buildlist_current_level) as cnt
-        FROM
-            buildings
-        INNER JOIN
-            (
-                buildlist
-            INNER JOIN
-                users
-            ON
-                buildlist_user_id=user_id
-                AND user_ghost=0
-                AND user_hmode_from=0
-                AND user_hmode_to=0
-            )
-        ON
-            building_id=buildlist_building_id
-        GROUP BY
-            buildings.building_id
-        ORDER BY
-            cnt DESC
-        LIMIT " . self::ROW_LIMIT . ";");
         $rank = 1;
         $total = 0;
-        while ($arr = mysql_fetch_array($res)) {
-            $out .= "<tr><td >" . $rank . "</td><td >" . $arr['building_name'] . "</td><td >" . nf($arr['cnt']) . "</td></tr>";
+        foreach ($this->buildingRepository->getOverallCount() as $arr) {
+            $out .= "<tr>
+                <td>" . $rank . "</td>
+                <td>" . $arr['name'] . "</td>
+                <td>" . nf($arr['cnt']) . "</td>
+            </tr>";
             $rank++;
             $total += $arr['cnt'];
         }
-        $out .= "<tr><td  colspan=\"2\"><b>Total</b></td><td ><b>" . nf($total) . "</b></td></tr>";
+        $out .= "<tr>
+            <td colspan=\"2\"><b>Total</b></td>
+            <td ><b>" . nf($total) . "</b></td>
+        </tr>";
         $out .= "</table>";
 
         return $out;
@@ -486,33 +452,13 @@ class GameStatsGenerator
     {
         $out = "<table width=\"100%\" class=\"tb\">";
         $out .= "<tr><th  colspan=\"3\">Forschungen</th></tr>";
-        $res = dbquery("
-            SELECT
-                technologies.tech_name,
-                MAX(techlist.techlist_current_level) as max
-            FROM
-                technologies
-            INNER JOIN
-                (
-                    techlist
-                INNER JOIN
-                    users
-                ON
-                    techlist_user_id=user_id
-                    AND user_ghost=0
-                    AND user_hmode_from=0
-                    AND user_hmode_to=0
-                )
-            ON
-                tech_id=techlist_tech_id
-            GROUP BY
-                technologies.tech_id
-            ORDER BY
-                max DESC;");
         $rank = 1;
-        $total = 0;
-        while ($arr = mysql_fetch_array($res)) {
-            $out .= "<tr><td >" . $rank . "</td><td >" . $arr['tech_name'] . "</td><td >" . nf($arr['max']) . "</td></tr>";
+        foreach ($this->technologyRepository->getBestLevels() as $arr) {
+            $out .= "<tr>
+                <td>" . $rank . "</td>
+                <td>" . $arr['name'] . "</td>
+                <td>" . nf($arr['max']) . "</td>
+            </tr>";
             $rank++;
         }
         $out .= "</table>";
@@ -524,33 +470,13 @@ class GameStatsGenerator
     {
         $out = "<table width=\"100%\" class=\"tb\">";
         $out .= "<tr><th  colspan=\"3\">Geb&auml;ude</th></tr>";
-        $res = dbquery("
-            SELECT
-                buildings.building_name,
-                MAX(buildlist.buildlist_current_level) as max
-            FROM
-                buildings
-            INNER JOIN
-                (
-                    buildlist
-                INNER JOIN
-                    users
-                ON
-                    buildlist_user_id=user_id
-                    AND user_ghost=0
-                    AND user_hmode_from=0
-                    AND user_hmode_to=0
-                )
-            ON
-                building_id=buildlist_building_id
-            GROUP BY
-                buildings.building_id
-            ORDER BY
-                max DESC;");
         $rank = 1;
-        $total = 0;
-        while ($arr = mysql_fetch_array($res)) {
-            $out .= "<tr><td >" . $rank . "</td><td >" . $arr['building_name'] . "</td><td >" . nf($arr['max']) . "</td></tr>";
+        foreach ($this->buildingRepository->getBestLevels() as $arr) {
+            $out .= "<tr>
+                <td >" . $rank . "</td>
+                <td >" . $arr['name'] . "</td>
+                <td >" . nf($arr['max']) . "</td>
+            </tr>";
             $rank++;
         }
         $out .= "</table>";
@@ -562,35 +488,14 @@ class GameStatsGenerator
     {
         $out = "<table width=\"100%\" class=\"tb\">";
         $out .= "<tr><th  colspan=\"4\">Spezialschiffe (Level, EXP)</th></tr>";
-        $res = dbquery("
-            SELECT
-                ships.ship_name,
-                MAX(shiplist.shiplist_special_ship_level) as level,
-                MAX(shiplist.shiplist_special_ship_exp) as exp
-            FROM
-                ships
-            INNER JOIN
-                (
-                    shiplist
-                INNER JOIN
-                    users
-                ON
-                    shiplist_user_id=user_id
-                    AND user_ghost=0
-                    AND user_hmode_from=0
-                    AND user_hmode_to=0
-                )
-            ON
-                shiplist_ship_id=ship_id
-                AND ships.special_ship=1
-            GROUP BY
-                ships.ship_id
-            ORDER BY
-                exp DESC;");
         $rank = 1;
-        $total = 0;
-        while ($arr = mysql_fetch_array($res)) {
-            $out .= "<tr><td >" . $rank . "</td><td >" . $arr['ship_name'] . "</td><td >" . nf($arr['level']) . "</td><td >" . nf($arr['exp']) . "</td></tr>";
+        foreach ($this->shipRepository->getSpecialShipStats() as $arr) {
+            $out .= "<tr>
+                <td>" . $rank . "</td>
+                <td>" . $arr['name'] . "</td>
+                <td>" . nf($arr['level']) . "</td>
+                <td>" . nf($arr['exp']) . "</td>
+            </tr>";
             $rank++;
         }
         $out .= "</table>";

@@ -173,4 +173,38 @@ class DefenseRepository extends AbstractRepository
             ->execute()
             ->fetchOne();
     }
+
+    /**
+     * @return array<string[]>
+     */
+    public function getOverallCount(): array
+    {
+        return $this->getConnection()
+            ->executeQuery(
+                "SELECT
+                    defense.def_name as name,
+                    SUM(deflist.deflist_count) as cnt,
+                    MAX(deflist.deflist_count) as max
+                FROM
+                    defense
+                INNER JOIN
+                    (
+                        deflist
+                    INNER JOIN
+                        users
+                    ON
+                        deflist_user_id = user_id
+                        AND user_ghost = 0
+                        AND user_hmode_from = 0
+                        AND user_hmode_to = 0
+                    )
+                ON
+                    deflist_def_id = def_id
+                GROUP BY
+                    defense.def_id
+                ORDER BY
+                    cnt DESC;"
+            )
+            ->fetchAllAssociative();
+    }
 }

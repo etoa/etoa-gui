@@ -341,4 +341,70 @@ class BuildingRepository extends AbstractRepository
                 'status' => (int) $working,
             ])->execute();
     }
+
+    /**
+     * @return array<string[]>
+     */
+    public function getOverallCount(): array
+    {
+        return $this->getConnection()
+            ->executeQuery(
+                "SELECT
+                    buildings.building_name as name,
+                    SUM(buildlist.buildlist_current_level) as cnt
+                FROM
+                    buildings
+                INNER JOIN
+                    (
+                        buildlist
+                    INNER JOIN
+                        users
+                    ON
+                        buildlist_user_id = user_id
+                        AND user_ghost = 0
+                        AND user_hmode_from = 0
+                        AND user_hmode_to = 0
+                    )
+                ON
+                    building_id = buildlist_building_id
+                GROUP BY
+                    buildings.building_id
+                ORDER BY
+                    cnt DESC;"
+            )
+            ->fetchAllAssociative();
+    }
+
+    /**
+     * @return array<string[]>
+     */
+    public function getBestLevels(): array
+    {
+        return $this->getConnection()
+            ->executeQuery(
+                "SELECT
+                    buildings.building_name as name,
+                    MAX(buildlist.buildlist_current_level) as max
+                FROM
+                    buildings
+                INNER JOIN
+                    (
+                        buildlist
+                    INNER JOIN
+                        users
+                    ON
+                        buildlist_user_id = user_id
+                        AND user_ghost = 0
+                        AND user_hmode_from = 0
+                        AND user_hmode_to = 0
+                    )
+                ON
+                    building_id = buildlist_building_id
+                GROUP BY
+                    buildings.building_id
+                ORDER BY
+                    max DESC;"
+            )
+            ->fetchAllAssociative();
+    }
 }
