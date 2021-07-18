@@ -35,6 +35,22 @@ class UserServiceProvider implements ServiceProviderInterface
             return new UserPropertiesRepository($pimple['db']);
         };
 
+        $pimple[UserCommentRepository::class] = function (Container $pimple): UserCommentRepository {
+            return new UserCommentRepository($pimple['db']);
+        };
+
+        $pimple[UserRatingRepository::class] = function (Container $pimple): UserRatingRepository {
+            return new UserRatingRepository($pimple['db']);
+        };
+
+        $pimple[UserMultiRepository::class] = function (Container $pimple): UserMultiRepository {
+            return new UserMultiRepository($pimple['db']);
+        };
+
+        $pimple[UserCommentRepository::class] = function (Container $pimple): UserCommentRepository {
+            return new UserCommentRepository($pimple['db']);
+        };
+
         $pimple[UserSessionManager::class] = function (Container $pimple): UserSessionManager {
             return new UserSessionManager(
                 $pimple[UserSessionRepository::class],

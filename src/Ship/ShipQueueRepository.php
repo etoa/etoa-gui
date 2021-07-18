@@ -2,6 +2,7 @@
 
 namespace EtoA\Ship;
 
+use Doctrine\DBAL\Connection;
 use EtoA\Core\AbstractRepository;
 
 class ShipQueueRepository extends AbstractRepository
@@ -107,6 +108,22 @@ class ShipQueueRepository extends AbstractRepository
         return (int) $this->createQueryBuilder()
             ->select('COUNT(*)')
             ->from('ship_queue')
+            ->execute()
+            ->fetchOne();
+    }
+
+    /**
+     * @param int[] $availableUserIds
+     */
+    public function getOrphanedCount(array $availableUserIds): int
+    {
+        $qb = $this->createQueryBuilder();
+
+        return (int) $qb
+            ->select('count(*)')
+            ->from('ship_queue')
+            ->where($qb->expr()->notIn('queue_user_id', ':userIds'))
+            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
             ->execute()
             ->fetchOne();
     }

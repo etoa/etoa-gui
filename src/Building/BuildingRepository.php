@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Building;
 
+use Doctrine\DBAL\Connection;
 use EtoA\Core\AbstractRepository;
 
 class BuildingRepository extends AbstractRepository
@@ -87,6 +88,22 @@ class BuildingRepository extends AbstractRepository
             ->where('buildlist_current_level=0')
             ->andWhere('buildlist_build_start_time=0')
             ->andWhere('buildlist_build_end_time=0')
+            ->execute()
+            ->fetchOne();
+    }
+
+    /**
+     * @param int[] $availableUserIds
+     */
+    public function getOrphanedCount(array $availableUserIds): int
+    {
+        $qb = $this->createQueryBuilder();
+
+        return (int) $qb
+            ->select('count(buildlist_id)')
+            ->from('buildlist')
+            ->where($qb->expr()->notIn('buildlist_user_id', ':userIds'))
+            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
             ->execute()
             ->fetchOne();
     }

@@ -2,6 +2,8 @@
 
 namespace EtoA\Missile;
 
+use Doctrine\DBAL\Connection;
+
 class MissileRepository extends \EtoA\Core\AbstractRepository
 {
     public function addMissile(int $missileId, int $amount, int $userId, int $entityId): void
@@ -64,6 +66,22 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
             ->select("COUNT(missilelist_id)")
             ->from('missilelist')
             ->where('missilelist_count = 0')
+            ->execute()
+            ->fetchOne();
+    }
+
+    /**
+     * @param int[] $availableUserIds
+     */
+    public function getOrphanedCount(array $availableUserIds): int
+    {
+        $qb = $this->createQueryBuilder();
+
+        return (int) $qb
+            ->select('count(missilelist_id)')
+            ->from('missilelist')
+            ->where($qb->expr()->notIn('missilelist_user_id', ':userIds'))
+            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
             ->execute()
             ->fetchOne();
     }

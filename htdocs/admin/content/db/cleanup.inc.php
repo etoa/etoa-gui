@@ -4,6 +4,7 @@ use EtoA\Admin\AdminSessionManager;
 use EtoA\Alliance\AlliancePointsRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Help\TicketSystem\TicketService;
@@ -11,9 +12,15 @@ use EtoA\Message\MessageRepository;
 use EtoA\Message\MessageService;
 use EtoA\Message\ReportRepository;
 use EtoA\Missile\MissileRepository;
+use EtoA\Notepad\NotepadRepository;
 use EtoA\Ranking\PointsService;
+use EtoA\Ship\ShipQueueRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Technology\TechnologyRepository;
+use EtoA\User\UserCommentRepository;
+use EtoA\User\UserMultiRepository;
+use EtoA\User\UserPropertiesRepository;
+use EtoA\User\UserRatingRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserService;
 use EtoA\User\UserSessionManager;
@@ -559,128 +566,67 @@ function cleanupOverView(
     /** @var UserRepository $userRepository */
     $userRepository = $app[UserRepository::class];
     $userIds = array_keys($userRepository->getUserNicknames());
-    if (count($userIds) > 0) {
-        $ustring = implode(',', $userIds);
-    } else {
-        $ustring = 0;
+    if (count($userIds) === 0) {
+        $userIds = [0];
     }
 
-    $lres = dbquery("SELECT
-                        count(`user_log`.id)
-                    FROM
-                        `user_log`
-                    WHERE
-                        !(`user_log`.user_id IN (" . $ustring . "))");
-    $rres = dbquery("SELECT
-                        count(`user_ratings`.id)
-                    FROM
-                        `user_ratings`
-                    WHERE
-                        !(`user_ratings`.id IN (" . $ustring . "))");
-    $pres = dbquery("SELECT
-                        count(`user_properties`.id)
-                    FROM
-                        `user_properties`
-                    WHERE
-                        !(`user_properties`.id IN (" . $ustring . "))");
-    $mres = dbquery("SELECT
-                        count(`user_multi`.id)
-                    FROM
-                        `user_multi`
-                    WHERE
-                        !(`user_multi`.user_id IN (" . $ustring . "))
-                        OR !(`user_multi`.multi_id IN (" . $ustring . "))");
-    $cres = dbquery("SELECT
-                        count(`user_comments`.comment_id)
-                    FROM
-                        `user_comments`
-                    WHERE
-                        !(`user_comments`.comment_user_id IN (" . $ustring . "))");
-    $reres = dbquery("SELECT
-                        count(`reports`.id)
-                    FROM
-                        `reports`
-                    WHERE
-                        !(`reports`.user_id IN (" . $ustring . "))");
-    $nres = dbquery("SELECT
-                        count(`notepad`.id)
-                    FROM
-                        `notepad`
-                    WHERE
-                        !(`notepad`.user_id IN (" . $ustring . "))");
-    $slres = dbquery("SELECT
-                        count(`shiplist`.shiplist_id)
-                    FROM
-                        `shiplist`
-                    WHERE
-                        !(`shiplist`.shiplist_user_id IN (" . $ustring . "))");
-    $dlres = dbquery("SELECT
-                        count(`deflist`.deflist_id)
-                    FROM
-                        `deflist`
-                    WHERE
-                        !(`deflist`.deflist_user_id IN (" . $ustring . "))");
-    $blres = dbquery("SELECT
-                        count(`buildlist`.buildlist_id)
-                    FROM
-                        `buildlist`
-                    WHERE
-                        !(`buildlist`.buildlist_user_id IN (" . $ustring . "))");
-    $tlres = dbquery("SELECT
-                        count(`techlist`.techlist_id)
-                    FROM
-                        `techlist`
-                    WHERE
-                        !(`techlist`.techlist_user_id IN (" . $ustring . "))");
-    $mlres = dbquery("SELECT
-                        count(`missilelist`.missilelist_id)
-                    FROM
-                        `missilelist`
-                    WHERE
-                        !(`missilelist`.missilelist_user_id IN (" . $ustring . "))");
-    $dqres = dbquery("SELECT
-                        count(`def_queue`.queue_id)
-                    FROM
-                        `def_queue`
-                    WHERE
-                        !(`def_queue`.queue_user_id IN (" . $ustring . "))");
-    $sqres = dbquery("SELECT
-                        count(`ship_queue`.queue_id)
-                    FROM
-                        `ship_queue`
-                    WHERE
-                        !(`ship_queue`.queue_user_id IN (" . $ustring . "))");
+    /** @var UserCommentRepository $userLogRepository */
+    $userLogRepository = $app[UserCommentRepository::class];
+    $lcount = $userLogRepository->getOrphanedCount($userIds);
+    /** @var UserRatingRepository $userRatingRepository */
+    $userRatingRepository = $app[UserRatingRepository::class];
+    $rcount = $userRatingRepository->getOrphanedCount($userIds);
+    /** @var UserPropertiesRepository $userPropertiesRepository */
+    $userPropertiesRepository = $app[UserPropertiesRepository::class];
+    $pcount = $userPropertiesRepository->getOrphanedCount($userIds);
+    /** @var UserMultiRepository $userMultiRepository */
+    $userMultiRepository = $app[UserMultiRepository::class];
+    $mcount = $userMultiRepository->getOrphanedCount($userIds);
+    /** @var UserCommentRepository $userCommentRepository */
+    $userCommentRepository = $app[UserCommentRepository::class];
+    $ccount = $userCommentRepository->getOrphanedCount($userIds);
+    $recount = $reportRepository->getOrphanedCount($userIds);
+    /** @var NotepadRepository $notepadRepository */
+    $notepadRepository = $app[NotepadRepository::class];
+    $ncount = $notepadRepository->getOrphanedCount($userIds);
+    /** @var ShipRepository $shipRepository */
+    $shipRepository = $app[ShipRepository::class];
+    $slcount = $shipRepository->getOrphanedCount($userIds);
+    /** @var DefenseRepository $defenseRepository */
+    $defenseRepository = $app[DefenseRepository::class];
+    $dlcount = $defenseRepository->getOrphanedCount($userIds);
+    /** @var BuildingRepository $buildingRepository */
+    $buildingRepository = $app[BuildingRepository::class];
+    $blcount = $buildingRepository->getOrphanedCount($userIds);
+    /** @var TechnologyRepository $technologyRepository */
+    $technologyRepository = $app[TechnologyRepository::class];
+    $tlcount = $technologyRepository->getOrphanedCount($userIds);
+    /** @var MissileRepository $missileRepository */
+    $missileRepository = $app[MissileRepository::class];
+    $mlcount = $missileRepository->getOrphanedCount($userIds);
+    /** @var DefenseQueueRepository $defQueueRepository */
+    $defQueueRepository = $app[DefenseQueueRepository::class];
+    $dqcount = $defQueueRepository->getOrphanedCount($userIds);
+    /** @var ShipQueueRepository $shipQueueRepository */
+    $shipQueueRepository = $app[ShipQueueRepository::class];
+    $sqcount = $shipQueueRepository->getOrphanedCount($userIds);
 
-    $tblcnt = mysql_fetch_row($lres);
-    echo '<input type="checkbox" value="1" name="del_user_log" /> ' . nf($tblcnt[0]) . " verwaiste <strong>Userlogs</strong> gefunden<br/>";
-    $tblcnt = mysql_fetch_row($rres);
-    echo '<input type="checkbox" value="1" name="del_user_ratings" /> ' . nf($tblcnt[0]) . " verwaiste <strong>Ratings</strong> gefunden<br/>";
-    $tblcnt = mysql_fetch_row($pres);
-    echo '<input type="checkbox" value="1" name="del_user_properties" /> ' . nf($tblcnt[0]) . " verwaiste <strong>Properties</strong> gefunden<br/>";
-    $tblcnt = mysql_fetch_row($mres);
-    echo '<input type="checkbox" value="1" name="del_user_multi" /> ' . nf($tblcnt[0]) . " verwaiste <strong>Multieinträge</strong> gefunden<br/>";
-    $tblcnt = mysql_fetch_row($cres);
-    echo '<input type="checkbox" value="1" name="del_user_comments" /> ' . nf($tblcnt[0]) . " verwaiste <strong>Adminkommentare</strong> gefunden<br/>";
+    echo '<input type="checkbox" value="1" name="del_user_log" /> ' . nf($lcount) . " verwaiste <strong>Userlogs</strong> gefunden<br/>";
+    echo '<input type="checkbox" value="1" name="del_user_ratings" /> ' . nf($rcount) . " verwaiste <strong>Ratings</strong> gefunden<br/>";
+    echo '<input type="checkbox" value="1" name="del_user_properties" /> ' . nf($pcount) . " verwaiste <strong>Properties</strong> gefunden<br/>";
+    echo '<input type="checkbox" value="1" name="del_user_multi" /> ' . nf($mcount) . " verwaiste <strong>Multieinträge</strong> gefunden<br/>";
+    echo '<input type="checkbox" value="1" name="del_user_comments" /> ' . nf($ccount) . " verwaiste <strong>Adminkommentare</strong> gefunden<br/>";
     $numOrphanedTickets = count($ticketRepo->findOrphanedIds());
     echo '<input type="checkbox" value="1" name="del_tickets" /> ' . nf($numOrphanedTickets) . " verwaiste <strong>Tickets</strong> gefunden<br/>";
-    $tblcnt = mysql_fetch_row($reres);
-    echo '<input type="checkbox" value="1" name="del_reports" /> ' . nf($tblcnt[0]) . " verwaiste <strong>Berichte</strong> gefunden<br/>";
-    $tblcnt = mysql_fetch_row($nres);
-    echo '<input type="checkbox" value="1" name="del_notepad" /> ' . nf($tblcnt[0]) . " verwaiste <strong>Notizen</strong> gefunden<br/>";
-    $tblcnt = mysql_fetch_row($slres);
-    echo '<input type="checkbox" value="1" name="del_shiplist" /> ' . nf($tblcnt[0]) . " verwaiste <strong>Schiffdatensätze</strong> gefunden<br/>";
-    $tblcnt = mysql_fetch_row($sqres);
-    echo '<input type="checkbox" value="1" name="del_ship_queue" /> ' . nf($tblcnt[0]) . " verwaiste <strong>Schiffbauaufträge</strong> gefunden<br/>";
-    $tblcnt = mysql_fetch_row($dlres);
-    echo '<input type="checkbox" value="1" name="del_deflist" /> ' . nf($tblcnt[0]) . " verwaiste <strong>Defdatensätze</strong> gefunden<br/>";
-    $tblcnt = mysql_fetch_row($dqres);
-    echo '<input type="checkbox" value="1" name="del_def_queue" /> ' . nf($tblcnt[0]) . " verwaiste <strong>Defbauaufträge</strong> gefunden<br/>";
-    $tblcnt = mysql_fetch_row($blres);
-    echo '<input type="checkbox" value="1" name="del_buildlist" /> ' . nf($tblcnt[0]) . " verwaiste <strong>Gebäude</strong> gefunden<br/>";
-    $tblcnt = mysql_fetch_row($tlres);
-    echo '<input type="checkbox" value="1" name="del_techlist" /> ' . nf($tblcnt[0]) . " verwaiste <strong>Technologien</strong> gefunden<br/>";
-    $tblcnt = mysql_fetch_row($mlres);
-    echo '<input type="checkbox" value="1" name="del_missilelist" /> ' . nf($tblcnt[0]) . " verwaiste <strong>Raketen</strong> gefunden<br/>";
+    echo '<input type="checkbox" value="1" name="del_reports" /> ' . nf($recount) . " verwaiste <strong>Berichte</strong> gefunden<br/>";
+    echo '<input type="checkbox" value="1" name="del_notepad" /> ' . nf($ncount) . " verwaiste <strong>Notizen</strong> gefunden<br/>";
+    echo '<input type="checkbox" value="1" name="del_shiplist" /> ' . nf($slcount) . " verwaiste <strong>Schiffdatensätze</strong> gefunden<br/>";
+    echo '<input type="checkbox" value="1" name="del_ship_queue" /> ' . nf($sqcount) . " verwaiste <strong>Schiffbauaufträge</strong> gefunden<br/>";
+    echo '<input type="checkbox" value="1" name="del_deflist" /> ' . nf($dlcount) . " verwaiste <strong>Defdatensätze</strong> gefunden<br/>";
+    echo '<input type="checkbox" value="1" name="del_def_queue" /> ' . nf($dqcount) . " verwaiste <strong>Defbauaufträge</strong> gefunden<br/>";
+    echo '<input type="checkbox" value="1" name="del_buildlist" /> ' . nf($blcount) . " verwaiste <strong>Gebäude</strong> gefunden<br/>";
+    echo '<input type="checkbox" value="1" name="del_techlist" /> ' . nf($tlcount) . " verwaiste <strong>Technologien</strong> gefunden<br/>";
+    echo '<input type="checkbox" value="1" name="del_missilelist" /> ' . nf($mlcount) . " verwaiste <strong>Raketen</strong> gefunden<br/>";
     echo '</fieldset><br/>';
 
     /* Object lists */

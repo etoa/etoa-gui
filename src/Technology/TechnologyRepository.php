@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Technology;
 
+use Doctrine\DBAL\Connection;
 use EtoA\Core\AbstractRepository;
 
 class TechnologyRepository extends AbstractRepository
@@ -149,6 +150,22 @@ class TechnologyRepository extends AbstractRepository
             ->where('techlist_current_level=0')
             ->andWhere('techlist_build_start_time=0')
             ->andWhere('techlist_build_end_time=0')
+            ->execute()
+            ->fetchOne();
+    }
+
+    /**
+     * @param int[] $availableUserIds
+     */
+    public function getOrphanedCount(array $availableUserIds): int
+    {
+        $qb = $this->createQueryBuilder();
+
+        return (int) $qb
+            ->select('count(techlist_id)')
+            ->from('techlist')
+            ->where($qb->expr()->notIn('techlist_user_id', ':userIds'))
+            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
             ->execute()
             ->fetchOne();
     }
