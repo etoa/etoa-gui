@@ -3,6 +3,7 @@
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
+use EtoA\Log\LogRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Technology\TechnologyDataRepository;
 use Twig\Environment;
@@ -956,6 +957,9 @@ function newCommonLog()
     showLogs();
     echo "</div>";
 
-    $tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM logs;"));
-    echo "<p>Es sind " . nf($tblcnt[0]) . " Eintr&auml;ge in der Datenbank vorhanden.</p>";
+    global $app;
+    /** @var LogRepository $logRepository */
+    $logRepository = $app[LogRepository::class];
+    $tblcnt = $logRepository->count();
+    echo "<p>Es sind " . nf($tblcnt) . " Eintr&auml;ge in der Datenbank vorhanden.</p>";
 }
