@@ -128,14 +128,20 @@ class UserSessionRepository extends AbstractRepository
     /**
      * @return UserSessionLog[]
      */
-    public function getUserSessionLogs(int $userId, int $limit): array
+    public function getUserSessionLogs(int $userId, int $limit = null): array
     {
-        $rows = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder()
             ->select('*')
             ->from('user_sessionlog')
             ->where('user_id = :userId')
             ->setParameter('userId', $userId)
-            ->setMaxResults($limit)
+            ->orderBy('time_action', 'DESC');
+
+        if ($limit !== null) {
+            $qb->setMaxResults($limit);
+        }
+
+        $rows = $qb
             ->execute()
             ->fetchAllAssociative();
 
